@@ -6,6 +6,7 @@ import svg_path
 
 pub type Error {
   Core(svg_path.Error)
+  ExpectedArcFlag
   ExpectedCommand
   ExpectedMove
   ExpectedNumber
@@ -66,6 +67,12 @@ fn parse_command(
     "m" -> parse_move(tokens, state, relative: True)
     "L" -> parse_line(tokens, state, relative: False)
     "l" -> parse_line(tokens, state, relative: True)
+    "Q" -> parse_quadratic_bezier(tokens, state, relative: False)
+    "q" -> parse_quadratic_bezier(tokens, state, relative: True)
+    "C" -> parse_cubic_bezier(tokens, state, relative: False)
+    "c" -> parse_cubic_bezier(tokens, state, relative: True)
+    "A" -> parse_arc(tokens, state, relative: False)
+    "a" -> parse_arc(tokens, state, relative: True)
     "H" -> parse_horizontal(tokens, state, relative: False)
     "h" -> parse_horizontal(tokens, state, relative: True)
     "V" -> parse_vertical(tokens, state, relative: False)
@@ -245,6 +252,165 @@ fn parse_vertical_loop(
   }
 }
 
+fn parse_quadratic_bezier(
+  tokens: List(Token),
+  state: State,
+  relative relative: Bool,
+) -> Result(svg_path.Path, Error) {
+  case ensure_active(state) {
+    Error(error) -> Error(error)
+    Ok(Nil) ->
+      parse_quadratic_bezier_loop(tokens, state, relative, parsed_any: False)
+  }
+}
+
+fn parse_quadratic_bezier_loop(
+  tokens: List(Token),
+  state: State,
+  relative: Bool,
+  parsed_any parsed_any: Bool,
+) -> Result(svg_path.Path, Error) {
+  case tokens {
+    [Number(_), ..] -> {
+      case take_quadratic_bezier(tokens) {
+        Error(error) -> Error(error)
+        Ok(#(control_x, control_y, end_x, end_y, rest)) -> {
+          let control = target_point(state, control_x, control_y, relative)
+          let end = target_point(state, end_x, end_y, relative)
+          let segment =
+            svg_path.quadratic_bezier(start: state.current, control:, end:)
+
+          case append_segment(state, segment, end) {
+            Error(error) -> Error(error)
+            Ok(state) ->
+              parse_quadratic_bezier_loop(
+                rest,
+                state,
+                relative,
+                parsed_any: True,
+              )
+          }
+        }
+      }
+    }
+    _ -> {
+      case parsed_any {
+        True -> parse_tokens(tokens, state)
+        False -> Error(ExpectedNumber)
+      }
+    }
+  }
+}
+
+fn parse_cubic_bezier(
+  tokens: List(Token),
+  state: State,
+  relative relative: Bool,
+) -> Result(svg_path.Path, Error) {
+  case ensure_active(state) {
+    Error(error) -> Error(error)
+    Ok(Nil) ->
+      parse_cubic_bezier_loop(tokens, state, relative, parsed_any: False)
+  }
+}
+
+fn parse_cubic_bezier_loop(
+  tokens: List(Token),
+  state: State,
+  relative: Bool,
+  parsed_any parsed_any: Bool,
+) -> Result(svg_path.Path, Error) {
+  case tokens {
+    [Number(_), ..] -> {
+      case take_cubic_bezier(tokens) {
+        Error(error) -> Error(error)
+        Ok(#(control1_x, control1_y, control2_x, control2_y, end_x, end_y, rest)) -> {
+          let control1 = target_point(state, control1_x, control1_y, relative)
+          let control2 = target_point(state, control2_x, control2_y, relative)
+          let end = target_point(state, end_x, end_y, relative)
+          let segment =
+            svg_path.cubic_bezier(
+              start: state.current,
+              control1:,
+              control2:,
+              end:,
+            )
+
+          case append_segment(state, segment, end) {
+            Error(error) -> Error(error)
+            Ok(state) ->
+              parse_cubic_bezier_loop(rest, state, relative, parsed_any: True)
+          }
+        }
+      }
+    }
+    _ -> {
+      case parsed_any {
+        True -> parse_tokens(tokens, state)
+        False -> Error(ExpectedNumber)
+      }
+    }
+  }
+}
+
+fn parse_arc(
+  tokens: List(Token),
+  state: State,
+  relative relative: Bool,
+) -> Result(svg_path.Path, Error) {
+  case ensure_active(state) {
+    Error(error) -> Error(error)
+    Ok(Nil) -> parse_arc_loop(tokens, state, relative, parsed_any: False)
+  }
+}
+
+fn parse_arc_loop(
+  tokens: List(Token),
+  state: State,
+  relative: Bool,
+  parsed_any parsed_any: Bool,
+) -> Result(svg_path.Path, Error) {
+  case tokens {
+    [Number(_), ..] -> {
+      case take_arc(tokens) {
+        Error(error) -> Error(error)
+        Ok(#(
+          radius_x,
+          radius_y,
+          x_axis_rotation,
+          large_arc,
+          sweep,
+          end_x,
+          end_y,
+          rest,
+        )) -> {
+          let end = target_point(state, end_x, end_y, relative)
+          let segment =
+            svg_path.arc(
+              start: state.current,
+              radius: svg_path.point(radius_x, radius_y),
+              x_axis_rotation:,
+              large_arc:,
+              sweep:,
+              end:,
+            )
+
+          case append_segment(state, segment, end) {
+            Error(error) -> Error(error)
+            Ok(state) -> parse_arc_loop(rest, state, relative, parsed_any: True)
+          }
+        }
+      }
+    }
+    _ -> {
+      case parsed_any {
+        True -> parse_tokens(tokens, state)
+        False -> Error(ExpectedNumber)
+      }
+    }
+  }
+}
+
 fn parse_close(
   tokens: List(Token),
   state: State,
@@ -308,15 +474,22 @@ fn append_line_to(
   state: State,
   target: svg_path.Point,
 ) -> Result(State, Error) {
-  case
-    svg_path.append(
-      state.subpath,
-      svg_path.line(start: state.current, end: target),
-    )
-  {
+  append_segment(
+    state,
+    svg_path.line(start: state.current, end: target),
+    target,
+  )
+}
+
+fn append_segment(
+  state: State,
+  segment: svg_path.Segment,
+  end: svg_path.Point,
+) -> Result(State, Error) {
+  case svg_path.append(state.subpath, segment) {
     Error(error) -> Error(Core(error))
     Ok(subpath) -> {
-      Ok(State(..state, subpath: subpath, current: target, active: True))
+      Ok(State(..state, subpath: subpath, current: end, active: True))
     }
   }
 }
@@ -354,6 +527,86 @@ fn take_pair(
   case tokens {
     [Number(x), Number(y), ..rest] -> Ok(#(x, y, rest))
     _ -> Error(ExpectedNumber)
+  }
+}
+
+fn take_quadratic_bezier(
+  tokens: List(Token),
+) -> Result(#(Float, Float, Float, Float, List(Token)), Error) {
+  case tokens {
+    [Number(control_x), Number(control_y), Number(end_x), Number(end_y), ..rest] -> {
+      Ok(#(control_x, control_y, end_x, end_y, rest))
+    }
+    _ -> Error(ExpectedNumber)
+  }
+}
+
+fn take_cubic_bezier(
+  tokens: List(Token),
+) -> Result(#(Float, Float, Float, Float, Float, Float, List(Token)), Error) {
+  case tokens {
+    [
+      Number(control1_x),
+      Number(control1_y),
+      Number(control2_x),
+      Number(control2_y),
+      Number(end_x),
+      Number(end_y),
+      ..rest
+    ] -> {
+      Ok(#(control1_x, control1_y, control2_x, control2_y, end_x, end_y, rest))
+    }
+    _ -> Error(ExpectedNumber)
+  }
+}
+
+fn take_arc(
+  tokens: List(Token),
+) -> Result(
+  #(Float, Float, Float, Bool, Bool, Float, Float, List(Token)),
+  Error,
+) {
+  case tokens {
+    [
+      Number(radius_x),
+      Number(radius_y),
+      Number(x_axis_rotation),
+      Number(large_arc),
+      Number(sweep),
+      Number(end_x),
+      Number(end_y),
+      ..rest
+    ] -> {
+      case arc_flag(large_arc) {
+        Error(error) -> Error(error)
+        Ok(large_arc) -> {
+          case arc_flag(sweep) {
+            Error(error) -> Error(error)
+            Ok(sweep) -> {
+              Ok(#(
+                radius_x,
+                radius_y,
+                x_axis_rotation,
+                large_arc,
+                sweep,
+                end_x,
+                end_y,
+                rest,
+              ))
+            }
+          }
+        }
+      }
+    }
+    _ -> Error(ExpectedNumber)
+  }
+}
+
+fn arc_flag(value: Float) -> Result(Bool, Error) {
+  case value {
+    0.0 -> Ok(False)
+    1.0 -> Ok(True)
+    _ -> Error(ExpectedArcFlag)
   }
 }
 
@@ -446,7 +699,27 @@ fn is_separator(grapheme: String) -> Bool {
 }
 
 fn is_command(grapheme: String) -> Bool {
-  list.contains(["M", "m", "L", "l", "H", "h", "V", "v", "Z", "z"], grapheme)
+  list.contains(
+    [
+      "M",
+      "m",
+      "L",
+      "l",
+      "Q",
+      "q",
+      "C",
+      "c",
+      "A",
+      "a",
+      "H",
+      "h",
+      "V",
+      "v",
+      "Z",
+      "z",
+    ],
+    grapheme,
+  )
 }
 
 fn is_number_start(grapheme: String) -> Bool {
