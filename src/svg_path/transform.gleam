@@ -1,9 +1,10 @@
 import gleam/list
+import gleam_community/maths
 import matrix/mat3f
 import svg_path
 import svg_path/ellipse
 
-pub type Matrix {
+pub opaque type Matrix {
   Matrix(a: Float, b: Float, c: Float, d: Float, e: Float, f: Float)
 }
 
@@ -27,6 +28,48 @@ pub fn matrix(
 
 pub fn identity() -> Matrix {
   matrix(a: 1.0, b: 0.0, c: 0.0, d: 1.0, e: 0.0, f: 0.0)
+}
+
+pub fn translate(x x: Float, y y: Float) -> Matrix {
+  matrix(a: 1.0, b: 0.0, c: 0.0, d: 1.0, e: x, f: y)
+}
+
+pub fn scale(factor factor: Float) -> Matrix {
+  scale_xy(x: factor, y: factor)
+}
+
+pub fn scale_xy(x x: Float, y y: Float) -> Matrix {
+  matrix(a: x, b: 0.0, c: 0.0, d: y, e: 0.0, f: 0.0)
+}
+
+pub fn rotate(degrees degrees: Float) -> Matrix {
+  let radians = degrees_to_radians(degrees)
+  let cosine = maths.cos(radians)
+  let sine = maths.sin(radians)
+
+  matrix(a: cosine, b: sine, c: 0.0 -. sine, d: cosine, e: 0.0, f: 0.0)
+}
+
+pub fn skew_x(degrees degrees: Float) -> Matrix {
+  matrix(
+    a: 1.0,
+    b: 0.0,
+    c: maths.tan(degrees_to_radians(degrees)),
+    d: 1.0,
+    e: 0.0,
+    f: 0.0,
+  )
+}
+
+pub fn skew_y(degrees degrees: Float) -> Matrix {
+  matrix(
+    a: 1.0,
+    b: maths.tan(degrees_to_radians(degrees)),
+    c: 0.0,
+    d: 1.0,
+    e: 0.0,
+    f: 0.0,
+  )
 }
 
 pub fn from_mat3f(transform: mat3f.Mat3f) -> Result(Matrix, Error) {
@@ -58,6 +101,50 @@ pub fn point(point: svg_path.Point, by transform: Matrix) -> svg_path.Point {
   )
 }
 
+pub fn translate_point(
+  input: svg_path.Point,
+  x x: Float,
+  y y: Float,
+) -> svg_path.Point {
+  point(input, by: translate(x:, y:))
+}
+
+pub fn scale_point(
+  input: svg_path.Point,
+  factor factor: Float,
+) -> svg_path.Point {
+  point(input, by: scale(factor:))
+}
+
+pub fn scale_xy_point(
+  input: svg_path.Point,
+  x x: Float,
+  y y: Float,
+) -> svg_path.Point {
+  point(input, by: scale_xy(x:, y:))
+}
+
+pub fn rotate_point(
+  input: svg_path.Point,
+  degrees degrees: Float,
+) -> svg_path.Point {
+  point(input, by: rotate(degrees:))
+}
+
+pub fn skew_x_point(
+  input: svg_path.Point,
+  degrees degrees: Float,
+) -> svg_path.Point {
+  point(input, by: skew_x(degrees:))
+}
+
+pub fn skew_y_point(
+  input: svg_path.Point,
+  degrees degrees: Float,
+) -> svg_path.Point {
+  point(input, by: skew_y(degrees:))
+}
+
 pub fn segment(
   segment: svg_path.Segment,
   by transform: Matrix,
@@ -66,6 +153,50 @@ pub fn segment(
     Error(error) -> Error(error)
     Ok(Nil) -> transform_valid_segment(segment, transform)
   }
+}
+
+pub fn translate_segment(
+  input: svg_path.Segment,
+  x x: Float,
+  y y: Float,
+) -> Result(svg_path.Segment, Error) {
+  segment(input, by: translate(x:, y:))
+}
+
+pub fn scale_segment(
+  input: svg_path.Segment,
+  factor factor: Float,
+) -> Result(svg_path.Segment, Error) {
+  segment(input, by: scale(factor:))
+}
+
+pub fn scale_xy_segment(
+  input: svg_path.Segment,
+  x x: Float,
+  y y: Float,
+) -> Result(svg_path.Segment, Error) {
+  segment(input, by: scale_xy(x:, y:))
+}
+
+pub fn rotate_segment(
+  input: svg_path.Segment,
+  degrees degrees: Float,
+) -> Result(svg_path.Segment, Error) {
+  segment(input, by: rotate(degrees:))
+}
+
+pub fn skew_x_segment(
+  input: svg_path.Segment,
+  degrees degrees: Float,
+) -> Result(svg_path.Segment, Error) {
+  segment(input, by: skew_x(degrees:))
+}
+
+pub fn skew_y_segment(
+  input: svg_path.Segment,
+  degrees degrees: Float,
+) -> Result(svg_path.Segment, Error) {
+  segment(input, by: skew_y(degrees:))
 }
 
 pub fn segment_gracefully(
@@ -169,6 +300,50 @@ pub fn subpath(
   }
 }
 
+pub fn translate_subpath(
+  input: svg_path.Subpath,
+  x x: Float,
+  y y: Float,
+) -> Result(svg_path.Subpath, Error) {
+  subpath(input, by: translate(x:, y:))
+}
+
+pub fn scale_subpath(
+  input: svg_path.Subpath,
+  factor factor: Float,
+) -> Result(svg_path.Subpath, Error) {
+  subpath(input, by: scale(factor:))
+}
+
+pub fn scale_xy_subpath(
+  input: svg_path.Subpath,
+  x x: Float,
+  y y: Float,
+) -> Result(svg_path.Subpath, Error) {
+  subpath(input, by: scale_xy(x:, y:))
+}
+
+pub fn rotate_subpath(
+  input: svg_path.Subpath,
+  degrees degrees: Float,
+) -> Result(svg_path.Subpath, Error) {
+  subpath(input, by: rotate(degrees:))
+}
+
+pub fn skew_x_subpath(
+  input: svg_path.Subpath,
+  degrees degrees: Float,
+) -> Result(svg_path.Subpath, Error) {
+  subpath(input, by: skew_x(degrees:))
+}
+
+pub fn skew_y_subpath(
+  input: svg_path.Subpath,
+  degrees degrees: Float,
+) -> Result(svg_path.Subpath, Error) {
+  subpath(input, by: skew_y(degrees:))
+}
+
 pub fn subpath_gracefully(
   subpath: svg_path.Subpath,
   by transform: Matrix,
@@ -209,6 +384,50 @@ pub fn path(
       }
     }
   }
+}
+
+pub fn translate_path(
+  input: svg_path.Path,
+  x x: Float,
+  y y: Float,
+) -> Result(svg_path.Path, Error) {
+  path(input, by: translate(x:, y:))
+}
+
+pub fn scale_path(
+  input: svg_path.Path,
+  factor factor: Float,
+) -> Result(svg_path.Path, Error) {
+  path(input, by: scale(factor:))
+}
+
+pub fn scale_xy_path(
+  input: svg_path.Path,
+  x x: Float,
+  y y: Float,
+) -> Result(svg_path.Path, Error) {
+  path(input, by: scale_xy(x:, y:))
+}
+
+pub fn rotate_path(
+  input: svg_path.Path,
+  degrees degrees: Float,
+) -> Result(svg_path.Path, Error) {
+  path(input, by: rotate(degrees:))
+}
+
+pub fn skew_x_path(
+  input: svg_path.Path,
+  degrees degrees: Float,
+) -> Result(svg_path.Path, Error) {
+  path(input, by: skew_x(degrees:))
+}
+
+pub fn skew_y_path(
+  input: svg_path.Path,
+  degrees degrees: Float,
+) -> Result(svg_path.Path, Error) {
+  path(input, by: skew_y(degrees:))
 }
 
 fn transform_valid_segment(
@@ -388,4 +607,8 @@ fn transformed_sweep(sweep: Bool, transform: Matrix) -> Bool {
 
 fn determinant(transform: Matrix) -> Float {
   transform.a *. transform.d -. transform.b *. transform.c
+}
+
+fn degrees_to_radians(degrees: Float) -> Float {
+  degrees *. maths.pi() /. 180.0
 }

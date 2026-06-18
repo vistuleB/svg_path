@@ -16,6 +16,69 @@ pub fn matrix_transforms_points_test() {
   assert transform.point(point, by: matrix) == svg_path.point(30.0, 40.0)
 }
 
+pub fn translate_matrix_transforms_points_test() {
+  let point = svg_path.point(2.0, 3.0)
+
+  assert transform.point(point, by: transform.translate(x: 5.0, y: -7.0))
+    == svg_path.point(7.0, -4.0)
+  assert transform.translate_point(point, x: 5.0, y: -7.0)
+    == svg_path.point(7.0, -4.0)
+}
+
+pub fn scale_matrix_transforms_points_test() {
+  let point = svg_path.point(2.0, 3.0)
+
+  assert transform.point(point, by: transform.scale(factor: 4.0))
+    == svg_path.point(8.0, 12.0)
+  assert transform.scale_point(point, factor: 4.0) == svg_path.point(8.0, 12.0)
+}
+
+pub fn scale_xy_matrix_transforms_points_test() {
+  let point = svg_path.point(2.0, 3.0)
+
+  assert transform.point(point, by: transform.scale_xy(x: 4.0, y: -2.0))
+    == svg_path.point(8.0, -6.0)
+  assert transform.scale_xy_point(point, x: 4.0, y: -2.0)
+    == svg_path.point(8.0, -6.0)
+}
+
+pub fn rotate_matrix_uses_degrees_test() {
+  let line =
+    svg_path.line(
+      start: svg_path.point(1.0, 0.0),
+      end: svg_path.point(1.0, 2.0),
+    )
+  let assert Ok(segment) = transform.rotate_segment(line, degrees: 90.0)
+
+  assert serialize.segment(segment) == "M 0 1 H -2"
+}
+
+pub fn skew_matrices_use_degrees_test() {
+  let point = svg_path.point(2.0, 3.0)
+
+  assert transform.point(point, by: transform.skew_x(degrees: 45.0))
+    == svg_path.point(5.0, 3.0)
+  assert transform.skew_y_point(point, degrees: 45.0)
+    == svg_path.point(2.0, 5.0)
+}
+
+pub fn direct_subpath_and_path_helpers_delegate_to_matrices_test() {
+  let assert Ok(subpath) =
+    svg_path.subpath([
+      svg_path.line(
+        start: svg_path.point(0.0, 0.0),
+        end: svg_path.point(5.0, 0.0),
+      ),
+    ])
+  let path = svg_path.from_subpath(subpath)
+  let assert Ok(translated_subpath) =
+    transform.translate_subpath(subpath, x: 10.0, y: 20.0)
+  let assert Ok(scaled_path) = transform.scale_path(path, factor: 2.0)
+
+  assert serialize.subpath(translated_subpath) == "M 10 20 H 15"
+  assert serialize.path(scaled_path) == "M 0 0 H 10"
+}
+
 pub fn from_mat3f_converts_affine_matrix_test() {
   let point = svg_path.point(2.0, 3.0)
   let matrix = mat3f.new(2.0, 3.0, 0.0, 5.0, 7.0, 0.0, 11.0, 13.0, 1.0)
