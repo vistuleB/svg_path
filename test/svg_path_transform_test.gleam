@@ -30,6 +30,12 @@ pub fn from_mat3f_rejects_non_affine_matrix_test() {
   assert transform.from_mat3f(matrix) == Error(transform.NonAffineMatrix)
 }
 
+pub fn from_mat3f_rejects_non_unit_homogeneous_scale_test() {
+  let matrix = mat3f.new(2.0, 3.0, 0.0, 5.0, 7.0, 0.0, 11.0, 13.0, 2.0)
+
+  assert transform.from_mat3f(matrix) == Error(transform.NonAffineMatrix)
+}
+
 pub fn line_transform_test() {
   let matrix =
     transform.matrix(a: 1.0, b: 0.0, c: 0.0, d: 1.0, e: 10.0, f: -5.0)

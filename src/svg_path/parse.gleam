@@ -458,6 +458,20 @@ fn is_digit(grapheme: String) -> Bool {
 }
 
 fn parse_number(raw: String) -> Result(Float, Nil) {
+  case string.split_once(raw, on: "e") {
+    Ok(#(mantissa, exponent)) -> parse_exponent_number(mantissa, exponent)
+    Error(_) -> {
+      case string.split_once(raw, on: "E") {
+        Ok(#(mantissa, exponent)) -> parse_exponent_number(mantissa, exponent)
+        Error(_) -> parse_decimal_number(raw)
+      }
+    }
+  }
+}
+
+fn parse_decimal_number(raw: String) -> Result(Float, Nil) {
+  let raw = strip_leading_plus(raw)
+
   case float.parse(raw) {
     Ok(number) -> Ok(number)
     Error(_) -> {
@@ -466,5 +480,35 @@ fn parse_number(raw: String) -> Result(Float, Nil) {
         Error(_) -> Error(Nil)
       }
     }
+  }
+}
+
+fn parse_exponent_number(
+  mantissa: String,
+  exponent: String,
+) -> Result(Float, Nil) {
+  case parse_decimal_number(mantissa) {
+    Error(_) -> Error(Nil)
+    Ok(mantissa) -> {
+      case exponent |> strip_leading_plus |> int.parse {
+        Error(_) -> Error(Nil)
+        Ok(exponent) -> Ok(mantissa *. power_of_ten(exponent))
+      }
+    }
+  }
+}
+
+fn strip_leading_plus(raw: String) -> String {
+  case string.starts_with(raw, "+") {
+    True -> string.drop_start(raw, up_to: 1)
+    False -> raw
+  }
+}
+
+fn power_of_ten(exponent: Int) -> Float {
+  case exponent {
+    0 -> 1.0
+    _ if exponent > 0 -> 10.0 *. power_of_ten(exponent - 1)
+    _ -> power_of_ten(exponent + 1) /. 10.0
   }
 }

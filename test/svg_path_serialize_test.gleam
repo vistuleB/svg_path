@@ -160,6 +160,52 @@ pub fn relative_options_use_relative_line_commands_test() {
     == "m 10 20 l 3 -2"
 }
 
+pub fn relative_options_use_relative_curve_commands_test() {
+  let start = svg_path.point(10.0, 20.0)
+  let quadratic =
+    svg_path.quadratic_bezier(
+      start: start,
+      control: svg_path.point(12.0, 23.0),
+      end: svg_path.point(15.0, 25.0),
+    )
+  let cubic =
+    svg_path.cubic_bezier(
+      start: start,
+      control1: svg_path.point(11.0, 21.0),
+      control2: svg_path.point(14.0, 24.0),
+      end: svg_path.point(18.0, 28.0),
+    )
+
+  assert serialize.segment_with_options(
+      quadratic,
+      options: serialize.relative_decimal_options(0),
+    )
+    == "m 10 20 q 2 3 5 5"
+  assert serialize.segment_with_options(
+      cubic,
+      options: serialize.relative_decimal_options(0),
+    )
+    == "m 10 20 c 1 1 4 4 8 8"
+}
+
+pub fn relative_options_use_relative_arc_endpoint_test() {
+  let arc =
+    svg_path.arc(
+      start: svg_path.point(10.0, 20.0),
+      radius: svg_path.point(5.0, 8.0),
+      x_axis_rotation: 45.0,
+      large_arc: True,
+      sweep: False,
+      end: svg_path.point(13.0, 18.0),
+    )
+
+  assert serialize.segment_with_options(
+      arc,
+      options: serialize.relative_decimal_options(0),
+    )
+    == "m 10 20 a 5 8 45 1 0 3 -2"
+}
+
 pub fn relative_minimize_whitespace_removes_command_spacing_test() {
   let a = svg_path.point(10.0, 20.0)
   let b = svg_path.point(13.0, 18.0)
@@ -205,6 +251,36 @@ pub fn relative_options_move_from_closed_subpath_start_after_z_test() {
       options: serialize.relative_decimal_options(0),
     )
     == "m 10 10 h 10 h -10 Z m 20 0 h 10"
+}
+
+pub fn minimized_relative_path_with_multiple_subpaths_test() {
+  let a = svg_path.point(10.0, 10.0)
+  let b = svg_path.point(20.0, 10.0)
+  let c = svg_path.point(25.0, 30.0)
+  let d = svg_path.point(30.0, 30.0)
+  let assert Ok(first) = svg_path.subpath([svg_path.line(start: a, end: b)])
+  let assert Ok(second) = svg_path.subpath([svg_path.line(start: c, end: d)])
+
+  assert serialize.path_with_options(
+      svg_path.path([first, second]),
+      options: serialize.relative_decimal_options(0)
+        |> serialize.minimize_whitespace,
+    )
+    == "m10 10h10m5 20h5"
+}
+
+pub fn decimal_options_clamp_negative_decimal_places_to_zero_test() {
+  let segment =
+    svg_path.line(
+      start: svg_path.point(0.4, 1.5),
+      end: svg_path.point(10.49, -20.5),
+    )
+
+  assert serialize.segment_with_options(
+      segment,
+      options: serialize.decimal_options(-3),
+    )
+    == "M 0 2 L 10 -21"
 }
 
 pub fn rounded_absolute_line_uses_h_or_v_after_formatting_test() {

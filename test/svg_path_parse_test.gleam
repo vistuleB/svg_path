@@ -25,11 +25,53 @@ pub fn relative_lines_parse_to_absolute_segments_test() {
   assert serialize.subpath(subpath) == "M 10 10 H 15 V 30 H 10"
 }
 
+pub fn relative_move_after_close_uses_closed_subpath_start_test() {
+  let assert Ok(path) = parse.path("M 0 0 L 10 0 z m 5 5 l 5 0")
+
+  assert serialize.path(path) == "M 0 0 H 10 H 0 Z M 5 5 H 10"
+}
+
+pub fn repeated_line_horizontal_and_vertical_values_parse_test() {
+  let assert Ok(path) = parse.path("M 0 0 L 10 0 10 10 H 5 0 V 5 0")
+  let assert Ok(subpath) = svg_path.as_subpath(path)
+
+  assert serialize.subpath(subpath) == "M 0 0 H 10 V 10 H 5 H 0 V 5 V 0"
+}
+
+pub fn repeated_absolute_line_coordinate_pairs_parse_test() {
+  let assert Ok(path) = parse.path("M 0 0 L 5 10 3 2 4 5 2 2 V 3")
+  let assert Ok(subpath) = svg_path.as_subpath(path)
+
+  assert serialize.subpath(subpath) == "M 0 0 L 5 10 L 3 2 L 4 5 L 2 2 V 3"
+}
+
+pub fn repeated_relative_line_coordinate_pairs_parse_test() {
+  let assert Ok(path) = parse.path("m 0 0 l 5 10 3 2 4 5 2 2 v 3")
+  let assert Ok(subpath) = svg_path.as_subpath(path)
+
+  assert serialize.subpath(subpath)
+    == "M 0 0 L 5 10 L 8 12 L 12 17 L 14 19 V 22"
+}
+
+pub fn repeated_line_pairs_can_switch_to_horizontal_command_test() {
+  let assert Ok(path) = parse.path("M 1 1 L 5 10 3 2 4 5 H 9")
+  let assert Ok(subpath) = svg_path.as_subpath(path)
+
+  assert serialize.subpath(subpath) == "M 1 1 L 5 10 L 3 2 L 4 5 H 9"
+}
+
 pub fn repeated_move_coordinates_become_implicit_lines_test() {
   let assert Ok(path) = parse.path("M0 0 10 0 10 20")
   let assert Ok(subpath) = svg_path.as_subpath(path)
 
   assert serialize.subpath(subpath) == "M 0 0 H 10 V 20"
+}
+
+pub fn relative_move_implicit_lines_stay_relative_test() {
+  let assert Ok(path) = parse.path("m 10 10 5 0 0 5")
+  let assert Ok(subpath) = svg_path.as_subpath(path)
+
+  assert serialize.subpath(subpath) == "M 10 10 H 15 V 15"
 }
 
 pub fn closepath_adds_closing_line_and_semantic_close_test() {
@@ -47,6 +89,13 @@ pub fn compact_numbers_parse_test() {
   assert serialize.subpath(subpath) == "M 0 -1 H 10 V 9"
 }
 
+pub fn exponent_and_plus_signed_numbers_parse_test() {
+  let assert Ok(path) = parse.path("M +1e1 -2E1 L 1.5e1 -2e1")
+  let assert Ok(subpath) = svg_path.as_subpath(path)
+
+  assert serialize.subpath(subpath) == "M 10 -20 H 15"
+}
+
 pub fn move_only_subpath_is_ignored_test() {
   assert parse.path("M 0 0") == Ok(svg_path.empty_path())
 }
@@ -61,4 +110,16 @@ pub fn move_only_subpaths_are_ignored_among_real_subpaths_test() {
 pub fn unsupported_commands_are_rejected_test() {
   assert parse.path("M 0 0 C 1 2 3 4 5 6")
     == Error(parse.UnsupportedCommand("C"))
+}
+
+pub fn drawing_command_before_move_is_rejected_test() {
+  assert parse.path("L 10 10") == Error(parse.ExpectedMove)
+}
+
+pub fn command_without_required_number_is_rejected_test() {
+  assert parse.path("M 0 0 L") == Error(parse.ExpectedNumber)
+}
+
+pub fn invalid_number_is_rejected_test() {
+  assert parse.path("M . 0") == Error(parse.InvalidNumber("."))
 }
