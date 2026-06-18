@@ -157,7 +157,7 @@ pub fn subpath_gracefully(
       {
         Error(error) -> Error(error)
         Ok(segments) -> {
-          case svg_path.subpath(segments) {
+          case svg_path.wiggle_subpath(segments) {
             Error(error) -> Error(Core(error))
             Ok(transformed) -> {
               case svg_path.is_closed(subpath) {
