@@ -15,13 +15,24 @@ type ArcParameters {
   )
 }
 
-pub type Affine {
+pub opaque type Affine {
   Affine(a: Float, b: Float, c: Float, d: Float, e: Float, f: Float)
 }
 
 pub type Error {
   DegenerateInputArc
   NotCollapsedToLine
+}
+
+pub fn ellipse_affine(
+  a a: Float,
+  b b: Float,
+  c c: Float,
+  d d: Float,
+  e e: Float,
+  f f: Float,
+) -> Affine {
+  Affine(a:, b:, c:, d:, e:, f:)
 }
 
 pub fn point(point: svg_path.Point, by transform: Affine) -> svg_path.Point {

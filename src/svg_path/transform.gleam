@@ -261,7 +261,7 @@ fn map_core_error(
 }
 
 fn affine(transform: Matrix) -> ellipse.Affine {
-  ellipse.Affine(
+  ellipse.ellipse_affine(
     a: transform.a,
     b: transform.b,
     c: transform.c,
