@@ -84,6 +84,73 @@ pub fn subpath_rejects_disconnected_segments_test() {
     == Error(svg_path.Discontinuous(expected: b, got: c))
 }
 
+pub fn wiggle_subpath_replaces_nearby_sequential_endpoints_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let near_b = svg_path.point(10.0000000001, 0.0)
+  let c = svg_path.point(20.0, 0.0)
+  let assert Ok(subpath) =
+    svg_path.wiggle_subpath([
+      svg_path.line(start: a, end: b),
+      svg_path.line(start: near_b, end: c),
+    ])
+
+  let assert [first, second] = svg_path.segments(subpath)
+  let overlap = svg_path.segment_end(first)
+
+  assert svg_path.segment_start(first) == a
+  assert svg_path.segment_start(second) == overlap
+  assert svg_path.segment_end(second) == c
+  assert overlap != b
+  assert overlap != near_b
+}
+
+pub fn wiggle_subpath_rejects_gaps_beyond_tolerance_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(10.1, 0.0)
+  let d = svg_path.point(20.0, 0.0)
+
+  assert svg_path.wiggle_subpath([
+      svg_path.line(start: a, end: b),
+      svg_path.line(start: c, end: d),
+    ])
+    == Error(svg_path.NotCloseEnough(
+      expected: b,
+      got: c,
+      tolerance: 0.000000001,
+    ))
+}
+
+pub fn wiggle_subpath_rejects_misaligned_vertical_lines_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(0.0, 10.0)
+  let c = svg_path.point(0.0000000001, 10.0000000001)
+  let d = svg_path.point(0.0000000001, 20.0)
+
+  assert svg_path.wiggle_subpath([
+      svg_path.line(start: a, end: b),
+      svg_path.line(start: c, end: d),
+    ])
+    == Error(svg_path.IncompatibleVerticalWiggle(previous_end: b, next_start: c))
+}
+
+pub fn wiggle_subpath_rejects_misaligned_horizontal_lines_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(10.0000000001, 0.0000000001)
+  let d = svg_path.point(20.0, 0.0000000001)
+
+  assert svg_path.wiggle_subpath([
+      svg_path.line(start: a, end: b),
+      svg_path.line(start: c, end: d),
+    ])
+    == Error(svg_path.IncompatibleHorizontalWiggle(
+      previous_end: b,
+      next_start: c,
+    ))
+}
+
 pub fn force_append_bridges_a_gap_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)

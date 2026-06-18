@@ -82,6 +82,18 @@ pub fn subpath(segments: List(Segment)) -> Result(Subpath, Error) {
   }
 }
 
+pub fn wiggle_subpath(segments: List(Segment)) -> Result(Subpath, Error) {
+  case segments {
+    [] | [_] -> subpath(segments)
+    [first, ..rest] -> {
+      case wiggle_segments(rest, first, []) {
+        Ok(segments) -> Ok(Subpath(segments:, closed: False))
+        Error(error) -> Error(error)
+      }
+    }
+  }
+}
+
 pub fn segments(subpath: Subpath) -> List(Segment) {
   subpath.segments
 }
@@ -300,6 +312,46 @@ fn continuous(segments: List(Segment)) -> Result(Nil, Error) {
       case left_end == right_start {
         True -> continuous([right, ..rest])
         False -> Error(Discontinuous(expected: left_end, got: right_start))
+      }
+    }
+  }
+}
+
+fn wiggle_segments(
+  remaining: List(Segment),
+  previous: Segment,
+  segments: List(Segment),
+) -> Result(List(Segment), Error) {
+  case remaining {
+    [] -> Ok(list.reverse([previous, ..segments]))
+    [next, ..rest] -> {
+      let previous_end = segment_end(previous)
+      let next_start = segment_start(next)
+
+      case previous_end == next_start {
+        True -> wiggle_segments(rest, next, [previous, ..segments])
+        False -> {
+          case distance(previous_end, next_start) <=. default_wiggle_tolerance {
+            False -> {
+              Error(NotCloseEnough(
+                expected: previous_end,
+                got: next_start,
+                tolerance: default_wiggle_tolerance,
+              ))
+            }
+            True -> {
+              case wiggle_overlap(previous, next) {
+                Error(error) -> Error(error)
+                Ok(overlap) -> {
+                  wiggle_segments(rest, segment_with_start(next, overlap), [
+                    segment_with_end(previous, overlap),
+                    ..segments
+                  ])
+                }
+              }
+            }
+          }
+        }
       }
     }
   }
