@@ -15,6 +15,7 @@ licences = ["MIT"]
 [dependencies]
 gleam_community_maths = ">= 2.0.0 and < 3.0.0"
 gleam_stdlib = ">= 1.0.0 and < 2.0.0"
+matrix_gleam = { git = "https://github.com/vistuleB/matrix_gleam.git", ref = "284ef27b90bd14b35e8bd3d71718f9c32ee0fcd8" }
 vec = ">= 4.1.0 and < 5.0.0"
 
 [dev_dependencies]

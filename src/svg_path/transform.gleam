@@ -1,4 +1,5 @@
 import gleam/list
+import matrix/mat3f
 import svg_path
 import svg_path/ellipse
 
@@ -9,6 +10,7 @@ pub type Matrix {
 pub type Error {
   DegenerateArcTransform
   InvalidMatrix
+  NonAffineMatrix
   Core(svg_path.Error)
 }
 
@@ -25,6 +27,28 @@ pub fn matrix(
 
 pub fn identity() -> Matrix {
   matrix(a: 1.0, b: 0.0, c: 0.0, d: 1.0, e: 0.0, f: 0.0)
+}
+
+pub fn from_mat3f(transform: mat3f.Mat3f) -> Result(Matrix, Error) {
+  case transform.x.z == 0.0 && transform.y.z == 0.0 && transform.z.z == 1.0 {
+    False -> Error(NonAffineMatrix)
+    True -> {
+      let transform =
+        matrix(
+          a: transform.x.x,
+          b: transform.x.y,
+          c: transform.y.x,
+          d: transform.y.y,
+          e: transform.z.x,
+          f: transform.z.y,
+        )
+
+      case validate_matrix(transform) {
+        Ok(Nil) -> Ok(transform)
+        Error(error) -> Error(error)
+      }
+    }
+  }
 }
 
 pub fn point(point: svg_path.Point, by transform: Matrix) -> svg_path.Point {
