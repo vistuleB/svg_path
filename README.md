@@ -6,10 +6,10 @@
 `svg_path` parses, represents, transforms, serializes, and inspects SVG path
 data in Gleam.
 
-The package is intentionally explicit about SVG path details that are easy to
-lose track of: implicit line commands after `M`, comma-separated coordinates,
-semantic closepath handling, transform matrix composition order, and the
-difference between cleaning a path object and merely serializing it.
+The package offers several knobs to fine-tune the details of path and SVG
+transform serialization. It aims to support the construction and manipulation
+of valid SVG paths from noisy data through parser normalization, ergonomic
+constructors, and small-tolerance snapping.
 
 ```sh
 gleam add svg_path@1
