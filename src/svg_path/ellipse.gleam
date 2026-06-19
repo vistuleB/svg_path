@@ -7,14 +7,18 @@
 import gleam/float
 import gleam/list
 import gleam_community/maths
-import svg_path
 
 const epsilon = 0.000000001
 
+/// A lightweight point used by the ellipse math helpers.
+pub type Point {
+  Point(x: Float, y: Float)
+}
+
 type ArcParameters {
   ArcParameters(
-    center: svg_path.Point,
-    radius: svg_path.Point,
+    center: Point,
+    radius: Point,
     x_axis_rotation: Float,
     start_angle: Float,
     delta_angle: Float,
@@ -51,8 +55,8 @@ pub fn ellipse_affine(
 }
 
 /// Transform a point by an affine matrix.
-pub fn point(point: svg_path.Point, by transform: Affine) -> svg_path.Point {
-  svg_path.point(
+pub fn point(point: Point, by transform: Affine) -> Point {
+  Point(
     transform.a *. point.x +. transform.c *. point.y +. transform.e,
     transform.b *. point.x +. transform.d *. point.y +. transform.f,
   )
@@ -62,10 +66,10 @@ pub fn point(point: svg_path.Point, by transform: Affine) -> svg_path.Point {
 ///
 /// Returns the new radius and x-axis rotation for the transformed ellipse.
 pub fn transformed_axes(
-  radius radius: svg_path.Point,
+  radius radius: Point,
   x_axis_rotation x_axis_rotation: Float,
   by transform: Affine,
-) -> Result(#(svg_path.Point, Float), Error) {
+) -> Result(#(Point, Float), Error) {
   case arc_axes(radius, x_axis_rotation) {
     Error(error) -> Error(error)
     Ok(#(x_axis, y_axis)) -> {
@@ -82,14 +86,14 @@ pub fn transformed_axes(
 /// If the collapsed arc's extrema require more than one segment to preserve its
 /// out-and-back motion, use `collapsed_arc_subpath`.
 pub fn collapsed_arc_line(
-  start start: svg_path.Point,
-  radius radius: svg_path.Point,
+  start start: Point,
+  radius radius: Point,
   x_axis_rotation x_axis_rotation: Float,
   large_arc large_arc: Bool,
   sweep sweep: Bool,
-  end end: svg_path.Point,
+  end end: Point,
   by transform: Affine,
-) -> Result(svg_path.Segment, Error) {
+) -> Result(#(Point, Point), Error) {
   case
     endpoint_to_center(start, radius, x_axis_rotation, large_arc, sweep, end)
   {
@@ -101,11 +105,7 @@ pub fn collapsed_arc_line(
       let y_axis = linear_point(y_axis, transform)
 
       case fully_collapsed(x_axis, y_axis) {
-        True ->
-          Ok(svg_path.line(
-            start: point(start, by: transform),
-            end: point(end, by: transform),
-          ))
+        True -> Ok(#(point(start, by: transform), point(end, by: transform)))
         False -> {
           case collapsed_axis(x_axis, y_axis) {
             Error(error) -> Error(error)
@@ -131,10 +131,7 @@ pub fn collapsed_arc_line(
                   #(float.min(low, scalar), float.max(high, scalar))
                 })
 
-              Ok(svg_path.line(
-                start: offset(center, axis, low),
-                end: offset(center, axis, high),
-              ))
+              Ok(#(offset(center, axis, low), offset(center, axis, high)))
             }
           }
         }
@@ -145,44 +142,34 @@ pub fn collapsed_arc_line(
 
 /// Convert an arc collapsed by an affine transform into a line-based subpath.
 pub fn collapsed_arc_subpath(
-  start start: svg_path.Point,
-  radius radius: svg_path.Point,
+  start start: Point,
+  radius radius: Point,
   x_axis_rotation x_axis_rotation: Float,
   large_arc large_arc: Bool,
   sweep sweep: Bool,
-  end end: svg_path.Point,
+  end end: Point,
   by transform: Affine,
-) -> Result(svg_path.Subpath, Error) {
-  case
-    collapsed_arc_points(
-      start,
-      radius,
-      x_axis_rotation,
-      large_arc,
-      sweep,
-      end,
-      transform,
-    )
-  {
-    Error(error) -> Error(error)
-    Ok(points) -> {
-      case svg_path.subpath(lines_between(points)) {
-        Ok(subpath) -> Ok(subpath)
-        Error(_) -> Error(NotCollapsedToLine)
-      }
-    }
-  }
+) -> Result(List(Point), Error) {
+  collapsed_arc_points(
+    start,
+    radius,
+    x_axis_rotation,
+    large_arc,
+    sweep,
+    end,
+    transform,
+  )
 }
 
 fn collapsed_arc_points(
-  start: svg_path.Point,
-  radius: svg_path.Point,
+  start: Point,
+  radius: Point,
   x_axis_rotation: Float,
   large_arc: Bool,
   sweep: Bool,
-  end: svg_path.Point,
+  end: Point,
   transform: Affine,
-) -> Result(List(svg_path.Point), Error) {
+) -> Result(List(Point), Error) {
   case
     endpoint_to_center(start, radius, x_axis_rotation, large_arc, sweep, end)
   {
@@ -228,12 +215,12 @@ fn collapsed_arc_points(
 }
 
 fn endpoint_to_center(
-  start: svg_path.Point,
-  radius: svg_path.Point,
+  start: Point,
+  radius: Point,
   x_axis_rotation: Float,
   large_arc: Bool,
   sweep: Bool,
-  end: svg_path.Point,
+  end: Point,
 ) -> Result(ArcParameters, Error) {
   let rx = float.absolute_value(radius.x)
   let ry = float.absolute_value(radius.y)
@@ -245,9 +232,9 @@ fn endpoint_to_center(
       let cos_phi = maths.cos(phi)
       let sin_phi = maths.sin(phi)
       let midpoint =
-        svg_path.point({ start.x +. end.x } /. 2.0, { start.y +. end.y } /. 2.0)
+        Point({ start.x +. end.x } /. 2.0, { start.y +. end.y } /. 2.0)
       let half_delta =
-        svg_path.point({ start.x -. end.x } /. 2.0, { start.y -. end.y } /. 2.0)
+        Point({ start.x -. end.x } /. 2.0, { start.y -. end.y } /. 2.0)
       let x1p = cos_phi *. half_delta.x +. sin_phi *. half_delta.y
       let y1p = 0.0 -. sin_phi *. half_delta.x +. cos_phi *. half_delta.y
       let radius_scale =
@@ -257,26 +244,23 @@ fn endpoint_to_center(
       let ry = ry *. scale
       let center_prime = center_prime(rx, ry, x1p, y1p, large_arc, sweep)
       let center =
-        svg_path.point(
+        Point(
           cos_phi *. center_prime.x -. sin_phi *. center_prime.y +. midpoint.x,
           sin_phi *. center_prime.x +. cos_phi *. center_prime.y +. midpoint.y,
         )
       let start_vector =
-        svg_path.point(
-          { x1p -. center_prime.x } /. rx,
-          { y1p -. center_prime.y } /. ry,
-        )
+        Point({ x1p -. center_prime.x } /. rx, { y1p -. center_prime.y } /. ry)
       let end_vector =
-        svg_path.point(
+        Point(
           { 0.0 -. x1p -. center_prime.x } /. rx,
           { 0.0 -. y1p -. center_prime.y } /. ry,
         )
-      let start_angle = vector_angle(svg_path.point(1.0, 0.0), start_vector)
+      let start_angle = vector_angle(Point(1.0, 0.0), start_vector)
       let delta_angle = swept_delta_angle(start_vector, end_vector, sweep)
 
       Ok(ArcParameters(
         center:,
-        radius: svg_path.point(rx, ry),
+        radius: Point(rx, ry),
         x_axis_rotation:,
         start_angle:,
         delta_angle:,
@@ -292,7 +276,7 @@ fn center_prime(
   y1p: Float,
   large_arc: Bool,
   sweep: Bool,
-) -> svg_path.Point {
+) -> Point {
   let numerator =
     rx *. rx *. ry *. ry -. rx *. rx *. y1p *. y1p -. ry *. ry *. x1p *. x1p
   let denominator = rx *. rx *. y1p *. y1p +. ry *. ry *. x1p *. x1p
@@ -303,15 +287,12 @@ fn center_prime(
   let coefficient =
     sign *. square_root(float.max(0.0, numerator /. denominator))
 
-  svg_path.point(
-    coefficient *. rx *. y1p /. ry,
-    0.0 -. coefficient *. ry *. x1p /. rx,
-  )
+  Point(coefficient *. rx *. y1p /. ry, 0.0 -. coefficient *. ry *. x1p /. rx)
 }
 
 fn swept_delta_angle(
-  start_vector: svg_path.Point,
-  end_vector: svg_path.Point,
+  start_vector: Point,
+  end_vector: Point,
   sweep: Bool,
 ) -> Float {
   let delta_angle = vector_angle(start_vector, end_vector)
@@ -332,10 +313,7 @@ fn swept_delta_angle(
   }
 }
 
-fn collapsed_axis(
-  x_axis: svg_path.Point,
-  y_axis: svg_path.Point,
-) -> Result(svg_path.Point, Error) {
+fn collapsed_axis(x_axis: Point, y_axis: Point) -> Result(Point, Error) {
   case float.absolute_value(cross(x_axis, y_axis)) <=. epsilon {
     False -> Error(NotCollapsedToLine)
     True -> {
@@ -355,7 +333,7 @@ fn collapsed_axis(
   }
 }
 
-fn fully_collapsed(x_axis: svg_path.Point, y_axis: svg_path.Point) -> Bool {
+fn fully_collapsed(x_axis: Point, y_axis: Point) -> Bool {
   length(x_axis) <=. epsilon && length(y_axis) <=. epsilon
 }
 
@@ -468,37 +446,10 @@ fn positive_remainder(angle: Float) -> Float {
   }
 }
 
-fn lines_between(points: List(svg_path.Point)) -> List(svg_path.Segment) {
-  case points {
-    [] | [_] -> []
-    [first, second, ..rest] -> {
-      lines_between_rest(second, rest, [
-        svg_path.line(start: first, end: second),
-      ])
-    }
-  }
-}
-
-fn lines_between_rest(
-  previous: svg_path.Point,
-  points: List(svg_path.Point),
-  lines: List(svg_path.Segment),
-) -> List(svg_path.Segment) {
-  case points {
-    [] -> list.reverse(lines)
-    [first, ..rest] -> {
-      lines_between_rest(first, rest, [
-        svg_path.line(start: previous, end: first),
-        ..lines
-      ])
-    }
-  }
-}
-
 fn arc_axes(
-  radius: svg_path.Point,
+  radius: Point,
   x_axis_rotation: Float,
-) -> Result(#(svg_path.Point, svg_path.Point), Error) {
+) -> Result(#(Point, Point), Error) {
   let rx = float.absolute_value(radius.x)
   let ry = float.absolute_value(radius.y)
 
@@ -510,17 +461,17 @@ fn arc_axes(
       let sin_phi = maths.sin(phi)
 
       Ok(#(
-        svg_path.point(rx *. cos_phi, rx *. sin_phi),
-        svg_path.point(0.0 -. ry *. sin_phi, ry *. cos_phi),
+        Point(rx *. cos_phi, rx *. sin_phi),
+        Point(0.0 -. ry *. sin_phi, ry *. cos_phi),
       ))
     }
   }
 }
 
 fn extract_axes(
-  x_axis: svg_path.Point,
-  y_axis: svg_path.Point,
-) -> Result(#(svg_path.Point, Float), Error) {
+  x_axis: Point,
+  y_axis: Point,
+) -> Result(#(Point, Float), Error) {
   let sxx = x_axis.x *. x_axis.x +. y_axis.x *. y_axis.x
   let sxy = x_axis.x *. x_axis.y +. y_axis.x *. y_axis.y
   let syy = x_axis.y *. x_axis.y +. y_axis.y *. y_axis.y
@@ -533,7 +484,7 @@ fn extract_axes(
     True -> Error(DegenerateInputArc)
     False -> {
       let axis1 = eigenvector(sxx, sxy, syy, lambda1)
-      let axis2 = svg_path.point(0.0 -. axis1.y, axis1.x)
+      let axis2 = Point(0.0 -. axis1.y, axis1.x)
       let choose_axis1 =
         float.absolute_value(dot(axis1, x_axis))
         >=. float.absolute_value(dot(axis2, x_axis))
@@ -541,7 +492,7 @@ fn extract_axes(
       case choose_axis1 {
         True -> {
           Ok(#(
-            svg_path.point(square_root(lambda1), square_root(lambda2)),
+            Point(square_root(lambda1), square_root(lambda2)),
             normalize_axis_rotation(
               radians_to_degrees(maths.atan2(axis1.y, axis1.x)),
             ),
@@ -549,7 +500,7 @@ fn extract_axes(
         }
         False -> {
           Ok(#(
-            svg_path.point(square_root(lambda2), square_root(lambda1)),
+            Point(square_root(lambda2), square_root(lambda1)),
             normalize_axis_rotation(
               radians_to_degrees(maths.atan2(axis2.y, axis2.x)),
             ),
@@ -560,68 +511,56 @@ fn extract_axes(
   }
 }
 
-fn eigenvector(
-  sxx: Float,
-  sxy: Float,
-  syy: Float,
-  lambda: Float,
-) -> svg_path.Point {
+fn eigenvector(sxx: Float, sxy: Float, syy: Float, lambda: Float) -> Point {
   case float.absolute_value(sxy) >. epsilon {
-    True -> normalize(svg_path.point(sxy, lambda -. sxx))
+    True -> normalize(Point(sxy, lambda -. sxx))
     False -> {
       case sxx >=. syy {
-        True -> svg_path.point(1.0, 0.0)
-        False -> svg_path.point(0.0, 1.0)
+        True -> Point(1.0, 0.0)
+        False -> Point(0.0, 1.0)
       }
     }
   }
 }
 
-fn vector_angle(a: svg_path.Point, b: svg_path.Point) -> Float {
+fn vector_angle(a: Point, b: Point) -> Float {
   maths.atan2(cross(a, b), dot(a, b))
 }
 
-fn offset(
-  point: svg_path.Point,
-  direction: svg_path.Point,
-  distance: Float,
-) -> svg_path.Point {
-  svg_path.point(
-    point.x +. direction.x *. distance,
-    point.y +. direction.y *. distance,
-  )
+fn offset(point: Point, direction: Point, distance: Float) -> Point {
+  Point(point.x +. direction.x *. distance, point.y +. direction.y *. distance)
 }
 
-fn linear_point(point: svg_path.Point, transform: Affine) -> svg_path.Point {
-  svg_path.point(
+fn linear_point(point: Point, transform: Affine) -> Point {
+  Point(
     transform.a *. point.x +. transform.c *. point.y,
     transform.b *. point.x +. transform.d *. point.y,
   )
 }
 
-fn dot(a: svg_path.Point, b: svg_path.Point) -> Float {
+fn dot(a: Point, b: Point) -> Float {
   a.x *. b.x +. a.y *. b.y
 }
 
-fn cross(a: svg_path.Point, b: svg_path.Point) -> Float {
+fn cross(a: Point, b: Point) -> Float {
   a.x *. b.y -. a.y *. b.x
 }
 
-fn length(point: svg_path.Point) -> Float {
+fn length(point: Point) -> Float {
   square_root(point.x *. point.x +. point.y *. point.y)
 }
 
-fn normalize(point: svg_path.Point) -> svg_path.Point {
+fn normalize(point: Point) -> Point {
   let point_length = length(point)
 
   case point_length <=. epsilon {
-    True -> svg_path.point(1.0, 0.0)
+    True -> Point(1.0, 0.0)
     False -> scale(point, 1.0 /. point_length)
   }
 }
 
-fn scale(point: svg_path.Point, factor: Float) -> svg_path.Point {
-  svg_path.point(point.x *. factor, point.y *. factor)
+fn scale(point: Point, factor: Float) -> Point {
+  Point(point.x *. factor, point.y *. factor)
 }
 
 fn degrees_to_radians(degrees: Float) -> Float {

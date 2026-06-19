@@ -285,16 +285,22 @@ pub fn segment_gracefully(
         ) -> {
           case
             ellipse.collapsed_arc_line(
-              start:,
-              radius:,
+              start: to_ellipse_point(start),
+              radius: to_ellipse_point(radius),
               x_axis_rotation:,
               large_arc:,
               sweep:,
-              end:,
+              end: to_ellipse_point(end),
               by: affine(transform),
             )
           {
-            Ok(segment) -> Ok(segment)
+            Ok(line) -> {
+              let #(start, end) = line
+              Ok(svg_path.line(
+                start: from_ellipse_point(start),
+                end: from_ellipse_point(end),
+              ))
+            }
             Error(_) -> Error(DegenerateArcTransform)
           }
         }
@@ -326,16 +332,18 @@ pub fn segment_gracefully2(
         ) -> {
           case
             ellipse.collapsed_arc_subpath(
-              start:,
-              radius:,
+              start: to_ellipse_point(start),
+              radius: to_ellipse_point(radius),
               x_axis_rotation:,
               large_arc:,
               sweep:,
-              end:,
+              end: to_ellipse_point(end),
               by: affine(transform),
             )
           {
-            Ok(subpath) -> Ok(subpath)
+            Ok(points) -> {
+              svg_path.subpath(lines_between(points)) |> map_core_error
+            }
             Error(_) -> Error(DegenerateArcTransform)
           }
         }
@@ -551,7 +559,7 @@ fn transform_valid_segment(
     svg_path.Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:) -> {
       case
         ellipse.transformed_axes(
-          radius:,
+          radius: to_ellipse_point(radius),
           x_axis_rotation:,
           by: affine(transform),
         )
@@ -560,7 +568,7 @@ fn transform_valid_segment(
         Ok(#(radius, x_axis_rotation)) -> {
           Ok(svg_path.arc(
             start: point(start, transform),
-            radius: radius,
+            radius: from_ellipse_point(radius),
             x_axis_rotation: x_axis_rotation,
             large_arc: large_arc,
             sweep: transformed_sweep(sweep, transform),
@@ -604,6 +612,47 @@ fn affine(transform: Matrix) -> ellipse.Affine {
     e: transform.e,
     f: transform.f,
   )
+}
+
+fn to_ellipse_point(point: svg_path.Point) -> ellipse.Point {
+  ellipse.Point(point.x, point.y)
+}
+
+fn from_ellipse_point(point: ellipse.Point) -> svg_path.Point {
+  svg_path.point(point.x, point.y)
+}
+
+fn lines_between(points: List(ellipse.Point)) -> List(svg_path.Segment) {
+  case points {
+    [] | [_] -> []
+    [first, second, ..rest] -> {
+      lines_between_rest(second, rest, [
+        svg_path.line(
+          start: from_ellipse_point(first),
+          end: from_ellipse_point(second),
+        ),
+      ])
+    }
+  }
+}
+
+fn lines_between_rest(
+  previous: ellipse.Point,
+  points: List(ellipse.Point),
+  lines: List(svg_path.Segment),
+) -> List(svg_path.Segment) {
+  case points {
+    [] -> list.reverse(lines)
+    [first, ..rest] -> {
+      lines_between_rest(first, rest, [
+        svg_path.line(
+          start: from_ellipse_point(previous),
+          end: from_ellipse_point(first),
+        ),
+        ..lines
+      ])
+    }
+  }
 }
 
 fn is_finite(value: Float) -> Bool {
