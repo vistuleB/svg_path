@@ -173,7 +173,7 @@ pub fn closed_subpath_transform_preserves_semantic_closure_test() {
   let assert Ok(transformed) = transform.subpath(subpath, by: matrix)
 
   assert svg_path.is_closed(transformed)
-  assert serialize.subpath(transformed) == "M 10 0 H 20 H 10 Z"
+  assert serialize.subpath(transformed) == "M 10 0 H 20 Z"
 }
 
 pub fn path_transform_test() {
@@ -432,7 +432,7 @@ pub fn graceful_closed_subpath_transform_preserves_semantic_closure_test() {
   let assert Ok(transformed) = transform.subpath_gracefully(subpath, by: matrix)
 
   assert svg_path.is_closed(transformed)
-  assert serialize.subpath(transformed) == "M 5 0 H -5 H 5 Z"
+  assert serialize.subpath(transformed) == "M 5 0 H -5 Z"
 }
 
 pub fn graceful_arc_transform_returns_vertical_collapsed_line_test() {

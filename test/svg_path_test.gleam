@@ -153,6 +153,56 @@ pub fn wiggle_subpath_accepts_empty_and_single_segment_inputs_test() {
   assert svg_path.segments(subpath) == [line]
 }
 
+pub fn clean_subpath_removes_zero_length_lines_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(20.0, 0.0)
+  let first = svg_path.line(start: a, end: b)
+  let zero = svg_path.line(start: b, end: b)
+  let second = svg_path.line(start: b, end: c)
+  let subpath = svg_path.assert_subpath([first, zero, second])
+
+  assert subpath |> svg_path.clean_subpath |> svg_path.segments
+    == [first, second]
+}
+
+pub fn clean_subpath_keeps_single_zero_length_line_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let zero = svg_path.line(start: a, end: a)
+  let subpath = svg_path.assert_subpath([zero])
+
+  assert subpath |> svg_path.clean_subpath |> svg_path.segments == [zero]
+}
+
+pub fn clean_subpath_reduces_multiple_zero_length_lines_to_one_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let zero = svg_path.line(start: a, end: a)
+  let subpath = svg_path.assert_subpath([zero, zero])
+
+  assert subpath |> svg_path.clean_subpath |> svg_path.segments == [zero]
+}
+
+pub fn clean_subpath_preserves_closed_state_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.line(start: a, end: b),
+      svg_path.line(start: b, end: a),
+      svg_path.line(start: a, end: a),
+    ])
+    |> svg_path.assert_close
+
+  let cleaned = svg_path.clean_subpath(subpath)
+
+  assert svg_path.is_closed(cleaned)
+  assert svg_path.segments(cleaned)
+    == [
+      svg_path.line(start: a, end: b),
+      svg_path.line(start: b, end: a),
+    ]
+}
+
 pub fn wiggle_subpath_rejects_gaps_beyond_tolerance_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)

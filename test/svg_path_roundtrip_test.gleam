@@ -19,8 +19,7 @@ pub fn relative_line_subset_canonicalizes_to_absolute_by_default_test() {
 }
 
 pub fn compact_input_canonicalizes_test() {
-  assert parse_and_serialize("M0-1L10-1V9H0z")
-    == Ok("M 0 -1 H 10 V 9 H 0 V -1 Z")
+  assert parse_and_serialize("M0-1L10-1V9H0z") == Ok("M 0 -1 H 10 V 9 H 0 Z")
 }
 
 pub fn comma_separated_input_canonicalizes_test() {

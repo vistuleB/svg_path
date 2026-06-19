@@ -28,7 +28,7 @@ pub fn relative_lines_parse_to_absolute_segments_test() {
 pub fn relative_move_after_close_uses_closed_subpath_start_test() {
   let assert Ok(path) = parse.path("M 0 0 L 10 0 z m 5 5 l 5 0")
 
-  assert serialize.path(path) == "M 0 0 H 10 H 0 Z M 5 5 H 10"
+  assert serialize.path(path) == "M 0 0 H 10 Z M 5 5 H 10"
 }
 
 pub fn repeated_line_horizontal_and_vertical_values_parse_test() {
@@ -203,7 +203,7 @@ pub fn closepath_adds_closing_line_and_semantic_close_test() {
   let assert Ok(subpath) = svg_path.as_subpath(path)
 
   assert svg_path.is_closed(subpath)
-  assert serialize.subpath(subpath) == "M 0 0 H 10 H 0 Z"
+  assert serialize.subpath(subpath) == "M 0 0 H 10 Z"
 }
 
 pub fn compact_numbers_parse_test() {

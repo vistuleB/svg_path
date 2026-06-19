@@ -169,6 +169,26 @@ pub fn segments(subpath: Subpath) -> List(Segment) {
   subpath.segments
 }
 
+/// Remove zero-length line segments from a subpath.
+///
+/// If the subpath contains only one zero-length line, it is preserved so the
+/// subpath does not become empty.
+pub fn clean_subpath(subpath: Subpath) -> Subpath {
+  let cleaned =
+    subpath.segments
+    |> list.filter(keeping: fn(segment) { !is_zero_length_line(segment) })
+
+  case cleaned {
+    [] -> {
+      case subpath.segments {
+        [] -> subpath
+        [first, ..] -> Subpath(segments: [first], closed: subpath.closed)
+      }
+    }
+    _ -> Subpath(segments: cleaned, closed: subpath.closed)
+  }
+}
+
 /// Check whether a subpath is closed.
 pub fn is_closed(subpath: Subpath) -> Bool {
   subpath.closed
@@ -344,6 +364,13 @@ pub fn segment_end(segment: Segment) -> Point {
 /// Create a straight line segment.
 pub fn line(start start: Point, end end: Point) -> Segment {
   Line(start:, end:)
+}
+
+fn is_zero_length_line(segment: Segment) -> Bool {
+  case segment {
+    Line(start:, end:) -> start == end
+    _ -> False
+  }
 }
 
 /// Create a quadratic Bezier segment.

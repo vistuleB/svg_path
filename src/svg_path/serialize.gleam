@@ -153,16 +153,16 @@ pub fn subpath_with_options(
     False -> {
       case svg_path.segments(subpath) {
         [] -> ""
-        [first, ..rest] -> {
+        [first, ..] -> {
           let start = svg_path.segment_start(first)
+          let segments = serializable_segments(subpath)
           let commands = [
             command("M", point(start, options), options),
-            absolute_segment_without_move(first, options),
           ]
           let commands =
             list.append(
               commands,
-              list.map(rest, absolute_segment_without_move(_, options)),
+              list.map(segments, absolute_segment_without_move(_, options)),
             )
           let commands = case svg_path.is_closed(subpath) {
             True -> list.append(commands, ["Z"])
@@ -244,16 +244,16 @@ fn subpath_from_current(
 ) -> String {
   case svg_path.segments(subpath) {
     [] -> ""
-    [first, ..rest] -> {
+    [first, ..] -> {
       let start = svg_path.segment_start(first)
+      let segments = serializable_segments(subpath)
       let commands = [
         command("m", point(delta(start, current), options), options),
-        relative_segment_without_move(first, options),
       ]
       let commands =
         list.append(
           commands,
-          list.map(rest, relative_segment_without_move(_, options)),
+          list.map(segments, relative_segment_without_move(_, options)),
         )
       let commands = case svg_path.is_closed(subpath) {
         True -> list.append(commands, ["Z"])
@@ -262,6 +262,43 @@ fn subpath_from_current(
 
       join_commands(commands, options)
     }
+  }
+}
+
+fn serializable_segments(subpath: svg_path.Subpath) -> List(svg_path.Segment) {
+  let segments = svg_path.segments(subpath)
+
+  case svg_path.is_closed(subpath) {
+    False -> segments
+    True -> drop_closing_line(segments)
+  }
+}
+
+fn drop_closing_line(
+  segments: List(svg_path.Segment),
+) -> List(svg_path.Segment) {
+  case segments {
+    [] -> []
+    [first, ..] -> {
+      let start = svg_path.segment_start(first)
+
+      segments
+      |> list.reverse
+      |> drop_last_if_closing_line(start)
+      |> list.reverse
+    }
+  }
+}
+
+fn drop_last_if_closing_line(
+  reversed_segments: List(svg_path.Segment),
+  start: svg_path.Point,
+) -> List(svg_path.Segment) {
+  case reversed_segments {
+    [svg_path.Line(start: line_start, end: line_end), ..rest]
+      if line_end == start && line_start != line_end
+    -> rest
+    _ -> reversed_segments
   }
 }
 

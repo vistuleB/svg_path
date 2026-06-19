@@ -52,7 +52,63 @@ pub fn closed_subpath_serializes_with_z_test() {
     ])
     |> result_try_force_close
 
-  assert serialize.subpath(subpath) == "M 0 0 H 10 V 20 L 0 0 Z"
+  assert serialize.subpath(subpath) == "M 0 0 H 10 V 20 Z"
+}
+
+pub fn closed_subpath_keeps_final_curve_before_z_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(20.0, 10.0)
+  let assert Ok(subpath) =
+    svg_path.subpath([
+      svg_path.line(start: a, end: b),
+      svg_path.quadratic_bezier(start: b, control: c, end: a),
+    ])
+    |> result_try_close
+
+  assert serialize.subpath(subpath) == "M 0 0 H 10 Q 20 10 0 0 Z"
+}
+
+pub fn closed_subpath_keeps_final_zero_length_line_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.line(start: a, end: a),
+    ])
+    |> svg_path.assert_close
+
+  assert serialize.subpath(subpath) == "M 0 0 H 0 Z"
+}
+
+pub fn closed_subpath_keeps_final_zero_length_line_after_curve_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let assert Ok(subpath) =
+    svg_path.subpath([
+      svg_path.quadratic_bezier(start: a, control: b, end: a),
+      svg_path.line(start: a, end: a),
+    ])
+    |> result_try_close
+
+  assert serialize.subpath(subpath) == "M 0 0 Q 10 0 0 0 H 0 Z"
+}
+
+pub fn relative_closed_subpath_keeps_final_zero_length_line_test() {
+  let a = svg_path.point(10.0, 10.0)
+  let b = svg_path.point(20.0, 10.0)
+  let assert Ok(subpath) =
+    svg_path.subpath([
+      svg_path.line(start: a, end: b),
+      svg_path.line(start: b, end: a),
+      svg_path.line(start: a, end: a),
+    ])
+    |> result_try_close
+
+  assert serialize.subpath_with_options(
+      subpath,
+      options: serialize.relative_decimal_options(0),
+    )
+    == "m 10 10 h 10 h -10 h 0 Z"
 }
 
 pub fn bezier_and_arc_segments_serialize_test() {
@@ -381,7 +437,7 @@ pub fn relative_options_move_from_closed_subpath_start_after_z_test() {
       svg_path.path([first, second]),
       options: serialize.relative_decimal_options(0),
     )
-    == "m 10 10 h 10 h -10 Z m 20 0 h 10"
+    == "m 10 10 h 10 Z m 20 0 h 10"
 }
 
 pub fn minimized_relative_path_with_multiple_subpaths_test() {
