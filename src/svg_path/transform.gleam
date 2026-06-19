@@ -46,6 +46,15 @@ pub fn matrix(
   Matrix(a:, b:, c:, d:, e:, f:)
 }
 
+/// Create an affine matrix from SVG's six matrix values as a tuple.
+pub fn from_tuple(
+  values: #(Float, Float, Float, Float, Float, Float),
+) -> Matrix {
+  let #(a, b, c, d, e, f) = values
+
+  matrix(a:, b:, c:, d:, e:, f:)
+}
+
 /// The identity transform.
 pub fn identity() -> Matrix {
   matrix(a: 1.0, b: 0.0, c: 0.0, d: 1.0, e: 0.0, f: 0.0)

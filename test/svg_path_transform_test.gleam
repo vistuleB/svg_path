@@ -132,6 +132,12 @@ pub fn to_tuple_exposes_svg_matrix_values_test() {
   assert values == #(2.0, 3.0, 5.0, 7.0, 11.0, 13.0)
 }
 
+pub fn from_tuple_creates_matrix_from_svg_matrix_values_test() {
+  let matrix = transform.from_tuple(#(2.0, 3.0, 5.0, 7.0, 11.0, 13.0))
+
+  assert transform.to_tuple(matrix) == #(2.0, 3.0, 5.0, 7.0, 11.0, 13.0)
+}
+
 pub fn from_mat3f_rejects_non_affine_matrix_test() {
   let matrix = mat3f.new(2.0, 3.0, 0.1, 5.0, 7.0, 0.0, 11.0, 13.0, 1.0)
 
