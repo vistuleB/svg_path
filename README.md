@@ -41,7 +41,7 @@ import svg_path/transform/serialize
 pub fn tidy_transform_attribute(input: String) -> String {
   let assert Ok(matrix) = parse.attribute(input)
 
-  serialize.transform(matrix)
+  serialize.to_string(matrix)
 }
 ```
 
@@ -55,7 +55,7 @@ import svg_path/transform/serialize
 
 pub fn raw_transform_attribute() -> String {
   transform.translate(x: 10.0, y: 20.0)
-  |> serialize.transform_with_options(
+  |> serialize.to_string_with_options(
     options: serialize.default_options() |> serialize.force_matrix,
   )
 }

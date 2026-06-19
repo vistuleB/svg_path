@@ -83,11 +83,11 @@ pub fn force_matrix(options: Options) -> Options {
   Options(..options, force_matrix: True)
 }
 
-pub fn transform(transform: path_transform.Matrix) -> String {
-  transform_with_options(transform, default_options())
+pub fn to_string(transform: path_transform.Matrix) -> String {
+  to_string_with_options(transform, default_options())
 }
 
-pub fn transform_with_options(
+pub fn to_string_with_options(
   transform transform: path_transform.Matrix,
   options options: Options,
 ) -> String {
