@@ -30,7 +30,7 @@ pub fn identity() -> Matrix {
   matrix(a: 1.0, b: 0.0, c: 0.0, d: 1.0, e: 0.0, f: 0.0)
 }
 
-pub fn compose(first first: Matrix, then second: Matrix) -> Matrix {
+pub fn chain(first first: Matrix, then second: Matrix) -> Matrix {
   multiply(left: second, right: first)
 }
 

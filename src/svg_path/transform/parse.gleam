@@ -43,7 +43,7 @@ fn parse_transforms(
             Ok(next) -> {
               parse_transforms(
                 rest,
-                transform.compose(first: next, then: accumulated),
+                transform.chain(first: next, then: accumulated),
               )
             }
           }
@@ -128,8 +128,8 @@ fn rotate_transform(
 
       Ok(
         move_to_origin
-        |> transform.compose(first: _, then: rotate)
-        |> transform.compose(first: _, then: move_back),
+        |> transform.chain(first: _, then: rotate)
+        |> transform.chain(first: _, then: move_back),
       )
     }
     _ -> Error(InvalidArgumentCount(name, list.length(arguments)))

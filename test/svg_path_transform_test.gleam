@@ -62,14 +62,14 @@ pub fn skew_matrices_use_degrees_test() {
     == svg_path.point(2.0, 5.0)
 }
 
-pub fn compose_applies_first_then_second_test() {
+pub fn chain_applies_first_then_second_test() {
   let point = svg_path.point(1.0, 1.0)
   let scale = transform.scale(factor: 2.0)
   let translate = transform.translate(x: 10.0, y: 20.0)
 
   assert transform.point(
       point,
-      by: transform.compose(first: scale, then: translate),
+      by: transform.chain(first: scale, then: translate),
     )
     == svg_path.point(12.0, 22.0)
 }

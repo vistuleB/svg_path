@@ -26,7 +26,7 @@ pub fn transform_rotate_serializes_nicely_test() {
 pub fn transform_scaled_rotate_serializes_nicely_test() {
   let matrix =
     transform.scale_xy(x: 2.0, y: 3.0)
-    |> transform.compose(first: _, then: transform.rotate(degrees: 90.0))
+    |> transform.chain(first: _, then: transform.rotate(degrees: 90.0))
 
   assert serialize.to_string(matrix) == "rotate(90)scale(2 3)"
 }
@@ -34,7 +34,7 @@ pub fn transform_scaled_rotate_serializes_nicely_test() {
 pub fn transform_translate_scale_serializes_nicely_test() {
   let matrix =
     transform.scale(factor: 2.0)
-    |> transform.compose(first: _, then: transform.translate(x: 10.0, y: 20.0))
+    |> transform.chain(first: _, then: transform.translate(x: 10.0, y: 20.0))
 
   assert serialize.to_string(matrix) == "translate(10 20)scale(2)"
 }
@@ -42,7 +42,7 @@ pub fn transform_translate_scale_serializes_nicely_test() {
 pub fn transform_translate_scale_xy_serializes_nicely_test() {
   let matrix =
     transform.scale_xy(x: 2.0, y: 3.0)
-    |> transform.compose(first: _, then: transform.translate(x: 10.0, y: 20.0))
+    |> transform.chain(first: _, then: transform.translate(x: 10.0, y: 20.0))
 
   assert serialize.to_string(matrix) == "translate(10 20)scale(2 3)"
 }
@@ -50,8 +50,8 @@ pub fn transform_translate_scale_xy_serializes_nicely_test() {
 pub fn transform_translate_scaled_rotate_serializes_nicely_test() {
   let matrix =
     transform.scale_xy(x: 2.0, y: 3.0)
-    |> transform.compose(first: _, then: transform.rotate(degrees: 90.0))
-    |> transform.compose(first: _, then: transform.translate(x: 10.0, y: 20.0))
+    |> transform.chain(first: _, then: transform.rotate(degrees: 90.0))
+    |> transform.chain(first: _, then: transform.translate(x: 10.0, y: 20.0))
 
   assert serialize.to_string(matrix) == "translate(10 20)rotate(90)scale(2 3)"
 }
@@ -72,7 +72,7 @@ pub fn transform_skew_serializes_nicely_test() {
 pub fn transform_translate_skew_serializes_nicely_test() {
   let matrix =
     transform.skew_x(degrees: 45.0)
-    |> transform.compose(first: _, then: transform.translate(x: 10.0, y: 20.0))
+    |> transform.chain(first: _, then: transform.translate(x: 10.0, y: 20.0))
 
   assert serialize.to_string_with_options(
       matrix,
@@ -117,7 +117,7 @@ pub fn transform_translate_scale_can_force_matrix_output_test() {
   let options = serialize.default_options() |> serialize.force_matrix
   let matrix =
     transform.scale_xy(x: 2.0, y: 3.0)
-    |> transform.compose(first: _, then: transform.translate(x: 10.0, y: 20.0))
+    |> transform.chain(first: _, then: transform.translate(x: 10.0, y: 20.0))
 
   assert serialize.to_string_with_options(matrix, options:)
     == "matrix(2 0 0 3 10 20)"
