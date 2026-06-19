@@ -6,8 +6,7 @@ version = "0.3.0"
 #
 description = "Parse, transform, and serialize SVG path data."
 licences = ["MIT"]
-# repository = { type = "github", user = "", repo = "" }
-# links = [{ title = "Website", href = "" }]
+repository = { type = "github", user = "vistuleB", repo = "svg_path" }
 #
 # For a full reference of all the available options, you can have a look at
 # https://gleam.run/writing-gleam/gleam-toml/.
