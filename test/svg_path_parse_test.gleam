@@ -153,6 +153,27 @@ pub fn compact_numbers_parse_test() {
   assert serialize.subpath(subpath) == "M 0 -1 H 10 V 9"
 }
 
+pub fn comma_separated_coordinate_pairs_parse_test() {
+  let assert Ok(path) = parse.path("M0,0 L10,20 30,40")
+  let assert Ok(subpath) = svg_path.as_subpath(path)
+
+  assert serialize.subpath(subpath) == "M 0 0 L 10 20 L 30 40"
+}
+
+pub fn commas_parse_between_curve_coordinates_test() {
+  let assert Ok(path) = parse.path("M0,0 C1,2,3,4,5,6 Q7,8,9,10")
+  let assert Ok(subpath) = svg_path.as_subpath(path)
+
+  assert serialize.subpath(subpath) == "M 0 0 C 1 2 3 4 5 6 Q 7 8 9 10"
+}
+
+pub fn commas_parse_between_arc_arguments_test() {
+  let assert Ok(path) = parse.path("M0,0 A25,50 -30 0,1 50,-25")
+  let assert Ok(subpath) = svg_path.as_subpath(path)
+
+  assert serialize.subpath(subpath) == "M 0 0 A 25 50 -30 0 1 50 -25"
+}
+
 pub fn exponent_and_plus_signed_numbers_parse_test() {
   let assert Ok(path) = parse.path("M +1e1 -2E1 L 1.5e1 -2e1")
   let assert Ok(subpath) = svg_path.as_subpath(path)
