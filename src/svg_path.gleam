@@ -135,6 +135,18 @@ pub fn subpath(segments: List(Segment)) -> Result(Subpath, Error) {
   }
 }
 
+/// Create an open subpath from a continuous list of segments, panicking if the
+/// segments are invalid.
+///
+/// This is useful for hand-authored paths where invalid continuity would be a
+/// programmer error. Use `subpath` when you want to handle construction errors.
+pub fn assert_subpath(segments: List(Segment)) -> Subpath {
+  case subpath(segments) {
+    Ok(subpath) -> subpath
+    Error(_) -> panic as "svg_path.assert_subpath received invalid segments"
+  }
+}
+
 /// Create an open subpath while gently reconciling tiny endpoint gaps.
 ///
 /// This is useful after floating-point transformations. If adjacent segment
@@ -236,6 +248,18 @@ pub fn close(subpath: Subpath) -> Result(Subpath, Error) {
         Ok(#(first, last)) -> Error(Discontinuous(expected: first, got: last))
       }
     }
+  }
+}
+
+/// Close a subpath if its start and end points already match, panicking if the
+/// subpath cannot be closed.
+///
+/// This is useful for hand-authored paths where invalid continuity would be a
+/// programmer error. Use `close` when you want to handle closure errors.
+pub fn assert_close(subpath: Subpath) -> Subpath {
+  case close(subpath) {
+    Ok(subpath) -> subpath
+    Error(_) -> panic as "svg_path.assert_close received an uncloseable subpath"
   }
 }
 

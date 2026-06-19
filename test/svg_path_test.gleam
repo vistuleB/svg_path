@@ -93,6 +93,20 @@ pub fn subpath_rejects_disconnected_segments_test() {
     == Error(svg_path.Discontinuous(expected: b, got: c))
 }
 
+pub fn assert_subpath_builds_continuous_segments_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(20.0, 0.0)
+  let segments = [
+    svg_path.line(start: a, end: b),
+    svg_path.line(start: b, end: c),
+  ]
+
+  let subpath = svg_path.assert_subpath(segments)
+
+  assert svg_path.segments(subpath) == segments
+}
+
 pub fn append_rejects_closed_subpath_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)
@@ -218,6 +232,20 @@ pub fn force_close_appends_a_final_line_test() {
 pub fn close_empty_subpath_errors_test() {
   assert svg_path.close(svg_path.empty_subpath())
     == Error(svg_path.EmptySubpath)
+}
+
+pub fn assert_close_closes_matching_endpoints_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.line(start: a, end: b),
+      svg_path.line(start: b, end: a),
+    ])
+
+  let closed = svg_path.assert_close(subpath)
+
+  assert svg_path.is_closed(closed)
 }
 
 pub fn wiggle_close_replaces_nearby_endpoints_test() {
