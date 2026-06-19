@@ -314,13 +314,14 @@ svg_path.splice_with(
 ## Converting Arcs to Beziers
 
 Some SVG consumers and geometry workflows prefer to avoid elliptical `Arc`
-segments. Use `subpath_arcs_to_bezier` to replace arcs with cubic Bezier
-curves while preserving lines, quadratic Beziers, and existing cubic Beziers:
+segments. Use the `_arcs_to_bezier` function family to replace arcs with cubic
+Bezier curves while preserving lines, quadratic Beziers, and existing cubic
+Beziers:
 
 ```gleam
-let no_arc_subpath =
-  subpath
-  |> svg_path.subpath_arcs_to_bezier
+svg_path.segment_arcs_to_bezier(segment)
+svg_path.subpath_arcs_to_bezier(subpath)
+svg_path.path_arcs_to_bezier(path)
 ```
 
 Elliptical arcs are approximated with one or more cubic Beziers, split into
@@ -332,12 +333,6 @@ There is no tolerance option for this conversion. The approximation policy is
 deterministic: each arc chunk spans no more than 90 degrees. This is the common
 practical SVG arc-to-cubic approximation and is usually more than adequate for
 rendering and interchange.
-
-```gleam
-svg_path.segment_arcs_to_bezier(segment)
-svg_path.subpath_arcs_to_bezier(subpath)
-svg_path.path_arcs_to_bezier(path)
-```
 
 If you want every segment represented as cubic Bezier curves, use the stricter
 helpers instead. Lines and quadratic Beziers are converted exactly.
