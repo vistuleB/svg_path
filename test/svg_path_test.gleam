@@ -90,7 +90,36 @@ pub fn subpath_rejects_disconnected_segments_test() {
       svg_path.line(start: a, end: b),
       svg_path.line(start: c, end: d),
     ])
-    == Error(svg_path.Discontinuous(expected: b, got: c))
+    == Error(svg_path.Discontinuous(
+      previous_index: 0,
+      next_index: 1,
+      expected: b,
+      got: c,
+      distance: 10.0,
+    ))
+}
+
+pub fn subpath_discontinuous_error_reports_later_segment_indices_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(20.0, 0.0)
+  let d = svg_path.point(30.0, 0.0)
+  let e = svg_path.point(40.0, 0.0)
+  let f = svg_path.point(50.0, 0.0)
+
+  assert svg_path.subpath([
+      svg_path.line(start: a, end: b),
+      svg_path.line(start: b, end: c),
+      svg_path.line(start: d, end: e),
+      svg_path.line(start: e, end: f),
+    ])
+    == Error(svg_path.Discontinuous(
+      previous_index: 1,
+      next_index: 2,
+      expected: c,
+      got: d,
+      distance: 10.0,
+    ))
 }
 
 pub fn assert_subpath_builds_continuous_segments_test() {
@@ -482,6 +511,23 @@ pub fn wiggle_subpath_rejects_misaligned_horizontal_lines_test() {
     ))
 }
 
+pub fn append_discontinuous_error_reports_segment_indices_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(20.0, 0.0)
+  let d = svg_path.point(30.0, 0.0)
+  let subpath = svg_path.assert_subpath([svg_path.line(start: a, end: b)])
+
+  assert svg_path.append(subpath, svg_path.line(start: c, end: d))
+    == Error(svg_path.Discontinuous(
+      previous_index: 0,
+      next_index: 1,
+      expected: b,
+      got: c,
+      distance: 10.0,
+    ))
+}
+
 pub fn force_append_bridges_a_gap_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)
@@ -515,6 +561,26 @@ pub fn force_close_appends_a_final_line_test() {
 pub fn close_empty_subpath_errors_test() {
   assert svg_path.close(svg_path.empty_subpath())
     == Error(svg_path.EmptySubpath)
+}
+
+pub fn close_discontinuous_error_reports_last_to_first_indices_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(0.0, 10.0)
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.line(start: a, end: b),
+      svg_path.line(start: b, end: c),
+    ])
+
+  assert svg_path.close(subpath)
+    == Error(svg_path.Discontinuous(
+      previous_index: 1,
+      next_index: 0,
+      expected: a,
+      got: c,
+      distance: 10.0,
+    ))
 }
 
 pub fn assert_close_closes_matching_endpoints_test() {

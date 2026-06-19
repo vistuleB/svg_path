@@ -60,7 +60,17 @@ pub type Error {
   AlreadyClosed
 
   /// A segment starts somewhere other than the previous segment's end point.
-  Discontinuous(expected: Point, got: Point)
+  ///
+  /// `previous_index` is the segment whose end point was expected. `next_index`
+  /// is the segment whose start point did not match. `distance` is the distance
+  /// between `expected` and `got`.
+  Discontinuous(
+    previous_index: Int,
+    next_index: Int,
+    expected: Point,
+    got: Point,
+    distance: Float,
+  )
 
   /// The operation requires a non-empty subpath.
   EmptySubpath
@@ -128,7 +138,8 @@ pub fn empty_subpath() -> Subpath {
 /// Create an open subpath from a continuous list of segments.
 ///
 /// Returns `Discontinuous` if any segment starts somewhere other than the
-/// previous segment's end point.
+/// previous segment's end point. The error includes the two segment indices
+/// that failed to meet.
 pub fn subpath(segments: List(Segment)) -> Result(Subpath, Error) {
   case continuous(segments) {
     Ok(Nil) -> Ok(Subpath(segments:, closed: False))
@@ -345,7 +356,17 @@ pub fn close(subpath: Subpath) -> Result(Subpath, Error) {
         Ok(#(first, last)) if first == last -> {
           Ok(Subpath(segments: subpath.segments, closed: True))
         }
-        Ok(#(first, last)) -> Error(Discontinuous(expected: first, got: last))
+        Ok(#(first, last)) -> {
+          let previous_index = list.length(subpath.segments) - 1
+
+          Error(Discontinuous(
+            previous_index:,
+            next_index: 0,
+            expected: first,
+            got: last,
+            distance: distance(first, last),
+          ))
+        }
       }
     }
   }
@@ -612,7 +633,17 @@ fn append_open_subpath(
             closed: False,
           ))
         }
-        False -> Error(Discontinuous(expected: previous_end, got: next_start))
+        False -> {
+          let next_index = list.length(subpath.segments)
+
+          Error(Discontinuous(
+            previous_index: next_index - 1,
+            next_index:,
+            expected: previous_end,
+            got: next_start,
+            distance: distance(previous_end, next_start),
+          ))
+        }
       }
     }
     Error(error) -> Error(error)
@@ -625,6 +656,13 @@ fn nonempty_subpaths(subpaths: List(Subpath)) -> List(Subpath) {
 }
 
 fn continuous(segments: List(Segment)) -> Result(Nil, Error) {
+  continuous_from(segments, previous_index: 0)
+}
+
+fn continuous_from(
+  segments: List(Segment),
+  previous_index previous_index: Int,
+) -> Result(Nil, Error) {
   case segments {
     [] | [_] -> Ok(Nil)
     [left, right, ..rest] -> {
@@ -632,8 +670,15 @@ fn continuous(segments: List(Segment)) -> Result(Nil, Error) {
       let right_start = segment_start(right)
 
       case left_end == right_start {
-        True -> continuous([right, ..rest])
-        False -> Error(Discontinuous(expected: left_end, got: right_start))
+        True -> continuous_from([right, ..rest], previous_index + 1)
+        False ->
+          Error(Discontinuous(
+            previous_index:,
+            next_index: previous_index + 1,
+            expected: left_end,
+            got: right_start,
+            distance: distance(left_end, right_start),
+          ))
       }
     }
   }
