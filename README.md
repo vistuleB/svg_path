@@ -3,6 +3,14 @@
 [![Package Version](https://img.shields.io/hexpm/v/svg_path)](https://hex.pm/packages/svg_path)
 [![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/svg_path/)
 
+`svg_path` parses, represents, transforms, serializes, and inspects SVG path
+data in Gleam.
+
+The package is intentionally explicit about SVG path details that are easy to
+lose track of: implicit line commands after `M`, comma-separated coordinates,
+semantic closepath handling, transform matrix composition order, and the
+difference between cleaning a path object and merely serializing it.
+
 ```sh
 gleam add svg_path@1
 ```
@@ -18,8 +26,122 @@ pub fn tidy_path_data(input: String) -> String {
 }
 ```
 
-Path serialization can also use relative commands, remove extra whitespace, and
-omit repeated command letters.
+## Core Model
+
+A `Path` is a list of `Subpath` values. A `Subpath` is a continuous list of
+segments plus a closed/open flag.
+
+The public segment variants are:
+
+```gleam
+svg_path.Line(start:, end:)
+svg_path.QuadraticBezier(start:, control:, end:)
+svg_path.CubicBezier(start:, control1:, control2:, end:)
+svg_path.Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:)
+```
+
+`Subpath` is opaque. Use constructors and editing helpers so the library can
+maintain the continuity invariant: every segment after the first must start at
+the previous segment's end point.
+
+```gleam
+import svg_path
+
+pub fn triangle() -> svg_path.Subpath {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(5.0, 10.0)
+
+  svg_path.assert_subpath([
+    svg_path.line(start: a, end: b),
+    svg_path.line(start: b, end: c),
+    svg_path.line(start: c, end: a),
+  ])
+  |> svg_path.assert_close
+}
+```
+
+Use the `Result`-returning functions when invalid path construction is
+recoverable:
+
+```gleam
+svg_path.subpath(segments)
+svg_path.close(subpath)
+svg_path.force_close(subpath)
+svg_path.append(subpath, segment)
+svg_path.force_append(subpath, segment)
+svg_path.wiggle_subpath(segments)
+svg_path.wiggle_close(subpath)
+```
+
+Use the `assert_` functions for hand-authored/static geometry where invalid
+continuity is a programmer error:
+
+```gleam
+svg_path.assert_subpath(segments)
+svg_path.assert_close(subpath)
+```
+
+## Parsing
+
+`svg_path/parse` accepts normal SVG path data syntax, including:
+
+- comma separators
+- whitespace separators
+- compact signed numbers such as `M0-1`
+- implicit line commands after `M`
+- repeated command argument groups
+- relative and absolute commands
+- closepath commands `Z` and `z`
+
+```gleam
+import gleam/result
+import svg_path/parse
+import svg_path/serialize
+
+pub fn canonicalize() -> Result(String, parse.Error) {
+  use path <- result.try(parse.path("M0,0 10,10z"))
+
+  Ok(serialize.path(path))
+}
+```
+
+The parsed object is not just a token stream. It is normalized into this
+package's path model. For example, an implicit line after `M` becomes a
+`Line` segment internally.
+
+Closepath is also represented semantically. If parsing `Z` needs a straight
+line back to the subpath start, the parser inserts that line and marks the
+subpath closed. If the subpath is already back at its start, no extra line is
+inserted; the subpath is just marked closed.
+
+## Serialization
+
+`svg_path/serialize` emits canonical SVG path data.
+
+By default it uses:
+
+- absolute commands
+- up to 5 decimal places
+- stripped trailing decimal zeroes
+- readable whitespace
+- repeated command letters
+- `H` and `V` for horizontal and vertical lines when possible
+- `Z` for closed subpaths
+
+```gleam
+import svg_path/parse
+import svg_path/serialize
+
+pub fn tidy_path_data(input: String) -> String {
+  let assert Ok(path) = parse.path(input)
+
+  serialize.path(path)
+}
+```
+
+Serialization options can use relative commands, remove optional whitespace,
+round numbers, keep fixed decimal places, and omit repeated command letters.
 
 ```gleam
 import svg_path/parse
@@ -36,6 +158,109 @@ pub fn compact_path_data(input: String) -> String {
 }
 ```
 
+### Repeated Command Letters
+
+SVG allows repeated commands of the same type to omit later command letters.
+Pass `False` to `repeat_commands` to use this form.
+
+```gleam
+serialize.default_options()
+|> serialize.repeat_commands(False)
+```
+
+For example, repeated line commands may serialize as:
+
+```text
+M 0 0 L 10 10 20 20 30 30
+```
+
+instead of:
+
+```text
+M 0 0 L 10 10 L 20 20 L 30 30
+```
+
+### Closepath and Final Lines
+
+Closed subpaths serialize with `Z`.
+
+If a closed subpath ends with a non-zero-length straight line back to the
+subpath start, the serializer drops that final line command and uses `Z` to
+represent the closure.
+
+For example, this internal subpath:
+
+```text
+Line(0,0 -> 10,0)
+Line(10,0 -> 10,20)
+Line(10,20 -> 0,0)
+closed
+```
+
+serializes as:
+
+```text
+M 0 0 H 10 V 20 Z
+```
+
+not:
+
+```text
+M 0 0 H 10 V 20 L 0 0 Z
+```
+
+This is intentional. `Z` is the SVG-native representation of closing the
+subpath, and including both the final straight line and `Z` would be redundant.
+
+Zero-length final lines are different. If the final segment is
+`Line(A, A)`, the serializer keeps it visible:
+
+```text
+M 0 0 H 0 Z
+```
+
+This is also intentional. A zero-length line is often evidence of unusual
+upstream geometry. The serializer does not hide that from the user.
+
+The same rule applies in relative mode:
+
+```text
+m 10 10 h 10 h -10 h 0 Z
+```
+
+The final `h 0` remains visible because it is a zero-length line.
+
+### Cleaning Zero-Length Lines
+
+Serialization is not a general cleanup pass. It only uses `Z` to avoid a
+redundant non-zero-length final closing line.
+
+If you want to remove zero-length straight lines from a subpath, use
+`clean_subpath`.
+
+```gleam
+import svg_path
+
+pub fn clean(subpath: svg_path.Subpath) -> svg_path.Subpath {
+  svg_path.clean_subpath(subpath)
+}
+```
+
+`clean_subpath` removes zero-length `Line` segments while preserving the
+subpath's closed/open state. If a subpath consists only of zero-length lines,
+one zero-length line is retained so the subpath does not become empty.
+
+This distinction is deliberate:
+
+- `serialize.subpath` preserves odd zero-length lines so the output still shows
+  that the object contains them.
+- `svg_path.clean_subpath` is an explicit user-requested cleanup.
+
+## Transforming Paths
+
+`svg_path/transform` applies SVG-style affine transforms to segments, subpaths,
+and paths.
+
 ```gleam
 import svg_path/parse
 import svg_path/serialize
@@ -50,7 +275,31 @@ pub fn move_path_data(input: String) -> String {
 }
 ```
 
-Use `chain(first:, then:)` when thinking in transform application order. Use
+Transforms use the SVG six-value affine matrix:
+
+```text
+matrix(a b c d e f)
+```
+
+which corresponds to:
+
+```text
+x' = a*x + c*y + e
+y' = b*x + d*y + f
+```
+
+Matrix values can be constructed and inspected as tuples:
+
+```gleam
+import svg_path/transform
+
+pub fn inspect_transform() -> #(Float, Float, Float, Float, Float, Float) {
+  transform.rotate(degrees: 30.0)
+  |> transform.to_tuple
+}
+```
+
+Use `chain(first:, then:)` when thinking in application order. Use
 `multiply(left:, right:)` when thinking in matrix multiplication order.
 
 ```gleam
@@ -60,13 +309,15 @@ pub fn scale_then_move() -> transform.Matrix {
   let scale = transform.scale(factor: 2.0)
   let move = transform.translate(x: 10.0, y: 20.0)
 
-  // These are the same matrix. Applying scale, then move, is move * scale.
+  // Applying scale, then move, is move * scale.
   transform.chain(first: scale, then: move)
   // transform.multiply(left: move, right: scale)
 }
 ```
 
-SVG transform attributes can be parsed and serialized too.
+## Transform Attributes
+
+SVG transform attributes can be parsed and serialized separately from paths.
 
 ```gleam
 import svg_path/transform/parse
@@ -79,10 +330,31 @@ pub fn tidy_transform_attribute(input: String) -> String {
 }
 ```
 
-Transform serialization prefers readable SVG forms such as
-`translate(10 20)scale(2)`, `rotate(30)`, and
-`translate(10 20)rotate(30)scale(2 3)` when the matrix can be represented
-clearly. Use `force_matrix` when you want the raw `matrix(a b c d e f)` form.
+The transform parser accepts normal SVG transform syntax, including compound
+attributes such as:
+
+```text
+translate(10)scale(2) skewX(3)
+```
+
+Transform serialization prefers readable SVG forms when the matrix can be
+recognized clearly:
+
+```text
+translate(10 20)
+translate(10 20)scale(2)
+rotate(30)
+translate(10 20)rotate(30)scale(2 3)
+```
+
+If no clearer representation is available, it falls back to:
+
+```text
+matrix(a b c d e f)
+```
+
+Use `force_matrix` when you want the raw matrix form even if a shorter
+transform expression could be detected.
 
 ```gleam
 import svg_path/transform
@@ -96,18 +368,74 @@ pub fn raw_transform_attribute() -> String {
 }
 ```
 
-Transform matrices can be created from or inspected as SVG's six matrix values.
+## Inspecting Paths
+
+`svg_path/inspect` prints path data structures for debugging and tests. It is
+not the SVG `d` serializer.
+
+Human-readable structural inspection:
 
 ```gleam
-import svg_path/transform
+import svg_path
+import svg_path/inspect
 
-pub fn inspect_transform() -> #(Float, Float, Float, Float, Float, Float) {
-  transform.rotate(degrees: 30.0)
-  |> transform.to_tuple
+pub fn inspect_line() -> String {
+  svg_path.line(
+    start: svg_path.point(0.0, 0.0),
+    end: svg_path.point(12.0, 10.0),
+  )
+  |> inspect.segment
 }
 ```
 
-## Converting matrices from `matrix_gleam`
+Example output:
+
+```text
+Line(start=0,0 end=12,10)
+```
+
+Copy-pasteable Gleam inspection:
+
+```gleam
+import svg_path
+import svg_path/inspect
+
+pub fn inspect_code(path: svg_path.Path) -> String {
+  inspect.path_code(path)
+}
+```
+
+Example output:
+
+```gleam
+svg_path.path([
+  svg_path.assert_subpath([
+    svg_path.line(start: svg_path.point(0.0, 0.0), end: svg_path.point(12.0, 10.0))
+  ])
+])
+```
+
+Inspection options support decimal rounding, fixed decimal places, and
+left-padding for visual alignment.
+
+```gleam
+import svg_path
+import svg_path/inspect
+
+pub fn inspect_aligned(path: svg_path.Path) -> String {
+  let options =
+    inspect.fixed_decimal_options(1)
+    |> inspect.with_left_padding(inspect.AutoLeftPadding)
+
+  inspect.path_code_with_options(path, options:)
+}
+```
+
+`AutoLeftPadding` pre-scans the value being inspected and chooses a shared
+left-side width for the numbers in that output. `LeftPadding(Int)` lets you
+choose the width yourself. `NoLeftPadding` disables it.
+
+## Converting Matrices From `matrix_gleam`
 
 `svg_path` does not depend on `matrix_gleam`, but the tuple helpers make the
 conversion small if your application uses both packages.
@@ -159,6 +487,6 @@ Further documentation can be found at <https://hexdocs.pm/svg_path>.
 ## Development
 
 ```sh
-gleam run   # Run the project
-gleam test  # Run the tests
+gleam test
+gleam docs build
 ```
