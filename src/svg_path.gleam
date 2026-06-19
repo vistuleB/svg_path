@@ -356,6 +356,14 @@ pub fn is_closed(subpath: Subpath) -> Bool {
   subpath.closed
 }
 
+/// Return an open version of a subpath.
+///
+/// This only clears the semantic closed flag. It does not remove or alter any
+/// segments, including any final line back to the subpath start.
+pub fn open(subpath: Subpath) -> Subpath {
+  Subpath(segments: subpath.segments, closed: False)
+}
+
 /// Return the start point of a non-empty subpath.
 pub fn start(subpath: Subpath) -> Result(Point, Error) {
   case subpath.segments {

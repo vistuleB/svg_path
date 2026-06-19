@@ -136,6 +136,33 @@ pub fn assert_subpath_builds_continuous_segments_test() {
   assert svg_path.segments(subpath) == segments
 }
 
+pub fn open_clears_closed_state_without_changing_segments_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let segments = [
+    svg_path.line(start: a, end: b),
+    svg_path.line(start: b, end: a),
+  ]
+  let closed =
+    svg_path.assert_subpath(segments)
+    |> svg_path.assert_close
+
+  let opened = svg_path.open(closed)
+
+  assert !svg_path.is_closed(opened)
+  assert svg_path.segments(opened) == segments
+}
+
+pub fn open_accepts_open_and_empty_subpaths_test() {
+  let empty = svg_path.empty_subpath()
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let open = svg_path.assert_subpath([svg_path.line(start: a, end: b)])
+
+  assert svg_path.open(empty) == empty
+  assert svg_path.open(open) == open
+}
+
 pub fn append_rejects_closed_subpath_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)

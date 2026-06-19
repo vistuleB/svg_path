@@ -93,6 +93,7 @@ recoverable:
 ```gleam
 svg_path.subpath(segments)
 svg_path.close(subpath)
+svg_path.open(subpath)
 svg_path.force_close(subpath)
 svg_path.append(subpath, segment)
 svg_path.force_append(subpath, segment)
@@ -121,6 +122,7 @@ svg_path.subpath(segments)
 svg_path.append(subpath, segment)
 svg_path.splice(subpath, start:, delete:, insert:)
 svg_path.close(subpath)
+svg_path.open(subpath)
 ```
 
 `Discontinuous` includes the two segment indices, the expected point, the
