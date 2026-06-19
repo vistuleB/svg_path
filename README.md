@@ -9,7 +9,7 @@ data in Gleam.
 The package offers several knobs to fine-tune the details of path and SVG
 transform serialization. It aims to support the construction and manipulation
 of valid SVG paths from noisy data through parser normalization, ergonomic
-constructors, and small-tolerance snapping.
+constructors, and explicit endpoint reconciliation policies.
 
 ```sh
 gleam add svg_path@0
@@ -95,16 +95,14 @@ svg_path.subpath(segments)
 svg_path.close(subpath)
 svg_path.open(subpath)
 svg_path.set_closed(subpath, closed:)
-svg_path.force_close(subpath)
 svg_path.append_segment(subpath, segment)
-svg_path.force_append_segment(subpath, segment)
-svg_path.join(first_subpath, second_subpath)
-svg_path.force_join(first_subpath, second_subpath)
+svg_path.concat(first_subpath, second_subpath)
 svg_path.splice(subpath, start:, delete:, insert:)
-svg_path.wiggle_subpath(segments)
-svg_path.wiggle_close(subpath)
-svg_path.wiggle_set_closed(subpath, closed:)
-svg_path.wiggle_join(first_subpath, second_subpath)
+
+svg_path.subpath_with(segments, join: svg_path.Wiggle)
+svg_path.close_with(subpath, join: svg_path.Bridge)
+svg_path.concat_with(first_subpath, second_subpath, join: svg_path.WiggleThenBridge)
+svg_path.splice_with(subpath, start:, delete:, insert:, join: svg_path.Wiggle)
 ```
 
 Use the `assert_` functions for hand-authored/static geometry where invalid
@@ -113,19 +111,35 @@ continuity is a programmer error:
 ```gleam
 svg_path.assert_subpath(segments)
 svg_path.assert_close(subpath)
+svg_path.assert_append_segment(subpath, segment)
+svg_path.assert_concat_with(first_subpath, second_subpath, join: svg_path.Bridge)
 ```
 
 ### Editing Subpaths
 
-The root module offers strict, forceful, and small-tolerance editing helpers.
+The root module uses a `Join` option to control how construction and editing
+helpers reconcile segment endpoints:
 
-Strict helpers preserve the model without changing your geometry. They return
+```gleam
+svg_path.Strict
+svg_path.Wiggle
+svg_path.Bridge
+svg_path.WiggleThenBridge
+```
+
+`Strict` requires exact endpoint equality. `Wiggle` moves nearby endpoints
+together within the package's default wiggle tolerance. `Bridge` keeps existing
+endpoints in place and inserts a straight line segment when needed.
+`WiggleThenBridge` first tries `Wiggle`; if that fails, it falls back to
+`Bridge`.
+
+The ordinary helpers use `Strict`. They preserve your geometry and return
 `Discontinuous` when segment endpoints do not meet exactly.
 
 ```gleam
 svg_path.subpath(segments)
 svg_path.append_segment(subpath, segment)
-svg_path.join(first_subpath, second_subpath)
+svg_path.concat(first_subpath, second_subpath)
 svg_path.splice(subpath, start:, delete:, insert:)
 svg_path.close(subpath)
 svg_path.open(subpath)
@@ -137,44 +151,36 @@ actual point, and the distance between them. This is often enough to tell
 whether upstream geometry missed by floating-point noise or by a real modeling
 mistake.
 
-Small-tolerance helpers reconcile tiny endpoint gaps. They are useful after
-floating-point math, transforms, imports from noisy data, or local edits where
-the intended topology is clear.
+Use `_with` variants when you want a non-strict endpoint policy:
 
 ```gleam
-svg_path.wiggle_subpath(segments)
-svg_path.wiggle_splice(subpath, start:, delete:, insert:)
-svg_path.wiggle_close(subpath)
-svg_path.wiggle_set_closed(subpath, closed:)
-svg_path.wiggle_join(first_subpath, second_subpath)
+svg_path.subpath_with(segments, join: svg_path.Wiggle)
+svg_path.append_segment_with(subpath, segment, join: svg_path.Bridge)
+svg_path.concat_with(first_subpath, second_subpath, join: svg_path.WiggleThenBridge)
+svg_path.splice_with(subpath, start:, delete:, insert:, join: svg_path.Wiggle)
+svg_path.close_with(subpath, join: svg_path.Bridge)
+svg_path.set_closed_with(subpath, closed:, join: svg_path.Wiggle)
 ```
 
-Forceful helpers insert straight line segments when needed. They are useful
-when a bridging line is the intended geometry, not when endpoints were meant to
-coincide.
+### Concatenating Subpaths
+
+`concat` combines two open subpaths into one open subpath. With the default
+`Strict` policy, the end of the first subpath must exactly equal the start of
+the second subpath. Empty open subpaths act as identity values.
 
 ```gleam
-svg_path.force_append_segment(subpath, segment)
-svg_path.force_join(first_subpath, second_subpath)
-svg_path.force_close(subpath)
-```
-
-### Joining Subpaths
-
-`join` combines two open subpaths into one open subpath. The end of the first
-subpath must exactly equal the start of the second subpath. Empty open subpaths
-act as identity values.
-
-```gleam
-svg_path.join(first_subpath, second_subpath)
+svg_path.concat(first_subpath, second_subpath)
 ```
 
 Closed subpaths are rejected rather than implicitly opened. This keeps
 closedness as explicit topology: if you want to discard it, call `open` first.
 
-Use `wiggle_join` when the two endpoints should coincide but may differ by
-small floating-point noise. Use `force_join` when a straight bridging line is
-intended geometry.
+Use `concat_with` when you want another endpoint policy:
+
+```gleam
+svg_path.concat_with(first_subpath, second_subpath, join: svg_path.Wiggle)
+svg_path.concat_with(first_subpath, second_subpath, join: svg_path.Bridge)
+```
 
 ### Splicing Subpaths
 
@@ -190,15 +196,21 @@ If `start + delete` extends past the end of the subpath, everything from
 `start` onward is deleted. Negative `start`, negative `delete`, and `start`
 greater than the subpath length return `InvalidSplice`.
 
-The edited subpath must still be continuous, otherwise `Discontinuous` is
-returned with segment indices, points, and distance. Closed subpaths preserve
-their closed state; a splice that would turn a closed subpath into an empty
-subpath returns `ClosedEmptySubpath`.
+With the default `Strict` policy, the edited subpath must still be continuous,
+otherwise `Discontinuous` is returned with segment indices, points, and
+distance. Closed subpaths preserve their closed state; a splice that would turn
+a closed subpath into an empty subpath returns `ClosedEmptySubpath`.
 
-Use `wiggle_splice` when the splice should tolerate tiny endpoint gaps:
+Use `splice_with` when the splice should use a different endpoint policy:
 
 ```gleam
-svg_path.wiggle_splice(subpath, start: 2, delete: 1, insert: replacement_segments)
+svg_path.splice_with(
+  subpath,
+  start: 2,
+  delete: 1,
+  insert: replacement_segments,
+  join: svg_path.Wiggle,
+)
 ```
 
 ## Converting Arcs to Beziers
@@ -593,8 +605,9 @@ choose the width yourself. `NoLeftPadding` disables it.
 
 ## Converting Matrices From `matrix_gleam`
 
-`svg_path` does not depend on [`matrix_gleam`](https://hex.pm/packages/matrix_gleam), but the tuple helpers make the
-conversion small if your application uses both packages.
+`svg_path` does not depend on
+[`matrix_gleam`](https://hex.pm/packages/matrix_gleam), but the tuple helpers
+make the conversion small if your application uses both packages.
 
 ```gleam
 import matrix/mat3f

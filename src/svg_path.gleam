@@ -27,9 +27,24 @@ pub type Path {
 ///
 /// The constructor is opaque so that subpaths cannot be created in an invalid
 /// discontinuous state. Use `subpath`, `empty_subpath`, `append_segment`, or
-/// `force_append_segment` to build values.
+/// their `_with` variants to build values.
 pub opaque type Subpath {
   Subpath(segments: List(Segment), closed: Bool)
+}
+
+/// How construction and editing helpers reconcile segment endpoints.
+pub type Join {
+  /// Endpoints must already match exactly.
+  Strict
+
+  /// Move nearby endpoints together within the default wiggle tolerance.
+  Wiggle
+
+  /// Keep endpoints unchanged and insert a straight line if needed.
+  Bridge
+
+  /// Try `Wiggle`; if that fails, use `Bridge`.
+  WiggleThenBridge
 }
 
 /// A single SVG path segment.
@@ -153,10 +168,15 @@ pub fn empty_subpath() -> Subpath {
 /// previous segment's end point. The error includes the two segment indices
 /// that failed to meet.
 pub fn subpath(segments: List(Segment)) -> Result(Subpath, Error) {
-  case continuous(segments) {
-    Ok(Nil) -> Ok(Subpath(segments:, closed: False))
-    Error(error) -> Error(error)
-  }
+  subpath_with(segments, join: Strict)
+}
+
+/// Create an open subpath using the given endpoint reconciliation policy.
+pub fn subpath_with(
+  segments: List(Segment),
+  join join: Join,
+) -> Result(Subpath, Error) {
+  open_subpath_with_segments(segments, join)
 }
 
 /// Create an open subpath from a continuous list of segments, panicking if the
@@ -165,26 +185,17 @@ pub fn subpath(segments: List(Segment)) -> Result(Subpath, Error) {
 /// This is useful for hand-authored paths where invalid continuity would be a
 /// programmer error. Use `subpath` when you want to handle construction errors.
 pub fn assert_subpath(segments: List(Segment)) -> Subpath {
-  case subpath(segments) {
-    Ok(subpath) -> subpath
-    Error(_) -> panic as "svg_path.assert_subpath received invalid segments"
-  }
+  assert_subpath_with(segments, join: Strict)
 }
 
-/// Create an open subpath while gently reconciling tiny endpoint gaps.
-///
-/// This is useful after floating-point transformations. If adjacent segment
-/// endpoints are within the default wiggle tolerance, the overlap point is used
-/// to make the segments continuous.
-pub fn wiggle_subpath(segments: List(Segment)) -> Result(Subpath, Error) {
-  case segments {
-    [] | [_] -> subpath(segments)
-    [first, ..rest] -> {
-      case wiggle_segments(rest, first, []) {
-        Ok(segments) -> Ok(Subpath(segments:, closed: False))
-        Error(error) -> Error(error)
-      }
-    }
+/// Create an open subpath with a join policy, panicking if construction fails.
+pub fn assert_subpath_with(
+  segments: List(Segment),
+  join join: Join,
+) -> Subpath {
+  case subpath_with(segments, join:) {
+    Ok(subpath) -> subpath
+    Error(_) -> panic as "svg_path.assert_subpath received invalid segments"
   }
 }
 
@@ -230,32 +241,16 @@ pub fn splice(
   delete delete: Int,
   insert insert: List(Segment),
 ) -> Result(Subpath, Error) {
-  let length = list.length(subpath.segments)
-
-  case start < 0 || delete < 0 || start > length {
-    True -> Error(InvalidSplice(start:, delete:, length:))
-    False -> {
-      let segments = splice_segments(subpath.segments, start, delete, insert)
-
-      case subpath.closed && list.is_empty(segments) {
-        True -> Error(ClosedEmptySubpath)
-        False -> validate_spliced_subpath(segments, subpath.closed)
-      }
-    }
-  }
+  splice_with(subpath, start:, delete:, insert:, join: Strict)
 }
 
-/// Replace a range of segments, reconciling tiny endpoint gaps.
-///
-/// This has the same splice bounds behavior as `splice`, but validates the
-/// edited subpath with `wiggle_subpath` and, for closed subpaths,
-/// `wiggle_close`. Use this when the splice should preserve topology across
-/// floating-point noise rather than requiring exact endpoint equality.
-pub fn wiggle_splice(
+/// Replace a range of segments in a subpath using the given join policy.
+pub fn splice_with(
   subpath: Subpath,
   start start: Int,
   delete delete: Int,
   insert insert: List(Segment),
+  join join: Join,
 ) -> Result(Subpath, Error) {
   let length = list.length(subpath.segments)
 
@@ -266,9 +261,33 @@ pub fn wiggle_splice(
 
       case subpath.closed && list.is_empty(segments) {
         True -> Error(ClosedEmptySubpath)
-        False -> validate_wiggled_spliced_subpath(segments, subpath.closed)
+        False -> validate_spliced_subpath(segments, subpath.closed, join)
       }
     }
+  }
+}
+
+/// Replace a range of segments, panicking if the splice is invalid.
+pub fn assert_splice(
+  subpath: Subpath,
+  start start: Int,
+  delete delete: Int,
+  insert insert: List(Segment),
+) -> Subpath {
+  assert_splice_with(subpath, start:, delete:, insert:, join: Strict)
+}
+
+/// Replace a range of segments with a join policy, panicking if invalid.
+pub fn assert_splice_with(
+  subpath: Subpath,
+  start start: Int,
+  delete delete: Int,
+  insert insert: List(Segment),
+  join join: Join,
+) -> Subpath {
+  case splice_with(subpath, start:, delete:, insert:, join:) {
+    Ok(subpath) -> subpath
+    Error(_) -> panic as "svg_path.assert_splice received an invalid splice"
   }
 }
 
@@ -372,24 +391,40 @@ pub fn set_closed(
   subpath: Subpath,
   closed closed: Bool,
 ) -> Result(Subpath, Error) {
-  case closed {
-    False -> Ok(open(subpath))
-    True -> close(subpath)
-  }
+  set_closed_with(subpath, closed:, join: Strict)
 }
 
-/// Set a subpath's semantic closed state, reconciling tiny endpoint gaps.
+/// Set a subpath's semantic closed state with a join policy.
 ///
 /// Setting `closed` to `False` only clears the semantic closed flag. Setting it
-/// to `True` uses `wiggle_close`, which may adjust endpoints within the default
-/// wiggle tolerance.
-pub fn wiggle_set_closed(
+/// to `True` uses the given join policy to reconcile the subpath's end point
+/// with its start point.
+pub fn set_closed_with(
   subpath: Subpath,
   closed closed: Bool,
+  join join: Join,
 ) -> Result(Subpath, Error) {
   case closed {
     False -> Ok(open(subpath))
-    True -> wiggle_close(subpath)
+    True -> close_with(subpath, join:)
+  }
+}
+
+/// Set a subpath's semantic closed state, panicking if invalid.
+pub fn assert_set_closed(subpath: Subpath, closed closed: Bool) -> Subpath {
+  assert_set_closed_with(subpath, closed:, join: Strict)
+}
+
+/// Set a subpath's semantic closed state with a join policy, panicking if invalid.
+pub fn assert_set_closed_with(
+  subpath: Subpath,
+  closed closed: Bool,
+  join join: Join,
+) -> Subpath {
+  case set_closed_with(subpath, closed:, join:) {
+    Ok(subpath) -> subpath
+    Error(_) ->
+      panic as "svg_path.assert_set_closed received an invalid subpath"
   }
 }
 
@@ -416,92 +451,92 @@ pub fn append_segment(
   subpath: Subpath,
   segment: Segment,
 ) -> Result(Subpath, Error) {
-  case subpath.closed {
-    True -> Error(AlreadyClosed)
-    False -> append_open_subpath(subpath, segment)
-  }
+  append_segment_with(subpath, segment, join: Strict)
 }
 
-/// Join two open subpaths.
-///
-/// The first subpath's end point must exactly match the second subpath's start
-/// point. Empty open subpaths are treated as identity values.
-pub fn join(first: Subpath, second: Subpath) -> Result(Subpath, Error) {
-  case first.closed || second.closed {
-    True -> Error(AlreadyClosed)
-    False -> validate_joined_subpath(first.segments, second.segments)
-  }
-}
-
-/// Append a segment to an open subpath, inserting a connecting line if needed.
-///
-/// If the subpath is empty, this behaves like `append_segment`. If the new segment does
-/// not start at the current end point, a line segment is inserted between them.
-pub fn force_append_segment(
+/// Append a segment to an open subpath using the given join policy.
+pub fn append_segment_with(
   subpath: Subpath,
   segment: Segment,
+  join join: Join,
 ) -> Result(Subpath, Error) {
   case subpath.closed {
     True -> Error(AlreadyClosed)
-    False -> {
-      case end(subpath) {
-        Error(EmptySubpath) -> append_open_subpath(subpath, segment)
-        Ok(previous_end) -> {
-          let next_start = segment_start(segment)
-
-          case previous_end == next_start {
-            True -> append_open_subpath(subpath, segment)
-            False -> {
-              Ok(Subpath(
-                segments: list.append(subpath.segments, [
-                  Line(start: previous_end, end: next_start),
-                  segment,
-                ]),
-                closed: False,
-              ))
-            }
-          }
-        }
-        Error(error) -> Error(error)
-      }
-    }
+    False ->
+      open_subpath_with_segments(list.append(subpath.segments, [segment]), join)
   }
 }
 
-/// Join two open subpaths, inserting a connecting line if needed.
+/// Append a segment to an open subpath, panicking if invalid.
+pub fn assert_append_segment(subpath: Subpath, segment: Segment) -> Subpath {
+  assert_append_segment_with(subpath, segment, join: Strict)
+}
+
+/// Append a segment with a join policy, panicking if invalid.
+pub fn assert_append_segment_with(
+  subpath: Subpath,
+  segment: Segment,
+  join join: Join,
+) -> Subpath {
+  case append_segment_with(subpath, segment, join:) {
+    Ok(subpath) -> subpath
+    Error(_) ->
+      panic as "svg_path.assert_append_segment received an invalid segment"
+  }
+}
+
+/// Concatenate two open subpaths.
 ///
-/// Empty open subpaths are treated as identity values. If both subpaths are
-/// non-empty and their endpoints do not meet, a straight line segment is
-/// inserted between them.
-pub fn force_join(first: Subpath, second: Subpath) -> Result(Subpath, Error) {
+/// The first subpath's end point must exactly match the second subpath's start
+/// point. Empty open subpaths are treated as identity values.
+pub fn concat(first: Subpath, second: Subpath) -> Result(Subpath, Error) {
+  concat_with(first, second, join: Strict)
+}
+
+/// Concatenate two open subpaths using the given join policy.
+pub fn concat_with(
+  first: Subpath,
+  second: Subpath,
+  join join: Join,
+) -> Result(Subpath, Error) {
   case first.closed || second.closed {
     True -> Error(AlreadyClosed)
-    False -> force_join_open_subpaths(first, second)
+    False ->
+      open_subpath_with_segments(
+        list.append(first.segments, second.segments),
+        join,
+      )
+  }
+}
+
+/// Concatenate two open subpaths, panicking if invalid.
+pub fn assert_concat(first: Subpath, second: Subpath) -> Subpath {
+  assert_concat_with(first, second, join: Strict)
+}
+
+/// Concatenate two open subpaths with a join policy, panicking if invalid.
+pub fn assert_concat_with(
+  first: Subpath,
+  second: Subpath,
+  join join: Join,
+) -> Subpath {
+  case concat_with(first, second, join:) {
+    Ok(subpath) -> subpath
+    Error(_) -> panic as "svg_path.assert_concat received invalid subpaths"
   }
 }
 
 /// Close a subpath if its start and end points already match.
 pub fn close(subpath: Subpath) -> Result(Subpath, Error) {
+  close_with(subpath, join: Strict)
+}
+
+/// Close a subpath using the given join policy.
+pub fn close_with(subpath: Subpath, join join: Join) -> Result(Subpath, Error) {
   case subpath.closed {
     True -> Ok(subpath)
     False -> {
-      case start_and_end(subpath) {
-        Error(error) -> Error(error)
-        Ok(#(first, last)) if first == last -> {
-          Ok(Subpath(segments: subpath.segments, closed: True))
-        }
-        Ok(#(first, last)) -> {
-          let previous_index = list.length(subpath.segments) - 1
-
-          Error(Discontinuous(
-            previous_index:,
-            next_index: 0,
-            expected: first,
-            got: last,
-            distance: distance(first, last),
-          ))
-        }
-      }
+      close_open_subpath_with(subpath, join)
     }
   }
 }
@@ -512,79 +547,14 @@ pub fn close(subpath: Subpath) -> Result(Subpath, Error) {
 /// This is useful for hand-authored paths where invalid continuity would be a
 /// programmer error. Use `close` when you want to handle closure errors.
 pub fn assert_close(subpath: Subpath) -> Subpath {
-  case close(subpath) {
+  assert_close_with(subpath, join: Strict)
+}
+
+/// Close a subpath with a join policy, panicking if invalid.
+pub fn assert_close_with(subpath: Subpath, join join: Join) -> Subpath {
+  case close_with(subpath, join:) {
     Ok(subpath) -> subpath
     Error(_) -> panic as "svg_path.assert_close received an uncloseable subpath"
-  }
-}
-
-/// Close a subpath, inserting a line back to the start point if needed.
-pub fn force_close(subpath: Subpath) -> Result(Subpath, Error) {
-  case subpath.closed {
-    True -> Ok(subpath)
-    False -> {
-      case start_and_end(subpath) {
-        Error(error) -> Error(error)
-        Ok(#(first, last)) if first == last -> close(subpath)
-        Ok(#(first, last)) -> {
-          Ok(Subpath(
-            segments: list.append(subpath.segments, [
-              Line(start: last, end: first),
-            ]),
-            closed: True,
-          ))
-        }
-      }
-    }
-  }
-}
-
-/// Join two open subpaths, reconciling tiny endpoint gaps.
-///
-/// This has the same closed-input and empty-input behavior as `join`, but uses
-/// the default wiggle tolerance when the first subpath's end point and the
-/// second subpath's start point are nearly equal.
-pub fn wiggle_join(first: Subpath, second: Subpath) -> Result(Subpath, Error) {
-  case first.closed || second.closed {
-    True -> Error(AlreadyClosed)
-    False -> wiggle_subpath(list.append(first.segments, second.segments))
-  }
-}
-
-/// Close a subpath while gently reconciling tiny endpoint gaps.
-///
-/// This is useful after floating-point transformations that should preserve
-/// closure but leave endpoints off by a very small amount.
-pub fn wiggle_close(subpath: Subpath) -> Result(Subpath, Error) {
-  case subpath.closed {
-    True -> Ok(subpath)
-    False -> {
-      case start_and_end(subpath) {
-        Error(error) -> Error(error)
-        Ok(#(first, last)) -> {
-          case distance(first, last) <=. default_wiggle_tolerance {
-            False -> {
-              Error(NotCloseEnough(
-                expected: first,
-                got: last,
-                tolerance: default_wiggle_tolerance,
-              ))
-            }
-            True -> {
-              case first_and_last_segments(subpath) {
-                Error(error) -> Error(error)
-                Ok(#(first_segment, last_segment)) -> {
-                  case wiggle_overlap(last_segment, first_segment) {
-                    Ok(overlap) -> Ok(wiggle_ends_to(subpath, overlap))
-                    Error(error) -> Error(error)
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
   }
 }
 
@@ -671,68 +641,82 @@ fn drop(segments: List(Segment), count: Int) -> List(Segment) {
 fn validate_spliced_subpath(
   segments: List(Segment),
   closed: Bool,
+  join: Join,
 ) -> Result(Subpath, Error) {
-  case continuous(segments) {
-    Error(error) -> Error(error)
-    Ok(Nil) -> {
-      let subpath = Subpath(segments:, closed: False)
-
-      case closed {
-        False -> Ok(subpath)
-        True -> close(subpath)
-      }
-    }
-  }
-}
-
-fn validate_wiggled_spliced_subpath(
-  segments: List(Segment),
-  closed: Bool,
-) -> Result(Subpath, Error) {
-  case wiggle_subpath(segments) {
-    Error(error) -> Error(error)
+  case open_subpath_with_segments(segments, join) {
     Ok(subpath) -> {
       case closed {
         False -> Ok(subpath)
-        True -> wiggle_close(subpath)
+        True -> close_with(subpath, join:)
+      }
+    }
+    Error(error) -> Error(error)
+  }
+}
+
+fn open_subpath_with_segments(
+  segments: List(Segment),
+  join: Join,
+) -> Result(Subpath, Error) {
+  case join {
+    Strict -> strict_open_subpath(segments)
+    Wiggle -> wiggle_open_subpath(segments)
+    Bridge -> Ok(Subpath(segments: line_join_segments(segments), closed: False))
+    WiggleThenBridge -> {
+      case wiggle_open_subpath(segments) {
+        Ok(subpath) -> Ok(subpath)
+        Error(_) ->
+          Ok(Subpath(segments: line_join_segments(segments), closed: False))
       }
     }
   }
 }
 
-fn validate_joined_subpath(
-  first_segments: List(Segment),
-  second_segments: List(Segment),
-) -> Result(Subpath, Error) {
-  let segments = list.append(first_segments, second_segments)
-
+fn strict_open_subpath(segments: List(Segment)) -> Result(Subpath, Error) {
   case continuous(segments) {
     Ok(Nil) -> Ok(Subpath(segments:, closed: False))
     Error(error) -> Error(error)
   }
 }
 
-fn force_join_open_subpaths(
-  first: Subpath,
-  second: Subpath,
-) -> Result(Subpath, Error) {
-  case first.segments, second.segments {
-    [], _ -> Ok(second)
-    _, [] -> Ok(first)
-    _, _ -> {
-      let assert Ok(first_end) = end(first)
-      let assert Ok(second_start) = start(second)
+fn wiggle_open_subpath(segments: List(Segment)) -> Result(Subpath, Error) {
+  case segments {
+    [] | [_] -> strict_open_subpath(segments)
+    [first, ..rest] -> {
+      case wiggle_segments(rest, first, []) {
+        Ok(segments) -> Ok(Subpath(segments:, closed: False))
+        Error(error) -> Error(error)
+      }
+    }
+  }
+}
 
-      case first_end == second_start {
-        True -> validate_joined_subpath(first.segments, second.segments)
+fn line_join_segments(segments: List(Segment)) -> List(Segment) {
+  case segments {
+    [] -> []
+    [first, ..rest] -> line_join_segments_loop(rest, first, [])
+  }
+}
+
+fn line_join_segments_loop(
+  remaining: List(Segment),
+  previous: Segment,
+  joined: List(Segment),
+) -> List(Segment) {
+  case remaining {
+    [] -> list.reverse([previous, ..joined])
+    [next, ..rest] -> {
+      let previous_end = segment_end(previous)
+      let next_start = segment_start(next)
+
+      case previous_end == next_start {
+        True -> line_join_segments_loop(rest, next, [previous, ..joined])
         False -> {
-          Ok(Subpath(
-            segments: list.append(first.segments, [
-              Line(start: first_end, end: second_start),
-              ..second.segments
-            ]),
-            closed: False,
-          ))
+          line_join_segments_loop(rest, next, [
+            Line(start: previous_end, end: next_start),
+            previous,
+            ..joined
+          ])
         }
       }
     }
@@ -880,41 +864,6 @@ pub fn arc(
   Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:)
 }
 
-fn append_open_subpath(
-  subpath: Subpath,
-  segment: Segment,
-) -> Result(Subpath, Error) {
-  case end(subpath) {
-    Error(EmptySubpath) -> {
-      Ok(Subpath(segments: [segment], closed: False))
-    }
-    Ok(previous_end) -> {
-      let next_start = segment_start(segment)
-
-      case previous_end == next_start {
-        True -> {
-          Ok(Subpath(
-            segments: list.append(subpath.segments, [segment]),
-            closed: False,
-          ))
-        }
-        False -> {
-          let next_index = list.length(subpath.segments)
-
-          Error(Discontinuous(
-            previous_index: next_index - 1,
-            next_index:,
-            expected: previous_end,
-            got: next_start,
-            distance: distance(previous_end, next_start),
-          ))
-        }
-      }
-    }
-    Error(error) -> Error(error)
-  }
-}
-
 fn nonempty_subpaths(subpaths: List(Subpath)) -> List(Subpath) {
   subpaths
   |> list.filter(keeping: fn(subpath) { !list.is_empty(subpath.segments) })
@@ -985,6 +934,86 @@ fn wiggle_segments(
           }
         }
       }
+    }
+  }
+}
+
+fn close_open_subpath_with(
+  subpath: Subpath,
+  join: Join,
+) -> Result(Subpath, Error) {
+  case join {
+    Strict -> strict_close_open_subpath(subpath)
+    Wiggle -> wiggle_close_open_subpath(subpath)
+    Bridge -> line_close_open_subpath(subpath)
+    WiggleThenBridge -> {
+      case wiggle_close_open_subpath(subpath) {
+        Ok(subpath) -> Ok(subpath)
+        Error(_) -> line_close_open_subpath(subpath)
+      }
+    }
+  }
+}
+
+fn strict_close_open_subpath(subpath: Subpath) -> Result(Subpath, Error) {
+  case start_and_end(subpath) {
+    Error(error) -> Error(error)
+    Ok(#(first, last)) if first == last -> {
+      Ok(Subpath(segments: subpath.segments, closed: True))
+    }
+    Ok(#(first, last)) -> {
+      let previous_index = list.length(subpath.segments) - 1
+
+      Error(Discontinuous(
+        previous_index:,
+        next_index: 0,
+        expected: first,
+        got: last,
+        distance: distance(first, last),
+      ))
+    }
+  }
+}
+
+fn wiggle_close_open_subpath(subpath: Subpath) -> Result(Subpath, Error) {
+  case start_and_end(subpath) {
+    Error(error) -> Error(error)
+    Ok(#(first, last)) -> {
+      case distance(first, last) <=. default_wiggle_tolerance {
+        False -> {
+          Error(NotCloseEnough(
+            expected: first,
+            got: last,
+            tolerance: default_wiggle_tolerance,
+          ))
+        }
+        True -> {
+          case first_and_last_segments(subpath) {
+            Error(error) -> Error(error)
+            Ok(#(first_segment, last_segment)) -> {
+              case wiggle_overlap(last_segment, first_segment) {
+                Ok(overlap) -> Ok(wiggle_ends_to(subpath, overlap))
+                Error(error) -> Error(error)
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+fn line_close_open_subpath(subpath: Subpath) -> Result(Subpath, Error) {
+  case start_and_end(subpath) {
+    Error(error) -> Error(error)
+    Ok(#(first, last)) if first == last -> strict_close_open_subpath(subpath)
+    Ok(#(first, last)) -> {
+      Ok(Subpath(
+        segments: list.append(subpath.segments, [
+          Line(start: last, end: first),
+        ]),
+        closed: True,
+      ))
     }
   }
 }

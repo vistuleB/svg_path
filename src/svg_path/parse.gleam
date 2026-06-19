@@ -575,7 +575,7 @@ fn parse_close(
       case svg_path.start(state.subpath) {
         Error(_) -> parse_tokens(tokens, State(..state, active: False))
         Ok(start) -> {
-          case svg_path.force_close(state.subpath) {
+          case svg_path.close_with(state.subpath, join: svg_path.Bridge) {
             Error(error) -> Error(Core(error))
             Ok(subpath) -> {
               parse_tokens(

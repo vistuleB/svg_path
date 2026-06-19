@@ -508,7 +508,7 @@ fn result_try_force_close(
   result_subpath: Result(svg_path.Subpath, svg_path.Error),
 ) -> Result(svg_path.Subpath, svg_path.Error) {
   case result_subpath {
-    Ok(subpath) -> svg_path.force_close(subpath)
+    Ok(subpath) -> svg_path.close_with(subpath, join: svg_path.Bridge)
     Error(error) -> Error(error)
   }
 }
