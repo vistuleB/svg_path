@@ -95,6 +95,14 @@ pub fn to_mat3f_converts_to_affine_matrix_test() {
   assert matrix == mat3f.new(2.0, 3.0, 0.0, 5.0, 7.0, 0.0, 11.0, 13.0, 1.0)
 }
 
+pub fn to_tuple_exposes_svg_matrix_values_test() {
+  let values =
+    transform.matrix(a: 2.0, b: 3.0, c: 5.0, d: 7.0, e: 11.0, f: 13.0)
+    |> transform.to_tuple
+
+  assert values == #(2.0, 3.0, 5.0, 7.0, 11.0, 13.0)
+}
+
 pub fn from_mat3f_rejects_non_affine_matrix_test() {
   let matrix = mat3f.new(2.0, 3.0, 0.1, 5.0, 7.0, 0.0, 11.0, 13.0, 1.0)
 

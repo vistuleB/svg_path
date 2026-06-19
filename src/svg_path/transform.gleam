@@ -119,6 +119,19 @@ pub fn to_mat3f(transform: Matrix) -> mat3f.Mat3f {
   )
 }
 
+pub fn to_tuple(
+  transform: Matrix,
+) -> #(Float, Float, Float, Float, Float, Float) {
+  #(
+    transform.a,
+    transform.b,
+    transform.c,
+    transform.d,
+    transform.e,
+    transform.f,
+  )
+}
+
 pub fn point(point: svg_path.Point, by transform: Matrix) -> svg_path.Point {
   svg_path.point(
     transform.a *. point.x +. transform.c *. point.y +. transform.e,
