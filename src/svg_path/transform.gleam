@@ -105,6 +105,20 @@ pub fn from_mat3f(transform: mat3f.Mat3f) -> Result(Matrix, Error) {
   }
 }
 
+pub fn to_mat3f(transform: Matrix) -> mat3f.Mat3f {
+  mat3f.new(
+    transform.a,
+    transform.b,
+    0.0,
+    transform.c,
+    transform.d,
+    0.0,
+    transform.e,
+    transform.f,
+    1.0,
+  )
+}
+
 pub fn point(point: svg_path.Point, by transform: Matrix) -> svg_path.Point {
   svg_path.point(
     transform.a *. point.x +. transform.c *. point.y +. transform.e,

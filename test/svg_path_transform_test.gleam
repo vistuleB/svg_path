@@ -87,6 +87,14 @@ pub fn from_mat3f_converts_affine_matrix_test() {
   assert transform.point(point, by: matrix) == svg_path.point(30.0, 40.0)
 }
 
+pub fn to_mat3f_converts_to_affine_matrix_test() {
+  let matrix =
+    transform.matrix(a: 2.0, b: 3.0, c: 5.0, d: 7.0, e: 11.0, f: 13.0)
+    |> transform.to_mat3f
+
+  assert matrix == mat3f.new(2.0, 3.0, 0.0, 5.0, 7.0, 0.0, 11.0, 13.0, 1.0)
+}
+
 pub fn from_mat3f_rejects_non_affine_matrix_test() {
   let matrix = mat3f.new(2.0, 3.0, 0.1, 5.0, 7.0, 0.0, 11.0, 13.0, 1.0)
 
