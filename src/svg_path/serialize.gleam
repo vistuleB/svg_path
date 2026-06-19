@@ -11,6 +11,7 @@ pub type Options {
     fixed_decimals: Bool,
     relative: Bool,
     minimize_whitespace: Bool,
+    compact_commands: Bool,
   )
 }
 
@@ -20,6 +21,7 @@ pub fn default_options() -> Options {
     fixed_decimals: False,
     relative: False,
     minimize_whitespace: False,
+    compact_commands: False,
   )
 }
 
@@ -29,6 +31,7 @@ pub fn decimal_options(decimal_places: Int) -> Options {
     fixed_decimals: False,
     relative: False,
     minimize_whitespace: False,
+    compact_commands: False,
   )
 }
 
@@ -38,6 +41,7 @@ pub fn fixed_decimal_options(decimal_places: Int) -> Options {
     fixed_decimals: True,
     relative: False,
     minimize_whitespace: False,
+    compact_commands: False,
   )
 }
 
@@ -47,6 +51,7 @@ pub fn relative_options() -> Options {
     fixed_decimals: False,
     relative: True,
     minimize_whitespace: False,
+    compact_commands: False,
   )
 }
 
@@ -56,6 +61,7 @@ pub fn relative_decimal_options(decimal_places: Int) -> Options {
     fixed_decimals: False,
     relative: True,
     minimize_whitespace: False,
+    compact_commands: False,
   )
 }
 
@@ -65,11 +71,16 @@ pub fn relative_fixed_decimal_options(decimal_places: Int) -> Options {
     fixed_decimals: True,
     relative: True,
     minimize_whitespace: False,
+    compact_commands: False,
   )
 }
 
 pub fn minimize_whitespace(options: Options) -> Options {
   Options(..options, minimize_whitespace: True)
+}
+
+pub fn compact_commands(options: Options) -> Options {
+  Options(..options, compact_commands: True)
 }
 
 pub fn path(path: svg_path.Path) -> String {
@@ -391,7 +402,65 @@ fn command_argument_separator(options: Options) -> String {
 }
 
 fn join_commands(commands: List(String), options: Options) -> String {
-  string.join(commands, command_separator(options))
+  case options.compact_commands {
+    False -> string.join(commands, command_separator(options))
+    True -> {
+      commands
+      |> compact_repeated_commands(previous: "", options:)
+      |> string.join(command_separator(options))
+    }
+  }
+}
+
+fn compact_repeated_commands(
+  commands: List(String),
+  previous previous: String,
+  options options: Options,
+) -> List(String) {
+  case commands {
+    [] -> []
+    [command, ..rest] -> {
+      let current = command_name(command)
+      let compacted = case current == previous && can_repeat_command(current) {
+        True -> compacted_command_arguments(command, options)
+        False -> command
+      }
+
+      [
+        compacted,
+        ..compact_repeated_commands(rest, previous: current, options:)
+      ]
+    }
+  }
+}
+
+fn command_name(command: String) -> String {
+  case string.to_graphemes(command) {
+    [name, ..] -> name
+    [] -> ""
+  }
+}
+
+fn command_arguments(command: String) -> String {
+  command
+  |> string.drop_start(up_to: 1)
+  |> string.trim_start
+}
+
+fn compacted_command_arguments(command: String, options: Options) -> String {
+  let arguments = command_arguments(command)
+
+  case options.minimize_whitespace {
+    True -> " " <> arguments
+    False -> arguments
+  }
+}
+
+fn can_repeat_command(command: String) -> Bool {
+  list.contains(
+    ["L", "l", "H", "h", "V", "v", "Q", "q", "C", "c", "A", "a"],
+    command,
+  )
 }
 
 fn command_separator(options: Options) -> String {

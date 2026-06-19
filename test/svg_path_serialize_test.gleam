@@ -149,6 +149,100 @@ pub fn minimize_whitespace_removes_command_spacing_test() {
     == "M0 0H10V20"
 }
 
+pub fn compact_commands_omits_repeated_line_commands_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 10.0)
+  let c = svg_path.point(20.0, 20.0)
+  let d = svg_path.point(30.0, 30.0)
+  let assert Ok(subpath) =
+    svg_path.subpath([
+      svg_path.line(start: a, end: b),
+      svg_path.line(start: b, end: c),
+      svg_path.line(start: c, end: d),
+    ])
+
+  assert serialize.subpath_with_options(
+      subpath,
+      options: serialize.default_options() |> serialize.compact_commands,
+    )
+    == "M 0 0 L 10 10 20 20 30 30"
+}
+
+pub fn compact_commands_omits_repeated_h_and_v_commands_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(20.0, 0.0)
+  let d = svg_path.point(20.0, 10.0)
+  let e = svg_path.point(20.0, 20.0)
+  let assert Ok(subpath) =
+    svg_path.subpath([
+      svg_path.line(start: a, end: b),
+      svg_path.line(start: b, end: c),
+      svg_path.line(start: c, end: d),
+      svg_path.line(start: d, end: e),
+    ])
+
+  assert serialize.subpath_with_options(
+      subpath,
+      options: serialize.default_options() |> serialize.compact_commands,
+    )
+    == "M 0 0 H 10 20 V 10 20"
+}
+
+pub fn compact_commands_omits_repeated_curve_commands_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(20.0, 10.0)
+  let d = svg_path.point(30.0, 0.0)
+  let e = svg_path.point(40.0, 10.0)
+  let f = svg_path.point(50.0, 0.0)
+  let assert Ok(subpath) =
+    svg_path.subpath([
+      svg_path.quadratic_bezier(start: a, control: b, end: c),
+      svg_path.quadratic_bezier(start: c, control: d, end: e),
+      svg_path.cubic_bezier(start: e, control1: d, control2: b, end: f),
+      svg_path.cubic_bezier(start: f, control1: b, control2: d, end: a),
+    ])
+
+  assert serialize.subpath_with_options(
+      subpath,
+      options: serialize.default_options() |> serialize.compact_commands,
+    )
+    == "M 0 0 Q 10 0 20 10 30 0 40 10 C 30 0 10 0 50 0 10 0 30 0 0 0"
+}
+
+pub fn compact_commands_omits_repeated_arc_commands_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(20.0, 0.0)
+  let radius = svg_path.point(5.0, 5.0)
+  let assert Ok(subpath) =
+    svg_path.subpath([
+      svg_path.arc(
+        start: a,
+        radius:,
+        x_axis_rotation: 0.0,
+        large_arc: False,
+        sweep: True,
+        end: b,
+      ),
+      svg_path.arc(
+        start: b,
+        radius:,
+        x_axis_rotation: 0.0,
+        large_arc: False,
+        sweep: True,
+        end: c,
+      ),
+    ])
+
+  assert serialize.subpath_with_options(
+      subpath,
+      options: serialize.default_options() |> serialize.compact_commands,
+    )
+    == "M 0 0 A 5 5 0 0 1 10 0 5 5 0 0 1 20 0"
+}
+
 pub fn relative_options_use_relative_line_commands_test() {
   let a = svg_path.point(10.0, 20.0)
   let b = svg_path.point(13.0, 18.0)
@@ -216,6 +310,43 @@ pub fn relative_minimize_whitespace_removes_command_spacing_test() {
         |> serialize.minimize_whitespace,
     )
     == "m10 20l3 -2"
+}
+
+pub fn relative_compact_commands_omits_repeated_commands_test() {
+  let a = svg_path.point(10.0, 20.0)
+  let b = svg_path.point(13.0, 18.0)
+  let c = svg_path.point(16.0, 16.0)
+  let assert Ok(subpath) =
+    svg_path.subpath([
+      svg_path.line(start: a, end: b),
+      svg_path.line(start: b, end: c),
+    ])
+
+  assert serialize.subpath_with_options(
+      subpath,
+      options: serialize.relative_decimal_options(0)
+        |> serialize.compact_commands,
+    )
+    == "m 10 20 l 3 -2 3 -2"
+}
+
+pub fn minimized_compact_commands_omits_repeated_commands_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 10.0)
+  let c = svg_path.point(20.0, 20.0)
+  let assert Ok(subpath) =
+    svg_path.subpath([
+      svg_path.line(start: a, end: b),
+      svg_path.line(start: b, end: c),
+    ])
+
+  assert serialize.subpath_with_options(
+      subpath,
+      options: serialize.decimal_options(0)
+        |> serialize.minimize_whitespace
+        |> serialize.compact_commands,
+    )
+    == "M0 0L10 10 20 20"
 }
 
 pub fn relative_options_make_moves_relative_between_subpaths_test() {
