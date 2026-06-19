@@ -1,5 +1,4 @@
 import gleeunit
-import matrix/mat3f
 import svg_path
 import svg_path/serialize
 import svg_path/transform
@@ -108,22 +107,6 @@ pub fn direct_subpath_and_path_helpers_delegate_to_matrices_test() {
   assert serialize.path(scaled_path) == "M 0 0 H 10"
 }
 
-pub fn from_mat3f_converts_affine_matrix_test() {
-  let point = svg_path.point(2.0, 3.0)
-  let matrix = mat3f.new(2.0, 3.0, 0.0, 5.0, 7.0, 0.0, 11.0, 13.0, 1.0)
-  let assert Ok(matrix) = transform.from_mat3f(matrix)
-
-  assert transform.point(point, by: matrix) == svg_path.point(30.0, 40.0)
-}
-
-pub fn to_mat3f_converts_to_affine_matrix_test() {
-  let matrix =
-    transform.matrix(a: 2.0, b: 3.0, c: 5.0, d: 7.0, e: 11.0, f: 13.0)
-    |> transform.to_mat3f
-
-  assert matrix == mat3f.new(2.0, 3.0, 0.0, 5.0, 7.0, 0.0, 11.0, 13.0, 1.0)
-}
-
 pub fn to_tuple_exposes_svg_matrix_values_test() {
   let values =
     transform.matrix(a: 2.0, b: 3.0, c: 5.0, d: 7.0, e: 11.0, f: 13.0)
@@ -136,18 +119,6 @@ pub fn from_tuple_creates_matrix_from_svg_matrix_values_test() {
   let matrix = transform.from_tuple(#(2.0, 3.0, 5.0, 7.0, 11.0, 13.0))
 
   assert transform.to_tuple(matrix) == #(2.0, 3.0, 5.0, 7.0, 11.0, 13.0)
-}
-
-pub fn from_mat3f_rejects_non_affine_matrix_test() {
-  let matrix = mat3f.new(2.0, 3.0, 0.1, 5.0, 7.0, 0.0, 11.0, 13.0, 1.0)
-
-  assert transform.from_mat3f(matrix) == Error(transform.NonAffineMatrix)
-}
-
-pub fn from_mat3f_rejects_non_unit_homogeneous_scale_test() {
-  let matrix = mat3f.new(2.0, 3.0, 0.0, 5.0, 7.0, 0.0, 11.0, 13.0, 2.0)
-
-  assert transform.from_mat3f(matrix) == Error(transform.NonAffineMatrix)
 }
 
 pub fn line_transform_test() {

@@ -96,8 +96,7 @@ pub fn raw_transform_attribute() -> String {
 }
 ```
 
-Transform matrices can be inspected as SVG's six matrix values, or converted to
-and from `matrix_gleam`'s `mat3f` type.
+Transform matrices can be created from or inspected as SVG's six matrix values.
 
 ```gleam
 import svg_path/transform
@@ -105,6 +104,53 @@ import svg_path/transform
 pub fn inspect_transform() -> #(Float, Float, Float, Float, Float, Float) {
   transform.rotate(degrees: 30.0)
   |> transform.to_tuple
+}
+```
+
+## Converting matrices from `matrix_gleam`
+
+`svg_path` does not depend on `matrix_gleam`, but the tuple helpers make the
+conversion small if your application uses both packages.
+
+```gleam
+import matrix/mat3f
+import svg_path/transform
+
+pub fn to_mat3f(matrix: transform.Matrix) -> mat3f.Mat3f {
+  let #(a, b, c, d, e, f) = transform.to_tuple(matrix)
+
+  mat3f.new(
+    a, b, 0.0,
+    c, d, 0.0,
+    e, f, 1.0,
+  )
+}
+```
+
+```gleam
+import matrix/mat3f
+import svg_path/transform
+
+pub type MatrixConversionError {
+  NonAffineMatrix
+}
+
+pub fn from_mat3f(
+  matrix: mat3f.Mat3f,
+) -> Result(transform.Matrix, MatrixConversionError) {
+  case matrix.x.z == 0.0 && matrix.y.z == 0.0 && matrix.z.z == 1.0 {
+    False -> Error(NonAffineMatrix)
+    True -> {
+      Ok(transform.from_tuple(#(
+        matrix.x.x,
+        matrix.x.y,
+        matrix.y.x,
+        matrix.y.y,
+        matrix.z.x,
+        matrix.z.y,
+      )))
+    }
+  }
 }
 ```
 

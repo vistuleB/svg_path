@@ -7,7 +7,6 @@
 
 import gleam/list
 import gleam_community/maths
-import matrix/mat3f
 import svg_path
 import svg_path/ellipse
 
@@ -26,9 +25,6 @@ pub type Error {
 
   /// A matrix contains non-finite values.
   InvalidMatrix
-
-  /// A `mat3f` value could not be represented as an SVG affine matrix.
-  NonAffineMatrix
 
   /// An error from the core path model.
   Core(svg_path.Error)
@@ -127,46 +123,6 @@ pub fn skew_y(degrees degrees: Float) -> Matrix {
     d: 1.0,
     e: 0.0,
     f: 0.0,
-  )
-}
-
-/// Convert a `matrix_gleam` `mat3f` value to an SVG affine matrix.
-///
-/// Returns `NonAffineMatrix` unless the third column is `(0, 0, 1)`.
-pub fn from_mat3f(transform: mat3f.Mat3f) -> Result(Matrix, Error) {
-  case transform.x.z == 0.0 && transform.y.z == 0.0 && transform.z.z == 1.0 {
-    False -> Error(NonAffineMatrix)
-    True -> {
-      let transform =
-        matrix(
-          a: transform.x.x,
-          b: transform.x.y,
-          c: transform.y.x,
-          d: transform.y.y,
-          e: transform.z.x,
-          f: transform.z.y,
-        )
-
-      case validate_matrix(transform) {
-        Ok(Nil) -> Ok(transform)
-        Error(error) -> Error(error)
-      }
-    }
-  }
-}
-
-/// Convert an SVG affine matrix to a `matrix_gleam` `mat3f` value.
-pub fn to_mat3f(transform: Matrix) -> mat3f.Mat3f {
-  mat3f.new(
-    transform.a,
-    transform.b,
-    0.0,
-    transform.c,
-    transform.d,
-    0.0,
-    transform.e,
-    transform.f,
-    1.0,
   )
 }
 
