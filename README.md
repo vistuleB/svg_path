@@ -3,13 +3,12 @@
 [![Package Version](https://img.shields.io/hexpm/v/svg_path)](https://hex.pm/packages/svg_path)
 [![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/svg_path/)
 
-`svg_path` parses, represents, transforms, serializes, and inspects SVG path
-data in Gleam.
+`svg_path` is a utility library for parsing, serializing, inspecting, and
+performing simple geometric manipulations on SVG paths and transforms.
 
-The package offers several knobs to fine-tune the details of path and SVG
-transform serialization. It aims to support the construction and manipulation
-of valid SVG paths from noisy data through parser normalization and explicit
-endpoint reconciliation policies.
+The package is especially mindful of providing a practical and versatile API for the
+construction of valid SVG paths from noisy data. It also offers several knobs to
+fine-tune the details of path and SVG transform serialization.
 
 ```sh
 gleam add svg_path@0
@@ -54,10 +53,28 @@ pub fn prepare_for_arc_averse_consumer(
 
 ## Core Model
 
-A `Path` is a list of `Subpath` values. A `Subpath` is a continuous list of
-segments plus a closed/open flag.
+The root `svg_path` module models SVG path data with four main types: `Point`,
+`Segment`, `Subpath`, and `Path`.
 
-The public segment variants are:
+### Points
+
+A `Point` is borrowed from the [`vec`](https://hex.pm/packages/vec) package:
+
+```gleam
+pub type Point =
+  Vec2(Float)
+```
+
+Use `svg_path.point` to create points without importing `vec` directly:
+
+```gleam
+svg_path.point(10.0, 20.0)
+```
+
+### Segments
+
+A `Segment` is one drawing instruction with explicit start and end points.
+These are the public segment variants:
 
 ```gleam
 svg_path.Line(start:, end:)
@@ -66,59 +83,116 @@ svg_path.CubicBezier(start:, control1:, control2:, end:)
 svg_path.Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:)
 ```
 
-`Subpath` is opaque. Use constructors and editing helpers so the library can
-maintain the continuity invariant: every segment after the first must start at
-the previous segment's end point.
+The lower-case helper functions construct the same values with ordinary
+function-call syntax:
 
 ```gleam
+svg_path.line(start:, end:)
+svg_path.quadratic_bezier(start:, control:, end:)
+svg_path.cubic_bezier(start:, control1:, control2:, end:)
+svg_path.arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:)
+```
+
+### Subpaths
+
+A `Subpath` is a continuous list of segments plus a closed/open flag. Its
+constructor is opaque; internally, the type is shaped like this:
+
+```gleam
+pub opaque type Subpath {
+  Subpath(segments: List(Segment), closed: Bool)
+}
+```
+
+The `segments` list must be continuous: every segment after the first must
+start at the previous segment's end point. The `closed` field records whether
+the subpath is topologically closed. A closed subpath must end where it starts,
+which is an invariant that the library maintains by keeping the type opaque,
+but a geometrically closed path need not be `closed`. The serialization of a
+`Subpath` ends in `Z` (or `z` if relative motions are used) if and only if
+`closed` is `True`.
+
+Use `svg_path.subpath` to construct an open subpath from a list of already
+continuous segments, and `svg_path.set_closed` to change whether a subpath is
+topologically closed:
+
+```gleam
+svg_path.subpath(segments)
+svg_path.set_closed(subpath, closed: Bool)
+```
+
+Construction succeeds when the segment endpoints meet. In this example, the
+segments return to their starting point geometrically, but the subpath becomes
+topologically closed only after `set_closed`:
+
+```gleam
+import gleam/result
 import svg_path
 
-pub fn triangle() -> svg_path.Subpath {
+pub fn closed_triangle() -> Result(svg_path.Subpath, svg_path.Error) {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)
   let c = svg_path.point(5.0, 10.0)
 
-  svg_path.assert_subpath([
+  use subpath <- result.try(svg_path.subpath([
     svg_path.line(start: a, end: b),
     svg_path.line(start: b, end: c),
     svg_path.line(start: c, end: a),
-  ])
-  |> svg_path.assert_set_closed(closed: True)
+  ]))
+
+  svg_path.set_closed(subpath, closed: True)
+  // Ok(subpath)
 }
 ```
 
-Use the `Result`-returning functions when invalid path construction is
-recoverable:
+Construction returns an error when the segment endpoints do not meet. Closing a
+subpath with `set_closed(subpath, closed: True)` can fail for the same reason if
+the final segment endpoint does not meet the first segment start point:
 
 ```gleam
-svg_path.subpath(segments)
-svg_path.set_closed(subpath, closed: True)
-svg_path.set_closed(subpath, closed: False)
-svg_path.set_closed(subpath, closed:)
-svg_path.append_segment(subpath, segment)
-svg_path.concat(first_subpath, second_subpath)
-svg_path.splice(subpath, start:, delete:, insert:)
+import svg_path
 
-svg_path.subpath_with(segments, join: svg_path.Wiggle)
-svg_path.set_closed_with(subpath, closed: True, join: svg_path.Bridge)
-svg_path.concat_with(first_subpath, second_subpath, join: svg_path.WiggleThenBridge)
-svg_path.splice_with(subpath, start:, delete:, insert:, join: svg_path.Wiggle)
+pub fn discontinuous_corner() -> Result(svg_path.Subpath, svg_path.Error) {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(10.0, 10.0)
+  let d = svg_path.point(20.0, 10.0)
+
+  svg_path.subpath([
+    svg_path.line(start: a, end: b),
+    svg_path.line(start: c, end: d),
+  ])
+  // Error(...)
+}
 ```
 
-Use the `assert_` functions for hand-authored/static geometry where invalid
-continuity is a programmer error:
+### Paths
+
+A `Path` is a list of `Subpath` values:
 
 ```gleam
-svg_path.assert_subpath(segments)
-svg_path.assert_set_closed(subpath, closed: True)
-svg_path.assert_append_segment(subpath, segment)
-svg_path.assert_concat_with(first_subpath, second_subpath, join: svg_path.Bridge)
+pub type Path {
+  Path(subpaths: List(Subpath))
+}
 ```
 
-### Editing Subpaths
+You can use the public constructor directly, or the helper function with the
+same shape:
 
-The root module uses a `Join` option to control how construction and editing
-helpers reconcile segment endpoints:
+```gleam
+svg_path.Path(subpaths: [subpath])
+svg_path.path([subpath])
+```
+
+A `Path` may consist of an empty list of subpaths, and an open `Subpath` may
+consist of an empty list of segments, which is intentional. Empty paths and
+empty open subpaths serialize to the empty string. A closed `Subpath` with no
+segments is impossible to construct.
+
+## Ergonomics for Endpoint Reconciliation
+
+Helper functions in the root module let users employ a `Join` option to specify
+different types of error-recovery behavior for non-matching endpoints:
 
 ```gleam
 svg_path.Strict
@@ -128,38 +202,61 @@ svg_path.WiggleThenBridge
 ```
 
 `Strict` requires exact endpoint equality. `Wiggle` moves nearby endpoints
-together within the package's default wiggle tolerance. `Bridge` keeps existing
-endpoints in place and inserts a straight line segment when needed.
-`WiggleThenBridge` first tries `Wiggle`; if that fails, it falls back to
-`Bridge`.
+together within the package's default wiggle tolerance of `0.000000001`.
+`Bridge` keeps existing endpoints in place and inserts a straight line segment
+when needed. `WiggleThenBridge`, as the name implies, first tries `Wiggle`
+before falling back on `Bridge`.
 
-The ordinary helpers use `Strict`. They preserve your geometry and return
-`Discontinuous` when segment endpoints do not meet exactly.
+The behavior of option-free functions and constructors is `Join.Strict`. These
+include:
 
 ```gleam
 svg_path.subpath(segments)
 svg_path.append_segment(subpath, segment)
 svg_path.concat(first_subpath, second_subpath)
 svg_path.splice(subpath, start:, delete:, insert:)
-svg_path.set_closed(subpath, closed: True)
-svg_path.set_closed(subpath, closed: False)
-svg_path.set_closed(subpath, closed:)
+svg_path.set_closed(subpath, closed: Bool)
 ```
 
-`Discontinuous` includes the two segment indices, the expected point, the
-actual point, and the distance between them. This is often enough to tell
-whether upstream geometry missed by floating-point noise or by a real modeling
-mistake.
+These functions preserve `Segment` lists exactly while returning a
+`Discontinuous` error payload when segment endpoints fail to match up by exact
+floating point equality. The `Discontinuous` error payload names the index at
+which discontinuity occurs as well as the position and distance between the
+endpoints involved:
 
-Use `_with` variants when you want a non-strict endpoint policy:
+```gleam
+Discontinuous(
+  previous_index: Int,
+  next_index: Int,
+  expected: Point,
+  got: Point,
+  distance: Float,
+)
+```
+
+This is often enough to tell whether upstream geometry missed by floating-point
+noise or by a real modeling mistake.
+
+The `_with` variants of constructor and subpath-modifying functions enable the
+specification of a non-`Strict` endpoint policy:
 
 ```gleam
 svg_path.subpath_with(segments, join: svg_path.Wiggle)
 svg_path.append_segment_with(subpath, segment, join: svg_path.Bridge)
 svg_path.concat_with(first_subpath, second_subpath, join: svg_path.WiggleThenBridge)
 svg_path.splice_with(subpath, start:, delete:, insert:, join: svg_path.Wiggle)
-svg_path.set_closed_with(subpath, closed: True, join: svg_path.Bridge)
-svg_path.set_closed_with(subpath, closed:, join: svg_path.Wiggle)
+svg_path.set_closed_with(subpath, closed: Bool, join: svg_path.Bridge)
+```
+
+Use the `assert_` functions for hand-authored/static geometry where invalid
+continuity is a programmer error:
+
+```gleam
+svg_path.assert_subpath(segments)
+svg_path.assert_append_segment(subpath, segment)
+svg_path.assert_concat(first_subpath, second_subpath)
+svg_path.assert_splice(subpath, start:, delete:, insert:)
+svg_path.assert_set_closed(subpath, closed: Bool)
 ```
 
 ### Concatenating Subpaths
@@ -576,7 +673,7 @@ pub fn inspect_code(path: svg_path.Path) -> String {
 
 Example output:
 
-```gleam
+```text
 svg_path.path([
   svg_path.assert_subpath([
     svg_path.line(start: svg_path.point(0.0, 0.0), end: svg_path.point(12.0, 10.0))
