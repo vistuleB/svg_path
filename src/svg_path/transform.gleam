@@ -30,6 +30,17 @@ pub fn identity() -> Matrix {
   matrix(a: 1.0, b: 0.0, c: 0.0, d: 1.0, e: 0.0, f: 0.0)
 }
 
+pub fn compose(first first: Matrix, then second: Matrix) -> Matrix {
+  matrix(
+    a: second.a *. first.a +. second.c *. first.b,
+    b: second.b *. first.a +. second.d *. first.b,
+    c: second.a *. first.c +. second.c *. first.d,
+    d: second.b *. first.c +. second.d *. first.d,
+    e: second.a *. first.e +. second.c *. first.f +. second.e,
+    f: second.b *. first.e +. second.d *. first.f +. second.f,
+  )
+}
+
 pub fn translate(x x: Float, y y: Float) -> Matrix {
   matrix(a: 1.0, b: 0.0, c: 0.0, d: 1.0, e: x, f: y)
 }
