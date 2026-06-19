@@ -822,6 +822,96 @@ pub fn append_discontinuous_error_reports_segment_indices_test() {
     ))
 }
 
+pub fn join_combines_open_subpaths_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(20.0, 0.0)
+  let first = svg_path.assert_subpath([svg_path.line(start: a, end: b)])
+  let second = svg_path.assert_subpath([svg_path.line(start: b, end: c)])
+
+  let assert Ok(joined) = svg_path.join(first, second)
+
+  assert svg_path.segments(joined)
+    == [
+      svg_path.line(start: a, end: b),
+      svg_path.line(start: b, end: c),
+    ]
+}
+
+pub fn join_treats_empty_open_subpaths_as_identity_values_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let subpath = svg_path.assert_subpath([svg_path.line(start: a, end: b)])
+  let empty = svg_path.empty_subpath()
+
+  assert svg_path.join(empty, subpath) == Ok(subpath)
+  assert svg_path.join(subpath, empty) == Ok(subpath)
+  assert svg_path.join(empty, empty) == Ok(empty)
+}
+
+pub fn join_rejects_discontinuous_subpaths_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(20.0, 0.0)
+  let d = svg_path.point(30.0, 0.0)
+  let first = svg_path.assert_subpath([svg_path.line(start: a, end: b)])
+  let second = svg_path.assert_subpath([svg_path.line(start: c, end: d)])
+
+  assert svg_path.join(first, second)
+    == Error(svg_path.Discontinuous(
+      previous_index: 0,
+      next_index: 1,
+      expected: b,
+      got: c,
+      distance: 10.0,
+    ))
+}
+
+pub fn join_rejects_closed_inputs_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let open = svg_path.assert_subpath([svg_path.line(start: a, end: b)])
+  let closed =
+    svg_path.assert_subpath([
+      svg_path.line(start: a, end: b),
+      svg_path.line(start: b, end: a),
+    ])
+    |> svg_path.assert_close
+
+  assert svg_path.join(closed, open) == Error(svg_path.AlreadyClosed)
+  assert svg_path.join(open, closed) == Error(svg_path.AlreadyClosed)
+}
+
+pub fn wiggle_join_reconciles_tiny_endpoint_gap_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let near_b = svg_path.point(10.0000000001, 0.0)
+  let c = svg_path.point(20.0, 0.0)
+  let first = svg_path.assert_subpath([svg_path.line(start: a, end: b)])
+  let second = svg_path.assert_subpath([svg_path.line(start: near_b, end: c)])
+
+  let assert Ok(joined) = svg_path.wiggle_join(first, second)
+
+  assert svg_path.start(joined) == Ok(a)
+  assert svg_path.end(joined) == Ok(c)
+  assert continuous_segments(svg_path.segments(joined))
+}
+
+pub fn wiggle_join_rejects_closed_inputs_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let open = svg_path.assert_subpath([svg_path.line(start: a, end: b)])
+  let closed =
+    svg_path.assert_subpath([
+      svg_path.line(start: a, end: b),
+      svg_path.line(start: b, end: a),
+    ])
+    |> svg_path.assert_close
+
+  assert svg_path.wiggle_join(closed, open) == Error(svg_path.AlreadyClosed)
+  assert svg_path.wiggle_join(open, closed) == Error(svg_path.AlreadyClosed)
+}
+
 pub fn force_append_bridges_a_gap_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)
@@ -834,6 +924,39 @@ pub fn force_append_bridges_a_gap_test() {
 
   assert subpath |> svg_path.segments |> list.length == 3
   assert svg_path.end(subpath) == Ok(d)
+}
+
+pub fn force_join_bridges_a_gap_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(20.0, 0.0)
+  let d = svg_path.point(30.0, 0.0)
+  let first = svg_path.assert_subpath([svg_path.line(start: a, end: b)])
+  let second = svg_path.assert_subpath([svg_path.line(start: c, end: d)])
+
+  let assert Ok(joined) = svg_path.force_join(first, second)
+
+  assert svg_path.segments(joined)
+    == [
+      svg_path.line(start: a, end: b),
+      svg_path.line(start: b, end: c),
+      svg_path.line(start: c, end: d),
+    ]
+}
+
+pub fn force_join_rejects_closed_inputs_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let open = svg_path.assert_subpath([svg_path.line(start: a, end: b)])
+  let closed =
+    svg_path.assert_subpath([
+      svg_path.line(start: a, end: b),
+      svg_path.line(start: b, end: a),
+    ])
+    |> svg_path.assert_close
+
+  assert svg_path.force_join(closed, open) == Error(svg_path.AlreadyClosed)
+  assert svg_path.force_join(open, closed) == Error(svg_path.AlreadyClosed)
 }
 
 pub fn force_close_appends_a_final_line_test() {

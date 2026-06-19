@@ -98,10 +98,13 @@ svg_path.set_closed(subpath, closed:)
 svg_path.force_close(subpath)
 svg_path.append(subpath, segment)
 svg_path.force_append(subpath, segment)
+svg_path.join(first_subpath, second_subpath)
+svg_path.force_join(first_subpath, second_subpath)
 svg_path.splice(subpath, start:, delete:, insert:)
 svg_path.wiggle_subpath(segments)
 svg_path.wiggle_close(subpath)
 svg_path.wiggle_set_closed(subpath, closed:)
+svg_path.wiggle_join(first_subpath, second_subpath)
 ```
 
 Use the `assert_` functions for hand-authored/static geometry where invalid
@@ -122,6 +125,7 @@ Strict helpers preserve the model without changing your geometry. They return
 ```gleam
 svg_path.subpath(segments)
 svg_path.append(subpath, segment)
+svg_path.join(first_subpath, second_subpath)
 svg_path.splice(subpath, start:, delete:, insert:)
 svg_path.close(subpath)
 svg_path.open(subpath)
@@ -142,6 +146,7 @@ svg_path.wiggle_subpath(segments)
 svg_path.wiggle_splice(subpath, start:, delete:, insert:)
 svg_path.wiggle_close(subpath)
 svg_path.wiggle_set_closed(subpath, closed:)
+svg_path.wiggle_join(first_subpath, second_subpath)
 ```
 
 Forceful helpers insert straight line segments when needed. They are useful
@@ -150,8 +155,26 @@ coincide.
 
 ```gleam
 svg_path.force_append(subpath, segment)
+svg_path.force_join(first_subpath, second_subpath)
 svg_path.force_close(subpath)
 ```
+
+### Joining Subpaths
+
+`join` combines two open subpaths into one open subpath. The end of the first
+subpath must exactly equal the start of the second subpath. Empty open subpaths
+act as identity values.
+
+```gleam
+svg_path.join(first_subpath, second_subpath)
+```
+
+Closed subpaths are rejected rather than implicitly opened. This keeps
+closedness as explicit topology: if you want to discard it, call `open` first.
+
+Use `wiggle_join` when the two endpoints should coincide but may differ by
+small floating-point noise. Use `force_join` when a straight bridging line is
+intended geometry.
 
 ### Splicing Subpaths
 

@@ -419,6 +419,17 @@ pub fn append(subpath: Subpath, segment: Segment) -> Result(Subpath, Error) {
   }
 }
 
+/// Join two open subpaths.
+///
+/// The first subpath's end point must exactly match the second subpath's start
+/// point. Empty open subpaths are treated as identity values.
+pub fn join(first: Subpath, second: Subpath) -> Result(Subpath, Error) {
+  case first.closed || second.closed {
+    True -> Error(AlreadyClosed)
+    False -> validate_joined_subpath(first.segments, second.segments)
+  }
+}
+
 /// Append a segment to an open subpath, inserting a connecting line if needed.
 ///
 /// If the subpath is empty, this behaves like `append`. If the new segment does
@@ -451,6 +462,18 @@ pub fn force_append(
         Error(error) -> Error(error)
       }
     }
+  }
+}
+
+/// Join two open subpaths, inserting a connecting line if needed.
+///
+/// Empty open subpaths are treated as identity values. If both subpaths are
+/// non-empty and their endpoints do not meet, a straight line segment is
+/// inserted between them.
+pub fn force_join(first: Subpath, second: Subpath) -> Result(Subpath, Error) {
+  case first.closed || second.closed {
+    True -> Error(AlreadyClosed)
+    False -> force_join_open_subpaths(first, second)
   }
 }
 
@@ -510,6 +533,18 @@ pub fn force_close(subpath: Subpath) -> Result(Subpath, Error) {
         }
       }
     }
+  }
+}
+
+/// Join two open subpaths, reconciling tiny endpoint gaps.
+///
+/// This has the same closed-input and empty-input behavior as `join`, but uses
+/// the default wiggle tolerance when the first subpath's end point and the
+/// second subpath's start point are nearly equal.
+pub fn wiggle_join(first: Subpath, second: Subpath) -> Result(Subpath, Error) {
+  case first.closed || second.closed {
+    True -> Error(AlreadyClosed)
+    False -> wiggle_subpath(list.append(first.segments, second.segments))
   }
 }
 
@@ -657,6 +692,45 @@ fn validate_wiggled_spliced_subpath(
       case closed {
         False -> Ok(subpath)
         True -> wiggle_close(subpath)
+      }
+    }
+  }
+}
+
+fn validate_joined_subpath(
+  first_segments: List(Segment),
+  second_segments: List(Segment),
+) -> Result(Subpath, Error) {
+  let segments = list.append(first_segments, second_segments)
+
+  case continuous(segments) {
+    Ok(Nil) -> Ok(Subpath(segments:, closed: False))
+    Error(error) -> Error(error)
+  }
+}
+
+fn force_join_open_subpaths(
+  first: Subpath,
+  second: Subpath,
+) -> Result(Subpath, Error) {
+  case first.segments, second.segments {
+    [], _ -> Ok(second)
+    _, [] -> Ok(first)
+    _, _ -> {
+      let assert Ok(first_end) = end(first)
+      let assert Ok(second_start) = start(second)
+
+      case first_end == second_start {
+        True -> validate_joined_subpath(first.segments, second.segments)
+        False -> {
+          Ok(Subpath(
+            segments: list.append(first.segments, [
+              Line(start: first_end, end: second_start),
+              ..second.segments
+            ]),
+            closed: False,
+          ))
+        }
       }
     }
   }
