@@ -376,7 +376,7 @@ line back to the subpath start, the parser inserts that line and marks the
 subpath closed. If the subpath is already back at its start, no extra line is
 inserted; the subpath is just marked closed.
 
-## Serialization
+## Path Serialization
 
 `svg_path/serialize` emits canonical SVG path data.
 
