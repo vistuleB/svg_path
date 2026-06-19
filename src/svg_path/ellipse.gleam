@@ -1,7 +1,7 @@
 //// Lower-level helpers for transforming SVG elliptical arcs.
 ////
 //// Most users should use `svg_path/transform` instead. This module exposes the
-//// ellipse-specific machinery used to transform arc axes and represent arcs
+//// ellipse-specific math helpers used to transform arc axes and represent arcs
 //// that collapse under affine transforms.
 
 import gleam/float
@@ -21,9 +21,10 @@ type ArcParameters {
   )
 }
 
-/// A lower-level affine matrix used by the ellipse helpers.
+/// Equivalent of `transform.Matrix`, redefined by the ellipse module to avoid
+/// a circular dependency.
 ///
-/// This has the same six-value layout as SVG `matrix(a b c d e f)`.
+/// Has the same six-value layout as SVG `matrix(a b c d e f)`.
 pub opaque type Affine {
   Affine(a: Float, b: Float, c: Float, d: Float, e: Float, f: Float)
 }
