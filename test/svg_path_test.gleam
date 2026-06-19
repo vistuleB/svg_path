@@ -232,6 +232,192 @@ pub fn clean_subpath_preserves_closed_state_test() {
     ]
 }
 
+pub fn splice_replaces_segment_range_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(20.0, 0.0)
+  let d = svg_path.point(30.0, 0.0)
+  let e = svg_path.point(40.0, 0.0)
+  let first = svg_path.line(start: a, end: b)
+  let replacement = svg_path.line(start: b, end: d)
+  let last = svg_path.line(start: d, end: e)
+  let subpath =
+    svg_path.assert_subpath([
+      first,
+      svg_path.line(start: b, end: c),
+      svg_path.line(start: c, end: d),
+      last,
+    ])
+
+  let assert Ok(spliced) =
+    svg_path.splice(subpath, start: 1, delete: 2, insert: [replacement])
+
+  assert svg_path.segments(spliced) == [first, replacement, last]
+}
+
+pub fn splice_inserts_without_deleting_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(20.0, 0.0)
+  let first = svg_path.line(start: a, end: b)
+  let inserted = svg_path.line(start: b, end: c)
+  let subpath = svg_path.assert_subpath([first])
+
+  let assert Ok(spliced) =
+    svg_path.splice(subpath, start: 1, delete: 0, insert: [inserted])
+
+  assert svg_path.segments(spliced) == [first, inserted]
+}
+
+pub fn splice_deletes_through_end_when_delete_is_too_large_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(20.0, 0.0)
+  let first = svg_path.line(start: a, end: b)
+  let subpath =
+    svg_path.assert_subpath([
+      first,
+      svg_path.line(start: b, end: c),
+    ])
+
+  let assert Ok(spliced) =
+    svg_path.splice(subpath, start: 1, delete: 99, insert: [])
+
+  assert svg_path.segments(spliced) == [first]
+}
+
+pub fn splice_rejects_invalid_bounds_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let subpath = svg_path.assert_subpath([svg_path.line(start: a, end: b)])
+
+  assert svg_path.splice(subpath, start: -1, delete: 0, insert: [])
+    == Error(svg_path.InvalidSplice(start: -1, delete: 0, length: 1))
+  assert svg_path.splice(subpath, start: 2, delete: 0, insert: [])
+    == Error(svg_path.InvalidSplice(start: 2, delete: 0, length: 1))
+  assert svg_path.splice(subpath, start: 0, delete: -1, insert: [])
+    == Error(svg_path.InvalidSplice(start: 0, delete: -1, length: 1))
+}
+
+pub fn splice_rejects_discontinuous_result_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(20.0, 0.0)
+  let d = svg_path.point(30.0, 0.0)
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.line(start: a, end: b),
+      svg_path.line(start: b, end: c),
+    ])
+
+  assert svg_path.splice(subpath, start: 1, delete: 1, insert: [
+      svg_path.line(start: d, end: c),
+    ])
+    == Error(svg_path.Discontinuous(
+      previous_index: 0,
+      next_index: 1,
+      expected: b,
+      got: d,
+      distance: 20.0,
+    ))
+}
+
+pub fn wiggle_splice_reconciles_tiny_endpoint_gaps_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let near_b = svg_path.point(10.0000000001, 0.0)
+  let c = svg_path.point(20.0, 0.0)
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.line(start: a, end: b),
+      svg_path.line(start: b, end: c),
+    ])
+
+  let assert Error(svg_path.Discontinuous(
+    previous_index: 0,
+    next_index: 1,
+    expected:,
+    got:,
+    distance:,
+  )) =
+    svg_path.splice(subpath, start: 1, delete: 1, insert: [
+      svg_path.line(start: near_b, end: c),
+    ])
+  assert expected == b
+  assert got == near_b
+  assert distance <. 0.000000001
+
+  let assert Ok(spliced) =
+    svg_path.wiggle_splice(subpath, start: 1, delete: 1, insert: [
+      svg_path.line(start: near_b, end: c),
+    ])
+
+  assert svg_path.end(spliced) == Ok(c)
+  assert continuous_segments(svg_path.segments(spliced))
+}
+
+pub fn wiggle_splice_preserves_closed_state_with_tiny_endpoint_gap_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(20.0, 0.0)
+  let near_a = svg_path.point(0.0000000001, 0.0)
+  let closed =
+    svg_path.assert_subpath([
+      svg_path.line(start: a, end: b),
+      svg_path.line(start: b, end: c),
+      svg_path.line(start: c, end: a),
+    ])
+    |> svg_path.assert_close
+
+  let assert Ok(spliced) =
+    svg_path.wiggle_splice(closed, start: 2, delete: 1, insert: [
+      svg_path.line(start: c, end: near_a),
+    ])
+
+  assert svg_path.is_closed(spliced)
+  assert svg_path.start(spliced) == svg_path.end(spliced)
+}
+
+pub fn wiggle_splice_reuses_splice_bounds_errors_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let subpath = svg_path.assert_subpath([svg_path.line(start: a, end: b)])
+
+  assert svg_path.wiggle_splice(subpath, start: 2, delete: 0, insert: [])
+    == Error(svg_path.InvalidSplice(start: 2, delete: 0, length: 1))
+}
+
+pub fn splice_preserves_closed_state_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(20.0, 0.0)
+  let closed =
+    svg_path.assert_subpath([
+      svg_path.line(start: a, end: b),
+      svg_path.line(start: b, end: c),
+      svg_path.line(start: c, end: a),
+    ])
+    |> svg_path.assert_close
+  let replacement = svg_path.line(start: b, end: c)
+
+  let assert Ok(spliced) =
+    svg_path.splice(closed, start: 1, delete: 1, insert: [replacement])
+
+  assert svg_path.is_closed(spliced)
+}
+
+pub fn splice_rejects_closed_empty_result_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let closed =
+    svg_path.assert_subpath([
+      svg_path.line(start: a, end: a),
+    ])
+    |> svg_path.assert_close
+
+  assert svg_path.splice(closed, start: 0, delete: 1, insert: [])
+    == Error(svg_path.ClosedEmptySubpath)
+}
+
 pub fn segment_arcs_to_bezier_preserves_lines_test() {
   let start = svg_path.point(0.0, 0.0)
   let end = svg_path.point(9.0, 0.0)

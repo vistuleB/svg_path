@@ -70,6 +70,7 @@ svg_path.close(subpath)
 svg_path.force_close(subpath)
 svg_path.append(subpath, segment)
 svg_path.force_append(subpath, segment)
+svg_path.splice(subpath, start:, delete:, insert:)
 svg_path.wiggle_subpath(segments)
 svg_path.wiggle_close(subpath)
 ```
@@ -81,6 +82,25 @@ continuity is a programmer error:
 svg_path.assert_subpath(segments)
 svg_path.assert_close(subpath)
 ```
+
+### Splicing Subpaths
+
+`splice` replaces a range of segments while preserving the subpath invariant.
+`start` is a zero-based segment index, `delete` is the number of segments to
+remove, and `insert` is the replacement list.
+
+```gleam
+svg_path.splice(subpath, start: 2, delete: 1, insert: replacement_segments)
+```
+
+If `start + delete` extends past the end of the subpath, everything from
+`start` onward is deleted. Negative `start`, negative `delete`, and `start`
+greater than the subpath length return `InvalidSplice`.
+
+The edited subpath must still be continuous, otherwise `Discontinuous` is
+returned with segment indices, points, and distance. Closed subpaths preserve
+their closed state; a splice that would turn a closed subpath into an empty
+subpath returns `ClosedEmptySubpath`.
 
 ## Converting Arcs to Beziers
 

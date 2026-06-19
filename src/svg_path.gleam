@@ -59,6 +59,9 @@ pub type Error {
   /// The subpath is already closed and cannot accept more segments.
   AlreadyClosed
 
+  /// An operation would produce a closed subpath with no segments.
+  ClosedEmptySubpath
+
   /// A segment starts somewhere other than the previous segment's end point.
   ///
   /// `previous_index` is the segment whose end point was expected. `next_index`
@@ -80,6 +83,9 @@ pub type Error {
 
   /// A wiggle operation could not reconcile two vertical line segments.
   IncompatibleVerticalWiggle(previous_end: Point, next_start: Point)
+
+  /// A splice was requested with invalid bounds.
+  InvalidSplice(start: Int, delete: Int, length: Int)
 
   /// The path contains more than one non-empty subpath.
   MultipleNonemptySubpaths
@@ -198,6 +204,64 @@ pub fn clean_subpath(subpath: Subpath) -> Subpath {
       }
     }
     _ -> Subpath(segments: cleaned, closed: subpath.closed)
+  }
+}
+
+/// Replace a range of segments in a subpath.
+///
+/// `start` is a zero-based segment index and `delete` is the number of
+/// segments to remove. If `start + delete` extends past the end of the subpath,
+/// everything from `start` onward is deleted. Negative `start`, negative
+/// `delete`, and `start` greater than the subpath length return
+/// `InvalidSplice`.
+///
+/// The edited subpath must remain continuous. Closed subpaths preserve their
+/// closed state; if the splice would make a closed subpath empty,
+/// `ClosedEmptySubpath` is returned.
+pub fn splice(
+  subpath: Subpath,
+  start start: Int,
+  delete delete: Int,
+  insert insert: List(Segment),
+) -> Result(Subpath, Error) {
+  let length = list.length(subpath.segments)
+
+  case start < 0 || delete < 0 || start > length {
+    True -> Error(InvalidSplice(start:, delete:, length:))
+    False -> {
+      let segments = splice_segments(subpath.segments, start, delete, insert)
+
+      case subpath.closed && list.is_empty(segments) {
+        True -> Error(ClosedEmptySubpath)
+        False -> validate_spliced_subpath(segments, subpath.closed)
+      }
+    }
+  }
+}
+
+/// Replace a range of segments, reconciling tiny endpoint gaps.
+///
+/// This has the same splice bounds behavior as `splice`, but validates the
+/// edited subpath with `wiggle_subpath` and, for closed subpaths,
+/// `wiggle_close`.
+pub fn wiggle_splice(
+  subpath: Subpath,
+  start start: Int,
+  delete delete: Int,
+  insert insert: List(Segment),
+) -> Result(Subpath, Error) {
+  let length = list.length(subpath.segments)
+
+  case start < 0 || delete < 0 || start > length {
+    True -> Error(InvalidSplice(start:, delete:, length:))
+    False -> {
+      let segments = splice_segments(subpath.segments, start, delete, insert)
+
+      case subpath.closed && list.is_empty(segments) {
+        True -> Error(ClosedEmptySubpath)
+        False -> validate_wiggled_spliced_subpath(segments, subpath.closed)
+      }
+    }
   }
 }
 
@@ -471,6 +535,86 @@ fn is_zero_length_line(segment: Segment) -> Bool {
   case segment {
     Line(start:, end:) -> start == end
     _ -> False
+  }
+}
+
+fn splice_segments(
+  segments: List(Segment),
+  start: Int,
+  delete: Int,
+  insert: List(Segment),
+) -> List(Segment) {
+  splice_segments_loop(segments, start, delete, insert, index: 0, before: [])
+}
+
+fn splice_segments_loop(
+  segments: List(Segment),
+  start: Int,
+  delete: Int,
+  insert: List(Segment),
+  index index: Int,
+  before before: List(Segment),
+) -> List(Segment) {
+  case segments {
+    [] -> list.append(list.reverse(before), insert)
+    [first, ..rest] -> {
+      case index < start {
+        True ->
+          splice_segments_loop(rest, start, delete, insert, index + 1, [
+            first,
+            ..before
+          ])
+        False ->
+          list.append(
+            list.reverse(before),
+            list.append(insert, drop(segments, delete)),
+          )
+      }
+    }
+  }
+}
+
+fn drop(segments: List(Segment), count: Int) -> List(Segment) {
+  case count <= 0 {
+    True -> segments
+    False -> {
+      case segments {
+        [] -> []
+        [_, ..rest] -> drop(rest, count - 1)
+      }
+    }
+  }
+}
+
+fn validate_spliced_subpath(
+  segments: List(Segment),
+  closed: Bool,
+) -> Result(Subpath, Error) {
+  case continuous(segments) {
+    Error(error) -> Error(error)
+    Ok(Nil) -> {
+      let subpath = Subpath(segments:, closed: False)
+
+      case closed {
+        False -> Ok(subpath)
+        True -> close(subpath)
+      }
+    }
+  }
+}
+
+fn validate_wiggled_spliced_subpath(
+  segments: List(Segment),
+  closed: Bool,
+) -> Result(Subpath, Error) {
+  case wiggle_subpath(segments) {
+    Error(error) -> Error(error)
+    Ok(subpath) -> {
+      case closed {
+        False -> Ok(subpath)
+        True -> wiggle_close(subpath)
+      }
+    }
   }
 }
 
