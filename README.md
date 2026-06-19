@@ -26,6 +26,32 @@ pub fn tidy_path_data(input: String) -> String {
 }
 ```
 
+Typical workflows compose parsing, path editing, transforms, conversion, and
+serialization:
+
+```gleam
+import gleam/result
+import svg_path
+import svg_path/parse
+import svg_path/serialize
+import svg_path/transform
+
+pub fn prepare_for_arc_averse_consumer(
+  input: String,
+) -> Result(String, parse.Error) {
+  use path <- result.try(parse.path(input))
+
+  let assert Ok(path) =
+    path
+    |> transform.scale_path(factor: 2.0)
+
+  path
+  |> svg_path.path_arcs_to_bezier
+  |> serialize.path
+  |> Ok
+}
+```
+
 ## Core Model
 
 A `Path` is a list of `Subpath` values. A `Subpath` is a continuous list of
@@ -83,6 +109,44 @@ svg_path.assert_subpath(segments)
 svg_path.assert_close(subpath)
 ```
 
+### Editing Subpaths
+
+The root module offers strict, forceful, and small-tolerance editing helpers.
+
+Strict helpers preserve the model without changing your geometry. They return
+`Discontinuous` when segment endpoints do not meet exactly.
+
+```gleam
+svg_path.subpath(segments)
+svg_path.append(subpath, segment)
+svg_path.splice(subpath, start:, delete:, insert:)
+svg_path.close(subpath)
+```
+
+`Discontinuous` includes the two segment indices, the expected point, the
+actual point, and the distance between them. This is often enough to tell
+whether upstream geometry missed by floating-point noise or by a real modeling
+mistake.
+
+Small-tolerance helpers reconcile tiny endpoint gaps. They are useful after
+floating-point math, transforms, imports from noisy data, or local edits where
+the intended topology is clear.
+
+```gleam
+svg_path.wiggle_subpath(segments)
+svg_path.wiggle_splice(subpath, start:, delete:, insert:)
+svg_path.wiggle_close(subpath)
+```
+
+Forceful helpers insert straight line segments when needed. They are useful
+when a bridging line is the intended geometry, not when endpoints were meant to
+coincide.
+
+```gleam
+svg_path.force_append(subpath, segment)
+svg_path.force_close(subpath)
+```
+
 ### Splicing Subpaths
 
 `splice` replaces a range of segments while preserving the subpath invariant.
@@ -101,6 +165,12 @@ The edited subpath must still be continuous, otherwise `Discontinuous` is
 returned with segment indices, points, and distance. Closed subpaths preserve
 their closed state; a splice that would turn a closed subpath into an empty
 subpath returns `ClosedEmptySubpath`.
+
+Use `wiggle_splice` when the splice should tolerate tiny endpoint gaps:
+
+```gleam
+svg_path.wiggle_splice(subpath, start: 2, delete: 1, insert: replacement_segments)
+```
 
 ## Converting Arcs to Beziers
 

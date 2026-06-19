@@ -60,6 +60,9 @@ pub type Error {
   AlreadyClosed
 
   /// An operation would produce a closed subpath with no segments.
+  ///
+  /// Empty open subpaths are valid, but this package does not represent a
+  /// closed empty subpath.
   ClosedEmptySubpath
 
   /// A segment starts somewhere other than the previous segment's end point.
@@ -85,6 +88,9 @@ pub type Error {
   IncompatibleVerticalWiggle(previous_end: Point, next_start: Point)
 
   /// A splice was requested with invalid bounds.
+  ///
+  /// This is returned when `start` is negative, `delete` is negative, or
+  /// `start` is greater than the subpath length.
   InvalidSplice(start: Int, delete: Int, length: Int)
 
   /// The path contains more than one non-empty subpath.
@@ -243,7 +249,8 @@ pub fn splice(
 ///
 /// This has the same splice bounds behavior as `splice`, but validates the
 /// edited subpath with `wiggle_subpath` and, for closed subpaths,
-/// `wiggle_close`.
+/// `wiggle_close`. Use this when the splice should preserve topology across
+/// floating-point noise rather than requiring exact endpoint equality.
 pub fn wiggle_splice(
   subpath: Subpath,
   start start: Int,
