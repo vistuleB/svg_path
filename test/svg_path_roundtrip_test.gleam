@@ -1,4 +1,6 @@
+import gleam/int
 import gleeunit
+import svg_path
 import svg_path/parse
 import svg_path/serialize
 
@@ -54,6 +56,40 @@ pub fn decimal_rounding_after_parsing_test() {
     == Ok("M 0 1.23457 H 10")
 }
 
+pub fn generated_paths_round_trip_with_default_options_test() {
+  assert_paths_round_trip(generated_paths(), serialize.default_options())
+}
+
+pub fn generated_paths_round_trip_with_relative_options_test() {
+  assert_paths_round_trip(
+    generated_paths(),
+    serialize.relative_decimal_options(0),
+  )
+}
+
+pub fn generated_paths_round_trip_with_minimized_options_test() {
+  assert_paths_round_trip(
+    generated_paths(),
+    serialize.decimal_options(0) |> serialize.minimize_whitespace,
+  )
+}
+
+pub fn generated_paths_round_trip_with_compact_options_test() {
+  assert_paths_round_trip(
+    generated_paths(),
+    serialize.default_options() |> serialize.compact_commands,
+  )
+}
+
+pub fn generated_paths_round_trip_with_minimized_compact_options_test() {
+  assert_paths_round_trip(
+    generated_paths(),
+    serialize.decimal_options(0)
+      |> serialize.minimize_whitespace
+      |> serialize.compact_commands,
+  )
+}
+
 fn parse_and_serialize(input: String) -> Result(String, parse.Error) {
   parse_and_serialize_with_options(input, serialize.default_options())
 }
@@ -66,4 +102,130 @@ fn parse_and_serialize_with_options(
     Error(error) -> Error(error)
     Ok(path) -> Ok(serialize.path_with_options(path, options:))
   }
+}
+
+fn assert_paths_round_trip(
+  paths: List(svg_path.Path),
+  options: serialize.Options,
+) -> Nil {
+  case paths {
+    [] -> Nil
+    [path, ..rest] -> {
+      assert_path_round_trips(path, options)
+      assert_paths_round_trip(rest, options)
+    }
+  }
+}
+
+fn assert_path_round_trips(
+  path: svg_path.Path,
+  options: serialize.Options,
+) -> Nil {
+  let serialized = serialize.path_with_options(path, options:)
+
+  assert parse_and_serialize_with_options(serialized, options) == Ok(serialized)
+}
+
+fn generated_paths() -> List(svg_path.Path) {
+  [
+    path_from_segments([
+      svg_path.line(point(0, 0), point(10, 0)),
+      svg_path.line(point(10, 0), point(10, 20)),
+      svg_path.line(point(10, 20), point(-5, 20)),
+    ]),
+    path_from_segments([
+      svg_path.line(point(-10, -10), point(-5, -5)),
+      svg_path.quadratic_bezier(point(-5, -5), point(0, 15), point(10, 0)),
+      svg_path.quadratic_bezier(point(10, 0), point(20, -15), point(25, 5)),
+    ]),
+    path_from_segments([
+      svg_path.cubic_bezier(
+        point(0, 0),
+        point(5, 10),
+        point(15, -10),
+        point(20, 0),
+      ),
+      svg_path.cubic_bezier(
+        point(20, 0),
+        point(30, 10),
+        point(35, -10),
+        point(40, 0),
+      ),
+    ]),
+    path_from_segments([
+      svg_path.arc(
+        start: point(0, 0),
+        radius: point(10, 5),
+        x_axis_rotation: 30.0,
+        large_arc: False,
+        sweep: True,
+        end: point(20, 10),
+      ),
+      svg_path.arc(
+        start: point(20, 10),
+        radius: point(8, 8),
+        x_axis_rotation: -45.0,
+        large_arc: True,
+        sweep: False,
+        end: point(40, 0),
+      ),
+    ]),
+    path_from_segments([
+      svg_path.line(point(0, 0), point(12, 0)),
+      svg_path.quadratic_bezier(point(12, 0), point(18, 8), point(24, 0)),
+      svg_path.cubic_bezier(
+        point(24, 0),
+        point(30, -8),
+        point(36, 8),
+        point(42, 0),
+      ),
+      svg_path.arc(
+        start: point(42, 0),
+        radius: point(6, 10),
+        x_axis_rotation: 0.0,
+        large_arc: False,
+        sweep: False,
+        end: point(50, 0),
+      ),
+    ]),
+    closed_path_from_segments([
+      svg_path.line(point(0, 0), point(20, 0)),
+      svg_path.line(point(20, 0), point(20, 20)),
+      svg_path.line(point(20, 20), point(0, 20)),
+      svg_path.line(point(0, 20), point(0, 0)),
+    ]),
+    svg_path.path([
+      subpath_from_segments([
+        svg_path.line(point(0, 0), point(10, 0)),
+        svg_path.line(point(10, 0), point(10, 10)),
+      ]),
+      subpath_from_segments([
+        svg_path.line(point(30, 30), point(40, 30)),
+        svg_path.line(point(40, 30), point(40, 40)),
+      ]),
+    ]),
+  ]
+}
+
+fn path_from_segments(segments: List(svg_path.Segment)) -> svg_path.Path {
+  svg_path.from_subpath(subpath_from_segments(segments))
+}
+
+fn closed_path_from_segments(
+  segments: List(svg_path.Segment),
+) -> svg_path.Path {
+  let assert Ok(subpath) = svg_path.subpath(segments)
+  let assert Ok(closed) = svg_path.close(subpath)
+
+  svg_path.from_subpath(closed)
+}
+
+fn subpath_from_segments(segments: List(svg_path.Segment)) -> svg_path.Subpath {
+  let assert Ok(subpath) = svg_path.subpath(segments)
+
+  subpath
+}
+
+fn point(x: Int, y: Int) -> svg_path.Point {
+  svg_path.point(int.to_float(x), int.to_float(y))
 }
