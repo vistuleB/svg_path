@@ -31,13 +31,17 @@ pub fn identity() -> Matrix {
 }
 
 pub fn compose(first first: Matrix, then second: Matrix) -> Matrix {
+  multiply(left: second, right: first)
+}
+
+pub fn multiply(left left: Matrix, right right: Matrix) -> Matrix {
   matrix(
-    a: second.a *. first.a +. second.c *. first.b,
-    b: second.b *. first.a +. second.d *. first.b,
-    c: second.a *. first.c +. second.c *. first.d,
-    d: second.b *. first.c +. second.d *. first.d,
-    e: second.a *. first.e +. second.c *. first.f +. second.e,
-    f: second.b *. first.e +. second.d *. first.f +. second.f,
+    a: left.a *. right.a +. left.c *. right.b,
+    b: left.b *. right.a +. left.d *. right.b,
+    c: left.a *. right.c +. left.c *. right.d,
+    d: left.b *. right.c +. left.d *. right.d,
+    e: left.a *. right.e +. left.c *. right.f +. left.e,
+    f: left.b *. right.e +. left.d *. right.f +. left.f,
   )
 }
 

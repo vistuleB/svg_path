@@ -62,6 +62,35 @@ pub fn skew_matrices_use_degrees_test() {
     == svg_path.point(2.0, 5.0)
 }
 
+pub fn compose_applies_first_then_second_test() {
+  let point = svg_path.point(1.0, 1.0)
+  let scale = transform.scale(factor: 2.0)
+  let translate = transform.translate(x: 10.0, y: 20.0)
+
+  assert transform.point(
+      point,
+      by: transform.compose(first: scale, then: translate),
+    )
+    == svg_path.point(12.0, 22.0)
+}
+
+pub fn multiply_uses_algebraic_left_times_right_order_test() {
+  let point = svg_path.point(1.0, 1.0)
+  let scale = transform.scale(factor: 2.0)
+  let translate = transform.translate(x: 10.0, y: 20.0)
+
+  assert transform.point(
+      point,
+      by: transform.multiply(left: translate, right: scale),
+    )
+    == svg_path.point(12.0, 22.0)
+  assert transform.point(
+      point,
+      by: transform.multiply(left: scale, right: translate),
+    )
+    == svg_path.point(22.0, 42.0)
+}
+
 pub fn direct_subpath_and_path_helpers_delegate_to_matrices_test() {
   let assert Ok(subpath) =
     svg_path.subpath([

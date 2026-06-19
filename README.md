@@ -50,6 +50,22 @@ pub fn move_path_data(input: String) -> String {
 }
 ```
 
+Use `compose(first:, then:)` when thinking in transform application order. Use
+`multiply(left:, right:)` when thinking in matrix multiplication order.
+
+```gleam
+import svg_path/transform
+
+pub fn scale_then_move() -> transform.Matrix {
+  let scale = transform.scale(factor: 2.0)
+  let move = transform.translate(x: 10.0, y: 20.0)
+
+  // These are the same matrix. Applying scale, then move, is move * scale.
+  transform.compose(first: scale, then: move)
+  // transform.multiply(left: move, right: scale)
+}
+```
+
 SVG transform attributes can be parsed and serialized too.
 
 ```gleam
