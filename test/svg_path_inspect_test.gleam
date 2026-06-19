@@ -125,8 +125,13 @@ pub fn path_inspects_subpaths_and_segments_with_indentation_test() {
     |> result_try_force_close
   let path = svg_path.from_subpath(subpath)
 
-  assert inspect.path(path)
-    == "Path([\n  Subpath(closed, [\n    Line(start=0,0 end=12,10),\n    Line(start=12,10 end=20,10),\n    Line(start=20,10 end=0,0)\n  ])\n])"
+  assert inspect.path(path) == "Path([
+  Subpath(closed, [
+    Line(start=0,0 end=12,10),
+    Line(start=12,10 end=20,10),
+    Line(start=20,10 end=0,0)
+  ])
+])"
 }
 
 pub fn path_inspects_with_decimal_options_test() {
@@ -140,7 +145,11 @@ pub fn path_inspects_with_decimal_options_test() {
   let path = svg_path.from_subpath(subpath)
 
   assert inspect.path_with_options(path, options: inspect.decimal_options(1))
-    == "Path([\n  Subpath(open, [\n    Line(start=0,0 end=12.2,10.2)\n  ])\n])"
+    == "Path([
+  Subpath(open, [
+    Line(start=0,0 end=12.2,10.2)
+  ])
+])"
 }
 
 pub fn point_code_inspects_as_copy_pasteable_gleam_test() {
@@ -170,8 +179,9 @@ pub fn subpath_code_inspects_as_copy_pasteable_gleam_test() {
       ),
     ])
 
-  assert inspect.subpath_code(subpath)
-    == "svg_path.assert_subpath([\n  svg_path.line(start: svg_path.point(0.0, 0.0), end: svg_path.point(12.0, 10.0))\n])"
+  assert inspect.subpath_code(subpath) == "svg_path.assert_subpath([
+  svg_path.line(start: svg_path.point(0.0, 0.0), end: svg_path.point(12.0, 10.0))
+])"
 }
 
 pub fn closed_subpath_code_inspects_as_copy_pasteable_gleam_test() {
@@ -184,8 +194,11 @@ pub fn closed_subpath_code_inspects_as_copy_pasteable_gleam_test() {
     ])
     |> result_try_force_close
 
-  assert inspect.subpath_code(subpath)
-    == "svg_path.assert_subpath([\n  svg_path.line(start: svg_path.point(0.0, 0.0), end: svg_path.point(12.0, 10.0)),\n  svg_path.line(start: svg_path.point(12.0, 10.0), end: svg_path.point(0.0, 0.0))\n])\n|> svg_path.assert_close"
+  assert inspect.subpath_code(subpath) == "svg_path.assert_subpath([
+  svg_path.line(start: svg_path.point(0.0, 0.0), end: svg_path.point(12.0, 10.0)),
+  svg_path.line(start: svg_path.point(12.0, 10.0), end: svg_path.point(0.0, 0.0))
+])
+|> svg_path.assert_close"
 }
 
 pub fn path_code_inspects_as_copy_pasteable_gleam_test() {
@@ -198,8 +211,11 @@ pub fn path_code_inspects_as_copy_pasteable_gleam_test() {
     ])
   let path = svg_path.from_subpath(subpath)
 
-  assert inspect.path_code(path)
-    == "svg_path.path([\n  svg_path.assert_subpath([\n    svg_path.line(start: svg_path.point(0.0, 0.0), end: svg_path.point(12.0, 10.0))\n  ])\n])"
+  assert inspect.path_code(path) == "svg_path.path([
+  svg_path.assert_subpath([
+    svg_path.line(start: svg_path.point(0.0, 0.0), end: svg_path.point(12.0, 10.0))
+  ])
+])"
 }
 
 pub fn code_inspection_respects_decimal_options_test() {
@@ -233,8 +249,12 @@ pub fn code_inspection_respects_auto_left_padding_test() {
     inspect.fixed_decimal_options(1)
     |> inspect.with_left_padding(inspect.AutoLeftPadding)
 
-  assert inspect.path_code_with_options(path, options:)
-    == "svg_path.path([\n  svg_path.assert_subpath([\n    svg_path.line(start: svg_path.point(000.0, -05.0), end: svg_path.point(120.0, 010.0)),\n    svg_path.line(start: svg_path.point(120.0, 010.0), end: svg_path.point(002.0, -30.0))\n  ])\n])"
+  assert inspect.path_code_with_options(path, options:) == "svg_path.path([
+  svg_path.assert_subpath([
+    svg_path.line(start: svg_path.point(000.0, -05.0), end: svg_path.point(120.0, 010.0)),
+    svg_path.line(start: svg_path.point(120.0, 010.0), end: svg_path.point(002.0, -30.0))
+  ])
+])"
 }
 
 fn result_try_force_close(
