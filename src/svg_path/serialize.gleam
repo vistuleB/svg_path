@@ -256,7 +256,7 @@ fn subpath_from_current(
           list.map(segments, relative_segment_without_move(_, options)),
         )
       let commands = case svg_path.is_closed(subpath) {
-        True -> list.append(commands, ["Z"])
+        True -> list.append(commands, ["z"])
         False -> commands
       }
 

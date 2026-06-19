@@ -108,7 +108,7 @@ pub fn relative_closed_subpath_keeps_final_zero_length_line_test() {
       subpath,
       options: serialize.relative_decimal_options(0),
     )
-    == "m 10 10 h 10 h -10 h 0 Z"
+    == "m 10 10 h 10 h -10 h 0 z"
 }
 
 pub fn bezier_and_arc_segments_serialize_test() {
@@ -437,7 +437,7 @@ pub fn relative_options_move_from_closed_subpath_start_after_z_test() {
       svg_path.path([first, second]),
       options: serialize.relative_decimal_options(0),
     )
-    == "m 10 10 h 10 Z m 20 0 h 10"
+    == "m 10 10 h 10 z m 20 0 h 10"
 }
 
 pub fn minimized_relative_path_with_multiple_subpaths_test() {
