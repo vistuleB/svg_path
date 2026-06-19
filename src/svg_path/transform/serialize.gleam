@@ -17,31 +17,17 @@ type LinearTransform {
 }
 
 pub type Options {
-  Options(
-    decimal_places: Option(Int),
-    fixed_decimals: Bool,
-    relative: Bool,
-    minimize_whitespace: Bool,
-    force_matrix: Bool,
-  )
+  Options(decimal_places: Option(Int), fixed_decimals: Bool, force_matrix: Bool)
 }
 
 pub fn default_options() -> Options {
-  Options(
-    decimal_places: Some(5),
-    fixed_decimals: False,
-    relative: False,
-    minimize_whitespace: False,
-    force_matrix: False,
-  )
+  Options(decimal_places: Some(5), fixed_decimals: False, force_matrix: False)
 }
 
 pub fn decimal_options(decimal_places: Int) -> Options {
   Options(
     decimal_places: Some(decimal_places),
     fixed_decimals: False,
-    relative: False,
-    minimize_whitespace: False,
     force_matrix: False,
   )
 }
@@ -50,44 +36,8 @@ pub fn fixed_decimal_options(decimal_places: Int) -> Options {
   Options(
     decimal_places: Some(decimal_places),
     fixed_decimals: True,
-    relative: False,
-    minimize_whitespace: False,
     force_matrix: False,
   )
-}
-
-pub fn relative_options() -> Options {
-  Options(
-    decimal_places: Some(5),
-    fixed_decimals: False,
-    relative: True,
-    minimize_whitespace: False,
-    force_matrix: False,
-  )
-}
-
-pub fn relative_decimal_options(decimal_places: Int) -> Options {
-  Options(
-    decimal_places: Some(decimal_places),
-    fixed_decimals: False,
-    relative: True,
-    minimize_whitespace: False,
-    force_matrix: False,
-  )
-}
-
-pub fn relative_fixed_decimal_options(decimal_places: Int) -> Options {
-  Options(
-    decimal_places: Some(decimal_places),
-    fixed_decimals: True,
-    relative: True,
-    minimize_whitespace: False,
-    force_matrix: False,
-  )
-}
-
-pub fn minimize_whitespace(options: Options) -> Options {
-  Options(..options, minimize_whitespace: True)
 }
 
 pub fn force_matrix(options: Options) -> Options {
