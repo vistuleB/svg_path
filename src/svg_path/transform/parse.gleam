@@ -1,16 +1,37 @@
+//// SVG transform attribute parser.
+////
+//// This module parses SVG transform lists such as
+//// `translate(10 20)rotate(30)scale(2)`. Commas are accepted where SVG allows
+//// separators, and adjacent signed numbers such as `translate(10-20)` are
+//// handled.
+
 import gleam/float
 import gleam/int
 import gleam/list
 import gleam/string
 import svg_path/transform
 
+/// Errors returned while parsing an SVG transform attribute.
 pub type Error {
+  /// A closing parenthesis was expected.
   ExpectedClose
+
+  /// An opening parenthesis was expected.
   ExpectedOpen
+
+  /// A transform function name was expected.
   ExpectedTransform
+
+  /// A transform function received the wrong number of arguments.
   InvalidArgumentCount(String, Int)
+
+  /// A numeric token could not be parsed as a float.
   InvalidNumber(String)
+
+  /// A token appeared where it is not valid.
   UnexpectedToken(String)
+
+  /// The transform function is not part of SVG's supported transform set.
   UnknownTransform(String)
 }
 
@@ -21,6 +42,9 @@ type Token {
   Open
 }
 
+/// Parse an SVG transform attribute into a matrix.
+///
+/// Empty strings parse as the identity matrix.
 pub fn attribute(input: String) -> Result(transform.Matrix, Error) {
   case tokenize(input) {
     Error(error) -> Error(error)

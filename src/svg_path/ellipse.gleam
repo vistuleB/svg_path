@@ -1,3 +1,9 @@
+//// Lower-level helpers for transforming SVG elliptical arcs.
+////
+//// Most users should use `svg_path/transform` instead. This module exposes the
+//// ellipse-specific machinery used to transform arc axes and represent arcs
+//// that collapse under affine transforms.
+
 import gleam/float
 import gleam/list
 import gleam_community/maths
@@ -15,15 +21,23 @@ type ArcParameters {
   )
 }
 
+/// A lower-level affine matrix used by the ellipse helpers.
+///
+/// This has the same six-value layout as SVG `matrix(a b c d e f)`.
 pub opaque type Affine {
   Affine(a: Float, b: Float, c: Float, d: Float, e: Float, f: Float)
 }
 
+/// Errors returned by ellipse and collapsed-arc helpers.
 pub type Error {
+  /// The source arc cannot be converted to center-parameter form.
   DegenerateInputArc
+
+  /// The transformed arc did not collapse to a line.
   NotCollapsedToLine
 }
 
+/// Create an affine matrix for ellipse helpers.
 pub fn ellipse_affine(
   a a: Float,
   b b: Float,
@@ -35,6 +49,7 @@ pub fn ellipse_affine(
   Affine(a:, b:, c:, d:, e:, f:)
 }
 
+/// Transform a point by an affine matrix.
 pub fn point(point: svg_path.Point, by transform: Affine) -> svg_path.Point {
   svg_path.point(
     transform.a *. point.x +. transform.c *. point.y +. transform.e,
@@ -42,6 +57,9 @@ pub fn point(point: svg_path.Point, by transform: Affine) -> svg_path.Point {
   )
 }
 
+/// Transform an arc's radius and x-axis rotation.
+///
+/// Returns the new radius and x-axis rotation for the transformed ellipse.
 pub fn transformed_axes(
   radius radius: svg_path.Point,
   x_axis_rotation x_axis_rotation: Float,
@@ -58,6 +76,10 @@ pub fn transformed_axes(
   }
 }
 
+/// Convert an arc collapsed by an affine transform into a single line segment.
+///
+/// If the collapsed arc's extrema require more than one segment to preserve its
+/// out-and-back motion, use `collapsed_arc_subpath`.
 pub fn collapsed_arc_line(
   start start: svg_path.Point,
   radius radius: svg_path.Point,
@@ -120,6 +142,7 @@ pub fn collapsed_arc_line(
   }
 }
 
+/// Convert an arc collapsed by an affine transform into a line-based subpath.
 pub fn collapsed_arc_subpath(
   start start: svg_path.Point,
   radius radius: svg_path.Point,

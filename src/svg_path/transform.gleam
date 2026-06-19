@@ -1,20 +1,40 @@
+//// Transform paths and path segments with 2D affine matrices.
+////
+//// Matrices use SVG's six-value affine form `matrix(a b c d e f)` and are
+//// applied to column vectors. Use `chain(first:, then:)` when thinking in
+//// transform application order, and `multiply(left:, right:)` when thinking in
+//// algebraic matrix multiplication order.
+
 import gleam/list
 import gleam_community/maths
 import matrix/mat3f
 import svg_path
 import svg_path/ellipse
 
+/// An opaque SVG affine transform matrix.
+///
+/// The stored values correspond to SVG's `matrix(a b c d e f)` form:
+/// `x' = a*x + c*y + e`, `y' = b*x + d*y + f`.
 pub opaque type Matrix {
   Matrix(a: Float, b: Float, c: Float, d: Float, e: Float, f: Float)
 }
 
+/// Errors returned while transforming paths or converting matrices.
 pub type Error {
+  /// An arc collapsed under the transform and cannot be represented as an arc.
   DegenerateArcTransform
+
+  /// A matrix contains non-finite values.
   InvalidMatrix
+
+  /// A `mat3f` value could not be represented as an SVG affine matrix.
   NonAffineMatrix
+
+  /// An error from the core path model.
   Core(svg_path.Error)
 }
 
+/// Create an affine matrix from SVG's six matrix values.
 pub fn matrix(
   a a: Float,
   b b: Float,
@@ -26,14 +46,22 @@ pub fn matrix(
   Matrix(a:, b:, c:, d:, e:, f:)
 }
 
+/// The identity transform.
 pub fn identity() -> Matrix {
   matrix(a: 1.0, b: 0.0, c: 0.0, d: 1.0, e: 0.0, f: 0.0)
 }
 
+/// Chain two transforms in application order.
+///
+/// `chain(first: a, then: b)` creates a matrix that applies `a` first and `b`
+/// second. In algebraic matrix order, this is `b * a`.
 pub fn chain(first first: Matrix, then second: Matrix) -> Matrix {
   multiply(left: second, right: first)
 }
 
+/// Multiply two matrices in algebraic order.
+///
+/// `multiply(left: a, right: b)` returns `a * b`.
 pub fn multiply(left left: Matrix, right right: Matrix) -> Matrix {
   matrix(
     a: left.a *. right.a +. left.c *. right.b,
@@ -45,18 +73,22 @@ pub fn multiply(left left: Matrix, right right: Matrix) -> Matrix {
   )
 }
 
+/// Create a translation matrix.
 pub fn translate(x x: Float, y y: Float) -> Matrix {
   matrix(a: 1.0, b: 0.0, c: 0.0, d: 1.0, e: x, f: y)
 }
 
+/// Create a uniform scale matrix.
 pub fn scale(factor factor: Float) -> Matrix {
   scale_xy(x: factor, y: factor)
 }
 
+/// Create a non-uniform scale matrix.
 pub fn scale_xy(x x: Float, y y: Float) -> Matrix {
   matrix(a: x, b: 0.0, c: 0.0, d: y, e: 0.0, f: 0.0)
 }
 
+/// Create a rotation matrix from an angle in degrees.
 pub fn rotate(degrees degrees: Float) -> Matrix {
   let radians = degrees_to_radians(degrees)
   let cosine = maths.cos(radians)
@@ -65,6 +97,7 @@ pub fn rotate(degrees degrees: Float) -> Matrix {
   matrix(a: cosine, b: sine, c: 0.0 -. sine, d: cosine, e: 0.0, f: 0.0)
 }
 
+/// Create an x-axis skew matrix from an angle in degrees.
 pub fn skew_x(degrees degrees: Float) -> Matrix {
   matrix(
     a: 1.0,
@@ -76,6 +109,7 @@ pub fn skew_x(degrees degrees: Float) -> Matrix {
   )
 }
 
+/// Create a y-axis skew matrix from an angle in degrees.
 pub fn skew_y(degrees degrees: Float) -> Matrix {
   matrix(
     a: 1.0,
@@ -87,6 +121,9 @@ pub fn skew_y(degrees degrees: Float) -> Matrix {
   )
 }
 
+/// Convert a `matrix_gleam` `mat3f` value to an SVG affine matrix.
+///
+/// Returns `NonAffineMatrix` unless the third column is `(0, 0, 1)`.
 pub fn from_mat3f(transform: mat3f.Mat3f) -> Result(Matrix, Error) {
   case transform.x.z == 0.0 && transform.y.z == 0.0 && transform.z.z == 1.0 {
     False -> Error(NonAffineMatrix)
@@ -109,6 +146,7 @@ pub fn from_mat3f(transform: mat3f.Mat3f) -> Result(Matrix, Error) {
   }
 }
 
+/// Convert an SVG affine matrix to a `matrix_gleam` `mat3f` value.
 pub fn to_mat3f(transform: Matrix) -> mat3f.Mat3f {
   mat3f.new(
     transform.a,
@@ -123,6 +161,7 @@ pub fn to_mat3f(transform: Matrix) -> mat3f.Mat3f {
   )
 }
 
+/// Return SVG's six matrix values as `#(a, b, c, d, e, f)`.
 pub fn to_tuple(
   transform: Matrix,
 ) -> #(Float, Float, Float, Float, Float, Float) {
@@ -136,6 +175,7 @@ pub fn to_tuple(
   )
 }
 
+/// Transform a point by a matrix.
 pub fn point(point: svg_path.Point, by transform: Matrix) -> svg_path.Point {
   svg_path.point(
     transform.a *. point.x +. transform.c *. point.y +. transform.e,
@@ -143,6 +183,7 @@ pub fn point(point: svg_path.Point, by transform: Matrix) -> svg_path.Point {
   )
 }
 
+/// Translate a point.
 pub fn translate_point(
   input: svg_path.Point,
   x x: Float,
@@ -151,6 +192,7 @@ pub fn translate_point(
   point(input, by: translate(x:, y:))
 }
 
+/// Scale a point uniformly.
 pub fn scale_point(
   input: svg_path.Point,
   factor factor: Float,
@@ -158,6 +200,7 @@ pub fn scale_point(
   point(input, by: scale(factor:))
 }
 
+/// Scale a point non-uniformly.
 pub fn scale_xy_point(
   input: svg_path.Point,
   x x: Float,
@@ -166,6 +209,7 @@ pub fn scale_xy_point(
   point(input, by: scale_xy(x:, y:))
 }
 
+/// Rotate a point around the origin.
 pub fn rotate_point(
   input: svg_path.Point,
   degrees degrees: Float,
@@ -173,6 +217,7 @@ pub fn rotate_point(
   point(input, by: rotate(degrees:))
 }
 
+/// Skew a point along the x axis.
 pub fn skew_x_point(
   input: svg_path.Point,
   degrees degrees: Float,
@@ -180,6 +225,7 @@ pub fn skew_x_point(
   point(input, by: skew_x(degrees:))
 }
 
+/// Skew a point along the y axis.
 pub fn skew_y_point(
   input: svg_path.Point,
   degrees degrees: Float,
@@ -187,6 +233,11 @@ pub fn skew_y_point(
   point(input, by: skew_y(degrees:))
 }
 
+/// Transform a segment by a matrix.
+///
+/// Degenerate arc transforms return `DegenerateArcTransform`; use
+/// `segment_gracefully` or `segment_gracefully2` to convert collapsed arcs into
+/// line-based representations when possible.
 pub fn segment(
   segment: svg_path.Segment,
   by transform: Matrix,
@@ -197,6 +248,7 @@ pub fn segment(
   }
 }
 
+/// Translate a segment.
 pub fn translate_segment(
   input: svg_path.Segment,
   x x: Float,
@@ -205,6 +257,7 @@ pub fn translate_segment(
   segment(input, by: translate(x:, y:))
 }
 
+/// Scale a segment uniformly.
 pub fn scale_segment(
   input: svg_path.Segment,
   factor factor: Float,
@@ -212,6 +265,7 @@ pub fn scale_segment(
   segment(input, by: scale(factor:))
 }
 
+/// Scale a segment non-uniformly.
 pub fn scale_xy_segment(
   input: svg_path.Segment,
   x x: Float,
@@ -220,6 +274,7 @@ pub fn scale_xy_segment(
   segment(input, by: scale_xy(x:, y:))
 }
 
+/// Rotate a segment around the origin.
 pub fn rotate_segment(
   input: svg_path.Segment,
   degrees degrees: Float,
@@ -227,6 +282,7 @@ pub fn rotate_segment(
   segment(input, by: rotate(degrees:))
 }
 
+/// Skew a segment along the x axis.
 pub fn skew_x_segment(
   input: svg_path.Segment,
   degrees degrees: Float,
@@ -234,6 +290,7 @@ pub fn skew_x_segment(
   segment(input, by: skew_x(degrees:))
 }
 
+/// Skew a segment along the y axis.
 pub fn skew_y_segment(
   input: svg_path.Segment,
   degrees degrees: Float,
@@ -241,6 +298,10 @@ pub fn skew_y_segment(
   segment(input, by: skew_y(degrees:))
 }
 
+/// Transform a segment, converting collapsed arcs into lines when possible.
+///
+/// This returns a single segment. If a collapsed arc needs multiple line
+/// segments to preserve its motion, use `segment_gracefully2`.
 pub fn segment_gracefully(
   input: svg_path.Segment,
   by transform: Matrix,
@@ -279,6 +340,9 @@ pub fn segment_gracefully(
   }
 }
 
+/// Transform a segment, returning a subpath for graceful collapsed arc handling.
+///
+/// This can represent collapsed arcs as multiple line segments when needed.
 pub fn segment_gracefully2(
   input: svg_path.Segment,
   by transform: Matrix,
@@ -317,6 +381,10 @@ pub fn segment_gracefully2(
   }
 }
 
+/// Transform a subpath by a matrix.
+///
+/// Closed subpaths remain semantically closed when the transformed endpoints can
+/// be reconciled.
 pub fn subpath(
   subpath: svg_path.Subpath,
   by transform: Matrix,
@@ -342,6 +410,7 @@ pub fn subpath(
   }
 }
 
+/// Translate a subpath.
 pub fn translate_subpath(
   input: svg_path.Subpath,
   x x: Float,
@@ -350,6 +419,7 @@ pub fn translate_subpath(
   subpath(input, by: translate(x:, y:))
 }
 
+/// Scale a subpath uniformly.
 pub fn scale_subpath(
   input: svg_path.Subpath,
   factor factor: Float,
@@ -357,6 +427,7 @@ pub fn scale_subpath(
   subpath(input, by: scale(factor:))
 }
 
+/// Scale a subpath non-uniformly.
 pub fn scale_xy_subpath(
   input: svg_path.Subpath,
   x x: Float,
@@ -365,6 +436,7 @@ pub fn scale_xy_subpath(
   subpath(input, by: scale_xy(x:, y:))
 }
 
+/// Rotate a subpath around the origin.
 pub fn rotate_subpath(
   input: svg_path.Subpath,
   degrees degrees: Float,
@@ -372,6 +444,7 @@ pub fn rotate_subpath(
   subpath(input, by: rotate(degrees:))
 }
 
+/// Skew a subpath along the x axis.
 pub fn skew_x_subpath(
   input: svg_path.Subpath,
   degrees degrees: Float,
@@ -379,6 +452,7 @@ pub fn skew_x_subpath(
   subpath(input, by: skew_x(degrees:))
 }
 
+/// Skew a subpath along the y axis.
 pub fn skew_y_subpath(
   input: svg_path.Subpath,
   degrees degrees: Float,
@@ -386,6 +460,10 @@ pub fn skew_y_subpath(
   subpath(input, by: skew_y(degrees:))
 }
 
+/// Transform a subpath, gracefully converting collapsed arcs when possible.
+///
+/// This uses the core path wiggle helpers to preserve continuity after
+/// collapsed arcs are converted to line-based subpaths.
 pub fn subpath_gracefully(
   subpath: svg_path.Subpath,
   by transform: Matrix,
@@ -413,6 +491,7 @@ pub fn subpath_gracefully(
   }
 }
 
+/// Transform every subpath in a path by a matrix.
 pub fn path(
   path: svg_path.Path,
   by transform: Matrix,
@@ -428,6 +507,7 @@ pub fn path(
   }
 }
 
+/// Translate a path.
 pub fn translate_path(
   input: svg_path.Path,
   x x: Float,
@@ -436,6 +516,7 @@ pub fn translate_path(
   path(input, by: translate(x:, y:))
 }
 
+/// Scale a path uniformly.
 pub fn scale_path(
   input: svg_path.Path,
   factor factor: Float,
@@ -443,6 +524,7 @@ pub fn scale_path(
   path(input, by: scale(factor:))
 }
 
+/// Scale a path non-uniformly.
 pub fn scale_xy_path(
   input: svg_path.Path,
   x x: Float,
@@ -451,6 +533,7 @@ pub fn scale_xy_path(
   path(input, by: scale_xy(x:, y:))
 }
 
+/// Rotate a path around the origin.
 pub fn rotate_path(
   input: svg_path.Path,
   degrees degrees: Float,
@@ -458,6 +541,7 @@ pub fn rotate_path(
   path(input, by: rotate(degrees:))
 }
 
+/// Skew a path along the x axis.
 pub fn skew_x_path(
   input: svg_path.Path,
   degrees degrees: Float,
@@ -465,6 +549,7 @@ pub fn skew_x_path(
   path(input, by: skew_x(degrees:))
 }
 
+/// Skew a path along the y axis.
 pub fn skew_y_path(
   input: svg_path.Path,
   degrees degrees: Float,

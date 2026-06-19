@@ -1,3 +1,10 @@
+//// SVG transform attribute serializer.
+////
+//// This module serializes affine matrices as SVG transform attribute strings.
+//// It prefers readable transform functions such as `translate`, `scale`,
+//// `rotate`, and `skew` when a matrix clearly matches them, and falls back to
+//// `matrix(a b c d e f)` otherwise.
+
 import gleam/float
 import gleam/int
 import gleam/option.{type Option, None, Some}
@@ -16,14 +23,22 @@ type LinearTransform {
   RotateScale2x2(degrees: Float, scale_x: Float, scale_y: Float)
 }
 
+/// Options for SVG transform serialization.
 pub type Options {
   Options(decimal_places: Option(Int), fixed_decimals: Bool, force_matrix: Bool)
 }
 
+/// Default transform serialization options.
+///
+/// Defaults to up to 5 decimal places, stripped trailing zeroes, and readable
+/// transform functions when possible.
 pub fn default_options() -> Options {
   Options(decimal_places: Some(5), fixed_decimals: False, force_matrix: False)
 }
 
+/// Create options that round numbers to the given number of decimal places.
+///
+/// Trailing zeroes are stripped. Negative decimal places are clamped to zero.
 pub fn decimal_options(decimal_places: Int) -> Options {
   Options(
     decimal_places: Some(decimal_places),
@@ -32,6 +47,10 @@ pub fn decimal_options(decimal_places: Int) -> Options {
   )
 }
 
+/// Create options that round numbers and keep exactly the given number of
+/// decimal places.
+///
+/// Negative decimal places are clamped to zero.
 pub fn fixed_decimal_options(decimal_places: Int) -> Options {
   Options(
     decimal_places: Some(decimal_places),
@@ -40,14 +59,20 @@ pub fn fixed_decimal_options(decimal_places: Int) -> Options {
   )
 }
 
+/// Force serialization as `matrix(a b c d e f)`.
+///
+/// This disables the nicer `translate`, `scale`, `rotate`, and `skew`
+/// representations.
 pub fn force_matrix(options: Options) -> Options {
   Options(..options, force_matrix: True)
 }
 
+/// Serialize a transform matrix with default options.
 pub fn to_string(transform: path_transform.Matrix) -> String {
   to_string_with_options(transform, default_options())
 }
 
+/// Serialize a transform matrix with custom options.
 pub fn to_string_with_options(
   transform transform: path_transform.Matrix,
   options options: Options,

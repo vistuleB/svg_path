@@ -1,24 +1,48 @@
+//// Core SVG path data structures and constructors.
+////
+//// This module models paths as a list of subpaths, and subpaths as continuous
+//// segment lists. Use `svg_path/parse` and `svg_path/serialize` when working
+//// directly with SVG path data strings.
+
 import gleam/float
 import gleam/list
 import vec/vec2.{type Vec2, Vec2}
 
 const default_wiggle_tolerance = 0.000000001
 
+/// A 2D point.
+///
+/// This is a `vec.Vec2(Float)`, so its coordinates are available as `.x` and
+/// `.y`.
 pub type Point =
   Vec2(Float)
 
+/// An SVG path, made of zero or more subpaths.
 pub type Path {
   Path(subpaths: List(Subpath))
 }
 
+/// A continuous sequence of path segments, optionally closed.
+///
+/// The constructor is opaque so that subpaths cannot be created in an invalid
+/// discontinuous state. Use `subpath`, `empty_subpath`, `append`, or
+/// `force_append` to build values.
 pub opaque type Subpath {
   Subpath(segments: List(Segment), closed: Bool)
 }
 
+/// A single SVG path segment.
 pub type Segment {
+  /// A straight line segment.
   Line(start: Point, end: Point)
+
+  /// A quadratic Bezier curve segment.
   QuadraticBezier(start: Point, control: Point, end: Point)
+
+  /// A cubic Bezier curve segment.
   CubicBezier(start: Point, control1: Point, control2: Point, end: Point)
+
+  /// An elliptical arc segment.
   Arc(
     start: Point,
     radius: Point,
@@ -29,40 +53,64 @@ pub type Segment {
   )
 }
 
+/// Errors returned by path construction and editing helpers.
 pub type Error {
+  /// The subpath is already closed and cannot accept more segments.
   AlreadyClosed
+
+  /// A segment starts somewhere other than the previous segment's end point.
   Discontinuous(expected: Point, got: Point)
+
+  /// The operation requires a non-empty subpath.
   EmptySubpath
+
+  /// A wiggle operation could not reconcile two horizontal line segments.
   IncompatibleHorizontalWiggle(previous_end: Point, next_start: Point)
+
+  /// A wiggle operation could not reconcile two vertical line segments.
   IncompatibleVerticalWiggle(previous_end: Point, next_start: Point)
+
+  /// The path contains more than one non-empty subpath.
   MultipleNonemptySubpaths
+
+  /// Two points were too far apart for a wiggle operation to merge them.
   NotCloseEnough(expected: Point, got: Point, tolerance: Float)
 }
 
+/// Create a point from `x` and `y` coordinates.
 pub fn point(x: Float, y: Float) -> Point {
   Vec2(x, y)
 }
 
+/// Create an empty path.
 pub fn empty_path() -> Path {
   Path([])
 }
 
+/// Create a path from a list of subpaths.
 pub fn path(subpaths: List(Subpath)) -> Path {
   Path(subpaths:)
 }
 
+/// Return the subpaths in a path.
 pub fn subpaths(path: Path) -> List(Subpath) {
   path.subpaths
 }
 
+/// Create a path containing a single subpath.
 pub fn from_subpath(subpath: Subpath) -> Path {
   path([subpath])
 }
 
+/// Append a subpath to the end of a path.
 pub fn append_subpath(path: Path, subpath: Subpath) -> Path {
   Path(subpaths: list.append(path.subpaths, [subpath]))
 }
 
+/// Convert a path with zero or one non-empty subpaths into a subpath.
+///
+/// Empty subpaths are ignored. If more than one non-empty subpath is present,
+/// this returns `MultipleNonemptySubpaths`.
 pub fn as_subpath(path: Path) -> Result(Subpath, Error) {
   case nonempty_subpaths(path.subpaths) {
     [] -> Ok(empty_subpath())
@@ -71,10 +119,15 @@ pub fn as_subpath(path: Path) -> Result(Subpath, Error) {
   }
 }
 
+/// Create an empty open subpath.
 pub fn empty_subpath() -> Subpath {
   Subpath(segments: [], closed: False)
 }
 
+/// Create an open subpath from a continuous list of segments.
+///
+/// Returns `Discontinuous` if any segment starts somewhere other than the
+/// previous segment's end point.
 pub fn subpath(segments: List(Segment)) -> Result(Subpath, Error) {
   case continuous(segments) {
     Ok(Nil) -> Ok(Subpath(segments:, closed: False))
@@ -82,6 +135,11 @@ pub fn subpath(segments: List(Segment)) -> Result(Subpath, Error) {
   }
 }
 
+/// Create an open subpath while gently reconciling tiny endpoint gaps.
+///
+/// This is useful after floating-point transformations. If adjacent segment
+/// endpoints are within the default wiggle tolerance, the overlap point is used
+/// to make the segments continuous.
 pub fn wiggle_subpath(segments: List(Segment)) -> Result(Subpath, Error) {
   case segments {
     [] | [_] -> subpath(segments)
@@ -94,14 +152,17 @@ pub fn wiggle_subpath(segments: List(Segment)) -> Result(Subpath, Error) {
   }
 }
 
+/// Return the segments in a subpath.
 pub fn segments(subpath: Subpath) -> List(Segment) {
   subpath.segments
 }
 
+/// Check whether a subpath is closed.
 pub fn is_closed(subpath: Subpath) -> Bool {
   subpath.closed
 }
 
+/// Return the start point of a non-empty subpath.
 pub fn start(subpath: Subpath) -> Result(Point, Error) {
   case subpath.segments {
     [] -> Error(EmptySubpath)
@@ -109,6 +170,7 @@ pub fn start(subpath: Subpath) -> Result(Point, Error) {
   }
 }
 
+/// Return the end point of a non-empty subpath.
 pub fn end(subpath: Subpath) -> Result(Point, Error) {
   case list.last(subpath.segments) {
     Ok(last) -> Ok(segment_end(last))
@@ -116,6 +178,9 @@ pub fn end(subpath: Subpath) -> Result(Point, Error) {
   }
 }
 
+/// Append a segment to an open subpath.
+///
+/// The new segment must start exactly at the current end point.
 pub fn append(subpath: Subpath, segment: Segment) -> Result(Subpath, Error) {
   case subpath.closed {
     True -> Error(AlreadyClosed)
@@ -123,6 +188,10 @@ pub fn append(subpath: Subpath, segment: Segment) -> Result(Subpath, Error) {
   }
 }
 
+/// Append a segment to an open subpath, inserting a connecting line if needed.
+///
+/// If the subpath is empty, this behaves like `append`. If the new segment does
+/// not start at the current end point, a line segment is inserted between them.
 pub fn force_append(
   subpath: Subpath,
   segment: Segment,
@@ -154,6 +223,7 @@ pub fn force_append(
   }
 }
 
+/// Close a subpath if its start and end points already match.
 pub fn close(subpath: Subpath) -> Result(Subpath, Error) {
   case subpath.closed {
     True -> Ok(subpath)
@@ -169,6 +239,7 @@ pub fn close(subpath: Subpath) -> Result(Subpath, Error) {
   }
 }
 
+/// Close a subpath, inserting a line back to the start point if needed.
 pub fn force_close(subpath: Subpath) -> Result(Subpath, Error) {
   case subpath.closed {
     True -> Ok(subpath)
@@ -189,6 +260,10 @@ pub fn force_close(subpath: Subpath) -> Result(Subpath, Error) {
   }
 }
 
+/// Close a subpath while gently reconciling tiny endpoint gaps.
+///
+/// This is useful after floating-point transformations that should preserve
+/// closure but leave endpoints off by a very small amount.
 pub fn wiggle_close(subpath: Subpath) -> Result(Subpath, Error) {
   case subpath.closed {
     True -> Ok(subpath)
@@ -222,6 +297,7 @@ pub fn wiggle_close(subpath: Subpath) -> Result(Subpath, Error) {
   }
 }
 
+/// Return the start point of a segment.
 pub fn segment_start(segment: Segment) -> Point {
   case segment {
     Line(start:, ..)
@@ -231,6 +307,7 @@ pub fn segment_start(segment: Segment) -> Point {
   }
 }
 
+/// Return the end point of a segment.
 pub fn segment_end(segment: Segment) -> Point {
   case segment {
     Line(end:, ..)
@@ -240,10 +317,12 @@ pub fn segment_end(segment: Segment) -> Point {
   }
 }
 
+/// Create a straight line segment.
 pub fn line(start start: Point, end end: Point) -> Segment {
   Line(start:, end:)
 }
 
+/// Create a quadratic Bezier segment.
 pub fn quadratic_bezier(
   start start: Point,
   control control: Point,
@@ -252,6 +331,7 @@ pub fn quadratic_bezier(
   QuadraticBezier(start:, control:, end:)
 }
 
+/// Create a cubic Bezier segment.
 pub fn cubic_bezier(
   start start: Point,
   control1 control1: Point,
@@ -261,6 +341,7 @@ pub fn cubic_bezier(
   CubicBezier(start:, control1:, control2:, end:)
 }
 
+/// Create an elliptical arc segment.
 pub fn arc(
   start start: Point,
   radius radius: Point,

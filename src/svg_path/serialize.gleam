@@ -1,3 +1,10 @@
+//// SVG path data serializer.
+////
+//// This module turns paths, subpaths, and segments into SVG `d` attribute
+//// strings. The default output favors readable canonical forms; options can be
+//// used for relative commands, smaller whitespace, and omitted repeated command
+//// letters.
+
 import gleam/float
 import gleam/int
 import gleam/list
@@ -5,16 +12,27 @@ import gleam/option.{type Option, None, Some}
 import gleam/string
 import svg_path
 
+/// Options for SVG path data serialization.
 pub type Options {
   Options(
+    /// Decimal places used when formatting numbers.
     decimal_places: Option(Int),
+    /// Whether formatted numbers should keep trailing zeroes.
     fixed_decimals: Bool,
+    /// Whether to emit relative commands instead of absolute commands.
     relative: Bool,
+    /// Whether to remove optional spaces between command letters and arguments.
     minimize_whitespace: Bool,
+    /// Whether to repeat command letters when SVG syntax allows them to be
+    /// omitted.
     repeat_commands: Bool,
   )
 }
 
+/// Default serialization options.
+///
+/// Defaults to readable absolute commands, up to 5 decimal places, repeated
+/// command letters, and normal whitespace.
 pub fn default_options() -> Options {
   Options(
     decimal_places: Some(5),
@@ -25,6 +43,9 @@ pub fn default_options() -> Options {
   )
 }
 
+/// Create options that round numbers to the given number of decimal places.
+///
+/// Trailing zeroes are stripped. Negative decimal places are clamped to zero.
 pub fn decimal_options(decimal_places: Int) -> Options {
   Options(
     decimal_places: Some(decimal_places),
@@ -35,6 +56,10 @@ pub fn decimal_options(decimal_places: Int) -> Options {
   )
 }
 
+/// Create options that round numbers and keep exactly the given number of
+/// decimal places.
+///
+/// Negative decimal places are clamped to zero.
 pub fn fixed_decimal_options(decimal_places: Int) -> Options {
   Options(
     decimal_places: Some(decimal_places),
@@ -45,6 +70,7 @@ pub fn fixed_decimal_options(decimal_places: Int) -> Options {
   )
 }
 
+/// Create options that serialize with relative commands.
 pub fn relative_options() -> Options {
   Options(
     decimal_places: Some(5),
@@ -55,6 +81,7 @@ pub fn relative_options() -> Options {
   )
 }
 
+/// Create relative serialization options with decimal rounding.
 pub fn relative_decimal_options(decimal_places: Int) -> Options {
   Options(
     decimal_places: Some(decimal_places),
@@ -65,6 +92,7 @@ pub fn relative_decimal_options(decimal_places: Int) -> Options {
   )
 }
 
+/// Create relative serialization options with fixed decimal formatting.
 pub fn relative_fixed_decimal_options(decimal_places: Int) -> Options {
   Options(
     decimal_places: Some(decimal_places),
@@ -75,18 +103,25 @@ pub fn relative_fixed_decimal_options(decimal_places: Int) -> Options {
   )
 }
 
+/// Remove optional spaces between command letters and their arguments.
 pub fn minimize_whitespace(options: Options) -> Options {
   Options(..options, minimize_whitespace: True)
 }
 
+/// Configure whether repeated command letters should be emitted.
+///
+/// SVG allows some commands to omit the command letter when the same command
+/// repeats. Pass `False` for smaller, less verbose output.
 pub fn repeat_commands(options: Options, repeat_commands: Bool) -> Options {
   Options(..options, repeat_commands:)
 }
 
+/// Serialize a path with default options.
 pub fn path(path: svg_path.Path) -> String {
   path_with_options(path, default_options())
 }
 
+/// Serialize a path with custom options.
 pub fn path_with_options(
   path path: svg_path.Path,
   options options: Options,
@@ -103,10 +138,12 @@ pub fn path_with_options(
   }
 }
 
+/// Serialize a subpath with default options.
 pub fn subpath(subpath: svg_path.Subpath) -> String {
   subpath_with_options(subpath, default_options())
 }
 
+/// Serialize a subpath with custom options.
 pub fn subpath_with_options(
   subpath subpath: svg_path.Subpath,
   options options: Options,
@@ -139,10 +176,12 @@ pub fn subpath_with_options(
   }
 }
 
+/// Serialize a segment with default options.
 pub fn segment(segment: svg_path.Segment) -> String {
   segment_with_options(segment, default_options())
 }
 
+/// Serialize a segment with custom options.
 pub fn segment_with_options(
   segment segment: svg_path.Segment,
   options options: Options,

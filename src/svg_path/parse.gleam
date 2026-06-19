@@ -1,3 +1,9 @@
+//// SVG path data parser.
+////
+//// This module parses the `d` attribute syntax used by SVG paths. It supports
+//// comma and whitespace separators, compact signed numbers, relative commands,
+//// implicit repeated commands, smooth curves, and arcs.
+
 import gleam/float
 import gleam/int
 import gleam/list
@@ -5,13 +11,27 @@ import gleam/option.{type Option, None, Some}
 import gleam/string
 import svg_path
 
+/// Errors returned while parsing SVG path data.
 pub type Error {
+  /// A parsed path was internally invalid according to the core path model.
   Core(svg_path.Error)
+
+  /// An arc flag was not `0` or `1`.
   ExpectedArcFlag
+
+  /// A command letter was expected.
   ExpectedCommand
+
+  /// Path data must begin with a move command.
   ExpectedMove
+
+  /// A numeric argument was expected.
   ExpectedNumber
+
+  /// A numeric token could not be parsed as a float.
   InvalidNumber(String)
+
+  /// The command letter is not supported by this library.
   UnsupportedCommand(String)
 }
 
@@ -32,6 +52,10 @@ type State {
   )
 }
 
+/// Parse an SVG path data string into a `Path`.
+///
+/// Empty strings parse as an empty path. Move-only subpaths are ignored by the
+/// core path model because they contain no drawable segments.
 pub fn path(input: String) -> Result(svg_path.Path, Error) {
   case tokenize(input) {
     Error(error) -> Error(error)
