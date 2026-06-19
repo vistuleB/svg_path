@@ -3,9 +3,7 @@ import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/string
-import gleam_community/maths
 import svg_path
-import svg_path/transform as path_transform
 
 pub type Options {
   Options(
@@ -13,7 +11,6 @@ pub type Options {
     fixed_decimals: Bool,
     relative: Bool,
     minimize_whitespace: Bool,
-    force_matrix_transform: Bool,
   )
 }
 
@@ -23,7 +20,6 @@ pub fn default_options() -> Options {
     fixed_decimals: False,
     relative: False,
     minimize_whitespace: False,
-    force_matrix_transform: False,
   )
 }
 
@@ -33,7 +29,6 @@ pub fn decimal_options(decimal_places: Int) -> Options {
     fixed_decimals: False,
     relative: False,
     minimize_whitespace: False,
-    force_matrix_transform: False,
   )
 }
 
@@ -43,7 +38,6 @@ pub fn fixed_decimal_options(decimal_places: Int) -> Options {
     fixed_decimals: True,
     relative: False,
     minimize_whitespace: False,
-    force_matrix_transform: False,
   )
 }
 
@@ -53,7 +47,6 @@ pub fn relative_options() -> Options {
     fixed_decimals: False,
     relative: True,
     minimize_whitespace: False,
-    force_matrix_transform: False,
   )
 }
 
@@ -63,7 +56,6 @@ pub fn relative_decimal_options(decimal_places: Int) -> Options {
     fixed_decimals: False,
     relative: True,
     minimize_whitespace: False,
-    force_matrix_transform: False,
   )
 }
 
@@ -73,16 +65,11 @@ pub fn relative_fixed_decimal_options(decimal_places: Int) -> Options {
     fixed_decimals: True,
     relative: True,
     minimize_whitespace: False,
-    force_matrix_transform: False,
   )
 }
 
 pub fn minimize_whitespace(options: Options) -> Options {
   Options(..options, minimize_whitespace: True)
-}
-
-pub fn force_matrix_transform(options: Options) -> Options {
-  Options(..options, force_matrix_transform: True)
 }
 
 pub fn path(path: svg_path.Path) -> String {
@@ -168,51 +155,6 @@ pub fn segment_with_options(
         ],
         options,
       )
-    }
-  }
-}
-
-pub fn transform(transform: path_transform.Matrix) -> String {
-  transform_with_options(transform, default_options())
-}
-
-pub fn transform_with_options(
-  transform transform: path_transform.Matrix,
-  options options: Options,
-) -> String {
-  let #(a, b, c, d, e, f) = path_transform.to_tuple(transform)
-
-  case options.force_matrix_transform {
-    True -> matrix_transform(a, b, c, d, e, f, options)
-    False -> {
-      case a == 1.0 && b == 0.0 && c == 0.0 && d == 1.0 {
-        True -> translate_transform(e, f, options)
-        False -> {
-          case b == 0.0 && c == 0.0 && e == 0.0 && f == 0.0 {
-            True -> scale_transform(a, d, options)
-            False -> {
-              case b == 0.0 && c == 0.0 {
-                True -> translate_scale_transform(e, f, a, d, options)
-                False -> {
-                  case
-                    a == 1.0 && b == 0.0 && d == 1.0 && e == 0.0 && f == 0.0
-                  {
-                    True -> skew_x_transform(c, options)
-                    False -> {
-                      case
-                        a == 1.0 && c == 0.0 && d == 1.0 && e == 0.0 && f == 0.0
-                      {
-                        True -> skew_y_transform(b, options)
-                        False -> matrix_transform(a, b, c, d, e, f, options)
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
     }
   }
 }
@@ -435,76 +377,6 @@ fn delta(point: svg_path.Point, from origin: svg_path.Point) -> svg_path.Point {
 
 fn point(point: svg_path.Point, options: Options) -> String {
   number(point.x, options) <> " " <> number(point.y, options)
-}
-
-fn translate_transform(x: Float, y: Float, options: Options) -> String {
-  let arguments = case y == 0.0 {
-    True -> number(x, options)
-    False -> number(x, options) <> " " <> number(y, options)
-  }
-
-  transform_function("translate", arguments)
-}
-
-fn scale_transform(x: Float, y: Float, options: Options) -> String {
-  let arguments = case x == y {
-    True -> number(x, options)
-    False -> number(x, options) <> " " <> number(y, options)
-  }
-
-  transform_function("scale", arguments)
-}
-
-fn translate_scale_transform(
-  translate_x: Float,
-  translate_y: Float,
-  scale_x: Float,
-  scale_y: Float,
-  options: Options,
-) -> String {
-  translate_transform(translate_x, translate_y, options)
-  <> scale_transform(scale_x, scale_y, options)
-}
-
-fn skew_x_transform(tangent: Float, options: Options) -> String {
-  transform_function("skewX", number(degrees_from_tangent(tangent), options))
-}
-
-fn skew_y_transform(tangent: Float, options: Options) -> String {
-  transform_function("skewY", number(degrees_from_tangent(tangent), options))
-}
-
-fn matrix_transform(
-  a: Float,
-  b: Float,
-  c: Float,
-  d: Float,
-  e: Float,
-  f: Float,
-  options: Options,
-) -> String {
-  transform_function(
-    "matrix",
-    number(a, options)
-      <> " "
-      <> number(b, options)
-      <> " "
-      <> number(c, options)
-      <> " "
-      <> number(d, options)
-      <> " "
-      <> number(e, options)
-      <> " "
-      <> number(f, options),
-  )
-}
-
-fn transform_function(name: String, arguments: String) -> String {
-  name <> "(" <> arguments <> ")"
-}
-
-fn degrees_from_tangent(tangent: Float) -> Float {
-  maths.atan(tangent) *. 180.0 /. maths.pi()
 }
 
 fn command(command: String, arguments: String, options: Options) -> String {
