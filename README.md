@@ -437,7 +437,7 @@ choose the width yourself. `NoLeftPadding` disables it.
 
 ## Converting Matrices From `matrix_gleam`
 
-`svg_path` does not depend on `matrix_gleam`, but the tuple helpers make the
+`svg_path` does not depend on [`matrix_gleam`](https://hex.pm/packages/matrix_gleam), but the tuple helpers make the
 conversion small if your application uses both packages.
 
 ```gleam
