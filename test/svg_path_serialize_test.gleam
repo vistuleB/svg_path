@@ -50,7 +50,7 @@ pub fn closed_subpath_serializes_with_z_test() {
       svg_path.line(start: a, end: b),
       svg_path.line(start: b, end: c),
     ])
-    |> result_try_force_close
+    |> result_try_close_with_bridge
 
   assert serialize.subpath(subpath) == "M 0 0 H 10 V 20 Z"
 }
@@ -504,7 +504,7 @@ pub fn rounded_relative_line_uses_h_or_v_after_formatting_test() {
     == "m 0 0 h 10 v 20"
 }
 
-fn result_try_force_close(
+fn result_try_close_with_bridge(
   result_subpath: Result(svg_path.Subpath, svg_path.Error),
 ) -> Result(svg_path.Subpath, svg_path.Error) {
   case result_subpath {
