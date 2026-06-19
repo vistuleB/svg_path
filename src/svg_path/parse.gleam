@@ -1,6 +1,7 @@
 import gleam/float
 import gleam/int
 import gleam/list
+import gleam/option.{type Option, None, Some}
 import gleam/string
 import svg_path
 
@@ -26,6 +27,8 @@ type State {
     current: svg_path.Point,
     has_current: Bool,
     active: Bool,
+    last_cubic_control: Option(svg_path.Point),
+    last_quadratic_control: Option(svg_path.Point),
   )
 }
 
@@ -43,6 +46,8 @@ fn initial_state() -> State {
     current: svg_path.point(0.0, 0.0),
     has_current: False,
     active: False,
+    last_cubic_control: None,
+    last_quadratic_control: None,
   )
 }
 
@@ -69,8 +74,12 @@ fn parse_command(
     "l" -> parse_line(tokens, state, relative: True)
     "Q" -> parse_quadratic_bezier(tokens, state, relative: False)
     "q" -> parse_quadratic_bezier(tokens, state, relative: True)
+    "T" -> parse_smooth_quadratic_bezier(tokens, state, relative: False)
+    "t" -> parse_smooth_quadratic_bezier(tokens, state, relative: True)
     "C" -> parse_cubic_bezier(tokens, state, relative: False)
     "c" -> parse_cubic_bezier(tokens, state, relative: True)
+    "S" -> parse_smooth_cubic_bezier(tokens, state, relative: False)
+    "s" -> parse_smooth_cubic_bezier(tokens, state, relative: True)
     "A" -> parse_arc(tokens, state, relative: False)
     "a" -> parse_arc(tokens, state, relative: True)
     "H" -> parse_horizontal(tokens, state, relative: False)
@@ -105,6 +114,8 @@ fn parse_move(
               current: target,
               has_current: True,
               active: True,
+              last_cubic_control: None,
+              last_quadratic_control: None,
             )
 
           parse_implicit_lines(rest, state, relative)
@@ -282,13 +293,72 @@ fn parse_quadratic_bezier_loop(
 
           case append_segment(state, segment, end) {
             Error(error) -> Error(error)
-            Ok(state) ->
+            Ok(state) -> {
+              let state = remember_quadratic_control(state, control)
               parse_quadratic_bezier_loop(
                 rest,
                 state,
                 relative,
                 parsed_any: True,
               )
+            }
+          }
+        }
+      }
+    }
+    _ -> {
+      case parsed_any {
+        True -> parse_tokens(tokens, state)
+        False -> Error(ExpectedNumber)
+      }
+    }
+  }
+}
+
+fn parse_smooth_quadratic_bezier(
+  tokens: List(Token),
+  state: State,
+  relative relative: Bool,
+) -> Result(svg_path.Path, Error) {
+  case ensure_active(state) {
+    Error(error) -> Error(error)
+    Ok(Nil) ->
+      parse_smooth_quadratic_bezier_loop(
+        tokens,
+        state,
+        relative,
+        parsed_any: False,
+      )
+  }
+}
+
+fn parse_smooth_quadratic_bezier_loop(
+  tokens: List(Token),
+  state: State,
+  relative: Bool,
+  parsed_any parsed_any: Bool,
+) -> Result(svg_path.Path, Error) {
+  case tokens {
+    [Number(_), ..] -> {
+      case take_pair(tokens) {
+        Error(error) -> Error(error)
+        Ok(#(end_x, end_y, rest)) -> {
+          let control = reflected_quadratic_control(state)
+          let end = target_point(state, end_x, end_y, relative)
+          let segment =
+            svg_path.quadratic_bezier(start: state.current, control:, end:)
+
+          case append_segment(state, segment, end) {
+            Error(error) -> Error(error)
+            Ok(state) -> {
+              let state = remember_quadratic_control(state, control)
+              parse_smooth_quadratic_bezier_loop(
+                rest,
+                state,
+                relative,
+                parsed_any: True,
+              )
+            }
           }
         }
       }
@@ -338,8 +408,68 @@ fn parse_cubic_bezier_loop(
 
           case append_segment(state, segment, end) {
             Error(error) -> Error(error)
-            Ok(state) ->
+            Ok(state) -> {
+              let state = remember_cubic_control(state, control2)
               parse_cubic_bezier_loop(rest, state, relative, parsed_any: True)
+            }
+          }
+        }
+      }
+    }
+    _ -> {
+      case parsed_any {
+        True -> parse_tokens(tokens, state)
+        False -> Error(ExpectedNumber)
+      }
+    }
+  }
+}
+
+fn parse_smooth_cubic_bezier(
+  tokens: List(Token),
+  state: State,
+  relative relative: Bool,
+) -> Result(svg_path.Path, Error) {
+  case ensure_active(state) {
+    Error(error) -> Error(error)
+    Ok(Nil) ->
+      parse_smooth_cubic_bezier_loop(tokens, state, relative, parsed_any: False)
+  }
+}
+
+fn parse_smooth_cubic_bezier_loop(
+  tokens: List(Token),
+  state: State,
+  relative: Bool,
+  parsed_any parsed_any: Bool,
+) -> Result(svg_path.Path, Error) {
+  case tokens {
+    [Number(_), ..] -> {
+      case take_smooth_cubic_bezier(tokens) {
+        Error(error) -> Error(error)
+        Ok(#(control2_x, control2_y, end_x, end_y, rest)) -> {
+          let control1 = reflected_cubic_control(state)
+          let control2 = target_point(state, control2_x, control2_y, relative)
+          let end = target_point(state, end_x, end_y, relative)
+          let segment =
+            svg_path.cubic_bezier(
+              start: state.current,
+              control1:,
+              control2:,
+              end:,
+            )
+
+          case append_segment(state, segment, end) {
+            Error(error) -> Error(error)
+            Ok(state) -> {
+              let state = remember_cubic_control(state, control2)
+              parse_smooth_cubic_bezier_loop(
+                rest,
+                state,
+                relative,
+                parsed_any: True,
+              )
+            }
           }
         }
       }
@@ -432,6 +562,8 @@ fn parse_close(
                   current: start,
                   has_current: True,
                   active: False,
+                  last_cubic_control: None,
+                  last_quadratic_control: None,
                 ),
               )
             }
@@ -489,9 +621,53 @@ fn append_segment(
   case svg_path.append(state.subpath, segment) {
     Error(error) -> Error(Core(error))
     Ok(subpath) -> {
-      Ok(State(..state, subpath: subpath, current: end, active: True))
+      Ok(
+        State(..state, subpath: subpath, current: end, active: True)
+        |> clear_curve_controls,
+      )
     }
   }
+}
+
+fn clear_curve_controls(state: State) -> State {
+  State(..state, last_cubic_control: None, last_quadratic_control: None)
+}
+
+fn remember_cubic_control(state: State, control: svg_path.Point) -> State {
+  State(
+    ..state,
+    last_cubic_control: Some(control),
+    last_quadratic_control: None,
+  )
+}
+
+fn remember_quadratic_control(state: State, control: svg_path.Point) -> State {
+  State(
+    ..state,
+    last_cubic_control: None,
+    last_quadratic_control: Some(control),
+  )
+}
+
+fn reflected_cubic_control(state: State) -> svg_path.Point {
+  case state.last_cubic_control {
+    Some(control) -> reflect(control, around: state.current)
+    None -> state.current
+  }
+}
+
+fn reflected_quadratic_control(state: State) -> svg_path.Point {
+  case state.last_quadratic_control {
+    Some(control) -> reflect(control, around: state.current)
+    None -> state.current
+  }
+}
+
+fn reflect(
+  point: svg_path.Point,
+  around origin: svg_path.Point,
+) -> svg_path.Point {
+  svg_path.point(origin.x *. 2.0 -. point.x, origin.y *. 2.0 -. point.y)
 }
 
 fn ensure_active(state: State) -> Result(Nil, Error) {
@@ -555,6 +731,23 @@ fn take_cubic_bezier(
       ..rest
     ] -> {
       Ok(#(control1_x, control1_y, control2_x, control2_y, end_x, end_y, rest))
+    }
+    _ -> Error(ExpectedNumber)
+  }
+}
+
+fn take_smooth_cubic_bezier(
+  tokens: List(Token),
+) -> Result(#(Float, Float, Float, Float, List(Token)), Error) {
+  case tokens {
+    [
+      Number(control2_x),
+      Number(control2_y),
+      Number(end_x),
+      Number(end_y),
+      ..rest
+    ] -> {
+      Ok(#(control2_x, control2_y, end_x, end_y, rest))
     }
     _ -> Error(ExpectedNumber)
   }
@@ -707,8 +900,12 @@ fn is_command(grapheme: String) -> Bool {
       "l",
       "Q",
       "q",
+      "T",
+      "t",
       "C",
       "c",
+      "S",
+      "s",
       "A",
       "a",
       "H",

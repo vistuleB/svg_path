@@ -81,6 +81,35 @@ pub fn repeated_quadratic_beziers_parse_test() {
   assert serialize.subpath(subpath) == "M 0 0 Q 10 20 30 40 Q 50 60 70 80"
 }
 
+pub fn absolute_smooth_quadratic_beziers_parse_test() {
+  let assert Ok(path) = parse.path("M 0 0 Q 10 20 30 40 T 50 60")
+  let assert Ok(subpath) = svg_path.as_subpath(path)
+
+  assert serialize.subpath(subpath) == "M 0 0 Q 10 20 30 40 Q 50 60 50 60"
+}
+
+pub fn relative_smooth_quadratic_beziers_parse_test() {
+  let assert Ok(path) = parse.path("M 10 10 q 5 10 20 30 t 20 20")
+  let assert Ok(subpath) = svg_path.as_subpath(path)
+
+  assert serialize.subpath(subpath) == "M 10 10 Q 15 20 30 40 Q 45 60 50 60"
+}
+
+pub fn repeated_smooth_quadratic_beziers_parse_test() {
+  let assert Ok(path) = parse.path("M 0 0 Q 10 20 30 40 T 50 60 70 80")
+  let assert Ok(subpath) = svg_path.as_subpath(path)
+
+  assert serialize.subpath(subpath)
+    == "M 0 0 Q 10 20 30 40 Q 50 60 50 60 Q 50 60 70 80"
+}
+
+pub fn smooth_quadratic_without_previous_quadratic_uses_current_point_test() {
+  let assert Ok(path) = parse.path("M 0 0 L 5 5 T 10 10")
+  let assert Ok(subpath) = svg_path.as_subpath(path)
+
+  assert serialize.subpath(subpath) == "M 0 0 L 5 5 Q 5 5 10 10"
+}
+
 pub fn absolute_cubic_beziers_parse_test() {
   let assert Ok(path) = parse.path("M 0 0 C 10 20 30 40 50 60")
   let assert Ok(subpath) = svg_path.as_subpath(path)
@@ -100,6 +129,37 @@ pub fn repeated_cubic_beziers_parse_test() {
   let assert Ok(subpath) = svg_path.as_subpath(path)
 
   assert serialize.subpath(subpath) == "M 0 0 C 1 2 3 4 5 6 C 7 8 9 10 11 12"
+}
+
+pub fn absolute_smooth_cubic_beziers_parse_test() {
+  let assert Ok(path) = parse.path("M 0 0 C 1 2 3 4 5 6 S 9 10 11 12")
+  let assert Ok(subpath) = svg_path.as_subpath(path)
+
+  assert serialize.subpath(subpath) == "M 0 0 C 1 2 3 4 5 6 C 7 8 9 10 11 12"
+}
+
+pub fn relative_smooth_cubic_beziers_parse_test() {
+  let assert Ok(path) = parse.path("M 10 10 c 1 2 3 4 5 6 s 4 4 6 6")
+  let assert Ok(subpath) = svg_path.as_subpath(path)
+
+  assert serialize.subpath(subpath)
+    == "M 10 10 C 11 12 13 14 15 16 C 17 18 19 20 21 22"
+}
+
+pub fn repeated_smooth_cubic_beziers_parse_test() {
+  let assert Ok(path) =
+    parse.path("M 0 0 C 1 2 3 4 5 6 S 9 10 11 12 15 16 17 18")
+  let assert Ok(subpath) = svg_path.as_subpath(path)
+
+  assert serialize.subpath(subpath)
+    == "M 0 0 C 1 2 3 4 5 6 C 7 8 9 10 11 12 C 13 14 15 16 17 18"
+}
+
+pub fn smooth_cubic_without_previous_cubic_uses_current_point_test() {
+  let assert Ok(path) = parse.path("M 0 0 L 5 5 S 10 10 15 15")
+  let assert Ok(subpath) = svg_path.as_subpath(path)
+
+  assert serialize.subpath(subpath) == "M 0 0 L 5 5 C 5 5 10 10 15 15"
 }
 
 pub fn absolute_arcs_parse_test() {
@@ -197,7 +257,7 @@ pub fn invalid_arc_flags_are_rejected_test() {
 }
 
 pub fn unsupported_commands_are_rejected_test() {
-  assert parse.path("M 0 0 S 1 2 3 4") == Error(parse.UnsupportedCommand("S"))
+  assert parse.path("M 0 0 R 1 2 3 4") == Error(parse.UnsupportedCommand("R"))
 }
 
 pub fn drawing_command_before_move_is_rejected_test() {
