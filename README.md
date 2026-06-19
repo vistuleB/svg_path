@@ -8,8 +8,8 @@ data in Gleam.
 
 The package offers several knobs to fine-tune the details of path and SVG
 transform serialization. It aims to support the construction and manipulation
-of valid SVG paths from noisy data through parser normalization, ergonomic
-constructors, and explicit endpoint reconciliation policies.
+of valid SVG paths from noisy data through parser normalization and explicit
+endpoint reconciliation policies.
 
 ```sh
 gleam add svg_path@0
