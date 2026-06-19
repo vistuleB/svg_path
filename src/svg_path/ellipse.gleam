@@ -25,6 +25,11 @@ type ArcParameters {
   )
 }
 
+/// A cubic Bezier curve produced by the ellipse math helpers.
+pub type Cubic {
+  Cubic(start: Point, control1: Point, control2: Point, end: Point)
+}
+
 /// Equivalent of `transform.Matrix`, redefined by the ellipse module to avoid
 /// a circular dependency.
 ///
@@ -161,6 +166,27 @@ pub fn collapsed_arc_subpath(
   )
 }
 
+/// Convert an elliptical arc to one or more cubic Bezier curves.
+///
+/// The arc is split into chunks of at most a quarter turn. This is the common
+/// deterministic SVG arc approximation strategy. This function does not accept
+/// a tolerance; use a higher-level helper if you want SVG path segments back.
+pub fn arc_to_cubics(
+  start start: Point,
+  radius radius: Point,
+  x_axis_rotation x_axis_rotation: Float,
+  large_arc large_arc: Bool,
+  sweep sweep: Bool,
+  end end: Point,
+) -> Result(List(Cubic), Error) {
+  case
+    endpoint_to_center(start, radius, x_axis_rotation, large_arc, sweep, end)
+  {
+    Error(error) -> Error(error)
+    Ok(arc) -> Ok(cubic_chunks(arc.start_angle, arc.delta_angle, arc, []))
+  }
+}
+
 fn collapsed_arc_points(
   start: Point,
   radius: Point,
@@ -212,6 +238,84 @@ fn collapsed_arc_points(
       }
     }
   }
+}
+
+fn cubic_chunks(
+  start_angle: Float,
+  remaining_delta: Float,
+  arc: ArcParameters,
+  cubics: List(Cubic),
+) -> List(Cubic) {
+  let quarter_turn = maths.pi() /. 2.0
+
+  case float.absolute_value(remaining_delta) <=. quarter_turn +. epsilon {
+    True -> {
+      list.reverse([
+        cubic_for_angle_range(start_angle, start_angle +. remaining_delta, arc),
+        ..cubics
+      ])
+    }
+    False -> {
+      let chunk_delta = case remaining_delta >=. 0.0 {
+        True -> quarter_turn
+        False -> 0.0 -. quarter_turn
+      }
+      cubic_chunks(
+        start_angle +. chunk_delta,
+        remaining_delta -. chunk_delta,
+        arc,
+        [
+          cubic_for_angle_range(start_angle, start_angle +. chunk_delta, arc),
+          ..cubics
+        ],
+      )
+    }
+  }
+}
+
+fn cubic_for_angle_range(
+  start_angle: Float,
+  end_angle: Float,
+  arc: ArcParameters,
+) -> Cubic {
+  let delta = end_angle -. start_angle
+  let alpha = 4.0 /. 3.0 *. maths.tan(delta /. 4.0)
+  let start = ellipse_point(arc, start_angle)
+  let end = ellipse_point(arc, end_angle)
+  let start_tangent = ellipse_derivative(arc, start_angle)
+  let end_tangent = ellipse_derivative(arc, end_angle)
+
+  Cubic(
+    start:,
+    control1: offset(start, start_tangent, alpha),
+    control2: offset(end, end_tangent, 0.0 -. alpha),
+    end:,
+  )
+}
+
+fn ellipse_point(arc: ArcParameters, angle: Float) -> Point {
+  let phi = degrees_to_radians(arc.x_axis_rotation)
+  let cos_phi = maths.cos(phi)
+  let sin_phi = maths.sin(phi)
+  let cos_angle = maths.cos(angle)
+  let sin_angle = maths.sin(angle)
+  let x = arc.radius.x *. cos_angle
+  let y = arc.radius.y *. sin_angle
+
+  Point(
+    arc.center.x +. cos_phi *. x -. sin_phi *. y,
+    arc.center.y +. sin_phi *. x +. cos_phi *. y,
+  )
+}
+
+fn ellipse_derivative(arc: ArcParameters, angle: Float) -> Point {
+  let phi = degrees_to_radians(arc.x_axis_rotation)
+  let cos_phi = maths.cos(phi)
+  let sin_phi = maths.sin(phi)
+  let x = 0.0 -. arc.radius.x *. maths.sin(angle)
+  let y = arc.radius.y *. maths.cos(angle)
+
+  Point(cos_phi *. x -. sin_phi *. y, sin_phi *. x +. cos_phi *. y)
 }
 
 fn endpoint_to_center(

@@ -6,6 +6,7 @@
 
 import gleam/float
 import gleam/list
+import svg_path/ellipse
 import vec/vec2.{type Vec2, Vec2}
 
 const default_wiggle_tolerance = 0.000000001
@@ -186,6 +187,85 @@ pub fn clean_subpath(subpath: Subpath) -> Subpath {
       }
     }
     _ -> Subpath(segments: cleaned, closed: subpath.closed)
+  }
+}
+
+/// Convert every arc in a subpath to cubic Bezier curves.
+///
+/// Lines, quadratic Beziers, and cubic Beziers are preserved. Elliptical arcs
+/// are approximated with one or more cubic Beziers, split into chunks of at
+/// most a quarter turn. Degenerate arcs fall back to a straight-line cubic
+/// Bezier between their endpoints.
+pub fn subpath_arcs_to_bezier(subpath: Subpath) -> Subpath {
+  Subpath(
+    segments: segments_arcs_to_bezier(subpath.segments, []),
+    closed: subpath.closed,
+  )
+}
+
+/// Convert every arc in a path to cubic Bezier curves.
+///
+/// This applies `subpath_arcs_to_bezier` to each subpath.
+pub fn path_arcs_to_bezier(path: Path) -> Path {
+  Path(subpaths: list.map(path.subpaths, subpath_arcs_to_bezier))
+}
+
+/// Convert an arc segment to cubic Bezier curves, preserving other segments.
+///
+/// Non-arc segments are returned unchanged as a single-item list. An arc may
+/// become several cubic Bezier segments.
+pub fn segment_arcs_to_bezier(segment: Segment) -> List(Segment) {
+  case segment {
+    Line(..) | QuadraticBezier(..) | CubicBezier(..) -> [segment]
+    Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:) -> {
+      case
+        ellipse.arc_to_cubics(
+          start: to_ellipse_point(start),
+          radius: to_ellipse_point(radius),
+          x_axis_rotation:,
+          large_arc:,
+          sweep:,
+          end: to_ellipse_point(end),
+        )
+      {
+        Ok(cubics) -> cubic_segments_from_ellipse(cubics, start, end)
+        Error(_) -> [line_to_cubic(start, end)]
+      }
+    }
+  }
+}
+
+/// Convert every segment in a subpath to cubic Bezier curves.
+///
+/// Lines and quadratic Beziers are converted exactly. Cubic Beziers are
+/// preserved. Elliptical arcs are approximated with one or more cubic Beziers,
+/// split into chunks of at most a quarter turn.
+pub fn subpath_to_cubic_beziers(subpath: Subpath) -> Subpath {
+  Subpath(
+    segments: segments_to_cubic_beziers(subpath.segments, []),
+    closed: subpath.closed,
+  )
+}
+
+/// Convert every segment in a path to cubic Bezier curves.
+///
+/// This applies `subpath_to_cubic_beziers` to each subpath.
+pub fn path_to_cubic_beziers(path: Path) -> Path {
+  Path(subpaths: list.map(path.subpaths, subpath_to_cubic_beziers))
+}
+
+/// Convert a segment to one or more cubic Bezier curves.
+///
+/// Lines and quadratic Beziers are converted exactly. Cubic Beziers are
+/// returned unchanged. Arcs may become several cubic Bezier segments.
+pub fn segment_to_cubic_beziers(segment: Segment) -> List(Segment) {
+  case segment {
+    Line(start:, end:) -> [line_to_cubic(start, end)]
+    QuadraticBezier(start:, control:, end:) -> [
+      quadratic_to_cubic(start, control, end),
+    ]
+    CubicBezier(..) -> [segment]
+    Arc(..) -> segment_arcs_to_bezier(segment)
   }
 }
 
@@ -371,6 +451,116 @@ fn is_zero_length_line(segment: Segment) -> Bool {
     Line(start:, end:) -> start == end
     _ -> False
   }
+}
+
+fn segments_arcs_to_bezier(
+  segments: List(Segment),
+  converted: List(Segment),
+) -> List(Segment) {
+  case segments {
+    [] -> list.reverse(converted)
+    [first, ..rest] -> {
+      segments_arcs_to_bezier(
+        rest,
+        list.append(list.reverse(segment_arcs_to_bezier(first)), converted),
+      )
+    }
+  }
+}
+
+fn segments_to_cubic_beziers(
+  segments: List(Segment),
+  converted: List(Segment),
+) -> List(Segment) {
+  case segments {
+    [] -> list.reverse(converted)
+    [first, ..rest] -> {
+      segments_to_cubic_beziers(
+        rest,
+        list.append(list.reverse(segment_to_cubic_beziers(first)), converted),
+      )
+    }
+  }
+}
+
+fn line_to_cubic(start: Point, end: Point) -> Segment {
+  CubicBezier(
+    start:,
+    control1: interpolate(start, end, 1.0 /. 3.0),
+    control2: interpolate(start, end, 2.0 /. 3.0),
+    end:,
+  )
+}
+
+fn quadratic_to_cubic(start: Point, control: Point, end: Point) -> Segment {
+  CubicBezier(
+    start:,
+    control1: point(
+      start.x +. 2.0 /. 3.0 *. { control.x -. start.x },
+      start.y +. 2.0 /. 3.0 *. { control.y -. start.y },
+    ),
+    control2: point(
+      end.x +. 2.0 /. 3.0 *. { control.x -. end.x },
+      end.y +. 2.0 /. 3.0 *. { control.y -. end.y },
+    ),
+    end:,
+  )
+}
+
+fn cubic_from_ellipse(cubic: ellipse.Cubic) -> Segment {
+  let ellipse.Cubic(start:, control1:, control2:, end:) = cubic
+
+  CubicBezier(
+    start: from_ellipse_point(start),
+    control1: from_ellipse_point(control1),
+    control2: from_ellipse_point(control2),
+    end: from_ellipse_point(end),
+  )
+}
+
+fn cubic_segments_from_ellipse(
+  cubics: List(ellipse.Cubic),
+  start: Point,
+  end: Point,
+) -> List(Segment) {
+  cubics
+  |> list.map(cubic_from_ellipse)
+  |> force_cubic_start(start)
+  |> force_cubic_end(end)
+}
+
+fn force_cubic_start(segments: List(Segment), start: Point) -> List(Segment) {
+  case segments {
+    [] -> []
+    [CubicBezier(control1:, control2:, end:, ..), ..rest] -> [
+      CubicBezier(start:, control1:, control2:, end:),
+      ..rest
+    ]
+    [first, ..rest] -> [first, ..rest]
+  }
+}
+
+fn force_cubic_end(segments: List(Segment), end: Point) -> List(Segment) {
+  case segments {
+    [] -> []
+    [only] -> [segment_with_end(only, end)]
+    [first, ..rest] -> [first, ..force_cubic_end(rest, end)]
+  }
+}
+
+fn to_ellipse_point(point: Point) -> ellipse.Point {
+  ellipse.Point(point.x, point.y)
+}
+
+fn from_ellipse_point(point: ellipse.Point) -> Point {
+  Vec2(point.x, point.y)
+}
+
+fn interpolate(start: Point, end: Point, t: Float) -> Point {
+  point(
+    start.x +. { end.x -. start.x } *. t,
+    start.y +. { end.y -. start.y } *. t,
+  )
 }
 
 /// Create a quadratic Bezier segment.
