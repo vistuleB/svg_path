@@ -169,7 +169,7 @@ pub fn closed_subpath_transform_preserves_semantic_closure_test() {
         end: svg_path.point(0.0, 0.0),
       ),
     ])
-    |> result_try_close
+    |> result_try_set_closed_true
   let assert Ok(transformed) = transform.subpath(subpath, by: matrix)
 
   assert svg_path.is_closed(transformed)
@@ -427,7 +427,7 @@ pub fn graceful_closed_subpath_transform_preserves_semantic_closure_test() {
         end: svg_path.point(5.0, 0.0),
       ),
     ])
-    |> result_try_close
+    |> result_try_set_closed_true
   let matrix = transform.matrix(a: 1.0, b: 0.0, c: 0.0, d: 0.0, e: 0.0, f: 0.0)
   let assert Ok(transformed) = transform.subpath_gracefully(subpath, by: matrix)
 
@@ -467,11 +467,11 @@ pub fn graceful_non_degenerate_arc_transform_returns_arc_test() {
   assert serialize.segment(segment) == "M 0 0 A 5 5 0 0 0 10 0"
 }
 
-fn result_try_close(
+fn result_try_set_closed_true(
   result_subpath: Result(svg_path.Subpath, svg_path.Error),
 ) -> Result(svg_path.Subpath, svg_path.Error) {
   case result_subpath {
-    Ok(subpath) -> svg_path.close(subpath)
+    Ok(subpath) -> svg_path.set_closed(subpath, closed: True)
     Error(error) -> Error(error)
   }
 }

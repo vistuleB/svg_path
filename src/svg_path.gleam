@@ -375,14 +375,6 @@ pub fn is_closed(subpath: Subpath) -> Bool {
   subpath.closed
 }
 
-/// Return an open version of a subpath.
-///
-/// This only clears the semantic closed flag. It does not remove or alter any
-/// segments, including any final line back to the subpath start.
-pub fn open(subpath: Subpath) -> Subpath {
-  Subpath(segments: subpath.segments, closed: False)
-}
-
 /// Set a subpath's semantic closed state.
 ///
 /// Setting `closed` to `False` only clears the semantic closed flag. Setting it
@@ -405,8 +397,8 @@ pub fn set_closed_with(
   join join: Join,
 ) -> Result(Subpath, Error) {
   case closed {
-    False -> Ok(open(subpath))
-    True -> close_with(subpath, join:)
+    False -> Ok(Subpath(segments: subpath.segments, closed: False))
+    True -> close_subpath_with(subpath, join)
   }
 }
 
@@ -526,38 +518,6 @@ pub fn assert_concat_with(
   }
 }
 
-/// Close a subpath if its start and end points already match.
-pub fn close(subpath: Subpath) -> Result(Subpath, Error) {
-  close_with(subpath, join: Strict)
-}
-
-/// Close a subpath using the given join policy.
-pub fn close_with(subpath: Subpath, join join: Join) -> Result(Subpath, Error) {
-  case subpath.closed {
-    True -> Ok(subpath)
-    False -> {
-      close_open_subpath_with(subpath, join)
-    }
-  }
-}
-
-/// Close a subpath if its start and end points already match, panicking if the
-/// subpath cannot be closed.
-///
-/// This is useful for hand-authored paths where invalid continuity would be a
-/// programmer error. Use `close` when you want to handle closure errors.
-pub fn assert_close(subpath: Subpath) -> Subpath {
-  assert_close_with(subpath, join: Strict)
-}
-
-/// Close a subpath with a join policy, panicking if invalid.
-pub fn assert_close_with(subpath: Subpath, join join: Join) -> Subpath {
-  case close_with(subpath, join:) {
-    Ok(subpath) -> subpath
-    Error(_) -> panic as "svg_path.assert_close received an uncloseable subpath"
-  }
-}
-
 /// Return the start point of a segment.
 pub fn segment_start(segment: Segment) -> Point {
   case segment {
@@ -647,7 +607,7 @@ fn validate_spliced_subpath(
     Ok(subpath) -> {
       case closed {
         False -> Ok(subpath)
-        True -> close_with(subpath, join:)
+        True -> close_subpath_with(subpath, join)
       }
     }
     Error(error) -> Error(error)
@@ -935,6 +895,13 @@ fn wiggle_segments(
         }
       }
     }
+  }
+}
+
+fn close_subpath_with(subpath: Subpath, join: Join) -> Result(Subpath, Error) {
+  case subpath.closed {
+    True -> Ok(subpath)
+    False -> close_open_subpath_with(subpath, join)
   }
 }
 

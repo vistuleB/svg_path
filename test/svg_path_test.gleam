@@ -136,7 +136,7 @@ pub fn assert_subpath_builds_continuous_segments_test() {
   assert svg_path.segments(subpath) == segments
 }
 
-pub fn open_clears_closed_state_without_changing_segments_test() {
+pub fn set_closed_false_clears_closed_state_without_changing_segments_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)
   let segments = [
@@ -145,22 +145,22 @@ pub fn open_clears_closed_state_without_changing_segments_test() {
   ]
   let closed =
     svg_path.assert_subpath(segments)
-    |> svg_path.assert_close
+    |> svg_path.assert_set_closed(closed: True)
 
-  let opened = svg_path.open(closed)
+  let assert Ok(opened) = svg_path.set_closed(closed, closed: False)
 
   assert !svg_path.is_closed(opened)
   assert svg_path.segments(opened) == segments
 }
 
-pub fn open_accepts_open_and_empty_subpaths_test() {
+pub fn set_closed_false_accepts_open_and_empty_subpaths_test() {
   let empty = svg_path.empty_subpath()
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)
-  let open = svg_path.assert_subpath([svg_path.line(start: a, end: b)])
+  let open_subpath = svg_path.assert_subpath([svg_path.line(start: a, end: b)])
 
-  assert svg_path.open(empty) == empty
-  assert svg_path.open(open) == open
+  assert svg_path.set_closed(empty, closed: False) == Ok(empty)
+  assert svg_path.set_closed(open_subpath, closed: False) == Ok(open_subpath)
 }
 
 pub fn set_closed_false_opens_subpath_test() {
@@ -171,7 +171,7 @@ pub fn set_closed_false_opens_subpath_test() {
       svg_path.line(start: a, end: b),
       svg_path.line(start: b, end: a),
     ])
-    |> svg_path.assert_close
+    |> svg_path.assert_set_closed(closed: True)
 
   let assert Ok(opened) = svg_path.set_closed(closed, closed: False)
 
@@ -238,7 +238,7 @@ pub fn set_closed_with_wiggle_false_opens_subpath_test() {
       svg_path.line(start: a, end: b),
       svg_path.line(start: b, end: a),
     ])
-    |> svg_path.assert_close
+    |> svg_path.assert_set_closed(closed: True)
 
   let assert Ok(opened) =
     svg_path.set_closed_with(closed, closed: False, join: svg_path.Wiggle)
@@ -255,7 +255,7 @@ pub fn append_segment_rejects_closed_subpath_test() {
       svg_path.line(start: a, end: b),
       svg_path.line(start: b, end: a),
     ])
-    |> result_try_close_with_line
+    |> result_try_set_closed_with_bridge
 
   assert svg_path.append_segment(subpath, svg_path.line(start: a, end: c))
     == Error(svg_path.AlreadyClosed)
@@ -376,7 +376,7 @@ pub fn clean_subpath_preserves_closed_state_test() {
       svg_path.line(start: b, end: a),
       svg_path.line(start: a, end: a),
     ])
-    |> svg_path.assert_close
+    |> svg_path.assert_set_closed(closed: True)
 
   let cleaned = svg_path.clean_subpath(subpath)
 
@@ -529,7 +529,7 @@ pub fn splice_with_wiggle_preserves_closed_state_with_tiny_endpoint_gap_test() {
       svg_path.line(start: b, end: c),
       svg_path.line(start: c, end: a),
     ])
-    |> svg_path.assert_close
+    |> svg_path.assert_set_closed(closed: True)
 
   let assert Ok(spliced) =
     svg_path.splice_with(
@@ -571,7 +571,7 @@ pub fn splice_preserves_closed_state_test() {
       svg_path.line(start: b, end: c),
       svg_path.line(start: c, end: a),
     ])
-    |> svg_path.assert_close
+    |> svg_path.assert_set_closed(closed: True)
   let replacement = svg_path.line(start: b, end: c)
 
   let assert Ok(spliced) =
@@ -586,7 +586,7 @@ pub fn splice_rejects_closed_empty_result_test() {
     svg_path.assert_subpath([
       svg_path.line(start: a, end: a),
     ])
-    |> svg_path.assert_close
+    |> svg_path.assert_set_closed(closed: True)
 
   assert svg_path.splice(closed, start: 0, delete: 1, insert: [])
     == Error(svg_path.ClosedEmptySubpath)
@@ -722,7 +722,7 @@ pub fn subpath_arcs_to_bezier_preserves_closed_state_test() {
       svg_path.line(start: a, end: b),
       svg_path.line(start: b, end: a),
     ])
-    |> svg_path.assert_close
+    |> svg_path.assert_set_closed(closed: True)
 
   let converted = svg_path.subpath_arcs_to_bezier(subpath)
 
@@ -772,7 +772,7 @@ pub fn subpath_to_cubic_beziers_preserves_closed_state_test() {
       svg_path.line(start: a, end: b),
       svg_path.line(start: b, end: a),
     ])
-    |> svg_path.assert_close
+    |> svg_path.assert_set_closed(closed: True)
 
   let converted = svg_path.subpath_to_cubic_beziers(subpath)
 
@@ -951,7 +951,7 @@ pub fn concat_rejects_closed_inputs_test() {
       svg_path.line(start: a, end: b),
       svg_path.line(start: b, end: a),
     ])
-    |> svg_path.assert_close
+    |> svg_path.assert_set_closed(closed: True)
 
   assert svg_path.concat(closed, open) == Error(svg_path.AlreadyClosed)
   assert svg_path.concat(open, closed) == Error(svg_path.AlreadyClosed)
@@ -982,7 +982,7 @@ pub fn concat_with_wiggle_rejects_closed_inputs_test() {
       svg_path.line(start: a, end: b),
       svg_path.line(start: b, end: a),
     ])
-    |> svg_path.assert_close
+    |> svg_path.assert_set_closed(closed: True)
 
   assert svg_path.concat_with(closed, open, join: svg_path.Wiggle)
     == Error(svg_path.AlreadyClosed)
@@ -1032,7 +1032,7 @@ pub fn concat_with_line_rejects_closed_inputs_test() {
       svg_path.line(start: a, end: b),
       svg_path.line(start: b, end: a),
     ])
-    |> svg_path.assert_close
+    |> svg_path.assert_set_closed(closed: True)
 
   assert svg_path.concat_with(closed, open, join: svg_path.Bridge)
     == Error(svg_path.AlreadyClosed)
@@ -1040,7 +1040,7 @@ pub fn concat_with_line_rejects_closed_inputs_test() {
     == Error(svg_path.AlreadyClosed)
 }
 
-pub fn close_with_line_appends_a_final_line_test() {
+pub fn set_closed_with_bridge_appends_a_final_line_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)
   let c = svg_path.point(10.0, 10.0)
@@ -1049,19 +1049,19 @@ pub fn close_with_line_appends_a_final_line_test() {
       svg_path.line(start: a, end: b),
       svg_path.line(start: b, end: c),
     ])
-    |> result_try_close_with_line
+    |> result_try_set_closed_with_bridge
 
   assert svg_path.is_closed(subpath)
   assert subpath |> svg_path.segments |> list.length == 3
   assert svg_path.end(subpath) == Ok(a)
 }
 
-pub fn close_empty_subpath_errors_test() {
-  assert svg_path.close(svg_path.empty_subpath())
+pub fn set_closed_true_empty_subpath_errors_test() {
+  assert svg_path.set_closed(svg_path.empty_subpath(), closed: True)
     == Error(svg_path.EmptySubpath)
 }
 
-pub fn close_discontinuous_error_reports_last_to_first_indices_test() {
+pub fn set_closed_true_discontinuous_error_reports_last_to_first_indices_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)
   let c = svg_path.point(0.0, 10.0)
@@ -1071,7 +1071,7 @@ pub fn close_discontinuous_error_reports_last_to_first_indices_test() {
       svg_path.line(start: b, end: c),
     ])
 
-  assert svg_path.close(subpath)
+  assert svg_path.set_closed(subpath, closed: True)
     == Error(svg_path.Discontinuous(
       previous_index: 1,
       next_index: 0,
@@ -1081,7 +1081,7 @@ pub fn close_discontinuous_error_reports_last_to_first_indices_test() {
     ))
 }
 
-pub fn assert_close_closes_matching_endpoints_test() {
+pub fn assert_set_closed_true_closes_matching_endpoints_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)
   let subpath =
@@ -1090,12 +1090,12 @@ pub fn assert_close_closes_matching_endpoints_test() {
       svg_path.line(start: b, end: a),
     ])
 
-  let closed = svg_path.assert_close(subpath)
+  let closed = svg_path.assert_set_closed(subpath, closed: True)
 
   assert svg_path.is_closed(closed)
 }
 
-pub fn close_with_wiggle_replaces_nearby_endpoints_test() {
+pub fn set_closed_with_wiggle_replaces_nearby_endpoints_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)
   let near_a = svg_path.point(0.0000000001, 0.0)
@@ -1104,13 +1104,13 @@ pub fn close_with_wiggle_replaces_nearby_endpoints_test() {
       svg_path.line(start: a, end: b),
       svg_path.line(start: b, end: near_a),
     ])
-    |> result_try_close_with_wiggle
+    |> result_try_set_closed_with_wiggle
 
   assert svg_path.is_closed(subpath)
   assert svg_path.start(subpath) == svg_path.end(subpath)
 }
 
-pub fn close_with_wiggle_rejects_misaligned_vertical_lines_test() {
+pub fn set_closed_with_wiggle_rejects_misaligned_vertical_lines_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(0.0, 10.0)
   let c = svg_path.point(0.0000000001, 0.0000000001)
@@ -1122,11 +1122,11 @@ pub fn close_with_wiggle_rejects_misaligned_vertical_lines_test() {
       svg_path.line(start: c, end: d),
     ])
 
-  assert svg_path.close_with(subpath, join: svg_path.Wiggle)
+  assert svg_path.set_closed_with(subpath, closed: True, join: svg_path.Wiggle)
     == Error(svg_path.IncompatibleVerticalWiggle(previous_end: d, next_start: a))
 }
 
-pub fn close_with_wiggle_rejects_misaligned_horizontal_lines_test() {
+pub fn set_closed_with_wiggle_rejects_misaligned_horizontal_lines_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)
   let c = svg_path.point(0.0000000001, 0.0000000001)
@@ -1138,7 +1138,7 @@ pub fn close_with_wiggle_rejects_misaligned_horizontal_lines_test() {
       svg_path.line(start: c, end: d),
     ])
 
-  assert svg_path.close_with(subpath, join: svg_path.Wiggle)
+  assert svg_path.set_closed_with(subpath, closed: True, join: svg_path.Wiggle)
     == Error(svg_path.IncompatibleHorizontalWiggle(
       previous_end: d,
       next_start: a,
@@ -1156,20 +1156,22 @@ fn result_try_append_segment_with_line(
   }
 }
 
-fn result_try_close_with_line(
+fn result_try_set_closed_with_bridge(
   result_subpath: Result(svg_path.Subpath, svg_path.Error),
 ) -> Result(svg_path.Subpath, svg_path.Error) {
   case result_subpath {
-    Ok(subpath) -> svg_path.close_with(subpath, join: svg_path.Bridge)
+    Ok(subpath) ->
+      svg_path.set_closed_with(subpath, closed: True, join: svg_path.Bridge)
     Error(error) -> Error(error)
   }
 }
 
-fn result_try_close_with_wiggle(
+fn result_try_set_closed_with_wiggle(
   result_subpath: Result(svg_path.Subpath, svg_path.Error),
 ) -> Result(svg_path.Subpath, svg_path.Error) {
   case result_subpath {
-    Ok(subpath) -> svg_path.close_with(subpath, join: svg_path.Wiggle)
+    Ok(subpath) ->
+      svg_path.set_closed_with(subpath, closed: True, join: svg_path.Wiggle)
     Error(error) -> Error(error)
   }
 }

@@ -209,7 +209,7 @@ fn do_subpath_code(subpath: svg_path.Subpath, format: NumberFormat) -> String {
       case svg_path.is_closed(subpath) {
         False -> constructor
         True -> {
-          constructor <> "\n|> svg_path.assert_close"
+          constructor <> "\n|> svg_path.assert_set_closed(closed: True)"
         }
       }
     }

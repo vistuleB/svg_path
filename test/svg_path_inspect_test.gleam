@@ -122,7 +122,7 @@ pub fn path_inspects_subpaths_and_segments_with_indentation_test() {
         end: svg_path.point(20.0, 10.0),
       ),
     ])
-    |> result_try_close_with_bridge
+    |> result_try_set_closed_with_bridge
   let path = svg_path.from_subpath(subpath)
 
   assert inspect.path(path) == "Path([
@@ -192,13 +192,13 @@ pub fn closed_subpath_code_inspects_as_copy_pasteable_gleam_test() {
         end: svg_path.point(12.0, 10.0),
       ),
     ])
-    |> result_try_close_with_bridge
+    |> result_try_set_closed_with_bridge
 
   assert inspect.subpath_code(subpath) == "svg_path.assert_subpath([
   svg_path.line(start: svg_path.point(0.0, 0.0), end: svg_path.point(12.0, 10.0)),
   svg_path.line(start: svg_path.point(12.0, 10.0), end: svg_path.point(0.0, 0.0))
 ])
-|> svg_path.assert_close"
+|> svg_path.assert_set_closed(closed: True)"
 }
 
 pub fn path_code_inspects_as_copy_pasteable_gleam_test() {
@@ -257,11 +257,12 @@ pub fn code_inspection_respects_auto_left_padding_test() {
 ])"
 }
 
-fn result_try_close_with_bridge(
+fn result_try_set_closed_with_bridge(
   result: Result(svg_path.Subpath, svg_path.Error),
 ) -> Result(svg_path.Subpath, svg_path.Error) {
   case result {
     Error(error) -> Error(error)
-    Ok(subpath) -> svg_path.close_with(subpath, join: svg_path.Bridge)
+    Ok(subpath) ->
+      svg_path.set_closed_with(subpath, closed: True, join: svg_path.Bridge)
   }
 }

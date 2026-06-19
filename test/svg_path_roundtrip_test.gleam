@@ -214,7 +214,7 @@ fn closed_path_from_segments(
   segments: List(svg_path.Segment),
 ) -> svg_path.Path {
   let assert Ok(subpath) = svg_path.subpath(segments)
-  let assert Ok(closed) = svg_path.close(subpath)
+  let assert Ok(closed) = svg_path.set_closed(subpath, closed: True)
 
   svg_path.from_subpath(closed)
 }

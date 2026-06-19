@@ -50,7 +50,7 @@ pub fn closed_subpath_serializes_with_z_test() {
       svg_path.line(start: a, end: b),
       svg_path.line(start: b, end: c),
     ])
-    |> result_try_close_with_bridge
+    |> result_try_set_closed_with_bridge
 
   assert serialize.subpath(subpath) == "M 0 0 H 10 V 20 Z"
 }
@@ -64,7 +64,7 @@ pub fn closed_subpath_keeps_final_curve_before_z_test() {
       svg_path.line(start: a, end: b),
       svg_path.quadratic_bezier(start: b, control: c, end: a),
     ])
-    |> result_try_close
+    |> result_try_set_closed_true
 
   assert serialize.subpath(subpath) == "M 0 0 H 10 Q 20 10 0 0 Z"
 }
@@ -75,7 +75,7 @@ pub fn closed_subpath_keeps_final_zero_length_line_test() {
     svg_path.assert_subpath([
       svg_path.line(start: a, end: a),
     ])
-    |> svg_path.assert_close
+    |> svg_path.assert_set_closed(closed: True)
 
   assert serialize.subpath(subpath) == "M 0 0 H 0 Z"
 }
@@ -88,7 +88,7 @@ pub fn closed_subpath_keeps_final_zero_length_line_after_curve_test() {
       svg_path.quadratic_bezier(start: a, control: b, end: a),
       svg_path.line(start: a, end: a),
     ])
-    |> result_try_close
+    |> result_try_set_closed_true
 
   assert serialize.subpath(subpath) == "M 0 0 Q 10 0 0 0 H 0 Z"
 }
@@ -102,7 +102,7 @@ pub fn relative_closed_subpath_keeps_final_zero_length_line_test() {
       svg_path.line(start: b, end: a),
       svg_path.line(start: a, end: a),
     ])
-    |> result_try_close
+    |> result_try_set_closed_true
 
   assert serialize.subpath_with_options(
       subpath,
@@ -430,7 +430,7 @@ pub fn relative_options_move_from_closed_subpath_start_after_z_test() {
       svg_path.line(start: a, end: b),
       svg_path.line(start: b, end: a),
     ])
-    |> result_try_close
+    |> result_try_set_closed_true
   let assert Ok(second) = svg_path.subpath([svg_path.line(start: c, end: d)])
 
   assert serialize.path_with_options(
@@ -504,20 +504,21 @@ pub fn rounded_relative_line_uses_h_or_v_after_formatting_test() {
     == "m 0 0 h 10 v 20"
 }
 
-fn result_try_close_with_bridge(
+fn result_try_set_closed_with_bridge(
   result_subpath: Result(svg_path.Subpath, svg_path.Error),
 ) -> Result(svg_path.Subpath, svg_path.Error) {
   case result_subpath {
-    Ok(subpath) -> svg_path.close_with(subpath, join: svg_path.Bridge)
+    Ok(subpath) ->
+      svg_path.set_closed_with(subpath, closed: True, join: svg_path.Bridge)
     Error(error) -> Error(error)
   }
 }
 
-fn result_try_close(
+fn result_try_set_closed_true(
   result_subpath: Result(svg_path.Subpath, svg_path.Error),
 ) -> Result(svg_path.Subpath, svg_path.Error) {
   case result_subpath {
-    Ok(subpath) -> svg_path.close(subpath)
+    Ok(subpath) -> svg_path.set_closed(subpath, closed: True)
     Error(error) -> Error(error)
   }
 }

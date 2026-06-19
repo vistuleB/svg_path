@@ -83,7 +83,7 @@ pub fn triangle() -> svg_path.Subpath {
     svg_path.line(start: b, end: c),
     svg_path.line(start: c, end: a),
   ])
-  |> svg_path.assert_close
+  |> svg_path.assert_set_closed(closed: True)
 }
 ```
 
@@ -92,15 +92,15 @@ recoverable:
 
 ```gleam
 svg_path.subpath(segments)
-svg_path.close(subpath)
-svg_path.open(subpath)
+svg_path.set_closed(subpath, closed: True)
+svg_path.set_closed(subpath, closed: False)
 svg_path.set_closed(subpath, closed:)
 svg_path.append_segment(subpath, segment)
 svg_path.concat(first_subpath, second_subpath)
 svg_path.splice(subpath, start:, delete:, insert:)
 
 svg_path.subpath_with(segments, join: svg_path.Wiggle)
-svg_path.close_with(subpath, join: svg_path.Bridge)
+svg_path.set_closed_with(subpath, closed: True, join: svg_path.Bridge)
 svg_path.concat_with(first_subpath, second_subpath, join: svg_path.WiggleThenBridge)
 svg_path.splice_with(subpath, start:, delete:, insert:, join: svg_path.Wiggle)
 ```
@@ -110,7 +110,7 @@ continuity is a programmer error:
 
 ```gleam
 svg_path.assert_subpath(segments)
-svg_path.assert_close(subpath)
+svg_path.assert_set_closed(subpath, closed: True)
 svg_path.assert_append_segment(subpath, segment)
 svg_path.assert_concat_with(first_subpath, second_subpath, join: svg_path.Bridge)
 ```
@@ -141,8 +141,8 @@ svg_path.subpath(segments)
 svg_path.append_segment(subpath, segment)
 svg_path.concat(first_subpath, second_subpath)
 svg_path.splice(subpath, start:, delete:, insert:)
-svg_path.close(subpath)
-svg_path.open(subpath)
+svg_path.set_closed(subpath, closed: True)
+svg_path.set_closed(subpath, closed: False)
 svg_path.set_closed(subpath, closed:)
 ```
 
@@ -158,7 +158,7 @@ svg_path.subpath_with(segments, join: svg_path.Wiggle)
 svg_path.append_segment_with(subpath, segment, join: svg_path.Bridge)
 svg_path.concat_with(first_subpath, second_subpath, join: svg_path.WiggleThenBridge)
 svg_path.splice_with(subpath, start:, delete:, insert:, join: svg_path.Wiggle)
-svg_path.close_with(subpath, join: svg_path.Bridge)
+svg_path.set_closed_with(subpath, closed: True, join: svg_path.Bridge)
 svg_path.set_closed_with(subpath, closed:, join: svg_path.Wiggle)
 ```
 
@@ -173,7 +173,8 @@ svg_path.concat(first_subpath, second_subpath)
 ```
 
 Closed subpaths are rejected rather than implicitly opened. This keeps
-closedness as explicit topology: if you want to discard it, call `open` first.
+closedness as explicit topology: if you want to discard it, use
+`set_closed(subpath, closed: False)` first.
 
 Use `concat_with` when you want another endpoint policy:
 
