@@ -26,8 +26,8 @@ pub type Path {
 /// A continuous sequence of path segments, optionally closed.
 ///
 /// The constructor is opaque so that subpaths cannot be created in an invalid
-/// discontinuous state. Use `subpath`, `empty_subpath`, `append`, or
-/// `force_append` to build values.
+/// discontinuous state. Use `subpath`, `empty_subpath`, `append_segment`, or
+/// `force_append_segment` to build values.
 pub opaque type Subpath {
   Subpath(segments: List(Segment), closed: Bool)
 }
@@ -412,7 +412,10 @@ pub fn end(subpath: Subpath) -> Result(Point, Error) {
 /// Append a segment to an open subpath.
 ///
 /// The new segment must start exactly at the current end point.
-pub fn append(subpath: Subpath, segment: Segment) -> Result(Subpath, Error) {
+pub fn append_segment(
+  subpath: Subpath,
+  segment: Segment,
+) -> Result(Subpath, Error) {
   case subpath.closed {
     True -> Error(AlreadyClosed)
     False -> append_open_subpath(subpath, segment)
@@ -432,9 +435,9 @@ pub fn join(first: Subpath, second: Subpath) -> Result(Subpath, Error) {
 
 /// Append a segment to an open subpath, inserting a connecting line if needed.
 ///
-/// If the subpath is empty, this behaves like `append`. If the new segment does
+/// If the subpath is empty, this behaves like `append_segment`. If the new segment does
 /// not start at the current end point, a line segment is inserted between them.
-pub fn force_append(
+pub fn force_append_segment(
   subpath: Subpath,
   segment: Segment,
 ) -> Result(Subpath, Error) {

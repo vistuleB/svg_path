@@ -642,7 +642,7 @@ fn append_segment(
   segment: svg_path.Segment,
   end: svg_path.Point,
 ) -> Result(State, Error) {
-  case svg_path.append(state.subpath, segment) {
+  case svg_path.append_segment(state.subpath, segment) {
     Error(error) -> Error(Core(error))
     Ok(subpath) -> {
       Ok(

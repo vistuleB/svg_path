@@ -96,8 +96,8 @@ svg_path.close(subpath)
 svg_path.open(subpath)
 svg_path.set_closed(subpath, closed:)
 svg_path.force_close(subpath)
-svg_path.append(subpath, segment)
-svg_path.force_append(subpath, segment)
+svg_path.append_segment(subpath, segment)
+svg_path.force_append_segment(subpath, segment)
 svg_path.join(first_subpath, second_subpath)
 svg_path.force_join(first_subpath, second_subpath)
 svg_path.splice(subpath, start:, delete:, insert:)
@@ -124,7 +124,7 @@ Strict helpers preserve the model without changing your geometry. They return
 
 ```gleam
 svg_path.subpath(segments)
-svg_path.append(subpath, segment)
+svg_path.append_segment(subpath, segment)
 svg_path.join(first_subpath, second_subpath)
 svg_path.splice(subpath, start:, delete:, insert:)
 svg_path.close(subpath)
@@ -154,7 +154,7 @@ when a bridging line is the intended geometry, not when endpoints were meant to
 coincide.
 
 ```gleam
-svg_path.force_append(subpath, segment)
+svg_path.force_append_segment(subpath, segment)
 svg_path.force_join(first_subpath, second_subpath)
 svg_path.force_close(subpath)
 ```

@@ -20,7 +20,7 @@ pub fn path_can_be_built_from_empty_test() {
   let b = svg_path.point(10.0, 0.0)
   let assert Ok(subpath) =
     svg_path.empty_subpath()
-    |> svg_path.append(svg_path.line(start: a, end: b))
+    |> svg_path.append_segment(svg_path.line(start: a, end: b))
   let path =
     svg_path.empty_path()
     |> svg_path.append_subpath(subpath)
@@ -68,7 +68,7 @@ pub fn subpath_can_be_built_from_empty_test() {
   let end = svg_path.point(10.0, 0.0)
   let assert Ok(subpath) =
     svg_path.empty_subpath()
-    |> svg_path.append(svg_path.line(start:, end:))
+    |> svg_path.append_segment(svg_path.line(start:, end:))
 
   assert svg_path.start(subpath) == Ok(start)
   assert svg_path.end(subpath) == Ok(end)
@@ -244,7 +244,7 @@ pub fn wiggle_set_closed_false_opens_subpath_test() {
   assert !svg_path.is_closed(opened)
 }
 
-pub fn append_rejects_closed_subpath_test() {
+pub fn append_segment_rejects_closed_subpath_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)
   let c = svg_path.point(20.0, 0.0)
@@ -255,7 +255,7 @@ pub fn append_rejects_closed_subpath_test() {
     ])
     |> result_try_force_close
 
-  assert svg_path.append(subpath, svg_path.line(start: a, end: c))
+  assert svg_path.append_segment(subpath, svg_path.line(start: a, end: c))
     == Error(svg_path.AlreadyClosed)
 }
 
@@ -805,14 +805,14 @@ pub fn wiggle_subpath_rejects_misaligned_horizontal_lines_test() {
     ))
 }
 
-pub fn append_discontinuous_error_reports_segment_indices_test() {
+pub fn append_segment_discontinuous_error_reports_segment_indices_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)
   let c = svg_path.point(20.0, 0.0)
   let d = svg_path.point(30.0, 0.0)
   let subpath = svg_path.assert_subpath([svg_path.line(start: a, end: b)])
 
-  assert svg_path.append(subpath, svg_path.line(start: c, end: d))
+  assert svg_path.append_segment(subpath, svg_path.line(start: c, end: d))
     == Error(svg_path.Discontinuous(
       previous_index: 0,
       next_index: 1,
@@ -912,15 +912,15 @@ pub fn wiggle_join_rejects_closed_inputs_test() {
   assert svg_path.wiggle_join(open, closed) == Error(svg_path.AlreadyClosed)
 }
 
-pub fn force_append_bridges_a_gap_test() {
+pub fn force_append_segment_bridges_a_gap_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)
   let c = svg_path.point(20.0, 0.0)
   let d = svg_path.point(30.0, 0.0)
   let assert Ok(subpath) =
     svg_path.empty_subpath()
-    |> svg_path.append(svg_path.line(start: a, end: b))
-    |> result_try_force_append(svg_path.line(start: c, end: d))
+    |> svg_path.append_segment(svg_path.line(start: a, end: b))
+    |> result_try_force_append_segment(svg_path.line(start: c, end: d))
 
   assert subpath |> svg_path.segments |> list.length == 3
   assert svg_path.end(subpath) == Ok(d)
@@ -1064,12 +1064,12 @@ pub fn wiggle_close_rejects_misaligned_horizontal_lines_test() {
     ))
 }
 
-fn result_try_force_append(
+fn result_try_force_append_segment(
   result_subpath: Result(svg_path.Subpath, svg_path.Error),
   segment: svg_path.Segment,
 ) -> Result(svg_path.Subpath, svg_path.Error) {
   case result_subpath {
-    Ok(subpath) -> svg_path.force_append(subpath, segment)
+    Ok(subpath) -> svg_path.force_append_segment(subpath, segment)
     Error(error) -> Error(error)
   }
 }
