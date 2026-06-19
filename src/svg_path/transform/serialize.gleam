@@ -5,6 +5,17 @@ import gleam/string
 import gleam_community/maths
 import svg_path/transform as path_transform
 
+const rotation_scale_epsilon = 0.000001
+
+type LinearTransform {
+  Matrix2x2
+  Identity2x2
+  Scale2x2(x: Float, y: Float)
+  SkewX2x2(tangent: Float)
+  SkewY2x2(tangent: Float)
+  RotateScale2x2(degrees: Float, scale_x: Float, scale_y: Float)
+}
+
 pub type Options {
   Options(
     decimal_places: Option(Int),
@@ -96,33 +107,9 @@ pub fn to_string_with_options(
   case options.force_matrix {
     True -> matrix_transform(a, b, c, d, e, f, options)
     False -> {
-      case a == 1.0 && b == 0.0 && c == 0.0 && d == 1.0 {
-        True -> translate_transform(e, f, options)
-        False -> {
-          case b == 0.0 && c == 0.0 && e == 0.0 && f == 0.0 {
-            True -> scale_transform(a, d, options)
-            False -> {
-              case b == 0.0 && c == 0.0 {
-                True -> translate_scale_transform(e, f, a, d, options)
-                False -> {
-                  case
-                    a == 1.0 && b == 0.0 && d == 1.0 && e == 0.0 && f == 0.0
-                  {
-                    True -> skew_x_transform(c, options)
-                    False -> {
-                      case
-                        a == 1.0 && c == 0.0 && d == 1.0 && e == 0.0 && f == 0.0
-                      {
-                        True -> skew_y_transform(b, options)
-                        False -> matrix_transform(a, b, c, d, e, f, options)
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
+      case analyze_linear_transform(a, b, c, d) {
+        Matrix2x2 -> matrix_transform(a, b, c, d, e, f, options)
+        linear -> affine_transform(linear, e, f, options)
       }
     }
   }
@@ -146,15 +133,106 @@ fn scale_transform(x: Float, y: Float, options: Options) -> String {
   transform_function("scale", arguments)
 }
 
-fn translate_scale_transform(
-  translate_x: Float,
-  translate_y: Float,
-  scale_x: Float,
-  scale_y: Float,
+fn rotate_transform(degrees: Float, options: Options) -> String {
+  transform_function("rotate", number(degrees, options))
+}
+
+fn translate_optional_transform(
+  x: Float,
+  y: Float,
   options: Options,
 ) -> String {
-  translate_transform(translate_x, translate_y, options)
-  <> scale_transform(scale_x, scale_y, options)
+  case x == 0.0 && y == 0.0 {
+    True -> ""
+    False -> translate_transform(x, y, options)
+  }
+}
+
+fn affine_transform(
+  linear: LinearTransform,
+  translate_x: Float,
+  translate_y: Float,
+  options: Options,
+) -> String {
+  case linear_transform(linear, options) {
+    "" -> translate_transform(translate_x, translate_y, options)
+    transform ->
+      translate_optional_transform(translate_x, translate_y, options)
+      <> transform
+  }
+}
+
+fn linear_transform(linear: LinearTransform, options: Options) -> String {
+  case linear {
+    Matrix2x2 -> ""
+    Identity2x2 -> ""
+    Scale2x2(x:, y:) -> scale_transform(x, y, options)
+    SkewX2x2(tangent:) -> skew_x_transform(tangent, options)
+    SkewY2x2(tangent:) -> skew_y_transform(tangent, options)
+    RotateScale2x2(degrees:, scale_x:, scale_y:) ->
+      rotate_transform(degrees, options)
+      <> scale_optional_transform(scale_x, scale_y, options)
+  }
+}
+
+fn analyze_linear_transform(
+  a: Float,
+  b: Float,
+  c: Float,
+  d: Float,
+) -> LinearTransform {
+  case a == 1.0 && b == 0.0 && c == 0.0 && d == 1.0 {
+    True -> Identity2x2
+    False -> {
+      case b == 0.0 && c == 0.0 {
+        True -> Scale2x2(x: a, y: d)
+        False -> {
+          case a == 1.0 && b == 0.0 && d == 1.0 {
+            True -> SkewX2x2(tangent: c)
+            False -> {
+              case a == 1.0 && c == 0.0 && d == 1.0 {
+                True -> SkewY2x2(tangent: b)
+                False -> analyze_rotation_scale(a, b, c, d)
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+fn analyze_rotation_scale(
+  a: Float,
+  b: Float,
+  c: Float,
+  d: Float,
+) -> LinearTransform {
+  let scale_x = length(a, b)
+  let scale_y = length(c, d)
+  let determinant = a *. d -. b *. c
+  let dot_product = a *. c +. b *. d
+
+  case
+    scale_x >. rotation_scale_epsilon
+    && scale_y >. rotation_scale_epsilon
+    && determinant >. rotation_scale_epsilon
+    && close_to_zero(dot_product)
+  {
+    False -> Matrix2x2
+    True -> {
+      let rotation_degrees = radians_to_degrees(maths.atan2(b, a))
+
+      RotateScale2x2(degrees: rotation_degrees, scale_x:, scale_y:)
+    }
+  }
+}
+
+fn scale_optional_transform(x: Float, y: Float, options: Options) -> String {
+  case close(x, 1.0) && close(y, 1.0) {
+    True -> ""
+    False -> scale_transform(x, y, options)
+  }
 }
 
 fn skew_x_transform(tangent: Float, options: Options) -> String {
@@ -196,6 +274,24 @@ fn transform_function(name: String, arguments: String) -> String {
 
 fn degrees_from_tangent(tangent: Float) -> Float {
   maths.atan(tangent) *. 180.0 /. maths.pi()
+}
+
+fn radians_to_degrees(radians: Float) -> Float {
+  radians *. 180.0 /. maths.pi()
+}
+
+fn length(x: Float, y: Float) -> Float {
+  let assert Ok(result) = float.square_root(x *. x +. y *. y)
+
+  result
+}
+
+fn close_to_zero(value: Float) -> Bool {
+  float.absolute_value(value) <=. rotation_scale_epsilon
+}
+
+fn close(left: Float, right: Float) -> Bool {
+  float.absolute_value(left -. right) <=. rotation_scale_epsilon
 }
 
 fn number(number: Float, options: Options) -> String {
