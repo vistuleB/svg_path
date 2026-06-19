@@ -30,7 +30,7 @@ pub fn compact_path_data(input: String) -> String {
   let options =
     serialize.relative_decimal_options(2)
     |> serialize.minimize_whitespace
-    |> serialize.compact_commands
+    |> serialize.repeat_commands(False)
 
   serialize.path_with_options(path, options:)
 }

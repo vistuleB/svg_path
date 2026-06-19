@@ -149,7 +149,7 @@ pub fn minimize_whitespace_removes_command_spacing_test() {
     == "M0 0H10V20"
 }
 
-pub fn compact_commands_omits_repeated_line_commands_test() {
+pub fn repeat_commands_false_omits_repeated_line_commands_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 10.0)
   let c = svg_path.point(20.0, 20.0)
@@ -163,12 +163,12 @@ pub fn compact_commands_omits_repeated_line_commands_test() {
 
   assert serialize.subpath_with_options(
       subpath,
-      options: serialize.default_options() |> serialize.compact_commands,
+      options: serialize.default_options() |> serialize.repeat_commands(False),
     )
     == "M 0 0 L 10 10 20 20 30 30"
 }
 
-pub fn compact_commands_omits_repeated_h_and_v_commands_test() {
+pub fn repeat_commands_false_omits_repeated_h_and_v_commands_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)
   let c = svg_path.point(20.0, 0.0)
@@ -184,12 +184,12 @@ pub fn compact_commands_omits_repeated_h_and_v_commands_test() {
 
   assert serialize.subpath_with_options(
       subpath,
-      options: serialize.default_options() |> serialize.compact_commands,
+      options: serialize.default_options() |> serialize.repeat_commands(False),
     )
     == "M 0 0 H 10 20 V 10 20"
 }
 
-pub fn compact_commands_omits_repeated_curve_commands_test() {
+pub fn repeat_commands_false_omits_repeated_curve_commands_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)
   let c = svg_path.point(20.0, 10.0)
@@ -206,12 +206,12 @@ pub fn compact_commands_omits_repeated_curve_commands_test() {
 
   assert serialize.subpath_with_options(
       subpath,
-      options: serialize.default_options() |> serialize.compact_commands,
+      options: serialize.default_options() |> serialize.repeat_commands(False),
     )
     == "M 0 0 Q 10 0 20 10 30 0 40 10 C 30 0 10 0 50 0 10 0 30 0 0 0"
 }
 
-pub fn compact_commands_omits_repeated_arc_commands_test() {
+pub fn repeat_commands_false_omits_repeated_arc_commands_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)
   let c = svg_path.point(20.0, 0.0)
@@ -238,7 +238,7 @@ pub fn compact_commands_omits_repeated_arc_commands_test() {
 
   assert serialize.subpath_with_options(
       subpath,
-      options: serialize.default_options() |> serialize.compact_commands,
+      options: serialize.default_options() |> serialize.repeat_commands(False),
     )
     == "M 0 0 A 5 5 0 0 1 10 0 5 5 0 0 1 20 0"
 }
@@ -312,7 +312,7 @@ pub fn relative_minimize_whitespace_removes_command_spacing_test() {
     == "m10 20l3 -2"
 }
 
-pub fn relative_compact_commands_omits_repeated_commands_test() {
+pub fn relative_repeat_commands_false_omits_repeated_commands_test() {
   let a = svg_path.point(10.0, 20.0)
   let b = svg_path.point(13.0, 18.0)
   let c = svg_path.point(16.0, 16.0)
@@ -325,12 +325,12 @@ pub fn relative_compact_commands_omits_repeated_commands_test() {
   assert serialize.subpath_with_options(
       subpath,
       options: serialize.relative_decimal_options(0)
-        |> serialize.compact_commands,
+        |> serialize.repeat_commands(False),
     )
     == "m 10 20 l 3 -2 3 -2"
 }
 
-pub fn minimized_compact_commands_omits_repeated_commands_test() {
+pub fn minimized_repeat_commands_false_omits_repeated_commands_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 10.0)
   let c = svg_path.point(20.0, 20.0)
@@ -344,7 +344,7 @@ pub fn minimized_compact_commands_omits_repeated_commands_test() {
       subpath,
       options: serialize.decimal_options(0)
         |> serialize.minimize_whitespace
-        |> serialize.compact_commands,
+        |> serialize.repeat_commands(False),
     )
     == "M0 0L10 10 20 20"
 }

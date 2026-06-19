@@ -74,19 +74,19 @@ pub fn generated_paths_round_trip_with_minimized_options_test() {
   )
 }
 
-pub fn generated_paths_round_trip_with_compact_options_test() {
+pub fn generated_paths_round_trip_with_repeat_commands_false_options_test() {
   assert_paths_round_trip(
     generated_paths(),
-    serialize.default_options() |> serialize.compact_commands,
+    serialize.default_options() |> serialize.repeat_commands(False),
   )
 }
 
-pub fn generated_paths_round_trip_with_minimized_compact_options_test() {
+pub fn generated_paths_round_trip_with_minimized_repeat_commands_false_options_test() {
   assert_paths_round_trip(
     generated_paths(),
     serialize.decimal_options(0)
       |> serialize.minimize_whitespace
-      |> serialize.compact_commands,
+      |> serialize.repeat_commands(False),
   )
 }
 
