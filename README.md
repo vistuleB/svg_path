@@ -18,6 +18,24 @@ pub fn tidy_path_data(input: String) -> String {
 }
 ```
 
+Path serialization can also use relative commands, remove extra whitespace, and
+omit repeated command letters.
+
+```gleam
+import svg_path/parse
+import svg_path/serialize
+
+pub fn compact_path_data(input: String) -> String {
+  let assert Ok(path) = parse.path(input)
+  let options =
+    serialize.relative_decimal_options(2)
+    |> serialize.minimize_whitespace
+    |> serialize.compact_commands
+
+  serialize.path_with_options(path, options:)
+}
+```
+
 ```gleam
 import svg_path/parse
 import svg_path/serialize
@@ -46,8 +64,9 @@ pub fn tidy_transform_attribute(input: String) -> String {
 ```
 
 Transform serialization prefers readable SVG forms such as
-`translate(10 20)scale(2)` when the matrix is clearly a translation and scale.
-Use `force_matrix` when you want the raw `matrix(a b c d e f)` form.
+`translate(10 20)scale(2)`, `rotate(30)`, and
+`translate(10 20)rotate(30)scale(2 3)` when the matrix can be represented
+clearly. Use `force_matrix` when you want the raw `matrix(a b c d e f)` form.
 
 ```gleam
 import svg_path/transform
@@ -58,6 +77,18 @@ pub fn raw_transform_attribute() -> String {
   |> serialize.to_string_with_options(
     options: serialize.default_options() |> serialize.force_matrix,
   )
+}
+```
+
+Transform matrices can be inspected as SVG's six matrix values, or converted to
+and from `matrix_gleam`'s `mat3f` type.
+
+```gleam
+import svg_path/transform
+
+pub fn inspect_transform() -> #(Float, Float, Float, Float, Float, Float) {
+  transform.rotate(degrees: 30.0)
+  |> transform.to_tuple
 }
 ```
 
