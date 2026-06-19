@@ -163,6 +163,87 @@ pub fn open_accepts_open_and_empty_subpaths_test() {
   assert svg_path.open(open) == open
 }
 
+pub fn set_closed_false_opens_subpath_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let closed =
+    svg_path.assert_subpath([
+      svg_path.line(start: a, end: b),
+      svg_path.line(start: b, end: a),
+    ])
+    |> svg_path.assert_close
+
+  let assert Ok(opened) = svg_path.set_closed(closed, closed: False)
+
+  assert !svg_path.is_closed(opened)
+  assert svg_path.segments(opened) == svg_path.segments(closed)
+}
+
+pub fn set_closed_true_closes_matching_subpath_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.line(start: a, end: b),
+      svg_path.line(start: b, end: a),
+    ])
+
+  let assert Ok(closed) = svg_path.set_closed(subpath, closed: True)
+
+  assert svg_path.is_closed(closed)
+}
+
+pub fn set_closed_true_rejects_uncloseable_subpath_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(10.0, 10.0)
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.line(start: a, end: b),
+      svg_path.line(start: b, end: c),
+    ])
+
+  assert svg_path.set_closed(subpath, closed: True)
+    == Error(svg_path.Discontinuous(
+      previous_index: 1,
+      next_index: 0,
+      expected: a,
+      got: c,
+      distance: 14.142135623730951,
+    ))
+}
+
+pub fn wiggle_set_closed_true_reconciles_nearby_endpoints_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let near_a = svg_path.point(0.0000000001, 0.0)
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.line(start: a, end: b),
+      svg_path.line(start: b, end: near_a),
+    ])
+
+  let assert Ok(closed) = svg_path.wiggle_set_closed(subpath, closed: True)
+
+  assert svg_path.is_closed(closed)
+  assert svg_path.start(closed) == svg_path.end(closed)
+}
+
+pub fn wiggle_set_closed_false_opens_subpath_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let closed =
+    svg_path.assert_subpath([
+      svg_path.line(start: a, end: b),
+      svg_path.line(start: b, end: a),
+    ])
+    |> svg_path.assert_close
+
+  let assert Ok(opened) = svg_path.wiggle_set_closed(closed, closed: False)
+
+  assert !svg_path.is_closed(opened)
+}
+
 pub fn append_rejects_closed_subpath_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)

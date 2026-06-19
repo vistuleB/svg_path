@@ -364,6 +364,35 @@ pub fn open(subpath: Subpath) -> Subpath {
   Subpath(segments: subpath.segments, closed: False)
 }
 
+/// Set a subpath's semantic closed state.
+///
+/// Setting `closed` to `False` only clears the semantic closed flag. Setting it
+/// to `True` requires the subpath's end point to exactly match its start point.
+pub fn set_closed(
+  subpath: Subpath,
+  closed closed: Bool,
+) -> Result(Subpath, Error) {
+  case closed {
+    False -> Ok(open(subpath))
+    True -> close(subpath)
+  }
+}
+
+/// Set a subpath's semantic closed state, reconciling tiny endpoint gaps.
+///
+/// Setting `closed` to `False` only clears the semantic closed flag. Setting it
+/// to `True` uses `wiggle_close`, which may adjust endpoints within the default
+/// wiggle tolerance.
+pub fn wiggle_set_closed(
+  subpath: Subpath,
+  closed closed: Bool,
+) -> Result(Subpath, Error) {
+  case closed {
+    False -> Ok(open(subpath))
+    True -> wiggle_close(subpath)
+  }
+}
+
 /// Return the start point of a non-empty subpath.
 pub fn start(subpath: Subpath) -> Result(Point, Error) {
   case subpath.segments {

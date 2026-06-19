@@ -94,12 +94,14 @@ recoverable:
 svg_path.subpath(segments)
 svg_path.close(subpath)
 svg_path.open(subpath)
+svg_path.set_closed(subpath, closed:)
 svg_path.force_close(subpath)
 svg_path.append(subpath, segment)
 svg_path.force_append(subpath, segment)
 svg_path.splice(subpath, start:, delete:, insert:)
 svg_path.wiggle_subpath(segments)
 svg_path.wiggle_close(subpath)
+svg_path.wiggle_set_closed(subpath, closed:)
 ```
 
 Use the `assert_` functions for hand-authored/static geometry where invalid
@@ -123,6 +125,7 @@ svg_path.append(subpath, segment)
 svg_path.splice(subpath, start:, delete:, insert:)
 svg_path.close(subpath)
 svg_path.open(subpath)
+svg_path.set_closed(subpath, closed:)
 ```
 
 `Discontinuous` includes the two segment indices, the expected point, the
@@ -138,6 +141,7 @@ the intended topology is clear.
 svg_path.wiggle_subpath(segments)
 svg_path.wiggle_splice(subpath, start:, delete:, insert:)
 svg_path.wiggle_close(subpath)
+svg_path.wiggle_set_closed(subpath, closed:)
 ```
 
 Forceful helpers insert straight line segments when needed. They are useful
