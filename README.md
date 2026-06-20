@@ -191,8 +191,9 @@ segments is impossible to construct.
 
 ## Ergonomics for Endpoint Reconciliation
 
-Helper functions in the root module let users employ an `EndpointPolicy` option to specify
-different types of error-recovery behavior for non-matching endpoints:
+Helper functions in the root module let users employ an `EndpointPolicy` option
+to specify different types of error-recovery behavior for non-matching
+endpoints:
 
 ```gleam
 svg_path.Strict
@@ -207,13 +208,13 @@ together within the package's default wiggle tolerance of `0.000000001`.
 when needed. `WiggleThenBridge`, as the name implies, first tries `Wiggle`
 before falling back on `Bridge`.
 
-The behavior of option-free functions and constructors is `EndpointPolicy.Strict`. These
-include:
+The behavior of option-free functions and constructors is
+`EndpointPolicy.Strict`. These include:
 
 ```gleam
 svg_path.subpath(segments)
 svg_path.append_segment(subpath, segment)
-svg_path.concat(first_subpath, second_subpath)
+svg_path.join([first_subpath, second_subpath])
 svg_path.splice(subpath, start:, delete:, insert:)
 svg_path.set_closed(subpath, closed: Bool)
 ```
@@ -243,7 +244,7 @@ specification of a non-`Strict` endpoint policy:
 ```gleam
 svg_path.subpath_with(segments, policy: svg_path.Wiggle)
 svg_path.append_segment_with(subpath, segment, policy: svg_path.Bridge)
-svg_path.concat_with(first_subpath, second_subpath, policy: svg_path.WiggleThenBridge)
+svg_path.join_with([first_subpath, second_subpath], policy: svg_path.WiggleThenBridge)
 svg_path.splice_with(subpath, start:, delete:, insert:, policy: svg_path.Wiggle)
 svg_path.set_closed_with(subpath, closed: Bool, policy: svg_path.Bridge)
 ```
@@ -254,30 +255,32 @@ continuity is a programmer error:
 ```gleam
 svg_path.assert_subpath(segments)
 svg_path.assert_append_segment(subpath, segment)
-svg_path.assert_concat(first_subpath, second_subpath)
+svg_path.assert_join([first_subpath, second_subpath])
+svg_path.assert_join_with([first_subpath, second_subpath], policy: svg_path.WiggleThenBridge)
 svg_path.assert_splice(subpath, start:, delete:, insert:)
 svg_path.assert_set_closed(subpath, closed: Bool)
 ```
 
-### Concatenating Subpaths
+### Joining Subpaths
 
-`concat` combines two open subpaths into one open subpath. With the default
-`Strict` policy, the end of the first subpath must exactly equal the start of
-the second subpath. Empty open subpaths act as identity values.
+`join` combines open subpaths into one open subpath. With the default
+`Strict` policy, each subpath's end point must exactly equal the next
+subpath's start point. Empty open subpaths act as identity values, and
+`join([])` returns an empty open subpath.
 
 ```gleam
-svg_path.concat(first_subpath, second_subpath)
+svg_path.join([first_subpath, second_subpath, third_subpath])
 ```
 
 Closed subpaths are rejected rather than implicitly opened. This keeps
 closedness as explicit topology: if you want to discard it, use
 `set_closed(subpath, closed: False)` first.
 
-Use `concat_with` when you want another endpoint policy:
+Use `join_with` when you want another endpoint policy:
 
 ```gleam
-svg_path.concat_with(first_subpath, second_subpath, policy: svg_path.Wiggle)
-svg_path.concat_with(first_subpath, second_subpath, policy: svg_path.Bridge)
+svg_path.join_with([first_subpath, second_subpath], policy: svg_path.Wiggle)
+svg_path.join_with([first_subpath, second_subpath], policy: svg_path.Bridge)
 ```
 
 ### Splicing Subpaths

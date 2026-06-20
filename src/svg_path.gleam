@@ -481,44 +481,42 @@ pub fn assert_append_segment_with(
   }
 }
 
-/// Concatenate two open subpaths.
+/// Join open subpaths into one open subpath.
 ///
-/// The first subpath's end point must exactly match the second subpath's start
-/// point. Empty open subpaths are treated as identity values.
-pub fn concat(first: Subpath, second: Subpath) -> Result(Subpath, Error) {
-  concat_with(first, second, policy: Strict)
+/// Each subpath's end point must exactly match the next subpath's start point.
+/// Empty open subpaths are treated as identity values.
+pub fn join(subpaths: List(Subpath)) -> Result(Subpath, Error) {
+  join_with(subpaths, policy: Strict)
 }
 
-/// Concatenate two open subpaths using the given endpoint policy.
-pub fn concat_with(
-  first: Subpath,
-  second: Subpath,
+/// Join open subpaths using the given endpoint policy.
+pub fn join_with(
+  subpaths: List(Subpath),
   policy endpoint_policy: EndpointPolicy,
 ) -> Result(Subpath, Error) {
-  case first.closed || second.closed {
+  case list.any(subpaths, fn(subpath) { subpath.closed }) {
     True -> Error(AlreadyClosed)
     False ->
       open_subpath_with_segments(
-        list.append(first.segments, second.segments),
+        list.flat_map(subpaths, segments),
         endpoint_policy,
       )
   }
 }
 
-/// Concatenate two open subpaths, panicking if invalid.
-pub fn assert_concat(first: Subpath, second: Subpath) -> Subpath {
-  assert_concat_with(first, second, policy: Strict)
+/// Join open subpaths, panicking if invalid.
+pub fn assert_join(subpaths: List(Subpath)) -> Subpath {
+  assert_join_with(subpaths, policy: Strict)
 }
 
-/// Concatenate two open subpaths with an endpoint policy, panicking if invalid.
-pub fn assert_concat_with(
-  first: Subpath,
-  second: Subpath,
+/// Join open subpaths with an endpoint policy, panicking if invalid.
+pub fn assert_join_with(
+  subpaths: List(Subpath),
   policy endpoint_policy: EndpointPolicy,
 ) -> Subpath {
-  case concat_with(first, second, policy: endpoint_policy) {
+  case join_with(subpaths, policy: endpoint_policy) {
     Ok(subpath) -> subpath
-    Error(_) -> panic as "svg_path.assert_concat received invalid subpaths"
+    Error(_) -> panic as "svg_path.assert_join received invalid subpaths"
   }
 }
 
