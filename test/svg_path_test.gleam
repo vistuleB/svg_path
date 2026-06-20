@@ -180,6 +180,129 @@ pub fn map_segment_points_rejects_arcs_test() {
     == Error(svg_path.CannotMapArcNonlinearly)
 }
 
+pub fn map_subpath_points_maps_segments_and_preserves_closed_state_test() {
+  let map = fn(point: svg_path.Point) {
+    svg_path.point(point.x +. 1.0, point.y *. 2.0)
+  }
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.line(
+        start: svg_path.point(0.0, 0.0),
+        end: svg_path.point(10.0, 0.0),
+      ),
+      svg_path.quadratic_bezier(
+        start: svg_path.point(10.0, 0.0),
+        control: svg_path.point(15.0, 5.0),
+        end: svg_path.point(0.0, 0.0),
+      ),
+    ])
+    |> svg_path.assert_set_closed(closed: True)
+
+  let assert Ok(mapped) = svg_path.map_subpath_points(subpath, with: map)
+
+  assert svg_path.is_closed(mapped)
+  assert svg_path.segments(mapped)
+    == [
+      svg_path.line(
+        start: svg_path.point(1.0, 0.0),
+        end: svg_path.point(11.0, 0.0),
+      ),
+      svg_path.quadratic_bezier(
+        start: svg_path.point(11.0, 0.0),
+        control: svg_path.point(16.0, 10.0),
+        end: svg_path.point(1.0, 0.0),
+      ),
+    ]
+}
+
+pub fn map_subpath_points_maps_empty_subpath_test() {
+  let assert Ok(mapped) =
+    svg_path.map_subpath_points(svg_path.empty_subpath(), with: fn(point) {
+      svg_path.point(point.x +. 1.0, point.y +. 1.0)
+    })
+
+  assert svg_path.segments(mapped) == []
+  assert !svg_path.is_closed(mapped)
+}
+
+pub fn map_subpath_points_rejects_arcs_test() {
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.arc(
+        start: svg_path.point(0.0, 0.0),
+        radius: svg_path.point(10.0, 10.0),
+        x_axis_rotation: 0.0,
+        large_arc: False,
+        sweep: True,
+        end: svg_path.point(20.0, 0.0),
+      ),
+    ])
+
+  assert svg_path.map_subpath_points(subpath, with: fn(point) { point })
+    == Error(svg_path.CannotMapArcNonlinearly)
+}
+
+pub fn map_path_points_maps_each_subpath_test() {
+  let map = fn(point: svg_path.Point) {
+    svg_path.point(point.x +. 1.0, point.y +. 1.0)
+  }
+  let first =
+    svg_path.assert_subpath([
+      svg_path.line(
+        start: svg_path.point(0.0, 0.0),
+        end: svg_path.point(10.0, 0.0),
+      ),
+    ])
+  let second =
+    svg_path.assert_subpath([
+      svg_path.cubic_bezier(
+        start: svg_path.point(10.0, 0.0),
+        control1: svg_path.point(15.0, 5.0),
+        control2: svg_path.point(20.0, 5.0),
+        end: svg_path.point(25.0, 0.0),
+      ),
+    ])
+  let path = svg_path.path([first, second])
+
+  let assert Ok(mapped) = svg_path.map_path_points(path, with: map)
+  let assert [mapped_first, mapped_second] = svg_path.subpaths(mapped)
+
+  assert svg_path.segments(mapped_first)
+    == [
+      svg_path.line(
+        start: svg_path.point(1.0, 1.0),
+        end: svg_path.point(11.0, 1.0),
+      ),
+    ]
+  assert svg_path.segments(mapped_second)
+    == [
+      svg_path.cubic_bezier(
+        start: svg_path.point(11.0, 1.0),
+        control1: svg_path.point(16.0, 6.0),
+        control2: svg_path.point(21.0, 6.0),
+        end: svg_path.point(26.0, 1.0),
+      ),
+    ]
+}
+
+pub fn map_path_points_rejects_arcs_test() {
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.arc(
+        start: svg_path.point(0.0, 0.0),
+        radius: svg_path.point(10.0, 10.0),
+        x_axis_rotation: 0.0,
+        large_arc: False,
+        sweep: True,
+        end: svg_path.point(20.0, 0.0),
+      ),
+    ])
+  let path = svg_path.path([svg_path.empty_subpath(), subpath])
+
+  assert svg_path.map_path_points(path, with: fn(point) { point })
+    == Error(svg_path.CannotMapArcNonlinearly)
+}
+
 pub fn segment_point_and_split_extrapolate_outside_t_test() {
   let segment =
     svg_path.line(

@@ -328,6 +328,38 @@ pub fn path_arcs_to_cubic_beziers(path: Path) -> Path {
   Path(subpaths: list.map(path.subpaths, subpath_arcs_to_cubic_beziers))
 }
 
+/// Map the defining points of every segment in a subpath.
+///
+/// The subpath's closed state is preserved. For nonlinear functions, this maps
+/// endpoints and control points, not the exact image of every point on each
+/// rendered curve. If any segment is an arc, this returns
+/// `CannotMapArcNonlinearly`.
+pub fn map_subpath_points(
+  subpath: Subpath,
+  with f: fn(Point) -> Point,
+) -> Result(Subpath, Error) {
+  case map_segments_points(subpath.segments, f, []) {
+    Error(error) -> Error(error)
+    Ok(segments) -> Ok(Subpath(segments:, closed: subpath.closed))
+  }
+}
+
+/// Map the defining points of every segment in a path.
+///
+/// Each subpath's closed state is preserved. For nonlinear functions, this maps
+/// endpoints and control points, not the exact image of every point on each
+/// rendered curve. If any segment is an arc, this returns
+/// `CannotMapArcNonlinearly`.
+pub fn map_path_points(
+  path: Path,
+  with f: fn(Point) -> Point,
+) -> Result(Path, Error) {
+  case map_subpaths_points(path.subpaths, f, []) {
+    Error(error) -> Error(error)
+    Ok(subpaths) -> Ok(Path(subpaths:))
+  }
+}
+
 /// Convert an arc segment to cubic Bezier curves, preserving other segments.
 ///
 /// Non-arc segments are returned unchanged as a single-item list. An arc may
@@ -749,6 +781,38 @@ fn first_subpath_end(subpaths: List(Subpath)) -> Result(Point, Error) {
         Ok(point) -> Ok(point)
         Error(EmptySubpath) -> first_subpath_end(rest)
         Error(error) -> Error(error)
+      }
+    }
+  }
+}
+
+fn map_subpaths_points(
+  subpaths: List(Subpath),
+  f: fn(Point) -> Point,
+  mapped: List(Subpath),
+) -> Result(List(Subpath), Error) {
+  case subpaths {
+    [] -> Ok(list.reverse(mapped))
+    [first, ..rest] -> {
+      case map_subpath_points(first, with: f) {
+        Error(error) -> Error(error)
+        Ok(subpath) -> map_subpaths_points(rest, f, [subpath, ..mapped])
+      }
+    }
+  }
+}
+
+fn map_segments_points(
+  segments: List(Segment),
+  f: fn(Point) -> Point,
+  mapped: List(Segment),
+) -> Result(List(Segment), Error) {
+  case segments {
+    [] -> Ok(list.reverse(mapped))
+    [first, ..rest] -> {
+      case map_segment_points(first, with: f) {
+        Error(error) -> Error(error)
+        Ok(segment) -> map_segments_points(rest, f, [segment, ..mapped])
       }
     }
   }
