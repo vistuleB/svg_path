@@ -3,12 +3,11 @@
 [![Package Version](https://img.shields.io/hexpm/v/svg_path)](https://hex.pm/packages/svg_path)
 [![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/svg_path/)
 
-`svg_path` is a utility library for parsing, serializing, inspecting, and
+`svg_path` is a utility for parsing, serializing, inspecting, and
 performing simple geometric manipulations on SVG paths and transforms.
 
-The package is especially mindful of providing a practical and versatile API for the
-construction of valid SVG paths from noisy data. It also offers several knobs to
-fine-tune the details of path and SVG transform serialization.
+The package tries to provide a flexible API for the construction of valid SVG
+paths from imperfectly matching segments.
 
 ```sh
 gleam add svg_path@0
@@ -92,6 +91,19 @@ svg_path.quadratic_bezier(start:, control:, end:)
 svg_path.cubic_bezier(start:, control1:, control2:, end:)
 svg_path.arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:)
 ```
+
+Segments can be evaluated and split by their local parameter `t`, where `0.0`
+is the segment start and `1.0` is the segment end:
+
+```gleam
+svg_path.segment_point(segment, at: 0.5)
+svg_path.segment_derivative(segment, at: 0.5)
+svg_path.split_segment(segment, at: 0.5)
+```
+
+These helpers work for lines, quadratic Beziers, cubic Beziers, and arcs.
+Values outside `0.0..1.0` extrapolate along the same segment. Use
+`split_segment_inside` when outside values should return an error instead.
 
 ### Subpaths
 
@@ -198,7 +210,7 @@ svg_path.path_start(path)
 svg_path.path_end(path)
 ```
 
-## Ergonomics for Endpoint Reconciliation
+## Matching Endpoints
 
 Helper functions in the root module let users employ an `EndpointPolicy` option
 to specify different types of error-recovery behavior for non-matching
@@ -212,10 +224,11 @@ svg_path.WiggleThenBridge
 ```
 
 `Strict` requires exact endpoint equality. `Wiggle` moves nearby endpoints
-together within the package's default wiggle tolerance of `0.000000001`.
-`Bridge` keeps existing endpoints in place and inserts a straight line segment
-when needed. `WiggleThenBridge`, as the name implies, first tries `Wiggle`
-before falling back on `Bridge`.
+together within the package's default wiggle tolerance of `0.000000001`, while
+preserving horizontal and vertical straight-line segments. `Bridge` keeps
+existing endpoints in place and inserts a straight line segment when needed.
+`WiggleThenBridge`, as the name implies, first tries `Wiggle` before falling
+back on `Bridge`.
 
 The behavior of option-free functions and constructors is
 `EndpointPolicy.Strict`. These include:
@@ -354,6 +367,61 @@ svg_path.segment_to_cubic_beziers(segment)
 svg_path.subpath_to_cubic_beziers(subpath)
 svg_path.path_to_cubic_beziers(path)
 ```
+
+## Geometry Helpers
+
+The root module provides a few geometry helpers that work directly with the
+`Segment`, `Subpath`, and `Path` model.
+
+### Bounding Boxes
+
+Use `segment_bounding_box`, `subpath_bounding_box`, and `path_bounding_box` to
+compute exact axis-aligned bounding boxes:
+
+```gleam
+import svg_path
+
+pub fn box_path(path: svg_path.Path) -> Result(svg_path.BoundingBox, svg_path.Error) {
+  svg_path.path_bounding_box(path)
+}
+```
+
+Line, quadratic Bezier, cubic Bezier, and arc extrema are included. Empty
+subpaths return `EmptySubpath`; empty paths return `EmptyPath`; paths whose
+subpaths are all empty return `EmptySubpaths`.
+
+For callers working at the lower-level curve modules, `svg_path/bezier` exposes
+`bezier_bounding_box`, and `svg_path/ellipse` exposes `arc_bounding_box`.
+
+### Segment Crossings
+
+Use `segment_crossings` to find parameter values where a scalar predicate
+changes sign along a segment:
+
+```gleam
+import svg_path
+
+pub fn horizontal_crossings(
+  segment: svg_path.Segment,
+  y: Float,
+) -> Result(List(Float), svg_path.Error) {
+  svg_path.segment_crossings(segment, where: fn(point) {
+    point.y -. y
+  })
+}
+```
+
+The returned values are segment parameters in `0.0..1.0`. You can pass them to
+`segment_point` or `split_segment`.
+
+Crossing detection is numerical and sampling-based. It finds sign-change
+crossings visible at the configured sampling resolution, plus endpoint/sample
+values that are already close to zero. It does not promise tangent roots or
+multiple crossings hidden inside one sample window. Use `segment_crossings_with`
+and `CrossingOptions` to tune `samples`, `tolerance`, and `max_iterations`.
+
+The scalar solver behind this lives in `svg_path/root.gleam` as a small
+self-contained bisection helper for bracketed `Float -> Float` functions.
 
 ## Parsing
 
