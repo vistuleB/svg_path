@@ -29,6 +29,42 @@ pub fn path_can_be_built_from_empty_test() {
   assert svg_path.from_subpath(subpath) |> svg_path.subpaths == [subpath]
 }
 
+pub fn path_start_and_end_use_first_and_last_nonempty_subpaths_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(20.0, 0.0)
+  let d = svg_path.point(30.0, 0.0)
+  let first = svg_path.assert_subpath([svg_path.line(start: a, end: b)])
+  let second = svg_path.assert_subpath([svg_path.line(start: c, end: d)])
+  let path =
+    svg_path.path([
+      svg_path.empty_subpath(),
+      first,
+      svg_path.empty_subpath(),
+      second,
+      svg_path.empty_subpath(),
+    ])
+
+  assert svg_path.path_start(path) == Ok(a)
+  assert svg_path.path_end(path) == Ok(d)
+}
+
+pub fn empty_path_has_no_start_or_end_test() {
+  assert svg_path.path_start(svg_path.empty_path()) == Error(svg_path.EmptyPath)
+  assert svg_path.path_end(svg_path.empty_path()) == Error(svg_path.EmptyPath)
+}
+
+pub fn path_with_only_empty_subpaths_has_no_start_or_end_test() {
+  let path =
+    svg_path.path([
+      svg_path.empty_subpath(),
+      svg_path.empty_subpath(),
+    ])
+
+  assert svg_path.path_start(path) == Error(svg_path.EmptySubpaths)
+  assert svg_path.path_end(path) == Error(svg_path.EmptySubpaths)
+}
+
 pub fn as_subpath_accepts_empty_path_test() {
   let assert Ok(subpath) = svg_path.as_subpath(svg_path.empty_path())
 

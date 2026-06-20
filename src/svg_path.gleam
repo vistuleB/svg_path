@@ -96,6 +96,12 @@ pub type Error {
   /// The operation requires a non-empty subpath.
   EmptySubpath
 
+  /// The operation requires a path with at least one subpath.
+  EmptyPath
+
+  /// The operation requires a path with at least one non-empty subpath.
+  EmptySubpaths
+
   /// A wiggle operation could not reconcile two horizontal line segments.
   IncompatibleHorizontalWiggle(previous_end: Point, next_start: Point)
 
@@ -437,6 +443,22 @@ pub fn end(subpath: Subpath) -> Result(Point, Error) {
   }
 }
 
+/// Return the start point of the first non-empty subpath in a path.
+pub fn path_start(path: Path) -> Result(Point, Error) {
+  case path.subpaths {
+    [] -> Error(EmptyPath)
+    subpaths -> first_subpath_start(subpaths)
+  }
+}
+
+/// Return the end point of the last non-empty subpath in a path.
+pub fn path_end(path: Path) -> Result(Point, Error) {
+  case path.subpaths {
+    [] -> Error(EmptyPath)
+    subpaths -> first_subpath_end(list.reverse(subpaths))
+  }
+}
+
 /// Append a segment to an open subpath.
 ///
 /// The new segment must start exactly at the current end point.
@@ -559,6 +581,32 @@ fn splice_segments(
   insert: List(Segment),
 ) -> List(Segment) {
   splice_segments_loop(segments, start, delete, insert, index: 0, before: [])
+}
+
+fn first_subpath_start(subpaths: List(Subpath)) -> Result(Point, Error) {
+  case subpaths {
+    [] -> Error(EmptySubpaths)
+    [subpath, ..rest] -> {
+      case start(subpath) {
+        Ok(point) -> Ok(point)
+        Error(EmptySubpath) -> first_subpath_start(rest)
+        Error(error) -> Error(error)
+      }
+    }
+  }
+}
+
+fn first_subpath_end(subpaths: List(Subpath)) -> Result(Point, Error) {
+  case subpaths {
+    [] -> Error(EmptySubpaths)
+    [subpath, ..rest] -> {
+      case end(subpath) {
+        Ok(point) -> Ok(point)
+        Error(EmptySubpath) -> first_subpath_end(rest)
+        Error(error) -> Error(error)
+      }
+    }
+  }
 }
 
 fn splice_segments_loop(

@@ -189,6 +189,15 @@ consist of an empty list of segments, which is intentional. Empty paths and
 empty open subpaths serialize to the empty string. A closed `Subpath` with no
 segments is impossible to construct.
 
+Use `path_start` and `path_end` to get the endpoints of a full path. Empty
+subpaths are ignored; `EmptyPath` is returned for `Path([])`, and
+`EmptySubpaths` is returned when a path has subpaths but none contain segments:
+
+```gleam
+svg_path.path_start(path)
+svg_path.path_end(path)
+```
+
 ## Ergonomics for Endpoint Reconciliation
 
 Helper functions in the root module let users employ an `EndpointPolicy` option
