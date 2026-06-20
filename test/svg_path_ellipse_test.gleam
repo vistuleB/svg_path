@@ -1,6 +1,7 @@
 import gleam/float
 import gleam_community/maths
 import gleeunit
+import svg_path
 import svg_path/ellipse
 
 const tolerance = 0.000001
@@ -347,7 +348,66 @@ pub fn center_to_endpoint_round_trips_arc_data_test() {
   assert converted.sweep == ellipse.arc_sweep(center)
 }
 
+pub fn arc_from_center_data_creates_svg_path_arc_test() {
+  let center =
+    ellipse.center_arc_data(
+      center: ellipse.Point(10.0, 0.0),
+      radius: ellipse.Point(10.0, 10.0),
+      x_axis_rotation: 0.0,
+      start_angle: maths.pi(),
+      delta_angle: maths.pi(),
+    )
+
+  let assert svg_path.Arc(
+    start:,
+    radius:,
+    x_axis_rotation:,
+    large_arc:,
+    sweep:,
+    end:,
+  ) = svg_path.arc_from_center_data(center)
+
+  assert svg_path_point_near(start, svg_path.point(0.0, 0.0))
+  assert svg_path_point_near(radius, svg_path.point(10.0, 10.0))
+  assert near(x_axis_rotation, 0.0)
+  assert !large_arc
+  assert sweep
+  assert svg_path_point_near(end, svg_path.point(20.0, 0.0))
+}
+
+pub fn arc_from_endpoint_data_creates_svg_path_arc_test() {
+  let endpoint =
+    ellipse.endpoint_arc_data(
+      start: ellipse.Point(0.0, 1.0),
+      radius: ellipse.Point(2.0, 3.0),
+      x_axis_rotation: 15.0,
+      large_arc: True,
+      sweep: False,
+      end: ellipse.Point(4.0, 5.0),
+    )
+
+  let assert svg_path.Arc(
+    start:,
+    radius:,
+    x_axis_rotation:,
+    large_arc:,
+    sweep:,
+    end:,
+  ) = svg_path.arc_from_endpoint_data(endpoint)
+
+  assert svg_path_point_near(start, svg_path.point(0.0, 1.0))
+  assert svg_path_point_near(radius, svg_path.point(2.0, 3.0))
+  assert near(x_axis_rotation, 15.0)
+  assert large_arc
+  assert !sweep
+  assert svg_path_point_near(end, svg_path.point(4.0, 5.0))
+}
+
 fn point_near(a: ellipse.Point, b: ellipse.Point) -> Bool {
+  near(a.x, b.x) && near(a.y, b.y)
+}
+
+fn svg_path_point_near(a: svg_path.Point, b: svg_path.Point) -> Bool {
   near(a.x, b.x) && near(a.y, b.y)
 }
 

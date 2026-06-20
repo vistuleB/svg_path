@@ -877,6 +877,25 @@ pub fn arc(
   Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:)
 }
 
+/// Create an elliptical arc segment from endpoint-parameter arc data.
+pub fn arc_from_endpoint_data(data: ellipse.EndpointArcData) -> Segment {
+  Arc(
+    start: from_ellipse_point(data.start),
+    radius: from_ellipse_point(data.radius),
+    x_axis_rotation: data.x_axis_rotation,
+    large_arc: data.large_arc,
+    sweep: data.sweep,
+    end: from_ellipse_point(data.end),
+  )
+}
+
+/// Create an elliptical arc segment from center-parameter arc data.
+pub fn arc_from_center_data(data: ellipse.CenterArcData) -> Segment {
+  let endpoint = ellipse.center_to_endpoint(data)
+
+  arc_from_endpoint_data(endpoint)
+}
+
 fn nonempty_subpaths(subpaths: List(Subpath)) -> List(Subpath) {
   subpaths
   |> list.filter(keeping: fn(subpath) { !list.is_empty(subpath.segments) })
