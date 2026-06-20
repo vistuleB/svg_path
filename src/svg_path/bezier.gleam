@@ -14,6 +14,7 @@
 //// - `bezier_derivative(curve, at: t)` is the derivative with respect to `t`.
 //// - `split_bezier(curve, at: t)` preserves the curve degree and divides it
 ////   with de Casteljau's algorithm.
+//// - `map_points(curve, with: f)` maps the curve's defining points.
 ////
 //// The `at` value is not clamped. Values outside `0.0..1.0` extrapolate along
 //// the same polynomial curve. `split_bezier` follows the same unclamped policy;
@@ -21,6 +22,11 @@
 //// `split_bezier_many` and `split_bezier_inside_many` sort their split points,
 //// remove exact duplicates, and trim boundary `0.0` or `1.0` split points that
 //// would only create zero-length boundary curves.
+////
+//// `map_points` maps the control points that define the curve. For nonlinear
+//// functions, this is not the exact image of every point on the rendered curve;
+//// it is the Bezier curve obtained by applying the function to the defining
+//// points.
 
 import gleam/list
 
@@ -140,6 +146,29 @@ pub fn bezier_derivative(curve: BezierData, at t: Float) -> Point {
           t,
         ),
         3.0,
+      )
+    }
+  }
+}
+
+/// Map a Bezier curve's defining points.
+///
+/// For nonlinear functions, this is not the exact image of every point on the
+/// rendered curve. It maps the control polygon and preserves the curve degree.
+pub fn map_points(curve: BezierData, with f: fn(Point) -> Point) -> BezierData {
+  case curve {
+    LinearBezierData(start:, end:) -> {
+      LinearBezierData(start: f(start), end: f(end))
+    }
+    QuadraticBezierData(start:, control:, end:) -> {
+      QuadraticBezierData(start: f(start), control: f(control), end: f(end))
+    }
+    CubicBezierData(start:, control1:, control2:, end:) -> {
+      CubicBezierData(
+        start: f(start),
+        control1: f(control1),
+        control2: f(control2),
+        end: f(end),
       )
     }
   }

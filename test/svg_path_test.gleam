@@ -113,6 +113,73 @@ pub fn segment_derivative_evaluates_lines_quadratics_cubics_and_arcs_test() {
   assert near(arc_derivative.y, 0.0)
 }
 
+pub fn map_segment_points_maps_line_quadratic_and_cubic_defining_points_test() {
+  let map = fn(point: svg_path.Point) {
+    svg_path.point(point.x +. 1.0, point.y *. 2.0)
+  }
+  let assert Ok(line) =
+    svg_path.map_segment_points(
+      svg_path.line(
+        start: svg_path.point(0.0, 1.0),
+        end: svg_path.point(2.0, 3.0),
+      ),
+      with: map,
+    )
+  let assert Ok(quadratic) =
+    svg_path.map_segment_points(
+      svg_path.quadratic_bezier(
+        start: svg_path.point(0.0, 1.0),
+        control: svg_path.point(2.0, 3.0),
+        end: svg_path.point(4.0, 5.0),
+      ),
+      with: map,
+    )
+  let assert Ok(cubic) =
+    svg_path.map_segment_points(
+      svg_path.cubic_bezier(
+        start: svg_path.point(0.0, 1.0),
+        control1: svg_path.point(2.0, 3.0),
+        control2: svg_path.point(4.0, 5.0),
+        end: svg_path.point(6.0, 7.0),
+      ),
+      with: map,
+    )
+
+  assert line
+    == svg_path.line(
+      start: svg_path.point(1.0, 2.0),
+      end: svg_path.point(3.0, 6.0),
+    )
+  assert quadratic
+    == svg_path.quadratic_bezier(
+      start: svg_path.point(1.0, 2.0),
+      control: svg_path.point(3.0, 6.0),
+      end: svg_path.point(5.0, 10.0),
+    )
+  assert cubic
+    == svg_path.cubic_bezier(
+      start: svg_path.point(1.0, 2.0),
+      control1: svg_path.point(3.0, 6.0),
+      control2: svg_path.point(5.0, 10.0),
+      end: svg_path.point(7.0, 14.0),
+    )
+}
+
+pub fn map_segment_points_rejects_arcs_test() {
+  let segment =
+    svg_path.arc(
+      start: svg_path.point(0.0, 0.0),
+      radius: svg_path.point(10.0, 10.0),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: True,
+      end: svg_path.point(20.0, 0.0),
+    )
+
+  assert svg_path.map_segment_points(segment, with: fn(point) { point })
+    == Error(svg_path.CannotMapArcNonlinearly)
+}
+
 pub fn segment_point_and_split_extrapolate_outside_t_test() {
   let segment =
     svg_path.line(

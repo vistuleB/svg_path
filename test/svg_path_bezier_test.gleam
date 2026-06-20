@@ -88,6 +88,27 @@ pub fn bezier_derivative_uses_parameter_t_test() {
   )
 }
 
+pub fn map_points_maps_bezier_defining_points_test() {
+  let curve =
+    bezier.cubic_bezier_data(
+      start: bezier.Point(0.0, 0.0),
+      control1: bezier.Point(0.0, 30.0),
+      control2: bezier.Point(30.0, 30.0),
+      end: bezier.Point(30.0, 0.0),
+    )
+
+  let mapped =
+    bezier.map_points(curve, with: fn(point) {
+      bezier.Point(point.x +. 1.0, point.y *. 2.0)
+    })
+  let assert bezier.CubicBezierData(start:, control1:, control2:, end:) = mapped
+
+  assert point_near(start, bezier.Point(1.0, 0.0))
+  assert point_near(control1, bezier.Point(1.0, 60.0))
+  assert point_near(control2, bezier.Point(31.0, 60.0))
+  assert point_near(end, bezier.Point(31.0, 0.0))
+}
+
 pub fn split_bezier_divides_quadratic_at_t_test() {
   let curve =
     bezier.quadratic_bezier_data(

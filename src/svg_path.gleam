@@ -106,6 +106,9 @@ pub type Error {
   /// The arc cannot be converted to center-parameter form.
   DegenerateArc
 
+  /// Nonlinear point mapping cannot preserve an SVG arc segment.
+  CannotMapArcNonlinearly
+
   /// A wiggle operation could not reconcile two horizontal line segments.
   IncompatibleHorizontalWiggle(previous_end: Point, next_start: Point)
 
@@ -612,6 +615,32 @@ pub fn segment_derivative(
         Ok(arc) -> Ok(ellipse.arc_derivative(arc, at: t) |> from_ellipse_point)
       }
     }
+  }
+}
+
+/// Map the defining points of a segment.
+///
+/// Lines, quadratic Beziers, and cubic Beziers are mapped by applying `f` to
+/// their endpoints and control points. For nonlinear functions, this is not the
+/// exact image of every point on the rendered curve. Arc segments return
+/// `CannotMapArcNonlinearly` because an arbitrary nonlinear mapping does not
+/// generally preserve SVG arc parameters.
+pub fn map_segment_points(
+  segment: Segment,
+  with f: fn(Point) -> Point,
+) -> Result(Segment, Error) {
+  case segment {
+    Line(..) | QuadraticBezier(..) | CubicBezier(..) -> {
+      Ok(
+        segment
+        |> segment_to_bezier_data
+        |> bezier.map_points(with: fn(point) {
+          point |> from_bezier_point |> f |> to_bezier_point
+        })
+        |> segment_from_bezier_data,
+      )
+    }
+    Arc(..) -> Error(CannotMapArcNonlinearly)
   }
 }
 
