@@ -1,6 +1,7 @@
 import gleam/float
 import gleeunit
 import svg_path/bezier
+import svg_path_bezier_bbox_fixtures
 
 const tolerance = 0.000001
 
@@ -86,6 +87,55 @@ pub fn bezier_derivative_uses_parameter_t_test() {
     bezier.bezier_derivative(cubic, at: 0.5),
     bezier.Point(45.0, 0.0),
   )
+}
+
+pub fn bezier_bounding_box_of_line_uses_endpoint_extents_test() {
+  let curve =
+    bezier.linear_bezier_data(
+      start: bezier.Point(1.0, 2.0),
+      end: bezier.Point(5.0, -3.0),
+    )
+
+  assert bbox_near(
+    bezier.bezier_bounding_box(curve),
+    min: bezier.Point(1.0, -3.0),
+    max: bezier.Point(5.0, 2.0),
+  )
+}
+
+pub fn bezier_bounding_box_of_quadratic_includes_interior_extremum_test() {
+  let curve =
+    bezier.quadratic_bezier_data(
+      start: bezier.Point(0.0, 0.0),
+      control: bezier.Point(10.0, 10.0),
+      end: bezier.Point(20.0, 0.0),
+    )
+
+  assert bbox_near(
+    bezier.bezier_bounding_box(curve),
+    min: bezier.Point(0.0, 0.0),
+    max: bezier.Point(20.0, 5.0),
+  )
+}
+
+pub fn bezier_bounding_box_of_cubic_includes_interior_extrema_test() {
+  let curve =
+    bezier.cubic_bezier_data(
+      start: bezier.Point(0.0, 0.0),
+      control1: bezier.Point(0.0, 30.0),
+      control2: bezier.Point(30.0, 30.0),
+      end: bezier.Point(30.0, 0.0),
+    )
+
+  assert bbox_near(
+    bezier.bezier_bounding_box(curve),
+    min: bezier.Point(0.0, 0.0),
+    max: bezier.Point(30.0, 22.5),
+  )
+}
+
+pub fn bezier_bounding_box_matches_generated_fixtures_test() {
+  assert_bounding_boxes(svg_path_bezier_bbox_fixtures.fixtures())
 }
 
 pub fn map_points_maps_bezier_defining_points_test() {
@@ -266,6 +316,37 @@ pub fn split_bezier_many_preserves_cubic_degree_test() {
 
 fn point_near(a: bezier.Point, b: bezier.Point) -> Bool {
   near(a.x, b.x) && near(a.y, b.y)
+}
+
+fn bbox_near(
+  box: bezier.BoundingBox,
+  min expected_min: bezier.Point,
+  max expected_max: bezier.Point,
+) -> Bool {
+  let bezier.BoundingBox(min:, max:) = box
+  point_near(min, expected_min) && point_near(max, expected_max)
+}
+
+fn assert_bounding_boxes(
+  fixtures: List(svg_path_bezier_bbox_fixtures.BezierBBoxFixture),
+) -> Nil {
+  case fixtures {
+    [] -> Nil
+    [fixture, ..rest] -> {
+      let svg_path_bezier_bbox_fixtures.BezierBBoxFixture(
+        curve:,
+        min: expected_min,
+        max: expected_max,
+        ..,
+      ) = fixture
+      assert bbox_near(
+        bezier.bezier_bounding_box(curve),
+        min: expected_min,
+        max: expected_max,
+      )
+      assert_bounding_boxes(rest)
+    }
+  }
 }
 
 fn near(a: Float, b: Float) -> Bool {

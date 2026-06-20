@@ -28,11 +28,17 @@
 //// it is the Bezier curve obtained by applying the function to the defining
 //// points.
 
+import gleam/float
 import gleam/list
 
 /// A lightweight point used by the Bezier math helpers.
 pub type Point {
   Point(x: Float, y: Float)
+}
+
+/// An axis-aligned bounding box for a Bezier curve.
+pub type BoundingBox {
+  BoundingBox(min: Point, max: Point)
 }
 
 /// Bezier-parameter representation of line, quadratic, and cubic curves.
@@ -149,6 +155,18 @@ pub fn bezier_derivative(curve: BezierData, at t: Float) -> Point {
       )
     }
   }
+}
+
+/// Return the curve's exact axis-aligned bounding box over `0.0..1.0`.
+pub fn bezier_bounding_box(curve: BezierData) -> BoundingBox {
+  let points =
+    [0.0, 1.0, ..bezier_extrema(curve)]
+    |> list.map(fn(t) { bezier_point(curve, at: t) })
+
+  let assert [first, ..rest] = points
+
+  rest
+  |> list.fold(BoundingBox(min: first, max: first), include_point)
 }
 
 /// Map a Bezier curve's defining points.
@@ -340,6 +358,88 @@ fn normalized_progresses(points: List(Float)) -> List(Float) {
   |> sort_unique_progresses
   |> trim_start_progress
   |> trim_end_progress
+}
+
+fn bezier_extrema(curve: BezierData) -> List(Float) {
+  case curve {
+    LinearBezierData(..) -> []
+    QuadraticBezierData(start:, control:, end:) ->
+      list.append(
+        quadratic_extrema(start.x, control.x, end.x),
+        quadratic_extrema(start.y, control.y, end.y),
+      )
+    CubicBezierData(start:, control1:, control2:, end:) ->
+      list.append(
+        cubic_extrema(start.x, control1.x, control2.x, end.x),
+        cubic_extrema(start.y, control1.y, control2.y, end.y),
+      )
+  }
+  |> list.filter(is_inside_unit_interval)
+}
+
+fn quadratic_extrema(start: Float, control: Float, end: Float) -> List(Float) {
+  let denominator = start -. { 2.0 *. control } +. end
+
+  case denominator == 0.0 {
+    True -> []
+    False -> [{ start -. control } /. denominator]
+  }
+}
+
+fn cubic_extrema(
+  start: Float,
+  control1: Float,
+  control2: Float,
+  end: Float,
+) -> List(Float) {
+  let a = 0.0 -. start +. { 3.0 *. control1 } -. { 3.0 *. control2 } +. end
+  let b = { 3.0 *. start } -. { 6.0 *. control1 } +. { 3.0 *. control2 }
+  let c = { 3.0 *. control1 } -. { 3.0 *. start }
+
+  quadratic_roots(3.0 *. a, 2.0 *. b, c)
+}
+
+fn quadratic_roots(a: Float, b: Float, c: Float) -> List(Float) {
+  case a == 0.0 {
+    True -> linear_roots(b, c)
+    False -> {
+      let discriminant = b *. b -. { 4.0 *. a *. c }
+
+      case discriminant <. 0.0 {
+        True -> []
+        False -> {
+          let assert Ok(root_discriminant) = float.square_root(discriminant)
+          let denominator = 2.0 *. a
+
+          case root_discriminant == 0.0 {
+            True -> [{ 0.0 -. b } /. denominator]
+            False -> [
+              { 0.0 -. b -. root_discriminant } /. denominator,
+              { 0.0 -. b +. root_discriminant } /. denominator,
+            ]
+          }
+        }
+      }
+    }
+  }
+}
+
+fn linear_roots(a: Float, b: Float) -> List(Float) {
+  case a == 0.0 {
+    True -> []
+    False -> [{ 0.0 -. b } /. a]
+  }
+}
+
+fn is_inside_unit_interval(t: Float) -> Bool {
+  t >=. 0.0 && t <=. 1.0
+}
+
+fn include_point(box: BoundingBox, point: Point) -> BoundingBox {
+  BoundingBox(
+    min: Point(float.min(box.min.x, point.x), float.min(box.min.y, point.y)),
+    max: Point(float.max(box.max.x, point.x), float.max(box.max.y, point.y)),
+  )
 }
 
 fn sort_unique_progresses(points: List(Float)) -> List(Float) {
