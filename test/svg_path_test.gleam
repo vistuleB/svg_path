@@ -231,6 +231,118 @@ pub fn segment_bounding_box_returns_degenerate_arc_errors_test() {
   assert svg_path.segment_bounding_box(segment) == Error(svg_path.DegenerateArc)
 }
 
+pub fn segment_crossings_finds_line_crossing_test() {
+  let line =
+    svg_path.line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(10.0, 0.0),
+    )
+
+  let assert Ok(crossings) =
+    svg_path.segment_crossings(line, where: fn(point) { point.x -. 5.0 })
+  let assert [crossing] = crossings
+
+  assert near(crossing, 0.5)
+}
+
+pub fn segment_crossings_finds_multiple_quadratic_crossings_test() {
+  let curve =
+    svg_path.quadratic_bezier(
+      start: svg_path.point(0.0, 0.0),
+      control: svg_path.point(10.0, 20.0),
+      end: svg_path.point(20.0, 0.0),
+    )
+  let options =
+    svg_path.CrossingOptions(
+      samples: 20,
+      tolerance: 0.000000001,
+      max_iterations: 100,
+    )
+
+  let assert Ok(crossings) =
+    svg_path.segment_crossings_with(
+      curve,
+      where: fn(point) { point.y -. 5.0 },
+      options:,
+    )
+  let assert [first, second] = crossings
+
+  assert near(first, 0.146446609)
+  assert near(second, 0.853553391)
+}
+
+pub fn segment_crossings_finds_arc_crossing_test() {
+  let arc =
+    svg_path.arc(
+      start: svg_path.point(0.0, 0.0),
+      radius: svg_path.point(10.0, 10.0),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: True,
+      end: svg_path.point(20.0, 0.0),
+    )
+
+  let assert Ok(crossings) =
+    svg_path.segment_crossings(arc, where: fn(point) { point.x -. 10.0 })
+  let assert [crossing] = crossings
+
+  assert near(crossing, 0.5)
+}
+
+pub fn segment_crossings_rejects_invalid_options_test() {
+  let line =
+    svg_path.line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(10.0, 0.0),
+    )
+
+  assert svg_path.segment_crossings_with(
+      line,
+      where: fn(point) { point.x -. 5.0 },
+      options: svg_path.CrossingOptions(
+        samples: 0,
+        tolerance: 0.000000001,
+        max_iterations: 100,
+      ),
+    )
+    == Error(svg_path.InvalidCrossingSamples(0))
+  assert svg_path.segment_crossings_with(
+      line,
+      where: fn(point) { point.x -. 5.0 },
+      options: svg_path.CrossingOptions(
+        samples: 10,
+        tolerance: 0.0,
+        max_iterations: 100,
+      ),
+    )
+    == Error(svg_path.InvalidCrossingTolerance(0.0))
+  assert svg_path.segment_crossings_with(
+      line,
+      where: fn(point) { point.x -. 5.0 },
+      options: svg_path.CrossingOptions(
+        samples: 10,
+        tolerance: 0.000000001,
+        max_iterations: 0,
+      ),
+    )
+    == Error(svg_path.InvalidCrossingMaxIterations(0))
+}
+
+pub fn segment_crossings_returns_degenerate_arc_errors_test() {
+  let segment =
+    svg_path.arc(
+      start: svg_path.point(0.0, 0.0),
+      radius: svg_path.point(0.0, 10.0),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: True,
+      end: svg_path.point(20.0, 0.0),
+    )
+
+  assert svg_path.segment_crossings(segment, where: fn(point) { point.x })
+    == Error(svg_path.DegenerateArc)
+}
+
 pub fn map_segment_points_maps_line_quadratic_and_cubic_defining_points_test() {
   let map = fn(point: svg_path.Point) {
     svg_path.point(point.x +. 1.0, point.y *. 2.0)

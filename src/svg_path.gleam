@@ -5,13 +5,21 @@
 //// directly with SVG path data strings.
 
 import gleam/float
+import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import svg_path/bezier
 import svg_path/ellipse
+import svg_path/root
 import vec/vec2.{type Vec2, Vec2}
 
 const default_wiggle_tolerance = 0.000000001
+
+const default_crossing_samples = 100
+
+const default_crossing_tolerance = 0.000000001
+
+const default_crossing_max_iterations = 100
 
 /// A 2D point.
 ///
@@ -23,6 +31,11 @@ pub type Point =
 /// An axis-aligned bounding box.
 pub type BoundingBox {
   BoundingBox(min: Point, max: Point)
+}
+
+/// Options for detecting scalar zero crossings along a segment.
+pub type CrossingOptions {
+  CrossingOptions(samples: Int, tolerance: Float, max_iterations: Int)
 }
 
 /// An SVG path, made of zero or more subpaths.
@@ -127,6 +140,18 @@ pub type Error {
   /// `start` is greater than the subpath length.
   InvalidSplice(start: Int, delete: Int, length: Int)
 
+  /// The number of crossing scan samples must be greater than zero.
+  InvalidCrossingSamples(samples: Int)
+
+  /// The crossing tolerance must be greater than zero.
+  InvalidCrossingTolerance(tolerance: Float)
+
+  /// The crossing bisection iteration limit must be greater than zero.
+  InvalidCrossingMaxIterations(max_iterations: Int)
+
+  /// A bracketed crossing could not be refined within the iteration limit.
+  CrossingMaxIterationsReached(estimate: Float, value: Float)
+
   /// The path contains more than one non-empty subpath.
   MultipleNonemptySubpaths
 
@@ -140,6 +165,15 @@ pub type Error {
 /// Create a point from `x` and `y` coordinates.
 pub fn point(x: Float, y: Float) -> Point {
   Vec2(x, y)
+}
+
+/// Return the default options for segment crossing detection.
+pub fn default_crossing_options() -> CrossingOptions {
+  CrossingOptions(
+    samples: default_crossing_samples,
+    tolerance: default_crossing_tolerance,
+    max_iterations: default_crossing_max_iterations,
+  )
 }
 
 /// Create an empty path.
@@ -728,6 +762,46 @@ pub fn segment_bounding_box(segment: Segment) -> Result(BoundingBox, Error) {
   }
 }
 
+/// Find scalar sign-change crossings along a segment using default options.
+///
+/// This samples `t` in `0.0..1.0`, detects sign changes of `f(segment_point(t))`,
+/// and refines each bracket with bisection. It finds crossings visible at the
+/// configured sampling resolution; tangent roots and pairs of crossings inside
+/// one sample window may be missed.
+pub fn segment_crossings(
+  segment: Segment,
+  where f: fn(Point) -> Float,
+) -> Result(List(Float), Error) {
+  segment_crossings_with(segment, where: f, options: default_crossing_options())
+}
+
+/// Find scalar sign-change crossings along a segment using explicit options.
+pub fn segment_crossings_with(
+  segment: Segment,
+  where f: fn(Point) -> Float,
+  options options: CrossingOptions,
+) -> Result(List(Float), Error) {
+  case validate_crossing_options(options) {
+    Error(error) -> Error(error)
+    Ok(Nil) -> {
+      case crossing_value(segment, f, 0.0) {
+        Error(error) -> Error(error)
+        Ok(first_value) -> {
+          scan_crossings(
+            segment,
+            f,
+            options,
+            index: 1,
+            previous_t: 0.0,
+            previous_value: first_value,
+            crossings: [],
+          )
+        }
+      }
+    }
+  }
+}
+
 /// Return a non-empty subpath's exact axis-aligned bounding box.
 pub fn subpath_bounding_box(subpath: Subpath) -> Result(BoundingBox, Error) {
   case subpath.segments {
@@ -848,6 +922,181 @@ fn is_zero_length_line(segment: Segment) -> Bool {
     Line(start:, end:) -> start == end
     _ -> False
   }
+}
+
+fn validate_crossing_options(options: CrossingOptions) -> Result(Nil, Error) {
+  case options.samples <= 0 {
+    True -> Error(InvalidCrossingSamples(options.samples))
+    False -> {
+      case options.tolerance <=. 0.0 {
+        True -> Error(InvalidCrossingTolerance(options.tolerance))
+        False -> {
+          case options.max_iterations <= 0 {
+            True -> Error(InvalidCrossingMaxIterations(options.max_iterations))
+            False -> Ok(Nil)
+          }
+        }
+      }
+    }
+  }
+}
+
+fn scan_crossings(
+  segment: Segment,
+  f: fn(Point) -> Float,
+  options: CrossingOptions,
+  index index: Int,
+  previous_t previous_t: Float,
+  previous_value previous_value: Float,
+  crossings crossings: List(Float),
+) -> Result(List(Float), Error) {
+  case index > options.samples {
+    True -> Ok(list.reverse(crossings))
+    False -> {
+      let next_t = int.to_float(index) /. int.to_float(options.samples)
+
+      case crossing_value(segment, f, next_t) {
+        Error(error) -> Error(error)
+        Ok(next_value) -> {
+          case
+            crossing_for_window(
+              segment,
+              f,
+              options,
+              previous_t,
+              previous_value,
+              next_t,
+              next_value,
+            )
+          {
+            Error(error) -> Error(error)
+            Ok(None) ->
+              scan_crossings(
+                segment,
+                f,
+                options,
+                index: index + 1,
+                previous_t: next_t,
+                previous_value: next_value,
+                crossings:,
+              )
+            Ok(Some(crossing)) ->
+              scan_crossings(
+                segment,
+                f,
+                options,
+                index: index + 1,
+                previous_t: next_t,
+                previous_value: next_value,
+                crossings: insert_crossing(
+                  crossings,
+                  crossing,
+                  options.tolerance,
+                ),
+              )
+          }
+        }
+      }
+    }
+  }
+}
+
+fn crossing_for_window(
+  segment: Segment,
+  f: fn(Point) -> Float,
+  options: CrossingOptions,
+  previous_t: Float,
+  previous_value: Float,
+  next_t: Float,
+  next_value: Float,
+) -> Result(Option(Float), Error) {
+  case is_close_to_zero(previous_value, options.tolerance) {
+    True -> Ok(Some(previous_t))
+    False -> {
+      case is_close_to_zero(next_value, options.tolerance) {
+        True -> Ok(Some(next_t))
+        False -> {
+          case same_sign(previous_value, next_value) {
+            True -> Ok(None)
+            False -> refine_crossing(segment, f, options, previous_t, next_t)
+          }
+        }
+      }
+    }
+  }
+}
+
+fn refine_crossing(
+  segment: Segment,
+  f: fn(Point) -> Float,
+  options: CrossingOptions,
+  previous_t: Float,
+  next_t: Float,
+) -> Result(Option(Float), Error) {
+  let solver_options =
+    root.Options(
+      tolerance: options.tolerance,
+      max_iterations: options.max_iterations,
+    )
+
+  case
+    root.bisect_with(
+      fn(t) { crossing_value_unsafe(segment, f, t) },
+      from: previous_t,
+      to: next_t,
+      options: solver_options,
+    )
+  {
+    Ok(t) -> Ok(Some(t))
+    Error(root.MaxIterationsReached(estimate:, value:)) ->
+      Error(CrossingMaxIterationsReached(estimate:, value:))
+    Error(_) -> Ok(None)
+  }
+}
+
+fn crossing_value(
+  segment: Segment,
+  f: fn(Point) -> Float,
+  t: Float,
+) -> Result(Float, Error) {
+  case segment_point(segment, at: t) {
+    Error(error) -> Error(error)
+    Ok(point) -> Ok(f(point))
+  }
+}
+
+fn crossing_value_unsafe(
+  segment: Segment,
+  f: fn(Point) -> Float,
+  t: Float,
+) -> Float {
+  let assert Ok(value) = crossing_value(segment, f, t)
+
+  value
+}
+
+fn insert_crossing(
+  crossings: List(Float),
+  crossing: Float,
+  tolerance: Float,
+) -> List(Float) {
+  case crossings {
+    [previous, ..] -> {
+      case float.absolute_value(previous -. crossing) <=. tolerance {
+        True -> crossings
+        False -> [crossing, ..crossings]
+      }
+    }
+    _ -> [crossing, ..crossings]
+  }
+}
+
+fn is_close_to_zero(value: Float, tolerance: Float) -> Bool {
+  float.absolute_value(value) <=. tolerance
+}
+
+fn same_sign(a: Float, b: Float) -> Bool {
+  a <. 0.0 && b <. 0.0 || a >. 0.0 && b >. 0.0
 }
 
 fn combine_segment_bounding_boxes(
