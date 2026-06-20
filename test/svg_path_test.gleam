@@ -1,6 +1,9 @@
+import gleam/float
 import gleam/list
 import gleeunit
 import svg_path
+
+const tolerance = 0.000001
 
 pub fn main() -> Nil {
   gleeunit.main()
@@ -13,6 +16,205 @@ pub fn line_keeps_its_endpoints_test() {
 
   assert svg_path.segment_start(segment) == start
   assert svg_path.segment_end(segment) == end
+}
+
+pub fn segment_point_evaluates_lines_quadratics_cubics_and_arcs_test() {
+  let assert Ok(line_point) =
+    svg_path.segment_point(
+      svg_path.line(
+        start: svg_path.point(0.0, 0.0),
+        end: svg_path.point(10.0, 20.0),
+      ),
+      at: 0.5,
+    )
+  let assert Ok(quadratic_point) =
+    svg_path.segment_point(
+      svg_path.quadratic_bezier(
+        start: svg_path.point(0.0, 0.0),
+        control: svg_path.point(10.0, 20.0),
+        end: svg_path.point(20.0, 0.0),
+      ),
+      at: 0.5,
+    )
+  let assert Ok(cubic_point) =
+    svg_path.segment_point(
+      svg_path.cubic_bezier(
+        start: svg_path.point(0.0, 0.0),
+        control1: svg_path.point(0.0, 30.0),
+        control2: svg_path.point(30.0, 30.0),
+        end: svg_path.point(30.0, 0.0),
+      ),
+      at: 0.5,
+    )
+  let assert Ok(arc_point) =
+    svg_path.segment_point(
+      svg_path.arc(
+        start: svg_path.point(0.0, 0.0),
+        radius: svg_path.point(10.0, 10.0),
+        x_axis_rotation: 0.0,
+        large_arc: False,
+        sweep: True,
+        end: svg_path.point(20.0, 0.0),
+      ),
+      at: 0.5,
+    )
+
+  assert point_near(line_point, svg_path.point(5.0, 10.0))
+  assert point_near(quadratic_point, svg_path.point(10.0, 10.0))
+  assert point_near(cubic_point, svg_path.point(15.0, 22.5))
+  assert point_near(arc_point, svg_path.point(10.0, -10.0))
+}
+
+pub fn segment_derivative_evaluates_lines_quadratics_cubics_and_arcs_test() {
+  let assert Ok(line_derivative) =
+    svg_path.segment_derivative(
+      svg_path.line(
+        start: svg_path.point(0.0, 0.0),
+        end: svg_path.point(10.0, 20.0),
+      ),
+      at: 0.5,
+    )
+  let assert Ok(quadratic_derivative) =
+    svg_path.segment_derivative(
+      svg_path.quadratic_bezier(
+        start: svg_path.point(0.0, 0.0),
+        control: svg_path.point(10.0, 20.0),
+        end: svg_path.point(20.0, 0.0),
+      ),
+      at: 0.5,
+    )
+  let assert Ok(cubic_derivative) =
+    svg_path.segment_derivative(
+      svg_path.cubic_bezier(
+        start: svg_path.point(0.0, 0.0),
+        control1: svg_path.point(0.0, 30.0),
+        control2: svg_path.point(30.0, 30.0),
+        end: svg_path.point(30.0, 0.0),
+      ),
+      at: 0.5,
+    )
+  let assert Ok(arc_derivative) =
+    svg_path.segment_derivative(
+      svg_path.arc(
+        start: svg_path.point(0.0, 0.0),
+        radius: svg_path.point(10.0, 10.0),
+        x_axis_rotation: 0.0,
+        large_arc: False,
+        sweep: True,
+        end: svg_path.point(20.0, 0.0),
+      ),
+      at: 0.5,
+    )
+
+  assert point_near(line_derivative, svg_path.point(10.0, 20.0))
+  assert point_near(quadratic_derivative, svg_path.point(20.0, 0.0))
+  assert point_near(cubic_derivative, svg_path.point(45.0, 0.0))
+  assert arc_derivative.x >. 0.0
+  assert near(arc_derivative.y, 0.0)
+}
+
+pub fn segment_point_and_split_extrapolate_outside_t_test() {
+  let segment =
+    svg_path.line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(10.0, 20.0),
+    )
+  let assert Ok(point) = svg_path.segment_point(segment, at: -0.5)
+  let assert Ok(#(before, through_end)) =
+    svg_path.split_segment(segment, at: -0.5)
+
+  assert point_near(point, svg_path.point(-5.0, -10.0))
+  assert point_near(svg_path.segment_start(before), svg_path.point(0.0, 0.0))
+  assert point_near(svg_path.segment_end(before), svg_path.point(-5.0, -10.0))
+  assert point_near(
+    svg_path.segment_start(through_end),
+    svg_path.point(-5.0, -10.0),
+  )
+  assert point_near(
+    svg_path.segment_end(through_end),
+    svg_path.point(10.0, 20.0),
+  )
+}
+
+pub fn split_segment_divides_quadratic_test() {
+  let segment =
+    svg_path.quadratic_bezier(
+      start: svg_path.point(0.0, 0.0),
+      control: svg_path.point(10.0, 20.0),
+      end: svg_path.point(20.0, 0.0),
+    )
+  let assert Ok(#(left, right)) = svg_path.split_segment(segment, at: 0.25)
+  let assert svg_path.QuadraticBezier(
+    start: left_start,
+    control: left_control,
+    end: split,
+  ) = left
+  let assert svg_path.QuadraticBezier(
+    start: right_start,
+    control: right_control,
+    end: right_end,
+  ) = right
+
+  assert point_near(left_start, svg_path.point(0.0, 0.0))
+  assert point_near(left_control, svg_path.point(2.5, 5.0))
+  assert point_near(split, svg_path.point(5.0, 7.5))
+  assert point_near(right_start, split)
+  assert point_near(right_control, svg_path.point(12.5, 15.0))
+  assert point_near(right_end, svg_path.point(20.0, 0.0))
+}
+
+pub fn split_segment_divides_arc_test() {
+  let segment =
+    svg_path.arc(
+      start: svg_path.point(0.0, 0.0),
+      radius: svg_path.point(10.0, 10.0),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: True,
+      end: svg_path.point(20.0, 0.0),
+    )
+  let assert Ok(#(left, right)) = svg_path.split_segment(segment, at: 0.5)
+
+  assert point_near(svg_path.segment_start(left), svg_path.point(0.0, 0.0))
+  assert point_near(svg_path.segment_end(left), svg_path.point(10.0, -10.0))
+  assert point_near(svg_path.segment_start(right), svg_path.point(10.0, -10.0))
+  assert point_near(svg_path.segment_end(right), svg_path.point(20.0, 0.0))
+}
+
+pub fn split_segment_inside_rejects_outside_t_test() {
+  let segment =
+    svg_path.cubic_bezier(
+      start: svg_path.point(0.0, 0.0),
+      control1: svg_path.point(0.0, 30.0),
+      control2: svg_path.point(30.0, 30.0),
+      end: svg_path.point(30.0, 0.0),
+    )
+
+  assert svg_path.split_segment_inside(segment, at: -0.01)
+    == Error(svg_path.SplitOutsideSegment)
+  assert svg_path.split_segment_inside(segment, at: 1.01)
+    == Error(svg_path.SplitOutsideSegment)
+  let assert Ok(_) = svg_path.split_segment_inside(segment, at: 0.0)
+  let assert Ok(_) = svg_path.split_segment_inside(segment, at: 1.0)
+}
+
+pub fn segment_eval_and_split_return_degenerate_arc_error_test() {
+  let segment =
+    svg_path.arc(
+      start: svg_path.point(0.0, 0.0),
+      radius: svg_path.point(0.0, 10.0),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: True,
+      end: svg_path.point(20.0, 0.0),
+    )
+
+  assert svg_path.segment_point(segment, at: 0.5)
+    == Error(svg_path.DegenerateArc)
+  assert svg_path.segment_derivative(segment, at: 0.5)
+    == Error(svg_path.DegenerateArc)
+  assert svg_path.split_segment(segment, at: 0.5)
+    == Error(svg_path.DegenerateArc)
 }
 
 pub fn path_can_be_built_from_empty_test() {
@@ -1327,4 +1529,12 @@ fn continuous_segments(segments: List(svg_path.Segment)) -> Bool {
       && continuous_segments([second, ..rest])
     }
   }
+}
+
+fn point_near(a: svg_path.Point, b: svg_path.Point) -> Bool {
+  near(a.x, b.x) && near(a.y, b.y)
+}
+
+fn near(a: Float, b: Float) -> Bool {
+  float.absolute_value(a -. b) <=. tolerance
 }

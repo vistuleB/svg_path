@@ -6,6 +6,7 @@
 
 import gleam/float
 import gleam/list
+import svg_path/bezier
 import svg_path/ellipse
 import vec/vec2.{type Vec2, Vec2}
 
@@ -102,6 +103,9 @@ pub type Error {
   /// The operation requires a path with at least one non-empty subpath.
   EmptySubpaths
 
+  /// The arc cannot be converted to center-parameter form.
+  DegenerateArc
+
   /// A wiggle operation could not reconcile two horizontal line segments.
   IncompatibleHorizontalWiggle(previous_end: Point, next_start: Point)
 
@@ -119,6 +123,9 @@ pub type Error {
 
   /// Two points were too far apart for a wiggle operation to merge them.
   NotCloseEnough(expected: Point, got: Point, tolerance: Float)
+
+  /// The requested split point is outside the segment's `0.0..1.0` parameter range.
+  SplitOutsideSegment
 }
 
 /// Create a point from `x` and `y` coordinates.
@@ -562,6 +569,115 @@ pub fn segment_end(segment: Segment) -> Point {
   }
 }
 
+/// Evaluate a segment at parameter `t`.
+///
+/// `t` is not clamped. Values outside `0.0..1.0` extrapolate along the same
+/// segment.
+pub fn segment_point(segment: Segment, at t: Float) -> Result(Point, Error) {
+  case segment {
+    Line(..) | QuadraticBezier(..) | CubicBezier(..) -> {
+      Ok(
+        segment_to_bezier_data(segment)
+        |> bezier.bezier_point(at: t)
+        |> from_bezier_point,
+      )
+    }
+    Arc(..) -> {
+      case segment_to_center_arc_data(segment) {
+        Error(error) -> Error(error)
+        Ok(arc) -> Ok(ellipse.arc_point(arc, at: t) |> from_ellipse_point)
+      }
+    }
+  }
+}
+
+/// Return a segment's derivative with respect to parameter `t`.
+///
+/// `t` is not clamped.
+pub fn segment_derivative(
+  segment: Segment,
+  at t: Float,
+) -> Result(Point, Error) {
+  case segment {
+    Line(..) | QuadraticBezier(..) | CubicBezier(..) -> {
+      Ok(
+        segment_to_bezier_data(segment)
+        |> bezier.bezier_derivative(at: t)
+        |> from_bezier_point,
+      )
+    }
+    Arc(..) -> {
+      case segment_to_center_arc_data(segment) {
+        Error(error) -> Error(error)
+        Ok(arc) -> Ok(ellipse.arc_derivative(arc, at: t) |> from_ellipse_point)
+      }
+    }
+  }
+}
+
+/// Split a segment at parameter `t`.
+///
+/// `t` is not clamped. Values outside `0.0..1.0` extrapolate along the same
+/// segment.
+pub fn split_segment(
+  segment: Segment,
+  at t: Float,
+) -> Result(#(Segment, Segment), Error) {
+  case segment {
+    Line(..) | QuadraticBezier(..) | CubicBezier(..) -> {
+      let #(left, right) =
+        segment_to_bezier_data(segment) |> bezier.split_bezier(at: t)
+
+      Ok(#(segment_from_bezier_data(left), segment_from_bezier_data(right)))
+    }
+    Arc(..) -> {
+      case segment_to_center_arc_data(segment) {
+        Error(error) -> Error(error)
+        Ok(arc) -> {
+          let #(left, right) = ellipse.split_arc(arc, at: t)
+
+          Ok(#(arc_from_center_data(left), arc_from_center_data(right)))
+        }
+      }
+    }
+  }
+}
+
+/// Split a segment at parameter `t`, returning an error outside `0.0..1.0`.
+///
+/// Values exactly at `0.0` or `1.0` are accepted and produce one zero-length
+/// segment.
+pub fn split_segment_inside(
+  segment: Segment,
+  at t: Float,
+) -> Result(#(Segment, Segment), Error) {
+  case segment {
+    Line(..) | QuadraticBezier(..) | CubicBezier(..) -> {
+      case
+        segment_to_bezier_data(segment) |> bezier.split_bezier_inside(at: t)
+      {
+        Error(_) -> Error(SplitOutsideSegment)
+        Ok(#(left, right)) -> {
+          Ok(#(segment_from_bezier_data(left), segment_from_bezier_data(right)))
+        }
+      }
+    }
+    Arc(..) -> {
+      case segment_to_center_arc_data(segment) {
+        Error(error) -> Error(error)
+        Ok(arc) -> {
+          case ellipse.split_arc_inside(arc, at: t) {
+            Error(_) -> Error(SplitOutsideSegment)
+            Ok(#(left, right)) -> {
+              Ok(#(arc_from_center_data(left), arc_from_center_data(right)))
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
 /// Create a straight line segment.
 pub fn line(start start: Point, end end: Point) -> Segment {
   Line(start:, end:)
@@ -837,6 +953,90 @@ fn to_ellipse_point(point: Point) -> ellipse.Point {
 
 fn from_ellipse_point(point: ellipse.Point) -> Point {
   Vec2(point.x, point.y)
+}
+
+fn to_bezier_point(point: Point) -> bezier.Point {
+  bezier.Point(point.x, point.y)
+}
+
+fn from_bezier_point(point: bezier.Point) -> Point {
+  Vec2(point.x, point.y)
+}
+
+fn segment_to_bezier_data(segment: Segment) -> bezier.BezierData {
+  case segment {
+    Line(start:, end:) -> {
+      bezier.linear_bezier_data(
+        start: to_bezier_point(start),
+        end: to_bezier_point(end),
+      )
+    }
+    QuadraticBezier(start:, control:, end:) -> {
+      bezier.quadratic_bezier_data(
+        start: to_bezier_point(start),
+        control: to_bezier_point(control),
+        end: to_bezier_point(end),
+      )
+    }
+    CubicBezier(start:, control1:, control2:, end:) -> {
+      bezier.cubic_bezier_data(
+        start: to_bezier_point(start),
+        control1: to_bezier_point(control1),
+        control2: to_bezier_point(control2),
+        end: to_bezier_point(end),
+      )
+    }
+    Arc(..) -> panic as "svg_path.segment_to_bezier_data received an arc"
+  }
+}
+
+fn segment_from_bezier_data(data: bezier.BezierData) -> Segment {
+  case data {
+    bezier.LinearBezierData(start:, end:) -> {
+      Line(start: from_bezier_point(start), end: from_bezier_point(end))
+    }
+    bezier.QuadraticBezierData(start:, control:, end:) -> {
+      QuadraticBezier(
+        start: from_bezier_point(start),
+        control: from_bezier_point(control),
+        end: from_bezier_point(end),
+      )
+    }
+    bezier.CubicBezierData(start:, control1:, control2:, end:) -> {
+      CubicBezier(
+        start: from_bezier_point(start),
+        control1: from_bezier_point(control1),
+        control2: from_bezier_point(control2),
+        end: from_bezier_point(end),
+      )
+    }
+  }
+}
+
+fn segment_to_center_arc_data(
+  segment: Segment,
+) -> Result(ellipse.CenterArcData, Error) {
+  case segment {
+    Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:) -> {
+      let endpoint =
+        ellipse.endpoint_arc_data(
+          start: to_ellipse_point(start),
+          radius: to_ellipse_point(radius),
+          x_axis_rotation:,
+          large_arc:,
+          sweep:,
+          end: to_ellipse_point(end),
+        )
+
+      case ellipse.endpoint_to_center(endpoint) {
+        Error(_) -> Error(DegenerateArc)
+        Ok(arc) -> Ok(arc)
+      }
+    }
+    Line(..) | QuadraticBezier(..) | CubicBezier(..) -> {
+      Error(DegenerateArc)
+    }
+  }
 }
 
 fn interpolate(start: Point, end: Point, t: Float) -> Point {
