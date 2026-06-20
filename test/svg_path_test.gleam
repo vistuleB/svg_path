@@ -593,12 +593,12 @@ pub fn splice_rejects_closed_empty_result_test() {
     == Error(svg_path.ClosedEmptySubpath)
 }
 
-pub fn segment_arcs_to_bezier_preserves_lines_test() {
+pub fn segment_arcs_to_cubic_beziers_preserves_lines_test() {
   let start = svg_path.point(0.0, 0.0)
   let end = svg_path.point(9.0, 0.0)
   let line = svg_path.line(start:, end:)
 
-  assert svg_path.segment_arcs_to_bezier(line) == [line]
+  assert svg_path.segment_arcs_to_cubic_beziers(line) == [line]
 }
 
 pub fn segment_to_cubic_beziers_converts_line_exactly_test() {
@@ -616,23 +616,23 @@ pub fn segment_to_cubic_beziers_converts_line_exactly_test() {
     ]
 }
 
-pub fn segment_arcs_to_bezier_preserves_quadratics_test() {
+pub fn segment_arcs_to_cubic_beziers_preserves_quadratics_test() {
   let start = svg_path.point(0.0, 0.0)
   let control = svg_path.point(3.0, 6.0)
   let end = svg_path.point(9.0, 0.0)
   let quadratic = svg_path.quadratic_bezier(start:, control:, end:)
 
-  assert svg_path.segment_arcs_to_bezier(quadratic) == [quadratic]
+  assert svg_path.segment_arcs_to_cubic_beziers(quadratic) == [quadratic]
 }
 
-pub fn segment_arcs_to_bezier_preserves_cubics_test() {
+pub fn segment_arcs_to_cubic_beziers_preserves_cubics_test() {
   let start = svg_path.point(0.0, 0.0)
   let control1 = svg_path.point(2.0, 4.0)
   let control2 = svg_path.point(5.0, 4.0)
   let end = svg_path.point(9.0, 0.0)
   let cubic = svg_path.cubic_bezier(start:, control1:, control2:, end:)
 
-  assert svg_path.segment_arcs_to_bezier(cubic) == [cubic]
+  assert svg_path.segment_arcs_to_cubic_beziers(cubic) == [cubic]
 }
 
 pub fn segment_to_cubic_beziers_converts_quadratic_exactly_test() {
@@ -655,11 +655,11 @@ pub fn segment_to_cubic_beziers_converts_quadratic_exactly_test() {
     ]
 }
 
-pub fn segment_arcs_to_bezier_splits_half_turn_into_two_cubics_test() {
+pub fn segment_arcs_to_cubic_beziers_splits_half_turn_into_two_cubics_test() {
   let start = svg_path.point(0.0, 0.0)
   let end = svg_path.point(20.0, 0.0)
   let cubics =
-    svg_path.segment_arcs_to_bezier(svg_path.arc(
+    svg_path.segment_arcs_to_cubic_beziers(svg_path.arc(
       start:,
       radius: svg_path.point(10.0, 10.0),
       x_axis_rotation: 0.0,
@@ -675,11 +675,11 @@ pub fn segment_arcs_to_bezier_splits_half_turn_into_two_cubics_test() {
   assert continuous_segments(cubics)
 }
 
-pub fn segment_arcs_to_bezier_large_arc_uses_more_than_two_cubics_test() {
+pub fn segment_arcs_to_cubic_beziers_large_arc_uses_more_than_two_cubics_test() {
   let start = svg_path.point(0.0, 0.0)
   let end = svg_path.point(10.0, 10.0)
   let cubics =
-    svg_path.segment_arcs_to_bezier(svg_path.arc(
+    svg_path.segment_arcs_to_cubic_beziers(svg_path.arc(
       start:,
       radius: svg_path.point(10.0, 10.0),
       x_axis_rotation: 0.0,
@@ -693,11 +693,11 @@ pub fn segment_arcs_to_bezier_large_arc_uses_more_than_two_cubics_test() {
   assert continuous_segments(cubics)
 }
 
-pub fn segment_arcs_to_bezier_degenerate_arc_falls_back_to_line_cubic_test() {
+pub fn segment_arcs_to_cubic_beziers_degenerate_arc_falls_back_to_line_cubic_test() {
   let start = svg_path.point(0.0, 0.0)
   let end = svg_path.point(9.0, 0.0)
 
-  assert svg_path.segment_arcs_to_bezier(svg_path.arc(
+  assert svg_path.segment_arcs_to_cubic_beziers(svg_path.arc(
       start:,
       radius: svg_path.point(0.0, 10.0),
       x_axis_rotation: 0.0,
@@ -715,7 +715,7 @@ pub fn segment_arcs_to_bezier_degenerate_arc_falls_back_to_line_cubic_test() {
     ]
 }
 
-pub fn subpath_arcs_to_bezier_preserves_closed_state_test() {
+pub fn subpath_arcs_to_cubic_beziers_preserves_closed_state_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)
   let subpath =
@@ -725,13 +725,13 @@ pub fn subpath_arcs_to_bezier_preserves_closed_state_test() {
     ])
     |> svg_path.assert_set_closed(closed: True)
 
-  let converted = svg_path.subpath_arcs_to_bezier(subpath)
+  let converted = svg_path.subpath_arcs_to_cubic_beziers(subpath)
 
   assert svg_path.is_closed(converted)
   assert svg_path.segments(converted) == svg_path.segments(subpath)
 }
 
-pub fn subpath_arcs_to_bezier_replaces_only_arcs_test() {
+pub fn subpath_arcs_to_cubic_beziers_replaces_only_arcs_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)
   let c = svg_path.point(20.0, 0.0)
@@ -749,7 +749,7 @@ pub fn subpath_arcs_to_bezier_replaces_only_arcs_test() {
   let quadratic = svg_path.quadratic_bezier(start: c, control: c, end: d)
   let subpath = svg_path.assert_subpath([line, arc, quadratic])
 
-  let converted = svg_path.subpath_arcs_to_bezier(subpath)
+  let converted = svg_path.subpath_arcs_to_cubic_beziers(subpath)
 
   assert svg_path.segment_start(
       list.first(svg_path.segments(converted)) |> unwrap_segment,
@@ -781,7 +781,7 @@ pub fn subpath_to_cubic_beziers_preserves_closed_state_test() {
   assert all_cubic(svg_path.segments(converted))
 }
 
-pub fn path_arcs_to_bezier_converts_each_subpath_test() {
+pub fn path_arcs_to_cubic_beziers_converts_each_subpath_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)
   let c = svg_path.point(20.0, 0.0)
@@ -799,7 +799,8 @@ pub fn path_arcs_to_bezier_converts_each_subpath_test() {
     ])
   let second = svg_path.assert_subpath([svg_path.line(start: c, end: d)])
 
-  let converted = svg_path.path_arcs_to_bezier(svg_path.path([first, second]))
+  let converted =
+    svg_path.path_arcs_to_cubic_beziers(svg_path.path([first, second]))
   let segments =
     converted
     |> svg_path.subpaths

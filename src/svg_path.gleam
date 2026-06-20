@@ -298,25 +298,25 @@ pub fn assert_splice_with(
 /// are approximated with one or more cubic Beziers, split into chunks of at
 /// most a quarter turn. Degenerate arcs fall back to a straight-line cubic
 /// Bezier between their endpoints.
-pub fn subpath_arcs_to_bezier(subpath: Subpath) -> Subpath {
+pub fn subpath_arcs_to_cubic_beziers(subpath: Subpath) -> Subpath {
   Subpath(
-    segments: segments_arcs_to_bezier(subpath.segments, []),
+    segments: segments_arcs_to_cubic_beziers(subpath.segments, []),
     closed: subpath.closed,
   )
 }
 
 /// Convert every arc in a path to cubic Bezier curves.
 ///
-/// This applies `subpath_arcs_to_bezier` to each subpath.
-pub fn path_arcs_to_bezier(path: Path) -> Path {
-  Path(subpaths: list.map(path.subpaths, subpath_arcs_to_bezier))
+/// This applies `subpath_arcs_to_cubic_beziers` to each subpath.
+pub fn path_arcs_to_cubic_beziers(path: Path) -> Path {
+  Path(subpaths: list.map(path.subpaths, subpath_arcs_to_cubic_beziers))
 }
 
 /// Convert an arc segment to cubic Bezier curves, preserving other segments.
 ///
 /// Non-arc segments are returned unchanged as a single-item list. An arc may
 /// become several cubic Bezier segments.
-pub fn segment_arcs_to_bezier(segment: Segment) -> List(Segment) {
+pub fn segment_arcs_to_cubic_beziers(segment: Segment) -> List(Segment) {
   case segment {
     Line(..) | QuadraticBezier(..) | CubicBezier(..) -> [segment]
     Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:) -> {
@@ -367,7 +367,7 @@ pub fn segment_to_cubic_beziers(segment: Segment) -> List(Segment) {
       quadratic_to_cubic(start, control, end),
     ]
     CubicBezier(..) -> [segment]
-    Arc(..) -> segment_arcs_to_bezier(segment)
+    Arc(..) -> segment_arcs_to_cubic_beziers(segment)
   }
 }
 
@@ -685,16 +685,19 @@ fn line_join_segments_loop(
   }
 }
 
-fn segments_arcs_to_bezier(
+fn segments_arcs_to_cubic_beziers(
   segments: List(Segment),
   converted: List(Segment),
 ) -> List(Segment) {
   case segments {
     [] -> list.reverse(converted)
     [first, ..rest] -> {
-      segments_arcs_to_bezier(
+      segments_arcs_to_cubic_beziers(
         rest,
-        list.append(list.reverse(segment_arcs_to_bezier(first)), converted),
+        list.append(
+          list.reverse(segment_arcs_to_cubic_beziers(first)),
+          converted,
+        ),
       )
     }
   }
