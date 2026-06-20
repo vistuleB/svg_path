@@ -79,6 +79,11 @@ pub type Point {
   Point(x: Float, y: Float)
 }
 
+/// An axis-aligned bounding box for an elliptical arc.
+pub type BoundingBox {
+  BoundingBox(min: Point, max: Point)
+}
+
 /// Endpoint-parameter representation of an SVG elliptical arc.
 ///
 /// This is the same shape as an SVG `A` path command plus its explicit start
@@ -356,6 +361,17 @@ pub fn arc_derivative(arc: CenterArcData, at t: Float) -> Point {
   scale(derivative_at_angle(arc, angle_at(arc, t)), arc.delta_angle)
 }
 
+/// Return the arc's exact axis-aligned bounding box.
+pub fn arc_bounding_box(arc: CenterArcData) -> BoundingBox {
+  let points =
+    arc_bounding_box_candidate_angles(arc)
+    |> list.map(fn(angle) { point_at_angle(arc, angle: angle) })
+  let assert [first, ..rest] = points
+
+  rest
+  |> list.fold(BoundingBox(min: first, max: first), include_point)
+}
+
 /// Split an arc at angular progress `t`.
 ///
 /// `t` is not clamped. Values outside `0.0..1.0` extrapolate along the same
@@ -630,6 +646,40 @@ fn cubic_for_arc(arc: CenterArcData) -> Cubic {
     control1: offset(start, start_tangent, alpha),
     control2: offset(end, end_tangent, 0.0 -. alpha),
     end:,
+  )
+}
+
+fn arc_bounding_box_candidate_angles(arc: CenterArcData) -> List(Float) {
+  let phi = degrees_to_radians(arc.x_axis_rotation)
+  let x_alpha = arc.radius.x *. maths.cos(phi)
+  let x_beta = 0.0 -. arc.radius.y *. maths.sin(phi)
+  let y_alpha = arc.radius.x *. maths.sin(phi)
+  let y_beta = arc.radius.y *. maths.cos(phi)
+
+  [
+    start_angle_extremum(x_alpha, x_beta),
+    opposite_angle_extremum(x_alpha, x_beta),
+    start_angle_extremum(y_alpha, y_beta),
+    opposite_angle_extremum(y_alpha, y_beta),
+  ]
+  |> list.filter(fn(angle) {
+    angle_in_sweep(angle, arc.start_angle, arc.delta_angle)
+  })
+  |> list.append([arc.start_angle, arc_end_angle(arc)])
+}
+
+fn start_angle_extremum(alpha: Float, beta: Float) -> Float {
+  maths.atan2(beta, alpha)
+}
+
+fn opposite_angle_extremum(alpha: Float, beta: Float) -> Float {
+  start_angle_extremum(alpha, beta) +. maths.pi()
+}
+
+fn include_point(box: BoundingBox, point: Point) -> BoundingBox {
+  BoundingBox(
+    min: Point(float.min(box.min.x, point.x), float.min(box.min.y, point.y)),
+    max: Point(float.max(box.max.x, point.x), float.max(box.max.y, point.y)),
   )
 }
 

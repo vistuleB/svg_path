@@ -3,8 +3,11 @@ import gleam_community/maths
 import gleeunit
 import svg_path
 import svg_path/ellipse
+import svg_path_arc_bbox_fixtures
 
 const tolerance = 0.000001
+
+const bbox_tolerance = 0.00001
 
 pub fn main() -> Nil {
   gleeunit.main()
@@ -84,6 +87,65 @@ pub fn arc_derivative_follows_arc_traversal_direction_test() {
   assert near(ellipse.arc_derivative(sweep_arc, at: 0.5).y, 0.0)
   assert ellipse.arc_derivative(non_sweep_arc, at: 0.5).x >. 0.0
   assert near(ellipse.arc_derivative(non_sweep_arc, at: 0.5).y, 0.0)
+}
+
+pub fn arc_bounding_box_of_sweep_half_circle_uses_lower_half_test() {
+  let assert Ok(arc) =
+    ellipse.endpoint_arc_data(
+      start: ellipse.Point(0.0, 0.0),
+      radius: ellipse.Point(10.0, 10.0),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: True,
+      end: ellipse.Point(20.0, 0.0),
+    )
+    |> ellipse.endpoint_to_center
+
+  assert bbox_near(
+    ellipse.arc_bounding_box(arc),
+    min: ellipse.Point(0.0, -10.0),
+    max: ellipse.Point(20.0, 0.0),
+  )
+}
+
+pub fn arc_bounding_box_of_non_sweep_half_circle_uses_upper_half_test() {
+  let assert Ok(arc) =
+    ellipse.endpoint_arc_data(
+      start: ellipse.Point(0.0, 0.0),
+      radius: ellipse.Point(10.0, 10.0),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: False,
+      end: ellipse.Point(20.0, 0.0),
+    )
+    |> ellipse.endpoint_to_center
+
+  assert bbox_near(
+    ellipse.arc_bounding_box(arc),
+    min: ellipse.Point(0.0, 0.0),
+    max: ellipse.Point(20.0, 10.0),
+  )
+}
+
+pub fn arc_bounding_box_of_rotated_arc_includes_interior_extrema_test() {
+  let arc =
+    ellipse.center_arc_data(
+      center: ellipse.Point(2.0, -3.0),
+      radius: ellipse.Point(12.0, 5.0),
+      x_axis_rotation: 30.0,
+      start_angle: -1.2,
+      delta_angle: 4.4,
+    )
+
+  assert bbox_near(
+    ellipse.arc_bounding_box(arc),
+    min: ellipse.Point(-8.688779, -9.242536),
+    max: ellipse.Point(12.688779, 4.399324),
+  )
+}
+
+pub fn arc_bounding_box_matches_generated_fixtures_test() {
+  assert_bounding_boxes(svg_path_arc_bbox_fixtures.fixtures())
 }
 
 pub fn split_arc_divides_center_data_at_t_test() {
@@ -405,6 +467,42 @@ pub fn arc_from_endpoint_data_creates_svg_path_arc_test() {
 
 fn point_near(a: ellipse.Point, b: ellipse.Point) -> Bool {
   near(a.x, b.x) && near(a.y, b.y)
+}
+
+fn bbox_near(
+  box: ellipse.BoundingBox,
+  min expected_min: ellipse.Point,
+  max expected_max: ellipse.Point,
+) -> Bool {
+  let ellipse.BoundingBox(min:, max:) = box
+  bbox_point_near(min, expected_min) && bbox_point_near(max, expected_max)
+}
+
+fn bbox_point_near(a: ellipse.Point, b: ellipse.Point) -> Bool {
+  float.absolute_value(a.x -. b.x) <=. bbox_tolerance
+  && float.absolute_value(a.y -. b.y) <=. bbox_tolerance
+}
+
+fn assert_bounding_boxes(
+  fixtures: List(svg_path_arc_bbox_fixtures.ArcBBoxFixture),
+) -> Nil {
+  case fixtures {
+    [] -> Nil
+    [fixture, ..rest] -> {
+      let svg_path_arc_bbox_fixtures.ArcBBoxFixture(
+        arc:,
+        min: expected_min,
+        max: expected_max,
+        ..,
+      ) = fixture
+      assert bbox_near(
+        ellipse.arc_bounding_box(arc),
+        min: expected_min,
+        max: expected_max,
+      )
+      assert_bounding_boxes(rest)
+    }
+  }
 }
 
 fn svg_path_point_near(a: svg_path.Point, b: svg_path.Point) -> Bool {
