@@ -18,6 +18,59 @@ pub fn line_keeps_its_endpoints_test() {
   assert svg_path.segment_end(segment) == end
 }
 
+pub fn reverse_segment_reverses_lines_quadratics_cubics_and_arcs_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(20.0, 0.0)
+  let d = svg_path.point(30.0, 0.0)
+
+  assert svg_path.reverse_segment(svg_path.line(start: a, end: b))
+    == svg_path.line(start: b, end: a)
+  assert svg_path.reverse_segment(svg_path.quadratic_bezier(
+      start: a,
+      control: b,
+      end: c,
+    ))
+    == svg_path.quadratic_bezier(start: c, control: b, end: a)
+  assert svg_path.reverse_segment(svg_path.cubic_bezier(
+      start: a,
+      control1: b,
+      control2: c,
+      end: d,
+    ))
+    == svg_path.cubic_bezier(start: d, control1: c, control2: b, end: a)
+  assert svg_path.reverse_segment(svg_path.arc(
+      start: a,
+      radius: svg_path.point(4.0, 5.0),
+      x_axis_rotation: 30.0,
+      large_arc: True,
+      sweep: False,
+      end: b,
+    ))
+    == svg_path.arc(
+      start: b,
+      radius: svg_path.point(4.0, 5.0),
+      x_axis_rotation: 30.0,
+      large_arc: True,
+      sweep: True,
+      end: a,
+    )
+}
+
+pub fn reverse_segment_swaps_start_and_end_test() {
+  let segment =
+    svg_path.cubic_bezier(
+      start: svg_path.point(0.0, 0.0),
+      control1: svg_path.point(1.0, 2.0),
+      control2: svg_path.point(3.0, 4.0),
+      end: svg_path.point(5.0, 6.0),
+    )
+  let reversed = svg_path.reverse_segment(segment)
+
+  assert svg_path.segment_start(reversed) == svg_path.segment_end(segment)
+  assert svg_path.segment_end(reversed) == svg_path.segment_start(segment)
+}
+
 pub fn segment_point_evaluates_lines_quadratics_cubics_and_arcs_test() {
   let assert Ok(line_point) =
     svg_path.segment_point(
@@ -301,6 +354,58 @@ pub fn map_path_points_rejects_arcs_test() {
 
   assert svg_path.map_path_points(path, with: fn(point) { point })
     == Error(svg_path.CannotMapArcNonlinearly)
+}
+
+pub fn reverse_subpath_reverses_segment_order_and_preserves_closed_state_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(20.0, 0.0)
+  let first = svg_path.line(start: a, end: b)
+  let second = svg_path.line(start: b, end: c)
+  let third = svg_path.line(start: c, end: a)
+  let subpath =
+    svg_path.assert_subpath([first, second, third])
+    |> svg_path.assert_set_closed(closed: True)
+
+  let reversed = svg_path.reverse_subpath(subpath)
+
+  assert svg_path.is_closed(reversed)
+  assert svg_path.segments(reversed)
+    == [
+      svg_path.reverse_segment(third),
+      svg_path.reverse_segment(second),
+      svg_path.reverse_segment(first),
+    ]
+}
+
+pub fn reverse_subpath_preserves_empty_open_subpath_test() {
+  assert svg_path.reverse_subpath(svg_path.empty_subpath())
+    == svg_path.empty_subpath()
+}
+
+pub fn reverse_path_reverses_subpaths_and_their_segments_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(20.0, 0.0)
+  let d = svg_path.point(30.0, 0.0)
+  let first =
+    svg_path.assert_subpath([
+      svg_path.line(start: a, end: b),
+      svg_path.line(start: b, end: c),
+    ])
+  let second =
+    svg_path.assert_subpath([
+      svg_path.line(start: c, end: d),
+    ])
+  let path = svg_path.path([first, second])
+
+  let reversed = svg_path.reverse_path(path)
+  let assert [reversed_second, reversed_first] = svg_path.subpaths(reversed)
+
+  assert svg_path.segments(reversed_second)
+    == svg_path.segments(svg_path.reverse_subpath(second))
+  assert svg_path.segments(reversed_first)
+    == svg_path.segments(svg_path.reverse_subpath(first))
 }
 
 pub fn segment_point_and_split_extrapolate_outside_t_test() {

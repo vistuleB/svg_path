@@ -328,6 +328,23 @@ pub fn path_arcs_to_cubic_beziers(path: Path) -> Path {
   Path(subpaths: list.map(path.subpaths, subpath_arcs_to_cubic_beziers))
 }
 
+/// Reverse the traversal direction of every segment in a subpath.
+///
+/// The subpath's closed state is preserved.
+pub fn reverse_subpath(subpath: Subpath) -> Subpath {
+  Subpath(
+    segments: subpath.segments |> list.reverse |> list.map(reverse_segment),
+    closed: subpath.closed,
+  )
+}
+
+/// Reverse the traversal direction of a path.
+///
+/// This reverses each subpath and reverses the path's subpath order.
+pub fn reverse_path(path: Path) -> Path {
+  Path(subpaths: path.subpaths |> list.reverse |> list.map(reverse_subpath))
+}
+
 /// Map the defining points of every segment in a subpath.
 ///
 /// The subpath's closed state is preserved. For nonlinear functions, this maps
@@ -601,6 +618,34 @@ pub fn segment_end(segment: Segment) -> Point {
     | QuadraticBezier(end:, ..)
     | CubicBezier(end:, ..)
     | Arc(end:, ..) -> end
+  }
+}
+
+/// Reverse the traversal direction of a segment.
+pub fn reverse_segment(segment: Segment) -> Segment {
+  case segment {
+    Line(start:, end:) -> Line(start: end, end: start)
+    QuadraticBezier(start:, control:, end:) -> {
+      QuadraticBezier(start: end, control:, end: start)
+    }
+    CubicBezier(start:, control1:, control2:, end:) -> {
+      CubicBezier(
+        start: end,
+        control1: control2,
+        control2: control1,
+        end: start,
+      )
+    }
+    Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:) -> {
+      Arc(
+        start: end,
+        radius:,
+        x_axis_rotation:,
+        large_arc:,
+        sweep: !sweep,
+        end: start,
+      )
+    }
   }
 }
 
