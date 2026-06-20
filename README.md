@@ -191,7 +191,7 @@ segments is impossible to construct.
 
 ## Ergonomics for Endpoint Reconciliation
 
-Helper functions in the root module let users employ a `Join` option to specify
+Helper functions in the root module let users employ an `EndpointPolicy` option to specify
 different types of error-recovery behavior for non-matching endpoints:
 
 ```gleam
@@ -207,7 +207,7 @@ together within the package's default wiggle tolerance of `0.000000001`.
 when needed. `WiggleThenBridge`, as the name implies, first tries `Wiggle`
 before falling back on `Bridge`.
 
-The behavior of option-free functions and constructors is `Join.Strict`. These
+The behavior of option-free functions and constructors is `EndpointPolicy.Strict`. These
 include:
 
 ```gleam
@@ -241,11 +241,11 @@ The `_with` variants of constructor and subpath-modifying functions enable the
 specification of a non-`Strict` endpoint policy:
 
 ```gleam
-svg_path.subpath_with(segments, join: svg_path.Wiggle)
-svg_path.append_segment_with(subpath, segment, join: svg_path.Bridge)
-svg_path.concat_with(first_subpath, second_subpath, join: svg_path.WiggleThenBridge)
-svg_path.splice_with(subpath, start:, delete:, insert:, join: svg_path.Wiggle)
-svg_path.set_closed_with(subpath, closed: Bool, join: svg_path.Bridge)
+svg_path.subpath_with(segments, policy: svg_path.Wiggle)
+svg_path.append_segment_with(subpath, segment, policy: svg_path.Bridge)
+svg_path.concat_with(first_subpath, second_subpath, policy: svg_path.WiggleThenBridge)
+svg_path.splice_with(subpath, start:, delete:, insert:, policy: svg_path.Wiggle)
+svg_path.set_closed_with(subpath, closed: Bool, policy: svg_path.Bridge)
 ```
 
 Use the `assert_` functions for hand-authored/static geometry where invalid
@@ -276,8 +276,8 @@ closedness as explicit topology: if you want to discard it, use
 Use `concat_with` when you want another endpoint policy:
 
 ```gleam
-svg_path.concat_with(first_subpath, second_subpath, join: svg_path.Wiggle)
-svg_path.concat_with(first_subpath, second_subpath, join: svg_path.Bridge)
+svg_path.concat_with(first_subpath, second_subpath, policy: svg_path.Wiggle)
+svg_path.concat_with(first_subpath, second_subpath, policy: svg_path.Bridge)
 ```
 
 ### Splicing Subpaths
@@ -307,7 +307,7 @@ svg_path.splice_with(
   start: 2,
   delete: 1,
   insert: replacement_segments,
-  join: svg_path.Wiggle,
+  policy: svg_path.Wiggle,
 )
 ```
 

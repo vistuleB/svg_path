@@ -449,7 +449,7 @@ pub fn subpath_gracefully(
       {
         Error(error) -> Error(error)
         Ok(segments) -> {
-          case svg_path.subpath_with(segments, join: svg_path.Wiggle) {
+          case svg_path.subpath_with(segments, policy: svg_path.Wiggle) {
             Error(error) -> Error(Core(error))
             Ok(transformed) -> {
               case svg_path.is_closed(subpath) {
@@ -732,7 +732,7 @@ fn close_transformed_subpath(
     Ok(subpath) -> Ok(subpath)
     Error(_) -> {
       case
-        svg_path.set_closed_with(subpath, closed: True, join: svg_path.Wiggle)
+        svg_path.set_closed_with(subpath, closed: True, policy: svg_path.Wiggle)
       {
         Ok(subpath) -> Ok(subpath)
         Error(error) -> Error(Core(error))

@@ -33,7 +33,7 @@ pub opaque type Subpath {
 }
 
 /// How construction and editing helpers reconcile segment endpoints.
-pub type Join {
+pub type EndpointPolicy {
   /// Endpoints must already match exactly.
   Strict
 
@@ -168,15 +168,15 @@ pub fn empty_subpath() -> Subpath {
 /// previous segment's end point. The error includes the two segment indices
 /// that failed to meet.
 pub fn subpath(segments: List(Segment)) -> Result(Subpath, Error) {
-  subpath_with(segments, join: Strict)
+  subpath_with(segments, policy: Strict)
 }
 
 /// Create an open subpath using the given endpoint reconciliation policy.
 pub fn subpath_with(
   segments: List(Segment),
-  join join: Join,
+  policy endpoint_policy: EndpointPolicy,
 ) -> Result(Subpath, Error) {
-  open_subpath_with_segments(segments, join)
+  open_subpath_with_segments(segments, endpoint_policy)
 }
 
 /// Create an open subpath from a continuous list of segments, panicking if the
@@ -185,15 +185,15 @@ pub fn subpath_with(
 /// This is useful for hand-authored paths where invalid continuity would be a
 /// programmer error. Use `subpath` when you want to handle construction errors.
 pub fn assert_subpath(segments: List(Segment)) -> Subpath {
-  assert_subpath_with(segments, join: Strict)
+  assert_subpath_with(segments, policy: Strict)
 }
 
-/// Create an open subpath with a join policy, panicking if construction fails.
+/// Create an open subpath with an endpoint policy, panicking if construction fails.
 pub fn assert_subpath_with(
   segments: List(Segment),
-  join join: Join,
+  policy endpoint_policy: EndpointPolicy,
 ) -> Subpath {
-  case subpath_with(segments, join:) {
+  case subpath_with(segments, policy: endpoint_policy) {
     Ok(subpath) -> subpath
     Error(_) -> panic as "svg_path.assert_subpath received invalid segments"
   }
@@ -241,16 +241,16 @@ pub fn splice(
   delete delete: Int,
   insert insert: List(Segment),
 ) -> Result(Subpath, Error) {
-  splice_with(subpath, start:, delete:, insert:, join: Strict)
+  splice_with(subpath, start:, delete:, insert:, policy: Strict)
 }
 
-/// Replace a range of segments in a subpath using the given join policy.
+/// Replace a range of segments in a subpath using the given endpoint policy.
 pub fn splice_with(
   subpath: Subpath,
   start start: Int,
   delete delete: Int,
   insert insert: List(Segment),
-  join join: Join,
+  policy endpoint_policy: EndpointPolicy,
 ) -> Result(Subpath, Error) {
   let length = list.length(subpath.segments)
 
@@ -261,7 +261,8 @@ pub fn splice_with(
 
       case subpath.closed && list.is_empty(segments) {
         True -> Error(ClosedEmptySubpath)
-        False -> validate_spliced_subpath(segments, subpath.closed, join)
+        False ->
+          validate_spliced_subpath(segments, subpath.closed, endpoint_policy)
       }
     }
   }
@@ -274,18 +275,18 @@ pub fn assert_splice(
   delete delete: Int,
   insert insert: List(Segment),
 ) -> Subpath {
-  assert_splice_with(subpath, start:, delete:, insert:, join: Strict)
+  assert_splice_with(subpath, start:, delete:, insert:, policy: Strict)
 }
 
-/// Replace a range of segments with a join policy, panicking if invalid.
+/// Replace a range of segments with an endpoint policy, panicking if invalid.
 pub fn assert_splice_with(
   subpath: Subpath,
   start start: Int,
   delete delete: Int,
   insert insert: List(Segment),
-  join join: Join,
+  policy endpoint_policy: EndpointPolicy,
 ) -> Subpath {
-  case splice_with(subpath, start:, delete:, insert:, join:) {
+  case splice_with(subpath, start:, delete:, insert:, policy: endpoint_policy) {
     Ok(subpath) -> subpath
     Error(_) -> panic as "svg_path.assert_splice received an invalid splice"
   }
@@ -383,37 +384,37 @@ pub fn set_closed(
   subpath: Subpath,
   closed closed: Bool,
 ) -> Result(Subpath, Error) {
-  set_closed_with(subpath, closed:, join: Strict)
+  set_closed_with(subpath, closed:, policy: Strict)
 }
 
-/// Set a subpath's semantic closed state with a join policy.
+/// Set a subpath's semantic closed state with an endpoint policy.
 ///
 /// Setting `closed` to `False` only clears the semantic closed flag. Setting it
-/// to `True` uses the given join policy to reconcile the subpath's end point
+/// to `True` uses the given endpoint policy to reconcile the subpath's end point
 /// with its start point.
 pub fn set_closed_with(
   subpath: Subpath,
   closed closed: Bool,
-  join join: Join,
+  policy endpoint_policy: EndpointPolicy,
 ) -> Result(Subpath, Error) {
   case closed {
     False -> Ok(Subpath(segments: subpath.segments, closed: False))
-    True -> close_subpath_with(subpath, join)
+    True -> close_subpath_with(subpath, endpoint_policy)
   }
 }
 
 /// Set a subpath's semantic closed state, panicking if invalid.
 pub fn assert_set_closed(subpath: Subpath, closed closed: Bool) -> Subpath {
-  assert_set_closed_with(subpath, closed:, join: Strict)
+  assert_set_closed_with(subpath, closed:, policy: Strict)
 }
 
-/// Set a subpath's semantic closed state with a join policy, panicking if invalid.
+/// Set a subpath's semantic closed state with an endpoint policy, panicking if invalid.
 pub fn assert_set_closed_with(
   subpath: Subpath,
   closed closed: Bool,
-  join join: Join,
+  policy endpoint_policy: EndpointPolicy,
 ) -> Subpath {
-  case set_closed_with(subpath, closed:, join:) {
+  case set_closed_with(subpath, closed:, policy: endpoint_policy) {
     Ok(subpath) -> subpath
     Error(_) ->
       panic as "svg_path.assert_set_closed received an invalid subpath"
@@ -443,34 +444,37 @@ pub fn append_segment(
   subpath: Subpath,
   segment: Segment,
 ) -> Result(Subpath, Error) {
-  append_segment_with(subpath, segment, join: Strict)
+  append_segment_with(subpath, segment, policy: Strict)
 }
 
-/// Append a segment to an open subpath using the given join policy.
+/// Append a segment to an open subpath using the given endpoint policy.
 pub fn append_segment_with(
   subpath: Subpath,
   segment: Segment,
-  join join: Join,
+  policy endpoint_policy: EndpointPolicy,
 ) -> Result(Subpath, Error) {
   case subpath.closed {
     True -> Error(AlreadyClosed)
     False ->
-      open_subpath_with_segments(list.append(subpath.segments, [segment]), join)
+      open_subpath_with_segments(
+        list.append(subpath.segments, [segment]),
+        endpoint_policy,
+      )
   }
 }
 
 /// Append a segment to an open subpath, panicking if invalid.
 pub fn assert_append_segment(subpath: Subpath, segment: Segment) -> Subpath {
-  assert_append_segment_with(subpath, segment, join: Strict)
+  assert_append_segment_with(subpath, segment, policy: Strict)
 }
 
-/// Append a segment with a join policy, panicking if invalid.
+/// Append a segment with an endpoint policy, panicking if invalid.
 pub fn assert_append_segment_with(
   subpath: Subpath,
   segment: Segment,
-  join join: Join,
+  policy endpoint_policy: EndpointPolicy,
 ) -> Subpath {
-  case append_segment_with(subpath, segment, join:) {
+  case append_segment_with(subpath, segment, policy: endpoint_policy) {
     Ok(subpath) -> subpath
     Error(_) ->
       panic as "svg_path.assert_append_segment received an invalid segment"
@@ -482,37 +486,37 @@ pub fn assert_append_segment_with(
 /// The first subpath's end point must exactly match the second subpath's start
 /// point. Empty open subpaths are treated as identity values.
 pub fn concat(first: Subpath, second: Subpath) -> Result(Subpath, Error) {
-  concat_with(first, second, join: Strict)
+  concat_with(first, second, policy: Strict)
 }
 
-/// Concatenate two open subpaths using the given join policy.
+/// Concatenate two open subpaths using the given endpoint policy.
 pub fn concat_with(
   first: Subpath,
   second: Subpath,
-  join join: Join,
+  policy endpoint_policy: EndpointPolicy,
 ) -> Result(Subpath, Error) {
   case first.closed || second.closed {
     True -> Error(AlreadyClosed)
     False ->
       open_subpath_with_segments(
         list.append(first.segments, second.segments),
-        join,
+        endpoint_policy,
       )
   }
 }
 
 /// Concatenate two open subpaths, panicking if invalid.
 pub fn assert_concat(first: Subpath, second: Subpath) -> Subpath {
-  assert_concat_with(first, second, join: Strict)
+  assert_concat_with(first, second, policy: Strict)
 }
 
-/// Concatenate two open subpaths with a join policy, panicking if invalid.
+/// Concatenate two open subpaths with an endpoint policy, panicking if invalid.
 pub fn assert_concat_with(
   first: Subpath,
   second: Subpath,
-  join join: Join,
+  policy endpoint_policy: EndpointPolicy,
 ) -> Subpath {
-  case concat_with(first, second, join:) {
+  case concat_with(first, second, policy: endpoint_policy) {
     Ok(subpath) -> subpath
     Error(_) -> panic as "svg_path.assert_concat received invalid subpaths"
   }
@@ -601,13 +605,13 @@ fn drop(segments: List(Segment), count: Int) -> List(Segment) {
 fn validate_spliced_subpath(
   segments: List(Segment),
   closed: Bool,
-  join: Join,
+  policy: EndpointPolicy,
 ) -> Result(Subpath, Error) {
-  case open_subpath_with_segments(segments, join) {
+  case open_subpath_with_segments(segments, policy) {
     Ok(subpath) -> {
       case closed {
         False -> Ok(subpath)
-        True -> close_subpath_with(subpath, join)
+        True -> close_subpath_with(subpath, policy)
       }
     }
     Error(error) -> Error(error)
@@ -616,9 +620,9 @@ fn validate_spliced_subpath(
 
 fn open_subpath_with_segments(
   segments: List(Segment),
-  join: Join,
+  policy: EndpointPolicy,
 ) -> Result(Subpath, Error) {
-  case join {
+  case policy {
     Strict -> strict_open_subpath(segments)
     Wiggle -> wiggle_open_subpath(segments)
     Bridge -> Ok(Subpath(segments: line_join_segments(segments), closed: False))
@@ -898,18 +902,21 @@ fn wiggle_segments(
   }
 }
 
-fn close_subpath_with(subpath: Subpath, join: Join) -> Result(Subpath, Error) {
+fn close_subpath_with(
+  subpath: Subpath,
+  policy: EndpointPolicy,
+) -> Result(Subpath, Error) {
   case subpath.closed {
     True -> Ok(subpath)
-    False -> close_open_subpath_with(subpath, join)
+    False -> close_open_subpath_with(subpath, policy)
   }
 }
 
 fn close_open_subpath_with(
   subpath: Subpath,
-  join: Join,
+  policy: EndpointPolicy,
 ) -> Result(Subpath, Error) {
-  case join {
+  case policy {
     Strict -> strict_close_open_subpath(subpath)
     Wiggle -> wiggle_close_open_subpath(subpath)
     Bridge -> line_close_open_subpath(subpath)

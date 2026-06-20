@@ -579,7 +579,7 @@ fn parse_close(
             svg_path.set_closed_with(
               state.subpath,
               closed: True,
-              join: svg_path.Bridge,
+              policy: svg_path.Bridge,
             )
           {
             Error(error) -> Error(Core(error))

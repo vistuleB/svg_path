@@ -509,7 +509,7 @@ fn result_try_set_closed_with_bridge(
 ) -> Result(svg_path.Subpath, svg_path.Error) {
   case result_subpath {
     Ok(subpath) ->
-      svg_path.set_closed_with(subpath, closed: True, join: svg_path.Bridge)
+      svg_path.set_closed_with(subpath, closed: True, policy: svg_path.Bridge)
     Error(error) -> Error(error)
   }
 }
