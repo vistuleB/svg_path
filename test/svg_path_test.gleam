@@ -166,6 +166,71 @@ pub fn segment_derivative_evaluates_lines_quadratics_cubics_and_arcs_test() {
   assert near(arc_derivative.y, 0.0)
 }
 
+pub fn segment_bounding_box_handles_lines_beziers_and_arcs_test() {
+  let assert Ok(line_box) =
+    svg_path.segment_bounding_box(svg_path.line(
+      start: svg_path.point(1.0, 2.0),
+      end: svg_path.point(5.0, -3.0),
+    ))
+  let assert Ok(quadratic_box) =
+    svg_path.segment_bounding_box(svg_path.quadratic_bezier(
+      start: svg_path.point(0.0, 0.0),
+      control: svg_path.point(10.0, 10.0),
+      end: svg_path.point(20.0, 0.0),
+    ))
+  let assert Ok(cubic_box) =
+    svg_path.segment_bounding_box(svg_path.cubic_bezier(
+      start: svg_path.point(0.0, 0.0),
+      control1: svg_path.point(0.0, 30.0),
+      control2: svg_path.point(30.0, 30.0),
+      end: svg_path.point(30.0, 0.0),
+    ))
+  let assert Ok(arc_box) =
+    svg_path.segment_bounding_box(svg_path.arc(
+      start: svg_path.point(0.0, 0.0),
+      radius: svg_path.point(10.0, 10.0),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: True,
+      end: svg_path.point(20.0, 0.0),
+    ))
+
+  assert bbox_near(
+    line_box,
+    min: svg_path.point(1.0, -3.0),
+    max: svg_path.point(5.0, 2.0),
+  )
+  assert bbox_near(
+    quadratic_box,
+    min: svg_path.point(0.0, 0.0),
+    max: svg_path.point(20.0, 5.0),
+  )
+  assert bbox_near(
+    cubic_box,
+    min: svg_path.point(0.0, 0.0),
+    max: svg_path.point(30.0, 22.5),
+  )
+  assert bbox_near(
+    arc_box,
+    min: svg_path.point(0.0, -10.0),
+    max: svg_path.point(20.0, 0.0),
+  )
+}
+
+pub fn segment_bounding_box_returns_degenerate_arc_errors_test() {
+  let segment =
+    svg_path.arc(
+      start: svg_path.point(0.0, 0.0),
+      radius: svg_path.point(0.0, 10.0),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: True,
+      end: svg_path.point(20.0, 0.0),
+    )
+
+  assert svg_path.segment_bounding_box(segment) == Error(svg_path.DegenerateArc)
+}
+
 pub fn map_segment_points_maps_line_quadratic_and_cubic_defining_points_test() {
   let map = fn(point: svg_path.Point) {
     svg_path.point(point.x +. 1.0, point.y *. 2.0)
@@ -546,9 +611,70 @@ pub fn path_start_and_end_use_first_and_last_nonempty_subpaths_test() {
   assert svg_path.path_end(path) == Ok(d)
 }
 
+pub fn subpath_bounding_box_combines_segment_boxes_test() {
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.line(
+        start: svg_path.point(1.0, 2.0),
+        end: svg_path.point(5.0, -3.0),
+      ),
+      svg_path.quadratic_bezier(
+        start: svg_path.point(5.0, -3.0),
+        control: svg_path.point(10.0, 10.0),
+        end: svg_path.point(20.0, 0.0),
+      ),
+    ])
+
+  let assert Ok(box) = svg_path.subpath_bounding_box(subpath)
+
+  assert bbox_near(
+    box,
+    min: svg_path.point(1.0, -3.0),
+    max: svg_path.point(20.0, 4.347826086956522),
+  )
+}
+
+pub fn path_bounding_box_uses_nonempty_subpaths_test() {
+  let first =
+    svg_path.assert_subpath([
+      svg_path.line(
+        start: svg_path.point(1.0, 2.0),
+        end: svg_path.point(5.0, -3.0),
+      ),
+    ])
+  let second =
+    svg_path.assert_subpath([
+      svg_path.arc(
+        start: svg_path.point(0.0, 0.0),
+        radius: svg_path.point(10.0, 10.0),
+        x_axis_rotation: 0.0,
+        large_arc: False,
+        sweep: True,
+        end: svg_path.point(20.0, 0.0),
+      ),
+    ])
+  let path =
+    svg_path.path([
+      svg_path.empty_subpath(),
+      first,
+      svg_path.empty_subpath(),
+      second,
+    ])
+
+  let assert Ok(box) = svg_path.path_bounding_box(path)
+
+  assert bbox_near(
+    box,
+    min: svg_path.point(0.0, -10.0),
+    max: svg_path.point(20.0, 2.0),
+  )
+}
+
 pub fn empty_path_has_no_start_or_end_test() {
   assert svg_path.path_start(svg_path.empty_path()) == Error(svg_path.EmptyPath)
   assert svg_path.path_end(svg_path.empty_path()) == Error(svg_path.EmptyPath)
+  assert svg_path.path_bounding_box(svg_path.empty_path())
+    == Error(svg_path.EmptyPath)
 }
 
 pub fn path_with_only_empty_subpaths_has_no_start_or_end_test() {
@@ -560,6 +686,7 @@ pub fn path_with_only_empty_subpaths_has_no_start_or_end_test() {
 
   assert svg_path.path_start(path) == Error(svg_path.EmptySubpaths)
   assert svg_path.path_end(path) == Error(svg_path.EmptySubpaths)
+  assert svg_path.path_bounding_box(path) == Error(svg_path.EmptySubpaths)
 }
 
 pub fn as_subpath_accepts_empty_path_test() {
@@ -611,6 +738,8 @@ pub fn empty_subpath_has_no_start_or_end_test() {
   assert svg_path.start(svg_path.empty_subpath())
     == Error(svg_path.EmptySubpath)
   assert svg_path.end(svg_path.empty_subpath()) == Error(svg_path.EmptySubpath)
+  assert svg_path.subpath_bounding_box(svg_path.empty_subpath())
+    == Error(svg_path.EmptySubpath)
 }
 
 pub fn subpath_rejects_disconnected_segments_test() {
@@ -1828,6 +1957,15 @@ fn continuous_segments(segments: List(svg_path.Segment)) -> Bool {
 
 fn point_near(a: svg_path.Point, b: svg_path.Point) -> Bool {
   near(a.x, b.x) && near(a.y, b.y)
+}
+
+fn bbox_near(
+  box: svg_path.BoundingBox,
+  min expected_min: svg_path.Point,
+  max expected_max: svg_path.Point,
+) -> Bool {
+  let svg_path.BoundingBox(min:, max:) = box
+  point_near(min, expected_min) && point_near(max, expected_max)
 }
 
 fn near(a: Float, b: Float) -> Bool {

@@ -6,6 +6,7 @@
 
 import gleam/float
 import gleam/list
+import gleam/option.{type Option, None, Some}
 import svg_path/bezier
 import svg_path/ellipse
 import vec/vec2.{type Vec2, Vec2}
@@ -18,6 +19,11 @@ const default_wiggle_tolerance = 0.000000001
 /// `.y`.
 pub type Point =
   Vec2(Float)
+
+/// An axis-aligned bounding box.
+pub type BoundingBox {
+  BoundingBox(min: Point, max: Point)
+}
 
 /// An SVG path, made of zero or more subpaths.
 pub type Path {
@@ -695,6 +701,54 @@ pub fn segment_derivative(
   }
 }
 
+/// Return a segment's exact axis-aligned bounding box.
+pub fn segment_bounding_box(segment: Segment) -> Result(BoundingBox, Error) {
+  case segment {
+    Line(start:, end:) ->
+      Ok(BoundingBox(min: min_point(start, end), max: max_point(start, end)))
+    QuadraticBezier(..) | CubicBezier(..) -> {
+      let bezier.BoundingBox(min:, max:) =
+        segment_to_bezier_data(segment) |> bezier.bezier_bounding_box
+
+      Ok(BoundingBox(min: from_bezier_point(min), max: from_bezier_point(max)))
+    }
+    Arc(..) -> {
+      case segment_to_center_arc_data(segment) {
+        Error(error) -> Error(error)
+        Ok(arc) -> {
+          let ellipse.BoundingBox(min:, max:) = ellipse.arc_bounding_box(arc)
+
+          Ok(BoundingBox(
+            min: from_ellipse_point(min),
+            max: from_ellipse_point(max),
+          ))
+        }
+      }
+    }
+  }
+}
+
+/// Return a non-empty subpath's exact axis-aligned bounding box.
+pub fn subpath_bounding_box(subpath: Subpath) -> Result(BoundingBox, Error) {
+  case subpath.segments {
+    [] -> Error(EmptySubpath)
+    [first, ..rest] -> {
+      case segment_bounding_box(first) {
+        Error(error) -> Error(error)
+        Ok(box) -> combine_segment_bounding_boxes(rest, box)
+      }
+    }
+  }
+}
+
+/// Return the exact axis-aligned bounding box of all non-empty subpaths.
+pub fn path_bounding_box(path: Path) -> Result(BoundingBox, Error) {
+  case path.subpaths {
+    [] -> Error(EmptyPath)
+    subpaths -> combine_subpath_bounding_boxes(subpaths, None)
+  }
+}
+
 /// Map the defining points of a segment.
 ///
 /// Lines, quadratic Beziers, and cubic Beziers are mapped by applying `f` to
@@ -794,6 +848,65 @@ fn is_zero_length_line(segment: Segment) -> Bool {
     Line(start:, end:) -> start == end
     _ -> False
   }
+}
+
+fn combine_segment_bounding_boxes(
+  segments: List(Segment),
+  box: BoundingBox,
+) -> Result(BoundingBox, Error) {
+  case segments {
+    [] -> Ok(box)
+    [first, ..rest] -> {
+      case segment_bounding_box(first) {
+        Error(error) -> Error(error)
+        Ok(next) ->
+          combine_segment_bounding_boxes(rest, combine_boxes(box, next))
+      }
+    }
+  }
+}
+
+fn combine_subpath_bounding_boxes(
+  subpaths: List(Subpath),
+  box: Option(BoundingBox),
+) -> Result(BoundingBox, Error) {
+  case subpaths {
+    [] -> {
+      case box {
+        None -> Error(EmptySubpaths)
+        Some(box) -> Ok(box)
+      }
+    }
+    [first, ..rest] -> {
+      case subpath_bounding_box(first) {
+        Error(EmptySubpath) -> combine_subpath_bounding_boxes(rest, box)
+        Error(error) -> Error(error)
+        Ok(next) -> {
+          let box = case box {
+            None -> next
+            Some(box) -> combine_boxes(box, next)
+          }
+
+          combine_subpath_bounding_boxes(rest, Some(box))
+        }
+      }
+    }
+  }
+}
+
+fn combine_boxes(first: BoundingBox, second: BoundingBox) -> BoundingBox {
+  BoundingBox(
+    min: min_point(first.min, second.min),
+    max: max_point(first.max, second.max),
+  )
+}
+
+fn min_point(a: Point, b: Point) -> Point {
+  point(float.min(a.x, b.x), float.min(a.y, b.y))
+}
+
+fn max_point(a: Point, b: Point) -> Point {
+  point(float.max(a.x, b.x), float.max(a.y, b.y))
 }
 
 fn splice_segments(
