@@ -12,14 +12,14 @@ import svg_path/number_format
 pub type Options {
   Options(
     /// Formatting for digits to the left of the decimal point.
-    left_decimals: LeftDecimalFormat,
+    left_decimals: LeftDecimalOptions,
     /// Formatting for digits to the right of the decimal point.
-    right_decimals: RightDecimalFormat,
+    right_decimals: RightDecimalOptions,
   )
 }
 
 /// Formatting for digits to the left of the decimal point.
-pub type LeftDecimalFormat {
+pub type LeftDecimalOptions {
   /// Do not pad numbers on the left.
   Succinct
 
@@ -34,7 +34,7 @@ pub type LeftDecimalFormat {
 }
 
 /// Formatting for digits to the right of the decimal point.
-pub type RightDecimalFormat {
+pub type RightDecimalOptions {
   /// Use the system float formatter, stripped of purely trailing decimal zeroes.
   System
 
@@ -70,7 +70,7 @@ pub fn fixed_decimal_options(decimal_places: Int) -> Options {
 /// Set left-side decimal formatting for inspection options.
 pub fn with_left_decimals(
   options options: Options,
-  left_decimals left_decimals: LeftDecimalFormat,
+  left_decimals left_decimals: LeftDecimalOptions,
 ) -> Options {
   Options(..options, left_decimals:)
 }
@@ -78,7 +78,7 @@ pub fn with_left_decimals(
 /// Set right-side decimal formatting for inspection options.
 pub fn with_right_decimals(
   options options: Options,
-  right_decimals right_decimals: RightDecimalFormat,
+  right_decimals right_decimals: RightDecimalOptions,
 ) -> Options {
   Options(..options, right_decimals:)
 }
@@ -86,7 +86,7 @@ pub fn with_right_decimals(
 /// Set left-side number padding for inspection options.
 pub fn with_left_padding(
   options options: Options,
-  left_padding left_padding: LeftDecimalFormat,
+  left_padding left_padding: LeftDecimalOptions,
 ) -> Options {
   with_left_decimals(options, left_padding)
 }
@@ -438,8 +438,8 @@ fn number_options(options: Options) -> number_format.Options {
 }
 
 fn left_decimals(
-  left_decimals: LeftDecimalFormat,
-) -> number_format.LeftDecimalFormat {
+  left_decimals: LeftDecimalOptions,
+) -> number_format.LeftDecimalOptions {
   case left_decimals {
     Succinct -> number_format.Succinct
     AutoLeftPadding -> number_format.AutoLeftPadding
@@ -448,8 +448,8 @@ fn left_decimals(
 }
 
 fn right_decimals(
-  right_decimals: RightDecimalFormat,
-) -> number_format.RightDecimalFormat {
+  right_decimals: RightDecimalOptions,
+) -> number_format.RightDecimalOptions {
   case right_decimals {
     System -> number_format.System
     AtMost(decimal_places) -> number_format.AtMost(decimal_places)

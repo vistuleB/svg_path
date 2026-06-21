@@ -12,7 +12,7 @@ import gleam/option.{type Option, None, Some}
 import gleam/string
 
 /// Formatting for digits to the left of the decimal point.
-pub type LeftDecimalFormat {
+pub type LeftDecimalOptions {
   /// Do not pad numbers on the left.
   Succinct
 
@@ -27,7 +27,7 @@ pub type LeftDecimalFormat {
 }
 
 /// Formatting for digits to the right of the decimal point.
-pub type RightDecimalFormat {
+pub type RightDecimalOptions {
   /// Use the system float formatter, stripped of purely trailing decimal zeroes.
   System
 
@@ -42,9 +42,9 @@ pub type RightDecimalFormat {
 pub type Options {
   Options(
     /// Formatting for digits to the left of the decimal point.
-    left_decimals: LeftDecimalFormat,
+    left_decimals: LeftDecimalOptions,
     /// Formatting for digits to the right of the decimal point.
-    right_decimals: RightDecimalFormat,
+    right_decimals: RightDecimalOptions,
   )
 }
 

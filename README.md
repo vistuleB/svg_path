@@ -484,7 +484,7 @@ pub fn tidy_path_data(input: String) -> String {
 Serialization options can use relative commands, remove optional whitespace,
 round numbers, keep fixed decimal places, omit repeated command letters, and
 left-pad numbers for visual alignment. The lower-level decimal controls are
-split into `LeftDecimalFormat` and `RightDecimalFormat`.
+split into `LeftDecimalOptions` and `RightDecimalOptions`.
 
 ```gleam
 import svg_path/parse
@@ -526,14 +526,14 @@ M 0 0 L 10 10 L 20 20 L 30 30
 
 ### Left Padding
 
-`RightDecimalFormat` controls the fractional side of serialized numbers:
+`RightDecimalOptions` controls the fractional side of serialized numbers:
 
 - `System` uses the system float formatter.
 - `AtMost(Int)` rounds to at most that many decimal places and strips trailing
   zeroes.
 - `Fixed(Int)` rounds to exactly that many decimal places.
 
-`LeftDecimalFormat` controls the whole-number side:
+`LeftDecimalOptions` controls the whole-number side:
 
 - `Succinct` uses no left padding.
 - `LeftPadding(Int)` pads the whole-number side to that width.
@@ -795,7 +795,7 @@ svg_path.path([
 
 Inspection options support decimal rounding, fixed decimal places, and
 left-padding for visual alignment. As with serialization, lower-level decimal
-controls are split into `LeftDecimalFormat` and `RightDecimalFormat`, with the
+controls are split into `LeftDecimalOptions` and `RightDecimalOptions`, with the
 same constructors.
 
 ```gleam
