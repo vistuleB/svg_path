@@ -356,6 +356,240 @@ pub fn segment_crossings_returns_degenerate_arc_errors_test() {
     == Error(svg_path.DegenerateArc)
 }
 
+pub fn segment_minimize_finds_line_minimum_test() {
+  let line =
+    svg_path.line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(10.0, 0.0),
+    )
+
+  let assert Ok(t) =
+    svg_path.segment_minimize(line, measure: fn(point) {
+      let dx = point.x -. 7.0
+      dx *. dx
+    })
+
+  assert near(t, 0.7)
+}
+
+pub fn segment_minimize_finds_quadratic_minimum_test() {
+  let curve =
+    svg_path.quadratic_bezier(
+      start: svg_path.point(0.0, 0.0),
+      control: svg_path.point(10.0, 20.0),
+      end: svg_path.point(20.0, 0.0),
+    )
+
+  let assert Ok(t) =
+    svg_path.segment_minimize(curve, measure: fn(point) {
+      let dx = point.x -. 10.0
+      let dy = point.y -. 10.0
+      dx *. dx +. dy *. dy
+    })
+
+  assert near(t, 0.5)
+}
+
+pub fn segment_minimize_finds_arc_minimum_test() {
+  let arc =
+    svg_path.arc(
+      start: svg_path.point(0.0, 0.0),
+      radius: svg_path.point(10.0, 10.0),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: True,
+      end: svg_path.point(20.0, 0.0),
+    )
+
+  let assert Ok(t) =
+    svg_path.segment_minimize(arc, measure: fn(point) {
+      let dx = point.x -. 10.0
+      dx *. dx
+    })
+
+  assert near(t, 0.5)
+}
+
+pub fn segment_minimize_with_rejects_invalid_options_test() {
+  let line =
+    svg_path.line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(10.0, 0.0),
+    )
+
+  assert svg_path.segment_minimize_with(
+      line,
+      measure: fn(point) { point.x },
+      options: svg_path.MinimizeOptions(
+        samples: 0,
+        tolerance: 0.000000001,
+        max_iterations: 100,
+      ),
+    )
+    == Error(svg_path.InvalidMinimizeSamples(0))
+  assert svg_path.segment_minimize_with(
+      line,
+      measure: fn(point) { point.x },
+      options: svg_path.MinimizeOptions(
+        samples: 10,
+        tolerance: 0.0,
+        max_iterations: 100,
+      ),
+    )
+    == Error(svg_path.InvalidMinimizeTolerance(0.0))
+  assert svg_path.segment_minimize_with(
+      line,
+      measure: fn(point) { point.x },
+      options: svg_path.MinimizeOptions(
+        samples: 10,
+        tolerance: 0.000000001,
+        max_iterations: 0,
+      ),
+    )
+    == Error(svg_path.InvalidMinimizeMaxIterations(0))
+}
+
+pub fn segment_minimize_returns_degenerate_arc_errors_test() {
+  let segment =
+    svg_path.arc(
+      start: svg_path.point(0.0, 0.0),
+      radius: svg_path.point(0.0, 10.0),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: True,
+      end: svg_path.point(20.0, 0.0),
+    )
+
+  assert svg_path.segment_minimize(segment, measure: fn(point) { point.x })
+    == Error(svg_path.DegenerateArc)
+}
+
+pub fn segment_distance_measures_line_projection_test() {
+  let line =
+    svg_path.line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(10.0, 0.0),
+    )
+
+  let assert Ok(distance) =
+    svg_path.segment_distance(svg_path.point(5.0, 4.0), to: line)
+
+  assert near(distance, 4.0)
+}
+
+pub fn segment_distance_measures_line_endpoint_test() {
+  let line =
+    svg_path.line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(10.0, 0.0),
+    )
+
+  let assert Ok(distance) =
+    svg_path.segment_distance(svg_path.point(13.0, 4.0), to: line)
+
+  assert near(distance, 5.0)
+}
+
+pub fn segment_distance_measures_quadratic_curve_test() {
+  let curve =
+    svg_path.quadratic_bezier(
+      start: svg_path.point(0.0, 0.0),
+      control: svg_path.point(10.0, 20.0),
+      end: svg_path.point(20.0, 0.0),
+    )
+
+  let assert Ok(distance) =
+    svg_path.segment_distance(svg_path.point(10.0, 15.0), to: curve)
+
+  assert near(distance, 5.0)
+}
+
+pub fn segment_distance_measures_cubic_curve_test() {
+  let curve =
+    svg_path.cubic_bezier(
+      start: svg_path.point(0.0, 0.0),
+      control1: svg_path.point(0.0, 10.0),
+      control2: svg_path.point(10.0, 10.0),
+      end: svg_path.point(10.0, 0.0),
+    )
+
+  let assert Ok(distance) =
+    svg_path.segment_distance(svg_path.point(5.0, 7.5), to: curve)
+
+  assert distance <. 0.0001
+}
+
+pub fn segment_distance_measures_arc_test() {
+  let arc =
+    svg_path.arc(
+      start: svg_path.point(0.0, 0.0),
+      radius: svg_path.point(10.0, 10.0),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: True,
+      end: svg_path.point(20.0, 0.0),
+    )
+
+  let assert Ok(distance) =
+    svg_path.segment_distance(svg_path.point(10.0, -15.0), to: arc)
+
+  assert near(distance, 5.0)
+}
+
+pub fn segment_distance_with_rejects_invalid_options_test() {
+  let line =
+    svg_path.line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(10.0, 0.0),
+    )
+
+  assert svg_path.segment_distance_with(
+      svg_path.point(5.0, 4.0),
+      to: line,
+      options: svg_path.DistanceOptions(
+        samples: 0,
+        tolerance: 0.000000001,
+        max_iterations: 100,
+      ),
+    )
+    == Error(svg_path.InvalidDistanceSamples(0))
+  assert svg_path.segment_distance_with(
+      svg_path.point(5.0, 4.0),
+      to: line,
+      options: svg_path.DistanceOptions(
+        samples: 10,
+        tolerance: 0.0,
+        max_iterations: 100,
+      ),
+    )
+    == Error(svg_path.InvalidDistanceTolerance(0.0))
+  assert svg_path.segment_distance_with(
+      svg_path.point(5.0, 4.0),
+      to: line,
+      options: svg_path.DistanceOptions(
+        samples: 10,
+        tolerance: 0.000000001,
+        max_iterations: 0,
+      ),
+    )
+    == Error(svg_path.InvalidDistanceMaxIterations(0))
+}
+
+pub fn segment_distance_returns_degenerate_arc_errors_test() {
+  let segment =
+    svg_path.arc(
+      start: svg_path.point(0.0, 0.0),
+      radius: svg_path.point(0.0, 10.0),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: True,
+      end: svg_path.point(20.0, 0.0),
+    )
+
+  assert svg_path.segment_distance(svg_path.point(10.0, 0.0), to: segment)
+    == Error(svg_path.DegenerateArc)
+}
+
 pub fn map_segment_points_maps_line_quadratic_and_cubic_defining_points_test() {
   let map = fn(point: svg_path.Point) {
     svg_path.point(point.x +. 1.0, point.y *. 2.0)

@@ -21,6 +21,20 @@ const default_crossing_tolerance = 0.000000001
 
 const default_crossing_max_iterations = 100
 
+const default_minimize_samples = 100
+
+const default_minimize_tolerance = 0.000000001
+
+const default_minimize_max_iterations = 100
+
+const golden_section_ratio = 0.6180339887498949
+
+const default_distance_samples = 100
+
+const default_distance_tolerance = 0.000000001
+
+const default_distance_max_iterations = 100
+
 /// A 2D point.
 ///
 /// This is a `vec.Vec2(Float)`, so its coordinates are available as `.x` and
@@ -61,6 +75,20 @@ pub fn bounding_box_diameter(box: BoundingBox) -> Float {
 /// Options for detecting scalar zero crossings along a segment.
 pub type CrossingOptions {
   CrossingOptions(samples: Int, tolerance: Float, max_iterations: Int)
+}
+
+/// Options for minimizing a scalar function along a segment.
+pub type MinimizeOptions {
+  MinimizeOptions(samples: Int, tolerance: Float, max_iterations: Int)
+}
+
+/// Options for finding the distance from a point to a segment.
+pub type DistanceOptions {
+  DistanceOptions(samples: Int, tolerance: Float, max_iterations: Int)
+}
+
+type MinimizeCandidate {
+  MinimizeCandidate(t: Float, value: Float)
 }
 
 /// An SVG path, made of zero or more subpaths.
@@ -185,6 +213,30 @@ pub type Error {
   /// A bracketed crossing could not be refined within the iteration limit.
   CrossingMaxIterationsReached(estimate: Float, value: Float)
 
+  /// The number of minimization scan samples must be greater than zero.
+  InvalidMinimizeSamples(samples: Int)
+
+  /// The minimization tolerance must be greater than zero.
+  InvalidMinimizeTolerance(tolerance: Float)
+
+  /// The minimization iteration limit must be greater than zero.
+  InvalidMinimizeMaxIterations(max_iterations: Int)
+
+  /// A minimization window could not be refined within the iteration limit.
+  MinimizeMaxIterationsReached(estimate: Float, value: Float)
+
+  /// The number of distance scan samples must be greater than zero.
+  InvalidDistanceSamples(samples: Int)
+
+  /// The distance tolerance must be greater than zero.
+  InvalidDistanceTolerance(tolerance: Float)
+
+  /// The distance bisection iteration limit must be greater than zero.
+  InvalidDistanceMaxIterations(max_iterations: Int)
+
+  /// A bracketed distance candidate could not be refined within the iteration limit.
+  DistanceMaxIterationsReached(estimate: Float, value: Float)
+
   /// The path contains more than one non-empty subpath.
   MultipleNonemptySubpaths
 
@@ -206,6 +258,24 @@ pub fn default_crossing_options() -> CrossingOptions {
     samples: default_crossing_samples,
     tolerance: default_crossing_tolerance,
     max_iterations: default_crossing_max_iterations,
+  )
+}
+
+/// Return the default options for segment minimization.
+pub fn default_minimize_options() -> MinimizeOptions {
+  MinimizeOptions(
+    samples: default_minimize_samples,
+    tolerance: default_minimize_tolerance,
+    max_iterations: default_minimize_max_iterations,
+  )
+}
+
+/// Return the default options for point-to-segment distance measurement.
+pub fn default_distance_options() -> DistanceOptions {
+  DistanceOptions(
+    samples: default_distance_samples,
+    tolerance: default_distance_tolerance,
+    max_iterations: default_distance_max_iterations,
   )
 }
 
@@ -873,6 +943,86 @@ pub fn segment_crossings_with(
   }
 }
 
+/// Return the segment parameter where a scalar function is minimized.
+///
+/// This numerically minimizes `f(segment_point(t))` for `t` in `0.0..1.0`.
+pub fn segment_minimize(
+  segment: Segment,
+  measure f: fn(Point) -> Float,
+) -> Result(Float, Error) {
+  segment_minimize_with(
+    segment,
+    measure: f,
+    options: default_minimize_options(),
+  )
+}
+
+/// Return the segment parameter where a scalar function is minimized using
+/// explicit options.
+pub fn segment_minimize_with(
+  segment: Segment,
+  measure f: fn(Point) -> Float,
+  options options: MinimizeOptions,
+) -> Result(Float, Error) {
+  case validate_minimize_options(options) {
+    Error(error) -> Error(error)
+    Ok(Nil) -> {
+      case minimize_value(segment, f, 0.0) {
+        Error(error) -> Error(error)
+        Ok(first) -> {
+          case
+            scan_minimize_windows(
+              segment,
+              f,
+              options,
+              index: 1,
+              previous_t: 0.0,
+              best: first,
+            )
+          {
+            Error(error) -> Error(error)
+            Ok(best) -> Ok(best.t)
+          }
+        }
+      }
+    }
+  }
+}
+
+/// Return the shortest distance from a point to a segment.
+///
+/// Lines are measured exactly. Quadratic Beziers, cubic Beziers, and arcs are
+/// measured by finding stationary points of squared distance in `0.0..1.0`.
+pub fn segment_distance(
+  point: Point,
+  to segment: Segment,
+) -> Result(Float, Error) {
+  segment_distance_with(point, to: segment, options: default_distance_options())
+}
+
+/// Return the shortest distance from a point to a segment using explicit options.
+pub fn segment_distance_with(
+  point: Point,
+  to segment: Segment,
+  options options: DistanceOptions,
+) -> Result(Float, Error) {
+  case validate_distance_options(options) {
+    Error(error) -> Error(error)
+    Ok(Nil) -> {
+      case segment {
+        Line(start:, end:) -> Ok(point_to_line_distance(point, start, end))
+        QuadraticBezier(..) | CubicBezier(..) | Arc(..) -> {
+          case distance_candidates(point, segment, options) {
+            Error(error) -> Error(error)
+            Ok(candidates) ->
+              smallest_segment_distance(point, segment, candidates)
+          }
+        }
+      }
+    }
+  }
+}
+
 /// Return a non-empty subpath's exact axis-aligned bounding box.
 pub fn subpath_bounding_box(subpath: Subpath) -> Result(BoundingBox, Error) {
   case subpath.segments {
@@ -1059,7 +1209,7 @@ fn scan_crossings(
                 index: index + 1,
                 previous_t: next_t,
                 previous_value: next_value,
-                crossings: insert_crossing(
+                crossings: insert_near_unique(
                   crossings,
                   crossing,
                   options.tolerance,
@@ -1146,19 +1296,19 @@ fn crossing_value_unsafe(
   value
 }
 
-fn insert_crossing(
-  crossings: List(Float),
-  crossing: Float,
+fn insert_near_unique(
+  values: List(Float),
+  value: Float,
   tolerance: Float,
 ) -> List(Float) {
-  case crossings {
+  case values {
     [previous, ..] -> {
-      case float.absolute_value(previous -. crossing) <=. tolerance {
-        True -> crossings
-        False -> [crossing, ..crossings]
+      case float.absolute_value(previous -. value) <=. tolerance {
+        True -> values
+        False -> [value, ..values]
       }
     }
-    _ -> [crossing, ..crossings]
+    _ -> [value, ..values]
   }
 }
 
@@ -1168,6 +1318,479 @@ fn is_close_to_zero(value: Float, tolerance: Float) -> Bool {
 
 fn same_sign(a: Float, b: Float) -> Bool {
   a <. 0.0 && b <. 0.0 || a >. 0.0 && b >. 0.0
+}
+
+fn validate_minimize_options(options: MinimizeOptions) -> Result(Nil, Error) {
+  case options.samples <= 0 {
+    True -> Error(InvalidMinimizeSamples(options.samples))
+    False -> {
+      case options.tolerance <=. 0.0 {
+        True -> Error(InvalidMinimizeTolerance(options.tolerance))
+        False -> {
+          case options.max_iterations <= 0 {
+            True -> Error(InvalidMinimizeMaxIterations(options.max_iterations))
+            False -> Ok(Nil)
+          }
+        }
+      }
+    }
+  }
+}
+
+fn scan_minimize_windows(
+  segment: Segment,
+  f: fn(Point) -> Float,
+  options: MinimizeOptions,
+  index index: Int,
+  previous_t previous_t: Float,
+  best best: MinimizeCandidate,
+) -> Result(MinimizeCandidate, Error) {
+  case index > options.samples {
+    True -> Ok(best)
+    False -> {
+      let next_t = int.to_float(index) /. int.to_float(options.samples)
+
+      case minimize_value(segment, f, next_t) {
+        Error(error) -> Error(error)
+        Ok(next) -> {
+          case
+            golden_section_minimize(
+              segment,
+              f,
+              left: previous_t,
+              right: next_t,
+              options:,
+            )
+          {
+            Error(error) -> Error(error)
+            Ok(window_best) ->
+              scan_minimize_windows(
+                segment,
+                f,
+                options,
+                index: index + 1,
+                previous_t: next_t,
+                best: best_candidate(best, next) |> best_candidate(window_best),
+              )
+          }
+        }
+      }
+    }
+  }
+}
+
+fn golden_section_minimize(
+  segment: Segment,
+  f: fn(Point) -> Float,
+  left left: Float,
+  right right: Float,
+  options options: MinimizeOptions,
+) -> Result(MinimizeCandidate, Error) {
+  let span = right -. left
+  let inner_left = right -. golden_section_ratio *. span
+  let inner_right = left +. golden_section_ratio *. span
+
+  case minimize_value(segment, f, inner_left) {
+    Error(error) -> Error(error)
+    Ok(left_candidate) -> {
+      case minimize_value(segment, f, inner_right) {
+        Error(error) -> Error(error)
+        Ok(right_candidate) ->
+          golden_section_loop(
+            segment,
+            f,
+            left:,
+            right:,
+            inner_left:,
+            inner_left_candidate: left_candidate,
+            inner_right:,
+            inner_right_candidate: right_candidate,
+            tolerance: options.tolerance,
+            remaining_iterations: options.max_iterations,
+          )
+      }
+    }
+  }
+}
+
+fn golden_section_loop(
+  segment: Segment,
+  f: fn(Point) -> Float,
+  left left: Float,
+  right right: Float,
+  inner_left inner_left: Float,
+  inner_left_candidate inner_left_candidate: MinimizeCandidate,
+  inner_right inner_right: Float,
+  inner_right_candidate inner_right_candidate: MinimizeCandidate,
+  tolerance tolerance: Float,
+  remaining_iterations remaining_iterations: Int,
+) -> Result(MinimizeCandidate, Error) {
+  case right -. left <=. tolerance {
+    True -> Ok(best_candidate(inner_left_candidate, inner_right_candidate))
+    False -> {
+      case remaining_iterations <= 0 {
+        True -> {
+          let best = best_candidate(inner_left_candidate, inner_right_candidate)
+
+          Error(MinimizeMaxIterationsReached(best.t, best.value))
+        }
+        False -> {
+          case inner_left_candidate.value <. inner_right_candidate.value {
+            True -> {
+              let next_right = inner_right
+              let next_inner_right = inner_left
+              let next_inner_right_candidate = inner_left_candidate
+              let next_inner_left =
+                next_right -. golden_section_ratio *. { next_right -. left }
+
+              case minimize_value(segment, f, next_inner_left) {
+                Error(error) -> Error(error)
+                Ok(next_inner_left_candidate) ->
+                  golden_section_loop(
+                    segment,
+                    f,
+                    left:,
+                    right: next_right,
+                    inner_left: next_inner_left,
+                    inner_left_candidate: next_inner_left_candidate,
+                    inner_right: next_inner_right,
+                    inner_right_candidate: next_inner_right_candidate,
+                    tolerance:,
+                    remaining_iterations: remaining_iterations - 1,
+                  )
+              }
+            }
+            False -> {
+              let next_left = inner_left
+              let next_inner_left = inner_right
+              let next_inner_left_candidate = inner_right_candidate
+              let next_inner_right =
+                next_left +. golden_section_ratio *. { right -. next_left }
+
+              case minimize_value(segment, f, next_inner_right) {
+                Error(error) -> Error(error)
+                Ok(next_inner_right_candidate) ->
+                  golden_section_loop(
+                    segment,
+                    f,
+                    left: next_left,
+                    right:,
+                    inner_left: next_inner_left,
+                    inner_left_candidate: next_inner_left_candidate,
+                    inner_right: next_inner_right,
+                    inner_right_candidate: next_inner_right_candidate,
+                    tolerance:,
+                    remaining_iterations: remaining_iterations - 1,
+                  )
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+fn minimize_value(
+  segment: Segment,
+  f: fn(Point) -> Float,
+  t: Float,
+) -> Result(MinimizeCandidate, Error) {
+  case segment_point(segment, at: t) {
+    Error(error) -> Error(error)
+    Ok(point) -> Ok(MinimizeCandidate(t:, value: f(point)))
+  }
+}
+
+fn best_candidate(
+  a: MinimizeCandidate,
+  b: MinimizeCandidate,
+) -> MinimizeCandidate {
+  case a.value <=. b.value {
+    True -> a
+    False -> b
+  }
+}
+
+fn validate_distance_options(options: DistanceOptions) -> Result(Nil, Error) {
+  case options.samples <= 0 {
+    True -> Error(InvalidDistanceSamples(options.samples))
+    False -> {
+      case options.tolerance <=. 0.0 {
+        True -> Error(InvalidDistanceTolerance(options.tolerance))
+        False -> {
+          case options.max_iterations <= 0 {
+            True -> Error(InvalidDistanceMaxIterations(options.max_iterations))
+            False -> Ok(Nil)
+          }
+        }
+      }
+    }
+  }
+}
+
+fn distance_candidates(
+  point: Point,
+  segment: Segment,
+  options: DistanceOptions,
+) -> Result(List(Float), Error) {
+  case distance_stationary_value(point, segment, 0.0) {
+    Error(error) -> Error(error)
+    Ok(first_value) -> {
+      scan_distance_candidates(
+        point,
+        segment,
+        options,
+        index: 1,
+        previous_t: 0.0,
+        previous_value: first_value,
+        candidates: [1.0, 0.0],
+      )
+    }
+  }
+}
+
+fn scan_distance_candidates(
+  point: Point,
+  segment: Segment,
+  options: DistanceOptions,
+  index index: Int,
+  previous_t previous_t: Float,
+  previous_value previous_value: Float,
+  candidates candidates: List(Float),
+) -> Result(List(Float), Error) {
+  case index > options.samples {
+    True -> Ok(candidates)
+    False -> {
+      let next_t = int.to_float(index) /. int.to_float(options.samples)
+
+      case distance_stationary_value(point, segment, next_t) {
+        Error(error) -> Error(error)
+        Ok(next_value) -> {
+          case
+            distance_candidate_for_window(
+              point,
+              segment,
+              options,
+              previous_t,
+              previous_value,
+              next_t,
+              next_value,
+            )
+          {
+            Error(error) -> Error(error)
+            Ok(None) ->
+              scan_distance_candidates(
+                point,
+                segment,
+                options,
+                index: index + 1,
+                previous_t: next_t,
+                previous_value: next_value,
+                candidates:,
+              )
+            Ok(Some(candidate)) ->
+              scan_distance_candidates(
+                point,
+                segment,
+                options,
+                index: index + 1,
+                previous_t: next_t,
+                previous_value: next_value,
+                candidates: insert_near_unique(
+                  candidates,
+                  candidate,
+                  options.tolerance,
+                ),
+              )
+          }
+        }
+      }
+    }
+  }
+}
+
+fn distance_candidate_for_window(
+  point: Point,
+  segment: Segment,
+  options: DistanceOptions,
+  previous_t: Float,
+  previous_value: Float,
+  next_t: Float,
+  next_value: Float,
+) -> Result(Option(Float), Error) {
+  case is_close_to_zero(previous_value, options.tolerance) {
+    True -> Ok(Some(previous_t))
+    False -> {
+      case is_close_to_zero(next_value, options.tolerance) {
+        True -> Ok(Some(next_t))
+        False -> {
+          case same_sign(previous_value, next_value) {
+            True -> Ok(None)
+            False ->
+              refine_distance_candidate(
+                point,
+                segment,
+                options,
+                previous_t,
+                next_t,
+              )
+          }
+        }
+      }
+    }
+  }
+}
+
+fn refine_distance_candidate(
+  point: Point,
+  segment: Segment,
+  options: DistanceOptions,
+  previous_t: Float,
+  next_t: Float,
+) -> Result(Option(Float), Error) {
+  let solver_options =
+    root.Options(
+      tolerance: options.tolerance,
+      max_iterations: options.max_iterations,
+    )
+
+  case
+    root.bisect_with(
+      fn(t) { distance_stationary_value_unsafe(point, segment, t) },
+      from: previous_t,
+      to: next_t,
+      options: solver_options,
+    )
+  {
+    Ok(t) -> Ok(Some(t))
+    Error(root.MaxIterationsReached(estimate:, value:)) ->
+      Error(DistanceMaxIterationsReached(estimate:, value:))
+    Error(_) -> Ok(None)
+  }
+}
+
+fn distance_stationary_value(
+  point: Point,
+  segment: Segment,
+  t: Float,
+) -> Result(Float, Error) {
+  case segment_point(segment, at: t) {
+    Error(error) -> Error(error)
+    Ok(segment_point) -> {
+      case segment_derivative(segment, at: t) {
+        Error(error) -> Error(error)
+        Ok(derivative) -> {
+          let offset = point_difference(segment_point, point)
+
+          Ok(dot(offset, derivative))
+        }
+      }
+    }
+  }
+}
+
+fn distance_stationary_value_unsafe(
+  point: Point,
+  segment: Segment,
+  t: Float,
+) -> Float {
+  let assert Ok(value) = distance_stationary_value(point, segment, t)
+
+  value
+}
+
+fn smallest_segment_distance(
+  point: Point,
+  segment: Segment,
+  candidates: List(Float),
+) -> Result(Float, Error) {
+  case candidates {
+    [] -> Ok(0.0)
+    [first, ..rest] -> {
+      case squared_segment_distance_at(point, segment, first) {
+        Error(error) -> Error(error)
+        Ok(first_distance) ->
+          smallest_segment_distance_loop(point, segment, rest, first_distance)
+      }
+    }
+  }
+}
+
+fn smallest_segment_distance_loop(
+  point: Point,
+  segment: Segment,
+  candidates: List(Float),
+  smallest: Float,
+) -> Result(Float, Error) {
+  case candidates {
+    [] -> Ok(float_square_root(smallest))
+    [first, ..rest] -> {
+      case squared_segment_distance_at(point, segment, first) {
+        Error(error) -> Error(error)
+        Ok(distance) ->
+          smallest_segment_distance_loop(
+            point,
+            segment,
+            rest,
+            float.min(smallest, distance),
+          )
+      }
+    }
+  }
+}
+
+fn squared_segment_distance_at(
+  point: Point,
+  segment: Segment,
+  t: Float,
+) -> Result(Float, Error) {
+  case segment_point(segment, at: t) {
+    Error(error) -> Error(error)
+    Ok(segment_point) -> Ok(squared_distance(point, segment_point))
+  }
+}
+
+fn point_to_line_distance(point: Point, start: Point, end: Point) -> Float {
+  let line = point_difference(end, start)
+  let length_squared = dot(line, line)
+
+  case length_squared == 0.0 {
+    True -> distance(point, start)
+    False -> {
+      let progress =
+        dot(point_difference(point, start), line) /. length_squared
+        |> clamp01
+      let projection = offset(start, line, progress)
+
+      distance(point, projection)
+    }
+  }
+}
+
+fn clamp01(value: Float) -> Float {
+  value |> float.max(0.0) |> float.min(1.0)
+}
+
+fn point_difference(a: Point, b: Point) -> Point {
+  point(a.x -. b.x, a.y -. b.y)
+}
+
+fn offset(origin: Point, direction: Point, distance: Float) -> Point {
+  point(
+    origin.x +. direction.x *. distance,
+    origin.y +. direction.y *. distance,
+  )
+}
+
+fn dot(a: Point, b: Point) -> Float {
+  a.x *. b.x +. a.y *. b.y
+}
+
+fn squared_distance(a: Point, b: Point) -> Float {
+  let dx = a.x -. b.x
+  let dy = a.y -. b.y
+  dx *. dx +. dy *. dy
 }
 
 fn combine_segment_bounding_boxes(

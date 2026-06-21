@@ -417,6 +417,50 @@ subpaths are all empty return `EmptySubpaths`.
 For callers working at the lower-level curve modules, `svg_path/bezier` exposes
 `bezier_bounding_box`, and `svg_path/ellipse` exposes `arc_bounding_box`.
 
+### Segment Minimization
+
+Use `segment_minimize` to find the segment parameter where a scalar function of
+the segment point is minimized:
+
+```gleam
+import svg_path
+
+pub fn lowest_point(segment: svg_path.Segment) -> Result(Float, svg_path.Error) {
+  svg_path.segment_minimize(segment, measure: fn(point) {
+    point.y
+  })
+}
+```
+
+The returned value is a segment parameter in `0.0..1.0`. You can pass it to
+`segment_point` or `split_segment`.
+
+Minimization is numerical and sampling-based. Each sampled window is refined
+with golden-section search, so it does not require a derivative of the measured
+function. Use `segment_minimize_with` and `MinimizeOptions` to tune `samples`,
+`tolerance`, and `max_iterations`.
+
+### Segment Distances
+
+Use `segment_distance` to measure the shortest distance from a point to a
+segment:
+
+```gleam
+import svg_path
+
+pub fn distance_to_segment(
+  point: svg_path.Point,
+  segment: svg_path.Segment,
+) -> Result(Float, svg_path.Error) {
+  svg_path.segment_distance(point, to: segment)
+}
+```
+
+Lines are measured exactly. Quadratic Beziers, cubic Beziers, and arcs are
+measured by finding stationary points of squared distance over the segment
+parameter range `0.0..1.0`. Use `segment_distance_with` and `DistanceOptions`
+to tune `samples`, `tolerance`, and `max_iterations`.
+
 ### Segment Crossings
 
 Use `segment_crossings` to find parameter values where a scalar predicate
