@@ -1931,6 +1931,86 @@ pub fn assert_set_closed_true_closes_matching_endpoints_test() {
   assert svg_path.is_closed(closed)
 }
 
+pub fn open_at_rotates_a_closed_subpath_to_start_at_index_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(10.0, 10.0)
+  let d = svg_path.point(0.0, 10.0)
+  let ab = svg_path.line(start: a, end: b)
+  let bc = svg_path.line(start: b, end: c)
+  let cd = svg_path.line(start: c, end: d)
+  let da = svg_path.line(start: d, end: a)
+  let subpath = closed_subpath([ab, bc, cd, da])
+
+  let assert Ok(opened) = svg_path.open_at(subpath, index: 1)
+
+  assert !svg_path.is_closed(opened)
+  assert svg_path.segments(opened) == [bc, cd, da, ab]
+  assert svg_path.start(opened) == Ok(b)
+  assert svg_path.end(opened) == Ok(b)
+}
+
+pub fn open_at_accepts_negative_indices_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(10.0, 10.0)
+  let d = svg_path.point(0.0, 10.0)
+  let ab = svg_path.line(start: a, end: b)
+  let bc = svg_path.line(start: b, end: c)
+  let cd = svg_path.line(start: c, end: d)
+  let da = svg_path.line(start: d, end: a)
+  let subpath = closed_subpath([ab, bc, cd, da])
+
+  let assert Ok(opened) = svg_path.open_at(subpath, index: -1)
+
+  assert svg_path.segments(opened) == [da, ab, bc, cd]
+  assert svg_path.start(opened) == Ok(d)
+  assert svg_path.end(opened) == Ok(d)
+}
+
+pub fn open_at_takes_boundary_indices_modulo_length_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(10.0, 10.0)
+  let d = svg_path.point(0.0, 10.0)
+  let ab = svg_path.line(start: a, end: b)
+  let bc = svg_path.line(start: b, end: c)
+  let cd = svg_path.line(start: c, end: d)
+  let da = svg_path.line(start: d, end: a)
+  let segments = [ab, bc, cd, da]
+  let subpath = closed_subpath(segments)
+
+  let assert Ok(opened_at_length) = svg_path.open_at(subpath, index: 4)
+  let assert Ok(opened_at_negative_length) =
+    svg_path.open_at(subpath, index: -4)
+
+  assert svg_path.segments(opened_at_length) == segments
+  assert svg_path.segments(opened_at_negative_length) == segments
+}
+
+pub fn open_at_rejects_open_subpaths_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let subpath = svg_path.assert_subpath([svg_path.line(start: a, end: b)])
+
+  assert svg_path.open_at(subpath, index: 0) == Error(svg_path.NotClosed)
+}
+
+pub fn open_at_rejects_indices_outside_length_range_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(10.0, 10.0)
+  let ab = svg_path.line(start: a, end: b)
+  let bc = svg_path.line(start: b, end: c)
+  let ca = svg_path.line(start: c, end: a)
+  let subpath = closed_subpath([ab, bc, ca])
+
+  assert svg_path.open_at(subpath, index: 4)
+    == Error(svg_path.InvalidOpenIndex(index: 4, length: 3))
+  assert svg_path.open_at(subpath, index: -4)
+    == Error(svg_path.InvalidOpenIndex(index: -4, length: 3))
+}
+
 pub fn set_closed_with_wiggle_replaces_nearby_endpoints_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)
@@ -1998,6 +2078,11 @@ fn result_try_append_segment_with_line(
       svg_path.append_segment_with(subpath, segment, policy: svg_path.Bridge)
     Error(error) -> Error(error)
   }
+}
+
+fn closed_subpath(segments: List(svg_path.Segment)) -> svg_path.Subpath {
+  svg_path.assert_subpath(segments)
+  |> svg_path.assert_set_closed(closed: True)
 }
 
 fn result_try_set_closed_with_bridge(

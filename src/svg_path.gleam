@@ -116,6 +116,9 @@ pub type Error {
   /// The operation requires a non-empty subpath.
   EmptySubpath
 
+  /// The operation requires a closed subpath.
+  NotClosed
+
   /// The operation requires a path with at least one subpath.
   EmptyPath
 
@@ -139,6 +142,11 @@ pub type Error {
   /// This is returned when `start` is negative, `delete` is negative, or
   /// `start` is greater than the subpath length.
   InvalidSplice(start: Int, delete: Int, length: Int)
+
+  /// An open index was outside the valid range for a closed subpath.
+  ///
+  /// `index` must be between `-length` and `length`, inclusive.
+  InvalidOpenIndex(index: Int, length: Int)
 
   /// The number of crossing scan samples must be greater than zero.
   InvalidCrossingSamples(samples: Int)
@@ -523,6 +531,33 @@ pub fn assert_set_closed_with(
     Ok(subpath) -> subpath
     Error(_) ->
       panic as "svg_path.assert_set_closed received an invalid subpath"
+  }
+}
+
+/// Break open a closed subpath at the given segment index.
+///
+/// The index denotes the segment that will become the first segment of the
+/// returned open subpath. Negative indices count from the end. `index` must be
+/// between `-length` and `length`, inclusive, where `length` is the number of
+/// segments in the subpath. After validation, the index is taken modulo the
+/// length, so `length`, `0`, and `-length` all open at the first segment.
+pub fn open_at(subpath: Subpath, index index: Int) -> Result(Subpath, Error) {
+  let length = list.length(subpath.segments)
+
+  case subpath.closed {
+    False -> Error(NotClosed)
+    True -> {
+      case index < 0 - length || index > length {
+        True -> Error(InvalidOpenIndex(index:, length:))
+        False -> {
+          let index = normalize_open_index(index, length)
+          Ok(Subpath(
+            segments: rotate_segments(subpath.segments, index),
+            closed: False,
+          ))
+        }
+      }
+    }
   }
 }
 
@@ -1262,6 +1297,32 @@ fn drop(segments: List(Segment), count: Int) -> List(Segment) {
       }
     }
   }
+}
+
+fn take(segments: List(Segment), count: Int) -> List(Segment) {
+  case count <= 0 {
+    True -> []
+    False -> {
+      case segments {
+        [] -> []
+        [first, ..rest] -> [first, ..take(rest, count - 1)]
+      }
+    }
+  }
+}
+
+fn normalize_open_index(index: Int, length: Int) -> Int {
+  case index {
+    0 -> 0
+    _ if index == length -> 0
+    _ if index == 0 - length -> 0
+    _ if index < 0 -> index + length
+    _ -> index
+  }
+}
+
+fn rotate_segments(segments: List(Segment), index: Int) -> List(Segment) {
+  list.append(drop(segments, index), take(segments, index))
 }
 
 fn validate_spliced_subpath(

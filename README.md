@@ -336,6 +336,26 @@ svg_path.splice_with(
 )
 ```
 
+### Opening Closed Subpaths
+
+`open_at` breaks open a closed subpath at a segment index and returns a single
+open subpath. The indexed segment becomes the first segment of the result:
+
+```gleam
+svg_path.open_at(closed_subpath, index: 2)
+```
+
+Negative indices count from the end. The accepted index range is inclusive:
+`-length <= index <= length`, where `length` is the number of segments in the
+closed subpath. After this range check, the index is taken modulo `length`, so
+`-length`, `0`, and `length` all open at the first segment.
+
+The error behavior is intentionally specific:
+
+- `NotClosed` is returned if the subpath is not closed.
+- `InvalidOpenIndex(index, length)` is returned if the index is outside the
+  accepted inclusive range.
+
 ## Converting Arcs to Beziers
 
 Some SVG consumers and geometry workflows prefer to avoid elliptical `Arc`
