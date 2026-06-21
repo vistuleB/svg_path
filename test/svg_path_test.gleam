@@ -217,6 +217,19 @@ pub fn segment_bounding_box_handles_lines_beziers_and_arcs_test() {
   )
 }
 
+pub fn bounding_box_dimensions_use_extents_test() {
+  let box =
+    svg_path.BoundingBox(
+      min: svg_path.point(-2.0, 3.0),
+      max: svg_path.point(8.0, 15.0),
+    )
+
+  assert svg_path.bounding_box_width(box) == 10.0
+  assert svg_path.bounding_box_height(box) == 12.0
+  assert svg_path.bounding_box_center(box) == svg_path.point(3.0, 9.0)
+  assert svg_path.bounding_box_diameter(box) == 22.0
+}
+
 pub fn segment_bounding_box_returns_degenerate_arc_errors_test() {
   let segment =
     svg_path.arc(

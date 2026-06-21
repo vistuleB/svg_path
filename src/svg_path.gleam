@@ -33,6 +33,31 @@ pub type BoundingBox {
   BoundingBox(min: Point, max: Point)
 }
 
+/// Return the width of a bounding box.
+pub fn bounding_box_width(box: BoundingBox) -> Float {
+  box.max.x -. box.min.x
+}
+
+/// Return the height of a bounding box.
+pub fn bounding_box_height(box: BoundingBox) -> Float {
+  box.max.y -. box.min.y
+}
+
+/// Return the center point of a bounding box.
+pub fn bounding_box_center(box: BoundingBox) -> Point {
+  point(
+    box.min.x +. bounding_box_width(box) /. 2.0,
+    box.min.y +. bounding_box_height(box) /. 2.0,
+  )
+}
+
+/// Return the taxicab diameter of a bounding box.
+///
+/// This is the box width plus the box height.
+pub fn bounding_box_diameter(box: BoundingBox) -> Float {
+  bounding_box_width(box) +. bounding_box_height(box)
+}
+
 /// Options for detecting scalar zero crossings along a segment.
 pub type CrossingOptions {
   CrossingOptions(samples: Int, tolerance: Float, max_iterations: Int)

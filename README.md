@@ -406,6 +406,10 @@ pub fn box_path(path: svg_path.Path) -> Result(svg_path.BoundingBox, svg_path.Er
 }
 ```
 
+Use `bounding_box_width`, `bounding_box_height`, `bounding_box_center`, and
+`bounding_box_diameter` to measure a `BoundingBox`. The diameter is the taxicab
+diameter: width plus height.
+
 Line, quadratic Bezier, cubic Bezier, and arc extrema are included. Empty
 subpaths return `EmptySubpath`; empty paths return `EmptyPath`; paths whose
 subpaths are all empty return `EmptySubpaths`.
