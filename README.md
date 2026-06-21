@@ -221,6 +221,7 @@ svg_path.Strict
 svg_path.Wiggle
 svg_path.Bridge
 svg_path.WiggleThenBridge
+svg_path.Custom(fn(previous, next) { #(previous, next) })
 ```
 
 `Strict` requires exact endpoint equality. `Wiggle` moves nearby endpoints
@@ -228,7 +229,8 @@ together within the package's default wiggle tolerance of `0.000000001`, while
 preserving horizontal and vertical straight-line segments. `Bridge` keeps
 existing endpoints in place and inserts a straight line segment when needed.
 `WiggleThenBridge`, as the name implies, first tries `Wiggle` before falling
-back on `Bridge`.
+back on `Bridge`. `Custom` gives callers a hook for bespoke endpoint
+reconciliation.
 
 The behavior of option-free functions and constructors is
 `EndpointPolicy.Strict`. These include:
@@ -270,6 +272,34 @@ svg_path.join_with([first_subpath, second_subpath], policy: svg_path.WiggleThenB
 svg_path.splice_with(subpath, start:, delete:, insert:, policy: svg_path.Wiggle)
 svg_path.set_closed_with(subpath, closed: Bool, policy: svg_path.Bridge)
 ```
+
+### Custom Endpoint Policies
+
+`Custom` receives each non-matching adjacent pair as `previous` and `next`, and
+returns replacement segments for that pair. It is called only when the two
+endpoints do not already match. After all custom reconciliation has run, the
+result is validated normally, so custom policies still return the usual
+construction errors if they leave the subpath discontinuous.
+
+For example, a custom policy can move the start of each incoming line to the
+previous segment's end point:
+
+```gleam
+let policy =
+  svg_path.Custom(fn(previous, next) {
+    case next {
+      svg_path.Line(end:, ..) -> {
+        #(previous, svg_path.line(start: svg_path.segment_end(previous), end:))
+      }
+      _ -> #(previous, next)
+    }
+  })
+```
+
+When closing a subpath with `set_closed_with`, the adjacent pair is the last
+segment followed by the first segment. The returned pair is used to close that
+wraparound boundary, and the final subpath must still validate as both
+continuous and closed.
 
 Use the `assert_` functions for hand-authored/static geometry where invalid
 continuity is a programmer error:

@@ -136,6 +136,9 @@ pub type EndpointPolicy {
 
   /// Try `Wiggle`; if that fails, use `Bridge`.
   WiggleThenBridge
+
+  /// Reconcile non-matching adjacent segments with a caller-provided function.
+  Custom(fn(Segment, Segment) -> #(Segment, Segment))
 }
 
 /// A single SVG path segment.
@@ -2704,6 +2707,7 @@ fn open_subpath_with_segments(
           Ok(Subpath(segments: line_join_segments(segments), closed: False))
       }
     }
+    Custom(reconcile) -> custom_open_subpath(segments, reconcile)
   }
 }
 
@@ -2754,6 +2758,39 @@ fn line_join_segments_loop(
           ])
         }
       }
+    }
+  }
+}
+
+fn custom_open_subpath(
+  segments: List(Segment),
+  reconcile: fn(Segment, Segment) -> #(Segment, Segment),
+) -> Result(Subpath, Error) {
+  case segments {
+    [] | [_] -> strict_open_subpath(segments)
+    [first, ..rest] ->
+      custom_reconcile_segments(rest, first, [], reconcile)
+      |> strict_open_subpath
+  }
+}
+
+fn custom_reconcile_segments(
+  remaining: List(Segment),
+  previous: Segment,
+  reconciled: List(Segment),
+  reconcile: fn(Segment, Segment) -> #(Segment, Segment),
+) -> List(Segment) {
+  case remaining {
+    [] -> list.reverse([previous, ..reconciled])
+    [next, ..rest] -> {
+      let #(previous, next) = case
+        segment_end(previous) == segment_start(next)
+      {
+        True -> #(previous, next)
+        False -> reconcile(previous, next)
+      }
+
+      custom_reconcile_segments(rest, next, [previous, ..reconciled], reconcile)
     }
   }
 }
@@ -3103,6 +3140,7 @@ fn close_open_subpath_with(
         Error(_) -> line_close_open_subpath(subpath)
       }
     }
+    Custom(reconcile) -> custom_close_open_subpath(subpath, reconcile)
   }
 }
 
@@ -3166,6 +3204,44 @@ fn line_close_open_subpath(subpath: Subpath) -> Result(Subpath, Error) {
         closed: True,
       ))
     }
+  }
+}
+
+fn custom_close_open_subpath(
+  subpath: Subpath,
+  reconcile: fn(Segment, Segment) -> #(Segment, Segment),
+) -> Result(Subpath, Error) {
+  case subpath.segments {
+    [] -> Error(EmptySubpath)
+    [only] -> {
+      case segment_end(only) == segment_start(only) {
+        True -> strict_close_open_subpath(subpath)
+        False -> {
+          let #(last, first) = reconcile(only, only)
+          validate_custom_closed_segments([first, last])
+        }
+      }
+    }
+    [first, ..rest] -> {
+      let assert Ok(#(middle, last)) = split_last(rest)
+
+      case segment_end(last) == segment_start(first) {
+        True -> strict_close_open_subpath(subpath)
+        False -> {
+          let #(last, first) = reconcile(last, first)
+          validate_custom_closed_segments([first, ..list.append(middle, [last])])
+        }
+      }
+    }
+  }
+}
+
+fn validate_custom_closed_segments(
+  segments: List(Segment),
+) -> Result(Subpath, Error) {
+  case strict_open_subpath(segments) {
+    Error(error) -> Error(error)
+    Ok(subpath) -> strict_close_open_subpath(subpath)
   }
 }
 
