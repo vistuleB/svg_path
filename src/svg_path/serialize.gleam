@@ -5,20 +5,18 @@
 //// used for relative commands, smaller whitespace, and omitted repeated command
 //// letters.
 
-import gleam/float
-import gleam/int
 import gleam/list
-import gleam/option.{type Option, None, Some}
 import gleam/string
 import svg_path
+import svg_path/number_format
 
 /// Options for SVG path data serialization.
 pub type Options {
   Options(
-    /// Decimal places used when formatting numbers.
-    decimal_places: Option(Int),
-    /// Whether formatted numbers should keep trailing zeroes.
-    fixed_decimals: Bool,
+    /// Formatting for digits to the left of the decimal point.
+    left_decimals: LeftDecimalFormat,
+    /// Formatting for digits to the right of the decimal point.
+    right_decimals: RightDecimalFormat,
     /// Whether to emit relative commands instead of absolute commands.
     relative: Bool,
     /// Whether to remove optional spaces between command letters and arguments.
@@ -29,14 +27,41 @@ pub type Options {
   )
 }
 
+/// Formatting for digits to the left of the decimal point.
+pub type LeftDecimalFormat {
+  /// Do not pad numbers on the left.
+  Succinct
+
+  /// Pre-scan the serialized value and choose the smallest shared left width
+  /// that aligns its numbers.
+  AutoLeftPadding
+
+  /// Pad numbers to the given left width.
+  ///
+  /// The width includes a leading minus sign for negative numbers.
+  LeftPadding(Int)
+}
+
+/// Formatting for digits to the right of the decimal point.
+pub type RightDecimalFormat {
+  /// Use the system float formatter, stripped of purely trailing decimal zeroes.
+  System
+
+  /// Use at most this many decimal places, stripping trailing zeroes.
+  AtMost(Int)
+
+  /// Use exactly this many decimal places.
+  Fixed(Int)
+}
+
 /// Default serialization options.
 ///
 /// Defaults to readable absolute commands, up to 5 decimal places, repeated
 /// command letters, and normal whitespace.
 pub fn default_options() -> Options {
   Options(
-    decimal_places: Some(5),
-    fixed_decimals: False,
+    left_decimals: Succinct,
+    right_decimals: AtMost(5),
     relative: False,
     minimize_whitespace: False,
     repeat_commands: True,
@@ -48,8 +73,8 @@ pub fn default_options() -> Options {
 /// Trailing zeroes are stripped. Negative decimal places are clamped to zero.
 pub fn decimal_options(decimal_places: Int) -> Options {
   Options(
-    decimal_places: Some(decimal_places),
-    fixed_decimals: False,
+    left_decimals: Succinct,
+    right_decimals: AtMost(decimal_places),
     relative: False,
     minimize_whitespace: False,
     repeat_commands: True,
@@ -62,8 +87,8 @@ pub fn decimal_options(decimal_places: Int) -> Options {
 /// Negative decimal places are clamped to zero.
 pub fn fixed_decimal_options(decimal_places: Int) -> Options {
   Options(
-    decimal_places: Some(decimal_places),
-    fixed_decimals: True,
+    left_decimals: Succinct,
+    right_decimals: Fixed(decimal_places),
     relative: False,
     minimize_whitespace: False,
     repeat_commands: True,
@@ -73,8 +98,8 @@ pub fn fixed_decimal_options(decimal_places: Int) -> Options {
 /// Create options that serialize with relative commands.
 pub fn relative_options() -> Options {
   Options(
-    decimal_places: Some(5),
-    fixed_decimals: False,
+    left_decimals: Succinct,
+    right_decimals: AtMost(5),
     relative: True,
     minimize_whitespace: False,
     repeat_commands: True,
@@ -84,8 +109,8 @@ pub fn relative_options() -> Options {
 /// Create relative serialization options with decimal rounding.
 pub fn relative_decimal_options(decimal_places: Int) -> Options {
   Options(
-    decimal_places: Some(decimal_places),
-    fixed_decimals: False,
+    left_decimals: Succinct,
+    right_decimals: AtMost(decimal_places),
     relative: True,
     minimize_whitespace: False,
     repeat_commands: True,
@@ -95,8 +120,8 @@ pub fn relative_decimal_options(decimal_places: Int) -> Options {
 /// Create relative serialization options with fixed decimal formatting.
 pub fn relative_fixed_decimal_options(decimal_places: Int) -> Options {
   Options(
-    decimal_places: Some(decimal_places),
-    fixed_decimals: True,
+    left_decimals: Succinct,
+    right_decimals: Fixed(decimal_places),
     relative: True,
     minimize_whitespace: False,
     repeat_commands: True,
@@ -116,6 +141,30 @@ pub fn repeat_commands(options: Options, repeat_commands: Bool) -> Options {
   Options(..options, repeat_commands:)
 }
 
+/// Set left-side decimal formatting for serialization options.
+pub fn with_left_decimals(
+  options options: Options,
+  left_decimals left_decimals: LeftDecimalFormat,
+) -> Options {
+  Options(..options, left_decimals:)
+}
+
+/// Set right-side decimal formatting for serialization options.
+pub fn with_right_decimals(
+  options options: Options,
+  right_decimals right_decimals: RightDecimalFormat,
+) -> Options {
+  Options(..options, right_decimals:)
+}
+
+/// Set left-side number padding for serialization options.
+pub fn with_left_padding(
+  options options: Options,
+  left_padding left_padding: LeftDecimalFormat,
+) -> Options {
+  with_left_decimals(options, left_padding)
+}
+
 /// Serialize a path with default options.
 pub fn path(path: svg_path.Path) -> String {
   path_with_options(path, default_options())
@@ -126,14 +175,16 @@ pub fn path_with_options(
   path path: svg_path.Path,
   options options: Options,
 ) -> String {
+  let format = serialization_format(options, path_numbers(path, options))
+
   case options.relative {
-    True -> relative_path(svg_path.subpaths(path), options)
+    True -> relative_path(svg_path.subpaths(path), format)
     False -> {
       path
       |> svg_path.subpaths
-      |> list.map(with: subpath_with_options(_, options:))
+      |> list.map(with: serialize_absolute_subpath(_, format))
       |> list.filter(keeping: fn(serialized) { serialized != "" })
-      |> join_commands(options)
+      |> join_commands(format)
     }
   }
 }
@@ -148,31 +199,11 @@ pub fn subpath_with_options(
   subpath subpath: svg_path.Subpath,
   options options: Options,
 ) -> String {
-  case options.relative {
-    True -> subpath_from_current(subpath, origin(), options)
-    False -> {
-      case svg_path.segments(subpath) {
-        [] -> ""
-        [first, ..] -> {
-          let start = svg_path.segment_start(first)
-          let segments = serializable_segments(subpath)
-          let commands = [
-            command("M", point(start, options), options),
-          ]
-          let commands =
-            list.append(
-              commands,
-              list.map(segments, absolute_segment_without_move(_, options)),
-            )
-          let commands = case svg_path.is_closed(subpath) {
-            True -> list.append(commands, ["Z"])
-            False -> commands
-          }
+  let format = serialization_format(options, subpath_numbers(subpath, options))
 
-          join_commands(commands, options)
-        }
-      }
-    }
+  case options.relative {
+    True -> subpath_from_current(subpath, origin(), format)
+    False -> serialize_absolute_subpath(subpath, format)
   }
 }
 
@@ -186,52 +217,81 @@ pub fn segment_with_options(
   segment segment: svg_path.Segment,
   options options: Options,
 ) -> String {
+  let format =
+    serialization_format(options, segment_with_move_numbers(segment, options))
   let start = svg_path.segment_start(segment)
   case options.relative {
     True -> {
       join_commands(
         [
-          command("m", point(start, options), options),
-          relative_segment_without_move(segment, options),
+          command("m", point(start, format), format),
+          relative_segment_without_move(segment, format),
         ],
-        options,
+        format,
       )
     }
     False -> {
       join_commands(
         [
-          command("M", point(start, options), options),
-          absolute_segment_without_move(segment, options),
+          command("M", point(start, format), format),
+          absolute_segment_without_move(segment, format),
         ],
-        options,
+        format,
       )
     }
   }
 }
 
-fn relative_path(subpaths: List(svg_path.Subpath), options: Options) -> String {
-  relative_path_loop(subpaths, origin(), [], options)
+fn serialize_absolute_subpath(
+  subpath: svg_path.Subpath,
+  format: Format,
+) -> String {
+  case svg_path.segments(subpath) {
+    [] -> ""
+    [first, ..] -> {
+      let start = svg_path.segment_start(first)
+      let segments = serializable_segments(subpath)
+      let commands = [
+        command("M", point(start, format), format),
+      ]
+      let commands =
+        list.append(
+          commands,
+          list.map(segments, absolute_segment_without_move(_, format)),
+        )
+      let commands = case svg_path.is_closed(subpath) {
+        True -> list.append(commands, ["Z"])
+        False -> commands
+      }
+
+      join_commands(commands, format)
+    }
+  }
+}
+
+fn relative_path(subpaths: List(svg_path.Subpath), format: Format) -> String {
+  relative_path_loop(subpaths, origin(), [], format)
 }
 
 fn relative_path_loop(
   subpaths: List(svg_path.Subpath),
   current: svg_path.Point,
   serialized: List(String),
-  options: Options,
+  format: Format,
 ) -> String {
   case subpaths {
     [] -> {
       serialized
       |> list.reverse
       |> list.filter(keeping: fn(subpath) { subpath != "" })
-      |> join_commands(options)
+      |> join_commands(format)
     }
     [subpath, ..rest] -> {
       relative_path_loop(
         rest,
         current_after_subpath(subpath, current),
-        [subpath_from_current(subpath, current, options), ..serialized],
-        options,
+        [subpath_from_current(subpath, current, format), ..serialized],
+        format,
       )
     }
   }
@@ -240,7 +300,7 @@ fn relative_path_loop(
 fn subpath_from_current(
   subpath: svg_path.Subpath,
   current: svg_path.Point,
-  options: Options,
+  format: Format,
 ) -> String {
   case svg_path.segments(subpath) {
     [] -> ""
@@ -248,19 +308,19 @@ fn subpath_from_current(
       let start = svg_path.segment_start(first)
       let segments = serializable_segments(subpath)
       let commands = [
-        command("m", point(delta(start, current), options), options),
+        command("m", point(delta(start, current), format), format),
       ]
       let commands =
         list.append(
           commands,
-          list.map(segments, relative_segment_without_move(_, options)),
+          list.map(segments, relative_segment_without_move(_, format)),
         )
       let commands = case svg_path.is_closed(subpath) {
         True -> list.append(commands, ["z"])
         False -> commands
       }
 
-      join_commands(commands, options)
+      join_commands(commands, format)
     }
   }
 }
@@ -304,41 +364,37 @@ fn drop_last_if_closing_line(
 
 fn absolute_segment_without_move(
   segment: svg_path.Segment,
-  options: Options,
+  format: Format,
 ) -> String {
   case segment {
-    svg_path.Line(start:, end:) -> absolute_line(start, end, options)
+    svg_path.Line(start:, end:) -> absolute_line(start, end, format)
     svg_path.QuadraticBezier(control:, end:, ..) -> {
-      command(
-        "Q",
-        point(control, options) <> " " <> point(end, options),
-        options,
-      )
+      command("Q", point(control, format) <> " " <> point(end, format), format)
     }
     svg_path.CubicBezier(control1:, control2:, end:, ..) -> {
       command(
         "C",
-        point(control1, options)
+        point(control1, format)
           <> " "
-          <> point(control2, options)
+          <> point(control2, format)
           <> " "
-          <> point(end, options),
-        options,
+          <> point(end, format),
+        format,
       )
     }
     svg_path.Arc(radius:, x_axis_rotation:, large_arc:, sweep:, end:, ..) -> {
       command(
         "A",
-        point(radius, options)
+        point(radius, format)
           <> " "
-          <> number(x_axis_rotation, options)
+          <> number(x_axis_rotation, format)
           <> " "
           <> flag(large_arc)
           <> " "
           <> flag(sweep)
           <> " "
-          <> point(end, options),
-        options,
+          <> point(end, format),
+        format,
       )
     }
   }
@@ -346,47 +402,47 @@ fn absolute_segment_without_move(
 
 fn relative_segment_without_move(
   segment: svg_path.Segment,
-  options: Options,
+  format: Format,
 ) -> String {
   let start = svg_path.segment_start(segment)
 
   case segment {
     svg_path.Line(end:, ..) -> {
-      relative_line(start, end, options)
+      relative_line(start, end, format)
     }
     svg_path.QuadraticBezier(control:, end:, ..) -> {
       command(
         "q",
-        point(delta(control, start), options)
+        point(delta(control, start), format)
           <> " "
-          <> point(delta(end, start), options),
-        options,
+          <> point(delta(end, start), format),
+        format,
       )
     }
     svg_path.CubicBezier(control1:, control2:, end:, ..) -> {
       command(
         "c",
-        point(delta(control1, start), options)
+        point(delta(control1, start), format)
           <> " "
-          <> point(delta(control2, start), options)
+          <> point(delta(control2, start), format)
           <> " "
-          <> point(delta(end, start), options),
-        options,
+          <> point(delta(end, start), format),
+        format,
       )
     }
     svg_path.Arc(radius:, x_axis_rotation:, large_arc:, sweep:, end:, ..) -> {
       command(
         "a",
-        point(radius, options)
+        point(radius, format)
           <> " "
-          <> number(x_axis_rotation, options)
+          <> number(x_axis_rotation, format)
           <> " "
           <> flag(large_arc)
           <> " "
           <> flag(sweep)
           <> " "
-          <> point(delta(end, start), options),
-        options,
+          <> point(delta(end, start), format),
+        format,
       )
     }
   }
@@ -395,19 +451,19 @@ fn relative_segment_without_move(
 fn absolute_line(
   start: svg_path.Point,
   end: svg_path.Point,
-  options: Options,
+  format: Format,
 ) -> String {
-  let start_x = number(start.x, options)
-  let start_y = number(start.y, options)
-  let end_x = number(end.x, options)
-  let end_y = number(end.y, options)
+  let start_x = number(start.x, format)
+  let start_y = number(start.y, format)
+  let end_x = number(end.x, format)
+  let end_y = number(end.y, format)
 
   case start_y == end_y {
-    True -> command("H", end_x, options)
+    True -> command("H", end_x, format)
     False -> {
       case start_x == end_x {
-        True -> command("V", end_y, options)
-        False -> command("L", end_x <> " " <> end_y, options)
+        True -> command("V", end_y, format)
+        False -> command("L", end_x <> " " <> end_y, format)
       }
     }
   }
@@ -416,19 +472,19 @@ fn absolute_line(
 fn relative_line(
   start: svg_path.Point,
   end: svg_path.Point,
-  options: Options,
+  format: Format,
 ) -> String {
   let difference = delta(end, start)
-  let dx = number(difference.x, options)
-  let dy = number(difference.y, options)
-  let zero = number(0.0, options)
+  let dx = number(difference.x, format)
+  let dy = number(difference.y, format)
+  let zero = number(0.0, format)
 
   case dy == zero {
-    True -> command("h", dx, options)
+    True -> command("h", dx, format)
     False -> {
       case dx == zero {
-        True -> command("v", dy, options)
-        False -> command("l", dx <> " " <> dy, options)
+        True -> command("v", dy, format)
+        False -> command("l", dx <> " " <> dy, format)
       }
     }
   }
@@ -462,12 +518,12 @@ fn delta(point: svg_path.Point, from origin: svg_path.Point) -> svg_path.Point {
   svg_path.point(point.x -. origin.x, point.y -. origin.y)
 }
 
-fn point(point: svg_path.Point, options: Options) -> String {
-  number(point.x, options) <> " " <> number(point.y, options)
+fn point(point: svg_path.Point, format: Format) -> String {
+  number(point.x, format) <> " " <> number(point.y, format)
 }
 
-fn command(command: String, arguments: String, options: Options) -> String {
-  command <> command_argument_separator(options) <> arguments
+fn command(command: String, arguments: String, format: Format) -> String {
+  command <> command_argument_separator(format.options) <> arguments
 }
 
 fn command_argument_separator(options: Options) -> String {
@@ -477,13 +533,13 @@ fn command_argument_separator(options: Options) -> String {
   }
 }
 
-fn join_commands(commands: List(String), options: Options) -> String {
-  case options.repeat_commands {
-    True -> string.join(commands, command_separator(options))
+fn join_commands(commands: List(String), format: Format) -> String {
+  case format.options.repeat_commands {
+    True -> string.join(commands, command_separator(format.options))
     False -> {
       commands
-      |> compact_repeated_commands(previous: "", options:)
-      |> string.join(command_separator(options))
+      |> compact_repeated_commands(previous: "", format:)
+      |> string.join(command_separator(format.options))
     }
   }
 }
@@ -491,21 +547,18 @@ fn join_commands(commands: List(String), options: Options) -> String {
 fn compact_repeated_commands(
   commands: List(String),
   previous previous: String,
-  options options: Options,
+  format format: Format,
 ) -> List(String) {
   case commands {
     [] -> []
     [command, ..rest] -> {
       let current = command_name(command)
       let compacted = case current == previous && can_repeat_command(current) {
-        True -> compacted_command_arguments(command, options)
+        True -> compacted_command_arguments(command, format.options)
         False -> command
       }
 
-      [
-        compacted,
-        ..compact_repeated_commands(rest, previous: current, options:)
-      ]
+      [compacted, ..compact_repeated_commands(rest, previous: current, format:)]
     }
   }
 }
@@ -546,81 +599,237 @@ fn command_separator(options: Options) -> String {
   }
 }
 
-fn number(number: Float, options: Options) -> String {
-  case options.decimal_places {
-    None -> float.to_string(number)
-    Some(decimal_places) ->
-      decimal(number, decimal_places, options.fixed_decimals)
-  }
-}
-
-fn decimal(number: Float, decimal_places: Int, fixed_decimals: Bool) -> String {
-  let fixed = fixed_decimal(number, decimal_places)
-
-  case fixed_decimals {
-    True -> fixed
-    False -> strip_trailing_decimal_zeros(fixed)
-  }
-}
-
-fn fixed_decimal(number: Float, decimal_places: Int) -> String {
-  let decimal_places = int.max(decimal_places, 0)
-  let scale = power_of_ten(decimal_places)
-  let scaled = number *. scale |> float.round
-  let sign = case scaled < 0 {
-    True -> "-"
-    False -> ""
-  }
-  let absolute_scaled = int.absolute_value(scaled)
-
-  case decimal_places {
-    0 -> sign <> int.to_string(absolute_scaled)
-    _ -> {
-      let whole = absolute_scaled / power_of_ten_int(decimal_places)
-      let fractional = absolute_scaled % power_of_ten_int(decimal_places)
-      let fractional =
-        fractional
-        |> int.to_string
-        |> string.pad_start(to: decimal_places, with: "0")
-
-      sign <> int.to_string(whole) <> "." <> fractional
+fn path_numbers(path: svg_path.Path, options: Options) -> List(Float) {
+  case options.relative {
+    True ->
+      relative_path_numbers(svg_path.subpaths(path), origin(), [], options)
+    False -> {
+      path
+      |> svg_path.subpaths
+      |> list.fold([], fn(accumulated, subpath) {
+        list.append(accumulated, absolute_subpath_numbers(subpath, options))
+      })
     }
   }
 }
 
-fn strip_trailing_decimal_zeros(number: String) -> String {
-  case string.split_once(number, on: ".") {
-    Error(_) -> number
-    Ok(#(whole, fractional)) -> {
-      let fractional = strip_trailing_zeros(fractional)
+fn relative_path_numbers(
+  subpaths: List(svg_path.Subpath),
+  current: svg_path.Point,
+  accumulated: List(Float),
+  options: Options,
+) -> List(Float) {
+  case subpaths {
+    [] -> accumulated
+    [subpath, ..rest] -> {
+      relative_path_numbers(
+        rest,
+        current_after_subpath(subpath, current),
+        list.append(
+          accumulated,
+          relative_subpath_numbers(subpath, current, options),
+        ),
+        options,
+      )
+    }
+  }
+}
 
-      case fractional {
-        "" -> whole
-        _ -> whole <> "." <> fractional
+fn subpath_numbers(subpath: svg_path.Subpath, options: Options) -> List(Float) {
+  case options.relative {
+    True -> relative_subpath_numbers(subpath, origin(), options)
+    False -> absolute_subpath_numbers(subpath, options)
+  }
+}
+
+fn absolute_subpath_numbers(
+  subpath: svg_path.Subpath,
+  options: Options,
+) -> List(Float) {
+  case svg_path.segments(subpath) {
+    [] -> []
+    [first, ..] -> {
+      let start = svg_path.segment_start(first)
+
+      serializable_segments(subpath)
+      |> list.fold(point_numbers(start), fn(accumulated, segment) {
+        list.append(accumulated, absolute_segment_numbers(segment, options))
+      })
+    }
+  }
+}
+
+fn relative_subpath_numbers(
+  subpath: svg_path.Subpath,
+  current: svg_path.Point,
+  options: Options,
+) -> List(Float) {
+  case svg_path.segments(subpath) {
+    [] -> []
+    [first, ..] -> {
+      let start = svg_path.segment_start(first)
+
+      serializable_segments(subpath)
+      |> list.fold(
+        point_numbers(delta(start, current)),
+        fn(accumulated, segment) {
+          list.append(accumulated, relative_segment_numbers(segment, options))
+        },
+      )
+    }
+  }
+}
+
+fn segment_with_move_numbers(
+  segment: svg_path.Segment,
+  options: Options,
+) -> List(Float) {
+  let start = svg_path.segment_start(segment)
+
+  case options.relative {
+    True ->
+      list.append(
+        point_numbers(start),
+        relative_segment_numbers(segment, options),
+      )
+    False ->
+      list.append(
+        point_numbers(start),
+        absolute_segment_numbers(segment, options),
+      )
+  }
+}
+
+fn absolute_segment_numbers(
+  segment: svg_path.Segment,
+  options: Options,
+) -> List(Float) {
+  case segment {
+    svg_path.Line(start:, end:) -> absolute_line_numbers(start, end, options)
+    svg_path.QuadraticBezier(control:, end:, ..) ->
+      point_numbers(control) |> list.append(point_numbers(end))
+    svg_path.CubicBezier(control1:, control2:, end:, ..) ->
+      point_numbers(control1)
+      |> list.append(point_numbers(control2))
+      |> list.append(point_numbers(end))
+    svg_path.Arc(radius:, x_axis_rotation:, end:, ..) ->
+      point_numbers(radius)
+      |> list.append([x_axis_rotation])
+      |> list.append(point_numbers(end))
+  }
+}
+
+fn relative_segment_numbers(
+  segment: svg_path.Segment,
+  options: Options,
+) -> List(Float) {
+  let start = svg_path.segment_start(segment)
+
+  case segment {
+    svg_path.Line(end:, ..) -> relative_line_numbers(start, end, options)
+    svg_path.QuadraticBezier(control:, end:, ..) ->
+      point_numbers(delta(control, start))
+      |> list.append(point_numbers(delta(end, start)))
+    svg_path.CubicBezier(control1:, control2:, end:, ..) ->
+      point_numbers(delta(control1, start))
+      |> list.append(point_numbers(delta(control2, start)))
+      |> list.append(point_numbers(delta(end, start)))
+    svg_path.Arc(radius:, x_axis_rotation:, end:, ..) ->
+      point_numbers(radius)
+      |> list.append([x_axis_rotation])
+      |> list.append(point_numbers(delta(end, start)))
+  }
+}
+
+fn absolute_line_numbers(
+  start: svg_path.Point,
+  end: svg_path.Point,
+  options: Options,
+) -> List(Float) {
+  let start_x = raw_number(start.x, options)
+  let start_y = raw_number(start.y, options)
+  let end_x = raw_number(end.x, options)
+  let end_y = raw_number(end.y, options)
+
+  case start_y == end_y {
+    True -> [end.x]
+    False -> {
+      case start_x == end_x {
+        True -> [end.y]
+        False -> point_numbers(end)
       }
     }
   }
 }
 
-fn strip_trailing_zeros(string: String) -> String {
-  case string.ends_with(string, "0") {
-    True -> {
-      string
-      |> string.drop_end(up_to: 1)
-      |> strip_trailing_zeros
+fn relative_line_numbers(
+  start: svg_path.Point,
+  end: svg_path.Point,
+  options: Options,
+) -> List(Float) {
+  let difference = delta(end, start)
+  let dx = raw_number(difference.x, options)
+  let dy = raw_number(difference.y, options)
+  let zero = raw_number(0.0, options)
+
+  case dy == zero {
+    True -> [difference.x]
+    False -> {
+      case dx == zero {
+        True -> [difference.y]
+        False -> point_numbers(difference)
+      }
     }
-    False -> string
   }
 }
 
-fn power_of_ten(exponent: Int) -> Float {
-  power_of_ten_int(exponent) |> int.to_float
+fn point_numbers(point: svg_path.Point) -> List(Float) {
+  [point.x, point.y]
 }
 
-fn power_of_ten_int(exponent: Int) -> Int {
-  case exponent <= 0 {
-    True -> 1
-    False -> 10 * power_of_ten_int(exponent - 1)
+type Format {
+  Format(options: Options, number_format: number_format.NumberFormat)
+}
+
+fn serialization_format(options: Options, numbers: List(Float)) -> Format {
+  Format(
+    options:,
+    number_format: number_format.prepare(number_options(options), numbers),
+  )
+}
+
+fn number(number: Float, format: Format) -> String {
+  number_format.number(number, with: format.number_format)
+}
+
+fn raw_number(number: Float, options: Options) -> String {
+  number_format.raw_number(number, number_options(options))
+}
+
+fn number_options(options: Options) -> number_format.Options {
+  number_format.Options(
+    left_decimals: left_decimals(options.left_decimals),
+    right_decimals: right_decimals(options.right_decimals),
+  )
+}
+
+fn left_decimals(
+  left_decimals: LeftDecimalFormat,
+) -> number_format.LeftDecimalFormat {
+  case left_decimals {
+    Succinct -> number_format.Succinct
+    AutoLeftPadding -> number_format.AutoLeftPadding
+    LeftPadding(width) -> number_format.LeftPadding(width)
+  }
+}
+
+fn right_decimals(
+  right_decimals: RightDecimalFormat,
+) -> number_format.RightDecimalFormat {
+  case right_decimals {
+    System -> number_format.System
+    AtMost(decimal_places) -> number_format.AtMost(decimal_places)
+    Fixed(decimal_places) -> number_format.Fixed(decimal_places)
   }
 }
 

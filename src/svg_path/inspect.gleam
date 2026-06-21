@@ -3,29 +3,25 @@
 //// This module is for debugging and tests, not for producing valid SVG path
 //// data. Use `svg_path/serialize` when you need a `d` attribute string.
 
-import gleam/float
-import gleam/int
 import gleam/list
-import gleam/option.{type Option, None, Some}
 import gleam/string
 import svg_path
+import svg_path/number_format
 
 /// Options for structural inspection output.
 pub type Options {
   Options(
-    /// Decimal places used when formatting numbers.
-    decimal_places: Option(Int),
-    /// Whether formatted numbers should keep trailing zeroes.
-    fixed_decimals: Bool,
-    /// Whether numbers should be padded on the left for visual alignment.
-    left_padding: LeftPadding,
+    /// Formatting for digits to the left of the decimal point.
+    left_decimals: LeftDecimalFormat,
+    /// Formatting for digits to the right of the decimal point.
+    right_decimals: RightDecimalFormat,
   )
 }
 
-/// Left-side number padding for structural inspection output.
-pub type LeftPadding {
+/// Formatting for digits to the left of the decimal point.
+pub type LeftDecimalFormat {
   /// Do not pad numbers on the left.
-  NoLeftPadding
+  Succinct
 
   /// Pre-scan the inspected value and choose the smallest shared left width
   /// that aligns its numbers.
@@ -37,26 +33,30 @@ pub type LeftPadding {
   LeftPadding(Int)
 }
 
+/// Formatting for digits to the right of the decimal point.
+pub type RightDecimalFormat {
+  /// Use the system float formatter, stripped of purely trailing decimal zeroes.
+  System
+
+  /// Use at most this many decimal places, stripping trailing zeroes.
+  AtMost(Int)
+
+  /// Use exactly this many decimal places.
+  Fixed(Int)
+}
+
 /// Default inspection options.
 ///
 /// Defaults to raw float formatting with trailing decimal zeroes stripped.
 pub fn default_options() -> Options {
-  Options(
-    decimal_places: None,
-    fixed_decimals: False,
-    left_padding: NoLeftPadding,
-  )
+  Options(left_decimals: Succinct, right_decimals: System)
 }
 
 /// Create options that round numbers to the given number of decimal places.
 ///
 /// Trailing zeroes are stripped. Negative decimal places are clamped to zero.
 pub fn decimal_options(decimal_places: Int) -> Options {
-  Options(
-    decimal_places: Some(decimal_places),
-    fixed_decimals: False,
-    left_padding: NoLeftPadding,
-  )
+  Options(left_decimals: Succinct, right_decimals: AtMost(decimal_places))
 }
 
 /// Create options that round numbers and keep exactly the given number of
@@ -64,19 +64,31 @@ pub fn decimal_options(decimal_places: Int) -> Options {
 ///
 /// Negative decimal places are clamped to zero.
 pub fn fixed_decimal_options(decimal_places: Int) -> Options {
-  Options(
-    decimal_places: Some(decimal_places),
-    fixed_decimals: True,
-    left_padding: NoLeftPadding,
-  )
+  Options(left_decimals: Succinct, right_decimals: Fixed(decimal_places))
+}
+
+/// Set left-side decimal formatting for inspection options.
+pub fn with_left_decimals(
+  options options: Options,
+  left_decimals left_decimals: LeftDecimalFormat,
+) -> Options {
+  Options(..options, left_decimals:)
+}
+
+/// Set right-side decimal formatting for inspection options.
+pub fn with_right_decimals(
+  options options: Options,
+  right_decimals right_decimals: RightDecimalFormat,
+) -> Options {
+  Options(..options, right_decimals:)
 }
 
 /// Set left-side number padding for inspection options.
 pub fn with_left_padding(
   options options: Options,
-  left_padding left_padding: LeftPadding,
+  left_padding left_padding: LeftDecimalFormat,
 ) -> Options {
-  Options(..options, left_padding:)
+  with_left_decimals(options, left_padding)
 }
 
 /// Inspect a path as a multiline structural string.
@@ -93,7 +105,7 @@ pub fn path_with_options(
   do_path(path, format)
 }
 
-fn do_path(path: svg_path.Path, format: NumberFormat) -> String {
+fn do_path(path: svg_path.Path, format: number_format.NumberFormat) -> String {
   case svg_path.subpaths(path) {
     [] -> "Path([])"
     subpaths -> {
@@ -125,7 +137,10 @@ pub fn path_code_with_options(
   do_path_code(path, format)
 }
 
-fn do_path_code(path: svg_path.Path, format: NumberFormat) -> String {
+fn do_path_code(
+  path: svg_path.Path,
+  format: number_format.NumberFormat,
+) -> String {
   case svg_path.subpaths(path) {
     [] -> "svg_path.empty_path()"
     subpaths -> {
@@ -154,7 +169,10 @@ pub fn subpath_with_options(
   do_subpath(subpath, format)
 }
 
-fn do_subpath(subpath: svg_path.Subpath, format: NumberFormat) -> String {
+fn do_subpath(
+  subpath: svg_path.Subpath,
+  format: number_format.NumberFormat,
+) -> String {
   let state = case svg_path.is_closed(subpath) {
     True -> "closed"
     False -> "open"
@@ -193,7 +211,10 @@ pub fn subpath_code_with_options(
   do_subpath_code(subpath, format)
 }
 
-fn do_subpath_code(subpath: svg_path.Subpath, format: NumberFormat) -> String {
+fn do_subpath_code(
+  subpath: svg_path.Subpath,
+  format: number_format.NumberFormat,
+) -> String {
   case svg_path.segments(subpath) {
     [] -> "svg_path.empty_subpath()"
     segments -> {
@@ -230,7 +251,10 @@ pub fn segment_with_options(
   do_segment(segment, format)
 }
 
-fn do_segment(segment: svg_path.Segment, format: NumberFormat) -> String {
+fn do_segment(
+  segment: svg_path.Segment,
+  format: number_format.NumberFormat,
+) -> String {
   case segment {
     svg_path.Line(start:, end:) -> {
       "Line(start="
@@ -297,7 +321,10 @@ pub fn segment_code_with_options(
   do_segment_code(segment, format)
 }
 
-fn do_segment_code(segment: svg_path.Segment, format: NumberFormat) -> String {
+fn do_segment_code(
+  segment: svg_path.Segment,
+  format: number_format.NumberFormat,
+) -> String {
   case segment {
     svg_path.Line(start:, end:) -> {
       "svg_path.line(start: "
@@ -361,7 +388,10 @@ pub fn point_with_options(
   do_point(point, format)
 }
 
-fn do_point(point: svg_path.Point, format: NumberFormat) -> String {
+fn do_point(
+  point: svg_path.Point,
+  format: number_format.NumberFormat,
+) -> String {
   number(point.x, format) <> "," <> number(point.y, format)
 }
 
@@ -382,7 +412,10 @@ pub fn point_code_with_options(
   do_point_code(point, format)
 }
 
-fn do_point_code(point: svg_path.Point, format: NumberFormat) -> String {
+fn do_point_code(
+  point: svg_path.Point,
+  format: number_format.NumberFormat,
+) -> String {
   "svg_path.point("
   <> code_number(point.x, format)
   <> ", "
@@ -390,24 +423,38 @@ fn do_point_code(point: svg_path.Point, format: NumberFormat) -> String {
   <> ")"
 }
 
-type NumberFormat {
-  NumberFormat(options: Options, left_padding_width: Option(Int))
+fn number_format(
+  options: Options,
+  numbers: List(Float),
+) -> number_format.NumberFormat {
+  number_format.prepare(number_options(options), numbers)
 }
 
-fn number_format(options: Options, numbers: List(Float)) -> NumberFormat {
-  let left_padding_width = case options.left_padding {
-    NoLeftPadding -> None
-    LeftPadding(width) -> Some(int.max(width, 0))
-    AutoLeftPadding -> Some(auto_left_padding_width(numbers, options))
+fn number_options(options: Options) -> number_format.Options {
+  number_format.Options(
+    left_decimals: left_decimals(options.left_decimals),
+    right_decimals: right_decimals(options.right_decimals),
+  )
+}
+
+fn left_decimals(
+  left_decimals: LeftDecimalFormat,
+) -> number_format.LeftDecimalFormat {
+  case left_decimals {
+    Succinct -> number_format.Succinct
+    AutoLeftPadding -> number_format.AutoLeftPadding
+    LeftPadding(width) -> number_format.LeftPadding(width)
   }
-
-  NumberFormat(options:, left_padding_width:)
 }
 
-fn auto_left_padding_width(numbers: List(Float), options: Options) -> Int {
-  numbers
-  |> list.map(fn(number) { number |> raw_number(options) |> left_width })
-  |> list.fold(0, int.max)
+fn right_decimals(
+  right_decimals: RightDecimalFormat,
+) -> number_format.RightDecimalFormat {
+  case right_decimals {
+    System -> number_format.System
+    AtMost(decimal_places) -> number_format.AtMost(decimal_places)
+    Fixed(decimal_places) -> number_format.Fixed(decimal_places)
+  }
 }
 
 fn path_numbers(path: svg_path.Path) -> List(Float) {
@@ -465,135 +512,10 @@ fn bool(value: Bool) -> String {
   }
 }
 
-fn number(number: Float, format: NumberFormat) -> String {
-  number
-  |> raw_number(format.options)
-  |> left_pad(format)
+fn number(number: Float, format: number_format.NumberFormat) -> String {
+  number_format.number(number, with: format)
 }
 
-fn raw_number(number: Float, options: Options) -> String {
-  case options.decimal_places {
-    None -> number |> float.to_string |> strip_trailing_decimal_zeros
-    Some(decimal_places) ->
-      decimal(number, decimal_places, options.fixed_decimals)
-  }
-}
-
-fn code_number(value: Float, format: NumberFormat) -> String {
-  let number = raw_number(value, format.options)
-  let number = case
-    string.contains(number, ".")
-    || string.contains(number, "e")
-    || string.contains(number, "E")
-  {
-    True -> number
-    False -> number <> ".0"
-  }
-
-  left_pad(number, format)
-}
-
-fn left_pad(number: String, format: NumberFormat) -> String {
-  case format.left_padding_width {
-    None -> number
-    Some(width) -> pad_left_side(number, width)
-  }
-}
-
-fn pad_left_side(number: String, width: Int) -> String {
-  let #(whole, suffix) = case string.split_once(number, on: ".") {
-    Ok(#(whole, fractional)) -> #(whole, "." <> fractional)
-    Error(_) -> #(number, "")
-  }
-
-  let whole = case string.starts_with(whole, "-") {
-    True -> {
-      "-"
-      <> {
-        whole
-        |> string.drop_start(up_to: 1)
-        |> string.pad_start(to: int.max(width - 1, 0), with: "0")
-      }
-    }
-    False -> string.pad_start(whole, to: width, with: "0")
-  }
-
-  whole <> suffix
-}
-
-fn left_width(number: String) -> Int {
-  case string.split_once(number, on: ".") {
-    Ok(#(whole, _)) -> string.length(whole)
-    Error(_) -> string.length(number)
-  }
-}
-
-fn decimal(number: Float, decimal_places: Int, fixed_decimals: Bool) -> String {
-  let fixed = fixed_decimal(number, decimal_places)
-
-  case fixed_decimals {
-    True -> fixed
-    False -> strip_trailing_decimal_zeros(fixed)
-  }
-}
-
-fn fixed_decimal(number: Float, decimal_places: Int) -> String {
-  let decimal_places = int.max(decimal_places, 0)
-  let scale = power_of_ten(decimal_places)
-  let scaled = number *. scale |> float.round
-  let sign = case scaled < 0 {
-    True -> "-"
-    False -> ""
-  }
-  let absolute_scaled = int.absolute_value(scaled)
-
-  case decimal_places {
-    0 -> sign <> int.to_string(absolute_scaled)
-    _ -> {
-      let whole = absolute_scaled / power_of_ten_int(decimal_places)
-      let fractional = absolute_scaled % power_of_ten_int(decimal_places)
-      let fractional =
-        fractional
-        |> int.to_string
-        |> string.pad_start(to: decimal_places, with: "0")
-
-      sign <> int.to_string(whole) <> "." <> fractional
-    }
-  }
-}
-
-fn strip_trailing_decimal_zeros(number: String) -> String {
-  case string.split_once(number, on: ".") {
-    Error(_) -> number
-    Ok(#(whole, fractional)) -> {
-      let fractional = strip_trailing_zeros(fractional)
-
-      case fractional {
-        "" -> whole
-        _ -> whole <> "." <> fractional
-      }
-    }
-  }
-}
-
-fn strip_trailing_zeros(string: String) -> String {
-  case string.ends_with(string, "0") {
-    True -> {
-      string
-      |> string.drop_end(up_to: 1)
-      |> strip_trailing_zeros
-    }
-    False -> string
-  }
-}
-
-fn power_of_ten(exponent: Int) -> Float {
-  int.to_float(power_of_ten_int(exponent))
-}
-
-fn power_of_ten_int(exponent: Int) -> Int {
-  case exponent {
-    0 -> 1
-    _ -> 10 * power_of_ten_int(exponent - 1)
-  }
+fn code_number(value: Float, format: number_format.NumberFormat) -> String {
+  number_format.code_number(value, with: format)
 }

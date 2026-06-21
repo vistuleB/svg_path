@@ -188,6 +188,36 @@ pub fn fixed_decimal_options_can_use_zero_places_test() {
     == "M 0 2 L 10 -21"
 }
 
+pub fn left_padding_pads_serialized_numbers_test() {
+  let a = svg_path.point(0.0, -2.0)
+  let b = svg_path.point(12.2, 10.2)
+
+  assert serialize.segment_with_options(
+      svg_path.line(start: a, end: b),
+      options: serialize.fixed_decimal_options(1)
+        |> serialize.with_left_padding(serialize.LeftPadding(3)),
+    )
+    == "M 000.0 -02.0 L 012.2 010.2"
+}
+
+pub fn auto_left_padding_aligns_serialized_path_numbers_test() {
+  let a = svg_path.point(0.0, -5.0)
+  let b = svg_path.point(120.0, 10.0)
+  let c = svg_path.point(2.0, -30.0)
+  let assert Ok(subpath) =
+    svg_path.subpath([
+      svg_path.line(start: a, end: b),
+      svg_path.line(start: b, end: c),
+    ])
+
+  assert serialize.subpath_with_options(
+      subpath,
+      options: serialize.fixed_decimal_options(1)
+        |> serialize.with_left_padding(serialize.AutoLeftPadding),
+    )
+    == "M 000.0 -05.0 L 120.0 010.0 L 002.0 -30.0"
+}
+
 pub fn minimize_whitespace_removes_command_spacing_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)

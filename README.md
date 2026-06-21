@@ -482,7 +482,9 @@ pub fn tidy_path_data(input: String) -> String {
 ```
 
 Serialization options can use relative commands, remove optional whitespace,
-round numbers, keep fixed decimal places, and omit repeated command letters.
+round numbers, keep fixed decimal places, omit repeated command letters, and
+left-pad numbers for visual alignment. The lower-level decimal controls are
+split into `LeftDecimalFormat` and `RightDecimalFormat`.
 
 ```gleam
 import svg_path/parse
@@ -494,6 +496,7 @@ pub fn compact_path_data(input: String) -> String {
     serialize.relative_decimal_options(2)
     |> serialize.minimize_whitespace
     |> serialize.repeat_commands(False)
+    |> serialize.with_left_padding(serialize.AutoLeftPadding)
 
   serialize.path_with_options(path, options:)
 }
@@ -519,6 +522,40 @@ instead of:
 
 ```text
 M 0 0 L 10 10 L 20 20 L 30 30
+```
+
+### Left Padding
+
+`RightDecimalFormat` controls the fractional side of serialized numbers:
+
+- `System` uses the system float formatter.
+- `AtMost(Int)` rounds to at most that many decimal places and strips trailing
+  zeroes.
+- `Fixed(Int)` rounds to exactly that many decimal places.
+
+`LeftDecimalFormat` controls the whole-number side:
+
+- `Succinct` uses no left padding.
+- `LeftPadding(Int)` pads the whole-number side to that width.
+- `AutoLeftPadding` pre-scans the serialized value and chooses a shared width.
+
+Use `with_left_padding` to align serialized numbers visually. `AutoLeftPadding`
+pre-scans the serialized value and chooses a shared left-side width.
+`LeftPadding(Int)` lets you choose the width yourself. Use `Succinct` to disable
+left padding.
+
+```gleam
+serialize.fixed_decimal_options(1)
+|> serialize.with_left_padding(serialize.AutoLeftPadding)
+```
+
+For more explicit control, use `with_left_decimals` and
+`with_right_decimals`:
+
+```gleam
+serialize.default_options()
+|> serialize.with_left_decimals(serialize.AutoLeftPadding)
+|> serialize.with_right_decimals(serialize.Fixed(2))
 ```
 
 ### Closepath and Final Lines
@@ -757,7 +794,9 @@ svg_path.path([
 ```
 
 Inspection options support decimal rounding, fixed decimal places, and
-left-padding for visual alignment.
+left-padding for visual alignment. As with serialization, lower-level decimal
+controls are split into `LeftDecimalFormat` and `RightDecimalFormat`, with the
+same constructors.
 
 ```gleam
 import svg_path
@@ -774,7 +813,7 @@ pub fn inspect_aligned(path: svg_path.Path) -> String {
 
 `AutoLeftPadding` pre-scans the value being inspected and chooses a shared
 left-side width for the numbers in that output. `LeftPadding(Int)` lets you
-choose the width yourself. `NoLeftPadding` disables it.
+choose the width yourself. Use `Succinct` to disable left padding.
 
 ## Converting Matrices From `matrix_gleam`
 
