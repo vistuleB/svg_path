@@ -1163,6 +1163,42 @@ pub fn clean_subpath_preserves_closed_state_test() {
     ]
 }
 
+pub fn clean_path_removes_empty_subpaths_and_cleans_nonempty_subpaths_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(20.0, 0.0)
+  let d = svg_path.point(30.0, 0.0)
+  let first = svg_path.line(start: a, end: b)
+  let zero = svg_path.line(start: b, end: b)
+  let second = svg_path.line(start: b, end: c)
+  let third = svg_path.line(start: c, end: d)
+  let first_subpath = svg_path.assert_subpath([first, zero, second])
+  let second_subpath = svg_path.assert_subpath([third])
+  let path =
+    svg_path.path([
+      svg_path.empty_subpath(),
+      first_subpath,
+      svg_path.empty_subpath(),
+      second_subpath,
+    ])
+
+  let cleaned = svg_path.clean_path(path)
+  let assert [cleaned_first, cleaned_second] = svg_path.subpaths(cleaned)
+
+  assert svg_path.segments(cleaned_first) == [first, second]
+  assert svg_path.segments(cleaned_second) == [third]
+}
+
+pub fn clean_path_with_only_empty_subpaths_returns_empty_path_test() {
+  let path =
+    svg_path.path([
+      svg_path.empty_subpath(),
+      svg_path.empty_subpath(),
+    ])
+
+  assert svg_path.clean_path(path) == svg_path.empty_path()
+}
+
 pub fn splice_replaces_segment_range_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)

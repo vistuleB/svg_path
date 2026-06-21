@@ -288,6 +288,17 @@ pub fn clean_subpath(subpath: Subpath) -> Subpath {
   }
 }
 
+/// Remove empty subpaths and clean each remaining subpath.
+///
+/// This drops subpaths with no segments and applies `clean_subpath` to the
+/// rest.
+pub fn clean_path(path: Path) -> Path {
+  path.subpaths
+  |> nonempty_subpaths
+  |> list.map(clean_subpath)
+  |> Path
+}
+
 /// Replace a range of segments in a subpath.
 ///
 /// `start` is a zero-based segment index and `delete` is the number of

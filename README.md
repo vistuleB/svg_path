@@ -693,13 +693,18 @@ Serialization is not a general cleanup pass. It only uses `Z` to avoid a
 redundant non-zero-length final closing line.
 
 If you want to remove zero-length straight lines from a subpath, use
-`clean_subpath`.
+`clean_subpath`. If you want to clean a whole path, use `clean_path`; it removes
+empty subpaths and runs `clean_subpath` on each remaining subpath.
 
 ```gleam
 import svg_path
 
 pub fn clean(subpath: svg_path.Subpath) -> svg_path.Subpath {
   svg_path.clean_subpath(subpath)
+}
+
+pub fn clean_all(path: svg_path.Path) -> svg_path.Path {
+  svg_path.clean_path(path)
 }
 ```
 
