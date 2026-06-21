@@ -3,11 +3,8 @@
 [![Package Version](https://img.shields.io/hexpm/v/svg_path)](https://hex.pm/packages/svg_path)
 [![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/svg_path/)
 
-`svg_path` is a utility for parsing, serializing, inspecting, and
-performing simple geometric manipulations on SVG paths and transforms.
-
-The package tries to provide a flexible API for the construction of valid SVG
-paths from imperfectly matching segments.
+`svg_path` is a set of utilities for working with SVG paths and
+transforms. 
 
 ```sh
 gleam add svg_path@0
