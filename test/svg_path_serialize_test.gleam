@@ -329,6 +329,133 @@ pub fn repeat_commands_false_omits_repeated_arc_commands_test() {
     == "M 0 0 A 5 5 0 0 1 10 0 5 5 0 0 1 20 0"
 }
 
+pub fn at_subpaths_puts_each_subpath_on_its_own_line_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 10.0)
+  let c = svg_path.point(20.0, 20.0)
+  let d = svg_path.point(100.0, 100.0)
+  let e = svg_path.point(110.0, 110.0)
+  let f = svg_path.point(120.0, 120.0)
+  let assert Ok(first) =
+    svg_path.subpath([
+      svg_path.line(start: a, end: b),
+      svg_path.line(start: b, end: c),
+    ])
+    |> result_try_set_closed_with_bridge
+  let assert Ok(second) =
+    svg_path.subpath([
+      svg_path.line(start: d, end: e),
+      svg_path.line(start: e, end: f),
+    ])
+    |> result_try_set_closed_with_bridge
+
+  assert serialize.path_with_options(
+      svg_path.path([first, second]),
+      options: serialize.default_options()
+        |> serialize.with_newlines(serialize.AtSubpaths),
+    )
+    == "M 0 0 L 10 10 L 20 20 Z\nM 100 100 L 110 110 L 120 120 Z"
+}
+
+pub fn at_segments_with_repeat_commands_true_starts_lines_with_commands_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 10.0)
+  let c = svg_path.point(20.0, 20.0)
+  let assert Ok(subpath) =
+    svg_path.subpath([
+      svg_path.line(start: a, end: b),
+      svg_path.line(start: b, end: c),
+    ])
+    |> result_try_set_closed_with_bridge
+
+  assert serialize.subpath_with_options(
+      subpath,
+      options: serialize.default_options()
+        |> serialize.with_newlines(serialize.AtSegments),
+    )
+    == "M 0 0\nL 10 10\nL 20 20\nZ"
+}
+
+pub fn at_segments_with_repeat_commands_false_trails_emitted_commands_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 10.0)
+  let c = svg_path.point(20.0, 20.0)
+  let assert Ok(subpath) =
+    svg_path.subpath([
+      svg_path.line(start: a, end: b),
+      svg_path.line(start: b, end: c),
+    ])
+    |> result_try_set_closed_with_bridge
+
+  assert serialize.subpath_with_options(
+      subpath,
+      options: serialize.default_options()
+        |> serialize.repeat_commands(False)
+        |> serialize.with_newlines(serialize.AtSegments),
+    )
+    == "M\n0 0 L\n10 10\n20 20 Z"
+}
+
+pub fn at_segments_with_repeat_commands_false_starts_moves_on_new_lines_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 10.0)
+  let c = svg_path.point(100.0, 100.0)
+  let d = svg_path.point(110.0, 110.0)
+  let assert Ok(first) = svg_path.subpath([svg_path.line(start: a, end: b)])
+  let assert Ok(second) = svg_path.subpath([svg_path.line(start: c, end: d)])
+
+  assert serialize.path_with_options(
+      svg_path.path([first, second]),
+      options: serialize.default_options()
+        |> serialize.repeat_commands(False)
+        |> serialize.with_newlines(serialize.AtSegments),
+    )
+    == "M\n0 0 L\n10 10\nM\n100 100 L\n110 110"
+}
+
+pub fn at_segments_with_repeat_commands_true_starts_curve_lines_with_commands_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(20.0, 10.0)
+  let d = svg_path.point(30.0, 0.0)
+  let e = svg_path.point(40.0, 10.0)
+  let assert Ok(subpath) =
+    svg_path.subpath([
+      svg_path.cubic_bezier(start: a, control1: b, control2: c, end: d),
+      svg_path.cubic_bezier(start: d, control1: c, control2: b, end: e),
+    ])
+    |> result_try_set_closed_with_bridge
+
+  assert serialize.subpath_with_options(
+      subpath,
+      options: serialize.default_options()
+        |> serialize.with_newlines(serialize.AtSegments),
+    )
+    == "M 0 0\nC 10 0 20 10 30 0\nC 20 10 10 0 40 10\nZ"
+}
+
+pub fn at_segments_with_repeat_commands_false_trails_curve_commands_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(20.0, 10.0)
+  let d = svg_path.point(30.0, 0.0)
+  let e = svg_path.point(40.0, 10.0)
+  let assert Ok(subpath) =
+    svg_path.subpath([
+      svg_path.cubic_bezier(start: a, control1: b, control2: c, end: d),
+      svg_path.cubic_bezier(start: d, control1: c, control2: b, end: e),
+    ])
+    |> result_try_set_closed_with_bridge
+
+  assert serialize.subpath_with_options(
+      subpath,
+      options: serialize.default_options()
+        |> serialize.repeat_commands(False)
+        |> serialize.with_newlines(serialize.AtSegments),
+    )
+    == "M\n0 0 C\n10 0 20 10 30 0\n20 10 10 0 40 10 Z"
+}
+
 pub fn relative_options_use_relative_line_commands_test() {
   let a = svg_path.point(10.0, 20.0)
   let b = svg_path.point(13.0, 18.0)

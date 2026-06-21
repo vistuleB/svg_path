@@ -24,7 +24,21 @@ pub type Options {
     /// Whether to repeat command letters when SVG syntax allows them to be
     /// omitted.
     repeat_commands: Bool,
+    /// Where to insert newlines in the serialized path data.
+    newlines: Newlines,
   )
+}
+
+/// Newline placement for serialized path data.
+pub type Newlines {
+  /// Keep serialized path data on one line.
+  OneLine
+
+  /// Put each subpath on its own line.
+  AtSubpaths
+
+  /// Put each segment on its own line.
+  AtSegments
 }
 
 /// Formatting for digits to the left of the decimal point.
@@ -65,6 +79,7 @@ pub fn default_options() -> Options {
     relative: False,
     minimize_whitespace: False,
     repeat_commands: True,
+    newlines: OneLine,
   )
 }
 
@@ -78,6 +93,7 @@ pub fn decimal_options(decimal_places: Int) -> Options {
     relative: False,
     minimize_whitespace: False,
     repeat_commands: True,
+    newlines: OneLine,
   )
 }
 
@@ -92,6 +108,7 @@ pub fn fixed_decimal_options(decimal_places: Int) -> Options {
     relative: False,
     minimize_whitespace: False,
     repeat_commands: True,
+    newlines: OneLine,
   )
 }
 
@@ -103,6 +120,7 @@ pub fn relative_options() -> Options {
     relative: True,
     minimize_whitespace: False,
     repeat_commands: True,
+    newlines: OneLine,
   )
 }
 
@@ -114,6 +132,7 @@ pub fn relative_decimal_options(decimal_places: Int) -> Options {
     relative: True,
     minimize_whitespace: False,
     repeat_commands: True,
+    newlines: OneLine,
   )
 }
 
@@ -125,6 +144,7 @@ pub fn relative_fixed_decimal_options(decimal_places: Int) -> Options {
     relative: True,
     minimize_whitespace: False,
     repeat_commands: True,
+    newlines: OneLine,
   )
 }
 
@@ -139,6 +159,14 @@ pub fn minimize_whitespace(options: Options) -> Options {
 /// repeats. Pass `False` for smaller, less verbose output.
 pub fn repeat_commands(options: Options, repeat_commands: Bool) -> Options {
   Options(..options, repeat_commands:)
+}
+
+/// Configure where newlines should be inserted in serialized path data.
+pub fn with_newlines(
+  options options: Options,
+  newlines newlines: Newlines,
+) -> Options {
+  Options(..options, newlines:)
 }
 
 /// Set left-side decimal formatting for serialization options.
@@ -534,14 +562,133 @@ fn command_argument_separator(options: Options) -> String {
 }
 
 fn join_commands(commands: List(String), format: Format) -> String {
+  case format.options.newlines {
+    OneLine -> join_one_line(commands, format)
+    AtSubpaths -> join_subpath_lines(commands, format)
+    AtSegments -> join_segment_lines(commands, format)
+  }
+}
+
+fn join_one_line(commands: List(String), format: Format) -> String {
   case format.options.repeat_commands {
     True -> string.join(commands, command_separator(format.options))
-    False -> {
+    False ->
       commands
       |> compact_repeated_commands(previous: "", format:)
       |> string.join(command_separator(format.options))
+  }
+}
+
+fn join_subpath_lines(commands: List(String), format: Format) -> String {
+  let commands = case format.options.repeat_commands {
+    True -> commands
+    False -> compact_repeated_commands(commands, previous: "", format:)
+  }
+
+  join_with_subpath_separators(commands, previous: "", format:)
+}
+
+fn join_with_subpath_separators(
+  commands: List(String),
+  previous previous: String,
+  format format: Format,
+) -> String {
+  case commands {
+    [] -> ""
+    [command] -> previous <> command
+    [command, next, ..rest] -> {
+      let separator = case is_move_command(command_name(next)) {
+        True -> "\n"
+        False -> command_separator(format.options)
+      }
+
+      join_with_subpath_separators(
+        [next, ..rest],
+        previous: previous <> command <> separator,
+        format:,
+      )
     }
   }
+}
+
+fn join_segment_lines(commands: List(String), format: Format) -> String {
+  case format.options.repeat_commands {
+    True -> string.join(commands, "\n")
+    False ->
+      commands
+      |> compact_repeated_commands(previous: "", format:)
+      |> join_segment_lines_with_command_newlines(
+        lines: [],
+        after_command: False,
+      )
+  }
+}
+
+fn join_segment_lines_with_command_newlines(
+  commands: List(String),
+  lines lines: List(String),
+  after_command after_command: Bool,
+) -> String {
+  case commands {
+    [] -> lines |> list.reverse |> string.join("\n")
+    [command, ..rest] -> {
+      let name = command_name(command)
+
+      case is_command_name(name) {
+        False -> {
+          let line = string.trim_start(command)
+          join_segment_lines_with_command_newlines(
+            rest,
+            lines: [line, ..lines],
+            after_command: False,
+          )
+        }
+        True -> {
+          let arguments = command_arguments(command)
+          let lines = case lines == [] || after_command {
+            True -> [name, ..lines]
+            False -> {
+              case is_move_command(name) {
+                True -> [name, ..lines]
+                False -> append_to_current_line(lines, name)
+              }
+            }
+          }
+          let lines = case arguments == "" {
+            True -> lines
+            False -> [arguments, ..lines]
+          }
+
+          join_segment_lines_with_command_newlines(
+            rest,
+            lines:,
+            after_command: arguments == "",
+          )
+        }
+      }
+    }
+  }
+}
+
+fn append_to_current_line(lines: List(String), suffix: String) -> List(String) {
+  case lines {
+    [] -> [suffix]
+    [line, ..rest] -> [line <> " " <> suffix, ..rest]
+  }
+}
+
+fn is_move_command(command: String) -> Bool {
+  command == "M" || command == "m"
+}
+
+fn is_command_name(command: String) -> Bool {
+  list.contains(
+    [
+      "M", "m", "L", "l", "H", "h", "V", "v", "Q", "q", "C", "c", "A", "a", "Z",
+      "z",
+    ],
+    command,
+  )
 }
 
 fn compact_repeated_commands(

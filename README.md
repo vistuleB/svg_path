@@ -467,6 +467,7 @@ By default it uses:
 - stripped trailing decimal zeroes
 - readable whitespace
 - repeated command letters
+- one-line path data
 - `H` and `V` for horizontal and vertical lines when possible
 - `Z` for closed subpaths
 
@@ -522,6 +523,64 @@ instead of:
 
 ```text
 M 0 0 L 10 10 L 20 20 L 30 30
+```
+
+### Newlines
+
+Use `with_newlines` to choose where the serializer inserts newlines:
+
+```gleam
+serialize.default_options()
+|> serialize.with_newlines(serialize.AtSubpaths)
+```
+
+`OneLine` keeps the path data on one line. `AtSubpaths` puts each subpath on
+its own line:
+
+```text
+M 0 0 L 10 10 L 20 20 Z
+M 100 100 L 110 110 L 120 120 Z
+```
+
+`AtSegments` puts each segment on its own line. With repeated command letters
+enabled, each line starts with its command:
+
+```text
+M 0 0
+L 10 10
+L 20 20
+Z
+```
+
+The one unusual combination is `AtSegments` with `repeat_commands(False)`.
+There, each emitted command letter is followed by a newline, repeated commands
+are omitted, and `M`/`m` always starts a new line. This enables vertical
+alignment of coordinates when combined with fixed-width decimal formatting:
+
+```gleam
+serialize.fixed_decimal_options(2)
+|> serialize.with_left_padding(serialize.AutoLeftPadding)
+|> serialize.repeat_commands(False)
+|> serialize.with_newlines(serialize.AtSegments)
+```
+
+```text
+M
+-003.00 0001.00 C
+0004.50 0012.25 0050.00 -006.75 0120.00 0018.00
+-040.00 0033.50 0009.25 -075.50 0200.13 0090.00
+0300.00 -012.00 0400.50 0075.25 -500.00 0006.50
+0017.75 -024.50 0088.13 0125.00 1000.00 -250.00
+M
+0020.00 -030.00 C
+-015.00 0040.00 0080.00 -090.00 0140.00 0020.00
+0260.00 0030.00 -320.00 0045.00 0480.00 -060.00
+0600.50 -070.25 0720.00 0080.00 0840.00 -090.00
+M
+-700.00 0300.00 C
+-600.00 -200.00 -500.00 0150.00 -400.00 -100.00
+-250.25 0075.50 -125.00 -050.00 0000.00 0025.00
+0125.50 -012.75 0250.00 0006.25 0375.00 -003.50
 ```
 
 ### Left Padding

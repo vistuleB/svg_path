@@ -89,6 +89,42 @@ pub fn generated_paths_round_trip_with_minimized_repeat_commands_false_options_t
   )
 }
 
+pub fn generated_paths_round_trip_with_subpath_newlines_and_repeat_commands_test() {
+  assert_paths_multiline_round_trip(
+    generated_paths(),
+    serialize.default_options()
+      |> serialize.repeat_commands(True)
+      |> serialize.with_newlines(serialize.AtSubpaths),
+  )
+}
+
+pub fn generated_paths_round_trip_with_subpath_newlines_and_omitted_repeat_commands_test() {
+  assert_paths_multiline_round_trip(
+    generated_paths(),
+    serialize.default_options()
+      |> serialize.repeat_commands(False)
+      |> serialize.with_newlines(serialize.AtSubpaths),
+  )
+}
+
+pub fn generated_paths_round_trip_with_segment_newlines_and_repeat_commands_test() {
+  assert_paths_multiline_round_trip(
+    generated_paths(),
+    serialize.default_options()
+      |> serialize.repeat_commands(True)
+      |> serialize.with_newlines(serialize.AtSegments),
+  )
+}
+
+pub fn generated_paths_round_trip_with_segment_newlines_and_omitted_repeat_commands_test() {
+  assert_paths_multiline_round_trip(
+    generated_paths(),
+    serialize.default_options()
+      |> serialize.repeat_commands(False)
+      |> serialize.with_newlines(serialize.AtSegments),
+  )
+}
+
 fn parse_and_serialize(input: String) -> Result(String, parse.Error) {
   parse_and_serialize_with_options(input, serialize.default_options())
 }
@@ -123,6 +159,31 @@ fn assert_path_round_trips(
   let serialized = serialize.path_with_options(path, options:)
 
   assert parse_and_serialize_with_options(serialized, options) == Ok(serialized)
+}
+
+fn assert_paths_multiline_round_trip(
+  paths: List(svg_path.Path),
+  options: serialize.Options,
+) -> Nil {
+  case paths {
+    [] -> Nil
+    [path, ..rest] -> {
+      assert_path_multiline_round_trips(path, options)
+      assert_paths_multiline_round_trip(rest, options)
+    }
+  }
+}
+
+fn assert_path_multiline_round_trips(
+  path: svg_path.Path,
+  options: serialize.Options,
+) -> Nil {
+  let serialized = serialize.path_with_options(path, options:)
+
+  assert parse_and_serialize_with_options(serialized, options) == Ok(serialized)
+
+  let assert Ok(parsed) = parse.path(serialized)
+  assert serialize.path(parsed) == serialize.path(path)
 }
 
 fn generated_paths() -> List(svg_path.Path) {
