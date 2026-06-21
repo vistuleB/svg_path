@@ -35,6 +35,10 @@ const default_distance_tolerance = 0.000000001
 
 const default_distance_max_iterations = 100
 
+const default_intersection_tolerance = 0.000000001
+
+const default_intersection_max_depth = 48
+
 /// A 2D point.
 ///
 /// This is a `vec.Vec2(Float)`, so its coordinates are available as `.x` and
@@ -87,8 +91,22 @@ pub type DistanceOptions {
   DistanceOptions(samples: Int, tolerance: Float, max_iterations: Int)
 }
 
+/// Options for finding segment intersections.
+pub type IntersectionOptions {
+  IntersectionOptions(tolerance: Float, max_depth: Int)
+}
+
+/// A point intersection between two segments.
+pub type SegmentIntersection {
+  SegmentIntersection(left_t: Float, right_t: Float, point: Point)
+}
+
 type MinimizeCandidate {
   MinimizeCandidate(t: Float, value: Float)
+}
+
+type IntersectionPiece {
+  IntersectionPiece(segment: Segment, from: Float, to: Float)
 }
 
 /// An SVG path, made of zero or more subpaths.
@@ -237,6 +255,15 @@ pub type Error {
   /// A bracketed distance candidate could not be refined within the iteration limit.
   DistanceMaxIterationsReached(estimate: Float, value: Float)
 
+  /// The intersection tolerance must be greater than zero.
+  InvalidIntersectionTolerance(tolerance: Float)
+
+  /// The intersection subdivision depth must be greater than zero.
+  InvalidIntersectionMaxDepth(max_depth: Int)
+
+  /// The two segments overlap in more than a single point.
+  OverlappingSegments
+
   /// The path contains more than one non-empty subpath.
   MultipleNonemptySubpaths
 
@@ -276,6 +303,14 @@ pub fn default_distance_options() -> DistanceOptions {
     samples: default_distance_samples,
     tolerance: default_distance_tolerance,
     max_iterations: default_distance_max_iterations,
+  )
+}
+
+/// Return the default options for segment intersection detection.
+pub fn default_intersection_options() -> IntersectionOptions {
+  IntersectionOptions(
+    tolerance: default_intersection_tolerance,
+    max_depth: default_intersection_max_depth,
   )
 }
 
@@ -1018,6 +1053,63 @@ pub fn segment_distance_with(
               smallest_segment_distance(point, segment, candidates)
           }
         }
+      }
+    }
+  }
+}
+
+/// Return point intersections between two segments.
+///
+/// Overlapping segments return `OverlappingSegments`, since they have more than
+/// a finite list of point intersections.
+pub fn segment_intersections(
+  left: Segment,
+  right: Segment,
+) -> Result(List(SegmentIntersection), Error) {
+  segment_intersections_with(
+    left,
+    right,
+    options: default_intersection_options(),
+  )
+}
+
+/// Return point intersections between two segments using explicit options.
+pub fn segment_intersections_with(
+  left: Segment,
+  right: Segment,
+  options options: IntersectionOptions,
+) -> Result(List(SegmentIntersection), Error) {
+  case validate_intersection_options(options) {
+    Error(error) -> Error(error)
+    Ok(Nil) -> {
+      case left, right {
+        Line(start: left_start, end: left_end),
+          Line(start: right_start, end: right_end)
+        ->
+          line_line_intersections(
+            left_start,
+            left_end,
+            right_start,
+            right_end,
+            options.tolerance,
+          )
+        Line(start:, end:), _ ->
+          line_segment_intersections(
+            line_start: start,
+            line_end: end,
+            line_is_left: True,
+            segment: right,
+            options:,
+          )
+        _, Line(start:, end:) ->
+          line_segment_intersections(
+            line_start: start,
+            line_end: end,
+            line_is_left: False,
+            segment: left,
+            options:,
+          )
+        _, _ -> curve_curve_intersections(left, right, options)
       }
     }
   }
@@ -1791,6 +1883,603 @@ fn squared_distance(a: Point, b: Point) -> Float {
   let dx = a.x -. b.x
   let dy = a.y -. b.y
   dx *. dx +. dy *. dy
+}
+
+fn validate_intersection_options(
+  options: IntersectionOptions,
+) -> Result(Nil, Error) {
+  case options.tolerance <=. 0.0 {
+    True -> Error(InvalidIntersectionTolerance(options.tolerance))
+    False -> {
+      case options.max_depth <= 0 {
+        True -> Error(InvalidIntersectionMaxDepth(options.max_depth))
+        False -> Ok(Nil)
+      }
+    }
+  }
+}
+
+fn line_line_intersections(
+  left_start: Point,
+  left_end: Point,
+  right_start: Point,
+  right_end: Point,
+  tolerance: Float,
+) -> Result(List(SegmentIntersection), Error) {
+  let left_direction = point_difference(left_end, left_start)
+  let right_direction = point_difference(right_end, right_start)
+  let left_length_squared = dot(left_direction, left_direction)
+  let right_length_squared = dot(right_direction, right_direction)
+
+  case
+    left_length_squared <=. tolerance *. tolerance,
+    right_length_squared <=. tolerance *. tolerance
+  {
+    True, True -> {
+      case distance(left_start, right_start) <=. tolerance {
+        True ->
+          Ok([
+            SegmentIntersection(
+              left_t: 0.0,
+              right_t: 0.0,
+              point: midpoint(left_start, right_start),
+            ),
+          ])
+        False -> Ok([])
+      }
+    }
+    True, False -> {
+      case
+        point_on_line_segment(left_start, right_start, right_end, tolerance)
+      {
+        True ->
+          Ok([
+            SegmentIntersection(
+              left_t: 0.0,
+              right_t: line_projection_t(left_start, right_start, right_end),
+              point: left_start,
+            ),
+          ])
+        False -> Ok([])
+      }
+    }
+    False, True -> {
+      case point_on_line_segment(right_start, left_start, left_end, tolerance) {
+        True ->
+          Ok([
+            SegmentIntersection(
+              left_t: line_projection_t(right_start, left_start, left_end),
+              right_t: 0.0,
+              point: right_start,
+            ),
+          ])
+        False -> Ok([])
+      }
+    }
+    False, False -> {
+      let start_difference = point_difference(right_start, left_start)
+      let denominator = cross(left_direction, right_direction)
+
+      case float.absolute_value(denominator) <=. tolerance {
+        True -> {
+          case
+            float.absolute_value(cross(start_difference, left_direction))
+            <=. tolerance
+          {
+            True ->
+              collinear_line_intersections(
+                left_start,
+                left_end,
+                right_start,
+                right_end,
+                tolerance,
+              )
+            False -> Ok([])
+          }
+        }
+        False -> {
+          let left_t = cross(start_difference, right_direction) /. denominator
+          let right_t = cross(start_difference, left_direction) /. denominator
+
+          case
+            in_unit_range(left_t, tolerance)
+            && in_unit_range(right_t, tolerance)
+          {
+            True -> {
+              let left_t = clamp01(left_t)
+              let right_t = clamp01(right_t)
+
+              Ok([
+                SegmentIntersection(
+                  left_t:,
+                  right_t:,
+                  point: interpolate(left_start, left_end, left_t),
+                ),
+              ])
+            }
+            False -> Ok([])
+          }
+        }
+      }
+    }
+  }
+}
+
+fn collinear_line_intersections(
+  left_start: Point,
+  left_end: Point,
+  right_start: Point,
+  right_end: Point,
+  tolerance: Float,
+) -> Result(List(SegmentIntersection), Error) {
+  let right_start_t = line_projection_t(right_start, left_start, left_end)
+  let right_end_t = line_projection_t(right_end, left_start, left_end)
+  let overlap_start = float.max(0.0, float.min(right_start_t, right_end_t))
+  let overlap_end = float.min(1.0, float.max(right_start_t, right_end_t))
+
+  case overlap_end <. overlap_start -. tolerance {
+    True -> Ok([])
+    False -> {
+      case overlap_end -. overlap_start <=. tolerance {
+        True -> {
+          let left_t = clamp01({ overlap_start +. overlap_end } /. 2.0)
+          let point = interpolate(left_start, left_end, left_t)
+
+          Ok([
+            SegmentIntersection(
+              left_t:,
+              right_t: line_projection_t(point, right_start, right_end)
+                |> clamp01,
+              point:,
+            ),
+          ])
+        }
+        False -> Error(OverlappingSegments)
+      }
+    }
+  }
+}
+
+fn line_segment_intersections(
+  line_start line_start: Point,
+  line_end line_end: Point,
+  line_is_left line_is_left: Bool,
+  segment segment: Segment,
+  options options: IntersectionOptions,
+) -> Result(List(SegmentIntersection), Error) {
+  let line_direction = point_difference(line_end, line_start)
+
+  case segment_lies_on_line(segment, line_start, line_end, options.tolerance) {
+    True -> Error(OverlappingSegments)
+    False -> {
+      case
+        segment_crossings_with(
+          segment,
+          where: fn(point) {
+            cross(line_direction, point_difference(point, line_start))
+          },
+          options: CrossingOptions(
+            samples: 100,
+            tolerance: options.tolerance,
+            max_iterations: options.max_depth * 4,
+          ),
+        )
+      {
+        Error(error) -> Error(error)
+        Ok(segment_ts) -> {
+          line_segment_intersections_from_ts(
+            line_start,
+            line_end,
+            line_is_left,
+            segment,
+            segment_ts,
+            options.tolerance,
+            [],
+          )
+        }
+      }
+    }
+  }
+}
+
+fn line_segment_intersections_from_ts(
+  line_start: Point,
+  line_end: Point,
+  line_is_left: Bool,
+  segment: Segment,
+  segment_ts: List(Float),
+  tolerance: Float,
+  intersections: List(SegmentIntersection),
+) -> Result(List(SegmentIntersection), Error) {
+  case segment_ts {
+    [] -> Ok(intersections)
+    [segment_t, ..rest] -> {
+      case segment_point(segment, at: segment_t) {
+        Error(error) -> Error(error)
+        Ok(point) -> {
+          let line_t = line_projection_t(point, line_start, line_end)
+
+          case in_unit_range(line_t, tolerance) {
+            True -> {
+              let intersection = case line_is_left {
+                True ->
+                  SegmentIntersection(
+                    left_t: clamp01(line_t),
+                    right_t: clamp01(segment_t),
+                    point:,
+                  )
+                False ->
+                  SegmentIntersection(
+                    left_t: clamp01(segment_t),
+                    right_t: clamp01(line_t),
+                    point:,
+                  )
+              }
+
+              line_segment_intersections_from_ts(
+                line_start,
+                line_end,
+                line_is_left,
+                segment,
+                rest,
+                tolerance,
+                insert_intersection(intersections, intersection, tolerance),
+              )
+            }
+            False ->
+              line_segment_intersections_from_ts(
+                line_start,
+                line_end,
+                line_is_left,
+                segment,
+                rest,
+                tolerance,
+                intersections,
+              )
+          }
+        }
+      }
+    }
+  }
+}
+
+fn curve_curve_intersections(
+  left: Segment,
+  right: Segment,
+  options: IntersectionOptions,
+) -> Result(List(SegmentIntersection), Error) {
+  collect_curve_curve_intersections(
+    IntersectionPiece(segment: left, from: 0.0, to: 1.0),
+    IntersectionPiece(segment: right, from: 0.0, to: 1.0),
+    options,
+    remaining_depth: options.max_depth,
+    intersections: [],
+  )
+}
+
+fn collect_curve_curve_intersections(
+  left: IntersectionPiece,
+  right: IntersectionPiece,
+  options: IntersectionOptions,
+  remaining_depth remaining_depth: Int,
+  intersections intersections: List(SegmentIntersection),
+) -> Result(List(SegmentIntersection), Error) {
+  case segment_bounding_box(left.segment), segment_bounding_box(right.segment) {
+    Error(error), _ | _, Error(error) -> Error(error)
+    Ok(left_box), Ok(right_box) -> {
+      case boxes_overlap(left_box, right_box, options.tolerance) {
+        False -> Ok(intersections)
+        True -> {
+          case
+            remaining_depth <= 0
+            || {
+              bounding_box_diameter(left_box) <=. options.tolerance
+              && bounding_box_diameter(right_box) <=. options.tolerance
+            }
+          {
+            True -> {
+              case
+                chord_intersections_from_pieces(left, right, options.tolerance)
+              {
+                Error(error) -> Error(error)
+                Ok(found) ->
+                  Ok(insert_intersections(
+                    intersections,
+                    found,
+                    intersection_dedupe_tolerance(options.tolerance),
+                  ))
+              }
+            }
+            False -> {
+              let split_left =
+                bounding_box_diameter(left_box)
+                >=. bounding_box_diameter(right_box)
+
+              case split_left {
+                True -> {
+                  let #(first, second) = split_intersection_piece(left)
+
+                  case
+                    collect_curve_curve_intersections(
+                      first,
+                      right,
+                      options,
+                      remaining_depth: remaining_depth - 1,
+                      intersections:,
+                    )
+                  {
+                    Error(error) -> Error(error)
+                    Ok(intersections) ->
+                      collect_curve_curve_intersections(
+                        second,
+                        right,
+                        options,
+                        remaining_depth: remaining_depth - 1,
+                        intersections:,
+                      )
+                  }
+                }
+                False -> {
+                  let #(first, second) = split_intersection_piece(right)
+
+                  case
+                    collect_curve_curve_intersections(
+                      left,
+                      first,
+                      options,
+                      remaining_depth: remaining_depth - 1,
+                      intersections:,
+                    )
+                  {
+                    Error(error) -> Error(error)
+                    Ok(intersections) ->
+                      collect_curve_curve_intersections(
+                        left,
+                        second,
+                        options,
+                        remaining_depth: remaining_depth - 1,
+                        intersections:,
+                      )
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+fn split_intersection_piece(
+  piece: IntersectionPiece,
+) -> #(IntersectionPiece, IntersectionPiece) {
+  let assert Ok(#(left, right)) = split_segment(piece.segment, at: 0.5)
+  let middle = { piece.from +. piece.to } /. 2.0
+
+  #(
+    IntersectionPiece(segment: left, from: piece.from, to: middle),
+    IntersectionPiece(segment: right, from: middle, to: piece.to),
+  )
+}
+
+fn intersection_from_pieces(
+  left: IntersectionPiece,
+  right: IntersectionPiece,
+) -> Result(SegmentIntersection, Error) {
+  let left_t = { left.from +. left.to } /. 2.0
+  let right_t = { right.from +. right.to } /. 2.0
+
+  case
+    segment_point(left.segment, at: 0.5),
+    segment_point(right.segment, at: 0.5)
+  {
+    Error(error), _ | _, Error(error) -> Error(error)
+    Ok(left_point), Ok(right_point) ->
+      Ok(SegmentIntersection(
+        left_t:,
+        right_t:,
+        point: midpoint(left_point, right_point),
+      ))
+  }
+}
+
+fn chord_intersections_from_pieces(
+  left: IntersectionPiece,
+  right: IntersectionPiece,
+  tolerance: Float,
+) -> Result(List(SegmentIntersection), Error) {
+  let left_start = segment_start(left.segment)
+  let left_end = segment_end(left.segment)
+  let right_start = segment_start(right.segment)
+  let right_end = segment_end(right.segment)
+
+  case
+    line_line_intersections(
+      left_start,
+      left_end,
+      right_start,
+      right_end,
+      tolerance,
+    )
+  {
+    Ok(intersections) ->
+      Ok(
+        list.map(intersections, fn(intersection) {
+          SegmentIntersection(
+            left_t: interpolate_float(left.from, left.to, intersection.left_t),
+            right_t: interpolate_float(
+              right.from,
+              right.to,
+              intersection.right_t,
+            ),
+            point: intersection.point,
+          )
+        }),
+      )
+    Error(OverlappingSegments) -> {
+      case intersection_from_pieces(left, right) {
+        Error(error) -> Error(error)
+        Ok(intersection) -> Ok([intersection])
+      }
+    }
+    Error(error) -> Error(error)
+  }
+}
+
+fn boxes_overlap(
+  left: BoundingBox,
+  right: BoundingBox,
+  tolerance: Float,
+) -> Bool {
+  left.min.x <=. right.max.x +. tolerance
+  && left.max.x +. tolerance >=. right.min.x
+  && left.min.y <=. right.max.y +. tolerance
+  && left.max.y +. tolerance >=. right.min.y
+}
+
+fn segment_lies_on_line(
+  segment: Segment,
+  line_start: Point,
+  line_end: Point,
+  tolerance: Float,
+) -> Bool {
+  let direction = point_difference(line_end, line_start)
+
+  case segment_defining_points(segment) {
+    None -> False
+    Some(points) -> {
+      list.all(points, fn(point) {
+        float.absolute_value(cross(
+          direction,
+          point_difference(point, line_start),
+        ))
+        <=. tolerance
+      })
+      && segment_projection_overlaps_line(
+        points,
+        line_start,
+        line_end,
+        tolerance,
+      )
+    }
+  }
+}
+
+fn segment_projection_overlaps_line(
+  points: List(Point),
+  line_start: Point,
+  line_end: Point,
+  tolerance: Float,
+) -> Bool {
+  case points {
+    [] -> False
+    [first, ..rest] -> {
+      let first_t = line_projection_t(first, line_start, line_end)
+      let #(min_t, max_t) =
+        list.fold(rest, #(first_t, first_t), fn(range, point) {
+          let #(min_t, max_t) = range
+          let t = line_projection_t(point, line_start, line_end)
+
+          #(float.min(min_t, t), float.max(max_t, t))
+        })
+
+      float.min(1.0, max_t) -. float.max(0.0, min_t) >. tolerance
+    }
+  }
+}
+
+fn segment_defining_points(segment: Segment) -> Option(List(Point)) {
+  case segment {
+    Line(start:, end:) -> Some([start, end])
+    QuadraticBezier(start:, control:, end:) -> Some([start, control, end])
+    CubicBezier(start:, control1:, control2:, end:) ->
+      Some([start, control1, control2, end])
+    Arc(..) -> None
+  }
+}
+
+fn point_on_line_segment(
+  point: Point,
+  start: Point,
+  end: Point,
+  tolerance: Float,
+) -> Bool {
+  let direction = point_difference(end, start)
+  float.absolute_value(cross(direction, point_difference(point, start)))
+  <=. tolerance
+  && in_unit_range(line_projection_t(point, start, end), tolerance)
+}
+
+fn line_projection_t(point: Point, start: Point, end: Point) -> Float {
+  let direction = point_difference(end, start)
+  let length_squared = dot(direction, direction)
+
+  case length_squared == 0.0 {
+    True -> 0.0
+    False -> dot(point_difference(point, start), direction) /. length_squared
+  }
+}
+
+fn in_unit_range(value: Float, tolerance: Float) -> Bool {
+  value >=. 0.0 -. tolerance && value <=. 1.0 +. tolerance
+}
+
+fn insert_intersection(
+  intersections: List(SegmentIntersection),
+  intersection: SegmentIntersection,
+  tolerance: Float,
+) -> List(SegmentIntersection) {
+  case intersections {
+    [] -> [intersection]
+    [first, ..rest] -> {
+      case
+        distance(first.point, intersection.point) <=. tolerance
+        || {
+          float.absolute_value(first.left_t -. intersection.left_t)
+          <=. tolerance
+          && float.absolute_value(first.right_t -. intersection.right_t)
+          <=. tolerance
+        }
+      {
+        True -> [merge_intersections(first, intersection), ..rest]
+        False -> [first, ..insert_intersection(rest, intersection, tolerance)]
+      }
+    }
+  }
+}
+
+fn merge_intersections(
+  a: SegmentIntersection,
+  b: SegmentIntersection,
+) -> SegmentIntersection {
+  SegmentIntersection(
+    left_t: { a.left_t +. b.left_t } /. 2.0,
+    right_t: { a.right_t +. b.right_t } /. 2.0,
+    point: midpoint(a.point, b.point),
+  )
+}
+
+fn insert_intersections(
+  intersections: List(SegmentIntersection),
+  new_intersections: List(SegmentIntersection),
+  tolerance: Float,
+) -> List(SegmentIntersection) {
+  list.fold(new_intersections, intersections, fn(intersections, intersection) {
+    insert_intersection(intersections, intersection, tolerance)
+  })
+}
+
+fn intersection_dedupe_tolerance(tolerance: Float) -> Float {
+  float.max(tolerance *. 1_000_000.0, 0.000001)
+}
+
+fn cross(a: Point, b: Point) -> Float {
+  a.x *. b.y -. a.y *. b.x
+}
+
+fn interpolate_float(start: Float, end: Float, t: Float) -> Float {
+  start +. { end -. start } *. t
 }
 
 fn combine_segment_bounding_boxes(

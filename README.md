@@ -491,6 +491,34 @@ and `CrossingOptions` to tune `samples`, `tolerance`, and `max_iterations`.
 The scalar solver behind this lives in `svg_path/root.gleam` as a small
 self-contained bisection helper for bracketed `Float -> Float` functions.
 
+### Segment Intersections
+
+Use `segment_intersections` to find point intersections between two segments:
+
+```gleam
+import svg_path
+
+pub fn crossings(
+  left: svg_path.Segment,
+  right: svg_path.Segment,
+) -> Result(List(svg_path.SegmentIntersection), svg_path.Error) {
+  svg_path.segment_intersections(left, right)
+}
+```
+
+Each `SegmentIntersection` contains the intersection point plus the local
+parameters on both segments:
+
+```gleam
+svg_path.SegmentIntersection(left_t:, right_t:, point:)
+```
+
+The result represents finite point intersections only. Segments that overlap
+in more than one point, such as partially overlapping collinear lines, return
+`OverlappingSegments`. Use `segment_intersections_with` and
+`IntersectionOptions` to tune `tolerance` and `max_depth` for curved segment
+intersection detection.
+
 ## Parsing
 
 `svg_path/parse` accepts normal SVG path data syntax, including:

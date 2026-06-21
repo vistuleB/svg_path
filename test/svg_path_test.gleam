@@ -590,6 +590,208 @@ pub fn segment_distance_returns_degenerate_arc_errors_test() {
     == Error(svg_path.DegenerateArc)
 }
 
+pub fn segment_intersections_finds_line_crossing_test() {
+  let left =
+    svg_path.line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(10.0, 10.0),
+    )
+  let right =
+    svg_path.line(
+      start: svg_path.point(0.0, 10.0),
+      end: svg_path.point(10.0, 0.0),
+    )
+
+  let assert Ok(intersections) = svg_path.segment_intersections(left, right)
+  let assert [intersection] = intersections
+
+  assert float.absolute_value(intersection.left_t -. 0.5) <. 0.00001
+  assert float.absolute_value(intersection.right_t -. 0.5) <. 0.00001
+  assert near(intersection.point.x, 5.0)
+  assert near(intersection.point.y, 5.0)
+}
+
+pub fn segment_intersections_finds_endpoint_touch_test() {
+  let left =
+    svg_path.line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(10.0, 0.0),
+    )
+  let right =
+    svg_path.line(
+      start: svg_path.point(10.0, 0.0),
+      end: svg_path.point(10.0, 10.0),
+    )
+
+  let assert Ok(intersections) = svg_path.segment_intersections(left, right)
+  let assert [intersection] = intersections
+
+  assert near(intersection.left_t, 1.0)
+  assert near(intersection.right_t, 0.0)
+  assert near(intersection.point.x, 10.0)
+  assert near(intersection.point.y, 0.0)
+}
+
+pub fn segment_intersections_returns_empty_for_disjoint_lines_test() {
+  let left =
+    svg_path.line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(10.0, 0.0),
+    )
+  let right =
+    svg_path.line(
+      start: svg_path.point(0.0, 5.0),
+      end: svg_path.point(10.0, 5.0),
+    )
+
+  assert svg_path.segment_intersections(left, right) == Ok([])
+}
+
+pub fn segment_intersections_rejects_overlapping_lines_test() {
+  let left =
+    svg_path.line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(10.0, 0.0),
+    )
+  let right =
+    svg_path.line(
+      start: svg_path.point(5.0, 0.0),
+      end: svg_path.point(15.0, 0.0),
+    )
+
+  assert svg_path.segment_intersections(left, right)
+    == Error(svg_path.OverlappingSegments)
+}
+
+pub fn segment_intersections_finds_line_curve_crossings_test() {
+  let line =
+    svg_path.line(
+      start: svg_path.point(0.0, 5.0),
+      end: svg_path.point(20.0, 5.0),
+    )
+  let curve =
+    svg_path.quadratic_bezier(
+      start: svg_path.point(0.0, 0.0),
+      control: svg_path.point(10.0, 20.0),
+      end: svg_path.point(20.0, 0.0),
+    )
+
+  let assert Ok(intersections) = svg_path.segment_intersections(line, curve)
+  let assert [first, second] = intersections
+
+  assert near(first.left_t, 0.146446609)
+  assert near(first.right_t, 0.146446609)
+  assert near(first.point.y, 5.0)
+  assert near(second.left_t, 0.853553391)
+  assert near(second.right_t, 0.853553391)
+  assert near(second.point.y, 5.0)
+}
+
+pub fn segment_intersections_finds_curve_curve_crossing_test() {
+  let left =
+    svg_path.quadratic_bezier(
+      start: svg_path.point(0.0, 0.0),
+      control: svg_path.point(10.0, 20.0),
+      end: svg_path.point(20.0, 0.0),
+    )
+  let right =
+    svg_path.quadratic_bezier(
+      start: svg_path.point(0.0, 20.0),
+      control: svg_path.point(10.0, 0.0),
+      end: svg_path.point(20.0, 20.0),
+    )
+
+  let assert Ok(intersections) = svg_path.segment_intersections(left, right)
+  let assert [intersection] = intersections
+
+  assert float.absolute_value(intersection.left_t -. 0.5) <. 0.00001
+  assert float.absolute_value(intersection.right_t -. 0.5) <. 0.00001
+  assert float.absolute_value(intersection.point.x -. 10.0) <. 0.0001
+  assert float.absolute_value(intersection.point.y -. 10.0) <. 0.0001
+}
+
+pub fn segment_intersections_with_rejects_invalid_options_test() {
+  let line =
+    svg_path.line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(10.0, 0.0),
+    )
+
+  assert svg_path.segment_intersections_with(
+      line,
+      line,
+      options: svg_path.IntersectionOptions(tolerance: 0.0, max_depth: 32),
+    )
+    == Error(svg_path.InvalidIntersectionTolerance(0.0))
+  assert svg_path.segment_intersections_with(
+      line,
+      line,
+      options: svg_path.IntersectionOptions(
+        tolerance: 0.000000001,
+        max_depth: 0,
+      ),
+    )
+    == Error(svg_path.InvalidIntersectionMaxDepth(0))
+}
+
+pub fn segment_intersections_match_returned_parameters_test() {
+  let line_a =
+    svg_path.line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(20.0, 20.0),
+    )
+  let line_b =
+    svg_path.line(
+      start: svg_path.point(0.0, 20.0),
+      end: svg_path.point(20.0, 0.0),
+    )
+  let quadratic_a =
+    svg_path.quadratic_bezier(
+      start: svg_path.point(0.0, 0.0),
+      control: svg_path.point(10.0, 20.0),
+      end: svg_path.point(20.0, 0.0),
+    )
+  let quadratic_b =
+    svg_path.quadratic_bezier(
+      start: svg_path.point(0.0, 20.0),
+      control: svg_path.point(10.0, 0.0),
+      end: svg_path.point(20.0, 20.0),
+    )
+  let cubic =
+    svg_path.cubic_bezier(
+      start: svg_path.point(0.0, 0.0),
+      control1: svg_path.point(0.0, 20.0),
+      control2: svg_path.point(20.0, 20.0),
+      end: svg_path.point(20.0, 0.0),
+    )
+  let horizontal =
+    svg_path.line(
+      start: svg_path.point(0.0, 10.0),
+      end: svg_path.point(20.0, 10.0),
+    )
+  let arc =
+    svg_path.arc(
+      start: svg_path.point(0.0, 0.0),
+      radius: svg_path.point(10.0, 10.0),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: True,
+      end: svg_path.point(20.0, 0.0),
+    )
+
+  assert segment_intersections_are_consistent(line_a, line_b)
+  assert segment_intersections_are_consistent(horizontal, quadratic_a)
+  assert segment_intersections_are_consistent(horizontal, cubic)
+  assert segment_intersections_are_consistent(quadratic_a, quadratic_b)
+  assert segment_intersections_are_consistent(
+    svg_path.line(
+      start: svg_path.point(10.0, -20.0),
+      end: svg_path.point(10.0, 5.0),
+    ),
+    arc,
+  )
+}
+
 pub fn map_segment_points_maps_line_quadratic_and_cubic_defining_points_test() {
   let map = fn(point: svg_path.Point) {
     svg_path.point(point.x +. 1.0, point.y *. 2.0)
@@ -2450,4 +2652,52 @@ fn bbox_near(
 
 fn near(a: Float, b: Float) -> Bool {
   float.absolute_value(a -. b) <=. tolerance
+}
+
+fn segment_intersections_are_consistent(
+  left: svg_path.Segment,
+  right: svg_path.Segment,
+) -> Bool {
+  case svg_path.segment_intersections(left, right) {
+    Error(_) -> False
+    Ok([]) -> False
+    Ok(intersections) -> {
+      list.all(intersections, fn(intersection) {
+        intersection_t_in_range(intersection.left_t)
+        && intersection_t_in_range(intersection.right_t)
+        && intersection_point_matches(
+          left,
+          intersection.left_t,
+          intersection.point,
+        )
+        && intersection_point_matches(
+          right,
+          intersection.right_t,
+          intersection.point,
+        )
+      })
+    }
+  }
+}
+
+fn intersection_t_in_range(t: Float) -> Bool {
+  t >=. 0.0 -. tolerance && t <=. 1.0 +. tolerance
+}
+
+fn intersection_point_matches(
+  segment: svg_path.Segment,
+  t: Float,
+  point: svg_path.Point,
+) -> Bool {
+  case svg_path.segment_point(segment, at: t) {
+    Error(_) -> False
+    Ok(actual) -> point_near_loose(actual, point)
+  }
+}
+
+fn point_near_loose(a: svg_path.Point, b: svg_path.Point) -> Bool {
+  let loose_tolerance = 0.0001
+
+  float.absolute_value(a.x -. b.x) <=. loose_tolerance
+  && float.absolute_value(a.y -. b.y) <=. loose_tolerance
 }
