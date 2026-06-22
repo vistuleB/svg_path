@@ -109,3 +109,21 @@ Generated cubic endpoint-root applicability:
   - genuine interior bitangent
   - degenerate/flat handling
 - so the endpoint-root branch is useful, but not remotely the whole algorithm
+
+Transfer plan:
+
+- `Line`, `QuadraticBezier`, and ordinary `Arc` do not need the general support
+  sampler. Their hull topology is the original segment plus the endpoint chord:
+  `HullCurve(0, 1)` and `HullLine(1, 0)`, with degenerate/near-zero cases
+  handled by a small collapse policy.
+- `CubicBezier` is the only segment type that needs the new solver machinery:
+  sampled support topology, analytic support candidates, and root-refined
+  curve-line boundaries.
+- The current production support-sampling purifier should be moved to a private
+  freezer rather than deleted immediately. It is useful as a behavioral oracle
+  and as a source of adversarial fixtures, but it should stop being the default
+  path for simple segment types.
+- The shallow hybrid-support experiment in `src/svg_path/convex_hull.gleam`
+  was informative but not a destination: trying both analytic cubic support and
+  numeric minimization removed one pinned endpoint-control failure but introduced
+  a `nearly_straight_cubic_translated` consecutive-curve failure.

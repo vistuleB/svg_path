@@ -77,6 +77,15 @@ fn segment_support(
 
   case segment {
     svg_path.Line(start:, end:) -> Ok(line_support(start, end, direction))
+    svg_path.CubicBezier(start:, control1:, control2:, end:) ->
+      cubic_support(
+        svg_path.cubic_bezier(start:, control1:, control2:, end:),
+        start,
+        control1,
+        control2,
+        end,
+        direction,
+      )
     _ -> numeric_support(segment, direction)
   }
 }
@@ -111,6 +120,75 @@ fn numeric_support(
   use point <- result.try(svg_path.segment_point(segment, at: t))
 
   Ok(#(t, point))
+}
+
+fn cubic_support(
+  segment: svg_path.Segment,
+  start: svg_path.Point,
+  control1: svg_path.Point,
+  control2: svg_path.Point,
+  end: svg_path.Point,
+  direction: svg_path.Point,
+) -> Result(#(Float, svg_path.Point), svg_path.Error) {
+  case analytic_cubic_support(start, control1, control2, end, direction),
+    numeric_support(segment, direction)
+  {
+    Ok(analytic), Ok(numeric) -> Ok(best_support(analytic, numeric, direction))
+    Ok(analytic), Error(_) -> Ok(analytic)
+    Error(_), Ok(numeric) -> Ok(numeric)
+    Error(error), Error(_) -> Error(error)
+  }
+}
+
+fn analytic_cubic_support(
+  start: svg_path.Point,
+  control1: svg_path.Point,
+  control2: svg_path.Point,
+  end: svg_path.Point,
+  direction: svg_path.Point,
+) -> Result(#(Float, svg_path.Point), svg_path.Error) {
+  let p0 = dot(start, direction)
+  let p1 = dot(control1, direction)
+  let p2 = dot(control2, direction)
+  let p3 = dot(end, direction)
+  let a = 0.0 -. p0 +. 3.0 *. p1 -. 3.0 *. p2 +. p3
+  let b = 3.0 *. p0 -. 6.0 *. p1 +. 3.0 *. p2
+  let c = -3.0 *. p0 +. 3.0 *. p1
+  let candidates =
+    [0.0, 1.0, ..quadratic_roots(3.0 *. a, 2.0 *. b, c)]
+    |> list.filter(fn(t) { t >=. 0.0 && t <=. 1.0 })
+
+  let assert [first, ..rest] = candidates
+  let best =
+    list.fold(rest, #(first, cubic_scalar(p0, p1, p2, p3, first)), fn(
+      best,
+      t,
+    ) {
+      let value = cubic_scalar(p0, p1, p2, p3, t)
+      case value >. best.1 {
+        True -> #(t, value)
+        False -> best
+      }
+    })
+
+  use point <- result.try(
+    svg_path.segment_point(
+      svg_path.cubic_bezier(start:, control1:, control2:, end:),
+      at: best.0,
+    ),
+  )
+  Ok(#(best.0, point))
+}
+
+fn best_support(
+  first: #(Float, svg_path.Point),
+  second: #(Float, svg_path.Point),
+  direction: svg_path.Point,
+) -> #(Float, svg_path.Point) {
+  case dot(first.1, direction) >=. dot(second.1, direction) {
+    True -> first
+    False -> second
+  }
 }
 
 fn support_sample(
@@ -1090,6 +1168,37 @@ fn angle_direction(angle: Float) -> svg_path.Point {
 
 fn dot(a: svg_path.Point, b: svg_path.Point) -> Float {
   a.x *. b.x +. a.y *. b.y
+}
+
+fn quadratic_roots(a: Float, b: Float, c: Float) -> List(Float) {
+  case float.absolute_value(a) <. 0.000000000001 {
+    True ->
+      case float.absolute_value(b) <. 0.000000000001 {
+        True -> []
+        False -> [{ 0.0 -. c } /. b]
+      }
+    False -> {
+      let discriminant = b *. b -. 4.0 *. a *. c
+      case discriminant <. 0.0 {
+        True -> []
+        False -> {
+          let assert Ok(root) = float.square_root(discriminant)
+          [
+            { 0.0 -. b -. root } /. { 2.0 *. a },
+            { 0.0 -. b +. root } /. { 2.0 *. a },
+          ]
+        }
+      }
+    }
+  }
+}
+
+fn cubic_scalar(p0: Float, p1: Float, p2: Float, p3: Float, t: Float) -> Float {
+  let mt = 1.0 -. t
+  p0 *. mt *. mt *. mt
+  +. 3.0 *. p1 *. mt *. mt *. t
+  +. 3.0 *. p2 *. mt *. t *. t
+  +. p3 *. t *. t *. t
 }
 
 fn map_path_error(result: Result(a, svg_path.Error)) -> Result(a, HullError) {

@@ -4,6 +4,7 @@ import gleam/io
 import gleam/list
 import gleam/string
 import gleam_community/maths
+import new_hull_experiment/arc_trivial_hull
 import new_hull_experiment/collinear_cubic
 import new_hull_experiment/cubic_sample_hull
 import new_hull_experiment/cubic_support
@@ -18,6 +19,26 @@ pub fn main() -> Nil {
   |> list.map(compare_specimen)
   |> string.join("\n")
   |> io.println
+
+  "\nArc trivial hulls"
+  |> io.println
+
+  fixtures.arc_specimens()
+  |> list.map(compare_arc_specimen)
+  |> string.join("\n")
+  |> io.println
+}
+
+fn compare_arc_specimen(specimen: #(String, svg_path.Segment)) -> String {
+  let #(name, segment) = specimen
+  name <> arc_sample_hull_summary(segment) <> current_hull_summary(segment)
+}
+
+fn arc_sample_hull_summary(segment: svg_path.Segment) -> String {
+  case arc_trivial_hull.hull(segment) {
+    Ok(#(_, pieces)) -> ", trivial arc hull = " <> string.inspect(pieces)
+    Error(error) -> ", trivial arc hull error = " <> string.inspect(error)
+  }
 }
 
 fn compare_specimen(specimen: #(String, svg_path.Segment)) -> String {
