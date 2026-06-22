@@ -1119,6 +1119,149 @@ pub fn split_segment_inside_rejects_outside_t_test() {
   let assert Ok(_) = svg_path.split_segment_inside(segment, at: 1.0)
 }
 
+pub fn sub_segment_returns_segment_between_parameters_test() {
+  let segment =
+    svg_path.line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(10.0, 20.0),
+    )
+  let assert Ok(sub_segment) =
+    svg_path.sub_segment(segment, from: 0.25, to: 0.75)
+
+  assert point_near(
+    svg_path.segment_start(sub_segment),
+    svg_path.point(2.5, 5.0),
+  )
+  assert point_near(
+    svg_path.segment_end(sub_segment),
+    svg_path.point(7.5, 15.0),
+  )
+}
+
+pub fn sub_segment_reverses_when_from_is_after_to_test() {
+  let segment =
+    svg_path.line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(10.0, 20.0),
+    )
+  let assert Ok(sub_segment) =
+    svg_path.sub_segment(segment, from: 0.75, to: 0.25)
+
+  assert point_near(
+    svg_path.segment_start(sub_segment),
+    svg_path.point(7.5, 15.0),
+  )
+  assert point_near(svg_path.segment_end(sub_segment), svg_path.point(2.5, 5.0))
+}
+
+pub fn sub_segment_returns_degenerate_line_when_parameters_are_equal_test() {
+  let segment =
+    svg_path.quadratic_bezier(
+      start: svg_path.point(0.0, 0.0),
+      control: svg_path.point(10.0, 20.0),
+      end: svg_path.point(20.0, 0.0),
+    )
+  let assert Ok(sub_segment) =
+    svg_path.sub_segment(segment, from: 0.25, to: 0.25)
+
+  assert point_near(
+    svg_path.segment_start(sub_segment),
+    svg_path.point(5.0, 7.5),
+  )
+  assert point_near(svg_path.segment_end(sub_segment), svg_path.point(5.0, 7.5))
+}
+
+pub fn sub_segment_inside_rejects_outside_t_test() {
+  let segment =
+    svg_path.line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(10.0, 20.0),
+    )
+
+  assert svg_path.sub_segment_inside(segment, from: -0.01, to: 0.5)
+    == Error(svg_path.SplitOutsideSegment)
+  assert svg_path.sub_segment_inside(segment, from: 0.5, to: 1.01)
+    == Error(svg_path.SplitOutsideSegment)
+  let assert Ok(_) = svg_path.sub_segment_inside(segment, from: 0.0, to: 1.0)
+  let assert Ok(_) = svg_path.sub_segment_inside(segment, from: 1.0, to: 0.0)
+}
+
+pub fn sub_segment_extrapolates_outside_t_test() {
+  let segment =
+    svg_path.line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(10.0, 20.0),
+    )
+  let assert Ok(sub_segment) = svg_path.sub_segment(segment, from: 1.0, to: 1.5)
+
+  assert point_near(
+    svg_path.segment_start(sub_segment),
+    svg_path.point(10.0, 20.0),
+  )
+  assert point_near(
+    svg_path.segment_end(sub_segment),
+    svg_path.point(15.0, 30.0),
+  )
+}
+
+pub fn sub_segments_returns_segments_between_adjacent_parameters_test() {
+  let segment =
+    svg_path.line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(10.0, 20.0),
+    )
+  let assert Ok([first, second]) =
+    svg_path.sub_segments(segment, between: [0.25, 0.75, 0.5])
+
+  assert point_near(svg_path.segment_start(first), svg_path.point(2.5, 5.0))
+  assert point_near(svg_path.segment_end(first), svg_path.point(7.5, 15.0))
+  assert point_near(svg_path.segment_start(second), svg_path.point(7.5, 15.0))
+  assert point_near(svg_path.segment_end(second), svg_path.point(5.0, 10.0))
+}
+
+pub fn sub_segments_does_not_add_boundary_parameters_test() {
+  let segment =
+    svg_path.line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(10.0, 20.0),
+    )
+  let assert Ok([sub_segment]) =
+    svg_path.sub_segments(segment, between: [0.25, 0.75])
+
+  assert point_near(
+    svg_path.segment_start(sub_segment),
+    svg_path.point(2.5, 5.0),
+  )
+  assert point_near(
+    svg_path.segment_end(sub_segment),
+    svg_path.point(7.5, 15.0),
+  )
+}
+
+pub fn sub_segments_returns_empty_for_too_few_parameters_test() {
+  let segment =
+    svg_path.line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(10.0, 20.0),
+    )
+
+  assert svg_path.sub_segments(segment, between: []) == Ok([])
+  assert svg_path.sub_segments(segment, between: [0.5]) == Ok([])
+}
+
+pub fn sub_segments_inside_rejects_any_outside_t_test() {
+  let segment =
+    svg_path.line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(10.0, 20.0),
+    )
+
+  assert svg_path.sub_segments_inside(segment, between: [0.0, 0.5, 1.01])
+    == Error(svg_path.SplitOutsideSegment)
+  let assert Ok([_]) =
+    svg_path.sub_segments_inside(segment, between: [0.0, 1.0])
+}
+
 pub fn segment_eval_and_split_return_degenerate_arc_error_test() {
   let segment =
     svg_path.arc(

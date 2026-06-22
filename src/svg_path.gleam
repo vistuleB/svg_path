@@ -1228,9 +1228,135 @@ pub fn split_segment_inside(
   }
 }
 
+/// Return the portion of a segment between two parameters.
+///
+/// `from` and `to` are not clamped. Values outside `0.0..1.0` extrapolate
+/// along the same segment. If `from` is greater than `to`, the returned segment
+/// traverses the interval in reverse.
+pub fn sub_segment(
+  segment: Segment,
+  from from: Float,
+  to to: Float,
+) -> Result(Segment, Error) {
+  case from == to {
+    True -> {
+      case segment_point(segment, at: from) {
+        Error(error) -> Error(error)
+        Ok(point) -> Ok(line(start: point, end: point))
+      }
+    }
+    False -> {
+      case from >. to {
+        True -> {
+          case sub_segment(segment, from: to, to: from) {
+            Error(error) -> Error(error)
+            Ok(segment) -> Ok(reverse_segment(segment))
+          }
+        }
+        False -> forward_sub_segment(segment, from: from, to: to)
+      }
+    }
+  }
+}
+
+/// Return the portion of a segment between two parameters.
+///
+/// `from` and `to` must be inside `0.0..1.0`, inclusive. If `from` is greater
+/// than `to`, the returned segment traverses the interval in reverse.
+pub fn sub_segment_inside(
+  segment: Segment,
+  from from: Float,
+  to to: Float,
+) -> Result(Segment, Error) {
+  case from <. 0.0 || from >. 1.0 || to <. 0.0 || to >. 1.0 {
+    True -> Error(SplitOutsideSegment)
+    False -> sub_segment(segment, from: from, to: to)
+  }
+}
+
+/// Return segment portions between adjacent parameters.
+///
+/// Parameters are not clamped. Values outside `0.0..1.0` extrapolate along the
+/// same segment. Empty and singleton lists return an empty list.
+pub fn sub_segments(
+  segment: Segment,
+  between points: List(Float),
+) -> Result(List(Segment), Error) {
+  sub_segments_loop(segment, points, [])
+}
+
+/// Return segment portions between adjacent parameters.
+///
+/// All parameters must be inside `0.0..1.0`, inclusive. Empty and singleton
+/// lists return an empty list.
+pub fn sub_segments_inside(
+  segment: Segment,
+  between points: List(Float),
+) -> Result(List(Segment), Error) {
+  case all_inside(points) {
+    False -> Error(SplitOutsideSegment)
+    True -> sub_segments(segment, between: points)
+  }
+}
+
 /// Create a straight line segment.
 pub fn line(start start: Point, end end: Point) -> Segment {
   Line(start:, end:)
+}
+
+fn sub_segments_loop(
+  segment: Segment,
+  points: List(Float),
+  segments: List(Segment),
+) -> Result(List(Segment), Error) {
+  case points {
+    [] | [_] -> Ok(list.reverse(segments))
+    [from, to, ..rest] -> {
+      case sub_segment(segment, from: from, to: to) {
+        Error(error) -> Error(error)
+        Ok(sub_segment) ->
+          sub_segments_loop(segment, [to, ..rest], [sub_segment, ..segments])
+      }
+    }
+  }
+}
+
+fn all_inside(points: List(Float)) -> Bool {
+  case points {
+    [] -> True
+    [first, ..rest] -> first >=. 0.0 && first <=. 1.0 && all_inside(rest)
+  }
+}
+
+fn forward_sub_segment(
+  segment: Segment,
+  from from: Float,
+  to to: Float,
+) -> Result(Segment, Error) {
+  case from == 1.0 {
+    True -> {
+      case
+        reverse_segment(segment)
+        |> forward_sub_segment(from: 1.0 -. to, to: 0.0)
+      {
+        Error(error) -> Error(error)
+        Ok(segment) -> Ok(reverse_segment(segment))
+      }
+    }
+    False -> {
+      let local_to = { to -. from } /. { 1.0 -. from }
+
+      case split_segment(segment, at: from) {
+        Error(error) -> Error(error)
+        Ok(#(_, after_from)) -> {
+          case split_segment(after_from, at: local_to) {
+            Error(error) -> Error(error)
+            Ok(#(between, _)) -> Ok(between)
+          }
+        }
+      }
+    }
+  }
 }
 
 fn is_zero_length_line(segment: Segment) -> Bool {

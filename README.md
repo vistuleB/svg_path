@@ -96,11 +96,14 @@ is the segment start and `1.0` is the segment end:
 svg_path.segment_point(segment, at: 0.5)
 svg_path.segment_derivative(segment, at: 0.5)
 svg_path.split_segment(segment, at: 0.5)
+svg_path.sub_segment(segment, from: 0.25, to: 0.75)
+svg_path.sub_segments(segment, between: [0.25, 0.75, 0.5])
 ```
 
 These helpers work for lines, quadratic Beziers, cubic Beziers, and arcs.
 Values outside `0.0..1.0` extrapolate along the same segment. Use
-`split_segment_inside` when outside values should return an error instead.
+`split_segment_inside`, `sub_segment_inside`, or `sub_segments_inside` when
+outside values should return an error instead.
 
 ### Subpaths
 
