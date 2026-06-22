@@ -1,7 +1,7 @@
 import svg_path
 import svg_path/svg
 
-pub fn paths_renders_a_complete_svg_document_test() {
+pub fn document_renders_a_complete_svg_document_test() {
   let path =
     svg_path.path([
       svg_path.assert_subpath([
@@ -17,7 +17,7 @@ pub fn paths_renders_a_complete_svg_document_test() {
       max: svg_path.point(20.0, 15.0),
     )
 
-  assert svg.paths(
+  assert svg.document(
       [
         svg.StyledPath(path, "fill: none; stroke: red; stroke-width: 0.25"),
         svg.Text(
@@ -33,6 +33,17 @@ pub fn paths_renders_a_complete_svg_document_test() {
     <> "  <path d=\"M 1 2 H 11\" style=\"fill: none; stroke: red; stroke-width: 0.25\" />\n"
     <> "  <text x=\"1\" y=\"2\" font-size=\"4\" style=\"fill: black; font-family: sans-serif\">start</text>\n"
     <> "</svg>"
+}
+
+pub fn paths_delegates_to_document_test() {
+  let box =
+    svg_path.BoundingBox(
+      min: svg_path.point(0.0, 0.0),
+      max: svg_path.point(1.0, 1.0),
+    )
+  let things = [svg.StyledPath(svg_path.empty_path(), "fill: none")]
+
+  assert svg.paths(things, view_box: box) == svg.document(things, view_box: box)
 }
 
 pub fn paths_escapes_path_style_and_text_values_test() {

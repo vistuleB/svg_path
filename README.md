@@ -3,8 +3,9 @@
 [![Package Version](https://img.shields.io/hexpm/v/svg_path)](https://hex.pm/packages/svg_path)
 [![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/svg_path/)
 
-`svg_path` is a set of utilities for working with SVG paths and
-transforms. 
+`svg_path` is a set of utilities for working with SVG paths and transforms.
+This README is a tour of the main workflows; the complete API reference lives
+on HexDocs.
 
 ```sh
 gleam add svg_path@0
@@ -558,6 +559,37 @@ in more than one point, such as partially overlapping collinear lines, return
 `IntersectionOptions` to tune `tolerance` and `max_depth` for curved segment
 intersection detection.
 
+### Segment Convex Hulls
+
+The `svg_path/convex_hull` module computes a closed hull for a single segment.
+The hull reuses curve portions from the original segment where possible, joined
+by straight lines:
+
+```gleam
+import svg_path
+import svg_path/convex_hull
+
+pub fn hull(
+  segment: svg_path.Segment,
+) -> Result(
+  #(svg_path.Subpath, List(convex_hull.HullPiece)),
+  convex_hull.HullError,
+) {
+  convex_hull.segment_hull(segment)
+}
+```
+
+`HullPiece` records how the hull was assembled:
+
+```gleam
+convex_hull.HullCurve(from, to)
+convex_hull.HullLine(from, to)
+```
+
+The `Float` values are the original segment parameters. A curve piece is
+produced with `sub_segment(segment, from:, to:)`; a line piece connects
+`segment_point(segment, at: from)` to `segment_point(segment, at: to)`.
+
 ## Parsing
 
 `svg_path/parse` accepts normal SVG path data syntax, including:
@@ -619,7 +651,8 @@ pub fn tidy_path_data(input: String) -> String {
 
 If you want a complete SVG document for debugging or examples, use
 `svg_path/svg` with a view box, per-path style strings, and optional styled
-text labels:
+text labels. This is a deliberately small helper for quick drawings, not a
+full rendering layer:
 
 ```gleam
 import svg_path/svg
@@ -628,14 +661,14 @@ pub fn debug_svg(
   things: svg.ThingsToDraw,
   box: svg_path.BoundingBox,
 ) -> String {
-  svg.paths(things, view_box: box)
+  svg.document(things, view_box: box)
 }
 ```
 
-Serialization options can use relative commands, remove optional whitespace,
-round numbers, keep fixed decimal places, omit repeated command letters, and
-left-pad numbers for visual alignment. The lower-level decimal controls are
-split into `LeftDecimalOptions` and `RightDecimalOptions`.
+Serialization options can use relative commands, smaller whitespace, rounded
+numbers, fixed decimal places, omitted repeated command letters, and left-padded
+numbers for visual alignment. The lower-level decimal controls are split into
+`LeftDecimalOptions` and `RightDecimalOptions`.
 
 ```gleam
 import svg_path/parse
@@ -704,8 +737,8 @@ Z
 
 The one unusual combination is `AtSegments` with `repeat_commands(False)`.
 There, each emitted command letter is followed by a newline, repeated commands
-are omitted, and `M`/`m` always starts a new line. This enables vertical
-alignment of coordinates when combined with fixed-width decimal formatting:
+are omitted, and `M`/`m` always starts a new line. This can be combined with
+fixed-width decimal formatting for visual alignment:
 
 ```gleam
 serialize.fixed_decimal_options(2)
@@ -716,21 +749,10 @@ serialize.fixed_decimal_options(2)
 
 ```text
 M
--003.00 0001.00 C
-0004.50 0012.25 0050.00 -006.75 0120.00 0018.00
--040.00 0033.50 0009.25 -075.50 0200.13 0090.00
-0300.00 -012.00 0400.50 0075.25 -500.00 0006.50
-0017.75 -024.50 0088.13 0125.00 1000.00 -250.00
-M
 0020.00 -030.00 C
 -015.00 0040.00 0080.00 -090.00 0140.00 0020.00
 0260.00 0030.00 -320.00 0045.00 0480.00 -060.00
 0600.50 -070.25 0720.00 0080.00 0840.00 -090.00
-M
--700.00 0300.00 C
--600.00 -200.00 -500.00 0150.00 -400.00 -100.00
--250.25 0075.50 -125.00 -050.00 0000.00 0025.00
-0125.50 -012.75 0250.00 0006.25 0375.00 -003.50
 ```
 
 ### Left Padding
@@ -748,10 +770,7 @@ M
 - `LeftPadding(Int)` pads the whole-number side to that width.
 - `AutoLeftPadding` pre-scans the serialized value and chooses a shared width.
 
-Use `with_left_padding` to align serialized numbers visually. `AutoLeftPadding`
-pre-scans the serialized value and chooses a shared left-side width.
-`LeftPadding(Int)` lets you choose the width yourself. Use `Succinct` to disable
-left padding.
+Use `with_left_padding` to align serialized numbers visually:
 
 ```gleam
 serialize.fixed_decimal_options(1)

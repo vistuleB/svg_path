@@ -18,6 +18,7 @@ Generated SVG debug drawings live here.
 - `convex_hull_half_circle_arc_reverse.*`: convex hull overlay for a reverse-sweep half-circle arc
 - `convex_hull_rotated_arc_reverse.*`: convex hull overlay for a reverse-sweep rotated arc
 
-The convex hull segment drawings are generated from
-`src/svg_path_convex_hull_debug.gleam`. Toggle `selected_segment` in that file
-while experimenting.
+`svg_path_convex_hull_debug.gleam` is the parked scratch harness that generated
+the convex hull segment drawings. It is intentionally commented out here because
+it was originally run from `src`, where it could talk to development-only helper
+functions while the hull algorithm was being shaped.

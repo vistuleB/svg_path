@@ -64,13 +64,13 @@ pub fn labeled_point(
   ]
 }
 
-/// Render styled paths as a complete SVG document.
+/// Render styled paths and text labels as a complete SVG document.
 ///
 /// The supplied bounding box is used directly as the document `viewBox`.
 /// `StyledPath` contains a path and a raw CSS declaration string for its
 /// `style` attribute. `Text` contains text, a raw CSS declaration string for
 /// its `style` attribute, a position, and a font size.
-pub fn paths(
+pub fn document(
   things things: ThingsToDraw,
   view_box view_box: svg_path.BoundingBox,
 ) -> String {
@@ -98,6 +98,16 @@ pub fn paths(
     |> string.join("\n")
   }
   <> "\n</svg>"
+}
+
+/// Render styled paths and text labels as a complete SVG document.
+///
+/// This is an older name for `document`.
+pub fn paths(
+  things things: ThingsToDraw,
+  view_box view_box: svg_path.BoundingBox,
+) -> String {
+  document(things, view_box:)
 }
 
 fn thing_element(

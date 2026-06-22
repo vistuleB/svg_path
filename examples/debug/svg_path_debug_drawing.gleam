@@ -1,3 +1,7 @@
+// Originally kept at `src/svg_path_debug_drawing.gleam` while prototyping the
+// tiny SVG debug renderer. It lives under `examples/debug` now so it stays out
+// of the package module surface.
+
 import gleam/io
 import svg_path
 import svg_path/svg
@@ -49,7 +53,7 @@ pub fn drawing_svg() -> String {
       max: svg_path.point(110.0, 85.0),
     )
 
-  svg.paths(
+  svg.document(
     [
       svg.StyledPath(
         svg_path.path([leaf]),
