@@ -61,7 +61,7 @@ pub fn segment_inspects_with_auto_left_padding_test() {
     |> inspect.with_left_padding(inspect.AutoLeftPadding)
 
   assert inspect.segment_with_options(segment, options:)
-    == "Line(start=000.0,-05.0 end=120.0,010.0)"
+    == "Line(start=  0.0, -5.0 end=120.0, 10.0)"
 }
 
 pub fn point_inspects_with_explicit_left_padding_test() {
@@ -70,7 +70,7 @@ pub fn point_inspects_with_explicit_left_padding_test() {
     |> inspect.with_left_padding(inspect.LeftPadding(4))
 
   assert inspect.point_with_options(svg_path.point(2.0, -3.0), options:)
-    == "0002.0,-003.0"
+    == "   2.0,  -3.0"
 }
 
 pub fn curve_and_arc_segments_inspect_named_fields_test() {
@@ -251,8 +251,8 @@ pub fn code_inspection_respects_auto_left_padding_test() {
 
   assert inspect.path_code_with_options(path, options:) == "svg_path.path([
   svg_path.assert_subpath([
-    svg_path.line(start: svg_path.point(000.0, -05.0), end: svg_path.point(120.0, 010.0)),
-    svg_path.line(start: svg_path.point(120.0, 010.0), end: svg_path.point(002.0, -30.0))
+    svg_path.line(start: svg_path.point(  0.0,  -5.0), end: svg_path.point(120.0,  10.0)),
+    svg_path.line(start: svg_path.point(120.0,  10.0), end: svg_path.point(  2.0, -30.0))
   ])
 ])"
 }

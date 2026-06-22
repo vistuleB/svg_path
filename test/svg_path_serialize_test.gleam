@@ -197,7 +197,7 @@ pub fn left_padding_pads_serialized_numbers_test() {
       options: serialize.fixed_decimal_options(1)
         |> serialize.with_left_padding(serialize.LeftPadding(3)),
     )
-    == "M 000.0 -02.0 L 012.2 010.2"
+    == "M   0.0  -2.0 L  12.2  10.2"
 }
 
 pub fn auto_left_padding_aligns_serialized_path_numbers_test() {
@@ -215,7 +215,7 @@ pub fn auto_left_padding_aligns_serialized_path_numbers_test() {
       options: serialize.fixed_decimal_options(1)
         |> serialize.with_left_padding(serialize.AutoLeftPadding),
     )
-    == "M 000.0 -05.0 L 120.0 010.0 L 002.0 -30.0"
+    == "M   0.0  -5.0 L 120.0  10.0 L   2.0 -30.0"
 }
 
 pub fn minimize_whitespace_removes_command_spacing_test() {
@@ -512,7 +512,7 @@ pub fn commas_preserve_spaces_between_curve_point_pairs_test() {
         |> serialize.repeat_commands(False)
         |> serialize.with_newlines(serialize.AtSegments),
     )
-    == "M\n0020.00,-030.00 C\n-015.00,0040.00 0080.00,-090.00 0140.00,0020.00\n0260.00,0030.00 -320.00,0045.00 0480.00,-060.00\n0600.50,-070.25 0720.00,0080.00 0840.00,-090.00"
+    == "M\n  20.00, -30.00 C\n -15.00,  40.00   80.00, -90.00  140.00,  20.00\n 260.00,  30.00 -320.00,  45.00  480.00, -60.00\n 600.50, -70.25  720.00,  80.00  840.00, -90.00"
 }
 
 pub fn commas_apply_to_arc_radius_and_endpoint_pairs_test() {

@@ -648,6 +648,7 @@ fn join_segment_lines(commands: List(String), format: Format) -> String {
       |> join_segment_lines_with_command_newlines(
         lines: [],
         after_command: False,
+        options: format.options,
       )
   }
 }
@@ -656,6 +657,7 @@ fn join_segment_lines_with_command_newlines(
   commands: List(String),
   lines lines: List(String),
   after_command after_command: Bool,
+  options options: Options,
 ) -> String {
   case commands {
     [] -> lines |> list.reverse |> string.join("\n")
@@ -664,15 +666,15 @@ fn join_segment_lines_with_command_newlines(
 
       case is_command_name(name) {
         False -> {
-          let line = string.trim_start(command)
           join_segment_lines_with_command_newlines(
             rest,
-            lines: [line, ..lines],
+            lines: [command, ..lines],
             after_command: False,
+            options:,
           )
         }
         True -> {
-          let arguments = command_arguments(command)
+          let arguments = command_arguments(command, options)
           let lines = case lines == [] || after_command {
             True -> [name, ..lines]
             False -> {
@@ -691,6 +693,7 @@ fn join_segment_lines_with_command_newlines(
             rest,
             lines:,
             after_command: arguments == "",
+            options:,
           )
         }
       }
@@ -745,14 +748,17 @@ fn command_name(command: String) -> String {
   }
 }
 
-fn command_arguments(command: String) -> String {
-  command
-  |> string.drop_start(up_to: 1)
-  |> string.trim_start
+fn command_arguments(command: String, options: Options) -> String {
+  let arguments = string.drop_start(command, up_to: 1)
+
+  case options.minimize_whitespace {
+    True -> arguments
+    False -> string.drop_start(arguments, up_to: 1)
+  }
 }
 
 fn compacted_command_arguments(command: String, options: Options) -> String {
-  let arguments = command_arguments(command)
+  let arguments = command_arguments(command, options)
 
   case options.minimize_whitespace {
     True -> " " <> arguments

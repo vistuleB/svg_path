@@ -751,10 +751,10 @@ serialize.fixed_decimal_options(2)
 
 ```text
 M
-0020.00,-030.00 C
--015.00,0040.00 0080.00,-090.00 0140.00,0020.00
-0260.00,0030.00 -320.00,0045.00 0480.00,-060.00
-0600.50,-070.25 0720.00,0080.00 0840.00,-090.00
+  20.00, -30.00 C
+ -15.00,  40.00   80.00, -90.00  140.00,  20.00
+ 260.00,  30.00 -320.00,  45.00  480.00, -60.00
+ 600.50, -70.25  720.00,  80.00  840.00, -90.00
 ```
 
 ### Left Padding
@@ -769,7 +769,7 @@ M
 `LeftDecimalOptions` controls the whole-number side:
 
 - `Succinct` uses no left padding.
-- `LeftPadding(Int)` pads the whole-number side to that width.
+- `LeftPadding(Int)` pads the whole-number side to that width with spaces.
 - `AutoLeftPadding` pre-scans the serialized value and chooses a shared width.
 
 Use `with_left_padding` to align serialized numbers visually:

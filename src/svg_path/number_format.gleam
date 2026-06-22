@@ -120,17 +120,7 @@ fn pad_left_side(number: String, width: Int) -> String {
     Error(_) -> #(number, "")
   }
 
-  let whole = case string.starts_with(whole, "-") {
-    True -> {
-      "-"
-      <> {
-        whole
-        |> string.drop_start(up_to: 1)
-        |> string.pad_start(to: int.max(width - 1, 0), with: "0")
-      }
-    }
-    False -> string.pad_start(whole, to: width, with: "0")
-  }
+  let whole = string.pad_start(whole, to: width, with: " ")
 
   whole <> suffix
 }
