@@ -590,6 +590,12 @@ The `Float` values are the original segment parameters. A curve piece is
 produced with `sub_segment(segment, from:, to:)`; a line piece connects
 `segment_point(segment, at: from)` to `segment_point(segment, at: to)`.
 
+This is a numerical geometric algorithm. `PathError` means the generated pieces
+could not be turned into a valid closed `Subpath`. The other `HullError` values
+mean the sampling/refinement process failed one of its internal consistency
+checks or iteration limits, so the function reports an error rather than
+guessing at a hull.
+
 ## Parsing
 
 `svg_path/parse` accepts normal SVG path data syntax, including:

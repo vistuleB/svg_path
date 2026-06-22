@@ -1,4 +1,12 @@
-//// Experimental convex hull helpers for path segments.
+//// Convex hull helpers for path segments.
+////
+//// This module computes a closed hull for a single segment. The hull reuses
+//// portions of the original segment when they lie on the hull boundary and
+//// joins those portions with straight lines.
+////
+//// The algorithm is numerical. When it cannot refine or simplify its support
+//// samples enough to certify the hull-piece sequence, it returns `HullError`
+//// rather than guessing.
 
 import gleam/float
 import gleam/int
@@ -34,20 +42,30 @@ type SamplePair {
 }
 
 pub type HullPiece {
+  /// A portion of the original segment, from one segment parameter to another.
   HullCurve(Float, Float)
 
+  /// A straight line between two points on the original segment.
   HullLine(Float, Float)
 }
 
 pub type HullError {
+  /// The generated hull segments could not be converted into a valid closed
+  /// `Subpath`.
   PathError(svg_path.Error)
 
+  /// The final hull-piece sequence failed the invariant that curve pieces must
+  /// be separated by line pieces.
   ConsecutiveCurves
 
+  /// The refined support samples still contained adjacent duplicate segment
+  /// parameters.
   DuplicateAdjacentTValues
 
+  /// Support-sample refinement did not settle before the iteration limit.
   RefinementReachedMaxIterations(Int)
 
+  /// Support-sample simplification did not settle before the iteration limit.
   PurificationReachedMaxIterations(Int)
 }
 
