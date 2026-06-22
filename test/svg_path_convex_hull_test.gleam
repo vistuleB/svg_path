@@ -45,15 +45,32 @@ pub fn segment_hull_returns_two_line_pieces_for_point_cubic_test() {
     ]
 }
 
-pub fn segment_hull_handles_near_endpoint_arc_as_two_line_pieces_test() {
+pub fn segment_hull_returns_curve_and_chord_for_quadratic_test() {
+  let segment =
+    svg_path.quadratic_bezier(
+      start: svg_path.point(0.0, 0.0),
+      control: svg_path.point(5.0, 10.0),
+      end: svg_path.point(10.0, 0.0),
+    )
+  let assert Ok(#(subpath, pieces)) = convex_hull.segment_hull(segment)
+
+  assert svg_path.is_closed(subpath)
+  assert pieces
+    == [
+      convex_hull.HullCurve(0.0, 1.0),
+      convex_hull.HullLine(1.0, 0.0),
+    ]
+}
+
+pub fn segment_hull_handles_near_endpoint_arc_as_curve_and_chord_test() {
   let assert Ok(#(subpath, pieces)) =
     convex_hull.segment_hull(near_endpoint_arc(sweep: True))
 
   assert svg_path.is_closed(subpath)
   assert pieces
     == [
+      convex_hull.HullCurve(0.0, 1.0),
       convex_hull.HullLine(1.0, 0.0),
-      convex_hull.HullLine(0.0, 1.0),
     ]
 }
 
@@ -130,12 +147,7 @@ pub fn transformed_adversarial_segment_hulls_pass_geometry_checks_test() {
 }
 
 fn known_transformed_adversarial_failures() -> List(String) {
-  [
-    "endpoint_control_cubic_translated: segment_hull returned RefinementReachedMaxIterations(0)",
-    "endpoint_control_cubic_rotated: segment_hull returned ConsecutiveCurves",
-    "near_cusp_cubic_translated: segment_hull returned RefinementReachedMaxIterations(0)",
-    "near_cusp_cubic_scaled: segment_hull returned ConsecutiveCurves",
-  ]
+  []
 }
 
 fn specimens() -> List(#(String, svg_path.Segment)) {

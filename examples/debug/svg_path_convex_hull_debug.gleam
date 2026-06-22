@@ -374,7 +374,8 @@ fn hull_support_value_loop(
       use value <- result_try_support(support_value(segment, angle))
       case value >. best {
         True -> hull_support_value_loop(rest, angle, value, index, index + 1)
-        False -> hull_support_value_loop(rest, angle, best, best_index, index + 1)
+        False ->
+          hull_support_value_loop(rest, angle, best, best_index, index + 1)
       }
     }
   }

@@ -1,5 +1,5 @@
-import gleam/int
 import gleam/float
+import gleam/int
 import gleam/list
 import gleam_community/maths
 import svg_path
@@ -33,11 +33,32 @@ pub fn arc_specimens() -> List(#(String, svg_path.Segment)) {
 pub fn cubic_specimens() -> List(#(String, svg_path.Segment)) {
   [
     #("endpoint_control_cubic", endpoint_control_cubic()),
-    #("endpoint_control_cubic_translated", transform_segment(endpoint_control_cubic(), transform.translate(x: 37.0, y: -19.0))),
-    #("endpoint_control_cubic_rotated", transform_segment(endpoint_control_cubic(), transform.rotate(degrees: 37.0))),
+    #(
+      "endpoint_control_cubic_translated",
+      transform_segment(
+        endpoint_control_cubic(),
+        transform.translate(x: 37.0, y: -19.0),
+      ),
+    ),
+    #(
+      "endpoint_control_cubic_rotated",
+      transform_segment(
+        endpoint_control_cubic(),
+        transform.rotate(degrees: 37.0),
+      ),
+    ),
     #("near_cusp_cubic", near_cusp_cubic()),
-    #("near_cusp_cubic_translated", transform_segment(near_cusp_cubic(), transform.translate(x: 37.0, y: -19.0))),
-    #("near_cusp_cubic_scaled", transform_segment(near_cusp_cubic(), transform.scale(factor: 1.7))),
+    #(
+      "near_cusp_cubic_translated",
+      transform_segment(
+        near_cusp_cubic(),
+        transform.translate(x: 37.0, y: -19.0),
+      ),
+    ),
+    #(
+      "near_cusp_cubic_scaled",
+      transform_segment(near_cusp_cubic(), transform.scale(factor: 1.7)),
+    ),
     #("far_control_cubic", far_control_cubic()),
     #("opposite_far_controls_cubic", opposite_far_controls_cubic()),
     #("wide_loop_cubic", wide_loop_cubic()),

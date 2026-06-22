@@ -62,7 +62,11 @@ pub fn max_support_error(
   pieces pieces: List(convex_hull.HullPiece),
   sample_count sample_count: Int,
 ) -> Result(Float, CandidateError) {
-  use worst <- result.try(worst_support_error(segment, pieces: pieces, sample_count: sample_count))
+  use worst <- result.try(worst_support_error(
+    segment,
+    pieces: pieces,
+    sample_count: sample_count,
+  ))
   Ok(worst.1)
 }
 
@@ -71,17 +75,22 @@ pub fn worst_support_error(
   pieces pieces: List(convex_hull.HullPiece),
   sample_count sample_count: Int,
 ) -> Result(#(Float, Float, Float, Float), CandidateError) {
-  int.range(from: 0, to: sample_count - 1, with: Ok(#(0.0, 0.0, 0.0, 0.0)), run: fn(worst, i) {
-    use worst <- result.try(worst)
-    let angle = int.to_float(i) *. 360.0 /. int.to_float(sample_count)
-    use original <- result.try(support(segment, angle: angle))
-    use candidate <- result.try(hull_piece_support(segment, pieces, angle))
-    let error = float.absolute_value(original.value -. candidate)
-    case error >. worst.1 {
-      True -> Ok(#(angle, error, original.value, candidate))
-      False -> Ok(worst)
-    }
-  })
+  int.range(
+    from: 0,
+    to: sample_count - 1,
+    with: Ok(#(0.0, 0.0, 0.0, 0.0)),
+    run: fn(worst, i) {
+      use worst <- result.try(worst)
+      let angle = int.to_float(i) *. 360.0 /. int.to_float(sample_count)
+      use original <- result.try(support(segment, angle: angle))
+      use candidate <- result.try(hull_piece_support(segment, pieces, angle))
+      let error = float.absolute_value(original.value -. candidate)
+      case error >. worst.1 {
+        True -> Ok(#(angle, error, original.value, candidate))
+        False -> Ok(worst)
+      }
+    },
+  )
 }
 
 pub fn piece_supports(
@@ -97,7 +106,10 @@ pub fn piece_supports(
   |> result.map(list.reverse)
 }
 
-fn raw_samples(segment: svg_path.Segment, sample_count: Int) -> List(SupportSample) {
+fn raw_samples(
+  segment: svg_path.Segment,
+  sample_count: Int,
+) -> List(SupportSample) {
   int.range(from: 0, to: sample_count - 1, with: [], run: fn(samples, i) {
     let angle = int.to_float(i) *. 360.0 /. int.to_float(sample_count)
     case support(segment, angle: angle) {
@@ -138,11 +150,10 @@ fn collapse_runs_loop(
             runs: runs,
           )
         False ->
-          collapse_runs_loop(
-            rest,
-            current: Run(ts: [sample.t]),
-            runs: [reverse_run(current), ..runs],
-          )
+          collapse_runs_loop(rest, current: Run(ts: [sample.t]), runs: [
+            reverse_run(current),
+            ..runs
+          ])
       }
     }
   }
@@ -176,12 +187,7 @@ fn pieces_from_runs(runs: List(Run)) -> List(convex_hull.HullPiece) {
   case endpoints {
     [] -> []
     [first, ..rest] ->
-      pieces_from_endpoints_loop(
-        endpoints,
-        first,
-        rest,
-        pieces: [],
-      )
+      pieces_from_endpoints_loop(endpoints, first, rest, pieces: [])
       |> list.reverse
   }
 }
@@ -193,24 +199,35 @@ fn refine_pieces(
   case pieces {
     [] -> []
     [_] -> pieces
-    [first, .._rest] -> {
+    [first, ..] -> {
       let assert Ok(last) = list.last(pieces)
       let window = list.append([last, ..pieces], [first])
-      refine_pieces_loop(segment, window, remaining: list.length(pieces), refined: [])
+      refine_pieces_loop(
+        segment,
+        window,
+        remaining: list.length(pieces),
+        refined: [],
+      )
       |> list.reverse
       |> sync_line_endpoints
     }
   }
 }
 
-fn sync_line_endpoints(pieces: List(convex_hull.HullPiece)) -> List(convex_hull.HullPiece) {
+fn sync_line_endpoints(
+  pieces: List(convex_hull.HullPiece),
+) -> List(convex_hull.HullPiece) {
   case pieces {
     [] -> []
     [_] -> pieces
-    [first, .._] -> {
+    [first, ..] -> {
       let assert Ok(last) = list.last(pieces)
       let window = list.append([last, ..pieces], [first])
-      sync_line_endpoints_loop(window, remaining: list.length(pieces), synced: [])
+      sync_line_endpoints_loop(
+        window,
+        remaining: list.length(pieces),
+        synced: [],
+      )
       |> list.reverse
     }
   }
@@ -308,16 +325,17 @@ fn refine_chord_tangent(
       let initial = chord_tangent_value(segment, approximate, other)
       case float.absolute_value(initial) <. 0.000000000001 {
         True -> approximate
-        False -> refine_chord_tangent_scan(
-          segment,
-          approximate: approximate,
-          other: other,
-          left: float.max(0.0, approximate -. 0.08),
-          right: float.min(1.0, approximate +. 0.08),
-          steps: 64,
-          best: approximate,
-          best_value: float.absolute_value(initial),
-        )
+        False ->
+          refine_chord_tangent_scan(
+            segment,
+            approximate: approximate,
+            other: other,
+            left: float.max(0.0, approximate -. 0.08),
+            right: float.min(1.0, approximate +. 0.08),
+            steps: 64,
+            best: approximate,
+            best_value: float.absolute_value(initial),
+          )
       }
     }
   }
@@ -334,24 +352,41 @@ fn refine_chord_tangent_scan(
   best_value best_value: Float,
 ) -> Float {
   let initial_value = chord_tangent_value(segment, left, other)
-  int.range(from: 1, to: steps, with: Continue(#(left, initial_value, best, best_value)), run: fn(state, i) {
-    case state {
-      Done(root) -> Done(root)
-      Continue(#(previous_t, previous_value, best, best_value)) -> {
-        let t = left +. { right -. left } *. int.to_float(i) /. int.to_float(steps)
-        let value = chord_tangent_value(segment, t, other)
-        let #(best, best_value) = case float.absolute_value(value) <. best_value {
-          True -> #(t, float.absolute_value(value))
-          False -> #(best, best_value)
-        }
-        case value == 0.0 || previous_value == 0.0 || same_sign(value, previous_value) == False {
-          True ->
-            Done(bisect_chord_tangent(segment, other, left: previous_t, right: t))
-          False -> Continue(#(t, value, best, best_value))
+  int.range(
+    from: 1,
+    to: steps,
+    with: Continue(#(left, initial_value, best, best_value)),
+    run: fn(state, i) {
+      case state {
+        Done(root) -> Done(root)
+        Continue(#(previous_t, previous_value, best, best_value)) -> {
+          let t =
+            left +. { right -. left } *. int.to_float(i) /. int.to_float(steps)
+          let value = chord_tangent_value(segment, t, other)
+          let #(best, best_value) = case
+            float.absolute_value(value) <. best_value
+          {
+            True -> #(t, float.absolute_value(value))
+            False -> #(best, best_value)
+          }
+          case
+            value == 0.0
+            || previous_value == 0.0
+            || same_sign(value, previous_value) == False
+          {
+            True ->
+              Done(bisect_chord_tangent(
+                segment,
+                other,
+                left: previous_t,
+                right: t,
+              ))
+            False -> Continue(#(t, value, best, best_value))
+          }
         }
       }
-    }
-  })
+    },
+  )
   |> finish_refinement_scan
 }
 
@@ -436,7 +471,7 @@ fn pieces_from_endpoints_loop(
 ) -> List(convex_hull.HullPiece) {
   case endpoints, rest {
     [], _ -> pieces
-    [current, .._remaining], [] -> {
+    [current, ..], [] -> {
       let pieces = add_endpoint_curve(pieces, current)
       add_line(pieces, end_t(current), start_t(first))
     }
@@ -524,16 +559,17 @@ fn support(
 
       let assert [first, ..rest] = candidates
       let best =
-        list.fold(rest, #(first, cubic_scalar(p0, p1, p2, p3, first)), fn(
-          best,
-          t,
-        ) {
-          let value = cubic_scalar(p0, p1, p2, p3, t)
-          case value >. best.1 {
-            True -> #(t, value)
-            False -> best
-          }
-        })
+        list.fold(
+          rest,
+          #(first, cubic_scalar(p0, p1, p2, p3, first)),
+          fn(best, t) {
+            let value = cubic_scalar(p0, p1, p2, p3, t)
+            case value >. best.1 {
+              True -> #(t, value)
+              False -> best
+            }
+          },
+        )
 
       Ok(SupportSample(angle: angle, t: best.0, value: best.1))
     }
@@ -712,10 +748,24 @@ fn quadratic_roots(a: Float, b: Float, c: Float) -> List(Float) {
 
 fn cubic_scalar(p0: Float, p1: Float, p2: Float, p3: Float, t: Float) -> Float {
   let mt = 1.0 -. t
-  p0 *. mt *. mt *. mt
-  +. 3.0 *. p1 *. mt *. mt *. t
-  +. 3.0 *. p2 *. mt *. t *. t
-  +. p3 *. t *. t *. t
+  p0
+  *. mt
+  *. mt
+  *. mt
+  +. 3.0
+  *. p1
+  *. mt
+  *. mt
+  *. t
+  +. 3.0
+  *. p2
+  *. mt
+  *. t
+  *. t
+  +. p3
+  *. t
+  *. t
+  *. t
 }
 
 fn average(values: List(Float)) -> Float {

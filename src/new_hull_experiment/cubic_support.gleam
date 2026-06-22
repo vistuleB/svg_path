@@ -40,7 +40,8 @@ fn candidates(
       add(scale(start, -1.0), scale(control1, 3.0)),
       add(scale(control2, -3.0), end),
     )
-  let b = add(scale(start, 3.0), add(scale(control1, -6.0), scale(control2, 3.0)))
+  let b =
+    add(scale(start, 3.0), add(scale(control1, -6.0), scale(control2, 3.0)))
   let c = add(scale(control1, 3.0), scale(start, -3.0))
 
   quadratic_roots(
@@ -60,7 +61,10 @@ fn best_candidate(
   case candidates {
     [] -> Error(NotCubic)
     [first, ..rest] -> {
-      use first_point <- result_try_point(svg_path.segment_point(segment, at: first))
+      use first_point <- result_try_point(svg_path.segment_point(
+        segment,
+        at: first,
+      ))
       best_candidate_loop(
         segment,
         direction,

@@ -67,7 +67,13 @@ fn compare_specimen(specimen: #(String, svg_path.Segment)) -> String {
 fn sample_hull_summary(segment: svg_path.Segment) -> String {
   case cubic_sample_hull.hull(segment, sample_count: 3600) {
     Ok(#(_, pieces)) -> {
-      case cubic_sample_hull.worst_support_error(segment, pieces: pieces, sample_count: 3600) {
+      case
+        cubic_sample_hull.worst_support_error(
+          segment,
+          pieces: pieces,
+          sample_count: 3600,
+        )
+      {
         Ok(#(angle, error, original, candidate)) ->
           ", sample hull pieces = "
           <> int.to_string(list.length(pieces))
@@ -81,16 +87,25 @@ fn sample_hull_summary(segment: svg_path.Segment) -> String {
           <> float.to_string(candidate)
           <> case error >. 0.000001 {
             True -> {
-              let supports =
-                case cubic_sample_hull.piece_supports(segment, pieces: pieces, angle: angle) {
-                  Ok(supports) -> string.inspect(supports)
-                  Error(error) -> string.inspect(error)
-                }
-              " pieces=" <> string.inspect(pieces) <> " piece_supports=" <> supports
+              let supports = case
+                cubic_sample_hull.piece_supports(
+                  segment,
+                  pieces: pieces,
+                  angle: angle,
+                )
+              {
+                Ok(supports) -> string.inspect(supports)
+                Error(error) -> string.inspect(error)
+              }
+              " pieces="
+              <> string.inspect(pieces)
+              <> " piece_supports="
+              <> supports
             }
             False -> ""
           }
-        Error(error) -> ", sample hull support error = " <> string.inspect(error)
+        Error(error) ->
+          ", sample hull support error = " <> string.inspect(error)
       }
     }
     Error(error) -> ", sample hull error = " <> string.inspect(error)
@@ -115,9 +130,15 @@ fn compare_support(
   segment: svg_path.Segment,
   angle: Float,
 ) -> Result(Float, Nil) {
-  case cubic_support.support(segment, degrees: angle), numeric_support(segment, angle) {
+  case
+    cubic_support.support(segment, degrees: angle),
+    numeric_support(segment, angle)
+  {
     Ok(#(_, analytic_point)), Ok(numeric_point) ->
-      Ok(float.absolute_value(point_support(analytic_point, angle) -. point_support(numeric_point, angle)))
+      Ok(float.absolute_value(
+        point_support(analytic_point, angle)
+        -. point_support(numeric_point, angle),
+      ))
     _, _ -> Error(Nil)
   }
 }

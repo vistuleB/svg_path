@@ -40,8 +40,10 @@ fn is_collinear(
   let axis = best_axis(start, control1, control2, end)
   let scale = float.max(length(axis), 1.0)
 
-  float.absolute_value(cross(axis, subtract(control1, start))) <=. epsilon *. scale
-  && float.absolute_value(cross(axis, subtract(control2, start))) <=. epsilon *. scale
+  float.absolute_value(cross(axis, subtract(control1, start)))
+  <=. epsilon *. scale
+  && float.absolute_value(cross(axis, subtract(control2, start)))
+  <=. epsilon *. scale
 }
 
 fn scalar_extrema(
@@ -103,10 +105,24 @@ fn extrema_loop(
 fn scalar_value(p0: Float, p1: Float, p2: Float, p3: Float, t: Float) -> Float {
   let mt = 1.0 -. t
 
-  p0 *. mt *. mt *. mt
-  +. 3.0 *. p1 *. mt *. mt *. t
-  +. 3.0 *. p2 *. mt *. t *. t
-  +. p3 *. t *. t *. t
+  p0
+  *. mt
+  *. mt
+  *. mt
+  +. 3.0
+  *. p1
+  *. mt
+  *. mt
+  *. t
+  +. 3.0
+  *. p2
+  *. mt
+  *. t
+  *. t
+  +. p3
+  *. t
+  *. t
+  *. t
 }
 
 fn quadratic_roots(a: Float, b: Float, c: Float) -> List(Float) {
