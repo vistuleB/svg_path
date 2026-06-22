@@ -617,6 +617,21 @@ pub fn tidy_path_data(input: String) -> String {
 }
 ```
 
+If you want a complete SVG document for debugging or examples, use
+`svg_path/svg` with a view box, per-path style strings, and optional styled
+text labels:
+
+```gleam
+import svg_path/svg
+
+pub fn debug_svg(
+  things: svg.ThingsToDraw,
+  box: svg_path.BoundingBox,
+) -> String {
+  svg.paths(things, view_box: box)
+}
+```
+
 Serialization options can use relative commands, remove optional whitespace,
 round numbers, keep fixed decimal places, omit repeated command letters, and
 left-pad numbers for visual alignment. The lower-level decimal controls are
