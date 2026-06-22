@@ -18,6 +18,22 @@ pub opaque type Matrix {
   Matrix(a: Float, b: Float, c: Float, d: Float, e: Float, f: Float)
 }
 
+/// An anchor point on a bounding box.
+///
+/// `Top` means the visual top edge, `box.min.y`; `Bottom` means the visual
+/// bottom edge, `box.max.y`.
+pub type Anchor {
+  TopLeft
+  TopCenter
+  TopRight
+  CenterLeft
+  Center
+  CenterRight
+  BottomLeft
+  BottomCenter
+  BottomRight
+}
+
 /// Errors returned while transforming paths or converting matrices.
 pub type Error {
   /// An arc collapsed under the transform and cannot be represented as an arc.
@@ -76,6 +92,16 @@ pub fn multiply(left left: Matrix, right right: Matrix) -> Matrix {
     e: left.a *. right.e +. left.c *. right.f +. left.e,
     f: left.b *. right.e +. left.d *. right.f +. left.f,
   )
+}
+
+/// Create a matrix that applies a transform about a point.
+pub fn about_point(
+  transform transform: Matrix,
+  point point: svg_path.Point,
+) -> Matrix {
+  translate(x: 0.0 -. point.x, y: 0.0 -. point.y)
+  |> chain(first: _, then: transform)
+  |> chain(first: _, then: translate(x: point.x, y: point.y))
 }
 
 /// Create a translation matrix.
@@ -210,6 +236,32 @@ pub fn segment(
   case validate_matrix(transform) {
     Error(error) -> Error(error)
     Ok(Nil) -> transform_valid_segment(segment, transform)
+  }
+}
+
+/// Transform a segment about a point.
+pub fn segment_about_point(
+  input: svg_path.Segment,
+  by transform: Matrix,
+  point point: svg_path.Point,
+) -> Result(svg_path.Segment, Error) {
+  segment(input, by: about_point(transform, point:))
+}
+
+/// Transform a segment about an anchor on its bounding box.
+pub fn segment_about_anchor(
+  input: svg_path.Segment,
+  by transform: Matrix,
+  anchor anchor: Anchor,
+) -> Result(svg_path.Segment, Error) {
+  case svg_path.segment_bounding_box(input) {
+    Error(error) -> Error(Core(error))
+    Ok(box) ->
+      segment_about_point(
+        input,
+        by: transform,
+        point: anchor_point(box, anchor),
+      )
   }
 }
 
@@ -383,6 +435,32 @@ pub fn subpath(
   }
 }
 
+/// Transform a subpath about a point.
+pub fn subpath_about_point(
+  input: svg_path.Subpath,
+  by transform: Matrix,
+  point point: svg_path.Point,
+) -> Result(svg_path.Subpath, Error) {
+  subpath(input, by: about_point(transform, point:))
+}
+
+/// Transform a subpath about an anchor on its bounding box.
+pub fn subpath_about_anchor(
+  input: svg_path.Subpath,
+  by transform: Matrix,
+  anchor anchor: Anchor,
+) -> Result(svg_path.Subpath, Error) {
+  case svg_path.subpath_bounding_box(input) {
+    Error(error) -> Error(Core(error))
+    Ok(box) ->
+      subpath_about_point(
+        input,
+        by: transform,
+        point: anchor_point(box, anchor),
+      )
+  }
+}
+
 /// Translate a subpath.
 pub fn translate_subpath(
   input: svg_path.Subpath,
@@ -477,6 +555,28 @@ pub fn path(
         Ok(subpaths) -> Ok(svg_path.path(subpaths))
       }
     }
+  }
+}
+
+/// Transform a path about a point.
+pub fn path_about_point(
+  input: svg_path.Path,
+  by transform: Matrix,
+  point point: svg_path.Point,
+) -> Result(svg_path.Path, Error) {
+  path(input, by: about_point(transform, point:))
+}
+
+/// Transform a path about an anchor on its bounding box.
+pub fn path_about_anchor(
+  input: svg_path.Path,
+  by transform: Matrix,
+  anchor anchor: Anchor,
+) -> Result(svg_path.Path, Error) {
+  case svg_path.path_bounding_box(input) {
+    Error(error) -> Error(Core(error))
+    Ok(box) ->
+      path_about_point(input, by: transform, point: anchor_point(box, anchor))
   }
 }
 
@@ -600,6 +700,23 @@ fn map_core_error(
   case result {
     Ok(subpath) -> Ok(subpath)
     Error(error) -> Error(Core(error))
+  }
+}
+
+fn anchor_point(box: svg_path.BoundingBox, anchor: Anchor) -> svg_path.Point {
+  let svg_path.BoundingBox(min:, max:) = box
+  let center = svg_path.bounding_box_center(box)
+
+  case anchor {
+    TopLeft -> min
+    TopCenter -> svg_path.point(center.x, min.y)
+    TopRight -> svg_path.point(max.x, min.y)
+    CenterLeft -> svg_path.point(min.x, center.y)
+    Center -> center
+    CenterRight -> svg_path.point(max.x, center.y)
+    BottomLeft -> svg_path.point(min.x, max.y)
+    BottomCenter -> svg_path.point(center.x, max.y)
+    BottomRight -> max
   }
 }
 

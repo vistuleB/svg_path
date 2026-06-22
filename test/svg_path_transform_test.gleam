@@ -1,7 +1,10 @@
+import gleam/float
 import gleeunit
 import svg_path
 import svg_path/serialize
 import svg_path/transform
+
+const tolerance = 0.000001
 
 pub fn main() -> Nil {
   gleeunit.main()
@@ -41,6 +44,20 @@ pub fn scale_xy_matrix_transforms_points_test() {
     == svg_path.point(8.0, -6.0)
 }
 
+pub fn about_point_matrix_transforms_points_about_point_test() {
+  let point = svg_path.point(3.0, 4.0)
+  let center = svg_path.point(1.0, 2.0)
+
+  assert transform.point(
+      point,
+      by: transform.about_point(
+        transform.scale_xy(x: 2.0, y: 3.0),
+        point: center,
+      ),
+    )
+    == svg_path.point(5.0, 8.0)
+}
+
 pub fn rotate_matrix_uses_degrees_test() {
   let line =
     svg_path.line(
@@ -50,6 +67,92 @@ pub fn rotate_matrix_uses_degrees_test() {
   let assert Ok(segment) = transform.rotate_segment(line, degrees: 90.0)
 
   assert serialize.segment(segment) == "M 0 1 H -2"
+}
+
+pub fn transform_about_rotation_rotates_about_point_test() {
+  let point = svg_path.point(3.0, 2.0)
+  let center = svg_path.point(1.0, 2.0)
+
+  assert point_near(
+    transform.point(
+      point,
+      by: transform.about_point(transform.rotate(degrees: 90.0), point: center),
+    ),
+    svg_path.point(1.0, 4.0),
+  )
+}
+
+pub fn path_about_point_transforms_path_about_point_test() {
+  let center = svg_path.point(1.0, 2.0)
+  let assert Ok(path) =
+    svg_path.path([
+      svg_path.assert_subpath([
+        svg_path.line(
+          start: svg_path.point(3.0, 2.0),
+          end: svg_path.point(3.0, 4.0),
+        ),
+      ]),
+    ])
+    |> transform.path_about_point(
+      by: transform.rotate(degrees: 90.0),
+      point: center,
+    )
+
+  assert serialize.path(path) == "M 1 4 H -1"
+}
+
+pub fn segment_about_anchor_transforms_segment_about_anchor_test() {
+  let segment =
+    svg_path.line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(10.0, 0.0),
+    )
+  let assert Ok(transformed) =
+    transform.segment_about_anchor(
+      segment,
+      by: transform.rotate(degrees: 90.0),
+      anchor: transform.TopLeft,
+    )
+
+  assert serialize.segment(transformed) == "M 0 0 V 10"
+}
+
+pub fn subpath_about_anchor_transforms_subpath_about_anchor_test() {
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.line(
+        start: svg_path.point(0.0, 0.0),
+        end: svg_path.point(0.0, 10.0),
+      ),
+    ])
+  let assert Ok(transformed) =
+    transform.subpath_about_anchor(
+      subpath,
+      by: transform.scale_xy(x: 1.0, y: -1.0),
+      anchor: transform.Center,
+    )
+
+  assert serialize.subpath(transformed) == "M 0 10 V 0"
+}
+
+pub fn path_about_anchor_transforms_path_about_anchor_test() {
+  let path =
+    svg_path.path([
+      svg_path.assert_subpath([
+        svg_path.line(
+          start: svg_path.point(0.0, 0.0),
+          end: svg_path.point(10.0, 0.0),
+        ),
+      ]),
+    ])
+  let assert Ok(transformed) =
+    transform.path_about_anchor(
+      path,
+      by: transform.scale_xy(x: -1.0, y: 1.0),
+      anchor: transform.Center,
+    )
+
+  assert serialize.path(transformed) == "M 10 0 H 0"
 }
 
 pub fn skew_matrices_use_degrees_test() {
@@ -474,4 +577,12 @@ fn result_try_set_closed_true(
     Ok(subpath) -> svg_path.set_closed(subpath, closed: True)
     Error(error) -> Error(error)
   }
+}
+
+fn point_near(a: svg_path.Point, b: svg_path.Point) -> Bool {
+  near(a.x, b.x) && near(a.y, b.y)
+}
+
+fn near(a: Float, b: Float) -> Bool {
+  float.absolute_value(a -. b) <=. tolerance
 }

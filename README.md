@@ -880,6 +880,30 @@ pub fn scale_then_move() -> transform.Matrix {
 }
 ```
 
+Transforms can also be applied about a point, or about one of the nine anchor
+points on a segment, subpath, or path bounding box:
+
+```gleam
+TopLeft      TopCenter      TopRight
+CenterLeft   Center         CenterRight
+BottomLeft   BottomCenter   BottomRight
+```
+
+```gleam
+import svg_path
+import svg_path/transform
+
+pub fn flip_path_horizontally(
+  path: svg_path.Path,
+) -> Result(svg_path.Path, transform.Error) {
+  path
+  |> transform.path_about_anchor(
+    by: transform.scale_xy(x: -1.0, y: 1.0),
+    anchor: transform.Center,
+  )
+}
+```
+
 ## Transform Attributes
 
 SVG transform attributes can be parsed and serialized separately from paths.
