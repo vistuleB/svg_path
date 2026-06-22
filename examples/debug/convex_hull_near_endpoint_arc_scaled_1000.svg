@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="9980 9980 40.1 40.1">
+  <path d="M 10000 10000 A 40000 30000 15 0 1 10000.1 10000.1" style="fill: none; stroke: #222222; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 10000 10000 L 10000.1 10000.1 Z" style="fill: rgba(70, 130, 180, 0.08); stroke: #4682b4; stroke-width: 0.8" />
+  <path d="M 10000 10000 L 10000.1 10000.1" style="fill: none; stroke: rgba(230, 57, 70, 0.76); stroke-width: 2.5; stroke-dasharray: 7 4; stroke-linecap: round" />
+  <path d="M 10000.1 10000.1 L 10000 10000" style="fill: none; stroke: rgba(42, 157, 143, 0.76); stroke-width: 2.5; stroke-dasharray: 7 4; stroke-linecap: round" />
+</svg>

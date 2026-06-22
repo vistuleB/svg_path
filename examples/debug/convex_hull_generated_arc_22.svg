@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-2019.99991 -3850.53016 3318.67454 2251.99141">
+  <path d="M -1999.99991 -1618.53874 A 617.75007 1618.0958 40.48148 0 1 640.251 -1636.37342" style="fill: none; stroke: #222222; stroke-width: 2; stroke-linecap: round" />
+  <path d="M -1999.99991 -1618.53874 A 1051.37885 2753.91583 40.48148 0 1 640.251 -1636.37342 Z" style="fill: rgba(70, 130, 180, 0.08); stroke: #4682b4; stroke-width: 0.8" />
+  <path d="M -1999.99991 -1618.53874 A 1051.37885 2753.91583 40.48148 0 1 640.251 -1636.37342" style="fill: none; stroke: rgba(230, 57, 70, 0.76); stroke-width: 3; stroke-linecap: round" />
+  <path d="M 640.251 -1636.37342 L -1999.99991 -1618.53874" style="fill: none; stroke: rgba(42, 157, 143, 0.76); stroke-width: 2.5; stroke-dasharray: 7 4; stroke-linecap: round" />
+  <path d="M -2002.49991 -1621.03874 H -1997.49991 V -1616.03874 H -2002.49991 Z M -2002.49991 -1621.03874 L -1997.49991 -1616.03874 M -2002.49991 -1616.03874 L -1997.49991 -1621.03874" style="fill: none; stroke: #e63946; stroke-width: 1; stroke-linecap: square; stroke-linejoin: miter" />
+  <text x="-1994.99991" y="-1616.03874" font-size="5" style="fill: #e63946; font-family: system-ui, sans-serif">start</text>
+  <path d="M 637.751 -1638.87342 H 642.751 V -1633.87342 H 637.751 Z M 637.751 -1638.87342 L 642.751 -1633.87342 M 637.751 -1633.87342 L 642.751 -1638.87342" style="fill: none; stroke: #2a9d8f; stroke-width: 1; stroke-linecap: square; stroke-linejoin: miter" />
+  <text x="645.251" y="-1633.87342" font-size="5" style="fill: #2a9d8f; font-family: system-ui, sans-serif">end</text>
+</svg>

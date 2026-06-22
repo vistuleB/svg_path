@@ -1,6 +1,13 @@
-// Originally kept at `src/svg_path_debug_drawing.gleam` while prototyping the
-// tiny SVG debug renderer. It lives under `examples/debug` now so it stays out
-// of the package module surface.
+//// Scratch runner for visually checking `svg_path/svg` debug drawing helpers.
+////
+//// This module is parked in `examples/debug` so it is not compiled as part of
+//// the package. To run it again, temporarily copy it to the project `src` root
+//// and run:
+////
+////     gleam run -m svg_path_debug_drawing
+////
+//// Redirect stdout into `examples/debug/debug_drawing.svg` to refresh the
+//// drawing.
 
 import gleam/io
 import svg_path

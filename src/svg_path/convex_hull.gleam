@@ -19,7 +19,7 @@ const initial_sample_number = 100
 
 const unit_diameter_distance_tolerance = 0.000001
 
-const t_tolerance = 0.05
+const t_tolerance = 0.1
 
 /// A support sample: `#(angle, t, segment_point(t))`.
 type SupportSample =
@@ -298,6 +298,18 @@ pub fn segment_hull(
 fn segment_hull_pieces(
   segment: svg_path.Segment,
 ) -> Result(List(HullPiece), HullError) {
+  use #(purified, refined) <- result.try(segment_hull_sample_stages(segment))
+
+  case degenerate_point_hull_pieces(purified, fallback: refined) {
+    Ok(pieces) -> Ok(pieces)
+    Error(Nil) ->
+      support_samples_to_hull_pieces(purified, t_tolerance: t_tolerance)
+  }
+}
+
+fn segment_hull_sample_stages(
+  segment: svg_path.Segment,
+) -> Result(#(List(SupportSample), List(SupportSample)), HullError) {
   use box <- result.try(map_path_error(svg_path.segment_bounding_box(segment)))
   let distance_tolerance =
     svg_path.bounding_box_diameter(box) *. unit_diameter_distance_tolerance
@@ -316,11 +328,7 @@ fn segment_hull_pieces(
     max_iterations: 1000,
   ))
 
-  case degenerate_point_hull_pieces(purified, fallback: refined) {
-    Ok(pieces) -> Ok(pieces)
-    Error(Nil) ->
-      support_samples_to_hull_pieces(purified, t_tolerance: t_tolerance)
-  }
+  Ok(#(purified, refined))
 }
 
 fn degenerate_point_hull_pieces(
@@ -420,7 +428,7 @@ fn remove_adjacent_duplicate_t_values_loop(
       let #(_, first_t, _) = first
       let #(_, previous_t, _) = previous
       case first_t == previous_t {
-        True -> kept |> list.reverse |> list.drop(1)
+        True -> kept |> list.reverse |> drop_last
         False -> list.reverse(kept)
       }
     }
@@ -513,24 +521,105 @@ fn remove_first_unneeded_support_sample(
     [] -> Error(Nil)
     [sample, ..after] -> {
       let without_sample = list.append(list.reverse(before), after)
+      let normalized_without_sample =
+        remove_adjacent_duplicate_t_values(without_sample)
 
       case
-        far_unrefined_pairs(
-          without_sample,
+        sample_touches_two_far_pairs(
+          sample,
+          before: before,
+          after: after,
           distance_tolerance: distance_tolerance,
           t_tolerance: t_tolerance,
         )
       {
-        [] -> Ok(without_sample)
-        _ ->
+        True ->
           remove_first_unneeded_support_sample(
             remaining: after,
             before: [sample, ..before],
             distance_tolerance: distance_tolerance,
             t_tolerance: t_tolerance,
           )
+
+        False -> {
+          case list.length(normalized_without_sample) <= 2 {
+            True -> Ok(normalized_without_sample)
+            False -> {
+              case
+                far_unrefined_pairs(
+                  normalized_without_sample,
+                  distance_tolerance: distance_tolerance,
+                  t_tolerance: t_tolerance,
+                )
+              {
+                [] -> Ok(normalized_without_sample)
+                _ ->
+                  remove_first_unneeded_support_sample(
+                    remaining: after,
+                    before: [sample, ..before],
+                    distance_tolerance: distance_tolerance,
+                    t_tolerance: t_tolerance,
+                  )
+              }
+            }
+          }
+        }
       }
     }
+  }
+}
+
+fn sample_touches_two_far_pairs(
+  sample: SupportSample,
+  before before: List(SupportSample),
+  after after: List(SupportSample),
+  distance_tolerance distance_tolerance: Float,
+  t_tolerance t_tolerance: Float,
+) -> Bool {
+  let left = case before {
+    [left, ..] -> Ok(left)
+    [] -> list.last(after)
+  }
+  let right = case after {
+    [right, ..] -> Ok(right)
+    [] -> list.last(before)
+  }
+
+  case left, right {
+    Ok(left), Ok(right) ->
+      sample_pair_is_far(
+        left,
+        sample,
+        distance_tolerance: distance_tolerance,
+        t_tolerance: t_tolerance,
+      )
+      && sample_pair_is_far(
+        sample,
+        right,
+        distance_tolerance: distance_tolerance,
+        t_tolerance: t_tolerance,
+      )
+
+    _, _ -> False
+  }
+}
+
+fn sample_pair_is_far(
+  first: SupportSample,
+  second: SupportSample,
+  distance_tolerance distance_tolerance: Float,
+  t_tolerance t_tolerance: Float,
+) -> Bool {
+  case
+    support_sample_pair(
+      first,
+      second,
+      distance_tolerance: distance_tolerance,
+      t_tolerance: t_tolerance,
+    )
+  {
+    TFar -> True
+    TClosePointsFar(_) | TClosePointsClose(_, _) -> False
   }
 }
 

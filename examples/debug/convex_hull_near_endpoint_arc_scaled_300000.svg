@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="2999980 2999980 70 70">
+  <path d="M 3000000 3000000 A 12000000 9000000 15 0 1 3000030 3000030" style="fill: none; stroke: #222222; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 3000000 3000000 L 3000030 3000030 Z" style="fill: rgba(70, 130, 180, 0.08); stroke: #4682b4; stroke-width: 0.8" />
+  <path d="M 3000000 3000000 L 3000030 3000030" style="fill: none; stroke: rgba(230, 57, 70, 0.76); stroke-width: 2.5; stroke-dasharray: 7 4; stroke-linecap: round" />
+  <path d="M 3000030 3000030 L 3000000 3000000" style="fill: none; stroke: rgba(42, 157, 143, 0.76); stroke-width: 2.5; stroke-dasharray: 7 4; stroke-linecap: round" />
+  <path d="M 2999997.5 2999997.5 H 3000002.5 V 3000002.5 H 2999997.5 Z M 2999997.5 2999997.5 L 3000002.5 3000002.5 M 2999997.5 3000002.5 L 3000002.5 2999997.5" style="fill: none; stroke: #e63946; stroke-width: 1; stroke-linecap: square; stroke-linejoin: miter" />
+  <text x="3000005" y="3000002.5" font-size="5" style="fill: #e63946; font-family: system-ui, sans-serif">start</text>
+  <path d="M 3000027.5 3000027.5 H 3000032.5 V 3000032.5 H 3000027.5 Z M 3000027.5 3000027.5 L 3000032.5 3000032.5 M 3000027.5 3000032.5 L 3000032.5 3000027.5" style="fill: none; stroke: #2a9d8f; stroke-width: 1; stroke-linecap: square; stroke-linejoin: miter" />
+  <text x="3000035" y="3000032.5" font-size="5" style="fill: #2a9d8f; font-family: system-ui, sans-serif">end</text>
+</svg>
