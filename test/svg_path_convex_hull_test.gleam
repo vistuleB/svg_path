@@ -24,6 +24,25 @@ pub fn segment_hull_returns_closed_subpath_and_line_pieces_for_line_test() {
   assert list.all(pieces, is_line_piece)
 }
 
+pub fn segment_hull_returns_two_line_pieces_for_point_cubic_test() {
+  let segment =
+    svg_path.cubic_bezier(
+      start: svg_path.point(0.0, 0.0),
+      control1: svg_path.point(0.0, 0.0),
+      control2: svg_path.point(0.0, 0.0),
+      end: svg_path.point(0.0, 0.0),
+    )
+  let assert Ok(#(subpath, pieces)) = convex_hull.segment_hull(segment)
+
+  assert svg_path.is_closed(subpath)
+  assert list.length(svg_path.segments(subpath)) == 2
+  assert pieces
+    == [
+      convex_hull.HullLine(0.0, 0.0),
+      convex_hull.HullLine(0.0, 0.0),
+    ]
+}
+
 pub fn specimen_hulls_survive_strict_subpath_constructor_test() {
   assert list.all(specimens(), fn(specimen) {
     let #(_, segment) = specimen

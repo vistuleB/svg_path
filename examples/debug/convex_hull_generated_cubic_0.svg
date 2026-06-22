@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-20 -20 40 40">
+  <path d="M 0 0 C 0 0 0 0 0 0" style="fill: none; stroke: #222222; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 0 0 H 0 H 0 Z" style="fill: rgba(70, 130, 180, 0.08); stroke: #4682b4; stroke-width: 0.8" />
+  <path d="M 0 0 H 0" style="fill: none; stroke: rgba(230, 57, 70, 0.76); stroke-width: 2.5; stroke-dasharray: 7 4; stroke-linecap: round" />
+  <path d="M 0 0 H 0" style="fill: none; stroke: rgba(42, 157, 143, 0.76); stroke-width: 2.5; stroke-dasharray: 7 4; stroke-linecap: round" />
+</svg>

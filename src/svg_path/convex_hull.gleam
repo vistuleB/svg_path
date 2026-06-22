@@ -316,7 +316,32 @@ fn segment_hull_pieces(
     max_iterations: 1000,
   ))
 
-  support_samples_to_hull_pieces(purified, t_tolerance: t_tolerance)
+  case degenerate_point_hull_pieces(purified, fallback: refined) {
+    Ok(pieces) -> Ok(pieces)
+    Error(Nil) ->
+      support_samples_to_hull_pieces(purified, t_tolerance: t_tolerance)
+  }
+}
+
+fn degenerate_point_hull_pieces(
+  samples: List(SupportSample),
+  fallback fallback: List(SupportSample),
+) -> Result(List(HullPiece), Nil) {
+  case samples {
+    [sample] -> Ok(two_point_hull_lines(sample))
+    [] ->
+      case fallback {
+        [sample, ..] -> Ok(two_point_hull_lines(sample))
+        [] -> Error(Nil)
+      }
+    _ -> Error(Nil)
+  }
+}
+
+fn two_point_hull_lines(sample: SupportSample) -> List(HullPiece) {
+  let #(_, t, _) = sample
+
+  [HullLine(t, t), HullLine(t, t)]
 }
 
 fn hull_piece_segments(
