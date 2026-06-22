@@ -26,35 +26,20 @@ pub type AngleSupportOptions {
 pub type SupportSample =
   #(Float, Float, svg_path.Point)
 
-/// How an adjacent pair of support samples has been resolved.
-pub type PairResolution {
-  /// The two sampled points are close enough in drawing space.
-  PointsClose(Float)
+/// How an adjacent pair of support samples compares.
+pub type SamplePair {
+  /// The two sampled `t` values are too far apart.
+  TFar
 
-  /// The two sampled `t` values are close enough in parameter space.
-  TsClose(Float)
+  /// The two sampled `t` values are close, but their points are far apart.
+  ///
+  /// Carries the observed `t` distance.
+  TClosePointsFar(Float)
 
-  /// Neither sampled points nor `t` values are close enough.
-  PairNoResolution
-}
-
-pub type SampleResolution {
-  BothVanillaResolved(PairResolution, PairResolution)
-
-  LeftPointsCloseResolved(PairResolution)
-
-  RightPointsCloseResolved(PairResolution)
-
-  NoResolution
-}
-
-pub type ContextualPairNoResolution {
-  ContextualPairNoResolution(
-    first: SupportSample,
-    second: SupportSample,
-    left_point_distance: Float,
-    right_point_distance: Float,
-  )
+  /// The two sampled `t` values are close, and their points are close.
+  ///
+  /// Carries the observed `t` distance and point distance.
+  TClosePointsClose(Float, Float)
 }
 
 pub type RefinementStopError {
@@ -132,58 +117,49 @@ pub fn support_sample(
   }
 }
 
-pub fn support_sample_resolution(
+pub fn support_sample_pair(
   first: SupportSample,
   second: SupportSample,
   distance_tolerance distance_tolerance: Float,
   t_tolerance t_tolerance: Float,
-) -> PairResolution {
+) -> SamplePair {
   let #(_, first_t, first_point) = first
   let #(_, second_t, second_point) = second
   let distance = point_distance(first_point, second_point)
   let t_distance = float.absolute_value(first_t -. second_t)
 
-  case distance <=. distance_tolerance {
-    True -> PointsClose(distance)
-    False -> {
-      case t_distance <=. t_tolerance {
-        True -> TsClose(t_distance)
-        False -> PairNoResolution
+  case t_distance <=. t_tolerance {
+    False -> TFar
+    True -> {
+      case distance <=. distance_tolerance {
+        True -> TClosePointsClose(t_distance, distance)
+        False -> TClosePointsFar(t_distance)
       }
     }
   }
 }
 
-pub fn middle_support_sample_resolution(
-  left: SupportSample,
-  middle: SupportSample,
-  right: SupportSample,
-  distance_tolerance distance_tolerance: Float,
-  t_tolerance t_tolerance: Float,
-) -> SampleResolution {
-  let left_resolution =
-    support_sample_resolution(
-      left,
-      middle,
-      distance_tolerance: distance_tolerance,
-      t_tolerance: t_tolerance,
-    )
-  let right_resolution =
-    support_sample_resolution(
-      middle,
-      right,
-      distance_tolerance: distance_tolerance,
-      t_tolerance: t_tolerance,
-    )
-
-  case left_resolution, right_resolution {
-    PairNoResolution, PointsClose(_) ->
-      RightPointsCloseResolved(right_resolution)
-    PointsClose(_), PairNoResolution -> LeftPointsCloseResolved(left_resolution)
-    PairNoResolution, _ -> NoResolution
-    _, PairNoResolution -> NoResolution
-    _, _ -> BothVanillaResolved(left_resolution, right_resolution)
+pub fn sample_pair_contextually_refined(
+  left_pair: SamplePair,
+  middle_pair: SamplePair,
+  right_pair: SamplePair,
+) -> Bool {
+  case middle_pair {
+    TClosePointsFar(_) | TClosePointsClose(_, _) -> True
+    TFar ->
+      case left_pair, right_pair {
+        TClosePointsClose(_, _), TClosePointsClose(_, _) -> True
+        _, _ -> False
+      }
   }
+}
+
+pub fn sample_pair_far_unrefined(
+  left_pair: SamplePair,
+  middle_pair: SamplePair,
+  right_pair: SamplePair,
+) -> Bool {
+  !sample_pair_contextually_refined(left_pair, middle_pair, right_pair)
 }
 
 pub fn assert_ordered_support_sample_angles(
@@ -196,7 +172,7 @@ pub fn assert_ordered_support_sample_angles(
   }
 }
 
-pub fn bisect_unresolved_pairs_once(
+pub fn bisect_t_far_pairs_once(
   segment: svg_path.Segment,
   samples samples: List(SupportSample),
   distance_tolerance distance_tolerance: Float,
@@ -206,7 +182,7 @@ pub fn bisect_unresolved_pairs_once(
     [] -> Ok([])
     [first, ..rest] -> {
       case
-        bisect_unresolved_pairs_loop(
+        bisect_t_far_pairs_loop(
           segment,
           current: first,
           rest: rest,
@@ -260,23 +236,23 @@ pub fn first_iteration_without_refinement(
   )
 }
 
-pub fn contextual_pair_no_resolutions(
+pub fn far_unrefined_pairs(
   samples: List(SupportSample),
   distance_tolerance distance_tolerance: Float,
   t_tolerance t_tolerance: Float,
-) -> List(ContextualPairNoResolution) {
+) -> List(#(SupportSample, SupportSample, Float, Float)) {
   case samples {
     [] -> []
     [_] -> []
     [first, second, ..] -> {
       let assert Ok(last) = list.last(samples)
       let window_samples = list.append([last, ..samples], [first, second])
-      collect_contextual_pair_no_resolutions(
+      collect_far_unrefined_pairs(
         window_samples: window_samples,
         remaining: list.length(samples),
         distance_tolerance: distance_tolerance,
         t_tolerance: t_tolerance,
-        resolutions: [],
+        pairs: [],
       )
     }
   }
@@ -394,7 +370,7 @@ fn refine_until_contextually_resolved(
   max_iterations max_iterations: Int,
 ) -> Result(List(SupportSample), svg_path.Error) {
   case
-    contextual_pair_no_resolutions(
+    far_unrefined_pairs(
       samples,
       distance_tolerance: distance_tolerance,
       t_tolerance: t_tolerance,
@@ -544,7 +520,7 @@ fn initial_support_samples(
   |> list.try_map(fn(angle) { support_sample(segment, angle:) })
 }
 
-fn bisect_unresolved_pairs_loop(
+fn bisect_t_far_pairs_loop(
   segment: svg_path.Segment,
   current current: SupportSample,
   rest rest: List(SupportSample),
@@ -581,7 +557,7 @@ fn bisect_unresolved_pairs_loop(
       {
         Error(error) -> Error(error)
         Ok(output) ->
-          bisect_unresolved_pairs_loop(
+          bisect_t_far_pairs_loop(
             segment,
             current: next,
             rest: rest,
@@ -603,14 +579,14 @@ fn add_sample_and_maybe_bisection(
   output output: List(SupportSample),
 ) -> Result(List(SupportSample), svg_path.Error) {
   case
-    support_sample_resolution(
+    support_sample_pair(
       first,
       second,
       distance_tolerance: distance_tolerance,
       t_tolerance: t_tolerance,
     )
   {
-    PairNoResolution ->
+    TFar ->
       case support_sample(segment, angle: midpoint_angle(first, second)) {
         Error(error) -> Error(error)
         Ok(middle) -> Ok([middle, first, ..output])
@@ -663,7 +639,7 @@ fn remove_first_unneeded_support_sample(
       let without_sample = list.append(list.reverse(before), after)
 
       case
-        contextual_pair_no_resolutions(
+        far_unrefined_pairs(
           without_sample,
           distance_tolerance: distance_tolerance,
           t_tolerance: t_tolerance,
@@ -947,73 +923,81 @@ fn first_iteration_without_refinement_loop(
   }
 }
 
-fn collect_contextual_pair_no_resolutions(
+fn support_sample_window_pairs(
+  left: SupportSample,
+  middle_left: SupportSample,
+  middle_right: SupportSample,
+  right: SupportSample,
+  distance_tolerance distance_tolerance: Float,
+  t_tolerance t_tolerance: Float,
+) -> #(SamplePair, SamplePair, SamplePair) {
+  #(
+    support_sample_pair(
+      left,
+      middle_left,
+      distance_tolerance: distance_tolerance,
+      t_tolerance: t_tolerance,
+    ),
+    support_sample_pair(
+      middle_left,
+      middle_right,
+      distance_tolerance: distance_tolerance,
+      t_tolerance: t_tolerance,
+    ),
+    support_sample_pair(
+      middle_right,
+      right,
+      distance_tolerance: distance_tolerance,
+      t_tolerance: t_tolerance,
+    ),
+  )
+}
+
+fn collect_far_unrefined_pairs(
   window_samples window_samples: List(SupportSample),
   remaining remaining: Int,
   distance_tolerance distance_tolerance: Float,
   t_tolerance t_tolerance: Float,
-  resolutions resolutions: List(ContextualPairNoResolution),
-) -> List(ContextualPairNoResolution) {
+  pairs pairs: List(#(SupportSample, SupportSample, Float, Float)),
+) -> List(#(SupportSample, SupportSample, Float, Float)) {
   case remaining <= 0 {
-    True -> list.reverse(resolutions)
+    True -> list.reverse(pairs)
     False -> {
       case window_samples {
         [left, middle_left, middle_right, right, ..rest] -> {
-          let left_resolution =
-            support_sample_resolution(
+          let #(left_pair, middle_pair, right_pair) =
+            support_sample_window_pairs(
               left,
               middle_left,
-              distance_tolerance: distance_tolerance,
-              t_tolerance: t_tolerance,
-            )
-          let middle_resolution =
-            support_sample_resolution(
-              middle_left,
-              middle_right,
-              distance_tolerance: distance_tolerance,
-              t_tolerance: t_tolerance,
-            )
-          let right_resolution =
-            support_sample_resolution(
               middle_right,
               right,
               distance_tolerance: distance_tolerance,
               t_tolerance: t_tolerance,
             )
-          let resolutions = case
-            should_refine_pair(
-              left_resolution,
-              middle_resolution,
-              right_resolution,
-            )
+          let pairs = case
+            sample_pair_far_unrefined(left_pair, middle_pair, right_pair)
           {
             True -> [
-              ContextualPairNoResolution(
-                first: middle_left,
-                second: middle_right,
-                left_point_distance: support_sample_point_distance(
-                  left,
-                  middle_left,
-                ),
-                right_point_distance: support_sample_point_distance(
-                  middle_right,
-                  right,
-                ),
+              #(
+                middle_left,
+                middle_right,
+                support_sample_point_distance(left, middle_left),
+                support_sample_point_distance(middle_right, right),
               ),
-              ..resolutions
+              ..pairs
             ]
-            False -> resolutions
+            False -> pairs
           }
 
-          collect_contextual_pair_no_resolutions(
+          collect_far_unrefined_pairs(
             window_samples: [middle_left, middle_right, right, ..rest],
             remaining: remaining - 1,
             distance_tolerance: distance_tolerance,
             t_tolerance: t_tolerance,
-            resolutions: resolutions,
+            pairs: pairs,
           )
         }
-        _ -> list.reverse(resolutions)
+        _ -> list.reverse(pairs)
       }
     }
   }
@@ -1057,35 +1041,17 @@ fn collect_refinement_additions(
     False -> {
       case window_samples {
         [left, middle_left, middle_right, right, ..rest] -> {
-          let left_resolution =
-            support_sample_resolution(
+          let #(left_pair, middle_pair, right_pair) =
+            support_sample_window_pairs(
               left,
               middle_left,
-              distance_tolerance: distance_tolerance,
-              t_tolerance: t_tolerance,
-            )
-          let middle_resolution =
-            support_sample_resolution(
-              middle_left,
-              middle_right,
-              distance_tolerance: distance_tolerance,
-              t_tolerance: t_tolerance,
-            )
-          let right_resolution =
-            support_sample_resolution(
               middle_right,
               right,
               distance_tolerance: distance_tolerance,
               t_tolerance: t_tolerance,
             )
 
-          case
-            should_refine_pair(
-              left_resolution,
-              middle_resolution,
-              right_resolution,
-            )
-          {
+          case sample_pair_far_unrefined(left_pair, middle_pair, right_pair) {
             True ->
               case
                 support_sample(
@@ -1118,21 +1084,6 @@ fn collect_refinement_additions(
         _ -> Ok(list.reverse(additions))
       }
     }
-  }
-}
-
-fn should_refine_pair(
-  left_resolution: PairResolution,
-  middle_resolution: PairResolution,
-  right_resolution: PairResolution,
-) -> Bool {
-  case middle_resolution {
-    PairNoResolution ->
-      case left_resolution, right_resolution {
-        PointsClose(_), PointsClose(_) -> False
-        _, _ -> True
-      }
-    _ -> False
   }
 }
 
@@ -1171,7 +1122,7 @@ fn insert_support_sample(
   }
 }
 
-pub fn refined_unresolved_pairs_to_draw(
+pub fn refined_t_far_pairs_to_draw(
   segment: svg_path.Segment,
 ) -> Result(svg.ThingsToDraw, svg_path.Error) {
   case svg_path.segment_bounding_box(segment) {
@@ -1195,7 +1146,7 @@ pub fn refined_unresolved_pairs_to_draw(
             Ok(samples) -> {
               assert_ordered_support_sample_angles(samples)
               Ok(
-                unresolved_pairs_to_draw(unresolved_pairs(
+                t_far_pairs_to_draw(t_far_pairs(
                   samples,
                   distance_tolerance,
                   t_tolerance,
@@ -1241,7 +1192,7 @@ fn refine_support_samples(
   }
 }
 
-fn unresolved_pairs(
+fn t_far_pairs(
   samples: List(SupportSample),
   distance_tolerance: Float,
   t_tolerance: Float,
@@ -1249,7 +1200,7 @@ fn unresolved_pairs(
   case samples {
     [] -> []
     [first, ..rest] ->
-      collect_unresolved_pairs(
+      collect_t_far_pairs(
         first,
         current: first,
         rest: rest,
@@ -1260,7 +1211,7 @@ fn unresolved_pairs(
   }
 }
 
-fn collect_unresolved_pairs(
+fn collect_t_far_pairs(
   first first: SupportSample,
   current current: SupportSample,
   rest rest: List(SupportSample),
@@ -1270,7 +1221,7 @@ fn collect_unresolved_pairs(
 ) -> List(#(SupportSample, SupportSample)) {
   case rest {
     [] ->
-      maybe_prepend_unresolved_pair(
+      maybe_prepend_t_far_pair(
         current,
         first,
         distance_tolerance,
@@ -1280,14 +1231,14 @@ fn collect_unresolved_pairs(
       |> list.reverse
     [next, ..rest] -> {
       let pairs =
-        maybe_prepend_unresolved_pair(
+        maybe_prepend_t_far_pair(
           current,
           next,
           distance_tolerance,
           t_tolerance,
           pairs,
         )
-      collect_unresolved_pairs(
+      collect_t_far_pairs(
         first,
         current: next,
         rest: rest,
@@ -1299,7 +1250,7 @@ fn collect_unresolved_pairs(
   }
 }
 
-fn maybe_prepend_unresolved_pair(
+fn maybe_prepend_t_far_pair(
   first: SupportSample,
   second: SupportSample,
   distance_tolerance: Float,
@@ -1307,19 +1258,19 @@ fn maybe_prepend_unresolved_pair(
   pairs: List(#(SupportSample, SupportSample)),
 ) -> List(#(SupportSample, SupportSample)) {
   case
-    support_sample_resolution(
+    support_sample_pair(
       first,
       second,
       distance_tolerance: distance_tolerance,
       t_tolerance: t_tolerance,
     )
   {
-    PairNoResolution -> [#(first, second), ..pairs]
+    TFar -> [#(first, second), ..pairs]
     _ -> pairs
   }
 }
 
-fn unresolved_pairs_to_draw(
+fn t_far_pairs_to_draw(
   pairs: List(#(SupportSample, SupportSample)),
 ) -> svg.ThingsToDraw {
   let colors = [

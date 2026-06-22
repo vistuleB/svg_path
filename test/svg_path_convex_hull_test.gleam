@@ -44,101 +44,77 @@ pub fn angle_support_rejects_invalid_options_test() {
     == Error(svg_path.InvalidMinimizeSamples(0))
 }
 
-pub fn support_sample_resolution_prefers_close_points_test() {
-  let resolution =
-    convex_hull.support_sample_resolution(
+pub fn support_sample_pair_reports_t_close_points_close_test() {
+  let pair =
+    convex_hull.support_sample_pair(
       #(0.0, 0.0, svg_path.point(0.0, 0.0)),
       #(1.0, 0.5, svg_path.point(3.0, 4.0)),
       distance_tolerance: 5.0,
       t_tolerance: 1.0,
     )
 
-  assert resolution == convex_hull.PointsClose(5.0)
+  assert pair == convex_hull.TClosePointsClose(0.5, 5.0)
 }
 
-pub fn support_sample_resolution_detects_close_t_values_test() {
-  let resolution =
-    convex_hull.support_sample_resolution(
+pub fn support_sample_pair_reports_t_close_points_far_test() {
+  let pair =
+    convex_hull.support_sample_pair(
       #(0.0, 0.4, svg_path.point(0.0, 0.0)),
       #(1.0, 0.45, svg_path.point(10.0, 0.0)),
       distance_tolerance: 1.0,
       t_tolerance: 0.1,
     )
 
-  let assert convex_hull.TsClose(distance) = resolution
+  let assert convex_hull.TClosePointsFar(distance) = pair
   assert near(distance, 0.05)
 }
 
-pub fn support_sample_resolution_reports_no_resolution_test() {
-  let resolution =
-    convex_hull.support_sample_resolution(
+pub fn support_sample_pair_reports_t_far_even_when_points_are_close_test() {
+  let pair =
+    convex_hull.support_sample_pair(
+      #(0.0, 0.0, svg_path.point(0.0, 0.0)),
+      #(1.0, 0.5, svg_path.point(0.5, 0.0)),
+      distance_tolerance: 1.0,
+      t_tolerance: 0.1,
+    )
+
+  assert pair == convex_hull.TFar
+}
+
+pub fn support_sample_pair_reports_t_far_points_far_test() {
+  let pair =
+    convex_hull.support_sample_pair(
       #(0.0, 0.0, svg_path.point(0.0, 0.0)),
       #(1.0, 0.5, svg_path.point(10.0, 0.0)),
       distance_tolerance: 1.0,
       t_tolerance: 0.1,
     )
 
-  assert resolution == convex_hull.PairNoResolution
+  assert pair == convex_hull.TFar
 }
 
-pub fn middle_support_sample_resolution_reports_both_sides_resolved_test() {
-  let resolution =
-    convex_hull.middle_support_sample_resolution(
-      #(0.0, 0.1, svg_path.point(0.0, 0.0)),
-      #(1.0, 0.12, svg_path.point(10.0, 0.0)),
-      #(2.0, 0.14, svg_path.point(20.0, 0.0)),
-      distance_tolerance: 1.0,
-      t_tolerance: 0.05,
-    )
-
-  let assert convex_hull.BothVanillaResolved(left, right) = resolution
-  let assert convex_hull.TsClose(left_distance) = left
-  let assert convex_hull.TsClose(right_distance) = right
-  assert near(left_distance, 0.02)
-  assert near(right_distance, 0.02)
+pub fn sample_pair_contextually_refined_accepts_t_close_middle_test() {
+  assert convex_hull.sample_pair_contextually_refined(
+    convex_hull.TFar,
+    convex_hull.TClosePointsFar(0.02),
+    convex_hull.TFar,
+  )
 }
 
-pub fn middle_support_sample_resolution_reports_left_points_close_test() {
-  let resolution =
-    convex_hull.middle_support_sample_resolution(
-      #(0.0, 0.0, svg_path.point(0.0, 0.0)),
-      #(1.0, 0.5, svg_path.point(0.5, 0.0)),
-      #(2.0, 1.0, svg_path.point(20.0, 0.0)),
-      distance_tolerance: 1.0,
-      t_tolerance: 0.1,
-    )
-
-  let assert convex_hull.LeftPointsCloseResolved(left) = resolution
-  let assert convex_hull.PointsClose(distance) = left
-  assert near(distance, 0.5)
+pub fn sample_pair_contextually_refined_accepts_far_between_close_point_pairs_test() {
+  assert convex_hull.sample_pair_contextually_refined(
+    convex_hull.TClosePointsClose(0.02, 0.5),
+    convex_hull.TFar,
+    convex_hull.TClosePointsClose(0.02, 0.5),
+  )
 }
 
-pub fn middle_support_sample_resolution_reports_right_points_close_test() {
-  let resolution =
-    convex_hull.middle_support_sample_resolution(
-      #(0.0, 0.0, svg_path.point(-20.0, 0.0)),
-      #(1.0, 0.5, svg_path.point(0.0, 0.0)),
-      #(2.0, 1.0, svg_path.point(0.5, 0.0)),
-      distance_tolerance: 1.0,
-      t_tolerance: 0.1,
-    )
-
-  let assert convex_hull.RightPointsCloseResolved(right) = resolution
-  let assert convex_hull.PointsClose(distance) = right
-  assert near(distance, 0.5)
-}
-
-pub fn middle_support_sample_resolution_reports_no_resolution_test() {
-  let resolution =
-    convex_hull.middle_support_sample_resolution(
-      #(0.0, 0.0, svg_path.point(-20.0, 0.0)),
-      #(1.0, 0.5, svg_path.point(0.0, 0.0)),
-      #(2.0, 1.0, svg_path.point(20.0, 0.0)),
-      distance_tolerance: 1.0,
-      t_tolerance: 0.1,
-    )
-
-  assert resolution == convex_hull.NoResolution
+pub fn sample_pair_far_unrefined_requires_t_far_middle_without_close_context_test() {
+  assert convex_hull.sample_pair_far_unrefined(
+    convex_hull.TClosePointsClose(0.02, 0.5),
+    convex_hull.TFar,
+    convex_hull.TClosePointsFar(0.02),
+  )
 }
 
 pub fn assert_ordered_support_sample_angles_accepts_in_range_increasing_angles_test() {
@@ -149,7 +125,7 @@ pub fn assert_ordered_support_sample_angles_accepts_in_range_increasing_angles_t
   ])
 }
 
-pub fn bisect_unresolved_pairs_once_inserts_midpoints_and_keeps_smallest_angle_first_test() {
+pub fn bisect_t_far_pairs_once_inserts_midpoints_and_keeps_smallest_angle_first_test() {
   let segment =
     svg_path.line(
       start: svg_path.point(0.0, 0.0),
@@ -162,7 +138,7 @@ pub fn bisect_unresolved_pairs_once_inserts_midpoints_and_keeps_smallest_angle_f
   ]
 
   let assert Ok(samples) =
-    convex_hull.bisect_unresolved_pairs_once(
+    convex_hull.bisect_t_far_pairs_once(
       segment,
       samples: samples,
       distance_tolerance: 0.0,
@@ -186,7 +162,7 @@ pub fn bisect_unresolved_pairs_once_inserts_midpoints_and_keeps_smallest_angle_f
   assert near(f, 350.0)
 }
 
-pub fn refine_support_samples_once_skips_unresolved_pair_between_points_close_pairs_test() {
+pub fn refine_support_samples_once_skips_t_far_pair_between_t_close_points_close_pairs_test() {
   let segment =
     svg_path.line(
       start: svg_path.point(0.0, 0.0),
@@ -194,9 +170,9 @@ pub fn refine_support_samples_once_skips_unresolved_pair_between_points_close_pa
     )
   let samples = [
     #(0.0, 0.0, svg_path.point(0.0, 0.0)),
-    #(10.0, 0.5, svg_path.point(0.1, 0.0)),
+    #(10.0, 0.02, svg_path.point(0.1, 0.0)),
     #(20.0, 1.0, svg_path.point(0.2, 0.0)),
-    #(30.0, 1.5, svg_path.point(0.3, 0.0)),
+    #(30.0, 1.02, svg_path.point(0.3, 0.0)),
   ]
 
   let assert Ok(refined) =
@@ -210,7 +186,7 @@ pub fn refine_support_samples_once_skips_unresolved_pair_between_points_close_pa
   assert list.length(refined) == list.length(samples)
 }
 
-pub fn refine_support_samples_once_adds_midpoint_for_contextual_unresolved_pair_test() {
+pub fn refine_support_samples_once_adds_midpoint_for_far_unrefined_pair_test() {
   let segment =
     svg_path.line(
       start: svg_path.point(0.0, 0.0),
@@ -235,7 +211,7 @@ pub fn refine_support_samples_once_adds_midpoint_for_contextual_unresolved_pair_
   convex_hull.assert_ordered_support_sample_angles(refined)
 }
 
-pub fn contextual_pair_no_resolutions_include_neighbor_point_distances_test() {
+pub fn far_unrefined_pairs_include_neighbor_point_distances_test() {
   let samples = [
     #(0.0, 0.0, svg_path.point(0.0, 0.0)),
     #(10.0, 0.5, svg_path.point(0.5, 0.0)),
@@ -243,30 +219,22 @@ pub fn contextual_pair_no_resolutions_include_neighbor_point_distances_test() {
     #(30.0, 1.5, svg_path.point(40.0, 0.0)),
   ]
 
-  let resolutions =
-    convex_hull.contextual_pair_no_resolutions(
+  let pairs =
+    convex_hull.far_unrefined_pairs(
       samples,
       distance_tolerance: 1.0,
       t_tolerance: 0.1,
     )
 
-  assert list.any(resolutions, fn(resolution) {
-    case resolution {
-      convex_hull.ContextualPairNoResolution(
-        first:,
-        second:,
-        left_point_distance:,
-        right_point_distance:,
-      ) -> {
-        let #(first_angle, _, _) = first
-        let #(second_angle, _, _) = second
+  assert list.any(pairs, fn(pair) {
+    let #(first, second, left_point_distance, right_point_distance) = pair
+    let #(first_angle, _, _) = first
+    let #(second_angle, _, _) = second
 
-        near(first_angle, 10.0)
-        && near(second_angle, 20.0)
-        && near(left_point_distance, 0.5)
-        && near(right_point_distance, 20.0)
-      }
-    }
+    near(first_angle, 10.0)
+    && near(second_angle, 20.0)
+    && near(left_point_distance, 0.5)
+    && near(right_point_distance, 20.0)
   })
 }
 
@@ -278,9 +246,9 @@ pub fn first_iteration_without_refinement_returns_zero_when_no_refinement_occurs
     )
   let samples = [
     #(0.0, 0.0, svg_path.point(0.0, 0.0)),
-    #(10.0, 0.5, svg_path.point(0.1, 0.0)),
-    #(20.0, 1.0, svg_path.point(0.2, 0.0)),
-    #(30.0, 1.5, svg_path.point(0.3, 0.0)),
+    #(10.0, 0.02, svg_path.point(0.1, 0.0)),
+    #(20.0, 0.04, svg_path.point(0.2, 0.0)),
+    #(30.0, 0.06, svg_path.point(0.3, 0.0)),
   ]
 
   assert convex_hull.first_iteration_without_refinement(
@@ -319,9 +287,9 @@ pub fn first_iteration_without_refinement_errors_at_max_iterations_test() {
 pub fn purify_support_samples_once_removes_first_sample_when_context_stays_resolved_test() {
   let samples = [
     #(0.0, 0.0, svg_path.point(0.0, 0.0)),
-    #(10.0, 0.5, svg_path.point(0.1, 0.0)),
-    #(20.0, 1.0, svg_path.point(0.2, 0.0)),
-    #(30.0, 1.5, svg_path.point(0.3, 0.0)),
+    #(10.0, 0.02, svg_path.point(0.1, 0.0)),
+    #(20.0, 0.04, svg_path.point(0.2, 0.0)),
+    #(30.0, 0.06, svg_path.point(0.3, 0.0)),
   ]
 
   let purified =
@@ -363,9 +331,9 @@ pub fn purify_support_samples_once_removes_adjacent_duplicate_t_values_test() {
 pub fn purify_support_samples_repeats_until_vacuously_resolved_test() {
   let samples = [
     #(0.0, 0.0, svg_path.point(0.0, 0.0)),
-    #(10.0, 0.5, svg_path.point(0.1, 0.0)),
-    #(20.0, 1.0, svg_path.point(0.2, 0.0)),
-    #(30.0, 1.5, svg_path.point(0.3, 0.0)),
+    #(10.0, 0.02, svg_path.point(0.1, 0.0)),
+    #(20.0, 0.04, svg_path.point(0.2, 0.0)),
+    #(30.0, 0.06, svg_path.point(0.3, 0.0)),
   ]
 
   let assert Ok(purified) =
@@ -382,9 +350,9 @@ pub fn purify_support_samples_repeats_until_vacuously_resolved_test() {
 pub fn purify_support_samples_errors_at_max_iterations_test() {
   let samples = [
     #(0.0, 0.0, svg_path.point(0.0, 0.0)),
-    #(10.0, 0.5, svg_path.point(0.1, 0.0)),
-    #(20.0, 1.0, svg_path.point(0.2, 0.0)),
-    #(30.0, 1.5, svg_path.point(0.3, 0.0)),
+    #(10.0, 0.02, svg_path.point(0.1, 0.0)),
+    #(20.0, 0.04, svg_path.point(0.2, 0.0)),
+    #(30.0, 0.06, svg_path.point(0.3, 0.0)),
   ]
 
   assert convex_hull.purify_support_samples(
