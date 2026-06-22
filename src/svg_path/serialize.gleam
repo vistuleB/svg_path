@@ -21,6 +21,8 @@ pub type Options {
     relative: Bool,
     /// Whether to remove optional spaces between command letters and arguments.
     minimize_whitespace: Bool,
+    /// Whether to use commas inside coordinate pairs.
+    commas: Bool,
     /// Whether to repeat command letters when SVG syntax allows them to be
     /// omitted.
     repeat_commands: Bool,
@@ -78,6 +80,7 @@ pub fn default_options() -> Options {
     right_decimals: AtMost(5),
     relative: False,
     minimize_whitespace: False,
+    commas: False,
     repeat_commands: True,
     newlines: OneLine,
   )
@@ -92,6 +95,7 @@ pub fn decimal_options(decimal_places: Int) -> Options {
     right_decimals: AtMost(decimal_places),
     relative: False,
     minimize_whitespace: False,
+    commas: False,
     repeat_commands: True,
     newlines: OneLine,
   )
@@ -107,6 +111,7 @@ pub fn fixed_decimal_options(decimal_places: Int) -> Options {
     right_decimals: Fixed(decimal_places),
     relative: False,
     minimize_whitespace: False,
+    commas: False,
     repeat_commands: True,
     newlines: OneLine,
   )
@@ -119,6 +124,7 @@ pub fn relative_options() -> Options {
     right_decimals: AtMost(5),
     relative: True,
     minimize_whitespace: False,
+    commas: False,
     repeat_commands: True,
     newlines: OneLine,
   )
@@ -131,6 +137,7 @@ pub fn relative_decimal_options(decimal_places: Int) -> Options {
     right_decimals: AtMost(decimal_places),
     relative: True,
     minimize_whitespace: False,
+    commas: False,
     repeat_commands: True,
     newlines: OneLine,
   )
@@ -143,6 +150,7 @@ pub fn relative_fixed_decimal_options(decimal_places: Int) -> Options {
     right_decimals: Fixed(decimal_places),
     relative: True,
     minimize_whitespace: False,
+    commas: False,
     repeat_commands: True,
     newlines: OneLine,
   )
@@ -151,6 +159,11 @@ pub fn relative_fixed_decimal_options(decimal_places: Int) -> Options {
 /// Remove optional spaces between command letters and their arguments.
 pub fn minimize_whitespace(options: Options) -> Options {
   Options(..options, minimize_whitespace: True)
+}
+
+/// Configure whether coordinate pairs should use a comma between `x` and `y`.
+pub fn with_commas(options: Options, commas: Bool) -> Options {
+  Options(..options, commas:)
 }
 
 /// Configure whether repeated command letters should be emitted.
@@ -491,7 +504,12 @@ fn absolute_line(
     False -> {
       case start_x == end_x {
         True -> command("V", end_y, format)
-        False -> command("L", end_x <> " " <> end_y, format)
+        False ->
+          command(
+            "L",
+            end_x <> coordinate_separator(format.options) <> end_y,
+            format,
+          )
       }
     }
   }
@@ -512,7 +530,8 @@ fn relative_line(
     False -> {
       case dx == zero {
         True -> command("v", dy, format)
-        False -> command("l", dx <> " " <> dy, format)
+        False ->
+          command("l", dx <> coordinate_separator(format.options) <> dy, format)
       }
     }
   }
@@ -547,11 +566,20 @@ fn delta(point: svg_path.Point, from origin: svg_path.Point) -> svg_path.Point {
 }
 
 fn point(point: svg_path.Point, format: Format) -> String {
-  number(point.x, format) <> " " <> number(point.y, format)
+  number(point.x, format)
+  <> coordinate_separator(format.options)
+  <> number(point.y, format)
 }
 
 fn command(command: String, arguments: String, format: Format) -> String {
   command <> command_argument_separator(format.options) <> arguments
+}
+
+fn coordinate_separator(options: Options) -> String {
+  case options.commas {
+    True -> ","
+    False -> " "
+  }
 }
 
 fn command_argument_separator(options: Options) -> String {

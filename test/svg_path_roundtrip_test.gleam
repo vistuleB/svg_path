@@ -80,6 +80,13 @@ pub fn generated_paths_round_trip_with_repeat_commands_false_options_test() {
   )
 }
 
+pub fn generated_paths_round_trip_with_commas_test() {
+  assert_paths_round_trip(
+    generated_paths(),
+    serialize.default_options() |> serialize.with_commas(True),
+  )
+}
+
 pub fn generated_paths_round_trip_with_minimized_repeat_commands_false_options_test() {
   assert_paths_round_trip(
     generated_paths(),
@@ -122,6 +129,25 @@ pub fn generated_paths_round_trip_with_segment_newlines_and_omitted_repeat_comma
     serialize.default_options()
       |> serialize.repeat_commands(False)
       |> serialize.with_newlines(serialize.AtSegments),
+  )
+}
+
+pub fn generated_paths_round_trip_with_commas_segment_newlines_and_omitted_repeat_commands_test() {
+  assert_paths_multiline_round_trip(
+    generated_paths(),
+    serialize.default_options()
+      |> serialize.with_commas(True)
+      |> serialize.repeat_commands(False)
+      |> serialize.with_newlines(serialize.AtSegments),
+  )
+}
+
+pub fn generated_paths_round_trip_with_commas_and_minimized_whitespace_test() {
+  assert_paths_round_trip(
+    generated_paths(),
+    serialize.decimal_options(0)
+      |> serialize.with_commas(True)
+      |> serialize.minimize_whitespace,
   )
 }
 

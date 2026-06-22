@@ -665,10 +665,11 @@ pub fn debug_svg(
 }
 ```
 
-Serialization options can use relative commands, smaller whitespace, rounded
-numbers, fixed decimal places, omitted repeated command letters, and left-padded
-numbers for visual alignment. The lower-level decimal controls are split into
-`LeftDecimalOptions` and `RightDecimalOptions`.
+Serialization options can use relative commands, commas inside coordinate
+pairs, smaller whitespace, rounded numbers, fixed decimal places, omitted
+repeated command letters, and left-padded numbers for visual alignment. The
+lower-level decimal controls are split into `LeftDecimalOptions` and
+`RightDecimalOptions`.
 
 ```gleam
 import svg_path/parse
@@ -743,16 +744,17 @@ fixed-width decimal formatting for visual alignment:
 ```gleam
 serialize.fixed_decimal_options(2)
 |> serialize.with_left_padding(serialize.AutoLeftPadding)
+|> serialize.with_commas(True)
 |> serialize.repeat_commands(False)
 |> serialize.with_newlines(serialize.AtSegments)
 ```
 
 ```text
 M
-0020.00 -030.00 C
--015.00 0040.00 0080.00 -090.00 0140.00 0020.00
-0260.00 0030.00 -320.00 0045.00 0480.00 -060.00
-0600.50 -070.25 0720.00 0080.00 0840.00 -090.00
+0020.00,-030.00 C
+-015.00,0040.00 0080.00,-090.00 0140.00,0020.00
+0260.00,0030.00 -320.00,0045.00 0480.00,-060.00
+0600.50,-070.25 0720.00,0080.00 0840.00,-090.00
 ```
 
 ### Left Padding

@@ -456,6 +456,84 @@ pub fn at_segments_with_repeat_commands_false_trails_curve_commands_test() {
     == "M\n0 0 C\n10 0 20 10 30 0\n20 10 10 0 40 10 Z"
 }
 
+pub fn commas_separate_coordinates_inside_point_pairs_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 10.0)
+  let c = svg_path.point(20.0, 20.0)
+  let assert Ok(subpath) =
+    svg_path.subpath([
+      svg_path.line(start: a, end: b),
+      svg_path.line(start: b, end: c),
+    ])
+    |> result_try_set_closed_with_bridge
+
+  assert serialize.subpath_with_options(
+      subpath,
+      options: serialize.default_options()
+        |> serialize.with_commas(True)
+        |> serialize.repeat_commands(False)
+        |> serialize.with_newlines(serialize.AtSegments),
+    )
+    == "M\n0,0 L\n10,10\n20,20 Z"
+}
+
+pub fn commas_preserve_spaces_between_curve_point_pairs_test() {
+  let a = svg_path.point(20.0, -30.0)
+  let b = svg_path.point(140.0, 20.0)
+  let c = svg_path.point(480.0, -60.0)
+  let d = svg_path.point(840.0, -90.0)
+  let assert Ok(subpath) =
+    svg_path.subpath([
+      svg_path.cubic_bezier(
+        start: a,
+        control1: svg_path.point(-15.0, 40.0),
+        control2: svg_path.point(80.0, -90.0),
+        end: b,
+      ),
+      svg_path.cubic_bezier(
+        start: b,
+        control1: svg_path.point(260.0, 30.0),
+        control2: svg_path.point(-320.0, 45.0),
+        end: c,
+      ),
+      svg_path.cubic_bezier(
+        start: c,
+        control1: svg_path.point(600.5, -70.25),
+        control2: svg_path.point(720.0, 80.0),
+        end: d,
+      ),
+    ])
+
+  assert serialize.subpath_with_options(
+      subpath,
+      options: serialize.fixed_decimal_options(2)
+        |> serialize.with_left_padding(serialize.AutoLeftPadding)
+        |> serialize.with_commas(True)
+        |> serialize.repeat_commands(False)
+        |> serialize.with_newlines(serialize.AtSegments),
+    )
+    == "M\n0020.00,-030.00 C\n-015.00,0040.00 0080.00,-090.00 0140.00,0020.00\n0260.00,0030.00 -320.00,0045.00 0480.00,-060.00\n0600.50,-070.25 0720.00,0080.00 0840.00,-090.00"
+}
+
+pub fn commas_apply_to_arc_radius_and_endpoint_pairs_test() {
+  let arc =
+    svg_path.arc(
+      start: svg_path.point(10.0, 20.0),
+      radius: svg_path.point(5.0, 8.0),
+      x_axis_rotation: 45.0,
+      large_arc: True,
+      sweep: False,
+      end: svg_path.point(13.0, 18.0),
+    )
+
+  assert serialize.segment_with_options(
+      arc,
+      options: serialize.relative_decimal_options(0)
+        |> serialize.with_commas(True),
+    )
+    == "m 10,20 a 5,8 45 1 0 3,-2"
+}
+
 pub fn relative_options_use_relative_line_commands_test() {
   let a = svg_path.point(10.0, 20.0)
   let b = svg_path.point(13.0, 18.0)
