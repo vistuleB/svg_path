@@ -1368,7 +1368,19 @@ fn forward_sub_segment(
         Ok(#(_, after_from)) -> {
           case split_segment(after_from, at: local_to) {
             Error(error) -> Error(error)
-            Ok(#(between, _)) -> Ok(between)
+            Ok(#(between, _)) -> {
+              case segment_point(segment, at: from) {
+                Error(error) -> Error(error)
+                Ok(start) -> {
+                  case segment_point(segment, at: to) {
+                    Error(error) -> Error(error)
+                    Ok(end) -> {
+                      Ok(segment_with_start_and_end(between, start, end))
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }

@@ -5,6 +5,7 @@ import gleam/int
 import gleam/io
 import gleam/list
 import gleam/result
+import gleam/string
 import gleam_community/maths
 import svg_path
 import svg_path/number_format
@@ -18,8 +19,21 @@ const t_tolerance = 0.05
 
 const debug_refinement_iterations = 2
 
+const use_dashed_hull_piece_styles = True
+
 pub type AngleSupportOptions {
-  AngleSupportOptions(samples: Int, tolerance: Float, max_iterations: Int)
+  AngleSupportOptions(
+    samples: Int,
+    tolerance: Float,
+    max_iterations: Int,
+    tie_break: SupportTieBreak,
+  )
+}
+
+pub type SupportTieBreak {
+  MinT
+
+  MaxT
 }
 
 /// A support sample: `#(angle, t, segment_point(t))`.
@@ -62,12 +76,29 @@ pub type HullPieceError {
   ConsecutiveCurves
 }
 
+pub type HullDebugStage {
+  HullDebugStage(
+    initial: Int,
+    refined: Int,
+    deduplicated: Int,
+    purified_once: Int,
+    purified: Int,
+    pieces: Int,
+    far_unrefined: Int,
+  )
+}
+
 pub fn main() -> Nil {
   io.println(drawing_svg())
 }
 
 pub fn default_angle_support_options() -> AngleSupportOptions {
-  AngleSupportOptions(samples: 100, tolerance: 0.000000001, max_iterations: 100)
+  AngleSupportOptions(
+    samples: 100,
+    tolerance: 0.000000001,
+    max_iterations: 100,
+    tie_break: MinT,
+  )
 }
 
 pub fn angle_support(
@@ -83,6 +114,44 @@ pub fn angle_support_with(
   options options: AngleSupportOptions,
 ) -> Result(#(Float, svg_path.Point), svg_path.Error) {
   let direction = angle_direction(angle)
+
+  case segment {
+    svg_path.Line(start:, end:) ->
+      Ok(line_angle_support(start, end, direction, options))
+    _ -> numeric_angle_support(segment, direction, options)
+  }
+}
+
+fn line_angle_support(
+  start: svg_path.Point,
+  end: svg_path.Point,
+  direction: svg_path.Point,
+  options: AngleSupportOptions,
+) -> #(Float, svg_path.Point) {
+  let start_support = dot(start, direction)
+  let end_support = dot(end, direction)
+
+  case
+    float.absolute_value(start_support -. end_support) <=. options.tolerance
+  {
+    True ->
+      case options.tie_break {
+        MinT -> #(0.0, start)
+        MaxT -> #(1.0, end)
+      }
+    False ->
+      case start_support >. end_support {
+        True -> #(0.0, start)
+        False -> #(1.0, end)
+      }
+  }
+}
+
+fn numeric_angle_support(
+  segment: svg_path.Segment,
+  direction: svg_path.Point,
+  options: AngleSupportOptions,
+) -> Result(#(Float, svg_path.Point), svg_path.Error) {
   let minimize_options =
     svg_path.MinimizeOptions(
       samples: options.samples,
@@ -90,21 +159,14 @@ pub fn angle_support_with(
       max_iterations: options.max_iterations,
     )
 
-  case
-    svg_path.segment_minimize_with(
-      segment,
-      measure: fn(point) { 0.0 -. dot(point, direction) },
-      options: minimize_options,
-    )
-  {
-    Error(error) -> Error(error)
-    Ok(t) -> {
-      case svg_path.segment_point(segment, at: t) {
-        Error(error) -> Error(error)
-        Ok(point) -> Ok(#(t, point))
-      }
-    }
-  }
+  use t <- result.try(svg_path.segment_minimize_with(
+    segment,
+    measure: fn(point) { 0.0 -. dot(point, direction) },
+    options: minimize_options,
+  ))
+  use point <- result.try(svg_path.segment_point(segment, at: t))
+
+  Ok(#(t, point))
 }
 
 pub fn support_sample(
@@ -263,8 +325,23 @@ pub fn purify_support_samples_once(
   distance_tolerance distance_tolerance: Float,
   t_tolerance t_tolerance: Float,
 ) -> List(SupportSample) {
-  let without_duplicate_t_values = remove_adjacent_duplicate_t_values(samples)
+  case list.length(samples) <= 2 {
+    True -> samples
+    False ->
+      purify_support_samples_once_long(
+        samples,
+        distance_tolerance: distance_tolerance,
+        t_tolerance: t_tolerance,
+      )
+  }
+}
 
+fn purify_support_samples_once_long(
+  samples: List(SupportSample),
+  distance_tolerance distance_tolerance: Float,
+  t_tolerance t_tolerance: Float,
+) -> List(SupportSample) {
+  let without_duplicate_t_values = remove_adjacent_duplicate_t_values(samples)
   case list.length(without_duplicate_t_values) == list.length(samples) {
     False -> without_duplicate_t_values
     True ->
@@ -311,8 +388,21 @@ pub fn support_samples_to_hull_pieces(
 
 pub fn drawing_svg() -> String {
   let stem = stem()
-  let subpath = svg_path.assert_subpath([stem])
-  let hull_things = hull_piece_things(stem)
+  let view_box =
+    svg_path.BoundingBox(
+      min: svg_path.point(-30.0, -30.0),
+      max: svg_path.point(200.0, 115.0),
+    )
+
+  segment_drawing_svg(stem, view_box:)
+}
+
+pub fn segment_drawing_svg(
+  segment: svg_path.Segment,
+  view_box view_box: svg_path.BoundingBox,
+) -> String {
+  let subpath = svg_path.assert_subpath([segment])
+  let hull_things = hull_piece_things(segment)
   let things =
     []
     |> list.append([
@@ -322,16 +412,121 @@ pub fn drawing_svg() -> String {
       ),
     ])
     |> list.append(hull_things)
-  let box =
-    svg_path.BoundingBox(
-      min: svg_path.point(-30.0, -30.0),
-      max: svg_path.point(200.0, 115.0),
+
+  svg.paths(things, view_box:)
+}
+
+pub fn segment_drawing_svg_with_padding(
+  segment: svg_path.Segment,
+  padding padding: Float,
+) -> Result(String, svg_path.Error) {
+  use box <- result.try(svg_path.segment_bounding_box(segment))
+
+  Ok(segment_drawing_svg(segment, view_box: pad_box(box, padding)))
+}
+
+fn pad_box(box: svg_path.BoundingBox, padding: Float) -> svg_path.BoundingBox {
+  svg_path.BoundingBox(
+    min: svg_path.point(box.min.x -. padding, box.min.y -. padding),
+    max: svg_path.point(box.max.x +. padding, box.max.y +. padding),
+  )
+}
+
+pub fn hull_debug_stage(
+  segment: svg_path.Segment,
+) -> Result(HullDebugStage, svg_path.Error) {
+  use box <- result.try(svg_path.segment_bounding_box(segment))
+  let distance_tolerance =
+    svg_path.bounding_box_diameter(box) *. unit_diameter_distance_tolerance
+  use samples <- result.try(initial_support_samples(segment))
+  use refined <- result.try(refine_until_contextually_resolved(
+    segment,
+    samples: samples,
+    distance_tolerance: distance_tolerance,
+    t_tolerance: t_tolerance,
+    max_iterations: 100,
+  ))
+  let deduplicated = remove_adjacent_duplicate_t_values(refined)
+  let purified_once =
+    purify_support_samples_once(
+      refined,
+      distance_tolerance: distance_tolerance,
+      t_tolerance: t_tolerance,
+    )
+  let assert Ok(purified) =
+    purify_support_samples(
+      refined,
+      distance_tolerance: distance_tolerance,
+      t_tolerance: t_tolerance,
+      max_iterations: 1000,
+    )
+  let assert Ok(pieces) =
+    support_samples_to_hull_pieces(purified, t_tolerance: t_tolerance)
+  let far_unrefined =
+    far_unrefined_pairs(
+      purified,
+      distance_tolerance: distance_tolerance,
+      t_tolerance: t_tolerance,
     )
 
-  svg.paths(things, view_box: box)
+  Ok(HullDebugStage(
+    initial: list.length(samples),
+    refined: list.length(refined),
+    deduplicated: list.length(deduplicated),
+    purified_once: list.length(purified_once),
+    purified: list.length(purified),
+    pieces: list.length(pieces),
+    far_unrefined: list.length(far_unrefined),
+  ))
+}
+
+pub fn hull_debug_stage_to_string(stage: HullDebugStage) -> String {
+  let HullDebugStage(
+    initial:,
+    refined:,
+    deduplicated:,
+    purified_once:,
+    purified:,
+    pieces:,
+    far_unrefined:,
+  ) = stage
+
+  [
+    "initial samples: " <> int.to_string(initial),
+    "refined samples: " <> int.to_string(refined),
+    "deduplicated samples: " <> int.to_string(deduplicated),
+    "purified-once samples: " <> int.to_string(purified_once),
+    "purified samples: " <> int.to_string(purified),
+    "hull pieces: " <> int.to_string(pieces),
+    "far unrefined pairs: " <> int.to_string(far_unrefined),
+  ]
+  |> string.join("\n")
+}
+
+pub fn hull_subpath(
+  segment: svg_path.Segment,
+) -> Result(svg_path.Subpath, svg_path.Error) {
+  let assert Ok(pieces) = segment_hull_pieces(segment)
+  use segments <- result.try(hull_piece_segments(segment, pieces))
+  use subpath <- result.try(svg_path.subpath(segments))
+
+  svg_path.set_closed(subpath, closed: True)
 }
 
 fn hull_piece_things(segment: svg_path.Segment) -> svg.ThingsToDraw {
+  let assert Ok(pieces) = segment_hull_pieces(segment)
+
+  hull_piece_things_loop(
+    segment,
+    pieces,
+    styles: hull_piece_styles(),
+    things: [],
+  )
+}
+
+fn segment_hull_pieces(
+  segment: svg_path.Segment,
+) -> Result(List(HullPiece), HullPieceError) {
   let assert Ok(box) = svg_path.segment_bounding_box(segment)
   let distance_tolerance =
     svg_path.bounding_box_diameter(box) *. unit_diameter_distance_tolerance
@@ -351,15 +546,16 @@ fn hull_piece_things(segment: svg_path.Segment) -> svg.ThingsToDraw {
       t_tolerance: t_tolerance,
       max_iterations: 1000,
     )
-  let assert Ok(pieces) =
-    support_samples_to_hull_pieces(purified, t_tolerance: t_tolerance)
 
-  hull_piece_things_loop(
-    segment,
-    pieces,
-    colors: hull_piece_colors(),
-    things: [],
-  )
+  support_samples_to_hull_pieces(purified, t_tolerance: t_tolerance)
+}
+
+fn hull_piece_segments(
+  segment: svg_path.Segment,
+  pieces: List(HullPiece),
+) -> Result(List(svg_path.Segment), svg_path.Error) {
+  pieces
+  |> list.try_map(hull_piece_segment(segment, _))
 }
 
 fn refine_until_contextually_resolved(
@@ -454,30 +650,22 @@ fn remove_adjacent_duplicate_t_values_loop(
 fn hull_piece_things_loop(
   segment: svg_path.Segment,
   pieces: List(HullPiece),
-  colors colors: List(String),
+  styles styles: List(String),
   things things: svg.ThingsToDraw,
 ) -> svg.ThingsToDraw {
   case pieces {
     [] -> list.reverse(things)
     [piece, ..pieces] -> {
-      let assert [color, ..next_colors] = colors
+      let assert [style, ..next_styles] = styles
       let assert Ok(segment_to_draw) = hull_piece_segment(segment, piece)
       let subpath = svg_path.assert_subpath([segment_to_draw])
-      let things = [
-        svg.StyledPath(
-          svg_path.path([subpath]),
-          "fill: none; stroke: "
-            <> color
-            <> "; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round",
-        ),
-        ..things
-      ]
-      let colors = case next_colors {
-        [] -> hull_piece_colors()
-        _ -> next_colors
+      let things = [svg.StyledPath(svg_path.path([subpath]), style), ..things]
+      let styles = case next_styles {
+        [] -> hull_piece_styles()
+        _ -> next_styles
       }
 
-      hull_piece_things_loop(segment, pieces, colors: colors, things: things)
+      hull_piece_things_loop(segment, pieces, styles: styles, things: things)
     }
   }
 }
@@ -498,6 +686,33 @@ fn hull_piece_segment(
 
 fn hull_piece_colors() -> List(String) {
   ["#e63946", "#0077b6", "#2d6a4f", "#f77f00", "#7209b7", "#9d0208"]
+}
+
+fn hull_piece_styles() -> List(String) {
+  case use_dashed_hull_piece_styles {
+    True -> dashed_hull_piece_styles()
+    False -> {
+      hull_piece_colors()
+      |> list.map(solid_hull_piece_style)
+    }
+  }
+}
+
+fn solid_hull_piece_style(color: String) -> String {
+  "fill: none; stroke: "
+  <> color
+  <> "; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round"
+}
+
+fn dashed_hull_piece_styles() -> List(String) {
+  [
+    "fill: none; stroke: rgba(230, 57, 70, 0.72); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 9 4 2 4",
+    "fill: none; stroke: rgba(0, 119, 182, 0.68); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 3 5 11 5",
+    "fill: none; stroke: rgba(45, 106, 79, 0.7); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 14 4 4 4",
+    "fill: none; stroke: rgba(247, 127, 0, 0.72); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 5 3 2 3 10 3",
+    "fill: none; stroke: rgba(114, 9, 183, 0.68); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 2 4 8 4",
+    "fill: none; stroke: rgba(157, 2, 8, 0.7); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 12 5 2 5",
+  ]
 }
 
 pub fn stem() -> svg_path.Segment {

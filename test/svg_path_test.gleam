@@ -1138,6 +1138,23 @@ pub fn sub_segment_returns_segment_between_parameters_test() {
   )
 }
 
+pub fn sub_segment_uses_exact_segment_point_endpoints_test() {
+  let segment =
+    svg_path.cubic_bezier(
+      start: svg_path.point(25.0, 40.0),
+      control1: svg_path.point(155.0, 100.0),
+      control2: svg_path.point(155.0, 10.0),
+      end: svg_path.point(25.0, 70.0),
+    )
+  let assert Ok(sub_segment) =
+    svg_path.sub_segment(segment, from: 0.123, to: 0.876)
+  let assert Ok(start) = svg_path.segment_point(segment, at: 0.123)
+  let assert Ok(end) = svg_path.segment_point(segment, at: 0.876)
+
+  assert svg_path.segment_start(sub_segment) == start
+  assert svg_path.segment_end(sub_segment) == end
+}
+
 pub fn sub_segment_reverses_when_from_is_after_to_test() {
   let segment =
     svg_path.line(
