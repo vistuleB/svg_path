@@ -1295,6 +1295,50 @@ pub fn path_can_be_built_from_empty_test() {
   assert svg_path.from_subpath(subpath) |> svg_path.subpaths == [subpath]
 }
 
+pub fn combine_paths_concatenates_subpaths_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(20.0, 0.0)
+  let d = svg_path.point(30.0, 0.0)
+  let first =
+    svg_path.assert_subpath([
+      svg_path.line(start: a, end: b),
+    ])
+  let second =
+    svg_path.assert_subpath([
+      svg_path.line(start: c, end: d),
+    ])
+
+  let combined =
+    svg_path.combine_paths([
+      svg_path.path([first]),
+      svg_path.empty_path(),
+      svg_path.path([svg_path.empty_subpath(), second]),
+    ])
+
+  assert svg_path.subpaths(combined)
+    == [first, svg_path.empty_subpath(), second]
+}
+
+pub fn clean_combine_paths_cleans_the_concatenated_path_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(20.0, 0.0)
+  let first = svg_path.line(start: a, end: b)
+  let zero = svg_path.line(start: b, end: b)
+  let second = svg_path.line(start: b, end: c)
+  let subpath = svg_path.assert_subpath([first, zero, second])
+
+  let combined =
+    svg_path.clean_combine_paths([
+      svg_path.path([svg_path.empty_subpath(), subpath]),
+      svg_path.path([svg_path.empty_subpath()]),
+    ])
+
+  let assert [cleaned] = svg_path.subpaths(combined)
+  assert svg_path.segments(cleaned) == [first, second]
+}
+
 pub fn path_start_and_end_use_first_and_last_nonempty_subpaths_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)

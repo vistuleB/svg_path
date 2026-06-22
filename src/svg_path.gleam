@@ -342,6 +342,23 @@ pub fn append_subpath(path: Path, subpath: Subpath) -> Path {
   Path(subpaths: list.append(path.subpaths, [subpath]))
 }
 
+/// Combine paths by concatenating their subpaths.
+pub fn combine_paths(paths: List(Path)) -> Path {
+  paths
+  |> list.flat_map(subpaths)
+  |> path
+}
+
+/// Combine paths and clean the result.
+///
+/// This concatenates subpaths, removes empty subpaths, and cleans each
+/// remaining subpath.
+pub fn clean_combine_paths(paths: List(Path)) -> Path {
+  paths
+  |> combine_paths
+  |> clean_path
+}
+
 /// Convert a path with zero or one non-empty subpaths into a subpath.
 ///
 /// Empty subpaths are ignored. If more than one non-empty subpath is present,

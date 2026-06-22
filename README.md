@@ -196,6 +196,15 @@ svg_path.Path(subpaths: [subpath])
 svg_path.path([subpath])
 ```
 
+Use `combine_paths` to concatenate the subpaths from several paths, preserving
+empty subpaths. Use `clean_combine_paths` when you want the combined result to
+also drop empty subpaths and clean zero-length lines:
+
+```gleam
+svg_path.combine_paths([first, second])
+svg_path.clean_combine_paths([first, second])
+```
+
 A `Path` may consist of an empty list of subpaths, and an open `Subpath` may
 consist of an empty list of segments, which is intentional. Empty paths and
 empty open subpaths serialize to the empty string. A closed `Subpath` with no
