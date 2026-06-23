@@ -6,6 +6,7 @@ import gleam/string
 import gleam_community/maths
 import svg_path
 import svg_path/convex_hull
+import svg_path/parse
 import svg_path/transform
 
 const tolerance = 0.000001
@@ -128,6 +129,48 @@ pub fn path_hull_returns_closed_hull_for_multiple_subpaths_test() {
   assert svg_path.is_closed(hull)
   assert subpath_support_matches_bool(
     list.append(left_segments, right_segments),
+    hull,
+  )
+}
+
+pub fn path_hull_handles_customer_line_path_test() {
+  let assert Ok(path) =
+    parse.path(
+      "M -0.00000 -299.30766 L -0.00000 299.30766 "
+      <> "M -0.00000 -299.30766 L 8.65413 -304.36344 "
+      <> "M -0.00000 -299.30766 L -79.02201 -331.51341 "
+      <> "M -0.00000 299.30766 L 8.65413 294.25187 "
+      <> "M -0.00000 299.30766 L -79.02201 267.10191 "
+      <> "M 8.65413 -304.36344 L 8.65413 294.25187 "
+      <> "M 8.65413 -304.36344 L -70.36788 -336.56919 "
+      <> "M -79.02201 -331.51341 L -79.02201 267.10191 "
+      <> "M -79.02201 -331.51341 L -70.36788 -336.56919 "
+      <> "M 8.65413 294.25187 L -70.36788 262.04612 "
+      <> "M -79.02201 267.10191 L -70.36788 262.04612 "
+      <> "M -70.36788 -336.56919 L -70.36788 262.04612",
+    )
+  let assert Ok(hull) = convex_hull.path_hull(path)
+
+  assert svg_path.is_closed(hull)
+  assert subpath_support_matches_bool(
+    path |> svg_path.subpaths |> list.flat_map(svg_path.segments),
+    hull,
+  )
+}
+
+pub fn path_hull_handles_customer_polyline_path_test() {
+  let assert Ok(path) =
+    parse.path(
+      "M -0.00000 -299.30766 L -0.00000 299.30766 "
+      <> "L 8.65413 -304.36344 L -79.02201 -331.51341 "
+      <> "L 8.65413 294.25187 L -79.02201 267.10191 "
+      <> "L -70.36788 -336.56919 L -70.36788 262.04612",
+    )
+  let assert Ok(hull) = convex_hull.path_hull(path)
+
+  assert svg_path.is_closed(hull)
+  assert subpath_support_matches_bool(
+    path |> svg_path.subpaths |> list.flat_map(svg_path.segments),
     hull,
   )
 }

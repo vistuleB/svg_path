@@ -108,6 +108,9 @@ pub type HullError {
 
   /// Support-sample simplification did not settle before the iteration limit.
   PurificationReachedMaxIterations(Int)
+
+  /// Convex-loop union collapsed to no boundary pieces.
+  LoopUnionCollapsed
 }
 
 /// Compute the convex hull of all segments in a subpath.
@@ -237,7 +240,57 @@ fn union_loop_segments(
   let loop_a = Loop(left)
   let loop_b = Loop(right)
   let pieces = loop_union(loop_a, loop_b, sample_count: loop_union_sample_count)
-  Ok(union_piece_segments(pieces, loop_a, loop_b))
+  case union_piece_segments(pieces, loop_a, loop_b) {
+    [] -> dominant_loop_segments(loop_a, loop_b)
+    segments -> Ok(segments)
+  }
+}
+
+fn dominant_loop_segments(
+  loop_a: Loop,
+  loop_b: Loop,
+) -> Result(List(svg_path.Segment), HullError) {
+  case loop_support_dominance(loop_a, loop_b, loop_union_sample_count) {
+    LoopADominates -> {
+      let Loop(segments:) = loop_a
+      Ok(segments)
+    }
+    LoopBDominates -> {
+      let Loop(segments:) = loop_b
+      Ok(segments)
+    }
+    NoLoopDominates -> Error(LoopUnionCollapsed)
+  }
+}
+
+type LoopDominance {
+  LoopADominates
+  LoopBDominates
+  NoLoopDominates
+}
+
+fn loop_support_dominance(
+  loop_a: Loop,
+  loop_b: Loop,
+  sample_count: Int,
+) -> LoopDominance {
+  let initial = #(True, True)
+  let #(a_contains_b, b_contains_a) =
+    int.range(from: 0, to: sample_count - 1, with: initial, run: fn(state, i) {
+      let #(a_contains_b, b_contains_a) = state
+      let angle = int.to_float(i) *. 360.0 /. int.to_float(sample_count)
+      let sample = loop_sample(loop_a, loop_b, angle)
+      #(
+        a_contains_b && sample.difference >=. 0.0 -. loop_union_tie_tolerance,
+        b_contains_a && sample.difference <=. loop_union_tie_tolerance,
+      )
+    })
+
+  case a_contains_b, b_contains_a {
+    True, _ -> LoopADominates
+    False, True -> LoopBDominates
+    False, False -> NoLoopDominates
+  }
 }
 
 fn loop_union(
@@ -463,16 +516,38 @@ fn segment_loop_support(
   angle: Float,
 ) -> LoopSupport {
   let direction = angle_direction(angle)
-  let assert Ok(t) =
-    svg_path.segment_minimize(segment, measure: fn(point) {
-      0.0 -. dot(point, direction)
-    })
-  let assert Ok(point) = svg_path.segment_point(segment, at: t)
-  LoopSupport(
-    param: LoopParam(segment_index: index, t: t),
-    point:,
-    value: dot(point, direction),
-  )
+  case segment {
+    svg_path.Line(start:, end:) -> {
+      let start_value = dot(start, direction)
+      let end_value = dot(end, direction)
+      case end_value >. start_value {
+        True ->
+          LoopSupport(
+            param: LoopParam(segment_index: index, t: 1.0),
+            point: end,
+            value: end_value,
+          )
+        False ->
+          LoopSupport(
+            param: LoopParam(segment_index: index, t: 0.0),
+            point: start,
+            value: start_value,
+          )
+      }
+    }
+    _ -> {
+      let assert Ok(t) =
+        svg_path.segment_minimize(segment, measure: fn(point) {
+          0.0 -. dot(point, direction)
+        })
+      let assert Ok(point) = svg_path.segment_point(segment, at: t)
+      LoopSupport(
+        param: LoopParam(segment_index: index, t: t),
+        point:,
+        value: dot(point, direction),
+      )
+    }
+  }
 }
 
 fn loop_point(loop: Loop, param: LoopParam) -> svg_path.Point {
