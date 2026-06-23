@@ -29,7 +29,7 @@ const t_close = 0.08
 const point_tolerance = 0.000000001
 
 type SupportSample {
-  SupportSample(angle: Float, t: Float, value: Float)
+  SupportSample(angle: Float, t: Float, point: svg_path.Point, value: Float)
 }
 
 type Run {
@@ -151,6 +151,24 @@ pub fn segment_hull(
       simple_curve_hull(segment)
     svg_path.CubicBezier(..) -> cubic_hull(segment)
   }
+}
+
+@internal
+pub fn test_segment_support(
+  segment: svg_path.Segment,
+  angle angle: Float,
+) -> Result(#(Float, svg_path.Point, Float), svg_path.Error) {
+  use sample <- result.try(segment_support(segment, angle: angle))
+  Ok(#(sample.t, sample.point, sample.value))
+}
+
+@internal
+pub fn test_brute_segment_support(
+  segment: svg_path.Segment,
+  angle angle: Float,
+) -> Result(#(Float, svg_path.Point, Float), svg_path.Error) {
+  use sample <- result.try(brute_segment_support(segment, angle: angle))
+  Ok(#(sample.t, sample.point, sample.value))
 }
 
 fn segments_hull(
@@ -515,39 +533,12 @@ fn segment_loop_support(
   index: Int,
   angle: Float,
 ) -> LoopSupport {
-  let direction = angle_direction(angle)
-  case segment {
-    svg_path.Line(start:, end:) -> {
-      let start_value = dot(start, direction)
-      let end_value = dot(end, direction)
-      case end_value >. start_value {
-        True ->
-          LoopSupport(
-            param: LoopParam(segment_index: index, t: 1.0),
-            point: end,
-            value: end_value,
-          )
-        False ->
-          LoopSupport(
-            param: LoopParam(segment_index: index, t: 0.0),
-            point: start,
-            value: start_value,
-          )
-      }
-    }
-    _ -> {
-      let assert Ok(t) =
-        svg_path.segment_minimize(segment, measure: fn(point) {
-          0.0 -. dot(point, direction)
-        })
-      let assert Ok(point) = svg_path.segment_point(segment, at: t)
-      LoopSupport(
-        param: LoopParam(segment_index: index, t: t),
-        point:,
-        value: dot(point, direction),
-      )
-    }
-  }
+  let assert Ok(sample) = segment_support(segment, angle: angle)
+  LoopSupport(
+    param: LoopParam(segment_index: index, t: sample.t),
+    point: sample.point,
+    value: sample.value,
+  )
 }
 
 fn loop_point(loop: Loop, param: LoopParam) -> svg_path.Point {
@@ -716,7 +707,7 @@ fn raw_samples(
 ) -> List(SupportSample) {
   int.range(from: 0, to: sample_count - 1, with: [], run: fn(samples, i) {
     let angle = int.to_float(i) *. 360.0 /. int.to_float(sample_count)
-    case support(segment, angle: angle) {
+    case segment_support(segment, angle: angle) {
       Ok(sample) -> [sample, ..samples]
       Error(_) -> samples
     }
@@ -1139,12 +1130,39 @@ fn same_sign(a: Float, b: Float) -> Bool {
   a <. 0.0 && b <. 0.0 || a >. 0.0 && b >. 0.0
 }
 
-fn support(
+fn segment_support(
   segment: svg_path.Segment,
   angle angle: Float,
 ) -> Result(SupportSample, svg_path.Error) {
   let direction = angle_direction(angle)
   case segment {
+    svg_path.Line(start:, end:) -> {
+      let start_value = dot(start, direction)
+      let end_value = dot(end, direction)
+      case end_value >. start_value {
+        True ->
+          Ok(SupportSample(angle: angle, t: 1.0, point: end, value: end_value))
+        False ->
+          Ok(SupportSample(
+            angle: angle,
+            t: 0.0,
+            point: start,
+            value: start_value,
+          ))
+      }
+    }
+    svg_path.QuadraticBezier(start:, control:, end:) -> {
+      let p0 = dot(start, direction)
+      let p1 = dot(control, direction)
+      let p2 = dot(end, direction)
+      let a = p0 -. 2.0 *. p1 +. p2
+      let b = -2.0 *. p0 +. 2.0 *. p1
+      let candidates =
+        [0.0, 1.0, ..quadratic_roots(0.0, 2.0 *. a, b)]
+        |> list.filter(fn(t) { t >=. 0.0 && t <=. 1.0 })
+
+      best_segment_support(segment, angle, candidates)
+    }
     svg_path.CubicBezier(start:, control1:, control2:, end:) -> {
       let p0 = dot(start, direction)
       let p1 = dot(control1, direction)
@@ -1157,24 +1175,62 @@ fn support(
         [0.0, 1.0, ..quadratic_roots(3.0 *. a, 2.0 *. b, c)]
         |> list.filter(fn(t) { t >=. 0.0 && t <=. 1.0 })
 
-      let assert [first, ..rest] = candidates
-      let best =
-        list.fold(
-          rest,
-          #(first, cubic_scalar(p0, p1, p2, p3, first)),
-          fn(best, t) {
-            let value = cubic_scalar(p0, p1, p2, p3, t)
-            case value >. best.1 {
-              True -> #(t, value)
-              False -> best
-            }
-          },
-        )
-
-      Ok(SupportSample(angle: angle, t: best.0, value: best.1))
+      best_segment_support(segment, angle, candidates)
     }
-    _ -> Error(svg_path.DegenerateArc)
+    svg_path.Arc(..) -> brute_segment_support(segment, angle: angle)
   }
+}
+
+fn brute_segment_support(
+  segment: svg_path.Segment,
+  angle angle: Float,
+) -> Result(SupportSample, svg_path.Error) {
+  let direction = angle_direction(angle)
+  use t <- result.try(
+    svg_path.segment_minimize(segment, measure: fn(point) {
+      0.0 -. dot(point, direction)
+    }),
+  )
+  use point <- result.try(svg_path.segment_point(segment, at: t))
+  Ok(SupportSample(
+    angle: angle,
+    t: t,
+    point: point,
+    value: dot(point, direction),
+  ))
+}
+
+fn best_segment_support(
+  segment: svg_path.Segment,
+  angle: Float,
+  candidates: List(Float),
+) -> Result(SupportSample, svg_path.Error) {
+  let assert [first, ..rest] = candidates
+  use first <- result.try(support_candidate(segment, angle, first))
+  rest
+  |> list.fold(Ok(first), fn(best, t) {
+    use best <- result.try(best)
+    use candidate <- result.try(support_candidate(segment, angle, t))
+    case candidate.value >. best.value {
+      True -> Ok(candidate)
+      False -> Ok(best)
+    }
+  })
+}
+
+fn support_candidate(
+  segment: svg_path.Segment,
+  angle: Float,
+  t: Float,
+) -> Result(SupportSample, svg_path.Error) {
+  let direction = angle_direction(angle)
+  use point <- result.try(svg_path.segment_point(segment, at: t))
+  Ok(SupportSample(
+    angle: angle,
+    t: t,
+    point: point,
+    value: dot(point, direction),
+  ))
 }
 
 fn reject_consecutive_curves(
@@ -1317,28 +1373,6 @@ fn quadratic_roots(a: Float, b: Float, c: Float) -> List(Float) {
       }
     }
   }
-}
-
-fn cubic_scalar(p0: Float, p1: Float, p2: Float, p3: Float, t: Float) -> Float {
-  let mt = 1.0 -. t
-  p0
-  *. mt
-  *. mt
-  *. mt
-  +. 3.0
-  *. p1
-  *. mt
-  *. mt
-  *. t
-  +. 3.0
-  *. p2
-  *. mt
-  *. t
-  *. t
-  +. p3
-  *. t
-  *. t
-  *. t
 }
 
 fn average(values: List(Float)) -> Float {

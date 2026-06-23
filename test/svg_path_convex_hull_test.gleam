@@ -13,6 +13,10 @@ const tolerance = 0.000001
 
 const support_unit_diameter_tolerance = 0.00000002
 
+const smart_support_base_tolerance = 0.000000001
+
+const smart_support_unit_diameter_tolerance = 0.000000001
+
 pub fn segment_hull_returns_closed_subpath_for_line_test() {
   let segment =
     svg_path.line(
@@ -247,6 +251,25 @@ pub fn specimen_hull_support_matches_original_at_10_degree_steps_test() {
   })
 }
 
+pub fn smart_segment_support_matches_brute_support_at_10_degree_steps_test() {
+  assert list.all(support_specimens(), fn(specimen) {
+    let #(_, segment) = specimen
+
+    multiples_of_10_degrees()
+    |> list.all(fn(angle) {
+      case
+        convex_hull.test_segment_support(segment, angle: angle),
+        convex_hull.test_brute_segment_support(segment, angle: angle)
+      {
+        Ok(#(_, _, smart_value)), Ok(#(_, _, brute_value)) ->
+          float.absolute_value(smart_value -. brute_value)
+          <=. smart_support_tolerance(segment)
+        _, _ -> False
+      }
+    })
+  })
+}
+
 pub fn adversarial_segment_hulls_pass_geometry_checks_test() {
   assert failing_specimen_reports(adversarial_specimens()) == []
 }
@@ -266,6 +289,10 @@ fn known_transformed_adversarial_failures() -> List(String) {
 
 fn specimens() -> List(#(String, svg_path.Segment)) {
   list.append(curve_and_line_specimens(), arc_specimens())
+}
+
+fn support_specimens() -> List(#(String, svg_path.Segment)) {
+  specimens()
 }
 
 fn adversarial_specimens() -> List(#(String, svg_path.Segment)) {
@@ -633,6 +660,23 @@ fn curve_and_line_specimens() -> List(#(String, svg_path.Segment)) {
     #("del_cubic", del_cubic()),
     #("flourish_cubic", flourish_cubic()),
     #("left_hook_cubic", left_hook_cubic()),
+    #("quadratic_arch", quadratic_arch()),
+    #("shallow_quadratic", shallow_quadratic()),
+    #("off_axis_quadratic", off_axis_quadratic()),
+    #("far_control_quadratic", far_control_quadratic()),
+    #("degenerate_line", degenerate_line()),
+    #("point_quadratic", point_quadratic()),
+    #("closed_quadratic", closed_quadratic()),
+    #("colinear_inside_quadratic", colinear_inside_quadratic()),
+    #("colinear_outside_quadratic", colinear_outside_quadratic()),
+    #(
+      "diagonal_colinear_inside_quadratic",
+      diagonal_colinear_inside_quadratic(),
+    ),
+    #(
+      "diagonal_colinear_outside_quadratic",
+      diagonal_colinear_outside_quadratic(),
+    ),
   ]
 }
 
@@ -645,6 +689,93 @@ fn arc_specimens() -> List(#(String, svg_path.Segment)) {
     #("large_arc", large_arc(sweep: True)),
     #("large_arc_reverse", large_arc(sweep: False)),
   ]
+}
+
+fn quadratic_arch() -> svg_path.Segment {
+  svg_path.quadratic_bezier(
+    start: svg_path.point(0.0, 0.0),
+    control: svg_path.point(40.0, 90.0),
+    end: svg_path.point(100.0, 0.0),
+  )
+}
+
+fn shallow_quadratic() -> svg_path.Segment {
+  svg_path.quadratic_bezier(
+    start: svg_path.point(-50.0, -5.0),
+    control: svg_path.point(10.0, 8.0),
+    end: svg_path.point(75.0, 4.0),
+  )
+}
+
+fn off_axis_quadratic() -> svg_path.Segment {
+  svg_path.quadratic_bezier(
+    start: svg_path.point(42.0, -80.0),
+    control: svg_path.point(-35.0, 140.0),
+    end: svg_path.point(118.0, 25.0),
+  )
+}
+
+fn far_control_quadratic() -> svg_path.Segment {
+  svg_path.quadratic_bezier(
+    start: svg_path.point(-12.0, 18.0),
+    control: svg_path.point(260.0, -310.0),
+    end: svg_path.point(95.0, 44.0),
+  )
+}
+
+fn degenerate_line() -> svg_path.Segment {
+  svg_path.line(
+    start: svg_path.point(33.0, -17.0),
+    end: svg_path.point(33.0, -17.0),
+  )
+}
+
+fn point_quadratic() -> svg_path.Segment {
+  svg_path.quadratic_bezier(
+    start: svg_path.point(12.0, -9.0),
+    control: svg_path.point(12.0, -9.0),
+    end: svg_path.point(12.0, -9.0),
+  )
+}
+
+fn closed_quadratic() -> svg_path.Segment {
+  svg_path.quadratic_bezier(
+    start: svg_path.point(12.0, -9.0),
+    control: svg_path.point(45.0, 30.0),
+    end: svg_path.point(12.0, -9.0),
+  )
+}
+
+fn colinear_inside_quadratic() -> svg_path.Segment {
+  svg_path.quadratic_bezier(
+    start: svg_path.point(0.0, 0.0),
+    control: svg_path.point(40.0, 0.0),
+    end: svg_path.point(100.0, 0.0),
+  )
+}
+
+fn colinear_outside_quadratic() -> svg_path.Segment {
+  svg_path.quadratic_bezier(
+    start: svg_path.point(0.0, 0.0),
+    control: svg_path.point(140.0, 0.0),
+    end: svg_path.point(100.0, 0.0),
+  )
+}
+
+fn diagonal_colinear_inside_quadratic() -> svg_path.Segment {
+  svg_path.quadratic_bezier(
+    start: svg_path.point(0.0, 0.0),
+    control: svg_path.point(40.0, 40.0),
+    end: svg_path.point(100.0, 100.0),
+  )
+}
+
+fn diagonal_colinear_outside_quadratic() -> svg_path.Segment {
+  svg_path.quadratic_bezier(
+    start: svg_path.point(0.0, 0.0),
+    control: svg_path.point(140.0, 140.0),
+    end: svg_path.point(100.0, 100.0),
+  )
 }
 
 fn stem() -> svg_path.Segment {
@@ -1223,5 +1354,17 @@ fn support_tolerance(segment: svg_path.Segment) -> Float {
         svg_path.bounding_box_diameter(box) *. support_unit_diameter_tolerance,
       )
     Error(_) -> tolerance
+  }
+}
+
+fn smart_support_tolerance(segment: svg_path.Segment) -> Float {
+  case svg_path.segment_bounding_box(segment) {
+    Ok(box) ->
+      float.max(
+        smart_support_base_tolerance,
+        svg_path.bounding_box_diameter(box)
+          *. smart_support_unit_diameter_tolerance,
+      )
+    Error(_) -> smart_support_base_tolerance
   }
 }
