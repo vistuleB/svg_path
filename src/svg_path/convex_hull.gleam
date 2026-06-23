@@ -73,17 +73,22 @@ pub fn subpath_hull(
 ) -> Result(svg_path.Subpath, HullError) {
   case svg_path.segments(subpath) {
     [] -> Error(PathError(svg_path.EmptySubpath))
-    [first, ..rest] -> {
-      use initial <- result.try(segment_hull_segments(first))
-      use segments <- result.try(
-        rest
-        |> list.fold(Ok(initial), fn(hull, segment) {
-          use hull <- result.try(hull)
-          use next <- result.try(segment_hull_segments(segment))
-          union_loop_segments(hull, next)
-        }),
-      )
-      build_closed_subpath(segments)
+    segments -> segments_hull(segments)
+  }
+}
+
+/// Compute the convex hull of all segments in a path.
+///
+/// Empty subpaths are ignored. The result is a single closed subpath containing
+/// the hull of every non-empty subpath in the input path.
+pub fn path_hull(path: svg_path.Path) -> Result(svg_path.Subpath, HullError) {
+  case svg_path.subpaths(path) {
+    [] -> Error(PathError(svg_path.EmptyPath))
+    subpaths -> {
+      case subpaths |> list.flat_map(svg_path.segments) {
+        [] -> Error(PathError(svg_path.EmptySubpaths))
+        segments -> segments_hull(segments)
+      }
     }
   }
 }
@@ -97,6 +102,22 @@ pub fn segment_hull(
       simple_curve_hull(segment)
     svg_path.CubicBezier(..) -> cubic_hull(segment)
   }
+}
+
+fn segments_hull(
+  segments: List(svg_path.Segment),
+) -> Result(svg_path.Subpath, HullError) {
+  let assert [first, ..rest] = segments
+  use initial <- result.try(segment_hull_segments(first))
+  use segments <- result.try(
+    rest
+    |> list.fold(Ok(initial), fn(hull, segment) {
+      use hull <- result.try(hull)
+      use next <- result.try(segment_hull_segments(segment))
+      union_loop_segments(hull, next)
+    }),
+  )
+  build_closed_subpath(segments)
 }
 
 fn segment_hull_segments(

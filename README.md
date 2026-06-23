@@ -613,6 +613,14 @@ This returns a closed `Subpath` containing the convex hull of all segments in
 the input. Internally each segment is first converted to a segment hull, then
 those convex loops are unioned together.
 
+For a path with multiple subpaths, use `path_hull`:
+
+```gleam
+convex_hull.path_hull(path)
+```
+
+Empty subpaths are ignored, and the result is still a single closed `Subpath`.
+
 ## Parsing
 
 `svg_path/parse` accepts normal SVG path data syntax, including:

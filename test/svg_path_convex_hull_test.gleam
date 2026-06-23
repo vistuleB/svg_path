@@ -120,6 +120,41 @@ pub fn subpath_hull_rejects_empty_subpath_test() {
     == Error(convex_hull.PathError(svg_path.EmptySubpath))
 }
 
+pub fn path_hull_returns_closed_hull_for_multiple_subpaths_test() {
+  let left_segments = [
+    svg_path.line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(20.0, 0.0),
+    ),
+  ]
+  let right_segments = [
+    svg_path.line(
+      start: svg_path.point(40.0, 30.0),
+      end: svg_path.point(50.0, -10.0),
+    ),
+  ]
+  let assert Ok(left) = svg_path.subpath(left_segments)
+  let assert Ok(right) = svg_path.subpath(right_segments)
+  let path = svg_path.path([left, right])
+  let assert Ok(hull) = convex_hull.path_hull(path)
+
+  assert svg_path.is_closed(hull)
+  assert subpath_support_matches_bool(
+    list.append(left_segments, right_segments),
+    hull,
+  )
+}
+
+pub fn path_hull_rejects_empty_path_test() {
+  assert convex_hull.path_hull(svg_path.empty_path())
+    == Error(convex_hull.PathError(svg_path.EmptyPath))
+}
+
+pub fn path_hull_rejects_path_with_only_empty_subpaths_test() {
+  assert convex_hull.path_hull(svg_path.path([svg_path.empty_subpath()]))
+    == Error(convex_hull.PathError(svg_path.EmptySubpaths))
+}
+
 pub fn specimen_hulls_survive_strict_subpath_constructor_test() {
   assert list.all(specimens(), fn(specimen) {
     let #(_, segment) = specimen
