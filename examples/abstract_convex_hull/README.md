@@ -25,6 +25,10 @@ Current fixtures:
 - `face_polygon_loop.gleam` and `face_union.gleam` start the face-aware version
   of the abstraction. Support can return either a point or a flat face, and
   face/face ties can distinguish overlapping and merely touching aligned faces.
+- `convex_loop.gleam` and `convex_polygon_loop.gleam` start the more explicit
+  refactor: loops carry `LoopPiece(id)` values, support returns
+  `SupportSet(id)` over `LoopPoint(id)`, and the union core does not interpret
+  the meaning of an `id`.
 - `segment_hull_loop.gleam` wraps the real `svg_path/convex_hull.segment_hull`
   output. Curved support is currently sampled, not solved exactly.
 

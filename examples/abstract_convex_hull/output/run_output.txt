@@ -56,3 +56,7 @@ parallelogram first diagonal: tie A point(v2 (12.0,12.0)) / B point(v2 (12.0,12.
 triangle cuts square east: B wins point(v1 (16.0,6.0))
 triangle cuts square west: B wins face(v2 (-4.0,10.0) -> v0 (-4.0,2.0))
 triangle cuts square NE: A wins point(v2 (12.0,12.0))
+
+explicit ConvexLoop support cases:
+right: B wins face(v1 (15.0,0.0) -> v2 (15.0,10.0))
+top: tie A face(v2 (10.0,10.0) -> v3 (0.0,10.0)) / B face(v2 (15.0,10.0) -> v3 (5.0,10.0))

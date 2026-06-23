@@ -1,4 +1,6 @@
 import abstract_union
+import convex_loop
+import convex_polygon_loop
 import cubic_convex_pieces
 import face_polygon_loop
 import face_union
@@ -27,6 +29,8 @@ pub fn main() -> Nil {
   cubic_split_stress_demo()
   io.println("")
   face_support_demo()
+  io.println("")
+  explicit_loop_model_demo()
   case run_slow_cubic_comparison {
     True -> {
       io.println("")
@@ -414,6 +418,77 @@ fn face_support_demo() -> Nil {
   })
   |> string.join("\n")
   |> io.println
+}
+
+fn explicit_loop_model_demo() -> Nil {
+  let square =
+    convex_polygon_loop.loop("explicit square", [
+      svg_path.point(0.0, 0.0),
+      svg_path.point(10.0, 0.0),
+      svg_path.point(10.0, 10.0),
+      svg_path.point(0.0, 10.0),
+    ])
+  let shifted =
+    convex_polygon_loop.loop("explicit shifted square", [
+      svg_path.point(5.0, 0.0),
+      svg_path.point(15.0, 0.0),
+      svg_path.point(15.0, 10.0),
+      svg_path.point(5.0, 10.0),
+    ])
+
+  io.println("explicit ConvexLoop support cases:")
+  [
+    #("right", convex_loop.union_support(square, shifted, angle: 0.0)),
+    #("top", convex_loop.union_support(square, shifted, angle: 90.0)),
+  ]
+  |> list.map(fn(case_) {
+    let #(label, support) = case_
+    label <> ": " <> describe_explicit_union_support(support, square, shifted)
+  })
+  |> string.join("\n")
+  |> io.println
+}
+
+fn describe_explicit_union_support(
+  support: convex_loop.UnionSupport(Int, Int),
+  loop_a: convex_loop.ConvexLoop(Int),
+  loop_b: convex_loop.ConvexLoop(Int),
+) -> String {
+  case support {
+    convex_loop.AWins(set) ->
+      "A wins " <> describe_explicit_support_set(set, loop_a)
+    convex_loop.BWins(set) ->
+      "B wins " <> describe_explicit_support_set(set, loop_b)
+    convex_loop.Tie(a, b) ->
+      "tie A "
+      <> describe_explicit_support_set(a, loop_a)
+      <> " / B "
+      <> describe_explicit_support_set(b, loop_b)
+  }
+}
+
+fn describe_explicit_support_set(
+  set: convex_loop.SupportSet(Int),
+  loop: convex_loop.ConvexLoop(Int),
+) -> String {
+  case set {
+    convex_loop.SupportPoint(point:) ->
+      "point("
+      <> loop.point_label(point)
+      <> " "
+      <> point_label(loop.point(point))
+      <> ")"
+    convex_loop.SupportFace(from:, to:) ->
+      "face("
+      <> loop.point_label(from)
+      <> " "
+      <> point_label(loop.point(from))
+      <> " -> "
+      <> loop.point_label(to)
+      <> " "
+      <> point_label(loop.point(to))
+      <> ")"
+  }
 }
 
 fn describe_union_support(
