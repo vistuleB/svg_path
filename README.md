@@ -559,7 +559,7 @@ in more than one point, such as partially overlapping collinear lines, return
 `IntersectionOptions` to tune `tolerance` and `max_depth` for curved segment
 intersection detection.
 
-### Segment Convex Hulls
+### Convex Hulls
 
 The `svg_path/convex_hull` module computes a closed hull for a single segment.
 The hull reuses curve portions from the original segment where possible, joined
@@ -604,7 +604,9 @@ a hull.
 For a whole continuous subpath, use `subpath_hull`:
 
 ```gleam
-pub fn hull(subpath: svg_path.Subpath) -> Result(svg_path.Subpath, convex_hull.HullError) {
+pub fn hull(
+  subpath: svg_path.Subpath,
+) -> Result(svg_path.Subpath, convex_hull.HullError) {
   convex_hull.subpath_hull(subpath)
 }
 ```

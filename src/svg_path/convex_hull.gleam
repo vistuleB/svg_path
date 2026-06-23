@@ -1,9 +1,10 @@
-//// Convex hull helpers for path segments.
+//// Convex hull helpers for paths, subpaths, and segments.
 ////
-//// This module computes a closed hull for a single segment. Lines,
-//// quadratic Beziers, and arcs have semantic hulls: the primitive itself plus
-//// the chord joining its endpoints, with tiny/point-like cases collapsed to
-//// lines. Cubic Beziers use a cubic-specific support/event solver.
+//// This module computes closed hulls. Single-segment hulls can also report
+//// the pieces used to build them. Lines, quadratic Beziers, and arcs have
+//// semantic hulls: the primitive itself plus the chord joining its endpoints,
+//// with tiny/point-like cases collapsed to lines. Cubic Beziers use a
+//// cubic-specific support/event solver.
 
 import gleam/float
 import gleam/int
