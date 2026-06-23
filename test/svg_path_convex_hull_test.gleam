@@ -74,6 +74,52 @@ pub fn segment_hull_handles_near_endpoint_arc_as_curve_and_chord_test() {
     ]
 }
 
+pub fn subpath_hull_returns_closed_hull_for_l_shaped_polyline_test() {
+  let segments = [
+    svg_path.line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(20.0, 0.0),
+    ),
+    svg_path.line(
+      start: svg_path.point(20.0, 0.0),
+      end: svg_path.point(20.0, 15.0),
+    ),
+  ]
+  let assert Ok(subpath) = svg_path.subpath(segments)
+  let assert Ok(hull) = convex_hull.subpath_hull(subpath)
+
+  assert svg_path.is_closed(hull)
+  assert list.length(svg_path.segments(hull)) >= 3
+  assert subpath_support_matches_bool(segments, hull)
+}
+
+pub fn subpath_hull_handles_curved_subpath_test() {
+  let curve =
+    svg_path.cubic_bezier(
+      start: svg_path.point(0.0, 0.0),
+      control1: svg_path.point(30.0, 60.0),
+      control2: svg_path.point(80.0, -30.0),
+      end: svg_path.point(100.0, 20.0),
+    )
+  let tail =
+    svg_path.line(
+      start: svg_path.point(100.0, 20.0),
+      end: svg_path.point(135.0, 70.0),
+    )
+  let segments = [curve, tail]
+  let assert Ok(subpath) = svg_path.subpath(segments)
+  let assert Ok(hull) = convex_hull.subpath_hull(subpath)
+
+  assert svg_path.is_closed(hull)
+  assert list.length(svg_path.segments(hull)) >= 3
+  assert subpath_support_matches_bool(segments, hull)
+}
+
+pub fn subpath_hull_rejects_empty_subpath_test() {
+  assert convex_hull.subpath_hull(svg_path.empty_subpath())
+    == Error(convex_hull.PathError(svg_path.EmptySubpath))
+}
+
 pub fn specimen_hulls_survive_strict_subpath_constructor_test() {
   assert list.all(specimens(), fn(specimen) {
     let #(_, segment) = specimen
@@ -141,6 +187,10 @@ pub fn adversarial_segment_hulls_pass_geometry_checks_test() {
   assert failing_specimen_reports(adversarial_specimens()) == []
 }
 
+pub fn paired_specimen_subpath_hulls_pass_support_checks_test() {
+  assert failing_subpath_specimen_reports(paired_subpath_specimens()) == []
+}
+
 pub fn transformed_adversarial_segment_hulls_pass_geometry_checks_test() {
   assert failing_specimen_reports(transformed_adversarial_specimens())
     == known_transformed_adversarial_failures()
@@ -195,6 +245,30 @@ fn transformed_adversarial_specimens() -> List(#(String, svg_path.Segment)) {
   })
 }
 
+fn paired_subpath_specimens() -> List(#(String, List(svg_path.Segment))) {
+  curve_and_line_specimens()
+  |> list.take(8)
+  |> adjacent_pairs
+  |> list.filter_map(fn(pair) {
+    let #(#(left_name, left), #(right_name, right)) = pair
+    use connected_right <- result.try(connect_segment_after(
+      right,
+      svg_path.segment_end(left),
+    ))
+    Ok(#(left_name <> "_then_" <> right_name, [left, connected_right]))
+  })
+}
+
+fn connect_segment_after(
+  segment: svg_path.Segment,
+  point: svg_path.Point,
+) -> Result(svg_path.Segment, Nil) {
+  let start = svg_path.segment_start(segment)
+  let matrix = transform.translate(x: point.x -. start.x, y: point.y -. start.y)
+  transform.segment(segment, by: matrix)
+  |> result.map_error(fn(_) { Nil })
+}
+
 fn transformed_specimen_variants(
   name: String,
   segment: svg_path.Segment,
@@ -239,6 +313,20 @@ fn failing_specimen_reports(
   })
 }
 
+fn failing_subpath_specimen_reports(
+  specimens: List(#(String, List(svg_path.Segment))),
+) -> List(String) {
+  specimens
+  |> list.filter_map(fn(specimen) {
+    let #(name, segments) = specimen
+
+    case subpath_hull_failure_reason(segments) {
+      Ok(Nil) -> Error(Nil)
+      Error(reason) -> Ok(name <> ": " <> reason)
+    }
+  })
+}
+
 fn hull_failure_reason(segment: svg_path.Segment) -> Result(Nil, String) {
   case convex_hull.segment_hull(segment) {
     Error(error) -> Error("segment_hull returned " <> string.inspect(error))
@@ -263,6 +351,35 @@ fn hull_failure_reason(segment: svg_path.Segment) -> Result(Nil, String) {
                   }
               }
           }
+      }
+    }
+  }
+}
+
+fn subpath_hull_failure_reason(
+  segments: List(svg_path.Segment),
+) -> Result(Nil, String) {
+  case svg_path.subpath(segments) {
+    Error(error) ->
+      Error("subpath constructor returned " <> string.inspect(error))
+    Ok(subpath) -> {
+      case convex_hull.subpath_hull(subpath) {
+        Error(error) -> Error("subpath_hull returned " <> string.inspect(error))
+        Ok(hull) -> {
+          case svg_path.is_closed(hull) {
+            False -> Error("hull subpath is not closed")
+            True ->
+              case list.length(svg_path.segments(hull)) >= 2 {
+                False -> Error("hull has fewer than two segments")
+                True ->
+                  case subpath_support_matches(segments, hull) {
+                    Ok(Nil) -> Ok(Nil)
+                    Error(report) ->
+                      Error("support values do not match: " <> report)
+                  }
+              }
+          }
+        }
       }
     }
   }
@@ -335,6 +452,101 @@ fn support_matches_at_angle(
       Error("original support errored " <> string.inspect(error))
     _, Error(error) -> Error("hull support errored " <> string.inspect(error))
   }
+}
+
+fn subpath_support_matches(
+  original_segments: List(svg_path.Segment),
+  hull: svg_path.Subpath,
+) -> Result(Nil, String) {
+  subpath_support_matches_loop(
+    multiples_of_10_degrees(),
+    original_segments,
+    hull,
+  )
+}
+
+fn subpath_support_matches_loop(
+  angles: List(Float),
+  original_segments: List(svg_path.Segment),
+  hull: svg_path.Subpath,
+) -> Result(Nil, String) {
+  case angles {
+    [] -> Ok(Nil)
+    [angle, ..rest] -> {
+      case subpath_support_matches_at_angle(original_segments, hull, angle) {
+        Ok(Nil) -> subpath_support_matches_loop(rest, original_segments, hull)
+        Error(report) -> Error(report)
+      }
+    }
+  }
+}
+
+fn subpath_support_matches_at_angle(
+  original_segments: List(svg_path.Segment),
+  hull: svg_path.Subpath,
+  angle: Float,
+) -> Result(Nil, String) {
+  let tolerance = subpath_support_tolerance(original_segments)
+
+  case
+    hull_support_value(original_segments, angle),
+    hull_support_value(svg_path.segments(hull), angle)
+  {
+    Ok(original_value), Ok(hull_value) -> {
+      let difference = float.absolute_value(original_value -. hull_value)
+      case difference <. tolerance {
+        True -> Ok(Nil)
+        False ->
+          Error(
+            "angle="
+            <> float.to_string(angle)
+            <> " original="
+            <> float.to_string(original_value)
+            <> " hull="
+            <> float.to_string(hull_value)
+            <> " diff="
+            <> float.to_string(difference)
+            <> " tolerance="
+            <> float.to_string(tolerance),
+          )
+      }
+    }
+    Error(error), _ ->
+      Error("original support errored " <> string.inspect(error))
+    _, Error(error) -> Error("hull support errored " <> string.inspect(error))
+  }
+}
+
+fn subpath_support_matches_bool(
+  original_segments: List(svg_path.Segment),
+  hull: svg_path.Subpath,
+) -> Bool {
+  multiples_of_10_degrees()
+  |> list.all(fn(angle) {
+    case
+      hull_support_value(original_segments, angle),
+      hull_support_value(svg_path.segments(hull), angle)
+    {
+      Ok(original_value), Ok(hull_value) ->
+        float.absolute_value(original_value -. hull_value)
+        <. subpath_support_tolerance(original_segments)
+      _, _ -> False
+    }
+  })
+}
+
+fn subpath_support_tolerance(segments: List(svg_path.Segment)) -> Float {
+  segments
+  |> list.fold(tolerance, fn(best, segment) {
+    case svg_path.segment_bounding_box(segment) {
+      Ok(box) ->
+        float.max(
+          best,
+          svg_path.bounding_box_diameter(box) *. support_unit_diameter_tolerance,
+        )
+      Error(_) -> best
+    }
+  })
 }
 
 fn curve_and_line_specimens() -> List(#(String, svg_path.Segment)) {
@@ -832,6 +1044,13 @@ fn take_loop(items: List(a), count: Int, taken: List(a)) -> List(a) {
         [] -> list.reverse(taken)
         [first, ..rest] -> take_loop(rest, count - 1, [first, ..taken])
       }
+  }
+}
+
+fn adjacent_pairs(items: List(a)) -> List(#(a, a)) {
+  case items {
+    [] | [_] -> []
+    [left, right, ..rest] -> [#(left, right), ..adjacent_pairs([right, ..rest])]
   }
 }
 

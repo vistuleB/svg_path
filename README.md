@@ -601,6 +601,18 @@ refines curve-line boundaries.
 consistency failures, so the function reports an error rather than guessing at
 a hull.
 
+For a whole continuous subpath, use `subpath_hull`:
+
+```gleam
+pub fn hull(subpath: svg_path.Subpath) -> Result(svg_path.Subpath, convex_hull.HullError) {
+  convex_hull.subpath_hull(subpath)
+}
+```
+
+This returns a closed `Subpath` containing the convex hull of all segments in
+the input. Internally each segment is first converted to a segment hull, then
+those convex loops are unioned together.
+
 ## Parsing
 
 `svg_path/parse` accepts normal SVG path data syntax, including:
