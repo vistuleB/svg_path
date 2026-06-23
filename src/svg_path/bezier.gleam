@@ -31,6 +31,8 @@
 import gleam/float
 import gleam/list
 
+const root_tolerance = 0.000000001
+
 /// A lightweight point used by the Bezier math helpers.
 pub type Point {
   Point(x: Float, y: Float)
@@ -289,6 +291,24 @@ pub fn split_bezier_inside_many(
   }
 }
 
+/// Return the Bezier parameters of a cubic curve's inflection points.
+///
+/// A cubic Bezier can have up to two inflection points. Values outside
+/// `0.0..1.0`, values too close to the endpoints, and numerically duplicate
+/// roots are not returned. Splitting at these parameters gives pieces with no
+/// interior inflection, which is often the useful first step before treating
+/// each piece as a convex curve plus its chord. Linear and quadratic curves
+/// return an empty list.
+pub fn cubic_inflection_parameters(curve: BezierData) -> List(Float) {
+  case curve {
+    CubicBezierData(start:, control1:, control2:, end:) ->
+      inflection_roots(start, control1, control2, end)
+      |> list.filter(fn(t) { t >. root_tolerance && t <. 1.0 -. root_tolerance })
+      |> sort_unique_close_progresses
+    LinearBezierData(..) | QuadraticBezierData(..) -> []
+  }
+}
+
 fn split_bezier_at_progresses(
   curve: BezierData,
   points: List(Float),
@@ -399,6 +419,31 @@ fn cubic_extrema(
   quadratic_roots(3.0 *. a, 2.0 *. b, c)
 }
 
+fn inflection_roots(
+  start: Point,
+  control1: Point,
+  control2: Point,
+  end: Point,
+) -> List(Float) {
+  let a =
+    add(
+      difference(scale(control1, 3.0), start),
+      difference(end, scale(control2, 3.0)),
+    )
+  let b =
+    add(
+      difference(scale(start, 3.0), scale(control1, 6.0)),
+      scale(control2, 3.0),
+    )
+  let c = difference(scale(control1, 3.0), scale(start, 3.0))
+
+  tolerant_quadratic_roots(
+    -6.0 *. cross(a, b),
+    6.0 *. cross(c, a),
+    2.0 *. cross(c, b),
+  )
+}
+
 fn quadratic_roots(a: Float, b: Float, c: Float) -> List(Float) {
   case a == 0.0 {
     True -> linear_roots(b, c)
@@ -418,6 +463,33 @@ fn quadratic_roots(a: Float, b: Float, c: Float) -> List(Float) {
               { 0.0 -. b +. root_discriminant } /. denominator,
             ]
           }
+        }
+      }
+    }
+  }
+}
+
+fn tolerant_quadratic_roots(a: Float, b: Float, c: Float) -> List(Float) {
+  case float.absolute_value(a) <. 0.000000000001 {
+    True -> {
+      case float.absolute_value(b) <. 0.000000000001 {
+        True -> []
+        False -> [{ 0.0 -. c } /. b]
+      }
+    }
+    False -> {
+      let discriminant = b *. b -. { 4.0 *. a *. c }
+
+      case discriminant <. 0.0 {
+        True -> []
+        False -> {
+          let assert Ok(root_discriminant) = float.square_root(discriminant)
+          let denominator = 2.0 *. a
+
+          [
+            { 0.0 -. b -. root_discriminant } /. denominator,
+            { 0.0 -. b +. root_discriminant } /. denominator,
+          ]
         }
       }
     }
@@ -447,6 +519,32 @@ fn sort_unique_progresses(points: List(Float)) -> List(Float) {
     [] -> []
     [first, ..rest] ->
       sort_unique_progresses(rest) |> insert_unique_progress(first)
+  }
+}
+
+fn sort_unique_close_progresses(points: List(Float)) -> List(Float) {
+  case list.sort(points, by: float.compare) {
+    [] -> []
+    [first, ..rest] ->
+      unique_close_progresses(rest, previous: first, kept: [first])
+      |> list.reverse
+  }
+}
+
+fn unique_close_progresses(
+  points: List(Float),
+  previous previous: Float,
+  kept kept: List(Float),
+) -> List(Float) {
+  case points {
+    [] -> kept
+    [point, ..rest] -> {
+      case float.absolute_value(point -. previous) <=. root_tolerance {
+        True -> unique_close_progresses(rest, previous:, kept:)
+        False ->
+          unique_close_progresses(rest, previous: point, kept: [point, ..kept])
+      }
+    }
   }
 }
 
@@ -499,10 +597,18 @@ fn difference(left: Point, right: Point) -> Point {
   Point(left.x -. right.x, left.y -. right.y)
 }
 
+fn add(left: Point, right: Point) -> Point {
+  Point(left.x +. right.x, left.y +. right.y)
+}
+
 fn scale(point: Point, factor: Float) -> Point {
   Point(point.x *. factor, point.y *. factor)
 }
 
 fn offset(point: Point, direction: Point, distance: Float) -> Point {
   Point(point.x +. direction.x *. distance, point.y +. direction.y *. distance)
+}
+
+fn cross(left: Point, right: Point) -> Float {
+  left.x *. right.y -. left.y *. right.x
 }

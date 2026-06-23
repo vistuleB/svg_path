@@ -314,6 +314,43 @@ pub fn split_bezier_many_preserves_cubic_degree_test() {
   ] = pieces
 }
 
+pub fn cubic_inflection_parameters_finds_an_s_curve_inflection_test() {
+  let curve =
+    bezier.cubic_bezier_data(
+      start: bezier.Point(0.0, 0.0),
+      control1: bezier.Point(0.0, 100.0),
+      control2: bezier.Point(100.0, -100.0),
+      end: bezier.Point(100.0, 0.0),
+    )
+
+  let assert [t] = bezier.cubic_inflection_parameters(curve)
+  let pieces = bezier.split_bezier_many(curve, at: [t])
+  let assert [bezier.CubicBezierData(end: split, ..), second] = pieces
+
+  assert near(t, 0.5)
+  assert point_near(split, bezier.Point(50.0, 0.0))
+  assert point_near(bezier.bezier_start(second), split)
+}
+
+pub fn cubic_inflection_parameters_ignores_non_inflecting_curves_test() {
+  let cubic =
+    bezier.cubic_bezier_data(
+      start: bezier.Point(0.0, 0.0),
+      control1: bezier.Point(0.0, 30.0),
+      control2: bezier.Point(30.0, 30.0),
+      end: bezier.Point(30.0, 0.0),
+    )
+  let quadratic =
+    bezier.quadratic_bezier_data(
+      start: bezier.Point(0.0, 0.0),
+      control: bezier.Point(10.0, 10.0),
+      end: bezier.Point(20.0, 0.0),
+    )
+
+  assert bezier.cubic_inflection_parameters(cubic) == []
+  assert bezier.cubic_inflection_parameters(quadratic) == []
+}
+
 fn point_near(a: bezier.Point, b: bezier.Point) -> Bool {
   near(a.x, b.x) && near(a.y, b.y)
 }
