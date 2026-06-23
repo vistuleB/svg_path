@@ -14,17 +14,17 @@ polygon svg:
 polygon support: ok
 
 segment-hull pieces:
-LoopPieceB(piece 0@0.9722222222222222, piece 1@1.0)
-HullLineBA(piece 1@1.0, piece 1@0.0)
-LoopPieceA(piece 1@0.0, piece 2@0.16986001468637962)
-HullLineAB(piece 2@0.16986001468637962, piece 0@0.17777777777777778)
-LoopPieceB(piece 0@0.17777777777777778, piece 0@0.3055555555555556)
-HullLineBA(piece 0@0.3055555555555556, piece 0@1.0)
-HullLineAB(piece 0@1.0, piece 0@0.9722222222222222)
+LoopPieceB(piece 0@0.9745656334451349, piece 0@1.0)
+HullLineBA(piece 0@1.0, piece 1@1.0)
+LoopPieceA(piece 1@1.0, piece 2@0.7313932530120854)
+HullLineAB(piece 2@0.7313932530120854, piece 0@0.17547489291092744)
+LoopPieceB(piece 0@0.17547489291092744, piece 0@0.3082589204945109)
+HullLineBA(piece 0@0.3082589204945109, piece 0@0.0)
+HullLineAB(piece 0@0.0, piece 0@0.9745656334451349)
 
 segment svg:
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -15 160 130">
-  <path d="M 130.38496 75.23274 A 48.89171 31.8859 15 0 1 130 78 H 130 L 10 80 H 10 C 15.9451 64.7126 22.61151 55.77273 29.72969 50.975 L 45.65729 40.18817 A 48.89171 31.8859 15 0 1 60.57204 34.30645 L 135 20 Z" style="fill: rgba(42, 157, 143, 0.08); stroke: #1d3557; stroke-width: 2; stroke-linejoin: round" />
+  <path d="M 130.36653 75.46906 A 48.89171 31.8859 15 0 1 130 78 L 10 80 H 10 C 15.92937 64.75304 22.57624 55.82008 29.6732 51.01317 L 45.43633 40.33649 A 48.89171 31.8859 15 0 1 60.9349 34.23539 L 135 20 Z" style="fill: rgba(42, 157, 143, 0.08); stroke: #1d3557; stroke-width: 2; stroke-linejoin: round" />
   <text x="0" y="-7" font-size="7" style="fill: #333; font-family: system-ui, sans-serif">segment hull union</text>
 </svg>
 segment support: ok

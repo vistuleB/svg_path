@@ -1,8 +1,8 @@
 //// Approximate support wrapper around the real `svg_path.segment_hull`.
 ////
 //// This hydrates the abstract loop-union experiment with actual library
-//// geometry. Curved support is sampled rather than solved exactly; that is
-//// enough for exploring the loop-union shape without touching production code.
+//// geometry. It now wraps the materialized hull subpath only; production no
+//// longer exposes the trace pieces that originally powered this experiment.
 
 import abstract_union
 import gleam/float
@@ -12,14 +12,8 @@ import gleam/result
 import svg_path
 import svg_path/convex_hull
 
-const curve_support_samples = 180
-
 pub type Param {
-  Param(piece_index: Int, t: Float)
-}
-
-type Piece {
-  Piece(index: Int, hull_piece: convex_hull.HullPiece)
+  Param(segment_index: Int, t: Float)
 }
 
 pub fn loop(
@@ -27,32 +21,28 @@ pub fn loop(
   segment: svg_path.Segment,
 ) -> Result(abstract_union.Loop(Param), convex_hull.HullError) {
   use hull <- result.try(convex_hull.segment_hull(segment))
-  let #(_, hull_pieces) = hull
-  let pieces =
-    hull_pieces
-    |> list.index_map(fn(piece, index) { Piece(index:, hull_piece: piece) })
+  let segments = svg_path.segments(hull)
 
   Ok(abstract_union.Loop(
     name:,
-    support: fn(angle) { support(segment, pieces, angle) },
-    point: fn(param) { point_at(segment, param) },
-    piece_segments: fn(from, to) { piece_segments(segment, pieces, from, to) },
+    support: fn(angle) { support(segments, angle) },
+    point: fn(param) { point_at(segments, param) },
+    piece_segments: fn(from, to) { piece_segments(segments, from, to) },
     param_label: param_label,
   ))
 }
 
 fn support(
-  segment: svg_path.Segment,
-  pieces: List(Piece),
+  segments: List(svg_path.Segment),
   angle: Float,
 ) -> abstract_union.Support(Param) {
   let direction = abstract_union.direction(angle)
-  let assert [first, ..rest] = pieces
-  let first_support = piece_support(segment, first, direction)
+  let assert [first, ..rest] = segments
+  let first_support = segment_support(first, 0, direction)
 
   rest
-  |> list.fold(first_support, fn(best, piece) {
-    let candidate = piece_support(segment, piece, direction)
+  |> list.index_fold(first_support, fn(best, segment, index) {
+    let candidate = segment_support(segment, index + 1, direction)
     case candidate.value >. best.value {
       True -> candidate
       False -> best
@@ -60,154 +50,75 @@ fn support(
   })
 }
 
-fn piece_support(
+fn segment_support(
   segment: svg_path.Segment,
-  piece: Piece,
+  index: Int,
   direction: svg_path.Point,
 ) -> abstract_union.Support(Param) {
-  case piece.hull_piece {
-    convex_hull.HullLine(a, b) -> {
-      let point_a = segment_point(segment, a)
-      let point_b = segment_point(segment, b)
-      let value_a = abstract_union.dot(point_a, direction)
-      let value_b = abstract_union.dot(point_b, direction)
-      case value_a >=. value_b {
-        True ->
-          abstract_union.Support(
-            param: Param(piece.index, a),
-            point: point_a,
-            value: value_a,
-          )
-        False ->
-          abstract_union.Support(
-            param: Param(piece.index, b),
-            point: point_b,
-            value: value_b,
-          )
-      }
-    }
-    convex_hull.HullCurve(a, b) -> {
-      int.range(
-        from: 0,
-        to: curve_support_samples,
-        with: [],
-        run: fn(samples, i) {
-          let fraction = int.to_float(i) /. int.to_float(curve_support_samples)
-          let t = a +. fraction *. { b -. a }
-          let point = segment_point(segment, t)
-          let value = abstract_union.dot(point, direction)
-          [
-            abstract_union.Support(param: Param(piece.index, t), point:, value:),
-            ..samples
-          ]
-        },
-      )
-      |> best_support
-    }
-  }
-}
-
-fn best_support(
-  samples: List(abstract_union.Support(Param)),
-) -> abstract_union.Support(Param) {
-  let assert [first, ..rest] = samples
-  list.fold(rest, first, fn(best, sample) {
-    case sample.value >. best.value {
-      True -> sample
-      False -> best
-    }
-  })
-}
-
-fn point_at(segment: svg_path.Segment, param: Param) -> svg_path.Point {
-  segment_point(segment, param.t)
-}
-
-fn segment_point(segment: svg_path.Segment, t: Float) -> svg_path.Point {
+  let assert Ok(t) =
+    svg_path.segment_minimize(segment, measure: fn(point) {
+      0.0 -. abstract_union.dot(point, direction)
+    })
   let assert Ok(point) = svg_path.segment_point(segment, at: t)
+  abstract_union.Support(
+    param: Param(segment_index: index, t: t),
+    point:,
+    value: abstract_union.dot(point, direction),
+  )
+}
+
+fn point_at(segments: List(svg_path.Segment), param: Param) -> svg_path.Point {
+  let assert Ok(segment) = nth(segments, param.segment_index)
+  let assert Ok(point) = svg_path.segment_point(segment, at: param.t)
   point
 }
 
 fn piece_segments(
-  segment: svg_path.Segment,
-  pieces: List(Piece),
+  segments: List(svg_path.Segment),
   from: Param,
   to: Param,
 ) -> List(svg_path.Segment) {
-  case from.piece_index == to.piece_index {
+  case from.segment_index == to.segment_index {
     True -> [
-      partial_piece_segment(
-        segment,
-        piece_at(pieces, from.piece_index),
-        from.t,
-        to.t,
-      ),
+      partial_segment(segment_at(segments, from.segment_index), from.t, to.t),
     ]
     False ->
-      walk_piece_indices(
-        from.piece_index,
-        to.piece_index,
-        list.length(pieces),
+      walk_segment_indices(
+        from.segment_index,
+        to.segment_index,
+        list.length(segments),
         [],
       )
       |> list.reverse
       |> list.map(fn(index) {
-        let piece = piece_at(pieces, index)
-        case index == from.piece_index, index == to.piece_index {
-          True, _ ->
-            partial_piece_segment(segment, piece, from.t, piece_to(piece))
-          _, True ->
-            partial_piece_segment(segment, piece, piece_from(piece), to.t)
-          _, _ ->
-            partial_piece_segment(
-              segment,
-              piece,
-              piece_from(piece),
-              piece_to(piece),
-            )
+        let segment = segment_at(segments, index)
+        case index == from.segment_index, index == to.segment_index {
+          True, _ -> partial_segment(segment, from.t, 1.0)
+          _, True -> partial_segment(segment, 0.0, to.t)
+          _, _ -> partial_segment(segment, 0.0, 1.0)
         }
       })
   }
 }
 
-fn partial_piece_segment(
+fn partial_segment(
   segment: svg_path.Segment,
-  piece: Piece,
   from: Float,
   to: Float,
 ) -> svg_path.Segment {
-  case piece.hull_piece {
-    convex_hull.HullLine(_, _) ->
-      svg_path.line(
-        start: segment_point(segment, from),
-        end: segment_point(segment, to),
-      )
-    convex_hull.HullCurve(_, _) -> {
-      let assert Ok(sub_segment) =
-        svg_path.sub_segment(segment, from: from, to: to)
-      sub_segment
-    }
-  }
+  let assert Ok(part) = svg_path.sub_segment(segment, from: from, to: to)
+  part
 }
 
-fn piece_from(piece: Piece) -> Float {
-  case piece.hull_piece {
-    convex_hull.HullLine(from, _) | convex_hull.HullCurve(from, _) -> from
-  }
+fn segment_at(
+  segments: List(svg_path.Segment),
+  index: Int,
+) -> svg_path.Segment {
+  let assert Ok(segment) = nth(segments, index)
+  segment
 }
 
-fn piece_to(piece: Piece) -> Float {
-  case piece.hull_piece {
-    convex_hull.HullLine(_, to) | convex_hull.HullCurve(_, to) -> to
-  }
-}
-
-fn piece_at(pieces: List(Piece), index: Int) -> Piece {
-  let assert Ok(piece) = nth(pieces, index)
-  piece
-}
-
-fn walk_piece_indices(
+fn walk_segment_indices(
   current: Int,
   target: Int,
   count: Int,
@@ -216,7 +127,7 @@ fn walk_piece_indices(
   case current == target {
     True -> [current, ..indices]
     False ->
-      walk_piece_indices(next_index(current, count), target, count, [
+      walk_segment_indices(next_index(current, count), target, count, [
         current,
         ..indices
       ])
@@ -231,7 +142,10 @@ fn next_index(index: Int, count: Int) -> Int {
 }
 
 fn param_label(param: Param) -> String {
-  "p" <> int.to_string(param.piece_index) <> "@t=" <> float.to_string(param.t)
+  "segment "
+  <> int.to_string(param.segment_index)
+  <> "@t="
+  <> float.to_string(param.t)
 }
 
 fn nth(items: List(a), index: Int) -> Result(a, Nil) {

@@ -562,8 +562,6 @@ intersection detection.
 ### Convex Hulls
 
 The `svg_path/convex_hull` module computes a closed hull for a single segment.
-The hull reuses curve portions from the original segment where possible, joined
-by straight lines:
 
 ```gleam
 import svg_path
@@ -571,30 +569,15 @@ import svg_path/convex_hull
 
 pub fn hull(
   segment: svg_path.Segment,
-) -> Result(
-  #(svg_path.Subpath, List(convex_hull.HullPiece)),
-  convex_hull.HullError,
-) {
+) -> Result(svg_path.Subpath, convex_hull.HullError) {
   convex_hull.segment_hull(segment)
 }
 ```
 
-`HullPiece` records how the hull was assembled:
-
-```gleam
-convex_hull.HullCurve(from, to)
-convex_hull.HullLine(from, to)
-```
-
-The `Float` values are the original segment parameters. A curve piece is
-produced with `sub_segment(segment, from:, to:)`; a line piece connects
-`segment_point(segment, at: from)` to `segment_point(segment, at: to)`.
-
 Lines, quadratic Beziers, and ordinary arcs are handled semantically. Lines
-produce line pieces, while quadratic Beziers and arcs produce the original
-primitive plus the chord joining its endpoints. Cubic Beziers use a
-cubic-specific numerical solver that samples analytic support points and then
-refines curve-line boundaries.
+produce a two-line closed hull, while quadratic Beziers and arcs produce the
+original primitive plus the chord joining its endpoints. Cubic Beziers use a
+cubic-specific numerical solver.
 
 `PathError` means the generated pieces could not be turned into a valid closed
 `Subpath`. The other `HullError` values are reserved for cubic solver

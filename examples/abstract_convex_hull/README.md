@@ -32,6 +32,16 @@ Current fixtures:
 - `segment_hull_loop.gleam` wraps the real `svg_path/convex_hull.segment_hull`
   output. Curved support is currently sampled, not solved exactly.
 
+The production hull API intentionally does not expose this tracing model. The
+likely future shape, if it ever earns a public surface, is a separate
+`hull_trace_`-style module or package: ordinary hull functions would keep
+returning just `Subpath`, while trace helpers would return output-only reports
+that preserve source ids, source parameters, derived line endpoints, and support
+faces. The important design note is that ids should stay homogeneous; for the
+standard SVG types, a path-level id such as `#(subpath_index, segment_index)` is
+enough, with sentinel values available for segment-only or subpath-only calls.
+Users who need their own ids could opt into such a trace API later.
+
 Run from this directory:
 
 ```sh

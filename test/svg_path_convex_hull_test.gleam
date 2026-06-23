@@ -12,21 +12,20 @@ const tolerance = 0.000001
 
 const support_unit_diameter_tolerance = 0.00000002
 
-pub fn segment_hull_returns_closed_subpath_and_line_pieces_for_line_test() {
+pub fn segment_hull_returns_closed_subpath_for_line_test() {
   let segment =
     svg_path.line(
       start: svg_path.point(0.0, 0.0),
       end: svg_path.point(10.0, 0.0),
     )
-  let assert Ok(#(subpath, pieces)) = convex_hull.segment_hull(segment)
+  let assert Ok(subpath) = convex_hull.segment_hull(segment)
 
   assert svg_path.is_closed(subpath)
   assert list.length(svg_path.segments(subpath)) == 2
-  assert list.length(pieces) == 2
-  assert list.all(pieces, is_line_piece)
+  assert support_values_match(segment, subpath)
 }
 
-pub fn segment_hull_returns_two_line_pieces_for_point_cubic_test() {
+pub fn segment_hull_returns_two_segments_for_point_cubic_test() {
   let segment =
     svg_path.cubic_bezier(
       start: svg_path.point(0.0, 0.0),
@@ -34,44 +33,32 @@ pub fn segment_hull_returns_two_line_pieces_for_point_cubic_test() {
       control2: svg_path.point(0.0, 0.0),
       end: svg_path.point(0.0, 0.0),
     )
-  let assert Ok(#(subpath, pieces)) = convex_hull.segment_hull(segment)
+  let assert Ok(subpath) = convex_hull.segment_hull(segment)
 
   assert svg_path.is_closed(subpath)
   assert list.length(svg_path.segments(subpath)) == 2
-  assert pieces
-    == [
-      convex_hull.HullLine(0.0, 0.0),
-      convex_hull.HullLine(0.0, 0.0),
-    ]
 }
 
-pub fn segment_hull_returns_curve_and_chord_for_quadratic_test() {
+pub fn segment_hull_returns_closed_hull_for_quadratic_test() {
   let segment =
     svg_path.quadratic_bezier(
       start: svg_path.point(0.0, 0.0),
       control: svg_path.point(5.0, 10.0),
       end: svg_path.point(10.0, 0.0),
     )
-  let assert Ok(#(subpath, pieces)) = convex_hull.segment_hull(segment)
+  let assert Ok(subpath) = convex_hull.segment_hull(segment)
 
   assert svg_path.is_closed(subpath)
-  assert pieces
-    == [
-      convex_hull.HullCurve(0.0, 1.0),
-      convex_hull.HullLine(1.0, 0.0),
-    ]
+  assert list.length(svg_path.segments(subpath)) == 2
+  assert support_values_match(segment, subpath)
 }
 
-pub fn segment_hull_handles_near_endpoint_arc_as_curve_and_chord_test() {
-  let assert Ok(#(subpath, pieces)) =
+pub fn segment_hull_handles_near_endpoint_arc_test() {
+  let assert Ok(subpath) =
     convex_hull.segment_hull(near_endpoint_arc(sweep: True))
 
   assert svg_path.is_closed(subpath)
-  assert pieces
-    == [
-      convex_hull.HullCurve(0.0, 1.0),
-      convex_hull.HullLine(1.0, 0.0),
-    ]
+  assert list.length(svg_path.segments(subpath)) == 2
 }
 
 pub fn subpath_hull_returns_closed_hull_for_l_shaped_polyline_test() {
@@ -171,8 +158,7 @@ pub fn specimen_hulls_have_at_least_two_segments_test() {
     let #(_, segment) = specimen
 
     case convex_hull.segment_hull(segment) {
-      Ok(#(subpath, pieces)) ->
-        list.length(svg_path.segments(subpath)) >= 2 && list.length(pieces) >= 2
+      Ok(subpath) -> list.length(svg_path.segments(subpath)) >= 2
       Error(_) -> False
     }
   })
@@ -183,7 +169,7 @@ pub fn specimen_hull_derivative_angles_are_nondecreasing_test() {
     let #(_, segment) = specimen
 
     case convex_hull.segment_hull(segment) {
-      Ok(#(subpath, _)) ->
+      Ok(subpath) ->
         subpath
         |> svg_path.segments
         |> segment_derivative_angles
@@ -201,7 +187,7 @@ pub fn specimen_hull_support_matches_original_at_10_degree_steps_test() {
     let #(_, segment) = specimen
 
     case convex_hull.segment_hull(segment) {
-      Ok(#(hull, _)) ->
+      Ok(hull) ->
         multiples_of_10_degrees()
         |> list.all(fn(angle) {
           case
@@ -365,24 +351,20 @@ fn failing_subpath_specimen_reports(
 fn hull_failure_reason(segment: svg_path.Segment) -> Result(Nil, String) {
   case convex_hull.segment_hull(segment) {
     Error(error) -> Error("segment_hull returned " <> string.inspect(error))
-    Ok(#(subpath, pieces)) -> {
+    Ok(subpath) -> {
       case svg_path.is_closed(subpath) {
         False -> Error("hull subpath is not closed")
         True ->
           case list.length(svg_path.segments(subpath)) >= 2 {
             False -> Error("hull has fewer than two segments")
             True ->
-              case list.length(pieces) >= 2 {
-                False -> Error("hull has fewer than two pieces")
+              case hull_derivative_angles_are_nondecreasing(subpath) {
+                False -> Error("derivative angles are not nondecreasing")
                 True ->
-                  case hull_derivative_angles_are_nondecreasing(subpath) {
-                    False -> Error("derivative angles are not nondecreasing")
-                    True ->
-                      case support_mismatch_report(segment, subpath) {
-                        Ok(report) ->
-                          Error("support values do not match: " <> report)
-                        Error(Nil) -> Ok(Nil)
-                      }
+                  case support_mismatch_report(segment, subpath) {
+                    Ok(report) ->
+                      Error("support values do not match: " <> report)
+                    Error(Nil) -> Ok(Nil)
                   }
               }
           }
@@ -434,6 +416,16 @@ fn support_mismatch_report(
   hull: svg_path.Subpath,
 ) -> Result(String, Nil) {
   support_mismatch_report_loop(multiples_of_10_degrees(), segment, hull)
+}
+
+fn support_values_match(
+  segment: svg_path.Segment,
+  hull: svg_path.Subpath,
+) -> Bool {
+  case support_mismatch_report(segment, hull) {
+    Error(Nil) -> True
+    Ok(_) -> False
+  }
 }
 
 fn support_mismatch_report_loop(
@@ -1174,13 +1166,6 @@ fn angle_direction(degrees: Float) -> svg_path.Point {
 
 fn dot(a: svg_path.Point, b: svg_path.Point) -> Float {
   a.x *. b.x +. a.y *. b.y
-}
-
-fn is_line_piece(piece: convex_hull.HullPiece) -> Bool {
-  case piece {
-    convex_hull.HullLine(_, _) -> True
-    convex_hull.HullCurve(_, _) -> False
-  }
 }
 
 fn near(a: Float, b: Float) -> Bool {

@@ -637,8 +637,7 @@ fn production_error_stats(
       name <> " production hull failed " <> string.inspect(error)
     }),
   )
-  let #(subpath, _) = hull
-  error_stats(name, segment, svg_path.segments(subpath), angles)
+  error_stats(name, segment, svg_path.segments(hull), angles)
 }
 
 fn split_error_stats(
@@ -1009,7 +1008,7 @@ fn polygon_label(param: polygon_loop.Param) -> String {
 
 fn segment_label(param: segment_hull_loop.Param) -> String {
   "piece "
-  <> int_to_string(param.piece_index)
+  <> int_to_string(param.segment_index)
   <> "@"
   <> float.to_string(param.t)
 }
