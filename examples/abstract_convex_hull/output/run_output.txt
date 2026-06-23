@@ -1,0 +1,58 @@
+abstract convex loop union experiment
+
+polygon pieces:
+LoopPieceA(v3, v0)
+HullLineAB(v0, v0)
+LoopPieceB(v0, v3)
+HullLineBA(v3, v3)
+
+polygon svg:
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -15 160 130">
+  <path d="M 10 70 V 20 L 55 5 L 125 35 L 105 95 L 45 82 Z" style="fill: rgba(42, 157, 143, 0.08); stroke: #1d3557; stroke-width: 2; stroke-linejoin: round" />
+  <text x="0" y="-7" font-size="7" style="fill: #333; font-family: system-ui, sans-serif">polygon union</text>
+</svg>
+polygon support: ok
+
+segment-hull pieces:
+LoopPieceB(piece 0@0.9722222222222222, piece 1@1.0)
+HullLineBA(piece 1@1.0, piece 1@0.0)
+LoopPieceA(piece 1@0.0, piece 2@0.16986001468637962)
+HullLineAB(piece 2@0.16986001468637962, piece 0@0.17777777777777778)
+LoopPieceB(piece 0@0.17777777777777778, piece 0@0.3055555555555556)
+HullLineBA(piece 0@0.3055555555555556, piece 0@1.0)
+HullLineAB(piece 0@1.0, piece 0@0.9722222222222222)
+
+segment svg:
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -15 160 130">
+  <path d="M 130.38496 75.23274 A 48.89171 31.8859 15 0 1 130 78 H 130 L 10 80 H 10 C 15.9451 64.7126 22.61151 55.77273 29.72969 50.975 L 45.65729 40.18817 A 48.89171 31.8859 15 0 1 60.57204 34.30645 L 135 20 Z" style="fill: rgba(42, 157, 143, 0.08); stroke: #1d3557; stroke-width: 2; stroke-linejoin: round" />
+  <text x="0" y="-7" font-size="7" style="fill: #333; font-family: system-ui, sans-serif">segment hull union</text>
+</svg>
+segment support: ok
+
+cubic split stress: 45/45 ok
+
+face-aware support cases:
+overlap right: B wins face(v1 (15.0,0.0) -> v2 (15.0,10.0))
+overlap top: tie A face(v2 (10.0,10.0) -> v3 (0.0,10.0)) / B face(v2 (15.0,10.0) -> v3 (5.0,10.0)) [collinear faces overlap (5.0,10.0) -> (10.0,10.0)]
+touching vertical seam: B wins face(v1 (20.0,0.0) -> v2 (20.0,10.0))
+touching shared top: tie A face(v2 (10.0,10.0) -> v3 (0.0,10.0)) / B face(v2 (20.0,10.0) -> v3 (10.0,10.0)) [collinear faces touch at (10.0,10.0)]
+square, rectangle right: B wins face(v1 (12.0,0.0) -> v2 (12.0,10.0))
+square, rectangle left: B wins face(v3 (0.0,10.0) -> v0 (0.0,0.0))
+square, rectangle top: tie A face(v2 (8.0,10.0) -> v3 (4.0,10.0)) / B face(v2 (12.0,10.0) -> v3 (0.0,10.0)) [collinear faces overlap (4.0,10.0) -> (8.0,10.0)]
+square, rectangle bottom: tie A face(v0 (4.0,0.0) -> v1 (8.0,0.0)) / B face(v0 (0.0,0.0) -> v1 (12.0,0.0)) [collinear faces overlap (4.0,0.0) -> (8.0,0.0)]
+rectangle, square right: A wins face(v1 (12.0,0.0) -> v2 (12.0,10.0))
+rectangle, square left: A wins face(v3 (0.0,10.0) -> v0 (0.0,0.0))
+rectangle, square top: tie A face(v2 (12.0,10.0) -> v3 (0.0,10.0)) / B face(v2 (8.0,10.0) -> v3 (4.0,10.0)) [collinear faces overlap (4.0,10.0) -> (8.0,10.0)]
+rectangle, square bottom: tie A face(v0 (0.0,0.0) -> v1 (12.0,0.0)) / B face(v0 (4.0,0.0) -> v1 (8.0,0.0)) [collinear faces overlap (4.0,0.0) -> (8.0,0.0)]
+corner square inside large NE: tie A point(v2 (12.0,12.0)) / B point(v2 (12.0,12.0))
+corner square inside large right: tie A face(v1 (12.0,0.0) -> v2 (12.0,12.0)) / B face(v1 (12.0,9.0) -> v2 (12.0,12.0)) [collinear faces overlap (12.0,9.0) -> (12.0,12.0)]
+corner square inside large top: tie A face(v2 (12.0,12.0) -> v3 (0.0,12.0)) / B face(v2 (12.0,12.0) -> v3 (9.0,12.0)) [collinear faces overlap (9.0,12.0) -> (12.0,12.0)]
+corner square first NE: tie A point(v2 (12.0,12.0)) / B point(v2 (12.0,12.0))
+corner square first right: tie A face(v1 (12.0,9.0) -> v2 (12.0,12.0)) / B face(v1 (12.0,0.0) -> v2 (12.0,12.0)) [collinear faces overlap (12.0,9.0) -> (12.0,12.0)]
+corner square first top: tie A face(v2 (12.0,12.0) -> v3 (9.0,12.0)) / B face(v2 (12.0,12.0) -> v3 (0.0,12.0)) [collinear faces overlap (9.0,12.0) -> (12.0,12.0)]
+parallelogram in square diagonal: tie A point(v2 (12.0,12.0)) / B point(v2 (12.0,12.0))
+parallelogram in square east: tie A face(v1 (12.0,0.0) -> v2 (12.0,12.0)) / B point(v2 (12.0,12.0))
+parallelogram first diagonal: tie A point(v2 (12.0,12.0)) / B point(v2 (12.0,12.0))
+triangle cuts square east: B wins point(v1 (16.0,6.0))
+triangle cuts square west: B wins face(v2 (-4.0,10.0) -> v0 (-4.0,2.0))
+triangle cuts square NE: A wins point(v2 (12.0,12.0))

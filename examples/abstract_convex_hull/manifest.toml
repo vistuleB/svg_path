@@ -1,0 +1,22 @@
+# Do not manually edit this file, it is managed by Gleam.
+#
+# This file locks the dependency versions used, to make your build
+# deterministic and to prevent unexpected versions from being included
+# in your application.
+#
+# You should check this file into your source control repository.
+
+packages = [
+  { name = "gleam_community_maths", version = "2.0.2", build_tools = ["gleam"], requirements = ["gleam_stdlib", "gleam_yielder"], source = "local", path = "../../build/packages/gleam_community_maths" },
+  { name = "gleam_stdlib", version = "1.0.3", build_tools = ["gleam"], requirements = [], source = "local", path = "../../build/packages/gleam_stdlib" },
+  { name = "gleam_yielder", version = "1.1.0", build_tools = ["gleam"], requirements = ["gleam_stdlib"], source = "local", path = "../../build/packages/gleam_yielder" },
+  { name = "svg_path", version = "0.5.1", build_tools = ["gleam"], requirements = ["gleam_community_maths", "gleam_stdlib", "vec"], source = "local", path = "../.." },
+  { name = "vec", version = "4.1.0", build_tools = ["gleam"], requirements = ["gleam_community_maths", "gleam_stdlib"], source = "local", path = "../../build/packages/vec" },
+]
+
+[requirements]
+gleam_community_maths = { path = "../../build/packages/gleam_community_maths" }
+gleam_stdlib = { path = "../../build/packages/gleam_stdlib" }
+gleam_yielder = { path = "../../build/packages/gleam_yielder" }
+svg_path = { path = "../.." }
+vec = { path = "../../build/packages/vec" }

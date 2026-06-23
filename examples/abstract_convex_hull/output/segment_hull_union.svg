@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -15 160 130">
+  <path d="M 130.38496 75.23274 A 48.89171 31.8859 15 0 1 130 78 H 130 L 10 80 H 10 C 15.9451 64.7126 22.61151 55.77273 29.72969 50.975 L 45.65729 40.18817 A 48.89171 31.8859 15 0 1 60.57204 34.30645 L 135 20 Z" style="fill: rgba(42, 157, 143, 0.08); stroke: #1d3557; stroke-width: 2; stroke-linejoin: round" />
+  <text x="0" y="-7" font-size="7" style="fill: #333; font-family: system-ui, sans-serif">segment hull union</text>
+</svg>

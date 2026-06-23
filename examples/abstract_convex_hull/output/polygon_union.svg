@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -15 160 130">
+  <path d="M 10 70 V 20 L 55 5 L 125 35 L 105 95 L 45 82 Z" style="fill: rgba(42, 157, 143, 0.08); stroke: #1d3557; stroke-width: 2; stroke-linejoin: round" />
+  <text x="0" y="-7" font-size="7" style="fill: #333; font-family: system-ui, sans-serif">polygon union</text>
+</svg>
