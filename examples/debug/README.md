@@ -56,7 +56,7 @@ The concrete support-mismatch arc witnesses were:
 
 ```gleam
 // rotated_large_arc_reverse is reverse_segment(rotated_large_arc(sweep: False)).
-svg_path.arc(
+svg_path.Arc(
   start: svg_path.point(-70.0, 20.0),
   radius: svg_path.point(95.0, 20.0),
   x_axis_rotation: 73.0,
@@ -66,7 +66,7 @@ svg_path.arc(
 )
 
 // generated_arc_3, plus its reverse.
-svg_path.arc(
+svg_path.Arc(
   start: svg_path.point(326.80026387727264, -260.8390009191016),
   radius: svg_path.point(87.76984319319511, 11.87045278497363),
   x_axis_rotation: 335.205286439588,
@@ -76,7 +76,7 @@ svg_path.arc(
 )
 
 // generated_arc_11, plus its reverse.
-svg_path.arc(
+svg_path.Arc(
   start: svg_path.point(107.85705720801101, -338.8495268430821),
   radius: svg_path.point(244.9772635063338, 33.57924520474891),
   x_axis_rotation: 310.005043260612,
@@ -86,7 +86,7 @@ svg_path.arc(
 )
 
 // generated_arc_22, plus its reverse.
-svg_path.arc(
+svg_path.Arc(
   start: svg_path.point(-1999.999905884838, -1618.5387408292152),
   radius: svg_path.point(617.7500734194787, 1618.0958002375917),
   x_axis_rotation: 40.48148243217115,
@@ -127,7 +127,7 @@ Those transformed failures come from these base cubics:
 
 ```gleam
 // endpoint_control_cubic
-svg_path.cubic_bezier(
+svg_path.CubicBezier(
   start: svg_path.point(0.0, 0.0),
   control1: svg_path.point(0.0, 0.0),
   control2: svg_path.point(100.0, 0.0),
@@ -135,7 +135,7 @@ svg_path.cubic_bezier(
 )
 
 // near_cusp_cubic
-svg_path.cubic_bezier(
+svg_path.CubicBezier(
   start: svg_path.point(0.0, 0.0),
   control1: svg_path.point(100.0, 0.0),
   control2: svg_path.point(-100.0, 0.0),

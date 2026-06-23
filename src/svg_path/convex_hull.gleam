@@ -338,10 +338,10 @@ fn union_piece_segments(
       LoopPieceA(from, to) -> loop_piece_segments(loop_a, from, to)
       LoopPieceB(from, to) -> loop_piece_segments(loop_b, from, to)
       HullLineAB(a, b) -> [
-        svg_path.line(start: loop_point(loop_a, a), end: loop_point(loop_b, b)),
+        svg_path.Line(start: loop_point(loop_a, a), end: loop_point(loop_b, b)),
       ]
       HullLineBA(b, a) -> [
-        svg_path.line(start: loop_point(loop_b, b), end: loop_point(loop_a, a)),
+        svg_path.Line(start: loop_point(loop_b, b), end: loop_point(loop_a, a)),
       ]
     }
   })
@@ -1305,7 +1305,7 @@ fn piece_to_segment(
         svg_path.segment_point(segment, at: to)
         |> map_path_error,
       )
-      Ok(svg_path.line(start: start, end: end))
+      Ok(svg_path.Line(start: start, end: end))
     }
   }
 }

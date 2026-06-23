@@ -20,7 +20,7 @@ pub fn main() -> Nil {
 pub fn drawing_svg() -> String {
   let stem =
     svg_path.assert_subpath([
-      svg_path.cubic_bezier(
+      svg_path.CubicBezier(
         start: svg_path.point(5.0, 70.0),
         control1: svg_path.point(30.0, 20.0),
         control2: svg_path.point(65.0, 105.0),
@@ -30,13 +30,13 @@ pub fn drawing_svg() -> String {
 
   let leaf =
     svg_path.assert_subpath([
-      svg_path.cubic_bezier(
+      svg_path.CubicBezier(
         start: svg_path.point(45.0, 45.0),
         control1: svg_path.point(55.0, 10.0),
         control2: svg_path.point(95.0, 15.0),
         end: svg_path.point(100.0, 50.0),
       ),
-      svg_path.cubic_bezier(
+      svg_path.CubicBezier(
         start: svg_path.point(100.0, 50.0),
         control1: svg_path.point(78.0, 65.0),
         control2: svg_path.point(58.0, 63.0),
@@ -47,7 +47,7 @@ pub fn drawing_svg() -> String {
 
   let vein =
     svg_path.assert_subpath([
-      svg_path.quadratic_bezier(
+      svg_path.QuadraticBezier(
         start: svg_path.point(50.0, 47.0),
         control: svg_path.point(72.0, 35.0),
         end: svg_path.point(96.0, 49.0),
@@ -63,15 +63,15 @@ pub fn drawing_svg() -> String {
   svg.document(
     [
       svg.StyledPath(
-        svg_path.path([leaf]),
+        svg_path.Path([leaf]),
         "fill: #d8f3dc; stroke: #2d6a4f; stroke-width: 2.5",
       ),
       svg.StyledPath(
-        svg_path.path([stem]),
+        svg_path.Path([stem]),
         "fill: none; stroke: #1d3557; stroke-width: 4; stroke-linecap: round",
       ),
       svg.StyledPath(
-        svg_path.path([vein]),
+        svg_path.Path([vein]),
         "fill: none; stroke: #40916c; stroke-width: 1.5; stroke-linecap: round",
       ),
       svg.Text(

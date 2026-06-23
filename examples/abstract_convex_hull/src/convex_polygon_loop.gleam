@@ -125,7 +125,7 @@ fn piece_segments(
 ) -> List(svg_path.Segment) {
   case piece {
     convex_loop.Line(from:, to:) -> [
-      svg_path.line(start: point_at(points, from), end: point_at(points, to)),
+      svg_path.Line(start: point_at(points, from), end: point_at(points, to)),
     ]
     convex_loop.Curve(..) -> []
   }

@@ -67,7 +67,7 @@ fn piece_segments(
       |> adjacent_index_pairs
       |> list.map(fn(pair) {
         let #(a, b) = pair
-        svg_path.line(
+        svg_path.Line(
           start: point_at(points, Vertex(a)),
           end: point_at(points, Vertex(b)),
         )
@@ -86,7 +86,7 @@ fn polygon_segments(points: List(svg_path.Point)) -> List(svg_path.Segment) {
   |> index_pairs
   |> list.map(fn(pair) {
     let #(a, b) = pair
-    svg_path.line(
+    svg_path.Line(
       start: point_at(points, Vertex(a)),
       end: point_at(points, Vertex(b)),
     )

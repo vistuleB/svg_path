@@ -442,8 +442,8 @@ fn drawing_svg(
   pieces: List(convex_hull.HullPiece),
 ) -> String {
   let assert Ok(box) = svg_path.segment_bounding_box(segment)
-  let original = svg_path.path([svg_path.assert_subpath([segment])])
-  let hull_path = svg_path.path([hull])
+  let original = svg_path.Path([svg_path.assert_subpath([segment])])
+  let hull_path = svg_path.Path([hull])
   let assert Ok(start) = svg_path.segment_point(segment, at: 0.0)
   let assert Ok(end) = svg_path.segment_point(segment, at: 1.0)
 
@@ -482,15 +482,15 @@ fn hull_piece_path(
       let assert Ok(piece_segment) =
         svg_path.sub_segment(segment, from: start_t, to: end_t)
 
-      svg_path.path([svg_path.assert_subpath([piece_segment])])
+      svg_path.Path([svg_path.assert_subpath([piece_segment])])
     }
 
     convex_hull.HullLine(start_t, end_t) -> {
       let assert Ok(start) = svg_path.segment_point(segment, at: start_t)
       let assert Ok(end) = svg_path.segment_point(segment, at: end_t)
 
-      svg_path.path([
-        svg_path.assert_subpath([svg_path.line(start: start, end: end)]),
+      svg_path.Path([
+        svg_path.assert_subpath([svg_path.Line(start: start, end: end)]),
       ])
     }
   }
@@ -796,7 +796,7 @@ fn pad_box(
 
 fn empty_subpath() -> svg_path.Subpath {
   svg_path.assert_subpath([
-    svg_path.line(
+    svg_path.Line(
       start: svg_path.point(0.0, 0.0),
       end: svg_path.point(0.0, 0.0),
     ),
@@ -804,7 +804,7 @@ fn empty_subpath() -> svg_path.Subpath {
 }
 
 fn stem() -> svg_path.Segment {
-  svg_path.cubic_bezier(
+  svg_path.CubicBezier(
     start: svg_path.point(5.0, 70.0),
     control1: svg_path.point(30.0, 20.0),
     control2: svg_path.point(65.0, 105.0),
@@ -813,7 +813,7 @@ fn stem() -> svg_path.Segment {
 }
 
 fn horseshoe() -> svg_path.Segment {
-  svg_path.cubic_bezier(
+  svg_path.CubicBezier(
     start: svg_path.point(20.0, 80.0),
     control1: svg_path.point(20.0, 5.0),
     control2: svg_path.point(100.0, 5.0),
@@ -822,7 +822,7 @@ fn horseshoe() -> svg_path.Segment {
 }
 
 fn horseshoe_wide() -> svg_path.Segment {
-  svg_path.cubic_bezier(
+  svg_path.CubicBezier(
     start: svg_path.point(20.0, 90.0),
     control1: svg_path.point(-25.0, 0.0),
     control2: svg_path.point(145.0, 0.0),
@@ -831,35 +831,35 @@ fn horseshoe_wide() -> svg_path.Segment {
 }
 
 fn diagonal_line() -> svg_path.Segment {
-  svg_path.line(
+  svg_path.Line(
     start: svg_path.point(10.0, 85.0),
     end: svg_path.point(120.0, 15.0),
   )
 }
 
 fn reverse_diagonal_line() -> svg_path.Segment {
-  svg_path.line(
+  svg_path.Line(
     start: svg_path.point(10.0, 15.0),
     end: svg_path.point(120.0, 85.0),
   )
 }
 
 fn horizontal_line() -> svg_path.Segment {
-  svg_path.line(
+  svg_path.Line(
     start: svg_path.point(10.0, 50.0),
     end: svg_path.point(120.0, 50.0),
   )
 }
 
 fn vertical_line() -> svg_path.Segment {
-  svg_path.line(
+  svg_path.Line(
     start: svg_path.point(65.0, 10.0),
     end: svg_path.point(65.0, 90.0),
   )
 }
 
 fn snake_cubic() -> svg_path.Segment {
-  svg_path.cubic_bezier(
+  svg_path.CubicBezier(
     start: svg_path.point(15.0, 55.0),
     control1: svg_path.point(135.0, 0.0),
     control2: svg_path.point(-20.0, 110.0),
@@ -868,7 +868,7 @@ fn snake_cubic() -> svg_path.Segment {
 }
 
 fn fish_cubic() -> svg_path.Segment {
-  svg_path.cubic_bezier(
+  svg_path.CubicBezier(
     start: svg_path.point(25.0, 40.0),
     control1: svg_path.point(155.0, 100.0),
     control2: svg_path.point(155.0, 10.0),
@@ -877,7 +877,7 @@ fn fish_cubic() -> svg_path.Segment {
 }
 
 fn del_cubic() -> svg_path.Segment {
-  svg_path.cubic_bezier(
+  svg_path.CubicBezier(
     start: svg_path.point(100.0, 20.0),
     control1: svg_path.point(120.0, 60.0),
     control2: svg_path.point(0.0, 140.0),
@@ -886,7 +886,7 @@ fn del_cubic() -> svg_path.Segment {
 }
 
 fn flourish_cubic() -> svg_path.Segment {
-  svg_path.cubic_bezier(
+  svg_path.CubicBezier(
     start: svg_path.point(100.0, 20.0),
     control1: svg_path.point(120.0, 60.0),
     control2: svg_path.point(20.0, 140.0),
@@ -895,7 +895,7 @@ fn flourish_cubic() -> svg_path.Segment {
 }
 
 fn left_hook_cubic() -> svg_path.Segment {
-  svg_path.cubic_bezier(
+  svg_path.CubicBezier(
     start: svg_path.point(120.0, 120.0),
     control1: svg_path.point(121.0, 120.0),
     control2: svg_path.point(20.0, 20.0),
@@ -904,7 +904,7 @@ fn left_hook_cubic() -> svg_path.Segment {
 }
 
 fn near_cusp_cubic() -> svg_path.Segment {
-  svg_path.cubic_bezier(
+  svg_path.CubicBezier(
     start: svg_path.point(0.0, 0.0),
     control1: svg_path.point(100.0, 0.0),
     control2: svg_path.point(-100.0, 0.0),
@@ -921,7 +921,7 @@ fn half_circle_arc_reverse() -> svg_path.Segment {
 }
 
 fn half_circle_arc_with_sweep(sweep: Bool) -> svg_path.Segment {
-  svg_path.arc(
+  svg_path.Arc(
     start: svg_path.point(20.0, 80.0),
     radius: svg_path.point(40.0, 40.0),
     x_axis_rotation: 0.0,
@@ -940,7 +940,7 @@ fn rotated_arc_reverse() -> svg_path.Segment {
 }
 
 fn rotated_arc_with_sweep(sweep: Bool) -> svg_path.Segment {
-  svg_path.arc(
+  svg_path.Arc(
     start: svg_path.point(30.0, 80.0),
     radius: svg_path.point(55.0, 25.0),
     x_axis_rotation: 30.0,
@@ -959,7 +959,7 @@ fn large_arc_reverse() -> svg_path.Segment {
 }
 
 fn large_arc_with_sweep(sweep: Bool) -> svg_path.Segment {
-  svg_path.arc(
+  svg_path.Arc(
     start: svg_path.point(20.0, 70.0),
     radius: svg_path.point(50.0, 35.0),
     x_axis_rotation: 0.0,
@@ -978,7 +978,7 @@ fn near_endpoint_arc_reverse() -> svg_path.Segment {
 }
 
 fn near_endpoint_arc_with_sweep(sweep: Bool) -> svg_path.Segment {
-  svg_path.arc(
+  svg_path.Arc(
     start: svg_path.point(10.0, 10.0),
     radius: svg_path.point(40.0, 30.0),
     x_axis_rotation: 15.0,
@@ -989,14 +989,14 @@ fn near_endpoint_arc_with_sweep(sweep: Bool) -> svg_path.Segment {
 }
 
 fn near_endpoint_line() -> svg_path.Segment {
-  svg_path.line(
+  svg_path.Line(
     start: svg_path.point(10.0, 10.0),
     end: svg_path.point(10.0001, 10.0001),
   )
 }
 
 fn generated_cubic_0() -> svg_path.Segment {
-  svg_path.cubic_bezier(
+  svg_path.CubicBezier(
     start: svg_path.point(0.0, 0.0),
     control1: svg_path.point(0.0, 0.0),
     control2: svg_path.point(0.0, 0.0),
@@ -1013,7 +1013,7 @@ fn generated_arc(i: Int) -> svg_path.Segment {
     _ -> 8.0
   }
 
-  svg_path.arc(
+  svg_path.Arc(
     start: svg_path.point(scale *. wave(x, 5.0), scale *. wave(x, 7.0)),
     radius: svg_path.point(
       1.0 +. scale *. float.absolute_value(wave(x, 11.0)),

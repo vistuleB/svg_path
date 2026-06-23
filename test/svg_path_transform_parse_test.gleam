@@ -44,7 +44,7 @@ pub fn scale_accepts_one_or_two_arguments_test() {
 
 pub fn rotate_about_center_parses_test() {
   let line =
-    svg_path.line(
+    svg_path.Line(
       start: svg_path.point(2.0, 1.0),
       end: svg_path.point(2.0, 3.0),
     )

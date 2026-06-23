@@ -3,9 +3,9 @@ import svg_path/svg
 
 pub fn document_renders_a_complete_svg_document_test() {
   let path =
-    svg_path.path([
+    svg_path.Path([
       svg_path.assert_subpath([
-        svg_path.line(
+        svg_path.Line(
           start: svg_path.point(1.0, 2.0),
           end: svg_path.point(11.0, 2.0),
         ),

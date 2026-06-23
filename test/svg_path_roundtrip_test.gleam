@@ -215,23 +215,23 @@ fn assert_path_multiline_round_trips(
 fn generated_paths() -> List(svg_path.Path) {
   [
     path_from_segments([
-      svg_path.line(point(0, 0), point(10, 0)),
-      svg_path.line(point(10, 0), point(10, 20)),
-      svg_path.line(point(10, 20), point(-5, 20)),
+      svg_path.Line(point(0, 0), point(10, 0)),
+      svg_path.Line(point(10, 0), point(10, 20)),
+      svg_path.Line(point(10, 20), point(-5, 20)),
     ]),
     path_from_segments([
-      svg_path.line(point(-10, -10), point(-5, -5)),
-      svg_path.quadratic_bezier(point(-5, -5), point(0, 15), point(10, 0)),
-      svg_path.quadratic_bezier(point(10, 0), point(20, -15), point(25, 5)),
+      svg_path.Line(point(-10, -10), point(-5, -5)),
+      svg_path.QuadraticBezier(point(-5, -5), point(0, 15), point(10, 0)),
+      svg_path.QuadraticBezier(point(10, 0), point(20, -15), point(25, 5)),
     ]),
     path_from_segments([
-      svg_path.cubic_bezier(
+      svg_path.CubicBezier(
         point(0, 0),
         point(5, 10),
         point(15, -10),
         point(20, 0),
       ),
-      svg_path.cubic_bezier(
+      svg_path.CubicBezier(
         point(20, 0),
         point(30, 10),
         point(35, -10),
@@ -239,7 +239,7 @@ fn generated_paths() -> List(svg_path.Path) {
       ),
     ]),
     path_from_segments([
-      svg_path.arc(
+      svg_path.Arc(
         start: point(0, 0),
         radius: point(10, 5),
         x_axis_rotation: 30.0,
@@ -247,7 +247,7 @@ fn generated_paths() -> List(svg_path.Path) {
         sweep: True,
         end: point(20, 10),
       ),
-      svg_path.arc(
+      svg_path.Arc(
         start: point(20, 10),
         radius: point(8, 8),
         x_axis_rotation: -45.0,
@@ -257,15 +257,15 @@ fn generated_paths() -> List(svg_path.Path) {
       ),
     ]),
     path_from_segments([
-      svg_path.line(point(0, 0), point(12, 0)),
-      svg_path.quadratic_bezier(point(12, 0), point(18, 8), point(24, 0)),
-      svg_path.cubic_bezier(
+      svg_path.Line(point(0, 0), point(12, 0)),
+      svg_path.QuadraticBezier(point(12, 0), point(18, 8), point(24, 0)),
+      svg_path.CubicBezier(
         point(24, 0),
         point(30, -8),
         point(36, 8),
         point(42, 0),
       ),
-      svg_path.arc(
+      svg_path.Arc(
         start: point(42, 0),
         radius: point(6, 10),
         x_axis_rotation: 0.0,
@@ -275,19 +275,19 @@ fn generated_paths() -> List(svg_path.Path) {
       ),
     ]),
     closed_path_from_segments([
-      svg_path.line(point(0, 0), point(20, 0)),
-      svg_path.line(point(20, 0), point(20, 20)),
-      svg_path.line(point(20, 20), point(0, 20)),
-      svg_path.line(point(0, 20), point(0, 0)),
+      svg_path.Line(point(0, 0), point(20, 0)),
+      svg_path.Line(point(20, 0), point(20, 20)),
+      svg_path.Line(point(20, 20), point(0, 20)),
+      svg_path.Line(point(0, 20), point(0, 0)),
     ]),
-    svg_path.path([
+    svg_path.Path([
       subpath_from_segments([
-        svg_path.line(point(0, 0), point(10, 0)),
-        svg_path.line(point(10, 0), point(10, 10)),
+        svg_path.Line(point(0, 0), point(10, 0)),
+        svg_path.Line(point(10, 0), point(10, 10)),
       ]),
       subpath_from_segments([
-        svg_path.line(point(30, 30), point(40, 30)),
-        svg_path.line(point(40, 30), point(40, 40)),
+        svg_path.Line(point(30, 30), point(40, 30)),
+        svg_path.Line(point(40, 30), point(40, 40)),
       ]),
     ]),
   ]

@@ -144,7 +144,7 @@ fn do_path_code(
   case svg_path.subpaths(path) {
     [] -> "svg_path.empty_path()"
     subpaths -> {
-      "svg_path.path([\n"
+      "svg_path.Path([\n"
       <> indent_lines(
         subpaths
         |> list.map(do_subpath_code(_, format))
@@ -327,7 +327,7 @@ fn do_segment_code(
 ) -> String {
   case segment {
     svg_path.Line(start:, end:) -> {
-      "svg_path.line(start: "
+      "svg_path.Line(start: "
       <> do_point_code(start, format)
       <> ", end: "
       <> do_point_code(end, format)
@@ -335,7 +335,7 @@ fn do_segment_code(
     }
 
     svg_path.QuadraticBezier(start:, control:, end:) -> {
-      "svg_path.quadratic_bezier(start: "
+      "svg_path.QuadraticBezier(start: "
       <> do_point_code(start, format)
       <> ", control: "
       <> do_point_code(control, format)
@@ -345,7 +345,7 @@ fn do_segment_code(
     }
 
     svg_path.CubicBezier(start:, control1:, control2:, end:) -> {
-      "svg_path.cubic_bezier(start: "
+      "svg_path.CubicBezier(start: "
       <> do_point_code(start, format)
       <> ", control1: "
       <> do_point_code(control1, format)
@@ -357,7 +357,7 @@ fn do_segment_code(
     }
 
     svg_path.Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:) -> {
-      "svg_path.arc(start: "
+      "svg_path.Arc(start: "
       <> do_point_code(start, format)
       <> ", radius: "
       <> do_point_code(radius, format)

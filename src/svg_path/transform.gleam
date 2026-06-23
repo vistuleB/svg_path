@@ -348,7 +348,7 @@ pub fn segment_gracefully(
           {
             Ok(line) -> {
               let #(start, end) = line
-              Ok(svg_path.line(
+              Ok(svg_path.Line(
                 start: from_ellipse_point(start),
                 end: from_ellipse_point(end),
               ))
@@ -552,7 +552,7 @@ pub fn path(
     Ok(Nil) -> {
       case transform_subpaths(svg_path.subpaths(path), transform, []) {
         Error(error) -> Error(error)
-        Ok(subpaths) -> Ok(svg_path.path(subpaths))
+        Ok(subpaths) -> Ok(svg_path.Path(subpaths))
       }
     }
   }
@@ -636,20 +636,20 @@ fn transform_valid_segment(
 ) -> Result(svg_path.Segment, Error) {
   case segment {
     svg_path.Line(start:, end:) -> {
-      Ok(svg_path.line(
+      Ok(svg_path.Line(
         start: point(start, transform),
         end: point(end, transform),
       ))
     }
     svg_path.QuadraticBezier(start:, control:, end:) -> {
-      Ok(svg_path.quadratic_bezier(
+      Ok(svg_path.QuadraticBezier(
         start: point(start, transform),
         control: point(control, transform),
         end: point(end, transform),
       ))
     }
     svg_path.CubicBezier(start:, control1:, control2:, end:) -> {
-      Ok(svg_path.cubic_bezier(
+      Ok(svg_path.CubicBezier(
         start: point(start, transform),
         control1: point(control1, transform),
         control2: point(control2, transform),
@@ -666,7 +666,7 @@ fn transform_valid_segment(
       {
         Error(_) -> Error(DegenerateArcTransform)
         Ok(#(radius, x_axis_rotation)) -> {
-          Ok(svg_path.arc(
+          Ok(svg_path.Arc(
             start: point(start, transform),
             radius: from_ellipse_point(radius),
             x_axis_rotation: x_axis_rotation,
@@ -744,7 +744,7 @@ fn lines_between(points: List(ellipse.Point)) -> List(svg_path.Segment) {
     [] | [_] -> []
     [first, second, ..rest] -> {
       lines_between_rest(second, rest, [
-        svg_path.line(
+        svg_path.Line(
           start: from_ellipse_point(first),
           end: from_ellipse_point(second),
         ),
@@ -762,7 +762,7 @@ fn lines_between_rest(
     [] -> list.reverse(lines)
     [first, ..rest] -> {
       lines_between_rest(first, rest, [
-        svg_path.line(
+        svg_path.Line(
           start: from_ellipse_point(previous),
           end: from_ellipse_point(first),
         ),

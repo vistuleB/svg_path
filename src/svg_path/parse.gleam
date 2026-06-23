@@ -313,7 +313,7 @@ fn parse_quadratic_bezier_loop(
           let control = target_point(state, control_x, control_y, relative)
           let end = target_point(state, end_x, end_y, relative)
           let segment =
-            svg_path.quadratic_bezier(start: state.current, control:, end:)
+            svg_path.QuadraticBezier(start: state.current, control:, end:)
 
           case append_segment(state, segment, end) {
             Error(error) -> Error(error)
@@ -370,7 +370,7 @@ fn parse_smooth_quadratic_bezier_loop(
           let control = reflected_quadratic_control(state)
           let end = target_point(state, end_x, end_y, relative)
           let segment =
-            svg_path.quadratic_bezier(start: state.current, control:, end:)
+            svg_path.QuadraticBezier(start: state.current, control:, end:)
 
           case append_segment(state, segment, end) {
             Error(error) -> Error(error)
@@ -423,7 +423,7 @@ fn parse_cubic_bezier_loop(
           let control2 = target_point(state, control2_x, control2_y, relative)
           let end = target_point(state, end_x, end_y, relative)
           let segment =
-            svg_path.cubic_bezier(
+            svg_path.CubicBezier(
               start: state.current,
               control1:,
               control2:,
@@ -476,7 +476,7 @@ fn parse_smooth_cubic_bezier_loop(
           let control2 = target_point(state, control2_x, control2_y, relative)
           let end = target_point(state, end_x, end_y, relative)
           let segment =
-            svg_path.cubic_bezier(
+            svg_path.CubicBezier(
               start: state.current,
               control1:,
               control2:,
@@ -540,7 +540,7 @@ fn parse_arc_loop(
         )) -> {
           let end = target_point(state, end_x, end_y, relative)
           let segment =
-            svg_path.arc(
+            svg_path.Arc(
               start: state.current,
               radius: svg_path.point(radius_x, radius_y),
               x_axis_rotation:,
@@ -607,7 +607,7 @@ fn parse_close(
 fn finish(state: State) -> Result(svg_path.Path, Error) {
   case finish_active_subpath(state) {
     Error(error) -> Error(error)
-    Ok(state) -> Ok(svg_path.path(list.reverse(state.subpaths)))
+    Ok(state) -> Ok(svg_path.Path(list.reverse(state.subpaths)))
   }
 }
 
@@ -638,7 +638,7 @@ fn append_line_to(
 ) -> Result(State, Error) {
   append_segment(
     state,
-    svg_path.line(start: state.current, end: target),
+    svg_path.Line(start: state.current, end: target),
     target,
   )
 }

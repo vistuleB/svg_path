@@ -68,7 +68,7 @@ pub fn cubic_specimens() -> List(#(String, svg_path.Segment)) {
 }
 
 fn half_circle_arc(sweep sweep: Bool) -> svg_path.Segment {
-  svg_path.arc(
+  svg_path.Arc(
     start: svg_path.point(20.0, 80.0),
     radius: svg_path.point(40.0, 40.0),
     x_axis_rotation: 0.0,
@@ -79,7 +79,7 @@ fn half_circle_arc(sweep sweep: Bool) -> svg_path.Segment {
 }
 
 fn rotated_arc(sweep sweep: Bool) -> svg_path.Segment {
-  svg_path.arc(
+  svg_path.Arc(
     start: svg_path.point(30.0, 80.0),
     radius: svg_path.point(55.0, 25.0),
     x_axis_rotation: 30.0,
@@ -90,7 +90,7 @@ fn rotated_arc(sweep sweep: Bool) -> svg_path.Segment {
 }
 
 fn large_arc(sweep sweep: Bool) -> svg_path.Segment {
-  svg_path.arc(
+  svg_path.Arc(
     start: svg_path.point(20.0, 70.0),
     radius: svg_path.point(50.0, 35.0),
     x_axis_rotation: 0.0,
@@ -101,7 +101,7 @@ fn large_arc(sweep sweep: Bool) -> svg_path.Segment {
 }
 
 fn flat_arc(sweep sweep: Bool) -> svg_path.Segment {
-  svg_path.arc(
+  svg_path.Arc(
     start: svg_path.point(-100.0, 0.0),
     radius: svg_path.point(120.0, 1.0),
     x_axis_rotation: 0.0,
@@ -112,7 +112,7 @@ fn flat_arc(sweep sweep: Bool) -> svg_path.Segment {
 }
 
 fn tall_arc(sweep sweep: Bool) -> svg_path.Segment {
-  svg_path.arc(
+  svg_path.Arc(
     start: svg_path.point(0.0, -100.0),
     radius: svg_path.point(1.0, 120.0),
     x_axis_rotation: 0.0,
@@ -123,7 +123,7 @@ fn tall_arc(sweep sweep: Bool) -> svg_path.Segment {
 }
 
 fn rotated_large_arc(sweep sweep: Bool) -> svg_path.Segment {
-  svg_path.arc(
+  svg_path.Arc(
     start: svg_path.point(-70.0, 20.0),
     radius: svg_path.point(95.0, 20.0),
     x_axis_rotation: 73.0,
@@ -134,7 +134,7 @@ fn rotated_large_arc(sweep sweep: Bool) -> svg_path.Segment {
 }
 
 fn near_endpoint_arc(sweep sweep: Bool) -> svg_path.Segment {
-  svg_path.arc(
+  svg_path.Arc(
     start: svg_path.point(10.0, 10.0),
     radius: svg_path.point(40.0, 30.0),
     x_axis_rotation: 15.0,
@@ -153,7 +153,7 @@ fn generated_arc(i: Int) -> svg_path.Segment {
     _ -> 8.0
   }
 
-  svg_path.arc(
+  svg_path.Arc(
     start: svg_path.point(scale *. wave(x, 5.0), scale *. wave(x, 7.0)),
     radius: svg_path.point(
       1.0 +. scale *. float.absolute_value(wave(x, 11.0)),
@@ -189,7 +189,7 @@ fn transform_segment(
 }
 
 fn endpoint_control_cubic() -> svg_path.Segment {
-  svg_path.cubic_bezier(
+  svg_path.CubicBezier(
     start: svg_path.point(0.0, 0.0),
     control1: svg_path.point(0.0, 0.0),
     control2: svg_path.point(100.0, 0.0),
@@ -198,7 +198,7 @@ fn endpoint_control_cubic() -> svg_path.Segment {
 }
 
 fn near_cusp_cubic() -> svg_path.Segment {
-  svg_path.cubic_bezier(
+  svg_path.CubicBezier(
     start: svg_path.point(0.0, 0.0),
     control1: svg_path.point(100.0, 0.0),
     control2: svg_path.point(-100.0, 0.0),
@@ -207,7 +207,7 @@ fn near_cusp_cubic() -> svg_path.Segment {
 }
 
 fn far_control_cubic() -> svg_path.Segment {
-  svg_path.cubic_bezier(
+  svg_path.CubicBezier(
     start: svg_path.point(0.0, 0.0),
     control1: svg_path.point(1000.0, 600.0),
     control2: svg_path.point(-900.0, 700.0),
@@ -216,7 +216,7 @@ fn far_control_cubic() -> svg_path.Segment {
 }
 
 fn opposite_far_controls_cubic() -> svg_path.Segment {
-  svg_path.cubic_bezier(
+  svg_path.CubicBezier(
     start: svg_path.point(-20.0, -10.0),
     control1: svg_path.point(500.0, -450.0),
     control2: svg_path.point(-520.0, 470.0),
@@ -225,7 +225,7 @@ fn opposite_far_controls_cubic() -> svg_path.Segment {
 }
 
 fn wide_loop_cubic() -> svg_path.Segment {
-  svg_path.cubic_bezier(
+  svg_path.CubicBezier(
     start: svg_path.point(-80.0, 0.0),
     control1: svg_path.point(180.0, 160.0),
     control2: svg_path.point(-180.0, 160.0),
@@ -234,7 +234,7 @@ fn wide_loop_cubic() -> svg_path.Segment {
 }
 
 fn narrow_loop_cubic() -> svg_path.Segment {
-  svg_path.cubic_bezier(
+  svg_path.CubicBezier(
     start: svg_path.point(-5.0, 0.0),
     control1: svg_path.point(95.0, 120.0),
     control2: svg_path.point(-95.0, 120.0),
@@ -258,7 +258,7 @@ fn generated_cubic(i: Int) -> svg_path.Segment {
     _ -> 10.0
   }
 
-  svg_path.cubic_bezier(
+  svg_path.CubicBezier(
     start: svg_path.point(scale *. wave(x, 3.0), scale *. wave(x, 11.0)),
     control1: svg_path.point(
       scale *. 4.0 *. wave(x, 17.0),

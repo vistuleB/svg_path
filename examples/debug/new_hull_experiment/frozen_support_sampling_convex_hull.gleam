@@ -79,7 +79,7 @@ fn segment_support(
     svg_path.Line(start:, end:) -> Ok(line_support(start, end, direction))
     svg_path.CubicBezier(start:, control1:, control2:, end:) ->
       cubic_support(
-        svg_path.cubic_bezier(start:, control1:, control2:, end:),
+        svg_path.CubicBezier(start:, control1:, control2:, end:),
         start,
         control1,
         control2,
@@ -170,7 +170,7 @@ fn analytic_cubic_support(
     })
 
   use point <- result.try(svg_path.segment_point(
-    svg_path.cubic_bezier(start:, control1:, control2:, end:),
+    svg_path.CubicBezier(start:, control1:, control2:, end:),
     at: best.0,
   ))
   Ok(#(best.0, point))
@@ -537,7 +537,7 @@ fn hull_piece_segment(
       use end <- result.try(
         map_path_error(svg_path.segment_point(segment, at: to)),
       )
-      Ok(svg_path.line(start:, end:))
+      Ok(svg_path.Line(start:, end:))
     }
   }
 }

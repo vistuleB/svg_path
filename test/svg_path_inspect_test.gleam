@@ -28,7 +28,7 @@ pub fn point_inspects_with_fixed_decimal_options_test() {
 
 pub fn line_segment_inspects_on_one_line_test() {
   let segment =
-    svg_path.line(
+    svg_path.Line(
       start: svg_path.point(0.0, 0.0),
       end: svg_path.point(12.0, 10.0),
     )
@@ -38,7 +38,7 @@ pub fn line_segment_inspects_on_one_line_test() {
 
 pub fn segment_inspects_with_decimal_options_test() {
   let segment =
-    svg_path.line(
+    svg_path.Line(
       start: svg_path.point(0.0, 0.0),
       end: svg_path.point(12.234, 10.235),
     )
@@ -52,7 +52,7 @@ pub fn segment_inspects_with_decimal_options_test() {
 
 pub fn segment_inspects_with_auto_left_padding_test() {
   let segment =
-    svg_path.line(
+    svg_path.Line(
       start: svg_path.point(0.0, -5.0),
       end: svg_path.point(120.0, 10.0),
     )
@@ -75,20 +75,20 @@ pub fn point_inspects_with_explicit_left_padding_test() {
 
 pub fn curve_and_arc_segments_inspect_named_fields_test() {
   let quadratic =
-    svg_path.quadratic_bezier(
+    svg_path.QuadraticBezier(
       start: svg_path.point(0.0, 0.0),
       control: svg_path.point(5.0, 10.0),
       end: svg_path.point(12.0, 10.0),
     )
   let cubic =
-    svg_path.cubic_bezier(
+    svg_path.CubicBezier(
       start: svg_path.point(0.0, 0.0),
       control1: svg_path.point(2.0, 4.0),
       control2: svg_path.point(6.0, 8.0),
       end: svg_path.point(10.0, 12.0),
     )
   let arc =
-    svg_path.arc(
+    svg_path.Arc(
       start: svg_path.point(0.0, 0.0),
       radius: svg_path.point(5.0, 8.0),
       x_axis_rotation: 45.0,
@@ -113,11 +113,11 @@ pub fn empty_path_and_subpath_inspect_compactly_test() {
 pub fn path_inspects_subpaths_and_segments_with_indentation_test() {
   let assert Ok(subpath) =
     svg_path.subpath([
-      svg_path.line(
+      svg_path.Line(
         start: svg_path.point(0.0, 0.0),
         end: svg_path.point(12.0, 10.0),
       ),
-      svg_path.line(
+      svg_path.Line(
         start: svg_path.point(12.0, 10.0),
         end: svg_path.point(20.0, 10.0),
       ),
@@ -137,7 +137,7 @@ pub fn path_inspects_subpaths_and_segments_with_indentation_test() {
 pub fn path_inspects_with_decimal_options_test() {
   let assert Ok(subpath) =
     svg_path.subpath([
-      svg_path.line(
+      svg_path.Line(
         start: svg_path.point(0.0, 0.0),
         end: svg_path.point(12.234, 10.235),
       ),
@@ -159,7 +159,7 @@ pub fn point_code_inspects_as_copy_pasteable_gleam_test() {
 
 pub fn segment_code_inspects_as_copy_pasteable_gleam_test() {
   let segment =
-    svg_path.cubic_bezier(
+    svg_path.CubicBezier(
       start: svg_path.point(0.0, 0.0),
       control1: svg_path.point(2.0, 4.0),
       control2: svg_path.point(6.0, 8.0),
@@ -167,27 +167,27 @@ pub fn segment_code_inspects_as_copy_pasteable_gleam_test() {
     )
 
   assert inspect.segment_code(segment)
-    == "svg_path.cubic_bezier(start: svg_path.point(0.0, 0.0), control1: svg_path.point(2.0, 4.0), control2: svg_path.point(6.0, 8.0), end: svg_path.point(10.0, 12.0))"
+    == "svg_path.CubicBezier(start: svg_path.point(0.0, 0.0), control1: svg_path.point(2.0, 4.0), control2: svg_path.point(6.0, 8.0), end: svg_path.point(10.0, 12.0))"
 }
 
 pub fn subpath_code_inspects_as_copy_pasteable_gleam_test() {
   let assert Ok(subpath) =
     svg_path.subpath([
-      svg_path.line(
+      svg_path.Line(
         start: svg_path.point(0.0, 0.0),
         end: svg_path.point(12.0, 10.0),
       ),
     ])
 
   assert inspect.subpath_code(subpath) == "svg_path.assert_subpath([
-  svg_path.line(start: svg_path.point(0.0, 0.0), end: svg_path.point(12.0, 10.0))
+  svg_path.Line(start: svg_path.point(0.0, 0.0), end: svg_path.point(12.0, 10.0))
 ])"
 }
 
 pub fn closed_subpath_code_inspects_as_copy_pasteable_gleam_test() {
   let assert Ok(subpath) =
     svg_path.subpath([
-      svg_path.line(
+      svg_path.Line(
         start: svg_path.point(0.0, 0.0),
         end: svg_path.point(12.0, 10.0),
       ),
@@ -195,8 +195,8 @@ pub fn closed_subpath_code_inspects_as_copy_pasteable_gleam_test() {
     |> result_try_set_closed_with_bridge
 
   assert inspect.subpath_code(subpath) == "svg_path.assert_subpath([
-  svg_path.line(start: svg_path.point(0.0, 0.0), end: svg_path.point(12.0, 10.0)),
-  svg_path.line(start: svg_path.point(12.0, 10.0), end: svg_path.point(0.0, 0.0))
+  svg_path.Line(start: svg_path.point(0.0, 0.0), end: svg_path.point(12.0, 10.0)),
+  svg_path.Line(start: svg_path.point(12.0, 10.0), end: svg_path.point(0.0, 0.0))
 ])
 |> svg_path.assert_set_closed(closed: True)"
 }
@@ -204,23 +204,23 @@ pub fn closed_subpath_code_inspects_as_copy_pasteable_gleam_test() {
 pub fn path_code_inspects_as_copy_pasteable_gleam_test() {
   let assert Ok(subpath) =
     svg_path.subpath([
-      svg_path.line(
+      svg_path.Line(
         start: svg_path.point(0.0, 0.0),
         end: svg_path.point(12.0, 10.0),
       ),
     ])
   let path = svg_path.from_subpath(subpath)
 
-  assert inspect.path_code(path) == "svg_path.path([
+  assert inspect.path_code(path) == "svg_path.Path([
   svg_path.assert_subpath([
-    svg_path.line(start: svg_path.point(0.0, 0.0), end: svg_path.point(12.0, 10.0))
+    svg_path.Line(start: svg_path.point(0.0, 0.0), end: svg_path.point(12.0, 10.0))
   ])
 ])"
 }
 
 pub fn code_inspection_respects_decimal_options_test() {
   let segment =
-    svg_path.line(
+    svg_path.Line(
       start: svg_path.point(0.0, 0.0),
       end: svg_path.point(12.234, 10.235),
     )
@@ -229,17 +229,17 @@ pub fn code_inspection_respects_decimal_options_test() {
       segment,
       options: inspect.decimal_options(1),
     )
-    == "svg_path.line(start: svg_path.point(0.0, 0.0), end: svg_path.point(12.2, 10.2))"
+    == "svg_path.Line(start: svg_path.point(0.0, 0.0), end: svg_path.point(12.2, 10.2))"
 }
 
 pub fn code_inspection_respects_auto_left_padding_test() {
   let assert Ok(subpath) =
     svg_path.subpath([
-      svg_path.line(
+      svg_path.Line(
         start: svg_path.point(0.0, -5.0),
         end: svg_path.point(120.0, 10.0),
       ),
-      svg_path.line(
+      svg_path.Line(
         start: svg_path.point(120.0, 10.0),
         end: svg_path.point(2.0, -30.0),
       ),
@@ -249,10 +249,10 @@ pub fn code_inspection_respects_auto_left_padding_test() {
     inspect.fixed_decimal_options(1)
     |> inspect.with_left_padding(inspect.AutoLeftPadding)
 
-  assert inspect.path_code_with_options(path, options:) == "svg_path.path([
+  assert inspect.path_code_with_options(path, options:) == "svg_path.Path([
   svg_path.assert_subpath([
-    svg_path.line(start: svg_path.point(  0.0,  -5.0), end: svg_path.point(120.0,  10.0)),
-    svg_path.line(start: svg_path.point(120.0,  10.0), end: svg_path.point(  2.0, -30.0))
+    svg_path.Line(start: svg_path.point(  0.0,  -5.0), end: svg_path.point(120.0,  10.0)),
+    svg_path.Line(start: svg_path.point(120.0,  10.0), end: svg_path.point(  2.0, -30.0))
   ])
 ])"
 }

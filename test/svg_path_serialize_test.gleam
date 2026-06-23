@@ -17,9 +17,9 @@ pub fn empty_subpath_serializes_to_empty_string_test() {
 pub fn path_ignores_empty_subpaths_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)
-  let assert Ok(subpath) = svg_path.subpath([svg_path.line(start: a, end: b)])
+  let assert Ok(subpath) = svg_path.subpath([svg_path.Line(start: a, end: b)])
   let path =
-    svg_path.path([
+    svg_path.Path([
       svg_path.empty_subpath(),
       subpath,
       svg_path.empty_subpath(),
@@ -34,8 +34,8 @@ pub fn open_subpath_serializes_absolute_commands_test() {
   let c = svg_path.point(10.0, 20.0)
   let assert Ok(subpath) =
     svg_path.subpath([
-      svg_path.line(start: a, end: b),
-      svg_path.line(start: b, end: c),
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
     ])
 
   assert serialize.subpath(subpath) == "M 0 0 H 10 V 20"
@@ -47,8 +47,8 @@ pub fn closed_subpath_serializes_with_z_test() {
   let c = svg_path.point(10.0, 20.0)
   let assert Ok(subpath) =
     svg_path.subpath([
-      svg_path.line(start: a, end: b),
-      svg_path.line(start: b, end: c),
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
     ])
     |> result_try_set_closed_with_bridge
 
@@ -61,8 +61,8 @@ pub fn closed_subpath_keeps_final_curve_before_z_test() {
   let c = svg_path.point(20.0, 10.0)
   let assert Ok(subpath) =
     svg_path.subpath([
-      svg_path.line(start: a, end: b),
-      svg_path.quadratic_bezier(start: b, control: c, end: a),
+      svg_path.Line(start: a, end: b),
+      svg_path.QuadraticBezier(start: b, control: c, end: a),
     ])
     |> result_try_set_closed_true
 
@@ -73,7 +73,7 @@ pub fn closed_subpath_keeps_final_zero_length_line_test() {
   let a = svg_path.point(0.0, 0.0)
   let subpath =
     svg_path.assert_subpath([
-      svg_path.line(start: a, end: a),
+      svg_path.Line(start: a, end: a),
     ])
     |> svg_path.assert_set_closed(closed: True)
 
@@ -85,8 +85,8 @@ pub fn closed_subpath_keeps_final_zero_length_line_after_curve_test() {
   let b = svg_path.point(10.0, 0.0)
   let assert Ok(subpath) =
     svg_path.subpath([
-      svg_path.quadratic_bezier(start: a, control: b, end: a),
-      svg_path.line(start: a, end: a),
+      svg_path.QuadraticBezier(start: a, control: b, end: a),
+      svg_path.Line(start: a, end: a),
     ])
     |> result_try_set_closed_true
 
@@ -98,9 +98,9 @@ pub fn relative_closed_subpath_keeps_final_zero_length_line_test() {
   let b = svg_path.point(20.0, 10.0)
   let assert Ok(subpath) =
     svg_path.subpath([
-      svg_path.line(start: a, end: b),
-      svg_path.line(start: b, end: a),
-      svg_path.line(start: a, end: a),
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: a),
+      svg_path.Line(start: a, end: a),
     ])
     |> result_try_set_closed_true
 
@@ -120,9 +120,9 @@ pub fn bezier_and_arc_segments_serialize_test() {
   let radius = svg_path.point(5.0, 8.0)
   let assert Ok(subpath) =
     svg_path.subpath([
-      svg_path.quadratic_bezier(start: a, control: b, end: c),
-      svg_path.cubic_bezier(start: c, control1: d, control2: e, end: b),
-      svg_path.arc(
+      svg_path.QuadraticBezier(start: a, control: b, end: c),
+      svg_path.CubicBezier(start: c, control1: d, control2: e, end: b),
+      svg_path.Arc(
         start: b,
         radius: radius,
         x_axis_rotation: 45.0,
@@ -141,7 +141,7 @@ pub fn fixed_decimal_options_round_and_pad_numbers_test() {
   let b = svg_path.point(10.234, -20.235)
   let assert Ok(subpath) =
     svg_path.subpath([
-      svg_path.line(start: a, end: b),
+      svg_path.Line(start: a, end: b),
     ])
 
   assert serialize.subpath_with_options(
@@ -156,7 +156,7 @@ pub fn decimal_options_round_and_strip_trailing_zeros_test() {
   let b = svg_path.point(10.234, -20.235)
   let assert Ok(subpath) =
     svg_path.subpath([
-      svg_path.line(start: a, end: b),
+      svg_path.Line(start: a, end: b),
     ])
 
   assert serialize.subpath_with_options(
@@ -171,7 +171,7 @@ pub fn fixed_decimal_options_keep_trailing_zeros_test() {
   let b = svg_path.point(10.0, -20.0)
 
   assert serialize.segment_with_options(
-      svg_path.line(start: a, end: b),
+      svg_path.Line(start: a, end: b),
       options: serialize.fixed_decimal_options(3),
     )
     == "M 1.000 1.200 L 10.000 -20.000"
@@ -182,7 +182,7 @@ pub fn fixed_decimal_options_can_use_zero_places_test() {
   let b = svg_path.point(10.49, -20.5)
 
   assert serialize.segment_with_options(
-      svg_path.line(start: a, end: b),
+      svg_path.Line(start: a, end: b),
       options: serialize.fixed_decimal_options(0),
     )
     == "M 0 2 L 10 -21"
@@ -193,7 +193,7 @@ pub fn left_padding_pads_serialized_numbers_test() {
   let b = svg_path.point(12.2, 10.2)
 
   assert serialize.segment_with_options(
-      svg_path.line(start: a, end: b),
+      svg_path.Line(start: a, end: b),
       options: serialize.fixed_decimal_options(1)
         |> serialize.with_left_padding(serialize.LeftPadding(3)),
     )
@@ -206,8 +206,8 @@ pub fn auto_left_padding_aligns_serialized_path_numbers_test() {
   let c = svg_path.point(2.0, -30.0)
   let assert Ok(subpath) =
     svg_path.subpath([
-      svg_path.line(start: a, end: b),
-      svg_path.line(start: b, end: c),
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
     ])
 
   assert serialize.subpath_with_options(
@@ -224,8 +224,8 @@ pub fn minimize_whitespace_removes_command_spacing_test() {
   let c = svg_path.point(10.0, 20.0)
   let assert Ok(subpath) =
     svg_path.subpath([
-      svg_path.line(start: a, end: b),
-      svg_path.line(start: b, end: c),
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
     ])
 
   assert serialize.subpath_with_options(
@@ -242,9 +242,9 @@ pub fn repeat_commands_false_omits_repeated_line_commands_test() {
   let d = svg_path.point(30.0, 30.0)
   let assert Ok(subpath) =
     svg_path.subpath([
-      svg_path.line(start: a, end: b),
-      svg_path.line(start: b, end: c),
-      svg_path.line(start: c, end: d),
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
+      svg_path.Line(start: c, end: d),
     ])
 
   assert serialize.subpath_with_options(
@@ -262,10 +262,10 @@ pub fn repeat_commands_false_omits_repeated_h_and_v_commands_test() {
   let e = svg_path.point(20.0, 20.0)
   let assert Ok(subpath) =
     svg_path.subpath([
-      svg_path.line(start: a, end: b),
-      svg_path.line(start: b, end: c),
-      svg_path.line(start: c, end: d),
-      svg_path.line(start: d, end: e),
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
+      svg_path.Line(start: c, end: d),
+      svg_path.Line(start: d, end: e),
     ])
 
   assert serialize.subpath_with_options(
@@ -284,10 +284,10 @@ pub fn repeat_commands_false_omits_repeated_curve_commands_test() {
   let f = svg_path.point(50.0, 0.0)
   let assert Ok(subpath) =
     svg_path.subpath([
-      svg_path.quadratic_bezier(start: a, control: b, end: c),
-      svg_path.quadratic_bezier(start: c, control: d, end: e),
-      svg_path.cubic_bezier(start: e, control1: d, control2: b, end: f),
-      svg_path.cubic_bezier(start: f, control1: b, control2: d, end: a),
+      svg_path.QuadraticBezier(start: a, control: b, end: c),
+      svg_path.QuadraticBezier(start: c, control: d, end: e),
+      svg_path.CubicBezier(start: e, control1: d, control2: b, end: f),
+      svg_path.CubicBezier(start: f, control1: b, control2: d, end: a),
     ])
 
   assert serialize.subpath_with_options(
@@ -304,7 +304,7 @@ pub fn repeat_commands_false_omits_repeated_arc_commands_test() {
   let radius = svg_path.point(5.0, 5.0)
   let assert Ok(subpath) =
     svg_path.subpath([
-      svg_path.arc(
+      svg_path.Arc(
         start: a,
         radius:,
         x_axis_rotation: 0.0,
@@ -312,7 +312,7 @@ pub fn repeat_commands_false_omits_repeated_arc_commands_test() {
         sweep: True,
         end: b,
       ),
-      svg_path.arc(
+      svg_path.Arc(
         start: b,
         radius:,
         x_axis_rotation: 0.0,
@@ -338,19 +338,19 @@ pub fn at_subpaths_puts_each_subpath_on_its_own_line_test() {
   let f = svg_path.point(120.0, 120.0)
   let assert Ok(first) =
     svg_path.subpath([
-      svg_path.line(start: a, end: b),
-      svg_path.line(start: b, end: c),
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
     ])
     |> result_try_set_closed_with_bridge
   let assert Ok(second) =
     svg_path.subpath([
-      svg_path.line(start: d, end: e),
-      svg_path.line(start: e, end: f),
+      svg_path.Line(start: d, end: e),
+      svg_path.Line(start: e, end: f),
     ])
     |> result_try_set_closed_with_bridge
 
   assert serialize.path_with_options(
-      svg_path.path([first, second]),
+      svg_path.Path([first, second]),
       options: serialize.default_options()
         |> serialize.with_newlines(serialize.AtSubpaths),
     )
@@ -363,8 +363,8 @@ pub fn at_segments_with_repeat_commands_true_starts_lines_with_commands_test() {
   let c = svg_path.point(20.0, 20.0)
   let assert Ok(subpath) =
     svg_path.subpath([
-      svg_path.line(start: a, end: b),
-      svg_path.line(start: b, end: c),
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
     ])
     |> result_try_set_closed_with_bridge
 
@@ -382,8 +382,8 @@ pub fn at_segments_with_repeat_commands_false_trails_emitted_commands_test() {
   let c = svg_path.point(20.0, 20.0)
   let assert Ok(subpath) =
     svg_path.subpath([
-      svg_path.line(start: a, end: b),
-      svg_path.line(start: b, end: c),
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
     ])
     |> result_try_set_closed_with_bridge
 
@@ -401,11 +401,11 @@ pub fn at_segments_with_repeat_commands_false_starts_moves_on_new_lines_test() {
   let b = svg_path.point(10.0, 10.0)
   let c = svg_path.point(100.0, 100.0)
   let d = svg_path.point(110.0, 110.0)
-  let assert Ok(first) = svg_path.subpath([svg_path.line(start: a, end: b)])
-  let assert Ok(second) = svg_path.subpath([svg_path.line(start: c, end: d)])
+  let assert Ok(first) = svg_path.subpath([svg_path.Line(start: a, end: b)])
+  let assert Ok(second) = svg_path.subpath([svg_path.Line(start: c, end: d)])
 
   assert serialize.path_with_options(
-      svg_path.path([first, second]),
+      svg_path.Path([first, second]),
       options: serialize.default_options()
         |> serialize.repeat_commands(False)
         |> serialize.with_newlines(serialize.AtSegments),
@@ -421,8 +421,8 @@ pub fn at_segments_with_repeat_commands_true_starts_curve_lines_with_commands_te
   let e = svg_path.point(40.0, 10.0)
   let assert Ok(subpath) =
     svg_path.subpath([
-      svg_path.cubic_bezier(start: a, control1: b, control2: c, end: d),
-      svg_path.cubic_bezier(start: d, control1: c, control2: b, end: e),
+      svg_path.CubicBezier(start: a, control1: b, control2: c, end: d),
+      svg_path.CubicBezier(start: d, control1: c, control2: b, end: e),
     ])
     |> result_try_set_closed_with_bridge
 
@@ -442,8 +442,8 @@ pub fn at_segments_with_repeat_commands_false_trails_curve_commands_test() {
   let e = svg_path.point(40.0, 10.0)
   let assert Ok(subpath) =
     svg_path.subpath([
-      svg_path.cubic_bezier(start: a, control1: b, control2: c, end: d),
-      svg_path.cubic_bezier(start: d, control1: c, control2: b, end: e),
+      svg_path.CubicBezier(start: a, control1: b, control2: c, end: d),
+      svg_path.CubicBezier(start: d, control1: c, control2: b, end: e),
     ])
     |> result_try_set_closed_with_bridge
 
@@ -462,8 +462,8 @@ pub fn commas_separate_coordinates_inside_point_pairs_test() {
   let c = svg_path.point(20.0, 20.0)
   let assert Ok(subpath) =
     svg_path.subpath([
-      svg_path.line(start: a, end: b),
-      svg_path.line(start: b, end: c),
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
     ])
     |> result_try_set_closed_with_bridge
 
@@ -484,19 +484,19 @@ pub fn commas_preserve_spaces_between_curve_point_pairs_test() {
   let d = svg_path.point(840.0, -90.0)
   let assert Ok(subpath) =
     svg_path.subpath([
-      svg_path.cubic_bezier(
+      svg_path.CubicBezier(
         start: a,
         control1: svg_path.point(-15.0, 40.0),
         control2: svg_path.point(80.0, -90.0),
         end: b,
       ),
-      svg_path.cubic_bezier(
+      svg_path.CubicBezier(
         start: b,
         control1: svg_path.point(260.0, 30.0),
         control2: svg_path.point(-320.0, 45.0),
         end: c,
       ),
-      svg_path.cubic_bezier(
+      svg_path.CubicBezier(
         start: c,
         control1: svg_path.point(600.5, -70.25),
         control2: svg_path.point(720.0, 80.0),
@@ -517,7 +517,7 @@ pub fn commas_preserve_spaces_between_curve_point_pairs_test() {
 
 pub fn commas_apply_to_arc_radius_and_endpoint_pairs_test() {
   let arc =
-    svg_path.arc(
+    svg_path.Arc(
       start: svg_path.point(10.0, 20.0),
       radius: svg_path.point(5.0, 8.0),
       x_axis_rotation: 45.0,
@@ -539,7 +539,7 @@ pub fn relative_options_use_relative_line_commands_test() {
   let b = svg_path.point(13.0, 18.0)
 
   assert serialize.segment_with_options(
-      svg_path.line(start: a, end: b),
+      svg_path.Line(start: a, end: b),
       options: serialize.relative_decimal_options(0),
     )
     == "m 10 20 l 3 -2"
@@ -548,13 +548,13 @@ pub fn relative_options_use_relative_line_commands_test() {
 pub fn relative_options_use_relative_curve_commands_test() {
   let start = svg_path.point(10.0, 20.0)
   let quadratic =
-    svg_path.quadratic_bezier(
+    svg_path.QuadraticBezier(
       start: start,
       control: svg_path.point(12.0, 23.0),
       end: svg_path.point(15.0, 25.0),
     )
   let cubic =
-    svg_path.cubic_bezier(
+    svg_path.CubicBezier(
       start: start,
       control1: svg_path.point(11.0, 21.0),
       control2: svg_path.point(14.0, 24.0),
@@ -575,7 +575,7 @@ pub fn relative_options_use_relative_curve_commands_test() {
 
 pub fn relative_options_use_relative_arc_endpoint_test() {
   let arc =
-    svg_path.arc(
+    svg_path.Arc(
       start: svg_path.point(10.0, 20.0),
       radius: svg_path.point(5.0, 8.0),
       x_axis_rotation: 45.0,
@@ -596,7 +596,7 @@ pub fn relative_minimize_whitespace_removes_command_spacing_test() {
   let b = svg_path.point(13.0, 18.0)
 
   assert serialize.segment_with_options(
-      svg_path.line(start: a, end: b),
+      svg_path.Line(start: a, end: b),
       options: serialize.relative_decimal_options(0)
         |> serialize.minimize_whitespace,
     )
@@ -609,8 +609,8 @@ pub fn relative_repeat_commands_false_omits_repeated_commands_test() {
   let c = svg_path.point(16.0, 16.0)
   let assert Ok(subpath) =
     svg_path.subpath([
-      svg_path.line(start: a, end: b),
-      svg_path.line(start: b, end: c),
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
     ])
 
   assert serialize.subpath_with_options(
@@ -627,8 +627,8 @@ pub fn minimized_repeat_commands_false_omits_repeated_commands_test() {
   let c = svg_path.point(20.0, 20.0)
   let assert Ok(subpath) =
     svg_path.subpath([
-      svg_path.line(start: a, end: b),
-      svg_path.line(start: b, end: c),
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
     ])
 
   assert serialize.subpath_with_options(
@@ -645,11 +645,11 @@ pub fn relative_options_make_moves_relative_between_subpaths_test() {
   let b = svg_path.point(20.0, 10.0)
   let c = svg_path.point(25.0, 30.0)
   let d = svg_path.point(30.0, 30.0)
-  let assert Ok(first) = svg_path.subpath([svg_path.line(start: a, end: b)])
-  let assert Ok(second) = svg_path.subpath([svg_path.line(start: c, end: d)])
+  let assert Ok(first) = svg_path.subpath([svg_path.Line(start: a, end: b)])
+  let assert Ok(second) = svg_path.subpath([svg_path.Line(start: c, end: d)])
 
   assert serialize.path_with_options(
-      svg_path.path([first, svg_path.empty_subpath(), second]),
+      svg_path.Path([first, svg_path.empty_subpath(), second]),
       options: serialize.relative_decimal_options(0),
     )
     == "m 10 10 h 10 m 5 20 h 5"
@@ -662,14 +662,14 @@ pub fn relative_options_move_from_closed_subpath_start_after_z_test() {
   let d = svg_path.point(40.0, 10.0)
   let assert Ok(first) =
     svg_path.subpath([
-      svg_path.line(start: a, end: b),
-      svg_path.line(start: b, end: a),
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: a),
     ])
     |> result_try_set_closed_true
-  let assert Ok(second) = svg_path.subpath([svg_path.line(start: c, end: d)])
+  let assert Ok(second) = svg_path.subpath([svg_path.Line(start: c, end: d)])
 
   assert serialize.path_with_options(
-      svg_path.path([first, second]),
+      svg_path.Path([first, second]),
       options: serialize.relative_decimal_options(0),
     )
     == "m 10 10 h 10 z m 20 0 h 10"
@@ -680,11 +680,11 @@ pub fn minimized_relative_path_with_multiple_subpaths_test() {
   let b = svg_path.point(20.0, 10.0)
   let c = svg_path.point(25.0, 30.0)
   let d = svg_path.point(30.0, 30.0)
-  let assert Ok(first) = svg_path.subpath([svg_path.line(start: a, end: b)])
-  let assert Ok(second) = svg_path.subpath([svg_path.line(start: c, end: d)])
+  let assert Ok(first) = svg_path.subpath([svg_path.Line(start: a, end: b)])
+  let assert Ok(second) = svg_path.subpath([svg_path.Line(start: c, end: d)])
 
   assert serialize.path_with_options(
-      svg_path.path([first, second]),
+      svg_path.Path([first, second]),
       options: serialize.relative_decimal_options(0)
         |> serialize.minimize_whitespace,
     )
@@ -693,7 +693,7 @@ pub fn minimized_relative_path_with_multiple_subpaths_test() {
 
 pub fn decimal_options_clamp_negative_decimal_places_to_zero_test() {
   let segment =
-    svg_path.line(
+    svg_path.Line(
       start: svg_path.point(0.4, 1.5),
       end: svg_path.point(10.49, -20.5),
     )
@@ -711,8 +711,8 @@ pub fn rounded_absolute_line_uses_h_or_v_after_formatting_test() {
   let c = svg_path.point(10.000001, 20.0)
   let assert Ok(subpath) =
     svg_path.subpath([
-      svg_path.line(start: a, end: b),
-      svg_path.line(start: b, end: c),
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
     ])
 
   assert serialize.subpath_with_options(
@@ -728,8 +728,8 @@ pub fn rounded_relative_line_uses_h_or_v_after_formatting_test() {
   let c = svg_path.point(10.000001, 20.0)
   let assert Ok(subpath) =
     svg_path.subpath([
-      svg_path.line(start: a, end: b),
-      svg_path.line(start: b, end: c),
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
     ])
 
   assert serialize.subpath_with_options(

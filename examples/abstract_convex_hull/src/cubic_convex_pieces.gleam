@@ -95,7 +95,7 @@ fn union_to_segments(
 fn primitive_segments(segment: svg_path.Segment) -> List(svg_path.Segment) {
   let start = segment_start(segment)
   let end = segment_end(segment)
-  [segment, svg_path.line(start: end, end: start)]
+  [segment, svg_path.Line(start: end, end: start)]
 }
 
 fn segment_start(segment: svg_path.Segment) -> svg_path.Point {

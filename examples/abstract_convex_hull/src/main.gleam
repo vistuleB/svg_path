@@ -70,7 +70,7 @@ fn polygon_demo() -> Nil {
     Ok(subpath) -> {
       io.println("")
       io.println("polygon svg:")
-      io.println(render_demo("polygon union", [svg_path.path([subpath])]))
+      io.println(render_demo("polygon union", [svg_path.Path([subpath])]))
       print_support_report(
         "polygon support",
         left,
@@ -84,7 +84,7 @@ fn polygon_demo() -> Nil {
 
 fn segment_demo() -> Nil {
   let cubic =
-    svg_path.cubic_bezier(
+    svg_path.CubicBezier(
       start: svg_path.point(10.0, 80.0),
       control1: svg_path.point(45.0, -10.0),
       control2: svg_path.point(105.0, 120.0),
@@ -92,7 +92,7 @@ fn segment_demo() -> Nil {
     )
 
   let arc =
-    svg_path.arc(
+    svg_path.Arc(
       start: svg_path.point(35.0, 55.0),
       radius: svg_path.point(46.0, 30.0),
       x_axis_rotation: 15.0,
@@ -124,7 +124,7 @@ fn segment_demo() -> Nil {
           io.println("")
           io.println("segment svg:")
           io.println(
-            render_demo("segment hull union", [svg_path.path([subpath])]),
+            render_demo("segment hull union", [svg_path.Path([subpath])]),
           )
           print_support_report(
             "segment support",

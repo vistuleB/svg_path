@@ -87,10 +87,10 @@ pub fn union_segments(
       LoopPieceA(from, to) -> loop_a.piece_segments(from, to)
       LoopPieceB(from, to) -> loop_b.piece_segments(from, to)
       HullLineAB(a, b) -> [
-        svg_path.line(start: loop_a.point(a), end: loop_b.point(b)),
+        svg_path.Line(start: loop_a.point(a), end: loop_b.point(b)),
       ]
       HullLineBA(b, a) -> [
-        svg_path.line(start: loop_b.point(b), end: loop_a.point(a)),
+        svg_path.Line(start: loop_b.point(b), end: loop_a.point(a)),
       ]
     }
   })

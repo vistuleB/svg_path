@@ -668,7 +668,7 @@ fn piece_to_segment(
     convex_hull.HullLine(from, to) -> {
       use start <- result.try(segment_point(segment, from))
       use end <- result.try(segment_point(segment, to))
-      Ok(svg_path.line(start: start, end: end))
+      Ok(svg_path.Line(start: start, end: end))
     }
   }
 }

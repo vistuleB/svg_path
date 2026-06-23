@@ -60,7 +60,7 @@ pub fn about_point_matrix_transforms_points_about_point_test() {
 
 pub fn rotate_matrix_uses_degrees_test() {
   let line =
-    svg_path.line(
+    svg_path.Line(
       start: svg_path.point(1.0, 0.0),
       end: svg_path.point(1.0, 2.0),
     )
@@ -85,9 +85,9 @@ pub fn transform_about_rotation_rotates_about_point_test() {
 pub fn path_about_point_transforms_path_about_point_test() {
   let center = svg_path.point(1.0, 2.0)
   let assert Ok(path) =
-    svg_path.path([
+    svg_path.Path([
       svg_path.assert_subpath([
-        svg_path.line(
+        svg_path.Line(
           start: svg_path.point(3.0, 2.0),
           end: svg_path.point(3.0, 4.0),
         ),
@@ -103,7 +103,7 @@ pub fn path_about_point_transforms_path_about_point_test() {
 
 pub fn segment_about_anchor_transforms_segment_about_anchor_test() {
   let segment =
-    svg_path.line(
+    svg_path.Line(
       start: svg_path.point(0.0, 0.0),
       end: svg_path.point(10.0, 0.0),
     )
@@ -120,7 +120,7 @@ pub fn segment_about_anchor_transforms_segment_about_anchor_test() {
 pub fn subpath_about_anchor_transforms_subpath_about_anchor_test() {
   let subpath =
     svg_path.assert_subpath([
-      svg_path.line(
+      svg_path.Line(
         start: svg_path.point(0.0, 0.0),
         end: svg_path.point(0.0, 10.0),
       ),
@@ -137,9 +137,9 @@ pub fn subpath_about_anchor_transforms_subpath_about_anchor_test() {
 
 pub fn path_about_anchor_transforms_path_about_anchor_test() {
   let path =
-    svg_path.path([
+    svg_path.Path([
       svg_path.assert_subpath([
-        svg_path.line(
+        svg_path.Line(
           start: svg_path.point(0.0, 0.0),
           end: svg_path.point(10.0, 0.0),
         ),
@@ -196,7 +196,7 @@ pub fn multiply_uses_algebraic_left_times_right_order_test() {
 pub fn direct_subpath_and_path_helpers_delegate_to_matrices_test() {
   let assert Ok(subpath) =
     svg_path.subpath([
-      svg_path.line(
+      svg_path.Line(
         start: svg_path.point(0.0, 0.0),
         end: svg_path.point(5.0, 0.0),
       ),
@@ -228,7 +228,7 @@ pub fn line_transform_test() {
   let matrix =
     transform.matrix(a: 1.0, b: 0.0, c: 0.0, d: 1.0, e: 10.0, f: -5.0)
   let assert Ok(segment) =
-    svg_path.line(
+    svg_path.Line(
       start: svg_path.point(0.0, 0.0),
       end: svg_path.point(5.0, 0.0),
     )
@@ -240,14 +240,14 @@ pub fn line_transform_test() {
 pub fn quadratic_and_cubic_bezier_transform_test() {
   let matrix = transform.matrix(a: 2.0, b: 0.0, c: 0.0, d: 3.0, e: 0.0, f: 0.0)
   let assert Ok(quadratic) =
-    svg_path.quadratic_bezier(
+    svg_path.QuadraticBezier(
       start: svg_path.point(0.0, 0.0),
       control: svg_path.point(1.0, 2.0),
       end: svg_path.point(3.0, 4.0),
     )
     |> transform.segment(by: matrix)
   let assert Ok(cubic) =
-    svg_path.cubic_bezier(
+    svg_path.CubicBezier(
       start: svg_path.point(0.0, 0.0),
       control1: svg_path.point(1.0, 2.0),
       control2: svg_path.point(3.0, 4.0),
@@ -263,11 +263,11 @@ pub fn closed_subpath_transform_preserves_semantic_closure_test() {
   let matrix = transform.matrix(a: 1.0, b: 0.0, c: 0.0, d: 1.0, e: 10.0, f: 0.0)
   let assert Ok(subpath) =
     svg_path.subpath([
-      svg_path.line(
+      svg_path.Line(
         start: svg_path.point(0.0, 0.0),
         end: svg_path.point(10.0, 0.0),
       ),
-      svg_path.line(
+      svg_path.Line(
         start: svg_path.point(10.0, 0.0),
         end: svg_path.point(0.0, 0.0),
       ),
@@ -283,13 +283,13 @@ pub fn path_transform_test() {
   let matrix = transform.matrix(a: 1.0, b: 0.0, c: 0.0, d: 1.0, e: 1.0, f: 2.0)
   let assert Ok(subpath) =
     svg_path.subpath([
-      svg_path.line(
+      svg_path.Line(
         start: svg_path.point(0.0, 0.0),
         end: svg_path.point(10.0, 0.0),
       ),
     ])
   let assert Ok(path) =
-    svg_path.path([svg_path.empty_subpath(), subpath])
+    svg_path.Path([svg_path.empty_subpath(), subpath])
     |> transform.path(by: matrix)
 
   assert serialize.path(path) == "M 1 2 H 11"
@@ -297,7 +297,7 @@ pub fn path_transform_test() {
 
 pub fn arc_identity_transform_preserves_arc_test() {
   let arc =
-    svg_path.arc(
+    svg_path.Arc(
       start: svg_path.point(0.0, 0.0),
       radius: svg_path.point(5.0, 5.0),
       x_axis_rotation: 0.0,
@@ -312,7 +312,7 @@ pub fn arc_identity_transform_preserves_arc_test() {
 
 pub fn arc_non_uniform_scale_transform_test() {
   let arc =
-    svg_path.arc(
+    svg_path.Arc(
       start: svg_path.point(0.0, 0.0),
       radius: svg_path.point(5.0, 10.0),
       x_axis_rotation: 0.0,
@@ -328,7 +328,7 @@ pub fn arc_non_uniform_scale_transform_test() {
 
 pub fn arc_shear_transform_test() {
   let arc =
-    svg_path.arc(
+    svg_path.Arc(
       start: svg_path.point(0.0, 0.0),
       radius: svg_path.point(5.0, 5.0),
       x_axis_rotation: 0.0,
@@ -348,7 +348,7 @@ pub fn arc_shear_transform_test() {
 
 pub fn arc_reflection_flips_sweep_test() {
   let arc =
-    svg_path.arc(
+    svg_path.Arc(
       start: svg_path.point(0.0, 0.0),
       radius: svg_path.point(5.0, 5.0),
       x_axis_rotation: 0.0,
@@ -364,7 +364,7 @@ pub fn arc_reflection_flips_sweep_test() {
 
 pub fn arc_degenerate_transform_errors_test() {
   let arc =
-    svg_path.arc(
+    svg_path.Arc(
       start: svg_path.point(0.0, 0.0),
       radius: svg_path.point(5.0, 5.0),
       x_axis_rotation: 0.0,
@@ -381,7 +381,7 @@ pub fn arc_degenerate_transform_errors_test() {
 pub fn strict_subpath_transform_errors_on_collapsed_arc_test() {
   let assert Ok(subpath) =
     svg_path.subpath([
-      svg_path.arc(
+      svg_path.Arc(
         start: svg_path.point(5.0, 0.0),
         radius: svg_path.point(5.0, 5.0),
         x_axis_rotation: 0.0,
@@ -398,7 +398,7 @@ pub fn strict_subpath_transform_errors_on_collapsed_arc_test() {
 
 pub fn graceful_arc_transform_returns_collapsed_line_test() {
   let arc =
-    svg_path.arc(
+    svg_path.Arc(
       start: svg_path.point(5.0, 0.0),
       radius: svg_path.point(5.0, 5.0),
       x_axis_rotation: 0.0,
@@ -414,7 +414,7 @@ pub fn graceful_arc_transform_returns_collapsed_line_test() {
 
 pub fn graceful_arc_transform_follows_full_collapse_to_point_test() {
   let arc =
-    svg_path.arc(
+    svg_path.Arc(
       start: svg_path.point(5.0, 0.0),
       radius: svg_path.point(5.0, 5.0),
       x_axis_rotation: 0.0,
@@ -430,7 +430,7 @@ pub fn graceful_arc_transform_follows_full_collapse_to_point_test() {
 
 pub fn graceful2_arc_transform_preserves_transformed_endpoints_test() {
   let arc =
-    svg_path.arc(
+    svg_path.Arc(
       start: svg_path.point(5.0, 0.0),
       radius: svg_path.point(5.0, 5.0),
       x_axis_rotation: 0.0,
@@ -446,7 +446,7 @@ pub fn graceful2_arc_transform_preserves_transformed_endpoints_test() {
 
 pub fn graceful2_line_transform_returns_single_segment_subpath_test() {
   let line =
-    svg_path.line(
+    svg_path.Line(
       start: svg_path.point(1.0, 2.0),
       end: svg_path.point(4.0, 2.0),
     )
@@ -458,7 +458,7 @@ pub fn graceful2_line_transform_returns_single_segment_subpath_test() {
 
 pub fn graceful2_arc_transform_preserves_out_and_back_motion_test() {
   let arc =
-    svg_path.arc(
+    svg_path.Arc(
       start: svg_path.point(3.5355339059, -3.5355339059),
       radius: svg_path.point(5.0, 5.0),
       x_axis_rotation: 0.0,
@@ -474,7 +474,7 @@ pub fn graceful2_arc_transform_preserves_out_and_back_motion_test() {
 
 pub fn graceful2_arc_transform_follows_full_collapse_to_point_test() {
   let arc =
-    svg_path.arc(
+    svg_path.Arc(
       start: svg_path.point(5.0, 0.0),
       radius: svg_path.point(5.0, 5.0),
       x_axis_rotation: 0.0,
@@ -491,11 +491,11 @@ pub fn graceful2_arc_transform_follows_full_collapse_to_point_test() {
 pub fn graceful_subpath_transform_keeps_surrounding_continuity_test() {
   let assert Ok(subpath) =
     svg_path.subpath([
-      svg_path.line(
+      svg_path.Line(
         start: svg_path.point(-10.0, 0.0),
         end: svg_path.point(5.0, 0.0),
       ),
-      svg_path.arc(
+      svg_path.Arc(
         start: svg_path.point(5.0, 0.0),
         radius: svg_path.point(5.0, 5.0),
         x_axis_rotation: 0.0,
@@ -503,7 +503,7 @@ pub fn graceful_subpath_transform_keeps_surrounding_continuity_test() {
         sweep: True,
         end: svg_path.point(-5.0, 0.0),
       ),
-      svg_path.line(
+      svg_path.Line(
         start: svg_path.point(-5.0, 0.0),
         end: svg_path.point(-10.0, 0.0),
       ),
@@ -517,7 +517,7 @@ pub fn graceful_subpath_transform_keeps_surrounding_continuity_test() {
 pub fn graceful_closed_subpath_transform_preserves_semantic_closure_test() {
   let assert Ok(subpath) =
     svg_path.subpath([
-      svg_path.arc(
+      svg_path.Arc(
         start: svg_path.point(5.0, 0.0),
         radius: svg_path.point(5.0, 5.0),
         x_axis_rotation: 0.0,
@@ -525,7 +525,7 @@ pub fn graceful_closed_subpath_transform_preserves_semantic_closure_test() {
         sweep: True,
         end: svg_path.point(-5.0, 0.0),
       ),
-      svg_path.line(
+      svg_path.Line(
         start: svg_path.point(-5.0, 0.0),
         end: svg_path.point(5.0, 0.0),
       ),
@@ -540,7 +540,7 @@ pub fn graceful_closed_subpath_transform_preserves_semantic_closure_test() {
 
 pub fn graceful_arc_transform_returns_vertical_collapsed_line_test() {
   let arc =
-    svg_path.arc(
+    svg_path.Arc(
       start: svg_path.point(0.0, 5.0),
       radius: svg_path.point(5.0, 5.0),
       x_axis_rotation: 0.0,
@@ -556,7 +556,7 @@ pub fn graceful_arc_transform_returns_vertical_collapsed_line_test() {
 
 pub fn graceful_non_degenerate_arc_transform_returns_arc_test() {
   let arc =
-    svg_path.arc(
+    svg_path.Arc(
       start: svg_path.point(0.0, 0.0),
       radius: svg_path.point(5.0, 5.0),
       x_axis_rotation: 0.0,

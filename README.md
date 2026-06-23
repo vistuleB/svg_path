@@ -80,14 +80,13 @@ svg_path.CubicBezier(start:, control1:, control2:, end:)
 svg_path.Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:)
 ```
 
-The lower-case helper functions construct the same values with ordinary
-function-call syntax:
+Construct segments with the public variants:
 
 ```gleam
-svg_path.line(start:, end:)
-svg_path.quadratic_bezier(start:, control:, end:)
-svg_path.cubic_bezier(start:, control1:, control2:, end:)
-svg_path.arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:)
+svg_path.Line(start:, end:)
+svg_path.QuadraticBezier(start:, control:, end:)
+svg_path.CubicBezier(start:, control1:, control2:, end:)
+svg_path.Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:)
 ```
 
 Segments can be evaluated and split by their local parameter `t`, where `0.0`
@@ -148,9 +147,9 @@ pub fn closed_triangle() -> Result(svg_path.Subpath, svg_path.Error) {
   let c = svg_path.point(5.0, 10.0)
 
   use subpath <- result.try(svg_path.subpath([
-    svg_path.line(start: a, end: b),
-    svg_path.line(start: b, end: c),
-    svg_path.line(start: c, end: a),
+    svg_path.Line(start: a, end: b),
+    svg_path.Line(start: b, end: c),
+    svg_path.Line(start: c, end: a),
   ]))
 
   svg_path.set_closed(subpath, closed: True)
@@ -172,8 +171,8 @@ pub fn discontinuous_corner() -> Result(svg_path.Subpath, svg_path.Error) {
   let d = svg_path.point(20.0, 10.0)
 
   svg_path.subpath([
-    svg_path.line(start: a, end: b),
-    svg_path.line(start: c, end: d),
+    svg_path.Line(start: a, end: b),
+    svg_path.Line(start: c, end: d),
   ])
   // Error(...)
 }
@@ -189,12 +188,10 @@ pub type Path {
 }
 ```
 
-You can use the public constructor directly, or the helper function with the
-same shape:
+Construct paths with the public variant:
 
 ```gleam
 svg_path.Path(subpaths: [subpath])
-svg_path.path([subpath])
 ```
 
 Use `combine_paths` to concatenate the subpaths from several paths, preserving
@@ -299,7 +296,7 @@ let policy =
   svg_path.Custom(fn(previous, next) {
     case next {
       svg_path.Line(end:, ..) -> {
-        #(previous, svg_path.line(start: svg_path.segment_end(previous), end:))
+        #(previous, svg_path.Line(start: svg_path.segment_end(previous), end:))
       }
       _ -> #(previous, next)
     }
@@ -1033,7 +1030,7 @@ import svg_path
 import svg_path/inspect
 
 pub fn inspect_line() -> String {
-  svg_path.line(
+  svg_path.Line(
     start: svg_path.point(0.0, 0.0),
     end: svg_path.point(12.0, 10.0),
   )
@@ -1061,9 +1058,9 @@ pub fn inspect_code(path: svg_path.Path) -> String {
 Example output:
 
 ```text
-svg_path.path([
+svg_path.Path([
   svg_path.assert_subpath([
-    svg_path.line(start: svg_path.point(0.0, 0.0), end: svg_path.point(12.0, 10.0))
+    svg_path.Line(start: svg_path.point(0.0, 0.0), end: svg_path.point(12.0, 10.0))
   ])
 ])
 ```

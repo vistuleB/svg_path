@@ -27,7 +27,7 @@ pub fn loop(
 fn primitive_pieces(segment: svg_path.Segment) -> List(svg_path.Segment) {
   let start = segment_start(segment)
   let end = segment_end(segment)
-  [segment, svg_path.line(start: end, end: start)]
+  [segment, svg_path.Line(start: end, end: start)]
 }
 
 fn support(

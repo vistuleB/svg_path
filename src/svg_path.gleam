@@ -322,11 +322,6 @@ pub fn empty_path() -> Path {
   Path([])
 }
 
-/// Create a path from a list of subpaths.
-pub fn path(subpaths: List(Subpath)) -> Path {
-  Path(subpaths:)
-}
-
 /// Return the subpaths in a path.
 pub fn subpaths(path: Path) -> List(Subpath) {
   path.subpaths
@@ -334,7 +329,7 @@ pub fn subpaths(path: Path) -> List(Subpath) {
 
 /// Create a path containing a single subpath.
 pub fn from_subpath(subpath: Subpath) -> Path {
-  path([subpath])
+  Path([subpath])
 }
 
 /// Append a subpath to the end of a path.
@@ -346,7 +341,7 @@ pub fn append_subpath(path: Path, subpath: Subpath) -> Path {
 pub fn combine_paths(paths: List(Path)) -> Path {
   paths
   |> list.flat_map(subpaths)
-  |> path
+  |> Path
 }
 
 /// Combine paths and clean the result.
@@ -1259,7 +1254,7 @@ pub fn sub_segment(
     True -> {
       case segment_point(segment, at: from) {
         Error(error) -> Error(error)
-        Ok(point) -> Ok(line(start: point, end: point))
+        Ok(point) -> Ok(Line(start: point, end: point))
       }
     }
     False -> {
@@ -1314,11 +1309,6 @@ pub fn sub_segments_inside(
     False -> Error(SplitOutsideSegment)
     True -> sub_segments(segment, between: points)
   }
-}
-
-/// Create a straight line segment.
-pub fn line(start start: Point, end end: Point) -> Segment {
-  Line(start:, end:)
 }
 
 fn sub_segments_loop(
@@ -3145,37 +3135,6 @@ fn interpolate(start: Point, end: Point, t: Float) -> Point {
     start.x +. { end.x -. start.x } *. t,
     start.y +. { end.y -. start.y } *. t,
   )
-}
-
-/// Create a quadratic Bezier segment.
-pub fn quadratic_bezier(
-  start start: Point,
-  control control: Point,
-  end end: Point,
-) -> Segment {
-  QuadraticBezier(start:, control:, end:)
-}
-
-/// Create a cubic Bezier segment.
-pub fn cubic_bezier(
-  start start: Point,
-  control1 control1: Point,
-  control2 control2: Point,
-  end end: Point,
-) -> Segment {
-  CubicBezier(start:, control1:, control2:, end:)
-}
-
-/// Create an elliptical arc segment.
-pub fn arc(
-  start start: Point,
-  radius radius: Point,
-  x_axis_rotation x_axis_rotation: Float,
-  large_arc large_arc: Bool,
-  sweep sweep: Bool,
-  end end: Point,
-) -> Segment {
-  Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:)
 }
 
 /// Create an elliptical arc segment from endpoint-parameter arc data.
