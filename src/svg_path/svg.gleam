@@ -7,11 +7,26 @@ import svg_path
 import svg_path/number_format
 import svg_path/serialize
 
+/// One item to render inside a generated SVG document.
+///
+/// This type is intentionally small. It supports styled path elements and text
+/// labels for quick debugging drawings and examples.
 pub type ThingToDraw {
+  /// A `<path>` element.
+  ///
+  /// The first field is serialized as the element's `d` attribute. The second
+  /// field is used directly as the element's `style` attribute after XML
+  /// attribute escaping.
   StyledPath(svg_path.Path, String)
+
+  /// A `<text>` element.
+  ///
+  /// The fields are text content, raw CSS declarations for the `style`
+  /// attribute, the text position, and the font size in SVG user units.
   Text(String, String, svg_path.Point, Int)
 }
 
+/// A list of items to render inside a generated SVG document.
 pub type ThingsToDraw =
   List(ThingToDraw)
 
@@ -67,9 +82,6 @@ pub fn labeled_point(
 /// Render styled paths and text labels as a complete SVG document.
 ///
 /// The supplied bounding box is used directly as the document `viewBox`.
-/// `StyledPath` contains a path and a raw CSS declaration string for its
-/// `style` attribute. `Text` contains text, a raw CSS declaration string for
-/// its `style` attribute, a position, and a font size.
 pub fn document(
   things things: ThingsToDraw,
   view_box view_box: svg_path.BoundingBox,
