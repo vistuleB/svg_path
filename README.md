@@ -3,9 +3,25 @@
 [![Package Version](https://img.shields.io/hexpm/v/svg_path)](https://hex.pm/packages/svg_path)
 [![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/svg_path/)
 
-`svg_path` is a set of utilities for working with SVG paths and transforms.
-This README is a tour of the main workflows; the complete API reference lives
-on HexDocs.
+`svg_path` is a set of utilities for working with the payloads of
+`d` and `transform` SVG attributes. This encompasses parsing, serialization,
+pretty-printing, as well as the semantic geometric manipulation of paths,
+subpaths, subpath segments, and transform matrices.
+
+
+<!-- `svg_path` is a set of utilities for working with SVG paths and transforms
+encompassing parsing, serialization, geometric operations
+and measurements on paths, subpaths, and segments, comprising 
+of the standard line, quadratic, cubic, and arc segments found in SVG. -->
+
+<!-- Note that this package
+is not concerned with the SVG file format per se being instead narrowly
+focused on its domain of expertise.  -->
+<!-- that being the payloads of
+`d` and `transform` attributes found in SVG documents. -->
+
+<!-- That being the generation, examination, and manipulation of geometry
+at the path level. -->
 
 ```sh
 gleam add svg_path@0
@@ -17,13 +33,9 @@ import svg_path/serialize
 
 pub fn tidy_path_data(input: String) -> String {
   let assert Ok(path) = parse.path(input)
-
   serialize.path(path)
 }
 ```
-
-Typical workflows compose parsing, path editing, transforms, conversion, and
-serialization:
 
 ```gleam
 import gleam/result
@@ -80,15 +92,6 @@ svg_path.CubicBezier(start:, control1:, control2:, end:)
 svg_path.Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:)
 ```
 
-Construct segments with the public variants:
-
-```gleam
-svg_path.Line(start:, end:)
-svg_path.QuadraticBezier(start:, control:, end:)
-svg_path.CubicBezier(start:, control1:, control2:, end:)
-svg_path.Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:)
-```
-
 Segments can be evaluated and split by their local parameter `t`, where `0.0`
 is the segment start and `1.0` is the segment end:
 
@@ -101,14 +104,17 @@ svg_path.sub_segments(segment, between: [0.25, 0.75, 0.5])
 ```
 
 These helpers work for lines, quadratic Beziers, cubic Beziers, and arcs.
-Values outside `0.0..1.0` extrapolate along the same segment. Use
-`split_segment_inside`, `sub_segment_inside`, or `sub_segments_inside` when
-outside values should return an error instead.
+Values outside `0.0..1.0` silently extrapolate along the same segment. 
+Use `_inside` variants of the same functions, such as `segment_point_inside`,
+to force errors instead.
 
 ### Subpaths
 
-A `Subpath` is a continuous list of segments plus a closed/open flag. Its
-constructor is opaque; internally, the type is shaped like this:
+<!-- A `Subpath` is a list of end-to-end segments, possibly empty,
+with an open/closed flag. A empty `Subpath` cannot be 
+closed. These constraints are enforced via an opaque type: -->
+A `Subpath` is an opauqe type consisting of a list of end-to-end segments, possibly empty,
+with an open/closed flag:
 
 ```gleam
 pub opaque type Subpath {
@@ -116,26 +122,31 @@ pub opaque type Subpath {
 }
 ```
 
-The `segments` list must be continuous: every segment after the first must
-start at the previous segment's end point. The `closed` field records whether
+<!-- each segment after the first must start where the previous segment ends.  -->
+The `segments` list must be contiguous: 
+one must have `prev.end == next.start` for each adjacent pair of segments `prev`, `next` in the list. 
+The `closed` field records whether
 the subpath is topologically closed. A closed subpath must end where it starts,
-which is an invariant that the library maintains by keeping the type opaque,
-but a geometrically closed path need not be `closed`. The serialization of a
-`Subpath` ends in `Z` (or `z` if relative motions are used) if and only if
-`closed` is `True`.
+but a geometrically closed path need not be `closed`. These invariants are
+guaranteed by the library by keeping the type opaque. A `Subpath`'s
+serialization ends in `Z`/`z` if and only
+only if `closed == True`.
 
 Use `svg_path.subpath` to construct an open subpath from a list of already
 continuous segments, and `svg_path.set_closed` to change whether a subpath is
 topologically closed:
 
 ```gleam
-svg_path.subpath(segments)
-svg_path.set_closed(subpath, closed: Bool)
+svg_path.subpath(segments)                  // -> Result(Subpath, svg_path.Error)
+svg_path.set_closed(subpath, closed: Bool)  // -> Result(Subpath, svg_path.Errors)
 ```
 
-Construction succeeds when the segment endpoints meet. In this example, the
-segments return to their starting point geometrically, but the subpath becomes
-topologically closed only after `set_closed`:
+Construction succeeds when the required segment endpoints meet, and, in
+the case of `set_closed`, when the `segments` are nonempty.
+
+In the following example the segments return to their starting point
+geometrically, but the subpath only becomes topologically closed after
+`set_closed`:
 
 ```gleam
 import gleam/result
@@ -152,14 +163,20 @@ pub fn closed_triangle() -> Result(svg_path.Subpath, svg_path.Error) {
     svg_path.Line(start: c, end: a),
   ]))
 
-  svg_path.set_closed(subpath, closed: True)
-  // Ok(subpath)
+  io.println(svg_path.serialize_subpath(subpath))
+  // -> "M 0 0 H 10 L 5 10"
+
+  use subpath <- result.try(svg_path.set_closed(subpath, closed: True))
+
+  io.println(svg_path.serialize_subpath(subpath))
+  // -> "M 0 0 H 10 L 5 10 Z"
 }
 ```
 
-Construction returns an error when the segment endpoints do not meet. Closing a
-subpath with `set_closed(subpath, closed: True)` can fail for the same reason if
-the final segment endpoint does not meet the first segment start point:
+<!-- Construction returns an error when the segment endpoints do not meet.  -->
+<!-- Similarly, `set_closed(subpath, closed: True)` returns an error if
+`first.start != last.end` where `first`, `last` are the the first and last
+segments of the subpath, or if `subpath` is empty.
 
 ```gleam
 import svg_path
@@ -177,10 +194,17 @@ pub fn discontinuous_corner() -> Result(svg_path.Subpath, svg_path.Error) {
   // Error(...)
 }
 ```
+-->
+
+A subpath-opening call `set_closed(..., closed: False)` cannot return an error.
+
+Use `svg_path.clean_subpath(subpath)` to remove zero-length segments from a `Subpath`, while in all cases preserving at least one segment (by default the first) of the subpath.
+
+Note that `Subpath`s cannot represent an "pure move" command, `d="M 10,10"`, but whose semantics 
 
 ### Paths
 
-A `Path` is a list of `Subpath` values:
+`Path` is a list of `Subpath`:
 
 ```gleam
 pub type Path {
@@ -188,7 +212,7 @@ pub type Path {
 }
 ```
 
-Construct paths with the public variant:
+Construct paths directly via the public variant:
 
 ```gleam
 svg_path.Path(subpaths: [subpath])
