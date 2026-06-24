@@ -8,21 +8,6 @@
 pretty-printing, as well as the semantic geometric manipulation of paths,
 subpaths, subpath segments, and transform matrices.
 
-
-<!-- `svg_path` is a set of utilities for working with SVG paths and transforms
-encompassing parsing, serialization, geometric operations
-and measurements on paths, subpaths, and segments, comprising 
-of the standard line, quadratic, cubic, and arc segments found in SVG. -->
-
-<!-- Note that this package
-is not concerned with the SVG file format per se being instead narrowly
-focused on its domain of expertise.  -->
-<!-- that being the payloads of
-`d` and `transform` attributes found in SVG documents. -->
-
-<!-- That being the generation, examination, and manipulation of geometry
-at the path level. -->
-
 ```sh
 gleam add svg_path@0
 ```
@@ -110,8 +95,8 @@ to force errors instead.
 
 ### Subpaths
 
-A `Subpath` has a start point, a list of end-to-end segments, and a
-`closed: Bool` flag. Its constructor is opaque:
+A `Subpath` has a start point, a list of end-to-end segments, and a flag for
+topological closure. Its constructor is opaque:
 
 ```gleam
 pub opaque type Subpath {
@@ -126,17 +111,19 @@ end at `start`; empty subpaths may also be closed. These invariants are
 guaranteed by keeping the type opaque. A `Subpath`'s serialization ends in
 `Z`/`z` if and only if `closed == True`.
 
-Use `svg_path.subpath` to construct an open subpath from a list of already
-continuous segments, and `svg_path.set_closed` to change whether a subpath is
-topologically closed:
+Use `svg_path.subpath` to construct an open subpath from a nonempty list of
+contiguous segments, and `svg_path.set_closed` to change whether a subpath is
+topologically closed; note that `set_closed(_, True)` may result in an error,
+but `set_closed(_, False)` may not:
 
 ```gleam
 svg_path.subpath(segments)                  // -> Result(Subpath, svg_path.Error)
-svg_path.set_closed(subpath, closed: Bool)  // -> Result(Subpath, svg_path.Errors)
+svg_path.set_closed(subpath, closed: Bool)  // -> Result(Subpath, svg_path.Error)
 ```
 
-Construction succeeds when the required segment endpoints meet. Use
-`empty_subpath(at:)` only when you need to represent a move-only subpath.
+Construction succeeds when the required segment endpoints meet. Initialize empty
+move-only subpaths with `empty_subpath(at:)` where `at` gives the start of the
+subpath.
 
 In the following example the segments return to their starting point
 geometrically, but the subpath only becomes topologically closed after
@@ -167,11 +154,9 @@ pub fn closed_triangle() -> Result(svg_path.Subpath, svg_path.Error) {
 }
 ```
 
-A subpath-opening call `set_closed(..., closed: False)` cannot return an error.
-
 Use `svg_path.clean_subpath(subpath)` to remove zero-length segments from a
-`Subpath`, while preserving at least one segment when the subpath started with
-segments.
+`Subpath` while preserving one zero-length segment if cleanup would otherwise
+remove every segment.
 
 ### Paths
 
@@ -795,47 +780,68 @@ serialize.default_options()
 |> serialize.with_right_decimals(serialize.Fixed(2))
 ```
 
-### Closepath and Final Lines
+### Zero-Length Subpaths, Closures, and Move-Only Subpaths
 
-Closed subpaths serialize with `Z`.
+SVG distinguishes move-only subpaths from zero-length drawing subpaths. The
+subpath consisting only of the command `M 0,0` has a current point but no
+drawing segment, whereas `M 0,0 L 0,0` has a zero-length line segment. User
+agents can render these differently: with `stroke-linecap: round` or
+`stroke-linecap: square`, for example, the zero-length line can produce a
+visible mark while the move-only subpath remains invisible. SVG 2 describes this
+in its notes on
+[zero-length path segments](https://www.w3.org/TR/SVG2/paths.html#PathElementImplementationNotes)
+and
+[stroke line caps](https://www.w3.org/TR/SVG2/painting.html#LineCaps).
 
-If a closed subpath ends with a non-zero-length straight line back to the
-subpath start, the serializer drops that final line command and uses `Z` to
-represent the closure.
+The repository includes a small browser probe:
 
-For example, this internal subpath:
+![Zero-length closepath probe](zero_length_closepath_probe.svg)
 
-```text
-Line(0,0 -> 10,0)
-Line(10,0 -> 10,20)
-Line(10,20 -> 0,0)
-closed
+The upper half of that file compares these two cases:
+
+```xml
+<path
+  d="M 90,50"
+  style="fill: none; stroke: blue; stroke-width: 24; stroke-linecap: round;"
+/>
+<path
+  d="M 260,50 L 260,50"
+  style="fill: none; stroke: blue; stroke-width: 24; stroke-linecap: round;"
+/>
+
+<path
+  d="M 90,120"
+  style="fill: none; stroke: blue; stroke-width: 24; stroke-linecap: square;"
+/>
+<path
+  d="M 260,120 L 260,120"
+  style="fill: none; stroke: blue; stroke-width: 24; stroke-linecap: square;"
+/>
 ```
 
-serializes as:
+For that reason, `serialize.subpath` preserves zero-length final lines, and
+`clean_subpath` keeps one zero-length line if a subpath consists only of
+zero-length lines. This preserves the difference between a move-only subpath and
+a zero-length drawing subpath.
 
-```text
-M 0 0 H 10 V 20 Z
-```
+Closed subpaths serialize with `Z`. By default, if a closed subpath ends with a
+non-zero-length straight line back to the subpath start, the serializer drops
+that final line command and uses `Z` to represent the closure.
 
-not:
+As per our knowledge of the
+[SVG 2 specification](https://www.w3.org/TR/SVG2/paths.html#PathDataClosePathCommand)
+and the observable behavior of current user agents, we draw no semantic
+distinction between the inclusion of a final explicit nonzero-jump `L` command
+followed by `Z` versus direct termination of a subpath by `Z`. Both subpath
+strings map to the same internal representation including a final nonzero
+`Line()` segment and a `closed: True` field.
 
-```text
-M 0 0 H 10 V 20 L 0 0 Z
-```
-
-This is intentional. `Z` is the SVG-native representation of closing the
-subpath, and including both the final straight line and `Z` would be redundant.
-
-Zero-length final lines are different. If the final segment is
+However, zero-length final lines are different. If the final segment is
 `Line(A, A)`, the serializer keeps it visible:
 
 ```text
 M 0 0 H 0 Z
 ```
-
-This is also intentional. A zero-length line is often evidence of unusual
-upstream geometry. The serializer does not hide that from the user.
 
 The same rule applies in relative mode:
 
@@ -845,14 +851,14 @@ m 10 10 h 10 h -10 h 0 Z
 
 The final `h 0` remains visible because it is a zero-length line.
 
-### Cleaning Zero-Length Lines
+### Removing Zero-Length Line Segments
 
 Serialization is not a general cleanup pass. It only uses `Z` to avoid a
 redundant non-zero-length final closing line.
 
-If you want to remove zero-length straight lines from a subpath, use
-`clean_subpath`. If you want to clean a whole path, use `clean_path`; it removes
-empty subpaths and runs `clean_subpath` on each remaining subpath.
+To remove zero-length straight lines from a subpath, use `clean_subpath`. To
+clean a whole path, use `clean_path`; it removes empty subpaths and runs
+`clean_subpath` on each remaining subpath.
 
 ```gleam
 import svg_path
@@ -868,13 +874,7 @@ pub fn clean_all(path: svg_path.Path) -> svg_path.Path {
 
 `clean_subpath` removes zero-length `Line` segments while preserving the
 subpath's closed/open state. If a subpath consists only of zero-length lines,
-one zero-length line is retained so the subpath does not become empty.
-
-This distinction is deliberate:
-
-- `serialize.subpath` preserves odd zero-length lines so the output still shows
-  that the object contains them.
-- `svg_path.clean_subpath` is an explicit user-requested cleanup.
+one zero-length line is retained so it remains a zero-length drawing subpath.
 
 ## Transforming Paths
 
