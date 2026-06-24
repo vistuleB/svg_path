@@ -552,7 +552,7 @@ cubic-specific numerical solver.
 consistency failures, so the function reports an error rather than guessing at
 a hull.
 
-For a whole continuous subpath, use `subpath_hull`:
+For a whole subpath, use `subpath_hull`:
 
 ```gleam
 import svg_path
@@ -565,9 +565,10 @@ pub fn hull(
 }
 ```
 
-This returns a closed `Subpath` containing the convex hull of all segments in
-the input. Internally each segment is first converted to a segment hull, then
-those convex loops are unioned together.
+This returns a closed `Subpath` containing the convex hull of the input.
+Move-only subpaths are treated as single points at their starts. Otherwise,
+each segment is first converted to a segment hull, then those convex loops are
+unioned together.
 
 For a path with multiple subpaths, use `path_hull`:
 
@@ -575,7 +576,8 @@ For a path with multiple subpaths, use `path_hull`:
 convex_hull.path_hull(path)
 ```
 
-Empty subpaths are ignored, and the result is still a single closed `Subpath`.
+Move-only subpaths contribute their start points, and the result is still a
+single closed `Subpath`.
 
 ## Parsing
 

@@ -113,31 +113,31 @@ pub type HullError {
   LoopUnionCollapsed
 }
 
-/// Compute the convex hull of all segments in a subpath.
+/// Compute the convex hull of a subpath.
 ///
-/// The result is a closed subpath. Each individual segment is first converted
+/// The result is a closed subpath. Move-only subpaths are treated as a single
+/// point at their start. Otherwise each individual segment is first converted
 /// to its own convex hull, then those convex loops are unioned one at a time.
 pub fn subpath_hull(
   subpath: svg_path.Subpath,
 ) -> Result(svg_path.Subpath, HullError) {
-  case svg_path.segments(subpath) {
-    [] -> Error(PathError(svg_path.EmptySubpath))
-    segments -> segments_hull(segments)
-  }
+  subpath
+  |> hull_input_segments
+  |> segments_hull
 }
 
-/// Compute the convex hull of all segments in a path.
+/// Compute the convex hull of a path.
 ///
-/// Empty subpaths are ignored. The result is a single closed subpath containing
-/// the hull of every non-empty subpath in the input path.
+/// Move-only subpaths are treated as single points at their starts. The result
+/// is a single closed subpath containing the hull of every subpath in the input
+/// path.
 pub fn path_hull(path: svg_path.Path) -> Result(svg_path.Subpath, HullError) {
   case svg_path.subpaths(path) {
     [] -> Error(PathError(svg_path.EmptyPath))
     subpaths -> {
-      case subpaths |> list.flat_map(svg_path.segments) {
-        [] -> Error(PathError(svg_path.EmptySubpaths))
-        segments -> segments_hull(segments)
-      }
+      subpaths
+      |> list.flat_map(hull_input_segments)
+      |> segments_hull
     }
   }
 }
@@ -185,6 +185,20 @@ fn segments_hull(
     }),
   )
   build_closed_subpath(segments)
+}
+
+fn hull_input_segments(subpath: svg_path.Subpath) -> List(svg_path.Segment) {
+  case svg_path.segments(subpath) {
+    [] -> {
+      let assert Ok(start) = svg_path.start(subpath)
+      [point_segment(start)]
+    }
+    segments -> segments
+  }
+}
+
+fn point_segment(point: svg_path.Point) -> svg_path.Segment {
+  svg_path.Line(start: point, end: point)
 }
 
 fn segment_hull_segments(

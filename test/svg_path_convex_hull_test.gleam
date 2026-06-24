@@ -107,11 +107,20 @@ pub fn subpath_hull_handles_curved_subpath_test() {
   assert subpath_support_matches_bool(segments, hull)
 }
 
-pub fn subpath_hull_rejects_empty_subpath_test() {
-  assert convex_hull.subpath_hull(
-      svg_path.empty_subpath(at: svg_path.point(0.0, 0.0)),
-    )
-    == Error(convex_hull.PathError(svg_path.EmptySubpath))
+pub fn subpath_hull_treats_empty_subpath_as_single_point_test() {
+  let point = svg_path.point(4.0, -3.0)
+  let assert Ok(hull) =
+    convex_hull.subpath_hull(svg_path.empty_subpath(at: point))
+
+  assert svg_path.is_closed(hull)
+  assert svg_path.segments(hull)
+    == svg_path.segments(svg_path.assert_set_closed(
+      svg_path.assert_subpath([
+        svg_path.Line(start: point, end: point),
+        svg_path.Line(start: point, end: point),
+      ]),
+      closed: True,
+    ))
 }
 
 pub fn path_hull_returns_closed_hull_for_multiple_subpaths_test() {
@@ -186,11 +195,35 @@ pub fn path_hull_rejects_empty_path_test() {
     == Error(convex_hull.PathError(svg_path.EmptyPath))
 }
 
-pub fn path_hull_rejects_path_with_only_empty_subpaths_test() {
-  assert convex_hull.path_hull(
-      svg_path.Path([svg_path.empty_subpath(at: svg_path.point(0.0, 0.0))]),
+pub fn path_hull_treats_path_with_only_empty_subpaths_as_points_test() {
+  let left = svg_path.point(0.0, 0.0)
+  let right = svg_path.point(10.0, 0.0)
+  let assert Ok(hull) =
+    convex_hull.path_hull(
+      svg_path.Path([
+        svg_path.empty_subpath(at: left),
+        svg_path.empty_subpath(at: right),
+      ]),
     )
-    == Error(convex_hull.PathError(svg_path.EmptySubpaths))
+
+  assert svg_path.is_closed(hull)
+  assert near_value(hull_support_value(svg_path.segments(hull), 0.0), 10.0)
+  assert near_value(hull_support_value(svg_path.segments(hull), 180.0), 0.0)
+}
+
+pub fn path_hull_includes_empty_subpath_start_points_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(2.0, 0.0)
+  let far = svg_path.point(10.0, 0.0)
+  let path =
+    svg_path.Path([
+      svg_path.assert_subpath([svg_path.Line(start: a, end: b)]),
+      svg_path.empty_subpath(at: far),
+    ])
+  let assert Ok(hull) = convex_hull.path_hull(path)
+
+  assert svg_path.is_closed(hull)
+  assert near_value(hull_support_value(svg_path.segments(hull), 0.0), 10.0)
 }
 
 pub fn specimen_hulls_survive_strict_subpath_constructor_test() {
@@ -1281,6 +1314,13 @@ fn hull_support_value(
   use point <- result.try(segments_support_point(segments, angle))
 
   Ok(point_support(point, degrees: angle))
+}
+
+fn near_value(value: Result(Float, svg_path.Error), expected: Float) -> Bool {
+  case value {
+    Ok(value) -> near(value, expected)
+    Error(_) -> False
+  }
 }
 
 fn segments_support_point(
