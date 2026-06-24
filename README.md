@@ -134,8 +134,10 @@ geometrically, but the subpath only becomes topologically closed after
 `set_closed`:
 
 ```gleam
+import gleam/io
 import gleam/result
 import svg_path
+import svg_path/serialize
 
 pub fn closed_triangle() -> Result(svg_path.Subpath, svg_path.Error) {
   let a = svg_path.point(0.0, 0.0)
@@ -148,13 +150,15 @@ pub fn closed_triangle() -> Result(svg_path.Subpath, svg_path.Error) {
     svg_path.Line(start: c, end: a),
   ]))
 
-  io.println(svg_path.serialize_subpath(subpath))
+  io.println(serialize.subpath(subpath))
   // -> "M 0 0 H 10 L 5 10"
 
   use subpath <- result.try(svg_path.set_closed(subpath, closed: True))
 
-  io.println(svg_path.serialize_subpath(subpath))
+  io.println(serialize.subpath(subpath))
   // -> "M 0 0 H 10 L 5 10 Z"
+
+  Ok(subpath)
 }
 ```
 
@@ -553,6 +557,9 @@ a hull.
 For a whole continuous subpath, use `subpath_hull`:
 
 ```gleam
+import svg_path
+import svg_path/convex_hull
+
 pub fn hull(
   subpath: svg_path.Subpath,
 ) -> Result(svg_path.Subpath, convex_hull.HullError) {
@@ -637,6 +644,7 @@ text labels. This is a deliberately small helper for quick drawings, not a
 full rendering layer:
 
 ```gleam
+import svg_path
 import svg_path/svg
 
 pub fn debug_svg(
@@ -907,7 +915,7 @@ pub fn scale_then_move() -> transform.Matrix {
 Transforms can also be applied about a point, or about one of the nine anchor
 points on a segment, subpath, or path bounding box:
 
-```gleam
+```text
 TopLeft      TopCenter      TopRight
 CenterLeft   Center         CenterRight
 BottomLeft   BottomCenter   BottomRight
