@@ -1347,7 +1347,7 @@ pub fn combine_paths_concatenates_subpaths_test() {
     == [first, svg_path.empty_subpath(at: svg_path.point(0.0, 0.0)), second]
 }
 
-pub fn clean_combine_paths_cleans_the_concatenated_path_test() {
+pub fn path_map_and_filter_subpaths_compose_after_combine_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)
   let c = svg_path.point(20.0, 0.0)
@@ -1357,13 +1357,17 @@ pub fn clean_combine_paths_cleans_the_concatenated_path_test() {
   let subpath = svg_path.assert_subpath([first, zero, second])
 
   let combined =
-    svg_path.clean_combine_paths([
+    svg_path.combine_paths([
       svg_path.Path([
         svg_path.empty_subpath(at: svg_path.point(0.0, 0.0)),
         subpath,
       ]),
       svg_path.Path([svg_path.empty_subpath(at: svg_path.point(0.0, 0.0))]),
     ])
+    |> svg_path.path_filter_subpaths(keeping: fn(subpath) {
+      !list.is_empty(svg_path.segments(subpath))
+    })
+    |> svg_path.path_map_subpaths(with: svg_path.clean_subpath)
 
   let assert [cleaned] = svg_path.subpaths(combined)
   assert svg_path.segments(cleaned) == [first, second]
@@ -1835,7 +1839,7 @@ pub fn clean_subpath_preserves_closed_state_test() {
     ]
 }
 
-pub fn clean_path_removes_empty_subpaths_and_cleans_nonempty_subpaths_test() {
+pub fn path_map_subpaths_maps_each_subpath_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)
   let c = svg_path.point(20.0, 0.0)
@@ -1854,21 +1858,55 @@ pub fn clean_path_removes_empty_subpaths_and_cleans_nonempty_subpaths_test() {
       second_subpath,
     ])
 
-  let cleaned = svg_path.clean_path(path)
-  let assert [cleaned_first, cleaned_second] = svg_path.subpaths(cleaned)
+  let cleaned = path |> svg_path.path_map_subpaths(with: svg_path.clean_subpath)
+  let assert [empty, cleaned_first, empty_again, cleaned_second] =
+    svg_path.subpaths(cleaned)
 
+  assert empty == svg_path.empty_subpath(at: svg_path.point(0.0, 0.0))
+  assert empty_again == svg_path.empty_subpath(at: svg_path.point(0.0, 0.0))
   assert svg_path.segments(cleaned_first) == [first, second]
   assert svg_path.segments(cleaned_second) == [third]
 }
 
-pub fn clean_path_with_only_empty_subpaths_returns_empty_path_test() {
+pub fn path_filter_subpaths_keeps_matching_subpaths_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(20.0, 0.0)
+  let d = svg_path.point(30.0, 0.0)
+  let first_subpath = svg_path.assert_subpath([svg_path.Line(start: a, end: b)])
+  let second_subpath =
+    svg_path.assert_subpath([svg_path.Line(start: c, end: d)])
+  let path =
+    svg_path.Path([
+      svg_path.empty_subpath(at: svg_path.point(0.0, 0.0)),
+      first_subpath,
+      svg_path.empty_subpath(at: svg_path.point(0.0, 0.0)),
+      second_subpath,
+    ])
+
+  let filtered =
+    path
+    |> svg_path.path_filter_subpaths(keeping: fn(subpath) {
+      !list.is_empty(svg_path.segments(subpath))
+    })
+  let assert [cleaned_first, cleaned_second] = svg_path.subpaths(filtered)
+
+  assert cleaned_first == first_subpath
+  assert cleaned_second == second_subpath
+}
+
+pub fn path_filter_subpaths_can_return_empty_path_test() {
   let path =
     svg_path.Path([
       svg_path.empty_subpath(at: svg_path.point(0.0, 0.0)),
       svg_path.empty_subpath(at: svg_path.point(0.0, 0.0)),
     ])
 
-  assert svg_path.clean_path(path) == svg_path.empty_path()
+  assert path
+    |> svg_path.path_filter_subpaths(keeping: fn(subpath) {
+      !list.is_empty(svg_path.segments(subpath))
+    })
+    == svg_path.empty_path()
 }
 
 pub fn splice_replaces_segment_range_test() {

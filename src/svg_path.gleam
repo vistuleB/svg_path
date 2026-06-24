@@ -342,14 +342,21 @@ pub fn combine_paths(paths: List(Path)) -> Path {
   |> Path
 }
 
-/// Combine paths and clean the result.
-///
-/// This concatenates subpaths, removes empty subpaths, and cleans each
-/// remaining subpath.
-pub fn clean_combine_paths(paths: List(Path)) -> Path {
-  paths
-  |> combine_paths
-  |> clean_path
+/// Map over the subpaths in a path.
+pub fn path_map_subpaths(path: Path, with f: fn(Subpath) -> Subpath) -> Path {
+  path.subpaths
+  |> list.map(f)
+  |> Path
+}
+
+/// Keep only the subpaths that satisfy a predicate.
+pub fn path_filter_subpaths(
+  path: Path,
+  keeping predicate: fn(Subpath) -> Bool,
+) -> Path {
+  path.subpaths
+  |> list.filter(keeping: predicate)
+  |> Path
 }
 
 /// Convert a path with zero or one non-empty subpaths into a subpath.
@@ -452,17 +459,6 @@ pub fn clean_subpath(subpath: Subpath) -> Subpath {
         closed: subpath.closed,
       )
   }
-}
-
-/// Remove empty subpaths and clean each remaining subpath.
-///
-/// This drops subpaths with no segments and applies `clean_subpath` to the
-/// rest.
-pub fn clean_path(path: Path) -> Path {
-  path.subpaths
-  |> nonempty_subpaths
-  |> list.map(clean_subpath)
-  |> Path
 }
 
 /// Replace a range of segments in a subpath.

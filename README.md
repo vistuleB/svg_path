@@ -181,6 +181,9 @@ svg_path.Path(subpaths: [subpath])
 
 Retrieve subpaths with `svg_path.subpaths(path)`.
 
+Use `path_map_subpaths` and `path_filter_subpaths` to transform or filter a
+path's subpaths.
+
 Use `combine_paths` to assemble a single `Path` from a `List(Path)`. The result
 of `combine_paths(paths)` is equivalent to
 `Path(paths |> list.map(svg_path.subpaths) |> list.flatten)`.
@@ -348,7 +351,23 @@ segments (e.g. change the `.start` of the `previous` segment) without
 necessarily triggering an error: errors are generated on final-pass
 verification of the returned subpath.
 
-## Converting Arcs to Beziers
+### Reversing Subpaths
+
+Use `reverse_subpath` to reverse the traversal direction of a subpath while
+preserving its closed/open state:
+
+```gleam
+svg_path.reverse_subpath(subpath)
+```
+
+For lower-level operations, `reverse_segment` reverses a single segment.
+
+## Geometry Helpers
+
+The root module provides a few geometry helpers that work directly with the
+`Segment`, `Subpath`, and `Path` model.
+
+### Converting Arcs to Beziers
 
 Some SVG consumers and geometry workflows prefer to avoid elliptical `Arc`
 segments. Use the `_arcs_to_cubic_beziers` function family to replace arcs with
@@ -379,11 +398,6 @@ svg_path.segment_to_cubic_beziers(segment)
 svg_path.subpath_to_cubic_beziers(subpath)
 svg_path.path_to_cubic_beziers(path)
 ```
-
-## Geometry Helpers
-
-The root module provides a few geometry helpers that work directly with the
-`Segment`, `Subpath`, and `Path` model.
 
 ### Bounding Boxes
 
