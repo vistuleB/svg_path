@@ -11,6 +11,15 @@ import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/string
 
+/// Character used for left padding.
+pub type LeftPaddingStyle {
+  /// Pad with zeroes.
+  Zero
+
+  /// Pad with spaces.
+  Space
+}
+
 /// Formatting for digits to the left of the decimal point.
 pub type LeftDecimalOptions {
   /// Do not pad numbers on the left.
@@ -18,12 +27,12 @@ pub type LeftDecimalOptions {
 
   /// Pre-scan the formatted value and choose the smallest shared left width
   /// that aligns its numbers.
-  AutoLeftPadding
+  AutoLeftPadding(LeftPaddingStyle)
 
   /// Pad numbers to the given left width.
   ///
   /// The width includes a leading minus sign for negative numbers.
-  LeftPadding(Int)
+  LeftPadding(Int, LeftPaddingStyle)
 }
 
 /// Formatting for digits to the right of the decimal point.
@@ -50,18 +59,19 @@ pub type Options {
 
 /// A prepared numeric formatter.
 pub opaque type NumberFormat {
-  NumberFormat(options: Options, left_padding_width: Option(Int))
+  NumberFormat(options: Options, left_padding: Option(#(Int, LeftPaddingStyle)))
 }
 
 /// Prepare a formatter, using the supplied numbers to choose automatic padding.
 pub fn prepare(options: Options, numbers: List(Float)) -> NumberFormat {
-  let left_padding_width = case options.left_decimals {
+  let left_padding = case options.left_decimals {
     Succinct -> None
-    LeftPadding(width) -> Some(int.max(width, 0))
-    AutoLeftPadding -> Some(auto_left_padding_width(numbers, options))
+    LeftPadding(width, style) -> Some(#(int.max(width, 0), style))
+    AutoLeftPadding(style) ->
+      Some(#(auto_left_padding_width(numbers, options), style))
   }
 
-  NumberFormat(options:, left_padding_width:)
+  NumberFormat(options:, left_padding:)
 }
 
 /// Format a number.
@@ -108,21 +118,38 @@ fn auto_left_padding_width(numbers: List(Float), options: Options) -> Int {
 }
 
 fn left_pad(number: String, format: NumberFormat) -> String {
-  case format.left_padding_width {
+  case format.left_padding {
     None -> number
-    Some(width) -> pad_left_side(number, width)
+    Some(#(width, style)) -> pad_left_side(number, width, style)
   }
 }
 
-fn pad_left_side(number: String, width: Int) -> String {
+fn pad_left_side(
+  number: String,
+  width: Int,
+  style: LeftPaddingStyle,
+) -> String {
   let #(whole, suffix) = case string.split_once(number, on: ".") {
     Ok(#(whole, fractional)) -> #(whole, "." <> fractional)
     Error(_) -> #(number, "")
   }
 
-  let whole = string.pad_start(whole, to: width, with: " ")
+  let whole = case style {
+    Space -> string.pad_start(whole, to: width, with: " ")
+    Zero -> zero_pad_whole(whole, width)
+  }
 
   whole <> suffix
+}
+
+fn zero_pad_whole(whole: String, width: Int) -> String {
+  case string.starts_with(whole, "-") {
+    True -> {
+      let digits = string.drop_start(whole, 1)
+      "-" <> string.pad_start(digits, to: int.max(width - 1, 0), with: "0")
+    }
+    False -> string.pad_start(whole, to: width, with: "0")
+  }
 }
 
 fn left_width(number: String) -> Int {

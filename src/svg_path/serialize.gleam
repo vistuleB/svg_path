@@ -43,6 +43,15 @@ pub type Newlines {
   AtSegments
 }
 
+/// Character used for left padding.
+pub type LeftPaddingStyle {
+  /// Pad with zeroes.
+  Zero
+
+  /// Pad with spaces.
+  Space
+}
+
 /// Formatting for digits to the left of the decimal point.
 pub type LeftDecimalOptions {
   /// Do not pad numbers on the left.
@@ -50,12 +59,12 @@ pub type LeftDecimalOptions {
 
   /// Pre-scan the serialized value and choose the smallest shared left width
   /// that aligns its numbers.
-  AutoLeftPadding
+  AutoLeftPadding(LeftPaddingStyle)
 
   /// Pad numbers to the given left width.
   ///
   /// The width includes a leading minus sign for negative numbers.
-  LeftPadding(Int)
+  LeftPadding(Int, LeftPaddingStyle)
 }
 
 /// Formatting for digits to the right of the decimal point.
@@ -1031,8 +1040,20 @@ fn left_decimals(
 ) -> number_format.LeftDecimalOptions {
   case left_decimals {
     Succinct -> number_format.Succinct
-    AutoLeftPadding -> number_format.AutoLeftPadding
-    LeftPadding(width) -> number_format.LeftPadding(width)
+    AutoLeftPadding(style) ->
+      number_format.AutoLeftPadding(left_padding_style(style))
+    LeftPadding(width, style) -> {
+      number_format.LeftPadding(width, left_padding_style(style))
+    }
+  }
+}
+
+fn left_padding_style(
+  style: LeftPaddingStyle,
+) -> number_format.LeftPaddingStyle {
+  case style {
+    Zero -> number_format.Zero
+    Space -> number_format.Space
   }
 }
 

@@ -663,7 +663,7 @@ pub fn compact_path_data(input: String) -> String {
     serialize.relative_decimal_options(2)
     |> serialize.minimize_whitespace
     |> serialize.repeat_commands(False)
-    |> serialize.with_left_padding(serialize.AutoLeftPadding)
+    |> serialize.with_left_padding(serialize.AutoLeftPadding(serialize.Zero))
 
   serialize.path_with_options(path, options:)
 }
@@ -725,7 +725,7 @@ fixed-width decimal formatting for visual alignment:
 
 ```gleam
 serialize.fixed_decimal_options(2)
-|> serialize.with_left_padding(serialize.AutoLeftPadding)
+|> serialize.with_left_padding(serialize.AutoLeftPadding(serialize.Space))
 |> serialize.with_commas(True)
 |> serialize.repeat_commands(False)
 |> serialize.with_newlines(serialize.AtSegments)
@@ -751,14 +751,18 @@ M
 `LeftDecimalOptions` controls the whole-number side:
 
 - `Succinct` uses no left padding.
-- `LeftPadding(Int)` pads the whole-number side to that width with spaces.
-- `AutoLeftPadding` pre-scans the serialized value and chooses a shared width.
+- `LeftPadding(Int, Zero)` pads the whole-number side to that width with zeroes.
+- `LeftPadding(Int, Space)` pads the whole-number side to that width with spaces.
+- `AutoLeftPadding(Zero)` pre-scans the serialized value and chooses a shared
+  width, padding with zeroes.
+- `AutoLeftPadding(Space)` pre-scans the serialized value and chooses a shared
+  width, padding with spaces.
 
 Use `with_left_padding` to align serialized numbers visually:
 
 ```gleam
 serialize.fixed_decimal_options(1)
-|> serialize.with_left_padding(serialize.AutoLeftPadding)
+|> serialize.with_left_padding(serialize.AutoLeftPadding(serialize.Zero))
 ```
 
 For more explicit control, use `with_left_decimals` and
@@ -766,7 +770,7 @@ For more explicit control, use `with_left_decimals` and
 
 ```gleam
 serialize.default_options()
-|> serialize.with_left_decimals(serialize.AutoLeftPadding)
+|> serialize.with_left_decimals(serialize.AutoLeftPadding(serialize.Zero))
 |> serialize.with_right_decimals(serialize.Fixed(2))
 ```
 
@@ -1036,15 +1040,16 @@ import svg_path/inspect
 pub fn inspect_aligned(path: svg_path.Path) -> String {
   let options =
     inspect.fixed_decimal_options(1)
-    |> inspect.with_left_padding(inspect.AutoLeftPadding)
+    |> inspect.with_left_padding(inspect.AutoLeftPadding(inspect.Zero))
 
   inspect.path_code_with_options(path, options:)
 }
 ```
 
-`AutoLeftPadding` pre-scans the value being inspected and chooses a shared
-left-side width for the numbers in that output. `LeftPadding(Int)` lets you
-choose the width yourself. Use `Succinct` to disable left padding.
+`AutoLeftPadding(Zero)` and `AutoLeftPadding(Space)` pre-scan the value being
+inspected and choose a shared left-side width for the numbers in that output.
+`LeftPadding(Int, Zero)` and `LeftPadding(Int, Space)` let you choose the width
+yourself. Use `Succinct` to disable left padding.
 
 ## Converting Matrices From `matrix_gleam`
 

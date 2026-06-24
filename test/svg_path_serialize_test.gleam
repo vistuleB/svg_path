@@ -204,7 +204,19 @@ pub fn left_padding_pads_serialized_numbers_test() {
   assert serialize.segment_with_options(
       svg_path.Line(start: a, end: b),
       options: serialize.fixed_decimal_options(1)
-        |> serialize.with_left_padding(serialize.LeftPadding(3)),
+        |> serialize.with_left_padding(serialize.LeftPadding(3, serialize.Zero)),
+    )
+    == "M 000.0 -02.0 L 012.2 010.2"
+}
+
+pub fn space_left_padding_pads_serialized_numbers_test() {
+  let a = svg_path.point(0.0, -2.0)
+  let b = svg_path.point(12.2, 10.2)
+
+  assert serialize.segment_with_options(
+      svg_path.Line(start: a, end: b),
+      options: serialize.fixed_decimal_options(1)
+        |> serialize.with_left_padding(serialize.LeftPadding(3, serialize.Space)),
     )
     == "M   0.0  -2.0 L  12.2  10.2"
 }
@@ -222,9 +234,9 @@ pub fn auto_left_padding_aligns_serialized_path_numbers_test() {
   assert serialize.subpath_with_options(
       subpath,
       options: serialize.fixed_decimal_options(1)
-        |> serialize.with_left_padding(serialize.AutoLeftPadding),
+        |> serialize.with_left_padding(serialize.AutoLeftPadding(serialize.Zero)),
     )
-    == "M   0.0  -5.0 L 120.0  10.0 L   2.0 -30.0"
+    == "M 000.0 -05.0 L 120.0 010.0 L 002.0 -30.0"
 }
 
 pub fn minimize_whitespace_removes_command_spacing_test() {
@@ -516,7 +528,9 @@ pub fn commas_preserve_spaces_between_curve_point_pairs_test() {
   assert serialize.subpath_with_options(
       subpath,
       options: serialize.fixed_decimal_options(2)
-        |> serialize.with_left_padding(serialize.AutoLeftPadding)
+        |> serialize.with_left_padding(serialize.AutoLeftPadding(
+          serialize.Space,
+        ))
         |> serialize.with_commas(True)
         |> serialize.repeat_commands(False)
         |> serialize.with_newlines(serialize.AtSegments),
