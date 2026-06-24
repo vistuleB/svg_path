@@ -108,7 +108,9 @@ pub fn subpath_hull_handles_curved_subpath_test() {
 }
 
 pub fn subpath_hull_rejects_empty_subpath_test() {
-  assert convex_hull.subpath_hull(svg_path.empty_subpath())
+  assert convex_hull.subpath_hull(
+      svg_path.empty_subpath(at: svg_path.point(0.0, 0.0)),
+    )
     == Error(convex_hull.PathError(svg_path.EmptySubpath))
 }
 
@@ -185,7 +187,9 @@ pub fn path_hull_rejects_empty_path_test() {
 }
 
 pub fn path_hull_rejects_path_with_only_empty_subpaths_test() {
-  assert convex_hull.path_hull(svg_path.Path([svg_path.empty_subpath()]))
+  assert convex_hull.path_hull(
+      svg_path.Path([svg_path.empty_subpath(at: svg_path.point(0.0, 0.0))]),
+    )
     == Error(convex_hull.PathError(svg_path.EmptySubpaths))
 }
 

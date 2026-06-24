@@ -289,10 +289,13 @@ pub fn path_transform_test() {
       ),
     ])
   let assert Ok(path) =
-    svg_path.Path([svg_path.empty_subpath(), subpath])
+    svg_path.Path([
+      svg_path.empty_subpath(at: svg_path.point(0.0, 0.0)),
+      subpath,
+    ])
     |> transform.path(by: matrix)
 
-  assert serialize.path(path) == "M 1 2 H 11"
+  assert serialize.path(path) == "M 1 2 M 1 2 H 11"
 }
 
 pub fn arc_identity_transform_preserves_arc_test() {

@@ -26,9 +26,9 @@ pub fn comma_separated_input_canonicalizes_test() {
   assert parse_and_serialize("M0,0 L10,0 10,20") == Ok("M 0 0 H 10 V 20")
 }
 
-pub fn move_only_subpaths_disappear_test() {
+pub fn move_only_subpaths_are_preserved_test() {
   assert parse_and_serialize("M 0 0 M 10 10 L 20 10 M 30 30")
-    == Ok("M 10 10 H 20")
+    == Ok("M 0 0 M 10 10 H 20 M 30 30")
 }
 
 pub fn relative_serialization_after_parsing_test() {

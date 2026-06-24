@@ -10,22 +10,23 @@ pub fn empty_path_serializes_to_empty_string_test() {
   assert serialize.path(svg_path.empty_path()) == ""
 }
 
-pub fn empty_subpath_serializes_to_empty_string_test() {
-  assert serialize.subpath(svg_path.empty_subpath()) == ""
+pub fn empty_subpath_serializes_to_move_test() {
+  assert serialize.subpath(svg_path.empty_subpath(at: svg_path.point(0.0, 0.0)))
+    == "M 0 0"
 }
 
-pub fn path_ignores_empty_subpaths_test() {
+pub fn path_serializes_empty_subpaths_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)
   let assert Ok(subpath) = svg_path.subpath([svg_path.Line(start: a, end: b)])
   let path =
     svg_path.Path([
-      svg_path.empty_subpath(),
+      svg_path.empty_subpath(at: svg_path.point(0.0, 0.0)),
       subpath,
-      svg_path.empty_subpath(),
+      svg_path.empty_subpath(at: svg_path.point(0.0, 0.0)),
     ])
 
-  assert serialize.path(path) == "M 0 0 H 10"
+  assert serialize.path(path) == "M 0 0 M 0 0 H 10 M 0 0"
 }
 
 pub fn open_subpath_serializes_absolute_commands_test() {
@@ -649,10 +650,14 @@ pub fn relative_options_make_moves_relative_between_subpaths_test() {
   let assert Ok(second) = svg_path.subpath([svg_path.Line(start: c, end: d)])
 
   assert serialize.path_with_options(
-      svg_path.Path([first, svg_path.empty_subpath(), second]),
+      svg_path.Path([
+        first,
+        svg_path.empty_subpath(at: b),
+        second,
+      ]),
       options: serialize.relative_decimal_options(0),
     )
-    == "m 10 10 h 10 m 5 20 h 5"
+    == "m 10 10 h 10 m 0 0 m 5 20 h 5"
 }
 
 pub fn relative_options_move_from_closed_subpath_start_after_z_test() {

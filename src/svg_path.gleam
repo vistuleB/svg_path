@@ -114,13 +114,13 @@ pub type Path {
   Path(subpaths: List(Subpath))
 }
 
-/// A continuous sequence of path segments, optionally closed.
+/// A positioned sequence of path segments, optionally closed.
 ///
 /// The constructor is opaque so that subpaths cannot be created in an invalid
 /// discontinuous state. Use `subpath`, `empty_subpath`, `append_segment`, or
 /// their `_with` variants to build values.
 pub opaque type Subpath {
-  Subpath(segments: List(Segment), closed: Bool)
+  Subpath(start: Point, segments: List(Segment), closed: Bool)
 }
 
 /// How construction and editing helpers reconcile segment endpoints.
@@ -167,12 +167,6 @@ pub type Segment {
 pub type Error {
   /// The subpath is already closed and cannot accept more segments.
   AlreadyClosed
-
-  /// An operation would produce a closed subpath with no segments.
-  ///
-  /// Empty open subpaths are valid, but this package does not represent a
-  /// closed empty subpath.
-  ClosedEmptySubpath
 
   /// A segment starts somewhere other than the previous segment's end point.
   ///
@@ -357,18 +351,24 @@ pub fn clean_combine_paths(paths: List(Path)) -> Path {
 /// Convert a path with zero or one non-empty subpaths into a subpath.
 ///
 /// Empty subpaths are ignored. If more than one non-empty subpath is present,
-/// this returns `MultipleNonemptySubpaths`.
+/// this returns `MultipleNonemptySubpaths`. If a path has only empty subpaths,
+/// the first empty subpath is returned.
 pub fn as_subpath(path: Path) -> Result(Subpath, Error) {
-  case nonempty_subpaths(path.subpaths) {
-    [] -> Ok(empty_subpath())
-    [subpath] -> Ok(subpath)
-    [_, _, ..] -> Error(MultipleNonemptySubpaths)
+  case path.subpaths {
+    [] -> Error(EmptySubpaths)
+    subpaths -> {
+      case nonempty_subpaths(subpaths) {
+        [] -> Ok(first_subpath(subpaths))
+        [subpath] -> Ok(subpath)
+        [_, _, ..] -> Error(MultipleNonemptySubpaths)
+      }
+    }
   }
 }
 
-/// Create an empty open subpath.
-pub fn empty_subpath() -> Subpath {
-  Subpath(segments: [], closed: False)
+/// Create an empty open subpath at a start point.
+pub fn empty_subpath(at start: Point) -> Subpath {
+  Subpath(start:, segments: [], closed: False)
 }
 
 /// Create an open subpath from a continuous list of segments.
@@ -426,10 +426,20 @@ pub fn clean_subpath(subpath: Subpath) -> Subpath {
     [] -> {
       case subpath.segments {
         [] -> subpath
-        [first, ..] -> Subpath(segments: [first], closed: subpath.closed)
+        [first, ..] ->
+          Subpath(
+            start: segment_start(first),
+            segments: [first],
+            closed: subpath.closed,
+          )
       }
     }
-    _ -> Subpath(segments: cleaned, closed: subpath.closed)
+    [first, ..] ->
+      Subpath(
+        start: segment_start(first),
+        segments: cleaned,
+        closed: subpath.closed,
+      )
   }
 }
 
@@ -453,8 +463,8 @@ pub fn clean_path(path: Path) -> Path {
 /// `InvalidSplice`.
 ///
 /// The edited subpath must remain continuous. Closed subpaths preserve their
-/// closed state; if the splice would make a closed subpath empty,
-/// `ClosedEmptySubpath` is returned.
+/// closed state. If the splice makes a subpath empty, the previous start point
+/// is preserved.
 pub fn splice(
   subpath: Subpath,
   start start: Int,
@@ -479,11 +489,12 @@ pub fn splice_with(
     False -> {
       let segments = splice_segments(subpath.segments, start, delete, insert)
 
-      case subpath.closed && list.is_empty(segments) {
-        True -> Error(ClosedEmptySubpath)
-        False ->
-          validate_spliced_subpath(segments, subpath.closed, endpoint_policy)
-      }
+      validate_spliced_subpath(
+        segments,
+        start: subpath.start,
+        closed: subpath.closed,
+        policy: endpoint_policy,
+      )
     }
   }
 }
@@ -520,6 +531,7 @@ pub fn assert_splice_with(
 /// Bezier between their endpoints.
 pub fn subpath_arcs_to_cubic_beziers(subpath: Subpath) -> Subpath {
   Subpath(
+    start: subpath.start,
     segments: segments_arcs_to_cubic_beziers(subpath.segments, []),
     closed: subpath.closed,
   )
@@ -536,8 +548,10 @@ pub fn path_arcs_to_cubic_beziers(path: Path) -> Path {
 ///
 /// The subpath's closed state is preserved.
 pub fn reverse_subpath(subpath: Subpath) -> Subpath {
-  Subpath(
-    segments: subpath.segments |> list.reverse |> list.map(reverse_segment),
+  let segments = subpath.segments |> list.reverse |> list.map(reverse_segment)
+  subpath_from_valid_segments(
+    segments,
+    fallback_start: subpath.start,
     closed: subpath.closed,
   )
 }
@@ -561,7 +575,8 @@ pub fn map_subpath_points(
 ) -> Result(Subpath, Error) {
   case map_segments_points(subpath.segments, f, []) {
     Error(error) -> Error(error)
-    Ok(segments) -> Ok(Subpath(segments:, closed: subpath.closed))
+    Ok(segments) ->
+      Ok(Subpath(start: f(subpath.start), segments:, closed: subpath.closed))
   }
 }
 
@@ -613,6 +628,7 @@ pub fn segment_arcs_to_cubic_beziers(segment: Segment) -> List(Segment) {
 /// split into chunks of at most a quarter turn.
 pub fn subpath_to_cubic_beziers(subpath: Subpath) -> Subpath {
   Subpath(
+    start: subpath.start,
     segments: segments_to_cubic_beziers(subpath.segments, []),
     closed: subpath.closed,
   )
@@ -648,7 +664,8 @@ pub fn is_closed(subpath: Subpath) -> Bool {
 /// Set a subpath's semantic closed state.
 ///
 /// Setting `closed` to `False` only clears the semantic closed flag. Setting it
-/// to `True` requires the subpath's end point to exactly match its start point.
+/// to `True` requires a non-empty subpath's end point to exactly match its
+/// start point. Empty subpaths may be closed.
 pub fn set_closed(
   subpath: Subpath,
   closed closed: Bool,
@@ -659,15 +676,15 @@ pub fn set_closed(
 /// Set a subpath's semantic closed state with an endpoint policy.
 ///
 /// Setting `closed` to `False` only clears the semantic closed flag. Setting it
-/// to `True` uses the given endpoint policy to reconcile the subpath's end point
-/// with its start point.
+/// to `True` uses the given endpoint policy to reconcile a non-empty subpath's
+/// end point with its start point. Empty subpaths may be closed.
 pub fn set_closed_with(
   subpath: Subpath,
   closed closed: Bool,
   policy endpoint_policy: EndpointPolicy,
 ) -> Result(Subpath, Error) {
   case closed {
-    False -> Ok(Subpath(segments: subpath.segments, closed: False))
+    False -> Ok(Subpath(..subpath, closed: False))
     True -> close_subpath_with(subpath, endpoint_policy)
   }
 }
@@ -707,8 +724,10 @@ pub fn open_at(subpath: Subpath, index index: Int) -> Result(Subpath, Error) {
         True -> Error(InvalidOpenIndex(index:, length:))
         False -> {
           let index = normalize_open_index(index, length)
-          Ok(Subpath(
-            segments: rotate_segments(subpath.segments, index),
+          let segments = rotate_segments(subpath.segments, index)
+          Ok(subpath_from_valid_segments(
+            segments,
+            fallback_start: subpath.start,
             closed: False,
           ))
         }
@@ -717,23 +736,20 @@ pub fn open_at(subpath: Subpath, index index: Int) -> Result(Subpath, Error) {
   }
 }
 
-/// Return the start point of a non-empty subpath.
+/// Return the start point of a subpath.
 pub fn start(subpath: Subpath) -> Result(Point, Error) {
-  case subpath.segments {
-    [] -> Error(EmptySubpath)
-    [first, ..] -> Ok(segment_start(first))
-  }
+  Ok(subpath.start)
 }
 
-/// Return the end point of a non-empty subpath.
+/// Return the end point of a subpath.
 pub fn end(subpath: Subpath) -> Result(Point, Error) {
   case list.last(subpath.segments) {
     Ok(last) -> Ok(segment_end(last))
-    Error(_) -> Error(EmptySubpath)
+    Error(_) -> Ok(subpath.start)
   }
 }
 
-/// Return the start point of the first non-empty subpath in a path.
+/// Return the start point of the first subpath in a path.
 pub fn path_start(path: Path) -> Result(Point, Error) {
   case path.subpaths {
     [] -> Error(EmptyPath)
@@ -741,7 +757,7 @@ pub fn path_start(path: Path) -> Result(Point, Error) {
   }
 }
 
-/// Return the end point of the last non-empty subpath in a path.
+/// Return the end point of the last subpath in a path.
 pub fn path_end(path: Path) -> Result(Point, Error) {
   case path.subpaths {
     [] -> Error(EmptyPath)
@@ -767,11 +783,10 @@ pub fn append_segment_with(
 ) -> Result(Subpath, Error) {
   case subpath.closed {
     True -> Error(AlreadyClosed)
-    False ->
-      open_subpath_with_segments(
-        list.append(subpath.segments, [segment]),
-        endpoint_policy,
-      )
+    False -> {
+      let segments = list.append(subpath.segments, [segment])
+      open_subpath_with_start(segments, subpath.start, endpoint_policy)
+    }
   }
 }
 
@@ -796,7 +811,8 @@ pub fn assert_append_segment_with(
 /// Join open subpaths into one open subpath.
 ///
 /// Each subpath's end point must exactly match the next subpath's start point.
-/// Empty open subpaths are treated as identity values.
+/// Empty open subpaths can act as identity values when their start points line
+/// up with their neighbors.
 pub fn join(subpaths: List(Subpath)) -> Result(Subpath, Error) {
   join_with(subpaths, policy: Strict)
 }
@@ -808,11 +824,7 @@ pub fn join_with(
 ) -> Result(Subpath, Error) {
   case list.any(subpaths, fn(subpath) { subpath.closed }) {
     True -> Error(AlreadyClosed)
-    False ->
-      open_subpath_with_segments(
-        list.flat_map(subpaths, segments),
-        endpoint_policy,
-      )
+    False -> join_open_subpaths(subpaths, endpoint_policy)
   }
 }
 
@@ -2701,25 +2713,27 @@ fn splice_segments(
 fn first_subpath_start(subpaths: List(Subpath)) -> Result(Point, Error) {
   case subpaths {
     [] -> Error(EmptySubpaths)
-    [subpath, ..rest] -> {
-      case start(subpath) {
-        Ok(point) -> Ok(point)
-        Error(EmptySubpath) -> first_subpath_start(rest)
-        Error(error) -> Error(error)
-      }
-    }
+    [subpath, ..] -> start(subpath)
   }
 }
 
 fn first_subpath_end(subpaths: List(Subpath)) -> Result(Point, Error) {
   case subpaths {
     [] -> Error(EmptySubpaths)
-    [subpath, ..rest] -> {
-      case end(subpath) {
-        Ok(point) -> Ok(point)
-        Error(EmptySubpath) -> first_subpath_end(rest)
-        Error(error) -> Error(error)
-      }
+    [subpath, ..] -> end(subpath)
+  }
+}
+
+fn join_open_subpaths(
+  subpaths: List(Subpath),
+  policy: EndpointPolicy,
+) -> Result(Subpath, Error) {
+  case subpaths {
+    [] -> Error(EmptySubpath)
+    [first, ..rest] -> {
+      let start = first.start
+      let segments = list.flat_map([first, ..rest], segments)
+      open_subpath_with_start(segments, start, policy)
     }
   }
 }
@@ -2737,6 +2751,24 @@ fn map_subpaths_points(
         Ok(subpath) -> map_subpaths_points(rest, f, [subpath, ..mapped])
       }
     }
+  }
+}
+
+fn first_subpath(subpaths: List(Subpath)) -> Subpath {
+  case subpaths {
+    [first, ..] -> first
+    [] -> panic as "svg_path.first_subpath received an empty list"
+  }
+}
+
+fn subpath_from_valid_segments(
+  segments: List(Segment),
+  fallback_start fallback_start: Point,
+  closed closed: Bool,
+) -> Subpath {
+  case segments {
+    [] -> Subpath(start: fallback_start, segments: [], closed:)
+    [first, ..] -> Subpath(start: segment_start(first), segments:, closed:)
   }
 }
 
@@ -2823,10 +2855,16 @@ fn rotate_segments(segments: List(Segment), index: Int) -> List(Segment) {
 
 fn validate_spliced_subpath(
   segments: List(Segment),
-  closed: Bool,
-  policy: EndpointPolicy,
+  start start: Point,
+  closed closed: Bool,
+  policy policy: EndpointPolicy,
 ) -> Result(Subpath, Error) {
-  case open_subpath_with_segments(segments, policy) {
+  let start = case segments {
+    [] -> start
+    [first, ..] -> segment_start(first)
+  }
+
+  case open_subpath_with_start(segments, start, policy) {
     Ok(subpath) -> {
       case closed {
         False -> Ok(subpath)
@@ -2841,36 +2879,151 @@ fn open_subpath_with_segments(
   segments: List(Segment),
   policy: EndpointPolicy,
 ) -> Result(Subpath, Error) {
+  case segments {
+    [] -> Error(EmptySubpath)
+    [first, ..] ->
+      open_subpath_with_start(segments, segment_start(first), policy)
+  }
+}
+
+fn open_subpath_with_start(
+  segments: List(Segment),
+  start: Point,
+  policy: EndpointPolicy,
+) -> Result(Subpath, Error) {
   case policy {
-    Strict -> strict_open_subpath(segments)
-    Wiggle -> wiggle_open_subpath(segments)
-    Bridge -> Ok(Subpath(segments: line_join_segments(segments), closed: False))
+    Strict -> strict_open_subpath_from(start, segments)
+    Wiggle -> wiggle_open_subpath_from(start, segments)
+    Bridge -> {
+      let segments = line_join_start(start, segments)
+      Ok(Subpath(start:, segments:, closed: False))
+    }
     WiggleThenBridge -> {
-      case wiggle_open_subpath(segments) {
+      case wiggle_open_subpath_from(start, segments) {
         Ok(subpath) -> Ok(subpath)
-        Error(_) ->
-          Ok(Subpath(segments: line_join_segments(segments), closed: False))
+        Error(_) -> {
+          let segments = line_join_start(start, segments)
+          Ok(Subpath(start:, segments:, closed: False))
+        }
       }
     }
-    Custom(reconcile) -> custom_open_subpath(segments, reconcile)
+    Custom(reconcile) -> custom_open_subpath_from(start, segments, reconcile)
+  }
+}
+
+fn strict_open_subpath_from(
+  start: Point,
+  segments: List(Segment),
+) -> Result(Subpath, Error) {
+  case starts_at(start, segments) {
+    Error(error) -> Error(error)
+    Ok(Nil) -> {
+      case continuous(segments) {
+        Ok(Nil) -> Ok(Subpath(start:, segments:, closed: False))
+        Error(error) -> Error(error)
+      }
+    }
+  }
+}
+
+fn starts_at(start: Point, segments: List(Segment)) -> Result(Nil, Error) {
+  case segments {
+    [] -> Ok(Nil)
+    [first, ..] -> {
+      let got = segment_start(first)
+      case got == start {
+        True -> Ok(Nil)
+        False ->
+          Error(Discontinuous(
+            previous_index: -1,
+            next_index: 0,
+            expected: start,
+            got:,
+            distance: distance(start, got),
+          ))
+      }
+    }
   }
 }
 
 fn strict_open_subpath(segments: List(Segment)) -> Result(Subpath, Error) {
-  case continuous(segments) {
-    Ok(Nil) -> Ok(Subpath(segments:, closed: False))
-    Error(error) -> Error(error)
+  case segments {
+    [] -> Error(EmptySubpath)
+    [first, ..] -> strict_open_subpath_from(segment_start(first), segments)
   }
 }
 
-fn wiggle_open_subpath(segments: List(Segment)) -> Result(Subpath, Error) {
+fn wiggle_open_subpath_from(
+  start: Point,
+  segments: List(Segment),
+) -> Result(Subpath, Error) {
   case segments {
-    [] | [_] -> strict_open_subpath(segments)
+    [] -> Ok(Subpath(start:, segments: [], closed: False))
     [first, ..rest] -> {
-      case wiggle_segments(rest, first, []) {
-        Ok(segments) -> Ok(Subpath(segments:, closed: False))
+      case wiggle_start(start, first) {
         Error(error) -> Error(error)
+        Ok(first) -> {
+          case wiggle_segments(rest, first, []) {
+            Ok(segments) -> Ok(Subpath(start:, segments:, closed: False))
+            Error(error) -> Error(error)
+          }
+        }
       }
+    }
+  }
+}
+
+fn wiggle_start(start: Point, first: Segment) -> Result(Segment, Error) {
+  let first_start = segment_start(first)
+  case first_start == start {
+    True -> Ok(first)
+    False -> {
+      case distance(start, first_start) <=. default_wiggle_tolerance {
+        True -> Ok(segment_with_start(first, start))
+        False ->
+          Error(NotCloseEnough(
+            expected: start,
+            got: first_start,
+            tolerance: default_wiggle_tolerance,
+          ))
+      }
+    }
+  }
+}
+
+fn line_join_start(start: Point, segments: List(Segment)) -> List(Segment) {
+  case segments {
+    [] -> []
+    [first, ..] -> {
+      let first_start = segment_start(first)
+      case start == first_start {
+        True -> line_join_segments(segments)
+        False ->
+          line_join_segments([Line(start:, end: first_start), ..segments])
+      }
+    }
+  }
+}
+
+fn custom_open_subpath_from(
+  start: Point,
+  segments: List(Segment),
+  reconcile: fn(Segment, Segment) -> #(Segment, Segment),
+) -> Result(Subpath, Error) {
+  case segments {
+    [] -> Ok(Subpath(start:, segments: [], closed: False))
+    [first, ..rest] -> {
+      let first = case segment_start(first) == start {
+        True -> first
+        False -> {
+          let bridge = Line(start:, end: segment_start(first))
+          let #(_, first) = reconcile(bridge, first)
+          first
+        }
+      }
+
+      custom_reconcile_segments(rest, first, [], reconcile)
+      |> strict_open_subpath_from(start, _)
     }
   }
 }
@@ -2904,18 +3057,6 @@ fn line_join_segments_loop(
         }
       }
     }
-  }
-}
-
-fn custom_open_subpath(
-  segments: List(Segment),
-  reconcile: fn(Segment, Segment) -> #(Segment, Segment),
-) -> Result(Subpath, Error) {
-  case segments {
-    [] | [_] -> strict_open_subpath(segments)
-    [first, ..rest] ->
-      custom_reconcile_segments(rest, first, [], reconcile)
-      |> strict_open_subpath
   }
 }
 
@@ -3259,10 +3400,17 @@ fn close_open_subpath_with(
 }
 
 fn strict_close_open_subpath(subpath: Subpath) -> Result(Subpath, Error) {
+  case subpath.segments {
+    [] -> Ok(Subpath(..subpath, closed: True))
+    _ -> strict_close_nonempty_subpath(subpath)
+  }
+}
+
+fn strict_close_nonempty_subpath(subpath: Subpath) -> Result(Subpath, Error) {
   case start_and_end(subpath) {
     Error(error) -> Error(error)
     Ok(#(first, last)) if first == last -> {
-      Ok(Subpath(segments: subpath.segments, closed: True))
+      Ok(Subpath(..subpath, closed: True))
     }
     Ok(#(first, last)) -> {
       let previous_index = list.length(subpath.segments) - 1
@@ -3279,6 +3427,13 @@ fn strict_close_open_subpath(subpath: Subpath) -> Result(Subpath, Error) {
 }
 
 fn wiggle_close_open_subpath(subpath: Subpath) -> Result(Subpath, Error) {
+  case subpath.segments {
+    [] -> Ok(Subpath(..subpath, closed: True))
+    _ -> wiggle_close_nonempty_subpath(subpath)
+  }
+}
+
+fn wiggle_close_nonempty_subpath(subpath: Subpath) -> Result(Subpath, Error) {
   case start_and_end(subpath) {
     Error(error) -> Error(error)
     Ok(#(first, last)) -> {
@@ -3307,11 +3462,19 @@ fn wiggle_close_open_subpath(subpath: Subpath) -> Result(Subpath, Error) {
 }
 
 fn line_close_open_subpath(subpath: Subpath) -> Result(Subpath, Error) {
+  case subpath.segments {
+    [] -> Ok(Subpath(..subpath, closed: True))
+    _ -> line_close_nonempty_subpath(subpath)
+  }
+}
+
+fn line_close_nonempty_subpath(subpath: Subpath) -> Result(Subpath, Error) {
   case start_and_end(subpath) {
     Error(error) -> Error(error)
     Ok(#(first, last)) if first == last -> strict_close_open_subpath(subpath)
     Ok(#(first, last)) -> {
       Ok(Subpath(
+        start: subpath.start,
         segments: list.append(subpath.segments, [
           Line(start: last, end: first),
         ]),
@@ -3326,7 +3489,7 @@ fn custom_close_open_subpath(
   reconcile: fn(Segment, Segment) -> #(Segment, Segment),
 ) -> Result(Subpath, Error) {
   case subpath.segments {
-    [] -> Error(EmptySubpath)
+    [] -> Ok(Subpath(..subpath, closed: True))
     [only] -> {
       case segment_end(only) == segment_start(only) {
         True -> strict_close_open_subpath(subpath)
@@ -3482,6 +3645,7 @@ fn wiggle_ends_to(subpath: Subpath, overlap: Point) -> Subpath {
     [] -> subpath
     [only] -> {
       Subpath(
+        start: overlap,
         segments: [segment_with_start_and_end(only, overlap, overlap)],
         closed: True,
       )
@@ -3490,6 +3654,7 @@ fn wiggle_ends_to(subpath: Subpath, overlap: Point) -> Subpath {
       let assert Ok(#(middle, last)) = split_last(rest)
 
       Subpath(
+        start: overlap,
         segments: [
           segment_with_start(first, overlap),
           ..list.append(middle, [

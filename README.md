@@ -110,27 +110,21 @@ to force errors instead.
 
 ### Subpaths
 
-<!-- A `Subpath` is a list of end-to-end segments, possibly empty,
-with an open/closed flag. A empty `Subpath` cannot be 
-closed. These constraints are enforced via an opaque type: -->
-A `Subpath` is an opauqe type consisting of a list of end-to-end segments, possibly empty,
-with an open/closed flag:
+A `Subpath` has a start point, a list of end-to-end segments, and a
+`closed: Bool` flag. Its constructor is opaque:
 
 ```gleam
 pub opaque type Subpath {
-  Subpath(segments: List(Segment), closed: Bool)
+  Subpath(start: Point, segments: List(Segment), closed: Bool)
 }
 ```
 
-<!-- each segment after the first must start where the previous segment ends.  -->
-The `segments` list must be contiguous: 
-one must have `prev.end == next.start` for each adjacent pair of segments `prev`, `next` in the list. 
-The `closed` field records whether
-the subpath is topologically closed. A closed subpath must end where it starts,
-but a geometrically closed path need not be `closed`. These invariants are
-guaranteed by the library by keeping the type opaque. A `Subpath`'s
-serialization ends in `Z`/`z` if and only
-only if `closed == True`.
+The first segment, when present, must start at `start`, and adjacent segments
+must meet end-to-start. The `closed` field records whether the subpath is
+topologically closed. When a non-empty subpath is closed, its last segment must
+end at `start`; empty subpaths may also be closed. These invariants are
+guaranteed by keeping the type opaque. A `Subpath`'s serialization ends in
+`Z`/`z` if and only if `closed == True`.
 
 Use `svg_path.subpath` to construct an open subpath from a list of already
 continuous segments, and `svg_path.set_closed` to change whether a subpath is
@@ -141,8 +135,8 @@ svg_path.subpath(segments)                  // -> Result(Subpath, svg_path.Error
 svg_path.set_closed(subpath, closed: Bool)  // -> Result(Subpath, svg_path.Errors)
 ```
 
-Construction succeeds when the required segment endpoints meet, and, in
-the case of `set_closed`, when the `segments` are nonempty.
+Construction succeeds when the required segment endpoints meet. Use
+`empty_subpath(at:)` only when you need to represent a move-only subpath.
 
 In the following example the segments return to their starting point
 geometrically, but the subpath only becomes topologically closed after
@@ -173,34 +167,11 @@ pub fn closed_triangle() -> Result(svg_path.Subpath, svg_path.Error) {
 }
 ```
 
-<!-- Construction returns an error when the segment endpoints do not meet.  -->
-<!-- Similarly, `set_closed(subpath, closed: True)` returns an error if
-`first.start != last.end` where `first`, `last` are the the first and last
-segments of the subpath, or if `subpath` is empty.
-
-```gleam
-import svg_path
-
-pub fn discontinuous_corner() -> Result(svg_path.Subpath, svg_path.Error) {
-  let a = svg_path.point(0.0, 0.0)
-  let b = svg_path.point(10.0, 0.0)
-  let c = svg_path.point(10.0, 10.0)
-  let d = svg_path.point(20.0, 10.0)
-
-  svg_path.subpath([
-    svg_path.Line(start: a, end: b),
-    svg_path.Line(start: c, end: d),
-  ])
-  // Error(...)
-}
-```
--->
-
 A subpath-opening call `set_closed(..., closed: False)` cannot return an error.
 
-Use `svg_path.clean_subpath(subpath)` to remove zero-length segments from a `Subpath`, while in all cases preserving at least one segment (by default the first) of the subpath.
-
-Note that `Subpath`s cannot represent an "pure move" command, `d="M 10,10"`, but whose semantics 
+Use `svg_path.clean_subpath(subpath)` to remove zero-length segments from a
+`Subpath`, while preserving at least one segment when the subpath started with
+segments.
 
 ### Paths
 
@@ -227,14 +198,13 @@ svg_path.combine_paths([first, second])
 svg_path.clean_combine_paths([first, second])
 ```
 
-A `Path` may consist of an empty list of subpaths, and an open `Subpath` may
-consist of an empty list of segments, which is intentional. Empty paths and
-empty open subpaths serialize to the empty string. A closed `Subpath` with no
-segments is impossible to construct.
+A `Path` may consist of an empty list of subpaths, and a `Subpath` may consist
+of an empty list of segments. Empty paths serialize to the empty string. Empty
+subpaths serialize as move-only subpaths, with `Z`/`z` appended when closed.
 
 Use `path_start` and `path_end` to get the endpoints of a full path. Empty
-subpaths are ignored; `EmptyPath` is returned for `Path([])`, and
-`EmptySubpaths` is returned when a path has subpaths but none contain segments:
+paths return `EmptyPath`; paths with subpaths use the first subpath's start and
+the last subpath's end, including empty subpaths:
 
 ```gleam
 svg_path.path_start(path)
@@ -348,8 +318,8 @@ svg_path.assert_set_closed(subpath, closed: Bool)
 
 `join` combines open subpaths into one open subpath. With the default
 `Strict` policy, each subpath's end point must exactly equal the next
-subpath's start point. Empty open subpaths act as identity values, and
-`join([])` returns an empty open subpath.
+subpath's start point. Empty open subpaths can act as identity values when
+their start points line up. `join([])` returns `EmptySubpath`.
 
 ```gleam
 svg_path.join([first_subpath, second_subpath, third_subpath])
@@ -382,8 +352,8 @@ greater than the subpath length return `InvalidSplice`.
 
 With the default `Strict` policy, the edited subpath must still be continuous,
 otherwise `Discontinuous` is returned with segment indices, points, and
-distance. Closed subpaths preserve their closed state; a splice that would turn
-a closed subpath into an empty subpath returns `ClosedEmptySubpath`.
+distance. Closed subpaths preserve their closed state. If a splice produces an
+empty subpath, the previous start point is preserved.
 
 Use `splice_with` when the splice should use a different endpoint policy:
 

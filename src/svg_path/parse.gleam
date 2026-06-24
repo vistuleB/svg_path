@@ -54,8 +54,8 @@ type State {
 
 /// Parse an SVG path data string into a `Path`.
 ///
-/// Empty strings parse as an empty path. Move-only subpaths are ignored by the
-/// core path model because they contain no drawable segments.
+/// Empty strings parse as an empty path. Move-only subpaths are preserved as
+/// empty subpaths with start points.
 pub fn path(input: String) -> Result(svg_path.Path, Error) {
   case tokenize(input) {
     Error(error) -> Error(error)
@@ -66,7 +66,7 @@ pub fn path(input: String) -> Result(svg_path.Path, Error) {
 fn initial_state() -> State {
   State(
     subpaths: [],
-    subpath: svg_path.empty_subpath(),
+    subpath: svg_path.empty_subpath(at: svg_path.point(0.0, 0.0)),
     current: svg_path.point(0.0, 0.0),
     has_current: False,
     active: False,
@@ -134,7 +134,7 @@ fn parse_move(
           let state =
             State(
               ..state,
-              subpath: svg_path.empty_subpath(),
+              subpath: svg_path.empty_subpath(at: target),
               current: target,
               has_current: True,
               active: True,
@@ -572,32 +572,28 @@ fn parse_close(
   case ensure_active(state) {
     Error(error) -> Error(error)
     Ok(Nil) -> {
-      case svg_path.start(state.subpath) {
-        Error(_) -> parse_tokens(tokens, State(..state, active: False))
-        Ok(start) -> {
-          case
-            svg_path.set_closed_with(
-              state.subpath,
-              closed: True,
-              policy: svg_path.Bridge,
-            )
-          {
-            Error(error) -> Error(Core(error))
-            Ok(subpath) -> {
-              parse_tokens(
-                tokens,
-                State(
-                  subpaths: [subpath, ..state.subpaths],
-                  subpath: svg_path.empty_subpath(),
-                  current: start,
-                  has_current: True,
-                  active: False,
-                  last_cubic_control: None,
-                  last_quadratic_control: None,
-                ),
-              )
-            }
-          }
+      let assert Ok(start) = svg_path.start(state.subpath)
+      case
+        svg_path.set_closed_with(
+          state.subpath,
+          closed: True,
+          policy: svg_path.Bridge,
+        )
+      {
+        Error(error) -> Error(Core(error))
+        Ok(subpath) -> {
+          parse_tokens(
+            tokens,
+            State(
+              subpaths: [subpath, ..state.subpaths],
+              subpath: svg_path.empty_subpath(at: start),
+              current: start,
+              has_current: True,
+              active: False,
+              last_cubic_control: None,
+              last_quadratic_control: None,
+            ),
+          )
         }
       }
     }
@@ -614,21 +610,15 @@ fn finish(state: State) -> Result(svg_path.Path, Error) {
 fn finish_active_subpath(state: State) -> Result(State, Error) {
   case state.active {
     False -> Ok(state)
-    True -> {
-      case subpath_is_empty(state.subpath) {
-        True -> Ok(State(..state, active: False))
-        False -> {
-          Ok(
-            State(
-              ..state,
-              subpaths: [state.subpath, ..state.subpaths],
-              subpath: svg_path.empty_subpath(),
-              active: False,
-            ),
-          )
-        }
-      }
-    }
+    True ->
+      Ok(
+        State(
+          ..state,
+          subpaths: [state.subpath, ..state.subpaths],
+          subpath: svg_path.empty_subpath(at: state.current),
+          active: False,
+        ),
+      )
   }
 }
 
@@ -721,10 +711,6 @@ fn target_point(
 
 fn offset(point: svg_path.Point, x: Float, y: Float) -> svg_path.Point {
   svg_path.point(point.x +. x, point.y +. y)
-}
-
-fn subpath_is_empty(subpath: svg_path.Subpath) -> Bool {
-  list.is_empty(svg_path.segments(subpath))
 }
 
 fn take_pair(

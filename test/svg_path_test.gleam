@@ -896,9 +896,10 @@ pub fn map_subpath_points_maps_segments_and_preserves_closed_state_test() {
 
 pub fn map_subpath_points_maps_empty_subpath_test() {
   let assert Ok(mapped) =
-    svg_path.map_subpath_points(svg_path.empty_subpath(), with: fn(point) {
-      svg_path.point(point.x +. 1.0, point.y +. 1.0)
-    })
+    svg_path.map_subpath_points(
+      svg_path.empty_subpath(at: svg_path.point(0.0, 0.0)),
+      with: fn(point) { svg_path.point(point.x +. 1.0, point.y +. 1.0) },
+    )
 
   assert svg_path.segments(mapped) == []
   assert !svg_path.is_closed(mapped)
@@ -976,7 +977,11 @@ pub fn map_path_points_rejects_arcs_test() {
         end: svg_path.point(20.0, 0.0),
       ),
     ])
-  let path = svg_path.Path([svg_path.empty_subpath(), subpath])
+  let path =
+    svg_path.Path([
+      svg_path.empty_subpath(at: svg_path.point(0.0, 0.0)),
+      subpath,
+    ])
 
   assert svg_path.map_path_points(path, with: fn(point) { point })
     == Error(svg_path.CannotMapArcNonlinearly)
@@ -1005,8 +1010,10 @@ pub fn reverse_subpath_reverses_segment_order_and_preserves_closed_state_test() 
 }
 
 pub fn reverse_subpath_preserves_empty_open_subpath_test() {
-  assert svg_path.reverse_subpath(svg_path.empty_subpath())
-    == svg_path.empty_subpath()
+  assert svg_path.reverse_subpath(
+      svg_path.empty_subpath(at: svg_path.point(0.0, 0.0)),
+    )
+    == svg_path.empty_subpath(at: svg_path.point(0.0, 0.0))
 }
 
 pub fn reverse_path_reverses_subpaths_and_their_segments_test() {
@@ -1302,7 +1309,7 @@ pub fn path_can_be_built_from_empty_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)
   let assert Ok(subpath) =
-    svg_path.empty_subpath()
+    svg_path.empty_subpath(at: svg_path.point(0.0, 0.0))
     |> svg_path.append_segment(svg_path.Line(start: a, end: b))
   let path =
     svg_path.empty_path()
@@ -1330,11 +1337,14 @@ pub fn combine_paths_concatenates_subpaths_test() {
     svg_path.combine_paths([
       svg_path.Path([first]),
       svg_path.empty_path(),
-      svg_path.Path([svg_path.empty_subpath(), second]),
+      svg_path.Path([
+        svg_path.empty_subpath(at: svg_path.point(0.0, 0.0)),
+        second,
+      ]),
     ])
 
   assert svg_path.subpaths(combined)
-    == [first, svg_path.empty_subpath(), second]
+    == [first, svg_path.empty_subpath(at: svg_path.point(0.0, 0.0)), second]
 }
 
 pub fn clean_combine_paths_cleans_the_concatenated_path_test() {
@@ -1348,15 +1358,18 @@ pub fn clean_combine_paths_cleans_the_concatenated_path_test() {
 
   let combined =
     svg_path.clean_combine_paths([
-      svg_path.Path([svg_path.empty_subpath(), subpath]),
-      svg_path.Path([svg_path.empty_subpath()]),
+      svg_path.Path([
+        svg_path.empty_subpath(at: svg_path.point(0.0, 0.0)),
+        subpath,
+      ]),
+      svg_path.Path([svg_path.empty_subpath(at: svg_path.point(0.0, 0.0))]),
     ])
 
   let assert [cleaned] = svg_path.subpaths(combined)
   assert svg_path.segments(cleaned) == [first, second]
 }
 
-pub fn path_start_and_end_use_first_and_last_nonempty_subpaths_test() {
+pub fn path_start_and_end_use_first_and_last_subpaths_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)
   let c = svg_path.point(20.0, 0.0)
@@ -1365,11 +1378,11 @@ pub fn path_start_and_end_use_first_and_last_nonempty_subpaths_test() {
   let second = svg_path.assert_subpath([svg_path.Line(start: c, end: d)])
   let path =
     svg_path.Path([
-      svg_path.empty_subpath(),
+      svg_path.empty_subpath(at: a),
       first,
-      svg_path.empty_subpath(),
+      svg_path.empty_subpath(at: svg_path.point(0.0, 0.0)),
       second,
-      svg_path.empty_subpath(),
+      svg_path.empty_subpath(at: d),
     ])
 
   assert svg_path.path_start(path) == Ok(a)
@@ -1420,9 +1433,9 @@ pub fn path_bounding_box_uses_nonempty_subpaths_test() {
     ])
   let path =
     svg_path.Path([
-      svg_path.empty_subpath(),
+      svg_path.empty_subpath(at: svg_path.point(0.0, 0.0)),
       first,
-      svg_path.empty_subpath(),
+      svg_path.empty_subpath(at: svg_path.point(0.0, 0.0)),
       second,
     ])
 
@@ -1442,22 +1455,23 @@ pub fn empty_path_has_no_start_or_end_test() {
     == Error(svg_path.EmptyPath)
 }
 
-pub fn path_with_only_empty_subpaths_has_no_start_or_end_test() {
+pub fn path_with_only_empty_subpaths_has_start_and_end_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
   let path =
     svg_path.Path([
-      svg_path.empty_subpath(),
-      svg_path.empty_subpath(),
+      svg_path.empty_subpath(at: a),
+      svg_path.empty_subpath(at: b),
     ])
 
-  assert svg_path.path_start(path) == Error(svg_path.EmptySubpaths)
-  assert svg_path.path_end(path) == Error(svg_path.EmptySubpaths)
+  assert svg_path.path_start(path) == Ok(a)
+  assert svg_path.path_end(path) == Ok(b)
   assert svg_path.path_bounding_box(path) == Error(svg_path.EmptySubpaths)
 }
 
-pub fn as_subpath_accepts_empty_path_test() {
-  let assert Ok(subpath) = svg_path.as_subpath(svg_path.empty_path())
-
-  assert svg_path.segments(subpath) == []
+pub fn as_subpath_rejects_empty_path_test() {
+  assert svg_path.as_subpath(svg_path.empty_path())
+    == Error(svg_path.EmptySubpaths)
 }
 
 pub fn as_subpath_ignores_empty_subpaths_test() {
@@ -1467,9 +1481,9 @@ pub fn as_subpath_ignores_empty_subpaths_test() {
   let assert Ok(subpath) = svg_path.subpath([line])
   let path =
     svg_path.Path([
-      svg_path.empty_subpath(),
+      svg_path.empty_subpath(at: svg_path.point(0.0, 0.0)),
       subpath,
-      svg_path.empty_subpath(),
+      svg_path.empty_subpath(at: svg_path.point(0.0, 0.0)),
     ])
   let assert Ok(only_subpath) = svg_path.as_subpath(path)
 
@@ -1492,18 +1506,19 @@ pub fn subpath_can_be_built_from_empty_test() {
   let start = svg_path.point(0.0, 0.0)
   let end = svg_path.point(10.0, 0.0)
   let assert Ok(subpath) =
-    svg_path.empty_subpath()
+    svg_path.empty_subpath(at: svg_path.point(0.0, 0.0))
     |> svg_path.append_segment(svg_path.Line(start:, end:))
 
   assert svg_path.start(subpath) == Ok(start)
   assert svg_path.end(subpath) == Ok(end)
 }
 
-pub fn empty_subpath_has_no_start_or_end_test() {
-  assert svg_path.start(svg_path.empty_subpath())
-    == Error(svg_path.EmptySubpath)
-  assert svg_path.end(svg_path.empty_subpath()) == Error(svg_path.EmptySubpath)
-  assert svg_path.subpath_bounding_box(svg_path.empty_subpath())
+pub fn empty_subpath_has_start_and_end_test() {
+  let start = svg_path.point(0.0, 0.0)
+
+  assert svg_path.start(svg_path.empty_subpath(at: start)) == Ok(start)
+  assert svg_path.end(svg_path.empty_subpath(at: start)) == Ok(start)
+  assert svg_path.subpath_bounding_box(svg_path.empty_subpath(at: start))
     == Error(svg_path.EmptySubpath)
 }
 
@@ -1581,7 +1596,7 @@ pub fn set_closed_false_clears_closed_state_without_changing_segments_test() {
 }
 
 pub fn set_closed_false_accepts_open_and_empty_subpaths_test() {
-  let empty = svg_path.empty_subpath()
+  let empty = svg_path.empty_subpath(at: svg_path.point(0.0, 0.0))
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)
   let open_subpath = svg_path.assert_subpath([svg_path.Line(start: a, end: b)])
@@ -1712,13 +1727,13 @@ pub fn subpath_with_wiggle_replaces_nearby_sequential_endpoints_test() {
   assert overlap != near_b
 }
 
-pub fn subpath_with_wiggle_accepts_empty_and_single_segment_inputs_test() {
+pub fn subpath_with_wiggle_rejects_empty_and_accepts_single_segment_inputs_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)
   let line = svg_path.Line(start: a, end: b)
 
   assert svg_path.subpath_with([], policy: svg_path.Wiggle)
-    == Ok(svg_path.empty_subpath())
+    == Error(svg_path.EmptySubpath)
   let assert Ok(subpath) =
     svg_path.subpath_with([line], policy: svg_path.Wiggle)
   assert svg_path.segments(subpath) == [line]
@@ -1829,9 +1844,9 @@ pub fn clean_path_removes_empty_subpaths_and_cleans_nonempty_subpaths_test() {
   let second_subpath = svg_path.assert_subpath([third])
   let path =
     svg_path.Path([
-      svg_path.empty_subpath(),
+      svg_path.empty_subpath(at: svg_path.point(0.0, 0.0)),
       first_subpath,
-      svg_path.empty_subpath(),
+      svg_path.empty_subpath(at: svg_path.point(0.0, 0.0)),
       second_subpath,
     ])
 
@@ -1845,8 +1860,8 @@ pub fn clean_path_removes_empty_subpaths_and_cleans_nonempty_subpaths_test() {
 pub fn clean_path_with_only_empty_subpaths_returns_empty_path_test() {
   let path =
     svg_path.Path([
-      svg_path.empty_subpath(),
-      svg_path.empty_subpath(),
+      svg_path.empty_subpath(at: svg_path.point(0.0, 0.0)),
+      svg_path.empty_subpath(at: svg_path.point(0.0, 0.0)),
     ])
 
   assert svg_path.clean_path(path) == svg_path.empty_path()
@@ -2044,7 +2059,7 @@ pub fn splice_preserves_closed_state_test() {
   assert svg_path.is_closed(spliced)
 }
 
-pub fn splice_rejects_closed_empty_result_test() {
+pub fn splice_allows_closed_empty_result_test() {
   let a = svg_path.point(0.0, 0.0)
   let closed =
     svg_path.assert_subpath([
@@ -2053,7 +2068,9 @@ pub fn splice_rejects_closed_empty_result_test() {
     |> svg_path.assert_set_closed(closed: True)
 
   assert svg_path.splice(closed, start: 0, delete: 1, insert: [])
-    == Error(svg_path.ClosedEmptySubpath)
+    == Ok(
+      svg_path.empty_subpath(at: a) |> svg_path.assert_set_closed(closed: True),
+    )
 }
 
 pub fn segment_arcs_to_cubic_beziers_preserves_lines_test() {
@@ -2385,12 +2402,13 @@ pub fn join_treats_empty_open_subpaths_as_identity_values_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)
   let subpath = svg_path.assert_subpath([svg_path.Line(start: a, end: b)])
-  let empty = svg_path.empty_subpath()
+  let empty_start = svg_path.empty_subpath(at: a)
+  let empty_end = svg_path.empty_subpath(at: b)
 
-  assert svg_path.join([]) == Ok(empty)
-  assert svg_path.join([empty, subpath]) == Ok(subpath)
-  assert svg_path.join([subpath, empty]) == Ok(subpath)
-  assert svg_path.join([empty, empty]) == Ok(empty)
+  assert svg_path.join([]) == Error(svg_path.EmptySubpath)
+  assert svg_path.join([empty_start, subpath]) == Ok(subpath)
+  assert svg_path.join([subpath, empty_end]) == Ok(subpath)
+  assert svg_path.join([empty_start, empty_end]) == Ok(empty_start)
 }
 
 pub fn join_treats_interleaved_empty_subpaths_as_identity_values_test() {
@@ -2399,7 +2417,7 @@ pub fn join_treats_interleaved_empty_subpaths_as_identity_values_test() {
   let c = svg_path.point(20.0, 0.0)
   let first = svg_path.assert_subpath([svg_path.Line(start: a, end: b)])
   let second = svg_path.assert_subpath([svg_path.Line(start: b, end: c)])
-  let empty = svg_path.empty_subpath()
+  let empty = svg_path.empty_subpath(at: svg_path.point(0.0, 0.0))
 
   let assert Ok(joined) = svg_path.join([empty, first, empty, second, empty])
 
@@ -2521,7 +2539,7 @@ pub fn append_segment_with_line_bridges_a_gap_test() {
   let c = svg_path.point(20.0, 0.0)
   let d = svg_path.point(30.0, 0.0)
   let assert Ok(subpath) =
-    svg_path.empty_subpath()
+    svg_path.empty_subpath(at: svg_path.point(0.0, 0.0))
     |> svg_path.append_segment(svg_path.Line(start: a, end: b))
     |> result_try_append_segment_with_line(svg_path.Line(start: c, end: d))
 
@@ -2710,9 +2728,11 @@ pub fn set_closed_with_custom_rejects_invalid_results_test() {
     ))
 }
 
-pub fn set_closed_true_empty_subpath_errors_test() {
-  assert svg_path.set_closed(svg_path.empty_subpath(), closed: True)
-    == Error(svg_path.EmptySubpath)
+pub fn set_closed_true_empty_subpath_closes_test() {
+  let subpath = svg_path.empty_subpath(at: svg_path.point(0.0, 0.0))
+
+  assert svg_path.set_closed(subpath, closed: True)
+    == Ok(svg_path.assert_set_closed(subpath, closed: True))
 }
 
 pub fn set_closed_true_discontinuous_error_reports_last_to_first_indices_test() {

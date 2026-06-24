@@ -419,17 +419,8 @@ pub fn subpath(
     Ok(Nil) -> {
       case transform_segments(svg_path.segments(subpath), transform, []) {
         Error(error) -> Error(error)
-        Ok(segments) -> {
-          case svg_path.subpath(segments) {
-            Error(error) -> Error(Core(error))
-            Ok(transformed) -> {
-              case svg_path.is_closed(subpath) {
-                True -> close_transformed_subpath(transformed)
-                False -> Ok(transformed)
-              }
-            }
-          }
-        }
+        Ok(segments) ->
+          finalize_transformed_subpath(subpath, segments, transform)
       }
     }
   }
@@ -526,15 +517,36 @@ pub fn subpath_gracefully(
         transform_segments_gracefully(svg_path.segments(subpath), transform, [])
       {
         Error(error) -> Error(error)
-        Ok(segments) -> {
-          case svg_path.subpath_with(segments, policy: svg_path.Wiggle) {
-            Error(error) -> Error(Core(error))
-            Ok(transformed) -> {
-              case svg_path.is_closed(subpath) {
-                True -> close_transformed_subpath(transformed)
-                False -> Ok(transformed)
-              }
-            }
+        Ok(segments) ->
+          finalize_transformed_subpath(subpath, segments, transform)
+      }
+    }
+  }
+}
+
+fn finalize_transformed_subpath(
+  original: svg_path.Subpath,
+  segments: List(svg_path.Segment),
+  transform: Matrix,
+) -> Result(svg_path.Subpath, Error) {
+  let assert Ok(start) = svg_path.start(original)
+  let start = point(start, transform)
+
+  case segments {
+    [] -> {
+      let subpath = svg_path.empty_subpath(at: start)
+      case svg_path.is_closed(original) {
+        True -> svg_path.set_closed(subpath, closed: True) |> map_core_error
+        False -> Ok(subpath)
+      }
+    }
+    _ -> {
+      case svg_path.subpath(segments) {
+        Error(error) -> Error(Core(error))
+        Ok(transformed) -> {
+          case svg_path.is_closed(original) {
+            True -> close_transformed_subpath(transformed)
+            False -> Ok(transformed)
           }
         }
       }

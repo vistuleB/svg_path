@@ -241,8 +241,10 @@ pub fn exponent_and_plus_signed_numbers_parse_test() {
   assert serialize.subpath(subpath) == "M 10 -20 H 15"
 }
 
-pub fn move_only_subpath_is_ignored_test() {
-  assert parse.path("M 0 0") == Ok(svg_path.empty_path())
+pub fn move_only_subpath_is_preserved_test() {
+  let assert Ok(path) = parse.path("M 0 0")
+
+  assert serialize.path(path) == "M 0 0"
 }
 
 pub fn move_only_subpaths_are_ignored_among_real_subpaths_test() {

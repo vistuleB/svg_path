@@ -107,7 +107,8 @@ pub fn curve_and_arc_segments_inspect_named_fields_test() {
 
 pub fn empty_path_and_subpath_inspect_compactly_test() {
   assert inspect.path(svg_path.empty_path()) == "Path([])"
-  assert inspect.subpath(svg_path.empty_subpath()) == "Subpath(open, [])"
+  assert inspect.subpath(svg_path.empty_subpath(at: svg_path.point(0.0, 0.0)))
+    == "Subpath(open, start=0,0, [])"
 }
 
 pub fn path_inspects_subpaths_and_segments_with_indentation_test() {
@@ -126,7 +127,7 @@ pub fn path_inspects_subpaths_and_segments_with_indentation_test() {
   let path = svg_path.from_subpath(subpath)
 
   assert inspect.path(path) == "Path([
-  Subpath(closed, [
+  Subpath(closed, start=0,0, [
     Line(start=0,0 end=12,10),
     Line(start=12,10 end=20,10),
     Line(start=20,10 end=0,0)
@@ -146,7 +147,7 @@ pub fn path_inspects_with_decimal_options_test() {
 
   assert inspect.path_with_options(path, options: inspect.decimal_options(1))
     == "Path([
-  Subpath(open, [
+  Subpath(open, start=0,0, [
     Line(start=0,0 end=12.2,10.2)
   ])
 ])"
