@@ -44,7 +44,7 @@ pub fn prepare_for_arc_averse_consumer(
 ## Core Model
 
 The root `svg_path` module represents SVG path data with `Path` and `Subpath`
-types, supported by lower-level primitives `Segment` and `Point`.
+types, supported by lower-level `Segment` and `Point` primitives.
 
 ### Points
 
@@ -109,8 +109,8 @@ pub opaque type Subpath {
 ```
 
 The library guarantees that the first segment, when present, starts at `start`,
-and that the last segment of a topologically closed subpath, when present, ends
-at `start`.
+and that the last segment of a topologically closed subpath, when present,
+likewise ends at `start`.
 
 Subpaths with `segments == []` can have any value of `closed`. A `Subpath`'s
 serialization ends in `Z`/`z` if and only if `closed == True`.
@@ -165,7 +165,7 @@ segments if `segments == []` to start with.
 
 ### Paths
 
-`Path` is a list of `Subpath`:
+A `Path` is a list of `Subpath`.
 
 ```gleam
 pub type Path {
@@ -179,67 +179,61 @@ Construct paths directly via the public variant:
 svg_path.Path(subpaths: [subpath])
 ```
 
-Use `combine_paths` to concatenate the subpaths from several paths, preserving
-empty subpaths. Use `clean_combine_paths` when you want the combined result to
-also drop empty subpaths and clean zero-length lines:
+Retrieve subpaths with `svg_path.subpaths(path)`.
 
-```gleam
-svg_path.combine_paths([first, second])
-svg_path.clean_combine_paths([first, second])
-```
-
-A `Path` may consist of an empty list of subpaths, and a `Subpath` may consist
-of an empty list of segments. Empty paths serialize to the empty string. Empty
-subpaths serialize as move-only subpaths, with `Z`/`z` appended when closed.
+Use `combine_paths` to assemble a single `Path` from a `List(Path)`. The result
+of `combine_paths(paths)` is equivalent to
+`Path(paths |> list.map(svg_path.subpaths) |> list.flatten)`.
 
 Use `path_start` and `path_end` to get the endpoints of a full path. Empty
-paths return `EmptyPath`; paths with subpaths use the first subpath's start and
-the last subpath's end, including empty subpaths:
+paths return `Error(EmptyPath)`; paths with subpaths use the first subpath's
+start and the last subpath's end, including empty subpaths:
 
 ```gleam
 svg_path.path_start(path)
 svg_path.path_end(path)
 ```
 
-## Matching Endpoints
+## Subpath-Building
 
 Helper functions in the root module let users employ an `EndpointPolicy` option
 to specify different types of error-recovery behavior for non-matching
 endpoints:
 
 ```gleam
-svg_path.Strict
-svg_path.Wiggle
-svg_path.Bridge
-svg_path.WiggleThenBridge
-svg_path.Custom(fn(previous, next) { #(previous, next) })
+pub type EndpointPolicy {
+  Strict
+  Wiggle
+  Bridge
+  WiggleThenBridge
+  Custom(fn(Segment, Segment) -> #(Segment, Segment))
+}
 ```
 
-`Strict` is the default behavior for `subpath`, requiring exact endpoint
+`Strict` is the behavior of `subpath`, requiring exact endpoint
 equality. `Wiggle` moves nearby endpoints together within the package's default
-wiggle tolerance of `0.000000001`, while preserving horizontal and vertical
-straight-line segments. `Bridge` keeps existing endpoints in place and inserts
-a straight line segment when needed.
+wiggle tolerance of 1e-9, while respecting the horizontality and verticality
+of `Line` segments. `Bridge` keeps existing endpoints in place and inserts a
+straight line segment when needed.
 `WiggleThenBridge`, as the name implies, first tries `Wiggle` before falling
 back on `Bridge`. `Custom` gives callers a hook for bespoke endpoint
 reconciliation.
 
-The behavior of option-free functions and constructors is
-`EndpointPolicy.Strict`. These include:
+Functions that accept an `EndpointPolicy` end in `_with`. Including:
 
 ```gleam
-svg_path.subpath(segments)
-svg_path.append_segment(subpath, segment)
-svg_path.join([first_subpath, second_subpath])
-svg_path.splice(subpath, start:, delete:, insert:)
-svg_path.set_closed(subpath, closed: Bool)
+svg_path.subpath_with(segments, policy: svg_path.Wiggle)
+svg_path.append_segment_with(subpath, segment, policy: svg_path.Bridge)
+svg_path.join_with([first_subpath, second_subpath], policy: svg_path.WiggleThenBridge)
+svg_path.splice_with(subpath, start: Int, delete: Int, insert: List(Segment), policy: svg_path.Wiggle)
+svg_path.set_closed_with(subpath, closed, policy: svg_path.Bridge)
 ```
 
-These functions preserve `Segment` lists exactly while returning a
-`Discontinuous` error payload when segment endpoints fail to match up by exact
-floating point equality. The `Discontinuous` error payload names the index at
-which discontinuity occurs as well as the position and distance between the
-endpoints involved:
+Subtracting the `_with` suffix yields equivalent functions whose policy is
+`EndpointPolicy.Strict`.
+
+Failure to reconcile segment endpoints under a given policy results in a
+`Discontinuous` `svg_path.Error` variant:
 
 ```gleam
 Discontinuous(
@@ -251,58 +245,24 @@ Discontinuous(
 )
 ```
 
-This is often enough to tell whether upstream geometry missed by floating-point
-noise or by a real modeling mistake.
-
-The `_with` variants of constructor and subpath-modifying functions enable the
-specification of a non-`Strict` endpoint policy:
-
-```gleam
-svg_path.subpath_with(segments, policy: svg_path.Wiggle)
-svg_path.append_segment_with(subpath, segment, policy: svg_path.Bridge)
-svg_path.join_with([first_subpath, second_subpath], policy: svg_path.WiggleThenBridge)
-svg_path.splice_with(subpath, start:, delete:, insert:, policy: svg_path.Wiggle)
-svg_path.set_closed_with(subpath, closed: Bool, policy: svg_path.Bridge)
-```
-
-### Custom Endpoint Policies
-
-`Custom` receives each non-matching adjacent pair as `previous` and `next`, and
-returns replacement segments for that pair. It is called only when the two
-endpoints do not already match. After all custom reconciliation has run, the
-result is validated normally, so custom policies still return the usual
-construction errors if they leave the subpath discontinuous.
-
-For example, a custom policy can move the start of each incoming line to the
-previous segment's end point:
-
-```gleam
-let policy =
-  svg_path.Custom(fn(previous, next) {
-    case next {
-      svg_path.Line(end:, ..) -> {
-        #(previous, svg_path.Line(start: svg_path.segment_end(previous), end:))
-      }
-      _ -> #(previous, next)
-    }
-  })
-```
-
-When closing a subpath with `set_closed_with`, the adjacent pair is the last
-segment followed by the first segment. The returned pair is used to close that
-wraparound boundary, and the final subpath must still validate as both
-continuous and closed.
+In the above, `expected` is the end of a putative last segment, `got` is the
+start of a putative next segment (or first segment of the subpath, for a
+closure error), and `distance` is the distance between the two.
 
 Use the `assert_` functions for hand-authored/static geometry where invalid
 continuity is a programmer error:
 
 ```gleam
 svg_path.assert_subpath(segments)
+svg_path.assert_subpath_with(segments, policy)
 svg_path.assert_append_segment(subpath, segment)
+svg_path.assert_append_segment_with(subpath, segment, policy)
 svg_path.assert_join([first_subpath, second_subpath])
-svg_path.assert_join_with([first_subpath, second_subpath], policy: svg_path.WiggleThenBridge)
-svg_path.assert_splice(subpath, start:, delete:, insert:)
-svg_path.assert_set_closed(subpath, closed: Bool)
+svg_path.assert_join_with([first_subpath, second_subpath], policy)
+svg_path.assert_splice(subpath, start, delete, insert)
+svg_path.assert_splice_with(subpath, start, delete, insert, policy)
+svg_path.assert_set_closed(subpath, closed)
+svg_path.assert_set_closed_with(subpath, closed, policy)
 ```
 
 ### Joining Subpaths
@@ -379,6 +339,15 @@ The error behavior is intentionally specific:
 - `InvalidOpenIndex(index, length)` is returned if the index is outside the
   accepted inclusive range.
 
+### Custom Endpoint Policies
+
+`Custom` receives each non-matching adjacent pair as `previous` and `next`, and
+returns replacement segments for that pair. It is called only when the two
+endpoints do not already match. A custom policy can change all aspects of both
+segments (e.g. change the `.start` of the `previous` segment) without
+necessarily triggering an error: errors are generated on final-pass
+verification of the returned subpath.
+
 ## Converting Arcs to Beziers
 
 Some SVG consumers and geometry workflows prefer to avoid elliptical `Arc`
@@ -440,7 +409,7 @@ subpaths are all empty return `EmptySubpaths`.
 For callers working at the lower-level curve modules, `svg_path/bezier` exposes
 `bezier_bounding_box`, and `svg_path/ellipse` exposes `arc_bounding_box`.
 
-### Segment Minimization
+### Optimization Over Segments
 
 Use `segment_minimize` to find the segment parameter where a scalar function of
 the segment point is minimized:
@@ -622,7 +591,7 @@ line back to the subpath start, the parser inserts that line and marks the
 subpath closed. If the subpath is already back at its start, no extra line is
 inserted; the subpath is just marked closed.
 
-## Path Serialization
+## Serialization
 
 `svg_path/serialize` emits canonical SVG path data.
 
@@ -756,7 +725,7 @@ M
  600.50, -70.25  720.00,  80.00  840.00, -90.00
 ```
 
-### Left Padding
+### Number Formatting
 
 `RightDecimalOptions` controls the fractional side of serialized numbers:
 
@@ -857,31 +826,6 @@ m 10 10 h 10 h -10 h 0 Z
 ```
 
 The final `h 0` remains visible because it is a zero-length line.
-
-### Removing Zero-Length Line Segments
-
-Serialization is not a general cleanup pass. It only uses `Z` to avoid a
-redundant non-zero-length final closing line.
-
-To remove zero-length straight lines from a subpath, use `clean_subpath`. To
-clean a whole path, use `clean_path`; it removes empty subpaths and runs
-`clean_subpath` on each remaining subpath.
-
-```gleam
-import svg_path
-
-pub fn clean(subpath: svg_path.Subpath) -> svg_path.Subpath {
-  svg_path.clean_subpath(subpath)
-}
-
-pub fn clean_all(path: svg_path.Path) -> svg_path.Path {
-  svg_path.clean_path(path)
-}
-```
-
-`clean_subpath` removes zero-length `Line` segments while preserving the
-subpath's closed/open state. If a subpath consists only of zero-length lines,
-one zero-length line is retained so it remains a zero-length drawing subpath.
 
 ## Transforming Paths
 
