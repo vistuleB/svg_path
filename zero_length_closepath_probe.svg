@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="180" viewBox="0 0 360 180">
+  <rect x="0" y="0" width="360" height="180" fill="white" />
+
+  <line x1="20" y1="50" x2="340" y2="50" stroke="#ddd" />
+  <line x1="20" y1="120" x2="340" y2="120" stroke="#ddd" />
+
+  <circle cx="90" cy="50" r="2" fill="red" />
+  <circle cx="240" cy="50" r="2" fill="red" />
+  <circle cx="90" cy="120" r="2" fill="red" />
+  <circle cx="240" cy="120" r="2" fill="red" />
+
+  <text x="90" y="25" text-anchor="middle" font-family="sans-serif" font-size="12">M only</text>
+  <text x="240" y="25" text-anchor="middle" font-family="sans-serif" font-size="12">M then Z</text>
+  <text x="20" y="54" text-anchor="start" font-family="sans-serif" font-size="12">round</text>
+  <text x="20" y="124" text-anchor="start" font-family="sans-serif" font-size="12">square</text>
+
+  <path d="M 90,50" style="fill: none; stroke: black; stroke-width: 24; stroke-linecap: round;" />
+  <path d="M 240,50 Z" style="fill: none; stroke: black; stroke-width: 24; stroke-linecap: round;" />
+
+  <path d="M 90,120" style="fill: none; stroke: black; stroke-width: 24; stroke-linecap: square;" />
+  <path d="M 240,120 Z" style="fill: none; stroke: black; stroke-width: 24; stroke-linecap: square;" />
+</svg>

@@ -1,5 +1,58 @@
 # Notes
 
+## Move-Only vs Closed Zero-Length Subpaths
+
+SVG can distinguish a pure moveto from a closed zero-length subpath:
+
+```xml
+M 0,0
+M 0,0 Z
+```
+
+SVG 2 Painting says a subpath consisting only of a moveto is not stroked, while
+other zero-length subpaths such as `M 30,30 Z` follow the `stroke-linecap`
+zero-length behavior. With `round` or `square`, that can produce a visible
+dot/square where pure `M 30,30` does not.
+
+The local probe file `zero_length_closepath_probe.svg` demonstrates the
+expected distinction:
+
+```xml
+<path d="M 90,50" style="fill: none; stroke: black; stroke-width: 24; stroke-linecap: round;" />
+<path d="M 240,50 Z" style="fill: none; stroke: black; stroke-width: 24; stroke-linecap: round;" />
+```
+
+## Closepath Normalization
+
+We are comfortable normalizing these two forms to the same semantic
+representation:
+
+```xml
+M 0,0 L 10,0 Z
+M 0,0 L 10,0 L 0,0 Z
+```
+
+In the first form, `Z` supplies the straight return-home connection. In the
+second form, the explicit `L 0,0` has already returned to the subpath start,
+and `Z` marks the subpath as topologically closed.
+
+The SVG spec describes `Z` as closing the current subpath by connecting the
+current point back to the initial point, with the automatic straight line
+allowed to be zero length. We read this semantically rather than as a
+requirement to append a distinct zero-length segment whenever the current point
+is already home. This matters for ordinary cases such as a subpath whose final
+drawn segment is a cubic ending at the start point:
+
+```xml
+M 0,0 C 10,0 10,10 0,0 Z
+```
+
+We do not know of an SVG spec requirement or concrete user-agent behavior that
+distinguishes the first two forms above after the path has been interpreted.
+The library may therefore flatten both to the same segment list plus
+`closed == True`, while acknowledging that raw command-list structure is not
+preserved.
+
 ## Test Speed
 
 `gleeunit.main()` discovers every public function ending in `_test` under
