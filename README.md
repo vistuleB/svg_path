@@ -219,7 +219,7 @@ pub type EndpointPolicy {
 
 `Strict` is the behavior of `subpath`, requiring exact endpoint
 equality. `Wiggle` moves nearby endpoints together within the package's default
-wiggle tolerance of 1e-9, while respecting the horizontality and verticality
+wiggle tolerance of 1e-9 while respecting the horizontality and verticality
 of `Line` segments. `Bridge` keeps existing endpoints in place and inserts a
 straight line segment when needed.
 `WiggleThenBridge`, as the name implies, first tries `Wiggle` before falling
@@ -271,6 +271,13 @@ svg_path.assert_splice_with(subpath, start, delete, insert, policy)
 svg_path.assert_set_closed(subpath, closed)
 svg_path.assert_set_closed_with(subpath, closed, policy)
 ```
+
+`Custom` receives each non-matching adjacent pair as `previous` and `next`, and
+returns replacement segments for that pair. It is called only when the two
+endpoints do not already match. A custom policy can change all aspects of both
+segments (e.g. change the `.start` of the `previous` segment) without
+necessarily triggering an error: errors are generated on final-pass
+verification of the returned subpath.
 
 ### Joining Subpaths
 
@@ -346,15 +353,6 @@ The error behavior is intentionally specific:
 - `InvalidOpenIndex(index, length)` is returned if the index is outside the
   accepted inclusive range.
 
-### Custom Endpoint Policies
-
-`Custom` receives each non-matching adjacent pair as `previous` and `next`, and
-returns replacement segments for that pair. It is called only when the two
-endpoints do not already match. A custom policy can change all aspects of both
-segments (e.g. change the `.start` of the `previous` segment) without
-necessarily triggering an error: errors are generated on final-pass
-verification of the returned subpath.
-
 ### Reversing Subpaths
 
 Use `reverse_subpath` to reverse the traversal direction of a subpath while
@@ -366,12 +364,7 @@ svg_path.reverse_subpath(subpath)
 
 For lower-level operations, `reverse_segment` reverses a single segment.
 
-## Geometry Helpers
-
-The root module provides a few geometry helpers that work directly with the
-`Segment`, `Subpath`, and `Path` model.
-
-### Converting Arcs to Beziers
+## Converting Arcs to Beziers
 
 Some SVG consumers and geometry workflows prefer to avoid elliptical `Arc`
 segments. Use the `_arcs_to_cubic_beziers` function family to replace arcs with
@@ -402,6 +395,11 @@ svg_path.segment_to_cubic_beziers(segment)
 svg_path.subpath_to_cubic_beziers(subpath)
 svg_path.path_to_cubic_beziers(path)
 ```
+
+## Geometry Helpers
+
+The root module provides a few geometry helpers that work directly with the
+`Segment`, `Subpath`, and `Path` model.
 
 ### Bounding Boxes
 
