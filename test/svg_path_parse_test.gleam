@@ -206,6 +206,16 @@ pub fn closepath_adds_closing_line_and_semantic_close_test() {
   assert serialize.subpath(subpath) == "M 0 0 H 10 Z"
 }
 
+pub fn closepath_and_explicit_line_home_parse_to_same_subpath_test() {
+  let assert Ok(direct_path) = parse.path("M 0 0 L 10 0 Z")
+  let assert Ok(explicit_path) = parse.path("M 0 0 L 10 0 L 0 0 Z")
+  let assert Ok(direct_subpath) = svg_path.as_subpath(direct_path)
+  let assert Ok(explicit_subpath) = svg_path.as_subpath(explicit_path)
+
+  assert direct_subpath == explicit_subpath
+  assert serialize.subpath(direct_subpath) == "M 0 0 H 10 Z"
+}
+
 pub fn compact_numbers_parse_test() {
   let assert Ok(path) = parse.path("M0-1L10-1V9")
   let assert Ok(subpath) = svg_path.as_subpath(path)
@@ -245,6 +255,17 @@ pub fn move_only_subpath_is_preserved_test() {
   let assert Ok(path) = parse.path("M 0 0")
 
   assert serialize.path(path) == "M 0 0"
+}
+
+pub fn zero_length_line_subpath_is_not_move_only_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let assert Ok(path) = parse.path("M 0 0 L 0 0")
+  let assert [subpath] = svg_path.subpaths(path)
+
+  assert svg_path.start(subpath) == Ok(a)
+  assert svg_path.end(subpath) == Ok(a)
+  assert svg_path.segments(subpath) == [svg_path.Line(start: a, end: a)]
+  assert serialize.path(path) == "M 0 0 H 0"
 }
 
 pub fn move_only_subpaths_are_ignored_among_real_subpaths_test() {

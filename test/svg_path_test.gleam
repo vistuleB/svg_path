@@ -1513,6 +1513,10 @@ pub fn subpath_can_be_built_from_empty_test() {
   assert svg_path.end(subpath) == Ok(end)
 }
 
+pub fn subpath_rejects_empty_segment_list_test() {
+  assert svg_path.subpath([]) == Error(svg_path.EmptySubpath)
+}
+
 pub fn empty_subpath_has_start_and_end_test() {
   let start = svg_path.point(0.0, 0.0)
 

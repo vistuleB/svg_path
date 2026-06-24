@@ -15,6 +15,14 @@ pub fn empty_subpath_serializes_to_move_test() {
     == "M 0 0"
 }
 
+pub fn closed_empty_subpath_serializes_to_move_and_z_test() {
+  let subpath =
+    svg_path.empty_subpath(at: svg_path.point(0.0, 0.0))
+    |> svg_path.assert_set_closed(closed: True)
+
+  assert serialize.subpath(subpath) == "M 0 0 Z"
+}
+
 pub fn path_serializes_empty_subpaths_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)
