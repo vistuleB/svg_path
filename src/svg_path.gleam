@@ -116,9 +116,13 @@ pub type Path {
 
 /// A positioned sequence of path segments, optionally closed.
 ///
-/// The constructor is opaque so that subpaths cannot be created in an invalid
-/// discontinuous state. Use `subpath`, `empty_subpath`, `append_segment`, or
-/// their `_with` variants to build values.
+/// The first segment, when present, starts at the subpath start point. The last
+/// segment of a closed subpath, when present, also ends at the subpath start
+/// point. Empty subpaths may be open or closed.
+///
+/// The constructor is opaque so that these invariants are maintained. Use
+/// `subpath`, `empty_subpath`, `append_segment`, or their `_with` variants to
+/// build values.
 pub opaque type Subpath {
   Subpath(start: Point, segments: List(Segment), closed: Bool)
 }
@@ -367,11 +371,16 @@ pub fn as_subpath(path: Path) -> Result(Subpath, Error) {
 }
 
 /// Create an empty open subpath at a start point.
+///
+/// This represents a move-only subpath such as `M 0 0`.
 pub fn empty_subpath(at start: Point) -> Subpath {
   Subpath(start:, segments: [], closed: False)
 }
 
-/// Create an open subpath from a continuous list of segments.
+/// Create an open subpath from a non-empty continuous list of segments.
+///
+/// Returns `EmptySubpath` if the segment list is empty. Use `empty_subpath`
+/// when you need to represent a move-only subpath.
 ///
 /// Returns `Discontinuous` if any segment starts somewhere other than the
 /// previous segment's end point. The error includes the two segment indices
@@ -381,6 +390,8 @@ pub fn subpath(segments: List(Segment)) -> Result(Subpath, Error) {
 }
 
 /// Create an open subpath using the given endpoint reconciliation policy.
+///
+/// Empty segment lists still return `EmptySubpath`.
 pub fn subpath_with(
   segments: List(Segment),
   policy endpoint_policy: EndpointPolicy,
@@ -388,8 +399,8 @@ pub fn subpath_with(
   open_subpath_with_segments(segments, endpoint_policy)
 }
 
-/// Create an open subpath from a continuous list of segments, panicking if the
-/// segments are invalid.
+/// Create an open subpath from a non-empty continuous list of segments,
+/// panicking if the segments are invalid.
 ///
 /// This is useful for hand-authored paths where invalid continuity would be a
 /// programmer error. Use `subpath` when you want to handle construction errors.
@@ -415,8 +426,8 @@ pub fn segments(subpath: Subpath) -> List(Segment) {
 
 /// Remove zero-length line segments from a subpath.
 ///
-/// If the subpath contains only one zero-length line, it is preserved so the
-/// subpath does not become empty.
+/// If cleanup would remove every segment, one zero-length line is preserved so
+/// a zero-length drawing subpath does not become a move-only subpath.
 pub fn clean_subpath(subpath: Subpath) -> Subpath {
   let cleaned =
     subpath.segments
@@ -664,9 +675,9 @@ pub fn is_closed(subpath: Subpath) -> Bool {
 
 /// Set a subpath's semantic closed state.
 ///
-/// Setting `closed` to `False` only clears the semantic closed flag. Setting it
-/// to `True` requires a non-empty subpath's end point to exactly match its
-/// start point. Empty subpaths may be closed.
+/// Setting `closed` to `False` always succeeds. Setting it to `True` requires a
+/// non-empty subpath's end point to exactly match its start point. Empty
+/// subpaths may be closed.
 pub fn set_closed(
   subpath: Subpath,
   closed closed: Bool,
@@ -676,9 +687,9 @@ pub fn set_closed(
 
 /// Set a subpath's semantic closed state with an endpoint policy.
 ///
-/// Setting `closed` to `False` only clears the semantic closed flag. Setting it
-/// to `True` uses the given endpoint policy to reconcile a non-empty subpath's
-/// end point with its start point. Empty subpaths may be closed.
+/// Setting `closed` to `False` always succeeds. Setting it to `True` uses the
+/// given endpoint policy to reconcile a non-empty subpath's end point with its
+/// start point. Empty subpaths may be closed.
 pub fn set_closed_with(
   subpath: Subpath,
   closed closed: Bool,
@@ -715,6 +726,8 @@ pub fn assert_set_closed_with(
 /// between `-length` and `length`, inclusive, where `length` is the number of
 /// segments in the subpath. After validation, the index is taken modulo the
 /// length, so `length`, `0`, and `-length` all open at the first segment.
+/// Opening a closed empty subpath at index `0` returns an open empty subpath
+/// with the same start point.
 pub fn open_at(subpath: Subpath, index index: Int) -> Result(Subpath, Error) {
   let length = list.length(subpath.segments)
 

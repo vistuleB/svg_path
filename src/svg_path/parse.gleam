@@ -55,7 +55,8 @@ type State {
 /// Parse an SVG path data string into a `Path`.
 ///
 /// Empty strings parse as an empty path. Move-only subpaths are preserved as
-/// empty subpaths with start points.
+/// empty subpaths with start points. Closepath commands mark subpaths as
+/// closed, inserting a straight line back to the subpath start when needed.
 pub fn path(input: String) -> Result(svg_path.Path, Error) {
   case tokenize(input) {
     Error(error) -> Error(error)

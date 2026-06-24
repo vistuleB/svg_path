@@ -207,11 +207,16 @@ pub fn with_left_padding(
 }
 
 /// Serialize a path with default options.
+///
+/// Empty paths serialize to the empty string. Empty subpaths serialize as
+/// move-only subpaths. Closed subpaths end in `Z`.
 pub fn path(path: svg_path.Path) -> String {
   path_with_options(path, default_options())
 }
 
 /// Serialize a path with custom options.
+///
+/// With relative options, closed subpaths end in `z`.
 pub fn path_with_options(
   path path: svg_path.Path,
   options options: Options,
@@ -231,11 +236,15 @@ pub fn path_with_options(
 }
 
 /// Serialize a subpath with default options.
+///
+/// Empty subpaths serialize as move-only subpaths. Closed subpaths end in `Z`.
 pub fn subpath(subpath: svg_path.Subpath) -> String {
   subpath_with_options(subpath, default_options())
 }
 
 /// Serialize a subpath with custom options.
+///
+/// With relative options, closed subpaths end in `z`.
 pub fn subpath_with_options(
   subpath subpath: svg_path.Subpath,
   options options: Options,
