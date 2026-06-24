@@ -3,10 +3,9 @@
 [![Package Version](https://img.shields.io/hexpm/v/svg_path)](https://hex.pm/packages/svg_path)
 [![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/svg_path/)
 
-`svg_path` is a set of utilities for working with the payloads of
-`d` and `transform` SVG attributes. This encompasses parsing, serialization,
-pretty-printing, as well as the semantic geometric manipulation of paths,
-subpaths, subpath segments, and transform matrices.
+Utilities for working with SVG `d` and `transform` attributes, encompassing
+parsing, serialization, and geometric manipulation of paths, subpaths, subpath
+segments, and transform matrices.
 
 ```sh
 gleam add svg_path@0
@@ -18,7 +17,9 @@ import svg_path/serialize
 
 pub fn tidy_path_data(input: String) -> String {
   let assert Ok(path) = parse.path(input)
-  serialize.path(path)
+  let options = serialize.decimal_options(2)
+
+  serialize.path_with_options(path, options:)
 }
 ```
 
@@ -27,16 +28,11 @@ import gleam/result
 import svg_path
 import svg_path/parse
 import svg_path/serialize
-import svg_path/transform
 
 pub fn prepare_for_arc_averse_consumer(
   input: String,
 ) -> Result(String, parse.Error) {
   use path <- result.try(parse.path(input))
-
-  let assert Ok(path) =
-    path
-    |> transform.scale_path(factor: 2.0)
 
   path
   |> svg_path.path_arcs_to_cubic_beziers
@@ -47,8 +43,8 @@ pub fn prepare_for_arc_averse_consumer(
 
 ## Core Model
 
-The root `svg_path` module models SVG path data with four main types: `Point`,
-`Segment`, `Subpath`, and `Path`.
+The root `svg_path` module represents SVG path data with `Path` and `Subpath`
+types, supported by lower-level primitives `Segment` and `Point`.
 
 ### Points
 
@@ -67,36 +63,44 @@ svg_path.point(10.0, 20.0)
 
 ### Segments
 
-A `Segment` is one drawing instruction with explicit start and end points.
-These are the public segment variants:
+A `Segment` is one SVG path segment, expressed in absolute coordinates, i.e.,
+not relative to a previous "current point":
 
 ```gleam
-svg_path.Line(start:, end:)
-svg_path.QuadraticBezier(start:, control:, end:)
-svg_path.CubicBezier(start:, control1:, control2:, end:)
-svg_path.Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:)
+pub type Segment {
+  Line(start: Point, end: Point)
+  QuadraticBezier(start: Point, control: Point, end: Point)
+  CubicBezier(start: Point, control1: Point, control2: Point, end: Point)
+  Arc(
+    start: Point,
+    radius: Point,
+    x_axis_rotation: Float,
+    large_arc: Bool,
+    sweep: Bool,
+    end: Point,
+  )
+}
 ```
 
-Segments can be evaluated and split by their local parameter `t`, where `0.0`
-is the segment start and `1.0` is the segment end:
+Segments can be evaluated, differentiated, and split by their local parameter
+`t`, where `0.0` is the segment start and `1.0` is the segment end:
 
 ```gleam
-svg_path.segment_point(segment, at: 0.5)
-svg_path.segment_derivative(segment, at: 0.5)
-svg_path.split_segment(segment, at: 0.5)
-svg_path.sub_segment(segment, from: 0.25, to: 0.75)
-svg_path.sub_segments(segment, between: [0.25, 0.75, 0.5])
+svg_path.segment_point(segment, at: 0.5)                    // -> Result(Point, svg_path.Error)
+svg_path.segment_derivative(segment, at: 0.5)               // -> Result(Point, svg_path.Error)
+svg_path.split_segment(segment, at: 0.5)                    // -> Result(#(Segment, Segment), svg_path.Error)
+svg_path.sub_segment(segment, from: 0.25, to: 0.75)         // -> Result(Segment, svg_path.Error)
+svg_path.sub_segments(segment, between: [0.25, 0.75, 0.5])  // -> Result(List(Segment), svg_path.Error)
 ```
 
-These helpers work for lines, quadratic Beziers, cubic Beziers, and arcs.
-Values outside `0.0..1.0` silently extrapolate along the same segment. 
-Use `_inside` variants of the same functions, such as `segment_point_inside`,
-to force errors instead.
+Values outside `0.0..1.0` lead to silent extrapolation along the same algebraic
+parameterization. Use `_inside` variants of the same functions to surface
+parameter domain errors instead.
 
 ### Subpaths
 
-A `Subpath` has a start point, a list of end-to-end segments, and a flag for
-topological closure. Its constructor is opaque:
+A `Subpath` is opaque. It internally consists of a start point, a list of
+end-to-end segments, and a flag indicating topological closure:
 
 ```gleam
 pub opaque type Subpath {
@@ -104,26 +108,26 @@ pub opaque type Subpath {
 }
 ```
 
-The first segment, when present, must start at `start`, and adjacent segments
-must meet end-to-start. The `closed` field records whether the subpath is
-topologically closed. When a non-empty subpath is closed, its last segment must
-end at `start`; empty subpaths may also be closed. These invariants are
-guaranteed by keeping the type opaque. A `Subpath`'s serialization ends in
-`Z`/`z` if and only if `closed == True`.
+The library guarantees that the first segment, when present, starts at `start`,
+and that the last segment of a topologically closed subpath, when present, ends
+at `start`.
+
+Subpaths with `segments == []` can have any value of `closed`. A `Subpath`'s
+serialization ends in `Z`/`z` if and only if `closed == True`.
 
 Use `svg_path.subpath` to construct an open subpath from a nonempty list of
 contiguous segments, and `svg_path.set_closed` to change whether a subpath is
 topologically closed; note that `set_closed(_, True)` may result in an error,
-but `set_closed(_, False)` may not:
+but `set_closed(_, False)` cannot:
 
 ```gleam
 svg_path.subpath(segments)                  // -> Result(Subpath, svg_path.Error)
 svg_path.set_closed(subpath, closed: Bool)  // -> Result(Subpath, svg_path.Error)
 ```
 
-Construction succeeds when the required segment endpoints meet. Initialize empty
-move-only subpaths with `empty_subpath(at:)` where `at` gives the start of the
-subpath.
+Construction succeeds when the required segment endpoints meet. Construct empty
+"move-only" subpaths with `empty_subpath(at:)` where `at` gives the start of
+the subpath.
 
 In the following example the segments return to their starting point
 geometrically, but the subpath only becomes topologically closed after
@@ -155,8 +159,9 @@ pub fn closed_triangle() -> Result(svg_path.Subpath, svg_path.Error) {
 ```
 
 Use `svg_path.clean_subpath(subpath)` to remove zero-length segments from a
-`Subpath` while preserving one zero-length segment if cleanup would otherwise
-remove every segment.
+`Subpath`. Note that `clean_subpath` will preserve at least one zero-length
+segment of a nonempty `Subpath` in all cases, though it will not add any new
+segments if `segments == []` to start with.
 
 ### Paths
 
@@ -210,10 +215,11 @@ svg_path.WiggleThenBridge
 svg_path.Custom(fn(previous, next) { #(previous, next) })
 ```
 
-`Strict` requires exact endpoint equality. `Wiggle` moves nearby endpoints
-together within the package's default wiggle tolerance of `0.000000001`, while
-preserving horizontal and vertical straight-line segments. `Bridge` keeps
-existing endpoints in place and inserts a straight line segment when needed.
+`Strict` is the default behavior for `subpath`, requiring exact endpoint
+equality. `Wiggle` moves nearby endpoints together within the package's default
+wiggle tolerance of `0.000000001`, while preserving horizontal and vertical
+straight-line segments. `Bridge` keeps existing endpoints in place and inserts
+a straight line segment when needed.
 `WiggleThenBridge`, as the name implies, first tries `Wiggle` before falling
 back on `Bridge`. `Custom` gives callers a hook for bespoke endpoint
 reconciliation.
@@ -337,8 +343,9 @@ greater than the subpath length return `InvalidSplice`.
 
 With the default `Strict` policy, the edited subpath must still be continuous,
 otherwise `Discontinuous` is returned with segment indices, points, and
-distance. Closed subpaths preserve their closed state. If a splice produces an
-empty subpath, the previous start point is preserved.
+distance. Closed subpaths preserve their closed state. If the splice result is
+nonempty, the subpath start is updated to the first resulting segment's start
+point. If the splice result is empty, the previous start point is preserved.
 
 Use `splice_with` when the splice should use a different endpoint policy:
 

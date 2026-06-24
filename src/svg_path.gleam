@@ -463,8 +463,9 @@ pub fn clean_path(path: Path) -> Path {
 /// `InvalidSplice`.
 ///
 /// The edited subpath must remain continuous. Closed subpaths preserve their
-/// closed state. If the splice makes a subpath empty, the previous start point
-/// is preserved.
+/// closed state. If the splice result is nonempty, the subpath start is updated
+/// to the first resulting segment's start point. If the splice result is empty,
+/// the previous start point is preserved.
 pub fn splice(
   subpath: Subpath,
   start start: Int,
