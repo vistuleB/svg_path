@@ -137,6 +137,76 @@ pub fn seeded_worst_direction_stays_within_max_drift_test() {
   assert near_float(upper, 4.0)
 }
 
+pub fn loop_initial_sample_angles_merges_sorted_seed_angles_test() {
+  assert convex_hull.test_loop_initial_sample_angles(4, seed_angles: [
+      45.0,
+      225.0,
+    ])
+    == [0.0, 45.0, 90.0, 180.0, 225.0, 270.0]
+}
+
+pub fn loop_initial_sample_angles_normalizes_seed_angles_test() {
+  assert convex_hull.test_loop_initial_sample_angles(4, seed_angles: [
+      -90.0,
+      405.0,
+    ])
+    == [0.0, 45.0, 90.0, 180.0, 270.0]
+}
+
+pub fn loop_initial_sample_angles_removes_near_seed_angles_test() {
+  assert convex_hull.test_loop_initial_sample_angles(4, seed_angles: [
+      45.0,
+      45.01,
+    ])
+    == [0.0, 45.0, 90.0, 180.0, 270.0]
+}
+
+pub fn loop_initial_sample_angles_removes_wraparound_duplicates_test() {
+  assert convex_hull.test_loop_initial_sample_angles(4, seed_angles: [
+      -0.0005,
+    ])
+    == [0.0, 90.0, 180.0, 270.0]
+}
+
+pub fn loop_union_with_seed_angles_removes_zero_length_endpoint_pieces_test() {
+  let segments =
+    convex_hull.test_loop_union_segments_with_seed_angles(
+      big_line_loop(),
+      tiny_arc_loop(),
+      seed_angles: [
+        0.49724434278326146,
+        0.5027556573338349,
+      ],
+    )
+
+  assert list.length(segments) == 4
+  assert segments
+    |> list.all(fn(segment) {
+      points_near(
+        svg_path.segment_start(segment),
+        svg_path.segment_end(segment),
+      )
+      == False
+    })
+}
+
+pub fn ambitious_repair_loop_with_loop_adds_tiny_arc_slice_test() {
+  let assert Ok(segments) =
+    convex_hull.test_ambitious_repair_loop_with_loop(
+      big_line_loop(),
+      addition: tiny_arc_loop(),
+    )
+
+  assert list.length(segments) == 4
+  assert segments
+    |> list.any(fn(segment) {
+      case segment {
+        svg_path.Arc(..) -> True
+        _ -> False
+      }
+    })
+}
+
 pub fn point_chord_polygon_loop_separation_returns_none_for_inside_polygon_point_test() {
   let loop = square_loop()
   assert convex_hull.test_point_chord_polygon_loop_separation(
@@ -468,6 +538,38 @@ pub fn path_hull_handles_scaled_two_arc_probe_test() {
   assert svg_path.is_closed(hull)
 }
 
+// This line/arc probe covers a narrow arc whose visible hull slice can sit
+// between the first-pass sample angles. Dumb repair should still return a
+// valid closed hull by adding visible arc endpoints as points, usually yielding
+// a line-only triangle. Ambitious repair should reseed the loop union near the
+// missed support directions and preserve a small arc slice in the final hull.
+pub fn path_hull_with_dumb_repair_mode_handles_line_arc_probe_test() {
+  let assert Ok(hull) =
+    convex_hull.test_path_hull_with_repair_mode(
+      line_arc_probe_path(),
+      repair_mode: "dumb",
+    )
+
+  assert svg_path.is_closed(hull)
+}
+
+pub fn path_hull_with_ambitious_repair_mode_handles_line_arc_probe_test() {
+  let assert Ok(hull) =
+    convex_hull.test_path_hull_with_repair_mode(
+      line_arc_probe_path(),
+      repair_mode: "ambitious",
+    )
+
+  assert svg_path.is_closed(hull)
+  assert svg_path.segments(hull)
+    |> list.any(fn(segment) {
+      case segment {
+        svg_path.Arc(..) -> True
+        _ -> False
+      }
+    })
+}
+
 pub fn point_exact_loop_tangent_subpaths_finds_cubic_interior_tangencies_test() {
   let loop = [
     svg_path.Line(
@@ -726,6 +828,57 @@ fn conflicting_tangent_line_like_loop() -> List(svg_path.Segment) {
       end: a,
     ),
   ]
+}
+
+fn big_line_loop() -> List(svg_path.Segment) {
+  let start = svg_path.point(1000.0, 0.0)
+  let end = svg_path.point(999.84769516, 17.45240644)
+
+  [
+    svg_path.Line(start:, end:),
+    svg_path.Line(start: end, end: start),
+  ]
+}
+
+fn tiny_arc_loop() -> List(svg_path.Segment) {
+  let start = svg_path.point(999.94340504, 7.63106966)
+  let end = svg_path.point(999.92428935, 9.82151131)
+  let arc =
+    svg_path.Arc(
+      start:,
+      radius: svg_path.point(30.0, 30.0),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: True,
+      end:,
+    )
+
+  [
+    arc,
+    svg_path.Line(start: end, end: start),
+  ]
+}
+
+fn line_arc_probe_path() -> svg_path.Path {
+  let line =
+    svg_path.Line(
+      start: svg_path.point(1000.0, 0.0),
+      end: svg_path.point(999.84769516, 17.45240644),
+    )
+  let arc =
+    svg_path.Arc(
+      start: svg_path.point(999.94340504, 7.63106966),
+      radius: svg_path.point(30.0, 30.0),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: True,
+      end: svg_path.point(999.92428935, 9.82151131),
+    )
+
+  svg_path.Path([
+    svg_path.assert_subpath([line]),
+    svg_path.assert_subpath([arc]),
+  ])
 }
 
 fn support_values_match(

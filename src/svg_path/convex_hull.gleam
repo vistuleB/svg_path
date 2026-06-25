@@ -21,6 +21,8 @@ const loop_union_sample_count = 360
 
 const loop_union_tie_tolerance = 0.0000001
 
+const loop_union_angle_tolerance = 0.02
+
 const loop_union_point_tolerance = 0.000001
 
 const loop_union_bisection_steps = 32
@@ -28,6 +30,14 @@ const loop_union_bisection_steps = 32
 const seeded_worst_direction_step = 0.1
 
 const seeded_worst_direction_refined_step = 0.01
+
+const loop_union_seed_max_drift = 1.0
+
+const repair_mode_dumb = "dumb"
+
+const repair_mode_ambitious = "ambitious"
+
+const default_repair_mode = repair_mode_ambitious
 
 const loop_prefilter_enabled = True
 
@@ -174,7 +184,7 @@ pub fn subpath_hull(
 ) -> Result(svg_path.Subpath, HullError) {
   subpath
   |> hull_input_segments
-  |> segments_hull
+  |> segments_hull(repair_mode: default_repair_mode)
 }
 
 /// Compute the convex hull of a path.
@@ -188,7 +198,7 @@ pub fn path_hull(path: svg_path.Path) -> Result(svg_path.Subpath, HullError) {
     subpaths -> {
       subpaths
       |> list.flat_map(hull_input_segments)
-      |> segments_hull
+      |> segments_hull(repair_mode: default_repair_mode)
     }
   }
 }
@@ -261,7 +271,35 @@ pub fn test_loop_plus_points_hull(
   segments: List(svg_path.Segment),
   points points: List(svg_path.Point),
 ) -> Result(List(svg_path.Segment), HullError) {
-  use loop <- result.try(loop_plus_points_hull(Loop(segments), points))
+  use loop <- result.try(dumb_repair_loop_with_points(Loop(segments), points))
+  let Loop(segments:) = loop
+  Ok(segments)
+}
+
+@internal
+pub fn test_path_hull_with_repair_mode(
+  path: svg_path.Path,
+  repair_mode repair_mode: String,
+) -> Result(svg_path.Subpath, HullError) {
+  case svg_path.subpaths(path) {
+    [] -> Error(PathError(svg_path.EmptyPath))
+    subpaths -> {
+      subpaths
+      |> list.flat_map(hull_input_segments)
+      |> segments_hull(repair_mode:)
+    }
+  }
+}
+
+@internal
+pub fn test_ambitious_repair_loop_with_loop(
+  current: List(svg_path.Segment),
+  addition addition: List(svg_path.Segment),
+) -> Result(List(svg_path.Segment), HullError) {
+  use loop <- result.try(ambitious_repair_loop_with_loop(
+    Loop(current),
+    addition: Loop(addition),
+  ))
   let Loop(segments:) = loop
   Ok(segments)
 }
@@ -279,6 +317,31 @@ pub fn test_find_seeded_worst_direction(
     direction:,
     threshold:,
   )
+}
+
+@internal
+pub fn test_loop_initial_sample_angles(
+  sample_count: Int,
+  seed_angles seed_angles: List(Float),
+) -> List(Float) {
+  loop_initial_sample_angles(sample_count, seed_angles:)
+}
+
+@internal
+pub fn test_loop_union_segments_with_seed_angles(
+  loop_a: List(svg_path.Segment),
+  loop_b: List(svg_path.Segment),
+  seed_angles seed_angles: List(Float),
+) -> List(svg_path.Segment) {
+  let loop_a = Loop(loop_a)
+  let loop_b = Loop(loop_b)
+  loop_union(
+    loop_a,
+    loop_b,
+    sample_count: loop_union_sample_count,
+    seed_angles:,
+  )
+  |> union_piece_segments(loop_a, loop_b)
 }
 
 @internal
@@ -308,16 +371,17 @@ pub fn test_point_loop_view(
 
 fn segments_hull(
   segments: List(svg_path.Segment),
+  repair_mode repair_mode: String,
 ) -> Result(svg_path.Subpath, HullError) {
   use loops <- result.try(segment_convex_loops(segments))
   let loops = maybe_prefilter_convex_loops(loops)
   let repair_points = distinct_convex_loop_endpoints(loops)
   use convex_loop <- result.try(
     loops
-    |> union_convex_loop_list,
+    |> union_convex_loop_list(repair_mode:),
   )
   let ConvexLoop(loop:, enclosure: _) = convex_loop
-  use repaired <- result.try(loop_plus_points_hull(loop, repair_points))
+  use repaired <- result.try(dumb_repair_loop_with_points(loop, repair_points))
   let Loop(segments:) = repaired
   build_closed_subpath(segments)
 }
@@ -401,6 +465,7 @@ fn add_distinct_point(
 
 fn union_convex_loop_list(
   loops: List(ConvexLoop),
+  repair_mode repair_mode: String,
 ) -> Result(ConvexLoop, HullError) {
   case loops {
     [] -> Error(LoopUnionCollapsed)
@@ -408,7 +473,7 @@ fn union_convex_loop_list(
       rest
       |> list.fold(Ok(first), fn(hull, loop) {
         use hull <- result.try(hull)
-        union_convex_loops(hull, loop)
+        union_convex_loops(hull, loop, repair_mode:)
       })
   }
 }
@@ -416,10 +481,17 @@ fn union_convex_loop_list(
 fn union_convex_loops(
   left: ConvexLoop,
   right: ConvexLoop,
+  repair_mode repair_mode: String,
 ) -> Result(ConvexLoop, HullError) {
   let ConvexLoop(loop: Loop(left_segments), enclosure: _) = left
   let ConvexLoop(loop: Loop(right_segments), enclosure: _) = right
   use segments <- result.try(union_loop_segments(left_segments, right_segments))
+  use repaired <- result.try(configured_repair_loop_with_loop(
+    Loop(segments),
+    addition: Loop(right_segments),
+    repair_mode:,
+  ))
+  let Loop(segments:) = repaired
   Ok(convex_loop(segments))
 }
 
@@ -843,7 +915,7 @@ fn loop_plus_point_hull(
   Ok(Loop(svg_path.segments(closed)))
 }
 
-fn loop_plus_points_hull(
+fn dumb_repair_loop_with_points(
   loop: Loop,
   points: List(svg_path.Point),
 ) -> Result(Loop, HullError) {
@@ -852,12 +924,12 @@ fn loop_plus_points_hull(
     use current <- result.try(current)
     case point_chord_polygon_loop_separation(current, point) {
       None -> Ok(current)
-      Some(_) -> repair_loop_with_point(current, point)
+      Some(_) -> dumb_repair_loop_with_point(current, point)
     }
   })
 }
 
-fn repair_loop_with_point(
+fn dumb_repair_loop_with_point(
   loop: Loop,
   point: svg_path.Point,
 ) -> Result(Loop, HullError) {
@@ -866,6 +938,83 @@ fn repair_loop_with_point(
     Error(TangentSearchExpectedTwoTangencies(_)) -> Ok(loop)
     Error(error) -> Error(error)
   }
+}
+
+fn configured_repair_loop_with_loop(
+  current: Loop,
+  addition addition: Loop,
+  repair_mode repair_mode: String,
+) -> Result(Loop, HullError) {
+  case repair_mode {
+    mode if mode == repair_mode_ambitious ->
+      ambitious_repair_loop_with_loop(current, addition:)
+    mode if mode == repair_mode_dumb -> Ok(current)
+    _ -> Ok(current)
+  }
+}
+
+fn ambitious_repair_loop_with_loop(
+  current: Loop,
+  addition addition: Loop,
+) -> Result(Loop, HullError) {
+  use seed_angles <- result.try(ambitious_repair_seed_angles(current, addition:))
+  case seed_angles {
+    [] -> Ok(current)
+    _ -> {
+      let segments =
+        seeded_loop_union_segments(current, addition: addition, seed_angles:)
+      case segments {
+        [] -> Ok(current)
+        _ -> Ok(Loop(segments))
+      }
+    }
+  }
+}
+
+fn ambitious_repair_seed_angles(
+  current: Loop,
+  addition addition: Loop,
+) -> Result(List(Float), HullError) {
+  loop_endpoints(addition)
+  |> list.fold(Ok([]), fn(seed_angles, point) {
+    use seed_angles <- result.try(seed_angles)
+    case point_chord_polygon_loop_separation(current, point) {
+      None -> Ok(seed_angles)
+      Some(#(direction, _)) -> {
+        use refined <- result.try(find_seeded_worst_direction(
+          current,
+          addition,
+          direction:,
+          threshold: loop_union_seed_max_drift,
+        ))
+        let #(lower, upper) = refined
+        Ok([lower, upper, ..seed_angles])
+      }
+    }
+  })
+  |> result.map(list.reverse)
+}
+
+fn seeded_loop_union_segments(
+  current: Loop,
+  addition addition: Loop,
+  seed_angles seed_angles: List(Float),
+) -> List(svg_path.Segment) {
+  loop_union(
+    current,
+    addition,
+    sample_count: loop_union_sample_count,
+    seed_angles:,
+  )
+  |> union_piece_segments(current, addition)
+}
+
+fn loop_endpoints(loop: Loop) -> List(svg_path.Point) {
+  let Loop(segments:) = loop
+  segments
+  |> segment_endpoints_for_repair
+  |> list.fold([], fn(points, point) { add_distinct_point(points, point) })
+  |> list.reverse
 }
 
 fn subpath_start(subpath: svg_path.Subpath) -> svg_path.Point {
@@ -2079,7 +2228,13 @@ fn union_loop_segments(
 ) -> Result(List(svg_path.Segment), HullError) {
   let loop_a = Loop(left)
   let loop_b = Loop(right)
-  let pieces = loop_union(loop_a, loop_b, sample_count: loop_union_sample_count)
+  let pieces =
+    loop_union(
+      loop_a,
+      loop_b,
+      sample_count: loop_union_sample_count,
+      seed_angles: [],
+    )
   case union_piece_segments(pieces, loop_a, loop_b) {
     [] -> {
       use segments <- result.try(dominant_loop_segments(loop_a, loop_b))
@@ -2144,8 +2299,9 @@ fn loop_union(
   loop_a: Loop,
   loop_b: Loop,
   sample_count sample_count: Int,
+  seed_angles seed_angles: List(Float),
 ) -> List(UnionPiece) {
-  let samples = loop_initial_samples(loop_a, loop_b, sample_count)
+  let samples = loop_initial_samples(loop_a, loop_b, sample_count, seed_angles:)
   let boundaries = loop_transition_boundaries(loop_a, loop_b, samples)
 
   case boundaries {
@@ -2175,18 +2331,87 @@ fn union_piece_segments(
       ]
     }
   })
+  |> remove_point_like_segments
 }
 
 fn loop_initial_samples(
   loop_a: Loop,
   loop_b: Loop,
   sample_count: Int,
+  seed_angles seed_angles: List(Float),
 ) -> List(LoopSample) {
-  int.range(from: 0, to: sample_count - 1, with: [], run: fn(samples, i) {
+  loop_initial_sample_angles(sample_count, seed_angles:)
+  |> list.map(loop_sample(loop_a, loop_b, _))
+}
+
+fn loop_initial_sample_angles(
+  sample_count: Int,
+  seed_angles seed_angles: List(Float),
+) -> List(Float) {
+  list.append(uniform_sample_angles(sample_count), seed_angles)
+  |> list.map(normalize_angle)
+  |> list.sort(by: float.compare)
+  |> unique_loop_sample_angles
+  |> remove_loop_sample_angle_wrap_duplicate
+}
+
+fn uniform_sample_angles(sample_count: Int) -> List(Float) {
+  int.range(from: 0, to: sample_count, with: [], run: fn(angles, i) {
     let angle = int.to_float(i) *. 360.0 /. int.to_float(sample_count)
-    [loop_sample(loop_a, loop_b, angle), ..samples]
+    [angle, ..angles]
   })
   |> list.reverse
+}
+
+fn unique_loop_sample_angles(angles: List(Float)) -> List(Float) {
+  unique_loop_sample_angles_loop(angles, previous: None, kept: [])
+}
+
+fn unique_loop_sample_angles_loop(
+  angles: List(Float),
+  previous previous: Option(Float),
+  kept kept: List(Float),
+) -> List(Float) {
+  case angles {
+    [] -> list.reverse(kept)
+    [angle, ..rest] -> {
+      case previous {
+        Some(previous) -> {
+          case angle -. previous <. loop_union_angle_tolerance {
+            True ->
+              unique_loop_sample_angles_loop(
+                rest,
+                previous: Some(previous),
+                kept:,
+              )
+            False ->
+              unique_loop_sample_angles_loop(rest, previous: Some(angle), kept: [
+                angle,
+                ..kept
+              ])
+          }
+        }
+        None ->
+          unique_loop_sample_angles_loop(rest, previous: Some(angle), kept: [
+            angle,
+            ..kept
+          ])
+      }
+    }
+  }
+}
+
+fn remove_loop_sample_angle_wrap_duplicate(angles: List(Float)) -> List(Float) {
+  case angles {
+    [] | [_] -> angles
+    [first, ..] -> {
+      let assert Ok(last) = list.last(angles)
+      case first +. 360.0 -. last <. loop_union_angle_tolerance {
+        True -> drop_last(angles)
+        False -> angles
+      }
+    }
+  }
 }
 
 fn loop_sample(loop_a: Loop, loop_b: Loop, angle: Float) -> LoopSample {

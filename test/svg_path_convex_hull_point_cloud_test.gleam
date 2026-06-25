@@ -18,6 +18,72 @@ pub fn path_hull_handles_10_point_cloud_test() {
   assert point_cloud_hull_matches_support(10)
 }
 
+pub fn path_hull_handles_single_point_cloud_test() {
+  assert point_cloud_matches_support([svg_path.point(4.0, -3.0)])
+}
+
+pub fn path_hull_handles_duplicate_single_point_cloud_test() {
+  let point = svg_path.point(4.0, -3.0)
+  assert point_cloud_matches_support([point, point, point])
+}
+
+pub fn path_hull_handles_two_point_cloud_test() {
+  assert point_cloud_matches_support([
+    svg_path.point(-2.0, 1.0),
+    svg_path.point(5.0, 1.0),
+  ])
+}
+
+pub fn path_hull_handles_duplicate_two_point_cloud_test() {
+  let a = svg_path.point(-2.0, 1.0)
+  let b = svg_path.point(5.0, 1.0)
+  assert point_cloud_matches_support([a, b, a, b, a])
+}
+
+pub fn path_hull_handles_horizontal_collinear_point_cloud_test() {
+  assert point_cloud_matches_support([
+    svg_path.point(-2.0, 1.0),
+    svg_path.point(0.0, 1.0),
+    svg_path.point(3.0, 1.0),
+    svg_path.point(5.0, 1.0),
+  ])
+}
+
+pub fn path_hull_handles_vertical_collinear_point_cloud_test() {
+  assert point_cloud_matches_support([
+    svg_path.point(2.0, -3.0),
+    svg_path.point(2.0, -1.0),
+    svg_path.point(2.0, 4.0),
+    svg_path.point(2.0, 8.0),
+  ])
+}
+
+pub fn path_hull_handles_positive_diagonal_collinear_point_cloud_test() {
+  assert point_cloud_matches_support([
+    svg_path.point(-2.0, -1.0),
+    svg_path.point(0.0, 1.0),
+    svg_path.point(3.0, 4.0),
+    svg_path.point(5.0, 6.0),
+  ])
+}
+
+pub fn path_hull_handles_negative_diagonal_collinear_point_cloud_test() {
+  assert point_cloud_matches_support([
+    svg_path.point(-2.0, 6.0),
+    svg_path.point(0.0, 4.0),
+    svg_path.point(3.0, 1.0),
+    svg_path.point(5.0, -1.0),
+  ])
+}
+
+pub fn path_hull_handles_duplicate_collinear_point_cloud_test() {
+  let a = svg_path.point(-2.0, -1.0)
+  let b = svg_path.point(0.0, 1.0)
+  let c = svg_path.point(3.0, 4.0)
+  let d = svg_path.point(5.0, 6.0)
+  assert point_cloud_matches_support([b, a, c, b, d, a, c])
+}
+
 pub fn path_hull_handles_100_point_cloud_test() {
   assert point_cloud_hull_matches_support(100)
 }
@@ -41,23 +107,26 @@ fn unit_circle_point_cloud_hull_matches_support(count: Int) -> Bool {
 }
 
 fn point_cloud_matches_support(points: List(svg_path.Point)) -> Bool {
+  ["dumb", "ambitious"]
+  |> list.all(fn(repair_mode) {
+    point_cloud_matches_support_with_repair_mode(points, repair_mode:)
+  })
+}
+
+fn point_cloud_matches_support_with_repair_mode(
+  points: List(svg_path.Point),
+  repair_mode repair_mode: String,
+) -> Bool {
   let path =
     points
     |> list.map(fn(point) { svg_path.empty_subpath(at: point) })
     |> svg_path.Path
 
-  case convex_hull.path_hull(path) {
+  case convex_hull.test_path_hull_with_repair_mode(path, repair_mode:) {
     Error(_) -> False
     Ok(hull) -> {
       svg_path.is_closed(hull)
-      && points
-      |> list.all(fn(point) {
-        convex_hull.test_point_chord_polygon_loop_separation(
-          svg_path.segments(hull),
-          point:,
-        )
-        == None
-      })
+      && original_points_are_inside_hull(points, hull)
       && support_angles()
       |> list.all(fn(angle) {
         case
@@ -71,6 +140,20 @@ fn point_cloud_matches_support(points: List(svg_path.Point)) -> Bool {
       })
     }
   }
+}
+
+fn original_points_are_inside_hull(
+  points: List(svg_path.Point),
+  hull: svg_path.Subpath,
+) -> Bool {
+  points
+  |> list.all(fn(point) {
+    convex_hull.test_point_chord_polygon_loop_separation(
+      svg_path.segments(hull),
+      point:,
+    )
+    == None
+  })
 }
 
 fn random_points(count: Int) -> List(svg_path.Point) {
