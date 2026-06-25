@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 420">
+  <rect x="0" y="0" width="820" height="420" style="fill: #fbfbf8; stroke: none" />
+
+  <path d="M 380 95 C 460 135 460 245 380 285" style="fill: none; stroke: #d8d2c8; stroke-width: 16; stroke-linecap: round" />
+  <path d="M 380 95 C 460 135 460 245 380 285" style="fill: none; stroke: #4f46a5; stroke-width: 6; stroke-linecap: round; stroke-dasharray: 18 12" />
+  <path d="M 320 210 C 365 230 400 255 380 285" style="fill: none; stroke: #d23f31; stroke-width: 7; stroke-linecap: round" />
+  <path d="M 380 95 C 405 120 380 160 330 175" style="fill: none; stroke: #168a72; stroke-width: 7; stroke-linecap: round" />
+
+  <path d="M 380 285 L 210 365" style="fill: none; stroke: #2f7fba; stroke-width: 5; stroke-linecap: round" />
+  <path d="M 210 365 L 320 210" style="fill: none; stroke: #2f7fba; stroke-width: 5; stroke-linecap: round" />
+  <path d="M 380 285 L 380 95" style="fill: none; stroke: #168a72; stroke-width: 5; stroke-linecap: round" />
+  <path d="M 330 175 L 620 45" style="fill: none; stroke: #2f7fba; stroke-width: 5; stroke-linecap: round" />
+  <path d="M 620 45 L 380 95" style="fill: none; stroke: #2f7fba; stroke-width: 5; stroke-linecap: round" />
+
+  <circle cx="442" cy="190" r="14" style="fill: #ffffff; stroke: #4f46a5; stroke-width: 2" />
+  <text x="438" y="197" style="fill: #4f46a5; font-family: system-ui, sans-serif; font-weight: 700; font-size: 18px">0</text>
+  <circle cx="294" cy="330" r="14" style="fill: #ffffff; stroke: #2f7fba; stroke-width: 2" />
+  <text x="290" y="337" style="fill: #2f7fba; font-family: system-ui, sans-serif; font-weight: 700; font-size: 18px">1</text>
+  <circle cx="266" cy="285" r="14" style="fill: #ffffff; stroke: #2f7fba; stroke-width: 2" />
+  <text x="262" y="292" style="fill: #2f7fba; font-family: system-ui, sans-serif; font-weight: 700; font-size: 18px">2</text>
+  <circle cx="360" cy="246" r="14" style="fill: #ffffff; stroke: #d23f31; stroke-width: 2" />
+  <text x="356" y="253" style="fill: #d23f31; font-family: system-ui, sans-serif; font-weight: 700; font-size: 18px">3</text>
+  <circle cx="400" cy="190" r="14" style="fill: #ffffff; stroke: #168a72; stroke-width: 2" />
+  <text x="396" y="197" style="fill: #168a72; font-family: system-ui, sans-serif; font-weight: 700; font-size: 18px">4</text>
+  <circle cx="386" cy="139" r="14" style="fill: #ffffff; stroke: #168a72; stroke-width: 2" />
+  <text x="382" y="146" style="fill: #168a72; font-family: system-ui, sans-serif; font-weight: 700; font-size: 18px">5</text>
+  <circle cx="486" cy="106" r="14" style="fill: #ffffff; stroke: #2f7fba; stroke-width: 2" />
+  <text x="482" y="113" style="fill: #2f7fba; font-family: system-ui, sans-serif; font-weight: 700; font-size: 18px">6</text>
+  <circle cx="506" cy="70" r="14" style="fill: #ffffff; stroke: #2f7fba; stroke-width: 2" />
+  <text x="502" y="77" style="fill: #2f7fba; font-family: system-ui, sans-serif; font-weight: 700; font-size: 18px">7</text>
+
+  <circle cx="620" cy="45" r="9" style="fill: #263238; stroke: none" />
+  <circle cx="210" cy="365" r="9" style="fill: #263238; stroke: none" />
+  <circle cx="380" cy="95" r="9" style="fill: #d23f31; stroke: #64150f; stroke-width: 2" />
+  <circle cx="380" cy="285" r="9" style="fill: #d23f31; stroke: #64150f; stroke-width: 2" />
+  <circle cx="330" cy="175" r="9" style="fill: #f4b400; stroke: #5f4700; stroke-width: 2" />
+  <circle cx="320" cy="210" r="9" style="fill: #f4b400; stroke: #5f4700; stroke-width: 2" />
+
+  <text x="632" y="50" style="fill: #263238; font-family: system-ui, sans-serif; font-size: 20px">T</text>
+  <text x="190" y="392" style="fill: #263238; font-family: system-ui, sans-serif; font-size: 20px">B</text>
+  <text x="395" y="92" style="fill: #64150f; font-family: system-ui, sans-serif; font-size: 18px">E_top</text>
+  <text x="395" y="294" style="fill: #64150f; font-family: system-ui, sans-serif; font-size: 18px">E_bot</text>
+  <text x="268" y="176" style="fill: #5f4700; font-family: system-ui, sans-serif; font-size: 18px">I_top</text>
+  <text x="257" y="215" style="fill: #5f4700; font-family: system-ui, sans-serif; font-size: 18px">I_bot</text>
+
+  <text x="42" y="42" style="fill: #4f46a5; font-family: system-ui, sans-serif; font-size: 18px">dashed purple: full tiny arc</text>
+  <text x="42" y="68" style="fill: #d23f31; font-family: system-ui, sans-serif; font-size: 18px">red: lower returned subarc</text>
+  <text x="42" y="94" style="fill: #168a72; font-family: system-ui, sans-serif; font-size: 18px">green: upper returned subarc plus endpoint bridge</text>
+  <text x="42" y="120" style="fill: #2f7fba; font-family: system-ui, sans-serif; font-size: 18px">blue: bridge lines to/from long-line endpoints</text>
+</svg>

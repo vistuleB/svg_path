@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="996.60951157 5.41186721 6.62867201 6.62867201">
+  <rect x="996.60951157" y="5.41186721" width="6.62867201" height="6.62867201" style="fill: #fbfbf8; stroke: none" />
+  <path d="M 1000 0 L 999.84769516 17.45240644" style="fill: none; stroke: #2f7fba; stroke-width: 0.025; stroke-linecap: round" />
+  <path d="M 1000 0 A 1000 1000 0 0 1 999.84769516 17.45240644" style="fill: none; stroke: #d8d2c8; stroke-width: 0.02; stroke-linecap: round" />
+  <path d="M 999.94340504 7.63106966 A 30 30 0 0 1 999.92428935 9.82151131" style="fill: none; stroke: #d23f31; stroke-width: 0.035; stroke-linecap: round" />
+  <circle cx="999.94340504" cy="7.63106966" r="0.06" style="fill: #d23f31; stroke: none" />
+  <circle cx="999.92428935" cy="9.82151131" r="0.06" style="fill: #d23f31; stroke: none" />
+  <circle cx="999.95384644" cy="8.72646501" r="0.06" style="fill: #2b7bbb; stroke: none" />
+</svg>

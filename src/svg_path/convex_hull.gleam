@@ -1,4 +1,4 @@
-//// Convex hull helpers for paths, subpaths, and segments.
+//// Convex hull helpers for paths, subpaths, segments, and points.
 ////
 //// This module computes closed hulls. Lines, quadratic Beziers, and arcs have
 //// semantic hulls: the primitive itself plus the chord joining its endpoints,
@@ -207,10 +207,10 @@ pub fn path_hull(path: svg_path.Path) -> Result(svg_path.Subpath, HullError) {
   }
 }
 
-/// Compute the convex hull of a point cloud.
+/// Compute the convex hull of a list of points.
 ///
 /// The result is a single closed subpath containing every input point.
-pub fn point_cloud_hull(
+pub fn points_hull(
   points: List(svg_path.Point),
 ) -> Result(svg_path.Subpath, HullError) {
   points
@@ -978,7 +978,13 @@ fn dumb_repair_loop_with_point(
   loop: Loop,
   point: svg_path.Point,
 ) -> Result(Loop, HullError) {
-  union_loop_with_point(loop, point)
+  case loop_plus_point_hull(loop, point) {
+    Ok(loop) -> Ok(loop)
+    Error(TangentSearchExpectedTwoTangencies(_)) ->
+      union_loop_with_point(loop, point)
+    Error(TangentSearchDegenerateLoop) -> union_loop_with_point(loop, point)
+    Error(error) -> Error(error)
+  }
 }
 
 fn union_loop_with_point(

@@ -579,10 +579,10 @@ convex_hull.path_hull(path)
 Move-only subpaths contribute their start points, and the result is still a
 single closed `Subpath`.
 
-For a point cloud, use `point_cloud_hull` directly:
+For a list of points, use `points_hull` directly:
 
 ```gleam
-convex_hull.point_cloud_hull(points)
+convex_hull.points_hull(points)
 ```
 
 For mixed inputs, convert points to move-only subpaths, segments to one-segment

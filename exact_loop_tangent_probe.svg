@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 360">
+  <rect x="20" y="20" width="410" height="320" style="fill: #fbfbf8; stroke: #d8d3c8; stroke-width: 1" />
+  <rect x="470" y="20" width="410" height="320" style="fill: #fbfbf8; stroke: #d8d3c8; stroke-width: 1" />
+  <path d="M 48 180 H 400 M 70 290 V 70" style="fill: none; stroke: #ded8cc; stroke-width: 0.75" />
+  <path d="M 500 290 H 840 M 520 310 V 30" style="fill: none; stroke: #ded8cc; stroke-width: 0.75" />
+  <path d="M 378 180 L 213.367 100.097 M 378 180 L 213.367 259.903" style="fill: none; stroke: #777; stroke-width: 1; stroke-dasharray: 4 4" />
+  <path d="M 800 190 L 740 267.46 M 800 190 L 740 112.54" style="fill: none; stroke: #777; stroke-width: 1; stroke-dasharray: 4 4" />
+  <path d="M 213.367 259.903 Q 141.684 294.694 70 180 Q 141.684 65.306 213.367 100.097" style="fill: none; stroke: #2f6fbb; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 213.367 100.097 Q 251.684 118.694 290 180 Q 251.684 241.306 213.367 259.903" style="fill: none; stroke: #d64545; stroke-width: 2.25; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 740 112.54 Q 731.27 101.27 720 90 L 520 290 H 720 Q 731.27 278.73 740 267.46" style="fill: none; stroke: #2f6fbb; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 740 267.46 Q 800 190 740 112.54" style="fill: none; stroke: #d64545; stroke-width: 2.25; stroke-linecap: round; stroke-linejoin: round" />
+  <circle cx="378" cy="180" r="2.2" style="fill: #2b2b2b; stroke: #2b2b2b; stroke-width: 1" />
+  <circle cx="800" cy="190" r="2.2" style="fill: #2b2b2b; stroke: #2b2b2b; stroke-width: 1" />
+  <circle cx="213.367" cy="100.097" r="2.6" style="fill: #f4b400; stroke: #5c4a00; stroke-width: 1" />
+  <circle cx="213.367" cy="259.903" r="2.6" style="fill: #f4b400; stroke: #5c4a00; stroke-width: 1" />
+  <circle cx="740" cy="267.46" r="2.6" style="fill: #f4b400; stroke: #5c4a00; stroke-width: 1" />
+  <circle cx="740" cy="112.54" r="2.6" style="fill: #f4b400; stroke: #5c4a00; stroke-width: 1" />
+  <text x="42" y="48" font-size="14" style="fill: #2b2b2b; font-family: system-ui, sans-serif">Quadratic lens</text>
+  <text x="42" y="70" font-size="12" style="fill: #595959; font-family: system-ui, sans-serif">both tangencies land inside curve pieces</text>
+  <text x="492" y="48" font-size="14" style="fill: #2b2b2b; font-family: system-ui, sans-serif">Quadratic loop</text>
+  <text x="492" y="70" font-size="12" style="fill: #595959; font-family: system-ui, sans-serif">exact tangent split lands inside the curve</text>
+</svg>
