@@ -23,6 +23,10 @@ const loop_union_point_tolerance = 0.000001
 
 const loop_union_bisection_steps = 32
 
+const loop_prefilter_enabled = True
+
+const loop_prefilter_sample_count = 36
+
 const same_t = 0.000001
 
 const t_close = 0.08
@@ -58,6 +62,14 @@ type LoopParam {
 
 type Loop {
   Loop(segments: List(svg_path.Segment))
+}
+
+type ConvexPolygon {
+  ConvexPolygon(vertices: List(svg_path.Point))
+}
+
+type ConvexLoop {
+  ConvexLoop(loop: Loop, enclosure: ConvexPolygon)
 }
 
 type UnionPiece {
@@ -181,17 +193,27 @@ pub fn test_brute_segment_support(
 fn segments_hull(
   segments: List(svg_path.Segment),
 ) -> Result(svg_path.Subpath, HullError) {
-  let assert [first, ..rest] = segments
-  use initial <- result.try(segment_hull_segments(first))
-  use segments <- result.try(
-    rest
-    |> list.fold(Ok(initial), fn(hull, segment) {
-      use hull <- result.try(hull)
-      use next <- result.try(segment_hull_segments(segment))
-      union_loop_segments(hull, next)
-    }),
+  use loops <- result.try(segment_convex_loops(segments))
+  use convex_loop <- result.try(
+    loops
+    |> maybe_prefilter_convex_loops
+    |> union_convex_loop_list,
   )
+  let ConvexLoop(loop:, enclosure: _) = convex_loop
+  let Loop(segments:) = loop
   build_closed_subpath(segments)
+}
+
+fn segment_convex_loops(
+  segments: List(svg_path.Segment),
+) -> Result(List(ConvexLoop), HullError) {
+  segments
+  |> list.fold(Ok([]), fn(loops, segment) {
+    use loops <- result.try(loops)
+    use loop <- result.try(segment_convex_loop(segment))
+    Ok([loop, ..loops])
+  })
+  |> result.map(list.reverse)
 }
 
 fn hull_input_segments(subpath: svg_path.Subpath) -> List(svg_path.Segment) {
@@ -213,6 +235,315 @@ fn segment_hull_segments(
 ) -> Result(List(svg_path.Segment), HullError) {
   use subpath <- result.try(segment_hull(segment))
   Ok(svg_path.segments(subpath))
+}
+
+fn segment_convex_loop(
+  segment: svg_path.Segment,
+) -> Result(ConvexLoop, HullError) {
+  use segments <- result.try(segment_hull_segments(segment))
+  Ok(convex_loop(segments))
+}
+
+fn convex_loop(segments: List(svg_path.Segment)) -> ConvexLoop {
+  let loop = Loop(segments)
+  ConvexLoop(loop:, enclosure: loop_enclosure(loop))
+}
+
+fn union_convex_loop_list(
+  loops: List(ConvexLoop),
+) -> Result(ConvexLoop, HullError) {
+  case loops {
+    [] -> Error(LoopUnionCollapsed)
+    [first, ..rest] ->
+      rest
+      |> list.fold(Ok(first), fn(hull, loop) {
+        use hull <- result.try(hull)
+        union_convex_loops(hull, loop)
+      })
+  }
+}
+
+fn union_convex_loops(
+  left: ConvexLoop,
+  right: ConvexLoop,
+) -> Result(ConvexLoop, HullError) {
+  let ConvexLoop(loop: Loop(left_segments), enclosure: _) = left
+  let ConvexLoop(loop: Loop(right_segments), enclosure: _) = right
+  use segments <- result.try(union_loop_segments(left_segments, right_segments))
+  Ok(convex_loop(segments))
+}
+
+fn maybe_prefilter_convex_loops(loops: List(ConvexLoop)) -> List(ConvexLoop) {
+  case loop_prefilter_enabled {
+    True -> prefilter_convex_loops(loops)
+    False -> loops
+  }
+}
+
+fn prefilter_convex_loops(loops: List(ConvexLoop)) -> List(ConvexLoop) {
+  case loops {
+    [] | [_] -> loops
+    _ -> {
+      let envelope = first_pass_envelope(loops)
+      case convex_polygon_orientation(envelope) {
+        DegenerateOrientation -> loops
+        orientation -> {
+          let filtered =
+            loops
+            |> list.filter(fn(loop) {
+              convex_loop_strictly_inside(loop, envelope, orientation) == False
+            })
+
+          case filtered {
+            [] -> loops
+            _ -> filtered
+          }
+        }
+      }
+    }
+  }
+}
+
+fn first_pass_envelope(loops: List(ConvexLoop)) -> ConvexPolygon {
+  let points =
+    int.range(
+      from: 0,
+      to: loop_prefilter_sample_count - 1,
+      with: [],
+      run: fn(points, i) {
+        let angle =
+          int.to_float(i) *. 360.0 /. int.to_float(loop_prefilter_sample_count)
+
+        case convex_loop_family_support(loops, angle) {
+          Ok(support) -> [support.point, ..points]
+          Error(_) -> points
+        }
+      },
+    )
+    |> list.reverse
+    |> remove_closing_duplicate
+    |> remove_near_adjacent_duplicates
+
+  ConvexPolygon(vertices: points)
+}
+
+fn convex_loop_family_support(
+  loops: List(ConvexLoop),
+  angle: Float,
+) -> Result(LoopSupport, Nil) {
+  case loops {
+    [] -> Error(Nil)
+    [first, ..rest] -> {
+      let first = convex_loop_exact_support(first, angle)
+      convex_loop_family_support_loop(
+        rest,
+        angle,
+        best: Ok(first),
+        value_to_beat: first.value,
+      )
+    }
+  }
+}
+
+fn convex_loop_family_support_loop(
+  loops: List(ConvexLoop),
+  angle: Float,
+  best best: Result(LoopSupport, Nil),
+  value_to_beat value_to_beat: Float,
+) -> Result(LoopSupport, Nil) {
+  case loops {
+    [] -> best
+    [loop, ..rest] -> {
+      let #(best, value_to_beat) = case
+        convex_loop_support(loop, angle, value_to_beat:)
+      {
+        Error(_) -> #(best, value_to_beat)
+        Ok(candidate) -> #(Ok(candidate), candidate.value)
+      }
+
+      convex_loop_family_support_loop(rest, angle, best:, value_to_beat:)
+    }
+  }
+}
+
+fn convex_loop_support(
+  convex_loop: ConvexLoop,
+  angle: Float,
+  value_to_beat value_to_beat: Float,
+) -> Result(LoopSupport, Nil) {
+  let ConvexLoop(loop:, enclosure:) = convex_loop
+  case convex_polygon_support_value(enclosure, angle) <=. value_to_beat {
+    True -> Error(Nil)
+    False -> {
+      let support = loop_support(loop, angle)
+      case support.value >. value_to_beat {
+        True -> Ok(support)
+        False -> Error(Nil)
+      }
+    }
+  }
+}
+
+fn convex_loop_exact_support(
+  convex_loop: ConvexLoop,
+  angle: Float,
+) -> LoopSupport {
+  let ConvexLoop(loop:, enclosure: _) = convex_loop
+  loop_support(loop, angle)
+}
+
+fn convex_loop_strictly_inside(
+  convex_loop: ConvexLoop,
+  envelope: ConvexPolygon,
+  orientation: LoopOrientation,
+) -> Bool {
+  let ConvexLoop(enclosure: ConvexPolygon(vertices:), loop: _) = convex_loop
+  case vertices {
+    [] -> False
+    _ ->
+      list.all(vertices, fn(point) {
+        convex_polygon_strictly_contains_point(envelope, point, orientation)
+      })
+  }
+}
+
+fn convex_polygon_strictly_contains_point(
+  polygon: ConvexPolygon,
+  point: svg_path.Point,
+  orientation: LoopOrientation,
+) -> Bool {
+  let ConvexPolygon(vertices:) = polygon
+  case vertices {
+    [] | [_] | [_, _] -> False
+    [first, ..] ->
+      convex_polygon_strictly_contains_point_loop(
+        list.append(vertices, [first]),
+        point,
+        orientation,
+      )
+  }
+}
+
+fn convex_polygon_strictly_contains_point_loop(
+  points: List(svg_path.Point),
+  point: svg_path.Point,
+  orientation: LoopOrientation,
+) -> Bool {
+  case points {
+    [a, b, ..rest] -> {
+      let edge = subtract(b, a)
+      let offset = subtract(point, a)
+      let turn = cross(edge, offset)
+      let scale = point_length(edge) *. point_length(offset)
+      case point_is_strictly_inside_edge(turn, scale, orientation) {
+        True ->
+          convex_polygon_strictly_contains_point_loop(
+            [b, ..rest],
+            point,
+            orientation,
+          )
+        False -> False
+      }
+    }
+    _ -> True
+  }
+}
+
+fn point_is_strictly_inside_edge(
+  turn: Float,
+  scale: Float,
+  orientation: LoopOrientation,
+) -> Bool {
+  let tolerance = orientation_turn_tolerance *. scale
+  case orientation {
+    CounterClockwise -> turn >. tolerance
+    Clockwise -> turn <. 0.0 -. tolerance
+    DegenerateOrientation -> False
+  }
+}
+
+fn convex_polygon_orientation(polygon: ConvexPolygon) -> LoopOrientation {
+  let ConvexPolygon(vertices:) = polygon
+  let area = signed_area(vertices)
+  case float.absolute_value(area) <=. point_tolerance *. point_tolerance {
+    True -> DegenerateOrientation
+    False ->
+      case area >. 0.0 {
+        True -> CounterClockwise
+        False -> Clockwise
+      }
+  }
+}
+
+fn convex_polygon_support_value(polygon: ConvexPolygon, angle: Float) -> Float {
+  let ConvexPolygon(vertices:) = polygon
+  let direction = angle_direction(angle)
+  case vertices {
+    [] -> -1.0 /. 0.0
+    [first, ..rest] ->
+      rest
+      |> list.fold(dot(first, direction), fn(best, point) {
+        float.max(best, dot(point, direction))
+      })
+  }
+}
+
+fn loop_enclosure(loop: Loop) -> ConvexPolygon {
+  let Loop(segments:) = loop
+  case loop_bounding_box(segments) {
+    Error(_) -> ConvexPolygon(vertices: loop_vertices(segments))
+    Ok(box) -> bounding_box_polygon(box)
+  }
+}
+
+fn loop_bounding_box(
+  segments: List(svg_path.Segment),
+) -> Result(svg_path.BoundingBox, svg_path.Error) {
+  case segments {
+    [] -> Error(svg_path.EmptySubpath)
+    [first, ..rest] -> {
+      use box <- result.try(svg_path.segment_bounding_box(first))
+      loop_bounding_box_loop(rest, box)
+    }
+  }
+}
+
+fn loop_bounding_box_loop(
+  segments: List(svg_path.Segment),
+  box: svg_path.BoundingBox,
+) -> Result(svg_path.BoundingBox, svg_path.Error) {
+  case segments {
+    [] -> Ok(box)
+    [segment, ..rest] -> {
+      use next <- result.try(svg_path.segment_bounding_box(segment))
+      loop_bounding_box_loop(rest, combine_boxes(box, next))
+    }
+  }
+}
+
+fn combine_boxes(
+  first: svg_path.BoundingBox,
+  second: svg_path.BoundingBox,
+) -> svg_path.BoundingBox {
+  svg_path.BoundingBox(
+    min: svg_path.point(
+      float.min(first.min.x, second.min.x),
+      float.min(first.min.y, second.min.y),
+    ),
+    max: svg_path.point(
+      float.max(first.max.x, second.max.x),
+      float.max(first.max.y, second.max.y),
+    ),
+  )
+}
+
+fn bounding_box_polygon(box: svg_path.BoundingBox) -> ConvexPolygon {
+  ConvexPolygon(vertices: [
+    svg_path.point(box.min.x, box.min.y),
+    svg_path.point(box.max.x, box.min.y),
+    svg_path.point(box.max.x, box.max.y),
+    svg_path.point(box.min.x, box.max.y),
+  ])
 }
 
 fn line_hull(segment: svg_path.Segment) -> Result(svg_path.Subpath, HullError) {
