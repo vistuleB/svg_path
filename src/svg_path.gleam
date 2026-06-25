@@ -8,6 +8,8 @@ import gleam/float
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
+import gleam/order
+import gleam/result
 import svg_path/bezier
 import svg_path/ellipse
 import svg_path/root
@@ -127,6 +129,19 @@ pub opaque type Subpath {
   Subpath(start: Point, segments: List(Segment), closed: Bool)
 }
 
+/// A local address on a subpath segment.
+///
+/// `segment_index` addresses a segment in the subpath, and `t` is that
+/// segment's local parameter. Subpath APIs require `t` to be inside
+/// `0.0..1.0`; unlike segment APIs, subpath parameters do not extrapolate.
+pub type SubpathParameter {
+  SubpathParameter(segment_index: Int, t: Float)
+}
+
+type CanonicalSubpathParameter {
+  CanonicalSubpathParameter(segment_index: Int, t: Float)
+}
+
 /// How construction and editing helpers reconcile segment endpoints.
 pub type EndpointPolicy {
   /// Endpoints must already match exactly.
@@ -219,6 +234,12 @@ pub type Error {
   ///
   /// `index` must be between `-length` and `length`, inclusive.
   InvalidOpenIndex(index: Int, length: Int)
+
+  /// A subpath parameter was outside the valid segment index or `0.0..1.0` range.
+  InvalidSubpathParameter(segment_index: Int, t: Float, length: Int)
+
+  /// A subpath interval would not produce a positive-length piece.
+  InvalidSubpathInterval(from: SubpathParameter, to: SubpathParameter)
 
   /// The number of crossing scan samples must be greater than zero.
   InvalidCrossingSamples(samples: Int)
@@ -790,6 +811,118 @@ pub fn open_at(subpath: Subpath, index index: Int) -> Result(Subpath, Error) {
         }
       }
     }
+  }
+}
+
+/// Compare two subpath parameters by segment index and then local `t`.
+pub fn compare_subpath_parameters(
+  a: SubpathParameter,
+  b: SubpathParameter,
+) -> order.Order {
+  let SubpathParameter(segment_index: a_index, t: a_t) = a
+  let SubpathParameter(segment_index: b_index, t: b_t) = b
+
+  case int.compare(a_index, b_index) {
+    order.Eq -> float.compare(a_t, b_t)
+    order -> order
+  }
+}
+
+/// Split an open subpath at a subpath parameter.
+///
+/// The split point must be inside the subpath: it cannot be the first point,
+/// the last point, outside the segment list, or outside the addressed segment's
+/// `0.0..1.0` parameter range. Closed and empty subpaths are rejected.
+pub fn split_subpath(
+  subpath: Subpath,
+  at at: SubpathParameter,
+) -> Result(#(Subpath, Subpath), Error) {
+  case subpath.closed {
+    True -> Error(AlreadyClosed)
+    False -> {
+      use at <- result.try(validate_subpath_parameter(subpath, at))
+      case subpath_parameter_is_boundary(at, list.length(subpath.segments)) {
+        True -> invalid_subpath_parameter(at, list.length(subpath.segments))
+        False -> {
+          use left_segments <- result.try(subpath_interval_segments(
+            subpath,
+            from: subpath_start_parameter(),
+            to: at,
+          ))
+          use right_segments <- result.try(subpath_interval_segments(
+            subpath,
+            from: at,
+            to: subpath_end_parameter(list.length(subpath.segments)),
+          ))
+          use left <- result.try(open_subpath_with_segments(
+            left_segments,
+            Strict,
+          ))
+          use right <- result.try(open_subpath_with_segments(
+            right_segments,
+            Strict,
+          ))
+          Ok(#(left, right))
+        }
+      }
+    }
+  }
+}
+
+/// Return the open subpath between two subpath parameters.
+///
+/// Parameters must be valid for the subpath and must describe a positive-length
+/// interval. Open subpaths reject reversed intervals. Closed subpaths allow
+/// wrapped intervals, but equal parameters are still rejected.
+pub fn sub_subpath(
+  subpath: Subpath,
+  from from: SubpathParameter,
+  to to: SubpathParameter,
+) -> Result(Subpath, Error) {
+  use from <- result.try(validate_subpath_parameter(subpath, from))
+  use to <- result.try(validate_subpath_parameter(subpath, to))
+  sub_subpath_between(subpath, from:, to:)
+}
+
+/// Split a subpath at multiple subpath parameters.
+///
+/// Open subpaths return the outer pieces as well as the pieces between split
+/// points, so an empty split list returns the original subpath. Open split
+/// points must be strictly increasing and cannot include the very start or very
+/// end. Closed split points must be cyclically increasing and distinct; empty
+/// split lists return an empty list.
+pub fn sub_subpaths(
+  subpath: Subpath,
+  between points: List(SubpathParameter),
+) -> Result(List(Subpath), Error) {
+  let length = list.length(subpath.segments)
+  use points <- result.try(validate_subpath_parameters(subpath, points))
+
+  case subpath.closed {
+    False ->
+      case points {
+        [] -> Ok([subpath])
+        _ -> {
+          use _ <- result.try(validate_open_subpath_split_points(points, length))
+          sub_subpaths_between_points(subpath, [
+            subpath_start_parameter(),
+            ..list.append(points, [subpath_end_parameter(length)])
+          ])
+        }
+      }
+    True ->
+      case points {
+        [] -> Ok([])
+        [point] ->
+          Error(InvalidSubpathInterval(
+            from: canonical_to_subpath_parameter(point),
+            to: canonical_to_subpath_parameter(point),
+          ))
+        _ -> {
+          use _ <- result.try(validate_closed_subpath_split_points(points))
+          sub_subpaths_between_pairs(subpath, cyclic_parameter_pairs(points))
+        }
+      }
   }
 }
 
@@ -2908,6 +3041,431 @@ fn normalize_open_index(index: Int, length: Int) -> Int {
 
 fn rotate_segments(segments: List(Segment), index: Int) -> List(Segment) {
   list.append(drop(segments, index), take(segments, index))
+}
+
+fn validate_subpath_parameter(
+  subpath: Subpath,
+  parameter: SubpathParameter,
+) -> Result(CanonicalSubpathParameter, Error) {
+  let length = list.length(subpath.segments)
+  let SubpathParameter(segment_index:, t:) = parameter
+
+  case length == 0 {
+    True -> Error(EmptySubpath)
+    False -> {
+      case
+        segment_index < 0 || segment_index >= length || t <. 0.0 || t >. 1.0
+      {
+        True -> Error(InvalidSubpathParameter(segment_index:, t:, length:))
+        False ->
+          Ok(canonical_subpath_parameter(
+            parameter,
+            length:,
+            closed: subpath.closed,
+          ))
+      }
+    }
+  }
+}
+
+fn validate_subpath_parameters(
+  subpath: Subpath,
+  parameters: List(SubpathParameter),
+) -> Result(List(CanonicalSubpathParameter), Error) {
+  parameters
+  |> list.fold(Ok([]), fn(validated, parameter) {
+    use validated <- result.try(validated)
+    use parameter <- result.try(validate_subpath_parameter(subpath, parameter))
+    Ok([parameter, ..validated])
+  })
+  |> result.map(list.reverse)
+}
+
+fn canonical_subpath_parameter(
+  parameter: SubpathParameter,
+  length length: Int,
+  closed closed: Bool,
+) -> CanonicalSubpathParameter {
+  let SubpathParameter(segment_index:, t:) = parameter
+  case t == 1.0 && segment_index + 1 < length {
+    True -> CanonicalSubpathParameter(segment_index: segment_index + 1, t: 0.0)
+    False ->
+      case closed && t == 1.0 && segment_index == length - 1 {
+        True -> CanonicalSubpathParameter(segment_index: 0, t: 0.0)
+        False -> CanonicalSubpathParameter(segment_index:, t:)
+      }
+  }
+}
+
+fn canonical_to_subpath_parameter(
+  parameter: CanonicalSubpathParameter,
+) -> SubpathParameter {
+  let CanonicalSubpathParameter(segment_index:, t:) = parameter
+  SubpathParameter(segment_index:, t:)
+}
+
+fn compare_canonical_subpath_parameters(
+  a: CanonicalSubpathParameter,
+  b: CanonicalSubpathParameter,
+) -> order.Order {
+  let CanonicalSubpathParameter(segment_index: a_index, t: a_t) = a
+  let CanonicalSubpathParameter(segment_index: b_index, t: b_t) = b
+
+  case int.compare(a_index, b_index) {
+    order.Eq -> float.compare(a_t, b_t)
+    order -> order
+  }
+}
+
+fn subpath_start_parameter() -> CanonicalSubpathParameter {
+  CanonicalSubpathParameter(segment_index: 0, t: 0.0)
+}
+
+fn subpath_end_parameter(length: Int) -> CanonicalSubpathParameter {
+  CanonicalSubpathParameter(segment_index: length - 1, t: 1.0)
+}
+
+fn subpath_parameter_is_boundary(
+  parameter: CanonicalSubpathParameter,
+  length: Int,
+) -> Bool {
+  compare_canonical_subpath_parameters(parameter, subpath_start_parameter())
+  == order.Eq
+  || compare_canonical_subpath_parameters(
+    parameter,
+    subpath_end_parameter(length),
+  )
+  == order.Eq
+}
+
+fn invalid_subpath_parameter(
+  parameter: CanonicalSubpathParameter,
+  length: Int,
+) -> Result(a, Error) {
+  let CanonicalSubpathParameter(segment_index:, t:) = parameter
+  Error(InvalidSubpathParameter(segment_index:, t:, length:))
+}
+
+fn sub_subpath_between(
+  subpath: Subpath,
+  from from: CanonicalSubpathParameter,
+  to to: CanonicalSubpathParameter,
+) -> Result(Subpath, Error) {
+  case compare_canonical_subpath_parameters(from, to) {
+    order.Eq ->
+      Error(InvalidSubpathInterval(
+        from: canonical_to_subpath_parameter(from),
+        to: canonical_to_subpath_parameter(to),
+      ))
+    order.Lt -> {
+      use segments <- result.try(subpath_interval_segments(subpath, from:, to:))
+      open_subpath_with_segments(segments, Strict)
+    }
+    order.Gt ->
+      case subpath.closed {
+        False ->
+          Error(InvalidSubpathInterval(
+            from: canonical_to_subpath_parameter(from),
+            to: canonical_to_subpath_parameter(to),
+          ))
+        True -> {
+          let length = list.length(subpath.segments)
+          use before_wrap <- result.try(subpath_interval_segments(
+            subpath,
+            from:,
+            to: subpath_end_parameter(length),
+          ))
+          use after_wrap <- result.try(subpath_interval_segments(
+            subpath,
+            from: subpath_start_parameter(),
+            to:,
+          ))
+          open_subpath_with_segments(
+            list.append(before_wrap, after_wrap),
+            Strict,
+          )
+        }
+      }
+  }
+}
+
+fn subpath_interval_segments(
+  subpath: Subpath,
+  from from: CanonicalSubpathParameter,
+  to to: CanonicalSubpathParameter,
+) -> Result(List(Segment), Error) {
+  case compare_canonical_subpath_parameters(from, to) {
+    order.Eq -> Ok([])
+    order.Gt ->
+      Error(InvalidSubpathInterval(
+        from: canonical_to_subpath_parameter(from),
+        to: canonical_to_subpath_parameter(to),
+      ))
+    order.Lt -> {
+      let CanonicalSubpathParameter(segment_index: from_index, t: from_t) = from
+      let CanonicalSubpathParameter(segment_index: to_index, t: to_t) = to
+
+      case from_index == to_index {
+        True -> {
+          use segment <- result.try(nth_segment(subpath.segments, from_index))
+          use piece <- result.try(sub_segment_inside(
+            segment,
+            from: from_t,
+            to: to_t,
+          ))
+          Ok([piece])
+        }
+        False -> {
+          use start <- result.try(subpath_interval_start_piece(
+            subpath.segments,
+            from_index,
+            from_t,
+          ))
+          let middle =
+            subpath.segments
+            |> drop(from_index + 1)
+            |> take(to_index - from_index - 1)
+          use end <- result.try(subpath_interval_end_piece(
+            subpath.segments,
+            to_index,
+            to_t,
+          ))
+          Ok(list.append(start, list.append(middle, end)))
+        }
+      }
+    }
+  }
+}
+
+fn subpath_interval_start_piece(
+  segments: List(Segment),
+  index: Int,
+  t: Float,
+) -> Result(List(Segment), Error) {
+  use segment <- result.try(nth_segment(segments, index))
+  case t == 0.0 {
+    True -> Ok([segment])
+    False -> {
+      use piece <- result.try(sub_segment_inside(segment, from: t, to: 1.0))
+      Ok([piece])
+    }
+  }
+}
+
+fn subpath_interval_end_piece(
+  segments: List(Segment),
+  index: Int,
+  t: Float,
+) -> Result(List(Segment), Error) {
+  case t == 0.0 {
+    True -> Ok([])
+    False -> {
+      use segment <- result.try(nth_segment(segments, index))
+      case t == 1.0 {
+        True -> Ok([segment])
+        False -> {
+          use piece <- result.try(sub_segment_inside(segment, from: 0.0, to: t))
+          Ok([piece])
+        }
+      }
+    }
+  }
+}
+
+fn validate_open_subpath_split_points(
+  points: List(CanonicalSubpathParameter),
+  length: Int,
+) -> Result(Nil, Error) {
+  case points {
+    [] -> Ok(Nil)
+    [point, ..rest] -> {
+      case subpath_parameter_is_boundary(point, length) {
+        True -> invalid_subpath_parameter(point, length)
+        False ->
+          validate_open_subpath_split_points_loop(
+            rest,
+            previous: point,
+            length:,
+          )
+      }
+    }
+  }
+}
+
+fn validate_open_subpath_split_points_loop(
+  points: List(CanonicalSubpathParameter),
+  previous previous: CanonicalSubpathParameter,
+  length length: Int,
+) -> Result(Nil, Error) {
+  case points {
+    [] -> Ok(Nil)
+    [point, ..rest] -> {
+      case subpath_parameter_is_boundary(point, length) {
+        True -> invalid_subpath_parameter(point, length)
+        False ->
+          case compare_canonical_subpath_parameters(previous, point) {
+            order.Lt ->
+              validate_open_subpath_split_points_loop(
+                rest,
+                previous: point,
+                length:,
+              )
+            _ ->
+              Error(InvalidSubpathInterval(
+                from: canonical_to_subpath_parameter(previous),
+                to: canonical_to_subpath_parameter(point),
+              ))
+          }
+      }
+    }
+  }
+}
+
+fn validate_closed_subpath_split_points(
+  points: List(CanonicalSubpathParameter),
+) -> Result(Nil, Error) {
+  case points {
+    [] | [_] -> Ok(Nil)
+    [first, second, ..rest] ->
+      validate_closed_subpath_split_points_loop(
+        [second, ..rest],
+        first:,
+        previous: first,
+        descents: 0,
+      )
+  }
+}
+
+fn validate_closed_subpath_split_points_loop(
+  points: List(CanonicalSubpathParameter),
+  first first: CanonicalSubpathParameter,
+  previous previous: CanonicalSubpathParameter,
+  descents descents: Int,
+) -> Result(Nil, Error) {
+  case points {
+    [] -> {
+      use descents <- result.try(count_cyclic_descent(
+        previous,
+        first,
+        descents:,
+      ))
+      case descents == 1 {
+        True -> Ok(Nil)
+        False ->
+          Error(InvalidSubpathInterval(
+            from: canonical_to_subpath_parameter(previous),
+            to: canonical_to_subpath_parameter(first),
+          ))
+      }
+    }
+    [point, ..rest] -> {
+      use descents <- result.try(count_cyclic_descent(
+        previous,
+        point,
+        descents:,
+      ))
+      case descents > 1 {
+        True ->
+          Error(InvalidSubpathInterval(
+            from: canonical_to_subpath_parameter(previous),
+            to: canonical_to_subpath_parameter(point),
+          ))
+        False ->
+          validate_closed_subpath_split_points_loop(
+            rest,
+            first:,
+            previous: point,
+            descents:,
+          )
+      }
+    }
+  }
+}
+
+fn count_cyclic_descent(
+  previous: CanonicalSubpathParameter,
+  point: CanonicalSubpathParameter,
+  descents descents: Int,
+) -> Result(Int, Error) {
+  case compare_canonical_subpath_parameters(previous, point) {
+    order.Eq ->
+      Error(InvalidSubpathInterval(
+        from: canonical_to_subpath_parameter(previous),
+        to: canonical_to_subpath_parameter(point),
+      ))
+    order.Gt -> Ok(descents + 1)
+    order.Lt -> Ok(descents)
+  }
+}
+
+fn sub_subpaths_between_points(
+  subpath: Subpath,
+  points: List(CanonicalSubpathParameter),
+) -> Result(List(Subpath), Error) {
+  sub_subpaths_between_pairs(subpath, adjacent_parameter_pairs(points))
+}
+
+fn sub_subpaths_between_pairs(
+  subpath: Subpath,
+  pairs: List(#(CanonicalSubpathParameter, CanonicalSubpathParameter)),
+) -> Result(List(Subpath), Error) {
+  pairs
+  |> list.fold(Ok([]), fn(subpaths, pair) {
+    use subpaths <- result.try(subpaths)
+    let #(from, to) = pair
+    use subpath <- result.try(sub_subpath_between(subpath, from:, to:))
+    Ok([subpath, ..subpaths])
+  })
+  |> result.map(list.reverse)
+}
+
+fn adjacent_parameter_pairs(
+  points: List(CanonicalSubpathParameter),
+) -> List(#(CanonicalSubpathParameter, CanonicalSubpathParameter)) {
+  case points {
+    [] | [_] -> []
+    [first, second, ..rest] -> [
+      #(first, second),
+      ..adjacent_parameter_pairs([second, ..rest])
+    ]
+  }
+}
+
+fn cyclic_parameter_pairs(
+  points: List(CanonicalSubpathParameter),
+) -> List(#(CanonicalSubpathParameter, CanonicalSubpathParameter)) {
+  case points {
+    [] | [_] -> []
+    [first, ..] -> cyclic_parameter_pairs_loop(points, first, [])
+  }
+}
+
+fn cyclic_parameter_pairs_loop(
+  points: List(CanonicalSubpathParameter),
+  first first: CanonicalSubpathParameter,
+  pairs pairs: List(#(CanonicalSubpathParameter, CanonicalSubpathParameter)),
+) -> List(#(CanonicalSubpathParameter, CanonicalSubpathParameter)) {
+  case points {
+    [] -> list.reverse(pairs)
+    [last] -> list.reverse([#(last, first), ..pairs])
+    [left, right, ..rest] ->
+      cyclic_parameter_pairs_loop([right, ..rest], first:, pairs: [
+        #(left, right),
+        ..pairs
+      ])
+  }
+}
+
+fn nth_segment(segments: List(Segment), index: Int) -> Result(Segment, Error) {
+  case index < 0 {
+    True -> Error(EmptySubpath)
+    False ->
+      case segments, index {
+        [], _ -> Error(EmptySubpath)
+        [segment, ..], 0 -> Ok(segment)
+        [_, ..rest], _ -> nth_segment(rest, index - 1)
+      }
+  }
 }
 
 fn validate_spliced_subpath(

@@ -115,6 +115,33 @@ likewise ends at `start`.
 Subpaths with `segments == []` can have any value of `closed`. A `Subpath`'s
 serialization ends in `Z`/`z` if and only if `closed == True`.
 
+Subpaths can be split by local segment addresses:
+
+```gleam
+pub type SubpathParameter {
+  SubpathParameter(segment_index: Int, t: Float)
+}
+
+svg_path.split_subpath(subpath, at: svg_path.SubpathParameter(1, 0.5))
+svg_path.sub_subpath(
+  subpath,
+  from: svg_path.SubpathParameter(0, 0.5),
+  to: svg_path.SubpathParameter(2, 0.25),
+)
+svg_path.sub_subpaths(subpath, between: [
+  svg_path.SubpathParameter(0, 0.5),
+  svg_path.SubpathParameter(2, 0.25),
+])
+```
+
+Subpath parameters are strict: `segment_index` must address a real segment and
+`t` must be inside `0.0..1.0`. Unlike segment parameters, subpath parameters do
+not extrapolate beyond a segment. The split helpers only return positive-length
+pieces: open subpath split lists must be strictly increasing and cannot include
+the very start or very end, while closed subpath split lists must be distinct
+and cyclically increasing. Use `compare_subpath_parameters` for plain
+segment-index-then-`t` ordering.
+
 Use `svg_path.subpath` to construct an open subpath from a nonempty list of
 contiguous segments, and `svg_path.set_closed` to change whether a subpath is
 topologically closed; note that `set_closed(_, True)` may result in an error,

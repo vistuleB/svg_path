@@ -1,5 +1,6 @@
 import gleam/float
 import gleam/list
+import gleam/order
 import gleeunit
 import svg_path
 
@@ -1284,6 +1285,332 @@ pub fn sub_segments_inside_rejects_any_outside_t_test() {
     == Error(svg_path.SplitOutsideSegment)
   let assert Ok([_]) =
     svg_path.sub_segments_inside(segment, between: [0.0, 1.0])
+}
+
+pub fn compare_subpath_parameters_orders_by_segment_then_t_test() {
+  assert svg_path.compare_subpath_parameters(
+      svg_path.SubpathParameter(0, 0.75),
+      svg_path.SubpathParameter(1, 0.25),
+    )
+    == order.Lt
+  assert svg_path.compare_subpath_parameters(
+      svg_path.SubpathParameter(1, 0.25),
+      svg_path.SubpathParameter(1, 0.25),
+    )
+    == order.Eq
+  assert svg_path.compare_subpath_parameters(
+      svg_path.SubpathParameter(2, 0.0),
+      svg_path.SubpathParameter(1, 1.0),
+    )
+    == order.Gt
+}
+
+pub fn split_subpath_splits_inside_segment_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(20.0, 0.0)
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
+    ])
+
+  let assert Ok(#(left, right)) =
+    svg_path.split_subpath(subpath, at: svg_path.SubpathParameter(0, 0.5))
+
+  assert svg_path.segments(left)
+    == [
+      svg_path.Line(start: a, end: svg_path.point(5.0, 0.0)),
+    ]
+  assert svg_path.segments(right)
+    == [
+      svg_path.Line(start: svg_path.point(5.0, 0.0), end: b),
+      svg_path.Line(start: b, end: c),
+    ]
+}
+
+pub fn split_subpath_splits_at_internal_vertex_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(20.0, 0.0)
+  let first = svg_path.Line(start: a, end: b)
+  let second = svg_path.Line(start: b, end: c)
+  let subpath = svg_path.assert_subpath([first, second])
+
+  let assert Ok(#(left, right)) =
+    svg_path.split_subpath(subpath, at: svg_path.SubpathParameter(0, 1.0))
+
+  assert svg_path.segments(left) == [first]
+  assert svg_path.segments(right) == [second]
+}
+
+pub fn split_subpath_rejects_closed_empty_boundary_and_outside_parameters_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(20.0, 0.0)
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
+    ])
+  let closed =
+    closed_subpath([
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: a),
+    ])
+
+  assert svg_path.split_subpath(closed, at: svg_path.SubpathParameter(0, 0.5))
+    == Error(svg_path.AlreadyClosed)
+  assert svg_path.split_subpath(
+      svg_path.empty_subpath(at: a),
+      at: svg_path.SubpathParameter(0, 0.5),
+    )
+    == Error(svg_path.EmptySubpath)
+  assert svg_path.split_subpath(subpath, at: svg_path.SubpathParameter(0, 0.0))
+    == Error(svg_path.InvalidSubpathParameter(
+      segment_index: 0,
+      t: 0.0,
+      length: 2,
+    ))
+  assert svg_path.split_subpath(subpath, at: svg_path.SubpathParameter(1, 1.0))
+    == Error(svg_path.InvalidSubpathParameter(
+      segment_index: 1,
+      t: 1.0,
+      length: 2,
+    ))
+  assert svg_path.split_subpath(subpath, at: svg_path.SubpathParameter(2, 0.0))
+    == Error(svg_path.InvalidSubpathParameter(
+      segment_index: 2,
+      t: 0.0,
+      length: 2,
+    ))
+  assert svg_path.split_subpath(subpath, at: svg_path.SubpathParameter(0, 1.01))
+    == Error(svg_path.InvalidSubpathParameter(
+      segment_index: 0,
+      t: 1.01,
+      length: 2,
+    ))
+}
+
+pub fn sub_subpath_extracts_open_interval_across_segments_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(20.0, 0.0)
+  let d = svg_path.point(30.0, 0.0)
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
+      svg_path.Line(start: c, end: d),
+    ])
+
+  let assert Ok(piece) =
+    svg_path.sub_subpath(
+      subpath,
+      from: svg_path.SubpathParameter(0, 0.5),
+      to: svg_path.SubpathParameter(2, 0.5),
+    )
+
+  assert svg_path.segments(piece)
+    == [
+      svg_path.Line(start: svg_path.point(5.0, 0.0), end: b),
+      svg_path.Line(start: b, end: c),
+      svg_path.Line(start: c, end: svg_path.point(25.0, 0.0)),
+    ]
+}
+
+pub fn sub_subpath_rejects_equal_and_reversed_open_intervals_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(20.0, 0.0)
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
+    ])
+
+  assert svg_path.sub_subpath(
+      subpath,
+      from: svg_path.SubpathParameter(0, 0.5),
+      to: svg_path.SubpathParameter(0, 0.5),
+    )
+    == Error(svg_path.InvalidSubpathInterval(
+      from: svg_path.SubpathParameter(0, 0.5),
+      to: svg_path.SubpathParameter(0, 0.5),
+    ))
+  assert svg_path.sub_subpath(
+      subpath,
+      from: svg_path.SubpathParameter(1, 0.5),
+      to: svg_path.SubpathParameter(0, 0.5),
+    )
+    == Error(svg_path.InvalidSubpathInterval(
+      from: svg_path.SubpathParameter(1, 0.5),
+      to: svg_path.SubpathParameter(0, 0.5),
+    ))
+}
+
+pub fn sub_subpath_wraps_closed_intervals_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(10.0, 10.0)
+  let d = svg_path.point(0.0, 10.0)
+  let subpath =
+    closed_subpath([
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
+      svg_path.Line(start: c, end: d),
+      svg_path.Line(start: d, end: a),
+    ])
+
+  let assert Ok(piece) =
+    svg_path.sub_subpath(
+      subpath,
+      from: svg_path.SubpathParameter(2, 0.5),
+      to: svg_path.SubpathParameter(1, 0.5),
+    )
+
+  assert svg_path.segments(piece)
+    == [
+      svg_path.Line(start: svg_path.point(5.0, 10.0), end: d),
+      svg_path.Line(start: d, end: a),
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: svg_path.point(10.0, 5.0)),
+    ]
+}
+
+pub fn sub_subpaths_open_returns_outer_pieces_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(20.0, 0.0)
+  let d = svg_path.point(30.0, 0.0)
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
+      svg_path.Line(start: c, end: d),
+    ])
+
+  let assert Ok([first, second, third]) =
+    svg_path.sub_subpaths(subpath, between: [
+      svg_path.SubpathParameter(0, 0.5),
+      svg_path.SubpathParameter(2, 0.5),
+    ])
+
+  assert svg_path.segments(first)
+    == [svg_path.Line(start: a, end: svg_path.point(5.0, 0.0))]
+  assert svg_path.segments(second)
+    == [
+      svg_path.Line(start: svg_path.point(5.0, 0.0), end: b),
+      svg_path.Line(start: b, end: c),
+      svg_path.Line(start: c, end: svg_path.point(25.0, 0.0)),
+    ]
+  assert svg_path.segments(third)
+    == [svg_path.Line(start: svg_path.point(25.0, 0.0), end: d)]
+}
+
+pub fn sub_subpaths_open_rejects_boundary_and_duplicate_points_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(20.0, 0.0)
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
+    ])
+
+  assert svg_path.sub_subpaths(subpath, between: [
+      svg_path.SubpathParameter(0, 0.0),
+    ])
+    == Error(svg_path.InvalidSubpathParameter(
+      segment_index: 0,
+      t: 0.0,
+      length: 2,
+    ))
+  assert svg_path.sub_subpaths(subpath, between: [
+      svg_path.SubpathParameter(0, 1.0),
+      svg_path.SubpathParameter(1, 0.0),
+    ])
+    == Error(svg_path.InvalidSubpathInterval(
+      from: svg_path.SubpathParameter(1, 0.0),
+      to: svg_path.SubpathParameter(1, 0.0),
+    ))
+}
+
+pub fn sub_subpaths_closed_accepts_cyclic_order_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(10.0, 10.0)
+  let d = svg_path.point(0.0, 10.0)
+  let subpath =
+    closed_subpath([
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
+      svg_path.Line(start: c, end: d),
+      svg_path.Line(start: d, end: a),
+    ])
+
+  let assert Ok([first, second, third]) =
+    svg_path.sub_subpaths(subpath, between: [
+      svg_path.SubpathParameter(2, 0.5),
+      svg_path.SubpathParameter(3, 0.5),
+      svg_path.SubpathParameter(1, 0.5),
+    ])
+
+  assert svg_path.segments(first)
+    == [
+      svg_path.Line(start: svg_path.point(5.0, 10.0), end: d),
+      svg_path.Line(start: d, end: svg_path.point(0.0, 5.0)),
+    ]
+  assert svg_path.segments(second)
+    == [
+      svg_path.Line(start: svg_path.point(0.0, 5.0), end: a),
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: svg_path.point(10.0, 5.0)),
+    ]
+  assert svg_path.segments(third)
+    == [
+      svg_path.Line(start: svg_path.point(10.0, 5.0), end: c),
+      svg_path.Line(start: c, end: svg_path.point(5.0, 10.0)),
+    ]
+}
+
+pub fn sub_subpaths_closed_rejects_single_duplicate_and_nonlinear_order_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(10.0, 10.0)
+  let d = svg_path.point(0.0, 10.0)
+  let subpath =
+    closed_subpath([
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
+      svg_path.Line(start: c, end: d),
+      svg_path.Line(start: d, end: a),
+    ])
+
+  assert svg_path.sub_subpaths(subpath, between: [
+      svg_path.SubpathParameter(1, 0.5),
+    ])
+    == Error(svg_path.InvalidSubpathInterval(
+      from: svg_path.SubpathParameter(1, 0.5),
+      to: svg_path.SubpathParameter(1, 0.5),
+    ))
+  assert svg_path.sub_subpaths(subpath, between: [
+      svg_path.SubpathParameter(3, 1.0),
+      svg_path.SubpathParameter(0, 0.0),
+    ])
+    == Error(svg_path.InvalidSubpathInterval(
+      from: svg_path.SubpathParameter(0, 0.0),
+      to: svg_path.SubpathParameter(0, 0.0),
+    ))
+  assert svg_path.sub_subpaths(subpath, between: [
+      svg_path.SubpathParameter(2, 0.5),
+      svg_path.SubpathParameter(1, 0.5),
+      svg_path.SubpathParameter(3, 0.5),
+    ])
+    == Error(svg_path.InvalidSubpathInterval(
+      from: svg_path.SubpathParameter(3, 0.5),
+      to: svg_path.SubpathParameter(2, 0.5),
+    ))
 }
 
 pub fn segment_eval_and_split_return_degenerate_arc_error_test() {
