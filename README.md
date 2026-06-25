@@ -834,7 +834,9 @@ and
 
 The repository includes a small browser probe:
 
-![Zero-length closepath probe](https://raw.githubusercontent.com/vistuleB/svg_path/main/zero_length_closepath_probe.svg)
+<center>
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/main/zero_length_closepath_probe.svg" alt="Zero-length closepath probe">
+</center>
 
 The upper half of that file compares these two cases:
 
