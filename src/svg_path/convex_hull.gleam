@@ -334,6 +334,8 @@ fn convex_loop_family_support(
   case loops {
     [] -> Error(Nil)
     [first, ..rest] -> {
+      // Seed with a real support value rather than a fake negative-infinity
+      // sentinel; west/southwest directions can have all-negative supports.
       let first = convex_loop_exact_support(first, angle)
       convex_loop_family_support_loop(
         rest,

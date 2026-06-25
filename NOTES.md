@@ -57,9 +57,16 @@ preserved.
 
 `gleeunit.main()` discovers every public function ending in `_test` under
 `test/`, so running one test module through Gleam does not restrict discovery
-to that module.
+to that module. The ordinary `gleam test` suite includes the convex hull smoke
+tests and deterministic point-cloud tests under `test/`.
 
-Use these local helpers when iterating:
+The slower convex hull stress module lives at
+`test_slow/svg_path_convex_hull_test.gleam`, outside normal discovery. To run
+it, temporarily park `test/svg_path_convex_hull_test.gleam`, copy the slow file
+into `test/svg_path_convex_hull_test.gleam`, run `gleam test`, then restore the
+smoke-test file.
+
+Use these local helpers when iterating on the ordinary suite:
 
 ```sh
 scripts/test-fast
@@ -70,4 +77,4 @@ scripts/test-all
 out of `test/`, runs `gleam test`, and restores the file before exiting.
 
 `scripts/test-all` restores `test/svg_path_convex_hull_test.gleam` if needed
-and runs the full `gleam test` suite.
+and runs the ordinary `gleam test` suite.
