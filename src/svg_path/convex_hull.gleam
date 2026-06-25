@@ -978,13 +978,7 @@ fn dumb_repair_loop_with_point(
   loop: Loop,
   point: svg_path.Point,
 ) -> Result(Loop, HullError) {
-  case loop_plus_point_hull(loop, point) {
-    Ok(loop) -> Ok(loop)
-    Error(TangentSearchExpectedTwoTangencies(_)) ->
-      union_loop_with_point(loop, point)
-    Error(TangentSearchDegenerateLoop) -> union_loop_with_point(loop, point)
-    Error(error) -> Error(error)
-  }
+  union_loop_with_point(loop, point)
 }
 
 fn union_loop_with_point(
