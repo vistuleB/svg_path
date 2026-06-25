@@ -37,7 +37,11 @@ const repair_mode_dumb = "dumb"
 
 const repair_mode_ambitious = "ambitious"
 
+const repair_mode_none = "none"
+
 const default_repair_mode = repair_mode_ambitious
+
+const pairwise_repair_mode = repair_mode_none
 
 const loop_prefilter_enabled = True
 
@@ -201,6 +205,18 @@ pub fn path_hull(path: svg_path.Path) -> Result(svg_path.Subpath, HullError) {
       |> segments_hull(repair_mode: default_repair_mode)
     }
   }
+}
+
+/// Compute the convex hull of a point cloud.
+///
+/// The result is a single closed subpath containing every input point.
+pub fn point_cloud_hull(
+  points: List(svg_path.Point),
+) -> Result(svg_path.Subpath, HullError) {
+  points
+  |> list.map(fn(point) { svg_path.empty_subpath(at: point) })
+  |> svg_path.Path
+  |> path_hull
 }
 
 pub fn segment_hull(
@@ -375,13 +391,18 @@ fn segments_hull(
 ) -> Result(svg_path.Subpath, HullError) {
   use loops <- result.try(segment_convex_loops(segments))
   let loops = maybe_prefilter_convex_loops(loops)
-  let repair_points = distinct_convex_loop_endpoints(loops)
+  let repair_point_groups = convex_loop_endpoint_groups(loops)
   use convex_loop <- result.try(
     loops
-    |> union_convex_loop_list(repair_mode:),
+    |> union_convex_loop_list(repair_mode: pairwise_repair_mode),
   )
   let ConvexLoop(loop:, enclosure: _) = convex_loop
-  use repaired <- result.try(dumb_repair_loop_with_points(loop, repair_points))
+  use repaired <- result.try(final_repair_loop(
+    loop,
+    source_loops: loops,
+    repair_point_groups:,
+    repair_mode:,
+  ))
   let Loop(segments:) = repaired
   build_closed_subpath(segments)
 }
@@ -431,17 +452,14 @@ fn convex_loop(segments: List(svg_path.Segment)) -> ConvexLoop {
   ConvexLoop(loop:, enclosure: loop_enclosure(loop))
 }
 
-fn distinct_convex_loop_endpoints(
+fn convex_loop_endpoint_groups(
   loops: List(ConvexLoop),
-) -> List(svg_path.Point) {
+) -> List(List(svg_path.Point)) {
   loops
-  |> list.fold([], fn(points, loop) {
-    let ConvexLoop(loop: Loop(segments), enclosure: _) = loop
-    segments
-    |> segment_endpoints_for_repair
-    |> list.fold(points, fn(points, point) { add_distinct_point(points, point) })
+  |> list.map(fn(loop) {
+    let ConvexLoop(loop:, enclosure: _) = loop
+    loop_endpoints(loop)
   })
-  |> list.reverse
 }
 
 fn segment_endpoints_for_repair(
@@ -919,13 +937,60 @@ fn dumb_repair_loop_with_points(
   loop: Loop,
   points: List(svg_path.Point),
 ) -> Result(Loop, HullError) {
+  let outside_points =
+    points
+    |> list.filter(fn(point) {
+      case point_chord_polygon_loop_separation(loop, point) {
+        None -> False
+        Some(_) -> True
+      }
+    })
+
+  repair_loop_with_points(loop, outside_points)
+}
+
+fn dumb_repair_loop_with_point_groups(
+  loop: Loop,
+  point_groups: List(List(svg_path.Point)),
+) -> Result(Loop, HullError) {
+  let repair_points =
+    point_groups
+    |> list.fold([], fn(points, group) {
+      case point_group_needs_repair(loop, group) {
+        False -> points
+        True ->
+          group
+          |> list.fold(points, fn(points, point) {
+            add_distinct_point(points, point)
+          })
+      }
+    })
+    |> list.reverse
+
+  repair_loop_with_points(loop, list.append(repair_points, repair_points))
+}
+
+fn point_group_needs_repair(
+  loop: Loop,
+  points: List(svg_path.Point),
+) -> Bool {
+  points
+  |> list.any(fn(point) {
+    case point_chord_polygon_loop_separation(loop, point) {
+      None -> False
+      Some(_) -> True
+    }
+  })
+}
+
+fn repair_loop_with_points(
+  loop: Loop,
+  points: List(svg_path.Point),
+) -> Result(Loop, HullError) {
   points
   |> list.fold(Ok(loop), fn(current, point) {
     use current <- result.try(current)
-    case point_chord_polygon_loop_separation(current, point) {
-      None -> Ok(current)
-      Some(_) -> dumb_repair_loop_with_point(current, point)
-    }
+    dumb_repair_loop_with_point(current, point)
   })
 }
 
@@ -935,8 +1000,40 @@ fn dumb_repair_loop_with_point(
 ) -> Result(Loop, HullError) {
   case loop_plus_point_hull(loop, point) {
     Ok(loop) -> Ok(loop)
-    Error(TangentSearchExpectedTwoTangencies(_)) -> Ok(loop)
+    Error(TangentSearchExpectedTwoTangencies(_)) ->
+      union_loop_with_point(loop, point)
+    Error(TangentSearchDegenerateLoop) -> union_loop_with_point(loop, point)
     Error(error) -> Error(error)
+  }
+}
+
+fn union_loop_with_point(
+  loop: Loop,
+  point: svg_path.Point,
+) -> Result(Loop, HullError) {
+  let segments =
+    [point, ..loop_endpoints(loop)]
+    |> list.map(point_segment)
+  use hull <- result.try(segments_hull(segments, repair_mode: repair_mode_none))
+  Ok(Loop(svg_path.segments(hull)))
+}
+
+fn final_repair_loop(
+  loop: Loop,
+  source_loops source_loops: List(ConvexLoop),
+  repair_point_groups repair_point_groups: List(List(svg_path.Point)),
+  repair_mode repair_mode: String,
+) -> Result(Loop, HullError) {
+  case repair_mode {
+    mode if mode == repair_mode_ambitious ->
+      ambitious_repair_loop_with_loops(
+        loop,
+        additions: source_loops,
+      )
+    mode if mode == repair_mode_dumb ->
+      dumb_repair_loop_with_point_groups(loop, repair_point_groups)
+    mode if mode == repair_mode_none -> Ok(loop)
+    _ -> Ok(loop)
   }
 }
 
@@ -949,8 +1046,21 @@ fn configured_repair_loop_with_loop(
     mode if mode == repair_mode_ambitious ->
       ambitious_repair_loop_with_loop(current, addition:)
     mode if mode == repair_mode_dumb -> Ok(current)
+    mode if mode == repair_mode_none -> Ok(current)
     _ -> Ok(current)
   }
+}
+
+fn ambitious_repair_loop_with_loops(
+  current: Loop,
+  additions additions: List(ConvexLoop),
+) -> Result(Loop, HullError) {
+  additions
+  |> list.fold(Ok(current), fn(current, addition) {
+    use current <- result.try(current)
+    let ConvexLoop(loop: addition, enclosure: _) = addition
+    ambitious_repair_loop_with_loop(current, addition:)
+  })
 }
 
 fn ambitious_repair_loop_with_loop(

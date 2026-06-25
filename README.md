@@ -579,6 +579,16 @@ convex_hull.path_hull(path)
 Move-only subpaths contribute their start points, and the result is still a
 single closed `Subpath`.
 
+For a point cloud, use `point_cloud_hull` directly:
+
+```gleam
+convex_hull.point_cloud_hull(points)
+```
+
+For mixed inputs, convert points to move-only subpaths, segments to one-segment
+subpaths, keep existing subpaths as-is, then collect them into a `Path` and use
+`path_hull`.
+
 ## Parsing
 
 `svg_path/parse` accepts normal SVG path data syntax, including:

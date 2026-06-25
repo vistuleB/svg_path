@@ -551,6 +551,7 @@ pub fn path_hull_with_dumb_repair_mode_handles_line_arc_probe_test() {
     )
 
   assert svg_path.is_closed(hull)
+  assert line_arc_probe_arc_endpoints_are_inside_hull(hull)
 }
 
 pub fn path_hull_with_ambitious_repair_mode_handles_line_arc_probe_test() {
@@ -561,6 +562,7 @@ pub fn path_hull_with_ambitious_repair_mode_handles_line_arc_probe_test() {
     )
 
   assert svg_path.is_closed(hull)
+  assert line_arc_probe_arc_endpoints_are_inside_hull(hull)
   assert svg_path.segments(hull)
     |> list.any(fn(segment) {
       case segment {
@@ -879,6 +881,24 @@ fn line_arc_probe_path() -> svg_path.Path {
     svg_path.assert_subpath([line]),
     svg_path.assert_subpath([arc]),
   ])
+}
+
+fn line_arc_probe_arc_endpoints_are_inside_hull(hull: svg_path.Subpath) -> Bool {
+  line_arc_probe_arc_endpoints()
+  |> list.all(fn(point) {
+    convex_hull.test_point_chord_polygon_loop_separation(
+      svg_path.segments(hull),
+      point:,
+    )
+    == None
+  })
+}
+
+fn line_arc_probe_arc_endpoints() -> List(svg_path.Point) {
+  [
+    svg_path.point(999.94340504, 7.63106966),
+    svg_path.point(999.92428935, 9.82151131),
+  ]
 }
 
 fn support_values_match(
