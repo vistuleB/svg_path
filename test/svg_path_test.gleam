@@ -1521,6 +1521,84 @@ pub fn subpath_rejects_empty_segment_list_test() {
   assert svg_path.subpath([]) == Error(svg_path.EmptySubpath)
 }
 
+pub fn polyline_rejects_empty_and_singleton_point_lists_test() {
+  let point = svg_path.point(0.0, 0.0)
+
+  assert svg_path.polyline([]) == Error(svg_path.EmptySubpath)
+  assert svg_path.polyline([point]) == Error(svg_path.EmptySubpath)
+}
+
+pub fn polyline_builds_open_line_subpath_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(10.0, 20.0)
+  let assert Ok(subpath) = svg_path.polyline([a, b, c])
+
+  assert !svg_path.is_closed(subpath)
+  assert svg_path.segments(subpath)
+    == [
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
+    ]
+}
+
+pub fn assert_polyline_builds_open_line_subpath_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let subpath = svg_path.assert_polyline([a, b])
+
+  assert !svg_path.is_closed(subpath)
+  assert svg_path.segments(subpath) == [svg_path.Line(start: a, end: b)]
+}
+
+pub fn polygon_rejects_empty_and_singleton_point_lists_test() {
+  let point = svg_path.point(0.0, 0.0)
+
+  assert svg_path.polygon([]) == Error(svg_path.EmptySubpath)
+  assert svg_path.polygon([point]) == Error(svg_path.EmptySubpath)
+}
+
+pub fn polygon_builds_closed_line_subpath_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(10.0, 20.0)
+  let assert Ok(subpath) = svg_path.polygon([a, b, c])
+
+  assert svg_path.is_closed(subpath)
+  assert svg_path.segments(subpath)
+    == [
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
+      svg_path.Line(start: c, end: a),
+    ]
+}
+
+pub fn assert_polygon_builds_closed_line_subpath_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let subpath = svg_path.assert_polygon([a, b])
+
+  assert svg_path.is_closed(subpath)
+  assert svg_path.segments(subpath)
+    == [
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: a),
+    ]
+}
+
+pub fn polygon_does_not_add_zero_length_line_when_input_already_closes_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let assert Ok(subpath) = svg_path.polygon([a, b, a])
+
+  assert svg_path.is_closed(subpath)
+  assert svg_path.segments(subpath)
+    == [
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: a),
+    ]
+}
+
 pub fn empty_subpath_has_start_and_end_test() {
   let start = svg_path.point(0.0, 0.0)
 

@@ -406,6 +406,53 @@ pub fn subpath_with(
   open_subpath_with_segments(segments, endpoint_policy)
 }
 
+/// Create an open subpath connecting the given points with line segments.
+///
+/// The input must contain at least two points.
+pub fn polyline(points: List(Point)) -> Result(Subpath, Error) {
+  case point_lines(points) {
+    [] -> Error(EmptySubpath)
+    segments -> subpath(segments)
+  }
+}
+
+/// Create an open polyline subpath, panicking if the point list is invalid.
+pub fn assert_polyline(points: List(Point)) -> Subpath {
+  case polyline(points) {
+    Ok(subpath) -> subpath
+    Error(_) -> panic as "svg_path.assert_polyline received invalid points"
+  }
+}
+
+/// Create a closed subpath connecting the given points with line segments.
+///
+/// The input must contain at least two points. If the last point equals the
+/// first point, no extra zero-length closing line is added.
+///
+/// This is equivalent to constructing a `polyline` from the same points and
+/// closing it with `set_closed_with(..., policy: Bridge)`.
+pub fn polygon(points: List(Point)) -> Result(Subpath, Error) {
+  case points {
+    [] | [_] -> Error(EmptySubpath)
+    [first, ..] -> {
+      let segments = point_lines(close_polygon_points(points, first))
+
+      case subpath(segments) {
+        Error(error) -> Error(error)
+        Ok(subpath) -> set_closed(subpath, closed: True)
+      }
+    }
+  }
+}
+
+/// Create a closed polygon subpath, panicking if the point list is invalid.
+pub fn assert_polygon(points: List(Point)) -> Subpath {
+  case polygon(points) {
+    Ok(subpath) -> subpath
+    Error(_) -> panic as "svg_path.assert_polygon received invalid points"
+  }
+}
+
 /// Create an open subpath from a non-empty continuous list of segments,
 /// panicking if the segments are invalid.
 ///
@@ -2893,6 +2940,28 @@ fn open_subpath_with_segments(
     [] -> Error(EmptySubpath)
     [first, ..] ->
       open_subpath_with_start(segments, segment_start(first), policy)
+  }
+}
+
+fn point_lines(points: List(Point)) -> List(Segment) {
+  point_lines_loop(points, [])
+}
+
+fn point_lines_loop(
+  points: List(Point),
+  segments: List(Segment),
+) -> List(Segment) {
+  case points {
+    [] | [_] -> list.reverse(segments)
+    [start, end, ..rest] ->
+      point_lines_loop([end, ..rest], [Line(start:, end:), ..segments])
+  }
+}
+
+fn close_polygon_points(points: List(Point), first: Point) -> List(Point) {
+  case list.last(points) {
+    Ok(last) if last == first -> points
+    _ -> list.append(points, [first])
   }
 }
 
