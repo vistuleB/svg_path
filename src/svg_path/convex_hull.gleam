@@ -872,6 +872,9 @@ fn point_exact_loop_tangent_subpaths(
   loop: Loop,
   point: svg_path.Point,
 ) -> Result(#(svg_path.Subpath, svg_path.Subpath), HullError) {
+  // This exact tangent split is a specialized point-repair path. The seeded
+  // ordinary loop-union path can cover similar cases, so revisit whether both
+  // routes are worth keeping once the repair logic settles.
   let Loop(segments:) = loop
 
   case tangent_search_orientation(segments, point) {
@@ -937,16 +940,7 @@ fn dumb_repair_loop_with_points(
   loop: Loop,
   points: List(svg_path.Point),
 ) -> Result(Loop, HullError) {
-  let outside_points =
-    points
-    |> list.filter(fn(point) {
-      case point_chord_polygon_loop_separation(loop, point) {
-        None -> False
-        Some(_) -> True
-      }
-    })
-
-  repair_loop_with_points(loop, outside_points)
+  repair_loop_with_points(loop, list.append(points, points))
 }
 
 fn dumb_repair_loop_with_point_groups(
@@ -956,31 +950,14 @@ fn dumb_repair_loop_with_point_groups(
   let repair_points =
     point_groups
     |> list.fold([], fn(points, group) {
-      case point_group_needs_repair(loop, group) {
-        False -> points
-        True ->
-          group
-          |> list.fold(points, fn(points, point) {
-            add_distinct_point(points, point)
-          })
-      }
+      group
+      |> list.fold(points, fn(points, point) {
+        add_distinct_point(points, point)
+      })
     })
     |> list.reverse
 
   repair_loop_with_points(loop, list.append(repair_points, repair_points))
-}
-
-fn point_group_needs_repair(
-  loop: Loop,
-  points: List(svg_path.Point),
-) -> Bool {
-  points
-  |> list.any(fn(point) {
-    case point_chord_polygon_loop_separation(loop, point) {
-      None -> False
-      Some(_) -> True
-    }
-  })
 }
 
 fn repair_loop_with_points(
@@ -990,7 +967,10 @@ fn repair_loop_with_points(
   points
   |> list.fold(Ok(loop), fn(current, point) {
     use current <- result.try(current)
-    dumb_repair_loop_with_point(current, point)
+    case point_chord_polygon_loop_separation(current, point) {
+      None -> Ok(current)
+      Some(_) -> dumb_repair_loop_with_point(current, point)
+    }
   })
 }
 
@@ -1011,11 +991,28 @@ fn union_loop_with_point(
   loop: Loop,
   point: svg_path.Point,
 ) -> Result(Loop, HullError) {
-  let segments =
-    [point, ..loop_endpoints(loop)]
-    |> list.map(point_segment)
-  use hull <- result.try(segments_hull(segments, repair_mode: repair_mode_none))
-  Ok(Loop(svg_path.segments(hull)))
+  let point_loop = Loop([point_segment(point)])
+  case point_chord_polygon_loop_separation(loop, point) {
+    None -> Ok(loop)
+    Some(#(direction, _)) -> {
+      use refined <- result.try(find_seeded_worst_direction(
+        loop,
+        point_loop,
+        direction:,
+        threshold: loop_union_seed_max_drift,
+      ))
+      let #(lower, upper) = refined
+      case
+        seeded_loop_union_segments(loop, addition: point_loop, seed_angles: [
+          lower,
+          upper,
+        ])
+      {
+        [] -> Ok(loop)
+        segments -> Ok(Loop(segments))
+      }
+    }
+  }
 }
 
 fn final_repair_loop(
@@ -1026,10 +1023,7 @@ fn final_repair_loop(
 ) -> Result(Loop, HullError) {
   case repair_mode {
     mode if mode == repair_mode_ambitious ->
-      ambitious_repair_loop_with_loops(
-        loop,
-        additions: source_loops,
-      )
+      ambitious_repair_loop_with_loops(loop, additions: source_loops)
     mode if mode == repair_mode_dumb ->
       dumb_repair_loop_with_point_groups(loop, repair_point_groups)
     mode if mode == repair_mode_none -> Ok(loop)
