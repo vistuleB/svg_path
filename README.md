@@ -797,7 +797,7 @@ and
 
 The repository includes a small browser probe:
 
-![Zero-length closepath probe](zero_length_closepath_probe.svg)
+![Zero-length closepath probe](https://raw.githubusercontent.com/vistuleB/svg_path/main/zero_length_closepath_probe.svg)
 
 The upper half of that file compares these two cases:
 
