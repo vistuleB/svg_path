@@ -105,7 +105,7 @@ pub fn seeded_worst_direction_stays_put_at_local_maximum_test() {
   assert near_float(upper, 0.0)
 }
 
-pub fn seeded_worst_direction_walks_toward_better_side_test() {
+pub fn seeded_worst_direction_walks_to_local_maximum_test() {
   let a = point_loop(svg_path.point(0.0, 0.0))
   let b = point_loop(svg_path.point(1.0, 0.0))
 
@@ -118,17 +118,14 @@ pub fn seeded_worst_direction_walks_toward_better_side_test() {
     )
 
   assert near_float(lower, 0.0)
-  assert near_float(upper, 5.0)
+  assert near_float(upper, 0.0)
 }
 
-pub fn seeded_worst_direction_errors_with_found_interval_test() {
+pub fn seeded_worst_direction_stays_within_max_drift_test() {
   let a = point_loop(svg_path.point(0.0, 0.0))
   let b = point_loop(svg_path.point(1.0, 0.0))
 
-  let assert Error(convex_hull.SeededWorstDirectionExceededThreshold(
-    lower,
-    upper,
-  )) =
+  let assert Ok(#(lower, upper)) =
     convex_hull.test_find_seeded_worst_direction(
       a,
       b,
@@ -136,8 +133,8 @@ pub fn seeded_worst_direction_errors_with_found_interval_test() {
       threshold: 1.0,
     )
 
-  assert lower <. upper
-  assert upper -. lower >. 1.0
+  assert near_float(lower, 4.0)
+  assert near_float(upper, 4.0)
 }
 
 pub fn point_chord_polygon_loop_separation_returns_none_for_inside_polygon_point_test() {

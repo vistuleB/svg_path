@@ -27,6 +27,8 @@ const loop_union_bisection_steps = 32
 
 const seeded_worst_direction_step = 0.1
 
+const seeded_worst_direction_refined_step = 0.01
+
 const loop_prefilter_enabled = True
 
 const loop_prefilter_sample_count = 36
@@ -2200,84 +2202,120 @@ fn find_seeded_worst_direction(
   direction direction: Float,
   threshold threshold: Float,
 ) -> Result(#(Float, Float), HullError) {
-  let advantage = loop_b_advantage(loop_a, loop_b, direction)
+  let max_drift = threshold
+  let initial =
+    SeededWorstDirectionState(
+      direction:,
+      advantage: loop_b_advantage(loop_a, loop_b, direction),
+    )
+  let coarse =
+    seeded_worst_direction_local_search(
+      loop_a,
+      loop_b,
+      origin: direction,
+      current: initial,
+      step: seeded_worst_direction_step,
+      max_drift:,
+    )
+  let refined =
+    seeded_worst_direction_local_search(
+      loop_a,
+      loop_b,
+      origin: direction,
+      current: coarse,
+      step: seeded_worst_direction_refined_step,
+      max_drift:,
+    )
 
-  find_seeded_worst_direction_loop(
+  Ok(#(normalize_angle(refined.direction), normalize_angle(refined.direction)))
+}
+
+type SeededWorstDirectionState {
+  SeededWorstDirectionState(direction: Float, advantage: Float)
+}
+
+fn seeded_worst_direction_local_search(
+  loop_a: Loop,
+  loop_b: Loop,
+  origin origin: Float,
+  current current: SeededWorstDirectionState,
+  step step: Float,
+  max_drift max_drift: Float,
+) -> SeededWorstDirectionState {
+  let candidate =
+    seeded_worst_direction_best_step(
+      loop_a,
+      loop_b,
+      origin:,
+      current:,
+      step:,
+      max_drift:,
+    )
+
+  case candidate {
+    SeededWorstDirectionState(direction:, ..)
+      if direction == current.direction
+    -> current
+    _ ->
+      seeded_worst_direction_local_search(
+        loop_a,
+        loop_b,
+        origin:,
+        current: candidate,
+        step:,
+        max_drift:,
+      )
+  }
+}
+
+fn seeded_worst_direction_best_step(
+  loop_a: Loop,
+  loop_b: Loop,
+  origin origin: Float,
+  current current: SeededWorstDirectionState,
+  step step: Float,
+  max_drift max_drift: Float,
+) -> SeededWorstDirectionState {
+  let upper =
+    seeded_worst_direction_candidate(
+      loop_a,
+      loop_b,
+      origin:,
+      candidate_direction: current.direction +. step,
+      best: current,
+      max_drift:,
+    )
+  seeded_worst_direction_candidate(
     loop_a,
     loop_b,
-    lower: direction,
-    lower_advantage: advantage,
-    upper: direction,
-    upper_advantage: advantage,
-    threshold: threshold,
+    origin:,
+    candidate_direction: current.direction -. step,
+    best: upper,
+    max_drift:,
   )
 }
 
-fn find_seeded_worst_direction_loop(
+fn seeded_worst_direction_candidate(
   loop_a: Loop,
   loop_b: Loop,
-  lower lower: Float,
-  lower_advantage lower_advantage: Float,
-  upper upper: Float,
-  upper_advantage upper_advantage: Float,
-  threshold threshold: Float,
-) -> Result(#(Float, Float), HullError) {
-  let #(upper, upper_advantage, upper_moved) =
-    maybe_grow_seeded_worst_upper(loop_a, loop_b, upper:, upper_advantage:)
-  let #(lower, lower_advantage, lower_moved) =
-    maybe_grow_seeded_worst_lower(loop_a, loop_b, lower:, lower_advantage:)
-
-  case upper -. lower >. threshold {
-    True ->
-      Error(SeededWorstDirectionExceededThreshold(
-        normalize_angle(lower),
-        normalize_angle(upper),
-      ))
+  origin origin: Float,
+  candidate_direction candidate_direction: Float,
+  best best: SeededWorstDirectionState,
+  max_drift max_drift: Float,
+) -> SeededWorstDirectionState {
+  case
+    float.absolute_value(candidate_direction -. origin)
+    >. max_drift +. point_tolerance
+  {
+    True -> best
     False -> {
-      case upper_moved || lower_moved {
+      let advantage = loop_b_advantage(loop_a, loop_b, candidate_direction)
+      case advantage >. best.advantage {
         True ->
-          find_seeded_worst_direction_loop(
-            loop_a,
-            loop_b,
-            lower:,
-            lower_advantage:,
-            upper:,
-            upper_advantage:,
-            threshold:,
-          )
-        False -> Ok(#(normalize_angle(lower), normalize_angle(upper)))
+          SeededWorstDirectionState(direction: candidate_direction, advantage:)
+        False -> best
       }
     }
-  }
-}
-
-fn maybe_grow_seeded_worst_upper(
-  loop_a: Loop,
-  loop_b: Loop,
-  upper upper: Float,
-  upper_advantage upper_advantage: Float,
-) -> #(Float, Float, Bool) {
-  let candidate = upper +. seeded_worst_direction_step
-  let candidate_advantage = loop_b_advantage(loop_a, loop_b, candidate)
-
-  case candidate_advantage >. upper_advantage {
-    True -> #(candidate, candidate_advantage, True)
-    False -> #(upper, upper_advantage, False)
-  }
-}
-
-fn maybe_grow_seeded_worst_lower(
-  loop_a: Loop,
-  loop_b: Loop,
-  lower lower: Float,
-  lower_advantage lower_advantage: Float,
-) -> #(Float, Float, Bool) {
-  let candidate = lower -. seeded_worst_direction_step
-  let candidate_advantage = loop_b_advantage(loop_a, loop_b, candidate)
-
-  case candidate_advantage >. lower_advantage {
-    True -> #(candidate, candidate_advantage, True)
-    False -> #(lower, lower_advantage, False)
   }
 }
 
