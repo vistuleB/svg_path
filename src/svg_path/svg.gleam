@@ -9,8 +9,9 @@ import svg_path/serialize
 
 /// One item to render inside a generated SVG document.
 ///
-/// This type is intentionally small. It supports styled path elements and text
-/// labels for quick debugging drawings and examples.
+/// This type is intentionally small. It supports styled paths, rectangles,
+/// circles, ellipses, and text labels for quick debugging drawings and
+/// examples.
 pub type ThingToDraw {
   /// A `<path>` element.
   ///
@@ -18,6 +19,24 @@ pub type ThingToDraw {
   /// field is used directly as the element's `style` attribute after XML
   /// attribute escaping.
   StyledPath(svg_path.Path, String)
+
+  /// A `<rect>` element.
+  ///
+  /// The fields are the top-left point, width, height, and raw CSS declarations
+  /// for the `style` attribute.
+  Rectangle(svg_path.Point, Float, Float, String)
+
+  /// A `<circle>` element.
+  ///
+  /// The fields are the center point, radius, and raw CSS declarations for the
+  /// `style` attribute.
+  Circle(svg_path.Point, Float, String)
+
+  /// An `<ellipse>` element.
+  ///
+  /// The fields are the center point, x/y radii, and raw CSS declarations for
+  /// the `style` attribute.
+  Ellipse(svg_path.Point, svg_path.Point, String)
 
   /// A `<text>` element.
   ///
@@ -128,6 +147,12 @@ fn thing_element(
 ) -> String {
   case thing {
     StyledPath(path, style) -> path_element(path, style)
+    Rectangle(top_left, width, height, style) ->
+      rectangle_element(top_left, width, height, style, format)
+    Circle(center, radius, style) ->
+      circle_element(center, radius, style, format)
+    Ellipse(center, radius, style) ->
+      ellipse_element(center, radius, style, format)
     Text(label, style, point, font_size) ->
       text_element(label, style, point, font_size, format)
   }
@@ -136,6 +161,62 @@ fn thing_element(
 fn path_element(path: svg_path.Path, style: String) -> String {
   "  <path d=\""
   <> attribute_escape(serialize.path(path))
+  <> "\" style=\""
+  <> attribute_escape(style)
+  <> "\" />"
+}
+
+fn rectangle_element(
+  top_left: svg_path.Point,
+  width: Float,
+  height: Float,
+  style: String,
+  format: number_format.NumberFormat,
+) -> String {
+  "  <rect x=\""
+  <> number_format.number(top_left.x, with: format)
+  <> "\" y=\""
+  <> number_format.number(top_left.y, with: format)
+  <> "\" width=\""
+  <> number_format.number(width, with: format)
+  <> "\" height=\""
+  <> number_format.number(height, with: format)
+  <> "\" style=\""
+  <> attribute_escape(style)
+  <> "\" />"
+}
+
+fn circle_element(
+  center: svg_path.Point,
+  radius: Float,
+  style: String,
+  format: number_format.NumberFormat,
+) -> String {
+  "  <circle cx=\""
+  <> number_format.number(center.x, with: format)
+  <> "\" cy=\""
+  <> number_format.number(center.y, with: format)
+  <> "\" r=\""
+  <> number_format.number(radius, with: format)
+  <> "\" style=\""
+  <> attribute_escape(style)
+  <> "\" />"
+}
+
+fn ellipse_element(
+  center: svg_path.Point,
+  radius: svg_path.Point,
+  style: String,
+  format: number_format.NumberFormat,
+) -> String {
+  "  <ellipse cx=\""
+  <> number_format.number(center.x, with: format)
+  <> "\" cy=\""
+  <> number_format.number(center.y, with: format)
+  <> "\" rx=\""
+  <> number_format.number(radius.x, with: format)
+  <> "\" ry=\""
+  <> number_format.number(radius.y, with: format)
   <> "\" style=\""
   <> attribute_escape(style)
   <> "\" />"

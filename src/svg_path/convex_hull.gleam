@@ -9,19 +9,23 @@ import gleam/float
 import gleam/int
 import gleam/io
 import gleam/list
+import gleam/option.{type Option, None, Some}
 import gleam/result
 import gleam_community/maths
 import svg_path
+import svg_path/ellipse
 
 const cubic_sample_count = 3600
 
-const loop_union_sample_count = 720
+const loop_union_sample_count = 360
 
 const loop_union_tie_tolerance = 0.0000001
 
 const loop_union_point_tolerance = 0.000001
 
 const loop_union_bisection_steps = 32
+
+const seeded_worst_direction_step = 0.1
 
 const loop_prefilter_enabled = True
 
@@ -109,6 +113,20 @@ type HullPiece {
   HullLine(Float, Float)
 }
 
+type TangentCandidate {
+  TangentCandidate(vertex_index: Int, point: svg_path.Point)
+}
+
+type LoopTangentCandidate {
+  LoopTangentCandidate(param: LoopParam, point: svg_path.Point)
+}
+
+pub type PointLoopView {
+  TangentPoint
+  OutsidePoint
+  InsidePoint
+}
+
 pub type HullError {
   /// The generated hull segments could not be converted into a valid closed
   /// `Subpath`.
@@ -130,6 +148,18 @@ pub type HullError {
 
   /// Convex-loop union collapsed to no boundary pieces.
   LoopUnionCollapsed
+
+  /// Tangent search expected a non-degenerate chord polygon.
+  TangentSearchDegenerateLoop
+
+  /// Tangent search found a locally non-convex chord-polygon vertex.
+  TangentSearchNonConvexVertex(Int)
+
+  /// Tangent search did not find exactly two tangent transitions.
+  TangentSearchExpectedTwoTangencies(Int)
+
+  /// Seeded worst-direction search grew past its allowed interval width.
+  SeededWorstDirectionExceededThreshold(Float, Float)
 }
 
 /// Compute the convex hull of a subpath.
@@ -190,17 +220,103 @@ pub fn test_brute_segment_support(
   Ok(#(sample.t, sample.point, sample.value))
 }
 
+@internal
+pub fn test_point_chord_polygon_loop_separation(
+  segments: List(svg_path.Segment),
+  point point: svg_path.Point,
+) -> Option(#(Float, svg_path.Point)) {
+  point_chord_polygon_loop_separation(Loop(segments), point)
+}
+
+@internal
+pub fn test_point_chord_polygon_tangent_subpaths(
+  segments: List(svg_path.Segment),
+  point point: svg_path.Point,
+) -> Result(#(svg_path.Subpath, svg_path.Subpath), HullError) {
+  point_chord_polygon_tangent_subpaths(Loop(segments), point)
+}
+
+@internal
+pub fn test_point_exact_loop_tangent_subpaths(
+  segments: List(svg_path.Segment),
+  point point: svg_path.Point,
+) -> Result(#(svg_path.Subpath, svg_path.Subpath), HullError) {
+  point_exact_loop_tangent_subpaths(Loop(segments), point)
+}
+
+@internal
+pub fn test_loop_plus_point_hull(
+  segments: List(svg_path.Segment),
+  point point: svg_path.Point,
+) -> Result(List(svg_path.Segment), HullError) {
+  use loop <- result.try(loop_plus_point_hull(Loop(segments), point))
+  let Loop(segments:) = loop
+  Ok(segments)
+}
+
+@internal
+pub fn test_loop_plus_points_hull(
+  segments: List(svg_path.Segment),
+  points points: List(svg_path.Point),
+) -> Result(List(svg_path.Segment), HullError) {
+  use loop <- result.try(loop_plus_points_hull(Loop(segments), points))
+  let Loop(segments:) = loop
+  Ok(segments)
+}
+
+@internal
+pub fn test_find_seeded_worst_direction(
+  loop_a: List(svg_path.Segment),
+  loop_b: List(svg_path.Segment),
+  direction direction: Float,
+  threshold threshold: Float,
+) -> Result(#(Float, Float), HullError) {
+  find_seeded_worst_direction(
+    Loop(loop_a),
+    Loop(loop_b),
+    direction:,
+    threshold:,
+  )
+}
+
+@internal
+pub fn test_segment_tangent_monotone(
+  segment: svg_path.Segment,
+  clockwise clockwise: Bool,
+) -> Result(Nil, Float) {
+  segment_tangent_turn_algebraic(segment, orientation: case clockwise {
+    True -> Clockwise
+    False -> CounterClockwise
+  })
+}
+
+@internal
+pub fn test_point_loop_view(
+  point point: svg_path.Point,
+  at q: svg_path.Point,
+  arriving arriving: svg_path.Point,
+  leaving leaving: svg_path.Point,
+  clockwise clockwise: Bool,
+) -> PointLoopView {
+  point_loop_view(point, q, arriving, leaving, orientation: case clockwise {
+    True -> Clockwise
+    False -> CounterClockwise
+  })
+}
+
 fn segments_hull(
   segments: List(svg_path.Segment),
 ) -> Result(svg_path.Subpath, HullError) {
   use loops <- result.try(segment_convex_loops(segments))
+  let loops = maybe_prefilter_convex_loops(loops)
+  let repair_points = distinct_convex_loop_endpoints(loops)
   use convex_loop <- result.try(
     loops
-    |> maybe_prefilter_convex_loops
     |> union_convex_loop_list,
   )
   let ConvexLoop(loop:, enclosure: _) = convex_loop
-  let Loop(segments:) = loop
+  use repaired <- result.try(loop_plus_points_hull(loop, repair_points))
+  let Loop(segments:) = repaired
   build_closed_subpath(segments)
 }
 
@@ -247,6 +363,38 @@ fn segment_convex_loop(
 fn convex_loop(segments: List(svg_path.Segment)) -> ConvexLoop {
   let loop = Loop(segments)
   ConvexLoop(loop:, enclosure: loop_enclosure(loop))
+}
+
+fn distinct_convex_loop_endpoints(
+  loops: List(ConvexLoop),
+) -> List(svg_path.Point) {
+  loops
+  |> list.fold([], fn(points, loop) {
+    let ConvexLoop(loop: Loop(segments), enclosure: _) = loop
+    segments
+    |> segment_endpoints_for_repair
+    |> list.fold(points, fn(points, point) { add_distinct_point(points, point) })
+  })
+  |> list.reverse
+}
+
+fn segment_endpoints_for_repair(
+  segments: List(svg_path.Segment),
+) -> List(svg_path.Point) {
+  segments
+  |> list.fold([], fn(points, segment) {
+    [svg_path.segment_start(segment), svg_path.segment_end(segment), ..points]
+  })
+}
+
+fn add_distinct_point(
+  points: List(svg_path.Point),
+  point: svg_path.Point,
+) -> List(svg_path.Point) {
+  case points |> list.any(fn(existing) { points_near(existing, point) }) {
+    True -> points
+    False -> [point, ..points]
+  }
 }
 
 fn union_convex_loop_list(
@@ -490,6 +638,1119 @@ fn convex_polygon_support_value(polygon: ConvexPolygon, angle: Float) -> Float {
   }
 }
 
+fn point_chord_polygon_loop_separation(
+  loop: Loop,
+  point: svg_path.Point,
+) -> Option(#(Float, svg_path.Point)) {
+  // Endpoint/chord-polygon test: `Some` may be a false positive for curved
+  // loops whose boundary bulges beyond the polygon through segment endpoints.
+  let Loop(segments:) = loop
+  let vertices = loop_vertices(segments)
+  case vertices {
+    [] -> None
+    [only] -> point_point_separation(only, point)
+    [a, b] -> point_segment_separation(a, b, point)
+    _ -> point_chord_polygon_separation(vertices, point)
+  }
+}
+
+fn point_point_separation(
+  only: svg_path.Point,
+  point: svg_path.Point,
+) -> Option(#(Float, svg_path.Point)) {
+  case points_near(only, point) {
+    True -> None
+    False -> Some(#(direction_angle(subtract(point, only)), only))
+  }
+}
+
+fn point_segment_separation(
+  a: svg_path.Point,
+  b: svg_path.Point,
+  point: svg_path.Point,
+) -> Option(#(Float, svg_path.Point)) {
+  let closest = closest_point_on_segment(a, b, point)
+  case points_near(closest, point) {
+    True -> None
+    False -> Some(#(direction_angle(subtract(point, closest)), closest))
+  }
+}
+
+fn point_chord_polygon_separation(
+  vertices: List(svg_path.Point),
+  point: svg_path.Point,
+) -> Option(#(Float, svg_path.Point)) {
+  let orientation = convex_polygon_orientation(ConvexPolygon(vertices:))
+  case orientation {
+    DegenerateOrientation -> point_chord_polyline_separation(vertices, point)
+    _ -> {
+      case convex_polygon_contains_point(vertices, point, orientation) {
+        True -> None
+        False -> {
+          let closest = closest_point_on_polygon(vertices, point)
+          case points_near(closest, point) {
+            True -> None
+            False -> Some(#(direction_angle(subtract(point, closest)), closest))
+          }
+        }
+      }
+    }
+  }
+}
+
+fn point_chord_polyline_separation(
+  vertices: List(svg_path.Point),
+  point: svg_path.Point,
+) -> Option(#(Float, svg_path.Point)) {
+  let closest = closest_point_on_polyline(vertices, point)
+  case points_near(closest, point) {
+    True -> None
+    False -> Some(#(direction_angle(subtract(point, closest)), closest))
+  }
+}
+
+fn point_loop_view(
+  point: svg_path.Point,
+  q: svg_path.Point,
+  arriving: svg_path.Point,
+  leaving: svg_path.Point,
+  orientation orientation: LoopOrientation,
+) -> PointLoopView {
+  let sight = subtract(q, point)
+  let arriving_turn = cross(sight, arriving)
+  let leaving_turn = cross(sight, leaving)
+
+  case
+    arriving_turn == 0.0
+    || leaving_turn == 0.0
+    || opposite_signs(arriving_turn, leaving_turn)
+  {
+    True -> TangentPoint
+    False ->
+      case orientation {
+        CounterClockwise ->
+          case arriving_turn <. 0.0 {
+            True -> OutsidePoint
+            False -> InsidePoint
+          }
+        Clockwise ->
+          case arriving_turn >. 0.0 {
+            True -> OutsidePoint
+            False -> InsidePoint
+          }
+        DegenerateOrientation -> TangentPoint
+      }
+  }
+}
+
+fn opposite_signs(a: Float, b: Float) -> Bool {
+  { a <. 0.0 && b >. 0.0 } || { a >. 0.0 && b <. 0.0 }
+}
+
+fn point_chord_polygon_tangent_subpaths(
+  loop: Loop,
+  point: svg_path.Point,
+) -> Result(#(svg_path.Subpath, svg_path.Subpath), HullError) {
+  let Loop(segments:) = loop
+  let vertices = loop_vertices(segments)
+  let orientation = convex_polygon_orientation(ConvexPolygon(vertices:))
+
+  case orientation {
+    DegenerateOrientation -> Error(TangentSearchDegenerateLoop)
+    _ -> {
+      use _ <- result.try(validate_chord_polygon_convex(vertices, orientation))
+      let tangents =
+        point_chord_polygon_tangent_vertices(vertices, point, orientation)
+      case tangents {
+        [first, second] ->
+          tangent_chains_to_subpaths(
+            vertices,
+            first,
+            second,
+            point,
+            orientation,
+          )
+        _ -> Error(TangentSearchExpectedTwoTangencies(list.length(tangents)))
+      }
+    }
+  }
+}
+
+fn point_exact_loop_tangent_subpaths(
+  loop: Loop,
+  point: svg_path.Point,
+) -> Result(#(svg_path.Subpath, svg_path.Subpath), HullError) {
+  let Loop(segments:) = loop
+  let orientation = loop_orientation(segments)
+
+  case orientation {
+    DegenerateOrientation -> Error(TangentSearchDegenerateLoop)
+    _ -> {
+      use _ <- result.try(validate_loop_endpoint_convexity(
+        segments,
+        orientation,
+      ))
+      use _ <- result.try(validate_loop_segment_convexity(segments, orientation))
+      use tangents <- result.try(point_exact_loop_tangent_candidates(
+        loop,
+        point,
+        orientation,
+      ))
+      case tangents {
+        [first, second] ->
+          loop_tangent_chains_to_subpaths(
+            loop,
+            first,
+            second,
+            point,
+            orientation,
+          )
+        _ -> Error(TangentSearchExpectedTwoTangencies(list.length(tangents)))
+      }
+    }
+  }
+}
+
+fn loop_plus_point_hull(
+  loop: Loop,
+  point: svg_path.Point,
+) -> Result(Loop, HullError) {
+  use split <- result.try(point_exact_loop_tangent_subpaths(loop, point))
+  let #(_removed, kept) = split
+  let start = subpath_start(kept)
+  let end = subpath_end(kept)
+  let segments =
+    list.append(svg_path.segments(kept), [
+      svg_path.Line(start: end, end: point),
+      svg_path.Line(start: point, end: start),
+    ])
+
+  use subpath <- result.try(
+    svg_path.subpath_with(segments, policy: svg_path.WiggleThenBridge)
+    |> map_path_error,
+  )
+  use closed <- result.try(
+    svg_path.set_closed_with(
+      subpath,
+      closed: True,
+      policy: svg_path.WiggleThenBridge,
+    )
+    |> map_path_error,
+  )
+  Ok(Loop(svg_path.segments(closed)))
+}
+
+fn loop_plus_points_hull(
+  loop: Loop,
+  points: List(svg_path.Point),
+) -> Result(Loop, HullError) {
+  points
+  |> list.fold(Ok(loop), fn(current, point) {
+    use current <- result.try(current)
+    case point_chord_polygon_loop_separation(current, point) {
+      None -> Ok(current)
+      Some(_) -> repair_loop_with_point(current, point)
+    }
+  })
+}
+
+fn repair_loop_with_point(
+  loop: Loop,
+  point: svg_path.Point,
+) -> Result(Loop, HullError) {
+  case loop_plus_point_hull(loop, point) {
+    Ok(loop) -> Ok(loop)
+    Error(TangentSearchExpectedTwoTangencies(_)) -> Ok(loop)
+    Error(error) -> Error(error)
+  }
+}
+
+fn subpath_start(subpath: svg_path.Subpath) -> svg_path.Point {
+  let assert Ok(point) = svg_path.start(subpath)
+  point
+}
+
+fn subpath_end(subpath: svg_path.Subpath) -> svg_path.Point {
+  let assert Ok(point) = svg_path.end(subpath)
+  point
+}
+
+fn validate_loop_endpoint_convexity(
+  segments: List(svg_path.Segment),
+  orientation: LoopOrientation,
+) -> Result(Nil, HullError) {
+  loop_vertices(segments)
+  |> validate_chord_polygon_convex(orientation)
+}
+
+fn validate_loop_segment_convexity(
+  segments: List(svg_path.Segment),
+  orientation: LoopOrientation,
+) -> Result(Nil, HullError) {
+  int.range(
+    from: 0,
+    to: list.length(segments) - 1,
+    with: Ok(Nil),
+    run: fn(state, index) {
+      use _ <- result.try(state)
+      let segment = segment_at(segments, index)
+      case segment_tangent_turn_algebraic(segment, orientation:) {
+        Ok(_) -> Ok(Nil)
+        Error(_) -> Error(TangentSearchNonConvexVertex(index))
+      }
+    },
+  )
+}
+
+fn point_exact_loop_tangent_candidates(
+  loop: Loop,
+  point: svg_path.Point,
+  orientation: LoopOrientation,
+) -> Result(List(LoopTangentCandidate), HullError) {
+  let Loop(segments:) = loop
+  int.range(
+    from: 0,
+    to: list.length(segments) - 1,
+    with: Ok([]),
+    run: fn(candidates, index) {
+      use candidates <- result.try(candidates)
+      use endpoint <- result.try(exact_loop_endpoint_tangent_candidate(
+        segments,
+        index,
+        point,
+        orientation,
+      ))
+      use interior <- result.try(exact_loop_interior_tangent_candidates(
+        segments,
+        index,
+        point,
+        orientation,
+      ))
+      Ok(list.append(candidates, list.append(endpoint, interior)))
+    },
+  )
+}
+
+fn exact_loop_endpoint_tangent_candidate(
+  segments: List(svg_path.Segment),
+  index: Int,
+  point: svg_path.Point,
+  orientation: LoopOrientation,
+) -> Result(List(LoopTangentCandidate), HullError) {
+  let count = list.length(segments)
+  let segment = segment_at(segments, index)
+  let previous = segment_at(segments, previous_index(index, count))
+  use arriving <- result.try(
+    svg_path.segment_derivative(previous, at: 1.0) |> map_path_error,
+  )
+  use leaving <- result.try(
+    svg_path.segment_derivative(segment, at: 0.0) |> map_path_error,
+  )
+  let q = svg_path.segment_start(segment)
+
+  case point_loop_view(point, q, arriving, leaving, orientation:) {
+    TangentPoint ->
+      Ok([LoopTangentCandidate(param: LoopParam(index, 0.0), point: q)])
+    _ -> Ok([])
+  }
+}
+
+fn exact_loop_interior_tangent_candidates(
+  segments: List(svg_path.Segment),
+  index: Int,
+  point: svg_path.Point,
+  orientation _: LoopOrientation,
+) -> Result(List(LoopTangentCandidate), HullError) {
+  let segment = segment_at(segments, index)
+  use roots <- result.try(segment_point_tangent_roots(segment, point))
+
+  roots
+  |> list.filter(fn(t) { t >. same_t && t <. 1.0 -. same_t })
+  |> unique_sorted_ts
+  |> list.fold(Ok([]), fn(candidates, t) {
+    use candidates <- result.try(candidates)
+    use q <- result.try(
+      svg_path.segment_point(segment, at: t) |> map_path_error,
+    )
+    Ok(
+      list.append(candidates, [
+        LoopTangentCandidate(param: LoopParam(index, t), point: q),
+      ]),
+    )
+  })
+}
+
+fn segment_point_tangent_roots(
+  segment: svg_path.Segment,
+  point: svg_path.Point,
+) -> Result(List(Float), HullError) {
+  case segment {
+    svg_path.Line(..) -> Ok([])
+    svg_path.QuadraticBezier(start:, control:, end:) -> {
+      let s = subtract(start, point)
+      let a = subtract(control, start)
+      let b = add_points(subtract(start, scale_point(control, 2.0)), end)
+      Ok(
+        quadratic_roots(cross(a, b), cross(s, b), cross(s, a))
+        |> list.filter(fn(t) { t >=. 0.0 && t <=. 1.0 }),
+      )
+    }
+    svg_path.CubicBezier(..) ->
+      Ok(segment_point_tangent_numeric_roots(segment, point))
+    svg_path.Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:) ->
+      arc_point_tangent_roots(
+        start,
+        radius,
+        x_axis_rotation,
+        large_arc,
+        sweep,
+        end,
+        point,
+      )
+  }
+}
+
+fn arc_point_tangent_roots(
+  start: svg_path.Point,
+  radius: svg_path.Point,
+  x_axis_rotation: Float,
+  large_arc: Bool,
+  sweep: Bool,
+  end: svg_path.Point,
+  point: svg_path.Point,
+) -> Result(List(Float), HullError) {
+  let endpoint =
+    ellipse.endpoint_arc_data(
+      start: to_ellipse_point(start),
+      radius: to_ellipse_point(radius),
+      x_axis_rotation:,
+      large_arc:,
+      sweep:,
+      end: to_ellipse_point(end),
+    )
+  use arc <- result.try(
+    ellipse.endpoint_to_center(endpoint)
+    |> result.map_error(fn(_) { PathError(svg_path.DegenerateArc) }),
+  )
+
+  let local = ellipse_local_point(point, arc)
+  let a = local.x *. arc.radius.y
+  let b = 0.0 -. local.y *. arc.radius.x
+  let c = arc.radius.x *. arc.radius.y
+  let assert Ok(magnitude) = float.square_root(a *. a +. b *. b)
+
+  case magnitude <=. point_tolerance || c >. magnitude +. point_tolerance {
+    True -> Ok([])
+    False -> {
+      let ratio = clamp(c /. magnitude, -1.0, 1.0)
+      let base = maths.atan2(b, a)
+      use offset <- result.try(
+        maths.acos(ratio)
+        |> result.map_error(fn(_) { PathError(svg_path.DegenerateArc) }),
+      )
+      Ok(
+        [base -. offset, base +. offset]
+        |> list.flat_map(arc_angle_progresses(arc, _))
+        |> list.filter(fn(t) { t >=. 0.0 -. same_t && t <=. 1.0 +. same_t })
+        |> list.map(fn(t) { clamp(t, 0.0, 1.0) }),
+      )
+    }
+  }
+}
+
+fn arc_angle_progresses(
+  arc: ellipse.CenterArcData,
+  angle: Float,
+) -> List(Float) {
+  int.range(from: -1, to: 1, with: [], run: fn(progresses, turn) {
+    let shifted = angle +. int.to_float(turn) *. 2.0 *. maths.pi()
+    [{ shifted -. arc.start_angle } /. arc.delta_angle, ..progresses]
+  })
+}
+
+fn ellipse_local_point(
+  point: svg_path.Point,
+  arc: ellipse.CenterArcData,
+) -> svg_path.Point {
+  let translated = subtract(point, from_ellipse_point(arc.center))
+  let radians = 0.0 -. arc.x_axis_rotation *. maths.pi() /. 180.0
+  let cosine = maths.cos(radians)
+  let sine = maths.sin(radians)
+  svg_path.point(
+    cosine *. translated.x -. sine *. translated.y,
+    sine *. translated.x +. cosine *. translated.y,
+  )
+}
+
+fn to_ellipse_point(point: svg_path.Point) -> ellipse.Point {
+  ellipse.Point(point.x, point.y)
+}
+
+fn from_ellipse_point(point: ellipse.Point) -> svg_path.Point {
+  svg_path.point(point.x, point.y)
+}
+
+fn segment_point_tangent_numeric_roots(
+  segment: svg_path.Segment,
+  point: svg_path.Point,
+) -> List(Float) {
+  let sample_count = 720
+  let first = point_tangent_value(segment, point, 0.0)
+  int.range(
+    from: 1,
+    to: sample_count,
+    with: #(0.0, first, []),
+    run: fn(state, index) {
+      let #(previous_t, previous_value, roots) = state
+      let t = int.to_float(index) /. int.to_float(sample_count)
+      let value = point_tangent_value(segment, point, t)
+      let roots = case near_zero(previous_value), near_zero(value) {
+        True, _ -> insert_near_unique_float(roots, previous_t)
+        _, True -> insert_near_unique_float(roots, t)
+        False, False -> {
+          case same_sign(previous_value, value) {
+            True -> roots
+            False ->
+              insert_near_unique_float(
+                roots,
+                bisect_point_tangent(segment, point, previous_t, t),
+              )
+          }
+        }
+      }
+      #(t, value, roots)
+    },
+  )
+  |> fn(state) {
+    let #(_, _, roots) = state
+    roots
+  }
+  |> list.reverse
+}
+
+fn bisect_point_tangent(
+  segment: svg_path.Segment,
+  point: svg_path.Point,
+  left left: Float,
+  right right: Float,
+) -> Float {
+  let left_value = point_tangent_value(segment, point, left)
+  bisect_point_tangent_loop(
+    segment,
+    point,
+    left,
+    left_value,
+    right,
+    remaining: 80,
+  )
+}
+
+fn bisect_point_tangent_loop(
+  segment: svg_path.Segment,
+  point: svg_path.Point,
+  left: Float,
+  left_value: Float,
+  right: Float,
+  remaining remaining: Int,
+) -> Float {
+  let midpoint = left +. { right -. left } /. 2.0
+  let midpoint_value = point_tangent_value(segment, point, midpoint)
+  case
+    remaining <= 0
+    || float.absolute_value(midpoint_value) <. 0.00000000000001
+    || float.absolute_value(right -. left) <. 0.000000000001
+  {
+    True -> midpoint
+    False ->
+      case same_sign(left_value, midpoint_value) {
+        True ->
+          bisect_point_tangent_loop(
+            segment,
+            point,
+            midpoint,
+            midpoint_value,
+            right,
+            remaining: remaining - 1,
+          )
+        False ->
+          bisect_point_tangent_loop(
+            segment,
+            point,
+            left,
+            left_value,
+            midpoint,
+            remaining: remaining - 1,
+          )
+      }
+  }
+}
+
+fn point_tangent_value(
+  segment: svg_path.Segment,
+  point: svg_path.Point,
+  t: Float,
+) -> Float {
+  let assert Ok(q) = svg_path.segment_point(segment, at: t)
+  let assert Ok(tangent) = svg_path.segment_derivative(segment, at: t)
+  cross(subtract(q, point), tangent)
+}
+
+fn near_zero(value: Float) -> Bool {
+  float.absolute_value(value) <=. 0.000000000001
+}
+
+fn insert_near_unique_float(values: List(Float), value: Float) -> List(Float) {
+  case
+    values
+    |> list.any(fn(existing) {
+      float.absolute_value(existing -. value) <=. same_t
+    })
+  {
+    True -> values
+    False -> [value, ..values]
+  }
+}
+
+fn unique_sorted_ts(values: List(Float)) -> List(Float) {
+  values
+  |> list.sort(by: float.compare)
+  |> unique_sorted_ts_loop(previous: None, kept: [])
+}
+
+fn unique_sorted_ts_loop(
+  values: List(Float),
+  previous previous: Option(Float),
+  kept kept: List(Float),
+) -> List(Float) {
+  case values {
+    [] -> list.reverse(kept)
+    [value, ..rest] -> {
+      case previous {
+        Some(previous) -> {
+          case float.absolute_value(value -. previous) <=. same_t {
+            True -> unique_sorted_ts_loop(rest, previous: Some(previous), kept:)
+            False ->
+              unique_sorted_ts_loop(rest, previous: Some(value), kept: [
+                value,
+                ..kept
+              ])
+          }
+        }
+        _ ->
+          unique_sorted_ts_loop(rest, previous: Some(value), kept: [
+            value,
+            ..kept
+          ])
+      }
+    }
+  }
+}
+
+fn loop_tangent_chains_to_subpaths(
+  loop: Loop,
+  first: LoopTangentCandidate,
+  second: LoopTangentCandidate,
+  point: svg_path.Point,
+  orientation: LoopOrientation,
+) -> Result(#(svg_path.Subpath, svg_path.Subpath), HullError) {
+  let LoopTangentCandidate(param: first_param, point: _) = first
+  let LoopTangentCandidate(param: second_param, point: _) = second
+  let first_segments = loop_piece_segments(loop, first_param, second_param)
+  let second_segments = loop_piece_segments(loop, second_param, first_param)
+  use first_subpath <- result.try(build_open_subpath_from_segments(
+    first_segments,
+  ))
+  use second_subpath <- result.try(build_open_subpath_from_segments(
+    second_segments,
+  ))
+
+  case segment_chain_is_outside(first_segments, point, orientation) {
+    True -> Ok(#(first_subpath, second_subpath))
+    False -> Ok(#(second_subpath, first_subpath))
+  }
+}
+
+fn build_open_subpath_from_segments(
+  segments: List(svg_path.Segment),
+) -> Result(svg_path.Subpath, HullError) {
+  let segments = remove_point_like_segments(segments)
+  case segments {
+    [] -> Error(TangentSearchDegenerateLoop)
+    _ ->
+      svg_path.subpath_with(segments, policy: svg_path.WiggleThenBridge)
+      |> map_path_error
+  }
+}
+
+fn remove_point_like_segments(
+  segments: List(svg_path.Segment),
+) -> List(svg_path.Segment) {
+  segments
+  |> list.filter(fn(segment) { segment_is_point_like(segment) == False })
+}
+
+fn segment_chain_is_outside(
+  segments: List(svg_path.Segment),
+  point: svg_path.Point,
+  orientation: LoopOrientation,
+) -> Bool {
+  case segments {
+    [] -> False
+    [segment, ..] -> {
+      let assert Ok(q) = svg_path.segment_point(segment, at: 0.5)
+      let assert Ok(tangent) = svg_path.segment_derivative(segment, at: 0.5)
+      point_loop_view(point, q, tangent, tangent, orientation:) == OutsidePoint
+    }
+  }
+}
+
+fn validate_chord_polygon_convex(
+  vertices: List(svg_path.Point),
+  orientation: LoopOrientation,
+) -> Result(Nil, HullError) {
+  int.range(
+    from: 0,
+    to: list.length(vertices) - 1,
+    with: Ok(Nil),
+    run: fn(state, index) {
+      use _ <- result.try(state)
+      case chord_polygon_vertex_is_convex(vertices, index, orientation) {
+        True -> Ok(Nil)
+        False -> Error(TangentSearchNonConvexVertex(index))
+      }
+    },
+  )
+}
+
+fn point_chord_polygon_tangent_vertices(
+  vertices: List(svg_path.Point),
+  point: svg_path.Point,
+  orientation: LoopOrientation,
+) -> List(TangentCandidate) {
+  int.range(
+    from: 0,
+    to: list.length(vertices) - 1,
+    with: [],
+    run: fn(tangents, index) {
+      case
+        point_chord_polygon_vertex_view(vertices, point, index, orientation)
+      {
+        TangentPoint -> {
+          let q = vertex_at(vertices, index)
+          [TangentCandidate(vertex_index: index, point: q), ..tangents]
+        }
+        _ -> tangents
+      }
+    },
+  )
+  |> list.reverse
+}
+
+fn point_chord_polygon_vertex_view(
+  vertices: List(svg_path.Point),
+  point: svg_path.Point,
+  index: Int,
+  orientation: LoopOrientation,
+) -> PointLoopView {
+  let previous =
+    vertex_at(vertices, previous_index(index, list.length(vertices)))
+  let q = vertex_at(vertices, index)
+  let next = vertex_at(vertices, next_index(index, list.length(vertices)))
+  point_loop_view(
+    point,
+    q,
+    subtract(q, previous),
+    subtract(next, q),
+    orientation:,
+  )
+}
+
+fn chord_polygon_vertex_is_convex(
+  vertices: List(svg_path.Point),
+  index: Int,
+  orientation: LoopOrientation,
+) -> Bool {
+  let count = list.length(vertices)
+  let previous = vertex_at(vertices, previous_index(index, count))
+  let q = vertex_at(vertices, index)
+  let next = vertex_at(vertices, next_index(index, count))
+  let arriving = subtract(q, previous)
+  let leaving = subtract(next, q)
+  let turn = cross(arriving, leaving)
+  let scale = point_length(arriving) *. point_length(leaving)
+  turn_is_against_orientation(turn, scale, orientation) == False
+}
+
+fn segment_tangent_turn_algebraic(
+  segment: svg_path.Segment,
+  orientation orientation: LoopOrientation,
+) -> Result(Nil, Float) {
+  case segment {
+    svg_path.Line(..) -> Ok(Nil)
+    svg_path.QuadraticBezier(start:, control:, end:) -> {
+      let arriving = subtract(control, start)
+      let leaving = subtract(end, control)
+      curvature_violation([cross(arriving, leaving)], orientation)
+    }
+    svg_path.CubicBezier(start:, control1:, control2:, end:) -> {
+      cubic_curvature_values(start, control1, control2, end)
+      |> curvature_violation(orientation)
+    }
+    svg_path.Arc(sweep:, ..) -> {
+      case orientation {
+        CounterClockwise ->
+          case sweep {
+            True -> Ok(Nil)
+            False -> Error(1.0)
+          }
+        Clockwise ->
+          case sweep {
+            True -> Error(1.0)
+            False -> Ok(Nil)
+          }
+        DegenerateOrientation -> Error(1.0)
+      }
+    }
+  }
+}
+
+fn segment_tangent_turn_numerical(
+  segment: svg_path.Segment,
+  orientation orientation: LoopOrientation,
+) -> Result(Nil, Float) {
+  case segment {
+    svg_path.Line(..) -> Ok(Nil)
+    _ -> {
+      let sample_count = tangent_turn_sample_count
+      case segment_derivative_sample(segment, 0, sample_count) {
+        Error(_) -> Ok(Nil)
+        Ok(first) ->
+          segment_tangent_turn_numerical_loop(
+            segment,
+            orientation,
+            sample_count: sample_count,
+            sample_index: 1,
+            previous: first,
+            worst: 0.0,
+          )
+      }
+    }
+  }
+}
+
+fn segment_tangent_turn_numerical_loop(
+  segment: svg_path.Segment,
+  orientation: LoopOrientation,
+  sample_count sample_count: Int,
+  sample_index sample_index: Int,
+  previous previous: svg_path.Point,
+  worst worst: Float,
+) -> Result(Nil, Float) {
+  case sample_index > sample_count {
+    True ->
+      case worst == 0.0 {
+        True -> Ok(Nil)
+        False -> Error(worst)
+      }
+    False -> {
+      case segment_derivative_sample(segment, sample_index, sample_count) {
+        Error(_) -> Ok(Nil)
+        Ok(current) -> {
+          let turn = cross(previous, current)
+          let scale = point_length(previous) *. point_length(current)
+          let amount = turn_against_orientation_amount(turn, scale, orientation)
+          segment_tangent_turn_numerical_loop(
+            segment,
+            orientation,
+            sample_count:,
+            sample_index: sample_index + 1,
+            previous: current,
+            worst: float.max(worst, amount),
+          )
+        }
+      }
+    }
+  }
+}
+
+fn cubic_curvature_values(
+  start: svg_path.Point,
+  control1: svg_path.Point,
+  control2: svg_path.Point,
+  end: svg_path.Point,
+) -> List(Float) {
+  let a = subtract(control1, start)
+  let b = subtract(control2, control1)
+  let c = subtract(end, control2)
+  let u = a
+  let v = scale_point(subtract(b, a), 2.0)
+  let w = add_points(subtract(a, scale_point(b, 2.0)), c)
+  let qa = cross(v, w)
+  let qb = 2.0 *. cross(u, w)
+  let qc = cross(u, v)
+  let candidates = case qa == 0.0 {
+    True -> [0.0, 1.0]
+    False -> {
+      let critical = { 0.0 -. qb } /. { 2.0 *. qa }
+      case critical >. 0.0 && critical <. 1.0 {
+        True -> [0.0, 1.0, critical]
+        False -> [0.0, 1.0]
+      }
+    }
+  }
+
+  candidates
+  |> list.map(fn(t) { qa *. t *. t +. qb *. t +. qc })
+}
+
+fn curvature_violation(
+  values: List(Float),
+  orientation: LoopOrientation,
+) -> Result(Nil, Float) {
+  let violation =
+    values
+    |> list.fold(0.0, fn(worst, value) {
+      float.max(worst, curvature_wrong_way_amount(value, orientation))
+    })
+
+  case violation == 0.0 {
+    True -> Ok(Nil)
+    False -> Error(violation)
+  }
+}
+
+fn curvature_wrong_way_amount(
+  value: Float,
+  orientation: LoopOrientation,
+) -> Float {
+  case orientation {
+    CounterClockwise -> float.max(0.0, 0.0 -. value)
+    Clockwise -> float.max(0.0, value)
+    DegenerateOrientation -> float.absolute_value(value)
+  }
+}
+
+fn tangent_chains_to_subpaths(
+  vertices: List(svg_path.Point),
+  first: TangentCandidate,
+  second: TangentCandidate,
+  point: svg_path.Point,
+  orientation: LoopOrientation,
+) -> Result(#(svg_path.Subpath, svg_path.Subpath), HullError) {
+  let TangentCandidate(vertex_index: first_index, point: _) = first
+  let TangentCandidate(vertex_index: second_index, point: _) = second
+  let first_chain = vertex_chain(vertices, from: first_index, to: second_index)
+  let second_chain = vertex_chain(vertices, from: second_index, to: first_index)
+  use first_subpath <- result.try(build_open_subpath_from_vertices(first_chain))
+  use second_subpath <- result.try(build_open_subpath_from_vertices(
+    second_chain,
+  ))
+
+  case vertex_chain_is_outside(first_chain, point, orientation) {
+    True -> Ok(#(first_subpath, second_subpath))
+    False -> Ok(#(second_subpath, first_subpath))
+  }
+}
+
+fn vertex_chain_is_outside(
+  vertices: List(svg_path.Point),
+  point: svg_path.Point,
+  orientation: LoopOrientation,
+) -> Bool {
+  case vertices {
+    [a, b] -> {
+      let middle = midpoint(a, b)
+      point_loop_view(
+        point,
+        middle,
+        subtract(b, a),
+        subtract(b, a),
+        orientation:,
+      )
+      == OutsidePoint
+    }
+    [a, b, c, ..] -> {
+      point_loop_view(point, b, subtract(b, a), subtract(c, b), orientation:)
+      == OutsidePoint
+    }
+    _ -> False
+  }
+}
+
+fn build_open_subpath_from_vertices(
+  vertices: List(svg_path.Point),
+) -> Result(svg_path.Subpath, HullError) {
+  case vertices_to_lines(vertices) {
+    [] -> Error(TangentSearchDegenerateLoop)
+    segments ->
+      svg_path.subpath_with(segments, policy: svg_path.WiggleThenBridge)
+      |> map_path_error
+  }
+}
+
+fn vertices_to_lines(vertices: List(svg_path.Point)) -> List(svg_path.Segment) {
+  case vertices {
+    [a, b, ..rest] -> [
+      svg_path.Line(start: a, end: b),
+      ..vertices_to_lines([b, ..rest])
+    ]
+    _ -> []
+  }
+}
+
+fn vertex_chain(
+  vertices: List(svg_path.Point),
+  from from: Int,
+  to to: Int,
+) -> List(svg_path.Point) {
+  vertex_chain_loop(vertices, current: from, target: to, points: [])
+  |> list.reverse
+}
+
+fn vertex_chain_loop(
+  vertices: List(svg_path.Point),
+  current current: Int,
+  target target: Int,
+  points points: List(svg_path.Point),
+) -> List(svg_path.Point) {
+  let points = [vertex_at(vertices, current), ..points]
+  case current == target {
+    True -> points
+    False ->
+      vertex_chain_loop(
+        vertices,
+        current: next_index(current, list.length(vertices)),
+        target:,
+        points:,
+      )
+  }
+}
+
+fn vertex_at(vertices: List(svg_path.Point), index: Int) -> svg_path.Point {
+  let assert Ok(vertex) = nth(vertices, index)
+  vertex
+}
+
+fn previous_index(index: Int, count: Int) -> Int {
+  case index <= 0 {
+    True -> count - 1
+    False -> index - 1
+  }
+}
+
+fn midpoint(a: svg_path.Point, b: svg_path.Point) -> svg_path.Point {
+  scale_point(add_points(a, b), 0.5)
+}
+
+fn convex_polygon_contains_point(
+  vertices: List(svg_path.Point),
+  point: svg_path.Point,
+  orientation: LoopOrientation,
+) -> Bool {
+  case vertices {
+    [] | [_] | [_, _] -> False
+    [first, ..] ->
+      convex_polygon_contains_point_loop(
+        list.append(vertices, [first]),
+        point,
+        orientation,
+      )
+  }
+}
+
+fn convex_polygon_contains_point_loop(
+  points: List(svg_path.Point),
+  point: svg_path.Point,
+  orientation: LoopOrientation,
+) -> Bool {
+  case points {
+    [a, b, ..rest] -> {
+      let edge = subtract(b, a)
+      let offset = subtract(point, a)
+      let turn = cross(edge, offset)
+      let scale = point_length(edge) *. point_length(offset)
+      case point_is_inside_edge(turn, scale, orientation) {
+        True ->
+          convex_polygon_contains_point_loop([b, ..rest], point, orientation)
+        False -> False
+      }
+    }
+    _ -> True
+  }
+}
+
+fn point_is_inside_edge(
+  turn: Float,
+  scale: Float,
+  orientation: LoopOrientation,
+) -> Bool {
+  let tolerance = orientation_turn_tolerance *. scale
+  case orientation {
+    CounterClockwise -> turn >=. 0.0 -. tolerance
+    Clockwise -> turn <=. tolerance
+    DegenerateOrientation -> False
+  }
+}
+
+fn closest_point_on_polygon(
+  vertices: List(svg_path.Point),
+  point: svg_path.Point,
+) -> svg_path.Point {
+  let assert Ok(first) = list.first(vertices)
+  closest_point_on_polyline(list.append(vertices, [first]), point)
+}
+
+fn closest_point_on_polyline(
+  vertices: List(svg_path.Point),
+  point: svg_path.Point,
+) -> svg_path.Point {
+  case vertices {
+    [] -> point
+    [only] -> only
+    [a, b, ..rest] -> {
+      let first = closest_point_on_segment(a, b, point)
+      closest_point_on_polyline_loop([b, ..rest], point, first)
+    }
+  }
+}
+
+fn closest_point_on_polyline_loop(
+  vertices: List(svg_path.Point),
+  point: svg_path.Point,
+  closest closest: svg_path.Point,
+) -> svg_path.Point {
+  case vertices {
+    [a, b, ..rest] -> {
+      let candidate = closest_point_on_segment(a, b, point)
+      let closest = case
+        point_distance_squared(candidate, point)
+        <. point_distance_squared(closest, point)
+      {
+        True -> candidate
+        False -> closest
+      }
+      closest_point_on_polyline_loop([b, ..rest], point, closest:)
+    }
+    _ -> closest
+  }
+}
+
+fn closest_point_on_segment(
+  a: svg_path.Point,
+  b: svg_path.Point,
+  point: svg_path.Point,
+) -> svg_path.Point {
+  let ab = subtract(b, a)
+  let length_squared = dot(ab, ab)
+  case length_squared <=. point_tolerance *. point_tolerance {
+    True -> a
+    False -> {
+      let t = dot(subtract(point, a), ab) /. length_squared
+      add_points(a, scale_point(ab, clamp(t, 0.0, 1.0)))
+    }
+  }
+}
+
 fn loop_enclosure(loop: Loop) -> ConvexPolygon {
   let Loop(segments:) = loop
   case loop_bounding_box(segments) {
@@ -690,9 +1951,10 @@ fn loop_union(
 
   case boundaries {
     [] -> all_one_loop(samples)
-    _ ->
+    _ -> {
       loop_pieces_from_boundaries(boundaries)
       |> compact_loop_pieces(loop_a, loop_b)
+    }
   }
 }
 
@@ -733,6 +1995,97 @@ fn loop_sample(loop_a: Loop, loop_b: Loop, angle: Float) -> LoopSample {
   let b = loop_support(loop_b, angle)
   let difference = a.value -. b.value
   LoopSample(angle:, winner: loop_winner(difference), a:, b:, difference:)
+}
+
+fn find_seeded_worst_direction(
+  loop_a: Loop,
+  loop_b: Loop,
+  direction direction: Float,
+  threshold threshold: Float,
+) -> Result(#(Float, Float), HullError) {
+  let advantage = loop_b_advantage(loop_a, loop_b, direction)
+
+  find_seeded_worst_direction_loop(
+    loop_a,
+    loop_b,
+    lower: direction,
+    lower_advantage: advantage,
+    upper: direction,
+    upper_advantage: advantage,
+    threshold: threshold,
+  )
+}
+
+fn find_seeded_worst_direction_loop(
+  loop_a: Loop,
+  loop_b: Loop,
+  lower lower: Float,
+  lower_advantage lower_advantage: Float,
+  upper upper: Float,
+  upper_advantage upper_advantage: Float,
+  threshold threshold: Float,
+) -> Result(#(Float, Float), HullError) {
+  let #(upper, upper_advantage, upper_moved) =
+    maybe_grow_seeded_worst_upper(loop_a, loop_b, upper:, upper_advantage:)
+  let #(lower, lower_advantage, lower_moved) =
+    maybe_grow_seeded_worst_lower(loop_a, loop_b, lower:, lower_advantage:)
+
+  case upper -. lower >. threshold {
+    True ->
+      Error(SeededWorstDirectionExceededThreshold(
+        normalize_angle(lower),
+        normalize_angle(upper),
+      ))
+    False -> {
+      case upper_moved || lower_moved {
+        True ->
+          find_seeded_worst_direction_loop(
+            loop_a,
+            loop_b,
+            lower:,
+            lower_advantage:,
+            upper:,
+            upper_advantage:,
+            threshold:,
+          )
+        False -> Ok(#(normalize_angle(lower), normalize_angle(upper)))
+      }
+    }
+  }
+}
+
+fn maybe_grow_seeded_worst_upper(
+  loop_a: Loop,
+  loop_b: Loop,
+  upper upper: Float,
+  upper_advantage upper_advantage: Float,
+) -> #(Float, Float, Bool) {
+  let candidate = upper +. seeded_worst_direction_step
+  let candidate_advantage = loop_b_advantage(loop_a, loop_b, candidate)
+
+  case candidate_advantage >. upper_advantage {
+    True -> #(candidate, candidate_advantage, True)
+    False -> #(upper, upper_advantage, False)
+  }
+}
+
+fn maybe_grow_seeded_worst_lower(
+  loop_a: Loop,
+  loop_b: Loop,
+  lower lower: Float,
+  lower_advantage lower_advantage: Float,
+) -> #(Float, Float, Bool) {
+  let candidate = lower -. seeded_worst_direction_step
+  let candidate_advantage = loop_b_advantage(loop_a, loop_b, candidate)
+
+  case candidate_advantage >. lower_advantage {
+    True -> #(candidate, candidate_advantage, True)
+    False -> #(lower, lower_advantage, False)
+  }
+}
+
+fn loop_b_advantage(loop_a: Loop, loop_b: Loop, angle: Float) -> Float {
+  0.0 -. loop_sample(loop_a, loop_b, angle).difference
 }
 
 fn loop_winner(difference: Float) -> LoopWinner {
@@ -1773,71 +3126,39 @@ fn diagnose_segment_tangent_turn(
   orientation: LoopOrientation,
   segment_index: Int,
 ) -> Nil {
-  case segment {
-    svg_path.Line(..) -> Nil
-    _ -> {
-      let sample_count = tangent_turn_sample_count
-      case segment_derivative_sample(segment, 0, sample_count) {
-        Error(_) -> Nil
-        Ok(first) ->
-          diagnose_segment_tangent_turn_loop(
-            segment,
-            orientation,
-            segment_index,
-            sample_count: sample_count,
-            sample_index: 1,
-            previous: first,
-          )
-      }
-    }
-  }
+  diagnose_segment_tangent_turn_result(
+    segment,
+    segment_index,
+    check: "algebraic",
+    result: segment_tangent_turn_algebraic(segment, orientation:),
+  )
+  diagnose_segment_tangent_turn_result(
+    segment,
+    segment_index,
+    check: "numerical",
+    result: segment_tangent_turn_numerical(segment, orientation:),
+  )
 }
 
-fn diagnose_segment_tangent_turn_loop(
+fn diagnose_segment_tangent_turn_result(
   segment: svg_path.Segment,
-  orientation: LoopOrientation,
   segment_index: Int,
-  sample_count sample_count: Int,
-  sample_index sample_index: Int,
-  previous previous: svg_path.Point,
+  check check: String,
+  result result: Result(Nil, Float),
 ) -> Nil {
-  case sample_index > sample_count {
-    True -> Nil
-    False -> {
-      case segment_derivative_sample(segment, sample_index, sample_count) {
-        Error(_) -> Nil
-        Ok(current) -> {
-          let turn = cross(previous, current)
-          let scale = point_length(previous) *. point_length(current)
-
-          case turn_is_against_orientation(turn, scale, orientation) {
-            True ->
-              io.println(
-                "[convex_hull diagnostic] segment tangent reversal at segment "
-                <> int.to_string(segment_index)
-                <> " ("
-                <> segment_kind(segment)
-                <> ") sample="
-                <> int.to_string(sample_index)
-                <> " turn="
-                <> float.to_string(turn)
-                <> " scale="
-                <> float.to_string(scale),
-              )
-            False -> Nil
-          }
-
-          diagnose_segment_tangent_turn_loop(
-            segment,
-            orientation,
-            segment_index,
-            sample_count: sample_count,
-            sample_index: sample_index + 1,
-            previous: current,
-          )
-        }
-      }
-    }
+  case result {
+    Ok(_) -> Nil
+    Error(amount) ->
+      io.println(
+        "[convex_hull diagnostic] "
+        <> check
+        <> " segment tangent reversal at segment "
+        <> int.to_string(segment_index)
+        <> " ("
+        <> segment_kind(segment)
+        <> ") amount="
+        <> float.to_string(amount),
+      )
   }
 }
 
@@ -1967,11 +3288,19 @@ fn turn_is_against_orientation(
   scale: Float,
   orientation: LoopOrientation,
 ) -> Bool {
+  turn_against_orientation_amount(turn, scale, orientation) >. 0.0
+}
+
+fn turn_against_orientation_amount(
+  turn: Float,
+  scale: Float,
+  orientation: LoopOrientation,
+) -> Float {
   let tolerance = orientation_turn_tolerance *. scale
   case orientation {
-    CounterClockwise -> turn <. 0.0 -. tolerance
-    Clockwise -> turn >. tolerance
-    DegenerateOrientation -> False
+    CounterClockwise -> float.max(0.0, { 0.0 -. tolerance } -. turn)
+    Clockwise -> float.max(0.0, turn -. tolerance)
+    DegenerateOrientation -> 0.0
   }
 }
 
@@ -2072,6 +3401,10 @@ fn average(values: List(Float)) -> Float {
   /. int.to_float(list.length(values))
 }
 
+fn direction_angle(direction: svg_path.Point) -> Float {
+  normalize_angle(maths.atan2(direction.y, direction.x) *. 180.0 /. maths.pi())
+}
+
 fn angle_direction(angle: Float) -> svg_path.Point {
   let radians = angle *. maths.pi() /. 180.0
   svg_path.point(maths.cos(radians), maths.sin(radians))
@@ -2083,6 +3416,12 @@ fn dot(a: svg_path.Point, b: svg_path.Point) -> Float {
 
 fn map_path_error(result: Result(a, svg_path.Error)) -> Result(a, HullError) {
   result.map_error(result, PathError)
+}
+
+fn clamp(value: Float, minimum: Float, maximum: Float) -> Float {
+  value
+  |> float.max(minimum)
+  |> float.min(maximum)
 }
 
 fn drop_last(items: List(a)) -> List(a) {

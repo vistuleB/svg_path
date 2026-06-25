@@ -1,6 +1,7 @@
 import gleam/float
 import gleam/int
 import gleam/list
+import gleam/option.{None}
 import gleam/result
 import gleam_community/maths
 import gleeunit
@@ -25,8 +26,21 @@ pub fn path_hull_handles_1000_point_cloud_test() {
   assert point_cloud_hull_matches_support(1000)
 }
 
+pub fn path_hull_handles_1000_unit_circle_point_cloud_test() {
+  assert unit_circle_point_cloud_hull_matches_support(1000)
+}
+
 fn point_cloud_hull_matches_support(count: Int) -> Bool {
   let points = random_points(count)
+  point_cloud_matches_support(points)
+}
+
+fn unit_circle_point_cloud_hull_matches_support(count: Int) -> Bool {
+  let points = unit_circle_points(count)
+  point_cloud_matches_support(points)
+}
+
+fn point_cloud_matches_support(points: List(svg_path.Point)) -> Bool {
   let path =
     points
     |> list.map(fn(point) { svg_path.empty_subpath(at: point) })
@@ -36,6 +50,14 @@ fn point_cloud_hull_matches_support(count: Int) -> Bool {
     Error(_) -> False
     Ok(hull) -> {
       svg_path.is_closed(hull)
+      && points
+      |> list.all(fn(point) {
+        convex_hull.test_point_chord_polygon_loop_separation(
+          svg_path.segments(hull),
+          point:,
+        )
+        == None
+      })
       && support_angles()
       |> list.all(fn(angle) {
         case
@@ -65,6 +87,24 @@ fn random_point(index: Int) -> svg_path.Point {
     int.to_float({ { index * 41 + 29 } * { index * 97 + 31 } + 7 } % 10_001)
       /. 100.0,
   )
+}
+
+fn unit_circle_points(count: Int) -> List(svg_path.Point) {
+  int.range(from: 0, to: count, with: [], run: fn(points, index) {
+    [unit_circle_point(index), ..points]
+  })
+  |> list.reverse
+}
+
+fn unit_circle_point(index: Int) -> svg_path.Point {
+  let angle =
+    int.to_float({ index * 97 + 13 } % 10_000) /. 10_000.0 *. maths.pi() *. 2.0
+  let radius =
+    int.to_float({ { index * 37 + 17 } * { index * 53 + 29 } + 5 } % 10_000)
+    /. 10_000.0
+  let assert Ok(radius) = float.square_root(radius)
+
+  svg_path.point(radius *. maths.cos(angle), radius *. maths.sin(angle))
 }
 
 fn support_angles() -> List(Float) {

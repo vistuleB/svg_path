@@ -46,6 +46,37 @@ pub fn paths_delegates_to_document_test() {
   assert svg.paths(things, view_box: box) == svg.document(things, view_box: box)
 }
 
+pub fn document_renders_rectangles_circles_and_ellipses_test() {
+  let box =
+    svg_path.BoundingBox(
+      min: svg_path.point(0.0, 0.0),
+      max: svg_path.point(20.0, 20.0),
+    )
+
+  assert svg.document(
+      [
+        svg.Rectangle(
+          svg_path.point(1.0, 2.0),
+          10.0,
+          5.0,
+          "fill: white; stroke: black",
+        ),
+        svg.Circle(svg_path.point(8.0, 9.0), 3.0, "fill: red; stroke: none"),
+        svg.Ellipse(
+          svg_path.point(12.0, 13.0),
+          svg_path.point(4.0, 2.0),
+          "fill: blue; stroke: none",
+        ),
+      ],
+      view_box: box,
+    )
+    == "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\">\n"
+    <> "  <rect x=\"1\" y=\"2\" width=\"10\" height=\"5\" style=\"fill: white; stroke: black\" />\n"
+    <> "  <circle cx=\"8\" cy=\"9\" r=\"3\" style=\"fill: red; stroke: none\" />\n"
+    <> "  <ellipse cx=\"12\" cy=\"13\" rx=\"4\" ry=\"2\" style=\"fill: blue; stroke: none\" />\n"
+    <> "</svg>"
+}
+
 pub fn paths_escapes_path_style_and_text_values_test() {
   let box =
     svg_path.BoundingBox(
@@ -59,6 +90,22 @@ pub fn paths_escapes_path_style_and_text_values_test() {
           svg_path.empty_path(),
           "stroke: \"red\"; marker: url(a&b<c>d)",
         ),
+        svg.Rectangle(
+          svg_path.point(0.0, 0.0),
+          1.0,
+          1.0,
+          "stroke: \"red\"; marker: url(a&b<c>d)",
+        ),
+        svg.Circle(
+          svg_path.point(0.5, 0.5),
+          0.25,
+          "stroke: \"red\"; marker: url(a&b<c>d)",
+        ),
+        svg.Ellipse(
+          svg_path.point(0.5, 0.5),
+          svg_path.point(0.25, 0.125),
+          "stroke: \"red\"; marker: url(a&b<c>d)",
+        ),
         svg.Text(
           "\"a\" & <b>",
           "font-family: \"serif\"; fill: a&b<c>d",
@@ -70,6 +117,9 @@ pub fn paths_escapes_path_style_and_text_values_test() {
     )
     == "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1 1\">\n"
     <> "  <path d=\"\" style=\"stroke: &quot;red&quot;; marker: url(a&amp;b&lt;c&gt;d)\" />\n"
+    <> "  <rect x=\"0\" y=\"0\" width=\"1\" height=\"1\" style=\"stroke: &quot;red&quot;; marker: url(a&amp;b&lt;c&gt;d)\" />\n"
+    <> "  <circle cx=\"0.5\" cy=\"0.5\" r=\"0.25\" style=\"stroke: &quot;red&quot;; marker: url(a&amp;b&lt;c&gt;d)\" />\n"
+    <> "  <ellipse cx=\"0.5\" cy=\"0.5\" rx=\"0.25\" ry=\"0.125\" style=\"stroke: &quot;red&quot;; marker: url(a&amp;b&lt;c&gt;d)\" />\n"
     <> "  <text x=\"0.5\" y=\"1\" font-size=\"12\" style=\"font-family: &quot;serif&quot;; fill: a&amp;b&lt;c&gt;d\">\"a\" &amp; &lt;b&gt;</text>\n"
     <> "</svg>"
 }
