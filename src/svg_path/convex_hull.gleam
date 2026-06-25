@@ -781,11 +781,12 @@ fn point_exact_loop_tangent_subpaths(
   point: svg_path.Point,
 ) -> Result(#(svg_path.Subpath, svg_path.Subpath), HullError) {
   let Loop(segments:) = loop
-  let orientation = loop_orientation(segments)
 
-  case orientation {
-    DegenerateOrientation -> Error(TangentSearchDegenerateLoop)
-    _ -> {
+  case tangent_search_orientation(segments, point) {
+    DegenerateSearchOrientation -> Error(TangentSearchDegenerateLoop)
+    LineLikeSearchOrientation(orientation) ->
+      line_like_loop_tangent_subpaths(loop, point, orientation)
+    ExactSearchOrientation(orientation) -> {
       use _ <- result.try(validate_loop_endpoint_convexity(
         segments,
         orientation,
@@ -873,6 +874,202 @@ fn subpath_start(subpath: svg_path.Subpath) -> svg_path.Point {
 fn subpath_end(subpath: svg_path.Subpath) -> svg_path.Point {
   let assert Ok(point) = svg_path.end(subpath)
   point
+}
+
+fn tangent_search_orientation(
+  segments: List(svg_path.Segment),
+  point: svg_path.Point,
+) -> TangentSearchOrientation {
+  case loop_orientation(segments) {
+    DegenerateOrientation ->
+      case loop_tangent_orientation(segments) {
+        FoundTangentOrientation(orientation) ->
+          ExactSearchOrientation(orientation)
+        NoTangentOrientation ->
+          case line_like_orientation(loop_vertices(segments), point) {
+            DegenerateOrientation -> DegenerateSearchOrientation
+            orientation -> LineLikeSearchOrientation(orientation)
+          }
+        ConflictingTangentOrientation -> DegenerateSearchOrientation
+      }
+    orientation -> ExactSearchOrientation(orientation)
+  }
+}
+
+type TangentSearchOrientation {
+  ExactSearchOrientation(LoopOrientation)
+  LineLikeSearchOrientation(LoopOrientation)
+  DegenerateSearchOrientation
+}
+
+fn loop_tangent_orientation(
+  segments: List(svg_path.Segment),
+) -> TangentOrientation {
+  loop_tangent_orientation_loop(
+    segments,
+    index: 0,
+    count: list.length(segments),
+    evidence: NoTangentOrientationEvidence,
+  )
+  |> tangent_orientation_evidence_result
+}
+
+fn loop_tangent_orientation_loop(
+  segments: List(svg_path.Segment),
+  index index: Int,
+  count count: Int,
+  evidence evidence: TangentOrientationEvidence,
+) -> TangentOrientationEvidence {
+  case index >= count {
+    True -> evidence
+    False ->
+      loop_tangent_orientation_loop(
+        segments,
+        index: index + 1,
+        count:,
+        evidence: add_tangent_orientation_evidence(
+          evidence,
+          endpoint_tangent_orientation(segments, index),
+        ),
+      )
+  }
+}
+
+type TangentOrientation {
+  FoundTangentOrientation(LoopOrientation)
+  NoTangentOrientation
+  ConflictingTangentOrientation
+}
+
+type TangentOrientationEvidence {
+  NoTangentOrientationEvidence
+  TangentOrientationEvidence(LoopOrientation)
+  ConflictingTangentOrientationEvidence
+}
+
+fn add_tangent_orientation_evidence(
+  evidence: TangentOrientationEvidence,
+  orientation: LoopOrientation,
+) -> TangentOrientationEvidence {
+  case evidence, orientation {
+    ConflictingTangentOrientationEvidence, _ ->
+      ConflictingTangentOrientationEvidence
+    _, DegenerateOrientation -> evidence
+    NoTangentOrientationEvidence, orientation ->
+      TangentOrientationEvidence(orientation)
+    TangentOrientationEvidence(existing), orientation ->
+      case existing == orientation {
+        True -> evidence
+        False -> ConflictingTangentOrientationEvidence
+      }
+  }
+}
+
+fn tangent_orientation_evidence_result(
+  evidence: TangentOrientationEvidence,
+) -> TangentOrientation {
+  case evidence {
+    TangentOrientationEvidence(orientation) ->
+      FoundTangentOrientation(orientation)
+    NoTangentOrientationEvidence -> NoTangentOrientation
+    ConflictingTangentOrientationEvidence -> ConflictingTangentOrientation
+  }
+}
+
+fn endpoint_tangent_orientation(
+  segments: List(svg_path.Segment),
+  index: Int,
+) -> LoopOrientation {
+  let count = list.length(segments)
+  let segment = segment_at(segments, index)
+  let previous = segment_at(segments, previous_index(index, count))
+  case
+    svg_path.segment_derivative(previous, at: 1.0),
+    svg_path.segment_derivative(segment, at: 0.0)
+  {
+    Ok(arriving), Ok(leaving) -> {
+      let turn = cross(arriving, leaving)
+      let scale = point_length(arriving) *. point_length(leaving)
+      orientation_from_turn(turn, scale)
+    }
+    _, _ -> DegenerateOrientation
+  }
+}
+
+fn line_like_orientation(
+  vertices: List(svg_path.Point),
+  point: svg_path.Point,
+) -> LoopOrientation {
+  case vertices {
+    [a, b] -> {
+      let edge = subtract(b, a)
+      let offset = subtract(point, a)
+      let turn = cross(edge, offset)
+      let scale = point_length(edge) *. point_length(offset)
+      case orientation_from_turn(turn, scale) {
+        CounterClockwise -> Clockwise
+        Clockwise -> CounterClockwise
+        DegenerateOrientation -> CounterClockwise
+      }
+    }
+    _ -> DegenerateOrientation
+  }
+}
+
+fn orientation_from_turn(turn: Float, scale: Float) -> LoopOrientation {
+  let tolerance = orientation_turn_tolerance *. scale
+  case turn >. tolerance {
+    True -> CounterClockwise
+    False ->
+      case turn <. 0.0 -. tolerance {
+        True -> Clockwise
+        False -> DegenerateOrientation
+      }
+  }
+}
+
+fn line_like_loop_tangent_subpaths(
+  loop: Loop,
+  point: svg_path.Point,
+  orientation: LoopOrientation,
+) -> Result(#(svg_path.Subpath, svg_path.Subpath), HullError) {
+  let Loop(segments:) = loop
+  case loop_vertices(segments) {
+    [a, b] -> {
+      use a_param <- result.try(loop_vertex_param(segments, a))
+      use b_param <- result.try(loop_vertex_param(segments, b))
+      loop_tangent_chains_to_subpaths(
+        loop,
+        LoopTangentCandidate(param: a_param, point: a),
+        LoopTangentCandidate(param: b_param, point: b),
+        point,
+        orientation,
+      )
+    }
+    _ -> Error(TangentSearchDegenerateLoop)
+  }
+}
+
+fn loop_vertex_param(
+  segments: List(svg_path.Segment),
+  point: svg_path.Point,
+) -> Result(LoopParam, HullError) {
+  loop_vertex_param_loop(segments, point, index: 0)
+}
+
+fn loop_vertex_param_loop(
+  segments: List(svg_path.Segment),
+  point: svg_path.Point,
+  index index: Int,
+) -> Result(LoopParam, HullError) {
+  case segments {
+    [] -> Error(TangentSearchDegenerateLoop)
+    [segment, ..rest] ->
+      case points_near(svg_path.segment_start(segment), point) {
+        True -> Ok(LoopParam(segment_index: index, t: 0.0))
+        False -> loop_vertex_param_loop(rest, point, index: index + 1)
+      }
+  }
 }
 
 fn validate_loop_endpoint_convexity(

@@ -420,6 +420,57 @@ pub fn loop_plus_points_hull_absorbs_outside_points_in_order_test() {
   })
 }
 
+pub fn loop_plus_point_hull_handles_line_like_loop_test() {
+  let point = svg_path.point(5.0, 4.0)
+  let assert Ok(segments) =
+    convex_hull.test_loop_plus_point_hull(line_like_loop(), point:)
+
+  assert list.length(segments) == 3
+  assert segments
+    |> list.any(fn(segment) {
+      points_near(svg_path.segment_start(segment), point)
+      || points_near(svg_path.segment_end(segment), point)
+    })
+}
+
+pub fn loop_plus_point_hull_rejects_conflicting_tangent_orientation_test() {
+  let point = svg_path.point(5.0, 4.0)
+
+  assert convex_hull.test_loop_plus_point_hull(
+      conflicting_tangent_line_like_loop(),
+      point:,
+    )
+    == Error(convex_hull.TangentSearchDegenerateLoop)
+}
+
+pub fn path_hull_handles_scaled_two_arc_probe_test() {
+  let large_arc =
+    svg_path.Arc(
+      start: svg_path.point(1000.0, 0.0),
+      radius: svg_path.point(1000.0, 1000.0),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: True,
+      end: svg_path.point(999.84769516, 17.45240644),
+    )
+  let small_arc =
+    svg_path.Arc(
+      start: svg_path.point(999.94340504, 7.63106966),
+      radius: svg_path.point(30.0, 30.0),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: True,
+      end: svg_path.point(999.92428935, 9.82151131),
+    )
+  let assert Ok(large_subpath) = svg_path.subpath([large_arc])
+  let assert Ok(small_subpath) = svg_path.subpath([small_arc])
+
+  let assert Ok(hull) =
+    convex_hull.path_hull(svg_path.Path([large_subpath, small_subpath]))
+
+  assert svg_path.is_closed(hull)
+}
+
 pub fn point_exact_loop_tangent_subpaths_finds_cubic_interior_tangencies_test() {
   let loop = [
     svg_path.Line(
@@ -643,6 +694,39 @@ fn rounded_triangle_loop() -> List(svg_path.Segment) {
     svg_path.Line(
       start: svg_path.point(10.0, 10.0),
       end: svg_path.point(0.0, 0.0),
+    ),
+  ]
+}
+
+fn line_like_loop() -> List(svg_path.Segment) {
+  [
+    svg_path.Line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(10.0, 0.0),
+    ),
+    svg_path.Line(
+      start: svg_path.point(10.0, 0.0),
+      end: svg_path.point(0.0, 0.0),
+    ),
+  ]
+}
+
+fn conflicting_tangent_line_like_loop() -> List(svg_path.Segment) {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+
+  [
+    svg_path.CubicBezier(
+      start: a,
+      control1: svg_path.point(10.0 /. 3.0, 10.0 /. 3.0),
+      control2: svg_path.point(20.0 /. 3.0, 10.0 /. 3.0),
+      end: b,
+    ),
+    svg_path.CubicBezier(
+      start: b,
+      control1: svg_path.point(20.0 /. 3.0, 0.0),
+      control2: svg_path.point(-10.0 /. 3.0, 0.0),
+      end: a,
     ),
   ]
 }
