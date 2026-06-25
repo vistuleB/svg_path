@@ -7,6 +7,7 @@
 
 import gleam/float
 import gleam/int
+import gleam/io
 import gleam/list
 import gleam/result
 import gleam_community/maths
@@ -27,6 +28,12 @@ const same_t = 0.000001
 const t_close = 0.08
 
 const point_tolerance = 0.000000001
+
+const loop_diagnostics_enabled = False
+
+const orientation_turn_tolerance = 0.000000001
+
+const tangent_turn_sample_count = 24
 
 type SupportSample {
   SupportSample(angle: Float, t: Float, point: svg_path.Point, value: Float)
@@ -257,12 +264,20 @@ fn build_closed_subpath(
     svg_path.subpath_with(segments, policy: svg_path.WiggleThenBridge)
     |> map_path_error,
   )
-  svg_path.set_closed_with(
-    subpath,
-    closed: True,
-    policy: svg_path.WiggleThenBridge,
-  )
-  |> map_path_error
+  case
+    svg_path.set_closed_with(
+      subpath,
+      closed: True,
+      policy: svg_path.WiggleThenBridge,
+    )
+    |> map_path_error
+  {
+    Error(error) -> Error(error)
+    Ok(subpath) -> {
+      diagnose_closed_loop(svg_path.segments(subpath))
+      Ok(subpath)
+    }
+  }
 }
 
 fn union_loop_segments(
@@ -273,8 +288,15 @@ fn union_loop_segments(
   let loop_b = Loop(right)
   let pieces = loop_union(loop_a, loop_b, sample_count: loop_union_sample_count)
   case union_piece_segments(pieces, loop_a, loop_b) {
-    [] -> dominant_loop_segments(loop_a, loop_b)
-    segments -> Ok(segments)
+    [] -> {
+      use segments <- result.try(dominant_loop_segments(loop_a, loop_b))
+      diagnose_closed_loop(segments)
+      Ok(segments)
+    }
+    segments -> {
+      diagnose_closed_loop(segments)
+      Ok(segments)
+    }
   }
 }
 
@@ -1321,6 +1343,329 @@ fn piece_to_segment(
       )
       Ok(svg_path.Line(start: start, end: end))
     }
+  }
+}
+
+type LoopOrientation {
+  CounterClockwise
+  Clockwise
+  DegenerateOrientation
+}
+
+fn diagnose_closed_loop(segments: List(svg_path.Segment)) -> Nil {
+  case loop_diagnostics_enabled {
+    False -> Nil
+    True -> {
+      case loop_orientation(segments) {
+        DegenerateOrientation -> Nil
+        orientation -> {
+          diagnose_endpoint_turns(segments, orientation)
+          diagnose_segment_tangent_turns(segments, orientation)
+        }
+      }
+    }
+  }
+}
+
+fn diagnose_endpoint_turns(
+  segments: List(svg_path.Segment),
+  orientation: LoopOrientation,
+) -> Nil {
+  case loop_vertices(segments) {
+    [] | [_] | [_, _] -> Nil
+    [first, second, ..] as vertices -> {
+      vertices
+      |> list.append([first, second])
+      |> diagnose_endpoint_turns_loop(orientation, 0)
+    }
+  }
+}
+
+fn diagnose_endpoint_turns_loop(
+  points: List(svg_path.Point),
+  orientation: LoopOrientation,
+  index: Int,
+) -> Nil {
+  case points {
+    [a, b, c, ..rest] -> {
+      let ab = subtract(b, a)
+      let bc = subtract(c, b)
+      let turn = cross(ab, bc)
+      let scale = point_length(ab) *. point_length(bc)
+
+      case turn_is_against_orientation(turn, scale, orientation) {
+        True ->
+          io.println(
+            "[convex_hull diagnostic] endpoint right turn at vertex "
+            <> int.to_string(index)
+            <> " turn="
+            <> float.to_string(turn)
+            <> " scale="
+            <> float.to_string(scale)
+            <> " point="
+            <> point_string(b),
+          )
+        False -> Nil
+      }
+
+      diagnose_endpoint_turns_loop([b, c, ..rest], orientation, index + 1)
+    }
+    _ -> Nil
+  }
+}
+
+fn diagnose_segment_tangent_turns(
+  segments: List(svg_path.Segment),
+  orientation: LoopOrientation,
+) -> Nil {
+  diagnose_segment_tangent_turns_loop(segments, orientation, 0)
+}
+
+fn diagnose_segment_tangent_turns_loop(
+  segments: List(svg_path.Segment),
+  orientation: LoopOrientation,
+  index: Int,
+) -> Nil {
+  case segments {
+    [] -> Nil
+    [segment, ..rest] -> {
+      diagnose_segment_tangent_turn(segment, orientation, index)
+      diagnose_segment_tangent_turns_loop(rest, orientation, index + 1)
+    }
+  }
+}
+
+fn diagnose_segment_tangent_turn(
+  segment: svg_path.Segment,
+  orientation: LoopOrientation,
+  segment_index: Int,
+) -> Nil {
+  case segment {
+    svg_path.Line(..) -> Nil
+    _ -> {
+      let sample_count = tangent_turn_sample_count
+      case segment_derivative_sample(segment, 0, sample_count) {
+        Error(_) -> Nil
+        Ok(first) ->
+          diagnose_segment_tangent_turn_loop(
+            segment,
+            orientation,
+            segment_index,
+            sample_count: sample_count,
+            sample_index: 1,
+            previous: first,
+          )
+      }
+    }
+  }
+}
+
+fn diagnose_segment_tangent_turn_loop(
+  segment: svg_path.Segment,
+  orientation: LoopOrientation,
+  segment_index: Int,
+  sample_count sample_count: Int,
+  sample_index sample_index: Int,
+  previous previous: svg_path.Point,
+) -> Nil {
+  case sample_index > sample_count {
+    True -> Nil
+    False -> {
+      case segment_derivative_sample(segment, sample_index, sample_count) {
+        Error(_) -> Nil
+        Ok(current) -> {
+          let turn = cross(previous, current)
+          let scale = point_length(previous) *. point_length(current)
+
+          case turn_is_against_orientation(turn, scale, orientation) {
+            True ->
+              io.println(
+                "[convex_hull diagnostic] segment tangent reversal at segment "
+                <> int.to_string(segment_index)
+                <> " ("
+                <> segment_kind(segment)
+                <> ") sample="
+                <> int.to_string(sample_index)
+                <> " turn="
+                <> float.to_string(turn)
+                <> " scale="
+                <> float.to_string(scale),
+              )
+            False -> Nil
+          }
+
+          diagnose_segment_tangent_turn_loop(
+            segment,
+            orientation,
+            segment_index,
+            sample_count: sample_count,
+            sample_index: sample_index + 1,
+            previous: current,
+          )
+        }
+      }
+    }
+  }
+}
+
+fn segment_derivative_sample(
+  segment: svg_path.Segment,
+  index: Int,
+  sample_count: Int,
+) -> Result(svg_path.Point, svg_path.Error) {
+  let t = int.to_float(index) /. int.to_float(sample_count)
+  svg_path.segment_derivative(segment, at: t)
+}
+
+fn loop_orientation(segments: List(svg_path.Segment)) -> LoopOrientation {
+  let vertices = loop_vertices(segments)
+  let area = signed_area(vertices)
+  case float.absolute_value(area) <=. point_tolerance *. point_tolerance {
+    True -> DegenerateOrientation
+    False ->
+      case area >. 0.0 {
+        True -> CounterClockwise
+        False -> Clockwise
+      }
+  }
+}
+
+fn loop_vertices(segments: List(svg_path.Segment)) -> List(svg_path.Point) {
+  case segments {
+    [] -> []
+    [first, ..] -> {
+      let points = [
+        svg_path.segment_start(first),
+        ..segment_endpoints(segments)
+      ]
+      points
+      |> remove_closing_duplicate
+      |> remove_near_adjacent_duplicates
+    }
+  }
+}
+
+fn segment_endpoints(segments: List(svg_path.Segment)) -> List(svg_path.Point) {
+  case segments {
+    [] -> []
+    [segment, ..rest] -> [
+      svg_path.segment_end(segment),
+      ..segment_endpoints(rest)
+    ]
+  }
+}
+
+fn remove_closing_duplicate(
+  points: List(svg_path.Point),
+) -> List(svg_path.Point) {
+  case points {
+    [] -> []
+    [first, ..] -> {
+      case list.last(points) {
+        Ok(last) ->
+          case points_near(first, last) {
+            True -> drop_last(points)
+            False -> points
+          }
+        _ -> points
+      }
+    }
+  }
+}
+
+fn remove_near_adjacent_duplicates(
+  points: List(svg_path.Point),
+) -> List(svg_path.Point) {
+  case points {
+    [] -> []
+    [first, ..rest] ->
+      remove_near_adjacent_duplicates_loop(rest, previous: first, kept: [first])
+  }
+}
+
+fn remove_near_adjacent_duplicates_loop(
+  points: List(svg_path.Point),
+  previous previous: svg_path.Point,
+  kept kept: List(svg_path.Point),
+) -> List(svg_path.Point) {
+  case points {
+    [] -> list.reverse(kept)
+    [point, ..rest] -> {
+      case points_near(previous, point) {
+        True -> remove_near_adjacent_duplicates_loop(rest, previous:, kept:)
+        False ->
+          remove_near_adjacent_duplicates_loop(rest, previous: point, kept: [
+            point,
+            ..kept
+          ])
+      }
+    }
+  }
+}
+
+fn signed_area(points: List(svg_path.Point)) -> Float {
+  case points {
+    [] | [_] | [_, _] -> 0.0
+    [first, ..rest] ->
+      signed_area_loop(rest, first: first, previous: first, area: 0.0)
+  }
+}
+
+fn signed_area_loop(
+  points: List(svg_path.Point),
+  first first: svg_path.Point,
+  previous previous: svg_path.Point,
+  area area: Float,
+) -> Float {
+  case points {
+    [] -> { area +. cross(previous, first) } /. 2.0
+    [point, ..rest] ->
+      signed_area_loop(
+        rest,
+        first:,
+        previous: point,
+        area: area +. cross(previous, point),
+      )
+  }
+}
+
+fn turn_is_against_orientation(
+  turn: Float,
+  scale: Float,
+  orientation: LoopOrientation,
+) -> Bool {
+  let tolerance = orientation_turn_tolerance *. scale
+  case orientation {
+    CounterClockwise -> turn <. 0.0 -. tolerance
+    Clockwise -> turn >. tolerance
+    DegenerateOrientation -> False
+  }
+}
+
+fn points_near(a: svg_path.Point, b: svg_path.Point) -> Bool {
+  point_distance_squared(a, b) <=. point_tolerance *. point_tolerance
+}
+
+fn point_distance_squared(a: svg_path.Point, b: svg_path.Point) -> Float {
+  let difference = subtract(a, b)
+  dot(difference, difference)
+}
+
+fn point_length(point: svg_path.Point) -> Float {
+  let assert Ok(length) = float.square_root(dot(point, point))
+  length
+}
+
+fn point_string(point: svg_path.Point) -> String {
+  "(" <> float.to_string(point.x) <> ", " <> float.to_string(point.y) <> ")"
+}
+
+fn segment_kind(segment: svg_path.Segment) -> String {
+  case segment {
+    svg_path.Line(..) -> "Line"
+    svg_path.QuadraticBezier(..) -> "QuadraticBezier"
+    svg_path.CubicBezier(..) -> "CubicBezier"
+    svg_path.Arc(..) -> "Arc"
   }
 }
 
