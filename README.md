@@ -846,10 +846,10 @@ command "supplying" a zero-length line segment to the subpath:
 <path d="M 260,120 L 260,120" style="fill:none;stroke:blue;stroke-width:24;stroke-linecap:square;" />
 
 <path d="M 90,230" style="fill:none;stroke:black;stroke-width:24;stroke-linecap:round;" />
-<path d="M 240,230 Z" style="fill:none;stroke:black;stroke-width:24;stroke-linecap:round;" />
+<path d="M 260,230 Z" style="fill:none;stroke:black;stroke-width:24;stroke-linecap:round;" />
 
 <path d="M 90,300" style="fill:none; stroke:black; stroke-width:24; stroke-linecap:square;" />
-<path d="M 240,300 Z" style="fill:none; stroke:black; stroke-width:24; stroke-linecap:square;" />
+<path d="M 260,300 Z" style="fill:none; stroke:black; stroke-width:24; stroke-linecap:square;" />
 ```
 
 For that reason, `svg_path.clean_subpath` keeps one zero-length line if a

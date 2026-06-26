@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="420" height="360" viewBox="0 0 420 360">
-  <rect x="0" y="0" width="420" height="360" fill="white" />
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="360" viewBox="-80 0 500 360">
+  <rect x="-80" y="0" width="500" height="360" fill="white" />
 
   <line x1="20" y1="50" x2="390" y2="50" stroke="#ddd" />
   <line x1="20" y1="120" x2="390" y2="120" stroke="#ddd" />
@@ -11,18 +11,26 @@
   <circle cx="90" cy="120" r="2" fill="red" />
   <circle cx="260" cy="120" r="2" fill="red" />
   <circle cx="90" cy="230" r="2" fill="red" />
-  <circle cx="240" cy="230" r="2" fill="red" />
+  <circle cx="260" cy="230" r="2" fill="red" />
   <circle cx="90" cy="300" r="2" fill="red" />
-  <circle cx="240" cy="300" r="2" fill="red" />
+  <circle cx="260" cy="300" r="2" fill="red" />
 
-  <text x="90" y="25" text-anchor="middle" font-family="sans-serif" font-size="12">M only</text>
-  <text x="260" y="25" text-anchor="middle" font-family="sans-serif" font-size="12">M then zero-length L</text>
-  <text x="20" y="54" text-anchor="start" font-family="sans-serif" font-size="12">round</text>
-  <text x="20" y="124" text-anchor="start" font-family="sans-serif" font-size="12">square</text>
-  <text x="90" y="205" text-anchor="middle" font-family="sans-serif" font-size="12">M only</text>
-  <text x="240" y="205" text-anchor="middle" font-family="sans-serif" font-size="12">M then Z</text>
-  <text x="20" y="234" text-anchor="start" font-family="sans-serif" font-size="12">round</text>
-  <text x="20" y="304" text-anchor="start" font-family="sans-serif" font-size="12">square</text>
+  <text x="90" y="25" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold">M only</text>
+  <text x="260" y="25" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold">M then zero-length L</text>
+  <text x="90" y="78" text-anchor="middle" font-family="monospace" font-size="10">M 90,50</text>
+  <text x="260" y="78" text-anchor="middle" font-family="monospace" font-size="10">M 260,50 L 260,50</text>
+  <text x="10" y="54" text-anchor="end" font-family="sans-serif" font-size="12">linecap:round</text>
+  <text x="10" y="124" text-anchor="end" font-family="sans-serif" font-size="12">linecap:square</text>
+  <text x="90" y="148" text-anchor="middle" font-family="monospace" font-size="10">M 90,120</text>
+  <text x="260" y="148" text-anchor="middle" font-family="monospace" font-size="10">M 260,120 L 260,120</text>
+  <text x="90" y="205" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold">M only</text>
+  <text x="260" y="205" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold">M then Z</text>
+  <text x="90" y="258" text-anchor="middle" font-family="monospace" font-size="10">M 90,230</text>
+  <text x="260" y="258" text-anchor="middle" font-family="monospace" font-size="10">M 260,230 Z</text>
+  <text x="10" y="234" text-anchor="end" font-family="sans-serif" font-size="12">linecap:round</text>
+  <text x="10" y="304" text-anchor="end" font-family="sans-serif" font-size="12">linecap:square</text>
+  <text x="90" y="328" text-anchor="middle" font-family="monospace" font-size="10">M 90,300</text>
+  <text x="260" y="328" text-anchor="middle" font-family="monospace" font-size="10">M 260,300 Z</text>
 
   <path d="M 90,50" style="fill: none; stroke: blue; stroke-width: 24; stroke-linecap: round;" />
   <path d="M 260,50 L 260,50" style="fill: none; stroke: blue; stroke-width: 24; stroke-linecap: round;" />
@@ -31,8 +39,8 @@
   <path d="M 260,120 L 260,120" style="fill: none; stroke: blue; stroke-width: 24; stroke-linecap: square;" />
 
   <path d="M 90,230" style="fill: none; stroke: black; stroke-width: 24; stroke-linecap: round;" />
-  <path d="M 240,230 Z" style="fill: none; stroke: black; stroke-width: 24; stroke-linecap: round;" />
+  <path d="M 260,230 Z" style="fill: none; stroke: black; stroke-width: 24; stroke-linecap: round;" />
 
   <path d="M 90,300" style="fill: none; stroke: black; stroke-width: 24; stroke-linecap: square;" />
-  <path d="M 240,300 Z" style="fill: none; stroke: black; stroke-width: 24; stroke-linecap: square;" />
+  <path d="M 260,300 Z" style="fill: none; stroke: black; stroke-width: 24; stroke-linecap: square;" />
 </svg>
