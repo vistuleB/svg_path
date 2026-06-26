@@ -860,27 +860,27 @@ case the decision is made more for the sake of the internal consistency of the l
 since we are not aware of any rendering difference between paths such as
 `M 0,0 Z` and `M 0,0 L 0,0 Z`.
 
-Also note that `serialize.subpath` includes all zero-length segments of a
-subpath at serialization time. This includes possible zero-length lines that
-might appear immediately prior to a closing command `Z`.
-
-Concerning this last point, a literal read of the
+Concerning the detailed mechanics of subpath closure, a literal read of the
 [SVG 2 specification](https://www.w3.org/TR/SVG2/paths.html#PathDataClosePathCommand)
 plausibly suggests that `Z` means "draw a final line from the current point to
 the starting point, even if this final line has length 0, and then mark
 topological closure". The observable behavior of user agents, however, suggests
-that `Z` is commonly interpreted as “draw a final line to the starting point
+that `Z` is commonly interpreted as meaning “draw a final line to the starting point
 _only if necessary to bridge a gap or when no segments have been added to the
-subpath yet_ and then mark topological closure”. This library follows the
-latter interpretation of `Z`.
+subpath yet_ and then mark topological closure”. 
+This library follows the latter interpretation.
 
-Under that common interpretation, a final nonzero-jump line that geometrically
+Under this interpretation, a final nonzero-jump line that geometrically
 closes a topologically closed subpath can be elided in the representation of
-the subpath, shortening e.g. `M0,0 L10,10 0,0 Z` to `M0,0 L10,10 Z`. However, note that a final
-zero-length jump followed by `Z` cannot be elided in the representation, since
-`Z` on its own does not allow the user agent to see or remember the
-zero-length jump. This more closely explains why zero-length lines are never
-dropped at serialization time, including when they appear prior to `Z`.
+the subpath, shortening e.g. `M0,0 L10,10 0,0 Z` to `M0,0 L10,10 Z`. 
+Our library does this.
+However, a final
+zero-length jump followed by `Z` cannot be dropped from the representation
+without losing information, since
+`Z` on its own does not allow the user agent to “see” or “remember” the
+zero-length jump. 
+Consequently, our serializer never drops zero-length lines, including
+immediately prior to `Z`.
 
 ## Transforming Paths
 
