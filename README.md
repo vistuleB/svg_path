@@ -819,79 +819,75 @@ serialize.default_options()
 |> serialize.with_right_decimals(serialize.Fixed(2))
 ```
 
-### Zero-Length Subpaths, Closures, and Move-Only Subpaths
+### Notes on Move-Only Subpaths, Zero-Length Segments, and Closure
 
 SVG distinguishes move-only subpaths from zero-length drawing subpaths. The
-subpath consisting only of the command `M 0,0` has a current point but no
-drawing segment, whereas `M 0,0 L 0,0` has a zero-length line segment. User
-agents can render these differently: with `stroke-linecap: round` or
-`stroke-linecap: square`, for example, the zero-length line can produce a
+subpath consisting only of the command `M 50,0` has a current point but no
+drawing segment, whereas `M 50,0 L 50,0` has a zero-length line segment. User
+agents can render these differently: with `stroke-linecap:round` or
+`stroke-linecap:square`, for example, the zero-length line can produce a
 visible mark while the move-only subpath remains invisible. SVG 2 describes this
 in its notes on
 [zero-length path segments](https://www.w3.org/TR/SVG2/paths.html#PathElementImplementationNotes)
 and
 [stroke line caps](https://www.w3.org/TR/SVG2/painting.html#LineCaps).
+Moreover there is a similar difference between `M 0,0` and `M 0,0 Z`, with
+the `Z` command “supplying” a zero-length line segment to the subpath:
 
-The repository includes a small browser probe:
-
-![Zero-length closepath probe](https://raw.githubusercontent.com/vistuleB/svg_path/main/zero_length_closepath_probe.svg)
-<!-- <center>
+<center>
   <img src="https://raw.githubusercontent.com/vistuleB/svg_path/main/zero_length_closepath_probe.svg" alt="Zero-length closepath probe">
-</center> -->
-
-The upper half of that file compares these two cases:
+</center>
 
 ```xml
-<path
-  d="M 90,50"
-  style="fill: none; stroke: blue; stroke-width: 24; stroke-linecap: round;"
-/>
-<path
-  d="M 260,50 L 260,50"
-  style="fill: none; stroke: blue; stroke-width: 24; stroke-linecap: round;"
-/>
+<path d="M 90,50" style="fill:none;stroke:blue;stroke-width:24;stroke-linecap:round;" />
+<path d="M 260,50 L 260,50" style="fill:none; stroke:blue; stroke-width:24;stroke-linecap:round;" />
 
-<path
-  d="M 90,120"
-  style="fill: none; stroke: blue; stroke-width: 24; stroke-linecap: square;"
-/>
-<path
-  d="M 260,120 L 260,120"
-  style="fill: none; stroke: blue; stroke-width: 24; stroke-linecap: square;"
-/>
+<path d="M 90,120" style="fill:none;stroke:blue;stroke-width:24;stroke-linecap:square;" />
+<path d="M 260,120 L 260,120" style="fill:none;stroke:blue;stroke-width:24;stroke-linecap:square;" />
+
+<path d="M 90,230" style="fill:none;stroke:black;stroke-width:24;stroke-linecap:round;" />
+<path d="M 240,230 Z" style="fill:none;stroke:black;stroke-width:24;stroke-linecap:round;" />
+
+<path d="M 90,300" style="fill:none; stroke:black; stroke-width:24; stroke-linecap:square;" />
+<path d="M 240,300 Z" style="fill:none; stroke:black; stroke-width:24; stroke-linecap:square;" />
 ```
 
-For that reason, `serialize.subpath` preserves zero-length final lines, and
-`clean_subpath` keeps one zero-length line if a subpath consists only of
-zero-length lines. This preserves the difference between a move-only subpath and
-a zero-length drawing subpath.
+For that reason, 
+`svg_path.clean_subpath` keeps one zero-length line if a subpath consists only of
+zero-length lines, preserving the final difference between a zero-length subpath and
+a move-only subpath.
 
-Closed subpaths serialize with `Z`. By default, if a closed subpath ends with a
-non-zero-length straight line back to the subpath start, the serializer drops
-that final line command and uses `Z` to represent the closure.
+A final zero-length line is preserved even if
+the subpath is closed, though in this case the decision is made more for the internal
+consistency of the library, given that we are not aware of any user-side difference
+between paths such as `M 0,0 Z` and `M 0,0 L 0,0 Z`.
 
-As per our knowledge of the
+Also note that `serialize.subpath` includes all zero-length segments
+of a subpath at serialization time. This includes possible zero-length lines that might appear immediately prior to a closing command `Z`.
+
+Concerning this last point, a literal read of the
 [SVG 2 specification](https://www.w3.org/TR/SVG2/paths.html#PathDataClosePathCommand)
-and the observable behavior of current user agents, we draw no semantic
-distinction between the inclusion of a final explicit nonzero-jump `L` command
-followed by `Z` versus direct termination of a subpath by `Z`. Both subpath
-strings map to the same internal representation including a final nonzero
-`Line()` segment and a `closed: True` field.
+plausibly suggests that `Z` means "draw a final
+line from the current point to starting point, even if this
+final line has length 0, and then mark topological closure”.
+The observable behavior of user agents, however,
+suggests that `Z` is commonly interpreted as "draw a final line from the current
+point to the starting point _only if necessary to bridge a gap
+or if no segments have been added to the subpath yet_ and mark
+topological closure”. 
+This library keeps with the latter “street-side” interpretation of `Z`.
 
-However, zero-length final lines are different. If the final segment is
-`Line(A, A)`, the serializer keeps it visible:
-
-```text
-M 0 0 H 0 Z
-```
-
-The same rule applies in relative mode:
-
-```text
-m 10 10 h 10 h -10 h 0 Z
-```
-
-The final `h 0` remains visible because it is a zero-length line.
+Note that per this (common) interpretation of `Z`,
+a final nonzero-jump line that geometrically closes
+a topologically closed subpath can be elided in the representation
+of the subpath, shortening e.g. `M0,0 L10,10 0,0 Z`
+to `M0,0 L10,10 Z`, but a final zero-length jump followed
+by `Z` cannot be elided in the representation, since `Z`
+on its own does not allow the user agent to “see” or
+“remember” the zero-length jump.
+This more closely explains
+why zero-length lines are never dropped at serialization time,
+including when they appear prior to `Z`.
 
 ## Transforming Paths
 
