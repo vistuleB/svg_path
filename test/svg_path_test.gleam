@@ -2085,6 +2085,30 @@ pub fn set_closed_with_wiggle_true_reconciles_nearby_endpoints_test() {
   assert svg_path.start(closed) == svg_path.end(closed)
 }
 
+pub fn set_closed_with_wiggle_true_rejects_gaps_beyond_tolerance_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(0.1, 0.0)
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
+    ])
+
+  assert svg_path.set_closed_with(
+      subpath,
+      closed: True,
+      policy: svg_path.Wiggle,
+    )
+    == Error(svg_path.Discontinuous(
+      previous_index: 1,
+      next_index: 0,
+      expected: a,
+      got: c,
+      distance: 0.1,
+    ))
+}
+
 pub fn set_closed_with_wiggle_false_opens_subpath_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)
@@ -2114,6 +2138,26 @@ pub fn append_segment_rejects_closed_subpath_test() {
 
   assert svg_path.append_segment(subpath, svg_path.Line(start: a, end: c))
     == Error(svg_path.AlreadyClosed)
+}
+
+pub fn append_segment_with_wiggle_rejects_start_gaps_beyond_tolerance_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(20.0, 0.0)
+  let subpath = svg_path.empty_subpath(at: a)
+
+  assert svg_path.append_segment_with(
+      subpath,
+      svg_path.Line(start: b, end: c),
+      policy: svg_path.Wiggle,
+    )
+    == Error(svg_path.Discontinuous(
+      previous_index: -1,
+      next_index: 0,
+      expected: a,
+      got: b,
+      distance: 10.0,
+    ))
 }
 
 pub fn subpath_with_wiggle_replaces_nearby_sequential_endpoints_test() {
@@ -2767,10 +2811,12 @@ pub fn subpath_with_wiggle_rejects_gaps_beyond_tolerance_test() {
       ],
       policy: svg_path.Wiggle,
     )
-    == Error(svg_path.NotCloseEnough(
+    == Error(svg_path.Discontinuous(
+      previous_index: 0,
+      next_index: 1,
       expected: b,
       got: c,
-      tolerance: 0.000000001,
+      distance: 0.09999999999999964,
     ))
 }
 
