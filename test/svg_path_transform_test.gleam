@@ -27,6 +27,36 @@ pub fn translate_matrix_transforms_points_test() {
     == svg_path.point(7.0, -4.0)
 }
 
+pub fn matrix_transforms_bounding_boxes_test() {
+  let box =
+    svg_path.BoundingBox(
+      min: svg_path.point(1.0, 2.0),
+      max: svg_path.point(3.0, 5.0),
+    )
+
+  assert transform.bounding_box(box, by: transform.translate(x: 4.0, y: -3.0))
+    == Ok(svg_path.BoundingBox(
+      min: svg_path.point(5.0, -1.0),
+      max: svg_path.point(7.0, 2.0),
+    ))
+}
+
+pub fn rotated_matrix_transforms_bounding_box_corners_test() {
+  let box =
+    svg_path.BoundingBox(
+      min: svg_path.point(0.0, 0.0),
+      max: svg_path.point(2.0, 1.0),
+    )
+  let assert Ok(transformed) =
+    transform.bounding_box(box, by: transform.rotate(degrees: 90.0))
+
+  assert bbox_near(
+    transformed,
+    min: svg_path.point(-1.0, 0.0),
+    max: svg_path.point(0.0, 2.0),
+  )
+}
+
 pub fn scale_matrix_transforms_points_test() {
   let point = svg_path.point(2.0, 3.0)
 
@@ -584,6 +614,14 @@ fn result_try_set_closed_true(
 
 fn point_near(a: svg_path.Point, b: svg_path.Point) -> Bool {
   near(a.x, b.x) && near(a.y, b.y)
+}
+
+fn bbox_near(
+  box: svg_path.BoundingBox,
+  min min: svg_path.Point,
+  max max: svg_path.Point,
+) -> Bool {
+  point_near(box.min, min) && point_near(box.max, max)
 }
 
 fn near(a: Float, b: Float) -> Bool {

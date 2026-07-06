@@ -231,6 +231,53 @@ pub fn bounding_box_dimensions_use_extents_test() {
   assert svg_path.bounding_box_diameter(box) == 22.0
 }
 
+pub fn bounding_box_union_covers_both_boxes_test() {
+  let first =
+    svg_path.BoundingBox(
+      min: svg_path.point(2.0, -3.0),
+      max: svg_path.point(5.0, 4.0),
+    )
+  let second =
+    svg_path.BoundingBox(
+      min: svg_path.point(-7.0, 6.0),
+      max: svg_path.point(-2.0, 9.0),
+    )
+
+  assert svg_path.bounding_box_union(first, second)
+    == svg_path.BoundingBox(
+      min: svg_path.point(-7.0, -3.0),
+      max: svg_path.point(5.0, 9.0),
+    )
+}
+
+pub fn bounding_box_union_many_covers_every_box_test() {
+  let first =
+    svg_path.BoundingBox(
+      min: svg_path.point(2.0, -3.0),
+      max: svg_path.point(5.0, 4.0),
+    )
+  let second =
+    svg_path.BoundingBox(
+      min: svg_path.point(-7.0, 6.0),
+      max: svg_path.point(-2.0, 9.0),
+    )
+  let third =
+    svg_path.BoundingBox(
+      min: svg_path.point(3.0, -8.0),
+      max: svg_path.point(4.0, -6.0),
+    )
+
+  assert svg_path.bounding_box_union_many([first, second, third])
+    == Ok(svg_path.BoundingBox(
+      min: svg_path.point(-7.0, -8.0),
+      max: svg_path.point(5.0, 9.0),
+    ))
+}
+
+pub fn bounding_box_union_many_returns_error_for_empty_lists_test() {
+  assert svg_path.bounding_box_union_many([]) == Error(Nil)
+}
+
 pub fn segment_bounding_box_returns_degenerate_arc_errors_test() {
   let segment =
     svg_path.Arc(

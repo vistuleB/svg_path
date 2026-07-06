@@ -78,6 +78,30 @@ pub fn bounding_box_diameter(box: BoundingBox) -> Float {
   bounding_box_width(box) +. bounding_box_height(box)
 }
 
+/// Return the smallest axis-aligned bounding box containing both boxes.
+pub fn bounding_box_union(
+  first: BoundingBox,
+  second: BoundingBox,
+) -> BoundingBox {
+  BoundingBox(
+    min: min_point(first.min, second.min),
+    max: max_point(first.max, second.max),
+  )
+}
+
+/// Return the smallest axis-aligned bounding box containing every box.
+pub fn bounding_box_union_many(
+  boxes: List(BoundingBox),
+) -> Result(BoundingBox, Nil) {
+  case boxes {
+    [] -> Error(Nil)
+    [first, ..rest] ->
+      Ok(
+        list.fold(rest, first, fn(box, next) { bounding_box_union(box, next) }),
+      )
+  }
+}
+
 /// Options for detecting scalar zero crossings along a segment.
 pub type CrossingOptions {
   CrossingOptions(samples: Int, tolerance: Float, max_iterations: Int)
@@ -2877,10 +2901,7 @@ fn combine_subpath_bounding_boxes(
 }
 
 fn combine_boxes(first: BoundingBox, second: BoundingBox) -> BoundingBox {
-  BoundingBox(
-    min: min_point(first.min, second.min),
-    max: max_point(first.max, second.max),
-  )
+  bounding_box_union(first, second)
 }
 
 fn min_point(a: Point, b: Point) -> Point {

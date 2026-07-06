@@ -570,6 +570,36 @@ pub fn path(
   }
 }
 
+/// Transform a bounding box by a matrix.
+///
+/// The result is the smallest axis-aligned bounding box containing the
+/// transformed corners of the input box.
+pub fn bounding_box(
+  box: svg_path.BoundingBox,
+  by transform: Matrix,
+) -> Result(svg_path.BoundingBox, Error) {
+  case validate_matrix(transform) {
+    Error(error) -> Error(error)
+    Ok(Nil) -> {
+      let svg_path.BoundingBox(min:, max:) = box
+      let top_left = point(min, by: transform)
+      let top_right = point(svg_path.point(max.x, min.y), by: transform)
+      let bottom_left = point(svg_path.point(min.x, max.y), by: transform)
+      let bottom_right = point(max, by: transform)
+
+      let assert Ok(box) =
+        svg_path.bounding_box_union_many([
+          svg_path.BoundingBox(min: top_left, max: top_left),
+          svg_path.BoundingBox(min: top_right, max: top_right),
+          svg_path.BoundingBox(min: bottom_left, max: bottom_left),
+          svg_path.BoundingBox(min: bottom_right, max: bottom_right),
+        ])
+
+      Ok(box)
+    }
+  }
+}
+
 /// Transform a path about a point.
 pub fn path_about_point(
   input: svg_path.Path,
