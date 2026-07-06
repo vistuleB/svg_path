@@ -102,6 +102,22 @@ pub fn bounding_box_union_many(
   }
 }
 
+/// Return the smallest axis-aligned bounding box containing every point.
+pub fn points_bounding_box(points: List(Point)) -> Result(BoundingBox, Nil) {
+  case points {
+    [] -> Error(Nil)
+    [first, ..rest] ->
+      Ok(
+        list.fold(rest, BoundingBox(min: first, max: first), fn(box, point) {
+          BoundingBox(
+            min: min_point(box.min, point),
+            max: max_point(box.max, point),
+          )
+        }),
+      )
+  }
+}
+
 /// Options for detecting scalar zero crossings along a segment.
 pub type CrossingOptions {
   CrossingOptions(samples: Int, tolerance: Float, max_iterations: Int)

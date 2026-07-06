@@ -278,6 +278,22 @@ pub fn bounding_box_union_many_returns_error_for_empty_lists_test() {
   assert svg_path.bounding_box_union_many([]) == Error(Nil)
 }
 
+pub fn points_bounding_box_covers_every_point_test() {
+  assert svg_path.points_bounding_box([
+      svg_path.point(2.0, -3.0),
+      svg_path.point(-7.0, 6.0),
+      svg_path.point(4.0, -8.0),
+    ])
+    == Ok(svg_path.BoundingBox(
+      min: svg_path.point(-7.0, -8.0),
+      max: svg_path.point(4.0, 6.0),
+    ))
+}
+
+pub fn points_bounding_box_returns_error_for_empty_lists_test() {
+  assert svg_path.points_bounding_box([]) == Error(Nil)
+}
+
 pub fn segment_bounding_box_returns_degenerate_arc_errors_test() {
   let segment =
     svg_path.Arc(
