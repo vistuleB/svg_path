@@ -1472,7 +1472,7 @@ fn arc_point_tangent_roots(
   point: svg_path.Point,
 ) -> Result(List(Float), HullError) {
   let endpoint =
-    ellipse.endpoint_arc_data(
+    ellipse.EndpointArcData(
       start: to_ellipse_point(start),
       radius: to_ellipse_point(radius),
       x_axis_rotation:,

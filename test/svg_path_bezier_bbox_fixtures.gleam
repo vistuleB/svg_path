@@ -16,7 +16,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
   [
     BezierBBoxFixture(
       name: "linear_diagonal",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(1.0, 2.0),
         end: bezier.Point(5.0, -3.0),
       ),
@@ -25,7 +25,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "quadratic_symmetric_peak",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(0.0, 0.0),
         control: bezier.Point(10.0, 10.0),
         end: bezier.Point(20.0, 0.0),
@@ -35,7 +35,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "quadratic_interior_x_extremum",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(0.0, 0.0),
         control: bezier.Point(10.0, 2.0),
         end: bezier.Point(0.0, 4.0),
@@ -45,7 +45,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "quadratic_mixed_extrema",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(-3.0, 5.0),
         control: bezier.Point(12.0, -8.0),
         end: bezier.Point(6.0, 7.0),
@@ -55,7 +55,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "cubic_arch",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(0.0, 0.0),
         control1: bezier.Point(0.0, 30.0),
         control2: bezier.Point(30.0, 30.0),
@@ -66,7 +66,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "cubic_s_curve",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(0.0, 0.0),
         control1: bezier.Point(20.0, 40.0),
         control2: bezier.Point(-10.0, -30.0),
@@ -77,7 +77,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "cubic_loopish",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(5.0, 1.0),
         control1: bezier.Point(40.0, 20.0),
         control2: bezier.Point(-30.0, 25.0),
@@ -88,7 +88,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_001",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(13.902, -26.073),
         end: bezier.Point(22.511, 3.074),
       ),
@@ -97,7 +97,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_001",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(-9.881, -8.999),
         control: bezier.Point(41.606, -35.489),
         end: bezier.Point(1.635, -41.056),
@@ -107,7 +107,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_001",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(1.781, 44.346),
         control1: bezier.Point(32.548, -3.012),
         control2: bezier.Point(33.131, 24.681),
@@ -118,7 +118,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_002",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(-19.667, 6.308),
         end: bezier.Point(-10.455, -41.28),
       ),
@@ -127,7 +127,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_002",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(17.229, -34.944),
         control: bezier.Point(-22.683, 48.946),
         end: bezier.Point(-47.651, -19.81),
@@ -137,7 +137,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_002",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(37.489, -18.376),
         control1: bezier.Point(11.484, 31.46),
         control2: bezier.Point(20.196, 7.446),
@@ -148,7 +148,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_003",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(-5.929, -23.771),
         end: bezier.Point(44.881, 0.259),
       ),
@@ -157,7 +157,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_003",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(-27.537, -27.63),
         control: bezier.Point(35.124, -45.246),
         end: bezier.Point(-15.156, 41.127),
@@ -167,7 +167,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_003",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(18.034, -15.988),
         control1: bezier.Point(23.696, 48.264),
         control2: bezier.Point(11.83, 28.003),
@@ -178,7 +178,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_004",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(-42.083, -38.856),
         end: bezier.Point(33.777, 48.659),
       ),
@@ -187,7 +187,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_004",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(-12.229, 37.966),
         control: bezier.Point(-36.77, -15.015),
         end: bezier.Point(-7.856, 13.539),
@@ -197,7 +197,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_004",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(-39.711, 18.094),
         control1: bezier.Point(18.116, -17.726),
         control2: bezier.Point(31.979, -24.604),
@@ -208,7 +208,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_005",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(-25.438, 23.246),
         end: bezier.Point(-8.556, -34.511),
       ),
@@ -217,7 +217,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_005",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(7.887, -32.575),
         control: bezier.Point(37.41, 47.678),
         end: bezier.Point(43.067, -23.545),
@@ -227,7 +227,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_005",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(20.532, -27.827),
         control1: bezier.Point(-39.662, 12.817),
         control2: bezier.Point(-37.388, -40.605),
@@ -238,7 +238,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_006",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(-9.755, 39.281),
         end: bezier.Point(20.735, 1.692),
       ),
@@ -247,7 +247,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_006",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(-47.82, -0.857),
         control: bezier.Point(-3.932, -47.488),
         end: bezier.Point(12.65, 34.428),
@@ -257,7 +257,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_006",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(-40.639, 46.18),
         control1: bezier.Point(41.012, -8.934),
         control2: bezier.Point(-28.815, 7.67),
@@ -268,7 +268,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_007",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(45.804, -33.412),
         end: bezier.Point(25.826, 6.117),
       ),
@@ -277,7 +277,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_007",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(27.93, 8.194),
         control: bezier.Point(35.971, 16.204),
         end: bezier.Point(-1.19, 21.713),
@@ -287,7 +287,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_007",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(-45.508, 45.561),
         control1: bezier.Point(-49.091, -15.734),
         control2: bezier.Point(-18.926, -0.108),
@@ -298,7 +298,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_008",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(-22.93, -4.838),
         end: bezier.Point(-20.834, -11.159),
       ),
@@ -307,7 +307,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_008",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(-35.855, 17.794),
         control: bezier.Point(24.669, -0.311),
         end: bezier.Point(20.783, -42.174),
@@ -317,7 +317,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_008",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(-11.099, -14.218),
         control1: bezier.Point(21.965, 2.363),
         control2: bezier.Point(-25.698, -16.084),
@@ -328,7 +328,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_009",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(-22.031, -28.986),
         end: bezier.Point(-41.348, -44.032),
       ),
@@ -337,7 +337,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_009",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(33.823, 23.504),
         control: bezier.Point(-46.806, -6.666),
         end: bezier.Point(44.155, 47.566),
@@ -347,7 +347,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_009",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(-31.862, 1.502),
         control1: bezier.Point(-18.999, -35.332),
         control2: bezier.Point(4.278, -33.361),
@@ -358,7 +358,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_010",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(-12.674, 5.692),
         end: bezier.Point(-19.717, 49.937),
       ),
@@ -367,7 +367,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_010",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(-17.145, 3.437),
         control: bezier.Point(42.631, -12.508),
         end: bezier.Point(-15.669, 9.105),
@@ -377,7 +377,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_010",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(-38.693, -19.224),
         control1: bezier.Point(-45.353, 35.701),
         control2: bezier.Point(7.395, 43.23),
@@ -388,7 +388,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_011",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(11.02, -38.578),
         end: bezier.Point(30.942, -27.484),
       ),
@@ -397,7 +397,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_011",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(47.831, -6.904),
         control: bezier.Point(24.931, 7.45),
         end: bezier.Point(47.392, 12.105),
@@ -407,7 +407,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_011",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(-35.465, -31.683),
         control1: bezier.Point(27.942, 6.929),
         control2: bezier.Point(-1.109, -44.967),
@@ -418,7 +418,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_012",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(21.181, -48.634),
         end: bezier.Point(19.355, -29.965),
       ),
@@ -427,7 +427,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_012",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(-10.259, -40.506),
         control: bezier.Point(-42.84, 27.666),
         end: bezier.Point(49.268, 0.12),
@@ -437,7 +437,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_012",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(-14.172, -26.023),
         control1: bezier.Point(46.567, 4.624),
         control2: bezier.Point(-45.889, -14.814),
@@ -448,7 +448,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_013",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(-47.626, 35.479),
         end: bezier.Point(16.409, 27.118),
       ),
@@ -457,7 +457,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_013",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(-11.526, 0.103),
         control: bezier.Point(4.381, -20.367),
         end: bezier.Point(31.569, 4.173),
@@ -467,7 +467,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_013",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(-37.829, -37.667),
         control1: bezier.Point(35.944, -25.246),
         control2: bezier.Point(-44.919, -8.828),
@@ -478,7 +478,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_014",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(-40.827, -32.598),
         end: bezier.Point(-30.439, 25.448),
       ),
@@ -487,7 +487,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_014",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(-40.735, 3.398),
         control: bezier.Point(23.691, 28.729),
         end: bezier.Point(-5.319, -27.298),
@@ -497,7 +497,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_014",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(23.849, -24.804),
         control1: bezier.Point(45.165, -15.149),
         control2: bezier.Point(44.176, -30.368),
@@ -508,7 +508,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_015",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(29.129, -0.313),
         end: bezier.Point(-44.404, 41.324),
       ),
@@ -517,7 +517,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_015",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(14.987, -42.831),
         control: bezier.Point(-47.579, -30.734),
         end: bezier.Point(22.316, 47.929),
@@ -527,7 +527,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_015",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(-4.326, 3.177),
         control1: bezier.Point(25.927, 27.592),
         control2: bezier.Point(-37.388, -41.196),
@@ -538,7 +538,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_016",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(-24.759, 3.982),
         end: bezier.Point(-40.271, -40.737),
       ),
@@ -547,7 +547,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_016",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(32.32, -12.357),
         control: bezier.Point(-40.476, -46.069),
         end: bezier.Point(-4.678, -24.366),
@@ -557,7 +557,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_016",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(38.805, 23.345),
         control1: bezier.Point(-31.91, -12.319),
         control2: bezier.Point(15.483, 13.355),
@@ -568,7 +568,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_017",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(48.277, 46.83),
         end: bezier.Point(-45.362, -37.268),
       ),
@@ -577,7 +577,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_017",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(-11.731, -1.518),
         control: bezier.Point(-3.763, 38.698),
         end: bezier.Point(11.161, -1.701),
@@ -587,7 +587,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_017",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(-29.556, 3.181),
         control1: bezier.Point(34.295, -36.511),
         control2: bezier.Point(-45.655, 17.969),
@@ -598,7 +598,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_018",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(24.332, 20.952),
         end: bezier.Point(13.882, 21.755),
       ),
@@ -607,7 +607,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_018",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(31.639, -28.575),
         control: bezier.Point(-32.044, 37.572),
         end: bezier.Point(-21.175, -20.64),
@@ -617,7 +617,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_018",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(11.486, -45.925),
         control1: bezier.Point(30.251, 44.594),
         control2: bezier.Point(42.944, 43.899),
@@ -628,7 +628,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_019",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(-40.098, 14.027),
         end: bezier.Point(-31.408, 2.557),
       ),
@@ -637,7 +637,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_019",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(-22.659, 27.255),
         control: bezier.Point(34.346, -39.383),
         end: bezier.Point(43.906, -26.509),
@@ -647,7 +647,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_019",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(12.929, -45.732),
         control1: bezier.Point(23.08, -37.912),
         control2: bezier.Point(32.891, 10.738),
@@ -658,7 +658,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_020",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(-15.724, -10.737),
         end: bezier.Point(43.266, -46.152),
       ),
@@ -667,7 +667,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_020",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(-46.128, 0.895),
         control: bezier.Point(-43.673, -38.599),
         end: bezier.Point(5.603, -23.693),
@@ -677,7 +677,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_020",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(40.327, 0.754),
         control1: bezier.Point(20.045, 5.429),
         control2: bezier.Point(-41.614, 20.612),
@@ -688,7 +688,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_021",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(7.07, -9.675),
         end: bezier.Point(-14.268, -14.157),
       ),
@@ -697,7 +697,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_021",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(-35.239, -21.611),
         control: bezier.Point(-25.764, -2.368),
         end: bezier.Point(-12.326, 40.536),
@@ -707,7 +707,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_021",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(-32.481, -30.508),
         control1: bezier.Point(21.39, -1.593),
         control2: bezier.Point(40.87, 45.793),
@@ -718,7 +718,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_022",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(22.514, 41.333),
         end: bezier.Point(-35.26, -15.424),
       ),
@@ -727,7 +727,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_022",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(24.261, 0.008),
         control: bezier.Point(39.496, 0.065),
         end: bezier.Point(12.369, 26.658),
@@ -737,7 +737,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_022",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(23.429, 7.061),
         control1: bezier.Point(-33.157, -27.631),
         control2: bezier.Point(35.588, -37.732),
@@ -748,7 +748,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_023",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(-43.815, 3.226),
         end: bezier.Point(-10.812, 40.568),
       ),
@@ -757,7 +757,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_023",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(-23.992, 14.674),
         control: bezier.Point(-9.955, 17.808),
         end: bezier.Point(-44.983, -27.452),
@@ -767,7 +767,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_023",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(-10.637, 16.087),
         control1: bezier.Point(-45.194, 15.701),
         control2: bezier.Point(49.284, 9.28),
@@ -778,7 +778,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_024",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(-47.029, -13.562),
         end: bezier.Point(14.996, -48.574),
       ),
@@ -787,7 +787,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_024",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(45.998, 19.683),
         control: bezier.Point(34.386, 27.538),
         end: bezier.Point(42.003, -12.44),
@@ -797,7 +797,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_024",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(40.33, 17.306),
         control1: bezier.Point(-22.885, -19.372),
         control2: bezier.Point(42.984, -2.57),
@@ -808,7 +808,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_025",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(8.501, 0.752),
         end: bezier.Point(-7.433, -32.941),
       ),
@@ -817,7 +817,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_025",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(33.958, 46.024),
         control: bezier.Point(40.22, 0.624),
         end: bezier.Point(-21.955, 0.193),
@@ -827,7 +827,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_025",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(-23.268, -28.324),
         control1: bezier.Point(-24.408, -49.656),
         control2: bezier.Point(43.215, 8.243),
@@ -838,7 +838,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_026",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(38.944, 29.822),
         end: bezier.Point(18.61, -45.682),
       ),
@@ -847,7 +847,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_026",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(-31.478, -2.638),
         control: bezier.Point(17.894, -36.476),
         end: bezier.Point(-40.527, -48.069),
@@ -857,7 +857,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_026",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(-18.425, 49.27),
         control1: bezier.Point(-16.249, 35.774),
         control2: bezier.Point(-14.619, -5.967),
@@ -868,7 +868,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_027",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(-23.544, 12.395),
         end: bezier.Point(-45.488, -21.02),
       ),
@@ -877,7 +877,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_027",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(-38.021, -44.126),
         control: bezier.Point(-4.157, -12.507),
         end: bezier.Point(14.548, -5.728),
@@ -887,7 +887,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_027",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(2.924, -22.125),
         control1: bezier.Point(-46.469, 44.415),
         control2: bezier.Point(-24.665, -37.482),
@@ -898,7 +898,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_028",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(-3.317, 12.882),
         end: bezier.Point(-22.522, -23.494),
       ),
@@ -907,7 +907,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_028",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(48.23, 28.31),
         control: bezier.Point(30.074, 39.266),
         end: bezier.Point(21.919, 31.918),
@@ -917,7 +917,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_028",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(6.519, 25.133),
         control1: bezier.Point(17.434, -40.726),
         control2: bezier.Point(-39.063, -18.306),
@@ -928,7 +928,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_029",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(-27.856, 48.108),
         end: bezier.Point(12.013, 35.335),
       ),
@@ -937,7 +937,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_029",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(23.235, -17.305),
         control: bezier.Point(-45.912, -11.661),
         end: bezier.Point(18.286, -49.455),
@@ -947,7 +947,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_029",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(5.371, 42.23),
         control1: bezier.Point(-33.834, -49.494),
         control2: bezier.Point(-13.737, 36.917),
@@ -958,7 +958,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_030",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(39.441, -34.9),
         end: bezier.Point(-47.548, 26.156),
       ),
@@ -967,7 +967,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_030",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(6.599, -23.987),
         control: bezier.Point(-8.319, -8.024),
         end: bezier.Point(-13.236, 44.581),
@@ -977,7 +977,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_030",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(48.118, 46.008),
         control1: bezier.Point(-46.033, -42.791),
         control2: bezier.Point(-26.79, -13.049),
@@ -988,7 +988,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_031",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(23.851, 29.4),
         end: bezier.Point(46.324, -42.648),
       ),
@@ -997,7 +997,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_031",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(4.722, -36.059),
         control: bezier.Point(-2.87, 36.583),
         end: bezier.Point(21.573, -43.729),
@@ -1007,7 +1007,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_031",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(32.715, -17.799),
         control1: bezier.Point(36.521, -44.674),
         control2: bezier.Point(-0.446, -41.542),
@@ -1018,7 +1018,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_032",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(-29.189, -17.485),
         end: bezier.Point(-23.377, -19.9),
       ),
@@ -1027,7 +1027,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_032",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(-38.222, 14.998),
         control: bezier.Point(42.643, -42.833),
         end: bezier.Point(0.463, -36.501),
@@ -1037,7 +1037,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_032",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(43.447, 32.578),
         control1: bezier.Point(47.544, -33.5),
         control2: bezier.Point(22.431, 9.615),
@@ -1048,7 +1048,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_033",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(48.112, -35.009),
         end: bezier.Point(-13.56, -12.056),
       ),
@@ -1057,7 +1057,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_033",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(-23.337, 12.499),
         control: bezier.Point(-2.214, 8.699),
         end: bezier.Point(-39.188, -11.401),
@@ -1067,7 +1067,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_033",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(-27.338, -23.07),
         control1: bezier.Point(-41.659, 11.365),
         control2: bezier.Point(25.634, -14.41),
@@ -1078,7 +1078,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_034",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(-20.031, 1.35),
         end: bezier.Point(-1.204, 28.656),
       ),
@@ -1087,7 +1087,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_034",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(-45.136, 36.158),
         control: bezier.Point(-48.061, 11.6),
         end: bezier.Point(-21.072, 38.657),
@@ -1097,7 +1097,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_034",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(-37.151, 17.67),
         control1: bezier.Point(19.744, 6.902),
         control2: bezier.Point(28.748, 29.581),
@@ -1108,7 +1108,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_035",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(13.671, 29.796),
         end: bezier.Point(-35.807, 41.927),
       ),
@@ -1117,7 +1117,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_035",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(-19.633, 5.663),
         control: bezier.Point(41.707, 33.203),
         end: bezier.Point(41.863, -43.011),
@@ -1127,7 +1127,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_035",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(14.83, -35.952),
         control1: bezier.Point(-44.68, -15.241),
         control2: bezier.Point(10.081, 45.285),
@@ -1138,7 +1138,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_036",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(-9.622, 9.889),
         end: bezier.Point(-6.838, 12.286),
       ),
@@ -1147,7 +1147,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_036",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(6.255, -27.62),
         control: bezier.Point(22.28, -9.384),
         end: bezier.Point(-34.387, 30.059),
@@ -1157,7 +1157,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_036",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(44.34, 41.9),
         control1: bezier.Point(41.95, 30.627),
         control2: bezier.Point(19.348, -26.249),
@@ -1168,7 +1168,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_037",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(-39.751, 28.147),
         end: bezier.Point(-30.701, 45.731),
       ),
@@ -1177,7 +1177,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_037",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(-46.318, -28.644),
         control: bezier.Point(-15.417, 29.049),
         end: bezier.Point(-39.542, -9.747),
@@ -1187,7 +1187,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_037",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(11.141, -8.04),
         control1: bezier.Point(42.474, -23.743),
         control2: bezier.Point(-0.236, -11.985),
@@ -1198,7 +1198,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_038",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(-14.06, -27.217),
         end: bezier.Point(25.84, -21.318),
       ),
@@ -1207,7 +1207,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_038",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(-47.388, 24.473),
         control: bezier.Point(30.531, -30.616),
         end: bezier.Point(-6.77, -26.422),
@@ -1217,7 +1217,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_038",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(-4.631, -5.959),
         control1: bezier.Point(19.146, 30.195),
         control2: bezier.Point(-29.051, 31.606),
@@ -1228,7 +1228,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_039",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(42.685, 3.348),
         end: bezier.Point(3.85, 48.011),
       ),
@@ -1237,7 +1237,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_039",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(35.09, -17.256),
         control: bezier.Point(-24.83, 30.398),
         end: bezier.Point(25.66, 43.554),
@@ -1247,7 +1247,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_039",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(20.988, 7.481),
         control1: bezier.Point(-39.498, -5.988),
         control2: bezier.Point(-49.916, -2.669),
@@ -1258,7 +1258,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_040",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(46.615, -13.097),
         end: bezier.Point(42.941, 0.252),
       ),
@@ -1267,7 +1267,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_040",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(8.226, 38.952),
         control: bezier.Point(16.794, 33.169),
         end: bezier.Point(29.293, 24.31),
@@ -1277,7 +1277,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_040",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(28.792, 41.325),
         control1: bezier.Point(11.208, -4.378),
         control2: bezier.Point(-33.881, -39.219),
@@ -1288,7 +1288,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_041",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(-20.818, 36.543),
         end: bezier.Point(19.32, -25.277),
       ),
@@ -1297,7 +1297,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_041",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(-39.216, 0.353),
         control: bezier.Point(37.088, 48.006),
         end: bezier.Point(32.332, -0.201),
@@ -1307,7 +1307,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_041",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(-40.685, -44.137),
         control1: bezier.Point(-45.914, 18.557),
         control2: bezier.Point(42.32, -17.611),
@@ -1318,7 +1318,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_042",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(40.32, -9.014),
         end: bezier.Point(38.96, 27.119),
       ),
@@ -1327,7 +1327,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_042",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(45.341, 12.965),
         control: bezier.Point(1.671, -7.331),
         end: bezier.Point(-43.748, 39.056),
@@ -1337,7 +1337,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_042",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(-21.821, -21.858),
         control1: bezier.Point(-35.178, -42.759),
         control2: bezier.Point(-27.407, -0.172),
@@ -1348,7 +1348,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_043",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(-20.349, 35.55),
         end: bezier.Point(-34.704, -3.365),
       ),
@@ -1357,7 +1357,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_043",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(-37.498, -45.805),
         control: bezier.Point(-0.781, -6.605),
         end: bezier.Point(9.595, -34.739),
@@ -1367,7 +1367,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_043",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(21.404, 23.535),
         control1: bezier.Point(49.443, 27.029),
         control2: bezier.Point(-16.756, 47.061),
@@ -1378,7 +1378,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_044",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(12.183, -16.878),
         end: bezier.Point(30.244, -8.729),
       ),
@@ -1387,7 +1387,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_044",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(-49.303, 26.482),
         control: bezier.Point(-36.358, 29.148),
         end: bezier.Point(-30.041, 28.158),
@@ -1397,7 +1397,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_044",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(-22.537, 1.662),
         control1: bezier.Point(-36.98, 41.01),
         control2: bezier.Point(43.952, 42.106),
@@ -1408,7 +1408,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_045",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(-12.872, 39.658),
         end: bezier.Point(-11.459, 26.978),
       ),
@@ -1417,7 +1417,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_045",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(-1.767, 27.296),
         control: bezier.Point(41.092, 40.329),
         end: bezier.Point(34.774, 29.908),
@@ -1427,7 +1427,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_045",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(-12.614, 4.558),
         control1: bezier.Point(36.563, -10.034),
         control2: bezier.Point(49.816, -31.443),
@@ -1438,7 +1438,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_046",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(-7.639, 23.237),
         end: bezier.Point(-15.164, 26.371),
       ),
@@ -1447,7 +1447,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_046",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(-2.447, 2.488),
         control: bezier.Point(32.834, 0.952),
         end: bezier.Point(-27.417, -31.516),
@@ -1457,7 +1457,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_046",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(8.283, -15.415),
         control1: bezier.Point(-2.277, 8.172),
         control2: bezier.Point(0.912, -0.195),
@@ -1468,7 +1468,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_047",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(32.494, -24.363),
         end: bezier.Point(46.46, 17.469),
       ),
@@ -1477,7 +1477,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_047",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(-33.136, 15.268),
         control: bezier.Point(-2.15, -1.331),
         end: bezier.Point(7.081, 15.37),
@@ -1487,7 +1487,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_047",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(-40.789, -48.357),
         control1: bezier.Point(-13.028, -44.436),
         control2: bezier.Point(38.349, -41.03),
@@ -1498,7 +1498,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_048",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(-45.468, -46.127),
         end: bezier.Point(42.418, 24.68),
       ),
@@ -1507,7 +1507,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_048",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(5.475, -46.488),
         control: bezier.Point(-28.069, -25.233),
         end: bezier.Point(-24.419, 47.094),
@@ -1517,7 +1517,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_048",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(-45.614, 36.105),
         control1: bezier.Point(-2.283, -22.523),
         control2: bezier.Point(-27.899, 11.265),
@@ -1528,7 +1528,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_049",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(39.74, 21.109),
         end: bezier.Point(-8.034, -6.729),
       ),
@@ -1537,7 +1537,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_049",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(20.637, 20.229),
         control: bezier.Point(-22.224, 28.784),
         end: bezier.Point(-22.697, -13.885),
@@ -1547,7 +1547,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_049",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(4.88, 31.197),
         control1: bezier.Point(-28.171, -37.237),
         control2: bezier.Point(-22.252, 38.93),
@@ -1558,7 +1558,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_linear_050",
-      curve: bezier.linear_bezier_data(
+      curve: bezier.LinearBezierData(
         start: bezier.Point(39.88, 20.328),
         end: bezier.Point(22.871, -21.145),
       ),
@@ -1567,7 +1567,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_quadratic_050",
-      curve: bezier.quadratic_bezier_data(
+      curve: bezier.QuadraticBezierData(
         start: bezier.Point(-27.241, -32.639),
         control: bezier.Point(7.649, 16.747),
         end: bezier.Point(-16.027, -8.044),
@@ -1577,7 +1577,7 @@ pub fn fixtures() -> List(BezierBBoxFixture) {
     ),
     BezierBBoxFixture(
       name: "generated_cubic_050",
-      curve: bezier.cubic_bezier_data(
+      curve: bezier.CubicBezierData(
         start: bezier.Point(-39.526, -45.99),
         control1: bezier.Point(3.748, 32.585),
         control2: bezier.Point(-46.89, -40.022),

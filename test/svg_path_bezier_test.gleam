@@ -11,18 +11,18 @@ pub fn main() -> Nil {
 
 pub fn bezier_point_evaluates_linear_quadratic_and_cubic_test() {
   let linear =
-    bezier.linear_bezier_data(
+    bezier.LinearBezierData(
       start: bezier.Point(0.0, 0.0),
       end: bezier.Point(10.0, 20.0),
     )
   let quadratic =
-    bezier.quadratic_bezier_data(
+    bezier.QuadraticBezierData(
       start: bezier.Point(0.0, 0.0),
       control: bezier.Point(10.0, 20.0),
       end: bezier.Point(20.0, 0.0),
     )
   let cubic =
-    bezier.cubic_bezier_data(
+    bezier.CubicBezierData(
       start: bezier.Point(0.0, 0.0),
       control1: bezier.Point(0.0, 30.0),
       control2: bezier.Point(30.0, 30.0),
@@ -45,7 +45,7 @@ pub fn bezier_point_evaluates_linear_quadratic_and_cubic_test() {
 
 pub fn bezier_point_extrapolates_outside_t_test() {
   let linear =
-    bezier.linear_bezier_data(
+    bezier.LinearBezierData(
       start: bezier.Point(0.0, 0.0),
       end: bezier.Point(10.0, 20.0),
     )
@@ -62,13 +62,13 @@ pub fn bezier_point_extrapolates_outside_t_test() {
 
 pub fn bezier_derivative_uses_parameter_t_test() {
   let quadratic =
-    bezier.quadratic_bezier_data(
+    bezier.QuadraticBezierData(
       start: bezier.Point(0.0, 0.0),
       control: bezier.Point(10.0, 20.0),
       end: bezier.Point(20.0, 0.0),
     )
   let cubic =
-    bezier.cubic_bezier_data(
+    bezier.CubicBezierData(
       start: bezier.Point(0.0, 0.0),
       control1: bezier.Point(0.0, 30.0),
       control2: bezier.Point(30.0, 30.0),
@@ -91,7 +91,7 @@ pub fn bezier_derivative_uses_parameter_t_test() {
 
 pub fn bezier_bounding_box_of_line_uses_endpoint_extents_test() {
   let curve =
-    bezier.linear_bezier_data(
+    bezier.LinearBezierData(
       start: bezier.Point(1.0, 2.0),
       end: bezier.Point(5.0, -3.0),
     )
@@ -105,7 +105,7 @@ pub fn bezier_bounding_box_of_line_uses_endpoint_extents_test() {
 
 pub fn bezier_bounding_box_of_quadratic_includes_interior_extremum_test() {
   let curve =
-    bezier.quadratic_bezier_data(
+    bezier.QuadraticBezierData(
       start: bezier.Point(0.0, 0.0),
       control: bezier.Point(10.0, 10.0),
       end: bezier.Point(20.0, 0.0),
@@ -120,7 +120,7 @@ pub fn bezier_bounding_box_of_quadratic_includes_interior_extremum_test() {
 
 pub fn bezier_bounding_box_of_cubic_includes_interior_extrema_test() {
   let curve =
-    bezier.cubic_bezier_data(
+    bezier.CubicBezierData(
       start: bezier.Point(0.0, 0.0),
       control1: bezier.Point(0.0, 30.0),
       control2: bezier.Point(30.0, 30.0),
@@ -140,7 +140,7 @@ pub fn bezier_bounding_box_matches_generated_fixtures_test() {
 
 pub fn map_points_maps_bezier_defining_points_test() {
   let curve =
-    bezier.cubic_bezier_data(
+    bezier.CubicBezierData(
       start: bezier.Point(0.0, 0.0),
       control1: bezier.Point(0.0, 30.0),
       control2: bezier.Point(30.0, 30.0),
@@ -161,7 +161,7 @@ pub fn map_points_maps_bezier_defining_points_test() {
 
 pub fn split_bezier_divides_quadratic_at_t_test() {
   let curve =
-    bezier.quadratic_bezier_data(
+    bezier.QuadraticBezierData(
       start: bezier.Point(0.0, 0.0),
       control: bezier.Point(10.0, 20.0),
       end: bezier.Point(20.0, 0.0),
@@ -189,7 +189,7 @@ pub fn split_bezier_divides_quadratic_at_t_test() {
 
 pub fn split_bezier_allows_endpoint_splits_test() {
   let curve =
-    bezier.cubic_bezier_data(
+    bezier.CubicBezierData(
       start: bezier.Point(0.0, 0.0),
       control1: bezier.Point(0.0, 30.0),
       control2: bezier.Point(30.0, 30.0),
@@ -211,7 +211,7 @@ pub fn split_bezier_allows_endpoint_splits_test() {
 
 pub fn split_bezier_inside_rejects_outside_t_test() {
   let curve =
-    bezier.linear_bezier_data(
+    bezier.LinearBezierData(
       start: bezier.Point(0.0, 0.0),
       end: bezier.Point(10.0, 20.0),
     )
@@ -226,7 +226,7 @@ pub fn split_bezier_inside_rejects_outside_t_test() {
 
 pub fn split_bezier_many_sorts_and_removes_duplicate_points_test() {
   let curve =
-    bezier.linear_bezier_data(
+    bezier.LinearBezierData(
       start: bezier.Point(0.0, 0.0),
       end: bezier.Point(40.0, 0.0),
     )
@@ -246,7 +246,7 @@ pub fn split_bezier_many_sorts_and_removes_duplicate_points_test() {
 
 pub fn split_bezier_inside_many_rejects_any_outside_point_test() {
   let curve =
-    bezier.linear_bezier_data(
+    bezier.LinearBezierData(
       start: bezier.Point(0.0, 0.0),
       end: bezier.Point(40.0, 0.0),
     )
@@ -259,7 +259,7 @@ pub fn split_bezier_inside_many_rejects_any_outside_point_test() {
 
 pub fn split_bezier_inside_many_trims_boundary_points_test() {
   let curve =
-    bezier.linear_bezier_data(
+    bezier.LinearBezierData(
       start: bezier.Point(0.0, 0.0),
       end: bezier.Point(40.0, 0.0),
     )
@@ -276,7 +276,7 @@ pub fn split_bezier_inside_many_trims_boundary_points_test() {
 
 pub fn split_bezier_many_keeps_boundary_points_when_they_are_interior_test() {
   let curve =
-    bezier.linear_bezier_data(
+    bezier.LinearBezierData(
       start: bezier.Point(0.0, 0.0),
       end: bezier.Point(40.0, 0.0),
     )
@@ -299,7 +299,7 @@ pub fn split_bezier_many_keeps_boundary_points_when_they_are_interior_test() {
 
 pub fn split_bezier_many_preserves_cubic_degree_test() {
   let curve =
-    bezier.cubic_bezier_data(
+    bezier.CubicBezierData(
       start: bezier.Point(0.0, 0.0),
       control1: bezier.Point(0.0, 30.0),
       control2: bezier.Point(30.0, 30.0),
@@ -316,7 +316,7 @@ pub fn split_bezier_many_preserves_cubic_degree_test() {
 
 pub fn cubic_inflection_parameters_finds_an_s_curve_inflection_test() {
   let curve =
-    bezier.cubic_bezier_data(
+    bezier.CubicBezierData(
       start: bezier.Point(0.0, 0.0),
       control1: bezier.Point(0.0, 100.0),
       control2: bezier.Point(100.0, -100.0),
@@ -334,14 +334,14 @@ pub fn cubic_inflection_parameters_finds_an_s_curve_inflection_test() {
 
 pub fn cubic_inflection_parameters_ignores_non_inflecting_curves_test() {
   let cubic =
-    bezier.cubic_bezier_data(
+    bezier.CubicBezierData(
       start: bezier.Point(0.0, 0.0),
       control1: bezier.Point(0.0, 30.0),
       control2: bezier.Point(30.0, 30.0),
       end: bezier.Point(30.0, 0.0),
     )
   let quadratic =
-    bezier.quadratic_bezier_data(
+    bezier.QuadraticBezierData(
       start: bezier.Point(0.0, 0.0),
       control: bezier.Point(10.0, 10.0),
       end: bezier.Point(20.0, 0.0),

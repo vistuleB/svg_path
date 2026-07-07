@@ -16,7 +16,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
   [
     ArcBBoxFixture(
       name: "endpoint_half_circle_sweep",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(10.0, 0.0),
         radius: ellipse.Point(10.0, 10.0),
         x_axis_rotation: 0.0,
@@ -28,7 +28,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "endpoint_half_circle_non_sweep",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(10.0, 0.0),
         radius: ellipse.Point(10.0, 10.0),
         x_axis_rotation: 0.0,
@@ -40,7 +40,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "endpoint_large_arc_rotated",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-0.5, -1.5),
         radius: ellipse.Point(23.070058363, 11.535029181),
         x_axis_rotation: 35.0,
@@ -52,7 +52,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "endpoint_small_radii_corrected",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(10.0, 0.0),
         radius: ellipse.Point(10.0, 10.0),
         x_axis_rotation: 0.0,
@@ -64,7 +64,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "endpoint_negative_radii_corrected",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(10.864522872, -1.376321785),
         radius: ellipse.Point(7.0, 11.0),
         x_axis_rotation: -25.0,
@@ -76,7 +76,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "center_quarter_unrotated",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(0.0, 0.0),
         radius: ellipse.Point(10.0, 5.0),
         x_axis_rotation: 0.0,
@@ -88,7 +88,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "center_rotated_interior_extrema",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(2.0, -3.0),
         radius: ellipse.Point(12.0, 5.0),
         x_axis_rotation: 30.0,
@@ -100,7 +100,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "center_negative_delta",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-4.0, 6.0),
         radius: ellipse.Point(8.0, 13.0),
         x_axis_rotation: -40.0,
@@ -112,7 +112,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "center_nearly_full_turn",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(1.0, 2.0),
         radius: ellipse.Point(6.0, 9.0),
         x_axis_rotation: 75.0,
@@ -124,7 +124,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_001",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-26.420227561, -0.658768598),
         radius: ellipse.Point(6.032111911, 34.909092126),
         x_axis_rotation: -134.736694428,
@@ -136,7 +136,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_002",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-23.253354044, 4.489836309),
         radius: ellipse.Point(11.040076949, 11.324675655),
         x_axis_rotation: -1.120270696,
@@ -148,7 +148,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_003",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(12.263737805, -7.794667382),
         radius: ellipse.Point(29.045558504, 36.020243129),
         x_axis_rotation: -4.470432897,
@@ -160,7 +160,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_004",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-35.199222325, 16.10660818),
         radius: ellipse.Point(16.511618437, 20.385959038),
         x_axis_rotation: 105.247348947,
@@ -172,7 +172,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_005",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(37.510534418, -1.532012496),
         radius: ellipse.Point(3.447058626, 25.413101101),
         x_axis_rotation: 86.572771013,
@@ -184,7 +184,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_006",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-30.056856415, 11.675302977),
         radius: ellipse.Point(37.905142477, 24.472406478),
         x_axis_rotation: 15.862230371,
@@ -196,7 +196,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_007",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-22.542107623, 18.860506455),
         radius: ellipse.Point(37.214814609, 9.466722192),
         x_axis_rotation: 172.12124999,
@@ -208,7 +208,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_008",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-22.853717427, -33.155411727),
         radius: ellipse.Point(20.890059207, 8.562003219),
         x_axis_rotation: -160.059822786,
@@ -220,7 +220,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_009",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-25.079142886, 27.22085841),
         radius: ellipse.Point(37.321160788, 24.050881842),
         x_axis_rotation: -42.268554188,
@@ -232,7 +232,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_010",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-6.400677035, -28.147946287),
         radius: ellipse.Point(2.586167544, 8.591884579),
         x_axis_rotation: 29.388556231,
@@ -244,7 +244,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_011",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(29.125132496, -22.229060849),
         radius: ellipse.Point(14.929590022, 31.313818056),
         x_axis_rotation: 7.531227591,
@@ -256,7 +256,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_012",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(2.413267122, -8.525360514),
         radius: ellipse.Point(27.806919019, 13.723893271),
         x_axis_rotation: -178.282894779,
@@ -268,7 +268,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_013",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-17.25495758, 26.471509571),
         radius: ellipse.Point(18.585136499, 9.928155635),
         x_axis_rotation: 26.849963092,
@@ -280,7 +280,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_014",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(37.678723547, 17.956326991),
         radius: ellipse.Point(29.396986326, 37.575993018),
         x_axis_rotation: -137.09578551,
@@ -292,7 +292,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_015",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-36.426110675, -18.086671804),
         radius: ellipse.Point(11.559500956, 19.61728651),
         x_axis_rotation: -25.17267739,
@@ -304,7 +304,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_016",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(3.581412922, 36.192809718),
         radius: ellipse.Point(26.760301224, 14.71069916),
         x_axis_rotation: 62.672832367,
@@ -316,7 +316,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_017",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-15.826213009, 11.335956579),
         radius: ellipse.Point(31.940957392, 3.228909565),
         x_axis_rotation: -22.676658523,
@@ -328,7 +328,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_018",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-21.166270461, 24.046227259),
         radius: ellipse.Point(18.376861372, 30.313700235),
         x_axis_rotation: -112.418566882,
@@ -340,7 +340,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_019",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(22.004409817, 38.076738345),
         radius: ellipse.Point(26.426286415, 15.413002263),
         x_axis_rotation: -54.495446406,
@@ -352,7 +352,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_020",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(26.490735349, -28.030747472),
         radius: ellipse.Point(21.609118515, 10.870021047),
         x_axis_rotation: 164.079164723,
@@ -364,7 +364,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_021",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-28.86210682, 13.922865259),
         radius: ellipse.Point(4.633502593, 6.221784326),
         x_axis_rotation: 58.010650166,
@@ -376,7 +376,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_022",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-31.494493327, 12.786999204),
         radius: ellipse.Point(11.110429361, 20.347110641),
         x_axis_rotation: 23.529997868,
@@ -388,7 +388,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_023",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(30.109109009, -35.156951771),
         radius: ellipse.Point(16.456259539, 24.098790329),
         x_axis_rotation: -90.758354096,
@@ -400,7 +400,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_024",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(13.928148696, 31.19287985),
         radius: ellipse.Point(22.66882146, 35.455563174),
         x_axis_rotation: 22.871364834,
@@ -412,7 +412,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_025",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(6.510599112, 39.985514508),
         radius: ellipse.Point(39.81273979, 8.919688978),
         x_axis_rotation: 22.269514757,
@@ -424,7 +424,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_026",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(2.70438978, -23.783653525),
         radius: ellipse.Point(2.922043531, 32.974429784),
         x_axis_rotation: 89.594580178,
@@ -436,7 +436,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_027",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-8.945259064, 18.308534168),
         radius: ellipse.Point(6.468724929, 32.497212692),
         x_axis_rotation: 135.67467776,
@@ -448,7 +448,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_028",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(36.250846726, -14.313865231),
         radius: ellipse.Point(38.154469742, 13.434713597),
         x_axis_rotation: -79.774847271,
@@ -460,7 +460,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_029",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(5.940085327, -36.377844062),
         radius: ellipse.Point(8.582114309, 39.073536908),
         x_axis_rotation: 10.035190618,
@@ -472,7 +472,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_030",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(25.415288759, 10.62985251),
         radius: ellipse.Point(22.002616299, 6.652617508),
         x_axis_rotation: -15.441732362,
@@ -484,7 +484,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_031",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(5.875946598, -34.222069787),
         radius: ellipse.Point(29.584657178, 22.458298285),
         x_axis_rotation: -150.239264641,
@@ -496,7 +496,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_032",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(27.219879357, 3.712341494),
         radius: ellipse.Point(10.421887927, 25.36079654),
         x_axis_rotation: -171.019808939,
@@ -508,7 +508,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_033",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(14.467003101, 26.288675408),
         radius: ellipse.Point(4.142945, 10.022642574),
         x_axis_rotation: 109.771440005,
@@ -520,7 +520,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_034",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-22.217312438, 25.153776184),
         radius: ellipse.Point(18.396135971, 33.479896048),
         x_axis_rotation: -148.435135624,
@@ -532,7 +532,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_035",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(30.813654817, 16.875453399),
         radius: ellipse.Point(35.322592324, 30.615539814),
         x_axis_rotation: 169.650377181,
@@ -544,7 +544,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_036",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(8.064226719, -39.821470541),
         radius: ellipse.Point(30.980337794, 5.395712798),
         x_axis_rotation: 97.14606189,
@@ -556,7 +556,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_037",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-9.169414805, -30.04393195),
         radius: ellipse.Point(9.590717172, 22.088187496),
         x_axis_rotation: 26.417372535,
@@ -568,7 +568,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_038",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(24.489119249, 22.299005047),
         radius: ellipse.Point(19.648045428, 33.418589551),
         x_axis_rotation: -160.628629488,
@@ -580,7 +580,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_039",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-5.304002438, 25.923584223),
         radius: ellipse.Point(34.207390048, 6.69827796),
         x_axis_rotation: 25.391523834,
@@ -592,7 +592,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_040",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(24.275237769, 25.722540562),
         radius: ellipse.Point(4.997132487, 2.975288081),
         x_axis_rotation: 141.649746321,
@@ -604,7 +604,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_041",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(13.720064927, 30.746303428),
         radius: ellipse.Point(12.47884834, 16.332458235),
         x_axis_rotation: 112.387742846,
@@ -616,7 +616,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_042",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(27.177372077, -19.541146194),
         radius: ellipse.Point(16.340957013, 2.330703139),
         x_axis_rotation: 84.107633924,
@@ -628,7 +628,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_043",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-26.720209085, 8.871691121),
         radius: ellipse.Point(11.545825784, 5.20415077),
         x_axis_rotation: 162.98069811,
@@ -640,7 +640,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_044",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-25.805272146, 22.142727703),
         radius: ellipse.Point(8.577191631, 34.075912957),
         x_axis_rotation: -145.000709177,
@@ -652,7 +652,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_045",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(23.331140795, -38.767957989),
         radius: ellipse.Point(18.297727778, 8.611822864),
         x_axis_rotation: -74.216950463,
@@ -664,7 +664,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_046",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-10.917637922, 17.561526102),
         radius: ellipse.Point(9.864534982, 24.73066319),
         x_axis_rotation: -18.828123623,
@@ -676,7 +676,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_047",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-16.279520673, 31.044515405),
         radius: ellipse.Point(30.37852224, 12.15181242),
         x_axis_rotation: -164.596701637,
@@ -688,7 +688,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_048",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(30.00931578, -18.69469822),
         radius: ellipse.Point(30.881071377, 17.709826122),
         x_axis_rotation: -115.775431721,
@@ -700,7 +700,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_049",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-2.926670597, 9.847122848),
         radius: ellipse.Point(11.546976634, 11.606219424),
         x_axis_rotation: -5.005993404,
@@ -712,7 +712,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_050",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(33.932344725, 27.237255144),
         radius: ellipse.Point(10.817604753, 24.909720474),
         x_axis_rotation: 159.46844257,
@@ -724,7 +724,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_051",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-3.72285314, -23.930488308),
         radius: ellipse.Point(7.435813444, 24.430043274),
         x_axis_rotation: -32.508208073,
@@ -736,7 +736,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_052",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-3.832336593, 26.722636936),
         radius: ellipse.Point(2.965322787, 19.383917177),
         x_axis_rotation: -151.448138793,
@@ -748,7 +748,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_053",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-38.457368709, -25.227984889),
         radius: ellipse.Point(22.831772386, 16.650363766),
         x_axis_rotation: 44.660147557,
@@ -760,7 +760,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_054",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(23.533562444, 33.167752804),
         radius: ellipse.Point(33.442887943, 25.380839434),
         x_axis_rotation: -97.343721443,
@@ -772,7 +772,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_055",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(1.795091166, 12.535897806),
         radius: ellipse.Point(15.73063309, 16.887536344),
         x_axis_rotation: 160.231444515,
@@ -784,7 +784,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_056",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-7.164175448, 9.93105671),
         radius: ellipse.Point(35.744769711, 6.232830188),
         x_axis_rotation: 86.065886663,
@@ -796,7 +796,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_057",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-28.420689759, -32.801355484),
         radius: ellipse.Point(11.091662362, 17.641283673),
         x_axis_rotation: -177.969013408,
@@ -808,7 +808,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_058",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-2.412567647, -29.905389772),
         radius: ellipse.Point(9.632921766, 36.224566466),
         x_axis_rotation: 63.60413477,
@@ -820,7 +820,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_059",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(34.814952351, 9.401945137),
         radius: ellipse.Point(15.718505764, 24.757461376),
         x_axis_rotation: -91.28674937,
@@ -832,7 +832,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_060",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-22.354082842, 4.883734011),
         radius: ellipse.Point(35.315239217, 18.834112768),
         x_axis_rotation: -173.611518166,
@@ -844,7 +844,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_061",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(2.981031109, -30.030520013),
         radius: ellipse.Point(29.573011488, 35.097308777),
         x_axis_rotation: -47.333141608,
@@ -856,7 +856,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_062",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-20.855351495, -39.740593001),
         radius: ellipse.Point(2.330788712, 12.312651532),
         x_axis_rotation: -39.425653415,
@@ -868,7 +868,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_063",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-5.793035341, 23.44028551),
         radius: ellipse.Point(9.673571235, 35.926084975),
         x_axis_rotation: -69.24582557,
@@ -880,7 +880,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_064",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-38.896276361, 34.677918081),
         radius: ellipse.Point(22.654165424, 26.224970811),
         x_axis_rotation: 101.477362754,
@@ -892,7 +892,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_065",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-23.058351154, 14.972892113),
         radius: ellipse.Point(25.477877359, 25.410043874),
         x_axis_rotation: -37.151402793,
@@ -904,7 +904,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_066",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(30.498215593, -3.656382172),
         radius: ellipse.Point(32.639955207, 39.044705674),
         x_axis_rotation: -154.464212965,
@@ -916,7 +916,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_067",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-30.056722299, 37.551275566),
         radius: ellipse.Point(19.544680104, 7.178815861),
         x_axis_rotation: 135.016961871,
@@ -928,7 +928,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_068",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(38.347673514, -32.305309679),
         radius: ellipse.Point(4.967600499, 7.051216444),
         x_axis_rotation: 1.399850835,
@@ -940,7 +940,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_069",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-20.376629426, -37.156524546),
         radius: ellipse.Point(36.497971528, 19.390093287),
         x_axis_rotation: -80.436009306,
@@ -952,7 +952,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_070",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(8.251127848, -29.384066522),
         radius: ellipse.Point(23.636651458, 37.959914868),
         x_axis_rotation: -44.966414228,
@@ -964,7 +964,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_071",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-14.83612892, -15.266073403),
         radius: ellipse.Point(29.29386105, 38.492032886),
         x_axis_rotation: -89.342938767,
@@ -976,7 +976,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_072",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-39.983187457, 27.054679454),
         radius: ellipse.Point(18.959685573, 10.897135283),
         x_axis_rotation: 68.864995877,
@@ -988,7 +988,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_073",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(28.284868718, 25.468818043),
         radius: ellipse.Point(34.531904357, 23.280902025),
         x_axis_rotation: 63.153443427,
@@ -1000,7 +1000,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_074",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(31.540000356, 37.116351041),
         radius: ellipse.Point(12.870240563, 33.061768716),
         x_axis_rotation: -19.439697511,
@@ -1012,7 +1012,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_075",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-33.049264167, 17.061790943),
         radius: ellipse.Point(29.048788877, 35.005819975),
         x_axis_rotation: 125.817487636,
@@ -1024,7 +1024,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_076",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(35.383163958, -20.447216564),
         radius: ellipse.Point(1.010404649, 36.130278321),
         x_axis_rotation: -129.272945085,
@@ -1036,7 +1036,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_077",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(21.70303902, 38.452571594),
         radius: ellipse.Point(16.889402554, 37.119227921),
         x_axis_rotation: -59.4213606,
@@ -1048,7 +1048,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_078",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(2.35060304, -39.876444083),
         radius: ellipse.Point(25.225620328, 18.219665068),
         x_axis_rotation: 49.988141135,
@@ -1060,7 +1060,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_079",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(19.320088317, -8.916843196),
         radius: ellipse.Point(13.624308882, 30.303945115),
         x_axis_rotation: 67.553084608,
@@ -1072,7 +1072,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_080",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-12.473348559, 31.183696991),
         radius: ellipse.Point(7.501959232, 9.882726608),
         x_axis_rotation: 23.549041004,
@@ -1084,7 +1084,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_081",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(31.961408248, -30.77560923),
         radius: ellipse.Point(8.033678261, 32.280917198),
         x_axis_rotation: 82.539682004,
@@ -1096,7 +1096,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_082",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(4.218643516, 33.731833665),
         radius: ellipse.Point(27.857547483, 28.244934964),
         x_axis_rotation: 116.521036431,
@@ -1108,7 +1108,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_083",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-32.985770559, -25.593372338),
         radius: ellipse.Point(31.546924971, 32.563241856),
         x_axis_rotation: 156.814455286,
@@ -1120,7 +1120,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_084",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(5.339850894, -25.854106273),
         radius: ellipse.Point(7.496730356, 36.666798267),
         x_axis_rotation: 129.985523111,
@@ -1132,7 +1132,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_085",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-1.928613643, 30.29681667),
         radius: ellipse.Point(26.769601902, 23.578406011),
         x_axis_rotation: -15.697477325,
@@ -1144,7 +1144,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_086",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(0.159515721, -31.484355924),
         radius: ellipse.Point(3.947532673, 36.171827653),
         x_axis_rotation: 136.927363067,
@@ -1156,7 +1156,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_087",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(39.962034549, -12.732651306),
         radius: ellipse.Point(31.841616344, 27.187168147),
         x_axis_rotation: 136.553019004,
@@ -1168,7 +1168,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_088",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(15.123102671, -14.457585587),
         radius: ellipse.Point(16.027788164, 18.476039756),
         x_axis_rotation: 71.430894567,
@@ -1180,7 +1180,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_089",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-26.96120694, -31.602982147),
         radius: ellipse.Point(24.624985554, 33.941208504),
         x_axis_rotation: 125.922455339,
@@ -1192,7 +1192,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_090",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-5.820356702, -5.438510539),
         radius: ellipse.Point(8.073532025, 26.131859336),
         x_axis_rotation: -54.119403151,
@@ -1204,7 +1204,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_091",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(20.522998721, -29.009162392),
         radius: ellipse.Point(19.751431689, 37.818075067),
         x_axis_rotation: -45.916091885,
@@ -1216,7 +1216,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_092",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(35.74297651, -8.036721589),
         radius: ellipse.Point(36.166183361, 32.46562811),
         x_axis_rotation: -83.713095413,
@@ -1228,7 +1228,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_093",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-39.899057994, 7.291971758),
         radius: ellipse.Point(27.594683477, 26.151336342),
         x_axis_rotation: 178.232823638,
@@ -1240,7 +1240,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_094",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-27.411804747, -3.896745766),
         radius: ellipse.Point(29.474657691, 3.755789096),
         x_axis_rotation: 114.290604532,
@@ -1252,7 +1252,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_095",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-27.658115542, -35.646840092),
         radius: ellipse.Point(20.24701295, 21.820924976),
         x_axis_rotation: 37.124432106,
@@ -1264,7 +1264,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_096",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-11.33344865, -12.871896412),
         radius: ellipse.Point(32.394681657, 23.87280017),
         x_axis_rotation: -174.279034228,
@@ -1276,7 +1276,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_097",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(3.645820345, 2.712666317),
         radius: ellipse.Point(3.322982874, 34.001420823),
         x_axis_rotation: 81.643061417,
@@ -1288,7 +1288,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_098",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(0.976274031, -33.15264374),
         radius: ellipse.Point(23.662209149, 5.983562618),
         x_axis_rotation: 173.103429542,
@@ -1300,7 +1300,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_099",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(-29.183212381, -16.770994996),
         radius: ellipse.Point(37.835863577, 8.616541755),
         x_axis_rotation: -71.731869312,
@@ -1312,7 +1312,7 @@ pub fn fixtures() -> List(ArcBBoxFixture) {
     ),
     ArcBBoxFixture(
       name: "generated_center_100",
-      arc: ellipse.center_arc_data(
+      arc: ellipse.CenterArcData(
         center: ellipse.Point(6.905275312, 19.127558646),
         radius: ellipse.Point(29.340604759, 23.2083473),
         x_axis_rotation: 94.785156324,

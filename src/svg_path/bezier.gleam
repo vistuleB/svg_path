@@ -61,30 +61,6 @@ pub type Error {
   SplitOutsideBezier
 }
 
-/// Create linear Bezier data.
-pub fn linear_bezier_data(start start: Point, end end: Point) -> BezierData {
-  LinearBezierData(start:, end:)
-}
-
-/// Create quadratic Bezier data.
-pub fn quadratic_bezier_data(
-  start start: Point,
-  control control: Point,
-  end end: Point,
-) -> BezierData {
-  QuadraticBezierData(start:, control:, end:)
-}
-
-/// Create cubic Bezier data.
-pub fn cubic_bezier_data(
-  start start: Point,
-  control1 control1: Point,
-  control2 control2: Point,
-  end end: Point,
-) -> BezierData {
-  CubicBezierData(start:, control1:, control2:, end:)
-}
-
 /// Return the curve's start point.
 pub fn bezier_start(curve: BezierData) -> Point {
   case curve {

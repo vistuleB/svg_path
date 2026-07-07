@@ -3874,20 +3874,20 @@ fn from_bezier_point(point: bezier.Point) -> Point {
 fn segment_to_bezier_data(segment: Segment) -> bezier.BezierData {
   case segment {
     Line(start:, end:) -> {
-      bezier.linear_bezier_data(
+      bezier.LinearBezierData(
         start: to_bezier_point(start),
         end: to_bezier_point(end),
       )
     }
     QuadraticBezier(start:, control:, end:) -> {
-      bezier.quadratic_bezier_data(
+      bezier.QuadraticBezierData(
         start: to_bezier_point(start),
         control: to_bezier_point(control),
         end: to_bezier_point(end),
       )
     }
     CubicBezier(start:, control1:, control2:, end:) -> {
-      bezier.cubic_bezier_data(
+      bezier.CubicBezierData(
         start: to_bezier_point(start),
         control1: to_bezier_point(control1),
         control2: to_bezier_point(control2),
@@ -3927,7 +3927,7 @@ fn segment_to_center_arc_data(
   case segment {
     Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:) -> {
       let endpoint =
-        ellipse.endpoint_arc_data(
+        ellipse.EndpointArcData(
           start: to_ellipse_point(start),
           radius: to_ellipse_point(radius),
           x_axis_rotation:,

@@ -317,7 +317,7 @@ def gleam_point(point: Point) -> str:
 
 def gleam_arc(arc: CenterArc) -> str:
     return (
-        "ellipse.center_arc_data(\n"
+        "ellipse.CenterArcData(\n"
         f"        center: {gleam_point(arc.center)},\n"
         f"        radius: {gleam_point(arc.radius)},\n"
         f"        x_axis_rotation: {gleam_float(arc.x_axis_rotation)},\n"

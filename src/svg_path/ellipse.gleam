@@ -119,31 +119,6 @@ pub type CenterArcData {
   )
 }
 
-/// Create endpoint arc data.
-pub fn endpoint_arc_data(
-  start start: Point,
-  radius radius: Point,
-  x_axis_rotation x_axis_rotation: Float,
-  large_arc large_arc: Bool,
-  sweep sweep: Bool,
-  end end: Point,
-) -> EndpointArcData {
-  EndpointArcData(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:)
-}
-
-/// Create center arc data.
-///
-/// This does not normalize or repair the given values.
-pub fn center_arc_data(
-  center center: Point,
-  radius radius: Point,
-  x_axis_rotation x_axis_rotation: Float,
-  start_angle start_angle: Float,
-  delta_angle delta_angle: Float,
-) -> CenterArcData {
-  CenterArcData(center:, radius:, x_axis_rotation:, start_angle:, delta_angle:)
-}
-
 /// A cubic Bezier curve produced by the ellipse math helpers.
 pub type Cubic {
   Cubic(start: Point, control1: Point, control2: Point, end: Point)

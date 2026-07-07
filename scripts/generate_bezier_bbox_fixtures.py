@@ -162,7 +162,7 @@ def gleam_curve(case: Case) -> str:
     if case.kind == "linear":
         start, end = case.points
         return (
-            "bezier.linear_bezier_data(\n"
+            "bezier.LinearBezierData(\n"
             f"        start: {gleam_point(start)},\n"
             f"        end: {gleam_point(end)},\n"
             "      )"
@@ -170,7 +170,7 @@ def gleam_curve(case: Case) -> str:
     if case.kind == "quadratic":
         start, control, end = case.points
         return (
-            "bezier.quadratic_bezier_data(\n"
+            "bezier.QuadraticBezierData(\n"
             f"        start: {gleam_point(start)},\n"
             f"        control: {gleam_point(control)},\n"
             f"        end: {gleam_point(end)},\n"
@@ -179,7 +179,7 @@ def gleam_curve(case: Case) -> str:
     if case.kind == "cubic":
         start, control1, control2, end = case.points
         return (
-            "bezier.cubic_bezier_data(\n"
+            "bezier.CubicBezierData(\n"
             f"        start: {gleam_point(start)},\n"
             f"        control1: {gleam_point(control1)},\n"
             f"        control2: {gleam_point(control2)},\n"
