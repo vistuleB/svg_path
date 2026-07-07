@@ -560,10 +560,7 @@ fn points_within_tolerance(
   b: svg_path.Point,
   tolerance: Float,
 ) -> Bool {
-  case float.square_root(distance_squared(a, b)) {
-    Ok(distance) -> distance <=. tolerance
-    Error(_) -> False
-  }
+  distance_squared(a, b) <=. tolerance *. tolerance
 }
 
 fn floats_within_tolerance(a: Float, b: Float, tolerance: Float) -> Bool {

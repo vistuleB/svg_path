@@ -5,7 +5,6 @@
 //// transform application order, and `multiply(left:, right:)` when thinking in
 //// algebraic matrix multiplication order.
 
-import gleam/float
 import gleam/list
 import svg_path
 import svg_path/ellipse
@@ -920,11 +919,10 @@ fn points_within_tolerance(
 ) -> Bool {
   let dx = a.x -. b.x
   let dy = a.y -. b.y
+  let distance_squared = dx *. dx +. dy *. dy
+  let tolerance_squared = tolerance *. tolerance
 
-  case float.square_root(dx *. dx +. dy *. dy) {
-    Ok(distance) -> distance <=. tolerance
-    Error(_) -> False
-  }
+  distance_squared <=. tolerance_squared
 }
 
 fn is_finite(value: Float) -> Bool {
