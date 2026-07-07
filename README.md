@@ -423,6 +423,51 @@ svg_path.subpath_to_cubic_beziers(subpath)
 svg_path.path_to_cubic_beziers(path)
 ```
 
+## Arcs and the `ellipse` Module
+
+`svg_path.Arc` uses SVG's endpoint arc representation: an explicit `start`,
+an `end`, two semi-axis radii, an `x_axis_rotation`, and the SVG `large_arc`
+and `sweep` flags. This matches the information carried by an SVG `A` path
+command, with the current point made explicit as `start`.
+
+Endpoint arcs are compact, but they are awkward for evaluation and splitting.
+The lower-level `svg_path/ellipse` module exposes the two arc representations
+used by the SVG implementation notes:
+
+```gleam
+ellipse.EndpointArcData(
+  start:,
+  radius:,
+  x_axis_rotation:,
+  large_arc:,
+  sweep:,
+  end:,
+)
+
+ellipse.CenterArcData(
+  center:,
+  radius:,
+  x_axis_rotation:,
+  start_angle:,
+  delta_angle:,
+)
+```
+
+`endpoint_to_center` converts SVG-style endpoint data into center data. During
+that conversion, radii follow SVG's forgiving rules: negative radii are made
+positive, and radii that are too small to connect the endpoints are scaled up
+uniformly. `CenterArcData.radius` is therefore the corrected radius.
+
+Public arc angles are in degrees. `start_angle` and `delta_angle` are measured
+in the ellipse's own coordinate system before stretching and rotation; `delta`
+is signed, and determines the `sweep` direction.
+
+Use `svg_path.arc_center_data` to convert a root-module `Arc` segment to
+`ellipse.CenterArcData`, and `svg_path.arc_from_center_data` to come back to an
+`Arc`. The `ellipse` module also exposes lower-level helpers such as
+`arc_point`, `point_at_angle`, `split_arc`, `arc_bounding_box`, and
+`arc_to_cubics`.
+
 ## Geometry Helpers
 
 The root module provides a few geometry helpers that work directly with the
