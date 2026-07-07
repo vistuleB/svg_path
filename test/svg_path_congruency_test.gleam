@@ -386,6 +386,148 @@ pub fn subpath_rejects_arc_field_mismatch_after_points_match_test() {
   assert congruency.subpath(source:, target:, tolerance:) == Error(Nil)
 }
 
+pub fn path_uses_one_transform_across_subpaths_test() {
+  let source =
+    svg_path.Path([
+      svg_path.assert_subpath([
+        svg_path.Line(
+          start: svg_path.point(0.0, 0.0),
+          end: svg_path.point(10.0, 0.0),
+        ),
+      ]),
+      svg_path.assert_subpath([
+        svg_path.Line(
+          start: svg_path.point(0.0, 10.0),
+          end: svg_path.point(10.0, 10.0),
+        ),
+      ]),
+    ])
+  let target =
+    svg_path.Path([
+      svg_path.assert_subpath([
+        svg_path.Line(
+          start: svg_path.point(5.0, 5.0),
+          end: svg_path.point(25.0, 5.0),
+        ),
+      ]),
+      svg_path.assert_subpath([
+        svg_path.Line(
+          start: svg_path.point(5.0, 25.0),
+          end: svg_path.point(25.0, 25.0),
+        ),
+      ]),
+    ])
+
+  let assert Ok(matrix) = congruency.path(source:, target:, tolerance:)
+  let assert Ok(mapped) = transform.path(source, by: matrix)
+
+  assert same_path(mapped, target)
+}
+
+pub fn path_rejects_individually_congruent_but_globally_inconsistent_subpaths_test() {
+  let source =
+    svg_path.Path([
+      svg_path.assert_subpath([
+        svg_path.Line(
+          start: svg_path.point(0.0, 0.0),
+          end: svg_path.point(10.0, 0.0),
+        ),
+      ]),
+      svg_path.assert_subpath([
+        svg_path.Line(
+          start: svg_path.point(0.0, 10.0),
+          end: svg_path.point(10.0, 10.0),
+        ),
+      ]),
+    ])
+  let target =
+    svg_path.Path([
+      svg_path.assert_subpath([
+        svg_path.Line(
+          start: svg_path.point(5.0, 5.0),
+          end: svg_path.point(25.0, 5.0),
+        ),
+      ]),
+      svg_path.assert_subpath([
+        svg_path.Line(
+          start: svg_path.point(100.0, 25.0),
+          end: svg_path.point(120.0, 25.0),
+        ),
+      ]),
+    ])
+
+  assert congruency.path(source:, target:, tolerance:) == Error(Nil)
+}
+
+pub fn path_ignores_subpath_closed_fields_test() {
+  let open =
+    svg_path.assert_subpath([
+      svg_path.Line(
+        start: svg_path.point(0.0, 0.0),
+        end: svg_path.point(10.0, 0.0),
+      ),
+      svg_path.Line(
+        start: svg_path.point(10.0, 0.0),
+        end: svg_path.point(0.0, 0.0),
+      ),
+    ])
+  let assert Ok(closed) = svg_path.set_closed(open, closed: True)
+
+  assert result_is_ok(congruency.path(
+    source: svg_path.Path([open]),
+    target: svg_path.Path([closed]),
+    tolerance:,
+  ))
+}
+
+pub fn path_rejects_different_subpath_counts_test() {
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.Line(
+        start: svg_path.point(0.0, 0.0),
+        end: svg_path.point(10.0, 0.0),
+      ),
+    ])
+
+  assert congruency.path(
+      source: svg_path.Path([subpath]),
+      target: svg_path.Path([subpath, subpath]),
+      tolerance:,
+    )
+    == Error(Nil)
+}
+
+pub fn path_rejects_arc_field_mismatch_after_points_match_test() {
+  let source =
+    svg_path.Path([
+      svg_path.assert_subpath([
+        svg_path.Arc(
+          start: svg_path.point(0.0, 0.0),
+          radius: svg_path.point(10.0, 10.0),
+          x_axis_rotation: 0.0,
+          large_arc: False,
+          sweep: True,
+          end: svg_path.point(20.0, 0.0),
+        ),
+      ]),
+    ])
+  let target =
+    svg_path.Path([
+      svg_path.assert_subpath([
+        svg_path.Arc(
+          start: svg_path.point(0.0, 0.0),
+          radius: svg_path.point(12.0, 12.0),
+          x_axis_rotation: 0.0,
+          large_arc: False,
+          sweep: True,
+          end: svg_path.point(20.0, 0.0),
+        ),
+      ]),
+    ])
+
+  assert congruency.path(source:, target:, tolerance:) == Error(Nil)
+}
+
 fn result_is_ok(result: Result(a, b)) -> Bool {
   case result {
     Ok(_) -> True
@@ -471,6 +613,24 @@ fn same_subpath(actual: svg_path.Subpath, expected: svg_path.Subpath) -> Bool {
     Ok(actual_start), Ok(expected_start) -> {
       point_near(actual_start, expected_start)
       && same_segments(svg_path.segments(actual), svg_path.segments(expected))
+    }
+    _, _ -> False
+  }
+}
+
+fn same_path(actual: svg_path.Path, expected: svg_path.Path) -> Bool {
+  same_subpaths(svg_path.subpaths(actual), svg_path.subpaths(expected))
+}
+
+fn same_subpaths(
+  actual: List(svg_path.Subpath),
+  expected: List(svg_path.Subpath),
+) -> Bool {
+  case actual, expected {
+    [], [] -> True
+    [actual_first, ..actual_rest], [expected_first, ..expected_rest] -> {
+      same_subpath(actual_first, expected_first)
+      && same_subpaths(actual_rest, expected_rest)
     }
     _, _ -> False
   }

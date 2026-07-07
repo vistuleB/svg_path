@@ -20,6 +20,14 @@ type PointPair {
   )
 }
 
+type PointCloud {
+  PointCloud(
+    source: List(svg_path.Point),
+    target: List(svg_path.Point),
+    has_arc: Bool,
+  )
+}
+
 /// Find a translation, rotation, and uniform scale mapping one ordered point
 /// list to another.
 ///
@@ -123,47 +131,119 @@ pub fn subpath(
   target target: svg_path.Subpath,
   tolerance tolerance: Float,
 ) -> Result(transform.Matrix, Nil) {
-  case svg_path.start(source), svg_path.start(target) {
-    Ok(source_start), Ok(target_start) -> {
-      let source_segments = svg_path.segments(source)
-      let target_segments = svg_path.segments(target)
-
-      case
-        subpath_points(
-          source_segments,
-          target_segments,
-          [source_start],
-          [target_start],
-          has_arc: False,
-        )
-      {
+  case subpath_point_cloud(source, target) {
+    Error(_) -> Error(Nil)
+    Ok(cloud) -> {
+      case points(source: cloud.source, target: cloud.target, tolerance:) {
         Error(_) -> Error(Nil)
-        Ok(#(source_points, target_points, has_arc)) -> {
+        Ok(matrix) -> {
           case
-            points(source: source_points, target: target_points, tolerance:)
+            !cloud.has_arc
+            || subpath_arc_fields_match(source, target, matrix, tolerance)
           {
-            Error(_) -> Error(Nil)
-            Ok(matrix) -> {
-              case has_arc {
-                False -> Ok(matrix)
-                True -> {
-                  case
-                    arc_fields_match(
-                      source_segments,
-                      target_segments,
-                      matrix,
-                      tolerance,
-                    )
-                  {
-                    True -> Ok(matrix)
-                    False -> Error(Nil)
-                  }
-                }
-              }
-            }
+            True -> Ok(matrix)
+            False -> Error(Nil)
           }
         }
       }
+    }
+  }
+}
+
+/// Find a translation, rotation, and uniform scale mapping one path to another
+/// path.
+///
+/// Path subpaths must match in order. Each subpath comparison ignores the
+/// subpath `closed` field, and no cycling or alternate starting segment is
+/// attempted.
+pub fn path(
+  source source: svg_path.Path,
+  target target: svg_path.Path,
+  tolerance tolerance: Float,
+) -> Result(transform.Matrix, Nil) {
+  case path_point_cloud(svg_path.subpaths(source), svg_path.subpaths(target)) {
+    Error(_) -> Error(Nil)
+    Ok(cloud) -> {
+      case points(source: cloud.source, target: cloud.target, tolerance:) {
+        Error(_) -> Error(Nil)
+        Ok(matrix) -> {
+          case
+            !cloud.has_arc
+            || path_arc_fields_match(
+              svg_path.subpaths(source),
+              svg_path.subpaths(target),
+              matrix,
+              tolerance,
+            )
+          {
+            True -> Ok(matrix)
+            False -> Error(Nil)
+          }
+        }
+      }
+    }
+  }
+}
+
+fn path_point_cloud(
+  source: List(svg_path.Subpath),
+  target: List(svg_path.Subpath),
+) -> Result(PointCloud, Nil) {
+  path_point_cloud_loop(
+    source,
+    target,
+    PointCloud(source: [], target: [], has_arc: False),
+  )
+}
+
+fn path_point_cloud_loop(
+  source: List(svg_path.Subpath),
+  target: List(svg_path.Subpath),
+  cloud: PointCloud,
+) -> Result(PointCloud, Nil) {
+  case source, target {
+    [], [] -> {
+      Ok(PointCloud(
+        source: list.reverse(cloud.source),
+        target: list.reverse(cloud.target),
+        has_arc: cloud.has_arc,
+      ))
+    }
+
+    [source_first, ..source_rest], [target_first, ..target_rest] -> {
+      case subpath_point_cloud(source_first, target_first) {
+        Error(_) -> Error(Nil)
+        Ok(subpath_cloud) -> {
+          path_point_cloud_loop(
+            source_rest,
+            target_rest,
+            PointCloud(
+              source: prepend_reversed(subpath_cloud.source, cloud.source),
+              target: prepend_reversed(subpath_cloud.target, cloud.target),
+              has_arc: cloud.has_arc || subpath_cloud.has_arc,
+            ),
+          )
+        }
+      }
+    }
+
+    _, _ -> Error(Nil)
+  }
+}
+
+fn subpath_point_cloud(
+  source: svg_path.Subpath,
+  target: svg_path.Subpath,
+) -> Result(PointCloud, Nil) {
+  case svg_path.start(source), svg_path.start(target) {
+    Ok(source_start), Ok(target_start) -> {
+      subpath_points(
+        svg_path.segments(source),
+        svg_path.segments(target),
+        [source_start],
+        [target_start],
+        has_arc: False,
+      )
     }
     _, _ -> Error(Nil)
   }
@@ -175,10 +255,14 @@ fn subpath_points(
   source_points: List(svg_path.Point),
   target_points: List(svg_path.Point),
   has_arc has_arc: Bool,
-) -> Result(#(List(svg_path.Point), List(svg_path.Point), Bool), Nil) {
+) -> Result(PointCloud, Nil) {
   case source, target {
     [], [] ->
-      Ok(#(list.reverse(source_points), list.reverse(target_points), has_arc))
+      Ok(PointCloud(
+        source: list.reverse(source_points),
+        target: list.reverse(target_points),
+        has_arc:,
+      ))
 
     [source_first, ..source_rest], [target_first, ..target_rest] -> {
       case segment_points(source_first, target_first) {
@@ -307,6 +391,36 @@ fn arc_fields_match(
     }
     _, _ -> False
   }
+}
+
+fn path_arc_fields_match(
+  source: List(svg_path.Subpath),
+  target: List(svg_path.Subpath),
+  matrix: transform.Matrix,
+  tolerance: Float,
+) -> Bool {
+  case source, target {
+    [], [] -> True
+    [source_first, ..source_rest], [target_first, ..target_rest] -> {
+      subpath_arc_fields_match(source_first, target_first, matrix, tolerance)
+      && path_arc_fields_match(source_rest, target_rest, matrix, tolerance)
+    }
+    _, _ -> False
+  }
+}
+
+fn subpath_arc_fields_match(
+  source: svg_path.Subpath,
+  target: svg_path.Subpath,
+  matrix: transform.Matrix,
+  tolerance: Float,
+) -> Bool {
+  arc_fields_match(
+    svg_path.segments(source),
+    svg_path.segments(target),
+    matrix,
+    tolerance,
+  )
 }
 
 fn arc_field_match(
