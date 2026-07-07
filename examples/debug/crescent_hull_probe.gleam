@@ -152,11 +152,16 @@ fn chord_side(
   line_start line_start: svg_path.Point,
   line_end line_end: svg_path.Point,
 ) -> Float {
-  { line_end.x -. line_start.x } *. { point.y -. line_start.y }
-  -. { line_end.y -. line_start.y } *. { point.x -. line_start.x }
+  { line_end.x -. line_start.x }
+  *. { point.y -. line_start.y }
+  -. { line_end.y -. line_start.y }
+  *. { point.x -. line_start.x }
 }
 
-fn take_first(points: List(svg_path.Point), count: Int) -> List(svg_path.Point) {
+fn take_first(
+  points: List(svg_path.Point),
+  count: Int,
+) -> List(svg_path.Point) {
   take_first_loop(points, count, [])
 }
 
@@ -180,10 +185,6 @@ fn radius_1000_point(angle: Float) -> svg_path.Point {
 fn point_markers(points: List(svg_path.Point)) -> List(svg.ThingToDraw) {
   points
   |> list.map(fn(point) {
-    svg.Circle(
-      point,
-      0.003,
-      "fill: #2ca02c; stroke: none",
-    )
+    svg.Circle(point, 0.003, "fill: #2ca02c; stroke: none")
   })
 }
