@@ -25,9 +25,9 @@ type PointPair {
 ///
 /// Empty lists and lists with different lengths return `Error(Nil)`. A
 /// one-point source list uses a translation. For two or more source points, the
-/// candidate transform is built from the farthest-apart source point pair and
-/// the target points at the corresponding indexes, then every mapped source
-/// point is checked against the corresponding target point.
+/// candidate transform is built from a triple-sweep source point pair and the
+/// target points at the corresponding positions, then every mapped source point
+/// is checked against the corresponding target point.
 pub fn points(
   source source: List(svg_path.Point),
   target target: List(svg_path.Point),
@@ -46,7 +46,7 @@ pub fn points(
       check_points([only], matrix, tolerance)
     }
     Ok([first, second, ..rest] as indexed) -> {
-      let pair = farthest_pair([first, second, ..rest])
+      let pair = swept_pair([first, second, ..rest])
 
       case pair.distance_squared <=. 0.0 {
         True -> {
@@ -366,38 +366,42 @@ fn indexed_points(
   }
 }
 
-fn farthest_pair(points: List(IndexedPoint)) -> PointPair {
-  let assert [first, second, ..] = points
-  let initial = indexed_pair(first, second)
+fn swept_pair(points: List(IndexedPoint)) -> PointPair {
+  let assert [first, second, ..rest] = points
+  let first_sweep = farthest_from(first, [second, ..rest])
+  let second_sweep = farthest_from(first_sweep, points)
+  let third_sweep = farthest_from(second_sweep, points)
 
-  farthest_pair_outer(points, initial)
+  indexed_pair(second_sweep, third_sweep)
 }
 
-fn farthest_pair_outer(
+fn farthest_from(
+  point: IndexedPoint,
   points: List(IndexedPoint),
-  best: PointPair,
-) -> PointPair {
+) -> IndexedPoint {
   case points {
-    [] | [_] -> best
-    [first, ..rest] -> {
-      farthest_pair_outer(rest, farthest_pair_with(first, rest, best))
-    }
+    [] -> point
+    [first, ..rest] -> farthest_from_loop(point, rest, first)
   }
 }
 
-fn farthest_pair_with(
+fn farthest_from_loop(
   point: IndexedPoint,
   rest: List(IndexedPoint),
-  best: PointPair,
-) -> PointPair {
+  best: IndexedPoint,
+) -> IndexedPoint {
   case rest {
     [] -> best
     [first, ..remaining] -> {
-      farthest_pair_with(
-        point,
-        remaining,
-        farther(best, indexed_pair(point, first)),
-      )
+      let next = case
+        distance_squared(point.source, first.source)
+        >. distance_squared(point.source, best.source)
+      {
+        True -> first
+        False -> best
+      }
+
+      farthest_from_loop(point, remaining, next)
     }
   }
 }
@@ -435,13 +439,6 @@ fn pair(
     target_b:,
     distance_squared: distance_squared(source_a, source_b),
   )
-}
-
-fn farther(left: PointPair, right: PointPair) -> PointPair {
-  case left.distance_squared >=. right.distance_squared {
-    True -> left
-    False -> right
-  }
 }
 
 fn points_within_tolerance(

@@ -1,4 +1,6 @@
 import gleam/float
+import gleam/int
+import gleam/list
 import gleeunit
 import svg_path
 import svg_path/congruency
@@ -65,7 +67,7 @@ pub fn points_rejects_collapsed_source_to_spread_target_test() {
   assert congruency.points(source:, target:, tolerance:) == Error(Nil)
 }
 
-pub fn points_uses_farthest_source_pair_and_checks_all_points_test() {
+pub fn points_checks_all_ordered_points_test() {
   let source = [
     svg_path.point(0.0, 0.0),
     svg_path.point(1.0, 1.0),
@@ -88,6 +90,17 @@ pub fn points_uses_farthest_source_pair_and_checks_all_points_test() {
   assert result_is_ok(congruency.points(source:, target:, tolerance:))
   assert congruency.points(source:, target: wrong_order, tolerance:)
     == Error(Nil)
+}
+
+pub fn points_maps_long_ordered_point_list_test() {
+  let source = long_point_list(1500)
+  let target = source |> list.map(long_target_point)
+
+  let assert Ok(matrix) = congruency.points(source:, target:, tolerance:)
+  let assert [first_source, ..] = source
+  let assert [first_target, ..] = target
+
+  assert point_near(transform.point(first_source, by: matrix), first_target)
 }
 
 pub fn line_returns_transform_mapping_source_to_target_test() {
@@ -475,6 +488,20 @@ fn same_segments(
     }
     _, _ -> False
   }
+}
+
+fn long_point_list(count: Int) -> List(svg_path.Point) {
+  int.range(from: 0, to: count - 1, with: [], run: fn(points, index) {
+    let x = int.to_float(index)
+    let y = int.to_float({ index * index } % 17)
+
+    [svg_path.point(x, y), ..points]
+  })
+  |> list.reverse
+}
+
+fn long_target_point(point: svg_path.Point) -> svg_path.Point {
+  svg_path.point(10.0 -. 2.0 *. point.y, -3.0 +. 2.0 *. point.x)
 }
 
 fn point_near(a: svg_path.Point, b: svg_path.Point) -> Bool {
