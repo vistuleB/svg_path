@@ -18,7 +18,7 @@ from typing import Iterable
 
 GENERATED_CASES = 100
 RANDOM_SEED = 24062027
-TAU = math.tau
+FULL_TURN = 360.0
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "test" / "svg_path_arc_bbox_fixtures.gleam"
 
@@ -121,7 +121,7 @@ HAND_CRAFTED_CENTER_CASES = [
             radius=Point(10.0, 5.0),
             x_axis_rotation=0.0,
             start_angle=0.0,
-            delta_angle=math.pi / 2.0,
+            delta_angle=90.0,
         ),
     ),
     Case(
@@ -130,8 +130,8 @@ HAND_CRAFTED_CENTER_CASES = [
             center=Point(2.0, -3.0),
             radius=Point(12.0, 5.0),
             x_axis_rotation=30.0,
-            start_angle=-1.2,
-            delta_angle=4.4,
+            start_angle=math.degrees(-1.2),
+            delta_angle=math.degrees(4.4),
         ),
     ),
     Case(
@@ -140,8 +140,8 @@ HAND_CRAFTED_CENTER_CASES = [
             center=Point(-4.0, 6.0),
             radius=Point(8.0, 13.0),
             x_axis_rotation=-40.0,
-            start_angle=2.5,
-            delta_angle=-3.7,
+            start_angle=math.degrees(2.5),
+            delta_angle=math.degrees(-3.7),
         ),
     ),
     Case(
@@ -150,8 +150,8 @@ HAND_CRAFTED_CENTER_CASES = [
             center=Point(1.0, 2.0),
             radius=Point(6.0, 9.0),
             x_axis_rotation=75.0,
-            start_angle=-0.5,
-            delta_angle=TAU - 0.2,
+            start_angle=math.degrees(-0.5),
+            delta_angle=FULL_TURN - math.degrees(0.2),
         ),
     ),
 ]
@@ -200,9 +200,9 @@ def endpoint_to_center(endpoint: EndpointArc) -> CenterArc:
         (-y1p - cyp) / ry,
     )
     if not endpoint.sweep and delta_angle > 0.0:
-        delta_angle -= TAU
+        delta_angle -= FULL_TURN
     elif endpoint.sweep and delta_angle < 0.0:
-        delta_angle += TAU
+        delta_angle += FULL_TURN
 
     return CenterArc(
         center=center,
@@ -216,11 +216,12 @@ def endpoint_to_center(endpoint: EndpointArc) -> CenterArc:
 def vector_angle(ux: float, uy: float, vx: float, vy: float) -> float:
     dot = ux * vx + uy * vy
     det = ux * vy - uy * vx
-    return math.atan2(det, dot)
+    return math.degrees(math.atan2(det, dot))
 
 
 def point_at_angle(arc: CenterArc, angle: float) -> Point:
     phi = math.radians(arc.x_axis_rotation)
+    angle = math.radians(angle)
     cos_phi = math.cos(phi)
     sin_phi = math.sin(phi)
     cos_angle = math.cos(angle)
@@ -246,18 +247,22 @@ def bbox(arc: CenterArc) -> tuple[Point, Point]:
 
 def candidate_extrema(arc: CenterArc) -> list[float]:
     phi = math.radians(arc.x_axis_rotation)
-    x_angle = math.atan2(-arc.radius.y * math.sin(phi), arc.radius.x * math.cos(phi))
-    y_angle = math.atan2(arc.radius.y * math.cos(phi), arc.radius.x * math.sin(phi))
-    return [x_angle, x_angle + math.pi, y_angle, y_angle + math.pi]
+    x_angle = math.degrees(
+        math.atan2(-arc.radius.y * math.sin(phi), arc.radius.x * math.cos(phi))
+    )
+    y_angle = math.degrees(
+        math.atan2(arc.radius.y * math.cos(phi), arc.radius.x * math.sin(phi))
+    )
+    return [x_angle, x_angle + 180.0, y_angle, y_angle + 180.0]
 
 
 def angle_on_arc(angle: float, start: float, delta: float) -> bool:
-    if abs(delta) >= TAU:
+    if abs(delta) >= FULL_TURN:
         return True
     if delta >= 0.0:
-        progress = positive_mod(angle - start, TAU)
+        progress = positive_mod(angle - start, FULL_TURN)
         return progress <= delta
-    progress = positive_mod(start - angle, TAU)
+    progress = positive_mod(start - angle, FULL_TURN)
     return progress <= -delta
 
 
@@ -270,9 +275,9 @@ def generated_center_cases() -> list[Case]:
     cases = []
     for index in range(1, GENERATED_CASES + 1):
         radius = Point(rng.uniform(1.0, 40.0), rng.uniform(1.0, 40.0))
-        delta = rng.uniform(-TAU + 0.01, TAU - 0.01)
-        if abs(delta) < 0.2:
-            delta = 0.2 if delta >= 0.0 else -0.2
+        delta = rng.uniform(-FULL_TURN + 0.572957795, FULL_TURN - 0.572957795)
+        if abs(delta) < 11.459155903:
+            delta = 11.459155903 if delta >= 0.0 else -11.459155903
         cases.append(
             Case(
                 f"generated_center_{index:03}",
@@ -280,7 +285,7 @@ def generated_center_cases() -> list[Case]:
                     center=Point(rng.uniform(-40.0, 40.0), rng.uniform(-40.0, 40.0)),
                     radius=radius,
                     x_axis_rotation=rng.uniform(-180.0, 180.0),
-                    start_angle=rng.uniform(-TAU, TAU),
+                    start_angle=rng.uniform(-FULL_TURN, FULL_TURN),
                     delta_angle=delta,
                 ),
             )

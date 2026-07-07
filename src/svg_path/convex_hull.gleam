@@ -11,9 +11,9 @@ import gleam/io
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
-import gleam_community/maths
 import svg_path
 import svg_path/ellipse
+import svg_path/trig
 
 const cubic_sample_count = 3600
 
@@ -1495,9 +1495,9 @@ fn arc_point_tangent_roots(
     True -> Ok([])
     False -> {
       let ratio = clamp(c /. magnitude, -1.0, 1.0)
-      let base = maths.atan2(b, a)
+      let base = trig.atan2_degrees(b, a)
       use offset <- result.try(
-        maths.acos(ratio)
+        trig.acos_degrees(ratio)
         |> result.map_error(fn(_) { PathError(svg_path.DegenerateArc) }),
       )
       Ok(
@@ -1515,7 +1515,7 @@ fn arc_angle_progresses(
   angle: Float,
 ) -> List(Float) {
   int.range(from: -1, to: 1, with: [], run: fn(progresses, turn) {
-    let shifted = angle +. int.to_float(turn) *. 2.0 *. maths.pi()
+    let shifted = angle +. int.to_float(turn) *. 360.0
     [{ shifted -. arc.start_angle } /. arc.delta_angle, ..progresses]
   })
 }
@@ -1525,9 +1525,8 @@ fn ellipse_local_point(
   arc: ellipse.CenterArcData,
 ) -> svg_path.Point {
   let translated = subtract(point, from_ellipse_point(arc.center))
-  let radians = 0.0 -. arc.x_axis_rotation *. maths.pi() /. 180.0
-  let cosine = maths.cos(radians)
-  let sine = maths.sin(radians)
+  let cosine = trig.cos_degrees(0.0 -. arc.x_axis_rotation)
+  let sine = trig.sin_degrees(0.0 -. arc.x_axis_rotation)
   svg_path.point(
     cosine *. translated.x -. sine *. translated.y,
     sine *. translated.x +. cosine *. translated.y,
@@ -3966,12 +3965,11 @@ fn average(values: List(Float)) -> Float {
 }
 
 fn direction_angle(direction: svg_path.Point) -> Float {
-  normalize_angle(maths.atan2(direction.y, direction.x) *. 180.0 /. maths.pi())
+  normalize_angle(trig.atan2_degrees(direction.y, direction.x))
 }
 
 fn angle_direction(angle: Float) -> svg_path.Point {
-  let radians = angle *. maths.pi() /. 180.0
-  svg_path.point(maths.cos(radians), maths.sin(radians))
+  svg_path.point(trig.cos_degrees(angle), trig.sin_degrees(angle))
 }
 
 fn dot(a: svg_path.Point, b: svg_path.Point) -> Float {

@@ -58,7 +58,7 @@ pub fn skew_transforms_parse_test() {
   let assert Ok(matrix) = transform_parse.attribute("skewX(45) skewY(45)")
 
   assert transform.point(svg_path.point(2.0, 3.0), by: matrix)
-    == svg_path.point(6.999999999999999, 5.0)
+    == svg_path.point(7.0, 5.0)
 }
 
 pub fn transform_list_uses_svg_matrix_order_test() {

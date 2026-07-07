@@ -28,17 +28,15 @@
 //// solution. `CenterArcData.radius` is therefore the corrected radius, not
 //// necessarily the input radius.
 ////
-//// Units are intentionally mixed to match their sources. `x_axis_rotation`
-//// remains in degrees because SVG path data uses degrees. `start_angle` and
-//// `delta_angle` are in radians because they are used with trigonometric
-//// functions. `start_angle` is the angle before the ellipse is stretched and
-//// rotated. `delta_angle` is the signed angular travel from the start point to
-//// the end point.
+//// All public angles are in degrees because SVG path data uses degrees.
+//// `start_angle` is the angle before the ellipse is stretched and rotated.
+//// `delta_angle` is the signed angular travel from the start point to the end
+//// point.
 ////
 //// For values returned by `endpoint_to_center`, these invariants hold:
 ////
 //// - `arc_sweep(arc)` is `True` when `delta_angle >= 0.0`.
-//// - `arc_large_arc(arc)` is `True` when `abs(delta_angle) > pi`.
+//// - `arc_large_arc(arc)` is `True` when `abs(delta_angle) > 180`.
 //// - `arc_end_angle(arc) == arc.start_angle + arc.delta_angle`.
 //// - `arc_point(arc, at: 0.0)` is the arc start point, modulo floating-point
 ////   roundoff.
@@ -70,9 +68,15 @@
 
 import gleam/float
 import gleam/list
-import gleam_community/maths
+import svg_path/trig
 
 const epsilon = 0.000000001
+
+const quarter_turn = 90.0
+
+const half_turn = 180.0
+
+const full_turn = 360.0
 
 /// A lightweight point used by the ellipse math helpers.
 pub type Point {
@@ -245,7 +249,10 @@ pub fn collapsed_arc_line(
                 )
               let scalars =
                 list.map(angles, fn(angle) {
-                  alpha *. maths.cos(angle) +. beta *. maths.sin(angle)
+                  alpha
+                  *. trig.cos_degrees(angle)
+                  +. beta
+                  *. trig.sin_degrees(angle)
                 })
               let assert Ok(first) = list.first(scalars)
               let #(low, high) =
@@ -427,14 +434,14 @@ pub fn split_arc_inside_many(
   }
 }
 
-/// Evaluate an arc at a center-parameter angle in radians.
+/// Evaluate an arc at a center-parameter angle in degrees.
 pub fn point_at_angle(arc: CenterArcData, angle angle: Float) -> Point {
   ellipse_point(arc, angle)
 }
 
-/// Return the derivative with respect to the center-parameter angle.
+/// Return the derivative with respect to the center-parameter angle in degrees.
 pub fn derivative_at_angle(arc: CenterArcData, angle angle: Float) -> Point {
-  ellipse_derivative(arc, angle)
+  scale(ellipse_derivative_radians(arc, angle), trig.degrees_to_radians(1.0))
 }
 
 /// Return the angle at `t` using this module's angular-progress parameterization.
@@ -442,14 +449,14 @@ pub fn angle_at(arc: CenterArcData, t t: Float) -> Float {
   arc.start_angle +. t *. arc.delta_angle
 }
 
-/// Return the arc's end angle in radians.
+/// Return the arc's end angle in degrees.
 pub fn arc_end_angle(arc: CenterArcData) -> Float {
   arc.start_angle +. arc.delta_angle
 }
 
 /// Return whether the arc spans more than 180 degrees.
 pub fn arc_large_arc(arc: CenterArcData) -> Bool {
-  float.absolute_value(arc.delta_angle) >. maths.pi()
+  float.absolute_value(arc.delta_angle) >. half_turn
 }
 
 /// Return whether the arc sweeps through increasing center-parameter angles.
@@ -589,7 +596,10 @@ fn collapsed_arc_points(
                   offset(
                     center,
                     axis,
-                    alpha *. maths.cos(angle) +. beta *. maths.sin(angle),
+                    alpha
+                      *. trig.cos_degrees(angle)
+                      +. beta
+                      *. trig.sin_degrees(angle),
                   )
                 }),
               )
@@ -602,7 +612,6 @@ fn collapsed_arc_points(
 }
 
 fn cubic_split_progresses(arc: CenterArcData) -> List(Float) {
-  let quarter_turn = maths.pi() /. 2.0
   let delta = float.absolute_value(arc.delta_angle)
 
   case delta <=. quarter_turn +. epsilon {
@@ -635,11 +644,11 @@ fn cubic_for_arc(arc: CenterArcData) -> Cubic {
   let start_angle = arc.start_angle
   let end_angle = arc_end_angle(arc)
   let delta = arc.delta_angle
-  let alpha = 4.0 /. 3.0 *. maths.tan(delta /. 4.0)
+  let alpha = 4.0 /. 3.0 *. trig.tan_degrees(delta /. 4.0)
   let start = ellipse_point(arc, start_angle)
   let end = ellipse_point(arc, end_angle)
-  let start_tangent = ellipse_derivative(arc, start_angle)
-  let end_tangent = ellipse_derivative(arc, end_angle)
+  let start_tangent = ellipse_derivative_radians(arc, start_angle)
+  let end_tangent = ellipse_derivative_radians(arc, end_angle)
 
   Cubic(
     start:,
@@ -650,11 +659,10 @@ fn cubic_for_arc(arc: CenterArcData) -> Cubic {
 }
 
 fn arc_bounding_box_candidate_angles(arc: CenterArcData) -> List(Float) {
-  let phi = degrees_to_radians(arc.x_axis_rotation)
-  let x_alpha = arc.radius.x *. maths.cos(phi)
-  let x_beta = 0.0 -. arc.radius.y *. maths.sin(phi)
-  let y_alpha = arc.radius.x *. maths.sin(phi)
-  let y_beta = arc.radius.y *. maths.cos(phi)
+  let x_alpha = arc.radius.x *. trig.cos_degrees(arc.x_axis_rotation)
+  let x_beta = 0.0 -. arc.radius.y *. trig.sin_degrees(arc.x_axis_rotation)
+  let y_alpha = arc.radius.x *. trig.sin_degrees(arc.x_axis_rotation)
+  let y_beta = arc.radius.y *. trig.cos_degrees(arc.x_axis_rotation)
 
   [
     start_angle_extremum(x_alpha, x_beta),
@@ -669,11 +677,11 @@ fn arc_bounding_box_candidate_angles(arc: CenterArcData) -> List(Float) {
 }
 
 fn start_angle_extremum(alpha: Float, beta: Float) -> Float {
-  maths.atan2(beta, alpha)
+  trig.atan2_degrees(beta, alpha)
 }
 
 fn opposite_angle_extremum(alpha: Float, beta: Float) -> Float {
-  start_angle_extremum(alpha, beta) +. maths.pi()
+  start_angle_extremum(alpha, beta) +. half_turn
 }
 
 fn include_point(box: BoundingBox, point: Point) -> BoundingBox {
@@ -684,11 +692,10 @@ fn include_point(box: BoundingBox, point: Point) -> BoundingBox {
 }
 
 fn ellipse_point(arc: CenterArcData, angle: Float) -> Point {
-  let phi = degrees_to_radians(arc.x_axis_rotation)
-  let cos_phi = maths.cos(phi)
-  let sin_phi = maths.sin(phi)
-  let cos_angle = maths.cos(angle)
-  let sin_angle = maths.sin(angle)
+  let cos_phi = trig.cos_degrees(arc.x_axis_rotation)
+  let sin_phi = trig.sin_degrees(arc.x_axis_rotation)
+  let cos_angle = trig.cos_degrees(angle)
+  let sin_angle = trig.sin_degrees(angle)
   let x = arc.radius.x *. cos_angle
   let y = arc.radius.y *. sin_angle
 
@@ -698,12 +705,11 @@ fn ellipse_point(arc: CenterArcData, angle: Float) -> Point {
   )
 }
 
-fn ellipse_derivative(arc: CenterArcData, angle: Float) -> Point {
-  let phi = degrees_to_radians(arc.x_axis_rotation)
-  let cos_phi = maths.cos(phi)
-  let sin_phi = maths.sin(phi)
-  let x = 0.0 -. arc.radius.x *. maths.sin(angle)
-  let y = arc.radius.y *. maths.cos(angle)
+fn ellipse_derivative_radians(arc: CenterArcData, angle: Float) -> Point {
+  let cos_phi = trig.cos_degrees(arc.x_axis_rotation)
+  let sin_phi = trig.sin_degrees(arc.x_axis_rotation)
+  let x = 0.0 -. arc.radius.x *. trig.sin_degrees(angle)
+  let y = arc.radius.y *. trig.cos_degrees(angle)
 
   Point(cos_phi *. x -. sin_phi *. y, sin_phi *. x +. cos_phi *. y)
 }
@@ -722,9 +728,8 @@ fn do_endpoint_to_center(
   case rx <=. epsilon || ry <=. epsilon {
     True -> Error(DegenerateInputArc)
     False -> {
-      let phi = degrees_to_radians(x_axis_rotation)
-      let cos_phi = maths.cos(phi)
-      let sin_phi = maths.sin(phi)
+      let cos_phi = trig.cos_degrees(x_axis_rotation)
+      let sin_phi = trig.sin_degrees(x_axis_rotation)
       let midpoint =
         Point({ start.x +. end.x } /. 2.0, { start.y +. end.y } /. 2.0)
       let half_delta =
@@ -794,13 +799,13 @@ fn swept_delta_angle(
   case sweep {
     True -> {
       case delta_angle <. 0.0 {
-        True -> delta_angle +. 2.0 *. maths.pi()
+        True -> delta_angle +. full_turn
         False -> delta_angle
       }
     }
     False -> {
       case delta_angle >. 0.0 {
-        True -> delta_angle -. 2.0 *. maths.pi()
+        True -> delta_angle -. full_turn
         False -> delta_angle
       }
     }
@@ -838,8 +843,8 @@ fn collapsed_candidate_angles(
   beta: Float,
 ) -> List(Float) {
   let end_angle = start_angle +. delta_angle
-  let maximum_angle = maths.atan2(beta, alpha)
-  let minimum_angle = maximum_angle +. maths.pi()
+  let maximum_angle = trig.atan2_degrees(beta, alpha)
+  let minimum_angle = maximum_angle +. half_turn
 
   [minimum_angle, maximum_angle]
   |> list.filter(fn(angle) { angle_in_sweep(angle, start_angle, delta_angle) })
@@ -853,8 +858,8 @@ fn collapsed_ordered_angles(
   beta: Float,
 ) -> List(Float) {
   let end_angle = start_angle +. delta_angle
-  let maximum_angle = maths.atan2(beta, alpha)
-  let minimum_angle = maximum_angle +. maths.pi()
+  let maximum_angle = trig.atan2_degrees(beta, alpha)
+  let minimum_angle = maximum_angle +. half_turn
   let interior_extrema =
     [minimum_angle, maximum_angle]
     |> list.filter(fn(angle) {
@@ -927,13 +932,11 @@ fn angle_in_sweep(
 }
 
 fn positive_remainder(angle: Float) -> Float {
-  let turn = 2.0 *. maths.pi()
-
   case angle <. 0.0 {
-    True -> positive_remainder(angle +. turn)
+    True -> positive_remainder(angle +. full_turn)
     False -> {
-      case angle >=. turn {
-        True -> positive_remainder(angle -. turn)
+      case angle >=. full_turn {
+        True -> positive_remainder(angle -. full_turn)
         False -> angle
       }
     }
@@ -950,9 +953,8 @@ fn arc_axes(
   case rx <=. epsilon || ry <=. epsilon {
     True -> Error(DegenerateInputArc)
     False -> {
-      let phi = degrees_to_radians(x_axis_rotation)
-      let cos_phi = maths.cos(phi)
-      let sin_phi = maths.sin(phi)
+      let cos_phi = trig.cos_degrees(x_axis_rotation)
+      let sin_phi = trig.sin_degrees(x_axis_rotation)
 
       Ok(#(
         Point(rx *. cos_phi, rx *. sin_phi),
@@ -987,17 +989,13 @@ fn extract_axes(
         True -> {
           Ok(#(
             Point(square_root(lambda1), square_root(lambda2)),
-            normalize_axis_rotation(
-              radians_to_degrees(maths.atan2(axis1.y, axis1.x)),
-            ),
+            normalize_axis_rotation(trig.atan2_degrees(axis1.y, axis1.x)),
           ))
         }
         False -> {
           Ok(#(
             Point(square_root(lambda2), square_root(lambda1)),
-            normalize_axis_rotation(
-              radians_to_degrees(maths.atan2(axis2.y, axis2.x)),
-            ),
+            normalize_axis_rotation(trig.atan2_degrees(axis2.y, axis2.x)),
           ))
         }
       }
@@ -1018,7 +1016,7 @@ fn eigenvector(sxx: Float, sxy: Float, syy: Float, lambda: Float) -> Point {
 }
 
 fn vector_angle(a: Point, b: Point) -> Float {
-  maths.atan2(cross(a, b), dot(a, b))
+  trig.atan2_degrees(cross(a, b), dot(a, b))
 }
 
 fn offset(point: Point, direction: Point, distance: Float) -> Point {
@@ -1055,14 +1053,6 @@ fn normalize(point: Point) -> Point {
 
 fn scale(point: Point, factor: Float) -> Point {
   Point(point.x *. factor, point.y *. factor)
-}
-
-fn degrees_to_radians(degrees: Float) -> Float {
-  degrees *. maths.pi() /. 180.0
-}
-
-fn radians_to_degrees(radians: Float) -> Float {
-  radians *. 180.0 /. maths.pi()
 }
 
 fn normalize_axis_rotation(degrees: Float) -> Float {

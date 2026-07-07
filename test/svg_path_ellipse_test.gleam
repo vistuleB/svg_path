@@ -1,5 +1,4 @@
 import gleam/float
-import gleam_community/maths
 import gleeunit
 import svg_path
 import svg_path/ellipse
@@ -30,9 +29,9 @@ pub fn endpoint_to_center_exposes_corrected_center_parameters_test() {
   assert point_near(arc.center, ellipse.Point(10.0, 0.0))
   assert point_near(arc.radius, ellipse.Point(10.0, 10.0))
   assert near(arc.x_axis_rotation, 0.0)
-  assert arc.start_angle >=. 0.0 -. maths.pi()
-  assert arc.start_angle <=. maths.pi()
-  assert near(arc.delta_angle, maths.pi())
+  assert arc.start_angle >=. -180.0
+  assert arc.start_angle <=. 180.0
+  assert near(arc.delta_angle, 180.0)
 }
 
 pub fn arc_point_uses_angular_progress_test() {
@@ -52,10 +51,7 @@ pub fn arc_point_uses_angular_progress_test() {
   assert point_near(ellipse.arc_point(arc, at: 0.0), start)
   assert point_near(ellipse.arc_point(arc, at: 0.5), ellipse.Point(10.0, -10.0))
   assert point_near(ellipse.arc_point(arc, at: 1.0), end)
-  assert near(
-    ellipse.angle_at(arc, t: 0.5),
-    arc.start_angle +. maths.pi() /. 2.0,
-  )
+  assert near(ellipse.angle_at(arc, t: 0.5), arc.start_angle +. 90.0)
   assert near(ellipse.arc_end_angle(arc), arc.start_angle +. arc.delta_angle)
 }
 
@@ -133,13 +129,13 @@ pub fn arc_bounding_box_of_rotated_arc_includes_interior_extrema_test() {
       center: ellipse.Point(2.0, -3.0),
       radius: ellipse.Point(12.0, 5.0),
       x_axis_rotation: 30.0,
-      start_angle: -1.2,
-      delta_angle: 4.4,
+      start_angle: -68.75493541569878,
+      delta_angle: 252.1015816987223,
     )
 
   assert bbox_near(
     ellipse.arc_bounding_box(arc),
-    min: ellipse.Point(-8.688779, -9.242536),
+    min: ellipse.Point(-8.688779, -9.242547),
     max: ellipse.Point(12.688779, 4.399324),
   )
 }
@@ -367,11 +363,11 @@ pub fn large_arc_and_sweep_are_derived_from_delta_angle_test() {
 
   assert ellipse.arc_large_arc(large_sweep_arc)
   assert ellipse.arc_sweep(large_sweep_arc)
-  assert large_sweep_arc.delta_angle >. maths.pi()
+  assert large_sweep_arc.delta_angle >. 180.0
   assert !ellipse.arc_large_arc(small_non_sweep_arc)
   assert !ellipse.arc_sweep(small_non_sweep_arc)
   assert small_non_sweep_arc.delta_angle <. 0.0
-  assert float.absolute_value(small_non_sweep_arc.delta_angle) <. maths.pi()
+  assert float.absolute_value(small_non_sweep_arc.delta_angle) <. 180.0
 }
 
 pub fn endpoint_to_center_scales_small_radii_up_test() {
@@ -416,8 +412,8 @@ pub fn arc_from_center_data_creates_svg_path_arc_test() {
       center: ellipse.Point(10.0, 0.0),
       radius: ellipse.Point(10.0, 10.0),
       x_axis_rotation: 0.0,
-      start_angle: maths.pi(),
-      delta_angle: maths.pi(),
+      start_angle: 180.0,
+      delta_angle: 180.0,
     )
 
   let assert svg_path.Arc(

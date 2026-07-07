@@ -88,6 +88,73 @@ pub fn about_point_matrix_transforms_points_about_point_test() {
     == svg_path.point(5.0, 8.0)
 }
 
+pub fn point_pair_map_maps_source_points_to_targets_test() {
+  let source_start = svg_path.point(1.0, 2.0)
+  let source_end = svg_path.point(4.0, 2.0)
+  let target_start = svg_path.point(10.0, -5.0)
+  let target_end = svg_path.point(10.0, 1.0)
+  let assert Ok(matrix) =
+    transform.point_pair_map(
+      source_start,
+      source_end,
+      target_start,
+      target_end,
+      tolerance:,
+    )
+
+  assert point_near(transform.point(source_start, by: matrix), target_start)
+  assert point_near(transform.point(source_end, by: matrix), target_end)
+  assert transform.to_tuple(matrix) == #(0.0, 2.0, -2.0, 0.0, 14.0, -7.0)
+}
+
+pub fn point_pair_map_rejects_points_outside_tolerance_test() {
+  assert transform.point_pair_map(
+      svg_path.point(1.0, 2.0),
+      svg_path.point(1.0, 2.0),
+      svg_path.point(10.0, -5.0),
+      svg_path.point(10.0, 1.0),
+      tolerance:,
+    )
+    == Error(Nil)
+}
+
+pub fn point_triple_map_maps_source_points_to_targets_test() {
+  let source_a = svg_path.point(1.0, 2.0)
+  let source_b = svg_path.point(3.0, 2.0)
+  let source_c = svg_path.point(1.0, 5.0)
+  let target_a = svg_path.point(10.0, -5.0)
+  let target_b = svg_path.point(14.0, -3.0)
+  let target_c = svg_path.point(7.0, 1.0)
+  let assert Ok(matrix) =
+    transform.point_triple_map(
+      source_a,
+      source_b,
+      source_c,
+      target_a,
+      target_b,
+      target_c,
+      tolerance:,
+    )
+
+  assert point_near(transform.point(source_a, by: matrix), target_a)
+  assert point_near(transform.point(source_b, by: matrix), target_b)
+  assert point_near(transform.point(source_c, by: matrix), target_c)
+  assert transform.to_tuple(matrix) == #(2.0, 1.0, -1.0, 2.0, 10.0, -10.0)
+}
+
+pub fn point_triple_map_rejects_points_outside_tolerance_test() {
+  assert transform.point_triple_map(
+      svg_path.point(1.0, 2.0),
+      svg_path.point(1.0, 2.0),
+      svg_path.point(1.0, 2.0),
+      svg_path.point(10.0, -5.0),
+      svg_path.point(14.0, -3.0),
+      svg_path.point(7.0, 1.0),
+      tolerance:,
+    )
+    == Error(Nil)
+}
+
 pub fn rotate_matrix_uses_degrees_test() {
   let line =
     svg_path.Line(

@@ -5,10 +5,11 @@
 //// transform application order, and `multiply(left:, right:)` when thinking in
 //// algebraic matrix multiplication order.
 
+import gleam/float
 import gleam/list
-import gleam_community/maths
 import svg_path
 import svg_path/ellipse
+import svg_path/trig
 
 /// An opaque SVG affine transform matrix.
 ///
@@ -104,6 +105,119 @@ pub fn about_point(
   |> chain(first: _, then: translate(x: point.x, y: point.y))
 }
 
+/// Find a translation, rotation, and uniform scale mapping one point pair to
+/// another.
+///
+/// The returned matrix maps `source_start` within `tolerance` of `target_start`
+/// and `source_end` within `tolerance` of `target_end`. Returns `Error(Nil)`
+/// when the direct point-pair construction produces non-finite values or the
+/// final mapped points are outside tolerance.
+pub fn point_pair_map(
+  source_start source_start: svg_path.Point,
+  source_end source_end: svg_path.Point,
+  target_start target_start: svg_path.Point,
+  target_end target_end: svg_path.Point,
+  tolerance tolerance: Float,
+) -> Result(Matrix, Nil) {
+  let source_x = source_end.x -. source_start.x
+  let source_y = source_end.y -. source_start.y
+  let target_x = target_end.x -. target_start.x
+  let target_y = target_end.y -. target_start.y
+  let denominator = source_x *. source_x +. source_y *. source_y
+  let scale_cos =
+    { source_x *. target_x +. source_y *. target_y } /. denominator
+  let scale_sin =
+    { source_x *. target_y -. source_y *. target_x } /. denominator
+  let transform =
+    matrix(
+      a: scale_cos,
+      b: scale_sin,
+      c: 0.0 -. scale_sin,
+      d: scale_cos,
+      e: target_start.x
+        -. { scale_cos *. source_start.x -. scale_sin *. source_start.y },
+      f: target_start.y
+        -. { scale_sin *. source_start.x +. scale_cos *. source_start.y },
+    )
+
+  case validate_matrix(transform) {
+    Error(_) -> Error(Nil)
+    Ok(Nil) -> {
+      let mapped_start = point(source_start, by: transform)
+      let mapped_end = point(source_end, by: transform)
+
+      case
+        points_within_tolerance(mapped_start, target_start, tolerance)
+        && points_within_tolerance(mapped_end, target_end, tolerance)
+      {
+        True -> Ok(transform)
+        False -> Error(Nil)
+      }
+    }
+  }
+}
+
+/// Find an affine transform mapping one point triple to another.
+///
+/// The returned matrix maps `source_a`, `source_b`, and `source_c` within
+/// `tolerance` of `target_a`, `target_b`, and `target_c`. Returns `Error(Nil)`
+/// when the direct point-triple construction produces non-finite values or the
+/// final mapped points are outside tolerance.
+pub fn point_triple_map(
+  source_a source_a: svg_path.Point,
+  source_b source_b: svg_path.Point,
+  source_c source_c: svg_path.Point,
+  target_a target_a: svg_path.Point,
+  target_b target_b: svg_path.Point,
+  target_c target_c: svg_path.Point,
+  tolerance tolerance: Float,
+) -> Result(Matrix, Nil) {
+  let source_ab_x = source_b.x -. source_a.x
+  let source_ab_y = source_b.y -. source_a.y
+  let source_ac_x = source_c.x -. source_a.x
+  let source_ac_y = source_c.y -. source_a.y
+  let target_ab_x = target_b.x -. target_a.x
+  let target_ab_y = target_b.y -. target_a.y
+  let target_ac_x = target_c.x -. target_a.x
+  let target_ac_y = target_c.y -. target_a.y
+  let denominator = source_ab_x *. source_ac_y -. source_ab_y *. source_ac_x
+  let a =
+    { target_ab_x *. source_ac_y -. target_ac_x *. source_ab_y } /. denominator
+  let b =
+    { target_ab_y *. source_ac_y -. target_ac_y *. source_ab_y } /. denominator
+  let c =
+    { target_ac_x *. source_ab_x -. target_ab_x *. source_ac_x } /. denominator
+  let d =
+    { target_ac_y *. source_ab_x -. target_ab_y *. source_ac_x } /. denominator
+  let transform =
+    matrix(
+      a:,
+      b:,
+      c:,
+      d:,
+      e: target_a.x -. { a *. source_a.x +. c *. source_a.y },
+      f: target_a.y -. { b *. source_a.x +. d *. source_a.y },
+    )
+
+  case validate_matrix(transform) {
+    Error(_) -> Error(Nil)
+    Ok(Nil) -> {
+      let mapped_a = point(source_a, by: transform)
+      let mapped_b = point(source_b, by: transform)
+      let mapped_c = point(source_c, by: transform)
+
+      case
+        points_within_tolerance(mapped_a, target_a, tolerance)
+        && points_within_tolerance(mapped_b, target_b, tolerance)
+        && points_within_tolerance(mapped_c, target_c, tolerance)
+      {
+        True -> Ok(transform)
+        False -> Error(Nil)
+      }
+    }
+  }
+}
+
 /// Create a translation matrix.
 pub fn translate(x x: Float, y y: Float) -> Matrix {
   matrix(a: 1.0, b: 0.0, c: 0.0, d: 1.0, e: x, f: y)
@@ -121,35 +235,20 @@ pub fn scale_xy(x x: Float, y y: Float) -> Matrix {
 
 /// Create a rotation matrix from an angle in degrees.
 pub fn rotate(degrees degrees: Float) -> Matrix {
-  let radians = degrees_to_radians(degrees)
-  let cosine = maths.cos(radians)
-  let sine = maths.sin(radians)
+  let cosine = trig.cos_degrees(degrees)
+  let sine = trig.sin_degrees(degrees)
 
   matrix(a: cosine, b: sine, c: 0.0 -. sine, d: cosine, e: 0.0, f: 0.0)
 }
 
 /// Create an x-axis skew matrix from an angle in degrees.
 pub fn skew_x(degrees degrees: Float) -> Matrix {
-  matrix(
-    a: 1.0,
-    b: 0.0,
-    c: maths.tan(degrees_to_radians(degrees)),
-    d: 1.0,
-    e: 0.0,
-    f: 0.0,
-  )
+  matrix(a: 1.0, b: 0.0, c: trig.tan_degrees(degrees), d: 1.0, e: 0.0, f: 0.0)
 }
 
 /// Create a y-axis skew matrix from an angle in degrees.
 pub fn skew_y(degrees degrees: Float) -> Matrix {
-  matrix(
-    a: 1.0,
-    b: maths.tan(degrees_to_radians(degrees)),
-    c: 0.0,
-    d: 1.0,
-    e: 0.0,
-    f: 0.0,
-  )
+  matrix(a: 1.0, b: trig.tan_degrees(degrees), c: 0.0, d: 1.0, e: 0.0, f: 0.0)
 }
 
 /// Return SVG's six matrix values as `#(a, b, c, d, e, f)`.
@@ -814,6 +913,20 @@ fn lines_between_rest(
   }
 }
 
+fn points_within_tolerance(
+  a: svg_path.Point,
+  b: svg_path.Point,
+  tolerance: Float,
+) -> Bool {
+  let dx = a.x -. b.x
+  let dy = a.y -. b.y
+
+  case float.square_root(dx *. dx +. dy *. dy) {
+    Ok(distance) -> distance <=. tolerance
+    Error(_) -> False
+  }
+}
+
 fn is_finite(value: Float) -> Bool {
   !is_nan(value -. value)
 }
@@ -909,8 +1022,4 @@ fn transformed_sweep(sweep: Bool, transform: Matrix) -> Bool {
 
 fn determinant(transform: Matrix) -> Float {
   transform.a *. transform.d -. transform.b *. transform.c
-}
-
-fn degrees_to_radians(degrees: Float) -> Float {
-  degrees *. maths.pi() /. 180.0
 }

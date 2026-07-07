@@ -9,8 +9,8 @@ import gleam/float
 import gleam/int
 import gleam/option.{type Option, None, Some}
 import gleam/string
-import gleam_community/maths
 import svg_path/transform as path_transform
+import svg_path/trig
 
 const rotation_scale_epsilon = 0.000001
 
@@ -196,7 +196,7 @@ fn analyze_rotation_scale(
   {
     False -> Matrix2x2
     True -> {
-      let rotation_degrees = radians_to_degrees(maths.atan2(b, a))
+      let rotation_degrees = trig.atan2_degrees(b, a)
 
       RotateScale2x2(degrees: rotation_degrees, scale_x:, scale_y:)
     }
@@ -248,11 +248,7 @@ fn transform_function(name: String, arguments: String) -> String {
 }
 
 fn degrees_from_tangent(tangent: Float) -> Float {
-  maths.atan(tangent) *. 180.0 /. maths.pi()
-}
-
-fn radians_to_degrees(radians: Float) -> Float {
-  radians *. 180.0 /. maths.pi()
+  trig.atan_degrees(tangent)
 }
 
 fn length(x: Float, y: Float) -> Float {
