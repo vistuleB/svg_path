@@ -5,6 +5,7 @@ import gleam/list
 import svg_path
 import svg_path/ellipse
 import svg_path/transform
+import vec/vec2f
 
 type IndexedPoint {
   IndexedPoint(source: svg_path.Point, target: svg_path.Point)
@@ -508,8 +509,8 @@ fn farthest_from_loop(
     [] -> best
     [first, ..remaining] -> {
       let next = case
-        distance_squared(point.source, first.source)
-        >. distance_squared(point.source, best.source)
+        vec2f.distance_squared(point.source, with: first.source)
+        >. vec2f.distance_squared(point.source, with: best.source)
       {
         True -> first
         False -> best
@@ -551,7 +552,7 @@ fn pair(
     source_b:,
     target_a:,
     target_b:,
-    distance_squared: distance_squared(source_a, source_b),
+    distance_squared: vec2f.distance_squared(source_a, with: source_b),
   )
 }
 
@@ -560,18 +561,11 @@ fn points_within_tolerance(
   b: svg_path.Point,
   tolerance: Float,
 ) -> Bool {
-  distance_squared(a, b) <=. tolerance *. tolerance
+  vec2f.distance_squared(a, with: b) <=. tolerance *. tolerance
 }
 
 fn floats_within_tolerance(a: Float, b: Float, tolerance: Float) -> Bool {
   float.absolute_value(a -. b) <=. tolerance
-}
-
-fn distance_squared(a: svg_path.Point, b: svg_path.Point) -> Float {
-  let dx = a.x -. b.x
-  let dy = a.y -. b.y
-
-  dx *. dx +. dy *. dy
 }
 
 fn from_ellipse_point(point: ellipse.Point) -> svg_path.Point {
