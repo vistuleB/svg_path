@@ -107,6 +107,25 @@ pub fn point_pair_map_maps_source_points_to_targets_test() {
   assert transform.to_tuple(matrix) == #(0.0, 2.0, -2.0, 0.0, 14.0, -7.0)
 }
 
+pub fn point_pair_map_maps_distinct_source_to_collapsed_target_test() {
+  let source_start = svg_path.point(1.0, 2.0)
+  let source_end = svg_path.point(4.0, 2.0)
+  let target_start = svg_path.point(10.0, -5.0)
+  let target_end = svg_path.point(10.0, -5.0)
+  let assert Ok(matrix) =
+    transform.point_pair_map(
+      source_start,
+      source_end,
+      target_start,
+      target_end,
+      tolerance:,
+    )
+
+  assert point_near(transform.point(source_start, by: matrix), target_start)
+  assert point_near(transform.point(source_end, by: matrix), target_end)
+  assert transform.to_tuple(matrix) == #(0.0, 0.0, 0.0, 0.0, 10.0, -5.0)
+}
+
 pub fn point_pair_map_rejects_points_outside_tolerance_test() {
   assert transform.point_pair_map(
       svg_path.point(1.0, 2.0),
