@@ -1136,7 +1136,7 @@ pub fn segment_point(segment: Segment, at t: Float) -> Result(Point, Error) {
       )
     }
     Arc(..) -> {
-      case segment_to_center_arc_data(segment) {
+      case arc_center_data(segment) {
         Error(error) -> Error(error)
         Ok(arc) -> Ok(ellipse.arc_point(arc, at: t) |> from_ellipse_point)
       }
@@ -1160,7 +1160,7 @@ pub fn segment_derivative(
       )
     }
     Arc(..) -> {
-      case segment_to_center_arc_data(segment) {
+      case arc_center_data(segment) {
         Error(error) -> Error(error)
         Ok(arc) -> Ok(ellipse.arc_derivative(arc, at: t) |> from_ellipse_point)
       }
@@ -1180,7 +1180,7 @@ pub fn segment_bounding_box(segment: Segment) -> Result(BoundingBox, Error) {
       Ok(BoundingBox(min: from_bezier_point(min), max: from_bezier_point(max)))
     }
     Arc(..) -> {
-      case segment_to_center_arc_data(segment) {
+      case arc_center_data(segment) {
         Error(error) -> Error(error)
         Ok(arc) -> {
           let ellipse.BoundingBox(min:, max:) = ellipse.arc_bounding_box(arc)
@@ -1435,7 +1435,7 @@ pub fn split_segment(
       Ok(#(segment_from_bezier_data(left), segment_from_bezier_data(right)))
     }
     Arc(..) -> {
-      case segment_to_center_arc_data(segment) {
+      case arc_center_data(segment) {
         Error(error) -> Error(error)
         Ok(arc) -> {
           let #(left, right) = ellipse.split_arc(arc, at: t)
@@ -1467,7 +1467,7 @@ pub fn split_segment_inside(
       }
     }
     Arc(..) -> {
-      case segment_to_center_arc_data(segment) {
+      case arc_center_data(segment) {
         Error(error) -> Error(error)
         Ok(arc) -> {
           case ellipse.split_arc_inside(arc, at: t) {
@@ -3921,7 +3921,8 @@ fn segment_from_bezier_data(data: bezier.BezierData) -> Segment {
   }
 }
 
-fn segment_to_center_arc_data(
+/// Return an elliptical arc segment as center-parameter arc data.
+pub fn arc_center_data(
   segment: Segment,
 ) -> Result(ellipse.CenterArcData, Error) {
   case segment {

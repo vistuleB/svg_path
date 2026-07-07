@@ -3,6 +3,7 @@ import gleam/list
 import gleam/order
 import gleeunit
 import svg_path
+import svg_path/ellipse
 
 const tolerance = 0.000001
 
@@ -306,6 +307,41 @@ pub fn segment_bounding_box_returns_degenerate_arc_errors_test() {
     )
 
   assert svg_path.segment_bounding_box(segment) == Error(svg_path.DegenerateArc)
+}
+
+pub fn arc_center_data_converts_arc_segments_test() {
+  let segment =
+    svg_path.Arc(
+      start: svg_path.point(0.0, 0.0),
+      radius: svg_path.point(10.0, 10.0),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: True,
+      end: svg_path.point(20.0, 0.0),
+    )
+
+  let assert Ok(arc) = svg_path.arc_center_data(segment)
+
+  assert center_arc_data_near(
+    arc,
+    ellipse.CenterArcData(
+      center: ellipse.Point(10.0, 0.0),
+      radius: ellipse.Point(10.0, 10.0),
+      x_axis_rotation: 0.0,
+      start_angle: 180.0,
+      delta_angle: 180.0,
+    ),
+  )
+}
+
+pub fn arc_center_data_rejects_non_arc_segments_test() {
+  let segment =
+    svg_path.Line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(1.0, 0.0),
+    )
+
+  assert svg_path.arc_center_data(segment) == Error(svg_path.DegenerateArc)
 }
 
 pub fn segment_crossings_finds_line_crossing_test() {
@@ -3571,6 +3607,21 @@ fn bbox_near(
 ) -> Bool {
   let svg_path.BoundingBox(min:, max:) = box
   point_near(min, expected_min) && point_near(max, expected_max)
+}
+
+fn center_arc_data_near(
+  actual: ellipse.CenterArcData,
+  expected: ellipse.CenterArcData,
+) -> Bool {
+  ellipse_point_near(actual.center, expected.center)
+  && ellipse_point_near(actual.radius, expected.radius)
+  && near(actual.x_axis_rotation, expected.x_axis_rotation)
+  && near(actual.start_angle, expected.start_angle)
+  && near(actual.delta_angle, expected.delta_angle)
+}
+
+fn ellipse_point_near(a: ellipse.Point, b: ellipse.Point) -> Bool {
+  near(a.x, b.x) && near(a.y, b.y)
 }
 
 fn near(a: Float, b: Float) -> Bool {
