@@ -231,6 +231,148 @@ pub fn arc_rejects_mismatched_flags_test() {
   assert congruency.segment(source:, target:, tolerance:) == Error(Nil)
 }
 
+pub fn subpath_maps_ordered_segments_to_target_test() {
+  let source =
+    svg_path.assert_subpath([
+      svg_path.Line(
+        start: svg_path.point(0.0, 0.0),
+        end: svg_path.point(10.0, 0.0),
+      ),
+      svg_path.QuadraticBezier(
+        start: svg_path.point(10.0, 0.0),
+        control: svg_path.point(15.0, 5.0),
+        end: svg_path.point(20.0, 0.0),
+      ),
+    ])
+  let matrix =
+    transform.translate(x: 3.0, y: 4.0)
+    |> transform.chain(first: transform.rotate(degrees: 90.0), then: _)
+    |> transform.chain(first: transform.scale(factor: 2.0), then: _)
+  let assert Ok(target) = transform.subpath(source, by: matrix)
+
+  let assert Ok(found) = congruency.subpath(source:, target:, tolerance:)
+  let assert Ok(mapped) = transform.subpath(source, by: found)
+
+  assert same_subpath(mapped, target)
+}
+
+pub fn subpath_ignores_closed_field_test() {
+  let open =
+    svg_path.assert_subpath([
+      svg_path.Line(
+        start: svg_path.point(0.0, 0.0),
+        end: svg_path.point(10.0, 0.0),
+      ),
+      svg_path.Line(
+        start: svg_path.point(10.0, 0.0),
+        end: svg_path.point(0.0, 0.0),
+      ),
+    ])
+  let assert Ok(closed) = svg_path.set_closed(open, closed: True)
+
+  assert result_is_ok(congruency.subpath(
+    source: open,
+    target: closed,
+    tolerance:,
+  ))
+}
+
+pub fn subpath_maps_move_only_subpaths_test() {
+  let source = svg_path.empty_subpath(at: svg_path.point(1.0, 2.0))
+  let assert Ok(target) =
+    svg_path.empty_subpath(at: svg_path.point(6.0, 8.0))
+    |> svg_path.set_closed(closed: True)
+
+  let assert Ok(matrix) = congruency.subpath(source:, target:, tolerance:)
+
+  assert point_near(
+    transform.point(svg_path.point(1.0, 2.0), by: matrix),
+    svg_path.point(6.0, 8.0),
+  )
+}
+
+pub fn subpath_rejects_different_segment_constructors_test() {
+  let source =
+    svg_path.assert_subpath([
+      svg_path.Line(
+        start: svg_path.point(0.0, 0.0),
+        end: svg_path.point(10.0, 0.0),
+      ),
+    ])
+  let target =
+    svg_path.assert_subpath([
+      svg_path.QuadraticBezier(
+        start: svg_path.point(0.0, 0.0),
+        control: svg_path.point(5.0, 5.0),
+        end: svg_path.point(10.0, 0.0),
+      ),
+    ])
+
+  assert congruency.subpath(source:, target:, tolerance:) == Error(Nil)
+}
+
+pub fn subpath_does_not_cycle_segments_test() {
+  let source =
+    svg_path.assert_subpath([
+      svg_path.Line(
+        start: svg_path.point(0.0, 0.0),
+        end: svg_path.point(10.0, 0.0),
+      ),
+      svg_path.Line(
+        start: svg_path.point(10.0, 0.0),
+        end: svg_path.point(20.0, 0.0),
+      ),
+      svg_path.Line(
+        start: svg_path.point(20.0, 0.0),
+        end: svg_path.point(30.0, 0.0),
+      ),
+    ])
+  let target =
+    svg_path.assert_subpath([
+      svg_path.Line(
+        start: svg_path.point(10.0, 0.0),
+        end: svg_path.point(20.0, 0.0),
+      ),
+      svg_path.Line(
+        start: svg_path.point(20.0, 0.0),
+        end: svg_path.point(30.0, 0.0),
+      ),
+      svg_path.Line(
+        start: svg_path.point(30.0, 0.0),
+        end: svg_path.point(0.0, 0.0),
+      ),
+    ])
+
+  assert congruency.subpath(source:, target:, tolerance:) == Error(Nil)
+}
+
+pub fn subpath_rejects_arc_field_mismatch_after_points_match_test() {
+  let source =
+    svg_path.assert_subpath([
+      svg_path.Arc(
+        start: svg_path.point(0.0, 0.0),
+        radius: svg_path.point(10.0, 10.0),
+        x_axis_rotation: 0.0,
+        large_arc: False,
+        sweep: True,
+        end: svg_path.point(20.0, 0.0),
+      ),
+    ])
+  let target =
+    svg_path.assert_subpath([
+      svg_path.Arc(
+        start: svg_path.point(0.0, 0.0),
+        radius: svg_path.point(12.0, 12.0),
+        x_axis_rotation: 0.0,
+        large_arc: False,
+        sweep: True,
+        end: svg_path.point(20.0, 0.0),
+      ),
+    ])
+
+  assert congruency.subpath(source:, target:, tolerance:) == Error(Nil)
+}
+
 fn result_is_ok(result: Result(a, b)) -> Bool {
   case result {
     Ok(_) -> True
@@ -244,6 +386,22 @@ fn same_segment(actual: svg_path.Segment, expected: svg_path.Segment) -> Bool {
       svg_path.Line(start: expected_start, end: expected_end)
     -> {
       point_near(actual_start, expected_start)
+      && point_near(actual_end, expected_end)
+    }
+
+    svg_path.QuadraticBezier(
+      start: actual_start,
+      control: actual_control,
+      end: actual_end,
+    ),
+      svg_path.QuadraticBezier(
+        start: expected_start,
+        control: expected_control,
+        end: expected_end,
+      )
+    -> {
+      point_near(actual_start, expected_start)
+      && point_near(actual_control, expected_control)
       && point_near(actual_end, expected_end)
     }
 
@@ -291,6 +449,30 @@ fn same_segment(actual: svg_path.Segment, expected: svg_path.Segment) -> Bool {
       && point_near(actual_end, expected_end)
     }
 
+    _, _ -> False
+  }
+}
+
+fn same_subpath(actual: svg_path.Subpath, expected: svg_path.Subpath) -> Bool {
+  case svg_path.start(actual), svg_path.start(expected) {
+    Ok(actual_start), Ok(expected_start) -> {
+      point_near(actual_start, expected_start)
+      && same_segments(svg_path.segments(actual), svg_path.segments(expected))
+    }
+    _, _ -> False
+  }
+}
+
+fn same_segments(
+  actual: List(svg_path.Segment),
+  expected: List(svg_path.Segment),
+) -> Bool {
+  case actual, expected {
+    [], [] -> True
+    [actual_first, ..actual_rest], [expected_first, ..expected_rest] -> {
+      same_segment(actual_first, expected_first)
+      && same_segments(actual_rest, expected_rest)
+    }
     _, _ -> False
   }
 }

@@ -160,6 +160,62 @@ pub fn segment(
   }
 }
 
+/// Find a translation, rotation, and uniform scale mapping one subpath to
+/// another subpath.
+///
+/// The subpath `closed` field is ignored. Segment constructors must match in
+/// order; no cycling or alternate starting segment is attempted.
+pub fn subpath(
+  source source: svg_path.Subpath,
+  target target: svg_path.Subpath,
+  tolerance tolerance: Float,
+) -> Result(transform.Matrix, Nil) {
+  case svg_path.start(source), svg_path.start(target) {
+    Ok(source_start), Ok(target_start) -> {
+      let source_segments = svg_path.segments(source)
+      let target_segments = svg_path.segments(target)
+
+      case
+        subpath_points(
+          source_segments,
+          target_segments,
+          [source_start],
+          [target_start],
+          has_arc: False,
+        )
+      {
+        Error(_) -> Error(Nil)
+        Ok(#(source_points, target_points, has_arc)) -> {
+          case
+            points(source: source_points, target: target_points, tolerance:)
+          {
+            Error(_) -> Error(Nil)
+            Ok(matrix) -> {
+              case has_arc {
+                False -> Ok(matrix)
+                True -> {
+                  case
+                    arc_fields_match(
+                      source_segments,
+                      target_segments,
+                      matrix,
+                      tolerance,
+                    )
+                  {
+                    True -> Ok(matrix)
+                    False -> Error(Nil)
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    _, _ -> Error(Nil)
+  }
+}
+
 fn map_and_check(
   source: svg_path.Segment,
   target: svg_path.Segment,
@@ -187,6 +243,186 @@ fn map_and_check(
         }
       }
     }
+  }
+}
+
+fn subpath_points(
+  source: List(svg_path.Segment),
+  target: List(svg_path.Segment),
+  source_points: List(svg_path.Point),
+  target_points: List(svg_path.Point),
+  has_arc has_arc: Bool,
+) -> Result(#(List(svg_path.Point), List(svg_path.Point), Bool), Nil) {
+  case source, target {
+    [], [] ->
+      Ok(#(list.reverse(source_points), list.reverse(target_points), has_arc))
+
+    [source_first, ..source_rest], [target_first, ..target_rest] -> {
+      case segment_points(source_first, target_first) {
+        Error(_) -> Error(Nil)
+        Ok(#(source_extra, target_extra, segment_has_arc)) -> {
+          subpath_points(
+            source_rest,
+            target_rest,
+            prepend_reversed(source_extra, source_points),
+            prepend_reversed(target_extra, target_points),
+            has_arc: has_arc || segment_has_arc,
+          )
+        }
+      }
+    }
+
+    _, _ -> Error(Nil)
+  }
+}
+
+fn segment_points(
+  source: svg_path.Segment,
+  target: svg_path.Segment,
+) -> Result(#(List(svg_path.Point), List(svg_path.Point), Bool), Nil) {
+  case source, target {
+    svg_path.Line(end: source_end, ..), svg_path.Line(end: target_end, ..) -> {
+      Ok(#([source_end], [target_end], False))
+    }
+
+    svg_path.QuadraticBezier(control: source_control, end: source_end, ..),
+      svg_path.QuadraticBezier(control: target_control, end: target_end, ..)
+    -> {
+      Ok(#([source_control, source_end], [target_control, target_end], False))
+    }
+
+    svg_path.CubicBezier(
+      control1: source_control1,
+      control2: source_control2,
+      end: source_end,
+      ..,
+    ),
+      svg_path.CubicBezier(
+        control1: target_control1,
+        control2: target_control2,
+        end: target_end,
+        ..,
+      )
+    -> {
+      Ok(#(
+        [source_control1, source_control2, source_end],
+        [target_control1, target_control2, target_end],
+        False,
+      ))
+    }
+
+    svg_path.Arc(
+      large_arc: source_large_arc,
+      sweep: source_sweep,
+      end: source_end,
+      ..,
+    ),
+      svg_path.Arc(
+        large_arc: target_large_arc,
+        sweep: target_sweep,
+        end: target_end,
+        ..,
+      )
+    -> {
+      case
+        source_large_arc == target_large_arc && source_sweep == target_sweep
+      {
+        False -> Error(Nil)
+        True -> {
+          case arc_opposite_point(source), arc_opposite_point(target) {
+            Ok(source_opposite), Ok(target_opposite) ->
+              Ok(#(
+                [source_opposite, source_end],
+                [target_opposite, target_end],
+                True,
+              ))
+            _, _ -> Error(Nil)
+          }
+        }
+      }
+    }
+
+    _, _ -> Error(Nil)
+  }
+}
+
+fn arc_opposite_point(
+  segment: svg_path.Segment,
+) -> Result(svg_path.Point, Nil) {
+  case svg_path.arc_center_data(segment) {
+    Error(_) -> Error(Nil)
+    Ok(arc) -> {
+      Ok(
+        ellipse.point_at_angle(arc, angle: arc.start_angle +. 180.0)
+        |> from_ellipse_point,
+      )
+    }
+  }
+}
+
+fn prepend_reversed(
+  points: List(svg_path.Point),
+  accumulated: List(svg_path.Point),
+) -> List(svg_path.Point) {
+  case points {
+    [] -> accumulated
+    [first, ..rest] -> prepend_reversed(rest, [first, ..accumulated])
+  }
+}
+
+fn arc_fields_match(
+  source: List(svg_path.Segment),
+  target: List(svg_path.Segment),
+  matrix: transform.Matrix,
+  tolerance: Float,
+) -> Bool {
+  case source, target {
+    [], [] -> True
+    [source_first, ..source_rest], [target_first, ..target_rest] -> {
+      arc_field_match(source_first, target_first, matrix, tolerance)
+      && arc_fields_match(source_rest, target_rest, matrix, tolerance)
+    }
+    _, _ -> False
+  }
+}
+
+fn arc_field_match(
+  source: svg_path.Segment,
+  target: svg_path.Segment,
+  matrix: transform.Matrix,
+  tolerance: Float,
+) -> Bool {
+  case source, target {
+    svg_path.Arc(..),
+      svg_path.Arc(
+        radius: target_radius,
+        x_axis_rotation: target_rotation,
+        large_arc: target_large_arc,
+        sweep: target_sweep,
+        ..,
+      )
+    -> {
+      case transform.segment(source, by: matrix) {
+        Ok(svg_path.Arc(
+          radius: actual_radius,
+          x_axis_rotation: actual_rotation,
+          large_arc: actual_large_arc,
+          sweep: actual_sweep,
+          ..,
+        )) -> {
+          actual_large_arc == target_large_arc
+          && actual_sweep == target_sweep
+          && points_within_tolerance(actual_radius, target_radius, tolerance)
+          && floats_within_tolerance(
+            actual_rotation,
+            target_rotation,
+            tolerance,
+          )
+        }
+        _ -> False
+      }
+    }
+    _, _ -> True
   }
 }
 
