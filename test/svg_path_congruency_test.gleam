@@ -424,6 +424,91 @@ pub fn path_uses_one_transform_across_subpaths_test() {
   assert same_path(mapped, target)
 }
 
+pub fn path_recognizes_transformed_mixed_fixture_test() {
+  let source =
+    svg_path.Path([
+      svg_path.assert_subpath([
+        svg_path.Line(
+          start: svg_path.point(0.0, 0.0),
+          end: svg_path.point(12.0, 0.0),
+        ),
+        svg_path.QuadraticBezier(
+          start: svg_path.point(12.0, 0.0),
+          control: svg_path.point(18.0, 8.0),
+          end: svg_path.point(24.0, 0.0),
+        ),
+        svg_path.CubicBezier(
+          start: svg_path.point(24.0, 0.0),
+          control1: svg_path.point(30.0, -8.0),
+          control2: svg_path.point(36.0, 8.0),
+          end: svg_path.point(42.0, 0.0),
+        ),
+        svg_path.Arc(
+          start: svg_path.point(42.0, 0.0),
+          radius: svg_path.point(6.0, 10.0),
+          x_axis_rotation: 0.0,
+          large_arc: False,
+          sweep: False,
+          end: svg_path.point(50.0, 0.0),
+        ),
+      ]),
+    ])
+  let matrix =
+    transform.translate(x: 17.0, y: -9.0)
+    |> transform.chain(first: transform.rotate(degrees: 37.0), then: _)
+    |> transform.chain(first: transform.scale(factor: 1.75), then: _)
+  let assert Ok(target) = transform.path(source, by: matrix)
+
+  let assert Ok(found) = congruency.path(source:, target:, tolerance:)
+  let assert Ok(mapped) = transform.path(source, by: found)
+
+  assert same_path(mapped, target)
+}
+
+pub fn path_recognizes_transformed_multi_subpath_fixture_test() {
+  let source =
+    svg_path.Path([
+      svg_path.assert_subpath([
+        svg_path.Line(
+          start: svg_path.point(0.0, 0.0),
+          end: svg_path.point(20.0, 0.0),
+        ),
+        svg_path.Line(
+          start: svg_path.point(20.0, 0.0),
+          end: svg_path.point(20.0, 20.0),
+        ),
+        svg_path.Line(
+          start: svg_path.point(20.0, 20.0),
+          end: svg_path.point(0.0, 20.0),
+        ),
+        svg_path.Line(
+          start: svg_path.point(0.0, 20.0),
+          end: svg_path.point(0.0, 0.0),
+        ),
+      ]),
+      svg_path.assert_subpath([
+        svg_path.Line(
+          start: svg_path.point(30.0, 30.0),
+          end: svg_path.point(40.0, 30.0),
+        ),
+        svg_path.Line(
+          start: svg_path.point(40.0, 30.0),
+          end: svg_path.point(40.0, 40.0),
+        ),
+      ]),
+    ])
+  let matrix =
+    transform.translate(x: -24.0, y: 11.0)
+    |> transform.chain(first: transform.rotate(degrees: -82.0), then: _)
+    |> transform.chain(first: transform.scale(factor: 0.6), then: _)
+  let assert Ok(target) = transform.path(source, by: matrix)
+
+  let assert Ok(found) = congruency.path(source:, target:, tolerance:)
+  let assert Ok(mapped) = transform.path(source, by: found)
+
+  assert same_path(mapped, target)
+}
+
 pub fn path_rejects_individually_congruent_but_globally_inconsistent_subpaths_test() {
   let source =
     svg_path.Path([
