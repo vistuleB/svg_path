@@ -10,6 +10,86 @@ pub fn main() -> Nil {
   gleeunit.main()
 }
 
+pub fn points_rejects_empty_lists_test() {
+  assert congruency.points(source: [], target: [], tolerance:) == Error(Nil)
+}
+
+pub fn points_rejects_different_length_lists_test() {
+  assert congruency.points(
+      source: [svg_path.point(0.0, 0.0)],
+      target: [svg_path.point(1.0, 1.0), svg_path.point(2.0, 2.0)],
+      tolerance:,
+    )
+    == Error(Nil)
+}
+
+pub fn points_maps_single_points_with_translation_test() {
+  let source = [svg_path.point(2.0, 3.0)]
+  let target = [svg_path.point(7.0, 11.0)]
+
+  let assert Ok(matrix) = congruency.points(source:, target:, tolerance:)
+
+  assert point_near(
+    transform.point(svg_path.point(2.0, 3.0), by: matrix),
+    svg_path.point(7.0, 11.0),
+  )
+}
+
+pub fn points_maps_collapsed_source_to_collapsed_target_test() {
+  let source = [
+    svg_path.point(2.0, 3.0),
+    svg_path.point(2.0, 3.0),
+    svg_path.point(2.0, 3.0),
+  ]
+  let target = [
+    svg_path.point(7.0, 11.0),
+    svg_path.point(7.0, 11.0),
+    svg_path.point(7.0, 11.0),
+  ]
+
+  assert result_is_ok(congruency.points(source:, target:, tolerance:))
+}
+
+pub fn points_rejects_collapsed_source_to_spread_target_test() {
+  let source = [
+    svg_path.point(2.0, 3.0),
+    svg_path.point(2.0, 3.0),
+    svg_path.point(2.0, 3.0),
+  ]
+  let target = [
+    svg_path.point(7.0, 11.0),
+    svg_path.point(8.0, 11.0),
+    svg_path.point(7.0, 12.0),
+  ]
+
+  assert congruency.points(source:, target:, tolerance:) == Error(Nil)
+}
+
+pub fn points_uses_farthest_source_pair_and_checks_all_points_test() {
+  let source = [
+    svg_path.point(0.0, 0.0),
+    svg_path.point(1.0, 1.0),
+    svg_path.point(10.0, 0.0),
+    svg_path.point(2.0, 3.0),
+  ]
+  let target = [
+    svg_path.point(5.0, 7.0),
+    svg_path.point(3.0, 9.0),
+    svg_path.point(5.0, 27.0),
+    svg_path.point(-1.0, 11.0),
+  ]
+  let wrong_order = [
+    svg_path.point(5.0, 7.0),
+    svg_path.point(-1.0, 11.0),
+    svg_path.point(5.0, 27.0),
+    svg_path.point(3.0, 9.0),
+  ]
+
+  assert result_is_ok(congruency.points(source:, target:, tolerance:))
+  assert congruency.points(source:, target: wrong_order, tolerance:)
+    == Error(Nil)
+}
+
 pub fn line_returns_transform_mapping_source_to_target_test() {
   let source =
     svg_path.Line(

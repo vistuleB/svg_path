@@ -1,9 +1,14 @@
 //// Directional congruency checks for path geometry.
 
 import gleam/float
+import gleam/list
 import svg_path
 import svg_path/ellipse
 import svg_path/transform
+
+type IndexedPoint {
+  IndexedPoint(source: svg_path.Point, target: svg_path.Point)
+}
 
 type PointPair {
   PointPair(
@@ -13,6 +18,63 @@ type PointPair {
     target_b: svg_path.Point,
     distance_squared: Float,
   )
+}
+
+/// Find a translation, rotation, and uniform scale mapping one ordered point
+/// list to another.
+///
+/// Empty lists and lists with different lengths return `Error(Nil)`. A
+/// one-point source list uses a translation. For two or more source points, the
+/// candidate transform is built from the farthest-apart source point pair and
+/// the target points at the corresponding indexes, then every mapped source
+/// point is checked against the corresponding target point.
+pub fn points(
+  source source: List(svg_path.Point),
+  target target: List(svg_path.Point),
+  tolerance tolerance: Float,
+) -> Result(transform.Matrix, Nil) {
+  case indexed_points(source, target, accumulated: []) {
+    Error(_) -> Error(Nil)
+    Ok([]) -> Error(Nil)
+    Ok([only]) -> {
+      let matrix =
+        transform.translate(
+          x: only.target.x -. only.source.x,
+          y: only.target.y -. only.source.y,
+        )
+
+      check_points([only], matrix, tolerance)
+    }
+    Ok([first, second, ..rest] as indexed) -> {
+      let pair = farthest_pair([first, second, ..rest])
+
+      case pair.distance_squared <=. 0.0 {
+        True -> {
+          let matrix =
+            transform.translate(
+              x: first.target.x -. first.source.x,
+              y: first.target.y -. first.source.y,
+            )
+
+          check_points(indexed, matrix, tolerance)
+        }
+        False -> {
+          case
+            transform.point_pair_map(
+              source_start: pair.source_a,
+              source_end: pair.source_b,
+              target_start: pair.target_a,
+              target_end: pair.target_b,
+              tolerance:,
+            )
+          {
+            Error(_) -> Error(Nil)
+            Ok(matrix) -> check_points(indexed, matrix, tolerance)
+          }
+        }
+      }
+    }
+  }
 }
 
 /// Find a translation, rotation, and uniform scale mapping one segment to
@@ -125,6 +187,79 @@ fn map_and_check(
         }
       }
     }
+  }
+}
+
+fn indexed_points(
+  source: List(svg_path.Point),
+  target: List(svg_path.Point),
+  accumulated accumulated: List(IndexedPoint),
+) -> Result(List(IndexedPoint), Nil) {
+  case source, target {
+    [], [] -> Ok(list.reverse(accumulated))
+    [source_first, ..source_rest], [target_first, ..target_rest] -> {
+      indexed_points(source_rest, target_rest, accumulated: [
+        IndexedPoint(source: source_first, target: target_first),
+        ..accumulated
+      ])
+    }
+    _, _ -> Error(Nil)
+  }
+}
+
+fn farthest_pair(points: List(IndexedPoint)) -> PointPair {
+  let assert [first, second, ..] = points
+  let initial = indexed_pair(first, second)
+
+  farthest_pair_outer(points, initial)
+}
+
+fn farthest_pair_outer(
+  points: List(IndexedPoint),
+  best: PointPair,
+) -> PointPair {
+  case points {
+    [] | [_] -> best
+    [first, ..rest] -> {
+      farthest_pair_outer(rest, farthest_pair_with(first, rest, best))
+    }
+  }
+}
+
+fn farthest_pair_with(
+  point: IndexedPoint,
+  rest: List(IndexedPoint),
+  best: PointPair,
+) -> PointPair {
+  case rest {
+    [] -> best
+    [first, ..remaining] -> {
+      farthest_pair_with(
+        point,
+        remaining,
+        farther(best, indexed_pair(point, first)),
+      )
+    }
+  }
+}
+
+fn indexed_pair(a: IndexedPoint, b: IndexedPoint) -> PointPair {
+  pair(a.source, b.source, a.target, b.target)
+}
+
+fn check_points(
+  points: List(IndexedPoint),
+  matrix: transform.Matrix,
+  tolerance: Float,
+) -> Result(transform.Matrix, Nil) {
+  case
+    list.all(points, fn(point) {
+      transform.point(point.source, by: matrix)
+      |> points_within_tolerance(point.target, tolerance)
+    })
+  {
+    True -> Ok(matrix)
+    False -> Error(Nil)
   }
 }
 
