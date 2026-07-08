@@ -929,8 +929,10 @@ pub fn sub_subpath(
 /// Open subpaths return the outer pieces as well as the pieces between split
 /// points, so an empty split list returns the original subpath. Open split
 /// points must be strictly increasing and cannot include the very start or very
-/// end. Closed split points must be cyclically increasing and distinct; empty
-/// split lists return an empty list.
+/// end. Closed split points must be cyclically increasing and distinct. For
+/// closed subpaths, an empty split list returns an empty list, and a single
+/// split point returns one open subpath traversing the whole loop from that
+/// point back to itself.
 pub fn sub_subpaths(
   subpath: Subpath,
   between points: List(SubpathParameter),
@@ -954,10 +956,8 @@ pub fn sub_subpaths(
       case points {
         [] -> Ok([])
         [point] ->
-          Error(InvalidSubpathInterval(
-            from: canonical_to_subpath_parameter(point),
-            to: canonical_to_subpath_parameter(point),
-          ))
+          open_closed_subpath_at_parameter(subpath, point)
+          |> result.map(fn(subpath) { [subpath] })
         _ -> {
           use _ <- result.try(validate_closed_subpath_split_points(points))
           sub_subpaths_between_pairs(subpath, cyclic_parameter_pairs(points))
@@ -3224,6 +3224,25 @@ fn sub_subpath_between(
         }
       }
   }
+}
+
+fn open_closed_subpath_at_parameter(
+  subpath: Subpath,
+  parameter: CanonicalSubpathParameter,
+) -> Result(Subpath, Error) {
+  let length = list.length(subpath.segments)
+  use before_wrap <- result.try(subpath_interval_segments(
+    subpath,
+    from: parameter,
+    to: subpath_end_parameter(length),
+  ))
+  use after_wrap <- result.try(subpath_interval_segments(
+    subpath,
+    from: subpath_start_parameter(),
+    to: parameter,
+  ))
+
+  open_subpath_with_segments(list.append(before_wrap, after_wrap), Strict)
 }
 
 fn subpath_interval_segments(
