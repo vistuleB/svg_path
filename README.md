@@ -142,6 +142,16 @@ the very start or very end, while closed subpath split lists must be distinct
 and cyclically increasing. Use `compare_subpath_parameters` for plain
 segment-index-then-`t` ordering.
 
+The subpath interval helpers have deliberately narrow roles:
+
+- `split_subpath` splits one open subpath into two open subpaths.
+- `sub_subpath` extracts one positive-length interval; closed subpaths may wrap.
+- `sub_subpaths` extracts every interval between a list of split points. For a
+  closed subpath, a single split point returns one open loop, while an empty
+  split list returns an empty list.
+- `open_at` is the convenience form for opening one closed subpath at one
+  `SubpathParameter`.
+
 Use `svg_path.subpath` to construct an open subpath from a nonempty list of
 contiguous segments, and `svg_path.set_closed` to change whether a subpath is
 topologically closed; note that `set_closed(_, True)` may result in an error,
@@ -660,6 +670,38 @@ convex_hull.points_hull(points)
 For mixed inputs, convert points to move-only subpaths, segments to one-segment
 subpaths, keep existing subpaths as-is, then collect them into a `Path` and use
 `path_hull`.
+
+### Congruency
+
+The `svg_path/congruency` module finds a translation, rotation, and uniform
+scale mapping one ordered piece of geometry to another:
+
+```gleam
+import svg_path
+import svg_path/congruency
+import svg_path/transform
+
+pub fn mapped(
+  source: svg_path.Path,
+  target: svg_path.Path,
+) -> Result(svg_path.Path, Nil) {
+  let assert Ok(matrix) =
+    congruency.path(source: source, target: target, tolerance: 0.000001)
+
+  transform.path(source, by: matrix)
+}
+```
+
+This is semantic congruency, not rendered-shape equivalence. Segment
+constructors must match, so a line and a visually identical degenerate curve do
+not match. Arc field details are checked after the point cloud transform is
+found.
+
+`congruency.subpath` and `congruency.path` compare ordered structure only. They
+ignore the subpath `closed` field, but they do not rotate or cycle closed
+subpaths, choose alternate starting segments, or reorder subpaths. If two
+closed loops start at different places, open or rebuild them with matching
+segment order before calling congruency.
 
 ## Parsing
 

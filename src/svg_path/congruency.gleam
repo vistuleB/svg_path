@@ -1,4 +1,13 @@
-//// Directional congruency checks for path geometry.
+//// Directional semantic congruency checks for path geometry.
+////
+//// Congruency means that a translation, rotation, and uniform scale maps the
+//// source geometry to the target geometry within a tolerance. Reflection and
+//// shear are not allowed.
+////
+//// These checks compare ordered semantic structure, not rendered shape. Segment
+//// constructors must match, subpaths and paths must have matching ordered
+//// structure, and closed subpaths are not cycled to search for another starting
+//// segment.
 
 import gleam/float
 import gleam/list
@@ -93,6 +102,10 @@ pub fn points(
 /// returned transform maps `source` to `target` within `tolerance` under this
 /// module's semantic segment comparison. `Error(Nil)` means no such transform
 /// was found.
+///
+/// Segment congruency is intentionally not visual-shape congruency. A segment
+/// only matches a target segment built with the same constructor, even if two
+/// different constructors would render the same geometry.
 pub fn segment(
   source source: svg_path.Segment,
   target target: svg_path.Segment,
@@ -126,7 +139,8 @@ pub fn segment(
 /// another subpath.
 ///
 /// The subpath `closed` field is ignored. Segment constructors must match in
-/// order; no cycling or alternate starting segment is attempted.
+/// order. Closed subpaths are not cycled, and no alternate starting segment is
+/// attempted.
 pub fn subpath(
   source source: svg_path.Subpath,
   target target: svg_path.Subpath,
@@ -155,8 +169,8 @@ pub fn subpath(
 /// path.
 ///
 /// Path subpaths must match in order. Each subpath comparison ignores the
-/// subpath `closed` field, and no cycling or alternate starting segment is
-/// attempted.
+/// subpath `closed` field. Closed subpaths are not cycled, no alternate
+/// starting segment is attempted, and subpaths are not reordered.
 pub fn path(
   source source: svg_path.Path,
   target target: svg_path.Path,
