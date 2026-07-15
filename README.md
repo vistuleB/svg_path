@@ -565,7 +565,8 @@ function. Use `segment_minimize_with` and `MinimizeOptions` to tune `samples`,
 ### Segment Distances
 
 Use `segment_distance` to measure the shortest distance from a point to a
-segment:
+segment. Use `segment_projection` when you also need the nearest segment
+parameter and point:
 
 ```gleam
 import svg_path
@@ -576,12 +577,23 @@ pub fn distance_to_segment(
 ) -> Result(Float, svg_path.Error) {
   svg_path.segment_distance(point, to: segment)
 }
+
+pub fn nearest_on_segment(
+  point: svg_path.Point,
+  segment: svg_path.Segment,
+) -> Result(svg_path.SegmentProjection, svg_path.Error) {
+  svg_path.segment_projection(point, to: segment)
+}
 ```
 
 Lines are measured exactly. Quadratic Beziers, cubic Beziers, and arcs are
 measured by finding stationary points of squared distance over the segment
-parameter range `0.0..1.0`. Use `segment_distance_with` and `DistanceOptions`
-to tune `samples`, `tolerance`, and `max_iterations`.
+parameter range `0.0..1.0`. Use `segment_distance_with`,
+`segment_projection_with`, and `DistanceOptions` to tune `samples`, `tolerance`,
+and `max_iterations`.
+
+For subpaths, `subpath_projection` returns the nearest point with a
+`SubpathParameter`.
 
 ### Segment Crossings
 

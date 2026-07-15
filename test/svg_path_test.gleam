@@ -690,6 +690,99 @@ pub fn segment_distance_returns_degenerate_arc_errors_test() {
     == Error(svg_path.DegenerateArc)
 }
 
+pub fn segment_projection_returns_line_parameter_point_and_distance_test() {
+  let line =
+    svg_path.Line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(10.0, 0.0),
+    )
+
+  let assert Ok(svg_path.SegmentProjection(t:, point:, distance:)) =
+    svg_path.segment_projection(svg_path.point(4.0, 3.0), to: line)
+
+  assert near(t, 0.4)
+  assert point_near(point, svg_path.point(4.0, 0.0))
+  assert near(distance, 3.0)
+}
+
+pub fn segment_projection_clamps_to_line_endpoint_test() {
+  let line =
+    svg_path.Line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(10.0, 0.0),
+    )
+
+  let assert Ok(svg_path.SegmentProjection(t:, point:, distance:)) =
+    svg_path.segment_projection(svg_path.point(13.0, 4.0), to: line)
+
+  assert near(t, 1.0)
+  assert point_near(point, svg_path.point(10.0, 0.0))
+  assert near(distance, 5.0)
+}
+
+pub fn segment_projection_returns_curve_parameter_point_and_distance_test() {
+  let curve =
+    svg_path.QuadraticBezier(
+      start: svg_path.point(0.0, 0.0),
+      control: svg_path.point(10.0, 20.0),
+      end: svg_path.point(20.0, 0.0),
+    )
+
+  let assert Ok(svg_path.SegmentProjection(t:, point:, distance:)) =
+    svg_path.segment_projection(svg_path.point(10.0, 15.0), to: curve)
+
+  assert near(t, 0.5)
+  assert point_near(point, svg_path.point(10.0, 10.0))
+  assert near(distance, 5.0)
+}
+
+pub fn segment_projection_with_rejects_invalid_options_test() {
+  let line =
+    svg_path.Line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(10.0, 0.0),
+    )
+
+  assert svg_path.segment_projection_with(
+      svg_path.point(5.0, 4.0),
+      to: line,
+      options: svg_path.DistanceOptions(
+        samples: 0,
+        tolerance: 0.000000001,
+        max_iterations: 100,
+      ),
+    )
+    == Error(svg_path.InvalidDistanceSamples(0))
+}
+
+pub fn subpath_projection_returns_subpath_parameter_point_and_distance_test() {
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.Line(
+        start: svg_path.point(0.0, 0.0),
+        end: svg_path.point(10.0, 0.0),
+      ),
+      svg_path.Line(
+        start: svg_path.point(10.0, 0.0),
+        end: svg_path.point(10.0, 20.0),
+      ),
+    ])
+
+  let assert Ok(svg_path.SubpathProjection(at:, point:, distance:)) =
+    svg_path.subpath_projection(svg_path.point(14.0, 8.0), to: subpath)
+
+  assert at == svg_path.SubpathParameter(segment_index: 1, t: 0.4)
+  assert point_near(point, svg_path.point(10.0, 8.0))
+  assert near(distance, 4.0)
+}
+
+pub fn subpath_projection_rejects_empty_subpaths_test() {
+  let subpath = svg_path.empty_subpath(at: svg_path.point(0.0, 0.0))
+
+  assert svg_path.subpath_projection(svg_path.point(1.0, 1.0), to: subpath)
+    == Error(svg_path.EmptySubpath)
+}
+
 pub fn segment_intersections_finds_line_crossing_test() {
   let left =
     svg_path.Line(

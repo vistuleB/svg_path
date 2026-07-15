@@ -143,6 +143,24 @@ pub type SegmentIntersection {
   SegmentIntersection(left_t: Float, right_t: Float, point: Point)
 }
 
+/// The nearest point on a segment to an input point.
+///
+/// When multiple segment points are equally nearest, this records one valid
+/// nearest point. The chosen point and parameter are not guaranteed to be
+/// canonical for ties or flat minima.
+pub type SegmentProjection {
+  SegmentProjection(t: Float, point: Point, distance: Float)
+}
+
+/// The nearest point on a subpath to an input point.
+///
+/// When multiple subpath points are equally nearest, this records one valid
+/// nearest point. The chosen point and parameter are not guaranteed to be
+/// canonical for ties or flat minima.
+pub type SubpathProjection {
+  SubpathProjection(at: SubpathParameter, point: Point, distance: Float)
+}
+
 type MinimizeCandidate {
   MinimizeCandidate(t: Float, value: Float)
 }
@@ -1332,20 +1350,73 @@ pub fn segment_distance_with(
   to segment: Segment,
   options options: DistanceOptions,
 ) -> Result(Float, Error) {
+  segment_projection_with(point, to: segment, options:)
+  |> result.map(fn(projection) { projection.distance })
+}
+
+/// Return the nearest point on a segment to an input point.
+pub fn segment_projection(
+  point: Point,
+  to segment: Segment,
+) -> Result(SegmentProjection, Error) {
+  segment_projection_with(
+    point,
+    to: segment,
+    options: default_distance_options(),
+  )
+}
+
+/// Return the nearest point on a segment to an input point using explicit options.
+pub fn segment_projection_with(
+  point: Point,
+  to segment: Segment,
+  options options: DistanceOptions,
+) -> Result(SegmentProjection, Error) {
   case validate_distance_options(options) {
     Error(error) -> Error(error)
     Ok(Nil) -> {
       case segment {
-        Line(start:, end:) -> Ok(point_to_line_distance(point, start, end))
+        Line(start:, end:) -> Ok(point_to_line_projection(point, start, end))
         QuadraticBezier(..) | CubicBezier(..) | Arc(..) -> {
           case distance_candidates(point, segment, options) {
             Error(error) -> Error(error)
             Ok(candidates) ->
-              smallest_segment_distance(point, segment, candidates)
+              smallest_segment_projection(point, segment, candidates)
           }
         }
       }
     }
+  }
+}
+
+/// Return the nearest point on a subpath to an input point.
+pub fn subpath_projection(
+  point: Point,
+  to subpath: Subpath,
+) -> Result(SubpathProjection, Error) {
+  subpath_projection_with(
+    point,
+    to: subpath,
+    options: default_distance_options(),
+  )
+}
+
+/// Return the nearest point on a subpath to an input point using explicit options.
+pub fn subpath_projection_with(
+  point: Point,
+  to subpath: Subpath,
+  options options: DistanceOptions,
+) -> Result(SubpathProjection, Error) {
+  case validate_distance_options(options) {
+    Error(error) -> Error(error)
+    Ok(Nil) ->
+      subpath_projection_loop(
+        point,
+        subpath.segments,
+        options,
+        index: 0,
+        best: None,
+      )
   }
 }
 
@@ -2216,70 +2287,138 @@ fn distance_stationary_value_unsafe(
   value
 }
 
-fn smallest_segment_distance(
+fn smallest_segment_projection(
   point: Point,
   segment: Segment,
   candidates: List(Float),
-) -> Result(Float, Error) {
+) -> Result(SegmentProjection, Error) {
   case candidates {
-    [] -> Ok(0.0)
-    [first, ..rest] -> {
-      case squared_segment_distance_at(point, segment, first) {
-        Error(error) -> Error(error)
-        Ok(first_distance) ->
-          smallest_segment_distance_loop(point, segment, rest, first_distance)
-      }
-    }
-  }
-}
+    [] -> {
+      use segment_point <- result.try(segment_point(segment, at: 0.0))
 
-fn smallest_segment_distance_loop(
-  point: Point,
-  segment: Segment,
-  candidates: List(Float),
-  smallest: Float,
-) -> Result(Float, Error) {
-  case candidates {
-    [] -> Ok(float_square_root(smallest))
+      Ok(SegmentProjection(
+        t: 0.0,
+        point: segment_point,
+        distance: distance(point, segment_point),
+      ))
+    }
     [first, ..rest] -> {
-      case squared_segment_distance_at(point, segment, first) {
+      case segment_projection_at(point, segment, first) {
         Error(error) -> Error(error)
-        Ok(distance) ->
-          smallest_segment_distance_loop(
+        Ok(first_projection) ->
+          smallest_segment_projection_loop(
             point,
             segment,
             rest,
-            float.min(smallest, distance),
+            first_projection,
           )
       }
     }
   }
 }
 
-fn squared_segment_distance_at(
+fn smallest_segment_projection_loop(
   point: Point,
   segment: Segment,
-  t: Float,
-) -> Result(Float, Error) {
-  case segment_point(segment, at: t) {
-    Error(error) -> Error(error)
-    Ok(segment_point) -> Ok(squared_distance(point, segment_point))
+  candidates: List(Float),
+  best: SegmentProjection,
+) -> Result(SegmentProjection, Error) {
+  case candidates {
+    [] -> Ok(best)
+    [first, ..rest] -> {
+      case segment_projection_at(point, segment, first) {
+        Error(error) -> Error(error)
+        Ok(projection) -> {
+          let best = case projection.distance <. best.distance {
+            True -> projection
+            False -> best
+          }
+
+          smallest_segment_projection_loop(point, segment, rest, best)
+        }
+      }
+    }
   }
 }
 
-fn point_to_line_distance(point: Point, start: Point, end: Point) -> Float {
+fn segment_projection_at(
+  point: Point,
+  segment: Segment,
+  t: Float,
+) -> Result(SegmentProjection, Error) {
+  case segment_point(segment, at: t) {
+    Error(error) -> Error(error)
+    Ok(segment_point) ->
+      Ok(SegmentProjection(
+        t:,
+        point: segment_point,
+        distance: distance(point, segment_point),
+      ))
+  }
+}
+
+fn point_to_line_projection(
+  point: Point,
+  start: Point,
+  end: Point,
+) -> SegmentProjection {
   let line = point_difference(end, start)
   let length_squared = dot(line, line)
 
   case length_squared == 0.0 {
-    True -> distance(point, start)
+    True ->
+      SegmentProjection(t: 0.0, point: start, distance: distance(point, start))
     False -> {
       let progress =
         dot(point_difference(point, start), line) /. length_squared
         |> clamp01
       let projection = offset(start, line, progress)
 
-      distance(point, projection)
+      SegmentProjection(
+        t: progress,
+        point: projection,
+        distance: distance(point, projection),
+      )
+    }
+  }
+}
+
+fn subpath_projection_loop(
+  point: Point,
+  segments: List(Segment),
+  options: DistanceOptions,
+  index index: Int,
+  best best: Option(SubpathProjection),
+) -> Result(SubpathProjection, Error) {
+  case segments {
+    [] ->
+      case best {
+        None -> Error(EmptySubpath)
+        Some(projection) -> Ok(projection)
+      }
+    [segment, ..rest] -> {
+      use projection <- result.try(segment_projection_with(
+        point,
+        to: segment,
+        options:,
+      ))
+      let subpath_projection =
+        SubpathProjection(
+          at: SubpathParameter(segment_index: index, t: projection.t),
+          point: projection.point,
+          distance: projection.distance,
+        )
+      let best = case best {
+        None -> Some(subpath_projection)
+        Some(best) -> {
+          case subpath_projection.distance <. best.distance {
+            True -> Some(subpath_projection)
+            False -> Some(best)
+          }
+        }
+      }
+
+      subpath_projection_loop(point, rest, options, index: index + 1, best:)
     }
   }
 }
@@ -2301,12 +2440,6 @@ fn offset(origin: Point, direction: Point, distance: Float) -> Point {
 
 fn dot(a: Point, b: Point) -> Float {
   a.x *. b.x +. a.y *. b.y
-}
-
-fn squared_distance(a: Point, b: Point) -> Float {
-  let dx = a.x -. b.x
-  let dy = a.y -. b.y
-  dx *. dx +. dy *. dy
 }
 
 fn validate_intersection_options(
