@@ -41,6 +41,27 @@ pub fn prepare_for_arc_averse_consumer(
 }
 ```
 
+## Module Map
+
+- `svg_path`: core `Path`, `Subpath`, `Segment`, and `Point` types, plus
+  construction, editing, geometry, splitting, distances, and intersections.
+- `svg_path/parse` and `svg_path/serialize`: SVG path-data parsing and
+  serialization.
+- `svg_path/transform`: SVG-style affine transform matrices and geometry
+  transforms.
+- `svg_path/transform/parse` and `svg_path/transform/serialize`: SVG
+  `transform` attribute parsing and serialization.
+- `svg_path/ellipse`: endpoint and center arc data, arc conversion, evaluation,
+  splitting, bounding boxes, and cubic approximation.
+- `svg_path/congruency`: semantic ordered congruency checks under translation,
+  rotation, and uniform scale.
+- `svg_path/convex_hull`: convex hulls for segments, subpaths, paths, and point
+  lists.
+- `svg_path/basic_shapes`: conversions from SVG basic shapes to paths.
+- `svg_path/svg`: small debugging helper for writing complete SVG documents.
+- `svg_path/inspect`: stable, non-SVG inspection strings for debugging and
+  tests.
+
 ## Core Model
 
 The root `svg_path` module represents SVG path data with `Path` and `Subpath`
