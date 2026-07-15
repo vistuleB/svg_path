@@ -792,6 +792,126 @@ pub fn subpath_length_returns_zero_for_empty_subpath_test() {
   assert svg_path.subpath_length(subpath) == Ok(0.0)
 }
 
+pub fn segment_parameter_at_length_measures_line_exactly_test() {
+  let line =
+    svg_path.Line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(10.0, 0.0),
+    )
+
+  assert svg_path.segment_parameter_at_length(line, distance: 4.0) == Ok(0.4)
+}
+
+pub fn segment_point_at_length_evaluates_line_test() {
+  let line =
+    svg_path.Line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(10.0, 0.0),
+    )
+
+  let assert Ok(point) = svg_path.segment_point_at_length(line, distance: 4.0)
+
+  assert point_near(point, svg_path.point(4.0, 0.0))
+}
+
+pub fn segment_parameter_at_length_inverts_symmetric_curve_test() {
+  let curve =
+    svg_path.QuadraticBezier(
+      start: svg_path.point(0.0, 0.0),
+      control: svg_path.point(10.0, 20.0),
+      end: svg_path.point(20.0, 0.0),
+    )
+
+  let assert Ok(length) = svg_path.segment_length(curve)
+  let assert Ok(t) =
+    svg_path.segment_parameter_at_length(curve, distance: length /. 2.0)
+
+  assert near(t, 0.5)
+}
+
+pub fn segment_point_at_length_evaluates_arc_test() {
+  let arc =
+    svg_path.Arc(
+      start: svg_path.point(0.0, 0.0),
+      radius: svg_path.point(10.0, 10.0),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: True,
+      end: svg_path.point(20.0, 0.0),
+    )
+
+  let assert Ok(length) = svg_path.segment_length(arc)
+  let assert Ok(point) =
+    svg_path.segment_point_at_length(arc, distance: length /. 2.0)
+  let assert Ok(derivative) =
+    svg_path.segment_derivative_at_length(arc, distance: length /. 2.0)
+
+  assert point_near(point, svg_path.point(10.0, -10.0))
+  assert derivative.x >. 0.0
+  assert float.absolute_value(derivative.y) <. 0.000001
+}
+
+pub fn segment_parameter_at_length_rejects_invalid_distances_test() {
+  let line =
+    svg_path.Line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(10.0, 0.0),
+    )
+
+  assert svg_path.segment_parameter_at_length(line, distance: -1.0)
+    == Error(svg_path.InvalidLengthDistance(distance: -1.0, length: 10.0))
+  assert svg_path.segment_parameter_at_length(line, distance: 11.0)
+    == Error(svg_path.InvalidLengthDistance(distance: 11.0, length: 10.0))
+}
+
+pub fn subpath_parameter_at_length_returns_public_parameter_test() {
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.Line(
+        start: svg_path.point(0.0, 0.0),
+        end: svg_path.point(3.0, 4.0),
+      ),
+      svg_path.Line(
+        start: svg_path.point(3.0, 4.0),
+        end: svg_path.point(3.0, 16.0),
+      ),
+    ])
+
+  assert svg_path.subpath_parameter_at_length(subpath, distance: 11.0)
+    == Ok(svg_path.SubpathParameter(segment_index: 1, t: 0.5))
+  assert svg_path.subpath_parameter_at_length(subpath, distance: 17.0)
+    == Ok(svg_path.SubpathParameter(segment_index: 1, t: 1.0))
+}
+
+pub fn subpath_point_and_derivative_at_length_evaluate_parameter_test() {
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.Line(
+        start: svg_path.point(0.0, 0.0),
+        end: svg_path.point(3.0, 4.0),
+      ),
+      svg_path.Line(
+        start: svg_path.point(3.0, 4.0),
+        end: svg_path.point(3.0, 16.0),
+      ),
+    ])
+
+  let assert Ok(point) =
+    svg_path.subpath_point_at_length(subpath, distance: 11.0)
+  let assert Ok(derivative) =
+    svg_path.subpath_derivative_at_length(subpath, distance: 11.0)
+
+  assert point_near(point, svg_path.point(3.0, 10.0))
+  assert point_near(derivative, svg_path.point(0.0, 12.0))
+}
+
+pub fn subpath_parameter_at_length_rejects_empty_subpaths_test() {
+  let subpath = svg_path.empty_subpath(at: svg_path.point(0.0, 0.0))
+
+  assert svg_path.subpath_parameter_at_length(subpath, distance: 0.0)
+    == Error(svg_path.EmptySubpath)
+}
+
 pub fn segment_projection_returns_line_parameter_point_and_distance_test() {
   let line =
     svg_path.Line(

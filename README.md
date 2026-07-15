@@ -581,6 +581,22 @@ approximated by adaptive integration of segment speed. Use
 `segment_length_with`, `subpath_length_with`, and `LengthOptions` to tune
 `tolerance` and `max_depth`. Empty subpaths have length `0.0`.
 
+Arc-length lookup helpers convert true traveled distances back to ordinary
+parameters and evaluated geometry:
+
+```gleam
+svg_path.segment_parameter_at_length(segment, distance: 12.0)
+svg_path.segment_point_at_length(segment, distance: 12.0)
+svg_path.segment_derivative_at_length(segment, distance: 12.0)
+
+svg_path.subpath_parameter_at_length(subpath, distance: 25.0)
+svg_path.subpath_point_at_length(subpath, distance: 25.0)
+svg_path.subpath_derivative_at_length(subpath, distance: 25.0)
+```
+
+These distances are path coordinate distances, not normalized fractions. The
+subpath parameter lookup returns an ordinary public `SubpathParameter`.
+
 ### Segment Distances
 
 Use `segment_distance` to measure the shortest distance from a point to a

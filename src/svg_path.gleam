@@ -336,6 +336,9 @@ pub type Error {
   /// A length approximation could not be refined within the recursion limit.
   LengthMaxDepthReached(estimate: Float, error: Float)
 
+  /// A requested arc-length distance was outside `0.0..length`.
+  InvalidLengthDistance(distance: Float, length: Float)
+
   /// The number of distance scan samples must be greater than zero.
   InvalidDistanceSamples(samples: Int)
 
@@ -1384,6 +1387,88 @@ pub fn segment_length_with(
   }
 }
 
+/// Return the segment parameter at a traveled distance from the segment start.
+///
+/// The distance is measured in path coordinate units, not normalized. Lines are
+/// inverted exactly. Quadratic Beziers, cubic Beziers, and arcs are inverted
+/// numerically using the same length options as `segment_length_with`.
+pub fn segment_parameter_at_length(
+  segment: Segment,
+  distance distance: Float,
+) -> Result(Float, Error) {
+  segment_parameter_at_length_with(
+    segment,
+    distance:,
+    options: default_length_options(),
+  )
+}
+
+/// Return the segment parameter at a traveled distance using explicit options.
+pub fn segment_parameter_at_length_with(
+  segment: Segment,
+  distance distance: Float,
+  options options: LengthOptions,
+) -> Result(Float, Error) {
+  use length <- result.try(segment_length_with(segment, options:))
+  case validate_length_distance(distance, length:) {
+    Error(error) -> Error(error)
+    Ok(Nil) ->
+      segment_parameter_at_valid_length(segment, distance, length, options)
+  }
+}
+
+/// Return the segment point at a traveled distance from the segment start.
+pub fn segment_point_at_length(
+  segment: Segment,
+  distance distance: Float,
+) -> Result(Point, Error) {
+  segment_point_at_length_with(
+    segment,
+    distance:,
+    options: default_length_options(),
+  )
+}
+
+/// Return the segment point at a traveled distance using explicit options.
+pub fn segment_point_at_length_with(
+  segment: Segment,
+  distance distance: Float,
+  options options: LengthOptions,
+) -> Result(Point, Error) {
+  use t <- result.try(segment_parameter_at_length_with(
+    segment,
+    distance:,
+    options:,
+  ))
+  segment_point(segment, at: t)
+}
+
+/// Return the segment derivative at a traveled distance from the segment start.
+pub fn segment_derivative_at_length(
+  segment: Segment,
+  distance distance: Float,
+) -> Result(Point, Error) {
+  segment_derivative_at_length_with(
+    segment,
+    distance:,
+    options: default_length_options(),
+  )
+}
+
+/// Return the segment derivative at a traveled distance using explicit options.
+pub fn segment_derivative_at_length_with(
+  segment: Segment,
+  distance distance: Float,
+  options options: LengthOptions,
+) -> Result(Point, Error) {
+  use t <- result.try(segment_parameter_at_length_with(
+    segment,
+    distance:,
+    options:,
+  ))
+  segment_derivative(segment, at: t)
+}
+
 /// Return the approximate length of a subpath.
 ///
 /// Empty subpaths have length `0.0`.
@@ -1400,6 +1485,107 @@ pub fn subpath_length_with(
     Error(error) -> Error(error)
     Ok(Nil) -> subpath_length_loop(subpath.segments, options, total: 0.0)
   }
+}
+
+/// Return the subpath parameter at a traveled distance from the subpath start.
+///
+/// The distance is measured in path coordinate units, not normalized. The
+/// returned value is an ordinary public `SubpathParameter`.
+pub fn subpath_parameter_at_length(
+  subpath: Subpath,
+  distance distance: Float,
+) -> Result(SubpathParameter, Error) {
+  subpath_parameter_at_length_with(
+    subpath,
+    distance:,
+    options: default_length_options(),
+  )
+}
+
+/// Return the subpath parameter at a traveled distance using explicit options.
+pub fn subpath_parameter_at_length_with(
+  subpath: Subpath,
+  distance distance: Float,
+  options options: LengthOptions,
+) -> Result(SubpathParameter, Error) {
+  use length <- result.try(subpath_length_with(subpath, options:))
+  case subpath.segments {
+    [] -> Error(EmptySubpath)
+    _ -> {
+      use _ <- result.try(validate_length_distance(distance, length:))
+      case distance == 0.0 {
+        True -> Ok(SubpathParameter(segment_index: 0, t: 0.0))
+        False ->
+          case distance == length {
+            True ->
+              Ok(
+                canonical_to_subpath_parameter(
+                  subpath_end_parameter(list.length(subpath.segments)),
+                ),
+              )
+            False ->
+              subpath_parameter_at_valid_length_loop(
+                subpath.segments,
+                distance:,
+                options:,
+                index: 0,
+              )
+          }
+      }
+    }
+  }
+}
+
+/// Return the subpath point at a traveled distance from the subpath start.
+pub fn subpath_point_at_length(
+  subpath: Subpath,
+  distance distance: Float,
+) -> Result(Point, Error) {
+  subpath_point_at_length_with(
+    subpath,
+    distance:,
+    options: default_length_options(),
+  )
+}
+
+/// Return the subpath point at a traveled distance using explicit options.
+pub fn subpath_point_at_length_with(
+  subpath: Subpath,
+  distance distance: Float,
+  options options: LengthOptions,
+) -> Result(Point, Error) {
+  use parameter <- result.try(subpath_parameter_at_length_with(
+    subpath,
+    distance:,
+    options:,
+  ))
+  subpath_point(subpath, at: parameter)
+}
+
+/// Return the subpath derivative at a traveled distance from the subpath start.
+pub fn subpath_derivative_at_length(
+  subpath: Subpath,
+  distance distance: Float,
+) -> Result(Point, Error) {
+  subpath_derivative_at_length_with(
+    subpath,
+    distance:,
+    options: default_length_options(),
+  )
+}
+
+/// Return the subpath derivative at a traveled distance using explicit options.
+pub fn subpath_derivative_at_length_with(
+  subpath: Subpath,
+  distance distance: Float,
+  options options: LengthOptions,
+) -> Result(Point, Error) {
+  use parameter <- result.try(subpath_parameter_at_length_with(
+    subpath,
+    distance:,
+    options:,
+  ))
+  subpath_derivative(subpath, at: parameter)
 }
 
 /// Return the shortest distance from a point to a segment.
@@ -2197,15 +2383,107 @@ fn validate_length_options(options: LengthOptions) -> Result(Nil, Error) {
   }
 }
 
+fn validate_length_distance(
+  distance distance: Float,
+  length length: Float,
+) -> Result(Nil, Error) {
+  case distance <. 0.0 || distance >. length {
+    True -> Error(InvalidLengthDistance(distance:, length:))
+    False -> Ok(Nil)
+  }
+}
+
+fn segment_parameter_at_valid_length(
+  segment: Segment,
+  distance distance: Float,
+  length length: Float,
+  options options: LengthOptions,
+) -> Result(Float, Error) {
+  case distance == 0.0 {
+    True -> Ok(0.0)
+    False ->
+      case distance == length {
+        True -> Ok(1.0)
+        False ->
+          case segment {
+            Line(..) -> Ok(distance /. length)
+            QuadraticBezier(..) | CubicBezier(..) | Arc(..) ->
+              segment_parameter_at_valid_length_loop(
+                segment,
+                distance:,
+                options:,
+                low: 0.0,
+                high: 1.0,
+                iterations: 64,
+              )
+          }
+      }
+  }
+}
+
+fn segment_parameter_at_valid_length_loop(
+  segment: Segment,
+  distance distance: Float,
+  options options: LengthOptions,
+  low low: Float,
+  high high: Float,
+  iterations iterations: Int,
+) -> Result(Float, Error) {
+  let t = { low +. high } /. 2.0
+  use length <- result.try(adaptive_segment_length_between(
+    segment,
+    from: 0.0,
+    to: t,
+    options:,
+  ))
+
+  case
+    float.absolute_value(length -. distance) <=. options.tolerance
+    || iterations <= 0
+  {
+    True -> Ok(t)
+    False ->
+      case length <. distance {
+        True ->
+          segment_parameter_at_valid_length_loop(
+            segment,
+            distance:,
+            options:,
+            low: t,
+            high:,
+            iterations: iterations - 1,
+          )
+        False ->
+          segment_parameter_at_valid_length_loop(
+            segment,
+            distance:,
+            options:,
+            low:,
+            high: t,
+            iterations: iterations - 1,
+          )
+      }
+  }
+}
+
 fn adaptive_segment_length(
   segment: Segment,
   options: LengthOptions,
 ) -> Result(Float, Error) {
-  use whole <- result.try(length_simpson(segment, from: 0.0, to: 1.0))
+  adaptive_segment_length_between(segment, from: 0.0, to: 1.0, options:)
+}
+
+fn adaptive_segment_length_between(
+  segment: Segment,
+  from from: Float,
+  to to: Float,
+  options options: LengthOptions,
+) -> Result(Float, Error) {
+  use whole <- result.try(length_simpson(segment, from:, to:))
   adaptive_segment_length_loop(
     segment,
-    from: 0.0,
-    to: 1.0,
+    from:,
+    to:,
     whole:,
     tolerance: options.tolerance,
     depth: options.max_depth,
@@ -2286,6 +2564,38 @@ fn subpath_length_loop(
     [first, ..rest] -> {
       use length <- result.try(segment_length_with(first, options:))
       subpath_length_loop(rest, options, total: total +. length)
+    }
+  }
+}
+
+fn subpath_parameter_at_valid_length_loop(
+  segments: List(Segment),
+  distance distance: Float,
+  options options: LengthOptions,
+  index index: Int,
+) -> Result(SubpathParameter, Error) {
+  case segments {
+    [] -> Error(EmptySubpath)
+    [first, ..rest] -> {
+      use length <- result.try(segment_length_with(first, options:))
+      case distance <=. length {
+        True -> {
+          use t <- result.try(segment_parameter_at_valid_length(
+            first,
+            distance:,
+            length:,
+            options:,
+          ))
+          Ok(SubpathParameter(segment_index: index, t:))
+        }
+        False ->
+          subpath_parameter_at_valid_length_loop(
+            rest,
+            distance: distance -. length,
+            options:,
+            index: index + 1,
+          )
+      }
     }
   }
 }
