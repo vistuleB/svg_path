@@ -562,6 +562,25 @@ with golden-section search, so it does not require a derivative of the measured
 function. Use `segment_minimize_with` and `MinimizeOptions` to tune `samples`,
 `tolerance`, and `max_iterations`.
 
+### Segment and Subpath Lengths
+
+Use `segment_length` or `subpath_length` to measure path geometry:
+
+```gleam
+import svg_path
+
+pub fn outline_length(
+  subpath: svg_path.Subpath,
+) -> Result(Float, svg_path.Error) {
+  svg_path.subpath_length(subpath)
+}
+```
+
+Lines are measured exactly. Quadratic Beziers, cubic Beziers, and arcs are
+approximated by adaptive integration of segment speed. Use
+`segment_length_with`, `subpath_length_with`, and `LengthOptions` to tune
+`tolerance` and `max_depth`. Empty subpaths have length `0.0`.
+
 ### Segment Distances
 
 Use `segment_distance` to measure the shortest distance from a point to a

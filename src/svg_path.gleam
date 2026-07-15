@@ -31,6 +31,10 @@ const default_minimize_max_iterations = 100
 
 const golden_section_ratio = 0.6180339887498949
 
+const default_length_tolerance = 0.000000001
+
+const default_length_max_depth = 20
+
 const default_distance_samples = 100
 
 const default_distance_tolerance = 0.000000001
@@ -126,6 +130,11 @@ pub type CrossingOptions {
 /// Options for minimizing a scalar function along a segment.
 pub type MinimizeOptions {
   MinimizeOptions(samples: Int, tolerance: Float, max_iterations: Int)
+}
+
+/// Options for approximating the length of a segment or subpath.
+pub type LengthOptions {
+  LengthOptions(tolerance: Float, max_depth: Int)
 }
 
 /// Options for finding the distance from a point to a segment.
@@ -318,6 +327,15 @@ pub type Error {
   /// A minimization window could not be refined within the iteration limit.
   MinimizeMaxIterationsReached(estimate: Float, value: Float)
 
+  /// The length approximation tolerance must be greater than zero.
+  InvalidLengthTolerance(tolerance: Float)
+
+  /// The length approximation recursion limit must be greater than zero.
+  InvalidLengthMaxDepth(max_depth: Int)
+
+  /// A length approximation could not be refined within the recursion limit.
+  LengthMaxDepthReached(estimate: Float, error: Float)
+
   /// The number of distance scan samples must be greater than zero.
   InvalidDistanceSamples(samples: Int)
 
@@ -369,6 +387,14 @@ pub fn default_minimize_options() -> MinimizeOptions {
     samples: default_minimize_samples,
     tolerance: default_minimize_tolerance,
     max_iterations: default_minimize_max_iterations,
+  )
+}
+
+/// Return the default options for segment and subpath length approximation.
+pub fn default_length_options() -> LengthOptions {
+  LengthOptions(
+    tolerance: default_length_tolerance,
+    max_depth: default_length_max_depth,
   )
 }
 
@@ -1333,6 +1359,49 @@ pub fn segment_minimize_with(
   }
 }
 
+/// Return the approximate length of a segment.
+///
+/// Lines are measured exactly. Quadratic Beziers, cubic Beziers, and arcs are
+/// approximated by adaptive Simpson integration of segment speed.
+pub fn segment_length(segment: Segment) -> Result(Float, Error) {
+  segment_length_with(segment, options: default_length_options())
+}
+
+/// Return the approximate length of a segment using explicit options.
+pub fn segment_length_with(
+  segment: Segment,
+  options options: LengthOptions,
+) -> Result(Float, Error) {
+  case validate_length_options(options) {
+    Error(error) -> Error(error)
+    Ok(Nil) -> {
+      case segment {
+        Line(start:, end:) -> Ok(distance(start, end))
+        QuadraticBezier(..) | CubicBezier(..) | Arc(..) ->
+          adaptive_segment_length(segment, options)
+      }
+    }
+  }
+}
+
+/// Return the approximate length of a subpath.
+///
+/// Empty subpaths have length `0.0`.
+pub fn subpath_length(subpath: Subpath) -> Result(Float, Error) {
+  subpath_length_with(subpath, options: default_length_options())
+}
+
+/// Return the approximate length of a subpath using explicit options.
+pub fn subpath_length_with(
+  subpath: Subpath,
+  options options: LengthOptions,
+) -> Result(Float, Error) {
+  case validate_length_options(options) {
+    Error(error) -> Error(error)
+    Ok(Nil) -> subpath_length_loop(subpath.segments, options, total: 0.0)
+  }
+}
+
 /// Return the shortest distance from a point to a segment.
 ///
 /// Lines are measured exactly. Quadratic Beziers, cubic Beziers, and arcs are
@@ -2112,6 +2181,111 @@ fn validate_distance_options(options: DistanceOptions) -> Result(Nil, Error) {
           }
         }
       }
+    }
+  }
+}
+
+fn validate_length_options(options: LengthOptions) -> Result(Nil, Error) {
+  case options.tolerance <=. 0.0 {
+    True -> Error(InvalidLengthTolerance(options.tolerance))
+    False -> {
+      case options.max_depth <= 0 {
+        True -> Error(InvalidLengthMaxDepth(options.max_depth))
+        False -> Ok(Nil)
+      }
+    }
+  }
+}
+
+fn adaptive_segment_length(
+  segment: Segment,
+  options: LengthOptions,
+) -> Result(Float, Error) {
+  use whole <- result.try(length_simpson(segment, from: 0.0, to: 1.0))
+  adaptive_segment_length_loop(
+    segment,
+    from: 0.0,
+    to: 1.0,
+    whole:,
+    tolerance: options.tolerance,
+    depth: options.max_depth,
+  )
+}
+
+fn adaptive_segment_length_loop(
+  segment: Segment,
+  from from: Float,
+  to to: Float,
+  whole whole: Float,
+  tolerance tolerance: Float,
+  depth depth: Int,
+) -> Result(Float, Error) {
+  let middle = { from +. to } /. 2.0
+  use left <- result.try(length_simpson(segment, from:, to: middle))
+  use right <- result.try(length_simpson(segment, from: middle, to:))
+  let estimate = left +. right
+  let error = float.absolute_value(estimate -. whole)
+
+  case error <=. 15.0 *. tolerance {
+    True -> Ok(estimate +. { estimate -. whole } /. 15.0)
+    False -> {
+      case depth <= 1 {
+        True -> Error(LengthMaxDepthReached(estimate: estimate, error:))
+        False -> {
+          use refined_left <- result.try(adaptive_segment_length_loop(
+            segment,
+            from:,
+            to: middle,
+            whole: left,
+            tolerance: tolerance /. 2.0,
+            depth: depth - 1,
+          ))
+          use refined_right <- result.try(adaptive_segment_length_loop(
+            segment,
+            from: middle,
+            to:,
+            whole: right,
+            tolerance: tolerance /. 2.0,
+            depth: depth - 1,
+          ))
+
+          Ok(refined_left +. refined_right)
+        }
+      }
+    }
+  }
+}
+
+fn length_simpson(
+  segment: Segment,
+  from from: Float,
+  to to: Float,
+) -> Result(Float, Error) {
+  let middle = { from +. to } /. 2.0
+  use start <- result.try(segment_speed(segment, at: from))
+  use mid <- result.try(segment_speed(segment, at: middle))
+  use end <- result.try(segment_speed(segment, at: to))
+
+  Ok({ to -. from } *. { start +. 4.0 *. mid +. end } /. 6.0)
+}
+
+fn segment_speed(segment: Segment, at t: Float) -> Result(Float, Error) {
+  case segment_derivative(segment, at: t) {
+    Error(error) -> Error(error)
+    Ok(derivative) -> distance(point(0.0, 0.0), derivative) |> Ok
+  }
+}
+
+fn subpath_length_loop(
+  segments: List(Segment),
+  options: LengthOptions,
+  total total: Float,
+) -> Result(Float, Error) {
+  case segments {
+    [] -> Ok(total)
+    [first, ..rest] -> {
+      use length <- result.try(segment_length_with(first, options:))
+      subpath_length_loop(rest, options, total: total +. length)
     }
   }
 }

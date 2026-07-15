@@ -1,6 +1,8 @@
 import gleam/float
+import gleam/int
 import gleam/list
 import gleam/order
+import gleam/result
 import gleeunit
 import svg_path
 import svg_path/ellipse
@@ -688,6 +690,106 @@ pub fn segment_distance_returns_degenerate_arc_errors_test() {
 
   assert svg_path.segment_distance(svg_path.point(10.0, 0.0), to: segment)
     == Error(svg_path.DegenerateArc)
+}
+
+pub fn segment_length_measures_line_exactly_test() {
+  let line =
+    svg_path.Line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(3.0, 4.0),
+    )
+
+  let assert Ok(length) = svg_path.segment_length(line)
+
+  assert near(length, 5.0)
+}
+
+pub fn segment_length_approximates_quadratic_curve_test() {
+  let curve =
+    svg_path.QuadraticBezier(
+      start: svg_path.point(0.0, 0.0),
+      control: svg_path.point(10.0, 20.0),
+      end: svg_path.point(20.0, 0.0),
+    )
+
+  let assert Ok(length) = svg_path.segment_length(curve)
+
+  assert length >. 20.0
+  assert length <. 40.0
+}
+
+pub fn segment_length_matches_sampled_curve_reference_test() {
+  let curve =
+    svg_path.CubicBezier(
+      start: svg_path.point(0.0, 0.0),
+      control1: svg_path.point(0.0, 30.0),
+      control2: svg_path.point(40.0, -10.0),
+      end: svg_path.point(40.0, 20.0),
+    )
+
+  let assert Ok(length) = svg_path.segment_length(curve)
+  let assert Ok(reference) = sampled_segment_length(curve, samples: 1000)
+
+  assert float.absolute_value(length -. reference) <. 0.001
+}
+
+pub fn segment_length_approximates_arc_test() {
+  let arc =
+    svg_path.Arc(
+      start: svg_path.point(0.0, 0.0),
+      radius: svg_path.point(10.0, 10.0),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: True,
+      end: svg_path.point(20.0, 0.0),
+    )
+
+  let assert Ok(length) = svg_path.segment_length(arc)
+
+  assert float.absolute_value(length -. 31.41592653589793) <. 0.01
+}
+
+pub fn segment_length_with_rejects_invalid_options_test() {
+  let line =
+    svg_path.Line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(10.0, 0.0),
+    )
+
+  assert svg_path.segment_length_with(
+      line,
+      options: svg_path.LengthOptions(tolerance: 0.0, max_depth: 20),
+    )
+    == Error(svg_path.InvalidLengthTolerance(0.0))
+  assert svg_path.segment_length_with(
+      line,
+      options: svg_path.LengthOptions(tolerance: 0.000000001, max_depth: 0),
+    )
+    == Error(svg_path.InvalidLengthMaxDepth(0))
+}
+
+pub fn subpath_length_sums_segment_lengths_test() {
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.Line(
+        start: svg_path.point(0.0, 0.0),
+        end: svg_path.point(3.0, 4.0),
+      ),
+      svg_path.Line(
+        start: svg_path.point(3.0, 4.0),
+        end: svg_path.point(8.0, 16.0),
+      ),
+    ])
+
+  let assert Ok(length) = svg_path.subpath_length(subpath)
+
+  assert near(length, 18.0)
+}
+
+pub fn subpath_length_returns_zero_for_empty_subpath_test() {
+  let subpath = svg_path.empty_subpath(at: svg_path.point(0.0, 0.0))
+
+  assert svg_path.subpath_length(subpath) == Ok(0.0)
 }
 
 pub fn segment_projection_returns_line_parameter_point_and_distance_test() {
@@ -3932,6 +4034,53 @@ fn continuous_segments(segments: List(svg_path.Segment)) -> Bool {
 
 fn point_near(a: svg_path.Point, b: svg_path.Point) -> Bool {
   near(a.x, b.x) && near(a.y, b.y)
+}
+
+fn sampled_segment_length(
+  segment: svg_path.Segment,
+  samples samples: Int,
+) -> Result(Float, svg_path.Error) {
+  use start <- result.try(svg_path.segment_point(segment, at: 0.0))
+
+  sampled_segment_length_loop(
+    segment,
+    samples,
+    index: 1,
+    previous: start,
+    total: 0.0,
+  )
+}
+
+fn sampled_segment_length_loop(
+  segment: svg_path.Segment,
+  samples: Int,
+  index index: Int,
+  previous previous: svg_path.Point,
+  total total: Float,
+) -> Result(Float, svg_path.Error) {
+  case index > samples {
+    True -> Ok(total)
+    False -> {
+      let t = int.to_float(index) /. int.to_float(samples)
+      use point <- result.try(svg_path.segment_point(segment, at: t))
+
+      sampled_segment_length_loop(
+        segment,
+        samples,
+        index: index + 1,
+        previous: point,
+        total: total +. point_distance(previous, point),
+      )
+    }
+  }
+}
+
+fn point_distance(a: svg_path.Point, b: svg_path.Point) -> Float {
+  let assert Ok(length) =
+    { { a.x -. b.x } *. { a.x -. b.x } +. { a.y -. b.y } *. { a.y -. b.y } }
+    |> float.square_root
+
+  length
 }
 
 fn bbox_near(
