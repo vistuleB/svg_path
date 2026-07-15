@@ -270,11 +270,6 @@ pub type Error {
   /// `start` is greater than the subpath length.
   InvalidSplice(start: Int, delete: Int, length: Int)
 
-  /// An open index was outside the valid range for a closed subpath.
-  ///
-  /// `index` must be between `-length` and `length`, inclusive.
-  InvalidOpenIndex(index: Int, length: Int)
-
   /// A subpath parameter was outside the valid segment index or `0.0..1.0` range.
   InvalidSubpathParameter(segment_index: Int, t: Float, length: Int)
 
@@ -823,32 +818,22 @@ pub fn assert_set_closed_with(
   }
 }
 
-/// Break open a closed subpath at the given segment index.
+/// Break open a closed subpath at the given subpath parameter.
 ///
-/// The index denotes the segment that will become the first segment of the
-/// returned open subpath. Negative indices count from the end. `index` must be
-/// between `-length` and `length`, inclusive, where `length` is the number of
-/// segments in the subpath. After validation, the index is taken modulo the
-/// length, so `length`, `0`, and `-length` all open at the first segment.
-/// Opening a closed empty subpath at index `0` returns an open empty subpath
-/// with the same start point.
-pub fn open_at(subpath: Subpath, index index: Int) -> Result(Subpath, Error) {
-  let length = list.length(subpath.segments)
-
+/// The returned subpath is open and traverses the whole loop from the split
+/// point back to itself. The parameter must address a segment in the closed
+/// subpath, with `t` inside `0.0..1.0`.
+pub fn open_at(
+  subpath: Subpath,
+  at parameter: SubpathParameter,
+) -> Result(Subpath, Error) {
   case subpath.closed {
     False -> Error(NotClosed)
     True -> {
-      case index < 0 - length || index > length {
-        True -> Error(InvalidOpenIndex(index:, length:))
-        False -> {
-          let index = normalize_open_index(index, length)
-          let segments = rotate_segments(subpath.segments, index)
-          Ok(subpath_from_valid_segments(
-            segments,
-            fallback_start: subpath.start,
-            closed: False,
-          ))
-        }
+      use subpaths <- result.try(sub_subpaths(subpath, between: [parameter]))
+      case subpaths {
+        [opened] -> Ok(opened)
+        _ -> Error(EmptySubpath)
       }
     }
   }
@@ -3064,20 +3049,6 @@ fn take(segments: List(Segment), count: Int) -> List(Segment) {
       }
     }
   }
-}
-
-fn normalize_open_index(index: Int, length: Int) -> Int {
-  case index {
-    0 -> 0
-    _ if index == length -> 0
-    _ if index == 0 - length -> 0
-    _ if index < 0 -> index + length
-    _ -> index
-  }
-}
-
-fn rotate_segments(segments: List(Segment), index: Int) -> List(Segment) {
-  list.append(drop(segments, index), take(segments, index))
 }
 
 fn validate_subpath_parameter(

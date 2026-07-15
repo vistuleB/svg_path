@@ -362,23 +362,23 @@ svg_path.splice_with(
 
 ### Opening Closed Subpaths
 
-`open_at` breaks open a closed subpath at a segment index and returns a single
-open subpath. The indexed segment becomes the first segment of the result:
+`open_at` breaks open a closed subpath at a subpath parameter and returns a
+single open subpath. The result traverses the whole loop from that point back to
+itself:
 
 ```gleam
-svg_path.open_at(closed_subpath, index: 2)
+svg_path.open_at(closed_subpath, at: svg_path.SubpathParameter(2, 0.5))
 ```
 
-Negative indices count from the end. The accepted index range is inclusive:
-`-length <= index <= length`, where `length` is the number of segments in the
-closed subpath. After this range check, the index is taken modulo `length`, so
-`-length`, `0`, and `length` all open at the first segment.
+Use `t: 0.0` to open at a segment boundary. A parameter at the final endpoint of
+a closed subpath, such as `SubpathParameter(length - 1, 1.0)`, opens at the
+first point of the subpath.
 
 The error behavior is intentionally specific:
 
 - `NotClosed` is returned if the subpath is not closed.
-- `InvalidOpenIndex(index, length)` is returned if the index is outside the
-  accepted inclusive range.
+- `InvalidSubpathParameter(segment_index, t, length)` is returned if the
+  parameter is outside the segment list or outside `0.0..1.0`.
 
 ### Reversing Subpaths
 
