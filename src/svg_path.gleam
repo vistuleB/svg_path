@@ -870,6 +870,38 @@ pub fn from_end_parameter(
   Ok(SubpathParameter(segment_index: length - 1 - segment_index, t: 1.0 -. t))
 }
 
+/// Evaluate a subpath at a subpath parameter.
+///
+/// The parameter must address a segment in the subpath, with `t` inside
+/// `0.0..1.0`. Internal segment-end parameters are evaluated through their
+/// canonical next-segment start address.
+pub fn subpath_point(
+  subpath: Subpath,
+  at parameter: SubpathParameter,
+) -> Result(Point, Error) {
+  use parameter <- result.try(validate_subpath_parameter(subpath, parameter))
+  let CanonicalSubpathParameter(segment_index:, t:) = parameter
+  use segment <- result.try(nth_segment(subpath.segments, segment_index))
+
+  segment_point(segment, at: t)
+}
+
+/// Return a subpath's segment derivative at a subpath parameter.
+///
+/// The parameter must address a segment in the subpath, with `t` inside
+/// `0.0..1.0`. Internal segment-end parameters are evaluated through their
+/// canonical next-segment start address.
+pub fn subpath_derivative(
+  subpath: Subpath,
+  at parameter: SubpathParameter,
+) -> Result(Point, Error) {
+  use parameter <- result.try(validate_subpath_parameter(subpath, parameter))
+  let CanonicalSubpathParameter(segment_index:, t:) = parameter
+  use segment <- result.try(nth_segment(subpath.segments, segment_index))
+
+  segment_derivative(segment, at: t)
+}
+
 /// Split an open subpath at a subpath parameter.
 ///
 /// The split point must be inside the subpath: it cannot be the first point,

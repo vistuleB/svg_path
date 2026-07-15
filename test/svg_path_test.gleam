@@ -1467,6 +1467,141 @@ pub fn from_end_parameter_rejects_invalid_reversed_address_test() {
     ))
 }
 
+pub fn from_end_parameter_can_address_open_at_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(10.0, 10.0)
+  let d = svg_path.point(0.0, 10.0)
+  let ab = svg_path.Line(start: a, end: b)
+  let bc = svg_path.Line(start: b, end: c)
+  let cd = svg_path.Line(start: c, end: d)
+  let da = svg_path.Line(start: d, end: a)
+  let subpath = closed_subpath([ab, bc, cd, da])
+  let assert Ok(parameter) =
+    svg_path.from_end_parameter(subpath, segment_index: 2, t: 1.0)
+
+  let assert Ok(opened) = svg_path.open_at(subpath, at: parameter)
+
+  assert svg_path.segments(opened) == [bc, cd, da, ab]
+  assert svg_path.start(opened) == Ok(b)
+}
+
+pub fn from_end_parameter_can_address_sub_subpath_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(20.0, 0.0)
+  let d = svg_path.point(30.0, 0.0)
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
+      svg_path.Line(start: c, end: d),
+    ])
+  let assert Ok(from) =
+    svg_path.from_end_parameter(subpath, segment_index: 2, t: 0.0)
+  let assert Ok(to) =
+    svg_path.from_end_parameter(subpath, segment_index: 0, t: 1.0)
+
+  let assert Ok(piece) = svg_path.sub_subpath(subpath, from:, to:)
+
+  assert svg_path.segments(piece)
+    == [
+      svg_path.Line(start: b, end: c),
+    ]
+}
+
+pub fn subpath_point_evaluates_segment_address_test() {
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.Line(
+        start: svg_path.point(0.0, 0.0),
+        end: svg_path.point(10.0, 0.0),
+      ),
+      svg_path.Line(
+        start: svg_path.point(10.0, 0.0),
+        end: svg_path.point(10.0, 20.0),
+      ),
+    ])
+  let assert Ok(point) =
+    svg_path.subpath_point(
+      subpath,
+      at: svg_path.SubpathParameter(segment_index: 1, t: 0.25),
+    )
+
+  assert point_near(point, svg_path.point(10.0, 5.0))
+}
+
+pub fn subpath_derivative_evaluates_segment_address_test() {
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.Line(
+        start: svg_path.point(0.0, 0.0),
+        end: svg_path.point(10.0, 0.0),
+      ),
+      svg_path.Line(
+        start: svg_path.point(10.0, 0.0),
+        end: svg_path.point(10.0, 20.0),
+      ),
+    ])
+  let assert Ok(derivative) =
+    svg_path.subpath_derivative(
+      subpath,
+      at: svg_path.SubpathParameter(segment_index: 1, t: 0.25),
+    )
+
+  assert point_near(derivative, svg_path.point(0.0, 20.0))
+}
+
+pub fn subpath_derivative_uses_canonical_next_segment_at_internal_vertices_test() {
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.Line(
+        start: svg_path.point(0.0, 0.0),
+        end: svg_path.point(10.0, 0.0),
+      ),
+      svg_path.Line(
+        start: svg_path.point(10.0, 0.0),
+        end: svg_path.point(10.0, 20.0),
+      ),
+    ])
+  let assert Ok(derivative) =
+    svg_path.subpath_derivative(
+      subpath,
+      at: svg_path.SubpathParameter(segment_index: 0, t: 1.0),
+    )
+
+  assert point_near(derivative, svg_path.point(0.0, 20.0))
+}
+
+pub fn subpath_point_and_derivative_reject_invalid_parameters_test() {
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.Line(
+        start: svg_path.point(0.0, 0.0),
+        end: svg_path.point(10.0, 0.0),
+      ),
+    ])
+
+  assert svg_path.subpath_point(
+      subpath,
+      at: svg_path.SubpathParameter(segment_index: 1, t: 0.0),
+    )
+    == Error(svg_path.InvalidSubpathParameter(
+      segment_index: 1,
+      t: 0.0,
+      length: 1,
+    ))
+  assert svg_path.subpath_derivative(
+      subpath,
+      at: svg_path.SubpathParameter(segment_index: 0, t: -0.1),
+    )
+    == Error(svg_path.InvalidSubpathParameter(
+      segment_index: 0,
+      t: -0.1,
+      length: 1,
+    ))
+}
+
 pub fn split_subpath_splits_inside_segment_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)

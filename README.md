@@ -134,6 +134,8 @@ svg_path.sub_subpaths(subpath, between: [
   svg_path.SubpathParameter(0, 0.5),
   svg_path.SubpathParameter(2, 0.25),
 ])
+svg_path.subpath_point(subpath, at: svg_path.SubpathParameter(1, 0.5))
+svg_path.subpath_derivative(subpath, at: svg_path.SubpathParameter(1, 0.5))
 ```
 
 Subpath parameters are strict: `segment_index` must address a real segment and
@@ -152,6 +154,8 @@ The subpath interval helpers have deliberately narrow roles:
   closed subpath, a single split point returns one open loop, while an empty
   split list returns an empty list.
 - `open_at` is the convenience form for opening one closed subpath at one
+  `SubpathParameter`.
+- `subpath_point` and `subpath_derivative` evaluate a subpath at one
   `SubpathParameter`.
 
 Use `svg_path.subpath` to construct an open subpath from a nonempty list of
