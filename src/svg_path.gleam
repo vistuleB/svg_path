@@ -211,7 +211,7 @@ pub type Segment {
   /// A cubic Bezier curve segment.
   CubicBezier(start: Point, control1: Point, control2: Point, end: Point)
 
-  /// An elliptical arc segment.
+  /// An elliptical arc segment. `x_axis_rotation` is in degrees.
   Arc(
     start: Point,
     radius: Point,
@@ -851,6 +851,23 @@ pub fn compare_subpath_parameters(
     order.Eq -> float.compare(a_t, b_t)
     order -> order
   }
+}
+
+/// Return a validated subpath parameter addressed as if the subpath were reversed.
+///
+/// `segment_index` addresses the reversed segment list. `t` is also measured in
+/// the reversed segment's direction, then converted back into the original
+/// subpath's coordinates.
+pub fn from_end_parameter(
+  subpath: Subpath,
+  segment_index segment_index: Int,
+  t t: Float,
+) -> Result(SubpathParameter, Error) {
+  let reverse_parameter = SubpathParameter(segment_index:, t:)
+  use _ <- result.try(validate_subpath_parameter(subpath, reverse_parameter))
+
+  let length = list.length(subpath.segments)
+  Ok(SubpathParameter(segment_index: length - 1 - segment_index, t: 1.0 -. t))
 }
 
 /// Split an open subpath at a subpath parameter.

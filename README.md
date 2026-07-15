@@ -82,6 +82,8 @@ pub type Segment {
 }
 ```
 
+For `Arc`, `x_axis_rotation` is in degrees, matching SVG path data.
+
 Segments can be evaluated, differentiated, and split by their local parameter
 `t`, where `0.0` is the segment start and `1.0` is the segment end:
 
@@ -156,6 +158,11 @@ Use `svg_path.subpath` to construct an open subpath from a nonempty list of
 contiguous segments, and `svg_path.set_closed` to change whether a subpath is
 topologically closed; note that `set_closed(_, True)` may result in an error,
 but `set_closed(_, False)` cannot:
+
+Use `SubpathParameter(index, t)` for normal forward addresses. Use
+`from_end_parameter(subpath, segment_index:, t:)` to address the subpath as if
+its segment order were reversed and convert that address back into the original
+subpath's coordinates.
 
 ```gleam
 svg_path.subpath(segments)                  // -> Result(Subpath, svg_path.Error)

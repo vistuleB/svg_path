@@ -1404,6 +1404,69 @@ pub fn compare_subpath_parameters_orders_by_segment_then_t_test() {
     == order.Gt
 }
 
+pub fn from_end_parameter_converts_reversed_address_to_original_address_test() {
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.Line(
+        start: svg_path.point(0.0, 0.0),
+        end: svg_path.point(10.0, 0.0),
+      ),
+      svg_path.Line(
+        start: svg_path.point(10.0, 0.0),
+        end: svg_path.point(20.0, 0.0),
+      ),
+      svg_path.Line(
+        start: svg_path.point(20.0, 0.0),
+        end: svg_path.point(30.0, 0.0),
+      ),
+      svg_path.Line(
+        start: svg_path.point(30.0, 0.0),
+        end: svg_path.point(40.0, 0.0),
+      ),
+    ])
+
+  assert svg_path.from_end_parameter(subpath, segment_index: 0, t: 0.0)
+    == Ok(svg_path.SubpathParameter(segment_index: 3, t: 1.0))
+  assert svg_path.from_end_parameter(subpath, segment_index: 0, t: 1.0)
+    == Ok(svg_path.SubpathParameter(segment_index: 3, t: 0.0))
+  assert svg_path.from_end_parameter(subpath, segment_index: 2, t: 0.25)
+    == Ok(svg_path.SubpathParameter(segment_index: 1, t: 0.75))
+}
+
+pub fn from_end_parameter_rejects_empty_subpaths_test() {
+  let subpath = svg_path.empty_subpath(at: svg_path.point(0.0, 0.0))
+
+  assert svg_path.from_end_parameter(subpath, segment_index: 0, t: 0.0)
+    == Error(svg_path.EmptySubpath)
+}
+
+pub fn from_end_parameter_rejects_invalid_reversed_address_test() {
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.Line(
+        start: svg_path.point(0.0, 0.0),
+        end: svg_path.point(10.0, 0.0),
+      ),
+      svg_path.Line(
+        start: svg_path.point(10.0, 0.0),
+        end: svg_path.point(20.0, 0.0),
+      ),
+    ])
+
+  assert svg_path.from_end_parameter(subpath, segment_index: 2, t: 0.0)
+    == Error(svg_path.InvalidSubpathParameter(
+      segment_index: 2,
+      t: 0.0,
+      length: 2,
+    ))
+  assert svg_path.from_end_parameter(subpath, segment_index: 0, t: -0.1)
+    == Error(svg_path.InvalidSubpathParameter(
+      segment_index: 0,
+      t: -0.1,
+      length: 2,
+    ))
+}
+
 pub fn split_subpath_splits_inside_segment_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)
