@@ -9,6 +9,28 @@ are attached just before the matching `gleam.toml` version bump; in those cases
 the entries below follow the intended release/version history rather than only
 the tag object.
 
+## 0.10.0 - 2026-07-15
+
+### Added
+
+- Added subpath parameter evaluation helpers: `subpath_point`,
+  `subpath_derivative`, and `from_end_parameter`.
+- Added closed-subpath opening at arbitrary subpath parameters through
+  `open_at`.
+- Added runnable congruency examples and an examples directory guide.
+
+### Changed
+
+- Updated `open_at` to accept a `SubpathParameter` instead of only a segment
+  index.
+- Updated closed `sub_subpaths` behavior so a single split point returns one
+  open loop.
+
+### Documentation
+
+- Documented subpath interval helper roles and congruency limitations.
+- Clarified that `Arc.x_axis_rotation` is in degrees.
+
 ## 0.9.0 - 2026-07-07
 
 ### Added

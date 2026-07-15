@@ -1,6 +1,6 @@
 # Notes
 
-## Library Shape and Next Steps for 0.9.0
+## Library Shape and Next Steps for 0.10.0
 
 The library currently has three broad layers:
 
@@ -18,7 +18,7 @@ before `1.0.0`.
 
 Suggested follow-up work:
 
-- Release `0.9.0` from the current version-bump commit.
+- Release `0.10.0` from the current version-bump commit.
 - Do a naming pass before `1.0.0`, especially around
   `ellipse.arc_center_data`, `transform.point_pair_map`,
   `transform.point_triple_map`, and the `congruency` API.
