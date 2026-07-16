@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 654 167">
+  <rect x="0" y="0" width="654" height="167" style="fill: #ffffff; stroke: none" />
+  <text x="0" y="18" font-size="14" style="fill: #111827; font-family: system-ui, sans-serif; font-weight: 700">Disjoint rectangles (Nonzero)</text>
+  <rect x="0" y="34" width="150" height="125" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
+  <text x="0" y="27" font-size="10" style="fill: #111827; font-family: system-ui, sans-serif; font-weight: 700">Inputs</text>
+  <path d="M 15 74 H 63 V 136 H 15 Z" style="fill: rgba(31, 41, 55, 0.08); stroke: #1f2937; stroke-width: 4; stroke-linejoin: round" />
+  <path d="M 89 74 H 137 V 136 H 89 Z" style="fill: rgba(245, 158, 11, 0.16); stroke: #f59e0b; stroke-width: 4; stroke-dasharray: 8 6; stroke-linejoin: round" />
+  <text x="8" y="58" font-size="13" style="fill: #1f2937; font-family: system-ui, sans-serif; font-weight: 700">A</text>
+  <text x="128" y="58" font-size="13" style="fill: #d97706; font-family: system-ui, sans-serif; font-weight: 700">B</text>
+  <rect x="168" y="34" width="150" height="125" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
+  <text x="168" y="27" font-size="10" style="fill: #111827; font-family: system-ui, sans-serif; font-weight: 700">union(A, B)</text>
+  <path d="M 183 74 H 231 V 136 H 183 Z M 257 74 H 305 V 136 H 257 Z" style="fill: #8ecae6; stroke: #1f2937; stroke-width: 4; stroke-linejoin: round" />
+  <rect x="336" y="34" width="150" height="125" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
+  <text x="336" y="27" font-size="10" style="fill: #111827; font-family: system-ui, sans-serif; font-weight: 700">intersection(A, B)</text>
+  <path d="" style="fill: #8ecae6; stroke: #1f2937; stroke-width: 4; stroke-linejoin: round" />
+  <rect x="504" y="34" width="150" height="125" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
+  <text x="504" y="27" font-size="10" style="fill: #111827; font-family: system-ui, sans-serif; font-weight: 700">difference(A, B)</text>
+  <path d="M 519 74 H 567 V 136 H 519 Z" style="fill: #8ecae6; stroke: #1f2937; stroke-width: 4; stroke-linejoin: round" />
+</svg>
