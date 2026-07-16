@@ -11,10 +11,14 @@ the tag object.
 
 ## Unreleased
 
+## 0.13.2 - 2026-07-16
+
 - Changed Nonzero CSG output to preserve contour-depth level boundaries inside
   results instead of collapsing to a minimal filled outline.
 - Added tests that check preserved Nonzero union depth for same-direction and
   reversed internal contours.
+- Improved generated CSG documentation figures so rounded contours and
+  per-subpath stroke colors make contour-depth boundaries easier to read.
 
 ## 0.13.1 - 2026-07-16
 
