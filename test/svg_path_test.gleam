@@ -1270,6 +1270,194 @@ pub fn subpath_projection_rejects_empty_subpaths_test() {
     == Error(svg_path.EmptySubpath)
 }
 
+pub fn subpath_containment_implicitly_closes_open_subpaths_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(10.0, 10.0)
+  let d = svg_path.point(0.0, 10.0)
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
+      svg_path.Line(start: c, end: d),
+    ])
+
+  assert !svg_path.is_closed(subpath)
+  assert svg_path.subpath_containment(
+      svg_path.point(5.0, 5.0),
+      within: subpath,
+      using: svg_path.Nonzero,
+    )
+    == Ok(svg_path.Inside)
+  assert svg_path.subpath_containment(
+      svg_path.point(15.0, 5.0),
+      within: subpath,
+      using: svg_path.Nonzero,
+    )
+    == Ok(svg_path.Outside)
+  assert svg_path.subpath_containment(
+      svg_path.point(0.0, 5.0),
+      within: subpath,
+      using: svg_path.Nonzero,
+    )
+    == Ok(svg_path.Boundary)
+  assert svg_path.subpath_containment(
+      svg_path.point(10.0, 5.0),
+      within: subpath,
+      using: svg_path.Nonzero,
+    )
+    == Ok(svg_path.Boundary)
+}
+
+pub fn subpath_containment_supports_both_fill_rules_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(10.0, 10.0)
+  let d = svg_path.point(0.0, 10.0)
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
+      svg_path.Line(start: c, end: d),
+      svg_path.Line(start: d, end: a),
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
+      svg_path.Line(start: c, end: d),
+      svg_path.Line(start: d, end: a),
+    ])
+
+  assert svg_path.subpath_containment(
+      svg_path.point(5.0, 5.0),
+      within: subpath,
+      using: svg_path.Nonzero,
+    )
+    == Ok(svg_path.Inside)
+  assert svg_path.subpath_containment(
+      svg_path.point(5.0, 5.0),
+      within: subpath,
+      using: svg_path.EvenOdd,
+    )
+    == Ok(svg_path.Outside)
+}
+
+pub fn subpath_containment_handles_ray_through_vertex_test() {
+  let subpath =
+    svg_path.assert_polygon([
+      svg_path.point(0.0, 0.0),
+      svg_path.point(10.0, 5.0),
+      svg_path.point(0.0, 10.0),
+    ])
+
+  assert svg_path.subpath_containment(
+      svg_path.point(2.0, 5.0),
+      within: subpath,
+      using: svg_path.Nonzero,
+    )
+    == Ok(svg_path.Inside)
+  assert svg_path.subpath_containment(
+      svg_path.point(12.0, 5.0),
+      within: subpath,
+      using: svg_path.Nonzero,
+    )
+    == Ok(svg_path.Outside)
+}
+
+pub fn subpath_containment_handles_curved_boundaries_test() {
+  let curve =
+    svg_path.QuadraticBezier(
+      start: svg_path.point(0.0, 0.0),
+      control: svg_path.point(10.0, 20.0),
+      end: svg_path.point(20.0, 0.0),
+    )
+  let subpath = svg_path.assert_subpath([curve])
+
+  assert svg_path.subpath_containment(
+      svg_path.point(10.0, 10.0),
+      within: subpath,
+      using: svg_path.Nonzero,
+    )
+    == Ok(svg_path.Boundary)
+  assert svg_path.subpath_containment(
+      svg_path.point(10.0, 5.0),
+      within: subpath,
+      using: svg_path.Nonzero,
+    )
+    == Ok(svg_path.Inside)
+}
+
+pub fn subpath_containment_uses_boundary_tolerance_test() {
+  let subpath =
+    svg_path.assert_polygon([
+      svg_path.point(0.0, 0.0),
+      svg_path.point(10.0, 0.0),
+      svg_path.point(10.0, 10.0),
+      svg_path.point(0.0, 10.0),
+    ])
+
+  assert svg_path.subpath_containment_with(
+      svg_path.point(-0.0005, 5.0),
+      within: subpath,
+      using: svg_path.Nonzero,
+      options: svg_path.ContainmentOptions(
+        tolerance: 0.001,
+        samples: 100,
+        max_iterations: 100,
+      ),
+    )
+    == Ok(svg_path.Boundary)
+}
+
+pub fn subpath_containment_move_only_subpath_is_outside_test() {
+  let point = svg_path.point(5.0, 5.0)
+  let subpath = svg_path.empty_subpath(at: point)
+
+  assert svg_path.subpath_containment(
+      point,
+      within: subpath,
+      using: svg_path.Nonzero,
+    )
+    == Ok(svg_path.Outside)
+}
+
+pub fn subpath_containment_rejects_invalid_options_test() {
+  let subpath = svg_path.empty_subpath(at: svg_path.point(0.0, 0.0))
+  let point = svg_path.point(1.0, 1.0)
+
+  assert svg_path.subpath_containment_with(
+      point,
+      within: subpath,
+      using: svg_path.Nonzero,
+      options: svg_path.ContainmentOptions(
+        tolerance: 0.0,
+        samples: 100,
+        max_iterations: 100,
+      ),
+    )
+    == Error(svg_path.InvalidContainmentTolerance(0.0))
+  assert svg_path.subpath_containment_with(
+      point,
+      within: subpath,
+      using: svg_path.Nonzero,
+      options: svg_path.ContainmentOptions(
+        tolerance: 0.000000001,
+        samples: 0,
+        max_iterations: 100,
+      ),
+    )
+    == Error(svg_path.InvalidContainmentSamples(0))
+  assert svg_path.subpath_containment_with(
+      point,
+      within: subpath,
+      using: svg_path.Nonzero,
+      options: svg_path.ContainmentOptions(
+        tolerance: 0.000000001,
+        samples: 100,
+        max_iterations: 0,
+      ),
+    )
+    == Error(svg_path.InvalidContainmentMaxIterations(0))
+}
+
 pub fn path_projection_returns_path_parameter_point_and_distance_test() {
   let first =
     svg_path.assert_subpath([

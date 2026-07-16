@@ -674,6 +674,28 @@ containing a `PathParameter`; move-only subpaths are skipped. `path_distance`
 returns only the distance. Use the corresponding `_with` functions to supply
 explicit `DistanceOptions`.
 
+### Point Containment
+
+Use `subpath_containment` to classify a point relative to a subpath's SVG fill
+area:
+
+```gleam
+svg_path.subpath_containment(point, within: subpath, using: svg_path.Nonzero)
+// -> Result(svg_path.PointContainment, svg_path.Error)
+```
+
+`PointContainment` is `Inside`, `Outside`, or `Boundary`. The supported fill
+rules are `Nonzero`, SVG's default, and `EvenOdd`. Open subpaths are implicitly
+closed with a straight line from their end to their start, so the subpath's
+`closed` field does not change its fill area. Move-only subpaths are `Outside`
+and have no boundary.
+
+Boundary classification uses shortest distance to the original segments and
+the implicit closing line. The remaining fill calculation uses adaptive line
+approximation and a half-open winding test. Use `subpath_containment_with` and
+`ContainmentOptions` to control the coordinate-space boundary `tolerance`,
+curve projection `samples`, and numerical `max_iterations`.
+
 ### Segment Crossings
 
 Use `segment_crossings` to find parameter values where a scalar predicate

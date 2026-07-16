@@ -46,6 +46,12 @@ const default_distance_tolerance = 0.000000001
 
 const default_distance_max_iterations = 100
 
+const default_containment_tolerance = 0.000000001
+
+const default_containment_samples = 100
+
+const default_containment_max_iterations = 100
+
 const default_intersection_tolerance = 0.000000001
 
 const default_intersection_max_depth = 48
@@ -150,6 +156,24 @@ pub type LinearizeOptions {
 /// Options for finding the distance from a point to a segment.
 pub type DistanceOptions {
   DistanceOptions(samples: Int, tolerance: Float, max_iterations: Int)
+}
+
+/// Options for classifying a point relative to a subpath's fill area.
+pub type ContainmentOptions {
+  ContainmentOptions(tolerance: Float, samples: Int, max_iterations: Int)
+}
+
+/// The SVG fill rule used for point containment.
+pub type FillRule {
+  Nonzero
+  EvenOdd
+}
+
+/// The position of a point relative to a filled subpath.
+pub type PointContainment {
+  Inside
+  Outside
+  Boundary
 }
 
 /// Options for finding segment intersections.
@@ -390,6 +414,15 @@ pub type Error {
   /// A bracketed distance candidate could not be refined within the iteration limit.
   DistanceMaxIterationsReached(estimate: Float, value: Float)
 
+  /// The containment tolerance must be greater than zero.
+  InvalidContainmentTolerance(tolerance: Float)
+
+  /// The number of containment samples must be greater than zero.
+  InvalidContainmentSamples(samples: Int)
+
+  /// The containment iteration limit must be greater than zero.
+  InvalidContainmentMaxIterations(max_iterations: Int)
+
   /// The intersection tolerance must be greater than zero.
   InvalidIntersectionTolerance(tolerance: Float)
 
@@ -454,6 +487,15 @@ pub fn default_distance_options() -> DistanceOptions {
     samples: default_distance_samples,
     tolerance: default_distance_tolerance,
     max_iterations: default_distance_max_iterations,
+  )
+}
+
+/// Return the default options for point containment.
+pub fn default_containment_options() -> ContainmentOptions {
+  ContainmentOptions(
+    tolerance: default_containment_tolerance,
+    samples: default_containment_samples,
+    max_iterations: default_containment_max_iterations,
   )
 }
 
@@ -2031,6 +2073,42 @@ pub fn subpath_projection_with(
   }
 }
 
+/// Classify a point relative to a subpath's fill area.
+///
+/// Open and closed subpaths use the same fill geometry: an open subpath is
+/// implicitly closed by a straight line from its end to its start. Move-only
+/// subpaths have no fill area or boundary.
+pub fn subpath_containment(
+  point: Point,
+  within subpath: Subpath,
+  using fill_rule: FillRule,
+) -> Result(PointContainment, Error) {
+  subpath_containment_with(
+    point,
+    within: subpath,
+    using: fill_rule,
+    options: default_containment_options(),
+  )
+}
+
+/// Classify a point relative to a subpath's fill area using explicit options.
+///
+/// `tolerance` is measured in path coordinate units and determines the width
+/// classified as `Boundary`. `samples` and `max_iterations` control numerical
+/// projection and adaptive line approximation for curves.
+pub fn subpath_containment_with(
+  point: Point,
+  within subpath: Subpath,
+  using fill_rule: FillRule,
+  options options: ContainmentOptions,
+) -> Result(PointContainment, Error) {
+  use _ <- result.try(validate_containment_options(options))
+  case subpath.segments {
+    [] -> Ok(Outside)
+    _ -> subpath_containment_valid_options(point, subpath, fill_rule, options)
+  }
+}
+
 /// Return the shortest distance from a point to a path.
 ///
 /// Move-only subpaths are skipped.
@@ -2779,6 +2857,26 @@ fn validate_distance_options(options: DistanceOptions) -> Result(Nil, Error) {
   }
 }
 
+fn validate_containment_options(
+  options: ContainmentOptions,
+) -> Result(Nil, Error) {
+  case options.tolerance <=. 0.0 {
+    True -> Error(InvalidContainmentTolerance(options.tolerance))
+    False -> {
+      case options.samples <= 0 {
+        True -> Error(InvalidContainmentSamples(options.samples))
+        False -> {
+          case options.max_iterations <= 0 {
+            True ->
+              Error(InvalidContainmentMaxIterations(options.max_iterations))
+            False -> Ok(Nil)
+          }
+        }
+      }
+    }
+  }
+}
+
 fn validate_length_options(options: LengthOptions) -> Result(Nil, Error) {
   case options.tolerance <=. 0.0 {
     True -> Error(InvalidLengthTolerance(options.tolerance))
@@ -3518,6 +3616,116 @@ fn subpath_projection_loop(
       }
 
       subpath_projection_loop(point, rest, options, index: index + 1, best:)
+    }
+  }
+}
+
+fn subpath_containment_valid_options(
+  point: Point,
+  subpath: Subpath,
+  fill_rule: FillRule,
+  options: ContainmentOptions,
+) -> Result(PointContainment, Error) {
+  let distance_options =
+    DistanceOptions(
+      samples: options.samples,
+      tolerance: options.tolerance,
+      max_iterations: options.max_iterations,
+    )
+  use projection <- result.try(subpath_projection_with(
+    point,
+    to: subpath,
+    options: distance_options,
+  ))
+  let subpath_end = case list.last(subpath.segments) {
+    Ok(last) -> segment_end(last)
+    Error(_) -> subpath.start
+  }
+  let closing_distance =
+    point_to_line_projection(point, subpath_end, subpath.start).distance
+  let boundary_distance = float.min(projection.distance, closing_distance)
+
+  case boundary_distance <=. options.tolerance {
+    True -> Ok(Boundary)
+    False -> {
+      let linearize_tolerance =
+        { boundary_distance -. options.tolerance } /. 2.0
+      use linearized <- result.try(subpath_to_lines_with(
+        subpath,
+        options: LinearizeOptions(
+          tolerance: linearize_tolerance,
+          max_depth: options.max_iterations,
+        ),
+      ))
+      let #(winding, crossings) = linearized_subpath_winding(point, linearized)
+
+      case fill_rule {
+        Nonzero -> containment_from_bool(winding != 0)
+        EvenOdd -> {
+          let assert Ok(remainder) = int.remainder(crossings, by: 2)
+          containment_from_bool(remainder == 1)
+        }
+      }
+      |> Ok
+    }
+  }
+}
+
+fn containment_from_bool(inside: Bool) -> PointContainment {
+  case inside {
+    True -> Inside
+    False -> Outside
+  }
+}
+
+fn linearized_subpath_winding(point: Point, subpath: Subpath) -> #(Int, Int) {
+  let #(winding, crossings) =
+    list.fold(subpath.segments, #(0, 0), fn(total, segment) {
+      let #(winding, crossings) = total
+      let assert Line(start:, end:) = segment
+      let contribution = line_winding_contribution(point, start, end)
+
+      #(
+        winding + contribution,
+        crossings
+          + case contribution == 0 {
+          True -> 0
+          False -> 1
+        },
+      )
+    })
+  let subpath_end = case list.last(subpath.segments) {
+    Ok(last) -> segment_end(last)
+    Error(_) -> subpath.start
+  }
+  let closing_contribution =
+    line_winding_contribution(point, subpath_end, subpath.start)
+
+  #(
+    winding + closing_contribution,
+    crossings
+      + case closing_contribution == 0 {
+      True -> 0
+      False -> 1
+    },
+  )
+}
+
+fn line_winding_contribution(point: Point, start: Point, end: Point) -> Int {
+  let side = cross(point_difference(end, start), point_difference(point, start))
+
+  case start.y <=. point.y {
+    True -> {
+      case end.y >. point.y && side >. 0.0 {
+        True -> 1
+        False -> 0
+      }
+    }
+    False -> {
+      case end.y <=. point.y && side <. 0.0 {
+        True -> -1
+        False -> 0
+      }
     }
   }
 }
