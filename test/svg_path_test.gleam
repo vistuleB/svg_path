@@ -1503,6 +1503,132 @@ pub fn segment_intersections_with_rejects_invalid_options_test() {
     == Error(svg_path.InvalidIntersectionMaxDepth(0))
 }
 
+pub fn segment_subpath_intersections_groups_and_orders_results_test() {
+  let segment =
+    svg_path.Line(
+      start: svg_path.point(20.0, 0.0),
+      end: svg_path.point(0.0, 0.0),
+    )
+  let a = svg_path.point(5.0, -5.0)
+  let b = svg_path.point(5.0, 5.0)
+  let c = svg_path.point(10.0, 5.0)
+  let d = svg_path.point(10.0, -5.0)
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
+      svg_path.Line(start: c, end: d),
+      svg_path.Line(start: d, end: a),
+      svg_path.Line(start: a, end: b),
+    ])
+
+  let assert Ok(intersections) =
+    svg_path.segment_subpath_intersections(segment, subpath)
+  let assert [first, second] = intersections
+  let #(first_point, first_t, first_parameters) = first
+  let #(second_point, second_t, second_parameters) = second
+
+  assert near(first_point.x, 10.0)
+  assert near(first_point.y, 0.0)
+  assert near(first_t, 0.5)
+  assert first_parameters == [svg_path.SubpathParameter(2, 0.5)]
+  assert near(second_point.x, 5.0)
+  assert near(second_point.y, 0.0)
+  assert near(second_t, 0.75)
+  assert second_parameters
+    == [
+      svg_path.SubpathParameter(0, 0.5),
+      svg_path.SubpathParameter(4, 0.5),
+    ]
+}
+
+pub fn segment_subpath_intersections_retains_boundary_aliases_test() {
+  let segment =
+    svg_path.Line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(10.0, 0.0),
+    )
+  let a = svg_path.point(0.0, -5.0)
+  let b = svg_path.point(5.0, 0.0)
+  let c = svg_path.point(10.0, -5.0)
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
+    ])
+
+  let assert Ok([intersection]) =
+    svg_path.segment_subpath_intersections(segment, subpath)
+  let #(point, segment_t, parameters) = intersection
+
+  assert point_near(point, b)
+  assert near(segment_t, 0.5)
+  assert parameters
+    == [
+      svg_path.SubpathParameter(0, 1.0),
+      svg_path.SubpathParameter(1, 0.0),
+    ]
+}
+
+pub fn segment_subpath_intersections_retains_closed_boundary_aliases_test() {
+  let segment =
+    svg_path.Line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(10.0, 0.0),
+    )
+  let a = svg_path.point(5.0, 0.0)
+  let b = svg_path.point(0.0, -5.0)
+  let c = svg_path.point(10.0, -5.0)
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
+      svg_path.Line(start: c, end: a),
+    ])
+    |> svg_path.assert_set_closed(closed: True)
+
+  let assert Ok([intersection]) =
+    svg_path.segment_subpath_intersections(segment, subpath)
+  let #(point, segment_t, parameters) = intersection
+
+  assert point_near(point, a)
+  assert near(segment_t, 0.5)
+  assert parameters
+    == [
+      svg_path.SubpathParameter(0, 0.0),
+      svg_path.SubpathParameter(2, 1.0),
+    ]
+}
+
+pub fn segment_subpath_intersections_empty_subpath_test() {
+  let segment =
+    svg_path.Line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(10.0, 0.0),
+    )
+  let subpath = svg_path.empty_subpath(at: svg_path.point(5.0, 0.0))
+
+  assert svg_path.segment_subpath_intersections(segment, subpath) == Ok([])
+}
+
+pub fn segment_subpath_intersections_propagates_errors_test() {
+  let segment =
+    svg_path.Line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(10.0, 0.0),
+    )
+  let subpath = svg_path.assert_subpath([segment])
+
+  assert svg_path.segment_subpath_intersections_with(
+      segment,
+      subpath,
+      options: svg_path.IntersectionOptions(tolerance: 0.0, max_depth: 48),
+    )
+    == Error(svg_path.InvalidIntersectionTolerance(0.0))
+  assert svg_path.segment_subpath_intersections(segment, subpath)
+    == Error(svg_path.OverlappingSegments)
+}
+
 pub fn segment_intersections_match_returned_parameters_test() {
   let line_a =
     svg_path.Line(

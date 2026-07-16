@@ -2095,40 +2095,46 @@ pub fn segment_intersections_with(
   right: Segment,
   options options: IntersectionOptions,
 ) -> Result(List(SegmentIntersection), Error) {
-  case validate_intersection_options(options) {
-    Error(error) -> Error(error)
-    Ok(Nil) -> {
-      case left, right {
-        Line(start: left_start, end: left_end),
-          Line(start: right_start, end: right_end)
-        ->
-          line_line_intersections(
-            left_start,
-            left_end,
-            right_start,
-            right_end,
-            options.tolerance,
-          )
-        Line(start:, end:), _ ->
-          line_segment_intersections(
-            line_start: start,
-            line_end: end,
-            line_is_left: True,
-            segment: right,
-            options:,
-          )
-        _, Line(start:, end:) ->
-          line_segment_intersections(
-            line_start: start,
-            line_end: end,
-            line_is_left: False,
-            segment: left,
-            options:,
-          )
-        _, _ -> curve_curve_intersections(left, right, options)
-      }
-    }
-  }
+  use _ <- result.try(validate_intersection_options(options))
+  segment_intersections_valid_options(left, right, options)
+}
+
+/// Return the intersections between a segment and a subpath.
+///
+/// Each result contains an intersection point, its local parameter on the
+/// standalone segment, and every corresponding parameter on the subpath.
+/// Results are ordered by the standalone segment parameter. Parameters at both
+/// sides of a subpath segment boundary are retained.
+pub fn segment_subpath_intersections(
+  segment: Segment,
+  subpath: Subpath,
+) -> Result(List(#(Point, Float, List(SubpathParameter))), Error) {
+  segment_subpath_intersections_with(
+    segment,
+    subpath,
+    options: default_intersection_options(),
+  )
+}
+
+/// Return the intersections between a segment and a subpath using explicit
+/// options.
+pub fn segment_subpath_intersections_with(
+  segment: Segment,
+  subpath: Subpath,
+  options options: IntersectionOptions,
+) -> Result(List(#(Point, Float, List(SubpathParameter))), Error) {
+  use _ <- result.try(validate_intersection_options(options))
+  use intersections <- result.try(
+    collect_segment_subpath_intersections(
+      segment,
+      subpath.segments,
+      options,
+      segment_index: 0,
+      grouped: [],
+    ),
+  )
+
+  Ok(sort_segment_subpath_intersections(intersections))
 }
 
 /// Return a non-empty subpath's exact axis-aligned bounding box.
@@ -3593,6 +3599,122 @@ fn validate_intersection_options(
       }
     }
   }
+}
+
+fn segment_intersections_valid_options(
+  left: Segment,
+  right: Segment,
+  options: IntersectionOptions,
+) -> Result(List(SegmentIntersection), Error) {
+  case left, right {
+    Line(start: left_start, end: left_end),
+      Line(start: right_start, end: right_end)
+    ->
+      line_line_intersections(
+        left_start,
+        left_end,
+        right_start,
+        right_end,
+        options.tolerance,
+      )
+    Line(start:, end:), _ ->
+      line_segment_intersections(
+        line_start: start,
+        line_end: end,
+        line_is_left: True,
+        segment: right,
+        options:,
+      )
+    _, Line(start:, end:) ->
+      line_segment_intersections(
+        line_start: start,
+        line_end: end,
+        line_is_left: False,
+        segment: left,
+        options:,
+      )
+    _, _ -> curve_curve_intersections(left, right, options)
+  }
+}
+
+fn collect_segment_subpath_intersections(
+  segment: Segment,
+  segments: List(Segment),
+  options: IntersectionOptions,
+  segment_index segment_index: Int,
+  grouped grouped: List(#(Point, Float, List(SubpathParameter))),
+) -> Result(List(#(Point, Float, List(SubpathParameter))), Error) {
+  case segments {
+    [] -> Ok(grouped)
+    [first, ..rest] -> {
+      use intersections <- result.try(segment_intersections_valid_options(
+        segment,
+        first,
+        options,
+      ))
+      let grouped =
+        list.fold(intersections, grouped, fn(grouped, intersection) {
+          insert_segment_subpath_intersection(
+            grouped,
+            intersection,
+            SubpathParameter(segment_index:, t: intersection.right_t),
+            options.tolerance,
+          )
+        })
+
+      collect_segment_subpath_intersections(
+        segment,
+        rest,
+        options,
+        segment_index: segment_index + 1,
+        grouped:,
+      )
+    }
+  }
+}
+
+fn insert_segment_subpath_intersection(
+  grouped: List(#(Point, Float, List(SubpathParameter))),
+  intersection: SegmentIntersection,
+  at: SubpathParameter,
+  tolerance: Float,
+) -> List(#(Point, Float, List(SubpathParameter))) {
+  case grouped {
+    [] -> [#(intersection.point, intersection.left_t, [at])]
+    [first, ..rest] -> {
+      let #(point, segment_t, parameters) = first
+      case
+        float.absolute_value(segment_t -. intersection.left_t) <=. tolerance
+        && distance(point, intersection.point) <=. tolerance
+      {
+        True -> [#(point, segment_t, list.append(parameters, [at])), ..rest]
+        False -> [
+          first,
+          ..insert_segment_subpath_intersection(
+            rest,
+            intersection,
+            at,
+            tolerance,
+          )
+        ]
+      }
+    }
+  }
+}
+
+fn sort_segment_subpath_intersections(
+  intersections: List(#(Point, Float, List(SubpathParameter))),
+) -> List(#(Point, Float, List(SubpathParameter))) {
+  intersections
+  |> list.map(fn(intersection) {
+    let #(point, segment_t, parameters) = intersection
+    #(point, segment_t, list.sort(parameters, by: compare_subpath_parameters))
+  })
+  |> list.sort(by: fn(a, b) {
+    let #(_, a_t, _) = a
+    let #(_, b_t, _) = b
+    float.compare(a_t, b_t)
+  })
 }
 
 fn line_line_intersections(

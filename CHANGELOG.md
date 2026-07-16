@@ -18,6 +18,8 @@ the tag object.
 - Added tolerance-controlled straight-line approximation for segments,
   subpaths, and paths through the `segment_to_lines`, `subpath_to_lines`, and
   `path_to_lines` function families.
+- Added grouped segment-to-subpath intersection helpers that retain every
+  corresponding `SubpathParameter`.
 
 ## 0.11.0 - 2026-07-16
 

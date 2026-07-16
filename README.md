@@ -732,6 +732,19 @@ in more than one point, such as partially overlapping collinear lines, return
 `IntersectionOptions` to tune `tolerance` and `max_depth` for curved segment
 intersection detection.
 
+Use `segment_subpath_intersections` to intersect one segment with every segment
+of a subpath. Each result has the form
+`#(point, segment_t, subpath_parameters)`. Results are ordered by `segment_t`,
+and each parameter list is ordered by `compare_subpath_parameters`.
+
+Intersections whose point and standalone segment parameter agree within the
+configured tolerance are grouped together. All corresponding subpath
+parameters are retained, including both representations of a shared segment
+boundary such as `SubpathParameter(0, 1.0)` and
+`SubpathParameter(1, 0.0)`. An overlap with any subpath segment returns
+`OverlappingSegments`. The `_with` variant accepts explicit
+`IntersectionOptions`.
+
 ### Convex Hulls
 
 The `svg_path/convex_hull` module computes a closed hull for a single segment.
