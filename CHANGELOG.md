@@ -23,6 +23,8 @@ the tag object.
 - Added `Nonzero` and `EvenOdd` point containment for open or closed subpaths
   and complete paths, with explicit `Inside`, `Outside`, and `Boundary`
   results.
+- Added `svg_path/area` for exact signed area helpers and SVG fill-rule area
+  for subpaths and paths.
 
 ## 0.11.0 - 2026-07-16
 

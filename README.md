@@ -55,6 +55,7 @@ pub fn prepare_for_arc_averse_consumer(
   splitting, bounding boxes, and cubic approximation.
 - `svg_path/congruency`: semantic ordered congruency checks under translation,
   rotation, and uniform scale.
+- `svg_path/area`: signed area and SVG fill-rule area for subpaths and paths.
 - `svg_path/convex_hull`: convex hulls for segments, subpaths, paths, and point
   lists.
 - `svg_path/basic_shapes`: conversions from SVG basic shapes to paths.
@@ -788,6 +789,181 @@ silently converted to `Inside` or `Outside`.
 
 The non-`_with` functions use `default_containment_options`. The subpath and
 path variants otherwise use the same classification policy.
+
+### Areas
+
+Use `svg_path/area` for signed area and SVG fill-rule area:
+
+```gleam
+import svg_path
+import svg_path/area
+
+pub fn filled_area(path: svg_path.Path) -> Result(Float, svg_path.Error) {
+  area.path(path, using: svg_path.Nonzero)
+}
+```
+
+There are three different notions that are easy to confuse:
+
+- `area.signed_subpath` and `area.signed_path` return algebraic area.
+- `area.subpath` and `area.path` return unsigned filled area under `Nonzero`
+  or `EvenOdd`.
+- `svg_path/convex_hull` returns hull geometry; a hull area can be larger than
+  the filled area of a concave or self-intersecting shape.
+
+Signed area is computed from line integrals. Lines, quadratic Beziers, cubic
+Beziers, and elliptical arcs are handled directly. The sign depends on drawing
+direction: reversing a simple loop reverses the sign. Self-intersections and
+oppositely directed loops can cancel, while repeated loops can multiply the
+result.
+
+Fill-rule area follows SVG fill semantics. Every nonempty subpath is
+implicitly closed with a straight line from its end to its start, regardless of
+the `Subpath.closed` field. Move-only subpaths contribute zero area. For a
+path, all subpaths are considered together, so overlapping and nested subpaths
+are not measured independently and then added.
+
+The difference matters for repeated or nested loops:
+
+| Shape | Signed area | `Nonzero` area | `EvenOdd` area |
+| --- | --- | --- | --- |
+| One simple loop | `+A` or `-A` | `A` | `A` |
+| Same loop twice, same direction | `+2A` or `-2A` | `A` | `0` |
+| Same loop twice, opposite directions | `0` | `0` | `0` |
+
+These drawings show the filled region for a few common cases. Blue means the
+area is counted by the fill rule; the dark stroke shows the source geometry.
+Dashed or slightly offset strokes represent repeated traces that would
+otherwise sit exactly on top of the first stroke.
+
+<table>
+  <tr>
+    <th>Case</th>
+    <th><code>Nonzero</code></th>
+    <th><code>EvenOdd</code></th>
+  </tr>
+  <tr>
+    <td>One loop</td>
+    <td>
+      <svg role="img" aria-label="Nonzero fills one loop" width="150" height="120" viewBox="0 0 150 120">
+        <rect x="40" y="25" width="70" height="70" fill="#8ecae6" stroke="#1f2937" stroke-width="4" />
+        <path d="M48 25 h54" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#area-arrow-a)" />
+        <defs>
+          <marker id="area-arrow-a" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#1f2937" />
+          </marker>
+        </defs>
+      </svg>
+    </td>
+    <td>
+      <svg role="img" aria-label="EvenOdd fills one loop" width="150" height="120" viewBox="0 0 150 120">
+        <rect x="40" y="25" width="70" height="70" fill="#8ecae6" stroke="#1f2937" stroke-width="4" />
+        <path d="M48 25 h54" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#area-arrow-b)" />
+        <defs>
+          <marker id="area-arrow-b" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#1f2937" />
+          </marker>
+        </defs>
+      </svg>
+    </td>
+  </tr>
+  <tr>
+    <td>Same loop twice, same direction</td>
+    <td>
+      <svg role="img" aria-label="Nonzero fills a twice traced loop in the same direction" width="150" height="120" viewBox="0 0 150 120">
+        <rect x="40" y="25" width="70" height="70" fill="#8ecae6" stroke="#1f2937" stroke-width="4" />
+        <rect x="46" y="31" width="58" height="58" fill="none" stroke="#3a86ff" stroke-width="3" stroke-dasharray="5 4" />
+        <path d="M48 25 h54" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#area-arrow-c)" />
+        <path d="M54 31 h42" fill="none" stroke="#3a86ff" stroke-width="3" marker-end="url(#area-arrow-c2)" />
+        <defs>
+          <marker id="area-arrow-c" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#1f2937" />
+          </marker>
+          <marker id="area-arrow-c2" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#3a86ff" />
+          </marker>
+        </defs>
+      </svg>
+    </td>
+    <td>
+      <svg role="img" aria-label="EvenOdd leaves a twice traced loop empty" width="150" height="120" viewBox="0 0 150 120">
+        <rect x="40" y="25" width="70" height="70" fill="none" stroke="#1f2937" stroke-width="4" />
+        <rect x="46" y="31" width="58" height="58" fill="none" stroke="#3a86ff" stroke-width="3" stroke-dasharray="5 4" />
+        <path d="M48 25 h54" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#area-arrow-d)" />
+        <path d="M54 31 h42" fill="none" stroke="#3a86ff" stroke-width="3" marker-end="url(#area-arrow-d2)" />
+        <defs>
+          <marker id="area-arrow-d" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#1f2937" />
+          </marker>
+          <marker id="area-arrow-d2" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#3a86ff" />
+          </marker>
+        </defs>
+      </svg>
+    </td>
+  </tr>
+  <tr>
+    <td>Nested loops, same direction</td>
+    <td>
+      <svg role="img" aria-label="Nonzero fills nested loops drawn in the same direction" width="150" height="120" viewBox="0 0 150 120">
+        <path d="M25 20 H125 V100 H25 Z M52 47 H98 V73 H52 Z" fill="#8ecae6" fill-rule="nonzero" stroke="#1f2937" stroke-width="4" />
+        <path d="M34 20 h82" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#area-arrow-e)" />
+        <path d="M58 47 h34" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#area-arrow-e)" />
+        <defs>
+          <marker id="area-arrow-e" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#1f2937" />
+          </marker>
+        </defs>
+      </svg>
+    </td>
+    <td>
+      <svg role="img" aria-label="EvenOdd cuts a hole for nested loops" width="150" height="120" viewBox="0 0 150 120">
+        <path d="M25 20 H125 V100 H25 Z M52 47 H98 V73 H52 Z" fill="#8ecae6" fill-rule="evenodd" stroke="#1f2937" stroke-width="4" />
+        <path d="M34 20 h82" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#area-arrow-f)" />
+        <path d="M58 47 h34" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#area-arrow-f)" />
+        <defs>
+          <marker id="area-arrow-f" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#1f2937" />
+          </marker>
+        </defs>
+      </svg>
+    </td>
+  </tr>
+  <tr>
+    <td>Nested loops, opposite directions</td>
+    <td>
+      <svg role="img" aria-label="Nonzero cuts a hole for nested loops drawn in opposite directions" width="150" height="120" viewBox="0 0 150 120">
+        <path d="M25 20 H125 V100 H25 Z M52 47 V73 H98 V47 Z" fill="#8ecae6" fill-rule="nonzero" stroke="#1f2937" stroke-width="4" />
+        <path d="M34 20 h82" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#area-arrow-g)" />
+        <path d="M52 53 v14" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#area-arrow-g)" />
+        <defs>
+          <marker id="area-arrow-g" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#1f2937" />
+          </marker>
+        </defs>
+      </svg>
+    </td>
+    <td>
+      <svg role="img" aria-label="EvenOdd also cuts a hole for nested loops drawn in opposite directions" width="150" height="120" viewBox="0 0 150 120">
+        <path d="M25 20 H125 V100 H25 Z M52 47 V73 H98 V47 Z" fill="#8ecae6" fill-rule="evenodd" stroke="#1f2937" stroke-width="4" />
+        <path d="M34 20 h82" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#area-arrow-h)" />
+        <path d="M52 53 v14" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#area-arrow-h)" />
+        <defs>
+          <marker id="area-arrow-h" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#1f2937" />
+          </marker>
+        </defs>
+      </svg>
+    </td>
+  </tr>
+</table>
+
+`area.subpath` and `area.path` first linearize curves and then integrate the
+filled slabs of the resulting line arrangement. The `_with` variants accept
+`LinearizeOptions`; `options.tolerance` controls curve-to-line approximation
+in coordinate units, not a direct bound on final area error. The arrangement
+step compares every pair of linearized edges, so fill-rule area is quadratic
+in the number of generated line edges.
 
 ### Segment Crossings
 
