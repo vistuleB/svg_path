@@ -170,6 +170,15 @@ pub type SubpathProjection {
   SubpathProjection(at: SubpathParameter, point: Point, distance: Float)
 }
 
+/// The nearest point on a path to an input point.
+///
+/// Move-only subpaths are skipped. When multiple path points are equally
+/// nearest, this records one valid nearest point. The chosen point and
+/// parameter are not guaranteed to be canonical for ties or flat minima.
+pub type PathProjection {
+  PathProjection(at: PathParameter, point: Point, distance: Float)
+}
+
 type MinimizeCandidate {
   MinimizeCandidate(t: Float, value: Float)
 }
@@ -1936,6 +1945,49 @@ pub fn subpath_projection_with(
   }
 }
 
+/// Return the shortest distance from a point to a path.
+///
+/// Move-only subpaths are skipped.
+pub fn path_distance(point: Point, to path: Path) -> Result(Float, Error) {
+  path_distance_with(point, to: path, options: default_distance_options())
+}
+
+/// Return the shortest distance from a point to a path using explicit options.
+pub fn path_distance_with(
+  point: Point,
+  to path: Path,
+  options options: DistanceOptions,
+) -> Result(Float, Error) {
+  path_projection_with(point, to: path, options:)
+  |> result.map(fn(projection) { projection.distance })
+}
+
+/// Return the nearest point on a path to an input point.
+///
+/// Move-only subpaths are skipped. An empty path returns `EmptyPath`; a path
+/// containing only move-only subpaths returns `EmptySubpaths`.
+pub fn path_projection(
+  point: Point,
+  to path: Path,
+) -> Result(PathProjection, Error) {
+  path_projection_with(point, to: path, options: default_distance_options())
+}
+
+/// Return the nearest point on a path to an input point using explicit options.
+pub fn path_projection_with(
+  point: Point,
+  to path: Path,
+  options options: DistanceOptions,
+) -> Result(PathProjection, Error) {
+  case path.subpaths {
+    [] -> Error(EmptyPath)
+    subpaths -> {
+      use _ <- result.try(validate_distance_options(options))
+      path_projection_loop(point, subpaths, options, index: 0, best: None)
+    }
+  }
+}
+
 /// Return point intersections between two segments.
 ///
 /// Overlapping segments return `OverlappingSegments`, since they have more than
@@ -3362,6 +3414,52 @@ fn subpath_projection_loop(
       }
 
       subpath_projection_loop(point, rest, options, index: index + 1, best:)
+    }
+  }
+}
+
+fn path_projection_loop(
+  point: Point,
+  subpaths: List(Subpath),
+  options: DistanceOptions,
+  index index: Int,
+  best best: Option(PathProjection),
+) -> Result(PathProjection, Error) {
+  case subpaths {
+    [] ->
+      case best {
+        None -> Error(EmptySubpaths)
+        Some(projection) -> Ok(projection)
+      }
+    [subpath, ..rest] -> {
+      case list.is_empty(subpath.segments) {
+        True ->
+          path_projection_loop(point, rest, options, index: index + 1, best:)
+        False -> {
+          use projection <- result.try(subpath_projection_with(
+            point,
+            to: subpath,
+            options:,
+          ))
+          let path_projection =
+            PathProjection(
+              at: PathParameter(subpath_index: index, at: projection.at),
+              point: projection.point,
+              distance: projection.distance,
+            )
+          let best = case best {
+            None -> Some(path_projection)
+            Some(best) -> {
+              case path_projection.distance <. best.distance {
+                True -> Some(path_projection)
+                False -> Some(best)
+              }
+            }
+          }
+
+          path_projection_loop(point, rest, options, index: index + 1, best:)
+        }
+      }
     }
   }
 }

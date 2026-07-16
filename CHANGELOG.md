@@ -9,6 +9,13 @@ are attached just before the matching `gleam.toml` version bump; in those cases
 the entries below follow the intended release/version history rather than only
 the tag object.
 
+## Unreleased
+
+### Added
+
+- Added path-level nearest-point projection and distance helpers, including
+  `PathProjection` and configurable `_with` variants.
+
 ## 0.11.0 - 2026-07-16
 
 ### Added

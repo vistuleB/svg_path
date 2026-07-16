@@ -610,7 +610,7 @@ parameter lookup returns `PathParameter(subpath_index:, at:)`. The
 `between_lengths` helpers use the same `LengthOptions` through their `_with`
 variants.
 
-### Segment Distances
+### Distances and Projections
 
 Use `segment_distance` to measure the shortest distance from a point to a
 segment. Use `segment_projection` when you also need the nearest segment
@@ -632,6 +632,13 @@ pub fn nearest_on_segment(
 ) -> Result(svg_path.SegmentProjection, svg_path.Error) {
   svg_path.segment_projection(point, to: segment)
 }
+
+pub fn nearest_on_path(
+  point: svg_path.Point,
+  path: svg_path.Path,
+) -> Result(svg_path.PathProjection, svg_path.Error) {
+  svg_path.path_projection(point, to: path)
+}
 ```
 
 Lines are measured exactly. Quadratic Beziers, cubic Beziers, and arcs are
@@ -641,7 +648,10 @@ parameter range `0.0..1.0`. Use `segment_distance_with`,
 and `max_iterations`.
 
 For subpaths, `subpath_projection` returns the nearest point with a
-`SubpathParameter`.
+`SubpathParameter`. For paths, `path_projection` returns a `PathProjection`
+containing a `PathParameter`; move-only subpaths are skipped. `path_distance`
+returns only the distance. Use the corresponding `_with` functions to supply
+explicit `DistanceOptions`.
 
 ### Segment Crossings
 

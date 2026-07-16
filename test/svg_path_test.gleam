@@ -1270,6 +1270,95 @@ pub fn subpath_projection_rejects_empty_subpaths_test() {
     == Error(svg_path.EmptySubpath)
 }
 
+pub fn path_projection_returns_path_parameter_point_and_distance_test() {
+  let first =
+    svg_path.assert_subpath([
+      svg_path.Line(
+        start: svg_path.point(0.0, 0.0),
+        end: svg_path.point(10.0, 0.0),
+      ),
+    ])
+  let second =
+    svg_path.assert_subpath([
+      svg_path.Line(
+        start: svg_path.point(20.0, 0.0),
+        end: svg_path.point(20.0, 10.0),
+      ),
+    ])
+  let path =
+    svg_path.Path([
+      svg_path.empty_subpath(at: svg_path.point(-10.0, -10.0)),
+      first,
+      second,
+    ])
+
+  let assert Ok(svg_path.PathProjection(at:, point:, distance:)) =
+    svg_path.path_projection(svg_path.point(17.0, 6.0), to: path)
+
+  assert at
+    == svg_path.PathParameter(
+      subpath_index: 2,
+      at: svg_path.SubpathParameter(segment_index: 0, t: 0.6),
+    )
+  assert point_near(point, svg_path.point(20.0, 6.0))
+  assert near(distance, 3.0)
+}
+
+pub fn path_distance_returns_projection_distance_test() {
+  let path =
+    svg_path.Path([
+      svg_path.assert_subpath([
+        svg_path.Line(
+          start: svg_path.point(0.0, 0.0),
+          end: svg_path.point(10.0, 0.0),
+        ),
+      ]),
+    ])
+
+  let assert Ok(distance) =
+    svg_path.path_distance(svg_path.point(4.0, 3.0), to: path)
+
+  assert near(distance, 3.0)
+}
+
+pub fn path_projection_rejects_empty_paths_and_empty_subpaths_test() {
+  let move_only = svg_path.empty_subpath(at: svg_path.point(0.0, 0.0))
+
+  assert svg_path.path_projection(
+      svg_path.point(1.0, 1.0),
+      to: svg_path.empty_path(),
+    )
+    == Error(svg_path.EmptyPath)
+  assert svg_path.path_projection(
+      svg_path.point(1.0, 1.0),
+      to: svg_path.Path([move_only]),
+    )
+    == Error(svg_path.EmptySubpaths)
+}
+
+pub fn path_projection_with_rejects_invalid_options_test() {
+  let path =
+    svg_path.Path([
+      svg_path.assert_subpath([
+        svg_path.Line(
+          start: svg_path.point(0.0, 0.0),
+          end: svg_path.point(10.0, 0.0),
+        ),
+      ]),
+    ])
+
+  assert svg_path.path_projection_with(
+      svg_path.point(4.0, 3.0),
+      to: path,
+      options: svg_path.DistanceOptions(
+        samples: 0,
+        tolerance: 0.000000001,
+        max_iterations: 100,
+      ),
+    )
+    == Error(svg_path.InvalidDistanceSamples(0))
+}
+
 pub fn segment_intersections_finds_line_crossing_test() {
   let left =
     svg_path.Line(
