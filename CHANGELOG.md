@@ -9,6 +9,19 @@ are attached just before the matching `gleam.toml` version bump; in those cases
 the entries below follow the intended release/version history rather than only
 the tag object.
 
+## Unreleased
+
+### Added
+
+- Added segment and subpath extraction and splitting by traveled distances
+  through the `between_lengths` helper family.
+
+### Changed
+
+- Renamed the segment and subpath `sub_*` extraction helpers to the
+  `segment_between`, `segments_between`, `subpath_between`, and
+  `subpaths_between` families.
+
 ## 0.10.0 - 2026-07-15
 
 ### Added

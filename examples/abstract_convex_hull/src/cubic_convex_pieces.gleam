@@ -38,7 +38,7 @@ fn split_by_ts(
   adjacent_pairs(bounds)
   |> list.try_map(fn(pair) {
     let #(from, to) = pair
-    svg_path.sub_segment(segment, from: from, to: to)
+    svg_path.segment_between(segment, from: from, to: to)
   })
 }
 

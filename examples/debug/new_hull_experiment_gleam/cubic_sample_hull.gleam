@@ -663,7 +663,7 @@ fn piece_to_segment(
 ) -> Result(svg_path.Segment, CandidateError) {
   case piece {
     convex_hull.HullCurve(from, to) ->
-      svg_path.sub_segment(segment, from: from, to: to)
+      svg_path.segment_between(segment, from: from, to: to)
       |> result.map_error(PathError)
     convex_hull.HullLine(from, to) -> {
       use start <- result.try(segment_point(segment, from))

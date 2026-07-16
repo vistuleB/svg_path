@@ -105,7 +105,7 @@ Other experiments:
   support errors. It reintroduced `ConsecutiveCurves` for
   `near_endpoint_arc` / `near_endpoint_arc_reverse` and made the transformed
   adversarial test time out inside repeated arc minimization.
-- Returning the original segment for `sub_segment(segment, 0.0, 1.0)` preserved
+- Returning the original segment for `segment_between(segment, 0.0, 1.0)` preserved
   whole-arc support better, but broke strict subpath continuity because arc
   endpoint evaluation can differ from declared endpoints by tiny floating-point
   dust.

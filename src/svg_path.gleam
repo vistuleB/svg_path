@@ -888,7 +888,9 @@ pub fn open_at(
   case subpath.closed {
     False -> Error(NotClosed)
     True -> {
-      use subpaths <- result.try(sub_subpaths(subpath, between: [parameter]))
+      use subpaths <- result.try(
+        subpaths_between(subpath, between: [parameter]),
+      )
       case subpaths {
         [opened] -> Ok(opened)
         _ -> Error(EmptySubpath)
@@ -1006,14 +1008,14 @@ pub fn split_subpath(
 /// Parameters must be valid for the subpath and must describe a positive-length
 /// interval. Open subpaths reject reversed intervals. Closed subpaths allow
 /// wrapped intervals, but equal parameters are still rejected.
-pub fn sub_subpath(
+pub fn subpath_between(
   subpath: Subpath,
   from from: SubpathParameter,
   to to: SubpathParameter,
 ) -> Result(Subpath, Error) {
   use from <- result.try(validate_subpath_parameter(subpath, from))
   use to <- result.try(validate_subpath_parameter(subpath, to))
-  sub_subpath_between(subpath, from:, to:)
+  subpath_between_valid_parameters(subpath, from:, to:)
 }
 
 /// Split a subpath at multiple subpath parameters.
@@ -1025,7 +1027,7 @@ pub fn sub_subpath(
 /// closed subpaths, an empty split list returns an empty list, and a single
 /// split point returns one open subpath traversing the whole loop from that
 /// point back to itself.
-pub fn sub_subpaths(
+pub fn subpaths_between(
   subpath: Subpath,
   between points: List(SubpathParameter),
 ) -> Result(List(Subpath), Error) {
@@ -1038,7 +1040,7 @@ pub fn sub_subpaths(
         [] -> Ok([subpath])
         _ -> {
           use _ <- result.try(validate_open_subpath_split_points(points, length))
-          sub_subpaths_between_points(subpath, [
+          subpaths_between_points(subpath, [
             subpath_start_parameter(),
             ..list.append(points, [subpath_end_parameter(length)])
           ])
@@ -1052,7 +1054,7 @@ pub fn sub_subpaths(
           |> result.map(fn(subpath) { [subpath] })
         _ -> {
           use _ <- result.try(validate_closed_subpath_split_points(points))
-          sub_subpaths_between_pairs(subpath, cyclic_parameter_pairs(points))
+          subpaths_between_pairs(subpath, cyclic_parameter_pairs(points))
         }
       }
   }
@@ -1421,11 +1423,7 @@ pub fn segment_parameter_at_length_with(
   options options: LengthOptions,
 ) -> Result(Float, Error) {
   use length <- result.try(segment_length_with(segment, options:))
-  case validate_length_distance(distance, length:) {
-    Error(error) -> Error(error)
-    Ok(Nil) ->
-      segment_parameter_at_valid_length(segment, distance, length, options)
-  }
+  segment_parameter_at_known_length(segment, distance, length, options)
 }
 
 /// Return the segment point at a traveled distance from the segment start.
@@ -1480,6 +1478,78 @@ pub fn segment_derivative_at_length_with(
   segment_derivative(segment, at: t)
 }
 
+/// Return the portion of a segment between two traveled distances.
+///
+/// Distances are measured in path coordinate units from the segment start and
+/// must be inside `0.0..length`, inclusive. If `from` is greater than `to`, the
+/// returned segment traverses the interval in reverse.
+pub fn segment_between_lengths(
+  segment: Segment,
+  from from: Float,
+  to to: Float,
+) -> Result(Segment, Error) {
+  segment_between_lengths_with(
+    segment,
+    from:,
+    to:,
+    options: default_length_options(),
+  )
+}
+
+/// Return the portion of a segment between two traveled distances using
+/// explicit length options.
+pub fn segment_between_lengths_with(
+  segment: Segment,
+  from from: Float,
+  to to: Float,
+  options options: LengthOptions,
+) -> Result(Segment, Error) {
+  use length <- result.try(segment_length_with(segment, options:))
+  use from <- result.try(segment_parameter_at_known_length(
+    segment,
+    from,
+    length,
+    options,
+  ))
+  use to <- result.try(segment_parameter_at_known_length(
+    segment,
+    to,
+    length,
+    options,
+  ))
+  segment_between(segment, from:, to:)
+}
+
+/// Return segment portions between adjacent traveled distances.
+///
+/// Distances are measured in path coordinate units from the segment start and
+/// must be inside `0.0..length`, inclusive. Empty and singleton lists return an
+/// empty list.
+pub fn segments_between_lengths(
+  segment: Segment,
+  between distances: List(Float),
+) -> Result(List(Segment), Error) {
+  segments_between_lengths_with(
+    segment,
+    between: distances,
+    options: default_length_options(),
+  )
+}
+
+/// Return segment portions between adjacent traveled distances using explicit
+/// length options.
+pub fn segments_between_lengths_with(
+  segment: Segment,
+  between distances: List(Float),
+  options options: LengthOptions,
+) -> Result(List(Segment), Error) {
+  use length <- result.try(segment_length_with(segment, options:))
+  use points <- result.try(
+    segment_parameters_at_known_lengths(segment, distances, length, options, []),
+  )
+  segments_between(segment, between: points)
+}
+
 /// Return the approximate length of a subpath.
 ///
 /// Empty subpaths have length `0.0`.
@@ -1520,31 +1590,7 @@ pub fn subpath_parameter_at_length_with(
   options options: LengthOptions,
 ) -> Result(SubpathParameter, Error) {
   use length <- result.try(subpath_length_with(subpath, options:))
-  case subpath.segments {
-    [] -> Error(EmptySubpath)
-    _ -> {
-      use _ <- result.try(validate_length_distance(distance, length:))
-      case distance == 0.0 {
-        True -> Ok(SubpathParameter(segment_index: 0, t: 0.0))
-        False ->
-          case distance == length {
-            True ->
-              Ok(
-                canonical_to_subpath_parameter(
-                  subpath_end_parameter(list.length(subpath.segments)),
-                ),
-              )
-            False ->
-              subpath_parameter_at_valid_length_loop(
-                subpath.segments,
-                distance:,
-                options:,
-                index: 0,
-              )
-          }
-      }
-    }
-  }
+  subpath_parameter_at_known_length(subpath, distance, length, options)
 }
 
 /// Return the subpath point at a traveled distance from the subpath start.
@@ -1597,6 +1643,78 @@ pub fn subpath_derivative_at_length_with(
     options:,
   ))
   subpath_derivative(subpath, at: parameter)
+}
+
+/// Return the open subpath between two traveled distances.
+///
+/// Distances are measured in path coordinate units from the subpath start and
+/// must be inside `0.0..length`, inclusive. The resulting parameters follow
+/// the same interval rules as `subpath_between`.
+pub fn subpath_between_lengths(
+  subpath: Subpath,
+  from from: Float,
+  to to: Float,
+) -> Result(Subpath, Error) {
+  subpath_between_lengths_with(
+    subpath,
+    from:,
+    to:,
+    options: default_length_options(),
+  )
+}
+
+/// Return the open subpath between two traveled distances using explicit
+/// length options.
+pub fn subpath_between_lengths_with(
+  subpath: Subpath,
+  from from: Float,
+  to to: Float,
+  options options: LengthOptions,
+) -> Result(Subpath, Error) {
+  use length <- result.try(subpath_length_with(subpath, options:))
+  use from <- result.try(subpath_parameter_at_known_length(
+    subpath,
+    from,
+    length,
+    options,
+  ))
+  use to <- result.try(subpath_parameter_at_known_length(
+    subpath,
+    to,
+    length,
+    options,
+  ))
+  subpath_between(subpath, from:, to:)
+}
+
+/// Split a subpath at multiple traveled distances.
+///
+/// Distances are measured in path coordinate units from the subpath start and
+/// must be inside `0.0..length`, inclusive. The resulting parameters follow
+/// the same split-point rules as `subpaths_between`.
+pub fn subpaths_between_lengths(
+  subpath: Subpath,
+  between distances: List(Float),
+) -> Result(List(Subpath), Error) {
+  subpaths_between_lengths_with(
+    subpath,
+    between: distances,
+    options: default_length_options(),
+  )
+}
+
+/// Split a subpath at multiple traveled distances using explicit length
+/// options.
+pub fn subpaths_between_lengths_with(
+  subpath: Subpath,
+  between distances: List(Float),
+  options options: LengthOptions,
+) -> Result(List(Subpath), Error) {
+  use length <- result.try(subpath_length_with(subpath, options:))
+  use points <- result.try(
+    subpath_parameters_at_known_lengths(subpath, distances, length, options, []),
+  )
+  subpaths_between(subpath, between: points)
 }
 
 /// Return the approximate length of a path.
@@ -1990,7 +2108,7 @@ pub fn split_segment_inside(
 /// `from` and `to` are not clamped. Values outside `0.0..1.0` extrapolate
 /// along the same segment. If `from` is greater than `to`, the returned segment
 /// traverses the interval in reverse.
-pub fn sub_segment(
+pub fn segment_between(
   segment: Segment,
   from from: Float,
   to to: Float,
@@ -2005,12 +2123,12 @@ pub fn sub_segment(
     False -> {
       case from >. to {
         True -> {
-          case sub_segment(segment, from: to, to: from) {
+          case segment_between(segment, from: to, to: from) {
             Error(error) -> Error(error)
             Ok(segment) -> Ok(reverse_segment(segment))
           }
         }
-        False -> forward_sub_segment(segment, from: from, to: to)
+        False -> forward_segment_between(segment, from: from, to: to)
       }
     }
   }
@@ -2020,14 +2138,14 @@ pub fn sub_segment(
 ///
 /// `from` and `to` must be inside `0.0..1.0`, inclusive. If `from` is greater
 /// than `to`, the returned segment traverses the interval in reverse.
-pub fn sub_segment_inside(
+pub fn segment_between_inside(
   segment: Segment,
   from from: Float,
   to to: Float,
 ) -> Result(Segment, Error) {
   case from <. 0.0 || from >. 1.0 || to <. 0.0 || to >. 1.0 {
     True -> Error(SplitOutsideSegment)
-    False -> sub_segment(segment, from: from, to: to)
+    False -> segment_between(segment, from: from, to: to)
   }
 }
 
@@ -2035,28 +2153,28 @@ pub fn sub_segment_inside(
 ///
 /// Parameters are not clamped. Values outside `0.0..1.0` extrapolate along the
 /// same segment. Empty and singleton lists return an empty list.
-pub fn sub_segments(
+pub fn segments_between(
   segment: Segment,
   between points: List(Float),
 ) -> Result(List(Segment), Error) {
-  sub_segments_loop(segment, points, [])
+  segments_between_loop(segment, points, [])
 }
 
 /// Return segment portions between adjacent parameters.
 ///
 /// All parameters must be inside `0.0..1.0`, inclusive. Empty and singleton
 /// lists return an empty list.
-pub fn sub_segments_inside(
+pub fn segments_between_inside(
   segment: Segment,
   between points: List(Float),
 ) -> Result(List(Segment), Error) {
   case all_inside(points) {
     False -> Error(SplitOutsideSegment)
-    True -> sub_segments(segment, between: points)
+    True -> segments_between(segment, between: points)
   }
 }
 
-fn sub_segments_loop(
+fn segments_between_loop(
   segment: Segment,
   points: List(Float),
   segments: List(Segment),
@@ -2064,10 +2182,13 @@ fn sub_segments_loop(
   case points {
     [] | [_] -> Ok(list.reverse(segments))
     [from, to, ..rest] -> {
-      case sub_segment(segment, from: from, to: to) {
+      case segment_between(segment, from: from, to: to) {
         Error(error) -> Error(error)
-        Ok(sub_segment) ->
-          sub_segments_loop(segment, [to, ..rest], [sub_segment, ..segments])
+        Ok(segment_between) ->
+          segments_between_loop(segment, [to, ..rest], [
+            segment_between,
+            ..segments
+          ])
       }
     }
   }
@@ -2080,7 +2201,7 @@ fn all_inside(points: List(Float)) -> Bool {
   }
 }
 
-fn forward_sub_segment(
+fn forward_segment_between(
   segment: Segment,
   from from: Float,
   to to: Float,
@@ -2089,7 +2210,7 @@ fn forward_sub_segment(
     True -> {
       case
         reverse_segment(segment)
-        |> forward_sub_segment(from: 1.0 -. to, to: 0.0)
+        |> forward_segment_between(from: 1.0 -. to, to: 0.0)
       {
         Error(error) -> Error(error)
         Ok(segment) -> Ok(reverse_segment(segment))
@@ -2533,6 +2654,97 @@ fn validate_length_distance(
   case distance <. 0.0 || distance >. length {
     True -> Error(InvalidLengthDistance(distance:, length:))
     False -> Ok(Nil)
+  }
+}
+
+fn segment_parameter_at_known_length(
+  segment: Segment,
+  distance: Float,
+  length: Float,
+  options: LengthOptions,
+) -> Result(Float, Error) {
+  use _ <- result.try(validate_length_distance(distance, length:))
+  segment_parameter_at_valid_length(segment, distance, length, options)
+}
+
+fn subpath_parameter_at_known_length(
+  subpath: Subpath,
+  distance: Float,
+  length: Float,
+  options: LengthOptions,
+) -> Result(SubpathParameter, Error) {
+  case subpath.segments {
+    [] -> Error(EmptySubpath)
+    _ -> {
+      use _ <- result.try(validate_length_distance(distance, length:))
+      case distance == 0.0 {
+        True -> Ok(SubpathParameter(segment_index: 0, t: 0.0))
+        False ->
+          case distance == length {
+            True ->
+              Ok(
+                canonical_to_subpath_parameter(
+                  subpath_end_parameter(list.length(subpath.segments)),
+                ),
+              )
+            False ->
+              subpath_parameter_at_valid_length_loop(
+                subpath.segments,
+                distance:,
+                options:,
+                index: 0,
+              )
+          }
+      }
+    }
+  }
+}
+
+fn segment_parameters_at_known_lengths(
+  segment: Segment,
+  distances: List(Float),
+  length: Float,
+  options: LengthOptions,
+  parameters: List(Float),
+) -> Result(List(Float), Error) {
+  case distances {
+    [] -> Ok(list.reverse(parameters))
+    [distance, ..rest] -> {
+      use parameter <- result.try(segment_parameter_at_known_length(
+        segment,
+        distance,
+        length,
+        options,
+      ))
+      segment_parameters_at_known_lengths(segment, rest, length, options, [
+        parameter,
+        ..parameters
+      ])
+    }
+  }
+}
+
+fn subpath_parameters_at_known_lengths(
+  subpath: Subpath,
+  distances: List(Float),
+  length: Float,
+  options: LengthOptions,
+  parameters: List(SubpathParameter),
+) -> Result(List(SubpathParameter), Error) {
+  case distances {
+    [] -> Ok(list.reverse(parameters))
+    [distance, ..rest] -> {
+      use parameter <- result.try(subpath_parameter_at_known_length(
+        subpath,
+        distance,
+        length,
+        options,
+      ))
+      subpath_parameters_at_known_lengths(subpath, rest, length, options, [
+        parameter,
+        ..parameters
+      ])
+    }
   }
 }
 
@@ -4067,7 +4279,7 @@ fn invalid_subpath_parameter(
   Error(InvalidSubpathParameter(segment_index:, t:, length:))
 }
 
-fn sub_subpath_between(
+fn subpath_between_valid_parameters(
   subpath: Subpath,
   from from: CanonicalSubpathParameter,
   to to: CanonicalSubpathParameter,
@@ -4148,7 +4360,7 @@ fn subpath_interval_segments(
       case from_index == to_index {
         True -> {
           use segment <- result.try(nth_segment(subpath.segments, from_index))
-          use piece <- result.try(sub_segment_inside(
+          use piece <- result.try(segment_between_inside(
             segment,
             from: from_t,
             to: to_t,
@@ -4186,7 +4398,7 @@ fn subpath_interval_start_piece(
   case t == 0.0 {
     True -> Ok([segment])
     False -> {
-      use piece <- result.try(sub_segment_inside(segment, from: t, to: 1.0))
+      use piece <- result.try(segment_between_inside(segment, from: t, to: 1.0))
       Ok([piece])
     }
   }
@@ -4204,7 +4416,11 @@ fn subpath_interval_end_piece(
       case t == 1.0 {
         True -> Ok([segment])
         False -> {
-          use piece <- result.try(sub_segment_inside(segment, from: 0.0, to: t))
+          use piece <- result.try(segment_between_inside(
+            segment,
+            from: 0.0,
+            to: t,
+          ))
           Ok([piece])
         }
       }
@@ -4338,14 +4554,14 @@ fn count_cyclic_descent(
   }
 }
 
-fn sub_subpaths_between_points(
+fn subpaths_between_points(
   subpath: Subpath,
   points: List(CanonicalSubpathParameter),
 ) -> Result(List(Subpath), Error) {
-  sub_subpaths_between_pairs(subpath, adjacent_parameter_pairs(points))
+  subpaths_between_pairs(subpath, adjacent_parameter_pairs(points))
 }
 
-fn sub_subpaths_between_pairs(
+fn subpaths_between_pairs(
   subpath: Subpath,
   pairs: List(#(CanonicalSubpathParameter, CanonicalSubpathParameter)),
 ) -> Result(List(Subpath), Error) {
@@ -4353,7 +4569,11 @@ fn sub_subpaths_between_pairs(
   |> list.fold(Ok([]), fn(subpaths, pair) {
     use subpaths <- result.try(subpaths)
     let #(from, to) = pair
-    use subpath <- result.try(sub_subpath_between(subpath, from:, to:))
+    use subpath <- result.try(subpath_between_valid_parameters(
+      subpath,
+      from:,
+      to:,
+    ))
     Ok([subpath, ..subpaths])
   })
   |> result.map(list.reverse)

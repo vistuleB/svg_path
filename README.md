@@ -112,8 +112,8 @@ Segments can be evaluated, differentiated, and split by their local parameter
 svg_path.segment_point(segment, at: 0.5)                    // -> Result(Point, svg_path.Error)
 svg_path.segment_derivative(segment, at: 0.5)               // -> Result(Point, svg_path.Error)
 svg_path.split_segment(segment, at: 0.5)                    // -> Result(#(Segment, Segment), svg_path.Error)
-svg_path.sub_segment(segment, from: 0.25, to: 0.75)         // -> Result(Segment, svg_path.Error)
-svg_path.sub_segments(segment, between: [0.25, 0.75, 0.5])  // -> Result(List(Segment), svg_path.Error)
+svg_path.segment_between(segment, from: 0.25, to: 0.75)        // -> Result(Segment, svg_path.Error)
+svg_path.segments_between(segment, between: [0.25, 0.75, 0.5]) // -> Result(List(Segment), svg_path.Error)
 ```
 
 Values outside `0.0..1.0` lead to silent extrapolation along the same algebraic
@@ -146,12 +146,12 @@ pub type SubpathParameter {
 }
 
 svg_path.split_subpath(subpath, at: svg_path.SubpathParameter(1, 0.5))
-svg_path.sub_subpath(
+svg_path.subpath_between(
   subpath,
   from: svg_path.SubpathParameter(0, 0.5),
   to: svg_path.SubpathParameter(2, 0.25),
 )
-svg_path.sub_subpaths(subpath, between: [
+svg_path.subpaths_between(subpath, between: [
   svg_path.SubpathParameter(0, 0.5),
   svg_path.SubpathParameter(2, 0.25),
 ])
@@ -170,10 +170,11 @@ segment-index-then-`t` ordering.
 The subpath interval helpers have deliberately narrow roles:
 
 - `split_subpath` splits one open subpath into two open subpaths.
-- `sub_subpath` extracts one positive-length interval; closed subpaths may wrap.
-- `sub_subpaths` extracts every interval between a list of split points. For a
-  closed subpath, a single split point returns one open loop, while an empty
-  split list returns an empty list.
+- `subpath_between` extracts one positive-length interval; closed subpaths may
+  wrap.
+- `subpaths_between` extracts every interval between a list of split points.
+  For a closed subpath, a single split point returns one open loop, while an
+  empty split list returns an empty list.
 - `open_at` is the convenience form for opening one closed subpath at one
   `SubpathParameter`.
 - `subpath_point` and `subpath_derivative` evaluate a subpath at one
@@ -589,10 +590,14 @@ parameters and evaluated geometry:
 svg_path.segment_parameter_at_length(segment, distance: 12.0)
 svg_path.segment_point_at_length(segment, distance: 12.0)
 svg_path.segment_derivative_at_length(segment, distance: 12.0)
+svg_path.segment_between_lengths(segment, from: 12.0, to: 30.0)
+svg_path.segments_between_lengths(segment, between: [12.0, 20.0, 30.0])
 
 svg_path.subpath_parameter_at_length(subpath, distance: 25.0)
 svg_path.subpath_point_at_length(subpath, distance: 25.0)
 svg_path.subpath_derivative_at_length(subpath, distance: 25.0)
+svg_path.subpath_between_lengths(subpath, from: 25.0, to: 60.0)
+svg_path.subpaths_between_lengths(subpath, between: [25.0, 40.0, 60.0])
 
 svg_path.path_parameter_at_length(path, distance: 40.0)
 svg_path.path_point_at_length(path, distance: 40.0)
@@ -601,7 +606,9 @@ svg_path.path_derivative_at_length(path, distance: 40.0)
 
 These distances are path coordinate distances, not normalized fractions. The
 subpath parameter lookup returns an ordinary public `SubpathParameter`; path
-parameter lookup returns `PathParameter(subpath_index:, at:)`.
+parameter lookup returns `PathParameter(subpath_index:, at:)`. The
+`between_lengths` helpers use the same `LengthOptions` through their `_with`
+variants.
 
 ### Segment Distances
 

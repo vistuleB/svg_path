@@ -2908,7 +2908,7 @@ fn loop_partial_segment(
   from: Float,
   to: Float,
 ) -> svg_path.Segment {
-  let assert Ok(part) = svg_path.sub_segment(segment, from: from, to: to)
+  let assert Ok(part) = svg_path.segment_between(segment, from: from, to: to)
   part
 }
 
@@ -3579,7 +3579,7 @@ fn piece_to_segment(
 ) -> Result(svg_path.Segment, HullError) {
   case piece {
     HullCurve(from, to) ->
-      svg_path.sub_segment(segment, from: from, to: to)
+      svg_path.segment_between(segment, from: from, to: to)
       |> map_path_error
     HullLine(from, to) -> {
       use start <- result.try(

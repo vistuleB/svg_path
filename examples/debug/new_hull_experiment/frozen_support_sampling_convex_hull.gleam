@@ -529,7 +529,7 @@ fn hull_piece_segment(
 ) -> Result(svg_path.Segment, HullError) {
   case piece {
     HullCurve(from, to) ->
-      map_path_error(svg_path.sub_segment(segment, from: from, to: to))
+      map_path_error(svg_path.segment_between(segment, from: from, to: to))
     HullLine(from, to) -> {
       use start <- result.try(
         map_path_error(svg_path.segment_point(segment, at: from)),

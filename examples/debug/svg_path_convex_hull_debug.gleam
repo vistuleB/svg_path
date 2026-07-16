@@ -480,7 +480,7 @@ fn hull_piece_path(
   case piece {
     convex_hull.HullCurve(start_t, end_t) -> {
       let assert Ok(piece_segment) =
-        svg_path.sub_segment(segment, from: start_t, to: end_t)
+        svg_path.segment_between(segment, from: start_t, to: end_t)
 
       svg_path.Path([svg_path.assert_subpath([piece_segment])])
     }

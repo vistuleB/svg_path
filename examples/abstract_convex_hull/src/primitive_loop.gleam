@@ -197,7 +197,7 @@ fn partial_piece(
   from: Float,
   to: Float,
 ) -> svg_path.Segment {
-  let assert Ok(segment) = svg_path.sub_segment(piece, from: from, to: to)
+  let assert Ok(segment) = svg_path.segment_between(piece, from: from, to: to)
   segment
 }
 
