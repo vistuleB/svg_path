@@ -11,6 +11,8 @@ the tag object.
 
 ## Unreleased
 
+## 0.13.0 - 2026-07-16
+
 ### Added
 
 - Added `svg_path/csg` with path-level `union`, `intersection`, and
