@@ -564,7 +564,8 @@ function. Use `segment_minimize_with` and `MinimizeOptions` to tune `samples`,
 
 ### Segment and Subpath Lengths
 
-Use `segment_length` or `subpath_length` to measure path geometry:
+Use `segment_length`, `subpath_length`, or `path_length` to measure path
+geometry:
 
 ```gleam
 import svg_path
@@ -579,7 +580,7 @@ pub fn outline_length(
 Lines are measured exactly. Quadratic Beziers, cubic Beziers, and arcs are
 approximated by adaptive integration of segment speed. Use
 `segment_length_with`, `subpath_length_with`, and `LengthOptions` to tune
-`tolerance` and `max_depth`. Empty subpaths have length `0.0`.
+`tolerance` and `max_depth`. Empty subpaths and empty paths have length `0.0`.
 
 Arc-length lookup helpers convert true traveled distances back to ordinary
 parameters and evaluated geometry:
@@ -592,10 +593,15 @@ svg_path.segment_derivative_at_length(segment, distance: 12.0)
 svg_path.subpath_parameter_at_length(subpath, distance: 25.0)
 svg_path.subpath_point_at_length(subpath, distance: 25.0)
 svg_path.subpath_derivative_at_length(subpath, distance: 25.0)
+
+svg_path.path_parameter_at_length(path, distance: 40.0)
+svg_path.path_point_at_length(path, distance: 40.0)
+svg_path.path_derivative_at_length(path, distance: 40.0)
 ```
 
 These distances are path coordinate distances, not normalized fractions. The
-subpath parameter lookup returns an ordinary public `SubpathParameter`.
+subpath parameter lookup returns an ordinary public `SubpathParameter`; path
+parameter lookup returns `PathParameter(subpath_index:, at:)`.
 
 ### Segment Distances
 

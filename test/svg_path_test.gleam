@@ -912,6 +912,144 @@ pub fn subpath_parameter_at_length_rejects_empty_subpaths_test() {
     == Error(svg_path.EmptySubpath)
 }
 
+pub fn path_length_sums_subpath_lengths_test() {
+  let first =
+    svg_path.assert_subpath([
+      svg_path.Line(
+        start: svg_path.point(0.0, 0.0),
+        end: svg_path.point(3.0, 4.0),
+      ),
+    ])
+  let second =
+    svg_path.assert_subpath([
+      svg_path.Line(
+        start: svg_path.point(10.0, 10.0),
+        end: svg_path.point(10.0, 22.0),
+      ),
+    ])
+  let path =
+    svg_path.Path([
+      svg_path.empty_subpath(at: svg_path.point(-1.0, -1.0)),
+      first,
+      second,
+    ])
+
+  let assert Ok(length) = svg_path.path_length(path)
+
+  assert near(length, 17.0)
+}
+
+pub fn path_length_returns_zero_for_empty_path_test() {
+  assert svg_path.path_length(svg_path.empty_path()) == Ok(0.0)
+}
+
+pub fn path_parameter_at_length_returns_public_parameter_test() {
+  let first =
+    svg_path.assert_subpath([
+      svg_path.Line(
+        start: svg_path.point(0.0, 0.0),
+        end: svg_path.point(3.0, 4.0),
+      ),
+    ])
+  let second =
+    svg_path.assert_subpath([
+      svg_path.Line(
+        start: svg_path.point(10.0, 10.0),
+        end: svg_path.point(10.0, 22.0),
+      ),
+    ])
+  let path =
+    svg_path.Path([
+      svg_path.empty_subpath(at: svg_path.point(-1.0, -1.0)),
+      first,
+      second,
+    ])
+
+  assert svg_path.path_parameter_at_length(path, distance: 11.0)
+    == Ok(svg_path.PathParameter(
+      subpath_index: 2,
+      at: svg_path.SubpathParameter(segment_index: 0, t: 0.5),
+    ))
+  assert svg_path.path_parameter_at_length(path, distance: 17.0)
+    == Ok(svg_path.PathParameter(
+      subpath_index: 2,
+      at: svg_path.SubpathParameter(segment_index: 0, t: 1.0),
+    ))
+}
+
+pub fn path_point_and_derivative_at_length_evaluate_parameter_test() {
+  let first =
+    svg_path.assert_subpath([
+      svg_path.Line(
+        start: svg_path.point(0.0, 0.0),
+        end: svg_path.point(3.0, 4.0),
+      ),
+    ])
+  let second =
+    svg_path.assert_subpath([
+      svg_path.Line(
+        start: svg_path.point(10.0, 10.0),
+        end: svg_path.point(10.0, 22.0),
+      ),
+    ])
+  let path = svg_path.Path([first, second])
+
+  let assert Ok(point) = svg_path.path_point_at_length(path, distance: 11.0)
+  let assert Ok(derivative) =
+    svg_path.path_derivative_at_length(path, distance: 11.0)
+
+  assert point_near(point, svg_path.point(10.0, 16.0))
+  assert point_near(derivative, svg_path.point(0.0, 12.0))
+}
+
+pub fn path_parameter_at_length_rejects_empty_paths_and_empty_subpaths_test() {
+  let move_only = svg_path.empty_subpath(at: svg_path.point(0.0, 0.0))
+
+  assert svg_path.path_parameter_at_length(svg_path.empty_path(), distance: 0.0)
+    == Error(svg_path.EmptyPath)
+  assert svg_path.path_parameter_at_length(
+      svg_path.Path([move_only]),
+      distance: 0.0,
+    )
+    == Error(svg_path.EmptySubpaths)
+}
+
+pub fn path_parameter_at_length_rejects_invalid_distances_test() {
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.Line(
+        start: svg_path.point(0.0, 0.0),
+        end: svg_path.point(10.0, 0.0),
+      ),
+    ])
+  let path = svg_path.from_subpath(subpath)
+
+  assert svg_path.path_parameter_at_length(path, distance: -1.0)
+    == Error(svg_path.InvalidLengthDistance(distance: -1.0, length: 10.0))
+  assert svg_path.path_parameter_at_length(path, distance: 11.0)
+    == Error(svg_path.InvalidLengthDistance(distance: 11.0, length: 10.0))
+}
+
+pub fn path_point_rejects_invalid_path_parameters_test() {
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.Line(
+        start: svg_path.point(0.0, 0.0),
+        end: svg_path.point(10.0, 0.0),
+      ),
+    ])
+  let path = svg_path.from_subpath(subpath)
+
+  assert svg_path.path_point(
+      path,
+      at: svg_path.PathParameter(
+        subpath_index: 1,
+        at: svg_path.SubpathParameter(segment_index: 0, t: 0.0),
+      ),
+    )
+    == Error(svg_path.InvalidPathParameter(subpath_index: 1, length: 1))
+}
+
 pub fn segment_projection_returns_line_parameter_point_and_distance_test() {
   let line =
     svg_path.Line(

@@ -205,6 +205,14 @@ pub type SubpathParameter {
   SubpathParameter(segment_index: Int, t: Float)
 }
 
+/// A local address on a path.
+///
+/// `subpath_index` addresses a subpath in the path, and `at` addresses a
+/// segment parameter inside that subpath.
+pub type PathParameter {
+  PathParameter(subpath_index: Int, at: SubpathParameter)
+}
+
 type CanonicalSubpathParameter {
   CanonicalSubpathParameter(segment_index: Int, t: Float)
 }
@@ -299,6 +307,9 @@ pub type Error {
 
   /// A subpath parameter was outside the valid segment index or `0.0..1.0` range.
   InvalidSubpathParameter(segment_index: Int, t: Float, length: Int)
+
+  /// A path parameter was outside the valid subpath index range.
+  InvalidPathParameter(subpath_index: Int, length: Int)
 
   /// A subpath interval would not produce a positive-length piece.
   InvalidSubpathInterval(from: SubpathParameter, to: SubpathParameter)
@@ -1588,6 +1599,138 @@ pub fn subpath_derivative_at_length_with(
   subpath_derivative(subpath, at: parameter)
 }
 
+/// Return the approximate length of a path.
+///
+/// Empty paths have length `0.0`. Move-only subpaths contribute `0.0`.
+pub fn path_length(path: Path) -> Result(Float, Error) {
+  path_length_with(path, options: default_length_options())
+}
+
+/// Return the approximate length of a path using explicit options.
+pub fn path_length_with(
+  path: Path,
+  options options: LengthOptions,
+) -> Result(Float, Error) {
+  case validate_length_options(options) {
+    Error(error) -> Error(error)
+    Ok(Nil) -> path_length_loop(path.subpaths, options, total: 0.0)
+  }
+}
+
+/// Return the path parameter at a traveled distance from the path start.
+///
+/// The distance is measured across subpaths in path order. Move-only subpaths
+/// contribute no length and are skipped for lookup. The returned value is an
+/// ordinary public `PathParameter`.
+pub fn path_parameter_at_length(
+  path: Path,
+  distance distance: Float,
+) -> Result(PathParameter, Error) {
+  path_parameter_at_length_with(
+    path,
+    distance:,
+    options: default_length_options(),
+  )
+}
+
+/// Return the path parameter at a traveled distance using explicit options.
+pub fn path_parameter_at_length_with(
+  path: Path,
+  distance distance: Float,
+  options options: LengthOptions,
+) -> Result(PathParameter, Error) {
+  case path.subpaths {
+    [] -> Error(EmptyPath)
+    subpaths -> {
+      case nonempty_subpaths(subpaths) {
+        [] -> Error(EmptySubpaths)
+        _ -> {
+          use length <- result.try(path_length_with(path, options:))
+          use _ <- result.try(validate_length_distance(distance, length:))
+          case distance == length {
+            True -> path_end_parameter_at_length(subpaths, options)
+            False ->
+              path_parameter_at_valid_length_loop(
+                subpaths,
+                distance:,
+                options:,
+                index: 0,
+              )
+          }
+        }
+      }
+    }
+  }
+}
+
+/// Return the path point at a traveled distance from the path start.
+pub fn path_point_at_length(
+  path: Path,
+  distance distance: Float,
+) -> Result(Point, Error) {
+  path_point_at_length_with(path, distance:, options: default_length_options())
+}
+
+/// Return the path point at a traveled distance using explicit options.
+pub fn path_point_at_length_with(
+  path: Path,
+  distance distance: Float,
+  options options: LengthOptions,
+) -> Result(Point, Error) {
+  use parameter <- result.try(path_parameter_at_length_with(
+    path,
+    distance:,
+    options:,
+  ))
+  path_point(path, at: parameter)
+}
+
+/// Return the path derivative at a traveled distance from the path start.
+pub fn path_derivative_at_length(
+  path: Path,
+  distance distance: Float,
+) -> Result(Point, Error) {
+  path_derivative_at_length_with(
+    path,
+    distance:,
+    options: default_length_options(),
+  )
+}
+
+/// Return the path derivative at a traveled distance using explicit options.
+pub fn path_derivative_at_length_with(
+  path: Path,
+  distance distance: Float,
+  options options: LengthOptions,
+) -> Result(Point, Error) {
+  use parameter <- result.try(path_parameter_at_length_with(
+    path,
+    distance:,
+    options:,
+  ))
+  path_derivative(path, at: parameter)
+}
+
+/// Evaluate a path at a path parameter.
+pub fn path_point(
+  path: Path,
+  at parameter: PathParameter,
+) -> Result(Point, Error) {
+  let PathParameter(subpath_index:, at:) = parameter
+  use subpath <- result.try(nth_subpath(path.subpaths, subpath_index))
+  subpath_point(subpath, at:)
+}
+
+/// Return a path's subpath derivative at a path parameter.
+pub fn path_derivative(
+  path: Path,
+  at parameter: PathParameter,
+) -> Result(Point, Error) {
+  let PathParameter(subpath_index:, at:) = parameter
+  use subpath <- result.try(nth_subpath(path.subpaths, subpath_index))
+  subpath_derivative(subpath, at:)
+}
+
 /// Return the shortest distance from a point to a segment.
 ///
 /// Lines are measured exactly. Quadratic Beziers, cubic Beziers, and arcs are
@@ -2568,6 +2711,20 @@ fn subpath_length_loop(
   }
 }
 
+fn path_length_loop(
+  subpaths: List(Subpath),
+  options: LengthOptions,
+  total total: Float,
+) -> Result(Float, Error) {
+  case subpaths {
+    [] -> Ok(total)
+    [first, ..rest] -> {
+      use length <- result.try(subpath_length_with(first, options:))
+      path_length_loop(rest, options, total: total +. length)
+    }
+  }
+}
+
 fn subpath_parameter_at_valid_length_loop(
   segments: List(Segment),
   distance distance: Float,
@@ -2595,6 +2752,96 @@ fn subpath_parameter_at_valid_length_loop(
             options:,
             index: index + 1,
           )
+      }
+    }
+  }
+}
+
+fn path_parameter_at_valid_length_loop(
+  subpaths: List(Subpath),
+  distance distance: Float,
+  options options: LengthOptions,
+  index index: Int,
+) -> Result(PathParameter, Error) {
+  case subpaths {
+    [] -> Error(EmptySubpaths)
+    [first, ..rest] -> {
+      use length <- result.try(subpath_length_with(first, options:))
+      case list.is_empty(first.segments) {
+        True ->
+          path_parameter_at_valid_length_loop(
+            rest,
+            distance:,
+            options:,
+            index: index + 1,
+          )
+        False -> {
+          case distance <=. length {
+            True -> {
+              use at <- result.try(subpath_parameter_at_length_with(
+                first,
+                distance:,
+                options:,
+              ))
+              Ok(PathParameter(subpath_index: index, at:))
+            }
+            False ->
+              path_parameter_at_valid_length_loop(
+                rest,
+                distance: distance -. length,
+                options:,
+                index: index + 1,
+              )
+          }
+        }
+      }
+    }
+  }
+}
+
+fn path_end_parameter_at_length(
+  subpaths: List(Subpath),
+  options: LengthOptions,
+) -> Result(PathParameter, Error) {
+  path_end_parameter_at_length_loop(subpaths, options, index: 0, last: None)
+}
+
+fn path_end_parameter_at_length_loop(
+  subpaths: List(Subpath),
+  options: LengthOptions,
+  index index: Int,
+  last last: Option(PathParameter),
+) -> Result(PathParameter, Error) {
+  case subpaths {
+    [] -> {
+      case last {
+        None -> Error(EmptySubpaths)
+        Some(parameter) -> Ok(parameter)
+      }
+    }
+    [first, ..rest] -> {
+      case list.is_empty(first.segments) {
+        True ->
+          path_end_parameter_at_length_loop(
+            rest,
+            options,
+            index: index + 1,
+            last:,
+          )
+        False -> {
+          use length <- result.try(subpath_length_with(first, options:))
+          use at <- result.try(subpath_parameter_at_length_with(
+            first,
+            distance: length,
+            options:,
+          ))
+          path_end_parameter_at_length_loop(
+            rest,
+            options,
+            index: index + 1,
+            last: Some(PathParameter(subpath_index: index, at:)),
+          )
+        }
       }
     }
   }
@@ -4157,6 +4404,34 @@ fn nth_segment(segments: List(Segment), index: Int) -> Result(Segment, Error) {
         [], _ -> Error(EmptySubpath)
         [segment, ..], 0 -> Ok(segment)
         [_, ..rest], _ -> nth_segment(rest, index - 1)
+      }
+  }
+}
+
+fn nth_subpath(subpaths: List(Subpath), index: Int) -> Result(Subpath, Error) {
+  nth_subpath_loop(
+    subpaths,
+    index,
+    requested_index: index,
+    length: list.length(subpaths),
+  )
+}
+
+fn nth_subpath_loop(
+  subpaths: List(Subpath),
+  index: Int,
+  requested_index requested_index: Int,
+  length length: Int,
+) -> Result(Subpath, Error) {
+  case index < 0 {
+    True -> Error(InvalidPathParameter(subpath_index: requested_index, length:))
+    False ->
+      case subpaths, index {
+        [], _ ->
+          Error(InvalidPathParameter(subpath_index: requested_index, length:))
+        [subpath, ..], 0 -> Ok(subpath)
+        [_, ..rest], _ ->
+          nth_subpath_loop(rest, index - 1, requested_index:, length:)
       }
   }
 }
