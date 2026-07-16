@@ -1931,6 +1931,93 @@ pub fn segment_subpath_intersections_propagates_errors_test() {
     == Error(svg_path.OverlappingSegments)
 }
 
+pub fn subpath_intersections_groups_and_orders_results_test() {
+  let left =
+    svg_path.assert_polyline([
+      svg_path.point(0.0, 0.0),
+      svg_path.point(20.0, 0.0),
+      svg_path.point(20.0, 10.0),
+    ])
+  let right =
+    svg_path.assert_polyline([
+      svg_path.point(5.0, -5.0),
+      svg_path.point(5.0, 5.0),
+      svg_path.point(15.0, 5.0),
+      svg_path.point(15.0, -5.0),
+    ])
+
+  let assert Ok(intersections) = svg_path.subpath_intersections(left, right)
+  let assert [first, second] = intersections
+
+  assert point_near(first.point, svg_path.point(5.0, 0.0))
+  assert first.left_parameters == [svg_path.SubpathParameter(0, 0.25)]
+  assert first.right_parameters == [svg_path.SubpathParameter(0, 0.5)]
+  assert point_near(second.point, svg_path.point(15.0, 0.0))
+  assert second.left_parameters == [svg_path.SubpathParameter(0, 0.75)]
+  assert second.right_parameters == [svg_path.SubpathParameter(2, 0.5)]
+}
+
+pub fn subpath_intersections_retains_boundary_aliases_on_both_sides_test() {
+  let point = svg_path.point(5.0, 0.0)
+  let left =
+    svg_path.assert_subpath([
+      svg_path.Line(start: svg_path.point(0.0, 0.0), end: point),
+      svg_path.Line(start: point, end: svg_path.point(10.0, 0.0)),
+    ])
+  let right =
+    svg_path.assert_subpath([
+      svg_path.Line(start: svg_path.point(5.0, -5.0), end: point),
+      svg_path.Line(start: point, end: svg_path.point(5.0, 5.0)),
+    ])
+
+  let assert Ok([intersection]) = svg_path.subpath_intersections(left, right)
+
+  assert point_near(intersection.point, point)
+  assert intersection.left_parameters
+    == [
+      svg_path.SubpathParameter(0, 1.0),
+      svg_path.SubpathParameter(1, 0.0),
+    ]
+  assert intersection.right_parameters
+    == [
+      svg_path.SubpathParameter(0, 1.0),
+      svg_path.SubpathParameter(1, 0.0),
+    ]
+}
+
+pub fn subpath_intersections_empty_subpaths_test() {
+  let empty = svg_path.empty_subpath(at: svg_path.point(0.0, 0.0))
+  let line =
+    svg_path.assert_subpath([
+      svg_path.Line(
+        start: svg_path.point(0.0, 0.0),
+        end: svg_path.point(10.0, 0.0),
+      ),
+    ])
+
+  assert svg_path.subpath_intersections(empty, line) == Ok([])
+  assert svg_path.subpath_intersections(line, empty) == Ok([])
+}
+
+pub fn subpath_intersections_propagates_errors_test() {
+  let line =
+    svg_path.assert_subpath([
+      svg_path.Line(
+        start: svg_path.point(0.0, 0.0),
+        end: svg_path.point(10.0, 0.0),
+      ),
+    ])
+
+  assert svg_path.subpath_intersections_with(
+      line,
+      line,
+      options: svg_path.IntersectionOptions(tolerance: 0.0, max_depth: 48),
+    )
+    == Error(svg_path.InvalidIntersectionTolerance(0.0))
+  assert svg_path.subpath_intersections(line, line)
+    == Error(svg_path.OverlappingSegments)
+}
+
 pub fn segment_intersections_match_returned_parameters_test() {
   let line_a =
     svg_path.Line(

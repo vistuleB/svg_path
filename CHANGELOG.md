@@ -25,6 +25,8 @@ the tag object.
   results.
 - Added `svg_path/area` for exact signed area helpers and SVG fill-rule area
   for subpaths and paths.
+- Added subpath-to-subpath intersection helpers that retain every
+  corresponding parameter on both subpaths.
 
 ## 0.11.0 - 2026-07-16
 
