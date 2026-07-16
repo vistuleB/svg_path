@@ -1,6 +1,6 @@
 # Notes
 
-## Library Shape and Next Steps for 0.11.0
+## Library Shape and Next Steps for 0.12.0
 
 The library currently has three broad layers:
 
@@ -10,7 +10,8 @@ The library currently has three broad layers:
   code.
 - Higher-level semantic tools: `congruency`, which encodes policy about when
   ordered points, segments, subpaths, and paths count as the same under
-  translation, rotation, and uniform scale.
+  translation, rotation, and uniform scale, and `area`, which measures signed
+  and filled path geometry.
 
 The public surface is now broader than "parse and serialize SVG paths". That is
 useful, but it means naming and module boundaries should get one more pass
@@ -18,7 +19,6 @@ before `1.0.0`.
 
 Suggested follow-up work:
 
-- Release `0.11.0` from the current version-bump commit.
 - Do a naming pass before `1.0.0`, especially around
   `ellipse.arc_center_data`, `transform.point_pair_map`,
   `transform.point_triple_map`, and the `congruency` API.

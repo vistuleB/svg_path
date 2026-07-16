@@ -11,6 +11,8 @@ the tag object.
 
 ## Unreleased
 
+## 0.12.0 - 2026-07-16
+
 ### Added
 
 - Added path-level nearest-point projection and distance helpers, including
