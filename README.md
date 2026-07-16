@@ -1716,6 +1716,710 @@ pub fn from_mat3f(
 
 Further documentation can be found at <https://hexdocs.pm/svg_path>.
 
+## CSG Scratch Notes
+
+This section is a design note, not a released API.
+
+CSG here means Boolean operations on the filled point-sets represented by SVG
+paths: union, intersection, and difference. SVG specifies how to decide the
+filled region of one path through `fill-rule`, and it specifies that open
+subpaths are filled as if a closing line connected the final point back to the
+start point. SVG does not specify a general CSG API for combining two arbitrary
+paths into a new path. The Boolean operations are the usual set operations from
+computational geometry; the library still has to choose its own output and
+numerical policy.
+
+The proposed API should work directly on `Path` and return `Path`, even for
+simple inputs. Boolean operations can produce zero components, one component,
+multiple components, holes, islands inside holes, and internal contours that
+matter as path structure even when they do not change the filled set.
+
+```gleam
+csg.union(left, right, using:)
+csg.intersection(left, right, using:)
+csg.difference(left, minus: right, using:)
+
+// Each returns Result(svg_path.Path, svg_path.Error)
+```
+
+There are two separate contracts.
+
+The required semantic contract is same-fill-rule filled-set equivalence:
+
+```text
+fill(csg.union(left, right, using: rule), using: rule)
+  == fill(left, using: rule) union fill(right, using: rule)
+
+fill(csg.intersection(left, right, using: rule), using: rule)
+  == fill(left, using: rule) intersection fill(right, using: rule)
+
+fill(csg.difference(left, minus: right, using: rule), using: rule)
+  == fill(left, using: rule) difference fill(right, using: rule)
+```
+
+`union` and `intersection` are commutative as filled sets:
+
+```text
+fill(csg.union(a, b, using: rule), using: rule)
+  == fill(csg.union(b, a, using: rule), using: rule)
+
+fill(csg.intersection(a, b, using: rule), using: rule)
+  == fill(csg.intersection(b, a, using: rule), using: rule)
+```
+
+`difference` is not commutative.
+
+The proposed returned-path policy is stronger than filled-set equivalence. The
+result should preserve meaningful path structure where possible. In
+particular, a same-direction internal contour under `Nonzero` can be
+fill-redundant while still being a contour in the returned path. CSG should not
+erase that structure just because the same filled set could be represented
+with fewer subpaths.
+
+Simplification is a separate policy. A future helper could remove subsumed
+same-direction internal contours under `Nonzero`, collapse fill-equivalent
+pieces, or otherwise produce a smaller equivalent path. That kind of
+destructive cleanup should be opt-in, not part of the Boolean operation itself.
+
+The `using` fill rule is not an implementation detail. A `Path` does not always
+define one obvious filled set without a fill rule: repeated loops,
+self-intersections, and nested subpaths can differ under `Nonzero` and
+`EvenOdd`. SVG defaults to `Nonzero`, so convenience variants could default to
+that, but the semantic operation is still:
+
+1. Interpret `left` as a filled set with the chosen `FillRule`.
+2. Interpret `right` as a filled set with the chosen `FillRule`.
+3. Apply the Boolean operation to those two sets.
+4. Return a path whose fill represents the resulting set, while preserving
+   meaningful returned-path structure as described above.
+
+Multiple subpaths are evaluated globally, just like `area.path` and
+`path_containment`; they are not processed independently and then added. Empty
+paths and move-only subpaths produce an empty filled set. Open subpaths are
+implicitly closed for fill purposes.
+
+The exact rule should be phrased in terms of points not on a boundary. This
+example uses a corner/corner overlap so the result has real cut corners without
+coincident input edges:
+
+<table>
+  <tr>
+    <th>Inputs</th>
+    <th>Union</th>
+    <th>Intersection</th>
+    <th>Difference</th>
+  </tr>
+  <tr>
+    <td>
+      <svg role="img" aria-label="Two rectangles overlapping at one corner" width="170" height="125" viewBox="0 0 170 125">
+        <rect x="28" y="22" width="74" height="62" fill="#8ecae6" fill-opacity="0.7" stroke="#1f2937" stroke-width="3" />
+        <rect x="74" y="50" width="68" height="48" fill="#ffb703" fill-opacity="0.7" stroke="#1f2937" stroke-width="3" />
+        <path d="M44 22 H86" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#csg-corner-a)" />
+        <path d="M88 50 H126" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#csg-corner-a)" />
+        <text x="55" y="57" font-size="18" text-anchor="middle" fill="#1f2937">A</text>
+        <text x="116" y="80" font-size="18" text-anchor="middle" fill="#ffb703">B</text>
+        <defs>
+          <marker id="csg-corner-a" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#1f2937" />
+          </marker>
+        </defs>
+      </svg>
+    </td>
+    <td>
+      <svg role="img" aria-label="Union of corner-overlapping rectangles" width="170" height="125" viewBox="0 0 170 125">
+        <path d="M28 22 H102 V50 H142 V98 H74 V84 H28 Z" fill="#8ecae6" stroke="#1f2937" stroke-width="3" />
+        <path d="M44 22 H86" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#csg-corner-u)" />
+        <rect x="28" y="22" width="74" height="62" fill="none" stroke="#1f2937" stroke-width="2" stroke-dasharray="5 4" opacity="0.35" />
+        <rect x="74" y="50" width="68" height="48" fill="none" stroke="#1f2937" stroke-width="2" stroke-dasharray="5 4" opacity="0.35" />
+        <defs>
+          <marker id="csg-corner-u" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#1f2937" />
+          </marker>
+        </defs>
+      </svg>
+    </td>
+    <td>
+      <svg role="img" aria-label="Intersection of corner-overlapping rectangles" width="170" height="125" viewBox="0 0 170 125">
+        <rect x="74" y="50" width="28" height="34" fill="#8ecae6" stroke="#1f2937" stroke-width="3" />
+        <path d="M82 50 H95" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#csg-corner-i)" />
+        <rect x="28" y="22" width="74" height="62" fill="none" stroke="#1f2937" stroke-width="2" stroke-dasharray="5 4" opacity="0.35" />
+        <rect x="74" y="50" width="68" height="48" fill="none" stroke="#1f2937" stroke-width="2" stroke-dasharray="5 4" opacity="0.35" />
+        <defs>
+          <marker id="csg-corner-i" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#1f2937" />
+          </marker>
+        </defs>
+      </svg>
+    </td>
+    <td>
+      <svg role="img" aria-label="Difference of A minus B with corner cut out" width="170" height="125" viewBox="0 0 170 125">
+        <path d="M28 22 H102 V50 H74 V84 H28 Z" fill="#8ecae6" stroke="#1f2937" stroke-width="3" />
+        <path d="M44 22 H86" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#csg-corner-d)" />
+        <rect x="74" y="50" width="68" height="48" fill="none" stroke="#1f2937" stroke-width="2" stroke-dasharray="5 4" opacity="0.35" />
+        <defs>
+          <marker id="csg-corner-d" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#1f2937" />
+          </marker>
+        </defs>
+      </svg>
+    </td>
+  </tr>
+</table>
+
+The operation rules are:
+
+| Operation | A non-boundary point is inside the result when |
+| --- | --- |
+| `union(left, right)` | the point is inside `left` or inside `right` |
+| `intersection(left, right)` | the point is inside `left` and inside `right` |
+| `difference(left, minus: right)` | the point is inside `left` and not inside `right` |
+
+Input orientation can change the input set before CSG runs, but it should not
+by itself decide the direction of newly assembled output boundaries. The CSG
+operation first resolves `left` and `right` into filled sets with `using`, then
+assembles a returned path using the output policy. Preserved input contours may
+keep their structural role even when they are not minimal boundaries of the
+filled set.
+
+For a single simple contour, clockwise and counterclockwise inputs represent
+the same filled set under both fill rules. These two rows therefore produce
+the same result: neither input orientation wins, and the returned path uses the
+canonical output orientation:
+
+<table>
+  <tr>
+    <th>Input orientations</th>
+    <th><code>union(A, B)</code></th>
+    <th><code>intersection(A, B)</code></th>
+    <th><code>difference(A, minus: B)</code></th>
+  </tr>
+  <tr>
+    <td>
+      <svg role="img" aria-label="A and B both counterclockwise" width="170" height="125" viewBox="0 0 170 125">
+        <rect x="28" y="22" width="74" height="62" fill="#8ecae6" fill-opacity="0.65" stroke="#1f2937" stroke-width="3" />
+        <rect x="74" y="50" width="68" height="48" fill="#ffb703" fill-opacity="0.65" stroke="#1f2937" stroke-width="3" />
+        <path d="M44 22 H86" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#csg-orient-same)" />
+        <path d="M88 50 H126" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#csg-orient-same)" />
+        <text x="50" y="56" font-size="16" text-anchor="middle" fill="#1f2937">A</text>
+        <text x="117" y="80" font-size="16" text-anchor="middle" fill="#ffb703">B</text>
+        <defs>
+          <marker id="csg-orient-same" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#1f2937" />
+          </marker>
+        </defs>
+      </svg>
+    </td>
+    <td>
+      <svg role="img" aria-label="Canonical union output" width="170" height="125" viewBox="0 0 170 125">
+        <path d="M28 22 H102 V50 H142 V98 H74 V84 H28 Z" fill="#8ecae6" stroke="#1f2937" stroke-width="3" />
+        <path d="M44 22 H86" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#csg-orient-u1)" />
+        <defs>
+          <marker id="csg-orient-u1" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#1f2937" />
+          </marker>
+        </defs>
+      </svg>
+    </td>
+    <td>
+      <svg role="img" aria-label="Canonical intersection output" width="170" height="125" viewBox="0 0 170 125">
+        <rect x="74" y="50" width="28" height="34" fill="#8ecae6" stroke="#1f2937" stroke-width="3" />
+        <path d="M82 50 H95" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#csg-orient-i1)" />
+        <defs>
+          <marker id="csg-orient-i1" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#1f2937" />
+          </marker>
+        </defs>
+      </svg>
+    </td>
+    <td>
+      <svg role="img" aria-label="Canonical difference output" width="170" height="125" viewBox="0 0 170 125">
+        <path d="M28 22 H102 V50 H74 V84 H28 Z" fill="#8ecae6" stroke="#1f2937" stroke-width="3" />
+        <path d="M44 22 H86" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#csg-orient-d1)" />
+        <defs>
+          <marker id="csg-orient-d1" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#1f2937" />
+          </marker>
+        </defs>
+      </svg>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <svg role="img" aria-label="A counterclockwise and B clockwise" width="170" height="125" viewBox="0 0 170 125">
+        <rect x="28" y="22" width="74" height="62" fill="#8ecae6" fill-opacity="0.65" stroke="#1f2937" stroke-width="3" />
+        <rect x="74" y="50" width="68" height="48" fill="#ffb703" fill-opacity="0.65" stroke="#1f2937" stroke-width="3" />
+        <path d="M44 22 H86" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#csg-orient-mixed-a)" />
+        <path d="M126 50 H88" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#csg-orient-mixed-a)" />
+        <text x="50" y="56" font-size="16" text-anchor="middle" fill="#1f2937">A</text>
+        <text x="117" y="80" font-size="16" text-anchor="middle" fill="#ffb703">B</text>
+        <defs>
+          <marker id="csg-orient-mixed-a" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#1f2937" />
+          </marker>
+        </defs>
+      </svg>
+    </td>
+    <td>
+      <svg role="img" aria-label="Canonical union output independent of mixed input directions" width="170" height="125" viewBox="0 0 170 125">
+        <path d="M28 22 H102 V50 H142 V98 H74 V84 H28 Z" fill="#8ecae6" stroke="#1f2937" stroke-width="3" />
+        <path d="M44 22 H86" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#csg-orient-u2)" />
+        <defs>
+          <marker id="csg-orient-u2" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#1f2937" />
+          </marker>
+        </defs>
+      </svg>
+    </td>
+    <td>
+      <svg role="img" aria-label="Canonical intersection output independent of mixed input directions" width="170" height="125" viewBox="0 0 170 125">
+        <rect x="74" y="50" width="28" height="34" fill="#8ecae6" stroke="#1f2937" stroke-width="3" />
+        <path d="M82 50 H95" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#csg-orient-i2)" />
+        <defs>
+          <marker id="csg-orient-i2" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#1f2937" />
+          </marker>
+        </defs>
+      </svg>
+    </td>
+    <td>
+      <svg role="img" aria-label="Canonical difference output independent of mixed input directions" width="170" height="125" viewBox="0 0 170 125">
+        <path d="M28 22 H102 V50 H74 V84 H28 Z" fill="#8ecae6" stroke="#1f2937" stroke-width="3" />
+        <path d="M44 22 H86" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#csg-orient-d2)" />
+        <defs>
+          <marker id="csg-orient-d2" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#1f2937" />
+          </marker>
+        </defs>
+      </svg>
+    </td>
+  </tr>
+</table>
+
+Nested contours are different. A single path `A` with two nested contours can
+describe either a solid shape or a ring, depending on contour orientation and
+fill rule:
+
+<table>
+  <tr>
+    <th>Input <code>A</code></th>
+    <th><code>A</code> under <code>Nonzero</code></th>
+    <th><code>A</code> under <code>EvenOdd</code></th>
+  </tr>
+  <tr>
+    <td>
+      <svg role="img" aria-label="Nested same-direction contours with arrows" width="180" height="130" viewBox="0 0 180 130">
+        <rect x="30" y="20" width="120" height="90" fill="none" stroke="#1f2937" stroke-width="4" />
+        <rect x="65" y="48" width="50" height="34" fill="none" stroke="#1f2937" stroke-width="4" />
+        <path d="M45 20 H125" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#csg-arrow-a1)" />
+        <path d="M75 48 H105" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#csg-arrow-a1)" />
+        <text x="42" y="42" font-size="14" text-anchor="middle" fill="#1f2937">A</text>
+        <defs>
+          <marker id="csg-arrow-a1" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#1f2937" />
+          </marker>
+        </defs>
+      </svg>
+    </td>
+    <td>
+      <svg role="img" aria-label="Nonzero fills both nested same-direction contours" width="180" height="130" viewBox="0 0 180 130">
+        <path d="M30 20 H150 V110 H30 Z M65 48 H115 V82 H65 Z" fill="#8ecae6" fill-rule="nonzero" stroke="#1f2937" stroke-width="4" />
+        <path d="M45 20 H125" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#csg-arrow-a2)" />
+        <path d="M75 48 H105" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#csg-arrow-a2)" />
+        <defs>
+          <marker id="csg-arrow-a2" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#1f2937" />
+          </marker>
+        </defs>
+      </svg>
+    </td>
+    <td>
+      <svg role="img" aria-label="EvenOdd cuts a hole for nested contours" width="180" height="130" viewBox="0 0 180 130">
+        <path d="M30 20 H150 V110 H30 Z M65 48 H115 V82 H65 Z" fill="#8ecae6" fill-rule="evenodd" stroke="#1f2937" stroke-width="4" />
+        <path d="M45 20 H125" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#csg-arrow-a3)" />
+        <path d="M75 48 H105" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#csg-arrow-a3)" />
+        <defs>
+          <marker id="csg-arrow-a3" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#1f2937" />
+          </marker>
+        </defs>
+      </svg>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <svg role="img" aria-label="Nested opposite-direction contours with arrows" width="180" height="130" viewBox="0 0 180 130">
+        <rect x="30" y="20" width="120" height="90" fill="none" stroke="#1f2937" stroke-width="4" />
+        <rect x="65" y="48" width="50" height="34" fill="none" stroke="#1f2937" stroke-width="4" />
+        <path d="M45 20 H125" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#csg-arrow-b1)" />
+        <path d="M105 48 H75" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#csg-arrow-b1)" />
+        <text x="42" y="42" font-size="14" text-anchor="middle" fill="#1f2937">A</text>
+        <defs>
+          <marker id="csg-arrow-b1" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#1f2937" />
+          </marker>
+        </defs>
+      </svg>
+    </td>
+    <td>
+      <svg role="img" aria-label="Nonzero cuts a hole for opposite-direction nested contours" width="180" height="130" viewBox="0 0 180 130">
+        <path d="M30 20 H150 V110 H30 Z M65 48 H115 V82 H65 Z" fill="#8ecae6" fill-rule="evenodd" stroke="#1f2937" stroke-width="4" />
+        <path d="M45 20 H125" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#csg-arrow-b2)" />
+        <path d="M105 48 H75" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#csg-arrow-b2)" />
+        <defs>
+          <marker id="csg-arrow-b2" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#1f2937" />
+          </marker>
+        </defs>
+      </svg>
+    </td>
+    <td>
+      <svg role="img" aria-label="EvenOdd cuts a hole for opposite-direction nested contours" width="180" height="130" viewBox="0 0 180 130">
+        <path d="M30 20 H150 V110 H30 Z M65 48 H115 V82 H65 Z" fill="#8ecae6" fill-rule="evenodd" stroke="#1f2937" stroke-width="4" />
+        <path d="M45 20 H125" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#csg-arrow-b3)" />
+        <path d="M105 48 H75" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#csg-arrow-b3)" />
+        <defs>
+          <marker id="csg-arrow-b3" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#1f2937" />
+          </marker>
+        </defs>
+      </svg>
+    </td>
+  </tr>
+</table>
+
+When a wider rectangle `B` crosses that nested path, `union` and
+`intersection` both depend on the filled set chosen by `using`. `B` is a simple
+contour, so reversing its orientation does not change its filled set under
+either rule. The duplicated `B` rows are still useful because they make that
+independence explicit: the returned path is determined by the filled sets and
+the returned-path policy, not by which direction `B` happened to be drawn.
+Under `EvenOdd`, intersecting a ring with `B` produces two separate output
+components, not one contour joined by hidden bridge segments.
+
+These drawings show candidate returned paths, not only minimal filled-set
+boundaries. Under `Nonzero`, the same-direction internal contour in `A`
+remains visible after `union` and is clipped by `difference`, even though some
+of those contour pieces are fill-redundant. A later simplification helper could
+explicitly remove such subsumed internal contours for callers who want a
+smaller equivalent `Nonzero` fill.
+
+<table>
+  <tr>
+    <th>Inputs</th>
+    <th><code>union(A, B, using: Nonzero)</code></th>
+    <th><code>union(A, B, using: EvenOdd)</code></th>
+    <th><code>intersection(A, B, using: Nonzero)</code></th>
+    <th><code>intersection(A, B, using: EvenOdd)</code></th>
+    <th><code>difference(A, minus: B, using: Nonzero)</code></th>
+    <th><code>difference(A, minus: B, using: EvenOdd)</code></th>
+  </tr>
+  <tr>
+    <td>
+      <svg role="img" aria-label="Same-direction nested A and counterclockwise B" width="190" height="130" viewBox="0 0 190 130">
+        <rect x="30" y="20" width="120" height="90" fill="none" stroke="#1f2937" stroke-width="4" />
+        <rect x="65" y="48" width="50" height="34" fill="none" stroke="#1f2937" stroke-width="4" />
+        <rect x="10" y="54" width="170" height="22" fill="none" stroke="#ffb703" stroke-width="3" stroke-dasharray="5 4" />
+        <path d="M45 20 H125" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#csg-combo-1)" />
+        <path d="M75 48 H105" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#csg-combo-1)" />
+        <path d="M26 54 H72" fill="none" stroke="#ffb703" stroke-width="3" marker-end="url(#csg-combo-1b)" />
+        <text x="42" y="42" font-size="14" text-anchor="middle" fill="#1f2937">A</text>
+        <text x="170" y="50" font-size="14" text-anchor="middle" fill="#ffb703">B</text>
+        <defs>
+          <marker id="csg-combo-1" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#1f2937" />
+          </marker>
+          <marker id="csg-combo-1b" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#ffb703" />
+          </marker>
+        </defs>
+      </svg>
+    </td>
+    <td>
+      <svg role="img" aria-label="Nonzero union of solid A and B" width="190" height="130" viewBox="0 0 190 130">
+        <path d="M30 20 H150 V54 H180 V76 H150 V110 H30 V76 H10 V54 H30 Z" fill="#8ecae6" stroke="#1f2937" stroke-width="3" />
+        <rect x="65" y="48" width="50" height="34" fill="none" stroke="#1f2937" stroke-width="3" />
+        <path d="M45 20 H125" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#csg-combo-u1)" />
+        <path d="M75 48 H105" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#csg-combo-u1)" />
+        <defs><marker id="csg-combo-u1" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#1f2937" /></marker></defs>
+      </svg>
+    </td>
+    <td>
+      <svg role="img" aria-label="EvenOdd union of ring A and B with two remaining holes" width="190" height="130" viewBox="0 0 190 130">
+        <path d="M30 20 H150 V54 H180 V76 H150 V110 H30 V76 H10 V54 H30 Z M65 48 H115 V54 H65 Z M65 76 H115 V82 H65 Z" fill="#8ecae6" fill-rule="evenodd" stroke="#1f2937" stroke-width="3" />
+        <path d="M45 20 H125" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#csg-combo-u2)" />
+        <path d="M75 48 H105" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#csg-combo-u2)" />
+        <path d="M75 76 H105" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#csg-combo-u2)" />
+        <defs><marker id="csg-combo-u2" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#1f2937" /></marker></defs>
+      </svg>
+    </td>
+    <td>
+      <svg role="img" aria-label="Nonzero intersection of solid A and B" width="190" height="130" viewBox="0 0 190 130">
+        <rect x="30" y="54" width="120" height="22" fill="#8ecae6" stroke="#1f2937" stroke-width="3" />
+        <path d="M45 54 H125" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#csg-combo-i1)" />
+        <defs><marker id="csg-combo-i1" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#1f2937" /></marker></defs>
+      </svg>
+    </td>
+    <td>
+      <svg role="img" aria-label="EvenOdd intersection of ring A and B" width="190" height="130" viewBox="0 0 190 130">
+        <rect x="30" y="54" width="35" height="22" fill="#8ecae6" stroke="#1f2937" stroke-width="3" />
+        <rect x="115" y="54" width="35" height="22" fill="#8ecae6" stroke="#1f2937" stroke-width="3" />
+        <path d="M38 54 H56" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#csg-combo-i2)" />
+        <path d="M123 54 H141" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#csg-combo-i2)" />
+        <defs><marker id="csg-combo-i2" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#1f2937" /></marker></defs>
+      </svg>
+    </td>
+    <td>
+      <svg role="img" aria-label="Nonzero difference of solid A minus B" width="190" height="130" viewBox="0 0 190 130">
+        <path d="M30 20 H150 V54 H115 V48 H65 V54 H30 Z M30 76 H65 V82 H115 V76 H150 V110 H30 Z" fill="#8ecae6" stroke="#1f2937" stroke-width="3" />
+        <path d="M45 20 H125" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#csg-combo-d1)" />
+        <path d="M45 76 H58" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#csg-combo-d1)" />
+        <defs><marker id="csg-combo-d1" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#1f2937" /></marker></defs>
+      </svg>
+    </td>
+    <td>
+      <svg role="img" aria-label="EvenOdd difference of ring A minus B" width="190" height="130" viewBox="0 0 190 130">
+        <path d="M30 20 H150 V54 H115 V48 H65 V54 H30 Z M30 76 H65 V82 H115 V76 H150 V110 H30 Z" fill="#8ecae6" stroke="#1f2937" stroke-width="3" />
+        <path d="M45 20 H125" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#csg-combo-d2)" />
+        <path d="M45 76 H58" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#csg-combo-d2)" />
+        <defs><marker id="csg-combo-d2" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#1f2937" /></marker></defs>
+      </svg>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <svg role="img" aria-label="Same-direction nested A and clockwise B" width="190" height="130" viewBox="0 0 190 130">
+        <rect x="30" y="20" width="120" height="90" fill="none" stroke="#1f2937" stroke-width="4" />
+        <rect x="65" y="48" width="50" height="34" fill="none" stroke="#1f2937" stroke-width="4" />
+        <rect x="10" y="54" width="170" height="22" fill="none" stroke="#ffb703" stroke-width="3" stroke-dasharray="5 4" />
+        <path d="M45 20 H125" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#csg-combo-2)" />
+        <path d="M75 48 H105" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#csg-combo-2)" />
+        <path d="M72 54 H26" fill="none" stroke="#ffb703" stroke-width="3" marker-end="url(#csg-combo-2b)" />
+        <text x="42" y="42" font-size="14" text-anchor="middle" fill="#1f2937">A</text>
+        <text x="170" y="50" font-size="14" text-anchor="middle" fill="#ffb703">B</text>
+        <defs>
+          <marker id="csg-combo-2" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#1f2937" /></marker>
+          <marker id="csg-combo-2b" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#ffb703" /></marker>
+        </defs>
+      </svg>
+    </td>
+    <td>Same as above.</td>
+    <td>Same as above.</td>
+    <td>Same as above.</td>
+    <td>Same as above.</td>
+    <td>Same as above.</td>
+    <td>Same as above.</td>
+  </tr>
+  <tr>
+    <td>
+      <svg role="img" aria-label="Opposite-direction nested A and counterclockwise B" width="190" height="130" viewBox="0 0 190 130">
+        <rect x="30" y="20" width="120" height="90" fill="none" stroke="#1f2937" stroke-width="4" />
+        <rect x="65" y="48" width="50" height="34" fill="none" stroke="#1f2937" stroke-width="4" />
+        <rect x="10" y="54" width="170" height="22" fill="none" stroke="#ffb703" stroke-width="3" stroke-dasharray="5 4" />
+        <path d="M45 20 H125" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#csg-combo-3)" />
+        <path d="M105 48 H75" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#csg-combo-3)" />
+        <path d="M26 54 H72" fill="none" stroke="#ffb703" stroke-width="3" marker-end="url(#csg-combo-3b)" />
+        <text x="42" y="42" font-size="14" text-anchor="middle" fill="#1f2937">A</text>
+        <text x="170" y="50" font-size="14" text-anchor="middle" fill="#ffb703">B</text>
+        <defs>
+          <marker id="csg-combo-3" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#1f2937" /></marker>
+          <marker id="csg-combo-3b" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#ffb703" /></marker>
+        </defs>
+      </svg>
+    </td>
+    <td>
+      <svg role="img" aria-label="Nonzero union of ring A and B with two remaining holes" width="190" height="130" viewBox="0 0 190 130">
+        <path d="M30 20 H150 V54 H180 V76 H150 V110 H30 V76 H10 V54 H30 Z M65 48 V54 H115 V48 Z M65 76 V82 H115 V76 Z" fill="#8ecae6" fill-rule="nonzero" stroke="#1f2937" stroke-width="3" />
+        <path d="M45 20 H125" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#csg-combo-u3)" />
+        <path d="M105 48 H75" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#csg-combo-u3)" />
+        <path d="M105 76 H75" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#csg-combo-u3)" />
+        <defs><marker id="csg-combo-u3" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#1f2937" /></marker></defs>
+      </svg>
+    </td>
+    <td>
+      <svg role="img" aria-label="EvenOdd union of ring A and B with two remaining holes" width="190" height="130" viewBox="0 0 190 130">
+        <path d="M30 20 H150 V54 H180 V76 H150 V110 H30 V76 H10 V54 H30 Z M65 48 H115 V54 H65 Z M65 76 H115 V82 H65 Z" fill="#8ecae6" fill-rule="evenodd" stroke="#1f2937" stroke-width="3" />
+        <path d="M45 20 H125" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#csg-combo-u4)" />
+        <path d="M75 48 H105" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#csg-combo-u4)" />
+        <path d="M75 76 H105" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#csg-combo-u4)" />
+        <defs><marker id="csg-combo-u4" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#1f2937" /></marker></defs>
+      </svg>
+    </td>
+    <td>
+      <svg role="img" aria-label="Nonzero intersection of ring A and B" width="190" height="130" viewBox="0 0 190 130">
+        <rect x="30" y="54" width="35" height="22" fill="#8ecae6" stroke="#1f2937" stroke-width="3" />
+        <rect x="115" y="54" width="35" height="22" fill="#8ecae6" stroke="#1f2937" stroke-width="3" />
+        <path d="M38 54 H56" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#csg-combo-i3)" />
+        <path d="M123 54 H141" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#csg-combo-i3)" />
+        <defs><marker id="csg-combo-i3" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#1f2937" /></marker></defs>
+      </svg>
+    </td>
+    <td>
+      <svg role="img" aria-label="EvenOdd intersection of ring A and B" width="190" height="130" viewBox="0 0 190 130">
+        <rect x="30" y="54" width="35" height="22" fill="#8ecae6" stroke="#1f2937" stroke-width="3" />
+        <rect x="115" y="54" width="35" height="22" fill="#8ecae6" stroke="#1f2937" stroke-width="3" />
+        <path d="M38 54 H56" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#csg-combo-i4)" />
+        <path d="M123 54 H141" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#csg-combo-i4)" />
+        <defs><marker id="csg-combo-i4" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#1f2937" /></marker></defs>
+      </svg>
+    </td>
+    <td>
+      <svg role="img" aria-label="Nonzero difference of ring A minus B" width="190" height="130" viewBox="0 0 190 130">
+        <path d="M30 20 H150 V54 H115 V48 H65 V54 H30 Z M30 76 H65 V82 H115 V76 H150 V110 H30 Z" fill="#8ecae6" stroke="#1f2937" stroke-width="3" />
+        <path d="M45 20 H125" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#csg-combo-d3)" />
+        <path d="M45 76 H58" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#csg-combo-d3)" />
+        <defs><marker id="csg-combo-d3" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#1f2937" /></marker></defs>
+      </svg>
+    </td>
+    <td>
+      <svg role="img" aria-label="EvenOdd difference of ring A minus B" width="190" height="130" viewBox="0 0 190 130">
+        <path d="M30 20 H150 V54 H115 V48 H65 V54 H30 Z M30 76 H65 V82 H115 V76 H150 V110 H30 Z" fill="#8ecae6" stroke="#1f2937" stroke-width="3" />
+        <path d="M45 20 H125" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#csg-combo-d4)" />
+        <path d="M45 76 H58" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#csg-combo-d4)" />
+        <defs><marker id="csg-combo-d4" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#1f2937" /></marker></defs>
+      </svg>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <svg role="img" aria-label="Opposite-direction nested A and clockwise B" width="190" height="130" viewBox="0 0 190 130">
+        <rect x="30" y="20" width="120" height="90" fill="none" stroke="#1f2937" stroke-width="4" />
+        <rect x="65" y="48" width="50" height="34" fill="none" stroke="#1f2937" stroke-width="4" />
+        <rect x="10" y="54" width="170" height="22" fill="none" stroke="#ffb703" stroke-width="3" stroke-dasharray="5 4" />
+        <path d="M45 20 H125" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#csg-combo-4)" />
+        <path d="M105 48 H75" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#csg-combo-4)" />
+        <path d="M72 54 H26" fill="none" stroke="#ffb703" stroke-width="3" marker-end="url(#csg-combo-4b)" />
+        <text x="42" y="42" font-size="14" text-anchor="middle" fill="#1f2937">A</text>
+        <text x="170" y="50" font-size="14" text-anchor="middle" fill="#ffb703">B</text>
+        <defs>
+          <marker id="csg-combo-4" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#1f2937" /></marker>
+          <marker id="csg-combo-4b" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#ffb703" /></marker>
+        </defs>
+      </svg>
+    </td>
+    <td>Same as above.</td>
+    <td>Same as above.</td>
+    <td>Same as above.</td>
+    <td>Same as above.</td>
+    <td>Same as above.</td>
+    <td>Same as above.</td>
+  </tr>
+</table>
+
+`difference` is not symmetric:
+
+<table>
+  <tr>
+    <th><code>A - B</code></th>
+    <th><code>B - A</code></th>
+  </tr>
+  <tr>
+    <td>
+      <svg role="img" aria-label="A minus B cuts a corner out of A" width="170" height="125" viewBox="0 0 170 125">
+        <path d="M28 22 H102 V50 H74 V84 H28 Z" fill="#8ecae6" stroke="#1f2937" stroke-width="3" />
+        <path d="M44 22 H86" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#csg-diff-ab)" />
+        <rect x="74" y="50" width="68" height="48" fill="none" stroke="#1f2937" stroke-width="2" stroke-dasharray="5 4" opacity="0.35" />
+        <defs>
+          <marker id="csg-diff-ab" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#1f2937" />
+          </marker>
+        </defs>
+      </svg>
+    </td>
+    <td>
+      <svg role="img" aria-label="B minus A cuts a corner out of B" width="170" height="125" viewBox="0 0 170 125">
+        <path d="M102 50 H142 V98 H74 V84 H102 Z" fill="#ffb703" stroke="#1f2937" stroke-width="3" />
+        <path d="M112 50 H132" fill="none" stroke="#1f2937" stroke-width="3" marker-end="url(#csg-diff-ba)" />
+        <rect x="28" y="22" width="74" height="62" fill="none" stroke="#1f2937" stroke-width="2" stroke-dasharray="5 4" opacity="0.35" />
+        <defs>
+          <marker id="csg-diff-ba" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#1f2937" />
+          </marker>
+        </defs>
+      </svg>
+    </td>
+  </tr>
+</table>
+
+Boundary points need explicit policy. For filled-set classification, the
+result boundary is the boundary of the resulting filled set after the Boolean
+operation. For returned-path construction, the output may additionally contain
+preserved internal contours when they are meaningful path structure. For
+example, the shared internal edge between two simple overlapping shapes in
+`union(left, right)` is not part of the output boundary, while a same-direction
+internal contour under `Nonzero` may be preserved even though it is not needed
+to describe the filled set. The cut edge in `difference(left, minus: right)` is
+part of the returned path.
+
+The result should be a canonical returned path:
+
+- `Path([])` represents the empty result.
+- Every output subpath is closed.
+- Output subpaths contain drawable segments; no move-only subpaths are emitted.
+- Newly assembled outer boundaries are counterclockwise.
+- Newly assembled hole boundaries are clockwise.
+- Islands inside holes become counterclockwise again, alternating by nesting.
+- Preserved internal contours should keep a direction consistent with their
+  `Nonzero` contribution unless a later simplification helper removes them.
+- The returned path should fill correctly with `Nonzero`. If contours are
+  simple and nesting is represented explicitly, it should also fill correctly
+  with `EvenOdd`.
+
+The orientation policy is about the returned path. It is not a promise to copy
+all input directions, but it also is not a license to erase useful internal
+contours:
+
+<table>
+  <tr>
+    <th>Filled result</th>
+    <th>Canonical output orientation</th>
+  </tr>
+  <tr>
+    <td>
+      <svg role="img" aria-label="Filled result with a hole" width="180" height="130" viewBox="0 0 180 130">
+        <path d="M30 20 H150 V110 H30 Z M65 48 H115 V82 H65 Z" fill="#8ecae6" fill-rule="evenodd" stroke="#1f2937" stroke-width="4" />
+      </svg>
+    </td>
+    <td>
+      <svg role="img" aria-label="Outer boundary counterclockwise and hole clockwise" width="180" height="130" viewBox="0 0 180 130">
+        <path d="M30 20 H150 V110 H30 Z M65 48 H115 V82 H65 Z" fill="#8ecae6" fill-rule="evenodd" stroke="#1f2937" stroke-width="4" />
+        <path d="M45 20 H125" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#csg-arrow-output-outer)" />
+        <path d="M105 48 H75" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#csg-arrow-output-hole)" />
+        <defs>
+          <marker id="csg-arrow-output-outer" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#1f2937" />
+          </marker>
+          <marker id="csg-arrow-output-hole" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M0 0 L10 5 L0 10 z" fill="#1f2937" />
+          </marker>
+        </defs>
+      </svg>
+    </td>
+  </tr>
+</table>
+
+The nontrivial part is representation. Users usually do not want arbitrary
+linearized output. The preferred long-term behavior is to preserve original
+segment types when possible: line pieces stay lines, Bezier pieces stay
+Beziers, and arc pieces stay arcs after splitting. New boundary pieces that
+come from an input segment should be subsegments of that input segment.
+
+The cases that need a documented policy before implementation are:
+
+- Touching at a point: usually does not merge components.
+- Overlapping along an edge: may merge, remove, or expose that edge depending
+  on the operation.
+- Tangent intersections: must split consistently even when the local crossing
+  count does not change.
+- Zero-area slivers and zero-length pieces: should be removed within the
+  operation tolerance.
+- Coincident curves with opposite direction: need a rule for whether they
+  cancel, remain as boundary, or are treated as overlap.
+
+The implementation likely needs a planar arrangement of split segment pieces,
+classification of each directed piece by the filled state on its left and
+right sides, and then graph traversal to assemble the pieces that form the
+result boundary.
+
 ## Development
 
 ```sh
