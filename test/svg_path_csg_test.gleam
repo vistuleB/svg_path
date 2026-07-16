@@ -1,4 +1,5 @@
 import gleam/float
+import gleam/list
 import gleeunit
 import svg_path
 import svg_path/area
@@ -74,6 +75,18 @@ pub fn disjoint_union_returns_both_components_test() {
   assert_outside(union, svg_path.point(15.0, 5.0))
 }
 
+pub fn intersection_preserves_curve_segments_test() {
+  let left = circle(svg_path.point(10.0, 10.0), 10.0)
+  let right = rectangle(5.0, 0.0, 20.0, 20.0)
+
+  let assert Ok(intersection) =
+    csg.intersection(left, right, using: svg_path.Nonzero)
+
+  assert has_arc(intersection)
+  assert_inside(intersection, svg_path.point(12.5, 10.0))
+  assert_outside(intersection, svg_path.point(2.5, 10.0))
+}
+
 fn rectangle(
   min_x: Float,
   min_y: Float,
@@ -88,6 +101,44 @@ fn rectangle(
       svg_path.point(min_x, max_y),
     ]),
   )
+}
+
+fn circle(center: svg_path.Point, radius: Float) -> svg_path.Path {
+  let left = svg_path.point(center.x -. radius, center.y)
+  let right = svg_path.point(center.x +. radius, center.y)
+  svg_path.from_subpath(
+    svg_path.assert_subpath([
+      svg_path.Arc(
+        start: right,
+        radius: svg_path.point(radius, radius),
+        x_axis_rotation: 0.0,
+        large_arc: False,
+        sweep: True,
+        end: left,
+      ),
+      svg_path.Arc(
+        start: left,
+        radius: svg_path.point(radius, radius),
+        x_axis_rotation: 0.0,
+        large_arc: False,
+        sweep: True,
+        end: right,
+      ),
+    ])
+    |> svg_path.assert_set_closed(closed: True),
+  )
+}
+
+fn has_arc(path: svg_path.Path) -> Bool {
+  path
+  |> svg_path.subpaths
+  |> list.flat_map(svg_path.segments)
+  |> list.any(fn(segment) {
+    case segment {
+      svg_path.Arc(..) -> True
+      _ -> False
+    }
+  })
 }
 
 fn assert_area(path: svg_path.Path, expected: Float) {

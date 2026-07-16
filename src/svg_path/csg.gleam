@@ -1,8 +1,9 @@
 //// Boolean operations on filled SVG paths.
 ////
-//// This first implementation works by linearizing input paths, splitting line
-//// pieces at point intersections, classifying each piece against the other
-//// operand, and assembling closed line subpaths from the retained pieces.
+//// This implementation splits original path segments at point intersections,
+//// classifies each resulting piece against the other operand, and assembles
+//// closed subpaths from the retained pieces. Curved segments remain curved
+//// between real encounters; only implicit closing edges are added as lines.
 //// Coincident line edges are split at their overlap endpoints and resolved by
 //// deterministic boundary ownership rules.
 
@@ -11,8 +12,9 @@ import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import svg_path
+import svg_path/trig
 
-const default_tolerance = 0.000000001
+const default_tolerance = 0.000001
 
 type Operation {
   Union
@@ -35,7 +37,6 @@ type Chain {
 /// Options for path CSG operations.
 pub type Options {
   Options(
-    linearize: svg_path.LinearizeOptions,
     intersection: svg_path.IntersectionOptions,
     containment: svg_path.ContainmentOptions,
     tolerance: Float,
@@ -45,7 +46,6 @@ pub type Options {
 /// Return default CSG options.
 pub fn default_options() -> Options {
   Options(
-    linearize: svg_path.default_linearize_options(),
     intersection: svg_path.default_intersection_options(),
     containment: svg_path.default_containment_options(),
     tolerance: default_tolerance,
@@ -124,22 +124,13 @@ fn csg(
   operation operation: Operation,
   options options: Options,
 ) -> Result(svg_path.Path, svg_path.Error) {
-  use linear_left <- result.try(svg_path.path_to_lines_with(
-    left,
-    options: options.linearize,
-  ))
-  use linear_right <- result.try(svg_path.path_to_lines_with(
-    right,
-    options: options.linearize,
-  ))
-
-  let left_edges = path_edges(linear_left)
-  let right_edges = path_edges(linear_right)
+  let left_edges = path_edges(left)
+  let right_edges = path_edges(right)
 
   use left_pieces <- result.try(retained_pieces(
     left_edges,
     against_edges: right_edges,
-    against_path: linear_right,
+    against_path: right,
     using: fill_rule,
     operation: operation,
     side: LeftSide,
@@ -148,7 +139,7 @@ fn csg(
   use right_pieces <- result.try(retained_pieces(
     right_edges,
     against_edges: left_edges,
-    against_path: linear_left,
+    against_path: left,
     using: fill_rule,
     operation: operation,
     side: RightSide,
@@ -187,7 +178,7 @@ fn subpath_edges(subpath: svg_path.Subpath) -> List(Edge) {
                 False -> Ok(Edge(segment:))
               }
             }
-            _ -> Error(Nil)
+            _ -> Ok(Edge(segment:))
           }
         })
 
@@ -363,21 +354,27 @@ fn retain_edge_pieces(
   case pieces {
     [] -> Ok(retained)
     [piece, ..rest] -> {
-      use keep <- result.try(keep_piece(
-        piece,
-        against_path:,
-        using: fill_rule,
-        operation:,
-        side:,
-        options:,
-      ))
-      let retained = case keep {
-        False -> retained
-        True -> [
-          Piece(segment: orient_piece(piece, operation, side)),
-          ..retained
-        ]
-      }
+      let Options(tolerance:, ..) = options
+      use retained <- result.try(case degenerate_line(piece, tolerance) {
+        True -> Ok(retained)
+        False -> {
+          use keep <- result.try(keep_piece(
+            piece,
+            against_path:,
+            using: fill_rule,
+            operation:,
+            side:,
+            options:,
+          ))
+          Ok(case keep {
+            False -> retained
+            True -> [
+              Piece(segment: orient_piece(piece, operation, side)),
+              ..retained
+            ]
+          })
+        }
+      })
       retain_edge_pieces(
         rest,
         against_path:,
@@ -388,6 +385,13 @@ fn retain_edge_pieces(
         retained:,
       )
     }
+  }
+}
+
+fn degenerate_line(segment: svg_path.Segment, tolerance: Float) -> Bool {
+  case segment {
+    svg_path.Line(start:, end:) -> same_point(start, end, tolerance)
+    _ -> False
   }
 }
 
@@ -446,14 +450,17 @@ fn pieces_to_path(
   pieces: List(Piece),
   tolerance: Float,
 ) -> Result(svg_path.Path, svg_path.Error) {
-  pieces
-  |> chains(tolerance)
+  use chains <- result.try(chains(pieces, tolerance))
+  chains
   |> list.map(chain_to_subpath(tolerance))
   |> collect_subpaths([])
   |> result.map(fn(subpaths) { svg_path.Path(subpaths:) })
 }
 
-fn chains(pieces: List(Piece), tolerance: Float) -> List(Chain) {
+fn chains(
+  pieces: List(Piece),
+  tolerance: Float,
+) -> Result(List(Chain), svg_path.Error) {
   chains_loop(pieces, tolerance, [])
 }
 
@@ -461,11 +468,11 @@ fn chains_loop(
   pieces: List(Piece),
   tolerance: Float,
   chains: List(Chain),
-) -> List(Chain) {
+) -> Result(List(Chain), svg_path.Error) {
   case pieces {
-    [] -> list.reverse(chains)
+    [] -> Ok(list.reverse(chains))
     [Piece(segment: first), ..rest] -> {
-      let #(chain, remaining) = grow_chain([first], rest, tolerance)
+      use #(chain, remaining) <- result.try(grow_chain([first], rest, tolerance))
       chains_loop(remaining, tolerance, [
         Chain(segments: list.reverse(chain)),
         ..chains
@@ -478,19 +485,37 @@ fn grow_chain(
   chain: List(svg_path.Segment),
   remaining: List(Piece),
   tolerance: Float,
-) -> #(List(svg_path.Segment), List(Piece)) {
+) -> Result(#(List(svg_path.Segment), List(Piece)), svg_path.Error) {
   let assert [last, ..] = chain
   let chain_end = svg_path.segment_end(last)
   let chain_start =
     chain |> list.last |> result.unwrap(last) |> svg_path.segment_start
 
   case same_point(chain_end, chain_start, tolerance) {
-    True -> #(chain, remaining)
+    True -> Ok(#(chain, remaining))
     False -> {
-      case take_connecting_piece(remaining, chain_end, tolerance, checked: []) {
-        None -> #(chain, remaining)
-        Some(#(next, remaining)) ->
+      use incoming_angle <- result.try(segment_end_angle(last))
+      case
+        take_connecting_piece(
+          remaining,
+          chain_end,
+          incoming_angle,
+          tolerance,
+          checked: [],
+          best: None,
+        )
+      {
+        None ->
+          Error(svg_path.Discontinuous(
+            previous_index: 0,
+            next_index: 1,
+            expected: chain_end,
+            got: chain_start,
+            distance: distance(chain_end, chain_start),
+          ))
+        Some(#(next, remaining)) -> {
           grow_chain([next, ..chain], remaining, tolerance)
+        }
       }
     }
   }
@@ -499,48 +524,239 @@ fn grow_chain(
 fn take_connecting_piece(
   pieces: List(Piece),
   point: svg_path.Point,
+  incoming_angle: Float,
   tolerance: Float,
   checked checked: List(Piece),
+  best best: Option(#(svg_path.Segment, List(Piece), Float)),
 ) -> Option(#(svg_path.Segment, List(Piece))) {
   case pieces {
-    [] -> None
+    [] -> {
+      case best {
+        None -> None
+        Some(#(segment, remaining, _score)) -> Some(#(segment, remaining))
+      }
+    }
     [Piece(segment:), ..rest] -> {
       case same_point(svg_path.segment_start(segment), point, tolerance) {
-        True -> Some(#(segment, list.append(list.reverse(checked), rest)))
-        False -> {
-          case same_point(svg_path.segment_end(segment), point, tolerance) {
-            True ->
-              Some(#(
-                svg_path.reverse_segment(segment),
-                list.append(list.reverse(checked), rest),
-              ))
-            False ->
-              take_connecting_piece(rest, point, tolerance, checked: [
-                Piece(segment:),
-                ..checked
-              ])
-          }
+        True -> {
+          let remaining = list.append(list.reverse(checked), rest)
+          let score = outgoing_turn_score(segment, incoming_angle)
+          let best =
+            better_connection(best, candidate: #(segment, remaining, score))
+          take_connecting_piece(
+            rest,
+            point,
+            incoming_angle,
+            tolerance,
+            checked: [Piece(segment:), ..checked],
+            best:,
+          )
         }
+        False ->
+          take_connecting_piece(
+            rest,
+            point,
+            incoming_angle,
+            tolerance,
+            checked: [Piece(segment:), ..checked],
+            best:,
+          )
       }
     }
   }
 }
 
+fn better_connection(
+  best: Option(#(svg_path.Segment, List(Piece), Float)),
+  candidate candidate: #(svg_path.Segment, List(Piece), Float),
+) -> Option(#(svg_path.Segment, List(Piece), Float)) {
+  case best {
+    None -> Some(candidate)
+    Some(#(_segment, _remaining, best_score)) -> {
+      let #(_candidate_segment, _candidate_remaining, score) = candidate
+      case score <. best_score {
+        True -> Some(candidate)
+        False -> best
+      }
+    }
+  }
+}
+
+fn outgoing_turn_score(
+  segment: svg_path.Segment,
+  incoming_angle: Float,
+) -> Float {
+  case segment_start_angle(segment) {
+    Error(_) -> 360.0
+    Ok(outgoing_angle) -> positive_turn(incoming_angle, outgoing_angle)
+  }
+}
+
+fn segment_start_angle(
+  segment: svg_path.Segment,
+) -> Result(Float, svg_path.Error) {
+  use derivative <- result.try(svg_path.segment_derivative(segment, at: 0.0))
+  Ok(trig.atan2_degrees(derivative.y, derivative.x))
+}
+
+fn segment_end_angle(
+  segment: svg_path.Segment,
+) -> Result(Float, svg_path.Error) {
+  use derivative <- result.try(svg_path.segment_derivative(segment, at: 1.0))
+  Ok(trig.atan2_degrees(derivative.y, derivative.x))
+}
+
+fn positive_turn(from: Float, to: Float) -> Float {
+  let turn = to -. from
+  case turn <. 0.0 {
+    True -> positive_turn(from, to +. 360.0)
+    False ->
+      case turn >=. 360.0 {
+        True -> positive_turn(from, to -. 360.0)
+        False -> turn
+      }
+  }
+}
+
 fn chain_to_subpath(
-  _tolerance: Float,
+  tolerance: Float,
 ) -> fn(Chain) -> Result(svg_path.Subpath, svg_path.Error) {
   fn(chain) {
     let Chain(segments:) = chain
+    use segments <- result.try(snap_chain(segments, tolerance))
     use subpath <- result.try(svg_path.subpath_with(
       segments,
-      policy: svg_path.WiggleThenBridge,
+      policy: svg_path.Strict,
     ))
     use closed <- result.try(svg_path.set_closed_with(
       subpath,
       closed: True,
-      policy: svg_path.Bridge,
+      policy: svg_path.Strict,
     ))
     Ok(closed)
+  }
+}
+
+fn snap_chain(
+  segments: List(svg_path.Segment),
+  tolerance: Float,
+) -> Result(List(svg_path.Segment), svg_path.Error) {
+  case segments {
+    [] -> Ok([])
+    [first, ..rest] -> {
+      use open <- result.try(snap_open_chain(rest, first, tolerance, [first]))
+      snap_closed_chain(open, tolerance)
+    }
+  }
+}
+
+fn snap_open_chain(
+  remaining: List(svg_path.Segment),
+  previous: svg_path.Segment,
+  tolerance: Float,
+  snapped: List(svg_path.Segment),
+) -> Result(List(svg_path.Segment), svg_path.Error) {
+  case remaining {
+    [] -> Ok(list.reverse(snapped))
+    [next, ..rest] -> {
+      let expected = svg_path.segment_end(previous)
+      let got = svg_path.segment_start(next)
+      case same_point(expected, got, tolerance) {
+        True -> {
+          let next = segment_with_start(next, expected)
+          snap_open_chain(rest, next, tolerance, [next, ..snapped])
+        }
+        False ->
+          Error(svg_path.Discontinuous(
+            previous_index: 0,
+            next_index: 1,
+            expected:,
+            got:,
+            distance: distance(expected, got),
+          ))
+      }
+    }
+  }
+}
+
+fn snap_closed_chain(
+  segments: List(svg_path.Segment),
+  tolerance: Float,
+) -> Result(List(svg_path.Segment), svg_path.Error) {
+  case segments {
+    [] -> Ok([])
+    [first, ..] -> {
+      let first_start = svg_path.segment_start(first)
+      let last = segments |> list.last |> result.unwrap(first)
+      let last_end = svg_path.segment_end(last)
+      case same_point(last_end, first_start, tolerance) {
+        True -> Ok(replace_last_end(segments, first_start, []))
+        False ->
+          Error(svg_path.Discontinuous(
+            previous_index: 0,
+            next_index: 1,
+            expected: first_start,
+            got: last_end,
+            distance: distance(first_start, last_end),
+          ))
+      }
+    }
+  }
+}
+
+fn replace_last_end(
+  segments: List(svg_path.Segment),
+  end: svg_path.Point,
+  checked: List(svg_path.Segment),
+) -> List(svg_path.Segment) {
+  case segments {
+    [] -> list.reverse(checked)
+    [only] -> list.reverse([segment_with_end(only, end), ..checked])
+    [first, ..rest] -> replace_last_end(rest, end, [first, ..checked])
+  }
+}
+
+fn segment_with_start(
+  segment: svg_path.Segment,
+  new_start: svg_path.Point,
+) -> svg_path.Segment {
+  case segment {
+    svg_path.Line(end:, ..) -> svg_path.Line(start: new_start, end:)
+    svg_path.QuadraticBezier(control:, end:, ..) ->
+      svg_path.QuadraticBezier(start: new_start, control:, end:)
+    svg_path.CubicBezier(control1:, control2:, end:, ..) ->
+      svg_path.CubicBezier(start: new_start, control1:, control2:, end:)
+    svg_path.Arc(radius:, x_axis_rotation:, large_arc:, sweep:, end:, ..) ->
+      svg_path.Arc(
+        start: new_start,
+        radius:,
+        x_axis_rotation:,
+        large_arc:,
+        sweep:,
+        end:,
+      )
+  }
+}
+
+fn segment_with_end(
+  segment: svg_path.Segment,
+  new_end: svg_path.Point,
+) -> svg_path.Segment {
+  case segment {
+    svg_path.Line(start:, ..) -> svg_path.Line(start:, end: new_end)
+    svg_path.QuadraticBezier(start:, control:, ..) ->
+      svg_path.QuadraticBezier(start:, control:, end: new_end)
+    svg_path.CubicBezier(start:, control1:, control2:, ..) ->
+      svg_path.CubicBezier(start:, control1:, control2:, end: new_end)
+    svg_path.Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, ..) ->
+      svg_path.Arc(
+        start:,
+        radius:,
+        x_axis_rotation:,
+        large_arc:,
+        sweep:,
+        end: new_end,
+      )
   }
 }
 
@@ -593,4 +809,11 @@ fn same_point(a: svg_path.Point, b: svg_path.Point, tolerance: Float) -> Bool {
   let dx = a.x -. b.x
   let dy = a.y -. b.y
   dx *. dx +. dy *. dy <=. tolerance *. tolerance
+}
+
+fn distance(a: svg_path.Point, b: svg_path.Point) -> Float {
+  let dx = a.x -. b.x
+  let dy = a.y -. b.y
+  let assert Ok(root) = float.square_root(dx *. dx +. dy *. dy)
+  root
 }
