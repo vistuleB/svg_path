@@ -54,8 +54,8 @@ type Candidate {
 
 type Separation {
   NoSeparation
-  InteriorOnLeft(level: Int, count: Int)
-  InteriorOnRight(level: Int, count: Int)
+  InteriorOnLeft(low_level: Int, high_level: Int)
+  InteriorOnRight(low_level: Int, high_level: Int)
 }
 
 /// Options for path CSG operations.
@@ -469,42 +469,43 @@ fn keep_piece(
         svg_path.Boundary, Intersection, RightSide -> Ok([])
         svg_path.Boundary, Difference, RightSide -> Ok([])
         _, _, _ -> {
-          let #(output_segment, level, count) =
-            output_piece_data(oriented, separation)
-          Ok(repeat_piece(output_segment, level, count, []))
+          Ok(output_pieces(oriented, separation))
         }
       }
     }
   }
 }
 
-fn output_piece_data(
+fn output_pieces(
   oriented: svg_path.Segment,
   separation: Separation,
-) -> #(svg_path.Segment, Int, Int) {
+) -> List(Piece) {
   case separation {
-    InteriorOnLeft(level:, count:) -> #(oriented, level, count)
-    InteriorOnRight(level:, count:) -> #(
-      svg_path.reverse_segment(oriented),
-      level,
-      count,
-    )
-    NoSeparation -> #(oriented, 0, 0)
+    InteriorOnLeft(low_level:, high_level:) ->
+      threshold_pieces(oriented, low_level, high_level, [])
+    InteriorOnRight(low_level:, high_level:) ->
+      threshold_pieces(
+        svg_path.reverse_segment(oriented),
+        low_level,
+        high_level,
+        [],
+      )
+    NoSeparation -> []
   }
 }
 
-fn repeat_piece(
+fn threshold_pieces(
   segment: svg_path.Segment,
-  level: Int,
-  count: Int,
-  repeated: List(Piece),
+  low_level: Int,
+  high_level: Int,
+  pieces: List(Piece),
 ) -> List(Piece) {
-  case count <= 0 {
-    True -> repeated
+  case high_level <= low_level {
+    True -> pieces
     False ->
-      repeat_piece(segment, level, count - 1, [
-        Piece(segment:, level:),
-        ..repeated
+      threshold_pieces(segment, low_level, high_level - 1, [
+        Piece(segment:, level: high_level),
+        ..pieces
       ])
   }
 }
@@ -690,14 +691,18 @@ fn level_separation(first_level: Int, second_level: Int) -> Separation {
   case first_level == second_level {
     True -> NoSeparation
     False -> {
-      let count = int_absolute_value(first_level - second_level)
       let first_strength = int_absolute_value(first_level)
       let second_strength = int_absolute_value(second_level)
       case first_strength > second_strength {
-        True -> InteriorOnLeft(level: first_level, count:)
+        True ->
+          InteriorOnLeft(low_level: second_strength, high_level: first_strength)
         False ->
           case second_strength > first_strength {
-            True -> InteriorOnRight(level: second_level, count:)
+            True ->
+              InteriorOnRight(
+                low_level: first_strength,
+                high_level: second_strength,
+              )
             False -> NoSeparation
           }
       }
@@ -763,7 +768,7 @@ fn grow_chain(
   remaining: List(Piece),
   tolerance: Float,
 ) -> Result(#(List(Piece), List(Piece)), svg_path.Error) {
-  let assert [Piece(segment: last_segment, ..), ..] = chain
+  let assert [Piece(segment: last_segment, level: chain_level), ..] = chain
   let segments = list.map(chain, fn(piece) { piece.segment })
   let chain_end = svg_path.segment_end(last_segment)
   let chain_start =
@@ -779,6 +784,7 @@ fn grow_chain(
       let candidates =
         connecting_pieces(
           remaining,
+          chain_level,
           chain_end,
           incoming_angle,
           tolerance,
@@ -818,6 +824,7 @@ fn try_grow_candidates(
 
 fn connecting_pieces(
   pieces: List(Piece),
+  chain_level: Int,
   point: svg_path.Point,
   incoming_angle: Float,
   tolerance: Float,
@@ -826,13 +833,17 @@ fn connecting_pieces(
 ) -> List(Candidate) {
   case pieces {
     [] -> list.sort(candidates, by: compare_candidates)
-    [Piece(segment:, level: _piece_level) as piece, ..rest] -> {
-      case same_point(svg_path.segment_start(segment), point, tolerance) {
+    [Piece(segment:, level: piece_level) as piece, ..rest] -> {
+      case
+        piece_level == chain_level
+        && same_point(svg_path.segment_start(segment), point, tolerance)
+      {
         True -> {
           let remaining = list.append(list.reverse(checked), rest)
           let score = outgoing_turn_score(segment, incoming_angle)
           connecting_pieces(
             rest,
+            chain_level,
             point,
             incoming_angle,
             tolerance,
@@ -843,6 +854,7 @@ fn connecting_pieces(
         False ->
           connecting_pieces(
             rest,
+            chain_level,
             point,
             incoming_angle,
             tolerance,

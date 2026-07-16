@@ -13,11 +13,11 @@
   <path d="M 99.76 66 L 92.76 70 V 62 Z" style="fill: #f59e0b; stroke: none" />
   <rect x="168" y="34" width="150" height="125" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
   <text x="168" y="27" font-size="10" style="fill: #111827; font-family: system-ui, sans-serif; font-weight: 700">union(A, B)</text>
-  <path d="M 293 111 A 52 52 0 0 1 267.05763 156 A 52 52 0 0 1 189 111 A 52 52 0 0 1 267.05763 66 A 52 52 0 0 1 293 111 Z M 227 66 H 267.05763 H 305 V 156 H 267.05763 H 227 Z" style="fill: #8ecae6; stroke: #1f2937; stroke-width: 4; stroke-linejoin: round" />
+  <path d="M 293 111 A 52 52 0 0 1 267.05763 156 H 227 V 66 H 267.05763 A 52 52 0 0 1 293 111 Z M 267.05763 156 A 52 52 0 0 1 189 111 A 52 52 0 0 1 267.05763 66 H 305 V 156 Z" style="fill: #8ecae6; stroke: #1f2937; stroke-width: 4; stroke-linejoin: round" />
   <path d="M 291.46525 125.87478 L 284.66056 140.35567" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 284.66056 140.35567 L 284.01739 132.31911 L 291.25783 135.72145 Z" style="fill: #1f2937; stroke: none" />
-  <path d="M 235.8242 66 H 251.8242" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
-  <path d="M 251.8242 66 L 244.8242 70 V 62 Z" style="fill: #1f2937; stroke: none" />
+  <path d="M 230.41077 162.53512 L 215.41012 156.9691" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 215.41012 156.9691 L 223.36441 155.65407 L 220.5814 163.15439 Z" style="fill: #1f2937; stroke: none" />
   <rect x="336" y="34" width="150" height="125" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
   <text x="336" y="27" font-size="10" style="fill: #111827; font-family: system-ui, sans-serif; font-weight: 700">intersection(A, B)</text>
   <path d="M 461 111 A 52 52 0 0 1 435.05763 156 H 395 V 66 H 435.05763 A 52 52 0 0 1 461 111 Z M 461 111 A 52 52 0 0 1 435.05763 156 H 395 V 66 H 435.05763 A 52 52 0 0 1 461 111 Z" style="fill: #8ecae6; stroke: #1f2937; stroke-width: 4; stroke-linejoin: round" />

@@ -25,6 +25,8 @@ const drawing_origin_x = 15.0
 
 const drawing_origin_y = 16.0
 
+const minimum_arrow_segment_length = 28.0
+
 pub fn main() -> Nil {
   gleeunit.main()
 }
@@ -479,16 +481,51 @@ fn guide_result_panel(
       placed,
       "fill: #8ecae6; fill-rule: "
         <> svg_fill_rule(fill_rule)
-        <> "; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round",
+        <> "; stroke: none",
     ),
-    ..path_arrows(placed, "#1f2937")
   ]
+  |> list.append(contour_overlays(placed, stroke_width: 3.0))
 }
 
 fn path_arrows(path: svg_path.Path, color: String) -> svg.ThingsToDraw {
   path
   |> svg_path.subpaths
   |> list.flat_map(subpath_arrows(_, color))
+}
+
+fn contour_overlays(
+  path: svg_path.Path,
+  stroke_width stroke_width: Float,
+) -> svg.ThingsToDraw {
+  path
+  |> svg_path.subpaths
+  |> list.index_map(fn(subpath, index) {
+    let color = contour_color(index)
+    let subpath_path = svg_path.from_subpath(subpath)
+    [
+      svg.StyledPath(
+        subpath_path,
+        "fill: none; stroke: "
+          <> color
+          <> "; stroke-width: "
+          <> float.to_string(stroke_width)
+          <> "; stroke-linejoin: round",
+      ),
+      ..path_arrows(subpath_path, color)
+    ]
+  })
+  |> list.flatten
+}
+
+fn contour_color(index: Int) -> String {
+  case index % 6 {
+    0 -> "#1f2937"
+    1 -> "#0f766e"
+    2 -> "#b45309"
+    3 -> "#6d28d9"
+    4 -> "#be123c"
+    _ -> "#0369a1"
+  }
 }
 
 fn subpath_arrows(
@@ -514,6 +551,17 @@ fn subpath_arrow(
 }
 
 fn segment_arrow(
+  segment: svg_path.Segment,
+  color: String,
+) -> Result(svg.ThingsToDraw, Nil) {
+  let assert Ok(length) = svg_path.segment_length(segment)
+  case length <. minimum_arrow_segment_length {
+    True -> Error(Nil)
+    False -> segment_arrow_on_long_enough_segment(segment, color)
+  }
+}
+
+fn segment_arrow_on_long_enough_segment(
   segment: svg_path.Segment,
   color: String,
 ) -> Result(svg.ThingsToDraw, Nil) {
@@ -909,10 +957,10 @@ fn combo_result_panel(
       placed,
       "fill: #8ecae6; fill-rule: "
         <> svg_fill_rule(fill_rule)
-        <> "; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round",
+        <> "; stroke: none",
     ),
-    ..path_arrows(placed, "#1f2937")
   ]
+  |> list.append(contour_overlays(placed, stroke_width: 3.0))
 }
 
 fn combo_panel_background(x: Float, y: Float) -> svg.ThingToDraw {
@@ -934,11 +982,12 @@ fn combo_row_label(x: Float, y: Float, label: String) -> svg.ThingToDraw {
 }
 
 fn theory_bar(same_direction same_direction: Bool) -> svg_path.Path {
-  svg_path.from_subpath(rectangle_subpath(
+  svg_path.from_subpath(rounded_rectangle_subpath(
     10.0,
     54.0,
     180.0,
     76.0,
+    radius: 5.0,
     same_direction:,
   ))
 }
@@ -1092,10 +1141,10 @@ fn theory_result_panel(
       placed,
       "fill: #8ecae6; fill-rule: "
         <> svg_fill_rule(fill_rule)
-        <> "; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round",
+        <> "; stroke: none",
     ),
-    ..path_arrows(placed, "#1f2937")
   ]
+  |> list.append(contour_overlays(placed, stroke_width: 3.0))
 }
 
 fn theory_panel_background(x: Float, y: Float) -> svg.ThingToDraw {
@@ -1199,12 +1248,20 @@ fn nested_theory_path(
   inner_same_direction inner_same_direction: Bool,
 ) -> svg_path.Path {
   svg_path.Path([
-    rectangle_subpath(30.0, 20.0, 150.0, 110.0, same_direction: True),
-    rectangle_subpath(
+    rounded_rectangle_subpath(
+      30.0,
+      20.0,
+      150.0,
+      110.0,
+      radius: 8.0,
+      same_direction: True,
+    ),
+    rounded_rectangle_subpath(
       65.0,
       48.0,
       115.0,
       82.0,
+      radius: 5.0,
       same_direction: inner_same_direction,
     ),
   ])
@@ -1257,6 +1314,71 @@ fn rectangle_subpath(
   }
 
   svg_path.assert_polygon(points)
+}
+
+fn rounded_rectangle_subpath(
+  min_x: Float,
+  min_y: Float,
+  max_x: Float,
+  max_y: Float,
+  radius radius: Float,
+  same_direction same_direction: Bool,
+) -> svg_path.Subpath {
+  let top_left = svg_path.point(min_x +. radius, min_y)
+  let top_right = svg_path.point(max_x -. radius, min_y)
+  let right_top = svg_path.point(max_x, min_y +. radius)
+  let right_bottom = svg_path.point(max_x, max_y -. radius)
+  let bottom_right = svg_path.point(max_x -. radius, max_y)
+  let bottom_left = svg_path.point(min_x +. radius, max_y)
+  let left_bottom = svg_path.point(min_x, max_y -. radius)
+  let left_top = svg_path.point(min_x, min_y +. radius)
+  let arc_radius = svg_path.point(radius, radius)
+
+  let clockwise =
+    svg_path.assert_subpath([
+      svg_path.Line(start: top_left, end: top_right),
+      svg_path.Arc(
+        start: top_right,
+        radius: arc_radius,
+        x_axis_rotation: 0.0,
+        large_arc: False,
+        sweep: True,
+        end: right_top,
+      ),
+      svg_path.Line(start: right_top, end: right_bottom),
+      svg_path.Arc(
+        start: right_bottom,
+        radius: arc_radius,
+        x_axis_rotation: 0.0,
+        large_arc: False,
+        sweep: True,
+        end: bottom_right,
+      ),
+      svg_path.Line(start: bottom_right, end: bottom_left),
+      svg_path.Arc(
+        start: bottom_left,
+        radius: arc_radius,
+        x_axis_rotation: 0.0,
+        large_arc: False,
+        sweep: True,
+        end: left_bottom,
+      ),
+      svg_path.Line(start: left_bottom, end: left_top),
+      svg_path.Arc(
+        start: left_top,
+        radius: arc_radius,
+        x_axis_rotation: 0.0,
+        large_arc: False,
+        sweep: True,
+        end: top_left,
+      ),
+    ])
+    |> svg_path.assert_set_closed(closed: True)
+
+  case same_direction {
+    True -> clockwise
+    False -> svg_path.reverse_subpath(clockwise)
+  }
 }
 
 fn circle(center: svg_path.Point, radius: Float) -> svg_path.Path {

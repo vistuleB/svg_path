@@ -13,21 +13,26 @@
   <path d="M 110.56 98 L 103.56 102 V 94 Z" style="fill: #f59e0b; stroke: none" />
   <rect x="186" y="48" width="170" height="125" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
   <text x="186" y="41" font-size="10" style="fill: #111827; font-family: system-ui, sans-serif; font-weight: 700">union(A, B)</text>
-  <path d="M 214 70 H 288 V 98 V 132 H 260 H 214 Z M 260 98 H 288 H 328 V 146 H 260 V 132 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
+  <path d="M 214 70 H 288 V 98 H 328 V 146 H 260 V 132 H 214 Z M 288 98 V 132 H 260 V 98 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: none" />
+  <path d="M 214 70 H 288 V 98 H 328 V 146 H 260 V 132 H 214 Z" style="fill: none; stroke: #1f2937; stroke-width: 3.0; stroke-linejoin: round" />
   <path d="M 237.08 70 H 253.08" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 253.08 70 L 246.08 74 V 66 Z" style="fill: #1f2937; stroke: none" />
-  <path d="M 263.76 98 H 279.76" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
-  <path d="M 279.76 98 L 272.76 102 V 94 Z" style="fill: #1f2937; stroke: none" />
+  <path d="M 288 98 V 132 H 260 V 98 Z" style="fill: none; stroke: #0f766e; stroke-width: 3.0; stroke-linejoin: round" />
+  <path d="M 288 104.28 V 120.28" style="fill: none; stroke: #0f766e; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 288 120.28 L 284 113.28 H 292 Z" style="fill: #0f766e; stroke: none" />
   <rect x="372" y="48" width="170" height="125" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
   <text x="372" y="41" font-size="10" style="fill: #111827; font-family: system-ui, sans-serif; font-weight: 700">intersection(A, B)</text>
-  <path d="M 474 98 V 132 H 446 V 98 Z M 474 98 V 132 H 446 V 98 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
+  <path d="M 474 98 V 132 H 446 V 98 Z M 474 98 V 132 H 446 V 98 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: none" />
+  <path d="M 474 98 V 132 H 446 V 98 Z" style="fill: none; stroke: #1f2937; stroke-width: 3.0; stroke-linejoin: round" />
   <path d="M 474 104.28 V 120.28" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 474 120.28 L 470 113.28 H 478 Z" style="fill: #1f2937; stroke: none" />
-  <path d="M 474 104.28 V 120.28" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
-  <path d="M 474 120.28 L 470 113.28 H 478 Z" style="fill: #1f2937; stroke: none" />
+  <path d="M 474 98 V 132 H 446 V 98 Z" style="fill: none; stroke: #0f766e; stroke-width: 3.0; stroke-linejoin: round" />
+  <path d="M 474 104.28 V 120.28" style="fill: none; stroke: #0f766e; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 474 120.28 L 470 113.28 H 478 Z" style="fill: #0f766e; stroke: none" />
   <rect x="558" y="48" width="170" height="125" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
   <text x="558" y="41" font-size="10" style="fill: #111827; font-family: system-ui, sans-serif; font-weight: 700">difference(A, B)</text>
-  <path d="M 586 70 H 660 V 98 H 632 V 132 H 586 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
+  <path d="M 586 70 H 660 V 98 H 632 V 132 H 586 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: none" />
+  <path d="M 586 70 H 660 V 98 H 632 V 132 H 586 Z" style="fill: none; stroke: #1f2937; stroke-width: 3.0; stroke-linejoin: round" />
   <path d="M 609.08 70 H 625.08" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 625.08 70 L 618.08 74 V 66 Z" style="fill: #1f2937; stroke: none" />
   <rect x="0" y="197" width="170" height="125" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
@@ -42,21 +47,26 @@
   <path d="M 74 275.16 L 70 268.16 H 78 Z" style="fill: #f59e0b; stroke: none" />
   <rect x="186" y="197" width="170" height="125" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
   <text x="186" y="190" font-size="10" style="fill: #111827; font-family: system-ui, sans-serif; font-weight: 700">union(A, B)</text>
-  <path d="M 214 219 H 288 V 247 V 281 H 260 H 214 Z M 260 281 V 247 H 288 H 328 V 295 H 260 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
+  <path d="M 214 219 H 288 V 247 H 328 V 295 H 260 V 281 H 214 Z M 288 247 V 281 H 260 V 247 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: none" />
+  <path d="M 214 219 H 288 V 247 H 328 V 295 H 260 V 281 H 214 Z" style="fill: none; stroke: #1f2937; stroke-width: 3.0; stroke-linejoin: round" />
   <path d="M 237.08 219 H 253.08" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 253.08 219 L 246.08 223 V 215 Z" style="fill: #1f2937; stroke: none" />
-  <path d="M 260 274.72 V 258.72" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
-  <path d="M 260 258.72 L 264 265.72 H 256 Z" style="fill: #1f2937; stroke: none" />
+  <path d="M 288 247 V 281 H 260 V 247 Z" style="fill: none; stroke: #0f766e; stroke-width: 3.0; stroke-linejoin: round" />
+  <path d="M 288 253.28 V 269.28" style="fill: none; stroke: #0f766e; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 288 269.28 L 284 262.28 H 292 Z" style="fill: #0f766e; stroke: none" />
   <rect x="372" y="197" width="170" height="125" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
   <text x="372" y="190" font-size="10" style="fill: #111827; font-family: system-ui, sans-serif; font-weight: 700">intersection(A, B)</text>
-  <path d="M 474 247 V 281 H 446 V 247 Z M 474 247 V 281 H 446 V 247 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
+  <path d="M 474 247 V 281 H 446 V 247 Z M 474 247 V 281 H 446 V 247 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: none" />
+  <path d="M 474 247 V 281 H 446 V 247 Z" style="fill: none; stroke: #1f2937; stroke-width: 3.0; stroke-linejoin: round" />
   <path d="M 474 253.28 V 269.28" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 474 269.28 L 470 262.28 H 478 Z" style="fill: #1f2937; stroke: none" />
-  <path d="M 474 253.28 V 269.28" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
-  <path d="M 474 269.28 L 470 262.28 H 478 Z" style="fill: #1f2937; stroke: none" />
+  <path d="M 474 247 V 281 H 446 V 247 Z" style="fill: none; stroke: #0f766e; stroke-width: 3.0; stroke-linejoin: round" />
+  <path d="M 474 253.28 V 269.28" style="fill: none; stroke: #0f766e; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 474 269.28 L 470 262.28 H 478 Z" style="fill: #0f766e; stroke: none" />
   <rect x="558" y="197" width="170" height="125" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
   <text x="558" y="190" font-size="10" style="fill: #111827; font-family: system-ui, sans-serif; font-weight: 700">difference(A, B)</text>
-  <path d="M 586 219 H 660 V 247 H 632 V 281 H 586 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
+  <path d="M 586 219 H 660 V 247 H 632 V 281 H 586 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: none" />
+  <path d="M 586 219 H 660 V 247 H 632 V 281 H 586 Z" style="fill: none; stroke: #1f2937; stroke-width: 3.0; stroke-linejoin: round" />
   <path d="M 609.08 219 H 625.08" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 625.08 219 L 618.08 223 V 215 Z" style="fill: #1f2937; stroke: none" />
 </svg>
