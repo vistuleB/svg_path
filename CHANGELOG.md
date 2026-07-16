@@ -9,10 +9,16 @@ are attached just before the matching `gleam.toml` version bump; in those cases
 the entries below follow the intended release/version history rather than only
 the tag object.
 
-## Unreleased
+## 0.11.0 - 2026-07-16
 
 ### Added
 
+- Added nearest-point projection for segments and subpaths, including public
+  projection result types and configurable numerical options.
+- Added adaptive segment, subpath, and path length measurement through
+  `LengthOptions`.
+- Added true-distance parameter, point, and derivative lookup for segments,
+  subpaths, and paths, including the public `PathParameter` type.
 - Added segment and subpath extraction and splitting by traveled distances
   through the `between_lengths` helper family.
 
@@ -21,6 +27,10 @@ the tag object.
 - Renamed the segment and subpath `sub_*` extraction helpers to the
   `segment_between`, `segments_between`, `subpath_between`, and
   `subpaths_between` families.
+
+### Documentation
+
+- Added a README module map for the library's public modules.
 
 ## 0.10.0 - 2026-07-15
 

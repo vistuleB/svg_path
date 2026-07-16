@@ -1,6 +1,6 @@
 # Notes
 
-## Library Shape and Next Steps for 0.10.0
+## Library Shape and Next Steps for 0.11.0
 
 The library currently has three broad layers:
 
@@ -18,19 +18,12 @@ before `1.0.0`.
 
 Suggested follow-up work:
 
-- Release `0.10.0` from the current version-bump commit.
+- Release `0.11.0` from the current version-bump commit.
 - Do a naming pass before `1.0.0`, especially around
   `ellipse.arc_center_data`, `transform.point_pair_map`,
   `transform.point_triple_map`, and the `congruency` API.
-- Document that `congruency` is semantic rather than visual: geometrically
-  similar rendered output can still be rejected when segment constructors or
-  ordered structure differ.
-- Add a short README module map so users know when to reach for `parse`,
-  `serialize`, `transform`, `ellipse`, `congruency`, and the inspection helpers.
 - Keep replacing local point/vector arithmetic with `vec/vec2f` where it
   improves clarity.
-- Start a small changelog habit for releases, because behavior and public API
-  changes are now meaningful between versions.
 
 ## Move-Only vs Closed Zero-Length Subpaths
 
