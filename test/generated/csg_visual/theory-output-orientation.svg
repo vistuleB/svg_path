@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 356 181">
+  <rect x="0" y="0" width="356" height="181" style="fill: #ffffff; stroke: none" />
+  <text x="0" y="20" font-size="16" style="fill: #111827; font-family: system-ui, sans-serif; font-weight: 700">Canonical output orientation</text>
+  <rect x="0" y="48" width="170" height="125" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
+  <text x="0" y="41" font-size="10" style="fill: #111827; font-family: system-ui, sans-serif; font-weight: 700">Filled result</text>
+  <path d="M 30 68 H 150 V 158 H 30 Z M 65 96 V 130 H 115 V 96 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
+  <path d="M 72.4 68 H 88.4" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 88.4 68 L 81.4 72 V 64 Z" style="fill: #1f2937; stroke: none" />
+  <path d="M 65 102.28 V 118.28" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 65 118.28 L 61 111.28 H 69 Z" style="fill: #1f2937; stroke: none" />
+  <rect x="186" y="48" width="170" height="125" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
+  <text x="186" y="41" font-size="10" style="fill: #111827; font-family: system-ui, sans-serif; font-weight: 700">Output orientation</text>
+  <path d="M 216 68 H 336 V 158 H 216 Z M 251 96 V 130 H 301 V 96 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
+  <path d="M 258.4 68 H 274.4" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 274.4 68 L 267.4 72 V 64 Z" style="fill: #1f2937; stroke: none" />
+  <path d="M 251 102.28 V 118.28" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 251 118.28 L 247 111.28 H 255 Z" style="fill: #1f2937; stroke: none" />
+</svg>

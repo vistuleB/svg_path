@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 728 181">
+  <rect x="0" y="0" width="728" height="181" style="fill: #ffffff; stroke: none" />
+  <text x="0" y="20" font-size="16" style="fill: #111827; font-family: system-ui, sans-serif; font-weight: 700">Corner/corner overlap</text>
+  <rect x="0" y="48" width="170" height="125" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
+  <text x="0" y="41" font-size="10" style="fill: #111827; font-family: system-ui, sans-serif; font-weight: 700">Inputs</text>
+  <path d="M 28 70 H 102 V 132 H 28 Z" style="fill: rgba(142, 202, 230, 0.55); stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
+  <path d="M 74 98 H 142 V 146 H 74 Z" style="fill: rgba(255, 183, 3, 0.32); stroke: #f59e0b; stroke-width: 3; stroke-dasharray: 6 5; stroke-linejoin: round" />
+  <text x="12" y="90" font-size="14" style="fill: #1f2937; font-family: system-ui, sans-serif; font-weight: 700">A</text>
+  <text x="144" y="118" font-size="14" style="fill: #d97706; font-family: system-ui, sans-serif; font-weight: 700">B</text>
+  <path d="M 51.08 70 H 67.08" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 67.08 70 L 60.08 74 V 66 Z" style="fill: #1f2937; stroke: none" />
+  <path d="M 94.56 98 H 110.56" style="fill: none; stroke: #f59e0b; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 110.56 98 L 103.56 102 V 94 Z" style="fill: #f59e0b; stroke: none" />
+  <rect x="186" y="48" width="170" height="125" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
+  <text x="186" y="41" font-size="10" style="fill: #111827; font-family: system-ui, sans-serif; font-weight: 700">union(A, B)</text>
+  <path d="M 214 70 H 288 V 98 H 328 V 146 H 260 V 132 H 214 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
+  <path d="M 237.08 70 H 253.08" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 253.08 70 L 246.08 74 V 66 Z" style="fill: #1f2937; stroke: none" />
+  <rect x="372" y="48" width="170" height="125" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
+  <text x="372" y="41" font-size="10" style="fill: #111827; font-family: system-ui, sans-serif; font-weight: 700">intersection(A, B)</text>
+  <path d="M 474 98 V 132 H 446 V 98 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
+  <path d="M 474 104.28 V 120.28" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 474 120.28 L 470 113.28 H 478 Z" style="fill: #1f2937; stroke: none" />
+  <rect x="558" y="48" width="170" height="125" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
+  <text x="558" y="41" font-size="10" style="fill: #111827; font-family: system-ui, sans-serif; font-weight: 700">difference(A, B)</text>
+  <path d="M 586 70 H 660 V 98 H 632 V 132 H 586 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
+  <path d="M 609.08 70 H 625.08" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 625.08 70 L 618.08 74 V 66 Z" style="fill: #1f2937; stroke: none" />
+</svg>
