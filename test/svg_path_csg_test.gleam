@@ -7,6 +7,21 @@ import svg_path/csg
 
 const tolerance = 0.000001
 
+type SemanticCase {
+  SemanticCase(
+    left: svg_path.Path,
+    right: svg_path.Path,
+    fill_rule: svg_path.FillRule,
+    samples: List(svg_path.Point),
+  )
+}
+
+type BooleanOperation {
+  UnionOp
+  IntersectionOp
+  DifferenceOp
+}
+
 pub fn main() -> Nil {
   gleeunit.main()
 }
@@ -174,6 +189,53 @@ pub fn operand_fill_rule_controls_nested_input_test() {
   assert_outside(even_odd_intersection, svg_path.point(10.0, 10.0))
 }
 
+pub fn csg_matches_boolean_semantics_on_sample_points_test() {
+  assert_semantic_cases([
+    SemanticCase(
+      left: rectangle(0.0, 0.0, 10.0, 10.0),
+      right: rectangle(5.0, 0.0, 15.0, 10.0),
+      fill_rule: svg_path.Nonzero,
+      samples: grid([2.5, 7.5, 12.5, 20.0], [-2.5, 5.0, 12.5]),
+    ),
+    SemanticCase(
+      left: circle(svg_path.point(10.0, 10.0), 10.0),
+      right: rectangle(5.0, 0.0, 20.0, 20.0),
+      fill_rule: svg_path.Nonzero,
+      samples: grid([2.5, 7.5, 12.5, 17.5, 22.5], [2.5, 7.5, 12.5, 17.5]),
+    ),
+    SemanticCase(
+      left: nested_rectangles(),
+      right: rectangle(7.0, 7.0, 13.0, 13.0),
+      fill_rule: svg_path.Nonzero,
+      samples: grid([2.5, 7.5, 10.0, 12.5, 17.5], [2.5, 7.5, 10.0, 12.5, 17.5]),
+    ),
+    SemanticCase(
+      left: nested_rectangles(),
+      right: rectangle(7.0, 7.0, 13.0, 13.0),
+      fill_rule: svg_path.EvenOdd,
+      samples: grid([2.5, 7.5, 10.0, 12.5, 17.5], [2.5, 7.5, 10.0, 12.5, 17.5]),
+    ),
+    SemanticCase(
+      left: circle(svg_path.point(50.0, 60.0), 40.0),
+      right: rectangle(90.0, 20.0, 124.0, 100.0),
+      fill_rule: svg_path.Nonzero,
+      samples: grid([12.5, 50.0, 88.0, 92.0, 110.0], [30.0, 60.0, 90.0]),
+    ),
+    SemanticCase(
+      left: bowtie(),
+      right: rectangle(36.0, 28.0, 86.0, 92.0),
+      fill_rule: svg_path.Nonzero,
+      samples: grid([16.0, 44.0, 62.0, 78.0, 100.0], [
+        16.0,
+        40.0,
+        60.0,
+        84.0,
+        104.0,
+      ]),
+    ),
+  ])
+}
+
 fn rectangle(
   min_x: Float,
   min_y: Float,
@@ -188,6 +250,23 @@ fn rectangle(
       svg_path.point(min_x, max_y),
     ]),
   )
+}
+
+fn nested_rectangles() -> svg_path.Path {
+  svg_path.Path([
+    svg_path.assert_polygon([
+      svg_path.point(0.0, 0.0),
+      svg_path.point(20.0, 0.0),
+      svg_path.point(20.0, 20.0),
+      svg_path.point(0.0, 20.0),
+    ]),
+    svg_path.assert_polygon([
+      svg_path.point(5.0, 5.0),
+      svg_path.point(15.0, 5.0),
+      svg_path.point(15.0, 15.0),
+      svg_path.point(5.0, 15.0),
+    ]),
+  ])
 }
 
 fn circle(center: svg_path.Point, radius: Float) -> svg_path.Path {
@@ -214,6 +293,117 @@ fn circle(center: svg_path.Point, radius: Float) -> svg_path.Path {
     ])
     |> svg_path.assert_set_closed(closed: True),
   )
+}
+
+fn bowtie() -> svg_path.Path {
+  svg_path.from_subpath(
+    svg_path.assert_polygon([
+      svg_path.point(8.0, 8.0),
+      svg_path.point(114.0, 112.0),
+      svg_path.point(114.0, 8.0),
+      svg_path.point(8.0, 112.0),
+    ]),
+  )
+}
+
+fn grid(xs: List(Float), ys: List(Float)) -> List(svg_path.Point) {
+  xs
+  |> list.flat_map(fn(x) {
+    ys
+    |> list.map(fn(y) { svg_path.point(x, y) })
+  })
+}
+
+fn assert_semantic_cases(cases: List(SemanticCase)) -> Nil {
+  case cases {
+    [] -> Nil
+    [semantic_case, ..rest] -> {
+      assert_semantic_case(semantic_case)
+      assert_semantic_cases(rest)
+    }
+  }
+}
+
+fn assert_semantic_case(semantic_case: SemanticCase) -> Nil {
+  let SemanticCase(left:, right:, fill_rule:, samples:) = semantic_case
+  let operations = [UnionOp, IntersectionOp, DifferenceOp]
+  assert_operations(operations, left:, right:, fill_rule:, samples:)
+}
+
+fn assert_operations(
+  operations: List(BooleanOperation),
+  left left: svg_path.Path,
+  right right: svg_path.Path,
+  fill_rule fill_rule: svg_path.FillRule,
+  samples samples: List(svg_path.Point),
+) -> Nil {
+  case operations {
+    [] -> Nil
+    [operation, ..rest] -> {
+      let assert Ok(result) = run_operation(left, right, operation, fill_rule)
+      assert_samples(samples, left:, right:, result:, operation:, fill_rule:)
+      assert_operations(rest, left:, right:, fill_rule:, samples:)
+    }
+  }
+}
+
+fn run_operation(
+  left: svg_path.Path,
+  right: svg_path.Path,
+  operation: BooleanOperation,
+  fill_rule: svg_path.FillRule,
+) -> Result(svg_path.Path, svg_path.Error) {
+  case operation {
+    UnionOp -> csg.union(left, right, using: fill_rule)
+    IntersectionOp -> csg.intersection(left, right, using: fill_rule)
+    DifferenceOp -> csg.difference(left, minus: right, using: fill_rule)
+  }
+}
+
+fn assert_samples(
+  samples: List(svg_path.Point),
+  left left: svg_path.Path,
+  right right: svg_path.Path,
+  result result: svg_path.Path,
+  operation operation: BooleanOperation,
+  fill_rule fill_rule: svg_path.FillRule,
+) -> Nil {
+  case samples {
+    [] -> Nil
+    [point, ..rest] -> {
+      let assert Ok(left_inside) = contains(left, point, fill_rule)
+      let assert Ok(right_inside) = contains(right, point, fill_rule)
+      let assert Ok(result_inside) = contains(result, point, fill_rule)
+      assert result_inside
+        == expected_result(left_inside, right_inside, operation)
+      assert_samples(rest, left:, right:, result:, operation:, fill_rule:)
+    }
+  }
+}
+
+fn contains(
+  path: svg_path.Path,
+  point: svg_path.Point,
+  fill_rule: svg_path.FillRule,
+) -> Result(Bool, Nil) {
+  case svg_path.path_containment(point, within: path, using: fill_rule) {
+    Ok(svg_path.Inside) -> Ok(True)
+    Ok(svg_path.Outside) -> Ok(False)
+    Ok(svg_path.Boundary) -> Error(Nil)
+    Error(_) -> Error(Nil)
+  }
+}
+
+fn expected_result(
+  left_inside: Bool,
+  right_inside: Bool,
+  operation: BooleanOperation,
+) -> Bool {
+  case operation {
+    UnionOp -> left_inside || right_inside
+    IntersectionOp -> left_inside && right_inside
+    DifferenceOp -> left_inside && !right_inside
+  }
 }
 
 fn has_arc(path: svg_path.Path) -> Bool {
