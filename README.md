@@ -1068,6 +1068,38 @@ shared vertex can report both `SubpathParameter(0, 1.0)` and
 `SubpathParameter(1, 0.0)` on either side. As with the segment helpers,
 overlapping segments return `OverlappingSegments`.
 
+Use `path_intersections` to intersect every subpath of one path with every
+subpath of another:
+
+```gleam
+import svg_path
+
+pub fn path_crossings(
+  left: svg_path.Path,
+  right: svg_path.Path,
+) -> Result(List(svg_path.PathIntersection), svg_path.Error) {
+  svg_path.path_intersections(left, right)
+}
+```
+
+Each `PathIntersection` contains the intersection point plus all matching path
+parameters on both paths:
+
+```gleam
+svg_path.PathIntersection(
+  point:,
+  left_parameters:,
+  right_parameters:,
+)
+```
+
+Results are ordered by the first left-side parameter. The parameter lists on
+both sides are sorted with `compare_path_parameters`, and duplicate parameters
+are removed. Empty paths and move-only subpaths simply contribute no
+intersections. Boundary aliases are retained through `PathParameter`, and
+overlapping segments still return `OverlappingSegments`. The `_with` variant
+accepts explicit `IntersectionOptions`.
+
 ### Convex Hulls
 
 The `svg_path/convex_hull` module computes a closed hull for a single segment.

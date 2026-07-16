@@ -27,6 +27,7 @@ the tag object.
   for subpaths and paths.
 - Added subpath-to-subpath intersection helpers that retain every
   corresponding parameter on both subpaths.
+- Added path-to-path intersection helpers and `compare_path_parameters`.
 
 ## 0.11.0 - 2026-07-16
 

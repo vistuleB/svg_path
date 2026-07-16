@@ -199,6 +199,18 @@ pub type SubpathIntersection {
   )
 }
 
+/// A point intersection between two paths.
+///
+/// Multiple parameters are retained on both paths because a single point can be
+/// represented by multiple subpaths or by both sides of a segment boundary.
+pub type PathIntersection {
+  PathIntersection(
+    point: Point,
+    left_parameters: List(PathParameter),
+    right_parameters: List(PathParameter),
+  )
+}
+
 /// The nearest point on a segment to an input point.
 ///
 /// When multiple segment points are equally nearest, this records one valid
@@ -1064,6 +1076,20 @@ pub fn compare_subpath_parameters(
 
   case int.compare(a_index, b_index) {
     order.Eq -> float.compare(a_t, b_t)
+    order -> order
+  }
+}
+
+/// Compare two path parameters by subpath index, then subpath parameter.
+pub fn compare_path_parameters(
+  a: PathParameter,
+  b: PathParameter,
+) -> order.Order {
+  let PathParameter(subpath_index: a_index, at: a_at) = a
+  let PathParameter(subpath_index: b_index, at: b_at) = b
+
+  case int.compare(a_index, b_index) {
+    order.Eq -> compare_subpath_parameters(a_at, b_at)
     order -> order
   }
 }
@@ -2312,6 +2338,38 @@ pub fn subpath_intersections_with(
   )
 
   Ok(sort_subpath_intersections(intersections))
+}
+
+/// Return the point intersections between two paths.
+///
+/// Each result contains an intersection point and every corresponding
+/// parameter on both paths. Results are ordered by the first left parameter.
+/// Parameters at both sides of subpath segment boundaries are retained.
+pub fn path_intersections(
+  left: Path,
+  right: Path,
+) -> Result(List(PathIntersection), Error) {
+  path_intersections_with(left, right, options: default_intersection_options())
+}
+
+/// Return the point intersections between two paths using explicit options.
+pub fn path_intersections_with(
+  left: Path,
+  right: Path,
+  options options: IntersectionOptions,
+) -> Result(List(PathIntersection), Error) {
+  use _ <- result.try(validate_intersection_options(options))
+  use intersections <- result.try(
+    collect_path_intersections(
+      left.subpaths,
+      right.subpaths,
+      options,
+      left_subpath_index: 0,
+      grouped: [],
+    ),
+  )
+
+  Ok(sort_path_intersections(intersections))
 }
 
 /// Return a non-empty subpath's exact axis-aligned bounding box.
@@ -4221,6 +4279,184 @@ fn dedupe_sorted_subpath_parameters(
         order.Eq -> dedupe_sorted_subpath_parameters(rest, accumulated:)
         _ ->
           dedupe_sorted_subpath_parameters(rest, accumulated: [
+            first,
+            ..accumulated
+          ])
+      }
+    }
+  }
+}
+
+fn collect_path_intersections(
+  left_subpaths: List(Subpath),
+  right_subpaths: List(Subpath),
+  options: IntersectionOptions,
+  left_subpath_index left_subpath_index: Int,
+  grouped grouped: List(PathIntersection),
+) -> Result(List(PathIntersection), Error) {
+  case left_subpaths {
+    [] -> Ok(grouped)
+    [left_subpath, ..rest] -> {
+      use grouped <- result.try(collect_path_intersections_for_left_subpath(
+        left_subpath,
+        left_subpath_index,
+        right_subpaths,
+        options,
+        right_subpath_index: 0,
+        grouped:,
+      ))
+
+      collect_path_intersections(
+        rest,
+        right_subpaths,
+        options,
+        left_subpath_index: left_subpath_index + 1,
+        grouped:,
+      )
+    }
+  }
+}
+
+fn collect_path_intersections_for_left_subpath(
+  left_subpath: Subpath,
+  left_subpath_index: Int,
+  right_subpaths: List(Subpath),
+  options: IntersectionOptions,
+  right_subpath_index right_subpath_index: Int,
+  grouped grouped: List(PathIntersection),
+) -> Result(List(PathIntersection), Error) {
+  case right_subpaths {
+    [] -> Ok(grouped)
+    [right_subpath, ..rest] -> {
+      use intersections <- result.try(
+        collect_subpath_intersections(
+          left_subpath.segments,
+          right_subpath,
+          options,
+          left_segment_index: 0,
+          grouped: [],
+        ),
+      )
+      let grouped =
+        list.fold(intersections, grouped, fn(grouped, intersection) {
+          insert_path_intersection(
+            grouped,
+            lift_subpath_intersection(
+              intersection,
+              left_subpath_index:,
+              right_subpath_index:,
+            ),
+            tolerance: options.tolerance,
+          )
+        })
+
+      collect_path_intersections_for_left_subpath(
+        left_subpath,
+        left_subpath_index,
+        rest,
+        options,
+        right_subpath_index: right_subpath_index + 1,
+        grouped:,
+      )
+    }
+  }
+}
+
+fn lift_subpath_intersection(
+  intersection: SubpathIntersection,
+  left_subpath_index left_subpath_index: Int,
+  right_subpath_index right_subpath_index: Int,
+) -> PathIntersection {
+  PathIntersection(
+    point: intersection.point,
+    left_parameters: list.map(intersection.left_parameters, fn(parameter) {
+      PathParameter(subpath_index: left_subpath_index, at: parameter)
+    }),
+    right_parameters: list.map(intersection.right_parameters, fn(parameter) {
+      PathParameter(subpath_index: right_subpath_index, at: parameter)
+    }),
+  )
+}
+
+fn insert_path_intersection(
+  grouped: List(PathIntersection),
+  intersection: PathIntersection,
+  tolerance tolerance: Float,
+) -> List(PathIntersection) {
+  case grouped {
+    [] -> [intersection]
+    [first, ..rest] -> {
+      case distance(first.point, intersection.point) <=. tolerance {
+        True -> [
+          PathIntersection(
+            ..first,
+            left_parameters: list.append(
+              intersection.left_parameters,
+              first.left_parameters,
+            ),
+            right_parameters: list.append(
+              intersection.right_parameters,
+              first.right_parameters,
+            ),
+          ),
+          ..rest
+        ]
+        False -> [
+          first,
+          ..insert_path_intersection(rest, intersection, tolerance:)
+        ]
+      }
+    }
+  }
+}
+
+fn sort_path_intersections(
+  intersections: List(PathIntersection),
+) -> List(PathIntersection) {
+  intersections
+  |> list.map(fn(intersection) {
+    PathIntersection(
+      ..intersection,
+      left_parameters: sort_unique_path_parameters(intersection.left_parameters),
+      right_parameters: sort_unique_path_parameters(
+        intersection.right_parameters,
+      ),
+    )
+  })
+  |> list.sort(by: compare_path_intersections)
+}
+
+fn compare_path_intersections(
+  a: PathIntersection,
+  b: PathIntersection,
+) -> order.Order {
+  case a.left_parameters, b.left_parameters {
+    [a_first, ..], [b_first, ..] -> compare_path_parameters(a_first, b_first)
+    _, _ -> order.Eq
+  }
+}
+
+fn sort_unique_path_parameters(
+  parameters: List(PathParameter),
+) -> List(PathParameter) {
+  parameters
+  |> list.sort(by: compare_path_parameters)
+  |> dedupe_sorted_path_parameters(accumulated: [])
+}
+
+fn dedupe_sorted_path_parameters(
+  parameters: List(PathParameter),
+  accumulated accumulated: List(PathParameter),
+) -> List(PathParameter) {
+  case parameters, accumulated {
+    [], _ -> list.reverse(accumulated)
+    [first, ..rest], [] ->
+      dedupe_sorted_path_parameters(rest, accumulated: [first])
+    [first, ..rest], [previous, ..] -> {
+      case compare_path_parameters(first, previous) {
+        order.Eq -> dedupe_sorted_path_parameters(rest, accumulated:)
+        _ ->
+          dedupe_sorted_path_parameters(rest, accumulated: [
             first,
             ..accumulated
           ])
