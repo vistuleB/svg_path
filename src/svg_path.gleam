@@ -221,6 +221,11 @@ type IntersectionPiece {
   IntersectionPiece(segment: Segment, from: Float, to: Float)
 }
 
+type ContainmentCalculation {
+  CalculatedBoundary
+  CalculatedWinding(winding: Int, crossings: Int)
+}
+
 /// An SVG path, made of zero or more subpaths.
 pub type Path {
   Path(subpaths: List(Subpath))
@@ -2105,8 +2110,53 @@ pub fn subpath_containment_with(
   use _ <- result.try(validate_containment_options(options))
   case subpath.segments {
     [] -> Ok(Outside)
-    _ -> subpath_containment_valid_options(point, subpath, fill_rule, options)
+    _ -> {
+      use calculation <- result.try(subpath_containment_calculation(
+        point,
+        subpath,
+        options,
+      ))
+      Ok(containment_from_calculation(calculation, fill_rule))
+    }
   }
+}
+
+/// Classify a point relative to a path's combined fill area.
+///
+/// Winding and crossing counts are accumulated across all non-move-only
+/// subpaths. Each open subpath is implicitly closed independently. A boundary
+/// match on any subpath takes precedence. Empty and move-only paths are
+/// `Outside`.
+pub fn path_containment(
+  point: Point,
+  within path: Path,
+  using fill_rule: FillRule,
+) -> Result(PointContainment, Error) {
+  path_containment_with(
+    point,
+    within: path,
+    using: fill_rule,
+    options: default_containment_options(),
+  )
+}
+
+/// Classify a point relative to a path's combined fill area using explicit
+/// options.
+pub fn path_containment_with(
+  point: Point,
+  within path: Path,
+  using fill_rule: FillRule,
+  options options: ContainmentOptions,
+) -> Result(PointContainment, Error) {
+  use _ <- result.try(validate_containment_options(options))
+  path_containment_loop(
+    point,
+    path.subpaths,
+    fill_rule,
+    options,
+    winding: 0,
+    crossings: 0,
+  )
 }
 
 /// Return the shortest distance from a point to a path.
@@ -3620,12 +3670,11 @@ fn subpath_projection_loop(
   }
 }
 
-fn subpath_containment_valid_options(
+fn subpath_containment_calculation(
   point: Point,
   subpath: Subpath,
-  fill_rule: FillRule,
   options: ContainmentOptions,
-) -> Result(PointContainment, Error) {
+) -> Result(ContainmentCalculation, Error) {
   let distance_options =
     DistanceOptions(
       samples: options.samples,
@@ -3646,7 +3695,7 @@ fn subpath_containment_valid_options(
   let boundary_distance = float.min(projection.distance, closing_distance)
 
   case boundary_distance <=. options.tolerance {
-    True -> Ok(Boundary)
+    True -> Ok(CalculatedBoundary)
     False -> {
       let linearize_tolerance =
         { boundary_distance -. options.tolerance } /. 2.0
@@ -3658,15 +3707,32 @@ fn subpath_containment_valid_options(
         ),
       ))
       let #(winding, crossings) = linearized_subpath_winding(point, linearized)
+      Ok(CalculatedWinding(winding:, crossings:))
+    }
+  }
+}
 
-      case fill_rule {
-        Nonzero -> containment_from_bool(winding != 0)
-        EvenOdd -> {
-          let assert Ok(remainder) = int.remainder(crossings, by: 2)
-          containment_from_bool(remainder == 1)
-        }
-      }
-      |> Ok
+fn containment_from_calculation(
+  calculation: ContainmentCalculation,
+  fill_rule: FillRule,
+) -> PointContainment {
+  case calculation {
+    CalculatedBoundary -> Boundary
+    CalculatedWinding(winding:, crossings:) ->
+      containment_from_winding(winding, crossings, fill_rule)
+  }
+}
+
+fn containment_from_winding(
+  winding: Int,
+  crossings: Int,
+  fill_rule: FillRule,
+) -> PointContainment {
+  case fill_rule {
+    Nonzero -> containment_from_bool(winding != 0)
+    EvenOdd -> {
+      let assert Ok(remainder) = int.remainder(crossings, by: 2)
+      containment_from_bool(remainder == 1)
     }
   }
 }
@@ -3725,6 +3791,54 @@ fn line_winding_contribution(point: Point, start: Point, end: Point) -> Int {
       case end.y <=. point.y && side <. 0.0 {
         True -> -1
         False -> 0
+      }
+    }
+  }
+}
+
+fn path_containment_loop(
+  point: Point,
+  subpaths: List(Subpath),
+  fill_rule: FillRule,
+  options: ContainmentOptions,
+  winding winding: Int,
+  crossings crossings: Int,
+) -> Result(PointContainment, Error) {
+  case subpaths {
+    [] -> Ok(containment_from_winding(winding, crossings, fill_rule))
+    [subpath, ..rest] -> {
+      case subpath.segments {
+        [] ->
+          path_containment_loop(
+            point,
+            rest,
+            fill_rule,
+            options,
+            winding:,
+            crossings:,
+          )
+        _ -> {
+          use calculation <- result.try(subpath_containment_calculation(
+            point,
+            subpath,
+            options,
+          ))
+          case calculation {
+            CalculatedBoundary -> Ok(Boundary)
+            CalculatedWinding(
+              winding: subpath_winding,
+              crossings: subpath_crossings,
+            ) ->
+              path_containment_loop(
+                point,
+                rest,
+                fill_rule,
+                options,
+                winding: winding + subpath_winding,
+                crossings: crossings + subpath_crossings,
+              )
+          }
+        }
       }
     }
   }

@@ -20,8 +20,9 @@ the tag object.
   `path_to_lines` function families.
 - Added grouped segment-to-subpath intersection helpers that retain every
   corresponding `SubpathParameter`.
-- Added `Nonzero` and `EvenOdd` point containment for open or closed subpaths,
-  with explicit `Inside`, `Outside`, and `Boundary` results.
+- Added `Nonzero` and `EvenOdd` point containment for open or closed subpaths
+  and complete paths, with explicit `Inside`, `Outside`, and `Boundary`
+  results.
 
 ## 0.11.0 - 2026-07-16
 

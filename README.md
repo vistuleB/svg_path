@@ -676,25 +676,118 @@ explicit `DistanceOptions`.
 
 ### Point Containment
 
-Use `subpath_containment` to classify a point relative to a subpath's SVG fill
-area:
+Use the containment helpers to classify a point relative to SVG fill geometry:
 
 ```gleam
 svg_path.subpath_containment(point, within: subpath, using: svg_path.Nonzero)
-// -> Result(svg_path.PointContainment, svg_path.Error)
+svg_path.path_containment(point, within: path, using: svg_path.EvenOdd)
+
+// Both return Result(svg_path.PointContainment, svg_path.Error)
 ```
 
-`PointContainment` is `Inside`, `Outside`, or `Boundary`. The supported fill
-rules are `Nonzero`, SVG's default, and `EvenOdd`. Open subpaths are implicitly
-closed with a straight line from their end to their start, so the subpath's
-`closed` field does not change its fill area. Move-only subpaths are `Outside`
-and have no boundary.
+The result and fill-rule types are:
 
-Boundary classification uses shortest distance to the original segments and
-the implicit closing line. The remaining fill calculation uses adaptive line
-approximation and a half-open winding test. Use `subpath_containment_with` and
-`ContainmentOptions` to control the coordinate-space boundary `tolerance`,
-curve projection `samples`, and numerical `max_iterations`.
+```gleam
+pub type PointContainment {
+  Inside
+  Outside
+  Boundary
+}
+
+pub type FillRule {
+  Nonzero
+  EvenOdd
+}
+```
+
+`Boundary` is reported independently of the fill rule. Otherwise, `Nonzero`
+or `EvenOdd` determines whether the result is `Inside` or `Outside`.
+
+#### Open and Closed Subpaths
+
+Fill geometry implicitly closes every nonempty subpath with a straight line
+from its end to its start. This happens whether `Subpath.closed` is `True` or
+`False`. Consequently, changing only the `closed` field does not change the
+result of containment testing.
+
+The `closed` field still matters for operations such as serialization and
+stroke semantics. Containment ignores it because SVG fill semantics close open
+subpaths independently.
+
+A move-only subpath has no segments, fill area, or boundary. It is always
+`Outside`, even when the tested point equals its move point. An empty path and
+a path containing only move-only subpaths are also `Outside`.
+
+#### Fill Rules
+
+`Nonzero` is SVG's default fill rule. A directed crossing contributes `+1` or
+`-1` to the winding number. The point is inside when the total winding number
+is not zero. For a `Path`, winding numbers are summed across all subpaths, so
+oppositely directed loops can cancel and equally directed loops reinforce one
+another.
+
+`EvenOdd` ignores crossing direction. The point is inside when the total number
+of crossings across all subpaths is odd. Passing through another enclosed loop
+therefore toggles inside/outside regardless of that loop's direction.
+
+For a point inside both an outer loop and a nested inner loop:
+
+| Inner loop direction | `Nonzero` | `EvenOdd` |
+| --- | --- | --- |
+| Same as outer loop | `Inside` (winding magnitude 2) | `Outside` (two crossings) |
+| Opposite to outer loop | `Outside` (windings cancel) | `Outside` (two crossings) |
+
+This aggregation is why `path_containment` cannot be implemented as "inside
+any subpath". Self-intersecting subpaths and paths that revisit an area use the
+same winding and crossing rules.
+
+#### Boundary Semantics
+
+Before applying a fill rule, containment measures the shortest distance from
+the point to every original segment and to each implicit closing line. If any
+distance is less than or equal to `ContainmentOptions.tolerance`, the result is
+`Boundary`. An exact endpoint or curve match naturally has distance zero; no
+special floating-point equality rule is used.
+
+For a path, a boundary match on any nonempty subpath takes precedence over all
+other subpaths and both fill rules. The tolerance is measured in path coordinate
+units, so callers working at unusually large or small coordinate scales should
+provide an appropriate value through `path_containment_with` or
+`subpath_containment_with`.
+
+#### Numerical Method and Options
+
+Boundary distance is measured against the original lines, Beziers, and arcs,
+not against a pre-flattened copy. Once the point is known to be outside the
+boundary tolerance, curved segments are adaptively approximated with lines.
+The approximation tolerance is kept below half of the point's clearance beyond
+the boundary tolerance, preserving winding classification at the tested point.
+A half-open line-crossing rule then computes winding and parity without
+counting a shared vertex twice.
+
+The default options are equivalent to:
+
+```gleam
+svg_path.ContainmentOptions(
+  tolerance: 0.000000001,
+  samples: 100,
+  max_iterations: 100,
+)
+```
+
+- `tolerance` is the coordinate-space width classified as `Boundary`.
+- `samples` controls the initial search for nearest points on curved segments.
+- `max_iterations` limits curve projection refinement and adaptive line
+  subdivision.
+
+All three values must be greater than zero. Invalid values return the matching
+`InvalidContainmentTolerance`, `InvalidContainmentSamples`, or
+`InvalidContainmentMaxIterations` error. Numerical projection or subdivision
+errors from the underlying geometry helpers are propagated rather than being
+silently converted to `Inside` or `Outside`.
+
+The non-`_with` functions use `default_containment_options`. The subpath and
+path variants otherwise use the same classification policy.
 
 ### Segment Crossings
 

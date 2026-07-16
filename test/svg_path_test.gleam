@@ -1458,6 +1458,120 @@ pub fn subpath_containment_rejects_invalid_options_test() {
     == Error(svg_path.InvalidContainmentMaxIterations(0))
 }
 
+pub fn path_containment_combines_subpath_winding_and_parity_test() {
+  let outer =
+    svg_path.assert_polygon([
+      svg_path.point(0.0, 0.0),
+      svg_path.point(20.0, 0.0),
+      svg_path.point(20.0, 20.0),
+      svg_path.point(0.0, 20.0),
+    ])
+  let inner_same_direction =
+    svg_path.assert_polygon([
+      svg_path.point(5.0, 5.0),
+      svg_path.point(15.0, 5.0),
+      svg_path.point(15.0, 15.0),
+      svg_path.point(5.0, 15.0),
+    ])
+  let inner_opposite_direction =
+    svg_path.assert_polygon([
+      svg_path.point(5.0, 5.0),
+      svg_path.point(5.0, 15.0),
+      svg_path.point(15.0, 15.0),
+      svg_path.point(15.0, 5.0),
+    ])
+  let same_direction = svg_path.Path([outer, inner_same_direction])
+  let opposite_direction = svg_path.Path([outer, inner_opposite_direction])
+  let center = svg_path.point(10.0, 10.0)
+
+  assert svg_path.path_containment(
+      center,
+      within: same_direction,
+      using: svg_path.Nonzero,
+    )
+    == Ok(svg_path.Inside)
+  assert svg_path.path_containment(
+      center,
+      within: same_direction,
+      using: svg_path.EvenOdd,
+    )
+    == Ok(svg_path.Outside)
+  assert svg_path.path_containment(
+      center,
+      within: opposite_direction,
+      using: svg_path.Nonzero,
+    )
+    == Ok(svg_path.Outside)
+  assert svg_path.path_containment(
+      center,
+      within: opposite_direction,
+      using: svg_path.EvenOdd,
+    )
+    == Ok(svg_path.Outside)
+  assert svg_path.path_containment(
+      svg_path.point(2.0, 2.0),
+      within: opposite_direction,
+      using: svg_path.Nonzero,
+    )
+    == Ok(svg_path.Inside)
+}
+
+pub fn path_containment_boundary_on_any_subpath_dominates_test() {
+  let outer =
+    svg_path.assert_polygon([
+      svg_path.point(0.0, 0.0),
+      svg_path.point(20.0, 0.0),
+      svg_path.point(20.0, 20.0),
+      svg_path.point(0.0, 20.0),
+    ])
+  let inner =
+    svg_path.assert_polygon([
+      svg_path.point(5.0, 5.0),
+      svg_path.point(15.0, 5.0),
+      svg_path.point(15.0, 15.0),
+      svg_path.point(5.0, 15.0),
+    ])
+
+  assert svg_path.path_containment(
+      svg_path.point(5.0, 10.0),
+      within: svg_path.Path([outer, inner]),
+      using: svg_path.Nonzero,
+    )
+    == Ok(svg_path.Boundary)
+}
+
+pub fn path_containment_empty_and_move_only_paths_are_outside_test() {
+  let point = svg_path.point(5.0, 5.0)
+  let move_only = svg_path.empty_subpath(at: point)
+
+  assert svg_path.path_containment(
+      point,
+      within: svg_path.empty_path(),
+      using: svg_path.Nonzero,
+    )
+    == Ok(svg_path.Outside)
+  assert svg_path.path_containment(
+      point,
+      within: svg_path.Path([move_only]),
+      using: svg_path.Nonzero,
+    )
+    == Ok(svg_path.Outside)
+}
+
+pub fn path_containment_with_rejects_invalid_options_test() {
+  assert svg_path.path_containment_with(
+      svg_path.point(0.0, 0.0),
+      within: svg_path.empty_path(),
+      using: svg_path.Nonzero,
+      options: svg_path.ContainmentOptions(
+        tolerance: 0.0,
+        samples: 100,
+        max_iterations: 100,
+      ),
+    )
+    == Error(svg_path.InvalidContainmentTolerance(0.0))
+}
+
 pub fn path_projection_returns_path_parameter_point_and_distance_test() {
   let first =
     svg_path.assert_subpath([
