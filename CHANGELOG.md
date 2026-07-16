@@ -11,6 +11,18 @@ the tag object.
 
 ## Unreleased
 
+### Added
+
+- Added `svg_path/csg` with path-level `union`, `intersection`, and
+  `difference` operations under an explicit SVG fill rule.
+- Added generated CSG visual fixtures covering overlaps, containment, tangent
+  contacts, nested paths, curves, and self-intersecting input.
+
+### Changed
+
+- Documented CSG fill-rule semantics, returned-path policy, and implementation
+  limits in the README.
+
 ## 0.12.0 - 2026-07-16
 
 ### Added

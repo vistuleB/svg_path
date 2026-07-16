@@ -1,11 +1,21 @@
 //// Boolean operations on filled SVG paths.
 ////
-//// This implementation splits original path segments at point intersections,
-//// classifies each resulting piece against the other operand, and assembles
-//// closed subpaths from the retained pieces. Curved segments remain curved
-//// between real encounters; only implicit closing edges are added as lines.
-//// Coincident line edges are split at their overlap endpoints and resolved by
-//// deterministic boundary ownership rules.
+//// The `using` fill rule is part of the operation: both input paths are first
+//// interpreted as filled sets under that rule, the Boolean operation is
+//// applied to those sets, and the returned path fills as the resulting set
+//// under the same rule.
+////
+//// Open subpaths are treated as implicitly closed for fill purposes. Empty
+//// paths and move-only subpaths contribute no filled area.
+////
+//// The implementation preserves original segment types where possible. It
+//// splits original path segments at point intersections, classifies each
+//// resulting directed piece by the filled state on its left and right sides,
+//// orients retained pieces with the result interior on their left, and
+//// assembles closed subpaths from those retained pieces. Curved segments
+//// remain curved between real encounters; only implicit closing edges are
+//// added as lines. Coincident line edges are split at their overlap endpoints
+//// and resolved by deterministic boundary ownership rules.
 
 import gleam/float
 import gleam/list

@@ -56,6 +56,8 @@ pub fn prepare_for_arc_averse_consumer(
 - `svg_path/congruency`: semantic ordered congruency checks under translation,
   rotation, and uniform scale.
 - `svg_path/area`: signed area and SVG fill-rule area for subpaths and paths.
+- `svg_path/csg`: Boolean union, intersection, and difference for filled
+  paths.
 - `svg_path/convex_hull`: convex hulls for segments, subpaths, paths, and point
   lists.
 - `svg_path/basic_shapes`: conversions from SVG basic shapes to paths.
@@ -1716,23 +1718,20 @@ pub fn from_mat3f(
 
 Further documentation can be found at <https://hexdocs.pm/svg_path>.
 
-## CSG Scratch Notes
-
-This section is a design note, not a released API.
+## CSG
 
 CSG here means Boolean operations on the filled point-sets represented by SVG
 paths: union, intersection, and difference. SVG specifies how to decide the
 filled region of one path through `fill-rule`, and it specifies that open
 subpaths are filled as if a closing line connected the final point back to the
 start point. SVG does not specify a general CSG API for combining two arbitrary
-paths into a new path. The Boolean operations are the usual set operations from
-computational geometry; the library still has to choose its own output and
-numerical policy.
+paths into a new path, so `svg_path/csg` defines the returned-path and
+numerical policy used by this package.
 
-The proposed API should work directly on `Path` and return `Path`, even for
-simple inputs. Boolean operations can produce zero components, one component,
-multiple components, holes, islands inside holes, and internal contours that
-matter as path structure even when they do not change the filled set.
+The API works directly on `Path` and returns `Path`, even for simple inputs.
+Boolean operations can produce zero components, one component, multiple
+components, holes, islands inside holes, and internal contours that matter as
+path structure even when they do not change the filled set.
 
 ```gleam
 csg.union(left, right, using:)
@@ -1769,17 +1768,16 @@ fill(csg.intersection(a, b, using: rule), using: rule)
 
 `difference` is not commutative.
 
-The proposed returned-path policy is stronger than filled-set equivalence. The
-result should preserve meaningful path structure where possible. In
-particular, a same-direction internal contour under `Nonzero` can be
-fill-redundant while still being a contour in the returned path. CSG should not
-erase that structure just because the same filled set could be represented
-with fewer subpaths.
+The returned-path policy is stronger than filled-set equivalence. The result
+preserves meaningful path structure where possible. In particular, a
+same-direction internal contour under `Nonzero` can be fill-redundant while
+still being a contour in the returned path. CSG does not erase that structure
+just because the same filled set could be represented with fewer subpaths.
 
 Simplification is a separate policy. A future helper could remove subsumed
 same-direction internal contours under `Nonzero`, collapse fill-equivalent
 pieces, or otherwise produce a smaller equivalent path. That kind of
-destructive cleanup should be opt-in, not part of the Boolean operation itself.
+destructive cleanup is opt-in, not part of the Boolean operation itself.
 
 The `using` fill rule is not an implementation detail. A `Path` does not always
 define one obvious filled set without a fill rule: repeated loops,
@@ -1798,8 +1796,8 @@ Multiple subpaths are evaluated globally, just like `area.path` and
 paths and move-only subpaths produce an empty filled set. Open subpaths are
 implicitly closed for fill purposes.
 
-The exact rule should be phrased in terms of points not on a boundary. This
-example uses a corner/corner overlap so the result has real cut corners without
+The exact rule is phrased in terms of points not on a boundary. This example
+uses a corner/corner overlap so the result has real cut corners without
 coincident input edges:
 
 <table>
@@ -2096,12 +2094,12 @@ the returned-path policy, not by which direction `B` happened to be drawn.
 Under `EvenOdd`, intersecting a ring with `B` produces two separate output
 components, not one contour joined by hidden bridge segments.
 
-These drawings show candidate returned paths, not only minimal filled-set
-boundaries. Under `Nonzero`, the same-direction internal contour in `A`
-remains visible after `union` and is clipped by `difference`, even though some
-of those contour pieces are fill-redundant. A later simplification helper could
-explicitly remove such subsumed internal contours for callers who want a
-smaller equivalent `Nonzero` fill.
+These drawings show returned paths, not only minimal filled-set boundaries.
+Under `Nonzero`, the same-direction internal contour in `A` remains visible
+after `union` and is clipped by `difference`, even though some of those contour
+pieces are fill-redundant. A later simplification helper could explicitly
+remove such subsumed internal contours for callers who want a smaller
+equivalent `Nonzero` fill.
 
 <table>
   <tr>
@@ -2350,7 +2348,7 @@ internal contour under `Nonzero` may be preserved even though it is not needed
 to describe the filled set. The cut edge in `difference(left, minus: right)` is
 part of the returned path.
 
-The result should be a canonical returned path:
+The implementation returns a canonical path:
 
 - `Path([])` represents the empty result.
 - Every output subpath is closed.
@@ -2358,11 +2356,10 @@ The result should be a canonical returned path:
 - Newly assembled outer boundaries are counterclockwise.
 - Newly assembled hole boundaries are clockwise.
 - Islands inside holes become counterclockwise again, alternating by nesting.
-- Preserved internal contours should keep a direction consistent with their
+- Preserved internal contours keep a direction consistent with their
   `Nonzero` contribution unless a later simplification helper removes them.
-- The returned path should fill correctly with `Nonzero`. If contours are
-  simple and nesting is represented explicitly, it should also fill correctly
-  with `EvenOdd`.
+- The returned path fills correctly with the same fill rule used for the
+  operation.
 
 The orientation policy is about the returned path. It is not a promise to copy
 all input directions, but it also is not a license to erase useful internal
@@ -2397,28 +2394,21 @@ contours:
   </tr>
 </table>
 
-The nontrivial part is representation. Users usually do not want arbitrary
-linearized output. The preferred long-term behavior is to preserve original
-segment types when possible: line pieces stay lines, Bezier pieces stay
-Beziers, and arc pieces stay arcs after splitting. New boundary pieces that
-come from an input segment should be subsegments of that input segment.
+The implementation preserves original segment types when possible: line pieces
+stay lines, Bezier pieces stay Beziers, and arc pieces stay arcs after
+splitting. New boundary pieces that come from an input segment are subsegments
+of that input segment. Implicit closing edges for open subpaths are represented
+as lines.
 
-The cases that need a documented policy before implementation are:
-
-- Touching at a point: usually does not merge components.
-- Overlapping along an edge: may merge, remove, or expose that edge depending
-  on the operation.
-- Tangent intersections: must split consistently even when the local crossing
-  count does not change.
-- Zero-area slivers and zero-length pieces: should be removed within the
-  operation tolerance.
-- Coincident curves with opposite direction: need a rule for whether they
-  cancel, remain as boundary, or are treated as overlap.
-
-The implementation likely needs a planar arrangement of split segment pieces,
-classification of each directed piece by the filled state on its left and
-right sides, and then graph traversal to assemble the pieces that form the
-result boundary.
+The implementation builds a planar arrangement of split segment pieces,
+classifies each directed piece by the filled state on its left and right
+sides, orients retained pieces with the resulting filled area on their left,
+and then traverses those pieces into closed subpaths. This handles normal
+crossings, point touches, edge touches, tangent contacts, self-intersections,
+nested subpaths, and coincident line edges. Zero-length line pieces are
+discarded within tolerance. If a case cannot be split or assembled into stable
+closed subpaths, the operation returns an error rather than silently emitting
+an incoherent path.
 
 ## Development
 
