@@ -1540,6 +1540,46 @@ pub fn path_containment_boundary_on_any_subpath_dominates_test() {
     == Ok(svg_path.Boundary)
 }
 
+pub fn path_winding_accumulates_subpath_winding_test() {
+  let outer =
+    svg_path.assert_polygon([
+      svg_path.point(0.0, 0.0),
+      svg_path.point(20.0, 0.0),
+      svg_path.point(20.0, 20.0),
+      svg_path.point(0.0, 20.0),
+    ])
+  let inner_same_direction =
+    svg_path.assert_polygon([
+      svg_path.point(5.0, 5.0),
+      svg_path.point(15.0, 5.0),
+      svg_path.point(15.0, 15.0),
+      svg_path.point(5.0, 15.0),
+    ])
+  let inner_opposite_direction =
+    svg_path.assert_polygon([
+      svg_path.point(5.0, 5.0),
+      svg_path.point(5.0, 15.0),
+      svg_path.point(15.0, 15.0),
+      svg_path.point(15.0, 5.0),
+    ])
+
+  assert svg_path.path_winding(
+      svg_path.point(10.0, 10.0),
+      within: svg_path.Path([outer, inner_same_direction]),
+    )
+    == Ok(svg_path.Winding(2))
+  assert svg_path.path_winding(
+      svg_path.point(10.0, 10.0),
+      within: svg_path.Path([outer, inner_opposite_direction]),
+    )
+    == Ok(svg_path.Winding(0))
+  assert svg_path.path_winding(
+      svg_path.point(5.0, 10.0),
+      within: svg_path.Path([outer, inner_same_direction]),
+    )
+    == Ok(svg_path.BoundaryWinding)
+}
+
 pub fn path_containment_empty_and_move_only_paths_are_outside_test() {
   let point = svg_path.point(5.0, 5.0)
   let move_only = svg_path.empty_subpath(at: point)

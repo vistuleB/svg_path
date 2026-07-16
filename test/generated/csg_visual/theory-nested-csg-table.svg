@@ -22,11 +22,13 @@
   <path d="M 89.4 112 L 82.4 116 V 108 Z" style="fill: #f59e0b; stroke: none" />
   <rect x="204" y="58" width="190" height="130" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
   <text x="204" y="53" font-size="8" style="fill: #374151; font-family: system-ui, sans-serif">union Nonzero</text>
-  <path d="M 234 78 H 354 V 112 H 384 V 134 H 354 V 168 H 234 V 134 H 214 V 112 H 234 Z M 269 106 H 319 V 112 V 134 V 140 H 269 V 134 V 112 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
+  <path d="M 234 78 H 354 V 112 V 134 V 168 H 234 V 134 V 112 Z M 269 106 H 319 V 112 V 134 V 140 H 269 V 134 V 112 Z M 214 112 H 234 H 269 H 319 H 354 H 384 V 134 H 354 H 319 H 269 H 234 H 214 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
   <path d="M 276.4 78 H 292.4" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 292.4 78 L 285.4 82 V 74 Z" style="fill: #1f2937; stroke: none" />
   <path d="M 282 106 H 298" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 298 106 L 291 110 V 102 Z" style="fill: #1f2937; stroke: none" />
+  <path d="M 214.4 112 H 230.4" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 230.4 112 L 223.4 116 V 108 Z" style="fill: #1f2937; stroke: none" />
   <rect x="408" y="58" width="190" height="130" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
   <text x="408" y="53" font-size="8" style="fill: #374151; font-family: system-ui, sans-serif">union EvenOdd</text>
   <path d="M 438 78 H 558 V 112 H 588 V 134 H 558 V 168 H 438 V 134 H 418 V 112 H 438 Z M 523 106 H 473 V 112 H 523 Z M 523 140 V 134 H 473 V 140 Z" style="fill: #8ecae6; fill-rule: evenodd; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
@@ -38,7 +40,9 @@
   <path d="M 523 129.48 L 527 136.48 H 519 Z" style="fill: #1f2937; stroke: none" />
   <rect x="612" y="58" width="190" height="130" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
   <text x="612" y="53" font-size="8" style="fill: #374151; font-family: system-ui, sans-serif">intersection Nonzero</text>
-  <path d="M 762 112 V 134 H 727 H 677 H 642 V 112 H 677 H 727 Z M 727 112 V 134 H 677 V 112 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
+  <path d="M 762 112 V 134 H 727 H 677 H 642 V 112 H 677 H 727 Z M 762 112 V 134 H 727 H 677 H 642 V 112 H 677 H 727 Z M 727 112 V 134 H 677 V 112 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
+  <path d="M 762 113.24 V 129.24" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 762 129.24 L 758 122.24 H 766 Z" style="fill: #1f2937; stroke: none" />
   <path d="M 762 113.24 V 129.24" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 762 129.24 L 758 122.24 H 766 Z" style="fill: #1f2937; stroke: none" />
   <path d="M 727 113.24 V 129.24" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
@@ -82,11 +86,13 @@
   <path d="M 10 283.24 L 6 276.24 H 14 Z" style="fill: #f59e0b; stroke: none" />
   <rect x="204" y="212" width="190" height="130" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
   <text x="204" y="207" font-size="8" style="fill: #374151; font-family: system-ui, sans-serif">union Nonzero</text>
-  <path d="M 234 232 H 354 V 266 H 384 V 288 H 354 V 322 H 234 V 288 H 214 V 266 H 234 Z M 269 260 H 319 V 266 V 288 V 294 H 269 V 288 V 266 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
+  <path d="M 234 232 H 354 V 266 V 288 V 322 H 234 V 288 V 266 Z M 269 260 H 319 V 266 V 288 V 294 H 269 V 288 V 266 Z M 214 288 V 266 H 234 H 269 H 319 H 354 H 384 V 288 H 354 H 319 H 269 H 234 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
   <path d="M 276.4 232 H 292.4" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 292.4 232 L 285.4 236 V 228 Z" style="fill: #1f2937; stroke: none" />
   <path d="M 282 260 H 298" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 298 260 L 291 264 V 256 Z" style="fill: #1f2937; stroke: none" />
+  <path d="M 214 286.76 V 270.76" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 214 270.76 L 218 277.76 H 210 Z" style="fill: #1f2937; stroke: none" />
   <rect x="408" y="212" width="190" height="130" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
   <text x="408" y="207" font-size="8" style="fill: #374151; font-family: system-ui, sans-serif">union EvenOdd</text>
   <path d="M 438 232 H 558 V 266 H 588 V 288 H 558 V 322 H 438 V 288 H 418 V 266 H 438 Z M 523 260 H 473 V 266 H 523 Z M 523 294 V 288 H 473 V 294 Z" style="fill: #8ecae6; fill-rule: evenodd; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
@@ -98,7 +104,9 @@
   <path d="M 523 283.48 L 527 290.48 H 519 Z" style="fill: #1f2937; stroke: none" />
   <rect x="612" y="212" width="190" height="130" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
   <text x="612" y="207" font-size="8" style="fill: #374151; font-family: system-ui, sans-serif">intersection Nonzero</text>
-  <path d="M 762 266 V 288 H 727 H 677 H 642 V 266 H 677 H 727 Z M 727 266 V 288 H 677 V 266 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
+  <path d="M 762 266 V 288 H 727 H 677 H 642 V 266 H 677 H 727 Z M 762 266 V 288 H 727 H 677 H 642 V 266 H 677 H 727 Z M 727 266 V 288 H 677 V 266 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
+  <path d="M 762 267.24 V 283.24" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 762 283.24 L 758 276.24 H 766 Z" style="fill: #1f2937; stroke: none" />
   <path d="M 762 267.24 V 283.24" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 762 283.24 L 758 276.24 H 766 Z" style="fill: #1f2937; stroke: none" />
   <path d="M 727 267.24 V 283.24" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
@@ -142,13 +150,13 @@
   <path d="M 89.4 420 L 82.4 424 V 416 Z" style="fill: #f59e0b; stroke: none" />
   <rect x="204" y="366" width="190" height="130" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
   <text x="204" y="361" font-size="8" style="fill: #374151; font-family: system-ui, sans-serif">union Nonzero</text>
-  <path d="M 234 386 H 354 V 420 H 384 V 442 H 354 V 476 H 234 V 442 H 214 V 420 H 234 Z M 269 414 V 420 H 319 V 414 Z M 269 442 V 448 H 319 V 442 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
+  <path d="M 234 386 H 354 V 420 V 442 V 476 H 234 V 442 V 420 Z M 269 414 V 420 V 442 V 448 H 319 V 442 V 420 V 414 Z M 214 420 H 234 H 269 H 319 H 354 H 384 V 442 H 354 H 319 H 269 H 234 H 214 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
   <path d="M 276.4 386 H 292.4" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 292.4 386 L 285.4 390 V 382 Z" style="fill: #1f2937; stroke: none" />
   <path d="M 269 408.52 V 424.52" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 269 424.52 L 265 417.52 H 273 Z" style="fill: #1f2937; stroke: none" />
-  <path d="M 269 436.52 V 452.52" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
-  <path d="M 269 452.52 L 265 445.52 H 273 Z" style="fill: #1f2937; stroke: none" />
+  <path d="M 214.4 420 H 230.4" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 230.4 420 L 223.4 424 V 416 Z" style="fill: #1f2937; stroke: none" />
   <rect x="408" y="366" width="190" height="130" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
   <text x="408" y="361" font-size="8" style="fill: #374151; font-family: system-ui, sans-serif">union EvenOdd</text>
   <path d="M 438 386 H 558 V 420 H 588 V 442 H 558 V 476 H 438 V 442 H 418 V 420 H 438 Z M 473 414 V 420 H 523 V 414 Z M 473 442 V 448 H 523 V 442 Z" style="fill: #8ecae6; fill-rule: evenodd; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
@@ -160,9 +168,13 @@
   <path d="M 473 452.52 L 469 445.52 H 477 Z" style="fill: #1f2937; stroke: none" />
   <rect x="612" y="366" width="190" height="130" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
   <text x="612" y="361" font-size="8" style="fill: #374151; font-family: system-ui, sans-serif">intersection Nonzero</text>
-  <path d="M 762 420 V 442 H 727 V 420 Z M 642 442 V 420 H 677 V 442 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
+  <path d="M 762 420 V 442 H 727 V 420 Z M 762 420 V 442 H 727 V 420 Z M 642 442 V 420 H 677 V 442 Z M 642 442 V 420 H 677 V 442 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
   <path d="M 762 421.24 V 437.24" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 762 437.24 L 758 430.24 H 766 Z" style="fill: #1f2937; stroke: none" />
+  <path d="M 762 421.24 V 437.24" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 762 437.24 L 758 430.24 H 766 Z" style="fill: #1f2937; stroke: none" />
+  <path d="M 642 440.76 V 424.76" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 642 424.76 L 646 431.76 H 638 Z" style="fill: #1f2937; stroke: none" />
   <path d="M 642 440.76 V 424.76" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 642 424.76 L 646 431.76 H 638 Z" style="fill: #1f2937; stroke: none" />
   <rect x="816" y="366" width="190" height="130" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
@@ -200,13 +212,13 @@
   <path d="M 10 591.24 L 6 584.24 H 14 Z" style="fill: #f59e0b; stroke: none" />
   <rect x="204" y="520" width="190" height="130" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
   <text x="204" y="515" font-size="8" style="fill: #374151; font-family: system-ui, sans-serif">union Nonzero</text>
-  <path d="M 234 540 H 354 V 574 H 384 V 596 H 354 V 630 H 234 V 596 H 214 V 574 H 234 Z M 269 568 V 574 H 319 V 568 Z M 269 596 V 602 H 319 V 596 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
+  <path d="M 234 540 H 354 V 574 V 596 V 630 H 234 V 596 V 574 Z M 269 568 V 574 V 596 V 602 H 319 V 596 V 574 V 568 Z M 214 596 V 574 H 234 H 269 H 319 H 354 H 384 V 596 H 354 H 319 H 269 H 234 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
   <path d="M 276.4 540 H 292.4" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 292.4 540 L 285.4 544 V 536 Z" style="fill: #1f2937; stroke: none" />
   <path d="M 269 562.52 V 578.52" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 269 578.52 L 265 571.52 H 273 Z" style="fill: #1f2937; stroke: none" />
-  <path d="M 269 590.52 V 606.52" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
-  <path d="M 269 606.52 L 265 599.52 H 273 Z" style="fill: #1f2937; stroke: none" />
+  <path d="M 214 594.76 V 578.76" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 214 578.76 L 218 585.76 H 210 Z" style="fill: #1f2937; stroke: none" />
   <rect x="408" y="520" width="190" height="130" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
   <text x="408" y="515" font-size="8" style="fill: #374151; font-family: system-ui, sans-serif">union EvenOdd</text>
   <path d="M 438 540 H 558 V 574 H 588 V 596 H 558 V 630 H 438 V 596 H 418 V 574 H 438 Z M 473 568 V 574 H 523 V 568 Z M 473 596 V 602 H 523 V 596 Z" style="fill: #8ecae6; fill-rule: evenodd; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
@@ -218,9 +230,13 @@
   <path d="M 473 606.52 L 469 599.52 H 477 Z" style="fill: #1f2937; stroke: none" />
   <rect x="612" y="520" width="190" height="130" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
   <text x="612" y="515" font-size="8" style="fill: #374151; font-family: system-ui, sans-serif">intersection Nonzero</text>
-  <path d="M 762 574 V 596 H 727 V 574 Z M 642 596 V 574 H 677 V 596 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
+  <path d="M 762 574 V 596 H 727 V 574 Z M 762 574 V 596 H 727 V 574 Z M 642 596 V 574 H 677 V 596 Z M 642 596 V 574 H 677 V 596 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
   <path d="M 762 575.24 V 591.24" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 762 591.24 L 758 584.24 H 766 Z" style="fill: #1f2937; stroke: none" />
+  <path d="M 762 575.24 V 591.24" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 762 591.24 L 758 584.24 H 766 Z" style="fill: #1f2937; stroke: none" />
+  <path d="M 642 594.76 V 578.76" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 642 578.76 L 646 585.76 H 638 Z" style="fill: #1f2937; stroke: none" />
   <path d="M 642 594.76 V 578.76" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 642 578.76 L 646 585.76 H 638 Z" style="fill: #1f2937; stroke: none" />
   <rect x="816" y="520" width="190" height="130" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />

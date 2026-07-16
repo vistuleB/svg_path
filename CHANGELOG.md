@@ -11,6 +11,21 @@ the tag object.
 
 ## Unreleased
 
+- Changed Nonzero CSG output to preserve contour-depth level boundaries inside
+  results instead of collapsing to a minimal filled outline.
+- Added tests that check preserved Nonzero union depth for same-direction and
+  reversed internal contours.
+
+## 0.13.1 - 2026-07-16
+
+### Fixed
+
+- Replaced inline CSG README diagrams with raw SVG image references that render
+  consistently on Hex.
+- Added generated, scratch-style CSG explanation fixtures so README diagrams
+  are produced from actual library output with arrows and labels added as
+  annotation.
+
 ## 0.13.0 - 2026-07-16
 
 ### Added

@@ -15,14 +15,18 @@
   <path d="M 81.6 84 L 74.6 88 V 80 Z" style="fill: #f59e0b; stroke: none" />
   <rect x="168" y="34" width="150" height="125" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
   <text x="168" y="27" font-size="10" style="fill: #111827; font-family: system-ui, sans-serif; font-weight: 700">union(A, B)</text>
-  <path d="M 191 58 H 297 V 140 H 191 Z M 217 78 H 271 V 120 H 217 Z" style="fill: #8ecae6; stroke: #1f2937; stroke-width: 4; stroke-linejoin: round" />
+  <path d="M 191 58 H 297 V 140 H 191 Z M 217 78 H 271 V 120 H 217 Z M 229 84 H 259 V 114 H 229 Z" style="fill: #8ecae6; stroke: #1f2937; stroke-width: 4; stroke-linejoin: round" />
   <path d="M 227.52 58 H 243.52" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 243.52 58 L 236.52 62 V 54 Z" style="fill: #1f2937; stroke: none" />
   <path d="M 231.68 78 H 247.68" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 247.68 78 L 240.68 82 V 74 Z" style="fill: #1f2937; stroke: none" />
+  <path d="M 233.6 84 H 249.6" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 249.6 84 L 242.6 88 V 80 Z" style="fill: #1f2937; stroke: none" />
   <rect x="336" y="34" width="150" height="125" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
   <text x="336" y="27" font-size="10" style="fill: #111827; font-family: system-ui, sans-serif; font-weight: 700">intersection(A, B)</text>
-  <path d="M 397 84 H 427 V 114 H 397 Z M 397 84 H 427 V 114 H 397 Z" style="fill: #8ecae6; stroke: #1f2937; stroke-width: 4; stroke-linejoin: round" />
+  <path d="M 397 84 H 427 V 114 H 397 Z M 397 84 H 427 V 114 H 397 Z M 397 84 H 427 V 114 H 397 Z" style="fill: #8ecae6; stroke: #1f2937; stroke-width: 4; stroke-linejoin: round" />
+  <path d="M 401.6 84 H 417.6" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 417.6 84 L 410.6 88 V 80 Z" style="fill: #1f2937; stroke: none" />
   <path d="M 401.6 84 H 417.6" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 417.6 84 L 410.6 88 V 80 Z" style="fill: #1f2937; stroke: none" />
   <path d="M 401.6 84 H 417.6" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />

@@ -13,12 +13,16 @@
   <path d="M 97.76 60 L 90.76 64 V 56 Z" style="fill: #f59e0b; stroke: none" />
   <rect x="168" y="34" width="150" height="125" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
   <text x="168" y="27" font-size="10" style="fill: #111827; font-family: system-ui, sans-serif; font-weight: 700">union(A, B)</text>
-  <path d="M 183 60 H 225 H 261 H 303 V 136 H 261 H 225 H 183 Z" style="fill: #8ecae6; stroke: #1f2937; stroke-width: 4; stroke-linejoin: round" />
+  <path d="M 183 60 H 225 H 261 H 303 V 136 H 261 H 225 H 183 Z M 225 60 H 261 V 136 H 225 Z" style="fill: #8ecae6; stroke: #1f2937; stroke-width: 4; stroke-linejoin: round" />
   <path d="M 192.64 60 H 208.64" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 208.64 60 L 201.64 64 V 56 Z" style="fill: #1f2937; stroke: none" />
+  <path d="M 232.12 60 H 248.12" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 248.12 60 L 241.12 64 V 56 Z" style="fill: #1f2937; stroke: none" />
   <rect x="336" y="34" width="150" height="125" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
   <text x="336" y="27" font-size="10" style="fill: #111827; font-family: system-ui, sans-serif; font-weight: 700">intersection(A, B)</text>
-  <path d="M 393 60 H 429 V 136 H 393 Z" style="fill: #8ecae6; stroke: #1f2937; stroke-width: 4; stroke-linejoin: round" />
+  <path d="M 393 60 H 429 V 136 H 393 Z M 393 60 H 429 V 136 H 393 Z" style="fill: #8ecae6; stroke: #1f2937; stroke-width: 4; stroke-linejoin: round" />
+  <path d="M 400.12 60 H 416.12" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 416.12 60 L 409.12 64 V 56 Z" style="fill: #1f2937; stroke: none" />
   <path d="M 400.12 60 H 416.12" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 416.12 60 L 409.12 64 V 56 Z" style="fill: #1f2937; stroke: none" />
   <rect x="504" y="34" width="150" height="125" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />

@@ -3,23 +3,27 @@
 //// The `using` fill rule is part of the operation: both input paths are first
 //// interpreted as filled sets under that rule, the Boolean operation is
 //// applied to those sets, and the returned path fills as the resulting set
-//// under the same rule.
+//// under the same rule. For `Nonzero`, CSG preserves contour-depth level-set
+//// boundaries inside the resulting set rather than collapsing the result to a
+//// minimal filled outline.
 ////
 //// Open subpaths are treated as implicitly closed for fill purposes. Empty
 //// paths and move-only subpaths contribute no filled area.
 ////
 //// The implementation preserves original segment types where possible. It
 //// splits original path segments at point intersections, classifies each
-//// resulting directed piece by the filled state on its left and right sides,
-//// orients retained pieces with the result interior on their left, and
-//// assembles closed subpaths from those retained pieces. Curved segments
-//// remain curved between real encounters; only implicit closing edges are
-//// added as lines. Coincident line edges are split at their overlap endpoints
-//// and resolved by deterministic boundary ownership rules.
+//// resulting directed piece by the output contour depth on its left and right
+//// sides, orients retained pieces with the stronger output depth on their
+//// left, and assembles closed subpaths from those retained pieces. A depth
+//// jump larger than one emits repeated pieces so the returned path can express
+//// the same `Nonzero` field. Curved segments remain curved between real
+//// encounters; only implicit closing edges are added as lines. Coincident line
+//// edges are split at their overlap endpoints and resolved by deterministic
+//// boundary ownership rules.
 
 import gleam/float
 import gleam/list
-import gleam/option.{type Option, None, Some}
+import gleam/order
 import gleam/result
 import svg_path
 import svg_path/trig
@@ -37,17 +41,21 @@ type Edge {
 }
 
 type Piece {
-  Piece(segment: svg_path.Segment)
+  Piece(segment: svg_path.Segment, level: Int)
 }
 
 type Chain {
-  Chain(segments: List(svg_path.Segment))
+  Chain(pieces: List(Piece))
+}
+
+type Candidate {
+  Candidate(piece: Piece, remaining: List(Piece), score: Float)
 }
 
 type Separation {
   NoSeparation
-  InteriorOnLeft
-  InteriorOnRight
+  InteriorOnLeft(level: Int, count: Int)
+  InteriorOnRight(level: Int, count: Int)
 }
 
 /// Options for path CSG operations.
@@ -392,7 +400,7 @@ fn retain_edge_pieces(
         True -> Ok(retained)
         False -> {
           let oriented = orient_piece(piece, operation, side)
-          use retained_piece <- result.try(keep_piece(
+          use retained_pieces <- result.try(keep_piece(
             piece,
             oriented:,
             own_path:,
@@ -402,10 +410,7 @@ fn retain_edge_pieces(
             side:,
             options:,
           ))
-          Ok(case retained_piece {
-            None -> retained
-            Some(segment) -> [Piece(segment:), ..retained]
-          })
+          Ok(list.append(retained_pieces, retained))
         }
       })
       retain_edge_pieces(
@@ -438,7 +443,7 @@ fn keep_piece(
   operation operation: Operation,
   side side: Side,
   options options: Options,
-) -> Result(Option(svg_path.Segment), svg_path.Error) {
+) -> Result(List(Piece), svg_path.Error) {
   use midpoint <- result.try(svg_path.segment_point(piece, at: 0.5))
   use containment <- result.try(svg_path.path_containment_with(
     midpoint,
@@ -457,22 +462,50 @@ fn keep_piece(
   ))
 
   case separation {
-    NoSeparation -> Ok(None)
+    NoSeparation -> Ok([])
     _ -> {
       case containment, operation, side {
-        svg_path.Boundary, Union, RightSide -> Ok(None)
-        svg_path.Boundary, Intersection, RightSide -> Ok(None)
-        svg_path.Boundary, Difference, RightSide -> Ok(None)
+        svg_path.Boundary, Union, RightSide -> Ok([])
+        svg_path.Boundary, Intersection, RightSide -> Ok([])
+        svg_path.Boundary, Difference, RightSide -> Ok([])
         _, _, _ -> {
-          let output_segment = case separation {
-            InteriorOnLeft -> oriented
-            InteriorOnRight -> svg_path.reverse_segment(oriented)
-            NoSeparation -> oriented
-          }
-          Ok(Some(output_segment))
+          let #(output_segment, level, count) =
+            output_piece_data(oriented, separation)
+          Ok(repeat_piece(output_segment, level, count, []))
         }
       }
     }
+  }
+}
+
+fn output_piece_data(
+  oriented: svg_path.Segment,
+  separation: Separation,
+) -> #(svg_path.Segment, Int, Int) {
+  case separation {
+    InteriorOnLeft(level:, count:) -> #(oriented, level, count)
+    InteriorOnRight(level:, count:) -> #(
+      svg_path.reverse_segment(oriented),
+      level,
+      count,
+    )
+    NoSeparation -> #(oriented, 0, 0)
+  }
+}
+
+fn repeat_piece(
+  segment: svg_path.Segment,
+  level: Int,
+  count: Int,
+  repeated: List(Piece),
+) -> List(Piece) {
+  case count <= 0 {
+    True -> repeated
+    False ->
+      repeat_piece(segment, level, count - 1, [
+        Piece(segment:, level:),
+        ..repeated
+      ])
   }
 }
 
@@ -502,7 +535,7 @@ fn separation_result(
       let first = svg_path.point(midpoint.x +. normal.x, midpoint.y +. normal.y)
       let second =
         svg_path.point(midpoint.x -. normal.x, midpoint.y -. normal.y)
-      use first_inside <- result.try(result_contains(
+      use first_level <- result.try(result_level(
         first,
         own_path:,
         against_path:,
@@ -511,7 +544,7 @@ fn separation_result(
         side:,
         options:,
       ))
-      use second_inside <- result.try(result_contains(
+      use second_level <- result.try(result_level(
         second,
         own_path:,
         against_path:,
@@ -520,16 +553,12 @@ fn separation_result(
         side:,
         options:,
       ))
-      Ok(case first_inside, second_inside {
-        True, False -> InteriorOnLeft
-        False, True -> InteriorOnRight
-        _, _ -> NoSeparation
-      })
+      Ok(level_separation(first_level, second_level))
     }
   }
 }
 
-fn result_contains(
+fn result_level(
   point: svg_path.Point,
   own_path own_path: svg_path.Path,
   against_path against_path: svg_path.Path,
@@ -537,39 +566,149 @@ fn result_contains(
   operation operation: Operation,
   side side: Side,
   options options: Options,
-) -> Result(Bool, svg_path.Error) {
-  use own <- result.try(svg_path.path_containment_with(
+) -> Result(Int, svg_path.Error) {
+  use own_level <- result.try(path_level(
     point,
     within: own_path,
     using: fill_rule,
     options: options.containment,
   ))
-  use against <- result.try(svg_path.path_containment_with(
+  use against_level <- result.try(path_level(
     point,
     within: against_path,
     using: fill_rule,
     options: options.containment,
   ))
-  let a_inside = case side {
-    LeftSide -> containment_inside(own)
-    RightSide -> containment_inside(against)
+  let a_level = case side {
+    LeftSide -> own_level
+    RightSide -> against_level
   }
-  let b_inside = case side {
-    LeftSide -> containment_inside(against)
-    RightSide -> containment_inside(own)
+  let b_level = case side {
+    LeftSide -> against_level
+    RightSide -> own_level
   }
 
-  Ok(case operation {
-    Union -> a_inside || b_inside
-    Intersection -> a_inside && b_inside
-    Difference -> a_inside && !b_inside
-  })
+  Ok(output_level(a_level, b_level, using: fill_rule, operation:))
 }
 
-fn containment_inside(containment: svg_path.PointContainment) -> Bool {
-  case containment {
-    svg_path.Inside | svg_path.Boundary -> True
-    svg_path.Outside -> False
+fn path_level(
+  point: svg_path.Point,
+  within path: svg_path.Path,
+  using fill_rule: svg_path.FillRule,
+  options options: svg_path.ContainmentOptions,
+) -> Result(Int, svg_path.Error) {
+  case fill_rule {
+    svg_path.EvenOdd -> {
+      use containment <- result.try(svg_path.path_containment_with(
+        point,
+        within: path,
+        using: fill_rule,
+        options:,
+      ))
+      Ok(case containment {
+        svg_path.Inside | svg_path.Boundary -> 1
+        svg_path.Outside -> 0
+      })
+    }
+    svg_path.Nonzero -> {
+      use winding <- result.try(svg_path.path_winding_with(
+        point,
+        within: path,
+        options:,
+      ))
+      case winding {
+        svg_path.Winding(winding) -> Ok(winding)
+        svg_path.BoundaryWinding -> {
+          use containment <- result.try(svg_path.path_containment_with(
+            point,
+            within: path,
+            using: fill_rule,
+            options:,
+          ))
+          Ok(case containment {
+            svg_path.Inside | svg_path.Boundary -> 1
+            svg_path.Outside -> 0
+          })
+        }
+      }
+    }
+  }
+}
+
+fn output_level(
+  a_level: Int,
+  b_level: Int,
+  using fill_rule: svg_path.FillRule,
+  operation operation: Operation,
+) -> Int {
+  case fill_rule {
+    svg_path.EvenOdd -> {
+      let a_inside = a_level != 0
+      let b_inside = b_level != 0
+      case operation {
+        Union -> bool_level(a_inside || b_inside)
+        Intersection -> bool_level(a_inside && b_inside)
+        Difference -> bool_level(a_inside && !b_inside)
+      }
+    }
+    svg_path.Nonzero -> {
+      let a_inside = a_level != 0
+      let b_inside = b_level != 0
+      case operation {
+        Union ->
+          case a_inside || b_inside {
+            True -> total_level(a_level, b_level)
+            False -> 0
+          }
+        Intersection ->
+          case a_inside && b_inside {
+            True -> total_level(a_level, b_level)
+            False -> 0
+          }
+        Difference ->
+          case a_inside && !b_inside {
+            True -> a_level
+            False -> 0
+          }
+      }
+    }
+  }
+}
+
+fn bool_level(value: Bool) -> Int {
+  case value {
+    True -> 1
+    False -> 0
+  }
+}
+
+fn total_level(a_level: Int, b_level: Int) -> Int {
+  int_absolute_value(a_level) + int_absolute_value(b_level)
+}
+
+fn level_separation(first_level: Int, second_level: Int) -> Separation {
+  case first_level == second_level {
+    True -> NoSeparation
+    False -> {
+      let count = int_absolute_value(first_level - second_level)
+      let first_strength = int_absolute_value(first_level)
+      let second_strength = int_absolute_value(second_level)
+      case first_strength > second_strength {
+        True -> InteriorOnLeft(level: first_level, count:)
+        False ->
+          case second_strength > first_strength {
+            True -> InteriorOnRight(level: second_level, count:)
+            False -> NoSeparation
+          }
+      }
+    }
+  }
+}
+
+fn int_absolute_value(value: Int) -> Int {
+  case value < 0 {
+    True -> 0 - value
+    False -> value
   }
 }
 
@@ -609,10 +748,10 @@ fn chains_loop(
 ) -> Result(List(Chain), svg_path.Error) {
   case pieces {
     [] -> Ok(list.reverse(chains))
-    [Piece(segment: first), ..rest] -> {
+    [first, ..rest] -> {
       use #(chain, remaining) <- result.try(grow_chain([first], rest, tolerance))
       chains_loop(remaining, tolerance, [
-        Chain(segments: list.reverse(chain)),
+        Chain(pieces: list.reverse(chain)),
         ..chains
       ])
     }
@@ -620,104 +759,103 @@ fn chains_loop(
 }
 
 fn grow_chain(
-  chain: List(svg_path.Segment),
+  chain: List(Piece),
   remaining: List(Piece),
   tolerance: Float,
-) -> Result(#(List(svg_path.Segment), List(Piece)), svg_path.Error) {
-  let assert [last, ..] = chain
-  let chain_end = svg_path.segment_end(last)
+) -> Result(#(List(Piece), List(Piece)), svg_path.Error) {
+  let assert [Piece(segment: last_segment, ..), ..] = chain
+  let segments = list.map(chain, fn(piece) { piece.segment })
+  let chain_end = svg_path.segment_end(last_segment)
   let chain_start =
-    chain |> list.last |> result.unwrap(last) |> svg_path.segment_start
+    segments
+    |> list.last
+    |> result.unwrap(last_segment)
+    |> svg_path.segment_start
 
   case same_point(chain_end, chain_start, tolerance) {
     True -> Ok(#(chain, remaining))
     False -> {
-      use incoming_angle <- result.try(segment_end_angle(last))
-      case
-        take_connecting_piece(
+      use incoming_angle <- result.try(segment_end_angle(last_segment))
+      let candidates =
+        connecting_pieces(
           remaining,
           chain_end,
           incoming_angle,
           tolerance,
           checked: [],
-          best: None,
+          candidates: [],
         )
-      {
-        None ->
-          Error(svg_path.Discontinuous(
-            previous_index: 0,
-            next_index: 1,
-            expected: chain_end,
-            got: chain_start,
-            distance: distance(chain_end, chain_start),
-          ))
-        Some(#(next, remaining)) -> {
-          grow_chain([next, ..chain], remaining, tolerance)
-        }
+      try_grow_candidates(candidates, chain, tolerance, chain_end, chain_start)
+    }
+  }
+}
+
+fn try_grow_candidates(
+  candidates: List(Candidate),
+  chain: List(Piece),
+  tolerance: Float,
+  chain_end: svg_path.Point,
+  chain_start: svg_path.Point,
+) -> Result(#(List(Piece), List(Piece)), svg_path.Error) {
+  case candidates {
+    [] ->
+      Error(svg_path.Discontinuous(
+        previous_index: 0,
+        next_index: 1,
+        expected: chain_end,
+        got: chain_start,
+        distance: distance(chain_end, chain_start),
+      ))
+    [Candidate(piece:, remaining:, ..), ..rest] -> {
+      case grow_chain([piece, ..chain], remaining, tolerance) {
+        Ok(result) -> Ok(result)
+        Error(_) ->
+          try_grow_candidates(rest, chain, tolerance, chain_end, chain_start)
       }
     }
   }
 }
 
-fn take_connecting_piece(
+fn connecting_pieces(
   pieces: List(Piece),
   point: svg_path.Point,
   incoming_angle: Float,
   tolerance: Float,
   checked checked: List(Piece),
-  best best: Option(#(svg_path.Segment, List(Piece), Float)),
-) -> Option(#(svg_path.Segment, List(Piece))) {
+  candidates candidates: List(Candidate),
+) -> List(Candidate) {
   case pieces {
-    [] -> {
-      case best {
-        None -> None
-        Some(#(segment, remaining, _score)) -> Some(#(segment, remaining))
-      }
-    }
-    [Piece(segment:), ..rest] -> {
+    [] -> list.sort(candidates, by: compare_candidates)
+    [Piece(segment:, level: _piece_level) as piece, ..rest] -> {
       case same_point(svg_path.segment_start(segment), point, tolerance) {
         True -> {
           let remaining = list.append(list.reverse(checked), rest)
           let score = outgoing_turn_score(segment, incoming_angle)
-          let best =
-            better_connection(best, candidate: #(segment, remaining, score))
-          take_connecting_piece(
+          connecting_pieces(
             rest,
             point,
             incoming_angle,
             tolerance,
-            checked: [Piece(segment:), ..checked],
-            best:,
+            checked: [piece, ..checked],
+            candidates: [Candidate(piece:, remaining:, score:), ..candidates],
           )
         }
         False ->
-          take_connecting_piece(
+          connecting_pieces(
             rest,
             point,
             incoming_angle,
             tolerance,
-            checked: [Piece(segment:), ..checked],
-            best:,
+            checked: [piece, ..checked],
+            candidates:,
           )
       }
     }
   }
 }
 
-fn better_connection(
-  best: Option(#(svg_path.Segment, List(Piece), Float)),
-  candidate candidate: #(svg_path.Segment, List(Piece), Float),
-) -> Option(#(svg_path.Segment, List(Piece), Float)) {
-  case best {
-    None -> Some(candidate)
-    Some(#(_segment, _remaining, best_score)) -> {
-      let #(_candidate_segment, _candidate_remaining, score) = candidate
-      case score <. best_score {
-        True -> Some(candidate)
-        False -> best
-      }
-    }
-  }
+fn compare_candidates(left: Candidate, right: Candidate) -> order.Order {
+  float.compare(left.score, right.score)
 }
 
 fn outgoing_turn_score(
@@ -746,13 +884,11 @@ fn segment_end_angle(
 
 fn positive_turn(from: Float, to: Float) -> Float {
   let turn = to -. from
-  case turn <. 0.0 {
-    True -> positive_turn(from, to +. 360.0)
-    False ->
-      case turn >=. 360.0 {
-        True -> positive_turn(from, to -. 360.0)
-        False -> turn
-      }
+  let turns = float.floor(turn /. 360.0)
+  let normalized = turn -. turns *. 360.0
+  case normalized <. 0.0 {
+    True -> normalized +. 360.0
+    False -> normalized
   }
 }
 
@@ -760,7 +896,8 @@ fn chain_to_subpath(
   tolerance: Float,
 ) -> fn(Chain) -> Result(svg_path.Subpath, svg_path.Error) {
   fn(chain) {
-    let Chain(segments:) = chain
+    let Chain(pieces:) = chain
+    let segments = list.map(pieces, fn(piece) { piece.segment })
     use segments <- result.try(snap_chain(segments, tolerance))
     use subpath <- result.try(svg_path.subpath_with(
       segments,

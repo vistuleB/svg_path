@@ -189,6 +189,28 @@ pub fn operand_fill_rule_controls_nested_input_test() {
   assert_outside(even_odd_intersection, svg_path.point(10.0, 10.0))
 }
 
+pub fn nonzero_union_preserves_internal_winding_levels_test() {
+  let left = nested_rectangles()
+  let right = rectangle(-5.0, 8.0, 25.0, 12.0)
+
+  let assert Ok(union) = csg.union(left, right, using: svg_path.Nonzero)
+
+  assert_inside(union, svg_path.point(10.0, 10.0))
+  assert_winding_depth(union, svg_path.point(10.0, 10.0), 3)
+  assert list.length(svg_path.subpaths(union)) > 1
+}
+
+pub fn nonzero_union_preserves_reversed_internal_winding_levels_test() {
+  let left = nested_rectangles()
+  let right = rectangle(-5.0, 8.0, 25.0, 12.0) |> svg_path.reverse_path
+
+  let assert Ok(union) = csg.union(left, right, using: svg_path.Nonzero)
+
+  assert_inside(union, svg_path.point(10.0, 10.0))
+  assert_winding_depth(union, svg_path.point(10.0, 10.0), 3)
+  assert list.length(svg_path.subpaths(union)) > 1
+}
+
 pub fn csg_matches_boolean_semantics_on_sample_points_test() {
   assert_semantic_cases([
     SemanticCase(
@@ -431,4 +453,21 @@ fn assert_inside(path: svg_path.Path, point: svg_path.Point) {
 fn assert_outside(path: svg_path.Path, point: svg_path.Point) {
   assert svg_path.path_containment(point, within: path, using: svg_path.Nonzero)
     == Ok(svg_path.Outside)
+}
+
+fn assert_winding_depth(
+  path: svg_path.Path,
+  point: svg_path.Point,
+  expected: Int,
+) {
+  let assert Ok(svg_path.Winding(winding)) =
+    svg_path.path_winding(point, within: path)
+  assert int_absolute_value(winding) == expected
+}
+
+fn int_absolute_value(value: Int) -> Int {
+  case value < 0 {
+    True -> 0 - value
+    False -> value
+  }
 }

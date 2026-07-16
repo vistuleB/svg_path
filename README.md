@@ -1768,15 +1768,13 @@ fill(csg.intersection(a, b, using: rule), using: rule)
 `difference` is not commutative.
 
 The returned-path policy is separate from filled-set equivalence. The current
-implementation returns a winding-field path. For `EvenOdd`, the field is just
+implementation returns a contour-depth path. For `EvenOdd`, the depth is just
 0 or 1, so the result is the ordinary Boolean boundary. For `Nonzero`, the
-result also preserves changes in absolute winding depth inside the filled set:
-a same-direction nested contour can remain visible in `union` even though both
-sides are filled blue. If a boundary jumps from winding depth 2 to 0, the
-returned path may contain that contour twice so that the path still fills
-correctly under `Nonzero`. Pure sign changes at the same absolute depth, such
-as +1 to -1 inside already-filled self-intersections, are not emitted as
-separate output contours.
+result also preserves changes in absolute contour depth inside the filled set:
+a nested contour can remain visible in `union` even when both sides are filled
+blue. This is deliberately not a minimal-outline policy. If a boundary jumps
+from depth 2 to 0, the returned path may contain that contour twice so that the
+path still fills correctly under `Nonzero`.
 
 The `using` fill rule is not an implementation detail. A `Path` does not always
 define one obvious filled set without a fill rule: repeated loops,
@@ -1815,9 +1813,9 @@ The operation rules are:
 Input orientation can change the input set before CSG runs, but it should not
 by itself decide the direction of newly assembled output boundaries. The CSG
 operation first resolves `left` and `right` into filled sets with `using`, then
-assembles a returned path using the winding-field output policy. The result is
+assembles a returned path using the contour-depth output policy. The result is
 allowed to omit contours that neither change filledness nor change absolute
-nonzero winding depth.
+nonzero contour depth.
 
 For a single simple contour, clockwise and counterclockwise inputs represent
 the same filled set under both fill rules. These two rows therefore produce
@@ -1869,9 +1867,9 @@ The implementation returns a canonical path:
 - `Path([])` represents the empty result.
 - Every output subpath is closed.
 - Output subpaths contain drawable segments; no move-only subpaths are emitted.
-- Newly assembled boundaries are oriented so the stronger output field is on
+- Newly assembled boundaries are oriented so the stronger output depth is on
   their left.
-- Under `Nonzero`, contours can be repeated when the winding-depth jump is
+- Under `Nonzero`, contours can be repeated when the contour-depth jump is
   greater than one.
 - The returned path fills correctly with the same fill rule used for the
   operation.
@@ -1879,7 +1877,7 @@ The implementation returns a canonical path:
 The orientation policy is about the returned path. It is not a promise to copy
 all input directions. For `EvenOdd`, this usually looks like ordinary outer and
 hole orientation. For `Nonzero`, internal level-set contours and repeated
-contours can appear when needed to represent the output winding field.
+contours can appear when needed to represent the output contour-depth field.
 
 <center>
   <img src="https://raw.githubusercontent.com/vistuleB/svg_path/main/test/generated/csg_visual/theory-output-orientation.svg" alt="CSG canonical output orientation">

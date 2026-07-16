@@ -17,13 +17,17 @@
   <path d="M 57.24 105 H 73.24" style="fill: none; stroke: #f59e0b; stroke-width: 2; stroke-linecap: round" />
   <path d="M 73.24 105 L 66.24 109 V 101 Z" style="fill: #f59e0b; stroke: none" />
   <rect x="166" y="55" width="150" height="104" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
-  <path d="M 188 69 H 294 V 105 H 302 V 127 H 294 V 151 H 188 V 127 H 180 V 105 H 188 Z M 214 89 H 268 V 105 V 127 V 131 H 214 V 127 V 105 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
+  <path d="M 188 69 H 294 V 105 V 127 V 151 H 188 V 127 V 105 Z M 214 89 H 268 V 105 V 127 V 131 H 214 V 127 V 105 Z M 180 105 H 188 H 214 H 268 H 294 H 302 V 127 H 294 H 268 H 214 H 188 H 180 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
   <path d="M 224.52 69 H 240.52" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 240.52 69 L 233.52 73 V 65 Z" style="fill: #1f2937; stroke: none" />
   <path d="M 228.68 89 H 244.68" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 244.68 89 L 237.68 93 V 85 Z" style="fill: #1f2937; stroke: none" />
+  <path d="M 175.36 105 H 191.36" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 191.36 105 L 184.36 109 V 101 Z" style="fill: #1f2937; stroke: none" />
   <rect x="332" y="55" width="150" height="104" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
-  <path d="M 460 105 V 127 H 434 H 380 H 354 V 105 H 380 H 434 Z M 434 105 V 127 H 380 V 105 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
+  <path d="M 460 105 V 127 H 434 H 380 H 354 V 105 H 380 H 434 Z M 460 105 V 127 H 434 H 380 H 354 V 105 H 380 H 434 Z M 434 105 V 127 H 380 V 105 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
+  <path d="M 460 106.24 V 122.24" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 460 122.24 L 456 115.24 H 464 Z" style="fill: #1f2937; stroke: none" />
   <path d="M 460 106.24 V 122.24" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 460 122.24 L 456 115.24 H 464 Z" style="fill: #1f2937; stroke: none" />
   <path d="M 434 106.24 V 122.24" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
@@ -51,13 +55,17 @@
   <path d="M 14 238.24 V 254.24" style="fill: none; stroke: #f59e0b; stroke-width: 2; stroke-linecap: round" />
   <path d="M 14 254.24 L 10 247.24 H 18 Z" style="fill: #f59e0b; stroke: none" />
   <rect x="166" y="187" width="150" height="104" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
-  <path d="M 188 201 H 294 V 237 H 302 V 259 H 294 V 283 H 188 V 259 H 180 V 237 H 188 Z M 214 221 H 268 V 237 V 259 V 263 H 214 V 259 V 237 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
+  <path d="M 188 201 H 294 V 237 V 259 V 283 H 188 V 259 V 237 Z M 214 221 H 268 V 237 V 259 V 263 H 214 V 259 V 237 Z M 180 259 V 237 H 188 H 214 H 268 H 294 H 302 V 259 H 294 H 268 H 214 H 188 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
   <path d="M 224.52 201 H 240.52" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 240.52 201 L 233.52 205 V 197 Z" style="fill: #1f2937; stroke: none" />
   <path d="M 228.68 221 H 244.68" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 244.68 221 L 237.68 225 V 217 Z" style="fill: #1f2937; stroke: none" />
+  <path d="M 180 257.76 V 241.76" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 180 241.76 L 184 248.76 H 176 Z" style="fill: #1f2937; stroke: none" />
   <rect x="332" y="187" width="150" height="104" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
-  <path d="M 460 237 V 259 H 434 H 380 H 354 V 237 H 380 H 434 Z M 434 237 V 259 H 380 V 237 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
+  <path d="M 460 237 V 259 H 434 H 380 H 354 V 237 H 380 H 434 Z M 460 237 V 259 H 434 H 380 H 354 V 237 H 380 H 434 Z M 434 237 V 259 H 380 V 237 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
+  <path d="M 460 238.24 V 254.24" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 460 254.24 L 456 247.24 H 464 Z" style="fill: #1f2937; stroke: none" />
   <path d="M 460 238.24 V 254.24" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 460 254.24 L 456 247.24 H 464 Z" style="fill: #1f2937; stroke: none" />
   <path d="M 434 238.24 V 254.24" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
@@ -85,17 +93,21 @@
   <path d="M 57.24 369 H 73.24" style="fill: none; stroke: #f59e0b; stroke-width: 2; stroke-linecap: round" />
   <path d="M 73.24 369 L 66.24 373 V 365 Z" style="fill: #f59e0b; stroke: none" />
   <rect x="166" y="319" width="150" height="104" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
-  <path d="M 188 333 H 294 V 369 H 302 V 391 H 294 V 415 H 188 V 391 H 180 V 369 H 188 Z M 214 353 V 369 H 268 V 353 Z M 214 391 V 395 H 268 V 391 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
+  <path d="M 188 333 H 294 V 369 V 391 V 415 H 188 V 391 V 369 Z M 214 353 V 369 V 391 V 395 H 268 V 391 V 369 V 353 Z M 180 369 H 188 H 214 H 268 H 294 H 302 V 391 H 294 H 268 H 214 H 188 H 180 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
   <path d="M 224.52 333 H 240.52" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 240.52 333 L 233.52 337 V 329 Z" style="fill: #1f2937; stroke: none" />
   <path d="M 214 351.72 V 367.72" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 214 367.72 L 210 360.72 H 218 Z" style="fill: #1f2937; stroke: none" />
-  <path d="M 214 384.68 V 400.68" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
-  <path d="M 214 400.68 L 210 393.68 H 218 Z" style="fill: #1f2937; stroke: none" />
+  <path d="M 175.36 369 H 191.36" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 191.36 369 L 184.36 373 V 365 Z" style="fill: #1f2937; stroke: none" />
   <rect x="332" y="319" width="150" height="104" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
-  <path d="M 460 369 V 391 H 434 V 369 Z M 354 391 V 369 H 380 V 391 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
+  <path d="M 460 369 V 391 H 434 V 369 Z M 460 369 V 391 H 434 V 369 Z M 354 391 V 369 H 380 V 391 Z M 354 391 V 369 H 380 V 391 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
   <path d="M 460 370.24 V 386.24" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 460 386.24 L 456 379.24 H 464 Z" style="fill: #1f2937; stroke: none" />
+  <path d="M 460 370.24 V 386.24" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 460 386.24 L 456 379.24 H 464 Z" style="fill: #1f2937; stroke: none" />
+  <path d="M 354 389.76 V 373.76" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 354 373.76 L 358 380.76 H 350 Z" style="fill: #1f2937; stroke: none" />
   <path d="M 354 389.76 V 373.76" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 354 373.76 L 358 380.76 H 350 Z" style="fill: #1f2937; stroke: none" />
   <rect x="498" y="319" width="150" height="104" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
@@ -117,17 +129,21 @@
   <path d="M 14 502.24 V 518.24" style="fill: none; stroke: #f59e0b; stroke-width: 2; stroke-linecap: round" />
   <path d="M 14 518.24 L 10 511.24 H 18 Z" style="fill: #f59e0b; stroke: none" />
   <rect x="166" y="451" width="150" height="104" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
-  <path d="M 188 465 H 294 V 501 H 302 V 523 H 294 V 547 H 188 V 523 H 180 V 501 H 188 Z M 214 485 V 501 H 268 V 485 Z M 214 523 V 527 H 268 V 523 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
+  <path d="M 188 465 H 294 V 501 V 523 V 547 H 188 V 523 V 501 Z M 214 485 V 501 V 523 V 527 H 268 V 523 V 501 V 485 Z M 180 523 V 501 H 188 H 214 H 268 H 294 H 302 V 523 H 294 H 268 H 214 H 188 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
   <path d="M 224.52 465 H 240.52" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 240.52 465 L 233.52 469 V 461 Z" style="fill: #1f2937; stroke: none" />
   <path d="M 214 483.72 V 499.72" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 214 499.72 L 210 492.72 H 218 Z" style="fill: #1f2937; stroke: none" />
-  <path d="M 214 516.68 V 532.68" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
-  <path d="M 214 532.68 L 210 525.68 H 218 Z" style="fill: #1f2937; stroke: none" />
+  <path d="M 180 521.76 V 505.76" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 180 505.76 L 184 512.76 H 176 Z" style="fill: #1f2937; stroke: none" />
   <rect x="332" y="451" width="150" height="104" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
-  <path d="M 460 501 V 523 H 434 V 501 Z M 354 523 V 501 H 380 V 523 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
+  <path d="M 460 501 V 523 H 434 V 501 Z M 460 501 V 523 H 434 V 501 Z M 354 523 V 501 H 380 V 523 Z M 354 523 V 501 H 380 V 523 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
   <path d="M 460 502.24 V 518.24" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 460 518.24 L 456 511.24 H 464 Z" style="fill: #1f2937; stroke: none" />
+  <path d="M 460 502.24 V 518.24" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 460 518.24 L 456 511.24 H 464 Z" style="fill: #1f2937; stroke: none" />
+  <path d="M 354 521.76 V 505.76" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 354 505.76 L 358 512.76 H 350 Z" style="fill: #1f2937; stroke: none" />
   <path d="M 354 521.76 V 505.76" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 354 505.76 L 358 512.76 H 350 Z" style="fill: #1f2937; stroke: none" />
   <rect x="498" y="451" width="150" height="104" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />

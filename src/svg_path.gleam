@@ -176,6 +176,12 @@ pub type PointContainment {
   Boundary
 }
 
+/// The signed winding number of a path around a point.
+pub type PathWinding {
+  Winding(Int)
+  BoundaryWinding
+}
+
 /// Options for finding segment intersections.
 pub type IntersectionOptions {
   IntersectionOptions(tolerance: Float, max_depth: Int)
@@ -2198,6 +2204,30 @@ pub fn path_containment_with(
   )
 }
 
+/// Return the signed winding number of a path around a point.
+///
+/// Open subpaths are implicitly closed, matching `path_containment`. If the
+/// point is within the boundary tolerance of any non-empty subpath, the result
+/// is `BoundaryWinding` because the winding number is not numerically stable at
+/// that point.
+pub fn path_winding(
+  point: Point,
+  within path: Path,
+) -> Result(PathWinding, Error) {
+  path_winding_with(point, within: path, options: default_containment_options())
+}
+
+/// Return the signed winding number of a path around a point using explicit
+/// containment options.
+pub fn path_winding_with(
+  point: Point,
+  within path: Path,
+  options options: ContainmentOptions,
+) -> Result(PathWinding, Error) {
+  use _ <- result.try(validate_containment_options(options))
+  path_winding_loop(point, path.subpaths, options, winding: 0)
+}
+
 /// Return the shortest distance from a point to a path.
 ///
 /// Move-only subpaths are skipped.
@@ -3943,6 +3973,39 @@ fn path_containment_loop(
                 options,
                 winding: winding + subpath_winding,
                 crossings: crossings + subpath_crossings,
+              )
+          }
+        }
+      }
+    }
+  }
+}
+
+fn path_winding_loop(
+  point: Point,
+  subpaths: List(Subpath),
+  options: ContainmentOptions,
+  winding winding: Int,
+) -> Result(PathWinding, Error) {
+  case subpaths {
+    [] -> Ok(Winding(winding))
+    [subpath, ..rest] -> {
+      case subpath.segments {
+        [] -> path_winding_loop(point, rest, options, winding:)
+        _ -> {
+          use calculation <- result.try(subpath_containment_calculation(
+            point,
+            subpath,
+            options,
+          ))
+          case calculation {
+            CalculatedBoundary -> Ok(BoundaryWinding)
+            CalculatedWinding(winding: subpath_winding, ..) ->
+              path_winding_loop(
+                point,
+                rest,
+                options,
+                winding: winding + subpath_winding,
               )
           }
         }

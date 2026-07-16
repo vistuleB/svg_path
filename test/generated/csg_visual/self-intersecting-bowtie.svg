@@ -13,14 +13,20 @@
   <path d="M 80 78 L 73 82 V 74 Z" style="fill: #f59e0b; stroke: none" />
   <rect x="168" y="34" width="150" height="125" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
   <text x="168" y="27" font-size="10" style="fill: #111827; font-family: system-ui, sans-serif; font-weight: 700">union(A, B)</text>
-  <path d="M 191 58 L 219 85.4717 V 78 H 269 V 85.4717 L 297 58 V 162 L 269 134.5283 V 142 H 219 V 134.5283 L 191 162 Z" style="fill: #8ecae6; stroke: #1f2937; stroke-width: 4; stroke-linejoin: round" />
+  <path d="M 191 58 L 219 85.4717 V 78 H 269 V 85.4717 V 134.5283 V 142 H 219 V 134.5283 V 85.4717 L 244 110 L 219 134.5283 L 191 162 Z M 269 134.5283 L 244 110 L 269 85.4717 L 297 58 V 162 Z" style="fill: #8ecae6; stroke: #1f2937; stroke-width: 4; stroke-linejoin: round" />
   <path d="M 197.04953 63.93539 L 208.47047 75.14084" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 208.47047 75.14084 L 200.67245 73.09369 L 206.27517 67.38322 Z" style="fill: #1f2937; stroke: none" />
+  <path d="M 264.21047 129.82914 L 252.78953 118.62369" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 252.78953 118.62369 L 260.58755 120.67084 L 254.98483 126.38131 Z" style="fill: #1f2937; stroke: none" />
   <rect x="336" y="34" width="150" height="125" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
   <text x="336" y="27" font-size="10" style="fill: #111827; font-family: system-ui, sans-serif; font-weight: 700">intersection(A, B)</text>
-  <path d="M 387 85.4717 L 412 110 L 387 134.5283 Z M 437 134.5283 L 412 110 L 437 85.4717 Z" style="fill: #8ecae6; stroke: #1f2937; stroke-width: 4; stroke-linejoin: round" />
+  <path d="M 387 85.4717 L 412 110 L 387 134.5283 Z M 387 85.4717 L 412 110 L 387 134.5283 Z M 437 134.5283 L 412 110 L 437 85.4717 Z M 437 134.5283 L 412 110 L 437 85.4717 Z" style="fill: #8ecae6; stroke: #1f2937; stroke-width: 4; stroke-linejoin: round" />
   <path d="M 391.78953 90.17086 L 403.21047 101.37631" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 403.21047 101.37631 L 395.41245 99.32916 L 401.01517 93.61869 Z" style="fill: #1f2937; stroke: none" />
+  <path d="M 391.78953 90.17086 L 403.21047 101.37631" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 403.21047 101.37631 L 395.41245 99.32916 L 401.01517 93.61869 Z" style="fill: #1f2937; stroke: none" />
+  <path d="M 432.21047 129.82914 L 420.78953 118.62369" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 420.78953 118.62369 L 428.58755 120.67084 L 422.98483 126.38131 Z" style="fill: #1f2937; stroke: none" />
   <path d="M 432.21047 129.82914 L 420.78953 118.62369" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 420.78953 118.62369 L 428.58755 120.67084 L 422.98483 126.38131 Z" style="fill: #1f2937; stroke: none" />
   <rect x="504" y="34" width="150" height="125" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
