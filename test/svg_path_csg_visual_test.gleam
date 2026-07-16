@@ -110,6 +110,60 @@ fn examples() -> List(Example) {
       a: circle(svg_path.point(58.0, 61.0), 52.0),
       b: rectangle(44.0, 16.0, 122.0, 106.0),
     ),
+    Example(
+      slug: "identical-rectangles",
+      title: "Identical rectangles",
+      fill_rule: svg_path.Nonzero,
+      a: rectangle(18.0, 18.0, 104.0, 92.0),
+      b: rectangle(18.0, 18.0, 104.0, 92.0),
+    ),
+    Example(
+      slug: "edge-tangent-rectangles",
+      title: "Edge tangent rectangles",
+      fill_rule: svg_path.Nonzero,
+      a: rectangle(0.0, 22.0, 60.0, 92.0),
+      b: rectangle(60.0, 22.0, 120.0, 92.0),
+    ),
+    Example(
+      slug: "point-tangent-rectangles",
+      title: "Point tangent rectangles",
+      fill_rule: svg_path.Nonzero,
+      a: rectangle(0.0, 0.0, 60.0, 60.0),
+      b: rectangle(60.0, 60.0, 120.0, 120.0),
+    ),
+    Example(
+      slug: "nested-input-nonzero",
+      title: "Nested input with Nonzero",
+      fill_rule: svg_path.Nonzero,
+      a: nested_rectangles(),
+      b: rectangle(46.0, 34.0, 76.0, 64.0),
+    ),
+    Example(
+      slug: "nested-input-evenodd",
+      title: "Nested input with EvenOdd",
+      fill_rule: svg_path.EvenOdd,
+      a: nested_rectangles(),
+      b: rectangle(46.0, 34.0, 76.0, 64.0),
+    ),
+    Example(
+      slug: "circle-tangent-rectangle",
+      title: "Circle tangent rectangle",
+      fill_rule: svg_path.Nonzero,
+      a: circle(svg_path.point(50.0, 60.0), 40.0),
+      b: rectangle(90.0, 20.0, 124.0, 100.0),
+    ),
+    Example(
+      slug: "self-intersecting-bowtie",
+      title: "Self-intersecting bowtie",
+      fill_rule: svg_path.Nonzero,
+      a: polygon([
+        svg_path.point(8.0, 8.0),
+        svg_path.point(114.0, 112.0),
+        svg_path.point(114.0, 8.0),
+        svg_path.point(8.0, 112.0),
+      ]),
+      b: rectangle(36.0, 28.0, 86.0, 92.0),
+    ),
   ]
 }
 
@@ -238,6 +292,23 @@ fn rectangle(
 
 fn polygon(points: List(svg_path.Point)) -> svg_path.Path {
   svg_path.from_subpath(svg_path.assert_polygon(points))
+}
+
+fn nested_rectangles() -> svg_path.Path {
+  svg_path.Path([
+    svg_path.assert_polygon([
+      svg_path.point(8.0, 8.0),
+      svg_path.point(114.0, 8.0),
+      svg_path.point(114.0, 90.0),
+      svg_path.point(8.0, 90.0),
+    ]),
+    svg_path.assert_polygon([
+      svg_path.point(34.0, 28.0),
+      svg_path.point(88.0, 28.0),
+      svg_path.point(88.0, 70.0),
+      svg_path.point(34.0, 70.0),
+    ]),
+  ])
 }
 
 fn circle(center: svg_path.Point, radius: Float) -> svg_path.Path {

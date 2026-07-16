@@ -87,6 +87,93 @@ pub fn intersection_preserves_curve_segments_test() {
   assert_outside(intersection, svg_path.point(2.5, 10.0))
 }
 
+pub fn identical_rectangles_share_boundaries_test() {
+  let left = rectangle(0.0, 0.0, 10.0, 10.0)
+  let right = rectangle(0.0, 0.0, 10.0, 10.0)
+
+  let assert Ok(union) = csg.union(left, right, using: svg_path.Nonzero)
+  let assert Ok(intersection) =
+    csg.intersection(left, right, using: svg_path.Nonzero)
+  let assert Ok(difference) =
+    csg.difference(left, minus: right, using: svg_path.Nonzero)
+
+  assert_area(union, 100.0)
+  assert_area(intersection, 100.0)
+  assert_area(difference, 0.0)
+  assert_inside(union, svg_path.point(5.0, 5.0))
+  assert_inside(intersection, svg_path.point(5.0, 5.0))
+  assert_outside(difference, svg_path.point(5.0, 5.0))
+}
+
+pub fn edge_tangent_rectangles_do_not_create_overlap_area_test() {
+  let left = rectangle(0.0, 0.0, 10.0, 10.0)
+  let right = rectangle(10.0, 0.0, 20.0, 10.0)
+
+  let assert Ok(union) = csg.union(left, right, using: svg_path.Nonzero)
+  let assert Ok(intersection) =
+    csg.intersection(left, right, using: svg_path.Nonzero)
+  let assert Ok(difference) =
+    csg.difference(left, minus: right, using: svg_path.Nonzero)
+
+  assert_area(union, 200.0)
+  assert_area(intersection, 0.0)
+  assert_area(difference, 100.0)
+  assert_inside(union, svg_path.point(5.0, 5.0))
+  assert_inside(union, svg_path.point(15.0, 5.0))
+  assert_outside(intersection, svg_path.point(5.0, 5.0))
+  assert_inside(difference, svg_path.point(5.0, 5.0))
+  assert_outside(difference, svg_path.point(15.0, 5.0))
+}
+
+pub fn point_tangent_rectangles_do_not_create_overlap_area_test() {
+  let left = rectangle(0.0, 0.0, 10.0, 10.0)
+  let right = rectangle(10.0, 10.0, 20.0, 20.0)
+
+  let assert Ok(union) = csg.union(left, right, using: svg_path.Nonzero)
+  let assert Ok(intersection) =
+    csg.intersection(left, right, using: svg_path.Nonzero)
+  let assert Ok(difference) =
+    csg.difference(left, minus: right, using: svg_path.Nonzero)
+
+  assert_area(union, 200.0)
+  assert_area(intersection, 0.0)
+  assert_area(difference, 100.0)
+  assert_inside(union, svg_path.point(5.0, 5.0))
+  assert_inside(union, svg_path.point(15.0, 15.0))
+  assert_outside(intersection, svg_path.point(5.0, 5.0))
+  assert_inside(difference, svg_path.point(5.0, 5.0))
+  assert_outside(difference, svg_path.point(15.0, 15.0))
+}
+
+pub fn operand_fill_rule_controls_nested_input_test() {
+  let outer =
+    svg_path.assert_polygon([
+      svg_path.point(0.0, 0.0),
+      svg_path.point(20.0, 0.0),
+      svg_path.point(20.0, 20.0),
+      svg_path.point(0.0, 20.0),
+    ])
+  let inner =
+    svg_path.assert_polygon([
+      svg_path.point(5.0, 5.0),
+      svg_path.point(15.0, 5.0),
+      svg_path.point(15.0, 15.0),
+      svg_path.point(5.0, 15.0),
+    ])
+  let nested = svg_path.Path([outer, inner])
+  let probe = rectangle(7.0, 7.0, 13.0, 13.0)
+
+  let assert Ok(nonzero_intersection) =
+    csg.intersection(nested, probe, using: svg_path.Nonzero)
+  let assert Ok(even_odd_intersection) =
+    csg.intersection(nested, probe, using: svg_path.EvenOdd)
+
+  assert_area(nonzero_intersection, 36.0)
+  assert_area(even_odd_intersection, 0.0)
+  assert_inside(nonzero_intersection, svg_path.point(10.0, 10.0))
+  assert_outside(even_odd_intersection, svg_path.point(10.0, 10.0))
+}
+
 fn rectangle(
   min_x: Float,
   min_y: Float,
