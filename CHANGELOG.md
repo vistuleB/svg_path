@@ -15,6 +15,9 @@ the tag object.
 
 - Added path-level nearest-point projection and distance helpers, including
   `PathProjection` and configurable `_with` variants.
+- Added tolerance-controlled straight-line approximation for segments,
+  subpaths, and paths through the `segment_to_lines`, `subpath_to_lines`, and
+  `path_to_lines` function families.
 
 ## 0.11.0 - 2026-07-16
 

@@ -466,6 +466,27 @@ svg_path.subpath_to_cubic_beziers(subpath)
 svg_path.path_to_cubic_beziers(path)
 ```
 
+## Converting Segments to Lines
+
+Use the `_to_lines` function family to approximate every segment with straight
+lines:
+
+```gleam
+svg_path.segment_to_lines(segment)
+svg_path.subpath_to_lines(subpath)
+svg_path.path_to_lines(path)
+```
+
+The `_with` variants accept `LinearizeOptions(tolerance:, max_depth:)`. The
+default tolerance is `0.01` coordinate units and the default recursion limit is
+20. Beziers are adaptively subdivided using their control points' distance from
+each chord. Arcs use a conservative bound based on their radius and angular
+span. Degenerate arcs become lines between their endpoints.
+
+Subpath order, start points, closed/open state, and move-only subpaths are
+preserved. Conversion returns an error when the requested tolerance cannot be
+reached within `max_depth`.
+
 ## Arcs and the `ellipse` Module
 
 `svg_path.Arc` uses SVG's endpoint arc representation: an explicit `start`,

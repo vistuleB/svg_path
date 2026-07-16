@@ -13,6 +13,7 @@ import gleam/result
 import svg_path/bezier
 import svg_path/ellipse
 import svg_path/root
+import svg_path/trig
 import vec/vec2.{type Vec2, Vec2}
 
 const default_wiggle_tolerance = 0.000000001
@@ -34,6 +35,10 @@ const golden_section_ratio = 0.6180339887498949
 const default_length_tolerance = 0.000000001
 
 const default_length_max_depth = 20
+
+const default_linearize_tolerance = 0.01
+
+const default_linearize_max_depth = 20
 
 const default_distance_samples = 100
 
@@ -135,6 +140,11 @@ pub type MinimizeOptions {
 /// Options for approximating the length of a segment or subpath.
 pub type LengthOptions {
   LengthOptions(tolerance: Float, max_depth: Int)
+}
+
+/// Options for approximating segments with straight lines.
+pub type LinearizeOptions {
+  LinearizeOptions(tolerance: Float, max_depth: Int)
 }
 
 /// Options for finding the distance from a point to a segment.
@@ -359,6 +369,15 @@ pub type Error {
   /// A requested arc-length distance was outside `0.0..length`.
   InvalidLengthDistance(distance: Float, length: Float)
 
+  /// The line approximation tolerance must be greater than zero.
+  InvalidLinearizeTolerance(tolerance: Float)
+
+  /// The line approximation recursion limit must be greater than zero.
+  InvalidLinearizeMaxDepth(max_depth: Int)
+
+  /// A segment could not be approximated within the recursion limit.
+  LinearizeMaxDepthReached(error: Float)
+
   /// The number of distance scan samples must be greater than zero.
   InvalidDistanceSamples(samples: Int)
 
@@ -418,6 +437,14 @@ pub fn default_length_options() -> LengthOptions {
   LengthOptions(
     tolerance: default_length_tolerance,
     max_depth: default_length_max_depth,
+  )
+}
+
+/// Return the default options for straight-line approximation.
+pub fn default_linearize_options() -> LinearizeOptions {
+  LinearizeOptions(
+    tolerance: default_linearize_tolerance,
+    max_depth: default_linearize_max_depth,
   )
 }
 
@@ -832,6 +859,65 @@ pub fn segment_to_cubic_beziers(segment: Segment) -> List(Segment) {
     CubicBezier(..) -> [segment]
     Arc(..) -> segment_arcs_to_cubic_beziers(segment)
   }
+}
+
+/// Approximate a segment with one or more straight lines.
+///
+/// Lines are returned unchanged. Beziers and arcs are subdivided until each
+/// resulting chord is within the default geometric tolerance. Degenerate arcs
+/// fall back to a straight line between their endpoints.
+pub fn segment_to_lines(segment: Segment) -> Result(List(Segment), Error) {
+  segment_to_lines_with(segment, options: default_linearize_options())
+}
+
+/// Approximate a segment with straight lines using explicit options.
+pub fn segment_to_lines_with(
+  segment: Segment,
+  options options: LinearizeOptions,
+) -> Result(List(Segment), Error) {
+  use _ <- result.try(validate_linearize_options(options))
+  segment_to_lines_valid_options(segment, options)
+}
+
+/// Approximate every segment in a subpath with straight lines.
+///
+/// The subpath's start point and closed state are preserved. Move-only
+/// subpaths remain move-only.
+pub fn subpath_to_lines(subpath: Subpath) -> Result(Subpath, Error) {
+  subpath_to_lines_with(subpath, options: default_linearize_options())
+}
+
+/// Approximate every segment in a subpath with straight lines using explicit
+/// options.
+pub fn subpath_to_lines_with(
+  subpath: Subpath,
+  options options: LinearizeOptions,
+) -> Result(Subpath, Error) {
+  use _ <- result.try(validate_linearize_options(options))
+  use segments <- result.try(
+    segments_to_lines(subpath.segments, options, converted: []),
+  )
+  Ok(Subpath(..subpath, segments:))
+}
+
+/// Approximate every segment in a path with straight lines.
+///
+/// Subpath order, move-only subpaths, and closed states are preserved.
+pub fn path_to_lines(path: Path) -> Result(Path, Error) {
+  path_to_lines_with(path, options: default_linearize_options())
+}
+
+/// Approximate every segment in a path with straight lines using explicit
+/// options.
+pub fn path_to_lines_with(
+  path: Path,
+  options options: LinearizeOptions,
+) -> Result(Path, Error) {
+  use _ <- result.try(validate_linearize_options(options))
+  use subpaths <- result.try(
+    subpaths_to_lines(path.subpaths, options, converted: []),
+  )
+  Ok(Path(subpaths:))
 }
 
 /// Check whether a subpath is closed.
@@ -2693,6 +2779,18 @@ fn validate_length_options(options: LengthOptions) -> Result(Nil, Error) {
     False -> {
       case options.max_depth <= 0 {
         True -> Error(InvalidLengthMaxDepth(options.max_depth))
+        False -> Ok(Nil)
+      }
+    }
+  }
+}
+
+fn validate_linearize_options(options: LinearizeOptions) -> Result(Nil, Error) {
+  case options.tolerance <=. 0.0 {
+    True -> Error(InvalidLinearizeTolerance(options.tolerance))
+    False -> {
+      case options.max_depth <= 0 {
+        True -> Error(InvalidLinearizeMaxDepth(options.max_depth))
         False -> Ok(Nil)
       }
     }
@@ -5035,6 +5133,157 @@ fn segments_to_cubic_beziers(
         rest,
         list.append(list.reverse(segment_to_cubic_beziers(first)), converted),
       )
+    }
+  }
+}
+
+fn segment_to_lines_valid_options(
+  segment: Segment,
+  options: LinearizeOptions,
+) -> Result(List(Segment), Error) {
+  case segment {
+    Line(..) -> Ok([segment])
+    QuadraticBezier(..) | CubicBezier(..) ->
+      bezier_segment_to_lines(segment, options, depth: 0)
+    Arc(start:, end:, ..) -> {
+      case arc_center_data(segment) {
+        Error(_) -> Ok([Line(start:, end:)])
+        Ok(arc) -> arc_to_lines(arc, start, end, options, depth: 0)
+      }
+    }
+  }
+}
+
+fn bezier_segment_to_lines(
+  segment: Segment,
+  options: LinearizeOptions,
+  depth depth: Int,
+) -> Result(List(Segment), Error) {
+  let error = bezier_chord_error(segment)
+  case error <=. options.tolerance {
+    True -> Ok([Line(start: segment_start(segment), end: segment_end(segment))])
+    False -> {
+      case depth >= options.max_depth {
+        True -> Error(LinearizeMaxDepthReached(error:))
+        False -> {
+          use split <- result.try(split_segment(segment, at: 0.5))
+          let #(left, right) = split
+          use left <- result.try(bezier_segment_to_lines(
+            left,
+            options,
+            depth: depth + 1,
+          ))
+          use right <- result.try(bezier_segment_to_lines(
+            right,
+            options,
+            depth: depth + 1,
+          ))
+          Ok(list.append(left, right))
+        }
+      }
+    }
+  }
+}
+
+fn bezier_chord_error(segment: Segment) -> Float {
+  case segment {
+    QuadraticBezier(start:, control:, end:) ->
+      point_to_line_projection(control, start, end).distance
+    CubicBezier(start:, control1:, control2:, end:) ->
+      float.max(
+        point_to_line_projection(control1, start, end).distance,
+        point_to_line_projection(control2, start, end).distance,
+      )
+    Line(..) | Arc(..) -> 0.0
+  }
+}
+
+fn arc_to_lines(
+  arc: ellipse.CenterArcData,
+  start: Point,
+  end: Point,
+  options: LinearizeOptions,
+  depth depth: Int,
+) -> Result(List(Segment), Error) {
+  let error = arc_chord_error_bound(arc)
+  case error <=. options.tolerance {
+    True -> Ok([Line(start:, end:)])
+    False -> {
+      case depth >= options.max_depth {
+        True -> Error(LinearizeMaxDepthReached(error:))
+        False -> {
+          let #(left_arc, right_arc) = ellipse.split_arc(arc, at: 0.5)
+          let middle = ellipse.arc_point(arc, at: 0.5) |> from_ellipse_point
+          use left <- result.try(arc_to_lines(
+            left_arc,
+            start,
+            middle,
+            options,
+            depth: depth + 1,
+          ))
+          use right <- result.try(arc_to_lines(
+            right_arc,
+            middle,
+            end,
+            options,
+            depth: depth + 1,
+          ))
+          Ok(list.append(left, right))
+        }
+      }
+    }
+  }
+}
+
+fn arc_chord_error_bound(arc: ellipse.CenterArcData) -> Float {
+  let radius =
+    float.max(
+      float.absolute_value(arc.radius.x),
+      float.absolute_value(arc.radius.y),
+    )
+  let delta = float.absolute_value(arc.delta_angle)
+
+  case delta >. 180.0 {
+    True -> 2.0 *. radius
+    False -> {
+      radius *. float.max(0.0, 1.0 -. trig.cos_degrees(delta /. 2.0))
+    }
+  }
+}
+
+fn segments_to_lines(
+  segments: List(Segment),
+  options: LinearizeOptions,
+  converted converted: List(Segment),
+) -> Result(List(Segment), Error) {
+  case segments {
+    [] -> Ok(list.reverse(converted))
+    [first, ..rest] -> {
+      use lines <- result.try(segment_to_lines_valid_options(first, options))
+      segments_to_lines(
+        rest,
+        options,
+        converted: list.append(list.reverse(lines), converted),
+      )
+    }
+  }
+}
+
+fn subpaths_to_lines(
+  subpaths: List(Subpath),
+  options: LinearizeOptions,
+  converted converted: List(Subpath),
+) -> Result(List(Subpath), Error) {
+  case subpaths {
+    [] -> Ok(list.reverse(converted))
+    [first, ..rest] -> {
+      use segments <- result.try(
+        segments_to_lines(first.segments, options, converted: []),
+      )
+      subpaths_to_lines(rest, options, converted: [
+        Subpath(..first, segments:),
+        ..converted
+      ])
     }
   }
 }

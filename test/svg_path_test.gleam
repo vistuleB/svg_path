@@ -3797,6 +3797,193 @@ pub fn path_to_cubic_beziers_converts_each_subpath_test() {
   assert all_cubic(segments)
 }
 
+pub fn segment_to_lines_preserves_lines_test() {
+  let line =
+    svg_path.Line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(10.0, 5.0),
+    )
+
+  assert svg_path.segment_to_lines(line) == Ok([line])
+}
+
+pub fn segment_to_lines_approximates_beziers_within_tolerance_test() {
+  let tolerance = 0.05
+  let options = svg_path.LinearizeOptions(tolerance:, max_depth: 20)
+  let quadratic =
+    svg_path.QuadraticBezier(
+      start: svg_path.point(0.0, 0.0),
+      control: svg_path.point(10.0, 20.0),
+      end: svg_path.point(20.0, 0.0),
+    )
+  let cubic =
+    svg_path.CubicBezier(
+      start: svg_path.point(0.0, 0.0),
+      control1: svg_path.point(0.0, 20.0),
+      control2: svg_path.point(20.0, 20.0),
+      end: svg_path.point(20.0, 0.0),
+    )
+
+  let assert Ok(quadratic_lines) =
+    svg_path.segment_to_lines_with(quadratic, options:)
+  let assert Ok(cubic_lines) = svg_path.segment_to_lines_with(cubic, options:)
+
+  assert all_lines(quadratic_lines)
+  assert all_lines(cubic_lines)
+  assert continuous_segments(quadratic_lines)
+  assert continuous_segments(cubic_lines)
+  assert sampled_segment_within_lines(
+    quadratic,
+    quadratic_lines,
+    tolerance,
+    samples: 500,
+  )
+  assert sampled_segment_within_lines(
+    cubic,
+    cubic_lines,
+    tolerance,
+    samples: 500,
+  )
+}
+
+pub fn segment_to_lines_detects_collinear_control_overshoot_test() {
+  let curve =
+    svg_path.QuadraticBezier(
+      start: svg_path.point(0.0, 0.0),
+      control: svg_path.point(20.0, 0.0),
+      end: svg_path.point(10.0, 0.0),
+    )
+
+  let assert Ok(lines) =
+    svg_path.segment_to_lines_with(
+      curve,
+      options: svg_path.LinearizeOptions(tolerance: 0.01, max_depth: 20),
+    )
+
+  assert list.length(lines) > 1
+  assert list.any(lines, fn(line) { svg_path.segment_end(line).x >. 10.0 })
+}
+
+pub fn segment_to_lines_approximates_arcs_within_tolerance_test() {
+  let tolerance = 0.05
+  let arc =
+    svg_path.Arc(
+      start: svg_path.point(0.0, 0.0),
+      radius: svg_path.point(10.0, 5.0),
+      x_axis_rotation: 30.0,
+      large_arc: True,
+      sweep: True,
+      end: svg_path.point(20.0, 0.0),
+    )
+
+  let assert Ok(lines) =
+    svg_path.segment_to_lines_with(
+      arc,
+      options: svg_path.LinearizeOptions(tolerance:, max_depth: 20),
+    )
+
+  assert all_lines(lines)
+  assert continuous_segments(lines)
+  assert svg_path.segment_start(list.first(lines) |> unwrap_segment)
+    == svg_path.segment_start(arc)
+  assert svg_path.segment_end(list.last(lines) |> unwrap_segment)
+    == svg_path.segment_end(arc)
+  assert sampled_segment_within_lines(arc, lines, tolerance, samples: 500)
+}
+
+pub fn segment_to_lines_degenerate_arc_falls_back_to_line_test() {
+  let start = svg_path.point(0.0, 0.0)
+  let end = svg_path.point(10.0, 0.0)
+  let arc =
+    svg_path.Arc(
+      start:,
+      radius: svg_path.point(0.0, 5.0),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: True,
+      end:,
+    )
+
+  assert svg_path.segment_to_lines(arc) == Ok([svg_path.Line(start:, end:)])
+}
+
+pub fn segment_to_lines_tighter_tolerance_does_not_use_fewer_lines_test() {
+  let curve =
+    svg_path.CubicBezier(
+      start: svg_path.point(0.0, 0.0),
+      control1: svg_path.point(0.0, 20.0),
+      control2: svg_path.point(20.0, 20.0),
+      end: svg_path.point(20.0, 0.0),
+    )
+  let assert Ok(coarse) =
+    svg_path.segment_to_lines_with(
+      curve,
+      options: svg_path.LinearizeOptions(tolerance: 1.0, max_depth: 20),
+    )
+  let assert Ok(fine) =
+    svg_path.segment_to_lines_with(
+      curve,
+      options: svg_path.LinearizeOptions(tolerance: 0.1, max_depth: 20),
+    )
+
+  assert list.length(fine) >= list.length(coarse)
+}
+
+pub fn segment_to_lines_rejects_invalid_options_and_depth_exhaustion_test() {
+  let curve =
+    svg_path.QuadraticBezier(
+      start: svg_path.point(0.0, 0.0),
+      control: svg_path.point(10.0, 20.0),
+      end: svg_path.point(20.0, 0.0),
+    )
+
+  assert svg_path.segment_to_lines_with(
+      curve,
+      options: svg_path.LinearizeOptions(tolerance: 0.0, max_depth: 20),
+    )
+    == Error(svg_path.InvalidLinearizeTolerance(0.0))
+  assert svg_path.segment_to_lines_with(
+      curve,
+      options: svg_path.LinearizeOptions(tolerance: 0.1, max_depth: 0),
+    )
+    == Error(svg_path.InvalidLinearizeMaxDepth(0))
+  let assert Error(svg_path.LinearizeMaxDepthReached(error:)) =
+    svg_path.segment_to_lines_with(
+      curve,
+      options: svg_path.LinearizeOptions(
+        tolerance: 0.000000000001,
+        max_depth: 1,
+      ),
+    )
+  assert error >. 0.000000000001
+}
+
+pub fn subpath_and_path_to_lines_preserve_topology_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let curve =
+    svg_path.QuadraticBezier(
+      start: a,
+      control: svg_path.point(10.0, 20.0),
+      end: a,
+    )
+  let closed =
+    svg_path.assert_subpath([curve])
+    |> svg_path.assert_set_closed(closed: True)
+  let move_only = svg_path.empty_subpath(at: svg_path.point(30.0, 40.0))
+
+  let assert Ok(converted) =
+    svg_path.path_to_lines(svg_path.Path([move_only, closed]))
+  let assert [converted_move_only, converted_closed] =
+    svg_path.subpaths(converted)
+
+  assert svg_path.segments(converted_move_only) == []
+  assert svg_path.start(converted_move_only) == svg_path.start(move_only)
+  assert svg_path.is_closed(converted_closed)
+  assert all_lines(svg_path.segments(converted_closed))
+  assert continuous_segments(svg_path.segments(converted_closed))
+  assert svg_path.start(converted_closed) == svg_path.end(converted_closed)
+}
+
 pub fn subpath_with_wiggle_rejects_gaps_beyond_tolerance_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)
@@ -4482,6 +4669,15 @@ fn all_cubic(segments: List(svg_path.Segment)) -> Bool {
   })
 }
 
+fn all_lines(segments: List(svg_path.Segment)) -> Bool {
+  list.all(segments, fn(segment) {
+    case segment {
+      svg_path.Line(..) -> True
+      _ -> False
+    }
+  })
+}
+
 fn no_arcs(segments: List(svg_path.Segment)) -> Bool {
   list.all(segments, fn(segment) {
     case segment {
@@ -4517,6 +4713,59 @@ fn continuous_segments(segments: List(svg_path.Segment)) -> Bool {
 
 fn point_near(a: svg_path.Point, b: svg_path.Point) -> Bool {
   near(a.x, b.x) && near(a.y, b.y)
+}
+
+fn sampled_segment_within_lines(
+  segment: svg_path.Segment,
+  lines: List(svg_path.Segment),
+  tolerance: Float,
+  samples samples: Int,
+) -> Bool {
+  sampled_segment_within_lines_loop(
+    segment,
+    lines,
+    tolerance,
+    samples,
+    index: 0,
+  )
+}
+
+fn sampled_segment_within_lines_loop(
+  segment: svg_path.Segment,
+  lines: List(svg_path.Segment),
+  tolerance: Float,
+  samples: Int,
+  index index: Int,
+) -> Bool {
+  case index > samples {
+    True -> True
+    False -> {
+      let t = int.to_float(index) /. int.to_float(samples)
+      let assert Ok(point) = svg_path.segment_point(segment, at: t)
+
+      point_distance_to_lines(point, lines) <=. tolerance
+      && sampled_segment_within_lines_loop(
+        segment,
+        lines,
+        tolerance,
+        samples,
+        index: index + 1,
+      )
+    }
+  }
+}
+
+fn point_distance_to_lines(
+  point: svg_path.Point,
+  lines: List(svg_path.Segment),
+) -> Float {
+  let assert [first, ..rest] = lines
+  let assert Ok(first_distance) = svg_path.segment_distance(point, to: first)
+
+  list.fold(rest, first_distance, fn(best, line) {
+    let assert Ok(distance) = svg_path.segment_distance(point, to: line)
+    float.min(best, distance)
+  })
 }
 
 fn sampled_segment_length(
