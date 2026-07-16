@@ -163,7 +163,7 @@ pub type ContainmentOptions {
   ContainmentOptions(tolerance: Float, samples: Int, max_iterations: Int)
 }
 
-/// The SVG fill rule used for point containment.
+/// The SVG fill rule used for point containment and filled area.
 pub type FillRule {
   Nonzero
   EvenOdd

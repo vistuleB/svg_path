@@ -1,8 +1,8 @@
 import gleam/option.{None, Some}
 import gleeunit
 import svg_path
-import svg_path/serialize
 import svg_path/basic_shapes
+import svg_path/serialize
 
 pub fn main() -> Nil {
   gleeunit.main()
@@ -83,8 +83,7 @@ pub fn ellipse_converts_to_svg_equivalent_path_test() {
 }
 
 pub fn line_converts_to_subpath_test() {
-  let assert Ok(subpath) =
-    basic_shapes.line(x1: 1.0, y1: 2.0, x2: 3.0, y2: 4.0)
+  let assert Ok(subpath) = basic_shapes.line(x1: 1.0, y1: 2.0, x2: 3.0, y2: 4.0)
 
   assert serialize.subpath(subpath) == "M 1 2 L 3 4"
 }
