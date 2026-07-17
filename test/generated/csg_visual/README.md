@@ -27,6 +27,6 @@ Each SVG shows the inputs and the three path CSG operations for one example.
 - [Nested CSG table with EvenOdd](theory-nested-csg-evenodd-table.svg)
 - [Canonical output orientation](theory-output-orientation.svg)
 - [Adjacent offset squares union](adjacent-offset-squares-union.svg)
-- [Four squares union: Nonzero](four-squares-empty-right-operand.svg)
+- [Four squares union: Nonzero](four-squares-union-nonzero.svg)
 - [Rounded corners on rectangle union](effects-rounded-rectangle-union.svg)
 - [Rounded corners on ellipse union](effects-rounded-ellipse-union.svg)

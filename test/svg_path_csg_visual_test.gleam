@@ -123,9 +123,9 @@ fn theory_entries() -> List(String) {
       render_adjacent_offset_squares_union(),
     ),
     #(
-      "four-squares-empty-right-operand",
+      "four-squares-union-nonzero",
       "Four squares union: Nonzero",
-      render_four_squares_empty_right_operand(),
+      render_four_squares_union_nonzero(),
     ),
     #(
       "effects-rounded-rectangle-union",
@@ -1174,7 +1174,7 @@ fn render_adjacent_offset_squares_union() -> String {
   )
 }
 
-fn render_four_squares_empty_right_operand() -> String {
+fn render_four_squares_union_nonzero() -> String {
   let paths = visual_four_translated_square_paths()
   let path = svg_path.combine_paths(paths)
   let assert Ok(union) = union_paths(paths)

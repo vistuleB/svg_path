@@ -1774,8 +1774,8 @@ structure is visible with rounded corners.
   <img src="https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/effects_rounded_rectangle_union.svg" alt="Raw and rounded union of overlapping rectangles">
 </center>
 
-Call `csg.simplify_nonzero_output(path)` when you want to remove those
-internal contour-depth boundaries after a CSG operation. It keeps boundaries
+Call `csg.simplify_nonzero_output(path)` to remove the internal
+contour-depth boundaries after a CSG operation. It keeps boundaries
 that separate filled and unfilled regions under `Nonzero`, removes boundaries
 that only separate two filled regions of different contour depth, and returns a
 path with the same `Nonzero` filled set.
