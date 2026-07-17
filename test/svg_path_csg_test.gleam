@@ -18,6 +18,37 @@ type SemanticCase {
   )
 }
 
+type OperationCase {
+  OperationCase(
+    left: svg_path.Path,
+    right: svg_path.Path,
+    fill_rule: svg_path.FillRule,
+    union: OperationExpectation,
+    intersection: OperationExpectation,
+    left_minus_right: OperationExpectation,
+    right_minus_left: OperationExpectation,
+  )
+}
+
+type OperationExpectation {
+  OperationExpectation(
+    area: Float,
+    subpaths: SubpathExpectation,
+    points: List(PointExpectation),
+  )
+}
+
+type SubpathExpectation {
+  AnySubpathCount
+  ExactSubpathCount(Int)
+}
+
+type PointExpectation {
+  ExpectInside(svg_path.Point)
+  ExpectOutside(svg_path.Point)
+  ExpectBoundary(svg_path.Point)
+}
+
 type BooleanOperation {
   UnionOp
   IntersectionOp
@@ -359,6 +390,154 @@ pub fn csg_matches_boolean_semantics_on_sample_points_test() {
   ])
 }
 
+pub fn paper_style_csg_operation_table_test() {
+  assert_operation_cases([
+    OperationCase(
+      left: rectangle(0.0, 0.0, 10.0, 10.0),
+      right: rectangle(5.0, 0.0, 15.0, 10.0),
+      fill_rule: svg_path.Nonzero,
+      union: OperationExpectation(
+        area: 150.0,
+        subpaths: AnySubpathCount,
+        points: [
+          ExpectInside(svg_path.point(2.5, 5.0)),
+          ExpectInside(svg_path.point(7.5, 5.0)),
+          ExpectInside(svg_path.point(12.5, 5.0)),
+          ExpectOutside(svg_path.point(20.0, 5.0)),
+        ],
+      ),
+      intersection: OperationExpectation(
+        area: 50.0,
+        subpaths: AnySubpathCount,
+        points: [
+          ExpectOutside(svg_path.point(2.5, 5.0)),
+          ExpectInside(svg_path.point(7.5, 5.0)),
+          ExpectOutside(svg_path.point(12.5, 5.0)),
+        ],
+      ),
+      left_minus_right: OperationExpectation(
+        area: 50.0,
+        subpaths: AnySubpathCount,
+        points: [
+          ExpectInside(svg_path.point(2.5, 5.0)),
+          ExpectOutside(svg_path.point(7.5, 5.0)),
+          ExpectOutside(svg_path.point(12.5, 5.0)),
+        ],
+      ),
+      right_minus_left: OperationExpectation(
+        area: 50.0,
+        subpaths: AnySubpathCount,
+        points: [
+          ExpectOutside(svg_path.point(2.5, 5.0)),
+          ExpectOutside(svg_path.point(7.5, 5.0)),
+          ExpectInside(svg_path.point(12.5, 5.0)),
+        ],
+      ),
+    ),
+    OperationCase(
+      left: rectangle(0.0, 0.0, 10.0, 10.0),
+      right: rectangle(20.0, 0.0, 30.0, 10.0),
+      fill_rule: svg_path.Nonzero,
+      union: OperationExpectation(
+        area: 200.0,
+        subpaths: ExactSubpathCount(2),
+        points: [
+          ExpectInside(svg_path.point(5.0, 5.0)),
+          ExpectOutside(svg_path.point(15.0, 5.0)),
+          ExpectInside(svg_path.point(25.0, 5.0)),
+        ],
+      ),
+      intersection: OperationExpectation(
+        area: 0.0,
+        subpaths: ExactSubpathCount(0),
+        points: [
+          ExpectOutside(svg_path.point(5.0, 5.0)),
+          ExpectOutside(svg_path.point(25.0, 5.0)),
+        ],
+      ),
+      left_minus_right: OperationExpectation(
+        area: 100.0,
+        subpaths: AnySubpathCount,
+        points: [
+          ExpectInside(svg_path.point(5.0, 5.0)),
+          ExpectOutside(svg_path.point(25.0, 5.0)),
+        ],
+      ),
+      right_minus_left: OperationExpectation(
+        area: 100.0,
+        subpaths: AnySubpathCount,
+        points: [
+          ExpectOutside(svg_path.point(5.0, 5.0)),
+          ExpectInside(svg_path.point(25.0, 5.0)),
+        ],
+      ),
+    ),
+    OperationCase(
+      left: rectangle(0.0, 0.0, 10.0, 10.0),
+      right: rectangle(0.0, 0.0, 10.0, 10.0),
+      fill_rule: svg_path.Nonzero,
+      union: OperationExpectation(
+        area: 100.0,
+        subpaths: AnySubpathCount,
+        points: [ExpectInside(svg_path.point(5.0, 5.0))],
+      ),
+      intersection: OperationExpectation(
+        area: 100.0,
+        subpaths: AnySubpathCount,
+        points: [ExpectInside(svg_path.point(5.0, 5.0))],
+      ),
+      left_minus_right: OperationExpectation(
+        area: 0.0,
+        subpaths: ExactSubpathCount(0),
+        points: [ExpectOutside(svg_path.point(5.0, 5.0))],
+      ),
+      right_minus_left: OperationExpectation(
+        area: 0.0,
+        subpaths: ExactSubpathCount(0),
+        points: [ExpectOutside(svg_path.point(5.0, 5.0))],
+      ),
+    ),
+    OperationCase(
+      left: rectangle(0.0, 0.0, 10.0, 10.0),
+      right: rectangle(10.0, 0.0, 20.0, 10.0),
+      fill_rule: svg_path.Nonzero,
+      union: OperationExpectation(
+        area: 200.0,
+        subpaths: ExactSubpathCount(2),
+        points: [
+          ExpectInside(svg_path.point(5.0, 5.0)),
+          ExpectBoundary(svg_path.point(10.0, 5.0)),
+          ExpectInside(svg_path.point(15.0, 5.0)),
+        ],
+      ),
+      intersection: OperationExpectation(
+        area: 0.0,
+        subpaths: AnySubpathCount,
+        points: [
+          ExpectOutside(svg_path.point(5.0, 5.0)),
+          ExpectOutside(svg_path.point(15.0, 5.0)),
+        ],
+      ),
+      left_minus_right: OperationExpectation(
+        area: 100.0,
+        subpaths: AnySubpathCount,
+        points: [
+          ExpectInside(svg_path.point(5.0, 5.0)),
+          ExpectOutside(svg_path.point(15.0, 5.0)),
+        ],
+      ),
+      right_minus_left: OperationExpectation(
+        area: 100.0,
+        subpaths: AnySubpathCount,
+        points: [
+          ExpectOutside(svg_path.point(5.0, 5.0)),
+          ExpectInside(svg_path.point(15.0, 5.0)),
+        ],
+      ),
+    ),
+  ])
+}
+
 fn rectangle(
   min_x: Float,
   min_y: Float,
@@ -491,6 +670,121 @@ fn assert_semantic_cases(cases: List(SemanticCase)) -> Nil {
     [semantic_case, ..rest] -> {
       assert_semantic_case(semantic_case)
       assert_semantic_cases(rest)
+    }
+  }
+}
+
+fn assert_operation_cases(cases: List(OperationCase)) -> Nil {
+  case cases {
+    [] -> Nil
+    [operation_case, ..rest] -> {
+      assert_operation_case(operation_case)
+      assert_operation_cases(rest)
+    }
+  }
+}
+
+fn assert_operation_case(operation_case: OperationCase) -> Nil {
+  let OperationCase(
+    left:,
+    right:,
+    fill_rule:,
+    union: union_expectation,
+    intersection: intersection_expectation,
+    left_minus_right: left_minus_right_expectation,
+    right_minus_left: right_minus_left_expectation,
+  ) = operation_case
+
+  let assert Ok(union) = csg.union(left, right, using: fill_rule)
+  let assert Ok(reversed_union) = csg.union(right, left, using: fill_rule)
+  assert_operation_expectation(union, union_expectation, fill_rule)
+  assert_operation_expectation(reversed_union, union_expectation, fill_rule)
+
+  let assert Ok(intersection) =
+    csg.intersection(left, right, using: fill_rule)
+  let assert Ok(reversed_intersection) =
+    csg.intersection(right, left, using: fill_rule)
+  assert_operation_expectation(
+    intersection,
+    intersection_expectation,
+    fill_rule,
+  )
+  assert_operation_expectation(
+    reversed_intersection,
+    intersection_expectation,
+    fill_rule,
+  )
+
+  let assert Ok(left_minus_right) =
+    csg.difference(left, minus: right, using: fill_rule)
+  let assert Ok(right_minus_left) =
+    csg.difference(right, minus: left, using: fill_rule)
+  assert_operation_expectation(
+    left_minus_right,
+    left_minus_right_expectation,
+    fill_rule,
+  )
+  assert_operation_expectation(
+    right_minus_left,
+    right_minus_left_expectation,
+    fill_rule,
+  )
+}
+
+fn assert_operation_expectation(
+  path: svg_path.Path,
+  expectation: OperationExpectation,
+  fill_rule: svg_path.FillRule,
+) -> Nil {
+  let OperationExpectation(area:, subpaths:, points:) = expectation
+  assert_area_using(path, area, fill_rule)
+  assert_subpath_expectation(path, subpaths)
+  assert_point_expectations(path, points, fill_rule)
+}
+
+fn assert_subpath_expectation(
+  path: svg_path.Path,
+  expectation: SubpathExpectation,
+) -> Nil {
+  case expectation {
+    AnySubpathCount -> Nil
+    ExactSubpathCount(expected) -> {
+      assert list.length(svg_path.subpaths(path)) == expected
+    }
+  }
+}
+
+fn assert_point_expectations(
+  path: svg_path.Path,
+  points: List(PointExpectation),
+  fill_rule: svg_path.FillRule,
+) -> Nil {
+  case points {
+    [] -> Nil
+    [point, ..rest] -> {
+      assert_point_expectation(path, point, fill_rule)
+      assert_point_expectations(path, rest, fill_rule)
+    }
+  }
+}
+
+fn assert_point_expectation(
+  path: svg_path.Path,
+  point: PointExpectation,
+  fill_rule: svg_path.FillRule,
+) -> Nil {
+  case point {
+    ExpectInside(point) -> {
+      assert svg_path.path_containment(point, within: path, using: fill_rule)
+        == Ok(svg_path.Inside)
+    }
+    ExpectOutside(point) -> {
+      assert svg_path.path_containment(point, within: path, using: fill_rule)
+        == Ok(svg_path.Outside)
+    }
+    ExpectBoundary(point) -> {
+      assert svg_path.path_containment(point, within: path, using: fill_rule)
+        == Ok(svg_path.Boundary)
     }
   }
 }
@@ -679,7 +973,15 @@ fn same_point(left: svg_path.Point, right: svg_path.Point) -> Bool {
 }
 
 fn assert_area(path: svg_path.Path, expected: Float) {
-  let assert Ok(actual) = area.path(path, using: svg_path.Nonzero)
+  assert_area_using(path, expected, svg_path.Nonzero)
+}
+
+fn assert_area_using(
+  path: svg_path.Path,
+  expected: Float,
+  fill_rule: svg_path.FillRule,
+) {
+  let assert Ok(actual) = area.path(path, using: fill_rule)
   assert float.absolute_value(actual -. expected) <=. tolerance
 }
 
