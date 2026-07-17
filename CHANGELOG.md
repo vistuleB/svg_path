@@ -11,6 +11,12 @@ the tag object.
 
 ## Unreleased
 
+## 0.14.2 - 2026-07-17
+
+- Regenerated CSG README figures from the current implementation.
+- Preserved natural closed source contours for `union` with `Nonzero` fill
+  when input subpaths are closed.
+
 ## 0.14.1 - 2026-07-17
 
 - Removed the README difference-asymmetry CSG figure and its generated visual
