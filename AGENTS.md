@@ -12,12 +12,9 @@
 
 - Markdown figures that must render on hex.pm and in local VSCode preview should be published to the orphan `markdown-assets` branch and referenced with raw GitHub URLs like `https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/name.svg`.
 - Do not point README images only at generated test-output paths. Generated figures can still live under `test/generated/...`, but Markdown image URLs should point at the `markdown-assets` branch copy.
-- When adding or regenerating Markdown figures:
-  1. Generate or update the SVGs in the normal working tree.
-  2. Copy the stable Markdown-facing SVGs into the `figures/` directory of a `markdown-assets` worktree.
-  3. Commit and push the `markdown-assets` branch.
-  4. Reference the pushed files from Markdown with `https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/...`.
-  5. If the user needs to inspect new or regenerated README figures, ask for permission to commit and push `markdown-assets` in the same assistant turn that reports the figure change. Do this before telling the user the README figure is ready to view. Do not leave the README pointing at an unpushed asset and then ask the user to inspect it in a later turn.
+- Key invariant: if a turn changes README-visible assets and the user is expected to inspect those assets through the README URL, the matching `markdown-assets` commit and push must happen before that assistant turn completes.
+- Do not end the turn with a final answer that merely asks whether to push `markdown-assets`. Ask for push permission during the work, batch all figure changes for that pass, perform the push if approved, and only then send the final response.
+- When adding or regenerating Markdown figures, generate or update the normal working-tree SVGs, copy the stable Markdown-facing SVGs into the `figures/` directory of a `markdown-assets` worktree, reference them with `https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/...`, then commit and push `markdown-assets` before saying the README is ready to inspect.
 - Batch Markdown figure updates so the user is asked for push permission at most once per figure-editing pass.
 - Use a separate worktree for `markdown-assets` so the main checkout can remain dirty. One existing local worktree path is `/private/tmp/svg_path-markdown-assets`.
 - When generating paired or tabular graphics where one version changes a subpath's orientation, keep that subpath's arrow in the same visual location across versions and only flip its direction. This makes orientation changes easier to compare.
