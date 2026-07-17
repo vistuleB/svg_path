@@ -11,6 +11,16 @@ the tag object.
 
 ## Unreleased
 
+## 0.15.0 - 2026-07-17
+
+- Added `svg_path/clip` for clipping curve geometry to a filled path region
+  without inserting closure or bridge segments from the clipping boundary.
+- Added clipping tests for open paths, closed paths, arcs, vertex-boundary
+  intersections, and subpath ordering.
+- Added Paper-style table-driven CSG operation tests covering union,
+  intersection, and both difference directions.
+- Documented curve clipping as distinct from filled-path CSG.
+
 ## 0.14.2 - 2026-07-17
 
 - Regenerated CSG README figures from the current implementation.
