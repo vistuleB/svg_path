@@ -2,11 +2,11 @@ import gleam/dynamic.{type Dynamic}
 import gleam/float
 import gleam/int
 import gleam/list
+import gleam/option.{type Option, None, Some}
 import gleam/result
 import gleam/string
 import gleeunit
 import svg_path
-import svg_path/area
 import svg_path/csg
 import svg_path/effects
 import svg_path/svg
@@ -574,12 +574,7 @@ fn fixed_top_center_arrows(
 ) -> svg.ThingsToDraw {
   path
   |> svg_path.subpaths
-  |> list.flat_map(fn(subpath) {
-    let assert Ok(box) = svg_path.subpath_bounding_box(subpath)
-    let anchor = svg_path.point({ box.min.x +. box.max.x } /. 2.0, box.min.y)
-
-    fixed_horizontal_subpath_arrow(subpath, color, arrow_scale, anchor)
-  })
+  |> list.flat_map(fixed_top_center_subpath_arrow(_, color, arrow_scale))
 }
 
 fn contour_overlays(
@@ -641,18 +636,59 @@ fn subpath_arrow(
   }
 }
 
-fn fixed_horizontal_subpath_arrow(
+fn fixed_top_center_subpath_arrow(
   subpath: svg_path.Subpath,
   color: String,
   arrow_scale: Float,
-  anchor: svg_path.Point,
 ) -> svg.ThingsToDraw {
-  let direction = case area.signed_subpath(subpath) >=. 0.0 {
-    True -> svg_path.point(1.0, 0.0)
-    False -> svg_path.point(-1.0, 0.0)
-  }
+  let assert Ok(segment) = top_horizontal_segment(subpath)
+  let assert Ok(point) = svg_path.segment_point(segment, at: 0.5)
+  let direction = segment_direction(segment)
 
-  arrow_glyph(anchor, direction, color, arrow_scale)
+  case normalize(direction) {
+    Error(_) -> []
+    Ok(unit) -> arrow_glyph(point, unit, color, arrow_scale)
+  }
+}
+
+fn top_horizontal_segment(
+  subpath: svg_path.Subpath,
+) -> Result(svg_path.Segment, Nil) {
+  subpath
+  |> svg_path.segments
+  |> list.filter(is_horizontal_line)
+  |> top_segment(None)
+}
+
+fn top_segment(
+  segments: List(svg_path.Segment),
+  best: Option(svg_path.Segment),
+) -> Result(svg_path.Segment, Nil) {
+  case segments, best {
+    [], Some(segment) -> Ok(segment)
+    [], None -> Error(Nil)
+    [segment, ..rest], None -> top_segment(rest, Some(segment))
+    [segment, ..rest], Some(best_segment) -> {
+      case segment_midpoint_y(segment) <. segment_midpoint_y(best_segment) {
+        True -> top_segment(rest, Some(segment))
+        False -> top_segment(rest, best)
+      }
+    }
+  }
+}
+
+fn is_horizontal_line(segment: svg_path.Segment) -> Bool {
+  case segment {
+    svg_path.Line(start:, end:) ->
+      float.absolute_value(start.y -. end.y) <=. 0.000001
+    _ -> False
+  }
+}
+
+fn segment_midpoint_y(segment: svg_path.Segment) -> Float {
+  let start = svg_path.segment_start(segment)
+  let end = svg_path.segment_end(segment)
+  { start.y +. end.y } /. 2.0
 }
 
 fn segment_arrow(
@@ -1555,7 +1591,7 @@ fn theory_input_only_panel(
       svg_path.point(x +. 12.0, y +. 42.0),
       14,
     ),
-    ..path_arrows(placed, "#1f2937")
+    ..nested_input_arrows(placed, "#1f2937", arrow_scale: 1.0)
   ]
 }
 

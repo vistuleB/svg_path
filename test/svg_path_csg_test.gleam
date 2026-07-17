@@ -226,6 +226,15 @@ pub fn nonzero_union_preserves_internal_winding_levels_test() {
   assert list.length(svg_path.subpaths(union)) > 1
 }
 
+pub fn nonzero_union_orients_internal_depth_contours_clockwise_test() {
+  let left = nested_rectangles()
+  let right = rectangle(-5.0, 8.0, 25.0, 12.0)
+
+  let assert Ok(union) = csg.union(left, right, using: svg_path.Nonzero)
+
+  assert_all_clockwise(union)
+}
+
 pub fn nonzero_union_preserves_reversed_internal_winding_levels_test() {
   let left = nested_rectangles()
   let right = rectangle(-5.0, 8.0, 25.0, 12.0) |> svg_path.reverse_path
@@ -235,6 +244,27 @@ pub fn nonzero_union_preserves_reversed_internal_winding_levels_test() {
   assert_inside(union, svg_path.point(10.0, 10.0))
   assert_winding_depth(union, svg_path.point(10.0, 10.0), 3)
   assert list.length(svg_path.subpaths(union)) > 1
+}
+
+pub fn nonzero_difference_keeps_forced_hole_orientation_test() {
+  let outer = nested_rectangles()
+  let inner = rectangle(7.0, 7.0, 13.0, 13.0)
+
+  let assert Ok(difference) =
+    csg.difference(outer, minus: inner, using: svg_path.Nonzero)
+
+  assert_outside(difference, svg_path.point(10.0, 10.0))
+  assert_has_clockwise_and_counterclockwise_contours(difference)
+}
+
+pub fn evenodd_difference_uses_canonical_hole_orientation_test() {
+  let outer = rectangle(0.0, 0.0, 20.0, 20.0)
+  let inner = rectangle(5.0, 5.0, 15.0, 15.0)
+
+  let assert Ok(difference) =
+    csg.difference(outer, minus: inner, using: svg_path.EvenOdd)
+
+  assert_has_clockwise_and_counterclockwise_contours(difference)
 }
 
 pub fn simplify_nonzero_output_removes_internal_contour_depths_test() {
@@ -589,6 +619,22 @@ fn assert_winding_depth(
   let assert Ok(svg_path.Winding(winding)) =
     svg_path.path_winding(point, within: path)
   assert int_absolute_value(winding) == expected
+}
+
+fn assert_all_clockwise(path: svg_path.Path) {
+  assert path
+    |> svg_path.subpaths
+    |> list.all(fn(subpath) { area.signed_subpath(subpath) >=. 0.0 })
+}
+
+fn assert_has_clockwise_and_counterclockwise_contours(path: svg_path.Path) {
+  let subpaths = svg_path.subpaths(path)
+  assert list.any(subpaths, fn(subpath) {
+    area.signed_subpath(subpath) >. tolerance
+  })
+  assert list.any(subpaths, fn(subpath) {
+    area.signed_subpath(subpath) <. 0.0 -. tolerance
+  })
 }
 
 fn int_absolute_value(value: Int) -> Int {

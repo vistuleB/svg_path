@@ -1742,9 +1742,7 @@ csg.simplify_nonzero_output(path)
 // Each returns Result(svg_path.Path, svg_path.Error)
 ```
 
-There are two separate contracts.
-
-The required semantic contract is same-fill-rule filled-set equivalence:
+Each operation preserves same-fill-rule filled-set equivalence:
 
 ```text
 fill(csg.union(left, right, using: rule), using: rule)
@@ -1757,24 +1755,15 @@ fill(csg.difference(left, minus: right, using: rule), using: rule)
   == fill(left, using: rule) difference fill(right, using: rule)
 ```
 
-`union` and `intersection` are commutative as filled sets:
+As filled sets, `union` and `intersection` are commutative; `difference` is
+not. The `using` fill rule is part of the operation: repeated loops,
+self-intersections, and nested subpaths can differ under `Nonzero` and
+`EvenOdd`.
 
-```text
-fill(csg.union(a, b, using: rule), using: rule)
-  == fill(csg.union(b, a, using: rule), using: rule)
-
-fill(csg.intersection(a, b, using: rule), using: rule)
-  == fill(csg.intersection(b, a, using: rule), using: rule)
-```
-
-`difference` is not commutative.
-
-The returned-path policy is separate from filled-set equivalence. The current
-implementation returns a contour-depth path. For `EvenOdd`, the depth is just
-0 or 1, so the result is the ordinary Boolean boundary. For `Nonzero`, the
-result also preserves changes in absolute contour depth inside the filled set:
-a nested contour can remain visible in `union` even when both sides are filled
-blue. This is deliberately not a minimal-outline policy.
+The returned path is not required to be a minimal outline. For `Nonzero`,
+changes in absolute contour depth inside the filled set may be preserved: a
+nested contour can remain visible in `union` even when both sides are filled
+blue.
 
 Call `csg.simplify_nonzero_output(path)` when you want to remove those
 internal contour-depth boundaries after a CSG operation. It keeps boundaries
@@ -1782,60 +1771,27 @@ that separate filled and unfilled regions under `Nonzero`, removes boundaries
 that only separate two filled regions of different contour depth, and returns a
 path with the same `Nonzero` filled set.
 
-The `using` fill rule is not an implementation detail. A `Path` does not always
-define one obvious filled set without a fill rule: repeated loops,
-self-intersections, and nested subpaths can differ under `Nonzero` and
-`EvenOdd`. SVG defaults to `Nonzero`, so convenience variants could default to
-that, but the semantic operation is still:
-
-1. Interpret `left` as a filled set with the chosen `FillRule`.
-2. Interpret `right` as a filled set with the chosen `FillRule`.
-3. Apply the Boolean operation to those two sets.
-4. Return a path whose fill represents the resulting set under the same
-   `FillRule`.
-
 Multiple subpaths are evaluated globally, just like `area.path` and
 `path_containment`; they are not processed independently and then added. Empty
 paths and move-only subpaths produce an empty filled set. Open subpaths are
 implicitly closed for fill purposes.
 
-The exact rule is phrased in terms of points not on a boundary. This example
-uses a corner/corner overlap so the result has real cut corners without
-coincident input edges:
+For points that are not on a boundary:
 
-<center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/csg_theory_corner_overlap.svg" alt="CSG corner overlap semantics">
-</center>
-
-
-The operation rules are:
-
-| Operation | A non-boundary point is inside the result when |
+| Operation | The point is inside the result when |
 | --- | --- |
 | `union(left, right)` | the point is inside `left` or inside `right` |
 | `intersection(left, right)` | the point is inside `left` and inside `right` |
 | `difference(left, minus: right)` | the point is inside `left` and not inside `right` |
 
-Input orientation can change the input set before CSG runs, but it should not
-by itself decide the direction of newly assembled output boundaries. The CSG
-operation first resolves `left` and `right` into filled sets with `using`, then
-assembles a returned path using the contour-depth output policy. The result is
-allowed to omit contours that neither change filledness nor change absolute
-nonzero contour depth.
-
-For a single simple contour, clockwise and counterclockwise inputs represent
-the same filled set under both fill rules. These two rows therefore produce
-the same result: neither input orientation wins, and the returned path uses the
-canonical output orientation.
-
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/csg_theory_simple_orientation.svg" alt="CSG simple contour orientation semantics">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/csg_theory_corner_overlap.svg" alt="CSG corner overlap semantics">
 </center>
 
-Nested contours are different. One path with two nested contours can describe
-either a solid shape or a ring, depending on contour orientation and fill rule.
-The `using` rule is therefore part of the Boolean operation, not just a display
-option.
+Input orientation matters only when it changes the input filled set. A single
+simple contour fills the same region in either direction, but nested contours
+can describe either a solid shape or a ring depending on orientation and fill
+rule.
 
 <center>
   <img src="https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/csg_theory_nested_fill_rules.svg" alt="CSG nested contour fill rule semantics">
@@ -1862,54 +1818,21 @@ keeps the opposite residual set.
   <img src="https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/csg_theory_difference_asymmetry.svg" alt="CSG difference asymmetry">
 </center>
 
-
 Boundary points need explicit policy. For filled-set classification, the
 result boundary is the boundary of the resulting filled set after the Boolean
 operation. For returned-path construction, the output is assembled from pieces
-where the output field changes. For example, the shared internal edge between
-two simple overlapping depth-1 shapes in `union(left, right)` is not part of
-the output path, while the cut edge in `difference(left, minus: right)` is part
-of the returned path. Under `Nonzero`, a deeper nested contour can also be part
-of the returned path even when it is not a filled-set boundary.
+where the output field changes: the shared internal edge between two simple
+overlapping depth-1 shapes in `union(left, right)` is omitted, while the cut
+edge in `difference(left, minus: right)` is kept. Under `Nonzero`, a deeper
+nested contour can also be kept even when it is not a filled-set boundary.
 
-The implementation returns a canonical path:
-
-- `Path([])` represents the empty result.
-- Every output subpath is closed.
-- Output subpaths contain drawable segments; no move-only subpaths are emitted.
-- Newly assembled boundaries are oriented so the stronger output depth is on
-  their left.
-- Under `Nonzero`, internal contour-depth boundaries may be preserved even when
-  they are not filled-set boundaries.
-- The returned path fills correctly with the same fill rule used for the
-  operation.
-
-The orientation policy is about the returned path. It is not a promise to copy
-all input directions. For `EvenOdd`, this usually looks like ordinary outer and
-hole orientation. For `Nonzero`, internal level-set contours can appear in the
-returned path. Use `csg.simplify_nonzero_output(path)` to collapse those
-internal contours when you only want the boundary of the `Nonzero` filled set.
-
-<center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/csg_theory_output_orientation.svg" alt="CSG canonical output orientation">
-</center>
-
-
-The implementation preserves original segment types when possible: line pieces
-stay lines, Bezier pieces stay Beziers, and arc pieces stay arcs after
-splitting. New boundary pieces that come from an input segment are subsegments
-of that input segment. Implicit closing edges for open subpaths are represented
-as lines.
-
-The implementation builds a planar arrangement of split segment pieces,
-classifies each directed piece by the filled state on its left and right
-sides, orients retained pieces with the resulting filled area on their left,
-and then traverses those pieces into closed subpaths. This handles normal
-crossings, point touches, edge touches, tangent contacts, self-intersections,
-nested subpaths, and coincident line edges. Zero-length line pieces are
-discarded within tolerance. If a case cannot be split or assembled into stable
-closed subpaths, the operation returns an error rather than silently emitting
-an incoherent path.
+Returned paths contain closed drawable subpaths, or `Path([])` for the empty
+result. Segment types are preserved where possible: line pieces stay lines,
+Bezier pieces stay Beziers, and arc pieces stay arcs after splitting. The
+returned path is oriented to fill correctly with the same rule used for the
+operation; unforced internal `Nonzero` level contours default to clockwise.
+If a case cannot be split or assembled into stable closed subpaths, the
+operation returns an error rather than silently emitting an incoherent path.
 
 ## Development
 

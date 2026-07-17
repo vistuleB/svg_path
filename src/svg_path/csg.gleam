@@ -13,19 +13,23 @@
 //// The implementation preserves original segment types where possible. It
 //// splits original path segments at point intersections, classifies each
 //// resulting directed piece by the output contour depth on its left and right
-//// sides, orients retained pieces with the stronger output depth on their
-//// left, and assembles closed subpaths from those retained pieces. A depth
+//// sides, and assembles closed subpaths from those retained pieces. A depth
 //// jump larger than one emits repeated pieces so the returned path can express
-//// the same `Nonzero` field. Curved segments remain curved between real
-//// encounters; only implicit closing edges are added as lines. Coincident line
-//// edges are split at their overlap endpoints and resolved by deterministic
-//// boundary ownership rules.
+//// the same `Nonzero` field. Result contour orientation is normalized after
+//// assembly: fill-forced boundaries keep the direction required by the output
+//// winding field, and retained internal `Nonzero` level contours use clockwise
+//// orientation when their direction is not forced by the fill. Curved segments
+//// remain curved between real encounters; only implicit closing edges are added
+//// as lines. Coincident line edges are split at their overlap endpoints and
+//// resolved by deterministic boundary ownership rules.
 
 import gleam/float
+import gleam/int
 import gleam/list
 import gleam/order
 import gleam/result
 import svg_path
+import svg_path/area
 import svg_path/trig
 
 const default_tolerance = 0.000001
@@ -41,7 +45,7 @@ type Edge {
 }
 
 type Piece {
-  Piece(segment: svg_path.Segment, level: Int, role: PieceRole)
+  Piece(segment: svg_path.Segment, level: Int, role: PieceRole, internal: Bool)
 }
 
 type PieceRole {
@@ -51,6 +55,15 @@ type PieceRole {
 
 type Chain {
   Chain(pieces: List(Piece))
+}
+
+type OutputContour {
+  OutputContour(
+    subpath: svg_path.Subpath,
+    level: Int,
+    role: PieceRole,
+    internal: Bool,
+  )
 }
 
 type Candidate {
@@ -211,8 +224,9 @@ fn csg(
     options:,
   ))
 
-  pieces_to_path(
+  pieces_to_csg_path(
     list.append(left_pieces, right_pieces),
+    fill_rule,
     assembly_tolerance(options.tolerance),
   )
 }
@@ -310,12 +324,15 @@ fn nonzero_boundary_piece(
       ))
 
       Ok(case first_inside, second_inside {
-        True, False -> [Piece(segment: piece, level: 1, role: BoundaryPiece)]
+        True, False -> [
+          Piece(segment: piece, level: 1, role: BoundaryPiece, internal: False),
+        ]
         False, True -> [
           Piece(
             segment: svg_path.reverse_segment(piece),
             level: 1,
             role: BoundaryPiece,
+            internal: False,
           ),
         ]
         _, _ -> []
@@ -628,7 +645,14 @@ fn keep_piece(
     NoSeparation -> {
       case containment, operation {
         svg_path.Boundary, Union ->
-          Ok([Piece(segment: oriented, level: 1, role: OverlapPiece)])
+          Ok([
+            Piece(
+              segment: oriented,
+              level: 1,
+              role: OverlapPiece,
+              internal: False,
+            ),
+          ])
         _, _ -> Ok([])
       }
     }
@@ -673,7 +697,12 @@ fn threshold_pieces(
     True -> pieces
     False ->
       threshold_pieces(segment, low_level, high_level - 1, [
-        Piece(segment:, level: high_level, role: BoundaryPiece),
+        Piece(
+          segment:,
+          level: high_level,
+          role: BoundaryPiece,
+          internal: low_level > 0,
+        ),
         ..pieces
       ])
   }
@@ -1002,11 +1031,142 @@ fn pieces_to_path(
   pieces: List(Piece),
   tolerance: Float,
 ) -> Result(svg_path.Path, svg_path.Error) {
+  use contours <- result.try(pieces_to_contours(pieces, tolerance))
+  Ok(contours_to_path(contours))
+}
+
+fn pieces_to_csg_path(
+  pieces: List(Piece),
+  fill_rule: svg_path.FillRule,
+  tolerance: Float,
+) -> Result(svg_path.Path, svg_path.Error) {
+  use contours <- result.try(pieces_to_contours(pieces, tolerance))
+  use oriented <- result.try(orient_csg_contours(contours, fill_rule))
+  Ok(contours_to_path(oriented))
+}
+
+fn pieces_to_contours(
+  pieces: List(Piece),
+  tolerance: Float,
+) -> Result(List(OutputContour), svg_path.Error) {
   use chains <- result.try(chains(pieces, tolerance))
   chains
-  |> list.map(chain_to_subpath(tolerance))
-  |> collect_subpaths([])
-  |> result.map(fn(subpaths) { svg_path.Path(subpaths:) })
+  |> list.map(chain_to_contour(tolerance))
+  |> collect_contours([])
+}
+
+fn contours_to_path(contours: List(OutputContour)) -> svg_path.Path {
+  contours
+  |> list.map(fn(contour) {
+    let OutputContour(subpath:, ..) = contour
+    subpath
+  })
+  |> svg_path.Path
+}
+
+fn orient_csg_contours(
+  contours: List(OutputContour),
+  fill_rule: svg_path.FillRule,
+) -> Result(List(OutputContour), svg_path.Error) {
+  case fill_rule {
+    svg_path.Nonzero -> orient_nonzero_contours(contours)
+    svg_path.EvenOdd -> orient_hierarchy_contours(contours)
+  }
+}
+
+fn orient_nonzero_contours(
+  contours: List(OutputContour),
+) -> Result(List(OutputContour), svg_path.Error) {
+  Ok(
+    list.map(contours, fn(contour) {
+      let OutputContour(role:, internal:, ..) = contour
+      case internal && role == BoundaryPiece {
+        True -> orient_contour(contour, clockwise: True)
+        False -> contour
+      }
+    }),
+  )
+}
+
+fn orient_hierarchy_contours(
+  contours: List(OutputContour),
+) -> Result(List(OutputContour), svg_path.Error) {
+  orient_hierarchy_contours_loop(contours, contours, [])
+}
+
+fn orient_hierarchy_contours_loop(
+  remaining: List(OutputContour),
+  all: List(OutputContour),
+  oriented: List(OutputContour),
+) -> Result(List(OutputContour), svg_path.Error) {
+  case remaining {
+    [] -> Ok(list.reverse(oriented))
+    [contour, ..rest] -> {
+      use depth <- result.try(contour_depth(contour, all))
+      let assert Ok(remainder) = int.remainder(depth, by: 2)
+      orient_hierarchy_contours_loop(rest, all, [
+        orient_contour(contour, clockwise: remainder == 0),
+        ..oriented
+      ])
+    }
+  }
+}
+
+fn contour_depth(
+  contour: OutputContour,
+  all: List(OutputContour),
+) -> Result(Int, svg_path.Error) {
+  let OutputContour(subpath:, ..) = contour
+  use probe <- result.try(contour_probe(subpath))
+  contour_depth_loop(all, probe, 0)
+}
+
+fn contour_depth_loop(
+  contours: List(OutputContour),
+  probe: svg_path.Point,
+  depth: Int,
+) -> Result(Int, svg_path.Error) {
+  case contours {
+    [] -> Ok(depth)
+    [OutputContour(subpath:, ..), ..rest] -> {
+      use containment <- result.try(svg_path.subpath_containment(
+        probe,
+        within: subpath,
+        using: svg_path.Nonzero,
+      ))
+      let depth = case containment {
+        svg_path.Inside -> depth + 1
+        svg_path.Boundary -> depth
+        svg_path.Outside -> depth
+      }
+      contour_depth_loop(rest, probe, depth)
+    }
+  }
+}
+
+fn contour_probe(
+  subpath: svg_path.Subpath,
+) -> Result(svg_path.Point, svg_path.Error) {
+  let assert [segment, ..] = svg_path.segments(subpath)
+  svg_path.segment_point(segment, at: 0.5)
+}
+
+fn orient_contour(
+  contour: OutputContour,
+  clockwise clockwise: Bool,
+) -> OutputContour {
+  let OutputContour(subpath:, level:, role:, internal:) = contour
+  let is_clockwise = area.signed_subpath(subpath) >=. 0.0
+  case is_clockwise == clockwise {
+    True -> contour
+    False ->
+      OutputContour(
+        subpath: svg_path.reverse_subpath(subpath),
+        level:,
+        role:,
+        internal:,
+      )
+  }
 }
 
 fn chains(
@@ -1039,7 +1199,7 @@ fn grow_chain(
   tolerance: Float,
 ) -> Result(#(List(Piece), List(Piece)), svg_path.Error) {
   let assert [
-    Piece(segment: last_segment, level: chain_level, role: chain_role),
+    Piece(segment: last_segment, level: chain_level, role: chain_role, ..),
     ..
   ] = chain
   let segments = list.map(chain, fn(piece) { piece.segment })
@@ -1108,7 +1268,7 @@ fn connecting_pieces(
 ) -> List(Candidate) {
   case pieces {
     [] -> list.sort(candidates, by: compare_candidates)
-    [Piece(segment:, level: piece_level, role: piece_role) as piece, ..rest] -> {
+    [Piece(segment:, level: piece_level, role: piece_role, ..) as piece, ..rest] -> {
       case
         piece_level == chain_level
         && piece_role == chain_role
@@ -1182,11 +1342,13 @@ fn positive_turn(from: Float, to: Float) -> Float {
   }
 }
 
-fn chain_to_subpath(
+fn chain_to_contour(
   tolerance: Float,
-) -> fn(Chain) -> Result(svg_path.Subpath, svg_path.Error) {
+) -> fn(Chain) -> Result(OutputContour, svg_path.Error) {
   fn(chain) {
     let Chain(pieces:) = chain
+    let assert [Piece(level:, role:, ..), ..] = pieces
+    let internal = list.all(pieces, fn(piece) { piece.internal })
     let segments = list.map(pieces, fn(piece) { piece.segment })
     use segments <- result.try(snap_chain(segments, tolerance))
     use subpath <- result.try(svg_path.subpath_with(
@@ -1198,7 +1360,7 @@ fn chain_to_subpath(
       closed: True,
       policy: svg_path.Strict,
     ))
-    Ok(closed)
+    Ok(OutputContour(subpath: closed, level:, role:, internal:))
   }
 }
 
@@ -1325,15 +1487,15 @@ fn segment_with_end(
   }
 }
 
-fn collect_subpaths(
-  results: List(Result(svg_path.Subpath, svg_path.Error)),
-  subpaths: List(svg_path.Subpath),
-) -> Result(List(svg_path.Subpath), svg_path.Error) {
+fn collect_contours(
+  results: List(Result(OutputContour, svg_path.Error)),
+  contours: List(OutputContour),
+) -> Result(List(OutputContour), svg_path.Error) {
   case results {
-    [] -> Ok(list.reverse(subpaths))
+    [] -> Ok(list.reverse(contours))
     [result, ..rest] -> {
-      use subpath <- result.try(result)
-      collect_subpaths(rest, [subpath, ..subpaths])
+      use contour <- result.try(result)
+      collect_contours(rest, [contour, ..contours])
     }
   }
 }
