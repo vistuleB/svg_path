@@ -732,8 +732,6 @@ fn arrow_glyph(
   color: String,
   arrow_scale: Float,
 ) -> svg.ThingsToDraw {
-  let tail = add(point, scale(unit, -6.0 *. arrow_scale))
-  let tip = add(point, scale(unit, 6.0 *. arrow_scale))
   let perp = svg_path.point(0.0 -. unit.y, unit.x)
   let half_width = 4.0 *. arrow_scale
   let equilateral_height = half_width *. 1.7320508075688772
@@ -748,18 +746,30 @@ fn arrow_glyph(
     svg.StyledPath(
       svg_path.from_subpath(
         svg_path.assert_subpath([
-          svg_path.Line(start: tail, end: tip),
+          svg_path.Line(
+            start: add(point, scale(unit, -6.0 *. arrow_scale)),
+            end: add(point, scale(unit, 6.0 *. arrow_scale)),
+          ),
         ]),
       ),
       "fill: none; stroke: "
         <> color
         <> "; stroke-width: 2; stroke-linecap: round",
     ),
-    svg.StyledPath(
-      polygon([head_tip, left, right]),
-      "fill: " <> color <> "; stroke: none",
-    ),
+    arrow_head_glyph(head_tip, left, right, color),
   ]
+}
+
+fn arrow_head_glyph(
+  head_tip: svg_path.Point,
+  left: svg_path.Point,
+  right: svg_path.Point,
+  color: String,
+) -> svg.ThingToDraw {
+  svg.StyledPath(
+    polygon([head_tip, left, right]),
+    "fill: " <> color <> "; stroke: none",
+  )
 }
 
 fn segment_direction(segment: svg_path.Segment) -> svg_path.Point {
@@ -1200,23 +1210,17 @@ fn render_effects_rounded_rectangle_union() -> String {
   let assert Ok(rounded) =
     effects.round_corners_with(union, radius: 6.0, options: round_options)
 
-  theory_document(
+  titleless_theory_document(
     "Rounded corners on a rectangle union",
     3,
     1,
     [
-      effects_input_panel(0, 0, "7 overlapping rectangles", input),
-      effects_result_panel(
-        1,
-        0,
-        "raw union(rectangles)",
-        union,
-        svg_path.Nonzero,
-      ),
+      effects_input_panel(0, 0, "rectangles", input),
+      effects_result_panel(1, 0, "raw union", union, svg_path.Nonzero),
       effects_result_panel(
         2,
         0,
-        "round_corners(..., 6)",
+        "|>  rounded_corners(..., 6)",
         rounded,
         svg_path.Nonzero,
       ),
@@ -1452,10 +1456,35 @@ fn subpath_longest_segment_arrow(
   case longest_segment(svg_path.segments(subpath), best: Error(Nil)) {
     Error(_) -> []
     Ok(segment) -> {
-      case segment_arrow_at(segment, color, arrow_scale, 0.42) {
+      case effects_segment_arrow_at(segment, color, arrow_scale, 0.42) {
         Error(_) -> []
         Ok(arrow) -> arrow
       }
+    }
+  }
+}
+
+fn effects_segment_arrow_at(
+  segment: svg_path.Segment,
+  color: String,
+  arrow_scale: Float,
+  t: Float,
+) -> Result(svg.ThingsToDraw, Nil) {
+  let assert Ok(point) = svg_path.segment_point(segment, at: t)
+  let direction = segment_direction(segment)
+
+  case normalize(direction) {
+    Error(_) -> Error(Nil)
+    Ok(unit) -> {
+      let perp = svg_path.point(0.0 -. unit.y, unit.x)
+      let half_width = 4.0 *. arrow_scale
+      let equilateral_height = half_width *. 1.7320508075688772
+      let head_tip = add(point, scale(unit, equilateral_height *. 2.0 /. 3.0))
+      let head_base = add(point, scale(unit, 0.0 -. equilateral_height /. 3.0))
+      let left = add(head_base, scale(perp, half_width))
+      let right = add(head_base, scale(perp, 0.0 -. half_width))
+
+      Ok([arrow_head_glyph(head_tip, left, right, color)])
     }
   }
 }
@@ -1486,16 +1515,43 @@ fn longest_segment(
 fn effects_contour_color(index: Int) -> String {
   case index % 10 {
     0 -> "#1f2937"
-    1 -> "#fef08a"
-    2 -> "#f0abfc"
-    3 -> "#bae6fd"
-    4 -> "#bbf7d0"
-    5 -> "#fed7aa"
-    6 -> "#c4b5fd"
-    7 -> "#fde68a"
-    8 -> "#99f6e4"
-    _ -> "#fecdd3"
+    1 -> "#7f1d1d"
+    2 -> "#713f12"
+    3 -> "#3f6212"
+    4 -> "#581c87"
+    5 -> "#831843"
+    6 -> "#431407"
+    7 -> "#365314"
+    8 -> "#701a75"
+    _ -> "#292524"
   }
+}
+
+fn titleless_theory_document(
+  _title: String,
+  columns: Int,
+  rows: Int,
+  things: svg.ThingsToDraw,
+) -> String {
+  let width = theory_width(columns)
+  let height = theory_height(rows)
+  let crop_top = 28.0
+
+  svg.document(
+    [
+      svg.Rectangle(
+        svg_path.point(0.0, 0.0),
+        width,
+        height,
+        "fill: #ffffff; stroke: none",
+      ),
+      ..things
+    ],
+    view_box: svg_path.BoundingBox(
+      min: svg_path.point(0.0, crop_top),
+      max: svg_path.point(width, height),
+    ),
+  )
 }
 
 fn theory_document(
