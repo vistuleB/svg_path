@@ -56,6 +56,8 @@ pub fn prepare_for_arc_averse_consumer(
 - `svg_path/congruency`: semantic ordered congruency checks under translation,
   rotation, and uniform scale.
 - `svg_path/area`: signed area and SVG fill-rule area for subpaths and paths.
+- `svg_path/clip`: curve clipping that keeps original geometry inside a filled
+  clipping region without adding closure bridges.
 - `svg_path/csg`: Boolean union, intersection, and difference for filled
   paths.
 - `svg_path/effects`: one-off artistic path effects such as corner rounding.
@@ -1718,6 +1720,31 @@ pub fn from_mat3f(
 ```
 
 Further documentation can be found at <https://hexdocs.pm/svg_path>.
+
+## Curve Clipping
+
+`svg_path/clip` clips drawn geometry to a filled clipping region. This is not a
+filled Boolean operation: the input path is treated as curves, and the clipping
+path is treated as a filled region.
+
+```gleam
+clip.subpath(input, to: clip_region, using: svg_path.Nonzero)
+clip.path(input, to: clip_region, using: svg_path.Nonzero)
+
+// Each returns Result(..., svg_path.Error)
+```
+
+The returned subpaths contain only pieces of the original input geometry.
+Boundary pieces from the clipping region are not inserted. If an open subpath
+enters, exits, and re-enters the clipping region, the result contains multiple
+open subpaths. If a closed circle is clipped by a rectangle, the result is the
+visible arc fragments as open subpaths, not a closed rectangle-and-arc outline.
+
+Closed inputs stay closed only when the whole subpath survives without being
+cut by the clipping boundary. Pieces whose sample point is inside or on the
+boundary of the clipping region are retained. Segment types are preserved where
+possible: lines remain lines, Beziers remain Beziers, and arcs remain arcs
+after splitting.
 
 ## CSG
 
