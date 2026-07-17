@@ -13,11 +13,11 @@
   <path d="M 105.8188 98 L 98.8906 102 V 94 Z" style="fill: #f59e0b; stroke: none" />
   <rect x="186" y="48" width="170" height="125" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
   <text x="186" y="41" font-size="10" style="fill: #111827; font-family: system-ui, sans-serif; font-weight: 700">union(A, B)</text>
-  <path d="M 202 68 H 262 V 98 V 128 H 202 Z M 262 98 H 322 V 158 H 262 V 128 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: none" />
-  <path d="M 202 68 H 262 V 98 V 128 H 202 Z" style="fill: none; stroke: #1f2937; stroke-width: 3.0; stroke-linejoin: round" />
+  <path d="M 202 68 H 262 V 98 H 322 V 158 H 262 V 128 H 202 Z M 262 98 V 128 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: none" />
+  <path d="M 202 68 H 262 V 98 H 322 V 158 H 262 V 128 H 202 Z" style="fill: none; stroke: #1f2937; stroke-width: 3.0; stroke-linejoin: round" />
   <path d="M 221.2 68 H 233.2" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 231.8188 68 L 224.8906 72 V 64 Z" style="fill: #1f2937; stroke: none" />
-  <path d="M 262 98 H 322 V 158 H 262 V 128 Z" style="fill: none; stroke: #0f766e; stroke-width: 3.0; stroke-linejoin: round" />
-  <path d="M 281.2 98 H 293.2" style="fill: none; stroke: #0f766e; stroke-width: 2; stroke-linecap: round" />
-  <path d="M 291.8188 98 L 284.8906 102 V 94 Z" style="fill: #0f766e; stroke: none" />
+  <path d="M 262 98 V 128 Z" style="fill: none; stroke: #0f766e; stroke-width: 3.0; stroke-linejoin: round" />
+  <path d="M 262 104.6 V 116.6" style="fill: none; stroke: #0f766e; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 262 115.2188 L 258 108.2906 H 266 Z" style="fill: #0f766e; stroke: none" />
 </svg>

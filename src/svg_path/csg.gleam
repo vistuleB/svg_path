@@ -41,7 +41,12 @@ type Edge {
 }
 
 type Piece {
-  Piece(segment: svg_path.Segment, level: Int)
+  Piece(segment: svg_path.Segment, level: Int, role: PieceRole)
+}
+
+type PieceRole {
+  BoundaryPiece
+  OverlapPiece
 }
 
 type Chain {
@@ -305,9 +310,13 @@ fn nonzero_boundary_piece(
       ))
 
       Ok(case first_inside, second_inside {
-        True, False -> [Piece(segment: piece, level: 1)]
+        True, False -> [Piece(segment: piece, level: 1, role: BoundaryPiece)]
         False, True -> [
-          Piece(segment: svg_path.reverse_segment(piece), level: 1),
+          Piece(
+            segment: svg_path.reverse_segment(piece),
+            level: 1,
+            role: BoundaryPiece,
+          ),
         ]
         _, _ -> []
       })
@@ -618,7 +627,8 @@ fn keep_piece(
   case separation {
     NoSeparation -> {
       case containment, operation {
-        svg_path.Boundary, Union -> Ok([Piece(segment: oriented, level: 1)])
+        svg_path.Boundary, Union ->
+          Ok([Piece(segment: oriented, level: 1, role: OverlapPiece)])
         _, _ -> Ok([])
       }
     }
@@ -663,7 +673,7 @@ fn threshold_pieces(
     True -> pieces
     False ->
       threshold_pieces(segment, low_level, high_level - 1, [
-        Piece(segment:, level: high_level),
+        Piece(segment:, level: high_level, role: BoundaryPiece),
         ..pieces
       ])
   }
@@ -1028,7 +1038,10 @@ fn grow_chain(
   remaining: List(Piece),
   tolerance: Float,
 ) -> Result(#(List(Piece), List(Piece)), svg_path.Error) {
-  let assert [Piece(segment: last_segment, level: chain_level), ..] = chain
+  let assert [
+    Piece(segment: last_segment, level: chain_level, role: chain_role),
+    ..
+  ] = chain
   let segments = list.map(chain, fn(piece) { piece.segment })
   let chain_end = svg_path.segment_end(last_segment)
   let chain_start =
@@ -1045,6 +1058,7 @@ fn grow_chain(
         connecting_pieces(
           remaining,
           chain_level,
+          chain_role,
           chain_end,
           incoming_angle,
           tolerance,
@@ -1085,6 +1099,7 @@ fn try_grow_candidates(
 fn connecting_pieces(
   pieces: List(Piece),
   chain_level: Int,
+  chain_role: PieceRole,
   point: svg_path.Point,
   incoming_angle: Float,
   tolerance: Float,
@@ -1093,9 +1108,10 @@ fn connecting_pieces(
 ) -> List(Candidate) {
   case pieces {
     [] -> list.sort(candidates, by: compare_candidates)
-    [Piece(segment:, level: piece_level) as piece, ..rest] -> {
+    [Piece(segment:, level: piece_level, role: piece_role) as piece, ..rest] -> {
       case
         piece_level == chain_level
+        && piece_role == chain_role
         && same_point(svg_path.segment_start(segment), point, tolerance)
       {
         True -> {
@@ -1104,6 +1120,7 @@ fn connecting_pieces(
           connecting_pieces(
             rest,
             chain_level,
+            chain_role,
             point,
             incoming_angle,
             tolerance,
@@ -1115,6 +1132,7 @@ fn connecting_pieces(
           connecting_pieces(
             rest,
             chain_level,
+            chain_role,
             point,
             incoming_angle,
             tolerance,

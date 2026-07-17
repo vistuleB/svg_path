@@ -153,6 +153,19 @@ pub fn adjacent_unit_square_union_preserves_shared_edge_slit_test() {
   assert union_has_rectangle_and_slit(union)
 }
 
+pub fn offset_adjacent_unit_square_union_stitches_outer_boundary_test() {
+  let left = rectangle(0.0, 0.0, 1.0, 1.0)
+  let right = rectangle(1.0, 0.5, 2.0, 1.5)
+
+  let assert Ok(union) = csg.union(left, right, using: svg_path.Nonzero)
+
+  assert_area(union, 2.0)
+  assert_inside(union, svg_path.point(0.5, 0.5))
+  assert_inside(union, svg_path.point(1.5, 1.0))
+  assert_outside(union, svg_path.point(1.5, 0.25))
+  assert offset_union_has_outer_boundary_and_slit(union)
+}
+
 pub fn point_tangent_rectangles_do_not_create_overlap_area_test() {
   let left = rectangle(0.0, 0.0, 10.0, 10.0)
   let right = rectangle(10.0, 10.0, 20.0, 20.0)
@@ -505,6 +518,33 @@ fn is_adjacent_union_slit(subpath: svg_path.Subpath) -> Bool {
   list.length(segments) == 2
   && has_line(segments, svg_path.point(1.0, 0.0), svg_path.point(1.0, 1.0))
   && has_line(segments, svg_path.point(1.0, 1.0), svg_path.point(1.0, 0.0))
+}
+
+fn offset_union_has_outer_boundary_and_slit(path: svg_path.Path) -> Bool {
+  let subpaths = svg_path.subpaths(path)
+  list.length(subpaths) == 2
+  && list.any(subpaths, is_offset_union_outer_boundary)
+  && list.any(subpaths, is_offset_union_slit)
+}
+
+fn is_offset_union_outer_boundary(subpath: svg_path.Subpath) -> Bool {
+  let segments = svg_path.segments(subpath)
+  list.length(segments) == 8
+  && has_line(segments, svg_path.point(0.0, 0.0), svg_path.point(1.0, 0.0))
+  && has_line(segments, svg_path.point(1.0, 0.0), svg_path.point(1.0, 0.5))
+  && has_line(segments, svg_path.point(1.0, 0.5), svg_path.point(2.0, 0.5))
+  && has_line(segments, svg_path.point(2.0, 0.5), svg_path.point(2.0, 1.5))
+  && has_line(segments, svg_path.point(2.0, 1.5), svg_path.point(1.0, 1.5))
+  && has_line(segments, svg_path.point(1.0, 1.5), svg_path.point(1.0, 1.0))
+  && has_line(segments, svg_path.point(1.0, 1.0), svg_path.point(0.0, 1.0))
+  && has_line(segments, svg_path.point(0.0, 1.0), svg_path.point(0.0, 0.0))
+}
+
+fn is_offset_union_slit(subpath: svg_path.Subpath) -> Bool {
+  let segments = svg_path.segments(subpath)
+  list.length(segments) == 2
+  && has_line(segments, svg_path.point(1.0, 0.5), svg_path.point(1.0, 1.0))
+  && has_line(segments, svg_path.point(1.0, 1.0), svg_path.point(1.0, 0.5))
 }
 
 fn has_line(
