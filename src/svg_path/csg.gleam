@@ -141,6 +141,40 @@ pub fn difference_with(
   csg(left, right, using: fill_rule, operation: Difference, options:)
 }
 
+/// Remove internal contour-depth boundaries from a CSG result while preserving
+/// its `Nonzero` filled set.
+///
+/// CSG operations intentionally preserve `Nonzero` contour-depth level sets.
+/// This helper is a post-processing convenience for callers who want the
+/// simpler filled-set boundary instead.
+pub fn simplify_nonzero_output(
+  path: svg_path.Path,
+) -> Result(svg_path.Path, svg_path.Error) {
+  simplify_nonzero_output_with(path, options: default_options())
+}
+
+/// Remove internal contour-depth boundaries from a CSG result using explicit
+/// options.
+pub fn simplify_nonzero_output_with(
+  path: svg_path.Path,
+  options options: Options,
+) -> Result(svg_path.Path, svg_path.Error) {
+  let edges = path_edges(path, offset: 0)
+  use pieces <- result.try(
+    nonzero_boundary_pieces(
+      edges,
+      whole_path: path,
+      split_edges: edges,
+      options:,
+      retained: [],
+    ),
+  )
+
+  pieces
+  |> unique_pieces(options.tolerance, [])
+  |> pieces_to_path(assembly_tolerance(options.tolerance))
+}
+
 fn csg(
   left: svg_path.Path,
   right: svg_path.Path,
@@ -176,6 +210,126 @@ fn csg(
     list.append(left_pieces, right_pieces),
     assembly_tolerance(options.tolerance),
   )
+}
+
+fn nonzero_boundary_pieces(
+  edges: List(Edge),
+  whole_path whole_path: svg_path.Path,
+  split_edges split_edges: List(Edge),
+  options options: Options,
+  retained retained: List(Piece),
+) -> Result(List(Piece), svg_path.Error) {
+  case edges {
+    [] -> Ok(list.reverse(retained))
+    [edge, ..rest] -> {
+      use pieces <- result.try(split_edge(
+        edge,
+        split_edges,
+        options.intersection,
+        options.tolerance,
+      ))
+      use retained <- result.try(retain_nonzero_boundary_pieces(
+        pieces,
+        whole_path:,
+        options:,
+        retained:,
+      ))
+      nonzero_boundary_pieces(
+        rest,
+        whole_path:,
+        split_edges:,
+        options:,
+        retained:,
+      )
+    }
+  }
+}
+
+fn retain_nonzero_boundary_pieces(
+  pieces: List(svg_path.Segment),
+  whole_path whole_path: svg_path.Path,
+  options options: Options,
+  retained retained: List(Piece),
+) -> Result(List(Piece), svg_path.Error) {
+  case pieces {
+    [] -> Ok(retained)
+    [piece, ..rest] -> {
+      let Options(tolerance:, ..) = options
+      use retained <- result.try(case degenerate_line(piece, tolerance) {
+        True -> Ok(retained)
+        False -> {
+          use boundary_pieces <- result.try(nonzero_boundary_piece(
+            piece,
+            whole_path:,
+            options:,
+          ))
+          Ok(list.append(boundary_pieces, retained))
+        }
+      })
+      retain_nonzero_boundary_pieces(rest, whole_path:, options:, retained:)
+    }
+  }
+}
+
+fn nonzero_boundary_piece(
+  piece: svg_path.Segment,
+  whole_path whole_path: svg_path.Path,
+  options options: Options,
+) -> Result(List(Piece), svg_path.Error) {
+  use midpoint <- result.try(svg_path.segment_point(piece, at: 0.5))
+  use derivative <- result.try(svg_path.segment_derivative(piece, at: 0.5))
+  let length_squared =
+    derivative.x *. derivative.x +. derivative.y *. derivative.y
+  case length_squared <=. 0.0 {
+    True -> Ok([])
+    False -> {
+      let assert Ok(length) = float.square_root(length_squared)
+      let offset = options.tolerance *. 16.0
+      let normal =
+        svg_path.point(
+          { 0.0 -. derivative.y } /. length *. offset,
+          derivative.x /. length *. offset,
+        )
+      let first = svg_path.point(midpoint.x +. normal.x, midpoint.y +. normal.y)
+      let second =
+        svg_path.point(midpoint.x -. normal.x, midpoint.y -. normal.y)
+      use first_inside <- result.try(nonzero_contains(
+        first,
+        within: whole_path,
+        options: options.containment,
+      ))
+      use second_inside <- result.try(nonzero_contains(
+        second,
+        within: whole_path,
+        options: options.containment,
+      ))
+
+      Ok(case first_inside, second_inside {
+        True, False -> [Piece(segment: piece, level: 1)]
+        False, True -> [
+          Piece(segment: svg_path.reverse_segment(piece), level: 1),
+        ]
+        _, _ -> []
+      })
+    }
+  }
+}
+
+fn nonzero_contains(
+  point: svg_path.Point,
+  within path: svg_path.Path,
+  options options: svg_path.ContainmentOptions,
+) -> Result(Bool, svg_path.Error) {
+  use containment <- result.try(svg_path.path_containment_with(
+    point,
+    within: path,
+    using: svg_path.Nonzero,
+    options:,
+  ))
+  Ok(case containment {
+    svg_path.Inside | svg_path.Boundary -> True
+    svg_path.Outside -> False
+  })
 }
 
 type Side {
@@ -462,7 +616,12 @@ fn keep_piece(
   ))
 
   case separation {
-    NoSeparation -> Ok([])
+    NoSeparation -> {
+      case containment, operation {
+        svg_path.Boundary, Union -> Ok([Piece(segment: oriented, level: 1)])
+        _, _ -> Ok([])
+      }
+    }
     _ -> {
       case containment, operation, side {
         svg_path.Boundary, Union, RightSide -> Ok([])
@@ -726,6 +885,107 @@ fn orient_piece(
     Difference, RightSide -> svg_path.reverse_segment(piece)
     _, _ -> piece
   }
+}
+
+fn unique_pieces(
+  pieces: List(Piece),
+  tolerance: Float,
+  kept: List(Piece),
+) -> List(Piece) {
+  case pieces {
+    [] -> list.reverse(kept)
+    [piece, ..rest] -> {
+      case
+        kept
+        |> list.any(fn(kept_piece) { same_piece(piece, kept_piece, tolerance) })
+      {
+        True -> unique_pieces(rest, tolerance, kept)
+        False -> unique_pieces(rest, tolerance, [piece, ..kept])
+      }
+    }
+  }
+}
+
+fn same_piece(left: Piece, right: Piece, tolerance: Float) -> Bool {
+  left.level == right.level
+  && same_segment_geometry(left.segment, right.segment, tolerance)
+}
+
+fn same_segment_geometry(
+  left: svg_path.Segment,
+  right: svg_path.Segment,
+  tolerance: Float,
+) -> Bool {
+  case left, right {
+    svg_path.Line(start: left_start, end: left_end),
+      svg_path.Line(start: right_start, end: right_end)
+    ->
+      same_point(left_start, right_start, tolerance)
+      && same_point(left_end, right_end, tolerance)
+
+    svg_path.QuadraticBezier(
+      start: left_start,
+      control: left_control,
+      end: left_end,
+    ),
+      svg_path.QuadraticBezier(
+        start: right_start,
+        control: right_control,
+        end: right_end,
+      )
+    ->
+      same_point(left_start, right_start, tolerance)
+      && same_point(left_control, right_control, tolerance)
+      && same_point(left_end, right_end, tolerance)
+
+    svg_path.CubicBezier(
+      start: left_start,
+      control1: left_control1,
+      control2: left_control2,
+      end: left_end,
+    ),
+      svg_path.CubicBezier(
+        start: right_start,
+        control1: right_control1,
+        control2: right_control2,
+        end: right_end,
+      )
+    ->
+      same_point(left_start, right_start, tolerance)
+      && same_point(left_control1, right_control1, tolerance)
+      && same_point(left_control2, right_control2, tolerance)
+      && same_point(left_end, right_end, tolerance)
+
+    svg_path.Arc(
+      start: left_start,
+      radius: left_radius,
+      x_axis_rotation: left_rotation,
+      large_arc: left_large_arc,
+      sweep: left_sweep,
+      end: left_end,
+    ),
+      svg_path.Arc(
+        start: right_start,
+        radius: right_radius,
+        x_axis_rotation: right_rotation,
+        large_arc: right_large_arc,
+        sweep: right_sweep,
+        end: right_end,
+      )
+    ->
+      same_point(left_start, right_start, tolerance)
+      && same_point(left_radius, right_radius, tolerance)
+      && floats_near(left_rotation, right_rotation, tolerance)
+      && left_large_arc == right_large_arc
+      && left_sweep == right_sweep
+      && same_point(left_end, right_end, tolerance)
+
+    _, _ -> False
+  }
+}
+
+fn floats_near(left: Float, right: Float, tolerance: Float) -> Bool {
+  float.absolute_value(left -. right) <=. tolerance
 }
 
 fn pieces_to_path(

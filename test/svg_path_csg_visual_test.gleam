@@ -5,13 +5,16 @@ import gleam/list
 import gleam/string
 import gleeunit
 import svg_path
+import svg_path/area
 import svg_path/csg
 import svg_path/svg
 import svg_path/transform
 
 const output_dir = "test/generated/csg_visual"
 
-const readme_nested_csg_table = "csg_nested_csg_table.svg"
+const readme_nested_csg_nonzero_table = "csg_nested_csg_nonzero_table.svg"
+
+const readme_nested_csg_evenodd_table = "csg_nested_csg_evenodd_table.svg"
 
 const panel_width = 150.0
 
@@ -97,9 +100,14 @@ fn theory_entries() -> List(String) {
       render_theory_nested_fill_rules(),
     ),
     #(
-      "theory-nested-csg-table",
-      "Nested CSG fill-rule table",
-      render_theory_nested_csg_table(),
+      "theory-nested-csg-nonzero-table",
+      "Nested CSG table with Nonzero",
+      render_theory_nested_csg_table(svg_path.Nonzero),
+    ),
+    #(
+      "theory-nested-csg-evenodd-table",
+      "Nested CSG table with EvenOdd",
+      render_theory_nested_csg_table(svg_path.EvenOdd),
     ),
     #(
       "theory-difference-asymmetry",
@@ -111,18 +119,47 @@ fn theory_entries() -> List(String) {
       "Canonical output orientation",
       render_theory_output_orientation(),
     ),
+    #(
+      "adjacent-offset-squares-union",
+      "Adjacent offset squares union",
+      render_adjacent_offset_squares_union(),
+    ),
   ]
   |> list.map(fn(entry) {
     let #(slug, title, contents) = entry
     let svg_filename = slug <> ".svg"
     let svg_path = output_dir <> "/" <> svg_filename
     let _ = write_file(svg_path, contents)
-    let _ = case slug == "theory-nested-csg-table" {
-      True -> {
-        let _ = write_file(readme_nested_csg_table, contents)
+    let _ = case slug {
+      "theory-corner-overlap" -> {
+        let _ = write_file("csg_theory_corner_overlap.svg", contents)
         Nil
       }
-      False -> Nil
+      "theory-simple-orientation" -> {
+        let _ = write_file("csg_theory_simple_orientation.svg", contents)
+        Nil
+      }
+      "theory-nested-fill-rules" -> {
+        let _ = write_file("csg_theory_nested_fill_rules.svg", contents)
+        Nil
+      }
+      "theory-nested-csg-nonzero-table" -> {
+        let _ = write_file(readme_nested_csg_nonzero_table, contents)
+        Nil
+      }
+      "theory-nested-csg-evenodd-table" -> {
+        let _ = write_file(readme_nested_csg_evenodd_table, contents)
+        Nil
+      }
+      "theory-difference-asymmetry" -> {
+        let _ = write_file("csg_theory_difference_asymmetry.svg", contents)
+        Nil
+      }
+      "theory-output-orientation" -> {
+        let _ = write_file("csg_theory_output_orientation.svg", contents)
+        Nil
+      }
+      _ -> Nil
     }
     "- [" <> title <> "](" <> svg_filename <> ")"
   })
@@ -461,9 +498,9 @@ fn guide_input_panel(
       svg_path.point(x +. guide_panel_width -. 18.0, y +. 45.0),
       11,
     ),
-    ..path_arrows(placed_a, "#1f2937")
+    ..nested_input_arrows(placed_a, "#1f2937", arrow_scale: 1.0)
   ]
-  |> list.append(path_arrows(placed_b, "#f59e0b"))
+  |> list.append(bar_input_arrows(placed_b, "#f59e0b", arrow_scale: 1.0))
 }
 
 fn guide_result_panel(
@@ -488,9 +525,48 @@ fn guide_result_panel(
 }
 
 fn path_arrows(path: svg_path.Path, color: String) -> svg.ThingsToDraw {
+  path_arrows_with_scale(path, color, 1.0)
+}
+
+fn path_arrows_with_scale(
+  path: svg_path.Path,
+  color: String,
+  arrow_scale: Float,
+) -> svg.ThingsToDraw {
   path
   |> svg_path.subpaths
-  |> list.flat_map(subpath_arrows(_, color))
+  |> list.flat_map(subpath_arrows(_, color, arrow_scale))
+}
+
+fn nested_input_arrows(
+  path: svg_path.Path,
+  color: String,
+  arrow_scale arrow_scale: Float,
+) -> svg.ThingsToDraw {
+  fixed_top_center_arrows(path, color, arrow_scale)
+}
+
+fn bar_input_arrows(
+  path: svg_path.Path,
+  color: String,
+  arrow_scale arrow_scale: Float,
+) -> svg.ThingsToDraw {
+  fixed_top_center_arrows(path, color, arrow_scale)
+}
+
+fn fixed_top_center_arrows(
+  path: svg_path.Path,
+  color: String,
+  arrow_scale: Float,
+) -> svg.ThingsToDraw {
+  path
+  |> svg_path.subpaths
+  |> list.flat_map(fn(subpath) {
+    let assert Ok(box) = svg_path.subpath_bounding_box(subpath)
+    let anchor = svg_path.point({ box.min.x +. box.max.x } /. 2.0, box.min.y)
+
+    fixed_horizontal_subpath_arrow(subpath, color, arrow_scale, anchor)
+  })
 }
 
 fn contour_overlays(
@@ -531,70 +607,110 @@ fn contour_color(index: Int) -> String {
 fn subpath_arrows(
   subpath: svg_path.Subpath,
   color: String,
+  arrow_scale: Float,
 ) -> svg.ThingsToDraw {
-  subpath_arrow(svg_path.segments(subpath), color)
+  subpath_arrow(svg_path.segments(subpath), color, arrow_scale)
 }
 
 fn subpath_arrow(
   segments: List(svg_path.Segment),
   color: String,
+  arrow_scale: Float,
 ) -> svg.ThingsToDraw {
   case segments {
     [] -> []
     [first, ..rest] -> {
-      case segment_arrow(first, color) {
+      case segment_arrow(first, color, arrow_scale) {
         Ok(arrow) -> arrow
-        Error(_) -> subpath_arrow(rest, color)
+        Error(_) -> subpath_arrow(rest, color, arrow_scale)
       }
     }
   }
 }
 
+fn fixed_horizontal_subpath_arrow(
+  subpath: svg_path.Subpath,
+  color: String,
+  arrow_scale: Float,
+  anchor: svg_path.Point,
+) -> svg.ThingsToDraw {
+  let direction = case area.signed_subpath(subpath) >=. 0.0 {
+    True -> svg_path.point(1.0, 0.0)
+    False -> svg_path.point(-1.0, 0.0)
+  }
+
+  arrow_glyph(anchor, direction, color, arrow_scale)
+}
+
 fn segment_arrow(
   segment: svg_path.Segment,
   color: String,
+  arrow_scale: Float,
 ) -> Result(svg.ThingsToDraw, Nil) {
   let assert Ok(length) = svg_path.segment_length(segment)
   case length <. minimum_arrow_segment_length {
     True -> Error(Nil)
-    False -> segment_arrow_on_long_enough_segment(segment, color)
+    False -> segment_arrow_on_long_enough_segment(segment, color, arrow_scale)
   }
 }
 
 fn segment_arrow_on_long_enough_segment(
   segment: svg_path.Segment,
   color: String,
+  arrow_scale: Float,
 ) -> Result(svg.ThingsToDraw, Nil) {
-  let assert Ok(point) = svg_path.segment_point(segment, at: 0.42)
+  segment_arrow_at(segment, color, arrow_scale, 0.42)
+}
+
+fn segment_arrow_at(
+  segment: svg_path.Segment,
+  color: String,
+  arrow_scale: Float,
+  t: Float,
+) -> Result(svg.ThingsToDraw, Nil) {
+  let assert Ok(point) = svg_path.segment_point(segment, at: t)
   let direction = segment_direction(segment)
 
   case normalize(direction) {
     Error(_) -> Error(Nil)
-    Ok(unit) -> {
-      let tail = add(point, scale(unit, -8.0))
-      let tip = add(point, scale(unit, 8.0))
-      let perp = svg_path.point(0.0 -. unit.y, unit.x)
-      let left = add(add(tip, scale(unit, -7.0)), scale(perp, 4.0))
-      let right = add(add(tip, scale(unit, -7.0)), scale(perp, -4.0))
-
-      Ok([
-        svg.StyledPath(
-          svg_path.from_subpath(
-            svg_path.assert_subpath([
-              svg_path.Line(start: tail, end: tip),
-            ]),
-          ),
-          "fill: none; stroke: "
-            <> color
-            <> "; stroke-width: 2; stroke-linecap: round",
-        ),
-        svg.StyledPath(
-          polygon([tip, left, right]),
-          "fill: " <> color <> "; stroke: none",
-        ),
-      ])
-    }
+    Ok(unit) -> Ok(arrow_glyph(point, unit, color, arrow_scale))
   }
+}
+
+fn arrow_glyph(
+  point: svg_path.Point,
+  unit: svg_path.Point,
+  color: String,
+  arrow_scale: Float,
+) -> svg.ThingsToDraw {
+  let tail = add(point, scale(unit, -6.0 *. arrow_scale))
+  let tip = add(point, scale(unit, 6.0 *. arrow_scale))
+  let perp = svg_path.point(0.0 -. unit.y, unit.x)
+  let half_width = 4.0 *. arrow_scale
+  let equilateral_height = half_width *. 1.7320508075688772
+  let head_center = point
+  let head_tip = add(head_center, scale(unit, equilateral_height *. 2.0 /. 3.0))
+  let head_base =
+    add(head_center, scale(unit, 0.0 -. equilateral_height /. 3.0))
+  let left = add(head_base, scale(perp, half_width))
+  let right = add(head_base, scale(perp, 0.0 -. half_width))
+
+  [
+    svg.StyledPath(
+      svg_path.from_subpath(
+        svg_path.assert_subpath([
+          svg_path.Line(start: tail, end: tip),
+        ]),
+      ),
+      "fill: none; stroke: "
+        <> color
+        <> "; stroke-width: 2; stroke-linecap: round",
+    ),
+    svg.StyledPath(
+      polygon([head_tip, left, right]),
+      "fill: " <> color <> "; stroke: none",
+    ),
+  ]
 }
 
 fn segment_direction(segment: svg_path.Segment) -> svg_path.Point {
@@ -761,7 +877,7 @@ type NestedCsgRow {
   NestedCsgRow(label: String, a: svg_path.Path, b: svg_path.Path)
 }
 
-fn render_theory_nested_csg_table() -> String {
+fn render_theory_nested_csg_table(fill_rule: svg_path.FillRule) -> String {
   let rows = [
     NestedCsgRow(
       label: "same-direction A; counterclockwise B",
@@ -786,75 +902,44 @@ fn render_theory_nested_csg_table() -> String {
   ]
 
   combo_document(
-    "Nested CSG fill-rule table",
+    "Nested CSG with " <> fill_rule_name(fill_rule),
+    fill_rule,
     rows
-      |> list.index_map(fn(row, index) { nested_csg_row(index, row) })
+      |> list.index_map(fn(row, index) { nested_csg_row(index, row, fill_rule) })
       |> list.flatten,
   )
 }
 
-fn nested_csg_row(row_index: Int, row: NestedCsgRow) -> svg.ThingsToDraw {
+fn nested_csg_row(
+  row_index: Int,
+  row: NestedCsgRow,
+  fill_rule: svg_path.FillRule,
+) -> svg.ThingsToDraw {
   let NestedCsgRow(label:, a:, b:) = row
-  let assert Ok(nonzero_union) = csg.union(a, b, using: svg_path.Nonzero)
-  let assert Ok(evenodd_union) = csg.union(a, b, using: svg_path.EvenOdd)
-  let assert Ok(nonzero_intersection) =
-    csg.intersection(a, b, using: svg_path.Nonzero)
-  let assert Ok(evenodd_intersection) =
-    csg.intersection(a, b, using: svg_path.EvenOdd)
-  let assert Ok(nonzero_difference) =
-    csg.difference(a, minus: b, using: svg_path.Nonzero)
-  let assert Ok(evenodd_difference) =
-    csg.difference(a, minus: b, using: svg_path.EvenOdd)
+  let assert Ok(union) = csg.union(a, b, using: fill_rule)
+  let assert Ok(intersection) = csg.intersection(a, b, using: fill_rule)
+  let assert Ok(difference) = csg.difference(a, minus: b, using: fill_rule)
 
   [
-    combo_input_panel(0, row_index, label, a, b),
-    combo_result_panel(
-      1,
-      row_index,
-      "union Nonzero",
-      nonzero_union,
-      svg_path.Nonzero,
-    ),
+    combo_input_panel(0, row_index, label, a, b, fill_rule),
+    combo_result_panel(1, row_index, "union(A, B)", union, fill_rule),
     combo_result_panel(
       2,
       row_index,
-      "union EvenOdd",
-      evenodd_union,
-      svg_path.EvenOdd,
+      "intersection(A, B)",
+      intersection,
+      fill_rule,
     ),
-    combo_result_panel(
-      3,
-      row_index,
-      "intersection Nonzero",
-      nonzero_intersection,
-      svg_path.Nonzero,
-    ),
-    combo_result_panel(
-      4,
-      row_index,
-      "intersection EvenOdd",
-      evenodd_intersection,
-      svg_path.EvenOdd,
-    ),
-    combo_result_panel(
-      5,
-      row_index,
-      "difference Nonzero",
-      nonzero_difference,
-      svg_path.Nonzero,
-    ),
-    combo_result_panel(
-      6,
-      row_index,
-      "difference EvenOdd",
-      evenodd_difference,
-      svg_path.EvenOdd,
-    ),
+    combo_result_panel(3, row_index, "difference(A, B)", difference, fill_rule),
   ]
   |> list.flatten
 }
 
-fn combo_document(title: String, things: svg.ThingsToDraw) -> String {
+fn combo_document(
+  title: String,
+  fill_rule: svg_path.FillRule,
+  things: svg.ThingsToDraw,
+) -> String {
   svg.document(
     [
       svg.Rectangle(
@@ -869,7 +954,7 @@ fn combo_document(title: String, things: svg.ThingsToDraw) -> String {
         svg_path.point(0.0, 20.0),
         16,
       ),
-      ..combo_headers()
+      ..combo_headers(fill_rule)
     ]
       |> list.append(things),
     view_box: svg_path.BoundingBox(
@@ -879,15 +964,12 @@ fn combo_document(title: String, things: svg.ThingsToDraw) -> String {
   )
 }
 
-fn combo_headers() -> svg.ThingsToDraw {
+fn combo_headers(fill_rule: svg_path.FillRule) -> svg.ThingsToDraw {
   [
-    "Inputs",
-    "union Nonzero",
-    "union EvenOdd",
-    "intersection Nonzero",
-    "intersection EvenOdd",
-    "difference Nonzero",
-    "difference EvenOdd",
+    "Inputs as " <> fill_rule_name(fill_rule),
+    "union(A, B)",
+    "intersection(A, B)",
+    "difference(A, B)",
   ]
   |> list.index_map(fn(label, index) {
     svg.Text(
@@ -905,6 +987,7 @@ fn combo_input_panel(
   label: String,
   a: svg_path.Path,
   b: svg_path.Path,
+  fill_rule: svg_path.FillRule,
 ) -> svg.ThingsToDraw {
   let x = combo_x(column)
   let y = combo_y(row)
@@ -916,11 +999,23 @@ fn combo_input_panel(
     combo_row_label(x, y, label),
     svg.StyledPath(
       placed_a,
-      "fill: rgba(31, 41, 55, 0.06); stroke: #1f2937; stroke-width: 4; stroke-linejoin: round",
+      "fill: rgba(142, 202, 230, 0.42); fill-rule: "
+        <> svg_fill_rule(fill_rule)
+        <> "; stroke: none",
     ),
     svg.StyledPath(
       placed_b,
-      "fill: rgba(245, 158, 11, 0.12); stroke: #f59e0b; stroke-width: 3; stroke-dasharray: 6 5; stroke-linejoin: round",
+      "fill: rgba(255, 183, 3, 0.26); fill-rule: "
+        <> svg_fill_rule(fill_rule)
+        <> "; stroke: none",
+    ),
+    svg.StyledPath(
+      placed_a,
+      "fill: none; stroke: #1f2937; stroke-width: 4; stroke-linejoin: round",
+    ),
+    svg.StyledPath(
+      placed_b,
+      "fill: none; stroke: #f59e0b; stroke-width: 3; stroke-dasharray: 6 5; stroke-linejoin: round",
     ),
     svg.Text(
       "A",
@@ -934,9 +1029,9 @@ fn combo_input_panel(
       svg_path.point(x +. 164.0, y +. 55.0),
       13,
     ),
-    ..path_arrows(placed_a, "#1f2937")
+    ..nested_input_arrows(placed_a, "#1f2937", arrow_scale: 1.25)
   ]
-  |> list.append(path_arrows(placed_b, "#f59e0b"))
+  |> list.append(bar_input_arrows(placed_b, "#f59e0b", arrow_scale: 1.3))
 }
 
 fn combo_result_panel(
@@ -1022,6 +1117,23 @@ fn render_theory_output_orientation() -> String {
     [
       theory_result_panel(0, 0, "Filled result", ring, svg_path.Nonzero),
       theory_result_panel(1, 0, "Output orientation", ring, svg_path.Nonzero),
+    ]
+      |> list.flatten,
+  )
+}
+
+fn render_adjacent_offset_squares_union() -> String {
+  let a = rectangle(16.0, 20.0, 76.0, 80.0)
+  let b = rectangle(76.0, 50.0, 136.0, 110.0)
+  let assert Ok(union) = csg.union(a, b, using: svg_path.Nonzero)
+
+  theory_document(
+    "Adjacent offset squares union",
+    2,
+    1,
+    [
+      theory_input_panel(0, 0, "Inputs", a, b),
+      theory_result_panel(1, 0, "union(A, B)", union, svg_path.Nonzero),
     ]
       |> list.flatten,
   )
@@ -1521,7 +1633,7 @@ fn combo_place(path: svg_path.Path, x: Float, y: Float) -> svg_path.Path {
 }
 
 fn combo_width() -> Float {
-  combo_panel_width *. 7.0 +. combo_panel_gap *. 6.0
+  combo_panel_width *. 4.0 +. combo_panel_gap *. 3.0
 }
 
 fn combo_height() -> Float {

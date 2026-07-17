@@ -140,6 +140,19 @@ pub fn edge_tangent_rectangles_do_not_create_overlap_area_test() {
   assert_outside(difference, svg_path.point(15.0, 5.0))
 }
 
+pub fn adjacent_unit_square_union_preserves_shared_edge_slit_test() {
+  let left = rectangle(0.0, 0.0, 1.0, 1.0)
+  let right = rectangle(1.0, 0.0, 2.0, 1.0)
+
+  let assert Ok(union) = csg.union(left, right, using: svg_path.Nonzero)
+
+  assert_area(union, 2.0)
+  assert_inside(union, svg_path.point(0.5, 0.5))
+  assert_inside(union, svg_path.point(1.5, 0.5))
+  assert_outside(union, svg_path.point(2.5, 0.5))
+  assert union_has_rectangle_and_slit(union)
+}
+
 pub fn point_tangent_rectangles_do_not_create_overlap_area_test() {
   let left = rectangle(0.0, 0.0, 10.0, 10.0)
   let right = rectangle(10.0, 10.0, 20.0, 20.0)
@@ -209,6 +222,35 @@ pub fn nonzero_union_preserves_reversed_internal_winding_levels_test() {
   assert_inside(union, svg_path.point(10.0, 10.0))
   assert_winding_depth(union, svg_path.point(10.0, 10.0), 3)
   assert list.length(svg_path.subpaths(union)) > 1
+}
+
+pub fn simplify_nonzero_output_removes_internal_contour_depths_test() {
+  let left = nested_rectangles()
+  let right = rectangle(-5.0, 8.0, 25.0, 12.0)
+
+  let assert Ok(union) = csg.union(left, right, using: svg_path.Nonzero)
+  let assert Ok(simplified) = csg.simplify_nonzero_output(union)
+
+  assert_inside(simplified, svg_path.point(10.0, 10.0))
+  assert_inside(simplified, svg_path.point(-2.5, 10.0))
+  assert_inside(simplified, svg_path.point(22.5, 10.0))
+  assert_outside(simplified, svg_path.point(30.0, 10.0))
+  assert_winding_depth(simplified, svg_path.point(10.0, 10.0), 1)
+  assert list.length(svg_path.subpaths(simplified)) == 1
+}
+
+pub fn simplify_nonzero_output_preserves_holes_test() {
+  let outer = rectangle(0.0, 0.0, 20.0, 20.0)
+  let inner = rectangle(5.0, 5.0, 15.0, 15.0)
+
+  let assert Ok(difference) =
+    csg.difference(outer, minus: inner, using: svg_path.Nonzero)
+  let assert Ok(simplified) = csg.simplify_nonzero_output(difference)
+
+  assert_inside(simplified, svg_path.point(2.5, 2.5))
+  assert_outside(simplified, svg_path.point(10.0, 10.0))
+  assert_inside(simplified, svg_path.point(17.5, 17.5))
+  assert list.length(svg_path.subpaths(simplified)) == 2
 }
 
 pub fn csg_matches_boolean_semantics_on_sample_points_test() {
@@ -438,6 +480,50 @@ fn has_arc(path: svg_path.Path) -> Bool {
       _ -> False
     }
   })
+}
+
+fn union_has_rectangle_and_slit(path: svg_path.Path) -> Bool {
+  let subpaths = svg_path.subpaths(path)
+  list.length(subpaths) == 2
+  && list.any(subpaths, is_adjacent_union_outer_rectangle)
+  && list.any(subpaths, is_adjacent_union_slit)
+}
+
+fn is_adjacent_union_outer_rectangle(subpath: svg_path.Subpath) -> Bool {
+  let segments = svg_path.segments(subpath)
+  list.length(segments) == 6
+  && has_line(segments, svg_path.point(0.0, 0.0), svg_path.point(1.0, 0.0))
+  && has_line(segments, svg_path.point(1.0, 0.0), svg_path.point(2.0, 0.0))
+  && has_line(segments, svg_path.point(2.0, 0.0), svg_path.point(2.0, 1.0))
+  && has_line(segments, svg_path.point(2.0, 1.0), svg_path.point(1.0, 1.0))
+  && has_line(segments, svg_path.point(1.0, 1.0), svg_path.point(0.0, 1.0))
+  && has_line(segments, svg_path.point(0.0, 1.0), svg_path.point(0.0, 0.0))
+}
+
+fn is_adjacent_union_slit(subpath: svg_path.Subpath) -> Bool {
+  let segments = svg_path.segments(subpath)
+  list.length(segments) == 2
+  && has_line(segments, svg_path.point(1.0, 0.0), svg_path.point(1.0, 1.0))
+  && has_line(segments, svg_path.point(1.0, 1.0), svg_path.point(1.0, 0.0))
+}
+
+fn has_line(
+  segments: List(svg_path.Segment),
+  start: svg_path.Point,
+  end: svg_path.Point,
+) -> Bool {
+  list.any(segments, fn(segment) {
+    case segment {
+      svg_path.Line(start: actual_start, end: actual_end) ->
+        same_point(actual_start, start) && same_point(actual_end, end)
+      _ -> False
+    }
+  })
+}
+
+fn same_point(left: svg_path.Point, right: svg_path.Point) -> Bool {
+  float.absolute_value(left.x -. right.x) <=. tolerance
+  && float.absolute_value(left.y -. right.y) <=. tolerance
 }
 
 fn assert_area(path: svg_path.Path, expected: Float) {

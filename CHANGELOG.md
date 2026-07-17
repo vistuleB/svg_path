@@ -11,6 +11,9 @@ the tag object.
 
 ## Unreleased
 
+- Added `csg.simplify_nonzero_output` for removing internal contour-depth
+  boundaries from CSG results while preserving the `Nonzero` filled set.
+
 ## 0.13.2 - 2026-07-16
 
 - Changed Nonzero CSG output to preserve contour-depth level boundaries inside
