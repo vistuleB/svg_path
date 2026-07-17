@@ -2,13 +2,16 @@ import gleam/dynamic.{type Dynamic}
 import gleam/float
 import gleam/int
 import gleam/list
+import gleam/result
 import gleam/string
 import gleeunit
 import svg_path
 import svg_path/area
 import svg_path/csg
+import svg_path/effects
 import svg_path/svg
 import svg_path/transform
+import svg_path/trig
 
 const output_dir = "test/generated/csg_visual"
 
@@ -123,6 +126,16 @@ fn theory_entries() -> List(String) {
       "adjacent-offset-squares-union",
       "Adjacent offset squares union",
       render_adjacent_offset_squares_union(),
+    ),
+    #(
+      "effects-rounded-rectangle-union",
+      "Rounded corners on rectangle union",
+      render_effects_rounded_rectangle_union(),
+    ),
+    #(
+      "effects-rounded-ellipse-union",
+      "Rounded corners on ellipse union",
+      render_effects_rounded_ellipse_union(),
     ),
   ]
   |> list.map(fn(entry) {
@@ -1139,6 +1152,316 @@ fn render_adjacent_offset_squares_union() -> String {
   )
 }
 
+fn render_effects_rounded_rectangle_union() -> String {
+  let rectangles = effect_rectangles()
+  let input = svg_path.combine_paths(rectangles)
+  let assert Ok(union) = union_paths(rectangles)
+  let round_options =
+    effects.RoundCornerOptions(
+      ..effects.default_round_corner_options(),
+      failure: effects.AdaptRadius,
+    )
+  let assert Ok(rounded) =
+    effects.round_corners_with(union, radius: 6.0, options: round_options)
+
+  theory_document(
+    "Rounded corners on a rectangle union",
+    3,
+    1,
+    [
+      effects_input_panel(0, 0, "7 overlapping rectangles", input),
+      effects_result_panel(
+        1,
+        0,
+        "raw union(rectangles)",
+        union,
+        svg_path.Nonzero,
+      ),
+      effects_result_panel(
+        2,
+        0,
+        "round_corners(..., 6)",
+        rounded,
+        svg_path.Nonzero,
+      ),
+    ]
+      |> list.flatten,
+  )
+}
+
+fn render_effects_rounded_ellipse_union() -> String {
+  let ellipses = effect_ellipses()
+  let input = svg_path.combine_paths(ellipses)
+  let assert Ok(union) = union_paths(ellipses)
+  let assert Ok(union_for_effects) = wiggle_path(union)
+  let round_options =
+    effects.RoundCornerOptions(
+      ..effects.default_round_corner_options(),
+      failure: effects.AdaptRadius,
+    )
+  let assert Ok(rounded) =
+    effects.round_corners_with(
+      union_for_effects,
+      radius: 4.5,
+      options: round_options,
+    )
+
+  theory_document(
+    "Rounded corners on an ellipse union",
+    3,
+    1,
+    [
+      effects_input_panel(0, 0, "5 eccentric ellipses", input),
+      effects_result_panel(1, 0, "raw union(ellipses)", union, svg_path.Nonzero),
+      effects_result_panel(
+        2,
+        0,
+        "round_corners(..., 4.5)",
+        rounded,
+        svg_path.Nonzero,
+      ),
+    ]
+      |> list.flatten,
+  )
+}
+
+fn wiggle_path(path: svg_path.Path) -> Result(svg_path.Path, svg_path.Error) {
+  use subpaths <- result.try(
+    wiggle_subpaths(svg_path.subpaths(path), wiggled: []),
+  )
+  Ok(svg_path.Path(subpaths:))
+}
+
+fn wiggle_subpaths(
+  subpaths: List(svg_path.Subpath),
+  wiggled wiggled: List(svg_path.Subpath),
+) -> Result(List(svg_path.Subpath), svg_path.Error) {
+  case subpaths {
+    [] -> Ok(list.reverse(wiggled))
+    [subpath, ..rest] -> {
+      use wiggled_subpath <- result.try(wiggle_subpath(subpath))
+      wiggle_subpaths(rest, wiggled: [wiggled_subpath, ..wiggled])
+    }
+  }
+}
+
+fn wiggle_subpath(
+  subpath: svg_path.Subpath,
+) -> Result(svg_path.Subpath, svg_path.Error) {
+  use open <- result.try(svg_path.subpath_with(
+    svg_path.segments(subpath),
+    policy: svg_path.Wiggle,
+  ))
+  svg_path.set_closed_with(
+    open,
+    closed: svg_path.is_closed(subpath),
+    policy: svg_path.Wiggle,
+  )
+}
+
+fn effect_rectangles() -> List(svg_path.Path) {
+  [
+    rectangle(26.0, 25.0, 82.0, 82.0),
+    rectangle(58.0, 15.0, 120.0, 55.0),
+    rectangle(94.0, 34.0, 146.0, 92.0),
+    rectangle(42.0, 66.0, 108.0, 112.0),
+    rectangle(5.0, 52.0, 54.0, 100.0),
+    rectangle(112.0, 58.0, 166.0, 108.0),
+    rectangle(72.0, 42.0, 132.0, 78.0),
+  ]
+}
+
+fn effect_ellipses() -> List(svg_path.Path) {
+  [
+    ellipse_path(
+      center: svg_path.point(84.0, 64.0),
+      radius_x: 72.0,
+      radius_y: 45.0,
+      rotation: 11.0,
+    ),
+    ellipse_path(
+      center: svg_path.point(87.0, 62.0),
+      radius_x: 66.0,
+      radius_y: 41.0,
+      rotation: -31.0,
+    ),
+    ellipse_path(
+      center: svg_path.point(80.0, 67.0),
+      radius_x: 60.0,
+      radius_y: 38.0,
+      rotation: 42.0,
+    ),
+    ellipse_path(
+      center: svg_path.point(90.0, 66.0),
+      radius_x: 55.0,
+      radius_y: 34.0,
+      rotation: -64.0,
+    ),
+    ellipse_path(
+      center: svg_path.point(82.0, 60.0),
+      radius_x: 50.0,
+      radius_y: 31.0,
+      rotation: 73.0,
+    ),
+  ]
+}
+
+fn union_paths(
+  paths: List(svg_path.Path),
+) -> Result(svg_path.Path, svg_path.Error) {
+  union_paths_with_options(paths, csg.default_options())
+}
+
+fn union_paths_with_options(
+  paths: List(svg_path.Path),
+  options: csg.Options,
+) -> Result(svg_path.Path, svg_path.Error) {
+  case paths {
+    [] -> Ok(svg_path.empty_path())
+    [first, ..rest] -> union_paths_loop(rest, first, options)
+  }
+}
+
+fn union_paths_loop(
+  paths: List(svg_path.Path),
+  accumulated: svg_path.Path,
+  options: csg.Options,
+) -> Result(svg_path.Path, svg_path.Error) {
+  case paths {
+    [] -> Ok(accumulated)
+    [path, ..rest] -> {
+      use accumulated <- result.try(csg.union_with(
+        accumulated,
+        path,
+        using: svg_path.Nonzero,
+        options:,
+      ))
+      union_paths_loop(rest, accumulated, options)
+    }
+  }
+}
+
+fn effects_input_panel(
+  column: Int,
+  row: Int,
+  label: String,
+  path: svg_path.Path,
+) -> svg.ThingsToDraw {
+  let x = theory_x(column)
+  let y = theory_y(row)
+  let placed = theory_place(path, x, y)
+  [
+    theory_panel_background(x, y),
+    theory_label(x, y, label),
+    svg.StyledPath(
+      placed,
+      "fill: rgba(245, 158, 11, 0.16); stroke: #b45309; stroke-width: 2; stroke-linejoin: round",
+    ),
+  ]
+  |> list.append(contour_overlays(placed, stroke_width: 1.5))
+}
+
+fn effects_result_panel(
+  column: Int,
+  row: Int,
+  label: String,
+  path: svg_path.Path,
+  fill_rule: svg_path.FillRule,
+) -> svg.ThingsToDraw {
+  let x = theory_x(column)
+  let y = theory_y(row)
+  let placed = theory_place(path, x, y)
+  [
+    theory_panel_background(x, y),
+    theory_label(x, y, label),
+    svg.StyledPath(
+      placed,
+      "fill: #8ecae6; fill-rule: "
+        <> svg_fill_rule(fill_rule)
+        <> "; stroke: none",
+    ),
+  ]
+  |> list.append(effects_contour_overlays(placed, stroke_width: 1.9))
+}
+
+fn effects_contour_overlays(
+  path: svg_path.Path,
+  stroke_width stroke_width: Float,
+) -> svg.ThingsToDraw {
+  path
+  |> svg_path.subpaths
+  |> list.index_map(fn(subpath, index) {
+    let color = effects_contour_color(index)
+    let subpath_path = svg_path.from_subpath(subpath)
+    [
+      svg.StyledPath(
+        subpath_path,
+        "fill: none; stroke: "
+          <> color
+          <> "; stroke-width: "
+          <> float.to_string(stroke_width)
+          <> "; stroke-linejoin: round",
+      ),
+      ..subpath_longest_segment_arrow(subpath, color, 0.82)
+    ]
+  })
+  |> list.flatten
+}
+
+fn subpath_longest_segment_arrow(
+  subpath: svg_path.Subpath,
+  color: String,
+  arrow_scale: Float,
+) -> svg.ThingsToDraw {
+  case longest_segment(svg_path.segments(subpath), best: Error(Nil)) {
+    Error(_) -> []
+    Ok(segment) -> {
+      case segment_arrow_at(segment, color, arrow_scale, 0.42) {
+        Error(_) -> []
+        Ok(arrow) -> arrow
+      }
+    }
+  }
+}
+
+fn longest_segment(
+  segments: List(svg_path.Segment),
+  best best: Result(#(svg_path.Segment, Float), Nil),
+) -> Result(svg_path.Segment, Nil) {
+  case segments {
+    [] -> {
+      case best {
+        Error(_) -> Error(Nil)
+        Ok(#(segment, _)) -> Ok(segment)
+      }
+    }
+    [segment, ..rest] -> {
+      let assert Ok(length) = svg_path.segment_length(segment)
+      let best = case best {
+        Error(_) -> Ok(#(segment, length))
+        Ok(#(_, best_length)) if length >. best_length -> Ok(#(segment, length))
+        Ok(_) -> best
+      }
+      longest_segment(rest, best:)
+    }
+  }
+}
+
+fn effects_contour_color(index: Int) -> String {
+  case index % 10 {
+    0 -> "#1f2937"
+    1 -> "#fef08a"
+    2 -> "#f0abfc"
+    3 -> "#bae6fd"
+    4 -> "#bbf7d0"
+    5 -> "#fed7aa"
+    6 -> "#c4b5fd"
+    7 -> "#fde68a"
+    8 -> "#99f6e4"
+    _ -> "#fecdd3"
+  }
+}
+
 fn theory_document(
   title: String,
   columns: Int,
@@ -1510,6 +1833,44 @@ fn circle(center: svg_path.Point, radius: Float) -> svg_path.Path {
         start: left,
         radius: svg_path.point(radius, radius),
         x_axis_rotation: 0.0,
+        large_arc: False,
+        sweep: True,
+        end: right,
+      ),
+    ])
+    |> svg_path.assert_set_closed(closed: True),
+  )
+}
+
+fn ellipse_path(
+  center center: svg_path.Point,
+  radius_x radius_x: Float,
+  radius_y radius_y: Float,
+  rotation rotation: Float,
+) -> svg_path.Path {
+  let axis =
+    svg_path.point(
+      trig.cos_degrees(rotation) *. radius_x,
+      trig.sin_degrees(rotation) *. radius_x,
+    )
+  let left = subtract(center, axis)
+  let right = add(center, axis)
+  let radius = svg_path.point(radius_x, radius_y)
+
+  svg_path.from_subpath(
+    svg_path.assert_subpath([
+      svg_path.Arc(
+        start: right,
+        radius:,
+        x_axis_rotation: rotation,
+        large_arc: False,
+        sweep: True,
+        end: left,
+      ),
+      svg_path.Arc(
+        start: left,
+        radius:,
+        x_axis_rotation: rotation,
         large_arc: False,
         sweep: True,
         end: right,

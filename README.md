@@ -58,6 +58,7 @@ pub fn prepare_for_arc_averse_consumer(
 - `svg_path/area`: signed area and SVG fill-rule area for subpaths and paths.
 - `svg_path/csg`: Boolean union, intersection, and difference for filled
   paths.
+- `svg_path/effects`: one-off artistic path effects such as corner rounding.
 - `svg_path/convex_hull`: convex hulls for segments, subpaths, paths, and point
   lists.
 - `svg_path/basic_shapes`: conversions from SVG basic shapes to paths.

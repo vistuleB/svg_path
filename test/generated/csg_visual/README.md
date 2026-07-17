@@ -28,3 +28,5 @@ Each SVG shows the inputs and the three path CSG operations for one example.
 - [Difference is not symmetric](theory-difference-asymmetry.svg)
 - [Canonical output orientation](theory-output-orientation.svg)
 - [Adjacent offset squares union](adjacent-offset-squares-union.svg)
+- [Rounded corners on rectangle union](effects-rounded-rectangle-union.svg)
+- [Rounded corners on ellipse union](effects-rounded-ellipse-union.svg)
