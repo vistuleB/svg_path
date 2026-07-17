@@ -6,11 +6,11 @@
   <path d="M 28 70 H 102 V 98 H 74 V 132 H 28 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: none" />
   <path d="M 28 70 H 102 V 98 H 74 V 132 H 28 Z" style="fill: none; stroke: #1f2937; stroke-width: 3.0; stroke-linejoin: round" />
   <path d="M 53.08 70 H 65.08" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
-  <path d="M 63.08 70 L 55.08 74 V 66 Z" style="fill: #1f2937; stroke: none" />
+  <path d="M 63.6988 70 L 56.7706 74 V 66 Z" style="fill: #1f2937; stroke: none" />
   <rect x="186" y="48" width="170" height="125" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
   <text x="186" y="41" font-size="10" style="fill: #111827; font-family: system-ui, sans-serif; font-weight: 700">difference(B, A)</text>
   <path d="M 288 98 H 328 V 146 H 260 V 132 H 288 Z" style="fill: #8ecae6; fill-rule: nonzero; stroke: none" />
   <path d="M 288 98 H 328 V 146 H 260 V 132 H 288 Z" style="fill: none; stroke: #1f2937; stroke-width: 3.0; stroke-linejoin: round" />
   <path d="M 298.8 98 H 310.8" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
-  <path d="M 308.8 98 L 300.8 102 V 94 Z" style="fill: #1f2937; stroke: none" />
+  <path d="M 309.4188 98 L 302.4906 102 V 94 Z" style="fill: #1f2937; stroke: none" />
 </svg>
