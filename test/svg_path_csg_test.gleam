@@ -1,9 +1,11 @@
 import gleam/float
 import gleam/list
+import gleam/result
 import gleeunit
 import svg_path
 import svg_path/area
 import svg_path/csg
+import svg_path/transform
 
 const tolerance = 0.000001
 
@@ -88,6 +90,20 @@ pub fn disjoint_union_returns_both_components_test() {
   assert_inside(union, svg_path.point(5.0, 5.0))
   assert_inside(union, svg_path.point(25.0, 5.0))
   assert_outside(union, svg_path.point(15.0, 5.0))
+}
+
+pub fn four_square_union_nonzero_test() {
+  let paths = four_translated_square_paths()
+  let assert Ok(union) = union_paths(paths)
+
+  assert_area(union, 16.0)
+  assert list.length(svg_path.subpaths(union)) == 6
+  assert count_back_and_forth_subpaths(union) == 4
+  assert_inside(union, svg_path.point(1.0, 1.0))
+  assert_inside(union, svg_path.point(3.0, 2.0))
+  assert_inside(union, svg_path.point(2.0, 4.0))
+  assert_inside(union, svg_path.point(0.0, 3.0))
+  assert_boundary(union, svg_path.point(2.0, 1.0))
 }
 
 pub fn intersection_preserves_curve_segments_test() {
@@ -376,6 +392,54 @@ fn nested_rectangles() -> svg_path.Path {
   ])
 }
 
+fn four_translated_square_paths() -> List(svg_path.Path) {
+  let square = rectangle(0.0, 0.0, 2.0, 2.0)
+  translated_copy_list(square, [
+    #(0.0, 0.0),
+    #(2.0, 1.0),
+    #(1.0, 3.0),
+    #(-1.0, 2.0),
+  ])
+}
+
+fn translated_copy_list(
+  path: svg_path.Path,
+  offsets: List(#(Float, Float)),
+) -> List(svg_path.Path) {
+  offsets
+  |> list.map(fn(offset) {
+    let #(x, y) = offset
+    let assert Ok(translated) = transform.translate_path(path, x:, y:)
+    translated
+  })
+}
+
+fn union_paths(
+  paths: List(svg_path.Path),
+) -> Result(svg_path.Path, svg_path.Error) {
+  case paths {
+    [] -> Ok(svg_path.empty_path())
+    [first, ..rest] -> union_paths_loop(rest, first)
+  }
+}
+
+fn union_paths_loop(
+  paths: List(svg_path.Path),
+  accumulated: svg_path.Path,
+) -> Result(svg_path.Path, svg_path.Error) {
+  case paths {
+    [] -> Ok(accumulated)
+    [path, ..rest] -> {
+      use accumulated <- result.try(csg.union(
+        accumulated,
+        path,
+        using: svg_path.Nonzero,
+      ))
+      union_paths_loop(rest, accumulated)
+    }
+  }
+}
+
 fn circle(center: svg_path.Point, radius: Float) -> svg_path.Path {
   let left = svg_path.point(center.x -. radius, center.y)
   let right = svg_path.point(center.x +. radius, center.y)
@@ -577,6 +641,24 @@ fn is_offset_union_slit(subpath: svg_path.Subpath) -> Bool {
   && has_line(segments, svg_path.point(1.0, 1.0), svg_path.point(1.0, 0.5))
 }
 
+fn count_back_and_forth_subpaths(path: svg_path.Path) -> Int {
+  path
+  |> svg_path.subpaths
+  |> list.filter(is_back_and_forth_subpath)
+  |> list.length
+}
+
+fn is_back_and_forth_subpath(subpath: svg_path.Subpath) -> Bool {
+  case svg_path.segments(subpath) {
+    [
+      svg_path.Line(start: first_start, end: first_end),
+      svg_path.Line(start: second_start, end: second_end),
+    ] ->
+      same_point(first_start, second_end) && same_point(first_end, second_start)
+    _ -> False
+  }
+}
+
 fn has_line(
   segments: List(svg_path.Segment),
   start: svg_path.Point,
@@ -604,6 +686,11 @@ fn assert_area(path: svg_path.Path, expected: Float) {
 fn assert_inside(path: svg_path.Path, point: svg_path.Point) {
   assert svg_path.path_containment(point, within: path, using: svg_path.Nonzero)
     == Ok(svg_path.Inside)
+}
+
+fn assert_boundary(path: svg_path.Path, point: svg_path.Point) {
+  assert svg_path.path_containment(point, within: path, using: svg_path.Nonzero)
+    == Ok(svg_path.Boundary)
 }
 
 fn assert_outside(path: svg_path.Path, point: svg_path.Point) {

@@ -1819,14 +1819,6 @@ backgrounds, and dashed input outlines are only annotations.
   <img src="https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/csg_nested_csg_evenodd_table.svg" alt="Nested CSG table with EvenOdd fill rule">
 </center>
 
-`difference` is not symmetric: `difference(left, minus: right)` keeps the
-points inside `left` and outside `right`, while `difference(right, minus: left)`
-keeps the opposite residual set.
-
-<center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/csg_theory_difference_asymmetry.svg" alt="CSG difference asymmetry">
-</center>
-
 Boundary points need explicit policy. For filled-set classification, the
 result boundary is the boundary of the resulting filled set after the Boolean
 operation. For returned-path construction, the output is assembled from pieces

@@ -41,16 +41,23 @@ type Operation {
 }
 
 type Edge {
-  Edge(id: Int, segment: svg_path.Segment)
+  Edge(id: Int, source: Int, segment: svg_path.Segment)
 }
 
 type Piece {
-  Piece(segment: svg_path.Segment, level: Int, role: PieceRole, internal: Bool)
+  Piece(
+    segment: svg_path.Segment,
+    level: Int,
+    role: PieceRole,
+    internal: Bool,
+    group: Int,
+  )
 }
 
 type PieceRole {
   BoundaryPiece
   OverlapPiece
+  SourcePiece
 }
 
 type Chain {
@@ -325,7 +332,13 @@ fn nonzero_boundary_piece(
 
       Ok(case first_inside, second_inside {
         True, False -> [
-          Piece(segment: piece, level: 1, role: BoundaryPiece, internal: False),
+          Piece(
+            segment: piece,
+            level: 1,
+            role: BoundaryPiece,
+            internal: False,
+            group: 0,
+          ),
         ]
         False, True -> [
           Piece(
@@ -333,6 +346,7 @@ fn nonzero_boundary_piece(
             level: 1,
             role: BoundaryPiece,
             internal: False,
+            group: 0,
           ),
         ]
         _, _ -> []
@@ -366,8 +380,16 @@ type Side {
 fn path_edges(path: svg_path.Path, offset offset: Int) -> List(Edge) {
   path
   |> svg_path.subpaths
-  |> list.flat_map(subpath_edges)
-  |> list.index_map(fn(segment, index) { Edge(id: offset + index, segment:) })
+  |> list.index_map(fn(subpath, index) { #(offset + index, subpath) })
+  |> list.flat_map(fn(source_subpath) {
+    let #(source, subpath) = source_subpath
+    subpath_edges(subpath)
+    |> list.map(fn(segment) { Edge(id: 0, source:, segment:) })
+  })
+  |> list.index_map(fn(edge, index) {
+    let Edge(source:, segment:, ..) = edge
+    Edge(id: offset + index, source:, segment:)
+  })
 }
 
 fn subpath_edges(subpath: svg_path.Subpath) -> List(svg_path.Segment) {
@@ -436,7 +458,7 @@ fn retained_pieces_loop(
 ) -> Result(List(Piece), svg_path.Error) {
   case edges {
     [] -> Ok(list.reverse(retained))
-    [edge, ..rest] -> {
+    [Edge(source:, ..) as edge, ..rest] -> {
       use pieces <- result.try(split_edge(
         edge,
         split_edges,
@@ -445,6 +467,7 @@ fn retained_pieces_loop(
       ))
       use retained <- result.try(retain_edge_pieces(
         pieces,
+        source:,
         own_path:,
         against_path:,
         using: fill_rule,
@@ -488,10 +511,10 @@ fn split_parameters(
   intersection_options: svg_path.IntersectionOptions,
   parameters: List(Float),
 ) -> Result(List(Float), svg_path.Error) {
-  let Edge(id:, segment:) = edge
+  let Edge(id:, segment:, ..) = edge
   case against_edges {
     [] -> Ok(parameters)
-    [Edge(id: against_id, segment: against), ..rest] -> {
+    [Edge(id: against_id, segment: against, ..), ..rest] -> {
       case id == against_id {
         True -> split_parameters(edge, rest, intersection_options, parameters)
         False -> {
@@ -564,6 +587,7 @@ fn line_parameter(
 
 fn retain_edge_pieces(
   pieces: List(svg_path.Segment),
+  source source: Int,
   own_path own_path: svg_path.Path,
   against_path against_path: svg_path.Path,
   using fill_rule: svg_path.FillRule,
@@ -583,6 +607,7 @@ fn retain_edge_pieces(
           use retained_pieces <- result.try(keep_piece(
             piece,
             oriented:,
+            source:,
             own_path:,
             against_path:,
             using: fill_rule,
@@ -595,6 +620,7 @@ fn retain_edge_pieces(
       })
       retain_edge_pieces(
         rest,
+        source:,
         own_path:,
         against_path:,
         using: fill_rule,
@@ -617,6 +643,7 @@ fn degenerate_line(segment: svg_path.Segment, tolerance: Float) -> Bool {
 fn keep_piece(
   piece: svg_path.Segment,
   oriented oriented: svg_path.Segment,
+  source source: Int,
   own_path own_path: svg_path.Path,
   against_path against_path: svg_path.Path,
   using fill_rule: svg_path.FillRule,
@@ -641,29 +668,82 @@ fn keep_piece(
     options:,
   ))
 
+  case operation, fill_rule {
+    Union, svg_path.Nonzero ->
+      Ok(nonzero_union_pieces(
+        oriented,
+        separation,
+        source:,
+        containment:,
+        side:,
+        internal: containment != svg_path.Boundary,
+      ))
+    _, _ -> {
+      case separation {
+        NoSeparation -> {
+          case containment, operation {
+            svg_path.Boundary, Union ->
+              Ok([
+                Piece(
+                  segment: oriented,
+                  level: 1,
+                  role: OverlapPiece,
+                  internal: False,
+                  group: 0,
+                ),
+              ])
+            _, _ -> Ok([])
+          }
+        }
+        _ -> {
+          case containment, operation, side {
+            svg_path.Boundary, Union, RightSide -> Ok([])
+            svg_path.Boundary, Intersection, RightSide -> Ok([])
+            svg_path.Boundary, Difference, RightSide -> Ok([])
+            _, _, _ -> {
+              Ok(output_pieces(oriented, separation))
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+fn nonzero_union_pieces(
+  oriented: svg_path.Segment,
+  separation: Separation,
+  source source: Int,
+  containment containment: svg_path.PointContainment,
+  side side: Side,
+  internal internal: Bool,
+) -> List(Piece) {
   case separation {
     NoSeparation -> {
-      case containment, operation {
-        svg_path.Boundary, Union ->
-          Ok([
-            Piece(
-              segment: oriented,
-              level: 1,
-              role: OverlapPiece,
-              internal: False,
-            ),
-          ])
-        _, _ -> Ok([])
+      case containment, side {
+        svg_path.Boundary, RightSide -> []
+        _, _ -> [
+          Piece(
+            segment: oriented,
+            level: source,
+            role: SourcePiece,
+            internal:,
+            group: source,
+          ),
+          Piece(
+            segment: svg_path.reverse_segment(oriented),
+            level: source,
+            role: SourcePiece,
+            internal:,
+            group: source,
+          ),
+        ]
       }
     }
     _ -> {
-      case containment, operation, side {
-        svg_path.Boundary, Union, RightSide -> Ok([])
-        svg_path.Boundary, Intersection, RightSide -> Ok([])
-        svg_path.Boundary, Difference, RightSide -> Ok([])
-        _, _, _ -> {
-          Ok(output_pieces(oriented, separation))
-        }
+      case containment, side {
+        svg_path.Boundary, RightSide -> []
+        _, _ -> output_pieces(oriented, separation)
       }
     }
   }
@@ -702,6 +782,7 @@ fn threshold_pieces(
           level: high_level,
           role: BoundaryPiece,
           internal: low_level > 0,
+          group: 0,
         ),
         ..pieces
       ])
@@ -947,7 +1028,16 @@ fn unique_pieces(
 
 fn same_piece(left: Piece, right: Piece, tolerance: Float) -> Bool {
   left.level == right.level
+  && left.role == right.role
+  && same_piece_group(left, right)
   && same_segment_geometry(left.segment, right.segment, tolerance)
+}
+
+fn same_piece_group(left: Piece, right: Piece) -> Bool {
+  case left.role, right.role {
+    SourcePiece, SourcePiece -> True
+    _, _ -> left.group == right.group
+  }
 }
 
 fn same_segment_geometry(
@@ -1040,6 +1130,7 @@ fn pieces_to_csg_path(
   fill_rule: svg_path.FillRule,
   tolerance: Float,
 ) -> Result(svg_path.Path, svg_path.Error) {
+  let pieces = unique_pieces(pieces, tolerance, [])
   use contours <- result.try(pieces_to_contours(pieces, tolerance))
   use oriented <- result.try(orient_csg_contours(contours, fill_rule))
   Ok(contours_to_path(oriented))
@@ -1199,7 +1290,13 @@ fn grow_chain(
   tolerance: Float,
 ) -> Result(#(List(Piece), List(Piece)), svg_path.Error) {
   let assert [
-    Piece(segment: last_segment, level: chain_level, role: chain_role, ..),
+    Piece(
+      segment: last_segment,
+      level: chain_level,
+      role: chain_role,
+      group: chain_group,
+      ..,
+    ),
     ..
   ] = chain
   let segments = list.map(chain, fn(piece) { piece.segment })
@@ -1219,6 +1316,7 @@ fn grow_chain(
           remaining,
           chain_level,
           chain_role,
+          chain_group,
           chain_end,
           incoming_angle,
           tolerance,
@@ -1260,6 +1358,7 @@ fn connecting_pieces(
   pieces: List(Piece),
   chain_level: Int,
   chain_role: PieceRole,
+  chain_group: Int,
   point: svg_path.Point,
   incoming_angle: Float,
   tolerance: Float,
@@ -1268,10 +1367,20 @@ fn connecting_pieces(
 ) -> List(Candidate) {
   case pieces {
     [] -> list.sort(candidates, by: compare_candidates)
-    [Piece(segment:, level: piece_level, role: piece_role, ..) as piece, ..rest] -> {
+    [
+      Piece(
+        segment:,
+        level: piece_level,
+        role: piece_role,
+        group: piece_group,
+        ..,
+      ) as piece,
+      ..rest
+    ] -> {
       case
         piece_level == chain_level
         && piece_role == chain_role
+        && piece_group == chain_group
         && same_point(svg_path.segment_start(segment), point, tolerance)
       {
         True -> {
@@ -1281,6 +1390,7 @@ fn connecting_pieces(
             rest,
             chain_level,
             chain_role,
+            chain_group,
             point,
             incoming_angle,
             tolerance,
@@ -1293,6 +1403,7 @@ fn connecting_pieces(
             rest,
             chain_level,
             chain_role,
+            chain_group,
             point,
             incoming_angle,
             tolerance,

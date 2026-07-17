@@ -113,11 +113,6 @@ fn theory_entries() -> List(String) {
       render_theory_nested_csg_table(svg_path.EvenOdd),
     ),
     #(
-      "theory-difference-asymmetry",
-      "Difference is not symmetric",
-      render_theory_difference_asymmetry(),
-    ),
-    #(
       "theory-output-orientation",
       "Canonical output orientation",
       render_theory_output_orientation(),
@@ -126,6 +121,11 @@ fn theory_entries() -> List(String) {
       "adjacent-offset-squares-union",
       "Adjacent offset squares union",
       render_adjacent_offset_squares_union(),
+    ),
+    #(
+      "four-squares-empty-right-operand",
+      "Four squares union: Nonzero",
+      render_four_squares_empty_right_operand(),
     ),
     #(
       "effects-rounded-rectangle-union",
@@ -162,10 +162,6 @@ fn theory_entries() -> List(String) {
       }
       "theory-nested-csg-evenodd-table" -> {
         let _ = write_file(readme_nested_csg_evenodd_table, contents)
-        Nil
-      }
-      "theory-difference-asymmetry" -> {
-        let _ = write_file("csg_theory_difference_asymmetry.svg", contents)
         Nil
       }
       "theory-output-orientation" -> {
@@ -1146,26 +1142,6 @@ fn theory_bar(same_direction same_direction: Bool) -> svg_path.Path {
   ))
 }
 
-fn render_theory_difference_asymmetry() -> String {
-  let a = rectangle(28.0, 22.0, 102.0, 84.0)
-  let b = rectangle(74.0, 50.0, 142.0, 98.0)
-  let assert Ok(a_minus_b) =
-    csg.difference(a, minus: b, using: svg_path.Nonzero)
-  let assert Ok(b_minus_a) =
-    csg.difference(b, minus: a, using: svg_path.Nonzero)
-
-  theory_document(
-    "Difference is not symmetric",
-    2,
-    1,
-    [
-      theory_result_panel(0, 0, "difference(A, B)", a_minus_b, svg_path.Nonzero),
-      theory_result_panel(1, 0, "difference(B, A)", b_minus_a, svg_path.Nonzero),
-    ]
-      |> list.flatten,
-  )
-}
-
 fn render_theory_output_orientation() -> String {
   let ring = nested_theory_path(inner_same_direction: False)
 
@@ -1193,6 +1169,23 @@ fn render_adjacent_offset_squares_union() -> String {
     [
       theory_input_panel(0, 0, "Inputs", a, b),
       theory_result_panel(1, 0, "union(A, B)", union, svg_path.Nonzero),
+    ]
+      |> list.flatten,
+  )
+}
+
+fn render_four_squares_empty_right_operand() -> String {
+  let paths = visual_four_translated_square_paths()
+  let path = svg_path.combine_paths(paths)
+  let assert Ok(union) = union_paths(paths)
+
+  theory_document(
+    "Four squares union: Nonzero",
+    2,
+    1,
+    [
+      theory_result_panel(0, 0, "path", path, svg_path.Nonzero),
+      theory_result_panel(1, 0, "union: Nonzero", union, svg_path.Nonzero),
     ]
       |> list.flatten,
   )
@@ -1309,6 +1302,33 @@ fn effect_rectangles() -> List(svg_path.Path) {
     rectangle(112.0, 58.0, 166.0, 108.0),
     rectangle(72.0, 42.0, 132.0, 78.0),
   ]
+}
+
+fn visual_four_translated_square_paths() -> List(svg_path.Path) {
+  let square = rectangle(0.0, 0.0, 2.0, 2.0)
+  translated_copies(square, [
+    #(0.0, 0.0),
+    #(2.0, 1.0),
+    #(1.0, 3.0),
+    #(-1.0, 2.0),
+  ])
+  |> list.map(fn(path) {
+    let assert Ok(scaled) = transform.scale_path(path, factor: 14.0)
+    let assert Ok(placed) = transform.translate_path(scaled, x: 64.0, y: 27.0)
+    placed
+  })
+}
+
+fn translated_copies(
+  path: svg_path.Path,
+  offsets: List(#(Float, Float)),
+) -> List(svg_path.Path) {
+  offsets
+  |> list.map(fn(offset) {
+    let #(x, y) = offset
+    let assert Ok(translated) = transform.translate_path(path, x:, y:)
+    translated
+  })
 }
 
 fn effect_ellipses() -> List(svg_path.Path) {

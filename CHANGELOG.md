@@ -11,8 +11,19 @@ the tag object.
 
 ## Unreleased
 
+## 0.14.1 - 2026-07-17
+
+- Removed the README difference-asymmetry CSG figure and its generated visual
+  fixture.
+- Tightened README figure workflow notes for `markdown-assets`.
+
+## 0.14.0 - 2026-07-17
+
 - Added `csg.simplify_nonzero_output` for removing internal contour-depth
   boundaries from CSG results while preserving the `Nonzero` filled set.
+- Added rounded-corner path effects and generated fixtures showing raw CSG
+  contour output before and after rounding.
+- Refined generated CSG README figures and orientation arrows.
 
 ## 0.13.2 - 2026-07-16
 
