@@ -1765,6 +1765,15 @@ changes in absolute contour depth inside the filled set may be preserved: a
 nested contour can remain visible in `union` even when both sides are filled
 blue.
 
+For example, the middle panel below is the raw `Nonzero` union of seven
+overlapping rectangles. It keeps internal contour-depth lines. The right panel
+applies `effects.round_corners_with` to that returned path, so the same contour
+structure is visible with rounded corners.
+
+<center>
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/effects_rounded_rectangle_union.svg" alt="Raw and rounded union of overlapping rectangles">
+</center>
+
 Call `csg.simplify_nonzero_output(path)` when you want to remove those
 internal contour-depth boundaries after a CSG operation. It keeps boundaries
 that separate filled and unfilled regions under `Nonzero`, removes boundaries
