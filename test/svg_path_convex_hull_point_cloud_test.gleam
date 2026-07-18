@@ -179,7 +179,7 @@ fn path_point_cloud_is_valid_with_repair_mode(
     |> list.map(fn(point) { svg_path.empty_subpath(at: point) })
     |> svg_path.Path
 
-  case convex_hull.test_path_hull_with_repair_mode(path, repair_mode:) {
+  case convex_hull.internal_path_hull_with_repair_mode(path, repair_mode:) {
     Error(_) -> False
     Ok(hull) -> point_cloud_hull_is_valid(points, hull)
   }
@@ -197,7 +197,7 @@ fn crescent_path_is_valid_in_all_modes(
   repair_modes_to_check
   |> list.all(fn(repair_mode) {
     case
-      convex_hull.test_path_hull_with_repair_mode(
+      convex_hull.internal_path_hull_with_repair_mode(
         crescent_path(points, line_start: start, line_end: end),
         repair_mode:,
       )
@@ -248,7 +248,7 @@ fn original_points_are_inside_hull(
 ) -> Bool {
   points
   |> list.all(fn(point) {
-    convex_hull.test_point_chord_polygon_loop_separation(
+    convex_hull.internal_point_chord_polygon_loop_separation(
       svg_path.segments(hull),
       point:,
     )

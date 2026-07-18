@@ -231,7 +231,7 @@ pub fn segment_hull(
 }
 
 @internal
-pub fn test_segment_support(
+pub fn internal_segment_support(
   segment: svg_path.Segment,
   angle angle: Float,
 ) -> Result(#(Float, svg_path.Point, Float), svg_path.Error) {
@@ -240,7 +240,7 @@ pub fn test_segment_support(
 }
 
 @internal
-pub fn test_brute_segment_support(
+pub fn internal_brute_segment_support(
   segment: svg_path.Segment,
   angle angle: Float,
 ) -> Result(#(Float, svg_path.Point, Float), svg_path.Error) {
@@ -249,7 +249,7 @@ pub fn test_brute_segment_support(
 }
 
 @internal
-pub fn test_point_chord_polygon_loop_separation(
+pub fn internal_point_chord_polygon_loop_separation(
   segments: List(svg_path.Segment),
   point point: svg_path.Point,
 ) -> Option(#(Float, svg_path.Point)) {
@@ -257,7 +257,7 @@ pub fn test_point_chord_polygon_loop_separation(
 }
 
 @internal
-pub fn test_point_chord_polygon_tangent_subpaths(
+pub fn internal_point_chord_polygon_tangent_subpaths(
   segments: List(svg_path.Segment),
   point point: svg_path.Point,
 ) -> Result(#(svg_path.Subpath, svg_path.Subpath), HullError) {
@@ -265,7 +265,7 @@ pub fn test_point_chord_polygon_tangent_subpaths(
 }
 
 @internal
-pub fn test_point_exact_loop_tangent_subpaths(
+pub fn internal_point_exact_loop_tangent_subpaths(
   segments: List(svg_path.Segment),
   point point: svg_path.Point,
 ) -> Result(#(svg_path.Subpath, svg_path.Subpath), HullError) {
@@ -273,7 +273,7 @@ pub fn test_point_exact_loop_tangent_subpaths(
 }
 
 @internal
-pub fn test_loop_plus_point_hull(
+pub fn internal_loop_plus_point_hull(
   segments: List(svg_path.Segment),
   point point: svg_path.Point,
 ) -> Result(List(svg_path.Segment), HullError) {
@@ -283,7 +283,7 @@ pub fn test_loop_plus_point_hull(
 }
 
 @internal
-pub fn test_loop_plus_points_hull(
+pub fn internal_loop_plus_points_hull(
   segments: List(svg_path.Segment),
   points points: List(svg_path.Point),
 ) -> Result(List(svg_path.Segment), HullError) {
@@ -293,7 +293,7 @@ pub fn test_loop_plus_points_hull(
 }
 
 @internal
-pub fn test_path_hull_with_repair_mode(
+pub fn internal_path_hull_with_repair_mode(
   path: svg_path.Path,
   repair_mode repair_mode: String,
 ) -> Result(svg_path.Subpath, HullError) {
@@ -308,7 +308,7 @@ pub fn test_path_hull_with_repair_mode(
 }
 
 @internal
-pub fn test_ambitious_repair_loop_with_loop(
+pub fn internal_ambitious_repair_loop_with_loop(
   current: List(svg_path.Segment),
   addition addition: List(svg_path.Segment),
 ) -> Result(List(svg_path.Segment), HullError) {
@@ -321,7 +321,7 @@ pub fn test_ambitious_repair_loop_with_loop(
 }
 
 @internal
-pub fn test_find_seeded_worst_direction(
+pub fn internal_find_seeded_worst_direction(
   loop_a: List(svg_path.Segment),
   loop_b: List(svg_path.Segment),
   direction direction: Float,
@@ -336,7 +336,7 @@ pub fn test_find_seeded_worst_direction(
 }
 
 @internal
-pub fn test_loop_initial_sample_angles(
+pub fn internal_loop_initial_sample_angles(
   sample_count: Int,
   seed_angles seed_angles: List(Float),
 ) -> List(Float) {
@@ -344,7 +344,7 @@ pub fn test_loop_initial_sample_angles(
 }
 
 @internal
-pub fn test_loop_union_segments_with_seed_angles(
+pub fn internal_loop_union_segments_with_seed_angles(
   loop_a: List(svg_path.Segment),
   loop_b: List(svg_path.Segment),
   seed_angles seed_angles: List(Float),
@@ -361,7 +361,7 @@ pub fn test_loop_union_segments_with_seed_angles(
 }
 
 @internal
-pub fn test_segment_tangent_monotone(
+pub fn internal_segment_tangent_monotone(
   segment: svg_path.Segment,
   clockwise clockwise: Bool,
 ) -> Result(Nil, Float) {
@@ -372,7 +372,7 @@ pub fn test_segment_tangent_monotone(
 }
 
 @internal
-pub fn test_point_loop_view(
+pub fn internal_point_loop_view(
   point point: svg_path.Point,
   at q: svg_path.Point,
   arriving arriving: svg_path.Point,

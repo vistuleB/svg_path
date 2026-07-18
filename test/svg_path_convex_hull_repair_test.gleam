@@ -11,7 +11,7 @@ pub fn seeded_worst_direction_stays_put_at_local_maximum_test() {
   let b = point_loop(svg_path.point(1.0, 0.0))
 
   let assert Ok(#(lower, upper)) =
-    convex_hull.test_find_seeded_worst_direction(
+    convex_hull.internal_find_seeded_worst_direction(
       a,
       b,
       direction: 0.0,
@@ -27,7 +27,7 @@ pub fn seeded_worst_direction_walks_to_local_maximum_test() {
   let b = point_loop(svg_path.point(1.0, 0.0))
 
   let assert Ok(#(lower, upper)) =
-    convex_hull.test_find_seeded_worst_direction(
+    convex_hull.internal_find_seeded_worst_direction(
       a,
       b,
       direction: 5.0,
@@ -43,7 +43,7 @@ pub fn seeded_worst_direction_stays_within_max_drift_test() {
   let b = point_loop(svg_path.point(1.0, 0.0))
 
   let assert Ok(#(lower, upper)) =
-    convex_hull.test_find_seeded_worst_direction(
+    convex_hull.internal_find_seeded_worst_direction(
       a,
       b,
       direction: 5.0,
@@ -55,7 +55,7 @@ pub fn seeded_worst_direction_stays_within_max_drift_test() {
 }
 
 pub fn loop_initial_sample_angles_merges_sorted_seed_angles_test() {
-  assert convex_hull.test_loop_initial_sample_angles(4, seed_angles: [
+  assert convex_hull.internal_loop_initial_sample_angles(4, seed_angles: [
       45.0,
       225.0,
     ])
@@ -63,7 +63,7 @@ pub fn loop_initial_sample_angles_merges_sorted_seed_angles_test() {
 }
 
 pub fn loop_initial_sample_angles_normalizes_seed_angles_test() {
-  assert convex_hull.test_loop_initial_sample_angles(4, seed_angles: [
+  assert convex_hull.internal_loop_initial_sample_angles(4, seed_angles: [
       -90.0,
       405.0,
     ])
@@ -71,7 +71,7 @@ pub fn loop_initial_sample_angles_normalizes_seed_angles_test() {
 }
 
 pub fn loop_initial_sample_angles_removes_near_seed_angles_test() {
-  assert convex_hull.test_loop_initial_sample_angles(4, seed_angles: [
+  assert convex_hull.internal_loop_initial_sample_angles(4, seed_angles: [
       45.0,
       45.01,
     ])
@@ -79,7 +79,7 @@ pub fn loop_initial_sample_angles_removes_near_seed_angles_test() {
 }
 
 pub fn loop_initial_sample_angles_removes_wraparound_duplicates_test() {
-  assert convex_hull.test_loop_initial_sample_angles(4, seed_angles: [
+  assert convex_hull.internal_loop_initial_sample_angles(4, seed_angles: [
       -0.0005,
     ])
     == [0.0, 90.0, 180.0, 270.0]
@@ -87,7 +87,7 @@ pub fn loop_initial_sample_angles_removes_wraparound_duplicates_test() {
 
 pub fn loop_union_with_seed_angles_removes_zero_length_endpoint_pieces_test() {
   let segments =
-    convex_hull.test_loop_union_segments_with_seed_angles(
+    convex_hull.internal_loop_union_segments_with_seed_angles(
       big_line_loop(),
       tiny_arc_loop(),
       seed_angles: [
@@ -109,7 +109,7 @@ pub fn loop_union_with_seed_angles_removes_zero_length_endpoint_pieces_test() {
 
 pub fn ambitious_repair_loop_with_loop_adds_tiny_arc_slice_test() {
   let assert Ok(segments) =
-    convex_hull.test_ambitious_repair_loop_with_loop(
+    convex_hull.internal_ambitious_repair_loop_with_loop(
       big_line_loop(),
       addition: tiny_arc_loop(),
     )
@@ -159,7 +159,7 @@ pub fn path_hull_handles_scaled_two_arc_probe_test() {
 // missed support directions and preserve a small arc slice in the final hull.
 pub fn path_hull_with_dumb_repair_mode_handles_line_arc_probe_test() {
   let assert Ok(hull) =
-    convex_hull.test_path_hull_with_repair_mode(
+    convex_hull.internal_path_hull_with_repair_mode(
       line_arc_probe_path(),
       repair_mode: "dumb",
     )
@@ -170,7 +170,7 @@ pub fn path_hull_with_dumb_repair_mode_handles_line_arc_probe_test() {
 
 pub fn path_hull_with_ambitious_repair_mode_handles_line_arc_probe_test() {
   let assert Ok(hull) =
-    convex_hull.test_path_hull_with_repair_mode(
+    convex_hull.internal_path_hull_with_repair_mode(
       line_arc_probe_path(),
       repair_mode: "ambitious",
     )
@@ -242,7 +242,7 @@ fn line_arc_probe_arc_endpoints_are_inside_hull(
 ) -> Bool {
   line_arc_probe_arc_endpoints()
   |> list.all(fn(point) {
-    convex_hull.test_point_chord_polygon_loop_separation(
+    convex_hull.internal_point_chord_polygon_loop_separation(
       svg_path.segments(hull),
       point:,
     )

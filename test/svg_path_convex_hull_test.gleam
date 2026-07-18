@@ -97,7 +97,7 @@ fn support_values_match(
   support.octant_angles()
   |> list.all(fn(angle) {
     case
-      convex_hull.test_segment_support(segment, angle: angle),
+      convex_hull.internal_segment_support(segment, angle: angle),
       support.segments_support_value(svg_path.segments(hull), angle)
     {
       Ok(#(_, _, original)), Ok(hull) ->

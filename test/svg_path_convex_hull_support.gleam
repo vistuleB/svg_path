@@ -40,12 +40,15 @@ pub fn segments_support_value(
   case segments {
     [] -> Error(svg_path.EmptySubpath)
     [first, ..rest] -> {
-      use first <- result.try(convex_hull.test_segment_support(first, angle:))
+      use first <- result.try(convex_hull.internal_segment_support(
+        first,
+        angle:,
+      ))
       let #(_, _, first_value) = first
       rest
       |> list.fold(Ok(first_value), fn(best, segment) {
         use best <- result.try(best)
-        use sample <- result.try(convex_hull.test_segment_support(
+        use sample <- result.try(convex_hull.internal_segment_support(
           segment,
           angle:,
         ))
