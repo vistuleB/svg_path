@@ -1,9 +1,8 @@
 # Notes
 
-## Library Shape and Next Steps for 0.15.0
+## Final Major Feature Candidates
 
-The library is now broader than SVG path parsing and serialization. Its public
-surface has four main layers:
+The library now covers much more than SVG path parsing and serialization:
 
 - Core path model: `Path`, `Subpath`, `Segment`, `Point`, construction,
   editing, splitting, joining, cleaning, parsing, serialization, and inspection.
@@ -14,31 +13,50 @@ surface has four main layers:
 - Output-side helpers: transform parsing/serialization, `basic_shapes`,
   `effects`, and the small `svg` drawing module for tests and examples.
 
-The current shape is coherent enough for continued 0.x releases, but the public
-surface is large enough that pruning should stay active before `1.0.0`.
+Two major features would make the package feel close to complete:
 
-Next-step observations for 0.15.0:
+1. Path offsets.
+2. Path stroking, including dash arrays, caps, joins, marker/decorator
+   placement, and SVG-style stroke semantics.
 
-- Keep `svg_path` as the large convenience module for now. Moving functions too
-  aggressively would make common path workflows harder to discover.
+After those, the remaining useful feature areas are probably smaller and more
+selective:
+
+- Path normalization or canonicalization pipelines. This would gather existing
+  operations such as arc-to-cubic conversion, curve linearization,
+  zero-length cleanup, empty-subpath handling, and maybe fill-rule orientation
+  normalization behind clear public presets.
+- Structural simplification, not smoothing. Reasonable package-level cleanup
+  includes merging adjacent collinear lines, removing redundant repeated points,
+  collapsing explicit backtracking when requested, and removing zero-length
+  artifacts according to the existing move-only semantics. Curve fitting,
+  smoothing, and aesthetic simplification should probably live in specialized
+  packages.
+- Stroke hit testing. If stroking returns a filled outline, callers can already
+  use containment on the produced path, but direct helpers for "point inside
+  stroke" or "point near stroked path" may still be ergonomic.
+- Orientation and topology helpers. Some CSG internals may be worth exposing in
+  smaller form: classify subpath orientation, orient clockwise/counterclockwise,
+  group nested contours, or distinguish outer contours from holes under a fill
+  rule.
+- Marker and decoration placement as geometry. This overlaps with stroking but
+  is not identical: `marker-start`, `marker-mid`, `marker-end`, repeated
+  decorations along length, tangent extraction, and arrowheads converted to
+  paths can be valuable independently.
+
+Ongoing pruning principles:
+
+- Keep `svg_path` as the large convenience module unless a smaller module has a
+  very clear separate identity.
 - Keep implementation-heavy modules like `convex_hull` and `csg` behind concise
   README explanations plus module docs. The README should teach concepts and
   show pictures, not repeat every option type.
-- `effects` is the right home for artistic one-off path rewrites such as rounded
-  corners. It should not become a second geometry module.
-- `clip` should remain distinct from CSG. Clipping removes portions of the input
-  curves and does not add boundary bridges from the clipping region.
-- CSG currently preserves contour information more than a minimal renderer
-  outline would. Keep `csg.simplify_nonzero_output` as the explicit cleanup tool
-  rather than making every operation silently discard internal contour lines.
-- Keep replacing local point/vector arithmetic with `vec/vec2f` when it improves
-  clarity, but do not force it into places where the code becomes harder to
-  read.
-- Avoid adding more public test-only helpers. When internals must be exposed to
+- Keep `clip` distinct from CSG. Clipping removes portions of input curves and
+  does not add boundary bridges from the clipping region.
+- Keep `effects` for artistic one-off path rewrites. It should not become a
+  second geometry module.
+- Do not add more public test-only helpers. When internals must be exposed to
   package tests, use `@internal` and names that do not look like public API.
-- The test suite is now split beyond the original catch-all
-  `test/svg_path_test.gleam`; continue splitting by feature when a section
-  grows large enough to hide failures.
 
 ## Move-Only vs Closed Zero-Length Subpaths
 
