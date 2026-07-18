@@ -187,9 +187,25 @@ pub type IntersectionOptions {
   IntersectionOptions(tolerance: Float, max_depth: Int)
 }
 
+/// Options for finding self-intersections in one subpath.
+pub type SelfIntersectionOptions {
+  SelfIntersectionOptions(
+    minimum_arc_length_separation: Float,
+    distance_tolerance: Float,
+  )
+}
+
 /// A point intersection between two segments.
 pub type SegmentIntersection {
   SegmentIntersection(left_t: Float, right_t: Float, point: Point)
+}
+
+/// A point where a subpath intersects itself.
+pub type SubpathSelfIntersection {
+  SubpathSelfIntersection(
+    point: Point,
+    parameters: #(SubpathParameter, SubpathParameter),
+  )
 }
 
 /// A point intersection between two subpaths.
@@ -465,6 +481,12 @@ pub type Error {
   /// The intersection subdivision depth must be greater than zero.
   InvalidIntersectionMaxDepth(max_depth: Int)
 
+  /// The self-intersection minimum arc length separation must be greater than zero.
+  InvalidSelfIntersectionMinimumArcLengthSeparation(Float)
+
+  /// The self-intersection distance tolerance must be greater than zero.
+  InvalidSelfIntersectionDistanceTolerance(Float)
+
   /// The two segments overlap in more than a single point.
   OverlappingSegments
 
@@ -540,6 +562,14 @@ pub fn default_intersection_options() -> IntersectionOptions {
   IntersectionOptions(
     tolerance: default_intersection_tolerance,
     max_depth: default_intersection_max_depth,
+  )
+}
+
+/// Return the default options for subpath self-intersection detection.
+pub fn default_self_intersection_options() -> SelfIntersectionOptions {
+  SelfIntersectionOptions(
+    minimum_arc_length_separation: default_intersection_tolerance,
+    distance_tolerance: default_intersection_tolerance,
   )
 }
 
@@ -2334,6 +2364,49 @@ pub fn segment_subpath_intersections_with(
   Ok(sort_segment_subpath_intersections(intersections))
 }
 
+/// Return point intersections where a subpath intersects itself.
+///
+/// Results are ordered by the first parameter. Adjacent segment endpoints are
+/// filtered by arc-length separation, so ordinary segment joins are not
+/// reported as self-intersections.
+pub fn subpath_self_intersections(
+  subpath: Subpath,
+) -> Result(List(SubpathSelfIntersection), Error) {
+  subpath_self_intersections_with(
+    subpath,
+    options: default_self_intersection_options(),
+  )
+}
+
+/// Return point intersections where a subpath intersects itself using explicit
+/// options.
+pub fn subpath_self_intersections_with(
+  subpath: Subpath,
+  options options: SelfIntersectionOptions,
+) -> Result(List(SubpathSelfIntersection), Error) {
+  use _ <- result.try(validate_self_intersection_options(options))
+  use total_length <- result.try(subpath_length(subpath))
+  use indexed_segments <- result.try(
+    indexed_segments_with_lengths(
+      subpath.segments,
+      index: 0,
+      prefix: 0.0,
+      accumulated: [],
+    ),
+  )
+  use intersections <- result.try(
+    collect_subpath_self_intersections(
+      indexed_segments,
+      subpath.closed,
+      total_length,
+      options,
+      found: [],
+    ),
+  )
+
+  Ok(sort_subpath_self_intersections(intersections))
+}
+
 /// Return the point intersections between two subpaths.
 ///
 /// Each result contains an intersection point and every corresponding
@@ -4093,6 +4166,26 @@ fn validate_intersection_options(
   }
 }
 
+fn validate_self_intersection_options(
+  options: SelfIntersectionOptions,
+) -> Result(Nil, Error) {
+  case options.minimum_arc_length_separation <=. 0.0 {
+    True ->
+      Error(InvalidSelfIntersectionMinimumArcLengthSeparation(
+        options.minimum_arc_length_separation,
+      ))
+    False -> {
+      case options.distance_tolerance <=. 0.0 {
+        True ->
+          Error(InvalidSelfIntersectionDistanceTolerance(
+            options.distance_tolerance,
+          ))
+        False -> Ok(Nil)
+      }
+    }
+  }
+}
+
 fn segment_intersections_valid_options(
   left: Segment,
   right: Segment,
@@ -4126,6 +4219,468 @@ fn segment_intersections_valid_options(
         options:,
       )
     _, _ -> curve_curve_intersections(left, right, options)
+  }
+}
+
+type IndexedSegment {
+  IndexedSegment(
+    index: Int,
+    segment: Segment,
+    prefix_length: Float,
+    length: Float,
+  )
+}
+
+fn indexed_segments_with_lengths(
+  segments: List(Segment),
+  index index: Int,
+  prefix prefix: Float,
+  accumulated accumulated: List(IndexedSegment),
+) -> Result(List(IndexedSegment), Error) {
+  case segments {
+    [] -> Ok(list.reverse(accumulated))
+    [first, ..rest] -> {
+      use length <- result.try(segment_length(first))
+      indexed_segments_with_lengths(
+        rest,
+        index: index + 1,
+        prefix: prefix +. length,
+        accumulated: [
+          IndexedSegment(index:, segment: first, prefix_length: prefix, length:),
+          ..accumulated
+        ],
+      )
+    }
+  }
+}
+
+fn collect_subpath_self_intersections(
+  segments: List(IndexedSegment),
+  closed: Bool,
+  total_length: Float,
+  options: SelfIntersectionOptions,
+  found found: List(SubpathSelfIntersection),
+) -> Result(List(SubpathSelfIntersection), Error) {
+  case segments {
+    [] -> Ok(found)
+    [first, ..rest] -> {
+      use found <- result.try(collect_single_segment_self_intersections(
+        first,
+        options,
+        found:,
+      ))
+      use found <- result.try(collect_segment_pair_self_intersections(
+        first,
+        rest,
+        closed,
+        total_length,
+        options,
+        found:,
+      ))
+      collect_subpath_self_intersections(
+        rest,
+        closed,
+        total_length,
+        options,
+        found:,
+      )
+    }
+  }
+}
+
+fn collect_single_segment_self_intersections(
+  segment: IndexedSegment,
+  options: SelfIntersectionOptions,
+  found found: List(SubpathSelfIntersection),
+) -> Result(List(SubpathSelfIntersection), Error) {
+  case segment.segment {
+    CubicBezier(..) -> {
+      let bezier_options =
+        bezier.CubicSelfIntersectionOptions(
+          minimum_arc_length_separation: options.minimum_arc_length_separation,
+          distance_tolerance: options.distance_tolerance,
+        )
+      case
+        segment.segment
+        |> segment_to_bezier_data
+        |> bezier.cubic_self_intersections_with(options: bezier_options)
+      {
+        Error(error) -> Error(bezier_self_intersection_error(error))
+        Ok(intersections) -> {
+          Ok(
+            list.fold(intersections, found, fn(found, intersection) {
+              let bezier.CubicSelfIntersection(s:, t:, point:) = intersection
+              insert_subpath_self_intersection(
+                found,
+                point: from_bezier_point(point),
+                first: SubpathParameter(segment_index: segment.index, t: s),
+                second: SubpathParameter(segment_index: segment.index, t: t),
+                tolerance: options.distance_tolerance,
+              )
+            }),
+          )
+        }
+      }
+    }
+    Line(..) | QuadraticBezier(..) | Arc(..) -> Ok(found)
+  }
+}
+
+fn collect_segment_pair_self_intersections(
+  left: IndexedSegment,
+  rights: List(IndexedSegment),
+  closed: Bool,
+  total_length: Float,
+  options: SelfIntersectionOptions,
+  found found: List(SubpathSelfIntersection),
+) -> Result(List(SubpathSelfIntersection), Error) {
+  case rights {
+    [] -> Ok(found)
+    [right, ..rest] -> {
+      use found <- result.try(collect_segment_pair_self_intersections_one(
+        left,
+        right,
+        closed,
+        total_length,
+        options,
+        found:,
+      ))
+      collect_segment_pair_self_intersections(
+        left,
+        rest,
+        closed,
+        total_length,
+        options,
+        found:,
+      )
+    }
+  }
+}
+
+fn collect_segment_pair_self_intersections_one(
+  left: IndexedSegment,
+  right: IndexedSegment,
+  closed: Bool,
+  total_length: Float,
+  options: SelfIntersectionOptions,
+  found found: List(SubpathSelfIntersection),
+) -> Result(List(SubpathSelfIntersection), Error) {
+  use left_box <- result.try(coarse_segment_bounding_box(left.segment))
+  use right_box <- result.try(coarse_segment_bounding_box(right.segment))
+
+  case boxes_overlap(left_box, right_box, options.distance_tolerance) {
+    False -> Ok(found)
+    True -> {
+      let intersection_options =
+        IntersectionOptions(
+          tolerance: options.distance_tolerance,
+          max_depth: default_intersection_max_depth,
+        )
+      use intersections <- result.try(
+        case
+          segment_intersections_valid_options(
+            left.segment,
+            right.segment,
+            intersection_options,
+          )
+        {
+          Ok(intersections) -> Ok(intersections)
+          Error(OverlappingSegments) ->
+            overlapping_self_intersections(
+              left.segment,
+              right.segment,
+              options.distance_tolerance,
+            )
+          Error(error) -> Error(error)
+        },
+      )
+
+      Ok(
+        list.fold(intersections, found, fn(found, intersection) {
+          insert_segment_pair_self_intersection(
+            found,
+            intersection,
+            left,
+            right,
+            closed,
+            total_length,
+            options,
+          )
+        }),
+      )
+    }
+  }
+}
+
+fn insert_segment_pair_self_intersection(
+  found: List(SubpathSelfIntersection),
+  intersection: SegmentIntersection,
+  left: IndexedSegment,
+  right: IndexedSegment,
+  closed: Bool,
+  total_length: Float,
+  options: SelfIntersectionOptions,
+) -> List(SubpathSelfIntersection) {
+  let first =
+    SubpathParameter(segment_index: left.index, t: intersection.left_t)
+  let second =
+    SubpathParameter(segment_index: right.index, t: intersection.right_t)
+
+  case
+    subpath_arc_length_separation(
+      left,
+      intersection.left_t,
+      right,
+      intersection.right_t,
+      closed,
+      total_length,
+    )
+    >=. options.minimum_arc_length_separation
+  {
+    False -> found
+    True ->
+      insert_subpath_self_intersection(
+        found,
+        point: intersection.point,
+        first:,
+        second:,
+        tolerance: options.distance_tolerance,
+      )
+  }
+}
+
+fn overlapping_self_intersections(
+  left: Segment,
+  right: Segment,
+  tolerance: Float,
+) -> Result(List(SegmentIntersection), Error) {
+  case left, right {
+    Line(start: left_start, end: left_end),
+      Line(start: right_start, end: right_end)
+    ->
+      overlapping_line_self_intersections(
+        left_start,
+        left_end,
+        right_start,
+        right_end,
+        tolerance,
+      )
+    _, _ -> Error(OverlappingSegments)
+  }
+}
+
+fn overlapping_line_self_intersections(
+  left_start: Point,
+  left_end: Point,
+  right_start: Point,
+  right_end: Point,
+  tolerance: Float,
+) -> Result(List(SegmentIntersection), Error) {
+  let right_start_t = line_projection_t(right_start, left_start, left_end)
+  let right_end_t = line_projection_t(right_end, left_start, left_end)
+  let overlap_start = float.max(0.0, float.min(right_start_t, right_end_t))
+  let overlap_end = float.min(1.0, float.max(right_start_t, right_end_t))
+
+  case overlap_end <. overlap_start -. tolerance {
+    True -> Ok([])
+    False -> {
+      let start = clamp01(overlap_start)
+      let end = clamp01(overlap_end)
+      case end -. start <=. tolerance {
+        True -> {
+          let point = interpolate(left_start, left_end, start)
+          Ok([
+            SegmentIntersection(
+              left_t: start,
+              right_t: line_projection_t(point, right_start, right_end)
+                |> clamp01,
+              point:,
+            ),
+          ])
+        }
+        False -> {
+          let start_point = interpolate(left_start, left_end, start)
+          let end_point = interpolate(left_start, left_end, end)
+          Ok([
+            SegmentIntersection(
+              left_t: start,
+              right_t: line_projection_t(start_point, right_start, right_end)
+                |> clamp01,
+              point: start_point,
+            ),
+            SegmentIntersection(
+              left_t: end,
+              right_t: line_projection_t(end_point, right_start, right_end)
+                |> clamp01,
+              point: end_point,
+            ),
+          ])
+        }
+      }
+    }
+  }
+}
+
+fn subpath_arc_length_separation(
+  left: IndexedSegment,
+  left_t: Float,
+  right: IndexedSegment,
+  right_t: Float,
+  closed: Bool,
+  total_length: Float,
+) -> Float {
+  let first = absolute_subpath_length_at(left, left_t)
+  let second = absolute_subpath_length_at(right, right_t)
+  let separation = float.absolute_value(second -. first)
+
+  case closed && total_length >. 0.0 {
+    True -> float.min(separation, total_length -. separation)
+    False -> separation
+  }
+}
+
+fn absolute_subpath_length_at(segment: IndexedSegment, t: Float) -> Float {
+  segment.prefix_length +. segment_length_to_t(segment.segment, t)
+}
+
+fn segment_length_to_t(segment: Segment, t: Float) -> Float {
+  case t <=. 0.0 {
+    True -> 0.0
+    False ->
+      case t >=. 1.0 {
+        True -> {
+          let assert Ok(length) = segment_length(segment)
+          length
+        }
+        False -> {
+          let assert Ok(length) =
+            adaptive_segment_length_between(
+              segment,
+              from: 0.0,
+              to: t,
+              options: default_length_options(),
+            )
+          length
+        }
+      }
+  }
+}
+
+fn insert_subpath_self_intersection(
+  found: List(SubpathSelfIntersection),
+  point point: Point,
+  first first: SubpathParameter,
+  second second: SubpathParameter,
+  tolerance tolerance: Float,
+) -> List(SubpathSelfIntersection) {
+  let #(first, second) = ordered_subpath_parameter_pair(first, second)
+
+  case found {
+    [] -> [SubpathSelfIntersection(point:, parameters: #(first, second))]
+    [existing, ..rest] -> {
+      let SubpathSelfIntersection(point: existing_point, parameters:) = existing
+      let #(existing_first, existing_second) = parameters
+      case
+        distance(existing_point, point) <=. tolerance
+        && same_subpath_parameter_pair(
+          first,
+          second,
+          existing_first,
+          existing_second,
+          tolerance,
+        )
+      {
+        True -> found
+        False -> [
+          existing,
+          ..insert_subpath_self_intersection(
+            rest,
+            point:,
+            first:,
+            second:,
+            tolerance:,
+          )
+        ]
+      }
+    }
+  }
+}
+
+fn same_subpath_parameter_pair(
+  first: SubpathParameter,
+  second: SubpathParameter,
+  existing_first: SubpathParameter,
+  existing_second: SubpathParameter,
+  tolerance: Float,
+) -> Bool {
+  same_subpath_parameter(first, existing_first, tolerance)
+  && same_subpath_parameter(second, existing_second, tolerance)
+}
+
+fn same_subpath_parameter(
+  left: SubpathParameter,
+  right: SubpathParameter,
+  tolerance: Float,
+) -> Bool {
+  let SubpathParameter(segment_index: left_index, t: left_t) = left
+  let SubpathParameter(segment_index: right_index, t: right_t) = right
+  left_index == right_index
+  && float.absolute_value(left_t -. right_t) <=. tolerance
+}
+
+fn ordered_subpath_parameter_pair(
+  first: SubpathParameter,
+  second: SubpathParameter,
+) -> #(SubpathParameter, SubpathParameter) {
+  case compare_subpath_parameters(first, second) {
+    order.Gt -> #(second, first)
+    order.Lt | order.Eq -> #(first, second)
+  }
+}
+
+fn sort_subpath_self_intersections(
+  intersections: List(SubpathSelfIntersection),
+) -> List(SubpathSelfIntersection) {
+  intersections
+  |> list.sort(by: fn(a, b) {
+    let SubpathSelfIntersection(parameters: a_parameters, ..) = a
+    let SubpathSelfIntersection(parameters: b_parameters, ..) = b
+    let #(a_first, a_second) = a_parameters
+    let #(b_first, b_second) = b_parameters
+
+    case compare_subpath_parameters(a_first, b_first) {
+      order.Eq -> compare_subpath_parameters(a_second, b_second)
+      order -> order
+    }
+  })
+}
+
+fn coarse_segment_bounding_box(segment: Segment) -> Result(BoundingBox, Error) {
+  case segment {
+    Line(start:, end:) -> Ok(assert_points_bounding_box([start, end]))
+    QuadraticBezier(start:, control:, end:) ->
+      Ok(assert_points_bounding_box([start, control, end]))
+    CubicBezier(start:, control1:, control2:, end:) ->
+      Ok(assert_points_bounding_box([start, control1, control2, end]))
+    Arc(..) -> segment_bounding_box(segment)
+  }
+}
+
+fn assert_points_bounding_box(points: List(Point)) -> BoundingBox {
+  let assert Ok(box) = points_bounding_box(points)
+  box
+}
+
+fn bezier_self_intersection_error(error: bezier.Error) -> Error {
+  case error {
+    bezier.InvalidCubicSelfIntersectionMinimumArcLengthSeparation(value) ->
+      InvalidSelfIntersectionMinimumArcLengthSeparation(value)
+    bezier.InvalidCubicSelfIntersectionDistanceTolerance(value) ->
+      InvalidSelfIntersectionDistanceTolerance(value)
+    bezier.SplitOutsideBezier
+    | bezier.DegenerateTangent
+    | bezier.UnderdeterminedCubicFit ->
+      InvalidSelfIntersectionDistanceTolerance(0.0)
   }
 }
 
@@ -4808,7 +5363,11 @@ fn collect_curve_curve_intersections(
           {
             True -> {
               case
-                chord_intersections_from_pieces(left, right, options.tolerance)
+                minimized_intersections_from_pieces(
+                  left,
+                  right,
+                  intersection_piece_tolerance(left, right, options.tolerance),
+                )
               {
                 Error(error) -> Error(error)
                 Ok(found) ->
@@ -4892,67 +5451,291 @@ fn split_intersection_piece(
   )
 }
 
-fn intersection_from_pieces(
-  left: IntersectionPiece,
-  right: IntersectionPiece,
-) -> Result(SegmentIntersection, Error) {
-  let left_t = { left.from +. left.to } /. 2.0
-  let right_t = { right.from +. right.to } /. 2.0
-
-  case
-    segment_point(left.segment, at: 0.5),
-    segment_point(right.segment, at: 0.5)
-  {
-    Error(error), _ | _, Error(error) -> Error(error)
-    Ok(left_point), Ok(right_point) ->
-      Ok(SegmentIntersection(
-        left_t:,
-        right_t:,
-        point: midpoint(left_point, right_point),
-      ))
-  }
-}
-
-fn chord_intersections_from_pieces(
+fn minimized_intersections_from_pieces(
   left: IntersectionPiece,
   right: IntersectionPiece,
   tolerance: Float,
 ) -> Result(List(SegmentIntersection), Error) {
-  let left_start = segment_start(left.segment)
-  let left_end = segment_end(left.segment)
-  let right_start = segment_start(right.segment)
-  let right_end = segment_end(right.segment)
+  use best <- result.try(best_piece_distance(
+    left.segment,
+    right.segment,
+    tolerance,
+  ))
+  let #(left_local_t, right_local_t, distance_squared) = best
 
-  case
-    line_line_intersections(
-      left_start,
-      left_end,
-      right_start,
-      right_end,
-      tolerance,
-    )
-  {
-    Ok(intersections) ->
-      Ok(
-        list.map(intersections, fn(intersection) {
-          SegmentIntersection(
-            left_t: interpolate_float(left.from, left.to, intersection.left_t),
-            right_t: interpolate_float(
-              right.from,
-              right.to,
-              intersection.right_t,
+  case distance_squared <=. tolerance *. tolerance {
+    False -> Ok([])
+    True -> {
+      case
+        segment_point(left.segment, at: left_local_t),
+        segment_point(right.segment, at: right_local_t)
+      {
+        Error(error), _ | _, Error(error) -> Error(error)
+        Ok(left_point), Ok(right_point) ->
+          Ok([
+            SegmentIntersection(
+              left_t: interpolate_float(left.from, left.to, left_local_t),
+              right_t: interpolate_float(right.from, right.to, right_local_t),
+              point: midpoint(left_point, right_point),
             ),
-            point: intersection.point,
-          )
-        }),
-      )
-    Error(OverlappingSegments) -> {
-      case intersection_from_pieces(left, right) {
-        Error(error) -> Error(error)
-        Ok(intersection) -> Ok([intersection])
+          ])
       }
     }
-    Error(error) -> Error(error)
+  }
+}
+
+fn intersection_piece_tolerance(
+  left: IntersectionPiece,
+  right: IntersectionPiece,
+  tolerance: Float,
+) -> Float {
+  case segment_bounding_box(left.segment), segment_bounding_box(right.segment) {
+    Ok(left_box), Ok(right_box) ->
+      float.max(
+        tolerance,
+        float.max(
+          bounding_box_diameter(left_box),
+          bounding_box_diameter(right_box),
+        ),
+      )
+    _, _ -> tolerance
+  }
+}
+
+fn best_piece_distance(
+  left: Segment,
+  right: Segment,
+  tolerance: Float,
+) -> Result(#(Float, Float, Float), Error) {
+  let starts = [#(0.0, 0.0), #(0.0, 1.0), #(1.0, 0.0), #(1.0, 1.0), #(0.5, 0.5)]
+  use best <- result.try(best_piece_distance_raw_start(
+    left,
+    right,
+    starts:,
+    best: Error(Nil),
+  ))
+  case best.2 <=. tolerance *. tolerance {
+    True -> Ok(best)
+    False ->
+      best_piece_distance_from_starts(left, right, starts:, best:, tolerance:)
+  }
+}
+
+fn best_piece_distance_raw_start(
+  left: Segment,
+  right: Segment,
+  starts starts: List(#(Float, Float)),
+  best best: Result(#(Float, Float, Float), Nil),
+) -> Result(#(Float, Float, Float), Error) {
+  case starts {
+    [] -> {
+      let assert Ok(best) = best
+      Ok(best)
+    }
+    [start, ..rest] -> {
+      let #(left_t, right_t) = start
+      use distance_squared <- result.try(segment_pair_distance_squared(
+        left,
+        left_t,
+        right,
+        right_t,
+      ))
+      let candidate = #(left_t, right_t, distance_squared)
+      let best = case best {
+        Error(_) -> Ok(candidate)
+        Ok(best) ->
+          case candidate.2 <. best.2 {
+            True -> Ok(candidate)
+            False -> Ok(best)
+          }
+      }
+      best_piece_distance_raw_start(left, right, starts: rest, best:)
+    }
+  }
+}
+
+fn best_piece_distance_from_starts(
+  left: Segment,
+  right: Segment,
+  starts starts: List(#(Float, Float)),
+  best best: #(Float, Float, Float),
+  tolerance tolerance: Float,
+) -> Result(#(Float, Float, Float), Error) {
+  case best.2 <=. tolerance *. tolerance, starts {
+    True, _ -> Ok(best)
+    _, [] -> Ok(best)
+    False, [start, ..rest] -> {
+      let #(left_t, right_t) = start
+      use candidate <- result.try(minimize_piece_distance(
+        left,
+        right,
+        left_t,
+        right_t,
+        tolerance:,
+        step: 0.25,
+        iterations: 24,
+      ))
+      let best = case candidate.2 <. best.2 {
+        True -> candidate
+        False -> best
+      }
+      best_piece_distance_from_starts(
+        left,
+        right,
+        starts: rest,
+        best:,
+        tolerance:,
+      )
+    }
+  }
+}
+
+fn minimize_piece_distance(
+  left: Segment,
+  right: Segment,
+  left_t: Float,
+  right_t: Float,
+  tolerance tolerance: Float,
+  step step: Float,
+  iterations iterations: Int,
+) -> Result(#(Float, Float, Float), Error) {
+  use distance_squared <- result.try(segment_pair_distance_squared(
+    left,
+    left_t,
+    right,
+    right_t,
+  ))
+  minimize_piece_distance_loop(
+    left,
+    right,
+    left_t,
+    right_t,
+    distance_squared,
+    tolerance:,
+    step:,
+    iterations:,
+  )
+}
+
+fn minimize_piece_distance_loop(
+  left: Segment,
+  right: Segment,
+  left_t: Float,
+  right_t: Float,
+  best_distance_squared: Float,
+  tolerance tolerance: Float,
+  step step: Float,
+  iterations iterations: Int,
+) -> Result(#(Float, Float, Float), Error) {
+  case
+    best_distance_squared <=. tolerance *. tolerance
+    || iterations <= 0
+    || step <=. 0.000000000001
+  {
+    True -> Ok(#(left_t, right_t, best_distance_squared))
+    False -> {
+      use next <- result.try(best_piece_neighbor(
+        left,
+        right,
+        left_t,
+        right_t,
+        best_distance_squared,
+        step,
+      ))
+      let #(next_left_t, next_right_t, next_distance_squared) = next
+      case next_distance_squared <. best_distance_squared {
+        True ->
+          minimize_piece_distance_loop(
+            left,
+            right,
+            next_left_t,
+            next_right_t,
+            next_distance_squared,
+            tolerance:,
+            step:,
+            iterations: iterations - 1,
+          )
+        False ->
+          minimize_piece_distance_loop(
+            left,
+            right,
+            left_t,
+            right_t,
+            best_distance_squared,
+            tolerance:,
+            step: step /. 2.0,
+            iterations: iterations - 1,
+          )
+      }
+    }
+  }
+}
+
+fn best_piece_neighbor(
+  left: Segment,
+  right: Segment,
+  left_t: Float,
+  right_t: Float,
+  best_distance_squared: Float,
+  step: Float,
+) -> Result(#(Float, Float, Float), Error) {
+  best_piece_neighbor_loop(
+    left,
+    right,
+    candidates: [
+      #(left_t -. step, right_t),
+      #(left_t +. step, right_t),
+      #(left_t, right_t -. step),
+      #(left_t, right_t +. step),
+      #(left_t -. step, right_t -. step),
+      #(left_t -. step, right_t +. step),
+      #(left_t +. step, right_t -. step),
+      #(left_t +. step, right_t +. step),
+    ],
+    best: #(left_t, right_t, best_distance_squared),
+  )
+}
+
+fn best_piece_neighbor_loop(
+  left: Segment,
+  right: Segment,
+  candidates candidates: List(#(Float, Float)),
+  best best: #(Float, Float, Float),
+) -> Result(#(Float, Float, Float), Error) {
+  case candidates {
+    [] -> Ok(best)
+    [candidate, ..rest] -> {
+      let #(left_t, right_t) = candidate
+      let left_t = clamp01(left_t)
+      let right_t = clamp01(right_t)
+      use distance_squared <- result.try(segment_pair_distance_squared(
+        left,
+        left_t,
+        right,
+        right_t,
+      ))
+      let best = case distance_squared <. best.2 {
+        True -> #(left_t, right_t, distance_squared)
+        False -> best
+      }
+      best_piece_neighbor_loop(left, right, candidates: rest, best:)
+    }
+  }
+}
+
+fn segment_pair_distance_squared(
+  left: Segment,
+  left_t: Float,
+  right: Segment,
+  right_t: Float,
+) -> Result(Float, Error) {
+  case segment_point(left, at: left_t), segment_point(right, at: right_t) {
+    Error(error), _ | _, Error(error) -> Error(error)
+    Ok(left_point), Ok(right_point) -> {
+      let dx = left_point.x -. right_point.x
+      let dy = left_point.y -. right_point.y
+      Ok(dx *. dx +. dy *. dy)
+    }
   }
 }
 
@@ -5071,22 +5854,11 @@ fn insert_intersection(
           <=. tolerance
         }
       {
-        True -> [merge_intersections(first, intersection), ..rest]
+        True -> [first, ..rest]
         False -> [first, ..insert_intersection(rest, intersection, tolerance)]
       }
     }
   }
-}
-
-fn merge_intersections(
-  a: SegmentIntersection,
-  b: SegmentIntersection,
-) -> SegmentIntersection {
-  SegmentIntersection(
-    left_t: { a.left_t +. b.left_t } /. 2.0,
-    right_t: { a.right_t +. b.right_t } /. 2.0,
-    point: midpoint(a.point, b.point),
-  )
 }
 
 fn insert_intersections(

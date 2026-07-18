@@ -16,8 +16,10 @@ the tag object.
   variants for stroke-style joins and robust closed-offset variants that split,
   prune, and stitch self-crossed inset contours.
 - Added experimental parametric offset variants that connect segment offsets
-  with synthetic turn arcs, split the resulting walk at self-intersections, and
-  prune pieces that enter the original path's forbidden distance tube.
+  with the requested join style, split the resulting walk at self-intersections,
+  and prune pieces that enter the original path's forbidden distance tube.
+- Parametric miter joins now require a directed tangent-line intersection before
+  accepting the miter apex.
 - Added `svg_path/stroke` for constructing filled stroke outlines with butt,
   round, and square caps.
 - Added best-fit congruency helpers for ordered points, segments, subpaths, and

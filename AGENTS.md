@@ -19,6 +19,22 @@
 - Use a separate worktree for `markdown-assets` so the main checkout can remain dirty. One existing local worktree path is `/private/tmp/svg_path-markdown-assets`.
 - When generating paired or tabular graphics where one version changes a subpath's orientation, keep that subpath's arrow in the same visual location across versions and only flip its direction. This makes orientation changes easier to compare.
 
+## Previewing Figures In Codex Desktop Chat
+
+- Store preview SVGs under `examples/debug/`.
+- Display SVGs with ordinary Markdown image syntax using an absolute local filesystem path.
+- Do not use `file://`, relative paths, plain paths, or GUI commands such as `open`, Chrome, Inkscape, or Preview.
+- Preview SVGs must include explicit root `width` and `height` attributes in addition to `viewBox`; SVGs with only `viewBox` have failed to render inline in Codex desktop chat.
+- In this repo, this exact pattern has rendered successfully in Codex desktop chat:
+
+  `![svg preview probe](/Users/jpsteinb/github.com/vistuleB/svg_path/examples/debug/svg_preview_probe.svg)`
+
+- For generated figures, use the same shape:
+
+  `![label](/Users/jpsteinb/github.com/vistuleB/svg_path/examples/debug/name.svg)`
+
+- Do not generate PNG fallbacks unless the user explicitly asks for PNG. SVG is the expected preview format.
+
 ## Communication Style
 
 - Avoid using the word “tiny” unless it is technically relevant, such as describing a small numeric tolerance, geometry case, file size, or similar concrete measurement.

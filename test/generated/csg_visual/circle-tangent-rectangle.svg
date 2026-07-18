@@ -14,7 +14,7 @@
   <rect x="168" y="34" width="150" height="125" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
   <text x="168" y="27" font-size="10" style="fill: #111827; font-family: system-ui, sans-serif; font-weight: 700">union(A, B)</text>
   <path d="M 273 110 A 40 40 0 0 1 193 110 A 40 40 0 0 1 273 110 Z M 273 70 H 307 V 150 H 273 V 110 Z" style="fill: #8ecae6; stroke: #1f2937; stroke-width: 4; stroke-linejoin: round" />
-  <path d="M 248.7591 147.25119 L 237.1361 150.23547" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 248.75909 147.25119 L 237.1361 150.23547" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 238.4739 149.89198 L 244.18968 144.29467 L 246.1792 152.04333 Z" style="fill: #1f2937; stroke: none" />
   <path d="M 281.28 70 H 293.28" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 291.8988 70 L 284.9706 74 V 66 Z" style="fill: #1f2937; stroke: none" />
@@ -24,6 +24,6 @@
   <rect x="504" y="34" width="150" height="125" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
   <text x="504" y="27" font-size="10" style="fill: #111827; font-family: system-ui, sans-serif; font-weight: 700">difference(A, B)</text>
   <path d="M 609 110 A 40 40 0 0 1 529 110 A 40 40 0 0 1 609 110 Z" style="fill: #8ecae6; stroke: #1f2937; stroke-width: 4; stroke-linejoin: round" />
-  <path d="M 584.7591 147.25119 L 573.1361 150.23547" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
+  <path d="M 584.75909 147.25119 L 573.1361 150.23547" style="fill: none; stroke: #1f2937; stroke-width: 2; stroke-linecap: round" />
   <path d="M 574.4739 149.89198 L 580.18968 144.29467 L 582.1792 152.04333 Z" style="fill: #1f2937; stroke: none" />
 </svg>

@@ -437,6 +437,117 @@ pub fn cubic_inflection_parameters_ignores_non_inflecting_curves_test() {
   assert bezier.cubic_inflection_parameters(quadratic) == []
 }
 
+pub fn cubic_self_intersections_finds_loop_test() {
+  let curve =
+    bezier.CubicBezierData(
+      start: bezier.Point(0.0, 0.0),
+      control1: bezier.Point(100.0, 100.0),
+      control2: bezier.Point(-100.0, 100.0),
+      end: bezier.Point(0.0, 0.0),
+    )
+
+  let assert Ok([intersection]) = bezier.cubic_self_intersections(curve)
+  let bezier.CubicSelfIntersection(s:, t:, point:) = intersection
+
+  assert near(s, 0.0)
+  assert near(t, 1.0)
+  assert point_near(point, bezier.Point(0.0, 0.0))
+}
+
+pub fn cubic_self_intersections_finds_interior_crossing_test() {
+  let curve =
+    bezier.CubicBezierData(
+      start: bezier.Point(0.0, 0.0),
+      control1: bezier.Point(-0.2708333333333333, -0.3333333333333333),
+      control2: bezier.Point(-0.5416666666666666, -0.3333333333333333),
+      end: bezier.Point(0.1875, 0.0),
+    )
+
+  let assert Ok([intersection]) = bezier.cubic_self_intersections(curve)
+  let bezier.CubicSelfIntersection(s:, t:, point:) = intersection
+
+  assert near(s, 0.25)
+  assert near(t, 0.75)
+  assert point_near(point, bezier.bezier_point(curve, at: 0.25))
+}
+
+pub fn cubic_self_intersections_ignores_non_looping_cubic_test() {
+  let curve =
+    bezier.CubicBezierData(
+      start: bezier.Point(0.0, 0.0),
+      control1: bezier.Point(0.0, 30.0),
+      control2: bezier.Point(30.0, 30.0),
+      end: bezier.Point(30.0, 0.0),
+    )
+
+  assert bezier.cubic_self_intersections(curve) == Ok([])
+}
+
+pub fn cubic_self_intersections_ignores_non_cubics_test() {
+  let line =
+    bezier.LinearBezierData(
+      start: bezier.Point(0.0, 0.0),
+      end: bezier.Point(10.0, 0.0),
+    )
+  let quadratic =
+    bezier.QuadraticBezierData(
+      start: bezier.Point(0.0, 0.0),
+      control: bezier.Point(10.0, 10.0),
+      end: bezier.Point(20.0, 0.0),
+    )
+
+  assert bezier.cubic_self_intersections(line) == Ok([])
+  assert bezier.cubic_self_intersections(quadratic) == Ok([])
+}
+
+pub fn cubic_self_intersections_respects_minimum_arc_length_separation_test() {
+  let curve =
+    bezier.CubicBezierData(
+      start: bezier.Point(0.0, 0.0),
+      control1: bezier.Point(100.0, 100.0),
+      control2: bezier.Point(-100.0, 100.0),
+      end: bezier.Point(0.0, 0.0),
+    )
+
+  assert bezier.cubic_self_intersections_with(
+      curve,
+      options: bezier.CubicSelfIntersectionOptions(
+        minimum_arc_length_separation: 301.0,
+        distance_tolerance: 0.000001,
+      ),
+    )
+    == Ok([])
+}
+
+pub fn cubic_self_intersections_rejects_invalid_options_test() {
+  let curve =
+    bezier.CubicBezierData(
+      start: bezier.Point(0.0, 0.0),
+      control1: bezier.Point(100.0, 100.0),
+      control2: bezier.Point(-100.0, 100.0),
+      end: bezier.Point(0.0, 0.0),
+    )
+
+  let assert Error(bezier.InvalidCubicSelfIntersectionMinimumArcLengthSeparation(
+    0.0,
+  )) =
+    bezier.cubic_self_intersections_with(
+      curve,
+      options: bezier.CubicSelfIntersectionOptions(
+        minimum_arc_length_separation: 0.0,
+        distance_tolerance: 0.000001,
+      ),
+    )
+  let assert Error(bezier.InvalidCubicSelfIntersectionDistanceTolerance(0.0)) =
+    bezier.cubic_self_intersections_with(
+      curve,
+      options: bezier.CubicSelfIntersectionOptions(
+        minimum_arc_length_separation: 0.000001,
+        distance_tolerance: 0.0,
+      ),
+    )
+}
+
 fn point_near(a: bezier.Point, b: bezier.Point) -> Bool {
   near(a.x, b.x) && near(a.y, b.y)
 }

@@ -31,6 +31,7 @@
 import gleam/float
 import gleam/int
 import gleam/list
+import gleam/option.{None, Some}
 import gleam/result
 
 const root_tolerance = 0.000000001
@@ -57,6 +58,21 @@ pub type CubicFitError {
   )
 }
 
+/// Options for direct cubic self-intersection detection.
+pub type CubicSelfIntersectionOptions {
+  CubicSelfIntersectionOptions(
+    /// Minimum required arc length between the two visits to the intersection.
+    minimum_arc_length_separation: Float,
+    /// Maximum allowed distance between the two evaluated points.
+    distance_tolerance: Float,
+  )
+}
+
+/// A point where a cubic Bezier intersects itself.
+pub type CubicSelfIntersection {
+  CubicSelfIntersection(s: Float, t: Float, point: Point)
+}
+
 /// Bezier-parameter representation of line, quadratic, and cubic curves.
 pub type BezierData {
   /// A degree-1 Bezier curve.
@@ -79,6 +95,12 @@ pub type Error {
 
   /// The provided samples do not determine stable cubic handle lengths.
   UnderdeterminedCubicFit
+
+  /// Cubic self-intersection minimum arc length separation must be greater than zero.
+  InvalidCubicSelfIntersectionMinimumArcLengthSeparation(Float)
+
+  /// Cubic self-intersection distance tolerance must be greater than zero.
+  InvalidCubicSelfIntersectionDistanceTolerance(Float)
 }
 
 /// Return the curve's start point.
@@ -355,6 +377,59 @@ pub fn cubic_inflection_parameters(curve: BezierData) -> List(Float) {
   }
 }
 
+/// Return the default options for direct cubic self-intersection detection.
+pub fn default_cubic_self_intersection_options() -> CubicSelfIntersectionOptions {
+  CubicSelfIntersectionOptions(
+    minimum_arc_length_separation: root_tolerance,
+    distance_tolerance: root_tolerance,
+  )
+}
+
+/// Return direct self-intersections of a cubic Bezier curve.
+///
+/// Linear and quadratic Beziers return an empty list. Cubics return either an
+/// empty list or one ordinary self-intersection. Endpoint intersections are
+/// treated the same as interior intersections: the two parameters only need to
+/// be separated by `minimum_arc_length_separation` along the curve.
+pub fn cubic_self_intersections(
+  curve: BezierData,
+) -> Result(List(CubicSelfIntersection), Error) {
+  cubic_self_intersections_with(
+    curve,
+    options: default_cubic_self_intersection_options(),
+  )
+}
+
+/// Return direct self-intersections of a cubic Bezier curve using explicit
+/// options.
+///
+/// `minimum_arc_length_separation` is measured in the same coordinate units as
+/// the curve. Larger values are stricter. `distance_tolerance` is also measured
+/// in the same coordinate units. Smaller values are stricter.
+pub fn cubic_self_intersections_with(
+  curve: BezierData,
+  options options: CubicSelfIntersectionOptions,
+) -> Result(List(CubicSelfIntersection), Error) {
+  use _ <- result.try(validate_cubic_self_intersection_options(options))
+
+  case curve {
+    LinearBezierData(..) | QuadraticBezierData(..) -> Ok([])
+    CubicBezierData(start:, control1:, control2:, end:) -> {
+      let #(a, b, c) = cubic_power_coefficients(start, control1, control2, end)
+      let candidates =
+        cubic_self_intersection_candidates(a, b, c, preferred_axis: XAxis)
+        |> list.append(cubic_self_intersection_candidates(
+          a,
+          b,
+          c,
+          preferred_axis: YAxis,
+        ))
+
+      Ok(filter_cubic_self_intersections(candidates, curve, options, []))
+    }
+  }
+}
+
 fn split_bezier_at_progresses(
   curve: BezierData,
   points: List(Float),
@@ -537,6 +612,233 @@ fn cubic_fit_error_loop(
       )
     }
   }
+}
+
+type Axis {
+  XAxis
+  YAxis
+}
+
+fn validate_cubic_self_intersection_options(
+  options: CubicSelfIntersectionOptions,
+) -> Result(Nil, Error) {
+  case options.minimum_arc_length_separation <=. 0.0 {
+    True ->
+      Error(InvalidCubicSelfIntersectionMinimumArcLengthSeparation(
+        options.minimum_arc_length_separation,
+      ))
+    False -> {
+      case options.distance_tolerance <=. 0.0 {
+        True ->
+          Error(InvalidCubicSelfIntersectionDistanceTolerance(
+            options.distance_tolerance,
+          ))
+        False -> Ok(Nil)
+      }
+    }
+  }
+}
+
+fn cubic_power_coefficients(
+  start: Point,
+  control1: Point,
+  control2: Point,
+  end: Point,
+) -> #(Point, Point, Point) {
+  #(
+    add(
+      difference(end, scale(control2, 3.0)),
+      difference(scale(control1, 3.0), start),
+    ),
+    add(
+      difference(scale(start, 3.0), scale(control1, 6.0)),
+      scale(control2, 3.0),
+    ),
+    difference(scale(control1, 3.0), scale(start, 3.0)),
+  )
+}
+
+fn cubic_self_intersection_candidates(
+  a: Point,
+  b: Point,
+  c: Point,
+  preferred_axis preferred_axis: Axis,
+) -> List(#(Float, Float)) {
+  let primary = component(a, preferred_axis)
+  let secondary_axis = other_axis(preferred_axis)
+
+  case float.absolute_value(primary) <=. root_tolerance {
+    True -> []
+    False -> {
+      let secondary = component(a, secondary_axis)
+      let linear =
+        component(b, secondary_axis)
+        -. secondary
+        *. component(b, preferred_axis)
+        /. primary
+      let constant =
+        component(c, secondary_axis)
+        -. secondary
+        *. component(c, preferred_axis)
+        /. primary
+
+      case float.absolute_value(linear) <=. root_tolerance {
+        True -> []
+        False -> {
+          let u = { 0.0 -. constant } /. linear
+          let v =
+            u
+            *. u
+            +. {
+              component(b, preferred_axis) *. u +. component(c, preferred_axis)
+            }
+            /. primary
+
+          parameters_from_sum_and_product(u, v)
+        }
+      }
+    }
+  }
+}
+
+fn parameters_from_sum_and_product(
+  u: Float,
+  v: Float,
+) -> List(#(Float, Float)) {
+  let discriminant = u *. u -. 4.0 *. v
+
+  case discriminant <. 0.0 {
+    True -> []
+    False -> {
+      let root = sqrt(discriminant)
+      let first = { u -. root } /. 2.0
+      let second = { u +. root } /. 2.0
+
+      case first <=. second {
+        True -> [#(first, second)]
+        False -> [#(second, first)]
+      }
+    }
+  }
+}
+
+fn filter_cubic_self_intersections(
+  candidates: List(#(Float, Float)),
+  curve: BezierData,
+  options: CubicSelfIntersectionOptions,
+  found: List(CubicSelfIntersection),
+) -> List(CubicSelfIntersection) {
+  case candidates {
+    [] -> list.reverse(found)
+    [candidate, ..rest] -> {
+      case cubic_self_intersection_from_candidate(candidate, curve, options) {
+        None -> filter_cubic_self_intersections(rest, curve, options, found)
+        Some(intersection) -> {
+          case cubic_self_intersection_already_found(intersection, found) {
+            True -> filter_cubic_self_intersections(rest, curve, options, found)
+            False ->
+              filter_cubic_self_intersections(rest, curve, options, [
+                intersection,
+                ..found
+              ])
+          }
+        }
+      }
+    }
+  }
+}
+
+fn cubic_self_intersection_from_candidate(
+  candidate: #(Float, Float),
+  curve: BezierData,
+  options: CubicSelfIntersectionOptions,
+) -> option.Option(CubicSelfIntersection) {
+  let #(s, t) = candidate
+  case s >=. 0.0 && t <=. 1.0 {
+    False -> None
+    True -> {
+      let left = bezier_point(curve, at: s)
+      let right = bezier_point(curve, at: t)
+      let arc_length =
+        bezier_between(curve, from: s, to: t) |> approximate_length
+      case
+        arc_length >=. options.minimum_arc_length_separation
+        && distance_squared(left, right)
+        <=. options.distance_tolerance *. options.distance_tolerance
+      {
+        False -> None
+        True ->
+          Some(CubicSelfIntersection(s:, t:, point: midpoint(left, right)))
+      }
+    }
+  }
+}
+
+fn cubic_self_intersection_already_found(
+  intersection: CubicSelfIntersection,
+  found: List(CubicSelfIntersection),
+) -> Bool {
+  let CubicSelfIntersection(s:, t:, ..) = intersection
+  list.any(found, fn(found_intersection) {
+    let CubicSelfIntersection(s: found_s, t: found_t, ..) = found_intersection
+    float.absolute_value(s -. found_s) <=. root_tolerance
+    && float.absolute_value(t -. found_t) <=. root_tolerance
+  })
+}
+
+fn component(point: Point, axis: Axis) -> Float {
+  case axis {
+    XAxis -> point.x
+    YAxis -> point.y
+  }
+}
+
+fn other_axis(axis: Axis) -> Axis {
+  case axis {
+    XAxis -> YAxis
+    YAxis -> XAxis
+  }
+}
+
+fn midpoint(left: Point, right: Point) -> Point {
+  Point({ left.x +. right.x } /. 2.0, { left.y +. right.y } /. 2.0)
+}
+
+fn approximate_length(curve: BezierData) -> Float {
+  approximate_length_loop(curve, remaining_depth: 16)
+}
+
+fn approximate_length_loop(
+  curve: BezierData,
+  remaining_depth remaining_depth: Int,
+) -> Float {
+  let chord = distance(bezier_start(curve), bezier_end(curve))
+  let polygon = control_polygon_length(curve)
+
+  case remaining_depth <= 0 || polygon -. chord <=. root_tolerance {
+    True -> { polygon +. chord } /. 2.0
+    False -> {
+      let #(left, right) = split_bezier(curve, at: 0.5)
+      approximate_length_loop(left, remaining_depth: remaining_depth - 1)
+      +. approximate_length_loop(right, remaining_depth: remaining_depth - 1)
+    }
+  }
+}
+
+fn control_polygon_length(curve: BezierData) -> Float {
+  case curve {
+    LinearBezierData(start:, end:) -> distance(start, end)
+    QuadraticBezierData(start:, control:, end:) ->
+      distance(start, control) +. distance(control, end)
+    CubicBezierData(start:, control1:, control2:, end:) ->
+      distance(start, control1)
+      +. distance(control1, control2)
+      +. distance(control2, end)
+  }
+}
+
+fn distance(left: Point, right: Point) -> Float {
+  distance_squared(left, right) |> sqrt
 }
 
 fn normalized_progresses(points: List(Float)) -> List(Float) {

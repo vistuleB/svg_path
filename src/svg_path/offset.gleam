@@ -26,6 +26,7 @@ import gleam/int
 import gleam/list
 import gleam/result
 import svg_path
+import svg_path/bezier
 import svg_path/trig
 import vec/vec2f
 
@@ -107,16 +108,12 @@ type TrimJoin {
   )
 }
 
-type IndexedSegment {
-  IndexedSegment(index: Int, segment: svg_path.Segment)
-}
-
 type SplitParameter {
   SplitParameter(t: Float, cut: Bool)
 }
 
 type SplitPiece {
-  SplitPiece(segment: svg_path.Segment, end_is_cut: Bool)
+  SplitPiece(segment: svg_path.Segment, start_is_cut: Bool, end_is_cut: Bool)
 }
 
 /// Return default options for offset construction.
@@ -326,9 +323,11 @@ pub fn subpath_robust_with(
 /// Adjacent segment offsets are connected by synthetic circular turn arcs so
 /// the provisional offset is continuous. Those synthetic turns are only
 /// construction geometry: validity is measured against the original subpath.
-/// After splitting the provisional walk at self-intersections, pieces whose
-/// samples are all closer to the original subpath than `abs(distance)` are
-/// removed. The surviving pieces are returned as zero or more ordered subpaths.
+/// After splitting the provisional walk at self-intersections, each section is
+/// sampled at global section-length parameters `0.1, 0.2, ..., 0.9`. Sections
+/// whose samples are all closer to the original subpath than `abs(distance)`
+/// are removed. The surviving pieces are returned as zero or more ordered
+/// subpaths.
 pub fn subpath_parametric(
   subpath: svg_path.Subpath,
   distance distance: Float,
@@ -585,6 +584,7 @@ fn parametric_provisional_subpath(
       use output_segments <- result.try(parametric_joined_offset_segments(
         offset_segments,
         distance,
+        options.join,
         closed: svg_path.is_closed(subpath),
       ))
       use provisional <- result.try(
@@ -608,6 +608,7 @@ fn parametric_provisional_subpath(
 fn parametric_joined_offset_segments(
   offsets: List(OffsetSegment),
   distance: Float,
+  join: Join,
   closed closed: Bool,
 ) -> Result(List(svg_path.Segment), Error) {
   case offsets {
@@ -618,6 +619,7 @@ fn parametric_joined_offset_segments(
         first,
         rest,
         distance,
+        join,
         closed:,
         segments: first.offset,
       )
@@ -629,6 +631,7 @@ fn parametric_joined_offset_segments_loop(
   previous: OffsetSegment,
   rest: List(OffsetSegment),
   distance: Float,
+  join: Join,
   closed closed: Bool,
   segments segments: List(svg_path.Segment),
 ) -> Result(List(svg_path.Segment), Error) {
@@ -637,29 +640,41 @@ fn parametric_joined_offset_segments_loop(
       case closed {
         False -> Ok(segments)
         True -> {
-          use turn <- result.try(synthetic_turn(previous, first, distance))
-          Ok(list.append(segments, turn))
+          use connector <- result.try(parametric_join_segments(
+            previous,
+            first,
+            distance,
+            join,
+          ))
+          Ok(list.append(segments, connector))
         }
       }
     }
     [next, ..remaining] -> {
-      use turn <- result.try(synthetic_turn(previous, next, distance))
+      use connector <- result.try(parametric_join_segments(
+        previous,
+        next,
+        distance,
+        join,
+      ))
       parametric_joined_offset_segments_loop(
         first,
         next,
         remaining,
         distance,
+        join,
         closed:,
-        segments: list.append(segments, list.append(turn, next.offset)),
+        segments: list.append(segments, list.append(connector, next.offset)),
       )
     }
   }
 }
 
-fn synthetic_turn(
+fn parametric_join_segments(
   left: OffsetSegment,
   right: OffsetSegment,
   distance: Float,
+  join: Join,
 ) -> Result(List(svg_path.Segment), Error) {
   use left_offset <- result.try(last_offset_segment(left))
   use right_offset <- result.try(first_offset_segment(right))
@@ -667,7 +682,13 @@ fn synthetic_turn(
   let end = svg_path.segment_start(right_offset)
   case points_near(start, end) {
     True -> Ok([])
-    False -> round_join(left, right, start, end, distance)
+    False ->
+      case join {
+        Bevel -> Ok(line_segments_between([start, end]))
+        Miter(miter_limit) ->
+          directed_miter_join(left, right, start, end, distance, miter_limit)
+        Round -> round_join(left, right, start, end, distance)
+      }
   }
 }
 
@@ -702,36 +723,47 @@ fn parametric_pruned_subpath(
 
 fn parametric_self_intersection_sections(
   subpath: svg_path.Subpath,
-  intersection_options: svg_path.IntersectionOptions,
-  tolerance: Float,
+  _intersection_options: svg_path.IntersectionOptions,
+  _tolerance: Float,
 ) -> Result(List(List(svg_path.Segment)), Error) {
-  let segments = svg_path.segments(subpath)
-  let indexed = indexed_segments(segments, index: 0, indexed: [])
-  let closed = svg_path.is_closed(subpath)
-  use sections <- result.try(split_parametric_indexed_segments(
-    indexed,
-    indexed,
-    intersection_options,
-    tolerance,
-    total: list.length(indexed),
-    closed:,
-    current: [],
-    sections: [],
-  ))
-  let sections = case closed {
-    True -> merge_wrapping_chunks(sections, tolerance)
+  use split_points <- result.try(self_intersection_split_parameters(subpath))
+  use sections <- result.try(
+    split_segments_at_subpath_parameters(
+      svg_path.segments(subpath),
+      split_points,
+      index: 0,
+      current: [],
+      sections: [],
+    ),
+  )
+  let sections = case svg_path.is_closed(subpath) {
+    True -> merge_wrapping_chunks(sections, point_tolerance)
     False -> sections
   }
-  Ok(sections)
+  normalize_section_chunks(sections, point_tolerance, normalized: [])
 }
 
-fn split_parametric_indexed_segments(
-  segments: List(IndexedSegment),
-  all: List(IndexedSegment),
-  intersection_options: svg_path.IntersectionOptions,
+fn normalize_section_chunks(
+  sections: List(List(svg_path.Segment)),
   tolerance: Float,
-  total total: Int,
-  closed closed: Bool,
+  normalized normalized: List(List(svg_path.Segment)),
+) -> Result(List(List(svg_path.Segment)), Error) {
+  case sections {
+    [] -> Ok(list.reverse(normalized))
+    [first, ..rest] -> {
+      use first <- result.try(normalize_chunk(first, tolerance))
+      normalize_section_chunks(rest, tolerance, normalized: [
+        first,
+        ..normalized
+      ])
+    }
+  }
+}
+
+fn split_segments_at_subpath_parameters(
+  segments: List(svg_path.Segment),
+  split_points: List(svg_path.SubpathParameter),
+  index index: Int,
   current current: List(svg_path.Segment),
   sections sections: List(List(svg_path.Segment)),
 ) -> Result(List(List(svg_path.Segment)), Error) {
@@ -743,25 +775,25 @@ fn split_parametric_indexed_segments(
       }
     }
     [first, ..rest] -> {
-      use parameters <- result.try(parametric_split_parameters(
-        first,
-        all,
-        intersection_options,
-        tolerance,
-        total:,
-        closed:,
-        parameters: [SplitParameter(0.0, False), SplitParameter(1.0, False)],
-      ))
-      use pieces <- result.try(split_parametric_piece(first.segment, parameters))
+      let parameters =
+        split_parameters_for_segment(split_points, index, [
+          SplitParameter(0.0, False),
+          SplitParameter(1.0, False),
+        ])
+        |> list.sort(by: fn(a, b) {
+          let SplitParameter(t: left, ..) = a
+          let SplitParameter(t: right, ..) = b
+          float.compare(left, right)
+        })
+        |> unique_split_parameters(point_tolerance, [])
+
+      use pieces <- result.try(split_parametric_piece(first, parameters))
       let #(current, sections) =
         append_split_pieces(pieces, current: current, sections: sections)
-      split_parametric_indexed_segments(
+      split_segments_at_subpath_parameters(
         rest,
-        all,
-        intersection_options,
-        tolerance,
-        total:,
-        closed:,
+        split_points,
+        index: index + 1,
         current:,
         sections:,
       )
@@ -769,139 +801,24 @@ fn split_parametric_indexed_segments(
   }
 }
 
-fn parametric_split_parameters(
-  segment: IndexedSegment,
-  all: List(IndexedSegment),
-  intersection_options: svg_path.IntersectionOptions,
-  tolerance: Float,
-  total total: Int,
-  closed closed: Bool,
-  parameters parameters: List(SplitParameter),
-) -> Result(List(SplitParameter), Error) {
-  let IndexedSegment(index:, segment: left) = segment
-  case all {
-    [] ->
-      Ok(
-        parameters
-        |> list.sort(by: fn(a, b) {
-          let SplitParameter(t: left, cut: _) = a
-          let SplitParameter(t: right, cut: _) = b
-          float.compare(left, right)
-        })
-        |> unique_split_parameters(tolerance, []),
-      )
-    [IndexedSegment(index: other_index, segment: right), ..rest] -> {
-      case other_index == index {
-        True ->
-          parametric_split_parameters(
-            segment,
-            rest,
-            intersection_options,
-            tolerance,
-            total:,
-            closed:,
-            parameters:,
-          )
-        False -> {
-          use parameters <- result.try(
-            case
-              svg_path.segment_intersections_with(
-                left,
-                right,
-                options: intersection_options,
-              )
-            {
-              Ok(intersections) ->
-                Ok(add_parametric_split_parameters(
-                  parameters,
-                  intersections,
-                  index,
-                  other_index,
-                  total:,
-                  closed:,
-                ))
-              Error(svg_path.OverlappingSegments) ->
-                overlapping_line_split_parameters(left, right, parameters)
-                |> result.map_error(fn(error) { PathError(error) })
-              Error(error) -> Error(PathError(error))
-            },
-          )
-          parametric_split_parameters(
-            segment,
-            rest,
-            intersection_options,
-            tolerance,
-            total:,
-            closed:,
-            parameters:,
-          )
-        }
-      }
-    }
-  }
-}
-
-fn add_parametric_split_parameters(
+fn split_parameters_for_segment(
+  split_points: List(svg_path.SubpathParameter),
+  index: Int,
   parameters: List(SplitParameter),
-  intersections: List(svg_path.SegmentIntersection),
-  left_index: Int,
-  right_index: Int,
-  total total: Int,
-  closed closed: Bool,
 ) -> List(SplitParameter) {
-  list.fold(intersections, parameters, fn(parameters, intersection) {
-    case
-      is_parametric_adjacent_endpoint_intersection(
-        intersection,
-        left_index,
-        right_index,
-        total:,
-        closed:,
-      )
-    {
-      True -> parameters
-      False -> [SplitParameter(clamp01(intersection.left_t), True), ..parameters]
+  case split_points {
+    [] -> parameters
+    [first, ..rest] -> {
+      let svg_path.SubpathParameter(segment_index:, t:) = first
+      let parameters = case segment_index == index {
+        True -> [
+          SplitParameter(float.min(1.0, float.max(0.0, t)), True),
+          ..parameters
+        ]
+        False -> parameters
+      }
+      split_parameters_for_segment(rest, index, parameters)
     }
-  })
-}
-
-fn is_parametric_adjacent_endpoint_intersection(
-  intersection: svg_path.SegmentIntersection,
-  left_index: Int,
-  right_index: Int,
-  total total: Int,
-  closed closed: Bool,
-) -> Bool {
-  is_adjacent_endpoint_intersection(intersection, left_index, right_index)
-  || {
-    closed
-    && total > 1
-    && left_index == 0
-    && right_index == total - 1
-    && intersection.left_t <=. point_tolerance
-    && intersection.right_t >=. 1.0 -. point_tolerance
-  }
-  || {
-    closed
-    && total > 1
-    && right_index == 0
-    && left_index == total - 1
-    && intersection.left_t >=. 1.0 -. point_tolerance
-    && intersection.right_t <=. point_tolerance
-  }
-}
-
-fn overlapping_line_split_parameters(
-  segment: svg_path.Segment,
-  against: svg_path.Segment,
-  parameters: List(SplitParameter),
-) -> Result(List(SplitParameter), svg_path.Error) {
-  case overlapping_line_parameters(segment, against, []) {
-    Ok(ts) ->
-      Ok(list.fold(ts, parameters, fn(parameters, t) {
-        [SplitParameter(t, True), ..parameters]
-      }))
-    Error(error) -> Error(error)
   }
 }
 
@@ -927,7 +844,7 @@ fn unique_split_parameters(
               unique_split_parameters(rest, tolerance, unique: [first, ..unique])
           }
         }
-        _ -> unique_split_parameters(rest, tolerance, unique: [first])
+        [] -> unique_split_parameters(rest, tolerance, unique: [first])
       }
     }
   }
@@ -940,17 +857,25 @@ fn split_parametric_piece(
   case parameters {
     [] | [_] -> Ok([])
     [from, to, ..rest] -> {
-      let SplitParameter(t: from_t, cut: _) = from
+      let SplitParameter(t: from_t, cut: from_cut) = from
       let SplitParameter(t: to_t, cut: to_cut) = to
-      use piece <- result.try(
-        svg_path.segments_between_inside(segment, between: [from_t, to_t])
-        |> result.map_error(PathError),
-      )
       use pieces <- result.try(split_parametric_piece(segment, [to, ..rest]))
-      Ok(list.append(
-        piece |> list.map(fn(segment) { SplitPiece(segment, end_is_cut: to_cut) }),
-        pieces,
-      ))
+      case to_t -. from_t <=. point_tolerance {
+        True -> Ok(pieces)
+        False -> {
+          use piece <- result.try(
+            svg_path.segments_between_inside(segment, between: [from_t, to_t])
+            |> result.map_error(PathError),
+          )
+          Ok(list.append(
+            piece
+              |> list.map(fn(segment) {
+                SplitPiece(segment:, start_is_cut: from_cut, end_is_cut: to_cut)
+              }),
+            pieces,
+          ))
+        }
+      }
     }
   }
 }
@@ -962,15 +887,18 @@ fn append_split_pieces(
 ) -> #(List(svg_path.Segment), List(List(svg_path.Segment))) {
   case pieces {
     [] -> #(current, sections)
-    [SplitPiece(segment:, end_is_cut:), ..rest] -> {
+    [SplitPiece(segment:, start_is_cut:, end_is_cut:), ..rest] -> {
+      let #(current, sections) = case start_is_cut, current {
+        True, [_, ..] -> #([], [list.reverse(current), ..sections])
+        _, _ -> #(current, sections)
+      }
       let current = [segment, ..current]
       case end_is_cut {
         True ->
-          append_split_pieces(
-            rest,
-            current: [],
-            sections: [list.reverse(current), ..sections],
-          )
+          append_split_pieces(rest, current: [], sections: [
+            list.reverse(current),
+            ..sections
+          ])
         False -> append_split_pieces(rest, current:, sections:)
       }
     }
@@ -1008,37 +936,44 @@ fn parametric_section_is_valid(
   distance distance: Float,
   options options: Options,
 ) -> Result(Bool, Error) {
-  case section {
-    [] -> Ok(False)
-    [first, ..rest] -> {
-      use valid <- result.try(parametric_piece_has_non_negative_sample(
-        first,
-        [0.2, 0.5, 0.8],
-        source:,
-        distance:,
-        options:,
-      ))
-      case valid {
-        True -> Ok(True)
-        False ->
-          parametric_section_is_valid(rest, source:, distance:, options:)
-      }
-    }
-  }
+  use section <- result.try(normalize_chunk(section, options.tolerance))
+  use section <- result.try(
+    svg_path.subpath_with(section, policy: svg_path.Wiggle)
+    |> result.map_error(PathError),
+  )
+  use length <- result.try(
+    svg_path.subpath_length(section) |> result.map_error(PathError),
+  )
+  parametric_section_has_enough_non_negative_samples(
+    section,
+    length,
+    section_sample_parameters(),
+    source:,
+    distance:,
+    options:,
+    count: 0,
+  )
 }
 
-fn parametric_piece_has_non_negative_sample(
-  piece: svg_path.Segment,
+fn section_sample_parameters() -> List(Float) {
+  [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+}
+
+fn parametric_section_has_enough_non_negative_samples(
+  section: svg_path.Subpath,
+  length: Float,
   samples: List(Float),
   source source: svg_path.Subpath,
   distance distance: Float,
   options options: Options,
+  count count: Int,
 ) -> Result(Bool, Error) {
   case samples {
-    [] -> Ok(False)
+    [] -> Ok(count >= 5)
     [first, ..rest] -> {
       use point <- result.try(
-        svg_path.segment_point(piece, at: first) |> result.map_error(PathError),
+        svg_path.subpath_point_at_length(section, distance: length *. first)
+        |> result.map_error(PathError),
       )
       use is_non_negative <- result.try(parametric_point_is_non_negative(
         point,
@@ -1046,17 +981,19 @@ fn parametric_piece_has_non_negative_sample(
         distance:,
         options:,
       ))
-      case is_non_negative {
-        True -> Ok(True)
-        False ->
-          parametric_piece_has_non_negative_sample(
-            piece,
-            rest,
-            source:,
-            distance:,
-            options:,
-          )
+      let count = case is_non_negative {
+        True -> count + 1
+        False -> count
       }
+      parametric_section_has_enough_non_negative_samples(
+        section,
+        length,
+        rest,
+        source:,
+        distance:,
+        options:,
+        count:,
+      )
     }
   }
 }
@@ -1067,7 +1004,7 @@ fn parametric_point_is_non_negative(
   distance distance: Float,
   options options: Options,
 ) -> Result(Bool, Error) {
-  let margin = options.tolerance *. 8.0 +. point_tolerance
+  let margin = distance_margin(options)
   use projection <- result.try(
     svg_path.subpath_projection_with(
       point,
@@ -1297,14 +1234,11 @@ fn robust_closed_subpath(
   options: Options,
 ) -> Result(svg_path.Path, Error) {
   use target <- result.try(target_containment(source, provisional))
-  use pieces <- result.try(
-    split_self_intersections(
-      provisional,
-      svg_path.default_intersection_options(),
-      options.tolerance,
-    )
-    |> result.map_error(PathError),
-  )
+  use pieces <- result.try(split_self_intersections(
+    provisional,
+    svg_path.default_intersection_options(),
+    options.tolerance,
+  ))
   use retained <- result.try(
     retain_robust_pieces(
       pieces,
@@ -1354,192 +1288,101 @@ fn target_containment_loop(
 
 fn split_self_intersections(
   subpath: svg_path.Subpath,
-  intersection_options: svg_path.IntersectionOptions,
-  tolerance: Float,
-) -> Result(List(svg_path.Segment), svg_path.Error) {
-  let indexed =
-    indexed_segments(svg_path.segments(subpath), index: 0, indexed: [])
-  split_indexed_segments(indexed, indexed, intersection_options, tolerance, [])
+  _intersection_options: svg_path.IntersectionOptions,
+  _tolerance: Float,
+) -> Result(List(svg_path.Segment), Error) {
+  use split_points <- result.try(self_intersection_split_parameters(subpath))
+  use sections <- result.try(
+    split_segments_at_subpath_parameters(
+      svg_path.segments(subpath),
+      split_points,
+      index: 0,
+      current: [],
+      sections: [],
+    ),
+  )
+  Ok(sections |> list.flat_map(fn(section) { section }))
 }
 
-fn indexed_segments(
-  segments: List(svg_path.Segment),
-  index index: Int,
-  indexed indexed: List(IndexedSegment),
-) -> List(IndexedSegment) {
-  case segments {
-    [] -> list.reverse(indexed)
-    [first, ..rest] ->
-      indexed_segments(rest, index: index + 1, indexed: [
-        IndexedSegment(index:, segment: first),
-        ..indexed
-      ])
-  }
+fn self_intersection_split_parameters(
+  subpath: svg_path.Subpath,
+) -> Result(List(svg_path.SubpathParameter), Error) {
+  use intersections <- result.try(
+    svg_path.subpath_self_intersections_with(
+      subpath,
+      options: svg_path.SelfIntersectionOptions(
+        minimum_arc_length_separation: 2.0 *. point_tolerance,
+        distance_tolerance: point_tolerance,
+      ),
+    )
+    |> result.map_error(PathError),
+  )
+
+  let parameters =
+    intersections
+    |> list.flat_map(fn(intersection) {
+      let svg_path.SubpathSelfIntersection(parameters: #(left, right), ..) =
+        intersection
+      [left, right]
+    })
+    |> list.filter(fn(parameter) {
+      !is_open_subpath_boundary_parameter(subpath, parameter)
+    })
+    |> list.sort(by: svg_path.compare_subpath_parameters)
+    |> unique_subpath_parameters(point_tolerance, [])
+
+  Ok(parameters)
 }
 
-fn split_indexed_segments(
-  segments: List(IndexedSegment),
-  all: List(IndexedSegment),
-  intersection_options: svg_path.IntersectionOptions,
-  tolerance: Float,
-  split split: List(svg_path.Segment),
-) -> Result(List(svg_path.Segment), svg_path.Error) {
-  case segments {
-    [] -> Ok(list.reverse(split))
-    [first, ..rest] -> {
-      use ts <- result.try(
-        self_split_parameters(first, all, intersection_options, [0.0, 1.0]),
-      )
-      let ts =
-        ts |> list.sort(by: float.compare) |> unique_floats(tolerance, [])
-      use pieces <- result.try(svg_path.segments_between_inside(
-        first.segment,
-        between: ts,
-      ))
-      split_indexed_segments(
-        rest,
-        all,
-        intersection_options,
-        tolerance,
-        split: list.append(list.reverse(pieces), split),
-      )
-    }
-  }
-}
-
-fn self_split_parameters(
-  segment: IndexedSegment,
-  all: List(IndexedSegment),
-  intersection_options: svg_path.IntersectionOptions,
-  parameters: List(Float),
-) -> Result(List(Float), svg_path.Error) {
-  let IndexedSegment(index:, segment: left) = segment
-  case all {
-    [] -> Ok(parameters)
-    [IndexedSegment(index: other_index, segment: right), ..rest] -> {
-      case other_index == index {
-        True ->
-          self_split_parameters(segment, rest, intersection_options, parameters)
-        False -> {
-          use parameters <- result.try(
-            case
-              svg_path.segment_intersections_with(
-                left,
-                right,
-                options: intersection_options,
-              )
-            {
-              Ok(intersections) ->
-                Ok(add_self_intersection_parameters(
-                  parameters,
-                  intersections,
-                  index,
-                  other_index,
-                ))
-              Error(svg_path.OverlappingSegments) ->
-                overlapping_line_parameters(left, right, parameters)
-              Error(error) -> Error(error)
-            },
-          )
-          self_split_parameters(segment, rest, intersection_options, parameters)
-        }
-      }
-    }
-  }
-}
-
-fn add_self_intersection_parameters(
-  parameters: List(Float),
-  intersections: List(svg_path.SegmentIntersection),
-  left_index: Int,
-  right_index: Int,
-) -> List(Float) {
-  list.fold(intersections, parameters, fn(parameters, intersection) {
-    case
-      is_adjacent_endpoint_intersection(intersection, left_index, right_index)
-    {
-      True -> parameters
-      False -> [clamp01(intersection.left_t), ..parameters]
-    }
-  })
-}
-
-fn is_adjacent_endpoint_intersection(
-  intersection: svg_path.SegmentIntersection,
-  left_index: Int,
-  right_index: Int,
+fn is_open_subpath_boundary_parameter(
+  subpath: svg_path.Subpath,
+  parameter: svg_path.SubpathParameter,
 ) -> Bool {
-  {
-    right_index == left_index + 1
-    && intersection.left_t >=. 1.0 -. point_tolerance
-    && intersection.right_t <=. point_tolerance
-  }
-  || {
-    left_index == right_index + 1
-    && intersection.left_t <=. point_tolerance
-    && intersection.right_t >=. 1.0 -. point_tolerance
-  }
-}
-
-fn overlapping_line_parameters(
-  segment: svg_path.Segment,
-  against: svg_path.Segment,
-  parameters: List(Float),
-) -> Result(List(Float), svg_path.Error) {
-  case segment, against {
-    svg_path.Line(start: left_start, end: left_end),
-      svg_path.Line(start: right_start, end: right_end)
-    -> {
-      let dx = left_end.x -. left_start.x
-      let dy = left_end.y -. left_start.y
-      case dx == 0.0 && dy == 0.0 {
-        True -> Ok(parameters)
-        False -> {
-          let t0 = line_parameter(left_start, dx, dy, right_start)
-          let t1 = line_parameter(left_start, dx, dy, right_end)
-          Ok([clamp01(t0), clamp01(t1), ..parameters])
-        }
-      }
+  case svg_path.is_closed(subpath) {
+    True -> False
+    False -> {
+      let length = list.length(svg_path.segments(subpath))
+      let svg_path.SubpathParameter(segment_index:, t:) = parameter
+      { segment_index == 0 && t <=. point_tolerance }
+      || { segment_index == length - 1 && t >=. 1.0 -. point_tolerance }
     }
-    _, _ -> Error(svg_path.OverlappingSegments)
   }
 }
 
-fn line_parameter(
-  start: svg_path.Point,
-  dx: Float,
-  dy: Float,
-  point: svg_path.Point,
-) -> Float {
-  case float.absolute_value(dx) >=. float.absolute_value(dy) {
-    True -> { point.x -. start.x } /. dx
-    False -> { point.y -. start.y } /. dy
-  }
-}
-
-fn unique_floats(
-  values: List(Float),
+fn unique_subpath_parameters(
+  values: List(svg_path.SubpathParameter),
   tolerance: Float,
-  unique unique: List(Float),
-) -> List(Float) {
+  unique unique: List(svg_path.SubpathParameter),
+) -> List(svg_path.SubpathParameter) {
   case values {
     [] -> list.reverse(unique)
     [first, ..rest] -> {
       case unique {
         [previous, ..] -> {
-          case float.absolute_value(first -. previous) <=. tolerance {
-            True -> unique_floats(rest, tolerance, unique:)
-            False -> unique_floats(rest, tolerance, unique: [first, ..unique])
+          case same_subpath_parameter(first, previous, tolerance) {
+            True -> unique_subpath_parameters(rest, tolerance, unique:)
+            False ->
+              unique_subpath_parameters(rest, tolerance, unique: [
+                first,
+                ..unique
+              ])
           }
         }
-        _ -> unique_floats(rest, tolerance, unique: [first, ..unique])
+        [] -> unique_subpath_parameters(rest, tolerance, unique: [first])
       }
     }
   }
 }
 
-fn clamp01(value: Float) -> Float {
-  float.min(1.0, float.max(0.0, value))
+fn same_subpath_parameter(
+  left: svg_path.SubpathParameter,
+  right: svg_path.SubpathParameter,
+  tolerance: Float,
+) -> Bool {
+  let svg_path.SubpathParameter(segment_index: left_index, t: left_t) = left
+  let svg_path.SubpathParameter(segment_index: right_index, t: right_t) = right
+  left_index == right_index
+  && float.absolute_value(left_t -. right_t) <=. tolerance
 }
 
 fn same_point(a: svg_path.Point, b: svg_path.Point, tolerance: Float) -> Bool {
@@ -1641,7 +1484,7 @@ fn robust_point_is_valid(
   target target: svg_path.PointContainment,
   options options: Options,
 ) -> Result(Bool, Error) {
-  let margin = options.tolerance *. 8.0 +. point_tolerance
+  let margin = distance_margin(options)
   use projection <- result.try(
     svg_path.subpath_projection_with(
       point,
@@ -1658,6 +1501,10 @@ fn robust_point_is_valid(
     projection.distance +. margin >=. float.absolute_value(distance)
     && containment == target,
   )
+}
+
+fn distance_margin(options: Options) -> Float {
+  options.tolerance
 }
 
 fn stitch_closed_pieces(
@@ -2153,6 +2000,36 @@ fn miter_join(
   }
 }
 
+fn directed_miter_join(
+  left: OffsetSegment,
+  right: OffsetSegment,
+  start: svg_path.Point,
+  end: svg_path.Point,
+  distance: Float,
+  miter_limit: Float,
+) -> Result(List(svg_path.Segment), Error) {
+  use left_tangent <- result.try(unit_tangent(left.source, t: 1.0))
+  use right_tangent <- result.try(unit_tangent(right.source, t: 0.0))
+
+  case directed_line_intersection(start, left_tangent, end, right_tangent) {
+    Error(_) -> Ok(line_segments_between([start, end]))
+    Ok(apex) -> {
+      let corner = svg_path.segment_end(left.source)
+      let miter_length = vec2f.distance(corner, with: apex)
+      let offset_distance = float.absolute_value(distance)
+      let within_limit = case offset_distance <=. point_tolerance {
+        True -> True
+        False -> miter_length /. offset_distance <=. miter_limit
+      }
+
+      case within_limit && point_is_finite(apex) {
+        True -> Ok(line_segments_between([start, apex, end]))
+        False -> Ok(line_segments_between([start, end]))
+      }
+    }
+  }
+}
+
 fn round_join(
   left: OffsetSegment,
   right: OffsetSegment,
@@ -2180,6 +2057,28 @@ fn round_join(
               end:,
             ),
           ])
+      }
+    }
+  }
+}
+
+fn directed_line_intersection(
+  left_start: svg_path.Point,
+  left_direction: svg_path.Point,
+  right_start: svg_path.Point,
+  right_direction: svg_path.Point,
+) -> Result(svg_path.Point, Nil) {
+  let delta = subtract(right_start, left_start)
+  let determinant = cross(left_direction, right_direction)
+  case float.absolute_value(determinant) <=. point_tolerance {
+    True -> Error(Nil)
+    False -> {
+      let left_t = cross(delta, right_direction) /. determinant
+      let right_t = cross(delta, left_direction) /. determinant
+      let point = add(left_start, scale(left_direction, left_t))
+      case left_t >=. 0.0 && right_t <=. 0.0 && point_is_finite(point) {
+        True -> Ok(point)
+        False -> Error(Nil)
       }
     }
   }
@@ -2275,7 +2174,7 @@ fn offset_cubic_segment_loop(
   options: Options,
   depth depth: Int,
 ) -> Result(List(svg_path.Segment), Error) {
-  use candidate <- result.try(naive_cubic_offset(segment, distance))
+  use candidate <- result.try(fitted_cubic_offset(segment, distance))
   use divergence <- result.try(offset_divergence(
     segment,
     candidate,
@@ -2312,31 +2211,82 @@ fn offset_cubic_segment_loop(
   }
 }
 
-fn naive_cubic_offset(
+fn fitted_cubic_offset(
   segment: svg_path.Segment,
   distance: Float,
 ) -> Result(svg_path.Segment, Error) {
   use start <- result.try(offset_point(segment, t: 0.0, distance:))
   use end <- result.try(offset_point(segment, t: 1.0, distance:))
-  use start_derivative <- result.try(offset_derivative(
-    segment,
-    t: 0.0,
-    distance:,
-  ))
-  use end_derivative <- result.try(offset_derivative(segment, t: 1.0, distance:))
-
-  let candidate =
-    svg_path.CubicBezier(
-      start:,
-      control1: add(start, scale(start_derivative, 1.0 /. 3.0)),
-      control2: subtract(end, scale(end_derivative, 1.0 /. 3.0)),
-      end:,
+  use start_tangent <- result.try(offset_derivative(segment, t: 0.0, distance:))
+  use end_tangent <- result.try(offset_derivative(segment, t: 1.0, distance:))
+  use samples <- result.try(
+    offset_fit_samples(segment, distance, [0.25, 0.5, 0.75], samples: []),
+  )
+  use fit <- result.try(
+    bezier.fit_cubic_with_endpoint_tangents(
+      start: to_bezier_point(start),
+      end: to_bezier_point(end),
+      start_tangent: to_bezier_point(start_tangent),
+      end_tangent: to_bezier_point(end_tangent),
+      samples:,
     )
+    |> result.map_error(cubic_fit_error),
+  )
+  let #(curve, _) = fit
+  use candidate <- result.try(fitted_curve_to_segment(curve))
 
   case segment_is_finite(candidate) {
     True -> Ok(candidate)
     False -> Error(NonFinite)
   }
+}
+
+fn offset_fit_samples(
+  segment: svg_path.Segment,
+  distance: Float,
+  t_values: List(Float),
+  samples samples: List(#(Float, bezier.Point)),
+) -> Result(List(#(Float, bezier.Point)), Error) {
+  case t_values {
+    [] -> Ok(list.reverse(samples))
+    [t, ..rest] -> {
+      use point <- result.try(offset_point(segment, t:, distance:))
+      offset_fit_samples(segment, distance, rest, samples: [
+        #(t, to_bezier_point(point)),
+        ..samples
+      ])
+    }
+  }
+}
+
+fn fitted_curve_to_segment(
+  curve: bezier.BezierData,
+) -> Result(svg_path.Segment, Error) {
+  case curve {
+    bezier.CubicBezierData(start:, control1:, control2:, end:) ->
+      Ok(svg_path.CubicBezier(
+        start: from_bezier_point(start),
+        control1: from_bezier_point(control1),
+        control2: from_bezier_point(control2),
+        end: from_bezier_point(end),
+      ))
+    _ -> Error(NonFinite)
+  }
+}
+
+fn cubic_fit_error(error: bezier.Error) -> Error {
+  case error {
+    bezier.DegenerateTangent -> DegenerateTangent(0.0)
+    _ -> NonFinite
+  }
+}
+
+fn to_bezier_point(point: svg_path.Point) -> bezier.Point {
+  bezier.Point(x: point.x, y: point.y)
+}
+
+fn from_bezier_point(point: bezier.Point) -> svg_path.Point {
+  svg_path.point(point.x, point.y)
 }
 
 fn offset_point(

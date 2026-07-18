@@ -269,7 +269,7 @@ pub fn path_robust_offsets_every_subpath_test() {
   assert serialize.path(robust) == "M 2 2 H 8 V 8 H 2 Z M 22 2 H 28 V 8 H 22 Z"
 }
 
-pub fn subpath_parametric_offsets_open_polyline_with_turn_arc_test() {
+pub fn subpath_parametric_offsets_open_polyline_with_default_miter_test() {
   let subpath =
     svg_path.assert_polyline([
       svg_path.point(0.0, 0.0),
@@ -279,7 +279,37 @@ pub fn subpath_parametric_offsets_open_polyline_with_turn_arc_test() {
 
   let assert Ok(offset_path) = offset.subpath_parametric(subpath, distance: 2.0)
 
+  assert serialize.path(offset_path) == "M 0 -2 H 10 H 12 V 0 V 10"
+}
+
+pub fn subpath_parametric_can_use_round_join_test() {
+  let subpath =
+    svg_path.assert_polyline([
+      svg_path.point(0.0, 0.0),
+      svg_path.point(10.0, 0.0),
+      svg_path.point(10.0, 10.0),
+    ])
+  let options = offset.Options(..offset.default_options(), join: offset.Round)
+
+  let assert Ok(offset_path) =
+    offset.subpath_parametric_with(subpath, distance: 2.0, options:)
+
   assert serialize.path(offset_path) == "M 0 -2 H 10 A 2 2 0 0 1 12 0 V 10"
+}
+
+pub fn subpath_parametric_can_use_bevel_join_test() {
+  let subpath =
+    svg_path.assert_polyline([
+      svg_path.point(0.0, 0.0),
+      svg_path.point(10.0, 0.0),
+      svg_path.point(10.0, 10.0),
+    ])
+  let options = offset.Options(..offset.default_options(), join: offset.Bevel)
+
+  let assert Ok(offset_path) =
+    offset.subpath_parametric_with(subpath, distance: 2.0, options:)
+
+  assert serialize.path(offset_path) == "M 0 -2 H 10 L 12 0 V 10"
 }
 
 pub fn subpath_parametric_prunes_negative_inset_pieces_test() {
@@ -295,11 +325,49 @@ pub fn subpath_parametric_prunes_negative_inset_pieces_test() {
       svg_path.point(0.0, 120.0),
     ])
 
-  let assert Ok(parametric) = offset.subpath_parametric(shape, distance: -24.0)
+  let options = offset.Options(..offset.default_options(), join: offset.Round)
+  let assert Ok(parametric) =
+    offset.subpath_parametric_with(shape, distance: -24.0, options:)
 
   assert list.length(svg_path.subpaths(parametric)) == 1
   assert serialize.path(parametric)
     == "M 24 24 H 46.7621 A 24 24 0 0 0 46 30 V 90 A 24 24 0 0 0 46.7621 96 H 24 Z"
+}
+
+pub fn subpath_parametric_ignores_adjacent_local_contacts_test() {
+  let assert Ok(shape) =
+    svg_path.subpath([
+      svg_path.CubicBezier(
+        start: svg_path.point(0.0, 0.0),
+        control1: svg_path.point(60.0, -75.0),
+        control2: svg_path.point(115.0, -75.0),
+        end: svg_path.point(75.0, 0.0),
+      ),
+      svg_path.CubicBezier(
+        start: svg_path.point(75.0, 0.0),
+        control1: svg_path.point(115.0, 75.0),
+        control2: svg_path.point(60.0, 75.0),
+        end: svg_path.point(0.0, 0.0),
+      ),
+      svg_path.CubicBezier(
+        start: svg_path.point(0.0, 0.0),
+        control1: svg_path.point(-60.0, -75.0),
+        control2: svg_path.point(-115.0, -75.0),
+        end: svg_path.point(-75.0, 0.0),
+      ),
+      svg_path.CubicBezier(
+        start: svg_path.point(-75.0, 0.0),
+        control1: svg_path.point(-115.0, 75.0),
+        control2: svg_path.point(-60.0, 75.0),
+        end: svg_path.point(0.0, 0.0),
+      ),
+    ])
+
+  let options = offset.Options(..offset.default_options(), join: offset.Round)
+  let assert Ok(parametric) =
+    offset.subpath_parametric_with(shape, distance: -16.0, options:)
+
+  assert list.length(svg_path.subpaths(parametric)) == 1
 }
 
 pub fn path_parametric_offsets_every_subpath_test() {
