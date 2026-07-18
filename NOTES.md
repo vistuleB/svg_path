@@ -1,29 +1,44 @@
 # Notes
 
-## Library Shape and Next Steps for 0.12.0
+## Library Shape and Next Steps for 0.15.0
 
-The library currently has three broad layers:
+The library is now broader than SVG path parsing and serialization. Its public
+surface has four main layers:
 
-- Core path model: `Path`, `Subpath`, `Segment`, parsing, serialization,
-  continuity checks, bounding boxes, distances, and intersections.
-- Geometry helpers: `ellipse`, `bezier`, `transform`, `trig`, and convex hull
-  code.
-- Higher-level semantic tools: `congruency`, which encodes policy about when
-  ordered points, segments, subpaths, and paths count as the same under
-  translation, rotation, and uniform scale, and `area`, which measures signed
-  and filled path geometry.
+- Core path model: `Path`, `Subpath`, `Segment`, `Point`, construction,
+  editing, splitting, joining, cleaning, parsing, serialization, and inspection.
+- Numeric geometry: bounding boxes, segment optimization, distances,
+  projections, true-length lookup, intersections, linearization, areas, and
+  convex hulls.
+- Semantic geometry: `congruency`, fill-rule containment, clipping, and CSG.
+- Output-side helpers: transform parsing/serialization, `basic_shapes`,
+  `effects`, and the small `svg` drawing module for tests and examples.
 
-The public surface is now broader than "parse and serialize SVG paths". That is
-useful, but it means naming and module boundaries should get one more pass
-before `1.0.0`.
+The current shape is coherent enough for continued 0.x releases, but the public
+surface is large enough that pruning should stay active before `1.0.0`.
 
-Suggested follow-up work:
+Next-step observations for 0.15.0:
 
-- Do a naming pass before `1.0.0`, especially around
-  `ellipse.arc_center_data`, `transform.point_pair_map`,
-  `transform.point_triple_map`, and the `congruency` API.
-- Keep replacing local point/vector arithmetic with `vec/vec2f` where it
-  improves clarity.
+- Keep `svg_path` as the large convenience module for now. Moving functions too
+  aggressively would make common path workflows harder to discover.
+- Keep implementation-heavy modules like `convex_hull` and `csg` behind concise
+  README explanations plus module docs. The README should teach concepts and
+  show pictures, not repeat every option type.
+- `effects` is the right home for artistic one-off path rewrites such as rounded
+  corners. It should not become a second geometry module.
+- `clip` should remain distinct from CSG. Clipping removes portions of the input
+  curves and does not add boundary bridges from the clipping region.
+- CSG currently preserves contour information more than a minimal renderer
+  outline would. Keep `csg.simplify_nonzero_output` as the explicit cleanup tool
+  rather than making every operation silently discard internal contour lines.
+- Keep replacing local point/vector arithmetic with `vec/vec2f` when it improves
+  clarity, but do not force it into places where the code becomes harder to
+  read.
+- Avoid adding more public test-only helpers. When internals must be exposed to
+  package tests, use `@internal` and names that do not look like public API.
+- The test suite is now split beyond the original catch-all
+  `test/svg_path_test.gleam`; continue splitting by feature when a section
+  grows large enough to hide failures.
 
 ## Move-Only vs Closed Zero-Length Subpaths
 
