@@ -11,8 +11,15 @@ the tag object.
 
 ## Unreleased
 
-- Added `svg_path/offset` with segment-level offset construction for lines,
-  Beziers, and arcs.
+- Added `svg_path/offset` with segment, subpath, and path offset construction
+  for lines, Beziers, and arcs, including trim-aware subpath/path offset
+  variants for stroke-style joins and robust closed-offset variants that split,
+  prune, and stitch self-crossed inset contours.
+- Added experimental parametric offset variants that connect segment offsets
+  with synthetic turn arcs, split the resulting walk at self-intersections, and
+  prune pieces that enter the original path's forbidden distance tube.
+- Added `svg_path/stroke` for constructing filled stroke outlines with butt,
+  round, and square caps.
 - Added best-fit congruency helpers for ordered points, segments, subpaths, and
   paths, with `Similar` and `Affine` transform families and RMS error reporting.
 
