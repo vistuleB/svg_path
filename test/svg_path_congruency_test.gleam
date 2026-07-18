@@ -103,6 +103,87 @@ pub fn points_maps_long_ordered_point_list_test() {
   assert point_near(transform.point(first_source, by: matrix), first_target)
 }
 
+pub fn fit_points_with_similar_returns_rms_error_test() {
+  let source = [
+    svg_path.point(0.0, 0.0),
+    svg_path.point(10.0, 0.0),
+    svg_path.point(0.0, 10.0),
+    svg_path.point(10.0, 10.0),
+  ]
+  let exact =
+    transform.translate(x: 5.0, y: 7.0)
+    |> transform.chain(first: transform.rotate(degrees: 90.0), then: _)
+    |> transform.chain(first: transform.scale(factor: 2.0), then: _)
+  let target =
+    source
+    |> list.map(transform.point(_, by: exact))
+    |> replace_last(svg_path.point(-14.0, 35.0))
+
+  let assert Ok(congruency.Fit(transform: matrix, error:)) =
+    congruency.fit_points(source:, target:, family: congruency.Similar)
+
+  assert error >. 0.0
+  assert error <. 3.0
+  assert transform.point(svg_path.point(0.0, 0.0), by: matrix).x >. 4.0
+}
+
+pub fn fit_points_with_affine_maps_square_to_parallelogram_test() {
+  let source = [
+    svg_path.point(0.0, 0.0),
+    svg_path.point(1.0, 0.0),
+    svg_path.point(0.0, 1.0),
+    svg_path.point(1.0, 1.0),
+  ]
+  let affine = transform.matrix(a: 3.0, b: 1.0, c: 2.0, d: 5.0, e: 7.0, f: 11.0)
+  let target = source |> list.map(transform.point(_, by: affine))
+
+  let assert Ok(congruency.Fit(transform: matrix, error:)) =
+    congruency.fit_points(source:, target:, family: congruency.Affine)
+  let assert Ok(congruency.Fit(error: similar_error, ..)) =
+    congruency.fit_points(source:, target:, family: congruency.Similar)
+
+  assert near(error, 0.0)
+  assert similar_error >. 0.5
+  assert matrix_near(matrix, affine)
+}
+
+pub fn fit_points_with_affine_falls_back_to_similar_for_collinear_source_test() {
+  let source = [
+    svg_path.point(0.0, 0.0),
+    svg_path.point(1.0, 0.0),
+    svg_path.point(2.0, 0.0),
+  ]
+  let target = [
+    svg_path.point(5.0, 5.0),
+    svg_path.point(7.0, 5.0),
+    svg_path.point(9.0, 5.0),
+  ]
+
+  let assert Ok(congruency.Fit(transform: affine, error: affine_error)) =
+    congruency.fit_points(source:, target:, family: congruency.Affine)
+  let assert Ok(congruency.Fit(transform: similar, error: similar_error)) =
+    congruency.fit_points(source:, target:, family: congruency.Similar)
+
+  assert near(affine_error, 0.0)
+  assert near(similar_error, 0.0)
+  assert matrix_near(affine, similar)
+}
+
+pub fn fit_points_rejects_empty_and_mismatched_lists_test() {
+  assert congruency.fit_points(
+      source: [],
+      target: [],
+      family: congruency.Affine,
+    )
+    == Error(Nil)
+  assert congruency.fit_points(
+      source: [svg_path.point(0.0, 0.0)],
+      target: [],
+      family: congruency.Similar,
+    )
+    == Error(Nil)
+}
+
 pub fn line_returns_transform_mapping_source_to_target_test() {
   let source =
     svg_path.Line(
@@ -119,6 +200,23 @@ pub fn line_returns_transform_mapping_source_to_target_test() {
   let assert Ok(mapped) = transform.segment(source, by: matrix)
 
   assert same_segment(mapped, target)
+}
+
+pub fn fit_segment_rejects_different_constructors_test() {
+  let source =
+    svg_path.Line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(10.0, 0.0),
+    )
+  let target =
+    svg_path.QuadraticBezier(
+      start: svg_path.point(0.0, 0.0),
+      control: svg_path.point(5.0, 5.0),
+      end: svg_path.point(10.0, 0.0),
+    )
+
+  assert congruency.fit_segment(source:, target:, family: congruency.Affine)
+    == Error(Nil)
 }
 
 pub fn segment_rejects_different_constructors_test() {
@@ -266,6 +364,29 @@ pub fn subpath_maps_ordered_segments_to_target_test() {
   let assert Ok(found) = congruency.subpath(source:, target:, tolerance:)
   let assert Ok(mapped) = transform.subpath(source, by: found)
 
+  assert same_subpath(mapped, target)
+}
+
+pub fn fit_subpath_with_affine_uses_semantic_point_cloud_test() {
+  let source =
+    svg_path.assert_subpath([
+      svg_path.Line(
+        start: svg_path.point(0.0, 0.0),
+        end: svg_path.point(10.0, 0.0),
+      ),
+      svg_path.Line(
+        start: svg_path.point(10.0, 0.0),
+        end: svg_path.point(10.0, 10.0),
+      ),
+    ])
+  let matrix = transform.matrix(a: 2.0, b: 1.0, c: 0.5, d: 3.0, e: -4.0, f: 8.0)
+  let assert Ok(target) = transform.subpath(source, by: matrix)
+
+  let assert Ok(congruency.Fit(transform: found, error:)) =
+    congruency.fit_subpath(source:, target:, family: congruency.Affine)
+  let assert Ok(mapped) = transform.subpath(source, by: found)
+
+  assert near(error, 0.0)
   assert same_subpath(mapped, target)
 }
 
@@ -421,6 +542,34 @@ pub fn path_uses_one_transform_across_subpaths_test() {
   let assert Ok(matrix) = congruency.path(source:, target:, tolerance:)
   let assert Ok(mapped) = transform.path(source, by: matrix)
 
+  assert same_path(mapped, target)
+}
+
+pub fn fit_path_with_affine_uses_one_transform_across_subpaths_test() {
+  let source =
+    svg_path.Path([
+      svg_path.assert_subpath([
+        svg_path.Line(
+          start: svg_path.point(0.0, 0.0),
+          end: svg_path.point(10.0, 0.0),
+        ),
+      ]),
+      svg_path.assert_subpath([
+        svg_path.Line(
+          start: svg_path.point(0.0, 10.0),
+          end: svg_path.point(10.0, 10.0),
+        ),
+      ]),
+    ])
+  let matrix =
+    transform.matrix(a: 2.0, b: 1.0, c: -0.5, d: 3.0, e: 7.0, f: -2.0)
+  let assert Ok(target) = transform.path(source, by: matrix)
+
+  let assert Ok(congruency.Fit(transform: found, error:)) =
+    congruency.fit_path(source:, target:, family: congruency.Affine)
+  let assert Ok(mapped) = transform.path(source, by: found)
+
+  assert near(error, 0.0)
   assert same_path(mapped, target)
 }
 
@@ -611,6 +760,31 @@ pub fn path_rejects_arc_field_mismatch_after_points_match_test() {
     ])
 
   assert congruency.path(source:, target:, tolerance:) == Error(Nil)
+}
+
+fn replace_last(
+  points: List(svg_path.Point),
+  replacement: svg_path.Point,
+) -> List(svg_path.Point) {
+  case points {
+    [] -> []
+    [_] -> [replacement]
+    [first, ..rest] -> [first, ..replace_last(rest, replacement)]
+  }
+}
+
+fn matrix_near(actual: transform.Matrix, expected: transform.Matrix) -> Bool {
+  let #(actual_a, actual_b, actual_c, actual_d, actual_e, actual_f) =
+    transform.to_tuple(actual)
+  let #(expected_a, expected_b, expected_c, expected_d, expected_e, expected_f) =
+    transform.to_tuple(expected)
+
+  near(actual_a, expected_a)
+  && near(actual_b, expected_b)
+  && near(actual_c, expected_c)
+  && near(actual_d, expected_d)
+  && near(actual_e, expected_e)
+  && near(actual_f, expected_f)
 }
 
 fn result_is_ok(result: Result(a, b)) -> Bool {

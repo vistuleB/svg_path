@@ -10,11 +10,31 @@
 //// segment.
 
 import gleam/float
+import gleam/int
 import gleam/list
 import svg_path
 import svg_path/ellipse
 import svg_path/transform
 import vec/vec2f
+
+/// The transform family allowed during best-fit congruency.
+pub type TransformFamily {
+  /// Translation, rotation, and uniform scale. Reflection and shear are not
+  /// allowed.
+  Similar
+
+  /// A general affine transform, allowing non-uniform scale, shear, and
+  /// reflection. If the source point cloud is underdetermined for an affine
+  /// solve, this falls back to `Similar`.
+  Affine
+}
+
+/// A best-fit transform and its root-mean-square point error.
+///
+/// `error` is measured in the same coordinate units as the input points.
+pub type Fit {
+  Fit(transform: transform.Matrix, error: Float)
+}
 
 type IndexedPoint {
   IndexedPoint(source: svg_path.Point, target: svg_path.Point)
@@ -35,6 +55,37 @@ type PointCloud {
     source: List(svg_path.Point),
     target: List(svg_path.Point),
     has_arc: Bool,
+  )
+}
+
+type PointSums {
+  PointSums(
+    count: Int,
+    source_x: Float,
+    source_y: Float,
+    target_x: Float,
+    target_y: Float,
+  )
+}
+
+type SimilaritySums {
+  SimilaritySums(dot: Float, cross: Float, source_length_squared: Float)
+}
+
+type AffineSums {
+  AffineSums(
+    count: Int,
+    source_x: Float,
+    source_y: Float,
+    source_xx: Float,
+    source_xy: Float,
+    source_yy: Float,
+    target_x: Float,
+    target_y: Float,
+    source_target_xx: Float,
+    source_target_yx: Float,
+    source_target_xy: Float,
+    source_target_yy: Float,
   )
 }
 
@@ -95,6 +146,33 @@ pub fn points(
   }
 }
 
+/// Find the best transform mapping one ordered point list to another.
+///
+/// Empty lists and lists with different lengths return `Error(Nil)`.
+/// `Similar` fits translation, rotation, and uniform scale without reflection.
+/// `Affine` fits a general affine transform; when the source points do not
+/// determine an affine transform stably, it falls back to `Similar`.
+///
+/// The returned `Fit.error` is the root-mean-square distance between each
+/// transformed source point and its corresponding target point.
+pub fn fit_points(
+  source source: List(svg_path.Point),
+  target target: List(svg_path.Point),
+  family family: TransformFamily,
+) -> Result(Fit, Nil) {
+  use indexed <- result_try_nil(indexed_points(source, target, accumulated: []))
+
+  case indexed {
+    [] -> Error(Nil)
+    _ -> {
+      case family {
+        Similar -> fit_similar(indexed)
+        Affine -> fit_affine(indexed)
+      }
+    }
+  }
+}
+
 /// Find a translation, rotation, and uniform scale mapping one segment to
 /// another segment of the same constructor.
 ///
@@ -135,6 +213,20 @@ pub fn segment(
   }
 }
 
+/// Find the best transform mapping one segment to another segment of the same
+/// constructor.
+///
+/// This uses the same semantic point-cloud policy as `segment`, but returns a
+/// best-fit transform and RMS point error instead of applying a tolerance.
+pub fn fit_segment(
+  source source: svg_path.Segment,
+  target target: svg_path.Segment,
+  family family: TransformFamily,
+) -> Result(Fit, Nil) {
+  use cloud <- result_try_nil(segment_point_cloud(source, target))
+  fit_points(source: cloud.source, target: cloud.target, family:)
+}
+
 /// Find a translation, rotation, and uniform scale mapping one subpath to
 /// another subpath.
 ///
@@ -163,6 +255,20 @@ pub fn subpath(
       }
     }
   }
+}
+
+/// Find the best transform mapping one ordered subpath to another.
+///
+/// The subpath `closed` field is ignored. Segment constructors must match in
+/// order. Closed subpaths are not cycled, and no alternate starting segment is
+/// attempted.
+pub fn fit_subpath(
+  source source: svg_path.Subpath,
+  target target: svg_path.Subpath,
+  family family: TransformFamily,
+) -> Result(Fit, Nil) {
+  use cloud <- result_try_nil(subpath_point_cloud(source, target))
+  fit_points(source: cloud.source, target: cloud.target, family:)
 }
 
 /// Find a translation, rotation, and uniform scale mapping one path to another
@@ -198,6 +304,322 @@ pub fn path(
       }
     }
   }
+}
+
+/// Find the best transform mapping one ordered path to another.
+///
+/// Path subpaths must match in order. Each subpath comparison ignores the
+/// subpath `closed` field. Closed subpaths are not cycled, no alternate
+/// starting segment is attempted, and subpaths are not reordered.
+pub fn fit_path(
+  source source: svg_path.Path,
+  target target: svg_path.Path,
+  family family: TransformFamily,
+) -> Result(Fit, Nil) {
+  use cloud <- result_try_nil(path_point_cloud(
+    svg_path.subpaths(source),
+    svg_path.subpaths(target),
+  ))
+  fit_points(source: cloud.source, target: cloud.target, family:)
+}
+
+fn segment_point_cloud(
+  source: svg_path.Segment,
+  target: svg_path.Segment,
+) -> Result(PointCloud, Nil) {
+  case segment_points(source, target) {
+    Error(_) -> Error(Nil)
+    Ok(#(source_extra, target_extra, has_arc)) -> {
+      Ok(PointCloud(
+        source: [svg_path.segment_start(source), ..source_extra],
+        target: [svg_path.segment_start(target), ..target_extra],
+        has_arc:,
+      ))
+    }
+  }
+}
+
+fn fit_similar(points: List(IndexedPoint)) -> Result(Fit, Nil) {
+  let centroids = point_centroids(points)
+  use centroids <- result_try_nil(centroids)
+  let #(source_center, target_center) = centroids
+  let sums = similarity_sums(points, source_center, target_center)
+
+  let matrix = case sums.source_length_squared <=. 0.0 {
+    True ->
+      transform.translate(
+        x: target_center.x -. source_center.x,
+        y: target_center.y -. source_center.y,
+      )
+    False -> {
+      let scale_cos = sums.dot /. sums.source_length_squared
+      let scale_sin = sums.cross /. sums.source_length_squared
+
+      transform.matrix(
+        a: scale_cos,
+        b: scale_sin,
+        c: 0.0 -. scale_sin,
+        d: scale_cos,
+        e: target_center.x
+          -. { scale_cos *. source_center.x -. scale_sin *. source_center.y },
+        f: target_center.y
+          -. { scale_sin *. source_center.x +. scale_cos *. source_center.y },
+      )
+    }
+  }
+
+  fit_from_matrix(points, matrix)
+}
+
+fn fit_affine(points: List(IndexedPoint)) -> Result(Fit, Nil) {
+  let sums = affine_sums(points)
+  let n = int.to_float(sums.count)
+  let determinant =
+    sums.source_xx
+    *. { sums.source_yy *. n -. sums.source_y *. sums.source_y }
+    -. sums.source_xy
+    *. { sums.source_xy *. n -. sums.source_y *. sums.source_x }
+    +. sums.source_x
+    *. { sums.source_xy *. sums.source_y -. sums.source_yy *. sums.source_x }
+
+  case determinant_within_zero(determinant) {
+    True -> fit_similar(points)
+    False -> {
+      use x_coefficients <- result_try_nil(solve_affine_coefficients(
+        sums,
+        rhs_x: sums.source_target_xx,
+        rhs_y: sums.source_target_yx,
+        rhs_constant: sums.target_x,
+        determinant:,
+      ))
+      use y_coefficients <- result_try_nil(solve_affine_coefficients(
+        sums,
+        rhs_x: sums.source_target_xy,
+        rhs_y: sums.source_target_yy,
+        rhs_constant: sums.target_y,
+        determinant:,
+      ))
+      let #(a, c, e) = x_coefficients
+      let #(b, d, f) = y_coefficients
+
+      transform.matrix(a:, b:, c:, d:, e:, f:)
+      |> fit_from_matrix(points, _)
+    }
+  }
+}
+
+fn solve_affine_coefficients(
+  sums: AffineSums,
+  rhs_x rhs_x: Float,
+  rhs_y rhs_y: Float,
+  rhs_constant rhs_constant: Float,
+  determinant determinant: Float,
+) -> Result(#(Float, Float, Float), Nil) {
+  let n = int.to_float(sums.count)
+  let x =
+    {
+      rhs_x
+      *. { sums.source_yy *. n -. sums.source_y *. sums.source_y }
+      -. sums.source_xy
+      *. { rhs_y *. n -. sums.source_y *. rhs_constant }
+      +. sums.source_x
+      *. { rhs_y *. sums.source_y -. sums.source_yy *. rhs_constant }
+    }
+    /. determinant
+  let y =
+    {
+      sums.source_xx
+      *. { rhs_y *. n -. sums.source_y *. rhs_constant }
+      -. rhs_x
+      *. { sums.source_xy *. n -. sums.source_y *. sums.source_x }
+      +. sums.source_x
+      *. { sums.source_xy *. rhs_constant -. rhs_y *. sums.source_x }
+    }
+    /. determinant
+  let constant =
+    {
+      sums.source_xx
+      *. { sums.source_yy *. rhs_constant -. rhs_y *. sums.source_y }
+      -. sums.source_xy
+      *. { sums.source_xy *. rhs_constant -. rhs_y *. sums.source_x }
+      +. rhs_x
+      *. { sums.source_xy *. sums.source_y -. sums.source_yy *. sums.source_x }
+    }
+    /. determinant
+
+  case is_finite(x) && is_finite(y) && is_finite(constant) {
+    True -> Ok(#(x, y, constant))
+    False -> Error(Nil)
+  }
+}
+
+fn point_centroids(
+  points: List(IndexedPoint),
+) -> Result(#(svg_path.Point, svg_path.Point), Nil) {
+  let sums =
+    list.fold(
+      points,
+      PointSums(
+        count: 0,
+        source_x: 0.0,
+        source_y: 0.0,
+        target_x: 0.0,
+        target_y: 0.0,
+      ),
+      fn(sums, point) {
+        PointSums(
+          count: sums.count + 1,
+          source_x: sums.source_x +. point.source.x,
+          source_y: sums.source_y +. point.source.y,
+          target_x: sums.target_x +. point.target.x,
+          target_y: sums.target_y +. point.target.y,
+        )
+      },
+    )
+
+  case sums.count <= 0 {
+    True -> Error(Nil)
+    False -> {
+      let count = int.to_float(sums.count)
+
+      Ok(#(
+        svg_path.point(sums.source_x /. count, sums.source_y /. count),
+        svg_path.point(sums.target_x /. count, sums.target_y /. count),
+      ))
+    }
+  }
+}
+
+fn similarity_sums(
+  points: List(IndexedPoint),
+  source_center: svg_path.Point,
+  target_center: svg_path.Point,
+) -> SimilaritySums {
+  list.fold(
+    points,
+    SimilaritySums(dot: 0.0, cross: 0.0, source_length_squared: 0.0),
+    fn(sums, point) {
+      let source_x = point.source.x -. source_center.x
+      let source_y = point.source.y -. source_center.y
+      let target_x = point.target.x -. target_center.x
+      let target_y = point.target.y -. target_center.y
+
+      SimilaritySums(
+        dot: sums.dot +. source_x *. target_x +. source_y *. target_y,
+        cross: sums.cross +. source_x *. target_y -. source_y *. target_x,
+        source_length_squared: sums.source_length_squared
+          +. source_x
+          *. source_x
+          +. source_y
+          *. source_y,
+      )
+    },
+  )
+}
+
+fn affine_sums(points: List(IndexedPoint)) -> AffineSums {
+  list.fold(
+    points,
+    AffineSums(
+      count: 0,
+      source_x: 0.0,
+      source_y: 0.0,
+      source_xx: 0.0,
+      source_xy: 0.0,
+      source_yy: 0.0,
+      target_x: 0.0,
+      target_y: 0.0,
+      source_target_xx: 0.0,
+      source_target_yx: 0.0,
+      source_target_xy: 0.0,
+      source_target_yy: 0.0,
+    ),
+    fn(sums, point) {
+      AffineSums(
+        count: sums.count + 1,
+        source_x: sums.source_x +. point.source.x,
+        source_y: sums.source_y +. point.source.y,
+        source_xx: sums.source_xx +. point.source.x *. point.source.x,
+        source_xy: sums.source_xy +. point.source.x *. point.source.y,
+        source_yy: sums.source_yy +. point.source.y *. point.source.y,
+        target_x: sums.target_x +. point.target.x,
+        target_y: sums.target_y +. point.target.y,
+        source_target_xx: sums.source_target_xx
+          +. point.source.x
+          *. point.target.x,
+        source_target_yx: sums.source_target_yx
+          +. point.source.y
+          *. point.target.x,
+        source_target_xy: sums.source_target_xy
+          +. point.source.x
+          *. point.target.y,
+        source_target_yy: sums.source_target_yy
+          +. point.source.y
+          *. point.target.y,
+      )
+    },
+  )
+}
+
+fn fit_from_matrix(
+  points: List(IndexedPoint),
+  matrix: transform.Matrix,
+) -> Result(Fit, Nil) {
+  let #(a, b, c, d, e, f) = transform.to_tuple(matrix)
+
+  case
+    is_finite(a)
+    && is_finite(b)
+    && is_finite(c)
+    && is_finite(d)
+    && is_finite(e)
+    && is_finite(f)
+  {
+    False -> Error(Nil)
+    True -> {
+      case rms_error(points, matrix) {
+        Error(_) -> Error(Nil)
+        Ok(error) -> Ok(Fit(transform: matrix, error:))
+      }
+    }
+  }
+}
+
+fn rms_error(
+  points: List(IndexedPoint),
+  matrix: transform.Matrix,
+) -> Result(Float, Nil) {
+  let #(count, error_squared) =
+    list.fold(points, #(0, 0.0), fn(accumulated, point) {
+      let #(count, error_squared) = accumulated
+      let mapped = transform.point(point.source, by: matrix)
+
+      #(
+        count + 1,
+        error_squared +. vec2f.distance_squared(mapped, with: point.target),
+      )
+    })
+
+  case count <= 0 {
+    True -> Error(Nil)
+    False -> {
+      let mean_error_squared = error_squared /. int.to_float(count)
+
+      case float.square_root(mean_error_squared) {
+        Ok(error) -> {
+          case is_finite(error) {
+            True -> Ok(error)
+            False -> Error(Nil)
+          }
+        }
+        Error(_) -> Error(Nil)
+      }
+    }
+  }
+}
+
+fn determinant_within_zero(value: Float) -> Bool {
+  !is_finite(value) || float.absolute_value(value) <=. 0.000000000001
 }
 
 fn path_point_cloud(
@@ -580,6 +1002,21 @@ fn points_within_tolerance(
 
 fn floats_within_tolerance(a: Float, b: Float, tolerance: Float) -> Bool {
   float.absolute_value(a -. b) <=. tolerance
+}
+
+fn result_try_nil(result: Result(a, Nil), next: fn(a) -> Result(b, Nil)) {
+  case result {
+    Ok(value) -> next(value)
+    Error(Nil) -> Error(Nil)
+  }
+}
+
+fn is_finite(value: Float) -> Bool {
+  !is_nan(value -. value)
+}
+
+fn is_nan(value: Float) -> Bool {
+  !{ value <. 0.0 || value >=. 0.0 }
 }
 
 fn from_ellipse_point(point: ellipse.Point) -> svg_path.Point {

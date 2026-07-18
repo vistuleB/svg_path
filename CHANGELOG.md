@@ -11,6 +11,9 @@ the tag object.
 
 ## Unreleased
 
+- Added best-fit congruency helpers for ordered points, segments, subpaths, and
+  paths, with `Similar` and `Affine` transform families and RMS error reporting.
+
 ## 0.15.0 - 2026-07-17
 
 - Added `svg_path/clip` for clipping curve geometry to a filled path region

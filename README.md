@@ -859,6 +859,11 @@ subpaths, choose alternate starting segments, or reorder subpaths. If two
 closed loops start at different places, open or rebuild them with matching
 segment order before calling congruency.
 
+The same module also exposes `fit_points`, `fit_segment`, `fit_subpath`, and
+`fit_path` for best-fit matching. Pass `Similar` for translation, rotation, and
+uniform scale, or `Affine` for a general affine matrix. These helpers return a
+`Fit(transform:, error:)`, where `error` is RMS point distance.
+
 ## Parsing
 
 `svg_path/parse` accepts normal SVG path data syntax, including:
