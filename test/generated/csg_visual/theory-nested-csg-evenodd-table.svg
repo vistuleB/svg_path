@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 802 658">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 802 658" width="802" height="658">
   <rect x="0" y="0" width="802" height="658" style="fill: #ffffff; stroke: none" />
   <text x="0" y="20" font-size="16" style="fill: #111827; font-family: system-ui, sans-serif; font-weight: 700">Nested CSG with EvenOdd</text>
   <text x="0" y="42" font-size="9" style="fill: #111827; font-family: system-ui, sans-serif; font-weight: 700">Inputs as EvenOdd</text>

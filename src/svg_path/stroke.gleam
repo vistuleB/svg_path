@@ -183,7 +183,7 @@ fn offset_subpath(
   distance: Float,
   options: offset.Options,
 ) -> Result(svg_path.Subpath, Error) {
-  offset.subpath_trimmed_with(subpath, distance:, options:)
+  offset.subpath_untrimmed_with(subpath, distance:, options:)
   |> result.map_error(OffsetError)
 }
 

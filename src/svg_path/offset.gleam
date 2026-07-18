@@ -5,21 +5,19 @@
 //// endpoint-normal cubics. The approximation is checked by sampling the true
 //// normal extrusion of the source curve and measuring its distance to the
 //// proposed offset. If the error is too large, the source curve is split and
-//// each half is offset recursively. Subpath and path offsets use this segment
-//// primitive, then add explicit connector geometry between adjacent offset
-//// pieces.
+//// each half is offset recursively.
 ////
-//// The `*_trimmed` helpers use the same segment offset primitive, but when
-//// adjacent offset pieces intersect near a corner they trim those pieces to
-//// their intersection instead of always appending connector geometry. Corners
-//// that do not produce a usable local intersection still fall back to the
-//// requested join style.
+//// Subpath and path offsets create a provisional one-sided offset walk by
+//// connecting adjacent segment offsets with the requested join style. The
+//// public trimmed offset splits that walk at self-intersections, removes
+//// sections that lie inside the forbidden distance tube around the original
+//// subpath, then keeps the remaining sections in provisional traversal order.
+//// Because trimming can split an offset or remove it entirely, subpath and
+//// path offsets return `Path`.
 ////
-//// The `*_parametric` helpers are a separate experimental track: they create a
-//// single provisional offset walk by connecting adjacent segment offsets with
-//// synthetic circular turn arcs, split that walk at self-intersections, remove
-//// pieces that lie inside the forbidden distance tube around the original
-//// subpath, then keep the remaining pieces in provisional traversal order.
+//// The `*_untrimmed` helpers expose the provisional offset walk directly. It
+//// is useful for debugging, drawing raw construction geometry, or implementing
+//// a different trimming policy.
 
 import gleam/float
 import gleam/int
@@ -67,9 +65,6 @@ pub type Error {
 
   /// A calculation produced a non-finite coordinate.
   NonFinite
-
-  /// Robust offset pieces could not be stitched into closed contours.
-  CannotStitchRobustOffset
 }
 
 /// Join style used when offsetting adjacent subpath segments.
@@ -98,14 +93,6 @@ pub type Options {
 
 type OffsetSegment {
   OffsetSegment(source: svg_path.Segment, offset: List(svg_path.Segment))
-}
-
-type TrimJoin {
-  TrimJoin(
-    left: svg_path.Segment,
-    join: List(svg_path.Segment),
-    right: svg_path.Segment,
-  )
 }
 
 type SplitParameter {
@@ -176,13 +163,19 @@ pub fn segment_with(
 
 /// Offset a subpath by a signed distance.
 ///
-/// Positive distances offset to the right of the subpath direction. Open
-/// subpaths remain open; closed subpaths remain closed. Adjacent offset
-/// segments are connected using `default_options().join`.
+/// Positive distances offset to the right of the subpath direction. Adjacent
+/// offset segments are connected using `default_options().join`. The result is
+/// a path because trimming self-intersections can split the offset into
+/// multiple subpaths or remove it entirely.
+///
+/// The provisional offset is split at self-intersections. Each section is
+/// sampled at global section-length parameters `0.1, 0.2, ..., 0.9`; sections
+/// with fewer than five samples at least `abs(distance) - options.tolerance`
+/// from the original subpath are removed.
 pub fn subpath(
   subpath: svg_path.Subpath,
   distance distance: Float,
-) -> Result(svg_path.Subpath, Error) {
+) -> Result(svg_path.Path, Error) {
   subpath_with(subpath, distance:, options: default_options())
 }
 
@@ -191,164 +184,36 @@ pub fn subpath_with(
   subpath subpath: svg_path.Subpath,
   distance distance: Float,
   options options: Options,
-) -> Result(svg_path.Subpath, Error) {
-  use _ <- result.try(validate_options(options))
-  case svg_path.segments(subpath) {
-    [] -> {
-      use start <- result.try(
-        svg_path.start(subpath) |> result.map_error(PathError),
-      )
-      Ok(svg_path.empty_subpath(at: start))
-    }
-    segments -> {
-      use offset_segments <- result.try(
-        offset_subpath_segments(segments, distance, options, converted: []),
-      )
-      use output_segments <- result.try(joined_offset_segments(
-        offset_segments,
-        distance,
-        options,
-        closed: svg_path.is_closed(subpath),
-      ))
-
-      use offset_subpath <- result.try(
-        svg_path.subpath_with(output_segments, policy: svg_path.Wiggle)
-        |> result.map_error(PathError),
-      )
-
-      case svg_path.is_closed(subpath) {
-        False -> Ok(offset_subpath)
-        True ->
-          svg_path.set_closed_with(
-            offset_subpath,
-            closed: True,
-            policy: svg_path.Wiggle,
-          )
-          |> result.map_error(PathError)
-      }
-    }
-  }
-}
-
-/// Offset a subpath, trimming adjacent offset pieces when they intersect.
-///
-/// This variant is closer to conventional stroke/outline construction than
-/// `subpath`: when the two offset pieces beside a corner cross, the pieces are
-/// cropped to the crossing point. If no crossing is found, the requested join
-/// style is used as a connector. Open subpaths remain open; closed subpaths
-/// remain closed.
-pub fn subpath_trimmed(
-  subpath: svg_path.Subpath,
-  distance distance: Float,
-) -> Result(svg_path.Subpath, Error) {
-  subpath_trimmed_with(subpath, distance:, options: default_options())
-}
-
-/// Offset a subpath with trim-aware joins using explicit options.
-pub fn subpath_trimmed_with(
-  subpath subpath: svg_path.Subpath,
-  distance distance: Float,
-  options options: Options,
-) -> Result(svg_path.Subpath, Error) {
-  use _ <- result.try(validate_options(options))
-  case svg_path.segments(subpath) {
-    [] -> {
-      use start <- result.try(
-        svg_path.start(subpath) |> result.map_error(PathError),
-      )
-      Ok(svg_path.empty_subpath(at: start))
-    }
-    segments -> {
-      use offset_segments <- result.try(
-        offset_subpath_segments(segments, distance, options, converted: []),
-      )
-      use output_segments <- result.try(trim_joined_offset_segments(
-        offset_segments,
-        distance,
-        options,
-        closed: svg_path.is_closed(subpath),
-      ))
-
-      use offset_subpath <- result.try(
-        svg_path.subpath_with(output_segments, policy: svg_path.Wiggle)
-        |> result.map_error(PathError),
-      )
-
-      case svg_path.is_closed(subpath) {
-        False -> Ok(offset_subpath)
-        True ->
-          svg_path.set_closed_with(
-            offset_subpath,
-            closed: True,
-            policy: svg_path.Wiggle,
-          )
-          |> result.map_error(PathError)
-      }
-    }
-  }
-}
-
-/// Offset a closed subpath using trim and validity pruning.
-///
-/// This variant first builds the local trim-aware offset, splits it at
-/// self-intersections, removes pieces that are closer to the original subpath
-/// than the requested offset distance or that lie on the wrong fill side, then
-/// stitches the remaining pieces into closed contours. It returns a `Path`
-/// because a robust inset can split into multiple contours or disappear.
-///
-/// Open subpaths are offset with `subpath_trimmed_with` and wrapped in a path;
-/// the global pruning/stitching pass is only applied to closed subpaths.
-pub fn subpath_robust(
-  subpath: svg_path.Subpath,
-  distance distance: Float,
-) -> Result(svg_path.Path, Error) {
-  subpath_robust_with(subpath, distance:, options: default_options())
-}
-
-/// Offset a subpath with robust trim pruning using explicit options.
-pub fn subpath_robust_with(
-  subpath subpath: svg_path.Subpath,
-  distance distance: Float,
-  options options: Options,
-) -> Result(svg_path.Path, Error) {
-  use trimmed <- result.try(subpath_trimmed_with(subpath, distance:, options:))
-  case svg_path.is_closed(subpath) {
-    False -> Ok(svg_path.from_subpath(trimmed))
-    True -> robust_closed_subpath(subpath, trimmed, distance, options)
-  }
-}
-
-/// Offset a subpath as an ordered one-sided parametric walk.
-///
-/// Adjacent segment offsets are connected by synthetic circular turn arcs so
-/// the provisional offset is continuous. Those synthetic turns are only
-/// construction geometry: validity is measured against the original subpath.
-/// After splitting the provisional walk at self-intersections, each section is
-/// sampled at global section-length parameters `0.1, 0.2, ..., 0.9`. Sections
-/// whose samples are all closer to the original subpath than `abs(distance)`
-/// are removed. The surviving pieces are returned as zero or more ordered
-/// subpaths.
-pub fn subpath_parametric(
-  subpath: svg_path.Subpath,
-  distance distance: Float,
-) -> Result(svg_path.Path, Error) {
-  subpath_parametric_with(subpath, distance:, options: default_options())
-}
-
-/// Offset a subpath as an ordered one-sided parametric walk using explicit
-/// options.
-pub fn subpath_parametric_with(
-  subpath subpath: svg_path.Subpath,
-  distance distance: Float,
-  options options: Options,
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(validate_options(options))
-  use provisional <- result.try(parametric_provisional_subpath(
+  use provisional <- result.try(subpath_untrimmed_with(
     subpath,
-    distance,
-    options,
+    distance:,
+    options:,
   ))
   parametric_pruned_subpath(subpath, provisional, distance, options)
+}
+
+/// Offset a subpath without trimming self-intersections.
+///
+/// This returns the provisional one-sided offset walk. Adjacent segment offsets
+/// are connected with `default_options().join`; the result may self-intersect or
+/// contain sections that a trimmed offset would remove.
+pub fn subpath_untrimmed(
+  subpath: svg_path.Subpath,
+  distance distance: Float,
+) -> Result(svg_path.Subpath, Error) {
+  subpath_untrimmed_with(subpath, distance:, options: default_options())
+}
+
+/// Offset a subpath without trimming self-intersections using explicit options.
+pub fn subpath_untrimmed_with(
+  subpath subpath: svg_path.Subpath,
+  distance distance: Float,
+  options options: Options,
+) -> Result(svg_path.Subpath, Error) {
+  use _ <- result.try(validate_options(options))
+  parametric_provisional_subpath(subpath, distance, options)
 }
 
 /// Offset every subpath in a path by a signed distance.
@@ -367,86 +232,34 @@ pub fn path_with(
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(validate_options(options))
   use subpaths <- result.try(
-    offset_path_subpaths(
-      svg_path.subpaths(path),
-      distance,
-      options,
-      converted: [],
-    ),
-  )
-  Ok(svg_path.Path(subpaths:))
-}
-
-/// Offset every subpath in a path using trim-aware joins.
-pub fn path_trimmed(
-  path: svg_path.Path,
-  distance distance: Float,
-) -> Result(svg_path.Path, Error) {
-  path_trimmed_with(path, distance:, options: default_options())
-}
-
-/// Offset every subpath in a path using trim-aware joins and explicit options.
-pub fn path_trimmed_with(
-  path path: svg_path.Path,
-  distance distance: Float,
-  options options: Options,
-) -> Result(svg_path.Path, Error) {
-  use _ <- result.try(validate_options(options))
-  use subpaths <- result.try(
-    trim_offset_path_subpaths(
-      svg_path.subpaths(path),
-      distance,
-      options,
-      converted: [],
-    ),
-  )
-  Ok(svg_path.Path(subpaths:))
-}
-
-/// Offset every subpath in a path using robust trim pruning.
-pub fn path_robust(
-  path: svg_path.Path,
-  distance distance: Float,
-) -> Result(svg_path.Path, Error) {
-  path_robust_with(path, distance:, options: default_options())
-}
-
-/// Offset every subpath in a path using robust trim pruning and explicit options.
-pub fn path_robust_with(
-  path path: svg_path.Path,
-  distance distance: Float,
-  options options: Options,
-) -> Result(svg_path.Path, Error) {
-  use _ <- result.try(validate_options(options))
-  use subpaths <- result.try(
-    robust_offset_path_subpaths(
-      svg_path.subpaths(path),
-      distance,
-      options,
-      converted: [],
-    ),
-  )
-  Ok(svg_path.Path(subpaths:))
-}
-
-/// Offset every subpath in a path as ordered one-sided parametric walks.
-pub fn path_parametric(
-  path: svg_path.Path,
-  distance distance: Float,
-) -> Result(svg_path.Path, Error) {
-  path_parametric_with(path, distance:, options: default_options())
-}
-
-/// Offset every subpath in a path as ordered one-sided parametric walks using
-/// explicit options.
-pub fn path_parametric_with(
-  path path: svg_path.Path,
-  distance distance: Float,
-  options options: Options,
-) -> Result(svg_path.Path, Error) {
-  use _ <- result.try(validate_options(options))
-  use subpaths <- result.try(
     parametric_offset_path_subpaths(
+      svg_path.subpaths(path),
+      distance,
+      options,
+      converted: [],
+    ),
+  )
+  Ok(svg_path.Path(subpaths:))
+}
+
+/// Offset every subpath in a path without trimming self-intersections.
+pub fn path_untrimmed(
+  path: svg_path.Path,
+  distance distance: Float,
+) -> Result(svg_path.Path, Error) {
+  path_untrimmed_with(path, distance:, options: default_options())
+}
+
+/// Offset every subpath in a path without trimming self-intersections using
+/// explicit options.
+pub fn path_untrimmed_with(
+  path path: svg_path.Path,
+  distance distance: Float,
+  options options: Options,
+) -> Result(svg_path.Path, Error) {
+  use _ <- result.try(validate_options(options))
+  use subpaths <- result.try(
+    untrimmed_offset_path_subpaths(
       svg_path.subpaths(path),
       distance,
       options,
@@ -479,7 +292,7 @@ fn validate_join(join: Join) -> Result(Nil, Error) {
   }
 }
 
-fn offset_path_subpaths(
+fn untrimmed_offset_path_subpaths(
   subpaths: List(svg_path.Subpath),
   distance: Float,
   options: Options,
@@ -488,52 +301,15 @@ fn offset_path_subpaths(
   case subpaths {
     [] -> Ok(list.reverse(converted))
     [first, ..rest] -> {
-      use offset <- result.try(subpath_with(first, distance:, options:))
-      offset_path_subpaths(rest, distance, options, converted: [
+      use offset <- result.try(subpath_untrimmed_with(
+        first,
+        distance:,
+        options:,
+      ))
+      untrimmed_offset_path_subpaths(rest, distance, options, converted: [
         offset,
         ..converted
       ])
-    }
-  }
-}
-
-fn trim_offset_path_subpaths(
-  subpaths: List(svg_path.Subpath),
-  distance: Float,
-  options: Options,
-  converted converted: List(svg_path.Subpath),
-) -> Result(List(svg_path.Subpath), Error) {
-  case subpaths {
-    [] -> Ok(list.reverse(converted))
-    [first, ..rest] -> {
-      use offset <- result.try(subpath_trimmed_with(first, distance:, options:))
-      trim_offset_path_subpaths(rest, distance, options, converted: [
-        offset,
-        ..converted
-      ])
-    }
-  }
-}
-
-fn robust_offset_path_subpaths(
-  subpaths: List(svg_path.Subpath),
-  distance: Float,
-  options: Options,
-  converted converted: List(svg_path.Subpath),
-) -> Result(List(svg_path.Subpath), Error) {
-  case subpaths {
-    [] -> Ok(list.reverse(converted))
-    [first, ..rest] -> {
-      use offset <- result.try(subpath_robust_with(first, distance:, options:))
-      robust_offset_path_subpaths(
-        rest,
-        distance,
-        options,
-        converted: list.append(
-          list.reverse(svg_path.subpaths(offset)),
-          converted,
-        ),
-      )
     }
   }
 }
@@ -547,11 +323,7 @@ fn parametric_offset_path_subpaths(
   case subpaths {
     [] -> Ok(list.reverse(converted))
     [first, ..rest] -> {
-      use offset <- result.try(subpath_parametric_with(
-        first,
-        distance:,
-        options:,
-      ))
+      use offset <- result.try(subpath_with(first, distance:, options:))
       parametric_offset_path_subpaths(
         rest,
         distance,
@@ -1227,83 +999,6 @@ fn drop_last(items: List(a)) -> List(a) {
   }
 }
 
-fn robust_closed_subpath(
-  source: svg_path.Subpath,
-  provisional: svg_path.Subpath,
-  distance: Float,
-  options: Options,
-) -> Result(svg_path.Path, Error) {
-  use target <- result.try(target_containment(source, provisional))
-  use pieces <- result.try(split_self_intersections(
-    provisional,
-    svg_path.default_intersection_options(),
-    options.tolerance,
-  ))
-  use retained <- result.try(
-    retain_robust_pieces(
-      pieces,
-      source:,
-      distance:,
-      target:,
-      options:,
-      retained: [],
-    ),
-  )
-  use contours <- result.try(stitch_closed_pieces(retained, options.tolerance))
-  Ok(svg_path.Path(subpaths: contours))
-}
-
-fn target_containment(
-  source: svg_path.Subpath,
-  provisional: svg_path.Subpath,
-) -> Result(svg_path.PointContainment, Error) {
-  target_containment_loop(svg_path.segments(provisional), source)
-}
-
-fn target_containment_loop(
-  segments: List(svg_path.Segment),
-  source: svg_path.Subpath,
-) -> Result(svg_path.PointContainment, Error) {
-  case segments {
-    [] -> Error(CannotStitchRobustOffset)
-    [first, ..rest] -> {
-      use midpoint <- result.try(
-        svg_path.segment_point(first, at: 0.5) |> result.map_error(PathError),
-      )
-      use containment <- result.try(
-        svg_path.subpath_containment(
-          midpoint,
-          within: source,
-          using: svg_path.Nonzero,
-        )
-        |> result.map_error(PathError),
-      )
-      case containment {
-        svg_path.Boundary -> target_containment_loop(rest, source)
-        _ -> Ok(containment)
-      }
-    }
-  }
-}
-
-fn split_self_intersections(
-  subpath: svg_path.Subpath,
-  _intersection_options: svg_path.IntersectionOptions,
-  _tolerance: Float,
-) -> Result(List(svg_path.Segment), Error) {
-  use split_points <- result.try(self_intersection_split_parameters(subpath))
-  use sections <- result.try(
-    split_segments_at_subpath_parameters(
-      svg_path.segments(subpath),
-      split_points,
-      index: 0,
-      current: [],
-      sections: [],
-    ),
-  )
-  Ok(sections |> list.flat_map(fn(section) { section }))
-}
-
 fn self_intersection_split_parameters(
   subpath: svg_path.Subpath,
 ) -> Result(List(svg_path.SubpathParameter), Error) {
@@ -1389,233 +1084,8 @@ fn same_point(a: svg_path.Point, b: svg_path.Point, tolerance: Float) -> Bool {
   vec2f.distance_squared(a, with: b) <=. tolerance *. tolerance
 }
 
-fn retain_robust_pieces(
-  pieces: List(svg_path.Segment),
-  source source: svg_path.Subpath,
-  distance distance: Float,
-  target target: svg_path.PointContainment,
-  options options: Options,
-  retained retained: List(svg_path.Segment),
-) -> Result(List(svg_path.Segment), Error) {
-  case pieces {
-    [] -> Ok(list.reverse(retained))
-    [first, ..rest] -> {
-      use keep <- result.try(robust_piece_is_valid(
-        first,
-        source:,
-        distance:,
-        target:,
-        options:,
-      ))
-      let retained = case keep {
-        True -> [first, ..retained]
-        False -> retained
-      }
-      retain_robust_pieces(
-        rest,
-        source:,
-        distance:,
-        target:,
-        options:,
-        retained:,
-      )
-    }
-  }
-}
-
-fn robust_piece_is_valid(
-  piece: svg_path.Segment,
-  source source: svg_path.Subpath,
-  distance distance: Float,
-  target target: svg_path.PointContainment,
-  options options: Options,
-) -> Result(Bool, Error) {
-  robust_piece_samples_valid(
-    piece,
-    [0.25, 0.5, 0.75],
-    source:,
-    distance:,
-    target:,
-    options:,
-  )
-}
-
-fn robust_piece_samples_valid(
-  piece: svg_path.Segment,
-  samples: List(Float),
-  source source: svg_path.Subpath,
-  distance distance: Float,
-  target target: svg_path.PointContainment,
-  options options: Options,
-) -> Result(Bool, Error) {
-  case samples {
-    [] -> Ok(True)
-    [first, ..rest] -> {
-      use point <- result.try(
-        svg_path.segment_point(piece, at: first) |> result.map_error(PathError),
-      )
-      use valid <- result.try(robust_point_is_valid(
-        point,
-        source:,
-        distance:,
-        target:,
-        options:,
-      ))
-      case valid {
-        False -> Ok(False)
-        True ->
-          robust_piece_samples_valid(
-            piece,
-            rest,
-            source:,
-            distance:,
-            target:,
-            options:,
-          )
-      }
-    }
-  }
-}
-
-fn robust_point_is_valid(
-  point: svg_path.Point,
-  source source: svg_path.Subpath,
-  distance distance: Float,
-  target target: svg_path.PointContainment,
-  options options: Options,
-) -> Result(Bool, Error) {
-  let margin = distance_margin(options)
-  use projection <- result.try(
-    svg_path.subpath_projection_with(
-      point,
-      to: source,
-      options: options.distance,
-    )
-    |> result.map_error(PathError),
-  )
-  use containment <- result.try(
-    svg_path.subpath_containment(point, within: source, using: svg_path.Nonzero)
-    |> result.map_error(PathError),
-  )
-  Ok(
-    projection.distance +. margin >=. float.absolute_value(distance)
-    && containment == target,
-  )
-}
-
 fn distance_margin(options: Options) -> Float {
   options.tolerance
-}
-
-fn stitch_closed_pieces(
-  pieces: List(svg_path.Segment),
-  tolerance: Float,
-) -> Result(List(svg_path.Subpath), Error) {
-  stitch_closed_pieces_loop(pieces, tolerance, contours: [])
-}
-
-fn stitch_closed_pieces_loop(
-  pieces: List(svg_path.Segment),
-  tolerance: Float,
-  contours contours: List(svg_path.Subpath),
-) -> Result(List(svg_path.Subpath), Error) {
-  case pieces {
-    [] -> Ok(list.reverse(contours))
-    [first, ..rest] -> {
-      use contour <- result.try(
-        stitch_one_contour(first, rest, tolerance, chain: [first]),
-      )
-      let #(subpath, remaining) = contour
-      stitch_closed_pieces_loop(remaining, tolerance, contours: [
-        subpath,
-        ..contours
-      ])
-    }
-  }
-}
-
-fn stitch_one_contour(
-  first: svg_path.Segment,
-  remaining: List(svg_path.Segment),
-  tolerance: Float,
-  chain chain: List(svg_path.Segment),
-) -> Result(#(svg_path.Subpath, List(svg_path.Segment)), Error) {
-  use last <- result.try(last_segment(chain))
-  let chain_start = svg_path.segment_start(first)
-  let chain_end = svg_path.segment_end(last)
-  case same_point(chain_start, chain_end, tolerance) {
-    True -> {
-      use subpath <- result.try(
-        svg_path.subpath_with(chain, policy: svg_path.Wiggle)
-        |> result.map_error(PathError),
-      )
-      use subpath <- result.try(
-        svg_path.set_closed_with(subpath, closed: True, policy: svg_path.Wiggle)
-        |> result.map_error(PathError),
-      )
-      Ok(#(subpath, remaining))
-    }
-    False -> {
-      use match <- result.try(take_unique_next_segment(
-        remaining,
-        after: chain_end,
-        tolerance:,
-      ))
-      let #(next, rest) = match
-      stitch_one_contour(
-        first,
-        rest,
-        tolerance,
-        chain: list.append(chain, [next]),
-      )
-    }
-  }
-}
-
-fn take_unique_next_segment(
-  segments: List(svg_path.Segment),
-  after point: svg_path.Point,
-  tolerance tolerance: Float,
-) -> Result(#(svg_path.Segment, List(svg_path.Segment)), Error) {
-  take_unique_next_segment_loop(
-    segments,
-    after: point,
-    tolerance:,
-    prefix: [],
-    found: [],
-  )
-}
-
-fn take_unique_next_segment_loop(
-  segments: List(svg_path.Segment),
-  after point: svg_path.Point,
-  tolerance tolerance: Float,
-  prefix prefix: List(svg_path.Segment),
-  found found: List(#(svg_path.Segment, List(svg_path.Segment))),
-) -> Result(#(svg_path.Segment, List(svg_path.Segment)), Error) {
-  case segments {
-    [] -> {
-      case found {
-        [match] -> Ok(match)
-        [] | [_, ..] -> Error(CannotStitchRobustOffset)
-      }
-    }
-    [first, ..rest] -> {
-      let found = case
-        same_point(svg_path.segment_start(first), point, tolerance)
-      {
-        True -> [#(first, list.append(list.reverse(prefix), rest)), ..found]
-        False -> found
-      }
-      take_unique_next_segment_loop(
-        rest,
-        after: point,
-        tolerance:,
-        prefix: [first, ..prefix],
-        found:,
-      )
-    }
-  }
 }
 
 fn offset_subpath_segments(
@@ -1632,370 +1102,6 @@ fn offset_subpath_segments(
         OffsetSegment(source: first, offset: svg_path.segments(offset)),
         ..converted
       ])
-    }
-  }
-}
-
-fn joined_offset_segments(
-  offsets: List(OffsetSegment),
-  distance: Float,
-  options: Options,
-  closed closed: Bool,
-) -> Result(List(svg_path.Segment), Error) {
-  case offsets {
-    [] -> Ok([])
-    [first, ..rest] -> {
-      let initial = first.offset
-      joined_offset_segments_loop(
-        first,
-        first,
-        rest,
-        distance,
-        options,
-        closed:,
-        segments: initial,
-      )
-    }
-  }
-}
-
-fn joined_offset_segments_loop(
-  first: OffsetSegment,
-  previous: OffsetSegment,
-  rest: List(OffsetSegment),
-  distance: Float,
-  options: Options,
-  closed closed: Bool,
-  segments segments: List(svg_path.Segment),
-) -> Result(List(svg_path.Segment), Error) {
-  case rest {
-    [] -> {
-      case closed {
-        False -> Ok(segments)
-        True -> {
-          use join <- result.try(join_segments(
-            previous,
-            first,
-            distance,
-            options.join,
-          ))
-          Ok(list.append(segments, join))
-        }
-      }
-    }
-    [next, ..remaining] -> {
-      use join <- result.try(join_segments(
-        previous,
-        next,
-        distance,
-        options.join,
-      ))
-      joined_offset_segments_loop(
-        first,
-        next,
-        remaining,
-        distance,
-        options,
-        closed:,
-        segments: list.append(segments, list.append(join, next.offset)),
-      )
-    }
-  }
-}
-
-fn join_segments(
-  left: OffsetSegment,
-  right: OffsetSegment,
-  distance: Float,
-  join: Join,
-) -> Result(List(svg_path.Segment), Error) {
-  use left_offset <- result.try(last_offset_segment(left))
-  use right_offset <- result.try(first_offset_segment(right))
-
-  let start = svg_path.segment_end(left_offset)
-  let end = svg_path.segment_start(right_offset)
-
-  case points_near(start, end) {
-    True -> Ok([])
-    False ->
-      case join {
-        Bevel -> Ok(line_segments_between([start, end]))
-        Miter(miter_limit) ->
-          miter_join(left, right, start, end, distance, miter_limit)
-        Round -> round_join(left, right, start, end, distance)
-      }
-  }
-}
-
-fn trim_joined_offset_segments(
-  offsets: List(OffsetSegment),
-  distance: Float,
-  options: Options,
-  closed closed: Bool,
-) -> Result(List(svg_path.Segment), Error) {
-  case offsets {
-    [] -> Ok([])
-    [first, ..rest] -> {
-      use open_segments <- result.try(trim_joined_offset_segments_loop(
-        first,
-        rest,
-        distance,
-        options,
-        segments: first.offset,
-      ))
-
-      case closed {
-        False -> Ok(open_segments)
-        True -> trim_closed_join(offsets, open_segments, distance, options)
-      }
-    }
-  }
-}
-
-fn trim_joined_offset_segments_loop(
-  previous: OffsetSegment,
-  rest: List(OffsetSegment),
-  distance: Float,
-  options: Options,
-  segments segments: List(svg_path.Segment),
-) -> Result(List(svg_path.Segment), Error) {
-  case rest {
-    [] -> Ok(segments)
-    [next, ..remaining] -> {
-      use left_offset <- result.try(last_segment(segments))
-      use right_offset <- result.try(first_offset_segment(next))
-      use join <- result.try(trim_or_join_segments(
-        previous.source,
-        left_offset,
-        next.source,
-        right_offset,
-        distance,
-        options.join,
-      ))
-      use segments <- result.try(replace_last_segment(segments, join.left))
-      let next_segments =
-        replace_first_segment_unchecked(next.offset, join.right)
-      trim_joined_offset_segments_loop(
-        next,
-        remaining,
-        distance,
-        options,
-        segments: list.append(segments, list.append(join.join, next_segments)),
-      )
-    }
-  }
-}
-
-fn trim_closed_join(
-  offsets: List(OffsetSegment),
-  segments: List(svg_path.Segment),
-  distance: Float,
-  options: Options,
-) -> Result(List(svg_path.Segment), Error) {
-  use first <- result.try(first_offset_segment_info(offsets))
-  use last <- result.try(last_offset_segment_info(offsets))
-  use first_offset <- result.try(first_segment(segments))
-  use last_offset <- result.try(last_segment(segments))
-  use join <- result.try(trim_or_join_segments(
-    last.source,
-    last_offset,
-    first.source,
-    first_offset,
-    distance,
-    options.join,
-  ))
-  use segments <- result.try(replace_first_segment(segments, join.right))
-  use segments <- result.try(replace_last_segment(segments, join.left))
-  Ok(list.append(segments, join.join))
-}
-
-fn trim_or_join_segments(
-  left_source: svg_path.Segment,
-  left_offset: svg_path.Segment,
-  right_source: svg_path.Segment,
-  right_offset: svg_path.Segment,
-  distance: Float,
-  join: Join,
-) -> Result(TrimJoin, Error) {
-  let start = svg_path.segment_end(left_offset)
-  let end = svg_path.segment_start(right_offset)
-
-  case points_near(start, end) {
-    True -> Ok(TrimJoin(left: left_offset, join: [], right: right_offset))
-    False -> {
-      case trim_intersection(left_offset, right_offset) {
-        Ok(#(left_t, right_t)) -> {
-          use left <- result.try(
-            svg_path.segment_between_inside(left_offset, from: 0.0, to: left_t)
-            |> result.map_error(PathError),
-          )
-          use right <- result.try(
-            svg_path.segment_between_inside(
-              right_offset,
-              from: right_t,
-              to: 1.0,
-            )
-            |> result.map_error(PathError),
-          )
-          Ok(TrimJoin(left:, join: [], right:))
-        }
-        Error(_) -> {
-          use connectors <- result.try(join_segments(
-            OffsetSegment(source: left_source, offset: [left_offset]),
-            OffsetSegment(source: right_source, offset: [right_offset]),
-            distance,
-            join,
-          ))
-          Ok(TrimJoin(left: left_offset, join: connectors, right: right_offset))
-        }
-      }
-    }
-  }
-}
-
-fn trim_intersection(
-  left: svg_path.Segment,
-  right: svg_path.Segment,
-) -> Result(#(Float, Float), Nil) {
-  case svg_path.segment_intersections(left, right) {
-    Error(_) -> Error(Nil)
-    Ok([]) -> Error(Nil)
-    Ok(intersections) ->
-      intersections
-      |> best_trim_intersection
-  }
-}
-
-fn best_trim_intersection(
-  intersections: List(svg_path.SegmentIntersection),
-) -> Result(#(Float, Float), Nil) {
-  case intersections {
-    [] -> Error(Nil)
-    [first, ..rest] ->
-      Ok(best_trim_intersection_loop(
-        rest,
-        best: #(first.left_t, first.right_t),
-        best_score: trim_score(first.left_t, first.right_t),
-      ))
-  }
-}
-
-fn best_trim_intersection_loop(
-  intersections: List(svg_path.SegmentIntersection),
-  best best: #(Float, Float),
-  best_score best_score: Float,
-) -> #(Float, Float) {
-  case intersections {
-    [] -> best
-    [first, ..rest] -> {
-      let score = trim_score(first.left_t, first.right_t)
-      case score <. best_score {
-        True ->
-          best_trim_intersection_loop(
-            rest,
-            best: #(first.left_t, first.right_t),
-            best_score: score,
-          )
-        False -> best_trim_intersection_loop(rest, best:, best_score:)
-      }
-    }
-  }
-}
-
-fn trim_score(left_t: Float, right_t: Float) -> Float {
-  float.absolute_value(1.0 -. left_t) +. float.absolute_value(right_t)
-}
-
-fn first_offset_segment_info(
-  offsets: List(OffsetSegment),
-) -> Result(OffsetSegment, Error) {
-  case offsets {
-    [] -> Error(NonFinite)
-    [first, ..] -> Ok(first)
-  }
-}
-
-fn last_offset_segment_info(
-  offsets: List(OffsetSegment),
-) -> Result(OffsetSegment, Error) {
-  offsets |> list.last |> result.map_error(fn(_) { NonFinite })
-}
-
-fn first_segment(
-  segments: List(svg_path.Segment),
-) -> Result(svg_path.Segment, Error) {
-  case segments {
-    [] -> Error(NonFinite)
-    [first, ..] -> Ok(first)
-  }
-}
-
-fn last_segment(
-  segments: List(svg_path.Segment),
-) -> Result(svg_path.Segment, Error) {
-  segments |> list.last |> result.map_error(fn(_) { NonFinite })
-}
-
-fn replace_first_segment(
-  segments: List(svg_path.Segment),
-  replacement: svg_path.Segment,
-) -> Result(List(svg_path.Segment), Error) {
-  case segments {
-    [] -> Error(NonFinite)
-    [_, ..rest] -> Ok([replacement, ..rest])
-  }
-}
-
-fn replace_first_segment_unchecked(
-  segments: List(svg_path.Segment),
-  replacement: svg_path.Segment,
-) -> List(svg_path.Segment) {
-  case segments {
-    [] -> []
-    [_, ..rest] -> [replacement, ..rest]
-  }
-}
-
-fn replace_last_segment(
-  segments: List(svg_path.Segment),
-  replacement: svg_path.Segment,
-) -> Result(List(svg_path.Segment), Error) {
-  case segments {
-    [] -> Error(NonFinite)
-    [_] -> Ok([replacement])
-    [first, ..rest] -> {
-      use rest <- result.try(replace_last_segment(rest, replacement))
-      Ok([first, ..rest])
-    }
-  }
-}
-
-fn miter_join(
-  left: OffsetSegment,
-  right: OffsetSegment,
-  start: svg_path.Point,
-  end: svg_path.Point,
-  distance: Float,
-  miter_limit: Float,
-) -> Result(List(svg_path.Segment), Error) {
-  use left_tangent <- result.try(unit_tangent(left.source, t: 1.0))
-  use right_tangent <- result.try(unit_tangent(right.source, t: 0.0))
-
-  case line_intersection(start, left_tangent, end, right_tangent) {
-    Error(_) -> Ok(line_segments_between([start, end]))
-    Ok(apex) -> {
-      let corner = svg_path.segment_end(left.source)
-      let miter_length = vec2f.distance(corner, with: apex)
-      let offset_distance = float.absolute_value(distance)
-      let within_limit = case offset_distance <=. point_tolerance {
-        True -> True
-        False -> miter_length /. offset_distance <=. miter_limit
-      }
-
-      case within_limit && point_is_finite(apex) {
-        True -> Ok(line_segments_between([start, apex, end]))
-        False -> Ok(line_segments_between([start, end]))
-      }
     }
   }
 }
@@ -2097,27 +1203,6 @@ fn last_offset_segment(
   offset: OffsetSegment,
 ) -> Result(svg_path.Segment, Error) {
   offset.offset |> list.last |> result.map_error(fn(_) { NonFinite })
-}
-
-fn line_intersection(
-  left_start: svg_path.Point,
-  left_direction: svg_path.Point,
-  right_start: svg_path.Point,
-  right_direction: svg_path.Point,
-) -> Result(svg_path.Point, Nil) {
-  let delta = subtract(right_start, left_start)
-  let determinant = cross(left_direction, right_direction)
-  case float.absolute_value(determinant) <=. point_tolerance {
-    True -> Error(Nil)
-    False -> {
-      let left_t = cross(delta, right_direction) /. determinant
-      let point = add(left_start, scale(left_direction, left_t))
-      case point_is_finite(point) {
-        True -> Ok(point)
-        False -> Error(Nil)
-      }
-    }
-  }
 }
 
 fn line_segments_between(

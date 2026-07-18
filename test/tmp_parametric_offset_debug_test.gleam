@@ -317,8 +317,7 @@ fn print_parametric_cut_diagnostics(
 ) -> Nil {
   let assert Ok(provisional) = debug_provisional_with(source, join, distance)
   let options = preview_options(join)
-  let assert Ok(result) =
-    offset.subpath_parametric_with(source, distance:, options:)
+  let assert Ok(result) = offset.subpath_with(source, distance:, options:)
   let segments = svg_path.segments(provisional)
   let cuts =
     count_intersection_cuts(
@@ -681,7 +680,7 @@ fn print_diamond_round_negative_distances() -> Nil {
   let source = rounded_diamond()
   let options = preview_options(offset.Round)
   let assert Ok(result) =
-    offset.subpath_parametric_with(source, distance: offset_distance, options:)
+    offset.subpath_with(source, distance: offset_distance, options:)
   let threshold =
     float.absolute_value(offset_distance) -. debug_distance_margin()
   io.println("")
@@ -1277,11 +1276,7 @@ fn render_panel(
   let placed_source = place_path(svg_path.from_subpath(example.source), x, y)
   let options = preview_options(join_case.join)
   let assert Ok(result) =
-    offset.subpath_parametric_with(
-      example.source,
-      distance: example.distance,
-      options:,
-    )
+    offset.subpath_with(example.source, distance: example.distance, options:)
   let placed_result = place_path(result, x, y)
 
   [
@@ -1454,7 +1449,8 @@ fn debug_provisional_with(
   let options = preview_options(join)
   case join {
     offset.Round -> {
-      let assert Ok(subpath) = offset.subpath_with(source, distance:, options:)
+      let assert Ok(subpath) =
+        offset.subpath_untrimmed_with(source, distance:, options:)
       Ok(subpath)
     }
     _ -> {

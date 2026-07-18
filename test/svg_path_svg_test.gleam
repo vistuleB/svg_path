@@ -29,7 +29,7 @@ pub fn document_renders_a_complete_svg_document_test() {
       ],
       view_box: box,
     )
-    == "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 -5 20 20\">\n"
+    == "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 -5 20 20\" width=\"20\" height=\"20\">\n"
     <> "  <path d=\"M 1 2 H 11\" style=\"fill: none; stroke: red; stroke-width: 0.25\" />\n"
     <> "  <text x=\"1\" y=\"2\" font-size=\"4\" style=\"fill: black; font-family: sans-serif\">start</text>\n"
     <> "</svg>"
@@ -70,7 +70,7 @@ pub fn document_renders_rectangles_circles_and_ellipses_test() {
       ],
       view_box: box,
     )
-    == "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\">\n"
+    == "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\" width=\"20\" height=\"20\">\n"
     <> "  <rect x=\"1\" y=\"2\" width=\"10\" height=\"5\" style=\"fill: white; stroke: black\" />\n"
     <> "  <circle cx=\"8\" cy=\"9\" r=\"3\" style=\"fill: red; stroke: none\" />\n"
     <> "  <ellipse cx=\"12\" cy=\"13\" rx=\"4\" ry=\"2\" style=\"fill: blue; stroke: none\" />\n"
@@ -115,7 +115,7 @@ pub fn paths_escapes_path_style_and_text_values_test() {
       ],
       view_box: box,
     )
-    == "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1 1\">\n"
+    == "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1 1\" width=\"1\" height=\"1\">\n"
     <> "  <path d=\"\" style=\"stroke: &quot;red&quot;; marker: url(a&amp;b&lt;c&gt;d)\" />\n"
     <> "  <rect x=\"0\" y=\"0\" width=\"1\" height=\"1\" style=\"stroke: &quot;red&quot;; marker: url(a&amp;b&lt;c&gt;d)\" />\n"
     <> "  <circle cx=\"0.5\" cy=\"0.5\" r=\"0.25\" style=\"stroke: &quot;red&quot;; marker: url(a&amp;b&lt;c&gt;d)\" />\n"
@@ -135,7 +135,7 @@ pub fn labeled_point_draws_marker_and_label_test() {
       svg.labeled_point("p0", "red", svg_path.point(10.0, 10.0), 4),
       view_box: box,
     )
-    == "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\">\n"
+    == "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\" width=\"20\" height=\"20\">\n"
     <> "  <path d=\"M 8 8 H 12 V 12 H 8 Z M 8 8 L 12 12 M 8 12 L 12 8\" style=\"fill: none; stroke: red; stroke-width: 1; stroke-linecap: square; stroke-linejoin: miter\" />\n"
     <> "  <text x=\"14\" y=\"12\" font-size=\"4\" style=\"fill: red; font-family: system-ui, sans-serif\">p0</text>\n"
     <> "</svg>"

@@ -122,6 +122,10 @@ pub fn document(
 
   "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\""
   <> view_box_value(view_box, format)
+  <> "\" width=\""
+  <> number_format.number(svg_path.bounding_box_width(view_box), with: format)
+  <> "\" height=\""
+  <> number_format.number(svg_path.bounding_box_height(view_box), with: format)
   <> "\">\n"
   <> {
     things
