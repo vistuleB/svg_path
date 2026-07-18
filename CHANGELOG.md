@@ -11,6 +11,8 @@ the tag object.
 
 ## Unreleased
 
+- Added `svg_path/offset` with segment-level offset construction for lines,
+  Beziers, and arcs.
 - Added best-fit congruency helpers for ordered points, segments, subpaths, and
   paths, with `Similar` and `Affine` transform families and RMS error reporting.
 
