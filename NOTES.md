@@ -1,48 +1,14 @@
 # Notes
 
-## Final Major Feature Candidates
+## Wishlist
 
-The library now covers much more than SVG path parsing and serialization:
-
-- Core path model: `Path`, `Subpath`, `Segment`, `Point`, construction,
-  editing, splitting, joining, cleaning, parsing, serialization, and inspection.
-- Numeric geometry: bounding boxes, segment optimization, distances,
-  projections, true-length lookup, intersections, linearization, areas, and
-  convex hulls.
-- Semantic geometry: `congruency`, fill-rule containment, clipping, and CSG.
-- Output-side helpers: transform parsing/serialization, `basic_shapes`,
-  `effects`, and the small `svg` drawing module for tests and examples.
-
-Two major features would make the package feel close to complete:
-
-1. Path offsets.
-2. Path stroking, including dash arrays, caps, joins, marker/decorator
-   placement, and SVG-style stroke semantics.
-
-After those, the remaining useful feature areas are probably smaller and more
-selective:
-
-- Path normalization or canonicalization pipelines. This would gather existing
-  operations such as arc-to-cubic conversion, curve linearization,
-  zero-length cleanup, empty-subpath handling, and maybe fill-rule orientation
-  normalization behind clear public presets.
-- Structural simplification, not smoothing. Reasonable package-level cleanup
-  includes merging adjacent collinear lines, removing redundant repeated points,
-  collapsing explicit backtracking when requested, and removing zero-length
-  artifacts according to the existing move-only semantics. Curve fitting,
-  smoothing, and aesthetic simplification should probably live in specialized
-  packages.
-- Stroke hit testing. If stroking returns a filled outline, callers can already
-  use containment on the produced path, but direct helpers for "point inside
-  stroke" or "point near stroked path" may still be ergonomic.
-- Orientation and topology helpers. Some CSG internals may be worth exposing in
-  smaller form: classify subpath orientation, orient clockwise/counterclockwise,
-  group nested contours, or distinguish outer contours from holes under a fill
-  rule.
-- Marker and decoration placement as geometry. This overlaps with stroking but
-  is not identical: `marker-start`, `marker-mid`, `marker-end`, repeated
-  decorations along length, tangent extraction, and arrowheads converted to
-  paths can be valuable independently.
+- Path offsets.
+- Path stroking, including dash arrays, caps, joins, and SVG stroke semantics.
+- Marker and decoration placement as geometry.
+- Stroke hit testing.
+- Path normalization or canonicalization pipelines.
+- Structural simplification, not smoothing.
+- Orientation and topology helpers.
 
 Ongoing pruning principles:
 
