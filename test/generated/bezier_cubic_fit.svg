@@ -1,0 +1,136 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 720">
+  <rect x="0" y="0" width="900" height="720" style="fill: #ffffff; stroke: none" />
+  <rect x="10" y="32" width="280" height="220" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
+  <text x="10" y="24" font-size="13" style="fill: #111827; font-family: system-ui, sans-serif; font-weight: 700">exact 2 samples</text>
+  <path d="M 46.80137 129.10274 C 98.12671 33.78425 178.78082 180.42808 237.43835 92.44178" style="fill: none; stroke: #ef4444; stroke-width: 1.2; stroke-opacity: 0.45; stroke-linecap: round" />
+  <path d="M 46.80137 129.10274 C 98.12671 33.78425 178.78082 180.42808 237.43835 92.44178" style="fill: none; stroke: #1f2937; stroke-width: 3; stroke-linecap: round" />
+  <path d="M 46.80137 129.10274 L 66.11526 93.2341" style="fill: none; stroke: #94a3b8; stroke-width: 1.2; stroke-linecap: round; stroke-opacity: 0.65" />
+  <path d="M 66.11526 93.2341 L 65.40411 101.93722 L 59.24081 98.61852 Z" style="fill: #94a3b8; stroke: none; opacity: 0.65" />
+  <path d="M 237.43835 92.44178 L 260.03574 58.54571" style="fill: none; stroke: #94a3b8; stroke-width: 1.2; stroke-linecap: round; stroke-opacity: 0.65" />
+  <path d="M 260.03574 58.54571 L 258.51031 67.14356 L 252.68596 63.26066 Z" style="fill: #94a3b8; stroke: none; opacity: 0.65" />
+  <circle cx="46.80137" cy="129.10274" r="3.8" style="fill: #2563eb; stroke: #ffffff; stroke-width: 1.2" />
+  <circle cx="237.43835" cy="92.44178" r="3.8" style="fill: #2563eb; stroke: #ffffff; stroke-width: 1.2" />
+  <circle cx="99.52716" cy="95.77793" r="3.2" style="fill: #f59e0b; stroke: #ffffff; stroke-width: 1" />
+  <circle cx="184.11912" cy="121.62743" r="3.2" style="fill: #f59e0b; stroke: #ffffff; stroke-width: 1" />
+  <text x="18" y="224" font-size="9" style="fill: #374151; font-family: ui-monospace, SFMono-Regular, Menlo, monospace">root_sum_square = 2.1390168887322673e-14</text>
+  <text x="18" y="240" font-size="9" style="fill: #374151; font-family: ui-monospace, SFMono-Regular, Menlo, monospace">taxicab_diameter = 222.2419489055914</text>
+  <rect x="310" y="32" width="280" height="220" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
+  <text x="310" y="24" font-size="13" style="fill: #111827; font-family: system-ui, sans-serif; font-weight: 700">exact 3 samples</text>
+  <path d="M 346.18512 89.39909 C 389.71663 39.6488 420.81056 238.64997 482.99843 151.58696" style="fill: none; stroke: #ef4444; stroke-width: 1.2; stroke-opacity: 0.45; stroke-linecap: round" />
+  <path d="M 346.18512 89.39909 C 389.71663 39.6488 420.81056 238.64997 482.99843 151.58696" style="fill: none; stroke: #1f2937; stroke-width: 3; stroke-linecap: round" />
+  <path d="M 346.18512 89.39909 L 372.16047 59.71298" style="fill: none; stroke: #94a3b8; stroke-width: 1.2; stroke-linecap: round; stroke-opacity: 0.65" />
+  <path d="M 372.16047 59.71298 L 369.52645 68.03836 L 364.25842 63.42882 Z" style="fill: #94a3b8; stroke: none; opacity: 0.65" />
+  <path d="M 482.99843 151.58696 L 505.92593 119.48845" style="fill: none; stroke: #94a3b8; stroke-width: 1.2; stroke-linecap: round; stroke-opacity: 0.65" />
+  <path d="M 505.92593 119.48845 L 504.12409 128.03265 L 498.42796 123.96399 Z" style="fill: #94a3b8; stroke: none; opacity: 0.65" />
+  <circle cx="346.18512" cy="89.39909" r="3.8" style="fill: #2563eb; stroke: #ffffff; stroke-width: 1.2" />
+  <circle cx="482.99843" cy="151.58696" r="3.8" style="fill: #2563eb; stroke: #ffffff; stroke-width: 1.2" />
+  <circle cx="371.15977" cy="85.12057" r="3.2" style="fill: #f59e0b; stroke: #ffffff; stroke-width: 1" />
+  <circle cx="410.12579" cy="138.37646" r="3.2" style="fill: #f59e0b; stroke: #ffffff; stroke-width: 1" />
+  <circle cx="453.76459" cy="173.81488" r="3.2" style="fill: #f59e0b; stroke: #ffffff; stroke-width: 1" />
+  <text x="318" y="224" font-size="9" style="fill: #374151; font-family: ui-monospace, SFMono-Regular, Menlo, monospace">root_sum_square = 2.7974095480984613e-14</text>
+  <text x="318" y="240" font-size="9" style="fill: #374151; font-family: ui-monospace, SFMono-Regular, Menlo, monospace">taxicab_diameter = 253.72132272792788</text>
+  <rect x="610" y="32" width="280" height="220" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
+  <text x="610" y="24" font-size="13" style="fill: #111827; font-family: system-ui, sans-serif; font-weight: 700">exact 4 samples</text>
+  <path d="M 648.14456 135.27664 C 692.02302 47.51973 774.29512 47.51973 834.628 140.76145" style="fill: none; stroke: #ef4444; stroke-width: 1.2; stroke-opacity: 0.45; stroke-linecap: round" />
+  <path d="M 648.14456 135.27664 C 692.02302 47.51973 774.29512 47.51973 834.628 140.76145" style="fill: none; stroke: #1f2937; stroke-width: 3; stroke-linecap: round" />
+  <path d="M 648.14456 135.27664 L 668.57832 94.40912" style="fill: none; stroke: #94a3b8; stroke-width: 1.2; stroke-linecap: round; stroke-opacity: 0.65" />
+  <path d="M 668.57832 94.40912 L 668.13111 103.12979 L 661.87012 99.99929 Z" style="fill: #94a3b8; stroke: none; opacity: 0.65" />
+  <path d="M 834.628 140.76145 L 859.44985 179.12249" style="fill: none; stroke: #94a3b8; stroke-width: 1.2; stroke-linecap: round; stroke-opacity: 0.65" />
+  <path d="M 859.44985 179.12249 L 852.16534 174.3073 L 858.04233 170.50455 Z" style="fill: #94a3b8; stroke: none; opacity: 0.65" />
+  <circle cx="648.14456" cy="135.27664" r="3.8" style="fill: #2563eb; stroke: #ffffff; stroke-width: 1.2" />
+  <circle cx="834.628" cy="140.76145" r="3.8" style="fill: #2563eb; stroke: #ffffff; stroke-width: 1.2" />
+  <circle cx="675.21893" cy="96.44987" r="3.2" style="fill: #f59e0b; stroke: #ffffff; stroke-width: 1" />
+  <circle cx="711.48754" cy="73.55102" r="3.2" style="fill: #f59e0b; stroke: #ffffff; stroke-width: 1" />
+  <circle cx="767.85126" cy="77.77555" r="3.2" style="fill: #f59e0b; stroke: #ffffff; stroke-width: 1" />
+  <circle cx="812.06464" cy="111.213" r="3.2" style="fill: #f59e0b; stroke: #ffffff; stroke-width: 1" />
+  <text x="618" y="224" font-size="9" style="fill: #374151; font-family: ui-monospace, SFMono-Regular, Menlo, monospace">root_sum_square = 1.7763568394002505e-14</text>
+  <text x="618" y="240" font-size="9" style="fill: #374151; font-family: ui-monospace, SFMono-Regular, Menlo, monospace">taxicab_diameter = 333.2206923292441</text>
+  <rect x="10" y="272" width="280" height="220" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
+  <text x="10" y="264" font-size="13" style="fill: #111827; font-family: system-ui, sans-serif; font-weight: 700">exact 3 samples</text>
+  <path d="M 47.02254 333.98271 C 103.82079 433.37965 174.81861 227.48599 238.71664 348.18228" style="fill: none; stroke: #ef4444; stroke-width: 1.2; stroke-opacity: 0.45; stroke-linecap: round" />
+  <path d="M 47.02254 333.98271 C 103.82079 433.37965 174.81861 227.48599 238.71664 348.18228" style="fill: none; stroke: #1f2937; stroke-width: 3; stroke-linecap: round" />
+  <path d="M 47.02254 333.98271 L 67.62111 370.0302" style="fill: none; stroke: #94a3b8; stroke-width: 1.2; stroke-linecap: round; stroke-opacity: 0.65" />
+  <path d="M 67.62111 370.0302 L 60.61315 364.82075 L 66.69085 361.34777 Z" style="fill: #94a3b8; stroke: none; opacity: 0.65" />
+  <path d="M 238.71664 348.18228 L 258.14228 384.87515" style="fill: none; stroke: #94a3b8; stroke-width: 1.2; stroke-linecap: round; stroke-opacity: 0.65" />
+  <path d="M 258.14228 384.87515 L 251.30592 379.44246 L 257.49244 376.16724 Z" style="fill: #94a3b8; stroke: none; opacity: 0.65" />
+  <circle cx="47.02254" cy="333.98271" r="3.8" style="fill: #2563eb; stroke: #ffffff; stroke-width: 1.2" />
+  <circle cx="238.71664" cy="348.18228" r="3.8" style="fill: #2563eb; stroke: #ffffff; stroke-width: 1.2" />
+  <circle cx="91.95085" cy="361.16156" r="3.2" style="fill: #f59e0b; stroke: #ffffff; stroke-width: 1" />
+  <circle cx="140.20717" cy="333.09524" r="3.2" style="fill: #f59e0b; stroke: #ffffff; stroke-width: 1" />
+  <circle cx="189.79471" cy="309.02254" r="3.2" style="fill: #f59e0b; stroke: #ffffff; stroke-width: 1" />
+  <text x="18" y="464" font-size="9" style="fill: #374151; font-family: ui-monospace, SFMono-Regular, Menlo, monospace">root_sum_square = 2.1316282072803006e-14</text>
+  <text x="18" y="480" font-size="9" style="fill: #374151; font-family: ui-monospace, SFMono-Regular, Menlo, monospace">taxicab_diameter = 233.90995761263918</text>
+  <rect x="310" y="272" width="280" height="220" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
+  <text x="310" y="264" font-size="13" style="fill: #111827; font-family: system-ui, sans-serif; font-weight: 700">exact 4 samples</text>
+  <path d="M 345.54963 388.39771 C 366.08248 280.60028 463.61349 280.60028 484.14633 388.39771" style="fill: none; stroke: #ef4444; stroke-width: 1.2; stroke-opacity: 0.45; stroke-linecap: round" />
+  <path d="M 345.54963 388.39771 C 366.08248 280.60028 463.61349 280.60028 484.14633 388.39771" style="fill: none; stroke: #1f2937; stroke-width: 3; stroke-linecap: round" />
+  <path d="M 345.54963 388.39771 L 352.67529 350.988" style="fill: none; stroke: #94a3b8; stroke-width: 1.2; stroke-linecap: round; stroke-opacity: 0.65" />
+  <path d="M 352.67529 350.988 L 354.61658 359.5016 L 347.74021 358.19182 Z" style="fill: #94a3b8; stroke: none; opacity: 0.65" />
+  <path d="M 484.14633 388.39771 L 491.27199 425.80742" style="fill: none; stroke: #94a3b8; stroke-width: 1.2; stroke-linecap: round; stroke-opacity: 0.65" />
+  <path d="M 491.27199 425.80742 L 486.33691 418.6036 L 493.21328 417.29382 Z" style="fill: #94a3b8; stroke: none; opacity: 0.65" />
+  <circle cx="345.54963" cy="388.39771" r="3.8" style="fill: #2563eb; stroke: #ffffff; stroke-width: 1.2" />
+  <circle cx="484.14633" cy="388.39771" r="3.8" style="fill: #2563eb; stroke: #ffffff; stroke-width: 1.2" />
+  <circle cx="359.46705" cy="347.16519" r="3.2" style="fill: #f59e0b; stroke: #ffffff; stroke-width: 1" />
+  <circle cx="388.80335" cy="314.82596" r="3.2" style="fill: #f59e0b; stroke: #ffffff; stroke-width: 1" />
+  <circle cx="440.89261" cy="314.82596" r="3.2" style="fill: #f59e0b; stroke: #ffffff; stroke-width: 1" />
+  <circle cx="475.83053" cy="359.2924" r="3.2" style="fill: #f59e0b; stroke: #ffffff; stroke-width: 1" />
+  <text x="318" y="464" font-size="9" style="fill: #374151; font-family: ui-monospace, SFMono-Regular, Menlo, monospace">root_sum_square = 1.5888218580782548e-14</text>
+  <text x="318" y="480" font-size="9" style="fill: #374151; font-family: ui-monospace, SFMono-Regular, Menlo, monospace">taxicab_diameter = 296.7522399970151</text>
+  <rect x="610" y="272" width="280" height="220" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
+  <text x="610" y="264" font-size="13" style="fill: #111827; font-family: system-ui, sans-serif; font-weight: 700">noisy 2 samples</text>
+  <path d="M 646.95068 370.01915 C 718.85256 236.48708 754.13717 457.31891 836.65852 333.53688" style="fill: none; stroke: #1f2937; stroke-width: 3; stroke-linecap: round" />
+  <path d="M 646.95068 370.01915 L 666.4854 333.74039" style="fill: none; stroke: #94a3b8; stroke-width: 1.2; stroke-linecap: round; stroke-opacity: 0.65" />
+  <path d="M 666.4854 333.74039 L 665.77425 342.4435 L 659.61095 339.12481 Z" style="fill: #94a3b8; stroke: none; opacity: 0.65" />
+  <path d="M 836.65852 333.53688 L 859.51429 299.25323" style="fill: none; stroke: #94a3b8; stroke-width: 1.2; stroke-linecap: round; stroke-opacity: 0.65" />
+  <path d="M 859.51429 299.25323 L 857.98886 307.85108 L 852.16451 303.96818 Z" style="fill: #94a3b8; stroke: none; opacity: 0.65" />
+  <circle cx="646.95068" cy="370.01915" r="3.8" style="fill: #2563eb; stroke: #ffffff; stroke-width: 1.2" />
+  <circle cx="836.65852" cy="333.53688" r="3.8" style="fill: #2563eb; stroke: #ffffff; stroke-width: 1.2" />
+  <circle cx="695.59714" cy="323.42924" r="3.2" style="fill: #f59e0b; stroke: #ffffff; stroke-width: 1" />
+  <circle cx="777.37214" cy="370.11284" r="3.2" style="fill: #f59e0b; stroke: #ffffff; stroke-width: 1" />
+  <text x="618" y="464" font-size="9" style="fill: #374151; font-family: ui-monospace, SFMono-Regular, Menlo, monospace">root_sum_square = 4.62012996357554</text>
+  <text x="618" y="480" font-size="9" style="fill: #374151; font-family: ui-monospace, SFMono-Regular, Menlo, monospace">taxicab_diameter = 225.88400222129528</text>
+  <rect x="10" y="512" width="280" height="220" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
+  <text x="10" y="504" font-size="13" style="fill: #111827; font-family: system-ui, sans-serif; font-weight: 700">noisy 3 samples</text>
+  <path d="M 46.67645 570.00455 C 77.03865 535.3049 141.97222 707.14082 192.56144 636.31591" style="fill: none; stroke: #1f2937; stroke-width: 3; stroke-linecap: round" />
+  <path d="M 46.67645 570.00455 L 73.48666 539.36431" style="fill: none; stroke: #94a3b8; stroke-width: 1.2; stroke-linecap: round; stroke-opacity: 0.65" />
+  <path d="M 73.48666 539.36431 L 70.85264 547.68969 L 65.58461 543.08016 Z" style="fill: #94a3b8; stroke: none; opacity: 0.65" />
+  <path d="M 192.56144 636.31591 L 216.22584 603.18575" style="fill: none; stroke: #94a3b8; stroke-width: 1.2; stroke-linecap: round; stroke-opacity: 0.65" />
+  <path d="M 216.22584 603.18575 L 214.424 611.72995 L 208.72787 607.66128 Z" style="fill: #94a3b8; stroke: none; opacity: 0.65" />
+  <circle cx="46.67645" cy="570.00455" r="3.8" style="fill: #2563eb; stroke: #ffffff; stroke-width: 1.2" />
+  <circle cx="192.56144" cy="636.31591" r="3.8" style="fill: #2563eb; stroke: #ffffff; stroke-width: 1.2" />
+  <circle cx="81.26445" cy="576.05215" r="3.2" style="fill: #f59e0b; stroke: #ffffff; stroke-width: 1" />
+  <circle cx="98.89664" cy="611.44915" r="3.2" style="fill: #f59e0b; stroke: #ffffff; stroke-width: 1" />
+  <circle cx="165.01023" cy="650.84043" r="3.2" style="fill: #f59e0b; stroke: #ffffff; stroke-width: 1" />
+  <text x="18" y="704" font-size="9" style="fill: #374151; font-family: ui-monospace, SFMono-Regular, Menlo, monospace">root_sum_square = 15.078638035073945</text>
+  <text x="18" y="720" font-size="9" style="fill: #374151; font-family: ui-monospace, SFMono-Regular, Menlo, monospace">taxicab_diameter = 245.59159331328905</text>
+  <rect x="310" y="512" width="280" height="220" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
+  <text x="310" y="504" font-size="13" style="fill: #111827; font-family: system-ui, sans-serif; font-weight: 700">noisy 4 samples</text>
+  <path d="M 348.0835 614.52937 C 391.54417 527.60804 475.46694 527.76086 535.17177 620.03196" style="fill: none; stroke: #1f2937; stroke-width: 3; stroke-linecap: round" />
+  <path d="M 348.0835 614.52937 L 368.43137 573.83364" style="fill: none; stroke: #94a3b8; stroke-width: 1.2; stroke-linecap: round; stroke-opacity: 0.65" />
+  <path d="M 368.43137 573.83364 L 367.98415 582.5543 L 361.72316 579.42381 Z" style="fill: #94a3b8; stroke: none; opacity: 0.65" />
+  <path d="M 535.17177 620.03196 L 559.88928 658.23174" style="fill: none; stroke: #94a3b8; stroke-width: 1.2; stroke-linecap: round; stroke-opacity: 0.65" />
+  <path d="M 559.88928 658.23174 L 552.60477 653.41656 L 558.48176 649.6138 Z" style="fill: #94a3b8; stroke: none; opacity: 0.65" />
+  <circle cx="348.0835" cy="614.52937" r="3.8" style="fill: #2563eb; stroke: #ffffff; stroke-width: 1.2" />
+  <circle cx="535.17177" cy="620.03196" r="3.8" style="fill: #2563eb; stroke: #ffffff; stroke-width: 1.2" />
+  <circle cx="367.52167" cy="571.34992" r="3.2" style="fill: #f59e0b; stroke: #ffffff; stroke-width: 1" />
+  <circle cx="417.68245" cy="560.5349" r="3.2" style="fill: #f59e0b; stroke: #ffffff; stroke-width: 1" />
+  <circle cx="455.26316" cy="560.62012" r="3.2" style="fill: #f59e0b; stroke: #ffffff; stroke-width: 1" />
+  <circle cx="514.12425" cy="577.42457" r="3.2" style="fill: #f59e0b; stroke: #ffffff; stroke-width: 1" />
+  <text x="318" y="704" font-size="9" style="fill: #374151; font-family: ui-monospace, SFMono-Regular, Menlo, monospace">root_sum_square = 18.932085576804816</text>
+  <text x="318" y="720" font-size="9" style="fill: #374151; font-family: ui-monospace, SFMono-Regular, Menlo, monospace">taxicab_diameter = 330.7472190638287</text>
+  <rect x="610" y="512" width="280" height="220" style="fill: #f8fafc; stroke: #d1d5db; stroke-width: 1" />
+  <text x="610" y="504" font-size="13" style="fill: #111827; font-family: system-ui, sans-serif; font-weight: 700">noisy 4 samples</text>
+  <path d="M 645.18717 628.91685 C 667.6571 510.94973 757.82096 528.93815 776.86453 628.91685" style="fill: none; stroke: #1f2937; stroke-width: 3; stroke-linecap: round" />
+  <path d="M 645.18717 628.91685 L 652.13334 592.44947" style="fill: none; stroke: #94a3b8; stroke-width: 1.2; stroke-linecap: round; stroke-opacity: 0.65" />
+  <path d="M 652.13334 592.44947 L 654.07462 600.96307 L 647.19825 599.65328 Z" style="fill: #94a3b8; stroke: none; opacity: 0.65" />
+  <path d="M 776.86453 628.91685 L 783.8107 665.38424" style="fill: none; stroke: #94a3b8; stroke-width: 1.2; stroke-linecap: round; stroke-opacity: 0.65" />
+  <path d="M 783.8107 665.38424 L 778.87561 658.18042 L 785.75198 656.87064 Z" style="fill: #94a3b8; stroke: none; opacity: 0.65" />
+  <circle cx="645.18717" cy="628.91685" r="3.8" style="fill: #2563eb; stroke: #ffffff; stroke-width: 1.2" />
+  <circle cx="776.86453" cy="628.91685" r="3.8" style="fill: #2563eb; stroke: #ffffff; stroke-width: 1.2" />
+  <circle cx="661.94511" cy="600.3731" r="3.2" style="fill: #f59e0b; stroke: #ffffff; stroke-width: 1" />
+  <circle cx="677.28908" cy="551.23062" r="3.2" style="fill: #f59e0b; stroke: #ffffff; stroke-width: 1" />
+  <circle cx="738.76666" cy="549.7017" r="3.2" style="fill: #f59e0b; stroke: #ffffff; stroke-width: 1" />
+  <circle cx="763.08927" cy="606.64046" r="3.2" style="fill: #f59e0b; stroke: #ffffff; stroke-width: 1" />
+  <text x="618" y="704" font-size="9" style="fill: #374151; font-family: ui-monospace, SFMono-Regular, Menlo, monospace">root_sum_square = 18.088270117921986</text>
+  <text x="618" y="720" font-size="9" style="fill: #374151; font-family: ui-monospace, SFMono-Regular, Menlo, monospace">taxicab_diameter = 304.47812393627856</text>
+</svg>

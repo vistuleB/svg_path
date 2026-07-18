@@ -29,7 +29,9 @@
 //// points.
 
 import gleam/float
+import gleam/int
 import gleam/list
+import gleam/result
 
 const root_tolerance = 0.000000001
 
@@ -41,6 +43,18 @@ pub type Point {
 /// An axis-aligned bounding box for a Bezier curve.
 pub type BoundingBox {
   BoundingBox(min: Point, max: Point)
+}
+
+/// Error measurements for a fitted cubic.
+pub type CubicFitError {
+  CubicFitError(
+    /// `sqrt(sum(distance(sample, fitted)^2))`.
+    root_sum_square: Float,
+    /// `sqrt(sum(distance(sample, fitted)^2) / sample_count)`.
+    root_mean_square: Float,
+    /// The largest sample distance.
+    max: Float,
+  )
 }
 
 /// Bezier-parameter representation of line, quadratic, and cubic curves.
@@ -59,6 +73,12 @@ pub type BezierData {
 pub type Error {
   /// The requested split point is outside the curve's `0.0..1.0` parameter range.
   SplitOutsideBezier
+
+  /// A tangent direction was too small to normalize.
+  DegenerateTangent
+
+  /// The provided samples do not determine stable cubic handle lengths.
+  UnderdeterminedCubicFit
 }
 
 /// Return the curve's start point.
@@ -168,6 +188,56 @@ pub fn map_points(curve: BezierData, with f: fn(Point) -> Point) -> BezierData {
       )
     }
   }
+}
+
+/// Fit a cubic with fixed endpoints and endpoint tangent directions.
+///
+/// The fitted cubic has the form:
+///
+/// ```text
+/// control1 = start + a * unit(start_tangent)
+/// control2 = end - b * unit(end_tangent)
+/// ```
+///
+/// `end_tangent` has the usual Bezier derivative direction at `t = 1`, so it
+/// points in the direction the curve is travelling as it reaches `end`.
+///
+/// The scalar handle lengths `a` and `b` are chosen by least squares against
+/// the provided `(t, point)` samples. Samples are allowed at any `t`, but
+/// endpoint samples do not add handle information.
+pub fn fit_cubic_with_endpoint_tangents(
+  start start: Point,
+  end end: Point,
+  start_tangent start_tangent: Point,
+  end_tangent end_tangent: Point,
+  samples samples: List(#(Float, Point)),
+) -> Result(#(BezierData, CubicFitError), Error) {
+  use start_direction <- result.try(unit(start_tangent))
+  use end_direction <- result.try(unit(end_tangent))
+  use fit <- result.try(cubic_fit_normal_equations(
+    samples,
+    start:,
+    end:,
+    start_direction:,
+    end_direction:,
+    ata00: 0.0,
+    ata01: 0.0,
+    ata11: 0.0,
+    atb0: 0.0,
+    atb1: 0.0,
+    count: 0,
+  ))
+  let #(a, b) = fit
+  let curve =
+    CubicBezierData(
+      start:,
+      control1: add(start, scale(start_direction, a)),
+      control2: difference(end, scale(end_direction, b)),
+      end:,
+    )
+  let error = cubic_fit_error(samples, curve)
+
+  Ok(#(curve, error))
 }
 
 /// Split a Bezier curve at parameter `t`.
@@ -344,6 +414,126 @@ fn bezier_between(
           0.0 -. delta /. 3.0,
         ),
         end:,
+      )
+    }
+  }
+}
+
+fn cubic_fit_normal_equations(
+  samples: List(#(Float, Point)),
+  start start: Point,
+  end end: Point,
+  start_direction start_direction: Point,
+  end_direction end_direction: Point,
+  ata00 ata00: Float,
+  ata01 ata01: Float,
+  ata11 ata11: Float,
+  atb0 atb0: Float,
+  atb1 atb1: Float,
+  count count: Int,
+) -> Result(#(Float, Float), Error) {
+  case samples {
+    [] -> solve_cubic_fit_equations(ata00, ata01, ata11, atb0, atb1, count)
+    [sample, ..rest] -> {
+      let #(t, point) = sample
+      let one_minus_t = 1.0 -. t
+      let start_basis = 3.0 *. one_minus_t *. one_minus_t *. t
+      let end_basis = 3.0 *. one_minus_t *. t *. t
+      let fixed_point =
+        add(
+          scale(start, one_minus_t *. one_minus_t *. one_minus_t +. start_basis),
+          scale(end, end_basis +. t *. t *. t),
+        )
+      let target = difference(point, fixed_point)
+      let left_column = scale(start_direction, start_basis)
+      let right_column = scale(end_direction, 0.0 -. end_basis)
+
+      cubic_fit_normal_equations(
+        rest,
+        start:,
+        end:,
+        start_direction:,
+        end_direction:,
+        ata00: ata00 +. dot(left_column, left_column),
+        ata01: ata01 +. dot(left_column, right_column),
+        ata11: ata11 +. dot(right_column, right_column),
+        atb0: atb0 +. dot(left_column, target),
+        atb1: atb1 +. dot(right_column, target),
+        count: count + 1,
+      )
+    }
+  }
+}
+
+fn solve_cubic_fit_equations(
+  ata00: Float,
+  ata01: Float,
+  ata11: Float,
+  atb0: Float,
+  atb1: Float,
+  count: Int,
+) -> Result(#(Float, Float), Error) {
+  case count == 0 {
+    True -> Error(UnderdeterminedCubicFit)
+    False -> {
+      let determinant = ata00 *. ata11 -. ata01 *. ata01
+      case float.absolute_value(determinant) <=. root_tolerance {
+        True -> Error(UnderdeterminedCubicFit)
+        False ->
+          Ok(#(
+            { atb0 *. ata11 -. atb1 *. ata01 } /. determinant,
+            { ata00 *. atb1 -. ata01 *. atb0 } /. determinant,
+          ))
+      }
+    }
+  }
+}
+
+fn cubic_fit_error(
+  samples: List(#(Float, Point)),
+  curve: BezierData,
+) -> CubicFitError {
+  let #(sum_squared, max_squared, count) =
+    cubic_fit_error_loop(
+      samples,
+      curve,
+      sum_squared: 0.0,
+      max_squared: 0.0,
+      count: 0,
+    )
+
+  case count == 0 {
+    True -> CubicFitError(root_sum_square: 0.0, root_mean_square: 0.0, max: 0.0)
+    False -> {
+      let root_sum_square = sqrt(sum_squared)
+      CubicFitError(
+        root_sum_square:,
+        root_mean_square: sqrt(sum_squared /. int.to_float(count)),
+        max: sqrt(max_squared),
+      )
+    }
+  }
+}
+
+fn cubic_fit_error_loop(
+  samples: List(#(Float, Point)),
+  curve: BezierData,
+  sum_squared sum_squared: Float,
+  max_squared max_squared: Float,
+  count count: Int,
+) -> #(Float, Float, Int) {
+  case samples {
+    [] -> #(sum_squared, max_squared, count)
+    [sample, ..rest] -> {
+      let #(t, point) = sample
+      let fitted = bezier_point(curve, at: t)
+      let error_squared = distance_squared(point, fitted)
+      cubic_fit_error_loop(
+        rest,
+        curve,
+        sum_squared: sum_squared +. error_squared,
+        max_squared: float.max(max_squared, error_squared),
+        count: count + 1,
       )
     }
   }
@@ -579,6 +769,29 @@ fn add(left: Point, right: Point) -> Point {
 
 fn scale(point: Point, factor: Float) -> Point {
   Point(point.x *. factor, point.y *. factor)
+}
+
+fn unit(point: Point) -> Result(Point, Error) {
+  let length = sqrt(distance_squared(point, Point(0.0, 0.0)))
+  case length <=. root_tolerance {
+    True -> Error(DegenerateTangent)
+    False -> Ok(scale(point, 1.0 /. length))
+  }
+}
+
+fn dot(left: Point, right: Point) -> Float {
+  left.x *. right.x +. left.y *. right.y
+}
+
+fn distance_squared(left: Point, right: Point) -> Float {
+  let dx = left.x -. right.x
+  let dy = left.y -. right.y
+  dx *. dx +. dy *. dy
+}
+
+fn sqrt(value: Float) -> Float {
+  let assert Ok(root) = float.square_root(value)
+  root
 }
 
 fn offset(point: Point, direction: Point, distance: Float) -> Point {
