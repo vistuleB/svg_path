@@ -540,32 +540,16 @@ Use `svg_path.arc_center_data` to convert a root-module `Arc` segment to
 
 ## Geometry Helpers
 
-The root module provides a few geometry helpers that work directly with the
-`Segment`, `Subpath`, and `Path` model.
+The root module exposes common geometry helpers directly on `Segment`,
+`Subpath`, and `Path`. The module docs contain the full option and error
+details; this section is a map of the available families.
 
 ### Bounding Boxes
 
-Use `segment_bounding_box`, `subpath_bounding_box`, and `path_bounding_box` to
-compute exact axis-aligned bounding boxes:
-
-```gleam
-import svg_path
-
-pub fn box_path(path: svg_path.Path) -> Result(svg_path.BoundingBox, svg_path.Error) {
-  svg_path.path_bounding_box(path)
-}
-```
-
-Use `bounding_box_width`, `bounding_box_height`, `bounding_box_center`, and
-`bounding_box_diameter` to measure a `BoundingBox`. The diameter is the taxicab
-diameter: width plus height.
-
-Line, quadratic Bezier, cubic Bezier, and arc extrema are included. Empty
-subpaths return `EmptySubpath`; empty paths return `EmptyPath`; paths whose
-subpaths are all empty return `EmptySubpaths`.
-
-For callers working at the lower-level curve modules, `svg_path/bezier` exposes
-`bezier_bounding_box`, and `svg_path/ellipse` exposes `arc_bounding_box`.
+Use `segment_bounding_box`, `subpath_bounding_box`, and `path_bounding_box` for
+axis-aligned bounds. Line, Bezier, and arc extrema are included. Measure a box
+with `bounding_box_width`, `bounding_box_height`, `bounding_box_center`, and
+`bounding_box_diameter`; the diameter is width plus height.
 
 ### Optimization Over Segments
 
@@ -585,33 +569,18 @@ pub fn lowest_point(segment: svg_path.Segment) -> Result(Float, svg_path.Error) 
 The returned value is a segment parameter in `0.0..1.0`. You can pass it to
 `segment_point` or `split_segment`.
 
-Minimization is numerical and sampling-based. Each sampled window is refined
-with golden-section search, so it does not require a derivative of the measured
-function. Use `segment_minimize_with` and `MinimizeOptions` to tune `samples`,
-`tolerance`, and `max_iterations`.
+Minimization is numerical and does not require a derivative. Use
+`segment_minimize_with` when the default sampling and tolerance are not
+appropriate.
 
 ### Segment and Subpath Lengths
 
-Use `segment_length`, `subpath_length`, or `path_length` to measure path
-geometry:
+Use `segment_length`, `subpath_length`, or `path_length` to measure geometry.
+Lines are exact. Beziers and arcs use adaptive integration. Distances are true
+path-coordinate lengths, not normalized fractions.
 
-```gleam
-import svg_path
-
-pub fn outline_length(
-  subpath: svg_path.Subpath,
-) -> Result(Float, svg_path.Error) {
-  svg_path.subpath_length(subpath)
-}
-```
-
-Lines are measured exactly. Quadratic Beziers, cubic Beziers, and arcs are
-approximated by adaptive integration of segment speed. Use
-`segment_length_with`, `subpath_length_with`, and `LengthOptions` to tune
-`tolerance` and `max_depth`. Empty subpaths and empty paths have length `0.0`.
-
-Arc-length lookup helpers convert true traveled distances back to ordinary
-parameters and evaluated geometry:
+Length-address helpers convert traveled distances back to ordinary parameters
+and evaluated geometry:
 
 ```gleam
 svg_path.segment_parameter_at_length(segment, distance: 12.0)
@@ -630,12 +599,6 @@ svg_path.path_parameter_at_length(path, distance: 40.0)
 svg_path.path_point_at_length(path, distance: 40.0)
 svg_path.path_derivative_at_length(path, distance: 40.0)
 ```
-
-These distances are path coordinate distances, not normalized fractions. The
-subpath parameter lookup returns an ordinary public `SubpathParameter`; path
-parameter lookup returns `PathParameter(subpath_index:, at:)`. The
-`between_lengths` helpers use the same `LengthOptions` through their `_with`
-variants.
 
 ### Distances and Projections
 
@@ -668,17 +631,8 @@ pub fn nearest_on_path(
 }
 ```
 
-Lines are measured exactly. Quadratic Beziers, cubic Beziers, and arcs are
-measured by finding stationary points of squared distance over the segment
-parameter range `0.0..1.0`. Use `segment_distance_with`,
-`segment_projection_with`, and `DistanceOptions` to tune `samples`, `tolerance`,
-and `max_iterations`.
-
-For subpaths, `subpath_projection` returns the nearest point with a
-`SubpathParameter`. For paths, `path_projection` returns a `PathProjection`
-containing a `PathParameter`; move-only subpaths are skipped. `path_distance`
-returns only the distance. Use the corresponding `_with` functions to supply
-explicit `DistanceOptions`.
+`subpath_projection` and `path_projection` lift the same idea to larger
+structures and return public parameters. Move-only subpaths are skipped.
 
 ### Point Containment
 
@@ -709,22 +663,15 @@ pub type FillRule {
 `Boundary` is reported independently of the fill rule. Otherwise, `Nonzero`
 or `EvenOdd` determines whether the result is `Inside` or `Outside`.
 
-#### Open and Closed Subpaths
-
 Fill geometry implicitly closes every nonempty subpath with a straight line
 from its end to its start. This happens whether `Subpath.closed` is `True` or
 `False`. Consequently, changing only the `closed` field does not change the
-result of containment testing.
-
-The `closed` field still matters for operations such as serialization and
-stroke semantics. Containment ignores it because SVG fill semantics close open
-subpaths independently.
+result of containment testing. The `closed` field still matters for
+serialization and stroke semantics.
 
 A move-only subpath has no segments, fill area, or boundary. It is always
 `Outside`, even when the tested point equals its move point. An empty path and
 a path containing only move-only subpaths are also `Outside`.
-
-#### Fill Rules
 
 `Nonzero` is SVG's default fill rule. A directed crossing contributes `+1` or
 `-1` to the winding number. The point is inside when the total winding number
@@ -747,53 +694,10 @@ This aggregation is why `path_containment` cannot be implemented as "inside
 any subpath". Self-intersecting subpaths and paths that revisit an area use the
 same winding and crossing rules.
 
-#### Boundary Semantics
-
-Before applying a fill rule, containment measures the shortest distance from
-the point to every original segment and to each implicit closing line. If any
-distance is less than or equal to `ContainmentOptions.tolerance`, the result is
-`Boundary`. An exact endpoint or curve match naturally has distance zero; no
-special floating-point equality rule is used.
-
-For a path, a boundary match on any nonempty subpath takes precedence over all
-other subpaths and both fill rules. The tolerance is measured in path coordinate
-units, so callers working at unusually large or small coordinate scales should
-provide an appropriate value through `path_containment_with` or
-`subpath_containment_with`.
-
-#### Numerical Method and Options
-
-Boundary distance is measured against the original lines, Beziers, and arcs,
-not against a pre-flattened copy. Once the point is known to be outside the
-boundary tolerance, curved segments are adaptively approximated with lines.
-The approximation tolerance is kept below half of the point's clearance beyond
-the boundary tolerance, preserving winding classification at the tested point.
-A half-open line-crossing rule then computes winding and parity without
-counting a shared vertex twice.
-
-The default options are equivalent to:
-
-```gleam
-svg_path.ContainmentOptions(
-  tolerance: 0.000000001,
-  samples: 100,
-  max_iterations: 100,
-)
-```
-
-- `tolerance` is the coordinate-space width classified as `Boundary`.
-- `samples` controls the initial search for nearest points on curved segments.
-- `max_iterations` limits curve projection refinement and adaptive line
-  subdivision.
-
-All three values must be greater than zero. Invalid values return the matching
-`InvalidContainmentTolerance`, `InvalidContainmentSamples`, or
-`InvalidContainmentMaxIterations` error. Numerical projection or subdivision
-errors from the underlying geometry helpers are propagated rather than being
-silently converted to `Inside` or `Outside`.
-
-The non-`_with` functions use `default_containment_options`. The subpath and
-path variants otherwise use the same classification policy.
+Before applying a fill rule, containment checks the original geometry and
+implicit closing lines for boundary hits. A boundary match takes precedence over
+both fill rules. Use `_with` variants to choose the coordinate-space boundary
+tolerance and numerical options.
 
 ### Areas
 
@@ -808,13 +712,11 @@ pub fn filled_area(path: svg_path.Path) -> Result(Float, svg_path.Error) {
 }
 ```
 
-There are three different notions that are easy to confuse:
-
-- `area.signed_subpath` and `area.signed_path` return algebraic area.
-- `area.subpath` and `area.path` return unsigned filled area under `Nonzero`
-  or `EvenOdd`.
-- `svg_path/convex_hull` returns hull geometry; a hull area can be larger than
-  the filled area of a concave or self-intersecting shape.
+There are two area notions here: `area.signed_subpath` and `area.signed_path`
+return algebraic area, while `area.subpath` and `area.path` return unsigned
+filled area under `Nonzero` or `EvenOdd`. `svg_path/convex_hull` is a separate
+geometry operation; a hull area can be larger than the filled area of a concave
+or self-intersecting shape.
 
 Signed area is computed from line integrals. Lines, quadratic Beziers, cubic
 Beziers, and elliptical arcs are handled directly. The sign depends on drawing
@@ -835,133 +737,6 @@ The difference matters for repeated or nested loops:
 | One simple loop | `+A` or `-A` | `A` | `A` |
 | Same loop twice, same direction | `+2A` or `-2A` | `A` | `0` |
 | Same loop twice, opposite directions | `0` | `0` | `0` |
-
-These drawings show the filled region for a few common cases. Blue means the
-area is counted by the fill rule; the dark stroke shows the source geometry.
-Dashed or slightly offset strokes represent repeated traces that would
-otherwise sit exactly on top of the first stroke.
-
-<table>
-  <tr>
-    <th>Case</th>
-    <th><code>Nonzero</code></th>
-    <th><code>EvenOdd</code></th>
-  </tr>
-  <tr>
-    <td>One loop</td>
-    <td>
-      <svg role="img" aria-label="Nonzero fills one loop" width="150" height="120" viewBox="0 0 150 120">
-        <rect x="40" y="25" width="70" height="70" fill="#8ecae6" stroke="#1f2937" stroke-width="4" />
-        <path d="M48 25 h54" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#area-arrow-a)" />
-        <defs>
-          <marker id="area-arrow-a" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-            <path d="M0 0 L10 5 L0 10 z" fill="#1f2937" />
-          </marker>
-        </defs>
-      </svg>
-    </td>
-    <td>
-      <svg role="img" aria-label="EvenOdd fills one loop" width="150" height="120" viewBox="0 0 150 120">
-        <rect x="40" y="25" width="70" height="70" fill="#8ecae6" stroke="#1f2937" stroke-width="4" />
-        <path d="M48 25 h54" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#area-arrow-b)" />
-        <defs>
-          <marker id="area-arrow-b" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-            <path d="M0 0 L10 5 L0 10 z" fill="#1f2937" />
-          </marker>
-        </defs>
-      </svg>
-    </td>
-  </tr>
-  <tr>
-    <td>Same loop twice, same direction</td>
-    <td>
-      <svg role="img" aria-label="Nonzero fills a twice traced loop in the same direction" width="150" height="120" viewBox="0 0 150 120">
-        <rect x="40" y="25" width="70" height="70" fill="#8ecae6" stroke="#1f2937" stroke-width="4" />
-        <rect x="46" y="31" width="58" height="58" fill="none" stroke="#3a86ff" stroke-width="3" stroke-dasharray="5 4" />
-        <path d="M48 25 h54" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#area-arrow-c)" />
-        <path d="M54 31 h42" fill="none" stroke="#3a86ff" stroke-width="3" marker-end="url(#area-arrow-c2)" />
-        <defs>
-          <marker id="area-arrow-c" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-            <path d="M0 0 L10 5 L0 10 z" fill="#1f2937" />
-          </marker>
-          <marker id="area-arrow-c2" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-            <path d="M0 0 L10 5 L0 10 z" fill="#3a86ff" />
-          </marker>
-        </defs>
-      </svg>
-    </td>
-    <td>
-      <svg role="img" aria-label="EvenOdd leaves a twice traced loop empty" width="150" height="120" viewBox="0 0 150 120">
-        <rect x="40" y="25" width="70" height="70" fill="none" stroke="#1f2937" stroke-width="4" />
-        <rect x="46" y="31" width="58" height="58" fill="none" stroke="#3a86ff" stroke-width="3" stroke-dasharray="5 4" />
-        <path d="M48 25 h54" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#area-arrow-d)" />
-        <path d="M54 31 h42" fill="none" stroke="#3a86ff" stroke-width="3" marker-end="url(#area-arrow-d2)" />
-        <defs>
-          <marker id="area-arrow-d" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-            <path d="M0 0 L10 5 L0 10 z" fill="#1f2937" />
-          </marker>
-          <marker id="area-arrow-d2" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-            <path d="M0 0 L10 5 L0 10 z" fill="#3a86ff" />
-          </marker>
-        </defs>
-      </svg>
-    </td>
-  </tr>
-  <tr>
-    <td>Nested loops, same direction</td>
-    <td>
-      <svg role="img" aria-label="Nonzero fills nested loops drawn in the same direction" width="150" height="120" viewBox="0 0 150 120">
-        <path d="M25 20 H125 V100 H25 Z M52 47 H98 V73 H52 Z" fill="#8ecae6" fill-rule="nonzero" stroke="#1f2937" stroke-width="4" />
-        <path d="M34 20 h82" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#area-arrow-e)" />
-        <path d="M58 47 h34" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#area-arrow-e)" />
-        <defs>
-          <marker id="area-arrow-e" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-            <path d="M0 0 L10 5 L0 10 z" fill="#1f2937" />
-          </marker>
-        </defs>
-      </svg>
-    </td>
-    <td>
-      <svg role="img" aria-label="EvenOdd cuts a hole for nested loops" width="150" height="120" viewBox="0 0 150 120">
-        <path d="M25 20 H125 V100 H25 Z M52 47 H98 V73 H52 Z" fill="#8ecae6" fill-rule="evenodd" stroke="#1f2937" stroke-width="4" />
-        <path d="M34 20 h82" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#area-arrow-f)" />
-        <path d="M58 47 h34" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#area-arrow-f)" />
-        <defs>
-          <marker id="area-arrow-f" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-            <path d="M0 0 L10 5 L0 10 z" fill="#1f2937" />
-          </marker>
-        </defs>
-      </svg>
-    </td>
-  </tr>
-  <tr>
-    <td>Nested loops, opposite directions</td>
-    <td>
-      <svg role="img" aria-label="Nonzero cuts a hole for nested loops drawn in opposite directions" width="150" height="120" viewBox="0 0 150 120">
-        <path d="M25 20 H125 V100 H25 Z M52 47 V73 H98 V47 Z" fill="#8ecae6" fill-rule="nonzero" stroke="#1f2937" stroke-width="4" />
-        <path d="M34 20 h82" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#area-arrow-g)" />
-        <path d="M52 53 v14" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#area-arrow-g)" />
-        <defs>
-          <marker id="area-arrow-g" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-            <path d="M0 0 L10 5 L0 10 z" fill="#1f2937" />
-          </marker>
-        </defs>
-      </svg>
-    </td>
-    <td>
-      <svg role="img" aria-label="EvenOdd also cuts a hole for nested loops drawn in opposite directions" width="150" height="120" viewBox="0 0 150 120">
-        <path d="M25 20 H125 V100 H25 Z M52 47 V73 H98 V47 Z" fill="#8ecae6" fill-rule="evenodd" stroke="#1f2937" stroke-width="4" />
-        <path d="M34 20 h82" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#area-arrow-h)" />
-        <path d="M52 53 v14" fill="none" stroke="#1f2937" stroke-width="4" marker-end="url(#area-arrow-h)" />
-        <defs>
-          <marker id="area-arrow-h" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-            <path d="M0 0 L10 5 L0 10 z" fill="#1f2937" />
-          </marker>
-        </defs>
-      </svg>
-    </td>
-  </tr>
-</table>
 
 `area.subpath` and `area.path` first linearize curves and then integrate the
 filled slabs of the resulting line arrangement. The `_with` variants accept
@@ -988,17 +763,9 @@ pub fn horizontal_crossings(
 }
 ```
 
-The returned values are segment parameters in `0.0..1.0`. You can pass them to
-`segment_point` or `split_segment`.
-
-Crossing detection is numerical and sampling-based. It finds sign-change
-crossings visible at the configured sampling resolution, plus endpoint/sample
-values that are already close to zero. It does not promise tangent roots or
-multiple crossings hidden inside one sample window. Use `segment_crossings_with`
-and `CrossingOptions` to tune `samples`, `tolerance`, and `max_iterations`.
-
-The scalar solver behind this lives in `svg_path/root.gleam` as a small
-self-contained bisection helper for bracketed `Float -> Float` functions.
+The returned values are ordinary segment parameters in `0.0..1.0`. Crossing
+detection is numerical and sampling-based; use `segment_crossings_with` to tune
+it.
 
 ### Segment Intersections
 
@@ -1022,92 +789,24 @@ parameters on both segments:
 svg_path.SegmentIntersection(left_t:, right_t:, point:)
 ```
 
-The result represents finite point intersections only. Segments that overlap
-in more than one point, such as partially overlapping collinear lines, return
-`OverlappingSegments`. Use `segment_intersections_with` and
-`IntersectionOptions` to tune `tolerance` and `max_depth` for curved segment
-intersection detection.
+The result represents finite point intersections only; segment overlaps return
+`OverlappingSegments`. The same operation is lifted to larger structures:
 
-Use `segment_subpath_intersections` to intersect one segment with every segment
-of a subpath. Each result has the form
-`#(point, segment_t, subpath_parameters)`. Results are ordered by `segment_t`,
-and each parameter list is ordered by `compare_subpath_parameters`.
+```gleam
+svg_path.segment_subpath_intersections(segment, subpath)
+svg_path.subpath_intersections(left_subpath, right_subpath)
+svg_path.path_intersections(left_path, right_path)
+```
 
-Intersections whose point and standalone segment parameter agree within the
-configured tolerance are grouped together. All corresponding subpath
-parameters are retained, including both representations of a shared segment
-boundary such as `SubpathParameter(0, 1.0)` and
-`SubpathParameter(1, 0.0)`. An overlap with any subpath segment returns
-`OverlappingSegments`. The `_with` variant accepts explicit
+Results are ordered along the left-hand input, and boundary aliases are
+retained. For example, a shared vertex can report both the end of one segment
+and the start of the next. Use `_with` variants to supply
 `IntersectionOptions`.
-
-Use `subpath_intersections` to intersect every segment of one subpath with
-every segment of another:
-
-```gleam
-import svg_path
-
-pub fn subpath_crossings(
-  left: svg_path.Subpath,
-  right: svg_path.Subpath,
-) -> Result(List(svg_path.SubpathIntersection), svg_path.Error) {
-  svg_path.subpath_intersections(left, right)
-}
-```
-
-Each `SubpathIntersection` contains the intersection point plus all matching
-parameters on both subpaths:
-
-```gleam
-svg_path.SubpathIntersection(
-  point:,
-  left_parameters:,
-  right_parameters:,
-)
-```
-
-Results are ordered by the first left-side parameter. The parameter lists on
-both sides are sorted with `compare_subpath_parameters`, and duplicate
-parameters are removed. Boundary aliases are retained on both subpaths, so a
-shared vertex can report both `SubpathParameter(0, 1.0)` and
-`SubpathParameter(1, 0.0)` on either side. As with the segment helpers,
-overlapping segments return `OverlappingSegments`.
-
-Use `path_intersections` to intersect every subpath of one path with every
-subpath of another:
-
-```gleam
-import svg_path
-
-pub fn path_crossings(
-  left: svg_path.Path,
-  right: svg_path.Path,
-) -> Result(List(svg_path.PathIntersection), svg_path.Error) {
-  svg_path.path_intersections(left, right)
-}
-```
-
-Each `PathIntersection` contains the intersection point plus all matching path
-parameters on both paths:
-
-```gleam
-svg_path.PathIntersection(
-  point:,
-  left_parameters:,
-  right_parameters:,
-)
-```
-
-Results are ordered by the first left-side parameter. The parameter lists on
-both sides are sorted with `compare_path_parameters`, and duplicate parameters
-are removed. Empty paths and move-only subpaths simply contribute no
-intersections. Boundary aliases are retained through `PathParameter`, and
-overlapping segments still return `OverlappingSegments`. The `_with` variant
-accepts explicit `IntersectionOptions`.
 
 ### Convex Hulls
 
-The `svg_path/convex_hull` module computes a closed hull for a single segment.
+The `svg_path/convex_hull` module computes closed convex hull subpaths for
+segments, subpaths, paths, and point lists.
 
 ```gleam
 import svg_path
@@ -1125,47 +824,8 @@ produce a two-line closed hull, while quadratic Beziers and arcs produce the
 original primitive plus the chord joining its endpoints. Cubic Beziers use a
 cubic-specific numerical solver.
 
-`PathError` means the generated pieces could not be turned into a valid closed
-`Subpath`. The other `HullError` values are reserved for cubic solver
-consistency failures, so the function reports an error rather than guessing at
-a hull.
-
-For a whole subpath, use `subpath_hull`:
-
-```gleam
-import svg_path
-import svg_path/convex_hull
-
-pub fn hull(
-  subpath: svg_path.Subpath,
-) -> Result(svg_path.Subpath, convex_hull.HullError) {
-  convex_hull.subpath_hull(subpath)
-}
-```
-
-This returns a closed `Subpath` containing the convex hull of the input.
-Move-only subpaths are treated as single points at their starts. Otherwise,
-each segment is first converted to a segment hull, then those convex loops are
-unioned together.
-
-For a path with multiple subpaths, use `path_hull`:
-
-```gleam
-convex_hull.path_hull(path)
-```
-
-Move-only subpaths contribute their start points, and the result is still a
-single closed `Subpath`.
-
-For a list of points, use `points_hull` directly:
-
-```gleam
-convex_hull.points_hull(points)
-```
-
-For mixed inputs, convert points to move-only subpaths, segments to one-segment
-subpaths, keep existing subpaths as-is, then collect them into a `Path` and use
-`path_hull`.
+Use `subpath_hull`, `path_hull`, and `points_hull` for larger inputs. Move-only
+subpaths contribute their start points.
 
 ### Congruency
 
@@ -1234,7 +894,8 @@ inserted; the subpath is just marked closed.
 
 ## Serialization
 
-`svg_path/serialize` emits canonical SVG path data.
+`svg_path/serialize` emits SVG path data from `Path`, `Subpath`, and
+`Segment` values.
 
 By default it uses:
 
@@ -1247,39 +908,10 @@ By default it uses:
 - `H` and `V` for horizontal and vertical lines when possible
 - `Z` for closed subpaths
 
-```gleam
-import svg_path/parse
-import svg_path/serialize
-
-pub fn tidy_path_data(input: String) -> String {
-  let assert Ok(path) = parse.path(input)
-
-  serialize.path(path)
-}
-```
-
-If you want a complete SVG document for debugging or examples, use
-`svg_path/svg` with a view box, per-path style strings, and optional styled
-text labels. This is a deliberately small helper for quick drawings, not a
-full rendering layer:
-
-```gleam
-import svg_path
-import svg_path/svg
-
-pub fn debug_svg(
-  things: svg.ThingsToDraw,
-  box: svg_path.BoundingBox,
-) -> String {
-  svg.document(things, view_box: box)
-}
-```
-
 Serialization options can use relative commands, commas inside coordinate
 pairs, smaller whitespace, rounded numbers, fixed decimal places, omitted
-repeated command letters, and left-padded numbers for visual alignment. The
-lower-level decimal controls are split into `LeftDecimalOptions` and
-`RightDecimalOptions`.
+repeated command letters, line breaks, and left-padded numbers for visual
+alignment.
 
 ```gleam
 import svg_path/parse
@@ -1297,110 +929,9 @@ pub fn compact_path_data(input: String) -> String {
 }
 ```
 
-### Repeated Command Letters
-
-SVG allows repeated commands of the same type to omit later command letters.
-Pass `False` to `repeat_commands` to use this form.
-
-```gleam
-serialize.default_options()
-|> serialize.repeat_commands(False)
-```
-
-For example, repeated line commands may serialize as:
-
-```text
-M 0 0 L 10 10 20 20 30 30
-```
-
-instead of:
-
-```text
-M 0 0 L 10 10 L 20 20 L 30 30
-```
-
-### Newlines
-
-Use `with_newlines` to choose where the serializer inserts newlines:
-
-```gleam
-serialize.default_options()
-|> serialize.with_newlines(serialize.AtSubpaths)
-```
-
-`OneLine` keeps the path data on one line. `AtSubpaths` puts each subpath on
-its own line:
-
-```text
-M 0 0 L 10 10 L 20 20 Z
-M 100 100 L 110 110 L 120 120 Z
-```
-
-`AtSegments` puts each segment on its own line. With repeated command letters
-enabled, each line starts with its command:
-
-```text
-M 0 0
-L 10 10
-L 20 20
-Z
-```
-
-The one unusual combination is `AtSegments` with `repeat_commands(False)`.
-There, each emitted command letter is followed by a newline, repeated commands
-are omitted, and `M`/`m` always starts a new line. This can be combined with
-fixed-width decimal formatting for visual alignment:
-
-```gleam
-serialize.fixed_decimal_options(2)
-|> serialize.with_left_padding(serialize.AutoLeftPadding(serialize.Space))
-|> serialize.with_commas(True)
-|> serialize.repeat_commands(False)
-|> serialize.with_newlines(serialize.AtSegments)
-```
-
-```text
-M
-  20.00, -30.00 C
- -15.00,  40.00   80.00, -90.00  140.00,  20.00
- 260.00,  30.00 -320.00,  45.00  480.00, -60.00
- 600.50, -70.25  720.00,  80.00  840.00, -90.00
-```
-
-### Number Formatting
-
-`RightDecimalOptions` controls the fractional side of serialized numbers:
-
-- `System` uses the system float formatter.
-- `AtMost(Int)` rounds to at most that many decimal places and strips trailing
-  zeroes.
-- `Fixed(Int)` rounds to exactly that many decimal places.
-
-`LeftDecimalOptions` controls the whole-number side:
-
-- `Succinct` uses no left padding.
-- `LeftPadding(Int, Zero)` pads the whole-number side to that width with zeroes.
-- `LeftPadding(Int, Space)` pads the whole-number side to that width with spaces.
-- `AutoLeftPadding(Zero)` pre-scans the serialized value and chooses a shared
-  width, padding with zeroes.
-- `AutoLeftPadding(Space)` pre-scans the serialized value and chooses a shared
-  width, padding with spaces.
-
-Use `with_left_padding` to align serialized numbers visually:
-
-```gleam
-serialize.fixed_decimal_options(1)
-|> serialize.with_left_padding(serialize.AutoLeftPadding(serialize.Zero))
-```
-
-For more explicit control, use `with_left_decimals` and
-`with_right_decimals`:
-
-```gleam
-serialize.default_options()
-|> serialize.with_left_decimals(serialize.AutoLeftPadding(serialize.Zero))
-|> serialize.with_right_decimals(serialize.Fixed(2))
-```
+If you want a complete SVG document for debugging or examples, use
+`svg_path/svg` with a view box, per-path style strings, and optional text
+labels. It is a small drawing helper, not a rendering framework.
 
 ### Move-Only Subpaths, Zero-Length Segments, and Closure
 
@@ -1437,33 +968,26 @@ command "supplying" a zero-length line segment to the subpath:
 
 For that reason, `svg_path.clean_subpath` keeps one zero-length line if a
 subpath consists only of zero-length lines, preserving the difference between a
-zero-length subpath and a move-only subpath.
-We do this even if the subpath is closed, though in this
-case the decision is made more for the sake of the internal consistency of the library
-since we are not aware of any rendering difference between paths such as
-`M 0,0 Z` and `M 0,0 L 0,0 Z`.
+zero-length subpath and a move-only subpath. It does this even for closed
+subpaths, where the choice is mainly about preserving internal representation
+consistency.
 
 Concerning the detailed mechanics of subpath closure, a literal read of the
 [SVG 2 specification](https://www.w3.org/TR/SVG2/paths.html#PathDataClosePathCommand)
 plausibly suggests that `Z` means "draw a final line from the current point to
 the starting point, even if this final line has length 0, and then mark
 topological closure". The observable behavior of user agents, however, suggests
-that `Z` is commonly interpreted as meaning “draw a final line to the starting point
-_only if necessary to bridge a gap or when no segments have been added to the
-subpath yet_ and then mark topological closure”. 
+that `Z` is commonly interpreted as meaning "draw a final line to the starting
+point only if necessary to bridge a gap or when no segments have been added to
+the subpath yet, and then mark topological closure".
 This library follows the latter interpretation.
 
 Under this interpretation, a final nonzero-jump line that geometrically
 closes a topologically closed subpath can be elided in the representation of
-the subpath, shortening e.g. `M0,0 L10,10 0,0 Z` to `M0,0 L10,10 Z`. 
-Our library does this.
-However, a final
-zero-length jump followed by `Z` cannot be dropped from the representation
-without losing information, since
-`Z` on its own does not allow the user agent to “see” or “remember” the
-zero-length jump. 
-Consequently, our serializer never drops zero-length lines, including
-immediately prior to `Z`.
+the subpath, shortening `M0,0 L10,10 0,0 Z` to `M0,0 L10,10 Z`. A final
+zero-length jump followed by `Z` cannot be dropped without losing information,
+so the serializer never drops zero-length lines, including immediately prior to
+`Z`.
 
 ## Transforming Paths
 
@@ -1604,9 +1128,8 @@ pub fn raw_transform_attribute() -> String {
 ## Inspecting Paths
 
 `svg_path/inspect` prints path data structures for debugging and tests. It is
-not the SVG `d` serializer.
-
-Human-readable structural inspection:
+not the SVG `d` serializer. Use `inspect.segment`, `inspect.subpath`, and
+`inspect.path` for readable structural output:
 
 ```gleam
 import svg_path
@@ -1627,7 +1150,7 @@ Example output:
 Line(start=0,0 end=12,10)
 ```
 
-Copy-pasteable Gleam inspection:
+Use the `_code` functions when you want copy-pasteable Gleam:
 
 ```gleam
 import svg_path
@@ -1648,28 +1171,9 @@ svg_path.Path([
 ])
 ```
 
-Inspection options support decimal rounding, fixed decimal places, and
-left-padding for visual alignment. As with serialization, lower-level decimal
-controls are split into `LeftDecimalOptions` and `RightDecimalOptions`, with the
-same constructors.
-
-```gleam
-import svg_path
-import svg_path/inspect
-
-pub fn inspect_aligned(path: svg_path.Path) -> String {
-  let options =
-    inspect.fixed_decimal_options(1)
-    |> inspect.with_left_padding(inspect.AutoLeftPadding(inspect.Zero))
-
-  inspect.path_code_with_options(path, options:)
-}
-```
-
-`AutoLeftPadding(Zero)` and `AutoLeftPadding(Space)` pre-scan the value being
-inspected and choose a shared left-side width for the numbers in that output.
-`LeftPadding(Int, Zero)` and `LeftPadding(Int, Space)` let you choose the width
-yourself. Use `Succinct` to disable left padding.
+Inspection options mirror the serializer's decimal controls: rounding, fixed
+decimal places, and left padding are available through `_with_options`
+functions.
 
 ## Converting Matrices From `matrix_gleam`
 
