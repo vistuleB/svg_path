@@ -18,6 +18,10 @@
 //// The `*_untrimmed` helpers expose the provisional offset walk directly. It
 //// is useful for debugging, drawing raw construction geometry, or implementing
 //// a different trimming policy.
+////
+//// `subpath_between` and `path_between` construct two signed offset walks and
+//// trim them together. They do not add caps or bridges; this is the capless
+//// boundary primitive that stroke construction can build on later.
 
 import gleam/float
 import gleam/int
@@ -194,6 +198,55 @@ pub fn subpath_with(
   parametric_pruned_subpath(subpath, provisional, distance, options)
 }
 
+/// Offset a subpath at two signed distances and trim the two sides together.
+///
+/// No caps, bridges, or fill-rule interpretation are added. The two provisional
+/// offset walks are split at their own self-intersections and at intersections
+/// with each other, then each section is tested against the original subpath's
+/// distance tube. This supports ordinary capless stroke sides, one-sided bands,
+/// and asymmetric bands such as two positive offsets.
+pub fn subpath_between(
+  subpath: svg_path.Subpath,
+  distance_a distance_a: Float,
+  distance_b distance_b: Float,
+) -> Result(svg_path.Path, Error) {
+  subpath_between_with(
+    subpath,
+    distance_a:,
+    distance_b:,
+    options: default_options(),
+  )
+}
+
+/// Offset a subpath at two signed distances using explicit options.
+pub fn subpath_between_with(
+  subpath subpath: svg_path.Subpath,
+  distance_a distance_a: Float,
+  distance_b distance_b: Float,
+  options options: Options,
+) -> Result(svg_path.Path, Error) {
+  use _ <- result.try(validate_options(options))
+  use provisional_a <- result.try(subpath_untrimmed_with(
+    subpath,
+    distance: distance_a,
+    options:,
+  ))
+  use provisional_b <- result.try(subpath_untrimmed_with(
+    subpath,
+    distance: distance_b,
+    options:,
+  ))
+  use subpaths <- result.try(parametric_pruned_pair(
+    subpath,
+    provisional_a:,
+    distance_a:,
+    provisional_b:,
+    distance_b:,
+    options:,
+  ))
+  Ok(svg_path.Path(subpaths:))
+}
+
 /// Offset a subpath without trimming self-intersections.
 ///
 /// This returns the provisional one-sided offset walk. Adjacent segment offsets
@@ -235,6 +288,37 @@ pub fn path_with(
     parametric_offset_path_subpaths(
       svg_path.subpaths(path),
       distance,
+      options,
+      converted: [],
+    ),
+  )
+  Ok(svg_path.Path(subpaths:))
+}
+
+/// Offset every subpath in a path at two signed distances and trim each pair of
+/// sides together.
+pub fn path_between(
+  path: svg_path.Path,
+  distance_a distance_a: Float,
+  distance_b distance_b: Float,
+) -> Result(svg_path.Path, Error) {
+  path_between_with(path, distance_a:, distance_b:, options: default_options())
+}
+
+/// Offset every subpath in a path at two signed distances using explicit
+/// options.
+pub fn path_between_with(
+  path path: svg_path.Path,
+  distance_a distance_a: Float,
+  distance_b distance_b: Float,
+  options options: Options,
+) -> Result(svg_path.Path, Error) {
+  use _ <- result.try(validate_options(options))
+  use subpaths <- result.try(
+    parametric_between_path_subpaths(
+      svg_path.subpaths(path),
+      distance_a,
+      distance_b,
       options,
       converted: [],
     ),
@@ -327,6 +411,36 @@ fn parametric_offset_path_subpaths(
       parametric_offset_path_subpaths(
         rest,
         distance,
+        options,
+        converted: list.append(
+          list.reverse(svg_path.subpaths(offset)),
+          converted,
+        ),
+      )
+    }
+  }
+}
+
+fn parametric_between_path_subpaths(
+  subpaths: List(svg_path.Subpath),
+  distance_a: Float,
+  distance_b: Float,
+  options: Options,
+  converted converted: List(svg_path.Subpath),
+) -> Result(List(svg_path.Subpath), Error) {
+  case subpaths {
+    [] -> Ok(list.reverse(converted))
+    [first, ..rest] -> {
+      use offset <- result.try(subpath_between_with(
+        first,
+        distance_a:,
+        distance_b:,
+        options:,
+      ))
+      parametric_between_path_subpaths(
+        rest,
+        distance_a,
+        distance_b,
         options,
         converted: list.append(
           list.reverse(svg_path.subpaths(offset)),
@@ -470,10 +584,59 @@ fn parametric_pruned_subpath(
   distance: Float,
   options: Options,
 ) -> Result(svg_path.Path, Error) {
+  use subpaths <- result.try(
+    parametric_pruned_side(
+      source,
+      provisional,
+      distance,
+      options,
+      extra_split_points: [],
+    ),
+  )
+  Ok(svg_path.Path(subpaths:))
+}
+
+fn parametric_pruned_pair(
+  source: svg_path.Subpath,
+  provisional_a provisional_a: svg_path.Subpath,
+  distance_a distance_a: Float,
+  provisional_b provisional_b: svg_path.Subpath,
+  distance_b distance_b: Float,
+  options options: Options,
+) -> Result(List(svg_path.Subpath), Error) {
+  use #(cross_a, cross_b) <- result.try(cross_side_split_parameters(
+    provisional_a,
+    provisional_b,
+  ))
+  use subpaths_a <- result.try(parametric_pruned_side(
+    source,
+    provisional_a,
+    distance_a,
+    options,
+    extra_split_points: cross_a,
+  ))
+  use subpaths_b <- result.try(parametric_pruned_side(
+    source,
+    provisional_b,
+    distance_b,
+    options,
+    extra_split_points: cross_b,
+  ))
+  Ok(list.append(subpaths_a, subpaths_b))
+}
+
+fn parametric_pruned_side(
+  source: svg_path.Subpath,
+  provisional: svg_path.Subpath,
+  distance: Float,
+  options: Options,
+  extra_split_points extra_split_points: List(svg_path.SubpathParameter),
+) -> Result(List(svg_path.Subpath), Error) {
   use sections <- result.try(parametric_self_intersection_sections(
     provisional,
     svg_path.default_intersection_options(),
     options.tolerance,
+    extra_split_points:,
   ))
   use retained <- result.try(
     retain_parametric_sections(
@@ -490,15 +653,60 @@ fn parametric_pruned_subpath(
     options.tolerance,
     closed: svg_path.is_closed(source),
   ))
-  Ok(svg_path.Path(subpaths:))
+  Ok(subpaths)
+}
+
+fn cross_side_split_parameters(
+  left: svg_path.Subpath,
+  right: svg_path.Subpath,
+) -> Result(
+  #(List(svg_path.SubpathParameter), List(svg_path.SubpathParameter)),
+  Error,
+) {
+  use intersections <- result.try(
+    svg_path.subpath_intersections_with(
+      left,
+      right,
+      options: svg_path.default_intersection_options(),
+    )
+    |> result.map_error(PathError),
+  )
+  let left_parameters =
+    intersections
+    |> list.flat_map(fn(intersection) {
+      let svg_path.SubpathIntersection(left_parameters:, ..) = intersection
+      left_parameters
+    })
+    |> list.filter(fn(parameter) {
+      !is_open_subpath_boundary_parameter(left, parameter)
+    })
+    |> list.sort(by: svg_path.compare_subpath_parameters)
+    |> unique_subpath_parameters(point_tolerance, [])
+  let right_parameters =
+    intersections
+    |> list.flat_map(fn(intersection) {
+      let svg_path.SubpathIntersection(right_parameters:, ..) = intersection
+      right_parameters
+    })
+    |> list.filter(fn(parameter) {
+      !is_open_subpath_boundary_parameter(right, parameter)
+    })
+    |> list.sort(by: svg_path.compare_subpath_parameters)
+    |> unique_subpath_parameters(point_tolerance, [])
+  Ok(#(left_parameters, right_parameters))
 }
 
 fn parametric_self_intersection_sections(
   subpath: svg_path.Subpath,
   _intersection_options: svg_path.IntersectionOptions,
   _tolerance: Float,
+  extra_split_points extra_split_points: List(svg_path.SubpathParameter),
 ) -> Result(List(List(svg_path.Segment)), Error) {
   use split_points <- result.try(self_intersection_split_parameters(subpath))
+  let split_points =
+    list.append(split_points, extra_split_points)
+    |> list.sort(by: svg_path.compare_subpath_parameters)
+    |> unique_subpath_parameters(point_tolerance, [])
   use sections <- result.try(
     split_segments_at_subpath_parameters(
       svg_path.segments(subpath),
