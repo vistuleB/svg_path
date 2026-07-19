@@ -319,6 +319,63 @@ pub fn path_band_untrimmed_returns_two_raw_sides_per_subpath_test() {
     == "M 0 1 H 10 M 0 -1 H 10 M 0 11 H 10 M 0 9 H 10"
 }
 
+pub fn subpath_stroke_open_line_with_butt_cap_returns_closed_outline_test() {
+  let subpath =
+    svg_path.assert_polyline([
+      svg_path.point(0.0, 0.0),
+      svg_path.point(10.0, 0.0),
+    ])
+
+  let assert Ok(stroke) = offset.subpath_stroke(subpath, width: 2.0)
+
+  assert list.length(svg_path.subpaths(stroke)) == 1
+  assert serialize.path(stroke) == "M 0 -1 H 10 V 1 H 0 Z"
+}
+
+pub fn subpath_stroke_open_line_with_square_cap_extends_ends_test() {
+  let subpath =
+    svg_path.assert_polyline([
+      svg_path.point(0.0, 0.0),
+      svg_path.point(10.0, 0.0),
+    ])
+
+  let assert Ok(stroke) =
+    offset.subpath_stroke_with(
+      subpath,
+      width: 2.0,
+      cap: offset.Square,
+      options: offset.default_options(),
+    )
+
+  assert serialize.path(stroke) == "M 0 -1 H 10 H 11 V 1 H 10 H 0 H -1 V -1 Z"
+}
+
+pub fn subpath_stroke_closed_square_uses_band_test() {
+  let square =
+    svg_path.assert_polygon([
+      svg_path.point(0.0, 0.0),
+      svg_path.point(10.0, 0.0),
+      svg_path.point(10.0, 10.0),
+      svg_path.point(0.0, 10.0),
+    ])
+
+  let assert Ok(stroke) = offset.subpath_stroke(square, width: 4.0)
+
+  assert serialize.path(stroke)
+    == "M 2 2 V 8 H 8 V 2 Z M 0 -2 H 10 H 12 V 0 V 10 V 12 H 10 H 0 H -2 V 10 V 0 V -2 Z"
+}
+
+pub fn subpath_stroke_rejects_invalid_width_test() {
+  let subpath =
+    svg_path.assert_polyline([
+      svg_path.point(0.0, 0.0),
+      svg_path.point(10.0, 0.0),
+    ])
+
+  assert offset.subpath_stroke(subpath, width: 0.0)
+    == Error(offset.InvalidStrokeWidth(0.0))
+}
+
 pub fn subpath_prunes_self_crossed_inset_sections_test() {
   let shape =
     svg_path.assert_polygon([

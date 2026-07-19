@@ -46,7 +46,7 @@ pub fn subpath_stroke_with_square_caps_extends_by_half_width_test() {
   let assert [outline] = svg_path.subpaths(path)
 
   assert serialize.subpath(outline)
-    == "M -1 -1 H 0 H 10 H 11 V 1 H 10 H 0 H -1 Z"
+    == "M 0 -1 H 10 H 11 V 1 H 10 H 0 H -1 V -1 Z"
 }
 
 pub fn closed_subpath_stroke_returns_two_closed_contours_test() {
@@ -63,6 +63,43 @@ pub fn closed_subpath_stroke_returns_two_closed_contours_test() {
 
   assert list.length(subpaths) == 2
   assert list.all(subpaths, svg_path.is_closed)
+}
+
+pub fn self_meeting_closed_subpath_stroke_uses_band_sections_test() {
+  let figure_eight =
+    svg_path.assert_subpath([
+      svg_path.CubicBezier(
+        start: svg_path.point(76.0, 0.0),
+        control1: svg_path.point(-2.0, -62.0),
+        control2: svg_path.point(-2.0, 62.0),
+        end: svg_path.point(76.0, 0.0),
+      ),
+      svg_path.CubicBezier(
+        start: svg_path.point(76.0, 0.0),
+        control1: svg_path.point(154.0, -62.0),
+        control2: svg_path.point(154.0, 62.0),
+        end: svg_path.point(76.0, 0.0),
+      ),
+    ])
+    |> svg_path.assert_set_closed(closed: True)
+
+  let assert Ok(path) = stroke.subpath(figure_eight, width: 26.0)
+  let subpaths = svg_path.subpaths(path)
+
+  assert list.length(subpaths) == 3
+  assert list.all(subpaths, svg_path.is_closed)
+  assert svg_path.path_containment(
+      svg_path.point(76.0, 0.0),
+      within: path,
+      using: svg_path.Nonzero,
+    )
+    == Ok(svg_path.Inside)
+  assert svg_path.path_containment(
+      svg_path.point(76.0, 0.0),
+      within: path,
+      using: svg_path.EvenOdd,
+    )
+    == Ok(svg_path.Inside)
 }
 
 pub fn path_stroke_strokes_each_subpath_test() {

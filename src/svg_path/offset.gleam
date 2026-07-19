@@ -20,15 +20,19 @@
 //// a different trimming policy.
 ////
 //// `subpath_band` and `path_band` construct two signed offset walks and trim
-//// them together. They do not add caps or bridges; this is the capless
-//// boundary primitive that stroke construction can build on later.
+//// them together. They do not add caps or bridges. `subpath_stroke` and
+//// `path_stroke` add endpoint caps for open subpaths. Closed strokes use the
+//// same capless per-subpath band construction.
 
 import gleam/float
 import gleam/int
 import gleam/list
+import gleam/option.{type Option, None, Some}
 import gleam/result
 import svg_path
+import svg_path/area
 import svg_path/bezier
+import svg_path/root
 import svg_path/trig
 import vec/vec2f
 
@@ -61,6 +65,9 @@ pub type Error {
   /// The miter limit must be greater than zero.
   InvalidMiterLimit(miter_limit: Float)
 
+  /// Stroke width must be greater than zero.
+  InvalidStrokeWidth(width: Float)
+
   /// A segment tangent was too small to define a stable normal direction.
   DegenerateTangent(t: Float)
 
@@ -82,6 +89,18 @@ pub type Join {
 
   /// Connect adjacent offset segments with a circular SVG arc.
   Round
+}
+
+/// Cap style used at open stroke endpoints.
+pub type Cap {
+  /// End the stroke exactly at the endpoint.
+  Butt
+
+  /// Extend the stroke by half its width beyond the endpoint.
+  Square
+
+  /// Add a semicircular endpoint cap.
+  RoundCap
 }
 
 /// Options for offset construction.
@@ -288,6 +307,60 @@ pub fn subpath_band_untrimmed_with(
   Ok(svg_path.Path(subpaths: [side_a, side_b]))
 }
 
+/// Stroke a subpath with the default butt cap.
+///
+/// Open subpaths build one closed provisional stroke boundary from the two
+/// offset sides and endpoint caps, then keep sections that separate points
+/// inside the intended stroke from points outside it. Closed subpaths use the
+/// same capless construction as `subpath_band`.
+pub fn subpath_stroke(
+  subpath: svg_path.Subpath,
+  width width: Float,
+) -> Result(svg_path.Path, Error) {
+  subpath_stroke_with(subpath, width:, cap: Butt, options: default_options())
+}
+
+/// Stroke a subpath using explicit cap and offset options.
+pub fn subpath_stroke_with(
+  subpath subpath: svg_path.Subpath,
+  width width: Float,
+  cap cap: Cap,
+  options options: Options,
+) -> Result(svg_path.Path, Error) {
+  use _ <- result.try(validate_stroke_width(width))
+  let radius = width /. 2.0
+  case svg_path.segments(subpath) {
+    [] -> Ok(svg_path.empty_path())
+    _ ->
+      case svg_path.is_closed(subpath) {
+        True -> {
+          use stroke <- result.try(closed_stroke_path(
+            subpath,
+            radius: radius,
+            options: options,
+          ))
+          orient_stroke_path(stroke)
+        }
+        False -> {
+          use candidate <- result.try(stroke_candidate_subpath(
+            subpath,
+            radius,
+            cap,
+            options,
+          ))
+          use stroke <- result.try(parametric_pruned_stroke_candidate(
+            source: subpath,
+            candidate:,
+            radius:,
+            cap:,
+            options:,
+          ))
+          orient_stroke_path(stroke)
+        }
+      }
+  }
+}
+
 /// Offset a subpath without trimming self-intersections.
 ///
 /// This returns the provisional one-sided offset walk. Adjacent segment offsets
@@ -364,7 +437,7 @@ pub fn path_band_with(
       converted: [],
     ),
   )
-  Ok(svg_path.Path(subpaths:))
+  orient_stroke_path(svg_path.Path(subpaths:))
 }
 
 /// Offset every subpath in a path at two signed distances without trimming any
@@ -396,6 +469,34 @@ pub fn path_band_untrimmed_with(
       svg_path.subpaths(path),
       distance_a,
       distance_b,
+      options,
+      converted: [],
+    ),
+  )
+  Ok(svg_path.Path(subpaths:))
+}
+
+/// Stroke every subpath in a path with the default butt cap.
+pub fn path_stroke(
+  path: svg_path.Path,
+  width width: Float,
+) -> Result(svg_path.Path, Error) {
+  path_stroke_with(path, width:, cap: Butt, options: default_options())
+}
+
+/// Stroke every subpath in a path using explicit cap and offset options.
+pub fn path_stroke_with(
+  path path: svg_path.Path,
+  width width: Float,
+  cap cap: Cap,
+  options options: Options,
+) -> Result(svg_path.Path, Error) {
+  use _ <- result.try(validate_stroke_width(width))
+  use subpaths <- result.try(
+    stroke_path_subpaths(
+      svg_path.subpaths(path),
+      width,
+      cap,
       options,
       converted: [],
     ),
@@ -453,6 +554,13 @@ fn validate_join(join: Join) -> Result(Nil, Error) {
   }
 }
 
+fn validate_stroke_width(width: Float) -> Result(Nil, Error) {
+  case width <=. 0.0 || !is_finite(width) {
+    True -> Error(InvalidStrokeWidth(width))
+    False -> Ok(Nil)
+  }
+}
+
 fn untrimmed_offset_path_subpaths(
   subpaths: List(svg_path.Subpath),
   distance: Float,
@@ -497,6 +605,36 @@ fn untrimmed_band_path_subpaths(
         distance_b,
         options,
         converted: list.append(list.reverse(svg_path.subpaths(band)), converted),
+      )
+    }
+  }
+}
+
+fn stroke_path_subpaths(
+  subpaths: List(svg_path.Subpath),
+  width: Float,
+  cap: Cap,
+  options: Options,
+  converted converted: List(svg_path.Subpath),
+) -> Result(List(svg_path.Subpath), Error) {
+  case subpaths {
+    [] -> Ok(list.reverse(converted))
+    [first, ..rest] -> {
+      use stroke <- result.try(subpath_stroke_with(
+        first,
+        width:,
+        cap:,
+        options:,
+      ))
+      stroke_path_subpaths(
+        rest,
+        width,
+        cap,
+        options,
+        converted: list.append(
+          list.reverse(svg_path.subpaths(stroke)),
+          converted,
+        ),
       )
     }
   }
@@ -682,6 +820,268 @@ fn parametric_join_segments(
   }
 }
 
+fn closed_stroke_path(
+  source: svg_path.Subpath,
+  radius radius: Float,
+  options options: Options,
+) -> Result(svg_path.Path, Error) {
+  let distance_a = 0.0 -. radius
+  let distance_b = radius
+  use provisional_a <- result.try(subpath_untrimmed_with(
+    source,
+    distance: distance_a,
+    options:,
+  ))
+  use provisional_b <- result.try(subpath_untrimmed_with(
+    source,
+    distance: distance_b,
+    options:,
+  ))
+  use #(cross_a, cross_b) <- result.try(cross_side_split_parameters(
+    provisional_a,
+    provisional_b,
+  ))
+  use chunks_a <- result.try(parametric_pruned_band_side_chunks(
+    source,
+    provisional_a,
+    distance_a:,
+    distance_b:,
+    options:,
+    extra_split_points: cross_a,
+  ))
+  use chunks_b <- result.try(parametric_pruned_band_side_chunks(
+    source,
+    provisional_b,
+    distance_a:,
+    distance_b:,
+    options:,
+    extra_split_points: cross_b,
+  ))
+  let chunks =
+    list.append(chunks_a, chunks_b)
+    |> merge_connecting_chunks(options.tolerance)
+  use subpaths <- result.try(chunks_to_subpaths(
+    chunks,
+    options.tolerance,
+    closed: True,
+  ))
+  Ok(svg_path.Path(subpaths:))
+}
+
+fn orient_stroke_path(path: svg_path.Path) -> Result(svg_path.Path, Error) {
+  use subpaths <- result.try(
+    orient_stroke_subpaths(
+      svg_path.subpaths(path),
+      all: svg_path.subpaths(path),
+      oriented: [],
+    ),
+  )
+  Ok(svg_path.Path(subpaths:))
+}
+
+fn orient_stroke_subpaths(
+  subpaths: List(svg_path.Subpath),
+  all all: List(svg_path.Subpath),
+  oriented oriented: List(svg_path.Subpath),
+) -> Result(List(svg_path.Subpath), Error) {
+  case subpaths {
+    [] -> Ok(list.reverse(oriented))
+    [first, ..rest] -> {
+      use depth <- result.try(stroke_contour_depth(first, all))
+      let assert Ok(remainder) = int.remainder(depth, by: 2)
+      let oriented_first =
+        orient_stroke_subpath(first, clockwise: remainder == 0)
+      orient_stroke_subpaths(rest, all:, oriented: [oriented_first, ..oriented])
+    }
+  }
+}
+
+fn stroke_contour_depth(
+  subpath: svg_path.Subpath,
+  all: List(svg_path.Subpath),
+) -> Result(Int, Error) {
+  use probe <- result.try(stroke_contour_probe(subpath))
+  stroke_contour_depth_loop(probe, all, depth: 0)
+}
+
+fn stroke_contour_depth_loop(
+  probe: svg_path.Point,
+  subpaths: List(svg_path.Subpath),
+  depth depth: Int,
+) -> Result(Int, Error) {
+  case subpaths {
+    [] -> Ok(depth)
+    [first, ..rest] -> {
+      use containment <- result.try(
+        svg_path.subpath_containment(
+          probe,
+          within: first,
+          using: svg_path.Nonzero,
+        )
+        |> result.map_error(PathError),
+      )
+      let depth = case containment {
+        svg_path.Inside -> depth + 1
+        svg_path.Boundary | svg_path.Outside -> depth
+      }
+      stroke_contour_depth_loop(probe, rest, depth:)
+    }
+  }
+}
+
+fn stroke_contour_probe(
+  subpath: svg_path.Subpath,
+) -> Result(svg_path.Point, Error) {
+  case svg_path.segments(subpath) {
+    [] -> Error(PathError(svg_path.EmptySubpath))
+    [first, ..] ->
+      svg_path.segment_point(first, at: 0.5) |> result.map_error(PathError)
+  }
+}
+
+fn orient_stroke_subpath(
+  subpath: svg_path.Subpath,
+  clockwise clockwise: Bool,
+) -> svg_path.Subpath {
+  let is_clockwise = area.signed_subpath(subpath) >=. 0.0
+  case is_clockwise == clockwise {
+    True -> subpath
+    False -> svg_path.reverse_subpath(subpath)
+  }
+}
+
+fn stroke_candidate_subpath(
+  source: svg_path.Subpath,
+  radius: Float,
+  cap: Cap,
+  options: Options,
+) -> Result(svg_path.Subpath, Error) {
+  use positive <- result.try(subpath_untrimmed_with(
+    source,
+    distance: radius,
+    options:,
+  ))
+  use negative <- result.try(subpath_untrimmed_with(
+    source,
+    distance: 0.0 -. radius,
+    options:,
+  ))
+  use end_cap <- result.try(stroke_end_cap(source, radius, cap))
+  use start_cap <- result.try(stroke_start_cap(source, radius, cap))
+  let segments =
+    list.append(
+      svg_path.segments(positive),
+      list.append(
+        end_cap,
+        list.append(reverse_segments(svg_path.segments(negative)), start_cap),
+      ),
+    )
+  use candidate <- result.try(
+    svg_path.subpath_with(segments, policy: svg_path.Wiggle)
+    |> result.map_error(PathError),
+  )
+  svg_path.set_closed_with(candidate, closed: True, policy: svg_path.Wiggle)
+  |> result.map_error(PathError)
+}
+
+fn stroke_end_cap(
+  source: svg_path.Subpath,
+  radius: Float,
+  cap: Cap,
+) -> Result(List(svg_path.Segment), Error) {
+  use end <- result.try(svg_path.end(source) |> result.map_error(PathError))
+  let assert Ok(last) = list.last(svg_path.segments(source))
+  use tangent <- result.try(unit_tangent(last, t: 1.0))
+  stroke_cap_segments(center: end, tangent:, radius:, cap:, at_end: True)
+}
+
+fn stroke_start_cap(
+  source: svg_path.Subpath,
+  radius: Float,
+  cap: Cap,
+) -> Result(List(svg_path.Segment), Error) {
+  use start <- result.try(svg_path.start(source) |> result.map_error(PathError))
+  let assert [first, ..] = svg_path.segments(source)
+  use tangent <- result.try(unit_tangent(first, t: 0.0))
+  stroke_cap_segments(center: start, tangent:, radius:, cap:, at_end: False)
+}
+
+fn stroke_cap_segments(
+  center center: svg_path.Point,
+  tangent tangent: svg_path.Point,
+  radius radius: Float,
+  cap cap: Cap,
+  at_end at_end: Bool,
+) -> Result(List(svg_path.Segment), Error) {
+  let normal = rotate_clockwise(tangent)
+  let positive = add(center, scale(normal, radius))
+  let negative = add(center, scale(normal, 0.0 -. radius))
+  case cap {
+    Butt -> {
+      case at_end {
+        True -> Ok(line_segments_between([positive, negative]))
+        False -> Ok(line_segments_between([negative, positive]))
+      }
+    }
+    Square -> {
+      let extension = case at_end {
+        True -> scale(tangent, radius)
+        False -> scale(tangent, 0.0 -. radius)
+      }
+      let positive_extended = add(positive, extension)
+      let negative_extended = add(negative, extension)
+      case at_end {
+        True ->
+          Ok(
+            line_segments_between([
+              positive,
+              positive_extended,
+              negative_extended,
+              negative,
+            ]),
+          )
+        False ->
+          Ok(
+            line_segments_between([
+              negative,
+              negative_extended,
+              positive_extended,
+              positive,
+            ]),
+          )
+      }
+    }
+    RoundCap -> {
+      let start = case at_end {
+        True -> positive
+        False -> negative
+      }
+      let end = case at_end {
+        True -> negative
+        False -> positive
+      }
+      Ok([
+        svg_path.Arc(
+          start:,
+          radius: svg_path.point(radius, radius),
+          x_axis_rotation: 0.0,
+          large_arc: False,
+          sweep: True,
+          end:,
+        ),
+      ])
+    }
+  }
+}
+
+fn reverse_segments(
+  segments: List(svg_path.Segment),
+) -> List(svg_path.Segment) {
+  segments
+  |> list.reverse
+  |> list.map(svg_path.reverse_segment)
+}
+
 fn parametric_pruned_subpath(
   source: svg_path.Subpath,
   provisional: svg_path.Subpath,
@@ -712,18 +1112,20 @@ fn parametric_pruned_pair(
     provisional_a,
     provisional_b,
   ))
-  use subpaths_a <- result.try(parametric_pruned_side(
+  use subpaths_a <- result.try(parametric_pruned_band_side(
     source,
     provisional_a,
-    distance_a,
-    options,
+    distance_a:,
+    distance_b:,
+    options:,
     extra_split_points: cross_a,
   ))
-  use subpaths_b <- result.try(parametric_pruned_side(
+  use subpaths_b <- result.try(parametric_pruned_band_side(
     source,
     provisional_b,
-    distance_b,
-    options,
+    distance_a:,
+    distance_b:,
+    options:,
     extra_split_points: cross_b,
   ))
   Ok(list.append(subpaths_a, subpaths_b))
@@ -758,6 +1160,91 @@ fn parametric_pruned_side(
     closed: svg_path.is_closed(source),
   ))
   Ok(subpaths)
+}
+
+fn parametric_pruned_band_side(
+  source: svg_path.Subpath,
+  provisional: svg_path.Subpath,
+  distance_a distance_a: Float,
+  distance_b distance_b: Float,
+  options options: Options,
+  extra_split_points extra_split_points: List(svg_path.SubpathParameter),
+) -> Result(List(svg_path.Subpath), Error) {
+  use retained <- result.try(parametric_pruned_band_side_chunks(
+    source,
+    provisional,
+    distance_a:,
+    distance_b:,
+    options:,
+    extra_split_points:,
+  ))
+  use subpaths <- result.try(chunks_to_subpaths(
+    retained,
+    options.tolerance,
+    closed: svg_path.is_closed(source),
+  ))
+  Ok(subpaths)
+}
+
+fn parametric_pruned_band_side_chunks(
+  source: svg_path.Subpath,
+  provisional: svg_path.Subpath,
+  distance_a distance_a: Float,
+  distance_b distance_b: Float,
+  options options: Options,
+  extra_split_points extra_split_points: List(svg_path.SubpathParameter),
+) -> Result(List(List(svg_path.Segment)), Error) {
+  use sections <- result.try(parametric_self_intersection_sections(
+    provisional,
+    svg_path.default_intersection_options(),
+    options.tolerance,
+    extra_split_points:,
+  ))
+  use retained <- result.try(
+    retain_band_boundary_sections(
+      sections,
+      source:,
+      distance_a:,
+      distance_b:,
+      options:,
+      retained: [],
+    ),
+  )
+  Ok(merge_touching_chunks(retained, options.tolerance))
+}
+
+fn parametric_pruned_stroke_candidate(
+  source source: svg_path.Subpath,
+  candidate candidate: svg_path.Subpath,
+  radius radius: Float,
+  cap cap: Cap,
+  options options: Options,
+) -> Result(svg_path.Path, Error) {
+  use sections <- result.try(
+    parametric_self_intersection_sections(
+      candidate,
+      svg_path.default_intersection_options(),
+      options.tolerance,
+      extra_split_points: [],
+    ),
+  )
+  use retained <- result.try(
+    retain_stroke_boundary_sections(
+      sections,
+      source:,
+      radius:,
+      cap:,
+      options:,
+      retained: [],
+    ),
+  )
+  let retained = merge_touching_chunks(retained, options.tolerance)
+  use subpaths <- result.try(chunks_to_subpaths(
+    retained,
+    options.tolerance,
+    closed: True,
+  ))
+  Ok(svg_path.Path(subpaths:))
 }
 
 fn cross_side_split_parameters(
@@ -1100,6 +1587,858 @@ fn parametric_point_is_non_negative(
   Ok(projection.distance +. margin >=. float.absolute_value(distance))
 }
 
+fn retain_band_boundary_sections(
+  sections: List(List(svg_path.Segment)),
+  source source: svg_path.Subpath,
+  distance_a distance_a: Float,
+  distance_b distance_b: Float,
+  options options: Options,
+  retained retained: List(List(svg_path.Segment)),
+) -> Result(List(List(svg_path.Segment)), Error) {
+  case sections {
+    [] -> Ok(list.reverse(retained))
+    [first, ..rest] -> {
+      use keep <- result.try(band_section_is_boundary(
+        first,
+        source:,
+        distance_a:,
+        distance_b:,
+        options:,
+      ))
+      let retained = case keep {
+        True -> [first, ..retained]
+        False -> retained
+      }
+      retain_band_boundary_sections(
+        rest,
+        source:,
+        distance_a:,
+        distance_b:,
+        options:,
+        retained:,
+      )
+    }
+  }
+}
+
+fn band_section_is_boundary(
+  section: List(svg_path.Segment),
+  source source: svg_path.Subpath,
+  distance_a distance_a: Float,
+  distance_b distance_b: Float,
+  options options: Options,
+) -> Result(Bool, Error) {
+  use section <- result.try(normalize_chunk(section, options.tolerance))
+  use section <- result.try(
+    svg_path.subpath_with(section, policy: svg_path.Wiggle)
+    |> result.map_error(PathError),
+  )
+  use length <- result.try(
+    svg_path.subpath_length(section) |> result.map_error(PathError),
+  )
+  use score <- result.try(band_section_boundary_score(
+    section,
+    length,
+    section_sample_parameters(),
+    source:,
+    distance_a:,
+    distance_b:,
+    options:,
+    score: 0,
+  ))
+  Ok(int.absolute_value(score) >= 5)
+}
+
+fn band_section_boundary_score(
+  section: svg_path.Subpath,
+  length: Float,
+  samples: List(Float),
+  source source: svg_path.Subpath,
+  distance_a distance_a: Float,
+  distance_b distance_b: Float,
+  options options: Options,
+  score score: Int,
+) -> Result(Int, Error) {
+  case samples {
+    [] -> Ok(score)
+    [first, ..rest] -> {
+      use sample_score <- result.try(band_section_sample_score(
+        section,
+        length *. first,
+        source:,
+        distance_a:,
+        distance_b:,
+        options:,
+      ))
+      band_section_boundary_score(
+        section,
+        length,
+        rest,
+        source:,
+        distance_a:,
+        distance_b:,
+        options:,
+        score: score + sample_score,
+      )
+    }
+  }
+}
+
+fn band_section_sample_score(
+  section: svg_path.Subpath,
+  distance distance_along_section: Float,
+  source source: svg_path.Subpath,
+  distance_a distance_a: Float,
+  distance_b distance_b: Float,
+  options options: Options,
+) -> Result(Int, Error) {
+  use point <- result.try(
+    svg_path.subpath_point_at_length(section, distance: distance_along_section)
+    |> result.map_error(PathError),
+  )
+  use derivative <- result.try(
+    svg_path.subpath_derivative_at_length(
+      section,
+      distance: distance_along_section,
+    )
+    |> result.map_error(PathError),
+  )
+  use tangent_length <- result.try(length(derivative, t: 0.5))
+  let tangent = scale(derivative, 1.0 /. tangent_length)
+  let normal = rotate_clockwise(tangent)
+  let probe_distance =
+    boundary_probe_distance(distance_a, distance_b, options.tolerance)
+  let left_probe = add(point, scale(normal, 0.0 -. probe_distance))
+  let right_probe = add(point, scale(normal, probe_distance))
+  use left <- result.try(in_band(
+    left_probe,
+    source:,
+    distance_a:,
+    distance_b:,
+    options:,
+  ))
+  use right <- result.try(in_band(
+    right_probe,
+    source:,
+    distance_a:,
+    distance_b:,
+    options:,
+  ))
+  Ok(bool_int(left) - bool_int(right))
+}
+
+fn retain_stroke_boundary_sections(
+  sections: List(List(svg_path.Segment)),
+  source source: svg_path.Subpath,
+  radius radius: Float,
+  cap cap: Cap,
+  options options: Options,
+  retained retained: List(List(svg_path.Segment)),
+) -> Result(List(List(svg_path.Segment)), Error) {
+  case sections {
+    [] -> Ok(list.reverse(retained))
+    [first, ..rest] -> {
+      use keep <- result.try(stroke_section_is_boundary(
+        first,
+        source:,
+        radius:,
+        cap:,
+        options:,
+      ))
+      let retained = case keep {
+        True -> [first, ..retained]
+        False -> retained
+      }
+      retain_stroke_boundary_sections(
+        rest,
+        source:,
+        radius:,
+        cap:,
+        options:,
+        retained:,
+      )
+    }
+  }
+}
+
+fn stroke_section_is_boundary(
+  section: List(svg_path.Segment),
+  source source: svg_path.Subpath,
+  radius radius: Float,
+  cap cap: Cap,
+  options options: Options,
+) -> Result(Bool, Error) {
+  use section <- result.try(normalize_chunk(section, options.tolerance))
+  use section <- result.try(
+    svg_path.subpath_with(section, policy: svg_path.Wiggle)
+    |> result.map_error(PathError),
+  )
+  use length <- result.try(
+    svg_path.subpath_length(section) |> result.map_error(PathError),
+  )
+  use score <- result.try(stroke_section_boundary_score(
+    section,
+    length,
+    section_sample_parameters(),
+    source:,
+    radius:,
+    cap:,
+    options:,
+    score: 0,
+  ))
+  Ok(int.absolute_value(score) >= 5)
+}
+
+fn stroke_section_boundary_score(
+  section: svg_path.Subpath,
+  length: Float,
+  samples: List(Float),
+  source source: svg_path.Subpath,
+  radius radius: Float,
+  cap cap: Cap,
+  options options: Options,
+  score score: Int,
+) -> Result(Int, Error) {
+  case samples {
+    [] -> Ok(score)
+    [first, ..rest] -> {
+      use sample_score <- result.try(stroke_section_sample_score(
+        section,
+        length *. first,
+        source:,
+        radius:,
+        cap:,
+        options:,
+      ))
+      stroke_section_boundary_score(
+        section,
+        length,
+        rest,
+        source:,
+        radius:,
+        cap:,
+        options:,
+        score: score + sample_score,
+      )
+    }
+  }
+}
+
+fn stroke_section_sample_score(
+  section: svg_path.Subpath,
+  distance distance_along_section: Float,
+  source source: svg_path.Subpath,
+  radius radius: Float,
+  cap cap: Cap,
+  options options: Options,
+) -> Result(Int, Error) {
+  use point <- result.try(
+    svg_path.subpath_point_at_length(section, distance: distance_along_section)
+    |> result.map_error(PathError),
+  )
+  use derivative <- result.try(
+    svg_path.subpath_derivative_at_length(
+      section,
+      distance: distance_along_section,
+    )
+    |> result.map_error(PathError),
+  )
+  use tangent_length <- result.try(length(derivative, t: 0.5))
+  let tangent = scale(derivative, 1.0 /. tangent_length)
+  let normal = rotate_clockwise(tangent)
+  let probe_distance =
+    boundary_probe_distance(0.0 -. radius, radius, options.tolerance)
+  let left_probe = add(point, scale(normal, 0.0 -. probe_distance))
+  let right_probe = add(point, scale(normal, probe_distance))
+  use left <- result.try(in_stroke(left_probe, source:, radius:, cap:, options:))
+  use right <- result.try(in_stroke(
+    right_probe,
+    source:,
+    radius:,
+    cap:,
+    options:,
+  ))
+  Ok(bool_int(left) - bool_int(right))
+}
+
+fn boundary_probe_distance(
+  distance_a: Float,
+  distance_b: Float,
+  tolerance: Float,
+) -> Float {
+  let base = float.max(tolerance *. 10.0, 0.000001)
+  let width = float.absolute_value(distance_a -. distance_b)
+  case width <=. point_tolerance {
+    True -> base
+    False -> float.min(base, width /. 100.0)
+  }
+}
+
+fn in_stroke(
+  point: svg_path.Point,
+  source source: svg_path.Subpath,
+  radius radius: Float,
+  cap cap: Cap,
+  options options: Options,
+) -> Result(Bool, Error) {
+  use in_body <- result.try(in_band(
+    point,
+    source:,
+    distance_a: 0.0 -. radius,
+    distance_b: radius,
+    options:,
+  ))
+  case in_body {
+    True -> Ok(True)
+    False -> in_stroke_cap(point, source:, radius:, cap:)
+  }
+}
+
+fn in_stroke_cap(
+  point: svg_path.Point,
+  source source: svg_path.Subpath,
+  radius radius: Float,
+  cap cap: Cap,
+) -> Result(Bool, Error) {
+  case cap {
+    Butt -> Ok(False)
+    RoundCap -> {
+      use start <- result.try(
+        svg_path.start(source) |> result.map_error(PathError),
+      )
+      use end <- result.try(svg_path.end(source) |> result.map_error(PathError))
+      Ok(
+        vec2f.distance_squared(point, with: start) <=. radius *. radius
+        || vec2f.distance_squared(point, with: end) <=. radius *. radius,
+      )
+    }
+    Square -> {
+      let segments = svg_path.segments(source)
+      let assert [first, ..] = segments
+      let assert Ok(last) = list.last(segments)
+      use start <- result.try(
+        svg_path.start(source) |> result.map_error(PathError),
+      )
+      use end <- result.try(svg_path.end(source) |> result.map_error(PathError))
+      use start_tangent <- result.try(unit_tangent(first, t: 0.0))
+      use end_tangent <- result.try(unit_tangent(last, t: 1.0))
+      Ok(
+        point_in_square_cap(
+          point,
+          center: start,
+          tangent: start_tangent,
+          radius:,
+          at_end: False,
+        )
+        || point_in_square_cap(
+          point,
+          center: end,
+          tangent: end_tangent,
+          radius:,
+          at_end: True,
+        ),
+      )
+    }
+  }
+}
+
+fn point_in_square_cap(
+  point: svg_path.Point,
+  center center: svg_path.Point,
+  tangent tangent: svg_path.Point,
+  radius radius: Float,
+  at_end at_end: Bool,
+) -> Bool {
+  let delta = subtract(point, center)
+  let normal = rotate_clockwise(tangent)
+  let along = dot(delta, tangent)
+  let across = dot(delta, normal)
+  let along_ok = case at_end {
+    True ->
+      along >=. 0.0 -. point_tolerance && along <=. radius +. point_tolerance
+    False ->
+      along <=. point_tolerance && along >=. 0.0 -. radius -. point_tolerance
+  }
+  along_ok && float.absolute_value(across) <=. radius +. point_tolerance
+}
+
+fn bool_int(value: Bool) -> Int {
+  case value {
+    True -> 1
+    False -> 0
+  }
+}
+
+fn in_band(
+  point: svg_path.Point,
+  source source: svg_path.Subpath,
+  distance_a distance_a: Float,
+  distance_b distance_b: Float,
+  options options: Options,
+) -> Result(Bool, Error) {
+  use in_body <- result.try(in_band_segments(
+    point,
+    svg_path.segments(source),
+    distance_a:,
+    distance_b:,
+    options:,
+  ))
+  case in_body {
+    True -> Ok(True)
+    False ->
+      in_band_joins(
+        point,
+        svg_path.segments(source),
+        closed: svg_path.is_closed(source),
+        distance_a:,
+        distance_b:,
+        options:,
+      )
+  }
+}
+
+fn in_band_segments(
+  point: svg_path.Point,
+  segments: List(svg_path.Segment),
+  distance_a distance_a: Float,
+  distance_b distance_b: Float,
+  options options: Options,
+) -> Result(Bool, Error) {
+  case segments {
+    [] -> Ok(False)
+    [first, ..rest] -> {
+      use current <- result.try(in_band_segment(
+        point,
+        first,
+        distance_a:,
+        distance_b:,
+        options:,
+      ))
+      case current {
+        True -> Ok(True)
+        False ->
+          in_band_segments(point, rest, distance_a:, distance_b:, options:)
+      }
+    }
+  }
+}
+
+fn in_band_segment(
+  point: svg_path.Point,
+  segment: svg_path.Segment,
+  distance_a distance_a: Float,
+  distance_b distance_b: Float,
+  options options: Options,
+) -> Result(Bool, Error) {
+  use parameters <- result.try(normal_projection_parameters(
+    point,
+    segment,
+    options,
+  ))
+  in_band_segment_parameters(
+    point,
+    segment,
+    parameters,
+    distance_a:,
+    distance_b:,
+    tolerance: options.tolerance,
+  )
+}
+
+fn in_band_joins(
+  point: svg_path.Point,
+  segments: List(svg_path.Segment),
+  closed closed: Bool,
+  distance_a distance_a: Float,
+  distance_b distance_b: Float,
+  options options: Options,
+) -> Result(Bool, Error) {
+  case segments {
+    [] | [_] -> Ok(False)
+    [first, ..rest] -> {
+      use internal <- result.try(in_band_adjacent_joins(
+        point,
+        previous: first,
+        rest:,
+        distance_a:,
+        distance_b:,
+        options:,
+      ))
+      case internal {
+        True -> Ok(True)
+        False ->
+          case closed {
+            False -> Ok(False)
+            True -> {
+              use last <- result.try(
+                list.last(segments) |> result.map_error(fn(_) { NonFinite }),
+              )
+              in_band_join(
+                point,
+                left: last,
+                right: first,
+                distance_a:,
+                distance_b:,
+                options:,
+              )
+            }
+          }
+      }
+    }
+  }
+}
+
+fn in_band_adjacent_joins(
+  point: svg_path.Point,
+  previous previous: svg_path.Segment,
+  rest rest: List(svg_path.Segment),
+  distance_a distance_a: Float,
+  distance_b distance_b: Float,
+  options options: Options,
+) -> Result(Bool, Error) {
+  case rest {
+    [] -> Ok(False)
+    [next, ..remaining] -> {
+      use current <- result.try(in_band_join(
+        point,
+        left: previous,
+        right: next,
+        distance_a:,
+        distance_b:,
+        options:,
+      ))
+      case current {
+        True -> Ok(True)
+        False ->
+          in_band_adjacent_joins(
+            point,
+            previous: next,
+            rest: remaining,
+            distance_a:,
+            distance_b:,
+            options:,
+          )
+      }
+    }
+  }
+}
+
+fn in_band_join(
+  point: svg_path.Point,
+  left left: svg_path.Segment,
+  right right: svg_path.Segment,
+  distance_a distance_a: Float,
+  distance_b distance_b: Float,
+  options options: Options,
+) -> Result(Bool, Error) {
+  use region <- result.try(band_join_region(
+    left,
+    right,
+    distance_a:,
+    distance_b:,
+    options:,
+  ))
+  case region {
+    None -> Ok(False)
+    Some(region) -> {
+      let containment_options =
+        svg_path.ContainmentOptions(
+          ..svg_path.default_containment_options(),
+          tolerance: options.tolerance,
+        )
+      use containment <- result.try(
+        svg_path.subpath_containment_with(
+          point,
+          within: region,
+          using: svg_path.EvenOdd,
+          options: containment_options,
+        )
+        |> result.map_error(PathError),
+      )
+      case containment {
+        svg_path.Outside -> Ok(False)
+        svg_path.Inside | svg_path.Boundary -> Ok(True)
+      }
+    }
+  }
+}
+
+fn band_join_region(
+  left: svg_path.Segment,
+  right: svg_path.Segment,
+  distance_a distance_a: Float,
+  distance_b distance_b: Float,
+  options options: Options,
+) -> Result(Option(svg_path.Subpath), Error) {
+  use left_a <- result.try(join_offset_segment(left, distance_a, options))
+  use right_a <- result.try(join_offset_segment(right, distance_a, options))
+  use left_b <- result.try(join_offset_segment(left, distance_b, options))
+  use right_b <- result.try(join_offset_segment(right, distance_b, options))
+  use join_a <- result.try(parametric_join_segments(
+    left_a,
+    right_a,
+    distance_a,
+    options.join,
+  ))
+  use join_b <- result.try(parametric_join_segments(
+    left_b,
+    right_b,
+    distance_b,
+    options.join,
+  ))
+  use left_a_end <- result.try(offset_segment_end(left_a))
+  use right_a_start <- result.try(offset_segment_start(right_a))
+  use left_b_end <- result.try(offset_segment_end(left_b))
+  use right_b_start <- result.try(offset_segment_start(right_b))
+  let segments =
+    list.append(
+      join_a,
+      list.append(
+        line_segments_between([right_a_start, right_b_start]),
+        list.append(
+          reverse_segments(join_b),
+          line_segments_between([left_b_end, left_a_end]),
+        ),
+      ),
+    )
+  case list.length(segments) < 3 {
+    True -> Ok(None)
+    False -> {
+      use region <- result.try(
+        svg_path.subpath_with(segments, policy: svg_path.Wiggle)
+        |> result.map_error(PathError),
+      )
+      use region <- result.try(
+        svg_path.set_closed_with(region, closed: True, policy: svg_path.Wiggle)
+        |> result.map_error(PathError),
+      )
+      Ok(Some(region))
+    }
+  }
+}
+
+fn join_offset_segment(
+  segment: svg_path.Segment,
+  distance: Float,
+  options: Options,
+) -> Result(OffsetSegment, Error) {
+  use offset <- result.try(segment_with(segment, distance:, options:))
+  Ok(OffsetSegment(source: segment, offset: svg_path.segments(offset)))
+}
+
+fn offset_segment_start(
+  offset: OffsetSegment,
+) -> Result(svg_path.Point, Error) {
+  use first <- result.try(first_offset_segment(offset))
+  Ok(svg_path.segment_start(first))
+}
+
+fn offset_segment_end(offset: OffsetSegment) -> Result(svg_path.Point, Error) {
+  use last <- result.try(last_offset_segment(offset))
+  Ok(svg_path.segment_end(last))
+}
+
+fn in_band_segment_parameters(
+  point: svg_path.Point,
+  segment: svg_path.Segment,
+  parameters: List(Float),
+  distance_a distance_a: Float,
+  distance_b distance_b: Float,
+  tolerance tolerance: Float,
+) -> Result(Bool, Error) {
+  case parameters {
+    [] -> Ok(False)
+    [first, ..rest] -> {
+      use signed_distance <- result.try(signed_normal_distance(
+        point,
+        segment,
+        t: first,
+      ))
+      case
+        distance_in_interval(signed_distance, distance_a, distance_b, tolerance)
+      {
+        True -> Ok(True)
+        False ->
+          in_band_segment_parameters(
+            point,
+            segment,
+            rest,
+            distance_a:,
+            distance_b:,
+            tolerance:,
+          )
+      }
+    }
+  }
+}
+
+fn distance_in_interval(
+  value: Float,
+  a: Float,
+  b: Float,
+  tolerance: Float,
+) -> Bool {
+  let low = float.min(a, b) -. tolerance
+  let high = float.max(a, b) +. tolerance
+  value >=. low && value <=. high
+}
+
+fn signed_normal_distance(
+  point: svg_path.Point,
+  segment: svg_path.Segment,
+  t t: Float,
+) -> Result(Float, Error) {
+  use source_point <- result.try(
+    svg_path.segment_point(segment, at: t) |> result.map_error(PathError),
+  )
+  use normal <- result.try(unit_normal(segment, t:))
+  Ok(dot(subtract(point, source_point), normal))
+}
+
+fn normal_projection_parameters(
+  point: svg_path.Point,
+  segment: svg_path.Segment,
+  options: Options,
+) -> Result(List(Float), Error) {
+  use first_value <- result.try(normal_projection_value(point, segment, 0.0))
+  scan_normal_projection_parameters(
+    point,
+    segment,
+    options,
+    index: 1,
+    previous_t: 0.0,
+    previous_value: first_value,
+    parameters: [],
+  )
+}
+
+fn scan_normal_projection_parameters(
+  point: svg_path.Point,
+  segment: svg_path.Segment,
+  options: Options,
+  index index: Int,
+  previous_t previous_t: Float,
+  previous_value previous_value: Float,
+  parameters parameters: List(Float),
+) -> Result(List(Float), Error) {
+  case index > options.distance.samples {
+    True -> Ok(parameters |> unique_floats(options.distance.tolerance, []))
+    False -> {
+      let next_t = int_to_float(index) /. int_to_float(options.distance.samples)
+      use next_value <- result.try(normal_projection_value(
+        point,
+        segment,
+        next_t,
+      ))
+      use candidate <- result.try(normal_projection_candidate(
+        point,
+        segment,
+        options,
+        previous_t,
+        previous_value,
+        next_t,
+        next_value,
+      ))
+      let parameters = case candidate {
+        Some(t) -> [t, ..parameters]
+        None -> parameters
+      }
+      scan_normal_projection_parameters(
+        point,
+        segment,
+        options,
+        index: index + 1,
+        previous_t: next_t,
+        previous_value: next_value,
+        parameters:,
+      )
+    }
+  }
+}
+
+fn normal_projection_candidate(
+  point: svg_path.Point,
+  segment: svg_path.Segment,
+  options: Options,
+  previous_t: Float,
+  previous_value: Float,
+  next_t: Float,
+  next_value: Float,
+) -> Result(Option(Float), Error) {
+  case float.absolute_value(previous_value) <=. options.distance.tolerance {
+    True -> Ok(Some(previous_t))
+    False ->
+      case float.absolute_value(next_value) <=. options.distance.tolerance {
+        True -> Ok(Some(next_t))
+        False ->
+          case same_sign(previous_value, next_value) {
+            True -> Ok(None)
+            False -> {
+              let root_options =
+                root.Options(
+                  tolerance: options.distance.tolerance,
+                  max_iterations: options.distance.max_iterations,
+                )
+              case
+                root.bisect_with(
+                  fn(t) {
+                    let assert Ok(value) =
+                      normal_projection_value(point, segment, t)
+                    value
+                  },
+                  from: previous_t,
+                  to: next_t,
+                  options: root_options,
+                )
+              {
+                Ok(t) -> Ok(Some(t))
+                Error(root.MaxIterationsReached(..)) -> Error(NonFinite)
+                Error(_) -> Ok(None)
+              }
+            }
+          }
+      }
+  }
+}
+
+fn normal_projection_value(
+  point: svg_path.Point,
+  segment: svg_path.Segment,
+  t: Float,
+) -> Result(Float, Error) {
+  use source_point <- result.try(
+    svg_path.segment_point(segment, at: t) |> result.map_error(PathError),
+  )
+  use derivative <- result.try(
+    svg_path.segment_derivative(segment, at: t) |> result.map_error(PathError),
+  )
+  Ok(dot(subtract(point, source_point), derivative))
+}
+
+fn unique_floats(
+  values: List(Float),
+  tolerance: Float,
+  unique unique: List(Float),
+) -> List(Float) {
+  case values |> list.sort(by: float.compare) {
+    [] -> list.reverse(unique)
+    [first, ..rest] ->
+      case unique {
+        [previous, ..] -> {
+          case float.absolute_value(first -. previous) <=. tolerance {
+            True -> unique_floats(rest, tolerance, unique:)
+            False -> unique_floats(rest, tolerance, unique: [first, ..unique])
+          }
+        }
+        [] -> unique_floats(rest, tolerance, unique: [first])
+      }
+  }
+}
+
+fn same_sign(a: Float, b: Float) -> Bool {
+  { a <. 0.0 && b <. 0.0 } || { a >. 0.0 && b >. 0.0 }
+}
+
 fn merge_touching_chunks(
   chunks: List(List(svg_path.Segment)),
   tolerance: Float,
@@ -1113,6 +2452,93 @@ fn merge_touching_chunks(
         False -> [first, ..merge_touching_chunks([second, ..rest], tolerance)]
       }
     }
+  }
+}
+
+fn merge_connecting_chunks(
+  chunks: List(List(svg_path.Segment)),
+  tolerance: Float,
+) -> List(List(svg_path.Segment)) {
+  let #(merged, changed) =
+    merge_connecting_chunks_pass(chunks, tolerance, merged: [])
+  case changed {
+    True -> merge_connecting_chunks(merged, tolerance)
+    False -> merged
+  }
+}
+
+fn merge_connecting_chunks_pass(
+  chunks: List(List(svg_path.Segment)),
+  tolerance: Float,
+  merged merged: List(List(svg_path.Segment)),
+) -> #(List(List(svg_path.Segment)), Bool) {
+  case chunks {
+    [] -> #(list.reverse(merged), False)
+    [first, ..remaining] ->
+      case find_connecting_chunk(first, remaining, tolerance, skipped: []) {
+        Ok(#(connected, rest)) -> #(
+          list.reverse(merged) |> list.append([connected, ..rest]),
+          True,
+        )
+        Error(Nil) ->
+          merge_connecting_chunks_pass(remaining, tolerance, merged: [
+            first,
+            ..merged
+          ])
+      }
+  }
+}
+
+fn find_connecting_chunk(
+  current: List(svg_path.Segment),
+  candidates: List(List(svg_path.Segment)),
+  tolerance: Float,
+  skipped skipped: List(List(svg_path.Segment)),
+) -> Result(#(List(svg_path.Segment), List(List(svg_path.Segment))), Nil) {
+  case candidates {
+    [] -> Error(Nil)
+    [first, ..rest] ->
+      case connect_chunks(current, first, tolerance) {
+        Ok(connected) ->
+          Ok(#(connected, list.append(list.reverse(skipped), rest)))
+        Error(Nil) ->
+          find_connecting_chunk(current, rest, tolerance, skipped: [
+            first,
+            ..skipped
+          ])
+      }
+  }
+}
+
+fn connect_chunks(
+  left: List(svg_path.Segment),
+  right: List(svg_path.Segment),
+  tolerance: Float,
+) -> Result(List(svg_path.Segment), Nil) {
+  case left, right, list.last(left), list.last(right) {
+    [left_first, ..], [right_first, ..], Ok(left_last), Ok(right_last) -> {
+      let left_start = svg_path.segment_start(left_first)
+      let left_end = svg_path.segment_end(left_last)
+      let right_start = svg_path.segment_start(right_first)
+      let right_end = svg_path.segment_end(right_last)
+      case same_point(left_end, right_start, tolerance) {
+        True -> Ok(list.append(left, right))
+        False ->
+          case same_point(left_end, right_end, tolerance) {
+            True -> Ok(list.append(left, reverse_segments(right)))
+            False ->
+              case same_point(left_start, right_end, tolerance) {
+                True -> Ok(list.append(right, left))
+                False ->
+                  case same_point(left_start, right_start, tolerance) {
+                    True -> Ok(list.append(reverse_segments(right), left))
+                    False -> Error(Nil)
+                  }
+              }
+          }
+      }
+    }
+    _, _, _, _ -> Error(Nil)
   }
 }
 
