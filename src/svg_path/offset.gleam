@@ -19,8 +19,8 @@
 //// is useful for debugging, drawing raw construction geometry, or implementing
 //// a different trimming policy.
 ////
-//// `subpath_between` and `path_between` construct two signed offset walks and
-//// trim them together. They do not add caps or bridges; this is the capless
+//// `subpath_band` and `path_band` construct two signed offset walks and trim
+//// them together. They do not add caps or bridges; this is the capless
 //// boundary primitive that stroke construction can build on later.
 
 import gleam/float
@@ -205,12 +205,12 @@ pub fn subpath_with(
 /// with each other, then each section is tested against the original subpath's
 /// distance tube. This supports ordinary capless stroke sides, one-sided bands,
 /// and asymmetric bands such as two positive offsets.
-pub fn subpath_between(
+pub fn subpath_band(
   subpath: svg_path.Subpath,
   distance_a distance_a: Float,
   distance_b distance_b: Float,
 ) -> Result(svg_path.Path, Error) {
-  subpath_between_with(
+  subpath_band_with(
     subpath,
     distance_a:,
     distance_b:,
@@ -219,7 +219,7 @@ pub fn subpath_between(
 }
 
 /// Offset a subpath at two signed distances using explicit options.
-pub fn subpath_between_with(
+pub fn subpath_band_with(
   subpath subpath: svg_path.Subpath,
   distance_a distance_a: Float,
   distance_b distance_b: Float,
@@ -297,17 +297,17 @@ pub fn path_with(
 
 /// Offset every subpath in a path at two signed distances and trim each pair of
 /// sides together.
-pub fn path_between(
+pub fn path_band(
   path: svg_path.Path,
   distance_a distance_a: Float,
   distance_b distance_b: Float,
 ) -> Result(svg_path.Path, Error) {
-  path_between_with(path, distance_a:, distance_b:, options: default_options())
+  path_band_with(path, distance_a:, distance_b:, options: default_options())
 }
 
 /// Offset every subpath in a path at two signed distances using explicit
 /// options.
-pub fn path_between_with(
+pub fn path_band_with(
   path path: svg_path.Path,
   distance_a distance_a: Float,
   distance_b distance_b: Float,
@@ -315,7 +315,7 @@ pub fn path_between_with(
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(validate_options(options))
   use subpaths <- result.try(
-    parametric_between_path_subpaths(
+    parametric_band_path_subpaths(
       svg_path.subpaths(path),
       distance_a,
       distance_b,
@@ -421,7 +421,7 @@ fn parametric_offset_path_subpaths(
   }
 }
 
-fn parametric_between_path_subpaths(
+fn parametric_band_path_subpaths(
   subpaths: List(svg_path.Subpath),
   distance_a: Float,
   distance_b: Float,
@@ -431,13 +431,13 @@ fn parametric_between_path_subpaths(
   case subpaths {
     [] -> Ok(list.reverse(converted))
     [first, ..rest] -> {
-      use offset <- result.try(subpath_between_with(
+      use offset <- result.try(subpath_band_with(
         first,
         distance_a:,
         distance_b:,
         options:,
       ))
-      parametric_between_path_subpaths(
+      parametric_band_path_subpaths(
         rest,
         distance_a,
         distance_b,

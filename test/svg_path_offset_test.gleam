@@ -228,7 +228,7 @@ pub fn path_offsets_straight_subpaths_test() {
   assert serialize.path(offset_path) == "M 0 -2 H 8 V -10 M 0 18 H 8 V 10"
 }
 
-pub fn subpath_between_open_line_returns_two_capless_sides_test() {
+pub fn subpath_band_open_line_returns_two_capless_sides_test() {
   let subpath =
     svg_path.assert_polyline([
       svg_path.point(0.0, 0.0),
@@ -236,13 +236,13 @@ pub fn subpath_between_open_line_returns_two_capless_sides_test() {
     ])
 
   let assert Ok(offset_path) =
-    offset.subpath_between(subpath, distance_a: -1.0, distance_b: 2.0)
+    offset.subpath_band(subpath, distance_a: -1.0, distance_b: 2.0)
 
   assert list.length(svg_path.subpaths(offset_path)) == 2
   assert serialize.path(offset_path) == "M 0 1 H 10 M 0 -2 H 10"
 }
 
-pub fn subpath_between_closed_square_returns_two_closed_sides_test() {
+pub fn subpath_band_closed_square_returns_two_closed_sides_test() {
   let square =
     svg_path.assert_polygon([
       svg_path.point(0.0, 0.0),
@@ -252,7 +252,7 @@ pub fn subpath_between_closed_square_returns_two_closed_sides_test() {
     ])
 
   let assert Ok(offset_path) =
-    offset.subpath_between(square, distance_a: -2.0, distance_b: 2.0)
+    offset.subpath_band(square, distance_a: -2.0, distance_b: 2.0)
   let assert [inner, outer] = svg_path.subpaths(offset_path)
 
   assert svg_path.is_closed(inner)
@@ -261,7 +261,7 @@ pub fn subpath_between_closed_square_returns_two_closed_sides_test() {
     == "M 2 2 H 8 V 8 H 2 Z M 0 -2 H 10 H 12 V 0 V 10 V 12 H 10 H 0 H -2 V 10 V 0 V -2 Z"
 }
 
-pub fn path_between_offsets_every_subpath_on_both_sides_test() {
+pub fn path_band_offsets_every_subpath_on_both_sides_test() {
   let first =
     svg_path.assert_polyline([
       svg_path.point(0.0, 0.0),
@@ -275,7 +275,7 @@ pub fn path_between_offsets_every_subpath_on_both_sides_test() {
   let path = svg_path.Path(subpaths: [first, second])
 
   let assert Ok(offset_path) =
-    offset.path_between(path, distance_a: -1.0, distance_b: 1.0)
+    offset.path_band(path, distance_a: -1.0, distance_b: 1.0)
 
   assert list.length(svg_path.subpaths(offset_path)) == 4
   assert serialize.path(offset_path)

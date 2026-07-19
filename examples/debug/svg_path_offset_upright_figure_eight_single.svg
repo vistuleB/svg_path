@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 500" width="640" height="500">
+  <rect x="0" y="0" width="640" height="500" style="fill: #ffffff; stroke: #d1d5db; stroke-width: 1.5" />
+  <text x="24" y="30" font-size="15" style="fill: #111827; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 700">smooth horizontal figure-eight: retained sections before restitch</text>
+  <path d="M 298 244 C -112.4 -104.48 -112.4 592.48 298 244 C 708.4 -104.48 708.4 592.48 298 244 Z" style="fill: none; stroke: #9ca3af; stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 5 5" />
+  <path d="M 274.50568 244 C 270.4394 240.70831 266.41982 237.52696 262.44717 234.45345" style="fill: none; stroke: #0f766e; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 262.44717 234.45345 C 222.86775 203.83211 187.946 183.91435 157.89726 172.21994 C 121.43026 158.02767 92.38439 155.96748 70.2648 160.66304 C 59.18205 163.01569 49.74143 167.05932 41.69915 172.32326 C 33.65715 177.587 26.97708 184.10353 21.58322 191.54611 C 10.80095 206.42375 5.2 225.12207 5.2 244 C 5.2 262.87793 10.80095 281.57625 21.58322 296.45389 C 26.97708 303.89647 33.65715 310.413 41.69915 315.67674 C 49.74143 320.94068 59.18205 324.98431 70.2648 327.33696 C 92.38439 332.03252 121.43026 329.97233 157.89726 315.78006 C 187.946 304.08565 222.86775 284.16789 262.44717 253.54655" style="fill: none; stroke: #b45309; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 262.44717 253.54655 C 266.41982 250.47304 270.4394 247.29169 274.50568 244" style="fill: none; stroke: #6d28d9; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 274.50568 244 C 279.04277 240.32719 283.63801 236.517 288.2911 232.56596 C 340.51982 188.21736 386.70229 160.03217 427.22226 144.26256 C 467.70526 128.50733 502.78439 125.12252 531.9648 131.31696 C 546.53205 134.40931 559.53518 139.89443 570.7304 147.22206 C 581.9259 154.54988 591.27708 163.68772 598.70822 173.94139 C 613.57595 194.45625 620.8 219.31793 620.8 244 C 620.8 268.68207 613.57595 293.54375 598.70822 314.05861 C 591.27708 324.31228 581.9259 333.45012 570.7304 340.77794 C 559.53518 348.10557 546.53205 353.59069 531.9648 356.68304 C 502.78439 362.87748 467.70526 359.49267 427.22226 343.73744 C 386.70229 327.96783 340.51982 299.78264 288.2911 255.43404 C 283.63801 251.483 279.04277 247.67281 274.50568 244" style="fill: none; stroke: #be123c; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 250.25911 244 C 236.12455 233.19374 222.65838 223.83186 209.88169 215.79199 C 188.82159 202.5397 169.6424 192.88686 152.45701 186.19863 C 117.99802 172.78783 91.96878 171.38995 73.37961 175.33607 C 64.0391 177.31888 56.37973 180.64177 49.91392 184.87385 C 43.44868 189.10556 38.10416 194.31143 33.72893 200.34847 C 29.35681 206.38123 25.96673 213.26922 23.67299 220.69469 C 21.38064 228.11566 20.2 236.05059 20.2 244 C 20.2 251.94941 21.38064 259.88434 23.67299 267.30531 C 25.96673 274.73078 29.35681 281.61877 33.72893 287.65153 C 38.10416 293.68857 43.44868 298.89444 49.91392 303.12615 C 56.37973 307.35823 64.0391 310.68112 73.37961 312.66393 C 91.96878 316.61005 117.99802 315.21217 152.45701 301.80137 C 169.6424 295.11314 188.82159 285.4603 209.88169 272.20801 C 222.65838 264.16814 236.12455 254.80626 250.25911 244" style="fill: none; stroke: #047857; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 262.44717 234.45345 C 267.73781 230.21151 273.1165 225.77297 278.5822 221.13192 C 305.17199 198.55392 330.33406 180.00415 354.16294 165.00957 C 377.99034 150.01593 400.4924 138.56939 421.78201 130.28387 C 464.27302 113.74717 502.36878 109.70005 535.07961 116.64393 C 551.3891 120.10612 566.17348 126.31198 578.94517 134.67146 C 591.71743 143.03131 602.40416 153.47982 610.85393 165.13903 C 619.30681 176.80252 625.53548 189.65265 629.65424 202.98624 C 633.77439 216.32434 635.8 230.16941 635.8 244 C 635.8 257.83059 633.77439 271.67566 629.65424 285.01376 C 625.53548 298.34735 619.30681 311.19748 610.85393 322.86097 C 602.40416 334.52018 591.71743 344.96869 578.94517 353.32854 C 566.17348 361.68802 551.3891 367.89388 535.07961 371.35607 C 502.36878 378.29995 464.27302 374.25283 421.78201 357.71613 C 400.4924 349.43061 377.99034 337.98407 354.16294 322.99043 C 330.33406 307.99585 305.17199 289.44608 278.5822 266.86808 C 273.1165 262.22703 267.73782 257.7885 262.44717 253.54655" style="fill: none; stroke: #1d4ed8; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round" />
+  <circle cx="274.50568" cy="244" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="262.44717" cy="234.45345" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="157.89726" cy="172.21994" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="70.2648" cy="160.66304" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="41.69915" cy="172.32326" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="21.58322" cy="191.54611" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="5.2" cy="244" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="21.58322" cy="296.45389" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="41.69915" cy="315.67674" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="70.2648" cy="327.33696" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="157.89726" cy="315.78006" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="262.44717" cy="253.54655" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="274.50568" cy="244" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="288.2911" cy="232.56596" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="427.22226" cy="144.26256" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="531.9648" cy="131.31696" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="570.7304" cy="147.22206" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="598.70822" cy="173.94139" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="620.8" cy="244" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="598.70822" cy="314.05861" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="570.7304" cy="340.77794" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="531.9648" cy="356.68304" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="427.22226" cy="343.73744" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="288.2911" cy="255.43404" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="250.25911" cy="244" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="209.88169" cy="215.79199" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="152.45701" cy="186.19863" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="73.37961" cy="175.33607" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="49.91392" cy="184.87385" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="33.72893" cy="200.34847" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="23.67299" cy="220.69469" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="20.2" cy="244" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="23.67299" cy="267.30531" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="33.72893" cy="287.65153" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="49.91392" cy="303.12615" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="73.37961" cy="312.66393" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="152.45701" cy="301.80137" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="209.88169" cy="272.20801" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="262.44717" cy="234.45345" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="278.5822" cy="221.13192" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="354.16294" cy="165.00957" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="421.78201" cy="130.28387" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="535.07961" cy="116.64393" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="578.94517" cy="134.67146" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="610.85393" cy="165.13903" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="629.65424" cy="202.98624" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="635.8" cy="244" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="629.65424" cy="285.01376" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="610.85393" cy="322.86097" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="578.94517" cy="353.32854" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="535.07961" cy="371.35607" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="421.78201" cy="357.71613" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="354.16294" cy="322.99043" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+  <circle cx="278.5822" cy="266.86808" r="3.2" style="fill: #000000; stroke: #ffffff; stroke-width: 0.8" />
+</svg>

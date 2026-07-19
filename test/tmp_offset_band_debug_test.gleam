@@ -6,7 +6,7 @@ import svg_path/offset
 import svg_path/svg
 import svg_path/transform
 
-const output = "examples/debug/svg_path_offset_between_gallery.svg"
+const output = "examples/debug/svg_path_offset_band_gallery.svg"
 
 const panel_w = 240.0
 
@@ -144,7 +144,7 @@ fn panel(
   let options =
     offset.Options(..offset.default_options(), tolerance: 0.01, join:)
   let result_things = case
-    offset.subpath_between_with(source, distance_a:, distance_b:, options:)
+    offset.subpath_band_with(source, distance_a:, distance_b:, options:)
   {
     Ok(result) -> [
       svg.StyledPath(
