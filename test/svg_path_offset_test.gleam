@@ -282,6 +282,43 @@ pub fn path_band_offsets_every_subpath_on_both_sides_test() {
     == "M 0 1 H 10 M 0 -1 H 10 M 0 11 H 10 M 0 9 H 10"
 }
 
+pub fn subpath_band_untrimmed_returns_two_raw_sides_test() {
+  let subpath =
+    svg_path.assert_polyline([
+      svg_path.point(0.0, 0.0),
+      svg_path.point(10.0, 0.0),
+      svg_path.point(10.0, 10.0),
+    ])
+
+  let assert Ok(offset_path) =
+    offset.subpath_band_untrimmed(subpath, distance_a: -1.0, distance_b: 2.0)
+
+  assert list.length(svg_path.subpaths(offset_path)) == 2
+  assert serialize.path(offset_path)
+    == "M 0 1 H 10 L 9 0 V 10 M 0 -2 H 10 H 12 V 0 V 10"
+}
+
+pub fn path_band_untrimmed_returns_two_raw_sides_per_subpath_test() {
+  let first =
+    svg_path.assert_polyline([
+      svg_path.point(0.0, 0.0),
+      svg_path.point(10.0, 0.0),
+    ])
+  let second =
+    svg_path.assert_polyline([
+      svg_path.point(0.0, 10.0),
+      svg_path.point(10.0, 10.0),
+    ])
+  let path = svg_path.Path(subpaths: [first, second])
+
+  let assert Ok(offset_path) =
+    offset.path_band_untrimmed(path, distance_a: -1.0, distance_b: 1.0)
+
+  assert list.length(svg_path.subpaths(offset_path)) == 4
+  assert serialize.path(offset_path)
+    == "M 0 1 H 10 M 0 -1 H 10 M 0 11 H 10 M 0 9 H 10"
+}
+
 pub fn subpath_prunes_self_crossed_inset_sections_test() {
   let shape =
     svg_path.assert_polygon([

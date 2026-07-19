@@ -247,6 +247,47 @@ pub fn subpath_band_with(
   Ok(svg_path.Path(subpaths:))
 }
 
+/// Offset a subpath at two signed distances without trimming either side.
+///
+/// This returns the two provisional offset walks in one path, with the
+/// `distance_a` side first and the `distance_b` side second. No caps, bridges,
+/// pairwise trimming, self-intersection pruning, or fill-rule interpretation
+/// are added.
+pub fn subpath_band_untrimmed(
+  subpath: svg_path.Subpath,
+  distance_a distance_a: Float,
+  distance_b distance_b: Float,
+) -> Result(svg_path.Path, Error) {
+  subpath_band_untrimmed_with(
+    subpath,
+    distance_a:,
+    distance_b:,
+    options: default_options(),
+  )
+}
+
+/// Offset a subpath at two signed distances without trimming either side,
+/// using explicit options.
+pub fn subpath_band_untrimmed_with(
+  subpath subpath: svg_path.Subpath,
+  distance_a distance_a: Float,
+  distance_b distance_b: Float,
+  options options: Options,
+) -> Result(svg_path.Path, Error) {
+  use _ <- result.try(validate_options(options))
+  use side_a <- result.try(subpath_untrimmed_with(
+    subpath,
+    distance: distance_a,
+    options:,
+  ))
+  use side_b <- result.try(subpath_untrimmed_with(
+    subpath,
+    distance: distance_b,
+    options:,
+  ))
+  Ok(svg_path.Path(subpaths: [side_a, side_b]))
+}
+
 /// Offset a subpath without trimming self-intersections.
 ///
 /// This returns the provisional one-sided offset walk. Adjacent segment offsets
@@ -326,6 +367,42 @@ pub fn path_band_with(
   Ok(svg_path.Path(subpaths:))
 }
 
+/// Offset every subpath in a path at two signed distances without trimming any
+/// side.
+pub fn path_band_untrimmed(
+  path: svg_path.Path,
+  distance_a distance_a: Float,
+  distance_b distance_b: Float,
+) -> Result(svg_path.Path, Error) {
+  path_band_untrimmed_with(
+    path,
+    distance_a:,
+    distance_b:,
+    options: default_options(),
+  )
+}
+
+/// Offset every subpath in a path at two signed distances without trimming any
+/// side, using explicit options.
+pub fn path_band_untrimmed_with(
+  path path: svg_path.Path,
+  distance_a distance_a: Float,
+  distance_b distance_b: Float,
+  options options: Options,
+) -> Result(svg_path.Path, Error) {
+  use _ <- result.try(validate_options(options))
+  use subpaths <- result.try(
+    untrimmed_band_path_subpaths(
+      svg_path.subpaths(path),
+      distance_a,
+      distance_b,
+      options,
+      converted: [],
+    ),
+  )
+  Ok(svg_path.Path(subpaths:))
+}
+
 /// Offset every subpath in a path without trimming self-intersections.
 pub fn path_untrimmed(
   path: svg_path.Path,
@@ -394,6 +471,33 @@ fn untrimmed_offset_path_subpaths(
         offset,
         ..converted
       ])
+    }
+  }
+}
+
+fn untrimmed_band_path_subpaths(
+  subpaths: List(svg_path.Subpath),
+  distance_a: Float,
+  distance_b: Float,
+  options: Options,
+  converted converted: List(svg_path.Subpath),
+) -> Result(List(svg_path.Subpath), Error) {
+  case subpaths {
+    [] -> Ok(list.reverse(converted))
+    [first, ..rest] -> {
+      use band <- result.try(subpath_band_untrimmed_with(
+        first,
+        distance_a:,
+        distance_b:,
+        options:,
+      ))
+      untrimmed_band_path_subpaths(
+        rest,
+        distance_a,
+        distance_b,
+        options,
+        converted: list.append(list.reverse(svg_path.subpaths(band)), converted),
+      )
     }
   }
 }
