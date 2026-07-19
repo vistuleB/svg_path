@@ -16,7 +16,7 @@
 - Do not end the turn with a final answer that merely asks whether to push `markdown-assets`. Ask for push permission during the work, batch all figure changes for that pass, perform the push if approved, and only then send the final response.
 - When adding or regenerating Markdown figures, generate or update the normal working-tree SVGs, copy the stable Markdown-facing SVGs into the `figures/` directory of a `markdown-assets` worktree, reference them with `https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/...`, then commit and push `markdown-assets` before saying the README is ready to inspect.
 - Batch Markdown figure updates so the user is asked for push permission at most once per figure-editing pass.
-- Use a separate worktree for `markdown-assets` so the main checkout can remain dirty. One existing local worktree path is `/private/tmp/svg_path-markdown-assets`.
+- Use a separate worktree for `markdown-assets` so the main checkout can remain dirty. Refer to it generically as `<markdown-assets-worktree>`.
 - When generating paired or tabular graphics where one version changes a subpath's orientation, keep that subpath's arrow in the same visual location across versions and only flip its direction. This makes orientation changes easier to compare.
 
 ## Previewing Figures In Codex Desktop Chat
@@ -27,11 +27,11 @@
 - Preview SVGs must include explicit root `width` and `height` attributes in addition to `viewBox`; SVGs with only `viewBox` have failed to render inline in Codex desktop chat.
 - In this repo, this exact pattern has rendered successfully in Codex desktop chat:
 
-  `![svg preview probe](/Users/jpsteinb/github.com/vistuleB/svg_path/examples/debug/svg_preview_probe.svg)`
+  `![svg preview probe](<absolute-path-to-repo>/examples/debug/svg_preview_probe.svg)`
 
 - For generated figures, use the same shape:
 
-  `![label](/Users/jpsteinb/github.com/vistuleB/svg_path/examples/debug/name.svg)`
+  `![label](<absolute-path-to-repo>/examples/debug/name.svg)`
 
 - Do not generate PNG fallbacks unless the user explicitly asks for PNG. SVG is the expected preview format.
 

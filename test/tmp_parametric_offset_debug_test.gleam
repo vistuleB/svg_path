@@ -13,13 +13,13 @@ const gallery_output = "examples/debug/svg_path_parametric_join_gallery.svg"
 
 const diamond_zoom_output = "examples/debug/svg_path_parametric_diamond_round_negative_zoom.svg"
 
-const diamond_miter_sections_output = "/private/tmp/svg_path_parametric_diamond_round_negative_sections.svg"
+const diamond_miter_sections_output = "examples/debug/svg_path_parametric_diamond_round_negative_sections.svg"
 
-const diamond_miter_loop_output = "/private/tmp/svg_path_parametric_diamond_round_negative_loop_zoom.svg"
+const diamond_miter_loop_output = "examples/debug/svg_path_parametric_diamond_round_negative_loop_zoom.svg"
 
-const diamond_section_survival_output = "/private/tmp/svg_path_parametric_diamond_round_negative_section_survival.svg"
+const diamond_section_survival_output = "examples/debug/svg_path_parametric_diamond_round_negative_section_survival.svg"
 
-const diamond_section_nine_output = "/private/tmp/svg_path_parametric_diamond_round_negative_section_9.svg"
+const diamond_section_nine_output = "examples/debug/svg_path_parametric_diamond_round_negative_section_9.svg"
 
 const panel_w = 185.0
 
