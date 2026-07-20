@@ -137,6 +137,45 @@ pub fn absolute_subpath_with(
   absolute_path_with(svg_path.from_subpath(subpath), options:)
 }
 
+/// Return a subpath's area-based clockwiseness as a value from `0.0` to `1.0`.
+///
+/// `1.0` means fully clockwise, `0.0` means fully counterclockwise, and `0.5`
+/// means balanced or zero-area. Open subpaths are treated as if closed by a
+/// straight line from end to start, matching `signed_subpath` and
+/// `absolute_subpath`.
+///
+/// The value is computed from signed area divided by absolute winding area, so
+/// self-crossing or overlapping subpaths can return intermediate values. The
+/// final result is clamped to `[0.0, 1.0]` to avoid exposing numerical drift.
+pub fn subpath_clockwiseness(
+  subpath: svg_path.Subpath,
+) -> Result(Float, svg_path.Error) {
+  subpath_clockwiseness_with(
+    subpath,
+    options: svg_path.default_linearize_options(),
+  )
+}
+
+/// Return a subpath's area-based clockwiseness using explicit linearization
+/// options.
+///
+/// `options.tolerance` controls the curve-to-line approximation used by the
+/// absolute winding area denominator.
+pub fn subpath_clockwiseness_with(
+  subpath: svg_path.Subpath,
+  options options: svg_path.LinearizeOptions,
+) -> Result(Float, svg_path.Error) {
+  let signed_area = signed_subpath(subpath)
+  use absolute_area <- result.try(absolute_subpath_with(subpath, options:))
+  case absolute_area <=. 0.0 {
+    True -> Ok(0.5)
+    False -> {
+      let raw = 0.5 +. signed_area /. { 2.0 *. absolute_area }
+      Ok(clamp01(raw))
+    }
+  }
+}
+
 /// Approximate a path's absolute winding area using default linearization
 /// options.
 ///

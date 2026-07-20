@@ -191,6 +191,60 @@ pub fn absolute_path_counts_overlapping_winding_magnitude_test() {
   assert_close(absolute, 500.0, tolerance)
 }
 
+pub fn subpath_clockwiseness_reports_area_orientation_test() {
+  let clockwise = svg_path.assert_polygon(square_points(0.0, 0.0, 10.0))
+  let counterclockwise =
+    svg_path.assert_polygon(reverse(square_points(0.0, 0.0, 10.0)))
+
+  let assert Ok(clockwise_value) = area.subpath_clockwiseness(clockwise)
+  let assert Ok(counterclockwise_value) =
+    area.subpath_clockwiseness(counterclockwise)
+
+  assert_close(clockwise_value, 1.0, tolerance)
+  assert_close(counterclockwise_value, 0.0, tolerance)
+}
+
+pub fn subpath_clockwiseness_uses_implicit_closing_chord_test() {
+  let open = svg_path.assert_polyline(square_points(0.0, 0.0, 10.0))
+  let line =
+    svg_path.assert_subpath([
+      svg_path.Line(
+        start: svg_path.point(0.0, 0.0),
+        end: svg_path.point(10.0, 0.0),
+      ),
+    ])
+
+  let assert Ok(open_value) = area.subpath_clockwiseness(open)
+  let assert Ok(line_value) = area.subpath_clockwiseness(line)
+
+  assert_close(open_value, 1.0, tolerance)
+  assert_close(line_value, 0.5, tolerance)
+}
+
+pub fn subpath_clockwiseness_can_be_intermediate_test() {
+  let bow_tie =
+    svg_path.assert_polyline([
+      svg_path.point(0.0, 0.0),
+      svg_path.point(10.0, 10.0),
+      svg_path.point(0.0, 10.0),
+      svg_path.point(10.0, 0.0),
+    ])
+
+  let assert Ok(value) = area.subpath_clockwiseness(bow_tie)
+
+  assert_close(value, 0.5, tolerance)
+}
+
+pub fn subpath_clockwiseness_rejects_invalid_linearization_options_test() {
+  let subpath = svg_path.assert_polygon(square_points(0.0, 0.0, 10.0))
+
+  assert area.subpath_clockwiseness_with(
+      subpath,
+      options: svg_path.LinearizeOptions(tolerance: 0.0, max_depth: 20),
+    )
+    == Error(svg_path.InvalidLinearizeTolerance(0.0))
+}
+
 pub fn move_only_paths_have_zero_area_test() {
   let move_only = svg_path.empty_subpath(at: svg_path.point(3.0, 4.0))
   let path = svg_path.Path([move_only])
