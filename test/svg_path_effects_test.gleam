@@ -73,6 +73,33 @@ pub fn round_corners_supports_curve_incident_segments_test() {
   assert has_quadratic(segments)
 }
 
+pub fn round_corners_rounds_closed_one_segment_cusp_test() {
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.CubicBezier(
+        start: svg_path.point(0.0, 0.0),
+        control1: svg_path.point(-40.0, -30.0),
+        control2: svg_path.point(-40.0, 30.0),
+        end: svg_path.point(0.0, 0.0),
+      ),
+    ])
+    |> svg_path.assert_set_closed(closed: True)
+  let options =
+    effects.RoundCornerOptions(
+      ..effects.default_round_corner_options(),
+      failure: effects.AdaptRadius,
+    )
+
+  let assert Ok(rounded) =
+    effects.round_subpath_corners_with(subpath, radius: 4.0, options:)
+  let segments = svg_path.segments(rounded)
+
+  assert svg_path.is_closed(rounded)
+  assert list.length(segments) == 2
+  assert arc_count(segments) == 1
+  assert has_cubic(segments)
+}
+
 pub fn round_corners_errors_when_radius_does_not_fit_test() {
   let subpath =
     svg_path.assert_polyline([
@@ -197,6 +224,15 @@ fn has_quadratic(segments: List(svg_path.Segment)) -> Bool {
   list.any(segments, fn(segment) {
     case segment {
       svg_path.QuadraticBezier(..) -> True
+      _ -> False
+    }
+  })
+}
+
+fn has_cubic(segments: List(svg_path.Segment)) -> Bool {
+  list.any(segments, fn(segment) {
+    case segment {
+      svg_path.CubicBezier(..) -> True
       _ -> False
     }
   })

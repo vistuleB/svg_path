@@ -130,21 +130,36 @@ pub fn round_subpath_corners_with(
     True -> {
       let segments = svg_path.segments(subpath)
       case segments {
-        [] | [_] -> Ok(subpath)
-        _ -> {
-          use infos <- result.try(segment_infos(segments, options.length, []))
-          case options.failure {
-            AdaptRadius ->
-              round_subpath_corners_adaptively(subpath, infos, radius, options)
-            ErrorOnFailure | LeaveCorner -> {
-              use corners <- result.try(corners(infos, subpath, radius, options))
-              let active =
-                resolve_overlapping_trims(corners, infos, subpath, options)
-              rounded_subpath_from_corners(subpath, infos, active, options)
-            }
+        [] -> Ok(subpath)
+        [_] -> {
+          case svg_path.is_closed(subpath) {
+            False -> Ok(subpath)
+            True ->
+              round_subpath_corners_nonempty(subpath, segments, radius, options)
           }
         }
+        _ -> {
+          round_subpath_corners_nonempty(subpath, segments, radius, options)
+        }
       }
+    }
+  }
+}
+
+fn round_subpath_corners_nonempty(
+  subpath: svg_path.Subpath,
+  segments: List(svg_path.Segment),
+  radius: Float,
+  options: RoundCornerOptions,
+) -> Result(svg_path.Subpath, Error) {
+  use infos <- result.try(segment_infos(segments, options.length, []))
+  case options.failure {
+    AdaptRadius ->
+      round_subpath_corners_adaptively(subpath, infos, radius, options)
+    ErrorOnFailure | LeaveCorner -> {
+      use corners <- result.try(corners(infos, subpath, radius, options))
+      let active = resolve_overlapping_trims(corners, infos, subpath, options)
+      rounded_subpath_from_corners(subpath, infos, active, options)
     }
   }
 }
@@ -216,7 +231,16 @@ fn corner_pairs(
   closed closed: Bool,
 ) -> List(#(SegmentInfo, SegmentInfo, Int)) {
   case infos {
-    [] | [_] -> []
+    [] -> []
+    [_] -> {
+      case closed {
+        False -> []
+        True -> {
+          let assert [first] = infos
+          [#(first, first, first.index)]
+        }
+      }
+    }
     [first, ..] -> {
       let open_pairs = adjacent_corner_pairs(infos, [])
       case closed {
