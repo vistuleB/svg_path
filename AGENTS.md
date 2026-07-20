@@ -8,16 +8,18 @@
 - Treat questions about committing, especially messages ending in `?`, as discussion or permission checks, not as authorization.
 - If the user asks whether a commit should be made, answer the question and wait for an explicit follow-up command before committing.
 
-## README Images
+## README And Gallery Images
 
 - Markdown figures that must render on hex.pm and in local VSCode preview should be published to the orphan `markdown-assets` branch and referenced with raw GitHub URLs like `https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/name.svg`.
+- Apply this policy to README figures and to any public gallery Markdown such as `GALLERY.md`.
 - Do not point README images only at generated test-output paths. Generated figures can still live under `test/generated/...`, but Markdown image URLs should point at the `markdown-assets` branch copy.
-- Key invariant: if a turn changes README-visible assets and the user is expected to inspect those assets through the README URL, the matching `markdown-assets` commit and push must happen before that assistant turn completes.
+- Key invariant: if a turn changes README-visible or gallery-visible assets and the user is expected to inspect those assets through the Markdown URL, the matching `markdown-assets` commit and push must happen before that assistant turn completes.
 - Do not end the turn with a final answer that merely asks whether to push `markdown-assets`. Ask for push permission during the work, batch all figure changes for that pass, perform the push if approved, and only then send the final response.
 - When adding or regenerating Markdown figures, generate or update the normal working-tree SVGs, copy the stable Markdown-facing SVGs into the `figures/` directory of a `markdown-assets` worktree, reference them with `https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/...`, then commit and push `markdown-assets` before saying the README is ready to inspect.
-- Batch Markdown figure updates so the user is asked for push permission at most once per figure-editing pass.
+- Batch Markdown figure updates before requesting permission to push `markdown-assets`. If a push will be needed, finish generating/copying all assets for that pass first, then ask for push permission once at the end of the batch.
 - Use a separate worktree for `markdown-assets` so the main checkout can remain dirty. Refer to it generically as `<markdown-assets-worktree>`.
 - When generating paired or tabular graphics where one version changes a subpath's orientation, keep that subpath's arrow in the same visual location across versions and only flip its direction. This makes orientation changes easier to compare.
+- When drawing multiple examples in panels, compute the bounding box of each panel's actual geometry and recenter that geometry in the panel before presenting it. Do not rely on hand-tuned translations when a bounding-box centering pass is practical.
 
 ## Previewing Figures In Codex Desktop Chat
 
