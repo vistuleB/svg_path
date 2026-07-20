@@ -258,7 +258,7 @@ pub fn subpath_band_closed_square_returns_two_closed_sides_test() {
   assert svg_path.is_closed(inner)
   assert svg_path.is_closed(outer)
   assert serialize.path(offset_path)
-    == "M 2 2 H 8 V 8 H 2 Z M 0 -2 H 10 H 12 V 0 V 10 V 12 H 10 H 0 H -2 V 10 V 0 V -2 Z"
+    == "M 2 2 V 8 H 8 V 2 Z M 0 -2 H 10 H 12 V 0 V 10 V 12 H 10 H 0 H -2 V 10 V 0 V -2 Z"
 }
 
 pub fn path_band_offsets_every_subpath_on_both_sides_test() {

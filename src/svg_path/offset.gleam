@@ -263,7 +263,7 @@ pub fn subpath_band_with(
     distance_b:,
     options:,
   ))
-  Ok(svg_path.Path(subpaths:))
+  orient_outline_path(svg_path.Path(subpaths:))
 }
 
 /// Offset a subpath at two signed distances without trimming either side.
@@ -339,7 +339,7 @@ pub fn subpath_stroke_with(
             radius: radius,
             options: options,
           ))
-          orient_stroke_path(stroke)
+          orient_outline_path(stroke)
         }
         False -> {
           use candidate <- result.try(stroke_candidate_subpath(
@@ -355,7 +355,7 @@ pub fn subpath_stroke_with(
             cap:,
             options:,
           ))
-          orient_stroke_path(stroke)
+          orient_outline_path(stroke)
         }
       }
   }
@@ -437,7 +437,7 @@ pub fn path_band_with(
       converted: [],
     ),
   )
-  orient_stroke_path(svg_path.Path(subpaths:))
+  Ok(svg_path.Path(subpaths:))
 }
 
 /// Offset every subpath in a path at two signed distances without trimming any
@@ -868,9 +868,9 @@ fn closed_stroke_path(
   Ok(svg_path.Path(subpaths:))
 }
 
-fn orient_stroke_path(path: svg_path.Path) -> Result(svg_path.Path, Error) {
+fn orient_outline_path(path: svg_path.Path) -> Result(svg_path.Path, Error) {
   use subpaths <- result.try(
-    orient_stroke_subpaths(
+    orient_outline_subpaths(
       svg_path.subpaths(path),
       all: svg_path.subpaths(path),
       oriented: [],
@@ -879,7 +879,7 @@ fn orient_stroke_path(path: svg_path.Path) -> Result(svg_path.Path, Error) {
   Ok(svg_path.Path(subpaths:))
 }
 
-fn orient_stroke_subpaths(
+fn orient_outline_subpaths(
   subpaths: List(svg_path.Subpath),
   all all: List(svg_path.Subpath),
   oriented oriented: List(svg_path.Subpath),
@@ -887,24 +887,24 @@ fn orient_stroke_subpaths(
   case subpaths {
     [] -> Ok(list.reverse(oriented))
     [first, ..rest] -> {
-      use depth <- result.try(stroke_contour_depth(first, all))
+      use depth <- result.try(outline_contour_depth(first, all))
       let assert Ok(remainder) = int.remainder(depth, by: 2)
       let oriented_first =
-        orient_stroke_subpath(first, clockwise: remainder == 0)
-      orient_stroke_subpaths(rest, all:, oriented: [oriented_first, ..oriented])
+        orient_outline_subpath(first, clockwise: remainder == 0)
+      orient_outline_subpaths(rest, all:, oriented: [oriented_first, ..oriented])
     }
   }
 }
 
-fn stroke_contour_depth(
+fn outline_contour_depth(
   subpath: svg_path.Subpath,
   all: List(svg_path.Subpath),
 ) -> Result(Int, Error) {
-  use probe <- result.try(stroke_contour_probe(subpath))
-  stroke_contour_depth_loop(probe, all, depth: 0)
+  use probe <- result.try(outline_contour_probe(subpath))
+  outline_contour_depth_loop(probe, all, depth: 0)
 }
 
-fn stroke_contour_depth_loop(
+fn outline_contour_depth_loop(
   probe: svg_path.Point,
   subpaths: List(svg_path.Subpath),
   depth depth: Int,
@@ -924,12 +924,12 @@ fn stroke_contour_depth_loop(
         svg_path.Inside -> depth + 1
         svg_path.Boundary | svg_path.Outside -> depth
       }
-      stroke_contour_depth_loop(probe, rest, depth:)
+      outline_contour_depth_loop(probe, rest, depth:)
     }
   }
 }
 
-fn stroke_contour_probe(
+fn outline_contour_probe(
   subpath: svg_path.Subpath,
 ) -> Result(svg_path.Point, Error) {
   case svg_path.segments(subpath) {
@@ -939,7 +939,7 @@ fn stroke_contour_probe(
   }
 }
 
-fn orient_stroke_subpath(
+fn orient_outline_subpath(
   subpath: svg_path.Subpath,
   clockwise clockwise: Bool,
 ) -> svg_path.Subpath {
