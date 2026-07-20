@@ -701,7 +701,8 @@ tolerance and numerical options.
 
 ### Areas
 
-Use `svg_path/area` for signed area and SVG fill-rule area:
+Use `svg_path/area` for signed area, SVG fill-rule area, and absolute winding
+area:
 
 ```gleam
 import svg_path
@@ -712,11 +713,13 @@ pub fn filled_area(path: svg_path.Path) -> Result(Float, svg_path.Error) {
 }
 ```
 
-There are two area notions here: `area.signed_subpath` and `area.signed_path`
-return algebraic area, while `area.subpath` and `area.path` return unsigned
-filled area under `Nonzero` or `EvenOdd`. `svg_path/convex_hull` is a separate
-geometry operation; a hull area can be larger than the filled area of a concave
-or self-intersecting shape.
+There are three area notions here. `area.signed_subpath` and `area.signed_path`
+return algebraic area. `area.subpath` and `area.path` return unsigned filled
+area under `Nonzero` or `EvenOdd`. `area.absolute_subpath` and
+`area.absolute_path` integrate `abs(winding_number)`, so repeated same-direction
+loops count with multiplicity. `svg_path/convex_hull` is a separate geometry
+operation; a hull area can be larger than the filled area of a concave or
+self-intersecting shape.
 
 Signed area is computed from line integrals. Lines, quadratic Beziers, cubic
 Beziers, and elliptical arcs are handled directly. The sign depends on drawing
@@ -738,12 +741,16 @@ The difference matters for repeated or nested loops:
 | Same loop twice, same direction | `+2A` or `-2A` | `A` | `0` |
 | Same loop twice, opposite directions | `0` | `0` | `0` |
 
-`area.subpath` and `area.path` first linearize curves and then integrate the
-filled slabs of the resulting line arrangement. The `_with` variants accept
-`LinearizeOptions`; `options.tolerance` controls curve-to-line approximation
-in coordinate units, not a direct bound on final area error. The arrangement
-step compares every pair of linearized edges, so fill-rule area is quadratic
-in the number of generated line edges.
+For those three rows, `area.absolute_path` returns `A`, `2A`, and `0`,
+respectively.
+
+`area.subpath`, `area.path`, `area.absolute_subpath`, and `area.absolute_path`
+first linearize curves and then integrate slabs of the resulting line
+arrangement. The `_with` variants accept `LinearizeOptions`;
+`options.tolerance` controls curve-to-line approximation in coordinate units,
+not a direct bound on final area error. The arrangement step compares every
+pair of linearized edges, so these arrangement-based areas are quadratic in the
+number of generated line edges.
 
 ### Segment Crossings
 
