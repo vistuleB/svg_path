@@ -2,7 +2,9 @@
 ////
 //// Signed area is computed directly from segment line integrals. Fill-rule
 //// area linearizes curves, builds a planar line arrangement, and integrates
-//// the filled vertical intervals of each arrangement slab.
+//// the filled vertical intervals of each arrangement slab. Absolute winding
+//// area uses the same arrangement but weights each region by the absolute
+//// value of its winding number.
 
 import gleam/float
 import gleam/int
@@ -22,6 +24,11 @@ type Crossing {
 
 type CrossingGroup {
   CrossingGroup(edge: Edge, y: Float, winding: Int, crossings: Int)
+}
+
+type AreaMode {
+  FillRuleArea(svg_path.FillRule)
+  AbsoluteWindingArea
 }
 
 const arrangement_relative_tolerance = 0.000000000001
@@ -97,11 +104,60 @@ pub fn signed_subpath(subpath: svg_path.Subpath) -> Float {
 /// Return the sum of the signed areas of a path's subpaths.
 ///
 /// This is algebraic area: repeated loops can multiply the value and opposite
-/// loops can cancel. Use `path` for SVG fill-rule area.
+/// loops can cancel. Equivalently, this is the integral of the signed winding
+/// number over the plane. Use `path` for SVG fill-rule area and
+/// `absolute_path` when repeated loops should contribute by winding magnitude.
 pub fn signed_path(path: svg_path.Path) -> Float {
   path
   |> svg_path.subpaths
   |> list.fold(0.0, fn(area, subpath) { area +. signed_subpath(subpath) })
+}
+
+/// Approximate a subpath's absolute winding area using default linearization
+/// options.
+///
+/// This integrates `abs(winding_number)` over the plane. A loop traced twice
+/// in the same direction contributes twice its ordinary fill area; coincident
+/// opposite loops cancel to zero because their total winding is zero.
+pub fn absolute_subpath(
+  subpath: svg_path.Subpath,
+) -> Result(Float, svg_path.Error) {
+  absolute_subpath_with(subpath, options: svg_path.default_linearize_options())
+}
+
+/// Approximate a subpath's absolute winding area using explicit linearization
+/// options.
+///
+/// `options.tolerance` is a geometric curve-to-line tolerance, not a direct
+/// bound on the final area error.
+pub fn absolute_subpath_with(
+  subpath: svg_path.Subpath,
+  options options: svg_path.LinearizeOptions,
+) -> Result(Float, svg_path.Error) {
+  absolute_path_with(svg_path.from_subpath(subpath), options:)
+}
+
+/// Approximate a path's absolute winding area using default linearization
+/// options.
+///
+/// This integrates `abs(winding_number)` over the path's combined winding
+/// field. It is different from `path(path, using: Nonzero)` when some regions
+/// have winding magnitude greater than one.
+pub fn absolute_path(path: svg_path.Path) -> Result(Float, svg_path.Error) {
+  absolute_path_with(path, options: svg_path.default_linearize_options())
+}
+
+/// Approximate a path's absolute winding area using explicit linearization
+/// options.
+///
+/// Every nonempty subpath is implicitly closed. Move-only subpaths contribute
+/// no area. Curves are linearized before their line arrangement is decomposed
+/// into vertical slabs; each slab is then integrated exactly.
+pub fn absolute_path_with(
+  path: svg_path.Path,
+  options options: svg_path.LinearizeOptions,
+) -> Result(Float, svg_path.Error) {
+  arrangement_area(path, mode: AbsoluteWindingArea, options:)
 }
 
 /// Approximate a subpath's filled area using the default linearization options.
@@ -152,6 +208,14 @@ pub fn path_with(
   using fill_rule: svg_path.FillRule,
   options options: svg_path.LinearizeOptions,
 ) -> Result(Float, svg_path.Error) {
+  arrangement_area(path, mode: FillRuleArea(fill_rule), options:)
+}
+
+fn arrangement_area(
+  path: svg_path.Path,
+  mode mode: AreaMode,
+  options options: svg_path.LinearizeOptions,
+) -> Result(Float, svg_path.Error) {
   use linearized <- result.try(svg_path.path_to_lines_with(path, options:))
   let edges = linearized |> svg_path.subpaths |> subpath_edges(accumulated: [])
   case edges {
@@ -159,7 +223,7 @@ pub fn path_with(
     _ -> {
       let tolerance = arrangement_tolerance(edges)
       let xs = arrangement_xs(edges, tolerance)
-      Ok(slabs_area(xs, edges, fill_rule, tolerance, area: 0.0))
+      Ok(slabs_area(xs, edges, mode, tolerance, area: 0.0))
     }
   }
 }
@@ -341,7 +405,7 @@ fn dedupe_sorted_floats(
 fn slabs_area(
   xs: List(Float),
   edges: List(Edge),
-  fill_rule: svg_path.FillRule,
+  mode: AreaMode,
   tolerance: Float,
   area area: Float,
 ) -> Float {
@@ -358,7 +422,7 @@ fn slabs_area(
             groups,
             left,
             right,
-            fill_rule,
+            mode,
             winding: 0,
             crossings: 0,
             previous: None,
@@ -370,7 +434,7 @@ fn slabs_area(
       slabs_area(
         [right, ..rest],
         edges,
-        fill_rule,
+        mode,
         tolerance,
         area: area +. slab_area,
       )
@@ -452,7 +516,7 @@ fn crossing_groups_area(
   groups: List(CrossingGroup),
   left: Float,
   right: Float,
-  fill_rule: svg_path.FillRule,
+  mode: AreaMode,
   winding winding: Int,
   crossings crossings: Int,
   previous previous: Option(CrossingGroup),
@@ -461,9 +525,11 @@ fn crossing_groups_area(
   case groups {
     [] -> area
     [current, ..rest] -> {
-      let area = case previous, is_filled(winding, crossings, fill_rule) {
-        Some(previous), True ->
-          area +. interval_area(previous.edge, current.edge, left, right)
+      let area = case previous, interval_weight(winding, crossings, mode) {
+        Some(previous), weight if weight >. 0.0 ->
+          area
+          +. weight
+          *. interval_area(previous.edge, current.edge, left, right)
         _, _ -> area
       }
 
@@ -471,13 +537,24 @@ fn crossing_groups_area(
         rest,
         left,
         right,
-        fill_rule,
+        mode,
         winding: winding + current.winding,
         crossings: crossings + current.crossings,
         previous: Some(current),
         area:,
       )
     }
+  }
+}
+
+fn interval_weight(winding: Int, crossings: Int, mode: AreaMode) -> Float {
+  case mode {
+    FillRuleArea(fill_rule) ->
+      case is_filled(winding, crossings, fill_rule) {
+        True -> 1.0
+        False -> 0.0
+      }
+    AbsoluteWindingArea -> winding |> int.absolute_value |> int.to_float
   }
 }
 
