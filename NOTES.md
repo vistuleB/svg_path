@@ -2,11 +2,9 @@
 
 ## Wishlist
 
-- Dash-array stroking.
 - Marker and decoration placement as geometry.
-- Stroke hit testing.
-- More complete SVG stroke semantics, if the current stroke/offset split proves
-  incomplete in real examples.
+- Stroke hit testing, if real callers need geometry-level hit tests rather than
+  renderer-level hit tests.
 - Structural simplification, not smoothing:
   - remove internal contours on request,
   - merge obvious adjacent collinear lines,
@@ -22,11 +20,21 @@ Recently completed:
 - Path offsets, including trimmed and untrimmed variants.
 - Path bands, including asymmetric and untrimmed variants.
 - Plain path stroking with caps and joins.
+- SVG-style dash extraction and dashed stroke geometry.
 - Area helpers for fill-rule area, absolute winding area, signed area, and
   subpath clockwiseness.
 - Cut helpers for splitting subjects by cutter intersections.
 - Intersection parameter canonicalization.
 - Public gallery seed file and generated candidate figures.
+
+Stabilization preference:
+
+- Prefer examples, fixtures, and documentation cleanup over new major geometry
+  features for now.
+- Add new public APIs only when they cover a concrete repeated need or expose a
+  coherent SVG concept.
+- Wait for real bugs or awkward caller code before reshaping the offset,
+  stroke, CSG, or intersection machinery again.
 
 Ongoing pruning principles:
 
