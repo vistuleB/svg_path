@@ -7,6 +7,7 @@ import svg_path/area
 import svg_path/csg
 import svg_path/effects
 import svg_path/offset
+import svg_path/stroke
 import svg_path/svg
 import svg_path/transform
 import vec/vec2f
@@ -27,6 +28,7 @@ pub fn gallery_figures_are_generated_test() {
       rounded_rectangle_union(),
     ),
     #("gallery-stroke-caps.svg", "Stroke caps", stroke_caps()),
+    #("gallery-dashed-strokes.svg", "Dashed strokes", dashed_strokes()),
     #(
       "gallery-figure-eight-band.svg",
       "Figure-eight asymmetric band",
@@ -150,6 +152,69 @@ fn stroke_caps() -> String {
             "fill: none; stroke: #4c1d95; stroke-width: 2; stroke-dasharray: 5 5; stroke-linecap: round",
           ),
           ..path_arrows(stroke, "#7c2d12", 1.0)
+        ]
+      }),
+    ),
+    width: 730.0,
+    height: 220.0,
+  )
+}
+
+fn dashed_strokes() -> String {
+  let source = dash_source()
+  let examples = [
+    #(0.0, "short dashes", [18.0, 12.0], 0.0, "#7f1d1d", "#fecaca"),
+    #(
+      250.0,
+      "offset pattern",
+      [26.0, 12.0, 8.0, 12.0],
+      18.0,
+      "#854d0e",
+      "#fde68a",
+    ),
+    #(500.0, "round caps", [34.0, 18.0], 9.0, "#14532d", "#bbf7d0"),
+  ]
+
+  document(
+    list.flatten(
+      examples
+      |> list.map(fn(example) {
+        let #(x, label, pattern, dash_offset, stroke_color, fill_color) =
+          example
+        let placed = place_subpath(source, x +. 22.0, 118.0)
+        let options =
+          stroke.Options(
+            width: 16.0,
+            cap: stroke.Round,
+            offset: offset.Options(
+              ..offset.default_options(),
+              join: offset.Round,
+            ),
+          )
+        let assert Ok(dashed) =
+          stroke.subpath_dashed_with(
+            placed,
+            options:,
+            dash_options: stroke.default_dash_options(
+              pattern:,
+              offset: dash_offset,
+            ),
+          )
+        [
+          panel(x, label),
+          svg.StyledPath(
+            dashed,
+            "fill: "
+              <> fill_color
+              <> "; stroke: "
+              <> stroke_color
+              <> "; stroke-width: 2.2; stroke-linejoin: round",
+          ),
+          svg.StyledPath(
+            svg_path.from_subpath(placed),
+            "fill: none; stroke: #334155; stroke-width: 1.8; stroke-dasharray: 5 6; stroke-linecap: round",
+          ),
+          ..path_arrows(dashed, stroke_color, 0.8)
         ]
       }),
     ),
@@ -486,6 +551,23 @@ fn offset_track_source() -> svg_path.Subpath {
       control1: svg_path.point(300.0, -92.0),
       control2: svg_path.point(414.0, 118.0),
       end: svg_path.point(532.0, -16.0),
+    ),
+  ])
+}
+
+fn dash_source() -> svg_path.Subpath {
+  svg_path.assert_subpath([
+    svg_path.CubicBezier(
+      start: svg_path.point(0.0, 28.0),
+      control1: svg_path.point(48.0, -62.0),
+      control2: svg_path.point(112.0, 88.0),
+      end: svg_path.point(154.0, 16.0),
+    ),
+    svg_path.CubicBezier(
+      start: svg_path.point(154.0, 16.0),
+      control1: svg_path.point(194.0, -52.0),
+      control2: svg_path.point(218.0, 70.0),
+      end: svg_path.point(188.0, 42.0),
     ),
   ])
 }

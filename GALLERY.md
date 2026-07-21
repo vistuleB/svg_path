@@ -28,6 +28,12 @@ result after `effects.rounded_corners`.
 
 Shows the same open cubic stroked with butt, square, and round caps.
 
+### Dashed Strokes
+
+![Dashed strokes](https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/gallery-dashed-strokes.svg)
+
+Shows SVG-style dash extraction followed by geometric stroking with round caps.
+
 ### Figure-Eight Band
 
 ![Figure-eight band](https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/gallery-figure-eight-band.svg)
