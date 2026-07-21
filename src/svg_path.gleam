@@ -329,7 +329,9 @@ pub type EndpointPolicy {
   WiggleThenBridge
 
   /// Reconcile non-matching adjacent segments with a caller-provided function.
-  Custom(fn(Segment, Segment) -> #(Segment, Segment))
+  ///
+  /// The middle segments are inserted between the adjusted adjacent segments.
+  Custom(fn(Segment, Segment) -> #(Segment, List(Segment), Segment))
 }
 
 /// A single SVG path segment.
@@ -7000,21 +7002,23 @@ fn line_join_start(start: Point, segments: List(Segment)) -> List(Segment) {
 fn custom_open_subpath_from(
   start: Point,
   segments: List(Segment),
-  reconcile: fn(Segment, Segment) -> #(Segment, Segment),
+  reconcile: fn(Segment, Segment) -> #(Segment, List(Segment), Segment),
 ) -> Result(Subpath, Error) {
   case segments {
     [] -> Ok(Subpath(start:, segments: [], closed: False))
     [first, ..rest] -> {
-      let first = case segment_start(first) == start {
-        True -> first
+      let prefix_and_first = case segment_start(first) == start {
+        True -> #([], first)
         False -> {
           let bridge = Line(start:, end: segment_start(first))
-          let #(_, first) = reconcile(bridge, first)
-          first
+          let #(bridge, connectors, first) = reconcile(bridge, first)
+          #(custom_reconciled_segments(bridge, connectors), first)
         }
       }
+      let #(prefix, first) = prefix_and_first
 
       custom_reconcile_segments(rest, first, [], reconcile)
+      |> list.append(prefix, _)
       |> strict_open_subpath_from(start, _)
     }
   }
@@ -7056,21 +7060,31 @@ fn custom_reconcile_segments(
   remaining: List(Segment),
   previous: Segment,
   reconciled: List(Segment),
-  reconcile: fn(Segment, Segment) -> #(Segment, Segment),
+  reconcile: fn(Segment, Segment) -> #(Segment, List(Segment), Segment),
 ) -> List(Segment) {
   case remaining {
     [] -> list.reverse([previous, ..reconciled])
     [next, ..rest] -> {
-      let #(previous, next) = case
+      let #(previous, connectors, next) = case
         segment_end(previous) == segment_start(next)
       {
-        True -> #(previous, next)
+        True -> #(previous, [], next)
         False -> reconcile(previous, next)
       }
 
-      custom_reconcile_segments(rest, next, [previous, ..reconciled], reconcile)
+      let reconciled =
+        list.append(list.reverse(connectors), [previous, ..reconciled])
+
+      custom_reconcile_segments(rest, next, reconciled, reconcile)
     }
   }
+}
+
+fn custom_reconciled_segments(
+  previous: Segment,
+  connectors: List(Segment),
+) -> List(Segment) {
+  [previous, ..connectors]
 }
 
 fn segments_arcs_to_cubic_beziers(
@@ -7643,7 +7657,7 @@ fn line_close_nonempty_subpath(subpath: Subpath) -> Result(Subpath, Error) {
 
 fn custom_close_open_subpath(
   subpath: Subpath,
-  reconcile: fn(Segment, Segment) -> #(Segment, Segment),
+  reconcile: fn(Segment, Segment) -> #(Segment, List(Segment), Segment),
 ) -> Result(Subpath, Error) {
   case subpath.segments {
     [] -> Ok(Subpath(..subpath, closed: True))
@@ -7651,8 +7665,11 @@ fn custom_close_open_subpath(
       case segment_end(only) == segment_start(only) {
         True -> strict_close_open_subpath(subpath)
         False -> {
-          let #(last, first) = reconcile(only, only)
-          validate_custom_closed_segments([first, last])
+          let #(last, connectors, first) = reconcile(only, only)
+          validate_custom_closed_segments([
+            first,
+            ..custom_reconciled_segments(last, connectors)
+          ])
         }
       }
     }
@@ -7662,8 +7679,11 @@ fn custom_close_open_subpath(
       case segment_end(last) == segment_start(first) {
         True -> strict_close_open_subpath(subpath)
         False -> {
-          let #(last, first) = reconcile(last, first)
-          validate_custom_closed_segments([first, ..list.append(middle, [last])])
+          let #(last, connectors, first) = reconcile(last, first)
+          validate_custom_closed_segments([
+            first,
+            ..list.append(middle, custom_reconciled_segments(last, connectors))
+          ])
         }
       }
     }

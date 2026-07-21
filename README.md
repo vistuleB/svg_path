@@ -289,7 +289,7 @@ pub type EndpointPolicy {
   Wiggle
   Bridge
   WiggleThenBridge
-  Custom(fn(Segment, Segment) -> #(Segment, Segment))
+  Custom(fn(Segment, Segment) -> #(Segment, List(Segment), Segment))
 }
 ```
 
@@ -348,11 +348,11 @@ svg_path.assert_set_closed(subpath, closed)
 svg_path.assert_set_closed_with(subpath, closed, policy)
 ```
 
-`Custom` receives each non-matching adjacent pair as `previous` and `next`, and
-returns replacement segments for that pair. It is called only when the two
-endpoints do not already match. A custom policy can change all aspects of both
-segments (e.g. change the `.start` of the `previous` segment) without
-necessarily triggering an error: errors are generated on final-pass
+`Custom` receives each non-matching adjacent pair as `previous` and `next`, then
+returns an adjusted previous segment, any inserted connector segments, and an
+adjusted next segment. It is called only when the two endpoints do not already
+match. A custom policy can change all aspects of both adjacent segments or
+insert bridge-like segments between them. Errors are generated on final-pass
 verification of the returned subpath.
 
 ### Joining Subpaths

@@ -2507,12 +2507,74 @@ pub fn subpath_with_custom_reconciles_a_gap_test() {
     svg_path.subpath_with(
       [svg_path.Line(start: a, end: b), svg_path.Line(start: c, end: d)],
       policy: svg_path.Custom(fn(previous, next) {
-        #(line_to_end(previous, c), next)
+        #(line_to_end(previous, c), [], next)
       }),
     )
 
   assert svg_path.segments(subpath)
     == [svg_path.Line(start: a, end: c), svg_path.Line(start: c, end: d)]
+}
+
+pub fn subpath_with_custom_can_insert_a_connector_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(20.0, 0.0)
+  let d = svg_path.point(30.0, 0.0)
+
+  let assert Ok(subpath) =
+    svg_path.subpath_with(
+      [svg_path.Line(start: a, end: b), svg_path.Line(start: c, end: d)],
+      policy: svg_path.Custom(fn(previous, next) {
+        #(
+          previous,
+          [
+            svg_path.Line(
+              start: svg_path.segment_end(previous),
+              end: svg_path.segment_start(next),
+            ),
+          ],
+          next,
+        )
+      }),
+    )
+
+  assert svg_path.segments(subpath)
+    == [
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
+      svg_path.Line(start: c, end: d),
+    ]
+}
+
+pub fn subpath_with_custom_can_insert_multiple_connectors_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let elbow = svg_path.point(10.0, 10.0)
+  let c = svg_path.point(20.0, 10.0)
+  let d = svg_path.point(30.0, 10.0)
+
+  let assert Ok(subpath) =
+    svg_path.subpath_with(
+      [svg_path.Line(start: a, end: b), svg_path.Line(start: c, end: d)],
+      policy: svg_path.Custom(fn(previous, next) {
+        #(
+          previous,
+          [
+            svg_path.Line(start: svg_path.segment_end(previous), end: elbow),
+            svg_path.Line(start: elbow, end: svg_path.segment_start(next)),
+          ],
+          next,
+        )
+      }),
+    )
+
+  assert svg_path.segments(subpath)
+    == [
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: elbow),
+      svg_path.Line(start: elbow, end: c),
+      svg_path.Line(start: c, end: d),
+    ]
 }
 
 pub fn subpath_with_custom_rejects_invalid_results_test() {
@@ -2523,7 +2585,7 @@ pub fn subpath_with_custom_rejects_invalid_results_test() {
 
   assert svg_path.subpath_with(
       [svg_path.Line(start: a, end: b), svg_path.Line(start: c, end: d)],
-      policy: svg_path.Custom(fn(previous, next) { #(previous, next) }),
+      policy: svg_path.Custom(fn(previous, next) { #(previous, [], next) }),
     )
     == Error(svg_path.Discontinuous(
       previous_index: 0,
@@ -2549,6 +2611,7 @@ pub fn append_segment_with_custom_can_rewrite_the_incoming_segment_test() {
       policy: svg_path.Custom(fn(previous, _next) {
         #(
           previous,
+          [],
           svg_path.Line(start: svg_path.segment_end(previous), end: e),
         )
       }),
@@ -2570,7 +2633,7 @@ pub fn join_with_custom_reconciles_a_gap_test() {
     svg_path.join_with(
       [first, second],
       policy: svg_path.Custom(fn(previous, next) {
-        #(previous, line_from_start(next, svg_path.segment_end(previous)))
+        #(previous, [], line_from_start(next, svg_path.segment_end(previous)))
       }),
     )
 
@@ -2609,7 +2672,7 @@ pub fn set_closed_with_custom_reconciles_the_closing_gap_test() {
       subpath,
       closed: True,
       policy: svg_path.Custom(fn(last, first) {
-        #(line_to_end(last, svg_path.segment_start(first)), first)
+        #(line_to_end(last, svg_path.segment_start(first)), [], first)
       }),
     )
 
@@ -2631,7 +2694,7 @@ pub fn set_closed_with_custom_rejects_invalid_results_test() {
   assert svg_path.set_closed_with(
       subpath,
       closed: True,
-      policy: svg_path.Custom(fn(last, first) { #(last, first) }),
+      policy: svg_path.Custom(fn(last, first) { #(last, [], first) }),
     )
     == Error(svg_path.Discontinuous(
       previous_index: 1,
