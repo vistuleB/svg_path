@@ -1544,7 +1544,7 @@ pub fn segment_subpath_intersections_groups_and_orders_results_test() {
     ]
 }
 
-pub fn segment_subpath_intersections_retains_boundary_aliases_test() {
+pub fn segment_subpath_intersections_canonicalizes_boundary_aliases_test() {
   let segment =
     svg_path.Line(
       start: svg_path.point(0.0, 0.0),
@@ -1565,14 +1565,10 @@ pub fn segment_subpath_intersections_retains_boundary_aliases_test() {
 
   assert point_near(point, b)
   assert near(segment_t, 0.5)
-  assert parameters
-    == [
-      svg_path.SubpathParameter(0, 1.0),
-      svg_path.SubpathParameter(1, 0.0),
-    ]
+  assert parameters == [svg_path.SubpathParameter(1, 0.0)]
 }
 
-pub fn segment_subpath_intersections_retains_closed_boundary_aliases_test() {
+pub fn segment_subpath_intersections_canonicalizes_closed_boundary_aliases_test() {
   let segment =
     svg_path.Line(
       start: svg_path.point(0.0, 0.0),
@@ -1595,11 +1591,7 @@ pub fn segment_subpath_intersections_retains_closed_boundary_aliases_test() {
 
   assert point_near(point, a)
   assert near(segment_t, 0.5)
-  assert parameters
-    == [
-      svg_path.SubpathParameter(0, 0.0),
-      svg_path.SubpathParameter(2, 1.0),
-    ]
+  assert parameters == [svg_path.SubpathParameter(0, 0.0)]
 }
 
 pub fn segment_subpath_intersections_empty_subpath_test() {
@@ -1657,7 +1649,7 @@ pub fn subpath_intersections_groups_and_orders_results_test() {
   assert second.right_parameters == [svg_path.SubpathParameter(2, 0.5)]
 }
 
-pub fn subpath_intersections_retains_boundary_aliases_on_both_sides_test() {
+pub fn subpath_intersections_canonicalizes_boundary_aliases_on_both_sides_test() {
   let point = svg_path.point(5.0, 0.0)
   let left =
     svg_path.assert_subpath([
@@ -1673,16 +1665,8 @@ pub fn subpath_intersections_retains_boundary_aliases_on_both_sides_test() {
   let assert Ok([intersection]) = svg_path.subpath_intersections(left, right)
 
   assert point_near(intersection.point, point)
-  assert intersection.left_parameters
-    == [
-      svg_path.SubpathParameter(0, 1.0),
-      svg_path.SubpathParameter(1, 0.0),
-    ]
-  assert intersection.right_parameters
-    == [
-      svg_path.SubpathParameter(0, 1.0),
-      svg_path.SubpathParameter(1, 0.0),
-    ]
+  assert intersection.left_parameters == [svg_path.SubpathParameter(1, 0.0)]
+  assert intersection.right_parameters == [svg_path.SubpathParameter(1, 0.0)]
 }
 
 pub fn subpath_intersections_empty_subpaths_test() {
@@ -1774,7 +1758,7 @@ pub fn path_intersections_groups_and_orders_results_test() {
     ]
 }
 
-pub fn path_intersections_retains_aliases_on_both_sides_test() {
+pub fn path_intersections_canonicalizes_aliases_on_both_sides_test() {
   let point = svg_path.point(5.0, 0.0)
   let left =
     svg_path.Path([
@@ -1796,14 +1780,50 @@ pub fn path_intersections_retains_aliases_on_both_sides_test() {
 
   assert point_near(intersection.point, point)
   assert intersection.left_parameters
-    == [
-      svg_path.PathParameter(0, svg_path.SubpathParameter(0, 1.0)),
-      svg_path.PathParameter(0, svg_path.SubpathParameter(1, 0.0)),
-    ]
+    == [svg_path.PathParameter(0, svg_path.SubpathParameter(1, 0.0))]
+  assert intersection.right_parameters
+    == [svg_path.PathParameter(1, svg_path.SubpathParameter(1, 0.0))]
+}
+
+pub fn path_intersections_canonicalizes_near_boundary_aliases_test() {
+  let middle = svg_path.point(10.0, 0.0)
+  let left =
+    svg_path.Path([
+      svg_path.assert_subpath([
+        svg_path.Line(start: svg_path.point(0.0, 0.0), end: middle),
+        svg_path.Line(start: middle, end: svg_path.point(20.0, 0.0)),
+      ]),
+    ])
+  let right =
+    svg_path.Path([
+      svg_path.assert_subpath([
+        svg_path.Line(
+          start: svg_path.point(9.9999999999, -5.0),
+          end: svg_path.point(9.9999999999, 5.0),
+        ),
+      ]),
+      svg_path.assert_subpath([
+        svg_path.Line(
+          start: svg_path.point(10.0000000001, -5.0),
+          end: svg_path.point(10.0000000001, 5.0),
+        ),
+      ]),
+    ])
+
+  let assert Ok([intersection]) =
+    svg_path.path_intersections_with(
+      left,
+      right,
+      options: svg_path.IntersectionOptions(tolerance: 0.000001, max_depth: 48),
+    )
+
+  assert point_near(intersection.point, middle)
+  assert intersection.left_parameters
+    == [svg_path.PathParameter(0, svg_path.SubpathParameter(1, 0.0))]
   assert intersection.right_parameters
     == [
-      svg_path.PathParameter(1, svg_path.SubpathParameter(0, 1.0)),
-      svg_path.PathParameter(1, svg_path.SubpathParameter(1, 0.0)),
+      svg_path.PathParameter(0, svg_path.SubpathParameter(0, 0.5)),
+      svg_path.PathParameter(1, svg_path.SubpathParameter(0, 0.5)),
     ]
 }
 

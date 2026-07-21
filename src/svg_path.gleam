@@ -15,6 +15,7 @@ import svg_path/ellipse
 import svg_path/root
 import svg_path/trig
 import vec/vec2.{type Vec2, Vec2}
+import vec/vec2f
 
 const default_wiggle_tolerance = 0.000000001
 
@@ -211,8 +212,8 @@ pub type SubpathSelfIntersection {
 /// A point intersection between two subpaths.
 ///
 /// Multiple parameters are retained on both subpaths because a single point can
-/// be represented by both sides of a segment boundary, or by multiple segments
-/// of a self-intersecting subpath.
+/// be reached multiple times by a self-intersecting subpath. Segment-boundary
+/// aliases are canonicalized to one traversal address.
 pub type SubpathIntersection {
   SubpathIntersection(
     point: Point,
@@ -224,7 +225,8 @@ pub type SubpathIntersection {
 /// A point intersection between two paths.
 ///
 /// Multiple parameters are retained on both paths because a single point can be
-/// represented by multiple subpaths or by both sides of a segment boundary.
+/// reached through multiple subpaths or through self-intersecting subpaths.
+/// Segment-boundary aliases are canonicalized to one traversal address.
 pub type PathIntersection {
   PathIntersection(
     point: Point,
@@ -1145,6 +1147,26 @@ pub fn from_end_parameter(
 
   let length = list.length(subpath.segments)
   Ok(SubpathParameter(segment_index: length - 1 - segment_index, t: 1.0 -. t))
+}
+
+/// Snap a subpath parameter to its canonical boundary address when it is within
+/// tolerance of a segment boundary.
+///
+/// Internal segment ends canonicalize to the next segment's `t = 0.0`. The end
+/// of a closed subpath's last segment canonicalizes to `SubpathParameter(0,
+/// 0.0)`. The end of an open subpath's last segment remains at `t = 1.0`.
+pub fn canonicalize_subpath_parameter(
+  subpath: Subpath,
+  parameter parameter: SubpathParameter,
+  tolerance tolerance: Float,
+) -> Result(SubpathParameter, Error) {
+  case tolerance <=. 0.0 {
+    True -> Error(InvalidIntersectionTolerance(tolerance))
+    False -> {
+      use _ <- result.try(validate_subpath_parameter(subpath, parameter))
+      Ok(canonicalize_subpath_parameter_unchecked(parameter, subpath, tolerance))
+    }
+  }
 }
 
 /// Evaluate a subpath at a subpath parameter.
@@ -2330,8 +2352,8 @@ pub fn segment_intersections_with(
 ///
 /// Each result contains an intersection point, its local parameter on the
 /// standalone segment, and every corresponding parameter on the subpath.
-/// Results are ordered by the standalone segment parameter. Parameters at both
-/// sides of a subpath segment boundary are retained.
+/// Results are ordered by the standalone segment parameter. Segment-boundary
+/// aliases are canonicalized to one traversal address.
 pub fn segment_subpath_intersections(
   segment: Segment,
   subpath: Subpath,
@@ -2361,7 +2383,11 @@ pub fn segment_subpath_intersections_with(
     ),
   )
 
-  Ok(sort_segment_subpath_intersections(intersections))
+  Ok(sort_segment_subpath_intersections(
+    intersections,
+    subpath,
+    options.tolerance,
+  ))
 }
 
 /// Return point intersections where a subpath intersects itself.
@@ -2411,7 +2437,7 @@ pub fn subpath_self_intersections_with(
 ///
 /// Each result contains an intersection point and every corresponding
 /// parameter on both subpaths. Results are ordered by the first left parameter.
-/// Parameters at both sides of a subpath segment boundary are retained.
+/// Segment-boundary aliases are canonicalized to one traversal address.
 pub fn subpath_intersections(
   left: Subpath,
   right: Subpath,
@@ -2440,14 +2466,14 @@ pub fn subpath_intersections_with(
     ),
   )
 
-  Ok(sort_subpath_intersections(intersections))
+  Ok(sort_subpath_intersections(intersections, left, right, options.tolerance))
 }
 
 /// Return the point intersections between two paths.
 ///
 /// Each result contains an intersection point and every corresponding
 /// parameter on both paths. Results are ordered by the first left parameter.
-/// Parameters at both sides of subpath segment boundaries are retained.
+/// Segment-boundary aliases are canonicalized to one traversal address.
 pub fn path_intersections(
   left: Path,
   right: Path,
@@ -4751,11 +4777,17 @@ fn insert_segment_subpath_intersection(
 
 fn sort_segment_subpath_intersections(
   intersections: List(#(Point, Float, List(SubpathParameter))),
+  subpath: Subpath,
+  tolerance: Float,
 ) -> List(#(Point, Float, List(SubpathParameter))) {
   intersections
   |> list.map(fn(intersection) {
     let #(point, segment_t, parameters) = intersection
-    #(point, segment_t, list.sort(parameters, by: compare_subpath_parameters))
+    #(
+      point,
+      segment_t,
+      sort_unique_subpath_parameters(parameters, subpath, tolerance),
+    )
   })
   |> list.sort(by: fn(a, b) {
     let #(_, a_t, _) = a
@@ -4850,6 +4882,9 @@ fn insert_subpath_intersection(
 
 fn sort_subpath_intersections(
   intersections: List(SubpathIntersection),
+  left: Subpath,
+  right: Subpath,
+  tolerance: Float,
 ) -> List(SubpathIntersection) {
   intersections
   |> list.map(fn(intersection) {
@@ -4857,9 +4892,13 @@ fn sort_subpath_intersections(
       ..intersection,
       left_parameters: sort_unique_subpath_parameters(
         intersection.left_parameters,
+        left,
+        tolerance,
       ),
       right_parameters: sort_unique_subpath_parameters(
         intersection.right_parameters,
+        right,
+        tolerance,
       ),
     )
   })
@@ -4878,30 +4917,174 @@ fn compare_subpath_intersections(
 
 fn sort_unique_subpath_parameters(
   parameters: List(SubpathParameter),
+  subpath: Subpath,
+  tolerance: Float,
 ) -> List(SubpathParameter) {
   parameters
+  |> list.map(canonicalize_subpath_parameter_unchecked(_, subpath, tolerance))
   |> list.sort(by: compare_subpath_parameters)
-  |> dedupe_sorted_subpath_parameters(accumulated: [])
+  |> dedupe_sorted_subpath_parameters(subpath, tolerance, accumulated: [])
+  |> drop_closed_wrap_duplicate(subpath, tolerance)
 }
 
 fn dedupe_sorted_subpath_parameters(
   parameters: List(SubpathParameter),
+  subpath: Subpath,
+  tolerance: Float,
   accumulated accumulated: List(SubpathParameter),
 ) -> List(SubpathParameter) {
   case parameters, accumulated {
     [], _ -> list.reverse(accumulated)
     [first, ..rest], [] ->
-      dedupe_sorted_subpath_parameters(rest, accumulated: [first])
+      dedupe_sorted_subpath_parameters(rest, subpath, tolerance, accumulated: [
+        first,
+      ])
     [first, ..rest], [previous, ..] -> {
-      case compare_subpath_parameters(first, previous) {
-        order.Eq -> dedupe_sorted_subpath_parameters(rest, accumulated:)
+      case subpath_parameters_near(first, previous, subpath, tolerance) {
+        True ->
+          dedupe_sorted_subpath_parameters(
+            rest,
+            subpath,
+            tolerance,
+            accumulated:,
+          )
         _ ->
-          dedupe_sorted_subpath_parameters(rest, accumulated: [
-            first,
-            ..accumulated
-          ])
+          dedupe_sorted_subpath_parameters(
+            rest,
+            subpath,
+            tolerance,
+            accumulated: [first, ..accumulated],
+          )
       }
     }
+  }
+}
+
+fn canonicalize_subpath_parameter_unchecked(
+  parameter: SubpathParameter,
+  subpath: Subpath,
+  tolerance: Float,
+) -> SubpathParameter {
+  let length = list.length(subpath.segments)
+  case parameter {
+    SubpathParameter(segment_index:, t:) if t <=. tolerance ->
+      SubpathParameter(segment_index:, t: 0.0)
+    SubpathParameter(segment_index:, t:) if 1.0 -. t <=. tolerance -> {
+      case segment_index < length - 1, subpath.closed {
+        True, _ -> SubpathParameter(segment_index + 1, 0.0)
+        False, True -> SubpathParameter(0, 0.0)
+        False, False -> SubpathParameter(segment_index:, t: 1.0)
+      }
+    }
+    _ -> parameter
+  }
+}
+
+fn drop_closed_wrap_duplicate(
+  parameters: List(SubpathParameter),
+  subpath: Subpath,
+  tolerance: Float,
+) -> List(SubpathParameter) {
+  case subpath.closed, parameters {
+    True, [first, second, ..rest] -> {
+      let last = list.last(parameters)
+      case last {
+        Ok(last) ->
+          case subpath_parameters_near(first, last, subpath, tolerance) {
+            True -> [second, ..rest]
+            False -> parameters
+          }
+        _ -> parameters
+      }
+    }
+    _, _ -> parameters
+  }
+}
+
+fn subpath_parameters_near(
+  a: SubpathParameter,
+  b: SubpathParameter,
+  subpath: Subpath,
+  tolerance: Float,
+) -> Bool {
+  subpath_parameter_addresses_near(a, b, subpath, tolerance)
+  && subpath_parameter_positions_near(a, b, subpath, tolerance)
+}
+
+fn subpath_parameter_addresses_near(
+  a: SubpathParameter,
+  b: SubpathParameter,
+  subpath: Subpath,
+  tolerance: Float,
+) -> Bool {
+  let SubpathParameter(segment_index: a_index, t: a_t) = a
+  let SubpathParameter(segment_index: b_index, t: b_t) = b
+  let length = list.length(subpath.segments)
+  case a_index == b_index {
+    True -> float.absolute_value(a_t -. b_t) <=. tolerance
+    False ->
+      adjacent_boundary_parameters_near(a_index, a_t, b_index, b_t, tolerance)
+      || {
+        subpath.closed
+        && closed_wrap_boundary_parameters_near(
+          a_index,
+          a_t,
+          b_index,
+          b_t,
+          length,
+          tolerance,
+        )
+      }
+  }
+}
+
+fn adjacent_boundary_parameters_near(
+  a_index: Int,
+  a_t: Float,
+  b_index: Int,
+  b_t: Float,
+  tolerance: Float,
+) -> Bool {
+  case a_index + 1 == b_index {
+    True -> float.absolute_value(b_t -. a_t +. 1.0) <=. tolerance
+    False ->
+      case b_index + 1 == a_index {
+        True -> float.absolute_value(a_t -. b_t +. 1.0) <=. tolerance
+        False -> False
+      }
+  }
+}
+
+fn closed_wrap_boundary_parameters_near(
+  a_index: Int,
+  a_t: Float,
+  b_index: Int,
+  b_t: Float,
+  length: Int,
+  tolerance: Float,
+) -> Bool {
+  case a_index == 0 && b_index == length - 1 {
+    True -> float.absolute_value(a_t -. b_t +. 1.0) <=. tolerance
+    False ->
+      case b_index == 0 && a_index == length - 1 {
+        True -> float.absolute_value(b_t -. a_t +. 1.0) <=. tolerance
+        False -> False
+      }
+  }
+}
+
+fn subpath_parameter_positions_near(
+  a: SubpathParameter,
+  b: SubpathParameter,
+  subpath: Subpath,
+  tolerance: Float,
+) -> Bool {
+  let a_point = subpath_point(subpath, at: a)
+  let b_point = subpath_point(subpath, at: b)
+  case a_point, b_point {
+    Ok(a_point), Ok(b_point) ->
+      vec2f.distance_squared(a_point, with: b_point) <=. tolerance *. tolerance
+    _, _ -> False
   }
 }
 
@@ -4955,6 +5138,13 @@ fn collect_path_intersections_for_left_subpath(
           grouped: [],
         ),
       )
+      let intersections =
+        sort_subpath_intersections(
+          intersections,
+          left_subpath,
+          right_subpath,
+          options.tolerance,
+        )
       let grouped =
         list.fold(intersections, grouped, fn(grouped, intersection) {
           insert_path_intersection(

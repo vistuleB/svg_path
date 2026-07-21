@@ -947,6 +947,87 @@ pub fn from_end_parameter_rejects_invalid_reversed_address_test() {
     ))
 }
 
+pub fn canonicalize_subpath_parameter_snaps_internal_segment_end_test() {
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.Line(
+        start: svg_path.point(0.0, 0.0),
+        end: svg_path.point(10.0, 0.0),
+      ),
+      svg_path.Line(
+        start: svg_path.point(10.0, 0.0),
+        end: svg_path.point(20.0, 0.0),
+      ),
+    ])
+
+  assert svg_path.canonicalize_subpath_parameter(
+      subpath,
+      parameter: svg_path.SubpathParameter(0, 0.9999999),
+      tolerance: 0.000001,
+    )
+    == Ok(svg_path.SubpathParameter(1, 0.0))
+}
+
+pub fn canonicalize_subpath_parameter_snaps_closed_wrap_test() {
+  let subpath =
+    svg_path.assert_polygon([
+      svg_path.point(0.0, 0.0),
+      svg_path.point(10.0, 0.0),
+      svg_path.point(10.0, 10.0),
+    ])
+
+  assert svg_path.canonicalize_subpath_parameter(
+      subpath,
+      parameter: svg_path.SubpathParameter(2, 0.9999999),
+      tolerance: 0.000001,
+    )
+    == Ok(svg_path.SubpathParameter(0, 0.0))
+}
+
+pub fn canonicalize_subpath_parameter_keeps_open_final_endpoint_test() {
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.Line(
+        start: svg_path.point(0.0, 0.0),
+        end: svg_path.point(10.0, 0.0),
+      ),
+    ])
+
+  assert svg_path.canonicalize_subpath_parameter(
+      subpath,
+      parameter: svg_path.SubpathParameter(0, 0.9999999),
+      tolerance: 0.000001,
+    )
+    == Ok(svg_path.SubpathParameter(0, 1.0))
+}
+
+pub fn canonicalize_subpath_parameter_rejects_invalid_inputs_test() {
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.Line(
+        start: svg_path.point(0.0, 0.0),
+        end: svg_path.point(10.0, 0.0),
+      ),
+    ])
+
+  assert svg_path.canonicalize_subpath_parameter(
+      subpath,
+      parameter: svg_path.SubpathParameter(0, 0.5),
+      tolerance: 0.0,
+    )
+    == Error(svg_path.InvalidIntersectionTolerance(0.0))
+  assert svg_path.canonicalize_subpath_parameter(
+      subpath,
+      parameter: svg_path.SubpathParameter(1, 0.5),
+      tolerance: 0.000001,
+    )
+    == Error(svg_path.InvalidSubpathParameter(
+      segment_index: 1,
+      t: 0.5,
+      length: 1,
+    ))
+}
+
 pub fn from_end_parameter_can_address_open_at_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)
