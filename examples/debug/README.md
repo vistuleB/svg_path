@@ -2,6 +2,8 @@
 
 Generated SVG debug drawings live here.
 
+- `tmp_tests/`: parked R&D drawing fixtures. These used to live under `test/`,
+  but are intentionally outside normal `gleam test` discovery.
 - `debug_drawing.*`: leaf/stem renderer smoke test
 - `convex_hull_stem.*`: convex hull overlay for the first cubic stem segment
 - `convex_hull_horseshoe.*`: convex hull overlay for the horseshoe cubic segment
