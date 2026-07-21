@@ -1,0 +1,22 @@
+dash index: 4
+dash segment count: 4
+dash length: 17.000000000312
+start point: (331.971813208819, 156.277011135983)
+end point: (341.799234851472, 142.408241456412)
+first derivative length at t=0: 1.794130925597
+last derivative length at t=1: 6.302334286726
+start cap: Ok(start=(334.473227598245, 157.93318928231), end=(329.470398819393, 154.620832989656))
+end cap: Ok(start=(339.397878429257, 140.610051440455), end=(344.200591273687, 144.206431472369))
+positive individual offset pieces: counts=1,1,1,1; total=4
+negative individual offset pieces: counts=1,1,1,1; total=4
+positive side: Ok(segments=4, closed=False, length=17.173745049283)
+negative side: Ok(segments=4, closed=False, length=16.826254950867)
+positive inserted joins: count=0; 
+negative inserted joins: count=0; 
+positive raw pair 0->1 before join: left_end=(330.613676230718, 153.004973968537); right_start=(330.613676259121, 153.004973930917); gap=0.000000047138; intersections=count=0; 
+negative raw pair 0->1 before join: left_end=(335.402140494947, 156.620303827651); right_start=(335.402140466543, 156.620303865272); gap=0.000000047138; intersections=count=1; 0: left_t=1, right_t=0, point=(335.402140480745, 156.620303846462)
+assembled candidate: Ok(segments=10, closed=True, length=52.84955542221)
+candidate self intersections: 0
+candidate self intersection points:
+
+full stroke result: Ok(subpaths=1)

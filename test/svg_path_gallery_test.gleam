@@ -1,4 +1,5 @@
 import gleam/dynamic.{type Dynamic}
+import gleam/int
 import gleam/list
 import gleam/string
 import gleeunit
@@ -6,6 +7,7 @@ import svg_path
 import svg_path/area
 import svg_path/csg
 import svg_path/effects
+import svg_path/number_format
 import svg_path/offset
 import svg_path/stroke
 import svg_path/svg
@@ -29,6 +31,7 @@ pub fn gallery_figures_are_generated_test() {
     ),
     #("gallery-stroke-caps.svg", "Stroke caps", stroke_caps()),
     #("gallery-dashed-strokes.svg", "Dashed strokes", dashed_strokes()),
+    #("gallery-recursive-dashes.svg", "Recursive dashes", recursive_dashes()),
     #(
       "gallery-figure-eight-band.svg",
       "Figure-eight asymmetric band",
@@ -113,6 +116,130 @@ fn rounded_rectangle_union() -> String {
     width: 730.0,
     height: 220.0,
   )
+}
+
+pub fn recursive_dash_failure_zoom_is_generated_test() {
+  let _ = ensure_dir("examples/debug/recursive-dash-failure-zoom.svg")
+  let drawing = recursive_dashes()
+  let _ = write_file("examples/debug/recursive-dash-failure-zoom.svg", drawing)
+  Nil
+}
+
+pub fn recursive_dash_cap_report_is_generated_test() {
+  let _ = ensure_dir("examples/debug/recursive-dash-cap-report.txt")
+  let source = place_subpath(recursive_dash_source(), 92.0, 154.0)
+  let first_options =
+    stroke.Options(
+      width: 58.0,
+      cap: stroke.Round,
+      offset: offset.Options(..offset.default_options(), join: offset.Round),
+    )
+  let assert Ok(first_stroke) =
+    stroke.subpath_dashed_with(
+      source,
+      options: first_options,
+      dash_options: stroke.default_dash_options(
+        pattern: [112.0, 48.0],
+        offset: 10.0,
+      ),
+    )
+  let outline = nth_subpath(svg_path.subpaths(first_stroke), 2)
+  let assert Ok(dashes) =
+    stroke.subpath_dashes(outline, pattern: [17.0, 9.0], offset: 3.0)
+  let dash = nth_subpath(dashes, 4)
+  let options = offset.Options(..offset.default_options(), join: offset.Round)
+  let stroke_options =
+    stroke.Options(width: 6.0, cap: stroke.Round, offset: options)
+  let radius = 3.0
+  let positive = offset.subpath_untrimmed_with(dash, distance: radius, options:)
+  let negative =
+    offset.subpath_untrimmed_with(dash, distance: 0.0 -. radius, options:)
+  let start_cap = debug_round_start_cap(dash, radius)
+  let end_cap = debug_round_end_cap(dash, radius)
+  let candidate = case positive, negative, start_cap, end_cap {
+    Ok(positive), Ok(negative), Ok(start_cap), Ok(end_cap) -> {
+      let segments =
+        list.append(
+          svg_path.segments(positive),
+          list.append(
+            [end_cap],
+            list.append(debug_reverse_segments(svg_path.segments(negative)), [
+              start_cap,
+            ]),
+          ),
+        )
+      case svg_path.subpath_with(segments, policy: svg_path.Wiggle) {
+        Ok(candidate) ->
+          svg_path.set_closed_with(
+            candidate,
+            closed: True,
+            policy: svg_path.Wiggle,
+          )
+        Error(error) -> Error(error)
+      }
+    }
+    _, _, _, _ -> Error(svg_path.EmptySubpath)
+  }
+  let report =
+    string.join(
+      [
+        "dash index: 4",
+        "dash segment count: "
+          <> int.to_string(list.length(svg_path.segments(dash))),
+        "dash length: "
+          <> length_result_to_string(svg_path.subpath_length(dash)),
+        "start point: " <> point_result_to_string(svg_path.start(dash)),
+        "end point: " <> point_result_to_string(svg_path.end(dash)),
+        "first derivative length at t=0: "
+          <> derivative_length_result_to_string(first_segment(dash), 0.0),
+        "last derivative length at t=1: "
+          <> derivative_length_result_to_string(last_segment(dash), 1.0),
+        "start cap: " <> cap_result_to_string(start_cap),
+        "end cap: " <> cap_result_to_string(end_cap),
+        "positive individual offset pieces: "
+          <> individual_offset_piece_counts_to_string(
+          svg_path.segments(dash),
+          distance: radius,
+          options: options,
+        ),
+        "negative individual offset pieces: "
+          <> individual_offset_piece_counts_to_string(
+          svg_path.segments(dash),
+          distance: 0.0 -. radius,
+          options: options,
+        ),
+        "positive side: " <> offset_subpath_result_to_string(positive),
+        "negative side: " <> offset_subpath_result_to_string(negative),
+        "positive inserted joins: "
+          <> inserted_join_diameters_to_string(positive),
+        "negative inserted joins: "
+          <> inserted_join_diameters_to_string(negative),
+        "positive raw pair 0->1 before join: "
+          <> raw_offset_pair_report(
+          svg_path.segments(dash),
+          distance: radius,
+          options: options,
+        ),
+        "negative raw pair 0->1 before join: "
+          <> raw_offset_pair_report(
+          svg_path.segments(dash),
+          distance: 0.0 -. radius,
+          options: options,
+        ),
+        "assembled candidate: " <> subpath_result_to_string(candidate),
+        "candidate self intersections: "
+          <> self_intersections_result_to_string(candidate),
+        self_intersection_points_result_to_string(candidate),
+        "full stroke result: "
+          <> stroke_result_to_string(stroke.subpath_with(
+          dash,
+          options: stroke_options,
+        )),
+      ],
+      "\n",
+    )
+  let _ = write_file("examples/debug/recursive-dash-cap-report.txt", report)
+  Nil
 }
 
 fn stroke_caps() -> String {
@@ -221,6 +348,624 @@ fn dashed_strokes() -> String {
     width: 730.0,
     height: 220.0,
   )
+}
+
+fn recursive_dashes() -> String {
+  let source = place_subpath(recursive_dash_source(), 92.0, 154.0)
+  let first_options =
+    stroke.Options(
+      width: 58.0,
+      cap: stroke.Round,
+      offset: offset.Options(..offset.default_options(), join: offset.Round),
+    )
+  let assert Ok(first_stroke) =
+    stroke.subpath_dashed_with(
+      source,
+      options: first_options,
+      dash_options: stroke.default_dash_options(
+        pattern: [112.0, 48.0],
+        offset: 10.0,
+      ),
+    )
+  let second_options =
+    stroke.Options(
+      width: 6.0,
+      cap: stroke.Round,
+      offset: offset.Options(..offset.default_options(), join: offset.Round),
+    )
+  let assert Ok(second_paths) =
+    recursive_dash_outline_strokes(
+      svg_path.subpaths(first_stroke),
+      options: second_options,
+      accumulated: [],
+    )
+  let second_path =
+    second_paths
+    |> list.flat_map(svg_path.subpaths)
+    |> svg_path.Path
+
+  document(
+    list.flatten([
+      [
+        svg.Rectangle(
+          svg_path.point(8.0, 18.0),
+          714.0,
+          304.0,
+          "fill: #f8fafc; stroke: #cbd5e1; stroke-width: 1.4",
+        ),
+        svg.StyledPath(
+          first_stroke,
+          "fill: #fed7aa; stroke: #9a3412; stroke-width: 1.4; stroke-linejoin: round; opacity: 0.42",
+        ),
+        svg.StyledPath(
+          second_path,
+          "fill: #fee2e2; stroke: #7f1d1d; stroke-width: 1.7; stroke-linejoin: round",
+        ),
+      ],
+      [
+        svg.StyledPath(
+          svg_path.from_subpath(source),
+          "fill: none; stroke: #334155; stroke-width: 1.8; stroke-linecap: round; stroke-dasharray: 7 7; opacity: 0.75",
+        ),
+      ],
+      path_arrows(second_path, "#7f1d1d", 0.65),
+    ]),
+    width: 730.0,
+    height: 340.0,
+  )
+}
+
+fn recursive_dash_outline_strokes(
+  outlines: List(svg_path.Subpath),
+  options options: stroke.Options,
+  accumulated accumulated: List(svg_path.Path),
+) -> Result(List(svg_path.Path), stroke.Error) {
+  case outlines {
+    [] -> Ok(list.reverse(accumulated))
+    [outline, ..rest] -> {
+      case stroke.subpath_dashes(outline, pattern: [17.0, 9.0], offset: 3.0) {
+        Ok(dashes) -> {
+          use stroked <- result_try(
+            stroke_non_degenerate_dashes(dashes, options:, accumulated: []),
+          )
+          recursive_dash_outline_strokes(rest, options:, accumulated: [
+            svg_path.Path(stroked),
+            ..accumulated
+          ])
+        }
+        Error(_) -> recursive_dash_outline_strokes(rest, options:, accumulated:)
+      }
+    }
+  }
+}
+
+fn stroke_non_degenerate_dashes(
+  dashes: List(svg_path.Subpath),
+  options options: stroke.Options,
+  accumulated accumulated: List(svg_path.Subpath),
+) -> Result(List(svg_path.Subpath), stroke.Error) {
+  case dashes {
+    [] -> Ok(list.reverse(accumulated))
+    [dash, ..rest] -> {
+      case svg_path.subpath_length(dash) {
+        Ok(length) if length >. 0.1 -> {
+          case stroke.subpath_with(dash, options:) {
+            Ok(stroked) ->
+              stroke_non_degenerate_dashes(
+                rest,
+                options:,
+                accumulated: list.append(
+                  svg_path.subpaths(stroked),
+                  accumulated,
+                ),
+              )
+            Error(_) ->
+              stroke_non_degenerate_dashes(rest, options:, accumulated:)
+          }
+        }
+        _ -> stroke_non_degenerate_dashes(rest, options:, accumulated:)
+      }
+    }
+  }
+}
+
+fn nth_subpath(
+  subpaths: List(svg_path.Subpath),
+  index: Int,
+) -> svg_path.Subpath {
+  let assert [first, ..rest] = subpaths
+  case index <= 0 {
+    True -> first
+    False -> nth_subpath(rest, index - 1)
+  }
+}
+
+fn first_segment(subpath: svg_path.Subpath) -> svg_path.Segment {
+  let assert [first, ..] = svg_path.segments(subpath)
+  first
+}
+
+fn last_segment(subpath: svg_path.Subpath) -> svg_path.Segment {
+  let assert Ok(last) = list.last(svg_path.segments(subpath))
+  last
+}
+
+fn debug_round_start_cap(
+  source: svg_path.Subpath,
+  radius: Float,
+) -> Result(svg_path.Segment, svg_path.Error) {
+  let first = first_segment(source)
+  use tangent <- result_try(debug_unit_tangent(first, 0.0))
+  use start <- result_try(svg_path.start(source))
+  Ok(debug_round_cap(start, tangent, radius, at_end: False))
+}
+
+fn debug_round_end_cap(
+  source: svg_path.Subpath,
+  radius: Float,
+) -> Result(svg_path.Segment, svg_path.Error) {
+  let last = last_segment(source)
+  use tangent <- result_try(debug_unit_tangent(last, 1.0))
+  use end <- result_try(svg_path.end(source))
+  Ok(debug_round_cap(end, tangent, radius, at_end: True))
+}
+
+fn debug_round_cap(
+  center: svg_path.Point,
+  tangent: svg_path.Point,
+  radius: Float,
+  at_end at_end: Bool,
+) -> svg_path.Segment {
+  let normal = svg_path.point(tangent.y, 0.0 -. tangent.x)
+  let positive = add_points(center, scale_point(normal, radius))
+  let negative = add_points(center, scale_point(normal, 0.0 -. radius))
+  let start = case at_end {
+    True -> positive
+    False -> negative
+  }
+  let end = case at_end {
+    True -> negative
+    False -> positive
+  }
+  svg_path.Arc(
+    start:,
+    radius: svg_path.point(radius, radius),
+    x_axis_rotation: 0.0,
+    large_arc: False,
+    sweep: True,
+    end:,
+  )
+}
+
+fn debug_unit_tangent(
+  segment: svg_path.Segment,
+  t: Float,
+) -> Result(svg_path.Point, svg_path.Error) {
+  use derivative <- result_try(svg_path.segment_derivative(segment, at: t))
+  let length = vec2f.length(derivative)
+  case length >. 0.000001 {
+    True -> Ok(scale_point(derivative, 1.0 /. length))
+    False -> {
+      let chord =
+        subtract_points(
+          svg_path.segment_end(segment),
+          svg_path.segment_start(segment),
+        )
+      let length = vec2f.length(chord)
+      case length >. 0.000001 {
+        True -> Ok(scale_point(chord, 1.0 /. length))
+        False -> Error(svg_path.EmptySubpath)
+      }
+    }
+  }
+}
+
+fn debug_reverse_segments(
+  segments: List(svg_path.Segment),
+) -> List(svg_path.Segment) {
+  segments
+  |> list.reverse
+  |> list.map(svg_path.reverse_segment)
+}
+
+fn add_points(a: svg_path.Point, b: svg_path.Point) -> svg_path.Point {
+  svg_path.point(a.x +. b.x, a.y +. b.y)
+}
+
+fn subtract_points(a: svg_path.Point, b: svg_path.Point) -> svg_path.Point {
+  svg_path.point(a.x -. b.x, a.y -. b.y)
+}
+
+fn scale_point(point: svg_path.Point, factor: Float) -> svg_path.Point {
+  svg_path.point(point.x *. factor, point.y *. factor)
+}
+
+fn length_result_to_string(result: Result(Float, svg_path.Error)) -> String {
+  case result {
+    Ok(length) -> debug_float_to_string(length)
+    Error(_) -> "Error"
+  }
+}
+
+fn point_result_to_string(
+  result: Result(svg_path.Point, svg_path.Error),
+) -> String {
+  case result {
+    Ok(point) -> point_to_string(point)
+    Error(_) -> "Error"
+  }
+}
+
+fn point_to_string(point: svg_path.Point) -> String {
+  "("
+  <> debug_float_to_string(point.x)
+  <> ", "
+  <> debug_float_to_string(point.y)
+  <> ")"
+}
+
+fn derivative_length_result_to_string(
+  segment: svg_path.Segment,
+  t: Float,
+) -> String {
+  case svg_path.segment_derivative(segment, at: t) {
+    Ok(derivative) -> debug_float_to_string(vec2f.length(derivative))
+    Error(_) -> "Error"
+  }
+}
+
+fn cap_result_to_string(
+  result: Result(svg_path.Segment, svg_path.Error),
+) -> String {
+  case result {
+    Ok(cap) ->
+      "Ok(start="
+      <> point_to_string(svg_path.segment_start(cap))
+      <> ", end="
+      <> point_to_string(svg_path.segment_end(cap))
+      <> ")"
+    Error(_) -> "Error"
+  }
+}
+
+fn subpath_result_to_string(
+  result: Result(svg_path.Subpath, svg_path.Error),
+) -> String {
+  case result {
+    Ok(subpath) ->
+      "Ok(segments="
+      <> int.to_string(list.length(svg_path.segments(subpath)))
+      <> ", closed="
+      <> bool_to_string(svg_path.is_closed(subpath))
+      <> ", length="
+      <> length_result_to_string(svg_path.subpath_length(subpath))
+      <> ")"
+    Error(_) -> "Error"
+  }
+}
+
+fn offset_subpath_result_to_string(
+  result: Result(svg_path.Subpath, offset.Error),
+) -> String {
+  case result {
+    Ok(subpath) -> subpath_summary_to_string(subpath)
+    Error(error) -> offset_error_to_string(error)
+  }
+}
+
+fn inserted_join_diameters_to_string(
+  result: Result(svg_path.Subpath, offset.Error),
+) -> String {
+  case result {
+    Error(error) -> offset_error_to_string(error)
+    Ok(subpath) ->
+      inserted_join_diameters_loop(
+        svg_path.segments(subpath),
+        index: 0,
+        joins: [],
+      )
+  }
+}
+
+fn raw_offset_pair_report(
+  segments: List(svg_path.Segment),
+  distance distance: Float,
+  options options: offset.Options,
+) -> String {
+  let raw = raw_offset_segments(segments, distance:, options:, accumulated: [])
+  case raw {
+    [left, right, ..] -> {
+      let left_end = svg_path.segment_end(left)
+      let right_start = svg_path.segment_start(right)
+      "left_end="
+      <> point_to_string(left_end)
+      <> "; right_start="
+      <> point_to_string(right_start)
+      <> "; gap="
+      <> debug_float_to_string(vec2f.distance(left_end, with: right_start))
+      <> "; intersections="
+      <> segment_intersections_to_string(svg_path.segment_intersections(
+        left,
+        right,
+      ))
+    }
+    _ -> "not enough raw offset segments"
+  }
+}
+
+fn raw_offset_segments(
+  segments: List(svg_path.Segment),
+  distance distance: Float,
+  options options: offset.Options,
+  accumulated accumulated: List(svg_path.Segment),
+) -> List(svg_path.Segment) {
+  case segments {
+    [] -> list.reverse(accumulated)
+    [segment, ..rest] -> {
+      let next = case offset.segment_with(segment, distance:, options:) {
+        Ok(subpath) -> list.reverse(svg_path.segments(subpath))
+        Error(_) -> []
+      }
+      raw_offset_segments(
+        rest,
+        distance:,
+        options:,
+        accumulated: list.append(next, accumulated),
+      )
+    }
+  }
+}
+
+fn segment_intersections_to_string(
+  result: Result(List(svg_path.SegmentIntersection), svg_path.Error),
+) -> String {
+  case result {
+    Error(_) -> "Error"
+    Ok(intersections) ->
+      "count="
+      <> int.to_string(list.length(intersections))
+      <> "; "
+      <> segment_intersection_list_to_string(intersections, index: 0)
+  }
+}
+
+fn segment_intersection_list_to_string(
+  intersections: List(svg_path.SegmentIntersection),
+  index index: Int,
+) -> String {
+  case intersections {
+    [] -> ""
+    [first, ..rest] -> {
+      let svg_path.SegmentIntersection(left_t:, right_t:, point:) = first
+      int.to_string(index)
+      <> ": left_t="
+      <> debug_float_to_string(left_t)
+      <> ", right_t="
+      <> debug_float_to_string(right_t)
+      <> ", point="
+      <> point_to_string(point)
+      <> case rest {
+        [] -> ""
+        _ -> "; "
+      }
+      <> segment_intersection_list_to_string(rest, index: index + 1)
+    }
+  }
+}
+
+fn inserted_join_diameters_loop(
+  segments: List(svg_path.Segment),
+  index index: Int,
+  joins joins: List(String),
+) -> String {
+  case segments {
+    [] -> {
+      let joins = list.reverse(joins)
+      "count="
+      <> int.to_string(list.length(joins))
+      <> "; "
+      <> string.join(joins, "; ")
+    }
+    [segment, ..rest] -> {
+      let joins = case segment {
+        svg_path.Arc(..) -> [
+          "segment "
+            <> int.to_string(index)
+            <> " bbox_diameter="
+            <> segment_bounding_box_diameter_to_string(segment)
+            <> " chord="
+            <> debug_float_to_string(vec2f.distance(
+            svg_path.segment_start(segment),
+            with: svg_path.segment_end(segment),
+          )),
+          ..joins
+        ]
+        _ -> joins
+      }
+      inserted_join_diameters_loop(rest, index: index + 1, joins:)
+    }
+  }
+}
+
+fn segment_bounding_box_diameter_to_string(
+  segment: svg_path.Segment,
+) -> String {
+  case svg_path.segment_bounding_box(segment) {
+    Ok(box) -> debug_float_to_string(svg_path.bounding_box_diameter(box))
+    Error(_) -> "Error"
+  }
+}
+
+fn individual_offset_piece_counts_to_string(
+  segments: List(svg_path.Segment),
+  distance distance: Float,
+  options options: offset.Options,
+) -> String {
+  let counts =
+    individual_offset_piece_counts(segments, distance:, options:, counts: [])
+  "counts="
+  <> string.join(counts, ",")
+  <> "; total="
+  <> int.to_string(sum_strings_as_ints(counts, total: 0))
+}
+
+fn individual_offset_piece_counts(
+  segments: List(svg_path.Segment),
+  distance distance: Float,
+  options options: offset.Options,
+  counts counts: List(String),
+) -> List(String) {
+  case segments {
+    [] -> list.reverse(counts)
+    [segment, ..rest] -> {
+      let count = case offset.segment_with(segment, distance:, options:) {
+        Ok(offset) -> int.to_string(list.length(svg_path.segments(offset)))
+        Error(_) -> "Error"
+      }
+      individual_offset_piece_counts(rest, distance:, options:, counts: [
+        count,
+        ..counts
+      ])
+    }
+  }
+}
+
+fn sum_strings_as_ints(strings: List(String), total total: Int) -> Int {
+  case strings {
+    [] -> total
+    [first, ..rest] -> {
+      let value = case first {
+        "0" -> 0
+        "1" -> 1
+        "2" -> 2
+        "3" -> 3
+        "4" -> 4
+        "5" -> 5
+        _ -> 0
+      }
+      sum_strings_as_ints(rest, total: total + value)
+    }
+  }
+}
+
+fn subpath_summary_to_string(subpath: svg_path.Subpath) -> String {
+  "Ok(segments="
+  <> int.to_string(list.length(svg_path.segments(subpath)))
+  <> ", closed="
+  <> bool_to_string(svg_path.is_closed(subpath))
+  <> ", length="
+  <> length_result_to_string(svg_path.subpath_length(subpath))
+  <> ")"
+}
+
+fn offset_error_to_string(error: offset.Error) -> String {
+  case error {
+    offset.DegenerateTangent(t) ->
+      "DegenerateTangent(" <> debug_float_to_string(t) <> ")"
+    _ -> "OffsetError"
+  }
+}
+
+fn self_intersections_result_to_string(
+  result: Result(svg_path.Subpath, svg_path.Error),
+) -> String {
+  case result {
+    Error(_) -> "not computed"
+    Ok(subpath) -> {
+      case
+        svg_path.subpath_self_intersections_with(
+          subpath,
+          options: svg_path.default_self_intersection_options(),
+        )
+      {
+        Ok(intersections) -> int.to_string(list.length(intersections))
+        Error(_) -> "Error"
+      }
+    }
+  }
+}
+
+fn self_intersection_points_result_to_string(
+  result: Result(svg_path.Subpath, svg_path.Error),
+) -> String {
+  case result {
+    Error(_) -> "candidate self intersection points: not computed"
+    Ok(subpath) -> {
+      case
+        svg_path.subpath_self_intersections_with(
+          subpath,
+          options: svg_path.default_self_intersection_options(),
+        )
+      {
+        Ok(intersections) ->
+          "candidate self intersection points:\n"
+          <> self_intersection_points_to_string(intersections, index: 0)
+        Error(_) -> "candidate self intersection points: Error"
+      }
+    }
+  }
+}
+
+fn self_intersection_points_to_string(
+  intersections: List(svg_path.SubpathSelfIntersection),
+  index index: Int,
+) -> String {
+  case intersections {
+    [] -> ""
+    [intersection, ..rest] -> {
+      let svg_path.SubpathSelfIntersection(point:, ..) = intersection
+      "  "
+      <> int.to_string(index)
+      <> ": "
+      <> point_to_string(point)
+      <> "\n"
+      <> self_intersection_points_to_string(rest, index: index + 1)
+    }
+  }
+}
+
+fn stroke_result_to_string(
+  result: Result(svg_path.Path, stroke.Error),
+) -> String {
+  case result {
+    Ok(path) ->
+      "Ok(subpaths="
+      <> int.to_string(list.length(svg_path.subpaths(path)))
+      <> ")"
+    Error(error) -> stroke_error_name(error)
+  }
+}
+
+fn bool_to_string(value: Bool) -> String {
+  case value {
+    True -> "True"
+    False -> "False"
+  }
+}
+
+fn debug_float_to_string(value: Float) -> String {
+  number_format.number(
+    value,
+    with: number_format.prepare(
+      number_format.Options(
+        left_decimals: number_format.Succinct,
+        right_decimals: number_format.AtMost(12),
+      ),
+      [value],
+    ),
+  )
+}
+
+fn stroke_error_name(error: stroke.Error) -> String {
+  case error {
+    stroke.OffsetError(offset.DegenerateTangent(t)) ->
+      "OffsetError(DegenerateTangent(" <> debug_float_to_string(t) <> "))"
+    stroke.OffsetError(_) -> "OffsetError(...)"
+    stroke.PathError(_) -> "PathError(...)"
+    stroke.InvalidWidth(_) -> "InvalidWidth"
+    stroke.InvalidDashLength(_) -> "InvalidDashLength"
+    stroke.InvalidDashOffset(_) -> "InvalidDashOffset"
+  }
 }
 
 fn figure_eight_band() -> String {
@@ -568,6 +1313,23 @@ fn dash_source() -> svg_path.Subpath {
       control1: svg_path.point(194.0, -52.0),
       control2: svg_path.point(218.0, 70.0),
       end: svg_path.point(188.0, 42.0),
+    ),
+  ])
+}
+
+fn recursive_dash_source() -> svg_path.Subpath {
+  svg_path.assert_subpath([
+    svg_path.CubicBezier(
+      start: svg_path.point(0.0, 34.0),
+      control1: svg_path.point(88.0, -112.0),
+      control2: svg_path.point(180.0, 146.0),
+      end: svg_path.point(270.0, 10.0),
+    ),
+    svg_path.CubicBezier(
+      start: svg_path.point(270.0, 10.0),
+      control1: svg_path.point(344.0, -98.0),
+      control2: svg_path.point(418.0, 138.0),
+      end: svg_path.point(520.0, 22.0),
     ),
   ])
 }
