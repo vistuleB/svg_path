@@ -2,13 +2,31 @@
 
 ## Wishlist
 
-- Path offsets.
-- Path stroking, including dash arrays, caps, joins, and SVG stroke semantics.
+- Dash-array stroking.
 - Marker and decoration placement as geometry.
 - Stroke hit testing.
-- Path normalization or canonicalization pipelines.
-- Structural simplification, not smoothing.
-- Orientation and topology helpers.
+- More complete SVG stroke semantics, if the current stroke/offset split proves
+  incomplete in real examples.
+- Structural simplification, not smoothing:
+  - remove internal contours on request,
+  - merge obvious adjacent collinear lines,
+  - drop or preserve degenerate pieces according to an explicit policy.
+- Path normalization or canonicalization helpers, only once concrete repeated
+  cleanup patterns emerge.
+- Possible `intersection` module extraction for `v1.0.0`, while keeping
+  `svg_path` as the large convenience module.
+- Further orientation and topology helpers if actual caller needs appear.
+
+Recently completed:
+
+- Path offsets, including trimmed and untrimmed variants.
+- Path bands, including asymmetric and untrimmed variants.
+- Plain path stroking with caps and joins.
+- Area helpers for fill-rule area, absolute winding area, signed area, and
+  subpath clockwiseness.
+- Cut helpers for splitting subjects by cutter intersections.
+- Intersection parameter canonicalization.
+- Public gallery seed file and generated candidate figures.
 
 Ongoing pruning principles:
 
