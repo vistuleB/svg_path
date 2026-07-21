@@ -262,6 +262,35 @@ pub fn fit_cubic_with_endpoint_tangents(
   Ok(#(curve, error))
 }
 
+/// Fit a cubic with fixed endpoints and no tangent constraints.
+///
+/// The fitted cubic has exactly the provided `start` and `end`. Its two control
+/// points are chosen by least squares against the provided `(t, point)` samples.
+/// Samples are allowed at any `t`, but endpoint samples do not add control
+/// point information.
+pub fn fit_cubic_with_endpoints(
+  start start: Point,
+  end end: Point,
+  samples samples: List(#(Float, Point)),
+) -> Result(#(BezierData, CubicFitError), Error) {
+  use controls <- result.try(cubic_endpoint_fit_normal_equations(
+    samples,
+    start:,
+    end:,
+    ata00: 0.0,
+    ata01: 0.0,
+    ata11: 0.0,
+    atb0: Point(0.0, 0.0),
+    atb1: Point(0.0, 0.0),
+    count: 0,
+  ))
+  let #(control1, control2) = controls
+  let curve = CubicBezierData(start:, control1:, control2:, end:)
+  let error = cubic_fit_error(samples, curve)
+
+  Ok(#(curve, error))
+}
+
 /// Split a Bezier curve at parameter `t`.
 ///
 /// `t` is not clamped. Values outside `0.0..1.0` extrapolate along the same
@@ -558,6 +587,75 @@ fn solve_cubic_fit_equations(
           Ok(#(
             { atb0 *. ata11 -. atb1 *. ata01 } /. determinant,
             { ata00 *. atb1 -. ata01 *. atb0 } /. determinant,
+          ))
+      }
+    }
+  }
+}
+
+fn cubic_endpoint_fit_normal_equations(
+  samples: List(#(Float, Point)),
+  start start: Point,
+  end end: Point,
+  ata00 ata00: Float,
+  ata01 ata01: Float,
+  ata11 ata11: Float,
+  atb0 atb0: Point,
+  atb1 atb1: Point,
+  count count: Int,
+) -> Result(#(Point, Point), Error) {
+  case samples {
+    [] ->
+      solve_cubic_endpoint_fit_equations(ata00, ata01, ata11, atb0, atb1, count)
+    [sample, ..rest] -> {
+      let #(t, point) = sample
+      let one_minus_t = 1.0 -. t
+      let start_basis = one_minus_t *. one_minus_t *. one_minus_t
+      let control1_basis = 3.0 *. one_minus_t *. one_minus_t *. t
+      let control2_basis = 3.0 *. one_minus_t *. t *. t
+      let end_basis = t *. t *. t
+      let fixed_point = add(scale(start, start_basis), scale(end, end_basis))
+      let target = difference(point, fixed_point)
+
+      cubic_endpoint_fit_normal_equations(
+        rest,
+        start:,
+        end:,
+        ata00: ata00 +. control1_basis *. control1_basis,
+        ata01: ata01 +. control1_basis *. control2_basis,
+        ata11: ata11 +. control2_basis *. control2_basis,
+        atb0: add(atb0, scale(target, control1_basis)),
+        atb1: add(atb1, scale(target, control2_basis)),
+        count: count + 1,
+      )
+    }
+  }
+}
+
+fn solve_cubic_endpoint_fit_equations(
+  ata00: Float,
+  ata01: Float,
+  ata11: Float,
+  atb0: Point,
+  atb1: Point,
+  count: Int,
+) -> Result(#(Point, Point), Error) {
+  case count == 0 {
+    True -> Error(UnderdeterminedCubicFit)
+    False -> {
+      let determinant = ata00 *. ata11 -. ata01 *. ata01
+      case float.absolute_value(determinant) <=. root_tolerance {
+        True -> Error(UnderdeterminedCubicFit)
+        False ->
+          Ok(#(
+            scale(
+              difference(scale(atb0, ata11), scale(atb1, ata01)),
+              1.0 /. determinant,
+            ),
+            scale(
+              difference(scale(atb1, ata00), scale(atb0, ata01)),
+              1.0 /. determinant,
+            ),
           ))
       }
     }

@@ -48,6 +48,8 @@ const tangent_epsilon = 0.000001
 
 const point_tolerance = 0.000000001
 
+const tangent_heal_angle_degrees = 0.01
+
 /// Errors returned by offset helpers.
 pub type Error {
   /// An underlying path operation failed.
@@ -118,6 +120,11 @@ type OffsetSegment {
   OffsetSegment(source: svg_path.Segment, offset: List(svg_path.Segment))
 }
 
+type OffsetPieceBuilder {
+  RecursiveOffsetPieceBuilder
+  SmartRecursiveOffsetPieceBuilder
+}
+
 type SplitParameter {
   SplitParameter(t: Float, cut: Bool)
 }
@@ -171,10 +178,11 @@ pub fn segment_with(
     }
     _ -> {
       use pieces <- result.try(
-        offset_cubic_segments(
+        offset_cubic_segments_with_builder(
           svg_path.segment_to_cubic_beziers(segment),
           distance,
           options,
+          RecursiveOffsetPieceBuilder,
           converted: [],
         ),
       )
@@ -707,7 +715,13 @@ fn parametric_provisional_subpath(
     }
     segments -> {
       use offset_segments <- result.try(
-        offset_subpath_segments(segments, distance, options, converted: []),
+        offset_subpath_segments(
+          segments,
+          distance,
+          options,
+          closed: svg_path.is_closed(subpath),
+          converted: [],
+        ),
       )
       use output_segments <- result.try(parametric_joined_offset_segments(
         offset_segments,
@@ -2830,17 +2844,273 @@ fn offset_subpath_segments(
   segments: List(svg_path.Segment),
   distance: Float,
   options: Options,
+  closed closed: Bool,
   converted converted: List(OffsetSegment),
 ) -> Result(List(OffsetSegment), Error) {
   case segments {
-    [] -> Ok(list.reverse(converted))
+    [] ->
+      heal_offset_boundaries(list.reverse(converted), distance, closed: closed)
     [first, ..rest] -> {
       use offset <- result.try(segment_with(first, distance:, options:))
-      offset_subpath_segments(rest, distance, options, converted: [
+      offset_subpath_segments(rest, distance, options, closed:, converted: [
         OffsetSegment(source: first, offset: svg_path.segments(offset)),
         ..converted
       ])
     }
+  }
+}
+
+fn heal_offset_boundaries(
+  offsets: List(OffsetSegment),
+  distance: Float,
+  closed closed: Bool,
+) -> Result(List(OffsetSegment), Error) {
+  use healed <- result.try(heal_adjacent_offset_boundaries(offsets, distance))
+  case closed {
+    False -> Ok(healed)
+    True -> heal_wrapping_offset_boundary(healed, distance)
+  }
+}
+
+fn heal_adjacent_offset_boundaries(
+  offsets: List(OffsetSegment),
+  distance: Float,
+) -> Result(List(OffsetSegment), Error) {
+  case offsets {
+    [] | [_] -> Ok(offsets)
+    [first, second, ..rest] -> {
+      use #(first, second) <- result.try(heal_offset_boundary(
+        first,
+        second,
+        distance,
+      ))
+      heal_adjacent_offset_boundaries_loop(second, rest, distance, healed: [
+        first,
+      ])
+    }
+  }
+}
+
+fn heal_adjacent_offset_boundaries_loop(
+  previous: OffsetSegment,
+  rest: List(OffsetSegment),
+  distance: Float,
+  healed healed: List(OffsetSegment),
+) -> Result(List(OffsetSegment), Error) {
+  case rest {
+    [] -> Ok(list.reverse([previous, ..healed]))
+    [next, ..remaining] -> {
+      use #(previous, next) <- result.try(heal_offset_boundary(
+        previous,
+        next,
+        distance,
+      ))
+      heal_adjacent_offset_boundaries_loop(next, remaining, distance, healed: [
+        previous,
+        ..healed
+      ])
+    }
+  }
+}
+
+fn heal_wrapping_offset_boundary(
+  offsets: List(OffsetSegment),
+  distance: Float,
+) -> Result(List(OffsetSegment), Error) {
+  case offsets {
+    [] | [_] -> Ok(offsets)
+    [first, ..rest] -> {
+      use last <- result.try(last_list_item(rest))
+      use #(last, first) <- result.try(heal_offset_boundary(
+        last,
+        first,
+        distance,
+      ))
+      Ok([first, ..replace_last_offset(rest, last)])
+    }
+  }
+}
+
+fn heal_offset_boundary(
+  left: OffsetSegment,
+  right: OffsetSegment,
+  distance: Float,
+) -> Result(#(OffsetSegment, OffsetSegment), Error) {
+  case shared_boundary_tangent(left.source, right.source) {
+    Error(_) -> Ok(#(left, right))
+    Ok(tangent) -> {
+      let corner = svg_path.segment_end(left.source)
+      let point = add(corner, scale(rotate_clockwise(tangent), distance))
+      let left = snap_offset_end_to_boundary(left, point, tangent)
+      let right = snap_offset_start_to_boundary(right, point, tangent)
+      Ok(#(left, right))
+    }
+  }
+}
+
+fn shared_boundary_tangent(
+  left: svg_path.Segment,
+  right: svg_path.Segment,
+) -> Result(svg_path.Point, Error) {
+  use left_tangent <- result.try(unit_tangent(left, t: 1.0))
+  use right_tangent <- result.try(unit_tangent(right, t: 0.0))
+  let angle = float.absolute_value(signed_angle(left_tangent, right_tangent))
+  case angle <=. tangent_heal_angle_degrees {
+    False -> Error(NonFinite)
+    True -> unit_vector(add(left_tangent, right_tangent), t: 1.0)
+  }
+}
+
+fn snap_offset_end_to_boundary(
+  offset: OffsetSegment,
+  point: svg_path.Point,
+  tangent: svg_path.Point,
+) -> OffsetSegment {
+  OffsetSegment(
+    source: offset.source,
+    offset: replace_last_offset_segment(
+      offset.offset,
+      point,
+      tangent,
+      at_end: True,
+    ),
+  )
+}
+
+fn snap_offset_start_to_boundary(
+  offset: OffsetSegment,
+  point: svg_path.Point,
+  tangent: svg_path.Point,
+) -> OffsetSegment {
+  OffsetSegment(
+    source: offset.source,
+    offset: replace_first_offset_segment(
+      offset.offset,
+      point,
+      tangent,
+      at_end: False,
+    ),
+  )
+}
+
+fn replace_first_offset_segment(
+  segments: List(svg_path.Segment),
+  point: svg_path.Point,
+  tangent: svg_path.Point,
+  at_end at_end: Bool,
+) -> List(svg_path.Segment) {
+  case segments {
+    [] -> []
+    [first, ..rest] -> [
+      snap_offset_segment_boundary(first, point, tangent, at_end:),
+      ..rest
+    ]
+  }
+}
+
+fn replace_last_offset_segment(
+  segments: List(svg_path.Segment),
+  point: svg_path.Point,
+  tangent: svg_path.Point,
+  at_end at_end: Bool,
+) -> List(svg_path.Segment) {
+  case segments {
+    [] -> []
+    [only] -> [snap_offset_segment_boundary(only, point, tangent, at_end:)]
+    [first, ..rest] -> [
+      first,
+      ..replace_last_offset_segment(rest, point, tangent, at_end:)
+    ]
+  }
+}
+
+fn snap_offset_segment_boundary(
+  segment: svg_path.Segment,
+  point: svg_path.Point,
+  tangent: svg_path.Point,
+  at_end at_end: Bool,
+) -> svg_path.Segment {
+  case at_end {
+    True -> snap_offset_segment_end(segment, point, tangent)
+    False -> snap_offset_segment_start(segment, point, tangent)
+  }
+}
+
+fn snap_offset_segment_start(
+  segment: svg_path.Segment,
+  start: svg_path.Point,
+  tangent: svg_path.Point,
+) -> svg_path.Segment {
+  case segment {
+    svg_path.Line(end:, ..) -> svg_path.Line(start:, end:)
+    svg_path.QuadraticBezier(control:, end:, ..) -> {
+      let handle =
+        vec2f.distance(control, with: svg_path.segment_start(segment))
+      svg_path.QuadraticBezier(
+        start:,
+        control: add(start, scale(tangent, handle)),
+        end:,
+      )
+    }
+    svg_path.CubicBezier(control1:, control2:, end:, ..) -> {
+      let handle =
+        vec2f.distance(control1, with: svg_path.segment_start(segment))
+      svg_path.CubicBezier(
+        start:,
+        control1: add(start, scale(tangent, handle)),
+        control2:,
+        end:,
+      )
+    }
+    svg_path.Arc(radius:, x_axis_rotation:, large_arc:, sweep:, end:, ..) ->
+      svg_path.Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:)
+  }
+}
+
+fn snap_offset_segment_end(
+  segment: svg_path.Segment,
+  end: svg_path.Point,
+  tangent: svg_path.Point,
+) -> svg_path.Segment {
+  case segment {
+    svg_path.Line(start:, ..) -> svg_path.Line(start:, end:)
+    svg_path.QuadraticBezier(start:, control:, ..) -> {
+      let handle = vec2f.distance(control, with: svg_path.segment_end(segment))
+      svg_path.QuadraticBezier(
+        start:,
+        control: subtract(end, scale(tangent, handle)),
+        end:,
+      )
+    }
+    svg_path.CubicBezier(start:, control1:, control2:, ..) -> {
+      let handle = vec2f.distance(control2, with: svg_path.segment_end(segment))
+      svg_path.CubicBezier(
+        start:,
+        control1:,
+        control2: subtract(end, scale(tangent, handle)),
+        end:,
+      )
+    }
+    svg_path.Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, ..) ->
+      svg_path.Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:)
+  }
+}
+
+fn last_list_item(items: List(a)) -> Result(a, Error) {
+  case list.last(items) {
+    Ok(item) -> Ok(item)
+    Error(_) -> Error(NonFinite)
+  }
+}
+
+fn replace_last_offset(
+  offsets: List(OffsetSegment),
+  replacement: OffsetSegment,
+) -> List(OffsetSegment) {
+  case offsets {
+    [] -> []
+    [_] -> [replacement]
+    [first, ..rest] -> [first, ..replace_last_offset(rest, replacement)]
   }
 }
 
@@ -2958,40 +3228,58 @@ fn line_segments_between(
   }
 }
 
-fn offset_cubic_segments(
+fn offset_cubic_segments_with_builder(
   segments: List(svg_path.Segment),
   distance: Float,
   options: Options,
+  builder: OffsetPieceBuilder,
   converted converted: List(svg_path.Segment),
 ) -> Result(List(svg_path.Segment), Error) {
   case segments {
     [] -> Ok(list.reverse(converted))
     [first, ..rest] -> {
-      use offset <- result.try(offset_cubic_segment(first, distance, options))
-      offset_cubic_segments(
+      use offset <- result.try(offset_cubic_segment_with_builder(
+        first,
+        distance,
+        options,
+        builder,
+      ))
+      offset_cubic_segments_with_builder(
         rest,
         distance,
         options,
+        builder,
         converted: list.append(list.reverse(offset), converted),
       )
     }
   }
 }
 
-fn offset_cubic_segment(
+fn offset_cubic_segment_with_builder(
   segment: svg_path.Segment,
   distance: Float,
   options: Options,
+  builder: OffsetPieceBuilder,
 ) -> Result(List(svg_path.Segment), Error) {
-  offset_cubic_segment_loop(
-    segment,
-    distance,
-    options,
-    depth: options.max_depth,
-  )
+  case builder {
+    RecursiveOffsetPieceBuilder ->
+      recursive_offset_cubic_segment(
+        segment,
+        distance,
+        options,
+        depth: options.max_depth,
+      )
+    SmartRecursiveOffsetPieceBuilder ->
+      smart_recursive_offset_cubic_segment(
+        segment,
+        distance,
+        options,
+        depth: options.max_depth,
+      )
+  }
 }
 
-fn offset_cubic_segment_loop(
+fn recursive_offset_cubic_segment(
   segment: svg_path.Segment,
   distance: Float,
   options: Options,
@@ -3016,13 +3304,56 @@ fn offset_cubic_segment_loop(
             |> result.map_error(PathError),
           )
           let #(left, right) = split
-          use left_offset <- result.try(offset_cubic_segment_loop(
+          use left_offset <- result.try(recursive_offset_cubic_segment(
             left,
             distance,
             options,
             depth: depth - 1,
           ))
-          use right_offset <- result.try(offset_cubic_segment_loop(
+          use right_offset <- result.try(recursive_offset_cubic_segment(
+            right,
+            distance,
+            options,
+            depth: depth - 1,
+          ))
+          Ok(list.append(left_offset, right_offset))
+        }
+      }
+  }
+}
+
+fn smart_recursive_offset_cubic_segment(
+  segment: svg_path.Segment,
+  distance: Float,
+  options: Options,
+  depth depth: Int,
+) -> Result(List(svg_path.Segment), Error) {
+  use candidate <- result.try(smart_fitted_cubic_offset(segment, distance))
+  use divergence <- result.try(smart_offset_divergence(
+    segment,
+    candidate,
+    distance,
+    options,
+  ))
+
+  case divergence <=. options.tolerance {
+    True -> Ok([candidate])
+    False ->
+      case depth <= 0 {
+        True -> Error(MaxDepthReached(divergence))
+        False -> {
+          use split <- result.try(
+            svg_path.split_segment(segment, at: 0.5)
+            |> result.map_error(PathError),
+          )
+          let #(left, right) = split
+          use left_offset <- result.try(smart_recursive_offset_cubic_segment(
+            left,
+            distance,
+            options,
+            depth: depth - 1,
+          ))
+          use right_offset <- result.try(smart_recursive_offset_cubic_segment(
             right,
             distance,
             options,
@@ -3040,28 +3371,103 @@ fn fitted_cubic_offset(
 ) -> Result(svg_path.Segment, Error) {
   use start <- result.try(offset_point(segment, t: 0.0, distance:))
   use end <- result.try(offset_point(segment, t: 1.0, distance:))
-  use start_tangent <- result.try(offset_derivative(segment, t: 0.0, distance:))
-  use end_tangent <- result.try(offset_derivative(segment, t: 1.0, distance:))
   use samples <- result.try(
     offset_fit_samples(segment, distance, [0.25, 0.5, 0.75], samples: []),
   )
-  use fit <- result.try(
-    bezier.fit_cubic_with_endpoint_tangents(
-      start: to_bezier_point(start),
-      end: to_bezier_point(end),
-      start_tangent: to_bezier_point(start_tangent),
-      end_tangent: to_bezier_point(end_tangent),
-      samples:,
-    )
-    |> result.map_error(cubic_fit_error),
-  )
-  let #(curve, _) = fit
+  use curve <- result.try(fit_cubic_offset_curve(
+    segment,
+    distance,
+    start:,
+    end:,
+    samples:,
+  ))
   use candidate <- result.try(fitted_curve_to_segment(curve))
 
   case segment_is_finite(candidate) {
     True -> Ok(candidate)
     False -> Error(NonFinite)
   }
+}
+
+fn smart_fitted_cubic_offset(
+  segment: svg_path.Segment,
+  distance: Float,
+) -> Result(svg_path.Segment, Error) {
+  use start <- result.try(offset_point(segment, t: 0.0, distance:))
+  use end <- result.try(offset_point(segment, t: 1.0, distance:))
+  let samples =
+    available_offset_fit_samples(
+      segment,
+      distance,
+      [0.2, 0.35, 0.5, 0.65, 0.8],
+      samples: [],
+    )
+  use curve <- result.try(fit_cubic_offset_curve(
+    segment,
+    distance,
+    start:,
+    end:,
+    samples:,
+  ))
+  use candidate <- result.try(fitted_curve_to_segment(curve))
+
+  case segment_is_finite(candidate) {
+    True -> Ok(candidate)
+    False -> Error(NonFinite)
+  }
+}
+
+fn fit_cubic_offset_curve(
+  segment: svg_path.Segment,
+  distance: Float,
+  start start: svg_path.Point,
+  end end: svg_path.Point,
+  samples samples: List(#(Float, bezier.Point)),
+) -> Result(bezier.BezierData, Error) {
+  case
+    offset_derivative(segment, t: 0.0, distance:),
+    offset_derivative(segment, t: 1.0, distance:)
+  {
+    Ok(start_tangent), Ok(end_tangent) -> {
+      case
+        bezier.fit_cubic_with_endpoint_tangents(
+          start: to_bezier_point(start),
+          end: to_bezier_point(end),
+          start_tangent: to_bezier_point(start_tangent),
+          end_tangent: to_bezier_point(end_tangent),
+          samples:,
+        )
+        |> result.map_error(cubic_fit_error)
+      {
+        Ok(#(curve, _)) -> Ok(curve)
+        Error(DegenerateTangent(_)) ->
+          fit_cubic_offset_curve_from_points(start:, end:, samples:)
+        Error(error) -> Error(error)
+      }
+    }
+    Error(DegenerateTangent(_)), _ ->
+      fit_cubic_offset_curve_from_points(start:, end:, samples:)
+    _, Error(DegenerateTangent(_)) ->
+      fit_cubic_offset_curve_from_points(start:, end:, samples:)
+    _, _ -> fit_cubic_offset_curve_from_points(start:, end:, samples:)
+  }
+}
+
+fn fit_cubic_offset_curve_from_points(
+  start start: svg_path.Point,
+  end end: svg_path.Point,
+  samples samples: List(#(Float, bezier.Point)),
+) -> Result(bezier.BezierData, Error) {
+  use fit <- result.try(
+    bezier.fit_cubic_with_endpoints(
+      start: to_bezier_point(start),
+      end: to_bezier_point(end),
+      samples:,
+    )
+    |> result.map_error(cubic_fit_error),
+  )
+  let #(curve, _) = fit
+  Ok(curve)
 }
 
 fn offset_fit_samples(
@@ -3078,6 +3484,25 @@ fn offset_fit_samples(
         #(t, to_bezier_point(point)),
         ..samples
       ])
+    }
+  }
+}
+
+fn available_offset_fit_samples(
+  segment: svg_path.Segment,
+  distance: Float,
+  t_values: List(Float),
+  samples samples: List(#(Float, bezier.Point)),
+) -> List(#(Float, bezier.Point)) {
+  case t_values {
+    [] -> list.reverse(samples)
+    [t, ..rest] -> {
+      let samples = case offset_point(segment, t:, distance:) {
+        Ok(point) -> [#(t, to_bezier_point(point)), ..samples]
+        Error(DegenerateTangent(_)) -> samples
+        Error(_) -> samples
+      }
+      available_offset_fit_samples(segment, distance, rest, samples:)
     }
   }
 }
@@ -3226,6 +3651,81 @@ fn offset_divergence_loop(
   }
 }
 
+fn smart_offset_divergence(
+  source: svg_path.Segment,
+  candidate: svg_path.Segment,
+  distance: Float,
+  options: Options,
+) -> Result(Float, Error) {
+  smart_offset_divergence_loop(
+    source,
+    candidate,
+    distance,
+    options,
+    sample: 1,
+    best: 0.0,
+    valid_samples: 0,
+  )
+}
+
+fn smart_offset_divergence_loop(
+  source: svg_path.Segment,
+  candidate: svg_path.Segment,
+  distance: Float,
+  options: Options,
+  sample sample: Int,
+  best best: Float,
+  valid_samples valid_samples: Int,
+) -> Result(Float, Error) {
+  case sample > options.samples {
+    True ->
+      case valid_samples == 0 {
+        True -> Error(DegenerateTangent(0.5))
+        False -> Ok(best)
+      }
+    False -> {
+      let t = int_to_float(sample) /. int_to_float(options.samples + 1)
+      case offset_point(source, t:, distance:) {
+        Error(DegenerateTangent(_)) ->
+          smart_offset_divergence_loop(
+            source,
+            candidate,
+            distance,
+            options,
+            sample: sample + 1,
+            best:,
+            valid_samples:,
+          )
+        Error(error) -> Error(error)
+        Ok(point) -> {
+          use projection <- result.try(
+            svg_path.segment_projection_with(
+              point,
+              to: candidate,
+              options: options.distance,
+            )
+            |> result.map_error(PathError),
+          )
+          let best = float.max(best, projection.distance)
+          case best >. options.tolerance {
+            True -> Ok(best)
+            False ->
+              smart_offset_divergence_loop(
+                source,
+                candidate,
+                distance,
+                options,
+                sample: sample + 1,
+                best:,
+                valid_samples: valid_samples + 1,
+              )
+          }
+        }
+      }
+    }
+  }
+}
+
 fn unit_normal(
   segment: svg_path.Segment,
   t t: Float,
@@ -3287,6 +3787,14 @@ fn length(point: svg_path.Point, t t: Float) -> Result(Float, Error) {
     True -> Ok(length)
     False -> Error(DegenerateTangent(t))
   }
+}
+
+fn unit_vector(
+  point: svg_path.Point,
+  t t: Float,
+) -> Result(svg_path.Point, Error) {
+  use length <- result.try(length(point, t:))
+  Ok(scale(point, 1.0 /. length))
 }
 
 fn rotate_clockwise(point: svg_path.Point) -> svg_path.Point {

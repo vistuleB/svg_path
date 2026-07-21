@@ -245,6 +245,79 @@ pub fn fit_cubic_with_endpoint_tangents_rejects_underdetermined_samples_test() {
     )
 }
 
+pub fn fit_cubic_with_endpoints_recovers_exact_cubic_test() {
+  let original =
+    bezier.CubicBezierData(
+      start: bezier.Point(0.0, 0.0),
+      control1: bezier.Point(35.0, 65.0),
+      control2: bezier.Point(90.0, -35.0),
+      end: bezier.Point(130.0, 25.0),
+    )
+  let assert Ok(#(fit, error)) =
+    bezier.fit_cubic_with_endpoints(
+      start: bezier.bezier_start(original),
+      end: bezier.bezier_end(original),
+      samples: [
+        #(0.25, bezier.bezier_point(original, at: 0.25)),
+        #(0.5, bezier.bezier_point(original, at: 0.5)),
+        #(0.75, bezier.bezier_point(original, at: 0.75)),
+      ],
+    )
+  let assert bezier.CubicBezierData(start:, control1:, control2:, end:) = fit
+  let bezier.CubicBezierData(
+    start: original_start,
+    control1: original_control1,
+    control2: original_control2,
+    end: original_end,
+  ) = original
+  let bezier.CubicFitError(root_sum_square:, root_mean_square:, max:) = error
+
+  assert point_near(start, original_start)
+  assert point_near(control1, original_control1)
+  assert point_near(control2, original_control2)
+  assert point_near(end, original_end)
+  assert near(root_sum_square, 0.0)
+  assert near(root_mean_square, 0.0)
+  assert near(max, 0.0)
+}
+
+pub fn fit_cubic_with_endpoints_fits_noisy_samples_test() {
+  let original =
+    bezier.CubicBezierData(
+      start: bezier.Point(0.0, 0.0),
+      control1: bezier.Point(10.0, 30.0),
+      control2: bezier.Point(80.0, -10.0),
+      end: bezier.Point(100.0, 0.0),
+    )
+  let assert Ok(#(fit, error)) =
+    bezier.fit_cubic_with_endpoints(
+      start: bezier.bezier_start(original),
+      end: bezier.bezier_end(original),
+      samples: [
+        #(0.2, add_point(bezier.bezier_point(original, at: 0.2), 1.0, -2.0)),
+        #(0.4, add_point(bezier.bezier_point(original, at: 0.4), -1.0, 1.0)),
+        #(0.7, add_point(bezier.bezier_point(original, at: 0.7), 2.0, 1.0)),
+        #(0.9, add_point(bezier.bezier_point(original, at: 0.9), -1.0, -1.0)),
+      ],
+    )
+  let bezier.CubicFitError(root_sum_square:, root_mean_square:, max:) = error
+
+  assert point_near(bezier.bezier_start(fit), bezier.bezier_start(original))
+  assert point_near(bezier.bezier_end(fit), bezier.bezier_end(original))
+  assert root_sum_square >. 0.0
+  assert root_mean_square >. 0.0
+  assert max >. 0.0
+}
+
+pub fn fit_cubic_with_endpoints_rejects_underdetermined_samples_test() {
+  let assert Error(bezier.UnderdeterminedCubicFit) =
+    bezier.fit_cubic_with_endpoints(
+      start: bezier.Point(0.0, 0.0),
+      end: bezier.Point(10.0, 0.0),
+      samples: [#(0.5, bezier.Point(5.0, 1.0))],
+    )
+}
+
 pub fn split_bezier_divides_quadratic_at_t_test() {
   let curve =
     bezier.QuadraticBezierData(
@@ -550,6 +623,10 @@ pub fn cubic_self_intersections_rejects_invalid_options_test() {
 
 fn point_near(a: bezier.Point, b: bezier.Point) -> Bool {
   near(a.x, b.x) && near(a.y, b.y)
+}
+
+fn add_point(point: bezier.Point, dx: Float, dy: Float) -> bezier.Point {
+  bezier.Point(point.x +. dx, point.y +. dy)
 }
 
 fn bbox_near(
