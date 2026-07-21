@@ -1460,18 +1460,24 @@ pub fn reverse_segment(segment: Segment) -> Segment {
 /// `t` is not clamped. Values outside `0.0..1.0` extrapolate along the same
 /// segment.
 pub fn segment_point(segment: Segment, at t: Float) -> Result(Point, Error) {
-  case segment {
-    Line(..) | QuadraticBezier(..) | CubicBezier(..) -> {
-      Ok(
-        segment_to_bezier_data(segment)
-        |> bezier.bezier_point(at: t)
-        |> from_bezier_point,
-      )
-    }
-    Arc(..) -> {
-      case arc_center_data(segment) {
-        Error(error) -> Error(error)
-        Ok(arc) -> Ok(ellipse.arc_point(arc, at: t) |> from_ellipse_point)
+  case t {
+    0.0 -> Ok(segment_start(segment))
+    1.0 -> Ok(segment_end(segment))
+    _ -> {
+      case segment {
+        Line(..) | QuadraticBezier(..) | CubicBezier(..) -> {
+          Ok(
+            segment_to_bezier_data(segment)
+            |> bezier.bezier_point(at: t)
+            |> from_bezier_point,
+          )
+        }
+        Arc(..) -> {
+          case arc_center_data(segment) {
+            Error(error) -> Error(error)
+            Ok(arc) -> Ok(ellipse.arc_point(arc, at: t) |> from_ellipse_point)
+          }
+        }
       }
     }
   }
@@ -2557,22 +2563,9 @@ pub fn split_segment(
   at t: Float,
 ) -> Result(#(Segment, Segment), Error) {
   case segment {
-    Line(..) | QuadraticBezier(..) | CubicBezier(..) -> {
-      let #(left, right) =
-        segment_to_bezier_data(segment) |> bezier.split_bezier(at: t)
-
-      Ok(#(segment_from_bezier_data(left), segment_from_bezier_data(right)))
-    }
-    Arc(..) -> {
-      case arc_center_data(segment) {
-        Error(error) -> Error(error)
-        Ok(arc) -> {
-          let #(left, right) = ellipse.split_arc(arc, at: t)
-
-          Ok(#(arc_from_center_data(left), arc_from_center_data(right)))
-        }
-      }
-    }
+    Line(..) | QuadraticBezier(..) | CubicBezier(..) ->
+      split_bezier_segment(segment, at: t)
+    Arc(..) -> split_arc_segment(segment, at: t)
   }
 }
 
@@ -2586,26 +2579,16 @@ pub fn split_segment_inside(
 ) -> Result(#(Segment, Segment), Error) {
   case segment {
     Line(..) | QuadraticBezier(..) | CubicBezier(..) -> {
-      case
-        segment_to_bezier_data(segment) |> bezier.split_bezier_inside(at: t)
-      {
+      case split_bezier_segment_inside(segment, at: t) {
         Error(_) -> Error(SplitOutsideSegment)
-        Ok(#(left, right)) -> {
-          Ok(#(segment_from_bezier_data(left), segment_from_bezier_data(right)))
-        }
+        Ok(split) -> Ok(split)
       }
     }
     Arc(..) -> {
-      case arc_center_data(segment) {
+      case split_arc_segment_inside(segment, at: t) {
+        Error(SplitOutsideSegment) -> Error(SplitOutsideSegment)
         Error(error) -> Error(error)
-        Ok(arc) -> {
-          case ellipse.split_arc_inside(arc, at: t) {
-            Error(_) -> Error(SplitOutsideSegment)
-            Ok(#(left, right)) -> {
-              Ok(#(arc_from_center_data(left), arc_from_center_data(right)))
-            }
-          }
-        }
+        Ok(split) -> Ok(split)
       }
     }
   }
@@ -2757,6 +2740,97 @@ fn is_zero_length_line(segment: Segment) -> Bool {
     Line(start:, end:) -> start == end
     _ -> False
   }
+}
+
+fn split_bezier_segment(
+  segment: Segment,
+  at t: Float,
+) -> Result(#(Segment, Segment), Error) {
+  let #(left, right) =
+    segment_to_bezier_data(segment) |> bezier.split_bezier(at: t)
+  let left = segment_from_bezier_data(left)
+  let right = segment_from_bezier_data(right)
+
+  assert_split_segment_preserves_endpoints(segment, left, right)
+  Ok(#(left, right))
+}
+
+fn split_bezier_segment_inside(
+  segment: Segment,
+  at t: Float,
+) -> Result(#(Segment, Segment), Error) {
+  case segment_to_bezier_data(segment) |> bezier.split_bezier_inside(at: t) {
+    Error(_) -> Error(SplitOutsideSegment)
+    Ok(#(left, right)) -> {
+      let left = segment_from_bezier_data(left)
+      let right = segment_from_bezier_data(right)
+
+      assert_split_segment_preserves_endpoints(segment, left, right)
+      Ok(#(left, right))
+    }
+  }
+}
+
+fn split_arc_segment(
+  segment: Segment,
+  at t: Float,
+) -> Result(#(Segment, Segment), Error) {
+  use arc <- result.try(arc_center_data(segment))
+  let #(left, right) = ellipse.split_arc(arc, at: t)
+  let left = arc_from_center_data(left)
+  let right = arc_from_center_data(right)
+  let #(left, right) = arc_split_with_exact_endpoints(segment, left, right, t)
+
+  assert_split_segment_preserves_endpoints(segment, left, right)
+  Ok(#(left, right))
+}
+
+fn split_arc_segment_inside(
+  segment: Segment,
+  at t: Float,
+) -> Result(#(Segment, Segment), Error) {
+  case arc_center_data(segment) {
+    Error(error) -> Error(error)
+    Ok(arc) -> {
+      case ellipse.split_arc_inside(arc, at: t) {
+        Error(_) -> Error(SplitOutsideSegment)
+        Ok(#(left, right)) -> {
+          let left = arc_from_center_data(left)
+          let right = arc_from_center_data(right)
+          let #(left, right) =
+            arc_split_with_exact_endpoints(segment, left, right, t)
+
+          assert_split_segment_preserves_endpoints(segment, left, right)
+          Ok(#(left, right))
+        }
+      }
+    }
+  }
+}
+
+fn assert_split_segment_preserves_endpoints(
+  original: Segment,
+  left: Segment,
+  right: Segment,
+) -> Nil {
+  assert segment_start(left) == segment_start(original)
+  assert segment_end(left) == segment_start(right)
+  assert segment_end(right) == segment_end(original)
+  Nil
+}
+
+fn arc_split_with_exact_endpoints(
+  original: Segment,
+  left: Segment,
+  right: Segment,
+  t: Float,
+) -> #(Segment, Segment) {
+  let left = segment_with_start(left, segment_start(original))
+  let assert Ok(split) = segment_point(original, at: t)
+  let left = segment_with_end(left, split)
+  let right = segment_with_start(right, split)
+  let right = segment_with_end(right, segment_end(original))
+  #(left, right)
 }
 
 fn validate_crossing_options(options: CrossingOptions) -> Result(Nil, Error) {
