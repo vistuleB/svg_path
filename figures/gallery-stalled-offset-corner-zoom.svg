@@ -1,0 +1,324 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 650" width="860" height="650">
+  <rect width="100%" height="100%" fill="#ffffff"/>
+  <text x="430" y="30" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" text-anchor="middle" fill="#111827">corner zoom; distance=39.999; threshold=0.01</text>
+  <g transform="translate(90 225) scale(110000)">
+    <clipPath id="corner-zoom-clip-0"><rect x="-0.0005" y="-0.0015" width="0.002" height="0.002" /></clipPath>
+    <rect x="-0.0005" y="-0.0015" width="0.002" height="0.002" fill="#f8fafc" stroke="#d1d5db" stroke-width="0.00003" />
+    <g clip-path="url(#corner-zoom-clip-0)">
+    <path d="M 40 40 V 0 A 40 40 0 0 0 0 -40 H -40" style="fill: none; stroke: #cbd5e1; stroke-width: 0.000035; stroke-linecap: round; stroke-linejoin: round" />
+    <path d="M 40 0 A 40 40 0 0 0 0 -40" style="fill: none; stroke: #f97316; stroke-width: 0.000055; stroke-linecap: round; stroke-linejoin: round" />
+    <path d="M 0.001 40 V 0 A 0.001 0.001 0 0 0 0 -0.001 H -40" style="fill: none; stroke: #1d4ed8; stroke-width: 0.00008; stroke-linecap: round; stroke-linejoin: round" />
+    <circle cx="0" cy="0" r="0.00008" fill="#111827" />
+    <circle cx="0.000924" cy="-0.000383" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000707" cy="-0.000707" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000383" cy="-0.000924" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <line x1="0.001" y1="0" x2="0.001" y2="-0.00075" style="stroke: #eab308; stroke-width: 0.000045; stroke-linecap: round" />
+    <circle cx="0.001" cy="0" r="0.000075" fill="#eab308" stroke="#ffffff" stroke-width="0.000018" />
+    <line x1="0" y1="-0.001" x2="-0.00075" y2="-0.001" style="stroke: #eab308; stroke-width: 0.000045; stroke-linecap: round" />
+    <circle cx="0" cy="-0.001" r="0.000075" fill="#eab308" stroke="#ffffff" stroke-width="0.000018" />
+    </g>
+  </g>
+  <text x="145" y="302" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" text-anchor="middle" fill="#111827">real arcs; 1 arc; corner 1 seg; length 0.001571; stalled=1</text>
+  <g transform="translate(370 225) scale(110000)">
+    <clipPath id="corner-zoom-clip-1"><rect x="-0.0005" y="-0.0015" width="0.002" height="0.002" /></clipPath>
+    <rect x="-0.0005" y="-0.0015" width="0.002" height="0.002" fill="#f8fafc" stroke="#d1d5db" stroke-width="0.00003" />
+    <g clip-path="url(#corner-zoom-clip-1)">
+    <path d="M 40 40 V 0 A 40 40 0 0 0 36.95518 -15.30734 A 40 40 0 0 0 28.28427 -28.28427 A 40 40 0 0 0 15.30734 -36.95518 A 40 40 0 0 0 0 -40 H -40" style="fill: none; stroke: #cbd5e1; stroke-width: 0.000035; stroke-linecap: round; stroke-linejoin: round" />
+    <path d="M 40 0 A 40 40 0 0 0 36.95518 -15.30734 A 40 40 0 0 0 28.28427 -28.28427 A 40 40 0 0 0 15.30734 -36.95518 A 40 40 0 0 0 0 -40" style="fill: none; stroke: #f97316; stroke-width: 0.000055; stroke-linecap: round; stroke-linejoin: round" />
+    <path d="M 0.001 40 V 0 C 0.001 -0.00054 0.00054 -0.001 0 -0.001 H -40" style="fill: none; stroke: #1d4ed8; stroke-width: 0.00008; stroke-linecap: round; stroke-linejoin: round" />
+    <circle cx="0" cy="0" r="0.00008" fill="#111827" />
+    <circle cx="0.001" cy="-0.000545" r="0.00007" fill="#dc2626" stroke="#ffffff" stroke-width="0.000018" />
+    <text x="0.001" y="-0.000725" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="0.00018" text-anchor="middle" fill="#dc2626" stroke="#ffffff" stroke-width="0.000035" paint-order="stroke fill">c1</text>
+    <circle cx="0.000545" cy="-0.001" r="0.00007" fill="#7c3aed" stroke="#ffffff" stroke-width="0.000018" />
+    <text x="0.000545" y="-0.00118" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="0.00018" text-anchor="middle" fill="#7c3aed" stroke="#ffffff" stroke-width="0.000035" paint-order="stroke fill">c2</text>
+    <circle cx="0.000995" cy="-0.000098" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000981" cy="-0.000195" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000957" cy="-0.00029" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000882" cy="-0.000471" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000831" cy="-0.000556" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000773" cy="-0.000634" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000634" cy="-0.000773" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000556" cy="-0.000831" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000471" cy="-0.000882" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.00029" cy="-0.000957" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000195" cy="-0.000981" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000098" cy="-0.000995" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <line x1="0.001" y1="0" x2="0.001" y2="-0.00075" style="stroke: #eab308; stroke-width: 0.000045; stroke-linecap: round" />
+    <circle cx="0.001" cy="0" r="0.000075" fill="#eab308" stroke="#ffffff" stroke-width="0.000018" />
+    <line x1="0" y1="-0.001" x2="-0.00075" y2="-0.001" style="stroke: #eab308; stroke-width: 0.000045; stroke-linecap: round" />
+    <circle cx="0" cy="-0.001" r="0.000075" fill="#eab308" stroke="#ffffff" stroke-width="0.000018" />
+    </g>
+  </g>
+  <text x="425" y="302" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" text-anchor="middle" fill="#111827">real arcs; 4 arcs; corner 1 seg; length 0.001568; stalled=4</text>
+  <g transform="translate(650 225) scale(110000)">
+    <clipPath id="corner-zoom-clip-2"><rect x="-0.0005" y="-0.0015" width="0.002" height="0.002" /></clipPath>
+    <rect x="-0.0005" y="-0.0015" width="0.002" height="0.002" fill="#f8fafc" stroke="#d1d5db" stroke-width="0.00003" />
+    <g clip-path="url(#corner-zoom-clip-2)">
+    <path d="M 40 40 V 0 A 40 40 0 0 0 39.94518 -2.09344 A 40 40 0 0 0 39.78088 -4.18114 A 40 40 0 0 0 39.50753 -6.25738 A 40 40 0 0 0 39.1259 -8.31647 A 40 40 0 0 0 38.63703 -10.35276 A 40 40 0 0 0 38.04226 -12.36068 A 40 40 0 0 0 37.34322 -14.33472 A 40 40 0 0 0 36.54182 -16.26947 A 40 40 0 0 0 35.64026 -18.15962 A 40 40 0 0 0 34.64102 -20 A 40 40 0 0 0 33.54682 -21.78556 A 40 40 0 0 0 32.36068 -23.51141 A 40 40 0 0 0 31.08584 -25.17282 A 40 40 0 0 0 29.72579 -26.76522 A 40 40 0 0 0 28.28427 -28.28427 A 40 40 0 0 0 26.76522 -29.72579 A 40 40 0 0 0 25.17282 -31.08584 A 40 40 0 0 0 23.51141 -32.36068 A 40 40 0 0 0 21.78556 -33.54682 A 40 40 0 0 0 20 -34.64102 A 40 40 0 0 0 18.15962 -35.64026 A 40 40 0 0 0 16.26947 -36.54182 A 40 40 0 0 0 14.33472 -37.34322 A 40 40 0 0 0 12.36068 -38.04226 A 40 40 0 0 0 10.35276 -38.63703 A 40 40 0 0 0 8.31647 -39.1259 A 40 40 0 0 0 6.25738 -39.50753 A 40 40 0 0 0 4.18114 -39.78088 A 40 40 0 0 0 2.09344 -39.94518 A 40 40 0 0 0 0 -40 H -40" style="fill: none; stroke: #cbd5e1; stroke-width: 0.000035; stroke-linecap: round; stroke-linejoin: round" />
+    <path d="M 40 0 A 40 40 0 0 0 39.94518 -2.09344 A 40 40 0 0 0 39.78088 -4.18114 A 40 40 0 0 0 39.50753 -6.25738 A 40 40 0 0 0 39.1259 -8.31647 A 40 40 0 0 0 38.63703 -10.35276 A 40 40 0 0 0 38.04226 -12.36068 A 40 40 0 0 0 37.34322 -14.33472 A 40 40 0 0 0 36.54182 -16.26947 A 40 40 0 0 0 35.64026 -18.15962 A 40 40 0 0 0 34.64102 -20 A 40 40 0 0 0 33.54682 -21.78556 A 40 40 0 0 0 32.36068 -23.51141 A 40 40 0 0 0 31.08584 -25.17282 A 40 40 0 0 0 29.72579 -26.76522 A 40 40 0 0 0 28.28427 -28.28427 A 40 40 0 0 0 26.76522 -29.72579 A 40 40 0 0 0 25.17282 -31.08584 A 40 40 0 0 0 23.51141 -32.36068 A 40 40 0 0 0 21.78556 -33.54682 A 40 40 0 0 0 20 -34.64102 A 40 40 0 0 0 18.15962 -35.64026 A 40 40 0 0 0 16.26947 -36.54182 A 40 40 0 0 0 14.33472 -37.34322 A 40 40 0 0 0 12.36068 -38.04226 A 40 40 0 0 0 10.35276 -38.63703 A 40 40 0 0 0 8.31647 -39.1259 A 40 40 0 0 0 6.25738 -39.50753 A 40 40 0 0 0 4.18114 -39.78088 A 40 40 0 0 0 2.09344 -39.94518 A 40 40 0 0 0 0 -40" style="fill: none; stroke: #f97316; stroke-width: 0.000055; stroke-linecap: round; stroke-linejoin: round" />
+    <path d="M 0.001 40 V 0 C 0.001 -0.00054 0.00054 -0.001 0 -0.001 H -40" style="fill: none; stroke: #1d4ed8; stroke-width: 0.00008; stroke-linecap: round; stroke-linejoin: round" />
+    <circle cx="0" cy="0" r="0.00008" fill="#111827" />
+    <circle cx="0.001" cy="-0.000545" r="0.00007" fill="#dc2626" stroke="#ffffff" stroke-width="0.000018" />
+    <text x="0.001" y="-0.000725" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="0.00018" text-anchor="middle" fill="#dc2626" stroke="#ffffff" stroke-width="0.000035" paint-order="stroke fill">c1</text>
+    <circle cx="0.000545" cy="-0.001" r="0.00007" fill="#7c3aed" stroke="#ffffff" stroke-width="0.000018" />
+    <text x="0.000545" y="-0.00118" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="0.00018" text-anchor="middle" fill="#7c3aed" stroke="#ffffff" stroke-width="0.000035" paint-order="stroke fill">c2</text>
+    <circle cx="0.001" cy="-0.000013" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.001" cy="-0.000026" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000999" cy="-0.000039" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000998" cy="-0.000065" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000997" cy="-0.000078" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000996" cy="-0.000092" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000993" cy="-0.000118" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000991" cy="-0.000131" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.00099" cy="-0.000143" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000986" cy="-0.000169" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000983" cy="-0.000182" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000981" cy="-0.000195" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000975" cy="-0.000221" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000972" cy="-0.000233" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000969" cy="-0.000246" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000962" cy="-0.000271" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000959" cy="-0.000284" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000955" cy="-0.000297" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000947" cy="-0.000321" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000943" cy="-0.000334" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000938" cy="-0.000346" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000929" cy="-0.000371" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000924" cy="-0.000383" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000919" cy="-0.000395" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000908" cy="-0.000419" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000903" cy="-0.000431" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000897" cy="-0.000442" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000885" cy="-0.000466" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000879" cy="-0.000477" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000872" cy="-0.000489" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000859" cy="-0.000511" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000853" cy="-0.000522" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000846" cy="-0.000534" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000831" cy="-0.000556" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000824" cy="-0.000566" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000817" cy="-0.000577" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000801" cy="-0.000598" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000793" cy="-0.000609" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000785" cy="-0.000619" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000769" cy="-0.000639" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.00076" cy="-0.000649" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000752" cy="-0.000659" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000734" cy="-0.000679" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000725" cy="-0.000688" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000716" cy="-0.000698" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000698" cy="-0.000716" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000688" cy="-0.000725" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000679" cy="-0.000734" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000659" cy="-0.000752" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000649" cy="-0.00076" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000639" cy="-0.000769" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000619" cy="-0.000785" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000609" cy="-0.000793" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000598" cy="-0.000801" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000577" cy="-0.000817" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000566" cy="-0.000824" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000556" cy="-0.000831" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000534" cy="-0.000846" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000522" cy="-0.000853" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000511" cy="-0.000859" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000489" cy="-0.000872" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000477" cy="-0.000879" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000466" cy="-0.000885" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000442" cy="-0.000897" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000431" cy="-0.000903" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000419" cy="-0.000908" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000395" cy="-0.000919" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000383" cy="-0.000924" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000371" cy="-0.000929" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000346" cy="-0.000938" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000334" cy="-0.000943" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000321" cy="-0.000947" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000297" cy="-0.000955" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000284" cy="-0.000959" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000271" cy="-0.000962" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000246" cy="-0.000969" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000233" cy="-0.000972" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000221" cy="-0.000975" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000195" cy="-0.000981" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000182" cy="-0.000983" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000169" cy="-0.000986" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000143" cy="-0.00099" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000131" cy="-0.000991" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000118" cy="-0.000993" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000092" cy="-0.000996" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000078" cy="-0.000997" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000065" cy="-0.000998" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000039" cy="-0.000999" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000026" cy="-0.001" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000013" cy="-0.001" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <line x1="0.001" y1="0" x2="0.001" y2="-0.00075" style="stroke: #eab308; stroke-width: 0.000045; stroke-linecap: round" />
+    <circle cx="0.001" cy="0" r="0.000075" fill="#eab308" stroke="#ffffff" stroke-width="0.000018" />
+    <line x1="0" y1="-0.001" x2="-0.00075" y2="-0.001" style="stroke: #eab308; stroke-width: 0.000045; stroke-linecap: round" />
+    <circle cx="0" cy="-0.001" r="0.000075" fill="#eab308" stroke="#ffffff" stroke-width="0.000018" />
+    </g>
+  </g>
+  <text x="705" y="302" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" text-anchor="middle" fill="#111827">real arcs; 30 arcs; corner 1 seg; length 0.001568; stalled=30</text>
+  <g transform="translate(129.201684 445.798316) scale(5789.397077)">
+    <clipPath id="corner-zoom-clip-3"><rect x="-0.016271" y="-0.021729" width="0.038001" height="0.038001" /></clipPath>
+    <rect x="-0.016271" y="-0.021729" width="0.038001" height="0.038001" fill="#f8fafc" stroke="#d1d5db" stroke-width="0.00003" />
+    <g clip-path="url(#corner-zoom-clip-3)">
+    <path d="M 40 40 V 0 C 40 -22.09139 22.09139 -40 0 -40 H -40" style="fill: none; stroke: #cbd5e1; stroke-width: 0.000035; stroke-linecap: round; stroke-linejoin: round" />
+    <path d="M 40 0 C 40 -22.09139 22.09139 -40 0 -40" style="fill: none; stroke: #f97316; stroke-width: 0.000055; stroke-linecap: round; stroke-linejoin: round" />
+    <path d="M 0.001 40 V 0 C 0.001 -0.00793 0.00793 -0.001 0 -0.001 H -40" style="fill: none; stroke: #1d4ed8; stroke-width: 0.00008; stroke-linecap: round; stroke-linejoin: round" />
+    <circle cx="0" cy="0" r="0.00008" fill="#111827" />
+    <circle cx="0.001" cy="-0.007928" r="0.00007" fill="#dc2626" stroke="#ffffff" stroke-width="0.000018" />
+    <text x="0.001" y="-0.008108" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="0.00018" text-anchor="middle" fill="#dc2626" stroke="#ffffff" stroke-width="0.000035" paint-order="stroke fill">c1</text>
+    <circle cx="0.007928" cy="-0.001" r="0.00007" fill="#7c3aed" stroke="#ffffff" stroke-width="0.000018" />
+    <text x="0.007928" y="-0.00118" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="0.00018" text-anchor="middle" fill="#7c3aed" stroke="#ffffff" stroke-width="0.000035" paint-order="stroke fill">c2</text>
+    <circle cx="0.017344" cy="0.011887" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000707" cy="-0.000707" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="-0.011887" cy="-0.017344" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <line x1="0.001" y1="0" x2="0.001" y2="-0.00075" style="stroke: #eab308; stroke-width: 0.000045; stroke-linecap: round" />
+    <circle cx="0.001" cy="0" r="0.000075" fill="#eab308" stroke="#ffffff" stroke-width="0.000018" />
+    <line x1="0" y1="-0.001" x2="-0.00075" y2="-0.001" style="stroke: #eab308; stroke-width: 0.000045; stroke-linecap: round" />
+    <circle cx="0" cy="-0.001" r="0.000075" fill="#eab308" stroke="#ffffff" stroke-width="0.000018" />
+    </g>
+  </g>
+  <text x="145" y="562" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" text-anchor="middle" fill="#111827">cubic approximation; 1 cubic; corner 1 seg; length 0.010808; stalled=1</text>
+  <g transform="translate(370 485) scale(110000)">
+    <clipPath id="corner-zoom-clip-4"><rect x="-0.0005" y="-0.0015" width="0.002" height="0.002" /></clipPath>
+    <rect x="-0.0005" y="-0.0015" width="0.002" height="0.002" fill="#f8fafc" stroke="#d1d5db" stroke-width="0.00003" />
+    <g clip-path="url(#corner-zoom-clip-4)">
+    <path d="M 40 40 V 0 C 40 -5.25287 38.96537 -10.45431 36.95518 -15.30734 C 34.94499 -20.16036 31.99861 -24.56993 28.28427 -28.28427 C 24.56993 -31.99861 20.16036 -34.94499 15.30734 -36.95518 C 10.45431 -38.96537 5.25287 -40 0 -40 H -40" style="fill: none; stroke: #cbd5e1; stroke-width: 0.000035; stroke-linecap: round; stroke-linejoin: round" />
+    <path d="M 40 0 C 40 -5.25287 38.96537 -10.45431 36.95518 -15.30734 C 34.94499 -20.16036 31.99861 -24.56993 28.28427 -28.28427 C 24.56993 -31.99861 20.16036 -34.94499 15.30734 -36.95518 C 10.45431 -38.96537 5.25287 -40 0 -40" style="fill: none; stroke: #f97316; stroke-width: 0.000055; stroke-linecap: round; stroke-linejoin: round" />
+    <path d="M 0.001 40 V 0 C 0.001 -0.00055 0.00055 -0.001 0 -0.001 H -40" style="fill: none; stroke: #1d4ed8; stroke-width: 0.00008; stroke-linecap: round; stroke-linejoin: round" />
+    <circle cx="0" cy="0" r="0.00008" fill="#111827" />
+    <circle cx="0.001" cy="-0.000547" r="0.00007" fill="#dc2626" stroke="#ffffff" stroke-width="0.000018" />
+    <text x="0.001" y="-0.000727" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="0.00018" text-anchor="middle" fill="#dc2626" stroke="#ffffff" stroke-width="0.000035" paint-order="stroke fill">c1</text>
+    <circle cx="0.000547" cy="-0.001" r="0.00007" fill="#7c3aed" stroke="#ffffff" stroke-width="0.000018" />
+    <text x="0.000547" y="-0.00118" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="0.00018" text-anchor="middle" fill="#7c3aed" stroke="#ffffff" stroke-width="0.000035" paint-order="stroke fill">c2</text>
+    <circle cx="0.000999" cy="-0.000081" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000981" cy="-0.000195" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000954" cy="-0.000307" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000892" cy="-0.000458" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000831" cy="-0.000556" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000764" cy="-0.000649" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000649" cy="-0.000764" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000556" cy="-0.000831" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000458" cy="-0.000892" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000307" cy="-0.000954" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000195" cy="-0.000981" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000081" cy="-0.000999" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <line x1="0.001" y1="0" x2="0.001" y2="-0.00075" style="stroke: #eab308; stroke-width: 0.000045; stroke-linecap: round" />
+    <circle cx="0.001" cy="0" r="0.000075" fill="#eab308" stroke="#ffffff" stroke-width="0.000018" />
+    <line x1="0" y1="-0.001" x2="-0.00075" y2="-0.001" style="stroke: #eab308; stroke-width: 0.000045; stroke-linecap: round" />
+    <circle cx="0" cy="-0.001" r="0.000075" fill="#eab308" stroke="#ffffff" stroke-width="0.000018" />
+    </g>
+  </g>
+  <text x="425" y="562" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" text-anchor="middle" fill="#111827">cubic approximation; 4 cubics; corner 1 seg; length 0.001569; stalled=4</text>
+  <g transform="translate(650 485) scale(110000)">
+    <clipPath id="corner-zoom-clip-5"><rect x="-0.0005" y="-0.0015" width="0.002" height="0.002" /></clipPath>
+    <rect x="-0.0005" y="-0.0015" width="0.002" height="0.002" fill="#f8fafc" stroke="#d1d5db" stroke-width="0.00003" />
+    <g clip-path="url(#corner-zoom-clip-5)">
+    <path d="M 40 40 V 0 C 40 -0.69817 39.98172 -1.39622 39.94518 -2.09344 C 39.90864 -2.79065 39.85385 -3.48679 39.78088 -4.18114 C 39.7079 -4.87549 39.61675 -5.5678 39.50753 -6.25738 C 39.39832 -6.94695 39.27106 -7.63355 39.1259 -8.31647 C 38.98075 -8.99938 38.81773 -9.67838 38.63703 -10.35276 C 38.45633 -11.02714 38.25801 -11.69668 38.04226 -12.36068 C 37.82651 -13.02468 37.59342 -13.68292 37.34322 -14.33472 C 37.09301 -14.98652 36.82579 -15.63165 36.54182 -16.26947 C 36.25785 -16.90728 35.95722 -17.53754 35.64026 -18.15962 C 35.3233 -18.7817 34.9901 -19.39537 34.64102 -20 C 34.29193 -20.60463 33.92707 -21.20003 33.54682 -21.78556 C 33.16657 -22.3711 32.77105 -22.94658 32.36068 -23.51141 C 31.9503 -24.07624 31.52521 -24.63023 31.08584 -25.17282 C 30.64646 -25.7154 30.19296 -26.24638 29.72579 -26.76522 C 29.25863 -27.28407 28.77795 -27.79059 28.28427 -28.28427 C 27.79059 -28.77795 27.28407 -29.25863 26.76522 -29.72579 C 26.24638 -30.19296 25.7154 -30.64646 25.17282 -31.08584 C 24.63023 -31.52521 24.07624 -31.9503 23.51141 -32.36068 C 22.94658 -32.77105 22.3711 -33.16657 21.78556 -33.54682 C 21.20003 -33.92707 20.60463 -34.29193 20 -34.64102 C 19.39537 -34.9901 18.7817 -35.3233 18.15962 -35.64026 C 17.53754 -35.95722 16.90728 -36.25785 16.26947 -36.54182 C 15.63165 -36.82579 14.98652 -37.09301 14.33472 -37.34322 C 13.68292 -37.59342 13.02468 -37.82651 12.36068 -38.04226 C 11.69668 -38.25801 11.02714 -38.45633 10.35276 -38.63703 C 9.67838 -38.81773 8.99938 -38.98075 8.31647 -39.1259 C 7.63355 -39.27106 6.94695 -39.39832 6.25738 -39.50753 C 5.5678 -39.61675 4.87549 -39.7079 4.18114 -39.78088 C 3.48679 -39.85385 2.79065 -39.90864 2.09344 -39.94518 C 1.39622 -39.98172 0.69817 -40 0 -40 H -40" style="fill: none; stroke: #cbd5e1; stroke-width: 0.000035; stroke-linecap: round; stroke-linejoin: round" />
+    <path d="M 40 0 C 40 -0.69817 39.98172 -1.39622 39.94518 -2.09344 C 39.90864 -2.79065 39.85385 -3.48679 39.78088 -4.18114 C 39.7079 -4.87549 39.61675 -5.5678 39.50753 -6.25738 C 39.39832 -6.94695 39.27106 -7.63355 39.1259 -8.31647 C 38.98075 -8.99938 38.81773 -9.67838 38.63703 -10.35276 C 38.45633 -11.02714 38.25801 -11.69668 38.04226 -12.36068 C 37.82651 -13.02468 37.59342 -13.68292 37.34322 -14.33472 C 37.09301 -14.98652 36.82579 -15.63165 36.54182 -16.26947 C 36.25785 -16.90728 35.95722 -17.53754 35.64026 -18.15962 C 35.3233 -18.7817 34.9901 -19.39537 34.64102 -20 C 34.29193 -20.60463 33.92707 -21.20003 33.54682 -21.78556 C 33.16657 -22.3711 32.77105 -22.94658 32.36068 -23.51141 C 31.9503 -24.07624 31.52521 -24.63023 31.08584 -25.17282 C 30.64646 -25.7154 30.19296 -26.24638 29.72579 -26.76522 C 29.25863 -27.28407 28.77795 -27.79059 28.28427 -28.28427 C 27.79059 -28.77795 27.28407 -29.25863 26.76522 -29.72579 C 26.24638 -30.19296 25.7154 -30.64646 25.17282 -31.08584 C 24.63023 -31.52521 24.07624 -31.9503 23.51141 -32.36068 C 22.94658 -32.77105 22.3711 -33.16657 21.78556 -33.54682 C 21.20003 -33.92707 20.60463 -34.29193 20 -34.64102 C 19.39537 -34.9901 18.7817 -35.3233 18.15962 -35.64026 C 17.53754 -35.95722 16.90728 -36.25785 16.26947 -36.54182 C 15.63165 -36.82579 14.98652 -37.09301 14.33472 -37.34322 C 13.68292 -37.59342 13.02468 -37.82651 12.36068 -38.04226 C 11.69668 -38.25801 11.02714 -38.45633 10.35276 -38.63703 C 9.67838 -38.81773 8.99938 -38.98075 8.31647 -39.1259 C 7.63355 -39.27106 6.94695 -39.39832 6.25738 -39.50753 C 5.5678 -39.61675 4.87549 -39.7079 4.18114 -39.78088 C 3.48679 -39.85385 2.79065 -39.90864 2.09344 -39.94518 C 1.39622 -39.98172 0.69817 -40 0 -40" style="fill: none; stroke: #f97316; stroke-width: 0.000055; stroke-linecap: round; stroke-linejoin: round" />
+    <path d="M 0.001 40 V 0 C 0.001 -0.00054 0.00054 -0.001 0 -0.001 H -40" style="fill: none; stroke: #1d4ed8; stroke-width: 0.00008; stroke-linecap: round; stroke-linejoin: round" />
+    <circle cx="0" cy="0" r="0.00008" fill="#111827" />
+    <circle cx="0.001" cy="-0.000545" r="0.00007" fill="#dc2626" stroke="#ffffff" stroke-width="0.000018" />
+    <text x="0.001" y="-0.000725" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="0.00018" text-anchor="middle" fill="#dc2626" stroke="#ffffff" stroke-width="0.000035" paint-order="stroke fill">c1</text>
+    <circle cx="0.000545" cy="-0.001" r="0.00007" fill="#7c3aed" stroke="#ffffff" stroke-width="0.000018" />
+    <text x="0.000545" y="-0.00118" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="0.00018" text-anchor="middle" fill="#7c3aed" stroke="#ffffff" stroke-width="0.000035" paint-order="stroke fill">c2</text>
+    <circle cx="0.001" cy="-0.000013" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.001" cy="-0.000026" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000999" cy="-0.000039" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000998" cy="-0.000065" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000997" cy="-0.000078" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000996" cy="-0.000092" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000993" cy="-0.000118" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000991" cy="-0.000131" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.00099" cy="-0.000143" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000986" cy="-0.000169" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000983" cy="-0.000182" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000981" cy="-0.000195" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000975" cy="-0.000221" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000972" cy="-0.000233" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000969" cy="-0.000246" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000962" cy="-0.000271" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000959" cy="-0.000284" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000955" cy="-0.000297" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000947" cy="-0.000321" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000943" cy="-0.000334" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000938" cy="-0.000346" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000929" cy="-0.000371" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000924" cy="-0.000383" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000919" cy="-0.000395" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000908" cy="-0.000419" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000903" cy="-0.000431" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000897" cy="-0.000442" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000885" cy="-0.000466" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000879" cy="-0.000477" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000872" cy="-0.000489" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000859" cy="-0.000511" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000853" cy="-0.000522" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000846" cy="-0.000534" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000831" cy="-0.000556" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000824" cy="-0.000566" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000817" cy="-0.000577" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000801" cy="-0.000598" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000793" cy="-0.000609" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000785" cy="-0.000619" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000769" cy="-0.000639" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.00076" cy="-0.000649" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000752" cy="-0.000659" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000734" cy="-0.000679" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000725" cy="-0.000688" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000716" cy="-0.000698" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000698" cy="-0.000716" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000688" cy="-0.000725" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000679" cy="-0.000734" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000659" cy="-0.000752" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000649" cy="-0.00076" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000639" cy="-0.000769" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000619" cy="-0.000785" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000609" cy="-0.000793" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000598" cy="-0.000801" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000577" cy="-0.000817" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000566" cy="-0.000824" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000556" cy="-0.000831" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000534" cy="-0.000846" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000522" cy="-0.000853" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000511" cy="-0.000859" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000489" cy="-0.000872" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000477" cy="-0.000879" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000466" cy="-0.000885" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000442" cy="-0.000897" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000431" cy="-0.000903" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000419" cy="-0.000908" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000395" cy="-0.000919" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000383" cy="-0.000924" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000371" cy="-0.000929" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000346" cy="-0.000938" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000334" cy="-0.000943" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000321" cy="-0.000947" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000297" cy="-0.000955" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000284" cy="-0.000959" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000271" cy="-0.000962" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000246" cy="-0.000969" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000233" cy="-0.000972" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000221" cy="-0.000975" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000195" cy="-0.000981" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000182" cy="-0.000983" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000169" cy="-0.000986" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000143" cy="-0.00099" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000131" cy="-0.000991" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000118" cy="-0.000993" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000092" cy="-0.000996" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000078" cy="-0.000997" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000065" cy="-0.000998" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000039" cy="-0.000999" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000026" cy="-0.001" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000013" cy="-0.001" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <line x1="0.001" y1="0" x2="0.001" y2="-0.00075" style="stroke: #eab308; stroke-width: 0.000045; stroke-linecap: round" />
+    <circle cx="0.001" cy="0" r="0.000075" fill="#eab308" stroke="#ffffff" stroke-width="0.000018" />
+    <line x1="0" y1="-0.001" x2="-0.00075" y2="-0.001" style="stroke: #eab308; stroke-width: 0.000045; stroke-linecap: round" />
+    <circle cx="0" cy="-0.001" r="0.000075" fill="#eab308" stroke="#ffffff" stroke-width="0.000018" />
+    </g>
+  </g>
+  <text x="705" y="562" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="11" text-anchor="middle" fill="#111827">cubic approximation; 30 cubics; corner 1 seg; length 0.001568; stalled=30</text>
+</svg>
