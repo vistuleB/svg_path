@@ -1,0 +1,17 @@
+stalled arc turn offset fixture
+radius: 40
+distance: 39.999
+classifier threshold: 0.01
+
+subdivisions: 1
+  source segments: 3
+  caught stalled segments: 1
+  result: Ok; output segments: 3; path: M 0.001 40 V 0 C 0.001 -0.00793 0.00793 -0.001 0 -0.001 H -40
+subdivisions: 4
+  source segments: 6
+  caught stalled segments: 4
+  result: Ok; output segments: 3; path: M 0.001 40 V 0 C 0.001 -0.00055 0.00055 -0.001 0 -0.001 H -40
+subdivisions: 30
+  source segments: 32
+  caught stalled segments: 30
+  result: Ok; output segments: 3; path: M 0.001 40 V 0 C 0.001 -0.00054 0.00054 -0.001 0 -0.001 H -40

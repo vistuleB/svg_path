@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 620" width="620" height="620">
+  <rect width="100%" height="100%" fill="#ffffff"/>
+  <text x="310" y="30" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="15" text-anchor="middle" fill="#111827">corner zoom; distance=39.999; threshold=0.01</text>
+  <g transform="translate(509.826631 115.173369) scale(9.995666)">
+    <clipPath id="corner-zoom-clip-0"><rect x="-46.002602" y="-6.019946" width="52.022548" height="52.022548" /></clipPath>
+    <rect x="-46.002602" y="-6.019946" width="52.022548" height="52.022548" fill="#f8fafc" stroke="#d1d5db" stroke-width="0.00003" />
+    <g clip-path="url(#corner-zoom-clip-0)">
+    <path d="M 40 40 V 0 C 40 -22.09139 22.09139 -40 0 -40 H -40" style="fill: none; stroke: #cbd5e1; stroke-width: 0.000035; stroke-linecap: round; stroke-linejoin: round" />
+    <path d="M 40 0 C 40 -22.09139 22.09139 -40 0 -40" style="fill: none; stroke: #f97316; stroke-width: 0.000055; stroke-linecap: round; stroke-linejoin: round" />
+    <path d="M 0.001 40 V 0 C 0.001 -0.00793 0.00793 -0.001 0 -0.001 H -40" style="fill: none; stroke: #1d4ed8; stroke-width: 0.00008; stroke-linecap: round; stroke-linejoin: round" />
+    <circle cx="0" cy="0" r="0.00008" fill="#111827" />
+    <circle cx="0.001" cy="-0.007928" r="0.00007" fill="#dc2626" stroke="#ffffff" stroke-width="0.000018" />
+    <text x="0.001" y="-0.008108" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="0.00018" text-anchor="middle" fill="#dc2626" stroke="#ffffff" stroke-width="0.000035" paint-order="stroke fill">c1</text>
+    <circle cx="0.007928" cy="-0.001" r="0.00007" fill="#7c3aed" stroke="#ffffff" stroke-width="0.000018" />
+    <text x="0.007928" y="-0.00118" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="0.00018" text-anchor="middle" fill="#7c3aed" stroke="#ffffff" stroke-width="0.000035" paint-order="stroke fill">c2</text>
+    <circle cx="0.017344" cy="0.011887" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="0.000707" cy="-0.000707" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <circle cx="-0.011887" cy="-0.017344" r="0.00007" fill="#16a34a" stroke="#ffffff" stroke-width="0.000018" />
+    <line x1="0.001" y1="0" x2="0.001" y2="-0.00075" style="stroke: #eab308; stroke-width: 0.000045; stroke-linecap: round" />
+    <circle cx="0.001" cy="0" r="0.000075" fill="#eab308" stroke="#ffffff" stroke-width="0.000018" />
+    <line x1="0" y1="-0.001" x2="-0.00075" y2="-0.001" style="stroke: #eab308; stroke-width: 0.000045; stroke-linecap: round" />
+    <circle cx="0" cy="-0.001" r="0.000075" fill="#eab308" stroke="#ffffff" stroke-width="0.000018" />
+    </g>
+  </g>
+  <text x="310" y="592" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" text-anchor="middle" fill="#111827">1 cubic; stalled=1</text>
+</svg>

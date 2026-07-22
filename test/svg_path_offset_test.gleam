@@ -1,9 +1,25 @@
+import gleam/dynamic.{type Dynamic}
 import gleam/float
 import gleam/int
 import gleam/list
+import gleam/string
 import svg_path
+import svg_path/number_format
 import svg_path/offset
 import svg_path/serialize
+import svg_path/trig
+
+const stalled_arc_turn_svg_output = "examples/debug/stalled-offset-arc-turns.svg"
+
+const stalled_arc_turn_zoom_svg_output = "examples/debug/stalled-offset-corner-zoom.svg"
+
+const stalled_arc_turn_report_output = "examples/debug/stalled-offset-arc-turns-report.txt"
+
+const stalled_arc_turn_radius = 40.0
+
+const stalled_arc_turn_distance = 39.999
+
+const stalled_arc_turn_threshold = 0.01
 
 pub fn segment_offsets_line_to_the_right_of_direction_test() {
   let line =
@@ -539,6 +555,46 @@ pub fn path_offsets_every_subpath_test() {
   assert serialize.path(offset_path) == "M 0 -1 H 10 M 0 9 H 10"
 }
 
+pub fn stalled_arc_turn_offset_debug_fixture_is_generated_test() {
+  let subdivisions = [1, 4, 30]
+  let cases =
+    subdivisions
+    |> list.map(fn(count) {
+      let source = stalled_arc_turn_source(count)
+      let options =
+        offset.Options(
+          ..offset.default_options(),
+          tolerance: 0.001,
+          join: offset.Round,
+        )
+      let result =
+        offset.subpath_untrimmed_with(
+          source,
+          distance: stalled_arc_turn_distance,
+          options:,
+        )
+      #(count, source, result)
+    })
+
+  let _ = write_file(stalled_arc_turn_svg_output, stalled_arc_turn_svg(cases))
+  let _ =
+    write_file(
+      stalled_arc_turn_zoom_svg_output,
+      stalled_arc_turn_zoom_svg(cases),
+    )
+  let _ =
+    write_file(stalled_arc_turn_report_output, stalled_arc_turn_report(cases))
+
+  let caught_counts =
+    cases
+    |> list.map(fn(example) {
+      let #(_, source, _) = example
+      count_stalled_segments(svg_path.segments(source))
+    })
+
+  assert caught_counts == [1, 4, 30]
+}
+
 fn max_offset_error(
   source: svg_path.Segment,
   offset_subpath: svg_path.Subpath,
@@ -601,3 +657,642 @@ fn distance(a: svg_path.Point, b: svg_path.Point) -> Float {
     )
   distance
 }
+
+fn stalled_arc_turn_source(subdivisions: Int) -> svg_path.Subpath {
+  let r = stalled_arc_turn_radius
+  let arc_start = circle_point(0.0, radius: r)
+  let arc_end = circle_point(-90.0, radius: r)
+  let segments = [
+    svg_path.Line(start: svg_path.point(r, r), end: arc_start),
+    ..list.append(quarter_turn_cubics(subdivisions), [
+      svg_path.Line(start: arc_end, end: svg_path.point(0.0 -. r, 0.0 -. r)),
+    ])
+  ]
+  let assert Ok(subpath) = svg_path.subpath(segments)
+  subpath
+}
+
+fn quarter_turn_cubics(subdivisions: Int) -> List(svg_path.Segment) {
+  quarter_turn_cubics_loop(0, subdivisions, cubics: [])
+}
+
+fn quarter_turn_cubics_loop(
+  index: Int,
+  subdivisions: Int,
+  cubics cubics: List(svg_path.Segment),
+) -> List(svg_path.Segment) {
+  case index >= subdivisions {
+    True -> list.reverse(cubics)
+    False -> {
+      let step = -90.0 /. int.to_float(subdivisions)
+      let start_angle = int.to_float(index) *. step
+      let end_angle = int.to_float(index + 1) *. step
+      quarter_turn_cubics_loop(index + 1, subdivisions, cubics: [
+        circle_arc_cubic(
+          start_angle,
+          end_angle,
+          radius: stalled_arc_turn_radius,
+        ),
+        ..cubics
+      ])
+    }
+  }
+}
+
+fn circle_arc_cubic(
+  start_angle: Float,
+  end_angle: Float,
+  radius radius: Float,
+) -> svg_path.Segment {
+  let start = circle_point(start_angle, radius:)
+  let end = circle_point(end_angle, radius:)
+  let k = 4.0 /. 3.0 *. trig.tan_degrees({ end_angle -. start_angle } /. 4.0)
+  let start_tangent = circle_angle_tangent(start_angle)
+  let end_tangent = circle_angle_tangent(end_angle)
+  svg_path.CubicBezier(
+    start:,
+    control1: add_point(start, scale_point(start_tangent, k *. radius)),
+    control2: subtract_point(end, scale_point(end_tangent, k *. radius)),
+    end:,
+  )
+}
+
+fn circle_point(angle: Float, radius radius: Float) -> svg_path.Point {
+  svg_path.point(
+    clean_zero(radius *. trig.cos_degrees(angle)),
+    clean_zero(radius *. trig.sin_degrees(angle)),
+  )
+}
+
+fn clean_zero(value: Float) -> Float {
+  case float.absolute_value(value) <=. 0.000000000001 {
+    True -> 0.0
+    False -> value
+  }
+}
+
+fn circle_angle_tangent(angle: Float) -> svg_path.Point {
+  svg_path.point(0.0 -. trig.sin_degrees(angle), trig.cos_degrees(angle))
+}
+
+fn count_stalled_segments(segments: List(svg_path.Segment)) -> Int {
+  segments
+  |> list.filter(stalled_arc_turn_segment_is_caught)
+  |> list.length
+}
+
+fn stalled_arc_turn_segment_is_caught(segment: svg_path.Segment) -> Bool {
+  let start = offset_endpoint(segment, 0.0)
+  let end = offset_endpoint(segment, 1.0)
+  case start, end {
+    Ok(start), Ok(end) -> distance(start, end) <=. stalled_arc_turn_threshold
+    _, _ -> False
+  }
+}
+
+fn offset_endpoint(
+  segment: svg_path.Segment,
+  t: Float,
+) -> Result(svg_path.Point, Nil) {
+  case
+    svg_path.segment_point(segment, at: t),
+    svg_path.segment_derivative(segment, at: t)
+  {
+    Ok(point), Ok(derivative) -> {
+      let normal = right_unit_normal(derivative)
+      Ok(add_point(point, scale_point(normal, stalled_arc_turn_distance)))
+    }
+    _, _ -> Error(Nil)
+  }
+}
+
+fn stalled_arc_turn_report(
+  cases: List(#(Int, svg_path.Subpath, Result(svg_path.Subpath, offset.Error))),
+) -> String {
+  string.join(
+    [
+      "stalled arc turn offset fixture",
+      "radius: " <> f(stalled_arc_turn_radius),
+      "distance: " <> f(stalled_arc_turn_distance),
+      "classifier threshold: " <> f(stalled_arc_turn_threshold),
+      "",
+      ..cases
+      |> list.map(stalled_arc_turn_case_report)
+    ],
+    "\n",
+  )
+}
+
+fn stalled_arc_turn_case_report(
+  example: #(Int, svg_path.Subpath, Result(svg_path.Subpath, offset.Error)),
+) -> String {
+  let #(subdivisions, source, result) = example
+  let source_segments = svg_path.segments(source)
+  let caught = count_stalled_segments(source_segments)
+  "subdivisions: "
+  <> int.to_string(subdivisions)
+  <> "\n"
+  <> "  source segments: "
+  <> int.to_string(list.length(source_segments))
+  <> "\n"
+  <> "  caught stalled segments: "
+  <> int.to_string(caught)
+  <> "\n"
+  <> "  result: "
+  <> stalled_arc_turn_offset_result_summary(result)
+}
+
+fn stalled_arc_turn_offset_result_summary(
+  result: Result(svg_path.Subpath, offset.Error),
+) -> String {
+  case result {
+    Ok(subpath) ->
+      "Ok; output segments: "
+      <> int.to_string(list.length(svg_path.segments(subpath)))
+      <> "; path: "
+      <> serialize.subpath(subpath)
+    Error(error) -> "Error: " <> string.inspect(error)
+  }
+}
+
+fn stalled_arc_turn_svg(
+  cases: List(#(Int, svg_path.Subpath, Result(svg_path.Subpath, offset.Error))),
+) -> String {
+  "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 860 280\" width=\"860\" height=\"280\">\n"
+  <> "  <rect width=\"100%\" height=\"100%\" fill=\"#ffffff\"/>\n"
+  <> "  <text x=\"430\" y=\"28\" font-family=\"ui-monospace, SFMono-Regular, Menlo, monospace\" font-size=\"16\" text-anchor=\"middle\" fill=\"#111827\">near-collapsed arc offsets</text>\n"
+  <> string.join(list.index_map(cases, stalled_arc_turn_panel), "\n")
+  <> "\n</svg>\n"
+}
+
+fn stalled_arc_turn_zoom_svg(
+  cases: List(#(Int, svg_path.Subpath, Result(svg_path.Subpath, offset.Error))),
+) -> String {
+  let one_cubic_cases =
+    cases
+    |> list.filter(fn(example) {
+      let #(subdivisions, _, _) = example
+      subdivisions == 1
+    })
+  "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 620\" width=\"620\" height=\"620\">\n"
+  <> "  <rect width=\"100%\" height=\"100%\" fill=\"#ffffff\"/>\n"
+  <> "  <text x=\"310\" y=\"30\" font-family=\"ui-monospace, SFMono-Regular, Menlo, monospace\" font-size=\"15\" text-anchor=\"middle\" fill=\"#111827\">corner zoom; distance="
+  <> f(stalled_arc_turn_distance)
+  <> "; threshold="
+  <> f(stalled_arc_turn_threshold)
+  <> "</text>\n"
+  <> string.join(
+    list.index_map(one_cubic_cases, stalled_arc_turn_zoom_panel),
+    "\n",
+  )
+  <> "\n</svg>\n"
+}
+
+fn stalled_arc_turn_zoom_panel(
+  example: #(Int, svg_path.Subpath, Result(svg_path.Subpath, offset.Error)),
+  index: Int,
+) -> String {
+  let #(subdivisions, source, result) = example
+  let #(clip_x, clip_y, clip_size) = stalled_arc_turn_zoom_box(source, result)
+  let scale = 520.0 /. clip_size
+  let tx = 310.0 -. { clip_x +. clip_size /. 2.0 } *. scale
+  let ty = 315.0 -. { clip_y +. clip_size /. 2.0 } *. scale
+  let source_path = serialize.subpath(source)
+  let stalled_segments =
+    svg_path.segments(source)
+    |> list.filter(stalled_arc_turn_segment_is_caught)
+    |> serialize_segments
+  let output = case result {
+    Ok(subpath) ->
+      "    <path d=\""
+      <> escape(serialize.subpath(subpath))
+      <> "\" style=\"fill: none; stroke: #1d4ed8; stroke-width: 0.00008; stroke-linecap: round; stroke-linejoin: round\" />\n"
+      <> "    <circle cx=\"0\" cy=\"0\" r=\"0.00008\" fill=\"#111827\" />\n"
+      <> stalled_arc_turn_output_control_marks(subpath)
+    Error(error) ->
+      "    <text x=\"0\" y=\"0.0016\" font-family=\"ui-monospace, SFMono-Regular, Menlo, monospace\" font-size=\"0.0003\" text-anchor=\"middle\" fill=\"#b91c1c\">"
+      <> escape(string.inspect(error))
+      <> "</text>\n"
+  }
+
+  "  <g transform=\"translate("
+  <> f(tx)
+  <> " "
+  <> f(ty)
+  <> ") scale("
+  <> f(scale)
+  <> ")\">\n"
+  <> "    <clipPath id=\"corner-zoom-clip-"
+  <> int.to_string(index)
+  <> "\"><rect x=\""
+  <> f(clip_x)
+  <> "\" y=\""
+  <> f(clip_y)
+  <> "\" width=\""
+  <> f(clip_size)
+  <> "\" height=\""
+  <> f(clip_size)
+  <> "\" /></clipPath>\n"
+  <> "    <rect x=\""
+  <> f(clip_x)
+  <> "\" y=\""
+  <> f(clip_y)
+  <> "\" width=\""
+  <> f(clip_size)
+  <> "\" height=\""
+  <> f(clip_size)
+  <> "\" fill=\"#f8fafc\" stroke=\"#d1d5db\" stroke-width=\"0.00003\" />\n"
+  <> "    <g clip-path=\"url(#corner-zoom-clip-"
+  <> int.to_string(index)
+  <> ")\">\n"
+  <> "    <path d=\""
+  <> escape(source_path)
+  <> "\" style=\"fill: none; stroke: #cbd5e1; stroke-width: 0.000035; stroke-linecap: round; stroke-linejoin: round\" />\n"
+  <> "    <path d=\""
+  <> escape(stalled_segments)
+  <> "\" style=\"fill: none; stroke: #f97316; stroke-width: 0.000055; stroke-linecap: round; stroke-linejoin: round\" />\n"
+  <> output
+  <> stalled_arc_turn_fit_marks(source)
+  <> "    </g>\n"
+  <> "  </g>\n"
+  <> "  <text x=\""
+  <> "310"
+  <> "\" y=\"592\" font-family=\"ui-monospace, SFMono-Regular, Menlo, monospace\" font-size=\"12\" text-anchor=\"middle\" fill=\"#111827\">"
+  <> int.to_string(subdivisions)
+  <> " cubic"
+  <> case subdivisions == 1 {
+    True -> ""
+    False -> "s"
+  }
+  <> "; stalled="
+  <> int.to_string(count_stalled_segments(svg_path.segments(source)))
+  <> "</text>"
+}
+
+fn stalled_arc_turn_zoom_box(
+  source: svg_path.Subpath,
+  result: Result(svg_path.Subpath, offset.Error),
+) -> #(Float, Float, Float) {
+  let points =
+    list.append(
+      stalled_arc_turn_source_diagnostic_points(source),
+      stalled_arc_turn_output_diagnostic_points(result),
+    )
+
+  case points {
+    [] -> #(-0.004, -0.008, 0.01)
+    [first, ..rest] -> {
+      let #(min_x, min_y, max_x, max_y) =
+        rest
+        |> list.fold(#(first.x, first.y, first.x, first.y), fn(box, point) {
+          let #(min_x, min_y, max_x, max_y) = box
+          #(
+            float.min(min_x, point.x),
+            float.min(min_y, point.y),
+            float.max(max_x, point.x),
+            float.max(max_y, point.y),
+          )
+        })
+      let width = max_x -. min_x
+      let height = max_y -. min_y
+      let size = float.max(float.max(width, height) *. 1.3, 0.002)
+      let center_x = { min_x +. max_x } /. 2.0
+      let center_y = { min_y +. max_y } /. 2.0
+      #(center_x -. size /. 2.0, center_y -. size /. 2.0, size)
+    }
+  }
+}
+
+fn stalled_arc_turn_source_diagnostic_points(
+  source: svg_path.Subpath,
+) -> List(svg_path.Point) {
+  let stalled =
+    svg_path.segments(source)
+    |> list.filter(stalled_arc_turn_segment_is_caught)
+
+  list.append(
+    stalled_arc_turn_sample_points(stalled),
+    stalled_arc_turn_tangent_points(stalled),
+  )
+}
+
+fn stalled_arc_turn_sample_points(
+  segments: List(svg_path.Segment),
+) -> List(svg_path.Point) {
+  stalled_arc_turn_sample_points_loop(segments, points: [])
+}
+
+fn stalled_arc_turn_sample_points_loop(
+  segments: List(svg_path.Segment),
+  points points: List(svg_path.Point),
+) -> List(svg_path.Point) {
+  case segments {
+    [] -> list.reverse(points)
+    [first, ..rest] -> {
+      let points =
+        stalled_arc_turn_segment_sample_points(first, [0.25, 0.5, 0.75], points)
+      stalled_arc_turn_sample_points_loop(rest, points:)
+    }
+  }
+}
+
+fn stalled_arc_turn_segment_sample_points(
+  segment: svg_path.Segment,
+  samples: List(Float),
+  points: List(svg_path.Point),
+) -> List(svg_path.Point) {
+  case samples {
+    [] -> points
+    [t, ..rest] -> {
+      let points = case offset_endpoint(segment, t) {
+        Ok(point) -> [point, ..points]
+        Error(_) -> points
+      }
+      stalled_arc_turn_segment_sample_points(segment, rest, points)
+    }
+  }
+}
+
+fn stalled_arc_turn_tangent_points(
+  segments: List(svg_path.Segment),
+) -> List(svg_path.Point) {
+  case segments {
+    [] -> []
+    [first, ..rest] -> {
+      let assert Ok(last) = list.last([first, ..rest])
+      list.append(
+        stalled_arc_turn_tangent_points_at(first, t: 0.0),
+        stalled_arc_turn_tangent_points_at(last, t: 1.0),
+      )
+    }
+  }
+}
+
+fn stalled_arc_turn_tangent_points_at(
+  segment: svg_path.Segment,
+  t t: Float,
+) -> List(svg_path.Point) {
+  case offset_endpoint(segment, t), segment_unit_tangent(segment, t) {
+    Ok(point), Ok(tangent) -> [
+      point,
+      add_point(point, scale_point(tangent, 0.00075)),
+    ]
+    _, _ -> []
+  }
+}
+
+fn stalled_arc_turn_output_diagnostic_points(
+  result: Result(svg_path.Subpath, offset.Error),
+) -> List(svg_path.Point) {
+  case result {
+    Error(_) -> []
+    Ok(subpath) -> {
+      let base_points =
+        svg_path.segments(subpath)
+        |> list.flat_map(stalled_arc_turn_segment_diagnostic_points)
+      [svg_path.point(0.0, 0.0), ..base_points]
+    }
+  }
+}
+
+fn stalled_arc_turn_segment_diagnostic_points(
+  segment: svg_path.Segment,
+) -> List(svg_path.Point) {
+  case segment {
+    svg_path.Line(start:, end:) -> [start, end]
+    svg_path.QuadraticBezier(start:, control:, end:) -> [start, control, end]
+    svg_path.CubicBezier(start:, control1:, control2:, end:) -> [
+      start,
+      control1,
+      control2,
+      end,
+    ]
+    svg_path.Arc(start:, end:, ..) -> [start, end]
+  }
+}
+
+fn stalled_arc_turn_output_control_marks(subpath: svg_path.Subpath) -> String {
+  case svg_path.segments(subpath) {
+    [_, svg_path.CubicBezier(control1:, control2:, ..), ..] ->
+      "    <circle cx=\""
+      <> f(control1.x)
+      <> "\" cy=\""
+      <> f(control1.y)
+      <> "\" r=\"0.00007\" fill=\"#dc2626\" stroke=\"#ffffff\" stroke-width=\"0.000018\" />\n"
+      <> "    <text x=\""
+      <> f(control1.x)
+      <> "\" y=\""
+      <> f(control1.y -. 0.00018)
+      <> "\" font-family=\"ui-monospace, SFMono-Regular, Menlo, monospace\" font-size=\"0.00018\" text-anchor=\"middle\" fill=\"#dc2626\" stroke=\"#ffffff\" stroke-width=\"0.000035\" paint-order=\"stroke fill\">c1</text>\n"
+      <> "    <circle cx=\""
+      <> f(control2.x)
+      <> "\" cy=\""
+      <> f(control2.y)
+      <> "\" r=\"0.00007\" fill=\"#7c3aed\" stroke=\"#ffffff\" stroke-width=\"0.000018\" />\n"
+      <> "    <text x=\""
+      <> f(control2.x)
+      <> "\" y=\""
+      <> f(control2.y -. 0.00018)
+      <> "\" font-family=\"ui-monospace, SFMono-Regular, Menlo, monospace\" font-size=\"0.00018\" text-anchor=\"middle\" fill=\"#7c3aed\" stroke=\"#ffffff\" stroke-width=\"0.000035\" paint-order=\"stroke fill\">c2</text>\n"
+    _ -> ""
+  }
+}
+
+fn stalled_arc_turn_fit_marks(source: svg_path.Subpath) -> String {
+  let stalled =
+    svg_path.segments(source)
+    |> list.filter(stalled_arc_turn_segment_is_caught)
+
+  stalled_arc_turn_sample_marks(stalled)
+  <> stalled_arc_turn_tangent_marks(stalled)
+}
+
+fn stalled_arc_turn_sample_marks(segments: List(svg_path.Segment)) -> String {
+  stalled_arc_turn_sample_marks_loop(segments, index: 0, marks: "")
+}
+
+fn stalled_arc_turn_sample_marks_loop(
+  segments: List(svg_path.Segment),
+  index index: Int,
+  marks marks: String,
+) -> String {
+  case segments {
+    [] -> marks
+    [first, ..rest] -> {
+      let marks =
+        marks <> stalled_arc_turn_segment_sample_marks(first, [0.25, 0.5, 0.75])
+      stalled_arc_turn_sample_marks_loop(rest, index: index + 1, marks:)
+    }
+  }
+}
+
+fn stalled_arc_turn_segment_sample_marks(
+  segment: svg_path.Segment,
+  samples: List(Float),
+) -> String {
+  case samples {
+    [] -> ""
+    [t, ..rest] -> {
+      let mark = case offset_endpoint(segment, t) {
+        Ok(point) ->
+          "    <circle cx=\""
+          <> f(point.x)
+          <> "\" cy=\""
+          <> f(point.y)
+          <> "\" r=\"0.00007\" fill=\"#16a34a\" stroke=\"#ffffff\" stroke-width=\"0.000018\" />\n"
+        Error(_) -> ""
+      }
+      mark <> stalled_arc_turn_segment_sample_marks(segment, rest)
+    }
+  }
+}
+
+fn stalled_arc_turn_tangent_marks(segments: List(svg_path.Segment)) -> String {
+  case segments {
+    [] -> ""
+    [first, ..rest] -> {
+      let assert Ok(last) = list.last([first, ..rest])
+      stalled_arc_turn_tangent_mark(first, t: 0.0, color: "#eab308")
+      <> stalled_arc_turn_tangent_mark(last, t: 1.0, color: "#eab308")
+    }
+  }
+}
+
+fn stalled_arc_turn_tangent_mark(
+  segment: svg_path.Segment,
+  t t: Float,
+  color color: String,
+) -> String {
+  case offset_endpoint(segment, t), segment_unit_tangent(segment, t) {
+    Ok(point), Ok(tangent) -> {
+      let end = add_point(point, scale_point(tangent, 0.00075))
+      "    <line x1=\""
+      <> f(point.x)
+      <> "\" y1=\""
+      <> f(point.y)
+      <> "\" x2=\""
+      <> f(end.x)
+      <> "\" y2=\""
+      <> f(end.y)
+      <> "\" style=\"stroke: "
+      <> color
+      <> "; stroke-width: 0.000045; stroke-linecap: round\" />\n"
+      <> "    <circle cx=\""
+      <> f(point.x)
+      <> "\" cy=\""
+      <> f(point.y)
+      <> "\" r=\"0.000075\" fill=\""
+      <> color
+      <> "\" stroke=\"#ffffff\" stroke-width=\"0.000018\" />\n"
+    }
+    _, _ -> ""
+  }
+}
+
+fn segment_unit_tangent(
+  segment: svg_path.Segment,
+  t: Float,
+) -> Result(svg_path.Point, Nil) {
+  case svg_path.segment_derivative(segment, at: t) {
+    Ok(derivative) -> {
+      let length = distance(svg_path.point(0.0, 0.0), derivative)
+      case length <=. 0.0 {
+        True -> Error(Nil)
+        False ->
+          Ok(svg_path.point(derivative.x /. length, derivative.y /. length))
+      }
+    }
+    Error(_) -> Error(Nil)
+  }
+}
+
+fn stalled_arc_turn_panel(
+  example: #(Int, svg_path.Subpath, Result(svg_path.Subpath, offset.Error)),
+  index: Int,
+) -> String {
+  let #(subdivisions, source, result) = example
+  let tx = 145.0 +. int.to_float(index) *. 280.0
+  let source_path = serialize.subpath(source)
+  let stalled_segments =
+    svg_path.segments(source)
+    |> list.filter(stalled_arc_turn_segment_is_caught)
+    |> serialize_segments
+  let output = case result {
+    Ok(subpath) ->
+      "    <path d=\""
+      <> escape(serialize.subpath(subpath))
+      <> "\" style=\"fill: none; stroke: #2563eb; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round\" />\n"
+    Error(error) ->
+      "    <text x=\"0\" y=\"24\" font-family=\"ui-monospace, SFMono-Regular, Menlo, monospace\" font-size=\"7\" text-anchor=\"middle\" fill=\"#b91c1c\">"
+      <> escape(string.inspect(error))
+      <> "</text>\n"
+  }
+
+  "  <g transform=\"translate("
+  <> f(tx)
+  <> " 145) scale(2)\">\n"
+  <> "    <rect x=\"-58\" y=\"-58\" width=\"116\" height=\"88\" fill=\"#f8fafc\" stroke=\"#d1d5db\" stroke-width=\"0.7\" />\n"
+  <> "    <path d=\""
+  <> escape(source_path)
+  <> "\" style=\"fill: none; stroke: #9ca3af; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round\" />\n"
+  <> "    <path d=\""
+  <> escape(stalled_segments)
+  <> "\" style=\"fill: none; stroke: #f97316; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round\" />\n"
+  <> output
+  <> "  </g>\n"
+  <> "  <text x=\""
+  <> f(tx)
+  <> "\" y=\"250\" font-family=\"ui-monospace, SFMono-Regular, Menlo, monospace\" font-size=\"13\" text-anchor=\"middle\" fill=\"#111827\">"
+  <> int.to_string(subdivisions)
+  <> " cubic"
+  <> case subdivisions == 1 {
+    True -> ""
+    False -> "s"
+  }
+  <> "; stalled="
+  <> int.to_string(count_stalled_segments(svg_path.segments(source)))
+  <> "</text>"
+}
+
+fn serialize_segments(segments: List(svg_path.Segment)) -> String {
+  case svg_path.subpath_with(segments, policy: svg_path.Wiggle) {
+    Ok(subpath) -> serialize.subpath(subpath)
+    Error(_) -> ""
+  }
+}
+
+fn add_point(a: svg_path.Point, b: svg_path.Point) -> svg_path.Point {
+  svg_path.point(a.x +. b.x, a.y +. b.y)
+}
+
+fn subtract_point(a: svg_path.Point, b: svg_path.Point) -> svg_path.Point {
+  svg_path.point(a.x -. b.x, a.y -. b.y)
+}
+
+fn scale_point(point: svg_path.Point, scale: Float) -> svg_path.Point {
+  svg_path.point(point.x *. scale, point.y *. scale)
+}
+
+fn f(value: Float) -> String {
+  number_format.number(
+    value,
+    with: number_format.prepare(
+      number_format.Options(
+        left_decimals: number_format.Succinct,
+        right_decimals: number_format.AtMost(6),
+      ),
+      [],
+    ),
+  )
+}
+
+fn escape(text: String) -> String {
+  text
+  |> string.replace("&", "\\&amp;")
+  |> string.replace("\"", "\\&quot;")
+  |> string.replace("<", "\\&lt;")
+  |> string.replace(">", "\\&gt;")
+}
+
+@external(erlang, "file", "write_file")
+fn write_file(path: String, contents: String) -> Dynamic
