@@ -9,13 +9,13 @@ start cap: Ok(start=(334.473227598245, 157.93318928231), end=(329.470398819393, 
 end cap: Ok(start=(339.397878429257, 140.610051440455), end=(344.200591273687, 144.206431472369))
 positive individual offset pieces: counts=1,1,1,1; total=4
 negative individual offset pieces: counts=1,1,1,1; total=4
-positive side: Ok(segments=4, closed=False, length=17.173745049283)
-negative side: Ok(segments=4, closed=False, length=16.826254950867)
-positive inserted joins: count=0; 
-negative inserted joins: count=0; 
+positive side: Ok(segments=4, closed=False, length=17.173745049216)
+negative side: Ok(segments=4, closed=False, length=16.826254950788)
+positive inserted joins: count=2; segment 0 bbox_diameter=2.759136465455 chord=1.979414991516; segment 2 bbox_diameter=0.715659931236 chord=0.515595292746
+negative inserted joins: count=2; segment 0 bbox_diameter=2.241798318348 chord=1.608274637908; segment 2 bbox_diameter=0.581473694129 chord=0.418921175356
 positive raw pair 0->1 before join: left_end=(330.613676230718, 153.004973968537); right_start=(330.613676259121, 153.004973930917); gap=0.000000047138; intersections=count=0; 
 negative raw pair 0->1 before join: left_end=(335.402140494947, 156.620303827651); right_start=(335.402140466543, 156.620303865272); gap=0.000000047138; intersections=count=1; 0: left_t=1, right_t=0, point=(335.402140480745, 156.620303846462)
-assembled candidate: Ok(segments=10, closed=True, length=52.849555921689)
+assembled candidate: Ok(segments=10, closed=True, length=52.849555479057)
 candidate self intersections: 0
 candidate self intersection points:
 

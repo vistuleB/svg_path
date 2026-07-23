@@ -54,6 +54,20 @@ colors.
 Shows three one-sided offset studies with each panel centered from the computed
 geometry bounds.
 
+### Stalled Offset Arc Turns
+
+![Stalled offset arc turns](https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/gallery-stalled-offset-arc-turns.svg)
+
+Compares near-collapsed quarter-turn offsets made from true circular arcs and
+from cubic approximations, with `1`, `4`, and `30` pieces.
+
+### Stalled Offset Corner Zoom
+
+![Stalled offset corner zoom](https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/gallery-stalled-offset-corner-zoom.svg)
+
+Zooms into the same six cases, showing offset samples, endpoint tangents, and
+the fitted or exact corner replacement.
+
 ### Area And Winding
 
 ![Area and winding](https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/gallery-area-winding.svg)
