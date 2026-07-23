@@ -40,9 +40,13 @@ type Example {
 }
 
 fn preview_options(join: offset.Join) -> offset.Options {
+  let default = offset.default_options()
   offset.Options(
-    ..offset.default_options(),
-    tolerance: preview_tolerance,
+    ..default,
+    fitting: offset.FittingOptions(
+      ..default.fitting,
+      tolerance: preview_tolerance,
+    ),
     join:,
   )
 }

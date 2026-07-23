@@ -1,11 +1,11 @@
 //// Path offset construction.
 ////
-//// This module follows the same basic model as `svgpathsio`: lines are offset
-//// exactly, while curves are converted to cubic Beziers and approximated by
-//// endpoint-normal cubics. The approximation is checked by sampling the true
-//// normal extrusion of the source curve and measuring its distance to the
-//// proposed offset. If the error is too large, the source curve is split and
-//// each half is offset recursively.
+//// This module follows the same basic model as `svgpathsio`: lines and
+//// circular arcs are offset exactly, while other curves are offset by fitted
+//// cubic Beziers. Cubic approximations are checked by sampling the true normal
+//// extrusion of the source curve and measuring its distance to the proposed
+//// offset. If the error is too large, the source curve is split and each half
+//// is offset recursively.
 ////
 //// Subpath and path offsets create a provisional one-sided offset walk by
 //// connecting adjacent segment offsets with the requested join style. The
@@ -50,7 +50,9 @@ const point_tolerance = 0.000000001
 
 const tangent_heal_angle_degrees = 0.01
 
-const stable_tangent_diameter = 0.01
+const stable_tangent_assertion_diameter = 0.01
+
+const default_stalled_offset_diameter = 0.01
 
 /// Errors returned by offset helpers.
 pub type Error {
@@ -68,6 +70,9 @@ pub type Error {
 
   /// The miter limit must be greater than zero.
   InvalidMiterLimit(miter_limit: Float)
+
+  /// The stalled offset diameter must be non-negative.
+  InvalidStalledOffsetDiameter(diameter: Float)
 
   /// Stroke width must be greater than zero.
   InvalidStrokeWidth(width: Float)
@@ -107,13 +112,26 @@ pub type Cap {
   RoundCap
 }
 
+/// Cubic fitting controls used by the recursive offset builders.
+///
+/// `tolerance` bounds the sampled geometric error of a fitted offset curve,
+/// `samples` controls the number of check samples, and `max_depth` limits
+/// recursive subdivision.
+pub type FittingOptions {
+  FittingOptions(tolerance: Float, samples: Int, max_depth: Int)
+}
+
 /// Options for offset construction.
+///
+/// `fitting` controls offset approximation, `trimming` controls projection and
+/// root-finding used while pruning, and `stalled_offset_diameter` decides when
+/// the stalled-run builder treats an offset piece as too small to keep as an
+/// ordinary independently fitted segment.
 pub type Options {
   Options(
-    tolerance: Float,
-    max_depth: Int,
-    samples: Int,
-    distance: svg_path.DistanceOptions,
+    fitting: FittingOptions,
+    trimming: svg_path.DistanceOptions,
+    stalled_offset_diameter: Float,
     join: Join,
   )
 }
@@ -167,10 +185,13 @@ type SplitPiece {
 /// Return default options for offset construction.
 pub fn default_options() -> Options {
   Options(
-    tolerance: default_tolerance,
-    max_depth: default_max_depth,
-    samples: default_samples,
-    distance: svg_path.default_distance_options(),
+    fitting: FittingOptions(
+      tolerance: default_tolerance,
+      samples: default_samples,
+      max_depth: default_max_depth,
+    ),
+    trimming: svg_path.default_distance_options(),
+    stalled_offset_diameter: default_stalled_offset_diameter,
     join: Miter(default_miter_limit),
   )
 }
@@ -181,9 +202,9 @@ pub fn default_options() -> Options {
 /// from `(0, 0)` to `(10, 0)`, `distance: 2.0` returns a line from `(0, -2)` to
 /// `(10, -2)`.
 ///
-/// Curves return an open subpath because the result may need several cubic
-/// pieces to stay within tolerance. Arcs and quadratic Beziers are converted to
-/// cubic Beziers before offsetting.
+/// Curves return an open subpath because the result may need several pieces to
+/// stay within tolerance. Circular arcs offset to circular arcs; non-circular
+/// arcs and Beziers use cubic fitting.
 pub fn segment(
   segment: svg_path.Segment,
   distance distance: Float,
@@ -219,7 +240,7 @@ pub fn segment_with(
 ///
 /// The provisional offset is split at self-intersections. Each section is
 /// sampled at global section-length parameters `0.1, 0.2, ..., 0.9`; sections
-/// with fewer than five samples at least `abs(distance) - options.tolerance`
+/// with fewer than five samples at least `abs(distance) - options.fitting.tolerance`
 /// from the original subpath are removed.
 pub fn subpath(
   subpath: svg_path.Subpath,
@@ -558,15 +579,22 @@ pub fn path_untrimmed_with(
 }
 
 fn validate_options(options: Options) -> Result(Nil, Error) {
-  case options.tolerance <=. 0.0 {
-    True -> Error(InvalidTolerance(options.tolerance))
+  case options.fitting.tolerance <=. 0.0 {
+    True -> Error(InvalidTolerance(options.fitting.tolerance))
     False ->
-      case options.samples <= 0 {
-        True -> Error(InvalidSamples(options.samples))
+      case options.fitting.samples <= 0 {
+        True -> Error(InvalidSamples(options.fitting.samples))
         False ->
-          case options.max_depth <= 0 {
-            True -> Error(InvalidMaxDepth(options.max_depth))
-            False -> validate_join(options.join)
+          case options.fitting.max_depth <= 0 {
+            True -> Error(InvalidMaxDepth(options.fitting.max_depth))
+            False ->
+              case options.stalled_offset_diameter <. 0.0 {
+                True ->
+                  Error(InvalidStalledOffsetDiameter(
+                    options.stalled_offset_diameter,
+                  ))
+                False -> validate_join(options.join)
+              }
           }
       }
   }
@@ -896,10 +924,10 @@ fn closed_stroke_path(
   ))
   let chunks =
     list.append(chunks_a, chunks_b)
-    |> merge_connecting_chunks(options.tolerance)
+    |> merge_connecting_chunks(options.fitting.tolerance)
   use subpaths <- result.try(chunks_to_subpaths(
     chunks,
-    options.tolerance,
+    options.fitting.tolerance,
     closed: True,
   ))
   Ok(svg_path.Path(subpaths:))
@@ -1178,7 +1206,7 @@ fn parametric_pruned_side(
   use sections <- result.try(parametric_self_intersection_sections(
     provisional,
     svg_path.default_intersection_options(),
-    options.tolerance,
+    options.fitting.tolerance,
     extra_split_points:,
   ))
   use retained <- result.try(
@@ -1190,10 +1218,10 @@ fn parametric_pruned_side(
       retained: [],
     ),
   )
-  let retained = merge_touching_chunks(retained, options.tolerance)
+  let retained = merge_touching_chunks(retained, options.fitting.tolerance)
   use subpaths <- result.try(chunks_to_subpaths(
     retained,
-    options.tolerance,
+    options.fitting.tolerance,
     closed: svg_path.is_closed(source),
   ))
   Ok(subpaths)
@@ -1217,7 +1245,7 @@ fn parametric_pruned_band_side(
   ))
   use subpaths <- result.try(chunks_to_subpaths(
     retained,
-    options.tolerance,
+    options.fitting.tolerance,
     closed: svg_path.is_closed(source),
   ))
   Ok(subpaths)
@@ -1234,7 +1262,7 @@ fn parametric_pruned_band_side_chunks(
   use sections <- result.try(parametric_self_intersection_sections(
     provisional,
     svg_path.default_intersection_options(),
-    options.tolerance,
+    options.fitting.tolerance,
     extra_split_points:,
   ))
   use retained <- result.try(
@@ -1247,7 +1275,7 @@ fn parametric_pruned_band_side_chunks(
       retained: [],
     ),
   )
-  Ok(merge_touching_chunks(retained, options.tolerance))
+  Ok(merge_touching_chunks(retained, options.fitting.tolerance))
 }
 
 fn parametric_pruned_stroke_candidate(
@@ -1261,7 +1289,7 @@ fn parametric_pruned_stroke_candidate(
     parametric_self_intersection_sections(
       candidate,
       svg_path.default_intersection_options(),
-      options.tolerance,
+      options.fitting.tolerance,
       extra_split_points: [],
     ),
   )
@@ -1275,10 +1303,10 @@ fn parametric_pruned_stroke_candidate(
       retained: [],
     ),
   )
-  let retained = merge_touching_chunks(retained, options.tolerance)
+  let retained = merge_touching_chunks(retained, options.fitting.tolerance)
   use subpaths <- result.try(chunks_to_subpaths(
     retained,
-    options.tolerance,
+    options.fitting.tolerance,
     closed: True,
   ))
   Ok(svg_path.Path(subpaths:))
@@ -1544,7 +1572,7 @@ fn parametric_section_is_valid(
   distance distance: Float,
   options options: Options,
 ) -> Result(Bool, Error) {
-  use section <- result.try(normalize_chunk(section, options.tolerance))
+  use section <- result.try(normalize_chunk(section, options.fitting.tolerance))
   use section <- result.try(
     svg_path.subpath_with(section, policy: svg_path.Wiggle)
     |> result.map_error(PathError),
@@ -1617,7 +1645,7 @@ fn parametric_point_is_non_negative(
     svg_path.subpath_projection_with(
       point,
       to: source,
-      options: options.distance,
+      options: options.trimming,
     )
     |> result.map_error(PathError),
   )
@@ -1665,7 +1693,7 @@ fn band_section_is_boundary(
   distance_b distance_b: Float,
   options options: Options,
 ) -> Result(Bool, Error) {
-  use section <- result.try(normalize_chunk(section, options.tolerance))
+  use section <- result.try(normalize_chunk(section, options.fitting.tolerance))
   use section <- result.try(
     svg_path.subpath_with(section, policy: svg_path.Wiggle)
     |> result.map_error(PathError),
@@ -1744,7 +1772,7 @@ fn band_section_sample_score(
   let tangent = scale(derivative, 1.0 /. tangent_length)
   let normal = rotate_clockwise(tangent)
   let probe_distance =
-    boundary_probe_distance(distance_a, distance_b, options.tolerance)
+    boundary_probe_distance(distance_a, distance_b, options.fitting.tolerance)
   let left_probe = add(point, scale(normal, 0.0 -. probe_distance))
   let right_probe = add(point, scale(normal, probe_distance))
   use left <- result.try(in_band(
@@ -1805,7 +1833,7 @@ fn stroke_section_is_boundary(
   cap cap: Cap,
   options options: Options,
 ) -> Result(Bool, Error) {
-  use section <- result.try(normalize_chunk(section, options.tolerance))
+  use section <- result.try(normalize_chunk(section, options.fitting.tolerance))
   use section <- result.try(
     svg_path.subpath_with(section, policy: svg_path.Wiggle)
     |> result.map_error(PathError),
@@ -1884,7 +1912,7 @@ fn stroke_section_sample_score(
   let tangent = scale(derivative, 1.0 /. tangent_length)
   let normal = rotate_clockwise(tangent)
   let probe_distance =
-    boundary_probe_distance(0.0 -. radius, radius, options.tolerance)
+    boundary_probe_distance(0.0 -. radius, radius, options.fitting.tolerance)
   let left_probe = add(point, scale(normal, 0.0 -. probe_distance))
   let right_probe = add(point, scale(normal, probe_distance))
   use left <- result.try(in_stroke(left_probe, source:, radius:, cap:, options:))
@@ -2078,7 +2106,7 @@ fn in_band_segment(
     parameters,
     distance_a:,
     distance_b:,
-    tolerance: options.tolerance,
+    tolerance: options.fitting.tolerance,
   )
 }
 
@@ -2181,7 +2209,7 @@ fn in_band_join(
       let containment_options =
         svg_path.ContainmentOptions(
           ..svg_path.default_containment_options(),
-          tolerance: options.tolerance,
+          tolerance: options.fitting.tolerance,
         )
       use containment <- result.try(
         svg_path.subpath_containment_with(
@@ -2386,10 +2414,10 @@ fn scan_normal_projection_parameters(
   previous_value previous_value: Float,
   parameters parameters: List(Float),
 ) -> Result(List(Float), Error) {
-  case index > options.distance.samples {
-    True -> Ok(parameters |> unique_floats(options.distance.tolerance, []))
+  case index > options.trimming.samples {
+    True -> Ok(parameters |> unique_floats(options.trimming.tolerance, []))
     False -> {
-      let next_t = int_to_float(index) /. int_to_float(options.distance.samples)
+      let next_t = int_to_float(index) /. int_to_float(options.trimming.samples)
       use next_value <- result.try(normal_projection_value(
         point,
         segment,
@@ -2430,10 +2458,10 @@ fn normal_projection_candidate(
   next_t: Float,
   next_value: Float,
 ) -> Result(Option(Float), Error) {
-  case float.absolute_value(previous_value) <=. options.distance.tolerance {
+  case float.absolute_value(previous_value) <=. options.trimming.tolerance {
     True -> Ok(Some(previous_t))
     False ->
-      case float.absolute_value(next_value) <=. options.distance.tolerance {
+      case float.absolute_value(next_value) <=. options.trimming.tolerance {
         True -> Ok(Some(next_t))
         False ->
           case same_sign(previous_value, next_value) {
@@ -2441,8 +2469,8 @@ fn normal_projection_candidate(
             False -> {
               let root_options =
                 root.Options(
-                  tolerance: options.distance.tolerance,
-                  max_iterations: options.distance.max_iterations,
+                  tolerance: options.trimming.tolerance,
+                  max_iterations: options.trimming.max_iterations,
                 )
               case
                 root.bisect_with(
@@ -2888,7 +2916,7 @@ fn same_point(a: svg_path.Point, b: svg_path.Point, tolerance: Float) -> Bool {
 }
 
 fn distance_margin(options: Options) -> Float {
-  options.tolerance
+  options.fitting.tolerance
 }
 
 fn stalled_run_offset_builder() -> OffsetBuilder {
@@ -2990,7 +3018,7 @@ fn stalled_run_smooth_offset_segments(
     svg_path.segments(subpath)
     |> classify_smooth_source_pieces(
       distance,
-      threshold: stable_tangent_diameter,
+      threshold: options.stalled_offset_diameter,
     )
   use offsets <- result.try(
     offset_smooth_source_pieces(
@@ -3071,12 +3099,16 @@ fn source_segment_offset_is_stalled(
   distance: Float,
   threshold: Float,
 ) -> Bool {
-  case
-    offset_point(segment, t: 0.0, distance:),
-    offset_point(segment, t: 1.0, distance:)
-  {
-    Ok(start), Ok(end) -> vec2f.distance(start, with: end) <=. threshold
-    _, _ -> False
+  case circular_arc_offset_radius(segment, distance) {
+    Ok(radius) -> float.absolute_value(radius) <=. threshold
+    Error(_) ->
+      case
+        offset_point(segment, t: 0.0, distance:),
+        offset_point(segment, t: 1.0, distance:)
+      {
+        Ok(start), Ok(end) -> vec2f.distance(start, with: end) <=. threshold
+        _, _ -> False
+      }
   }
 }
 
@@ -3144,36 +3176,76 @@ fn offset_stalled_source_run(
           samples: [],
         ),
       )
-      use source_start_tangent <- result.try(unit_tangent(first, t: 0.0))
-      use source_end_tangent <- result.try(unit_tangent(last, t: 1.0))
-      use curve <- result.try(
-        bezier.fit_cubic_with_endpoint_tangents(
-          start: to_bezier_point(start),
-          end: to_bezier_point(end),
-          start_tangent: to_bezier_point(source_start_tangent),
-          end_tangent: to_bezier_point(source_end_tangent),
-          samples:,
-        )
-        |> result.map_error(cubic_fit_error)
-        |> result.map(fn(fit) {
-          let #(curve, _) = fit
-          curve
-        }),
-      )
-      use segment <- result.try(fitted_curve_to_segment(curve))
-      case segment_is_finite(segment) {
-        False -> Error(NonFinite)
-        True -> {
-          use offset <- result.try(make_offset_segment(
-            segment:,
-            source_start: svg_path.segment_start(first),
-            source_end: svg_path.segment_end(last),
-            source_start_tangent:,
-            source_end_tangent:,
-          ))
-          Ok([offset])
+      case stalled_run_collapsed(start, end, samples) {
+        True -> Ok([])
+        False -> {
+          case rest, circular_arc_offset_radius(first, distance) {
+            [], Ok(radius) -> {
+              use offset <- result.try(offset_circular_arc_segment(
+                first,
+                distance,
+                radius,
+              ))
+              Ok([offset])
+            }
+            _, _ ->
+              offset_nonempty_stalled_source_run(
+                first,
+                last,
+                start,
+                end,
+                samples,
+              )
+          }
         }
       }
+    }
+  }
+}
+
+fn stalled_run_collapsed(
+  start: svg_path.Point,
+  end: svg_path.Point,
+  _samples: List(#(Float, bezier.Point)),
+) -> Bool {
+  start == end
+}
+
+fn offset_nonempty_stalled_source_run(
+  first: svg_path.Segment,
+  last: svg_path.Segment,
+  start: svg_path.Point,
+  end: svg_path.Point,
+  samples: List(#(Float, bezier.Point)),
+) -> Result(List(OffsetSegment), Error) {
+  use source_start_tangent <- result.try(unit_tangent(first, t: 0.0))
+  use source_end_tangent <- result.try(unit_tangent(last, t: 1.0))
+  use curve <- result.try(
+    bezier.fit_cubic_with_endpoint_tangents(
+      start: to_bezier_point(start),
+      end: to_bezier_point(end),
+      start_tangent: to_bezier_point(source_start_tangent),
+      end_tangent: to_bezier_point(source_end_tangent),
+      samples:,
+    )
+    |> result.map_error(cubic_fit_error)
+    |> result.map(fn(fit) {
+      let #(curve, _) = fit
+      curve
+    }),
+  )
+  use segment <- result.try(fitted_curve_to_segment(curve))
+  case segment_is_finite(segment) {
+    False -> Error(NonFinite)
+    True -> {
+      use offset <- result.try(make_offset_segment(
+        segment:,
+        source_start: svg_path.segment_start(first),
+        source_end: svg_path.segment_end(last),
+        source_start_tangent:,
+        source_end_tangent:,
+      ))
+      Ok([offset])
     }
   }
 }
@@ -3252,7 +3324,12 @@ fn assert_smooth_offset_boundary(
     svg_path.segment_end(left.segment) == svg_path.segment_start(right.segment)
   {
     False -> Error(NonFinite)
-    True -> assert_smooth_offset_tangent_boundary(left.segment, right.segment)
+    True ->
+      case left.source_end == right.source_start {
+        False -> Ok(Nil)
+        True ->
+          assert_smooth_offset_tangent_boundary(left.segment, right.segment)
+      }
   }
 }
 
@@ -3263,8 +3340,8 @@ fn assert_smooth_offset_tangent_boundary(
   use left_diameter <- result.try(segment_diameter(left))
   use right_diameter <- result.try(segment_diameter(right))
   case
-    left_diameter >=. stable_tangent_diameter
-    && right_diameter >=. stable_tangent_diameter
+    left_diameter >=. stable_tangent_assertion_diameter
+    && right_diameter >=. stable_tangent_assertion_diameter
   {
     False -> Ok(Nil)
     True -> {
@@ -3752,7 +3829,32 @@ fn offset_source_segment_with_builder(
       ))
       Ok([offset])
     }
-    _ ->
+    svg_path.Arc(..) -> {
+      case circular_arc_offset_radius(segment, distance) {
+        Ok(radius) -> {
+          case float.absolute_value(radius) <=. point_tolerance {
+            True -> Error(DegenerateTangent(0.0))
+            False -> {
+              use offset <- result.try(offset_circular_arc_segment(
+                segment,
+                distance,
+                radius,
+              ))
+              Ok([offset])
+            }
+          }
+        }
+        Error(_) ->
+          offset_cubic_segments_with_builder(
+            svg_path.segment_to_cubic_beziers(segment),
+            distance,
+            options,
+            fit_policy,
+            converted: [],
+          )
+      }
+    }
+    svg_path.QuadraticBezier(..) | svg_path.CubicBezier(..) ->
       offset_cubic_segments_with_builder(
         svg_path.segment_to_cubic_beziers(segment),
         distance,
@@ -3760,6 +3862,52 @@ fn offset_source_segment_with_builder(
         fit_policy,
         converted: [],
       )
+  }
+}
+
+fn offset_circular_arc_segment(
+  segment: svg_path.Segment,
+  distance: Float,
+  radius: Float,
+) -> Result(OffsetSegment, Error) {
+  use start <- result.try(offset_point(segment, t: 0.0, distance:))
+  use end <- result.try(offset_point(segment, t: 1.0, distance:))
+  use center <- result.try(
+    svg_path.arc_center_data(segment) |> result.map_error(PathError),
+  )
+  let arc =
+    svg_path.Arc(
+      start:,
+      radius: svg_path.point(
+        float.absolute_value(radius),
+        float.absolute_value(radius),
+      ),
+      x_axis_rotation: center.x_axis_rotation,
+      large_arc: float.absolute_value(center.delta_angle) >. 180.0,
+      sweep: center.delta_angle >=. 0.0,
+      end:,
+    )
+  build_offset_segment(source: segment, segment: arc)
+}
+
+fn circular_arc_offset_radius(
+  segment: svg_path.Segment,
+  distance: Float,
+) -> Result(Float, Error) {
+  use center <- result.try(
+    svg_path.arc_center_data(segment) |> result.map_error(PathError),
+  )
+  case
+    float.absolute_value(center.radius.x -. center.radius.y) <=. point_tolerance
+  {
+    False -> Error(NonFinite)
+    True -> {
+      let signed_distance = case center.delta_angle >=. 0.0 {
+        True -> distance
+        False -> 0.0 -. distance
+      }
+      Ok(center.radius.x +. signed_distance)
+    }
   }
 }
 
@@ -3833,14 +3981,14 @@ fn offset_cubic_segment_with_builder(
         segment,
         distance,
         options,
-        depth: options.max_depth,
+        depth: options.fitting.max_depth,
       )
     SmartOriginalRecursiveFit ->
       smart_recursive_offset_cubic_segment(
         segment,
         distance,
         options,
-        depth: options.max_depth,
+        depth: options.fitting.max_depth,
       )
   }
 }
@@ -3859,7 +4007,7 @@ fn recursive_offset_cubic_segment(
     options,
   ))
 
-  case divergence <=. options.tolerance {
+  case divergence <=. options.fitting.tolerance {
     True -> {
       use offset <- result.try(build_offset_segment(
         source: segment,
@@ -3908,7 +4056,7 @@ fn smart_recursive_offset_cubic_segment(
     options,
   ))
 
-  case divergence <=. options.tolerance {
+  case divergence <=. options.fitting.tolerance {
     True -> {
       use offset <- result.try(build_offset_segment(
         source: segment,
@@ -4199,21 +4347,21 @@ fn offset_divergence_loop(
   sample sample: Int,
   best best: Float,
 ) -> Result(Float, Error) {
-  case sample > options.samples {
+  case sample > options.fitting.samples {
     True -> Ok(best)
     False -> {
-      let t = int_to_float(sample) /. int_to_float(options.samples + 1)
+      let t = int_to_float(sample) /. int_to_float(options.fitting.samples + 1)
       use point <- result.try(offset_point(source, t:, distance:))
       use projection <- result.try(
         svg_path.segment_projection_with(
           point,
           to: candidate,
-          options: options.distance,
+          options: options.trimming,
         )
         |> result.map_error(PathError),
       )
       let best = float.max(best, projection.distance)
-      case best >. options.tolerance {
+      case best >. options.fitting.tolerance {
         True -> Ok(best)
         False ->
           offset_divergence_loop(
@@ -4255,14 +4403,14 @@ fn smart_offset_divergence_loop(
   best best: Float,
   valid_samples valid_samples: Int,
 ) -> Result(Float, Error) {
-  case sample > options.samples {
+  case sample > options.fitting.samples {
     True ->
       case valid_samples == 0 {
         True -> Error(DegenerateTangent(0.5))
         False -> Ok(best)
       }
     False -> {
-      let t = int_to_float(sample) /. int_to_float(options.samples + 1)
+      let t = int_to_float(sample) /. int_to_float(options.fitting.samples + 1)
       case offset_point(source, t:, distance:) {
         Error(DegenerateTangent(_)) ->
           smart_offset_divergence_loop(
@@ -4280,12 +4428,12 @@ fn smart_offset_divergence_loop(
             svg_path.segment_projection_with(
               point,
               to: candidate,
-              options: options.distance,
+              options: options.trimming,
             )
             |> result.map_error(PathError),
           )
           let best = float.max(best, projection.distance)
-          case best >. options.tolerance {
+          case best >. options.fitting.tolerance {
             True -> Ok(best)
             False ->
               smart_offset_divergence_loop(

@@ -23,8 +23,15 @@ fn render() -> String {
     |> transform.scale_subpath(factor: scale_factor)
     |> result.try_recover(fn(_) { Error(Nil) })
   let assert Ok(source) = transform.translate_subpath(source, x: 80.0, y: 240.0)
+  let default = offset.default_options()
   let options =
-    offset.Options(..offset.default_options(), tolerance: 0.01 *. scale_factor)
+    offset.Options(
+      ..default,
+      fitting: offset.FittingOptions(
+        ..default.fitting,
+        tolerance: 0.01 *. scale_factor,
+      ),
+    )
   let assert Ok(negative) =
     offset.subpath_untrimmed_with(source, distance: 0.0 -. radius(), options:)
   let assert Ok(positive) =

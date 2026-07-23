@@ -19,10 +19,11 @@ fn render() -> String {
     smooth_horizontal_figure_eight()
     |> transform.translate_subpath(x: -220.4, y: -116.0)
   let assert Ok(source) = source
+  let default = offset.default_options()
   let options =
     offset.Options(
-      ..offset.default_options(),
-      tolerance: 0.01,
+      ..default,
+      fitting: offset.FittingOptions(..default.fitting, tolerance: 0.01),
       join: offset.Round,
     )
 
@@ -287,12 +288,12 @@ fn section_has_enough_non_negative_samples(
         svg_path.subpath_projection_with(
           point,
           to: source,
-          options: options.distance,
+          options: options.trimming,
         )
         |> result.map_error(offset.PathError),
       )
       let count = case
-        projection.distance +. options.tolerance
+        projection.distance +. options.fitting.tolerance
         >=. float.absolute_value(distance)
       {
         True -> count + 1

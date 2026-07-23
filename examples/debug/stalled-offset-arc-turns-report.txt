@@ -3,15 +3,33 @@ radius: 40
 distance: 39.999
 classifier threshold: 0.01
 
-subdivisions: 1
+real arcs; subdivisions: 1 arc
   source segments: 3
-  caught stalled segments: 1
-  result: Ok; output segments: 3; path: M 0.001 40 V 0 C 0.001 -0.00793 0.00793 -0.001 0 -0.001 H -40
-subdivisions: 4
+  near-collapsed offset chords: 1
+  corner offset section: segments=1; length=0.001571
+  result: Ok; output segments: 3; path: M 0.001 40 V 0 A 0.001 0.001 0 0 0 0 -0.001 H -40
+real arcs; subdivisions: 4 arcs
   source segments: 6
-  caught stalled segments: 4
-  result: Ok; output segments: 3; path: M 0.001 40 V 0 C 0.001 -0.00055 0.00055 -0.001 0 -0.001 H -40
-subdivisions: 30
+  near-collapsed offset chords: 4
+  corner offset section: segments=1; length=0.001568
+  result: Ok; output segments: 3; path: M 0.001 40 V 0 C 0.001 -0.00054 0.00054 -0.001 0 -0.001 H -40
+real arcs; subdivisions: 30 arcs
   source segments: 32
-  caught stalled segments: 30
+  near-collapsed offset chords: 30
+  corner offset section: segments=1; length=0.001568
+  result: Ok; output segments: 3; path: M 0.001 40 V 0 C 0.001 -0.00054 0.00054 -0.001 0 -0.001 H -40
+cubic approximation; subdivisions: 1 cubic
+  source segments: 3
+  near-collapsed offset chords: 1
+  corner offset section: segments=1; length=0.010808
+  result: Ok; output segments: 3; path: M 0.001 40 V 0 C 0.001 -0.00793 0.00793 -0.001 0 -0.001 H -40
+cubic approximation; subdivisions: 4 cubics
+  source segments: 6
+  near-collapsed offset chords: 4
+  corner offset section: segments=1; length=0.001569
+  result: Ok; output segments: 3; path: M 0.001 40 V 0 C 0.001 -0.00055 0.00055 -0.001 0 -0.001 H -40
+cubic approximation; subdivisions: 30 cubics
+  source segments: 32
+  near-collapsed offset chords: 30
+  corner offset section: segments=1; length=0.001568
   result: Ok; output segments: 3; path: M 0.001 40 V 0 C 0.001 -0.00054 0.00054 -0.001 0 -0.001 H -40

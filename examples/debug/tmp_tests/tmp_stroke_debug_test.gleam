@@ -95,8 +95,13 @@ fn panel(
   let Example(label:, source:, width:, cap:, join:) = example
   let matrix = transform.translate(x: x +. 35.0, y: y +. 82.0)
   let assert Ok(source) = transform.subpath(source, by: matrix)
+  let default = offset.default_options()
   let options =
-    offset.Options(..offset.default_options(), tolerance: 0.01, join:)
+    offset.Options(
+      ..default,
+      fitting: offset.FittingOptions(..default.fitting, tolerance: 0.01),
+      join:,
+    )
   let result_things = case
     offset.subpath_stroke_with(source, width:, cap:, options:)
   {

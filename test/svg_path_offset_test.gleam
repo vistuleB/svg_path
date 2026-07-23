@@ -64,8 +64,16 @@ pub fn segment_offsets_quadratic_to_cubic_pieces_within_tolerance_test() {
       control: svg_path.point(50.0, -80.0),
       end: svg_path.point(100.0, 0.0),
     )
+  let default = offset.default_options()
   let options =
-    offset.Options(..offset.default_options(), tolerance: 0.001, samples: 12)
+    offset.Options(
+      ..default,
+      fitting: offset.FittingOptions(
+        ..default.fitting,
+        tolerance: 0.001,
+        samples: 12,
+      ),
+    )
 
   let assert Ok(offset_subpath) =
     offset.segment_with(curve, distance: 5.0, options:)
@@ -74,7 +82,7 @@ pub fn segment_offsets_quadratic_to_cubic_pieces_within_tolerance_test() {
   assert max_offset_error(curve, offset_subpath, distance: 5.0) <=. 0.01
 }
 
-pub fn segment_offsets_arc_after_cubic_conversion_test() {
+pub fn segment_offsets_circular_arc_exactly_test() {
   let arc =
     svg_path.Arc(
       start: svg_path.point(10.0, 0.0),
@@ -87,7 +95,105 @@ pub fn segment_offsets_arc_after_cubic_conversion_test() {
 
   let assert Ok(offset_subpath) = offset.segment(arc, distance: 2.0)
 
-  assert svg_path.segments(offset_subpath) != []
+  assert serialize.subpath(offset_subpath) == "M 12 0 A 12 12 0 0 1 0 12"
+}
+
+pub fn segment_offsets_circular_arc_across_center_test() {
+  let arc =
+    svg_path.Arc(
+      start: svg_path.point(10.0, 0.0),
+      radius: svg_path.point(10.0, 10.0),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: False,
+      end: svg_path.point(0.0, -10.0),
+    )
+
+  let assert Ok(offset_subpath) = offset.segment(arc, distance: 12.0)
+
+  assert serialize.subpath(offset_subpath) == "M -2 0 A 2 2 0 0 0 0 2"
+}
+
+pub fn segment_offsets_near_collapsed_circular_arc_exactly_test() {
+  let arc =
+    svg_path.Arc(
+      start: svg_path.point(40.0, 0.0),
+      radius: svg_path.point(40.0, 40.0),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: False,
+      end: svg_path.point(0.0, -40.0),
+    )
+
+  let assert Ok(offset_subpath) = offset.segment(arc, distance: 39.999)
+
+  assert serialize.subpath(offset_subpath)
+    == "M 0.001 0 A 0.001 0.001 0 0 0 0 -0.001"
+}
+
+pub fn segment_rejects_collapsed_circular_arc_offset_test() {
+  let arc =
+    svg_path.Arc(
+      start: svg_path.point(40.0, 0.0),
+      radius: svg_path.point(40.0, 40.0),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: False,
+      end: svg_path.point(0.0, -40.0),
+    )
+
+  assert offset.segment(arc, distance: 40.0)
+    == Error(offset.DegenerateTangent(0.0))
+}
+
+pub fn subpath_offsets_one_small_circular_arc_as_arc_test() {
+  let source = stalled_arc_turn_source(1, use_arcs: True)
+  let default = offset.default_options()
+  let options =
+    offset.Options(
+      ..default,
+      fitting: offset.FittingOptions(..default.fitting, tolerance: 0.001),
+      join: offset.Round,
+    )
+
+  let assert Ok(offset_subpath) =
+    offset.subpath_untrimmed_with(source, distance: 39.999, options:)
+
+  let corner_segments = stalled_arc_turn_corner_segments(offset_subpath)
+
+  assert list.length(corner_segments) == 1
+  assert list.any(corner_segments, fn(segment) {
+    case segment {
+      svg_path.Arc(..) -> True
+      _ -> False
+    }
+  })
+  assert serialize.subpath(offset_subpath)
+    == "M 0.001 40 V 0 A 0.001 0.001 0 0 0 0 -0.001 H -40"
+}
+
+pub fn subpath_offsets_many_small_circular_arcs_as_one_sampled_segment_test() {
+  let source = stalled_arc_turn_source(4, use_arcs: True)
+  let default = offset.default_options()
+  let options =
+    offset.Options(
+      ..default,
+      fitting: offset.FittingOptions(..default.fitting, tolerance: 0.001),
+      join: offset.Round,
+    )
+
+  let assert Ok(offset_subpath) =
+    offset.subpath_untrimmed_with(source, distance: 39.999, options:)
+
+  let corner_segments = stalled_arc_turn_corner_segments(offset_subpath)
+
+  assert list.length(corner_segments) == 1
+  assert list.any(corner_segments, fn(segment) {
+    case segment {
+      svg_path.CubicBezier(..) -> True
+      _ -> False
+    }
+  })
 }
 
 pub fn segment_rejects_invalid_options_test() {
@@ -96,10 +202,28 @@ pub fn segment_rejects_invalid_options_test() {
       start: svg_path.point(0.0, 0.0),
       end: svg_path.point(10.0, 0.0),
     )
-  let options = offset.Options(..offset.default_options(), tolerance: 0.0)
+  let default = offset.default_options()
+  let options =
+    offset.Options(
+      ..default,
+      fitting: offset.FittingOptions(..default.fitting, tolerance: 0.0),
+    )
 
   assert offset.segment_with(line, distance: 1.0, options:)
     == Error(offset.InvalidTolerance(0.0))
+}
+
+pub fn segment_rejects_negative_stalled_offset_diameter_test() {
+  let line =
+    svg_path.Line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(10.0, 0.0),
+    )
+  let options =
+    offset.Options(..offset.default_options(), stalled_offset_diameter: -1.0)
+
+  assert offset.segment_with(line, distance: 1.0, options:)
+    == Error(offset.InvalidStalledOffsetDiameter(-1.0))
 }
 
 pub fn segment_rejects_zero_length_line_test() {
@@ -558,23 +682,21 @@ pub fn path_offsets_every_subpath_test() {
 pub fn stalled_arc_turn_offset_debug_fixture_is_generated_test() {
   let subdivisions = [1, 4, 30]
   let cases =
-    subdivisions
-    |> list.map(fn(count) {
-      let source = stalled_arc_turn_source(count)
-      let options =
-        offset.Options(
-          ..offset.default_options(),
-          tolerance: 0.001,
-          join: offset.Round,
-        )
-      let result =
-        offset.subpath_untrimmed_with(
-          source,
-          distance: stalled_arc_turn_distance,
-          options:,
-        )
-      #(count, source, result)
-    })
+    list.append(
+      subdivisions
+        |> list.map(fn(count) {
+          stalled_arc_turn_case("real arcs", "arc", count, use_arcs: True)
+        }),
+      subdivisions
+        |> list.map(fn(count) {
+          stalled_arc_turn_case(
+            "cubic approximation",
+            "cubic",
+            count,
+            use_arcs: False,
+          )
+        }),
+    )
 
   let _ = write_file(stalled_arc_turn_svg_output, stalled_arc_turn_svg(cases))
   let _ =
@@ -588,11 +710,40 @@ pub fn stalled_arc_turn_offset_debug_fixture_is_generated_test() {
   let caught_counts =
     cases
     |> list.map(fn(example) {
-      let #(_, source, _) = example
+      let #(_, _, _, source, _) = example
       count_stalled_segments(svg_path.segments(source))
     })
 
-  assert caught_counts == [1, 4, 30]
+  assert caught_counts == [1, 4, 30, 1, 4, 30]
+}
+
+fn stalled_arc_turn_case(
+  row_label: String,
+  unit_label: String,
+  subdivisions: Int,
+  use_arcs use_arcs: Bool,
+) -> #(
+  String,
+  String,
+  Int,
+  svg_path.Subpath,
+  Result(svg_path.Subpath, offset.Error),
+) {
+  let source = stalled_arc_turn_source(subdivisions, use_arcs:)
+  let default = offset.default_options()
+  let options =
+    offset.Options(
+      ..default,
+      fitting: offset.FittingOptions(..default.fitting, tolerance: 0.001),
+      join: offset.Round,
+    )
+  let result =
+    offset.subpath_untrimmed_with(
+      source,
+      distance: stalled_arc_turn_distance,
+      options:,
+    )
+  #(row_label, unit_label, subdivisions, source, result)
 }
 
 fn max_offset_error(
@@ -658,18 +809,67 @@ fn distance(a: svg_path.Point, b: svg_path.Point) -> Float {
   distance
 }
 
-fn stalled_arc_turn_source(subdivisions: Int) -> svg_path.Subpath {
+fn stalled_arc_turn_source(
+  subdivisions: Int,
+  use_arcs use_arcs: Bool,
+) -> svg_path.Subpath {
   let r = stalled_arc_turn_radius
   let arc_start = circle_point(0.0, radius: r)
   let arc_end = circle_point(-90.0, radius: r)
+  let turn_segments = case use_arcs {
+    True -> quarter_turn_arcs(subdivisions)
+    False -> quarter_turn_cubics(subdivisions)
+  }
   let segments = [
     svg_path.Line(start: svg_path.point(r, r), end: arc_start),
-    ..list.append(quarter_turn_cubics(subdivisions), [
+    ..list.append(turn_segments, [
       svg_path.Line(start: arc_end, end: svg_path.point(0.0 -. r, 0.0 -. r)),
     ])
   ]
   let assert Ok(subpath) = svg_path.subpath(segments)
   subpath
+}
+
+fn quarter_turn_arcs(subdivisions: Int) -> List(svg_path.Segment) {
+  quarter_turn_arcs_loop(0, subdivisions, arcs: [])
+}
+
+fn quarter_turn_arcs_loop(
+  index: Int,
+  subdivisions: Int,
+  arcs arcs: List(svg_path.Segment),
+) -> List(svg_path.Segment) {
+  case index >= subdivisions {
+    True -> list.reverse(arcs)
+    False -> {
+      let step = -90.0 /. int.to_float(subdivisions)
+      let start_angle = int.to_float(index) *. step
+      let end_angle = int.to_float(index + 1) *. step
+      quarter_turn_arcs_loop(index + 1, subdivisions, arcs: [
+        circle_arc_segment(
+          start_angle,
+          end_angle,
+          radius: stalled_arc_turn_radius,
+        ),
+        ..arcs
+      ])
+    }
+  }
+}
+
+fn circle_arc_segment(
+  start_angle: Float,
+  end_angle: Float,
+  radius radius: Float,
+) -> svg_path.Segment {
+  svg_path.Arc(
+    start: circle_point(start_angle, radius:),
+    radius: svg_path.point(radius, radius),
+    x_axis_rotation: 0.0,
+    large_arc: False,
+    sweep: False,
+    end: circle_point(end_angle, radius:),
+  )
 }
 
 fn quarter_turn_cubics(subdivisions: Int) -> List(svg_path.Segment) {
@@ -767,7 +967,15 @@ fn offset_endpoint(
 }
 
 fn stalled_arc_turn_report(
-  cases: List(#(Int, svg_path.Subpath, Result(svg_path.Subpath, offset.Error))),
+  cases: List(
+    #(
+      String,
+      String,
+      Int,
+      svg_path.Subpath,
+      Result(svg_path.Subpath, offset.Error),
+    ),
+  ),
 ) -> String {
   string.join(
     [
@@ -784,22 +992,53 @@ fn stalled_arc_turn_report(
 }
 
 fn stalled_arc_turn_case_report(
-  example: #(Int, svg_path.Subpath, Result(svg_path.Subpath, offset.Error)),
+  example: #(
+    String,
+    String,
+    Int,
+    svg_path.Subpath,
+    Result(svg_path.Subpath, offset.Error),
+  ),
 ) -> String {
-  let #(subdivisions, source, result) = example
+  let #(row_label, unit_label, subdivisions, source, result) = example
   let source_segments = svg_path.segments(source)
   let caught = count_stalled_segments(source_segments)
-  "subdivisions: "
+  row_label
+  <> "; subdivisions: "
   <> int.to_string(subdivisions)
+  <> " "
+  <> unit_label
+  <> case subdivisions == 1 {
+    True -> ""
+    False -> "s"
+  }
   <> "\n"
   <> "  source segments: "
   <> int.to_string(list.length(source_segments))
   <> "\n"
-  <> "  caught stalled segments: "
+  <> "  near-collapsed offset chords: "
   <> int.to_string(caught)
+  <> "\n"
+  <> "  corner offset section: "
+  <> stalled_arc_turn_corner_summary(result)
   <> "\n"
   <> "  result: "
   <> stalled_arc_turn_offset_result_summary(result)
+}
+
+fn stalled_arc_turn_corner_summary(
+  result: Result(svg_path.Subpath, offset.Error),
+) -> String {
+  case result {
+    Error(error) -> "Error: " <> string.inspect(error)
+    Ok(subpath) -> {
+      let segments = stalled_arc_turn_corner_segments(subpath)
+      "segments="
+      <> int.to_string(list.length(segments))
+      <> "; length="
+      <> f(stalled_arc_turn_segments_length(segments))
+    }
+  }
 }
 
 fn stalled_arc_turn_offset_result_summary(
@@ -815,48 +1054,114 @@ fn stalled_arc_turn_offset_result_summary(
   }
 }
 
-fn stalled_arc_turn_svg(
-  cases: List(#(Int, svg_path.Subpath, Result(svg_path.Subpath, offset.Error))),
+fn stalled_arc_turn_corner_label(
+  result: Result(svg_path.Subpath, offset.Error),
 ) -> String {
-  "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 860 280\" width=\"860\" height=\"280\">\n"
+  case result {
+    Error(_) -> "Error"
+    Ok(subpath) -> {
+      let segments = stalled_arc_turn_corner_segments(subpath)
+      int.to_string(list.length(segments))
+      <> " seg; length "
+      <> f(stalled_arc_turn_segments_length(segments))
+    }
+  }
+}
+
+fn stalled_arc_turn_corner_segment_count(
+  result: Result(svg_path.Subpath, offset.Error),
+) -> String {
+  case result {
+    Error(_) -> "Error"
+    Ok(subpath) ->
+      subpath
+      |> stalled_arc_turn_corner_segments
+      |> list.length
+      |> int.to_string
+  }
+}
+
+fn stalled_arc_turn_corner_segments(
+  subpath: svg_path.Subpath,
+) -> List(svg_path.Segment) {
+  case svg_path.segments(subpath) {
+    [] | [_] | [_, _] -> []
+    [_, ..rest] ->
+      case list.take(rest, list.length(rest) - 1) {
+        middle -> middle
+      }
+  }
+}
+
+fn stalled_arc_turn_segments_length(segments: List(svg_path.Segment)) -> Float {
+  segments
+  |> list.fold(0.0, fn(total, segment) {
+    case svg_path.segment_length(segment) {
+      Ok(length) -> total +. length
+      Error(_) -> total
+    }
+  })
+}
+
+fn stalled_arc_turn_svg(
+  cases: List(
+    #(
+      String,
+      String,
+      Int,
+      svg_path.Subpath,
+      Result(svg_path.Subpath, offset.Error),
+    ),
+  ),
+) -> String {
+  "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 860 570\" width=\"860\" height=\"570\">\n"
   <> "  <rect width=\"100%\" height=\"100%\" fill=\"#ffffff\"/>\n"
-  <> "  <text x=\"430\" y=\"28\" font-family=\"ui-monospace, SFMono-Regular, Menlo, monospace\" font-size=\"16\" text-anchor=\"middle\" fill=\"#111827\">near-collapsed arc offsets</text>\n"
+  <> "  <text x=\"430\" y=\"28\" font-family=\"ui-monospace, SFMono-Regular, Menlo, monospace\" font-size=\"16\" text-anchor=\"middle\" fill=\"#111827\">near-collapsed quarter-turn offsets</text>\n"
   <> string.join(list.index_map(cases, stalled_arc_turn_panel), "\n")
   <> "\n</svg>\n"
 }
 
 fn stalled_arc_turn_zoom_svg(
-  cases: List(#(Int, svg_path.Subpath, Result(svg_path.Subpath, offset.Error))),
+  cases: List(
+    #(
+      String,
+      String,
+      Int,
+      svg_path.Subpath,
+      Result(svg_path.Subpath, offset.Error),
+    ),
+  ),
 ) -> String {
-  let one_cubic_cases =
-    cases
-    |> list.filter(fn(example) {
-      let #(subdivisions, _, _) = example
-      subdivisions == 1
-    })
-  "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 620 620\" width=\"620\" height=\"620\">\n"
+  "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 860 650\" width=\"860\" height=\"650\">\n"
   <> "  <rect width=\"100%\" height=\"100%\" fill=\"#ffffff\"/>\n"
-  <> "  <text x=\"310\" y=\"30\" font-family=\"ui-monospace, SFMono-Regular, Menlo, monospace\" font-size=\"15\" text-anchor=\"middle\" fill=\"#111827\">corner zoom; distance="
+  <> "  <text x=\"430\" y=\"30\" font-family=\"ui-monospace, SFMono-Regular, Menlo, monospace\" font-size=\"15\" text-anchor=\"middle\" fill=\"#111827\">corner zoom; distance="
   <> f(stalled_arc_turn_distance)
   <> "; threshold="
   <> f(stalled_arc_turn_threshold)
   <> "</text>\n"
-  <> string.join(
-    list.index_map(one_cubic_cases, stalled_arc_turn_zoom_panel),
-    "\n",
-  )
+  <> string.join(list.index_map(cases, stalled_arc_turn_zoom_panel), "\n")
   <> "\n</svg>\n"
 }
 
 fn stalled_arc_turn_zoom_panel(
-  example: #(Int, svg_path.Subpath, Result(svg_path.Subpath, offset.Error)),
+  example: #(
+    String,
+    String,
+    Int,
+    svg_path.Subpath,
+    Result(svg_path.Subpath, offset.Error),
+  ),
   index: Int,
 ) -> String {
-  let #(subdivisions, source, result) = example
+  let #(row_label, unit_label, subdivisions, source, result) = example
   let #(clip_x, clip_y, clip_size) = stalled_arc_turn_zoom_box(source, result)
-  let scale = 520.0 /. clip_size
-  let tx = 310.0 -. { clip_x +. clip_size /. 2.0 } *. scale
-  let ty = 315.0 -. { clip_y +. clip_size /. 2.0 } *. scale
+  let scale = 220.0 /. clip_size
+  let column = index % 3
+  let row = index / 3
+  let panel_x = 145.0 +. int.to_float(column) *. 280.0
+  let panel_y = 170.0 +. int.to_float(row) *. 260.0
+  let tx = panel_x -. { clip_x +. clip_size /. 2.0 } *. scale
+  let ty = panel_y -. { clip_y +. clip_size /. 2.0 } *. scale
   let source_path = serialize.subpath(source)
   let stalled_segments =
     svg_path.segments(source)
@@ -916,14 +1221,21 @@ fn stalled_arc_turn_zoom_panel(
   <> "    </g>\n"
   <> "  </g>\n"
   <> "  <text x=\""
-  <> "310"
-  <> "\" y=\"592\" font-family=\"ui-monospace, SFMono-Regular, Menlo, monospace\" font-size=\"12\" text-anchor=\"middle\" fill=\"#111827\">"
+  <> f(panel_x)
+  <> "\" y=\""
+  <> f(panel_y +. 132.0)
+  <> "\" font-family=\"ui-monospace, SFMono-Regular, Menlo, monospace\" font-size=\"11\" text-anchor=\"middle\" fill=\"#111827\">"
+  <> row_label
+  <> "; "
   <> int.to_string(subdivisions)
-  <> " cubic"
+  <> " "
+  <> unit_label
   <> case subdivisions == 1 {
     True -> ""
     False -> "s"
   }
+  <> "; corner "
+  <> stalled_arc_turn_corner_label(result)
   <> "; stalled="
   <> int.to_string(count_stalled_segments(svg_path.segments(source)))
   <> "</text>"
@@ -935,8 +1247,8 @@ fn stalled_arc_turn_zoom_box(
 ) -> #(Float, Float, Float) {
   let points =
     list.append(
-      stalled_arc_turn_source_diagnostic_points(source),
-      stalled_arc_turn_output_diagnostic_points(result),
+      stalled_arc_turn_offset_sample_points(source),
+      stalled_arc_turn_corner_diagnostic_points(result),
     )
 
   case points {
@@ -963,17 +1275,14 @@ fn stalled_arc_turn_zoom_box(
   }
 }
 
-fn stalled_arc_turn_source_diagnostic_points(
+fn stalled_arc_turn_offset_sample_points(
   source: svg_path.Subpath,
 ) -> List(svg_path.Point) {
   let stalled =
     svg_path.segments(source)
     |> list.filter(stalled_arc_turn_segment_is_caught)
 
-  list.append(
-    stalled_arc_turn_sample_points(stalled),
-    stalled_arc_turn_tangent_points(stalled),
-  )
+  stalled_arc_turn_sample_points(stalled)
 }
 
 fn stalled_arc_turn_sample_points(
@@ -1013,45 +1322,15 @@ fn stalled_arc_turn_segment_sample_points(
   }
 }
 
-fn stalled_arc_turn_tangent_points(
-  segments: List(svg_path.Segment),
-) -> List(svg_path.Point) {
-  case segments {
-    [] -> []
-    [first, ..rest] -> {
-      let assert Ok(last) = list.last([first, ..rest])
-      list.append(
-        stalled_arc_turn_tangent_points_at(first, t: 0.0),
-        stalled_arc_turn_tangent_points_at(last, t: 1.0),
-      )
-    }
-  }
-}
-
-fn stalled_arc_turn_tangent_points_at(
-  segment: svg_path.Segment,
-  t t: Float,
-) -> List(svg_path.Point) {
-  case offset_endpoint(segment, t), segment_unit_tangent(segment, t) {
-    Ok(point), Ok(tangent) -> [
-      point,
-      add_point(point, scale_point(tangent, 0.00075)),
-    ]
-    _, _ -> []
-  }
-}
-
-fn stalled_arc_turn_output_diagnostic_points(
+fn stalled_arc_turn_corner_diagnostic_points(
   result: Result(svg_path.Subpath, offset.Error),
 ) -> List(svg_path.Point) {
   case result {
     Error(_) -> []
-    Ok(subpath) -> {
-      let base_points =
-        svg_path.segments(subpath)
-        |> list.flat_map(stalled_arc_turn_segment_diagnostic_points)
-      [svg_path.point(0.0, 0.0), ..base_points]
-    }
+    Ok(subpath) ->
+      subpath
+      |> stalled_arc_turn_corner_segments
+      |> list.flat_map(stalled_arc_turn_segment_diagnostic_points)
   }
 }
 
@@ -1207,11 +1486,20 @@ fn segment_unit_tangent(
 }
 
 fn stalled_arc_turn_panel(
-  example: #(Int, svg_path.Subpath, Result(svg_path.Subpath, offset.Error)),
+  example: #(
+    String,
+    String,
+    Int,
+    svg_path.Subpath,
+    Result(svg_path.Subpath, offset.Error),
+  ),
   index: Int,
 ) -> String {
-  let #(subdivisions, source, result) = example
-  let tx = 145.0 +. int.to_float(index) *. 280.0
+  let #(row_label, unit_label, subdivisions, source, result) = example
+  let column = index % 3
+  let row = index / 3
+  let tx = 145.0 +. int.to_float(column) *. 280.0
+  let ty = 145.0 +. int.to_float(row) *. 260.0
   let source_path = serialize.subpath(source)
   let stalled_segments =
     svg_path.segments(source)
@@ -1230,7 +1518,9 @@ fn stalled_arc_turn_panel(
 
   "  <g transform=\"translate("
   <> f(tx)
-  <> " 145) scale(2)\">\n"
+  <> " "
+  <> f(ty)
+  <> ") scale(2)\">\n"
   <> "    <rect x=\"-58\" y=\"-58\" width=\"116\" height=\"88\" fill=\"#f8fafc\" stroke=\"#d1d5db\" stroke-width=\"0.7\" />\n"
   <> "    <path d=\""
   <> escape(source_path)
@@ -1242,13 +1532,25 @@ fn stalled_arc_turn_panel(
   <> "  </g>\n"
   <> "  <text x=\""
   <> f(tx)
-  <> "\" y=\"250\" font-family=\"ui-monospace, SFMono-Regular, Menlo, monospace\" font-size=\"13\" text-anchor=\"middle\" fill=\"#111827\">"
+  <> "\" y=\""
+  <> f(ty +. 105.0)
+  <> "\" font-family=\"ui-monospace, SFMono-Regular, Menlo, monospace\" font-size=\"12\" text-anchor=\"middle\" fill=\"#111827\">"
+  <> row_label
+  <> "; "
   <> int.to_string(subdivisions)
-  <> " cubic"
+  <> " "
+  <> unit_label
   <> case subdivisions == 1 {
     True -> ""
     False -> "s"
   }
+  <> "</text>\n"
+  <> "  <text x=\""
+  <> f(tx)
+  <> "\" y=\""
+  <> f(ty +. 122.0)
+  <> "\" font-family=\"ui-monospace, SFMono-Regular, Menlo, monospace\" font-size=\"11\" text-anchor=\"middle\" fill=\"#334155\">corner segments="
+  <> stalled_arc_turn_corner_segment_count(result)
   <> "; stalled="
   <> int.to_string(count_stalled_segments(svg_path.segments(source)))
   <> "</text>"
