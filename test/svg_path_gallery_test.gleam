@@ -5,7 +5,7 @@ import gleam/list
 import gleam/string
 import gleeunit
 import svg_path
-import svg_path/area
+import svg_path/convex_hull
 import svg_path/csg
 import svg_path/effects
 import svg_path/number_format
@@ -66,7 +66,7 @@ pub fn gallery_figures_are_generated_test() {
       "Stalled offset corner zoom",
       stalled_arc_turn_zoom_svg(stalled_arc_turn_cases()),
     ),
-    #("gallery-area-winding.svg", "Area and winding", area_winding()),
+    #("gallery-crescent-hull.svg", "Crescent hull", crescent_hull()),
   ]
 
   let entries =
@@ -456,6 +456,119 @@ fn recursive_dash_outline_strokes(
       }
     }
   }
+}
+
+fn crescent_hull() -> String {
+  let start = crescent_radius_point(-35.0)
+  let end = crescent_radius_point(35.0)
+  let points = crescent_points(54)
+  let source =
+    crescent_point_cloud_path(points, line_start: start, line_end: end)
+  let reference = crescent_reference_path(start, end)
+  let assert Ok(hull) = convex_hull.path_hull(source)
+  let by = crescent_display_transform()
+  let assert Ok(display_source) = transform.path(source, by:)
+  let assert Ok(display_reference) = transform.path(reference, by:)
+  let assert Ok(display_hull) = transform.path(svg_path.Path([hull]), by:)
+  let display_points = points |> list.map(transform.point(_, by:))
+
+  document(
+    list.flatten([
+      [
+        svg.Rectangle(
+          svg_path.point(8.0, 18.0),
+          314.0,
+          324.0,
+          "fill: #f8fafc; stroke: #cbd5e1; stroke-width: 1.4",
+        ),
+        svg.StyledPath(
+          display_reference,
+          "fill: none; stroke: #94a3b8; stroke-width: 1.4; stroke-linecap: round",
+        ),
+        svg.StyledPath(
+          display_source,
+          "fill: none; stroke: #64748b; stroke-width: 1.2; stroke-linecap: round",
+        ),
+        svg.StyledPath(
+          display_hull,
+          "fill: #fed7aa; fill-opacity: 0.54; stroke: #9a3412; stroke-width: 2.4; stroke-linejoin: round",
+        ),
+      ],
+      crescent_point_markers(display_points),
+    ]),
+    width: 330.0,
+    height: 360.0,
+  )
+}
+
+fn crescent_point_cloud_path(
+  points: List(svg_path.Point),
+  line_start line_start: svg_path.Point,
+  line_end line_end: svg_path.Point,
+) -> svg_path.Path {
+  let chord =
+    svg_path.assert_subpath([
+      svg_path.Line(start: line_start, end: line_end),
+    ])
+  let point_subpaths = points |> list.map(svg_path.empty_subpath(at: _))
+
+  svg_path.Path([chord, ..point_subpaths])
+}
+
+fn crescent_reference_path(
+  start: svg_path.Point,
+  end: svg_path.Point,
+) -> svg_path.Path {
+  svg_path.Path([
+    svg_path.assert_subpath([
+      svg_path.Arc(
+        start:,
+        radius: svg_path.point(120.0, 120.0),
+        x_axis_rotation: 0.0,
+        large_arc: False,
+        sweep: True,
+        end:,
+      ),
+    ]),
+  ])
+}
+
+fn crescent_points(count: Int) -> List(svg_path.Point) {
+  int.range(from: 0, to: count - 1, with: [], run: fn(points, index) {
+    [crescent_point(index, count), ..points]
+  })
+  |> list.reverse
+}
+
+fn crescent_point(index: Int, count: Int) -> svg_path.Point {
+  let angle = -33.5 +. int.to_float(index) *. 67.0 /. int.to_float(count - 1)
+  let circle = crescent_radius_point(angle)
+  let chord_x = 120.0 *. trig.cos_degrees(35.0)
+  let fraction =
+    0.1
+    +. 0.82
+    *. int.to_float({ { index * 61 + 43 } * { index * 31 + 29 } + 17 } % 10_000)
+    /. 10_000.0
+
+  svg_path.point(chord_x +. fraction *. { circle.x -. chord_x }, circle.y)
+}
+
+fn crescent_radius_point(angle: Float) -> svg_path.Point {
+  svg_path.point(
+    120.0 *. trig.cos_degrees(angle),
+    120.0 *. trig.sin_degrees(angle),
+  )
+}
+
+fn crescent_display_transform() -> transform.Matrix {
+  transform.matrix(a: 5.8, b: 0.0, c: 0.0, d: 2.0, e: -482.4, f: 182.0)
+}
+
+fn crescent_point_markers(points: List(svg_path.Point)) -> svg.ThingsToDraw {
+  points
+  |> list.map(fn(point) {
+    svg.Circle(point, 2.3, "fill: #166534; stroke: #f0fdf4; stroke-width: 0.8")
+  })
 }
 
 fn stroke_non_degenerate_dashes(
@@ -1020,7 +1133,7 @@ fn figure_eight_band() -> String {
 }
 
 fn stroke_offset_tracks() -> String {
-  let source = place_subpath(offset_track_source(), 95.0, 160.0)
+  let source = offset_track_source()
   let options = offset.Options(..offset.default_options(), join: offset.Round)
   let offsets = [
     #(-42.0, "#7f1d1d"),
@@ -1030,6 +1143,36 @@ fn stroke_offset_tracks() -> String {
     #(28.0, "#0369a1"),
     #(42.0, "#6d28d9"),
   ]
+  let tracks =
+    offsets
+    |> list.map(fn(entry) {
+      let #(distance, color) = entry
+      let assert Ok(track) =
+        offset.subpath_untrimmed_with(source, distance:, options:)
+      #(track, color)
+    })
+  let geometry_path =
+    svg_path.Path([
+      source,
+      ..tracks
+      |> list.map(fn(entry) {
+        let #(track, _) = entry
+        track
+      })
+    ])
+  let assert Ok(box) = svg_path.path_bounding_box(geometry_path)
+  let center = svg_path.bounding_box_center(box)
+  let panel_center = svg_path.point(365.0, 140.0)
+  let dx = panel_center.x -. center.x
+  let dy = panel_center.y -. center.y
+  let assert Ok(source) = transform.translate_subpath(source, x: dx, y: dy)
+  let tracks =
+    tracks
+    |> list.map(fn(entry) {
+      let #(track, color) = entry
+      let assert Ok(track) = transform.translate_subpath(track, x: dx, y: dy)
+      #(track, color)
+    })
 
   document(
     list.flatten([
@@ -1041,11 +1184,9 @@ fn stroke_offset_tracks() -> String {
           "fill: #f8fafc; stroke: #cbd5e1; stroke-width: 1.4",
         ),
       ],
-      offsets
+      tracks
         |> list.map(fn(entry) {
-          let #(distance, color) = entry
-          let assert Ok(track) =
-            offset.subpath_untrimmed_with(source, distance:, options:)
+          let #(track, color) = entry
           svg.StyledPath(
             svg_path.from_subpath(track),
             "fill: none; stroke: "
@@ -1153,89 +1294,6 @@ fn color_from(colors: List(String), index: Int) -> String {
   case colors |> list.drop(index % list.length(colors)) {
     [color, ..] -> color
     [] -> "#1f2937"
-  }
-}
-
-fn area_winding() -> String {
-  let one = square_path(0.0, 0.0, 90.0)
-  let twice =
-    svg_path.Path([
-      square_subpath(0.0, 0.0, 90.0),
-      square_subpath(0.0, 0.0, 90.0),
-    ])
-  let opposite =
-    svg_path.Path([
-      square_subpath(0.0, 0.0, 90.0),
-      square_subpath(0.0, 0.0, 90.0) |> svg_path.reverse_subpath,
-    ])
-
-  document(
-    list.flatten([
-      area_panel(0.0, "one loop", one),
-      area_panel(250.0, "twice, same direction", twice),
-      area_panel(500.0, "twice, opposite", opposite),
-    ]),
-    width: 730.0,
-    height: 230.0,
-  )
-}
-
-fn area_panel(
-  x: Float,
-  label: String,
-  path: svg_path.Path,
-) -> svg.ThingsToDraw {
-  let placed = place_path(path, x +. 78.0, 58.0)
-  let signed = area.signed_path(path)
-  let assert Ok(nonzero) = area.path(path, using: svg_path.Nonzero)
-  let assert Ok(even_odd) = area.path(path, using: svg_path.EvenOdd)
-  let assert Ok(absolute) = area.absolute_path(path)
-
-  list.flatten([
-    [
-      panel(x, label),
-      svg.StyledPath(
-        placed,
-        "fill: #dcfce7; stroke: #166534; stroke-width: 4; stroke-linejoin: round",
-      ),
-    ],
-    path_arrows(placed, "#166534", 1.0),
-    [
-      svg.Text(
-        "signed: " <> area_label(signed),
-        text_style("#334155"),
-        svg_path.point(x +. 22.0, 170.0),
-        11,
-      ),
-      svg.Text(
-        "Nonzero: " <> area_label(nonzero),
-        text_style("#334155"),
-        svg_path.point(x +. 22.0, 187.0),
-        11,
-      ),
-      svg.Text(
-        "EvenOdd: " <> area_label(even_odd),
-        text_style("#334155"),
-        svg_path.point(x +. 118.0, 187.0),
-        11,
-      ),
-      svg.Text(
-        "absolute: " <> area_label(absolute),
-        text_style("#334155"),
-        svg_path.point(x +. 22.0, 204.0),
-        11,
-      ),
-    ],
-  ])
-}
-
-fn area_label(value: Float) -> String {
-  case value {
-    value if value >=. 18_000.0 -> "2A"
-    value if value <=. -18_000.0 -> "-2A"
-    value if value >=. 9000.0 -> "A"
-    value if value <=. -9000.0 -> "-A"
-    _ -> "0"
   }
 }
 
@@ -2263,12 +2321,6 @@ fn place_subpath(
 ) -> svg_path.Subpath {
   let assert Ok(translated) = transform.translate_subpath(subpath, x:, y:)
   translated
-}
-
-fn text_style(color: String) -> String {
-  "fill: "
-  <> color
-  <> "; font-family: ui-monospace, SFMono-Regular, Menlo, monospace"
 }
 
 fn add(a: svg_path.Point, b: svg_path.Point) -> svg_path.Point {

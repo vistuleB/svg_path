@@ -1,4 +1,4 @@
-# Gallery Ideas
+# Gallery
 
 This is a holding area for visual examples that could become a polished README
 gallery around `v1.0.0`.
@@ -34,6 +34,13 @@ Shows the same open cubic stroked with butt, square, and round caps.
 
 Shows SVG-style dash extraction followed by geometric stroking with round caps.
 
+### Recursive Dashes
+
+![Recursive dashes](https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/gallery-recursive-dashes.svg)
+
+Shows a dashed stroke whose individual dash outlines are dashed and stroked
+again at a smaller scale.
+
 ### Figure-Eight Band
 
 ![Figure-eight band](https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/gallery-figure-eight-band.svg)
@@ -68,13 +75,6 @@ from cubic approximations, with `1`, `4`, and `30` pieces.
 Zooms into the same six cases, showing offset samples, endpoint tangents, and
 the fitted or exact corner replacement.
 
-### Area And Winding
-
-![Area and winding](https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/gallery-area-winding.svg)
-
-Compares signed area, `Nonzero`, `EvenOdd`, and absolute winding area on one
-loop, a doubled loop, and opposite coincident loops.
-
 ## CSG And Fill Rules
 
 - Nested contour CSG table: square doughnut `A` crossed by a narrow `B`, with
@@ -105,15 +105,6 @@ loop, a doubled loop, and opposite coincident loops.
   colors for inner contours so orientation remains readable.
 - A closed one-segment cusp before and after `rounded_corners`, since it is a
   compact example of treating topology rather than only segment count.
-
-## Area And Winding
-
-- Three-loop area comparison: one loop, same loop twice in the same direction,
-  and the same loop twice in opposite directions. Label signed area, fill-rule
-  area, and absolute winding area.
-- Bow-tie / figure-eight area comparison, showing signed cancellation versus
-  fill-rule area and absolute winding area.
-- A small winding field diagram with regions labeled `0`, `1`, `2`, and `-1`.
 
 ## Congruency And Fitting
 

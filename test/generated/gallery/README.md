@@ -9,4 +9,4 @@
 - [Earth-tone offsets](gallery-earth-tone-offsets.svg)
 - [Stalled offset arc turns](gallery-stalled-offset-arc-turns.svg)
 - [Stalled offset corner zoom](gallery-stalled-offset-corner-zoom.svg)
-- [Area and winding](gallery-area-winding.svg)
+- [Crescent hull](gallery-crescent-hull.svg)
