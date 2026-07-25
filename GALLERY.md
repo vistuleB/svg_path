@@ -75,6 +75,13 @@ from cubic approximations, with `1`, `4`, and `30` pieces.
 Zooms into the same six cases, showing offset samples, endpoint tangents, and
 the fitted or exact corner replacement.
 
+### Crescent Hull
+
+![Crescent hull](https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/gallery-crescent-hull.svg)
+
+Shows a crescent-shaped point cloud, a reference arc and chord, and the computed
+convex hull.
+
 ## CSG And Fill Rules
 
 - Nested contour CSG table: square doughnut `A` crossed by a narrow `B`, with
@@ -115,8 +122,6 @@ the fitted or exact corner replacement.
 
 ## Convex Hull
 
-- Crescent hull example: input arc-heavy crescent, sampled support points, and
-  final hull.
 - Tangled or self-intersecting path with hull overlay, emphasizing that hull is
   a separate operation from fill area.
 
