@@ -12,3 +12,4 @@
 - [Khmer fixed-radius coil offset map](gallery-khmer-coil-offset-map.svg)
 - [Khmer decaying spiral offset map](gallery-khmer-decaying-spiral-offset-map.svg)
 - [Crescent hull](gallery-crescent-hull.svg)
+- [Cut radiator](gallery-cut-radiator.svg)

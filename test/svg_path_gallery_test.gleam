@@ -7,9 +7,11 @@ import gleeunit
 import svg_path
 import svg_path/convex_hull
 import svg_path/csg
+import svg_path/cut
 import svg_path/effects
 import svg_path/number_format
 import svg_path/offset
+import svg_path/parse
 import svg_path/serialize
 import svg_path/stroke
 import svg_path/svg
@@ -24,6 +26,10 @@ const stalled_arc_turn_radius = 40.0
 const stalled_arc_turn_distance = 39.999
 
 const stalled_arc_turn_threshold = 0.01
+
+const cut_radiator_square_size = 16.26195
+
+const cut_radiator_path_data = "m 4.5284748,13.174906 q -0.375,0 -0.705,-0.24 -0.33,-0.24 -0.585,-0.78 -0.24,-0.555 -0.39,-1.47 -0.15,-0.9299998 -0.15,-2.2799998 0,-1.2 0.105,-2.025 0.105,-0.84 0.285,-1.38 0.195,-0.54 0.435,-0.84 0.24,-0.315 0.495,-0.435 0.27,-0.12 0.525,-0.12 0.51,0 0.855,0.345 0.36,0.345 0.51,1.08 l -0.465,0.525 -0.105,0.12 -0.075,-0.075 q -0.015,-0.12 0,-0.27 0.03,-0.15 -0.06,-0.375 -0.15,-0.3 -0.315,-0.39 -0.165,-0.09 -0.36,-0.09 -0.24,0 -0.435,0.225 -0.195,0.21 -0.345,0.675 -0.135,0.465 -0.21,1.2 -0.075,0.72 -0.075,1.755 0,0.99 0.075,1.7399998 0.09,0.75 0.24,1.245 0.165,0.495 0.36,0.75 0.195,0.24 0.42,0.24 0.195,0 0.33,-0.105 0.15,-0.105 0.27,-0.3 0.12,-0.21 0.225,-0.51 l 0.465,0.66 q -0.24,0.585 -0.555,0.855 -0.3,0.27 -0.765,0.27 z m 3.5949999,0.015 q -0.915,0 -1.215,-0.75 -0.3,-0.765 -0.3,-2.34 V 3.6799062 h 0.75 0.15 v 0.105 q -0.09,0.09 -0.12,0.195 -0.015,0.105 -0.015,0.36 v 5.7749998 q 0,1.155 0.165,1.725 0.165,0.555 0.585,0.54 0.435,-0.015 0.585,-0.615 0.165,-0.615 0.165,-1.695 V 3.6799062 h 0.765 v 6.3749998 q 0,1.155 -0.15,1.845 -0.15,0.69 -0.495,0.99 -0.33,0.3 -0.87,0.3 z m 3.4150003,-0.165 V 4.5049062 h -1.215 v -0.84 h 3.24 v 0.84 h -1.26 v 8.5199998 z"
 
 pub fn main() -> Nil {
   gleeunit.main()
@@ -79,6 +85,7 @@ pub fn gallery_figures_are_generated_test() {
       ),
     ),
     #("gallery-crescent-hull.svg", "Crescent hull", crescent_hull()),
+    #("gallery-cut-radiator.svg", "Cut radiator", cut_radiator()),
   ]
 
   let entries =
@@ -152,6 +159,179 @@ fn rounded_rectangle_union() -> String {
 fn generated_debug_svg(path: String) -> String {
   let assert Ok(contents) = read_file(path)
   contents
+}
+
+fn cut_radiator() -> String {
+  let assert Ok(cutter) = parse.path(cut_radiator_path_data)
+  let snake = cut_radiator_snake(legs: 56)
+  let assert Ok(cut_snake) =
+    cut.path(subject: svg_path.path_from_subpath(snake), by: cutter)
+  let assert Ok(kept) = keep_outside_cut(cut_snake, cutter)
+
+  cut_radiator_document(kept)
+}
+
+fn cut_radiator_snake(legs legs: Int) -> svg_path.Subpath {
+  let inset = 0.55
+  let left = inset
+  let right = cut_radiator_square_size -. inset
+  let top = inset
+  let bottom = cut_radiator_square_size -. inset
+  let step = { bottom -. top } /. int.to_float(legs - 1)
+
+  let segments =
+    cut_radiator_segments(
+      index: 0,
+      legs:,
+      left:,
+      right:,
+      y: top,
+      step:,
+      accumulated: [],
+    )
+
+  svg_path.subpath_assert(segments)
+}
+
+fn cut_radiator_segments(
+  index index: Int,
+  legs legs: Int,
+  left left: Float,
+  right right: Float,
+  y y: Float,
+  step step: Float,
+  accumulated accumulated: List(svg_path.Segment),
+) -> List(svg_path.Segment) {
+  case index >= legs {
+    True -> accumulated
+    False -> {
+      let start_x = case index % 2 {
+        0 -> left
+        _ -> right
+      }
+      let end_x = case index % 2 {
+        0 -> right
+        _ -> left
+      }
+      let horizontal =
+        svg_path.Line(
+          start: svg_path.point(start_x, y),
+          end: svg_path.point(end_x, y),
+        )
+      let accumulated = list.append(accumulated, [horizontal])
+
+      case index == legs - 1 {
+        True -> accumulated
+        False -> {
+          let next_y = y +. step
+          let vertical =
+            svg_path.Line(
+              start: svg_path.point(end_x, y),
+              end: svg_path.point(end_x, next_y),
+            )
+          cut_radiator_segments(
+            index: index + 1,
+            legs:,
+            left:,
+            right:,
+            y: next_y,
+            step:,
+            accumulated: list.append(accumulated, [vertical]),
+          )
+        }
+      }
+    }
+  }
+}
+
+fn keep_outside_cut(
+  pieces: svg_path.Path,
+  cutter: svg_path.Path,
+) -> Result(svg_path.Path, svg_path.Error) {
+  use kept <- result_try(
+    pieces
+    |> svg_path.path_subpaths
+    |> keep_outside_cut_loop(cutter, kept: []),
+  )
+  Ok(svg_path.Path(kept))
+}
+
+fn keep_outside_cut_loop(
+  pieces: List(svg_path.Subpath),
+  cutter: svg_path.Path,
+  kept kept: List(svg_path.Subpath),
+) -> Result(List(svg_path.Subpath), svg_path.Error) {
+  case pieces {
+    [] -> Ok(list.reverse(kept))
+    [piece, ..rest] -> {
+      use keep <- result_try(keep_cut_piece(piece, cutter))
+      let kept = case keep {
+        True -> [piece, ..kept]
+        False -> kept
+      }
+      keep_outside_cut_loop(rest, cutter, kept:)
+    }
+  }
+}
+
+fn keep_cut_piece(
+  piece: svg_path.Subpath,
+  cutter: svg_path.Path,
+) -> Result(Bool, svg_path.Error) {
+  use length <- result_try(svg_path.subpath_length(piece))
+  case length <=. 0.000001 {
+    True -> Ok(False)
+    False -> {
+      use point <- result_try(svg_path.subpath_point_at_length(
+        piece,
+        length /. 2.0,
+      ))
+      use containment <- result_try(svg_path.path_containment(
+        point,
+        within: cutter,
+        using: svg_path.Nonzero,
+      ))
+      case containment {
+        svg_path.Inside -> Ok(False)
+        svg_path.Outside | svg_path.Boundary -> Ok(True)
+      }
+    }
+  }
+}
+
+fn cut_radiator_document(path: svg_path.Path) -> String {
+  let scale = 26.0
+  let margin = 36.0
+  let width = margin *. 2.0 +. cut_radiator_square_size *. scale
+  let height = width
+
+  "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 "
+  <> float_to_string(width)
+  <> " "
+  <> float_to_string(height)
+  <> "\" width=\""
+  <> float_to_string(width)
+  <> "\" height=\""
+  <> float_to_string(height)
+  <> "\">\n"
+  <> "  <rect width=\"100%\" height=\"100%\" fill=\"#ffffff\"/>\n"
+  <> "  <g transform=\"translate("
+  <> float_to_string(margin)
+  <> " "
+  <> float_to_string(margin)
+  <> ") scale("
+  <> float_to_string(scale)
+  <> ")\">\n"
+  <> "    <rect x=\"0\" y=\"0\" width=\""
+  <> float_to_string(cut_radiator_square_size)
+  <> "\" height=\""
+  <> float_to_string(cut_radiator_square_size)
+  <> "\" fill=\"#f8fafc\" stroke=\"#111827\" stroke-width=\"0.055\"/>\n"
+  <> "    <path d=\""
+  <> serialize.path(path)
+  <> "\" fill=\"none\" stroke=\"#0f766e\" stroke-width=\"0.032\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n"
+  <> "  </g>\n"
+  <> "</svg>\n"
 }
 
 pub fn recursive_dash_failure_zoom_is_generated_test() {
