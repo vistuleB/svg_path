@@ -66,6 +66,18 @@ pub fn gallery_figures_are_generated_test() {
       "Stalled offset corner zoom",
       stalled_arc_turn_zoom_svg(stalled_arc_turn_cases()),
     ),
+    #(
+      "gallery-khmer-coil-offset-map.svg",
+      "Khmer fixed-radius coil offset map",
+      generated_debug_svg("examples/debug/the_quick_brown_khmer_spiral_map.svg"),
+    ),
+    #(
+      "gallery-khmer-decaying-spiral-offset-map.svg",
+      "Khmer decaying spiral offset map",
+      generated_debug_svg(
+        "examples/debug/the_quick_brown_khmer_decaying_spiral_map.svg",
+      ),
+    ),
     #("gallery-crescent-hull.svg", "Crescent hull", crescent_hull()),
   ]
 
@@ -135,6 +147,11 @@ fn rounded_rectangle_union() -> String {
     width: 730.0,
     height: 220.0,
   )
+}
+
+fn generated_debug_svg(path: String) -> String {
+  let assert Ok(contents) = read_file(path)
+  contents
 }
 
 pub fn recursive_dash_failure_zoom_is_generated_test() {
@@ -2371,3 +2388,6 @@ fn ensure_dir(path: String) -> Dynamic
 
 @external(erlang, "file", "write_file")
 fn write_file(path: String, contents: String) -> Dynamic
+
+@external(erlang, "file", "read_file")
+fn read_file(path: String) -> Result(String, Dynamic)

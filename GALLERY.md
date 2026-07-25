@@ -75,6 +75,20 @@ from cubic approximations, with `1`, `4`, and `30` pieces.
 Zooms into the same six cases, showing offset samples, endpoint tangents, and
 the fitted or exact corner replacement.
 
+### Khmer Offset Map Coil
+
+![Khmer offset map coil](https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/gallery-khmer-coil-offset-map.svg)
+
+Maps a path extracted from an SVG text sample into `(distance, offset)` space
+and then onto a fixed-radius coil with `offset.subpath_offset_map`.
+
+### Khmer Offset Map Spiral
+
+![Khmer offset map spiral](https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/gallery-khmer-decaying-spiral-offset-map.svg)
+
+Uses the same text sample on a decaying spiral, with both radius and local
+offset shrinking by the same factor per turn.
+
 ### Crescent Hull
 
 ![Crescent hull](https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/gallery-crescent-hull.svg)
