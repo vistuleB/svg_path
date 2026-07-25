@@ -136,6 +136,10 @@ pub type Options {
   )
 }
 
+type LengthSpan {
+  LengthSpan(segment: svg_path.Segment, start_distance: Float, length: Float)
+}
+
 type OffsetSegment {
   OffsetSegment(
     segment: svg_path.Segment,
@@ -194,6 +198,48 @@ pub fn default_options() -> Options {
     stalled_offset_diameter: default_stalled_offset_diameter,
     join: Miter(default_miter_limit),
   )
+}
+
+/// Build a local coordinate map around a subpath.
+///
+/// The returned function interprets its input point as local path coordinates:
+/// `x` is true arc length along the source subpath, and `y` is signed offset
+/// from that point. Positive offsets use this module's usual convention:
+/// to the right of the subpath direction.
+///
+/// Open subpaths reject `x` values outside `0.0..subpath_length`. Closed
+/// subpaths wrap `x` modulo the subpath length. Empty and zero-length subpaths
+/// cannot define a stable normal direction and return an error.
+pub fn subpath_offset_map(
+  subpath: svg_path.Subpath,
+) -> Result(fn(svg_path.Point) -> Result(svg_path.Point, Error), Error) {
+  subpath_offset_map_with(subpath, options: svg_path.default_length_options())
+}
+
+/// Build a local coordinate map around a subpath using explicit length options.
+pub fn subpath_offset_map_with(
+  subpath: svg_path.Subpath,
+  options options: svg_path.LengthOptions,
+) -> Result(fn(svg_path.Point) -> Result(svg_path.Point, Error), Error) {
+  use spans <- result.try(
+    length_spans(
+      svg_path.segments(subpath),
+      options:,
+      start_distance: 0.0,
+      spans: [],
+    ),
+  )
+  let total_length = length_spans_total(spans)
+
+  case total_length <=. 0.0 {
+    True -> Error(DegenerateTangent(0.0))
+    False -> {
+      let closed = svg_path.is_closed(subpath)
+      Ok(fn(point) {
+        offset_map_point(spans, total_length:, closed:, options:, local: point)
+      })
+    }
+  }
 }
 
 /// Offset one segment by a signed distance.
@@ -4252,6 +4298,134 @@ fn cubic_fit_error(error: bezier.Error) -> Error {
   case error {
     bezier.DegenerateTangent -> DegenerateTangent(0.0)
     _ -> NonFinite
+  }
+}
+
+fn length_spans(
+  segments: List(svg_path.Segment),
+  options options: svg_path.LengthOptions,
+  start_distance start_distance: Float,
+  spans spans: List(LengthSpan),
+) -> Result(List(LengthSpan), Error) {
+  case segments {
+    [] -> Ok(list.reverse(spans))
+    [first, ..rest] -> {
+      use length <- result.try(
+        svg_path.segment_length_with(first, options:)
+        |> result.map_error(PathError),
+      )
+      let spans = case length >. 0.0 {
+        True -> [LengthSpan(segment: first, start_distance:, length:), ..spans]
+        False -> spans
+      }
+      length_spans(
+        rest,
+        options:,
+        start_distance: start_distance +. length,
+        spans:,
+      )
+    }
+  }
+}
+
+fn length_spans_total(spans: List(LengthSpan)) -> Float {
+  case spans {
+    [] -> 0.0
+    [first, ..rest] ->
+      rest
+      |> list.fold(first.start_distance +. first.length, fn(total, span) {
+        span.start_distance +. span.length |> float.max(total)
+      })
+  }
+}
+
+fn offset_map_point(
+  spans: List(LengthSpan),
+  total_length total_length: Float,
+  closed closed: Bool,
+  options options: svg_path.LengthOptions,
+  local local: svg_path.Point,
+) -> Result(svg_path.Point, Error) {
+  case point_is_finite(local) {
+    False -> Error(NonFinite)
+    True -> {
+      use distance <- result.try(offset_map_distance(
+        local.x,
+        total_length,
+        closed,
+      ))
+      use span <- result.try(length_span_at(spans, distance))
+      let local_distance = distance -. span.start_distance
+      use t <- result.try(
+        svg_path.segment_parameter_at_length_with(
+          span.segment,
+          distance: local_distance,
+          options:,
+        )
+        |> result.map_error(PathError),
+      )
+      use point <- result.try(
+        svg_path.segment_point(span.segment, at: t)
+        |> result.map_error(PathError),
+      )
+      use normal <- result.try(unit_normal(span.segment, t:))
+      let mapped = add(point, scale(normal, local.y))
+
+      case point_is_finite(mapped) {
+        True -> Ok(mapped)
+        False -> Error(NonFinite)
+      }
+    }
+  }
+}
+
+fn offset_map_distance(
+  distance: Float,
+  total_length: Float,
+  closed: Bool,
+) -> Result(Float, Error) {
+  case closed {
+    True -> Ok(positive_remainder(distance, total_length))
+    False ->
+      case distance <. 0.0 || distance >. total_length {
+        True ->
+          Error(
+            PathError(svg_path.InvalidLengthDistance(
+              distance:,
+              length: total_length,
+            )),
+          )
+        False -> Ok(distance)
+      }
+  }
+}
+
+fn positive_remainder(value: Float, modulus: Float) -> Float {
+  let turns = float.floor(value /. modulus)
+  let remainder = value -. turns *. modulus
+  case remainder <. 0.0 {
+    True -> remainder +. modulus
+    False ->
+      case remainder >=. modulus {
+        True -> remainder -. modulus
+        False -> remainder
+      }
+  }
+}
+
+fn length_span_at(
+  spans: List(LengthSpan),
+  distance: Float,
+) -> Result(LengthSpan, Error) {
+  case spans {
+    [] -> Error(DegenerateTangent(0.0))
+    [first] -> Ok(first)
+    [first, ..rest] -> {
+      case distance <=. first.start_distance +. first.length {
+        True -> Ok(first)
+        False -> length_span_at(rest, distance)
+      }
+    }
   }
 }
 

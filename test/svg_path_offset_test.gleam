@@ -57,6 +57,120 @@ pub fn segment_offsets_line_to_left_for_negative_distance_test() {
     ]
 }
 
+pub fn subpath_offset_map_maps_local_coordinates_to_right_side_test() {
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.Line(
+        start: svg_path.point(0.0, 0.0),
+        end: svg_path.point(10.0, 0.0),
+      ),
+    ])
+  let assert Ok(map) = offset.subpath_offset_map(subpath)
+
+  assert map(svg_path.point(3.0, 2.0)) == Ok(svg_path.point(3.0, -2.0))
+  assert map(svg_path.point(3.0, -2.0)) == Ok(svg_path.point(3.0, 2.0))
+}
+
+pub fn subpath_offset_map_uses_cumulative_segment_lengths_test() {
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.Line(
+        start: svg_path.point(0.0, 0.0),
+        end: svg_path.point(10.0, 0.0),
+      ),
+      svg_path.Line(
+        start: svg_path.point(10.0, 0.0),
+        end: svg_path.point(10.0, 10.0),
+      ),
+    ])
+  let assert Ok(map) = offset.subpath_offset_map(subpath)
+
+  assert map(svg_path.point(12.0, 3.0)) == Ok(svg_path.point(13.0, 2.0))
+}
+
+pub fn subpath_offset_map_wraps_closed_subpath_distances_test() {
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.Line(
+        start: svg_path.point(0.0, 0.0),
+        end: svg_path.point(10.0, 0.0),
+      ),
+      svg_path.Line(
+        start: svg_path.point(10.0, 0.0),
+        end: svg_path.point(10.0, 10.0),
+      ),
+      svg_path.Line(
+        start: svg_path.point(10.0, 10.0),
+        end: svg_path.point(0.0, 10.0),
+      ),
+      svg_path.Line(
+        start: svg_path.point(0.0, 10.0),
+        end: svg_path.point(0.0, 0.0),
+      ),
+    ])
+    |> svg_path.assert_set_closed(closed: True)
+  let assert Ok(map) = offset.subpath_offset_map(subpath)
+
+  assert map(svg_path.point(42.0, 1.0)) == Ok(svg_path.point(2.0, -1.0))
+}
+
+pub fn subpath_offset_map_rejects_open_subpath_distances_outside_length_test() {
+  let subpath =
+    svg_path.assert_subpath([
+      svg_path.Line(
+        start: svg_path.point(0.0, 0.0),
+        end: svg_path.point(10.0, 0.0),
+      ),
+    ])
+  let assert Ok(map) = offset.subpath_offset_map(subpath)
+
+  assert map(svg_path.point(11.0, 0.0))
+    == Error(
+      offset.PathError(svg_path.InvalidLengthDistance(
+        distance: 11.0,
+        length: 10.0,
+      )),
+    )
+}
+
+pub fn subpath_offset_map_rejects_zero_length_subpath_test() {
+  let subpath = svg_path.empty_subpath(at: svg_path.point(0.0, 0.0))
+
+  assert offset.subpath_offset_map(subpath)
+    == Error(offset.DegenerateTangent(0.0))
+}
+
+pub fn subpath_offset_map_composes_with_try_map_path_points_test() {
+  let baseline =
+    svg_path.assert_subpath([
+      svg_path.Line(
+        start: svg_path.point(0.0, 0.0),
+        end: svg_path.point(100.0, 0.0),
+      ),
+    ])
+  let outline =
+    svg_path.Path([
+      svg_path.assert_subpath([
+        svg_path.Line(
+          start: svg_path.point(20.0, 3.0),
+          end: svg_path.point(40.0, 5.0),
+        ),
+      ]),
+    ])
+  let assert Ok(map) = offset.subpath_offset_map(baseline)
+  let assert Ok(mapped) = svg_path.try_map_path_points(outline, with: map)
+
+  assert mapped
+    == svg_path.Path([
+      svg_path.assert_subpath([
+        svg_path.Line(
+          start: svg_path.point(20.0, -3.0),
+          end: svg_path.point(40.0, -5.0),
+        ),
+      ]),
+    ])
+}
+
 pub fn segment_offsets_quadratic_to_cubic_pieces_within_tolerance_test() {
   let curve =
     svg_path.QuadraticBezier(
