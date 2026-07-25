@@ -21,7 +21,7 @@ pub fn loop(
   segment: svg_path.Segment,
 ) -> Result(abstract_union.Loop(Param), convex_hull.HullError) {
   use hull <- result.try(convex_hull.segment_hull(segment))
-  let segments = svg_path.segments(hull)
+  let segments = svg_path.subpath_segments(hull)
 
   Ok(abstract_union.Loop(
     name:,

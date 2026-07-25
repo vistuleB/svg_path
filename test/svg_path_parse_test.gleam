@@ -8,19 +8,19 @@ pub fn main() -> Nil {
 }
 
 pub fn empty_string_parses_as_empty_path_test() {
-  assert parse.path("") == Ok(svg_path.empty_path())
+  assert parse.path("") == Ok(svg_path.path_empty())
 }
 
 pub fn absolute_lines_parse_test() {
   let assert Ok(path) = parse.path("M 0 0 L 10 0 V 20 H 0")
-  let assert Ok(subpath) = svg_path.as_subpath(path)
+  let assert Ok(subpath) = svg_path.path_as_subpath(path)
 
   assert serialize.subpath(subpath) == "M 0 0 H 10 V 20 H 0"
 }
 
 pub fn relative_lines_parse_to_absolute_segments_test() {
   let assert Ok(path) = parse.path("m 10 10 l 5 0 v 20 h -5")
-  let assert Ok(subpath) = svg_path.as_subpath(path)
+  let assert Ok(subpath) = svg_path.path_as_subpath(path)
 
   assert serialize.subpath(subpath) == "M 10 10 H 15 V 30 H 10"
 }
@@ -33,21 +33,21 @@ pub fn relative_move_after_close_uses_closed_subpath_start_test() {
 
 pub fn repeated_line_horizontal_and_vertical_values_parse_test() {
   let assert Ok(path) = parse.path("M 0 0 L 10 0 10 10 H 5 0 V 5 0")
-  let assert Ok(subpath) = svg_path.as_subpath(path)
+  let assert Ok(subpath) = svg_path.path_as_subpath(path)
 
   assert serialize.subpath(subpath) == "M 0 0 H 10 V 10 H 5 H 0 V 5 V 0"
 }
 
 pub fn repeated_absolute_line_coordinate_pairs_parse_test() {
   let assert Ok(path) = parse.path("M 0 0 L 5 10 3 2 4 5 2 2 V 3")
-  let assert Ok(subpath) = svg_path.as_subpath(path)
+  let assert Ok(subpath) = svg_path.path_as_subpath(path)
 
   assert serialize.subpath(subpath) == "M 0 0 L 5 10 L 3 2 L 4 5 L 2 2 V 3"
 }
 
 pub fn repeated_relative_line_coordinate_pairs_parse_test() {
   let assert Ok(path) = parse.path("m 0 0 l 5 10 3 2 4 5 2 2 v 3")
-  let assert Ok(subpath) = svg_path.as_subpath(path)
+  let assert Ok(subpath) = svg_path.path_as_subpath(path)
 
   assert serialize.subpath(subpath)
     == "M 0 0 L 5 10 L 8 12 L 12 17 L 14 19 V 22"
@@ -55,49 +55,49 @@ pub fn repeated_relative_line_coordinate_pairs_parse_test() {
 
 pub fn repeated_line_pairs_can_switch_to_horizontal_command_test() {
   let assert Ok(path) = parse.path("M 1 1 L 5 10 3 2 4 5 H 9")
-  let assert Ok(subpath) = svg_path.as_subpath(path)
+  let assert Ok(subpath) = svg_path.path_as_subpath(path)
 
   assert serialize.subpath(subpath) == "M 1 1 L 5 10 L 3 2 L 4 5 H 9"
 }
 
 pub fn absolute_quadratic_beziers_parse_test() {
   let assert Ok(path) = parse.path("M 0 0 Q 10 20 30 40")
-  let assert Ok(subpath) = svg_path.as_subpath(path)
+  let assert Ok(subpath) = svg_path.path_as_subpath(path)
 
   assert serialize.subpath(subpath) == "M 0 0 Q 10 20 30 40"
 }
 
 pub fn relative_quadratic_beziers_parse_test() {
   let assert Ok(path) = parse.path("M 10 10 q 5 10 20 30")
-  let assert Ok(subpath) = svg_path.as_subpath(path)
+  let assert Ok(subpath) = svg_path.path_as_subpath(path)
 
   assert serialize.subpath(subpath) == "M 10 10 Q 15 20 30 40"
 }
 
 pub fn repeated_quadratic_beziers_parse_test() {
   let assert Ok(path) = parse.path("M 0 0 Q 10 20 30 40 50 60 70 80")
-  let assert Ok(subpath) = svg_path.as_subpath(path)
+  let assert Ok(subpath) = svg_path.path_as_subpath(path)
 
   assert serialize.subpath(subpath) == "M 0 0 Q 10 20 30 40 Q 50 60 70 80"
 }
 
 pub fn absolute_smooth_quadratic_beziers_parse_test() {
   let assert Ok(path) = parse.path("M 0 0 Q 10 20 30 40 T 50 60")
-  let assert Ok(subpath) = svg_path.as_subpath(path)
+  let assert Ok(subpath) = svg_path.path_as_subpath(path)
 
   assert serialize.subpath(subpath) == "M 0 0 Q 10 20 30 40 Q 50 60 50 60"
 }
 
 pub fn relative_smooth_quadratic_beziers_parse_test() {
   let assert Ok(path) = parse.path("M 10 10 q 5 10 20 30 t 20 20")
-  let assert Ok(subpath) = svg_path.as_subpath(path)
+  let assert Ok(subpath) = svg_path.path_as_subpath(path)
 
   assert serialize.subpath(subpath) == "M 10 10 Q 15 20 30 40 Q 45 60 50 60"
 }
 
 pub fn repeated_smooth_quadratic_beziers_parse_test() {
   let assert Ok(path) = parse.path("M 0 0 Q 10 20 30 40 T 50 60 70 80")
-  let assert Ok(subpath) = svg_path.as_subpath(path)
+  let assert Ok(subpath) = svg_path.path_as_subpath(path)
 
   assert serialize.subpath(subpath)
     == "M 0 0 Q 10 20 30 40 Q 50 60 50 60 Q 50 60 70 80"
@@ -105,42 +105,42 @@ pub fn repeated_smooth_quadratic_beziers_parse_test() {
 
 pub fn smooth_quadratic_without_previous_quadratic_uses_current_point_test() {
   let assert Ok(path) = parse.path("M 0 0 L 5 5 T 10 10")
-  let assert Ok(subpath) = svg_path.as_subpath(path)
+  let assert Ok(subpath) = svg_path.path_as_subpath(path)
 
   assert serialize.subpath(subpath) == "M 0 0 L 5 5 Q 5 5 10 10"
 }
 
 pub fn absolute_cubic_beziers_parse_test() {
   let assert Ok(path) = parse.path("M 0 0 C 10 20 30 40 50 60")
-  let assert Ok(subpath) = svg_path.as_subpath(path)
+  let assert Ok(subpath) = svg_path.path_as_subpath(path)
 
   assert serialize.subpath(subpath) == "M 0 0 C 10 20 30 40 50 60"
 }
 
 pub fn relative_cubic_beziers_parse_test() {
   let assert Ok(path) = parse.path("M 10 10 c 1 2 3 4 5 6")
-  let assert Ok(subpath) = svg_path.as_subpath(path)
+  let assert Ok(subpath) = svg_path.path_as_subpath(path)
 
   assert serialize.subpath(subpath) == "M 10 10 C 11 12 13 14 15 16"
 }
 
 pub fn repeated_cubic_beziers_parse_test() {
   let assert Ok(path) = parse.path("M 0 0 C 1 2 3 4 5 6 7 8 9 10 11 12")
-  let assert Ok(subpath) = svg_path.as_subpath(path)
+  let assert Ok(subpath) = svg_path.path_as_subpath(path)
 
   assert serialize.subpath(subpath) == "M 0 0 C 1 2 3 4 5 6 C 7 8 9 10 11 12"
 }
 
 pub fn absolute_smooth_cubic_beziers_parse_test() {
   let assert Ok(path) = parse.path("M 0 0 C 1 2 3 4 5 6 S 9 10 11 12")
-  let assert Ok(subpath) = svg_path.as_subpath(path)
+  let assert Ok(subpath) = svg_path.path_as_subpath(path)
 
   assert serialize.subpath(subpath) == "M 0 0 C 1 2 3 4 5 6 C 7 8 9 10 11 12"
 }
 
 pub fn relative_smooth_cubic_beziers_parse_test() {
   let assert Ok(path) = parse.path("M 10 10 c 1 2 3 4 5 6 s 4 4 6 6")
-  let assert Ok(subpath) = svg_path.as_subpath(path)
+  let assert Ok(subpath) = svg_path.path_as_subpath(path)
 
   assert serialize.subpath(subpath)
     == "M 10 10 C 11 12 13 14 15 16 C 17 18 19 20 21 22"
@@ -149,7 +149,7 @@ pub fn relative_smooth_cubic_beziers_parse_test() {
 pub fn repeated_smooth_cubic_beziers_parse_test() {
   let assert Ok(path) =
     parse.path("M 0 0 C 1 2 3 4 5 6 S 9 10 11 12 15 16 17 18")
-  let assert Ok(subpath) = svg_path.as_subpath(path)
+  let assert Ok(subpath) = svg_path.path_as_subpath(path)
 
   assert serialize.subpath(subpath)
     == "M 0 0 C 1 2 3 4 5 6 C 7 8 9 10 11 12 C 13 14 15 16 17 18"
@@ -157,28 +157,28 @@ pub fn repeated_smooth_cubic_beziers_parse_test() {
 
 pub fn smooth_cubic_without_previous_cubic_uses_current_point_test() {
   let assert Ok(path) = parse.path("M 0 0 L 5 5 S 10 10 15 15")
-  let assert Ok(subpath) = svg_path.as_subpath(path)
+  let assert Ok(subpath) = svg_path.path_as_subpath(path)
 
   assert serialize.subpath(subpath) == "M 0 0 L 5 5 C 5 5 10 10 15 15"
 }
 
 pub fn absolute_arcs_parse_test() {
   let assert Ok(path) = parse.path("M 0 0 A 5 10 30 0 1 20 40")
-  let assert Ok(subpath) = svg_path.as_subpath(path)
+  let assert Ok(subpath) = svg_path.path_as_subpath(path)
 
   assert serialize.subpath(subpath) == "M 0 0 A 5 10 30 0 1 20 40"
 }
 
 pub fn relative_arcs_parse_test() {
   let assert Ok(path) = parse.path("M 10 10 a 5 10 30 1 0 20 40")
-  let assert Ok(subpath) = svg_path.as_subpath(path)
+  let assert Ok(subpath) = svg_path.path_as_subpath(path)
 
   assert serialize.subpath(subpath) == "M 10 10 A 5 10 30 1 0 30 50"
 }
 
 pub fn repeated_arcs_parse_test() {
   let assert Ok(path) = parse.path("M 0 0 A 5 10 30 0 1 20 40 7 8 45 1 0 30 50")
-  let assert Ok(subpath) = svg_path.as_subpath(path)
+  let assert Ok(subpath) = svg_path.path_as_subpath(path)
 
   assert serialize.subpath(subpath)
     == "M 0 0 A 5 10 30 0 1 20 40 A 7 8 45 1 0 30 50"
@@ -186,31 +186,31 @@ pub fn repeated_arcs_parse_test() {
 
 pub fn repeated_move_coordinates_become_implicit_lines_test() {
   let assert Ok(path) = parse.path("M0 0 10 0 10 20")
-  let assert Ok(subpath) = svg_path.as_subpath(path)
+  let assert Ok(subpath) = svg_path.path_as_subpath(path)
 
   assert serialize.subpath(subpath) == "M 0 0 H 10 V 20"
 }
 
 pub fn relative_move_implicit_lines_stay_relative_test() {
   let assert Ok(path) = parse.path("m 10 10 5 0 0 5")
-  let assert Ok(subpath) = svg_path.as_subpath(path)
+  let assert Ok(subpath) = svg_path.path_as_subpath(path)
 
   assert serialize.subpath(subpath) == "M 10 10 H 15 V 15"
 }
 
 pub fn closepath_adds_closing_line_and_semantic_close_test() {
   let assert Ok(path) = parse.path("M 0 0 L 10 0 z")
-  let assert Ok(subpath) = svg_path.as_subpath(path)
+  let assert Ok(subpath) = svg_path.path_as_subpath(path)
 
-  assert svg_path.is_closed(subpath)
+  assert svg_path.subpath_is_closed(subpath)
   assert serialize.subpath(subpath) == "M 0 0 H 10 Z"
 }
 
 pub fn closepath_and_explicit_line_home_parse_to_same_subpath_test() {
   let assert Ok(direct_path) = parse.path("M 0 0 L 10 0 Z")
   let assert Ok(explicit_path) = parse.path("M 0 0 L 10 0 L 0 0 Z")
-  let assert Ok(direct_subpath) = svg_path.as_subpath(direct_path)
-  let assert Ok(explicit_subpath) = svg_path.as_subpath(explicit_path)
+  let assert Ok(direct_subpath) = svg_path.path_as_subpath(direct_path)
+  let assert Ok(explicit_subpath) = svg_path.path_as_subpath(explicit_path)
 
   assert direct_subpath == explicit_subpath
   assert serialize.subpath(direct_subpath) == "M 0 0 H 10 Z"
@@ -218,35 +218,35 @@ pub fn closepath_and_explicit_line_home_parse_to_same_subpath_test() {
 
 pub fn compact_numbers_parse_test() {
   let assert Ok(path) = parse.path("M0-1L10-1V9")
-  let assert Ok(subpath) = svg_path.as_subpath(path)
+  let assert Ok(subpath) = svg_path.path_as_subpath(path)
 
   assert serialize.subpath(subpath) == "M 0 -1 H 10 V 9"
 }
 
 pub fn comma_separated_coordinate_pairs_parse_test() {
   let assert Ok(path) = parse.path("M0,0 L10,20 30,40")
-  let assert Ok(subpath) = svg_path.as_subpath(path)
+  let assert Ok(subpath) = svg_path.path_as_subpath(path)
 
   assert serialize.subpath(subpath) == "M 0 0 L 10 20 L 30 40"
 }
 
 pub fn commas_parse_between_curve_coordinates_test() {
   let assert Ok(path) = parse.path("M0,0 C1,2,3,4,5,6 Q7,8,9,10")
-  let assert Ok(subpath) = svg_path.as_subpath(path)
+  let assert Ok(subpath) = svg_path.path_as_subpath(path)
 
   assert serialize.subpath(subpath) == "M 0 0 C 1 2 3 4 5 6 Q 7 8 9 10"
 }
 
 pub fn commas_parse_between_arc_arguments_test() {
   let assert Ok(path) = parse.path("M0,0 A25,50 -30 0,1 50,-25")
-  let assert Ok(subpath) = svg_path.as_subpath(path)
+  let assert Ok(subpath) = svg_path.path_as_subpath(path)
 
   assert serialize.subpath(subpath) == "M 0 0 A 25 50 -30 0 1 50 -25"
 }
 
 pub fn exponent_and_plus_signed_numbers_parse_test() {
   let assert Ok(path) = parse.path("M +1e1 -2E1 L 1.5e1 -2e1")
-  let assert Ok(subpath) = svg_path.as_subpath(path)
+  let assert Ok(subpath) = svg_path.path_as_subpath(path)
 
   assert serialize.subpath(subpath) == "M 10 -20 H 15"
 }
@@ -260,17 +260,17 @@ pub fn move_only_subpath_is_preserved_test() {
 pub fn zero_length_line_subpath_is_not_move_only_test() {
   let a = svg_path.point(0.0, 0.0)
   let assert Ok(path) = parse.path("M 0 0 L 0 0")
-  let assert [subpath] = svg_path.subpaths(path)
+  let assert [subpath] = svg_path.path_subpaths(path)
 
-  assert svg_path.start(subpath) == Ok(a)
-  assert svg_path.end(subpath) == Ok(a)
-  assert svg_path.segments(subpath) == [svg_path.Line(start: a, end: a)]
+  assert svg_path.subpath_start(subpath) == Ok(a)
+  assert svg_path.subpath_end(subpath) == Ok(a)
+  assert svg_path.subpath_segments(subpath) == [svg_path.Line(start: a, end: a)]
   assert serialize.path(path) == "M 0 0 H 0"
 }
 
 pub fn move_only_subpaths_are_ignored_among_real_subpaths_test() {
   let assert Ok(path) = parse.path("M 0 0 M 10 10 L 20 10")
-  let assert Ok(subpath) = svg_path.as_subpath(path)
+  let assert Ok(subpath) = svg_path.path_as_subpath(path)
 
   assert serialize.subpath(subpath) == "M 10 10 H 20"
 }

@@ -60,7 +60,7 @@ fn render() -> String {
         15,
       ),
       svg.StyledPath(
-        svg_path.from_subpath(source),
+        svg_path.path_from_subpath(source),
         "fill: none; stroke: #9ca3af; stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 5 5",
       ),
       ..result_things
@@ -127,13 +127,13 @@ fn split_sections(
   use self_points <- result.try(self_split_parameters(subpath))
   let split_points =
     list.append(self_points, extra_split_points)
-    |> list.sort(by: svg_path.compare_subpath_parameters)
+    |> list.sort(by: svg_path.subpath_parameters_compare)
     |> unique_subpath_parameters([])
 
   case split_points {
     [] -> Ok([subpath])
     _ ->
-      svg_path.subpaths_between(subpath, between: split_points)
+      svg_path.subpath_between_many(subpath, between: split_points)
       |> result.map_error(offset.PathError)
   }
 }
@@ -159,7 +159,7 @@ fn self_split_parameters(
         intersection
       [left, right]
     })
-    |> list.sort(by: svg_path.compare_subpath_parameters)
+    |> list.sort(by: svg_path.subpath_parameters_compare)
     |> unique_subpath_parameters([]),
   )
 }
@@ -185,7 +185,7 @@ fn cross_side_split_parameters(
       let svg_path.SubpathIntersection(left_parameters:, ..) = intersection
       left_parameters
     })
-    |> list.sort(by: svg_path.compare_subpath_parameters)
+    |> list.sort(by: svg_path.subpath_parameters_compare)
     |> unique_subpath_parameters([])
   let right_parameters =
     intersections
@@ -193,7 +193,7 @@ fn cross_side_split_parameters(
       let svg_path.SubpathIntersection(right_parameters:, ..) = intersection
       right_parameters
     })
-    |> list.sort(by: svg_path.compare_subpath_parameters)
+    |> list.sort(by: svg_path.subpath_parameters_compare)
     |> unique_subpath_parameters([])
   Ok(#(left_parameters, right_parameters))
 }
@@ -331,7 +331,7 @@ fn colored_subpaths_loop(
     [first, ..rest], [color, ..remaining_colors] ->
       colored_subpaths_loop(rest, remaining_colors, all_colors, drawn: [
         svg.StyledPath(
-          svg_path.from_subpath(first),
+          svg_path.path_from_subpath(first),
           "fill: none; stroke: "
             <> color
             <> "; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round",
@@ -349,7 +349,7 @@ fn segment_start_dots(subpaths: List(svg_path.Subpath)) -> svg.ThingsToDraw {
   subpaths
   |> list.flat_map(fn(subpath) {
     subpath
-    |> svg_path.segments
+    |> svg_path.subpath_segments
     |> list.map(fn(segment) {
       svg.Circle(
         svg_path.segment_start(segment),
@@ -361,7 +361,7 @@ fn segment_start_dots(subpaths: List(svg_path.Subpath)) -> svg.ThingsToDraw {
 }
 
 fn smooth_horizontal_figure_eight() -> svg_path.Subpath {
-  svg_path.assert_subpath([
+  svg_path.subpath_assert([
     svg_path.CubicBezier(
       start: svg_path.point(518.4, 360.0),
       control1: svg_path.point(108.0, 11.52),
@@ -375,7 +375,7 @@ fn smooth_horizontal_figure_eight() -> svg_path.Subpath {
       end: svg_path.point(518.4, 360.0),
     ),
   ])
-  |> svg_path.assert_set_closed(closed: True)
+  |> svg_path.subpath_assert_set_closed(closed: True)
 }
 
 @external(erlang, "file", "write_file")

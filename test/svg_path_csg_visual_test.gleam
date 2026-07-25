@@ -543,7 +543,7 @@ fn path_arrows_with_scale(
   arrow_scale: Float,
 ) -> svg.ThingsToDraw {
   path
-  |> svg_path.subpaths
+  |> svg_path.path_subpaths
   |> list.flat_map(subpath_arrows(_, color, arrow_scale))
 }
 
@@ -569,7 +569,7 @@ fn fixed_top_center_arrows(
   arrow_scale: Float,
 ) -> svg.ThingsToDraw {
   path
-  |> svg_path.subpaths
+  |> svg_path.path_subpaths
   |> list.flat_map(fixed_top_center_subpath_arrow(_, color, arrow_scale))
 }
 
@@ -578,10 +578,10 @@ fn contour_overlays(
   stroke_width stroke_width: Float,
 ) -> svg.ThingsToDraw {
   path
-  |> svg_path.subpaths
+  |> svg_path.path_subpaths
   |> list.index_map(fn(subpath, index) {
     let color = contour_color(index)
-    let subpath_path = svg_path.from_subpath(subpath)
+    let subpath_path = svg_path.path_from_subpath(subpath)
     [
       svg.StyledPath(
         subpath_path,
@@ -613,7 +613,7 @@ fn subpath_arrows(
   color: String,
   arrow_scale: Float,
 ) -> svg.ThingsToDraw {
-  subpath_arrow(svg_path.segments(subpath), color, arrow_scale)
+  subpath_arrow(svg_path.subpath_segments(subpath), color, arrow_scale)
 }
 
 fn subpath_arrow(
@@ -651,7 +651,7 @@ fn top_horizontal_segment(
   subpath: svg_path.Subpath,
 ) -> Result(svg_path.Segment, Nil) {
   subpath
-  |> svg_path.segments
+  |> svg_path.subpath_segments
   |> list.filter(is_horizontal_line)
   |> top_segment(None)
 }
@@ -740,8 +740,8 @@ fn arrow_glyph(
 
   [
     svg.StyledPath(
-      svg_path.from_subpath(
-        svg_path.assert_subpath([
+      svg_path.path_from_subpath(
+        svg_path.subpath_assert([
           svg_path.Line(
             start: add(point, scale(unit, -6.0 *. arrow_scale)),
             end: add(point, scale(unit, 6.0 *. arrow_scale)),
@@ -857,7 +857,7 @@ fn render_theory_simple_orientation() -> String {
   let a = rectangle(28.0, 22.0, 102.0, 84.0)
   let b = rectangle(74.0, 50.0, 142.0, 98.0)
   let reversed_b =
-    svg_path.from_subpath(rectangle_subpath(
+    svg_path.path_from_subpath(rectangle_subpath(
       74.0,
       50.0,
       142.0,
@@ -1132,7 +1132,7 @@ fn combo_row_label(x: Float, y: Float, label: String) -> svg.ThingToDraw {
 }
 
 fn theory_bar(same_direction same_direction: Bool) -> svg_path.Path {
-  svg_path.from_subpath(rounded_rectangle_subpath(
+  svg_path.path_from_subpath(rounded_rectangle_subpath(
     10.0,
     54.0,
     180.0,
@@ -1176,7 +1176,7 @@ fn render_adjacent_offset_squares_union() -> String {
 
 fn render_four_squares_union_nonzero() -> String {
   let paths = visual_four_translated_square_paths()
-  let path = svg_path.combine_paths(paths)
+  let path = svg_path.path_combine(paths)
   let assert Ok(union) = union_paths(paths)
 
   theory_document(
@@ -1193,7 +1193,7 @@ fn render_four_squares_union_nonzero() -> String {
 
 fn render_effects_rounded_rectangle_union() -> String {
   let rectangles = effect_rectangles()
-  let input = svg_path.combine_paths(rectangles)
+  let input = svg_path.path_combine(rectangles)
   let assert Ok(union) = union_paths(rectangles)
   let round_options =
     effects.RoundCornerOptions(
@@ -1224,7 +1224,7 @@ fn render_effects_rounded_rectangle_union() -> String {
 
 fn render_effects_rounded_ellipse_union() -> String {
   let ellipses = effect_ellipses()
-  let input = svg_path.combine_paths(ellipses)
+  let input = svg_path.path_combine(ellipses)
   let assert Ok(union) = union_paths(ellipses)
   let assert Ok(union_for_effects) = wiggle_path(union)
   let round_options =
@@ -1260,7 +1260,7 @@ fn render_effects_rounded_ellipse_union() -> String {
 
 fn wiggle_path(path: svg_path.Path) -> Result(svg_path.Path, svg_path.Error) {
   use subpaths <- result.try(
-    wiggle_subpaths(svg_path.subpaths(path), wiggled: []),
+    wiggle_subpaths(svg_path.path_subpaths(path), wiggled: []),
   )
   Ok(svg_path.Path(subpaths:))
 }
@@ -1282,12 +1282,12 @@ fn wiggle_subpath(
   subpath: svg_path.Subpath,
 ) -> Result(svg_path.Subpath, svg_path.Error) {
   use open <- result.try(svg_path.subpath_with(
-    svg_path.segments(subpath),
+    svg_path.subpath_segments(subpath),
     policy: svg_path.Wiggle,
   ))
-  svg_path.set_closed_with(
+  svg_path.subpath_set_closed_with(
     open,
-    closed: svg_path.is_closed(subpath),
+    closed: svg_path.subpath_is_closed(subpath),
     policy: svg_path.Wiggle,
   )
 }
@@ -1377,7 +1377,7 @@ fn union_paths_with_options(
   options: csg.Options,
 ) -> Result(svg_path.Path, svg_path.Error) {
   case paths {
-    [] -> Ok(svg_path.empty_path())
+    [] -> Ok(svg_path.path_empty())
     [first, ..rest] -> union_paths_loop(rest, first, options)
   }
 }
@@ -1449,10 +1449,10 @@ fn effects_contour_overlays(
   stroke_width stroke_width: Float,
 ) -> svg.ThingsToDraw {
   path
-  |> svg_path.subpaths
+  |> svg_path.path_subpaths
   |> list.index_map(fn(subpath, index) {
     let color = effects_contour_color(index)
-    let subpath_path = svg_path.from_subpath(subpath)
+    let subpath_path = svg_path.path_from_subpath(subpath)
     [
       svg.StyledPath(
         subpath_path,
@@ -1473,7 +1473,7 @@ fn subpath_longest_segment_arrow(
   color: String,
   arrow_scale: Float,
 ) -> svg.ThingsToDraw {
-  case longest_segment(svg_path.segments(subpath), best: Error(Nil)) {
+  case longest_segment(svg_path.subpath_segments(subpath), best: Error(Nil)) {
     Error(_) -> []
     Ok(segment) -> {
       case effects_segment_arrow_at(segment, color, arrow_scale, 0.42) {
@@ -1784,7 +1784,7 @@ fn rectangle(
 }
 
 fn polygon(points: List(svg_path.Point)) -> svg_path.Path {
-  svg_path.from_subpath(svg_path.assert_polygon(points))
+  svg_path.path_from_subpath(svg_path.subpath_assert_polygon(points))
 }
 
 fn nested_rectangles() -> svg_path.Path {
@@ -1818,7 +1818,7 @@ fn nested_rectangles_with_inner(
   same_direction same_direction: Bool,
 ) -> svg_path.Path {
   svg_path.Path([
-    svg_path.assert_polygon([
+    svg_path.subpath_assert_polygon([
       svg_path.point(8.0, 8.0),
       svg_path.point(114.0, 8.0),
       svg_path.point(114.0, 90.0),
@@ -1829,7 +1829,7 @@ fn nested_rectangles_with_inner(
 }
 
 fn bar(same_direction same_direction: Bool) -> svg_path.Path {
-  svg_path.from_subpath(rectangle_subpath(
+  svg_path.path_from_subpath(rectangle_subpath(
     0.0,
     44.0,
     122.0,
@@ -1860,7 +1860,7 @@ fn rectangle_subpath(
     ]
   }
 
-  svg_path.assert_polygon(points)
+  svg_path.subpath_assert_polygon(points)
 }
 
 fn rounded_rectangle_subpath(
@@ -1882,7 +1882,7 @@ fn rounded_rectangle_subpath(
   let arc_radius = svg_path.point(radius, radius)
 
   let clockwise =
-    svg_path.assert_subpath([
+    svg_path.subpath_assert([
       svg_path.Line(start: top_left, end: top_right),
       svg_path.Arc(
         start: top_right,
@@ -1920,19 +1920,19 @@ fn rounded_rectangle_subpath(
         end: top_left,
       ),
     ])
-    |> svg_path.assert_set_closed(closed: True)
+    |> svg_path.subpath_assert_set_closed(closed: True)
 
   case same_direction {
     True -> clockwise
-    False -> svg_path.reverse_subpath(clockwise)
+    False -> svg_path.subpath_reverse(clockwise)
   }
 }
 
 fn circle(center: svg_path.Point, radius: Float) -> svg_path.Path {
   let left = svg_path.point(center.x -. radius, center.y)
   let right = svg_path.point(center.x +. radius, center.y)
-  svg_path.from_subpath(
-    svg_path.assert_subpath([
+  svg_path.path_from_subpath(
+    svg_path.subpath_assert([
       svg_path.Arc(
         start: right,
         radius: svg_path.point(radius, radius),
@@ -1950,7 +1950,7 @@ fn circle(center: svg_path.Point, radius: Float) -> svg_path.Path {
         end: right,
       ),
     ])
-    |> svg_path.assert_set_closed(closed: True),
+    |> svg_path.subpath_assert_set_closed(closed: True),
   )
 }
 
@@ -1969,8 +1969,8 @@ fn ellipse_path(
   let right = add(center, axis)
   let radius = svg_path.point(radius_x, radius_y)
 
-  svg_path.from_subpath(
-    svg_path.assert_subpath([
+  svg_path.path_from_subpath(
+    svg_path.subpath_assert([
       svg_path.Arc(
         start: right,
         radius:,
@@ -1988,7 +1988,7 @@ fn ellipse_path(
         end: right,
       ),
     ])
-    |> svg_path.assert_set_closed(closed: True),
+    |> svg_path.subpath_assert_set_closed(closed: True),
   )
 }
 

@@ -65,10 +65,10 @@ fn render() -> String {
       ),
       [
         svg.StyledPath(
-          svg_path.from_subpath(source),
+          svg_path.path_from_subpath(source),
           "fill: none; stroke: #ef4444; stroke-width: 2.5; stroke-dasharray: 10 10; stroke-linecap: round",
         ),
-        ..segment_arrows(svg_path.segments(source), "#ef4444", 1.3)
+        ..segment_arrows(svg_path.subpath_segments(source), "#ef4444", 1.3)
       ],
     ]),
     view_box: svg_path.BoundingBox(
@@ -125,7 +125,7 @@ fn split_sections(
     [] -> [subpath]
     _ -> {
       let assert Ok(sections) =
-        svg_path.subpaths_between(subpath, between: parameters)
+        svg_path.subpath_between_many(subpath, between: parameters)
       sections
     }
   }
@@ -135,7 +135,7 @@ fn normalize_parameters(
   parameters: List(svg_path.SubpathParameter),
 ) -> List(svg_path.SubpathParameter) {
   parameters
-  |> list.sort(by: svg_path.compare_subpath_parameters)
+  |> list.sort(by: svg_path.subpath_parameters_compare)
   |> unique_subpath_parameters([])
 }
 
@@ -148,7 +148,7 @@ fn unique_subpath_parameters(
     [first, ..rest] ->
       case unique {
         [previous, ..] ->
-          case svg_path.compare_subpath_parameters(first, previous) {
+          case svg_path.subpath_parameters_compare(first, previous) {
             order.Eq -> unique_subpath_parameters(rest, unique:)
             _ -> unique_subpath_parameters(rest, unique: [first, ..unique])
           }
@@ -168,7 +168,7 @@ fn draw_sections(
       let color = color(index)
       draw_sections(rest, index: index + 1, things: [
         svg.StyledPath(
-          svg_path.from_subpath(first),
+          svg_path.path_from_subpath(first),
           "fill: none; stroke: "
             <> color
             <> "; stroke-width: 4; stroke-linejoin: round; stroke-linecap: round",
@@ -268,7 +268,7 @@ fn arrow_glyph(
   let left = add(base, scale(normal, half_width))
   let right = add(base, scale(normal, 0.0 -. half_width))
   svg.StyledPath(
-    svg_path.Path([svg_path.assert_polygon([tip, left, right])]),
+    svg_path.Path([svg_path.subpath_assert_polygon([tip, left, right])]),
     "fill: " <> color <> "; stroke: none",
   )
 }
@@ -297,7 +297,7 @@ fn color(index: Int) -> String {
 }
 
 fn figure_eight() -> svg_path.Subpath {
-  svg_path.assert_subpath([
+  svg_path.subpath_assert([
     svg_path.CubicBezier(
       start: svg_path.point(76.0, 0.0),
       control1: svg_path.point(-2.0, -62.0),
@@ -311,7 +311,7 @@ fn figure_eight() -> svg_path.Subpath {
       end: svg_path.point(76.0, 0.0),
     ),
   ])
-  |> svg_path.assert_set_closed(closed: True)
+  |> svg_path.subpath_assert_set_closed(closed: True)
 }
 
 fn radius() -> Float {

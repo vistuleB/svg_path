@@ -50,12 +50,12 @@ fn crescent_path(
   line_end line_end: svg_path.Point,
 ) -> svg_path.Path {
   let line =
-    svg_path.assert_subpath([
+    svg_path.subpath_assert([
       svg_path.Line(start: line_start, end: line_end),
     ])
   let point_subpaths =
     points
-    |> list.map(fn(point) { svg_path.empty_subpath(at: point) })
+    |> list.map(fn(point) { svg_path.subpath_empty(at: point) })
 
   svg_path.Path([line, ..point_subpaths])
 }
@@ -65,7 +65,7 @@ fn reference_circle_arc(
   end: svg_path.Point,
 ) -> svg_path.Path {
   svg_path.Path([
-    svg_path.assert_subpath([
+    svg_path.subpath_assert([
       svg_path.Arc(
         start:,
         radius: svg_path.point(1000.0, 1000.0),
@@ -80,7 +80,7 @@ fn reference_circle_arc(
 
 fn big_line(start: svg_path.Point, end: svg_path.Point) -> svg_path.Path {
   svg_path.Path([
-    svg_path.assert_subpath([
+    svg_path.subpath_assert([
       svg_path.Line(start:, end:),
     ]),
   ])

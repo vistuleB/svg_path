@@ -233,10 +233,10 @@ pub fn path_with_options(
   let format = serialization_format(options, path_numbers(path, options))
 
   case options.relative {
-    True -> relative_path(svg_path.subpaths(path), format)
+    True -> relative_path(svg_path.path_subpaths(path), format)
     False -> {
       path
-      |> svg_path.subpaths
+      |> svg_path.path_subpaths
       |> list.map(with: serialize_absolute_subpath(_, format))
       |> list.filter(keeping: fn(serialized) { serialized != "" })
       |> join_commands(format)
@@ -305,12 +305,12 @@ fn serialize_absolute_subpath(
   subpath: svg_path.Subpath,
   format: Format,
 ) -> String {
-  let assert Ok(start) = svg_path.start(subpath)
+  let assert Ok(start) = svg_path.subpath_start(subpath)
 
-  case svg_path.segments(subpath) {
+  case svg_path.subpath_segments(subpath) {
     [] -> {
       let commands = [command("M", point(start, format), format)]
-      let commands = case svg_path.is_closed(subpath) {
+      let commands = case svg_path.subpath_is_closed(subpath) {
         True -> list.append(commands, ["Z"])
         False -> commands
       }
@@ -327,7 +327,7 @@ fn serialize_absolute_subpath(
           commands,
           list.map(segments, absolute_segment_without_move(_, format)),
         )
-      let commands = case svg_path.is_closed(subpath) {
+      let commands = case svg_path.subpath_is_closed(subpath) {
         True -> list.append(commands, ["Z"])
         False -> commands
       }
@@ -370,14 +370,14 @@ fn subpath_from_current(
   current: svg_path.Point,
   format: Format,
 ) -> String {
-  let assert Ok(start) = svg_path.start(subpath)
+  let assert Ok(start) = svg_path.subpath_start(subpath)
 
-  case svg_path.segments(subpath) {
+  case svg_path.subpath_segments(subpath) {
     [] -> {
       let commands = [
         command("m", point(delta(start, current), format), format),
       ]
-      let commands = case svg_path.is_closed(subpath) {
+      let commands = case svg_path.subpath_is_closed(subpath) {
         True -> list.append(commands, ["z"])
         False -> commands
       }
@@ -394,7 +394,7 @@ fn subpath_from_current(
           commands,
           list.map(segments, relative_segment_without_move(_, format)),
         )
-      let commands = case svg_path.is_closed(subpath) {
+      let commands = case svg_path.subpath_is_closed(subpath) {
         True -> list.append(commands, ["z"])
         False -> commands
       }
@@ -405,9 +405,9 @@ fn subpath_from_current(
 }
 
 fn serializable_segments(subpath: svg_path.Subpath) -> List(svg_path.Segment) {
-  let segments = svg_path.segments(subpath)
+  let segments = svg_path.subpath_segments(subpath)
 
-  case svg_path.is_closed(subpath) {
+  case svg_path.subpath_is_closed(subpath) {
     False -> segments
     True -> drop_closing_line(segments)
   }
@@ -579,16 +579,16 @@ fn current_after_subpath(
   subpath: svg_path.Subpath,
   current: svg_path.Point,
 ) -> svg_path.Point {
-  case svg_path.segments(subpath) {
+  case svg_path.subpath_segments(subpath) {
     [] -> {
-      let assert Ok(start) = svg_path.start(subpath)
+      let assert Ok(start) = svg_path.subpath_start(subpath)
       start
     }
     [first, ..] -> {
-      case svg_path.is_closed(subpath) {
+      case svg_path.subpath_is_closed(subpath) {
         True -> svg_path.segment_start(first)
         False -> {
-          case svg_path.end(subpath) {
+          case svg_path.subpath_end(subpath) {
             Ok(end) -> end
             Error(_) -> current
           }
@@ -824,10 +824,10 @@ fn command_separator(options: Options) -> String {
 fn path_numbers(path: svg_path.Path, options: Options) -> List(Float) {
   case options.relative {
     True ->
-      relative_path_numbers(svg_path.subpaths(path), origin(), [], options)
+      relative_path_numbers(svg_path.path_subpaths(path), origin(), [], options)
     False -> {
       path
-      |> svg_path.subpaths
+      |> svg_path.path_subpaths
       |> list.fold([], fn(accumulated, subpath) {
         list.append(accumulated, absolute_subpath_numbers(subpath, options))
       })
@@ -868,9 +868,9 @@ fn absolute_subpath_numbers(
   subpath: svg_path.Subpath,
   options: Options,
 ) -> List(Float) {
-  let assert Ok(start) = svg_path.start(subpath)
+  let assert Ok(start) = svg_path.subpath_start(subpath)
 
-  case svg_path.segments(subpath) {
+  case svg_path.subpath_segments(subpath) {
     [] -> point_numbers(start)
     [_, ..] -> {
       serializable_segments(subpath)
@@ -886,9 +886,9 @@ fn relative_subpath_numbers(
   current: svg_path.Point,
   options: Options,
 ) -> List(Float) {
-  let assert Ok(start) = svg_path.start(subpath)
+  let assert Ok(start) = svg_path.subpath_start(subpath)
 
-  case svg_path.segments(subpath) {
+  case svg_path.subpath_segments(subpath) {
     [] -> point_numbers(delta(start, current))
     [_, ..] -> {
       serializable_segments(subpath)

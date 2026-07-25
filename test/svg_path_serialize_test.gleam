@@ -7,18 +7,18 @@ pub fn main() -> Nil {
 }
 
 pub fn empty_path_serializes_to_empty_string_test() {
-  assert serialize.path(svg_path.empty_path()) == ""
+  assert serialize.path(svg_path.path_empty()) == ""
 }
 
 pub fn empty_subpath_serializes_to_move_test() {
-  assert serialize.subpath(svg_path.empty_subpath(at: svg_path.point(0.0, 0.0)))
+  assert serialize.subpath(svg_path.subpath_empty(at: svg_path.point(0.0, 0.0)))
     == "M 0 0"
 }
 
 pub fn closed_empty_subpath_serializes_to_move_and_z_test() {
   let subpath =
-    svg_path.empty_subpath(at: svg_path.point(0.0, 0.0))
-    |> svg_path.assert_set_closed(closed: True)
+    svg_path.subpath_empty(at: svg_path.point(0.0, 0.0))
+    |> svg_path.subpath_assert_set_closed(closed: True)
 
   assert serialize.subpath(subpath) == "M 0 0 Z"
 }
@@ -29,9 +29,9 @@ pub fn path_serializes_empty_subpaths_test() {
   let assert Ok(subpath) = svg_path.subpath([svg_path.Line(start: a, end: b)])
   let path =
     svg_path.Path([
-      svg_path.empty_subpath(at: svg_path.point(0.0, 0.0)),
+      svg_path.subpath_empty(at: svg_path.point(0.0, 0.0)),
       subpath,
-      svg_path.empty_subpath(at: svg_path.point(0.0, 0.0)),
+      svg_path.subpath_empty(at: svg_path.point(0.0, 0.0)),
     ])
 
   assert serialize.path(path) == "M 0 0 M 0 0 H 10 M 0 0"
@@ -81,10 +81,10 @@ pub fn closed_subpath_keeps_final_curve_before_z_test() {
 pub fn closed_subpath_keeps_final_zero_length_line_test() {
   let a = svg_path.point(0.0, 0.0)
   let subpath =
-    svg_path.assert_subpath([
+    svg_path.subpath_assert([
       svg_path.Line(start: a, end: a),
     ])
-    |> svg_path.assert_set_closed(closed: True)
+    |> svg_path.subpath_assert_set_closed(closed: True)
 
   assert serialize.subpath(subpath) == "M 0 0 H 0 Z"
 }
@@ -674,7 +674,7 @@ pub fn relative_options_make_moves_relative_between_subpaths_test() {
   assert serialize.path_with_options(
       svg_path.Path([
         first,
-        svg_path.empty_subpath(at: b),
+        svg_path.subpath_empty(at: b),
         second,
       ]),
       options: serialize.relative_decimal_options(0),
@@ -771,7 +771,11 @@ fn result_try_set_closed_with_bridge(
 ) -> Result(svg_path.Subpath, svg_path.Error) {
   case result_subpath {
     Ok(subpath) ->
-      svg_path.set_closed_with(subpath, closed: True, policy: svg_path.Bridge)
+      svg_path.subpath_set_closed_with(
+        subpath,
+        closed: True,
+        policy: svg_path.Bridge,
+      )
     Error(error) -> Error(error)
   }
 }
@@ -780,7 +784,7 @@ fn result_try_set_closed_true(
   result_subpath: Result(svg_path.Subpath, svg_path.Error),
 ) -> Result(svg_path.Subpath, svg_path.Error) {
   case result_subpath {
-    Ok(subpath) -> svg_path.set_closed(subpath, closed: True)
+    Ok(subpath) -> svg_path.subpath_set_closed(subpath, closed: True)
     Error(error) -> Error(error)
   }
 }

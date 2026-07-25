@@ -150,10 +150,10 @@ pub fn point_chord_polygon_tangent_subpaths_split_square_test() {
 
   assert points_near(subpath_start(outside), svg_path.point(10.0, 0.0))
   assert points_near(subpath_end(outside), svg_path.point(10.0, 10.0))
-  assert list.length(svg_path.segments(outside)) == 1
+  assert list.length(svg_path.subpath_segments(outside)) == 1
   assert points_near(subpath_start(inside), svg_path.point(10.0, 10.0))
   assert points_near(subpath_end(inside), svg_path.point(10.0, 0.0))
-  assert list.length(svg_path.segments(inside)) == 3
+  assert list.length(svg_path.subpath_segments(inside)) == 3
 }
 
 pub fn point_chord_polygon_tangent_subpaths_reject_nonconvex_loop_test() {
@@ -196,10 +196,10 @@ pub fn point_exact_loop_tangent_subpaths_split_square_test() {
 
   assert points_near(subpath_start(outside), svg_path.point(10.0, 0.0))
   assert points_near(subpath_end(outside), svg_path.point(10.0, 10.0))
-  assert list.length(svg_path.segments(outside)) == 1
+  assert list.length(svg_path.subpath_segments(outside)) == 1
   assert points_near(subpath_start(inside), svg_path.point(10.0, 10.0))
   assert points_near(subpath_end(inside), svg_path.point(10.0, 0.0))
-  assert list.length(svg_path.segments(inside)) == 3
+  assert list.length(svg_path.subpath_segments(inside)) == 3
 }
 
 pub fn point_exact_loop_tangent_subpaths_finds_quadratic_interior_tangencies_test() {
@@ -218,10 +218,10 @@ pub fn point_exact_loop_tangent_subpaths_finds_quadratic_interior_tangencies_tes
 
   assert points_near(subpath_start(outside), lower)
   assert points_near(subpath_end(outside), upper)
-  assert list.length(svg_path.segments(outside)) == 1
+  assert list.length(svg_path.subpath_segments(outside)) == 1
   assert points_near(subpath_start(inside), upper)
   assert points_near(subpath_end(inside), lower)
-  assert list.length(svg_path.segments(inside)) == 4
+  assert list.length(svg_path.subpath_segments(inside)) == 4
 }
 
 pub fn loop_plus_point_hull_replaces_visible_square_edge_test() {
@@ -341,7 +341,7 @@ pub fn point_exact_loop_tangent_subpaths_finds_cubic_interior_tangencies_test() 
     subpath_end(outside),
     svg_path.point(13.510530985333087, 6.5000760646431495),
   )
-  assert list.length(svg_path.segments(outside)) == 1
+  assert list.length(svg_path.subpath_segments(outside)) == 1
   assert points_near(
     subpath_start(inside),
     svg_path.point(13.510530985333087, 6.5000760646431495),
@@ -350,7 +350,7 @@ pub fn point_exact_loop_tangent_subpaths_finds_cubic_interior_tangencies_test() 
     subpath_end(inside),
     svg_path.point(13.510530985333089, 3.4999239353568505),
   )
-  assert list.length(svg_path.segments(inside)) == 4
+  assert list.length(svg_path.subpath_segments(inside)) == 4
 }
 
 pub fn point_exact_loop_tangent_subpaths_finds_arc_interior_tangencies_test() {
@@ -387,10 +387,10 @@ pub fn point_exact_loop_tangent_subpaths_finds_arc_interior_tangencies_test() {
 
   assert points_near(subpath_start(outside), lower)
   assert points_near(subpath_end(outside), upper)
-  assert list.length(svg_path.segments(outside)) == 1
+  assert list.length(svg_path.subpath_segments(outside)) == 1
   assert points_near(subpath_start(inside), upper)
   assert points_near(subpath_end(inside), lower)
-  assert list.length(svg_path.segments(inside)) == 4
+  assert list.length(svg_path.subpath_segments(inside)) == 4
 }
 
 pub fn segment_tangent_monotone_accepts_lines_test() {
@@ -570,12 +570,12 @@ fn conflicting_tangent_line_like_loop() -> List(svg_path.Segment) {
 }
 
 fn subpath_start(subpath: svg_path.Subpath) -> svg_path.Point {
-  let assert Ok(point) = svg_path.start(subpath)
+  let assert Ok(point) = svg_path.subpath_start(subpath)
   point
 }
 
 fn subpath_end(subpath: svg_path.Subpath) -> svg_path.Point {
-  let assert Ok(point) = svg_path.end(subpath)
+  let assert Ok(point) = svg_path.subpath_end(subpath)
   point
 }
 

@@ -182,7 +182,7 @@ fn panel(
         13,
       ),
       svg.StyledPath(
-        svg_path.from_subpath(source),
+        svg_path.path_from_subpath(source),
         "fill: none; stroke: #9ca3af; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 5 5",
       ),
     ],
@@ -207,7 +207,7 @@ fn error_label(error: offset.Error) -> String {
 }
 
 fn open_curve() -> svg_path.Subpath {
-  svg_path.assert_subpath([
+  svg_path.subpath_assert([
     svg_path.CubicBezier(
       start: svg_path.point(0.0, 86.0),
       control1: svg_path.point(35.0, -26.0),
@@ -218,7 +218,7 @@ fn open_curve() -> svg_path.Subpath {
 }
 
 fn concave_polygon() -> svg_path.Subpath {
-  svg_path.assert_polygon([
+  svg_path.subpath_assert_polygon([
     svg_path.point(0.0, 0.0),
     svg_path.point(150.0, 0.0),
     svg_path.point(150.0, 38.0),
@@ -231,7 +231,7 @@ fn concave_polygon() -> svg_path.Subpath {
 }
 
 fn diamond() -> svg_path.Subpath {
-  svg_path.assert_polygon([
+  svg_path.subpath_assert_polygon([
     svg_path.point(78.0, 0.0),
     svg_path.point(156.0, 58.0),
     svg_path.point(78.0, 116.0),
@@ -240,7 +240,7 @@ fn diamond() -> svg_path.Subpath {
 }
 
 fn narrow_concavity() -> svg_path.Subpath {
-  svg_path.assert_polygon([
+  svg_path.subpath_assert_polygon([
     svg_path.point(0.0, 0.0),
     svg_path.point(154.0, 0.0),
     svg_path.point(154.0, 118.0),
@@ -253,7 +253,7 @@ fn narrow_concavity() -> svg_path.Subpath {
 }
 
 fn smooth_figure_eight() -> svg_path.Subpath {
-  svg_path.assert_subpath([
+  svg_path.subpath_assert([
     svg_path.CubicBezier(
       start: svg_path.point(82.0, 58.0),
       control1: svg_path.point(40.0, 8.0),
@@ -267,11 +267,11 @@ fn smooth_figure_eight() -> svg_path.Subpath {
       end: svg_path.point(82.0, 58.0),
     ),
   ])
-  |> svg_path.assert_set_closed(closed: True)
+  |> svg_path.subpath_assert_set_closed(closed: True)
 }
 
 fn upright_figure_eight() -> svg_path.Subpath {
-  svg_path.assert_subpath([
+  svg_path.subpath_assert([
     svg_path.Line(
       start: svg_path.point(82.0, 58.0),
       end: svg_path.point(20.0, 4.0),
@@ -297,7 +297,7 @@ fn upright_figure_eight() -> svg_path.Subpath {
       end: svg_path.point(82.0, 58.0),
     ),
   ])
-  |> svg_path.assert_set_closed(closed: True)
+  |> svg_path.subpath_assert_set_closed(closed: True)
 }
 
 fn int_to_float(value: Int) -> Float {

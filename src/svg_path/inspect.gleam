@@ -115,7 +115,7 @@ pub fn path_with_options(
 }
 
 fn do_path(path: svg_path.Path, format: number_format.NumberFormat) -> String {
-  case svg_path.subpaths(path) {
+  case svg_path.path_subpaths(path) {
     [] -> "Path([])"
     subpaths -> {
       "Path([\n"
@@ -150,8 +150,8 @@ fn do_path_code(
   path: svg_path.Path,
   format: number_format.NumberFormat,
 ) -> String {
-  case svg_path.subpaths(path) {
-    [] -> "svg_path.empty_path()"
+  case svg_path.path_subpaths(path) {
+    [] -> "svg_path.path_empty()"
     subpaths -> {
       "svg_path.Path([\n"
       <> indent_lines(
@@ -182,15 +182,15 @@ fn do_subpath(
   subpath: svg_path.Subpath,
   format: number_format.NumberFormat,
 ) -> String {
-  let state = case svg_path.is_closed(subpath) {
+  let state = case svg_path.subpath_is_closed(subpath) {
     True -> "closed"
     False -> "open"
   }
 
-  let assert Ok(start) = svg_path.start(subpath)
+  let assert Ok(start) = svg_path.subpath_start(subpath)
   let start = "start=" <> do_point(start, format)
 
-  case svg_path.segments(subpath) {
+  case svg_path.subpath_segments(subpath) {
     [] -> "Subpath(" <> state <> ", " <> start <> ", [])"
     segments -> {
       "Subpath("
@@ -229,23 +229,23 @@ fn do_subpath_code(
   subpath: svg_path.Subpath,
   format: number_format.NumberFormat,
 ) -> String {
-  let assert Ok(start) = svg_path.start(subpath)
+  let assert Ok(start) = svg_path.subpath_start(subpath)
 
-  case svg_path.segments(subpath) {
+  case svg_path.subpath_segments(subpath) {
     [] -> {
       let constructor =
-        "svg_path.empty_subpath(at: " <> do_point_code(start, format) <> ")"
+        "svg_path.subpath_empty(at: " <> do_point_code(start, format) <> ")"
 
-      case svg_path.is_closed(subpath) {
+      case svg_path.subpath_is_closed(subpath) {
         False -> constructor
         True -> {
-          constructor <> "\n|> svg_path.assert_set_closed(closed: True)"
+          constructor <> "\n|> svg_path.subpath_assert_set_closed(closed: True)"
         }
       }
     }
     segments -> {
       let constructor =
-        "svg_path.assert_subpath([\n"
+        "svg_path.subpath_assert([\n"
         <> indent_lines(
           segments
           |> list.map(do_segment_code(_, format))
@@ -253,10 +253,10 @@ fn do_subpath_code(
         )
         <> "\n])"
 
-      case svg_path.is_closed(subpath) {
+      case svg_path.subpath_is_closed(subpath) {
         False -> constructor
         True -> {
-          constructor <> "\n|> svg_path.assert_set_closed(closed: True)"
+          constructor <> "\n|> svg_path.subpath_assert_set_closed(closed: True)"
         }
       }
     }
@@ -497,17 +497,17 @@ fn right_decimals(
 
 fn path_numbers(path: svg_path.Path) -> List(Float) {
   path
-  |> svg_path.subpaths
+  |> svg_path.path_subpaths
   |> list.fold([], fn(accumulated, subpath) {
     list.append(accumulated, subpath_numbers(subpath))
   })
 }
 
 fn subpath_numbers(subpath: svg_path.Subpath) -> List(Float) {
-  let assert Ok(start) = svg_path.start(subpath)
+  let assert Ok(start) = svg_path.subpath_start(subpath)
 
   subpath
-  |> svg_path.segments
+  |> svg_path.subpath_segments
   |> list.fold(point_numbers(start), fn(accumulated, segment) {
     list.append(accumulated, segment_numbers(segment))
   })

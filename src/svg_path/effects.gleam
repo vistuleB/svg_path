@@ -102,7 +102,7 @@ pub fn round_corners_with(
   options options: RoundCornerOptions,
 ) -> Result(svg_path.Path, Error) {
   use subpaths <- result.try(
-    round_subpaths(svg_path.subpaths(path), radius:, options:, rounded: []),
+    round_subpaths(svg_path.path_subpaths(path), radius:, options:, rounded: []),
   )
   Ok(svg_path.Path(subpaths:))
 }
@@ -128,11 +128,11 @@ pub fn round_subpath_corners_with(
   case valid_radius(radius) {
     False -> Error(InvalidRadius(radius))
     True -> {
-      let segments = svg_path.segments(subpath)
+      let segments = svg_path.subpath_segments(subpath)
       case segments {
         [] -> Ok(subpath)
         [_] -> {
-          case svg_path.is_closed(subpath) {
+          case svg_path.subpath_is_closed(subpath) {
             False -> Ok(subpath)
             True ->
               round_subpath_corners_nonempty(subpath, segments, radius, options)
@@ -222,7 +222,7 @@ fn corners(
   radius: Float,
   options: RoundCornerOptions,
 ) -> Result(List(Corner), Error) {
-  let pairs = corner_pairs(infos, closed: svg_path.is_closed(subpath))
+  let pairs = corner_pairs(infos, closed: svg_path.subpath_is_closed(subpath))
   corner_candidates(pairs, radius, options, corners: [])
 }
 
@@ -412,7 +412,7 @@ fn round_subpath_corners_adaptively(
   radius: Float,
   options: RoundCornerOptions,
 ) -> Result(svg_path.Subpath, Error) {
-  let pairs = corner_pairs(infos, closed: svg_path.is_closed(subpath))
+  let pairs = corner_pairs(infos, closed: svg_path.subpath_is_closed(subpath))
   use specs <- result.try(corner_specs(pairs, options, specs: []))
   let assigned =
     initial_radii(specs, radius)
@@ -439,9 +439,9 @@ fn rounded_subpath_from_corners(
         svg_path.subpath_with(rounded_segments, policy: svg_path.Wiggle)
         |> result.map_error(PathError),
       )
-      svg_path.set_closed_with(
+      svg_path.subpath_set_closed_with(
         rounded,
-        closed: svg_path.is_closed(subpath),
+        closed: svg_path.subpath_is_closed(subpath),
         policy: svg_path.Wiggle,
       )
       |> result.map_error(PathError)
@@ -875,9 +875,9 @@ fn previous_corner_index(segment_index: Int, subpath: svg_path.Subpath) -> Int {
   case segment_index > 0 {
     True -> segment_index - 1
     False -> {
-      case svg_path.is_closed(subpath) {
+      case svg_path.subpath_is_closed(subpath) {
         False -> -1
-        True -> list.length(svg_path.segments(subpath)) - 1
+        True -> list.length(svg_path.subpath_segments(subpath)) - 1
       }
     }
   }

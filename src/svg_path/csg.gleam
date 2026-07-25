@@ -342,7 +342,7 @@ fn nonzero_boundary_piece(
         ]
         False, True -> [
           Piece(
-            segment: svg_path.reverse_segment(piece),
+            segment: svg_path.segment_reverse(piece),
             level: 1,
             role: BoundaryPiece,
             internal: False,
@@ -379,7 +379,7 @@ type Side {
 
 fn path_edges(path: svg_path.Path, offset offset: Int) -> List(Edge) {
   path
-  |> svg_path.subpaths
+  |> svg_path.path_subpaths
   |> list.index_map(fn(subpath, index) { #(offset + index, subpath) })
   |> list.flat_map(fn(source_subpath) {
     let #(source, subpath) = source_subpath
@@ -393,13 +393,14 @@ fn path_edges(path: svg_path.Path, offset offset: Int) -> List(Edge) {
 }
 
 fn subpath_edges(subpath: svg_path.Subpath) -> List(svg_path.Segment) {
-  let segments = svg_path.segments(subpath)
+  let segments = svg_path.subpath_segments(subpath)
   case segments {
     [] -> []
     _ -> {
       let start =
-        svg_path.start(subpath) |> result.unwrap(svg_path.point(0.0, 0.0))
-      let end = svg_path.end(subpath) |> result.unwrap(start)
+        svg_path.subpath_start(subpath)
+        |> result.unwrap(svg_path.point(0.0, 0.0))
+      let end = svg_path.subpath_end(subpath) |> result.unwrap(start)
       let edges =
         segments
         |> list.filter_map(fn(segment) {
@@ -502,7 +503,7 @@ fn split_edge(
     split_parameters(edge, split_edges, intersection_options, [0.0, 1.0]),
   )
   let ts = ts |> list.sort(by: float.compare) |> unique_floats(tolerance, [])
-  svg_path.segments_between_inside(segment, between: ts)
+  svg_path.segment_between_many_inside(segment, between: ts)
 }
 
 fn split_parameters(
@@ -731,7 +732,7 @@ fn nonzero_union_pieces(
             group: source,
           ),
           Piece(
-            segment: svg_path.reverse_segment(oriented),
+            segment: svg_path.segment_reverse(oriented),
             level: source,
             role: SourcePiece,
             internal:,
@@ -758,7 +759,7 @@ fn output_pieces(
       threshold_pieces(oriented, low_level, high_level, [])
     InteriorOnRight(low_level:, high_level:) ->
       threshold_pieces(
-        svg_path.reverse_segment(oriented),
+        svg_path.segment_reverse(oriented),
         low_level,
         high_level,
         [],
@@ -1002,7 +1003,7 @@ fn orient_piece(
   side: Side,
 ) -> svg_path.Segment {
   case operation, side {
-    Difference, RightSide -> svg_path.reverse_segment(piece)
+    Difference, RightSide -> svg_path.segment_reverse(piece)
     _, _ -> piece
   }
 }
@@ -1238,7 +1239,7 @@ fn contour_depth_loop(
 fn contour_probe(
   subpath: svg_path.Subpath,
 ) -> Result(svg_path.Point, svg_path.Error) {
-  let assert [segment, ..] = svg_path.segments(subpath)
+  let assert [segment, ..] = svg_path.subpath_segments(subpath)
   svg_path.segment_point(segment, at: 0.5)
 }
 
@@ -1252,7 +1253,7 @@ fn orient_contour(
     True -> contour
     False ->
       OutputContour(
-        subpath: svg_path.reverse_subpath(subpath),
+        subpath: svg_path.subpath_reverse(subpath),
         level:,
         role:,
         internal:,
@@ -1466,7 +1467,7 @@ fn chain_to_contour(
       segments,
       policy: svg_path.Strict,
     ))
-    use closed <- result.try(svg_path.set_closed_with(
+    use closed <- result.try(svg_path.subpath_set_closed_with(
       subpath,
       closed: True,
       policy: svg_path.Strict,

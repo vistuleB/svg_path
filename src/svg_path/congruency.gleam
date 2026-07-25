@@ -282,7 +282,12 @@ pub fn path(
   target target: svg_path.Path,
   tolerance tolerance: Float,
 ) -> Result(transform.Matrix, Nil) {
-  case path_point_cloud(svg_path.subpaths(source), svg_path.subpaths(target)) {
+  case
+    path_point_cloud(
+      svg_path.path_subpaths(source),
+      svg_path.path_subpaths(target),
+    )
+  {
     Error(_) -> Error(Nil)
     Ok(cloud) -> {
       case points(source: cloud.source, target: cloud.target, tolerance:) {
@@ -291,8 +296,8 @@ pub fn path(
           case
             !cloud.has_arc
             || path_arc_fields_match(
-              svg_path.subpaths(source),
-              svg_path.subpaths(target),
+              svg_path.path_subpaths(source),
+              svg_path.path_subpaths(target),
               matrix,
               tolerance,
             )
@@ -317,8 +322,8 @@ pub fn fit_path(
   family family: TransformFamily,
 ) -> Result(Fit, Nil) {
   use cloud <- result_try_nil(path_point_cloud(
-    svg_path.subpaths(source),
-    svg_path.subpaths(target),
+    svg_path.path_subpaths(source),
+    svg_path.path_subpaths(target),
   ))
   fit_points(source: cloud.source, target: cloud.target, family:)
 }
@@ -672,11 +677,11 @@ fn subpath_point_cloud(
   source: svg_path.Subpath,
   target: svg_path.Subpath,
 ) -> Result(PointCloud, Nil) {
-  case svg_path.start(source), svg_path.start(target) {
+  case svg_path.subpath_start(source), svg_path.subpath_start(target) {
     Ok(source_start), Ok(target_start) -> {
       subpath_points(
-        svg_path.segments(source),
-        svg_path.segments(target),
+        svg_path.subpath_segments(source),
+        svg_path.subpath_segments(target),
         [source_start],
         [target_start],
         has_arc: False,
@@ -853,8 +858,8 @@ fn subpath_arc_fields_match(
   tolerance: Float,
 ) -> Bool {
   arc_fields_match(
-    svg_path.segments(source),
-    svg_path.segments(target),
+    svg_path.subpath_segments(source),
+    svg_path.subpath_segments(target),
     matrix,
     tolerance,
   )

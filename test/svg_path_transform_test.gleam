@@ -202,7 +202,7 @@ pub fn path_about_point_transforms_path_about_point_test() {
   let center = svg_path.point(1.0, 2.0)
   let assert Ok(path) =
     svg_path.Path([
-      svg_path.assert_subpath([
+      svg_path.subpath_assert([
         svg_path.Line(
           start: svg_path.point(3.0, 2.0),
           end: svg_path.point(3.0, 4.0),
@@ -235,7 +235,7 @@ pub fn segment_about_anchor_transforms_segment_about_anchor_test() {
 
 pub fn subpath_about_anchor_transforms_subpath_about_anchor_test() {
   let subpath =
-    svg_path.assert_subpath([
+    svg_path.subpath_assert([
       svg_path.Line(
         start: svg_path.point(0.0, 0.0),
         end: svg_path.point(0.0, 10.0),
@@ -254,7 +254,7 @@ pub fn subpath_about_anchor_transforms_subpath_about_anchor_test() {
 pub fn path_about_anchor_transforms_path_about_anchor_test() {
   let path =
     svg_path.Path([
-      svg_path.assert_subpath([
+      svg_path.subpath_assert([
         svg_path.Line(
           start: svg_path.point(0.0, 0.0),
           end: svg_path.point(10.0, 0.0),
@@ -317,7 +317,7 @@ pub fn direct_subpath_and_path_helpers_delegate_to_matrices_test() {
         end: svg_path.point(5.0, 0.0),
       ),
     ])
-  let path = svg_path.from_subpath(subpath)
+  let path = svg_path.path_from_subpath(subpath)
   let assert Ok(translated_subpath) =
     transform.translate_subpath(subpath, x: 10.0, y: 20.0)
   let assert Ok(scaled_path) = transform.scale_path(path, factor: 2.0)
@@ -391,7 +391,7 @@ pub fn closed_subpath_transform_preserves_semantic_closure_test() {
     |> result_try_set_closed_true
   let assert Ok(transformed) = transform.subpath(subpath, by: matrix)
 
-  assert svg_path.is_closed(transformed)
+  assert svg_path.subpath_is_closed(transformed)
   assert serialize.subpath(transformed) == "M 10 0 H 20 Z"
 }
 
@@ -406,7 +406,7 @@ pub fn path_transform_test() {
     ])
   let assert Ok(path) =
     svg_path.Path([
-      svg_path.empty_subpath(at: svg_path.point(0.0, 0.0)),
+      svg_path.subpath_empty(at: svg_path.point(0.0, 0.0)),
       subpath,
     ])
     |> transform.path(by: matrix)
@@ -653,7 +653,7 @@ pub fn graceful_closed_subpath_transform_preserves_semantic_closure_test() {
   let matrix = transform.matrix(a: 1.0, b: 0.0, c: 0.0, d: 0.0, e: 0.0, f: 0.0)
   let assert Ok(transformed) = transform.subpath_gracefully(subpath, by: matrix)
 
-  assert svg_path.is_closed(transformed)
+  assert svg_path.subpath_is_closed(transformed)
   assert serialize.subpath(transformed) == "M 5 0 H -5 Z"
 }
 
@@ -693,7 +693,7 @@ fn result_try_set_closed_true(
   result_subpath: Result(svg_path.Subpath, svg_path.Error),
 ) -> Result(svg_path.Subpath, svg_path.Error) {
   case result_subpath {
-    Ok(subpath) -> svg_path.set_closed(subpath, closed: True)
+    Ok(subpath) -> svg_path.subpath_set_closed(subpath, closed: True)
     Error(error) -> Error(error)
   }
 }

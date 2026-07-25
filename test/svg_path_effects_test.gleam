@@ -7,7 +7,7 @@ const tolerance = 0.000001
 
 pub fn round_corners_rounds_closed_square_test() {
   let square =
-    svg_path.assert_polygon([
+    svg_path.subpath_assert_polygon([
       svg_path.point(0.0, 0.0),
       svg_path.point(10.0, 0.0),
       svg_path.point(10.0, 10.0),
@@ -15,9 +15,9 @@ pub fn round_corners_rounds_closed_square_test() {
     ])
 
   let assert Ok(rounded) = effects.round_subpath_corners(square, radius: 2.0)
-  let segments = svg_path.segments(rounded)
+  let segments = svg_path.subpath_segments(rounded)
 
-  assert svg_path.is_closed(rounded)
+  assert svg_path.subpath_is_closed(rounded)
   assert list.length(segments) == 8
   assert arc_count(segments) == 4
   assert has_line(segments, svg_path.point(2.0, 0.0), svg_path.point(8.0, 0.0))
@@ -30,16 +30,16 @@ pub fn round_corners_rounds_closed_square_test() {
 
 pub fn round_corners_rounds_open_polyline_interior_join_test() {
   let subpath =
-    svg_path.assert_polyline([
+    svg_path.subpath_assert_polyline([
       svg_path.point(0.0, 0.0),
       svg_path.point(10.0, 0.0),
       svg_path.point(10.0, 10.0),
     ])
 
   let assert Ok(rounded) = effects.round_subpath_corners(subpath, radius: 2.0)
-  let segments = svg_path.segments(rounded)
+  let segments = svg_path.subpath_segments(rounded)
 
-  assert !svg_path.is_closed(rounded)
+  assert !svg_path.subpath_is_closed(rounded)
   assert list.length(segments) == 3
   assert has_line(segments, svg_path.point(0.0, 0.0), svg_path.point(8.0, 0.0))
   assert has_arc(segments, svg_path.point(8.0, 0.0), svg_path.point(10.0, 2.0))
@@ -52,7 +52,7 @@ pub fn round_corners_rounds_open_polyline_interior_join_test() {
 
 pub fn round_corners_supports_curve_incident_segments_test() {
   let subpath =
-    svg_path.assert_subpath([
+    svg_path.subpath_assert([
       svg_path.Line(
         start: svg_path.point(0.0, 0.0),
         end: svg_path.point(10.0, 0.0),
@@ -65,7 +65,7 @@ pub fn round_corners_supports_curve_incident_segments_test() {
     ])
 
   let assert Ok(rounded) = effects.round_subpath_corners(subpath, radius: 2.0)
-  let segments = svg_path.segments(rounded)
+  let segments = svg_path.subpath_segments(rounded)
 
   assert list.length(segments) == 3
   assert arc_count(segments) == 1
@@ -75,7 +75,7 @@ pub fn round_corners_supports_curve_incident_segments_test() {
 
 pub fn round_corners_rounds_closed_one_segment_cusp_test() {
   let subpath =
-    svg_path.assert_subpath([
+    svg_path.subpath_assert([
       svg_path.CubicBezier(
         start: svg_path.point(0.0, 0.0),
         control1: svg_path.point(-40.0, -30.0),
@@ -83,7 +83,7 @@ pub fn round_corners_rounds_closed_one_segment_cusp_test() {
         end: svg_path.point(0.0, 0.0),
       ),
     ])
-    |> svg_path.assert_set_closed(closed: True)
+    |> svg_path.subpath_assert_set_closed(closed: True)
   let options =
     effects.RoundCornerOptions(
       ..effects.default_round_corner_options(),
@@ -92,9 +92,9 @@ pub fn round_corners_rounds_closed_one_segment_cusp_test() {
 
   let assert Ok(rounded) =
     effects.round_subpath_corners_with(subpath, radius: 4.0, options:)
-  let segments = svg_path.segments(rounded)
+  let segments = svg_path.subpath_segments(rounded)
 
-  assert svg_path.is_closed(rounded)
+  assert svg_path.subpath_is_closed(rounded)
   assert list.length(segments) == 2
   assert arc_count(segments) == 1
   assert has_cubic(segments)
@@ -102,7 +102,7 @@ pub fn round_corners_rounds_closed_one_segment_cusp_test() {
 
 pub fn round_corners_errors_when_radius_does_not_fit_test() {
   let subpath =
-    svg_path.assert_polyline([
+    svg_path.subpath_assert_polyline([
       svg_path.point(0.0, 0.0),
       svg_path.point(10.0, 0.0),
       svg_path.point(10.0, 10.0),
@@ -114,7 +114,7 @@ pub fn round_corners_errors_when_radius_does_not_fit_test() {
 
 pub fn round_corners_can_leave_unfittable_corner_test() {
   let subpath =
-    svg_path.assert_polyline([
+    svg_path.subpath_assert_polyline([
       svg_path.point(0.0, 0.0),
       svg_path.point(10.0, 0.0),
       svg_path.point(10.0, 10.0),
@@ -131,7 +131,7 @@ pub fn round_corners_can_leave_unfittable_corner_test() {
 
 pub fn round_corners_can_adapt_radius_to_fit_short_segments_test() {
   let square =
-    svg_path.assert_polygon([
+    svg_path.subpath_assert_polygon([
       svg_path.point(0.0, 0.0),
       svg_path.point(10.0, 0.0),
       svg_path.point(10.0, 10.0),
@@ -145,9 +145,9 @@ pub fn round_corners_can_adapt_radius_to_fit_short_segments_test() {
 
   let assert Ok(rounded) =
     effects.round_subpath_corners_with(square, radius: 20.0, options:)
-  let segments = svg_path.segments(rounded)
+  let segments = svg_path.subpath_segments(rounded)
 
-  assert svg_path.is_closed(rounded)
+  assert svg_path.subpath_is_closed(rounded)
   assert list.length(segments) == 8
   assert arc_count(segments) == 4
   assert all_arc_radii_near(segments, expected: 4.999999)

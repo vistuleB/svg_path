@@ -85,13 +85,14 @@ pub fn signed_segment(segment: svg_path.Segment) -> Float {
 /// The subpath's `closed` field does not affect the result. Move-only subpaths
 /// have zero area.
 pub fn signed_subpath(subpath: svg_path.Subpath) -> Float {
-  let segments = svg_path.segments(subpath)
+  let segments = svg_path.subpath_segments(subpath)
   case segments {
     [] -> 0.0
     _ -> {
       let start =
-        svg_path.start(subpath) |> result.unwrap(svg_path.point(0.0, 0.0))
-      let end = svg_path.end(subpath) |> result.unwrap(start)
+        svg_path.subpath_start(subpath)
+        |> result.unwrap(svg_path.point(0.0, 0.0))
+      let end = svg_path.subpath_end(subpath) |> result.unwrap(start)
       list.fold(segments, 0.0, fn(area, segment) {
         area +. signed_segment(segment)
       })
@@ -109,7 +110,7 @@ pub fn signed_subpath(subpath: svg_path.Subpath) -> Float {
 /// `absolute_path` when repeated loops should contribute by winding magnitude.
 pub fn signed_path(path: svg_path.Path) -> Float {
   path
-  |> svg_path.subpaths
+  |> svg_path.path_subpaths
   |> list.fold(0.0, fn(area, subpath) { area +. signed_subpath(subpath) })
 }
 
@@ -134,7 +135,7 @@ pub fn absolute_subpath_with(
   subpath: svg_path.Subpath,
   options options: svg_path.LinearizeOptions,
 ) -> Result(Float, svg_path.Error) {
-  absolute_path_with(svg_path.from_subpath(subpath), options:)
+  absolute_path_with(svg_path.path_from_subpath(subpath), options:)
 }
 
 /// Return a subpath's area-based clockwiseness as a value from `0.0` to `1.0`.
@@ -220,7 +221,7 @@ pub fn subpath_with(
   using fill_rule: svg_path.FillRule,
   options options: svg_path.LinearizeOptions,
 ) -> Result(Float, svg_path.Error) {
-  path_with(svg_path.from_subpath(subpath), using: fill_rule, options:)
+  path_with(svg_path.path_from_subpath(subpath), using: fill_rule, options:)
 }
 
 /// Approximate a path's combined filled area using the default linearization
@@ -256,7 +257,8 @@ fn arrangement_area(
   options options: svg_path.LinearizeOptions,
 ) -> Result(Float, svg_path.Error) {
   use linearized <- result.try(svg_path.path_to_lines_with(path, options:))
-  let edges = linearized |> svg_path.subpaths |> subpath_edges(accumulated: [])
+  let edges =
+    linearized |> svg_path.path_subpaths |> subpath_edges(accumulated: [])
   case edges {
     [] -> Ok(0.0)
     _ -> {
@@ -328,7 +330,7 @@ fn subpath_edges(
   case subpaths {
     [] -> list.reverse(accumulated)
     [subpath, ..rest] -> {
-      let segments = svg_path.segments(subpath)
+      let segments = svg_path.subpath_segments(subpath)
       case segments {
         [] -> subpath_edges(rest, accumulated:)
         _ -> {
@@ -338,8 +340,9 @@ fn subpath_edges(
               add_edge(start, end, edges)
             })
           let start =
-            svg_path.start(subpath) |> result.unwrap(svg_path.point(0.0, 0.0))
-          let end = svg_path.end(subpath) |> result.unwrap(start)
+            svg_path.subpath_start(subpath)
+            |> result.unwrap(svg_path.point(0.0, 0.0))
+          let end = svg_path.subpath_end(subpath) |> result.unwrap(start)
 
           subpath_edges(rest, accumulated: add_edge(end, start, accumulated))
         }

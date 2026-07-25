@@ -201,7 +201,7 @@ pub fn line(
 pub fn polyline(
   points: List(svg_path.Point),
 ) -> Result(svg_path.Subpath, Error) {
-  svg_path.polyline(points)
+  svg_path.subpath_polyline(points)
   |> map_core_error
 }
 
@@ -209,7 +209,7 @@ pub fn polyline(
 pub fn polygon(
   points: List(svg_path.Point),
 ) -> Result(svg_path.Subpath, Error) {
-  svg_path.polygon(points)
+  svg_path.subpath_polygon(points)
   |> map_core_error
 }
 
@@ -256,7 +256,7 @@ fn validate_ellipse_radii(rx: Float, ry: Float) -> Result(Nil, Error) {
 fn close(segments: List(svg_path.Segment)) -> Result(svg_path.Subpath, Error) {
   use subpath <- result_try(svg_path.subpath(segments) |> map_core_error)
 
-  svg_path.set_closed(subpath, closed: True)
+  svg_path.subpath_set_closed(subpath, closed: True)
   |> map_core_error
 }
 

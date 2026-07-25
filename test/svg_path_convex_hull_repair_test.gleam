@@ -149,7 +149,7 @@ pub fn path_hull_handles_scaled_two_arc_probe_test() {
   let assert Ok(hull) =
     convex_hull.path_hull(svg_path.Path([large_subpath, small_subpath]))
 
-  assert svg_path.is_closed(hull)
+  assert svg_path.subpath_is_closed(hull)
 }
 
 // This line/arc probe covers a narrow arc whose visible hull slice can sit
@@ -164,7 +164,7 @@ pub fn path_hull_with_dumb_repair_mode_handles_line_arc_probe_test() {
       repair_mode: "dumb",
     )
 
-  assert svg_path.is_closed(hull)
+  assert svg_path.subpath_is_closed(hull)
   assert line_arc_probe_arc_endpoints_are_inside_hull(hull)
 }
 
@@ -175,9 +175,9 @@ pub fn path_hull_with_ambitious_repair_mode_handles_line_arc_probe_test() {
       repair_mode: "ambitious",
     )
 
-  assert svg_path.is_closed(hull)
+  assert svg_path.subpath_is_closed(hull)
   assert line_arc_probe_arc_endpoints_are_inside_hull(hull)
-  assert svg_path.segments(hull)
+  assert svg_path.subpath_segments(hull)
     |> list.any(fn(segment) {
       case segment {
         svg_path.Arc(..) -> True
@@ -232,8 +232,8 @@ fn line_arc_probe_path() -> svg_path.Path {
     )
 
   svg_path.Path([
-    svg_path.assert_subpath([line]),
-    svg_path.assert_subpath([arc]),
+    svg_path.subpath_assert([line]),
+    svg_path.subpath_assert([arc]),
   ])
 }
 
@@ -243,7 +243,7 @@ fn line_arc_probe_arc_endpoints_are_inside_hull(
   line_arc_probe_arc_endpoints()
   |> list.all(fn(point) {
     convex_hull.internal_point_chord_polygon_loop_separation(
-      svg_path.segments(hull),
+      svg_path.subpath_segments(hull),
       point:,
     )
     == None

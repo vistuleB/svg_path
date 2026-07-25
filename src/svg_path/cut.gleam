@@ -105,7 +105,7 @@ fn path_cut_points(
   options: svg_path.IntersectionOptions,
 ) -> Result(List(svg_path.SubpathParameter), svg_path.Error) {
   use intersections <- result.try(svg_path.path_intersections_with(
-    svg_path.from_subpath(subject),
+    svg_path.path_from_subpath(subject),
     cutter,
     options:,
   ))
@@ -134,7 +134,7 @@ fn cut_at_parameters(
 
   case cut_points {
     [] -> Ok([subject])
-    _ -> svg_path.subpaths_between(subject, between: cut_points)
+    _ -> svg_path.subpath_between_many(subject, between: cut_points)
   }
 }
 
@@ -142,7 +142,7 @@ fn should_keep_parameter(
   subject: svg_path.Subpath,
   parameter: svg_path.SubpathParameter,
 ) -> Bool {
-  case svg_path.is_closed(subject) {
+  case svg_path.subpath_is_closed(subject) {
     True -> True
     False -> !is_open_boundary_parameter(subject, parameter)
   }
@@ -152,7 +152,7 @@ fn is_open_boundary_parameter(
   subject: svg_path.Subpath,
   parameter: svg_path.SubpathParameter,
 ) -> Bool {
-  let length = list.length(svg_path.segments(subject))
+  let length = list.length(svg_path.subpath_segments(subject))
   case parameter {
     svg_path.SubpathParameter(segment_index: 0, t:) if t == 0.0 -> True
     svg_path.SubpathParameter(segment_index:, t:)
@@ -166,7 +166,7 @@ fn sort_unique_parameters(
   parameters: List(svg_path.SubpathParameter),
 ) -> List(svg_path.SubpathParameter) {
   parameters
-  |> list.sort(by: svg_path.compare_subpath_parameters)
+  |> list.sort(by: svg_path.subpath_parameters_compare)
   |> unique_sorted_parameters(kept: [])
 }
 
@@ -178,7 +178,7 @@ fn unique_sorted_parameters(
     [], _ -> list.reverse(kept)
     [first, ..rest], [] -> unique_sorted_parameters(rest, kept: [first])
     [first, ..rest], [previous, ..] ->
-      case svg_path.compare_subpath_parameters(first, previous) {
+      case svg_path.subpath_parameters_compare(first, previous) {
         order.Eq -> unique_sorted_parameters(rest, kept:)
         _ -> unique_sorted_parameters(rest, kept: [first, ..kept])
       }

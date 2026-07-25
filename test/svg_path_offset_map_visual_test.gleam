@@ -176,7 +176,7 @@ pub fn khmer_text_offset_map_rectangle_focus_visual_probe() {
       decaying_map,
     )
   let assert Ok(mapped_grid) =
-    svg_path.try_map_path_points(source_grid, with: fn(point) {
+    svg_path.path_try_map_points(source_grid, with: fn(point) {
       source_point_to_offset_point(
         point,
         text_box,
@@ -186,7 +186,7 @@ pub fn khmer_text_offset_map_rectangle_focus_visual_probe() {
       )
     })
   let assert Ok(mapped_highlighted_vertical_4) =
-    svg_path.try_map_path_points(source_highlighted_vertical_4, with: fn(point) {
+    svg_path.path_try_map_points(source_highlighted_vertical_4, with: fn(point) {
       source_point_to_offset_point(
         point,
         text_box,
@@ -196,7 +196,7 @@ pub fn khmer_text_offset_map_rectangle_focus_visual_probe() {
       )
     })
   let assert Ok(mapped_highlighted_vertical_5) =
-    svg_path.try_map_path_points(source_highlighted_vertical_5, with: fn(point) {
+    svg_path.path_try_map_points(source_highlighted_vertical_5, with: fn(point) {
       source_point_to_offset_point(
         point,
         text_box,
@@ -248,30 +248,30 @@ pub fn khmer_text_offset_map_rectangle_focus_visual_probe() {
       height: 315.0,
     )
   let assert Ok(source_panel_path) =
-    svg_path.map_path_points(selected_source, with: source_panel_map)
+    svg_path.path_map_points(selected_source, with: source_panel_map)
   let assert Ok(source_panel_grid) =
-    svg_path.map_path_points(source_grid, with: source_panel_map)
+    svg_path.path_map_points(source_grid, with: source_panel_map)
   let assert Ok(source_panel_highlighted_vertical_4) =
-    svg_path.map_path_points(
+    svg_path.path_map_points(
       source_highlighted_vertical_4,
       with: source_panel_map,
     )
   let assert Ok(source_panel_highlighted_vertical_5) =
-    svg_path.map_path_points(
+    svg_path.path_map_points(
       source_highlighted_vertical_5,
       with: source_panel_map,
     )
   let assert Ok(mapped_panel_path) =
-    svg_path.map_path_points(selected_mapped, with: mapped_panel_map)
+    svg_path.path_map_points(selected_mapped, with: mapped_panel_map)
   let assert Ok(mapped_panel_grid) =
-    svg_path.map_path_points(mapped_grid, with: mapped_panel_map)
+    svg_path.path_map_points(mapped_grid, with: mapped_panel_map)
   let assert Ok(mapped_panel_highlighted_vertical_4) =
-    svg_path.map_path_points(
+    svg_path.path_map_points(
       mapped_highlighted_vertical_4,
       with: mapped_panel_map,
     )
   let assert Ok(mapped_panel_highlighted_vertical_5) =
-    svg_path.map_path_points(
+    svg_path.path_map_points(
       mapped_highlighted_vertical_5,
       with: mapped_panel_map,
     )
@@ -414,8 +414,8 @@ fn path_segments_inside(
   path: svg_path.Path,
   rectangle: SourceRectangle,
 ) -> List(svg_path.Segment) {
-  svg_path.subpaths(path)
-  |> list.flat_map(fn(subpath) { svg_path.segments(subpath) })
+  svg_path.path_subpaths(path)
+  |> list.flat_map(fn(subpath) { svg_path.subpath_segments(subpath) })
   |> list.filter(fn(segment) {
     segment_defining_points(segment)
     |> list.all(point_inside_rectangle(_, rectangle))
@@ -526,7 +526,7 @@ fn selected_segments_to_plain_path(
   segments: List(svg_path.Segment),
 ) -> svg_path.Path {
   segments
-  |> list.map(fn(segment) { svg_path.assert_subpath([segment]) })
+  |> list.map(fn(segment) { svg_path.subpath_assert([segment]) })
   |> svg_path.Path
 }
 
@@ -542,7 +542,7 @@ fn selected_segments_to_subpaths(
     [] -> Ok(list.reverse(mapped))
     [segment, ..rest] -> {
       use mapped_segment <- result.try(
-        svg_path.try_map_segment_points(segment, with: fn(point) {
+        svg_path.segment_try_map_points(segment, with: fn(point) {
           source_point_to_offset_point(
             point,
             text_box,
@@ -552,7 +552,7 @@ fn selected_segments_to_subpaths(
           )
         }),
       )
-      let subpath = svg_path.assert_subpath([mapped_segment])
+      let subpath = svg_path.subpath_assert([mapped_segment])
       selected_segments_to_subpaths(
         rest,
         text_box,
@@ -834,7 +834,7 @@ fn mapped_vertical_base_sample(
 }
 
 fn subpath_polyline_points(subpath: svg_path.Subpath) -> List(svg_path.Point) {
-  case svg_path.segments(subpath) {
+  case svg_path.subpath_segments(subpath) {
     [] -> []
     segments -> [
       segment_list_start(segments),
@@ -976,7 +976,7 @@ fn map_vertical_grid_loop(
     [] -> Ok(list.reverse(mapped))
     [line, ..rest] -> {
       use mapped_line <- result.try(
-        svg_path.try_map_subpath_points(line, with: fn(point) {
+        svg_path.subpath_try_map_points(line, with: fn(point) {
           source_point_to_offset_point(point, text_box, x_scale, 0.0, coil_map)
         }),
       )
@@ -1098,7 +1098,9 @@ fn repeated_text_on_coil(
     }
   }
 
-  Ok(svg_path.Path(mapped |> list.reverse |> list.flat_map(svg_path.subpaths)))
+  Ok(svg_path.Path(
+    mapped |> list.reverse |> list.flat_map(svg_path.path_subpaths),
+  ))
 }
 
 fn repeated_text_copies(
@@ -1143,7 +1145,7 @@ fn map_text_copy_to_coil(
   available_width available_width: Float,
   coil_map coil_map: fn(svg_path.Point) -> Result(svg_path.Point, offset.Error),
 ) -> Result(svg_path.Path, svg_path.PointMapError(offset.Error)) {
-  svg_path.try_map_path_points(text_path, with: fn(point) {
+  svg_path.path_try_map_points(text_path, with: fn(point) {
     source_point_to_offset_point(
       svg_path.point(
         float.min(point.x, text_box.min.x +. available_width),
@@ -1175,7 +1177,7 @@ fn source_point_to_offset_point(
 fn coil_subpath(turns turns: Int, samples _samples: Int) -> svg_path.Subpath {
   let total_degrees = int.to_float(turns) *. 360.0
   let assert Ok(subpath) =
-    svg_path.parametric_subpath_with(
+    svg_path.subpath_parametric_with(
       from: 0.0,
       to: total_degrees,
       point: coil_point_at_degrees,
@@ -1216,7 +1218,7 @@ fn decaying_spiral_subpath(
 ) -> svg_path.Subpath {
   let total_degrees = int.to_float(turns) *. 360.0
   let assert Ok(subpath) =
-    svg_path.parametric_subpath_with(
+    svg_path.subpath_parametric_with(
       from: 0.0,
       to: total_degrees,
       point: decaying_spiral_point_at_degrees,
@@ -1304,7 +1306,7 @@ fn decay_for_degrees(degrees: Float) -> Float {
 
 fn points_to_subpath(points: List(svg_path.Point)) -> svg_path.Subpath {
   let assert [first, second, ..rest] = points
-  svg_path.assert_subpath(
+  svg_path.subpath_assert(
     points_to_segments(second, rest, previous: first, segments: []),
   )
 }

@@ -117,9 +117,9 @@ Segments can be evaluated, differentiated, and split by their local parameter
 ```gleam
 svg_path.segment_point(segment, at: 0.5)                    // -> Result(Point, svg_path.Error)
 svg_path.segment_derivative(segment, at: 0.5)               // -> Result(Point, svg_path.Error)
-svg_path.split_segment(segment, at: 0.5)                    // -> Result(#(Segment, Segment), svg_path.Error)
+svg_path.segment_split(segment, at: 0.5)                    // -> Result(#(Segment, Segment), svg_path.Error)
 svg_path.segment_between(segment, from: 0.25, to: 0.75)        // -> Result(Segment, svg_path.Error)
-svg_path.segments_between(segment, between: [0.25, 0.75, 0.5]) // -> Result(List(Segment), svg_path.Error)
+svg_path.segment_between_many(segment, between: [0.25, 0.75, 0.5]) // -> Result(List(Segment), svg_path.Error)
 ```
 
 Values outside `0.0..1.0` lead to silent extrapolation along the same algebraic
@@ -151,13 +151,13 @@ pub type SubpathParameter {
   SubpathParameter(segment_index: Int, t: Float)
 }
 
-svg_path.split_subpath(subpath, at: svg_path.SubpathParameter(1, 0.5))
+svg_path.subpath_split(subpath, at: svg_path.SubpathParameter(1, 0.5))
 svg_path.subpath_between(
   subpath,
   from: svg_path.SubpathParameter(0, 0.5),
   to: svg_path.SubpathParameter(2, 0.25),
 )
-svg_path.subpaths_between(subpath, between: [
+svg_path.subpath_between_many(subpath, between: [
   svg_path.SubpathParameter(0, 0.5),
   svg_path.SubpathParameter(2, 0.25),
 ])
@@ -170,44 +170,44 @@ Subpath parameters are strict: `segment_index` must address a real segment and
 not extrapolate beyond a segment. The split helpers only return positive-length
 pieces: open subpath split lists must be strictly increasing and cannot include
 the very start or very end, while closed subpath split lists must be distinct
-and cyclically increasing. Use `compare_subpath_parameters` for plain
+and cyclically increasing. Use `subpath_parameters_compare` for plain
 segment-index-then-`t` ordering.
 
 The subpath interval helpers have deliberately narrow roles:
 
-- `split_subpath` splits one open subpath into two open subpaths.
+- `subpath_split` splits one open subpath into two open subpaths.
 - `subpath_between` extracts one positive-length interval; closed subpaths may
   wrap.
-- `subpaths_between` extracts every interval between a list of split points.
+- `subpath_between_many` extracts every interval between a list of split points.
   For a closed subpath, a single split point returns one open loop, while an
   empty split list returns an empty list.
-- `open_at` is the convenience form for opening one closed subpath at one
+- `subpath_open_at` is the convenience form for opening one closed subpath at one
   `SubpathParameter`.
 - `subpath_point` and `subpath_derivative` evaluate a subpath at one
   `SubpathParameter`.
 
 Use `svg_path.subpath` to construct an open subpath from a nonempty list of
-contiguous segments, and `svg_path.set_closed` to change whether a subpath is
-topologically closed; note that `set_closed(_, True)` may result in an error,
-but `set_closed(_, False)` cannot:
+contiguous segments, and `svg_path.subpath_set_closed` to change whether a subpath is
+topologically closed; note that `subpath_set_closed(_, True)` may result in an
+error, but `subpath_set_closed(_, False)` cannot:
 
 Use `SubpathParameter(index, t)` for normal forward addresses. Use
-`from_end_parameter(subpath, segment_index:, t:)` to address the subpath as if
-its segment order were reversed and convert that address back into the original
-subpath's coordinates.
+`subpath_parameter_from_end(subpath, segment_index:, t:)` to address the
+subpath as if its segment order were reversed and convert that address back into
+the original subpath's coordinates.
 
 ```gleam
 svg_path.subpath(segments)                  // -> Result(Subpath, svg_path.Error)
-svg_path.set_closed(subpath, closed: Bool)  // -> Result(Subpath, svg_path.Error)
+svg_path.subpath_set_closed(subpath, closed: Bool)  // -> Result(Subpath, svg_path.Error)
 ```
 
 Construction succeeds when the required segment endpoints meet. Construct empty
-"move-only" subpaths with `empty_subpath(at:)` where `at` gives the start of
+"move-only" subpaths with `subpath_empty(at:)` where `at` gives the start of
 the subpath.
 
 In the following example the segments return to their starting point
 geometrically, but the subpath only becomes topologically closed after
-`set_closed`:
+`subpath_set_closed`:
 
 ```gleam
 import gleam/io
@@ -229,7 +229,7 @@ pub fn closed_triangle() -> Result(svg_path.Subpath, svg_path.Error) {
   io.println(serialize.subpath(subpath))
   // -> "M 0 0 H 10 L 5 10"
 
-  use subpath <- result.try(svg_path.set_closed(subpath, closed: True))
+  use subpath <- result.try(svg_path.subpath_set_closed(subpath, closed: True))
 
   io.println(serialize.subpath(subpath))
   // -> "M 0 0 H 10 L 5 10 Z"
@@ -238,10 +238,10 @@ pub fn closed_triangle() -> Result(svg_path.Subpath, svg_path.Error) {
 }
 ```
 
-Use `svg_path.clean_subpath(subpath)` to remove zero-length segments from a
-`Subpath`. Note that `clean_subpath` will preserve at least one zero-length
+Use `svg_path.subpath_clean(subpath)` to remove zero-length segments from a
+`Subpath`. Note that `subpath_clean` will preserve at least one zero-length
 segment of a nonempty `Subpath` in all cases, though it will not add any new
-segments if `segments == []` to start with.
+segments if `subpath_segments(subpath) == []` to start with.
 
 ### Paths
 
@@ -259,14 +259,14 @@ Construct paths directly via the public variant:
 svg_path.Path(subpaths: [subpath])
 ```
 
-Retrieve subpaths with `svg_path.subpaths(path)`.
+Retrieve subpaths with `svg_path.path_subpaths(path)`.
 
 Use `path_map_subpaths` and `path_filter_subpaths` to transform or filter a
 path's subpaths.
 
-Use `combine_paths` to assemble a single `Path` from a `List(Path)`. The result
-of `combine_paths(paths)` is equivalent to
-`Path(paths |> list.map(svg_path.subpaths) |> list.flatten)`.
+Use `path_combine` to assemble a single `Path` from a `List(Path)`. The result
+of `path_combine(paths)` is equivalent to
+`Path(paths |> list.map(svg_path.path_subpaths) |> list.flatten)`.
 
 Use `path_start` and `path_end` to get the endpoints of a full path. Empty
 paths return `Error(EmptyPath)`; paths with subpaths use the first subpath's
@@ -306,10 +306,10 @@ Functions that accept an `EndpointPolicy` end in `_with`. Including:
 
 ```gleam
 svg_path.subpath_with(segments, policy: svg_path.Wiggle)
-svg_path.append_segment_with(subpath, segment, policy: svg_path.Bridge)
-svg_path.join_with([first_subpath, second_subpath], policy: svg_path.WiggleThenBridge)
-svg_path.splice_with(subpath, start: Int, delete: Int, insert: List(Segment), policy: svg_path.Wiggle)
-svg_path.set_closed_with(subpath, closed, policy: svg_path.Bridge)
+svg_path.subpath_append_segment_with(subpath, segment, policy: svg_path.Bridge)
+svg_path.subpath_join_with([first_subpath, second_subpath], policy: svg_path.WiggleThenBridge)
+svg_path.subpath_splice_with(subpath, start: Int, delete: Int, insert: List(Segment), policy: svg_path.Wiggle)
+svg_path.subpath_set_closed_with(subpath, closed, policy: svg_path.Bridge)
 ```
 
 Subtracting the `_with` suffix yields equivalent functions whose policy is
@@ -336,16 +336,16 @@ Use the `assert_` functions for hand-authored/static geometry where invalid
 continuity is a programmer error:
 
 ```gleam
-svg_path.assert_subpath(segments)
-svg_path.assert_subpath_with(segments, policy)
-svg_path.assert_append_segment(subpath, segment)
-svg_path.assert_append_segment_with(subpath, segment, policy)
-svg_path.assert_join([first_subpath, second_subpath])
-svg_path.assert_join_with([first_subpath, second_subpath], policy)
-svg_path.assert_splice(subpath, start, delete, insert)
-svg_path.assert_splice_with(subpath, start, delete, insert, policy)
-svg_path.assert_set_closed(subpath, closed)
-svg_path.assert_set_closed_with(subpath, closed, policy)
+svg_path.subpath_assert(segments)
+svg_path.subpath_assert_with(segments, policy)
+svg_path.subpath_assert_append_segment(subpath, segment)
+svg_path.subpath_assert_append_segment_with(subpath, segment, policy)
+svg_path.subpath_assert_join([first_subpath, second_subpath])
+svg_path.subpath_assert_join_with([first_subpath, second_subpath], policy)
+svg_path.subpath_assert_splice(subpath, start, delete, insert)
+svg_path.subpath_assert_splice_with(subpath, start, delete, insert, policy)
+svg_path.subpath_assert_set_closed(subpath, closed)
+svg_path.subpath_assert_set_closed_with(subpath, closed, policy)
 ```
 
 `Custom` receives each non-matching adjacent pair as `previous` and `next`, then
@@ -357,34 +357,34 @@ verification of the returned subpath.
 
 ### Joining Subpaths
 
-`join` combines open subpaths into one open subpath. With the default
+`subpath_join` combines open subpaths into one open subpath. With the default
 `Strict` policy, each subpath's end point must exactly equal the next
 subpath's start point. Empty open subpaths can act as identity values when
-their start points line up. `join([])` returns `EmptySubpath`.
+their start points line up. `subpath_join([])` returns `EmptySubpath`.
 
 ```gleam
-svg_path.join([first_subpath, second_subpath, third_subpath])
+svg_path.subpath_join([first_subpath, second_subpath, third_subpath])
 ```
 
 Closed subpaths are rejected rather than implicitly opened. This keeps
 closedness as explicit topology: if you want to discard it, use
-`set_closed(subpath, closed: False)` first.
+`subpath_set_closed(subpath, closed: False)` first.
 
-Use `join_with` when you want another endpoint policy:
+Use `subpath_join_with` when you want another endpoint policy:
 
 ```gleam
-svg_path.join_with([first_subpath, second_subpath], policy: svg_path.Wiggle)
-svg_path.join_with([first_subpath, second_subpath], policy: svg_path.Bridge)
+svg_path.subpath_join_with([first_subpath, second_subpath], policy: svg_path.Wiggle)
+svg_path.subpath_join_with([first_subpath, second_subpath], policy: svg_path.Bridge)
 ```
 
 ### Splicing Subpaths
 
-`splice` replaces a range of segments while preserving the subpath invariant.
-`start` is a zero-based segment index, `delete` is the number of segments to
-remove, and `insert` is the replacement list.
+`subpath_splice` replaces a range of segments while preserving the subpath
+invariant. `start` is a zero-based segment index, `delete` is the number of
+segments to remove, and `insert` is the replacement list.
 
 ```gleam
-svg_path.splice(subpath, start: 2, delete: 1, insert: replacement_segments)
+svg_path.subpath_splice(subpath, start: 2, delete: 1, insert: replacement_segments)
 ```
 
 If `start + delete` extends past the end of the subpath, everything from
@@ -397,10 +397,10 @@ distance. Closed subpaths preserve their closed state. If the splice result is
 nonempty, the subpath start is updated to the first resulting segment's start
 point. If the splice result is empty, the previous start point is preserved.
 
-Use `splice_with` when the splice should use a different endpoint policy:
+Use `subpath_splice_with` when the splice should use a different endpoint policy:
 
 ```gleam
-svg_path.splice_with(
+svg_path.subpath_splice_with(
   subpath,
   start: 2,
   delete: 1,
@@ -411,12 +411,12 @@ svg_path.splice_with(
 
 ### Opening Closed Subpaths
 
-`open_at` breaks open a closed subpath at a subpath parameter and returns a
-single open subpath. The result traverses the whole loop from that point back to
-itself:
+`subpath_open_at` breaks open a closed subpath at a subpath parameter and
+returns a single open subpath. The result traverses the whole loop from that
+point back to itself:
 
 ```gleam
-svg_path.open_at(closed_subpath, at: svg_path.SubpathParameter(2, 0.5))
+svg_path.subpath_open_at(closed_subpath, at: svg_path.SubpathParameter(2, 0.5))
 ```
 
 Use `t: 0.0` to open at a segment boundary. A parameter at the final endpoint of
@@ -431,14 +431,14 @@ The error behavior is intentionally specific:
 
 ### Reversing Subpaths
 
-Use `reverse_subpath` to reverse the traversal direction of a subpath while
+Use `subpath_reverse` to reverse the traversal direction of a subpath while
 preserving its closed/open state:
 
 ```gleam
-svg_path.reverse_subpath(subpath)
+svg_path.subpath_reverse(subpath)
 ```
 
-For lower-level operations, `reverse_segment` reverses a single segment.
+For lower-level operations, `segment_reverse` reverses a single segment.
 
 ## Converting Arcs to Beziers
 
@@ -567,7 +567,7 @@ pub fn lowest_point(segment: svg_path.Segment) -> Result(Float, svg_path.Error) 
 ```
 
 The returned value is a segment parameter in `0.0..1.0`. You can pass it to
-`segment_point` or `split_segment`.
+`segment_point` or `segment_split`.
 
 Minimization is numerical and does not require a derivative. Use
 `segment_minimize_with` when the default sampling and tolerance are not
@@ -587,13 +587,13 @@ svg_path.segment_parameter_at_length(segment, distance: 12.0)
 svg_path.segment_point_at_length(segment, distance: 12.0)
 svg_path.segment_derivative_at_length(segment, distance: 12.0)
 svg_path.segment_between_lengths(segment, from: 12.0, to: 30.0)
-svg_path.segments_between_lengths(segment, between: [12.0, 20.0, 30.0])
+svg_path.segment_between_lengths_many(segment, between: [12.0, 20.0, 30.0])
 
 svg_path.subpath_parameter_at_length(subpath, distance: 25.0)
 svg_path.subpath_point_at_length(subpath, distance: 25.0)
 svg_path.subpath_derivative_at_length(subpath, distance: 25.0)
 svg_path.subpath_between_lengths(subpath, from: 25.0, to: 60.0)
-svg_path.subpaths_between_lengths(subpath, between: [25.0, 40.0, 60.0])
+svg_path.subpath_between_lengths_many(subpath, between: [25.0, 40.0, 60.0])
 
 svg_path.path_parameter_at_length(path, distance: 40.0)
 svg_path.path_point_at_length(path, distance: 40.0)
@@ -978,7 +978,7 @@ command "supplying" a zero-length line segment to the subpath:
 <path d="M 260,300 Z" style="fill:none; stroke:black; stroke-width:24; stroke-linecap:square;" />
 ```
 
-For that reason, `svg_path.clean_subpath` keeps one zero-length line if a
+For that reason, `svg_path.subpath_clean` keeps one zero-length line if a
 subpath consists only of zero-length lines, preserving the difference between a
 zero-length subpath and a move-only subpath. It does this even for closed
 subpaths, where the choice is mainly about preserving internal representation
@@ -1177,7 +1177,7 @@ Example output:
 
 ```text
 svg_path.Path([
-  svg_path.assert_subpath([
+  svg_path.subpath_assert([
     svg_path.Line(start: svg_path.point(0.0, 0.0), end: svg_path.point(12.0, 10.0))
   ])
 ])

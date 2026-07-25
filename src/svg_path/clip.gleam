@@ -59,7 +59,7 @@ pub fn path_with(
   options options: Options,
 ) -> Result(svg_path.Path, svg_path.Error) {
   input
-  |> svg_path.subpaths
+  |> svg_path.path_subpaths
   |> clip_subpaths(clip_region, fill_rule, options, kept: [])
   |> result.map(fn(subpaths) { svg_path.Path(subpaths) })
 }
@@ -88,14 +88,14 @@ pub fn subpath_with(
   using fill_rule: svg_path.FillRule,
   options options: Options,
 ) -> Result(List(svg_path.Subpath), svg_path.Error) {
-  case svg_path.segments(input) {
+  case svg_path.subpath_segments(input) {
     [] -> Ok([])
     _ -> {
       use split_points <- result.try(split_points(input, clip_region, options))
       case split_points {
         [] -> keep_whole_subpath(input, clip_region, fill_rule, options)
         _ -> {
-          use pieces <- result.try(svg_path.subpaths_between(
+          use pieces <- result.try(svg_path.subpath_between_many(
             input,
             between: split_points,
           ))
@@ -145,7 +145,7 @@ fn split_points(
   options: Options,
 ) -> Result(List(svg_path.SubpathParameter), svg_path.Error) {
   use intersections <- result.try(svg_path.path_intersections_with(
-    svg_path.from_subpath(input),
+    svg_path.path_from_subpath(input),
     clip_region,
     options: options.intersection,
   ))
@@ -174,7 +174,7 @@ fn should_keep_split_point(
   input: svg_path.Subpath,
   parameter: svg_path.SubpathParameter,
 ) -> Bool {
-  case svg_path.is_closed(input) {
+  case svg_path.subpath_is_closed(input) {
     True -> True
     False -> !is_open_boundary_parameter(input, parameter)
   }
@@ -184,8 +184,8 @@ fn normalize_parameter(
   input: svg_path.Subpath,
   parameter: svg_path.SubpathParameter,
 ) -> svg_path.SubpathParameter {
-  let length = list.length(svg_path.segments(input))
-  let closed = svg_path.is_closed(input)
+  let length = list.length(svg_path.subpath_segments(input))
+  let closed = svg_path.subpath_is_closed(input)
   case parameter {
     svg_path.SubpathParameter(segment_index:, t:)
       if t == 1.0 && segment_index < length - 1
@@ -201,7 +201,7 @@ fn is_open_boundary_parameter(
   input: svg_path.Subpath,
   parameter: svg_path.SubpathParameter,
 ) -> Bool {
-  let length = list.length(svg_path.segments(input))
+  let length = list.length(svg_path.subpath_segments(input))
   case parameter {
     svg_path.SubpathParameter(segment_index: 0, t:) if t == 0.0 -> True
     svg_path.SubpathParameter(segment_index:, t:)
@@ -215,7 +215,7 @@ fn sort_unique_parameters(
   parameters: List(svg_path.SubpathParameter),
 ) -> List(svg_path.SubpathParameter) {
   parameters
-  |> list.sort(by: svg_path.compare_subpath_parameters)
+  |> list.sort(by: svg_path.subpath_parameters_compare)
   |> unique_sorted_parameters(kept: [])
 }
 
@@ -227,7 +227,7 @@ fn unique_sorted_parameters(
     [], _ -> list.reverse(kept)
     [first, ..rest], [] -> unique_sorted_parameters(rest, kept: [first])
     [first, ..rest], [previous, ..] ->
-      case svg_path.compare_subpath_parameters(first, previous) {
+      case svg_path.subpath_parameters_compare(first, previous) {
         order.Eq -> unique_sorted_parameters(rest, kept:)
         _ -> unique_sorted_parameters(rest, kept: [first, ..kept])
       }

@@ -67,17 +67,17 @@ pub fn labeled_point(
   let bottom_left = svg_path.point(left, bottom)
   let marker =
     svg_path.Path([
-      svg_path.assert_subpath([
+      svg_path.subpath_assert([
         svg_path.Line(start: top_left, end: top_right),
         svg_path.Line(start: top_right, end: bottom_right),
         svg_path.Line(start: bottom_right, end: bottom_left),
         svg_path.Line(start: bottom_left, end: top_left),
       ])
-        |> svg_path.assert_set_closed(closed: True),
-      svg_path.assert_subpath([
+        |> svg_path.subpath_assert_set_closed(closed: True),
+      svg_path.subpath_assert([
         svg_path.Line(start: top_left, end: bottom_right),
       ]),
-      svg_path.assert_subpath([
+      svg_path.subpath_assert([
         svg_path.Line(start: bottom_left, end: top_right),
       ]),
     ])

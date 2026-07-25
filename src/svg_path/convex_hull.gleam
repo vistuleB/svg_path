@@ -197,7 +197,7 @@ pub fn subpath_hull(
 /// is a single closed subpath containing the hull of every subpath in the input
 /// path.
 pub fn path_hull(path: svg_path.Path) -> Result(svg_path.Subpath, HullError) {
-  case svg_path.subpaths(path) {
+  case svg_path.path_subpaths(path) {
     [] -> Error(PathError(svg_path.EmptyPath))
     subpaths -> {
       subpaths
@@ -214,7 +214,7 @@ pub fn points_hull(
   points: List(svg_path.Point),
 ) -> Result(svg_path.Subpath, HullError) {
   points
-  |> list.map(fn(point) { svg_path.empty_subpath(at: point) })
+  |> list.map(fn(point) { svg_path.subpath_empty(at: point) })
   |> svg_path.Path
   |> path_hull
 }
@@ -297,7 +297,7 @@ pub fn internal_path_hull_with_repair_mode(
   path: svg_path.Path,
   repair_mode repair_mode: String,
 ) -> Result(svg_path.Subpath, HullError) {
-  case svg_path.subpaths(path) {
+  case svg_path.path_subpaths(path) {
     [] -> Error(PathError(svg_path.EmptyPath))
     subpaths -> {
       subpaths
@@ -420,9 +420,9 @@ fn segment_convex_loops(
 }
 
 fn hull_input_segments(subpath: svg_path.Subpath) -> List(svg_path.Segment) {
-  case svg_path.segments(subpath) {
+  case svg_path.subpath_segments(subpath) {
     [] -> {
-      let assert Ok(start) = svg_path.start(subpath)
+      let assert Ok(start) = svg_path.subpath_start(subpath)
       [point_segment(start)]
     }
     segments -> segments
@@ -437,7 +437,7 @@ fn segment_hull_segments(
   segment: svg_path.Segment,
 ) -> Result(List(svg_path.Segment), HullError) {
   use subpath <- result.try(segment_hull(segment))
-  Ok(svg_path.segments(subpath))
+  Ok(svg_path.subpath_segments(subpath))
 }
 
 fn segment_convex_loop(
@@ -916,7 +916,7 @@ fn loop_plus_point_hull(
   let start = subpath_start(kept)
   let end = subpath_end(kept)
   let segments =
-    list.append(svg_path.segments(kept), [
+    list.append(svg_path.subpath_segments(kept), [
       svg_path.Line(start: end, end: point),
       svg_path.Line(start: point, end: start),
     ])
@@ -926,14 +926,14 @@ fn loop_plus_point_hull(
     |> map_path_error,
   )
   use closed <- result.try(
-    svg_path.set_closed_with(
+    svg_path.subpath_set_closed_with(
       subpath,
       closed: True,
       policy: svg_path.WiggleThenBridge,
     )
     |> map_path_error,
   )
-  Ok(Loop(svg_path.segments(closed)))
+  Ok(Loop(svg_path.subpath_segments(closed)))
 }
 
 fn dumb_repair_loop_with_points(
@@ -1122,12 +1122,12 @@ fn loop_endpoints(loop: Loop) -> List(svg_path.Point) {
 }
 
 fn subpath_start(subpath: svg_path.Subpath) -> svg_path.Point {
-  let assert Ok(point) = svg_path.start(subpath)
+  let assert Ok(point) = svg_path.subpath_start(subpath)
   point
 }
 
 fn subpath_end(subpath: svg_path.Subpath) -> svg_path.Point {
-  let assert Ok(point) = svg_path.end(subpath)
+  let assert Ok(point) = svg_path.subpath_end(subpath)
   point
 }
 
@@ -2310,7 +2310,7 @@ fn build_closed_subpath(
     |> map_path_error,
   )
   case
-    svg_path.set_closed_with(
+    svg_path.subpath_set_closed_with(
       subpath,
       closed: True,
       policy: svg_path.WiggleThenBridge,
@@ -2319,7 +2319,7 @@ fn build_closed_subpath(
   {
     Error(error) -> Error(error)
     Ok(subpath) -> {
-      diagnose_closed_loop(svg_path.segments(subpath))
+      diagnose_closed_loop(svg_path.subpath_segments(subpath))
       Ok(subpath)
     }
   }

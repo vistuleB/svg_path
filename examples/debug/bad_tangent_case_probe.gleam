@@ -29,11 +29,11 @@ pub fn drawing_svg() -> String {
       ),
       path(
         svg_path.Path([
-          svg_path.assert_subpath([
+          svg_path.subpath_assert([
             svg_path.Line(start: loop_a_start, end: loop_a_vertex),
             svg_path.Line(start: loop_a_vertex, end: loop_a_start),
           ])
-          |> svg_path.assert_set_closed(closed: True),
+          |> svg_path.subpath_assert_set_closed(closed: True),
         ]),
         "fill: none; stroke: #2f6fbb; stroke-width: 1.2; stroke-linecap: round",
       ),
@@ -96,7 +96,7 @@ pub fn drawing_svg() -> String {
 
 fn line_path(start: svg_path.Point, end: svg_path.Point) -> svg_path.Path {
   svg_path.Path([
-    svg_path.assert_subpath([svg_path.Line(start:, end:)]),
+    svg_path.subpath_assert([svg_path.Line(start:, end:)]),
   ])
 }
 

@@ -12,7 +12,7 @@ pub fn main() -> Nil {
 
 pub fn open_line_clips_to_inside_piece_test() {
   let input =
-    svg_path.assert_subpath([
+    svg_path.subpath_assert([
       svg_path.Line(
         start: svg_path.point(-5.0, 5.0),
         end: svg_path.point(15.0, 5.0),
@@ -26,8 +26,8 @@ pub fn open_line_clips_to_inside_piece_test() {
       using: svg_path.Nonzero,
     )
 
-  assert !svg_path.is_closed(clipped)
-  assert svg_path.segments(clipped)
+  assert !svg_path.subpath_is_closed(clipped)
+  assert svg_path.subpath_segments(clipped)
     == [
       svg_path.Line(
         start: svg_path.point(0.0, 5.0),
@@ -38,7 +38,7 @@ pub fn open_line_clips_to_inside_piece_test() {
 
 pub fn open_subpath_clips_to_multiple_open_pieces_without_bridges_test() {
   let input =
-    svg_path.assert_subpath([
+    svg_path.subpath_assert([
       svg_path.Line(
         start: svg_path.point(-5.0, 2.0),
         end: svg_path.point(5.0, 2.0),
@@ -68,9 +68,9 @@ pub fn open_subpath_clips_to_multiple_open_pieces_without_bridges_test() {
       using: svg_path.Nonzero,
     )
 
-  assert !svg_path.is_closed(first)
-  assert !svg_path.is_closed(second)
-  assert svg_path.segments(first)
+  assert !svg_path.subpath_is_closed(first)
+  assert !svg_path.subpath_is_closed(second)
+  assert svg_path.subpath_segments(first)
     == [
       svg_path.Line(
         start: svg_path.point(0.0, 2.0),
@@ -81,7 +81,7 @@ pub fn open_subpath_clips_to_multiple_open_pieces_without_bridges_test() {
         end: svg_path.point(10.0, 2.0),
       ),
     ]
-  assert svg_path.segments(second)
+  assert svg_path.subpath_segments(second)
     == [
       svg_path.Line(
         start: svg_path.point(10.0, 8.0),
@@ -96,7 +96,7 @@ pub fn open_subpath_clips_to_multiple_open_pieces_without_bridges_test() {
 
 pub fn clip_boundary_at_subpath_vertex_does_not_duplicate_split_test() {
   let input =
-    svg_path.assert_subpath([
+    svg_path.subpath_assert([
       svg_path.Line(
         start: svg_path.point(-5.0, 5.0),
         end: svg_path.point(0.0, 5.0),
@@ -114,7 +114,7 @@ pub fn clip_boundary_at_subpath_vertex_does_not_duplicate_split_test() {
       using: svg_path.Nonzero,
     )
 
-  assert svg_path.segments(clipped)
+  assert svg_path.subpath_segments(clipped)
     == [
       svg_path.Line(
         start: svg_path.point(0.0, 5.0),
@@ -133,8 +133,8 @@ pub fn closed_subpath_survives_whole_when_fully_inside_test() {
       using: svg_path.Nonzero,
     )
 
-  assert svg_path.is_closed(clipped)
-  assert svg_path.segments(clipped) == svg_path.segments(input)
+  assert svg_path.subpath_is_closed(clipped)
+  assert svg_path.subpath_segments(clipped) == svg_path.subpath_segments(input)
 }
 
 pub fn closed_circle_clips_to_open_arc_fragments_test() {
@@ -148,20 +148,20 @@ pub fn closed_circle_clips_to_open_arc_fragments_test() {
     )
 
   assert list.length(clipped) == 2
-  assert list.all(clipped, fn(subpath) { !svg_path.is_closed(subpath) })
+  assert list.all(clipped, fn(subpath) { !svg_path.subpath_is_closed(subpath) })
   assert list.all(clipped, has_arc)
 }
 
 pub fn path_clipping_preserves_subpath_order_test() {
   let input =
     svg_path.Path([
-      svg_path.assert_subpath([
+      svg_path.subpath_assert([
         svg_path.Line(
           start: svg_path.point(-5.0, 2.0),
           end: svg_path.point(15.0, 2.0),
         ),
       ]),
-      svg_path.assert_subpath([
+      svg_path.subpath_assert([
         svg_path.Line(
           start: svg_path.point(-5.0, 8.0),
           end: svg_path.point(15.0, 8.0),
@@ -176,7 +176,7 @@ pub fn path_clipping_preserves_subpath_order_test() {
       using: svg_path.Nonzero,
     )
 
-  let assert [first, second] = svg_path.subpaths(clipped)
+  let assert [first, second] = svg_path.path_subpaths(clipped)
   assert_start(first, svg_path.point(0.0, 2.0))
   assert_start(second, svg_path.point(0.0, 8.0))
 }
@@ -187,7 +187,7 @@ fn rectangle(
   max_x: Float,
   max_y: Float,
 ) -> svg_path.Path {
-  svg_path.from_subpath(rectangle_subpath(min_x, min_y, max_x, max_y))
+  svg_path.path_from_subpath(rectangle_subpath(min_x, min_y, max_x, max_y))
 }
 
 fn rectangle_subpath(
@@ -196,7 +196,7 @@ fn rectangle_subpath(
   max_x: Float,
   max_y: Float,
 ) -> svg_path.Subpath {
-  svg_path.assert_polygon([
+  svg_path.subpath_assert_polygon([
     svg_path.point(min_x, min_y),
     svg_path.point(max_x, min_y),
     svg_path.point(max_x, max_y),
@@ -207,7 +207,7 @@ fn rectangle_subpath(
 fn circle_subpath(center: svg_path.Point, radius: Float) -> svg_path.Subpath {
   let left = svg_path.point(center.x -. radius, center.y)
   let right = svg_path.point(center.x +. radius, center.y)
-  svg_path.assert_subpath([
+  svg_path.subpath_assert([
     svg_path.Arc(
       start: right,
       radius: svg_path.point(radius, radius),
@@ -225,12 +225,12 @@ fn circle_subpath(center: svg_path.Point, radius: Float) -> svg_path.Subpath {
       end: right,
     ),
   ])
-  |> svg_path.assert_set_closed(closed: True)
+  |> svg_path.subpath_assert_set_closed(closed: True)
 }
 
 fn has_arc(subpath: svg_path.Subpath) -> Bool {
   subpath
-  |> svg_path.segments
+  |> svg_path.subpath_segments
   |> list.any(fn(segment) {
     case segment {
       svg_path.Arc(..) -> True
@@ -240,7 +240,7 @@ fn has_arc(subpath: svg_path.Subpath) -> Bool {
 }
 
 fn assert_start(subpath: svg_path.Subpath, expected: svg_path.Point) {
-  let assert Ok(actual) = svg_path.start(subpath)
+  let assert Ok(actual) = svg_path.subpath_start(subpath)
   assert same_point(actual, expected)
 }
 

@@ -344,7 +344,7 @@ pub fn arc_rejects_mismatched_flags_test() {
 
 pub fn subpath_maps_ordered_segments_to_target_test() {
   let source =
-    svg_path.assert_subpath([
+    svg_path.subpath_assert([
       svg_path.Line(
         start: svg_path.point(0.0, 0.0),
         end: svg_path.point(10.0, 0.0),
@@ -369,7 +369,7 @@ pub fn subpath_maps_ordered_segments_to_target_test() {
 
 pub fn fit_subpath_with_affine_uses_semantic_point_cloud_test() {
   let source =
-    svg_path.assert_subpath([
+    svg_path.subpath_assert([
       svg_path.Line(
         start: svg_path.point(0.0, 0.0),
         end: svg_path.point(10.0, 0.0),
@@ -392,7 +392,7 @@ pub fn fit_subpath_with_affine_uses_semantic_point_cloud_test() {
 
 pub fn subpath_ignores_closed_field_test() {
   let open =
-    svg_path.assert_subpath([
+    svg_path.subpath_assert([
       svg_path.Line(
         start: svg_path.point(0.0, 0.0),
         end: svg_path.point(10.0, 0.0),
@@ -402,7 +402,7 @@ pub fn subpath_ignores_closed_field_test() {
         end: svg_path.point(0.0, 0.0),
       ),
     ])
-  let assert Ok(closed) = svg_path.set_closed(open, closed: True)
+  let assert Ok(closed) = svg_path.subpath_set_closed(open, closed: True)
 
   assert result_is_ok(congruency.subpath(
     source: open,
@@ -412,10 +412,10 @@ pub fn subpath_ignores_closed_field_test() {
 }
 
 pub fn subpath_maps_move_only_subpaths_test() {
-  let source = svg_path.empty_subpath(at: svg_path.point(1.0, 2.0))
+  let source = svg_path.subpath_empty(at: svg_path.point(1.0, 2.0))
   let assert Ok(target) =
-    svg_path.empty_subpath(at: svg_path.point(6.0, 8.0))
-    |> svg_path.set_closed(closed: True)
+    svg_path.subpath_empty(at: svg_path.point(6.0, 8.0))
+    |> svg_path.subpath_set_closed(closed: True)
 
   let assert Ok(matrix) = congruency.subpath(source:, target:, tolerance:)
 
@@ -427,14 +427,14 @@ pub fn subpath_maps_move_only_subpaths_test() {
 
 pub fn subpath_rejects_different_segment_constructors_test() {
   let source =
-    svg_path.assert_subpath([
+    svg_path.subpath_assert([
       svg_path.Line(
         start: svg_path.point(0.0, 0.0),
         end: svg_path.point(10.0, 0.0),
       ),
     ])
   let target =
-    svg_path.assert_subpath([
+    svg_path.subpath_assert([
       svg_path.QuadraticBezier(
         start: svg_path.point(0.0, 0.0),
         control: svg_path.point(5.0, 5.0),
@@ -447,7 +447,7 @@ pub fn subpath_rejects_different_segment_constructors_test() {
 
 pub fn subpath_does_not_cycle_segments_test() {
   let source =
-    svg_path.assert_subpath([
+    svg_path.subpath_assert([
       svg_path.Line(
         start: svg_path.point(0.0, 0.0),
         end: svg_path.point(10.0, 0.0),
@@ -462,7 +462,7 @@ pub fn subpath_does_not_cycle_segments_test() {
       ),
     ])
   let target =
-    svg_path.assert_subpath([
+    svg_path.subpath_assert([
       svg_path.Line(
         start: svg_path.point(10.0, 0.0),
         end: svg_path.point(20.0, 0.0),
@@ -482,7 +482,7 @@ pub fn subpath_does_not_cycle_segments_test() {
 
 pub fn subpath_rejects_arc_field_mismatch_after_points_match_test() {
   let source =
-    svg_path.assert_subpath([
+    svg_path.subpath_assert([
       svg_path.Arc(
         start: svg_path.point(0.0, 0.0),
         radius: svg_path.point(10.0, 10.0),
@@ -493,7 +493,7 @@ pub fn subpath_rejects_arc_field_mismatch_after_points_match_test() {
       ),
     ])
   let target =
-    svg_path.assert_subpath([
+    svg_path.subpath_assert([
       svg_path.Arc(
         start: svg_path.point(0.0, 0.0),
         radius: svg_path.point(12.0, 12.0),
@@ -510,13 +510,13 @@ pub fn subpath_rejects_arc_field_mismatch_after_points_match_test() {
 pub fn path_uses_one_transform_across_subpaths_test() {
   let source =
     svg_path.Path([
-      svg_path.assert_subpath([
+      svg_path.subpath_assert([
         svg_path.Line(
           start: svg_path.point(0.0, 0.0),
           end: svg_path.point(10.0, 0.0),
         ),
       ]),
-      svg_path.assert_subpath([
+      svg_path.subpath_assert([
         svg_path.Line(
           start: svg_path.point(0.0, 10.0),
           end: svg_path.point(10.0, 10.0),
@@ -525,13 +525,13 @@ pub fn path_uses_one_transform_across_subpaths_test() {
     ])
   let target =
     svg_path.Path([
-      svg_path.assert_subpath([
+      svg_path.subpath_assert([
         svg_path.Line(
           start: svg_path.point(5.0, 5.0),
           end: svg_path.point(25.0, 5.0),
         ),
       ]),
-      svg_path.assert_subpath([
+      svg_path.subpath_assert([
         svg_path.Line(
           start: svg_path.point(5.0, 25.0),
           end: svg_path.point(25.0, 25.0),
@@ -548,13 +548,13 @@ pub fn path_uses_one_transform_across_subpaths_test() {
 pub fn fit_path_with_affine_uses_one_transform_across_subpaths_test() {
   let source =
     svg_path.Path([
-      svg_path.assert_subpath([
+      svg_path.subpath_assert([
         svg_path.Line(
           start: svg_path.point(0.0, 0.0),
           end: svg_path.point(10.0, 0.0),
         ),
       ]),
-      svg_path.assert_subpath([
+      svg_path.subpath_assert([
         svg_path.Line(
           start: svg_path.point(0.0, 10.0),
           end: svg_path.point(10.0, 10.0),
@@ -576,7 +576,7 @@ pub fn fit_path_with_affine_uses_one_transform_across_subpaths_test() {
 pub fn path_recognizes_transformed_mixed_fixture_test() {
   let source =
     svg_path.Path([
-      svg_path.assert_subpath([
+      svg_path.subpath_assert([
         svg_path.Line(
           start: svg_path.point(0.0, 0.0),
           end: svg_path.point(12.0, 0.0),
@@ -617,7 +617,7 @@ pub fn path_recognizes_transformed_mixed_fixture_test() {
 pub fn path_recognizes_transformed_multi_subpath_fixture_test() {
   let source =
     svg_path.Path([
-      svg_path.assert_subpath([
+      svg_path.subpath_assert([
         svg_path.Line(
           start: svg_path.point(0.0, 0.0),
           end: svg_path.point(20.0, 0.0),
@@ -635,7 +635,7 @@ pub fn path_recognizes_transformed_multi_subpath_fixture_test() {
           end: svg_path.point(0.0, 0.0),
         ),
       ]),
-      svg_path.assert_subpath([
+      svg_path.subpath_assert([
         svg_path.Line(
           start: svg_path.point(30.0, 30.0),
           end: svg_path.point(40.0, 30.0),
@@ -661,13 +661,13 @@ pub fn path_recognizes_transformed_multi_subpath_fixture_test() {
 pub fn path_rejects_individually_congruent_but_globally_inconsistent_subpaths_test() {
   let source =
     svg_path.Path([
-      svg_path.assert_subpath([
+      svg_path.subpath_assert([
         svg_path.Line(
           start: svg_path.point(0.0, 0.0),
           end: svg_path.point(10.0, 0.0),
         ),
       ]),
-      svg_path.assert_subpath([
+      svg_path.subpath_assert([
         svg_path.Line(
           start: svg_path.point(0.0, 10.0),
           end: svg_path.point(10.0, 10.0),
@@ -676,13 +676,13 @@ pub fn path_rejects_individually_congruent_but_globally_inconsistent_subpaths_te
     ])
   let target =
     svg_path.Path([
-      svg_path.assert_subpath([
+      svg_path.subpath_assert([
         svg_path.Line(
           start: svg_path.point(5.0, 5.0),
           end: svg_path.point(25.0, 5.0),
         ),
       ]),
-      svg_path.assert_subpath([
+      svg_path.subpath_assert([
         svg_path.Line(
           start: svg_path.point(100.0, 25.0),
           end: svg_path.point(120.0, 25.0),
@@ -695,7 +695,7 @@ pub fn path_rejects_individually_congruent_but_globally_inconsistent_subpaths_te
 
 pub fn path_ignores_subpath_closed_fields_test() {
   let open =
-    svg_path.assert_subpath([
+    svg_path.subpath_assert([
       svg_path.Line(
         start: svg_path.point(0.0, 0.0),
         end: svg_path.point(10.0, 0.0),
@@ -705,7 +705,7 @@ pub fn path_ignores_subpath_closed_fields_test() {
         end: svg_path.point(0.0, 0.0),
       ),
     ])
-  let assert Ok(closed) = svg_path.set_closed(open, closed: True)
+  let assert Ok(closed) = svg_path.subpath_set_closed(open, closed: True)
 
   assert result_is_ok(congruency.path(
     source: svg_path.Path([open]),
@@ -716,7 +716,7 @@ pub fn path_ignores_subpath_closed_fields_test() {
 
 pub fn path_rejects_different_subpath_counts_test() {
   let subpath =
-    svg_path.assert_subpath([
+    svg_path.subpath_assert([
       svg_path.Line(
         start: svg_path.point(0.0, 0.0),
         end: svg_path.point(10.0, 0.0),
@@ -734,7 +734,7 @@ pub fn path_rejects_different_subpath_counts_test() {
 pub fn path_rejects_arc_field_mismatch_after_points_match_test() {
   let source =
     svg_path.Path([
-      svg_path.assert_subpath([
+      svg_path.subpath_assert([
         svg_path.Arc(
           start: svg_path.point(0.0, 0.0),
           radius: svg_path.point(10.0, 10.0),
@@ -747,7 +747,7 @@ pub fn path_rejects_arc_field_mismatch_after_points_match_test() {
     ])
   let target =
     svg_path.Path([
-      svg_path.assert_subpath([
+      svg_path.subpath_assert([
         svg_path.Arc(
           start: svg_path.point(0.0, 0.0),
           radius: svg_path.point(12.0, 12.0),
@@ -868,17 +868,23 @@ fn same_segment(actual: svg_path.Segment, expected: svg_path.Segment) -> Bool {
 }
 
 fn same_subpath(actual: svg_path.Subpath, expected: svg_path.Subpath) -> Bool {
-  case svg_path.start(actual), svg_path.start(expected) {
+  case svg_path.subpath_start(actual), svg_path.subpath_start(expected) {
     Ok(actual_start), Ok(expected_start) -> {
       point_near(actual_start, expected_start)
-      && same_segments(svg_path.segments(actual), svg_path.segments(expected))
+      && same_segments(
+        svg_path.subpath_segments(actual),
+        svg_path.subpath_segments(expected),
+      )
     }
     _, _ -> False
   }
 }
 
 fn same_path(actual: svg_path.Path, expected: svg_path.Path) -> Bool {
-  same_subpaths(svg_path.subpaths(actual), svg_path.subpaths(expected))
+  same_subpaths(
+    svg_path.path_subpaths(actual),
+    svg_path.path_subpaths(expected),
+  )
 }
 
 fn same_subpaths(

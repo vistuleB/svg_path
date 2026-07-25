@@ -516,7 +516,9 @@ pub fn subpath(
   case validate_matrix(transform) {
     Error(error) -> Error(error)
     Ok(Nil) -> {
-      case transform_segments(svg_path.segments(subpath), transform, []) {
+      case
+        transform_segments(svg_path.subpath_segments(subpath), transform, [])
+      {
         Error(error) -> Error(error)
         Ok(segments) ->
           finalize_transformed_subpath(subpath, segments, transform)
@@ -613,7 +615,11 @@ pub fn subpath_gracefully(
     Error(error) -> Error(error)
     Ok(Nil) -> {
       case
-        transform_segments_gracefully(svg_path.segments(subpath), transform, [])
+        transform_segments_gracefully(
+          svg_path.subpath_segments(subpath),
+          transform,
+          [],
+        )
       {
         Error(error) -> Error(error)
         Ok(segments) ->
@@ -628,14 +634,15 @@ fn finalize_transformed_subpath(
   segments: List(svg_path.Segment),
   transform: Matrix,
 ) -> Result(svg_path.Subpath, Error) {
-  let assert Ok(start) = svg_path.start(original)
+  let assert Ok(start) = svg_path.subpath_start(original)
   let start = point(start, transform)
 
   case segments {
     [] -> {
-      let subpath = svg_path.empty_subpath(at: start)
-      case svg_path.is_closed(original) {
-        True -> svg_path.set_closed(subpath, closed: True) |> map_core_error
+      let subpath = svg_path.subpath_empty(at: start)
+      case svg_path.subpath_is_closed(original) {
+        True ->
+          svg_path.subpath_set_closed(subpath, closed: True) |> map_core_error
         False -> Ok(subpath)
       }
     }
@@ -643,7 +650,7 @@ fn finalize_transformed_subpath(
       case svg_path.subpath(segments) {
         Error(error) -> Error(Core(error))
         Ok(transformed) -> {
-          case svg_path.is_closed(original) {
+          case svg_path.subpath_is_closed(original) {
             True -> close_transformed_subpath(transformed)
             False -> Ok(transformed)
           }
@@ -661,7 +668,7 @@ pub fn path(
   case validate_matrix(transform) {
     Error(error) -> Error(error)
     Ok(Nil) -> {
-      case transform_subpaths(svg_path.subpaths(path), transform, []) {
+      case transform_subpaths(svg_path.path_subpaths(path), transform, []) {
         Error(error) -> Error(error)
         Ok(subpaths) -> Ok(svg_path.Path(subpaths))
       }
@@ -959,7 +966,7 @@ fn transform_segments_gracefully(
         Error(error) -> Error(error)
         Ok(first) -> {
           let transformed =
-            prepend_all(svg_path.segments(first), to: transformed)
+            prepend_all(svg_path.subpath_segments(first), to: transformed)
           transform_segments_gracefully(rest, transform, transformed)
         }
       }
@@ -996,11 +1003,15 @@ fn transform_subpaths(
 fn close_transformed_subpath(
   subpath: svg_path.Subpath,
 ) -> Result(svg_path.Subpath, Error) {
-  case svg_path.set_closed(subpath, closed: True) {
+  case svg_path.subpath_set_closed(subpath, closed: True) {
     Ok(subpath) -> Ok(subpath)
     Error(_) -> {
       case
-        svg_path.set_closed_with(subpath, closed: True, policy: svg_path.Wiggle)
+        svg_path.subpath_set_closed_with(
+          subpath,
+          closed: True,
+          policy: svg_path.Wiggle,
+        )
       {
         Ok(subpath) -> Ok(subpath)
         Error(error) -> Error(Core(error))

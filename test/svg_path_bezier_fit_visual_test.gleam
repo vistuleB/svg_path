@@ -219,7 +219,7 @@ fn tangent_arrow(
   [
     svg.StyledPath(
       svg_path.Path([
-        svg_path.assert_subpath([svg_path.Line(start:, end:)]),
+        svg_path.subpath_assert([svg_path.Line(start:, end:)]),
       ]),
       "fill: none; stroke: #94a3b8; stroke-width: 1.2; stroke-linecap: round; stroke-opacity: 0.65",
     ),
@@ -256,12 +256,12 @@ fn arrow_head(
 
   svg.StyledPath(
     svg_path.Path([
-      svg_path.assert_subpath([
+      svg_path.subpath_assert([
         svg_path.Line(start: end, end: left),
         svg_path.Line(start: left, end: right),
         svg_path.Line(start: right, end: end),
       ])
-      |> svg_path.assert_set_closed(closed: True),
+      |> svg_path.subpath_assert_set_closed(closed: True),
     ]),
     style,
   )
@@ -281,7 +281,7 @@ fn curve_subpath(
 ) -> svg_path.Subpath {
   case curve {
     bezier.CubicBezierData(start:, control1:, control2:, end:) ->
-      svg_path.assert_subpath([
+      svg_path.subpath_assert([
         svg_path.CubicBezier(
           start: place(start, placement),
           control1: place(control1, placement),
@@ -290,7 +290,7 @@ fn curve_subpath(
         ),
       ])
     _ ->
-      svg_path.assert_subpath([
+      svg_path.subpath_assert([
         svg_path.Line(
           start: place(bezier.bezier_start(curve), placement),
           end: place(bezier.bezier_end(curve), placement),

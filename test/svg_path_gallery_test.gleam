@@ -102,7 +102,7 @@ fn rounded_rectangle_union() -> String {
   let rectangles = rectangle_stack()
   let assert Ok(union) =
     rectangles
-    |> list.fold(Ok(svg_path.empty_path()), fn(acc, next) {
+    |> list.fold(Ok(svg_path.path_empty()), fn(acc, next) {
       use acc <- result_try(acc)
       csg.union(acc, next, using: svg_path.Nonzero)
     })
@@ -179,7 +179,7 @@ pub fn recursive_dash_cap_report_is_generated_test() {
         offset: 10.0,
       ),
     )
-  let outline = nth_subpath(svg_path.subpaths(first_stroke), 2)
+  let outline = nth_subpath(svg_path.path_subpaths(first_stroke), 2)
   let assert Ok(dashes) =
     stroke.subpath_dashes(outline, pattern: [17.0, 9.0], offset: 3.0)
   let dash = nth_subpath(dashes, 4)
@@ -196,17 +196,20 @@ pub fn recursive_dash_cap_report_is_generated_test() {
     Ok(positive), Ok(negative), Ok(start_cap), Ok(end_cap) -> {
       let segments =
         list.append(
-          svg_path.segments(positive),
+          svg_path.subpath_segments(positive),
           list.append(
             [end_cap],
-            list.append(debug_reverse_segments(svg_path.segments(negative)), [
-              start_cap,
-            ]),
+            list.append(
+              debug_reverse_segments(svg_path.subpath_segments(negative)),
+              [
+                start_cap,
+              ],
+            ),
           ),
         )
       case svg_path.subpath_with(segments, policy: svg_path.Wiggle) {
         Ok(candidate) ->
-          svg_path.set_closed_with(
+          svg_path.subpath_set_closed_with(
             candidate,
             closed: True,
             policy: svg_path.Wiggle,
@@ -221,11 +224,11 @@ pub fn recursive_dash_cap_report_is_generated_test() {
       [
         "dash index: 4",
         "dash segment count: "
-          <> int.to_string(list.length(svg_path.segments(dash))),
+          <> int.to_string(list.length(svg_path.subpath_segments(dash))),
         "dash length: "
           <> length_result_to_string(svg_path.subpath_length(dash)),
-        "start point: " <> point_result_to_string(svg_path.start(dash)),
-        "end point: " <> point_result_to_string(svg_path.end(dash)),
+        "start point: " <> point_result_to_string(svg_path.subpath_start(dash)),
+        "end point: " <> point_result_to_string(svg_path.subpath_end(dash)),
         "first derivative length at t=0: "
           <> derivative_length_result_to_string(first_segment(dash), 0.0),
         "last derivative length at t=1: "
@@ -234,13 +237,13 @@ pub fn recursive_dash_cap_report_is_generated_test() {
         "end cap: " <> cap_result_to_string(end_cap),
         "positive individual offset pieces: "
           <> individual_offset_piece_counts_to_string(
-          svg_path.segments(dash),
+          svg_path.subpath_segments(dash),
           distance: radius,
           options: options,
         ),
         "negative individual offset pieces: "
           <> individual_offset_piece_counts_to_string(
-          svg_path.segments(dash),
+          svg_path.subpath_segments(dash),
           distance: 0.0 -. radius,
           options: options,
         ),
@@ -252,13 +255,13 @@ pub fn recursive_dash_cap_report_is_generated_test() {
           <> inserted_join_diameters_to_string(negative),
         "positive raw pair 0->1 before join: "
           <> raw_offset_pair_report(
-          svg_path.segments(dash),
+          svg_path.subpath_segments(dash),
           distance: radius,
           options: options,
         ),
         "negative raw pair 0->1 before join: "
           <> raw_offset_pair_report(
-          svg_path.segments(dash),
+          svg_path.subpath_segments(dash),
           distance: 0.0 -. radius,
           options: options,
         ),
@@ -280,7 +283,7 @@ pub fn recursive_dash_cap_report_is_generated_test() {
 
 fn stroke_caps() -> String {
   let source =
-    svg_path.assert_subpath([
+    svg_path.subpath_assert([
       svg_path.CubicBezier(
         start: svg_path.point(0.0, 20.0),
         control1: svg_path.point(40.0, -58.0),
@@ -311,7 +314,7 @@ fn stroke_caps() -> String {
             "fill: #fed7aa; stroke: #7c2d12; stroke-width: 2.5; stroke-linejoin: round",
           ),
           svg.StyledPath(
-            svg_path.from_subpath(placed),
+            svg_path.path_from_subpath(placed),
             "fill: none; stroke: #4c1d95; stroke-width: 2; stroke-dasharray: 5 5; stroke-linecap: round",
           ),
           ..path_arrows(stroke, "#7c2d12", 1.0)
@@ -374,7 +377,7 @@ fn dashed_strokes() -> String {
               <> "; stroke-width: 2.2; stroke-linejoin: round",
           ),
           svg.StyledPath(
-            svg_path.from_subpath(placed),
+            svg_path.path_from_subpath(placed),
             "fill: none; stroke: #334155; stroke-width: 1.8; stroke-dasharray: 5 6; stroke-linecap: round",
           ),
           ..path_arrows(dashed, stroke_color, 0.8)
@@ -411,13 +414,13 @@ fn recursive_dashes() -> String {
     )
   let assert Ok(second_paths) =
     recursive_dash_outline_strokes(
-      svg_path.subpaths(first_stroke),
+      svg_path.path_subpaths(first_stroke),
       options: second_options,
       accumulated: [],
     )
   let second_path =
     second_paths
-    |> list.flat_map(svg_path.subpaths)
+    |> list.flat_map(svg_path.path_subpaths)
     |> svg_path.Path
 
   document(
@@ -440,7 +443,7 @@ fn recursive_dashes() -> String {
       ],
       [
         svg.StyledPath(
-          svg_path.from_subpath(source),
+          svg_path.path_from_subpath(source),
           "fill: none; stroke: #334155; stroke-width: 1.8; stroke-linecap: round; stroke-dasharray: 7 7; opacity: 0.75",
         ),
       ],
@@ -524,10 +527,10 @@ fn crescent_point_cloud_path(
   line_end line_end: svg_path.Point,
 ) -> svg_path.Path {
   let chord =
-    svg_path.assert_subpath([
+    svg_path.subpath_assert([
       svg_path.Line(start: line_start, end: line_end),
     ])
-  let point_subpaths = points |> list.map(svg_path.empty_subpath(at: _))
+  let point_subpaths = points |> list.map(svg_path.subpath_empty(at: _))
 
   svg_path.Path([chord, ..point_subpaths])
 }
@@ -537,7 +540,7 @@ fn crescent_reference_path(
   end: svg_path.Point,
 ) -> svg_path.Path {
   svg_path.Path([
-    svg_path.assert_subpath([
+    svg_path.subpath_assert([
       svg_path.Arc(
         start:,
         radius: svg_path.point(120.0, 120.0),
@@ -604,7 +607,7 @@ fn stroke_non_degenerate_dashes(
                 rest,
                 options:,
                 accumulated: list.append(
-                  svg_path.subpaths(stroked),
+                  svg_path.path_subpaths(stroked),
                   accumulated,
                 ),
               )
@@ -630,12 +633,12 @@ fn nth_subpath(
 }
 
 fn first_segment(subpath: svg_path.Subpath) -> svg_path.Segment {
-  let assert [first, ..] = svg_path.segments(subpath)
+  let assert [first, ..] = svg_path.subpath_segments(subpath)
   first
 }
 
 fn last_segment(subpath: svg_path.Subpath) -> svg_path.Segment {
-  let assert Ok(last) = list.last(svg_path.segments(subpath))
+  let assert Ok(last) = list.last(svg_path.subpath_segments(subpath))
   last
 }
 
@@ -645,7 +648,7 @@ fn debug_round_start_cap(
 ) -> Result(svg_path.Segment, svg_path.Error) {
   let first = first_segment(source)
   use tangent <- result_try(debug_unit_tangent(first, 0.0))
-  use start <- result_try(svg_path.start(source))
+  use start <- result_try(svg_path.subpath_start(source))
   Ok(debug_round_cap(start, tangent, radius, at_end: False))
 }
 
@@ -655,7 +658,7 @@ fn debug_round_end_cap(
 ) -> Result(svg_path.Segment, svg_path.Error) {
   let last = last_segment(source)
   use tangent <- result_try(debug_unit_tangent(last, 1.0))
-  use end <- result_try(svg_path.end(source))
+  use end <- result_try(svg_path.subpath_end(source))
   Ok(debug_round_cap(end, tangent, radius, at_end: True))
 }
 
@@ -714,7 +717,7 @@ fn debug_reverse_segments(
 ) -> List(svg_path.Segment) {
   segments
   |> list.reverse
-  |> list.map(svg_path.reverse_segment)
+  |> list.map(svg_path.segment_reverse)
 }
 
 fn add_points(a: svg_path.Point, b: svg_path.Point) -> svg_path.Point {
@@ -783,9 +786,9 @@ fn subpath_result_to_string(
   case result {
     Ok(subpath) ->
       "Ok(segments="
-      <> int.to_string(list.length(svg_path.segments(subpath)))
+      <> int.to_string(list.length(svg_path.subpath_segments(subpath)))
       <> ", closed="
-      <> bool_to_string(svg_path.is_closed(subpath))
+      <> bool_to_string(svg_path.subpath_is_closed(subpath))
       <> ", length="
       <> length_result_to_string(svg_path.subpath_length(subpath))
       <> ")"
@@ -809,7 +812,7 @@ fn inserted_join_diameters_to_string(
     Error(error) -> offset_error_to_string(error)
     Ok(subpath) ->
       inserted_join_diameters_loop(
-        svg_path.segments(subpath),
+        svg_path.subpath_segments(subpath),
         index: 0,
         joins: [],
       )
@@ -852,7 +855,7 @@ fn raw_offset_segments(
     [] -> list.reverse(accumulated)
     [segment, ..rest] -> {
       let next = case offset.segment_with(segment, distance:, options:) {
-        Ok(subpath) -> list.reverse(svg_path.segments(subpath))
+        Ok(subpath) -> list.reverse(svg_path.subpath_segments(subpath))
         Error(_) -> []
       }
       raw_offset_segments(
@@ -968,7 +971,8 @@ fn individual_offset_piece_counts(
     [] -> list.reverse(counts)
     [segment, ..rest] -> {
       let count = case offset.segment_with(segment, distance:, options:) {
-        Ok(offset) -> int.to_string(list.length(svg_path.segments(offset)))
+        Ok(offset) ->
+          int.to_string(list.length(svg_path.subpath_segments(offset)))
         Error(_) -> "Error"
       }
       individual_offset_piece_counts(rest, distance:, options:, counts: [
@@ -999,9 +1003,9 @@ fn sum_strings_as_ints(strings: List(String), total total: Int) -> Int {
 
 fn subpath_summary_to_string(subpath: svg_path.Subpath) -> String {
   "Ok(segments="
-  <> int.to_string(list.length(svg_path.segments(subpath)))
+  <> int.to_string(list.length(svg_path.subpath_segments(subpath)))
   <> ", closed="
-  <> bool_to_string(svg_path.is_closed(subpath))
+  <> bool_to_string(svg_path.subpath_is_closed(subpath))
   <> ", length="
   <> length_result_to_string(svg_path.subpath_length(subpath))
   <> ")"
@@ -1079,7 +1083,7 @@ fn stroke_result_to_string(
   case result {
     Ok(path) ->
       "Ok(subpaths="
-      <> int.to_string(list.length(svg_path.subpaths(path)))
+      <> int.to_string(list.length(svg_path.path_subpaths(path)))
       <> ")"
     Error(error) -> stroke_error_name(error)
   }
@@ -1139,7 +1143,7 @@ fn figure_eight_band() -> String {
       ],
       [
         svg.StyledPath(
-          svg_path.from_subpath(source),
+          svg_path.path_from_subpath(source),
           "fill: none; stroke: #be123c; stroke-width: 2.2; stroke-dasharray: 7 6; stroke-linecap: round",
         ),
       ],
@@ -1205,7 +1209,7 @@ fn stroke_offset_tracks() -> String {
         |> list.map(fn(entry) {
           let #(track, color) = entry
           svg.StyledPath(
-            svg_path.from_subpath(track),
+            svg_path.path_from_subpath(track),
             "fill: none; stroke: "
               <> color
               <> "; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round",
@@ -1213,7 +1217,7 @@ fn stroke_offset_tracks() -> String {
         }),
       [
         svg.StyledPath(
-          svg_path.from_subpath(source),
+          svg_path.path_from_subpath(source),
           "fill: none; stroke: #111827; stroke-width: 3.6; stroke-dasharray: 7 6; stroke-linecap: round",
         ),
       ],
@@ -1292,7 +1296,7 @@ fn centered_offset_family(
       |> list.index_map(fn(track, index) {
         let color = color_from(colors, index)
         svg.StyledPath(
-          svg_path.from_subpath(track),
+          svg_path.path_from_subpath(track),
           "fill: none; stroke: "
             <> color
             <> "; stroke-width: 2.8; stroke-linecap: round; stroke-linejoin: round",
@@ -1300,7 +1304,7 @@ fn centered_offset_family(
       }),
     [
       svg.StyledPath(
-        svg_path.from_subpath(placed_source),
+        svg_path.path_from_subpath(placed_source),
         "fill: none; stroke: #1f1a17; stroke-width: 3.1; stroke-dasharray: 7 6; stroke-linecap: round; stroke-linejoin: round",
       ),
     ],
@@ -1326,12 +1330,12 @@ fn rectangle_stack() -> List(svg_path.Path) {
 
 fn rectangle_cloud_path(paths: List(svg_path.Path)) -> svg_path.Path {
   paths
-  |> list.flat_map(svg_path.subpaths)
+  |> list.flat_map(svg_path.path_subpaths)
   |> svg_path.Path
 }
 
 fn square_path(x: Float, y: Float, size: Float) -> svg_path.Path {
-  svg_path.from_subpath(square_subpath(x, y, size))
+  svg_path.path_from_subpath(square_subpath(x, y, size))
 }
 
 fn rectangle_path(
@@ -1340,8 +1344,8 @@ fn rectangle_path(
   max_x: Float,
   max_y: Float,
 ) -> svg_path.Path {
-  svg_path.from_subpath(
-    svg_path.assert_polygon([
+  svg_path.path_from_subpath(
+    svg_path.subpath_assert_polygon([
       svg_path.point(min_x, min_y),
       svg_path.point(max_x, min_y),
       svg_path.point(max_x, max_y),
@@ -1351,7 +1355,7 @@ fn rectangle_path(
 }
 
 fn square_subpath(x: Float, y: Float, size: Float) -> svg_path.Subpath {
-  svg_path.assert_polygon([
+  svg_path.subpath_assert_polygon([
     svg_path.point(x, y),
     svg_path.point(x +. size, y),
     svg_path.point(x +. size, y +. size),
@@ -1360,7 +1364,7 @@ fn square_subpath(x: Float, y: Float, size: Float) -> svg_path.Subpath {
 }
 
 fn figure_eight() -> svg_path.Subpath {
-  svg_path.assert_subpath([
+  svg_path.subpath_assert([
     svg_path.CubicBezier(
       start: svg_path.point(0.0, 0.0),
       control1: svg_path.point(-336.0, -234.0),
@@ -1374,7 +1378,7 @@ fn figure_eight() -> svg_path.Subpath {
       end: svg_path.point(0.0, 0.0),
     ),
   ])
-  |> svg_path.assert_set_closed(closed: True)
+  |> svg_path.subpath_assert_set_closed(closed: True)
 }
 
 fn stalled_arc_turn_cases() -> List(
@@ -1653,7 +1657,7 @@ fn stalled_arc_turn_panel(
   let ty = 145.0 +. int.to_float(row) *. 260.0
   let source_path = serialize.subpath(source)
   let stalled_segments =
-    svg_path.segments(source)
+    svg_path.subpath_segments(source)
     |> list.filter(stalled_arc_turn_segment_is_caught)
     |> serialize_segments
   let output = case result {
@@ -1703,7 +1707,7 @@ fn stalled_arc_turn_panel(
   <> "\" font-family=\"ui-monospace, SFMono-Regular, Menlo, monospace\" font-size=\"11\" text-anchor=\"middle\" fill=\"#334155\">corner segments="
   <> stalled_arc_turn_corner_segment_count(result)
   <> "; stalled="
-  <> int.to_string(count_stalled_segments(svg_path.segments(source)))
+  <> int.to_string(count_stalled_segments(svg_path.subpath_segments(source)))
   <> "</text>"
 }
 
@@ -1728,7 +1732,7 @@ fn stalled_arc_turn_zoom_panel(
   let ty = panel_y -. { clip_y +. clip_size /. 2.0 } *. scale
   let source_path = serialize.subpath(source)
   let stalled_segments =
-    svg_path.segments(source)
+    svg_path.subpath_segments(source)
     |> list.filter(stalled_arc_turn_segment_is_caught)
     |> serialize_segments
   let output = case result {
@@ -1801,7 +1805,7 @@ fn stalled_arc_turn_zoom_panel(
   <> "; corner "
   <> stalled_arc_turn_corner_label(result)
   <> "; stalled="
-  <> int.to_string(count_stalled_segments(svg_path.segments(source)))
+  <> int.to_string(count_stalled_segments(svg_path.subpath_segments(source)))
   <> "</text>"
 }
 
@@ -1843,7 +1847,7 @@ fn stalled_arc_turn_offset_sample_points(
   source: svg_path.Subpath,
 ) -> List(svg_path.Point) {
   let stalled =
-    svg_path.segments(source)
+    svg_path.subpath_segments(source)
     |> list.filter(stalled_arc_turn_segment_is_caught)
 
   stalled_arc_turn_sample_points(stalled)
@@ -1915,7 +1919,7 @@ fn stalled_arc_turn_segment_diagnostic_points(
 }
 
 fn stalled_arc_turn_output_control_marks(subpath: svg_path.Subpath) -> String {
-  case svg_path.segments(subpath) {
+  case svg_path.subpath_segments(subpath) {
     [_, svg_path.CubicBezier(control1:, control2:, ..), ..] ->
       "    <circle cx=\""
       <> gallery_float_to_string(control1.x)
@@ -1943,7 +1947,7 @@ fn stalled_arc_turn_output_control_marks(subpath: svg_path.Subpath) -> String {
 
 fn stalled_arc_turn_fit_marks(source: svg_path.Subpath) -> String {
   let stalled =
-    svg_path.segments(source)
+    svg_path.subpath_segments(source)
     |> list.filter(stalled_arc_turn_segment_is_caught)
 
   stalled_arc_turn_sample_marks(stalled)
@@ -2078,7 +2082,7 @@ fn stalled_arc_turn_corner_segment_count(
 fn stalled_arc_turn_corner_segments(
   subpath: svg_path.Subpath,
 ) -> List(svg_path.Segment) {
-  case svg_path.segments(subpath) {
+  case svg_path.subpath_segments(subpath) {
     [] | [_] | [_, _] -> []
     [_, ..rest] -> list.take(rest, list.length(rest) - 1)
   }
@@ -2110,7 +2114,7 @@ fn escape(text: String) -> String {
 }
 
 fn offset_track_source() -> svg_path.Subpath {
-  svg_path.assert_subpath([
+  svg_path.subpath_assert([
     svg_path.CubicBezier(
       start: svg_path.point(0.0, 32.0),
       control1: svg_path.point(82.0, -108.0),
@@ -2127,7 +2131,7 @@ fn offset_track_source() -> svg_path.Subpath {
 }
 
 fn dash_source() -> svg_path.Subpath {
-  svg_path.assert_subpath([
+  svg_path.subpath_assert([
     svg_path.CubicBezier(
       start: svg_path.point(0.0, 28.0),
       control1: svg_path.point(48.0, -62.0),
@@ -2144,7 +2148,7 @@ fn dash_source() -> svg_path.Subpath {
 }
 
 fn recursive_dash_source() -> svg_path.Subpath {
-  svg_path.assert_subpath([
+  svg_path.subpath_assert([
     svg_path.CubicBezier(
       start: svg_path.point(0.0, 34.0),
       control1: svg_path.point(88.0, -112.0),
@@ -2161,7 +2165,7 @@ fn recursive_dash_source() -> svg_path.Subpath {
 }
 
 fn earth_arc_source() -> svg_path.Subpath {
-  svg_path.assert_subpath([
+  svg_path.subpath_assert([
     svg_path.CubicBezier(
       start: svg_path.point(0.0, 28.0),
       control1: svg_path.point(42.0, -24.0),
@@ -2172,7 +2176,7 @@ fn earth_arc_source() -> svg_path.Subpath {
 }
 
 fn earth_bend_source() -> svg_path.Subpath {
-  svg_path.assert_subpath([
+  svg_path.subpath_assert([
     svg_path.CubicBezier(
       start: svg_path.point(0.0, 42.0),
       control1: svg_path.point(34.0, 6.0),
@@ -2189,7 +2193,7 @@ fn earth_bend_source() -> svg_path.Subpath {
 }
 
 fn earth_turn_source() -> svg_path.Subpath {
-  svg_path.assert_subpath([
+  svg_path.subpath_assert([
     svg_path.Line(
       start: svg_path.point(0.0, 34.0),
       end: svg_path.point(68.0, -8.0),
@@ -2270,7 +2274,7 @@ fn path_arrows(
   arrow_scale: Float,
 ) -> svg.ThingsToDraw {
   path
-  |> svg_path.subpaths
+  |> svg_path.path_subpaths
   |> list.flat_map(subpath_arrows(_, color, arrow_scale))
 }
 
@@ -2321,7 +2325,7 @@ fn arrow_glyph(
   let left = add(base, scale(normal, half_width))
   let right = add(base, scale(normal, 0.0 -. half_width))
   svg.StyledPath(
-    svg_path.Path([svg_path.assert_polygon([tip, left, right])]),
+    svg_path.Path([svg_path.subpath_assert_polygon([tip, left, right])]),
     "fill: " <> color <> "; stroke: none",
   )
 }

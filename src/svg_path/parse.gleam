@@ -67,7 +67,7 @@ pub fn path(input: String) -> Result(svg_path.Path, Error) {
 fn initial_state() -> State {
   State(
     subpaths: [],
-    subpath: svg_path.empty_subpath(at: svg_path.point(0.0, 0.0)),
+    subpath: svg_path.subpath_empty(at: svg_path.point(0.0, 0.0)),
     current: svg_path.point(0.0, 0.0),
     has_current: False,
     active: False,
@@ -135,7 +135,7 @@ fn parse_move(
           let state =
             State(
               ..state,
-              subpath: svg_path.empty_subpath(at: target),
+              subpath: svg_path.subpath_empty(at: target),
               current: target,
               has_current: True,
               active: True,
@@ -573,9 +573,9 @@ fn parse_close(
   case ensure_active(state) {
     Error(error) -> Error(error)
     Ok(Nil) -> {
-      let assert Ok(start) = svg_path.start(state.subpath)
+      let assert Ok(start) = svg_path.subpath_start(state.subpath)
       case
-        svg_path.set_closed_with(
+        svg_path.subpath_set_closed_with(
           state.subpath,
           closed: True,
           policy: svg_path.Bridge,
@@ -587,7 +587,7 @@ fn parse_close(
             tokens,
             State(
               subpaths: [subpath, ..state.subpaths],
-              subpath: svg_path.empty_subpath(at: start),
+              subpath: svg_path.subpath_empty(at: start),
               current: start,
               has_current: True,
               active: False,
@@ -616,7 +616,7 @@ fn finish_active_subpath(state: State) -> Result(State, Error) {
         State(
           ..state,
           subpaths: [state.subpath, ..state.subpaths],
-          subpath: svg_path.empty_subpath(at: state.current),
+          subpath: svg_path.subpath_empty(at: state.current),
           active: False,
         ),
       )
@@ -639,7 +639,7 @@ fn append_segment(
   segment: svg_path.Segment,
   end: svg_path.Point,
 ) -> Result(State, Error) {
-  case svg_path.append_segment(state.subpath, segment) {
+  case svg_path.subpath_append_segment(state.subpath, segment) {
     Error(error) -> Error(Core(error))
     Ok(subpath) -> {
       Ok(

@@ -89,7 +89,7 @@ fn union_to_segments(
 ) -> Result(List(svg_path.Segment), svg_path.Error) {
   let pieces = abstract_union.union(loop_a, loop_b, sample_count: 720)
   use subpath <- result.try(abstract_union.union_subpath(pieces, loop_a, loop_b))
-  Ok(svg_path.segments(subpath))
+  Ok(svg_path.subpath_segments(subpath))
 }
 
 fn primitive_segments(segment: svg_path.Segment) -> List(svg_path.Segment) {

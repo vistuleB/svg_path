@@ -90,13 +90,13 @@ fn axes(
 ) -> svg.ThingToDraw {
   styled_path(
     svg_path.Path([
-      svg_path.assert_subpath([
+      svg_path.subpath_assert([
         svg_path.Line(
           start: svg_path.point(x1, y1),
           end: svg_path.point(x2, y2),
         ),
       ]),
-      svg_path.assert_subpath([
+      svg_path.subpath_assert([
         svg_path.Line(
           start: svg_path.point(x3, y3),
           end: svg_path.point(x4, y4),
@@ -113,14 +113,14 @@ fn guide_rays(
   second: svg_path.Point,
 ) -> svg_path.Path {
   svg_path.Path([
-    svg_path.assert_subpath([svg_path.Line(start: point, end: first)]),
-    svg_path.assert_subpath([svg_path.Line(start: point, end: second)]),
+    svg_path.subpath_assert([svg_path.Line(start: point, end: first)]),
+    svg_path.subpath_assert([svg_path.Line(start: point, end: second)]),
   ])
 }
 
 fn quadratic_lens_inside() -> svg_path.Path {
   svg_path.Path([
-    svg_path.assert_subpath([
+    svg_path.subpath_assert([
       svg_path.QuadraticBezier(
         start: svg_path.point(213.367, 259.903),
         control: svg_path.point(141.684, 294.694),
@@ -137,7 +137,7 @@ fn quadratic_lens_inside() -> svg_path.Path {
 
 fn quadratic_lens_outside() -> svg_path.Path {
   svg_path.Path([
-    svg_path.assert_subpath([
+    svg_path.subpath_assert([
       svg_path.QuadraticBezier(
         start: svg_path.point(213.367, 100.097),
         control: svg_path.point(251.684, 118.694),
@@ -154,7 +154,7 @@ fn quadratic_lens_outside() -> svg_path.Path {
 
 fn rounded_triangle_inside() -> svg_path.Path {
   svg_path.Path([
-    svg_path.assert_subpath([
+    svg_path.subpath_assert([
       svg_path.QuadraticBezier(
         start: svg_path.point(740.0, 112.54),
         control: svg_path.point(731.27, 101.27),
@@ -179,7 +179,7 @@ fn rounded_triangle_inside() -> svg_path.Path {
 
 fn rounded_triangle_outside() -> svg_path.Path {
   svg_path.Path([
-    svg_path.assert_subpath([
+    svg_path.subpath_assert([
       svg_path.QuadraticBezier(
         start: svg_path.point(740.0, 267.46),
         control: svg_path.point(800.0, 190.0),

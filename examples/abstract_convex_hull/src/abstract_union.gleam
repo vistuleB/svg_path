@@ -105,7 +105,11 @@ pub fn union_subpath(
     union_segments(pieces, loop_a, loop_b)
     |> svg_path.subpath_with(policy: svg_path.Wiggle),
   )
-  svg_path.set_closed_with(subpath, closed: True, policy: svg_path.Wiggle)
+  svg_path.subpath_set_closed_with(
+    subpath,
+    closed: True,
+    policy: svg_path.Wiggle,
+  )
 }
 
 fn initial_samples(

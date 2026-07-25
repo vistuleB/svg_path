@@ -96,7 +96,7 @@ fn print_parametric_cut_diagnostics(
   let assert Ok(provisional) = debug_provisional_with(source, join, distance)
   let options = preview_options(join)
   let assert Ok(result) = offset.subpath_with(source, distance:, options:)
-  let segments = svg_path.segments(provisional)
+  let segments = svg_path.subpath_segments(provisional)
   let cuts =
     count_intersection_cuts(
       indexed_segments(segments, 0),
@@ -111,7 +111,7 @@ fn print_parametric_cut_diagnostics(
   io.println("provisional segments=" <> int.to_string(list.length(segments)))
   io.println(
     "production output subpaths="
-    <> int.to_string(list.length(svg_path.subpaths(result))),
+    <> int.to_string(list.length(svg_path.path_subpaths(result))),
   )
   io.println(
     "intersections="
@@ -464,9 +464,9 @@ fn print_diamond_round_negative_distances() -> Nil {
   io.println("")
   io.println("round negative rounded-diamond retained segment samples")
   io.println("keep threshold with restored margin: " <> f(threshold))
-  svg_path.subpaths(result)
+  svg_path.path_subpaths(result)
   |> list.index_map(fn(subpath, subpath_index) {
-    svg_path.segments(subpath)
+    svg_path.subpath_segments(subpath)
     |> list.index_map(fn(segment, segment_index) {
       print_segment_samples(source, subpath_index, segment_index, segment)
     })
@@ -538,7 +538,7 @@ fn render_diamond_zoom() -> String {
   let source = rounded_diamond()
   let assert Ok(provisional) = debug_provisional(source, offset.Round)
   let assert Ok(sections) = self_intersection_sections(provisional)
-  let placed_source = place_path(svg_path.from_subpath(source), 0.0, 0.0)
+  let placed_source = place_path(svg_path.path_from_subpath(source), 0.0, 0.0)
   let section_drawings =
     sections
     |> list.index_map(fn(section, index) {
@@ -550,7 +550,7 @@ fn render_diamond_zoom() -> String {
             svg_path.subpath_with(section, policy: svg_path.Wiggle)
           [
             svg.StyledPath(
-              svg_path.from_subpath(subpath),
+              svg_path.path_from_subpath(subpath),
               "fill: none; stroke: "
                 <> color
                 <> "; stroke-width: 0.8; stroke-linecap: round; stroke-linejoin: round",
@@ -587,14 +587,14 @@ fn render_diamond_miter_sections() -> String {
   let source = rounded_diamond()
   let assert Ok(provisional) = debug_provisional(source, offset.Round)
   let assert Ok(sections) = self_intersection_sections(provisional)
-  let source_path = svg_path.from_subpath(source)
+  let source_path = svg_path.path_from_subpath(source)
   let section_drawings =
     sections
     |> list.index_map(fn(section, index) {
       let color = section_color(index)
       let assert Ok(subpath) =
         svg_path.subpath_with(section, policy: svg_path.Wiggle)
-      let path = svg_path.from_subpath(subpath)
+      let path = svg_path.path_from_subpath(subpath)
       [
         svg.StyledPath(
           path,
@@ -631,14 +631,14 @@ fn render_diamond_miter_loop_zoom() -> String {
   let source = rounded_diamond()
   let assert Ok(provisional) = debug_provisional(source, offset.Round)
   let assert Ok(sections) = self_intersection_sections(provisional)
-  let source_path = svg_path.from_subpath(source)
+  let source_path = svg_path.path_from_subpath(source)
   let section_drawings =
     sections
     |> list.index_map(fn(section, index) {
       let color = section_color(index)
       let assert Ok(subpath) =
         svg_path.subpath_with(section, policy: svg_path.Wiggle)
-      let path = svg_path.from_subpath(subpath)
+      let path = svg_path.path_from_subpath(subpath)
       [
         svg.StyledPath(
           path,
@@ -675,7 +675,7 @@ fn render_diamond_section_survival() -> String {
   let source = rounded_diamond()
   let assert Ok(provisional) = debug_provisional(source, offset.Round)
   let assert Ok(sections) = self_intersection_sections(provisional)
-  let source_path = svg_path.from_subpath(source)
+  let source_path = svg_path.path_from_subpath(source)
   let section_drawings =
     sections
     |> list.index_map(fn(section, index) {
@@ -694,7 +694,7 @@ fn render_diamond_section_survival() -> String {
       }
       let assert Ok(subpath) =
         svg_path.subpath_with(section, policy: svg_path.Wiggle)
-      let path = svg_path.from_subpath(subpath)
+      let path = svg_path.path_from_subpath(subpath)
       [
         svg.StyledPath(
           path,
@@ -736,7 +736,7 @@ fn render_diamond_section_nine() -> String {
   let assert Ok(provisional) = debug_provisional(source, offset.Round)
   let assert Ok(sections) = self_intersection_sections(provisional)
   let assert Ok(target_section) = nth_section(sections, 9)
-  let source_path = svg_path.from_subpath(source)
+  let source_path = svg_path.path_from_subpath(source)
   let section_drawings =
     sections
     |> list.index_map(fn(section, index) {
@@ -799,7 +799,7 @@ fn inspected_section_segment_drawings(
     let assert Ok(subpath) =
       svg_path.subpath_with([segment], policy: svg_path.Wiggle)
     svg.StyledPath(
-      svg_path.from_subpath(subpath),
+      svg_path.path_from_subpath(subpath),
       "fill: none; stroke: "
         <> color
         <> "; stroke-width: 0.18; stroke-linecap: round; stroke-linejoin: round",
@@ -812,7 +812,7 @@ fn gray_section_drawing(section: List(svg_path.Segment)) -> svg.ThingsToDraw {
     svg_path.subpath_with(section, policy: svg_path.Wiggle)
   [
     svg.StyledPath(
-      svg_path.from_subpath(subpath),
+      svg_path.path_from_subpath(subpath),
       "fill: none; stroke: #94a3b8; stroke-width: 0.075; stroke-linecap: round; stroke-linejoin: round",
     ),
   ]
@@ -1022,7 +1022,8 @@ fn render_panel(
 ) -> svg.ThingsToDraw {
   let x = 8.0 +. int.to_float(col) *. { panel_w +. gap }
   let y = 38.0 +. int.to_float(row) *. { panel_h +. gap }
-  let placed_source = place_path(svg_path.from_subpath(example.source), x, y)
+  let placed_source =
+    place_path(svg_path.path_from_subpath(example.source), x, y)
   let options = preview_options(join_case.join)
   let assert Ok(result) =
     offset.subpath_with(example.source, distance: example.distance, options:)
@@ -1073,7 +1074,7 @@ fn examples() -> List(Example) {
 }
 
 fn open_corner() -> svg_path.Subpath {
-  svg_path.assert_polyline([
+  svg_path.subpath_assert_polyline([
     svg_path.point(18.0, 82.0),
     svg_path.point(82.0, 82.0),
     svg_path.point(82.0, 28.0),
@@ -1081,7 +1082,7 @@ fn open_corner() -> svg_path.Subpath {
 }
 
 fn open_zigzag() -> svg_path.Subpath {
-  svg_path.assert_polyline([
+  svg_path.subpath_assert_polyline([
     svg_path.point(16.0, 80.0),
     svg_path.point(54.0, 38.0),
     svg_path.point(92.0, 80.0),
@@ -1090,7 +1091,7 @@ fn open_zigzag() -> svg_path.Subpath {
 }
 
 fn open_cubic_wave() -> svg_path.Subpath {
-  svg_path.assert_subpath([
+  svg_path.subpath_assert([
     svg_path.CubicBezier(
       start: svg_path.point(16.0, 68.0),
       control1: svg_path.point(38.0, 20.0),
@@ -1107,7 +1108,7 @@ fn open_cubic_wave() -> svg_path.Subpath {
 }
 
 fn concave_inset() -> svg_path.Subpath {
-  svg_path.assert_polygon([
+  svg_path.subpath_assert_polygon([
     svg_path.point(18.0, 18.0),
     svg_path.point(146.0, 18.0),
     svg_path.point(146.0, 100.0),
@@ -1120,7 +1121,7 @@ fn concave_inset() -> svg_path.Subpath {
 }
 
 fn smooth_figure_eight() -> svg_path.Subpath {
-  svg_path.assert_subpath([
+  svg_path.subpath_assert([
     svg_path.CubicBezier(
       start: svg_path.point(82.0, 58.0),
       control1: svg_path.point(40.0, 8.0),
@@ -1134,11 +1135,11 @@ fn smooth_figure_eight() -> svg_path.Subpath {
       end: svg_path.point(82.0, 58.0),
     ),
   ])
-  |> svg_path.assert_set_closed(closed: True)
+  |> svg_path.subpath_assert_set_closed(closed: True)
 }
 
 fn rounded_diamond() -> svg_path.Subpath {
-  svg_path.assert_subpath([
+  svg_path.subpath_assert([
     svg_path.QuadraticBezier(
       start: svg_path.point(82.0, 12.0),
       control: svg_path.point(112.0, 20.0),
@@ -1160,7 +1161,7 @@ fn rounded_diamond() -> svg_path.Subpath {
       end: svg_path.point(82.0, 12.0),
     ),
   ])
-  |> svg_path.assert_set_closed(closed: True)
+  |> svg_path.subpath_assert_set_closed(closed: True)
 }
 
 type DebugOffsetPiece {
@@ -1204,17 +1205,17 @@ fn debug_provisional_with(
     }
     _ -> {
       let pieces =
-        svg_path.segments(source)
+        svg_path.subpath_segments(source)
         |> list.map(fn(segment) {
           let assert Ok(offset_subpath) =
             offset.segment_with(segment, distance:, options:)
           DebugOffsetPiece(
             source: segment,
-            offset: svg_path.segments(offset_subpath),
+            offset: svg_path.subpath_segments(offset_subpath),
           )
         })
       case pieces {
-        [] -> Ok(svg_path.empty_subpath(at: svg_path.point(0.0, 0.0)))
+        [] -> Ok(svg_path.subpath_empty(at: svg_path.point(0.0, 0.0)))
         [first, ..rest] -> {
           let assert Ok(segments) =
             debug_miter_join_loop(
@@ -1227,7 +1228,7 @@ fn debug_provisional_with(
           let assert Ok(subpath) =
             svg_path.subpath_with(segments, policy: svg_path.Wiggle)
           let assert Ok(subpath) =
-            svg_path.set_closed_with(
+            svg_path.subpath_set_closed_with(
               subpath,
               closed: True,
               policy: svg_path.Wiggle,
@@ -1304,13 +1305,13 @@ fn self_intersection_sections(
   let assert Ok(split_points) = self_intersection_split_parameters(subpath)
   let sections =
     split_segments_at_subpath_parameters(
-      svg_path.segments(subpath),
+      svg_path.subpath_segments(subpath),
       split_points,
       index: 0,
       current: [],
       sections: [],
     )
-  case svg_path.is_closed(subpath) {
+  case svg_path.subpath_is_closed(subpath) {
     True -> Ok(merge_wrapping_sections(sections))
     False -> Ok(sections)
   }
@@ -1338,7 +1339,7 @@ fn self_intersection_split_parameters(
     |> list.filter(fn(parameter) {
       !is_open_subpath_boundary_parameter(subpath, parameter)
     })
-    |> list.sort(by: svg_path.compare_subpath_parameters)
+    |> list.sort(by: svg_path.subpath_parameters_compare)
     |> unique_subpath_parameters(0.000000001, [])
 
   Ok(parameters)
@@ -1348,10 +1349,10 @@ fn is_open_subpath_boundary_parameter(
   subpath: svg_path.Subpath,
   parameter: svg_path.SubpathParameter,
 ) -> Bool {
-  case svg_path.is_closed(subpath) {
+  case svg_path.subpath_is_closed(subpath) {
     True -> False
     False -> {
-      let length = list.length(svg_path.segments(subpath))
+      let length = list.length(svg_path.subpath_segments(subpath))
       let svg_path.SubpathParameter(segment_index:, t:) = parameter
       { segment_index == 0 && t <=. 0.000000001 }
       || { segment_index == length - 1 && t >=. 1.0 -. 0.000000001 }
@@ -1504,7 +1505,10 @@ fn split_piece(
         True -> split_piece(segment, [to, ..rest])
         False -> {
           let assert Ok(pieces) =
-            svg_path.segments_between_inside(segment, between: [from_t, to_t])
+            svg_path.segment_between_many_inside(segment, between: [
+              from_t,
+              to_t,
+            ])
           list.append(
             pieces
               |> list.index_map(fn(segment, index) {
@@ -1765,15 +1769,15 @@ fn place_path(path: svg_path.Path, x: Float, y: Float) -> svg_path.Path {
 
 fn colored_path_segments(path: svg_path.Path) -> svg.ThingsToDraw {
   path
-  |> svg_path.subpaths
+  |> svg_path.path_subpaths
   |> list.index_map(fn(subpath, subpath_index) {
-    svg_path.segments(subpath)
+    svg_path.subpath_segments(subpath)
     |> list.index_map(fn(segment, segment_index) {
       let color = segment_color(subpath_index, segment_index)
       let assert Ok(segment_subpath) =
         svg_path.subpath_with([segment], policy: svg_path.Wiggle)
       svg.StyledPath(
-        svg_path.from_subpath(segment_subpath),
+        svg_path.path_from_subpath(segment_subpath),
         "fill: none; stroke: "
           <> color
           <> "; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round",
@@ -1785,9 +1789,9 @@ fn colored_path_segments(path: svg_path.Path) -> svg.ThingsToDraw {
 
 fn colored_path_arrows(path: svg_path.Path) -> svg.ThingsToDraw {
   path
-  |> svg_path.subpaths
+  |> svg_path.path_subpaths
   |> list.index_map(fn(subpath, subpath_index) {
-    svg_path.segments(subpath)
+    svg_path.subpath_segments(subpath)
     |> list.index_map(fn(segment, segment_index) {
       let color = segment_color(subpath_index, segment_index)
       case segment_direction(segment) |> normalize {
@@ -1820,7 +1824,7 @@ fn arrow(
   let left = add(base, scale(perp, half_width))
   let right = add(base, scale(perp, 0.0 -. half_width))
   svg.StyledPath(
-    svg_path.Path([svg_path.assert_polygon([tip, left, right])]),
+    svg_path.Path([svg_path.subpath_assert_polygon([tip, left, right])]),
     "fill: " <> color <> "; stroke: none",
   )
 }

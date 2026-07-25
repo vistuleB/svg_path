@@ -4,7 +4,7 @@ import svg_path/svg
 pub fn document_renders_a_complete_svg_document_test() {
   let path =
     svg_path.Path([
-      svg_path.assert_subpath([
+      svg_path.subpath_assert([
         svg_path.Line(
           start: svg_path.point(1.0, 2.0),
           end: svg_path.point(11.0, 2.0),
@@ -41,7 +41,7 @@ pub fn paths_delegates_to_document_test() {
       min: svg_path.point(0.0, 0.0),
       max: svg_path.point(1.0, 1.0),
     )
-  let things = [svg.StyledPath(svg_path.empty_path(), "fill: none")]
+  let things = [svg.StyledPath(svg_path.path_empty(), "fill: none")]
 
   assert svg.paths(things, view_box: box) == svg.document(things, view_box: box)
 }
@@ -87,7 +87,7 @@ pub fn paths_escapes_path_style_and_text_values_test() {
   assert svg.paths(
       [
         svg.StyledPath(
-          svg_path.empty_path(),
+          svg_path.path_empty(),
           "stroke: \"red\"; marker: url(a&b<c>d)",
         ),
         svg.Rectangle(

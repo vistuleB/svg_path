@@ -321,7 +321,7 @@ fn print_support_comparison(
       "support comparison "
       <> format_float(angle)
       <> "deg: "
-      <> support_comparison(segment, svg_path.segments(hull), angle),
+      <> support_comparison(segment, svg_path.subpath_segments(hull), angle),
     )
   })
 }
@@ -442,7 +442,7 @@ fn drawing_svg(
   pieces: List(convex_hull.HullPiece),
 ) -> String {
   let assert Ok(box) = svg_path.segment_bounding_box(segment)
-  let original = svg_path.Path([svg_path.assert_subpath([segment])])
+  let original = svg_path.Path([svg_path.subpath_assert([segment])])
   let hull_path = svg_path.Path([hull])
   let assert Ok(start) = svg_path.segment_point(segment, at: 0.0)
   let assert Ok(end) = svg_path.segment_point(segment, at: 1.0)
@@ -482,7 +482,7 @@ fn hull_piece_path(
       let assert Ok(piece_segment) =
         svg_path.segment_between(segment, from: start_t, to: end_t)
 
-      svg_path.Path([svg_path.assert_subpath([piece_segment])])
+      svg_path.Path([svg_path.subpath_assert([piece_segment])])
     }
 
     convex_hull.HullLine(start_t, end_t) -> {
@@ -490,7 +490,7 @@ fn hull_piece_path(
       let assert Ok(end) = svg_path.segment_point(segment, at: end_t)
 
       svg_path.Path([
-        svg_path.assert_subpath([svg_path.Line(start: start, end: end)]),
+        svg_path.subpath_assert([svg_path.Line(start: start, end: end)]),
       ])
     }
   }
@@ -579,7 +579,9 @@ fn all_derivative_angles() -> String {
     let #(name, segment) = specimen
     case convex_hull.segment_hull(segment) {
       Ok(#(subpath, _)) ->
-        name <> "\n" <> segment_derivative_angles(svg_path.segments(subpath))
+        name
+        <> "\n"
+        <> segment_derivative_angles(svg_path.subpath_segments(subpath))
 
       Error(error) -> name <> "\nError " <> string.inspect(error)
     }
@@ -642,7 +644,9 @@ fn selected_segment() -> #(String, svg_path.Segment) {
 }
 
 fn print_subpath_derivative_angles(subpath: svg_path.Subpath) -> Nil {
-  io.println_error(segment_derivative_angles(svg_path.segments(subpath)))
+  io.println_error(
+    segment_derivative_angles(svg_path.subpath_segments(subpath)),
+  )
 }
 
 fn segment_derivative_angles(segments: List(svg_path.Segment)) -> String {
@@ -795,7 +799,7 @@ fn pad_box(
 }
 
 fn empty_subpath() -> svg_path.Subpath {
-  svg_path.assert_subpath([
+  svg_path.subpath_assert([
     svg_path.Line(
       start: svg_path.point(0.0, 0.0),
       end: svg_path.point(0.0, 0.0),

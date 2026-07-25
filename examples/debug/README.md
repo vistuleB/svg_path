@@ -57,7 +57,7 @@ whole-arc piece rather than on the original arc data. The observed scale was:
 The concrete support-mismatch arc witnesses were:
 
 ```gleam
-// rotated_large_arc_reverse is reverse_segment(rotated_large_arc(sweep: False)).
+// rotated_large_arc_reverse is segment_reverse(rotated_large_arc(sweep: False)).
 svg_path.Arc(
   start: svg_path.point(-70.0, 20.0),
   radius: svg_path.point(95.0, 20.0),

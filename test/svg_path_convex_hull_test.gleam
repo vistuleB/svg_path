@@ -13,8 +13,8 @@ pub fn segment_hull_returns_closed_subpath_for_line_test() {
     )
   let assert Ok(subpath) = convex_hull.segment_hull(segment)
 
-  assert svg_path.is_closed(subpath)
-  assert list.length(svg_path.segments(subpath)) == 2
+  assert svg_path.subpath_is_closed(subpath)
+  assert list.length(svg_path.subpath_segments(subpath)) == 2
   assert support_values_match(segment, subpath)
 }
 
@@ -27,8 +27,8 @@ pub fn segment_hull_returns_closed_hull_for_quadratic_test() {
     )
   let assert Ok(subpath) = convex_hull.segment_hull(segment)
 
-  assert svg_path.is_closed(subpath)
-  assert list.length(svg_path.segments(subpath)) == 2
+  assert svg_path.subpath_is_closed(subpath)
+  assert list.length(svg_path.subpath_segments(subpath)) == 2
   assert support_values_match(segment, subpath)
 }
 
@@ -46,20 +46,20 @@ pub fn subpath_hull_returns_closed_hull_for_l_shaped_polyline_test() {
   let assert Ok(subpath) = svg_path.subpath(segments)
   let assert Ok(hull) = convex_hull.subpath_hull(subpath)
 
-  assert svg_path.is_closed(hull)
-  assert list.length(svg_path.segments(hull)) >= 3
+  assert svg_path.subpath_is_closed(hull)
+  assert list.length(svg_path.subpath_segments(hull)) >= 3
   assert subpath_support_matches(segments, hull)
 }
 
 pub fn subpath_hull_treats_empty_subpath_as_single_point_test() {
   let point = svg_path.point(4.0, -3.0)
   let assert Ok(hull) =
-    convex_hull.subpath_hull(svg_path.empty_subpath(at: point))
+    convex_hull.subpath_hull(svg_path.subpath_empty(at: point))
 
-  assert svg_path.is_closed(hull)
-  assert svg_path.segments(hull)
-    == svg_path.segments(svg_path.assert_set_closed(
-      svg_path.assert_subpath([
+  assert svg_path.subpath_is_closed(hull)
+  assert svg_path.subpath_segments(hull)
+    == svg_path.subpath_segments(svg_path.subpath_assert_set_closed(
+      svg_path.subpath_assert([
         svg_path.Line(start: point, end: point),
         svg_path.Line(start: point, end: point),
       ]),
@@ -73,20 +73,20 @@ pub fn path_hull_includes_empty_subpath_start_points_test() {
   let far = svg_path.point(10.0, 0.0)
   let path =
     svg_path.Path([
-      svg_path.assert_subpath([svg_path.Line(start: a, end: b)]),
-      svg_path.empty_subpath(at: far),
+      svg_path.subpath_assert([svg_path.Line(start: a, end: b)]),
+      svg_path.subpath_empty(at: far),
     ])
   let assert Ok(hull) = convex_hull.path_hull(path)
 
-  assert svg_path.is_closed(hull)
+  assert svg_path.subpath_is_closed(hull)
   assert near_value(
-    support.segments_support_value(svg_path.segments(hull), 0.0),
+    support.segments_support_value(svg_path.subpath_segments(hull), 0.0),
     10.0,
   )
 }
 
 pub fn path_hull_rejects_empty_path_test() {
-  assert convex_hull.path_hull(svg_path.empty_path())
+  assert convex_hull.path_hull(svg_path.path_empty())
     == Error(convex_hull.PathError(svg_path.EmptyPath))
 }
 
@@ -98,7 +98,7 @@ fn support_values_match(
   |> list.all(fn(angle) {
     case
       convex_hull.internal_segment_support(segment, angle: angle),
-      support.segments_support_value(svg_path.segments(hull), angle)
+      support.segments_support_value(svg_path.subpath_segments(hull), angle)
     {
       Ok(#(_, _, original)), Ok(hull) ->
         support.values_near(original, hull, tolerance:)
@@ -115,7 +115,7 @@ fn subpath_support_matches(
   |> list.all(fn(angle) {
     case
       support.segments_support_value(original_segments, angle),
-      support.segments_support_value(svg_path.segments(hull), angle)
+      support.segments_support_value(svg_path.subpath_segments(hull), angle)
     {
       Ok(original), Ok(hull) -> support.values_near(original, hull, tolerance:)
       _, _ -> False

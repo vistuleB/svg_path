@@ -139,7 +139,7 @@ fn panel(
     ],
     list.append(result_things, [
       svg.StyledPath(
-        svg_path.from_subpath(source),
+        svg_path.path_from_subpath(source),
         "fill: none; stroke: #ef4444; stroke-width: 1.4; stroke-dasharray: 4 4; stroke-linecap: round",
       ),
       ..subpath_arrows(source, "#ef4444", 0.9)
@@ -153,7 +153,7 @@ fn path_arrows(
   arrow_scale: Float,
 ) -> svg.ThingsToDraw {
   path
-  |> svg_path.subpaths
+  |> svg_path.path_subpaths
   |> list.flat_map(subpath_arrows(_, color, arrow_scale))
 }
 
@@ -204,7 +204,7 @@ fn arrow_glyph(
   let left = add(base, scale(normal, half_width))
   let right = add(base, scale(normal, 0.0 -. half_width))
   svg.StyledPath(
-    svg_path.Path([svg_path.assert_polygon([tip, left, right])]),
+    svg_path.Path([svg_path.subpath_assert_polygon([tip, left, right])]),
     "fill: " <> color <> "; stroke: none",
   )
 }
@@ -222,14 +222,14 @@ fn rotate_counterclockwise(point: svg_path.Point) -> svg_path.Point {
 }
 
 fn open_line() -> svg_path.Subpath {
-  svg_path.assert_polyline([
+  svg_path.subpath_assert_polyline([
     svg_path.point(0.0, 0.0),
     svg_path.point(150.0, 0.0),
   ])
 }
 
 fn open_curve() -> svg_path.Subpath {
-  svg_path.assert_subpath([
+  svg_path.subpath_assert([
     svg_path.CubicBezier(
       start: svg_path.point(0.0, 28.0),
       control1: svg_path.point(38.0, -70.0),
@@ -240,7 +240,7 @@ fn open_curve() -> svg_path.Subpath {
 }
 
 fn figure_eight() -> svg_path.Subpath {
-  svg_path.assert_subpath([
+  svg_path.subpath_assert([
     svg_path.CubicBezier(
       start: svg_path.point(76.0, 0.0),
       control1: svg_path.point(-2.0, -62.0),
@@ -254,7 +254,7 @@ fn figure_eight() -> svg_path.Subpath {
       end: svg_path.point(76.0, 0.0),
     ),
   ])
-  |> svg_path.assert_set_closed(closed: True)
+  |> svg_path.subpath_assert_set_closed(closed: True)
 }
 
 @external(erlang, "file", "write_file")

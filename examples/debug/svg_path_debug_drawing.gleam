@@ -19,7 +19,7 @@ pub fn main() -> Nil {
 
 pub fn drawing_svg() -> String {
   let stem =
-    svg_path.assert_subpath([
+    svg_path.subpath_assert([
       svg_path.CubicBezier(
         start: svg_path.point(5.0, 70.0),
         control1: svg_path.point(30.0, 20.0),
@@ -29,7 +29,7 @@ pub fn drawing_svg() -> String {
     ])
 
   let leaf =
-    svg_path.assert_subpath([
+    svg_path.subpath_assert([
       svg_path.CubicBezier(
         start: svg_path.point(45.0, 45.0),
         control1: svg_path.point(55.0, 10.0),
@@ -43,10 +43,10 @@ pub fn drawing_svg() -> String {
         end: svg_path.point(45.0, 45.0),
       ),
     ])
-    |> svg_path.assert_set_closed(closed: True)
+    |> svg_path.subpath_assert_set_closed(closed: True)
 
   let vein =
-    svg_path.assert_subpath([
+    svg_path.subpath_assert([
       svg_path.QuadraticBezier(
         start: svg_path.point(50.0, 47.0),
         control: svg_path.point(72.0, 35.0),

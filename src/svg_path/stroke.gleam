@@ -138,7 +138,7 @@ pub fn path_with(
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(validate_options(options))
   use subpaths <- result.try(
-    stroke_subpaths(svg_path.subpaths(path), options, stroked: []),
+    stroke_subpaths(svg_path.path_subpaths(path), options, stroked: []),
   )
   Ok(svg_path.Path(subpaths:))
 }
@@ -213,7 +213,11 @@ pub fn path_dashes_with(
   dash_options dash_options: DashOptions,
 ) -> Result(svg_path.Path, Error) {
   use subpaths <- result.try(
-    path_dashes_loop(svg_path.subpaths(path), dash_options, accumulated: []),
+    path_dashes_loop(
+      svg_path.path_subpaths(path),
+      dash_options,
+      accumulated: [],
+    ),
   )
   Ok(svg_path.Path(subpaths:))
 }
@@ -441,7 +445,7 @@ fn dash_piece(
   case near_length(from, 0.0) && near_length(to, length) {
     True -> open_full_dash(subpath)
     False ->
-      case svg_path.is_closed(subpath) {
+      case svg_path.subpath_is_closed(subpath) {
         True ->
           svg_path.subpath_between_lengths_with(
             subpath,
@@ -478,8 +482,9 @@ fn continuous_dash(
 fn open_full_dash(
   subpath: svg_path.Subpath,
 ) -> Result(svg_path.Subpath, svg_path.Error) {
-  case svg_path.is_closed(subpath) {
-    True -> svg_path.open_at(subpath, at: svg_path.SubpathParameter(0, 0.0))
+  case svg_path.subpath_is_closed(subpath) {
+    True ->
+      svg_path.subpath_open_at(subpath, at: svg_path.SubpathParameter(0, 0.0))
     False -> Ok(subpath)
   }
 }
@@ -489,7 +494,7 @@ fn first_split_piece(
   at distance: Float,
   length_options length_options: svg_path.LengthOptions,
 ) -> Result(svg_path.Subpath, svg_path.Error) {
-  use pieces <- result.try(svg_path.subpaths_between_lengths_with(
+  use pieces <- result.try(svg_path.subpath_between_lengths_many_with(
     subpath,
     between: [distance],
     options: length_options,
@@ -511,7 +516,7 @@ fn last_split_piece(
   at distance: Float,
   length_options length_options: svg_path.LengthOptions,
 ) -> Result(svg_path.Subpath, svg_path.Error) {
-  use pieces <- result.try(svg_path.subpaths_between_lengths_with(
+  use pieces <- result.try(svg_path.subpath_between_lengths_many_with(
     subpath,
     between: [distance],
     options: length_options,
@@ -558,7 +563,10 @@ fn stroke_subpaths(
       stroke_subpaths(
         rest,
         options,
-        stroked: list.append(list.reverse(svg_path.subpaths(path)), stroked),
+        stroked: list.append(
+          list.reverse(svg_path.path_subpaths(path)),
+          stroked,
+        ),
       )
     }
   }

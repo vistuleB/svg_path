@@ -75,7 +75,7 @@ fn polygon_demo() -> Nil {
         "polygon support",
         left,
         right,
-        svg_path.segments(subpath),
+        svg_path.subpath_segments(subpath),
         tolerance: 0.000001,
       )
     }
@@ -130,7 +130,7 @@ fn segment_demo() -> Nil {
             "segment support",
             cubic_loop,
             arc_loop,
-            svg_path.segments(subpath),
+            svg_path.subpath_segments(subpath),
             tolerance: 0.02,
           )
         }
@@ -637,7 +637,7 @@ fn production_error_stats(
       name <> " production hull failed " <> string.inspect(error)
     }),
   )
-  error_stats(name, segment, svg_path.segments(hull), angles)
+  error_stats(name, segment, svg_path.subpath_segments(hull), angles)
 }
 
 fn split_error_stats(

@@ -24,9 +24,9 @@ pub fn arc_specimens() -> List(#(String, svg_path.Segment)) {
     #("generated_arc_3", generated_arc(3)),
     #("generated_arc_11", generated_arc(11)),
     #("generated_arc_22", generated_arc(22)),
-    #("generated_arc_3_reverse", svg_path.reverse_segment(generated_arc(3))),
-    #("generated_arc_11_reverse", svg_path.reverse_segment(generated_arc(11))),
-    #("generated_arc_22_reverse", svg_path.reverse_segment(generated_arc(22))),
+    #("generated_arc_3_reverse", svg_path.segment_reverse(generated_arc(3))),
+    #("generated_arc_11_reverse", svg_path.segment_reverse(generated_arc(11))),
+    #("generated_arc_22_reverse", svg_path.segment_reverse(generated_arc(22))),
   ]
 }
 

@@ -176,7 +176,7 @@ fn path_point_cloud_is_valid_with_repair_mode(
 ) -> Bool {
   let path =
     points
-    |> list.map(fn(point) { svg_path.empty_subpath(at: point) })
+    |> list.map(fn(point) { svg_path.subpath_empty(at: point) })
     |> svg_path.Path
 
   case convex_hull.internal_path_hull_with_repair_mode(path, repair_mode:) {
@@ -214,12 +214,12 @@ fn crescent_path(
   line_end line_end: svg_path.Point,
 ) -> svg_path.Path {
   let line =
-    svg_path.assert_subpath([
+    svg_path.subpath_assert([
       svg_path.Line(start: line_start, end: line_end),
     ])
   let point_subpaths =
     points
-    |> list.map(fn(point) { svg_path.empty_subpath(at: point) })
+    |> list.map(fn(point) { svg_path.subpath_empty(at: point) })
 
   svg_path.Path([line, ..point_subpaths])
 }
@@ -228,13 +228,13 @@ fn point_cloud_hull_is_valid(
   points: List(svg_path.Point),
   hull: svg_path.Subpath,
 ) -> Bool {
-  svg_path.is_closed(hull)
+  svg_path.subpath_is_closed(hull)
   && original_points_are_inside_hull(points, hull)
   && support.ten_degree_angles()
   |> list.all(fn(angle) {
     case
       support.point_cloud_support_value(points, angle),
-      support.segments_support_value(svg_path.segments(hull), angle)
+      support.segments_support_value(svg_path.subpath_segments(hull), angle)
     {
       Ok(original), Ok(hull) -> support.values_near(original, hull, tolerance:)
       _, _ -> False
@@ -249,7 +249,7 @@ fn original_points_are_inside_hull(
   points
   |> list.all(fn(point) {
     convex_hull.internal_point_chord_polygon_loop_separation(
-      svg_path.segments(hull),
+      svg_path.subpath_segments(hull),
       point:,
     )
     == None

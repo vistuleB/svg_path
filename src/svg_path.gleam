@@ -315,8 +315,8 @@ pub type Path {
 /// point. Empty subpaths may be open or closed.
 ///
 /// The constructor is opaque so that these invariants are maintained. Use
-/// `subpath`, `empty_subpath`, `append_segment`, or their `_with` variants to
-/// build values.
+/// `subpath`, `subpath_empty`, `subpath_append_segment`, or their `_with`
+/// variants to build values.
 pub opaque type Subpath {
   Subpath(start: Point, segments: List(Segment), closed: Bool)
 }
@@ -647,29 +647,29 @@ pub fn default_self_intersection_options() -> SelfIntersectionOptions {
 }
 
 /// Create an empty path.
-pub fn empty_path() -> Path {
+pub fn path_empty() -> Path {
   Path([])
 }
 
 /// Return the subpaths in a path.
-pub fn subpaths(path: Path) -> List(Subpath) {
+pub fn path_subpaths(path: Path) -> List(Subpath) {
   path.subpaths
 }
 
 /// Create a path containing a single subpath.
-pub fn from_subpath(subpath: Subpath) -> Path {
+pub fn path_from_subpath(subpath: Subpath) -> Path {
   Path([subpath])
 }
 
 /// Append a subpath to the end of a path.
-pub fn append_subpath(path: Path, subpath: Subpath) -> Path {
+pub fn path_append_subpath(path: Path, subpath: Subpath) -> Path {
   Path(subpaths: list.append(path.subpaths, [subpath]))
 }
 
 /// Combine paths by concatenating their subpaths.
-pub fn combine_paths(paths: List(Path)) -> Path {
+pub fn path_combine(paths: List(Path)) -> Path {
   paths
-  |> list.flat_map(subpaths)
+  |> list.flat_map(path_subpaths)
   |> Path
 }
 
@@ -695,7 +695,7 @@ pub fn path_filter_subpaths(
 /// Empty subpaths are ignored. If more than one non-empty subpath is present,
 /// this returns `MultipleNonemptySubpaths`. If a path has only empty subpaths,
 /// the first empty subpath is returned.
-pub fn as_subpath(path: Path) -> Result(Subpath, Error) {
+pub fn path_as_subpath(path: Path) -> Result(Subpath, Error) {
   case path.subpaths {
     [] -> Error(EmptySubpaths)
     subpaths -> {
@@ -711,13 +711,13 @@ pub fn as_subpath(path: Path) -> Result(Subpath, Error) {
 /// Create an empty open subpath at a start point.
 ///
 /// This represents a move-only subpath such as `M 0 0`.
-pub fn empty_subpath(at start: Point) -> Subpath {
+pub fn subpath_empty(at start: Point) -> Subpath {
   Subpath(start:, segments: [], closed: False)
 }
 
 /// Create an open subpath from a non-empty continuous list of segments.
 ///
-/// Returns `EmptySubpath` if the segment list is empty. Use `empty_subpath`
+/// Returns `EmptySubpath` if the segment list is empty. Use `subpath_empty`
 /// when you need to represent a move-only subpath.
 ///
 /// Returns `Discontinuous` if any segment starts somewhere other than the
@@ -740,7 +740,7 @@ pub fn subpath_with(
 /// Create an open subpath connecting the given points with line segments.
 ///
 /// The input must contain at least two points.
-pub fn polyline(points: List(Point)) -> Result(Subpath, Error) {
+pub fn subpath_polyline(points: List(Point)) -> Result(Subpath, Error) {
   case point_lines(points) {
     [] -> Error(EmptySubpath)
     segments -> subpath(segments)
@@ -748,10 +748,11 @@ pub fn polyline(points: List(Point)) -> Result(Subpath, Error) {
 }
 
 /// Create an open polyline subpath, panicking if the point list is invalid.
-pub fn assert_polyline(points: List(Point)) -> Subpath {
-  case polyline(points) {
+pub fn subpath_assert_polyline(points: List(Point)) -> Subpath {
+  case subpath_polyline(points) {
     Ok(subpath) -> subpath
-    Error(_) -> panic as "svg_path.assert_polyline received invalid points"
+    Error(_) ->
+      panic as "svg_path.subpath_assert_polyline received invalid points"
   }
 }
 
@@ -760,9 +761,9 @@ pub fn assert_polyline(points: List(Point)) -> Subpath {
 /// The input must contain at least two points. If the last point equals the
 /// first point, no extra zero-length closing line is added.
 ///
-/// This is equivalent to constructing a `polyline` from the same points and
-/// closing it with `set_closed_with(..., policy: Bridge)`.
-pub fn polygon(points: List(Point)) -> Result(Subpath, Error) {
+/// This is equivalent to constructing a `subpath_polyline` from the same points
+/// and closing it with `subpath_set_closed_with(..., policy: Bridge)`.
+pub fn subpath_polygon(points: List(Point)) -> Result(Subpath, Error) {
   case points {
     [] | [_] -> Error(EmptySubpath)
     [first, ..] -> {
@@ -770,17 +771,18 @@ pub fn polygon(points: List(Point)) -> Result(Subpath, Error) {
 
       case subpath(segments) {
         Error(error) -> Error(error)
-        Ok(subpath) -> set_closed(subpath, closed: True)
+        Ok(subpath) -> subpath_set_closed(subpath, closed: True)
       }
     }
   }
 }
 
 /// Create a closed polygon subpath, panicking if the point list is invalid.
-pub fn assert_polygon(points: List(Point)) -> Subpath {
-  case polygon(points) {
+pub fn subpath_assert_polygon(points: List(Point)) -> Subpath {
+  case subpath_polygon(points) {
     Ok(subpath) -> subpath
-    Error(_) -> panic as "svg_path.assert_polygon received invalid points"
+    Error(_) ->
+      panic as "svg_path.subpath_assert_polygon received invalid points"
   }
 }
 
@@ -790,12 +792,12 @@ pub fn assert_polygon(points: List(Point)) -> Subpath {
 /// `default_parametric_options().initial_piece_count` pieces. Each piece is
 /// fitted with a cubic, then recursively bisected in parameter space until the
 /// maximum sampled fitting error is within tolerance.
-pub fn parametric_subpath(
+pub fn subpath_parametric(
   from start: Float,
   to end: Float,
   point point_function: fn(Float) -> Point,
 ) -> Result(Subpath, Error) {
-  parametric_subpath_with(
+  subpath_parametric_with(
     from: start,
     to: end,
     point: point_function,
@@ -809,7 +811,7 @@ pub fn parametric_subpath(
 /// If `options.tangent` is `Some(tangent_function)`, each cubic is constrained
 /// to match the endpoint tangent directions returned by that function. If it is
 /// `None`, control points are fitted from samples while the endpoints are fixed.
-pub fn parametric_subpath_with(
+pub fn subpath_parametric_with(
   from start: Float,
   to end: Float,
   point point_function: fn(Float) -> Point,
@@ -835,23 +837,23 @@ pub fn parametric_subpath_with(
 ///
 /// This is useful for hand-authored paths where invalid continuity would be a
 /// programmer error. Use `subpath` when you want to handle construction errors.
-pub fn assert_subpath(segments: List(Segment)) -> Subpath {
-  assert_subpath_with(segments, policy: Strict)
+pub fn subpath_assert(segments: List(Segment)) -> Subpath {
+  subpath_assert_with(segments, policy: Strict)
 }
 
 /// Create an open subpath with an endpoint policy, panicking if construction fails.
-pub fn assert_subpath_with(
+pub fn subpath_assert_with(
   segments: List(Segment),
   policy endpoint_policy: EndpointPolicy,
 ) -> Subpath {
   case subpath_with(segments, policy: endpoint_policy) {
     Ok(subpath) -> subpath
-    Error(_) -> panic as "svg_path.assert_subpath received invalid segments"
+    Error(_) -> panic as "svg_path.subpath_assert received invalid segments"
   }
 }
 
 /// Return the segments in a subpath.
-pub fn segments(subpath: Subpath) -> List(Segment) {
+pub fn subpath_segments(subpath: Subpath) -> List(Segment) {
   subpath.segments
 }
 
@@ -859,7 +861,7 @@ pub fn segments(subpath: Subpath) -> List(Segment) {
 ///
 /// If cleanup would remove every segment, one zero-length line is preserved so
 /// a zero-length drawing subpath does not become a move-only subpath.
-pub fn clean_subpath(subpath: Subpath) -> Subpath {
+pub fn subpath_clean(subpath: Subpath) -> Subpath {
   let cleaned =
     subpath.segments
     |> list.filter(keeping: fn(segment) { !is_zero_length_line(segment) })
@@ -897,17 +899,17 @@ pub fn clean_subpath(subpath: Subpath) -> Subpath {
 /// closed state. If the splice result is nonempty, the subpath start is updated
 /// to the first resulting segment's start point. If the splice result is empty,
 /// the previous start point is preserved.
-pub fn splice(
+pub fn subpath_splice(
   subpath: Subpath,
   start start: Int,
   delete delete: Int,
   insert insert: List(Segment),
 ) -> Result(Subpath, Error) {
-  splice_with(subpath, start:, delete:, insert:, policy: Strict)
+  subpath_splice_with(subpath, start:, delete:, insert:, policy: Strict)
 }
 
 /// Replace a range of segments in a subpath using the given endpoint policy.
-pub fn splice_with(
+pub fn subpath_splice_with(
   subpath: Subpath,
   start start: Int,
   delete delete: Int,
@@ -932,24 +934,32 @@ pub fn splice_with(
 }
 
 /// Replace a range of segments, panicking if the splice is invalid.
-pub fn assert_splice(
+pub fn subpath_assert_splice(
   subpath: Subpath,
   start start: Int,
   delete delete: Int,
   insert insert: List(Segment),
 ) -> Subpath {
-  assert_splice_with(subpath, start:, delete:, insert:, policy: Strict)
+  subpath_assert_splice_with(subpath, start:, delete:, insert:, policy: Strict)
 }
 
 /// Replace a range of segments with an endpoint policy, panicking if invalid.
-pub fn assert_splice_with(
+pub fn subpath_assert_splice_with(
   subpath: Subpath,
   start start: Int,
   delete delete: Int,
   insert insert: List(Segment),
   policy endpoint_policy: EndpointPolicy,
 ) -> Subpath {
-  case splice_with(subpath, start:, delete:, insert:, policy: endpoint_policy) {
+  case
+    subpath_splice_with(
+      subpath,
+      start:,
+      delete:,
+      insert:,
+      policy: endpoint_policy,
+    )
+  {
     Ok(subpath) -> subpath
     Error(_) -> panic as "svg_path.assert_splice received an invalid splice"
   }
@@ -979,8 +989,8 @@ pub fn path_arcs_to_cubic_beziers(path: Path) -> Path {
 /// Reverse the traversal direction of every segment in a subpath.
 ///
 /// The subpath's closed state is preserved.
-pub fn reverse_subpath(subpath: Subpath) -> Subpath {
-  let segments = subpath.segments |> list.reverse |> list.map(reverse_segment)
+pub fn subpath_reverse(subpath: Subpath) -> Subpath {
+  let segments = subpath.segments |> list.reverse |> list.map(segment_reverse)
   subpath_from_valid_segments(
     segments,
     fallback_start: subpath.start,
@@ -991,8 +1001,8 @@ pub fn reverse_subpath(subpath: Subpath) -> Subpath {
 /// Reverse the traversal direction of a path.
 ///
 /// This reverses each subpath and reverses the path's subpath order.
-pub fn reverse_path(path: Path) -> Path {
-  Path(subpaths: path.subpaths |> list.reverse |> list.map(reverse_subpath))
+pub fn path_reverse(path: Path) -> Path {
+  Path(subpaths: path.subpaths |> list.reverse |> list.map(subpath_reverse))
 }
 
 /// Map the defining points of every segment in a subpath.
@@ -1001,7 +1011,7 @@ pub fn reverse_path(path: Path) -> Path {
 /// endpoints and control points, not the exact image of every point on each
 /// rendered curve. If any segment is an arc, this returns
 /// `CannotMapArcNonlinearly`.
-pub fn map_subpath_points(
+pub fn subpath_map_points(
   subpath: Subpath,
   with f: fn(Point) -> Point,
 ) -> Result(Subpath, Error) {
@@ -1015,9 +1025,9 @@ pub fn map_subpath_points(
 /// Map the defining points of every segment in a subpath with a fallible
 /// function.
 ///
-/// This has the same geometry semantics as `map_subpath_points`, but the
+/// This has the same geometry semantics as `subpath_map_points`, but the
 /// mapping function may reject individual points.
-pub fn try_map_subpath_points(
+pub fn subpath_try_map_points(
   subpath: Subpath,
   with f: fn(Point) -> Result(Point, error),
 ) -> Result(Subpath, PointMapError(error)) {
@@ -1036,7 +1046,7 @@ pub fn try_map_subpath_points(
 /// endpoints and control points, not the exact image of every point on each
 /// rendered curve. If any segment is an arc, this returns
 /// `CannotMapArcNonlinearly`.
-pub fn map_path_points(
+pub fn path_map_points(
   path: Path,
   with f: fn(Point) -> Point,
 ) -> Result(Path, Error) {
@@ -1048,9 +1058,9 @@ pub fn map_path_points(
 
 /// Map the defining points of every segment in a path with a fallible function.
 ///
-/// This has the same geometry semantics as `map_path_points`, but the mapping
+/// This has the same geometry semantics as `path_map_points`, but the mapping
 /// function may reject individual points.
-pub fn try_map_path_points(
+pub fn path_try_map_points(
   path: Path,
   with f: fn(Point) -> Result(Point, error),
 ) -> Result(Path, PointMapError(error)) {
@@ -1180,7 +1190,7 @@ pub fn path_to_lines_with(
 }
 
 /// Check whether a subpath is closed.
-pub fn is_closed(subpath: Subpath) -> Bool {
+pub fn subpath_is_closed(subpath: Subpath) -> Bool {
   subpath.closed
 }
 
@@ -1189,11 +1199,11 @@ pub fn is_closed(subpath: Subpath) -> Bool {
 /// Setting `closed` to `False` always succeeds. Setting it to `True` requires a
 /// non-empty subpath's end point to exactly match its start point. Empty
 /// subpaths may be closed.
-pub fn set_closed(
+pub fn subpath_set_closed(
   subpath: Subpath,
   closed closed: Bool,
 ) -> Result(Subpath, Error) {
-  set_closed_with(subpath, closed:, policy: Strict)
+  subpath_set_closed_with(subpath, closed:, policy: Strict)
 }
 
 /// Set a subpath's semantic closed state with an endpoint policy.
@@ -1201,7 +1211,7 @@ pub fn set_closed(
 /// Setting `closed` to `False` always succeeds. Setting it to `True` uses the
 /// given endpoint policy to reconcile a non-empty subpath's end point with its
 /// start point. Empty subpaths may be closed.
-pub fn set_closed_with(
+pub fn subpath_set_closed_with(
   subpath: Subpath,
   closed closed: Bool,
   policy endpoint_policy: EndpointPolicy,
@@ -1213,20 +1223,23 @@ pub fn set_closed_with(
 }
 
 /// Set a subpath's semantic closed state, panicking if invalid.
-pub fn assert_set_closed(subpath: Subpath, closed closed: Bool) -> Subpath {
-  assert_set_closed_with(subpath, closed:, policy: Strict)
+pub fn subpath_assert_set_closed(
+  subpath: Subpath,
+  closed closed: Bool,
+) -> Subpath {
+  subpath_assert_set_closed_with(subpath, closed:, policy: Strict)
 }
 
 /// Set a subpath's semantic closed state with an endpoint policy, panicking if invalid.
-pub fn assert_set_closed_with(
+pub fn subpath_assert_set_closed_with(
   subpath: Subpath,
   closed closed: Bool,
   policy endpoint_policy: EndpointPolicy,
 ) -> Subpath {
-  case set_closed_with(subpath, closed:, policy: endpoint_policy) {
+  case subpath_set_closed_with(subpath, closed:, policy: endpoint_policy) {
     Ok(subpath) -> subpath
     Error(_) ->
-      panic as "svg_path.assert_set_closed received an invalid subpath"
+      panic as "svg_path.subpath_assert_set_closed received an invalid subpath"
   }
 }
 
@@ -1235,7 +1248,7 @@ pub fn assert_set_closed_with(
 /// The returned subpath is open and traverses the whole loop from the split
 /// point back to itself. The parameter must address a segment in the closed
 /// subpath, with `t` inside `0.0..1.0`.
-pub fn open_at(
+pub fn subpath_open_at(
   subpath: Subpath,
   at parameter: SubpathParameter,
 ) -> Result(Subpath, Error) {
@@ -1243,7 +1256,7 @@ pub fn open_at(
     False -> Error(NotClosed)
     True -> {
       use subpaths <- result.try(
-        subpaths_between(subpath, between: [parameter]),
+        subpath_between_many(subpath, between: [parameter]),
       )
       case subpaths {
         [opened] -> Ok(opened)
@@ -1254,7 +1267,7 @@ pub fn open_at(
 }
 
 /// Compare two subpath parameters by segment index and then local `t`.
-pub fn compare_subpath_parameters(
+pub fn subpath_parameters_compare(
   a: SubpathParameter,
   b: SubpathParameter,
 ) -> order.Order {
@@ -1268,7 +1281,7 @@ pub fn compare_subpath_parameters(
 }
 
 /// Compare two path parameters by subpath index, then subpath parameter.
-pub fn compare_path_parameters(
+pub fn path_parameters_compare(
   a: PathParameter,
   b: PathParameter,
 ) -> order.Order {
@@ -1276,7 +1289,7 @@ pub fn compare_path_parameters(
   let PathParameter(subpath_index: b_index, at: b_at) = b
 
   case int.compare(a_index, b_index) {
-    order.Eq -> compare_subpath_parameters(a_at, b_at)
+    order.Eq -> subpath_parameters_compare(a_at, b_at)
     order -> order
   }
 }
@@ -1286,7 +1299,7 @@ pub fn compare_path_parameters(
 /// `segment_index` addresses the reversed segment list. `t` is also measured in
 /// the reversed segment's direction, then converted back into the original
 /// subpath's coordinates.
-pub fn from_end_parameter(
+pub fn subpath_parameter_from_end(
   subpath: Subpath,
   segment_index segment_index: Int,
   t t: Float,
@@ -1304,7 +1317,7 @@ pub fn from_end_parameter(
 /// Internal segment ends canonicalize to the next segment's `t = 0.0`. The end
 /// of a closed subpath's last segment canonicalizes to `SubpathParameter(0,
 /// 0.0)`. The end of an open subpath's last segment remains at `t = 1.0`.
-pub fn canonicalize_subpath_parameter(
+pub fn subpath_parameter_canonicalize(
   subpath: Subpath,
   parameter parameter: SubpathParameter,
   tolerance tolerance: Float,
@@ -1355,7 +1368,7 @@ pub fn subpath_derivative(
 /// The split point must be inside the subpath: it cannot be the first point,
 /// the last point, outside the segment list, or outside the addressed segment's
 /// `0.0..1.0` parameter range. Closed and empty subpaths are rejected.
-pub fn split_subpath(
+pub fn subpath_split(
   subpath: Subpath,
   at at: SubpathParameter,
 ) -> Result(#(Subpath, Subpath), Error) {
@@ -1415,7 +1428,7 @@ pub fn subpath_between(
 /// closed subpaths, an empty split list returns an empty list, and a single
 /// split point returns one open subpath traversing the whole loop from that
 /// point back to itself.
-pub fn subpaths_between(
+pub fn subpath_between_many(
   subpath: Subpath,
   between points: List(SubpathParameter),
 ) -> Result(List(Subpath), Error) {
@@ -1449,12 +1462,12 @@ pub fn subpaths_between(
 }
 
 /// Return the start point of a subpath.
-pub fn start(subpath: Subpath) -> Result(Point, Error) {
+pub fn subpath_start(subpath: Subpath) -> Result(Point, Error) {
   Ok(subpath.start)
 }
 
 /// Return the end point of a subpath.
-pub fn end(subpath: Subpath) -> Result(Point, Error) {
+pub fn subpath_end(subpath: Subpath) -> Result(Point, Error) {
   case list.last(subpath.segments) {
     Ok(last) -> Ok(segment_end(last))
     Error(_) -> Ok(subpath.start)
@@ -1480,15 +1493,15 @@ pub fn path_end(path: Path) -> Result(Point, Error) {
 /// Append a segment to an open subpath.
 ///
 /// The new segment must start exactly at the current end point.
-pub fn append_segment(
+pub fn subpath_append_segment(
   subpath: Subpath,
   segment: Segment,
 ) -> Result(Subpath, Error) {
-  append_segment_with(subpath, segment, policy: Strict)
+  subpath_append_segment_with(subpath, segment, policy: Strict)
 }
 
 /// Append a segment to an open subpath using the given endpoint policy.
-pub fn append_segment_with(
+pub fn subpath_append_segment_with(
   subpath: Subpath,
   segment: Segment,
   policy endpoint_policy: EndpointPolicy,
@@ -1503,20 +1516,23 @@ pub fn append_segment_with(
 }
 
 /// Append a segment to an open subpath, panicking if invalid.
-pub fn assert_append_segment(subpath: Subpath, segment: Segment) -> Subpath {
-  assert_append_segment_with(subpath, segment, policy: Strict)
+pub fn subpath_assert_append_segment(
+  subpath: Subpath,
+  segment: Segment,
+) -> Subpath {
+  subpath_assert_append_segment_with(subpath, segment, policy: Strict)
 }
 
 /// Append a segment with an endpoint policy, panicking if invalid.
-pub fn assert_append_segment_with(
+pub fn subpath_assert_append_segment_with(
   subpath: Subpath,
   segment: Segment,
   policy endpoint_policy: EndpointPolicy,
 ) -> Subpath {
-  case append_segment_with(subpath, segment, policy: endpoint_policy) {
+  case subpath_append_segment_with(subpath, segment, policy: endpoint_policy) {
     Ok(subpath) -> subpath
     Error(_) ->
-      panic as "svg_path.assert_append_segment received an invalid segment"
+      panic as "svg_path.subpath_assert_append_segment received an invalid segment"
   }
 }
 
@@ -1525,12 +1541,12 @@ pub fn assert_append_segment_with(
 /// Each subpath's end point must exactly match the next subpath's start point.
 /// Empty open subpaths can act as identity values when their start points line
 /// up with their neighbors.
-pub fn join(subpaths: List(Subpath)) -> Result(Subpath, Error) {
-  join_with(subpaths, policy: Strict)
+pub fn subpath_join(subpaths: List(Subpath)) -> Result(Subpath, Error) {
+  subpath_join_with(subpaths, policy: Strict)
 }
 
 /// Join open subpaths using the given endpoint policy.
-pub fn join_with(
+pub fn subpath_join_with(
   subpaths: List(Subpath),
   policy endpoint_policy: EndpointPolicy,
 ) -> Result(Subpath, Error) {
@@ -1541,18 +1557,19 @@ pub fn join_with(
 }
 
 /// Join open subpaths, panicking if invalid.
-pub fn assert_join(subpaths: List(Subpath)) -> Subpath {
-  assert_join_with(subpaths, policy: Strict)
+pub fn subpath_assert_join(subpaths: List(Subpath)) -> Subpath {
+  subpath_assert_join_with(subpaths, policy: Strict)
 }
 
 /// Join open subpaths with an endpoint policy, panicking if invalid.
-pub fn assert_join_with(
+pub fn subpath_assert_join_with(
   subpaths: List(Subpath),
   policy endpoint_policy: EndpointPolicy,
 ) -> Subpath {
-  case join_with(subpaths, policy: endpoint_policy) {
+  case subpath_join_with(subpaths, policy: endpoint_policy) {
     Ok(subpath) -> subpath
-    Error(_) -> panic as "svg_path.assert_join received invalid subpaths"
+    Error(_) ->
+      panic as "svg_path.subpath_assert_join received invalid subpaths"
   }
 }
 
@@ -1577,7 +1594,7 @@ pub fn segment_end(segment: Segment) -> Point {
 }
 
 /// Reverse the traversal direction of a segment.
-pub fn reverse_segment(segment: Segment) -> Segment {
+pub fn segment_reverse(segment: Segment) -> Segment {
   case segment {
     Line(start:, end:) -> Line(start: end, end: start)
     QuadraticBezier(start:, control:, end:) -> {
@@ -1919,11 +1936,11 @@ pub fn segment_between_lengths_with(
 /// Distances are measured in path coordinate units from the segment start and
 /// must be inside `0.0..length`, inclusive. Empty and singleton lists return an
 /// empty list.
-pub fn segments_between_lengths(
+pub fn segment_between_lengths_many(
   segment: Segment,
   between distances: List(Float),
 ) -> Result(List(Segment), Error) {
-  segments_between_lengths_with(
+  segment_between_lengths_many_with(
     segment,
     between: distances,
     options: default_length_options(),
@@ -1932,7 +1949,7 @@ pub fn segments_between_lengths(
 
 /// Return segment portions between adjacent traveled distances using explicit
 /// length options.
-pub fn segments_between_lengths_with(
+pub fn segment_between_lengths_many_with(
   segment: Segment,
   between distances: List(Float),
   options options: LengthOptions,
@@ -1941,7 +1958,7 @@ pub fn segments_between_lengths_with(
   use points <- result.try(
     segment_parameters_at_known_lengths(segment, distances, length, options, []),
   )
-  segments_between(segment, between: points)
+  segment_between_many(segment, between: points)
 }
 
 /// Subdivide a segment into pieces of at most `max_length`.
@@ -1973,7 +1990,7 @@ pub fn segment_subdivide_to_max_length_with(
     False -> {
       let piece_count = float.ceiling(length /. max_length) |> float.truncate
       let step = length /. int.to_float(piece_count)
-      segments_between_lengths_with(
+      segment_between_lengths_many_with(
         segment,
         between: subdivision_distances(length, piece_count, step),
         options:,
@@ -2178,12 +2195,12 @@ pub fn subpath_between_lengths_with(
 ///
 /// Distances are measured in path coordinate units from the subpath start and
 /// must be inside `0.0..length`, inclusive. The resulting parameters follow
-/// the same split-point rules as `subpaths_between`.
-pub fn subpaths_between_lengths(
+/// the same split-point rules as `subpath_between_many`.
+pub fn subpath_between_lengths_many(
   subpath: Subpath,
   between distances: List(Float),
 ) -> Result(List(Subpath), Error) {
-  subpaths_between_lengths_with(
+  subpath_between_lengths_many_with(
     subpath,
     between: distances,
     options: default_length_options(),
@@ -2192,7 +2209,7 @@ pub fn subpaths_between_lengths(
 
 /// Split a subpath at multiple traveled distances using explicit length
 /// options.
-pub fn subpaths_between_lengths_with(
+pub fn subpath_between_lengths_many_with(
   subpath: Subpath,
   between distances: List(Float),
   options options: LengthOptions,
@@ -2201,7 +2218,7 @@ pub fn subpaths_between_lengths_with(
   use points <- result.try(
     subpath_parameters_at_known_lengths(subpath, distances, length, options, []),
   )
-  subpaths_between(subpath, between: points)
+  subpath_between_many(subpath, between: points)
 }
 
 /// Return the approximate length of a path.
@@ -2777,7 +2794,7 @@ pub fn path_bounding_box(path: Path) -> Result(BoundingBox, Error) {
 /// exact image of every point on the rendered curve. Arc segments return
 /// `CannotMapArcNonlinearly` because an arbitrary nonlinear mapping does not
 /// generally preserve SVG arc parameters.
-pub fn map_segment_points(
+pub fn segment_map_points(
   segment: Segment,
   with f: fn(Point) -> Point,
 ) -> Result(Segment, Error) {
@@ -2798,9 +2815,9 @@ pub fn map_segment_points(
 
 /// Map the defining points of a segment with a fallible function.
 ///
-/// This has the same geometry semantics as `map_segment_points`, but the
+/// This has the same geometry semantics as `segment_map_points`, but the
 /// mapping function may reject individual points.
-pub fn try_map_segment_points(
+pub fn segment_try_map_points(
   segment: Segment,
   with f: fn(Point) -> Result(Point, error),
 ) -> Result(Segment, PointMapError(error)) {
@@ -2820,7 +2837,7 @@ pub fn try_map_segment_points(
 ///
 /// `t` is not clamped. Values outside `0.0..1.0` extrapolate along the same
 /// segment.
-pub fn split_segment(
+pub fn segment_split(
   segment: Segment,
   at t: Float,
 ) -> Result(#(Segment, Segment), Error) {
@@ -2835,7 +2852,7 @@ pub fn split_segment(
 ///
 /// Values exactly at `0.0` or `1.0` are accepted and produce one zero-length
 /// segment.
-pub fn split_segment_inside(
+pub fn segment_split_inside(
   segment: Segment,
   at t: Float,
 ) -> Result(#(Segment, Segment), Error) {
@@ -2878,7 +2895,7 @@ pub fn segment_between(
         True -> {
           case segment_between(segment, from: to, to: from) {
             Error(error) -> Error(error)
-            Ok(segment) -> Ok(reverse_segment(segment))
+            Ok(segment) -> Ok(segment_reverse(segment))
           }
         }
         False -> forward_segment_between(segment, from: from, to: to)
@@ -2906,7 +2923,7 @@ pub fn segment_between_inside(
 ///
 /// Parameters are not clamped. Values outside `0.0..1.0` extrapolate along the
 /// same segment. Empty and singleton lists return an empty list.
-pub fn segments_between(
+pub fn segment_between_many(
   segment: Segment,
   between points: List(Float),
 ) -> Result(List(Segment), Error) {
@@ -2917,13 +2934,13 @@ pub fn segments_between(
 ///
 /// All parameters must be inside `0.0..1.0`, inclusive. Empty and singleton
 /// lists return an empty list.
-pub fn segments_between_inside(
+pub fn segment_between_many_inside(
   segment: Segment,
   between points: List(Float),
 ) -> Result(List(Segment), Error) {
   case all_inside(points) {
     False -> Error(SplitOutsideSegment)
-    True -> segments_between(segment, between: points)
+    True -> segment_between_many(segment, between: points)
   }
 }
 
@@ -2962,20 +2979,20 @@ fn forward_segment_between(
   case from == 1.0 {
     True -> {
       case
-        reverse_segment(segment)
+        segment_reverse(segment)
         |> forward_segment_between(from: 1.0 -. to, to: 0.0)
       {
         Error(error) -> Error(error)
-        Ok(segment) -> Ok(reverse_segment(segment))
+        Ok(segment) -> Ok(segment_reverse(segment))
       }
     }
     False -> {
       let local_to = { to -. from } /. { 1.0 -. from }
 
-      case split_segment(segment, at: from) {
+      case segment_split(segment, at: from) {
         Error(error) -> Error(error)
         Ok(#(_, after_from)) -> {
-          case split_segment(after_from, at: local_to) {
+          case segment_split(after_from, at: local_to) {
             Error(error) -> Error(error)
             Ok(#(between, _)) -> {
               case segment_point(segment, at: from) {
@@ -5329,7 +5346,7 @@ fn ordered_subpath_parameter_pair(
   first: SubpathParameter,
   second: SubpathParameter,
 ) -> #(SubpathParameter, SubpathParameter) {
-  case compare_subpath_parameters(first, second) {
+  case subpath_parameters_compare(first, second) {
     order.Gt -> #(second, first)
     order.Lt | order.Eq -> #(first, second)
   }
@@ -5345,8 +5362,8 @@ fn sort_subpath_self_intersections(
     let #(a_first, a_second) = a_parameters
     let #(b_first, b_second) = b_parameters
 
-    case compare_subpath_parameters(a_first, b_first) {
-      order.Eq -> compare_subpath_parameters(a_second, b_second)
+    case subpath_parameters_compare(a_first, b_first) {
+      order.Eq -> subpath_parameters_compare(a_second, b_second)
       order -> order
     }
   })
@@ -5581,7 +5598,7 @@ fn compare_subpath_intersections(
   b: SubpathIntersection,
 ) -> order.Order {
   case a.left_parameters, b.left_parameters {
-    [a_first, ..], [b_first, ..] -> compare_subpath_parameters(a_first, b_first)
+    [a_first, ..], [b_first, ..] -> subpath_parameters_compare(a_first, b_first)
     _, _ -> order.Eq
   }
 }
@@ -5593,7 +5610,7 @@ fn sort_unique_subpath_parameters(
 ) -> List(SubpathParameter) {
   parameters
   |> list.map(canonicalize_subpath_parameter_unchecked(_, subpath, tolerance))
-  |> list.sort(by: compare_subpath_parameters)
+  |> list.sort(by: subpath_parameters_compare)
   |> dedupe_sorted_subpath_parameters(subpath, tolerance, accumulated: [])
   |> drop_closed_wrap_duplicate(subpath, tolerance)
 }
@@ -5910,7 +5927,7 @@ fn compare_path_intersections(
   b: PathIntersection,
 ) -> order.Order {
   case a.left_parameters, b.left_parameters {
-    [a_first, ..], [b_first, ..] -> compare_path_parameters(a_first, b_first)
+    [a_first, ..], [b_first, ..] -> path_parameters_compare(a_first, b_first)
     _, _ -> order.Eq
   }
 }
@@ -5919,7 +5936,7 @@ fn sort_unique_path_parameters(
   parameters: List(PathParameter),
 ) -> List(PathParameter) {
   parameters
-  |> list.sort(by: compare_path_parameters)
+  |> list.sort(by: path_parameters_compare)
   |> dedupe_sorted_path_parameters(accumulated: [])
 }
 
@@ -5932,7 +5949,7 @@ fn dedupe_sorted_path_parameters(
     [first, ..rest], [] ->
       dedupe_sorted_path_parameters(rest, accumulated: [first])
     [first, ..rest], [previous, ..] -> {
-      case compare_path_parameters(first, previous) {
+      case path_parameters_compare(first, previous) {
         order.Eq -> dedupe_sorted_path_parameters(rest, accumulated:)
         _ ->
           dedupe_sorted_path_parameters(rest, accumulated: [
@@ -6303,7 +6320,7 @@ fn collect_curve_curve_intersections(
 fn split_intersection_piece(
   piece: IntersectionPiece,
 ) -> #(IntersectionPiece, IntersectionPiece) {
-  let assert Ok(#(left, right)) = split_segment(piece.segment, at: 0.5)
+  let assert Ok(#(left, right)) = segment_split(piece.segment, at: 0.5)
   let middle = { piece.from +. piece.to } /. 2.0
 
   #(
@@ -6812,14 +6829,14 @@ fn splice_segments(
 fn first_subpath_start(subpaths: List(Subpath)) -> Result(Point, Error) {
   case subpaths {
     [] -> Error(EmptySubpaths)
-    [subpath, ..] -> start(subpath)
+    [subpath, ..] -> subpath_start(subpath)
   }
 }
 
 fn first_subpath_end(subpaths: List(Subpath)) -> Result(Point, Error) {
   case subpaths {
     [] -> Error(EmptySubpaths)
-    [subpath, ..] -> end(subpath)
+    [subpath, ..] -> subpath_end(subpath)
   }
 }
 
@@ -6831,7 +6848,7 @@ fn join_open_subpaths(
     [] -> Error(EmptySubpath)
     [first, ..rest] -> {
       let start = first.start
-      let segments = list.flat_map([first, ..rest], segments)
+      let segments = list.flat_map([first, ..rest], subpath_segments)
       open_subpath_with_start(segments, start, policy)
     }
   }
@@ -6845,7 +6862,7 @@ fn map_subpaths_points(
   case subpaths {
     [] -> Ok(list.reverse(mapped))
     [first, ..rest] -> {
-      case map_subpath_points(first, with: f) {
+      case subpath_map_points(first, with: f) {
         Error(error) -> Error(error)
         Ok(subpath) -> map_subpaths_points(rest, f, [subpath, ..mapped])
       }
@@ -6861,7 +6878,7 @@ fn try_map_subpaths_points(
   case subpaths {
     [] -> Ok(list.reverse(mapped))
     [first, ..rest] -> {
-      case try_map_subpath_points(first, with: f) {
+      case subpath_try_map_points(first, with: f) {
         Error(error) -> Error(error)
         Ok(subpath) -> try_map_subpaths_points(rest, f, [subpath, ..mapped])
       }
@@ -6895,7 +6912,7 @@ fn map_segments_points(
   case segments {
     [] -> Ok(list.reverse(mapped))
     [first, ..rest] -> {
-      case map_segment_points(first, with: f) {
+      case segment_map_points(first, with: f) {
         Error(error) -> Error(error)
         Ok(segment) -> map_segments_points(rest, f, [segment, ..mapped])
       }
@@ -6911,7 +6928,7 @@ fn try_map_segments_points(
   case segments {
     [] -> Ok(list.reverse(mapped))
     [first, ..rest] -> {
-      case try_map_segment_points(first, with: f) {
+      case segment_try_map_points(first, with: f) {
         Error(error) -> Error(error)
         Ok(segment) -> try_map_segments_points(rest, f, [segment, ..mapped])
       }
@@ -7850,7 +7867,7 @@ fn bezier_segment_to_lines(
       case depth >= options.max_depth {
         True -> Error(LinearizeMaxDepthReached(error:))
         False -> {
-          use split <- result.try(split_segment(segment, at: 0.5))
+          use split <- result.try(segment_split(segment, at: 0.5))
           let #(left, right) = split
           use left <- result.try(bezier_segment_to_lines(
             left,
@@ -8401,10 +8418,10 @@ fn validate_custom_closed_segments(
 }
 
 fn start_and_end(subpath: Subpath) -> Result(#(Point, Point), Error) {
-  case start(subpath) {
+  case subpath_start(subpath) {
     Error(error) -> Error(error)
     Ok(first) -> {
-      case end(subpath) {
+      case subpath_end(subpath) {
         Error(error) -> Error(error)
         Ok(last) -> Ok(#(first, last))
       }

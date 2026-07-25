@@ -33,7 +33,7 @@ fn semantic_mismatch() -> Bool {
 
 fn transformed_subpath() -> Bool {
   let source =
-    svg_path.assert_subpath([
+    svg_path.subpath_assert([
       svg_path.Line(
         start: svg_path.point(0.0, 0.0),
         end: svg_path.point(10.0, 0.0),
@@ -87,7 +87,7 @@ fn result_try_set_closed(
   result: Result(svg_path.Subpath, svg_path.Error),
 ) -> Result(svg_path.Subpath, svg_path.Error) {
   case result {
-    Ok(subpath) -> svg_path.set_closed(subpath, closed: True)
+    Ok(subpath) -> svg_path.subpath_set_closed(subpath, closed: True)
     Error(error) -> Error(error)
   }
 }

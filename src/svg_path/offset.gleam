@@ -223,7 +223,7 @@ pub fn subpath_offset_map_with(
 ) -> Result(fn(svg_path.Point) -> Result(svg_path.Point, Error), Error) {
   use spans <- result.try(
     length_spans(
-      svg_path.segments(subpath),
+      svg_path.subpath_segments(subpath),
       options:,
       start_distance: 0.0,
       spans: [],
@@ -234,7 +234,7 @@ pub fn subpath_offset_map_with(
   case total_length <=. 0.0 {
     True -> Error(DegenerateTangent(0.0))
     False -> {
-      let closed = svg_path.is_closed(subpath)
+      let closed = svg_path.subpath_is_closed(subpath)
       Ok(fn(point) {
         offset_map_point(spans, total_length:, closed:, options:, local: point)
       })
@@ -422,10 +422,10 @@ pub fn subpath_stroke_with(
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(validate_stroke_width(width))
   let radius = width /. 2.0
-  case svg_path.segments(subpath) {
-    [] -> Ok(svg_path.empty_path())
+  case svg_path.subpath_segments(subpath) {
+    [] -> Ok(svg_path.path_empty())
     _ ->
-      case svg_path.is_closed(subpath) {
+      case svg_path.subpath_is_closed(subpath) {
         True -> {
           use stroke <- result.try(closed_stroke_path(
             subpath,
@@ -493,7 +493,7 @@ pub fn path_with(
   use _ <- result.try(validate_options(options))
   use subpaths <- result.try(
     parametric_offset_path_subpaths(
-      svg_path.subpaths(path),
+      svg_path.path_subpaths(path),
       distance,
       options,
       converted: [],
@@ -523,7 +523,7 @@ pub fn path_band_with(
   use _ <- result.try(validate_options(options))
   use subpaths <- result.try(
     parametric_band_path_subpaths(
-      svg_path.subpaths(path),
+      svg_path.path_subpaths(path),
       distance_a,
       distance_b,
       options,
@@ -559,7 +559,7 @@ pub fn path_band_untrimmed_with(
   use _ <- result.try(validate_options(options))
   use subpaths <- result.try(
     untrimmed_band_path_subpaths(
-      svg_path.subpaths(path),
+      svg_path.path_subpaths(path),
       distance_a,
       distance_b,
       options,
@@ -587,7 +587,7 @@ pub fn path_stroke_with(
   use _ <- result.try(validate_stroke_width(width))
   use subpaths <- result.try(
     stroke_path_subpaths(
-      svg_path.subpaths(path),
+      svg_path.path_subpaths(path),
       width,
       cap,
       options,
@@ -615,7 +615,7 @@ pub fn path_untrimmed_with(
   use _ <- result.try(validate_options(options))
   use subpaths <- result.try(
     untrimmed_offset_path_subpaths(
-      svg_path.subpaths(path),
+      svg_path.path_subpaths(path),
       distance,
       options,
       converted: [],
@@ -704,7 +704,10 @@ fn untrimmed_band_path_subpaths(
         distance_a,
         distance_b,
         options,
-        converted: list.append(list.reverse(svg_path.subpaths(band)), converted),
+        converted: list.append(
+          list.reverse(svg_path.path_subpaths(band)),
+          converted,
+        ),
       )
     }
   }
@@ -732,7 +735,7 @@ fn stroke_path_subpaths(
         cap,
         options,
         converted: list.append(
-          list.reverse(svg_path.subpaths(stroke)),
+          list.reverse(svg_path.path_subpaths(stroke)),
           converted,
         ),
       )
@@ -755,7 +758,7 @@ fn parametric_offset_path_subpaths(
         distance,
         options,
         converted: list.append(
-          list.reverse(svg_path.subpaths(offset)),
+          list.reverse(svg_path.path_subpaths(offset)),
           converted,
         ),
       )
@@ -785,7 +788,7 @@ fn parametric_band_path_subpaths(
         distance_b,
         options,
         converted: list.append(
-          list.reverse(svg_path.subpaths(offset)),
+          list.reverse(svg_path.path_subpaths(offset)),
           converted,
         ),
       )
@@ -798,12 +801,12 @@ fn parametric_provisional_subpath(
   distance: Float,
   options: Options,
 ) -> Result(svg_path.Subpath, Error) {
-  case svg_path.segments(subpath) {
+  case svg_path.subpath_segments(subpath) {
     [] -> {
       use start <- result.try(
-        svg_path.start(subpath) |> result.map_error(PathError),
+        svg_path.subpath_start(subpath) |> result.map_error(PathError),
       )
-      Ok(svg_path.empty_subpath(at: start))
+      Ok(svg_path.subpath_empty(at: start))
     }
     [_, ..] -> {
       use offset_segments <- result.try(build_offset_segments(
@@ -816,16 +819,16 @@ fn parametric_provisional_subpath(
         offset_segments,
         distance,
         options.join,
-        closed: svg_path.is_closed(subpath),
+        closed: svg_path.subpath_is_closed(subpath),
       ))
       use provisional <- result.try(
         svg_path.subpath_with(output_segments, policy: svg_path.Wiggle)
         |> result.map_error(PathError),
       )
-      case svg_path.is_closed(subpath) {
+      case svg_path.subpath_is_closed(subpath) {
         False -> Ok(provisional)
         True ->
-          svg_path.set_closed_with(
+          svg_path.subpath_set_closed_with(
             provisional,
             closed: True,
             policy: svg_path.Wiggle,
@@ -982,8 +985,8 @@ fn closed_stroke_path(
 fn orient_outline_path(path: svg_path.Path) -> Result(svg_path.Path, Error) {
   use subpaths <- result.try(
     orient_outline_subpaths(
-      svg_path.subpaths(path),
-      all: svg_path.subpaths(path),
+      svg_path.path_subpaths(path),
+      all: svg_path.path_subpaths(path),
       oriented: [],
     ),
   )
@@ -1043,7 +1046,7 @@ fn outline_contour_depth_loop(
 fn outline_contour_probe(
   subpath: svg_path.Subpath,
 ) -> Result(svg_path.Point, Error) {
-  case svg_path.segments(subpath) {
+  case svg_path.subpath_segments(subpath) {
     [] -> Error(PathError(svg_path.EmptySubpath))
     [first, ..] ->
       svg_path.segment_point(first, at: 0.5) |> result.map_error(PathError)
@@ -1057,7 +1060,7 @@ fn orient_outline_subpath(
   let is_clockwise = area.signed_subpath(subpath) >=. 0.0
   case is_clockwise == clockwise {
     True -> subpath
-    False -> svg_path.reverse_subpath(subpath)
+    False -> svg_path.subpath_reverse(subpath)
   }
 }
 
@@ -1081,17 +1084,24 @@ fn stroke_candidate_subpath(
   use start_cap <- result.try(stroke_start_cap(source, radius, cap))
   let segments =
     list.append(
-      svg_path.segments(positive),
+      svg_path.subpath_segments(positive),
       list.append(
         end_cap,
-        list.append(reverse_segments(svg_path.segments(negative)), start_cap),
+        list.append(
+          reverse_segments(svg_path.subpath_segments(negative)),
+          start_cap,
+        ),
       ),
     )
   use candidate <- result.try(
     svg_path.subpath_with(segments, policy: svg_path.Wiggle)
     |> result.map_error(PathError),
   )
-  svg_path.set_closed_with(candidate, closed: True, policy: svg_path.Wiggle)
+  svg_path.subpath_set_closed_with(
+    candidate,
+    closed: True,
+    policy: svg_path.Wiggle,
+  )
   |> result.map_error(PathError)
 }
 
@@ -1100,8 +1110,10 @@ fn stroke_end_cap(
   radius: Float,
   cap: Cap,
 ) -> Result(List(svg_path.Segment), Error) {
-  use end <- result.try(svg_path.end(source) |> result.map_error(PathError))
-  let assert Ok(last) = list.last(svg_path.segments(source))
+  use end <- result.try(
+    svg_path.subpath_end(source) |> result.map_error(PathError),
+  )
+  let assert Ok(last) = list.last(svg_path.subpath_segments(source))
   use tangent <- result.try(unit_tangent(last, t: 1.0))
   stroke_cap_segments(center: end, tangent:, radius:, cap:, at_end: True)
 }
@@ -1111,8 +1123,10 @@ fn stroke_start_cap(
   radius: Float,
   cap: Cap,
 ) -> Result(List(svg_path.Segment), Error) {
-  use start <- result.try(svg_path.start(source) |> result.map_error(PathError))
-  let assert [first, ..] = svg_path.segments(source)
+  use start <- result.try(
+    svg_path.subpath_start(source) |> result.map_error(PathError),
+  )
+  let assert [first, ..] = svg_path.subpath_segments(source)
   use tangent <- result.try(unit_tangent(first, t: 0.0))
   stroke_cap_segments(center: start, tangent:, radius:, cap:, at_end: False)
 }
@@ -1190,7 +1204,7 @@ fn reverse_segments(
 ) -> List(svg_path.Segment) {
   segments
   |> list.reverse
-  |> list.map(svg_path.reverse_segment)
+  |> list.map(svg_path.segment_reverse)
 }
 
 fn parametric_pruned_subpath(
@@ -1268,7 +1282,7 @@ fn parametric_pruned_side(
   use subpaths <- result.try(chunks_to_subpaths(
     retained,
     options.fitting.tolerance,
-    closed: svg_path.is_closed(source),
+    closed: svg_path.subpath_is_closed(source),
   ))
   Ok(subpaths)
 }
@@ -1292,7 +1306,7 @@ fn parametric_pruned_band_side(
   use subpaths <- result.try(chunks_to_subpaths(
     retained,
     options.fitting.tolerance,
-    closed: svg_path.is_closed(source),
+    closed: svg_path.subpath_is_closed(source),
   ))
   Ok(subpaths)
 }
@@ -1382,7 +1396,7 @@ fn cross_side_split_parameters(
     |> list.filter(fn(parameter) {
       !is_open_subpath_boundary_parameter(left, parameter)
     })
-    |> list.sort(by: svg_path.compare_subpath_parameters)
+    |> list.sort(by: svg_path.subpath_parameters_compare)
     |> unique_subpath_parameters(point_tolerance, [])
   let right_parameters =
     intersections
@@ -1393,7 +1407,7 @@ fn cross_side_split_parameters(
     |> list.filter(fn(parameter) {
       !is_open_subpath_boundary_parameter(right, parameter)
     })
-    |> list.sort(by: svg_path.compare_subpath_parameters)
+    |> list.sort(by: svg_path.subpath_parameters_compare)
     |> unique_subpath_parameters(point_tolerance, [])
   Ok(#(left_parameters, right_parameters))
 }
@@ -1407,18 +1421,18 @@ fn parametric_self_intersection_sections(
   use split_points <- result.try(self_intersection_split_parameters(subpath))
   let split_points =
     list.append(split_points, extra_split_points)
-    |> list.sort(by: svg_path.compare_subpath_parameters)
+    |> list.sort(by: svg_path.subpath_parameters_compare)
     |> unique_subpath_parameters(point_tolerance, [])
   use sections <- result.try(
     split_segments_at_subpath_parameters(
-      svg_path.segments(subpath),
+      svg_path.subpath_segments(subpath),
       split_points,
       index: 0,
       current: [],
       sections: [],
     ),
   )
-  let sections = case svg_path.is_closed(subpath) {
+  let sections = case svg_path.subpath_is_closed(subpath) {
     True -> merge_wrapping_chunks(sections, point_tolerance)
     False -> sections
   }
@@ -1546,7 +1560,10 @@ fn split_parametric_piece(
         True -> Ok(pieces)
         False -> {
           use piece <- result.try(
-            svg_path.segments_between_inside(segment, between: [from_t, to_t])
+            svg_path.segment_between_many_inside(segment, between: [
+              from_t,
+              to_t,
+            ])
             |> result.map_error(PathError),
           )
           Ok(list.append(
@@ -2015,22 +2032,26 @@ fn in_stroke_cap(
     Butt -> Ok(False)
     RoundCap -> {
       use start <- result.try(
-        svg_path.start(source) |> result.map_error(PathError),
+        svg_path.subpath_start(source) |> result.map_error(PathError),
       )
-      use end <- result.try(svg_path.end(source) |> result.map_error(PathError))
+      use end <- result.try(
+        svg_path.subpath_end(source) |> result.map_error(PathError),
+      )
       Ok(
         vec2f.distance_squared(point, with: start) <=. radius *. radius
         || vec2f.distance_squared(point, with: end) <=. radius *. radius,
       )
     }
     Square -> {
-      let segments = svg_path.segments(source)
+      let segments = svg_path.subpath_segments(source)
       let assert [first, ..] = segments
       let assert Ok(last) = list.last(segments)
       use start <- result.try(
-        svg_path.start(source) |> result.map_error(PathError),
+        svg_path.subpath_start(source) |> result.map_error(PathError),
       )
-      use end <- result.try(svg_path.end(source) |> result.map_error(PathError))
+      use end <- result.try(
+        svg_path.subpath_end(source) |> result.map_error(PathError),
+      )
       use start_tangent <- result.try(unit_tangent(first, t: 0.0))
       use end_tangent <- result.try(unit_tangent(last, t: 1.0))
       Ok(
@@ -2089,7 +2110,7 @@ fn in_band(
 ) -> Result(Bool, Error) {
   use in_body <- result.try(in_band_segments(
     point,
-    svg_path.segments(source),
+    svg_path.subpath_segments(source),
     distance_a:,
     distance_b:,
     options:,
@@ -2099,8 +2120,8 @@ fn in_band(
     False ->
       in_band_joins(
         point,
-        svg_path.segments(source),
-        closed: svg_path.is_closed(source),
+        svg_path.subpath_segments(source),
+        closed: svg_path.subpath_is_closed(source),
         distance_a:,
         distance_b:,
         options:,
@@ -2328,7 +2349,11 @@ fn band_join_region(
         |> result.map_error(PathError),
       )
       use region <- result.try(
-        svg_path.set_closed_with(region, closed: True, policy: svg_path.Wiggle)
+        svg_path.subpath_set_closed_with(
+          region,
+          closed: True,
+          policy: svg_path.Wiggle,
+        )
         |> result.map_error(PathError),
       )
       Ok(Some(region))
@@ -2714,7 +2739,7 @@ fn chunks_to_subpaths_loop(
       )
       use subpath <- result.try(case close {
         True ->
-          svg_path.set_closed_with(
+          svg_path.subpath_set_closed_with(
             subpath,
             closed: True,
             policy: svg_path.Wiggle,
@@ -2900,7 +2925,7 @@ fn self_intersection_split_parameters(
     |> list.filter(fn(parameter) {
       !is_open_subpath_boundary_parameter(subpath, parameter)
     })
-    |> list.sort(by: svg_path.compare_subpath_parameters)
+    |> list.sort(by: svg_path.subpath_parameters_compare)
     |> unique_subpath_parameters(point_tolerance, [])
 
   Ok(parameters)
@@ -2910,10 +2935,10 @@ fn is_open_subpath_boundary_parameter(
   subpath: svg_path.Subpath,
   parameter: svg_path.SubpathParameter,
 ) -> Bool {
-  case svg_path.is_closed(subpath) {
+  case svg_path.subpath_is_closed(subpath) {
     True -> False
     False -> {
-      let length = list.length(svg_path.segments(subpath))
+      let length = list.length(svg_path.subpath_segments(subpath))
       let svg_path.SubpathParameter(segment_index:, t:) = parameter
       { segment_index == 0 && t <=. point_tolerance }
       || { segment_index == length - 1 && t >=. 1.0 -. point_tolerance }
@@ -3016,7 +3041,7 @@ fn join_free_portions(
   subpath: svg_path.Subpath,
   options: Options,
 ) -> Result(List(JoinFreePortion), Error) {
-  case svg_path.segments(subpath) {
+  case svg_path.subpath_segments(subpath) {
     [] -> Ok([])
     segments -> {
       use portions <- result.try(
@@ -3024,7 +3049,7 @@ fn join_free_portions(
       )
       Ok(mark_closed_join_free_portion(
         portions,
-        closed: svg_path.is_closed(subpath),
+        closed: svg_path.subpath_is_closed(subpath),
       ))
     }
   }
@@ -3045,7 +3070,7 @@ fn original_recursive_smooth_offset_segments(
 ) -> Result(List(OffsetSegment), Error) {
   let JoinFreePortion(subpath:, closed:) = portion
   offset_subpath_segments(
-    svg_path.segments(subpath),
+    svg_path.subpath_segments(subpath),
     distance,
     options,
     fit_policy: OriginalRecursiveFit,
@@ -3061,7 +3086,7 @@ fn stalled_run_smooth_offset_segments(
 ) -> Result(List(OffsetSegment), Error) {
   let JoinFreePortion(subpath:, closed:) = portion
   let pieces =
-    svg_path.segments(subpath)
+    svg_path.subpath_segments(subpath)
     |> classify_smooth_source_pieces(
       distance,
       threshold: options.stalled_offset_diameter,
@@ -3470,7 +3495,11 @@ fn prepend_join_free_portion(
         |> result.map_error(PathError),
       )
       use subpath <- result.try(
-        svg_path.set_closed_with(subpath, closed:, policy: svg_path.Strict)
+        svg_path.subpath_set_closed_with(
+          subpath,
+          closed:,
+          policy: svg_path.Strict,
+        )
         |> result.map_error(PathError),
       )
       Ok([JoinFreePortion(subpath:, closed:), ..portions])
@@ -4066,7 +4095,7 @@ fn recursive_offset_cubic_segment(
         True -> Error(MaxDepthReached(divergence))
         False -> {
           use split <- result.try(
-            svg_path.split_segment(segment, at: 0.5)
+            svg_path.segment_split(segment, at: 0.5)
             |> result.map_error(PathError),
           )
           let #(left, right) = split
@@ -4115,7 +4144,7 @@ fn smart_recursive_offset_cubic_segment(
         True -> Error(MaxDepthReached(divergence))
         False -> {
           use split <- result.try(
-            svg_path.split_segment(segment, at: 0.5)
+            svg_path.segment_split(segment, at: 0.5)
             |> result.map_error(PathError),
           )
           let #(left, right) = split
