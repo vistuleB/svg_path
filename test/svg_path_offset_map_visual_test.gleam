@@ -3,11 +3,11 @@ import gleam/float
 import gleam/int
 import gleam/io
 import gleam/list
+import gleam/option.{Some}
 import gleam/result
 import gleam/string
 import gleeunit
 import svg_path
-import svg_path/bezier
 import svg_path/offset
 import svg_path/parse
 import svg_path/svg
@@ -42,32 +42,29 @@ pub fn khmer_text_offset_map_spiral_visual_test() {
   let text_layout = text_layout(text_box, coil_length)
   let assert Ok(mapped) =
     repeated_text_on_coil(text_path, text_box, text_layout, coil_map)
+  let assert Ok(mapped_box) = svg_path.path_bounding_box(mapped)
+  let view_box = offset_map_view_box(mapped_box)
 
   let drawing =
     svg.document(
       things: [
-        svg.Rectangle(
-          svg_path.point(-150.0, -215.0),
-          770.0,
-          445.0,
-          "fill: #ffffff; stroke: none",
-        ),
+        background_rectangle(view_box),
         svg.Text(
           "fixed-radius coil",
           "fill: #111827; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 700",
-          svg_path.point(-120.0, -185.0),
+          svg_path.point(view_box.min.x +. 30.0, view_box.min.y +. 30.0),
           18,
         ),
         svg.Text(
           text_box_label(text_box),
           "fill: #475569; font-family: ui-monospace, SFMono-Regular, Menlo, monospace",
-          svg_path.point(-120.0, 190.0),
+          svg_path.point(view_box.min.x +. 30.0, view_box.max.y -. 30.0),
           12,
         ),
         svg.Text(
           layout_label(text_layout, coil_length),
           "fill: #475569; font-family: ui-monospace, SFMono-Regular, Menlo, monospace",
-          svg_path.point(-120.0, 205.0),
+          svg_path.point(view_box.min.x +. 30.0, view_box.max.y -. 15.0),
           12,
         ),
         svg.StyledPath(
@@ -75,10 +72,7 @@ pub fn khmer_text_offset_map_spiral_visual_test() {
           "fill: #0f766e; fill-opacity: 0.78; stroke: #064e3b; stroke-width: 0.25",
         ),
       ],
-      view_box: svg_path.BoundingBox(
-        min: svg_path.point(-150.0, -215.0),
-        max: svg_path.point(620.0, 230.0),
-      ),
+      view_box:,
     )
 
   let _ = write_file(output, drawing)
@@ -104,26 +98,23 @@ pub fn khmer_text_offset_map_decaying_spiral_visual_test() {
     svg_path.path_subdivide_to_max_length(text_path, max_length: 1.0)
   let assert Ok(mapped) =
     repeated_text_on_coil(subdivided_text, text_box, text_layout, decaying_map)
+  let assert Ok(mapped_box) = svg_path.path_bounding_box(mapped)
+  let view_box = offset_map_view_box(mapped_box)
 
   let drawing =
     svg.document(
       things: [
-        svg.Rectangle(
-          svg_path.point(-205.0, -200.0),
-          350.0,
-          400.0,
-          "fill: #ffffff; stroke: none",
-        ),
+        background_rectangle(view_box),
         svg.Text(
           "decaying spiral: radius and offset lose 20% per turn",
           "fill: #111827; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 700",
-          svg_path.point(-180.0, -170.0),
+          svg_path.point(view_box.min.x +. 30.0, view_box.min.y +. 30.0),
           18,
         ),
         svg.Text(
           layout_label(text_layout, spiral_length),
           "fill: #475569; font-family: ui-monospace, SFMono-Regular, Menlo, monospace",
-          svg_path.point(-180.0, 175.0),
+          svg_path.point(view_box.min.x +. 30.0, view_box.max.y -. 20.0),
           12,
         ),
         svg.StyledPath(
@@ -131,10 +122,7 @@ pub fn khmer_text_offset_map_decaying_spiral_visual_test() {
           "fill: #581c87; fill-opacity: 0.78; stroke: #2e1065; stroke-width: 0.2",
         ),
       ],
-      view_box: svg_path.BoundingBox(
-        min: svg_path.point(-205.0, -200.0),
-        max: svg_path.point(145.0, 200.0),
-      ),
+      view_box:,
     )
 
   let _ = write_file(decaying_output, drawing)
@@ -1010,6 +998,24 @@ fn focus_view_box(rectangle_box: svg_path.BoundingBox) -> svg_path.BoundingBox {
   )
 }
 
+fn offset_map_view_box(
+  content_box: svg_path.BoundingBox,
+) -> svg_path.BoundingBox {
+  svg_path.BoundingBox(
+    min: svg_path.point(content_box.min.x -. 30.0, content_box.min.y -. 55.0),
+    max: svg_path.point(content_box.max.x +. 30.0, content_box.max.y +. 45.0),
+  )
+}
+
+fn background_rectangle(view_box: svg_path.BoundingBox) -> svg.ThingToDraw {
+  svg.Rectangle(
+    view_box.min,
+    svg_path.bounding_box_width(view_box),
+    svg_path.bounding_box_height(view_box),
+    "fill: #ffffff; stroke: none",
+  )
+}
+
 type TextLayout {
   TextLayout(
     x_scale: Float,
@@ -1168,56 +1174,20 @@ fn source_point_to_offset_point(
 
 fn coil_subpath(turns turns: Int, samples _samples: Int) -> svg_path.Subpath {
   let total_degrees = int.to_float(turns) *. 360.0
-  coil_cubics(0.0, total_degrees, segments: [])
-  |> svg_path.assert_subpath
-}
-
-fn coil_cubics(
-  start_degrees: Float,
-  total_degrees: Float,
-  segments segments: List(svg_path.Segment),
-) -> List(svg_path.Segment) {
-  case start_degrees >=. total_degrees {
-    True -> list.reverse(segments)
-    False -> {
-      let end_degrees = float.min(start_degrees +. 10.0, total_degrees)
-      let segment = coil_cubic(start_degrees, end_degrees)
-      coil_cubics(end_degrees, total_degrees, segments: [segment, ..segments])
-    }
-  }
-}
-
-fn coil_cubic(start_degrees: Float, end_degrees: Float) -> svg_path.Segment {
-  let start = coil_point_at_degrees(start_degrees)
-  let end = coil_point_at_degrees(end_degrees)
-  let assert Ok(#(curve, _error)) =
-    bezier.fit_cubic_with_endpoint_tangents(
-      start: bezier.Point(start.x, start.y),
-      end: bezier.Point(end.x, end.y),
-      start_tangent: coil_tangent_at_degrees(start_degrees),
-      end_tangent: coil_tangent_at_degrees(end_degrees),
-      samples: coil_cubic_samples(start_degrees, end_degrees),
+  let assert Ok(subpath) =
+    svg_path.parametric_subpath_with(
+      from: 0.0,
+      to: total_degrees,
+      point: coil_point_at_degrees,
+      options: svg_path.ParametricOptions(
+        tolerance: 0.001,
+        samples_per_piece: 3,
+        initial_piece_count: turns * 36,
+        max_depth: 0,
+        tangent: Some(coil_tangent_at_degrees),
+      ),
     )
-
-  let assert bezier.CubicBezierData(start:, control1:, control2:, end:) = curve
-  svg_path.CubicBezier(
-    start: svg_path.point(start.x, start.y),
-    control1: svg_path.point(control1.x, control1.y),
-    control2: svg_path.point(control2.x, control2.y),
-    end: svg_path.point(end.x, end.y),
-  )
-}
-
-fn coil_cubic_samples(
-  start_degrees: Float,
-  end_degrees: Float,
-) -> List(#(Float, bezier.Point)) {
-  [0.25, 0.5, 0.75]
-  |> list.map(fn(t) {
-    let degrees = start_degrees +. { end_degrees -. start_degrees } *. t
-    let point = coil_point_at_degrees(degrees)
-    #(t, bezier.Point(point.x, point.y))
-  })
+  subpath
 }
 
 fn coil_point_at_degrees(degrees: Float) -> svg_path.Point {
@@ -1228,15 +1198,15 @@ fn coil_point_at_degrees(degrees: Float) -> svg_path.Point {
   )
 }
 
-fn coil_tangent_at_degrees(degrees: Float) -> bezier.Point {
+fn coil_tangent_at_degrees(degrees: Float) -> svg_path.Point {
   let angle_derivative = pi /. 180.0
-  bezier.Point(
-    x: 16.0
+  svg_path.point(
+    16.0
       *. angle_derivative
       -. 100.0
       *. trig.sin_degrees(degrees)
       *. angle_derivative,
-    y: 100.0 *. trig.cos_degrees(degrees) *. angle_derivative,
+    100.0 *. trig.cos_degrees(degrees) *. angle_derivative,
   )
 }
 
@@ -1245,62 +1215,20 @@ fn decaying_spiral_subpath(
   samples _samples: Int,
 ) -> svg_path.Subpath {
   let total_degrees = int.to_float(turns) *. 360.0
-  decaying_spiral_cubics(0.0, total_degrees, segments: [])
-  |> svg_path.assert_subpath
-}
-
-fn decaying_spiral_cubics(
-  start_degrees: Float,
-  total_degrees: Float,
-  segments segments: List(svg_path.Segment),
-) -> List(svg_path.Segment) {
-  case start_degrees >=. total_degrees {
-    True -> list.reverse(segments)
-    False -> {
-      let end_degrees = float.min(start_degrees +. 10.0, total_degrees)
-      let segment = decaying_spiral_cubic(start_degrees, end_degrees)
-      decaying_spiral_cubics(end_degrees, total_degrees, segments: [
-        segment,
-        ..segments
-      ])
-    }
-  }
-}
-
-fn decaying_spiral_cubic(
-  start_degrees: Float,
-  end_degrees: Float,
-) -> svg_path.Segment {
-  let start = decaying_spiral_point_at_degrees(start_degrees)
-  let end = decaying_spiral_point_at_degrees(end_degrees)
-  let assert Ok(#(curve, _error)) =
-    bezier.fit_cubic_with_endpoint_tangents(
-      start: bezier.Point(start.x, start.y),
-      end: bezier.Point(end.x, end.y),
-      start_tangent: decaying_spiral_tangent_at_degrees(start_degrees),
-      end_tangent: decaying_spiral_tangent_at_degrees(end_degrees),
-      samples: decaying_spiral_cubic_samples(start_degrees, end_degrees),
+  let assert Ok(subpath) =
+    svg_path.parametric_subpath_with(
+      from: 0.0,
+      to: total_degrees,
+      point: decaying_spiral_point_at_degrees,
+      options: svg_path.ParametricOptions(
+        tolerance: 0.001,
+        samples_per_piece: 3,
+        initial_piece_count: turns * 36,
+        max_depth: 0,
+        tangent: Some(decaying_spiral_tangent_at_degrees),
+      ),
     )
-
-  let assert bezier.CubicBezierData(start:, control1:, control2:, end:) = curve
-  svg_path.CubicBezier(
-    start: svg_path.point(start.x, start.y),
-    control1: svg_path.point(control1.x, control1.y),
-    control2: svg_path.point(control2.x, control2.y),
-    end: svg_path.point(end.x, end.y),
-  )
-}
-
-fn decaying_spiral_cubic_samples(
-  start_degrees: Float,
-  end_degrees: Float,
-) -> List(#(Float, bezier.Point)) {
-  [0.25, 0.5, 0.75]
-  |> list.map(fn(t) {
-    let degrees = start_degrees +. { end_degrees -. start_degrees } *. t
-    let point = decaying_spiral_point_at_degrees(degrees)
-    #(t, bezier.Point(point.x, point.y))
-  })
+  subpath
 }
 
 fn decaying_spiral_point_at_degrees(degrees: Float) -> svg_path.Point {
@@ -1311,17 +1239,17 @@ fn decaying_spiral_point_at_degrees(degrees: Float) -> svg_path.Point {
   )
 }
 
-fn decaying_spiral_tangent_at_degrees(degrees: Float) -> bezier.Point {
+fn decaying_spiral_tangent_at_degrees(degrees: Float) -> svg_path.Point {
   let radius = 100.0 *. decay_for_degrees(degrees)
   let radius_derivative = log(0.8) /. 360.0 *. radius
   let angle_derivative = pi /. 180.0
-  bezier.Point(
-    x: radius_derivative
+  svg_path.point(
+    radius_derivative
       *. trig.cos_degrees(degrees)
       -. radius
       *. trig.sin_degrees(degrees)
       *. angle_derivative,
-    y: radius_derivative
+    radius_derivative
       *. trig.sin_degrees(degrees)
       +. radius
       *. trig.cos_degrees(degrees)

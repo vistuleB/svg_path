@@ -1,10 +1,78 @@
 import gleam/float
 import gleam/int
 import gleam/list
+import gleam/option.{Some}
 import gleam/result
 import svg_path
 
 const tolerance = 0.000001
+
+pub fn parametric_subpath_fits_simple_parabola_test() {
+  let assert Ok(subpath) =
+    svg_path.parametric_subpath(from: 0.0, to: 1.0, point: fn(t) {
+      svg_path.point(t, t *. t)
+    })
+  let assert [segment] = svg_path.segments(subpath)
+  let assert Ok(point) = svg_path.segment_point(segment, at: 0.5)
+
+  assert point_near(point, svg_path.point(0.5, 0.25))
+}
+
+pub fn parametric_subpath_uses_optional_tangents_test() {
+  let options =
+    svg_path.ParametricOptions(
+      ..svg_path.default_parametric_options(),
+      tolerance: 0.000000001,
+      tangent: Some(fn(_) { svg_path.point(1.0, 1.0) }),
+    )
+  let assert Ok(subpath) =
+    svg_path.parametric_subpath_with(
+      from: 2.0,
+      to: 6.0,
+      point: fn(t) { svg_path.point(t, t) },
+      options:,
+    )
+  let assert [segment] = svg_path.segments(subpath)
+  let assert Ok(point) = svg_path.segment_point(segment, at: 0.25)
+
+  assert point_near(point, svg_path.point(3.0, 3.0))
+}
+
+pub fn parametric_subpath_adaptively_subdivides_test() {
+  let options =
+    svg_path.ParametricOptions(
+      ..svg_path.default_parametric_options(),
+      tolerance: 0.00001,
+      max_depth: 8,
+    )
+  let assert Ok(subpath) =
+    svg_path.parametric_subpath_with(
+      from: -1.0,
+      to: 1.0,
+      point: fn(t) { svg_path.point(t, t *. t *. t *. t) },
+      options:,
+    )
+
+  assert list.length(svg_path.segments(subpath)) > 1
+}
+
+pub fn parametric_subpath_rejects_invalid_options_test() {
+  assert svg_path.parametric_subpath_with(
+      from: 0.0,
+      to: 1.0,
+      point: fn(t) { svg_path.point(t, t) },
+      options: svg_path.ParametricOptions(
+        ..svg_path.default_parametric_options(),
+        samples_per_piece: 1,
+      ),
+    )
+    == Error(svg_path.InvalidParametricSamplesPerPiece(1))
+
+  assert svg_path.parametric_subpath(from: 1.0, to: 1.0, point: fn(t) {
+      svg_path.point(t, t)
+    })
+    == Error(svg_path.InvalidParametricInterval(start: 1.0, end: 1.0))
+}
 
 pub fn segment_crossings_finds_line_crossing_test() {
   let line =

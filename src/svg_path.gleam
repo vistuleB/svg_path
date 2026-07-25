@@ -57,6 +57,14 @@ const default_intersection_tolerance = 0.000000001
 
 const default_intersection_max_depth = 48
 
+const default_parametric_tolerance = 0.01
+
+const default_parametric_samples_per_piece = 5
+
+const default_parametric_initial_piece_count = 1
+
+const default_parametric_max_depth = 10
+
 /// A 2D point.
 ///
 /// This is a `vec.Vec2(Float)`, so its coordinates are available as `.x` and
@@ -147,6 +155,17 @@ pub type MinimizeOptions {
 /// Options for approximating the length of a segment or subpath.
 pub type LengthOptions {
   LengthOptions(tolerance: Float, max_depth: Int)
+}
+
+/// Options for building a subpath from a parametric curve.
+pub type ParametricOptions {
+  ParametricOptions(
+    tolerance: Float,
+    samples_per_piece: Int,
+    initial_piece_count: Int,
+    max_depth: Int,
+    tangent: Option(fn(Float) -> Point),
+  )
 }
 
 /// Errors returned by fallible point-mapping helpers.
@@ -461,6 +480,33 @@ pub type Error {
   /// The maximum segment length for subdivision must be greater than zero.
   InvalidSubdivisionMaxLength(max_length: Float)
 
+  /// Parametric fitting tolerance must be greater than zero.
+  InvalidParametricTolerance(tolerance: Float)
+
+  /// Parametric fitting needs at least two interior samples per piece.
+  InvalidParametricSamplesPerPiece(samples: Int)
+
+  /// Parametric fitting initial piece count must be greater than zero.
+  InvalidParametricInitialPieceCount(piece_count: Int)
+
+  /// Parametric fitting recursion depth must be zero or greater.
+  InvalidParametricMaxDepth(max_depth: Int)
+
+  /// Parametric fitting needs distinct start and end parameters.
+  InvalidParametricInterval(start: Float, end: Float)
+
+  /// The caller-provided parametric function produced a non-finite point.
+  NonFiniteParametricPoint(parameter: Float, point: Point)
+
+  /// The caller-provided tangent function produced a non-finite tangent.
+  NonFiniteParametricTangent(parameter: Float, tangent: Point)
+
+  /// A parametric interval could not be fitted within the recursion limit.
+  ParametricMaxDepthReached(error: Float)
+
+  /// A parametric interval could not determine a stable cubic fit.
+  ParametricFitFailed
+
   /// The line approximation tolerance must be greater than zero.
   InvalidLinearizeTolerance(tolerance: Float)
 
@@ -544,6 +590,17 @@ pub fn default_length_options() -> LengthOptions {
   LengthOptions(
     tolerance: default_length_tolerance,
     max_depth: default_length_max_depth,
+  )
+}
+
+/// Return the default options for parametric subpath fitting.
+pub fn default_parametric_options() -> ParametricOptions {
+  ParametricOptions(
+    tolerance: default_parametric_tolerance,
+    samples_per_piece: default_parametric_samples_per_piece,
+    initial_piece_count: default_parametric_initial_piece_count,
+    max_depth: default_parametric_max_depth,
+    tangent: None,
   )
 }
 
@@ -725,6 +782,52 @@ pub fn assert_polygon(points: List(Point)) -> Subpath {
     Ok(subpath) -> subpath
     Error(_) -> panic as "svg_path.assert_polygon received invalid points"
   }
+}
+
+/// Approximate a parametric curve with a sequence of cubic Bezier segments.
+///
+/// The parameter interval is split uniformly into
+/// `default_parametric_options().initial_piece_count` pieces. Each piece is
+/// fitted with a cubic, then recursively bisected in parameter space until the
+/// maximum sampled fitting error is within tolerance.
+pub fn parametric_subpath(
+  from start: Float,
+  to end: Float,
+  point point_function: fn(Float) -> Point,
+) -> Result(Subpath, Error) {
+  parametric_subpath_with(
+    from: start,
+    to: end,
+    point: point_function,
+    options: default_parametric_options(),
+  )
+}
+
+/// Approximate a parametric curve with a sequence of cubic Bezier segments
+/// using explicit options.
+///
+/// If `options.tangent` is `Some(tangent_function)`, each cubic is constrained
+/// to match the endpoint tangent directions returned by that function. If it is
+/// `None`, control points are fitted from samples while the endpoints are fixed.
+pub fn parametric_subpath_with(
+  from start: Float,
+  to end: Float,
+  point point_function: fn(Float) -> Point,
+  options options: ParametricOptions,
+) -> Result(Subpath, Error) {
+  use _ <- result.try(validate_parametric_options(options))
+  use _ <- result.try(validate_parametric_interval(start, end))
+  use segments <- result.try(
+    parametric_initial_segments(
+      start,
+      end,
+      point_function,
+      options,
+      index: 0,
+      segments: [],
+    ),
+  )
+  subpath(segments)
 }
 
 /// Create an open subpath from a non-empty continuous list of segments,
@@ -3413,6 +3516,255 @@ fn validate_subdivision_max_length(max_length: Float) -> Result(Nil, Error) {
     True -> Error(InvalidSubdivisionMaxLength(max_length))
     False -> Ok(Nil)
   }
+}
+
+fn validate_parametric_options(
+  options: ParametricOptions,
+) -> Result(Nil, Error) {
+  case options.tolerance <=. 0.0 || !finite_float(options.tolerance) {
+    True -> Error(InvalidParametricTolerance(options.tolerance))
+    False -> {
+      case options.samples_per_piece < 2 {
+        True ->
+          Error(InvalidParametricSamplesPerPiece(options.samples_per_piece))
+        False -> {
+          case options.initial_piece_count <= 0 {
+            True ->
+              Error(InvalidParametricInitialPieceCount(
+                options.initial_piece_count,
+              ))
+            False -> {
+              case options.max_depth < 0 {
+                True -> Error(InvalidParametricMaxDepth(options.max_depth))
+                False -> Ok(Nil)
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+fn validate_parametric_interval(
+  start: Float,
+  end: Float,
+) -> Result(Nil, Error) {
+  case start == end || !finite_float(start) || !finite_float(end) {
+    True -> Error(InvalidParametricInterval(start:, end:))
+    False -> Ok(Nil)
+  }
+}
+
+fn parametric_initial_segments(
+  start: Float,
+  end: Float,
+  point_function: fn(Float) -> Point,
+  options: ParametricOptions,
+  index index: Int,
+  segments segments: List(Segment),
+) -> Result(List(Segment), Error) {
+  case index >= options.initial_piece_count {
+    True -> Ok(list.reverse(segments))
+    False -> {
+      let piece_start =
+        interpolate_float(
+          start,
+          end,
+          int.to_float(index) /. int.to_float(options.initial_piece_count),
+        )
+      let piece_end =
+        interpolate_float(
+          start,
+          end,
+          int.to_float(index + 1) /. int.to_float(options.initial_piece_count),
+        )
+      use piece <- result.try(parametric_interval_segments(
+        piece_start,
+        piece_end,
+        point_function,
+        options,
+        depth_remaining: options.max_depth,
+      ))
+      parametric_initial_segments(
+        start,
+        end,
+        point_function,
+        options,
+        index: index + 1,
+        segments: list.reverse(piece) |> list.append(segments),
+      )
+    }
+  }
+}
+
+fn parametric_interval_segments(
+  start: Float,
+  end: Float,
+  point_function: fn(Float) -> Point,
+  options: ParametricOptions,
+  depth_remaining depth_remaining: Int,
+) -> Result(List(Segment), Error) {
+  use fit <- result.try(parametric_fit_cubic(
+    start,
+    end,
+    point_function,
+    options,
+  ))
+  let #(segment, error) = fit
+  case error <=. options.tolerance {
+    True -> Ok([segment])
+    False -> {
+      case depth_remaining <= 0 {
+        True -> Error(ParametricMaxDepthReached(error))
+        False -> {
+          let middle = interpolate_float(start, end, 0.5)
+          use left <- result.try(parametric_interval_segments(
+            start,
+            middle,
+            point_function,
+            options,
+            depth_remaining: depth_remaining - 1,
+          ))
+          use right <- result.try(parametric_interval_segments(
+            middle,
+            end,
+            point_function,
+            options,
+            depth_remaining: depth_remaining - 1,
+          ))
+          Ok(list.append(left, right))
+        }
+      }
+    }
+  }
+}
+
+fn parametric_fit_cubic(
+  start: Float,
+  end: Float,
+  point_function: fn(Float) -> Point,
+  options: ParametricOptions,
+) -> Result(#(Segment, Float), Error) {
+  use start_point <- result.try(parametric_point(point_function, start))
+  use end_point <- result.try(parametric_point(point_function, end))
+  use samples <- result.try(
+    parametric_samples(
+      point_function,
+      start,
+      end,
+      options.samples_per_piece,
+      index: 1,
+      samples: [],
+    ),
+  )
+  use fit <- result.try(case options.tangent {
+    None ->
+      bezier.fit_cubic_with_endpoints(
+        start: to_bezier_point(start_point),
+        end: to_bezier_point(end_point),
+        samples:,
+      )
+      |> result.map_error(fn(_) { ParametricFitFailed })
+    Some(tangent_function) -> {
+      use start_tangent <- result.try(parametric_tangent(
+        tangent_function,
+        start,
+      ))
+      use end_tangent <- result.try(parametric_tangent(tangent_function, end))
+      bezier.fit_cubic_with_endpoint_tangents(
+        start: to_bezier_point(start_point),
+        end: to_bezier_point(end_point),
+        start_tangent: to_bezier_point(start_tangent),
+        end_tangent: to_bezier_point(end_tangent),
+        samples:,
+      )
+      |> result.map_error(fn(_) { ParametricFitFailed })
+    }
+  })
+  let #(curve, fit_error) = fit
+  use segment <- result.try(parametric_cubic_segment(curve))
+  Ok(#(segment, fit_error.max))
+}
+
+fn parametric_samples(
+  point_function: fn(Float) -> Point,
+  start: Float,
+  end: Float,
+  count: Int,
+  index index: Int,
+  samples samples: List(#(Float, bezier.Point)),
+) -> Result(List(#(Float, bezier.Point)), Error) {
+  case index > count {
+    True -> Ok(list.reverse(samples))
+    False -> {
+      let t = int.to_float(index) /. int.to_float(count + 1)
+      let parameter = interpolate_float(start, end, t)
+      use point <- result.try(parametric_point(point_function, parameter))
+      parametric_samples(
+        point_function,
+        start,
+        end,
+        count,
+        index: index + 1,
+        samples: [#(t, to_bezier_point(point)), ..samples],
+      )
+    }
+  }
+}
+
+fn parametric_point(
+  point_function: fn(Float) -> Point,
+  parameter: Float,
+) -> Result(Point, Error) {
+  let point = point_function(parameter)
+  case finite_point(point) {
+    True -> Ok(point)
+    False -> Error(NonFiniteParametricPoint(parameter:, point:))
+  }
+}
+
+fn parametric_tangent(
+  tangent_function: fn(Float) -> Point,
+  parameter: Float,
+) -> Result(Point, Error) {
+  let tangent = tangent_function(parameter)
+  case finite_point(tangent) {
+    True -> Ok(tangent)
+    False -> Error(NonFiniteParametricTangent(parameter:, tangent:))
+  }
+}
+
+fn parametric_cubic_segment(
+  curve: bezier.BezierData,
+) -> Result(Segment, Error) {
+  case curve {
+    bezier.CubicBezierData(start:, control1:, control2:, end:) -> {
+      let segment =
+        CubicBezier(
+          start: from_bezier_point(start),
+          control1: from_bezier_point(control1),
+          control2: from_bezier_point(control2),
+          end: from_bezier_point(end),
+        )
+      case
+        [segment.start, segment.control1, segment.control2, segment.end]
+        |> list.all(finite_point)
+      {
+        True -> Ok(segment)
+        False -> Error(ParametricFitFailed)
+      }
+    }
+    _ -> Error(ParametricFitFailed)
+  }
+}
+
+fn finite_point(point: Point) -> Bool {
+  finite_float(point.x) && finite_float(point.y)
+}
+
+fn finite_float(value: Float) -> Bool {
+  value -. value == 0.0
 }
 
 fn subdivision_distances(
