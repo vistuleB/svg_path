@@ -576,6 +576,126 @@ pub fn segment_between_lengths_rejects_invalid_input_test() {
     == Error(svg_path.InvalidLengthTolerance(0.0))
 }
 
+pub fn segment_subdivide_to_max_length_splits_line_by_arc_length_test() {
+  let line =
+    svg_path.Line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(10.0, 0.0),
+    )
+
+  let assert Ok(pieces) =
+    svg_path.segment_subdivide_to_max_length(line, max_length: 3.0)
+
+  let assert [first, second, third, fourth] = pieces
+  assert svg_path.segment_start(first) == svg_path.point(0.0, 0.0)
+  assert svg_path.segment_end(first) == svg_path.point(2.5, 0.0)
+  assert svg_path.segment_start(second) == svg_path.point(2.5, 0.0)
+  assert svg_path.segment_end(second) == svg_path.point(5.0, 0.0)
+  assert svg_path.segment_start(third) == svg_path.point(5.0, 0.0)
+  assert svg_path.segment_end(third) == svg_path.point(7.5, 0.0)
+  assert svg_path.segment_start(fourth) == svg_path.point(7.5, 0.0)
+  assert svg_path.segment_end(fourth) == svg_path.point(10.0, 0.0)
+}
+
+pub fn segment_subdivide_to_max_length_splits_curve_by_arc_length_test() {
+  let curve =
+    svg_path.QuadraticBezier(
+      start: svg_path.point(0.0, 0.0),
+      control: svg_path.point(30.0, 0.0),
+      end: svg_path.point(30.0, 30.0),
+    )
+
+  let assert Ok(length) = svg_path.segment_length(curve)
+  let assert Ok(pieces) =
+    svg_path.segment_subdivide_to_max_length(curve, max_length: length /. 2.0)
+  let assert [first, second] = pieces
+  let assert Ok(first_length) = svg_path.segment_length(first)
+  let assert Ok(second_length) = svg_path.segment_length(second)
+
+  assert near(first_length, length /. 2.0)
+  assert near(second_length, length /. 2.0)
+  assert point_near(svg_path.segment_end(first), svg_path.segment_start(second))
+}
+
+pub fn segment_subdivide_to_max_length_keeps_zero_length_segment_test() {
+  let line =
+    svg_path.Line(
+      start: svg_path.point(1.0, 2.0),
+      end: svg_path.point(1.0, 2.0),
+    )
+
+  assert svg_path.segment_subdivide_to_max_length(line, max_length: 1.0)
+    == Ok([line])
+}
+
+pub fn segment_subdivide_to_max_length_rejects_invalid_max_length_test() {
+  let line =
+    svg_path.Line(
+      start: svg_path.point(0.0, 0.0),
+      end: svg_path.point(10.0, 0.0),
+    )
+
+  assert svg_path.segment_subdivide_to_max_length(line, max_length: 0.0)
+    == Error(svg_path.InvalidSubdivisionMaxLength(0.0))
+}
+
+pub fn subpath_subdivide_to_max_length_preserves_boundaries_and_closed_test() {
+  let subpath =
+    svg_path.assert_set_closed(
+      svg_path.assert_subpath([
+        svg_path.Line(
+          start: svg_path.point(0.0, 0.0),
+          end: svg_path.point(10.0, 0.0),
+        ),
+        svg_path.Line(
+          start: svg_path.point(10.0, 0.0),
+          end: svg_path.point(10.0, 4.0),
+        ),
+        svg_path.Line(
+          start: svg_path.point(10.0, 4.0),
+          end: svg_path.point(0.0, 0.0),
+        ),
+      ]),
+      closed: True,
+    )
+
+  let assert Ok(subdivided) =
+    svg_path.subpath_subdivide_to_max_length(subpath, max_length: 4.0)
+  let segments = svg_path.segments(subdivided)
+
+  assert svg_path.is_closed(subdivided)
+  assert list.length(segments) == 7
+  let assert [_, _, third, fourth, ..] = segments
+  assert svg_path.segment_end(third) == svg_path.point(10.0, 0.0)
+  assert svg_path.segment_start(fourth) == svg_path.point(10.0, 0.0)
+}
+
+pub fn path_subdivide_to_max_length_preserves_subpaths_test() {
+  let first =
+    svg_path.assert_subpath([
+      svg_path.Line(
+        start: svg_path.point(0.0, 0.0),
+        end: svg_path.point(10.0, 0.0),
+      ),
+    ])
+  let second =
+    svg_path.assert_subpath([
+      svg_path.Line(
+        start: svg_path.point(20.0, 0.0),
+        end: svg_path.point(20.0, 8.0),
+      ),
+    ])
+  let path = svg_path.Path(subpaths: [first, second])
+
+  let assert Ok(subdivided) =
+    svg_path.path_subdivide_to_max_length(path, max_length: 4.0)
+  let subpaths = svg_path.subpaths(subdivided)
+
+  let assert [first_subpath, second_subpath] = subpaths
+  assert list.length(svg_path.segments(first_subpath)) == 3
+  assert list.length(svg_path.segments(second_subpath)) == 2
+}
+
 pub fn subpath_parameter_at_length_returns_public_parameter_test() {
   let subpath =
     svg_path.assert_subpath([

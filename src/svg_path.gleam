@@ -149,6 +149,15 @@ pub type LengthOptions {
   LengthOptions(tolerance: Float, max_depth: Int)
 }
 
+/// Errors returned by fallible point-mapping helpers.
+pub type PointMapError(error) {
+  /// The path structure could not be mapped.
+  PointMapPathError(Error)
+
+  /// The caller-provided point mapping function failed.
+  PointMapFunctionError(error)
+}
+
 /// Options for approximating segments with straight lines.
 pub type LinearizeOptions {
   LinearizeOptions(tolerance: Float, max_depth: Int)
@@ -448,6 +457,9 @@ pub type Error {
 
   /// A requested arc-length distance was outside `0.0..length`.
   InvalidLengthDistance(distance: Float, length: Float)
+
+  /// The maximum segment length for subdivision must be greater than zero.
+  InvalidSubdivisionMaxLength(max_length: Float)
 
   /// The line approximation tolerance must be greater than zero.
   InvalidLinearizeTolerance(tolerance: Float)
@@ -897,6 +909,24 @@ pub fn map_subpath_points(
   }
 }
 
+/// Map the defining points of every segment in a subpath with a fallible
+/// function.
+///
+/// This has the same geometry semantics as `map_subpath_points`, but the
+/// mapping function may reject individual points.
+pub fn try_map_subpath_points(
+  subpath: Subpath,
+  with f: fn(Point) -> Result(Point, error),
+) -> Result(Subpath, PointMapError(error)) {
+  use start <- result.try(
+    f(subpath.start) |> result.map_error(PointMapFunctionError),
+  )
+  case try_map_segments_points(subpath.segments, f, []) {
+    Error(error) -> Error(error)
+    Ok(segments) -> Ok(Subpath(start:, segments:, closed: subpath.closed))
+  }
+}
+
 /// Map the defining points of every segment in a path.
 ///
 /// Each subpath's closed state is preserved. For nonlinear functions, this maps
@@ -908,6 +938,20 @@ pub fn map_path_points(
   with f: fn(Point) -> Point,
 ) -> Result(Path, Error) {
   case map_subpaths_points(path.subpaths, f, []) {
+    Error(error) -> Error(error)
+    Ok(subpaths) -> Ok(Path(subpaths:))
+  }
+}
+
+/// Map the defining points of every segment in a path with a fallible function.
+///
+/// This has the same geometry semantics as `map_path_points`, but the mapping
+/// function may reject individual points.
+pub fn try_map_path_points(
+  path: Path,
+  with f: fn(Point) -> Result(Point, error),
+) -> Result(Path, PointMapError(error)) {
+  case try_map_subpaths_points(path.subpaths, f, []) {
     Error(error) -> Error(error)
     Ok(subpaths) -> Ok(Path(subpaths:))
   }
@@ -1797,6 +1841,99 @@ pub fn segments_between_lengths_with(
   segments_between(segment, between: points)
 }
 
+/// Subdivide a segment into pieces of at most `max_length`.
+///
+/// Splits are chosen by traveled arc length, not by equal Bezier or arc
+/// parameter spacing. Zero-length segments are returned unchanged.
+pub fn segment_subdivide_to_max_length(
+  segment: Segment,
+  max_length max_length: Float,
+) -> Result(List(Segment), Error) {
+  segment_subdivide_to_max_length_with(
+    segment,
+    max_length:,
+    options: default_length_options(),
+  )
+}
+
+/// Subdivide a segment into pieces of at most `max_length` using explicit
+/// length options.
+pub fn segment_subdivide_to_max_length_with(
+  segment: Segment,
+  max_length max_length: Float,
+  options options: LengthOptions,
+) -> Result(List(Segment), Error) {
+  use _ <- result.try(validate_subdivision_max_length(max_length))
+  use length <- result.try(segment_length_with(segment, options:))
+  case length == 0.0 {
+    True -> Ok([segment])
+    False -> {
+      let piece_count = float.ceiling(length /. max_length) |> float.truncate
+      let step = length /. int.to_float(piece_count)
+      segments_between_lengths_with(
+        segment,
+        between: subdivision_distances(length, piece_count, step),
+        options:,
+      )
+    }
+  }
+}
+
+/// Subdivide every segment in a subpath into pieces of at most `max_length`.
+///
+/// Existing segment boundaries are preserved. The subpath's closed state is
+/// preserved.
+pub fn subpath_subdivide_to_max_length(
+  subpath: Subpath,
+  max_length max_length: Float,
+) -> Result(Subpath, Error) {
+  subpath_subdivide_to_max_length_with(
+    subpath,
+    max_length:,
+    options: default_length_options(),
+  )
+}
+
+/// Subdivide every segment in a subpath into pieces of at most `max_length`
+/// using explicit length options.
+pub fn subpath_subdivide_to_max_length_with(
+  subpath: Subpath,
+  max_length max_length: Float,
+  options options: LengthOptions,
+) -> Result(Subpath, Error) {
+  use segments <- result.try(
+    subdivide_segments_to_max_length(subpath.segments, max_length, options, []),
+  )
+  Ok(Subpath(..subpath, segments:))
+}
+
+/// Subdivide every segment in a path into pieces of at most `max_length`.
+///
+/// Existing subpath boundaries and closed states are preserved.
+pub fn path_subdivide_to_max_length(
+  path: Path,
+  max_length max_length: Float,
+) -> Result(Path, Error) {
+  path_subdivide_to_max_length_with(
+    path,
+    max_length:,
+    options: default_length_options(),
+  )
+}
+
+/// Subdivide every segment in a path into pieces of at most `max_length` using
+/// explicit length options.
+pub fn path_subdivide_to_max_length_with(
+  path: Path,
+  max_length max_length: Float,
+  options options: LengthOptions,
+) -> Result(Path, Error) {
+  use subpaths <- result.try(
+    subdivide_subpaths_to_max_length(path.subpaths, max_length, options, []),
+  )
+  Ok(Path(subpaths:))
+}
+
 /// Return the approximate length of a subpath.
 ///
 /// Empty subpaths have length `0.0`.
@@ -2556,6 +2693,26 @@ pub fn map_segment_points(
   }
 }
 
+/// Map the defining points of a segment with a fallible function.
+///
+/// This has the same geometry semantics as `map_segment_points`, but the
+/// mapping function may reject individual points.
+pub fn try_map_segment_points(
+  segment: Segment,
+  with f: fn(Point) -> Result(Point, error),
+) -> Result(Segment, PointMapError(error)) {
+  case segment {
+    Line(..) | QuadraticBezier(..) | CubicBezier(..) -> {
+      use mapped <- result.try(
+        segment_to_bezier_data(segment)
+        |> try_map_bezier_points(with: f),
+      )
+      Ok(segment_from_bezier_data(mapped))
+    }
+    Arc(..) -> Error(PointMapPathError(CannotMapArcNonlinearly))
+  }
+}
+
 /// Split a segment at parameter `t`.
 ///
 /// `t` is not clamped. Values outside `0.0..1.0` extrapolate along the same
@@ -3247,6 +3404,92 @@ fn validate_length_options(options: LengthOptions) -> Result(Nil, Error) {
         True -> Error(InvalidLengthMaxDepth(options.max_depth))
         False -> Ok(Nil)
       }
+    }
+  }
+}
+
+fn validate_subdivision_max_length(max_length: Float) -> Result(Nil, Error) {
+  case max_length <=. 0.0 {
+    True -> Error(InvalidSubdivisionMaxLength(max_length))
+    False -> Ok(Nil)
+  }
+}
+
+fn subdivision_distances(
+  length: Float,
+  piece_count: Int,
+  step: Float,
+) -> List(Float) {
+  subdivision_distances_loop(length, piece_count, step, index: 0, distances: [])
+}
+
+fn subdivision_distances_loop(
+  length: Float,
+  piece_count: Int,
+  step: Float,
+  index index: Int,
+  distances distances: List(Float),
+) -> List(Float) {
+  case index > piece_count {
+    True -> list.reverse(distances)
+    False -> {
+      let distance = case index == piece_count {
+        True -> length
+        False -> int.to_float(index) *. step
+      }
+      subdivision_distances_loop(
+        length,
+        piece_count,
+        step,
+        index: index + 1,
+        distances: [distance, ..distances],
+      )
+    }
+  }
+}
+
+fn subdivide_segments_to_max_length(
+  segments: List(Segment),
+  max_length: Float,
+  options: LengthOptions,
+  subdivided subdivided: List(Segment),
+) -> Result(List(Segment), Error) {
+  case segments {
+    [] -> Ok(list.reverse(subdivided))
+    [first, ..rest] -> {
+      use pieces <- result.try(segment_subdivide_to_max_length_with(
+        first,
+        max_length:,
+        options:,
+      ))
+      subdivide_segments_to_max_length(
+        rest,
+        max_length,
+        options,
+        subdivided: list.append(list.reverse(pieces), subdivided),
+      )
+    }
+  }
+}
+
+fn subdivide_subpaths_to_max_length(
+  subpaths: List(Subpath),
+  max_length: Float,
+  options: LengthOptions,
+  subdivided subdivided: List(Subpath),
+) -> Result(List(Subpath), Error) {
+  case subpaths {
+    [] -> Ok(list.reverse(subdivided))
+    [first, ..rest] -> {
+      use subpath <- result.try(subpath_subdivide_to_max_length_with(
+        first,
+        max_length:,
+        options:,
+      ))
+      subdivide_subpaths_to_max_length(rest, max_length, options, subdivided: [
+        subpath,
+        ..subdivided
+      ])
     }
   }
 }
@@ -6258,6 +6501,22 @@ fn map_subpaths_points(
   }
 }
 
+fn try_map_subpaths_points(
+  subpaths: List(Subpath),
+  f: fn(Point) -> Result(Point, error),
+  mapped: List(Subpath),
+) -> Result(List(Subpath), PointMapError(error)) {
+  case subpaths {
+    [] -> Ok(list.reverse(mapped))
+    [first, ..rest] -> {
+      case try_map_subpath_points(first, with: f) {
+        Error(error) -> Error(error)
+        Ok(subpath) -> try_map_subpaths_points(rest, f, [subpath, ..mapped])
+      }
+    }
+  }
+}
+
 fn first_subpath(subpaths: List(Subpath)) -> Subpath {
   case subpaths {
     [first, ..] -> first
@@ -6288,6 +6547,96 @@ fn map_segments_points(
         Error(error) -> Error(error)
         Ok(segment) -> map_segments_points(rest, f, [segment, ..mapped])
       }
+    }
+  }
+}
+
+fn try_map_segments_points(
+  segments: List(Segment),
+  f: fn(Point) -> Result(Point, error),
+  mapped: List(Segment),
+) -> Result(List(Segment), PointMapError(error)) {
+  case segments {
+    [] -> Ok(list.reverse(mapped))
+    [first, ..rest] -> {
+      case try_map_segment_points(first, with: f) {
+        Error(error) -> Error(error)
+        Ok(segment) -> try_map_segments_points(rest, f, [segment, ..mapped])
+      }
+    }
+  }
+}
+
+fn try_map_bezier_points(
+  curve: bezier.BezierData,
+  with f: fn(Point) -> Result(Point, error),
+) -> Result(bezier.BezierData, PointMapError(error)) {
+  case curve {
+    bezier.LinearBezierData(start:, end:) -> {
+      use start <- result.try(
+        start
+        |> from_bezier_point
+        |> f
+        |> result.map_error(PointMapFunctionError),
+      )
+      use end <- result.try(
+        end |> from_bezier_point |> f |> result.map_error(PointMapFunctionError),
+      )
+      Ok(bezier.LinearBezierData(
+        start: to_bezier_point(start),
+        end: to_bezier_point(end),
+      ))
+    }
+    bezier.QuadraticBezierData(start:, control:, end:) -> {
+      use start <- result.try(
+        start
+        |> from_bezier_point
+        |> f
+        |> result.map_error(PointMapFunctionError),
+      )
+      use control <- result.try(
+        control
+        |> from_bezier_point
+        |> f
+        |> result.map_error(PointMapFunctionError),
+      )
+      use end <- result.try(
+        end |> from_bezier_point |> f |> result.map_error(PointMapFunctionError),
+      )
+      Ok(bezier.QuadraticBezierData(
+        start: to_bezier_point(start),
+        control: to_bezier_point(control),
+        end: to_bezier_point(end),
+      ))
+    }
+    bezier.CubicBezierData(start:, control1:, control2:, end:) -> {
+      use start <- result.try(
+        start
+        |> from_bezier_point
+        |> f
+        |> result.map_error(PointMapFunctionError),
+      )
+      use control1 <- result.try(
+        control1
+        |> from_bezier_point
+        |> f
+        |> result.map_error(PointMapFunctionError),
+      )
+      use control2 <- result.try(
+        control2
+        |> from_bezier_point
+        |> f
+        |> result.map_error(PointMapFunctionError),
+      )
+      use end <- result.try(
+        end |> from_bezier_point |> f |> result.map_error(PointMapFunctionError),
+      )
+      Ok(bezier.CubicBezierData(
+        start: to_bezier_point(start),
+        control1: to_bezier_point(control1),
+        control2: to_bezier_point(control2),
+        end: to_bezier_point(end),
+      ))
     }
   }
 }
