@@ -1658,6 +1658,67 @@ pub fn clean_subpath_preserves_closed_state_test() {
     ]
 }
 
+pub fn segment_is_zero_length_detects_exact_zero_lines_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let zero = svg_path.Line(start: a, end: a)
+  let nonzero = svg_path.Line(start: a, end: svg_path.point(1.0, 0.0))
+
+  assert svg_path.segment_is_zero_length(zero, tolerance: 0.0) == Ok(True)
+  assert svg_path.segment_is_zero_length(nonzero, tolerance: 0.0) == Ok(False)
+}
+
+pub fn segment_is_zero_length_uses_tolerance_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let short = svg_path.Line(start: a, end: svg_path.point(0.001, 0.0))
+
+  assert svg_path.segment_is_zero_length(short, tolerance: 0.0009) == Ok(False)
+  assert svg_path.segment_is_zero_length(short, tolerance: 0.0011) == Ok(True)
+}
+
+pub fn segment_is_zero_length_detects_collapsed_cubic_test() {
+  let a = svg_path.point(2.0, 3.0)
+  let zero = svg_path.CubicBezier(start: a, control1: a, control2: a, end: a)
+
+  assert svg_path.segment_is_zero_length(zero, tolerance: 0.0) == Ok(True)
+}
+
+pub fn subpath_is_zero_length_requires_non_empty_subpath_test() {
+  let empty = svg_path.subpath_empty(at: svg_path.point(0.0, 0.0))
+
+  assert svg_path.subpath_is_zero_length(empty, tolerance: 0.0) == Ok(False)
+}
+
+pub fn subpath_is_zero_length_checks_every_segment_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(1.0, 0.0)
+  let zero = svg_path.Line(start: a, end: a)
+  let nonzero = svg_path.Line(start: a, end: b)
+
+  assert svg_path.subpath_is_zero_length(
+      svg_path.subpath_assert([zero]),
+      tolerance: 0.0,
+    )
+    == Ok(True)
+  assert svg_path.subpath_is_zero_length(
+      svg_path.subpath_assert([zero, zero]),
+      tolerance: 0.0,
+    )
+    == Ok(True)
+  assert svg_path.subpath_is_zero_length(
+      svg_path.subpath_assert_with([zero, nonzero], policy: svg_path.Wiggle),
+      tolerance: 0.0,
+    )
+    == Ok(False)
+}
+
+pub fn zero_length_predicates_reject_negative_tolerance_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let zero = svg_path.Line(start: a, end: a)
+
+  assert svg_path.segment_is_zero_length(zero, tolerance: -0.1)
+    == Error(svg_path.InvalidZeroLengthTolerance(-0.1))
+}
+
 pub fn path_map_subpaths_maps_each_subpath_test() {
   let a = svg_path.point(0.0, 0.0)
   let b = svg_path.point(10.0, 0.0)

@@ -474,6 +474,9 @@ pub type Error {
   /// A length approximation could not be refined within the recursion limit.
   LengthMaxDepthReached(estimate: Float, error: Float)
 
+  /// The zero-length tolerance must be finite and zero or greater.
+  InvalidZeroLengthTolerance(tolerance: Float)
+
   /// A requested arc-length distance was outside `0.0..length`.
   InvalidLengthDistance(distance: Float, length: Float)
 
@@ -1811,6 +1814,20 @@ pub fn segment_length_with(
   }
 }
 
+/// Return whether a segment has length at most `tolerance`.
+///
+/// `tolerance` is measured in path coordinate units and may be exactly `0.0`
+/// for an exact zero-length check. Lines are measured exactly. Quadratic
+/// Beziers, cubic Beziers, and arcs are measured with default length options.
+pub fn segment_is_zero_length(
+  segment: Segment,
+  tolerance tolerance: Float,
+) -> Result(Bool, Error) {
+  use _ <- result.try(validate_zero_length_tolerance(tolerance))
+  use length <- result.try(segment_length(segment))
+  Ok(length <=. tolerance)
+}
+
 /// Return the segment parameter at a traveled distance from the segment start.
 ///
 /// The distance is measured in path coordinate units, not normalized. Lines are
@@ -2069,6 +2086,21 @@ pub fn subpath_length_with(
   case validate_length_options(options) {
     Error(error) -> Error(error)
     Ok(Nil) -> subpath_length_loop(subpath.segments, options, total: 0.0)
+  }
+}
+
+/// Return whether a subpath is a zero-length drawing subpath.
+///
+/// Empty subpaths are not considered zero-length drawing subpaths. A non-empty
+/// subpath is zero-length when every segment has length at most `tolerance`.
+pub fn subpath_is_zero_length(
+  subpath: Subpath,
+  tolerance tolerance: Float,
+) -> Result(Bool, Error) {
+  use _ <- result.try(validate_zero_length_tolerance(tolerance))
+  case subpath.segments {
+    [] -> Ok(False)
+    segments -> subpath_segments_are_zero_length(segments, tolerance)
   }
 }
 
@@ -3776,6 +3808,13 @@ fn parametric_cubic_segment(
   }
 }
 
+fn validate_zero_length_tolerance(tolerance: Float) -> Result(Nil, Error) {
+  case tolerance <. 0.0 || !finite_float(tolerance) {
+    True -> Error(InvalidZeroLengthTolerance(tolerance))
+    False -> Ok(Nil)
+  }
+}
+
 fn finite_point(point: Point) -> Bool {
   finite_float(point.x) && finite_float(point.y)
 }
@@ -4161,6 +4200,22 @@ fn path_length_loop(
     [first, ..rest] -> {
       use length <- result.try(subpath_length_with(first, options:))
       path_length_loop(rest, options, total: total +. length)
+    }
+  }
+}
+
+fn subpath_segments_are_zero_length(
+  segments: List(Segment),
+  tolerance: Float,
+) -> Result(Bool, Error) {
+  case segments {
+    [] -> Ok(True)
+    [first, ..rest] -> {
+      use zero <- result.try(segment_is_zero_length(first, tolerance:))
+      case zero {
+        False -> Ok(False)
+        True -> subpath_segments_are_zero_length(rest, tolerance)
+      }
     }
   }
 }

@@ -1,5 +1,6 @@
 import gleam/list
 import svg_path
+import svg_path/offset
 import svg_path/serialize
 import svg_path/stroke
 
@@ -33,6 +34,44 @@ pub fn subpath_stroke_with_round_caps_adds_two_cap_arcs_test() {
   assert arc_count(svg_path.subpath_segments(outline)) == 2
 }
 
+pub fn subpath_stroke_with_round_cap_serializes_semicircles_test() {
+  let subpath =
+    svg_path.subpath_assert_polyline([
+      svg_path.point(0.0, 0.0),
+      svg_path.point(10.0, 0.0),
+    ])
+  let options =
+    stroke.Options(..stroke.default_options(), width: 2.0, cap: stroke.Round)
+
+  let assert Ok(path) = stroke.subpath_with(subpath, options:)
+  let assert [outline] = svg_path.path_subpaths(path)
+
+  assert serialize.subpath(outline)
+    == "M 0 -1 H 10 A 1 1 0 0 1 10 1 H 0 A 1 1 0 0 1 0 -1 Z"
+}
+
+pub fn zero_length_subpath_stroke_with_butt_cap_returns_empty_path_test() {
+  let a = svg_path.point(3.0, 4.0)
+  let subpath = svg_path.subpath_assert([svg_path.Line(start: a, end: a)])
+
+  let assert Ok(path) = stroke.subpath(subpath, width: 2.0)
+
+  assert svg_path.path_subpaths(path) == []
+}
+
+pub fn zero_length_subpath_stroke_with_round_cap_returns_circle_test() {
+  let a = svg_path.point(3.0, 4.0)
+  let subpath = svg_path.subpath_assert([svg_path.Line(start: a, end: a)])
+  let options =
+    stroke.Options(..stroke.default_options(), width: 2.0, cap: stroke.Round)
+
+  let assert Ok(path) = stroke.subpath_with(subpath, options:)
+  let assert [outline] = svg_path.path_subpaths(path)
+
+  assert svg_path.subpath_is_closed(outline)
+  assert serialize.subpath(outline) == "M 4 4 A 1 1 0 0 1 2 4 A 1 1 0 0 1 4 4 Z"
+}
+
 pub fn subpath_stroke_with_square_caps_extends_by_half_width_test() {
   let subpath =
     svg_path.subpath_assert_polyline([
@@ -47,6 +86,94 @@ pub fn subpath_stroke_with_square_caps_extends_by_half_width_test() {
 
   assert serialize.subpath(outline)
     == "M 0 -1 H 10 H 11 V 1 H 10 H 0 H -1 V -1 Z"
+}
+
+pub fn subpath_stroke_with_bevel_join_keeps_corner_cut_test() {
+  let subpath = right_angle_subpath()
+  let options =
+    stroke.Options(
+      ..stroke.default_options(),
+      width: 2.0,
+      offset: offset.Options(..offset.default_options(), join: offset.Bevel),
+    )
+
+  let assert Ok(path) = stroke.subpath_with(subpath, options:)
+  let assert [outline] = svg_path.path_subpaths(path)
+
+  assert serialize.subpath(outline) == "M 9 1 H 0 V -1 H 10 L 11 0 V 10 H 9 Z"
+}
+
+pub fn subpath_stroke_with_round_join_adds_join_arcs_test() {
+  let subpath = right_angle_subpath()
+  let options =
+    stroke.Options(
+      ..stroke.default_options(),
+      width: 2.0,
+      offset: offset.Options(..offset.default_options(), join: offset.Round),
+    )
+
+  let assert Ok(path) = stroke.subpath_with(subpath, options:)
+  let assert [outline] = svg_path.path_subpaths(path)
+
+  assert arc_count(svg_path.subpath_segments(outline)) == 1
+  assert serialize.subpath(outline)
+    == "M 9 1 H 0 V -1 H 10 A 1 1 0 0 1 11 0 V 10 H 9 Z"
+}
+
+pub fn subpath_stroke_with_miter_join_extends_to_apex_test() {
+  let subpath = right_angle_subpath()
+  let options =
+    stroke.Options(
+      ..stroke.default_options(),
+      width: 2.0,
+      offset: offset.Options(
+        ..offset.default_options(),
+        join: offset.Miter(4.0),
+      ),
+    )
+
+  let assert Ok(path) = stroke.subpath_with(subpath, options:)
+  let assert [outline] = svg_path.path_subpaths(path)
+
+  assert serialize.subpath(outline) == "M 9 1 H 0 V -1 H 10 H 11 V 0 V 10 H 9 Z"
+}
+
+pub fn subpath_stroke_with_low_miter_limit_falls_back_to_bevel_test() {
+  let subpath = right_angle_subpath()
+  let low_miter =
+    stroke.Options(
+      ..stroke.default_options(),
+      width: 2.0,
+      offset: offset.Options(
+        ..offset.default_options(),
+        join: offset.Miter(1.0),
+      ),
+    )
+  let bevel =
+    stroke.Options(
+      ..stroke.default_options(),
+      width: 2.0,
+      offset: offset.Options(..offset.default_options(), join: offset.Bevel),
+    )
+
+  let assert Ok(low_miter_path) =
+    stroke.subpath_with(subpath, options: low_miter)
+  let assert Ok(bevel_path) = stroke.subpath_with(subpath, options: bevel)
+
+  assert serialize.path(low_miter_path) == serialize.path(bevel_path)
+}
+
+pub fn zero_length_subpath_stroke_with_square_cap_returns_square_test() {
+  let a = svg_path.point(3.0, 4.0)
+  let subpath = svg_path.subpath_assert([svg_path.Line(start: a, end: a)])
+  let options =
+    stroke.Options(..stroke.default_options(), width: 2.0, cap: stroke.Square)
+
+  let assert Ok(path) = stroke.subpath_with(subpath, options:)
+  let assert [outline] = svg_path.path_subpaths(path)
+
+  assert svg_path.subpath_is_closed(outline)
+  assert serialize.subpath(outline) == "M 2 3 H 4 V 5 H 2 Z"
 }
 
 pub fn closed_subpath_stroke_returns_two_closed_contours_test() {
@@ -207,6 +334,19 @@ pub fn subpath_dashes_skips_zero_entries_in_nonzero_patterns_test() {
     ]
 }
 
+pub fn subpath_dashes_treats_empty_pattern_as_none_test() {
+  let subpath =
+    svg_path.subpath_assert_polyline([
+      svg_path.point(0.0, 0.0),
+      svg_path.point(8.0, 0.0),
+    ])
+
+  let assert Ok(dashes) =
+    stroke.subpath_dashes(subpath, pattern: [], offset: 3.0)
+
+  assert dashes |> list.map(serialize.subpath) == ["M 0 0 H 8"]
+}
+
 pub fn subpath_dashes_crosses_segment_boundaries_test() {
   let subpath =
     svg_path.subpath_assert_polyline([
@@ -328,4 +468,12 @@ fn arc_count(segments: List(svg_path.Segment)) -> Int {
     }
   })
   |> list.length
+}
+
+fn right_angle_subpath() -> svg_path.Subpath {
+  svg_path.subpath_assert_polyline([
+    svg_path.point(0.0, 0.0),
+    svg_path.point(10.0, 0.0),
+    svg_path.point(10.0, 10.0),
+  ])
 }

@@ -3,6 +3,11 @@
 ## Wishlist
 
 - Marker and decoration placement as geometry.
+- SVG 2 stroke join styles `miter-clip` and `arcs`, only if real caller demand
+  appears. The current stroke API covers `bevel`, `miter`, and `round`.
+- Newer/proposed stroke features such as `stroke-alignment`,
+  `stroke-dashcorner`, and `stroke-dashadjust`, only if real caller demand
+  appears.
 - Stroke hit testing, if real callers need geometry-level hit tests rather than
   renderer-level hit tests.
 - Structural simplification, not smoothing:
@@ -20,6 +25,11 @@ Recently completed:
 - Path offsets, including trimmed and untrimmed variants.
 - Path bands, including asymmetric and untrimmed variants.
 - Plain path stroking with caps and joins.
+- Zero-length subpath stroke behavior for `butt`, `round`, and `square` caps.
+- Ordinary open-subpath stroke cap behavior for `butt`, `round`, and `square`.
+- Stroke join behavior for `bevel`, `miter`, and `round`, including
+  miter-limit bevel fallback.
+- SVG-style dasharray normalization and dashoffset behavior.
 - SVG-style dash extraction and dashed stroke geometry.
 - Area helpers for fill-rule area, absolute winding area, signed area, and
   subpath clockwiseness.

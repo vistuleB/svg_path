@@ -88,6 +88,10 @@ pub type Error {
 }
 
 /// Join style used when offsetting adjacent subpath segments.
+///
+/// This covers the common SVG `stroke-linejoin` values `bevel`, `miter`, and
+/// `round`. SVG 2 also describes `miter-clip` and `arcs`; those are not exposed
+/// here yet.
 pub type Join {
   /// Connect adjacent offset segments with a straight line.
   Bevel
@@ -425,30 +429,38 @@ pub fn subpath_stroke_with(
   case svg_path.subpath_segments(subpath) {
     [] -> Ok(svg_path.path_empty())
     _ ->
-      case svg_path.subpath_is_closed(subpath) {
-        True -> {
-          use stroke <- result.try(closed_stroke_path(
-            subpath,
-            radius: radius,
-            options: options,
-          ))
-          orient_outline_path(stroke)
-        }
-        False -> {
-          use candidate <- result.try(stroke_candidate_subpath(
-            subpath,
-            radius,
-            cap,
-            options,
-          ))
-          use stroke <- result.try(parametric_pruned_stroke_candidate(
-            source: subpath,
-            candidate:,
-            radius:,
-            cap:,
-            options:,
-          ))
-          orient_outline_path(stroke)
+      case
+        svg_path.subpath_is_zero_length(subpath, tolerance: point_tolerance)
+      {
+        Error(error) -> Error(PathError(error))
+        Ok(True) -> zero_length_stroke_path(subpath, radius:, cap:)
+        Ok(False) -> {
+          case svg_path.subpath_is_closed(subpath) {
+            True -> {
+              use stroke <- result.try(closed_stroke_path(
+                subpath,
+                radius: radius,
+                options: options,
+              ))
+              orient_outline_path(stroke)
+            }
+            False -> {
+              use candidate <- result.try(stroke_candidate_subpath(
+                subpath,
+                radius,
+                cap,
+                options,
+              ))
+              use stroke <- result.try(parametric_pruned_stroke_candidate(
+                source: subpath,
+                candidate:,
+                radius:,
+                cap:,
+                options:,
+              ))
+              orient_outline_path(stroke)
+            }
+          }
         }
       }
   }
@@ -1103,6 +1115,92 @@ fn stroke_candidate_subpath(
     policy: svg_path.Wiggle,
   )
   |> result.map_error(PathError)
+}
+
+fn zero_length_stroke_path(
+  subpath: svg_path.Subpath,
+  radius radius: Float,
+  cap cap: Cap,
+) -> Result(svg_path.Path, Error) {
+  use center <- result.try(
+    svg_path.subpath_start(subpath) |> result.map_error(PathError),
+  )
+  case cap {
+    Butt -> Ok(svg_path.path_empty())
+    RoundCap -> zero_length_round_stroke_path(center, radius)
+    Square -> zero_length_square_stroke_path(center, radius)
+  }
+}
+
+fn zero_length_round_stroke_path(
+  center: svg_path.Point,
+  radius: Float,
+) -> Result(svg_path.Path, Error) {
+  let right = add(center, svg_path.point(radius, 0.0))
+  let left = add(center, svg_path.point(0.0 -. radius, 0.0))
+  let segments = [
+    svg_path.Arc(
+      start: right,
+      radius: svg_path.point(radius, radius),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: True,
+      end: left,
+    ),
+    svg_path.Arc(
+      start: left,
+      radius: svg_path.point(radius, radius),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: True,
+      end: right,
+    ),
+  ]
+  use outline <- result.try(
+    svg_path.subpath_with(segments, policy: svg_path.Strict)
+    |> result.map_error(PathError),
+  )
+  use closed <- result.try(
+    svg_path.subpath_set_closed_with(
+      outline,
+      closed: True,
+      policy: svg_path.Strict,
+    )
+    |> result.map_error(PathError),
+  )
+  Ok(svg_path.Path(subpaths: [closed]))
+}
+
+fn zero_length_square_stroke_path(
+  center: svg_path.Point,
+  radius: Float,
+) -> Result(svg_path.Path, Error) {
+  let top_left = add(center, svg_path.point(0.0 -. radius, 0.0 -. radius))
+  let top_right = add(center, svg_path.point(radius, 0.0 -. radius))
+  let bottom_right = add(center, svg_path.point(radius, radius))
+  let bottom_left = add(center, svg_path.point(0.0 -. radius, radius))
+  use outline <- result.try(
+    svg_path.subpath_with(
+      line_segments_between([
+        top_left,
+        top_right,
+        bottom_right,
+        bottom_left,
+        top_left,
+      ]),
+      policy: svg_path.Strict,
+    )
+    |> result.map_error(PathError),
+  )
+  use closed <- result.try(
+    svg_path.subpath_set_closed_with(
+      outline,
+      closed: True,
+      policy: svg_path.Strict,
+    )
+    |> result.map_error(PathError),
+  )
+  Ok(svg_path.Path(subpaths: [closed]))
 }
 
 fn stroke_end_cap(
