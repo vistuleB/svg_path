@@ -13,3 +13,8 @@
 - [Khmer decaying spiral offset map](gallery-khmer-decaying-spiral-offset-map.svg)
 - [Crescent hull](gallery-crescent-hull.svg)
 - [Cut radiator](gallery-cut-radiator.svg)
+- [Marker pose slots](gallery-marker-pose-slots.svg)
+- [Marker orientation semantics](gallery-marker-orient-semantics.svg)
+- [Marker reference semantics](gallery-marker-reference-semantics.svg)
+- [Marker units semantics](gallery-marker-units-semantics.svg)
+- [Marker viewBox semantics](gallery-marker-viewbox-semantics.svg)

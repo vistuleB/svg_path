@@ -2,6 +2,7 @@ import gleam/dynamic.{type Dynamic}
 import gleam/float
 import gleam/int
 import gleam/list
+import gleam/option.{None, Some}
 import gleam/string
 import gleeunit
 import svg_path
@@ -9,6 +10,7 @@ import svg_path/convex_hull
 import svg_path/csg
 import svg_path/cut
 import svg_path/effects
+import svg_path/marker
 import svg_path/number_format
 import svg_path/offset
 import svg_path/parse
@@ -86,6 +88,27 @@ pub fn gallery_figures_are_generated_test() {
     ),
     #("gallery-crescent-hull.svg", "Crescent hull", crescent_hull()),
     #("gallery-cut-radiator.svg", "Cut radiator", cut_radiator()),
+    #("gallery-marker-pose-slots.svg", "Marker pose slots", marker_pose_slots()),
+    #(
+      "gallery-marker-orient-semantics.svg",
+      "Marker orientation semantics",
+      marker_orientation_semantics(),
+    ),
+    #(
+      "gallery-marker-reference-semantics.svg",
+      "Marker reference semantics",
+      marker_reference_semantics(),
+    ),
+    #(
+      "gallery-marker-units-semantics.svg",
+      "Marker units semantics",
+      marker_units_semantics(),
+    ),
+    #(
+      "gallery-marker-viewbox-semantics.svg",
+      "Marker viewBox semantics",
+      marker_viewbox_semantics(),
+    ),
   ]
 
   let entries =
@@ -103,6 +126,461 @@ pub fn gallery_figures_are_generated_test() {
     )
 
   assert figures != []
+}
+
+fn marker_pose_slots() -> String {
+  let width = 900.0
+  let height = 260.0
+  let source = marker_pose_demo_subpath(72.0)
+  let path = svg_path.Path([source])
+  let assert Ok(poses) = marker.subpath_poses(source, orient: marker.Auto)
+
+  document(
+    [
+      svg.Text(
+        "marker.subpath_poses(...) returns start, mid, and end poses",
+        marker_title_style(),
+        svg_path.point(450.0, 34.0),
+        22,
+      ),
+      svg.StyledPath(path, marker_source_path_style()),
+      ..list.append(
+        marker_pose_points(poses),
+        list.append(
+          marker_glyphs(poses, marker_orientation_layout()),
+          marker_pose_slot_labels(poses),
+        ),
+      )
+    ],
+    width:,
+    height:,
+  )
+}
+
+fn marker_orientation_semantics() -> String {
+  let width = 900.0
+  let height = 500.0
+  let rows = [
+    #("Auto", marker.Auto, 50.0),
+    #("AutoStartReverse", marker.AutoStartReverse, 200.0),
+    #("Fixed(0)", marker.Fixed(0.0), 350.0),
+  ]
+
+  document(
+    [
+      svg.Text(
+        "marker.subpath_poses(...) orientation policies",
+        marker_title_style(),
+        svg_path.point(450.0, 34.0),
+        22,
+      ),
+      ..rows
+      |> list.flat_map(fn(row) {
+        let #(label, orient, y) = row
+        marker_orientation_row(label, orient, y)
+      })
+    ],
+    width:,
+    height:,
+  )
+}
+
+fn marker_orientation_row(
+  label: String,
+  orient: marker.MarkerOrient,
+  y: Float,
+) -> svg.ThingsToDraw {
+  let source = marker_pose_demo_subpath(y)
+  let path = svg_path.Path([source])
+  let assert Ok(poses) = marker.subpath_poses(source, orient:)
+
+  [
+    svg.Text(label, marker_label_style(), svg_path.point(38.0, y +. 60.0), 17),
+    svg.StyledPath(path, marker_source_path_style()),
+    ..list.append(
+      marker_pose_points(poses),
+      marker_glyphs(poses, marker_orientation_layout()),
+    )
+  ]
+}
+
+fn marker_reference_semantics() -> String {
+  let width = 900.0
+  let height = 380.0
+  let pose =
+    marker.MarkerPose(
+      kind: marker.MarkerEnd,
+      point: svg_path.point(200.0, 0.0),
+      angle: 0.0,
+    )
+  let rows = [
+    #("refX at tail", svg_path.point(0.0, 0.0), 80.0),
+    #("refX at center", svg_path.point(12.0, 0.0), 180.0),
+    #("refX at tip", svg_path.point(24.0, 0.0), 280.0),
+  ]
+
+  document(
+    [
+      svg.Text(
+        "refX/refY pins one marker-local point to the path pose",
+        marker_title_style(),
+        svg_path.point(450.0, 34.0),
+        22,
+      ),
+      ..rows
+      |> list.flat_map(fn(row) {
+        let #(label, reference, y) = row
+        marker_reference_row(label, pose, reference, y)
+      })
+    ],
+    width:,
+    height:,
+  )
+}
+
+fn marker_reference_row(
+  label: String,
+  pose: marker.MarkerPose,
+  reference: svg_path.Point,
+  y: Float,
+) -> svg.ThingsToDraw {
+  let shifted_pose = shift_marker_pose(pose, y: y)
+  let layout =
+    marker_layout(reference:, marker_width: 28.0, marker_height: 16.0)
+  let assert Ok(matrix) = marker.pose_layout_transform(shifted_pose, layout:)
+  let assert Ok(glyph) = transform.path(marker_reference_shape(), by: matrix)
+  let marker.MarkerPose(point:, ..) = shifted_pose
+  let reference_point = transform.point(reference, by: matrix)
+
+  [
+    svg.Text(label, marker_label_style(), svg_path.point(38.0, y +. 5.0), 17),
+    svg.StyledPath(
+      svg_path.Path([
+        svg_path.subpath_assert([
+          svg_path.Line(
+            start: svg_path.point(170.0, y),
+            end: svg_path.point(505.0, y),
+          ),
+        ]),
+      ]),
+      "fill: none; stroke: #cbd5e1; stroke-width: 2",
+    ),
+    svg.Circle(point, 5.5, "fill: #111827"),
+    svg.Circle(
+      reference_point,
+      9.0,
+      "fill: none; stroke: #f59e0b; stroke-width: 3",
+    ),
+    svg.StyledPath(glyph, marker_fill_style("#0f766e")),
+  ]
+}
+
+fn marker_units_semantics() -> String {
+  let width = 980.0
+  let height = 270.0
+  let rows = [
+    #("UserSpaceOnUse", marker_user_space_layout(), 94.0),
+    #("StrokeWidth, stroke_width: 3", marker_stroke_width_layout(), 196.0),
+  ]
+
+  document(
+    [
+      svg.Text(
+        "markerUnits changes the size of marker-local coordinates",
+        marker_title_style(),
+        svg_path.point(490.0, 34.0),
+        22,
+      ),
+      ..rows
+      |> list.flat_map(fn(row) {
+        let #(label, layout, y) = row
+        marker_layout_row(label, layout, y)
+      })
+    ],
+    width:,
+    height:,
+  )
+}
+
+fn marker_viewbox_semantics() -> String {
+  let width = 980.0
+  let height = 372.0
+  let rows = [
+    #("Stretch", marker_stretch_layout(), 94.0),
+    #("Meet(XMidYMid)", marker_meet_layout(), 196.0),
+    #("Slice(XMidYMid)", marker_slice_layout(), 298.0),
+  ]
+
+  document(
+    [
+      svg.Text(
+        "viewBox + preserveAspectRatio changes marker content fitting",
+        marker_title_style(),
+        svg_path.point(490.0, 34.0),
+        22,
+      ),
+      ..rows
+      |> list.flat_map(fn(row) {
+        let #(label, layout, y) = row
+        marker_layout_row(label, layout, y)
+      })
+    ],
+    width:,
+    height:,
+  )
+}
+
+fn marker_layout_row(
+  label: String,
+  layout: marker.MarkerLayout,
+  y: Float,
+) -> svg.ThingsToDraw {
+  let pose =
+    marker.MarkerPose(
+      kind: marker.MarkerEnd,
+      point: svg_path.point(270.0, y),
+      angle: 0.0,
+    )
+  let assert Ok(matrix) = marker.pose_layout_transform(pose, layout:)
+  let assert Ok(glyph) = transform.path(marker_layout_shape(), by: matrix)
+  let marker.MarkerPose(point:, ..) = pose
+  let marker.MarkerLayout(reference:, ..) = layout
+  let reference_point = transform.point(reference, by: matrix)
+
+  [
+    svg.Text(label, marker_label_style(), svg_path.point(40.0, y +. 6.0), 16),
+    svg.StyledPath(
+      svg_path.Path([
+        svg_path.subpath_assert([
+          svg_path.Line(
+            start: svg_path.point(240.0, y),
+            end: svg_path.point(680.0, y),
+          ),
+        ]),
+      ]),
+      "fill: none; stroke: #cbd5e1; stroke-width: 2",
+    ),
+    svg.Circle(point, 5.5, "fill: #111827"),
+    svg.Circle(
+      reference_point,
+      8.0,
+      "fill: none; stroke: #f59e0b; stroke-width: 2.5",
+    ),
+    svg.StyledPath(glyph, marker_fill_style("#7c2d12")),
+  ]
+}
+
+fn marker_glyphs(
+  poses: List(marker.MarkerPose),
+  layout: marker.MarkerLayout,
+) -> svg.ThingsToDraw {
+  poses
+  |> list.map(fn(pose) {
+    let assert Ok(matrix) = marker.pose_layout_transform(pose, layout:)
+    let assert Ok(glyph) =
+      transform.path(marker_orientation_shape(), by: matrix)
+    let fill = case pose.kind {
+      marker.MarkerStart -> "#0f766e"
+      marker.MarkerMid -> "#b45309"
+      marker.MarkerEnd -> "#1d4ed8"
+    }
+    svg.StyledPath(glyph, marker_fill_style(fill))
+  })
+}
+
+fn marker_pose_points(poses: List(marker.MarkerPose)) -> svg.ThingsToDraw {
+  poses
+  |> list.map(fn(pose) {
+    let marker.MarkerPose(point:, ..) = pose
+    svg.Circle(point, 4.4, "fill: #111827")
+  })
+}
+
+fn marker_pose_slot_labels(poses: List(marker.MarkerPose)) -> svg.ThingsToDraw {
+  poses
+  |> list.map(fn(pose) {
+    let marker.MarkerPose(kind:, point:, ..) = pose
+    svg.Text(
+      marker_pose_kind_label(kind),
+      marker_label_style(),
+      svg_path.point(point.x, point.y +. 34.0),
+      14,
+    )
+  })
+}
+
+fn marker_pose_kind_label(kind: marker.MarkerKind) -> String {
+  case kind {
+    marker.MarkerStart -> "start"
+    marker.MarkerMid -> "mid"
+    marker.MarkerEnd -> "end"
+  }
+}
+
+fn marker_pose_demo_subpath(y: Float) -> svg_path.Subpath {
+  svg_path.subpath_assert([
+    svg_path.Line(
+      start: svg_path.point(210.0, y +. 60.0),
+      end: svg_path.point(340.0, y +. 60.0),
+    ),
+    svg_path.CubicBezier(
+      start: svg_path.point(340.0, y +. 60.0),
+      control1: svg_path.point(405.0, y +. 0.0),
+      control2: svg_path.point(485.0, y +. 120.0),
+      end: svg_path.point(550.0, y +. 60.0),
+    ),
+    svg_path.Line(
+      start: svg_path.point(550.0, y +. 60.0),
+      end: svg_path.point(690.0, y +. 20.0),
+    ),
+  ])
+}
+
+fn marker_orientation_shape() -> svg_path.Path {
+  marker_arrow_shape(length: 28.0, half_height: 9.0)
+}
+
+fn marker_reference_shape() -> svg_path.Path {
+  marker_arrow_shape(length: 24.0, half_height: 8.0)
+}
+
+fn marker_layout_shape() -> svg_path.Path {
+  svg_path.Path([
+    svg_path.subpath_assert_polygon([
+      svg_path.point(0.0, -10.0),
+      svg_path.point(26.0, -10.0),
+      svg_path.point(36.0, 0.0),
+      svg_path.point(26.0, 10.0),
+      svg_path.point(0.0, 10.0),
+    ]),
+    svg_path.subpath_assert_polygon([
+      svg_path.point(5.0, -5.0),
+      svg_path.point(17.0, -5.0),
+      svg_path.point(17.0, 5.0),
+      svg_path.point(5.0, 5.0),
+    ]),
+  ])
+}
+
+fn marker_arrow_shape(
+  length length: Float,
+  half_height half_height: Float,
+) -> svg_path.Path {
+  svg_path.Path([
+    svg_path.subpath_assert_polygon([
+      svg_path.point(0.0, 0.0 -. half_height),
+      svg_path.point(length, 0.0),
+      svg_path.point(0.0, half_height),
+    ]),
+  ])
+}
+
+fn marker_orientation_layout() -> marker.MarkerLayout {
+  marker.MarkerLayout(
+    reference: svg_path.point(0.0, 0.0),
+    marker_width: 28.0,
+    marker_height: 18.0,
+    marker_units: marker.UserSpaceOnUse,
+    stroke_width: 1.0,
+    view_box: None,
+    preserve_aspect_ratio: marker.Meet(marker.XMidYMid),
+  )
+}
+
+fn marker_layout(
+  reference reference: svg_path.Point,
+  marker_width marker_width: Float,
+  marker_height marker_height: Float,
+) -> marker.MarkerLayout {
+  marker.MarkerLayout(
+    reference:,
+    marker_width:,
+    marker_height:,
+    marker_units: marker.UserSpaceOnUse,
+    stroke_width: 1.0,
+    view_box: None,
+    preserve_aspect_ratio: marker.Meet(marker.XMidYMid),
+  )
+}
+
+fn marker_user_space_layout() -> marker.MarkerLayout {
+  marker.MarkerLayout(
+    reference: svg_path.point(18.0, 0.0),
+    marker_width: 36.0,
+    marker_height: 20.0,
+    marker_units: marker.UserSpaceOnUse,
+    stroke_width: 1.0,
+    view_box: None,
+    preserve_aspect_ratio: marker.Meet(marker.XMidYMid),
+  )
+}
+
+fn marker_stroke_width_layout() -> marker.MarkerLayout {
+  marker.MarkerLayout(
+    ..marker_user_space_layout(),
+    marker_units: marker.StrokeWidth,
+    stroke_width: 3.0,
+  )
+}
+
+fn marker_stretch_layout() -> marker.MarkerLayout {
+  marker.MarkerLayout(
+    ..marker_user_space_layout(),
+    reference: svg_path.point(18.0, 0.0),
+    marker_width: 70.0,
+    marker_height: 30.0,
+    view_box: Some(marker_box(0.0, -10.0, 36.0, 20.0)),
+    preserve_aspect_ratio: marker.Stretch,
+  )
+}
+
+fn marker_meet_layout() -> marker.MarkerLayout {
+  marker.MarkerLayout(
+    ..marker_stretch_layout(),
+    preserve_aspect_ratio: marker.Meet(marker.XMidYMid),
+  )
+}
+
+fn marker_slice_layout() -> marker.MarkerLayout {
+  marker.MarkerLayout(
+    ..marker_stretch_layout(),
+    preserve_aspect_ratio: marker.Slice(marker.XMidYMid),
+  )
+}
+
+fn shift_marker_pose(pose: marker.MarkerPose, y y: Float) -> marker.MarkerPose {
+  let marker.MarkerPose(kind:, point:, angle:) = pose
+  marker.MarkerPose(kind:, point: svg_path.point(point.x, y), angle:)
+}
+
+fn marker_box(
+  min_x: Float,
+  min_y: Float,
+  max_x: Float,
+  max_y: Float,
+) -> svg_path.BoundingBox {
+  svg_path.BoundingBox(
+    min: svg_path.point(min_x, min_y),
+    max: svg_path.point(max_x, max_y),
+  )
+}
+
+fn marker_source_path_style() -> String {
+  "fill: none; stroke: #1e293b; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round"
+}
+
+fn marker_fill_style(fill: String) -> String {
+  "fill: "
+  <> fill
+  <> "; fill-opacity: 0.88; stroke: #111827; stroke-width: 1.2; stroke-linejoin: round"
+}
+
+fn marker_title_style() -> String {
+  "fill: #111827; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 700; text-anchor: middle"
+}
+
+fn marker_label_style() -> String {
+  "fill: #334155; font-family: ui-monospace, SFMono-Regular, Menlo, monospace"
 }
 
 fn rounded_rectangle_union() -> String {

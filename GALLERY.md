@@ -89,3 +89,36 @@ convex hull.
 
 Shows a dense snaking subpath cut by a text outline, with the pieces inside the
 outline removed.
+
+### Marker Pose Slots
+
+![Marker pose slots](https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/gallery-marker-pose-slots.svg)
+
+Shows the `MarkerStart`, `MarkerMid`, and `MarkerEnd` poses computed from a
+single subpath.
+
+### Marker Orientation Semantics
+
+![Marker orientation semantics](https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/gallery-marker-orient-semantics.svg)
+
+Compares `Auto`, `AutoStartReverse`, and a fixed marker orientation.
+
+### Marker Reference Semantics
+
+![Marker reference semantics](https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/gallery-marker-reference-semantics.svg)
+
+Shows how `refX` and `refY` choose which marker-local point lands on the path
+pose.
+
+### Marker Units Semantics
+
+![Marker units semantics](https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/gallery-marker-units-semantics.svg)
+
+Shows the difference between marker-local `UserSpaceOnUse` units and
+`StrokeWidth` units.
+
+### Marker ViewBox Semantics
+
+![Marker viewBox semantics](https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/gallery-marker-viewbox-semantics.svg)
+
+Compares `Stretch`, `Meet`, and `Slice` viewBox fitting for marker content.
