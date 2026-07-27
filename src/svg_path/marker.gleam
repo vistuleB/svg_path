@@ -6,6 +6,7 @@
 
 import gleam/float
 import gleam/list
+import gleam/option.{type Option, None, Some}
 import gleam/result
 import svg_path
 import svg_path/transform as affine
@@ -21,6 +22,19 @@ pub type Error {
 
   /// An underlying path operation failed.
   PathError(svg_path.Error)
+
+  /// Marker viewport width must be finite and greater than zero.
+  InvalidMarkerWidth(width: Float)
+
+  /// Marker viewport height must be finite and greater than zero.
+  InvalidMarkerHeight(height: Float)
+
+  /// Stroke width must be finite and greater than zero when marker units use
+  /// stroke width.
+  InvalidStrokeWidth(width: Float)
+
+  /// Marker viewBox width and height must be finite and greater than zero.
+  InvalidViewBox(view_box: svg_path.BoundingBox)
 }
 
 /// Which SVG marker slot a pose belongs to.
@@ -45,6 +59,59 @@ pub type MarkerOrient {
 
   /// Use one fixed absolute angle for every marker.
   Fixed(Float)
+}
+
+/// How marker viewport units relate to the stroked path.
+pub type MarkerUnits {
+  /// Marker viewport units are multiplied by the path stroke width.
+  StrokeWidth
+
+  /// Marker viewport units are ordinary user-space units.
+  UserSpaceOnUse
+}
+
+/// Alignment used by SVG `preserveAspectRatio`.
+pub type AspectAlign {
+  XMinYMin
+  XMidYMin
+  XMaxYMin
+  XMinYMid
+  XMidYMid
+  XMaxYMid
+  XMinYMax
+  XMidYMax
+  XMaxYMax
+}
+
+/// SVG `preserveAspectRatio` behavior for marker viewBox fitting.
+pub type PreserveAspectRatio {
+  /// Scale x and y independently so the viewBox exactly fills the viewport.
+  Stretch
+
+  /// Use uniform scale so the whole viewBox fits inside the viewport.
+  Meet(AspectAlign)
+
+  /// Use uniform scale so the viewBox covers the viewport.
+  Slice(AspectAlign)
+}
+
+/// Transform-only SVG marker layout inputs.
+///
+/// `reference` corresponds to SVG `refX` and `refY`. `marker_width` and
+/// `marker_height` are the marker viewport size. If `view_box` is `Some`, the
+/// marker content coordinate system is mapped into that viewport using
+/// `preserve_aspect_ratio`; otherwise marker content coordinates are already
+/// viewport coordinates. `stroke_width` is used only with `StrokeWidth` units.
+pub type MarkerLayout {
+  MarkerLayout(
+    reference: svg_path.Point,
+    marker_width: Float,
+    marker_height: Float,
+    marker_units: MarkerUnits,
+    stroke_width: Float,
+    view_box: Option(svg_path.BoundingBox),
+    preserve_aspect_ratio: PreserveAspectRatio,
+  )
 }
 
 /// Return marker poses for one subpath.
@@ -133,6 +200,45 @@ pub fn transform_with_reference(
   affine.translate(x: 0.0 -. reference.x, y: 0.0 -. reference.y)
   |> affine.chain(first: _, then: affine.rotate(degrees: angle))
   |> affine.chain(first: _, then: affine.translate(x: point.x, y: point.y))
+}
+
+/// Return a full marker-content transform for a pose and marker layout.
+///
+/// This computes the transform-only portion of SVG marker placement. It maps
+/// marker content coordinates through optional `viewBox` fitting, optional
+/// `strokeWidth` unit scaling, reference-point placement, pose rotation, and
+/// pose translation.
+pub fn pose_layout_transform(
+  pose: MarkerPose,
+  layout layout: MarkerLayout,
+) -> Result(affine.Matrix, Error) {
+  let MarkerPose(point:, angle:, ..) = pose
+  layout_transform(point:, angle:, layout:)
+}
+
+/// Return a full marker-content transform at `point` and `angle`.
+pub fn layout_transform(
+  point point: svg_path.Point,
+  angle angle: Float,
+  layout layout: MarkerLayout,
+) -> Result(affine.Matrix, Error) {
+  use _ <- result.try(validate_layout(layout))
+  let local = marker_local_transform(layout)
+  let MarkerLayout(reference:, ..) = layout
+  let mapped_reference = affine.point(reference, by: local)
+
+  Ok(
+    local
+    |> affine.chain(
+      first: _,
+      then: affine.translate(
+        x: 0.0 -. mapped_reference.x,
+        y: 0.0 -. mapped_reference.y,
+      ),
+    )
+    |> affine.chain(first: _, then: affine.rotate(degrees: angle))
+    |> affine.chain(first: _, then: affine.translate(x: point.x, y: point.y)),
+  )
 }
 
 fn mid_poses(
@@ -274,6 +380,126 @@ fn vector_length(vector: svg_path.Point) -> Float {
     vector.x *. vector.x +. vector.y *. vector.y
     |> float.square_root
   length
+}
+
+fn marker_local_transform(layout: MarkerLayout) -> affine.Matrix {
+  let MarkerLayout(marker_units:, stroke_width:, view_box:, ..) = layout
+  let view_box_transform = case view_box {
+    None -> affine.identity()
+    Some(box) -> view_box_to_marker_viewport(box, layout)
+  }
+  let unit_scale = case marker_units {
+    UserSpaceOnUse -> 1.0
+    StrokeWidth -> stroke_width
+  }
+
+  view_box_transform
+  |> affine.chain(first: _, then: affine.scale(factor: unit_scale))
+}
+
+fn view_box_to_marker_viewport(
+  box: svg_path.BoundingBox,
+  layout: MarkerLayout,
+) -> affine.Matrix {
+  let MarkerLayout(marker_width:, marker_height:, preserve_aspect_ratio:, ..) =
+    layout
+  let view_width = svg_path.bounding_box_width(box)
+  let view_height = svg_path.bounding_box_height(box)
+  let x_scale = marker_width /. view_width
+  let y_scale = marker_height /. view_height
+
+  case preserve_aspect_ratio {
+    Stretch ->
+      affine.translate(x: 0.0 -. box.min.x, y: 0.0 -. box.min.y)
+      |> affine.chain(first: _, then: affine.scale_xy(x: x_scale, y: y_scale))
+    Meet(align) -> {
+      let scale = float.min(x_scale, y_scale)
+      uniform_view_box_transform(box, marker_width, marker_height, scale, align)
+    }
+    Slice(align) -> {
+      let scale = float.max(x_scale, y_scale)
+      uniform_view_box_transform(box, marker_width, marker_height, scale, align)
+    }
+  }
+}
+
+fn uniform_view_box_transform(
+  box: svg_path.BoundingBox,
+  marker_width: Float,
+  marker_height: Float,
+  scale: Float,
+  align: AspectAlign,
+) -> affine.Matrix {
+  let view_width = svg_path.bounding_box_width(box)
+  let view_height = svg_path.bounding_box_height(box)
+  let x_extra = marker_width -. view_width *. scale
+  let y_extra = marker_height -. view_height *. scale
+  let x_offset = x_extra *. x_align_fraction(align)
+  let y_offset = y_extra *. y_align_fraction(align)
+
+  affine.translate(x: 0.0 -. box.min.x, y: 0.0 -. box.min.y)
+  |> affine.chain(first: _, then: affine.scale(factor: scale))
+  |> affine.chain(first: _, then: affine.translate(x: x_offset, y: y_offset))
+}
+
+fn x_align_fraction(align: AspectAlign) -> Float {
+  case align {
+    XMinYMin | XMinYMid | XMinYMax -> 0.0
+    XMidYMin | XMidYMid | XMidYMax -> 0.5
+    XMaxYMin | XMaxYMid | XMaxYMax -> 1.0
+  }
+}
+
+fn y_align_fraction(align: AspectAlign) -> Float {
+  case align {
+    XMinYMin | XMidYMin | XMaxYMin -> 0.0
+    XMinYMid | XMidYMid | XMaxYMid -> 0.5
+    XMinYMax | XMidYMax | XMaxYMax -> 1.0
+  }
+}
+
+fn validate_layout(layout: MarkerLayout) -> Result(Nil, Error) {
+  let MarkerLayout(
+    marker_width:,
+    marker_height:,
+    marker_units:,
+    stroke_width:,
+    view_box:,
+    ..,
+  ) = layout
+  case marker_width <=. 0.0 || !is_finite(marker_width) {
+    True -> Error(InvalidMarkerWidth(marker_width))
+    False ->
+      case marker_height <=. 0.0 || !is_finite(marker_height) {
+        True -> Error(InvalidMarkerHeight(marker_height))
+        False ->
+          case marker_units, stroke_width <=. 0.0 || !is_finite(stroke_width) {
+            StrokeWidth, True -> Error(InvalidStrokeWidth(stroke_width))
+            _, _ -> validate_view_box(view_box)
+          }
+      }
+  }
+}
+
+fn validate_view_box(
+  view_box: Option(svg_path.BoundingBox),
+) -> Result(Nil, Error) {
+  case view_box {
+    None -> Ok(Nil)
+    Some(box) -> {
+      let width = svg_path.bounding_box_width(box)
+      let height = svg_path.bounding_box_height(box)
+      case
+        width <=. 0.0
+        || height <=. 0.0
+        || !is_finite(width)
+        || !is_finite(height)
+      {
+        True -> Error(InvalidViewBox(box))
+        False -> Ok(Nil)
+      }
+    }
+  }
 }
 
 fn is_finite(value: Float) -> Bool {

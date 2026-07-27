@@ -1,4 +1,5 @@
 import gleam/list
+import gleam/option.{None, Some}
 import svg_path
 import svg_path/marker
 import svg_path/transform
@@ -198,9 +199,179 @@ pub fn pose_transform_with_reference_places_reference_at_pose_test() {
     == svg_path.point(10.0, 21.0)
 }
 
+pub fn layout_transform_without_view_box_matches_reference_transform_test() {
+  let pose = basic_pose()
+  let layout =
+    marker.MarkerLayout(..basic_layout(), reference: svg_path.point(2.0, 0.0))
+
+  let assert Ok(matrix) = marker.pose_layout_transform(pose, layout:)
+
+  assert transform.point(svg_path.point(2.0, 0.0), by: matrix)
+    == svg_path.point(10.0, 20.0)
+  assert transform.point(svg_path.point(3.0, 0.0), by: matrix)
+    == svg_path.point(10.0, 21.0)
+}
+
+pub fn layout_transform_scales_stroke_width_units_test() {
+  let pose = basic_pose()
+  let layout =
+    marker.MarkerLayout(
+      ..basic_layout(),
+      reference: svg_path.point(2.0, 0.0),
+      marker_units: marker.StrokeWidth,
+      stroke_width: 4.0,
+    )
+
+  let assert Ok(matrix) = marker.pose_layout_transform(pose, layout:)
+
+  assert transform.point(svg_path.point(2.0, 0.0), by: matrix)
+    == svg_path.point(10.0, 20.0)
+  assert transform.point(svg_path.point(3.0, 0.0), by: matrix)
+    == svg_path.point(10.0, 24.0)
+}
+
+pub fn layout_transform_stretches_view_box_test() {
+  let pose =
+    marker.MarkerPose(
+      kind: marker.MarkerEnd,
+      point: svg_path.point(100.0, 100.0),
+      angle: 0.0,
+    )
+  let layout =
+    marker.MarkerLayout(
+      ..basic_layout(),
+      reference: svg_path.point(10.0, 5.0),
+      marker_width: 20.0,
+      marker_height: 10.0,
+      view_box: Some(box(0.0, 0.0, 10.0, 10.0)),
+      preserve_aspect_ratio: marker.Stretch,
+    )
+
+  let assert Ok(matrix) = marker.pose_layout_transform(pose, layout:)
+
+  assert transform.point(svg_path.point(10.0, 5.0), by: matrix)
+    == svg_path.point(100.0, 100.0)
+  assert transform.point(svg_path.point(0.0, 5.0), by: matrix)
+    == svg_path.point(80.0, 100.0)
+}
+
+pub fn layout_transform_meet_aligns_view_box_test() {
+  let pose =
+    marker.MarkerPose(
+      kind: marker.MarkerEnd,
+      point: svg_path.point(100.0, 100.0),
+      angle: 0.0,
+    )
+  let layout =
+    marker.MarkerLayout(
+      ..basic_layout(),
+      reference: svg_path.point(5.0, 5.0),
+      marker_width: 20.0,
+      marker_height: 10.0,
+      view_box: Some(box(0.0, 0.0, 10.0, 10.0)),
+      preserve_aspect_ratio: marker.Meet(marker.XMidYMid),
+    )
+
+  let assert Ok(matrix) = marker.pose_layout_transform(pose, layout:)
+
+  assert transform.point(svg_path.point(5.0, 5.0), by: matrix)
+    == svg_path.point(100.0, 100.0)
+  assert transform.point(svg_path.point(0.0, 0.0), by: matrix)
+    == svg_path.point(95.0, 95.0)
+}
+
+pub fn layout_transform_slice_aligns_view_box_test() {
+  let pose =
+    marker.MarkerPose(
+      kind: marker.MarkerEnd,
+      point: svg_path.point(100.0, 100.0),
+      angle: 0.0,
+    )
+  let layout =
+    marker.MarkerLayout(
+      ..basic_layout(),
+      reference: svg_path.point(5.0, 5.0),
+      marker_width: 20.0,
+      marker_height: 10.0,
+      view_box: Some(box(0.0, 0.0, 10.0, 10.0)),
+      preserve_aspect_ratio: marker.Slice(marker.XMidYMid),
+    )
+
+  let assert Ok(matrix) = marker.pose_layout_transform(pose, layout:)
+
+  assert transform.point(svg_path.point(5.0, 5.0), by: matrix)
+    == svg_path.point(100.0, 100.0)
+  assert transform.point(svg_path.point(0.0, 0.0), by: matrix)
+    == svg_path.point(90.0, 90.0)
+}
+
+pub fn layout_transform_rejects_invalid_dimensions_test() {
+  let pose = basic_pose()
+
+  assert marker.pose_layout_transform(
+      pose,
+      layout: marker.MarkerLayout(..basic_layout(), marker_width: 0.0),
+    )
+    == Error(marker.InvalidMarkerWidth(0.0))
+  assert marker.pose_layout_transform(
+      pose,
+      layout: marker.MarkerLayout(..basic_layout(), marker_height: 0.0),
+    )
+    == Error(marker.InvalidMarkerHeight(0.0))
+  assert marker.pose_layout_transform(
+      pose,
+      layout: marker.MarkerLayout(
+        ..basic_layout(),
+        marker_units: marker.StrokeWidth,
+        stroke_width: 0.0,
+      ),
+    )
+    == Error(marker.InvalidStrokeWidth(0.0))
+  assert marker.pose_layout_transform(
+      pose,
+      layout: marker.MarkerLayout(
+        ..basic_layout(),
+        view_box: Some(box(0.0, 0.0, 0.0, 10.0)),
+      ),
+    )
+    == Error(marker.InvalidViewBox(box(0.0, 0.0, 0.0, 10.0)))
+}
+
 pub fn subpath_poses_rejects_empty_subpath_test() {
   let subpath = svg_path.subpath_empty(at: svg_path.point(0.0, 0.0))
 
   assert marker.subpath_poses(subpath, orient: marker.Auto)
     == Error(marker.EmptySubpath)
+}
+
+fn basic_pose() -> marker.MarkerPose {
+  marker.MarkerPose(
+    kind: marker.MarkerEnd,
+    point: svg_path.point(10.0, 20.0),
+    angle: 90.0,
+  )
+}
+
+fn basic_layout() -> marker.MarkerLayout {
+  marker.MarkerLayout(
+    reference: svg_path.point(0.0, 0.0),
+    marker_width: 10.0,
+    marker_height: 10.0,
+    marker_units: marker.UserSpaceOnUse,
+    stroke_width: 1.0,
+    view_box: None,
+    preserve_aspect_ratio: marker.Meet(marker.XMidYMid),
+  )
+}
+
+fn box(
+  min_x: Float,
+  min_y: Float,
+  max_x: Float,
+  max_y: Float,
+) -> svg_path.BoundingBox {
+  svg_path.BoundingBox(
+    min: svg_path.point(min_x, min_y),
+    max: svg_path.point(max_x, max_y),
+  )
 }
