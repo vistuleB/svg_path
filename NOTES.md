@@ -2,7 +2,9 @@
 
 ## Wishlist
 
-- Marker and decoration placement as geometry.
+- Full marker rendering as geometry, only if there is real caller demand. The
+  current marker API computes poses and layout transforms, but does not render
+  marker SVG subtrees into paths.
 - SVG 2 stroke join styles `miter-clip` and `arcs`, only if real caller demand
   appears. The current stroke API covers `bevel`, `miter`, and `round`.
 - Newer/proposed stroke features such as `stroke-alignment`,
@@ -31,11 +33,13 @@ Recently completed:
   miter-limit bevel fallback.
 - SVG-style dasharray normalization and dashoffset behavior.
 - SVG-style dash extraction and dashed stroke geometry.
+- SVG marker pose helpers and marker layout transforms.
 - Area helpers for fill-rule area, absolute winding area, signed area, and
   subpath clockwiseness.
 - Cut helpers for splitting subjects by cutter intersections.
 - Intersection parameter canonicalization.
 - Public gallery seed file and generated candidate figures.
+- Gallery figures for markers, offsets, strokes, cuts, hulls, and offset maps.
 
 Stabilization preference:
 

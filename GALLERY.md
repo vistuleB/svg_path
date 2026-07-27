@@ -121,4 +121,6 @@ Shows the difference between marker-local `UserSpaceOnUse` units and
 
 ![Marker viewBox semantics](https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/gallery-marker-viewbox-semantics.svg)
 
-Compares `Stretch`, `Meet`, and `Slice` viewBox fitting for marker content.
+Compares the marker-local transforms for `Stretch`, `Meet`, and `Slice`
+viewBox fitting. This figure shows transform semantics, not full marker
+viewport clipping.

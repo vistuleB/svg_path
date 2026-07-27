@@ -11,19 +11,75 @@ the tag object.
 
 ## Unreleased
 
+- No unreleased changes yet.
+
+## 0.20.0 - 2026-07-27
+
+- Added `svg_path/marker` helpers for SVG marker poses and marker layout
+  transforms, including marker units, `orient`, `refX`/`refY`, and
+  viewBox/preserveAspectRatio fitting.
+- Added marker gallery figures for pose slots, orientation, reference points,
+  marker units, and viewBox fitting.
+- Audited stroke cap and join behavior against SVG painting semantics.
+
+## 0.19.0 - 2026-07-25
+
+- Normalized public root-module API prefixes so segment, subpath, and path
+  helper families use consistent names.
+
+## 0.18.0 - 2026-07-25
+
+- Added fallible point mapping helpers and segment/subpath/path subdivision by
+  maximum arc length.
+- Added `offset.subpath_offset_map` for mapping `(distance, offset)` coordinates
+  onto an offset of a source subpath.
+- Added parametric subpath fitting from sampled functions into cubic Bezier
+  sequences.
+- Added Khmer coil and decaying-spiral offset-map gallery figures.
+- Added crescent hull and cut-radiator gallery figures.
+
+## 0.17.2 - 2026-07-23
+
+- Refactored offset builders and exposed fitting options for stalled offset
+  pieces.
+- Added stalled-offset gallery figures for circular and cubic quarter-turn
+  cases.
+- Allowed custom offset connector policies to return multiple connector
+  segments.
+
+## 0.17.1 - 2026-07-22
+
+- Fixed split endpoint preservation for segments and arcs.
+- Repaired offset boundary healing so band and stroke output share the same
+  contour normalization path.
+- Added recursive dash gallery fixtures.
+
+## 0.17.0 - 2026-07-21
+
+- Added SVG-style dasharray normalization, dashoffset handling, dash extraction,
+  and dashed stroke geometry.
+- Added public path cutting helpers and intersection parameter
+  canonicalization.
+- Added subpath clockwiseness helpers.
+
+## 0.16.0 - 2026-07-20
+
 - Added `svg_path/offset` with segment, subpath, and path offset construction
-  for lines, Beziers, and arcs, including trim-aware subpath/path offset
-  variants for stroke-style joins and robust closed-offset variants that split,
-  prune, and stitch self-crossed inset contours.
-- Added experimental parametric offset variants that connect segment offsets
-  with the requested join style, split the resulting walk at self-intersections,
-  and prune pieces that enter the original path's forbidden distance tube.
-- Parametric miter joins now require a directed tangent-line intersection before
-  accepting the miter apex.
+  for lines, Beziers, and arcs.
+- Added trimmed and untrimmed band helpers, including asymmetric offset bands.
 - Added `svg_path/stroke` for constructing filled stroke outlines with butt,
   round, and square caps.
+- Added absolute winding area helpers.
+- Added the public gallery seed file.
+
+## 0.15.1 - 2026-07-19
+
 - Added best-fit congruency helpers for ordered points, segments, subpaths, and
   paths, with `Similar` and `Affine` transform families and RMS error reporting.
+- Added cubic Bezier tangent fitting helpers.
+- Added early segment and subpath offset construction, plus capless offset band
+  helpers.
+- Shortened README API detail sections and split large geometry tests.
 
 ## 0.15.0 - 2026-07-17
 

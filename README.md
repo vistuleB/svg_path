@@ -60,9 +60,17 @@ pub fn prepare_for_arc_averse_consumer(
   clipping region without adding closure bridges.
 - `svg_path/csg`: Boolean union, intersection, and difference for filled
   paths.
+- `svg_path/cut`: split subpaths and paths at intersections with cutter
+  geometry.
+- `svg_path/offset`: one-sided offsets, two-sided bands, and offset-map
+  helpers.
+- `svg_path/stroke`: SVG-style stroke outlines, caps, joins, dash extraction,
+  and dashed stroke geometry.
+- `svg_path/marker`: marker pose computation and marker layout transforms.
 - `svg_path/effects`: one-off artistic path effects such as corner rounding.
 - `svg_path/convex_hull`: convex hulls for segments, subpaths, paths, and point
   lists.
+- `svg_path/bezier`: Bezier fitting and low-level Bezier geometry helpers.
 - `svg_path/basic_shapes`: conversions from SVG basic shapes to paths.
 - `svg_path/svg`: small debugging helper for writing complete SVG documents.
 - `svg_path/inspect`: stable, non-SVG inspection strings for debugging and
