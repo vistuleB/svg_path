@@ -3,6 +3,7 @@ import gleam/float
 import gleam/int
 import gleam/list
 import gleam/option.{None, Some}
+import gleam/result
 import gleam/string
 import gleeunit
 import svg_path
@@ -1049,6 +1050,14 @@ fn dashed_strokes() -> String {
 
 fn recursive_dashes() -> String {
   let source = place_subpath(recursive_dash_source(), 92.0, 154.0)
+  let first_dash_pattern = [112.0, 48.0]
+  let first_dash_offset = 10.0
+  let assert Ok(source) =
+    recursive_dash_truncate_source(
+      source,
+      pattern: first_dash_pattern,
+      offset: first_dash_offset,
+    )
   let first_options =
     stroke.Options(
       width: 58.0,
@@ -1060,8 +1069,8 @@ fn recursive_dashes() -> String {
       source,
       options: first_options,
       dash_options: stroke.default_dash_options(
-        pattern: [112.0, 48.0],
-        offset: 10.0,
+        pattern: first_dash_pattern,
+        offset: first_dash_offset,
       ),
     )
   let second_options =
@@ -1110,6 +1119,126 @@ fn recursive_dashes() -> String {
     width: 730.0,
     height: 340.0,
   )
+}
+
+fn recursive_dash_truncate_source(
+  source: svg_path.Subpath,
+  pattern pattern: List(Float),
+  offset offset: Float,
+) -> Result(svg_path.Subpath, svg_path.Error) {
+  use length <- result.try(svg_path.subpath_length(source))
+  let intervals =
+    gallery_dash_intervals(length, pattern, offset: offset)
+  case list.last(intervals) {
+    Ok(#(_, last_distance)) ->
+      svg_path.subpath_between_lengths(source, from: 0.0, to: last_distance)
+    Error(_) -> Ok(source)
+  }
+}
+
+fn gallery_dash_intervals(
+  length: Float,
+  pattern: List(Float),
+  offset offset: Float,
+) -> List(#(Float, Float)) {
+  let pattern_length = list.fold(pattern, 0.0, fn(total, value) {
+    total +. value
+  })
+  let offset = gallery_positive_remainder(offset, pattern_length)
+  let #(index, remaining) = gallery_dash_start(pattern, offset, index: 0)
+  gallery_dash_intervals_loop(
+    length,
+    pattern,
+    position: 0.0,
+    index:,
+    remaining:,
+    intervals: [],
+  )
+}
+
+fn gallery_dash_start(
+  pattern: List(Float),
+  offset: Float,
+  index index: Int,
+) -> #(Int, Float) {
+  case pattern {
+    [] -> #(0, 0.0)
+    [first, ..rest] -> {
+      case offset <. first || rest == [] {
+        True -> #(index, first -. offset)
+        False -> gallery_dash_start(rest, offset -. first, index: index + 1)
+      }
+    }
+  }
+}
+
+fn gallery_dash_intervals_loop(
+  length: Float,
+  pattern: List(Float),
+  position position: Float,
+  index index: Int,
+  remaining remaining: Float,
+  intervals intervals: List(#(Float, Float)),
+) -> List(#(Float, Float)) {
+  case position >=. length {
+    True -> list.reverse(intervals)
+    False if remaining <=. 0.0 -> {
+      let next_index = gallery_next_dash_index(index, pattern)
+      gallery_dash_intervals_loop(
+        length,
+        pattern,
+        position:,
+        index: next_index,
+        remaining: gallery_dash_length_at(pattern, next_index),
+        intervals:,
+      )
+    }
+    False -> {
+      let step = float.min(remaining, length -. position)
+      let next = position +. step
+      let intervals = case index % 2 == 0 && step >. 0.0 {
+        True -> [#(position, next), ..intervals]
+        False -> intervals
+      }
+      let next_index = gallery_next_dash_index(index, pattern)
+      gallery_dash_intervals_loop(
+        length,
+        pattern,
+        position: next,
+        index: next_index,
+        remaining: gallery_dash_length_at(pattern, next_index),
+        intervals:,
+      )
+    }
+  }
+}
+
+fn gallery_next_dash_index(index: Int, pattern: List(Float)) -> Int {
+  let next = index + 1
+  case next >= list.length(pattern) {
+    True -> 0
+    False -> next
+  }
+}
+
+fn gallery_dash_length_at(pattern: List(Float), index: Int) -> Float {
+  case list.drop(pattern, index) {
+    [length, ..] -> length
+    [] -> 0.0
+  }
+}
+
+fn gallery_positive_remainder(value: Float, modulus: Float) -> Float {
+  let turns = float.floor(value /. modulus)
+  let remainder = value -. turns *. modulus
+  case remainder <. 0.0 {
+    True -> remainder +. modulus
+    False ->
+      case remainder >=. modulus {
+        True -> remainder -. modulus
+        False -> remainder
+      }
+  }
 }
 
 fn recursive_dash_outline_strokes(
