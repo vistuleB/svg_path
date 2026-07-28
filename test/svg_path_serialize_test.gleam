@@ -680,6 +680,90 @@ pub fn minifying_options_use_relative_minimized_output_test() {
     == "m10 20l3 -2 3 -2"
 }
 
+pub fn use_h_v_can_be_disabled_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 0.0)
+  let c = svg_path.point(10.0, 20.0)
+  let assert Ok(subpath) =
+    svg_path.subpath([
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
+    ])
+
+  assert serialize.subpath_with_options(
+      subpath,
+      options: serialize.default_options()
+        |> serialize.use_h_v(False),
+    )
+    == "M 0 0 L 10 0 L 10 20"
+}
+
+pub fn use_s_t_uses_s_and_t_by_default_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 20.0)
+  let c = svg_path.point(30.0, 40.0)
+  let d = svg_path.point(50.0, 60.0)
+  let e = svg_path.point(70.0, 80.0)
+  let assert Ok(quadratic_subpath) =
+    svg_path.subpath([
+      svg_path.QuadraticBezier(start: a, control: b, end: c),
+      svg_path.QuadraticBezier(start: c, control: d, end: e),
+    ])
+
+  let p = svg_path.point(1.0, 2.0)
+  let q = svg_path.point(3.0, 4.0)
+  let r = svg_path.point(5.0, 6.0)
+  let s = svg_path.point(7.0, 8.0)
+  let t = svg_path.point(9.0, 10.0)
+  let u = svg_path.point(11.0, 12.0)
+  let assert Ok(cubic_subpath) =
+    svg_path.subpath([
+      svg_path.CubicBezier(start: a, control1: p, control2: q, end: r),
+      svg_path.CubicBezier(start: r, control1: s, control2: t, end: u),
+    ])
+
+  assert serialize.subpath(quadratic_subpath) == "M 0 0 Q 10 20 30 40 T 70 80"
+  assert serialize.subpath(cubic_subpath) == "M 0 0 C 1 2 3 4 5 6 S 9 10 11 12"
+}
+
+pub fn use_s_t_can_be_disabled_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 20.0)
+  let c = svg_path.point(30.0, 40.0)
+  let d = svg_path.point(50.0, 60.0)
+  let e = svg_path.point(70.0, 80.0)
+  let assert Ok(subpath) =
+    svg_path.subpath([
+      svg_path.QuadraticBezier(start: a, control: b, end: c),
+      svg_path.QuadraticBezier(start: c, control: d, end: e),
+    ])
+
+  assert serialize.subpath_with_options(
+      subpath,
+      options: serialize.default_options() |> serialize.use_s_t(False),
+    )
+    == "M 0 0 Q 10 20 30 40 Q 50 60 70 80"
+}
+
+pub fn use_s_t_discovers_shorthand_after_decimal_formatting_test() {
+  let a = svg_path.point(0.0, 0.0)
+  let b = svg_path.point(10.0, 20.0)
+  let c = svg_path.point(30.0, 40.0)
+  let d = svg_path.point(50.0004, 60.0004)
+  let e = svg_path.point(70.0, 80.0)
+  let assert Ok(subpath) =
+    svg_path.subpath([
+      svg_path.QuadraticBezier(start: a, control: b, end: c),
+      svg_path.QuadraticBezier(start: c, control: d, end: e),
+    ])
+
+  assert serialize.subpath_with_options(
+      subpath,
+      options: serialize.decimal_options(3),
+    )
+    == "M 0 0 Q 10 20 30 40 T 70 80"
+}
+
 pub fn relative_options_make_moves_relative_between_subpaths_test() {
   let a = svg_path.point(10.0, 10.0)
   let b = svg_path.point(20.0, 10.0)

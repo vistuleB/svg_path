@@ -26,6 +26,12 @@ pub type Options {
     /// Whether to repeat command letters when SVG syntax allows them to be
     /// omitted.
     repeat_commands: Bool,
+    /// Whether horizontal and vertical line segments should use `H`/`V` or
+    /// `h`/`v` commands.
+    use_h_v: Bool,
+    /// Whether smooth cubic and quadratic curves should use `S`/`T` or `s`/`t`
+    /// commands when their omitted control point matches after formatting.
+    use_s_t: Bool,
     /// Where to insert newlines in the serialized path data.
     newlines: Newlines,
   )
@@ -91,6 +97,8 @@ pub fn default_options() -> Options {
     minimize_whitespace: False,
     commas: False,
     repeat_commands: True,
+    use_h_v: True,
+    use_s_t: True,
     newlines: OneLine,
   )
 }
@@ -106,6 +114,8 @@ pub fn decimal_options(decimal_places: Int) -> Options {
     minimize_whitespace: False,
     commas: False,
     repeat_commands: True,
+    use_h_v: True,
+    use_s_t: True,
     newlines: OneLine,
   )
 }
@@ -122,6 +132,8 @@ pub fn fixed_decimal_options(decimal_places: Int) -> Options {
     minimize_whitespace: False,
     commas: False,
     repeat_commands: True,
+    use_h_v: True,
+    use_s_t: True,
     newlines: OneLine,
   )
 }
@@ -135,6 +147,8 @@ pub fn relative_options() -> Options {
     minimize_whitespace: False,
     commas: False,
     repeat_commands: True,
+    use_h_v: True,
+    use_s_t: True,
     newlines: OneLine,
   )
 }
@@ -148,6 +162,8 @@ pub fn relative_decimal_options(decimal_places: Int) -> Options {
     minimize_whitespace: False,
     commas: False,
     repeat_commands: True,
+    use_h_v: True,
+    use_s_t: True,
     newlines: OneLine,
   )
 }
@@ -176,8 +192,16 @@ pub fn relative_fixed_decimal_options(decimal_places: Int) -> Options {
     minimize_whitespace: False,
     commas: False,
     repeat_commands: True,
+    use_h_v: True,
+    use_s_t: True,
     newlines: OneLine,
   )
+}
+
+type PreviousCurve {
+  NoPreviousCurve
+  PreviousCubic(control2: svg_path.Point)
+  PreviousQuadratic(control: svg_path.Point)
 }
 
 /// Remove optional spaces between command letters and their arguments.
@@ -196,6 +220,18 @@ pub fn with_commas(options: Options, commas: Bool) -> Options {
 /// repeats. Pass `False` for smaller, less verbose output.
 pub fn repeat_commands(options: Options, repeat_commands: Bool) -> Options {
   Options(..options, repeat_commands:)
+}
+
+/// Configure whether horizontal and vertical lines should use `H`/`V` or
+/// `h`/`v` commands.
+pub fn use_h_v(options options: Options, use_h_v use_h_v: Bool) -> Options {
+  Options(..options, use_h_v:)
+}
+
+/// Configure whether smooth curves should use `S`/`T` or `s`/`t` commands
+/// when their omitted control point matches after formatting.
+pub fn use_s_t(options options: Options, use_s_t use_s_t: Bool) -> Options {
+  Options(..options, use_s_t:)
 }
 
 /// Configure where newlines should be inserted in serialized path data.
@@ -299,7 +335,7 @@ pub fn segment_with_options(
       join_commands(
         [
           command("m", point(start, format), format),
-          relative_segment_without_move(segment, format),
+          relative_single_segment_without_move(segment, format),
         ],
         format,
       )
@@ -308,7 +344,7 @@ pub fn segment_with_options(
       join_commands(
         [
           command("M", point(start, format), format),
-          absolute_segment_without_move(segment, format),
+          absolute_single_segment_without_move(segment, format),
         ],
         format,
       )
@@ -337,11 +373,7 @@ fn serialize_absolute_subpath(
       let commands = [
         command("M", point(start, format), format),
       ]
-      let commands =
-        list.append(
-          commands,
-          list.map(segments, absolute_segment_without_move(_, format)),
-        )
+      let commands = list.append(commands, absolute_segments(segments, format))
       let commands = case svg_path.subpath_is_closed(subpath) {
         True -> list.append(commands, ["Z"])
         False -> commands
@@ -404,11 +436,7 @@ fn subpath_from_current(
       let commands = [
         command("m", point(delta(start, current), format), format),
       ]
-      let commands =
-        list.append(
-          commands,
-          list.map(segments, relative_segment_without_move(_, format)),
-        )
+      let commands = list.append(commands, relative_segments(segments, format))
       let commands = case svg_path.subpath_is_closed(subpath) {
         True -> list.append(commands, ["z"])
         False -> commands
@@ -456,16 +484,228 @@ fn drop_last_if_closing_line(
   }
 }
 
-fn absolute_segment_without_move(
+fn absolute_single_segment_without_move(
   segment: svg_path.Segment,
   format: Format,
 ) -> String {
+  let #(serialized, _) =
+    absolute_segment_without_move(segment, NoPreviousCurve, format)
+
+  serialized
+}
+
+fn relative_single_segment_without_move(
+  segment: svg_path.Segment,
+  format: Format,
+) -> String {
+  let #(serialized, _) =
+    relative_segment_without_move(segment, NoPreviousCurve, format)
+
+  serialized
+}
+
+fn absolute_segments(
+  segments: List(svg_path.Segment),
+  format: Format,
+) -> List(String) {
+  absolute_segments_loop(segments, NoPreviousCurve, [], format)
+}
+
+fn absolute_segments_loop(
+  segments: List(svg_path.Segment),
+  previous: PreviousCurve,
+  serialized: List(String),
+  format: Format,
+) -> List(String) {
+  case segments {
+    [] -> list.reverse(serialized)
+    [segment, ..rest] -> {
+      let #(command, previous) =
+        absolute_segment_without_move(segment, previous, format)
+
+      absolute_segments_loop(rest, previous, [command, ..serialized], format)
+    }
+  }
+}
+
+fn relative_segments(
+  segments: List(svg_path.Segment),
+  format: Format,
+) -> List(String) {
+  relative_segments_loop(segments, NoPreviousCurve, [], format)
+}
+
+fn relative_segments_loop(
+  segments: List(svg_path.Segment),
+  previous: PreviousCurve,
+  serialized: List(String),
+  format: Format,
+) -> List(String) {
+  case segments {
+    [] -> list.reverse(serialized)
+    [segment, ..rest] -> {
+      let #(command, previous) =
+        relative_segment_without_move(segment, previous, format)
+
+      relative_segments_loop(rest, previous, [command, ..serialized], format)
+    }
+  }
+}
+
+fn absolute_segment_without_move(
+  segment: svg_path.Segment,
+  previous: PreviousCurve,
+  format: Format,
+) -> #(String, PreviousCurve) {
   case segment {
-    svg_path.Line(start:, end:) -> absolute_line(start, end, format)
+    svg_path.Line(start:, end:) -> #(
+      absolute_line(start, end, format),
+      NoPreviousCurve,
+    )
+    svg_path.QuadraticBezier(start:, control:, end:) -> {
+      #(
+        absolute_quadratic(start, control, end, previous, format),
+        PreviousQuadratic(control),
+      )
+    }
+    svg_path.CubicBezier(start:, control1:, control2:, end:) -> {
+      #(
+        absolute_cubic(start, control1, control2, end, previous, format),
+        PreviousCubic(control2),
+      )
+    }
+    svg_path.Arc(radius:, x_axis_rotation:, large_arc:, sweep:, end:, ..) -> {
+      #(
+        command(
+          "A",
+          point(radius, format)
+            <> " "
+            <> number(x_axis_rotation, format)
+            <> " "
+            <> flag(large_arc)
+            <> " "
+            <> flag(sweep)
+            <> " "
+            <> point(end, format),
+          format,
+        ),
+        NoPreviousCurve,
+      )
+    }
+  }
+}
+
+fn relative_segment_without_move(
+  segment: svg_path.Segment,
+  previous: PreviousCurve,
+  format: Format,
+) -> #(String, PreviousCurve) {
+  let start = svg_path.segment_start(segment)
+
+  case segment {
+    svg_path.Line(end:, ..) -> {
+      #(relative_line(start, end, format), NoPreviousCurve)
+    }
     svg_path.QuadraticBezier(control:, end:, ..) -> {
-      command("Q", point(control, format) <> " " <> point(end, format), format)
+      #(
+        relative_quadratic(start, control, end, previous, format),
+        PreviousQuadratic(control),
+      )
     }
     svg_path.CubicBezier(control1:, control2:, end:, ..) -> {
+      #(
+        relative_cubic(start, control1, control2, end, previous, format),
+        PreviousCubic(control2),
+      )
+    }
+    svg_path.Arc(radius:, x_axis_rotation:, large_arc:, sweep:, end:, ..) -> {
+      #(
+        command(
+          "a",
+          point(radius, format)
+            <> " "
+            <> number(x_axis_rotation, format)
+            <> " "
+            <> flag(large_arc)
+            <> " "
+            <> flag(sweep)
+            <> " "
+            <> point(delta(end, start), format),
+          format,
+        ),
+        NoPreviousCurve,
+      )
+    }
+  }
+}
+
+fn absolute_quadratic(
+  start: svg_path.Point,
+  control: svg_path.Point,
+  end: svg_path.Point,
+  previous: PreviousCurve,
+  format: Format,
+) -> String {
+  case
+    format.options.use_s_t
+    && formatted_points_equal(
+      control,
+      reflected_quadratic_control(start, previous),
+      format,
+    )
+  {
+    True -> command("T", point(end, format), format)
+    False ->
+      command("Q", point(control, format) <> " " <> point(end, format), format)
+  }
+}
+
+fn relative_quadratic(
+  start: svg_path.Point,
+  control: svg_path.Point,
+  end: svg_path.Point,
+  previous: PreviousCurve,
+  format: Format,
+) -> String {
+  case
+    format.options.use_s_t
+    && formatted_points_equal(
+      control,
+      reflected_quadratic_control(start, previous),
+      format,
+    )
+  {
+    True -> command("t", point(delta(end, start), format), format)
+    False ->
+      command(
+        "q",
+        point(delta(control, start), format)
+          <> " "
+          <> point(delta(end, start), format),
+        format,
+      )
+  }
+}
+
+fn absolute_cubic(
+  start: svg_path.Point,
+  control1: svg_path.Point,
+  control2: svg_path.Point,
+  end: svg_path.Point,
+  previous: PreviousCurve,
+  format: Format,
+) -> String {
+  case
+    format.options.use_s_t
+    && formatted_points_equal(
+      control1,
+      reflected_cubic_control(start, previous),
+      format,
+    )
+  {
+    True ->
+      command("S", point(control2, format) <> " " <> point(end, format), format)
+    False ->
       command(
         "C",
         point(control1, format)
@@ -475,45 +715,34 @@ fn absolute_segment_without_move(
           <> point(end, format),
         format,
       )
-    }
-    svg_path.Arc(radius:, x_axis_rotation:, large_arc:, sweep:, end:, ..) -> {
-      command(
-        "A",
-        point(radius, format)
-          <> " "
-          <> number(x_axis_rotation, format)
-          <> " "
-          <> flag(large_arc)
-          <> " "
-          <> flag(sweep)
-          <> " "
-          <> point(end, format),
-        format,
-      )
-    }
   }
 }
 
-fn relative_segment_without_move(
-  segment: svg_path.Segment,
+fn relative_cubic(
+  start: svg_path.Point,
+  control1: svg_path.Point,
+  control2: svg_path.Point,
+  end: svg_path.Point,
+  previous: PreviousCurve,
   format: Format,
 ) -> String {
-  let start = svg_path.segment_start(segment)
-
-  case segment {
-    svg_path.Line(end:, ..) -> {
-      relative_line(start, end, format)
-    }
-    svg_path.QuadraticBezier(control:, end:, ..) -> {
+  case
+    format.options.use_s_t
+    && formatted_points_equal(
+      control1,
+      reflected_cubic_control(start, previous),
+      format,
+    )
+  {
+    True ->
       command(
-        "q",
-        point(delta(control, start), format)
+        "s",
+        point(delta(control2, start), format)
           <> " "
           <> point(delta(end, start), format),
         format,
       )
-    }
-    svg_path.CubicBezier(control1:, control2:, end:, ..) -> {
+    False ->
       command(
         "c",
         point(delta(control1, start), format)
@@ -523,23 +752,42 @@ fn relative_segment_without_move(
           <> point(delta(end, start), format),
         format,
       )
-    }
-    svg_path.Arc(radius:, x_axis_rotation:, large_arc:, sweep:, end:, ..) -> {
-      command(
-        "a",
-        point(radius, format)
-          <> " "
-          <> number(x_axis_rotation, format)
-          <> " "
-          <> flag(large_arc)
-          <> " "
-          <> flag(sweep)
-          <> " "
-          <> point(delta(end, start), format),
-        format,
-      )
-    }
   }
+}
+
+fn reflected_quadratic_control(
+  start: svg_path.Point,
+  previous: PreviousCurve,
+) -> svg_path.Point {
+  case previous {
+    PreviousQuadratic(control) -> reflect(control, across: start)
+    _ -> start
+  }
+}
+
+fn reflected_cubic_control(
+  start: svg_path.Point,
+  previous: PreviousCurve,
+) -> svg_path.Point {
+  case previous {
+    PreviousCubic(control2) -> reflect(control2, across: start)
+    _ -> start
+  }
+}
+
+fn reflect(
+  point point: svg_path.Point,
+  across center: svg_path.Point,
+) -> svg_path.Point {
+  svg_path.point(2.0 *. center.x -. point.x, 2.0 *. center.y -. point.y)
+}
+
+fn formatted_points_equal(
+  a: svg_path.Point,
+  b: svg_path.Point,
+  format: Format,
+) -> Bool {
+  point(a, format) == point(b, format)
 }
 
 fn absolute_line(
@@ -552,10 +800,10 @@ fn absolute_line(
   let end_x = number(end.x, format)
   let end_y = number(end.y, format)
 
-  case start_y == end_y {
+  case format.options.use_h_v && start_y == end_y {
     True -> command("H", end_x, format)
     False -> {
-      case start_x == end_x {
+      case format.options.use_h_v && start_x == end_x {
         True -> command("V", end_y, format)
         False ->
           command(
@@ -578,10 +826,10 @@ fn relative_line(
   let dy = number(difference.y, format)
   let zero = number(0.0, format)
 
-  case dy == zero {
+  case format.options.use_h_v && dy == zero {
     True -> command("h", dx, format)
     False -> {
-      case dx == zero {
+      case format.options.use_h_v && dx == zero {
         True -> command("v", dy, format)
         False ->
           command("l", dx <> coordinate_separator(format.options) <> dy, format)

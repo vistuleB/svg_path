@@ -926,12 +926,14 @@ By default it uses:
 - repeated command letters
 - one-line path data
 - `H` and `V` for horizontal and vertical lines when possible
+- `S` and `T` for smooth curves when possible
 - `Z` for closed subpaths
 
 Serialization options can use relative commands, commas inside coordinate
 pairs, smaller whitespace, rounded numbers, fixed decimal places, omitted
-repeated command letters, line breaks, and left-padded numbers for visual
-alignment.
+repeated command letters, line breaks, left-padded numbers for visual
+alignment, explicit line commands instead of `H`/`V`, and explicit curve
+commands instead of `S`/`T`.
 
 ```gleam
 import svg_path/parse
@@ -944,8 +946,9 @@ pub fn compact_path_data(input: String) -> String {
 }
 ```
 
-`minifying_options` is a deterministic small-output preset. It does not try
-every SVG spelling and prove that the result is globally shortest.
+`minifying_options` is a deterministic small-output preset. It uses the
+serializer's normal `H`/`V` and `S`/`T` discovery, but it does not try every SVG
+spelling and prove that the result is globally shortest.
 
 If you want a complete SVG document for debugging or examples, use
 `svg_path/svg` with a view box, per-path style strings, and optional text
