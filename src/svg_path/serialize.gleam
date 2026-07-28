@@ -152,6 +152,21 @@ pub fn relative_decimal_options(decimal_places: Int) -> Options {
   )
 }
 
+/// Create options for minifying serialized SVG path data.
+///
+/// This uses relative commands, rounds numbers to at most `decimal_places`
+/// decimal places, removes optional command whitespace, keeps the path on one
+/// line, and omits repeated command letters where SVG syntax allows it.
+///
+/// This is a deterministic small-output preset, not a full shortest-path-data
+/// optimizer. It does not compare absolute and relative commands per segment.
+/// Negative decimal places are clamped to zero.
+pub fn minifying_options(decimal_places: Int) -> Options {
+  relative_decimal_options(decimal_places)
+  |> minimize_whitespace
+  |> repeat_commands(False)
+}
+
 /// Create relative serialization options with fixed decimal formatting.
 pub fn relative_fixed_decimal_options(decimal_places: Int) -> Options {
   Options(

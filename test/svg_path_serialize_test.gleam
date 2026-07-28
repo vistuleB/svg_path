@@ -663,6 +663,23 @@ pub fn minimized_repeat_commands_false_omits_repeated_commands_test() {
     == "M0 0L10 10 20 20"
 }
 
+pub fn minifying_options_use_relative_minimized_output_test() {
+  let a = svg_path.point(10.0, 20.0)
+  let b = svg_path.point(13.0, 18.0)
+  let c = svg_path.point(16.0, 16.0)
+  let assert Ok(subpath) =
+    svg_path.subpath([
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
+    ])
+
+  assert serialize.subpath_with_options(
+      subpath,
+      options: serialize.minifying_options(0),
+    )
+    == "m10 20l3 -2 3 -2"
+}
+
 pub fn relative_options_make_moves_relative_between_subpaths_test() {
   let a = svg_path.point(10.0, 10.0)
   let b = svg_path.point(20.0, 10.0)

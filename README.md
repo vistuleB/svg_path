@@ -939,15 +939,13 @@ import svg_path/serialize
 
 pub fn compact_path_data(input: String) -> String {
   let assert Ok(path) = parse.path(input)
-  let options =
-    serialize.relative_decimal_options(2)
-    |> serialize.minimize_whitespace
-    |> serialize.repeat_commands(False)
-    |> serialize.with_left_padding(serialize.AutoLeftPadding(serialize.Zero))
 
-  serialize.path_with_options(path, options:)
+  serialize.path_with_options(path, options: serialize.minifying_options(2))
 }
 ```
+
+`minifying_options` is a deterministic small-output preset. It does not try
+every SVG spelling and prove that the result is globally shortest.
 
 If you want a complete SVG document for debugging or examples, use
 `svg_path/svg` with a view box, per-path style strings, and optional text
