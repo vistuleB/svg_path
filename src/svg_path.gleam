@@ -570,6 +570,11 @@ pub fn point(x: Float, y: Float) -> Point {
   Vec2(x, y)
 }
 
+/// Return the `x` and `y` coordinates of a point.
+pub fn coordinates(point: Point) -> #(Float, Float) {
+  #(point.x, point.y)
+}
+
 /// Return the default options for segment crossing detection.
 pub fn default_crossing_options() -> CrossingOptions {
   CrossingOptions(

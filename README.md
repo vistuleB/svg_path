@@ -90,10 +90,12 @@ pub type Point =
   Vec2(Float)
 ```
 
-Use `svg_path.point` to create points without importing `vec` directly:
+Use `svg_path.point` to create points without importing `vec` directly, and
+`svg_path.coordinates` to get the coordinates back as `#(x, y)`:
 
 ```gleam
 svg_path.point(10.0, 20.0)
+svg_path.coordinates(point)
 ```
 
 ### Segments

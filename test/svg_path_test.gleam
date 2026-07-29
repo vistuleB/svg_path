@@ -11,6 +11,12 @@ pub fn main() -> Nil {
   gleeunit.main()
 }
 
+pub fn coordinates_returns_point_coordinates_test() {
+  let point = svg_path.point(1.5, -2.25)
+
+  assert svg_path.coordinates(point) == #(1.5, -2.25)
+}
+
 pub fn line_keeps_its_endpoints_test() {
   let start = svg_path.point(0.0, 0.0)
   let end = svg_path.point(10.0, 20.0)
