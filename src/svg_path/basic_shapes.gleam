@@ -55,57 +55,57 @@ pub fn rect(
   let #(rx, ry) = radii
   let x2 = x +. width
   let y2 = y +. height
-  let start = svg_path.point(x +. rx, y)
+  let start = svg_path.Point(x +. rx, y)
 
   let segments = case rx >. 0.0 && ry >. 0.0 {
     False -> [
-      svg_path.Line(start: start, end: svg_path.point(x2, y)),
-      svg_path.Line(start: svg_path.point(x2, y), end: svg_path.point(x2, y2)),
-      svg_path.Line(start: svg_path.point(x2, y2), end: svg_path.point(x, y2)),
-      svg_path.Line(start: svg_path.point(x, y2), end: start),
+      svg_path.Line(start: start, end: svg_path.Point(x2, y)),
+      svg_path.Line(start: svg_path.Point(x2, y), end: svg_path.Point(x2, y2)),
+      svg_path.Line(start: svg_path.Point(x2, y2), end: svg_path.Point(x, y2)),
+      svg_path.Line(start: svg_path.Point(x, y2), end: start),
     ]
 
     True -> [
-      svg_path.Line(start: start, end: svg_path.point(x2 -. rx, y)),
+      svg_path.Line(start: start, end: svg_path.Point(x2 -. rx, y)),
       svg_path.Arc(
-        start: svg_path.point(x2 -. rx, y),
-        radius: svg_path.point(rx, ry),
+        start: svg_path.Point(x2 -. rx, y),
+        radius: svg_path.Point(rx, ry),
         x_axis_rotation: 0.0,
         large_arc: False,
         sweep: True,
-        end: svg_path.point(x2, y +. ry),
+        end: svg_path.Point(x2, y +. ry),
       ),
       svg_path.Line(
-        start: svg_path.point(x2, y +. ry),
-        end: svg_path.point(x2, y2 -. ry),
+        start: svg_path.Point(x2, y +. ry),
+        end: svg_path.Point(x2, y2 -. ry),
       ),
       svg_path.Arc(
-        start: svg_path.point(x2, y2 -. ry),
-        radius: svg_path.point(rx, ry),
+        start: svg_path.Point(x2, y2 -. ry),
+        radius: svg_path.Point(rx, ry),
         x_axis_rotation: 0.0,
         large_arc: False,
         sweep: True,
-        end: svg_path.point(x2 -. rx, y2),
+        end: svg_path.Point(x2 -. rx, y2),
       ),
       svg_path.Line(
-        start: svg_path.point(x2 -. rx, y2),
-        end: svg_path.point(x +. rx, y2),
+        start: svg_path.Point(x2 -. rx, y2),
+        end: svg_path.Point(x +. rx, y2),
       ),
       svg_path.Arc(
-        start: svg_path.point(x +. rx, y2),
-        radius: svg_path.point(rx, ry),
+        start: svg_path.Point(x +. rx, y2),
+        radius: svg_path.Point(rx, ry),
         x_axis_rotation: 0.0,
         large_arc: False,
         sweep: True,
-        end: svg_path.point(x, y2 -. ry),
+        end: svg_path.Point(x, y2 -. ry),
       ),
       svg_path.Line(
-        start: svg_path.point(x, y2 -. ry),
-        end: svg_path.point(x, y +. ry),
+        start: svg_path.Point(x, y2 -. ry),
+        end: svg_path.Point(x, y +. ry),
       ),
       svg_path.Arc(
-        start: svg_path.point(x, y +. ry),
-        radius: svg_path.point(rx, ry),
+        start: svg_path.Point(x, y +. ry),
+        radius: svg_path.Point(rx, ry),
         x_axis_rotation: 0.0,
         large_arc: False,
         sweep: True,
@@ -144,8 +144,8 @@ pub fn ellipse(
   ry ry: Float,
 ) -> Result(svg_path.Subpath, Error) {
   use _ <- result_try(validate_ellipse_radii(rx, ry))
-  let start = svg_path.point(cx +. rx, cy)
-  let radius = svg_path.point(rx, ry)
+  let start = svg_path.Point(cx +. rx, cy)
+  let radius = svg_path.Point(rx, ry)
 
   close([
     svg_path.Arc(
@@ -154,26 +154,26 @@ pub fn ellipse(
       x_axis_rotation: 0.0,
       large_arc: False,
       sweep: False,
-      end: svg_path.point(cx, cy +. ry),
+      end: svg_path.Point(cx, cy +. ry),
     ),
     svg_path.Arc(
-      start: svg_path.point(cx, cy +. ry),
+      start: svg_path.Point(cx, cy +. ry),
       radius: radius,
       x_axis_rotation: 0.0,
       large_arc: False,
       sweep: False,
-      end: svg_path.point(cx -. rx, cy),
+      end: svg_path.Point(cx -. rx, cy),
     ),
     svg_path.Arc(
-      start: svg_path.point(cx -. rx, cy),
+      start: svg_path.Point(cx -. rx, cy),
       radius: radius,
       x_axis_rotation: 0.0,
       large_arc: False,
       sweep: False,
-      end: svg_path.point(cx, cy -. ry),
+      end: svg_path.Point(cx, cy -. ry),
     ),
     svg_path.Arc(
-      start: svg_path.point(cx, cy -. ry),
+      start: svg_path.Point(cx, cy -. ry),
       radius: radius,
       x_axis_rotation: 0.0,
       large_arc: False,
@@ -190,8 +190,8 @@ pub fn line(
   x2 x2: Float,
   y2 y2: Float,
 ) -> Result(svg_path.Subpath, Error) {
-  let start = svg_path.point(x1, y1)
-  let end = svg_path.point(x2, y2)
+  let start = svg_path.Point(x1, y1)
+  let end = svg_path.Point(x2, y2)
 
   svg_path.subpath([svg_path.Line(start:, end:)])
   |> map_core_error

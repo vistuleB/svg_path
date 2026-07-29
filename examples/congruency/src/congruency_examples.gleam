@@ -18,14 +18,14 @@ pub fn main() -> Nil {
 fn semantic_mismatch() -> Bool {
   let line =
     svg_path.Line(
-      start: svg_path.point(0.0, 0.0),
-      end: svg_path.point(10.0, 0.0),
+      start: svg_path.Point(0.0, 0.0),
+      end: svg_path.Point(10.0, 0.0),
     )
   let curve =
     svg_path.QuadraticBezier(
-      start: svg_path.point(0.0, 0.0),
-      control: svg_path.point(5.0, 0.0),
-      end: svg_path.point(10.0, 0.0),
+      start: svg_path.Point(0.0, 0.0),
+      control: svg_path.Point(5.0, 0.0),
+      end: svg_path.Point(10.0, 0.0),
     )
 
   congruency.segment(source: line, target: curve, tolerance:) == Error(Nil)
@@ -35,14 +35,14 @@ fn transformed_subpath() -> Bool {
   let source =
     svg_path.subpath_assert([
       svg_path.Line(
-        start: svg_path.point(0.0, 0.0),
-        end: svg_path.point(10.0, 0.0),
+        start: svg_path.Point(0.0, 0.0),
+        end: svg_path.Point(10.0, 0.0),
       ),
       svg_path.CubicBezier(
-        start: svg_path.point(10.0, 0.0),
-        control1: svg_path.point(14.0, 6.0),
-        control2: svg_path.point(18.0, -6.0),
-        end: svg_path.point(22.0, 0.0),
+        start: svg_path.Point(10.0, 0.0),
+        control1: svg_path.Point(14.0, 6.0),
+        control2: svg_path.Point(18.0, -6.0),
+        end: svg_path.Point(22.0, 0.0),
       ),
     ])
   let matrix =
@@ -61,10 +61,10 @@ fn transformed_subpath() -> Bool {
 }
 
 fn closed_loop_start_order() -> Bool {
-  let a = svg_path.point(0.0, 0.0)
-  let b = svg_path.point(10.0, 0.0)
-  let c = svg_path.point(15.0, 7.0)
-  let d = svg_path.point(0.0, 10.0)
+  let a = svg_path.Point(0.0, 0.0)
+  let b = svg_path.Point(10.0, 0.0)
+  let c = svg_path.Point(15.0, 7.0)
+  let d = svg_path.Point(0.0, 10.0)
   let ab = svg_path.Line(start: a, end: b)
   let bc = svg_path.Line(start: b, end: c)
   let cd = svg_path.Line(start: c, end: d)

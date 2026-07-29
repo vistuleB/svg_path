@@ -313,5 +313,5 @@ fn subpath_from_segments(segments: List(svg_path.Segment)) -> svg_path.Subpath {
 }
 
 fn point(x: Int, y: Int) -> svg_path.Point {
-  svg_path.point(int.to_float(x), int.to_float(y))
+  svg_path.Point(int.to_float(x), int.to_float(y))
 }

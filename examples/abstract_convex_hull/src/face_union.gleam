@@ -68,7 +68,7 @@ pub fn support_set_points(
 
 pub fn direction(angle: Float) -> svg_path.Point {
   let radians = angle *. 3.141592653589793 /. 180.0
-  svg_path.point(maths.cos(radians), maths.sin(radians))
+  svg_path.Point(maths.cos(radians), maths.sin(radians))
 }
 
 pub fn dot(a: svg_path.Point, b: svg_path.Point) -> Float {

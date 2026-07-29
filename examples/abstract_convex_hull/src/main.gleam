@@ -43,18 +43,18 @@ pub fn main() -> Nil {
 fn polygon_demo() -> Nil {
   let left =
     polygon_loop.loop("left rectangle", [
-      svg_path.point(10.0, 20.0),
-      svg_path.point(70.0, 20.0),
-      svg_path.point(70.0, 70.0),
-      svg_path.point(10.0, 70.0),
+      svg_path.Point(10.0, 20.0),
+      svg_path.Point(70.0, 20.0),
+      svg_path.Point(70.0, 70.0),
+      svg_path.Point(10.0, 70.0),
     ])
 
   let right =
     polygon_loop.loop("tilted quadrilateral", [
-      svg_path.point(55.0, 5.0),
-      svg_path.point(125.0, 35.0),
-      svg_path.point(105.0, 95.0),
-      svg_path.point(45.0, 82.0),
+      svg_path.Point(55.0, 5.0),
+      svg_path.Point(125.0, 35.0),
+      svg_path.Point(105.0, 95.0),
+      svg_path.Point(45.0, 82.0),
     ])
 
   let pieces = abstract_union.union(left, right, sample_count: 180)
@@ -85,20 +85,20 @@ fn polygon_demo() -> Nil {
 fn segment_demo() -> Nil {
   let cubic =
     svg_path.CubicBezier(
-      start: svg_path.point(10.0, 80.0),
-      control1: svg_path.point(45.0, -10.0),
-      control2: svg_path.point(105.0, 120.0),
-      end: svg_path.point(135.0, 20.0),
+      start: svg_path.Point(10.0, 80.0),
+      control1: svg_path.Point(45.0, -10.0),
+      control2: svg_path.Point(105.0, 120.0),
+      end: svg_path.Point(135.0, 20.0),
     )
 
   let arc =
     svg_path.Arc(
-      start: svg_path.point(35.0, 55.0),
-      radius: svg_path.point(46.0, 30.0),
+      start: svg_path.Point(35.0, 55.0),
+      radius: svg_path.Point(46.0, 30.0),
       x_axis_rotation: 15.0,
       large_arc: False,
       sweep: True,
-      end: svg_path.point(130.0, 78.0),
+      end: svg_path.Point(130.0, 78.0),
     )
 
   case
@@ -250,65 +250,65 @@ fn cubic_algorithm_comparison_demo() -> Nil {
 fn face_support_demo() -> Nil {
   let left =
     face_polygon_loop.loop("left square", [
-      svg_path.point(0.0, 0.0),
-      svg_path.point(10.0, 0.0),
-      svg_path.point(10.0, 10.0),
-      svg_path.point(0.0, 10.0),
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
+      svg_path.Point(10.0, 10.0),
+      svg_path.Point(0.0, 10.0),
     ])
   let right =
     face_polygon_loop.loop("right square", [
-      svg_path.point(5.0, 0.0),
-      svg_path.point(15.0, 0.0),
-      svg_path.point(15.0, 10.0),
-      svg_path.point(5.0, 10.0),
+      svg_path.Point(5.0, 0.0),
+      svg_path.Point(15.0, 0.0),
+      svg_path.Point(15.0, 10.0),
+      svg_path.Point(5.0, 10.0),
     ])
   let touching =
     face_polygon_loop.loop("touching square", [
-      svg_path.point(10.0, 0.0),
-      svg_path.point(20.0, 0.0),
-      svg_path.point(20.0, 10.0),
-      svg_path.point(10.0, 10.0),
+      svg_path.Point(10.0, 0.0),
+      svg_path.Point(20.0, 0.0),
+      svg_path.Point(20.0, 10.0),
+      svg_path.Point(10.0, 10.0),
     ])
   let inner_square =
     face_polygon_loop.loop("inner square", [
-      svg_path.point(4.0, 0.0),
-      svg_path.point(8.0, 0.0),
-      svg_path.point(8.0, 10.0),
-      svg_path.point(4.0, 10.0),
+      svg_path.Point(4.0, 0.0),
+      svg_path.Point(8.0, 0.0),
+      svg_path.Point(8.0, 10.0),
+      svg_path.Point(4.0, 10.0),
     ])
   let wide_rectangle =
     face_polygon_loop.loop("wide rectangle", [
-      svg_path.point(0.0, 0.0),
-      svg_path.point(12.0, 0.0),
-      svg_path.point(12.0, 10.0),
-      svg_path.point(0.0, 10.0),
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(12.0, 0.0),
+      svg_path.Point(12.0, 10.0),
+      svg_path.Point(0.0, 10.0),
     ])
   let large_square =
     face_polygon_loop.loop("large square", [
-      svg_path.point(0.0, 0.0),
-      svg_path.point(12.0, 0.0),
-      svg_path.point(12.0, 12.0),
-      svg_path.point(0.0, 12.0),
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(12.0, 0.0),
+      svg_path.Point(12.0, 12.0),
+      svg_path.Point(0.0, 12.0),
     ])
   let corner_square =
     face_polygon_loop.loop("corner square", [
-      svg_path.point(9.0, 9.0),
-      svg_path.point(12.0, 9.0),
-      svg_path.point(12.0, 12.0),
-      svg_path.point(9.0, 12.0),
+      svg_path.Point(9.0, 9.0),
+      svg_path.Point(12.0, 9.0),
+      svg_path.Point(12.0, 12.0),
+      svg_path.Point(9.0, 12.0),
     ])
   let diagonal_parallelogram =
     face_polygon_loop.loop("diagonal parallelogram", [
-      svg_path.point(0.0, 0.0),
-      svg_path.point(8.0, 4.0),
-      svg_path.point(12.0, 12.0),
-      svg_path.point(4.0, 8.0),
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(8.0, 4.0),
+      svg_path.Point(12.0, 12.0),
+      svg_path.Point(4.0, 8.0),
     ])
   let half_cut_triangle =
     face_polygon_loop.loop("half-cut triangle", [
-      svg_path.point(-4.0, 2.0),
-      svg_path.point(16.0, 6.0),
-      svg_path.point(-4.0, 10.0),
+      svg_path.Point(-4.0, 2.0),
+      svg_path.Point(16.0, 6.0),
+      svg_path.Point(-4.0, 10.0),
     ])
 
   io.println("face-aware support cases:")
@@ -423,17 +423,17 @@ fn face_support_demo() -> Nil {
 fn explicit_loop_model_demo() -> Nil {
   let square =
     convex_polygon_loop.loop("explicit square", [
-      svg_path.point(0.0, 0.0),
-      svg_path.point(10.0, 0.0),
-      svg_path.point(10.0, 10.0),
-      svg_path.point(0.0, 10.0),
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
+      svg_path.Point(10.0, 10.0),
+      svg_path.Point(0.0, 10.0),
     ])
   let shifted =
     convex_polygon_loop.loop("explicit shifted square", [
-      svg_path.point(5.0, 0.0),
-      svg_path.point(15.0, 0.0),
-      svg_path.point(15.0, 10.0),
-      svg_path.point(5.0, 10.0),
+      svg_path.Point(5.0, 0.0),
+      svg_path.Point(15.0, 0.0),
+      svg_path.Point(15.0, 10.0),
+      svg_path.Point(5.0, 10.0),
     ])
 
   io.println("explicit ConvexLoop support cases:")
@@ -586,14 +586,14 @@ fn projected_point_label(
         True -> 0.0
         False -> { value -. a.x } /. { b.x -. a.x }
       }
-      point_label(svg_path.point(value, a.y +. fraction *. { b.y -. a.y }))
+      point_label(svg_path.Point(value, a.y +. fraction *. { b.y -. a.y }))
     }
     False -> {
       let fraction = case float.absolute_value(b.y -. a.y) <=. 0.0000001 {
         True -> 0.0
         False -> { value -. a.y } /. { b.y -. a.y }
       }
-      point_label(svg_path.point(a.x +. fraction *. { b.x -. a.x }, value))
+      point_label(svg_path.Point(a.x +. fraction *. { b.x -. a.x }, value))
     }
   }
 }
@@ -948,13 +948,13 @@ fn render_demo(label: String, paths: List(svg_path.Path)) -> String {
       svg.Text(
         label,
         "fill: #333; font-family: system-ui, sans-serif",
-        svg_path.point(0.0, -7.0),
+        svg_path.Point(0.0, -7.0),
         7,
       ),
     ]),
     view_box: svg_path.BoundingBox(
-      min: svg_path.point(-10.0, -15.0),
-      max: svg_path.point(150.0, 115.0),
+      min: svg_path.Point(-10.0, -15.0),
+      max: svg_path.Point(150.0, 115.0),
     ),
   )
 }

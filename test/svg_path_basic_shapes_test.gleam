@@ -91,9 +91,9 @@ pub fn line_converts_to_subpath_test() {
 pub fn polyline_converts_points_to_open_subpath_test() {
   let assert Ok(subpath) =
     basic_shapes.polyline([
-      svg_path.point(1.0, 2.0),
-      svg_path.point(3.0, 4.0),
-      svg_path.point(5.0, 4.0),
+      svg_path.Point(1.0, 2.0),
+      svg_path.Point(3.0, 4.0),
+      svg_path.Point(5.0, 4.0),
     ])
 
   assert serialize.subpath(subpath) == "M 1 2 L 3 4 H 5"
@@ -102,9 +102,9 @@ pub fn polyline_converts_points_to_open_subpath_test() {
 pub fn polygon_converts_points_to_closed_subpath_test() {
   let assert Ok(subpath) =
     basic_shapes.polygon([
-      svg_path.point(1.0, 2.0),
-      svg_path.point(3.0, 4.0),
-      svg_path.point(5.0, 4.0),
+      svg_path.Point(1.0, 2.0),
+      svg_path.Point(3.0, 4.0),
+      svg_path.Point(5.0, 4.0),
     ])
 
   assert serialize.subpath(subpath) == "M 1 2 L 3 4 H 5 Z"
@@ -150,6 +150,6 @@ pub fn invalid_point_lists_return_core_errors_test() {
   assert basic_shapes.polyline([])
     == Error(basic_shapes.Core(svg_path.EmptySubpath))
 
-  assert basic_shapes.polygon([svg_path.point(1.0, 2.0)])
+  assert basic_shapes.polygon([svg_path.Point(1.0, 2.0)])
     == Error(basic_shapes.Core(svg_path.EmptySubpath))
 }

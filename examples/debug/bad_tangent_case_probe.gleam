@@ -15,14 +15,14 @@ pub fn main() -> Nil {
 }
 
 pub fn drawing_svg() -> String {
-  let loop_a_start = svg_path.point(4.48, 9.06)
-  let loop_a_vertex = svg_path.point(36.91, 89.67)
-  let loop_b_point = svg_path.point(94.16, 49.8)
+  let loop_a_start = svg_path.Point(4.48, 9.06)
+  let loop_a_vertex = svg_path.Point(36.91, 89.67)
+  let loop_b_point = svg_path.Point(94.16, 49.8)
 
   svg.document(
     [
       svg.Rectangle(
-        svg_path.point(0.0, 0.0),
+        svg_path.Point(0.0, 0.0),
         115.0,
         105.0,
         "fill: #fbfbf8; stroke: #d8d3c8; stroke-width: 0.4",
@@ -59,37 +59,37 @@ pub fn drawing_svg() -> String {
       svg.Text(
         "loop A is line-like",
         "fill: #2f6fbb; font-family: system-ui, sans-serif",
-        svg_path.point(7.0, 16.0),
+        svg_path.Point(7.0, 16.0),
         4,
       ),
       svg.Text(
         "reported hull connector",
         "fill: #d64545; font-family: system-ui, sans-serif",
-        svg_path.point(56.0, 74.0),
+        svg_path.Point(56.0, 74.0),
         4,
       ),
       svg.Text(
         "point-like loop B",
         "fill: #2b2b2b; font-family: system-ui, sans-serif",
-        svg_path.point(73.0, 45.0),
+        svg_path.Point(73.0, 45.0),
         4,
       ),
       svg.Text(
         "same-segment refinement: None",
         "fill: #5b4a00; font-family: system-ui, sans-serif",
-        svg_path.point(24.0, 98.0),
+        svg_path.Point(24.0, 98.0),
         4,
       ),
       svg.Text(
         "the red connector is the suspect hull line, not a tangent refinement",
         "fill: #5b4a00; font-family: system-ui, sans-serif",
-        svg_path.point(10.0, 103.0),
+        svg_path.Point(10.0, 103.0),
         4,
       ),
     ],
     view_box: svg_path.BoundingBox(
-      min: svg_path.point(0.0, 0.0),
-      max: svg_path.point(115.0, 105.0),
+      min: svg_path.Point(0.0, 0.0),
+      max: svg_path.Point(115.0, 105.0),
     ),
   )
 }

@@ -38,8 +38,8 @@ pub fn drawing_svg() -> String {
       ..point_markers(points)
     ],
     view_box: svg_path.BoundingBox(
-      min: svg_path.point(999.8, 8.4),
-      max: svg_path.point(1000.0, 8.5),
+      min: svg_path.Point(999.8, 8.4),
+      max: svg_path.Point(1000.0, 8.5),
     ),
   )
 }
@@ -68,7 +68,7 @@ fn reference_circle_arc(
     svg_path.subpath_assert([
       svg_path.Arc(
         start:,
-        radius: svg_path.point(1000.0, 1000.0),
+        radius: svg_path.Point(1000.0, 1000.0),
         x_axis_rotation: 0.0,
         large_arc: False,
         sweep: True,
@@ -125,7 +125,7 @@ fn crescent_candidate_point(
     *. int.to_float({ { index * 61 + 43 } * { index * 31 + 29 } + 17 } % 10_000)
     /. 10_000.0
 
-  svg_path.point(chord_x +. fraction *. { circle_x -. chord_x }, y)
+  svg_path.Point(chord_x +. fraction *. { circle_x -. chord_x }, y)
 }
 
 fn chord_x_at_y(
@@ -179,7 +179,7 @@ fn take_first_loop(
 
 fn radius_1000_point(angle: Float) -> svg_path.Point {
   let radians = angle *. maths.pi() /. 180.0
-  svg_path.point(1000.0 *. maths.cos(radians), 1000.0 *. maths.sin(radians))
+  svg_path.Point(1000.0 *. maths.cos(radians), 1000.0 *. maths.sin(radians))
 }
 
 fn point_markers(points: List(svg_path.Point)) -> List(svg.ThingToDraw) {

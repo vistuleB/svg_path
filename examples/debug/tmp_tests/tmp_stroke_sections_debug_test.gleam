@@ -1,4 +1,5 @@
 import gleam/dynamic.{type Dynamic}
+import gleam/float
 import gleam/list
 import gleam/order
 import gleam/result
@@ -6,7 +7,6 @@ import svg_path
 import svg_path/offset
 import svg_path/svg
 import svg_path/transform
-import vec/vec2f
 
 const output = "examples/debug/svg_path_stroke_sections.svg"
 
@@ -45,7 +45,7 @@ fn render() -> String {
     things: list.flatten([
       [
         svg.Rectangle(
-          svg_path.point(0.0, 0.0),
+          svg_path.Point(0.0, 0.0),
           720.0,
           430.0,
           "fill: #ffffff; stroke: #d1d5db; stroke-width: 2",
@@ -53,7 +53,7 @@ fn render() -> String {
         svg.Text(
           "closed stroke after self/cross-intersection split",
           "fill: #111827; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 700",
-          svg_path.point(24.0, 36.0),
+          svg_path.Point(24.0, 36.0),
           18,
         ),
       ],
@@ -72,8 +72,8 @@ fn render() -> String {
       ],
     ]),
     view_box: svg_path.BoundingBox(
-      min: svg_path.point(0.0, 0.0),
-      max: svg_path.point(720.0, 430.0),
+      min: svg_path.Point(0.0, 0.0),
+      max: svg_path.Point(720.0, 430.0),
     ),
   )
 }
@@ -204,7 +204,7 @@ fn segment_arrow(
     svg_path.segment_derivative(segment, at: 0.42)
   {
     Ok(point), Ok(derivative) -> {
-      let length = vec2f.length(derivative)
+      let length = point_length(derivative)
       case length <=. 0.000001 {
         True -> []
         False -> [
@@ -235,7 +235,7 @@ fn subpath_arrows(
         svg_path.subpath_derivative_at_length(subpath, distance:)
       {
         Ok(point), Ok(derivative) -> {
-          let length = vec2f.length(derivative)
+          let length = point_length(derivative)
           case length <=. 0.000001 {
             True -> []
             False -> [
@@ -262,7 +262,7 @@ fn arrow_glyph(
 ) -> svg.ThingToDraw {
   let half_width = 6.0 *. arrow_scale
   let arrow_height = half_width *. 1.7320508075688772
-  let normal = svg_path.point(0.0 -. unit.y, unit.x)
+  let normal = svg_path.Point(0.0 -. unit.y, unit.x)
   let tip = add(point, scale(unit, arrow_height *. 2.0 /. 3.0))
   let base = add(point, scale(unit, 0.0 -. arrow_height /. 3.0))
   let left = add(base, scale(normal, half_width))
@@ -274,11 +274,17 @@ fn arrow_glyph(
 }
 
 fn add(a: svg_path.Point, b: svg_path.Point) -> svg_path.Point {
-  svg_path.point(a.x +. b.x, a.y +. b.y)
+  svg_path.Point(a.x +. b.x, a.y +. b.y)
 }
 
 fn scale(point: svg_path.Point, factor: Float) -> svg_path.Point {
-  svg_path.point(point.x *. factor, point.y *. factor)
+  svg_path.Point(point.x *. factor, point.y *. factor)
+}
+
+fn point_length(point: svg_path.Point) -> Float {
+  let assert Ok(length) =
+    float.square_root(point.x *. point.x +. point.y *. point.y)
+  length
 }
 
 fn color(index: Int) -> String {
@@ -299,16 +305,16 @@ fn color(index: Int) -> String {
 fn figure_eight() -> svg_path.Subpath {
   svg_path.subpath_assert([
     svg_path.CubicBezier(
-      start: svg_path.point(76.0, 0.0),
-      control1: svg_path.point(-2.0, -62.0),
-      control2: svg_path.point(-2.0, 62.0),
-      end: svg_path.point(76.0, 0.0),
+      start: svg_path.Point(76.0, 0.0),
+      control1: svg_path.Point(-2.0, -62.0),
+      control2: svg_path.Point(-2.0, 62.0),
+      end: svg_path.Point(76.0, 0.0),
     ),
     svg_path.CubicBezier(
-      start: svg_path.point(76.0, 0.0),
-      control1: svg_path.point(154.0, -62.0),
-      control2: svg_path.point(154.0, 62.0),
-      end: svg_path.point(76.0, 0.0),
+      start: svg_path.Point(76.0, 0.0),
+      control1: svg_path.Point(154.0, -62.0),
+      control2: svg_path.Point(154.0, 62.0),
+      end: svg_path.Point(76.0, 0.0),
     ),
   ])
   |> svg_path.subpath_assert_set_closed(closed: True)

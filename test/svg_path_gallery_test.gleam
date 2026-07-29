@@ -20,7 +20,6 @@ import svg_path/stroke
 import svg_path/svg
 import svg_path/transform
 import svg_path/trig
-import vec/vec2f
 
 const output_dir = "test/generated/gallery"
 
@@ -141,7 +140,7 @@ fn marker_pose_slots() -> String {
       svg.Text(
         "marker.subpath_poses(...) returns start, mid, and end poses",
         marker_title_style(),
-        svg_path.point(450.0, 34.0),
+        svg_path.Point(450.0, 34.0),
         22,
       ),
       svg.StyledPath(path, marker_source_path_style()),
@@ -172,7 +171,7 @@ fn marker_orientation_semantics() -> String {
       svg.Text(
         "marker.subpath_poses(...) orientation policies",
         marker_title_style(),
-        svg_path.point(450.0, 34.0),
+        svg_path.Point(450.0, 34.0),
         22,
       ),
       ..rows
@@ -196,7 +195,7 @@ fn marker_orientation_row(
   let assert Ok(poses) = marker.subpath_poses(source, orient:)
 
   [
-    svg.Text(label, marker_label_style(), svg_path.point(38.0, y +. 60.0), 17),
+    svg.Text(label, marker_label_style(), svg_path.Point(38.0, y +. 60.0), 17),
     svg.StyledPath(path, marker_source_path_style()),
     ..list.append(
       marker_pose_points(poses),
@@ -211,13 +210,13 @@ fn marker_reference_semantics() -> String {
   let pose =
     marker.MarkerPose(
       kind: marker.MarkerEnd,
-      point: svg_path.point(200.0, 0.0),
+      point: svg_path.Point(200.0, 0.0),
       angle: 0.0,
     )
   let rows = [
-    #("refX at tail", svg_path.point(0.0, 0.0), 80.0),
-    #("refX at center", svg_path.point(12.0, 0.0), 180.0),
-    #("refX at tip", svg_path.point(24.0, 0.0), 280.0),
+    #("refX at tail", svg_path.Point(0.0, 0.0), 80.0),
+    #("refX at center", svg_path.Point(12.0, 0.0), 180.0),
+    #("refX at tip", svg_path.Point(24.0, 0.0), 280.0),
   ]
 
   document(
@@ -225,7 +224,7 @@ fn marker_reference_semantics() -> String {
       svg.Text(
         "refX/refY pins one marker-local point to the path pose",
         marker_title_style(),
-        svg_path.point(450.0, 34.0),
+        svg_path.Point(450.0, 34.0),
         22,
       ),
       ..rows
@@ -254,13 +253,13 @@ fn marker_reference_row(
   let reference_point = transform.point(reference, by: matrix)
 
   [
-    svg.Text(label, marker_label_style(), svg_path.point(38.0, y +. 5.0), 17),
+    svg.Text(label, marker_label_style(), svg_path.Point(38.0, y +. 5.0), 17),
     svg.StyledPath(
       svg_path.Path([
         svg_path.subpath_assert([
           svg_path.Line(
-            start: svg_path.point(170.0, y),
-            end: svg_path.point(505.0, y),
+            start: svg_path.Point(170.0, y),
+            end: svg_path.Point(505.0, y),
           ),
         ]),
       ]),
@@ -289,7 +288,7 @@ fn marker_units_semantics() -> String {
       svg.Text(
         "markerUnits changes the size of marker-local coordinates",
         marker_title_style(),
-        svg_path.point(490.0, 34.0),
+        svg_path.Point(490.0, 34.0),
         22,
       ),
       ..rows
@@ -317,7 +316,7 @@ fn marker_viewbox_semantics() -> String {
       svg.Text(
         "viewBox + preserveAspectRatio changes marker content fitting",
         marker_title_style(),
-        svg_path.point(490.0, 34.0),
+        svg_path.Point(490.0, 34.0),
         22,
       ),
       ..rows
@@ -339,7 +338,7 @@ fn marker_layout_row(
   let pose =
     marker.MarkerPose(
       kind: marker.MarkerEnd,
-      point: svg_path.point(270.0, y),
+      point: svg_path.Point(270.0, y),
       angle: 0.0,
     )
   let assert Ok(matrix) = marker.pose_layout_transform(pose, layout:)
@@ -349,13 +348,13 @@ fn marker_layout_row(
   let reference_point = transform.point(reference, by: matrix)
 
   [
-    svg.Text(label, marker_label_style(), svg_path.point(40.0, y +. 6.0), 16),
+    svg.Text(label, marker_label_style(), svg_path.Point(40.0, y +. 6.0), 16),
     svg.StyledPath(
       svg_path.Path([
         svg_path.subpath_assert([
           svg_path.Line(
-            start: svg_path.point(240.0, y),
-            end: svg_path.point(680.0, y),
+            start: svg_path.Point(240.0, y),
+            end: svg_path.Point(680.0, y),
           ),
         ]),
       ]),
@@ -404,7 +403,7 @@ fn marker_pose_slot_labels(poses: List(marker.MarkerPose)) -> svg.ThingsToDraw {
     svg.Text(
       marker_pose_kind_label(kind),
       marker_label_style(),
-      svg_path.point(point.x, point.y +. 34.0),
+      svg_path.Point(point.x, point.y +. 34.0),
       14,
     )
   })
@@ -421,18 +420,18 @@ fn marker_pose_kind_label(kind: marker.MarkerKind) -> String {
 fn marker_pose_demo_subpath(y: Float) -> svg_path.Subpath {
   svg_path.subpath_assert([
     svg_path.Line(
-      start: svg_path.point(210.0, y +. 60.0),
-      end: svg_path.point(340.0, y +. 60.0),
+      start: svg_path.Point(210.0, y +. 60.0),
+      end: svg_path.Point(340.0, y +. 60.0),
     ),
     svg_path.CubicBezier(
-      start: svg_path.point(340.0, y +. 60.0),
-      control1: svg_path.point(405.0, y +. 0.0),
-      control2: svg_path.point(485.0, y +. 120.0),
-      end: svg_path.point(550.0, y +. 60.0),
+      start: svg_path.Point(340.0, y +. 60.0),
+      control1: svg_path.Point(405.0, y +. 0.0),
+      control2: svg_path.Point(485.0, y +. 120.0),
+      end: svg_path.Point(550.0, y +. 60.0),
     ),
     svg_path.Line(
-      start: svg_path.point(550.0, y +. 60.0),
-      end: svg_path.point(690.0, y +. 20.0),
+      start: svg_path.Point(550.0, y +. 60.0),
+      end: svg_path.Point(690.0, y +. 20.0),
     ),
   ])
 }
@@ -448,17 +447,17 @@ fn marker_reference_shape() -> svg_path.Path {
 fn marker_layout_shape() -> svg_path.Path {
   svg_path.Path([
     svg_path.subpath_assert_polygon([
-      svg_path.point(0.0, -10.0),
-      svg_path.point(26.0, -10.0),
-      svg_path.point(36.0, 0.0),
-      svg_path.point(26.0, 10.0),
-      svg_path.point(0.0, 10.0),
+      svg_path.Point(0.0, -10.0),
+      svg_path.Point(26.0, -10.0),
+      svg_path.Point(36.0, 0.0),
+      svg_path.Point(26.0, 10.0),
+      svg_path.Point(0.0, 10.0),
     ]),
     svg_path.subpath_assert_polygon([
-      svg_path.point(5.0, -5.0),
-      svg_path.point(17.0, -5.0),
-      svg_path.point(17.0, 5.0),
-      svg_path.point(5.0, 5.0),
+      svg_path.Point(5.0, -5.0),
+      svg_path.Point(17.0, -5.0),
+      svg_path.Point(17.0, 5.0),
+      svg_path.Point(5.0, 5.0),
     ]),
   ])
 }
@@ -469,16 +468,16 @@ fn marker_arrow_shape(
 ) -> svg_path.Path {
   svg_path.Path([
     svg_path.subpath_assert_polygon([
-      svg_path.point(0.0, 0.0 -. half_height),
-      svg_path.point(length, 0.0),
-      svg_path.point(0.0, half_height),
+      svg_path.Point(0.0, 0.0 -. half_height),
+      svg_path.Point(length, 0.0),
+      svg_path.Point(0.0, half_height),
     ]),
   ])
 }
 
 fn marker_orientation_layout() -> marker.MarkerLayout {
   marker.MarkerLayout(
-    reference: svg_path.point(0.0, 0.0),
+    reference: svg_path.Point(0.0, 0.0),
     marker_width: 28.0,
     marker_height: 18.0,
     marker_units: marker.UserSpaceOnUse,
@@ -506,7 +505,7 @@ fn marker_layout(
 
 fn marker_user_space_layout() -> marker.MarkerLayout {
   marker.MarkerLayout(
-    reference: svg_path.point(18.0, 0.0),
+    reference: svg_path.Point(18.0, 0.0),
     marker_width: 36.0,
     marker_height: 20.0,
     marker_units: marker.UserSpaceOnUse,
@@ -527,7 +526,7 @@ fn marker_stroke_width_layout() -> marker.MarkerLayout {
 fn marker_stretch_layout() -> marker.MarkerLayout {
   marker.MarkerLayout(
     ..marker_user_space_layout(),
-    reference: svg_path.point(18.0, 0.0),
+    reference: svg_path.Point(18.0, 0.0),
     marker_width: 70.0,
     marker_height: 30.0,
     view_box: Some(marker_box(0.0, -10.0, 36.0, 20.0)),
@@ -551,7 +550,7 @@ fn marker_slice_layout() -> marker.MarkerLayout {
 
 fn shift_marker_pose(pose: marker.MarkerPose, y y: Float) -> marker.MarkerPose {
   let marker.MarkerPose(kind:, point:, angle:) = pose
-  marker.MarkerPose(kind:, point: svg_path.point(point.x, y), angle:)
+  marker.MarkerPose(kind:, point: svg_path.Point(point.x, y), angle:)
 }
 
 fn marker_box(
@@ -561,8 +560,8 @@ fn marker_box(
   max_y: Float,
 ) -> svg_path.BoundingBox {
   svg_path.BoundingBox(
-    min: svg_path.point(min_x, min_y),
-    max: svg_path.point(max_x, max_y),
+    min: svg_path.Point(min_x, min_y),
+    max: svg_path.Point(max_x, max_y),
   )
 }
 
@@ -694,8 +693,8 @@ fn cut_radiator_segments(
       }
       let horizontal =
         svg_path.Line(
-          start: svg_path.point(start_x, y),
-          end: svg_path.point(end_x, y),
+          start: svg_path.Point(start_x, y),
+          end: svg_path.Point(end_x, y),
         )
       let accumulated = list.append(accumulated, [horizontal])
 
@@ -705,8 +704,8 @@ fn cut_radiator_segments(
           let next_y = y +. step
           let vertical =
             svg_path.Line(
-              start: svg_path.point(end_x, y),
-              end: svg_path.point(end_x, next_y),
+              start: svg_path.Point(end_x, y),
+              end: svg_path.Point(end_x, next_y),
             )
           cut_radiator_segments(
             index: index + 1,
@@ -944,10 +943,10 @@ fn stroke_caps() -> String {
   let source =
     svg_path.subpath_assert([
       svg_path.CubicBezier(
-        start: svg_path.point(0.0, 20.0),
-        control1: svg_path.point(40.0, -58.0),
-        control2: svg_path.point(100.0, 78.0),
-        end: svg_path.point(150.0, 0.0),
+        start: svg_path.Point(0.0, 20.0),
+        control1: svg_path.Point(40.0, -58.0),
+        control2: svg_path.Point(100.0, 78.0),
+        end: svg_path.Point(150.0, 0.0),
       ),
     ])
   let examples = [
@@ -1094,7 +1093,7 @@ fn recursive_dashes() -> String {
     list.flatten([
       [
         svg.Rectangle(
-          svg_path.point(8.0, 18.0),
+          svg_path.Point(8.0, 18.0),
           714.0,
           304.0,
           "fill: #f8fafc; stroke: #cbd5e1; stroke-width: 1.4",
@@ -1127,8 +1126,7 @@ fn recursive_dash_truncate_source(
   offset offset: Float,
 ) -> Result(svg_path.Subpath, svg_path.Error) {
   use length <- result.try(svg_path.subpath_length(source))
-  let intervals =
-    gallery_dash_intervals(length, pattern, offset: offset)
+  let intervals = gallery_dash_intervals(length, pattern, offset: offset)
   case list.last(intervals) {
     Ok(#(_, last_distance)) ->
       svg_path.subpath_between_lengths(source, from: 0.0, to: last_distance)
@@ -1141,9 +1139,8 @@ fn gallery_dash_intervals(
   pattern: List(Float),
   offset offset: Float,
 ) -> List(#(Float, Float)) {
-  let pattern_length = list.fold(pattern, 0.0, fn(total, value) {
-    total +. value
-  })
+  let pattern_length =
+    list.fold(pattern, 0.0, fn(total, value) { total +. value })
   let offset = gallery_positive_remainder(offset, pattern_length)
   let #(index, remaining) = gallery_dash_start(pattern, offset, index: 0)
   gallery_dash_intervals_loop(
@@ -1283,7 +1280,7 @@ fn crescent_hull() -> String {
     list.flatten([
       [
         svg.Rectangle(
-          svg_path.point(8.0, 18.0),
+          svg_path.Point(8.0, 18.0),
           314.0,
           324.0,
           "fill: #f8fafc; stroke: #cbd5e1; stroke-width: 1.4",
@@ -1330,7 +1327,7 @@ fn crescent_reference_path(
     svg_path.subpath_assert([
       svg_path.Arc(
         start:,
-        radius: svg_path.point(120.0, 120.0),
+        radius: svg_path.Point(120.0, 120.0),
         x_axis_rotation: 0.0,
         large_arc: False,
         sweep: True,
@@ -1357,11 +1354,11 @@ fn crescent_point(index: Int, count: Int) -> svg_path.Point {
     *. int.to_float({ { index * 61 + 43 } * { index * 31 + 29 } + 17 } % 10_000)
     /. 10_000.0
 
-  svg_path.point(chord_x +. fraction *. { circle.x -. chord_x }, circle.y)
+  svg_path.Point(chord_x +. fraction *. { circle.x -. chord_x }, circle.y)
 }
 
 fn crescent_radius_point(angle: Float) -> svg_path.Point {
-  svg_path.point(
+  svg_path.Point(
     120.0 *. trig.cos_degrees(angle),
     120.0 *. trig.sin_degrees(angle),
   )
@@ -1455,7 +1452,7 @@ fn debug_round_cap(
   radius: Float,
   at_end at_end: Bool,
 ) -> svg_path.Segment {
-  let normal = svg_path.point(tangent.y, 0.0 -. tangent.x)
+  let normal = svg_path.Point(tangent.y, 0.0 -. tangent.x)
   let positive = add_points(center, scale_point(normal, radius))
   let negative = add_points(center, scale_point(normal, 0.0 -. radius))
   let start = case at_end {
@@ -1468,7 +1465,7 @@ fn debug_round_cap(
   }
   svg_path.Arc(
     start:,
-    radius: svg_path.point(radius, radius),
+    radius: svg_path.Point(radius, radius),
     x_axis_rotation: 0.0,
     large_arc: False,
     sweep: True,
@@ -1481,7 +1478,7 @@ fn debug_unit_tangent(
   t: Float,
 ) -> Result(svg_path.Point, svg_path.Error) {
   use derivative <- result_try(svg_path.segment_derivative(segment, at: t))
-  let length = vec2f.length(derivative)
+  let length = point_length(derivative)
   case length >. 0.000001 {
     True -> Ok(scale_point(derivative, 1.0 /. length))
     False -> {
@@ -1490,7 +1487,7 @@ fn debug_unit_tangent(
           svg_path.segment_end(segment),
           svg_path.segment_start(segment),
         )
-      let length = vec2f.length(chord)
+      let length = point_length(chord)
       case length >. 0.000001 {
         True -> Ok(scale_point(chord, 1.0 /. length))
         False -> Error(svg_path.EmptySubpath)
@@ -1508,15 +1505,15 @@ fn debug_reverse_segments(
 }
 
 fn add_points(a: svg_path.Point, b: svg_path.Point) -> svg_path.Point {
-  svg_path.point(a.x +. b.x, a.y +. b.y)
+  svg_path.Point(a.x +. b.x, a.y +. b.y)
 }
 
 fn subtract_points(a: svg_path.Point, b: svg_path.Point) -> svg_path.Point {
-  svg_path.point(a.x -. b.x, a.y -. b.y)
+  svg_path.Point(a.x -. b.x, a.y -. b.y)
 }
 
 fn scale_point(point: svg_path.Point, factor: Float) -> svg_path.Point {
-  svg_path.point(point.x *. factor, point.y *. factor)
+  svg_path.Point(point.x *. factor, point.y *. factor)
 }
 
 fn length_result_to_string(result: Result(Float, svg_path.Error)) -> String {
@@ -1548,7 +1545,7 @@ fn derivative_length_result_to_string(
   t: Float,
 ) -> String {
   case svg_path.segment_derivative(segment, at: t) {
-    Ok(derivative) -> debug_float_to_string(vec2f.length(derivative))
+    Ok(derivative) -> debug_float_to_string(point_length(derivative))
     Error(_) -> "Error"
   }
 }
@@ -1621,7 +1618,7 @@ fn raw_offset_pair_report(
       <> "; right_start="
       <> point_to_string(right_start)
       <> "; gap="
-      <> debug_float_to_string(vec2f.distance(left_end, with: right_start))
+      <> debug_float_to_string(point_distance(left_end, right_start))
       <> "; intersections="
       <> segment_intersections_to_string(svg_path.segment_intersections(
         left,
@@ -1713,9 +1710,9 @@ fn inserted_join_diameters_loop(
             <> " bbox_diameter="
             <> segment_bounding_box_diameter_to_string(segment)
             <> " chord="
-            <> debug_float_to_string(vec2f.distance(
+            <> debug_float_to_string(point_distance(
             svg_path.segment_start(segment),
-            with: svg_path.segment_end(segment),
+            svg_path.segment_end(segment),
           )),
           ..joins
         ]
@@ -1970,7 +1967,7 @@ fn stroke_offset_tracks() -> String {
     ])
   let assert Ok(box) = svg_path.path_bounding_box(geometry_path)
   let center = svg_path.bounding_box_center(box)
-  let panel_center = svg_path.point(365.0, 140.0)
+  let panel_center = svg_path.Point(365.0, 140.0)
   let dx = panel_center.x -. center.x
   let dy = panel_center.y -. center.y
   let assert Ok(source) = transform.translate_subpath(source, x: dx, y: dy)
@@ -1986,7 +1983,7 @@ fn stroke_offset_tracks() -> String {
     list.flatten([
       [
         svg.Rectangle(
-          svg_path.point(8.0, 18.0),
+          svg_path.Point(8.0, 18.0),
           714.0,
           244.0,
           "fill: #f8fafc; stroke: #cbd5e1; stroke-width: 1.4",
@@ -2025,21 +2022,21 @@ fn earth_tone_offsets() -> String {
       [panel(500.0, "quiet turn")],
       centered_offset_family(
         source: earth_arc_source(),
-        panel_center: svg_path.point(119.0, 112.0),
+        panel_center: svg_path.Point(119.0, 112.0),
         distances: [8.0, 16.0, 24.0, 32.0, 40.0],
         colors:,
         options:,
       ),
       centered_offset_family(
         source: earth_bend_source(),
-        panel_center: svg_path.point(369.0, 112.0),
+        panel_center: svg_path.Point(369.0, 112.0),
         distances: [8.0, 16.0, 24.0, 32.0, 40.0],
         colors:,
         options:,
       ),
       centered_offset_family(
         source: earth_turn_source(),
-        panel_center: svg_path.point(619.0, 112.0),
+        panel_center: svg_path.Point(619.0, 112.0),
         distances: [8.0, 16.0, 24.0, 32.0, 40.0],
         colors:,
         options:,
@@ -2133,36 +2130,36 @@ fn rectangle_path(
 ) -> svg_path.Path {
   svg_path.path_from_subpath(
     svg_path.subpath_assert_polygon([
-      svg_path.point(min_x, min_y),
-      svg_path.point(max_x, min_y),
-      svg_path.point(max_x, max_y),
-      svg_path.point(min_x, max_y),
+      svg_path.Point(min_x, min_y),
+      svg_path.Point(max_x, min_y),
+      svg_path.Point(max_x, max_y),
+      svg_path.Point(min_x, max_y),
     ]),
   )
 }
 
 fn square_subpath(x: Float, y: Float, size: Float) -> svg_path.Subpath {
   svg_path.subpath_assert_polygon([
-    svg_path.point(x, y),
-    svg_path.point(x +. size, y),
-    svg_path.point(x +. size, y +. size),
-    svg_path.point(x, y +. size),
+    svg_path.Point(x, y),
+    svg_path.Point(x +. size, y),
+    svg_path.Point(x +. size, y +. size),
+    svg_path.Point(x, y +. size),
   ])
 }
 
 fn figure_eight() -> svg_path.Subpath {
   svg_path.subpath_assert([
     svg_path.CubicBezier(
-      start: svg_path.point(0.0, 0.0),
-      control1: svg_path.point(-336.0, -234.0),
-      control2: svg_path.point(-336.0, 234.0),
-      end: svg_path.point(0.0, 0.0),
+      start: svg_path.Point(0.0, 0.0),
+      control1: svg_path.Point(-336.0, -234.0),
+      control2: svg_path.Point(-336.0, 234.0),
+      end: svg_path.Point(0.0, 0.0),
     ),
     svg_path.CubicBezier(
-      start: svg_path.point(0.0, 0.0),
-      control1: svg_path.point(336.0, -234.0),
-      control2: svg_path.point(336.0, 234.0),
-      end: svg_path.point(0.0, 0.0),
+      start: svg_path.Point(0.0, 0.0),
+      control1: svg_path.Point(336.0, -234.0),
+      control2: svg_path.Point(336.0, 234.0),
+      end: svg_path.Point(0.0, 0.0),
     ),
   ])
   |> svg_path.subpath_assert_set_closed(closed: True)
@@ -2236,9 +2233,9 @@ fn stalled_arc_turn_source(
     False -> quarter_turn_cubics(subdivisions)
   }
   let segments = [
-    svg_path.Line(start: svg_path.point(r, r), end: arc_start),
+    svg_path.Line(start: svg_path.Point(r, r), end: arc_start),
     ..list.append(turn_segments, [
-      svg_path.Line(start: arc_end, end: svg_path.point(0.0 -. r, 0.0 -. r)),
+      svg_path.Line(start: arc_end, end: svg_path.Point(0.0 -. r, 0.0 -. r)),
     ])
   ]
   let assert Ok(subpath) = svg_path.subpath(segments)
@@ -2279,7 +2276,7 @@ fn circle_arc_segment(
 ) -> svg_path.Segment {
   svg_path.Arc(
     start: circle_point(start_angle, radius:),
-    radius: svg_path.point(radius, radius),
+    radius: svg_path.Point(radius, radius),
     x_axis_rotation: 0.0,
     large_arc: False,
     sweep: False,
@@ -2333,7 +2330,7 @@ fn circle_arc_cubic(
 }
 
 fn circle_point(angle: Float, radius radius: Float) -> svg_path.Point {
-  svg_path.point(
+  svg_path.Point(
     clean_zero(radius *. trig.cos_degrees(angle)),
     clean_zero(radius *. trig.sin_degrees(angle)),
   )
@@ -2347,7 +2344,7 @@ fn clean_zero(value: Float) -> Float {
 }
 
 fn circle_angle_tangent(angle: Float) -> svg_path.Point {
-  svg_path.point(0.0 -. trig.sin_degrees(angle), trig.cos_degrees(angle))
+  svg_path.Point(0.0 -. trig.sin_degrees(angle), trig.cos_degrees(angle))
 }
 
 fn count_stalled_segments(segments: List(svg_path.Segment)) -> Int {
@@ -2361,7 +2358,7 @@ fn stalled_arc_turn_segment_is_caught(segment: svg_path.Segment) -> Bool {
   let end = offset_endpoint(segment, 1.0)
   case start, end {
     Ok(start), Ok(end) ->
-      vec2f.distance(start, with: end) <=. stalled_arc_turn_threshold
+      point_distance(start, end) <=. stalled_arc_turn_threshold
     _, _ -> False
   }
 }
@@ -2383,8 +2380,8 @@ fn offset_endpoint(
 }
 
 fn right_unit_normal(point: svg_path.Point) -> svg_path.Point {
-  let length = vec2f.length(point)
-  svg_path.point(point.y /. length, { 0.0 -. point.x } /. length)
+  let length = point_length(point)
+  svg_path.Point(point.y /. length, { 0.0 -. point.x } /. length)
 }
 
 fn stalled_arc_turn_svg(
@@ -2828,11 +2825,11 @@ fn segment_unit_tangent(
 ) -> Result(svg_path.Point, Nil) {
   case svg_path.segment_derivative(segment, at: t) {
     Ok(derivative) -> {
-      let length = vec2f.length(derivative)
+      let length = point_length(derivative)
       case length <=. 0.0 {
         True -> Error(Nil)
         False ->
-          Ok(svg_path.point(derivative.x /. length, derivative.y /. length))
+          Ok(svg_path.Point(derivative.x /. length, derivative.y /. length))
       }
     }
     Error(_) -> Error(Nil)
@@ -2903,16 +2900,16 @@ fn escape(text: String) -> String {
 fn offset_track_source() -> svg_path.Subpath {
   svg_path.subpath_assert([
     svg_path.CubicBezier(
-      start: svg_path.point(0.0, 32.0),
-      control1: svg_path.point(82.0, -108.0),
-      control2: svg_path.point(150.0, 142.0),
-      end: svg_path.point(232.0, 12.0),
+      start: svg_path.Point(0.0, 32.0),
+      control1: svg_path.Point(82.0, -108.0),
+      control2: svg_path.Point(150.0, 142.0),
+      end: svg_path.Point(232.0, 12.0),
     ),
     svg_path.CubicBezier(
-      start: svg_path.point(232.0, 12.0),
-      control1: svg_path.point(300.0, -92.0),
-      control2: svg_path.point(414.0, 118.0),
-      end: svg_path.point(532.0, -16.0),
+      start: svg_path.Point(232.0, 12.0),
+      control1: svg_path.Point(300.0, -92.0),
+      control2: svg_path.Point(414.0, 118.0),
+      end: svg_path.Point(532.0, -16.0),
     ),
   ])
 }
@@ -2920,16 +2917,16 @@ fn offset_track_source() -> svg_path.Subpath {
 fn dash_source() -> svg_path.Subpath {
   svg_path.subpath_assert([
     svg_path.CubicBezier(
-      start: svg_path.point(0.0, 28.0),
-      control1: svg_path.point(48.0, -62.0),
-      control2: svg_path.point(112.0, 88.0),
-      end: svg_path.point(154.0, 16.0),
+      start: svg_path.Point(0.0, 28.0),
+      control1: svg_path.Point(48.0, -62.0),
+      control2: svg_path.Point(112.0, 88.0),
+      end: svg_path.Point(154.0, 16.0),
     ),
     svg_path.CubicBezier(
-      start: svg_path.point(154.0, 16.0),
-      control1: svg_path.point(194.0, -52.0),
-      control2: svg_path.point(218.0, 70.0),
-      end: svg_path.point(188.0, 42.0),
+      start: svg_path.Point(154.0, 16.0),
+      control1: svg_path.Point(194.0, -52.0),
+      control2: svg_path.Point(218.0, 70.0),
+      end: svg_path.Point(188.0, 42.0),
     ),
   ])
 }
@@ -2937,16 +2934,16 @@ fn dash_source() -> svg_path.Subpath {
 fn recursive_dash_source() -> svg_path.Subpath {
   svg_path.subpath_assert([
     svg_path.CubicBezier(
-      start: svg_path.point(0.0, 34.0),
-      control1: svg_path.point(88.0, -112.0),
-      control2: svg_path.point(180.0, 146.0),
-      end: svg_path.point(270.0, 10.0),
+      start: svg_path.Point(0.0, 34.0),
+      control1: svg_path.Point(88.0, -112.0),
+      control2: svg_path.Point(180.0, 146.0),
+      end: svg_path.Point(270.0, 10.0),
     ),
     svg_path.CubicBezier(
-      start: svg_path.point(270.0, 10.0),
-      control1: svg_path.point(344.0, -98.0),
-      control2: svg_path.point(418.0, 138.0),
-      end: svg_path.point(520.0, 22.0),
+      start: svg_path.Point(270.0, 10.0),
+      control1: svg_path.Point(344.0, -98.0),
+      control2: svg_path.Point(418.0, 138.0),
+      end: svg_path.Point(520.0, 22.0),
     ),
   ])
 }
@@ -2954,10 +2951,10 @@ fn recursive_dash_source() -> svg_path.Subpath {
 fn earth_arc_source() -> svg_path.Subpath {
   svg_path.subpath_assert([
     svg_path.CubicBezier(
-      start: svg_path.point(0.0, 28.0),
-      control1: svg_path.point(42.0, -24.0),
-      control2: svg_path.point(118.0, -24.0),
-      end: svg_path.point(164.0, 28.0),
+      start: svg_path.Point(0.0, 28.0),
+      control1: svg_path.Point(42.0, -24.0),
+      control2: svg_path.Point(118.0, -24.0),
+      end: svg_path.Point(164.0, 28.0),
     ),
   ])
 }
@@ -2965,16 +2962,16 @@ fn earth_arc_source() -> svg_path.Subpath {
 fn earth_bend_source() -> svg_path.Subpath {
   svg_path.subpath_assert([
     svg_path.CubicBezier(
-      start: svg_path.point(0.0, 42.0),
-      control1: svg_path.point(34.0, 6.0),
-      control2: svg_path.point(82.0, -18.0),
-      end: svg_path.point(126.0, 0.0),
+      start: svg_path.Point(0.0, 42.0),
+      control1: svg_path.Point(34.0, 6.0),
+      control2: svg_path.Point(82.0, -18.0),
+      end: svg_path.Point(126.0, 0.0),
     ),
     svg_path.CubicBezier(
-      start: svg_path.point(126.0, 0.0),
-      control1: svg_path.point(156.0, 12.0),
-      control2: svg_path.point(160.0, 50.0),
-      end: svg_path.point(188.0, 66.0),
+      start: svg_path.Point(126.0, 0.0),
+      control1: svg_path.Point(156.0, 12.0),
+      control2: svg_path.Point(160.0, 50.0),
+      end: svg_path.Point(188.0, 66.0),
     ),
   ])
 }
@@ -2982,21 +2979,21 @@ fn earth_bend_source() -> svg_path.Subpath {
 fn earth_turn_source() -> svg_path.Subpath {
   svg_path.subpath_assert([
     svg_path.Line(
-      start: svg_path.point(0.0, 34.0),
-      end: svg_path.point(68.0, -8.0),
+      start: svg_path.Point(0.0, 34.0),
+      end: svg_path.Point(68.0, -8.0),
     ),
     svg_path.CubicBezier(
-      start: svg_path.point(68.0, -8.0),
-      control1: svg_path.point(110.0, -34.0),
-      control2: svg_path.point(150.0, 34.0),
-      end: svg_path.point(188.0, 10.0),
+      start: svg_path.Point(68.0, -8.0),
+      control1: svg_path.Point(110.0, -34.0),
+      control2: svg_path.Point(150.0, 34.0),
+      end: svg_path.Point(188.0, 10.0),
     ),
   ])
 }
 
 fn panel(x: Float, _label: String) -> svg.ThingToDraw {
   svg.Rectangle(
-    svg_path.point(x +. 8.0, 18.0),
+    svg_path.Point(x +. 8.0, 18.0),
     222.0,
     184.0,
     "fill: #f8fafc; stroke: #cbd5e1; stroke-width: 1.4",
@@ -3005,7 +3002,7 @@ fn panel(x: Float, _label: String) -> svg.ThingToDraw {
 
 fn wide_panel() -> svg.ThingToDraw {
   svg.Rectangle(
-    svg_path.point(8.0, 18.0),
+    svg_path.Point(8.0, 18.0),
     844.0,
     344.0,
     "fill: #f8fafc; stroke: #cbd5e1; stroke-width: 1.4",
@@ -3044,13 +3041,13 @@ fn document(
   svg.document(
     things: list.append(
       [
-        svg.Rectangle(svg_path.point(0.0, 0.0), width, height, "fill: #ffffff"),
+        svg.Rectangle(svg_path.Point(0.0, 0.0), width, height, "fill: #ffffff"),
       ],
       things,
     ),
     view_box: svg_path.BoundingBox(
-      min: svg_path.point(0.0, 0.0),
-      max: svg_path.point(width, height),
+      min: svg_path.Point(0.0, 0.0),
+      max: svg_path.Point(width, height),
     ),
   )
 }
@@ -3079,7 +3076,7 @@ fn subpath_arrows(
         svg_path.subpath_derivative_at_length(subpath, distance:)
       {
         Ok(point), Ok(derivative) -> {
-          let length = vec2f.length(derivative)
+          let length = point_length(derivative)
           case length <=. 0.000001 {
             True -> []
             False -> [
@@ -3132,15 +3129,30 @@ fn place_subpath(
 }
 
 fn add(a: svg_path.Point, b: svg_path.Point) -> svg_path.Point {
-  svg_path.point(a.x +. b.x, a.y +. b.y)
+  svg_path.Point(a.x +. b.x, a.y +. b.y)
 }
 
 fn scale(point: svg_path.Point, factor: Float) -> svg_path.Point {
-  svg_path.point(point.x *. factor, point.y *. factor)
+  svg_path.Point(point.x *. factor, point.y *. factor)
+}
+
+fn point_length(point: svg_path.Point) -> Float {
+  point.x *. point.x +. point.y *. point.y |> float_square_root
+}
+
+fn point_distance(a: svg_path.Point, b: svg_path.Point) -> Float {
+  let dx = a.x -. b.x
+  let dy = a.y -. b.y
+  dx *. dx +. dy *. dy |> float_square_root
+}
+
+fn float_square_root(value: Float) -> Float {
+  let assert Ok(root) = float.square_root(value)
+  root
 }
 
 fn rotate_counterclockwise(point: svg_path.Point) -> svg_path.Point {
-  svg_path.point(0.0 -. point.y, point.x)
+  svg_path.Point(0.0 -. point.y, point.x)
 }
 
 fn float_to_string(value: Float) -> String {

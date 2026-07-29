@@ -10,7 +10,7 @@ pub fn point_chord_polygon_loop_separation_returns_none_for_inside_polygon_point
   let loop = square_loop()
   assert convex_hull.internal_point_chord_polygon_loop_separation(
       loop,
-      point: svg_path.point(5.0, 5.0),
+      point: svg_path.Point(5.0, 5.0),
     )
     == None
 }
@@ -19,7 +19,7 @@ pub fn point_chord_polygon_loop_separation_returns_none_for_boundary_polygon_poi
   let loop = square_loop()
   assert convex_hull.internal_point_chord_polygon_loop_separation(
       loop,
-      point: svg_path.point(10.0, 5.0),
+      point: svg_path.Point(10.0, 5.0),
     )
     == None
 }
@@ -29,11 +29,11 @@ pub fn point_chord_polygon_loop_separation_finds_closest_point_on_polygon_edge_t
   let assert Some(#(angle, closest)) =
     convex_hull.internal_point_chord_polygon_loop_separation(
       loop,
-      point: svg_path.point(15.0, 5.0),
+      point: svg_path.Point(15.0, 5.0),
     )
 
   assert near_float(angle, 0.0)
-  assert points_near(closest, svg_path.point(10.0, 5.0))
+  assert points_near(closest, svg_path.Point(10.0, 5.0))
 }
 
 pub fn point_chord_polygon_loop_separation_handles_clockwise_polygon_test() {
@@ -41,11 +41,11 @@ pub fn point_chord_polygon_loop_separation_handles_clockwise_polygon_test() {
   let assert Some(#(angle, closest)) =
     convex_hull.internal_point_chord_polygon_loop_separation(
       loop,
-      point: svg_path.point(15.0, 5.0),
+      point: svg_path.Point(15.0, 5.0),
     )
 
   assert near_float(angle, 0.0)
-  assert points_near(closest, svg_path.point(10.0, 5.0))
+  assert points_near(closest, svg_path.Point(10.0, 5.0))
 }
 
 pub fn point_chord_polygon_loop_separation_finds_closest_point_on_polygon_vertex_test() {
@@ -53,15 +53,15 @@ pub fn point_chord_polygon_loop_separation_finds_closest_point_on_polygon_vertex
   let assert Some(#(angle, closest)) =
     convex_hull.internal_point_chord_polygon_loop_separation(
       loop,
-      point: svg_path.point(15.0, 15.0),
+      point: svg_path.Point(15.0, 15.0),
     )
 
   assert near_float(angle, 45.0)
-  assert points_near(closest, svg_path.point(10.0, 10.0))
+  assert points_near(closest, svg_path.Point(10.0, 10.0))
 }
 
 pub fn point_chord_polygon_loop_separation_handles_point_like_loop_test() {
-  let point = svg_path.point(2.0, 3.0)
+  let point = svg_path.Point(2.0, 3.0)
   let loop = [
     svg_path.Line(start: point, end: point),
     svg_path.Line(start: point, end: point),
@@ -69,7 +69,7 @@ pub fn point_chord_polygon_loop_separation_handles_point_like_loop_test() {
   let assert Some(#(angle, closest)) =
     convex_hull.internal_point_chord_polygon_loop_separation(
       loop,
-      point: svg_path.point(7.0, 3.0),
+      point: svg_path.Point(7.0, 3.0),
     )
 
   assert near_float(angle, 0.0)
@@ -79,30 +79,30 @@ pub fn point_chord_polygon_loop_separation_handles_point_like_loop_test() {
 pub fn point_chord_polygon_loop_separation_handles_line_like_loop_test() {
   let loop = [
     svg_path.Line(
-      start: svg_path.point(0.0, 0.0),
-      end: svg_path.point(10.0, 0.0),
+      start: svg_path.Point(0.0, 0.0),
+      end: svg_path.Point(10.0, 0.0),
     ),
     svg_path.Line(
-      start: svg_path.point(10.0, 0.0),
-      end: svg_path.point(0.0, 0.0),
+      start: svg_path.Point(10.0, 0.0),
+      end: svg_path.Point(0.0, 0.0),
     ),
   ]
   let assert Some(#(angle, closest)) =
     convex_hull.internal_point_chord_polygon_loop_separation(
       loop,
-      point: svg_path.point(5.0, 4.0),
+      point: svg_path.Point(5.0, 4.0),
     )
 
   assert near_float(angle, 90.0)
-  assert points_near(closest, svg_path.point(5.0, 0.0))
+  assert points_near(closest, svg_path.Point(5.0, 0.0))
 }
 
 pub fn point_loop_view_classifies_ccw_outside_arc_point_test() {
   assert convex_hull.internal_point_loop_view(
-      point: svg_path.point(15.0, 5.0),
-      at: svg_path.point(10.0, 5.0),
-      arriving: svg_path.point(0.0, 1.0),
-      leaving: svg_path.point(0.0, 1.0),
+      point: svg_path.Point(15.0, 5.0),
+      at: svg_path.Point(10.0, 5.0),
+      arriving: svg_path.Point(0.0, 1.0),
+      leaving: svg_path.Point(0.0, 1.0),
       clockwise: False,
     )
     == convex_hull.OutsidePoint
@@ -110,10 +110,10 @@ pub fn point_loop_view_classifies_ccw_outside_arc_point_test() {
 
 pub fn point_loop_view_classifies_ccw_inside_arc_point_test() {
   assert convex_hull.internal_point_loop_view(
-      point: svg_path.point(15.0, 5.0),
-      at: svg_path.point(0.0, 5.0),
-      arriving: svg_path.point(0.0, -1.0),
-      leaving: svg_path.point(0.0, -1.0),
+      point: svg_path.Point(15.0, 5.0),
+      at: svg_path.Point(0.0, 5.0),
+      arriving: svg_path.Point(0.0, -1.0),
+      leaving: svg_path.Point(0.0, -1.0),
       clockwise: False,
     )
     == convex_hull.InsidePoint
@@ -121,10 +121,10 @@ pub fn point_loop_view_classifies_ccw_inside_arc_point_test() {
 
 pub fn point_loop_view_classifies_ccw_tangent_corner_test() {
   assert convex_hull.internal_point_loop_view(
-      point: svg_path.point(15.0, 5.0),
-      at: svg_path.point(10.0, 10.0),
-      arriving: svg_path.point(0.0, 1.0),
-      leaving: svg_path.point(-1.0, 0.0),
+      point: svg_path.Point(15.0, 5.0),
+      at: svg_path.Point(10.0, 10.0),
+      arriving: svg_path.Point(0.0, 1.0),
+      leaving: svg_path.Point(-1.0, 0.0),
       clockwise: False,
     )
     == convex_hull.TangentPoint
@@ -132,10 +132,10 @@ pub fn point_loop_view_classifies_ccw_tangent_corner_test() {
 
 pub fn point_loop_view_classifies_clockwise_outside_arc_point_test() {
   assert convex_hull.internal_point_loop_view(
-      point: svg_path.point(15.0, 5.0),
-      at: svg_path.point(10.0, 5.0),
-      arriving: svg_path.point(0.0, -1.0),
-      leaving: svg_path.point(0.0, -1.0),
+      point: svg_path.Point(15.0, 5.0),
+      at: svg_path.Point(10.0, 5.0),
+      arriving: svg_path.Point(0.0, -1.0),
+      leaving: svg_path.Point(0.0, -1.0),
       clockwise: True,
     )
     == convex_hull.OutsidePoint
@@ -145,44 +145,44 @@ pub fn point_chord_polygon_tangent_subpaths_split_square_test() {
   let assert Ok(#(outside, inside)) =
     convex_hull.internal_point_chord_polygon_tangent_subpaths(
       square_loop(),
-      point: svg_path.point(15.0, 5.0),
+      point: svg_path.Point(15.0, 5.0),
     )
 
-  assert points_near(subpath_start(outside), svg_path.point(10.0, 0.0))
-  assert points_near(subpath_end(outside), svg_path.point(10.0, 10.0))
+  assert points_near(subpath_start(outside), svg_path.Point(10.0, 0.0))
+  assert points_near(subpath_end(outside), svg_path.Point(10.0, 10.0))
   assert list.length(svg_path.subpath_segments(outside)) == 1
-  assert points_near(subpath_start(inside), svg_path.point(10.0, 10.0))
-  assert points_near(subpath_end(inside), svg_path.point(10.0, 0.0))
+  assert points_near(subpath_start(inside), svg_path.Point(10.0, 10.0))
+  assert points_near(subpath_end(inside), svg_path.Point(10.0, 0.0))
   assert list.length(svg_path.subpath_segments(inside)) == 3
 }
 
 pub fn point_chord_polygon_tangent_subpaths_reject_nonconvex_loop_test() {
   let loop = [
     svg_path.Line(
-      start: svg_path.point(0.0, 0.0),
-      end: svg_path.point(10.0, 0.0),
+      start: svg_path.Point(0.0, 0.0),
+      end: svg_path.Point(10.0, 0.0),
     ),
     svg_path.Line(
-      start: svg_path.point(10.0, 0.0),
-      end: svg_path.point(5.0, 5.0),
+      start: svg_path.Point(10.0, 0.0),
+      end: svg_path.Point(5.0, 5.0),
     ),
     svg_path.Line(
-      start: svg_path.point(5.0, 5.0),
-      end: svg_path.point(10.0, 10.0),
+      start: svg_path.Point(5.0, 5.0),
+      end: svg_path.Point(10.0, 10.0),
     ),
     svg_path.Line(
-      start: svg_path.point(10.0, 10.0),
-      end: svg_path.point(0.0, 10.0),
+      start: svg_path.Point(10.0, 10.0),
+      end: svg_path.Point(0.0, 10.0),
     ),
     svg_path.Line(
-      start: svg_path.point(0.0, 10.0),
-      end: svg_path.point(0.0, 0.0),
+      start: svg_path.Point(0.0, 10.0),
+      end: svg_path.Point(0.0, 0.0),
     ),
   ]
 
   assert convex_hull.internal_point_chord_polygon_tangent_subpaths(
       loop,
-      point: svg_path.point(15.0, 5.0),
+      point: svg_path.Point(15.0, 5.0),
     )
     == Error(convex_hull.TangentSearchNonConvexVertex(2))
 }
@@ -191,14 +191,14 @@ pub fn point_exact_loop_tangent_subpaths_split_square_test() {
   let assert Ok(#(outside, inside)) =
     convex_hull.internal_point_exact_loop_tangent_subpaths(
       square_loop(),
-      point: svg_path.point(15.0, 5.0),
+      point: svg_path.Point(15.0, 5.0),
     )
 
-  assert points_near(subpath_start(outside), svg_path.point(10.0, 0.0))
-  assert points_near(subpath_end(outside), svg_path.point(10.0, 10.0))
+  assert points_near(subpath_start(outside), svg_path.Point(10.0, 0.0))
+  assert points_near(subpath_end(outside), svg_path.Point(10.0, 10.0))
   assert list.length(svg_path.subpath_segments(outside)) == 1
-  assert points_near(subpath_start(inside), svg_path.point(10.0, 10.0))
-  assert points_near(subpath_end(inside), svg_path.point(10.0, 0.0))
+  assert points_near(subpath_start(inside), svg_path.Point(10.0, 10.0))
+  assert points_near(subpath_end(inside), svg_path.Point(10.0, 0.0))
   assert list.length(svg_path.subpath_segments(inside)) == 3
 }
 
@@ -206,15 +206,15 @@ pub fn point_exact_loop_tangent_subpaths_finds_quadratic_interior_tangencies_tes
   let assert Ok(#(outside, inside)) =
     convex_hull.internal_point_exact_loop_tangent_subpaths(
       rounded_triangle_loop(),
-      point: svg_path.point(14.0, 5.0),
+      point: svg_path.Point(14.0, 5.0),
     )
 
   let root_offset = {
     let assert Ok(root) = float.square_root(15.0)
     root
   }
-  let lower = svg_path.point(11.0, 5.0 -. root_offset)
-  let upper = svg_path.point(11.0, 5.0 +. root_offset)
+  let lower = svg_path.Point(11.0, 5.0 -. root_offset)
+  let upper = svg_path.Point(11.0, 5.0 +. root_offset)
 
   assert points_near(subpath_start(outside), lower)
   assert points_near(subpath_end(outside), upper)
@@ -225,24 +225,24 @@ pub fn point_exact_loop_tangent_subpaths_finds_quadratic_interior_tangencies_tes
 }
 
 pub fn loop_plus_point_hull_replaces_visible_square_edge_test() {
-  let point = svg_path.point(15.0, 5.0)
+  let point = svg_path.Point(15.0, 5.0)
   let assert Ok(segments) =
     convex_hull.internal_loop_plus_point_hull(square_loop(), point:)
 
   assert list.length(segments) == 5
   let assert [first, _, _, connector_to_point, connector_from_point] = segments
-  assert points_near(svg_path.segment_start(first), svg_path.point(10.0, 10.0))
-  assert points_near(svg_path.segment_end(first), svg_path.point(0.0, 10.0))
+  assert points_near(svg_path.segment_start(first), svg_path.Point(10.0, 10.0))
+  assert points_near(svg_path.segment_end(first), svg_path.Point(0.0, 10.0))
   assert points_near(svg_path.segment_end(connector_to_point), point)
   assert points_near(svg_path.segment_start(connector_from_point), point)
   assert points_near(
     svg_path.segment_end(connector_from_point),
-    svg_path.point(10.0, 10.0),
+    svg_path.Point(10.0, 10.0),
   )
 }
 
 pub fn loop_plus_point_hull_handles_quadratic_interior_tangencies_test() {
-  let point = svg_path.point(14.0, 5.0)
+  let point = svg_path.Point(14.0, 5.0)
   let assert Ok(segments) =
     convex_hull.internal_loop_plus_point_hull(rounded_triangle_loop(), point:)
 
@@ -250,8 +250,8 @@ pub fn loop_plus_point_hull_handles_quadratic_interior_tangencies_test() {
     let assert Ok(root) = float.square_root(15.0)
     root
   }
-  let lower = svg_path.point(11.0, 5.0 -. root_offset)
-  let upper = svg_path.point(11.0, 5.0 +. root_offset)
+  let lower = svg_path.Point(11.0, 5.0 -. root_offset)
+  let upper = svg_path.Point(11.0, 5.0 +. root_offset)
 
   assert list.length(segments) == 6
   let assert Ok(first) = list.first(segments)
@@ -268,9 +268,9 @@ pub fn loop_plus_point_hull_handles_quadratic_interior_tangencies_test() {
 
 pub fn loop_plus_points_hull_absorbs_outside_points_in_order_test() {
   let points = [
-    svg_path.point(5.0, 5.0),
-    svg_path.point(15.0, 5.0),
-    svg_path.point(5.0, 15.0),
+    svg_path.Point(5.0, 5.0),
+    svg_path.Point(15.0, 5.0),
+    svg_path.Point(5.0, 15.0),
   ]
   let assert Ok(segments) =
     convex_hull.internal_loop_plus_points_hull(square_loop(), points:)
@@ -287,7 +287,7 @@ pub fn loop_plus_points_hull_absorbs_outside_points_in_order_test() {
 }
 
 pub fn loop_plus_point_hull_handles_line_like_loop_test() {
-  let point = svg_path.point(5.0, 4.0)
+  let point = svg_path.Point(5.0, 4.0)
   let assert Ok(segments) =
     convex_hull.internal_loop_plus_point_hull(line_like_loop(), point:)
 
@@ -300,7 +300,7 @@ pub fn loop_plus_point_hull_handles_line_like_loop_test() {
 }
 
 pub fn loop_plus_point_hull_rejects_conflicting_tangent_orientation_test() {
-  let point = svg_path.point(5.0, 4.0)
+  let point = svg_path.Point(5.0, 4.0)
 
   assert convex_hull.internal_loop_plus_point_hull(
       conflicting_tangent_line_like_loop(),
@@ -312,43 +312,43 @@ pub fn loop_plus_point_hull_rejects_conflicting_tangent_orientation_test() {
 pub fn point_exact_loop_tangent_subpaths_finds_cubic_interior_tangencies_test() {
   let loop = [
     svg_path.Line(
-      start: svg_path.point(0.0, 0.0),
-      end: svg_path.point(10.0, 0.0),
+      start: svg_path.Point(0.0, 0.0),
+      end: svg_path.Point(10.0, 0.0),
     ),
     svg_path.CubicBezier(
-      start: svg_path.point(10.0, 0.0),
-      control1: svg_path.point(15.0, 2.0),
-      control2: svg_path.point(15.0, 8.0),
-      end: svg_path.point(10.0, 10.0),
+      start: svg_path.Point(10.0, 0.0),
+      control1: svg_path.Point(15.0, 2.0),
+      control2: svg_path.Point(15.0, 8.0),
+      end: svg_path.Point(10.0, 10.0),
     ),
     svg_path.Line(
-      start: svg_path.point(10.0, 10.0),
-      end: svg_path.point(0.0, 0.0),
+      start: svg_path.Point(10.0, 10.0),
+      end: svg_path.Point(0.0, 0.0),
     ),
   ]
 
   let assert Ok(#(outside, inside)) =
     convex_hull.internal_point_exact_loop_tangent_subpaths(
       loop,
-      point: svg_path.point(14.0, 5.0),
+      point: svg_path.Point(14.0, 5.0),
     )
 
   assert points_near(
     subpath_start(outside),
-    svg_path.point(13.510530985333089, 3.4999239353568505),
+    svg_path.Point(13.510530985333089, 3.4999239353568505),
   )
   assert points_near(
     subpath_end(outside),
-    svg_path.point(13.510530985333087, 6.5000760646431495),
+    svg_path.Point(13.510530985333087, 6.5000760646431495),
   )
   assert list.length(svg_path.subpath_segments(outside)) == 1
   assert points_near(
     subpath_start(inside),
-    svg_path.point(13.510530985333087, 6.5000760646431495),
+    svg_path.Point(13.510530985333087, 6.5000760646431495),
   )
   assert points_near(
     subpath_end(inside),
-    svg_path.point(13.510530985333089, 3.4999239353568505),
+    svg_path.Point(13.510530985333089, 3.4999239353568505),
   )
   assert list.length(svg_path.subpath_segments(inside)) == 4
 }
@@ -356,33 +356,33 @@ pub fn point_exact_loop_tangent_subpaths_finds_cubic_interior_tangencies_test() 
 pub fn point_exact_loop_tangent_subpaths_finds_arc_interior_tangencies_test() {
   let loop = [
     svg_path.Line(
-      start: svg_path.point(0.0, 0.0),
-      end: svg_path.point(10.0, 0.0),
+      start: svg_path.Point(0.0, 0.0),
+      end: svg_path.Point(10.0, 0.0),
     ),
     svg_path.Arc(
-      start: svg_path.point(10.0, 0.0),
-      radius: svg_path.point(5.0, 5.0),
+      start: svg_path.Point(10.0, 0.0),
+      radius: svg_path.Point(5.0, 5.0),
       x_axis_rotation: 0.0,
       large_arc: False,
       sweep: True,
-      end: svg_path.point(10.0, 10.0),
+      end: svg_path.Point(10.0, 10.0),
     ),
     svg_path.Line(
-      start: svg_path.point(10.0, 10.0),
-      end: svg_path.point(0.0, 0.0),
+      start: svg_path.Point(10.0, 10.0),
+      end: svg_path.Point(0.0, 0.0),
     ),
   ]
   let root_offset = {
     let assert Ok(root) = float.square_root(18.75)
     root
   }
-  let lower = svg_path.point(12.5, 5.0 -. root_offset)
-  let upper = svg_path.point(12.5, 5.0 +. root_offset)
+  let lower = svg_path.Point(12.5, 5.0 -. root_offset)
+  let upper = svg_path.Point(12.5, 5.0 +. root_offset)
 
   let assert Ok(#(outside, inside)) =
     convex_hull.internal_point_exact_loop_tangent_subpaths(
       loop,
-      point: svg_path.point(20.0, 5.0),
+      point: svg_path.Point(20.0, 5.0),
     )
 
   assert points_near(subpath_start(outside), lower)
@@ -396,8 +396,8 @@ pub fn point_exact_loop_tangent_subpaths_finds_arc_interior_tangencies_test() {
 pub fn segment_tangent_monotone_accepts_lines_test() {
   let segment =
     svg_path.Line(
-      start: svg_path.point(0.0, 0.0),
-      end: svg_path.point(10.0, 0.0),
+      start: svg_path.Point(0.0, 0.0),
+      end: svg_path.Point(10.0, 0.0),
     )
 
   assert_monotone(segment, clockwise: False)
@@ -407,15 +407,15 @@ pub fn segment_tangent_monotone_accepts_lines_test() {
 pub fn segment_tangent_monotone_checks_quadratic_orientation_test() {
   let counterclockwise =
     svg_path.QuadraticBezier(
-      start: svg_path.point(0.0, 0.0),
-      control: svg_path.point(1.0, -1.0),
-      end: svg_path.point(2.0, 0.0),
+      start: svg_path.Point(0.0, 0.0),
+      control: svg_path.Point(1.0, -1.0),
+      end: svg_path.Point(2.0, 0.0),
     )
   let clockwise =
     svg_path.QuadraticBezier(
-      start: svg_path.point(0.0, 0.0),
-      control: svg_path.point(1.0, 1.0),
-      end: svg_path.point(2.0, 0.0),
+      start: svg_path.Point(0.0, 0.0),
+      control: svg_path.Point(1.0, 1.0),
+      end: svg_path.Point(2.0, 0.0),
     )
 
   assert_monotone(counterclockwise, clockwise: False)
@@ -427,10 +427,10 @@ pub fn segment_tangent_monotone_checks_quadratic_orientation_test() {
 pub fn segment_tangent_monotone_accepts_monotone_cubic_test() {
   let segment =
     svg_path.CubicBezier(
-      start: svg_path.point(1.0, 0.0),
-      control1: svg_path.point(1.0, 0.5),
-      control2: svg_path.point(0.5, 1.0),
-      end: svg_path.point(0.0, 1.0),
+      start: svg_path.Point(1.0, 0.0),
+      control1: svg_path.Point(1.0, 0.5),
+      control2: svg_path.Point(0.5, 1.0),
+      end: svg_path.Point(0.0, 1.0),
     )
 
   assert_monotone(segment, clockwise: False)
@@ -440,10 +440,10 @@ pub fn segment_tangent_monotone_accepts_monotone_cubic_test() {
 pub fn segment_tangent_monotone_rejects_sign_changing_cubic_test() {
   let segment =
     svg_path.CubicBezier(
-      start: svg_path.point(0.0, 0.0),
-      control1: svg_path.point(1.0, 1.0),
-      control2: svg_path.point(1.0, -1.0),
-      end: svg_path.point(2.0, 0.0),
+      start: svg_path.Point(0.0, 0.0),
+      control1: svg_path.Point(1.0, 1.0),
+      control2: svg_path.Point(1.0, -1.0),
+      end: svg_path.Point(2.0, 0.0),
     )
 
   assert_not_monotone(segment, clockwise: False, by_at_least: 4.0)
@@ -453,21 +453,21 @@ pub fn segment_tangent_monotone_rejects_sign_changing_cubic_test() {
 pub fn segment_tangent_monotone_checks_arc_sweep_test() {
   let counterclockwise =
     svg_path.Arc(
-      start: svg_path.point(1.0, 0.0),
-      radius: svg_path.point(1.0, 1.0),
+      start: svg_path.Point(1.0, 0.0),
+      radius: svg_path.Point(1.0, 1.0),
       x_axis_rotation: 0.0,
       large_arc: False,
       sweep: True,
-      end: svg_path.point(0.0, 1.0),
+      end: svg_path.Point(0.0, 1.0),
     )
   let clockwise =
     svg_path.Arc(
-      start: svg_path.point(1.0, 0.0),
-      radius: svg_path.point(1.0, 1.0),
+      start: svg_path.Point(1.0, 0.0),
+      radius: svg_path.Point(1.0, 1.0),
       x_axis_rotation: 0.0,
       large_arc: False,
       sweep: False,
-      end: svg_path.point(0.0, -1.0),
+      end: svg_path.Point(0.0, -1.0),
     )
 
   assert_monotone(counterclockwise, clockwise: False)
@@ -479,20 +479,20 @@ pub fn segment_tangent_monotone_checks_arc_sweep_test() {
 fn square_loop() -> List(svg_path.Segment) {
   [
     svg_path.Line(
-      start: svg_path.point(0.0, 0.0),
-      end: svg_path.point(10.0, 0.0),
+      start: svg_path.Point(0.0, 0.0),
+      end: svg_path.Point(10.0, 0.0),
     ),
     svg_path.Line(
-      start: svg_path.point(10.0, 0.0),
-      end: svg_path.point(10.0, 10.0),
+      start: svg_path.Point(10.0, 0.0),
+      end: svg_path.Point(10.0, 10.0),
     ),
     svg_path.Line(
-      start: svg_path.point(10.0, 10.0),
-      end: svg_path.point(0.0, 10.0),
+      start: svg_path.Point(10.0, 10.0),
+      end: svg_path.Point(0.0, 10.0),
     ),
     svg_path.Line(
-      start: svg_path.point(0.0, 10.0),
-      end: svg_path.point(0.0, 0.0),
+      start: svg_path.Point(0.0, 10.0),
+      end: svg_path.Point(0.0, 0.0),
     ),
   ]
 }
@@ -500,20 +500,20 @@ fn square_loop() -> List(svg_path.Segment) {
 fn clockwise_square_loop() -> List(svg_path.Segment) {
   [
     svg_path.Line(
-      start: svg_path.point(0.0, 0.0),
-      end: svg_path.point(0.0, 10.0),
+      start: svg_path.Point(0.0, 0.0),
+      end: svg_path.Point(0.0, 10.0),
     ),
     svg_path.Line(
-      start: svg_path.point(0.0, 10.0),
-      end: svg_path.point(10.0, 10.0),
+      start: svg_path.Point(0.0, 10.0),
+      end: svg_path.Point(10.0, 10.0),
     ),
     svg_path.Line(
-      start: svg_path.point(10.0, 10.0),
-      end: svg_path.point(10.0, 0.0),
+      start: svg_path.Point(10.0, 10.0),
+      end: svg_path.Point(10.0, 0.0),
     ),
     svg_path.Line(
-      start: svg_path.point(10.0, 0.0),
-      end: svg_path.point(0.0, 0.0),
+      start: svg_path.Point(10.0, 0.0),
+      end: svg_path.Point(0.0, 0.0),
     ),
   ]
 }
@@ -521,17 +521,17 @@ fn clockwise_square_loop() -> List(svg_path.Segment) {
 fn rounded_triangle_loop() -> List(svg_path.Segment) {
   [
     svg_path.Line(
-      start: svg_path.point(0.0, 0.0),
-      end: svg_path.point(10.0, 0.0),
+      start: svg_path.Point(0.0, 0.0),
+      end: svg_path.Point(10.0, 0.0),
     ),
     svg_path.QuadraticBezier(
-      start: svg_path.point(10.0, 0.0),
-      control: svg_path.point(15.0, 5.0),
-      end: svg_path.point(10.0, 10.0),
+      start: svg_path.Point(10.0, 0.0),
+      control: svg_path.Point(15.0, 5.0),
+      end: svg_path.Point(10.0, 10.0),
     ),
     svg_path.Line(
-      start: svg_path.point(10.0, 10.0),
-      end: svg_path.point(0.0, 0.0),
+      start: svg_path.Point(10.0, 10.0),
+      end: svg_path.Point(0.0, 0.0),
     ),
   ]
 }
@@ -539,31 +539,31 @@ fn rounded_triangle_loop() -> List(svg_path.Segment) {
 fn line_like_loop() -> List(svg_path.Segment) {
   [
     svg_path.Line(
-      start: svg_path.point(0.0, 0.0),
-      end: svg_path.point(10.0, 0.0),
+      start: svg_path.Point(0.0, 0.0),
+      end: svg_path.Point(10.0, 0.0),
     ),
     svg_path.Line(
-      start: svg_path.point(10.0, 0.0),
-      end: svg_path.point(0.0, 0.0),
+      start: svg_path.Point(10.0, 0.0),
+      end: svg_path.Point(0.0, 0.0),
     ),
   ]
 }
 
 fn conflicting_tangent_line_like_loop() -> List(svg_path.Segment) {
-  let a = svg_path.point(0.0, 0.0)
-  let b = svg_path.point(10.0, 0.0)
+  let a = svg_path.Point(0.0, 0.0)
+  let b = svg_path.Point(10.0, 0.0)
 
   [
     svg_path.CubicBezier(
       start: a,
-      control1: svg_path.point(10.0 /. 3.0, 10.0 /. 3.0),
-      control2: svg_path.point(20.0 /. 3.0, 10.0 /. 3.0),
+      control1: svg_path.Point(10.0 /. 3.0, 10.0 /. 3.0),
+      control2: svg_path.Point(20.0 /. 3.0, 10.0 /. 3.0),
       end: b,
     ),
     svg_path.CubicBezier(
       start: b,
-      control1: svg_path.point(20.0 /. 3.0, 0.0),
-      control2: svg_path.point(-10.0 /. 3.0, 0.0),
+      control1: svg_path.Point(20.0 /. 3.0, 0.0),
+      control2: svg_path.Point(-10.0 /. 3.0, 0.0),
       end: a,
     ),
   ]

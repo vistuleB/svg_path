@@ -15,7 +15,6 @@ import gleam/list
 import svg_path
 import svg_path/ellipse
 import svg_path/transform
-import vec/vec2f
 
 /// The transform family allowed during best-fit congruency.
 pub type TransformFamily {
@@ -488,8 +487,8 @@ fn point_centroids(
       let count = int.to_float(sums.count)
 
       Ok(#(
-        svg_path.point(sums.source_x /. count, sums.source_y /. count),
-        svg_path.point(sums.target_x /. count, sums.target_y /. count),
+        svg_path.Point(sums.source_x /. count, sums.source_y /. count),
+        svg_path.Point(sums.target_x /. count, sums.target_y /. count),
       ))
     }
   }
@@ -599,10 +598,7 @@ fn rms_error(
       let #(count, error_squared) = accumulated
       let mapped = transform.point(point.source, by: matrix)
 
-      #(
-        count + 1,
-        error_squared +. vec2f.distance_squared(mapped, with: point.target),
-      )
+      #(count + 1, error_squared +. distance_squared(mapped, point.target))
     })
 
   case count <= 0 {
@@ -950,8 +946,8 @@ fn farthest_from_loop(
     [] -> best
     [first, ..remaining] -> {
       let next = case
-        vec2f.distance_squared(point.source, with: first.source)
-        >. vec2f.distance_squared(point.source, with: best.source)
+        distance_squared(point.source, first.source)
+        >. distance_squared(point.source, best.source)
       {
         True -> first
         False -> best
@@ -993,7 +989,7 @@ fn pair(
     source_b:,
     target_a:,
     target_b:,
-    distance_squared: vec2f.distance_squared(source_a, with: source_b),
+    distance_squared: distance_squared(source_a, source_b),
   )
 }
 
@@ -1002,7 +998,13 @@ fn points_within_tolerance(
   b: svg_path.Point,
   tolerance: Float,
 ) -> Bool {
-  vec2f.distance_squared(a, with: b) <=. tolerance *. tolerance
+  distance_squared(a, b) <=. tolerance *. tolerance
+}
+
+fn distance_squared(a: svg_path.Point, b: svg_path.Point) -> Float {
+  let dx = a.x -. b.x
+  let dy = a.y -. b.y
+  dx *. dx +. dy *. dy
 }
 
 fn floats_within_tolerance(a: Float, b: Float, tolerance: Float) -> Bool {
@@ -1025,5 +1027,5 @@ fn is_nan(value: Float) -> Bool {
 }
 
 fn from_ellipse_point(point: ellipse.Point) -> svg_path.Point {
-  svg_path.point(point.x, point.y)
+  svg_path.Point(point.x, point.y)
 }

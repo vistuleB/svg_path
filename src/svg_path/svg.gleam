@@ -61,10 +61,10 @@ pub fn labeled_point(
   let right = point.x +. half_side
   let top = point.y -. half_side
   let bottom = point.y +. half_side
-  let top_left = svg_path.point(left, top)
-  let top_right = svg_path.point(right, top)
-  let bottom_right = svg_path.point(right, bottom)
-  let bottom_left = svg_path.point(left, bottom)
+  let top_left = svg_path.Point(left, top)
+  let top_right = svg_path.Point(right, top)
+  let bottom_right = svg_path.Point(right, bottom)
+  let bottom_left = svg_path.Point(left, bottom)
   let marker =
     svg_path.Path([
       svg_path.subpath_assert([
@@ -92,7 +92,7 @@ pub fn labeled_point(
     Text(
       label,
       "fill: " <> color <> "; font-family: system-ui, sans-serif",
-      svg_path.point(right +. half_side, point.y +. half_side),
+      svg_path.Point(right +. half_side, point.y +. half_side),
       font_size,
     ),
   ]

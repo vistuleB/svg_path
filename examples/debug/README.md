@@ -59,42 +59,42 @@ The concrete support-mismatch arc witnesses were:
 ```gleam
 // rotated_large_arc_reverse is segment_reverse(rotated_large_arc(sweep: False)).
 svg_path.Arc(
-  start: svg_path.point(-70.0, 20.0),
-  radius: svg_path.point(95.0, 20.0),
+  start: svg_path.Point(-70.0, 20.0),
+  radius: svg_path.Point(95.0, 20.0),
   x_axis_rotation: 73.0,
   large_arc: True,
   sweep: False,
-  end: svg_path.point(80.0, -10.0),
+  end: svg_path.Point(80.0, -10.0),
 )
 
 // generated_arc_3, plus its reverse.
 svg_path.Arc(
-  start: svg_path.point(326.80026387727264, -260.8390009191016),
-  radius: svg_path.point(87.76984319319511, 11.87045278497363),
+  start: svg_path.Point(326.80026387727264, -260.8390009191016),
+  radius: svg_path.Point(87.76984319319511, 11.87045278497363),
   x_axis_rotation: 335.205286439588,
   large_arc: True,
   sweep: False,
-  end: svg_path.point(280.93017594732527, 376.3922587940047),
+  end: svg_path.Point(280.93017594732527, 376.3922587940047),
 )
 
 // generated_arc_11, plus its reverse.
 svg_path.Arc(
-  start: svg_path.point(107.85705720801101, -338.8495268430821),
-  radius: svg_path.point(244.9772635063338, 33.57924520474891),
+  start: svg_path.Point(107.85705720801101, -338.8495268430821),
+  radius: svg_path.Point(244.9772635063338, 33.57924520474891),
   x_axis_rotation: 310.005043260612,
   large_arc: False,
   sweep: False,
-  end: svg_path.point(303.8439162943818, -238.8757730743505),
+  end: svg_path.Point(303.8439162943818, -238.8757730743505),
 )
 
 // generated_arc_22, plus its reverse.
 svg_path.Arc(
-  start: svg_path.point(-1999.999905884838, -1618.5387408292152),
-  radius: svg_path.point(617.7500734194787, 1618.0958002375917),
+  start: svg_path.Point(-1999.999905884838, -1618.5387408292152),
+  radius: svg_path.Point(617.7500734194787, 1618.0958002375917),
   x_axis_rotation: 40.48148243217115,
   large_arc: False,
   sweep: True,
-  end: svg_path.point(640.2509972532353, -1636.37341664681),
+  end: svg_path.Point(640.2509972532353, -1636.37341664681),
 )
 ```
 
@@ -130,18 +130,18 @@ Those transformed failures come from these base cubics:
 ```gleam
 // endpoint_control_cubic
 svg_path.CubicBezier(
-  start: svg_path.point(0.0, 0.0),
-  control1: svg_path.point(0.0, 0.0),
-  control2: svg_path.point(100.0, 0.0),
-  end: svg_path.point(100.0, 0.0),
+  start: svg_path.Point(0.0, 0.0),
+  control1: svg_path.Point(0.0, 0.0),
+  control2: svg_path.Point(100.0, 0.0),
+  end: svg_path.Point(100.0, 0.0),
 )
 
 // near_cusp_cubic
 svg_path.CubicBezier(
-  start: svg_path.point(0.0, 0.0),
-  control1: svg_path.point(100.0, 0.0),
-  control2: svg_path.point(-100.0, 0.0),
-  end: svg_path.point(0.001, 0.0),
+  start: svg_path.Point(0.0, 0.0),
+  control1: svg_path.Point(100.0, 0.0),
+  control2: svg_path.Point(-100.0, 0.0),
+  end: svg_path.Point(0.001, 0.0),
 )
 ```
 

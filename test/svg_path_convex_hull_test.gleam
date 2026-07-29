@@ -8,8 +8,8 @@ const tolerance = 0.000001
 pub fn segment_hull_returns_closed_subpath_for_line_test() {
   let segment =
     svg_path.Line(
-      start: svg_path.point(0.0, 0.0),
-      end: svg_path.point(10.0, 0.0),
+      start: svg_path.Point(0.0, 0.0),
+      end: svg_path.Point(10.0, 0.0),
     )
   let assert Ok(subpath) = convex_hull.segment_hull(segment)
 
@@ -21,9 +21,9 @@ pub fn segment_hull_returns_closed_subpath_for_line_test() {
 pub fn segment_hull_returns_closed_hull_for_quadratic_test() {
   let segment =
     svg_path.QuadraticBezier(
-      start: svg_path.point(0.0, 0.0),
-      control: svg_path.point(5.0, 10.0),
-      end: svg_path.point(10.0, 0.0),
+      start: svg_path.Point(0.0, 0.0),
+      control: svg_path.Point(5.0, 10.0),
+      end: svg_path.Point(10.0, 0.0),
     )
   let assert Ok(subpath) = convex_hull.segment_hull(segment)
 
@@ -35,12 +35,12 @@ pub fn segment_hull_returns_closed_hull_for_quadratic_test() {
 pub fn subpath_hull_returns_closed_hull_for_l_shaped_polyline_test() {
   let segments = [
     svg_path.Line(
-      start: svg_path.point(0.0, 0.0),
-      end: svg_path.point(20.0, 0.0),
+      start: svg_path.Point(0.0, 0.0),
+      end: svg_path.Point(20.0, 0.0),
     ),
     svg_path.Line(
-      start: svg_path.point(20.0, 0.0),
-      end: svg_path.point(20.0, 15.0),
+      start: svg_path.Point(20.0, 0.0),
+      end: svg_path.Point(20.0, 15.0),
     ),
   ]
   let assert Ok(subpath) = svg_path.subpath(segments)
@@ -52,7 +52,7 @@ pub fn subpath_hull_returns_closed_hull_for_l_shaped_polyline_test() {
 }
 
 pub fn subpath_hull_treats_empty_subpath_as_single_point_test() {
-  let point = svg_path.point(4.0, -3.0)
+  let point = svg_path.Point(4.0, -3.0)
   let assert Ok(hull) =
     convex_hull.subpath_hull(svg_path.subpath_empty(at: point))
 
@@ -68,9 +68,9 @@ pub fn subpath_hull_treats_empty_subpath_as_single_point_test() {
 }
 
 pub fn path_hull_includes_empty_subpath_start_points_test() {
-  let a = svg_path.point(0.0, 0.0)
-  let b = svg_path.point(2.0, 0.0)
-  let far = svg_path.point(10.0, 0.0)
+  let a = svg_path.Point(0.0, 0.0)
+  let b = svg_path.Point(2.0, 0.0)
+  let far = svg_path.Point(10.0, 0.0)
   let path =
     svg_path.Path([
       svg_path.subpath_assert([svg_path.Line(start: a, end: b)]),

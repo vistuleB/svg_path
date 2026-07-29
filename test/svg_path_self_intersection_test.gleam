@@ -9,10 +9,10 @@ pub fn main() -> Nil {
 }
 
 pub fn subpath_self_intersections_finds_line_crossing_test() {
-  let a = svg_path.point(0.0, 0.0)
-  let b = svg_path.point(10.0, 10.0)
-  let c = svg_path.point(0.0, 10.0)
-  let d = svg_path.point(10.0, 0.0)
+  let a = svg_path.Point(0.0, 0.0)
+  let b = svg_path.Point(10.0, 10.0)
+  let c = svg_path.Point(0.0, 10.0)
+  let d = svg_path.Point(10.0, 0.0)
   let subpath =
     svg_path.subpath_assert([
       svg_path.Line(start: a, end: b),
@@ -27,7 +27,7 @@ pub fn subpath_self_intersections_finds_line_crossing_test() {
   let svg_path.SubpathParameter(segment_index: second_index, t: second_t) =
     second
 
-  assert point_near(point, svg_path.point(5.0, 5.0))
+  assert point_near(point, svg_path.Point(5.0, 5.0))
   assert first_index == 0
   assert near(first_t, 0.5)
   assert second_index == 2
@@ -38,33 +38,33 @@ pub fn subpath_self_intersections_reports_overlapping_line_endpoints_test() {
   let subpath =
     svg_path.subpath_assert([
       svg_path.Line(
-        start: svg_path.point(0.0, 0.0),
-        end: svg_path.point(10.0, 0.0),
+        start: svg_path.Point(0.0, 0.0),
+        end: svg_path.Point(10.0, 0.0),
       ),
       svg_path.Line(
-        start: svg_path.point(10.0, 0.0),
-        end: svg_path.point(10.0, 10.0),
+        start: svg_path.Point(10.0, 0.0),
+        end: svg_path.Point(10.0, 10.0),
       ),
       svg_path.Line(
-        start: svg_path.point(10.0, 10.0),
-        end: svg_path.point(8.0, 0.0),
+        start: svg_path.Point(10.0, 10.0),
+        end: svg_path.Point(8.0, 0.0),
       ),
       svg_path.Line(
-        start: svg_path.point(8.0, 0.0),
-        end: svg_path.point(2.0, 0.0),
+        start: svg_path.Point(8.0, 0.0),
+        end: svg_path.Point(2.0, 0.0),
       ),
     ])
 
   let assert Ok(intersections) = svg_path.subpath_self_intersections(subpath)
 
-  assert list_contains_point(intersections, svg_path.point(2.0, 0.0))
-  assert list_contains_point(intersections, svg_path.point(8.0, 0.0))
+  assert list_contains_point(intersections, svg_path.Point(2.0, 0.0))
+  assert list_contains_point(intersections, svg_path.Point(8.0, 0.0))
 }
 
 pub fn subpath_self_intersections_ignores_adjacent_segment_join_test() {
-  let a = svg_path.point(0.0, 0.0)
-  let b = svg_path.point(10.0, 0.0)
-  let c = svg_path.point(10.0, 10.0)
+  let a = svg_path.Point(0.0, 0.0)
+  let b = svg_path.Point(10.0, 0.0)
+  let c = svg_path.Point(10.0, 10.0)
   let subpath =
     svg_path.subpath_assert([
       svg_path.Line(start: a, end: b),
@@ -75,10 +75,10 @@ pub fn subpath_self_intersections_ignores_adjacent_segment_join_test() {
 }
 
 pub fn subpath_self_intersections_ignores_closed_endpoint_join_test() {
-  let a = svg_path.point(0.0, 0.0)
-  let b = svg_path.point(10.0, 0.0)
-  let c = svg_path.point(10.0, 10.0)
-  let d = svg_path.point(0.0, 10.0)
+  let a = svg_path.Point(0.0, 0.0)
+  let b = svg_path.Point(10.0, 0.0)
+  let c = svg_path.Point(10.0, 10.0)
+  let d = svg_path.Point(0.0, 10.0)
   let subpath =
     svg_path.subpath_assert([
       svg_path.Line(start: a, end: b),
@@ -94,10 +94,10 @@ pub fn subpath_self_intersections_ignores_closed_endpoint_join_test() {
 pub fn subpath_self_intersections_finds_cubic_self_intersection_test() {
   let curve =
     svg_path.CubicBezier(
-      start: svg_path.point(0.0, 0.0),
-      control1: svg_path.point(-0.2708333333333333, -0.3333333333333333),
-      control2: svg_path.point(-0.5416666666666666, -0.3333333333333333),
-      end: svg_path.point(0.1875, 0.0),
+      start: svg_path.Point(0.0, 0.0),
+      control1: svg_path.Point(-0.2708333333333333, -0.3333333333333333),
+      control2: svg_path.Point(-0.5416666666666666, -0.3333333333333333),
+      end: svg_path.Point(0.1875, 0.0),
     )
   let subpath = svg_path.subpath_assert([curve])
 
@@ -116,10 +116,10 @@ pub fn subpath_self_intersections_finds_cubic_self_intersection_test() {
 }
 
 pub fn subpath_self_intersections_respects_minimum_arc_length_separation_test() {
-  let a = svg_path.point(0.0, 0.0)
-  let b = svg_path.point(10.0, 10.0)
-  let c = svg_path.point(0.0, 10.0)
-  let d = svg_path.point(10.0, 0.0)
+  let a = svg_path.Point(0.0, 0.0)
+  let b = svg_path.Point(10.0, 10.0)
+  let c = svg_path.Point(0.0, 10.0)
+  let d = svg_path.Point(10.0, 0.0)
   let subpath =
     svg_path.subpath_assert([
       svg_path.Line(start: a, end: b),
@@ -141,8 +141,8 @@ pub fn subpath_self_intersections_rejects_invalid_options_test() {
   let subpath =
     svg_path.subpath_assert([
       svg_path.Line(
-        start: svg_path.point(0.0, 0.0),
-        end: svg_path.point(1.0, 0.0),
+        start: svg_path.Point(0.0, 0.0),
+        end: svg_path.Point(1.0, 0.0),
       ),
     ])
 

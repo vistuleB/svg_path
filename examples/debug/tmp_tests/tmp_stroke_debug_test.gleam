@@ -1,11 +1,11 @@
 import gleam/dynamic.{type Dynamic}
+import gleam/float
 import gleam/int
 import gleam/list
 import svg_path
 import svg_path/offset
 import svg_path/svg
 import svg_path/transform
-import vec/vec2f
 
 const output = "examples/debug/svg_path_stroke_gallery.svg"
 
@@ -79,8 +79,8 @@ fn render() -> String {
       ),
     ]),
     view_box: svg_path.BoundingBox(
-      min: svg_path.point(0.0, 0.0),
-      max: svg_path.point(panel_w *. 2.0 +. gap, panel_h *. 2.0 +. gap),
+      min: svg_path.Point(0.0, 0.0),
+      max: svg_path.Point(panel_w *. 2.0 +. gap, panel_h *. 2.0 +. gap),
     ),
   )
 }
@@ -116,7 +116,7 @@ fn panel(
       svg.Text(
         "Error",
         "fill: #b91c1c; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 700",
-        svg_path.point(x +. 12.0, y +. 130.0),
+        svg_path.Point(x +. 12.0, y +. 130.0),
         12,
       ),
     ]
@@ -125,7 +125,7 @@ fn panel(
   list.append(
     [
       svg.Rectangle(
-        svg_path.point(x, y),
+        svg_path.Point(x, y),
         panel_w,
         panel_h,
         "fill: #ffffff; stroke: #d1d5db; stroke-width: 1.5",
@@ -133,7 +133,7 @@ fn panel(
       svg.Text(
         label,
         "fill: #111827; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 700",
-        svg_path.point(x +. 12.0, y +. 24.0),
+        svg_path.Point(x +. 12.0, y +. 24.0),
         13,
       ),
     ],
@@ -171,7 +171,7 @@ fn subpath_arrows(
         svg_path.subpath_derivative_at_length(subpath, distance:)
       {
         Ok(point), Ok(derivative) -> {
-          let length = vec2f.length(derivative)
+          let length = point_length(derivative)
           case length <=. 0.000001 {
             True -> []
             False -> [
@@ -210,31 +210,37 @@ fn arrow_glyph(
 }
 
 fn add(a: svg_path.Point, b: svg_path.Point) -> svg_path.Point {
-  svg_path.point(a.x +. b.x, a.y +. b.y)
+  svg_path.Point(a.x +. b.x, a.y +. b.y)
 }
 
 fn scale(point: svg_path.Point, factor: Float) -> svg_path.Point {
-  svg_path.point(point.x *. factor, point.y *. factor)
+  svg_path.Point(point.x *. factor, point.y *. factor)
+}
+
+fn point_length(point: svg_path.Point) -> Float {
+  let assert Ok(length) =
+    float.square_root(point.x *. point.x +. point.y *. point.y)
+  length
 }
 
 fn rotate_counterclockwise(point: svg_path.Point) -> svg_path.Point {
-  svg_path.point(0.0 -. point.y, point.x)
+  svg_path.Point(0.0 -. point.y, point.x)
 }
 
 fn open_line() -> svg_path.Subpath {
   svg_path.subpath_assert_polyline([
-    svg_path.point(0.0, 0.0),
-    svg_path.point(150.0, 0.0),
+    svg_path.Point(0.0, 0.0),
+    svg_path.Point(150.0, 0.0),
   ])
 }
 
 fn open_curve() -> svg_path.Subpath {
   svg_path.subpath_assert([
     svg_path.CubicBezier(
-      start: svg_path.point(0.0, 28.0),
-      control1: svg_path.point(38.0, -70.0),
-      control2: svg_path.point(110.0, 86.0),
-      end: svg_path.point(150.0, -4.0),
+      start: svg_path.Point(0.0, 28.0),
+      control1: svg_path.Point(38.0, -70.0),
+      control2: svg_path.Point(110.0, 86.0),
+      end: svg_path.Point(150.0, -4.0),
     ),
   ])
 }
@@ -242,16 +248,16 @@ fn open_curve() -> svg_path.Subpath {
 fn figure_eight() -> svg_path.Subpath {
   svg_path.subpath_assert([
     svg_path.CubicBezier(
-      start: svg_path.point(76.0, 0.0),
-      control1: svg_path.point(-2.0, -62.0),
-      control2: svg_path.point(-2.0, 62.0),
-      end: svg_path.point(76.0, 0.0),
+      start: svg_path.Point(76.0, 0.0),
+      control1: svg_path.Point(-2.0, -62.0),
+      control2: svg_path.Point(-2.0, 62.0),
+      end: svg_path.Point(76.0, 0.0),
     ),
     svg_path.CubicBezier(
-      start: svg_path.point(76.0, 0.0),
-      control1: svg_path.point(154.0, -62.0),
-      control2: svg_path.point(154.0, 62.0),
-      end: svg_path.point(76.0, 0.0),
+      start: svg_path.Point(76.0, 0.0),
+      control1: svg_path.Point(154.0, -62.0),
+      control2: svg_path.Point(154.0, 62.0),
+      end: svg_path.Point(76.0, 0.0),
     ),
   ])
   |> svg_path.subpath_assert_set_closed(closed: True)

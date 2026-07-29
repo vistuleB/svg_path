@@ -50,7 +50,7 @@ fn render() -> String {
   let things =
     [
       svg.Rectangle(
-        svg_path.point(0.0, 0.0),
+        svg_path.Point(0.0, 0.0),
         page_width,
         page_height,
         "fill: #ffffff; stroke: none",
@@ -61,8 +61,8 @@ fn render() -> String {
   svg.document(
     things,
     view_box: svg_path.BoundingBox(
-      min: svg_path.point(0.0, 0.0),
-      max: svg_path.point(page_width, page_height),
+      min: svg_path.Point(0.0, 0.0),
+      max: svg_path.Point(page_width, page_height),
     ),
   )
 }
@@ -104,7 +104,7 @@ fn render_case(fit_case: FitCase, index: Int) -> svg.ThingsToDraw {
 
   [
     svg.Rectangle(
-      svg_path.point(origin.x, origin.y),
+      svg_path.Point(origin.x, origin.y),
       panel_width,
       panel_height,
       "fill: #f8fafc; stroke: #d1d5db; stroke-width: 1",
@@ -112,7 +112,7 @@ fn render_case(fit_case: FitCase, index: Int) -> svg.ThingsToDraw {
     svg.Text(
       title,
       "fill: #111827; font-family: system-ui, sans-serif; font-weight: 700",
-      svg_path.point(origin.x, origin.y -. 8.0),
+      svg_path.Point(origin.x, origin.y -. 8.0),
       13,
     ),
   ]
@@ -132,13 +132,13 @@ fn render_case(fit_case: FitCase, index: Int) -> svg.ThingsToDraw {
     svg.Text(
       "root_sum_square = " <> float.to_string(root_sum_square),
       "fill: #374151; font-family: ui-monospace, SFMono-Regular, Menlo, monospace",
-      svg_path.point(origin.x +. 8.0, origin.y +. panel_height -. 28.0),
+      svg_path.Point(origin.x +. 8.0, origin.y +. panel_height -. 28.0),
       9,
     ),
     svg.Text(
       "taxicab_diameter = " <> float.to_string(taxicab_diameter),
       "fill: #374151; font-family: ui-monospace, SFMono-Regular, Menlo, monospace",
-      svg_path.point(origin.x +. 8.0, origin.y +. panel_height -. 12.0),
+      svg_path.Point(origin.x +. 8.0, origin.y +. panel_height -. 12.0),
       9,
     ),
   ])
@@ -242,14 +242,14 @@ fn arrow_head(
   let head = 8.0
   let width = 7.0
   let base =
-    svg_path.point(end.x -. direction_x *. head, end.y -. direction_y *. head)
+    svg_path.Point(end.x -. direction_x *. head, end.y -. direction_y *. head)
   let left =
-    svg_path.point(
+    svg_path.Point(
       base.x +. normal_x *. width /. 2.0,
       base.y +. normal_y *. width /. 2.0,
     )
   let right =
-    svg_path.point(
+    svg_path.Point(
       base.x -. normal_x *. width /. 2.0,
       base.y -. normal_y *. width /. 2.0,
     )
@@ -317,7 +317,7 @@ fn panel_origin(index: Int) -> svg_path.Point {
   let column = index % 3
   let row = index / 3
 
-  svg_path.point(
+  svg_path.Point(
     10.0 +. int.to_float(column) *. { panel_width +. panel_gap },
     32.0 +. int.to_float(row) *. { panel_height +. panel_gap },
   )
@@ -327,7 +327,7 @@ fn place(point: bezier.Point, placement: Placement) -> svg_path.Point {
   let Placement(x:, y:, scale:, world:) = placement
   let Box(min:, max:) = world
 
-  svg_path.point(
+  svg_path.Point(
     x +. { point.x -. min.x } *. scale,
     y +. { max.y -. point.y } *. scale,
   )

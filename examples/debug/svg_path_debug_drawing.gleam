@@ -21,26 +21,26 @@ pub fn drawing_svg() -> String {
   let stem =
     svg_path.subpath_assert([
       svg_path.CubicBezier(
-        start: svg_path.point(5.0, 70.0),
-        control1: svg_path.point(30.0, 20.0),
-        control2: svg_path.point(65.0, 105.0),
-        end: svg_path.point(95.0, 30.0),
+        start: svg_path.Point(5.0, 70.0),
+        control1: svg_path.Point(30.0, 20.0),
+        control2: svg_path.Point(65.0, 105.0),
+        end: svg_path.Point(95.0, 30.0),
       ),
     ])
 
   let leaf =
     svg_path.subpath_assert([
       svg_path.CubicBezier(
-        start: svg_path.point(45.0, 45.0),
-        control1: svg_path.point(55.0, 10.0),
-        control2: svg_path.point(95.0, 15.0),
-        end: svg_path.point(100.0, 50.0),
+        start: svg_path.Point(45.0, 45.0),
+        control1: svg_path.Point(55.0, 10.0),
+        control2: svg_path.Point(95.0, 15.0),
+        end: svg_path.Point(100.0, 50.0),
       ),
       svg_path.CubicBezier(
-        start: svg_path.point(100.0, 50.0),
-        control1: svg_path.point(78.0, 65.0),
-        control2: svg_path.point(58.0, 63.0),
-        end: svg_path.point(45.0, 45.0),
+        start: svg_path.Point(100.0, 50.0),
+        control1: svg_path.Point(78.0, 65.0),
+        control2: svg_path.Point(58.0, 63.0),
+        end: svg_path.Point(45.0, 45.0),
       ),
     ])
     |> svg_path.subpath_assert_set_closed(closed: True)
@@ -48,16 +48,16 @@ pub fn drawing_svg() -> String {
   let vein =
     svg_path.subpath_assert([
       svg_path.QuadraticBezier(
-        start: svg_path.point(50.0, 47.0),
-        control: svg_path.point(72.0, 35.0),
-        end: svg_path.point(96.0, 49.0),
+        start: svg_path.Point(50.0, 47.0),
+        control: svg_path.Point(72.0, 35.0),
+        end: svg_path.Point(96.0, 49.0),
       ),
     ])
 
   let box =
     svg_path.BoundingBox(
-      min: svg_path.point(0.0, 0.0),
-      max: svg_path.point(110.0, 85.0),
+      min: svg_path.Point(0.0, 0.0),
+      max: svg_path.Point(110.0, 85.0),
     )
 
   svg.document(
@@ -77,37 +77,37 @@ pub fn drawing_svg() -> String {
       svg.Text(
         "leaf",
         "fill: #2d6a4f; font-family: system-ui, sans-serif; font-weight: 700",
-        svg_path.point(73.0, 27.0),
+        svg_path.Point(73.0, 27.0),
         8,
       ),
       svg.Text(
         "stem gap?",
         "fill: #e63946; font-family: system-ui, sans-serif",
-        svg_path.point(10.0, 82.0),
+        svg_path.Point(10.0, 82.0),
         6,
       ),
       svg.Text(
         "support",
         "fill: #7209b7; font-family: system-ui, sans-serif",
-        svg_path.point(4.0, 10.0),
+        svg_path.Point(4.0, 10.0),
         5,
       ),
       svg.Text(
         "t = 0.42",
         "fill: #f77f00; font-family: ui-monospace, monospace",
-        svg_path.point(36.0, 33.0),
+        svg_path.Point(36.0, 33.0),
         4,
       ),
       svg.Text(
         "curve piece",
         "fill: #0077b6; font-family: system-ui, sans-serif",
-        svg_path.point(55.0, 78.0),
+        svg_path.Point(55.0, 78.0),
         5,
       ),
       svg.Text(
         "hull?",
         "fill: #9d0208; font-family: Georgia, serif; font-style: italic",
-        svg_path.point(92.0, 10.0),
+        svg_path.Point(92.0, 10.0),
         6,
       ),
     ],

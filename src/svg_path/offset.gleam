@@ -34,7 +34,6 @@ import svg_path/area
 import svg_path/bezier
 import svg_path/root
 import svg_path/trig
-import vec/vec2f
 
 const default_tolerance = 0.01
 
@@ -1136,12 +1135,12 @@ fn zero_length_round_stroke_path(
   center: svg_path.Point,
   radius: Float,
 ) -> Result(svg_path.Path, Error) {
-  let right = add(center, svg_path.point(radius, 0.0))
-  let left = add(center, svg_path.point(0.0 -. radius, 0.0))
+  let right = add(center, svg_path.Point(radius, 0.0))
+  let left = add(center, svg_path.Point(0.0 -. radius, 0.0))
   let segments = [
     svg_path.Arc(
       start: right,
-      radius: svg_path.point(radius, radius),
+      radius: svg_path.Point(radius, radius),
       x_axis_rotation: 0.0,
       large_arc: False,
       sweep: True,
@@ -1149,7 +1148,7 @@ fn zero_length_round_stroke_path(
     ),
     svg_path.Arc(
       start: left,
-      radius: svg_path.point(radius, radius),
+      radius: svg_path.Point(radius, radius),
       x_axis_rotation: 0.0,
       large_arc: False,
       sweep: True,
@@ -1175,10 +1174,10 @@ fn zero_length_square_stroke_path(
   center: svg_path.Point,
   radius: Float,
 ) -> Result(svg_path.Path, Error) {
-  let top_left = add(center, svg_path.point(0.0 -. radius, 0.0 -. radius))
-  let top_right = add(center, svg_path.point(radius, 0.0 -. radius))
-  let bottom_right = add(center, svg_path.point(radius, radius))
-  let bottom_left = add(center, svg_path.point(0.0 -. radius, radius))
+  let top_left = add(center, svg_path.Point(0.0 -. radius, 0.0 -. radius))
+  let top_right = add(center, svg_path.Point(radius, 0.0 -. radius))
+  let bottom_right = add(center, svg_path.Point(radius, radius))
+  let bottom_left = add(center, svg_path.Point(0.0 -. radius, radius))
   use outline <- result.try(
     svg_path.subpath_with(
       line_segments_between([
@@ -1286,7 +1285,7 @@ fn stroke_cap_segments(
       Ok([
         svg_path.Arc(
           start:,
-          radius: svg_path.point(radius, radius),
+          radius: svg_path.Point(radius, radius),
           x_axis_rotation: 0.0,
           large_arc: False,
           sweep: True,
@@ -2136,8 +2135,8 @@ fn in_stroke_cap(
         svg_path.subpath_end(source) |> result.map_error(PathError),
       )
       Ok(
-        vec2f.distance_squared(point, with: start) <=. radius *. radius
-        || vec2f.distance_squared(point, with: end) <=. radius *. radius,
+        distance_squared(point, start) <=. radius *. radius
+        || distance_squared(point, end) <=. radius *. radius,
       )
     }
     Square -> {
@@ -3081,7 +3080,7 @@ fn same_subpath_parameter(
 }
 
 fn same_point(a: svg_path.Point, b: svg_path.Point, tolerance: Float) -> Bool {
-  vec2f.distance_squared(a, with: b) <=. tolerance *. tolerance
+  distance_squared(a, b) <=. tolerance *. tolerance
 }
 
 fn distance_margin(options: Options) -> Float {
@@ -3275,7 +3274,7 @@ fn source_segment_offset_is_stalled(
         offset_point(segment, t: 0.0, distance:),
         offset_point(segment, t: 1.0, distance:)
       {
-        Ok(start), Ok(end) -> vec2f.distance(start, with: end) <=. threshold
+        Ok(start), Ok(end) -> point_distance(start, end) <=. threshold
         _, _ -> False
       }
   }
@@ -3817,8 +3816,7 @@ fn snap_offset_segment_start(
   case segment {
     svg_path.Line(end:, ..) -> svg_path.Line(start:, end:)
     svg_path.QuadraticBezier(control:, end:, ..) -> {
-      let handle =
-        vec2f.distance(control, with: svg_path.segment_start(segment))
+      let handle = point_distance(control, svg_path.segment_start(segment))
       svg_path.QuadraticBezier(
         start:,
         control: add(start, scale(tangent, handle)),
@@ -3826,8 +3824,7 @@ fn snap_offset_segment_start(
       )
     }
     svg_path.CubicBezier(control1:, control2:, end:, ..) -> {
-      let handle =
-        vec2f.distance(control1, with: svg_path.segment_start(segment))
+      let handle = point_distance(control1, svg_path.segment_start(segment))
       svg_path.CubicBezier(
         start:,
         control1: add(start, scale(tangent, handle)),
@@ -3848,7 +3845,7 @@ fn snap_offset_segment_end(
   case segment {
     svg_path.Line(start:, ..) -> svg_path.Line(start:, end:)
     svg_path.QuadraticBezier(start:, control:, ..) -> {
-      let handle = vec2f.distance(control, with: svg_path.segment_end(segment))
+      let handle = point_distance(control, svg_path.segment_end(segment))
       svg_path.QuadraticBezier(
         start:,
         control: subtract(end, scale(tangent, handle)),
@@ -3856,7 +3853,7 @@ fn snap_offset_segment_end(
       )
     }
     svg_path.CubicBezier(start:, control1:, control2:, ..) -> {
-      let handle = vec2f.distance(control2, with: svg_path.segment_end(segment))
+      let handle = point_distance(control2, svg_path.segment_end(segment))
       svg_path.CubicBezier(
         start:,
         control1:,
@@ -3902,7 +3899,7 @@ fn directed_miter_join(
     Error(_) -> Ok(line_segments_between([start, end]))
     Ok(apex) -> {
       let corner = left.source_end
-      let miter_length = vec2f.distance(corner, with: apex)
+      let miter_length = point_distance(corner, apex)
       let offset_distance = float.absolute_value(distance)
       let within_limit = case offset_distance <=. point_tolerance {
         True -> True
@@ -3937,7 +3934,7 @@ fn round_join(
           Ok([
             svg_path.Arc(
               start:,
-              radius: svg_path.point(radius, radius),
+              radius: svg_path.Point(radius, radius),
               x_axis_rotation: 0.0,
               large_arc: float.absolute_value(angle) >. 180.0,
               sweep: angle >. 0.0,
@@ -4051,7 +4048,7 @@ fn offset_circular_arc_segment(
   let arc =
     svg_path.Arc(
       start:,
-      radius: svg_path.point(
+      radius: svg_path.Point(
         float.absolute_value(radius),
         float.absolute_value(radius),
       ),
@@ -4561,7 +4558,7 @@ fn to_bezier_point(point: svg_path.Point) -> bezier.Point {
 }
 
 fn from_bezier_point(point: bezier.Point) -> svg_path.Point {
-  svg_path.point(point.x, point.y)
+  svg_path.Point(point.x, point.y)
 }
 
 fn offset_point(
@@ -4619,7 +4616,7 @@ fn second_derivative(
     }
     svg_path.QuadraticBezier(start:, control:, end:) ->
       Ok(scale(add(subtract(start, scale(control, 2.0)), end), 2.0))
-    svg_path.Line(..) -> Ok(svg_path.point(0.0, 0.0))
+    svg_path.Line(..) -> Ok(svg_path.Point(0.0, 0.0))
     svg_path.Arc(..) -> Error(PathError(svg_path.DegenerateArc))
   }
 }
@@ -4767,8 +4764,8 @@ fn unit_tangent(
 ) -> Result(svg_path.Point, Error) {
   case svg_path.segment_derivative(segment, at: t) {
     Ok(derivative) -> {
-      case vec2f.length(derivative) >. tangent_epsilon {
-        True -> Ok(scale(derivative, 1.0 /. vec2f.length(derivative)))
+      case point_length(derivative) >. tangent_epsilon {
+        True -> Ok(scale(derivative, 1.0 /. point_length(derivative)))
         False -> fallback_unit_tangent(segment, t:)
       }
     }
@@ -4794,14 +4791,14 @@ fn fallback_unit_tangent(
     |> result.map_error(PathError),
   )
 
-  case vec2f.length(derivative) >. tangent_epsilon {
-    True -> Ok(scale(derivative, 1.0 /. vec2f.length(derivative)))
+  case point_length(derivative) >. tangent_epsilon {
+    True -> Ok(scale(derivative, 1.0 /. point_length(derivative)))
     False -> {
       let start = svg_path.segment_start(segment)
       let end = svg_path.segment_end(segment)
       let chord = subtract(end, start)
-      case vec2f.length(chord) >. tangent_epsilon {
-        True -> Ok(scale(chord, 1.0 /. vec2f.length(chord)))
+      case point_length(chord) >. tangent_epsilon {
+        True -> Ok(scale(chord, 1.0 /. point_length(chord)))
         False -> Error(DegenerateTangent(t))
       }
     }
@@ -4809,7 +4806,7 @@ fn fallback_unit_tangent(
 }
 
 fn length(point: svg_path.Point, t t: Float) -> Result(Float, Error) {
-  let length = vec2f.length(point)
+  let length = point_length(point)
   case length >. tangent_epsilon {
     True -> Ok(length)
     False -> Error(DegenerateTangent(t))
@@ -4825,7 +4822,7 @@ fn unit_vector(
 }
 
 fn rotate_clockwise(point: svg_path.Point) -> svg_path.Point {
-  svg_path.point(point.y, 0.0 -. point.x)
+  svg_path.Point(point.y, 0.0 -. point.x)
 }
 
 fn interpolate(
@@ -4837,19 +4834,38 @@ fn interpolate(
 }
 
 fn add(a: svg_path.Point, b: svg_path.Point) -> svg_path.Point {
-  svg_path.point(a.x +. b.x, a.y +. b.y)
+  svg_path.Point(a.x +. b.x, a.y +. b.y)
 }
 
 fn subtract(a: svg_path.Point, b: svg_path.Point) -> svg_path.Point {
-  svg_path.point(a.x -. b.x, a.y -. b.y)
+  svg_path.Point(a.x -. b.x, a.y -. b.y)
 }
 
 fn scale(point: svg_path.Point, factor: Float) -> svg_path.Point {
-  svg_path.point(point.x *. factor, point.y *. factor)
+  svg_path.Point(point.x *. factor, point.y *. factor)
 }
 
 fn dot(a: svg_path.Point, b: svg_path.Point) -> Float {
   a.x *. b.x +. a.y *. b.y
+}
+
+fn point_length(point: svg_path.Point) -> Float {
+  dot(point, point) |> float_square_root
+}
+
+fn point_distance(a: svg_path.Point, b: svg_path.Point) -> Float {
+  distance_squared(a, b) |> float_square_root
+}
+
+fn distance_squared(a: svg_path.Point, b: svg_path.Point) -> Float {
+  let dx = a.x -. b.x
+  let dy = a.y -. b.y
+  dx *. dx +. dy *. dy
+}
+
+fn float_square_root(value: Float) -> Float {
+  let assert Ok(root) = float.square_root(value)
+  root
 }
 
 fn cross(a: svg_path.Point, b: svg_path.Point) -> Float {
@@ -4861,7 +4877,7 @@ fn signed_angle(a: svg_path.Point, b: svg_path.Point) -> Float {
 }
 
 fn points_near(a: svg_path.Point, b: svg_path.Point) -> Bool {
-  vec2f.distance_squared(a, with: b) <=. point_tolerance *. point_tolerance
+  distance_squared(a, b) <=. point_tolerance *. point_tolerance
 }
 
 fn segment_is_finite(segment: svg_path.Segment) -> Bool {

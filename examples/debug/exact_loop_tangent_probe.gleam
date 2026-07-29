@@ -23,17 +23,17 @@ pub fn drawing_svg() -> String {
       axes(500.0, 290.0, 840.0, 290.0, 520.0, 310.0, 520.0, 30.0),
       styled_path(
         guide_rays(
-          svg_path.point(378.0, 180.0),
-          svg_path.point(213.367, 100.097),
-          svg_path.point(213.367, 259.903),
+          svg_path.Point(378.0, 180.0),
+          svg_path.Point(213.367, 100.097),
+          svg_path.Point(213.367, 259.903),
         ),
         guide_style(),
       ),
       styled_path(
         guide_rays(
-          svg_path.point(800.0, 190.0),
-          svg_path.point(740.0, 267.46),
-          svg_path.point(740.0, 112.54),
+          svg_path.Point(800.0, 190.0),
+          svg_path.Point(740.0, 267.46),
+          svg_path.Point(740.0, 112.54),
         ),
         guide_style(),
       ),
@@ -41,37 +41,37 @@ pub fn drawing_svg() -> String {
       styled_path(quadratic_lens_outside(), outside_style()),
       styled_path(rounded_triangle_inside(), inside_style()),
       styled_path(rounded_triangle_outside(), outside_style()),
-      marker(svg_path.point(378.0, 180.0), 2.2, "#2b2b2b", "#2b2b2b"),
-      marker(svg_path.point(800.0, 190.0), 2.2, "#2b2b2b", "#2b2b2b"),
-      marker(svg_path.point(213.367, 100.097), 2.6, "#f4b400", "#5c4a00"),
-      marker(svg_path.point(213.367, 259.903), 2.6, "#f4b400", "#5c4a00"),
-      marker(svg_path.point(740.0, 267.46), 2.6, "#f4b400", "#5c4a00"),
-      marker(svg_path.point(740.0, 112.54), 2.6, "#f4b400", "#5c4a00"),
-      svg.Text("Quadratic lens", label_style(), svg_path.point(42.0, 48.0), 14),
+      marker(svg_path.Point(378.0, 180.0), 2.2, "#2b2b2b", "#2b2b2b"),
+      marker(svg_path.Point(800.0, 190.0), 2.2, "#2b2b2b", "#2b2b2b"),
+      marker(svg_path.Point(213.367, 100.097), 2.6, "#f4b400", "#5c4a00"),
+      marker(svg_path.Point(213.367, 259.903), 2.6, "#f4b400", "#5c4a00"),
+      marker(svg_path.Point(740.0, 267.46), 2.6, "#f4b400", "#5c4a00"),
+      marker(svg_path.Point(740.0, 112.54), 2.6, "#f4b400", "#5c4a00"),
+      svg.Text("Quadratic lens", label_style(), svg_path.Point(42.0, 48.0), 14),
       svg.Text(
         "both tangencies land inside curve pieces",
         small_label_style(),
-        svg_path.point(42.0, 70.0),
+        svg_path.Point(42.0, 70.0),
         12,
       ),
-      svg.Text("Quadratic loop", label_style(), svg_path.point(492.0, 48.0), 14),
+      svg.Text("Quadratic loop", label_style(), svg_path.Point(492.0, 48.0), 14),
       svg.Text(
         "exact tangent split lands inside the curve",
         small_label_style(),
-        svg_path.point(492.0, 70.0),
+        svg_path.Point(492.0, 70.0),
         12,
       ),
     ],
     view_box: svg_path.BoundingBox(
-      min: svg_path.point(0.0, 0.0),
-      max: svg_path.point(900.0, 360.0),
+      min: svg_path.Point(0.0, 0.0),
+      max: svg_path.Point(900.0, 360.0),
     ),
   )
 }
 
 fn panel(x: Float, y: Float, width: Float, height: Float) -> svg.ThingToDraw {
   svg.Rectangle(
-    svg_path.point(x, y),
+    svg_path.Point(x, y),
     width,
     height,
     "fill: #fbfbf8; stroke: #d8d3c8; stroke-width: 1",
@@ -92,14 +92,14 @@ fn axes(
     svg_path.Path([
       svg_path.subpath_assert([
         svg_path.Line(
-          start: svg_path.point(x1, y1),
-          end: svg_path.point(x2, y2),
+          start: svg_path.Point(x1, y1),
+          end: svg_path.Point(x2, y2),
         ),
       ]),
       svg_path.subpath_assert([
         svg_path.Line(
-          start: svg_path.point(x3, y3),
-          end: svg_path.point(x4, y4),
+          start: svg_path.Point(x3, y3),
+          end: svg_path.Point(x4, y4),
         ),
       ]),
     ]),
@@ -122,14 +122,14 @@ fn quadratic_lens_inside() -> svg_path.Path {
   svg_path.Path([
     svg_path.subpath_assert([
       svg_path.QuadraticBezier(
-        start: svg_path.point(213.367, 259.903),
-        control: svg_path.point(141.684, 294.694),
-        end: svg_path.point(70.0, 180.0),
+        start: svg_path.Point(213.367, 259.903),
+        control: svg_path.Point(141.684, 294.694),
+        end: svg_path.Point(70.0, 180.0),
       ),
       svg_path.QuadraticBezier(
-        start: svg_path.point(70.0, 180.0),
-        control: svg_path.point(141.684, 65.306),
-        end: svg_path.point(213.367, 100.097),
+        start: svg_path.Point(70.0, 180.0),
+        control: svg_path.Point(141.684, 65.306),
+        end: svg_path.Point(213.367, 100.097),
       ),
     ]),
   ])
@@ -139,14 +139,14 @@ fn quadratic_lens_outside() -> svg_path.Path {
   svg_path.Path([
     svg_path.subpath_assert([
       svg_path.QuadraticBezier(
-        start: svg_path.point(213.367, 100.097),
-        control: svg_path.point(251.684, 118.694),
-        end: svg_path.point(290.0, 180.0),
+        start: svg_path.Point(213.367, 100.097),
+        control: svg_path.Point(251.684, 118.694),
+        end: svg_path.Point(290.0, 180.0),
       ),
       svg_path.QuadraticBezier(
-        start: svg_path.point(290.0, 180.0),
-        control: svg_path.point(251.684, 241.306),
-        end: svg_path.point(213.367, 259.903),
+        start: svg_path.Point(290.0, 180.0),
+        control: svg_path.Point(251.684, 241.306),
+        end: svg_path.Point(213.367, 259.903),
       ),
     ]),
   ])
@@ -156,22 +156,22 @@ fn rounded_triangle_inside() -> svg_path.Path {
   svg_path.Path([
     svg_path.subpath_assert([
       svg_path.QuadraticBezier(
-        start: svg_path.point(740.0, 112.54),
-        control: svg_path.point(731.27, 101.27),
-        end: svg_path.point(720.0, 90.0),
+        start: svg_path.Point(740.0, 112.54),
+        control: svg_path.Point(731.27, 101.27),
+        end: svg_path.Point(720.0, 90.0),
       ),
       svg_path.Line(
-        start: svg_path.point(720.0, 90.0),
-        end: svg_path.point(520.0, 290.0),
+        start: svg_path.Point(720.0, 90.0),
+        end: svg_path.Point(520.0, 290.0),
       ),
       svg_path.Line(
-        start: svg_path.point(520.0, 290.0),
-        end: svg_path.point(720.0, 290.0),
+        start: svg_path.Point(520.0, 290.0),
+        end: svg_path.Point(720.0, 290.0),
       ),
       svg_path.QuadraticBezier(
-        start: svg_path.point(720.0, 290.0),
-        control: svg_path.point(731.27, 278.73),
-        end: svg_path.point(740.0, 267.46),
+        start: svg_path.Point(720.0, 290.0),
+        control: svg_path.Point(731.27, 278.73),
+        end: svg_path.Point(740.0, 267.46),
       ),
     ]),
   ])
@@ -181,9 +181,9 @@ fn rounded_triangle_outside() -> svg_path.Path {
   svg_path.Path([
     svg_path.subpath_assert([
       svg_path.QuadraticBezier(
-        start: svg_path.point(740.0, 267.46),
-        control: svg_path.point(800.0, 190.0),
-        end: svg_path.point(740.0, 112.54),
+        start: svg_path.Point(740.0, 267.46),
+        control: svg_path.Point(800.0, 190.0),
+        end: svg_path.Point(740.0, 112.54),
       ),
     ]),
   ])

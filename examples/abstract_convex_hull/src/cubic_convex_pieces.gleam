@@ -188,15 +188,15 @@ fn unique_close_loop(
 }
 
 fn add_points(a: svg_path.Point, b: svg_path.Point) -> svg_path.Point {
-  svg_path.point(a.x +. b.x, a.y +. b.y)
+  svg_path.Point(a.x +. b.x, a.y +. b.y)
 }
 
 fn subtract(a: svg_path.Point, b: svg_path.Point) -> svg_path.Point {
-  svg_path.point(a.x -. b.x, a.y -. b.y)
+  svg_path.Point(a.x -. b.x, a.y -. b.y)
 }
 
 fn scale_point(a: svg_path.Point, factor: Float) -> svg_path.Point {
-  svg_path.point(a.x *. factor, a.y *. factor)
+  svg_path.Point(a.x *. factor, a.y *. factor)
 }
 
 fn cross(a: svg_path.Point, b: svg_path.Point) -> Float {

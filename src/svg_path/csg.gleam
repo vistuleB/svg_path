@@ -312,13 +312,13 @@ fn nonzero_boundary_piece(
       let assert Ok(length) = float.square_root(length_squared)
       let offset = options.tolerance *. 16.0
       let normal =
-        svg_path.point(
+        svg_path.Point(
           { 0.0 -. derivative.y } /. length *. offset,
           derivative.x /. length *. offset,
         )
-      let first = svg_path.point(midpoint.x +. normal.x, midpoint.y +. normal.y)
+      let first = svg_path.Point(midpoint.x +. normal.x, midpoint.y +. normal.y)
       let second =
-        svg_path.point(midpoint.x -. normal.x, midpoint.y -. normal.y)
+        svg_path.Point(midpoint.x -. normal.x, midpoint.y -. normal.y)
       use first_inside <- result.try(nonzero_contains(
         first,
         within: whole_path,
@@ -399,7 +399,7 @@ fn subpath_edges(subpath: svg_path.Subpath) -> List(svg_path.Segment) {
     _ -> {
       let start =
         svg_path.subpath_start(subpath)
-        |> result.unwrap(svg_path.point(0.0, 0.0))
+        |> result.unwrap(svg_path.Point(0.0, 0.0))
       let end = svg_path.subpath_end(subpath) |> result.unwrap(start)
       let edges =
         segments
@@ -809,13 +809,13 @@ fn separation_result(
       let assert Ok(length) = float.square_root(length_squared)
       let offset = options.tolerance *. 16.0
       let normal =
-        svg_path.point(
+        svg_path.Point(
           { 0.0 -. derivative.y } /. length *. offset,
           derivative.x /. length *. offset,
         )
-      let first = svg_path.point(midpoint.x +. normal.x, midpoint.y +. normal.y)
+      let first = svg_path.Point(midpoint.x +. normal.x, midpoint.y +. normal.y)
       let second =
-        svg_path.point(midpoint.x -. normal.x, midpoint.y -. normal.y)
+        svg_path.Point(midpoint.x -. normal.x, midpoint.y -. normal.y)
       use first_level <- result.try(result_level(
         first,
         own_path:,

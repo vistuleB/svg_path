@@ -7,8 +7,8 @@ import svg_path/stroke
 pub fn segment_stroke_with_butt_caps_returns_closed_outline_test() {
   let segment =
     svg_path.Line(
-      start: svg_path.point(0.0, 0.0),
-      end: svg_path.point(10.0, 0.0),
+      start: svg_path.Point(0.0, 0.0),
+      end: svg_path.Point(10.0, 0.0),
     )
 
   let assert Ok(path) = stroke.segment(segment, width: 2.0)
@@ -21,8 +21,8 @@ pub fn segment_stroke_with_butt_caps_returns_closed_outline_test() {
 pub fn subpath_stroke_with_round_caps_adds_two_cap_arcs_test() {
   let subpath =
     svg_path.subpath_assert_polyline([
-      svg_path.point(0.0, 0.0),
-      svg_path.point(10.0, 0.0),
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
     ])
   let options =
     stroke.Options(..stroke.default_options(), width: 2.0, cap: stroke.Round)
@@ -37,8 +37,8 @@ pub fn subpath_stroke_with_round_caps_adds_two_cap_arcs_test() {
 pub fn subpath_stroke_with_round_cap_serializes_semicircles_test() {
   let subpath =
     svg_path.subpath_assert_polyline([
-      svg_path.point(0.0, 0.0),
-      svg_path.point(10.0, 0.0),
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
     ])
   let options =
     stroke.Options(..stroke.default_options(), width: 2.0, cap: stroke.Round)
@@ -51,7 +51,7 @@ pub fn subpath_stroke_with_round_cap_serializes_semicircles_test() {
 }
 
 pub fn zero_length_subpath_stroke_with_butt_cap_returns_empty_path_test() {
-  let a = svg_path.point(3.0, 4.0)
+  let a = svg_path.Point(3.0, 4.0)
   let subpath = svg_path.subpath_assert([svg_path.Line(start: a, end: a)])
 
   let assert Ok(path) = stroke.subpath(subpath, width: 2.0)
@@ -60,7 +60,7 @@ pub fn zero_length_subpath_stroke_with_butt_cap_returns_empty_path_test() {
 }
 
 pub fn zero_length_subpath_stroke_with_round_cap_returns_circle_test() {
-  let a = svg_path.point(3.0, 4.0)
+  let a = svg_path.Point(3.0, 4.0)
   let subpath = svg_path.subpath_assert([svg_path.Line(start: a, end: a)])
   let options =
     stroke.Options(..stroke.default_options(), width: 2.0, cap: stroke.Round)
@@ -75,8 +75,8 @@ pub fn zero_length_subpath_stroke_with_round_cap_returns_circle_test() {
 pub fn subpath_stroke_with_square_caps_extends_by_half_width_test() {
   let subpath =
     svg_path.subpath_assert_polyline([
-      svg_path.point(0.0, 0.0),
-      svg_path.point(10.0, 0.0),
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
     ])
   let options =
     stroke.Options(..stroke.default_options(), width: 2.0, cap: stroke.Square)
@@ -164,7 +164,7 @@ pub fn subpath_stroke_with_low_miter_limit_falls_back_to_bevel_test() {
 }
 
 pub fn zero_length_subpath_stroke_with_square_cap_returns_square_test() {
-  let a = svg_path.point(3.0, 4.0)
+  let a = svg_path.Point(3.0, 4.0)
   let subpath = svg_path.subpath_assert([svg_path.Line(start: a, end: a)])
   let options =
     stroke.Options(..stroke.default_options(), width: 2.0, cap: stroke.Square)
@@ -179,10 +179,10 @@ pub fn zero_length_subpath_stroke_with_square_cap_returns_square_test() {
 pub fn closed_subpath_stroke_returns_two_closed_contours_test() {
   let square =
     svg_path.subpath_assert_polygon([
-      svg_path.point(0.0, 0.0),
-      svg_path.point(10.0, 0.0),
-      svg_path.point(10.0, 10.0),
-      svg_path.point(0.0, 10.0),
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
+      svg_path.Point(10.0, 10.0),
+      svg_path.Point(0.0, 10.0),
     ])
 
   let assert Ok(path) = stroke.subpath(square, width: 2.0)
@@ -196,16 +196,16 @@ pub fn self_meeting_closed_subpath_stroke_uses_band_sections_test() {
   let figure_eight =
     svg_path.subpath_assert([
       svg_path.CubicBezier(
-        start: svg_path.point(76.0, 0.0),
-        control1: svg_path.point(-2.0, -62.0),
-        control2: svg_path.point(-2.0, 62.0),
-        end: svg_path.point(76.0, 0.0),
+        start: svg_path.Point(76.0, 0.0),
+        control1: svg_path.Point(-2.0, -62.0),
+        control2: svg_path.Point(-2.0, 62.0),
+        end: svg_path.Point(76.0, 0.0),
       ),
       svg_path.CubicBezier(
-        start: svg_path.point(76.0, 0.0),
-        control1: svg_path.point(154.0, -62.0),
-        control2: svg_path.point(154.0, 62.0),
-        end: svg_path.point(76.0, 0.0),
+        start: svg_path.Point(76.0, 0.0),
+        control1: svg_path.Point(154.0, -62.0),
+        control2: svg_path.Point(154.0, 62.0),
+        end: svg_path.Point(76.0, 0.0),
       ),
     ])
     |> svg_path.subpath_assert_set_closed(closed: True)
@@ -216,13 +216,13 @@ pub fn self_meeting_closed_subpath_stroke_uses_band_sections_test() {
   assert list.length(subpaths) == 3
   assert list.all(subpaths, svg_path.subpath_is_closed)
   assert svg_path.path_containment(
-      svg_path.point(76.0, 0.0),
+      svg_path.Point(76.0, 0.0),
       within: path,
       using: svg_path.Nonzero,
     )
     == Ok(svg_path.Inside)
   assert svg_path.path_containment(
-      svg_path.point(76.0, 0.0),
+      svg_path.Point(76.0, 0.0),
       within: path,
       using: svg_path.EvenOdd,
     )
@@ -232,13 +232,13 @@ pub fn self_meeting_closed_subpath_stroke_uses_band_sections_test() {
 pub fn path_stroke_strokes_each_subpath_test() {
   let first =
     svg_path.subpath_assert_polyline([
-      svg_path.point(0.0, 0.0),
-      svg_path.point(10.0, 0.0),
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
     ])
   let second =
     svg_path.subpath_assert_polyline([
-      svg_path.point(0.0, 10.0),
-      svg_path.point(10.0, 10.0),
+      svg_path.Point(0.0, 10.0),
+      svg_path.Point(10.0, 10.0),
     ])
 
   let assert Ok(path) =
@@ -250,8 +250,8 @@ pub fn path_stroke_strokes_each_subpath_test() {
 pub fn subpath_dashes_extracts_line_intervals_test() {
   let subpath =
     svg_path.subpath_assert_polyline([
-      svg_path.point(0.0, 0.0),
-      svg_path.point(12.0, 0.0),
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(12.0, 0.0),
     ])
 
   let assert Ok(dashes) =
@@ -268,8 +268,8 @@ pub fn subpath_dashes_extracts_line_intervals_test() {
 pub fn subpath_dashes_applies_positive_dash_offset_test() {
   let subpath =
     svg_path.subpath_assert_polyline([
-      svg_path.point(0.0, 0.0),
-      svg_path.point(10.0, 0.0),
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
     ])
 
   let assert Ok(dashes) =
@@ -286,8 +286,8 @@ pub fn subpath_dashes_applies_positive_dash_offset_test() {
 pub fn subpath_dashes_applies_negative_dash_offset_test() {
   let subpath =
     svg_path.subpath_assert_polyline([
-      svg_path.point(0.0, 0.0),
-      svg_path.point(10.0, 0.0),
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
     ])
 
   let assert Ok(dashes) =
@@ -303,8 +303,8 @@ pub fn subpath_dashes_applies_negative_dash_offset_test() {
 pub fn subpath_dashes_duplicates_odd_patterns_test() {
   let subpath =
     svg_path.subpath_assert_polyline([
-      svg_path.point(0.0, 0.0),
-      svg_path.point(12.0, 0.0),
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(12.0, 0.0),
     ])
 
   let assert Ok(dashes) =
@@ -321,8 +321,8 @@ pub fn subpath_dashes_duplicates_odd_patterns_test() {
 pub fn subpath_dashes_skips_zero_entries_in_nonzero_patterns_test() {
   let subpath =
     svg_path.subpath_assert_polyline([
-      svg_path.point(0.0, 0.0),
-      svg_path.point(8.0, 0.0),
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(8.0, 0.0),
     ])
 
   let assert Ok(dashes) =
@@ -337,8 +337,8 @@ pub fn subpath_dashes_skips_zero_entries_in_nonzero_patterns_test() {
 pub fn subpath_dashes_treats_empty_pattern_as_none_test() {
   let subpath =
     svg_path.subpath_assert_polyline([
-      svg_path.point(0.0, 0.0),
-      svg_path.point(8.0, 0.0),
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(8.0, 0.0),
     ])
 
   let assert Ok(dashes) =
@@ -350,9 +350,9 @@ pub fn subpath_dashes_treats_empty_pattern_as_none_test() {
 pub fn subpath_dashes_crosses_segment_boundaries_test() {
   let subpath =
     svg_path.subpath_assert_polyline([
-      svg_path.point(0.0, 0.0),
-      svg_path.point(10.0, 0.0),
-      svg_path.point(10.0, 10.0),
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
+      svg_path.Point(10.0, 10.0),
     ])
 
   let assert Ok([dash]) =
@@ -365,10 +365,10 @@ pub fn subpath_dashes_crosses_segment_boundaries_test() {
 pub fn subpath_dashes_preserves_closed_none_semantics_test() {
   let subpath =
     svg_path.subpath_assert_polygon([
-      svg_path.point(0.0, 0.0),
-      svg_path.point(10.0, 0.0),
-      svg_path.point(10.0, 10.0),
-      svg_path.point(0.0, 10.0),
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
+      svg_path.Point(10.0, 10.0),
+      svg_path.Point(0.0, 10.0),
     ])
 
   let assert Ok([dash]) =
@@ -381,10 +381,10 @@ pub fn subpath_dashes_preserves_closed_none_semantics_test() {
 pub fn subpath_dashes_opens_full_closed_dash_when_pattern_is_active_test() {
   let subpath =
     svg_path.subpath_assert_polygon([
-      svg_path.point(0.0, 0.0),
-      svg_path.point(10.0, 0.0),
-      svg_path.point(10.0, 10.0),
-      svg_path.point(0.0, 10.0),
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
+      svg_path.Point(10.0, 10.0),
+      svg_path.Point(0.0, 10.0),
     ])
 
   let assert Ok([dash]) =
@@ -397,13 +397,13 @@ pub fn subpath_dashes_opens_full_closed_dash_when_pattern_is_active_test() {
 pub fn path_dashes_resets_pattern_per_subpath_test() {
   let first =
     svg_path.subpath_assert_polyline([
-      svg_path.point(0.0, 0.0),
-      svg_path.point(10.0, 0.0),
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
     ])
   let second =
     svg_path.subpath_assert_polyline([
-      svg_path.point(0.0, 10.0),
-      svg_path.point(10.0, 10.0),
+      svg_path.Point(0.0, 10.0),
+      svg_path.Point(10.0, 10.0),
     ])
 
   let assert Ok(path) =
@@ -423,8 +423,8 @@ pub fn path_dashes_resets_pattern_per_subpath_test() {
 pub fn subpath_dashed_strokes_each_dash_test() {
   let subpath =
     svg_path.subpath_assert_polyline([
-      svg_path.point(0.0, 0.0),
-      svg_path.point(10.0, 0.0),
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
     ])
 
   let assert Ok(path) =
@@ -441,8 +441,8 @@ pub fn subpath_dashed_strokes_each_dash_test() {
 pub fn subpath_dashes_rejects_invalid_pattern_and_offset_test() {
   let subpath =
     svg_path.subpath_assert_polyline([
-      svg_path.point(0.0, 0.0),
-      svg_path.point(10.0, 0.0),
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
     ])
 
   assert stroke.subpath_dashes(subpath, pattern: [-1.0, 2.0], offset: 0.0)
@@ -452,8 +452,8 @@ pub fn subpath_dashes_rejects_invalid_pattern_and_offset_test() {
 pub fn stroke_rejects_non_positive_width_test() {
   let segment =
     svg_path.Line(
-      start: svg_path.point(0.0, 0.0),
-      end: svg_path.point(10.0, 0.0),
+      start: svg_path.Point(0.0, 0.0),
+      end: svg_path.Point(10.0, 0.0),
     )
 
   assert stroke.segment(segment, width: 0.0) == Error(stroke.InvalidWidth(0.0))
@@ -472,8 +472,8 @@ fn arc_count(segments: List(svg_path.Segment)) -> Int {
 
 fn right_angle_subpath() -> svg_path.Subpath {
   svg_path.subpath_assert_polyline([
-    svg_path.point(0.0, 0.0),
-    svg_path.point(10.0, 0.0),
-    svg_path.point(10.0, 10.0),
+    svg_path.Point(0.0, 0.0),
+    svg_path.Point(10.0, 0.0),
+    svg_path.Point(10.0, 10.0),
   ])
 }

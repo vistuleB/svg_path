@@ -9,7 +9,6 @@ import gleam/list
 import svg_path
 import svg_path/ellipse
 import svg_path/trig
-import vec/vec2f
 
 /// An opaque SVG affine transform matrix.
 ///
@@ -267,7 +266,7 @@ pub fn to_tuple(
 
 /// Transform a point by a matrix.
 pub fn point(point: svg_path.Point, by transform: Matrix) -> svg_path.Point {
-  svg_path.point(
+  svg_path.Point(
     transform.a *. point.x +. transform.c *. point.y +. transform.e,
     transform.b *. point.x +. transform.d *. point.y +. transform.f,
   )
@@ -689,8 +688,8 @@ pub fn bounding_box(
     Ok(Nil) -> {
       let svg_path.BoundingBox(min:, max:) = box
       let top_left = point(min, by: transform)
-      let top_right = point(svg_path.point(max.x, min.y), by: transform)
-      let bottom_left = point(svg_path.point(min.x, max.y), by: transform)
+      let top_right = point(svg_path.Point(max.x, min.y), by: transform)
+      let bottom_left = point(svg_path.Point(min.x, max.y), by: transform)
       let bottom_right = point(max, by: transform)
 
       let assert Ok(box) =
@@ -857,13 +856,13 @@ fn anchor_point(box: svg_path.BoundingBox, anchor: Anchor) -> svg_path.Point {
 
   case anchor {
     TopLeft -> min
-    TopCenter -> svg_path.point(center.x, min.y)
-    TopRight -> svg_path.point(max.x, min.y)
-    CenterLeft -> svg_path.point(min.x, center.y)
+    TopCenter -> svg_path.Point(center.x, min.y)
+    TopRight -> svg_path.Point(max.x, min.y)
+    CenterLeft -> svg_path.Point(min.x, center.y)
     Center -> center
-    CenterRight -> svg_path.point(max.x, center.y)
-    BottomLeft -> svg_path.point(min.x, max.y)
-    BottomCenter -> svg_path.point(center.x, max.y)
+    CenterRight -> svg_path.Point(max.x, center.y)
+    BottomLeft -> svg_path.Point(min.x, max.y)
+    BottomCenter -> svg_path.Point(center.x, max.y)
     BottomRight -> max
   }
 }
@@ -884,7 +883,7 @@ fn to_ellipse_point(point: svg_path.Point) -> ellipse.Point {
 }
 
 fn from_ellipse_point(point: ellipse.Point) -> svg_path.Point {
-  svg_path.point(point.x, point.y)
+  svg_path.Point(point.x, point.y)
 }
 
 fn lines_between(points: List(ellipse.Point)) -> List(svg_path.Segment) {
@@ -927,7 +926,13 @@ fn points_within_tolerance(
 ) -> Bool {
   let tolerance_squared = tolerance *. tolerance
 
-  vec2f.distance_squared(a, with: b) <=. tolerance_squared
+  distance_squared(a, b) <=. tolerance_squared
+}
+
+fn distance_squared(a: svg_path.Point, b: svg_path.Point) -> Float {
+  let dx = a.x -. b.x
+  let dy = a.y -. b.y
+  dx *. dx +. dy *. dy
 }
 
 fn is_finite(value: Float) -> Bool {

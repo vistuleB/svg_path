@@ -7,8 +7,8 @@ import svg_path/convex_hull
 const tolerance = 0.000001
 
 pub fn seeded_worst_direction_stays_put_at_local_maximum_test() {
-  let a = point_loop(svg_path.point(0.0, 0.0))
-  let b = point_loop(svg_path.point(1.0, 0.0))
+  let a = point_loop(svg_path.Point(0.0, 0.0))
+  let b = point_loop(svg_path.Point(1.0, 0.0))
 
   let assert Ok(#(lower, upper)) =
     convex_hull.internal_find_seeded_worst_direction(
@@ -23,8 +23,8 @@ pub fn seeded_worst_direction_stays_put_at_local_maximum_test() {
 }
 
 pub fn seeded_worst_direction_walks_to_local_maximum_test() {
-  let a = point_loop(svg_path.point(0.0, 0.0))
-  let b = point_loop(svg_path.point(1.0, 0.0))
+  let a = point_loop(svg_path.Point(0.0, 0.0))
+  let b = point_loop(svg_path.Point(1.0, 0.0))
 
   let assert Ok(#(lower, upper)) =
     convex_hull.internal_find_seeded_worst_direction(
@@ -39,8 +39,8 @@ pub fn seeded_worst_direction_walks_to_local_maximum_test() {
 }
 
 pub fn seeded_worst_direction_stays_within_max_drift_test() {
-  let a = point_loop(svg_path.point(0.0, 0.0))
-  let b = point_loop(svg_path.point(1.0, 0.0))
+  let a = point_loop(svg_path.Point(0.0, 0.0))
+  let b = point_loop(svg_path.Point(1.0, 0.0))
 
   let assert Ok(#(lower, upper)) =
     convex_hull.internal_find_seeded_worst_direction(
@@ -127,21 +127,21 @@ pub fn ambitious_repair_loop_with_loop_adds_tiny_arc_slice_test() {
 pub fn path_hull_handles_scaled_two_arc_probe_test() {
   let large_arc =
     svg_path.Arc(
-      start: svg_path.point(1000.0, 0.0),
-      radius: svg_path.point(1000.0, 1000.0),
+      start: svg_path.Point(1000.0, 0.0),
+      radius: svg_path.Point(1000.0, 1000.0),
       x_axis_rotation: 0.0,
       large_arc: False,
       sweep: True,
-      end: svg_path.point(999.84769516, 17.45240644),
+      end: svg_path.Point(999.84769516, 17.45240644),
     )
   let small_arc =
     svg_path.Arc(
-      start: svg_path.point(999.94340504, 7.63106966),
-      radius: svg_path.point(30.0, 30.0),
+      start: svg_path.Point(999.94340504, 7.63106966),
+      radius: svg_path.Point(30.0, 30.0),
       x_axis_rotation: 0.0,
       large_arc: False,
       sweep: True,
-      end: svg_path.point(999.92428935, 9.82151131),
+      end: svg_path.Point(999.92428935, 9.82151131),
     )
   let assert Ok(large_subpath) = svg_path.subpath([large_arc])
   let assert Ok(small_subpath) = svg_path.subpath([small_arc])
@@ -187,8 +187,8 @@ pub fn path_hull_with_ambitious_repair_mode_handles_line_arc_probe_test() {
 }
 
 fn big_line_loop() -> List(svg_path.Segment) {
-  let start = svg_path.point(1000.0, 0.0)
-  let end = svg_path.point(999.84769516, 17.45240644)
+  let start = svg_path.Point(1000.0, 0.0)
+  let end = svg_path.Point(999.84769516, 17.45240644)
 
   [
     svg_path.Line(start:, end:),
@@ -197,12 +197,12 @@ fn big_line_loop() -> List(svg_path.Segment) {
 }
 
 fn tiny_arc_loop() -> List(svg_path.Segment) {
-  let start = svg_path.point(999.94340504, 7.63106966)
-  let end = svg_path.point(999.92428935, 9.82151131)
+  let start = svg_path.Point(999.94340504, 7.63106966)
+  let end = svg_path.Point(999.92428935, 9.82151131)
   let arc =
     svg_path.Arc(
       start:,
-      radius: svg_path.point(30.0, 30.0),
+      radius: svg_path.Point(30.0, 30.0),
       x_axis_rotation: 0.0,
       large_arc: False,
       sweep: True,
@@ -218,17 +218,17 @@ fn tiny_arc_loop() -> List(svg_path.Segment) {
 fn line_arc_probe_path() -> svg_path.Path {
   let line =
     svg_path.Line(
-      start: svg_path.point(1000.0, 0.0),
-      end: svg_path.point(999.84769516, 17.45240644),
+      start: svg_path.Point(1000.0, 0.0),
+      end: svg_path.Point(999.84769516, 17.45240644),
     )
   let arc =
     svg_path.Arc(
-      start: svg_path.point(999.94340504, 7.63106966),
-      radius: svg_path.point(30.0, 30.0),
+      start: svg_path.Point(999.94340504, 7.63106966),
+      radius: svg_path.Point(30.0, 30.0),
       x_axis_rotation: 0.0,
       large_arc: False,
       sweep: True,
-      end: svg_path.point(999.92428935, 9.82151131),
+      end: svg_path.Point(999.92428935, 9.82151131),
     )
 
   svg_path.Path([
@@ -252,8 +252,8 @@ fn line_arc_probe_arc_endpoints_are_inside_hull(
 
 fn line_arc_probe_arc_endpoints() -> List(svg_path.Point) {
   [
-    svg_path.point(999.94340504, 7.63106966),
-    svg_path.point(999.92428935, 9.82151131),
+    svg_path.Point(999.94340504, 7.63106966),
+    svg_path.Point(999.92428935, 9.82151131),
   ]
 }
 

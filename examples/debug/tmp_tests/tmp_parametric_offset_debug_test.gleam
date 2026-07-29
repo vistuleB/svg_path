@@ -505,7 +505,7 @@ fn render_gallery() -> String {
   let columns = join_styles()
   let things = [
     svg.Rectangle(
-      svg_path.point(0.0, 0.0),
+      svg_path.Point(0.0, 0.0),
       gallery_width(),
       gallery_height(rows),
       "fill: #ffffff; stroke: none",
@@ -513,7 +513,7 @@ fn render_gallery() -> String {
     svg.Text(
       "parametric offset join styles",
       text_style("700"),
-      svg_path.point(8.0, 24.0),
+      svg_path.Point(8.0, 24.0),
       20,
     ),
     ..list.index_map(rows, fn(example, row) {
@@ -528,8 +528,8 @@ fn render_gallery() -> String {
   svg.document(
     things,
     view_box: svg_path.BoundingBox(
-      min: svg_path.point(0.0, 0.0),
-      max: svg_path.point(gallery_width(), gallery_height(rows)),
+      min: svg_path.Point(0.0, 0.0),
+      max: svg_path.Point(gallery_width(), gallery_height(rows)),
     ),
   )
 }
@@ -563,7 +563,7 @@ fn render_diamond_zoom() -> String {
     |> list.flatten
   let things = [
     svg.Rectangle(
-      svg_path.point(0.0, 0.0),
+      svg_path.Point(0.0, 0.0),
       164.0,
       116.0,
       "fill: #ffffff; stroke: none",
@@ -577,8 +577,8 @@ fn render_diamond_zoom() -> String {
   svg.document(
     things,
     view_box: svg_path.BoundingBox(
-      min: svg_path.point(24.0, 20.0),
-      max: svg_path.point(140.0, 100.0),
+      min: svg_path.Point(24.0, 20.0),
+      max: svg_path.Point(140.0, 100.0),
     ),
   )
 }
@@ -609,7 +609,7 @@ fn render_diamond_miter_sections() -> String {
   svg.document(
     [
       svg.Rectangle(
-        svg_path.point(0.0, 0.0),
+        svg_path.Point(0.0, 0.0),
         164.0,
         116.0,
         "fill: #ffffff; stroke: none",
@@ -621,8 +621,8 @@ fn render_diamond_miter_sections() -> String {
       ..section_drawings
     ],
     view_box: svg_path.BoundingBox(
-      min: svg_path.point(30.0, 24.0),
-      max: svg_path.point(134.0, 98.0),
+      min: svg_path.Point(30.0, 24.0),
+      max: svg_path.Point(134.0, 98.0),
     ),
   )
 }
@@ -653,7 +653,7 @@ fn render_diamond_miter_loop_zoom() -> String {
   svg.document(
     [
       svg.Rectangle(
-        svg_path.point(0.0, 0.0),
+        svg_path.Point(0.0, 0.0),
         164.0,
         116.0,
         "fill: #ffffff; stroke: none",
@@ -665,8 +665,8 @@ fn render_diamond_miter_loop_zoom() -> String {
       ..section_drawings
     ],
     view_box: svg_path.BoundingBox(
-      min: svg_path.point(72.0, 78.0),
-      max: svg_path.point(91.0, 94.0),
+      min: svg_path.Point(72.0, 78.0),
+      max: svg_path.Point(91.0, 94.0),
     ),
   )
 }
@@ -713,7 +713,7 @@ fn render_diamond_section_survival() -> String {
   svg.document(
     [
       svg.Rectangle(
-        svg_path.point(0.0, 0.0),
+        svg_path.Point(0.0, 0.0),
         164.0,
         116.0,
         "fill: #ffffff; stroke: none",
@@ -725,8 +725,8 @@ fn render_diamond_section_survival() -> String {
       ..section_drawings
     ],
     view_box: svg_path.BoundingBox(
-      min: svg_path.point(72.0, 78.0),
-      max: svg_path.point(91.0, 94.0),
+      min: svg_path.Point(72.0, 78.0),
+      max: svg_path.Point(91.0, 94.0),
     ),
   )
 }
@@ -749,7 +749,7 @@ fn render_diamond_section_nine() -> String {
   svg.document(
     [
       svg.Rectangle(
-        svg_path.point(0.0, 0.0),
+        svg_path.Point(0.0, 0.0),
         164.0,
         116.0,
         "fill: #ffffff; stroke: none",
@@ -771,7 +771,7 @@ fn render_diamond_section_nine() -> String {
                 <> int.to_string(list.length(target_section))
                 <> " segments",
               "fill: #111827; font-family: system-ui, sans-serif; font-weight: 700; text-anchor: middle; dominant-baseline: central",
-              svg_path.point(81.5, 96.0),
+              svg_path.Point(81.5, 96.0),
               2,
             ),
           ],
@@ -779,8 +779,8 @@ fn render_diamond_section_nine() -> String {
       )
     ],
     view_box: svg_path.BoundingBox(
-      min: svg_path.point(72.0, 78.0),
-      max: svg_path.point(91.0, 99.0),
+      min: svg_path.Point(72.0, 78.0),
+      max: svg_path.Point(91.0, 99.0),
     ),
   )
 }
@@ -1031,7 +1031,7 @@ fn render_panel(
 
   [
     svg.Rectangle(
-      svg_path.point(x, y),
+      svg_path.Point(x, y),
       panel_w,
       panel_h,
       "fill: #f8fafc; stroke: #cbd5e1; stroke-width: 1",
@@ -1039,7 +1039,7 @@ fn render_panel(
     svg.Text(
       join_case.label <> " / " <> example.label,
       text_style("700"),
-      svg_path.point(x +. 8.0, y +. 16.0),
+      svg_path.Point(x +. 8.0, y +. 16.0),
       8,
     ),
     svg.StyledPath(
@@ -1075,64 +1075,64 @@ fn examples() -> List(Example) {
 
 fn open_corner() -> svg_path.Subpath {
   svg_path.subpath_assert_polyline([
-    svg_path.point(18.0, 82.0),
-    svg_path.point(82.0, 82.0),
-    svg_path.point(82.0, 28.0),
+    svg_path.Point(18.0, 82.0),
+    svg_path.Point(82.0, 82.0),
+    svg_path.Point(82.0, 28.0),
   ])
 }
 
 fn open_zigzag() -> svg_path.Subpath {
   svg_path.subpath_assert_polyline([
-    svg_path.point(16.0, 80.0),
-    svg_path.point(54.0, 38.0),
-    svg_path.point(92.0, 80.0),
-    svg_path.point(130.0, 38.0),
+    svg_path.Point(16.0, 80.0),
+    svg_path.Point(54.0, 38.0),
+    svg_path.Point(92.0, 80.0),
+    svg_path.Point(130.0, 38.0),
   ])
 }
 
 fn open_cubic_wave() -> svg_path.Subpath {
   svg_path.subpath_assert([
     svg_path.CubicBezier(
-      start: svg_path.point(16.0, 68.0),
-      control1: svg_path.point(38.0, 20.0),
-      control2: svg_path.point(62.0, 96.0),
-      end: svg_path.point(84.0, 50.0),
+      start: svg_path.Point(16.0, 68.0),
+      control1: svg_path.Point(38.0, 20.0),
+      control2: svg_path.Point(62.0, 96.0),
+      end: svg_path.Point(84.0, 50.0),
     ),
     svg_path.CubicBezier(
-      start: svg_path.point(84.0, 50.0),
-      control1: svg_path.point(104.0, 8.0),
-      control2: svg_path.point(124.0, 88.0),
-      end: svg_path.point(146.0, 42.0),
+      start: svg_path.Point(84.0, 50.0),
+      control1: svg_path.Point(104.0, 8.0),
+      control2: svg_path.Point(124.0, 88.0),
+      end: svg_path.Point(146.0, 42.0),
     ),
   ])
 }
 
 fn concave_inset() -> svg_path.Subpath {
   svg_path.subpath_assert_polygon([
-    svg_path.point(18.0, 18.0),
-    svg_path.point(146.0, 18.0),
-    svg_path.point(146.0, 100.0),
-    svg_path.point(128.0, 100.0),
-    svg_path.point(128.0, 58.0),
-    svg_path.point(62.0, 58.0),
-    svg_path.point(62.0, 100.0),
-    svg_path.point(18.0, 100.0),
+    svg_path.Point(18.0, 18.0),
+    svg_path.Point(146.0, 18.0),
+    svg_path.Point(146.0, 100.0),
+    svg_path.Point(128.0, 100.0),
+    svg_path.Point(128.0, 58.0),
+    svg_path.Point(62.0, 58.0),
+    svg_path.Point(62.0, 100.0),
+    svg_path.Point(18.0, 100.0),
   ])
 }
 
 fn smooth_figure_eight() -> svg_path.Subpath {
   svg_path.subpath_assert([
     svg_path.CubicBezier(
-      start: svg_path.point(82.0, 58.0),
-      control1: svg_path.point(40.0, 8.0),
-      control2: svg_path.point(12.0, 112.0),
-      end: svg_path.point(82.0, 58.0),
+      start: svg_path.Point(82.0, 58.0),
+      control1: svg_path.Point(40.0, 8.0),
+      control2: svg_path.Point(12.0, 112.0),
+      end: svg_path.Point(82.0, 58.0),
     ),
     svg_path.CubicBezier(
-      start: svg_path.point(82.0, 58.0),
-      control1: svg_path.point(152.0, 4.0),
-      control2: svg_path.point(124.0, 112.0),
-      end: svg_path.point(82.0, 58.0),
+      start: svg_path.Point(82.0, 58.0),
+      control1: svg_path.Point(152.0, 4.0),
+      control2: svg_path.Point(124.0, 112.0),
+      end: svg_path.Point(82.0, 58.0),
     ),
   ])
   |> svg_path.subpath_assert_set_closed(closed: True)
@@ -1141,24 +1141,24 @@ fn smooth_figure_eight() -> svg_path.Subpath {
 fn rounded_diamond() -> svg_path.Subpath {
   svg_path.subpath_assert([
     svg_path.QuadraticBezier(
-      start: svg_path.point(82.0, 12.0),
-      control: svg_path.point(112.0, 20.0),
-      end: svg_path.point(146.0, 58.0),
+      start: svg_path.Point(82.0, 12.0),
+      control: svg_path.Point(112.0, 20.0),
+      end: svg_path.Point(146.0, 58.0),
     ),
     svg_path.QuadraticBezier(
-      start: svg_path.point(146.0, 58.0),
-      control: svg_path.point(120.0, 92.0),
-      end: svg_path.point(82.0, 104.0),
+      start: svg_path.Point(146.0, 58.0),
+      control: svg_path.Point(120.0, 92.0),
+      end: svg_path.Point(82.0, 104.0),
     ),
     svg_path.QuadraticBezier(
-      start: svg_path.point(82.0, 104.0),
-      control: svg_path.point(42.0, 92.0),
-      end: svg_path.point(18.0, 58.0),
+      start: svg_path.Point(82.0, 104.0),
+      control: svg_path.Point(42.0, 92.0),
+      end: svg_path.Point(18.0, 58.0),
     ),
     svg_path.QuadraticBezier(
-      start: svg_path.point(18.0, 58.0),
-      control: svg_path.point(48.0, 22.0),
-      end: svg_path.point(82.0, 12.0),
+      start: svg_path.Point(18.0, 58.0),
+      control: svg_path.Point(48.0, 22.0),
+      end: svg_path.Point(82.0, 12.0),
     ),
   ])
   |> svg_path.subpath_assert_set_closed(closed: True)
@@ -1215,7 +1215,7 @@ fn debug_provisional_with(
           )
         })
       case pieces {
-        [] -> Ok(svg_path.subpath_empty(at: svg_path.point(0.0, 0.0)))
+        [] -> Ok(svg_path.subpath_empty(at: svg_path.Point(0.0, 0.0)))
         [first, ..rest] -> {
           let assert Ok(segments) =
             debug_miter_join_loop(
@@ -1730,7 +1730,7 @@ fn directed_line_intersection(
 }
 
 fn subtract(a: svg_path.Point, b: svg_path.Point) -> svg_path.Point {
-  svg_path.point(a.x -. b.x, a.y -. b.y)
+  svg_path.Point(a.x -. b.x, a.y -. b.y)
 }
 
 fn cross(a: svg_path.Point, b: svg_path.Point) -> Float {
@@ -1816,7 +1816,7 @@ fn arrow(
   unit: svg_path.Point,
   color: String,
 ) -> svg.ThingToDraw {
-  let perp = svg_path.point(0.0 -. unit.y, unit.x)
+  let perp = svg_path.Point(0.0 -. unit.y, unit.x)
   let half_width = 3.8
   let arrow_height = half_width *. 1.7320508075688772
   let tip = add(point, scale(unit, arrow_height *. 2.0 /. 3.0))
@@ -1836,7 +1836,7 @@ fn segment_direction(segment: svg_path.Segment) -> svg_path.Point {
 }
 
 fn normalize(point: svg_path.Point) -> Result(svg_path.Point, Nil) {
-  let length = distance(svg_path.point(0.0, 0.0), point)
+  let length = distance(svg_path.Point(0.0, 0.0), point)
   case length <=. 0.0000001 {
     True -> Error(Nil)
     False -> Ok(scale(point, 1.0 /. length))
@@ -1844,11 +1844,11 @@ fn normalize(point: svg_path.Point) -> Result(svg_path.Point, Nil) {
 }
 
 fn add(a: svg_path.Point, b: svg_path.Point) -> svg_path.Point {
-  svg_path.point(a.x +. b.x, a.y +. b.y)
+  svg_path.Point(a.x +. b.x, a.y +. b.y)
 }
 
 fn scale(point: svg_path.Point, factor: Float) -> svg_path.Point {
-  svg_path.point(point.x *. factor, point.y *. factor)
+  svg_path.Point(point.x *. factor, point.y *. factor)
 }
 
 fn distance(a: svg_path.Point, b: svg_path.Point) -> Float {

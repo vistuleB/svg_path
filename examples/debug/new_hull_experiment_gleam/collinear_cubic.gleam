@@ -159,7 +159,7 @@ fn best_axis(
   end: svg_path.Point,
 ) -> svg_path.Point {
   [subtract(end, start), subtract(control1, start), subtract(control2, start)]
-  |> longest_axis(svg_path.point(1.0, 0.0))
+  |> longest_axis(svg_path.Point(1.0, 0.0))
 }
 
 fn longest_axis(
@@ -178,7 +178,7 @@ fn longest_axis(
 }
 
 fn subtract(a: svg_path.Point, b: svg_path.Point) -> svg_path.Point {
-  svg_path.point(a.x -. b.x, a.y -. b.y)
+  svg_path.Point(a.x -. b.x, a.y -. b.y)
 }
 
 fn dot(a: svg_path.Point, b: svg_path.Point) -> Float {

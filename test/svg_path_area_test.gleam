@@ -15,7 +15,7 @@ pub fn signed_points_implicitly_closes_the_loop_test() {
   assert_close(area.signed_points(points), 100.0, tolerance)
   assert_close(area.signed_points(reverse(points)), -100.0, tolerance)
   assert area.signed_points([]) == 0.0
-  assert area.signed_points([svg_path.point(0.0, 0.0)]) == 0.0
+  assert area.signed_points([svg_path.Point(0.0, 0.0)]) == 0.0
 }
 
 pub fn signed_subpath_ignores_the_closed_field_test() {
@@ -30,16 +30,16 @@ pub fn signed_subpath_ignores_the_closed_field_test() {
 pub fn signed_bezier_segments_use_exact_line_integrals_test() {
   let quadratic =
     svg_path.QuadraticBezier(
-      start: svg_path.point(0.0, 0.0),
-      control: svg_path.point(10.0, 20.0),
-      end: svg_path.point(20.0, 0.0),
+      start: svg_path.Point(0.0, 0.0),
+      control: svg_path.Point(10.0, 20.0),
+      end: svg_path.Point(20.0, 0.0),
     )
   let cubic =
     svg_path.CubicBezier(
-      start: svg_path.point(0.0, 0.0),
-      control1: svg_path.point(0.0, 10.0),
-      control2: svg_path.point(10.0, 10.0),
-      end: svg_path.point(10.0, 0.0),
+      start: svg_path.Point(0.0, 0.0),
+      control1: svg_path.Point(0.0, 10.0),
+      control2: svg_path.Point(10.0, 10.0),
+      end: svg_path.Point(10.0, 0.0),
     )
 
   assert_close(
@@ -63,12 +63,12 @@ pub fn signed_bezier_segments_use_exact_line_integrals_test() {
 pub fn signed_arc_segment_uses_the_ellipse_integral_test() {
   let semicircle =
     svg_path.Arc(
-      start: svg_path.point(-10.0, 0.0),
-      radius: svg_path.point(10.0, 10.0),
+      start: svg_path.Point(-10.0, 0.0),
+      radius: svg_path.Point(10.0, 10.0),
       x_axis_rotation: 0.0,
       large_arc: False,
       sweep: True,
-      end: svg_path.point(10.0, 0.0),
+      end: svg_path.Point(10.0, 0.0),
     )
   let subpath = svg_path.subpath_assert([semicircle])
 
@@ -91,14 +91,14 @@ pub fn fill_area_implicitly_closes_open_subpaths_test() {
 
 pub fn fill_rules_differ_for_a_twice_traced_loop_test() {
   let points = [
-    svg_path.point(0.0, 0.0),
-    svg_path.point(10.0, 0.0),
-    svg_path.point(10.0, 10.0),
-    svg_path.point(0.0, 10.0),
-    svg_path.point(0.0, 0.0),
-    svg_path.point(10.0, 0.0),
-    svg_path.point(10.0, 10.0),
-    svg_path.point(0.0, 10.0),
+    svg_path.Point(0.0, 0.0),
+    svg_path.Point(10.0, 0.0),
+    svg_path.Point(10.0, 10.0),
+    svg_path.Point(0.0, 10.0),
+    svg_path.Point(0.0, 0.0),
+    svg_path.Point(10.0, 0.0),
+    svg_path.Point(10.0, 10.0),
+    svg_path.Point(0.0, 10.0),
   ]
   let subpath = svg_path.subpath_assert_polyline(points)
 
@@ -115,10 +115,10 @@ pub fn fill_rules_differ_for_a_twice_traced_loop_test() {
 pub fn self_intersecting_bow_tie_has_filled_but_no_signed_area_test() {
   let subpath =
     svg_path.subpath_assert_polyline([
-      svg_path.point(0.0, 0.0),
-      svg_path.point(10.0, 10.0),
-      svg_path.point(0.0, 10.0),
-      svg_path.point(10.0, 0.0),
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 10.0),
+      svg_path.Point(0.0, 10.0),
+      svg_path.Point(10.0, 0.0),
     ])
 
   let assert Ok(nonzero) = area.subpath(subpath, using: svg_path.Nonzero)
@@ -209,8 +209,8 @@ pub fn subpath_clockwiseness_uses_implicit_closing_chord_test() {
   let line =
     svg_path.subpath_assert([
       svg_path.Line(
-        start: svg_path.point(0.0, 0.0),
-        end: svg_path.point(10.0, 0.0),
+        start: svg_path.Point(0.0, 0.0),
+        end: svg_path.Point(10.0, 0.0),
       ),
     ])
 
@@ -224,10 +224,10 @@ pub fn subpath_clockwiseness_uses_implicit_closing_chord_test() {
 pub fn subpath_clockwiseness_can_be_intermediate_test() {
   let bow_tie =
     svg_path.subpath_assert_polyline([
-      svg_path.point(0.0, 0.0),
-      svg_path.point(10.0, 10.0),
-      svg_path.point(0.0, 10.0),
-      svg_path.point(10.0, 0.0),
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 10.0),
+      svg_path.Point(0.0, 10.0),
+      svg_path.Point(10.0, 0.0),
     ])
 
   let assert Ok(value) = area.subpath_clockwiseness(bow_tie)
@@ -246,7 +246,7 @@ pub fn subpath_clockwiseness_rejects_invalid_linearization_options_test() {
 }
 
 pub fn move_only_paths_have_zero_area_test() {
-  let move_only = svg_path.subpath_empty(at: svg_path.point(3.0, 4.0))
+  let move_only = svg_path.subpath_empty(at: svg_path.Point(3.0, 4.0))
   let path = svg_path.Path([move_only])
 
   let assert Ok(nonzero) = area.path(path, using: svg_path.Nonzero)
@@ -263,10 +263,10 @@ pub fn curved_fill_area_uses_linearization_options_test() {
   let curve =
     svg_path.subpath_assert([
       svg_path.CubicBezier(
-        start: svg_path.point(0.0, 0.0),
-        control1: svg_path.point(0.0, 10.0),
-        control2: svg_path.point(10.0, 10.0),
-        end: svg_path.point(10.0, 0.0),
+        start: svg_path.Point(0.0, 0.0),
+        control1: svg_path.Point(0.0, 10.0),
+        control2: svg_path.Point(10.0, 10.0),
+        end: svg_path.Point(10.0, 0.0),
       ),
     ])
   let options = svg_path.LinearizeOptions(tolerance: 0.0001, max_depth: 20)
@@ -295,10 +295,10 @@ pub fn fill_area_rejects_invalid_linearization_options_test() {
 
 fn square_points(x: Float, y: Float, size: Float) -> List(svg_path.Point) {
   [
-    svg_path.point(x, y),
-    svg_path.point(x +. size, y),
-    svg_path.point(x +. size, y +. size),
-    svg_path.point(x, y +. size),
+    svg_path.Point(x, y),
+    svg_path.Point(x +. size, y),
+    svg_path.Point(x +. size, y +. size),
+    svg_path.Point(x, y +. size),
   ]
 }
 

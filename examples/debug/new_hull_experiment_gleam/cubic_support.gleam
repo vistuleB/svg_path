@@ -144,7 +144,7 @@ fn square_root(value: Float) -> Float {
 fn angle_direction(degrees: Float) -> svg_path.Point {
   let radians = degrees *. maths.pi() /. 180.0
 
-  svg_path.point(maths.cos(radians), maths.sin(radians))
+  svg_path.Point(maths.cos(radians), maths.sin(radians))
 }
 
 fn dot(a: svg_path.Point, b: svg_path.Point) -> Float {
@@ -152,11 +152,11 @@ fn dot(a: svg_path.Point, b: svg_path.Point) -> Float {
 }
 
 fn add(a: svg_path.Point, b: svg_path.Point) -> svg_path.Point {
-  svg_path.point(a.x +. b.x, a.y +. b.y)
+  svg_path.Point(a.x +. b.x, a.y +. b.y)
 }
 
 fn scale(point: svg_path.Point, factor: Float) -> svg_path.Point {
-  svg_path.point(point.x *. factor, point.y *. factor)
+  svg_path.Point(point.x *. factor, point.y *. factor)
 }
 
 fn result_try_point(

@@ -122,8 +122,8 @@ fn render() -> String {
       ),
     ]),
     view_box: svg_path.BoundingBox(
-      min: svg_path.point(0.0, 0.0),
-      max: svg_path.point(
+      min: svg_path.Point(0.0, 0.0),
+      max: svg_path.Point(
         panel_w *. 2.0 +. gap,
         panel_h *. 4.0 +. gap *. 3.0 +. gap,
       ),
@@ -161,7 +161,7 @@ fn panel(
       svg.Text(
         error_label(error),
         "fill: #b91c1c; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 700",
-        svg_path.point(x +. 12.0, y +. 148.0),
+        svg_path.Point(x +. 12.0, y +. 148.0),
         12,
       ),
     ]
@@ -170,7 +170,7 @@ fn panel(
   list.append(
     [
       svg.Rectangle(
-        svg_path.point(x, y),
+        svg_path.Point(x, y),
         panel_w,
         panel_h,
         "fill: #ffffff; stroke: #d1d5db; stroke-width: 1.5",
@@ -178,7 +178,7 @@ fn panel(
       svg.Text(
         label,
         "fill: #111827; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 700",
-        svg_path.point(x +. 12.0, y +. 23.0),
+        svg_path.Point(x +. 12.0, y +. 23.0),
         13,
       ),
       svg.StyledPath(
@@ -209,62 +209,62 @@ fn error_label(error: offset.Error) -> String {
 fn open_curve() -> svg_path.Subpath {
   svg_path.subpath_assert([
     svg_path.CubicBezier(
-      start: svg_path.point(0.0, 86.0),
-      control1: svg_path.point(35.0, -26.0),
-      control2: svg_path.point(104.0, 18.0),
-      end: svg_path.point(154.0, 70.0),
+      start: svg_path.Point(0.0, 86.0),
+      control1: svg_path.Point(35.0, -26.0),
+      control2: svg_path.Point(104.0, 18.0),
+      end: svg_path.Point(154.0, 70.0),
     ),
   ])
 }
 
 fn concave_polygon() -> svg_path.Subpath {
   svg_path.subpath_assert_polygon([
-    svg_path.point(0.0, 0.0),
-    svg_path.point(150.0, 0.0),
-    svg_path.point(150.0, 38.0),
-    svg_path.point(94.0, 38.0),
-    svg_path.point(94.0, 78.0),
-    svg_path.point(150.0, 78.0),
-    svg_path.point(150.0, 116.0),
-    svg_path.point(0.0, 116.0),
+    svg_path.Point(0.0, 0.0),
+    svg_path.Point(150.0, 0.0),
+    svg_path.Point(150.0, 38.0),
+    svg_path.Point(94.0, 38.0),
+    svg_path.Point(94.0, 78.0),
+    svg_path.Point(150.0, 78.0),
+    svg_path.Point(150.0, 116.0),
+    svg_path.Point(0.0, 116.0),
   ])
 }
 
 fn diamond() -> svg_path.Subpath {
   svg_path.subpath_assert_polygon([
-    svg_path.point(78.0, 0.0),
-    svg_path.point(156.0, 58.0),
-    svg_path.point(78.0, 116.0),
-    svg_path.point(0.0, 58.0),
+    svg_path.Point(78.0, 0.0),
+    svg_path.Point(156.0, 58.0),
+    svg_path.Point(78.0, 116.0),
+    svg_path.Point(0.0, 58.0),
   ])
 }
 
 fn narrow_concavity() -> svg_path.Subpath {
   svg_path.subpath_assert_polygon([
-    svg_path.point(0.0, 0.0),
-    svg_path.point(154.0, 0.0),
-    svg_path.point(154.0, 118.0),
-    svg_path.point(126.0, 118.0),
-    svg_path.point(126.0, 50.0),
-    svg_path.point(80.0, 50.0),
-    svg_path.point(80.0, 118.0),
-    svg_path.point(0.0, 118.0),
+    svg_path.Point(0.0, 0.0),
+    svg_path.Point(154.0, 0.0),
+    svg_path.Point(154.0, 118.0),
+    svg_path.Point(126.0, 118.0),
+    svg_path.Point(126.0, 50.0),
+    svg_path.Point(80.0, 50.0),
+    svg_path.Point(80.0, 118.0),
+    svg_path.Point(0.0, 118.0),
   ])
 }
 
 fn smooth_figure_eight() -> svg_path.Subpath {
   svg_path.subpath_assert([
     svg_path.CubicBezier(
-      start: svg_path.point(82.0, 58.0),
-      control1: svg_path.point(40.0, 8.0),
-      control2: svg_path.point(12.0, 112.0),
-      end: svg_path.point(82.0, 58.0),
+      start: svg_path.Point(82.0, 58.0),
+      control1: svg_path.Point(40.0, 8.0),
+      control2: svg_path.Point(12.0, 112.0),
+      end: svg_path.Point(82.0, 58.0),
     ),
     svg_path.CubicBezier(
-      start: svg_path.point(82.0, 58.0),
-      control1: svg_path.point(152.0, 4.0),
-      control2: svg_path.point(124.0, 112.0),
-      end: svg_path.point(82.0, 58.0),
+      start: svg_path.Point(82.0, 58.0),
+      control1: svg_path.Point(152.0, 4.0),
+      control2: svg_path.Point(124.0, 112.0),
+      end: svg_path.Point(82.0, 58.0),
     ),
   ])
   |> svg_path.subpath_assert_set_closed(closed: True)
@@ -273,28 +273,28 @@ fn smooth_figure_eight() -> svg_path.Subpath {
 fn upright_figure_eight() -> svg_path.Subpath {
   svg_path.subpath_assert([
     svg_path.Line(
-      start: svg_path.point(82.0, 58.0),
-      end: svg_path.point(20.0, 4.0),
+      start: svg_path.Point(82.0, 58.0),
+      end: svg_path.Point(20.0, 4.0),
     ),
     svg_path.Line(
-      start: svg_path.point(20.0, 4.0),
-      end: svg_path.point(144.0, 4.0),
+      start: svg_path.Point(20.0, 4.0),
+      end: svg_path.Point(144.0, 4.0),
     ),
     svg_path.Line(
-      start: svg_path.point(144.0, 4.0),
-      end: svg_path.point(82.0, 58.0),
+      start: svg_path.Point(144.0, 4.0),
+      end: svg_path.Point(82.0, 58.0),
     ),
     svg_path.Line(
-      start: svg_path.point(82.0, 58.0),
-      end: svg_path.point(144.0, 112.0),
+      start: svg_path.Point(82.0, 58.0),
+      end: svg_path.Point(144.0, 112.0),
     ),
     svg_path.Line(
-      start: svg_path.point(144.0, 112.0),
-      end: svg_path.point(20.0, 112.0),
+      start: svg_path.Point(144.0, 112.0),
+      end: svg_path.Point(20.0, 112.0),
     ),
     svg_path.Line(
-      start: svg_path.point(20.0, 112.0),
-      end: svg_path.point(82.0, 58.0),
+      start: svg_path.Point(20.0, 112.0),
+      end: svg_path.Point(82.0, 58.0),
     ),
   ])
   |> svg_path.subpath_assert_set_closed(closed: True)

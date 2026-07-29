@@ -442,7 +442,7 @@ fn do_point_code(
   point: svg_path.Point,
   format: number_format.NumberFormat,
 ) -> String {
-  "svg_path.point("
+  "svg_path.Point("
   <> code_number(point.x, format)
   <> ", "
   <> code_number(point.y, format)

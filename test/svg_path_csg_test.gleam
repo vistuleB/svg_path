@@ -66,10 +66,10 @@ pub fn union_combines_overlapping_rectangles_test() {
   let assert Ok(union) = csg.union(left, right, using: svg_path.Nonzero)
 
   assert_area(union, 150.0)
-  assert_inside(union, svg_path.point(2.5, 5.0))
-  assert_inside(union, svg_path.point(12.5, 5.0))
-  assert_inside(union, svg_path.point(7.5, 5.0))
-  assert_outside(union, svg_path.point(20.0, 5.0))
+  assert_inside(union, svg_path.Point(2.5, 5.0))
+  assert_inside(union, svg_path.Point(12.5, 5.0))
+  assert_inside(union, svg_path.Point(7.5, 5.0))
+  assert_outside(union, svg_path.Point(20.0, 5.0))
 }
 
 pub fn intersection_returns_overlap_of_rectangles_test() {
@@ -80,9 +80,9 @@ pub fn intersection_returns_overlap_of_rectangles_test() {
     csg.intersection(left, right, using: svg_path.Nonzero)
 
   assert_area(intersection, 50.0)
-  assert_outside(intersection, svg_path.point(2.5, 5.0))
-  assert_outside(intersection, svg_path.point(12.5, 5.0))
-  assert_inside(intersection, svg_path.point(7.5, 5.0))
+  assert_outside(intersection, svg_path.Point(2.5, 5.0))
+  assert_outside(intersection, svg_path.Point(12.5, 5.0))
+  assert_inside(intersection, svg_path.Point(7.5, 5.0))
 }
 
 pub fn difference_cuts_right_rectangle_from_left_test() {
@@ -93,9 +93,9 @@ pub fn difference_cuts_right_rectangle_from_left_test() {
     csg.difference(left, minus: right, using: svg_path.Nonzero)
 
   assert_area(difference, 50.0)
-  assert_inside(difference, svg_path.point(2.5, 5.0))
-  assert_outside(difference, svg_path.point(7.5, 5.0))
-  assert_outside(difference, svg_path.point(12.5, 5.0))
+  assert_inside(difference, svg_path.Point(2.5, 5.0))
+  assert_outside(difference, svg_path.Point(7.5, 5.0))
+  assert_outside(difference, svg_path.Point(12.5, 5.0))
 }
 
 pub fn difference_preserves_inner_hole_orientation_test() {
@@ -106,9 +106,9 @@ pub fn difference_preserves_inner_hole_orientation_test() {
     csg.difference(outer, minus: inner, using: svg_path.Nonzero)
 
   assert_area(difference, 300.0)
-  assert_inside(difference, svg_path.point(2.5, 2.5))
-  assert_outside(difference, svg_path.point(10.0, 10.0))
-  assert_inside(difference, svg_path.point(17.5, 17.5))
+  assert_inside(difference, svg_path.Point(2.5, 2.5))
+  assert_outside(difference, svg_path.Point(10.0, 10.0))
+  assert_inside(difference, svg_path.Point(17.5, 17.5))
 }
 
 pub fn disjoint_union_returns_both_components_test() {
@@ -118,9 +118,9 @@ pub fn disjoint_union_returns_both_components_test() {
   let assert Ok(union) = csg.union(left, right, using: svg_path.Nonzero)
 
   assert_area(union, 200.0)
-  assert_inside(union, svg_path.point(5.0, 5.0))
-  assert_inside(union, svg_path.point(25.0, 5.0))
-  assert_outside(union, svg_path.point(15.0, 5.0))
+  assert_inside(union, svg_path.Point(5.0, 5.0))
+  assert_inside(union, svg_path.Point(25.0, 5.0))
+  assert_outside(union, svg_path.Point(15.0, 5.0))
 }
 
 pub fn four_square_union_nonzero_test() {
@@ -130,23 +130,23 @@ pub fn four_square_union_nonzero_test() {
   assert_area(union, 16.0)
   assert list.length(svg_path.path_subpaths(union)) == 6
   assert count_back_and_forth_subpaths(union) == 4
-  assert_inside(union, svg_path.point(1.0, 1.0))
-  assert_inside(union, svg_path.point(3.0, 2.0))
-  assert_inside(union, svg_path.point(2.0, 4.0))
-  assert_inside(union, svg_path.point(0.0, 3.0))
-  assert_boundary(union, svg_path.point(2.0, 1.0))
+  assert_inside(union, svg_path.Point(1.0, 1.0))
+  assert_inside(union, svg_path.Point(3.0, 2.0))
+  assert_inside(union, svg_path.Point(2.0, 4.0))
+  assert_inside(union, svg_path.Point(0.0, 3.0))
+  assert_boundary(union, svg_path.Point(2.0, 1.0))
 }
 
 pub fn intersection_preserves_curve_segments_test() {
-  let left = circle(svg_path.point(10.0, 10.0), 10.0)
+  let left = circle(svg_path.Point(10.0, 10.0), 10.0)
   let right = rectangle(5.0, 0.0, 20.0, 20.0)
 
   let assert Ok(intersection) =
     csg.intersection(left, right, using: svg_path.Nonzero)
 
   assert has_arc(intersection)
-  assert_inside(intersection, svg_path.point(12.5, 10.0))
-  assert_outside(intersection, svg_path.point(2.5, 10.0))
+  assert_inside(intersection, svg_path.Point(12.5, 10.0))
+  assert_outside(intersection, svg_path.Point(2.5, 10.0))
 }
 
 pub fn identical_rectangles_share_boundaries_test() {
@@ -162,9 +162,9 @@ pub fn identical_rectangles_share_boundaries_test() {
   assert_area(union, 100.0)
   assert_area(intersection, 100.0)
   assert_area(difference, 0.0)
-  assert_inside(union, svg_path.point(5.0, 5.0))
-  assert_inside(intersection, svg_path.point(5.0, 5.0))
-  assert_outside(difference, svg_path.point(5.0, 5.0))
+  assert_inside(union, svg_path.Point(5.0, 5.0))
+  assert_inside(intersection, svg_path.Point(5.0, 5.0))
+  assert_outside(difference, svg_path.Point(5.0, 5.0))
 }
 
 pub fn edge_tangent_rectangles_do_not_create_overlap_area_test() {
@@ -180,11 +180,11 @@ pub fn edge_tangent_rectangles_do_not_create_overlap_area_test() {
   assert_area(union, 200.0)
   assert_area(intersection, 0.0)
   assert_area(difference, 100.0)
-  assert_inside(union, svg_path.point(5.0, 5.0))
-  assert_inside(union, svg_path.point(15.0, 5.0))
-  assert_outside(intersection, svg_path.point(5.0, 5.0))
-  assert_inside(difference, svg_path.point(5.0, 5.0))
-  assert_outside(difference, svg_path.point(15.0, 5.0))
+  assert_inside(union, svg_path.Point(5.0, 5.0))
+  assert_inside(union, svg_path.Point(15.0, 5.0))
+  assert_outside(intersection, svg_path.Point(5.0, 5.0))
+  assert_inside(difference, svg_path.Point(5.0, 5.0))
+  assert_outside(difference, svg_path.Point(15.0, 5.0))
 }
 
 pub fn adjacent_unit_square_union_preserves_shared_edge_slit_test() {
@@ -194,9 +194,9 @@ pub fn adjacent_unit_square_union_preserves_shared_edge_slit_test() {
   let assert Ok(union) = csg.union(left, right, using: svg_path.Nonzero)
 
   assert_area(union, 2.0)
-  assert_inside(union, svg_path.point(0.5, 0.5))
-  assert_inside(union, svg_path.point(1.5, 0.5))
-  assert_outside(union, svg_path.point(2.5, 0.5))
+  assert_inside(union, svg_path.Point(0.5, 0.5))
+  assert_inside(union, svg_path.Point(1.5, 0.5))
+  assert_outside(union, svg_path.Point(2.5, 0.5))
   assert union_has_rectangle_and_slit(union)
 }
 
@@ -207,9 +207,9 @@ pub fn offset_adjacent_unit_square_union_stitches_outer_boundary_test() {
   let assert Ok(union) = csg.union(left, right, using: svg_path.Nonzero)
 
   assert_area(union, 2.0)
-  assert_inside(union, svg_path.point(0.5, 0.5))
-  assert_inside(union, svg_path.point(1.5, 1.0))
-  assert_outside(union, svg_path.point(1.5, 0.25))
+  assert_inside(union, svg_path.Point(0.5, 0.5))
+  assert_inside(union, svg_path.Point(1.5, 1.0))
+  assert_outside(union, svg_path.Point(1.5, 0.25))
   assert offset_union_has_outer_boundary_and_slit(union)
 }
 
@@ -226,27 +226,27 @@ pub fn point_tangent_rectangles_do_not_create_overlap_area_test() {
   assert_area(union, 200.0)
   assert_area(intersection, 0.0)
   assert_area(difference, 100.0)
-  assert_inside(union, svg_path.point(5.0, 5.0))
-  assert_inside(union, svg_path.point(15.0, 15.0))
-  assert_outside(intersection, svg_path.point(5.0, 5.0))
-  assert_inside(difference, svg_path.point(5.0, 5.0))
-  assert_outside(difference, svg_path.point(15.0, 15.0))
+  assert_inside(union, svg_path.Point(5.0, 5.0))
+  assert_inside(union, svg_path.Point(15.0, 15.0))
+  assert_outside(intersection, svg_path.Point(5.0, 5.0))
+  assert_inside(difference, svg_path.Point(5.0, 5.0))
+  assert_outside(difference, svg_path.Point(15.0, 15.0))
 }
 
 pub fn operand_fill_rule_controls_nested_input_test() {
   let outer =
     svg_path.subpath_assert_polygon([
-      svg_path.point(0.0, 0.0),
-      svg_path.point(20.0, 0.0),
-      svg_path.point(20.0, 20.0),
-      svg_path.point(0.0, 20.0),
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(20.0, 0.0),
+      svg_path.Point(20.0, 20.0),
+      svg_path.Point(0.0, 20.0),
     ])
   let inner =
     svg_path.subpath_assert_polygon([
-      svg_path.point(5.0, 5.0),
-      svg_path.point(15.0, 5.0),
-      svg_path.point(15.0, 15.0),
-      svg_path.point(5.0, 15.0),
+      svg_path.Point(5.0, 5.0),
+      svg_path.Point(15.0, 5.0),
+      svg_path.Point(15.0, 15.0),
+      svg_path.Point(5.0, 15.0),
     ])
   let nested = svg_path.Path([outer, inner])
   let probe = rectangle(7.0, 7.0, 13.0, 13.0)
@@ -258,8 +258,8 @@ pub fn operand_fill_rule_controls_nested_input_test() {
 
   assert_area(nonzero_intersection, 36.0)
   assert_area(even_odd_intersection, 0.0)
-  assert_inside(nonzero_intersection, svg_path.point(10.0, 10.0))
-  assert_outside(even_odd_intersection, svg_path.point(10.0, 10.0))
+  assert_inside(nonzero_intersection, svg_path.Point(10.0, 10.0))
+  assert_outside(even_odd_intersection, svg_path.Point(10.0, 10.0))
 }
 
 pub fn nonzero_union_preserves_internal_winding_levels_test() {
@@ -268,8 +268,8 @@ pub fn nonzero_union_preserves_internal_winding_levels_test() {
 
   let assert Ok(union) = csg.union(left, right, using: svg_path.Nonzero)
 
-  assert_inside(union, svg_path.point(10.0, 10.0))
-  assert_winding_depth(union, svg_path.point(10.0, 10.0), 3)
+  assert_inside(union, svg_path.Point(10.0, 10.0))
+  assert_winding_depth(union, svg_path.Point(10.0, 10.0), 3)
   assert list.length(svg_path.path_subpaths(union)) > 1
 }
 
@@ -288,8 +288,8 @@ pub fn nonzero_union_preserves_reversed_internal_winding_levels_test() {
 
   let assert Ok(union) = csg.union(left, right, using: svg_path.Nonzero)
 
-  assert_inside(union, svg_path.point(10.0, 10.0))
-  assert_winding_depth(union, svg_path.point(10.0, 10.0), 3)
+  assert_inside(union, svg_path.Point(10.0, 10.0))
+  assert_winding_depth(union, svg_path.Point(10.0, 10.0), 3)
   assert list.length(svg_path.path_subpaths(union)) > 1
 }
 
@@ -300,7 +300,7 @@ pub fn nonzero_difference_keeps_forced_hole_orientation_test() {
   let assert Ok(difference) =
     csg.difference(outer, minus: inner, using: svg_path.Nonzero)
 
-  assert_outside(difference, svg_path.point(10.0, 10.0))
+  assert_outside(difference, svg_path.Point(10.0, 10.0))
   assert_has_clockwise_and_counterclockwise_contours(difference)
 }
 
@@ -321,11 +321,11 @@ pub fn simplify_nonzero_output_removes_internal_contour_depths_test() {
   let assert Ok(union) = csg.union(left, right, using: svg_path.Nonzero)
   let assert Ok(simplified) = csg.simplify_nonzero_output(union)
 
-  assert_inside(simplified, svg_path.point(10.0, 10.0))
-  assert_inside(simplified, svg_path.point(-2.5, 10.0))
-  assert_inside(simplified, svg_path.point(22.5, 10.0))
-  assert_outside(simplified, svg_path.point(30.0, 10.0))
-  assert_winding_depth(simplified, svg_path.point(10.0, 10.0), 1)
+  assert_inside(simplified, svg_path.Point(10.0, 10.0))
+  assert_inside(simplified, svg_path.Point(-2.5, 10.0))
+  assert_inside(simplified, svg_path.Point(22.5, 10.0))
+  assert_outside(simplified, svg_path.Point(30.0, 10.0))
+  assert_winding_depth(simplified, svg_path.Point(10.0, 10.0), 1)
   assert list.length(svg_path.path_subpaths(simplified)) == 1
 }
 
@@ -337,9 +337,9 @@ pub fn simplify_nonzero_output_preserves_holes_test() {
     csg.difference(outer, minus: inner, using: svg_path.Nonzero)
   let assert Ok(simplified) = csg.simplify_nonzero_output(difference)
 
-  assert_inside(simplified, svg_path.point(2.5, 2.5))
-  assert_outside(simplified, svg_path.point(10.0, 10.0))
-  assert_inside(simplified, svg_path.point(17.5, 17.5))
+  assert_inside(simplified, svg_path.Point(2.5, 2.5))
+  assert_outside(simplified, svg_path.Point(10.0, 10.0))
+  assert_inside(simplified, svg_path.Point(17.5, 17.5))
   assert list.length(svg_path.path_subpaths(simplified)) == 2
 }
 
@@ -352,7 +352,7 @@ pub fn csg_matches_boolean_semantics_on_sample_points_test() {
       samples: grid([2.5, 7.5, 12.5, 20.0], [-2.5, 5.0, 12.5]),
     ),
     SemanticCase(
-      left: circle(svg_path.point(10.0, 10.0), 10.0),
+      left: circle(svg_path.Point(10.0, 10.0), 10.0),
       right: rectangle(5.0, 0.0, 20.0, 20.0),
       fill_rule: svg_path.Nonzero,
       samples: grid([2.5, 7.5, 12.5, 17.5, 22.5], [2.5, 7.5, 12.5, 17.5]),
@@ -370,7 +370,7 @@ pub fn csg_matches_boolean_semantics_on_sample_points_test() {
       samples: grid([2.5, 7.5, 10.0, 12.5, 17.5], [2.5, 7.5, 10.0, 12.5, 17.5]),
     ),
     SemanticCase(
-      left: circle(svg_path.point(50.0, 60.0), 40.0),
+      left: circle(svg_path.Point(50.0, 60.0), 40.0),
       right: rectangle(90.0, 20.0, 124.0, 100.0),
       fill_rule: svg_path.Nonzero,
       samples: grid([12.5, 50.0, 88.0, 92.0, 110.0], [30.0, 60.0, 90.0]),
@@ -400,37 +400,37 @@ pub fn paper_style_csg_operation_table_test() {
         area: 150.0,
         subpaths: AnySubpathCount,
         points: [
-          ExpectInside(svg_path.point(2.5, 5.0)),
-          ExpectInside(svg_path.point(7.5, 5.0)),
-          ExpectInside(svg_path.point(12.5, 5.0)),
-          ExpectOutside(svg_path.point(20.0, 5.0)),
+          ExpectInside(svg_path.Point(2.5, 5.0)),
+          ExpectInside(svg_path.Point(7.5, 5.0)),
+          ExpectInside(svg_path.Point(12.5, 5.0)),
+          ExpectOutside(svg_path.Point(20.0, 5.0)),
         ],
       ),
       intersection: OperationExpectation(
         area: 50.0,
         subpaths: AnySubpathCount,
         points: [
-          ExpectOutside(svg_path.point(2.5, 5.0)),
-          ExpectInside(svg_path.point(7.5, 5.0)),
-          ExpectOutside(svg_path.point(12.5, 5.0)),
+          ExpectOutside(svg_path.Point(2.5, 5.0)),
+          ExpectInside(svg_path.Point(7.5, 5.0)),
+          ExpectOutside(svg_path.Point(12.5, 5.0)),
         ],
       ),
       left_minus_right: OperationExpectation(
         area: 50.0,
         subpaths: AnySubpathCount,
         points: [
-          ExpectInside(svg_path.point(2.5, 5.0)),
-          ExpectOutside(svg_path.point(7.5, 5.0)),
-          ExpectOutside(svg_path.point(12.5, 5.0)),
+          ExpectInside(svg_path.Point(2.5, 5.0)),
+          ExpectOutside(svg_path.Point(7.5, 5.0)),
+          ExpectOutside(svg_path.Point(12.5, 5.0)),
         ],
       ),
       right_minus_left: OperationExpectation(
         area: 50.0,
         subpaths: AnySubpathCount,
         points: [
-          ExpectOutside(svg_path.point(2.5, 5.0)),
-          ExpectOutside(svg_path.point(7.5, 5.0)),
-          ExpectInside(svg_path.point(12.5, 5.0)),
+          ExpectOutside(svg_path.Point(2.5, 5.0)),
+          ExpectOutside(svg_path.Point(7.5, 5.0)),
+          ExpectInside(svg_path.Point(12.5, 5.0)),
         ],
       ),
     ),
@@ -442,33 +442,33 @@ pub fn paper_style_csg_operation_table_test() {
         area: 200.0,
         subpaths: ExactSubpathCount(2),
         points: [
-          ExpectInside(svg_path.point(5.0, 5.0)),
-          ExpectOutside(svg_path.point(15.0, 5.0)),
-          ExpectInside(svg_path.point(25.0, 5.0)),
+          ExpectInside(svg_path.Point(5.0, 5.0)),
+          ExpectOutside(svg_path.Point(15.0, 5.0)),
+          ExpectInside(svg_path.Point(25.0, 5.0)),
         ],
       ),
       intersection: OperationExpectation(
         area: 0.0,
         subpaths: ExactSubpathCount(0),
         points: [
-          ExpectOutside(svg_path.point(5.0, 5.0)),
-          ExpectOutside(svg_path.point(25.0, 5.0)),
+          ExpectOutside(svg_path.Point(5.0, 5.0)),
+          ExpectOutside(svg_path.Point(25.0, 5.0)),
         ],
       ),
       left_minus_right: OperationExpectation(
         area: 100.0,
         subpaths: AnySubpathCount,
         points: [
-          ExpectInside(svg_path.point(5.0, 5.0)),
-          ExpectOutside(svg_path.point(25.0, 5.0)),
+          ExpectInside(svg_path.Point(5.0, 5.0)),
+          ExpectOutside(svg_path.Point(25.0, 5.0)),
         ],
       ),
       right_minus_left: OperationExpectation(
         area: 100.0,
         subpaths: AnySubpathCount,
         points: [
-          ExpectOutside(svg_path.point(5.0, 5.0)),
-          ExpectInside(svg_path.point(25.0, 5.0)),
+          ExpectOutside(svg_path.Point(5.0, 5.0)),
+          ExpectInside(svg_path.Point(25.0, 5.0)),
         ],
       ),
     ),
@@ -479,22 +479,22 @@ pub fn paper_style_csg_operation_table_test() {
       union: OperationExpectation(
         area: 100.0,
         subpaths: AnySubpathCount,
-        points: [ExpectInside(svg_path.point(5.0, 5.0))],
+        points: [ExpectInside(svg_path.Point(5.0, 5.0))],
       ),
       intersection: OperationExpectation(
         area: 100.0,
         subpaths: AnySubpathCount,
-        points: [ExpectInside(svg_path.point(5.0, 5.0))],
+        points: [ExpectInside(svg_path.Point(5.0, 5.0))],
       ),
       left_minus_right: OperationExpectation(
         area: 0.0,
         subpaths: ExactSubpathCount(0),
-        points: [ExpectOutside(svg_path.point(5.0, 5.0))],
+        points: [ExpectOutside(svg_path.Point(5.0, 5.0))],
       ),
       right_minus_left: OperationExpectation(
         area: 0.0,
         subpaths: ExactSubpathCount(0),
-        points: [ExpectOutside(svg_path.point(5.0, 5.0))],
+        points: [ExpectOutside(svg_path.Point(5.0, 5.0))],
       ),
     ),
     OperationCase(
@@ -505,33 +505,33 @@ pub fn paper_style_csg_operation_table_test() {
         area: 200.0,
         subpaths: ExactSubpathCount(2),
         points: [
-          ExpectInside(svg_path.point(5.0, 5.0)),
-          ExpectBoundary(svg_path.point(10.0, 5.0)),
-          ExpectInside(svg_path.point(15.0, 5.0)),
+          ExpectInside(svg_path.Point(5.0, 5.0)),
+          ExpectBoundary(svg_path.Point(10.0, 5.0)),
+          ExpectInside(svg_path.Point(15.0, 5.0)),
         ],
       ),
       intersection: OperationExpectation(
         area: 0.0,
         subpaths: AnySubpathCount,
         points: [
-          ExpectOutside(svg_path.point(5.0, 5.0)),
-          ExpectOutside(svg_path.point(15.0, 5.0)),
+          ExpectOutside(svg_path.Point(5.0, 5.0)),
+          ExpectOutside(svg_path.Point(15.0, 5.0)),
         ],
       ),
       left_minus_right: OperationExpectation(
         area: 100.0,
         subpaths: AnySubpathCount,
         points: [
-          ExpectInside(svg_path.point(5.0, 5.0)),
-          ExpectOutside(svg_path.point(15.0, 5.0)),
+          ExpectInside(svg_path.Point(5.0, 5.0)),
+          ExpectOutside(svg_path.Point(15.0, 5.0)),
         ],
       ),
       right_minus_left: OperationExpectation(
         area: 100.0,
         subpaths: AnySubpathCount,
         points: [
-          ExpectOutside(svg_path.point(5.0, 5.0)),
-          ExpectInside(svg_path.point(15.0, 5.0)),
+          ExpectOutside(svg_path.Point(5.0, 5.0)),
+          ExpectInside(svg_path.Point(15.0, 5.0)),
         ],
       ),
     ),
@@ -546,10 +546,10 @@ fn rectangle(
 ) -> svg_path.Path {
   svg_path.path_from_subpath(
     svg_path.subpath_assert_polygon([
-      svg_path.point(min_x, min_y),
-      svg_path.point(max_x, min_y),
-      svg_path.point(max_x, max_y),
-      svg_path.point(min_x, max_y),
+      svg_path.Point(min_x, min_y),
+      svg_path.Point(max_x, min_y),
+      svg_path.Point(max_x, max_y),
+      svg_path.Point(min_x, max_y),
     ]),
   )
 }
@@ -557,16 +557,16 @@ fn rectangle(
 fn nested_rectangles() -> svg_path.Path {
   svg_path.Path([
     svg_path.subpath_assert_polygon([
-      svg_path.point(0.0, 0.0),
-      svg_path.point(20.0, 0.0),
-      svg_path.point(20.0, 20.0),
-      svg_path.point(0.0, 20.0),
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(20.0, 0.0),
+      svg_path.Point(20.0, 20.0),
+      svg_path.Point(0.0, 20.0),
     ]),
     svg_path.subpath_assert_polygon([
-      svg_path.point(5.0, 5.0),
-      svg_path.point(15.0, 5.0),
-      svg_path.point(15.0, 15.0),
-      svg_path.point(5.0, 15.0),
+      svg_path.Point(5.0, 5.0),
+      svg_path.Point(15.0, 5.0),
+      svg_path.Point(15.0, 15.0),
+      svg_path.Point(5.0, 15.0),
     ]),
   ])
 }
@@ -620,13 +620,13 @@ fn union_paths_loop(
 }
 
 fn circle(center: svg_path.Point, radius: Float) -> svg_path.Path {
-  let left = svg_path.point(center.x -. radius, center.y)
-  let right = svg_path.point(center.x +. radius, center.y)
+  let left = svg_path.Point(center.x -. radius, center.y)
+  let right = svg_path.Point(center.x +. radius, center.y)
   svg_path.path_from_subpath(
     svg_path.subpath_assert([
       svg_path.Arc(
         start: right,
-        radius: svg_path.point(radius, radius),
+        radius: svg_path.Point(radius, radius),
         x_axis_rotation: 0.0,
         large_arc: False,
         sweep: True,
@@ -634,7 +634,7 @@ fn circle(center: svg_path.Point, radius: Float) -> svg_path.Path {
       ),
       svg_path.Arc(
         start: left,
-        radius: svg_path.point(radius, radius),
+        radius: svg_path.Point(radius, radius),
         x_axis_rotation: 0.0,
         large_arc: False,
         sweep: True,
@@ -648,10 +648,10 @@ fn circle(center: svg_path.Point, radius: Float) -> svg_path.Path {
 fn bowtie() -> svg_path.Path {
   svg_path.path_from_subpath(
     svg_path.subpath_assert_polygon([
-      svg_path.point(8.0, 8.0),
-      svg_path.point(114.0, 112.0),
-      svg_path.point(114.0, 8.0),
-      svg_path.point(8.0, 112.0),
+      svg_path.Point(8.0, 8.0),
+      svg_path.Point(114.0, 112.0),
+      svg_path.Point(114.0, 8.0),
+      svg_path.Point(8.0, 112.0),
     ]),
   )
 }
@@ -660,7 +660,7 @@ fn grid(xs: List(Float), ys: List(Float)) -> List(svg_path.Point) {
   xs
   |> list.flat_map(fn(x) {
     ys
-    |> list.map(fn(y) { svg_path.point(x, y) })
+    |> list.map(fn(y) { svg_path.Point(x, y) })
   })
 }
 
@@ -892,19 +892,19 @@ fn union_has_rectangle_and_slit(path: svg_path.Path) -> Bool {
 fn is_adjacent_union_outer_rectangle(subpath: svg_path.Subpath) -> Bool {
   let segments = svg_path.subpath_segments(subpath)
   list.length(segments) == 6
-  && has_line(segments, svg_path.point(0.0, 0.0), svg_path.point(1.0, 0.0))
-  && has_line(segments, svg_path.point(1.0, 0.0), svg_path.point(2.0, 0.0))
-  && has_line(segments, svg_path.point(2.0, 0.0), svg_path.point(2.0, 1.0))
-  && has_line(segments, svg_path.point(2.0, 1.0), svg_path.point(1.0, 1.0))
-  && has_line(segments, svg_path.point(1.0, 1.0), svg_path.point(0.0, 1.0))
-  && has_line(segments, svg_path.point(0.0, 1.0), svg_path.point(0.0, 0.0))
+  && has_line(segments, svg_path.Point(0.0, 0.0), svg_path.Point(1.0, 0.0))
+  && has_line(segments, svg_path.Point(1.0, 0.0), svg_path.Point(2.0, 0.0))
+  && has_line(segments, svg_path.Point(2.0, 0.0), svg_path.Point(2.0, 1.0))
+  && has_line(segments, svg_path.Point(2.0, 1.0), svg_path.Point(1.0, 1.0))
+  && has_line(segments, svg_path.Point(1.0, 1.0), svg_path.Point(0.0, 1.0))
+  && has_line(segments, svg_path.Point(0.0, 1.0), svg_path.Point(0.0, 0.0))
 }
 
 fn is_adjacent_union_slit(subpath: svg_path.Subpath) -> Bool {
   let segments = svg_path.subpath_segments(subpath)
   list.length(segments) == 2
-  && has_line(segments, svg_path.point(1.0, 0.0), svg_path.point(1.0, 1.0))
-  && has_line(segments, svg_path.point(1.0, 1.0), svg_path.point(1.0, 0.0))
+  && has_line(segments, svg_path.Point(1.0, 0.0), svg_path.Point(1.0, 1.0))
+  && has_line(segments, svg_path.Point(1.0, 1.0), svg_path.Point(1.0, 0.0))
 }
 
 fn offset_union_has_outer_boundary_and_slit(path: svg_path.Path) -> Bool {
@@ -917,21 +917,21 @@ fn offset_union_has_outer_boundary_and_slit(path: svg_path.Path) -> Bool {
 fn is_offset_union_outer_boundary(subpath: svg_path.Subpath) -> Bool {
   let segments = svg_path.subpath_segments(subpath)
   list.length(segments) == 8
-  && has_line(segments, svg_path.point(0.0, 0.0), svg_path.point(1.0, 0.0))
-  && has_line(segments, svg_path.point(1.0, 0.0), svg_path.point(1.0, 0.5))
-  && has_line(segments, svg_path.point(1.0, 0.5), svg_path.point(2.0, 0.5))
-  && has_line(segments, svg_path.point(2.0, 0.5), svg_path.point(2.0, 1.5))
-  && has_line(segments, svg_path.point(2.0, 1.5), svg_path.point(1.0, 1.5))
-  && has_line(segments, svg_path.point(1.0, 1.5), svg_path.point(1.0, 1.0))
-  && has_line(segments, svg_path.point(1.0, 1.0), svg_path.point(0.0, 1.0))
-  && has_line(segments, svg_path.point(0.0, 1.0), svg_path.point(0.0, 0.0))
+  && has_line(segments, svg_path.Point(0.0, 0.0), svg_path.Point(1.0, 0.0))
+  && has_line(segments, svg_path.Point(1.0, 0.0), svg_path.Point(1.0, 0.5))
+  && has_line(segments, svg_path.Point(1.0, 0.5), svg_path.Point(2.0, 0.5))
+  && has_line(segments, svg_path.Point(2.0, 0.5), svg_path.Point(2.0, 1.5))
+  && has_line(segments, svg_path.Point(2.0, 1.5), svg_path.Point(1.0, 1.5))
+  && has_line(segments, svg_path.Point(1.0, 1.5), svg_path.Point(1.0, 1.0))
+  && has_line(segments, svg_path.Point(1.0, 1.0), svg_path.Point(0.0, 1.0))
+  && has_line(segments, svg_path.Point(0.0, 1.0), svg_path.Point(0.0, 0.0))
 }
 
 fn is_offset_union_slit(subpath: svg_path.Subpath) -> Bool {
   let segments = svg_path.subpath_segments(subpath)
   list.length(segments) == 2
-  && has_line(segments, svg_path.point(1.0, 0.5), svg_path.point(1.0, 1.0))
-  && has_line(segments, svg_path.point(1.0, 1.0), svg_path.point(1.0, 0.5))
+  && has_line(segments, svg_path.Point(1.0, 0.5), svg_path.Point(1.0, 1.0))
+  && has_line(segments, svg_path.Point(1.0, 1.0), svg_path.Point(1.0, 0.5))
 }
 
 fn count_back_and_forth_subpaths(path: svg_path.Path) -> Int {

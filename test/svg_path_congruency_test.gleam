@@ -18,35 +18,35 @@ pub fn points_rejects_empty_lists_test() {
 
 pub fn points_rejects_different_length_lists_test() {
   assert congruency.points(
-      source: [svg_path.point(0.0, 0.0)],
-      target: [svg_path.point(1.0, 1.0), svg_path.point(2.0, 2.0)],
+      source: [svg_path.Point(0.0, 0.0)],
+      target: [svg_path.Point(1.0, 1.0), svg_path.Point(2.0, 2.0)],
       tolerance:,
     )
     == Error(Nil)
 }
 
 pub fn points_maps_single_points_with_translation_test() {
-  let source = [svg_path.point(2.0, 3.0)]
-  let target = [svg_path.point(7.0, 11.0)]
+  let source = [svg_path.Point(2.0, 3.0)]
+  let target = [svg_path.Point(7.0, 11.0)]
 
   let assert Ok(matrix) = congruency.points(source:, target:, tolerance:)
 
   assert point_near(
-    transform.point(svg_path.point(2.0, 3.0), by: matrix),
-    svg_path.point(7.0, 11.0),
+    transform.point(svg_path.Point(2.0, 3.0), by: matrix),
+    svg_path.Point(7.0, 11.0),
   )
 }
 
 pub fn points_maps_collapsed_source_to_collapsed_target_test() {
   let source = [
-    svg_path.point(2.0, 3.0),
-    svg_path.point(2.0, 3.0),
-    svg_path.point(2.0, 3.0),
+    svg_path.Point(2.0, 3.0),
+    svg_path.Point(2.0, 3.0),
+    svg_path.Point(2.0, 3.0),
   ]
   let target = [
-    svg_path.point(7.0, 11.0),
-    svg_path.point(7.0, 11.0),
-    svg_path.point(7.0, 11.0),
+    svg_path.Point(7.0, 11.0),
+    svg_path.Point(7.0, 11.0),
+    svg_path.Point(7.0, 11.0),
   ]
 
   assert result_is_ok(congruency.points(source:, target:, tolerance:))
@@ -54,14 +54,14 @@ pub fn points_maps_collapsed_source_to_collapsed_target_test() {
 
 pub fn points_rejects_collapsed_source_to_spread_target_test() {
   let source = [
-    svg_path.point(2.0, 3.0),
-    svg_path.point(2.0, 3.0),
-    svg_path.point(2.0, 3.0),
+    svg_path.Point(2.0, 3.0),
+    svg_path.Point(2.0, 3.0),
+    svg_path.Point(2.0, 3.0),
   ]
   let target = [
-    svg_path.point(7.0, 11.0),
-    svg_path.point(8.0, 11.0),
-    svg_path.point(7.0, 12.0),
+    svg_path.Point(7.0, 11.0),
+    svg_path.Point(8.0, 11.0),
+    svg_path.Point(7.0, 12.0),
   ]
 
   assert congruency.points(source:, target:, tolerance:) == Error(Nil)
@@ -69,22 +69,22 @@ pub fn points_rejects_collapsed_source_to_spread_target_test() {
 
 pub fn points_checks_all_ordered_points_test() {
   let source = [
-    svg_path.point(0.0, 0.0),
-    svg_path.point(1.0, 1.0),
-    svg_path.point(10.0, 0.0),
-    svg_path.point(2.0, 3.0),
+    svg_path.Point(0.0, 0.0),
+    svg_path.Point(1.0, 1.0),
+    svg_path.Point(10.0, 0.0),
+    svg_path.Point(2.0, 3.0),
   ]
   let target = [
-    svg_path.point(5.0, 7.0),
-    svg_path.point(3.0, 9.0),
-    svg_path.point(5.0, 27.0),
-    svg_path.point(-1.0, 11.0),
+    svg_path.Point(5.0, 7.0),
+    svg_path.Point(3.0, 9.0),
+    svg_path.Point(5.0, 27.0),
+    svg_path.Point(-1.0, 11.0),
   ]
   let wrong_order = [
-    svg_path.point(5.0, 7.0),
-    svg_path.point(-1.0, 11.0),
-    svg_path.point(5.0, 27.0),
-    svg_path.point(3.0, 9.0),
+    svg_path.Point(5.0, 7.0),
+    svg_path.Point(-1.0, 11.0),
+    svg_path.Point(5.0, 27.0),
+    svg_path.Point(3.0, 9.0),
   ]
 
   assert result_is_ok(congruency.points(source:, target:, tolerance:))
@@ -105,10 +105,10 @@ pub fn points_maps_long_ordered_point_list_test() {
 
 pub fn fit_points_with_similar_returns_rms_error_test() {
   let source = [
-    svg_path.point(0.0, 0.0),
-    svg_path.point(10.0, 0.0),
-    svg_path.point(0.0, 10.0),
-    svg_path.point(10.0, 10.0),
+    svg_path.Point(0.0, 0.0),
+    svg_path.Point(10.0, 0.0),
+    svg_path.Point(0.0, 10.0),
+    svg_path.Point(10.0, 10.0),
   ]
   let exact =
     transform.translate(x: 5.0, y: 7.0)
@@ -117,22 +117,22 @@ pub fn fit_points_with_similar_returns_rms_error_test() {
   let target =
     source
     |> list.map(transform.point(_, by: exact))
-    |> replace_last(svg_path.point(-14.0, 35.0))
+    |> replace_last(svg_path.Point(-14.0, 35.0))
 
   let assert Ok(congruency.Fit(transform: matrix, error:)) =
     congruency.fit_points(source:, target:, family: congruency.Similar)
 
   assert error >. 0.0
   assert error <. 3.0
-  assert transform.point(svg_path.point(0.0, 0.0), by: matrix).x >. 4.0
+  assert transform.point(svg_path.Point(0.0, 0.0), by: matrix).x >. 4.0
 }
 
 pub fn fit_points_with_affine_maps_square_to_parallelogram_test() {
   let source = [
-    svg_path.point(0.0, 0.0),
-    svg_path.point(1.0, 0.0),
-    svg_path.point(0.0, 1.0),
-    svg_path.point(1.0, 1.0),
+    svg_path.Point(0.0, 0.0),
+    svg_path.Point(1.0, 0.0),
+    svg_path.Point(0.0, 1.0),
+    svg_path.Point(1.0, 1.0),
   ]
   let affine = transform.matrix(a: 3.0, b: 1.0, c: 2.0, d: 5.0, e: 7.0, f: 11.0)
   let target = source |> list.map(transform.point(_, by: affine))
@@ -149,14 +149,14 @@ pub fn fit_points_with_affine_maps_square_to_parallelogram_test() {
 
 pub fn fit_points_with_affine_falls_back_to_similar_for_collinear_source_test() {
   let source = [
-    svg_path.point(0.0, 0.0),
-    svg_path.point(1.0, 0.0),
-    svg_path.point(2.0, 0.0),
+    svg_path.Point(0.0, 0.0),
+    svg_path.Point(1.0, 0.0),
+    svg_path.Point(2.0, 0.0),
   ]
   let target = [
-    svg_path.point(5.0, 5.0),
-    svg_path.point(7.0, 5.0),
-    svg_path.point(9.0, 5.0),
+    svg_path.Point(5.0, 5.0),
+    svg_path.Point(7.0, 5.0),
+    svg_path.Point(9.0, 5.0),
   ]
 
   let assert Ok(congruency.Fit(transform: affine, error: affine_error)) =
@@ -177,7 +177,7 @@ pub fn fit_points_rejects_empty_and_mismatched_lists_test() {
     )
     == Error(Nil)
   assert congruency.fit_points(
-      source: [svg_path.point(0.0, 0.0)],
+      source: [svg_path.Point(0.0, 0.0)],
       target: [],
       family: congruency.Similar,
     )
@@ -187,13 +187,13 @@ pub fn fit_points_rejects_empty_and_mismatched_lists_test() {
 pub fn line_returns_transform_mapping_source_to_target_test() {
   let source =
     svg_path.Line(
-      start: svg_path.point(0.0, 0.0),
-      end: svg_path.point(10.0, 0.0),
+      start: svg_path.Point(0.0, 0.0),
+      end: svg_path.Point(10.0, 0.0),
     )
   let target =
     svg_path.Line(
-      start: svg_path.point(3.0, 4.0),
-      end: svg_path.point(3.0, 24.0),
+      start: svg_path.Point(3.0, 4.0),
+      end: svg_path.Point(3.0, 24.0),
     )
 
   let assert Ok(matrix) = congruency.segment(source:, target:, tolerance:)
@@ -205,14 +205,14 @@ pub fn line_returns_transform_mapping_source_to_target_test() {
 pub fn fit_segment_rejects_different_constructors_test() {
   let source =
     svg_path.Line(
-      start: svg_path.point(0.0, 0.0),
-      end: svg_path.point(10.0, 0.0),
+      start: svg_path.Point(0.0, 0.0),
+      end: svg_path.Point(10.0, 0.0),
     )
   let target =
     svg_path.QuadraticBezier(
-      start: svg_path.point(0.0, 0.0),
-      control: svg_path.point(5.0, 5.0),
-      end: svg_path.point(10.0, 0.0),
+      start: svg_path.Point(0.0, 0.0),
+      control: svg_path.Point(5.0, 5.0),
+      end: svg_path.Point(10.0, 0.0),
     )
 
   assert congruency.fit_segment(source:, target:, family: congruency.Affine)
@@ -222,14 +222,14 @@ pub fn fit_segment_rejects_different_constructors_test() {
 pub fn segment_rejects_different_constructors_test() {
   let source =
     svg_path.Line(
-      start: svg_path.point(0.0, 0.0),
-      end: svg_path.point(10.0, 0.0),
+      start: svg_path.Point(0.0, 0.0),
+      end: svg_path.Point(10.0, 0.0),
     )
   let target =
     svg_path.QuadraticBezier(
-      start: svg_path.point(0.0, 0.0),
-      control: svg_path.point(5.0, 5.0),
-      end: svg_path.point(10.0, 0.0),
+      start: svg_path.Point(0.0, 0.0),
+      control: svg_path.Point(5.0, 5.0),
+      end: svg_path.Point(10.0, 0.0),
     )
 
   assert congruency.segment(source:, target:, tolerance:) == Error(Nil)
@@ -238,13 +238,13 @@ pub fn segment_rejects_different_constructors_test() {
 pub fn line_congruency_allows_zero_scale_directionally_test() {
   let source =
     svg_path.Line(
-      start: svg_path.point(0.0, 0.0),
-      end: svg_path.point(10.0, 0.0),
+      start: svg_path.Point(0.0, 0.0),
+      end: svg_path.Point(10.0, 0.0),
     )
   let target =
     svg_path.Line(
-      start: svg_path.point(5.0, 5.0),
-      end: svg_path.point(5.0, 5.0),
+      start: svg_path.Point(5.0, 5.0),
+      end: svg_path.Point(5.0, 5.0),
     )
 
   assert result_is_ok(congruency.segment(source:, target:, tolerance:))
@@ -255,21 +255,21 @@ pub fn line_congruency_allows_zero_scale_directionally_test() {
 pub fn quadratic_uses_control_points_in_final_check_test() {
   let source =
     svg_path.QuadraticBezier(
-      start: svg_path.point(0.0, 0.0),
-      control: svg_path.point(5.0, 10.0),
-      end: svg_path.point(10.0, 0.0),
+      start: svg_path.Point(0.0, 0.0),
+      control: svg_path.Point(5.0, 10.0),
+      end: svg_path.Point(10.0, 0.0),
     )
   let target =
     svg_path.QuadraticBezier(
-      start: svg_path.point(10.0, 20.0),
-      control: svg_path.point(-10.0, 30.0),
-      end: svg_path.point(10.0, 40.0),
+      start: svg_path.Point(10.0, 20.0),
+      control: svg_path.Point(-10.0, 30.0),
+      end: svg_path.Point(10.0, 40.0),
     )
   let wrong_control =
     svg_path.QuadraticBezier(
-      start: svg_path.point(10.0, 20.0),
-      control: svg_path.point(-9.0, 30.0),
-      end: svg_path.point(10.0, 40.0),
+      start: svg_path.Point(10.0, 20.0),
+      control: svg_path.Point(-9.0, 30.0),
+      end: svg_path.Point(10.0, 40.0),
     )
 
   assert result_is_ok(congruency.segment(source:, target:, tolerance:))
@@ -280,10 +280,10 @@ pub fn quadratic_uses_control_points_in_final_check_test() {
 pub fn cubic_returns_transform_mapping_source_to_target_test() {
   let source =
     svg_path.CubicBezier(
-      start: svg_path.point(0.0, 0.0),
-      control1: svg_path.point(2.0, 8.0),
-      control2: svg_path.point(8.0, 8.0),
-      end: svg_path.point(10.0, 0.0),
+      start: svg_path.Point(0.0, 0.0),
+      control1: svg_path.Point(2.0, 8.0),
+      control2: svg_path.Point(8.0, 8.0),
+      end: svg_path.Point(10.0, 0.0),
     )
   let matrix =
     transform.translate(x: 12.0, y: -3.0)
@@ -300,12 +300,12 @@ pub fn cubic_returns_transform_mapping_source_to_target_test() {
 pub fn arc_returns_transform_mapping_source_to_target_test() {
   let source =
     svg_path.Arc(
-      start: svg_path.point(0.0, 0.0),
-      radius: svg_path.point(10.0, 5.0),
+      start: svg_path.Point(0.0, 0.0),
+      radius: svg_path.Point(10.0, 5.0),
       x_axis_rotation: 30.0,
       large_arc: False,
       sweep: True,
-      end: svg_path.point(20.0, 0.0),
+      end: svg_path.Point(20.0, 0.0),
     )
   let matrix =
     transform.translate(x: 3.0, y: -7.0)
@@ -322,21 +322,21 @@ pub fn arc_returns_transform_mapping_source_to_target_test() {
 pub fn arc_rejects_mismatched_flags_test() {
   let source =
     svg_path.Arc(
-      start: svg_path.point(0.0, 0.0),
-      radius: svg_path.point(10.0, 10.0),
+      start: svg_path.Point(0.0, 0.0),
+      radius: svg_path.Point(10.0, 10.0),
       x_axis_rotation: 0.0,
       large_arc: False,
       sweep: True,
-      end: svg_path.point(20.0, 0.0),
+      end: svg_path.Point(20.0, 0.0),
     )
   let target =
     svg_path.Arc(
-      start: svg_path.point(0.0, 0.0),
-      radius: svg_path.point(10.0, 10.0),
+      start: svg_path.Point(0.0, 0.0),
+      radius: svg_path.Point(10.0, 10.0),
       x_axis_rotation: 0.0,
       large_arc: False,
       sweep: False,
-      end: svg_path.point(20.0, 0.0),
+      end: svg_path.Point(20.0, 0.0),
     )
 
   assert congruency.segment(source:, target:, tolerance:) == Error(Nil)
@@ -346,13 +346,13 @@ pub fn subpath_maps_ordered_segments_to_target_test() {
   let source =
     svg_path.subpath_assert([
       svg_path.Line(
-        start: svg_path.point(0.0, 0.0),
-        end: svg_path.point(10.0, 0.0),
+        start: svg_path.Point(0.0, 0.0),
+        end: svg_path.Point(10.0, 0.0),
       ),
       svg_path.QuadraticBezier(
-        start: svg_path.point(10.0, 0.0),
-        control: svg_path.point(15.0, 5.0),
-        end: svg_path.point(20.0, 0.0),
+        start: svg_path.Point(10.0, 0.0),
+        control: svg_path.Point(15.0, 5.0),
+        end: svg_path.Point(20.0, 0.0),
       ),
     ])
   let matrix =
@@ -371,12 +371,12 @@ pub fn fit_subpath_with_affine_uses_semantic_point_cloud_test() {
   let source =
     svg_path.subpath_assert([
       svg_path.Line(
-        start: svg_path.point(0.0, 0.0),
-        end: svg_path.point(10.0, 0.0),
+        start: svg_path.Point(0.0, 0.0),
+        end: svg_path.Point(10.0, 0.0),
       ),
       svg_path.Line(
-        start: svg_path.point(10.0, 0.0),
-        end: svg_path.point(10.0, 10.0),
+        start: svg_path.Point(10.0, 0.0),
+        end: svg_path.Point(10.0, 10.0),
       ),
     ])
   let matrix = transform.matrix(a: 2.0, b: 1.0, c: 0.5, d: 3.0, e: -4.0, f: 8.0)
@@ -394,12 +394,12 @@ pub fn subpath_ignores_closed_field_test() {
   let open =
     svg_path.subpath_assert([
       svg_path.Line(
-        start: svg_path.point(0.0, 0.0),
-        end: svg_path.point(10.0, 0.0),
+        start: svg_path.Point(0.0, 0.0),
+        end: svg_path.Point(10.0, 0.0),
       ),
       svg_path.Line(
-        start: svg_path.point(10.0, 0.0),
-        end: svg_path.point(0.0, 0.0),
+        start: svg_path.Point(10.0, 0.0),
+        end: svg_path.Point(0.0, 0.0),
       ),
     ])
   let assert Ok(closed) = svg_path.subpath_set_closed(open, closed: True)
@@ -412,16 +412,16 @@ pub fn subpath_ignores_closed_field_test() {
 }
 
 pub fn subpath_maps_move_only_subpaths_test() {
-  let source = svg_path.subpath_empty(at: svg_path.point(1.0, 2.0))
+  let source = svg_path.subpath_empty(at: svg_path.Point(1.0, 2.0))
   let assert Ok(target) =
-    svg_path.subpath_empty(at: svg_path.point(6.0, 8.0))
+    svg_path.subpath_empty(at: svg_path.Point(6.0, 8.0))
     |> svg_path.subpath_set_closed(closed: True)
 
   let assert Ok(matrix) = congruency.subpath(source:, target:, tolerance:)
 
   assert point_near(
-    transform.point(svg_path.point(1.0, 2.0), by: matrix),
-    svg_path.point(6.0, 8.0),
+    transform.point(svg_path.Point(1.0, 2.0), by: matrix),
+    svg_path.Point(6.0, 8.0),
   )
 }
 
@@ -429,16 +429,16 @@ pub fn subpath_rejects_different_segment_constructors_test() {
   let source =
     svg_path.subpath_assert([
       svg_path.Line(
-        start: svg_path.point(0.0, 0.0),
-        end: svg_path.point(10.0, 0.0),
+        start: svg_path.Point(0.0, 0.0),
+        end: svg_path.Point(10.0, 0.0),
       ),
     ])
   let target =
     svg_path.subpath_assert([
       svg_path.QuadraticBezier(
-        start: svg_path.point(0.0, 0.0),
-        control: svg_path.point(5.0, 5.0),
-        end: svg_path.point(10.0, 0.0),
+        start: svg_path.Point(0.0, 0.0),
+        control: svg_path.Point(5.0, 5.0),
+        end: svg_path.Point(10.0, 0.0),
       ),
     ])
 
@@ -449,31 +449,31 @@ pub fn subpath_does_not_cycle_segments_test() {
   let source =
     svg_path.subpath_assert([
       svg_path.Line(
-        start: svg_path.point(0.0, 0.0),
-        end: svg_path.point(10.0, 0.0),
+        start: svg_path.Point(0.0, 0.0),
+        end: svg_path.Point(10.0, 0.0),
       ),
       svg_path.Line(
-        start: svg_path.point(10.0, 0.0),
-        end: svg_path.point(20.0, 0.0),
+        start: svg_path.Point(10.0, 0.0),
+        end: svg_path.Point(20.0, 0.0),
       ),
       svg_path.Line(
-        start: svg_path.point(20.0, 0.0),
-        end: svg_path.point(30.0, 0.0),
+        start: svg_path.Point(20.0, 0.0),
+        end: svg_path.Point(30.0, 0.0),
       ),
     ])
   let target =
     svg_path.subpath_assert([
       svg_path.Line(
-        start: svg_path.point(10.0, 0.0),
-        end: svg_path.point(20.0, 0.0),
+        start: svg_path.Point(10.0, 0.0),
+        end: svg_path.Point(20.0, 0.0),
       ),
       svg_path.Line(
-        start: svg_path.point(20.0, 0.0),
-        end: svg_path.point(30.0, 0.0),
+        start: svg_path.Point(20.0, 0.0),
+        end: svg_path.Point(30.0, 0.0),
       ),
       svg_path.Line(
-        start: svg_path.point(30.0, 0.0),
-        end: svg_path.point(0.0, 0.0),
+        start: svg_path.Point(30.0, 0.0),
+        end: svg_path.Point(0.0, 0.0),
       ),
     ])
 
@@ -484,23 +484,23 @@ pub fn subpath_rejects_arc_field_mismatch_after_points_match_test() {
   let source =
     svg_path.subpath_assert([
       svg_path.Arc(
-        start: svg_path.point(0.0, 0.0),
-        radius: svg_path.point(10.0, 10.0),
+        start: svg_path.Point(0.0, 0.0),
+        radius: svg_path.Point(10.0, 10.0),
         x_axis_rotation: 0.0,
         large_arc: False,
         sweep: True,
-        end: svg_path.point(20.0, 0.0),
+        end: svg_path.Point(20.0, 0.0),
       ),
     ])
   let target =
     svg_path.subpath_assert([
       svg_path.Arc(
-        start: svg_path.point(0.0, 0.0),
-        radius: svg_path.point(12.0, 12.0),
+        start: svg_path.Point(0.0, 0.0),
+        radius: svg_path.Point(12.0, 12.0),
         x_axis_rotation: 0.0,
         large_arc: False,
         sweep: True,
-        end: svg_path.point(20.0, 0.0),
+        end: svg_path.Point(20.0, 0.0),
       ),
     ])
 
@@ -512,14 +512,14 @@ pub fn path_uses_one_transform_across_subpaths_test() {
     svg_path.Path([
       svg_path.subpath_assert([
         svg_path.Line(
-          start: svg_path.point(0.0, 0.0),
-          end: svg_path.point(10.0, 0.0),
+          start: svg_path.Point(0.0, 0.0),
+          end: svg_path.Point(10.0, 0.0),
         ),
       ]),
       svg_path.subpath_assert([
         svg_path.Line(
-          start: svg_path.point(0.0, 10.0),
-          end: svg_path.point(10.0, 10.0),
+          start: svg_path.Point(0.0, 10.0),
+          end: svg_path.Point(10.0, 10.0),
         ),
       ]),
     ])
@@ -527,14 +527,14 @@ pub fn path_uses_one_transform_across_subpaths_test() {
     svg_path.Path([
       svg_path.subpath_assert([
         svg_path.Line(
-          start: svg_path.point(5.0, 5.0),
-          end: svg_path.point(25.0, 5.0),
+          start: svg_path.Point(5.0, 5.0),
+          end: svg_path.Point(25.0, 5.0),
         ),
       ]),
       svg_path.subpath_assert([
         svg_path.Line(
-          start: svg_path.point(5.0, 25.0),
-          end: svg_path.point(25.0, 25.0),
+          start: svg_path.Point(5.0, 25.0),
+          end: svg_path.Point(25.0, 25.0),
         ),
       ]),
     ])
@@ -550,14 +550,14 @@ pub fn fit_path_with_affine_uses_one_transform_across_subpaths_test() {
     svg_path.Path([
       svg_path.subpath_assert([
         svg_path.Line(
-          start: svg_path.point(0.0, 0.0),
-          end: svg_path.point(10.0, 0.0),
+          start: svg_path.Point(0.0, 0.0),
+          end: svg_path.Point(10.0, 0.0),
         ),
       ]),
       svg_path.subpath_assert([
         svg_path.Line(
-          start: svg_path.point(0.0, 10.0),
-          end: svg_path.point(10.0, 10.0),
+          start: svg_path.Point(0.0, 10.0),
+          end: svg_path.Point(10.0, 10.0),
         ),
       ]),
     ])
@@ -578,27 +578,27 @@ pub fn path_recognizes_transformed_mixed_fixture_test() {
     svg_path.Path([
       svg_path.subpath_assert([
         svg_path.Line(
-          start: svg_path.point(0.0, 0.0),
-          end: svg_path.point(12.0, 0.0),
+          start: svg_path.Point(0.0, 0.0),
+          end: svg_path.Point(12.0, 0.0),
         ),
         svg_path.QuadraticBezier(
-          start: svg_path.point(12.0, 0.0),
-          control: svg_path.point(18.0, 8.0),
-          end: svg_path.point(24.0, 0.0),
+          start: svg_path.Point(12.0, 0.0),
+          control: svg_path.Point(18.0, 8.0),
+          end: svg_path.Point(24.0, 0.0),
         ),
         svg_path.CubicBezier(
-          start: svg_path.point(24.0, 0.0),
-          control1: svg_path.point(30.0, -8.0),
-          control2: svg_path.point(36.0, 8.0),
-          end: svg_path.point(42.0, 0.0),
+          start: svg_path.Point(24.0, 0.0),
+          control1: svg_path.Point(30.0, -8.0),
+          control2: svg_path.Point(36.0, 8.0),
+          end: svg_path.Point(42.0, 0.0),
         ),
         svg_path.Arc(
-          start: svg_path.point(42.0, 0.0),
-          radius: svg_path.point(6.0, 10.0),
+          start: svg_path.Point(42.0, 0.0),
+          radius: svg_path.Point(6.0, 10.0),
           x_axis_rotation: 0.0,
           large_arc: False,
           sweep: False,
-          end: svg_path.point(50.0, 0.0),
+          end: svg_path.Point(50.0, 0.0),
         ),
       ]),
     ])
@@ -619,30 +619,30 @@ pub fn path_recognizes_transformed_multi_subpath_fixture_test() {
     svg_path.Path([
       svg_path.subpath_assert([
         svg_path.Line(
-          start: svg_path.point(0.0, 0.0),
-          end: svg_path.point(20.0, 0.0),
+          start: svg_path.Point(0.0, 0.0),
+          end: svg_path.Point(20.0, 0.0),
         ),
         svg_path.Line(
-          start: svg_path.point(20.0, 0.0),
-          end: svg_path.point(20.0, 20.0),
+          start: svg_path.Point(20.0, 0.0),
+          end: svg_path.Point(20.0, 20.0),
         ),
         svg_path.Line(
-          start: svg_path.point(20.0, 20.0),
-          end: svg_path.point(0.0, 20.0),
+          start: svg_path.Point(20.0, 20.0),
+          end: svg_path.Point(0.0, 20.0),
         ),
         svg_path.Line(
-          start: svg_path.point(0.0, 20.0),
-          end: svg_path.point(0.0, 0.0),
+          start: svg_path.Point(0.0, 20.0),
+          end: svg_path.Point(0.0, 0.0),
         ),
       ]),
       svg_path.subpath_assert([
         svg_path.Line(
-          start: svg_path.point(30.0, 30.0),
-          end: svg_path.point(40.0, 30.0),
+          start: svg_path.Point(30.0, 30.0),
+          end: svg_path.Point(40.0, 30.0),
         ),
         svg_path.Line(
-          start: svg_path.point(40.0, 30.0),
-          end: svg_path.point(40.0, 40.0),
+          start: svg_path.Point(40.0, 30.0),
+          end: svg_path.Point(40.0, 40.0),
         ),
       ]),
     ])
@@ -663,14 +663,14 @@ pub fn path_rejects_individually_congruent_but_globally_inconsistent_subpaths_te
     svg_path.Path([
       svg_path.subpath_assert([
         svg_path.Line(
-          start: svg_path.point(0.0, 0.0),
-          end: svg_path.point(10.0, 0.0),
+          start: svg_path.Point(0.0, 0.0),
+          end: svg_path.Point(10.0, 0.0),
         ),
       ]),
       svg_path.subpath_assert([
         svg_path.Line(
-          start: svg_path.point(0.0, 10.0),
-          end: svg_path.point(10.0, 10.0),
+          start: svg_path.Point(0.0, 10.0),
+          end: svg_path.Point(10.0, 10.0),
         ),
       ]),
     ])
@@ -678,14 +678,14 @@ pub fn path_rejects_individually_congruent_but_globally_inconsistent_subpaths_te
     svg_path.Path([
       svg_path.subpath_assert([
         svg_path.Line(
-          start: svg_path.point(5.0, 5.0),
-          end: svg_path.point(25.0, 5.0),
+          start: svg_path.Point(5.0, 5.0),
+          end: svg_path.Point(25.0, 5.0),
         ),
       ]),
       svg_path.subpath_assert([
         svg_path.Line(
-          start: svg_path.point(100.0, 25.0),
-          end: svg_path.point(120.0, 25.0),
+          start: svg_path.Point(100.0, 25.0),
+          end: svg_path.Point(120.0, 25.0),
         ),
       ]),
     ])
@@ -697,12 +697,12 @@ pub fn path_ignores_subpath_closed_fields_test() {
   let open =
     svg_path.subpath_assert([
       svg_path.Line(
-        start: svg_path.point(0.0, 0.0),
-        end: svg_path.point(10.0, 0.0),
+        start: svg_path.Point(0.0, 0.0),
+        end: svg_path.Point(10.0, 0.0),
       ),
       svg_path.Line(
-        start: svg_path.point(10.0, 0.0),
-        end: svg_path.point(0.0, 0.0),
+        start: svg_path.Point(10.0, 0.0),
+        end: svg_path.Point(0.0, 0.0),
       ),
     ])
   let assert Ok(closed) = svg_path.subpath_set_closed(open, closed: True)
@@ -718,8 +718,8 @@ pub fn path_rejects_different_subpath_counts_test() {
   let subpath =
     svg_path.subpath_assert([
       svg_path.Line(
-        start: svg_path.point(0.0, 0.0),
-        end: svg_path.point(10.0, 0.0),
+        start: svg_path.Point(0.0, 0.0),
+        end: svg_path.Point(10.0, 0.0),
       ),
     ])
 
@@ -736,12 +736,12 @@ pub fn path_rejects_arc_field_mismatch_after_points_match_test() {
     svg_path.Path([
       svg_path.subpath_assert([
         svg_path.Arc(
-          start: svg_path.point(0.0, 0.0),
-          radius: svg_path.point(10.0, 10.0),
+          start: svg_path.Point(0.0, 0.0),
+          radius: svg_path.Point(10.0, 10.0),
           x_axis_rotation: 0.0,
           large_arc: False,
           sweep: True,
-          end: svg_path.point(20.0, 0.0),
+          end: svg_path.Point(20.0, 0.0),
         ),
       ]),
     ])
@@ -749,12 +749,12 @@ pub fn path_rejects_arc_field_mismatch_after_points_match_test() {
     svg_path.Path([
       svg_path.subpath_assert([
         svg_path.Arc(
-          start: svg_path.point(0.0, 0.0),
-          radius: svg_path.point(12.0, 12.0),
+          start: svg_path.Point(0.0, 0.0),
+          radius: svg_path.Point(12.0, 12.0),
           x_axis_rotation: 0.0,
           large_arc: False,
           sweep: True,
-          end: svg_path.point(20.0, 0.0),
+          end: svg_path.Point(20.0, 0.0),
         ),
       ]),
     ])
@@ -920,13 +920,13 @@ fn long_point_list(count: Int) -> List(svg_path.Point) {
     let x = int.to_float(index)
     let y = int.to_float({ index * index } % 17)
 
-    [svg_path.point(x, y), ..points]
+    [svg_path.Point(x, y), ..points]
   })
   |> list.reverse
 }
 
 fn long_target_point(point: svg_path.Point) -> svg_path.Point {
-  svg_path.point(10.0 -. 2.0 *. point.y, -3.0 +. 2.0 *. point.x)
+  svg_path.Point(10.0 -. 2.0 *. point.y, -3.0 +. 2.0 *. point.x)
 }
 
 fn point_near(a: svg_path.Point, b: svg_path.Point) -> Bool {

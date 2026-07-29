@@ -164,7 +164,7 @@ fn point_support(point: svg_path.Point, degrees: Float) -> Float {
 fn angle_direction(degrees: Float) -> svg_path.Point {
   let radians = degrees *. maths.pi() /. 180.0
 
-  svg_path.point(maths.cos(radians), maths.sin(radians))
+  svg_path.Point(maths.cos(radians), maths.sin(radians))
 }
 
 fn dot(a: svg_path.Point, b: svg_path.Point) -> Float {

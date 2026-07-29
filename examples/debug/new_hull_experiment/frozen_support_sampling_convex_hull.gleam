@@ -1159,7 +1159,7 @@ fn normalize_angle(angle: Float) -> Float {
 
 fn angle_direction(angle: Float) -> svg_path.Point {
   let radians = angle *. maths.pi() /. 180.0
-  svg_path.point(maths.cos(radians), maths.sin(radians))
+  svg_path.Point(maths.cos(radians), maths.sin(radians))
 }
 
 fn dot(a: svg_path.Point, b: svg_path.Point) -> Float {

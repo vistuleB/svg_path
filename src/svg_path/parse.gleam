@@ -67,8 +67,8 @@ pub fn path(input: String) -> Result(svg_path.Path, Error) {
 fn initial_state() -> State {
   State(
     subpaths: [],
-    subpath: svg_path.subpath_empty(at: svg_path.point(0.0, 0.0)),
-    current: svg_path.point(0.0, 0.0),
+    subpath: svg_path.subpath_empty(at: svg_path.Point(0.0, 0.0)),
+    current: svg_path.Point(0.0, 0.0),
     has_current: False,
     active: False,
     last_cubic_control: None,
@@ -129,7 +129,7 @@ fn parse_move(
         Ok(state) -> {
           let base = case relative && state.has_current {
             True -> state.current
-            False -> svg_path.point(0.0, 0.0)
+            False -> svg_path.Point(0.0, 0.0)
           }
           let target = offset(base, x, y)
           let state =
@@ -231,7 +231,7 @@ fn parse_horizontal_loop(
     [Number(x), ..rest] -> {
       let target = case relative {
         True -> offset(state.current, x, 0.0)
-        False -> svg_path.point(x, state.current.y)
+        False -> svg_path.Point(x, state.current.y)
       }
 
       case append_line_to(state, target) {
@@ -270,7 +270,7 @@ fn parse_vertical_loop(
     [Number(y), ..rest] -> {
       let target = case relative {
         True -> offset(state.current, 0.0, y)
-        False -> svg_path.point(state.current.x, y)
+        False -> svg_path.Point(state.current.x, y)
       }
 
       case append_line_to(state, target) {
@@ -543,7 +543,7 @@ fn parse_arc_loop(
           let segment =
             svg_path.Arc(
               start: state.current,
-              radius: svg_path.point(radius_x, radius_y),
+              radius: svg_path.Point(radius_x, radius_y),
               x_axis_rotation:,
               large_arc:,
               sweep:,
@@ -688,7 +688,7 @@ fn reflect(
   point: svg_path.Point,
   around origin: svg_path.Point,
 ) -> svg_path.Point {
-  svg_path.point(origin.x *. 2.0 -. point.x, origin.y *. 2.0 -. point.y)
+  svg_path.Point(origin.x *. 2.0 -. point.x, origin.y *. 2.0 -. point.y)
 }
 
 fn ensure_active(state: State) -> Result(Nil, Error) {
@@ -706,12 +706,12 @@ fn target_point(
 ) -> svg_path.Point {
   case relative {
     True -> offset(state.current, x, y)
-    False -> svg_path.point(x, y)
+    False -> svg_path.Point(x, y)
   }
 }
 
 fn offset(point: svg_path.Point, x: Float, y: Float) -> svg_path.Point {
-  svg_path.point(point.x +. x, point.y +. y)
+  svg_path.Point(point.x +. x, point.y +. y)
 }
 
 fn take_pair(

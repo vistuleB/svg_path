@@ -1527,7 +1527,7 @@ fn ellipse_local_point(
   let translated = subtract(point, from_ellipse_point(arc.center))
   let cosine = trig.cos_degrees(0.0 -. arc.x_axis_rotation)
   let sine = trig.sin_degrees(0.0 -. arc.x_axis_rotation)
-  svg_path.point(
+  svg_path.Point(
     cosine *. translated.x -. sine *. translated.y,
     sine *. translated.x +. cosine *. translated.y,
   )
@@ -1538,7 +1538,7 @@ fn to_ellipse_point(point: svg_path.Point) -> ellipse.Point {
 }
 
 fn from_ellipse_point(point: ellipse.Point) -> svg_path.Point {
-  svg_path.point(point.x, point.y)
+  svg_path.Point(point.x, point.y)
 }
 
 fn segment_point_tangent_numeric_roots(
@@ -2240,11 +2240,11 @@ fn combine_boxes(
   second: svg_path.BoundingBox,
 ) -> svg_path.BoundingBox {
   svg_path.BoundingBox(
-    min: svg_path.point(
+    min: svg_path.Point(
       float.min(first.min.x, second.min.x),
       float.min(first.min.y, second.min.y),
     ),
-    max: svg_path.point(
+    max: svg_path.Point(
       float.max(first.max.x, second.max.x),
       float.max(first.max.y, second.max.y),
     ),
@@ -2253,10 +2253,10 @@ fn combine_boxes(
 
 fn bounding_box_polygon(box: svg_path.BoundingBox) -> ConvexPolygon {
   ConvexPolygon(vertices: [
-    svg_path.point(box.min.x, box.min.y),
-    svg_path.point(box.max.x, box.min.y),
-    svg_path.point(box.max.x, box.max.y),
-    svg_path.point(box.min.x, box.max.y),
+    svg_path.Point(box.min.x, box.min.y),
+    svg_path.Point(box.max.x, box.min.y),
+    svg_path.Point(box.max.x, box.max.y),
+    svg_path.Point(box.min.x, box.max.y),
   ])
 }
 
@@ -3916,20 +3916,20 @@ fn cubic_derivative(segment: svg_path.Segment, t: Float) -> svg_path.Point {
         scale_point(subtract(end, control2), 3.0 *. t *. t),
       )
     }
-    _ -> svg_path.point(0.0, 0.0)
+    _ -> svg_path.Point(0.0, 0.0)
   }
 }
 
 fn add_points(a: svg_path.Point, b: svg_path.Point) -> svg_path.Point {
-  svg_path.point(a.x +. b.x, a.y +. b.y)
+  svg_path.Point(a.x +. b.x, a.y +. b.y)
 }
 
 fn subtract(a: svg_path.Point, b: svg_path.Point) -> svg_path.Point {
-  svg_path.point(a.x -. b.x, a.y -. b.y)
+  svg_path.Point(a.x -. b.x, a.y -. b.y)
 }
 
 fn scale_point(a: svg_path.Point, factor: Float) -> svg_path.Point {
-  svg_path.point(a.x *. factor, a.y *. factor)
+  svg_path.Point(a.x *. factor, a.y *. factor)
 }
 
 fn cross(a: svg_path.Point, b: svg_path.Point) -> Float {
@@ -3969,7 +3969,7 @@ fn direction_angle(direction: svg_path.Point) -> Float {
 }
 
 fn angle_direction(angle: Float) -> svg_path.Point {
-  svg_path.point(trig.cos_degrees(angle), trig.sin_degrees(angle))
+  svg_path.Point(trig.cos_degrees(angle), trig.sin_degrees(angle))
 }
 
 fn dot(a: svg_path.Point, b: svg_path.Point) -> Float {

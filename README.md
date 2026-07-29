@@ -83,19 +83,17 @@ types, supported by lower-level `Segment` and `Point` primitives.
 
 ### Points
 
-A `Point` is borrowed from the [`vec`](https://hex.pm/packages/vec) package:
+A `Point` stores `x` and `y` coordinates:
 
 ```gleam
 pub type Point =
-  Vec2(Float)
+  Point(x: Float, y: Float)
 ```
 
-Use `svg_path.point` to create points without importing `vec` directly, and
-`svg_path.coordinates` to get the coordinates back as `#(x, y)`:
+Construct points with the public `Point` constructor:
 
 ```gleam
-svg_path.point(10.0, 20.0)
-svg_path.coordinates(point)
+svg_path.Point(10.0, 20.0)
 ```
 
 ### Segments
@@ -226,9 +224,9 @@ import svg_path
 import svg_path/serialize
 
 pub fn closed_triangle() -> Result(svg_path.Subpath, svg_path.Error) {
-  let a = svg_path.point(0.0, 0.0)
-  let b = svg_path.point(10.0, 0.0)
-  let c = svg_path.point(5.0, 10.0)
+  let a = svg_path.Point(0.0, 0.0)
+  let b = svg_path.Point(10.0, 0.0)
+  let c = svg_path.Point(5.0, 10.0)
 
   use subpath <- result.try(svg_path.subpath([
     svg_path.Line(start: a, end: b),
@@ -1160,8 +1158,8 @@ import svg_path/inspect
 
 pub fn inspect_line() -> String {
   svg_path.Line(
-    start: svg_path.point(0.0, 0.0),
-    end: svg_path.point(12.0, 10.0),
+    start: svg_path.Point(0.0, 0.0),
+    end: svg_path.Point(12.0, 10.0),
   )
   |> inspect.segment
 }
@@ -1189,7 +1187,7 @@ Example output:
 ```text
 svg_path.Path([
   svg_path.subpath_assert([
-    svg_path.Line(start: svg_path.point(0.0, 0.0), end: svg_path.point(12.0, 10.0))
+    svg_path.Line(start: svg_path.Point(0.0, 0.0), end: svg_path.Point(12.0, 10.0))
   ])
 ])
 ```

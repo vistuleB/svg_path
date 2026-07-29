@@ -14,8 +14,8 @@ pub fn open_line_clips_to_inside_piece_test() {
   let input =
     svg_path.subpath_assert([
       svg_path.Line(
-        start: svg_path.point(-5.0, 5.0),
-        end: svg_path.point(15.0, 5.0),
+        start: svg_path.Point(-5.0, 5.0),
+        end: svg_path.Point(15.0, 5.0),
       ),
     ])
 
@@ -30,8 +30,8 @@ pub fn open_line_clips_to_inside_piece_test() {
   assert svg_path.subpath_segments(clipped)
     == [
       svg_path.Line(
-        start: svg_path.point(0.0, 5.0),
-        end: svg_path.point(10.0, 5.0),
+        start: svg_path.Point(0.0, 5.0),
+        end: svg_path.Point(10.0, 5.0),
       ),
     ]
 }
@@ -40,24 +40,24 @@ pub fn open_subpath_clips_to_multiple_open_pieces_without_bridges_test() {
   let input =
     svg_path.subpath_assert([
       svg_path.Line(
-        start: svg_path.point(-5.0, 2.0),
-        end: svg_path.point(5.0, 2.0),
+        start: svg_path.Point(-5.0, 2.0),
+        end: svg_path.Point(5.0, 2.0),
       ),
       svg_path.Line(
-        start: svg_path.point(5.0, 2.0),
-        end: svg_path.point(15.0, 2.0),
+        start: svg_path.Point(5.0, 2.0),
+        end: svg_path.Point(15.0, 2.0),
       ),
       svg_path.Line(
-        start: svg_path.point(15.0, 2.0),
-        end: svg_path.point(15.0, 8.0),
+        start: svg_path.Point(15.0, 2.0),
+        end: svg_path.Point(15.0, 8.0),
       ),
       svg_path.Line(
-        start: svg_path.point(15.0, 8.0),
-        end: svg_path.point(5.0, 8.0),
+        start: svg_path.Point(15.0, 8.0),
+        end: svg_path.Point(5.0, 8.0),
       ),
       svg_path.Line(
-        start: svg_path.point(5.0, 8.0),
-        end: svg_path.point(-5.0, 8.0),
+        start: svg_path.Point(5.0, 8.0),
+        end: svg_path.Point(-5.0, 8.0),
       ),
     ])
 
@@ -73,23 +73,23 @@ pub fn open_subpath_clips_to_multiple_open_pieces_without_bridges_test() {
   assert svg_path.subpath_segments(first)
     == [
       svg_path.Line(
-        start: svg_path.point(0.0, 2.0),
-        end: svg_path.point(5.0, 2.0),
+        start: svg_path.Point(0.0, 2.0),
+        end: svg_path.Point(5.0, 2.0),
       ),
       svg_path.Line(
-        start: svg_path.point(5.0, 2.0),
-        end: svg_path.point(10.0, 2.0),
+        start: svg_path.Point(5.0, 2.0),
+        end: svg_path.Point(10.0, 2.0),
       ),
     ]
   assert svg_path.subpath_segments(second)
     == [
       svg_path.Line(
-        start: svg_path.point(10.0, 8.0),
-        end: svg_path.point(5.0, 8.0),
+        start: svg_path.Point(10.0, 8.0),
+        end: svg_path.Point(5.0, 8.0),
       ),
       svg_path.Line(
-        start: svg_path.point(5.0, 8.0),
-        end: svg_path.point(0.0, 8.0),
+        start: svg_path.Point(5.0, 8.0),
+        end: svg_path.Point(0.0, 8.0),
       ),
     ]
 }
@@ -98,12 +98,12 @@ pub fn clip_boundary_at_subpath_vertex_does_not_duplicate_split_test() {
   let input =
     svg_path.subpath_assert([
       svg_path.Line(
-        start: svg_path.point(-5.0, 5.0),
-        end: svg_path.point(0.0, 5.0),
+        start: svg_path.Point(-5.0, 5.0),
+        end: svg_path.Point(0.0, 5.0),
       ),
       svg_path.Line(
-        start: svg_path.point(0.0, 5.0),
-        end: svg_path.point(5.0, 5.0),
+        start: svg_path.Point(0.0, 5.0),
+        end: svg_path.Point(5.0, 5.0),
       ),
     ])
 
@@ -117,8 +117,8 @@ pub fn clip_boundary_at_subpath_vertex_does_not_duplicate_split_test() {
   assert svg_path.subpath_segments(clipped)
     == [
       svg_path.Line(
-        start: svg_path.point(0.0, 5.0),
-        end: svg_path.point(5.0, 5.0),
+        start: svg_path.Point(0.0, 5.0),
+        end: svg_path.Point(5.0, 5.0),
       ),
     ]
 }
@@ -138,7 +138,7 @@ pub fn closed_subpath_survives_whole_when_fully_inside_test() {
 }
 
 pub fn closed_circle_clips_to_open_arc_fragments_test() {
-  let input = circle_subpath(svg_path.point(0.0, 0.0), 10.0)
+  let input = circle_subpath(svg_path.Point(0.0, 0.0), 10.0)
 
   let assert Ok(clipped) =
     clip.subpath(
@@ -157,14 +157,14 @@ pub fn path_clipping_preserves_subpath_order_test() {
     svg_path.Path([
       svg_path.subpath_assert([
         svg_path.Line(
-          start: svg_path.point(-5.0, 2.0),
-          end: svg_path.point(15.0, 2.0),
+          start: svg_path.Point(-5.0, 2.0),
+          end: svg_path.Point(15.0, 2.0),
         ),
       ]),
       svg_path.subpath_assert([
         svg_path.Line(
-          start: svg_path.point(-5.0, 8.0),
-          end: svg_path.point(15.0, 8.0),
+          start: svg_path.Point(-5.0, 8.0),
+          end: svg_path.Point(15.0, 8.0),
         ),
       ]),
     ])
@@ -177,8 +177,8 @@ pub fn path_clipping_preserves_subpath_order_test() {
     )
 
   let assert [first, second] = svg_path.path_subpaths(clipped)
-  assert_start(first, svg_path.point(0.0, 2.0))
-  assert_start(second, svg_path.point(0.0, 8.0))
+  assert_start(first, svg_path.Point(0.0, 2.0))
+  assert_start(second, svg_path.Point(0.0, 8.0))
 }
 
 fn rectangle(
@@ -197,20 +197,20 @@ fn rectangle_subpath(
   max_y: Float,
 ) -> svg_path.Subpath {
   svg_path.subpath_assert_polygon([
-    svg_path.point(min_x, min_y),
-    svg_path.point(max_x, min_y),
-    svg_path.point(max_x, max_y),
-    svg_path.point(min_x, max_y),
+    svg_path.Point(min_x, min_y),
+    svg_path.Point(max_x, min_y),
+    svg_path.Point(max_x, max_y),
+    svg_path.Point(min_x, max_y),
   ])
 }
 
 fn circle_subpath(center: svg_path.Point, radius: Float) -> svg_path.Subpath {
-  let left = svg_path.point(center.x -. radius, center.y)
-  let right = svg_path.point(center.x +. radius, center.y)
+  let left = svg_path.Point(center.x -. radius, center.y)
+  let right = svg_path.Point(center.x +. radius, center.y)
   svg_path.subpath_assert([
     svg_path.Arc(
       start: right,
-      radius: svg_path.point(radius, radius),
+      radius: svg_path.Point(radius, radius),
       x_axis_rotation: 0.0,
       large_arc: False,
       sweep: True,
@@ -218,7 +218,7 @@ fn circle_subpath(center: svg_path.Point, radius: Float) -> svg_path.Subpath {
     ),
     svg_path.Arc(
       start: left,
-      radius: svg_path.point(radius, radius),
+      radius: svg_path.Point(radius, radius),
       x_axis_rotation: 0.0,
       large_arc: False,
       sweep: True,

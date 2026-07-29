@@ -348,7 +348,7 @@ fn corner_candidate(
                   trim:,
                   arc: svg_path.Arc(
                     start: incoming_cut,
-                    radius: svg_path.point(radius, radius),
+                    radius: svg_path.Point(radius, radius),
                     x_axis_rotation: 0.0,
                     large_arc: False,
                     sweep: sweep_from_turn(incoming_tangent, outgoing_tangent),
@@ -724,7 +724,7 @@ fn corner_from_spec(
     trim:,
     arc: svg_path.Arc(
       start: incoming_cut,
-      radius: svg_path.point(radius, radius),
+      radius: svg_path.Point(radius, radius),
       x_axis_rotation: 0.0,
       large_arc: False,
       sweep: sweep_from_turn(spec.incoming_tangent, spec.outgoing_tangent),
@@ -925,7 +925,7 @@ fn unit(point: svg_path.Point) -> Result(svg_path.Point, Nil) {
     True -> Error(Nil)
     False -> {
       let assert Ok(length) = float.square_root(length_squared)
-      Ok(svg_path.point(point.x /. length, point.y /. length))
+      Ok(svg_path.Point(point.x /. length, point.y /. length))
     }
   }
 }

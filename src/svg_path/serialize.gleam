@@ -779,7 +779,7 @@ fn reflect(
   point point: svg_path.Point,
   across center: svg_path.Point,
 ) -> svg_path.Point {
-  svg_path.point(2.0 *. center.x -. point.x, 2.0 *. center.y -. point.y)
+  svg_path.Point(2.0 *. center.x -. point.x, 2.0 *. center.y -. point.y)
 }
 
 fn formatted_points_equal(
@@ -862,11 +862,11 @@ fn current_after_subpath(
 }
 
 fn origin() -> svg_path.Point {
-  svg_path.point(0.0, 0.0)
+  svg_path.Point(0.0, 0.0)
 }
 
 fn delta(point: svg_path.Point, from origin: svg_path.Point) -> svg_path.Point {
-  svg_path.point(point.x -. origin.x, point.y -. origin.y)
+  svg_path.Point(point.x -. origin.x, point.y -. origin.y)
 }
 
 fn point(point: svg_path.Point, format: Format) -> String {

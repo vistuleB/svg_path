@@ -52,19 +52,19 @@ pub fn khmer_text_offset_map_spiral_visual_test() {
         svg.Text(
           "fixed-radius coil",
           "fill: #111827; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 700",
-          svg_path.point(view_box.min.x +. 30.0, view_box.min.y +. 30.0),
+          svg_path.Point(view_box.min.x +. 30.0, view_box.min.y +. 30.0),
           18,
         ),
         svg.Text(
           text_box_label(text_box),
           "fill: #475569; font-family: ui-monospace, SFMono-Regular, Menlo, monospace",
-          svg_path.point(view_box.min.x +. 30.0, view_box.max.y -. 30.0),
+          svg_path.Point(view_box.min.x +. 30.0, view_box.max.y -. 30.0),
           12,
         ),
         svg.Text(
           layout_label(text_layout, coil_length),
           "fill: #475569; font-family: ui-monospace, SFMono-Regular, Menlo, monospace",
-          svg_path.point(view_box.min.x +. 30.0, view_box.max.y -. 15.0),
+          svg_path.Point(view_box.min.x +. 30.0, view_box.max.y -. 15.0),
           12,
         ),
         svg.StyledPath(
@@ -108,13 +108,13 @@ pub fn khmer_text_offset_map_decaying_spiral_visual_test() {
         svg.Text(
           "decaying spiral: radius and offset lose 20% per turn",
           "fill: #111827; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 700",
-          svg_path.point(view_box.min.x +. 30.0, view_box.min.y +. 30.0),
+          svg_path.Point(view_box.min.x +. 30.0, view_box.min.y +. 30.0),
           18,
         ),
         svg.Text(
           layout_label(text_layout, spiral_length),
           "fill: #475569; font-family: ui-monospace, SFMono-Regular, Menlo, monospace",
-          svg_path.point(view_box.min.x +. 30.0, view_box.max.y -. 20.0),
+          svg_path.Point(view_box.min.x +. 30.0, view_box.max.y -. 20.0),
           12,
         ),
         svg.StyledPath(
@@ -288,8 +288,8 @@ pub fn khmer_text_offset_map_rectangle_focus_visual_probe() {
     vertical_line_labels(mapped_verticals, mapped_panel_map)
   let view_box =
     svg_path.BoundingBox(
-      min: svg_path.point(0.0, 0.0),
-      max: svg_path.point(865.0, 390.0),
+      min: svg_path.Point(0.0, 0.0),
+      max: svg_path.Point(865.0, 390.0),
     )
 
   let drawing =
@@ -304,13 +304,13 @@ pub fn khmer_text_offset_map_rectangle_focus_visual_probe() {
         svg.Text(
           "source",
           "fill: #111827; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 700",
-          svg_path.point(20.0, 24.0),
+          svg_path.Point(20.0, 24.0),
           18,
         ),
         svg.Text(
           "mapped",
           "fill: #111827; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 700",
-          svg_path.point(455.0, 24.0),
+          svg_path.Point(455.0, 24.0),
           18,
         ),
         svg.StyledPath(
@@ -351,7 +351,7 @@ pub fn khmer_text_offset_map_rectangle_focus_visual_probe() {
             <> "; cubic bezier: "
             <> int.to_string(cubic_count),
           "fill: #475569; font-family: ui-monospace, SFMono-Regular, Menlo, monospace",
-          svg_path.point(20.0, 374.0),
+          svg_path.Point(20.0, 374.0),
           12,
         ),
       ]
@@ -392,8 +392,8 @@ fn extract_rectangle(source_svg: String) -> SourceRectangle {
   let width = extract_float_attribute(after_rect, "width")
   let height = extract_float_attribute(after_rect, "height")
   SourceRectangle(
-    min: svg_path.point(x, y),
-    max: svg_path.point(x +. width, y +. height),
+    min: svg_path.Point(x, y),
+    max: svg_path.Point(x +. width, y +. height),
   )
 }
 
@@ -625,13 +625,13 @@ fn vertical_line_labels_loop(
     [line, ..rest] -> {
       let points = subpath_polyline_points(line)
       let label = case points {
-        [] -> svg.Text("", "fill: none", svg_path.point(0.0, 0.0), 1)
+        [] -> svg.Text("", "fill: none", svg_path.Point(0.0, 0.0), 1)
         [base, ..] -> {
           let point = f(base)
           svg.Text(
             int.to_string(index),
             "fill: #111827; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 700",
-            svg_path.point(point.x -. 4.0, point.y +. 16.0),
+            svg_path.Point(point.x -. 4.0, point.y +. 16.0),
             12,
           )
         }
@@ -665,7 +665,7 @@ fn panel_map(
   let offset_y = top +. { height -. used_height } /. 2.0
 
   fn(point: svg_path.Point) {
-    svg_path.point(
+    svg_path.Point(
       offset_x +. { point.x -. source_box.min.x } *. scale,
       offset_y +. { point.y -. source_box.min.y } *. scale,
     )
@@ -696,10 +696,10 @@ fn rectangle_points(
 ) -> List(svg_path.Point) {
   let SourceRectangle(min:, max:) = rectangle
   []
-  |> rectangle_side_points(min, svg_path.point(max.x, min.y), side_samples)
-  |> rectangle_side_points(svg_path.point(max.x, min.y), max, side_samples)
-  |> rectangle_side_points(max, svg_path.point(min.x, max.y), side_samples)
-  |> rectangle_side_points(svg_path.point(min.x, max.y), min, side_samples)
+  |> rectangle_side_points(min, svg_path.Point(max.x, min.y), side_samples)
+  |> rectangle_side_points(svg_path.Point(max.x, min.y), max, side_samples)
+  |> rectangle_side_points(max, svg_path.Point(min.x, max.y), side_samples)
+  |> rectangle_side_points(svg_path.Point(min.x, max.y), min, side_samples)
   |> list.append(points)
 }
 
@@ -773,11 +773,11 @@ fn rectangle_grid_lines(
       let #(start, end) = case vertical {
         True -> {
           let x = min.x +. { max.x -. min.x } *. t
-          #(svg_path.point(x, min.y), svg_path.point(x, max.y))
+          #(svg_path.Point(x, min.y), svg_path.Point(x, max.y))
         }
         False -> {
           let y = min.y +. { max.y -. min.y } *. t
-          #(svg_path.point(min.x, y), svg_path.point(max.x, y))
+          #(svg_path.Point(min.x, y), svg_path.Point(max.x, y))
         }
       }
       let line =
@@ -915,7 +915,7 @@ fn rectangle_side_points_loop(
     False -> {
       let t = int.to_float(index) /. int.to_float(samples)
       let point =
-        svg_path.point(
+        svg_path.Point(
           start.x +. { end.x -. start.x } *. t,
           start.y +. { end.y -. start.y } *. t,
         )
@@ -993,8 +993,8 @@ fn focus_view_box(rectangle_box: svg_path.BoundingBox) -> svg_path.BoundingBox {
   let width = svg_path.bounding_box_width(rectangle_box) /. 0.3
   let height = svg_path.bounding_box_height(rectangle_box) /. 0.3
   svg_path.BoundingBox(
-    min: svg_path.point(center.x -. width /. 2.0, center.y -. height /. 2.0),
-    max: svg_path.point(center.x +. width /. 2.0, center.y +. height /. 2.0),
+    min: svg_path.Point(center.x -. width /. 2.0, center.y -. height /. 2.0),
+    max: svg_path.Point(center.x +. width /. 2.0, center.y +. height /. 2.0),
   )
 }
 
@@ -1002,8 +1002,8 @@ fn offset_map_view_box(
   content_box: svg_path.BoundingBox,
 ) -> svg_path.BoundingBox {
   svg_path.BoundingBox(
-    min: svg_path.point(content_box.min.x -. 30.0, content_box.min.y -. 55.0),
-    max: svg_path.point(content_box.max.x +. 30.0, content_box.max.y +. 45.0),
+    min: svg_path.Point(content_box.min.x -. 30.0, content_box.min.y -. 55.0),
+    max: svg_path.Point(content_box.max.x +. 30.0, content_box.max.y +. 45.0),
   )
 }
 
@@ -1147,7 +1147,7 @@ fn map_text_copy_to_coil(
 ) -> Result(svg_path.Path, svg_path.PointMapError(offset.Error)) {
   svg_path.path_try_map_points(text_path, with: fn(point) {
     source_point_to_offset_point(
-      svg_path.point(
+      svg_path.Point(
         float.min(point.x, text_box.min.x +. available_width),
         point.y,
       ),
@@ -1171,7 +1171,7 @@ fn source_point_to_offset_point(
   let distance = start_distance +. source_x *. x_scale
   let band_offset =
     band_inner +. { text_box.max.y -. point.y } /. height *. band_height
-  coil_map(svg_path.point(distance, band_offset))
+  coil_map(svg_path.Point(distance, band_offset))
 }
 
 fn coil_subpath(turns turns: Int, samples _samples: Int) -> svg_path.Subpath {
@@ -1194,7 +1194,7 @@ fn coil_subpath(turns turns: Int, samples _samples: Int) -> svg_path.Subpath {
 
 fn coil_point_at_degrees(degrees: Float) -> svg_path.Point {
   let radians = degrees *. pi /. 180.0
-  svg_path.point(
+  svg_path.Point(
     100.0 *. trig.cos_degrees(degrees) +. 16.0 *. radians,
     100.0 *. trig.sin_degrees(degrees),
   )
@@ -1202,7 +1202,7 @@ fn coil_point_at_degrees(degrees: Float) -> svg_path.Point {
 
 fn coil_tangent_at_degrees(degrees: Float) -> svg_path.Point {
   let angle_derivative = pi /. 180.0
-  svg_path.point(
+  svg_path.Point(
     16.0
       *. angle_derivative
       -. 100.0
@@ -1235,7 +1235,7 @@ fn decaying_spiral_subpath(
 
 fn decaying_spiral_point_at_degrees(degrees: Float) -> svg_path.Point {
   let radius = 100.0 *. decay_for_degrees(degrees)
-  svg_path.point(
+  svg_path.Point(
     radius *. trig.cos_degrees(degrees),
     radius *. trig.sin_degrees(degrees),
   )
@@ -1245,7 +1245,7 @@ fn decaying_spiral_tangent_at_degrees(degrees: Float) -> svg_path.Point {
   let radius = 100.0 *. decay_for_degrees(degrees)
   let radius_derivative = log(0.8) /. 360.0 *. radius
   let angle_derivative = pi /. 180.0
-  svg_path.point(
+  svg_path.Point(
     radius_derivative
       *. trig.cos_degrees(degrees)
       -. radius
@@ -1270,7 +1270,7 @@ fn decaying_offset_map(
       |> float.max(0.0)
       |> float.min(maximum_spiral_query_length(spiral_length))
     let local_decay = decay_for_length(length, spiral_length)
-    spiral_map(svg_path.point(length, point.y *. local_decay))
+    spiral_map(svg_path.Point(length, point.y *. local_decay))
   }
 }
 

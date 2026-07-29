@@ -331,7 +331,7 @@ fn join_angle(
   use incoming <- result.try(tangent_unit(incoming_segment, at: 1.0))
   use outgoing <- result.try(tangent_unit(outgoing_segment, at: 0.0))
   let bisector =
-    svg_path.point(incoming.x +. outgoing.x, incoming.y +. outgoing.y)
+    svg_path.Point(incoming.x +. outgoing.x, incoming.y +. outgoing.y)
 
   case vector_length(bisector) <=. 0.0 {
     True -> Ok(angle_of(incoming))
@@ -367,7 +367,7 @@ fn tangent_unit(
   let length = vector_length(tangent)
   case length <=. 0.0 || !is_finite(length) {
     True -> Error(DegenerateTangent)
-    False -> Ok(svg_path.point(tangent.x /. length, tangent.y /. length))
+    False -> Ok(svg_path.Point(tangent.x /. length, tangent.y /. length))
   }
 }
 

@@ -11,16 +11,16 @@ pub fn subpath_cut_splits_open_subject_in_order_test() {
   let subject =
     svg_path.subpath_assert([
       svg_path.Line(
-        start: svg_path.point(0.0, 0.0),
-        end: svg_path.point(30.0, 0.0),
+        start: svg_path.Point(0.0, 0.0),
+        end: svg_path.Point(30.0, 0.0),
       ),
     ])
   let cutter =
     svg_path.subpath_assert_polyline([
-      svg_path.point(10.0, -5.0),
-      svg_path.point(10.0, 5.0),
-      svg_path.point(20.0, 5.0),
-      svg_path.point(20.0, -5.0),
+      svg_path.Point(10.0, -5.0),
+      svg_path.Point(10.0, 5.0),
+      svg_path.Point(20.0, 5.0),
+      svg_path.Point(20.0, -5.0),
     ])
 
   let assert Ok(pieces) = cut.subpath(subject: subject, by: cutter)
@@ -33,15 +33,15 @@ pub fn subpath_cut_returns_subject_when_no_intersections_test() {
   let subject =
     svg_path.subpath_assert([
       svg_path.Line(
-        start: svg_path.point(0.0, 0.0),
-        end: svg_path.point(10.0, 0.0),
+        start: svg_path.Point(0.0, 0.0),
+        end: svg_path.Point(10.0, 0.0),
       ),
     ])
   let cutter =
     svg_path.subpath_assert([
       svg_path.Line(
-        start: svg_path.point(0.0, 5.0),
-        end: svg_path.point(10.0, 5.0),
+        start: svg_path.Point(0.0, 5.0),
+        end: svg_path.Point(10.0, 5.0),
       ),
     ])
 
@@ -52,15 +52,15 @@ pub fn subpath_cut_ignores_open_subject_endpoint_intersections_test() {
   let subject =
     svg_path.subpath_assert([
       svg_path.Line(
-        start: svg_path.point(0.0, 0.0),
-        end: svg_path.point(10.0, 0.0),
+        start: svg_path.Point(0.0, 0.0),
+        end: svg_path.Point(10.0, 0.0),
       ),
     ])
   let cutter =
     svg_path.subpath_assert([
       svg_path.Line(
-        start: svg_path.point(0.0, -5.0),
-        end: svg_path.point(0.0, 5.0),
+        start: svg_path.Point(0.0, -5.0),
+        end: svg_path.Point(0.0, 5.0),
       ),
     ])
 
@@ -68,17 +68,17 @@ pub fn subpath_cut_ignores_open_subject_endpoint_intersections_test() {
 }
 
 pub fn subpath_cut_dedupes_internal_boundary_aliases_test() {
-  let middle = svg_path.point(10.0, 0.0)
+  let middle = svg_path.Point(10.0, 0.0)
   let subject =
     svg_path.subpath_assert([
-      svg_path.Line(start: svg_path.point(0.0, 0.0), end: middle),
-      svg_path.Line(start: middle, end: svg_path.point(20.0, 0.0)),
+      svg_path.Line(start: svg_path.Point(0.0, 0.0), end: middle),
+      svg_path.Line(start: middle, end: svg_path.Point(20.0, 0.0)),
     ])
   let cutter =
     svg_path.subpath_assert([
       svg_path.Line(
-        start: svg_path.point(10.0, -5.0),
-        end: svg_path.point(10.0, 5.0),
+        start: svg_path.Point(10.0, -5.0),
+        end: svg_path.Point(10.0, 5.0),
       ),
     ])
 
@@ -90,16 +90,16 @@ pub fn subpath_cut_dedupes_internal_boundary_aliases_test() {
 pub fn subpath_cut_opens_closed_subject_at_single_cut_test() {
   let subject =
     svg_path.subpath_assert_polygon([
-      svg_path.point(0.0, 0.0),
-      svg_path.point(10.0, 0.0),
-      svg_path.point(10.0, 10.0),
-      svg_path.point(0.0, 10.0),
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
+      svg_path.Point(10.0, 10.0),
+      svg_path.Point(0.0, 10.0),
     ])
   let cutter =
     svg_path.subpath_assert([
       svg_path.Line(
-        start: svg_path.point(5.0, -5.0),
-        end: svg_path.point(5.0, 0.0),
+        start: svg_path.Point(5.0, -5.0),
+        end: svg_path.Point(5.0, 0.0),
       ),
     ])
 
@@ -113,16 +113,16 @@ pub fn subpath_cut_opens_closed_subject_at_single_cut_test() {
 pub fn subpath_cut_splits_closed_subject_cyclically_test() {
   let subject =
     svg_path.subpath_assert_polygon([
-      svg_path.point(0.0, 0.0),
-      svg_path.point(10.0, 0.0),
-      svg_path.point(10.0, 10.0),
-      svg_path.point(0.0, 10.0),
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
+      svg_path.Point(10.0, 10.0),
+      svg_path.Point(0.0, 10.0),
     ])
   let cutter =
     svg_path.subpath_assert([
       svg_path.Line(
-        start: svg_path.point(5.0, -5.0),
-        end: svg_path.point(5.0, 15.0),
+        start: svg_path.Point(5.0, -5.0),
+        end: svg_path.Point(5.0, 15.0),
       ),
     ])
 
@@ -136,15 +136,15 @@ pub fn subpath_cut_propagates_intersection_option_errors_test() {
   let subject =
     svg_path.subpath_assert([
       svg_path.Line(
-        start: svg_path.point(0.0, 0.0),
-        end: svg_path.point(10.0, 0.0),
+        start: svg_path.Point(0.0, 0.0),
+        end: svg_path.Point(10.0, 0.0),
       ),
     ])
   let cutter =
     svg_path.subpath_assert([
       svg_path.Line(
-        start: svg_path.point(5.0, -5.0),
-        end: svg_path.point(5.0, 5.0),
+        start: svg_path.Point(5.0, -5.0),
+        end: svg_path.Point(5.0, 5.0),
       ),
     ])
 
@@ -160,29 +160,29 @@ pub fn path_cut_cuts_each_subject_subpath_by_all_cutter_subpaths_test() {
   let top =
     svg_path.subpath_assert([
       svg_path.Line(
-        start: svg_path.point(0.0, 0.0),
-        end: svg_path.point(30.0, 0.0),
+        start: svg_path.Point(0.0, 0.0),
+        end: svg_path.Point(30.0, 0.0),
       ),
     ])
   let bottom =
     svg_path.subpath_assert([
       svg_path.Line(
-        start: svg_path.point(0.0, 10.0),
-        end: svg_path.point(30.0, 10.0),
+        start: svg_path.Point(0.0, 10.0),
+        end: svg_path.Point(30.0, 10.0),
       ),
     ])
   let left_cut =
     svg_path.subpath_assert([
       svg_path.Line(
-        start: svg_path.point(10.0, -5.0),
-        end: svg_path.point(10.0, 15.0),
+        start: svg_path.Point(10.0, -5.0),
+        end: svg_path.Point(10.0, 15.0),
       ),
     ])
   let right_cut =
     svg_path.subpath_assert([
       svg_path.Line(
-        start: svg_path.point(20.0, -5.0),
-        end: svg_path.point(20.0, 15.0),
+        start: svg_path.Point(20.0, -5.0),
+        end: svg_path.Point(20.0, 15.0),
       ),
     ])
 
@@ -200,8 +200,8 @@ pub fn path_cut_empty_subject_returns_empty_path_test() {
   let cutter =
     svg_path.subpath_assert([
       svg_path.Line(
-        start: svg_path.point(5.0, -5.0),
-        end: svg_path.point(5.0, 5.0),
+        start: svg_path.Point(5.0, -5.0),
+        end: svg_path.Point(5.0, 5.0),
       ),
     ])
 
@@ -213,8 +213,8 @@ pub fn path_cut_empty_cutter_returns_subject_path_test() {
   let subject =
     svg_path.subpath_assert([
       svg_path.Line(
-        start: svg_path.point(0.0, 0.0),
-        end: svg_path.point(10.0, 0.0),
+        start: svg_path.Point(0.0, 0.0),
+        end: svg_path.Point(10.0, 0.0),
       ),
     ])
 
@@ -223,24 +223,24 @@ pub fn path_cut_empty_cutter_returns_subject_path_test() {
 }
 
 pub fn path_cut_dedupes_near_internal_boundary_aliases_test() {
-  let middle = svg_path.point(10.0, 0.0)
+  let middle = svg_path.Point(10.0, 0.0)
   let subject =
     svg_path.subpath_assert([
-      svg_path.Line(start: svg_path.point(0.0, 0.0), end: middle),
-      svg_path.Line(start: middle, end: svg_path.point(20.0, 0.0)),
+      svg_path.Line(start: svg_path.Point(0.0, 0.0), end: middle),
+      svg_path.Line(start: middle, end: svg_path.Point(20.0, 0.0)),
     ])
   let left_near_cut =
     svg_path.subpath_assert([
       svg_path.Line(
-        start: svg_path.point(9.9999999999, -5.0),
-        end: svg_path.point(9.9999999999, 5.0),
+        start: svg_path.Point(9.9999999999, -5.0),
+        end: svg_path.Point(9.9999999999, 5.0),
       ),
     ])
   let right_near_cut =
     svg_path.subpath_assert([
       svg_path.Line(
-        start: svg_path.point(10.0000000001, -5.0),
-        end: svg_path.point(10.0000000001, 5.0),
+        start: svg_path.Point(10.0000000001, -5.0),
+        end: svg_path.Point(10.0000000001, 5.0),
       ),
     ])
 

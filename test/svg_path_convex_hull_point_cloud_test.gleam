@@ -32,76 +32,76 @@ pub fn point_cloud_hull_rejects_empty_point_cloud_test() {
 
 pub fn point_cloud_hull_handles_points_test() {
   assert public_point_cloud_hull_is_valid([
-    svg_path.point(-2.0, 1.0),
-    svg_path.point(5.0, 1.0),
-    svg_path.point(0.0, 4.0),
-    svg_path.point(1.0, 2.0),
+    svg_path.Point(-2.0, 1.0),
+    svg_path.Point(5.0, 1.0),
+    svg_path.Point(0.0, 4.0),
+    svg_path.Point(1.0, 2.0),
   ])
 }
 
 pub fn point_cloud_hull_handles_single_point_cloud_test() {
-  assert point_cloud_is_valid_in_all_modes([svg_path.point(4.0, -3.0)])
+  assert point_cloud_is_valid_in_all_modes([svg_path.Point(4.0, -3.0)])
 }
 
 pub fn point_cloud_hull_handles_duplicate_single_point_cloud_test() {
-  let point = svg_path.point(4.0, -3.0)
+  let point = svg_path.Point(4.0, -3.0)
   assert point_cloud_is_valid_in_all_modes([point, point, point])
 }
 
 pub fn point_cloud_hull_handles_two_point_cloud_test() {
   assert point_cloud_is_valid_in_all_modes([
-    svg_path.point(-2.0, 1.0),
-    svg_path.point(5.0, 1.0),
+    svg_path.Point(-2.0, 1.0),
+    svg_path.Point(5.0, 1.0),
   ])
 }
 
 pub fn point_cloud_hull_handles_duplicate_two_point_cloud_test() {
-  let a = svg_path.point(-2.0, 1.0)
-  let b = svg_path.point(5.0, 1.0)
+  let a = svg_path.Point(-2.0, 1.0)
+  let b = svg_path.Point(5.0, 1.0)
   assert point_cloud_is_valid_in_all_modes([a, b, a, b, a])
 }
 
 pub fn point_cloud_hull_handles_horizontal_collinear_point_cloud_test() {
   assert point_cloud_is_valid_in_all_modes([
-    svg_path.point(-2.0, 1.0),
-    svg_path.point(0.0, 1.0),
-    svg_path.point(3.0, 1.0),
-    svg_path.point(5.0, 1.0),
+    svg_path.Point(-2.0, 1.0),
+    svg_path.Point(0.0, 1.0),
+    svg_path.Point(3.0, 1.0),
+    svg_path.Point(5.0, 1.0),
   ])
 }
 
 pub fn point_cloud_hull_handles_vertical_collinear_point_cloud_test() {
   assert point_cloud_is_valid_in_all_modes([
-    svg_path.point(2.0, -3.0),
-    svg_path.point(2.0, -1.0),
-    svg_path.point(2.0, 4.0),
-    svg_path.point(2.0, 8.0),
+    svg_path.Point(2.0, -3.0),
+    svg_path.Point(2.0, -1.0),
+    svg_path.Point(2.0, 4.0),
+    svg_path.Point(2.0, 8.0),
   ])
 }
 
 pub fn point_cloud_hull_handles_positive_diagonal_collinear_point_cloud_test() {
   assert point_cloud_is_valid_in_all_modes([
-    svg_path.point(-2.0, -1.0),
-    svg_path.point(0.0, 1.0),
-    svg_path.point(3.0, 4.0),
-    svg_path.point(5.0, 6.0),
+    svg_path.Point(-2.0, -1.0),
+    svg_path.Point(0.0, 1.0),
+    svg_path.Point(3.0, 4.0),
+    svg_path.Point(5.0, 6.0),
   ])
 }
 
 pub fn point_cloud_hull_handles_negative_diagonal_collinear_point_cloud_test() {
   assert point_cloud_is_valid_in_all_modes([
-    svg_path.point(-2.0, 6.0),
-    svg_path.point(0.0, 4.0),
-    svg_path.point(3.0, 1.0),
-    svg_path.point(5.0, -1.0),
+    svg_path.Point(-2.0, 6.0),
+    svg_path.Point(0.0, 4.0),
+    svg_path.Point(3.0, 1.0),
+    svg_path.Point(5.0, -1.0),
   ])
 }
 
 pub fn point_cloud_hull_handles_duplicate_collinear_point_cloud_test() {
-  let a = svg_path.point(-2.0, -1.0)
-  let b = svg_path.point(0.0, 1.0)
-  let c = svg_path.point(3.0, 4.0)
-  let d = svg_path.point(5.0, 6.0)
+  let a = svg_path.Point(-2.0, -1.0)
+  let b = svg_path.Point(0.0, 1.0)
+  let c = svg_path.Point(3.0, 4.0)
+  let d = svg_path.Point(5.0, 6.0)
   assert point_cloud_is_valid_in_all_modes([b, a, c, b, d, a, c])
 }
 
@@ -264,7 +264,7 @@ fn random_points(count: Int) -> List(svg_path.Point) {
 }
 
 fn random_point(index: Int) -> svg_path.Point {
-  svg_path.point(
+  svg_path.Point(
     int.to_float({ { index * 73 + 19 } * { index * 17 + 23 } + 11 } % 10_001)
       /. 100.0,
     int.to_float({ { index * 41 + 29 } * { index * 97 + 31 } + 7 } % 10_001)
@@ -287,7 +287,7 @@ fn unit_circle_point(index: Int) -> svg_path.Point {
     /. 10_000.0
   let assert Ok(radius) = float.square_root(radius)
 
-  svg_path.point(radius *. maths.cos(angle), radius *. maths.sin(angle))
+  svg_path.Point(radius *. maths.cos(angle), radius *. maths.sin(angle))
 }
 
 fn one_sided_1_degree_crescent_points(count: Int) -> List(svg_path.Point) {
@@ -337,7 +337,7 @@ fn crescent_candidate_point(
     /. 10_000.0
   let radians = angle *. maths.pi() /. 180.0
   let circle =
-    svg_path.point(1000.0 *. maths.cos(radians), 1000.0 *. maths.sin(radians))
+    svg_path.Point(1000.0 *. maths.cos(radians), 1000.0 *. maths.sin(radians))
   let line_start = radius_1000_point(start_angle)
   let line_end = radius_1000_point(end_angle)
   let chord = chord_point_at_y(circle.y, line_start:, line_end:)
@@ -347,7 +347,7 @@ fn crescent_candidate_point(
     *. int.to_float({ { index * 61 + 43 } * { index * 31 + 29 } + 17 } % 10_000)
     /. 10_000.0
 
-  svg_path.point(
+  svg_path.Point(
     chord.x +. fraction *. { circle.x -. chord.x },
     chord.y +. fraction *. { circle.y -. chord.y },
   )
@@ -359,7 +359,7 @@ fn chord_point_at_y(
   line_end line_end: svg_path.Point,
 ) -> svg_path.Point {
   let t = { y -. line_start.y } /. { line_end.y -. line_start.y }
-  svg_path.point(line_start.x +. t *. { line_end.x -. line_start.x }, y)
+  svg_path.Point(line_start.x +. t *. { line_end.x -. line_start.x }, y)
 }
 
 fn point_inside_crescent(
@@ -404,5 +404,5 @@ fn take_first_loop(
 
 fn radius_1000_point(angle: Float) -> svg_path.Point {
   let radians = angle *. maths.pi() /. 180.0
-  svg_path.point(1000.0 *. maths.cos(radians), 1000.0 *. maths.sin(radians))
+  svg_path.Point(1000.0 *. maths.cos(radians), 1000.0 *. maths.sin(radians))
 }

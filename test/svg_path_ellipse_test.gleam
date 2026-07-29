@@ -425,12 +425,12 @@ pub fn arc_from_center_data_creates_svg_path_arc_test() {
     end:,
   ) = svg_path.arc_from_center_data(center)
 
-  assert svg_path_point_near(start, svg_path.point(0.0, 0.0))
-  assert svg_path_point_near(radius, svg_path.point(10.0, 10.0))
+  assert svg_path_point_near(start, svg_path.Point(0.0, 0.0))
+  assert svg_path_point_near(radius, svg_path.Point(10.0, 10.0))
   assert near(x_axis_rotation, 0.0)
   assert !large_arc
   assert sweep
-  assert svg_path_point_near(end, svg_path.point(20.0, 0.0))
+  assert svg_path_point_near(end, svg_path.Point(20.0, 0.0))
 }
 
 pub fn arc_from_endpoint_data_creates_svg_path_arc_test() {
@@ -453,12 +453,12 @@ pub fn arc_from_endpoint_data_creates_svg_path_arc_test() {
     end:,
   ) = svg_path.arc_from_endpoint_data(endpoint)
 
-  assert svg_path_point_near(start, svg_path.point(0.0, 1.0))
-  assert svg_path_point_near(radius, svg_path.point(2.0, 3.0))
+  assert svg_path_point_near(start, svg_path.Point(0.0, 1.0))
+  assert svg_path_point_near(radius, svg_path.Point(2.0, 3.0))
   assert near(x_axis_rotation, 15.0)
   assert large_arc
   assert !sweep
-  assert svg_path_point_near(end, svg_path.point(4.0, 5.0))
+  assert svg_path_point_near(end, svg_path.Point(4.0, 5.0))
 }
 
 fn point_near(a: ellipse.Point, b: ellipse.Point) -> Bool {

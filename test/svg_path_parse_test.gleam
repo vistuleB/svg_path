@@ -257,7 +257,7 @@ pub fn move_only_subpath_is_preserved_test() {
 }
 
 pub fn zero_length_line_subpath_is_not_move_only_test() {
-  let a = svg_path.point(0.0, 0.0)
+  let a = svg_path.Point(0.0, 0.0)
   let assert Ok(path) = parse.path("M 0 0 L 0 0")
   let assert [subpath] = svg_path.path_subpaths(path)
 

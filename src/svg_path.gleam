@@ -14,8 +14,6 @@ import svg_path/bezier
 import svg_path/ellipse
 import svg_path/root
 import svg_path/trig
-import vec/vec2.{type Vec2, Vec2}
-import vec/vec2f
 
 const default_wiggle_tolerance = 0.000000001
 
@@ -66,11 +64,9 @@ const default_parametric_initial_piece_count = 1
 const default_parametric_max_depth = 10
 
 /// A 2D point.
-///
-/// This is a `vec.Vec2(Float)`, so its coordinates are available as `.x` and
-/// `.y`.
-pub type Point =
-  Vec2(Float)
+pub type Point {
+  Point(x: Float, y: Float)
+}
 
 /// An axis-aligned bounding box.
 pub type BoundingBox {
@@ -89,7 +85,7 @@ pub fn bounding_box_height(box: BoundingBox) -> Float {
 
 /// Return the center point of a bounding box.
 pub fn bounding_box_center(box: BoundingBox) -> Point {
-  point(
+  Point(
     box.min.x +. bounding_box_width(box) /. 2.0,
     box.min.y +. bounding_box_height(box) /. 2.0,
   )
@@ -563,16 +559,6 @@ pub type Error {
 
   /// The requested split point is outside the segment's `0.0..1.0` parameter range.
   SplitOutsideSegment
-}
-
-/// Create a point from `x` and `y` coordinates.
-pub fn point(x: Float, y: Float) -> Point {
-  Vec2(x, y)
-}
-
-/// Return the `x` and `y` coordinates of a point.
-pub fn coordinates(point: Point) -> #(Float, Float) {
-  #(point.x, point.y)
 }
 
 /// Return the default options for segment crossing detection.
@@ -4177,7 +4163,7 @@ fn length_simpson(
 fn segment_speed(segment: Segment, at t: Float) -> Result(Float, Error) {
   case segment_derivative(segment, at: t) {
     Error(error) -> Error(error)
-    Ok(derivative) -> distance(point(0.0, 0.0), derivative) |> Ok
+    Ok(derivative) -> distance(Point(0.0, 0.0), derivative) |> Ok
   }
 }
 
@@ -4912,11 +4898,11 @@ fn clamp01(value: Float) -> Float {
 }
 
 fn point_difference(a: Point, b: Point) -> Point {
-  point(a.x -. b.x, a.y -. b.y)
+  Point(a.x -. b.x, a.y -. b.y)
 }
 
 fn offset(origin: Point, direction: Point, distance: Float) -> Point {
-  point(
+  Point(
     origin.x +. direction.x *. distance,
     origin.y +. direction.y *. distance,
   )
@@ -5831,7 +5817,7 @@ fn subpath_parameter_positions_near(
   let b_point = subpath_point(subpath, at: b)
   case a_point, b_point {
     Ok(a_point), Ok(b_point) ->
-      vec2f.distance_squared(a_point, with: b_point) <=. tolerance *. tolerance
+      distance_squared(a_point, b_point) <=. tolerance *. tolerance
     _, _ -> False
   }
 }
@@ -6870,11 +6856,11 @@ fn combine_boxes(first: BoundingBox, second: BoundingBox) -> BoundingBox {
 }
 
 fn min_point(a: Point, b: Point) -> Point {
-  point(float.min(a.x, b.x), float.min(a.y, b.y))
+  Point(float.min(a.x, b.x), float.min(a.y, b.y))
 }
 
 fn max_point(a: Point, b: Point) -> Point {
-  point(float.max(a.x, b.x), float.max(a.y, b.y))
+  Point(float.max(a.x, b.x), float.max(a.y, b.y))
 }
 
 fn splice_segments(
@@ -8061,11 +8047,11 @@ fn line_to_cubic(start: Point, end: Point) -> Segment {
 fn quadratic_to_cubic(start: Point, control: Point, end: Point) -> Segment {
   CubicBezier(
     start:,
-    control1: point(
+    control1: Point(
       start.x +. 2.0 /. 3.0 *. { control.x -. start.x },
       start.y +. 2.0 /. 3.0 *. { control.y -. start.y },
     ),
-    control2: point(
+    control2: Point(
       end.x +. 2.0 /. 3.0 *. { control.x -. end.x },
       end.y +. 2.0 /. 3.0 *. { control.y -. end.y },
     ),
@@ -8119,7 +8105,7 @@ fn to_ellipse_point(point: Point) -> ellipse.Point {
 }
 
 fn from_ellipse_point(point: ellipse.Point) -> Point {
-  Vec2(point.x, point.y)
+  Point(point.x, point.y)
 }
 
 fn to_bezier_point(point: Point) -> bezier.Point {
@@ -8127,7 +8113,7 @@ fn to_bezier_point(point: Point) -> bezier.Point {
 }
 
 fn from_bezier_point(point: bezier.Point) -> Point {
-  Vec2(point.x, point.y)
+  Point(point.x, point.y)
 }
 
 fn segment_to_bezier_data(segment: Segment) -> bezier.BezierData {
@@ -8208,7 +8194,7 @@ pub fn arc_center_data(
 }
 
 fn interpolate(start: Point, end: Point, t: Float) -> Point {
-  point(
+  Point(
     start.x +. { end.x -. start.x } *. t,
     start.y +. { end.y -. start.y } *. t,
   )
@@ -8505,9 +8491,13 @@ fn first_and_last_segments(
 }
 
 fn distance(a: Point, b: Point) -> Float {
+  distance_squared(a, b) |> float_square_root
+}
+
+fn distance_squared(a: Point, b: Point) -> Float {
   let dx = a.x -. b.x
   let dy = a.y -. b.y
-  dx *. dx +. dy *. dy |> float_square_root
+  dx *. dx +. dy *. dy
 }
 
 fn float_square_root(value: Float) -> Float {
@@ -8516,7 +8506,7 @@ fn float_square_root(value: Float) -> Float {
 }
 
 fn midpoint(a: Point, b: Point) -> Point {
-  point({ a.x +. b.x } /. 2.0, { a.y +. b.y } /. 2.0)
+  Point({ a.x +. b.x } /. 2.0, { a.y +. b.y } /. 2.0)
 }
 
 fn wiggle_overlap(previous: Segment, next: Segment) -> Result(Point, Error) {
@@ -8537,7 +8527,7 @@ fn wiggle_overlap(previous: Segment, next: Segment) -> Result(Point, Error) {
       case horizontals_misaligned {
         True -> Error(IncompatibleHorizontalWiggle(previous_end:, next_start:))
         False -> {
-          Ok(point(
+          Ok(Point(
             wiggle_x(previous, next, previous_end, next_start),
             wiggle_y(previous, next, previous_end, next_start),
           ))

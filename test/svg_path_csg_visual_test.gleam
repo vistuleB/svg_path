@@ -216,10 +216,10 @@ fn examples() -> List(Example) {
       title: "Diamond and bar",
       fill_rule: svg_path.Nonzero,
       a: polygon([
-        svg_path.point(60.0, 0.0),
-        svg_path.point(122.0, 60.0),
-        svg_path.point(60.0, 122.0),
-        svg_path.point(0.0, 60.0),
+        svg_path.Point(60.0, 0.0),
+        svg_path.Point(122.0, 60.0),
+        svg_path.Point(60.0, 122.0),
+        svg_path.Point(0.0, 60.0),
       ]),
       b: rectangle(12.0, 42.0, 110.0, 80.0),
     ),
@@ -227,7 +227,7 @@ fn examples() -> List(Example) {
       slug: "circle-and-rectangle",
       title: "Circle and rectangle",
       fill_rule: svg_path.Nonzero,
-      a: circle(svg_path.point(58.0, 61.0), 52.0),
+      a: circle(svg_path.Point(58.0, 61.0), 52.0),
       b: rectangle(44.0, 16.0, 122.0, 106.0),
     ),
     Example(
@@ -269,7 +269,7 @@ fn examples() -> List(Example) {
       slug: "circle-tangent-rectangle",
       title: "Circle tangent rectangle",
       fill_rule: svg_path.Nonzero,
-      a: circle(svg_path.point(50.0, 60.0), 40.0),
+      a: circle(svg_path.Point(50.0, 60.0), 40.0),
       b: rectangle(90.0, 20.0, 124.0, 100.0),
     ),
     Example(
@@ -277,10 +277,10 @@ fn examples() -> List(Example) {
       title: "Self-intersecting bowtie",
       fill_rule: svg_path.Nonzero,
       a: polygon([
-        svg_path.point(8.0, 8.0),
-        svg_path.point(114.0, 112.0),
-        svg_path.point(114.0, 8.0),
-        svg_path.point(8.0, 112.0),
+        svg_path.Point(8.0, 8.0),
+        svg_path.Point(114.0, 112.0),
+        svg_path.Point(114.0, 8.0),
+        svg_path.Point(8.0, 112.0),
       ]),
       b: rectangle(36.0, 28.0, 86.0, 92.0),
     ),
@@ -296,7 +296,7 @@ fn render_example(example: Example) -> String {
   svg.document(
     [
       svg.Rectangle(
-        svg_path.point(0.0, 0.0),
+        svg_path.Point(0.0, 0.0),
         document_width(),
         document_height(),
         "fill: #ffffff; stroke: none",
@@ -304,7 +304,7 @@ fn render_example(example: Example) -> String {
       svg.Text(
         title <> " (" <> fill_rule_name(fill_rule) <> ")",
         "fill: #111827; font-family: system-ui, sans-serif; font-weight: 700",
-        svg_path.point(0.0, 18.0),
+        svg_path.Point(0.0, 18.0),
         14,
       ),
     ]
@@ -313,8 +313,8 @@ fn render_example(example: Example) -> String {
       |> list.append(result_panel(2, "intersection(A, B)", intersection))
       |> list.append(result_panel(3, "difference(A, B)", difference)),
     view_box: svg_path.BoundingBox(
-      min: svg_path.point(0.0, 0.0),
-      max: svg_path.point(document_width(), document_height()),
+      min: svg_path.Point(0.0, 0.0),
+      max: svg_path.Point(document_width(), document_height()),
     ),
   )
 }
@@ -340,13 +340,13 @@ fn input_panel(
     svg.Text(
       "A",
       "fill: #1f2937; font-family: system-ui, sans-serif; font-weight: 700",
-      svg_path.point(x +. 8.0, panel_origin_y +. 24.0),
+      svg_path.Point(x +. 8.0, panel_origin_y +. 24.0),
       13,
     ),
     svg.Text(
       "B",
       "fill: #d97706; font-family: system-ui, sans-serif; font-weight: 700",
-      svg_path.point(x +. panel_width -. 22.0, panel_origin_y +. 24.0),
+      svg_path.Point(x +. panel_width -. 22.0, panel_origin_y +. 24.0),
       13,
     ),
     ..path_arrows(place(a, x), "#1f2937")
@@ -386,7 +386,7 @@ fn render_orientation_guide(
   svg.document(
     [
       svg.Rectangle(
-        svg_path.point(0.0, 0.0),
+        svg_path.Point(0.0, 0.0),
         width,
         height,
         "fill: #ffffff; stroke: none",
@@ -394,7 +394,7 @@ fn render_orientation_guide(
       svg.Text(
         title,
         "fill: #111827; font-family: system-ui, sans-serif; font-weight: 700",
-        svg_path.point(0.0, 18.0),
+        svg_path.Point(0.0, 18.0),
         14,
       ),
     ]
@@ -407,8 +407,8 @@ fn render_orientation_guide(
         |> list.flatten,
       ),
     view_box: svg_path.BoundingBox(
-      min: svg_path.point(0.0, 0.0),
-      max: svg_path.point(width, height),
+      min: svg_path.Point(0.0, 0.0),
+      max: svg_path.Point(width, height),
     ),
   )
 }
@@ -457,7 +457,7 @@ fn orientation_row(
     svg.Text(
       label,
       "fill: #374151; font-family: system-ui, sans-serif",
-      svg_path.point(0.0, y -. 6.0),
+      svg_path.Point(0.0, y -. 6.0),
       9,
     ),
   ])
@@ -469,7 +469,7 @@ fn guide_header() -> svg.ThingsToDraw {
     svg.Text(
       label,
       "fill: #111827; font-family: system-ui, sans-serif; font-weight: 700",
-      svg_path.point(guide_panel_x(index), guide_header_y()),
+      svg_path.Point(guide_panel_x(index), guide_header_y()),
       10,
     )
   })
@@ -498,13 +498,13 @@ fn guide_input_panel(
     svg.Text(
       "A",
       "fill: #1f2937; font-family: system-ui, sans-serif; font-weight: 700",
-      svg_path.point(x +. 8.0, y +. 25.0),
+      svg_path.Point(x +. 8.0, y +. 25.0),
       11,
     ),
     svg.Text(
       "B",
       "fill: #d97706; font-family: system-ui, sans-serif; font-weight: 700",
-      svg_path.point(x +. guide_panel_width -. 18.0, y +. 45.0),
+      svg_path.Point(x +. guide_panel_width -. 18.0, y +. 45.0),
       11,
     ),
     ..nested_input_arrows(placed_a, "#1f2937", arrow_scale: 1.0)
@@ -728,7 +728,7 @@ fn arrow_glyph(
   color: String,
   arrow_scale: Float,
 ) -> svg.ThingsToDraw {
-  let perp = svg_path.point(0.0 -. unit.y, unit.x)
+  let perp = svg_path.Point(0.0 -. unit.y, unit.x)
   let half_width = 4.0 *. arrow_scale
   let equilateral_height = half_width *. 1.7320508075688772
   let head_center = point
@@ -794,15 +794,15 @@ fn normalize(point: svg_path.Point) -> Result(svg_path.Point, Nil) {
 }
 
 fn add(a: svg_path.Point, b: svg_path.Point) -> svg_path.Point {
-  svg_path.point(a.x +. b.x, a.y +. b.y)
+  svg_path.Point(a.x +. b.x, a.y +. b.y)
 }
 
 fn subtract(a: svg_path.Point, b: svg_path.Point) -> svg_path.Point {
-  svg_path.point(a.x -. b.x, a.y -. b.y)
+  svg_path.Point(a.x -. b.x, a.y -. b.y)
 }
 
 fn scale(point: svg_path.Point, factor: Float) -> svg_path.Point {
-  svg_path.point(point.x *. factor, point.y *. factor)
+  svg_path.Point(point.x *. factor, point.y *. factor)
 }
 
 fn length_squared(point: svg_path.Point) -> Float {
@@ -998,7 +998,7 @@ fn combo_document(
   svg.document(
     [
       svg.Rectangle(
-        svg_path.point(0.0, 0.0),
+        svg_path.Point(0.0, 0.0),
         combo_width(),
         combo_height(),
         "fill: #ffffff; stroke: none",
@@ -1006,15 +1006,15 @@ fn combo_document(
       svg.Text(
         title,
         "fill: #111827; font-family: system-ui, sans-serif; font-weight: 700",
-        svg_path.point(0.0, 20.0),
+        svg_path.Point(0.0, 20.0),
         16,
       ),
       ..combo_headers(fill_rule)
     ]
       |> list.append(things),
     view_box: svg_path.BoundingBox(
-      min: svg_path.point(0.0, 0.0),
-      max: svg_path.point(combo_width(), combo_height()),
+      min: svg_path.Point(0.0, 0.0),
+      max: svg_path.Point(combo_width(), combo_height()),
     ),
   )
 }
@@ -1030,7 +1030,7 @@ fn combo_headers(fill_rule: svg_path.FillRule) -> svg.ThingsToDraw {
     svg.Text(
       label,
       "fill: #111827; font-family: system-ui, sans-serif; font-weight: 700",
-      svg_path.point(combo_x(index), 42.0),
+      svg_path.Point(combo_x(index), 42.0),
       9,
     )
   })
@@ -1075,13 +1075,13 @@ fn combo_input_panel(
     svg.Text(
       "A",
       "fill: #1f2937; font-family: system-ui, sans-serif; font-weight: 700",
-      svg_path.point(x +. 34.0, y +. 43.0),
+      svg_path.Point(x +. 34.0, y +. 43.0),
       13,
     ),
     svg.Text(
       "B",
       "fill: #d97706; font-family: system-ui, sans-serif; font-weight: 700",
-      svg_path.point(x +. 164.0, y +. 55.0),
+      svg_path.Point(x +. 164.0, y +. 55.0),
       13,
     ),
     ..nested_input_arrows(placed_a, "#1f2937", arrow_scale: 1.25)
@@ -1115,7 +1115,7 @@ fn combo_result_panel(
 
 fn combo_panel_background(x: Float, y: Float) -> svg.ThingToDraw {
   svg.Rectangle(
-    svg_path.point(x, y),
+    svg_path.Point(x, y),
     combo_panel_width,
     combo_panel_height,
     "fill: #f8fafc; stroke: #d1d5db; stroke-width: 1",
@@ -1126,7 +1126,7 @@ fn combo_row_label(x: Float, y: Float, label: String) -> svg.ThingToDraw {
   svg.Text(
     label,
     "fill: #374151; font-family: system-ui, sans-serif",
-    svg_path.point(x, y -. 5.0),
+    svg_path.Point(x, y -. 5.0),
     8,
   )
 }
@@ -1334,31 +1334,31 @@ fn translated_copies(
 fn effect_ellipses() -> List(svg_path.Path) {
   [
     ellipse_path(
-      center: svg_path.point(84.0, 64.0),
+      center: svg_path.Point(84.0, 64.0),
       radius_x: 72.0,
       radius_y: 45.0,
       rotation: 11.0,
     ),
     ellipse_path(
-      center: svg_path.point(87.0, 62.0),
+      center: svg_path.Point(87.0, 62.0),
       radius_x: 66.0,
       radius_y: 41.0,
       rotation: -31.0,
     ),
     ellipse_path(
-      center: svg_path.point(80.0, 67.0),
+      center: svg_path.Point(80.0, 67.0),
       radius_x: 60.0,
       radius_y: 38.0,
       rotation: 42.0,
     ),
     ellipse_path(
-      center: svg_path.point(90.0, 66.0),
+      center: svg_path.Point(90.0, 66.0),
       radius_x: 55.0,
       radius_y: 34.0,
       rotation: -64.0,
     ),
     ellipse_path(
-      center: svg_path.point(82.0, 60.0),
+      center: svg_path.Point(82.0, 60.0),
       radius_x: 50.0,
       radius_y: 31.0,
       rotation: 73.0,
@@ -1496,7 +1496,7 @@ fn effects_segment_arrow_at(
   case normalize(direction) {
     Error(_) -> Error(Nil)
     Ok(unit) -> {
-      let perp = svg_path.point(0.0 -. unit.y, unit.x)
+      let perp = svg_path.Point(0.0 -. unit.y, unit.x)
       let half_width = 4.0 *. arrow_scale
       let equilateral_height = half_width *. 1.7320508075688772
       let head_tip = add(point, scale(unit, equilateral_height *. 2.0 /. 3.0))
@@ -1560,7 +1560,7 @@ fn titleless_theory_document(
   svg.document(
     [
       svg.Rectangle(
-        svg_path.point(0.0, 0.0),
+        svg_path.Point(0.0, 0.0),
         width,
         height,
         "fill: #ffffff; stroke: none",
@@ -1568,8 +1568,8 @@ fn titleless_theory_document(
       ..things
     ],
     view_box: svg_path.BoundingBox(
-      min: svg_path.point(0.0, crop_top),
-      max: svg_path.point(width, height),
+      min: svg_path.Point(0.0, crop_top),
+      max: svg_path.Point(width, height),
     ),
   )
 }
@@ -1586,7 +1586,7 @@ fn theory_document(
   svg.document(
     [
       svg.Rectangle(
-        svg_path.point(0.0, 0.0),
+        svg_path.Point(0.0, 0.0),
         width,
         height,
         "fill: #ffffff; stroke: none",
@@ -1594,14 +1594,14 @@ fn theory_document(
       svg.Text(
         title,
         "fill: #111827; font-family: system-ui, sans-serif; font-weight: 700",
-        svg_path.point(0.0, 20.0),
+        svg_path.Point(0.0, 20.0),
         16,
       ),
       ..things
     ],
     view_box: svg_path.BoundingBox(
-      min: svg_path.point(0.0, 0.0),
-      max: svg_path.point(width, height),
+      min: svg_path.Point(0.0, 0.0),
+      max: svg_path.Point(width, height),
     ),
   )
 }
@@ -1631,13 +1631,13 @@ fn theory_input_panel(
     svg.Text(
       "A",
       "fill: #1f2937; font-family: system-ui, sans-serif; font-weight: 700",
-      svg_path.point(x +. 12.0, y +. 42.0),
+      svg_path.Point(x +. 12.0, y +. 42.0),
       14,
     ),
     svg.Text(
       "B",
       "fill: #d97706; font-family: system-ui, sans-serif; font-weight: 700",
-      svg_path.point(x +. theory_panel_width -. 26.0, y +. 70.0),
+      svg_path.Point(x +. theory_panel_width -. 26.0, y +. 70.0),
       14,
     ),
     ..path_arrows(placed_a, "#1f2937")
@@ -1664,7 +1664,7 @@ fn theory_input_only_panel(
     svg.Text(
       "A",
       "fill: #1f2937; font-family: system-ui, sans-serif; font-weight: 700",
-      svg_path.point(x +. 12.0, y +. 42.0),
+      svg_path.Point(x +. 12.0, y +. 42.0),
       14,
     ),
     ..nested_input_arrows(placed, "#1f2937", arrow_scale: 1.0)
@@ -1696,7 +1696,7 @@ fn theory_result_panel(
 
 fn theory_panel_background(x: Float, y: Float) -> svg.ThingToDraw {
   svg.Rectangle(
-    svg_path.point(x, y),
+    svg_path.Point(x, y),
     theory_panel_width,
     theory_panel_height,
     "fill: #f8fafc; stroke: #d1d5db; stroke-width: 1",
@@ -1707,7 +1707,7 @@ fn theory_label(x: Float, y: Float, label: String) -> svg.ThingToDraw {
   svg.Text(
     label,
     "fill: #111827; font-family: system-ui, sans-serif; font-weight: 700",
-    svg_path.point(x, y -. 7.0),
+    svg_path.Point(x, y -. 7.0),
     10,
   )
 }
@@ -1743,7 +1743,7 @@ fn theory_height(rows: Int) -> Float {
 
 fn panel_background(x: Float) -> svg.ThingToDraw {
   svg.Rectangle(
-    svg_path.point(x, panel_origin_y),
+    svg_path.Point(x, panel_origin_y),
     panel_width,
     panel_height,
     "fill: #f8fafc; stroke: #d1d5db; stroke-width: 1",
@@ -1754,7 +1754,7 @@ fn panel_label(x: Float, label: String) -> svg.ThingToDraw {
   svg.Text(
     label,
     "fill: #111827; font-family: system-ui, sans-serif; font-weight: 700",
-    svg_path.point(x, panel_origin_y -. 7.0),
+    svg_path.Point(x, panel_origin_y -. 7.0),
     10,
   )
 }
@@ -1776,10 +1776,10 @@ fn rectangle(
   max_y: Float,
 ) -> svg_path.Path {
   polygon([
-    svg_path.point(min_x, min_y),
-    svg_path.point(max_x, min_y),
-    svg_path.point(max_x, max_y),
-    svg_path.point(min_x, max_y),
+    svg_path.Point(min_x, min_y),
+    svg_path.Point(max_x, min_y),
+    svg_path.Point(max_x, max_y),
+    svg_path.Point(min_x, max_y),
   ])
 }
 
@@ -1819,10 +1819,10 @@ fn nested_rectangles_with_inner(
 ) -> svg_path.Path {
   svg_path.Path([
     svg_path.subpath_assert_polygon([
-      svg_path.point(8.0, 8.0),
-      svg_path.point(114.0, 8.0),
-      svg_path.point(114.0, 90.0),
-      svg_path.point(8.0, 90.0),
+      svg_path.Point(8.0, 8.0),
+      svg_path.Point(114.0, 8.0),
+      svg_path.Point(114.0, 90.0),
+      svg_path.Point(8.0, 90.0),
     ]),
     rectangle_subpath(34.0, 28.0, 88.0, 70.0, same_direction:),
   ])
@@ -1847,16 +1847,16 @@ fn rectangle_subpath(
 ) -> svg_path.Subpath {
   let points = case same_direction {
     True -> [
-      svg_path.point(min_x, min_y),
-      svg_path.point(max_x, min_y),
-      svg_path.point(max_x, max_y),
-      svg_path.point(min_x, max_y),
+      svg_path.Point(min_x, min_y),
+      svg_path.Point(max_x, min_y),
+      svg_path.Point(max_x, max_y),
+      svg_path.Point(min_x, max_y),
     ]
     False -> [
-      svg_path.point(min_x, min_y),
-      svg_path.point(min_x, max_y),
-      svg_path.point(max_x, max_y),
-      svg_path.point(max_x, min_y),
+      svg_path.Point(min_x, min_y),
+      svg_path.Point(min_x, max_y),
+      svg_path.Point(max_x, max_y),
+      svg_path.Point(max_x, min_y),
     ]
   }
 
@@ -1871,15 +1871,15 @@ fn rounded_rectangle_subpath(
   radius radius: Float,
   same_direction same_direction: Bool,
 ) -> svg_path.Subpath {
-  let top_left = svg_path.point(min_x +. radius, min_y)
-  let top_right = svg_path.point(max_x -. radius, min_y)
-  let right_top = svg_path.point(max_x, min_y +. radius)
-  let right_bottom = svg_path.point(max_x, max_y -. radius)
-  let bottom_right = svg_path.point(max_x -. radius, max_y)
-  let bottom_left = svg_path.point(min_x +. radius, max_y)
-  let left_bottom = svg_path.point(min_x, max_y -. radius)
-  let left_top = svg_path.point(min_x, min_y +. radius)
-  let arc_radius = svg_path.point(radius, radius)
+  let top_left = svg_path.Point(min_x +. radius, min_y)
+  let top_right = svg_path.Point(max_x -. radius, min_y)
+  let right_top = svg_path.Point(max_x, min_y +. radius)
+  let right_bottom = svg_path.Point(max_x, max_y -. radius)
+  let bottom_right = svg_path.Point(max_x -. radius, max_y)
+  let bottom_left = svg_path.Point(min_x +. radius, max_y)
+  let left_bottom = svg_path.Point(min_x, max_y -. radius)
+  let left_top = svg_path.Point(min_x, min_y +. radius)
+  let arc_radius = svg_path.Point(radius, radius)
 
   let clockwise =
     svg_path.subpath_assert([
@@ -1929,13 +1929,13 @@ fn rounded_rectangle_subpath(
 }
 
 fn circle(center: svg_path.Point, radius: Float) -> svg_path.Path {
-  let left = svg_path.point(center.x -. radius, center.y)
-  let right = svg_path.point(center.x +. radius, center.y)
+  let left = svg_path.Point(center.x -. radius, center.y)
+  let right = svg_path.Point(center.x +. radius, center.y)
   svg_path.path_from_subpath(
     svg_path.subpath_assert([
       svg_path.Arc(
         start: right,
-        radius: svg_path.point(radius, radius),
+        radius: svg_path.Point(radius, radius),
         x_axis_rotation: 0.0,
         large_arc: False,
         sweep: True,
@@ -1943,7 +1943,7 @@ fn circle(center: svg_path.Point, radius: Float) -> svg_path.Path {
       ),
       svg_path.Arc(
         start: left,
-        radius: svg_path.point(radius, radius),
+        radius: svg_path.Point(radius, radius),
         x_axis_rotation: 0.0,
         large_arc: False,
         sweep: True,
@@ -1961,13 +1961,13 @@ fn ellipse_path(
   rotation rotation: Float,
 ) -> svg_path.Path {
   let axis =
-    svg_path.point(
+    svg_path.Point(
       trig.cos_degrees(rotation) *. radius_x,
       trig.sin_degrees(rotation) *. radius_x,
     )
   let left = subtract(center, axis)
   let right = add(center, axis)
-  let radius = svg_path.point(radius_x, radius_y)
+  let radius = svg_path.Point(radius_x, radius_y)
 
   svg_path.path_from_subpath(
     svg_path.subpath_assert([
@@ -2052,7 +2052,7 @@ fn guide_row_y(index: Int) -> Float {
 
 fn guide_panel_background(x: Float, y: Float) -> svg.ThingToDraw {
   svg.Rectangle(
-    svg_path.point(x, y),
+    svg_path.Point(x, y),
     guide_panel_width,
     guide_panel_height,
     "fill: #f8fafc; stroke: #d1d5db; stroke-width: 1",

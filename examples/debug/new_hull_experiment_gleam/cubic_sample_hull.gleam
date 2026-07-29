@@ -707,20 +707,20 @@ fn cubic_derivative(segment: svg_path.Segment, t: Float) -> svg_path.Point {
         scale_point(subtract(end, control2), 3.0 *. t *. t),
       )
     }
-    _ -> svg_path.point(0.0, 0.0)
+    _ -> svg_path.Point(0.0, 0.0)
   }
 }
 
 fn add_points(a: svg_path.Point, b: svg_path.Point) -> svg_path.Point {
-  svg_path.point(a.x +. b.x, a.y +. b.y)
+  svg_path.Point(a.x +. b.x, a.y +. b.y)
 }
 
 fn subtract(a: svg_path.Point, b: svg_path.Point) -> svg_path.Point {
-  svg_path.point(a.x -. b.x, a.y -. b.y)
+  svg_path.Point(a.x -. b.x, a.y -. b.y)
 }
 
 fn scale_point(a: svg_path.Point, factor: Float) -> svg_path.Point {
-  svg_path.point(a.x *. factor, a.y *. factor)
+  svg_path.Point(a.x *. factor, a.y *. factor)
 }
 
 fn cross(a: svg_path.Point, b: svg_path.Point) -> Float {
@@ -779,7 +779,7 @@ fn average(values: List(Float)) -> Float {
 
 fn angle_direction(angle: Float) -> svg_path.Point {
   let radians = angle *. maths.pi() /. 180.0
-  svg_path.point(maths.cos(radians), maths.sin(radians))
+  svg_path.Point(maths.cos(radians), maths.sin(radians))
 }
 
 fn dot(a: svg_path.Point, b: svg_path.Point) -> Float {

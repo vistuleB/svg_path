@@ -39,7 +39,7 @@ fn render() -> String {
       svg.Text(
         "Error while computing retained +15/+30 sections",
         "fill: #b91c1c; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 700",
-        svg_path.point(24.0, 466.0),
+        svg_path.Point(24.0, 466.0),
         14,
       ),
     ]
@@ -48,7 +48,7 @@ fn render() -> String {
   svg.document(
     things: [
       svg.Rectangle(
-        svg_path.point(0.0, 0.0),
+        svg_path.Point(0.0, 0.0),
         640.0,
         500.0,
         "fill: #ffffff; stroke: #d1d5db; stroke-width: 1.5",
@@ -56,7 +56,7 @@ fn render() -> String {
       svg.Text(
         "smooth horizontal figure-eight: retained sections before restitch",
         "fill: #111827; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 700",
-        svg_path.point(24.0, 30.0),
+        svg_path.Point(24.0, 30.0),
         15,
       ),
       svg.StyledPath(
@@ -66,8 +66,8 @@ fn render() -> String {
       ..result_things
     ],
     view_box: svg_path.BoundingBox(
-      min: svg_path.point(0.0, 0.0),
-      max: svg_path.point(640.0, 500.0),
+      min: svg_path.Point(0.0, 0.0),
+      max: svg_path.Point(640.0, 500.0),
     ),
   )
 }
@@ -363,16 +363,16 @@ fn segment_start_dots(subpaths: List(svg_path.Subpath)) -> svg.ThingsToDraw {
 fn smooth_horizontal_figure_eight() -> svg_path.Subpath {
   svg_path.subpath_assert([
     svg_path.CubicBezier(
-      start: svg_path.point(518.4, 360.0),
-      control1: svg_path.point(108.0, 11.52),
-      control2: svg_path.point(108.0, 708.48),
-      end: svg_path.point(518.4, 360.0),
+      start: svg_path.Point(518.4, 360.0),
+      control1: svg_path.Point(108.0, 11.52),
+      control2: svg_path.Point(108.0, 708.48),
+      end: svg_path.Point(518.4, 360.0),
     ),
     svg_path.CubicBezier(
-      start: svg_path.point(518.4, 360.0),
-      control1: svg_path.point(928.8, 11.52),
-      control2: svg_path.point(928.8, 708.48),
-      end: svg_path.point(518.4, 360.0),
+      start: svg_path.Point(518.4, 360.0),
+      control1: svg_path.Point(928.8, 11.52),
+      control2: svg_path.Point(928.8, 708.48),
+      end: svg_path.Point(518.4, 360.0),
     ),
   ])
   |> svg_path.subpath_assert_set_closed(closed: True)

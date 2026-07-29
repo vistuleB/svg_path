@@ -66,7 +66,7 @@ pub fn signed_segment(segment: svg_path.Segment) -> Float {
           let delta = trig.degrees_to_radians(arc.delta_angle)
           {
             cross(
-              svg_path.point(arc.center.x, arc.center.y),
+              svg_path.Point(arc.center.x, arc.center.y),
               difference(end, start),
             )
             +. arc.radius.x
@@ -91,7 +91,7 @@ pub fn signed_subpath(subpath: svg_path.Subpath) -> Float {
     _ -> {
       let start =
         svg_path.subpath_start(subpath)
-        |> result.unwrap(svg_path.point(0.0, 0.0))
+        |> result.unwrap(svg_path.Point(0.0, 0.0))
       let end = svg_path.subpath_end(subpath) |> result.unwrap(start)
       list.fold(segments, 0.0, fn(area, segment) {
         area +. signed_segment(segment)
@@ -341,7 +341,7 @@ fn subpath_edges(
             })
           let start =
             svg_path.subpath_start(subpath)
-            |> result.unwrap(svg_path.point(0.0, 0.0))
+            |> result.unwrap(svg_path.Point(0.0, 0.0))
           let end = svg_path.subpath_end(subpath) |> result.unwrap(start)
 
           subpath_edges(rest, accumulated: add_edge(end, start, accumulated))
@@ -653,7 +653,7 @@ fn combine2(
   b: svg_path.Point,
   b_scale: Float,
 ) -> svg_path.Point {
-  svg_path.point(
+  svg_path.Point(
     a.x *. a_scale +. b.x *. b_scale,
     a.y *. a_scale +. b.y *. b_scale,
   )
@@ -667,7 +667,7 @@ fn combine3(
   c: svg_path.Point,
   c_scale: Float,
 ) -> svg_path.Point {
-  svg_path.point(
+  svg_path.Point(
     a.x *. a_scale +. b.x *. b_scale +. c.x *. c_scale,
     a.y *. a_scale +. b.y *. b_scale +. c.y *. c_scale,
   )
@@ -683,14 +683,14 @@ fn combine4(
   d: svg_path.Point,
   d_scale: Float,
 ) -> svg_path.Point {
-  svg_path.point(
+  svg_path.Point(
     a.x *. a_scale +. b.x *. b_scale +. c.x *. c_scale +. d.x *. d_scale,
     a.y *. a_scale +. b.y *. b_scale +. c.y *. c_scale +. d.y *. d_scale,
   )
 }
 
 fn difference(a: svg_path.Point, b: svg_path.Point) -> svg_path.Point {
-  svg_path.point(a.x -. b.x, a.y -. b.y)
+  svg_path.Point(a.x -. b.x, a.y -. b.y)
 }
 
 fn cross(a: svg_path.Point, b: svg_path.Point) -> Float {
