@@ -326,8 +326,8 @@ pub fn skew_y_point(
 /// Transform a segment by a matrix.
 ///
 /// Degenerate arc transforms return `DegenerateArcTransform`; use
-/// `segment_gracefully` or `segment_gracefully2` to convert collapsed arcs into
-/// line-based representations when possible.
+/// `segment_gracefully` or `segment_to_subpath_gracefully` to convert
+/// collapsed arcs into line-based representations when possible.
 pub fn segment(
   segment: svg_path.Segment,
   by transform: Matrix,
@@ -417,7 +417,7 @@ pub fn skew_y_segment(
 /// Transform a segment, converting collapsed arcs into lines when possible.
 ///
 /// This returns a single segment. If a collapsed arc needs multiple line
-/// segments to preserve its motion, use `segment_gracefully2`.
+/// segments to preserve its motion, use `segment_to_subpath_gracefully`.
 pub fn segment_gracefully(
   input: svg_path.Segment,
   by transform: Matrix,
@@ -465,7 +465,7 @@ pub fn segment_gracefully(
 /// Transform a segment, returning a subpath for graceful collapsed arc handling.
 ///
 /// This can represent collapsed arcs as multiple line segments when needed.
-pub fn segment_gracefully2(
+pub fn segment_to_subpath_gracefully(
   input: svg_path.Segment,
   by transform: Matrix,
 ) -> Result(svg_path.Subpath, Error) {
@@ -962,7 +962,7 @@ fn transform_segments_gracefully(
   case segments {
     [] -> Ok(list.reverse(transformed))
     [first, ..rest] -> {
-      case segment_gracefully2(first, by: transform) {
+      case segment_to_subpath_gracefully(first, by: transform) {
         Error(error) -> Error(error)
         Ok(first) -> {
           let transformed =

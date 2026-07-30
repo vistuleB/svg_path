@@ -558,7 +558,8 @@ pub fn graceful2_arc_transform_preserves_transformed_endpoints_test() {
       end: svg_path.Point(-5.0, 0.0),
     )
   let matrix = transform.matrix(a: 1.0, b: 0.0, c: 0.0, d: 0.0, e: 0.0, f: 0.0)
-  let assert Ok(subpath) = transform.segment_gracefully2(arc, by: matrix)
+  let assert Ok(subpath) =
+    transform.segment_to_subpath_gracefully(arc, by: matrix)
 
   assert serialize.subpath(subpath) == "M 5 0 H -5"
 }
@@ -570,7 +571,8 @@ pub fn graceful2_line_transform_returns_single_segment_subpath_test() {
       end: svg_path.Point(4.0, 2.0),
     )
   let matrix = transform.matrix(a: 1.0, b: 0.0, c: 0.0, d: 1.0, e: 10.0, f: 0.0)
-  let assert Ok(subpath) = transform.segment_gracefully2(line, by: matrix)
+  let assert Ok(subpath) =
+    transform.segment_to_subpath_gracefully(line, by: matrix)
 
   assert serialize.subpath(subpath) == "M 11 2 H 14"
 }
@@ -586,7 +588,8 @@ pub fn graceful2_arc_transform_preserves_out_and_back_motion_test() {
       end: svg_path.Point(3.5355339059, 3.5355339059),
     )
   let matrix = transform.matrix(a: 1.0, b: 0.0, c: 0.0, d: 0.0, e: 0.0, f: 0.0)
-  let assert Ok(subpath) = transform.segment_gracefully2(arc, by: matrix)
+  let assert Ok(subpath) =
+    transform.segment_to_subpath_gracefully(arc, by: matrix)
 
   assert serialize.subpath(subpath) == "M 3.53553 0 H 5 H 3.53553"
 }
@@ -602,7 +605,8 @@ pub fn graceful2_arc_transform_follows_full_collapse_to_point_test() {
       end: svg_path.Point(-5.0, 0.0),
     )
   let matrix = transform.matrix(a: 0.0, b: 0.0, c: 0.0, d: 0.0, e: 7.0, f: 11.0)
-  let assert Ok(subpath) = transform.segment_gracefully2(arc, by: matrix)
+  let assert Ok(subpath) =
+    transform.segment_to_subpath_gracefully(arc, by: matrix)
 
   assert serialize.subpath(subpath) == "M 7 11 H 7"
 }
