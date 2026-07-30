@@ -1680,13 +1680,13 @@ pub fn segment_intersections_with_rejects_invalid_options_test() {
   assert intersections.segment_with(
       line,
       line,
-      options: svg_path.IntersectionOptions(tolerance: 0.0, max_depth: 32),
+      options: intersections.IntersectionOptions(tolerance: 0.0, max_depth: 32),
     )
     == Error(svg_path.InvalidIntersectionTolerance(0.0))
   assert intersections.segment_with(
       line,
       line,
-      options: svg_path.IntersectionOptions(
+      options: intersections.IntersectionOptions(
         tolerance: 0.000000001,
         max_depth: 0,
       ),
@@ -1804,7 +1804,7 @@ pub fn segment_subpath_intersections_propagates_errors_test() {
   assert intersections.segment_subpath_with(
       segment,
       subpath,
-      options: svg_path.IntersectionOptions(tolerance: 0.0, max_depth: 48),
+      options: intersections.IntersectionOptions(tolerance: 0.0, max_depth: 48),
     )
     == Error(svg_path.InvalidIntersectionTolerance(0.0))
   assert intersections.segment_subpath(segment, subpath)
@@ -1883,7 +1883,7 @@ pub fn subpath_intersections_propagates_errors_test() {
   assert intersections.subpath_with(
       line,
       line,
-      options: svg_path.IntersectionOptions(tolerance: 0.0, max_depth: 48),
+      options: intersections.IntersectionOptions(tolerance: 0.0, max_depth: 48),
     )
     == Error(svg_path.InvalidIntersectionTolerance(0.0))
   assert intersections.subpath(line, line)
@@ -2002,7 +2002,10 @@ pub fn path_intersections_canonicalizes_near_boundary_aliases_test() {
     intersections.path_with(
       left,
       right,
-      options: svg_path.IntersectionOptions(tolerance: 0.000001, max_depth: 48),
+      options: intersections.IntersectionOptions(
+        tolerance: 0.000001,
+        max_depth: 48,
+      ),
     )
 
   assert point_near(intersection.point, middle)
@@ -2049,7 +2052,7 @@ pub fn path_intersections_propagates_errors_test() {
   assert intersections.path_with(
       path,
       path,
-      options: svg_path.IntersectionOptions(tolerance: 0.0, max_depth: 48),
+      options: intersections.IntersectionOptions(tolerance: 0.0, max_depth: 48),
     )
     == Error(svg_path.InvalidIntersectionTolerance(0.0))
   assert intersections.path(path, path) == Error(svg_path.OverlappingSegments)

@@ -11,12 +11,11 @@ import gleam/option.{type Option, None, Some}
 import gleam/order
 import gleam/result
 import svg_path.{
-  type BoundingBox, type Error, type IntersectionOptions, type Path,
-  type PathIntersection, type PathParameter, type PathSelfIntersection,
-  type Point, type Segment, type SegmentIntersection,
-  type SelfIntersectionOptions, type Subpath, type SubpathIntersection,
-  type SubpathParameter, type SubpathSelfIntersection, Arc, CubicBezier,
-  IntersectionOptions, InvalidIntersectionMaxDepth, InvalidIntersectionTolerance,
+  type BoundingBox, type Error, type Path, type PathIntersection,
+  type PathParameter, type PathSelfIntersection, type Point, type Segment,
+  type SegmentIntersection, type SelfIntersectionOptions, type Subpath,
+  type SubpathIntersection, type SubpathParameter, type SubpathSelfIntersection,
+  Arc, CubicBezier, InvalidIntersectionMaxDepth, InvalidIntersectionTolerance,
   InvalidSelfIntersectionDistanceTolerance,
   InvalidSelfIntersectionMinimumArcLengthSeparation, Line, OverlappingSegments,
   PathIntersection, PathParameter, PathSelfIntersection, Point, QuadraticBezier,
@@ -28,6 +27,11 @@ import svg_path/bezier
 const default_intersection_tolerance = 0.000000001
 
 const default_intersection_max_depth = 48
+
+/// Options for finding segment, subpath, and path intersections.
+pub type IntersectionOptions {
+  IntersectionOptions(tolerance: Float, max_depth: Int)
+}
 
 /// Return the default options for segment, subpath, and path intersection
 /// detection.

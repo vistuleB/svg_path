@@ -17,7 +17,7 @@ const default_tolerance = 0.000001
 /// Options for curve clipping.
 pub type Options {
   Options(
-    intersection: svg_path.IntersectionOptions,
+    intersection: intersections.IntersectionOptions,
     containment: svg_path.ContainmentOptions,
     tolerance: Float,
   )

@@ -215,11 +215,6 @@ pub type PathWinding {
   BoundaryWinding
 }
 
-/// Options for finding segment intersections.
-pub type IntersectionOptions {
-  IntersectionOptions(tolerance: Float, max_depth: Int)
-}
-
 /// Options for finding self-intersections in one subpath.
 pub type SelfIntersectionOptions {
   SelfIntersectionOptions(

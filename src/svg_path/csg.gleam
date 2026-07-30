@@ -88,7 +88,7 @@ type Separation {
 /// Options for path CSG operations.
 pub type Options {
   Options(
-    intersection: svg_path.IntersectionOptions,
+    intersection: intersections.IntersectionOptions,
     containment: svg_path.ContainmentOptions,
     tolerance: Float,
   )
@@ -497,7 +497,7 @@ fn retained_pieces_loop(
 fn split_edge(
   edge: Edge,
   split_edges: List(Edge),
-  intersection_options: svg_path.IntersectionOptions,
+  intersection_options: intersections.IntersectionOptions,
   tolerance: Float,
 ) -> Result(List(svg_path.Segment), svg_path.Error) {
   let Edge(segment:, ..) = edge
@@ -511,7 +511,7 @@ fn split_edge(
 fn split_parameters(
   edge: Edge,
   against_edges: List(Edge),
-  intersection_options: svg_path.IntersectionOptions,
+  intersection_options: intersections.IntersectionOptions,
   parameters: List(Float),
 ) -> Result(List(Float), svg_path.Error) {
   let Edge(id:, segment:, ..) = edge

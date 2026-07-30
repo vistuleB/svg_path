@@ -1513,7 +1513,7 @@ fn cross_side_split_parameters(
 
 fn parametric_self_intersection_sections(
   subpath: svg_path.Subpath,
-  _intersection_options: svg_path.IntersectionOptions,
+  _intersection_options: intersections.IntersectionOptions,
   _tolerance: Float,
   extra_split_points extra_split_points: List(svg_path.SubpathParameter),
 ) -> Result(List(List(svg_path.Segment)), Error) {

@@ -26,7 +26,7 @@ pub fn path(
 pub fn path_with(
   subject subject: svg_path.Path,
   by cutter: svg_path.Path,
-  options options: svg_path.IntersectionOptions,
+  options options: intersections.IntersectionOptions,
 ) -> Result(svg_path.Path, svg_path.Error) {
   use pieces <- result.try(
     cut_subject_subpaths(subject.subpaths, cutter, options, accumulated: []),
@@ -57,7 +57,7 @@ pub fn subpath(
 pub fn subpath_with(
   subject subject: svg_path.Subpath,
   by cutter: svg_path.Subpath,
-  options options: svg_path.IntersectionOptions,
+  options options: intersections.IntersectionOptions,
 ) -> Result(List(svg_path.Subpath), svg_path.Error) {
   use intersections <- result.try(intersections.subpath_with(
     subject,
@@ -73,7 +73,7 @@ pub fn subpath_with(
 fn cut_subject_subpaths(
   subpaths: List(svg_path.Subpath),
   cutter: svg_path.Path,
-  options: svg_path.IntersectionOptions,
+  options: intersections.IntersectionOptions,
   accumulated accumulated: List(svg_path.Subpath),
 ) -> Result(List(svg_path.Subpath), svg_path.Error) {
   case subpaths {
@@ -95,7 +95,7 @@ fn cut_subject_subpaths(
 fn path_cut_points(
   subject: svg_path.Subpath,
   cutter: svg_path.Path,
-  options: svg_path.IntersectionOptions,
+  options: intersections.IntersectionOptions,
 ) -> Result(List(svg_path.SubpathParameter), svg_path.Error) {
   use intersections <- result.try(intersections.path_with(
     svg_path.path_from_subpath(subject),
