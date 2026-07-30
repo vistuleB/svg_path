@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 372" width="980" height="372">
+  <rect x="0" y="0" width="980" height="372" style="fill: #ffffff" />
+  <text x="490" y="34" font-size="22" style="fill: #111827; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 700; text-anchor: middle">viewBox + preserveAspectRatio changes marker content fitting</text>
+  <text x="40" y="100" font-size="16" style="fill: #334155; font-family: ui-monospace, SFMono-Regular, Menlo, monospace">Stretch</text>
+  <path d="M 360 94 H 500" style="fill: none; stroke: #cbd5e1; stroke-width: 2" />
+  <circle cx="500" cy="94" r="5.5" style="fill: #111827" />
+  <circle cx="500" cy="94" r="8" style="fill: none; stroke: #f59e0b; stroke-width: 2.5" />
+  <path d="M 465 84 H 515.55556 L 535 94 L 515.55556 104 H 465 Z" style="fill: #b45309; fill-opacity: 0.38; stroke: #111827; stroke-width: 1.25; stroke-linejoin: round" />
+  <path d="M 474.72222 89 H 498.05556 V 99 H 474.72222 Z" style="fill: none; stroke: #0f172a; stroke-width: 1.6; stroke-linejoin: round" />
+  <text x="40" y="202" font-size="16" style="fill: #334155; font-family: ui-monospace, SFMono-Regular, Menlo, monospace">Meet(XMidYMid)</text>
+  <path d="M 360 196 H 500" style="fill: none; stroke: #cbd5e1; stroke-width: 2" />
+  <circle cx="500" cy="196" r="5.5" style="fill: #111827" />
+  <circle cx="500" cy="196" r="8" style="fill: none; stroke: #f59e0b; stroke-width: 2.5" />
+  <path d="M 482 186 H 508 L 518 196 L 508 206 H 482 Z" style="fill: #b45309; fill-opacity: 0.38; stroke: #111827; stroke-width: 1.25; stroke-linejoin: round" />
+  <path d="M 487 191 H 499 V 201 H 487 Z" style="fill: none; stroke: #0f172a; stroke-width: 1.6; stroke-linejoin: round" />
+  <text x="40" y="304" font-size="16" style="fill: #334155; font-family: ui-monospace, SFMono-Regular, Menlo, monospace">Slice(XMidYMid)</text>
+  <path d="M 360 298 H 500" style="fill: none; stroke: #cbd5e1; stroke-width: 2" />
+  <circle cx="500" cy="298" r="5.5" style="fill: #111827" />
+  <circle cx="500" cy="298" r="8" style="fill: none; stroke: #f59e0b; stroke-width: 2.5" />
+  <path d="M 465 278.55556 H 515.55556 L 535 298 L 515.55556 317.44444 H 465 Z" style="fill: #b45309; fill-opacity: 0.38; stroke: #111827; stroke-width: 1.25; stroke-linejoin: round" />
+  <path d="M 474.72222 288.27778 H 498.05556 V 307.72222 H 474.72222 Z" style="fill: none; stroke: #0f172a; stroke-width: 1.6; stroke-linejoin: round" />
+</svg>

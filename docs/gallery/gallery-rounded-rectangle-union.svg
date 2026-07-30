@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 730 220" width="730" height="220">
+  <rect x="0" y="0" width="730" height="220" style="fill: #ffffff" />
+  <rect x="8" y="18" width="222" height="184" style="fill: #f8fafc; stroke: #cbd5e1; stroke-width: 1.4" />
+  <rect x="258" y="18" width="222" height="184" style="fill: #f8fafc; stroke: #cbd5e1; stroke-width: 1.4" />
+  <rect x="508" y="18" width="222" height="184" style="fill: #f8fafc; stroke: #cbd5e1; stroke-width: 1.4" />
+  <path d="M 6 56 H 102 V 152 H 6 Z M 48 34 H 156 V 98 H 48 Z M 124 72 H 216 V 152 H 124 Z M 30 122 H 152 V 180 H 30 Z M 158 120 H 232 V 186 H 158 Z" style="fill: #d9f99d; stroke: #365314; stroke-width: 2; stroke-linejoin: round" />
+  <path d="M 102 95.75615 L 97.5 87.96192 H 106.5 Z" style="fill: #365314; stroke: none" />
+  <path d="M 156 48.15615 L 151.5 40.36192 H 160.5 Z" style="fill: #365314; stroke: none" />
+  <path d="M 216 102.15615 L 211.5 94.36192 H 220.5 Z" style="fill: #365314; stroke: none" />
+  <path d="M 152 127.59615 L 147.5 119.80192 H 156.5 Z" style="fill: #365314; stroke: none" />
+  <path d="M 232 146.39615 L 227.5 138.60192 H 236.5 Z" style="fill: #365314; stroke: none" />
+  <path d="M 256 56 H 298 V 34 H 406 V 72 H 466 V 120 H 482 V 186 H 408 V 152 H 402 V 180 H 280 V 152 H 256 Z M 466 120 V 152 H 408 V 120 Z M 402 152 H 374 V 122 H 402 Z M 374 122 V 98 H 352 V 122 Z M 352 122 V 152 H 280 V 122 Z M 406 72 V 98 H 374 V 72 Z M 298 56 H 352 V 98 H 298 Z" style="fill: #bfdbfe; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
+  <path d="M 466 83.27615 L 461.5 75.48192 H 470.5 Z" style="fill: #1f2937; stroke: none" />
+  <path d="M 431.60385 152 L 439.39808 147.5 V 156.5 Z" style="fill: #1f2937; stroke: none" />
+  <path d="M 374 135.36385 L 378.5 143.15808 H 369.5 Z" style="fill: #1f2937; stroke: none" />
+  <path d="M 361.52385 98 L 369.31808 93.5 V 102.5 Z" style="fill: #1f2937; stroke: none" />
+  <path d="M 307.44385 152 L 315.23808 147.5 V 156.5 Z" style="fill: #1f2937; stroke: none" />
+  <path d="M 387.36385 98 L 395.15808 93.5 V 102.5 Z" style="fill: #1f2937; stroke: none" />
+  <path d="M 352 72.47615 L 347.5 64.68192 H 356.5 Z" style="fill: #1f2937; stroke: none" />
+  <path d="M 514 56 H 540 A 8 8 0 0 0 548 48 V 42 A 8 8 0 0 1 556 34 H 648 A 8 8 0 0 1 656 42 V 64 A 8 8 0 0 0 664 72 H 708 A 8 8 0 0 1 716 80 V 112 A 8 8 0 0 0 724 120 H 724 A 8 8 0 0 1 732 128 V 178 A 8 8 0 0 1 724 186 H 666 A 8 8 0 0 1 658 178 V 155 A 3 3 0 0 0 655 152 H 655 A 3 3 0 0 0 652 155 V 172 A 8 8 0 0 1 644 180 H 538 A 8 8 0 0 1 530 172 V 160 A 8 8 0 0 0 522 152 H 514 A 8 8 0 0 1 506 144 V 64 A 8 8 0 0 1 514 56 Z M 716 128 V 144 A 8 8 0 0 1 708 152 H 666 A 8 8 0 0 1 658 144 V 128 A 8 8 0 0 1 666 120 H 708 A 8 8 0 0 1 716 128 Z M 644 152 H 632 A 8 8 0 0 1 624 144 V 130 A 8 8 0 0 1 632 122 H 644 A 8 8 0 0 1 652 130 V 144 A 8 8 0 0 1 644 152 Z M 624 114 V 106 A 8 8 0 0 0 616 98 H 610 A 8 8 0 0 0 602 106 V 114 A 8 8 0 0 0 610 122 H 616 A 8 8 0 0 0 624 114 Z M 602 130 V 144 A 8 8 0 0 1 594 152 H 538 A 8 8 0 0 1 530 144 V 130 A 8 8 0 0 1 538 122 H 594 A 8 8 0 0 1 602 130 Z M 656 80 V 90 A 8 8 0 0 1 648 98 H 632 A 8 8 0 0 1 624 90 V 80 A 8 8 0 0 1 632 72 H 648 A 8 8 0 0 1 656 80 Z M 556 56 H 594 A 8 8 0 0 1 602 64 V 90 A 8 8 0 0 1 594 98 H 556 A 8 8 0 0 1 548 90 V 64 A 8 8 0 0 1 556 56 Z" style="fill: #bbf7d0; stroke: #14532d; stroke-width: 3; stroke-linejoin: round" />
+  <path d="M 716 91.22465 L 711.5 83.43042 H 720.5 Z" style="fill: #14532d; stroke: none" />
+  <path d="M 674.83995 152 L 682.63418 147.5 V 156.5 Z" style="fill: #14532d; stroke: none" />
+  <path d="M 624 128.59995 L 628.5 136.39418 H 619.5 Z" style="fill: #14532d; stroke: none" />
+  <path d="M 604.76003 98.02863 L 612.52945 93.48593 L 612.57883 102.4858 Z" style="fill: #14532d; stroke: none" />
+  <path d="M 550.67995 152 L 558.47418 147.5 V 156.5 Z" style="fill: #14532d; stroke: none" />
+  <path d="M 630.59995 98 L 638.39418 93.5 V 102.5 Z" style="fill: #14532d; stroke: none" />
+  <path d="M 602 79.24005 L 597.5 71.44582 H 606.5 Z" style="fill: #14532d; stroke: none" />
+</svg>
