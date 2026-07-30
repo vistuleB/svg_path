@@ -4,7 +4,7 @@
 //// the package. To run it again, temporarily copy it to the project `src` root
 //// and run:
 ////
-////     gleam run -m bad_tangent_case_probe > bad_tangent_case_probe.svg
+////     gleam run -m bad_tangent_case_probe > examples/debug/bad_tangent_case_probe.svg
 
 import gleam/io
 import svg_path

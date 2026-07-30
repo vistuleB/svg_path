@@ -1,6 +1,6 @@
 //// Scratch runner for drawing a 1-degree crescent point cloud with its hull.
 ////
-////     gleam run -m crescent_hull_probe > crescent_hull_probe.svg
+////     gleam run -m crescent_hull_probe > examples/debug/crescent_hull_probe.svg
 
 import gleam/int
 import gleam/io

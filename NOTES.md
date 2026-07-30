@@ -86,7 +86,8 @@ other zero-length subpaths such as `M 30,30 Z` follow the `stroke-linecap`
 zero-length behavior. With `round` or `square`, that can produce a visible
 dot/square where pure `M 30,30` does not.
 
-The local probe file `zero_length_closepath_probe.svg` demonstrates the
+The local probe file `examples/debug/zero_length_closepath_probe.svg`
+demonstrates the
 expected distinction:
 
 ```xml

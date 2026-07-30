@@ -4,7 +4,7 @@
 //// the package. To run it again, temporarily copy it to the project `src` root
 //// and run:
 ////
-////     gleam run -m exact_loop_tangent_probe > exact_loop_tangent_probe.svg
+////     gleam run -m exact_loop_tangent_probe > examples/debug/exact_loop_tangent_probe.svg
 
 import gleam/io
 import svg_path
