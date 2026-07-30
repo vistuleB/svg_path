@@ -1,8 +1,9 @@
-# SVG Stroke Research Notes
+# SVG Stroke Reference Notes
 
-These notes summarize the parts of SVG/CSS stroke behavior that matter for the
-current stroke, dash, and marker-pose APIs, plus nearby SVG behavior that is not
-implemented.
+This file collects the SVG and CSS specification details that inform
+`svg_path/stroke`, dash extraction, marker pose helpers, and related geometry
+behavior. It is not a replacement for the official specs; it records the rules
+this package intentionally follows or defers.
 
 Primary sources:
 
