@@ -1226,6 +1226,289 @@ pub fn segment_to_lines_with(
   segment_to_lines_valid_options(segment, options)
 }
 
+/// Detect a curve that is contained in an absolute-width strip and replace it
+/// with ordered line segments when possible.
+///
+/// `tolerance` is the maximum distance from the replacement line or lines to
+/// the curve, in path coordinate units. `Ok(None)` means that the segment is
+/// not line-degenerate. `Ok(Some(lines))` preserves collinear backtracking;
+/// `Some([])` represents a curve with no movement. Lines themselves return
+/// `Ok(None)`. The tolerance must be greater than zero.
+pub fn segment_degenerate_lines(
+  segment: Segment,
+  tolerance tolerance: Float,
+) -> Result(Option(List(Segment)), Error) {
+  case tolerance <=. 0.0 {
+    True -> Error(InvalidLinearizeTolerance(tolerance))
+    False -> segment_degenerate_lines_valid(segment, tolerance)
+  }
+}
+
+fn segment_degenerate_lines_valid(
+  segment: Segment,
+  tolerance: Float,
+) -> Result(Option(List(Segment)), Error) {
+  case segment {
+    Line(..) -> Ok(None)
+    QuadraticBezier(start:, control:, end:) ->
+      bezier_degenerate_lines(
+        segment,
+        [start, control, end],
+        quadratic_degenerate_breaks(start, control, end, start),
+        tolerance,
+      )
+    CubicBezier(start:, control1:, control2:, end:) ->
+      bezier_degenerate_lines(
+        segment,
+        [start, control1, control2, end],
+        cubic_degenerate_breaks(start, control1, control2, end, start),
+        tolerance,
+      )
+    Arc(start:, radius:, end:, ..) -> {
+      case radius.x == 0.0 || radius.y == 0.0 {
+        True -> {
+          case start == end {
+            True -> Ok(Some([]))
+            False -> Ok(Some([Line(start:, end:)]))
+          }
+        }
+        False -> {
+          use lines <- result.try(segment_to_lines_with(
+            segment,
+            options: LinearizeOptions(
+              tolerance:,
+              max_depth: default_linearize_max_depth,
+            ),
+          ))
+          degenerate_line_list(lines, tolerance)
+        }
+      }
+    }
+  }
+}
+
+fn bezier_degenerate_lines(
+  segment: Segment,
+  defining_points: List(Point),
+  breaks: List(Float),
+  tolerance: Float,
+) -> Result(Option(List(Segment)), Error) {
+  case degenerate_line_axis(defining_points, tolerance) {
+    None -> Ok(None)
+    Some(#(start, axis)) -> {
+      case
+        defining_points_are_in_strip(defining_points, start, axis, tolerance)
+      {
+        False -> Ok(None)
+        True -> {
+          let breaks = [0.0, ..breaks] |> list.append([1.0])
+          use lines <- result.try(line_pieces_at_breaks(segment, breaks, []))
+          Ok(Some(remove_zero_length_lines(lines)))
+        }
+      }
+    }
+  }
+}
+
+fn degenerate_line_axis(
+  points: List(Point),
+  tolerance: Float,
+) -> Option(#(Point, Point)) {
+  case points {
+    [start, ..] -> {
+      case farthest_point(points, start, start) {
+        farthest -> {
+          case distance_squared(farthest, start) <=. tolerance *. tolerance {
+            True -> None
+            False -> Some(#(start, point_difference(farthest, start)))
+          }
+        }
+      }
+    }
+    [] -> None
+  }
+}
+
+fn defining_points_are_in_strip(
+  points: List(Point),
+  start: Point,
+  axis: Point,
+  tolerance: Float,
+) -> Bool {
+  let axis_length_squared = distance_squared(axis, Point(0.0, 0.0))
+  list.all(points, fn(point) {
+    let relative = point_difference(point, start)
+    let cross = relative.x *. axis.y -. relative.y *. axis.x
+    float.absolute_value(cross) /. sqrt(axis_length_squared) <=. tolerance
+  })
+}
+
+fn degenerate_line_list(
+  lines: List(Segment),
+  tolerance: Float,
+) -> Result(Option(List(Segment)), Error) {
+  let points = line_list_points(lines, [])
+  case degenerate_line_axis(points, tolerance) {
+    None -> Ok(Some([]))
+    Some(#(start, axis)) -> {
+      case defining_points_are_in_strip(points, start, axis, tolerance) {
+        True -> Ok(Some(remove_zero_length_lines(lines)))
+        False -> Ok(None)
+      }
+    }
+  }
+}
+
+fn farthest_point(points: List(Point), origin: Point, best: Point) -> Point {
+  case points {
+    [] -> best
+    [first, ..rest] -> {
+      let best = case
+        distance_squared(first, origin) >. distance_squared(best, origin)
+      {
+        True -> first
+        False -> best
+      }
+      farthest_point(rest, origin, best)
+    }
+  }
+}
+
+fn line_list_points(lines: List(Segment), points: List(Point)) -> List(Point) {
+  case lines {
+    [] -> list.reverse(points)
+    [Line(start:, end:), ..rest] ->
+      line_list_points(rest, [end, start, ..points])
+    [_first, ..rest] -> line_list_points(rest, points)
+  }
+}
+
+fn remove_zero_length_lines(lines: List(Segment)) -> List(Segment) {
+  list.filter(lines, fn(segment) {
+    segment_start(segment) != segment_end(segment)
+  })
+}
+
+fn line_pieces_at_breaks(
+  segment: Segment,
+  breaks: List(Float),
+  lines: List(Segment),
+) -> Result(List(Segment), Error) {
+  case breaks {
+    [] | [_] -> Ok(list.reverse(lines))
+    [from, to, ..rest] -> {
+      use start <- result.try(segment_point(segment, at: from))
+      use end <- result.try(segment_point(segment, at: to))
+      line_pieces_at_breaks(segment, [to, ..rest], [Line(start:, end:), ..lines])
+    }
+  }
+}
+
+fn quadratic_degenerate_breaks(
+  start: Point,
+  control: Point,
+  end: Point,
+  axis_start: Point,
+) -> List(Float) {
+  let axis =
+    point_difference(
+      farthest_point([start, control, end], axis_start, axis_start),
+      axis_start,
+    )
+  let s = axis_coordinate(start, axis_start, axis)
+  let c = axis_coordinate(control, axis_start, axis)
+  let e = axis_coordinate(end, axis_start, axis)
+  let denominator = s -. { 2.0 *. c } +. e
+  case denominator == 0.0 {
+    True -> []
+    False -> {
+      let root = { s -. c } /. denominator
+      inside_breaks([root])
+    }
+  }
+}
+
+fn cubic_degenerate_breaks(
+  start: Point,
+  control1: Point,
+  control2: Point,
+  end: Point,
+  axis_start: Point,
+) -> List(Float) {
+  let axis =
+    point_difference(
+      farthest_point([start, control1, control2, end], axis_start, axis_start),
+      axis_start,
+    )
+  let s = axis_coordinate(start, axis_start, axis)
+  let c1 = axis_coordinate(control1, axis_start, axis)
+  let c2 = axis_coordinate(control2, axis_start, axis)
+  let e = axis_coordinate(end, axis_start, axis)
+  let a = 0.0 -. s +. { 3.0 *. c1 } -. { 3.0 *. c2 } +. e
+  let b = { 3.0 *. s } -. { 6.0 *. c1 } +. { 3.0 *. c2 }
+  let c = { 3.0 *. c1 } -. { 3.0 *. s }
+  quadratic_roots_inside(3.0 *. a, 2.0 *. b, c)
+}
+
+fn axis_coordinate(point: Point, origin: Point, axis: Point) -> Float {
+  let relative = point_difference(point, origin)
+  let denominator = distance_squared(axis, Point(0.0, 0.0))
+  case denominator == 0.0 {
+    True -> 0.0
+    False -> dot(relative, axis) /. denominator
+  }
+}
+
+fn quadratic_roots_inside(a: Float, b: Float, c: Float) -> List(Float) {
+  case a == 0.0 {
+    True -> {
+      case b == 0.0 {
+        True -> []
+        False -> [b /. { 0.0 -. c }] |> inside_breaks
+      }
+    }
+    False -> {
+      let discriminant = b *. b -. 4.0 *. a *. c
+      case discriminant <. 0.0 {
+        True -> []
+        False -> {
+          let root = sqrt(discriminant)
+          let first = { 0.0 -. b -. root } /. { 2.0 *. a }
+          let second = { 0.0 -. b +. root } /. { 2.0 *. a }
+          [first, second] |> list.filter(is_inside_break) |> sort_floats
+        }
+      }
+    }
+  }
+}
+
+fn inside_breaks(values: List(Float)) -> List(Float) {
+  list.filter(values, is_inside_break)
+}
+
+fn is_inside_break(value: Float) -> Bool {
+  value >. 0.0 && value <. 1.0
+}
+
+fn sort_floats(values: List(Float)) -> List(Float) {
+  case values {
+    [] -> []
+    [first] -> [first]
+    [first, second] -> {
+      case first <=. second {
+        True -> [first, second]
+        False -> [second, first]
+      }
+    }
+    _ -> values
+  }
+}
+
+fn sqrt(value: Float) -> Float {
+  let assert Ok(root) = float.square_root(value)
+  root
+}
+
 /// Approximate every segment in a subpath with straight lines.
 ///
 /// The subpath's start point and closed state are preserved. Move-only

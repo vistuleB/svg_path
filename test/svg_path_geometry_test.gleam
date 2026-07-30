@@ -1,12 +1,71 @@
 import gleam/float
 import gleam/int
 import gleam/list
-import gleam/option.{Some}
+import gleam/option.{None, Some}
 import gleam/result
 import svg_path
 import svg_path/intersections
 
 const tolerance = 0.000001
+
+pub fn segment_degenerate_lines_preserves_quadratic_backtracking_test() {
+  let curve =
+    svg_path.QuadraticBezier(
+      start: svg_path.Point(0.0, 0.0),
+      control: svg_path.Point(10.0, 0.0),
+      end: svg_path.Point(0.0, 0.0),
+    )
+
+  let assert Ok(Some(lines)) = svg_path.segment_degenerate_lines(curve, 0.001)
+  assert list.length(lines) == 2
+  assert list.all(lines, fn(segment) {
+    case segment {
+      svg_path.Line(..) -> True
+      _ -> False
+    }
+  })
+}
+
+pub fn segment_degenerate_lines_preserves_cubic_backtracking_test() {
+  let curve =
+    svg_path.CubicBezier(
+      start: svg_path.Point(0.0, 0.0),
+      control1: svg_path.Point(10.0, 0.0),
+      control2: svg_path.Point(-10.0, 0.0),
+      end: svg_path.Point(0.0, 0.0),
+    )
+
+  let assert Ok(Some(lines)) = svg_path.segment_degenerate_lines(curve, 0.001)
+  assert list.length(lines) == 3
+}
+
+pub fn segment_degenerate_lines_converts_zero_radius_arc_test() {
+  let arc =
+    svg_path.Arc(
+      start: svg_path.Point(0.0, 0.0),
+      radius: svg_path.Point(0.0, 10.0),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: False,
+      end: svg_path.Point(10.0, 0.0),
+    )
+
+  let assert Ok(Some([svg_path.Line(start:, end:)])) =
+    svg_path.segment_degenerate_lines(arc, 0.001)
+  assert start == svg_path.Point(0.0, 0.0)
+  assert end == svg_path.Point(10.0, 0.0)
+}
+
+pub fn segment_degenerate_lines_rejects_wide_curve_test() {
+  let curve =
+    svg_path.QuadraticBezier(
+      start: svg_path.Point(0.0, 0.0),
+      control: svg_path.Point(5.0, 2.0),
+      end: svg_path.Point(10.0, 0.0),
+    )
+
+  assert svg_path.segment_degenerate_lines(curve, 0.001) == Ok(None)
+}
 
 pub fn parametric_subpath_fits_simple_parabola_test() {
   let assert Ok(subpath) =
