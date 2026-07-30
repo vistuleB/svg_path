@@ -13,6 +13,38 @@ the tag object.
 
 - No unreleased changes yet.
 
+## 1.0.0 - 2026-07-30
+
+- First stable release of the current public API.
+- Carries forward the `0.23.0` feature set after final documentation cleanup.
+
+## 0.23.0 - 2026-07-30
+
+- Renamed low-level Bezier and ellipse point types to `BezierPoint` and
+  `EllipsePoint` to avoid suggesting they are the public root `Point` type.
+- Added root-module convenience wrappers for common ellipse arc evaluation and
+  cubic fitting helpers.
+- Renamed graceful transform helpers for clearer segment and subpath behavior.
+- Clarified point helper and CSG documentation before the stable release.
+
+## 0.22.0 - 2026-07-30
+
+- Removed the `vec` package dependency.
+- Added `svg_path/point` as a small helper library for the root `Point` type.
+- Used point helpers internally where they made the code clearer.
+
+## 0.21.1 - 2026-07-29
+
+- Added `coordinates` for destructuring `Point` values through a helper
+  function.
+
+## 0.21.0 - 2026-07-28
+
+- Added serializer minifying options.
+- Used `H`/`V` and smooth `S`/`T` path commands by default when they shorten
+  serialized output.
+- Trimmed the recursive dash gallery source and refreshed pre-1.0 notes.
+
 ## 0.20.0 - 2026-07-27
 
 - Added `svg_path/marker` helpers for SVG marker poses and marker layout
