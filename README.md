@@ -44,7 +44,7 @@ pub fn prepare_for_arc_averse_consumer(
 ## Module Map
 
 - `svg_path`: core `Path`, `Subpath`, `Segment`, and `Point` types, plus
-  construction, editing, geometry, splitting, distances, and intersections.
+  construction, editing, geometry, splitting, and distances.
 - `svg_path/point`: small helper library for the `svg_path.Point` type.
 - `svg_path/parse` and `svg_path/serialize`: SVG path-data parsing and
   serialization.
@@ -59,8 +59,8 @@ pub fn prepare_for_arc_averse_consumer(
 - `svg_path/area`: signed area and SVG fill-rule area for subpaths and paths.
 - `svg_path/clip`: curve clipping that keeps original geometry inside a filled
   clipping region without adding closure bridges.
-- `svg_path/intersections`: discoverable facade for segment, subpath, and path
-  point-intersection queries.
+- `svg_path/intersections`: segment, subpath, and path point-intersection
+  queries.
 - `svg_path/csg`: Boolean union, intersection, and difference for filled
   paths.
 - `svg_path/cut`: split subpaths and paths at intersections with cutter

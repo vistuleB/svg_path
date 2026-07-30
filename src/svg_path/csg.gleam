@@ -30,6 +30,7 @@ import gleam/order
 import gleam/result
 import svg_path
 import svg_path/area
+import svg_path/intersections
 import svg_path/point as point_helpers
 import svg_path/trig
 
@@ -96,7 +97,7 @@ pub type Options {
 /// Return default CSG options.
 pub fn default_options() -> Options {
   Options(
-    intersection: svg_path.default_intersection_options(),
+    intersection: intersections.default_options(),
     containment: svg_path.default_containment_options(),
     tolerance: default_tolerance,
   )
@@ -522,7 +523,7 @@ fn split_parameters(
         False -> {
           use parameters <- result.try(
             case
-              svg_path.segment_intersections_with(
+              intersections.segment_with(
                 segment,
                 against,
                 options: intersection_options,

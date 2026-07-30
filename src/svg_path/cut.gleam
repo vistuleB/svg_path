@@ -7,6 +7,7 @@ import gleam/list
 import gleam/order
 import gleam/result
 import svg_path
+import svg_path/intersections
 
 /// Cut a subject path by a cutter path.
 ///
@@ -18,11 +19,7 @@ pub fn path(
   subject subject: svg_path.Path,
   by cutter: svg_path.Path,
 ) -> Result(svg_path.Path, svg_path.Error) {
-  path_with(
-    subject:,
-    by: cutter,
-    options: svg_path.default_intersection_options(),
-  )
+  path_with(subject:, by: cutter, options: intersections.default_options())
 }
 
 /// Cut a subject path by a cutter path using explicit intersection options.
@@ -52,11 +49,7 @@ pub fn subpath(
   subject subject: svg_path.Subpath,
   by cutter: svg_path.Subpath,
 ) -> Result(List(svg_path.Subpath), svg_path.Error) {
-  subpath_with(
-    subject:,
-    by: cutter,
-    options: svg_path.default_intersection_options(),
-  )
+  subpath_with(subject:, by: cutter, options: intersections.default_options())
 }
 
 /// Cut a subject subpath by a cutter subpath using explicit intersection
@@ -66,7 +59,7 @@ pub fn subpath_with(
   by cutter: svg_path.Subpath,
   options options: svg_path.IntersectionOptions,
 ) -> Result(List(svg_path.Subpath), svg_path.Error) {
-  use intersections <- result.try(svg_path.subpath_intersections_with(
+  use intersections <- result.try(intersections.subpath_with(
     subject,
     cutter,
     options:,
@@ -104,7 +97,7 @@ fn path_cut_points(
   cutter: svg_path.Path,
   options: svg_path.IntersectionOptions,
 ) -> Result(List(svg_path.SubpathParameter), svg_path.Error) {
-  use intersections <- result.try(svg_path.path_intersections_with(
+  use intersections <- result.try(intersections.path_with(
     svg_path.path_from_subpath(subject),
     cutter,
     options:,

@@ -10,6 +10,7 @@ import gleam/list
 import gleam/order
 import gleam/result
 import svg_path
+import svg_path/intersections
 
 const default_tolerance = 0.000001
 
@@ -25,7 +26,7 @@ pub type Options {
 /// Return default clipping options.
 pub fn default_options() -> Options {
   Options(
-    intersection: svg_path.default_intersection_options(),
+    intersection: intersections.default_options(),
     containment: svg_path.default_containment_options(),
     tolerance: default_tolerance,
   )
@@ -144,7 +145,7 @@ fn split_points(
   clip_region: svg_path.Path,
   options: Options,
 ) -> Result(List(svg_path.SubpathParameter), svg_path.Error) {
-  use intersections <- result.try(svg_path.path_intersections_with(
+  use intersections <- result.try(intersections.path_with(
     svg_path.path_from_subpath(input),
     clip_region,
     options: options.intersection,

@@ -11,6 +11,7 @@ import svg_path/convex_hull
 import svg_path/csg
 import svg_path/cut
 import svg_path/effects
+import svg_path/intersections
 import svg_path/marker
 import svg_path/number_format
 import svg_path/offset
@@ -1634,10 +1635,7 @@ fn raw_offset_pair_report(
       <> "; gap="
       <> debug_float_to_string(point_distance(left_end, right_start))
       <> "; intersections="
-      <> segment_intersections_to_string(svg_path.segment_intersections(
-        left,
-        right,
-      ))
+      <> segment_intersections_to_string(intersections.segment(left, right))
     }
     _ -> "not enough raw offset segments"
   }
@@ -1824,9 +1822,9 @@ fn self_intersections_result_to_string(
     Error(_) -> "not computed"
     Ok(subpath) -> {
       case
-        svg_path.subpath_self_intersections_with(
+        intersections.subpath_self_with(
           subpath,
-          options: svg_path.default_self_intersection_options(),
+          options: intersections.default_self_options(),
         )
       {
         Ok(intersections) -> int.to_string(list.length(intersections))
@@ -1843,9 +1841,9 @@ fn self_intersection_points_result_to_string(
     Error(_) -> "candidate self intersection points: not computed"
     Ok(subpath) -> {
       case
-        svg_path.subpath_self_intersections_with(
+        intersections.subpath_self_with(
           subpath,
-          options: svg_path.default_self_intersection_options(),
+          options: intersections.default_self_options(),
         )
       {
         Ok(intersections) ->

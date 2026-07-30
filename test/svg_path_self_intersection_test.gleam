@@ -1,6 +1,7 @@
 import gleam/list
 import gleeunit
 import svg_path
+import svg_path/intersections
 
 const tolerance = 0.000001
 
@@ -20,7 +21,7 @@ pub fn subpath_self_intersections_finds_line_crossing_test() {
       svg_path.Line(start: c, end: d),
     ])
 
-  let assert Ok([intersection]) = svg_path.subpath_self_intersections(subpath)
+  let assert Ok([intersection]) = intersections.subpath_self(subpath)
   let svg_path.SubpathSelfIntersection(point:, parameters:) = intersection
   let #(first, second) = parameters
   let svg_path.SubpathParameter(segment_index: first_index, t: first_t) = first
@@ -55,7 +56,7 @@ pub fn subpath_self_intersections_reports_overlapping_line_endpoints_test() {
       ),
     ])
 
-  let assert Ok(intersections) = svg_path.subpath_self_intersections(subpath)
+  let assert Ok(intersections) = intersections.subpath_self(subpath)
 
   assert list_contains_point(intersections, svg_path.Point(2.0, 0.0))
   assert list_contains_point(intersections, svg_path.Point(8.0, 0.0))
@@ -71,7 +72,7 @@ pub fn subpath_self_intersections_ignores_adjacent_segment_join_test() {
       svg_path.Line(start: b, end: c),
     ])
 
-  assert svg_path.subpath_self_intersections(subpath) == Ok([])
+  assert intersections.subpath_self(subpath) == Ok([])
 }
 
 pub fn subpath_self_intersections_ignores_closed_endpoint_join_test() {
@@ -88,7 +89,7 @@ pub fn subpath_self_intersections_ignores_closed_endpoint_join_test() {
     ])
     |> svg_path.subpath_assert_set_closed(closed: True)
 
-  assert svg_path.subpath_self_intersections(subpath) == Ok([])
+  assert intersections.subpath_self(subpath) == Ok([])
 }
 
 pub fn subpath_self_intersections_finds_cubic_self_intersection_test() {
@@ -101,7 +102,7 @@ pub fn subpath_self_intersections_finds_cubic_self_intersection_test() {
     )
   let subpath = svg_path.subpath_assert([curve])
 
-  let assert Ok([intersection]) = svg_path.subpath_self_intersections(subpath)
+  let assert Ok([intersection]) = intersections.subpath_self(subpath)
   let svg_path.SubpathSelfIntersection(point:, parameters:) = intersection
   let #(first, second) = parameters
   let svg_path.SubpathParameter(segment_index: first_index, t: first_t) = first
@@ -127,7 +128,7 @@ pub fn subpath_self_intersections_respects_minimum_arc_length_separation_test() 
       svg_path.Line(start: c, end: d),
     ])
 
-  assert svg_path.subpath_self_intersections_with(
+  assert intersections.subpath_self_with(
       subpath,
       options: svg_path.SelfIntersectionOptions(
         minimum_arc_length_separation: 100.0,
@@ -149,7 +150,7 @@ pub fn subpath_self_intersections_rejects_invalid_options_test() {
   let assert Error(svg_path.InvalidSelfIntersectionMinimumArcLengthSeparation(
     0.0,
   )) =
-    svg_path.subpath_self_intersections_with(
+    intersections.subpath_self_with(
       subpath,
       options: svg_path.SelfIntersectionOptions(
         minimum_arc_length_separation: 0.0,
@@ -157,7 +158,7 @@ pub fn subpath_self_intersections_rejects_invalid_options_test() {
       ),
     )
   let assert Error(svg_path.InvalidSelfIntersectionDistanceTolerance(0.0)) =
-    svg_path.subpath_self_intersections_with(
+    intersections.subpath_self_with(
       subpath,
       options: svg_path.SelfIntersectionOptions(
         minimum_arc_length_separation: 0.000001,

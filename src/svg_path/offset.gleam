@@ -32,6 +32,7 @@ import gleam/result
 import svg_path
 import svg_path/area
 import svg_path/bezier
+import svg_path/intersections
 import svg_path/point as point_helpers
 import svg_path/root
 import svg_path/trig
@@ -1363,7 +1364,7 @@ fn parametric_pruned_side(
 ) -> Result(List(svg_path.Subpath), Error) {
   use sections <- result.try(parametric_self_intersection_sections(
     provisional,
-    svg_path.default_intersection_options(),
+    intersections.default_options(),
     options.fitting.tolerance,
     extra_split_points:,
   ))
@@ -1419,7 +1420,7 @@ fn parametric_pruned_band_side_chunks(
 ) -> Result(List(List(svg_path.Segment)), Error) {
   use sections <- result.try(parametric_self_intersection_sections(
     provisional,
-    svg_path.default_intersection_options(),
+    intersections.default_options(),
     options.fitting.tolerance,
     extra_split_points:,
   ))
@@ -1446,7 +1447,7 @@ fn parametric_pruned_stroke_candidate(
   use sections <- result.try(
     parametric_self_intersection_sections(
       candidate,
-      svg_path.default_intersection_options(),
+      intersections.default_options(),
       options.fitting.tolerance,
       extra_split_points: [],
     ),
@@ -1478,10 +1479,10 @@ fn cross_side_split_parameters(
   Error,
 ) {
   use intersections <- result.try(
-    svg_path.subpath_intersections_with(
+    intersections.subpath_with(
       left,
       right,
-      options: svg_path.default_intersection_options(),
+      options: intersections.default_options(),
     )
     |> result.map_error(PathError),
   )
@@ -3003,7 +3004,7 @@ fn self_intersection_split_parameters(
   subpath: svg_path.Subpath,
 ) -> Result(List(svg_path.SubpathParameter), Error) {
   use intersections <- result.try(
-    svg_path.subpath_self_intersections_with(
+    intersections.subpath_self_with(
       subpath,
       options: svg_path.SelfIntersectionOptions(
         minimum_arc_length_separation: 2.0 *. point_tolerance,
