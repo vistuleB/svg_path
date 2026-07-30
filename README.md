@@ -822,10 +822,16 @@ intersections.subpath(left_subpath, right_subpath)
 intersections.path(left_path, right_path)
 ```
 
-Results are ordered along the left-hand input, and boundary aliases are
-retained. For example, a shared vertex can report both the end of one segment
-and the start of the next. Use `_with` variants to supply
-`IntersectionOptions`.
+Self-intersections use parallel names:
+
+```gleam
+intersections.segment_self(segment)
+intersections.subpath_self(subpath)
+intersections.path_self(path)
+```
+
+Results are ordered by parameter, and boundary aliases are canonicalized. Use
+`_with` variants to supply `IntersectionOptions` or `SelfIntersectionOptions`.
 
 ### Convex Hulls
 

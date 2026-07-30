@@ -3,11 +3,9 @@
 //// must match. Most cases also run through the public point-cloud API plus the
 //// explicit dumb and ambitious final repair modes.
 
-import gleam/float
 import gleam/int
 import gleam/list
 import gleam/option.{None}
-import gleam_community/maths
 import gleeunit
 import svg_path
 import svg_path/convex_hull
@@ -109,49 +107,8 @@ pub fn point_cloud_hull_handles_100_point_cloud_test() {
   assert point_cloud_hull_is_valid_for_count(100)
 }
 
-pub fn point_cloud_hull_handles_1000_point_cloud_test() {
-  assert point_cloud_hull_is_valid_for_count(1000)
-}
-
-pub fn point_cloud_hull_handles_1000_unit_circle_point_cloud_test() {
-  assert unit_circle_point_cloud_hull_is_valid(1000)
-}
-
-pub fn point_cloud_hull_handles_one_sided_1_degree_crescent_point_cloud_test() {
-  assert point_cloud_is_valid_in_all_modes(one_sided_1_degree_crescent_points(
-    100,
-  ))
-}
-
-pub fn point_cloud_hull_handles_two_sided_1_degree_crescent_point_cloud_test() {
-  assert point_cloud_is_valid_in_all_modes(two_sided_1_degree_crescent_points(
-    100,
-  ))
-}
-
-pub fn path_hull_handles_one_sided_1_degree_crescent_points_and_chord_test() {
-  assert crescent_path_is_valid_in_all_modes(
-    one_sided_1_degree_crescent_points(100),
-    start_angle: 0.0,
-    end_angle: 1.0,
-  )
-}
-
-pub fn path_hull_handles_two_sided_1_degree_crescent_points_and_chord_test() {
-  assert crescent_path_is_valid_in_all_modes(
-    two_sided_1_degree_crescent_points(100),
-    start_angle: -0.5,
-    end_angle: 0.5,
-  )
-}
-
 fn point_cloud_hull_is_valid_for_count(count: Int) -> Bool {
   let points = random_points(count)
-  point_cloud_is_valid_in_all_modes(points)
-}
-
-fn unit_circle_point_cloud_hull_is_valid(count: Int) -> Bool {
-  let points = unit_circle_points(count)
   point_cloud_is_valid_in_all_modes(points)
 }
 
@@ -183,45 +140,6 @@ fn path_point_cloud_is_valid_with_repair_mode(
     Error(_) -> False
     Ok(hull) -> point_cloud_hull_is_valid(points, hull)
   }
-}
-
-fn crescent_path_is_valid_in_all_modes(
-  points: List(svg_path.Point),
-  start_angle start_angle: Float,
-  end_angle end_angle: Float,
-) -> Bool {
-  let start = radius_1000_point(start_angle)
-  let end = radius_1000_point(end_angle)
-  let support_points = [start, end, ..points]
-
-  repair_modes_to_check
-  |> list.all(fn(repair_mode) {
-    case
-      convex_hull.internal_path_hull_with_repair_mode(
-        crescent_path(points, line_start: start, line_end: end),
-        repair_mode:,
-      )
-    {
-      Error(_) -> False
-      Ok(hull) -> point_cloud_hull_is_valid(support_points, hull)
-    }
-  })
-}
-
-fn crescent_path(
-  points: List(svg_path.Point),
-  line_start line_start: svg_path.Point,
-  line_end line_end: svg_path.Point,
-) -> svg_path.Path {
-  let line =
-    svg_path.subpath_assert([
-      svg_path.Line(start: line_start, end: line_end),
-    ])
-  let point_subpaths =
-    points
-    |> list.map(fn(point) { svg_path.subpath_empty(at: point) })
-
-  svg_path.Path([line, ..point_subpaths])
 }
 
 fn point_cloud_hull_is_valid(
@@ -270,139 +188,4 @@ fn random_point(index: Int) -> svg_path.Point {
     int.to_float({ { index * 41 + 29 } * { index * 97 + 31 } + 7 } % 10_001)
       /. 100.0,
   )
-}
-
-fn unit_circle_points(count: Int) -> List(svg_path.Point) {
-  int.range(from: 0, to: count, with: [], run: fn(points, index) {
-    [unit_circle_point(index), ..points]
-  })
-  |> list.reverse
-}
-
-fn unit_circle_point(index: Int) -> svg_path.Point {
-  let angle =
-    int.to_float({ index * 97 + 13 } % 10_000) /. 10_000.0 *. maths.pi() *. 2.0
-  let radius =
-    int.to_float({ { index * 37 + 17 } * { index * 53 + 29 } + 5 } % 10_000)
-    /. 10_000.0
-  let assert Ok(radius) = float.square_root(radius)
-
-  svg_path.Point(radius *. maths.cos(angle), radius *. maths.sin(angle))
-}
-
-fn one_sided_1_degree_crescent_points(count: Int) -> List(svg_path.Point) {
-  crescent_points(count, start_angle: 0.0, end_angle: 1.0)
-}
-
-fn two_sided_1_degree_crescent_points(count: Int) -> List(svg_path.Point) {
-  crescent_points(count, start_angle: -0.5, end_angle: 0.5)
-}
-
-fn crescent_points(
-  count: Int,
-  start_angle start_angle: Float,
-  end_angle end_angle: Float,
-) -> List(svg_path.Point) {
-  let line_start = radius_1000_point(start_angle)
-  let line_end = radius_1000_point(end_angle)
-
-  candidate_indexes(count * 20)
-  |> list.filter_map(fn(index) {
-    let point = crescent_candidate_point(index, start_angle:, end_angle:)
-    case point_inside_crescent(point, line_start:, line_end:) {
-      True -> Ok(point)
-      False -> Error(Nil)
-    }
-  })
-  |> take_first(count)
-}
-
-fn candidate_indexes(count: Int) -> List(Int) {
-  int.range(from: 0, to: count, with: [], run: fn(indexes, index) {
-    [index, ..indexes]
-  })
-  |> list.reverse
-}
-
-fn crescent_candidate_point(
-  index: Int,
-  start_angle start_angle: Float,
-  end_angle end_angle: Float,
-) -> svg_path.Point {
-  let angle_span = end_angle -. start_angle
-  let angle =
-    start_angle
-    +. angle_span
-    *. int.to_float({ index * 89 + 37 } % 10_000)
-    /. 10_000.0
-  let radians = angle *. maths.pi() /. 180.0
-  let circle =
-    svg_path.Point(1000.0 *. maths.cos(radians), 1000.0 *. maths.sin(radians))
-  let line_start = radius_1000_point(start_angle)
-  let line_end = radius_1000_point(end_angle)
-  let chord = chord_point_at_y(circle.y, line_start:, line_end:)
-  let fraction =
-    0.05
-    +. 0.9
-    *. int.to_float({ { index * 61 + 43 } * { index * 31 + 29 } + 17 } % 10_000)
-    /. 10_000.0
-
-  svg_path.Point(
-    chord.x +. fraction *. { circle.x -. chord.x },
-    chord.y +. fraction *. { circle.y -. chord.y },
-  )
-}
-
-fn chord_point_at_y(
-  y: Float,
-  line_start line_start: svg_path.Point,
-  line_end line_end: svg_path.Point,
-) -> svg_path.Point {
-  let t = { y -. line_start.y } /. { line_end.y -. line_start.y }
-  svg_path.Point(line_start.x +. t *. { line_end.x -. line_start.x }, y)
-}
-
-fn point_inside_crescent(
-  point: svg_path.Point,
-  line_start line_start: svg_path.Point,
-  line_end line_end: svg_path.Point,
-) -> Bool {
-  let radius_squared = point.x *. point.x +. point.y *. point.y
-  radius_squared <=. 1000.0 *. 1000.0 +. 0.000001
-  && chord_side(point, line_start:, line_end:) <=. 0.000001
-}
-
-fn chord_side(
-  point: svg_path.Point,
-  line_start line_start: svg_path.Point,
-  line_end line_end: svg_path.Point,
-) -> Float {
-  { line_end.x -. line_start.x }
-  *. { point.y -. line_start.y }
-  -. { line_end.y -. line_start.y }
-  *. { point.x -. line_start.x }
-}
-
-fn take_first(
-  points: List(svg_path.Point),
-  count: Int,
-) -> List(svg_path.Point) {
-  take_first_loop(points, count, [])
-}
-
-fn take_first_loop(
-  points: List(svg_path.Point),
-  count: Int,
-  taken: List(svg_path.Point),
-) -> List(svg_path.Point) {
-  case points, count {
-    _, count if count <= 0 -> list.reverse(taken)
-    [], _ -> list.reverse(taken)
-    [point, ..rest], _ -> take_first_loop(rest, count - 1, [point, ..taken])
-  }
-}
-
-fn radius_1000_point(angle: Float) -> svg_path.Point {
-  let radians = angle *. maths.pi() /. 180.0
-  svg_path.Point(1000.0 *. maths.cos(radians), 1000.0 *. maths.sin(radians))
 }

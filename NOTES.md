@@ -134,20 +134,22 @@ to that module. The ordinary `gleam test` suite includes the convex hull smoke
 tests and deterministic point-cloud tests under `test/`.
 
 The slower convex hull stress module lives at
-`test_slow/svg_path_convex_hull_test.gleam`, outside normal discovery. To run
-it, temporarily park `test/svg_path_convex_hull_test.gleam`, copy the slow file
-into `test/svg_path_convex_hull_test.gleam`, run `gleam test`, then restore the
-smoke-test file.
+`test_slow/svg_path_convex_hull_test.gleam`, outside normal discovery. Run it
+with `scripts/test-slow`. That script temporarily parks
+`test/svg_path_convex_hull_test.gleam`, copies the slow file into its place,
+runs `gleam test`, then restores the smoke-test file.
 
 Use these local helpers when iterating on the ordinary suite:
 
 ```sh
 scripts/test-fast
 scripts/test-all
+scripts/test-slow
 ```
 
 `scripts/test-fast` temporarily moves `test/svg_path_convex_hull_test.gleam`
 out of `test/`, runs `gleam test`, and restores the file before exiting.
+`scripts/test-all` runs the ordinary suite and then `scripts/test-slow`.
 
 `scripts/test-all` restores `test/svg_path_convex_hull_test.gleam` if needed
 and runs the ordinary `gleam test` suite.

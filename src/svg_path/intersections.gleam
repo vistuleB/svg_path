@@ -12,15 +12,16 @@ import gleam/order
 import gleam/result
 import svg_path.{
   type BoundingBox, type Error, type IntersectionOptions, type Path,
-  type PathIntersection, type PathParameter, type Point, type Segment,
-  type SegmentIntersection, type SelfIntersectionOptions, type Subpath,
-  type SubpathIntersection, type SubpathParameter, type SubpathSelfIntersection,
-  Arc, CubicBezier, IntersectionOptions, InvalidIntersectionMaxDepth,
-  InvalidIntersectionTolerance, InvalidSelfIntersectionDistanceTolerance,
+  type PathIntersection, type PathParameter, type PathSelfIntersection,
+  type Point, type Segment, type SegmentIntersection,
+  type SelfIntersectionOptions, type Subpath, type SubpathIntersection,
+  type SubpathParameter, type SubpathSelfIntersection, Arc, CubicBezier,
+  IntersectionOptions, InvalidIntersectionMaxDepth, InvalidIntersectionTolerance,
+  InvalidSelfIntersectionDistanceTolerance,
   InvalidSelfIntersectionMinimumArcLengthSeparation, Line, OverlappingSegments,
-  PathIntersection, PathParameter, Point, QuadraticBezier, SegmentIntersection,
-  SelfIntersectionOptions, SubpathIntersection, SubpathParameter,
-  SubpathSelfIntersection,
+  PathIntersection, PathParameter, PathSelfIntersection, Point, QuadraticBezier,
+  SegmentIntersection, SelfIntersectionOptions, SubpathIntersection,
+  SubpathParameter, SubpathSelfIntersection,
 }
 import svg_path/bezier
 
@@ -64,6 +65,27 @@ pub fn segment_with(
 ) -> Result(List(SegmentIntersection), Error) {
   use _ <- result.try(validate_intersection_options(options))
   segment_intersections_valid_options(left, right, options)
+}
+
+/// Return point intersections where a segment intersects itself.
+///
+/// Straight lines, quadratic Beziers, and SVG endpoint arcs do not report
+/// self-intersections. Cubic Beziers can self-intersect, including at separated
+/// parameters that evaluate to the same endpoint.
+pub fn segment_self(
+  segment: Segment,
+) -> Result(List(SegmentIntersection), Error) {
+  segment_self_with(segment, options: default_self_options())
+}
+
+/// Return point intersections where a segment intersects itself using explicit
+/// options.
+pub fn segment_self_with(
+  segment: Segment,
+  options options: SelfIntersectionOptions,
+) -> Result(List(SegmentIntersection), Error) {
+  use _ <- result.try(validate_self_intersection_options(options))
+  segment_self_intersections_valid_options(segment, options)
 }
 
 /// Return the intersections between a segment and a subpath.
@@ -205,6 +227,34 @@ pub fn path_with(
   Ok(sort_path_intersections(intersections))
 }
 
+/// Return point intersections where a path intersects itself.
+///
+/// This includes self-intersections inside one subpath and intersections
+/// between distinct subpaths in the same path. Results are ordered by the first
+/// path parameter.
+pub fn path_self(path: Path) -> Result(List(PathSelfIntersection), Error) {
+  path_self_with(path, options: default_self_options())
+}
+
+/// Return point intersections where a path intersects itself using explicit
+/// options.
+pub fn path_self_with(
+  path: Path,
+  options options: SelfIntersectionOptions,
+) -> Result(List(PathSelfIntersection), Error) {
+  use _ <- result.try(validate_self_intersection_options(options))
+  use intersections <- result.try(
+    collect_path_self_intersections(
+      path.subpaths,
+      options,
+      subpath_index: 0,
+      found: [],
+    ),
+  )
+
+  Ok(sort_path_self_intersections(intersections))
+}
+
 fn clamp01(value: Float) -> Float {
   value |> float.max(0.0) |> float.min(1.0)
 }
@@ -284,6 +334,40 @@ fn segment_intersections_valid_options(
         options:,
       )
     _, _ -> curve_curve_intersections(left, right, options)
+  }
+}
+
+fn segment_self_intersections_valid_options(
+  segment: Segment,
+  options: SelfIntersectionOptions,
+) -> Result(List(SegmentIntersection), Error) {
+  case segment {
+    CubicBezier(..) -> {
+      let bezier_options =
+        bezier.CubicSelfIntersectionOptions(
+          minimum_arc_length_separation: options.minimum_arc_length_separation,
+          distance_tolerance: options.distance_tolerance,
+        )
+      case
+        segment
+        |> segment_to_bezier_data
+        |> bezier.cubic_self_intersections_with(options: bezier_options)
+      {
+        Error(error) -> Error(bezier_self_intersection_error(error))
+        Ok(intersections) ->
+          Ok(
+            list.map(intersections, fn(intersection) {
+              let bezier.CubicSelfIntersection(s:, t:, point:) = intersection
+              SegmentIntersection(
+                left_t: s,
+                right_t: t,
+                point: from_bezier_point(point),
+              )
+            }),
+          )
+      }
+    }
+    Line(..) | QuadraticBezier(..) | Arc(..) -> Ok([])
   }
 }
 
@@ -1126,6 +1210,282 @@ fn subpath_parameter_positions_near(
       distance_squared(a_point, b_point) <=. tolerance *. tolerance
     _, _ -> False
   }
+}
+
+fn collect_path_self_intersections(
+  subpaths: List(Subpath),
+  options: SelfIntersectionOptions,
+  subpath_index subpath_index: Int,
+  found found: List(PathSelfIntersection),
+) -> Result(List(PathSelfIntersection), Error) {
+  case subpaths {
+    [] -> Ok(found)
+    [first, ..rest] -> {
+      use found <- result.try(collect_path_self_intersections_inside_subpath(
+        first,
+        subpath_index,
+        options,
+        found:,
+      ))
+      use found <- result.try(collect_path_self_intersections_against_rest(
+        first,
+        subpath_index,
+        rest,
+        options,
+        right_subpath_index: subpath_index + 1,
+        found:,
+      ))
+
+      collect_path_self_intersections(
+        rest,
+        options,
+        subpath_index: subpath_index + 1,
+        found:,
+      )
+    }
+  }
+}
+
+fn collect_path_self_intersections_inside_subpath(
+  subpath: Subpath,
+  subpath_index: Int,
+  options: SelfIntersectionOptions,
+  found found: List(PathSelfIntersection),
+) -> Result(List(PathSelfIntersection), Error) {
+  use intersections <- result.try(subpath_self_with(subpath, options:))
+
+  Ok(
+    list.fold(intersections, found, fn(found, intersection) {
+      let SubpathSelfIntersection(point:, parameters:) = intersection
+      let #(first, second) = parameters
+      insert_path_self_intersection(
+        found,
+        point:,
+        first: PathParameter(subpath_index:, at: first),
+        second: PathParameter(subpath_index:, at: second),
+        tolerance: options.distance_tolerance,
+      )
+    }),
+  )
+}
+
+fn collect_path_self_intersections_against_rest(
+  left: Subpath,
+  left_subpath_index: Int,
+  rights: List(Subpath),
+  options: SelfIntersectionOptions,
+  right_subpath_index right_subpath_index: Int,
+  found found: List(PathSelfIntersection),
+) -> Result(List(PathSelfIntersection), Error) {
+  case rights {
+    [] -> Ok(found)
+    [right, ..rest] -> {
+      let intersection_options =
+        IntersectionOptions(
+          tolerance: options.distance_tolerance,
+          max_depth: default_intersection_max_depth,
+        )
+      use intersections <- result.try(subpath_with(
+        left,
+        right,
+        options: intersection_options,
+      ))
+      let found =
+        list.fold(intersections, found, fn(found, intersection) {
+          insert_subpath_pair_self_intersections(
+            found,
+            intersection,
+            left_subpath_index,
+            right_subpath_index,
+            options.distance_tolerance,
+          )
+        })
+
+      collect_path_self_intersections_against_rest(
+        left,
+        left_subpath_index,
+        rest,
+        options,
+        right_subpath_index: right_subpath_index + 1,
+        found:,
+      )
+    }
+  }
+}
+
+fn insert_subpath_pair_self_intersections(
+  found: List(PathSelfIntersection),
+  intersection: SubpathIntersection,
+  left_subpath_index: Int,
+  right_subpath_index: Int,
+  tolerance: Float,
+) -> List(PathSelfIntersection) {
+  insert_path_self_intersections_for_left_parameters(
+    found,
+    intersection.point,
+    intersection.left_parameters,
+    intersection.right_parameters,
+    left_subpath_index,
+    right_subpath_index,
+    tolerance,
+  )
+}
+
+fn insert_path_self_intersections_for_left_parameters(
+  found: List(PathSelfIntersection),
+  point: Point,
+  left_parameters: List(SubpathParameter),
+  right_parameters: List(SubpathParameter),
+  left_subpath_index: Int,
+  right_subpath_index: Int,
+  tolerance: Float,
+) -> List(PathSelfIntersection) {
+  case left_parameters {
+    [] -> found
+    [left, ..rest] -> {
+      let found =
+        insert_path_self_intersections_for_right_parameters(
+          found,
+          point,
+          left,
+          right_parameters,
+          left_subpath_index,
+          right_subpath_index,
+          tolerance,
+        )
+      insert_path_self_intersections_for_left_parameters(
+        found,
+        point,
+        rest,
+        right_parameters,
+        left_subpath_index,
+        right_subpath_index,
+        tolerance,
+      )
+    }
+  }
+}
+
+fn insert_path_self_intersections_for_right_parameters(
+  found: List(PathSelfIntersection),
+  point: Point,
+  left: SubpathParameter,
+  right_parameters: List(SubpathParameter),
+  left_subpath_index: Int,
+  right_subpath_index: Int,
+  tolerance: Float,
+) -> List(PathSelfIntersection) {
+  case right_parameters {
+    [] -> found
+    [right, ..rest] -> {
+      let found =
+        insert_path_self_intersection(
+          found,
+          point:,
+          first: PathParameter(subpath_index: left_subpath_index, at: left),
+          second: PathParameter(subpath_index: right_subpath_index, at: right),
+          tolerance:,
+        )
+      insert_path_self_intersections_for_right_parameters(
+        found,
+        point,
+        left,
+        rest,
+        left_subpath_index,
+        right_subpath_index,
+        tolerance,
+      )
+    }
+  }
+}
+
+fn insert_path_self_intersection(
+  found: List(PathSelfIntersection),
+  point point: Point,
+  first first: PathParameter,
+  second second: PathParameter,
+  tolerance tolerance: Float,
+) -> List(PathSelfIntersection) {
+  let #(first, second) = ordered_path_parameter_pair(first, second)
+
+  case found {
+    [] -> [PathSelfIntersection(point:, parameters: #(first, second))]
+    [existing, ..rest] -> {
+      let PathSelfIntersection(point: existing_point, parameters:) = existing
+      let #(existing_first, existing_second) = parameters
+      case
+        distance(existing_point, point) <=. tolerance
+        && same_path_parameter_pair(
+          first,
+          second,
+          existing_first,
+          existing_second,
+          tolerance,
+        )
+      {
+        True -> found
+        False -> [
+          existing,
+          ..insert_path_self_intersection(
+            rest,
+            point:,
+            first:,
+            second:,
+            tolerance:,
+          )
+        ]
+      }
+    }
+  }
+}
+
+fn same_path_parameter_pair(
+  first: PathParameter,
+  second: PathParameter,
+  existing_first: PathParameter,
+  existing_second: PathParameter,
+  tolerance: Float,
+) -> Bool {
+  same_path_parameter(first, existing_first, tolerance)
+  && same_path_parameter(second, existing_second, tolerance)
+}
+
+fn same_path_parameter(
+  left: PathParameter,
+  right: PathParameter,
+  tolerance: Float,
+) -> Bool {
+  let PathParameter(subpath_index: left_index, at: left_at) = left
+  let PathParameter(subpath_index: right_index, at: right_at) = right
+  left_index == right_index
+  && same_subpath_parameter(left_at, right_at, tolerance)
+}
+
+fn ordered_path_parameter_pair(
+  first: PathParameter,
+  second: PathParameter,
+) -> #(PathParameter, PathParameter) {
+  case svg_path.path_parameters_compare(first, second) {
+    order.Gt -> #(second, first)
+    order.Lt | order.Eq -> #(first, second)
+  }
+}
+
+fn sort_path_self_intersections(
+  intersections: List(PathSelfIntersection),
+) -> List(PathSelfIntersection) {
+  intersections
+  |> list.sort(by: fn(a, b) {
+    let PathSelfIntersection(parameters: a_parameters, ..) = a
+    let PathSelfIntersection(parameters: b_parameters, ..) = b
+    let #(a_first, a_second) = a_parameters
+    let #(b_first, b_second) = b_parameters
+
+    case svg_path.path_parameters_compare(a_first, b_first) {
+      order.Eq -> svg_path.path_parameters_compare(a_second, b_second)
+      order -> order
+    }
+  })
 }
 
 fn collect_path_intersections(

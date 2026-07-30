@@ -9,6 +9,37 @@ pub fn main() -> Nil {
   gleeunit.main()
 }
 
+pub fn segment_self_intersections_finds_cubic_crossing_test() {
+  let curve =
+    svg_path.CubicBezier(
+      start: svg_path.Point(0.0, 0.0),
+      control1: svg_path.Point(-0.2708333333333333, -0.3333333333333333),
+      control2: svg_path.Point(-0.5416666666666666, -0.3333333333333333),
+      end: svg_path.Point(0.1875, 0.0),
+    )
+
+  let assert Ok([intersection]) = intersections.segment_self(curve)
+  let svg_path.SegmentIntersection(left_t:, right_t:, point:) = intersection
+
+  assert near(left_t, 0.25)
+  assert near(right_t, 0.75)
+  assert point_near(point, svg_path.segment_point(curve, at: 0.25) |> assert_ok)
+}
+
+pub fn segment_self_intersections_treats_same_endpoint_arc_as_empty_test() {
+  let arc =
+    svg_path.Arc(
+      start: svg_path.Point(0.0, 0.0),
+      radius: svg_path.Point(10.0, 10.0),
+      x_axis_rotation: 0.0,
+      large_arc: True,
+      sweep: True,
+      end: svg_path.Point(0.0, 0.0),
+    )
+
+  assert intersections.segment_self(arc) == Ok([])
+}
+
 pub fn subpath_self_intersections_finds_line_crossing_test() {
   let a = svg_path.Point(0.0, 0.0)
   let b = svg_path.Point(10.0, 10.0)
@@ -163,6 +194,98 @@ pub fn subpath_self_intersections_rejects_invalid_options_test() {
       options: svg_path.SelfIntersectionOptions(
         minimum_arc_length_separation: 0.000001,
         distance_tolerance: 0.0,
+      ),
+    )
+}
+
+pub fn path_self_intersections_finds_crossing_subpaths_test() {
+  let horizontal =
+    svg_path.subpath_assert([
+      svg_path.Line(
+        start: svg_path.Point(0.0, 5.0),
+        end: svg_path.Point(10.0, 5.0),
+      ),
+    ])
+  let vertical =
+    svg_path.subpath_assert([
+      svg_path.Line(
+        start: svg_path.Point(5.0, 0.0),
+        end: svg_path.Point(5.0, 10.0),
+      ),
+    ])
+
+  let assert Ok([intersection]) =
+    intersections.path_self(svg_path.Path([horizontal, vertical]))
+  let svg_path.PathSelfIntersection(point:, parameters:) = intersection
+  let #(first, second) = parameters
+  let svg_path.PathParameter(subpath_index: first_subpath, at: first_at) = first
+  let svg_path.PathParameter(subpath_index: second_subpath, at: second_at) =
+    second
+  let svg_path.SubpathParameter(segment_index: first_segment, t: first_t) =
+    first_at
+  let svg_path.SubpathParameter(segment_index: second_segment, t: second_t) =
+    second_at
+
+  assert point_near(point, svg_path.Point(5.0, 5.0))
+  assert first_subpath == 0
+  assert first_segment == 0
+  assert near(first_t, 0.5)
+  assert second_subpath == 1
+  assert second_segment == 0
+  assert near(second_t, 0.5)
+}
+
+pub fn path_self_intersections_includes_single_subpath_crossings_test() {
+  let subpath =
+    svg_path.subpath_assert([
+      svg_path.Line(
+        start: svg_path.Point(0.0, 0.0),
+        end: svg_path.Point(10.0, 10.0),
+      ),
+      svg_path.Line(
+        start: svg_path.Point(10.0, 10.0),
+        end: svg_path.Point(0.0, 10.0),
+      ),
+      svg_path.Line(
+        start: svg_path.Point(0.0, 10.0),
+        end: svg_path.Point(10.0, 0.0),
+      ),
+    ])
+
+  let assert Ok([intersection]) =
+    intersections.path_self(
+      svg_path.Path([
+        subpath,
+      ]),
+    )
+  let svg_path.PathSelfIntersection(point:, parameters:) = intersection
+  let #(first, second) = parameters
+  let svg_path.PathParameter(subpath_index: first_subpath, at: first_at) = first
+  let svg_path.PathParameter(subpath_index: second_subpath, at: second_at) =
+    second
+  let svg_path.SubpathParameter(segment_index: first_segment, t: first_t) =
+    first_at
+  let svg_path.SubpathParameter(segment_index: second_segment, t: second_t) =
+    second_at
+
+  assert point_near(point, svg_path.Point(5.0, 5.0))
+  assert first_subpath == 0
+  assert first_segment == 0
+  assert near(first_t, 0.5)
+  assert second_subpath == 0
+  assert second_segment == 2
+  assert near(second_t, 0.5)
+}
+
+pub fn path_self_intersections_rejects_invalid_options_test() {
+  let assert Error(svg_path.InvalidSelfIntersectionMinimumArcLengthSeparation(
+    0.0,
+  )) =
+    intersections.path_self_with(
+      svg_path.Path([]),
+      options: svg_path.SelfIntersectionOptions(
+        minimum_arc_length_separation: 0.0,
+        distance_tolerance: 0.000001,
       ),
     )
 }

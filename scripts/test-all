@@ -17,4 +17,5 @@ if [ ! -f "$active" ]; then
 fi
 
 cd "$root"
-gleam test
+"$root/scripts/test-fast"
+"$root/scripts/test-slow"

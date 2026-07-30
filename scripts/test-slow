@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+active="$root/test/svg_path_convex_hull_test.gleam"
+slow="$root/test_slow/svg_path_convex_hull_test.gleam"
+backup="$root/.test-disabled/svg_path_convex_hull_test.gleam"
+
+restore() {
+  if [ -f "$backup" ]; then
+    mkdir -p "$(dirname "$active")"
+    mv "$backup" "$active"
+  fi
+  rmdir "$(dirname "$backup")" 2>/dev/null || true
+}
+
+trap restore EXIT INT TERM
+
+if [ ! -f "$slow" ]; then
+  echo "Could not find test_slow/svg_path_convex_hull_test.gleam." >&2
+  exit 1
+fi
+
+if [ -f "$backup" ]; then
+  echo "Refusing to run with an existing parked convex hull test." >&2
+  exit 1
+fi
+
+if [ -f "$active" ]; then
+  mkdir -p "$(dirname "$backup")"
+  mv "$active" "$backup"
+fi
+
+cp "$slow" "$active"
+
+cd "$root"
+gleam test

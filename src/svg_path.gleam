@@ -241,6 +241,14 @@ pub type SubpathSelfIntersection {
   )
 }
 
+/// A point where a path intersects itself.
+pub type PathSelfIntersection {
+  PathSelfIntersection(
+    point: Point,
+    parameters: #(PathParameter, PathParameter),
+  )
+}
+
 /// A point intersection between two subpaths.
 ///
 /// Multiple parameters are retained on both subpaths because a single point can
