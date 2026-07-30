@@ -1229,7 +1229,7 @@ boundary of the clipping region are retained. Segment types are preserved where
 possible: lines remain lines, Beziers remain Beziers, and arcs remain arcs
 after splitting.
 
-## CSG
+## Path CSG
 
 CSG here means Boolean operations on the filled point-sets represented by SVG
 paths: union, intersection, and difference. SVG specifies how to decide the
