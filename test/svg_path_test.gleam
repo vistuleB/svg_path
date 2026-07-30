@@ -1,6 +1,7 @@
 import gleam/float
 import gleam/int
 import gleam/list
+import gleam/result
 import gleeunit
 import svg_path
 import svg_path/ellipse
@@ -390,6 +391,109 @@ pub fn arc_wrappers_reject_non_arc_segments_test() {
     == Error(svg_path.DegenerateArc)
   assert svg_path.arc_angle_at(segment, t: 0.5) == Error(svg_path.DegenerateArc)
   assert svg_path.arc_end_angle(segment) == Error(svg_path.DegenerateArc)
+}
+
+pub fn fit_cubic_with_endpoint_tangents_returns_root_segment_test() {
+  let original =
+    svg_path.CubicBezier(
+      start: svg_path.Point(0.0, 0.0),
+      control1: svg_path.Point(35.0, 65.0),
+      control2: svg_path.Point(90.0, -35.0),
+      end: svg_path.Point(130.0, 25.0),
+    )
+
+  let assert Ok(#(fit, report)) =
+    svg_path.fit_cubic_with_endpoint_tangents(
+      start: svg_path.segment_start(original),
+      end: svg_path.segment_end(original),
+      start_tangent: result.unwrap(
+        svg_path.segment_derivative(original, at: 0.0),
+        svg_path.Point(0.0, 0.0),
+      ),
+      end_tangent: result.unwrap(
+        svg_path.segment_derivative(original, at: 1.0),
+        svg_path.Point(0.0, 0.0),
+      ),
+      samples: [
+        #(
+          0.25,
+          result.unwrap(
+            svg_path.segment_point(original, at: 0.25),
+            svg_path.Point(0.0, 0.0),
+          ),
+        ),
+        #(
+          0.5,
+          result.unwrap(
+            svg_path.segment_point(original, at: 0.5),
+            svg_path.Point(0.0, 0.0),
+          ),
+        ),
+        #(
+          0.75,
+          result.unwrap(
+            svg_path.segment_point(original, at: 0.75),
+            svg_path.Point(0.0, 0.0),
+          ),
+        ),
+      ],
+    )
+
+  let assert svg_path.CubicBezier(start:, control1:, control2:, end:) = fit
+  let svg_path.CubicBezier(
+    start: original_start,
+    control1: original_control1,
+    control2: original_control2,
+    end: original_end,
+  ) = original
+  let svg_path.CubicFitReport(root_sum_square:, root_mean_square:, max:) =
+    report
+
+  assert point_near(start, original_start)
+  assert point_near(control1, original_control1)
+  assert point_near(control2, original_control2)
+  assert point_near(end, original_end)
+  assert near(root_sum_square, 0.0)
+  assert near(root_mean_square, 0.0)
+  assert near(max, 0.0)
+}
+
+pub fn fit_cubic_with_endpoints_returns_root_segment_test() {
+  let assert Ok(#(fit, _report)) =
+    svg_path.fit_cubic_with_endpoints(
+      start: svg_path.Point(0.0, 0.0),
+      end: svg_path.Point(10.0, 0.0),
+      samples: [
+        #(0.25, svg_path.Point(2.5, 2.0)),
+        #(0.5, svg_path.Point(5.0, 3.0)),
+        #(0.75, svg_path.Point(7.5, 2.0)),
+      ],
+    )
+
+  let assert svg_path.CubicBezier(start:, end:, ..) = fit
+
+  assert point_near(start, svg_path.Point(0.0, 0.0))
+  assert point_near(end, svg_path.Point(10.0, 0.0))
+}
+
+pub fn fit_cubic_with_endpoint_tangents_reports_degenerate_tangent_test() {
+  assert svg_path.fit_cubic_with_endpoint_tangents(
+      start: svg_path.Point(0.0, 0.0),
+      end: svg_path.Point(10.0, 0.0),
+      start_tangent: svg_path.Point(0.0, 0.0),
+      end_tangent: svg_path.Point(1.0, 0.0),
+      samples: [#(0.5, svg_path.Point(5.0, 1.0))],
+    )
+    == Error(svg_path.DegenerateCubicFitTangent)
+}
+
+pub fn fit_cubic_with_endpoints_reports_underdetermined_fit_test() {
+  assert svg_path.fit_cubic_with_endpoints(
+      start: svg_path.Point(0.0, 0.0),
+      end: svg_path.Point(10.0, 0.0),
+      samples: [#(0.5, svg_path.Point(5.0, 1.0))],
+    )
+    == Error(svg_path.UnderdeterminedCubicFit)
 }
 
 pub fn map_segment_points_maps_line_quadratic_and_cubic_defining_points_test() {

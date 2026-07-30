@@ -73,6 +73,18 @@ pub type BoundingBox {
   BoundingBox(min: Point, max: Point)
 }
 
+/// Error measurements for a fitted cubic Bezier segment.
+pub type CubicFitReport {
+  CubicFitReport(
+    /// `sqrt(sum(distance(sample, fitted)^2))`.
+    root_sum_square: Float,
+    /// `sqrt(sum(distance(sample, fitted)^2) / sample_count)`.
+    root_mean_square: Float,
+    /// The largest sample distance.
+    max: Float,
+  )
+}
+
 /// Return the width of a bounding box.
 pub fn bounding_box_width(box: BoundingBox) -> Float {
   box.max.x -. box.min.x
@@ -505,6 +517,12 @@ pub type Error {
 
   /// A parametric interval could not determine a stable cubic fit.
   ParametricFitFailed
+
+  /// A cubic fit tangent was too small to normalize.
+  DegenerateCubicFitTangent
+
+  /// A cubic fit did not have enough sample information to determine controls.
+  UnderdeterminedCubicFit
 
   /// The line approximation tolerance must be greater than zero.
   InvalidLinearizeTolerance(tolerance: Float)
@@ -1121,6 +1139,74 @@ pub fn segment_to_cubic_beziers(segment: Segment) -> List(Segment) {
     ]
     CubicBezier(..) -> [segment]
     Arc(..) -> segment_arcs_to_cubic_beziers(segment)
+  }
+}
+
+/// Fit a cubic Bezier segment with fixed endpoints and endpoint tangents.
+///
+/// This is a root-module convenience wrapper around
+/// `bezier.fit_cubic_with_endpoint_tangents`. It accepts `svg_path.Point`
+/// values, returns an `svg_path.CubicBezier` segment, and maps fit failures
+/// into `svg_path.Error`.
+pub fn fit_cubic_with_endpoint_tangents(
+  start start: Point,
+  end end: Point,
+  start_tangent start_tangent: Point,
+  end_tangent end_tangent: Point,
+  samples samples: List(#(Float, Point)),
+) -> Result(#(Segment, CubicFitReport), Error) {
+  let samples =
+    samples
+    |> list.map(fn(sample) {
+      let #(t, point) = sample
+      #(t, to_bezier_point(point))
+    })
+
+  case
+    bezier.fit_cubic_with_endpoint_tangents(
+      start: to_bezier_point(start),
+      end: to_bezier_point(end),
+      start_tangent: to_bezier_point(start_tangent),
+      end_tangent: to_bezier_point(end_tangent),
+      samples:,
+    )
+  {
+    Error(error) -> Error(from_bezier_error(error))
+    Ok(#(curve, report)) -> {
+      Ok(#(segment_from_bezier_data(curve), from_bezier_fit_report(report)))
+    }
+  }
+}
+
+/// Fit a cubic Bezier segment with fixed endpoints and no tangent constraints.
+///
+/// This is a root-module convenience wrapper around
+/// `bezier.fit_cubic_with_endpoints`. It accepts `svg_path.Point` values,
+/// returns an `svg_path.CubicBezier` segment, and maps fit failures into
+/// `svg_path.Error`.
+pub fn fit_cubic_with_endpoints(
+  start start: Point,
+  end end: Point,
+  samples samples: List(#(Float, Point)),
+) -> Result(#(Segment, CubicFitReport), Error) {
+  let samples =
+    samples
+    |> list.map(fn(sample) {
+      let #(t, point) = sample
+      #(t, to_bezier_point(point))
+    })
+
+  case
+    bezier.fit_cubic_with_endpoints(
+      start: to_bezier_point(start),
+      end: to_bezier_point(end),
+      samples:,
+    )
+  {
+    Error(error) -> Error(from_bezier_error(error))
+    Ok(#(curve, report)) -> {
+      Ok(#(segment_from_bezier_data(curve), from_bezier_fit_report(report)))
+    }
   }
 }
 
@@ -8114,6 +8200,26 @@ fn to_bezier_point(point: Point) -> bezier.BezierPoint {
 
 fn from_bezier_point(point: bezier.BezierPoint) -> Point {
   Point(point.x, point.y)
+}
+
+fn from_bezier_fit_report(report: bezier.CubicFitError) -> CubicFitReport {
+  CubicFitReport(
+    root_sum_square: report.root_sum_square,
+    root_mean_square: report.root_mean_square,
+    max: report.max,
+  )
+}
+
+fn from_bezier_error(error: bezier.Error) -> Error {
+  case error {
+    bezier.DegenerateTangent -> DegenerateCubicFitTangent
+    bezier.UnderdeterminedCubicFit -> UnderdeterminedCubicFit
+    bezier.SplitOutsideBezier -> ParametricFitFailed
+    bezier.InvalidCubicSelfIntersectionMinimumArcLengthSeparation(_) ->
+      ParametricFitFailed
+    bezier.InvalidCubicSelfIntersectionDistanceTolerance(_) ->
+      ParametricFitFailed
+  }
 }
 
 fn segment_to_bezier_data(segment: Segment) -> bezier.BezierData {
