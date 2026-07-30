@@ -5,6 +5,11 @@
 //// the more technical layer for users who want the curve math behind line and
 //// Bezier segments.
 ////
+//// For cubic fitting with ordinary `svg_path.Point` values and root
+//// `svg_path.Error`, use the root-module wrappers
+//// `svg_path.fit_cubic_with_endpoint_tangents` and
+//// `svg_path.fit_cubic_with_endpoints`.
+////
 //// A line segment is a degree-1 Bezier curve, a quadratic Bezier has one
 //// control point, and a cubic Bezier has two control points. All evaluation
 //// and splitting helpers use the standard Bezier parameter `t`:
