@@ -17,6 +17,8 @@ the tag object.
 
 - First stable release of the current public API.
 - Carries forward the `0.23.0` feature set after final documentation cleanup.
+- Added `svg_path/intersections` as a discoverable facade for segment, subpath,
+  self-subpath, and path point-intersection queries.
 
 ## 0.23.0 - 2026-07-30
 

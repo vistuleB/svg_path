@@ -59,6 +59,8 @@ pub fn prepare_for_arc_averse_consumer(
 - `svg_path/area`: signed area and SVG fill-rule area for subpaths and paths.
 - `svg_path/clip`: curve clipping that keeps original geometry inside a filled
   clipping region without adding closure bridges.
+- `svg_path/intersections`: discoverable facade for segment, subpath, and path
+  point-intersection queries.
 - `svg_path/csg`: Boolean union, intersection, and difference for filled
   paths.
 - `svg_path/cut`: split subpaths and paths at intersections with cutter
@@ -790,16 +792,17 @@ it.
 
 ### Segment Intersections
 
-Use `segment_intersections` to find point intersections between two segments:
+Use `intersections.segment` to find point intersections between two segments:
 
 ```gleam
 import svg_path
+import svg_path/intersections
 
 pub fn crossings(
   left: svg_path.Segment,
   right: svg_path.Segment,
 ) -> Result(List(svg_path.SegmentIntersection), svg_path.Error) {
-  svg_path.segment_intersections(left, right)
+  intersections.segment(left, right)
 }
 ```
 
@@ -814,9 +817,9 @@ The result represents finite point intersections only; segment overlaps return
 `OverlappingSegments`. The same operation is lifted to larger structures:
 
 ```gleam
-svg_path.segment_subpath_intersections(segment, subpath)
-svg_path.subpath_intersections(left_subpath, right_subpath)
-svg_path.path_intersections(left_path, right_path)
+intersections.segment_subpath(segment, subpath)
+intersections.subpath(left_subpath, right_subpath)
+intersections.path(left_path, right_path)
 ```
 
 Results are ordered along the left-hand input, and boundary aliases are
