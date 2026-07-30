@@ -207,12 +207,6 @@ fn marker_orientation_row(
 fn marker_reference_semantics() -> String {
   let width = 900.0
   let height = 380.0
-  let pose =
-    marker.MarkerPose(
-      kind: marker.MarkerEnd,
-      point: svg_path.Point(200.0, 0.0),
-      angle: 0.0,
-    )
   let rows = [
     #("refX at tail", svg_path.Point(0.0, 0.0), 80.0),
     #("refX at center", svg_path.Point(12.0, 0.0), 180.0),
@@ -230,7 +224,7 @@ fn marker_reference_semantics() -> String {
       ..rows
       |> list.flat_map(fn(row) {
         let #(label, reference, y) = row
-        marker_reference_row(label, pose, reference, y)
+        marker_reference_row(label, reference, y)
       })
     ],
     width:,
@@ -240,29 +234,22 @@ fn marker_reference_semantics() -> String {
 
 fn marker_reference_row(
   label: String,
-  pose: marker.MarkerPose,
   reference: svg_path.Point,
   y: Float,
 ) -> svg.ThingsToDraw {
-  let shifted_pose = shift_marker_pose(pose, y: y)
+  let source = marker_reference_source_subpath(y)
+  let pose = marker_end_pose_from_source(source)
   let layout =
     marker_layout(reference:, marker_width: 28.0, marker_height: 16.0)
-  let assert Ok(matrix) = marker.pose_layout_transform(shifted_pose, layout:)
+  let assert Ok(matrix) = marker.pose_layout_transform(pose, layout:)
   let assert Ok(glyph) = transform.path(marker_reference_shape(), by: matrix)
-  let marker.MarkerPose(point:, ..) = shifted_pose
+  let marker.MarkerPose(point:, ..) = pose
   let reference_point = transform.point(reference, by: matrix)
 
   [
     svg.Text(label, marker_label_style(), svg_path.Point(38.0, y +. 5.0), 17),
     svg.StyledPath(
-      svg_path.Path([
-        svg_path.subpath_assert([
-          svg_path.Line(
-            start: svg_path.Point(170.0, y),
-            end: svg_path.Point(505.0, y),
-          ),
-        ]),
-      ]),
+      svg_path.Path([source]),
       "fill: none; stroke: #cbd5e1; stroke-width: 2",
     ),
     svg.Circle(point, 5.5, "fill: #111827"),
@@ -335,14 +322,13 @@ fn marker_layout_row(
   layout: marker.MarkerLayout,
   y: Float,
 ) -> svg.ThingsToDraw {
-  let pose =
-    marker.MarkerPose(
-      kind: marker.MarkerEnd,
-      point: svg_path.Point(270.0, y),
-      angle: 0.0,
-    )
+  let source = marker_layout_source_subpath(y)
+  let pose = marker_end_pose_from_source(source)
   let assert Ok(matrix) = marker.pose_layout_transform(pose, layout:)
-  let assert Ok(glyph) = transform.path(marker_layout_shape(), by: matrix)
+  let assert Ok(marker_body) =
+    transform.path(marker_layout_body_shape(), by: matrix)
+  let assert Ok(marker_content) =
+    transform.path(marker_layout_content_shape(), by: matrix)
   let marker.MarkerPose(point:, ..) = pose
   let marker.MarkerLayout(reference:, ..) = layout
   let reference_point = transform.point(reference, by: matrix)
@@ -350,14 +336,7 @@ fn marker_layout_row(
   [
     svg.Text(label, marker_label_style(), svg_path.Point(40.0, y +. 6.0), 16),
     svg.StyledPath(
-      svg_path.Path([
-        svg_path.subpath_assert([
-          svg_path.Line(
-            start: svg_path.Point(240.0, y),
-            end: svg_path.Point(680.0, y),
-          ),
-        ]),
-      ]),
+      svg_path.Path([source]),
       "fill: none; stroke: #cbd5e1; stroke-width: 2",
     ),
     svg.Circle(point, 5.5, "fill: #111827"),
@@ -366,8 +345,35 @@ fn marker_layout_row(
       8.0,
       "fill: none; stroke: #f59e0b; stroke-width: 2.5",
     ),
-    svg.StyledPath(glyph, marker_fill_style("#7c2d12")),
+    svg.StyledPath(marker_body, marker_layout_body_style()),
+    svg.StyledPath(marker_content, marker_layout_content_style()),
   ]
+}
+
+fn marker_reference_source_subpath(y: Float) -> svg_path.Subpath {
+  svg_path.subpath_assert([
+    svg_path.Line(
+      start: svg_path.Point(250.0, y),
+      end: svg_path.Point(390.0, y),
+    ),
+  ])
+}
+
+fn marker_layout_source_subpath(y: Float) -> svg_path.Subpath {
+  svg_path.subpath_assert([
+    svg_path.Line(
+      start: svg_path.Point(360.0, y),
+      end: svg_path.Point(500.0, y),
+    ),
+  ])
+}
+
+fn marker_end_pose_from_source(source: svg_path.Subpath) -> marker.MarkerPose {
+  let assert Ok(poses) = marker.subpath_poses(source, orient: marker.Auto)
+  let assert Ok(pose) =
+    poses
+    |> list.find(fn(pose) { pose.kind == marker.MarkerEnd })
+  pose
 }
 
 fn marker_glyphs(
@@ -444,7 +450,7 @@ fn marker_reference_shape() -> svg_path.Path {
   marker_arrow_shape(length: 24.0, half_height: 8.0)
 }
 
-fn marker_layout_shape() -> svg_path.Path {
+fn marker_layout_body_shape() -> svg_path.Path {
   svg_path.Path([
     svg_path.subpath_assert_polygon([
       svg_path.Point(0.0, -10.0),
@@ -453,6 +459,11 @@ fn marker_layout_shape() -> svg_path.Path {
       svg_path.Point(26.0, 10.0),
       svg_path.Point(0.0, 10.0),
     ]),
+  ])
+}
+
+fn marker_layout_content_shape() -> svg_path.Path {
+  svg_path.Path([
     svg_path.subpath_assert_polygon([
       svg_path.Point(5.0, -5.0),
       svg_path.Point(17.0, -5.0),
@@ -548,11 +559,6 @@ fn marker_slice_layout() -> marker.MarkerLayout {
   )
 }
 
-fn shift_marker_pose(pose: marker.MarkerPose, y y: Float) -> marker.MarkerPose {
-  let marker.MarkerPose(kind:, point:, angle:) = pose
-  marker.MarkerPose(kind:, point: svg_path.Point(point.x, y), angle:)
-}
-
 fn marker_box(
   min_x: Float,
   min_y: Float,
@@ -573,6 +579,14 @@ fn marker_fill_style(fill: String) -> String {
   "fill: "
   <> fill
   <> "; fill-opacity: 0.88; stroke: #111827; stroke-width: 1.2; stroke-linejoin: round"
+}
+
+fn marker_layout_body_style() -> String {
+  "fill: #b45309; fill-opacity: 0.38; stroke: #111827; stroke-width: 1.25; stroke-linejoin: round"
+}
+
+fn marker_layout_content_style() -> String {
+  "fill: none; stroke: #0f172a; stroke-width: 1.6; stroke-linejoin: round"
 }
 
 fn marker_title_style() -> String {
