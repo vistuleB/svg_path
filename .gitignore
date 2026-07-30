@@ -3,3 +3,4 @@
 /build
 /.test-disabled
 erl_crash.dump
+AGENTS.md
