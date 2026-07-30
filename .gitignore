@@ -4,3 +4,4 @@
 /.test-disabled
 erl_crash.dump
 AGENTS.md
+COMMIT_CYCLE.md
