@@ -546,9 +546,11 @@ is signed, and determines the `sweep` direction.
 
 Use `svg_path.arc_center_data` to convert a root-module `Arc` segment to
 `ellipse.CenterArcData`, and `svg_path.arc_from_center_data` to come back to an
-`Arc`. The `ellipse` module also exposes lower-level helpers such as
-`arc_point`, `point_at_angle`, `split_arc`, `arc_bounding_box`, and
-`arc_to_cubics`.
+`Arc`. For common evaluation tasks, use the root wrappers `svg_path.arc_point`,
+`svg_path.arc_derivative`, and `svg_path.arc_point_at_angle`; these keep the
+ordinary `svg_path.Point` and `svg_path.Error` types. The `ellipse` module also
+exposes lower-level helpers such as `arc_point`, `arc_point_at_angle`,
+`split_arc`, `arc_bounding_box`, and `arc_to_cubics`.
 
 ## Geometry Helpers
 
