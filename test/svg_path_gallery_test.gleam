@@ -38,7 +38,7 @@ pub fn main() -> Nil {
   gleeunit.main()
 }
 
-pub fn gallery_figures_are_generated_test() {
+pub fn generate_gallery_figures() {
   let _ = ensure_dir(output_dir <> "/README.md")
 
   let figures = [
@@ -827,14 +827,14 @@ fn cut_radiator_document(path: svg_path.Path) -> String {
   <> "</svg>\n"
 }
 
-pub fn recursive_dash_failure_zoom_is_generated_test() {
+pub fn generate_recursive_dash_failure_zoom() {
   let _ = ensure_dir("examples/debug/recursive-dash-failure-zoom.svg")
   let drawing = recursive_dashes()
   let _ = write_file("examples/debug/recursive-dash-failure-zoom.svg", drawing)
   Nil
 }
 
-pub fn recursive_dash_cap_report_is_generated_test() {
+pub fn generate_recursive_dash_cap_report() {
   let _ = ensure_dir("examples/debug/recursive-dash-cap-report.txt")
   let source = place_subpath(recursive_dash_source(), 92.0, 154.0)
   let first_options =

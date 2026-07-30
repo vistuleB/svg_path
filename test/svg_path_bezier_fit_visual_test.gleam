@@ -21,7 +21,7 @@ const panel_gap = 20.0
 
 const panel_pad = 22.0
 
-pub fn cubic_fit_visual_examples_are_generated_test() {
+pub fn generate_cubic_fit_visual_examples() {
   let _ = ensure_dir(output_path)
   let _ = write_file(output_path, render())
 }

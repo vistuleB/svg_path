@@ -47,7 +47,7 @@ type Example {
   )
 }
 
-pub fn csg_visual_examples_are_generated_test() {
+pub fn generate_csg_visual_examples() {
   let cases = examples()
   let _ = ensure_dir(output_dir <> "/README.md")
 

@@ -31,7 +31,7 @@ pub fn main() -> Nil {
   gleeunit.main()
 }
 
-pub fn khmer_text_offset_map_spiral_visual_test() {
+pub fn generate_khmer_text_offset_map_spiral_visual() {
   let assert Ok(source_svg) = read_file(source)
   let d = extract_path_data(source_svg)
   let assert Ok(text_path) = parse.path(d)
@@ -79,7 +79,7 @@ pub fn khmer_text_offset_map_spiral_visual_test() {
   assert drawing != ""
 }
 
-pub fn khmer_text_offset_map_decaying_spiral_visual_test() {
+pub fn generate_khmer_text_offset_map_decaying_spiral_visual() {
   let assert Ok(source_svg) = read_file(source)
   let d = extract_path_data(source_svg)
   let assert Ok(text_path) = parse.path(d)

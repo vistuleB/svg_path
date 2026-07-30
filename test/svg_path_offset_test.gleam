@@ -793,25 +793,8 @@ pub fn path_offsets_every_subpath_test() {
   assert serialize.path(offset_path) == "M 0 -1 H 10 M 0 9 H 10"
 }
 
-pub fn stalled_arc_turn_offset_debug_fixture_is_generated_test() {
-  let subdivisions = [1, 4, 30]
-  let cases =
-    list.append(
-      subdivisions
-        |> list.map(fn(count) {
-          stalled_arc_turn_case("real arcs", "arc", count, use_arcs: True)
-        }),
-      subdivisions
-        |> list.map(fn(count) {
-          stalled_arc_turn_case(
-            "cubic approximation",
-            "cubic",
-            count,
-            use_arcs: False,
-          )
-        }),
-    )
-
+pub fn generate_stalled_arc_turn_offset_debug_fixture() {
+  let cases = stalled_arc_turn_cases()
   let _ = write_file(stalled_arc_turn_svg_output, stalled_arc_turn_svg(cases))
   let _ =
     write_file(
@@ -820,7 +803,11 @@ pub fn stalled_arc_turn_offset_debug_fixture_is_generated_test() {
     )
   let _ =
     write_file(stalled_arc_turn_report_output, stalled_arc_turn_report(cases))
+  Nil
+}
 
+pub fn stalled_arc_turn_offset_catches_expected_stalled_segments_test() {
+  let cases = stalled_arc_turn_cases()
   let caught_counts =
     cases
     |> list.map(fn(example) {
@@ -829,6 +816,25 @@ pub fn stalled_arc_turn_offset_debug_fixture_is_generated_test() {
     })
 
   assert caught_counts == [1, 4, 30, 1, 4, 30]
+}
+
+fn stalled_arc_turn_cases() {
+  let subdivisions = [1, 4, 30]
+  list.append(
+    subdivisions
+      |> list.map(fn(count) {
+        stalled_arc_turn_case("real arcs", "arc", count, use_arcs: True)
+      }),
+    subdivisions
+      |> list.map(fn(count) {
+        stalled_arc_turn_case(
+          "cubic approximation",
+          "cubic",
+          count,
+          use_arcs: False,
+        )
+      }),
+  )
 }
 
 fn stalled_arc_turn_case(
