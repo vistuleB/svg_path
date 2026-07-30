@@ -12,6 +12,7 @@ import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import svg_path
+import svg_path/point as point_helpers
 import svg_path/trig
 
 type Edge {
@@ -690,17 +691,15 @@ fn combine4(
 }
 
 fn difference(a: svg_path.Point, b: svg_path.Point) -> svg_path.Point {
-  svg_path.Point(a.x -. b.x, a.y -. b.y)
+  point_helpers.subtract(a, b)
 }
 
 fn cross(a: svg_path.Point, b: svg_path.Point) -> Float {
-  a.x *. b.y -. a.y *. b.x
+  point_helpers.cross(a, b)
 }
 
 fn length(vector: svg_path.Point) -> Float {
-  let assert Ok(root) =
-    vector.x *. vector.x +. vector.y *. vector.y |> float.square_root
-  root
+  point_helpers.norm(vector)
 }
 
 fn clamp01(value: Float) -> Float {

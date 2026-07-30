@@ -32,6 +32,7 @@ import gleam/result
 import svg_path
 import svg_path/area
 import svg_path/bezier
+import svg_path/point as point_helpers
 import svg_path/root
 import svg_path/trig
 
@@ -4822,7 +4823,7 @@ fn unit_vector(
 }
 
 fn rotate_clockwise(point: svg_path.Point) -> svg_path.Point {
-  svg_path.Point(point.y, 0.0 -. point.x)
+  point_helpers.rotate_clockwise(point)
 }
 
 fn interpolate(
@@ -4830,46 +4831,39 @@ fn interpolate(
   b: svg_path.Point,
   t: Float,
 ) -> svg_path.Point {
-  add(a, scale(subtract(b, a), t))
+  point_helpers.lerp(a, b, t:)
 }
 
 fn add(a: svg_path.Point, b: svg_path.Point) -> svg_path.Point {
-  svg_path.Point(a.x +. b.x, a.y +. b.y)
+  point_helpers.add(a, b)
 }
 
 fn subtract(a: svg_path.Point, b: svg_path.Point) -> svg_path.Point {
-  svg_path.Point(a.x -. b.x, a.y -. b.y)
+  point_helpers.subtract(a, b)
 }
 
 fn scale(point: svg_path.Point, factor: Float) -> svg_path.Point {
-  svg_path.Point(point.x *. factor, point.y *. factor)
+  point_helpers.scale(point, by: factor)
 }
 
 fn dot(a: svg_path.Point, b: svg_path.Point) -> Float {
-  a.x *. b.x +. a.y *. b.y
+  point_helpers.dot(a, b)
 }
 
 fn point_length(point: svg_path.Point) -> Float {
-  dot(point, point) |> float_square_root
+  point_helpers.norm(point)
 }
 
 fn point_distance(a: svg_path.Point, b: svg_path.Point) -> Float {
-  distance_squared(a, b) |> float_square_root
+  point_helpers.distance(a, b)
 }
 
 fn distance_squared(a: svg_path.Point, b: svg_path.Point) -> Float {
-  let dx = a.x -. b.x
-  let dy = a.y -. b.y
-  dx *. dx +. dy *. dy
-}
-
-fn float_square_root(value: Float) -> Float {
-  let assert Ok(root) = float.square_root(value)
-  root
+  point_helpers.distance_squared(a, b)
 }
 
 fn cross(a: svg_path.Point, b: svg_path.Point) -> Float {
-  a.x *. b.y -. a.y *. b.x
+  point_helpers.cross(a, b)
 }
 
 fn signed_angle(a: svg_path.Point, b: svg_path.Point) -> Float {
@@ -4877,7 +4871,7 @@ fn signed_angle(a: svg_path.Point, b: svg_path.Point) -> Float {
 }
 
 fn points_near(a: svg_path.Point, b: svg_path.Point) -> Bool {
-  distance_squared(a, b) <=. point_tolerance *. point_tolerance
+  point_helpers.near(a, b, tolerance: point_tolerance)
 }
 
 fn segment_is_finite(segment: svg_path.Segment) -> Bool {

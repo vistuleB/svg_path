@@ -13,6 +13,7 @@ import gleam/option.{type Option, None, Some}
 import gleam/result
 import svg_path
 import svg_path/ellipse
+import svg_path/point as point_helpers
 import svg_path/trig
 
 const cubic_sample_count = 3600
@@ -2090,7 +2091,7 @@ fn previous_index(index: Int, count: Int) -> Int {
 }
 
 fn midpoint(a: svg_path.Point, b: svg_path.Point) -> svg_path.Point {
-  scale_point(add_points(a, b), 0.5)
+  point_helpers.midpoint(a, b)
 }
 
 fn convex_polygon_contains_point(
@@ -3868,17 +3869,15 @@ fn turn_against_orientation_amount(
 }
 
 fn points_near(a: svg_path.Point, b: svg_path.Point) -> Bool {
-  point_distance_squared(a, b) <=. point_tolerance *. point_tolerance
+  point_helpers.near(a, b, tolerance: point_tolerance)
 }
 
 fn point_distance_squared(a: svg_path.Point, b: svg_path.Point) -> Float {
-  let difference = subtract(a, b)
-  dot(difference, difference)
+  point_helpers.distance_squared(a, b)
 }
 
 fn point_length(point: svg_path.Point) -> Float {
-  let assert Ok(length) = float.square_root(dot(point, point))
-  length
+  point_helpers.norm(point)
 }
 
 fn point_string(point: svg_path.Point) -> String {
@@ -3921,19 +3920,19 @@ fn cubic_derivative(segment: svg_path.Segment, t: Float) -> svg_path.Point {
 }
 
 fn add_points(a: svg_path.Point, b: svg_path.Point) -> svg_path.Point {
-  svg_path.Point(a.x +. b.x, a.y +. b.y)
+  point_helpers.add(a, b)
 }
 
 fn subtract(a: svg_path.Point, b: svg_path.Point) -> svg_path.Point {
-  svg_path.Point(a.x -. b.x, a.y -. b.y)
+  point_helpers.subtract(a, b)
 }
 
 fn scale_point(a: svg_path.Point, factor: Float) -> svg_path.Point {
-  svg_path.Point(a.x *. factor, a.y *. factor)
+  point_helpers.scale(a, by: factor)
 }
 
 fn cross(a: svg_path.Point, b: svg_path.Point) -> Float {
-  a.x *. b.y -. a.y *. b.x
+  point_helpers.cross(a, b)
 }
 
 fn quadratic_roots(a: Float, b: Float, c: Float) -> List(Float) {
@@ -3973,7 +3972,7 @@ fn angle_direction(angle: Float) -> svg_path.Point {
 }
 
 fn dot(a: svg_path.Point, b: svg_path.Point) -> Float {
-  a.x *. b.x +. a.y *. b.y
+  point_helpers.dot(a, b)
 }
 
 fn map_path_error(result: Result(a, svg_path.Error)) -> Result(a, HullError) {

@@ -14,6 +14,7 @@ import gleam/int
 import gleam/list
 import svg_path
 import svg_path/ellipse
+import svg_path/point as point_helpers
 import svg_path/transform
 
 /// The transform family allowed during best-fit congruency.
@@ -598,7 +599,10 @@ fn rms_error(
       let #(count, error_squared) = accumulated
       let mapped = transform.point(point.source, by: matrix)
 
-      #(count + 1, error_squared +. distance_squared(mapped, point.target))
+      #(
+        count + 1,
+        error_squared +. point_helpers.distance_squared(mapped, point.target),
+      )
     })
 
   case count <= 0 {
@@ -946,8 +950,8 @@ fn farthest_from_loop(
     [] -> best
     [first, ..remaining] -> {
       let next = case
-        distance_squared(point.source, first.source)
-        >. distance_squared(point.source, best.source)
+        point_helpers.distance_squared(point.source, first.source)
+        >. point_helpers.distance_squared(point.source, best.source)
       {
         True -> first
         False -> best
@@ -989,7 +993,7 @@ fn pair(
     source_b:,
     target_a:,
     target_b:,
-    distance_squared: distance_squared(source_a, source_b),
+    distance_squared: point_helpers.distance_squared(source_a, source_b),
   )
 }
 
@@ -998,13 +1002,7 @@ fn points_within_tolerance(
   b: svg_path.Point,
   tolerance: Float,
 ) -> Bool {
-  distance_squared(a, b) <=. tolerance *. tolerance
-}
-
-fn distance_squared(a: svg_path.Point, b: svg_path.Point) -> Float {
-  let dx = a.x -. b.x
-  let dy = a.y -. b.y
-  dx *. dx +. dy *. dy
+  point_helpers.near(a, b, tolerance:)
 }
 
 fn floats_within_tolerance(a: Float, b: Float, tolerance: Float) -> Bool {

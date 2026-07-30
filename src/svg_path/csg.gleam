@@ -30,6 +30,7 @@ import gleam/order
 import gleam/result
 import svg_path
 import svg_path/area
+import svg_path/point as point_helpers
 import svg_path/trig
 
 const default_tolerance = 0.000001
@@ -1645,16 +1646,11 @@ fn clamp01(value: Float) -> Float {
 }
 
 fn same_point(a: svg_path.Point, b: svg_path.Point, tolerance: Float) -> Bool {
-  let dx = a.x -. b.x
-  let dy = a.y -. b.y
-  dx *. dx +. dy *. dy <=. tolerance *. tolerance
+  point_helpers.near(a, b, tolerance:)
 }
 
 fn distance(a: svg_path.Point, b: svg_path.Point) -> Float {
-  let dx = a.x -. b.x
-  let dy = a.y -. b.y
-  let assert Ok(root) = float.square_root(dx *. dx +. dy *. dy)
-  root
+  point_helpers.distance(a, b)
 }
 
 fn assembly_tolerance(tolerance: Float) -> Float {

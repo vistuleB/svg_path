@@ -8,6 +8,7 @@
 import gleam/list
 import svg_path
 import svg_path/ellipse
+import svg_path/point as point_helpers
 import svg_path/trig
 
 /// An opaque SVG affine transform matrix.
@@ -926,13 +927,7 @@ fn points_within_tolerance(
 ) -> Bool {
   let tolerance_squared = tolerance *. tolerance
 
-  distance_squared(a, b) <=. tolerance_squared
-}
-
-fn distance_squared(a: svg_path.Point, b: svg_path.Point) -> Float {
-  let dx = a.x -. b.x
-  let dy = a.y -. b.y
-  dx *. dx +. dy *. dy
+  point_helpers.distance_squared(a, b) <=. tolerance_squared
 }
 
 fn is_finite(value: Float) -> Bool {

@@ -5,6 +5,7 @@ import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import svg_path
+import svg_path/point as point_helpers
 import svg_path/trig
 
 const default_tolerance = 0.000001
@@ -389,7 +390,7 @@ fn turn_angle(
   outgoing: svg_path.Point,
   index: Int,
 ) -> Result(Float, Error) {
-  let value = clamp(dot(incoming, outgoing), min: -1.0, max: 1.0)
+  let value = clamp(point_helpers.dot(incoming, outgoing), min: -1.0, max: 1.0)
   case trig.acos_degrees(value) {
     Ok(angle) -> Ok(angle)
     Error(_) -> Error(CannotRoundCorner(index))
@@ -920,26 +921,11 @@ fn corner_trim(corner: Option(Corner)) -> Float {
 }
 
 fn unit(point: svg_path.Point) -> Result(svg_path.Point, Nil) {
-  let length_squared = point.x *. point.x +. point.y *. point.y
-  case length_squared <=. 0.0 {
-    True -> Error(Nil)
-    False -> {
-      let assert Ok(length) = float.square_root(length_squared)
-      Ok(svg_path.Point(point.x /. length, point.y /. length))
-    }
-  }
-}
-
-fn dot(left: svg_path.Point, right: svg_path.Point) -> Float {
-  left.x *. right.x +. left.y *. right.y
-}
-
-fn cross(left: svg_path.Point, right: svg_path.Point) -> Float {
-  left.x *. right.y -. left.y *. right.x
+  point_helpers.normalize(point)
 }
 
 fn sweep_from_turn(incoming: svg_path.Point, outgoing: svg_path.Point) -> Bool {
-  cross(incoming, outgoing) >=. 0.0
+  point_helpers.cross(incoming, outgoing) >=. 0.0
 }
 
 fn clamp(value: Float, min min: Float, max max: Float) -> Float {
