@@ -26,11 +26,32 @@ pub fn segment_self_intersections_finds_cubic_crossing_test() {
   assert point_near(point, svg_path.segment_point(curve, at: 0.25) |> assert_ok)
 }
 
-pub fn segment_self_intersections_treats_same_endpoint_arc_as_empty_test() {
+pub fn segment_self_intersections_reports_same_endpoint_arc_test() {
   let arc =
     svg_path.Arc(
       start: svg_path.Point(0.0, 0.0),
       radius: svg_path.Point(10.0, 10.0),
+      x_axis_rotation: 0.0,
+      large_arc: True,
+      sweep: True,
+      end: svg_path.Point(0.0, 0.0),
+    )
+
+  assert intersections.segment_self(arc)
+    == Ok([
+      svg_path.SegmentIntersection(
+        left_t: 0.0,
+        right_t: 1.0,
+        point: svg_path.Point(0.0, 0.0),
+      ),
+    ])
+}
+
+pub fn segment_self_intersections_ignores_same_endpoint_zero_radius_arc_test() {
+  let arc =
+    svg_path.Arc(
+      start: svg_path.Point(0.0, 0.0),
+      radius: svg_path.Point(0.0, 10.0),
       x_axis_rotation: 0.0,
       large_arc: True,
       sweep: True,

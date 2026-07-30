@@ -73,9 +73,10 @@ pub fn segment_with(
 
 /// Return point intersections where a segment intersects itself.
 ///
-/// Straight lines, quadratic Beziers, and SVG endpoint arcs do not report
-/// self-intersections. Cubic Beziers can self-intersect, including at separated
-/// parameters that evaluate to the same endpoint.
+/// Straight lines and quadratic Beziers do not report self-intersections.
+/// Cubic Beziers can self-intersect, including at separated parameters that
+/// evaluate to the same endpoint. An arc whose start and end coincide reports
+/// that endpoint pair when both radii are nonzero.
 pub fn segment_self(
   segment: Segment,
 ) -> Result(List(SegmentIntersection), Error) {
@@ -371,7 +372,16 @@ fn segment_self_intersections_valid_options(
           )
       }
     }
-    Line(..) | QuadraticBezier(..) | Arc(..) -> Ok([])
+    Line(..) | QuadraticBezier(..) -> Ok([])
+    Arc(start:, radius:, end:, ..) -> {
+      case start == end && radius.x != 0.0 && radius.y != 0.0 {
+        True ->
+          Ok([
+            SegmentIntersection(left_t: 0.0, right_t: 1.0, point: start),
+          ])
+        False -> Ok([])
+      }
+    }
   }
 }
 
