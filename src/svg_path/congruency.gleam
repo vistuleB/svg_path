@@ -802,7 +802,7 @@ fn arc_opposite_point(
     Error(_) -> Error(Nil)
     Ok(arc) -> {
       Ok(
-        ellipse.point_at_angle(arc, angle: arc.start_angle +. 180.0)
+        ellipse.arc_point_at_angle(arc, angle: arc.start_angle +. 180.0)
         |> from_ellipse_point,
       )
     }

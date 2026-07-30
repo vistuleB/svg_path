@@ -8193,6 +8193,76 @@ pub fn arc_center_data(
   }
 }
 
+/// Evaluate an arc segment at parameter `t`.
+///
+/// This is a root-module convenience wrapper around `ellipse.arc_point` that
+/// accepts an `svg_path.Arc` segment and returns `svg_path.Point`. Non-arc
+/// segments return `DegenerateArc`.
+pub fn arc_point(segment: Segment, at t: Float) -> Result(Point, Error) {
+  use arc <- result.try(arc_center_data(segment))
+
+  Ok(ellipse.arc_point(arc, at: t) |> from_ellipse_point)
+}
+
+/// Return an arc segment's derivative with respect to parameter `t`.
+///
+/// This is a root-module convenience wrapper around `ellipse.arc_derivative`
+/// that accepts an `svg_path.Arc` segment and returns `svg_path.Point`.
+/// Non-arc segments return `DegenerateArc`.
+pub fn arc_derivative(segment: Segment, at t: Float) -> Result(Point, Error) {
+  use arc <- result.try(arc_center_data(segment))
+
+  Ok(ellipse.arc_derivative(arc, at: t) |> from_ellipse_point)
+}
+
+/// Evaluate an arc segment at an ellipse angle in degrees.
+///
+/// This is a root-module convenience wrapper around
+/// `ellipse.arc_point_at_angle` that accepts an `svg_path.Arc` segment and
+/// returns `svg_path.Point`. Non-arc segments return `DegenerateArc`.
+pub fn arc_point_at_angle(
+  segment: Segment,
+  angle angle: Float,
+) -> Result(Point, Error) {
+  use arc <- result.try(arc_center_data(segment))
+
+  Ok(ellipse.arc_point_at_angle(arc, angle: angle) |> from_ellipse_point)
+}
+
+/// Return an arc segment's derivative at an ellipse angle in degrees.
+///
+/// This is a root-module convenience wrapper around
+/// `ellipse.arc_derivative_at_angle` that accepts an `svg_path.Arc` segment and
+/// returns `svg_path.Point`. Non-arc segments return `DegenerateArc`.
+pub fn arc_derivative_at_angle(
+  segment: Segment,
+  angle angle: Float,
+) -> Result(Point, Error) {
+  use arc <- result.try(arc_center_data(segment))
+
+  Ok(ellipse.arc_derivative_at_angle(arc, angle: angle) |> from_ellipse_point)
+}
+
+/// Return the ellipse angle, in degrees, reached at arc parameter `t`.
+///
+/// This is a root-module convenience wrapper around `ellipse.angle_at`.
+/// Non-arc segments return `DegenerateArc`.
+pub fn arc_angle_at(segment: Segment, t t: Float) -> Result(Float, Error) {
+  use arc <- result.try(arc_center_data(segment))
+
+  Ok(ellipse.angle_at(arc, t: t))
+}
+
+/// Return the end angle, in degrees, of an arc segment.
+///
+/// This is a root-module convenience wrapper around `ellipse.arc_end_angle`.
+/// Non-arc segments return `DegenerateArc`.
+pub fn arc_end_angle(segment: Segment) -> Result(Float, Error) {
+  use arc <- result.try(arc_center_data(segment))
+
+  Ok(ellipse.arc_end_angle(arc))
+}
+
 fn interpolate(start: Point, end: Point, t: Float) -> Point {
   Point(
     start.x +. { end.x -. start.x } *. t,

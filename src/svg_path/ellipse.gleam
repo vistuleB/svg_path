@@ -321,12 +321,12 @@ pub fn endpoint_to_center(
 /// derives `large_arc` and `sweep` from `delta_angle`.
 pub fn center_to_endpoint(data: CenterArcData) -> EndpointArcData {
   EndpointArcData(
-    start: point_at_angle(data, angle: data.start_angle),
+    start: arc_point_at_angle(data, angle: data.start_angle),
     radius: data.radius,
     x_axis_rotation: data.x_axis_rotation,
     large_arc: arc_large_arc(data),
     sweep: arc_sweep(data),
-    end: point_at_angle(data, angle: arc_end_angle(data)),
+    end: arc_point_at_angle(data, angle: arc_end_angle(data)),
   )
 }
 
@@ -336,23 +336,23 @@ pub fn center_to_endpoint(data: CenterArcData) -> EndpointArcData {
 /// the end of the arc, and values outside that range extrapolate along the
 /// same ellipse.
 pub fn arc_point(arc: CenterArcData, at t: Float) -> EllipsePoint {
-  point_at_angle(arc, angle_at(arc, t))
+  arc_point_at_angle(arc, angle_at(arc, t))
 }
 
 /// Return the derivative with respect to angular progress `t`.
 ///
 /// This is the tangent direction followed from the arc start to the arc end.
 /// For the raw derivative with respect to the ellipse angle, use
-/// `derivative_at_angle`.
+/// `arc_derivative_at_angle`.
 pub fn arc_derivative(arc: CenterArcData, at t: Float) -> EllipsePoint {
-  scale(derivative_at_angle(arc, angle_at(arc, t)), arc.delta_angle)
+  scale(arc_derivative_at_angle(arc, angle_at(arc, t)), arc.delta_angle)
 }
 
 /// Return the arc's exact axis-aligned bounding box.
 pub fn arc_bounding_box(arc: CenterArcData) -> BoundingBox {
   let points =
     arc_bounding_box_candidate_angles(arc)
-    |> list.map(fn(angle) { point_at_angle(arc, angle: angle) })
+    |> list.map(fn(angle) { arc_point_at_angle(arc, angle: angle) })
   let assert [first, ..rest] = points
 
   rest
@@ -415,12 +415,15 @@ pub fn split_arc_inside_many(
 }
 
 /// Evaluate an arc at a center-parameter angle in degrees.
-pub fn point_at_angle(arc: CenterArcData, angle angle: Float) -> EllipsePoint {
+pub fn arc_point_at_angle(
+  arc: CenterArcData,
+  angle angle: Float,
+) -> EllipsePoint {
   ellipse_point(arc, angle)
 }
 
 /// Return the derivative with respect to the center-parameter angle in degrees.
-pub fn derivative_at_angle(
+pub fn arc_derivative_at_angle(
   arc: CenterArcData,
   angle angle: Float,
 ) -> EllipsePoint {
