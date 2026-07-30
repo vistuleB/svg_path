@@ -30,16 +30,16 @@ type FitCase {
   FitCase(
     title: String,
     original: option.Option(bezier.BezierData),
-    start: bezier.Point,
-    end: bezier.Point,
-    start_tangent: bezier.Point,
-    end_tangent: bezier.Point,
-    samples: List(#(Float, bezier.Point)),
+    start: bezier.BezierPoint,
+    end: bezier.BezierPoint,
+    start_tangent: bezier.BezierPoint,
+    end_tangent: bezier.BezierPoint,
+    samples: List(#(Float, bezier.BezierPoint)),
   )
 }
 
 type Box {
-  Box(min: bezier.Point, max: bezier.Point)
+  Box(min: bezier.BezierPoint, max: bezier.BezierPoint)
 }
 
 type Placement {
@@ -161,8 +161,8 @@ fn original_overlay(
 }
 
 fn endpoint_marks(
-  start: bezier.Point,
-  end: bezier.Point,
+  start: bezier.BezierPoint,
+  end: bezier.BezierPoint,
   placement: Placement,
 ) -> svg.ThingsToDraw {
   [
@@ -180,7 +180,7 @@ fn endpoint_marks(
 }
 
 fn sample_marks(
-  samples: List(#(Float, bezier.Point)),
+  samples: List(#(Float, bezier.BezierPoint)),
   placement: Placement,
 ) -> svg.ThingsToDraw {
   samples
@@ -195,15 +195,15 @@ fn sample_marks(
 }
 
 fn tangent_arrow(
-  point: bezier.Point,
-  tangent: bezier.Point,
+  point: bezier.BezierPoint,
+  tangent: bezier.BezierPoint,
   placement: Placement,
 ) -> svg.ThingsToDraw {
   let start = place(point, placement)
   let direction = unit(tangent)
   let end =
     place(
-      bezier.Point(
+      bezier.BezierPoint(
         x: point.x
           +. direction.x
           *. box_taxicab_diameter(placement.world)
@@ -323,7 +323,7 @@ fn panel_origin(index: Int) -> svg_path.Point {
   )
 }
 
-fn place(point: bezier.Point, placement: Placement) -> svg_path.Point {
+fn place(point: bezier.BezierPoint, placement: Placement) -> svg_path.Point {
   let Placement(x:, y:, scale:, world:) = placement
   let Box(min:, max:) = world
 
@@ -334,11 +334,11 @@ fn place(point: bezier.Point, placement: Placement) -> svg_path.Point {
 }
 
 fn drawing_box(
-  start: bezier.Point,
-  end: bezier.Point,
-  start_tangent: bezier.Point,
-  end_tangent: bezier.Point,
-  samples: List(#(Float, bezier.Point)),
+  start: bezier.BezierPoint,
+  end: bezier.BezierPoint,
+  start_tangent: bezier.BezierPoint,
+  end_tangent: bezier.BezierPoint,
+  samples: List(#(Float, bezier.BezierPoint)),
   fit: bezier.BezierData,
   original: option.Option(bezier.BezierData),
 ) -> Box {
@@ -354,11 +354,11 @@ fn drawing_box(
     [start, end, ..sample_points(samples)]
     |> list.append(curve_points(fit))
     |> list.append([
-      bezier.Point(
+      bezier.BezierPoint(
         x: start.x +. start_direction.x *. tangent_scale,
         y: start.y +. start_direction.y *. tangent_scale,
       ),
-      bezier.Point(
+      bezier.BezierPoint(
         x: end.x +. end_direction.x *. tangent_scale,
         y: end.y +. end_direction.y *. tangent_scale,
       ),
@@ -372,7 +372,7 @@ fn drawing_box(
   pad_box(box, by: box_taxicab_diameter(box) /. 20.0 +. 1.0)
 }
 
-fn curve_points(curve: bezier.BezierData) -> List(bezier.Point) {
+fn curve_points(curve: bezier.BezierData) -> List(bezier.BezierPoint) {
   [
     0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65,
     0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0,
@@ -380,7 +380,9 @@ fn curve_points(curve: bezier.BezierData) -> List(bezier.Point) {
   |> list.map(fn(t) { bezier.bezier_point(curve, at: t) })
 }
 
-fn sample_points(samples: List(#(Float, bezier.Point))) -> List(bezier.Point) {
+fn sample_points(
+  samples: List(#(Float, bezier.BezierPoint)),
+) -> List(bezier.BezierPoint) {
   samples
   |> list.map(fn(sample) {
     let #(_, point) = sample
@@ -388,23 +390,23 @@ fn sample_points(samples: List(#(Float, bezier.Point))) -> List(bezier.Point) {
   })
 }
 
-fn include_many(points: List(bezier.Point), box: Box) -> Box {
+fn include_many(points: List(bezier.BezierPoint), box: Box) -> Box {
   points
   |> list.fold(box, fn(box, point) { include_point(box, point) })
 }
 
-fn empty_box(point: bezier.Point) -> Box {
+fn empty_box(point: bezier.BezierPoint) -> Box {
   Box(min: point, max: point)
 }
 
-fn include_point(box: Box, point: bezier.Point) -> Box {
+fn include_point(box: Box, point: bezier.BezierPoint) -> Box {
   let Box(min:, max:) = box
   Box(
-    min: bezier.Point(
+    min: bezier.BezierPoint(
       x: float.min(min.x, point.x),
       y: float.min(min.y, point.y),
     ),
-    max: bezier.Point(
+    max: bezier.BezierPoint(
       x: float.max(max.x, point.x),
       y: float.max(max.y, point.y),
     ),
@@ -414,8 +416,8 @@ fn include_point(box: Box, point: bezier.Point) -> Box {
 fn pad_box(box: Box, by amount: Float) -> Box {
   let Box(min:, max:) = box
   Box(
-    min: bezier.Point(x: min.x -. amount, y: min.y -. amount),
-    max: bezier.Point(x: max.x +. amount, y: max.y +. amount),
+    min: bezier.BezierPoint(x: min.x -. amount, y: min.y -. amount),
+    max: bezier.BezierPoint(x: max.x +. amount, y: max.y +. amount),
   )
 }
 
@@ -424,10 +426,10 @@ fn box_taxicab_diameter(box: Box) -> Float {
   max.x -. min.x +. max.y -. min.y
 }
 
-fn unit(vector: bezier.Point) -> bezier.Point {
+fn unit(vector: bezier.BezierPoint) -> bezier.BezierPoint {
   let assert Ok(length) =
     float.square_root(vector.x *. vector.x +. vector.y *. vector.y)
-  bezier.Point(x: vector.x /. length, y: vector.y /. length)
+  bezier.BezierPoint(x: vector.x /. length, y: vector.y /. length)
 }
 
 fn exact_case(
@@ -449,7 +451,7 @@ fn exact_case(
 fn noisy_case(
   title: String,
   curve: bezier.BezierData,
-  ts_and_noise: List(#(Float, bezier.Point)),
+  ts_and_noise: List(#(Float, bezier.BezierPoint)),
 ) -> FitCase {
   FitCase(
     title:,
@@ -464,17 +466,17 @@ fn noisy_case(
 
 fn noisy_sample(
   curve: bezier.BezierData,
-  sample: #(Float, bezier.Point),
-) -> #(Float, bezier.Point) {
+  sample: #(Float, bezier.BezierPoint),
+) -> #(Float, bezier.BezierPoint) {
   let #(t, noise) = sample
   let point = bezier.bezier_point(curve, at: t)
-  #(t, bezier.Point(x: point.x +. noise.x, y: point.y +. noise.y))
+  #(t, bezier.BezierPoint(x: point.x +. noise.x, y: point.y +. noise.y))
 }
 
 fn sample_curve(
   curve: bezier.BezierData,
   ts: List(Float),
-) -> List(#(Float, bezier.Point)) {
+) -> List(#(Float, bezier.BezierPoint)) {
   ts
   |> list.map(fn(t) { #(t, bezier.bezier_point(curve, at: t)) })
 }
@@ -482,38 +484,38 @@ fn sample_curve(
 fn cases() -> List(FitCase) {
   let c1 =
     bezier.CubicBezierData(
-      start: bezier.Point(0.0, 0.0),
-      control1: bezier.Point(35.0, 65.0),
-      control2: bezier.Point(90.0, -35.0),
-      end: bezier.Point(130.0, 25.0),
+      start: bezier.BezierPoint(0.0, 0.0),
+      control1: bezier.BezierPoint(35.0, 65.0),
+      control2: bezier.BezierPoint(90.0, -35.0),
+      end: bezier.BezierPoint(130.0, 25.0),
     )
   let c2 =
     bezier.CubicBezierData(
-      start: bezier.Point(10.0, 80.0),
-      control1: bezier.Point(45.0, 120.0),
-      control2: bezier.Point(70.0, -40.0),
-      end: bezier.Point(120.0, 30.0),
+      start: bezier.BezierPoint(10.0, 80.0),
+      control1: bezier.BezierPoint(45.0, 120.0),
+      control2: bezier.BezierPoint(70.0, -40.0),
+      end: bezier.BezierPoint(120.0, 30.0),
     )
   let c3 =
     bezier.CubicBezierData(
-      start: bezier.Point(-20.0, 10.0),
-      control1: bezier.Point(20.0, 90.0),
-      control2: bezier.Point(95.0, 90.0),
-      end: bezier.Point(150.0, 5.0),
+      start: bezier.BezierPoint(-20.0, 10.0),
+      control1: bezier.BezierPoint(20.0, 90.0),
+      control2: bezier.BezierPoint(95.0, 90.0),
+      end: bezier.BezierPoint(150.0, 5.0),
     )
   let c4 =
     bezier.CubicBezierData(
-      start: bezier.Point(0.0, 40.0),
-      control1: bezier.Point(40.0, -30.0),
-      control2: bezier.Point(90.0, 115.0),
-      end: bezier.Point(135.0, 30.0),
+      start: bezier.BezierPoint(0.0, 40.0),
+      control1: bezier.BezierPoint(40.0, -30.0),
+      control2: bezier.BezierPoint(90.0, 115.0),
+      end: bezier.BezierPoint(135.0, 30.0),
     )
   let c5 =
     bezier.CubicBezierData(
-      start: bezier.Point(0.0, 0.0),
-      control1: bezier.Point(20.0, 105.0),
-      control2: bezier.Point(115.0, 105.0),
-      end: bezier.Point(135.0, 0.0),
+      start: bezier.BezierPoint(0.0, 0.0),
+      control1: bezier.BezierPoint(20.0, 105.0),
+      control2: bezier.BezierPoint(115.0, 105.0),
+      end: bezier.BezierPoint(135.0, 0.0),
     )
 
   [
@@ -523,25 +525,25 @@ fn cases() -> List(FitCase) {
     exact_case("exact 3 samples", c4, [0.25, 0.5, 0.75]),
     exact_case("exact 4 samples", c5, [0.15, 0.35, 0.65, 0.9]),
     noisy_case("noisy 2 samples", c1, [
-      #(0.28, bezier.Point(0.0, 9.0)),
-      #(0.74, bezier.Point(-7.0, -5.0)),
+      #(0.28, bezier.BezierPoint(0.0, 9.0)),
+      #(0.74, bezier.BezierPoint(-7.0, -5.0)),
     ]),
     noisy_case("noisy 3 samples", c2, [
-      #(0.2, bezier.Point(6.0, -8.0)),
-      #(0.5, bezier.Point(-10.0, 5.0)),
-      #(0.82, bezier.Point(4.0, 7.0)),
+      #(0.2, bezier.BezierPoint(6.0, -8.0)),
+      #(0.5, bezier.BezierPoint(-10.0, 5.0)),
+      #(0.82, bezier.BezierPoint(4.0, 7.0)),
     ]),
     noisy_case("noisy 4 samples", c3, [
-      #(0.16, bezier.Point(-4.0, 7.0)),
-      #(0.36, bezier.Point(9.0, -6.0)),
-      #(0.64, bezier.Point(-8.0, -5.0)),
-      #(0.86, bezier.Point(5.0, 8.0)),
+      #(0.16, bezier.BezierPoint(-4.0, 7.0)),
+      #(0.36, bezier.BezierPoint(9.0, -6.0)),
+      #(0.64, bezier.BezierPoint(-8.0, -5.0)),
+      #(0.86, bezier.BezierPoint(5.0, 8.0)),
     ]),
     noisy_case("noisy 4 samples", c5, [
-      #(0.12, bezier.Point(7.0, -4.0)),
-      #(0.33, bezier.Point(-6.0, 10.0)),
-      #(0.62, bezier.Point(8.0, 7.0)),
-      #(0.89, bezier.Point(-5.0, -8.0)),
+      #(0.12, bezier.BezierPoint(7.0, -4.0)),
+      #(0.33, bezier.BezierPoint(-6.0, 10.0)),
+      #(0.62, bezier.BezierPoint(8.0, 7.0)),
+      #(0.89, bezier.BezierPoint(-5.0, -8.0)),
     ]),
   ]
 }

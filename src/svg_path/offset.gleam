@@ -3375,7 +3375,7 @@ fn offset_stalled_source_run(
 fn stalled_run_collapsed(
   start: svg_path.Point,
   end: svg_path.Point,
-  _samples: List(#(Float, bezier.Point)),
+  _samples: List(#(Float, bezier.BezierPoint)),
 ) -> Bool {
   start == end
 }
@@ -3385,7 +3385,7 @@ fn offset_nonempty_stalled_source_run(
   last: svg_path.Segment,
   start: svg_path.Point,
   end: svg_path.Point,
-  samples: List(#(Float, bezier.Point)),
+  samples: List(#(Float, bezier.BezierPoint)),
 ) -> Result(List(OffsetSegment), Error) {
   use source_start_tangent <- result.try(unit_tangent(first, t: 0.0))
   use source_end_tangent <- result.try(unit_tangent(last, t: 1.0))
@@ -3424,8 +3424,8 @@ fn stalled_run_offset_samples(
   distance: Float,
   index index: Int,
   count count: Int,
-  samples samples: List(#(Float, bezier.Point)),
-) -> Result(List(#(Float, bezier.Point)), Error) {
+  samples samples: List(#(Float, bezier.BezierPoint)),
+) -> Result(List(#(Float, bezier.BezierPoint)), Error) {
   case segments {
     [] -> Ok(list.reverse(samples))
     [first, ..rest] -> {
@@ -3454,8 +3454,8 @@ fn stalled_segment_offset_samples(
   index: Int,
   count: Int,
   t_values: List(Float),
-  samples samples: List(#(Float, bezier.Point)),
-) -> Result(List(#(Float, bezier.Point)), Error) {
+  samples samples: List(#(Float, bezier.BezierPoint)),
+) -> Result(List(#(Float, bezier.BezierPoint)), Error) {
   case t_values {
     [] -> Ok(samples)
     [local_t, ..rest] -> {
@@ -4319,7 +4319,7 @@ fn fit_cubic_offset_curve(
   distance: Float,
   start start: svg_path.Point,
   end end: svg_path.Point,
-  samples samples: List(#(Float, bezier.Point)),
+  samples samples: List(#(Float, bezier.BezierPoint)),
 ) -> Result(bezier.BezierData, Error) {
   case
     offset_derivative(segment, t: 0.0, distance:),
@@ -4353,7 +4353,7 @@ fn fit_cubic_offset_curve(
 fn fit_cubic_offset_curve_from_points(
   start start: svg_path.Point,
   end end: svg_path.Point,
-  samples samples: List(#(Float, bezier.Point)),
+  samples samples: List(#(Float, bezier.BezierPoint)),
 ) -> Result(bezier.BezierData, Error) {
   use fit <- result.try(
     bezier.fit_cubic_with_endpoints(
@@ -4371,8 +4371,8 @@ fn offset_fit_samples(
   segment: svg_path.Segment,
   distance: Float,
   t_values: List(Float),
-  samples samples: List(#(Float, bezier.Point)),
-) -> Result(List(#(Float, bezier.Point)), Error) {
+  samples samples: List(#(Float, bezier.BezierPoint)),
+) -> Result(List(#(Float, bezier.BezierPoint)), Error) {
   case t_values {
     [] -> Ok(list.reverse(samples))
     [t, ..rest] -> {
@@ -4389,8 +4389,8 @@ fn available_offset_fit_samples(
   segment: svg_path.Segment,
   distance: Float,
   t_values: List(Float),
-  samples samples: List(#(Float, bezier.Point)),
-) -> List(#(Float, bezier.Point)) {
+  samples samples: List(#(Float, bezier.BezierPoint)),
+) -> List(#(Float, bezier.BezierPoint)) {
   case t_values {
     [] -> list.reverse(samples)
     [t, ..rest] -> {
@@ -4554,11 +4554,11 @@ fn length_span_at(
   }
 }
 
-fn to_bezier_point(point: svg_path.Point) -> bezier.Point {
-  bezier.Point(x: point.x, y: point.y)
+fn to_bezier_point(point: svg_path.Point) -> bezier.BezierPoint {
+  bezier.BezierPoint(x: point.x, y: point.y)
 }
 
-fn from_bezier_point(point: bezier.Point) -> svg_path.Point {
+fn from_bezier_point(point: bezier.BezierPoint) -> svg_path.Point {
   svg_path.Point(point.x, point.y)
 }
 

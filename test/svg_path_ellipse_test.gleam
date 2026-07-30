@@ -13,12 +13,12 @@ pub fn main() -> Nil {
 }
 
 pub fn endpoint_to_center_exposes_corrected_center_parameters_test() {
-  let start = ellipse.Point(0.0, 0.0)
-  let end = ellipse.Point(20.0, 0.0)
+  let start = ellipse.EllipsePoint(0.0, 0.0)
+  let end = ellipse.EllipsePoint(20.0, 0.0)
   let assert Ok(arc) =
     ellipse.EndpointArcData(
       start:,
-      radius: ellipse.Point(10.0, 10.0),
+      radius: ellipse.EllipsePoint(10.0, 10.0),
       x_axis_rotation: 0.0,
       large_arc: False,
       sweep: True,
@@ -26,8 +26,8 @@ pub fn endpoint_to_center_exposes_corrected_center_parameters_test() {
     )
     |> ellipse.endpoint_to_center
 
-  assert point_near(arc.center, ellipse.Point(10.0, 0.0))
-  assert point_near(arc.radius, ellipse.Point(10.0, 10.0))
+  assert point_near(arc.center, ellipse.EllipsePoint(10.0, 0.0))
+  assert point_near(arc.radius, ellipse.EllipsePoint(10.0, 10.0))
   assert near(arc.x_axis_rotation, 0.0)
   assert arc.start_angle >=. -180.0
   assert arc.start_angle <=. 180.0
@@ -35,12 +35,12 @@ pub fn endpoint_to_center_exposes_corrected_center_parameters_test() {
 }
 
 pub fn arc_point_uses_angular_progress_test() {
-  let start = ellipse.Point(0.0, 0.0)
-  let end = ellipse.Point(20.0, 0.0)
+  let start = ellipse.EllipsePoint(0.0, 0.0)
+  let end = ellipse.EllipsePoint(20.0, 0.0)
   let assert Ok(arc) =
     ellipse.EndpointArcData(
       start:,
-      radius: ellipse.Point(10.0, 10.0),
+      radius: ellipse.EllipsePoint(10.0, 10.0),
       x_axis_rotation: 0.0,
       large_arc: False,
       sweep: True,
@@ -49,19 +49,22 @@ pub fn arc_point_uses_angular_progress_test() {
     |> ellipse.endpoint_to_center
 
   assert point_near(ellipse.arc_point(arc, at: 0.0), start)
-  assert point_near(ellipse.arc_point(arc, at: 0.5), ellipse.Point(10.0, -10.0))
+  assert point_near(
+    ellipse.arc_point(arc, at: 0.5),
+    ellipse.EllipsePoint(10.0, -10.0),
+  )
   assert point_near(ellipse.arc_point(arc, at: 1.0), end)
   assert near(ellipse.angle_at(arc, t: 0.5), arc.start_angle +. 90.0)
   assert near(ellipse.arc_end_angle(arc), arc.start_angle +. arc.delta_angle)
 }
 
 pub fn arc_derivative_follows_arc_traversal_direction_test() {
-  let start = ellipse.Point(0.0, 0.0)
-  let end = ellipse.Point(20.0, 0.0)
+  let start = ellipse.EllipsePoint(0.0, 0.0)
+  let end = ellipse.EllipsePoint(20.0, 0.0)
   let assert Ok(sweep_arc) =
     ellipse.EndpointArcData(
       start:,
-      radius: ellipse.Point(10.0, 10.0),
+      radius: ellipse.EllipsePoint(10.0, 10.0),
       x_axis_rotation: 0.0,
       large_arc: False,
       sweep: True,
@@ -71,7 +74,7 @@ pub fn arc_derivative_follows_arc_traversal_direction_test() {
   let assert Ok(non_sweep_arc) =
     ellipse.EndpointArcData(
       start:,
-      radius: ellipse.Point(10.0, 10.0),
+      radius: ellipse.EllipsePoint(10.0, 10.0),
       x_axis_rotation: 0.0,
       large_arc: False,
       sweep: False,
@@ -88,46 +91,46 @@ pub fn arc_derivative_follows_arc_traversal_direction_test() {
 pub fn arc_bounding_box_of_sweep_half_circle_uses_lower_half_test() {
   let assert Ok(arc) =
     ellipse.EndpointArcData(
-      start: ellipse.Point(0.0, 0.0),
-      radius: ellipse.Point(10.0, 10.0),
+      start: ellipse.EllipsePoint(0.0, 0.0),
+      radius: ellipse.EllipsePoint(10.0, 10.0),
       x_axis_rotation: 0.0,
       large_arc: False,
       sweep: True,
-      end: ellipse.Point(20.0, 0.0),
+      end: ellipse.EllipsePoint(20.0, 0.0),
     )
     |> ellipse.endpoint_to_center
 
   assert bbox_near(
     ellipse.arc_bounding_box(arc),
-    min: ellipse.Point(0.0, -10.0),
-    max: ellipse.Point(20.0, 0.0),
+    min: ellipse.EllipsePoint(0.0, -10.0),
+    max: ellipse.EllipsePoint(20.0, 0.0),
   )
 }
 
 pub fn arc_bounding_box_of_non_sweep_half_circle_uses_upper_half_test() {
   let assert Ok(arc) =
     ellipse.EndpointArcData(
-      start: ellipse.Point(0.0, 0.0),
-      radius: ellipse.Point(10.0, 10.0),
+      start: ellipse.EllipsePoint(0.0, 0.0),
+      radius: ellipse.EllipsePoint(10.0, 10.0),
       x_axis_rotation: 0.0,
       large_arc: False,
       sweep: False,
-      end: ellipse.Point(20.0, 0.0),
+      end: ellipse.EllipsePoint(20.0, 0.0),
     )
     |> ellipse.endpoint_to_center
 
   assert bbox_near(
     ellipse.arc_bounding_box(arc),
-    min: ellipse.Point(0.0, 0.0),
-    max: ellipse.Point(20.0, 10.0),
+    min: ellipse.EllipsePoint(0.0, 0.0),
+    max: ellipse.EllipsePoint(20.0, 10.0),
   )
 }
 
 pub fn arc_bounding_box_of_rotated_arc_includes_interior_extrema_test() {
   let arc =
     ellipse.CenterArcData(
-      center: ellipse.Point(2.0, -3.0),
-      radius: ellipse.Point(12.0, 5.0),
+      center: ellipse.EllipsePoint(2.0, -3.0),
+      radius: ellipse.EllipsePoint(12.0, 5.0),
       x_axis_rotation: 30.0,
       start_angle: -68.75493541569878,
       delta_angle: 252.1015816987223,
@@ -135,8 +138,8 @@ pub fn arc_bounding_box_of_rotated_arc_includes_interior_extrema_test() {
 
   assert bbox_near(
     ellipse.arc_bounding_box(arc),
-    min: ellipse.Point(-8.688779, -9.242547),
-    max: ellipse.Point(12.688779, 4.399324),
+    min: ellipse.EllipsePoint(-8.688779, -9.242547),
+    max: ellipse.EllipsePoint(12.688779, 4.399324),
   )
 }
 
@@ -147,8 +150,8 @@ pub fn arc_bounding_box_matches_generated_fixtures_test() {
 pub fn split_arc_divides_center_data_at_t_test() {
   let arc =
     ellipse.CenterArcData(
-      center: ellipse.Point(2.0, 3.0),
-      radius: ellipse.Point(5.0, 7.0),
+      center: ellipse.EllipsePoint(2.0, 3.0),
+      radius: ellipse.EllipsePoint(5.0, 7.0),
       x_axis_rotation: 30.0,
       start_angle: 0.25,
       delta_angle: 2.0,
@@ -179,8 +182,8 @@ pub fn split_arc_divides_center_data_at_t_test() {
 pub fn split_arc_allows_endpoint_splits_test() {
   let arc =
     ellipse.CenterArcData(
-      center: ellipse.Point(0.0, 0.0),
-      radius: ellipse.Point(5.0, 5.0),
+      center: ellipse.EllipsePoint(0.0, 0.0),
+      radius: ellipse.EllipsePoint(5.0, 5.0),
       x_axis_rotation: 0.0,
       start_angle: 1.0,
       delta_angle: -2.0,
@@ -202,8 +205,8 @@ pub fn split_arc_allows_endpoint_splits_test() {
 pub fn split_arc_extrapolates_outside_t_test() {
   let arc =
     ellipse.CenterArcData(
-      center: ellipse.Point(0.0, 0.0),
-      radius: ellipse.Point(5.0, 5.0),
+      center: ellipse.EllipsePoint(0.0, 0.0),
+      radius: ellipse.EllipsePoint(5.0, 5.0),
       x_axis_rotation: 0.0,
       start_angle: 1.0,
       delta_angle: 2.0,
@@ -223,8 +226,8 @@ pub fn split_arc_extrapolates_outside_t_test() {
 pub fn split_arc_inside_rejects_outside_t_test() {
   let arc =
     ellipse.CenterArcData(
-      center: ellipse.Point(0.0, 0.0),
-      radius: ellipse.Point(5.0, 5.0),
+      center: ellipse.EllipsePoint(0.0, 0.0),
+      radius: ellipse.EllipsePoint(5.0, 5.0),
       x_axis_rotation: 0.0,
       start_angle: 1.0,
       delta_angle: 2.0,
@@ -241,8 +244,8 @@ pub fn split_arc_inside_rejects_outside_t_test() {
 pub fn split_arc_many_sorts_and_removes_duplicate_points_test() {
   let arc =
     ellipse.CenterArcData(
-      center: ellipse.Point(0.0, 0.0),
-      radius: ellipse.Point(5.0, 5.0),
+      center: ellipse.EllipsePoint(0.0, 0.0),
+      radius: ellipse.EllipsePoint(5.0, 5.0),
       x_axis_rotation: 0.0,
       start_angle: 1.0,
       delta_angle: 4.0,
@@ -264,8 +267,8 @@ pub fn split_arc_many_sorts_and_removes_duplicate_points_test() {
 pub fn split_arc_many_without_points_returns_original_arc_test() {
   let arc =
     ellipse.CenterArcData(
-      center: ellipse.Point(0.0, 0.0),
-      radius: ellipse.Point(5.0, 5.0),
+      center: ellipse.EllipsePoint(0.0, 0.0),
+      radius: ellipse.EllipsePoint(5.0, 5.0),
       x_axis_rotation: 0.0,
       start_angle: 1.0,
       delta_angle: 4.0,
@@ -280,8 +283,8 @@ pub fn split_arc_many_without_points_returns_original_arc_test() {
 pub fn split_arc_inside_many_rejects_any_outside_point_test() {
   let arc =
     ellipse.CenterArcData(
-      center: ellipse.Point(0.0, 0.0),
-      radius: ellipse.Point(5.0, 5.0),
+      center: ellipse.EllipsePoint(0.0, 0.0),
+      radius: ellipse.EllipsePoint(5.0, 5.0),
       x_axis_rotation: 0.0,
       start_angle: 1.0,
       delta_angle: 4.0,
@@ -296,8 +299,8 @@ pub fn split_arc_inside_many_rejects_any_outside_point_test() {
 pub fn split_arc_inside_many_accepts_endpoint_points_test() {
   let arc =
     ellipse.CenterArcData(
-      center: ellipse.Point(0.0, 0.0),
-      radius: ellipse.Point(5.0, 5.0),
+      center: ellipse.EllipsePoint(0.0, 0.0),
+      radius: ellipse.EllipsePoint(5.0, 5.0),
       x_axis_rotation: 0.0,
       start_angle: 1.0,
       delta_angle: 4.0,
@@ -316,8 +319,8 @@ pub fn split_arc_inside_many_accepts_endpoint_points_test() {
 pub fn split_arc_many_keeps_boundary_points_when_they_are_interior_test() {
   let arc =
     ellipse.CenterArcData(
-      center: ellipse.Point(0.0, 0.0),
-      radius: ellipse.Point(5.0, 5.0),
+      center: ellipse.EllipsePoint(0.0, 0.0),
+      radius: ellipse.EllipsePoint(5.0, 5.0),
       x_axis_rotation: 0.0,
       start_angle: 1.0,
       delta_angle: 4.0,
@@ -342,22 +345,22 @@ pub fn split_arc_many_keeps_boundary_points_when_they_are_interior_test() {
 pub fn large_arc_and_sweep_are_derived_from_delta_angle_test() {
   let assert Ok(large_sweep_arc) =
     ellipse.EndpointArcData(
-      start: ellipse.Point(0.0, 0.0),
-      radius: ellipse.Point(10.0, 10.0),
+      start: ellipse.EllipsePoint(0.0, 0.0),
+      radius: ellipse.EllipsePoint(10.0, 10.0),
       x_axis_rotation: 0.0,
       large_arc: True,
       sweep: True,
-      end: ellipse.Point(10.0, 0.0),
+      end: ellipse.EllipsePoint(10.0, 0.0),
     )
     |> ellipse.endpoint_to_center
   let assert Ok(small_non_sweep_arc) =
     ellipse.EndpointArcData(
-      start: ellipse.Point(0.0, 0.0),
-      radius: ellipse.Point(10.0, 10.0),
+      start: ellipse.EllipsePoint(0.0, 0.0),
+      radius: ellipse.EllipsePoint(10.0, 10.0),
       x_axis_rotation: 0.0,
       large_arc: False,
       sweep: False,
-      end: ellipse.Point(10.0, 0.0),
+      end: ellipse.EllipsePoint(10.0, 0.0),
     )
     |> ellipse.endpoint_to_center
 
@@ -373,27 +376,27 @@ pub fn large_arc_and_sweep_are_derived_from_delta_angle_test() {
 pub fn endpoint_to_center_scales_small_radii_up_test() {
   let assert Ok(arc) =
     ellipse.EndpointArcData(
-      start: ellipse.Point(0.0, 0.0),
-      radius: ellipse.Point(1.0, 1.0),
+      start: ellipse.EllipsePoint(0.0, 0.0),
+      radius: ellipse.EllipsePoint(1.0, 1.0),
       x_axis_rotation: 0.0,
       large_arc: False,
       sweep: True,
-      end: ellipse.Point(20.0, 0.0),
+      end: ellipse.EllipsePoint(20.0, 0.0),
     )
     |> ellipse.endpoint_to_center
 
-  assert point_near(arc.radius, ellipse.Point(10.0, 10.0))
+  assert point_near(arc.radius, ellipse.EllipsePoint(10.0, 10.0))
 }
 
 pub fn center_to_endpoint_round_trips_arc_data_test() {
   let endpoint =
     ellipse.EndpointArcData(
-      start: ellipse.Point(0.0, 0.0),
-      radius: ellipse.Point(8.0, 12.0),
+      start: ellipse.EllipsePoint(0.0, 0.0),
+      radius: ellipse.EllipsePoint(8.0, 12.0),
       x_axis_rotation: 30.0,
       large_arc: True,
       sweep: False,
-      end: ellipse.Point(10.0, 5.0),
+      end: ellipse.EllipsePoint(10.0, 5.0),
     )
   let assert Ok(center) = ellipse.endpoint_to_center(endpoint)
   let converted = ellipse.center_to_endpoint(center)
@@ -409,8 +412,8 @@ pub fn center_to_endpoint_round_trips_arc_data_test() {
 pub fn arc_from_center_data_creates_svg_path_arc_test() {
   let center =
     ellipse.CenterArcData(
-      center: ellipse.Point(10.0, 0.0),
-      radius: ellipse.Point(10.0, 10.0),
+      center: ellipse.EllipsePoint(10.0, 0.0),
+      radius: ellipse.EllipsePoint(10.0, 10.0),
       x_axis_rotation: 0.0,
       start_angle: 180.0,
       delta_angle: 180.0,
@@ -436,12 +439,12 @@ pub fn arc_from_center_data_creates_svg_path_arc_test() {
 pub fn arc_from_endpoint_data_creates_svg_path_arc_test() {
   let endpoint =
     ellipse.EndpointArcData(
-      start: ellipse.Point(0.0, 1.0),
-      radius: ellipse.Point(2.0, 3.0),
+      start: ellipse.EllipsePoint(0.0, 1.0),
+      radius: ellipse.EllipsePoint(2.0, 3.0),
       x_axis_rotation: 15.0,
       large_arc: True,
       sweep: False,
-      end: ellipse.Point(4.0, 5.0),
+      end: ellipse.EllipsePoint(4.0, 5.0),
     )
 
   let assert svg_path.Arc(
@@ -461,20 +464,20 @@ pub fn arc_from_endpoint_data_creates_svg_path_arc_test() {
   assert svg_path_point_near(end, svg_path.Point(4.0, 5.0))
 }
 
-fn point_near(a: ellipse.Point, b: ellipse.Point) -> Bool {
+fn point_near(a: ellipse.EllipsePoint, b: ellipse.EllipsePoint) -> Bool {
   near(a.x, b.x) && near(a.y, b.y)
 }
 
 fn bbox_near(
   box: ellipse.BoundingBox,
-  min expected_min: ellipse.Point,
-  max expected_max: ellipse.Point,
+  min expected_min: ellipse.EllipsePoint,
+  max expected_max: ellipse.EllipsePoint,
 ) -> Bool {
   let ellipse.BoundingBox(min:, max:) = box
   bbox_point_near(min, expected_min) && bbox_point_near(max, expected_max)
 }
 
-fn bbox_point_near(a: ellipse.Point, b: ellipse.Point) -> Bool {
+fn bbox_point_near(a: ellipse.EllipsePoint, b: ellipse.EllipsePoint) -> Bool {
   float.absolute_value(a.x -. b.x) <=. bbox_tolerance
   && float.absolute_value(a.y -. b.y) <=. bbox_tolerance
 }

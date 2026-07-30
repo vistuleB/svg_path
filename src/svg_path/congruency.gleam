@@ -1024,6 +1024,6 @@ fn is_nan(value: Float) -> Bool {
   !{ value <. 0.0 || value >=. 0.0 }
 }
 
-fn from_ellipse_point(point: ellipse.Point) -> svg_path.Point {
+fn from_ellipse_point(point: ellipse.EllipsePoint) -> svg_path.Point {
   svg_path.Point(point.x, point.y)
 }

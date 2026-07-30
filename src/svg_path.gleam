@@ -3733,8 +3733,8 @@ fn parametric_samples(
   end: Float,
   count: Int,
   index index: Int,
-  samples samples: List(#(Float, bezier.Point)),
-) -> Result(List(#(Float, bezier.Point)), Error) {
+  samples samples: List(#(Float, bezier.BezierPoint)),
+) -> Result(List(#(Float, bezier.BezierPoint)), Error) {
   case index > count {
     True -> Ok(list.reverse(samples))
     False -> {
@@ -8100,19 +8100,19 @@ fn force_cubic_end(segments: List(Segment), end: Point) -> List(Segment) {
   }
 }
 
-fn to_ellipse_point(point: Point) -> ellipse.Point {
-  ellipse.Point(point.x, point.y)
+fn to_ellipse_point(point: Point) -> ellipse.EllipsePoint {
+  ellipse.EllipsePoint(point.x, point.y)
 }
 
-fn from_ellipse_point(point: ellipse.Point) -> Point {
+fn from_ellipse_point(point: ellipse.EllipsePoint) -> Point {
   Point(point.x, point.y)
 }
 
-fn to_bezier_point(point: Point) -> bezier.Point {
-  bezier.Point(point.x, point.y)
+fn to_bezier_point(point: Point) -> bezier.BezierPoint {
+  bezier.BezierPoint(point.x, point.y)
 }
 
-fn from_bezier_point(point: bezier.Point) -> Point {
+fn from_bezier_point(point: bezier.BezierPoint) -> Point {
   Point(point.x, point.y)
 }
 

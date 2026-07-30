@@ -79,13 +79,13 @@ const half_turn = 180.0
 const full_turn = 360.0
 
 /// A lightweight point used by the ellipse math helpers.
-pub type Point {
-  Point(x: Float, y: Float)
+pub type EllipsePoint {
+  EllipsePoint(x: Float, y: Float)
 }
 
 /// An axis-aligned bounding box for an elliptical arc.
 pub type BoundingBox {
-  BoundingBox(min: Point, max: Point)
+  BoundingBox(min: EllipsePoint, max: EllipsePoint)
 }
 
 /// Endpoint-parameter representation of an SVG elliptical arc.
@@ -94,12 +94,12 @@ pub type BoundingBox {
 /// point. `radius` values are not corrected until conversion to `CenterArcData`.
 pub type EndpointArcData {
   EndpointArcData(
-    start: Point,
-    radius: Point,
+    start: EllipsePoint,
+    radius: EllipsePoint,
     x_axis_rotation: Float,
     large_arc: Bool,
     sweep: Bool,
-    end: Point,
+    end: EllipsePoint,
   )
 }
 
@@ -111,8 +111,8 @@ pub type EndpointArcData {
 /// module.
 pub type CenterArcData {
   CenterArcData(
-    center: Point,
-    radius: Point,
+    center: EllipsePoint,
+    radius: EllipsePoint,
     x_axis_rotation: Float,
     start_angle: Float,
     delta_angle: Float,
@@ -121,7 +121,12 @@ pub type CenterArcData {
 
 /// A cubic Bezier curve produced by the ellipse math helpers.
 pub type Cubic {
-  Cubic(start: Point, control1: Point, control2: Point, end: Point)
+  Cubic(
+    start: EllipsePoint,
+    control1: EllipsePoint,
+    control2: EllipsePoint,
+    end: EllipsePoint,
+  )
 }
 
 /// Equivalent of `transform.Matrix`, redefined by the ellipse module to avoid
@@ -157,8 +162,8 @@ pub fn ellipse_affine(
 }
 
 /// Transform a point by an affine matrix.
-pub fn point(point: Point, by transform: Affine) -> Point {
-  Point(
+pub fn point(point: EllipsePoint, by transform: Affine) -> EllipsePoint {
+  EllipsePoint(
     transform.a *. point.x +. transform.c *. point.y +. transform.e,
     transform.b *. point.x +. transform.d *. point.y +. transform.f,
   )
@@ -168,10 +173,10 @@ pub fn point(point: Point, by transform: Affine) -> Point {
 ///
 /// Returns the new radius and x-axis rotation for the transformed ellipse.
 pub fn transformed_axes(
-  radius radius: Point,
+  radius radius: EllipsePoint,
   x_axis_rotation x_axis_rotation: Float,
   by transform: Affine,
-) -> Result(#(Point, Float), Error) {
+) -> Result(#(EllipsePoint, Float), Error) {
   case arc_axes(radius, x_axis_rotation) {
     Error(error) -> Error(error)
     Ok(#(x_axis, y_axis)) -> {
@@ -188,14 +193,14 @@ pub fn transformed_axes(
 /// If the collapsed arc's extrema require more than one segment to preserve its
 /// out-and-back motion, use `collapsed_arc_subpath`.
 pub fn collapsed_arc_line(
-  start start: Point,
-  radius radius: Point,
+  start start: EllipsePoint,
+  radius radius: EllipsePoint,
   x_axis_rotation x_axis_rotation: Float,
   large_arc large_arc: Bool,
   sweep sweep: Bool,
-  end end: Point,
+  end end: EllipsePoint,
   by transform: Affine,
-) -> Result(#(Point, Point), Error) {
+) -> Result(#(EllipsePoint, EllipsePoint), Error) {
   case
     do_endpoint_to_center(start, radius, x_axis_rotation, large_arc, sweep, end)
   {
@@ -247,14 +252,14 @@ pub fn collapsed_arc_line(
 
 /// Convert an arc collapsed by an affine transform into a line-based subpath.
 pub fn collapsed_arc_subpath(
-  start start: Point,
-  radius radius: Point,
+  start start: EllipsePoint,
+  radius radius: EllipsePoint,
   x_axis_rotation x_axis_rotation: Float,
   large_arc large_arc: Bool,
   sweep sweep: Bool,
-  end end: Point,
+  end end: EllipsePoint,
   by transform: Affine,
-) -> Result(List(Point), Error) {
+) -> Result(List(EllipsePoint), Error) {
   collapsed_arc_points(
     start,
     radius,
@@ -272,12 +277,12 @@ pub fn collapsed_arc_subpath(
 /// deterministic SVG arc approximation strategy. This function does not accept
 /// a tolerance; use a higher-level helper if you want SVG path segments back.
 pub fn arc_to_cubics(
-  start start: Point,
-  radius radius: Point,
+  start start: EllipsePoint,
+  radius radius: EllipsePoint,
   x_axis_rotation x_axis_rotation: Float,
   large_arc large_arc: Bool,
   sweep sweep: Bool,
-  end end: Point,
+  end end: EllipsePoint,
 ) -> Result(List(Cubic), Error) {
   case
     do_endpoint_to_center(start, radius, x_axis_rotation, large_arc, sweep, end)
@@ -330,7 +335,7 @@ pub fn center_to_endpoint(data: CenterArcData) -> EndpointArcData {
 /// `t` is not clamped. `0.0` evaluates the start of the arc, `1.0` evaluates
 /// the end of the arc, and values outside that range extrapolate along the
 /// same ellipse.
-pub fn arc_point(arc: CenterArcData, at t: Float) -> Point {
+pub fn arc_point(arc: CenterArcData, at t: Float) -> EllipsePoint {
   point_at_angle(arc, angle_at(arc, t))
 }
 
@@ -339,7 +344,7 @@ pub fn arc_point(arc: CenterArcData, at t: Float) -> Point {
 /// This is the tangent direction followed from the arc start to the arc end.
 /// For the raw derivative with respect to the ellipse angle, use
 /// `derivative_at_angle`.
-pub fn arc_derivative(arc: CenterArcData, at t: Float) -> Point {
+pub fn arc_derivative(arc: CenterArcData, at t: Float) -> EllipsePoint {
   scale(derivative_at_angle(arc, angle_at(arc, t)), arc.delta_angle)
 }
 
@@ -410,12 +415,15 @@ pub fn split_arc_inside_many(
 }
 
 /// Evaluate an arc at a center-parameter angle in degrees.
-pub fn point_at_angle(arc: CenterArcData, angle angle: Float) -> Point {
+pub fn point_at_angle(arc: CenterArcData, angle angle: Float) -> EllipsePoint {
   ellipse_point(arc, angle)
 }
 
 /// Return the derivative with respect to the center-parameter angle in degrees.
-pub fn derivative_at_angle(arc: CenterArcData, angle angle: Float) -> Point {
+pub fn derivative_at_angle(
+  arc: CenterArcData,
+  angle angle: Float,
+) -> EllipsePoint {
   scale(ellipse_derivative_radians(arc, angle), trig.degrees_to_radians(1.0))
 }
 
@@ -531,14 +539,14 @@ fn insert_unique_progress(sorted: List(Float), point: Float) -> List(Float) {
 }
 
 fn collapsed_arc_points(
-  start: Point,
-  radius: Point,
+  start: EllipsePoint,
+  radius: EllipsePoint,
   x_axis_rotation: Float,
   large_arc: Bool,
   sweep: Bool,
-  end: Point,
+  end: EllipsePoint,
   transform: Affine,
-) -> Result(List(Point), Error) {
+) -> Result(List(EllipsePoint), Error) {
   case
     do_endpoint_to_center(start, radius, x_axis_rotation, large_arc, sweep, end)
   {
@@ -659,14 +667,20 @@ fn opposite_angle_extremum(alpha: Float, beta: Float) -> Float {
   start_angle_extremum(alpha, beta) +. half_turn
 }
 
-fn include_point(box: BoundingBox, point: Point) -> BoundingBox {
+fn include_point(box: BoundingBox, point: EllipsePoint) -> BoundingBox {
   BoundingBox(
-    min: Point(float.min(box.min.x, point.x), float.min(box.min.y, point.y)),
-    max: Point(float.max(box.max.x, point.x), float.max(box.max.y, point.y)),
+    min: EllipsePoint(
+      float.min(box.min.x, point.x),
+      float.min(box.min.y, point.y),
+    ),
+    max: EllipsePoint(
+      float.max(box.max.x, point.x),
+      float.max(box.max.y, point.y),
+    ),
   )
 }
 
-fn ellipse_point(arc: CenterArcData, angle: Float) -> Point {
+fn ellipse_point(arc: CenterArcData, angle: Float) -> EllipsePoint {
   let cos_phi = trig.cos_degrees(arc.x_axis_rotation)
   let sin_phi = trig.sin_degrees(arc.x_axis_rotation)
   let cos_angle = trig.cos_degrees(angle)
@@ -674,28 +688,31 @@ fn ellipse_point(arc: CenterArcData, angle: Float) -> Point {
   let x = arc.radius.x *. cos_angle
   let y = arc.radius.y *. sin_angle
 
-  Point(
+  EllipsePoint(
     arc.center.x +. cos_phi *. x -. sin_phi *. y,
     arc.center.y +. sin_phi *. x +. cos_phi *. y,
   )
 }
 
-fn ellipse_derivative_radians(arc: CenterArcData, angle: Float) -> Point {
+fn ellipse_derivative_radians(
+  arc: CenterArcData,
+  angle: Float,
+) -> EllipsePoint {
   let cos_phi = trig.cos_degrees(arc.x_axis_rotation)
   let sin_phi = trig.sin_degrees(arc.x_axis_rotation)
   let x = 0.0 -. arc.radius.x *. trig.sin_degrees(angle)
   let y = arc.radius.y *. trig.cos_degrees(angle)
 
-  Point(cos_phi *. x -. sin_phi *. y, sin_phi *. x +. cos_phi *. y)
+  EllipsePoint(cos_phi *. x -. sin_phi *. y, sin_phi *. x +. cos_phi *. y)
 }
 
 fn do_endpoint_to_center(
-  start: Point,
-  radius: Point,
+  start: EllipsePoint,
+  radius: EllipsePoint,
   x_axis_rotation: Float,
   large_arc: Bool,
   sweep: Bool,
-  end: Point,
+  end: EllipsePoint,
 ) -> Result(CenterArcData, Error) {
   let rx = float.absolute_value(radius.x)
   let ry = float.absolute_value(radius.y)
@@ -706,9 +723,9 @@ fn do_endpoint_to_center(
       let cos_phi = trig.cos_degrees(x_axis_rotation)
       let sin_phi = trig.sin_degrees(x_axis_rotation)
       let midpoint =
-        Point({ start.x +. end.x } /. 2.0, { start.y +. end.y } /. 2.0)
+        EllipsePoint({ start.x +. end.x } /. 2.0, { start.y +. end.y } /. 2.0)
       let half_delta =
-        Point({ start.x -. end.x } /. 2.0, { start.y -. end.y } /. 2.0)
+        EllipsePoint({ start.x -. end.x } /. 2.0, { start.y -. end.y } /. 2.0)
       let x1p = cos_phi *. half_delta.x +. sin_phi *. half_delta.y
       let y1p = 0.0 -. sin_phi *. half_delta.x +. cos_phi *. half_delta.y
       let radius_scale =
@@ -718,23 +735,26 @@ fn do_endpoint_to_center(
       let ry = ry *. scale
       let center_prime = center_prime(rx, ry, x1p, y1p, large_arc, sweep)
       let center =
-        Point(
+        EllipsePoint(
           cos_phi *. center_prime.x -. sin_phi *. center_prime.y +. midpoint.x,
           sin_phi *. center_prime.x +. cos_phi *. center_prime.y +. midpoint.y,
         )
       let start_vector =
-        Point({ x1p -. center_prime.x } /. rx, { y1p -. center_prime.y } /. ry)
+        EllipsePoint(
+          { x1p -. center_prime.x } /. rx,
+          { y1p -. center_prime.y } /. ry,
+        )
       let end_vector =
-        Point(
+        EllipsePoint(
           { 0.0 -. x1p -. center_prime.x } /. rx,
           { 0.0 -. y1p -. center_prime.y } /. ry,
         )
-      let start_angle = vector_angle(Point(1.0, 0.0), start_vector)
+      let start_angle = vector_angle(EllipsePoint(1.0, 0.0), start_vector)
       let delta_angle = swept_delta_angle(start_vector, end_vector, sweep)
 
       Ok(CenterArcData(
         center:,
-        radius: Point(rx, ry),
+        radius: EllipsePoint(rx, ry),
         x_axis_rotation:,
         start_angle:,
         delta_angle:,
@@ -750,7 +770,7 @@ fn center_prime(
   y1p: Float,
   large_arc: Bool,
   sweep: Bool,
-) -> Point {
+) -> EllipsePoint {
   let numerator =
     rx *. rx *. ry *. ry -. rx *. rx *. y1p *. y1p -. ry *. ry *. x1p *. x1p
   let denominator = rx *. rx *. y1p *. y1p +. ry *. ry *. x1p *. x1p
@@ -761,12 +781,15 @@ fn center_prime(
   let coefficient =
     sign *. square_root(float.max(0.0, numerator /. denominator))
 
-  Point(coefficient *. rx *. y1p /. ry, 0.0 -. coefficient *. ry *. x1p /. rx)
+  EllipsePoint(
+    coefficient *. rx *. y1p /. ry,
+    0.0 -. coefficient *. ry *. x1p /. rx,
+  )
 }
 
 fn swept_delta_angle(
-  start_vector: Point,
-  end_vector: Point,
+  start_vector: EllipsePoint,
+  end_vector: EllipsePoint,
   sweep: Bool,
 ) -> Float {
   let delta_angle = vector_angle(start_vector, end_vector)
@@ -787,7 +810,10 @@ fn swept_delta_angle(
   }
 }
 
-fn collapsed_axis(x_axis: Point, y_axis: Point) -> Result(Point, Error) {
+fn collapsed_axis(
+  x_axis: EllipsePoint,
+  y_axis: EllipsePoint,
+) -> Result(EllipsePoint, Error) {
   case float.absolute_value(cross(x_axis, y_axis)) <=. epsilon {
     False -> Error(NotCollapsedToLine)
     True -> {
@@ -807,7 +833,7 @@ fn collapsed_axis(x_axis: Point, y_axis: Point) -> Result(Point, Error) {
   }
 }
 
-fn fully_collapsed(x_axis: Point, y_axis: Point) -> Bool {
+fn fully_collapsed(x_axis: EllipsePoint, y_axis: EllipsePoint) -> Bool {
   length(x_axis) <=. epsilon && length(y_axis) <=. epsilon
 }
 
@@ -919,9 +945,9 @@ fn positive_remainder(angle: Float) -> Float {
 }
 
 fn arc_axes(
-  radius: Point,
+  radius: EllipsePoint,
   x_axis_rotation: Float,
-) -> Result(#(Point, Point), Error) {
+) -> Result(#(EllipsePoint, EllipsePoint), Error) {
   let rx = float.absolute_value(radius.x)
   let ry = float.absolute_value(radius.y)
 
@@ -932,17 +958,17 @@ fn arc_axes(
       let sin_phi = trig.sin_degrees(x_axis_rotation)
 
       Ok(#(
-        Point(rx *. cos_phi, rx *. sin_phi),
-        Point(0.0 -. ry *. sin_phi, ry *. cos_phi),
+        EllipsePoint(rx *. cos_phi, rx *. sin_phi),
+        EllipsePoint(0.0 -. ry *. sin_phi, ry *. cos_phi),
       ))
     }
   }
 }
 
 fn extract_axes(
-  x_axis: Point,
-  y_axis: Point,
-) -> Result(#(Point, Float), Error) {
+  x_axis: EllipsePoint,
+  y_axis: EllipsePoint,
+) -> Result(#(EllipsePoint, Float), Error) {
   let sxx = x_axis.x *. x_axis.x +. y_axis.x *. y_axis.x
   let sxy = x_axis.x *. x_axis.y +. y_axis.x *. y_axis.y
   let syy = x_axis.y *. x_axis.y +. y_axis.y *. y_axis.y
@@ -955,7 +981,7 @@ fn extract_axes(
     True -> Error(DegenerateInputArc)
     False -> {
       let axis1 = eigenvector(sxx, sxy, syy, lambda1)
-      let axis2 = Point(0.0 -. axis1.y, axis1.x)
+      let axis2 = EllipsePoint(0.0 -. axis1.y, axis1.x)
       let choose_axis1 =
         float.absolute_value(dot(axis1, x_axis))
         >=. float.absolute_value(dot(axis2, x_axis))
@@ -963,13 +989,13 @@ fn extract_axes(
       case choose_axis1 {
         True -> {
           Ok(#(
-            Point(square_root(lambda1), square_root(lambda2)),
+            EllipsePoint(square_root(lambda1), square_root(lambda2)),
             normalize_axis_rotation(trig.atan2_degrees(axis1.y, axis1.x)),
           ))
         }
         False -> {
           Ok(#(
-            Point(square_root(lambda2), square_root(lambda1)),
+            EllipsePoint(square_root(lambda2), square_root(lambda1)),
             normalize_axis_rotation(trig.atan2_degrees(axis2.y, axis2.x)),
           ))
         }
@@ -978,56 +1004,68 @@ fn extract_axes(
   }
 }
 
-fn eigenvector(sxx: Float, sxy: Float, syy: Float, lambda: Float) -> Point {
+fn eigenvector(
+  sxx: Float,
+  sxy: Float,
+  syy: Float,
+  lambda: Float,
+) -> EllipsePoint {
   case float.absolute_value(sxy) >. epsilon {
-    True -> normalize(Point(sxy, lambda -. sxx))
+    True -> normalize(EllipsePoint(sxy, lambda -. sxx))
     False -> {
       case sxx >=. syy {
-        True -> Point(1.0, 0.0)
-        False -> Point(0.0, 1.0)
+        True -> EllipsePoint(1.0, 0.0)
+        False -> EllipsePoint(0.0, 1.0)
       }
     }
   }
 }
 
-fn vector_angle(a: Point, b: Point) -> Float {
+fn vector_angle(a: EllipsePoint, b: EllipsePoint) -> Float {
   trig.atan2_degrees(cross(a, b), dot(a, b))
 }
 
-fn offset(point: Point, direction: Point, distance: Float) -> Point {
-  Point(point.x +. direction.x *. distance, point.y +. direction.y *. distance)
+fn offset(
+  point: EllipsePoint,
+  direction: EllipsePoint,
+  distance: Float,
+) -> EllipsePoint {
+  EllipsePoint(
+    point.x +. direction.x *. distance,
+    point.y +. direction.y *. distance,
+  )
 }
 
-fn linear_point(point: Point, transform: Affine) -> Point {
-  Point(
+fn linear_point(point: EllipsePoint, transform: Affine) -> EllipsePoint {
+  EllipsePoint(
     transform.a *. point.x +. transform.c *. point.y,
     transform.b *. point.x +. transform.d *. point.y,
   )
 }
 
-fn dot(a: Point, b: Point) -> Float {
+fn dot(a: EllipsePoint, b: EllipsePoint) -> Float {
   a.x *. b.x +. a.y *. b.y
 }
 
-fn cross(a: Point, b: Point) -> Float {
+fn cross(a: EllipsePoint, b: EllipsePoint) -> Float {
   a.x *. b.y -. a.y *. b.x
 }
 
-fn length(point: Point) -> Float {
+fn length(point: EllipsePoint) -> Float {
   square_root(point.x *. point.x +. point.y *. point.y)
 }
 
-fn normalize(point: Point) -> Point {
+fn normalize(point: EllipsePoint) -> EllipsePoint {
   let point_length = length(point)
 
   case point_length <=. epsilon {
-    True -> Point(1.0, 0.0)
+    True -> EllipsePoint(1.0, 0.0)
     False -> scale(point, 1.0 /. point_length)
   }
 }
 
-fn scale(point: Point, factor: Float) -> Point {
-  Point(point.x *. factor, point.y *. factor)
+fn scale(point: EllipsePoint, factor: Float) -> EllipsePoint {
+  EllipsePoint(point.x *. factor, point.y *. factor)
 }
 
 fn normalize_axis_rotation(degrees: Float) -> Float {

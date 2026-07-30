@@ -879,15 +879,15 @@ fn affine(transform: Matrix) -> ellipse.Affine {
   )
 }
 
-fn to_ellipse_point(point: svg_path.Point) -> ellipse.Point {
-  ellipse.Point(point.x, point.y)
+fn to_ellipse_point(point: svg_path.Point) -> ellipse.EllipsePoint {
+  ellipse.EllipsePoint(point.x, point.y)
 }
 
-fn from_ellipse_point(point: ellipse.Point) -> svg_path.Point {
+fn from_ellipse_point(point: ellipse.EllipsePoint) -> svg_path.Point {
   svg_path.Point(point.x, point.y)
 }
 
-fn lines_between(points: List(ellipse.Point)) -> List(svg_path.Segment) {
+fn lines_between(points: List(ellipse.EllipsePoint)) -> List(svg_path.Segment) {
   case points {
     [] | [_] -> []
     [first, second, ..rest] -> {
@@ -902,8 +902,8 @@ fn lines_between(points: List(ellipse.Point)) -> List(svg_path.Segment) {
 }
 
 fn lines_between_rest(
-  previous: ellipse.Point,
-  points: List(ellipse.Point),
+  previous: ellipse.EllipsePoint,
+  points: List(ellipse.EllipsePoint),
   lines: List(svg_path.Segment),
 ) -> List(svg_path.Segment) {
   case points {

@@ -1534,11 +1534,11 @@ fn ellipse_local_point(
   )
 }
 
-fn to_ellipse_point(point: svg_path.Point) -> ellipse.Point {
-  ellipse.Point(point.x, point.y)
+fn to_ellipse_point(point: svg_path.Point) -> ellipse.EllipsePoint {
+  ellipse.EllipsePoint(point.x, point.y)
 }
 
-fn from_ellipse_point(point: ellipse.Point) -> svg_path.Point {
+fn from_ellipse_point(point: ellipse.EllipsePoint) -> svg_path.Point {
   svg_path.Point(point.x, point.y)
 }
 

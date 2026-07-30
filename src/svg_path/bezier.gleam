@@ -37,13 +37,13 @@ import gleam/result
 const root_tolerance = 0.000000001
 
 /// A lightweight point used by the Bezier math helpers.
-pub type Point {
-  Point(x: Float, y: Float)
+pub type BezierPoint {
+  BezierPoint(x: Float, y: Float)
 }
 
 /// An axis-aligned bounding box for a Bezier curve.
 pub type BoundingBox {
-  BoundingBox(min: Point, max: Point)
+  BoundingBox(min: BezierPoint, max: BezierPoint)
 }
 
 /// Error measurements for a fitted cubic.
@@ -70,19 +70,28 @@ pub type CubicSelfIntersectionOptions {
 
 /// A point where a cubic Bezier intersects itself.
 pub type CubicSelfIntersection {
-  CubicSelfIntersection(s: Float, t: Float, point: Point)
+  CubicSelfIntersection(s: Float, t: Float, point: BezierPoint)
 }
 
 /// Bezier-parameter representation of line, quadratic, and cubic curves.
 pub type BezierData {
   /// A degree-1 Bezier curve.
-  LinearBezierData(start: Point, end: Point)
+  LinearBezierData(start: BezierPoint, end: BezierPoint)
 
   /// A degree-2 Bezier curve.
-  QuadraticBezierData(start: Point, control: Point, end: Point)
+  QuadraticBezierData(
+    start: BezierPoint,
+    control: BezierPoint,
+    end: BezierPoint,
+  )
 
   /// A degree-3 Bezier curve.
-  CubicBezierData(start: Point, control1: Point, control2: Point, end: Point)
+  CubicBezierData(
+    start: BezierPoint,
+    control1: BezierPoint,
+    control2: BezierPoint,
+    end: BezierPoint,
+  )
 }
 
 /// Errors returned by Bezier helpers.
@@ -104,7 +113,7 @@ pub type Error {
 }
 
 /// Return the curve's start point.
-pub fn bezier_start(curve: BezierData) -> Point {
+pub fn bezier_start(curve: BezierData) -> BezierPoint {
   case curve {
     LinearBezierData(start:, ..)
     | QuadraticBezierData(start:, ..)
@@ -113,7 +122,7 @@ pub fn bezier_start(curve: BezierData) -> Point {
 }
 
 /// Return the curve's end point.
-pub fn bezier_end(curve: BezierData) -> Point {
+pub fn bezier_end(curve: BezierData) -> BezierPoint {
   case curve {
     LinearBezierData(end:, ..)
     | QuadraticBezierData(end:, ..)
@@ -126,7 +135,7 @@ pub fn bezier_end(curve: BezierData) -> Point {
 /// `t` is not clamped. `0.0` evaluates the start of the curve, `1.0` evaluates
 /// the end of the curve, and values outside that range extrapolate along the
 /// same polynomial curve.
-pub fn bezier_point(curve: BezierData, at t: Float) -> Point {
+pub fn bezier_point(curve: BezierData, at t: Float) -> BezierPoint {
   case curve {
     LinearBezierData(start:, end:) -> interpolate(start, end, t)
     QuadraticBezierData(start:, control:, end:) -> {
@@ -151,7 +160,7 @@ pub fn bezier_point(curve: BezierData, at t: Float) -> Point {
 }
 
 /// Return the derivative with respect to Bezier parameter `t`.
-pub fn bezier_derivative(curve: BezierData, at t: Float) -> Point {
+pub fn bezier_derivative(curve: BezierData, at t: Float) -> BezierPoint {
   case curve {
     LinearBezierData(start:, end:) -> difference(end, start)
     QuadraticBezierData(start:, control:, end:) -> {
@@ -193,7 +202,10 @@ pub fn bezier_bounding_box(curve: BezierData) -> BoundingBox {
 ///
 /// For nonlinear functions, this is not the exact image of every point on the
 /// rendered curve. It maps the control polygon and preserves the curve degree.
-pub fn map_points(curve: BezierData, with f: fn(Point) -> Point) -> BezierData {
+pub fn map_points(
+  curve: BezierData,
+  with f: fn(BezierPoint) -> BezierPoint,
+) -> BezierData {
   case curve {
     LinearBezierData(start:, end:) -> {
       LinearBezierData(start: f(start), end: f(end))
@@ -228,11 +240,11 @@ pub fn map_points(curve: BezierData, with f: fn(Point) -> Point) -> BezierData {
 /// the provided `(t, point)` samples. Samples are allowed at any `t`, but
 /// endpoint samples do not add handle information.
 pub fn fit_cubic_with_endpoint_tangents(
-  start start: Point,
-  end end: Point,
-  start_tangent start_tangent: Point,
-  end_tangent end_tangent: Point,
-  samples samples: List(#(Float, Point)),
+  start start: BezierPoint,
+  end end: BezierPoint,
+  start_tangent start_tangent: BezierPoint,
+  end_tangent end_tangent: BezierPoint,
+  samples samples: List(#(Float, BezierPoint)),
 ) -> Result(#(BezierData, CubicFitError), Error) {
   use start_direction <- result.try(unit(start_tangent))
   use end_direction <- result.try(unit(end_tangent))
@@ -269,9 +281,9 @@ pub fn fit_cubic_with_endpoint_tangents(
 /// Samples are allowed at any `t`, but endpoint samples do not add control
 /// point information.
 pub fn fit_cubic_with_endpoints(
-  start start: Point,
-  end end: Point,
-  samples samples: List(#(Float, Point)),
+  start start: BezierPoint,
+  end end: BezierPoint,
+  samples samples: List(#(Float, BezierPoint)),
 ) -> Result(#(BezierData, CubicFitError), Error) {
   use controls <- result.try(cubic_endpoint_fit_normal_equations(
     samples,
@@ -280,8 +292,8 @@ pub fn fit_cubic_with_endpoints(
     ata00: 0.0,
     ata01: 0.0,
     ata11: 0.0,
-    atb0: Point(0.0, 0.0),
-    atb1: Point(0.0, 0.0),
+    atb0: BezierPoint(0.0, 0.0),
+    atb1: BezierPoint(0.0, 0.0),
     count: 0,
   ))
   let #(control1, control2) = controls
@@ -524,11 +536,11 @@ fn bezier_between(
 }
 
 fn cubic_fit_normal_equations(
-  samples: List(#(Float, Point)),
-  start start: Point,
-  end end: Point,
-  start_direction start_direction: Point,
-  end_direction end_direction: Point,
+  samples: List(#(Float, BezierPoint)),
+  start start: BezierPoint,
+  end end: BezierPoint,
+  start_direction start_direction: BezierPoint,
+  end_direction end_direction: BezierPoint,
   ata00 ata00: Float,
   ata01 ata01: Float,
   ata11 ata11: Float,
@@ -594,16 +606,16 @@ fn solve_cubic_fit_equations(
 }
 
 fn cubic_endpoint_fit_normal_equations(
-  samples: List(#(Float, Point)),
-  start start: Point,
-  end end: Point,
+  samples: List(#(Float, BezierPoint)),
+  start start: BezierPoint,
+  end end: BezierPoint,
   ata00 ata00: Float,
   ata01 ata01: Float,
   ata11 ata11: Float,
-  atb0 atb0: Point,
-  atb1 atb1: Point,
+  atb0 atb0: BezierPoint,
+  atb1 atb1: BezierPoint,
   count count: Int,
-) -> Result(#(Point, Point), Error) {
+) -> Result(#(BezierPoint, BezierPoint), Error) {
   case samples {
     [] ->
       solve_cubic_endpoint_fit_equations(ata00, ata01, ata11, atb0, atb1, count)
@@ -636,10 +648,10 @@ fn solve_cubic_endpoint_fit_equations(
   ata00: Float,
   ata01: Float,
   ata11: Float,
-  atb0: Point,
-  atb1: Point,
+  atb0: BezierPoint,
+  atb1: BezierPoint,
   count: Int,
-) -> Result(#(Point, Point), Error) {
+) -> Result(#(BezierPoint, BezierPoint), Error) {
   case count == 0 {
     True -> Error(UnderdeterminedCubicFit)
     False -> {
@@ -663,7 +675,7 @@ fn solve_cubic_endpoint_fit_equations(
 }
 
 fn cubic_fit_error(
-  samples: List(#(Float, Point)),
+  samples: List(#(Float, BezierPoint)),
   curve: BezierData,
 ) -> CubicFitError {
   let #(sum_squared, max_squared, count) =
@@ -689,7 +701,7 @@ fn cubic_fit_error(
 }
 
 fn cubic_fit_error_loop(
-  samples: List(#(Float, Point)),
+  samples: List(#(Float, BezierPoint)),
   curve: BezierData,
   sum_squared sum_squared: Float,
   max_squared max_squared: Float,
@@ -738,11 +750,11 @@ fn validate_cubic_self_intersection_options(
 }
 
 fn cubic_power_coefficients(
-  start: Point,
-  control1: Point,
-  control2: Point,
-  end: Point,
-) -> #(Point, Point, Point) {
+  start: BezierPoint,
+  control1: BezierPoint,
+  control2: BezierPoint,
+  end: BezierPoint,
+) -> #(BezierPoint, BezierPoint, BezierPoint) {
   #(
     add(
       difference(end, scale(control2, 3.0)),
@@ -757,9 +769,9 @@ fn cubic_power_coefficients(
 }
 
 fn cubic_self_intersection_candidates(
-  a: Point,
-  b: Point,
-  c: Point,
+  a: BezierPoint,
+  b: BezierPoint,
+  c: BezierPoint,
   preferred_axis preferred_axis: Axis,
 ) -> List(#(Float, Float)) {
   let primary = component(a, preferred_axis)
@@ -884,7 +896,7 @@ fn cubic_self_intersection_already_found(
   })
 }
 
-fn component(point: Point, axis: Axis) -> Float {
+fn component(point: BezierPoint, axis: Axis) -> Float {
   case axis {
     XAxis -> point.x
     YAxis -> point.y
@@ -898,8 +910,8 @@ fn other_axis(axis: Axis) -> Axis {
   }
 }
 
-fn midpoint(left: Point, right: Point) -> Point {
-  Point({ left.x +. right.x } /. 2.0, { left.y +. right.y } /. 2.0)
+fn midpoint(left: BezierPoint, right: BezierPoint) -> BezierPoint {
+  BezierPoint({ left.x +. right.x } /. 2.0, { left.y +. right.y } /. 2.0)
 }
 
 fn approximate_length(curve: BezierData) -> Float {
@@ -935,7 +947,7 @@ fn control_polygon_length(curve: BezierData) -> Float {
   }
 }
 
-fn distance(left: Point, right: Point) -> Float {
+fn distance(left: BezierPoint, right: BezierPoint) -> Float {
   distance_squared(left, right) |> sqrt
 }
 
@@ -986,10 +998,10 @@ fn cubic_extrema(
 }
 
 fn inflection_roots(
-  start: Point,
-  control1: Point,
-  control2: Point,
-  end: Point,
+  start: BezierPoint,
+  control1: BezierPoint,
+  control2: BezierPoint,
+  end: BezierPoint,
 ) -> List(Float) {
   let a =
     add(
@@ -1073,10 +1085,16 @@ fn is_inside_unit_interval(t: Float) -> Bool {
   t >=. 0.0 && t <=. 1.0
 }
 
-fn include_point(box: BoundingBox, point: Point) -> BoundingBox {
+fn include_point(box: BoundingBox, point: BezierPoint) -> BoundingBox {
   BoundingBox(
-    min: Point(float.min(box.min.x, point.x), float.min(box.min.y, point.y)),
-    max: Point(float.max(box.max.x, point.x), float.max(box.max.y, point.y)),
+    min: BezierPoint(
+      float.min(box.min.x, point.x),
+      float.min(box.min.y, point.y),
+    ),
+    max: BezierPoint(
+      float.max(box.max.x, point.x),
+      float.max(box.max.y, point.y),
+    ),
   )
 }
 
@@ -1152,38 +1170,38 @@ fn insert_unique_progress(sorted: List(Float), point: Float) -> List(Float) {
   }
 }
 
-fn interpolate(start: Point, end: Point, t: Float) -> Point {
-  Point(
+fn interpolate(start: BezierPoint, end: BezierPoint, t: Float) -> BezierPoint {
+  BezierPoint(
     start.x +. { end.x -. start.x } *. t,
     start.y +. { end.y -. start.y } *. t,
   )
 }
 
-fn difference(left: Point, right: Point) -> Point {
-  Point(left.x -. right.x, left.y -. right.y)
+fn difference(left: BezierPoint, right: BezierPoint) -> BezierPoint {
+  BezierPoint(left.x -. right.x, left.y -. right.y)
 }
 
-fn add(left: Point, right: Point) -> Point {
-  Point(left.x +. right.x, left.y +. right.y)
+fn add(left: BezierPoint, right: BezierPoint) -> BezierPoint {
+  BezierPoint(left.x +. right.x, left.y +. right.y)
 }
 
-fn scale(point: Point, factor: Float) -> Point {
-  Point(point.x *. factor, point.y *. factor)
+fn scale(point: BezierPoint, factor: Float) -> BezierPoint {
+  BezierPoint(point.x *. factor, point.y *. factor)
 }
 
-fn unit(point: Point) -> Result(Point, Error) {
-  let length = sqrt(distance_squared(point, Point(0.0, 0.0)))
+fn unit(point: BezierPoint) -> Result(BezierPoint, Error) {
+  let length = sqrt(distance_squared(point, BezierPoint(0.0, 0.0)))
   case length <=. root_tolerance {
     True -> Error(DegenerateTangent)
     False -> Ok(scale(point, 1.0 /. length))
   }
 }
 
-fn dot(left: Point, right: Point) -> Float {
+fn dot(left: BezierPoint, right: BezierPoint) -> Float {
   left.x *. right.x +. left.y *. right.y
 }
 
-fn distance_squared(left: Point, right: Point) -> Float {
+fn distance_squared(left: BezierPoint, right: BezierPoint) -> Float {
   let dx = left.x -. right.x
   let dy = left.y -. right.y
   dx *. dx +. dy *. dy
@@ -1194,10 +1212,17 @@ fn sqrt(value: Float) -> Float {
   root
 }
 
-fn offset(point: Point, direction: Point, distance: Float) -> Point {
-  Point(point.x +. direction.x *. distance, point.y +. direction.y *. distance)
+fn offset(
+  point: BezierPoint,
+  direction: BezierPoint,
+  distance: Float,
+) -> BezierPoint {
+  BezierPoint(
+    point.x +. direction.x *. distance,
+    point.y +. direction.y *. distance,
+  )
 }
 
-fn cross(left: Point, right: Point) -> Float {
+fn cross(left: BezierPoint, right: BezierPoint) -> Float {
   left.x *. right.y -. left.y *. right.x
 }

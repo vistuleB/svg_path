@@ -325,8 +325,8 @@ pub fn arc_center_data_converts_arc_segments_test() {
   assert center_arc_data_near(
     arc,
     ellipse.CenterArcData(
-      center: ellipse.Point(10.0, 0.0),
-      radius: ellipse.Point(10.0, 10.0),
+      center: ellipse.EllipsePoint(10.0, 0.0),
+      radius: ellipse.EllipsePoint(10.0, 10.0),
       x_axis_rotation: 0.0,
       start_angle: 180.0,
       delta_angle: 180.0,
@@ -3312,7 +3312,10 @@ fn center_arc_data_near(
   && near(actual.delta_angle, expected.delta_angle)
 }
 
-fn ellipse_point_near(a: ellipse.Point, b: ellipse.Point) -> Bool {
+fn ellipse_point_near(
+  a: ellipse.EllipsePoint,
+  b: ellipse.EllipsePoint,
+) -> Bool {
   near(a.x, b.x) && near(a.y, b.y)
 }
 
