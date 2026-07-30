@@ -301,20 +301,25 @@ endpoints:
 pub type EndpointPolicy {
   Strict
   Wiggle
+  WiggleWith(Float)
   Bridge
   WiggleThenBridge
-  Custom(fn(Segment, Segment) -> #(Segment, List(Segment), Segment))
+  WiggleThenBridgeWith(Float)
+  Custom(fn(Segment, Segment, Bool) -> #(Segment, List(Segment), Segment))
 }
 ```
 
 `Strict` is the behavior of `subpath`, requiring exact endpoint
 equality. `Wiggle` moves nearby endpoints together within the package's default
 wiggle tolerance of 1e-9 while respecting the horizontality and verticality
-of `Line` segments. `Bridge` keeps existing endpoints in place and inserts a
+of `Line` segments. `wiggle_with(tolerance)` provides the same policy with an
+explicit tolerance. `Bridge` keeps existing endpoints in place and inserts a
 straight line segment when needed.
 `WiggleThenBridge`, as the name implies, first tries `Wiggle` before falling
-back on `Bridge`. `Custom` gives callers a hook for bespoke endpoint
-reconciliation.
+back on `Bridge`; `wiggle_then_bridge_with(tolerance)` is its configurable
+counterpart. `Custom` gives callers a hook for bespoke endpoint reconciliation.
+Its third callback argument is `True` only for the closing join from the last
+segment back to the first segment of a closed subpath.
 
 Functions that accept an `EndpointPolicy` end in `_with`. Including:
 

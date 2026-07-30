@@ -353,16 +353,35 @@ pub type EndpointPolicy {
   /// Move nearby endpoints together within the default wiggle tolerance.
   Wiggle
 
+  /// Move nearby endpoints together within the supplied tolerance.
+  WiggleWith(Float)
+
   /// Keep endpoints unchanged and insert a straight line if needed.
   Bridge
 
   /// Try `Wiggle`; if that fails, use `Bridge`.
   WiggleThenBridge
 
+  /// Try wiggle with the supplied tolerance; if that fails, use `Bridge`.
+  WiggleThenBridgeWith(Float)
+
   /// Reconcile non-matching adjacent segments with a caller-provided function.
   ///
   /// The middle segments are inserted between the adjusted adjacent segments.
-  Custom(fn(Segment, Segment) -> #(Segment, List(Segment), Segment))
+  /// The callback's third argument is `True` only for a closing join from the
+  /// last segment back to the first segment.
+  Custom(fn(Segment, Segment, Bool) -> #(Segment, List(Segment), Segment))
+}
+
+/// Create a wiggle endpoint policy with a custom distance tolerance.
+pub fn wiggle_with(tolerance: Float) -> EndpointPolicy {
+  WiggleWith(tolerance)
+}
+
+/// Create a wiggle-then-bridge endpoint policy with a custom distance
+/// tolerance.
+pub fn wiggle_then_bridge_with(tolerance: Float) -> EndpointPolicy {
+  WiggleThenBridgeWith(tolerance)
 }
 
 /// A single SVG path segment.
@@ -5669,13 +5688,25 @@ fn open_subpath_with_start(
 ) -> Result(Subpath, Error) {
   case policy {
     Strict -> strict_open_subpath_from(start, segments)
-    Wiggle -> wiggle_open_subpath_from(start, segments)
+    Wiggle ->
+      wiggle_open_subpath_from(start, segments, default_wiggle_tolerance)
+    WiggleWith(tolerance) ->
+      wiggle_open_subpath_from(start, segments, tolerance)
     Bridge -> {
       let segments = line_join_start(start, segments)
       Ok(Subpath(start:, segments:, closed: False))
     }
     WiggleThenBridge -> {
-      case wiggle_open_subpath_from(start, segments) {
+      case wiggle_open_subpath_from(start, segments, default_wiggle_tolerance) {
+        Ok(subpath) -> Ok(subpath)
+        Error(_) -> {
+          let segments = line_join_start(start, segments)
+          Ok(Subpath(start:, segments:, closed: False))
+        }
+      }
+    }
+    WiggleThenBridgeWith(tolerance) -> {
+      case wiggle_open_subpath_from(start, segments, tolerance) {
         Ok(subpath) -> Ok(subpath)
         Error(_) -> {
           let segments = line_join_start(start, segments)
@@ -5732,14 +5763,15 @@ fn strict_open_subpath(segments: List(Segment)) -> Result(Subpath, Error) {
 fn wiggle_open_subpath_from(
   start: Point,
   segments: List(Segment),
+  tolerance: Float,
 ) -> Result(Subpath, Error) {
   case segments {
     [] -> Ok(Subpath(start:, segments: [], closed: False))
     [first, ..rest] -> {
-      case wiggle_start(start, first) {
+      case wiggle_start(start, first, tolerance) {
         Error(error) -> Error(error)
         Ok(first) -> {
-          case wiggle_segments(rest, first, [], previous_index: 0) {
+          case wiggle_segments(rest, first, [], tolerance, previous_index: 0) {
             Ok(segments) -> Ok(Subpath(start:, segments:, closed: False))
             Error(error) -> Error(error)
           }
@@ -5749,12 +5781,16 @@ fn wiggle_open_subpath_from(
   }
 }
 
-fn wiggle_start(start: Point, first: Segment) -> Result(Segment, Error) {
+fn wiggle_start(
+  start: Point,
+  first: Segment,
+  tolerance: Float,
+) -> Result(Segment, Error) {
   let first_start = segment_start(first)
   case first_start == start {
     True -> Ok(first)
     False -> {
-      case distance(start, first_start) <=. default_wiggle_tolerance {
+      case distance(start, first_start) <=. tolerance {
         True -> Ok(segment_with_start(first, start))
         False ->
           Error(Discontinuous(
@@ -5786,7 +5822,7 @@ fn line_join_start(start: Point, segments: List(Segment)) -> List(Segment) {
 fn custom_open_subpath_from(
   start: Point,
   segments: List(Segment),
-  reconcile: fn(Segment, Segment) -> #(Segment, List(Segment), Segment),
+  reconcile: fn(Segment, Segment, Bool) -> #(Segment, List(Segment), Segment),
 ) -> Result(Subpath, Error) {
   case segments {
     [] -> Ok(Subpath(start:, segments: [], closed: False))
@@ -5795,7 +5831,7 @@ fn custom_open_subpath_from(
         True -> #([], first)
         False -> {
           let bridge = Line(start:, end: segment_start(first))
-          let #(bridge, connectors, first) = reconcile(bridge, first)
+          let #(bridge, connectors, first) = reconcile(bridge, first, False)
           #(custom_reconciled_segments(bridge, connectors), first)
         }
       }
@@ -5844,7 +5880,7 @@ fn custom_reconcile_segments(
   remaining: List(Segment),
   previous: Segment,
   reconciled: List(Segment),
-  reconcile: fn(Segment, Segment) -> #(Segment, List(Segment), Segment),
+  reconcile: fn(Segment, Segment, Bool) -> #(Segment, List(Segment), Segment),
 ) -> List(Segment) {
   case remaining {
     [] -> list.reverse([previous, ..reconciled])
@@ -5853,7 +5889,7 @@ fn custom_reconcile_segments(
         segment_end(previous) == segment_start(next)
       {
         True -> #(previous, [], next)
-        False -> reconcile(previous, next)
+        False -> reconcile(previous, next, False)
       }
 
       let reconciled =
@@ -6367,6 +6403,7 @@ fn wiggle_segments(
   remaining: List(Segment),
   previous: Segment,
   segments: List(Segment),
+  tolerance: Float,
   previous_index previous_index: Int,
 ) -> Result(List(Segment), Error) {
   case remaining {
@@ -6381,10 +6418,11 @@ fn wiggle_segments(
             rest,
             next,
             [previous, ..segments],
+            tolerance,
             previous_index + 1,
           )
         False -> {
-          case distance(previous_end, next_start) <=. default_wiggle_tolerance {
+          case distance(previous_end, next_start) <=. tolerance {
             False -> {
               Error(Discontinuous(
                 previous_index:,
@@ -6402,6 +6440,7 @@ fn wiggle_segments(
                     rest,
                     segment_with_start(next, overlap),
                     [segment_with_end(previous, overlap), ..segments],
+                    tolerance,
                     previous_index + 1,
                   )
                 }
@@ -6430,10 +6469,17 @@ fn close_open_subpath_with(
 ) -> Result(Subpath, Error) {
   case policy {
     Strict -> strict_close_open_subpath(subpath)
-    Wiggle -> wiggle_close_open_subpath(subpath)
+    Wiggle -> wiggle_close_open_subpath(subpath, default_wiggle_tolerance)
+    WiggleWith(tolerance) -> wiggle_close_open_subpath(subpath, tolerance)
     Bridge -> line_close_open_subpath(subpath)
     WiggleThenBridge -> {
-      case wiggle_close_open_subpath(subpath) {
+      case wiggle_close_open_subpath(subpath, default_wiggle_tolerance) {
+        Ok(subpath) -> Ok(subpath)
+        Error(_) -> line_close_open_subpath(subpath)
+      }
+    }
+    WiggleThenBridgeWith(tolerance) -> {
+      case wiggle_close_open_subpath(subpath, tolerance) {
         Ok(subpath) -> Ok(subpath)
         Error(_) -> line_close_open_subpath(subpath)
       }
@@ -6469,18 +6515,24 @@ fn strict_close_nonempty_subpath(subpath: Subpath) -> Result(Subpath, Error) {
   }
 }
 
-fn wiggle_close_open_subpath(subpath: Subpath) -> Result(Subpath, Error) {
+fn wiggle_close_open_subpath(
+  subpath: Subpath,
+  tolerance: Float,
+) -> Result(Subpath, Error) {
   case subpath.segments {
     [] -> Ok(Subpath(..subpath, closed: True))
-    _ -> wiggle_close_nonempty_subpath(subpath)
+    _ -> wiggle_close_nonempty_subpath(subpath, tolerance)
   }
 }
 
-fn wiggle_close_nonempty_subpath(subpath: Subpath) -> Result(Subpath, Error) {
+fn wiggle_close_nonempty_subpath(
+  subpath: Subpath,
+  tolerance: Float,
+) -> Result(Subpath, Error) {
   case start_and_end(subpath) {
     Error(error) -> Error(error)
     Ok(#(first, last)) -> {
-      case distance(first, last) <=. default_wiggle_tolerance {
+      case distance(first, last) <=. tolerance {
         False -> {
           Error(Discontinuous(
             previous_index: list.length(subpath.segments) - 1,
@@ -6531,7 +6583,7 @@ fn line_close_nonempty_subpath(subpath: Subpath) -> Result(Subpath, Error) {
 
 fn custom_close_open_subpath(
   subpath: Subpath,
-  reconcile: fn(Segment, Segment) -> #(Segment, List(Segment), Segment),
+  reconcile: fn(Segment, Segment, Bool) -> #(Segment, List(Segment), Segment),
 ) -> Result(Subpath, Error) {
   case subpath.segments {
     [] -> Ok(Subpath(..subpath, closed: True))
@@ -6539,7 +6591,7 @@ fn custom_close_open_subpath(
       case segment_end(only) == segment_start(only) {
         True -> strict_close_open_subpath(subpath)
         False -> {
-          let #(last, connectors, first) = reconcile(only, only)
+          let #(last, connectors, first) = reconcile(only, only, True)
           validate_custom_closed_segments([
             first,
             ..custom_reconciled_segments(last, connectors)
@@ -6553,7 +6605,7 @@ fn custom_close_open_subpath(
       case segment_end(last) == segment_start(first) {
         True -> strict_close_open_subpath(subpath)
         False -> {
-          let #(last, connectors, first) = reconcile(last, first)
+          let #(last, connectors, first) = reconcile(last, first, True)
           validate_custom_closed_segments([
             first,
             ..list.append(middle, custom_reconciled_segments(last, connectors))
