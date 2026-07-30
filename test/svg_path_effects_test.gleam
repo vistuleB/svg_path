@@ -153,6 +153,114 @@ pub fn round_corners_can_adapt_radius_to_fit_short_segments_test() {
   assert all_arc_radii_near(segments, expected: 4.999999)
 }
 
+pub fn subpath_colinearize_replaces_degenerate_segments_test() {
+  let subpath =
+    svg_path.subpath_assert([
+      svg_path.QuadraticBezier(
+        start: svg_path.Point(0.0, 0.0),
+        control: svg_path.Point(10.0, 0.0),
+        end: svg_path.Point(0.0, 0.0),
+      ),
+    ])
+
+  let assert Ok(cleaned) =
+    effects.subpath_colinearize(subpath, tolerance: 0.001)
+  assert list.length(svg_path.subpath_segments(cleaned)) == 2
+}
+
+pub fn subpath_colinearize_preserves_closed_one_line_replacement_test() {
+  let open =
+    svg_path.subpath_assert([
+      svg_path.QuadraticBezier(
+        start: svg_path.Point(0.0, 0.0),
+        control: svg_path.Point(5.0, 0.0001),
+        end: svg_path.Point(10.0, 0.0),
+      ),
+      svg_path.Line(
+        start: svg_path.Point(10.0, 0.0),
+        end: svg_path.Point(0.0, 10.0),
+      ),
+      svg_path.Line(
+        start: svg_path.Point(0.0, 10.0),
+        end: svg_path.Point(0.0, 0.0),
+      ),
+    ])
+  let subpath = svg_path.subpath_assert_set_closed(open, closed: True)
+
+  let assert Ok(cleaned) =
+    effects.subpath_colinearize(subpath, tolerance: 0.001)
+  assert svg_path.subpath_is_closed(cleaned)
+  assert list.length(svg_path.subpath_segments(cleaned)) == 3
+  assert has_line(
+    svg_path.subpath_segments(cleaned),
+    svg_path.Point(0.0, 0.0),
+    svg_path.Point(10.0, 0.0),
+  )
+}
+
+pub fn subpath_colinearize_preserves_closed_two_line_backtracking_test() {
+  let open =
+    svg_path.subpath_assert([
+      svg_path.QuadraticBezier(
+        start: svg_path.Point(0.0, 0.0),
+        control: svg_path.Point(5.0, 0.0),
+        end: svg_path.Point(0.0, 0.0),
+      ),
+      svg_path.Line(
+        start: svg_path.Point(0.0, 0.0),
+        end: svg_path.Point(0.0, 10.0),
+      ),
+      svg_path.Line(
+        start: svg_path.Point(0.0, 10.0),
+        end: svg_path.Point(0.0, 0.0),
+      ),
+    ])
+  let subpath = svg_path.subpath_assert_set_closed(open, closed: True)
+
+  let assert Ok(cleaned) =
+    effects.subpath_colinearize(subpath, tolerance: 0.001)
+  assert svg_path.subpath_is_closed(cleaned)
+  assert list.length(svg_path.subpath_segments(cleaned)) == 4
+  assert has_line(
+    svg_path.subpath_segments(cleaned),
+    svg_path.Point(0.0, 0.0),
+    svg_path.Point(2.5, 0.0),
+  )
+  assert has_line(
+    svg_path.subpath_segments(cleaned),
+    svg_path.Point(2.5, 0.0),
+    svg_path.Point(0.0, 0.0),
+  )
+}
+
+pub fn subpath_colinearize_keeps_closed_three_line_traversal_test() {
+  let open =
+    svg_path.subpath_assert([
+      svg_path.Line(
+        start: svg_path.Point(0.0, 0.0),
+        end: svg_path.Point(10.0, 0.0),
+      ),
+      svg_path.Line(
+        start: svg_path.Point(10.0, 0.0),
+        end: svg_path.Point(0.0, 0.0),
+      ),
+      svg_path.Line(
+        start: svg_path.Point(0.0, 0.0),
+        end: svg_path.Point(0.0, 10.0),
+      ),
+      svg_path.Line(
+        start: svg_path.Point(0.0, 10.0),
+        end: svg_path.Point(0.0, 0.0),
+      ),
+    ])
+  let subpath = svg_path.subpath_assert_set_closed(open, closed: True)
+
+  let assert Ok(cleaned) =
+    effects.subpath_colinearize(subpath, tolerance: 0.001)
+  assert svg_path.subpath_is_closed(cleaned)
+  assert list.length(svg_path.subpath_segments(cleaned)) == 4
+}
+
 fn arc_count(segments: List(svg_path.Segment)) -> Int {
   segments
   |> list.filter(keeping: fn(segment) {

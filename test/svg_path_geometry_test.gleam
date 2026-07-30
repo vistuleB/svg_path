@@ -67,6 +67,40 @@ pub fn segment_degenerate_lines_rejects_wide_curve_test() {
   assert svg_path.segment_degenerate_lines(curve, 0.001) == Ok(None)
 }
 
+pub fn subpath_degenerate_lines_uses_one_strip_for_all_segments_test() {
+  let subpath =
+    svg_path.subpath_assert([
+      svg_path.QuadraticBezier(
+        start: svg_path.Point(0.0, 0.0),
+        control: svg_path.Point(10.0, 0.0),
+        end: svg_path.Point(0.0, 0.0),
+      ),
+      svg_path.Line(
+        start: svg_path.Point(0.0, 0.0),
+        end: svg_path.Point(-10.0, 0.0),
+      ),
+    ])
+
+  let assert Ok(Some(lines)) = svg_path.subpath_degenerate_lines(subpath, 0.001)
+  assert list.length(lines) == 3
+}
+
+pub fn subpath_degenerate_lines_rejects_bent_subpath_test() {
+  let subpath =
+    svg_path.subpath_assert([
+      svg_path.Line(
+        start: svg_path.Point(0.0, 0.0),
+        end: svg_path.Point(10.0, 0.0),
+      ),
+      svg_path.Line(
+        start: svg_path.Point(10.0, 0.0),
+        end: svg_path.Point(10.0, 10.0),
+      ),
+    ])
+
+  assert svg_path.subpath_degenerate_lines(subpath, 0.001) == Ok(None)
+}
+
 pub fn parametric_subpath_fits_simple_parabola_test() {
   let assert Ok(subpath) =
     svg_path.subpath_parametric(from: 0.0, to: 1.0, point: fn(t) {

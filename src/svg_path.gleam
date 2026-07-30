@@ -1244,6 +1244,33 @@ pub fn segment_degenerate_lines(
   }
 }
 
+/// Detect whether an entire subpath fits inside one absolute-width line strip.
+///
+/// `Ok(Some(lines))` returns an ordered line replacement, preserving the
+/// subpath's flattened traversal and backtracking. `Ok(None)` means that the
+/// subpath is not line-degenerate. Empty subpaths return `Ok(Some([]))`.
+pub fn subpath_degenerate_lines(
+  subpath: Subpath,
+  tolerance tolerance: Float,
+) -> Result(Option(List(Segment)), Error) {
+  case tolerance <=. 0.0 {
+    True -> Error(InvalidLinearizeTolerance(tolerance))
+    False -> {
+      use flattened <- result.try(
+        subpath_to_lines_with(
+          subpath,
+          options: LinearizeOptions(
+            tolerance:,
+            max_depth: default_linearize_max_depth,
+          ),
+        )
+        |> result.map(subpath_segments),
+      )
+      degenerate_line_list(flattened, tolerance)
+    }
+  }
+}
+
 fn segment_degenerate_lines_valid(
   segment: Segment,
   tolerance: Float,

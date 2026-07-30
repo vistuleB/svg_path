@@ -25,6 +25,115 @@ pub type Error {
   CornerTrimsOverlap(segment_index: Int)
 }
 
+/// Replace maximal contiguous line-degenerate windows in a subpath.
+///
+/// Each selected window is replaced by the ordered line traversal returned by
+/// `svg_path.subpath_degenerate_lines`. Windows are considered from left to
+/// right, with the largest qualifying window selected first. A single
+/// degenerate segment is also replaced when no larger window qualifies.
+pub fn subpath_colinearize(
+  subpath: svg_path.Subpath,
+  tolerance tolerance: Float,
+) -> Result(svg_path.Subpath, Error) {
+  case tolerance <=. 0.0 {
+    True -> Error(PathError(svg_path.InvalidLinearizeTolerance(tolerance)))
+    False -> {
+      use segments <- result.try(
+        colinearize_segments(
+          svg_path.subpath_segments(subpath),
+          tolerance,
+          converted: [],
+        ),
+      )
+      use open <- result.try(case segments {
+        [] -> {
+          use start <- result.try(
+            svg_path.subpath_start(subpath) |> result.map_error(PathError),
+          )
+          Ok(svg_path.subpath_empty(at: start))
+        }
+        _ -> svg_path.subpath(segments) |> result.map_error(PathError)
+      })
+      case svg_path.subpath_is_closed(subpath) {
+        False -> Ok(open)
+        True ->
+          svg_path.subpath_set_closed_with(
+            open,
+            closed: True,
+            policy: svg_path.Strict,
+          )
+          |> result.map_error(PathError)
+      }
+    }
+  }
+}
+
+fn colinearize_segments(
+  segments: List(svg_path.Segment),
+  tolerance: Float,
+  converted converted: List(svg_path.Segment),
+) -> Result(List(svg_path.Segment), Error) {
+  case segments {
+    [] -> Ok(list.reverse(converted))
+    [first, ..rest] -> {
+      use window <- result.try(largest_colinear_window(
+        [first, ..rest],
+        tolerance,
+        list.length(segments),
+      ))
+      case window {
+        Some(#(lines, count)) ->
+          colinearize_segments(
+            list.drop(segments, count),
+            tolerance,
+            converted: list.append(list.reverse(lines), converted),
+          )
+        None -> {
+          use replacement <- result.try(
+            svg_path.segment_degenerate_lines(first, tolerance)
+            |> result.map_error(PathError),
+          )
+          let replacement = case replacement {
+            None -> [first]
+            Some(lines) -> lines
+          }
+          colinearize_segments(
+            rest,
+            tolerance,
+            converted: list.append(list.reverse(replacement), converted),
+          )
+        }
+      }
+    }
+  }
+}
+
+fn largest_colinear_window(
+  segments: List(svg_path.Segment),
+  tolerance: Float,
+  count: Int,
+) -> Result(Option(#(List(svg_path.Segment), Int)), Error) {
+  case count < 2 {
+    True -> Ok(None)
+    False -> {
+      let window_segments = list.take(segments, count)
+      case svg_path.subpath(window_segments) {
+        Error(error) -> Error(PathError(error))
+        Ok(window) -> {
+          use replacement <- result.try(
+            svg_path.subpath_degenerate_lines(window, tolerance)
+            |> result.map_error(PathError),
+          )
+          case replacement {
+            Some(lines) -> Ok(Some(#(lines, count)))
+            None -> largest_colinear_window(segments, tolerance, count - 1)
+          }
+        }
+      }
+    }
+  }
+}
+
 /// What to do when an individual corner cannot be rounded.
 pub type FailureMode {
   /// Return an error.
