@@ -6,4 +6,3 @@ gleam_community_maths = { path = "../../build/packages/gleam_community_maths" }
 gleam_stdlib = { path = "../../build/packages/gleam_stdlib" }
 gleam_yielder = { path = "../../build/packages/gleam_yielder" }
 svg_path = { path = "../.." }
-vec = { path = "../../build/packages/vec" }
