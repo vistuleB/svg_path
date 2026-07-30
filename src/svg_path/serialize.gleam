@@ -8,7 +8,7 @@
 import gleam/list
 import gleam/string
 import svg_path
-import svg_path/number_format
+import svg_path/format as number_format
 
 /// Options for SVG path data serialization.
 pub type Options {

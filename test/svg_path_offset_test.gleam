@@ -4,7 +4,7 @@ import gleam/int
 import gleam/list
 import gleam/string
 import svg_path
-import svg_path/number_format
+import svg_path/format as number_format
 import svg_path/offset
 import svg_path/serialize
 import svg_path/trig
