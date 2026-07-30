@@ -18,9 +18,12 @@
   - drop or preserve degenerate pieces according to an explicit policy.
 - Path normalization or canonicalization helpers, only once concrete repeated
   cleanup patterns emerge.
-- Possible `intersection` module extraction for `v1.0.0`, while keeping
-  `svg_path` as the large convenience module.
+- Possible `intersection` module extraction in a future breaking release, while
+  keeping `svg_path` as the large convenience module.
 - Further orientation and topology helpers if actual caller needs appear.
+- Full SVG path-module reshaping such as `svg_path/subpath` or
+  `svg_path/segment`, only if the user experience clearly beats the current
+  one-import convenience style.
 
 Recently completed:
 
@@ -40,6 +43,11 @@ Recently completed:
 - Intersection parameter canonicalization.
 - Public gallery seed file and generated candidate figures.
 - Gallery figures for markers, offsets, strokes, cuts, hulls, and offset maps.
+- Point helpers in `svg_path/point`, while keeping the public `Point` type in
+  the root `svg_path` module.
+- Root convenience wrappers for common ellipse arc and cubic fitting helpers.
+- Minifying serialization options, including `H`/`V` and `S`/`T` command
+  discovery.
 
 Stabilization preference:
 

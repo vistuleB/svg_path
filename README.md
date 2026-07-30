@@ -45,7 +45,7 @@ pub fn prepare_for_arc_averse_consumer(
 
 - `svg_path`: core `Path`, `Subpath`, `Segment`, and `Point` types, plus
   construction, editing, geometry, splitting, distances, and intersections.
-- `svg_path/point`: numeric helpers for `Point` values.
+- `svg_path/point`: small helper library for the `svg_path.Point` type.
 - `svg_path/parse` and `svg_path/serialize`: SVG path-data parsing and
   serialization.
 - `svg_path/transform`: SVG-style affine transform matrices and geometry

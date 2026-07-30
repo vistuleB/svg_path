@@ -1,4 +1,4 @@
-//// Numeric helpers for `svg_path.Point` values.
+//// Small helper library for the `svg_path.Point` type.
 
 import gleam/float
 import svg_path

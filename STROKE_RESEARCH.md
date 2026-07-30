@@ -1,8 +1,8 @@
 # SVG Stroke Research Notes
 
-These notes summarize the parts of SVG/CSS stroke behavior that matter for
-future dash-array stroking, marker/decorator placement, and related geometry
-helpers.
+These notes summarize the parts of SVG/CSS stroke behavior that matter for the
+current stroke, dash, and marker-pose APIs, plus nearby SVG behavior that is not
+implemented.
 
 Primary sources:
 
@@ -65,9 +65,9 @@ miter length = stroke-width / sin(theta / 2)
 
 For `miter`, if `miter length / stroke-width > stroke-miterlimit`, use bevel.
 
-Current package implication: our existing `Miter`, `Round`, and `Bevel` are the
-right first supported set. `miter-clip` and `arcs` can be deferred unless users
-ask for exact SVG 2 edge behavior.
+Current package implication: `Miter`, `Round`, and `Bevel` are the supported
+join set. `miter-clip` and `arcs` remain deferred unless users ask for exact
+SVG 2 edge behavior.
 
 ## Dash Arrays
 
@@ -122,13 +122,12 @@ Important edge behavior:
 - For a closed subpath, dashing still starts at that subpath's start point; the
   seam is meaningful.
 
-Likely package decomposition:
+Current package decomposition:
 
-- `dash_intervals(length, pattern, offset) -> List(#(start_length, end_length))`
-- `subpath_dashes(subpath, pattern, offset, length_options) -> List(Subpath)`
-- `path_dashes(path, pattern, offset, length_options) -> Path`
-- `stroke_dashed(...)` can then stroke each dash independently and union the
-  resulting stroke shapes if desired.
+- dash patterns are normalized in user units,
+- dash intervals are measured in true arc length,
+- dash extraction returns open subpaths,
+- dashed strokes stroke each dash as its own open piece.
 
 ## PathLength
 
@@ -192,7 +191,7 @@ examples.
 
 ## Implementation Guidance For This Package
 
-Recommended first dash feature:
+Current dash feature:
 
 - Accept dash lengths in user units only.
 - Reject negative dash lengths.
@@ -214,4 +213,3 @@ Deferred:
 - SVG Markers Level 1 segment/repeating marker extensions.
 - Full marker element rendering. A geometry-first helper should probably return
   marker placement records first, not render marker contents.
-
