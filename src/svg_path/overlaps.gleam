@@ -5,6 +5,7 @@
 
 import gleam/float
 import gleam/list
+import gleam/result
 import svg_path
 import svg_path/intersections
 
@@ -20,6 +21,24 @@ pub type SegmentEncounter {
   )
 }
 
+/// A finite encounter between two subpath traversals. Unlike the point-only
+/// intersection API, overlap endpoints retain an address on both subpaths.
+pub type SubpathEncounter {
+  SubpathIntersection(
+    point: svg_path.Point,
+    left: svg_path.SubpathParameter,
+    right: svg_path.SubpathParameter,
+  )
+  SubpathOverlap(
+    start: svg_path.Point,
+    end: svg_path.Point,
+    left_from: svg_path.SubpathParameter,
+    left_to: svg_path.SubpathParameter,
+    right_from: svg_path.SubpathParameter,
+    right_to: svg_path.SubpathParameter,
+  )
+}
+
 pub fn segment(
   left: svg_path.Segment,
   right: svg_path.Segment,
@@ -32,6 +51,17 @@ pub fn segment_with(
   right: svg_path.Segment,
   options options: intersections.IntersectionOptions,
 ) -> Result(List(SegmentEncounter), svg_path.Error) {
+  case exact_coincident_segment(left, right) {
+    Ok(encounter) -> Ok([encounter])
+    Error(Nil) -> segment_encounters_from_intersections(left, right, options)
+  }
+}
+
+fn segment_encounters_from_intersections(
+  left: svg_path.Segment,
+  right: svg_path.Segment,
+  options: intersections.IntersectionOptions,
+) -> Result(List(SegmentEncounter), svg_path.Error) {
   case intersections.segment_with(left, right, options:) {
     Ok(found) ->
       found
@@ -43,6 +73,154 @@ pub fn segment_with(
     Error(svg_path.OverlappingSegments) ->
       line_overlap(left, right, options.tolerance)
     Error(error) -> Error(error)
+  }
+}
+
+fn exact_coincident_segment(
+  left: svg_path.Segment,
+  right: svg_path.Segment,
+) -> Result(SegmentEncounter, Nil) {
+  let start = svg_path.segment_start(left)
+  let end = svg_path.segment_end(left)
+  case left == right {
+    True ->
+      Ok(Overlap(
+        left_from: 0.0,
+        left_to: 1.0,
+        right_from: 0.0,
+        right_to: 1.0,
+        start:,
+        end:,
+      ))
+    False ->
+      case left == svg_path.segment_reverse(right) {
+        True ->
+          Ok(Overlap(
+            left_from: 0.0,
+            left_to: 1.0,
+            right_from: 1.0,
+            right_to: 0.0,
+            start:,
+            end:,
+          ))
+        False -> Error(Nil)
+      }
+  }
+}
+
+pub fn subpath(
+  left: svg_path.Subpath,
+  right: svg_path.Subpath,
+) -> Result(List(SubpathEncounter), svg_path.Error) {
+  subpath_with(left, right, options: intersections.default_options())
+}
+
+pub fn subpath_with(
+  left: svg_path.Subpath,
+  right: svg_path.Subpath,
+  options options: intersections.IntersectionOptions,
+) -> Result(List(SubpathEncounter), svg_path.Error) {
+  subpath_left_segments(
+    svg_path.subpath_segments(left),
+    svg_path.subpath_segments(right),
+    options,
+    left_index: 0,
+    found: [],
+  )
+}
+
+fn subpath_left_segments(
+  left: List(svg_path.Segment),
+  right: List(svg_path.Segment),
+  options: intersections.IntersectionOptions,
+  left_index left_index: Int,
+  found found: List(SubpathEncounter),
+) -> Result(List(SubpathEncounter), svg_path.Error) {
+  case left {
+    [] -> Ok(list.reverse(found))
+    [first, ..rest] -> {
+      use found <- result.try(subpath_right_segments(
+        first,
+        right,
+        options,
+        left_index:,
+        right_index: 0,
+        found:,
+      ))
+      subpath_left_segments(
+        rest,
+        right,
+        options,
+        left_index: left_index + 1,
+        found:,
+      )
+    }
+  }
+}
+
+fn subpath_right_segments(
+  left: svg_path.Segment,
+  right: List(svg_path.Segment),
+  options: intersections.IntersectionOptions,
+  left_index left_index: Int,
+  right_index right_index: Int,
+  found found: List(SubpathEncounter),
+) -> Result(List(SubpathEncounter), svg_path.Error) {
+  case right {
+    [] -> Ok(found)
+    [first, ..rest] -> {
+      use encounters <- result.try(segment_with(left, first, options:))
+      let found =
+        list.fold(encounters, found, fn(found, encounter) {
+          case encounter {
+            Intersection(left_t:, right_t:, point:) -> [
+              SubpathIntersection(
+                point:,
+                left: svg_path.SubpathParameter(
+                  segment_index: left_index,
+                  t: left_t,
+                ),
+                right: svg_path.SubpathParameter(
+                  segment_index: right_index,
+                  t: right_t,
+                ),
+              ),
+              ..found
+            ]
+            Overlap(start:, end:, left_from:, left_to:, right_from:, right_to:) -> [
+              SubpathOverlap(
+                start:,
+                end:,
+                left_from: svg_path.SubpathParameter(
+                  segment_index: left_index,
+                  t: left_from,
+                ),
+                left_to: svg_path.SubpathParameter(
+                  segment_index: left_index,
+                  t: left_to,
+                ),
+                right_from: svg_path.SubpathParameter(
+                  segment_index: right_index,
+                  t: right_from,
+                ),
+                right_to: svg_path.SubpathParameter(
+                  segment_index: right_index,
+                  t: right_to,
+                ),
+              ),
+              ..found
+            ]
+          }
+        })
+      subpath_right_segments(
+        left,
+        rest,
+        options,
+        left_index:,
+        right_index: right_index + 1,
+        found:,
+      )
+    }
   }
 }
 

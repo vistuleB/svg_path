@@ -33,6 +33,7 @@ import svg_path
 import svg_path/area
 import svg_path/bezier
 import svg_path/intersections
+import svg_path/overlaps
 import svg_path/point as point_helpers
 import svg_path/root
 import svg_path/trig
@@ -882,7 +883,7 @@ fn global_offset_pair_splits(
     [] -> Ok(collected)
     [right, ..rest] -> {
       case
-        intersections.subpath_with(
+        overlaps.subpath_with(
           left,
           right,
           options: intersections.default_options(),
@@ -891,18 +892,26 @@ fn global_offset_pair_splits(
         Ok(found) -> {
           let collected =
             list.fold(found, collected, fn(acc, intersection) {
-              let svg_path.SubpathIntersection(
-                left_parameters:,
-                right_parameters:,
-                ..,
-              ) = intersection
-              let acc =
-                list.fold(left_parameters, acc, fn(acc, parameter) {
-                  [GlobalSplit(subpath_index: left_index, parameter:), ..acc]
-                })
-              list.fold(right_parameters, acc, fn(acc, parameter) {
-                [GlobalSplit(subpath_index: right_index, parameter:), ..acc]
-              })
+              case intersection {
+                overlaps.SubpathIntersection(left:, right:, ..) -> [
+                  GlobalSplit(subpath_index: left_index, parameter: left),
+                  GlobalSplit(subpath_index: right_index, parameter: right),
+                  ..acc
+                ]
+                overlaps.SubpathOverlap(
+                  left_from:,
+                  left_to:,
+                  right_from:,
+                  right_to:,
+                  ..,
+                ) -> [
+                  GlobalSplit(subpath_index: left_index, parameter: left_from),
+                  GlobalSplit(subpath_index: left_index, parameter: left_to),
+                  GlobalSplit(subpath_index: right_index, parameter: right_from),
+                  GlobalSplit(subpath_index: right_index, parameter: right_to),
+                  ..acc
+                ]
+              }
             })
           global_offset_pair_splits(
             left,
@@ -912,16 +921,6 @@ fn global_offset_pair_splits(
             collected:,
           )
         }
-        // Coincident spans do not provide point split addresses. Leave their
-        // occurrences intact here; the arrangement union owns multiplicity.
-        Error(svg_path.OverlappingSegments) ->
-          global_offset_pair_splits(
-            left,
-            rest,
-            left_index:,
-            right_index: right_index + 1,
-            collected:,
-          )
         Error(error) -> Error(PathError(error))
       }
     }
