@@ -1,4 +1,4 @@
-//// Scratch probe: offset + union on the first two subpaths (S and V), with the
+//// Legacy scratch probe: offset + union on the first two subpaths (S and V), with the
 //// outer contour identified in Gleam (largest absolute signed area) and drawn
 //// orange, the interior contours drawn blue. Not part of the library.
 
@@ -12,10 +12,10 @@ import gleam/string
 import svg_path
 import svg_path/area
 import svg_path/intersections
+import svg_path/legacy/robust_union
 import svg_path/offset
 import svg_path/parse
 import svg_path/point as point_helpers
-import svg_path/robust_union
 import svg_path/svg
 import svg_path/trig
 

@@ -1,10 +1,12 @@
-//// Debug figure generator for arrangement-graph Boolean cases.
+//// Debug figure generator for ArrangementGraph Boolean cases.
 
 import gleam/dynamic.{type Dynamic}
 import gleam/float
 import gleam/list
 import svg_path
-import svg_path/planar_graph
+import svg_path/arrangement_graph
+import svg_path/csg
+import svg_path/effects
 import svg_path/svg
 import svg_path/transform
 
@@ -165,79 +167,64 @@ fn render_boolean_table(
       svg_path.path_subpaths(left),
       svg_path.path_subpaths(right),
     ))
-  let panel_y = 185.0
+  let first_row_y = 185.0
+  let second_row_y = 465.0
   let panel_width = 225.0
   let panel_height = 225.0
   let assert Ok(source_placed) =
-    place_like(source, source, 140.0, panel_y, panel_width, panel_height)
+    place_like(source, source, 140.0, first_row_y, panel_width, panel_height)
   let source_parts = svg_path.path_subpaths(source_placed)
   let left_count = list.length(svg_path.path_subpaths(left))
   let left_placed = svg_path.Path(list.take(source_parts, left_count))
   let right_placed = svg_path.Path(list.drop(source_parts, left_count))
 
   let assert Ok(graph_source) =
-    place_like(source, source, 420.0, panel_y, panel_width, panel_height)
+    place_like(source, source, 420.0, first_row_y, panel_width, panel_height)
   let assert Ok(graph) =
-    planar_graph.from_subpaths(
+    arrangement_graph.build(
       svg_path.path_subpaths(graph_source),
       tolerance:,
       minimum_chord:,
     )
   let assert Ok(graph_drawing) =
-    planar_graph.annotated_things_to_draw(graph, graph_source, tolerance:)
+    arrangement_graph.annotated_drawing(graph, graph_source, tolerance:)
 
-  let assert Ok(union) =
-    planar_graph.union_paths(
-      left,
-      right,
-      using: rule,
-      tolerance:,
-      minimum_chord:,
-    )
-  let assert Ok(intersection) =
-    planar_graph.intersection_paths(
-      left,
-      right,
-      using: rule,
-      tolerance:,
-      minimum_chord:,
-    )
-  let assert Ok(difference) =
-    planar_graph.difference_paths(
-      left,
-      minus: right,
-      using: rule,
-      tolerance:,
-      minimum_chord:,
-    )
+  let assert Ok(union) = csg.union(left, right, using: rule)
+  let assert Ok(intersection) = csg.intersection(left, right, using: rule)
+  let assert Ok(difference) = csg.difference(left, minus: right, using: rule)
   let assert Ok(reverse_difference) =
-    planar_graph.difference_paths(
-      right,
-      minus: left,
-      using: rule,
-      tolerance:,
-      minimum_chord:,
-    )
+    csg.difference(right, minus: left, using: rule)
   let assert Ok(symmetric_difference) =
-    planar_graph.symmetric_difference_paths(
-      left,
-      right,
-      using: rule,
-      tolerance:,
-      minimum_chord:,
-    )
+    csg.symmetric_difference(left, right, using: rule)
+  let assert Ok(monotone) = csg.monotone_contours(source)
+  let assert Ok(rounded_monotone) =
+    effects.round_corners(monotone, radius: 0.36)
   let assert Ok(union_placed) =
-    place_like(union, source, 700.0, panel_y, panel_width, panel_height)
+    place_like(union, source, 700.0, first_row_y, panel_width, panel_height)
   let assert Ok(intersection_placed) =
-    place_like(intersection, source, 980.0, panel_y, panel_width, panel_height)
+    place_like(
+      intersection,
+      source,
+      980.0,
+      first_row_y,
+      panel_width,
+      panel_height,
+    )
   let assert Ok(difference_placed) =
-    place_like(difference, source, 1260.0, panel_y, panel_width, panel_height)
+    place_like(
+      difference,
+      source,
+      140.0,
+      second_row_y,
+      panel_width,
+      panel_height,
+    )
   let assert Ok(reverse_difference_placed) =
     place_like(
       reverse_difference,
       source,
-      1540.0,
-      panel_y,
+      420.0,
+      second_row_y,
       panel_width,
       panel_height,
     )
@@ -245,8 +232,17 @@ fn render_boolean_table(
     place_like(
       symmetric_difference,
       source,
-      1820.0,
-      panel_y,
+      700.0,
+      second_row_y,
+      panel_width,
+      panel_height,
+    )
+  let assert Ok(rounded_monotone_placed) =
+    place_like(
+      rounded_monotone,
+      source,
+      980.0,
+      second_row_y,
       panel_width,
       panel_height,
     )
@@ -263,8 +259,8 @@ fn render_boolean_table(
   let base = [
     svg.Rectangle(
       svg_path.Point(0.0, 0.0),
-      1960.0,
-      350.0,
+      1120.0,
+      630.0,
       "fill: #f8fafc; stroke: none",
     ),
     svg.Text(
@@ -300,31 +296,38 @@ fn render_boolean_table(
     svg.Text(
       "difference(path1, path2)",
       label_style(),
-      svg_path.Point(1260.0, 328.0),
+      svg_path.Point(140.0, 608.0),
       12,
     ),
     svg.Text(
       "difference(path2, path1)",
       label_style(),
-      svg_path.Point(1540.0, 328.0),
+      svg_path.Point(420.0, 608.0),
       12,
     ),
     svg.Text(
       "symmetric_difference(path1, path2)",
       label_style(),
-      svg_path.Point(1820.0, 328.0),
+      svg_path.Point(700.0, 608.0),
       12,
+    ),
+    svg.Text(
+      "monotone_contours([path1, path2]) |> rounded_corners",
+      label_style(),
+      svg_path.Point(980.0, 608.0),
+      9,
     ),
   ]
   let backdrops =
     list.flatten([
-      panel_backdrop(source, 140.0, panel_y, panel_width, panel_height),
-      panel_backdrop(source, 420.0, panel_y, panel_width, panel_height),
-      panel_backdrop(source, 700.0, panel_y, panel_width, panel_height),
-      panel_backdrop(source, 980.0, panel_y, panel_width, panel_height),
-      panel_backdrop(source, 1260.0, panel_y, panel_width, panel_height),
-      panel_backdrop(source, 1540.0, panel_y, panel_width, panel_height),
-      panel_backdrop(source, 1820.0, panel_y, panel_width, panel_height),
+      panel_backdrop(source, 140.0, first_row_y, panel_width, panel_height),
+      panel_backdrop(source, 420.0, first_row_y, panel_width, panel_height),
+      panel_backdrop(source, 700.0, first_row_y, panel_width, panel_height),
+      panel_backdrop(source, 980.0, first_row_y, panel_width, panel_height),
+      panel_backdrop(source, 140.0, second_row_y, panel_width, panel_height),
+      panel_backdrop(source, 420.0, second_row_y, panel_width, panel_height),
+      panel_backdrop(source, 700.0, second_row_y, panel_width, panel_height),
+      panel_backdrop(source, 980.0, second_row_y, panel_width, panel_height),
     ])
   let geometry = [
     svg.StyledPath(left_placed, path_style("#2563eb", "#2563eb")),
@@ -337,19 +340,30 @@ fn render_boolean_table(
       symmetric_difference_placed,
       path_style("#db2777", "#be185d"),
     ),
+    svg.StyledPath(rounded_monotone_placed, path_style("#4f46e5", "#4338ca")),
   ]
   let source_arrows =
     list.append(
-      planar_graph.path_direction_arrows(left_placed, "#2563eb"),
-      planar_graph.path_direction_arrows(right_placed, "#e11d48"),
+      arrangement_graph.path_direction_arrows(left_placed, "#2563eb"),
+      arrangement_graph.path_direction_arrows(right_placed, "#e11d48"),
     )
   let result_arrows =
     list.flatten([
-      planar_graph.path_direction_arrows(union_placed, "#15803d"),
-      planar_graph.path_direction_arrows(intersection_placed, "#6d28d9"),
-      planar_graph.path_direction_arrows(difference_placed, "#b45309"),
-      planar_graph.path_direction_arrows(reverse_difference_placed, "#0e7490"),
-      planar_graph.path_direction_arrows(symmetric_difference_placed, "#be185d"),
+      arrangement_graph.path_direction_arrows(union_placed, "#15803d"),
+      arrangement_graph.path_direction_arrows(intersection_placed, "#6d28d9"),
+      arrangement_graph.path_direction_arrows(difference_placed, "#b45309"),
+      arrangement_graph.path_direction_arrows(
+        reverse_difference_placed,
+        "#0e7490",
+      ),
+      arrangement_graph.path_direction_arrows(
+        symmetric_difference_placed,
+        "#be185d",
+      ),
+      arrangement_graph.path_direction_arrows(
+        rounded_monotone_placed,
+        "#4338ca",
+      ),
     ])
   svg.document(
     list.flatten([
@@ -362,7 +376,7 @@ fn render_boolean_table(
     ]),
     view_box: svg_path.BoundingBox(
       min: svg_path.Point(0.0, 0.0),
-      max: svg_path.Point(1960.0, 350.0),
+      max: svg_path.Point(1120.0, 630.0),
     ),
   )
 }
@@ -391,30 +405,16 @@ fn render_case(
 
   let assert Ok(graph_source) = fit(source, 450.0, 132.0)
   let assert Ok(graph) =
-    planar_graph.from_subpaths(
+    arrangement_graph.build(
       svg_path.path_subpaths(graph_source),
       tolerance:,
       minimum_chord:,
     )
   let assert Ok(graph_drawing) =
-    planar_graph.annotated_things_to_draw(graph, graph_source, tolerance:)
+    arrangement_graph.annotated_drawing(graph, graph_source, tolerance:)
   let assert Ok(boolean_result) = case operation {
-    IntersectionFigure ->
-      planar_graph.intersection_paths(
-        left,
-        right,
-        using: rule,
-        tolerance:,
-        minimum_chord:,
-      )
-    DifferenceFigure ->
-      planar_graph.difference_paths(
-        left,
-        minus: right,
-        using: rule,
-        tolerance:,
-        minimum_chord:,
-      )
+    IntersectionFigure -> csg.intersection(left, right, using: rule)
+    DifferenceFigure -> csg.difference(left, minus: right, using: rule)
   }
   let result_placed = case svg_path.path_subpaths(boolean_result) {
     [] -> boolean_result
@@ -442,7 +442,12 @@ fn render_case(
       15,
     ),
     svg.Text("operands", label_style(), svg_path.Point(150.0, 48.0), 11),
-    svg.Text("planar graph", label_style(), svg_path.Point(450.0, 48.0), 11),
+    svg.Text(
+      "arrangement graph",
+      label_style(),
+      svg_path.Point(450.0, 48.0),
+      11,
+    ),
     svg.Text(operation_label, label_style(), svg_path.Point(750.0, 48.0), 11),
     svg.StyledPath(
       left_placed,
@@ -465,11 +470,11 @@ fn render_case(
   ]
   let arrows =
     list.append(
-      planar_graph.path_direction_arrows(left_placed, "#2563eb"),
-      planar_graph.path_direction_arrows(right_placed, "#e11d48"),
+      arrangement_graph.path_direction_arrows(left_placed, "#2563eb"),
+      arrangement_graph.path_direction_arrows(right_placed, "#e11d48"),
     )
   let result_arrows =
-    planar_graph.path_direction_arrows(result_placed, "#7c3aed")
+    arrangement_graph.path_direction_arrows(result_placed, "#7c3aed")
   let empty_note = case svg_path.path_subpaths(boolean_result) {
     [] -> [
       svg.Text(

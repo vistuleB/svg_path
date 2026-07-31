@@ -1,10 +1,9 @@
 //// Arrangement-graph primitives for Boolean path operations.
 ////
-//// This module currently provides the arrangement representation, endpoint
-//// clustering, coincident-edge multiplicity, validation, and debug drawing.
-//// The insertion function requires segments that have already been noded: two
-//// geometric edges may meet at endpoints, but must not cross or partially
-//// overlap.
+//// This module provides arrangement construction, endpoint clustering,
+//// coincident-edge multiplicity, validation, Boolean boundary extraction, and
+//// diagnostic drawing. `build` nodes intersections and endpoint-bounded
+//// overlaps. The lower-level insertion functions require already-noded input.
 
 import gleam/float
 import gleam/int
@@ -14,12 +13,12 @@ import gleam/order
 import gleam/result
 import svg_path
 import svg_path/effects
-import svg_path/fill_levels
 import svg_path/intersections
 import svg_path/overlaps
 import svg_path/point
 import svg_path/svg
 import svg_path/trig
+import svg_path/winding_field
 
 pub type ArrangementVertex {
   ArrangementVertex(id: Int, point: svg_path.Point, sample_count: Int)
@@ -76,6 +75,7 @@ type SegmentCut {
 type BoundaryEdge {
   BoundaryEdge(
     id: Int,
+    layer: Int,
     segment: svg_path.Segment,
     start_vertex: Int,
     end_vertex: Int,
@@ -101,8 +101,8 @@ pub fn empty() -> ArrangementGraph {
   ArrangementGraph(vertices: [], edges: [])
 }
 
-/// Clean line-degenerate segment sequences before graph construction.
-pub fn clean_subpaths(
+/// Replace line-degenerate segment sequences before arrangement construction.
+pub fn prepare_subpaths(
   subpaths: List(svg_path.Subpath),
   tolerance tolerance: Float,
 ) -> Result(List(svg_path.Subpath), Error) {
@@ -159,7 +159,7 @@ pub fn insert_noded_segment(
   }
 }
 
-pub fn from_noded_subpaths(
+pub fn build_from_noded_subpaths(
   subpaths: List(svg_path.Subpath),
   tolerance tolerance: Float,
   minimum_chord minimum_chord: Float,
@@ -176,12 +176,12 @@ pub fn from_noded_subpaths(
 /// insertion. Its output is independent of input processing order. Overlap
 /// detection uses endpoint projection, so semantically equal arcs need not
 /// have structurally equal SVG flags or matching original subdivision points.
-pub fn from_subpaths(
+pub fn build(
   subpaths: List(svg_path.Subpath),
   tolerance tolerance: Float,
   minimum_chord minimum_chord: Float,
 ) -> Result(ArrangementGraph, Error) {
-  use cleaned <- result.try(clean_subpaths(subpaths, tolerance:))
+  use cleaned <- result.try(prepare_subpaths(subpaths, tolerance:))
   let indexed =
     cleaned
     |> list.flat_map(svg_path.subpath_segments)
@@ -307,16 +307,37 @@ pub fn symmetric_difference_from_arrangement_graph(
   Ok(svg_path.Path(subpaths))
 }
 
+/// Reconstruct the signed winding field of `path` as nested or disjoint
+/// unit-level contours using an arrangement built from that path.
+///
+/// Winding-neutral edge multiplicity is omitted. Every retained contour adds
+/// either `1` or `-1` to the winding field inside it.
+pub fn monotone_contours_from_arrangement_graph(
+  graph: ArrangementGraph,
+  path: svg_path.Path,
+  tolerance tolerance: Float,
+) -> Result(svg_path.Path, Error) {
+  let ArrangementGraph(edges:, ..) = graph
+  use boundary <- result.try(
+    classify_winding_level_edges(edges, path, tolerance, 0, []),
+  )
+  use links <- result.try(pair_boundary_sectors(boundary, []))
+  use subpaths <- result.try(
+    trace_winding_level_edges(boundary, links, tolerance, []),
+  )
+  Ok(svg_path.Path(subpaths))
+}
+
 /// Build an arrangement graph for two paths and return their Boolean union
 /// boundary.
-pub fn union_paths(
+pub fn union(
   left: svg_path.Path,
   right: svg_path.Path,
   using fill_rule: svg_path.FillRule,
   tolerance tolerance: Float,
   minimum_chord minimum_chord: Float,
 ) -> Result(svg_path.Path, Error) {
-  use graph <- result.try(from_subpaths(
+  use graph <- result.try(build(
     list.append(svg_path.path_subpaths(left), svg_path.path_subpaths(right)),
     tolerance:,
     minimum_chord:,
@@ -326,14 +347,14 @@ pub fn union_paths(
 
 /// Build an arrangement graph for two paths and return their Boolean
 /// intersection boundary.
-pub fn intersection_paths(
+pub fn intersection(
   left: svg_path.Path,
   right: svg_path.Path,
   using fill_rule: svg_path.FillRule,
   tolerance tolerance: Float,
   minimum_chord minimum_chord: Float,
 ) -> Result(svg_path.Path, Error) {
-  use graph <- result.try(from_subpaths(
+  use graph <- result.try(build(
     list.append(svg_path.path_subpaths(left), svg_path.path_subpaths(right)),
     tolerance:,
     minimum_chord:,
@@ -348,14 +369,14 @@ pub fn intersection_paths(
 }
 
 /// Build an arrangement graph for two paths and return `left` minus `right`.
-pub fn difference_paths(
+pub fn difference(
   left: svg_path.Path,
   minus right: svg_path.Path,
   using fill_rule: svg_path.FillRule,
   tolerance tolerance: Float,
   minimum_chord minimum_chord: Float,
 ) -> Result(svg_path.Path, Error) {
-  use graph <- result.try(from_subpaths(
+  use graph <- result.try(build(
     list.append(svg_path.path_subpaths(left), svg_path.path_subpaths(right)),
     tolerance:,
     minimum_chord:,
@@ -371,14 +392,14 @@ pub fn difference_paths(
 
 /// Build an arrangement graph for two paths and return their Boolean symmetric
 /// difference.
-pub fn symmetric_difference_paths(
+pub fn symmetric_difference(
   left: svg_path.Path,
   right: svg_path.Path,
   using fill_rule: svg_path.FillRule,
   tolerance tolerance: Float,
   minimum_chord minimum_chord: Float,
 ) -> Result(svg_path.Path, Error) {
-  use graph <- result.try(from_subpaths(
+  use graph <- result.try(build(
     list.append(svg_path.path_subpaths(left), svg_path.path_subpaths(right)),
     tolerance:,
     minimum_chord:,
@@ -390,6 +411,21 @@ pub fn symmetric_difference_paths(
     using: fill_rule,
     tolerance:,
   )
+}
+
+/// Return nested or disjoint unit-level contours with the same signed winding
+/// field as `path`.
+pub fn monotone_contours(
+  path: svg_path.Path,
+  tolerance tolerance: Float,
+  minimum_chord minimum_chord: Float,
+) -> Result(svg_path.Path, Error) {
+  use graph <- result.try(build(
+    svg_path.path_subpaths(path),
+    tolerance:,
+    minimum_chord:,
+  ))
+  monotone_contours_from_arrangement_graph(graph, path, tolerance:)
 }
 
 fn classify_boolean_edges(
@@ -405,7 +441,7 @@ fn classify_boolean_edges(
     [] -> Ok(list.reverse(boundary))
     [ArrangementEdge(id:, segment:, start_vertex:, end_vertex:, ..), ..rest] -> {
       use left_levels <- result.try(
-        fill_levels.nonzero_side_levels(
+        winding_field.segment_side_nonzero_levels(
           segment,
           within: left_path,
           tolerance:,
@@ -414,7 +450,7 @@ fn classify_boolean_edges(
         |> result.map_error(PathError),
       )
       use right_levels <- result.try(
-        fill_levels.nonzero_side_levels(
+        winding_field.segment_side_nonzero_levels(
           segment,
           within: right_path,
           tolerance:,
@@ -438,12 +474,13 @@ fn classify_boolean_edges(
         )
       let boundary = case filled_left, filled_right {
         False, True -> [
-          BoundaryEdge(id:, segment:, start_vertex:, end_vertex:),
+          BoundaryEdge(id:, layer: 0, segment:, start_vertex:, end_vertex:),
           ..boundary
         ]
         True, False -> [
           BoundaryEdge(
             id:,
+            layer: 0,
             segment: svg_path.segment_reverse(segment),
             start_vertex: end_vertex,
             end_vertex: start_vertex,
@@ -462,6 +499,97 @@ fn classify_boolean_edges(
         boundary,
       )
     }
+  }
+}
+
+fn classify_winding_level_edges(
+  edges: List(ArrangementEdge),
+  path: svg_path.Path,
+  tolerance: Float,
+  next_id: Int,
+  boundary: List(BoundaryEdge),
+) -> Result(List(BoundaryEdge), Error) {
+  case edges {
+    [] -> Ok(list.reverse(boundary))
+    [edge, ..rest] -> {
+      let ArrangementEdge(segment:, ..) = edge
+      use levels <- result.try(
+        winding_field.segment_side_nonzero_levels(
+          segment,
+          within: path,
+          tolerance:,
+          options: svg_path.default_containment_options(),
+        )
+        |> result.map_error(PathError),
+      )
+      let #(left, right) = levels
+      let #(next_id, boundary) =
+        emit_winding_thresholds(edge, left, right, 1, next_id, boundary)
+      classify_winding_level_edges(rest, path, tolerance, next_id, boundary)
+    }
+  }
+}
+
+fn emit_winding_thresholds(
+  edge: ArrangementEdge,
+  left: Int,
+  right: Int,
+  level: Int,
+  next_id: Int,
+  boundary: List(BoundaryEdge),
+) -> #(Int, List(BoundaryEdge)) {
+  let maximum = int_max(int.absolute_value(left), int.absolute_value(right))
+  case level > maximum {
+    True -> #(next_id, boundary)
+    False -> {
+      let #(next_id, boundary) =
+        emit_threshold_boundary(
+          edge,
+          left >= level,
+          right >= level,
+          level,
+          next_id,
+          boundary,
+        )
+      let #(next_id, boundary) =
+        emit_threshold_boundary(
+          edge,
+          left <= 0 - level,
+          right <= 0 - level,
+          0 - level,
+          next_id,
+          boundary,
+        )
+      emit_winding_thresholds(edge, left, right, level + 1, next_id, boundary)
+    }
+  }
+}
+
+fn emit_threshold_boundary(
+  edge: ArrangementEdge,
+  active_left: Bool,
+  active_right: Bool,
+  layer: Int,
+  next_id: Int,
+  boundary: List(BoundaryEdge),
+) -> #(Int, List(BoundaryEdge)) {
+  let ArrangementEdge(segment:, start_vertex:, end_vertex:, ..) = edge
+  case active_left, active_right {
+    False, True -> #(next_id + 1, [
+      BoundaryEdge(id: next_id, layer:, segment:, start_vertex:, end_vertex:),
+      ..boundary
+    ])
+    True, False -> #(next_id + 1, [
+      BoundaryEdge(
+        id: next_id,
+        layer:,
+        segment: svg_path.segment_reverse(segment),
+        start_vertex: end_vertex,
+        end_vertex: start_vertex,
+      ),
+      ..boundary
+    ])
+    _, _ -> #(next_id, boundary)
   }
 }
 
@@ -503,11 +631,12 @@ fn pair_boundary_sectors_loop(
 ) -> Result(List(BoundaryLink), Error) {
   case unpaired {
     [] -> Ok(list.reverse(links))
-    [BoundaryEdge(id:, end_vertex:, ..), ..rest] -> {
+    [BoundaryEdge(id:, layer:, end_vertex:, ..), ..rest] -> {
       use successor <- result.try(filled_sector_successor(
         all_edges,
         id,
         end_vertex,
+        layer,
       ))
       pair_boundary_sectors_loop(rest, all_edges, [
         BoundaryLink(edge_id: id, successor_id: successor),
@@ -521,8 +650,9 @@ fn filled_sector_successor(
   edges: List(BoundaryEdge),
   incoming_id: Int,
   vertex: Int,
+  layer: Int,
 ) -> Result(Int, Error) {
-  use rays <- result.try(collect_boundary_rays(edges, vertex, []))
+  use rays <- result.try(collect_boundary_rays(edges, vertex, layer, []))
   let ordered = rays |> list.sort(by: compare_boundary_rays)
   use successor <- result.try(cyclic_successor(
     ordered,
@@ -540,32 +670,38 @@ fn filled_sector_successor(
 fn collect_boundary_rays(
   edges: List(BoundaryEdge),
   vertex: Int,
+  layer: Int,
   rays: List(BoundaryRay),
 ) -> Result(List(BoundaryRay), Error) {
   case edges {
     [] -> Ok(rays)
-    [BoundaryEdge(id:, segment:, start_vertex:, end_vertex:), ..rest] -> {
-      use rays <- result.try(case start_vertex == vertex {
-        False -> Ok(rays)
-        True -> {
-          use derivative <- result.try(
-            svg_path.segment_derivative(segment, at: 0.0)
-            |> result.map_error(PathError),
-          )
-          Ok([
-            BoundaryRay(
-              edge_id: id,
-              starts: True,
-              angle: normalized_angle(trig.atan2_degrees(
-                derivative.y,
-                derivative.x,
-              )),
-            ),
-            ..rays
-          ])
-        }
-      })
-      use rays <- result.try(case end_vertex == vertex {
+    [
+      BoundaryEdge(id:, layer: edge_layer, segment:, start_vertex:, end_vertex:),
+      ..rest
+    ] -> {
+      use rays <- result.try(
+        case edge_layer == layer && start_vertex == vertex {
+          False -> Ok(rays)
+          True -> {
+            use derivative <- result.try(
+              svg_path.segment_derivative(segment, at: 0.0)
+              |> result.map_error(PathError),
+            )
+            Ok([
+              BoundaryRay(
+                edge_id: id,
+                starts: True,
+                angle: normalized_angle(trig.atan2_degrees(
+                  derivative.y,
+                  derivative.x,
+                )),
+              ),
+              ..rays
+            ])
+          }
+        },
+      )
+      use rays <- result.try(case edge_layer == layer && end_vertex == vertex {
         False -> Ok(rays)
         True -> {
           use derivative <- result.try(
@@ -585,7 +721,7 @@ fn collect_boundary_rays(
           ])
         }
       })
-      collect_boundary_rays(rest, vertex, rays)
+      collect_boundary_rays(rest, vertex, layer, rays)
     }
   }
 }
@@ -662,6 +798,53 @@ fn trace_boundary_edges(
         |> result.map_error(PathError),
       )
       trace_boundary_edges(remaining, links, tolerance, [closed, ..subpaths])
+    }
+  }
+}
+
+fn trace_winding_level_edges(
+  remaining: List(BoundaryEdge),
+  links: List(BoundaryLink),
+  tolerance: Float,
+  subpaths: List(svg_path.Subpath),
+) -> Result(List(svg_path.Subpath), Error) {
+  case remaining {
+    [] -> Ok(list.reverse(subpaths))
+    [seed, ..rest] -> {
+      let BoundaryEdge(layer:, ..) = seed
+      use traced <- result.try(trace_boundary_cycle(
+        seed,
+        rest,
+        links,
+        [seed],
+        list.length(remaining) + 1,
+      ))
+      let #(cycle, remaining) = traced
+      use subpath <- result.try(
+        cycle
+        |> list.map(fn(edge) {
+          let BoundaryEdge(segment:, ..) = edge
+          segment
+        })
+        |> svg_path.subpath_with(policy: svg_path.WiggleWith(tolerance))
+        |> result.map_error(PathError),
+      )
+      use closed <- result.try(
+        svg_path.subpath_set_closed_with(
+          subpath,
+          closed: True,
+          policy: svg_path.WiggleWith(tolerance),
+        )
+        |> result.map_error(PathError),
+      )
+      let oriented = case layer > 0 {
+        True -> svg_path.subpath_reverse(closed)
+        False -> closed
+      }
+      trace_winding_level_edges(remaining, links, tolerance, [
+        oriented,
+        ..subpaths
+      ])
     }
   }
 }
@@ -1385,7 +1568,7 @@ fn vertex_point(
 }
 
 /// Draw edges, averaged vertices, vertex ids, and directional multiplicities.
-pub fn things_to_draw(graph: ArrangementGraph) -> svg.ThingsToDraw {
+pub fn drawing(graph: ArrangementGraph) -> svg.ThingsToDraw {
   let ArrangementGraph(vertices:, edges:) = graph
   let edge_things =
     edges
@@ -1438,7 +1621,7 @@ pub fn things_to_draw(graph: ArrangementGraph) -> svg.ThingsToDraw {
 /// red. Red arrowheads show the stored forward direction. Vertices use the
 /// established white-circle/red-outline style. Cartouches are sized per edge
 /// and never exceed 80% of the chord remaining between its endpoint nodes.
-pub fn annotated_things_to_draw(
+pub fn annotated_drawing(
   graph: ArrangementGraph,
   source: svg_path.Path,
   tolerance tolerance: Float,
@@ -1472,7 +1655,7 @@ fn annotated_edge_things(
         ..,
       ) = edge
       use levels <- result.try(
-        fill_levels.nonzero_side_levels(
+        winding_field.segment_side_nonzero_levels(
           segment,
           within: source,
           tolerance:,
@@ -1635,6 +1818,13 @@ pub fn edge_annotation_pose(
 
 fn float_min(a: Float, b: Float) -> Float {
   case a <. b {
+    True -> a
+    False -> b
+  }
+}
+
+fn int_max(a: Int, b: Int) -> Int {
+  case a > b {
     True -> a
     False -> b
   }

@@ -1,6 +1,16 @@
-# Robust Union Next Plan
+# ArrangementGraph CSG Plan
 
-## Current position
+## Current module layout
+
+- `svg_path/arrangement_graph` owns graph construction, validation, low-level
+  boundary extraction, and diagnostic drawing.
+- `svg_path/winding_field` owns trusting point and segment-side winding samples.
+- `svg_path/csg` is the public path-operation facade for union, intersection,
+  difference, symmetric difference, and monotone contours.
+- `svg_path/legacy/csg` and `svg_path/legacy/robust_union` retain the superseded
+  implementations until their remaining useful fixtures have been migrated.
+
+## Historical robust-union position
 
 The arrangement pipeline now retains atomic records through noding,
 classification, threshold emission, candidate selection, and tracing.
@@ -269,7 +279,7 @@ Add these tests during the corresponding stages:
 - Do not restore geometric equality as a consumption mechanism.
 - Do not collapse coincident source occurrences before classification.
 - Do not concatenate Boolean operands into one fill path.
-- Do not post-process offset output with robust union.
+- Do not post-process offset output with the legacy robust-union prototype.
 - Do not infer overlap classes from final segment geometry when encounter
   provenance is available.
 - Do not use broad U-turn permissions to compensate for missing role
@@ -366,22 +376,21 @@ The separate arc-intersection timeout remains outside the robust-union plan.
 
 Gallery candidate after the graph builder is complete:
 
-- `examples/debug/planar_graph_separate_radius_circle_matrix.svg`
+- `examples/debug/arrangement_graph_separate_radius_circle_matrix.svg`
 - Shows oriented graph edges, vertices, signed left/right winding numbers, and
   directional multiplicities for twelve concentric-circle configurations.
 - Before gallery inclusion, regenerate it from actual `ArrangementGraph` values rather
   than retaining the current debug SVG construction.
 
-Additional ArrangementGraph gallery candidates:
+ArrangementGraph gallery figures:
 
-- `examples/debug/arrangement_boolean_nonzero.svg`
-- `examples/debug/arrangement_boolean_evenodd.svg`
+- `docs/gallery/gallery-arrangement-csg-nonzero.svg`
+- `docs/gallery/gallery-arrangement-csg-evenodd.svg`
 - These compare the same two multi-rectangle paths, their ArrangementGraph,
   union, intersection, both directional differences, and symmetric difference
   under Nonzero and EvenOdd filling.
 - The panels share one coordinate transform and use a common pale, densely
   hatched `(0, 0)` to `(6, 6)` backdrop. The graph cartouches display winding
   levels and directional multiplicities from the shared drawing helper.
-- Before gallery inclusion, regenerate with `intersection_graph_figures`, copy
-  stable outputs into `docs/gallery/`, and add both entries to `GALLERY.md` in
-  the same commit.
+- Regenerate their preview sources with `arrangement_csg_figures` before copying
+  updated stable outputs into `docs/gallery/`.

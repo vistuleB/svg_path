@@ -3,8 +3,8 @@ import gleam/int
 import gleam/list
 import svg_path
 import svg_path/area
+import svg_path/legacy/robust_union
 import svg_path/overlaps
-import svg_path/robust_union
 
 const tolerance = 0.000001
 

@@ -1,4 +1,4 @@
-//// Fill-level sampling shared by arrangement operations.
+//// Winding-field sampling shared by arrangement operations.
 
 import gleam/float
 import gleam/result
@@ -6,7 +6,7 @@ import svg_path
 
 /// Return the signed Nonzero winding level at a point. Boundary samples fall
 /// back to filled/not-filled because a signed winding is undefined there.
-pub fn nonzero_level(
+pub fn nonzero_level_at(
   point: svg_path.Point,
   within path: svg_path.Path,
   options options: svg_path.ContainmentOptions,
@@ -35,7 +35,7 @@ pub fn nonzero_level(
 
 /// Sample the Nonzero winding field immediately on the geometric left and
 /// right of a segment. The first result is the left-side level.
-pub fn nonzero_side_levels(
+pub fn segment_side_nonzero_levels(
   segment: svg_path.Segment,
   within path: svg_path.Path,
   tolerance tolerance: Float,
@@ -57,8 +57,16 @@ pub fn nonzero_side_levels(
         )
       let left = svg_path.Point(midpoint.x +. normal.x, midpoint.y +. normal.y)
       let right = svg_path.Point(midpoint.x -. normal.x, midpoint.y -. normal.y)
-      use left_level <- result.try(nonzero_level(left, within: path, options:))
-      use right_level <- result.try(nonzero_level(right, within: path, options:))
+      use left_level <- result.try(nonzero_level_at(
+        left,
+        within: path,
+        options:,
+      ))
+      use right_level <- result.try(nonzero_level_at(
+        right,
+        within: path,
+        options:,
+      ))
       Ok(#(left_level, right_level))
     }
   }

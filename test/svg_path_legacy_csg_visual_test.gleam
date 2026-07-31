@@ -7,8 +7,8 @@ import gleam/result
 import gleam/string
 import gleeunit
 import svg_path
-import svg_path/csg
 import svg_path/effects
+import svg_path/legacy/csg
 import svg_path/svg
 import svg_path/transform
 import svg_path/trig

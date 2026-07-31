@@ -1,4 +1,4 @@
-//// Arrangement-based Nonzero union and segment noding.
+//// Legacy arrangement-based Nonzero union and segment noding.
 ////
 //// The pipeline preserves occurrence and operand provenance through
 //// intersection noding, overlap ownership, fill-level classification, and
@@ -11,10 +11,10 @@ import gleam/order
 import gleam/result
 import svg_path
 import svg_path/area
-import svg_path/fill_levels
 import svg_path/intersections
 import svg_path/overlaps
 import svg_path/trig
+import svg_path/winding_field
 
 type Operand {
   SingleInput
@@ -236,13 +236,13 @@ fn union_boundaries(
         segment:,
         ..,
       ) = first
-      use left_levels <- result.try(fill_levels.nonzero_side_levels(
+      use left_levels <- result.try(winding_field.segment_side_nonzero_levels(
         segment,
         within: left_path,
         tolerance:,
         options: svg_path.default_containment_options(),
       ))
-      use right_levels <- result.try(fill_levels.nonzero_side_levels(
+      use right_levels <- result.try(winding_field.segment_side_nonzero_levels(
         segment,
         within: right_path,
         tolerance:,
@@ -347,7 +347,7 @@ fn nonzero_boundaries(
         segment:,
         ..,
       ) = first
-      use levels <- result.try(fill_levels.nonzero_side_levels(
+      use levels <- result.try(winding_field.segment_side_nonzero_levels(
         segment,
         within: input,
         tolerance:,
