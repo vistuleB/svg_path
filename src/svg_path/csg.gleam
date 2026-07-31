@@ -123,12 +123,7 @@ pub fn union_with(
 ) -> Result(svg_path.Path, svg_path.Error) {
   let _ = fill_rule
   let _ = options
-  robust_union.union_nonzero(
-    svg_path.Path(list.append(
-      svg_path.path_subpaths(left),
-      svg_path.path_subpaths(right),
-    )),
-  )
+  robust_union.union_nonzero_paths(left, right)
 }
 
 /// Return a path whose fill is the intersection of two input paths under

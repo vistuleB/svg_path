@@ -1,0 +1,65 @@
+//// Fill-level sampling shared by arrangement operations.
+
+import gleam/float
+import gleam/result
+import svg_path
+
+/// Return the signed Nonzero winding level at a point. Boundary samples fall
+/// back to filled/not-filled because a signed winding is undefined there.
+pub fn nonzero_level(
+  point: svg_path.Point,
+  within path: svg_path.Path,
+  options options: svg_path.ContainmentOptions,
+) -> Result(Int, svg_path.Error) {
+  use winding <- result.try(svg_path.path_winding_with(
+    point,
+    within: path,
+    options:,
+  ))
+  case winding {
+    svg_path.Winding(value) -> Ok(value)
+    svg_path.BoundaryWinding -> {
+      use containment <- result.try(svg_path.path_containment_with(
+        point,
+        within: path,
+        using: svg_path.Nonzero,
+        options:,
+      ))
+      Ok(case containment {
+        svg_path.Inside | svg_path.Boundary -> 1
+        svg_path.Outside -> 0
+      })
+    }
+  }
+}
+
+/// Sample the Nonzero winding field immediately on the geometric left and
+/// right of a segment. The first result is the left-side level.
+pub fn nonzero_side_levels(
+  segment: svg_path.Segment,
+  within path: svg_path.Path,
+  tolerance tolerance: Float,
+  options options: svg_path.ContainmentOptions,
+) -> Result(#(Int, Int), svg_path.Error) {
+  use midpoint <- result.try(svg_path.segment_point(segment, at: 0.5))
+  use derivative <- result.try(svg_path.segment_derivative(segment, at: 0.5))
+  let length_squared =
+    derivative.x *. derivative.x +. derivative.y *. derivative.y
+  case length_squared <=. 0.0 {
+    True -> Ok(#(0, 0))
+    False -> {
+      let assert Ok(length) = float.square_root(length_squared)
+      let offset = tolerance *. 16.0
+      let normal =
+        svg_path.Point(
+          { 0.0 -. derivative.y } /. length *. offset,
+          derivative.x /. length *. offset,
+        )
+      let left = svg_path.Point(midpoint.x +. normal.x, midpoint.y +. normal.y)
+      let right = svg_path.Point(midpoint.x -. normal.x, midpoint.y -. normal.y)
+      use left_level <- result.try(nonzero_level(left, within: path, options:))
+      use right_level <- result.try(nonzero_level(right, within: path, options:))
+      Ok(#(left_level, right_level))
+    }
+  }
+}
