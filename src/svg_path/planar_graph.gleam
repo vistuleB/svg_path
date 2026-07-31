@@ -6,6 +6,7 @@
 //// geometric edges may meet at endpoints, but must not cross or partially
 //// overlap.
 
+import gleam/float
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
@@ -84,6 +85,11 @@ type BoundaryLink {
 
 type BoundaryRay {
   BoundaryRay(edge_id: Int, starts: Bool, angle: Float)
+}
+
+type BooleanOperation {
+  UnionOperation
+  IntersectionOperation
 }
 
 pub fn empty() -> Graph {
@@ -195,7 +201,15 @@ pub fn union_from_graph(
 ) -> Result(svg_path.Path, Error) {
   let Graph(edges:, ..) = graph
   use boundary <- result.try(
-    classify_union_edges(edges, left, right, fill_rule, tolerance, []),
+    classify_boolean_edges(
+      edges,
+      left,
+      right,
+      fill_rule,
+      UnionOperation,
+      tolerance,
+      [],
+    ),
   )
   use links <- result.try(pair_boundary_sectors(boundary, []))
   use subpaths <- result.try(
@@ -204,11 +218,73 @@ pub fn union_from_graph(
   Ok(svg_path.Path(subpaths))
 }
 
-fn classify_union_edges(
+/// Compute the Boolean intersection boundary from an already constructed
+/// graph.
+pub fn intersection_from_graph(
+  graph: Graph,
+  left: svg_path.Path,
+  right: svg_path.Path,
+  using fill_rule: svg_path.FillRule,
+  tolerance tolerance: Float,
+) -> Result(svg_path.Path, Error) {
+  let Graph(edges:, ..) = graph
+  use boundary <- result.try(
+    classify_boolean_edges(
+      edges,
+      left,
+      right,
+      fill_rule,
+      IntersectionOperation,
+      tolerance,
+      [],
+    ),
+  )
+  use links <- result.try(pair_boundary_sectors(boundary, []))
+  use subpaths <- result.try(
+    trace_boundary_edges(boundary, links, tolerance, []),
+  )
+  Ok(svg_path.Path(subpaths))
+}
+
+/// Build a planar graph for two paths and return their Boolean union boundary.
+pub fn union_paths(
+  left: svg_path.Path,
+  right: svg_path.Path,
+  using fill_rule: svg_path.FillRule,
+  tolerance tolerance: Float,
+  minimum_chord minimum_chord: Float,
+) -> Result(svg_path.Path, Error) {
+  use graph <- result.try(from_subpaths(
+    list.append(svg_path.path_subpaths(left), svg_path.path_subpaths(right)),
+    tolerance:,
+    minimum_chord:,
+  ))
+  union_from_graph(graph, left, right, using: fill_rule, tolerance:)
+}
+
+/// Build a planar graph for two paths and return their Boolean intersection
+/// boundary.
+pub fn intersection_paths(
+  left: svg_path.Path,
+  right: svg_path.Path,
+  using fill_rule: svg_path.FillRule,
+  tolerance tolerance: Float,
+  minimum_chord minimum_chord: Float,
+) -> Result(svg_path.Path, Error) {
+  use graph <- result.try(from_subpaths(
+    list.append(svg_path.path_subpaths(left), svg_path.path_subpaths(right)),
+    tolerance:,
+    minimum_chord:,
+  ))
+  intersection_from_graph(graph, left, right, using: fill_rule, tolerance:)
+}
+
+fn classify_boolean_edges(
   edges: List(Edge),
   left_path: svg_path.Path,
   right_path: svg_path.Path,
   fill_rule: svg_path.FillRule,
+  operation: BooleanOperation,
   tolerance: Float,
   boundary: List(BoundaryEdge),
 ) -> Result(List(BoundaryEdge), Error) {
@@ -236,9 +312,17 @@ fn classify_union_edges(
       let #(left_a, right_a) = left_levels
       let #(left_b, right_b) = right_levels
       let filled_left =
-        winding_filled(left_a, fill_rule) || winding_filled(left_b, fill_rule)
+        combine_filled(
+          winding_filled(left_a, fill_rule),
+          winding_filled(left_b, fill_rule),
+          operation,
+        )
       let filled_right =
-        winding_filled(right_a, fill_rule) || winding_filled(right_b, fill_rule)
+        combine_filled(
+          winding_filled(right_a, fill_rule),
+          winding_filled(right_b, fill_rule),
+          operation,
+        )
       let boundary = case filled_left, filled_right {
         False, True -> [
           BoundaryEdge(id:, segment:, start_vertex:, end_vertex:),
@@ -255,15 +339,27 @@ fn classify_union_edges(
         ]
         _, _ -> boundary
       }
-      classify_union_edges(
+      classify_boolean_edges(
         rest,
         left_path,
         right_path,
         fill_rule,
+        operation,
         tolerance,
         boundary,
       )
     }
+  }
+}
+
+fn combine_filled(
+  left: Bool,
+  right: Bool,
+  operation: BooleanOperation,
+) -> Bool {
+  case operation {
+    UnionOperation -> left || right
+    IntersectionOperation -> left && right
   }
 }
 
@@ -1201,6 +1297,158 @@ pub fn things_to_draw(graph: Graph) -> svg.ThingsToDraw {
       svg.labeled_point("v" <> int.to_string(id), "#dc2626", point, 8)
     })
   list.append(edge_things, vertex_things)
+}
+
+/// Draw a graph using the shared Boolean-debug style.
+///
+/// Each tangent-oriented cartouche shows global winding immediately to the
+/// left/right of the edge in black, with forward/reverse multiplicity below in
+/// red. Red arrowheads show the stored forward direction. Vertices use the
+/// established white-circle/red-outline style.
+pub fn annotated_things_to_draw(
+  graph: Graph,
+  source: svg_path.Path,
+  tolerance tolerance: Float,
+) -> Result(svg.ThingsToDraw, Error) {
+  let Graph(vertices:, edges:) = graph
+  use edge_things <- result.try(
+    annotated_edge_things(edges, source, tolerance, []),
+  )
+  let vertex_things =
+    vertices
+    |> list.map(fn(vertex) {
+      let Vertex(point:, ..) = vertex
+      svg.Circle(point, 5.0, "fill: #fff; stroke: #dc2626; stroke-width: 2.25")
+    })
+  Ok(list.append(edge_things, vertex_things))
+}
+
+fn annotated_edge_things(
+  edges: List(Edge),
+  source: svg_path.Path,
+  tolerance: Float,
+  accumulated: List(svg.ThingsToDraw),
+) -> Result(svg.ThingsToDraw, Error) {
+  case edges {
+    [] -> Ok(list.reverse(accumulated) |> list.flatten)
+    [edge, ..rest] -> {
+      let Edge(segment:, forward_multiplicity:, reverse_multiplicity:, ..) =
+        edge
+      use levels <- result.try(
+        fill_levels.nonzero_side_levels(
+          segment,
+          within: source,
+          tolerance:,
+          options: svg_path.default_containment_options(),
+        )
+        |> result.map_error(PathError),
+      )
+      use pose <- result.try(
+        edge_annotation_pose(edge) |> result.map_error(PathError),
+      )
+      let #(left_winding, right_winding) = levels
+      let EdgeAnnotationPose(point: midpoint, rotation:) = pose
+      // SVG's display Y axis is the reflection of the Cartesian Y axis used
+      // by the side-level calculation. Swap the textual order so the first
+      // number appears on the physical left of the directed edge.
+      let winding_label =
+        int.to_string(right_winding) <> "/" <> int.to_string(left_winding)
+      let multiplicity_label =
+        "↑"
+        <> int.to_string(forward_multiplicity)
+        <> "/"
+        <> int.to_string(reverse_multiplicity)
+        <> "↓"
+      let arrow =
+        segment_direction_arrow(segment, "#dc2626")
+        |> result.unwrap(svg.StyledPath(svg_path.path_empty(), ""))
+      let things = [
+        svg.StyledPath(
+          svg_path.Path([svg_path.subpath_assert([segment])]),
+          "fill: none; stroke: #334155; stroke-width: 3.25",
+        ),
+        arrow,
+        svg.RotatedRectangle(
+          svg_path.Point(midpoint.x -. 17.0, midpoint.y -. 12.0),
+          34.0,
+          24.0,
+          "fill: #fff; stroke: #94a3b8; stroke-width: 1",
+          rotation:,
+          origin: midpoint,
+        ),
+        svg.RotatedText(
+          winding_label,
+          "fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle",
+          svg_path.Point(midpoint.x, midpoint.y -. 2.0),
+          9,
+          rotation:,
+          origin: midpoint,
+        ),
+        svg.RotatedText(
+          multiplicity_label,
+          "fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle",
+          svg_path.Point(midpoint.x, midpoint.y +. 9.0),
+          8,
+          rotation:,
+          origin: midpoint,
+        ),
+      ]
+      annotated_edge_things(rest, source, tolerance, [things, ..accumulated])
+    }
+  }
+}
+
+/// Draw one arrowhead whose tip is the head of a segment.
+pub fn segment_direction_arrow(
+  segment: svg_path.Segment,
+  color: String,
+) -> Result(svg.ThingToDraw, Nil) {
+  use point <- result.try(
+    svg_path.segment_point(segment, at: 1.0) |> result.replace_error(Nil),
+  )
+  use derivative <- result.try(
+    svg_path.segment_derivative(segment, at: 1.0)
+    |> result.replace_error(Nil),
+  )
+  let magnitude =
+    float.square_root(
+      derivative.x *. derivative.x +. derivative.y *. derivative.y,
+    )
+    |> result.unwrap(0.0)
+  case magnitude <=. 0.000001 {
+    True -> Error(Nil)
+    False -> {
+      let ux = derivative.x /. magnitude
+      let uy = derivative.y /. magnitude
+      let px = 0.0 -. uy
+      let py = ux
+      let left =
+        svg_path.Point(
+          point.x -. ux *. 9.0 +. px *. 3.5,
+          point.y -. uy *. 9.0 +. py *. 3.5,
+        )
+      let right =
+        svg_path.Point(
+          point.x -. ux *. 9.0 -. px *. 3.5,
+          point.y -. uy *. 9.0 -. py *. 3.5,
+        )
+      Ok(svg.StyledPath(
+        svg_path.Path([svg_path.subpath_assert_polygon([point, left, right])]),
+        "fill: " <> color <> "; stroke: none",
+      ))
+    }
+  }
+}
+
+/// Draw endpoint arrowheads for every segment of a path.
+pub fn path_direction_arrows(
+  path: svg_path.Path,
+  color: String,
+) -> svg.ThingsToDraw {
+  path
+  |> svg_path.path_subpaths
+  |> list.flat_map(svg_path.subpath_segments)
+  |> list.filter_map(fn(segment) { segment_direction_arrow(segment, color) })
 }
 
 /// Return the midpoint and tangent-aligned orientation for an edge annotation.

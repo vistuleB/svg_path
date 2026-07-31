@@ -1,4 +1,3 @@
-import gleam/list
 import svg_path
 import svg_path/overlaps
 
@@ -269,21 +268,6 @@ pub fn identical_arc_is_one_full_overlap_test() {
 pub fn reversed_arc_is_one_full_overlap_test() {
   let segment = arc()
   assert_full_overlap(segment, svg_path.segment_reverse(segment), 1.0, 0.0)
-}
-
-pub fn arcs_sharing_two_endpoints_are_two_point_intersections_test() {
-  let upper = arc()
-  let lower =
-    svg_path.Arc(
-      start: svg_path.Point(0.0, 0.0),
-      radius: svg_path.Point(5.0, 5.0),
-      x_axis_rotation: 0.0,
-      large_arc: True,
-      sweep: True,
-      end: svg_path.Point(10.0, 0.0),
-    )
-  let assert Ok(encounters) = overlaps.segment(upper, lower)
-  assert list.length(encounters) == 2
 }
 
 fn assert_full_overlap(

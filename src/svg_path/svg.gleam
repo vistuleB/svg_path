@@ -26,6 +26,16 @@ pub type ThingToDraw {
   /// for the `style` attribute.
   Rectangle(svg_path.Point, Float, Float, String)
 
+  /// A rectangle rotated in degrees around the supplied origin.
+  RotatedRectangle(
+    svg_path.Point,
+    Float,
+    Float,
+    String,
+    rotation: Float,
+    origin: svg_path.Point,
+  )
+
   /// A `<circle>` element.
   ///
   /// The fields are the center point, radius, and raw CSS declarations for the
@@ -43,6 +53,16 @@ pub type ThingToDraw {
   /// The fields are text content, raw CSS declarations for the `style`
   /// attribute, the text position, and the font size in SVG user units.
   Text(String, String, svg_path.Point, Int)
+
+  /// Text rotated in degrees around the supplied origin.
+  RotatedText(
+    String,
+    String,
+    svg_path.Point,
+    Int,
+    rotation: Float,
+    origin: svg_path.Point,
+  )
 }
 
 /// A list of items to render inside a generated SVG document.
@@ -153,13 +173,50 @@ fn thing_element(
     StyledPath(path, style) -> path_element(path, style)
     Rectangle(top_left, width, height, style) ->
       rectangle_element(top_left, width, height, style, format)
+    RotatedRectangle(top_left, width, height, style, rotation, origin) ->
+      rotated_rectangle_element(
+        top_left,
+        width,
+        height,
+        style,
+        rotation,
+        origin,
+        format,
+      )
     Circle(center, radius, style) ->
       circle_element(center, radius, style, format)
     Ellipse(center, radius, style) ->
       ellipse_element(center, radius, style, format)
     Text(label, style, point, font_size) ->
       text_element(label, style, point, font_size, format)
+    RotatedText(label, style, point, font_size, rotation, origin) ->
+      rotated_text_element(
+        label,
+        style,
+        point,
+        font_size,
+        rotation,
+        origin,
+        format,
+      )
   }
+}
+
+fn rotated_rectangle_element(
+  top_left: svg_path.Point,
+  width: Float,
+  height: Float,
+  style: String,
+  rotation: Float,
+  origin: svg_path.Point,
+  format: number_format.NumberFormat,
+) -> String {
+  add_rotation(
+    rectangle_element(top_left, width, height, style, format),
+    rotation,
+    origin,
+    format,
+  )
 }
 
 fn path_element(path: svg_path.Path, style: String) -> String {
@@ -244,6 +301,44 @@ fn text_element(
   <> "\">"
   <> text_escape(label)
   <> "</text>"
+}
+
+fn rotated_text_element(
+  label: String,
+  style: String,
+  point: svg_path.Point,
+  font_size: Int,
+  rotation: Float,
+  origin: svg_path.Point,
+  format: number_format.NumberFormat,
+) -> String {
+  add_rotation(
+    text_element(label, style, point, font_size, format),
+    rotation,
+    origin,
+    format,
+  )
+}
+
+fn add_rotation(
+  element: String,
+  rotation: Float,
+  origin: svg_path.Point,
+  format: number_format.NumberFormat,
+) -> String {
+  let transform =
+    " transform=\"rotate("
+    <> number_format.number(rotation, with: format)
+    <> " "
+    <> number_format.number(origin.x, with: format)
+    <> " "
+    <> number_format.number(origin.y, with: format)
+    <> ")\""
+  let assert Ok(#(before, after)) = string.split_once(element, on: ">")
+  case string.ends_with(before, " /") {
+    True -> string.drop_end(before, up_to: 2) <> transform <> " />" <> after
+    False -> before <> transform <> ">" <> after
+  }
 }
 
 fn view_box_value(
