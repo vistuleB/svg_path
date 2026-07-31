@@ -49,7 +49,7 @@ const tangent_epsilon = 0.000001
 
 const point_tolerance = 0.000000001
 
-const tangent_heal_angle_degrees = 0.01
+const default_tangent_heal_angle_degrees = 2.0
 
 const stable_tangent_assertion_diameter = 0.01
 
@@ -129,14 +129,19 @@ pub type FittingOptions {
 /// Options for offset construction.
 ///
 /// `fitting` controls offset approximation, `trimming` controls projection and
-/// root-finding used while pruning, and `stalled_offset_diameter` decides when
+/// root-finding used while pruning, `stalled_offset_diameter` decides when
 /// the stalled-run builder treats an offset piece as too small to keep as an
-/// ordinary independently fitted segment.
+/// ordinary independently fitted segment, and `tangent_heal_angle_degrees` is
+/// the maximum tangent change-of-direction, in degrees, between two adjacent
+/// offset pieces that is still treated as a smooth boundary and welded to a
+/// single vertex. Larger values weld more near-smooth joins, avoiding the tiny
+/// degenerate connector segments that otherwise appear between offset pieces.
 pub type Options {
   Options(
     fitting: FittingOptions,
     trimming: svg_path.DistanceOptions,
     stalled_offset_diameter: Float,
+    tangent_heal_angle_degrees: Float,
     join: Join,
   )
 }
@@ -201,6 +206,7 @@ pub fn default_options() -> Options {
     ),
     trimming: svg_path.default_distance_options(),
     stalled_offset_diameter: default_stalled_offset_diameter,
+    tangent_heal_angle_degrees: default_tangent_heal_angle_degrees,
     join: Miter(default_miter_limit),
   )
 }
@@ -3199,7 +3205,10 @@ fn stalled_run_smooth_offset_segments(
       converted: [],
     ),
   )
-  use _ <- result.try(assert_smooth_offset_postconditions(offsets))
+  use _ <- result.try(assert_smooth_offset_postconditions(
+    offsets,
+    options.tangent_heal_angle_degrees,
+  ))
   Ok(offsets)
 }
 
@@ -3290,7 +3299,13 @@ fn offset_smooth_source_pieces(
   converted converted: List(OffsetSegment),
 ) -> Result(List(OffsetSegment), Error) {
   case pieces {
-    [] -> heal_offset_boundaries(list.reverse(converted), distance, closed:)
+    [] ->
+      heal_offset_boundaries(
+        list.reverse(converted),
+        distance,
+        options.tangent_heal_angle_degrees,
+        closed:,
+      )
     [first, ..rest] -> {
       use offsets <- result.try(offset_smooth_source_piece(
         first,
@@ -3476,12 +3491,17 @@ fn stalled_segment_offset_samples(
 
 fn assert_smooth_offset_postconditions(
   offsets: List(OffsetSegment),
+  heal_angle: Float,
 ) -> Result(Nil, Error) {
   case offsets {
     [] | [_] -> Ok(Nil)
     [first, second, ..rest] -> {
-      use _ <- result.try(assert_smooth_offset_boundary(first, second))
-      assert_smooth_offset_postconditions([second, ..rest])
+      use _ <- result.try(assert_smooth_offset_boundary(
+        first,
+        second,
+        heal_angle,
+      ))
+      assert_smooth_offset_postconditions([second, ..rest], heal_angle)
     }
   }
 }
@@ -3489,6 +3509,7 @@ fn assert_smooth_offset_postconditions(
 fn assert_smooth_offset_boundary(
   left: OffsetSegment,
   right: OffsetSegment,
+  heal_angle: Float,
 ) -> Result(Nil, Error) {
   case
     svg_path.segment_end(left.segment) == svg_path.segment_start(right.segment)
@@ -3498,7 +3519,11 @@ fn assert_smooth_offset_boundary(
       case left.source_end == right.source_start {
         False -> Ok(Nil)
         True ->
-          assert_smooth_offset_tangent_boundary(left.segment, right.segment)
+          assert_smooth_offset_tangent_boundary(
+            left.segment,
+            right.segment,
+            heal_angle,
+          )
       }
   }
 }
@@ -3506,6 +3531,7 @@ fn assert_smooth_offset_boundary(
 fn assert_smooth_offset_tangent_boundary(
   left: svg_path.Segment,
   right: svg_path.Segment,
+  heal_angle: Float,
 ) -> Result(Nil, Error) {
   use left_diameter <- result.try(segment_diameter(left))
   use right_diameter <- result.try(segment_diameter(right))
@@ -3519,7 +3545,7 @@ fn assert_smooth_offset_tangent_boundary(
       use right_tangent <- result.try(unit_tangent(right, t: 0.0))
       let angle =
         float.absolute_value(signed_angle(left_tangent, right_tangent))
-      case angle <=. tangent_heal_angle_degrees {
+      case angle <=. heal_angle {
         True -> Ok(Nil)
         False -> Error(DegenerateTangent(1.0))
       }
@@ -3621,13 +3647,13 @@ fn mark_closed_join_free_portion(
 fn source_boundary_is_smooth(
   left: svg_path.Segment,
   right: svg_path.Segment,
-  _options: Options,
+  options: Options,
 ) -> Bool {
   case unit_tangent(left, t: 1.0), unit_tangent(right, t: 0.0) {
     Ok(left_tangent), Ok(right_tangent) -> {
       let angle =
         float.absolute_value(signed_angle(left_tangent, right_tangent))
-      angle <=. tangent_heal_angle_degrees
+      angle <=. options.tangent_heal_angle_degrees
     }
     _, _ -> False
   }
@@ -3643,7 +3669,12 @@ fn offset_subpath_segments(
 ) -> Result(List(OffsetSegment), Error) {
   case segments {
     [] ->
-      heal_offset_boundaries(list.reverse(converted), distance, closed: closed)
+      heal_offset_boundaries(
+        list.reverse(converted),
+        distance,
+        options.tangent_heal_angle_degrees,
+        closed: closed,
+      )
     [first, ..rest] -> {
       use offsets <- result.try(offset_source_segment_with_builder(
         first,
@@ -3666,18 +3697,24 @@ fn offset_subpath_segments(
 fn heal_offset_boundaries(
   offsets: List(OffsetSegment),
   distance: Float,
+  heal_angle: Float,
   closed closed: Bool,
 ) -> Result(List(OffsetSegment), Error) {
-  use healed <- result.try(heal_adjacent_offset_boundaries(offsets, distance))
+  use healed <- result.try(heal_adjacent_offset_boundaries(
+    offsets,
+    distance,
+    heal_angle,
+  ))
   case closed {
     False -> Ok(healed)
-    True -> heal_wrapping_offset_boundary(healed, distance)
+    True -> heal_wrapping_offset_boundary(healed, distance, heal_angle)
   }
 }
 
 fn heal_adjacent_offset_boundaries(
   offsets: List(OffsetSegment),
   distance: Float,
+  heal_angle: Float,
 ) -> Result(List(OffsetSegment), Error) {
   case offsets {
     [] | [_] -> Ok(offsets)
@@ -3686,8 +3723,9 @@ fn heal_adjacent_offset_boundaries(
         first,
         second,
         distance,
+        heal_angle,
       ))
-      heal_adjacent_offset_boundaries_loop(second, rest, distance, healed: [
+      heal_adjacent_offset_boundaries_loop(second, rest, distance, heal_angle, healed: [
         first,
       ])
     }
@@ -3698,6 +3736,7 @@ fn heal_adjacent_offset_boundaries_loop(
   previous: OffsetSegment,
   rest: List(OffsetSegment),
   distance: Float,
+  heal_angle: Float,
   healed healed: List(OffsetSegment),
 ) -> Result(List(OffsetSegment), Error) {
   case rest {
@@ -3707,8 +3746,9 @@ fn heal_adjacent_offset_boundaries_loop(
         previous,
         next,
         distance,
+        heal_angle,
       ))
-      heal_adjacent_offset_boundaries_loop(next, remaining, distance, healed: [
+      heal_adjacent_offset_boundaries_loop(next, remaining, distance, heal_angle, healed: [
         previous,
         ..healed
       ])
@@ -3719,6 +3759,7 @@ fn heal_adjacent_offset_boundaries_loop(
 fn heal_wrapping_offset_boundary(
   offsets: List(OffsetSegment),
   distance: Float,
+  heal_angle: Float,
 ) -> Result(List(OffsetSegment), Error) {
   case offsets {
     [] | [_] -> Ok(offsets)
@@ -3728,6 +3769,7 @@ fn heal_wrapping_offset_boundary(
         last,
         first,
         distance,
+        heal_angle,
       ))
       Ok([first, ..replace_last_offset(rest, last)])
     }
@@ -3738,8 +3780,9 @@ fn heal_offset_boundary(
   left: OffsetSegment,
   right: OffsetSegment,
   distance: Float,
+  heal_angle: Float,
 ) -> Result(#(OffsetSegment, OffsetSegment), Error) {
-  case shared_boundary_tangent(left, right) {
+  case shared_boundary_tangent(left, right, heal_angle) {
     Error(_) -> Ok(#(left, right))
     Ok(tangent) -> {
       let corner = left.source_end
@@ -3754,11 +3797,12 @@ fn heal_offset_boundary(
 fn shared_boundary_tangent(
   left: OffsetSegment,
   right: OffsetSegment,
+  heal_angle: Float,
 ) -> Result(svg_path.Point, Error) {
   let left_tangent = left.source_end_tangent
   let right_tangent = right.source_start_tangent
   let angle = float.absolute_value(signed_angle(left_tangent, right_tangent))
-  case angle <=. tangent_heal_angle_degrees {
+  case angle <=. heal_angle {
     False -> Error(NonFinite)
     True -> unit_vector(add(left_tangent, right_tangent), t: 1.0)
   }
