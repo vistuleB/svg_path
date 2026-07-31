@@ -163,8 +163,49 @@ pub fn union_nonzero_composes_three_coincident_contributors_test() {
   assert_winding_depth(union, svg_path.Point(1.0, 1.0), 3)
 }
 
+pub fn union_nonzero_preserves_decreasing_concentric_winding_test() {
+  let input =
+    svg_path.Path([
+      circle_subpath(40.0),
+      circle_subpath(30.0),
+      circle_subpath(20.0) |> svg_path.subpath_reverse,
+      circle_subpath(10.0) |> svg_path.subpath_reverse,
+    ])
+
+  let assert Ok(union) = robust_union.union_nonzero(input)
+
+  assert_winding_depth(union, svg_path.Point(0.0, 0.0), 0)
+  assert_winding_depth(union, svg_path.Point(15.0, 0.0), 1)
+  assert_winding_depth(union, svg_path.Point(25.0, 0.0), 2)
+  assert_winding_depth(union, svg_path.Point(35.0, 0.0), 1)
+}
+
 fn line(x1: Float, y1: Float, x2: Float, y2: Float) -> svg_path.Segment {
   svg_path.Line(start: svg_path.Point(x1, y1), end: svg_path.Point(x2, y2))
+}
+
+fn circle_subpath(radius: Float) -> svg_path.Subpath {
+  let left = svg_path.Point(0.0 -. radius, 0.0)
+  let right = svg_path.Point(radius, 0.0)
+  svg_path.subpath_assert([
+    svg_path.Arc(
+      start: right,
+      radius: svg_path.Point(radius, radius),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: True,
+      end: left,
+    ),
+    svg_path.Arc(
+      start: left,
+      radius: svg_path.Point(radius, radius),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: True,
+      end: right,
+    ),
+  ])
+  |> svg_path.subpath_assert_set_closed(closed: True)
 }
 
 fn rectangle(
