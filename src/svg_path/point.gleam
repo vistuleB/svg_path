@@ -23,6 +23,20 @@ pub fn direction(degrees degrees: Float) -> svg_path.Point {
   svg_path.Point(trig.cos_degrees(degrees), trig.sin_degrees(degrees))
 }
 
+/// Return the clockwise SVG heading of a vector in degrees from positive X.
+///
+/// `0` points right, `90` points down, `180` points left, and `270` points up.
+/// A zero vector has heading `0`.
+pub fn heading(vector: svg_path.Point) -> Float {
+  let degrees = trig.atan2_degrees(vector.y, vector.x)
+  let turns = float.floor(degrees /. 360.0)
+  let normalized = degrees -. turns *. 360.0
+  case normalized <. 0.0 {
+    True -> normalized +. 360.0
+    False -> normalized
+  }
+}
+
 /// Add two points as vectors.
 pub fn add(a: svg_path.Point, b: svg_path.Point) -> svg_path.Point {
   svg_path.Point(a.x +. b.x, a.y +. b.y)

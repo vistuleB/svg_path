@@ -1,0 +1,136 @@
+import gleam/float
+import gleam/list
+import svg_path
+import svg_path/robust_union
+
+const tolerance = 0.000001
+
+pub fn segment_encounters_reports_line_overlap_with_reversed_right_test() {
+  let left = line(0.0, 0.0, 10.0, 0.0)
+  let right = line(7.0, 0.0, 3.0, 0.0)
+
+  let assert Ok([encounter]) = robust_union.segment_encounters(left, right)
+  let assert robust_union.OverlapEncounter(
+    left_from:,
+    left_to:,
+    right_from:,
+    right_to:,
+    representative:,
+  ) = encounter
+
+  assert near(left_from, 0.3)
+  assert near(left_to, 0.7)
+  assert near(right_from, 1.0)
+  assert near(right_to, 0.0)
+  assert representative == line(3.0, 0.0, 7.0, 0.0)
+}
+
+pub fn segment_encounters_reports_crossing_point_test() {
+  let horizontal = line(0.0, 0.0, 10.0, 0.0)
+  let vertical = line(5.0, -5.0, 5.0, 5.0)
+
+  let assert Ok([encounter]) =
+    robust_union.segment_encounters(horizontal, vertical)
+  let assert robust_union.PointEncounter(left_t:, right_t:, point:) = encounter
+
+  assert near(left_t, 0.5)
+  assert near(right_t, 0.5)
+  assert point == svg_path.Point(5.0, 0.0)
+}
+
+pub fn node_segments_splits_at_crossing_without_mutating_inputs_test() {
+  let horizontal = line(0.0, 0.0, 10.0, 0.0)
+  let vertical = line(5.0, -5.0, 5.0, 5.0)
+
+  let assert Ok(segments) = robust_union.node_segments([horizontal, vertical])
+
+  assert list.length(segments) == 4
+  assert contains_segment(segments, line(0.0, 0.0, 5.0, 0.0))
+  assert contains_segment(segments, line(5.0, 0.0, 10.0, 0.0))
+  assert contains_segment(segments, line(5.0, -5.0, 5.0, 0.0))
+  assert contains_segment(segments, line(5.0, 0.0, 5.0, 5.0))
+}
+
+pub fn node_segments_canonicalizes_partial_overlap_as_two_copies_test() {
+  let left = line(0.0, 0.0, 10.0, 0.0)
+  let right = line(3.0, 0.0, 7.0, 0.0)
+
+  let assert Ok(segments) = robust_union.node_segments([left, right])
+
+  assert list.length(segments) == 4
+  assert contains_segment(segments, line(0.0, 0.0, 3.0, 0.0))
+  assert contains_segment(segments, line(7.0, 0.0, 10.0, 0.0))
+  assert count_segment(segments, line(3.0, 0.0, 7.0, 0.0)) == 2
+}
+
+pub fn node_segments_canonicalizes_reversed_overlap_as_same_copies_test() {
+  let left = line(0.0, 0.0, 10.0, 0.0)
+  let right = line(7.0, 0.0, 3.0, 0.0)
+
+  let assert Ok(segments) = robust_union.node_segments([left, right])
+
+  assert list.length(segments) == 4
+  assert contains_segment(segments, line(0.0, 0.0, 3.0, 0.0))
+  assert contains_segment(segments, line(7.0, 0.0, 10.0, 0.0))
+  assert count_segment(segments, line(3.0, 0.0, 7.0, 0.0)) == 2
+}
+
+pub fn node_segments_handles_overlap_and_crossing_together_test() {
+  let base = line(0.0, 0.0, 10.0, 0.0)
+  let overlap = line(2.0, 0.0, 8.0, 0.0)
+  let crossing = line(5.0, -5.0, 5.0, 5.0)
+
+  let assert Ok(segments) =
+    robust_union.node_segments([base, overlap, crossing])
+
+  assert list.length(segments) == 8
+  assert count_segment(segments, line(2.0, 0.0, 5.0, 0.0)) == 2
+  assert count_segment(segments, line(5.0, 0.0, 8.0, 0.0)) == 2
+  assert contains_segment(segments, line(0.0, 0.0, 2.0, 0.0))
+  assert contains_segment(segments, line(8.0, 0.0, 10.0, 0.0))
+  assert contains_segment(segments, line(5.0, -5.0, 5.0, 0.0))
+  assert contains_segment(segments, line(5.0, 0.0, 5.0, 5.0))
+}
+
+pub fn node_subpaths_uses_same_segment_engine_test() {
+  let left =
+    svg_path.subpath_assert([
+      line(0.0, 0.0, 10.0, 0.0),
+      line(10.0, 0.0, 10.0, 10.0),
+    ])
+  let right =
+    svg_path.subpath_assert([
+      line(3.0, 0.0, 7.0, 0.0),
+      line(7.0, 0.0, 7.0, 4.0),
+    ])
+
+  let assert Ok(segments) = robust_union.node_subpaths(left, right)
+
+  assert count_segment(segments, line(3.0, 0.0, 7.0, 0.0)) == 2
+  assert contains_segment(segments, line(0.0, 0.0, 3.0, 0.0))
+  assert contains_segment(segments, line(7.0, 0.0, 10.0, 0.0))
+}
+
+fn line(x1: Float, y1: Float, x2: Float, y2: Float) -> svg_path.Segment {
+  svg_path.Line(start: svg_path.Point(x1, y1), end: svg_path.Point(x2, y2))
+}
+
+fn contains_segment(
+  segments: List(svg_path.Segment),
+  segment: svg_path.Segment,
+) -> Bool {
+  count_segment(segments, segment) > 0
+}
+
+fn count_segment(
+  segments: List(svg_path.Segment),
+  wanted: svg_path.Segment,
+) -> Int {
+  segments
+  |> list.filter(keeping: fn(segment) { segment == wanted })
+  |> list.length
+}
+
+fn near(a: Float, b: Float) -> Bool {
+  float.absolute_value(a -. b) <=. tolerance
+}
