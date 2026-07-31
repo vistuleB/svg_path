@@ -361,3 +361,13 @@ describe the production arrangement pipeline and replaced the original
 handoff with a completion summary.
 
 The separate arc-intersection timeout remains outside the robust-union plan.
+
+## Planar-graph follow-up
+
+Gallery candidate after the graph builder is complete:
+
+- `examples/debug/planar_graph_separate_radius_circle_matrix.svg`
+- Shows oriented graph edges, vertices, signed left/right winding numbers, and
+  directional multiplicities for twelve concentric-circle configurations.
+- Before gallery inclusion, regenerate it from actual `Graph` values rather
+  than retaining the current debug SVG construction.

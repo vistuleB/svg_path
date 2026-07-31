@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1420" viewBox="0 0 1500 1420">
+  <defs>
+    <marker id="ab" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#2563eb"/></marker>
+    <marker id="ao" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#ea580c"/></marker>
+
+    <!-- Blue reference circle: clockwise, starting at 0 degrees. -->
+    <g id="blue180" fill="none" stroke="#2563eb" stroke-width="6" opacity=".58" marker-end="url(#ab)">
+      <path d="M70 0A70 70 0 0 1-70 0"/><path d="M-70 0A70 70 0 0 1 70 0"/>
+    </g>
+    <g id="blue90" fill="none" stroke="#2563eb" stroke-width="6" opacity=".58" marker-end="url(#ab)">
+      <path d="M70 0A70 70 0 0 1 0 70"/><path d="M0 70A70 70 0 0 1-70 0"/><path d="M-70 0A70 70 0 0 1 0-70"/><path d="M0-70A70 70 0 0 1 70 0"/>
+    </g>
+
+    <!-- Orange circle variants. Rotation controls phase; scale(1,-1) reverses orientation. -->
+    <g id="orange180" fill="none" stroke="#ea580c" stroke-width="6" opacity=".58" marker-end="url(#ao)">
+      <path d="M70 0A70 70 0 0 1-70 0"/><path d="M-70 0A70 70 0 0 1 70 0"/>
+    </g>
+    <g id="orange90" fill="none" stroke="#ea580c" stroke-width="6" opacity=".58" marker-end="url(#ao)">
+      <path d="M70 0A70 70 0 0 1 0 70"/><path d="M0 70A70 70 0 0 1-70 0"/><path d="M-70 0A70 70 0 0 1 0-70"/><path d="M0-70A70 70 0 0 1 70 0"/>
+    </g>
+
+    <!-- Noded graph circles. Vertex count is the union of the two endpoint sets. -->
+    <g id="graph2"><circle r="70" fill="none" stroke="#334155" stroke-width="4"/><g fill="#fff" stroke="#dc2626" stroke-width="2"><circle cx="70" r="5"/><circle cx="-70" r="5"/></g></g>
+    <g id="graph4"><circle r="70" fill="none" stroke="#334155" stroke-width="4"/><g fill="#fff" stroke="#dc2626" stroke-width="2"><circle cx="70" r="5"/><circle cy="70" r="5"/><circle cx="-70" r="5"/><circle cy="-70" r="5"/></g></g>
+    <g id="graph4phase"><circle r="70" fill="none" stroke="#334155" stroke-width="4"/><g fill="#fff" stroke="#dc2626" stroke-width="2"><circle cx="70" r="5"/><circle cx="49.5" cy="49.5" r="5"/><circle cx="-70" r="5"/><circle cx="-49.5" cy="-49.5" r="5"/></g></g>
+    <g id="graph8"><circle r="70" fill="none" stroke="#334155" stroke-width="4"/><g fill="#fff" stroke="#dc2626" stroke-width="2"><circle cx="70" r="4"/><circle cx="49.5" cy="49.5" r="4"/><circle cy="70" r="4"/><circle cx="-49.5" cy="49.5" r="4"/><circle cx="-70" r="4"/><circle cx="-49.5" cy="-49.5" r="4"/><circle cy="-70" r="4"/><circle cx="49.5" cy="-49.5" r="4"/></g></g>
+
+    <!-- Every edge in one graph has the same signed global left/right winding. -->
+    <g id="m20"><rect x="-25" y="-18" width="50" height="36" rx="5" fill="#fff" stroke="#94a3b8"/><text y="-3" text-anchor="middle" font-family="ui-monospace,monospace" font-size="12" font-weight="700" fill="#0f172a">0/2</text><text y="12" text-anchor="middle" font-family="ui-monospace,monospace" font-size="10" font-weight="700" fill="#dc2626">↑2/0↓</text></g>
+    <g id="m11"><rect x="-25" y="-18" width="50" height="36" rx="5" fill="#fff" stroke="#94a3b8"/><text y="-3" text-anchor="middle" font-family="ui-monospace,monospace" font-size="12" font-weight="700" fill="#0f172a">0/0</text><text y="12" text-anchor="middle" font-family="ui-monospace,monospace" font-size="10" font-weight="700" fill="#dc2626">↑1/1↓</text></g>
+  </defs>
+
+  <rect width="1500" height="1420" fill="#f8fafc"/>
+  <text x="750" y="38" text-anchor="middle" font-family="system-ui,sans-serif" font-size="25" font-weight="700" fill="#0f172a">Equal-circle overlap matrix</text>
+  <text x="750" y="64" text-anchor="middle" font-family="system-ui,sans-serif" font-size="13" fill="#64748b">Cartouche: black = winding L/R · red = multiplicity forward/reverse</text>
+
+  <!-- Column headings. -->
+  <g font-family="system-ui,sans-serif" text-anchor="middle" fill="#0f172a">
+    <text x="410" y="104" font-size="18" font-weight="600">phase 0°</text>
+    <text x="820" y="104" font-size="18" font-weight="600">phase 45°</text>
+    <text x="1230" y="104" font-size="18" font-weight="600">phase 180°</text>
+  </g>
+
+  <!-- Row headings and separators. -->
+  <g font-family="system-ui,sans-serif" fill="#0f172a">
+    <text x="20" y="250" font-size="17" font-weight="650">180° components</text><text x="20" y="274" font-size="15" fill="#475569">same orientation</text>
+    <text x="20" y="570" font-size="17" font-weight="650">180° components</text><text x="20" y="594" font-size="15" fill="#475569">opposite orientation</text>
+    <text x="20" y="890" font-size="17" font-weight="650">90° components</text><text x="20" y="914" font-size="15" fill="#475569">same orientation</text>
+    <text x="20" y="1210" font-size="17" font-weight="650">90° components</text><text x="20" y="1234" font-size="15" fill="#475569">opposite orientation</text>
+  </g>
+  <g stroke="#dbe3ec"><line x1="180" y1="120" x2="1480" y2="120"/><line x1="180" y1="440" x2="1480" y2="440"/><line x1="180" y1="760" x2="1480" y2="760"/><line x1="180" y1="1080" x2="1480" y2="1080"/><line x1="180" y1="1400" x2="1480" y2="1400"/><line x1="615" y1="120" x2="615" y2="1400"/><line x1="1025" y1="120" x2="1025" y2="1400"/></g>
+
+  <!-- Cell helper convention: input center x = column-120; graph center x = column+110. -->
+  <!-- Row 1: 180°, same orientation. -->
+  <g transform="translate(290 275)"><use href="#blue180"/><use href="#orange180"/><circle cx="70" r="4" fill="#0f172a"/></g><text x="290" y="380" text-anchor="middle" font-family="system-ui" font-size="12" fill="#64748b">blue start · orange start</text><g transform="translate(520 275)"><use href="#graph2"/><use href="#m20"/></g>
+  <g transform="translate(700 275)"><use href="#blue180"/><g transform="rotate(45)"><use href="#orange180"/><circle cx="70" r="4" fill="#ea580c"/></g><circle cx="70" r="4" fill="#2563eb"/></g><g transform="translate(930 275)"><use href="#graph4phase"/><use href="#m20"/></g>
+  <g transform="translate(1110 275)"><use href="#blue180"/><g transform="rotate(180)"><use href="#orange180"/><circle cx="70" r="4" fill="#ea580c"/></g><circle cx="70" r="4" fill="#2563eb"/></g><g transform="translate(1340 275)"><use href="#graph2"/><use href="#m20"/></g>
+
+  <!-- Row 2: 180°, opposite orientation. -->
+  <g transform="translate(290 595)"><use href="#blue180"/><g transform="scale(1,-1)"><use href="#orange180"/></g><circle cx="70" r="4" fill="#0f172a"/></g><g transform="translate(520 595)"><use href="#graph2"/><use href="#m11"/></g>
+  <g transform="translate(700 595)"><use href="#blue180"/><g transform="rotate(45) scale(1,-1)"><use href="#orange180"/><circle cx="70" r="4" fill="#ea580c"/></g><circle cx="70" r="4" fill="#2563eb"/></g><g transform="translate(930 595)"><use href="#graph4phase"/><use href="#m11"/></g>
+  <g transform="translate(1110 595)"><use href="#blue180"/><g transform="rotate(180) scale(1,-1)"><use href="#orange180"/><circle cx="70" r="4" fill="#ea580c"/></g><circle cx="70" r="4" fill="#2563eb"/></g><g transform="translate(1340 595)"><use href="#graph2"/><use href="#m11"/></g>
+
+  <!-- Row 3: 90°, same orientation. -->
+  <g transform="translate(290 915)"><use href="#blue90"/><use href="#orange90"/><circle cx="70" r="4" fill="#0f172a"/></g><g transform="translate(520 915)"><use href="#graph4"/><use href="#m20"/></g>
+  <g transform="translate(700 915)"><use href="#blue90"/><g transform="rotate(45)"><use href="#orange90"/><circle cx="70" r="4" fill="#ea580c"/></g><circle cx="70" r="4" fill="#2563eb"/></g><g transform="translate(930 915)"><use href="#graph8"/><use href="#m20"/></g>
+  <g transform="translate(1110 915)"><use href="#blue90"/><g transform="rotate(180)"><use href="#orange90"/><circle cx="70" r="4" fill="#ea580c"/></g><circle cx="70" r="4" fill="#2563eb"/></g><g transform="translate(1340 915)"><use href="#graph4"/><use href="#m20"/></g>
+
+  <!-- Row 4: 90°, opposite orientation. -->
+  <g transform="translate(290 1235)"><use href="#blue90"/><g transform="scale(1,-1)"><use href="#orange90"/></g><circle cx="70" r="4" fill="#0f172a"/></g><g transform="translate(520 1235)"><use href="#graph4"/><use href="#m11"/></g>
+  <g transform="translate(700 1235)"><use href="#blue90"/><g transform="rotate(45) scale(1,-1)"><use href="#orange90"/><circle cx="70" r="4" fill="#ea580c"/></g><circle cx="70" r="4" fill="#2563eb"/></g><g transform="translate(930 1235)"><use href="#graph8"/><use href="#m11"/></g>
+  <g transform="translate(1110 1235)"><use href="#blue90"/><g transform="rotate(180) scale(1,-1)"><use href="#orange90"/><circle cx="70" r="4" fill="#ea580c"/></g><circle cx="70" r="4" fill="#2563eb"/></g><g transform="translate(1340 1235)"><use href="#graph4"/><use href="#m11"/></g>
+
+  <!-- Repeated local labels. -->
+  <g font-family="system-ui,sans-serif" font-size="12" fill="#64748b" text-anchor="middle">
+    <text x="290" y="155">input</text><text x="520" y="155">graph</text><text x="700" y="155">input</text><text x="930" y="155">graph</text><text x="1110" y="155">input</text><text x="1340" y="155">graph</text>
+    <text x="290" y="475">input</text><text x="520" y="475">graph</text><text x="700" y="475">input</text><text x="930" y="475">graph</text><text x="1110" y="475">input</text><text x="1340" y="475">graph</text>
+    <text x="290" y="795">input</text><text x="520" y="795">graph</text><text x="700" y="795">input</text><text x="930" y="795">graph</text><text x="1110" y="795">input</text><text x="1340" y="795">graph</text>
+    <text x="290" y="1115">input</text><text x="520" y="1115">graph</text><text x="700" y="1115">input</text><text x="930" y="1115">graph</text><text x="1110" y="1115">input</text><text x="1340" y="1115">graph</text>
+  </g>
+</svg>

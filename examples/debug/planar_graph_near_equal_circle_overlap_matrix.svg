@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1320" height="1260" viewBox="0 0 1320 1260">
+  <defs>
+    <marker id="ab" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#2563eb"/></marker>
+    <marker id="ao" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#ea580c"/></marker>
+    <g id="blue180" fill="none" stroke="#2563eb" stroke-width="6" opacity=".58" marker-end="url(#ab)"><path d="M70 0A70 70 0 0 1-70 0"/><path d="M-70 0A70 70 0 0 1 70 0"/></g>
+    <g id="blue90" fill="none" stroke="#2563eb" stroke-width="6" opacity=".58" marker-end="url(#ab)"><path d="M70 0A70 70 0 0 1 0 70"/><path d="M0 70A70 70 0 0 1-70 0"/><path d="M-70 0A70 70 0 0 1 0-70"/><path d="M0-70A70 70 0 0 1 70 0"/></g>
+    <g id="orange180" fill="none" stroke="#ea580c" stroke-width="6" opacity=".58" marker-end="url(#ao)"><path d="M70 0A70 70 0 0 1-70 0"/><path d="M-70 0A70 70 0 0 1 70 0"/></g>
+    <g id="orange90" fill="none" stroke="#ea580c" stroke-width="6" opacity=".58" marker-end="url(#ao)"><path d="M70 0A70 70 0 0 1 0 70"/><path d="M0 70A70 70 0 0 1-70 0"/><path d="M-70 0A70 70 0 0 1 0-70"/><path d="M0-70A70 70 0 0 1 70 0"/></g>
+    <g id="graph2"><circle r="70" fill="none" stroke="#334155" stroke-width="4"/><g fill="#fff" stroke="#dc2626" stroke-width="2"><circle cx="70" r="5"/><circle cx="-70" r="5"/></g></g>
+    <g id="graph4"><circle r="70" fill="none" stroke="#334155" stroke-width="4"/><g fill="#fff" stroke="#dc2626" stroke-width="2"><circle cx="70" r="5"/><circle cy="70" r="5"/><circle cx="-70" r="5"/><circle cy="-70" r="5"/></g></g>
+    <g id="graph4phase"><circle r="70" fill="none" stroke="#334155" stroke-width="4"/><g fill="#fff" stroke="#dc2626" stroke-width="2"><circle cx="70" r="5"/><circle cx="49.5" cy="49.5" r="5"/><circle cx="-70" r="5"/><circle cx="-49.5" cy="-49.5" r="5"/></g></g>
+    <g id="graph8"><circle r="70" fill="none" stroke="#334155" stroke-width="4"/><g fill="#fff" stroke="#dc2626" stroke-width="2"><circle cx="70" r="4"/><circle cx="49.5" cy="49.5" r="4"/><circle cy="70" r="4"/><circle cx="-49.5" cy="49.5" r="4"/><circle cx="-70" r="4"/><circle cx="-49.5" cy="-49.5" r="4"/><circle cy="-70" r="4"/><circle cx="49.5" cy="-49.5" r="4"/></g></g>
+    <g id="m20"><rect x="-25" y="-18" width="50" height="36" rx="5" fill="#fff" stroke="#94a3b8"/><text y="-3" text-anchor="middle" font-family="ui-monospace,monospace" font-size="12" font-weight="700" fill="#0f172a">0/2</text><text y="12" text-anchor="middle" font-family="ui-monospace,monospace" font-size="10" font-weight="700" fill="#dc2626">↑2/0↓</text></g>
+    <g id="m11"><rect x="-25" y="-18" width="50" height="36" rx="5" fill="#fff" stroke="#94a3b8"/><text y="-3" text-anchor="middle" font-family="ui-monospace,monospace" font-size="12" font-weight="700" fill="#0f172a">0/0</text><text y="12" text-anchor="middle" font-family="ui-monospace,monospace" font-size="10" font-weight="700" fill="#dc2626">↑1/1↓</text></g>
+    <g id="near180"><g transform="scale(0.999999428571)"><use href="#orange180"/></g></g>
+    <g id="near90"><g transform="scale(0.999999428571)"><use href="#orange90"/></g></g>
+  </defs>
+  <rect width="1320" height="1260" fill="#f8fafc"/>
+  <text x="660" y="34" text-anchor="middle" font-family="system-ui,sans-serif" font-size="24" font-weight="700" fill="#0f172a">Near-equal circles inside overlap tolerance</text>
+  <text x="660" y="60" text-anchor="middle" font-family="ui-monospace,monospace" font-size="12" fill="#475569">r = 70 / 69.99996 · tol = .00010 · black = winding L/R · red = multiplicity fwd/rev</text>
+  <g font-family="system-ui,sans-serif" text-anchor="middle" fill="#0f172a" font-size="17" font-weight="600">
+    <text x="310" y="98">phase 0°</text><text x="700" y="98">phase 45°</text><text x="1090" y="98">phase 180°</text>
+  </g>
+  <g stroke="#dbe3ec"><line x1="145" y1="112" x2="1300" y2="112"/><line x1="145" y1="392" x2="1300" y2="392"/><line x1="145" y1="672" x2="1300" y2="672"/><line x1="145" y1="952" x2="1300" y2="952"/><line x1="145" y1="1232" x2="1300" y2="1232"/><line x1="505" y1="112" x2="505" y2="1232"/><line x1="895" y1="112" x2="895" y2="1232"/></g>
+  <g font-family="system-ui,sans-serif" fill="#0f172a"><text x="15" y="230" font-size="16" font-weight="650">180° arcs</text><text x="15" y="252" font-size="14" fill="#475569">same direction</text><text x="15" y="510" font-size="16" font-weight="650">180° arcs</text><text x="15" y="532" font-size="14" fill="#475569">opposite</text><text x="15" y="790" font-size="16" font-weight="650">90° arcs</text><text x="15" y="812" font-size="14" fill="#475569">same direction</text><text x="15" y="1070" font-size="16" font-weight="650">90° arcs</text><text x="15" y="1092" font-size="14" fill="#475569">opposite</text></g>
+
+  <!-- Each cell uses the prior sheet's reusable input and graph symbols. -->
+  <!-- 180°, same. -->
+  <g transform="translate(235 250)"><use href="#blue180"/><use href="#near180"/></g><g transform="translate(385 250)"><use href="#graph2"/><use href="#m20"/></g>
+  <g transform="translate(625 250)"><use href="#blue180"/><g transform="rotate(45)"><use href="#near180"/></g></g><g transform="translate(775 250)"><use href="#graph4phase"/><use href="#m20"/></g>
+  <g transform="translate(1015 250)"><use href="#blue180"/><g transform="rotate(180)"><use href="#near180"/></g></g><g transform="translate(1165 250)"><use href="#graph2"/><use href="#m20"/></g>
+  <!-- 180°, opposite. -->
+  <g transform="translate(235 530)"><use href="#blue180"/><g transform="scale(1,-1)"><use href="#near180"/></g></g><g transform="translate(385 530)"><use href="#graph2"/><use href="#m11"/></g>
+  <g transform="translate(625 530)"><use href="#blue180"/><g transform="rotate(45) scale(1,-1)"><use href="#near180"/></g></g><g transform="translate(775 530)"><use href="#graph4phase"/><use href="#m11"/></g>
+  <g transform="translate(1015 530)"><use href="#blue180"/><g transform="rotate(180) scale(1,-1)"><use href="#near180"/></g></g><g transform="translate(1165 530)"><use href="#graph2"/><use href="#m11"/></g>
+  <!-- 90°, same. -->
+  <g transform="translate(235 810)"><use href="#blue90"/><use href="#near90"/></g><g transform="translate(385 810)"><use href="#graph4"/><use href="#m20"/></g>
+  <g transform="translate(625 810)"><use href="#blue90"/><g transform="rotate(45)"><use href="#near90"/></g></g><g transform="translate(775 810)"><use href="#graph8"/><use href="#m20"/></g>
+  <g transform="translate(1015 810)"><use href="#blue90"/><g transform="rotate(180)"><use href="#near90"/></g></g><g transform="translate(1165 810)"><use href="#graph4"/><use href="#m20"/></g>
+  <!-- 90°, opposite. -->
+  <g transform="translate(235 1090)"><use href="#blue90"/><g transform="scale(1,-1)"><use href="#near90"/></g></g><g transform="translate(385 1090)"><use href="#graph4"/><use href="#m11"/></g>
+  <g transform="translate(625 1090)"><use href="#blue90"/><g transform="rotate(45) scale(1,-1)"><use href="#near90"/></g></g><g transform="translate(775 1090)"><use href="#graph8"/><use href="#m11"/></g>
+  <g transform="translate(1015 1090)"><use href="#blue90"/><g transform="rotate(180) scale(1,-1)"><use href="#near90"/></g></g><g transform="translate(1165 1090)"><use href="#graph4"/><use href="#m11"/></g>
+
+  <g font-family="system-ui,sans-serif" font-size="11" fill="#64748b" text-anchor="middle">
+    <text x="310" y="372">input → graph</text><text x="700" y="372">input → graph</text><text x="1090" y="372">input → graph</text>
+    <text x="310" y="652">input → graph</text><text x="700" y="652">input → graph</text><text x="1090" y="652">input → graph</text>
+    <text x="310" y="932">input → graph</text><text x="700" y="932">input → graph</text><text x="1090" y="932">input → graph</text>
+    <text x="310" y="1212">input → graph</text><text x="700" y="1212">input → graph</text><text x="1090" y="1212">input → graph</text>
+  </g>
+</svg>
