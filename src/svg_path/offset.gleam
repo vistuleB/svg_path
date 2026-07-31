@@ -541,9 +541,25 @@ pub fn path_with(
   use subpaths <- result.try(chunks_to_subpaths(
     retained,
     options.fitting.tolerance,
-    closed: False,
+    closed: all_subpaths_closed(svg_path.path_subpaths(path)),
   ))
   Ok(svg_path.Path(subpaths:))
+}
+
+fn all_subpaths_closed(subpaths: List(svg_path.Subpath)) -> Bool {
+  case subpaths {
+    [] -> False
+    [first, ..rest] ->
+      svg_path.subpath_is_closed(first) && all_remaining_subpaths_closed(rest)
+  }
+}
+
+fn all_remaining_subpaths_closed(subpaths: List(svg_path.Subpath)) -> Bool {
+  case subpaths {
+    [] -> True
+    [first, ..rest] ->
+      svg_path.subpath_is_closed(first) && all_remaining_subpaths_closed(rest)
+  }
 }
 
 /// Return the retained, globally split offset sections without stitching

@@ -13,25 +13,19 @@ import gleam/result
 import svg_path
 import svg_path/area
 import svg_path/intersections
+import svg_path/overlaps
 import svg_path/trig
-
-pub type SegmentEncounter {
-  PointEncounter(left_t: Float, right_t: Float, point: svg_path.Point)
-  OverlapEncounter(
-    left_from: Float,
-    left_to: Float,
-    right_from: Float,
-    right_to: Float,
-    representative: svg_path.Segment,
-  )
-}
 
 type IndexedSegment {
   IndexedSegment(index: Int, segment: svg_path.Segment)
 }
 
 type PairEncounter {
-  PairEncounter(left_index: Int, right_index: Int, encounter: SegmentEncounter)
+  PairEncounter(
+    left_index: Int,
+    right_index: Int,
+    encounter: overlaps.SegmentEncounter,
+  )
 }
 
 type SpanReplacement {
@@ -50,49 +44,6 @@ type Candidate {
   Candidate(index: Int, segment: svg_path.Segment, turn: Float)
 }
 
-pub fn segment_encounters(
-  left: svg_path.Segment,
-  right: svg_path.Segment,
-) -> Result(List(SegmentEncounter), svg_path.Error) {
-  segment_encounters_with(left, right, options: intersections.default_options())
-}
-
-pub fn segment_encounters_with(
-  left: svg_path.Segment,
-  right: svg_path.Segment,
-  options options: intersections.IntersectionOptions,
-) -> Result(List(SegmentEncounter), svg_path.Error) {
-  case intersections.segment_with(left, right, options:) {
-    Ok(intersections) ->
-      intersections
-      |> list.map(fn(intersection) {
-        let svg_path.SegmentIntersection(left_t:, right_t:, point:) =
-          intersection
-        PointEncounter(left_t:, right_t:, point:)
-      })
-      |> Ok
-    Error(svg_path.OverlappingSegments) ->
-      case line_overlap_encounters(left, right, options.tolerance) {
-        Ok(encounters) -> Ok(encounters)
-        Error(svg_path.OverlappingSegments) ->
-          complete_curve_overlap_encounters(left, right, options.tolerance)
-        Error(error) -> Error(error)
-      }
-    Error(error) -> Error(error)
-  }
-}
-
-fn complete_curve_overlap_encounters(
-  _left: svg_path.Segment,
-  _right: svg_path.Segment,
-  _tolerance: Float,
-) -> Result(List(SegmentEncounter), svg_path.Error) {
-  // Curve overlap normalization is intentionally deferred until the tracer
-  // retains source occurrence provenance. Do not invent split parameters here:
-  // a bad span prevents all ordinary crossing cuts from reaching the face walk.
-  Ok([])
-}
-
 pub fn node_segments(
   segments: List(svg_path.Segment),
 ) -> Result(List(svg_path.Segment), svg_path.Error) {
@@ -107,10 +58,7 @@ pub fn node_segments_with(
   use encounters <- result.try(collect_pair_encounters(indexed, options, []))
   let cuts = collect_cuts(indexed, encounters, options.tolerance)
   let junctions = collect_junctions(encounters)
-  // Preserve each contour's traversal geometry while this prototype still
-  // rebuilds contours directly from their noded segment sequence. Canonical
-  // overlap representatives are retained in encounters for the later tracer.
-  let replacements = []
+  let replacements = collect_replacements(encounters)
   build_noded_segments(
     indexed,
     cuts,
@@ -126,11 +74,11 @@ fn collect_junctions(encounters: List(PairEncounter)) -> List(Junction) {
   |> list.flat_map(fn(pair) {
     let PairEncounter(left_index:, right_index:, encounter:) = pair
     case encounter {
-      PointEncounter(left_t:, right_t:, point:) -> [
+      overlaps.Intersection(left_t:, right_t:, point:) -> [
         Junction(index: left_index, t: left_t, point:),
         Junction(index: right_index, t: right_t, point:),
       ]
-      OverlapEncounter(..) -> []
+      overlaps.Overlap(..) -> []
     }
   })
 }
@@ -481,7 +429,7 @@ fn line_overlap_encounters(
   left: svg_path.Segment,
   right: svg_path.Segment,
   tolerance: Float,
-) -> Result(List(SegmentEncounter), svg_path.Error) {
+) -> Result(List(overlaps.SegmentEncounter), svg_path.Error) {
   case left, right {
     svg_path.Line(start: left_start, end: left_end),
       svg_path.Line(start: right_start, end: right_end)
@@ -519,15 +467,13 @@ fn line_overlap_encounters(
                 line_parameter(right_start, right_dx, right_dy, to_point)
 
               Ok([
-                OverlapEncounter(
+                overlaps.Overlap(
                   left_from: overlap_from,
                   left_to: overlap_to,
                   right_from:,
                   right_to:,
-                  representative: svg_path.Line(
-                    start: from_point,
-                    end: to_point,
-                  ),
+                  start: from_point,
+                  end: to_point,
                 ),
               ])
             }
@@ -564,7 +510,7 @@ fn collect_against(
     [right, ..tail] -> {
       let IndexedSegment(index: left_index, segment: left_segment) = left
       let IndexedSegment(index: right_index, segment: right_segment) = right
-      use encounters <- result.try(segment_encounters_with(
+      use encounters <- result.try(overlaps.segment_with(
         left_segment,
         right_segment,
         options:,
@@ -601,14 +547,14 @@ fn cuts_for(
       case pair {
         PairEncounter(left_index:, right_index:, encounter:) -> {
           case encounter {
-            PointEncounter(left_t:, right_t:, ..) -> {
+            overlaps.Intersection(left_t:, right_t:, ..) -> {
               case index == left_index, index == right_index {
                 True, _ -> [left_t, ..cuts]
                 _, True -> [right_t, ..cuts]
                 _, _ -> cuts
               }
             }
-            OverlapEncounter(left_from:, left_to:, right_from:, right_to:, ..) -> {
+            overlaps.Overlap(left_from:, left_to:, right_from:, right_to:, ..) -> {
               case index == left_index, index == right_index {
                 True, _ -> [left_from, left_to, ..cuts]
                 _, True -> [right_from, right_to, ..cuts]
@@ -634,12 +580,13 @@ fn collect_replacements(
     case pair {
       PairEncounter(left_index:, right_index:, encounter:) -> {
         case encounter {
-          OverlapEncounter(
+          overlaps.Overlap(
             left_from:,
             left_to:,
             right_from:,
             right_to:,
-            representative:,
+            start:,
+            end:,
           ) -> {
             let left_span = normalized_span(left_from, left_to)
             let right_span = normalized_span(right_from, right_to)
@@ -648,13 +595,13 @@ fn collect_replacements(
                 index: left_index,
                 from: left_span.0,
                 to: left_span.1,
-                segment: representative,
+                segment: svg_path.Line(start:, end:),
               ),
               SpanReplacement(
                 index: right_index,
                 from: right_span.0,
                 to: right_span.1,
-                segment: representative,
+                segment: svg_path.Line(start:, end:),
               ),
             ]
           }

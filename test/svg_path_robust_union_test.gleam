@@ -1,6 +1,7 @@
 import gleam/float
 import gleam/list
 import svg_path
+import svg_path/overlaps
 import svg_path/robust_union
 
 const tolerance = 0.000001
@@ -9,20 +10,22 @@ pub fn segment_encounters_reports_line_overlap_with_reversed_right_test() {
   let left = line(0.0, 0.0, 10.0, 0.0)
   let right = line(7.0, 0.0, 3.0, 0.0)
 
-  let assert Ok([encounter]) = robust_union.segment_encounters(left, right)
-  let assert robust_union.OverlapEncounter(
+  let assert Ok([encounter]) = overlaps.segment(left, right)
+  let assert overlaps.Overlap(
     left_from:,
     left_to:,
     right_from:,
     right_to:,
-    representative:,
+    start:,
+    end:,
   ) = encounter
 
   assert near(left_from, 0.3)
   assert near(left_to, 0.7)
   assert near(right_from, 1.0)
   assert near(right_to, 0.0)
-  assert representative == line(3.0, 0.0, 7.0, 0.0)
+  assert start == svg_path.Point(3.0, 0.0)
+  assert end == svg_path.Point(7.0, 0.0)
 }
 
 pub fn segment_encounters_reports_crossing_point_test() {
@@ -30,8 +33,8 @@ pub fn segment_encounters_reports_crossing_point_test() {
   let vertical = line(5.0, -5.0, 5.0, 5.0)
 
   let assert Ok([encounter]) =
-    robust_union.segment_encounters(horizontal, vertical)
-  let assert robust_union.PointEncounter(left_t:, right_t:, point:) = encounter
+    overlaps.segment(horizontal, vertical)
+  let assert overlaps.Intersection(left_t:, right_t:, point:) = encounter
 
   assert near(left_t, 0.5)
   assert near(right_t, 0.5)
