@@ -369,5 +369,19 @@ Gallery candidate after the graph builder is complete:
 - `examples/debug/planar_graph_separate_radius_circle_matrix.svg`
 - Shows oriented graph edges, vertices, signed left/right winding numbers, and
   directional multiplicities for twelve concentric-circle configurations.
-- Before gallery inclusion, regenerate it from actual `Graph` values rather
+- Before gallery inclusion, regenerate it from actual `ArrangementGraph` values rather
   than retaining the current debug SVG construction.
+
+Additional ArrangementGraph gallery candidates:
+
+- `examples/debug/arrangement_boolean_nonzero.svg`
+- `examples/debug/arrangement_boolean_evenodd.svg`
+- These compare the same two multi-rectangle paths, their ArrangementGraph,
+  union, intersection, both directional differences, and symmetric difference
+  under Nonzero and EvenOdd filling.
+- The panels share one coordinate transform and use a common pale, densely
+  hatched `(0, 0)` to `(6, 6)` backdrop. The graph cartouches display winding
+  levels and directional multiplicities from the shared drawing helper.
+- Before gallery inclusion, regenerate with `intersection_graph_figures`, copy
+  stable outputs into `docs/gallery/`, and add both entries to `GALLERY.md` in
+  the same commit.

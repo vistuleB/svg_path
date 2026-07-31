@@ -1,6 +1,6 @@
-//// Incremental planar-graph primitives for Boolean path operations.
+//// Arrangement-graph primitives for Boolean path operations.
 ////
-//// This module currently provides the graph representation, endpoint
+//// This module currently provides the arrangement representation, endpoint
 //// clustering, coincident-edge multiplicity, validation, and debug drawing.
 //// The insertion function requires segments that have already been noded: two
 //// geometric edges may meet at endpoints, but must not cross or partially
@@ -21,12 +21,12 @@ import svg_path/point
 import svg_path/svg
 import svg_path/trig
 
-pub type Vertex {
-  Vertex(id: Int, point: svg_path.Point, sample_count: Int)
+pub type ArrangementVertex {
+  ArrangementVertex(id: Int, point: svg_path.Point, sample_count: Int)
 }
 
-pub type Edge {
-  Edge(
+pub type ArrangementEdge {
+  ArrangementEdge(
     id: Int,
     segment: svg_path.Segment,
     start_vertex: Int,
@@ -36,8 +36,11 @@ pub type Edge {
   )
 }
 
-pub type Graph {
-  Graph(vertices: List(Vertex), edges: List(Edge))
+pub type ArrangementGraph {
+  ArrangementGraph(
+    vertices: List(ArrangementVertex),
+    edges: List(ArrangementEdge),
+  )
 }
 
 /// Placement of an edge annotation derived from the stored segment itself.
@@ -90,10 +93,12 @@ type BoundaryRay {
 type BooleanOperation {
   UnionOperation
   IntersectionOperation
+  DifferenceOperation
+  SymmetricDifferenceOperation
 }
 
-pub fn empty() -> Graph {
-  Graph(vertices: [], edges: [])
+pub fn empty() -> ArrangementGraph {
+  ArrangementGraph(vertices: [], edges: [])
 }
 
 /// Clean line-degenerate segment sequences before graph construction.
@@ -118,11 +123,11 @@ pub fn clean_subpaths(
 /// reverse multiplicity. Other crossings and partial overlaps must have been
 /// resolved by a noding layer before calling this function.
 pub fn insert_noded_segment(
-  graph: Graph,
+  graph: ArrangementGraph,
   segment: svg_path.Segment,
   tolerance tolerance: Float,
   minimum_chord minimum_chord: Float,
-) -> Result(Graph, Error) {
+) -> Result(ArrangementGraph, Error) {
   case tolerance <=. 0.0 || minimum_chord <=. 0.0 {
     True -> Error(InvalidTolerance(float_min(tolerance, minimum_chord)))
     False -> {
@@ -132,13 +137,13 @@ pub fn insert_noded_segment(
       case chord <. minimum_chord {
         True -> Error(SegmentTooShort(chord:, minimum: minimum_chord))
         False -> {
-          let Graph(vertices:, edges:) = graph
+          let ArrangementGraph(vertices:, edges:) = graph
           let #(vertices, start_id) = attach_vertex(vertices, start, tolerance)
           let #(vertices, end_id) = attach_vertex(vertices, end, tolerance)
           case start_id == end_id {
             True -> Error(LoopEdge(vertex: start_id))
             False ->
-              Ok(Graph(
+              Ok(ArrangementGraph(
                 vertices:,
                 edges: insert_or_increment_edge(
                   edges,
@@ -158,13 +163,14 @@ pub fn from_noded_subpaths(
   subpaths: List(svg_path.Subpath),
   tolerance tolerance: Float,
   minimum_chord minimum_chord: Float,
-) -> Result(Graph, Error) {
+) -> Result(ArrangementGraph, Error) {
   subpaths
   |> list.flat_map(svg_path.subpath_segments)
   |> insert_segments(empty(), tolerance, minimum_chord)
 }
 
-/// Build a graph by noding point intersections and endpoint-bounded overlaps.
+/// Build an arrangement graph by noding point intersections and
+/// endpoint-bounded overlaps.
 ///
 /// This first implementation performs arrangement-wide refinement before
 /// insertion. Its output is independent of input processing order. Overlap
@@ -174,7 +180,7 @@ pub fn from_subpaths(
   subpaths: List(svg_path.Subpath),
   tolerance tolerance: Float,
   minimum_chord minimum_chord: Float,
-) -> Result(Graph, Error) {
+) -> Result(ArrangementGraph, Error) {
   use cleaned <- result.try(clean_subpaths(subpaths, tolerance:))
   let indexed =
     cleaned
@@ -187,19 +193,19 @@ pub fn from_subpaths(
   insert_semantic_pieces(pieces, empty(), tolerance, minimum_chord)
 }
 
-/// Compute the Boolean union boundary from an already constructed graph.
+/// Compute the Boolean union boundary from an `ArrangementGraph`.
 ///
 /// Winding is evaluated separately against both operands before the common
 /// fill rule is applied. Necessary edges are oriented with filled space on the
 /// right and consumed into closed cycles.
-pub fn union_from_graph(
-  graph: Graph,
+pub fn union_from_arrangement_graph(
+  graph: ArrangementGraph,
   left: svg_path.Path,
   right: svg_path.Path,
   using fill_rule: svg_path.FillRule,
   tolerance tolerance: Float,
 ) -> Result(svg_path.Path, Error) {
-  let Graph(edges:, ..) = graph
+  let ArrangementGraph(edges:, ..) = graph
   use boundary <- result.try(
     classify_boolean_edges(
       edges,
@@ -218,16 +224,15 @@ pub fn union_from_graph(
   Ok(svg_path.Path(subpaths))
 }
 
-/// Compute the Boolean intersection boundary from an already constructed
-/// graph.
-pub fn intersection_from_graph(
-  graph: Graph,
+/// Compute the Boolean intersection boundary from an `ArrangementGraph`.
+pub fn intersection_from_arrangement_graph(
+  graph: ArrangementGraph,
   left: svg_path.Path,
   right: svg_path.Path,
   using fill_rule: svg_path.FillRule,
   tolerance tolerance: Float,
 ) -> Result(svg_path.Path, Error) {
-  let Graph(edges:, ..) = graph
+  let ArrangementGraph(edges:, ..) = graph
   use boundary <- result.try(
     classify_boolean_edges(
       edges,
@@ -246,7 +251,64 @@ pub fn intersection_from_graph(
   Ok(svg_path.Path(subpaths))
 }
 
-/// Build a planar graph for two paths and return their Boolean union boundary.
+/// Compute the Boolean boundary of `left` minus `right` from an
+/// `ArrangementGraph` constructed from both operands.
+pub fn difference_from_arrangement_graph(
+  graph: ArrangementGraph,
+  left: svg_path.Path,
+  right: svg_path.Path,
+  using fill_rule: svg_path.FillRule,
+  tolerance tolerance: Float,
+) -> Result(svg_path.Path, Error) {
+  let ArrangementGraph(edges:, ..) = graph
+  use boundary <- result.try(
+    classify_boolean_edges(
+      edges,
+      left,
+      right,
+      fill_rule,
+      DifferenceOperation,
+      tolerance,
+      [],
+    ),
+  )
+  use links <- result.try(pair_boundary_sectors(boundary, []))
+  use subpaths <- result.try(
+    trace_boundary_edges(boundary, links, tolerance, []),
+  )
+  Ok(svg_path.Path(subpaths))
+}
+
+/// Compute the Boolean symmetric-difference boundary from an
+/// `ArrangementGraph` constructed from both operands.
+pub fn symmetric_difference_from_arrangement_graph(
+  graph: ArrangementGraph,
+  left: svg_path.Path,
+  right: svg_path.Path,
+  using fill_rule: svg_path.FillRule,
+  tolerance tolerance: Float,
+) -> Result(svg_path.Path, Error) {
+  let ArrangementGraph(edges:, ..) = graph
+  use boundary <- result.try(
+    classify_boolean_edges(
+      edges,
+      left,
+      right,
+      fill_rule,
+      SymmetricDifferenceOperation,
+      tolerance,
+      [],
+    ),
+  )
+  use links <- result.try(pair_boundary_sectors(boundary, []))
+  use subpaths <- result.try(
+    trace_boundary_edges(boundary, links, tolerance, []),
+  )
+  Ok(svg_path.Path(subpaths))
+}
+
+/// Build an arrangement graph for two paths and return their Boolean union
+/// boundary.
 pub fn union_paths(
   left: svg_path.Path,
   right: svg_path.Path,
@@ -259,11 +321,11 @@ pub fn union_paths(
     tolerance:,
     minimum_chord:,
   ))
-  union_from_graph(graph, left, right, using: fill_rule, tolerance:)
+  union_from_arrangement_graph(graph, left, right, using: fill_rule, tolerance:)
 }
 
-/// Build a planar graph for two paths and return their Boolean intersection
-/// boundary.
+/// Build an arrangement graph for two paths and return their Boolean
+/// intersection boundary.
 pub fn intersection_paths(
   left: svg_path.Path,
   right: svg_path.Path,
@@ -276,11 +338,62 @@ pub fn intersection_paths(
     tolerance:,
     minimum_chord:,
   ))
-  intersection_from_graph(graph, left, right, using: fill_rule, tolerance:)
+  intersection_from_arrangement_graph(
+    graph,
+    left,
+    right,
+    using: fill_rule,
+    tolerance:,
+  )
+}
+
+/// Build an arrangement graph for two paths and return `left` minus `right`.
+pub fn difference_paths(
+  left: svg_path.Path,
+  minus right: svg_path.Path,
+  using fill_rule: svg_path.FillRule,
+  tolerance tolerance: Float,
+  minimum_chord minimum_chord: Float,
+) -> Result(svg_path.Path, Error) {
+  use graph <- result.try(from_subpaths(
+    list.append(svg_path.path_subpaths(left), svg_path.path_subpaths(right)),
+    tolerance:,
+    minimum_chord:,
+  ))
+  difference_from_arrangement_graph(
+    graph,
+    left,
+    right,
+    using: fill_rule,
+    tolerance:,
+  )
+}
+
+/// Build an arrangement graph for two paths and return their Boolean symmetric
+/// difference.
+pub fn symmetric_difference_paths(
+  left: svg_path.Path,
+  right: svg_path.Path,
+  using fill_rule: svg_path.FillRule,
+  tolerance tolerance: Float,
+  minimum_chord minimum_chord: Float,
+) -> Result(svg_path.Path, Error) {
+  use graph <- result.try(from_subpaths(
+    list.append(svg_path.path_subpaths(left), svg_path.path_subpaths(right)),
+    tolerance:,
+    minimum_chord:,
+  ))
+  symmetric_difference_from_arrangement_graph(
+    graph,
+    left,
+    right,
+    using: fill_rule,
+    tolerance:,
+  )
 }
 
 fn classify_boolean_edges(
-  edges: List(Edge),
+  edges: List(ArrangementEdge),
   left_path: svg_path.Path,
   right_path: svg_path.Path,
   fill_rule: svg_path.FillRule,
@@ -290,7 +403,7 @@ fn classify_boolean_edges(
 ) -> Result(List(BoundaryEdge), Error) {
   case edges {
     [] -> Ok(list.reverse(boundary))
-    [Edge(id:, segment:, start_vertex:, end_vertex:, ..), ..rest] -> {
+    [ArrangementEdge(id:, segment:, start_vertex:, end_vertex:, ..), ..rest] -> {
       use left_levels <- result.try(
         fill_levels.nonzero_side_levels(
           segment,
@@ -360,6 +473,8 @@ fn combine_filled(
   case operation {
     UnionOperation -> left || right
     IntersectionOperation -> left && right
+    DifferenceOperation -> left && !right
+    SymmetricDifferenceOperation -> left != right
   }
 }
 
@@ -810,10 +925,10 @@ fn float_compare(left: Float, right: Float) -> order.Order {
 
 fn insert_semantic_pieces(
   pieces: List(svg_path.Segment),
-  graph: Graph,
+  graph: ArrangementGraph,
   tolerance: Float,
   minimum_chord: Float,
-) -> Result(Graph, Error) {
+) -> Result(ArrangementGraph, Error) {
   case pieces {
     [] -> Ok(graph)
     [first, ..rest] -> {
@@ -829,12 +944,12 @@ fn insert_semantic_pieces(
 }
 
 fn insert_semantic_piece(
-  graph: Graph,
+  graph: ArrangementGraph,
   segment: svg_path.Segment,
   tolerance: Float,
   minimum_chord: Float,
-) -> Result(Graph, Error) {
-  let Graph(edges:, ..) = graph
+) -> Result(ArrangementGraph, Error) {
+  let ArrangementGraph(edges:, ..) = graph
   use match <- result.try(find_semantic_edge(edges, segment, tolerance))
   case match {
     None -> insert_noded_segment(graph, segment, tolerance:, minimum_chord:)
@@ -844,13 +959,13 @@ fn insert_semantic_piece(
 }
 
 fn find_semantic_edge(
-  edges: List(Edge),
+  edges: List(ArrangementEdge),
   segment: svg_path.Segment,
   tolerance: Float,
 ) -> Result(Option(#(Int, Bool)), Error) {
   case edges {
     [] -> Ok(None)
-    [Edge(id:, segment: existing, ..), ..rest] -> {
+    [ArrangementEdge(id:, segment: existing, ..), ..rest] -> {
       use found <- result.try(
         overlaps.segment_overlaps_by_endpoint_projection_with(
           existing,
@@ -884,13 +999,17 @@ fn find_semantic_edge(
   }
 }
 
-fn increment_edge_by_id(graph: Graph, edge_id: Int, forward: Bool) -> Graph {
-  let Graph(vertices:, edges:) = graph
-  Graph(
+fn increment_edge_by_id(
+  graph: ArrangementGraph,
+  edge_id: Int,
+  forward: Bool,
+) -> ArrangementGraph {
+  let ArrangementGraph(vertices:, edges:) = graph
+  ArrangementGraph(
     vertices:,
     edges: edges
       |> list.map(fn(edge) {
-        let Edge(
+        let ArrangementEdge(
           id:,
           segment:,
           start_vertex:,
@@ -901,7 +1020,7 @@ fn increment_edge_by_id(graph: Graph, edge_id: Int, forward: Bool) -> Graph {
         case id == edge_id {
           False -> edge
           True ->
-            Edge(
+            ArrangementEdge(
               id:,
               segment:,
               start_vertex:,
@@ -929,10 +1048,10 @@ fn float_absolute(value: Float) -> Float {
 
 fn insert_segments(
   segments: List(svg_path.Segment),
-  graph: Graph,
+  graph: ArrangementGraph,
   tolerance: Float,
   minimum_chord: Float,
-) -> Result(Graph, Error) {
+) -> Result(ArrangementGraph, Error) {
   case segments {
     [] -> Ok(graph)
     [first, ..rest] -> {
@@ -948,12 +1067,12 @@ fn insert_segments(
 }
 
 fn attach_vertex(
-  vertices: List(Vertex),
+  vertices: List(ArrangementVertex),
   endpoint: svg_path.Point,
   tolerance: Float,
-) -> #(List(Vertex), Int) {
+) -> #(List(ArrangementVertex), Int) {
   case nearest_vertex(vertices, endpoint, tolerance, None) {
-    Some(Vertex(id:, point: existing, sample_count: count)) -> {
+    Some(ArrangementVertex(id:, point: existing, sample_count: count)) -> {
       let count_float = int.to_float(count)
       let next_count = count + 1
       let averaged =
@@ -966,7 +1085,7 @@ fn attach_vertex(
       #(
         replace_vertex(
           vertices,
-          Vertex(id:, point: averaged, sample_count: next_count),
+          ArrangementVertex(id:, point: averaged, sample_count: next_count),
         ),
         id,
       )
@@ -974,7 +1093,9 @@ fn attach_vertex(
     None -> {
       let id = list.length(vertices)
       #(
-        list.append(vertices, [Vertex(id:, point: endpoint, sample_count: 1)]),
+        list.append(vertices, [
+          ArrangementVertex(id:, point: endpoint, sample_count: 1),
+        ]),
         id,
       )
     }
@@ -982,22 +1103,22 @@ fn attach_vertex(
 }
 
 fn nearest_vertex(
-  vertices: List(Vertex),
+  vertices: List(ArrangementVertex),
   endpoint: svg_path.Point,
   tolerance: Float,
-  nearest: Option(Vertex),
-) -> Option(Vertex) {
+  nearest: Option(ArrangementVertex),
+) -> Option(ArrangementVertex) {
   case vertices {
     [] -> nearest
     [first, ..rest] -> {
-      let Vertex(point: candidate, ..) = first
+      let ArrangementVertex(point: candidate, ..) = first
       let nearest = case point.distance(candidate, endpoint) <=. tolerance {
         False -> nearest
         True ->
           case nearest {
             None -> Some(first)
             Some(previous) -> {
-              let Vertex(point: previous_point, ..) = previous
+              let ArrangementVertex(point: previous_point, ..) = previous
               case
                 point.distance(candidate, endpoint)
                 <. point.distance(previous_point, endpoint)
@@ -1013,11 +1134,14 @@ fn nearest_vertex(
   }
 }
 
-fn replace_vertex(vertices: List(Vertex), replacement: Vertex) -> List(Vertex) {
-  let Vertex(id: wanted, ..) = replacement
+fn replace_vertex(
+  vertices: List(ArrangementVertex),
+  replacement: ArrangementVertex,
+) -> List(ArrangementVertex) {
+  let ArrangementVertex(id: wanted, ..) = replacement
   vertices
   |> list.map(fn(vertex) {
-    let Vertex(id:, ..) = vertex
+    let ArrangementVertex(id:, ..) = vertex
     case id == wanted {
       True -> replacement
       False -> vertex
@@ -1026,16 +1150,16 @@ fn replace_vertex(vertices: List(Vertex), replacement: Vertex) -> List(Vertex) {
 }
 
 fn insert_or_increment_edge(
-  edges: List(Edge),
+  edges: List(ArrangementEdge),
   segment: svg_path.Segment,
   start_id: Int,
   end_id: Int,
-) -> List(Edge) {
+) -> List(ArrangementEdge) {
   case increment_matching_edge(edges, segment, start_id, end_id, []) {
     #(True, updated) -> updated
     #(False, _) ->
       list.append(edges, [
-        Edge(
+        ArrangementEdge(
           id: list.length(edges),
           segment:,
           start_vertex: start_id,
@@ -1048,16 +1172,16 @@ fn insert_or_increment_edge(
 }
 
 fn increment_matching_edge(
-  edges: List(Edge),
+  edges: List(ArrangementEdge),
   segment: svg_path.Segment,
   start_id: Int,
   end_id: Int,
-  before: List(Edge),
-) -> #(Bool, List(Edge)) {
+  before: List(ArrangementEdge),
+) -> #(Bool, List(ArrangementEdge)) {
   case edges {
     [] -> #(False, list.reverse(before))
     [first, ..rest] -> {
-      let Edge(
+      let ArrangementEdge(
         id:,
         segment: existing,
         start_vertex: existing_start,
@@ -1073,7 +1197,7 @@ fn increment_matching_edge(
         True -> #(
           True,
           list.append(list.reverse(before), [
-            Edge(
+            ArrangementEdge(
               id:,
               segment: existing,
               start_vertex: existing_start,
@@ -1093,7 +1217,7 @@ fn increment_matching_edge(
             True -> #(
               True,
               list.append(list.reverse(before), [
-                Edge(
+                ArrangementEdge(
                   id:,
                   segment: existing,
                   start_vertex: existing_start,
@@ -1117,25 +1241,25 @@ fn increment_matching_edge(
 
 /// Validate representation invariants that do not require intersection tests.
 pub fn validate(
-  graph: Graph,
+  graph: ArrangementGraph,
   tolerance tolerance: Float,
   minimum_chord minimum_chord: Float,
 ) -> Result(Nil, Error) {
-  let Graph(vertices:, edges:) = graph
+  let ArrangementGraph(vertices:, edges:) = graph
   use _ <- result.try(validate_edges(edges, vertices, tolerance, minimum_chord))
   validate_vertices(vertices, edges)
 }
 
 fn validate_edges(
-  edges: List(Edge),
-  vertices: List(Vertex),
+  edges: List(ArrangementEdge),
+  vertices: List(ArrangementVertex),
   tolerance: Float,
   minimum_chord: Float,
 ) -> Result(Nil, Error) {
   case edges {
     [] -> Ok(Nil)
     [
-      Edge(
+      ArrangementEdge(
         id:,
         segment:,
         start_vertex:,
@@ -1200,12 +1324,12 @@ fn validate_edges(
 }
 
 fn validate_vertices(
-  vertices: List(Vertex),
-  edges: List(Edge),
+  vertices: List(ArrangementVertex),
+  edges: List(ArrangementEdge),
 ) -> Result(Nil, Error) {
   case vertices {
     [] -> Ok(Nil)
-    [Vertex(id:, ..), ..rest] -> {
+    [ArrangementVertex(id:, ..), ..rest] -> {
       let degree = weighted_degree(edges, id, 0)
       case degree == 0 {
         True -> Error(IsolatedVertex(vertex: id))
@@ -1219,11 +1343,15 @@ fn validate_vertices(
   }
 }
 
-fn weighted_degree(edges: List(Edge), vertex: Int, total: Int) -> Int {
+fn weighted_degree(
+  edges: List(ArrangementEdge),
+  vertex: Int,
+  total: Int,
+) -> Int {
   case edges {
     [] -> total
     [
-      Edge(
+      ArrangementEdge(
         start_vertex:,
         end_vertex:,
         forward_multiplicity:,
@@ -1242,28 +1370,32 @@ fn weighted_degree(edges: List(Edge), vertex: Int, total: Int) -> Int {
 }
 
 fn vertex_point(
-  vertices: List(Vertex),
+  vertices: List(ArrangementVertex),
   id: Int,
 ) -> Result(svg_path.Point, Error) {
   case
     list.find(vertices, fn(vertex) {
-      let Vertex(id: candidate, ..) = vertex
+      let ArrangementVertex(id: candidate, ..) = vertex
       candidate == id
     })
   {
-    Ok(Vertex(point:, ..)) -> Ok(point)
+    Ok(ArrangementVertex(point:, ..)) -> Ok(point)
     Error(_) -> Error(MissingVertex(vertex: id))
   }
 }
 
 /// Draw edges, averaged vertices, vertex ids, and directional multiplicities.
-pub fn things_to_draw(graph: Graph) -> svg.ThingsToDraw {
-  let Graph(vertices:, edges:) = graph
+pub fn things_to_draw(graph: ArrangementGraph) -> svg.ThingsToDraw {
+  let ArrangementGraph(vertices:, edges:) = graph
   let edge_things =
     edges
     |> list.flat_map(fn(edge) {
-      let Edge(segment:, forward_multiplicity:, reverse_multiplicity:, ..) =
-        edge
+      let ArrangementEdge(
+        segment:,
+        forward_multiplicity:,
+        reverse_multiplicity:,
+        ..,
+      ) = edge
       let midpoint =
         svg_path.segment_point(segment, at: 0.5)
         |> result.unwrap(svg_path.segment_start(segment))
@@ -1293,38 +1425,39 @@ pub fn things_to_draw(graph: Graph) -> svg.ThingsToDraw {
   let vertex_things =
     vertices
     |> list.flat_map(fn(vertex) {
-      let Vertex(id:, point:, ..) = vertex
+      let ArrangementVertex(id:, point:, ..) = vertex
       svg.labeled_point("v" <> int.to_string(id), "#dc2626", point, 8)
     })
   list.append(edge_things, vertex_things)
 }
 
-/// Draw a graph using the shared Boolean-debug style.
+/// Draw an arrangement graph using the shared Boolean-debug style.
 ///
 /// Each tangent-oriented cartouche shows global winding immediately to the
 /// left/right of the edge in black, with forward/reverse multiplicity below in
 /// red. Red arrowheads show the stored forward direction. Vertices use the
-/// established white-circle/red-outline style.
+/// established white-circle/red-outline style. Cartouches are sized per edge
+/// and never exceed 80% of the chord remaining between its endpoint nodes.
 pub fn annotated_things_to_draw(
-  graph: Graph,
+  graph: ArrangementGraph,
   source: svg_path.Path,
   tolerance tolerance: Float,
 ) -> Result(svg.ThingsToDraw, Error) {
-  let Graph(vertices:, edges:) = graph
+  let ArrangementGraph(vertices:, edges:) = graph
   use edge_things <- result.try(
     annotated_edge_things(edges, source, tolerance, []),
   )
   let vertex_things =
     vertices
     |> list.map(fn(vertex) {
-      let Vertex(point:, ..) = vertex
+      let ArrangementVertex(point:, ..) = vertex
       svg.Circle(point, 5.0, "fill: #fff; stroke: #dc2626; stroke-width: 2.25")
     })
   Ok(list.append(edge_things, vertex_things))
 }
 
 fn annotated_edge_things(
-  edges: List(Edge),
+  edges: List(ArrangementEdge),
   source: svg_path.Path,
   tolerance: Float,
   accumulated: List(svg.ThingsToDraw),
@@ -1332,8 +1465,12 @@ fn annotated_edge_things(
   case edges {
     [] -> Ok(list.reverse(accumulated) |> list.flatten)
     [edge, ..rest] -> {
-      let Edge(segment:, forward_multiplicity:, reverse_multiplicity:, ..) =
-        edge
+      let ArrangementEdge(
+        segment:,
+        forward_multiplicity:,
+        reverse_multiplicity:,
+        ..,
+      ) = edge
       use levels <- result.try(
         fill_levels.nonzero_side_levels(
           segment,
@@ -1362,39 +1499,73 @@ fn annotated_edge_things(
       let arrow =
         segment_direction_arrow(segment, "#dc2626")
         |> result.unwrap(svg.StyledPath(svg_path.path_empty(), ""))
-      let things = [
-        svg.StyledPath(
-          svg_path.Path([svg_path.subpath_assert([segment])]),
-          "fill: none; stroke: #334155; stroke-width: 3.25",
-        ),
-        arrow,
-        svg.RotatedRectangle(
-          svg_path.Point(midpoint.x -. 17.0, midpoint.y -. 12.0),
-          34.0,
-          24.0,
-          "fill: #fff; stroke: #94a3b8; stroke-width: 1",
-          rotation:,
-          origin: midpoint,
-        ),
-        svg.RotatedText(
-          winding_label,
-          "fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle",
-          svg_path.Point(midpoint.x, midpoint.y -. 2.0),
-          9,
-          rotation:,
-          origin: midpoint,
-        ),
-        svg.RotatedText(
-          multiplicity_label,
-          "fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle",
-          svg_path.Point(midpoint.x, midpoint.y +. 9.0),
-          8,
-          rotation:,
-          origin: midpoint,
-        ),
-      ]
+      let chord =
+        point.distance(
+          svg_path.segment_start(segment),
+          svg_path.segment_end(segment),
+        )
+      let usable_chord = chord -. 10.0
+      let label_scale = case usable_chord <=. 0.0 {
+        True -> 0.0
+        False -> float_min(0.5, usable_chord *. 0.8 /. 24.0)
+      }
+      let label_things = case label_scale <=. 0.0 {
+        True -> []
+        False -> {
+          let width = 34.0 *. label_scale
+          let height = 24.0 *. label_scale
+          [
+            svg.RotatedRectangle(
+              svg_path.Point(
+                midpoint.x -. width /. 2.0,
+                midpoint.y -. height /. 2.0,
+              ),
+              width,
+              height,
+              "fill: #fff; stroke: #94a3b8; stroke-width: 0.75",
+              rotation:,
+              origin: midpoint,
+            ),
+            svg.RotatedText(
+              winding_label,
+              "fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle",
+              svg_path.Point(midpoint.x, midpoint.y -. 2.0 *. label_scale),
+              scaled_font_size(9.0, label_scale),
+              rotation:,
+              origin: midpoint,
+            ),
+            svg.RotatedText(
+              multiplicity_label,
+              "fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle",
+              svg_path.Point(midpoint.x, midpoint.y +. 9.0 *. label_scale),
+              scaled_font_size(8.0, label_scale),
+              rotation:,
+              origin: midpoint,
+            ),
+          ]
+        }
+      }
+      let things =
+        list.append(
+          [
+            svg.StyledPath(
+              svg_path.Path([svg_path.subpath_assert([segment])]),
+              "fill: none; stroke: #334155; stroke-width: 3.25",
+            ),
+            arrow,
+          ],
+          label_things,
+        )
       annotated_edge_things(rest, source, tolerance, [things, ..accumulated])
     }
+  }
+}
+
+fn scaled_font_size(base: Float, scale: Float) -> Int {
+  let size = float.round(base *. scale)
+  case size < 1 {
+    True -> 1
+    False -> size
   }
 }
 
@@ -1453,9 +1624,9 @@ pub fn path_direction_arrows(
 
 /// Return the midpoint and tangent-aligned orientation for an edge annotation.
 pub fn edge_annotation_pose(
-  edge: Edge,
+  edge: ArrangementEdge,
 ) -> Result(EdgeAnnotationPose, svg_path.Error) {
-  let Edge(segment:, ..) = edge
+  let ArrangementEdge(segment:, ..) = edge
   use midpoint <- result.try(svg_path.segment_point(segment, at: 0.5))
   use tangent <- result.try(svg_path.segment_derivative(segment, at: 0.5))
   let tangent_angle = trig.atan2_degrees(tangent.y, tangent.x)

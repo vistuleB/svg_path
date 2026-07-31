@@ -322,6 +322,193 @@ pub fn intersection_adapter_runs_old_operation_table_test() {
   ])
 }
 
+pub fn difference_adapter_runs_old_semantic_matrix_test() {
+  assert_difference_adapter_cases([
+    adapter_case(
+      rectangle(0.0, 0.0, 10.0, 10.0),
+      rectangle(5.0, 0.0, 15.0, 10.0),
+      svg_path.Nonzero,
+      grid([2.5, 7.5, 12.5, 20.0], [-2.5, 5.0, 12.5]),
+    ),
+    adapter_case(
+      svg_path.path_from_subpath(circle_subpath_at(
+        svg_path.Point(10.0, 10.0),
+        10.0,
+      )),
+      rectangle(5.0, 0.0, 20.0, 20.0),
+      svg_path.Nonzero,
+      grid([2.5, 7.5, 12.5, 17.5, 22.5], [2.5, 7.5, 12.5, 17.5]),
+    ),
+    adapter_case(
+      nested_rectangles(),
+      rectangle(7.0, 7.0, 13.0, 13.0),
+      svg_path.Nonzero,
+      grid([2.5, 7.5, 10.0, 12.5, 17.5], [2.5, 7.5, 10.0, 12.5, 17.5]),
+    ),
+    adapter_case(
+      nested_rectangles(),
+      rectangle(7.0, 7.0, 13.0, 13.0),
+      svg_path.EvenOdd,
+      grid([2.5, 7.5, 10.0, 12.5, 17.5], [2.5, 7.5, 10.0, 12.5, 17.5]),
+    ),
+    adapter_case(
+      svg_path.path_from_subpath(circle_subpath_at(
+        svg_path.Point(50.0, 60.0),
+        40.0,
+      )),
+      rectangle(90.0, 20.0, 124.0, 100.0),
+      svg_path.Nonzero,
+      grid([12.5, 50.0, 88.0, 92.0, 110.0], [30.0, 60.0, 90.0]),
+    ),
+    adapter_case(
+      bowtie(),
+      rectangle(36.0, 28.0, 86.0, 92.0),
+      svg_path.Nonzero,
+      grid([16.0, 44.0, 62.0, 78.0, 100.0], [
+        16.0,
+        40.0,
+        60.0,
+        84.0,
+        104.0,
+      ]),
+    ),
+  ])
+}
+
+pub fn difference_adapter_runs_old_operation_table_test() {
+  assert_difference_adapter_cases([
+    adapter_case_with_expectation(
+      rectangle(0.0, 0.0, 10.0, 10.0),
+      rectangle(5.0, 0.0, 15.0, 10.0),
+      svg_path.Nonzero,
+      [
+        svg_path.Point(2.5, 5.0),
+        svg_path.Point(7.5, 5.0),
+        svg_path.Point(12.5, 5.0),
+      ],
+      50.0,
+      None,
+    ),
+    adapter_case_with_expectation(
+      rectangle(0.0, 0.0, 10.0, 10.0),
+      rectangle(20.0, 0.0, 30.0, 10.0),
+      svg_path.Nonzero,
+      [svg_path.Point(5.0, 5.0), svg_path.Point(25.0, 5.0)],
+      100.0,
+      None,
+    ),
+    adapter_case_with_expectation(
+      rectangle(0.0, 0.0, 10.0, 10.0),
+      rectangle(0.0, 0.0, 10.0, 10.0),
+      svg_path.Nonzero,
+      [svg_path.Point(5.0, 5.0)],
+      0.0,
+      Some(0),
+    ),
+    adapter_case_with_expectation(
+      rectangle(0.0, 0.0, 10.0, 10.0),
+      rectangle(10.0, 0.0, 20.0, 10.0),
+      svg_path.Nonzero,
+      [svg_path.Point(5.0, 5.0), svg_path.Point(15.0, 5.0)],
+      100.0,
+      None,
+    ),
+  ])
+}
+
+pub fn difference_creates_hole_and_preserves_mixed_curves_test() {
+  let outer = rectangle(0.0, 0.0, 20.0, 20.0)
+  let inner = rectangle(5.0, 5.0, 15.0, 15.0)
+  let assert Ok(holed) = graph_difference(outer, inner, svg_path.Nonzero)
+  assert_area(holed, 300.0)
+  list.length(svg_path.path_subpaths(holed)) |> should.equal(2)
+  assert_containment(holed, svg_path.Point(2.5, 2.5), svg_path.Inside)
+  assert_containment(holed, svg_path.Point(10.0, 10.0), svg_path.Outside)
+
+  let circle =
+    svg_path.path_from_subpath(circle_subpath_at(
+      svg_path.Point(10.0, 10.0),
+      10.0,
+    ))
+  let assert Ok(cut) =
+    graph_difference(circle, rectangle(5.0, 0.0, 20.0, 20.0), svg_path.Nonzero)
+  assert has_arc(cut)
+  assert has_line(cut)
+}
+
+pub fn difference_adapts_old_hole_orientation_tests() {
+  let probe = rectangle(7.0, 7.0, 13.0, 13.0)
+  let assert Ok(nonzero) =
+    graph_difference(nested_rectangles(), probe, svg_path.Nonzero)
+  assert_containment(nonzero, svg_path.Point(10.0, 10.0), svg_path.Outside)
+  assert_has_both_contour_orientations(nonzero)
+
+  let outer = rectangle(0.0, 0.0, 20.0, 20.0)
+  let inner = rectangle(5.0, 5.0, 15.0, 15.0)
+  let assert Ok(even_odd) = graph_difference(outer, inner, svg_path.EvenOdd)
+  assert_has_both_contour_orientations(even_odd)
+}
+
+pub fn symmetric_difference_handles_basic_topologies_test() {
+  let left = rectangle(0.0, 0.0, 10.0, 10.0)
+  let overlap = rectangle(5.0, 0.0, 15.0, 10.0)
+  let disjoint = rectangle(20.0, 0.0, 30.0, 10.0)
+
+  let assert Ok(overlapping) =
+    graph_symmetric_difference(left, overlap, svg_path.Nonzero)
+  assert_area(overlapping, 100.0)
+  assert_containment(overlapping, svg_path.Point(2.5, 5.0), svg_path.Inside)
+  assert_containment(overlapping, svg_path.Point(7.5, 5.0), svg_path.Outside)
+  assert_containment(overlapping, svg_path.Point(12.5, 5.0), svg_path.Inside)
+
+  let assert Ok(separate) =
+    graph_symmetric_difference(left, disjoint, svg_path.Nonzero)
+  assert_area(separate, 200.0)
+  list.length(svg_path.path_subpaths(separate)) |> should.equal(2)
+
+  let assert Ok(identical) =
+    graph_symmetric_difference(left, left, svg_path.Nonzero)
+  list.length(svg_path.path_subpaths(identical)) |> should.equal(0)
+}
+
+pub fn symmetric_difference_applies_both_fill_policies_test() {
+  let nested = nested_rectangles()
+  let probe = rectangle(7.0, 7.0, 13.0, 13.0)
+  let assert Ok(nonzero) =
+    graph_symmetric_difference(nested, probe, svg_path.Nonzero)
+  let assert Ok(even_odd) =
+    graph_symmetric_difference(nested, probe, svg_path.EvenOdd)
+
+  assert_area(nonzero, 364.0)
+  assert_containment(nonzero, svg_path.Point(10.0, 10.0), svg_path.Outside)
+  assert_containment(nonzero, svg_path.Point(6.0, 6.0), svg_path.Inside)
+
+  assert_area(even_odd, 336.0)
+  assert_containment(even_odd, svg_path.Point(10.0, 10.0), svg_path.Inside)
+  assert_containment(even_odd, svg_path.Point(6.0, 6.0), svg_path.Outside)
+}
+
+pub fn symmetric_difference_is_commutative_test() {
+  let left = rectangle(0.0, 0.0, 10.0, 10.0)
+  let right = rectangle(5.0, 0.0, 15.0, 10.0)
+  let assert Ok(forward) =
+    graph_symmetric_difference(left, right, svg_path.Nonzero)
+  let assert Ok(reverse) =
+    graph_symmetric_difference(right, left, svg_path.Nonzero)
+
+  let assert Ok(reverse_area) = area.path(reverse, using: svg_path.Nonzero)
+  assert_area(forward, reverse_area)
+  let samples = grid([2.5, 7.5, 12.5], [2.5, 7.5])
+  samples
+  |> list.each(fn(point) {
+    let assert Ok(forward_containment) =
+      svg_path.path_containment(point, within: forward, using: svg_path.Nonzero)
+    let assert Ok(reverse_containment) =
+      svg_path.path_containment(point, within: reverse, using: svg_path.Nonzero)
+    assert forward_containment == reverse_containment
+  })
+}
+
 fn graph_union(
   left: svg_path.Path,
   right: svg_path.Path,
@@ -341,6 +528,34 @@ fn graph_intersection(
   fill_rule: svg_path.FillRule,
 ) -> Result(svg_path.Path, planar_graph.Error) {
   planar_graph.intersection_paths(
+    left,
+    right,
+    using: fill_rule,
+    tolerance:,
+    minimum_chord:,
+  )
+}
+
+fn graph_difference(
+  left: svg_path.Path,
+  right: svg_path.Path,
+  fill_rule: svg_path.FillRule,
+) -> Result(svg_path.Path, planar_graph.Error) {
+  planar_graph.difference_paths(
+    left,
+    minus: right,
+    using: fill_rule,
+    tolerance:,
+    minimum_chord:,
+  )
+}
+
+fn graph_symmetric_difference(
+  left: svg_path.Path,
+  right: svg_path.Path,
+  fill_rule: svg_path.FillRule,
+) -> Result(svg_path.Path, planar_graph.Error) {
+  planar_graph.symmetric_difference_paths(
     left,
     right,
     using: fill_rule,
@@ -429,6 +644,49 @@ fn assert_intersection_adapter_case(
           && containment_is_inside(right_containment)
         }
     })
+  })
+}
+
+fn assert_difference_adapter_cases(
+  cases: List(IntersectionAdapterCase),
+) -> Nil {
+  cases |> list.each(assert_difference_adapter_case)
+}
+
+fn assert_difference_adapter_case(
+  adapter_case: IntersectionAdapterCase,
+) -> Nil {
+  let IntersectionAdapterCase(
+    left:,
+    right:,
+    fill_rule:,
+    samples:,
+    expected_area:,
+    expected_subpaths:,
+  ) = adapter_case
+  let assert Ok(difference) = graph_difference(left, right, fill_rule)
+  case expected_area {
+    Some(expected) -> assert_area(difference, expected)
+    None -> Nil
+  }
+  case expected_subpaths {
+    Some(expected) ->
+      list.length(svg_path.path_subpaths(difference)) |> should.equal(expected)
+    None -> Nil
+  }
+  samples
+  |> list.each(fn(point) {
+    let assert Ok(left_containment) =
+      svg_path.path_containment(point, within: left, using: fill_rule)
+    let assert Ok(right_containment) =
+      svg_path.path_containment(point, within: right, using: fill_rule)
+    let assert Ok(result_containment) =
+      svg_path.path_containment(point, within: difference, using: fill_rule)
+    assert containment_is_inside(result_containment)
+      == {
+        containment_is_inside(left_containment)
+        && !containment_is_inside(right_containment)
+      }
   })
 }
 
@@ -644,6 +902,16 @@ fn assert_area(path: svg_path.Path, expected: Float) {
   let assert Ok(actual) = area.path(path, using: svg_path.Nonzero)
   let difference = float.absolute_value(actual -. expected)
   assert difference <=. tolerance
+}
+
+fn assert_has_both_contour_orientations(path: svg_path.Path) {
+  let subpaths = svg_path.path_subpaths(path)
+  assert list.any(subpaths, fn(subpath) {
+    area.signed_subpath(subpath) >. tolerance
+  })
+  assert list.any(subpaths, fn(subpath) {
+    area.signed_subpath(subpath) <. 0.0 -. tolerance
+  })
 }
 
 fn assert_containment(

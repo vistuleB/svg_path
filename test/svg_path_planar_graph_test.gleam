@@ -23,7 +23,7 @@ pub fn closed_square_builds_valid_graph_test() {
 
   let assert Ok(graph) =
     planar_graph.from_noded_subpaths([square], tolerance:, minimum_chord:)
-  let planar_graph.Graph(vertices:, edges:) = graph
+  let planar_graph.ArrangementGraph(vertices:, edges:) = graph
 
   list.length(vertices) |> should.equal(4)
   list.length(edges) |> should.equal(4)
@@ -50,9 +50,12 @@ pub fn endpoint_samples_are_averaged_test() {
       tolerance:,
       minimum_chord:,
     )
-  let planar_graph.Graph(vertices:, ..) = graph
-  let assert [_, planar_graph.Vertex(point: joined, sample_count: 2, ..), _] =
-    vertices
+  let planar_graph.ArrangementGraph(vertices:, ..) = graph
+  let assert [
+    _,
+    planar_graph.ArrangementVertex(point: joined, sample_count: 2, ..),
+    _,
+  ] = vertices
 
   point.near(joined, svg_path.Point(10.0000002, 0.0), tolerance: 0.000000001)
   |> should.be_true
@@ -77,10 +80,14 @@ pub fn reversed_duplicate_increments_reverse_multiplicity_test() {
       tolerance:,
       minimum_chord:,
     )
-  let planar_graph.Graph(edges:, ..) = graph
+  let planar_graph.ArrangementGraph(edges:, ..) = graph
 
   let assert [
-    planar_graph.Edge(forward_multiplicity: 1, reverse_multiplicity: 1, ..),
+    planar_graph.ArrangementEdge(
+      forward_multiplicity: 1,
+      reverse_multiplicity: 1,
+      ..,
+    ),
   ] = edges
   planar_graph.validate(graph, tolerance:, minimum_chord:)
   |> should.equal(Ok(Nil))
@@ -138,7 +145,7 @@ pub fn drawing_contains_edges_vertices_and_multiplicity_labels_test() {
 
 pub fn edge_annotation_pose_comes_from_segment_midpoint_and_tangent_test() {
   let edge =
-    planar_graph.Edge(
+    planar_graph.ArrangementEdge(
       id: 0,
       segment: svg_path.Line(
         start: svg_path.Point(0.0, 0.0),
@@ -175,7 +182,7 @@ pub fn builder_splits_crossing_lines_at_shared_vertex_test() {
       ),
     ])
 
-  let assert Ok(planar_graph.Graph(vertices:, edges:)) =
+  let assert Ok(planar_graph.ArrangementGraph(vertices:, edges:)) =
     planar_graph.from_subpaths(
       [horizontal, vertical],
       tolerance:,
@@ -202,14 +209,14 @@ pub fn builder_refines_partial_line_overlap_and_counts_middle_test() {
       ),
     ])
 
-  let assert Ok(planar_graph.Graph(vertices:, edges:)) =
+  let assert Ok(planar_graph.ArrangementGraph(vertices:, edges:)) =
     planar_graph.from_subpaths([first, second], tolerance:, minimum_chord:)
 
   list.length(vertices) |> should.equal(4)
   list.length(edges) |> should.equal(3)
   edges
   |> list.filter(fn(edge) {
-    let planar_graph.Edge(forward_multiplicity:, ..) = edge
+    let planar_graph.ArrangementEdge(forward_multiplicity:, ..) = edge
     forward_multiplicity == 2
   })
   |> list.length
@@ -267,14 +274,17 @@ pub fn builder_consolidates_phase_shifted_opposite_circle_arcs_test() {
       tolerance:,
       minimum_chord:,
     )
-  let planar_graph.Graph(vertices:, edges:) = graph
+  let planar_graph.ArrangementGraph(vertices:, edges:) = graph
 
   list.length(vertices) |> should.equal(4)
   list.length(edges) |> should.equal(4)
   edges
   |> list.all(fn(edge) {
-    let planar_graph.Edge(forward_multiplicity:, reverse_multiplicity:, ..) =
-      edge
+    let planar_graph.ArrangementEdge(
+      forward_multiplicity:,
+      reverse_multiplicity:,
+      ..,
+    ) = edge
     forward_multiplicity == 1 && reverse_multiplicity == 1
   })
   |> should.be_true
@@ -333,20 +343,23 @@ pub fn builder_consolidates_near_equal_circles_inside_tolerance_test() {
       tolerance: graph_tolerance,
       minimum_chord:,
     )
-  let planar_graph.Graph(vertices:, edges:) = graph
+  let planar_graph.ArrangementGraph(vertices:, edges:) = graph
 
   list.length(vertices) |> should.equal(2)
   list.length(edges) |> should.equal(2)
   edges
   |> list.all(fn(edge) {
-    let planar_graph.Edge(forward_multiplicity:, reverse_multiplicity:, ..) =
-      edge
+    let planar_graph.ArrangementEdge(
+      forward_multiplicity:,
+      reverse_multiplicity:,
+      ..,
+    ) = edge
     forward_multiplicity == 1 && reverse_multiplicity == 1
   })
   |> should.be_true
 }
 
-pub fn union_from_graph_removes_interlocking_square_internal_edges_test() {
+pub fn union_from_arrangement_graph_removes_interlocking_square_internal_edges_test() {
   let first = square(0.0, 0.0, 10.0)
   let second = square(5.0, 5.0, 10.0)
   let left = svg_path.path_from_subpath(first)
@@ -354,7 +367,7 @@ pub fn union_from_graph_removes_interlocking_square_internal_edges_test() {
   let assert Ok(graph) =
     planar_graph.from_subpaths([first, second], tolerance:, minimum_chord:)
   let assert Ok(union) =
-    planar_graph.union_from_graph(
+    planar_graph.union_from_arrangement_graph(
       graph,
       left,
       right,
@@ -389,7 +402,7 @@ pub fn union_from_graph_removes_interlocking_square_internal_edges_test() {
   |> should.equal(Ok(svg_path.Outside))
 }
 
-pub fn union_from_graph_does_not_cancel_opposite_operands_test() {
+pub fn union_from_arrangement_graph_does_not_cancel_opposite_operands_test() {
   let clockwise = square(0.0, 0.0, 10.0)
   let counterclockwise = svg_path.subpath_reverse(clockwise)
   let left = svg_path.path_from_subpath(clockwise)
@@ -401,7 +414,7 @@ pub fn union_from_graph_does_not_cancel_opposite_operands_test() {
       minimum_chord:,
     )
   let assert Ok(union) =
-    planar_graph.union_from_graph(
+    planar_graph.union_from_arrangement_graph(
       graph,
       left,
       right,
@@ -418,14 +431,14 @@ pub fn union_from_graph_does_not_cancel_opposite_operands_test() {
   |> should.equal(Ok(svg_path.Inside))
 }
 
-pub fn union_from_graph_applies_requested_fill_rule_test() {
+pub fn union_from_arrangement_graph_applies_requested_fill_rule_test() {
   let contour = square(0.0, 0.0, 10.0)
   let doubled = svg_path.Path([contour, contour])
   let empty = svg_path.path_empty()
   let assert Ok(graph) =
     planar_graph.from_subpaths([contour, contour], tolerance:, minimum_chord:)
   let assert Ok(nonzero) =
-    planar_graph.union_from_graph(
+    planar_graph.union_from_arrangement_graph(
       graph,
       doubled,
       empty,
@@ -433,7 +446,7 @@ pub fn union_from_graph_applies_requested_fill_rule_test() {
       tolerance:,
     )
   let assert Ok(even_odd) =
-    planar_graph.union_from_graph(
+    planar_graph.union_from_arrangement_graph(
       graph,
       doubled,
       empty,
@@ -445,7 +458,7 @@ pub fn union_from_graph_applies_requested_fill_rule_test() {
   list.length(svg_path.path_subpaths(even_odd)) |> should.equal(0)
 }
 
-pub fn union_from_graph_pairs_filled_sectors_at_corner_pinch_test() {
+pub fn union_from_arrangement_graph_pairs_filled_sectors_at_corner_pinch_test() {
   let first = square(0.0, 0.0, 10.0)
   let second = square(10.0, 10.0, 10.0)
   let left = svg_path.path_from_subpath(first)
@@ -453,7 +466,7 @@ pub fn union_from_graph_pairs_filled_sectors_at_corner_pinch_test() {
   let assert Ok(graph) =
     planar_graph.from_subpaths([first, second], tolerance:, minimum_chord:)
   let assert Ok(union) =
-    planar_graph.union_from_graph(
+    planar_graph.union_from_arrangement_graph(
       graph,
       left,
       right,
