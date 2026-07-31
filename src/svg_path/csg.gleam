@@ -32,6 +32,7 @@ import svg_path
 import svg_path/area
 import svg_path/intersections
 import svg_path/point as point_helpers
+import svg_path/robust_union
 import svg_path/trig
 
 const default_tolerance = 0.000001
@@ -120,7 +121,14 @@ pub fn union_with(
   using fill_rule: svg_path.FillRule,
   options options: Options,
 ) -> Result(svg_path.Path, svg_path.Error) {
-  csg(left, right, using: fill_rule, operation: Union, options:)
+  let _ = fill_rule
+  let _ = options
+  robust_union.union_nonzero(
+    svg_path.Path(list.append(
+      svg_path.path_subpaths(left),
+      svg_path.path_subpaths(right),
+    )),
+  )
 }
 
 /// Return a path whose fill is the intersection of two input paths under

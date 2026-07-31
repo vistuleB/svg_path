@@ -207,10 +207,10 @@ fn next_piece(
   ))
   let candidates =
     collect_candidates(pieces, point, incoming_derivative, tolerance, 0, [])
-    |> list.filter(keeping: fn(candidate) {
-      float.absolute_value(float.absolute_value(candidate.turn) -. 180.0)
-      >. u_turn_epsilon
-    })
+  let candidates = case list.filter(candidates, keeping: non_u_turn) {
+    [] -> candidates
+    non_u_turns -> non_u_turns
+  }
   case candidates |> list.sort(by: compare_candidates) |> list.first {
     Ok(candidate) -> Ok(candidate)
     Error(Nil) -> Error(svg_path.OverlappingSegments)
@@ -218,6 +218,11 @@ fn next_piece(
 }
 
 const u_turn_epsilon = 1.0e-6
+
+fn non_u_turn(candidate: Candidate) -> Bool {
+  float.absolute_value(float.absolute_value(candidate.turn) -. 180.0)
+  >. u_turn_epsilon
+}
 
 fn collect_candidates(
   pieces: List(svg_path.Segment),
