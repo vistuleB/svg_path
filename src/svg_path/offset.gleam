@@ -88,6 +88,12 @@ pub type Error {
   NonFinite
 }
 
+/// A split address on one provisional offset subpath, collected from the
+/// arrangement formed by every provisional subpath in an offset path.
+type GlobalSplit {
+  GlobalSplit(subpath_index: Int, parameter: svg_path.SubpathParameter)
+}
+
 /// Join style used when offsetting adjacent subpath segments.
 ///
 /// This covers the common SVG `stroke-linejoin` values `bevel`, `miter`, and
@@ -510,14 +516,70 @@ pub fn path_with(
   options options: Options,
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(validate_options(options))
-  use subpaths <- result.try(
-    parametric_offset_path_subpaths(
+  use provisional <- result.try(
+    parametric_untrimmed_path_subpaths(
       svg_path.path_subpaths(path),
       distance,
       options,
       converted: [],
     ),
   )
+  use splits <- result.try(global_offset_split_parameters(provisional))
+  use sections <- result.try(
+    global_offset_sections(provisional, splits, options, index: 0, sections: []),
+  )
+  use retained <- result.try(
+    retain_global_parametric_sections(
+      sections,
+      source: path,
+      distance:,
+      options:,
+      retained: [],
+    ),
+  )
+  let retained = merge_touching_chunks(retained, options.fitting.tolerance)
+  use subpaths <- result.try(chunks_to_subpaths(
+    retained,
+    options.fitting.tolerance,
+    closed: False,
+  ))
+  Ok(svg_path.Path(subpaths:))
+}
+
+/// Return the retained, globally split offset sections without stitching
+/// touching sections together. This is intended for construction diagnostics.
+pub fn path_sections_with(
+  path path: svg_path.Path,
+  distance distance: Float,
+  options options: Options,
+) -> Result(svg_path.Path, Error) {
+  use _ <- result.try(validate_options(options))
+  use provisional <- result.try(
+    parametric_untrimmed_path_subpaths(
+      svg_path.path_subpaths(path),
+      distance,
+      options,
+      converted: [],
+    ),
+  )
+  use splits <- result.try(global_offset_split_parameters(provisional))
+  use sections <- result.try(
+    global_offset_sections(provisional, splits, options, index: 0, sections: []),
+  )
+  use retained <- result.try(
+    retain_global_parametric_sections(
+      sections,
+      source: path,
+      distance:,
+      options:,
+      retained: [],
+    ),
+  )
+  use subpaths <- result.try(chunks_to_subpaths(
+    retained,
+    options.fitting.tolerance,
+    closed: False,
+  ))
   Ok(svg_path.Path(subpaths:))
 }
 
@@ -762,7 +824,231 @@ fn stroke_path_subpaths(
   }
 }
 
-fn parametric_offset_path_subpaths(
+fn global_offset_split_parameters(
+  provisional: List(svg_path.Subpath),
+) -> Result(List(GlobalSplit), Error) {
+  global_offset_split_parameters_loop(provisional, index: 0, collected: [])
+}
+
+fn global_offset_split_parameters_loop(
+  remaining: List(svg_path.Subpath),
+  index index: Int,
+  collected collected: List(GlobalSplit),
+) -> Result(List(GlobalSplit), Error) {
+  case remaining {
+    [] -> Ok(collected)
+    [first, ..rest] -> {
+      use self_splits <- result.try(self_intersection_split_parameters(first))
+      let collected =
+        list.fold(self_splits, collected, fn(acc, parameter) {
+          [GlobalSplit(subpath_index: index, parameter:), ..acc]
+        })
+      use collected <- result.try(global_offset_pair_splits(
+        first,
+        rest,
+        left_index: index,
+        right_index: index + 1,
+        collected:,
+      ))
+      global_offset_split_parameters_loop(rest, index: index + 1, collected:)
+    }
+  }
+}
+
+fn global_offset_pair_splits(
+  left: svg_path.Subpath,
+  remaining: List(svg_path.Subpath),
+  left_index left_index: Int,
+  right_index right_index: Int,
+  collected collected: List(GlobalSplit),
+) -> Result(List(GlobalSplit), Error) {
+  case remaining {
+    [] -> Ok(collected)
+    [right, ..rest] -> {
+      case
+        intersections.subpath_with(
+          left,
+          right,
+          options: intersections.default_options(),
+        )
+      {
+        Ok(found) -> {
+          let collected =
+            list.fold(found, collected, fn(acc, intersection) {
+              let svg_path.SubpathIntersection(
+                left_parameters:,
+                right_parameters:,
+                ..,
+              ) = intersection
+              let acc =
+                list.fold(left_parameters, acc, fn(acc, parameter) {
+                  [GlobalSplit(subpath_index: left_index, parameter:), ..acc]
+                })
+              list.fold(right_parameters, acc, fn(acc, parameter) {
+                [GlobalSplit(subpath_index: right_index, parameter:), ..acc]
+              })
+            })
+          global_offset_pair_splits(
+            left,
+            rest,
+            left_index:,
+            right_index: right_index + 1,
+            collected:,
+          )
+        }
+        // Coincident spans do not provide point split addresses. Leave their
+        // occurrences intact here; the arrangement union owns multiplicity.
+        Error(svg_path.OverlappingSegments) ->
+          global_offset_pair_splits(
+            left,
+            rest,
+            left_index:,
+            right_index: right_index + 1,
+            collected:,
+          )
+        Error(error) -> Error(PathError(error))
+      }
+    }
+  }
+}
+
+fn global_offset_sections(
+  provisional: List(svg_path.Subpath),
+  splits: List(GlobalSplit),
+  options: Options,
+  index index: Int,
+  sections sections: List(List(svg_path.Segment)),
+) -> Result(List(List(svg_path.Segment)), Error) {
+  case provisional {
+    [] -> Ok(list.reverse(sections))
+    [first, ..rest] -> {
+      let local_splits =
+        splits
+        |> list.filter_map(fn(split) {
+          let GlobalSplit(subpath_index:, parameter:) = split
+          case subpath_index == index {
+            True -> Ok(parameter)
+            False -> Error(Nil)
+          }
+        })
+      use first_sections <- result.try(parametric_self_intersection_sections(
+        first,
+        intersections.default_options(),
+        options.fitting.tolerance,
+        extra_split_points: local_splits,
+      ))
+      global_offset_sections(
+        rest,
+        splits,
+        options,
+        index: index + 1,
+        sections: list.append(list.reverse(first_sections), sections),
+      )
+    }
+  }
+}
+
+fn retain_global_parametric_sections(
+  sections: List(List(svg_path.Segment)),
+  source source: svg_path.Path,
+  distance distance: Float,
+  options options: Options,
+  retained retained: List(List(svg_path.Segment)),
+) -> Result(List(List(svg_path.Segment)), Error) {
+  case sections {
+    [] -> Ok(list.reverse(retained))
+    [first, ..rest] -> {
+      use keep <- result.try(global_parametric_section_is_valid(
+        first,
+        source:,
+        distance:,
+        options:,
+      ))
+      let retained = case keep {
+        True -> [first, ..retained]
+        False -> retained
+      }
+      retain_global_parametric_sections(
+        rest,
+        source:,
+        distance:,
+        options:,
+        retained:,
+      )
+    }
+  }
+}
+
+fn global_parametric_section_is_valid(
+  section: List(svg_path.Segment),
+  source source: svg_path.Path,
+  distance distance: Float,
+  options options: Options,
+) -> Result(Bool, Error) {
+  use section <- result.try(normalize_chunk(section, options.fitting.tolerance))
+  use section <- result.try(
+    svg_path.subpath_with(section, policy: svg_path.Wiggle)
+    |> result.map_error(PathError),
+  )
+  use length <- result.try(
+    svg_path.subpath_length(section) |> result.map_error(PathError),
+  )
+  global_parametric_section_samples(
+    section,
+    length,
+    section_sample_parameters(),
+    source:,
+    distance:,
+    options:,
+    count: 0,
+  )
+}
+
+fn global_parametric_section_samples(
+  section: svg_path.Subpath,
+  length: Float,
+  samples: List(Float),
+  source source: svg_path.Path,
+  distance distance: Float,
+  options options: Options,
+  count count: Int,
+) -> Result(Bool, Error) {
+  case samples {
+    [] -> Ok(count >= 5)
+    [first, ..rest] -> {
+      use point <- result.try(
+        svg_path.subpath_point_at_length(section, distance: length *. first)
+        |> result.map_error(PathError),
+      )
+      let margin = distance_margin(options)
+      use projection <- result.try(
+        svg_path.path_projection_with(
+          point,
+          to: source,
+          options: options.trimming,
+        )
+        |> result.map_error(PathError),
+      )
+      let count = case
+        projection.distance +. margin >=. float.absolute_value(distance)
+      {
+        True -> count + 1
+        False -> count
+      }
+      global_parametric_section_samples(
+        section,
+        length,
+        rest,
+        source:,
+        distance:,
+        options:,
+        count:,
+      )
+    }
+  }
+}
+
+fn parametric_untrimmed_path_subpaths(
   subpaths: List(svg_path.Subpath),
   distance: Float,
   options: Options,
@@ -771,16 +1057,15 @@ fn parametric_offset_path_subpaths(
   case subpaths {
     [] -> Ok(list.reverse(converted))
     [first, ..rest] -> {
-      use offset <- result.try(subpath_with(first, distance:, options:))
-      parametric_offset_path_subpaths(
-        rest,
-        distance,
-        options,
-        converted: list.append(
-          list.reverse(svg_path.path_subpaths(offset)),
-          converted,
-        ),
-      )
+      use offset <- result.try(subpath_untrimmed_with(
+        first,
+        distance:,
+        options:,
+      ))
+      parametric_untrimmed_path_subpaths(rest, distance, options, converted: [
+        offset,
+        ..converted
+      ])
     }
   }
 }
@@ -3725,9 +4010,15 @@ fn heal_adjacent_offset_boundaries(
         distance,
         heal_angle,
       ))
-      heal_adjacent_offset_boundaries_loop(second, rest, distance, heal_angle, healed: [
-        first,
-      ])
+      heal_adjacent_offset_boundaries_loop(
+        second,
+        rest,
+        distance,
+        heal_angle,
+        healed: [
+          first,
+        ],
+      )
     }
   }
 }
@@ -3748,10 +4039,13 @@ fn heal_adjacent_offset_boundaries_loop(
         distance,
         heal_angle,
       ))
-      heal_adjacent_offset_boundaries_loop(next, remaining, distance, heal_angle, healed: [
-        previous,
-        ..healed
-      ])
+      heal_adjacent_offset_boundaries_loop(
+        next,
+        remaining,
+        distance,
+        heal_angle,
+        healed: [previous, ..healed],
+      )
     }
   }
 }
