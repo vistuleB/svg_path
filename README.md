@@ -1293,7 +1293,7 @@ the right panel shows the resulting vertices, directed edges, winding levels,
 and directional multiplicities.
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/arrangement_graph_overlapping_squares.svg" alt="Two overlapping square subpaths and their arrangement graph">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.26.0/figures/arrangement_graph_overlapping_squares.svg" alt="Two overlapping square subpaths and their arrangement graph">
 </center>
 
 ```gleam
@@ -1328,7 +1328,7 @@ circle at all four source endpoints and represents each geometric edge once,
 with one occurrence in each direction.
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/arrangement_graph_semantic_circle_overlap.svg" alt="Oppositely directed equal circles with phase-shifted arc subdivisions and their arrangement graph">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.26.0/figures/arrangement_graph_semantic_circle_overlap.svg" alt="Oppositely directed equal circles with phase-shifted arc subdivisions and their arrangement graph">
 </center>
 
 `build` is the supported constructor. Direct construction remains possible for

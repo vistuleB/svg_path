@@ -9,7 +9,7 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
-## Unreleased
+## 0.26.0 - 2026-08-01
 
 ### Added
 
@@ -76,6 +76,12 @@ rather than only the tag object.
 - Renamed the number-formatting module to `svg_path/format`.
 - Stopped ordinary visual tests from writing generated artifacts during the
   test suite.
+
+## 1.0.0 - 2026-07-30 (withdrawn)
+
+- Published briefly as a stable snapshot of the API developed through 0.23.0.
+- Withdrawn from Hex; subsequent development resumed on the 0.x version line
+  with 0.24.0.
 
 ## 0.23.0 - 2026-07-30
 
