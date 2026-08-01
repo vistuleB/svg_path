@@ -23,6 +23,40 @@ binary CSG operations, symmetric difference, and rounded monotone contours.
 Uses the same source paths and arrangement graph under `EvenOdd`. The final
 monotone-contour panel is winding-based and therefore independent of fill rule.
 
+### ArrangementGraph Intersection Studies
+
+Each sheet shows the source operands, their shared arrangement graph, and the
+reconstructed intersection boundary.
+
+![Overlapping rectangle intersection](docs/gallery/gallery-intersection-rectangles.svg)
+
+![Circle and rectangle intersection](docs/gallery/gallery-intersection-circle-rectangle.svg)
+
+![Edge-tangent rectangle intersection](docs/gallery/gallery-intersection-edge-tangent.svg)
+
+![Nested Nonzero intersection](docs/gallery/gallery-intersection-nested-nonzero.svg)
+
+![Nested EvenOdd intersection](docs/gallery/gallery-intersection-nested-evenodd.svg)
+
+![Bowtie and rectangle intersection](docs/gallery/gallery-intersection-bowtie-rectangle.svg)
+
+### ArrangementGraph Difference Studies
+
+These use the same three-panel format for subtraction, including holes,
+nested fill-rule cases, mixed curves, and self-crossing input.
+
+![Overlapping rectangle difference](docs/gallery/gallery-difference-rectangles.svg)
+
+![Circle and rectangle difference](docs/gallery/gallery-difference-circle-rectangle.svg)
+
+![Contained rectangle cutout](docs/gallery/gallery-difference-hole.svg)
+
+![Nested Nonzero difference](docs/gallery/gallery-difference-nested-nonzero.svg)
+
+![Nested EvenOdd difference](docs/gallery/gallery-difference-nested-evenodd.svg)
+
+![Bowtie and rectangle difference](docs/gallery/gallery-difference-bowtie-rectangle.svg)
+
 ### Stroke Caps
 
 ![Stroke caps](docs/gallery/gallery-stroke-caps.svg)

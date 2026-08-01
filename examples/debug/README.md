@@ -4,6 +4,11 @@ Generated SVG debug drawings live here.
 
 - `tmp_tests/`: parked R&D drawing fixtures. These used to live under `test/`,
   but are intentionally outside normal `gleam test` discovery.
+- `arrangement_csg_figures.gleam`: parked generator for ArrangementGraph and
+  CSG diagnostic sheets.
+- `offset_sv_probe.gleam` and `package_title_figure.gleam`: parked package-title
+  offset probes. They live outside `src` so their Erlang file I/O is not part
+  of the published package.
 - `debug_drawing.*`: leaf/stem renderer smoke test
 - `convex_hull_stem.*`: convex hull overlay for the first cubic stem segment
 - `convex_hull_horseshoe.*`: convex hull overlay for the horseshoe cubic segment

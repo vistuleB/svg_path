@@ -1,24 +1,81 @@
 # Changelog
 
-This changelog was reconstructed from git history, `gleam.toml` version bumps,
-tags, commit subjects, public module diffs, and README/test changes.
+This changelog was reconstructed from published Hex versions, git history,
+`gleam.toml` version bumps, commit subjects, public module diffs, and
+README/test changes.
 
-Tags begin at `v0.3.0`. The `0.1.0` and `0.2.0` sections are reconstructed
-from the initial package version and the `0.2.0` version bump. A few older tags
-are attached just before the matching `gleam.toml` version bump; in those cases
-the entries below follow the intended release/version history rather than only
-the tag object.
+Published versions begin at `0.1.0`; repository tags begin at `v0.3.0`. A few
+older tags are attached just before the matching `gleam.toml` version bump; in
+those cases the entries below follow the published release/version history
+rather than only the tag object.
 
 ## Unreleased
 
-- No unreleased changes yet.
+### Added
 
-## 1.0.0 - 2026-07-30
+- Added `svg_path/arrangement_graph`, a transparent planar arrangement built
+  from normalized source paths, atomic non-intersecting edges, endpoint
+  clusters, and directional overlap multiplicities.
+- Added reusable ArrangementGraph drawing helpers with edge direction,
+  multiplicity, vertex, and winding-level annotations.
+- Added graph-based Boolean union, intersection, difference, and symmetric
+  difference under both SVG fill rules.
+- Added `csg.monotone_contours` for reconstructing nested or disjoint contours
+  while preserving the complete signed integer winding field.
+- Added `svg_path/overlaps` for segment and subpath overlap intervals, including
+  interval canonicalization and merging helpers.
+- Added deterministic smallest-enclosing-circle endpoint clustering.
 
-- First stable release of the current public API.
-- Carries forward the `0.23.0` feature set after final documentation cleanup.
-- Added `svg_path/intersections` as a discoverable facade for segment, subpath,
-  self-subpath, and path point-intersection queries.
+### Changed
+
+- Changed CSG operations to return `CsgResult`, containing both the result path
+  and the exact `ArrangementGraphBuild` used to derive it.
+- Changed CSG construction to normalize line-degenerate segment sequences,
+  refine intersections and overlap boundaries, classify atomic edges by their
+  winding fields, and trace filled-sector boundary cycles.
+- Made segment overlap detection geometric rather than dependent on structural
+  equality of segment fields or matching original subdivision points.
+- Enforced one shared overlap classification contract across
+  `intersections.segment` and `overlaps.segment` at matching tolerances.
+- Improved segment projection termination for small parameter windows and
+  corrected distance-candidate evaluation near window boundaries.
+- Changed endpoint-cluster representatives from insertion-order averaging to
+  deterministic smallest-enclosing-circle centers.
+- Refined ArrangementGraph and CSG option, validation, and internal-topology
+  errors.
+- Built offset sections across complete paths and split them at overlap
+  endpoints.
+
+### Removed
+
+- Removed the superseded occurrence-ID and legacy CSG implementations.
+- Removed `csg.simplify_nonzero_output`; current Boolean operations reconstruct
+  only edges separating filled and unfilled output sectors.
+
+### Fixed
+
+- Fixed overlap detection for geometrically equal arcs with different SVG arc
+  fields or phase-shifted arc subdivisions.
+- Fixed arc subdivision searches that could fail to terminate after the
+  parameter interval was already below the requested tolerance.
+
+## 0.25.0 - 2026-07-30
+
+- Added conversion of degenerate segment sequences into equivalent line
+  traversals.
+- Reported finite endpoint intersections for non-degenerate arcs whose start
+  and end points coincide.
+
+## 0.24.0 - 2026-07-30
+
+- Moved point-intersection implementation and options into the public
+  `svg_path/intersections` module.
+- Added segment, subpath, and path self-intersection APIs and restored their
+  slower regression coverage.
+- Extended endpoint policies with caller-supplied reconciliation functions.
+- Renamed the number-formatting module to `svg_path/format`.
+- Stopped ordinary visual tests from writing generated artifacts during the
+  test suite.
 
 ## 0.23.0 - 2026-07-30
 
