@@ -61,8 +61,14 @@ pub fn prepare_for_arc_averse_consumer(
   clipping region without adding closure bridges.
 - `svg_path/intersections`: segment, subpath, and path point-intersection
   queries.
-- `svg_path/csg`: Boolean union, intersection, and difference for filled
-  paths.
+- `svg_path/overlaps`: continuous coincident intervals between segments and
+  subpaths.
+- `svg_path/arrangement_graph`: planar arrangements built from normalized path
+  segments, including endpoint clusters and coincident-edge multiplicities.
+- `svg_path/arrangement_graph/drawing`: drawing primitives for inspecting an
+  arrangement graph.
+- `svg_path/csg`: Boolean union, intersection, difference, symmetric
+  difference, and monotone contour reconstruction for filled paths.
 - `svg_path/cut`: split subpaths and paths at intersections with cutter
   geometry.
 - `svg_path/offset`: one-sided offsets, two-sided bands, and offset-map
@@ -838,6 +844,35 @@ intersections.path_self(path)
 Results are ordered by parameter, and boundary aliases are canonicalized. Use
 `_with` variants to supply `IntersectionOptions` or `SelfIntersectionOptions`.
 
+### Segment and Subpath Overlaps
+
+Point-intersection queries deliberately cannot represent a continuous shared
+interval. Use `svg_path/overlaps` when coincident geometry is the expected
+result:
+
+```gleam
+import svg_path/overlaps
+
+overlaps.segment(left_segment, right_segment)
+// -> Result(List(overlaps.SegmentOverlap), svg_path.Error)
+
+overlaps.subpath(left_subpath, right_subpath)
+// -> Result(List(overlaps.SubpathOverlap), svg_path.Error)
+```
+
+A `SegmentOverlap` gives the interval parameters and geometric endpoints on
+both segments. Its left parameters are canonicalized into increasing order;
+the right parameters may decrease when the two segments traverse the overlap
+in opposite directions. At a matching tolerance, `intersections.segment`
+returns `OverlappingSegments` exactly when `overlaps.segment` reports an
+overlap.
+
+The overlap detector is intended for non-degenerate segments whose overlap
+boundaries occur at an endpoint of at least one input segment. Arrangement
+construction establishes that working model through normalization and repeated
+subdivision. Lower-level helpers in `svg_path/overlaps` canonicalize, validate,
+and merge compatible overlap intervals.
+
 ### Convex Hulls
 
 The `svg_path/convex_hull` module computes closed convex hull subpaths for
@@ -1243,121 +1278,132 @@ boundary of the clipping region are retained. Segment types are preserved where
 possible: lines remain lines, Beziers remain Beziers, and arcs remain arcs
 after splitting.
 
-## Path CSG
+## Arrangement Graphs
 
-CSG here means Boolean operations on the filled point-sets represented by SVG
-paths: union, intersection, and difference. SVG specifies how to decide the
-filled region of one path through `fill-rule`, and it specifies that open
-subpaths are filled as if a closing line connected the final point back to the
-start point. SVG does not specify a general CSG API for combining two arbitrary
-paths into a new path, so `svg_path/csg` defines the returned-path and
-numerical policy used by this package.
+`svg_path/arrangement_graph` constructs a planar arrangement from one or more
+source paths. Construction first normalizes line-degenerate segment sequences,
+then splits segments at intersections and overlap boundaries. The resulting
+atomic edges do not intersect except at endpoint clusters. Coincident edges are
+stored once with forward and reverse multiplicities.
 
-The API works directly on `Path` and returns `Path`, even for simple inputs.
-Boolean operations can produce zero components, one component, multiple
-components, holes, and islands inside holes.
-
-```gleam
-csg.union(left, right, using:)
-csg.intersection(left, right, using:)
-csg.difference(left, minus: right, using:)
-csg.simplify_nonzero_output(path)
-
-// Each returns Result(svg_path.Path, svg_path.Error)
-```
-
-Each operation preserves same-fill-rule filled-set equivalence:
-
-```text
-fill(csg.union(left, right, using: rule), using: rule)
-  == fill(left, using: rule) union fill(right, using: rule)
-
-fill(csg.intersection(left, right, using: rule), using: rule)
-  == fill(left, using: rule) intersection fill(right, using: rule)
-
-fill(csg.difference(left, minus: right, using: rule), using: rule)
-  == fill(left, using: rule) difference fill(right, using: rule)
-```
-
-As filled sets, `union` and `intersection` are commutative; `difference` is
-not. The `using` fill rule is part of the operation: repeated loops,
-self-intersections, and nested subpaths can differ under `Nonzero` and
-`EvenOdd`.
-
-The returned path is not required to be a minimal outline. For `Nonzero`,
-changes in absolute contour depth inside the filled set may be preserved: a
-nested contour can remain visible in `union` even when both sides are filled
-blue.
-
-For example, the middle panel below is the raw `Nonzero` union of seven
-overlapping rectangles. It keeps internal contour-depth lines. The right panel
-applies `effects.round_corners_with` to that returned path, so the same contour
-structure is visible with rounded corners.
+For two overlapping squares, the input boundaries cross at two points. Those
+crossings become vertices, and the four original sides that pass through them
+are split into atomic edges. The left panel uses one color per source subpath;
+the right panel shows the resulting vertices, directed edges, winding levels,
+and directional multiplicities.
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v1.0.0/figures/effects_rounded_rectangle_union.svg" alt="Raw and rounded union of overlapping rectangles">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/arrangement_graph_overlapping_squares.svg" alt="Two overlapping square subpaths and their arrangement graph">
 </center>
 
-Call `csg.simplify_nonzero_output(path)` to remove the internal
-contour-depth boundaries after a CSG operation. It keeps boundaries
-that separate filled and unfilled regions under `Nonzero`, removes boundaries
-that only separate two filled regions of different contour depth, and returns a
-path with the same `Nonzero` filled set.
+```gleam
+import svg_path/arrangement_graph
 
-Multiple subpaths are evaluated globally, just like `area.path` and
-`path_containment`; they are not processed independently and then added. Empty
-paths and move-only subpaths produce an empty filled set. Open subpaths are
-implicitly closed for fill purposes.
+arrangement_graph.build(
+  [left, right],
+  tolerance: 0.000001,
+  minimum_chord: 0.00001,
+)
+// -> Result(arrangement_graph.ArrangementGraphBuild, arrangement_graph.Error)
+```
 
-For points that are not on a boundary:
+`ArrangementGraphBuild` contains both the graph and `normalized_paths`. The
+normalized paths retain the input path and subpath order and are the official
+source geometry corresponding to the graph. Consumers that classify graph
+edges against their sources should use these paths rather than the original
+inputs.
+
+The graph, vertex, and edge representations are transparent for inspection.
+Vertices retain their clustered source endpoints and use the center of the
+smallest circle enclosing those endpoints as their representative point. Edges
+retain their segment geometry, endpoint vertex identifiers, and directional
+multiplicities. Cyclic edge order around a vertex is derived from geometry; it
+is not stored in the graph.
+
+Arrangement construction compares segment geometry rather than requiring
+structurally equal segment values. In the following case, two equal circles run
+in opposite directions. Each consists of two 180-degree arcs, but the second
+circle's subdivision is shifted by 45 degrees. The graph splits the common
+circle at all four source endpoints and represents each geometric edge once,
+with one occurrence in each direction.
+
+<center>
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/arrangement_graph_semantic_circle_overlap.svg" alt="Oppositely directed equal circles with phase-shifted arc subdivisions and their arrangement graph">
+</center>
+
+`build` is the supported constructor. Direct construction remains possible for
+inspection, serialization, and tests, but callers then assume responsibility
+for the documented graph invariants. `arrangement_graph.validate` checks local
+representation and closed-boundary invariants that do not require pairwise
+intersection tests.
+
+`svg_path/arrangement_graph/drawing` provides reusable drawing primitives for
+the transparent graph representation. `drawing` shows vertices, edges, and
+directional multiplicities. `annotated_drawing` additionally shows winding
+levels on both sides of every edge relative to a compatible source path; it
+trusts that the supplied source corresponds to the graph.
+
+## Path CSG
+
+`svg_path/csg` performs operations on the filled point-sets represented by SVG
+paths. It builds an arrangement graph, measures the winding field on either
+side of its edges, applies the requested fill rule, and reconstructs the
+necessary boundary cycles.
+
+```gleam
+import svg_path
+import svg_path/csg
+
+csg.union(left, right, using: svg_path.Nonzero)
+csg.intersection(left, right, using: svg_path.Nonzero)
+csg.difference(left, minus: right, using: svg_path.Nonzero)
+csg.symmetric_difference(left, right, using: svg_path.Nonzero)
+
+// Each returns Result(csg.CsgResult, csg.Error)
+```
+
+For example, both products of a union remain available without rebuilding the
+arrangement:
+
+```gleam
+let assert Ok(output) =
+  csg.union(left, right, using: svg_path.Nonzero)
+
+let result_path = output.path
+let arrangement_build = output.build
+```
+
+`CsgResult.path` is the reconstructed output path. `CsgResult.build` is the
+exact `ArrangementGraphBuild` used to compute it, exposing both the normalized
+source paths and the arrangement graph for inspection or drawing. This matters
+because endpoint clustering and segment refinement make the arrangement's
+geometry the source of truth for the returned path.
+
+Boolean operations can produce no components, one component, multiple
+components, holes, or islands inside holes. Multiple subpaths in each operand
+are evaluated globally. Open subpaths follow SVG fill semantics and are
+implicitly closed for filling. The `using` fill rule is part of the operation:
+repeated loops, self-intersections, and nested subpaths can produce different
+results under `Nonzero` and `EvenOdd`.
+
+For points away from a boundary:
 
 | Operation | The point is inside the result when |
 | --- | --- |
-| `union(left, right)` | the point is inside `left` or inside `right` |
-| `intersection(left, right)` | the point is inside `left` and inside `right` |
-| `difference(left, minus: right)` | the point is inside `left` and not inside `right` |
+| `union(left, right)` | it is inside `left` or `right` |
+| `intersection(left, right)` | it is inside both operands |
+| `difference(left, minus: right)` | it is inside `left` but not `right` |
+| `symmetric_difference(left, right)` | it is inside exactly one operand |
 
-<center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v1.0.0/figures/csg_theory_corner_overlap.svg" alt="CSG corner overlap semantics">
-</center>
+Use the `_with` variants with `csg.Options` to choose the endpoint tolerance
+and minimum atomic-edge chord. Returned segments retain their source type where
+possible: lines remain lines, Beziers remain Beziers, and arcs remain arcs
+after splitting.
 
-Input orientation matters only when it changes the input filled set. A single
-simple contour fills the same region in either direction, but nested contours
-can describe either a solid shape or a ring depending on orientation and fill
-rule.
-
-<center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v1.0.0/figures/csg_theory_nested_fill_rules.svg" alt="CSG nested contour fill rule semantics">
-</center>
-
-When a wider rectangle `B` crosses that nested path, `union`,
-`intersection`, and `difference` depend on the filled set chosen by `using`.
-The filled paths below are generated by the library; arrows, labels, panel
-backgrounds, and dashed input outlines are only annotations.
-
-<center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v1.0.0/figures/csg_nested_csg_nonzero_table.svg" alt="Nested CSG table with Nonzero fill rule">
-</center>
-
-<center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v1.0.0/figures/csg_nested_csg_evenodd_table.svg" alt="Nested CSG table with EvenOdd fill rule">
-</center>
-
-Boundary points need explicit policy. For filled-set classification, the
-result boundary is the boundary of the resulting filled set after the Boolean
-operation. For returned-path construction, the output is assembled from pieces
-where the output field changes: the shared internal edge between two simple
-overlapping depth-1 shapes in `union(left, right)` is omitted, while the cut
-edge in `difference(left, minus: right)` is kept. Under `Nonzero`, a deeper
-nested contour can also be kept even when it is not a filled-set boundary.
-
-Returned paths contain closed drawable subpaths, or `Path([])` for the empty
-result. Segment types are preserved where possible: line pieces stay lines,
-Bezier pieces stay Beziers, and arc pieces stay arcs after splitting. The
-returned path is oriented to fill correctly with the same rule used for the
-operation; unforced internal `Nonzero` level contours default to clockwise.
-If a case cannot be split or assembled into stable closed subpaths, the
-operation returns an error rather than silently emitting an incoherent path.
+The unary `csg.monotone_contours` operation takes no fill rule. It reconstructs
+nested or disjoint unit-level contours that preserve a path's complete signed
+integer winding field, rather than reducing that field to filled/unfilled
+values.
 
 ## Development
 
