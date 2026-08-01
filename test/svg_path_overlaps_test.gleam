@@ -1,7 +1,77 @@
+import gleam/list
 import svg_path
+import svg_path/intersections
 import svg_path/overlaps
 
 const tolerance = 0.000001
+
+pub fn segment_overlap_and_intersection_agree_on_partial_line_test() {
+  let left = line()
+  let right =
+    svg_path.Line(
+      start: svg_path.Point(5.0, 0.0),
+      end: svg_path.Point(15.0, 0.0),
+    )
+
+  assert_overlap_contract(left, right, expected_overlap: True)
+}
+
+pub fn segment_overlap_and_intersection_agree_on_semantic_arc_test() {
+  let same_geometry =
+    svg_path.Arc(
+      start: svg_path.Point(0.0, 0.0),
+      radius: svg_path.Point(5.0, 5.0),
+      x_axis_rotation: 0.0,
+      large_arc: True,
+      sweep: True,
+      end: svg_path.Point(10.0, 0.0),
+    )
+
+  assert_overlap_contract(arc(), same_geometry, expected_overlap: True)
+}
+
+pub fn segment_overlap_and_intersection_agree_on_endpoint_touch_test() {
+  let right =
+    svg_path.Line(
+      start: svg_path.Point(10.0, 0.0),
+      end: svg_path.Point(10.0, 10.0),
+    )
+
+  assert_overlap_contract(line(), right, expected_overlap: False)
+}
+
+pub fn segment_overlap_and_intersection_agree_on_disjoint_segments_test() {
+  let right =
+    svg_path.Line(
+      start: svg_path.Point(0.0, 2.0),
+      end: svg_path.Point(10.0, 2.0),
+    )
+
+  assert_overlap_contract(line(), right, expected_overlap: False)
+}
+
+fn assert_overlap_contract(
+  left: svg_path.Segment,
+  right: svg_path.Segment,
+  expected_overlap expected_overlap: Bool,
+) {
+  let options = intersections.IntersectionOptions(tolerance:, max_depth: 48)
+  let assert Ok(encounters) = overlaps.segment_with(left, right, options:)
+  let reports_overlap =
+    encounters
+    |> list.any(fn(encounter) {
+      case encounter {
+        overlaps.Overlap(..) -> True
+        overlaps.Intersection(..) -> False
+      }
+    })
+  let intersection_reports_overlap =
+    intersections.segment_with(left, right, options:)
+    == Error(svg_path.OverlappingSegments)
+
+  assert reports_overlap == expected_overlap
+  assert intersection_reports_overlap == expected_overlap
+}
 
 pub fn segment_overlap_merge_is_idempotent_test() {
   let overlap = segment_overlap(0.1, 0.9, 0.2, 0.8)
@@ -276,6 +346,8 @@ fn assert_full_overlap(
   expected_right_from: Float,
   expected_right_to: Float,
 ) {
+  assert intersections.segment(left, right)
+    == Error(svg_path.OverlappingSegments)
   let assert Ok([encounter]) = overlaps.segment(left, right)
   let assert overlaps.Overlap(
     left_from:,

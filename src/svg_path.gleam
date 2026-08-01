@@ -583,6 +583,10 @@ pub type Error {
   /// The two segments overlap in more than a single point.
   OverlappingSegments
 
+  /// Point-intersection logic reported an overlap that the shared overlap
+  /// classifier did not confirm.
+  OverlapClassificationDisagreement
+
   /// The path contains more than one non-empty subpath.
   MultipleNonemptySubpaths
 

@@ -17,12 +17,14 @@ import svg_path.{
   type SubpathIntersection, type SubpathParameter, type SubpathSelfIntersection,
   Arc, CubicBezier, InvalidIntersectionMaxDepth, InvalidIntersectionTolerance,
   InvalidSelfIntersectionDistanceTolerance,
-  InvalidSelfIntersectionMinimumArcLengthSeparation, Line, OverlappingSegments,
-  PathIntersection, PathParameter, PathSelfIntersection, Point, QuadraticBezier,
+  InvalidSelfIntersectionMinimumArcLengthSeparation, Line,
+  OverlapClassificationDisagreement, OverlappingSegments, PathIntersection,
+  PathParameter, PathSelfIntersection, Point, QuadraticBezier,
   SegmentIntersection, SelfIntersectionOptions, SubpathIntersection,
   SubpathParameter, SubpathSelfIntersection,
 }
 import svg_path/bezier
+import svg_path/segment_overlap
 
 const default_intersection_tolerance = 0.000000001
 
@@ -68,7 +70,19 @@ pub fn segment_with(
   options options: IntersectionOptions,
 ) -> Result(List(SegmentIntersection), Error) {
   use _ <- result.try(validate_intersection_options(options))
-  segment_intersections_valid_options(left, right, options)
+  use overlaps <- result.try(segment_overlap.segment_overlaps(
+    left,
+    right,
+    tolerance: options.tolerance,
+  ))
+  case overlaps {
+    [_, ..] -> Error(OverlappingSegments)
+    [] ->
+      case segment_intersections_valid_options(left, right, options) {
+        Error(OverlappingSegments) -> Error(OverlapClassificationDisagreement)
+        result -> result
+      }
+  }
 }
 
 /// Return point intersections where a segment intersects itself.
