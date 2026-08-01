@@ -123,7 +123,7 @@ pub fn main() -> Dynamic {
     let #(name, title, left, right, rule, operation) = entry
     let _ =
       write_file(
-        "examples/debug/" <> name,
+        "../debug/" <> name,
         render_case(title, left, right, rule, operation),
       )
   })
@@ -139,12 +139,12 @@ pub fn main() -> Dynamic {
     ])
   let _ =
     write_file(
-      "examples/debug/arrangement_boolean_nonzero.svg",
+      "../debug/arrangement_boolean_nonzero.svg",
       render_boolean_table(figure_left, figure_right, svg_path.Nonzero),
     )
   let _ =
     write_file(
-      "examples/debug/arrangement_boolean_evenodd.svg",
+      "../debug/arrangement_boolean_evenodd.svg",
       render_boolean_table(figure_left, figure_right, svg_path.EvenOdd),
     )
   dyn_nil()

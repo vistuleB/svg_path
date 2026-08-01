@@ -9,6 +9,16 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
+## 0.26.1 - 2026-08-01
+
+- Added proportional ArrangementGraph drawing options so nodes, edge strokes,
+  arrowheads, and annotations scale together.
+- Stopped graph arrowheads at the visible node boundary and added independent
+  arrow length, width, opacity, and arrival controls.
+- Rebuilt the README ArrangementGraph figures through reproducible generators
+  and moved the eight-panel fill-rule comparison from the Gallery into the CSG
+  documentation.
+
 ## 0.26.0 - 2026-08-01
 
 ### Added

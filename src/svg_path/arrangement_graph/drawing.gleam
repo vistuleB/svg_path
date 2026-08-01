@@ -21,6 +21,16 @@ pub type EdgeAnnotationPose {
   EdgeAnnotationPose(point: svg_path.Point, rotation: Float)
 }
 
+/// Proportional sizing for an annotated arrangement-graph drawing.
+pub type AnnotatedDrawingOptions {
+  AnnotatedDrawingOptions(scale: Float)
+}
+
+/// Default sizing for an annotated arrangement-graph drawing.
+pub fn default_annotated_drawing_options() -> AnnotatedDrawingOptions {
+  AnnotatedDrawingOptions(scale: 1.0)
+}
+
 /// Draw edges, clustered vertices, vertex ids, and directional multiplicities.
 pub fn drawing(graph: ArrangementGraph) -> svg.ThingsToDraw {
   let ArrangementGraph(vertices:, edges:) = graph
@@ -80,15 +90,37 @@ pub fn annotated_drawing(
   source: svg_path.Path,
   tolerance tolerance: Float,
 ) -> Result(svg.ThingsToDraw, Error) {
+  annotated_drawing_with(
+    graph,
+    source,
+    tolerance:,
+    options: default_annotated_drawing_options(),
+  )
+}
+
+/// Draw an arrangement graph with proportional control over its visual scale.
+pub fn annotated_drawing_with(
+  graph: ArrangementGraph,
+  source: svg_path.Path,
+  tolerance tolerance: Float,
+  options options: AnnotatedDrawingOptions,
+) -> Result(svg.ThingsToDraw, Error) {
+  let AnnotatedDrawingOptions(scale:) = options
+  let node_radius = 5.0 *. scale
   let ArrangementGraph(vertices:, edges:) = graph
   use edge_things <- result.try(
-    annotated_edge_things(edges, source, tolerance, []),
+    annotated_edge_things(edges, source, tolerance, scale, node_radius, []),
   )
   let vertex_things =
     vertices
     |> list.map(fn(vertex) {
       let ArrangementVertex(point:, ..) = vertex
-      svg.Circle(point, 5.0, "fill: #fff; stroke: #dc2626; stroke-width: 2.25")
+      svg.Circle(
+        point,
+        node_radius,
+        "fill: #fff; stroke: #dc2626; stroke-width: "
+          <> float.to_string(2.25 *. scale),
+      )
     })
   Ok(list.append(edge_things, vertex_things))
 }
@@ -97,6 +129,8 @@ fn annotated_edge_things(
   edges: List(ArrangementEdge),
   source: svg_path.Path,
   tolerance: Float,
+  drawing_scale: Float,
+  node_radius: Float,
   accumulated: List(svg.ThingsToDraw),
 ) -> Result(svg.ThingsToDraw, Error) {
   case edges {
@@ -134,17 +168,24 @@ fn annotated_edge_things(
         <> int.to_string(reverse_multiplicity)
         <> "↓"
       let arrow =
-        segment_direction_arrow(segment, "#dc2626")
+        segment_direction_arrow_with(
+          segment,
+          "#dc2626",
+          length_scale: 2.0 *. node_radius /. 9.0,
+          width_scale: 1.6 *. node_radius /. 3.5,
+          arrival_offset: node_radius,
+          opacity: 1.0,
+        )
         |> result.unwrap(svg.StyledPath(svg_path.path_empty(), ""))
       let chord =
         point.distance(
           svg_path.segment_start(segment),
           svg_path.segment_end(segment),
         )
-      let usable_chord = chord -. 10.0
+      let usable_chord = chord -. 2.0 *. node_radius
       let label_scale = case usable_chord <=. 0.0 {
         True -> 0.0
-        False -> float_min(0.5, usable_chord *. 0.8 /. 24.0)
+        False -> float_min(1.2 *. drawing_scale, usable_chord *. 0.8 /. 24.0)
       }
       let label_things = case label_scale <=. 0.0 {
         True -> []
@@ -159,7 +200,8 @@ fn annotated_edge_things(
               ),
               width,
               height,
-              "fill: #fff; stroke: #94a3b8; stroke-width: 0.75",
+              "fill: #fff; stroke: #94a3b8; stroke-width: "
+                <> float.to_string(0.75 *. drawing_scale),
               rotation:,
               origin: midpoint,
             ),
@@ -187,13 +229,21 @@ fn annotated_edge_things(
           [
             svg.StyledPath(
               svg_path.Path([svg_path.subpath_assert([segment])]),
-              "fill: none; stroke: #334155; stroke-width: 3.25",
+              "fill: none; stroke: #334155; stroke-width: "
+                <> float.to_string(3.25 *. drawing_scale),
             ),
             arrow,
           ],
           label_things,
         )
-      annotated_edge_things(rest, source, tolerance, [things, ..accumulated])
+      annotated_edge_things(
+        rest,
+        source,
+        tolerance,
+        drawing_scale,
+        node_radius,
+        [things, ..accumulated],
+      )
     }
   }
 }
@@ -211,7 +261,28 @@ pub fn segment_direction_arrow(
   segment: svg_path.Segment,
   color: String,
 ) -> Result(svg.ThingToDraw, Nil) {
-  use point <- result.try(
+  segment_direction_arrow_with(
+    segment,
+    color,
+    length_scale: 1.0,
+    width_scale: 1.0,
+    arrival_offset: 0.0,
+    opacity: 1.0,
+  )
+}
+
+/// Draw one arrowhead whose tip is the head of a segment.
+///
+/// Length and width are scaled independently from the default dimensions.
+pub fn segment_direction_arrow_with(
+  segment: svg_path.Segment,
+  color: String,
+  length_scale length_scale: Float,
+  width_scale width_scale: Float,
+  arrival_offset arrival_offset: Float,
+  opacity opacity: Float,
+) -> Result(svg.ThingToDraw, Nil) {
+  use endpoint <- result.try(
     svg_path.segment_point(segment, at: 1.0) |> result.replace_error(Nil),
   )
   use derivative <- result.try(
@@ -230,19 +301,28 @@ pub fn segment_direction_arrow(
       let uy = derivative.y /. magnitude
       let px = 0.0 -. uy
       let py = ux
+      let point =
+        svg_path.Point(
+          endpoint.x -. ux *. arrival_offset,
+          endpoint.y -. uy *. arrival_offset,
+        )
       let left =
         svg_path.Point(
-          point.x -. ux *. 9.0 +. px *. 3.5,
-          point.y -. uy *. 9.0 +. py *. 3.5,
+          point.x -. ux *. 9.0 *. length_scale +. px *. 3.5 *. width_scale,
+          point.y -. uy *. 9.0 *. length_scale +. py *. 3.5 *. width_scale,
         )
       let right =
         svg_path.Point(
-          point.x -. ux *. 9.0 -. px *. 3.5,
-          point.y -. uy *. 9.0 -. py *. 3.5,
+          point.x -. ux *. 9.0 *. length_scale -. px *. 3.5 *. width_scale,
+          point.y -. uy *. 9.0 *. length_scale -. py *. 3.5 *. width_scale,
         )
       Ok(svg.StyledPath(
         svg_path.Path([svg_path.subpath_assert_polygon([point, left, right])]),
-        "fill: " <> color <> "; stroke: none",
+        "fill: "
+          <> color
+          <> "; fill-opacity: "
+          <> float.to_string(opacity)
+          <> "; stroke: none",
       ))
     }
   }
@@ -253,10 +333,38 @@ pub fn path_direction_arrows(
   path: svg_path.Path,
   color: String,
 ) -> svg.ThingsToDraw {
+  path_direction_arrows_with(
+    path,
+    color,
+    length_scale: 1.0,
+    width_scale: 1.0,
+    arrival_offset: 0.0,
+    opacity: 1.0,
+  )
+}
+
+/// Draw independently scaled endpoint arrowheads for every segment of a path.
+pub fn path_direction_arrows_with(
+  path: svg_path.Path,
+  color: String,
+  length_scale length_scale: Float,
+  width_scale width_scale: Float,
+  arrival_offset arrival_offset: Float,
+  opacity opacity: Float,
+) -> svg.ThingsToDraw {
   path
   |> svg_path.path_subpaths
   |> list.flat_map(svg_path.subpath_segments)
-  |> list.filter_map(fn(segment) { segment_direction_arrow(segment, color) })
+  |> list.filter_map(fn(segment) {
+    segment_direction_arrow_with(
+      segment,
+      color,
+      length_scale:,
+      width_scale:,
+      arrival_offset:,
+      opacity:,
+    )
+  })
 }
 
 /// Return the midpoint and tangent-aligned orientation for an edge annotation.

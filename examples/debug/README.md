@@ -4,8 +4,8 @@ Generated SVG debug drawings live here.
 
 - `tmp_tests/`: parked R&D drawing fixtures. These used to live under `test/`,
   but are intentionally outside normal `gleam test` discovery.
-- `arrangement_csg_figures.gleam`: parked generator for ArrangementGraph and
-  CSG diagnostic sheets.
+- `../readme_arrangement_figures/`: generators for the ArrangementGraph and
+  CSG sheets used by the README.
 - `offset_sv_probe.gleam` and `package_title_figure.gleam`: parked package-title
   offset probes. They live outside `src` so their Erlang file I/O is not part
   of the published package.

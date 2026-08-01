@@ -1293,7 +1293,7 @@ the right panel shows the resulting vertices, directed edges, winding levels,
 and directional multiplicities.
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.26.0/figures/arrangement_graph_overlapping_squares.svg" alt="Two overlapping square subpaths and their arrangement graph">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.26.1/figures/arrangement_graph_overlapping_squares.svg" alt="Two overlapping square subpaths and their arrangement graph">
 </center>
 
 ```gleam
@@ -1328,7 +1328,7 @@ circle at all four source endpoints and represents each geometric edge once,
 with one occurrence in each direction.
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.26.0/figures/arrangement_graph_semantic_circle_overlap.svg" alt="Oppositely directed equal circles with phase-shifted arc subdivisions and their arrangement graph">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.26.1/figures/arrangement_graph_semantic_circle_overlap.svg" alt="Oppositely directed equal circles with phase-shifted arc subdivisions and their arrangement graph">
 </center>
 
 `build` is the supported constructor. Direct construction remains possible for
@@ -1385,6 +1385,30 @@ are evaluated globally. Open subpaths follow SVG fill semantics and are
 implicitly closed for filling. The `using` fill rule is part of the operation:
 repeated loops, self-intersections, and nested subpaths can produce different
 results under `Nonzero` and `EvenOdd`.
+
+The following worked example uses two paths containing two rectangles each.
+Every panel retains the same coordinate system: the first row shows the source
+paths, their arrangement graph, union, and intersection; the second shows both
+orders of difference, symmetric difference, and rounded monotone contours.
+The arrangement is constructed once from geometry, while each binary result
+classifies its edge sectors under the selected fill rule.
+
+Under `Nonzero`, any nonzero winding level is filled. The arrangement panel's
+black numbers are the winding levels immediately to the left and right of each
+directed edge; its red numbers are forward and reverse source multiplicities.
+
+<center>
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.26.1/figures/arrangement_csg_nonzero.svg" alt="Eight-panel ArrangementGraph CSG example using the Nonzero fill rule">
+</center>
+
+The same inputs and arrangement produce different Boolean boundaries under
+`EvenOdd`, where winding parity determines whether a sector is filled. The
+final `monotone_contours` panel is unchanged because that unary operation
+preserves the complete signed winding field and does not take a fill rule.
+
+<center>
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.26.1/figures/arrangement_csg_evenodd.svg" alt="Eight-panel ArrangementGraph CSG example using the EvenOdd fill rule">
+</center>
 
 For points away from a boundary:
 
