@@ -112,18 +112,49 @@ pub type ArrangementGraphBuild {
 }
 
 pub type Error {
+  /// An underlying path operation failed.
   PathError(svg_path.Error)
-  EffectError(effects.Error)
-  InvalidTolerance(Float)
+
+  /// Normalization failed for a reason outside its path-operation contract.
+  InternalNormalizationError
+
+  /// Endpoint tolerance must be greater than zero.
+  InvalidTolerance(tolerance: Float)
+
+  /// Minimum edge chord length must be greater than zero.
+  InvalidMinimumChord(minimum_chord: Float)
+
+  /// A segment is shorter than the required minimum chord length.
   SegmentTooShort(chord: Float, minimum: Float)
+
+  /// Endpoint clustering collapsed an inserted segment to one vertex.
+  SegmentCollapsedToVertex(vertex: Int)
+
+  /// A graph edge refers to the same vertex at both ends.
   LoopEdge(vertex: Int)
+
+  /// An edge refers to a vertex that is not in the graph.
   MissingVertex(vertex: Int)
+
+  /// A vertex has no incident edge.
   IsolatedVertex(vertex: Int)
+
+  /// An edge's total directional multiplicity is not positive.
   InvalidMultiplicity(edge: Int)
+
+  /// A closed-boundary graph has an odd weighted degree at a vertex.
   OddWeightedDegree(vertex: Int, degree: Int)
+
+  /// A segment endpoint is farther than tolerance from its vertex point.
   EdgeEndpointMismatch(edge: Int, vertex: Int, distance: Float)
+
+  /// A vertex does not retain any source endpoints for its cluster.
   VertexWithoutEndpointSamples(vertex: Int)
+
+  /// A vertex point is not the canonical center of its endpoint samples.
   VertexCenterMismatch(vertex: Int, distance_squared: Float)
+
+  /// A vertex's endpoint cluster exceeds the graph tolerance.
   VertexSampleOutsideTolerance(
     vertex: Int,
     distance_squared: Float,
@@ -163,7 +194,14 @@ fn normalize_subpaths(
       subpaths
       |> list.map(effects.subpath_colinearize(_, tolerance:))
       |> result.all
-      |> result.map_error(EffectError)
+      |> result.map_error(normalization_error)
+  }
+}
+
+fn normalization_error(error: effects.Error) -> Error {
+  case error {
+    effects.PathError(error) -> PathError(error)
+    _ -> InternalNormalizationError
   }
 }
 
@@ -195,9 +233,10 @@ pub fn insert_atomic_segment(
   tolerance tolerance: Float,
   minimum_chord minimum_chord: Float,
 ) -> Result(ArrangementGraph, Error) {
-  case tolerance <=. 0.0 || minimum_chord <=. 0.0 {
-    True -> Error(InvalidTolerance(float_min(tolerance, minimum_chord)))
-    False -> {
+  case tolerance <=. 0.0, minimum_chord <=. 0.0 {
+    True, _ -> Error(InvalidTolerance(tolerance))
+    _, True -> Error(InvalidMinimumChord(minimum_chord))
+    False, False -> {
       let start = svg_path.segment_start(segment)
       let end = svg_path.segment_end(segment)
       let chord = point.distance(start, end)
@@ -208,7 +247,7 @@ pub fn insert_atomic_segment(
           let #(vertices, start_id) = attach_vertex(vertices, start, tolerance)
           let #(vertices, end_id) = attach_vertex(vertices, end, tolerance)
           case start_id == end_id {
-            True -> Error(LoopEdge(vertex: start_id))
+            True -> Error(SegmentCollapsedToVertex(vertex: start_id))
             False ->
               Ok(ArrangementGraph(
                 vertices:,
@@ -240,6 +279,7 @@ pub fn build(
   tolerance tolerance: Float,
   minimum_chord minimum_chord: Float,
 ) -> Result(ArrangementGraphBuild, Error) {
+  use _ <- result.try(validate_options(tolerance, minimum_chord))
   use normalized_paths <- result.try(normalize_paths(paths, tolerance))
   let segments =
     normalized_paths
@@ -780,9 +820,21 @@ pub fn validate(
   tolerance tolerance: Float,
   minimum_chord minimum_chord: Float,
 ) -> Result(Nil, Error) {
+  use _ <- result.try(validate_options(tolerance, minimum_chord))
   let ArrangementGraph(vertices:, edges:) = graph
   use _ <- result.try(validate_edges(edges, vertices, tolerance, minimum_chord))
   validate_vertices(vertices, edges, tolerance)
+}
+
+fn validate_options(
+  tolerance: Float,
+  minimum_chord: Float,
+) -> Result(Nil, Error) {
+  case tolerance <=. 0.0, minimum_chord <=. 0.0 {
+    True, _ -> Error(InvalidTolerance(tolerance))
+    _, True -> Error(InvalidMinimumChord(minimum_chord))
+    False, False -> Ok(Nil)
+  }
 }
 
 fn validate_edges(
@@ -957,12 +1009,5 @@ fn vertex_point(
   {
     Ok(ArrangementVertex(point:, ..)) -> Ok(point)
     Error(_) -> Error(MissingVertex(vertex: id))
-  }
-}
-
-fn float_min(a: Float, b: Float) -> Float {
-  case a <. b {
-    True -> a
-    False -> b
   }
 }

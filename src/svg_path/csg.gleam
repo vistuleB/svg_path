@@ -23,10 +23,25 @@ pub type Options {
 }
 
 pub type Error {
+  /// Arrangement construction or validation failed.
   ArrangementError(arrangement_graph.Error)
+
+  /// An underlying path operation failed.
   PathError(svg_path.Error)
-  BoundaryTraceFailed(vertex: Int)
-  BoundarySectorMismatch(vertex: Int)
+
+  /// Boundary classification produced topology that could not be reconstructed.
+  /// This indicates an internal consistency failure rather than invalid caller
+  /// syntax.
+  InternalBoundaryTopologyError(vertex: Int, reason: BoundaryTopologyFailure)
+}
+
+/// The stage at which classified boundary topology became inconsistent.
+pub type BoundaryTopologyFailure {
+  /// A boundary ray did not have the required filled-sector successor.
+  SectorMismatch
+
+  /// Linked boundary edges did not form a complete closed cycle.
+  TraceFailed
 }
 
 /// A CSG output together with the exact arrangement used to derive it.
@@ -627,7 +642,8 @@ fn filled_sector_successor(
   let BoundaryRay(edge_id:, starts:, ..) = successor
   case starts {
     True -> Ok(edge_id)
-    False -> Error(BoundarySectorMismatch(vertex:))
+    False ->
+      Error(InternalBoundaryTopologyError(vertex:, reason: SectorMismatch))
   }
 }
 
@@ -710,7 +726,7 @@ fn cyclic_successor(
   vertex vertex: Int,
 ) -> Result(BoundaryRay, Error) {
   case rays {
-    [] -> Error(BoundarySectorMismatch(vertex:))
+    [] -> Error(InternalBoundaryTopologyError(vertex:, reason: SectorMismatch))
     [first, ..rest] -> {
       let BoundaryRay(edge_id:, starts:, ..) = first
       case edge_id == incoming_id && !starts {
@@ -719,7 +735,9 @@ fn cyclic_successor(
             [next, ..] -> Ok(next)
             [] ->
               first_ray
-              |> result.map_error(fn(_) { BoundarySectorMismatch(vertex:) })
+              |> result.map_error(fn(_) {
+                InternalBoundaryTopologyError(vertex:, reason: SectorMismatch)
+              })
           }
         False -> cyclic_successor(rest, incoming_id, first: first_ray, vertex:)
       }
@@ -832,7 +850,11 @@ fn trace_boundary_cycle(
     True -> Ok(#(list.reverse(reversed_cycle), remaining))
     False ->
       case limit <= 0 {
-        True -> Error(BoundaryTraceFailed(vertex: end_vertex))
+        True ->
+          Error(InternalBoundaryTopologyError(
+            vertex: end_vertex,
+            reason: TraceFailed,
+          ))
         False -> {
           use selected <- result.try(
             take_boundary_edge(remaining, successor_id, end_vertex, []),
@@ -856,7 +878,7 @@ fn boundary_successor(
   vertex: Int,
 ) -> Result(Int, Error) {
   case links {
-    [] -> Error(BoundaryTraceFailed(vertex:))
+    [] -> Error(InternalBoundaryTopologyError(vertex:, reason: TraceFailed))
     [BoundaryLink(edge_id: candidate, successor_id:), ..rest] ->
       case candidate == edge_id {
         True -> Ok(successor_id)
@@ -872,7 +894,7 @@ fn take_boundary_edge(
   retained: List(BoundaryEdge),
 ) -> Result(#(BoundaryEdge, List(BoundaryEdge)), Error) {
   case edges {
-    [] -> Error(BoundaryTraceFailed(vertex:))
+    [] -> Error(InternalBoundaryTopologyError(vertex:, reason: TraceFailed))
     [first, ..rest] -> {
       let BoundaryEdge(id: candidate, ..) = first
       case candidate == id {

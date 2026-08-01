@@ -58,6 +58,38 @@ pub fn build_preserves_source_path_grouping_test() {
   |> should.equal(2)
 }
 
+pub fn build_rejects_invalid_tolerance_before_inspecting_sources_test() {
+  arrangement_graph.build([], tolerance: 0.0, minimum_chord:)
+  |> should.equal(Error(arrangement_graph.InvalidTolerance(0.0)))
+}
+
+pub fn build_rejects_invalid_minimum_chord_before_inspecting_sources_test() {
+  arrangement_graph.build([], tolerance:, minimum_chord: 0.0)
+  |> should.equal(Error(arrangement_graph.InvalidMinimumChord(0.0)))
+}
+
+pub fn validation_rejects_invalid_numeric_options_test() {
+  arrangement_graph.validate(
+    arrangement_graph.ArrangementGraph(vertices: [], edges: []),
+    tolerance:,
+    minimum_chord: 0.0,
+  )
+  |> should.equal(Error(arrangement_graph.InvalidMinimumChord(0.0)))
+}
+
+pub fn insertion_reports_tolerance_cluster_collapse_test() {
+  arrangement_graph.insert_atomic_segment(
+    arrangement_graph.empty(),
+    svg_path.Line(
+      start: svg_path.Point(0.0, 0.0),
+      end: svg_path.Point(0.5, 0.0),
+    ),
+    tolerance: 1.0,
+    minimum_chord: 0.1,
+  )
+  |> should.equal(Error(arrangement_graph.SegmentCollapsedToVertex(vertex: 0)))
+}
+
 pub fn two_endpoint_samples_use_enclosing_circle_midpoint_test() {
   let a = svg_path.Point(0.0, 0.0)
   let b1 = svg_path.Point(10.0, 0.0)
