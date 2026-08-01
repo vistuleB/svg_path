@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="500" viewBox="0 0 960 500">
+  <defs>
+    <marker id="ab" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#2563eb"/></marker>
+    <marker id="ao" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#ea580c"/></marker>
+    <marker id="ag" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0 0L10 5L0 10z" fill="#334155"/></marker>
+    <g id="c01"><rect x="-17" y="-12" width="34" height="24" rx="4" fill="#fff" stroke="#94a3b8"/><text y="-2" text-anchor="middle" font-family="ui-monospace,monospace" font-size="9" font-weight="700" fill="#0f172a">0/1</text><text y="9" text-anchor="middle" font-family="ui-monospace,monospace" font-size="8" font-weight="700" fill="#dc2626">↑1/0↓</text></g>
+    <g id="c12"><rect x="-17" y="-12" width="34" height="24" rx="4" fill="#fff" stroke="#94a3b8"/><text y="-2" text-anchor="middle" font-family="ui-monospace,monospace" font-size="9" font-weight="700" fill="#0f172a">1/2</text><text y="9" text-anchor="middle" font-family="ui-monospace,monospace" font-size="8" font-weight="700" fill="#dc2626">↑1/0↓</text></g>
+  </defs>
+  <rect width="960" height="500" fill="#f8fafc"/>
+  <line x1="455" y1="30" x2="455" y2="450" stroke="#cbd5e1"/>
+  <text x="225" y="48" text-anchor="middle" font-family="system-ui,sans-serif" font-size="20" font-weight="650" fill="#0f172a">Two input subpaths</text>
+  <text x="705" y="48" text-anchor="middle" font-family="system-ui,sans-serif" font-size="20" font-weight="650" fill="#0f172a">Arrangement graph</text>
+
+  <!-- Two clockwise closed square subpaths. -->
+  <g fill="none" stroke="#2563eb" stroke-width="7" opacity=".58" marker-end="url(#ab)"><path d="M80 90L260 90"/><path d="M260 90L260 270"/><path d="M260 270L80 270"/><path d="M80 270L80 90"/></g>
+  <g fill="none" stroke="#ea580c" stroke-width="7" opacity=".58" marker-end="url(#ao)"><path d="M170 180L350 180"/><path d="M350 180L350 360"/><path d="M350 360L170 360"/><path d="M170 360L170 180"/></g>
+  <g font-family="system-ui,sans-serif" font-size="13"><circle cx="110" cy="410" r="6" fill="#2563eb" opacity=".7"/><text x="123" y="415" fill="#1d4ed8">subpath 1</text><circle cx="250" cy="410" r="6" fill="#ea580c" opacity=".7"/><text x="263" y="415" fill="#c2410c">subpath 2</text></g>
+
+  <!-- Actual atomic line segments after cuts at (740,180) and (650,270). -->
+  <g fill="none" stroke="#334155" stroke-width="4" marker-end="url(#ag)">
+    <path d="M560 90L740 90"/>
+    <path d="M740 90L740 180"/><path d="M740 180L740 270"/>
+    <path d="M740 270L650 270"/><path d="M650 270L560 270"/>
+    <path d="M560 270L560 90"/>
+    <path d="M650 180L740 180"/><path d="M740 180L830 180"/>
+    <path d="M830 180L830 360"/>
+    <path d="M830 360L650 360"/>
+    <path d="M650 360L650 270"/><path d="M650 270L650 180"/>
+  </g>
+
+  <!-- Cartouche poses use each line segment's midpoint and derivative. -->
+  <use href="#c01" transform="translate(650 90) rotate(90)"/>
+  <use href="#c01" transform="translate(740 135) rotate(180)"/>
+  <use href="#c12" transform="translate(740 225) rotate(180)"/>
+  <use href="#c12" transform="translate(695 270) rotate(270)"/>
+  <use href="#c01" transform="translate(605 270) rotate(270)"/>
+  <use href="#c01" transform="translate(560 180) rotate(0)"/>
+  <use href="#c12" transform="translate(695 180) rotate(90)"/>
+  <use href="#c01" transform="translate(785 180) rotate(90)"/>
+  <use href="#c01" transform="translate(830 270) rotate(180)"/>
+  <use href="#c01" transform="translate(740 360) rotate(270)"/>
+  <use href="#c01" transform="translate(650 315) rotate(0)"/>
+  <use href="#c12" transform="translate(650 225) rotate(0)"/>
+
+  <g fill="#fff" stroke="#dc2626" stroke-width="2.5">
+    <circle cx="560" cy="90" r="6"/><circle cx="740" cy="90" r="6"/><circle cx="740" cy="180" r="6"/><circle cx="740" cy="270" r="6"/><circle cx="650" cy="270" r="6"/><circle cx="560" cy="270" r="6"/><circle cx="650" cy="180" r="6"/><circle cx="830" cy="180" r="6"/><circle cx="830" cy="360" r="6"/><circle cx="650" cy="360" r="6"/>
+  </g>
+  <text x="705" y="410" text-anchor="middle" font-family="system-ui,sans-serif" font-size="13" fill="#475569">10 vertices · 12 edges · no geometric overlaps</text>
+  <text x="480" y="478" text-anchor="start" font-family="system-ui,sans-serif" font-size="12" fill="#64748b">black: winding L/R · red: ↑forward/reverse↓ multiplicity</text>
+</svg>
