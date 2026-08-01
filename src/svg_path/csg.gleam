@@ -4,6 +4,7 @@
 //// `monotone_contours` operation instead preserves the complete signed integer
 //// winding field and therefore takes no fill rule.
 
+import gleam/result
 import svg_path
 import svg_path/arrangement_graph
 
@@ -35,12 +36,19 @@ pub fn union_with(
   using fill_rule: svg_path.FillRule,
   options options: Options,
 ) -> Result(svg_path.Path, arrangement_graph.Error) {
-  arrangement_graph.union(
-    left,
-    right,
-    using: fill_rule,
+  use built <- result.try(arrangement_graph.build(
+    [left, right],
     tolerance: options.tolerance,
     minimum_chord: options.minimum_chord,
+  ))
+  let arrangement_graph.BuildResult(graph:, normalized_paths:) = built
+  let assert [normalized_left, normalized_right] = normalized_paths
+  arrangement_graph.union_from_arrangement_graph(
+    graph,
+    normalized_left,
+    normalized_right,
+    using: fill_rule,
+    tolerance: options.tolerance,
   )
 }
 
@@ -60,12 +68,19 @@ pub fn intersection_with(
   using fill_rule: svg_path.FillRule,
   options options: Options,
 ) -> Result(svg_path.Path, arrangement_graph.Error) {
-  arrangement_graph.intersection(
-    left,
-    right,
-    using: fill_rule,
+  use built <- result.try(arrangement_graph.build(
+    [left, right],
     tolerance: options.tolerance,
     minimum_chord: options.minimum_chord,
+  ))
+  let arrangement_graph.BuildResult(graph:, normalized_paths:) = built
+  let assert [normalized_left, normalized_right] = normalized_paths
+  arrangement_graph.intersection_from_arrangement_graph(
+    graph,
+    normalized_left,
+    normalized_right,
+    using: fill_rule,
+    tolerance: options.tolerance,
   )
 }
 
@@ -90,12 +105,19 @@ pub fn difference_with(
   using fill_rule: svg_path.FillRule,
   options options: Options,
 ) -> Result(svg_path.Path, arrangement_graph.Error) {
-  arrangement_graph.difference(
-    left,
-    minus: right,
-    using: fill_rule,
+  use built <- result.try(arrangement_graph.build(
+    [left, right],
     tolerance: options.tolerance,
     minimum_chord: options.minimum_chord,
+  ))
+  let arrangement_graph.BuildResult(graph:, normalized_paths:) = built
+  let assert [normalized_left, normalized_right] = normalized_paths
+  arrangement_graph.difference_from_arrangement_graph(
+    graph,
+    normalized_left,
+    normalized_right,
+    using: fill_rule,
+    tolerance: options.tolerance,
   )
 }
 
@@ -120,12 +142,19 @@ pub fn symmetric_difference_with(
   using fill_rule: svg_path.FillRule,
   options options: Options,
 ) -> Result(svg_path.Path, arrangement_graph.Error) {
-  arrangement_graph.symmetric_difference(
-    left,
-    right,
-    using: fill_rule,
+  use built <- result.try(arrangement_graph.build(
+    [left, right],
     tolerance: options.tolerance,
     minimum_chord: options.minimum_chord,
+  ))
+  let arrangement_graph.BuildResult(graph:, normalized_paths:) = built
+  let assert [normalized_left, normalized_right] = normalized_paths
+  arrangement_graph.symmetric_difference_from_arrangement_graph(
+    graph,
+    normalized_left,
+    normalized_right,
+    using: fill_rule,
+    tolerance: options.tolerance,
   )
 }
 
@@ -142,9 +171,16 @@ pub fn monotone_contours_with(
   path: svg_path.Path,
   options options: Options,
 ) -> Result(svg_path.Path, arrangement_graph.Error) {
-  arrangement_graph.monotone_contours(
-    path,
+  use built <- result.try(arrangement_graph.build(
+    [path],
     tolerance: options.tolerance,
     minimum_chord: options.minimum_chord,
+  ))
+  let arrangement_graph.BuildResult(graph:, normalized_paths:) = built
+  let assert [normalized_path] = normalized_paths
+  arrangement_graph.monotone_contours_from_arrangement_graph(
+    graph,
+    normalized_path,
+    tolerance: options.tolerance,
   )
 }

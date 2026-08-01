@@ -1,4 +1,7 @@
+import gleam/float
+import gleam/int
 import gleam/list
+import gleam/result
 import gleeunit/should
 import svg_path
 import svg_path/arrangement_graph
@@ -21,12 +24,7 @@ pub fn closed_square_builds_valid_graph_test() {
       svg_path.Line(start: d, end: a),
     ])
 
-  let assert Ok(graph) =
-    arrangement_graph.build_from_noded_subpaths(
-      [square],
-      tolerance:,
-      minimum_chord:,
-    )
+  let assert Ok(graph) = build_graph([square], tolerance:, minimum_chord:)
   let arrangement_graph.ArrangementGraph(vertices:, edges:) = graph
 
   list.length(vertices) |> should.equal(4)
@@ -35,20 +33,43 @@ pub fn closed_square_builds_valid_graph_test() {
   |> should.equal(Ok(Nil))
 }
 
-pub fn endpoint_samples_are_averaged_test() {
+pub fn build_preserves_source_path_grouping_test() {
+  let first = svg_path.path_from_subpath(square(0.0, 0.0, 10.0))
+  let second =
+    svg_path.Path([
+      square(20.0, 0.0, 5.0),
+      square(30.0, 0.0, 5.0),
+    ])
+
+  let assert Ok(arrangement_graph.BuildResult(
+    normalized_paths: [normalized_first, normalized_second],
+    ..,
+  )) = arrangement_graph.build([first, second], tolerance:, minimum_chord:)
+
+  normalized_first
+  |> svg_path.path_subpaths
+  |> list.length
+  |> should.equal(1)
+  normalized_second
+  |> svg_path.path_subpaths
+  |> list.length
+  |> should.equal(2)
+}
+
+pub fn two_endpoint_samples_use_enclosing_circle_midpoint_test() {
   let a = svg_path.Point(0.0, 0.0)
   let b1 = svg_path.Point(10.0, 0.0)
   let b2 = svg_path.Point(10.0000004, 0.0)
   let c = svg_path.Point(10.0, 10.0)
   let assert Ok(first) =
-    arrangement_graph.insert_noded_segment(
+    arrangement_graph.insert_atomic_segment(
       arrangement_graph.empty(),
       svg_path.Line(start: a, end: b1),
       tolerance:,
       minimum_chord:,
     )
   let assert Ok(graph) =
-    arrangement_graph.insert_noded_segment(
+    arrangement_graph.insert_atomic_segment(
       first,
       svg_path.Line(start: b2, end: c),
       tolerance:,
@@ -57,12 +78,126 @@ pub fn endpoint_samples_are_averaged_test() {
   let arrangement_graph.ArrangementGraph(vertices:, ..) = graph
   let assert [
     _,
-    arrangement_graph.ArrangementVertex(point: joined, sample_count: 2, ..),
+    arrangement_graph.ArrangementVertex(
+      point: joined,
+      endpoint_samples: [_, _],
+      ..,
+    ),
     _,
   ] = vertices
 
   point.near(joined, svg_path.Point(10.0000002, 0.0), tolerance: 0.000000001)
   |> should.be_true
+}
+
+pub fn endpoint_cluster_center_is_independent_of_insertion_order_test() {
+  let a = svg_path.Point(0.0, 0.0)
+  let b = svg_path.Point(2.0, 0.0)
+  let c = svg_path.Point(1.0, 2.0)
+  let assert Ok(first) = graph_with_clustered_endpoints([a, b, c], 2.0)
+  let assert Ok(second) = graph_with_clustered_endpoints([c, a, b], 2.0)
+  let assert arrangement_graph.ArrangementGraph(
+    vertices: [
+      _,
+      arrangement_graph.ArrangementVertex(point: first_center, ..),
+      ..
+    ],
+    ..,
+  ) = first
+  let assert arrangement_graph.ArrangementGraph(
+    vertices: [
+      _,
+      arrangement_graph.ArrangementVertex(point: second_center, ..),
+      ..
+    ],
+    ..,
+  ) = second
+
+  first_center |> should.equal(svg_path.Point(1.0, 0.75))
+  second_center |> should.equal(first_center)
+}
+
+pub fn exactly_equal_endpoint_samples_preserve_exact_vertex_test() {
+  let endpoint = svg_path.Point(1.25, -3.5)
+  let assert Ok(graph) =
+    graph_with_clustered_endpoints([endpoint, endpoint, endpoint], tolerance)
+  let assert arrangement_graph.ArrangementGraph(
+    vertices: [
+      _,
+      arrangement_graph.ArrangementVertex(
+        point:,
+        endpoint_samples: [_, _, _],
+        ..,
+      ),
+      ..
+    ],
+    ..,
+  ) = graph
+
+  point |> should.equal(endpoint)
+}
+
+pub fn validation_rejects_vertex_sample_outside_official_tolerance_test() {
+  let graph =
+    arrangement_graph.ArrangementGraph(
+      vertices: [
+        arrangement_graph.ArrangementVertex(
+          id: 0,
+          point: svg_path.Point(0.0, 0.0),
+          endpoint_samples: [
+            svg_path.Point(-2.0, 0.0),
+            svg_path.Point(2.0, 0.0),
+          ],
+        ),
+      ],
+      edges: [],
+    )
+
+  arrangement_graph.validate(graph, tolerance: 1.0, minimum_chord:)
+  |> should.equal(
+    Error(arrangement_graph.VertexSampleOutsideTolerance(
+      vertex: 0,
+      distance_squared: 4.0,
+      tolerance_squared: 1.0,
+    )),
+  )
+}
+
+pub fn validation_rejects_noncanonical_vertex_center_test() {
+  let graph =
+    arrangement_graph.ArrangementGraph(
+      vertices: [
+        arrangement_graph.ArrangementVertex(
+          id: 0,
+          point: svg_path.Point(0.1, 0.0),
+          endpoint_samples: [svg_path.Point(0.0, 0.0)],
+        ),
+      ],
+      edges: [],
+    )
+
+  let assert Error(arrangement_graph.VertexCenterMismatch(
+    vertex: 0,
+    distance_squared:,
+  )) = arrangement_graph.validate(graph, tolerance: 1.0, minimum_chord:)
+  assert float.absolute_value(distance_squared -. 0.01) <. tolerance
+}
+
+pub fn validation_rejects_vertex_without_endpoint_samples_test() {
+  let graph =
+    arrangement_graph.ArrangementGraph(
+      vertices: [
+        arrangement_graph.ArrangementVertex(
+          id: 0,
+          point: svg_path.Point(0.0, 0.0),
+          endpoint_samples: [],
+        ),
+      ],
+      edges: [],
+    )
+
+  arrangement_graph.validate(graph, tolerance:, minimum_chord:)
+  |> should.equal(Error(arrangement_graph.VertexWithoutEndpointSamples(0)))
 }
 
 pub fn reversed_duplicate_increments_reverse_multiplicity_test() {
@@ -71,14 +206,14 @@ pub fn reversed_duplicate_increments_reverse_multiplicity_test() {
   let forward = svg_path.Line(start: a, end: b)
   let reverse = svg_path.Line(start: b, end: a)
   let assert Ok(first) =
-    arrangement_graph.insert_noded_segment(
+    arrangement_graph.insert_atomic_segment(
       arrangement_graph.empty(),
       forward,
       tolerance:,
       minimum_chord:,
     )
   let assert Ok(graph) =
-    arrangement_graph.insert_noded_segment(
+    arrangement_graph.insert_atomic_segment(
       first,
       reverse,
       tolerance:,
@@ -99,7 +234,7 @@ pub fn reversed_duplicate_increments_reverse_multiplicity_test() {
 
 pub fn open_chain_fails_final_even_degree_invariant_test() {
   let assert Ok(graph) =
-    arrangement_graph.insert_noded_segment(
+    arrangement_graph.insert_atomic_segment(
       arrangement_graph.empty(),
       svg_path.Line(
         start: svg_path.Point(0.0, 0.0),
@@ -116,7 +251,7 @@ pub fn open_chain_fails_final_even_degree_invariant_test() {
 }
 
 pub fn short_chord_is_rejected_test() {
-  arrangement_graph.insert_noded_segment(
+  arrangement_graph.insert_atomic_segment(
     arrangement_graph.empty(),
     svg_path.Line(
       start: svg_path.Point(0.0, 0.0),
@@ -140,7 +275,7 @@ pub fn drawing_contains_edges_vertices_and_multiplicity_labels_test() {
       end: svg_path.Point(10.0, 0.0),
     )
   let assert Ok(graph) =
-    arrangement_graph.insert_noded_segment(
+    arrangement_graph.insert_atomic_segment(
       arrangement_graph.empty(),
       line,
       tolerance:,
@@ -192,7 +327,7 @@ pub fn builder_splits_crossing_lines_at_shared_vertex_test() {
     ])
 
   let assert Ok(arrangement_graph.ArrangementGraph(vertices:, edges:)) =
-    arrangement_graph.build([horizontal, vertical], tolerance:, minimum_chord:)
+    build_graph([horizontal, vertical], tolerance:, minimum_chord:)
 
   list.length(vertices) |> should.equal(5)
   list.length(edges) |> should.equal(4)
@@ -215,7 +350,7 @@ pub fn builder_refines_partial_line_overlap_and_counts_middle_test() {
     ])
 
   let assert Ok(arrangement_graph.ArrangementGraph(vertices:, edges:)) =
-    arrangement_graph.build([first, second], tolerance:, minimum_chord:)
+    build_graph([first, second], tolerance:, minimum_chord:)
 
   list.length(vertices) |> should.equal(4)
   list.length(edges) |> should.equal(3)
@@ -274,11 +409,7 @@ pub fn builder_consolidates_phase_shifted_opposite_circle_arcs_test() {
     ])
 
   let assert Ok(graph) =
-    arrangement_graph.build(
-      [clockwise, counterclockwise],
-      tolerance:,
-      minimum_chord:,
-    )
+    build_graph([clockwise, counterclockwise], tolerance:, minimum_chord:)
   let arrangement_graph.ArrangementGraph(vertices:, edges:) = graph
 
   list.length(vertices) |> should.equal(4)
@@ -343,7 +474,7 @@ pub fn builder_consolidates_near_equal_circles_inside_tolerance_test() {
     ])
 
   let assert Ok(graph) =
-    arrangement_graph.build(
+    build_graph(
       [outer, inner_reversed],
       tolerance: graph_tolerance,
       minimum_chord:,
@@ -370,7 +501,7 @@ pub fn union_from_arrangement_graph_removes_interlocking_square_internal_edges_t
   let left = svg_path.path_from_subpath(first)
   let right = svg_path.path_from_subpath(second)
   let assert Ok(graph) =
-    arrangement_graph.build([first, second], tolerance:, minimum_chord:)
+    build_graph([first, second], tolerance:, minimum_chord:)
   let assert Ok(union) =
     arrangement_graph.union_from_arrangement_graph(
       graph,
@@ -413,11 +544,7 @@ pub fn union_from_arrangement_graph_does_not_cancel_opposite_operands_test() {
   let left = svg_path.path_from_subpath(clockwise)
   let right = svg_path.path_from_subpath(counterclockwise)
   let assert Ok(graph) =
-    arrangement_graph.build(
-      [clockwise, counterclockwise],
-      tolerance:,
-      minimum_chord:,
-    )
+    build_graph([clockwise, counterclockwise], tolerance:, minimum_chord:)
   let assert Ok(union) =
     arrangement_graph.union_from_arrangement_graph(
       graph,
@@ -441,7 +568,7 @@ pub fn union_from_arrangement_graph_applies_requested_fill_rule_test() {
   let doubled = svg_path.Path([contour, contour])
   let empty = svg_path.path_empty()
   let assert Ok(graph) =
-    arrangement_graph.build([contour, contour], tolerance:, minimum_chord:)
+    build_graph([contour, contour], tolerance:, minimum_chord:)
   let assert Ok(nonzero) =
     arrangement_graph.union_from_arrangement_graph(
       graph,
@@ -469,7 +596,7 @@ pub fn union_from_arrangement_graph_pairs_filled_sectors_at_corner_pinch_test() 
   let left = svg_path.path_from_subpath(first)
   let right = svg_path.path_from_subpath(second)
   let assert Ok(graph) =
-    arrangement_graph.build([first, second], tolerance:, minimum_chord:)
+    build_graph([first, second], tolerance:, minimum_chord:)
   let assert Ok(union) =
     arrangement_graph.union_from_arrangement_graph(
       graph,
@@ -497,6 +624,58 @@ pub fn union_from_arrangement_graph_pairs_filled_sectors_at_corner_pinch_test() 
 fn closed_subpath(segments: List(svg_path.Segment)) -> svg_path.Subpath {
   svg_path.subpath_assert(segments)
   |> svg_path.subpath_assert_set_closed(closed: True)
+}
+
+fn build_graph(
+  subpaths: List(svg_path.Subpath),
+  tolerance tolerance: Float,
+  minimum_chord minimum_chord: Float,
+) -> Result(arrangement_graph.ArrangementGraph, arrangement_graph.Error) {
+  arrangement_graph.build([svg_path.Path(subpaths)], tolerance:, minimum_chord:)
+  |> result.map(fn(built) {
+    let arrangement_graph.BuildResult(graph:, ..) = built
+    graph
+  })
+}
+
+fn graph_with_clustered_endpoints(
+  endpoints: List(svg_path.Point),
+  cluster_tolerance: Float,
+) -> Result(arrangement_graph.ArrangementGraph, arrangement_graph.Error) {
+  insert_clustered_endpoints(
+    endpoints,
+    arrangement_graph.empty(),
+    index: 0,
+    cluster_tolerance:,
+  )
+}
+
+fn insert_clustered_endpoints(
+  endpoints: List(svg_path.Point),
+  graph: arrangement_graph.ArrangementGraph,
+  index index: Int,
+  cluster_tolerance cluster_tolerance: Float,
+) -> Result(arrangement_graph.ArrangementGraph, arrangement_graph.Error) {
+  case endpoints {
+    [] -> Ok(graph)
+    [endpoint, ..rest] -> {
+      use graph <- result.try(arrangement_graph.insert_atomic_segment(
+        graph,
+        svg_path.Line(
+          start: svg_path.Point(100.0, int.to_float(index) *. 10.0),
+          end: endpoint,
+        ),
+        tolerance: cluster_tolerance,
+        minimum_chord:,
+      ))
+      insert_clustered_endpoints(
+        rest,
+        graph,
+        index: index + 1,
+        cluster_tolerance:,
+      )
+    }
+  }
 }
 
 fn square(x: Float, y: Float, side: Float) -> svg_path.Subpath {

@@ -180,14 +180,16 @@ fn render_boolean_table(
 
   let assert Ok(graph_source) =
     place_like(source, source, 420.0, first_row_y, panel_width, panel_height)
-  let assert Ok(graph) =
-    arrangement_graph.build(
-      svg_path.path_subpaths(graph_source),
-      tolerance:,
-      minimum_chord:,
-    )
+  let assert Ok(arrangement_graph.BuildResult(
+    graph:,
+    normalized_paths: [normalized_graph_source],
+  )) = arrangement_graph.build([graph_source], tolerance:, minimum_chord:)
   let assert Ok(graph_drawing) =
-    arrangement_graph.annotated_drawing(graph, graph_source, tolerance:)
+    arrangement_graph.annotated_drawing(
+      graph,
+      normalized_graph_source,
+      tolerance:,
+    )
 
   let assert Ok(union) = csg.union(left, right, using: rule)
   let assert Ok(intersection) = csg.intersection(left, right, using: rule)
@@ -404,14 +406,16 @@ fn render_case(
   let right_placed = svg_path.Path(list.drop(source_parts, left_count))
 
   let assert Ok(graph_source) = fit(source, 450.0, 132.0)
-  let assert Ok(graph) =
-    arrangement_graph.build(
-      svg_path.path_subpaths(graph_source),
-      tolerance:,
-      minimum_chord:,
-    )
+  let assert Ok(arrangement_graph.BuildResult(
+    graph:,
+    normalized_paths: [normalized_graph_source],
+  )) = arrangement_graph.build([graph_source], tolerance:, minimum_chord:)
   let assert Ok(graph_drawing) =
-    arrangement_graph.annotated_drawing(graph, graph_source, tolerance:)
+    arrangement_graph.annotated_drawing(
+      graph,
+      normalized_graph_source,
+      tolerance:,
+    )
   let assert Ok(boolean_result) = case operation {
     IntersectionFigure -> csg.intersection(left, right, using: rule)
     DifferenceFigure -> csg.difference(left, minus: right, using: rule)

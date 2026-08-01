@@ -2,8 +2,8 @@
 ////
 //// This module provides arrangement construction, endpoint clustering,
 //// coincident-edge multiplicity, validation, Boolean boundary extraction, and
-//// diagnostic drawing. `build` nodes intersections and endpoint-bounded
-//// overlaps. The lower-level insertion functions require already-noded input.
+//// diagnostic drawing. `build` refines intersections and endpoint-bounded
+//// overlaps into atomic segments before inserting them as graph edges.
 
 import gleam/float
 import gleam/int
@@ -16,12 +16,22 @@ import svg_path/effects
 import svg_path/intersections
 import svg_path/overlaps
 import svg_path/point
+import svg_path/smallest_enclosing_circle
 import svg_path/svg
 import svg_path/trig
 import svg_path/winding_field
 
+/// One endpoint cluster in the embedded arrangement.
+///
+/// `point` is the center of the smallest circle enclosing `endpoint_samples`.
+/// Construction accepts a sample only when that circle's squared radius does
+/// not exceed the graph's squared endpoint tolerance.
 pub type ArrangementVertex {
-  ArrangementVertex(id: Int, point: svg_path.Point, sample_count: Int)
+  ArrangementVertex(
+    id: Int,
+    point: svg_path.Point,
+    endpoint_samples: List(svg_path.Point),
+  )
 }
 
 pub type ArrangementEdge {
@@ -42,6 +52,12 @@ pub type ArrangementGraph {
   )
 }
 
+/// An arrangement graph and the normalized source paths from which it was
+/// constructed. Source-path order is preserved.
+pub type BuildResult {
+  BuildResult(graph: ArrangementGraph, normalized_paths: List(svg_path.Path))
+}
+
 /// Placement of an edge annotation derived from the stored segment itself.
 /// `rotation` is an SVG rotation angle for which the annotation's local up
 /// direction follows the segment tangent.
@@ -60,12 +76,27 @@ pub type Error {
   InvalidMultiplicity(edge: Int)
   OddWeightedDegree(vertex: Int, degree: Int)
   EdgeEndpointMismatch(edge: Int, vertex: Int, distance: Float)
+  VertexWithoutEndpointSamples(vertex: Int)
+  VertexCenterMismatch(vertex: Int, distance_squared: Float)
+  VertexSampleOutsideTolerance(
+    vertex: Int,
+    distance_squared: Float,
+    tolerance_squared: Float,
+  )
   BoundaryTraceFailed(vertex: Int)
   BoundarySectorMismatch(vertex: Int)
 }
 
 type IndexedSegment {
   IndexedSegment(index: Int, segment: svg_path.Segment)
+}
+
+type VertexAttachment {
+  VertexAttachment(
+    vertex: ArrangementVertex,
+    center: svg_path.Point,
+    radius_squared: Float,
+  )
 }
 
 type SegmentCut {
@@ -97,12 +128,13 @@ type BooleanOperation {
   SymmetricDifferenceOperation
 }
 
+@internal
 pub fn empty() -> ArrangementGraph {
   ArrangementGraph(vertices: [], edges: [])
 }
 
 /// Replace line-degenerate segment sequences before arrangement construction.
-pub fn prepare_subpaths(
+fn normalize_subpaths(
   subpaths: List(svg_path.Subpath),
   tolerance tolerance: Float,
 ) -> Result(List(svg_path.Subpath), Error) {
@@ -116,13 +148,29 @@ pub fn prepare_subpaths(
   }
 }
 
-/// Insert one already-noded segment.
+fn normalize_paths(
+  paths: List(svg_path.Path),
+  tolerance: Float,
+) -> Result(List(svg_path.Path), Error) {
+  paths
+  |> list.map(fn(path) {
+    path
+    |> svg_path.path_subpaths
+    |> normalize_subpaths(tolerance:)
+    |> result.map(svg_path.Path)
+  })
+  |> result.all
+}
+
+/// Insert one atomic segment directly as an arrangement edge.
 ///
 /// Endpoints within `tolerance` join the same vertex. A structurally identical
 /// edge increments its forward multiplicity; its structural reverse increments
-/// reverse multiplicity. Other crossings and partial overlaps must have been
-/// resolved by a noding layer before calling this function.
-pub fn insert_noded_segment(
+/// reverse multiplicity. An atomic segment has no proper intersection or
+/// partial overlap with any existing edge; callers must establish that
+/// precondition before using this trusting insertion primitive.
+@internal
+pub fn insert_atomic_segment(
   graph: ArrangementGraph,
   segment: svg_path.Segment,
   tolerance tolerance: Float,
@@ -159,38 +207,46 @@ pub fn insert_noded_segment(
   }
 }
 
-pub fn build_from_noded_subpaths(
-  subpaths: List(svg_path.Subpath),
+/// Build an arrangement graph from independently normalized source paths.
+///
+/// Source-path order is retained in the result. Construction flattens their
+/// segments, refines them at point intersections and endpoint-bounded overlap
+/// boundaries, and inserts the resulting atomic segments. Its output is
+/// independent of input processing order. Overlap detection uses endpoint
+/// projection, so semantically equal arcs need not have structurally equal SVG
+/// flags or matching original subdivision points.
+pub fn build(
+  paths: List(svg_path.Path),
   tolerance tolerance: Float,
   minimum_chord minimum_chord: Float,
-) -> Result(ArrangementGraph, Error) {
-  subpaths
-  |> list.flat_map(svg_path.subpath_segments)
-  |> insert_segments(empty(), tolerance, minimum_chord)
+) -> Result(BuildResult, Error) {
+  use normalized_paths <- result.try(normalize_paths(paths, tolerance))
+  let segments =
+    normalized_paths
+    |> list.flat_map(svg_path.path_subpaths)
+    |> list.flat_map(svg_path.subpath_segments)
+  use atomic_segments <- result.try(refine_segments_to_atomic(
+    segments,
+    tolerance,
+    minimum_chord,
+  ))
+  use graph <- result.try(insert_semantic_pieces(
+    atomic_segments,
+    empty(),
+    tolerance,
+    minimum_chord,
+  ))
+  Ok(BuildResult(graph:, normalized_paths:))
 }
 
-/// Build an arrangement graph by noding point intersections and
-/// endpoint-bounded overlaps.
-///
-/// This first implementation performs arrangement-wide refinement before
-/// insertion. Its output is independent of input processing order. Overlap
-/// detection uses endpoint projection, so semantically equal arcs need not
-/// have structurally equal SVG flags or matching original subdivision points.
-pub fn build(
-  subpaths: List(svg_path.Subpath),
-  tolerance tolerance: Float,
-  minimum_chord minimum_chord: Float,
-) -> Result(ArrangementGraph, Error) {
-  use cleaned <- result.try(prepare_subpaths(subpaths, tolerance:))
-  let indexed =
-    cleaned
-    |> list.flat_map(svg_path.subpath_segments)
-    |> index_segments(0, [])
+fn refine_segments_to_atomic(
+  segments: List(svg_path.Segment),
+  tolerance: Float,
+  minimum_chord: Float,
+) -> Result(List(svg_path.Segment), Error) {
+  let indexed = index_segments(segments, 0, [])
   use cuts <- result.try(collect_all_cuts(indexed, tolerance, []))
-  use pieces <- result.try(
-    split_indexed_segments(indexed, cuts, tolerance, minimum_chord, []),
-  )
-  insert_semantic_pieces(pieces, empty(), tolerance, minimum_chord)
+  split_indexed_segments(indexed, cuts, tolerance, minimum_chord, [])
 }
 
 /// Compute the Boolean union boundary from an `ArrangementGraph`.
@@ -326,106 +382,6 @@ pub fn monotone_contours_from_arrangement_graph(
     trace_winding_level_edges(boundary, links, tolerance, []),
   )
   Ok(svg_path.Path(subpaths))
-}
-
-/// Build an arrangement graph for two paths and return their Boolean union
-/// boundary.
-pub fn union(
-  left: svg_path.Path,
-  right: svg_path.Path,
-  using fill_rule: svg_path.FillRule,
-  tolerance tolerance: Float,
-  minimum_chord minimum_chord: Float,
-) -> Result(svg_path.Path, Error) {
-  use graph <- result.try(build(
-    list.append(svg_path.path_subpaths(left), svg_path.path_subpaths(right)),
-    tolerance:,
-    minimum_chord:,
-  ))
-  union_from_arrangement_graph(graph, left, right, using: fill_rule, tolerance:)
-}
-
-/// Build an arrangement graph for two paths and return their Boolean
-/// intersection boundary.
-pub fn intersection(
-  left: svg_path.Path,
-  right: svg_path.Path,
-  using fill_rule: svg_path.FillRule,
-  tolerance tolerance: Float,
-  minimum_chord minimum_chord: Float,
-) -> Result(svg_path.Path, Error) {
-  use graph <- result.try(build(
-    list.append(svg_path.path_subpaths(left), svg_path.path_subpaths(right)),
-    tolerance:,
-    minimum_chord:,
-  ))
-  intersection_from_arrangement_graph(
-    graph,
-    left,
-    right,
-    using: fill_rule,
-    tolerance:,
-  )
-}
-
-/// Build an arrangement graph for two paths and return `left` minus `right`.
-pub fn difference(
-  left: svg_path.Path,
-  minus right: svg_path.Path,
-  using fill_rule: svg_path.FillRule,
-  tolerance tolerance: Float,
-  minimum_chord minimum_chord: Float,
-) -> Result(svg_path.Path, Error) {
-  use graph <- result.try(build(
-    list.append(svg_path.path_subpaths(left), svg_path.path_subpaths(right)),
-    tolerance:,
-    minimum_chord:,
-  ))
-  difference_from_arrangement_graph(
-    graph,
-    left,
-    right,
-    using: fill_rule,
-    tolerance:,
-  )
-}
-
-/// Build an arrangement graph for two paths and return their Boolean symmetric
-/// difference.
-pub fn symmetric_difference(
-  left: svg_path.Path,
-  right: svg_path.Path,
-  using fill_rule: svg_path.FillRule,
-  tolerance tolerance: Float,
-  minimum_chord minimum_chord: Float,
-) -> Result(svg_path.Path, Error) {
-  use graph <- result.try(build(
-    list.append(svg_path.path_subpaths(left), svg_path.path_subpaths(right)),
-    tolerance:,
-    minimum_chord:,
-  ))
-  symmetric_difference_from_arrangement_graph(
-    graph,
-    left,
-    right,
-    using: fill_rule,
-    tolerance:,
-  )
-}
-
-/// Return nested or disjoint unit-level contours with the same signed winding
-/// field as `path`.
-pub fn monotone_contours(
-  path: svg_path.Path,
-  tolerance tolerance: Float,
-  minimum_chord minimum_chord: Float,
-) -> Result(svg_path.Path, Error) {
-  use graph <- result.try(build(
-    svg_path.path_subpaths(path),
-    tolerance:,
-    minimum_chord:,
-  ))
-  monotone_contours_from_arrangement_graph(graph, path, tolerance:)
 }
 
 fn classify_boolean_edges(
@@ -1135,7 +1091,7 @@ fn insert_semantic_piece(
   let ArrangementGraph(edges:, ..) = graph
   use match <- result.try(find_semantic_edge(edges, segment, tolerance))
   case match {
-    None -> insert_noded_segment(graph, segment, tolerance:, minimum_chord:)
+    None -> insert_atomic_segment(graph, segment, tolerance:, minimum_chord:)
     Some(#(edge_id, same_direction)) ->
       Ok(increment_edge_by_id(graph, edge_id, same_direction))
   }
@@ -1229,46 +1185,24 @@ fn float_absolute(value: Float) -> Float {
   }
 }
 
-fn insert_segments(
-  segments: List(svg_path.Segment),
-  graph: ArrangementGraph,
-  tolerance: Float,
-  minimum_chord: Float,
-) -> Result(ArrangementGraph, Error) {
-  case segments {
-    [] -> Ok(graph)
-    [first, ..rest] -> {
-      use next <- result.try(insert_noded_segment(
-        graph,
-        first,
-        tolerance:,
-        minimum_chord:,
-      ))
-      insert_segments(rest, next, tolerance, minimum_chord)
-    }
-  }
-}
-
 fn attach_vertex(
   vertices: List(ArrangementVertex),
   endpoint: svg_path.Point,
   tolerance: Float,
 ) -> #(List(ArrangementVertex), Int) {
-  case nearest_vertex(vertices, endpoint, tolerance, None) {
-    Some(ArrangementVertex(id:, point: existing, sample_count: count)) -> {
-      let count_float = int.to_float(count)
-      let next_count = count + 1
-      let averaged =
-        svg_path.Point(
-          x: { existing.x *. count_float +. endpoint.x }
-            /. int.to_float(next_count),
-          y: { existing.y *. count_float +. endpoint.y }
-            /. int.to_float(next_count),
-        )
+  case best_vertex_attachment(vertices, endpoint, tolerance, None) {
+    Some(VertexAttachment(
+      vertex: ArrangementVertex(id:, endpoint_samples:, ..),
+      center:,
+      ..,
+    )) -> {
       #(
         replace_vertex(
           vertices,
-          ArrangementVertex(id:, point: averaged, sample_count: next_count),
+          ArrangementVertex(id:, point: center, endpoint_samples: [
+            endpoint,
+            ..endpoint_samples
+          ]),
         ),
         id,
       )
@@ -1277,7 +1211,7 @@ fn attach_vertex(
       let id = list.length(vertices)
       #(
         list.append(vertices, [
-          ArrangementVertex(id:, point: endpoint, sample_count: 1),
+          ArrangementVertex(id:, point: endpoint, endpoint_samples: [endpoint]),
         ]),
         id,
       )
@@ -1285,36 +1219,54 @@ fn attach_vertex(
   }
 }
 
-fn nearest_vertex(
+fn best_vertex_attachment(
   vertices: List(ArrangementVertex),
   endpoint: svg_path.Point,
   tolerance: Float,
-  nearest: Option(ArrangementVertex),
-) -> Option(ArrangementVertex) {
+  best: Option(VertexAttachment),
+) -> Option(VertexAttachment) {
   case vertices {
-    [] -> nearest
+    [] -> best
     [first, ..rest] -> {
-      let ArrangementVertex(point: candidate, ..) = first
-      let nearest = case point.distance(candidate, endpoint) <=. tolerance {
-        False -> nearest
+      let ArrangementVertex(endpoint_samples:, ..) = first
+      let assert Ok(smallest_enclosing_circle.EnclosingCircle(
+        center:,
+        radius_squared:,
+      )) = smallest_enclosing_circle.points([endpoint, ..endpoint_samples])
+      let candidate = VertexAttachment(vertex: first, center:, radius_squared:)
+      let best = case radius_squared <=. tolerance *. tolerance {
+        False -> best
         True ->
-          case nearest {
-            None -> Some(first)
-            Some(previous) -> {
-              let ArrangementVertex(point: previous_point, ..) = previous
-              case
-                point.distance(candidate, endpoint)
-                <. point.distance(previous_point, endpoint)
-              {
-                True -> Some(first)
-                False -> nearest
+          case best {
+            None -> Some(candidate)
+            Some(previous) ->
+              case attachment_precedes(candidate, previous) {
+                True -> Some(candidate)
+                False -> best
               }
-            }
           }
       }
-      nearest_vertex(rest, endpoint, tolerance, nearest)
+      best_vertex_attachment(rest, endpoint, tolerance, best)
     }
   }
+}
+
+fn attachment_precedes(
+  candidate: VertexAttachment,
+  previous: VertexAttachment,
+) -> Bool {
+  let VertexAttachment(
+    vertex: ArrangementVertex(id: candidate_id, ..),
+    radius_squared: candidate_radius,
+    ..,
+  ) = candidate
+  let VertexAttachment(
+    vertex: ArrangementVertex(id: previous_id, ..),
+    radius_squared: previous_radius,
+    ..,
+  ) = previous
+  candidate_radius <. previous_radius
+  || { candidate_radius == previous_radius && candidate_id < previous_id }
 }
 
 fn replace_vertex(
@@ -1430,7 +1382,7 @@ pub fn validate(
 ) -> Result(Nil, Error) {
   let ArrangementGraph(vertices:, edges:) = graph
   use _ <- result.try(validate_edges(edges, vertices, tolerance, minimum_chord))
-  validate_vertices(vertices, edges)
+  validate_vertices(vertices, edges, tolerance)
 }
 
 fn validate_edges(
@@ -1509,17 +1461,58 @@ fn validate_edges(
 fn validate_vertices(
   vertices: List(ArrangementVertex),
   edges: List(ArrangementEdge),
+  tolerance: Float,
 ) -> Result(Nil, Error) {
   case vertices {
     [] -> Ok(Nil)
-    [ArrangementVertex(id:, ..), ..rest] -> {
+    [ArrangementVertex(id:, point:, endpoint_samples:), ..rest] -> {
+      use _ <- result.try(validate_vertex_samples(
+        endpoint_samples,
+        point,
+        id,
+        tolerance *. tolerance,
+      ))
       let degree = weighted_degree(edges, id, 0)
       case degree == 0 {
         True -> Error(IsolatedVertex(vertex: id))
         False ->
           case int.modulo(degree, 2) != Ok(0) {
             True -> Error(OddWeightedDegree(vertex: id, degree:))
-            False -> validate_vertices(rest, edges)
+            False -> validate_vertices(rest, edges, tolerance)
+          }
+      }
+    }
+  }
+}
+
+fn validate_vertex_samples(
+  samples: List(svg_path.Point),
+  center: svg_path.Point,
+  vertex: Int,
+  tolerance_squared: Float,
+) -> Result(Nil, Error) {
+  case samples {
+    [] -> Error(VertexWithoutEndpointSamples(vertex:))
+    _ -> {
+      let assert Ok(smallest_enclosing_circle.EnclosingCircle(
+        center: expected_center,
+        radius_squared:,
+      )) = smallest_enclosing_circle.points(samples)
+      case center == expected_center {
+        False ->
+          Error(VertexCenterMismatch(
+            vertex:,
+            distance_squared: point.distance_squared(center, expected_center),
+          ))
+        True ->
+          case radius_squared <=. tolerance_squared {
+            False ->
+              Error(VertexSampleOutsideTolerance(
+                vertex:,
+                distance_squared: radius_squared,
+                tolerance_squared:,
+              ))
+            True -> Ok(Nil)
           }
       }
     }
@@ -1567,7 +1560,7 @@ fn vertex_point(
   }
 }
 
-/// Draw edges, averaged vertices, vertex ids, and directional multiplicities.
+/// Draw edges, clustered vertices, vertex ids, and directional multiplicities.
 pub fn drawing(graph: ArrangementGraph) -> svg.ThingsToDraw {
   let ArrangementGraph(vertices:, edges:) = graph
   let edge_things =
