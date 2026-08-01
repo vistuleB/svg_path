@@ -990,6 +990,8 @@ repeated command letters, line breaks, left-padded numbers for visual
 alignment, explicit line commands instead of `H`/`V`, and explicit curve
 commands instead of `S`/`T`.
 
+When `options.relative == True`, the serializer compensates for accumulated drift caused by decimal rounding.
+
 ```gleam
 import svg_path/parse
 import svg_path/serialize

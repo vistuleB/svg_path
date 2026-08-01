@@ -5,10 +5,12 @@
 //// used for relative commands, smaller whitespace, and omitted repeated command
 //// letters.
 
+import gleam/float
 import gleam/list
 import gleam/string
 import svg_path
 import svg_path/format as number_format
+import svg_path/trig
 
 /// Options for SVG path data serialization.
 pub type Options {
@@ -204,6 +206,14 @@ type PreviousCurve {
   PreviousQuadratic(control: svg_path.Point)
 }
 
+type RelativeParserState {
+  RelativeParserState(
+    parser_current: svg_path.Point,
+    parser_subpath_start: svg_path.Point,
+    previous_curve: PreviousCurve,
+  )
+}
+
 /// Remove optional spaces between command letters and their arguments.
 pub fn minimize_whitespace(options: Options) -> Options {
   Options(..options, minimize_whitespace: True)
@@ -281,11 +291,13 @@ pub fn path_with_options(
   path path: svg_path.Path,
   options options: Options,
 ) -> String {
-  let format = serialization_format(options, path_numbers(path, options))
-
   case options.relative {
-    True -> relative_path(svg_path.path_subpaths(path), format)
+    True -> {
+      let format = parser_tracked_serialization_format(path, options)
+      parser_tracked_relative_path(svg_path.path_subpaths(path), format)
+    }
     False -> {
+      let format = serialization_format(options, path_numbers(path, options))
       path
       |> svg_path.path_subpaths
       |> list.map(with: serialize_absolute_subpath(_, format))
@@ -293,6 +305,105 @@ pub fn path_with_options(
       |> join_commands(format)
     }
   }
+}
+
+/// Serialize a path with relative commands corrected against a simulated SVG
+/// parser state.
+///
+/// This is an explicit relative-only spelling of the parser-tracked behavior
+/// used by `path_with_options` whenever `options.relative == True`. The supplied
+/// options still control formatting, shorthand commands, whitespace, and
+/// newlines; relative commands are enabled regardless of `options.relative`.
+pub fn path_with_parser_tracked_relative_options(
+  path path: svg_path.Path,
+  options options: Options,
+) -> String {
+  let options = Options(..options, relative: True)
+  path_with_options(path, options)
+}
+
+/// Serialize a path using independently rounded relative segment parameters.
+///
+/// This preserves the relative serialization policy used before parser-tracked
+/// drift compensation became the default. Relative commands are enabled
+/// regardless of `options.relative`.
+pub fn path_with_independent_relative_options(
+  path path: svg_path.Path,
+  options options: Options,
+) -> String {
+  let options = Options(..options, relative: True)
+  let format = serialization_format(options, path_numbers(path, options))
+  relative_path(svg_path.path_subpaths(path), format)
+}
+
+fn parser_tracked_serialization_format(
+  path: svg_path.Path,
+  options: Options,
+) -> Format {
+  case options.left_decimals {
+    AutoLeftPadding(_) -> {
+      let prepass_options =
+        Options(
+          ..options,
+          left_decimals: Succinct,
+          minimize_whitespace: False,
+          commas: False,
+          repeat_commands: True,
+          newlines: OneLine,
+        )
+      let prepass_format = serialization_format(prepass_options, [])
+      let emitted =
+        parser_tracked_relative_path(
+          svg_path.path_subpaths(path),
+          prepass_format,
+        )
+      Format(
+        options:,
+        number_format: number_format.prepare_raw(
+          number_options(options),
+          serialized_number_tokens(emitted),
+        ),
+      )
+    }
+    _ -> serialization_format(options, path_numbers(path, options))
+  }
+}
+
+fn serialized_number_tokens(serialized: String) -> List(String) {
+  serialized
+  |> string.replace(each: "\n", with: " ")
+  |> string.replace(each: ",", with: " ")
+  |> replace_svg_command_letters
+  |> string.split(on: " ")
+  |> list.filter(fn(token) { token != "" })
+}
+
+fn replace_svg_command_letters(serialized: String) -> String {
+  [
+    "M",
+    "m",
+    "L",
+    "l",
+    "H",
+    "h",
+    "V",
+    "v",
+    "Q",
+    "q",
+    "C",
+    "c",
+    "S",
+    "s",
+    "T",
+    "t",
+    "A",
+    "a",
+    "Z",
+    "z",
+  ]
+  |> list.fold(serialized, fn(serialized, letter) {
+    string.replace(serialized, each: letter, with: " ")
+  })
 }
 
 /// Serialize a subpath with default options.
@@ -312,7 +423,7 @@ pub fn subpath_with_options(
   let format = serialization_format(options, subpath_numbers(subpath, options))
 
   case options.relative {
-    True -> subpath_from_current(subpath, origin(), format)
+    True -> path_with_options(svg_path.Path([subpath]), options)
     False -> serialize_absolute_subpath(subpath, format)
   }
 }
@@ -332,13 +443,8 @@ pub fn segment_with_options(
   let start = svg_path.segment_start(segment)
   case options.relative {
     True -> {
-      join_commands(
-        [
-          command("m", point(start, format), format),
-          relative_single_segment_without_move(segment, format),
-        ],
-        format,
-      )
+      let assert Ok(subpath) = svg_path.subpath([segment])
+      path_with_options(svg_path.Path([subpath]), options)
     }
     False -> {
       join_commands(
@@ -406,6 +512,102 @@ fn relative_path_loop(
         rest,
         current_after_subpath(subpath, current),
         [subpath_from_current(subpath, current, format), ..serialized],
+        format,
+      )
+    }
+  }
+}
+
+fn parser_tracked_relative_path(
+  subpaths: List(svg_path.Subpath),
+  format: Format,
+) -> String {
+  parser_tracked_relative_path_loop(
+    subpaths,
+    RelativeParserState(
+      parser_current: origin(),
+      parser_subpath_start: origin(),
+      previous_curve: NoPreviousCurve,
+    ),
+    [],
+    format,
+  )
+}
+
+fn parser_tracked_relative_path_loop(
+  subpaths: List(svg_path.Subpath),
+  state: RelativeParserState,
+  serialized: List(String),
+  format: Format,
+) -> String {
+  case subpaths {
+    [] -> serialized |> list.reverse |> join_commands(format)
+    [subpath, ..rest] -> {
+      let #(commands, state) =
+        parser_tracked_subpath_from_state(subpath, state, format)
+      parser_tracked_relative_path_loop(
+        rest,
+        state,
+        [join_commands(commands, format), ..serialized],
+        format,
+      )
+    }
+  }
+}
+
+fn parser_tracked_subpath_from_state(
+  subpath: svg_path.Subpath,
+  state: RelativeParserState,
+  format: Format,
+) -> #(List(String), RelativeParserState) {
+  let assert Ok(source_start) = svg_path.subpath_start(subpath)
+  let RelativeParserState(parser_current:, ..) = state
+  let move_delta =
+    quantized_point(source_start, format)
+    |> delta(from: parser_current)
+    |> quantized_point(format)
+  let parser_start = add(parser_current, move_delta)
+  let move = command("m", point(move_delta, format), format)
+  let state =
+    RelativeParserState(
+      parser_current: parser_start,
+      parser_subpath_start: parser_start,
+      previous_curve: NoPreviousCurve,
+    )
+  let #(segment_commands, state) =
+    parser_tracked_segments(serializable_segments(subpath), state, [], format)
+  let commands = [move, ..segment_commands]
+
+  case svg_path.subpath_is_closed(subpath) {
+    False -> #(commands, state)
+    True -> {
+      let RelativeParserState(parser_subpath_start:, ..) = state
+      #(
+        list.append(commands, ["z"]),
+        RelativeParserState(
+          parser_current: parser_subpath_start,
+          parser_subpath_start:,
+          previous_curve: NoPreviousCurve,
+        ),
+      )
+    }
+  }
+}
+
+fn parser_tracked_segments(
+  segments: List(svg_path.Segment),
+  state: RelativeParserState,
+  serialized: List(String),
+  format: Format,
+) -> #(List(String), RelativeParserState) {
+  case segments {
+    [] -> #(list.reverse(serialized), state)
+    [segment, ..rest] -> {
+      let #(commands, state) = parser_tracked_segment(segment, state, format)
+      parser_tracked_segments(
+        rest,
+        state,
+        list.append(list.reverse(commands), serialized),
         format,
       )
     }
@@ -490,16 +692,6 @@ fn absolute_single_segment_without_move(
 ) -> String {
   let #(serialized, _) =
     absolute_segment_without_move(segment, NoPreviousCurve, format)
-
-  serialized
-}
-
-fn relative_single_segment_without_move(
-  segment: svg_path.Segment,
-  format: Format,
-) -> String {
-  let #(serialized, _) =
-    relative_segment_without_move(segment, NoPreviousCurve, format)
 
   serialized
 }
@@ -637,6 +829,381 @@ fn relative_segment_without_move(
       )
     }
   }
+}
+
+fn parser_tracked_segment(
+  segment: svg_path.Segment,
+  state: RelativeParserState,
+  format: Format,
+) -> #(List(String), RelativeParserState) {
+  case segment {
+    svg_path.Line(start:, end:) ->
+      parser_tracked_line(start, end, state, format)
+    svg_path.QuadraticBezier(start:, control:, end:) ->
+      parser_tracked_quadratic(start, control, end, state, format)
+    svg_path.CubicBezier(start:, control1:, control2:, end:) ->
+      parser_tracked_cubic(start, control1, control2, end, state, format)
+    svg_path.Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:) ->
+      parser_tracked_arc(
+        segment,
+        start,
+        radius,
+        x_axis_rotation,
+        large_arc,
+        sweep,
+        end,
+        state,
+        format,
+      )
+  }
+}
+
+fn parser_tracked_line(
+  source_start: svg_path.Point,
+  source_end: svg_path.Point,
+  state: RelativeParserState,
+  format: Format,
+) -> #(List(String), RelativeParserState) {
+  let RelativeParserState(parser_current:, parser_subpath_start:, ..) = state
+  let intended_end = quantized_point(source_end, format)
+  let source_horizontal = source_start.y == source_end.y
+  let source_vertical = source_start.x == source_end.x
+  let target = case source_horizontal, source_vertical {
+    True, _ -> svg_path.Point(intended_end.x, parser_current.y)
+    _, True -> svg_path.Point(parser_current.x, intended_end.y)
+    _, _ -> intended_end
+  }
+  let target_horizontal =
+    raw_number(target.y, format.options)
+    == raw_number(parser_current.y, format.options)
+  let target_vertical =
+    raw_number(target.x, format.options)
+    == raw_number(parser_current.x, format.options)
+  let #(command_name, parser_end, arguments) = case
+    format.options.use_h_v,
+    target_horizontal,
+    target_vertical
+  {
+    True, True, _ -> {
+      let dx = quantized_number(intended_end.x -. parser_current.x, format)
+      #(
+        "h",
+        svg_path.Point(parser_current.x +. dx, parser_current.y),
+        number(dx, format),
+      )
+    }
+    True, _, True -> {
+      let dy = quantized_number(intended_end.y -. parser_current.y, format)
+      #(
+        "v",
+        svg_path.Point(parser_current.x, parser_current.y +. dy),
+        number(dy, format),
+      )
+    }
+    _, _, _ -> {
+      let difference =
+        target |> delta(from: parser_current) |> quantized_point(format)
+      #("l", add(parser_current, difference), point(difference, format))
+    }
+  }
+  #(
+    [command(command_name, arguments, format)],
+    RelativeParserState(
+      parser_current: parser_end,
+      parser_subpath_start:,
+      previous_curve: NoPreviousCurve,
+    ),
+  )
+}
+
+type ChordSimilarity {
+  ChordSimilarity(
+    source_start: svg_path.Point,
+    parser_start: svg_path.Point,
+    scale_cos: Float,
+    scale_sin: Float,
+  )
+  UnstableChord
+}
+
+fn parser_tracked_quadratic(
+  source_start: svg_path.Point,
+  source_control: svg_path.Point,
+  source_end: svg_path.Point,
+  state: RelativeParserState,
+  format: Format,
+) -> #(List(String), RelativeParserState) {
+  let RelativeParserState(
+    parser_current:,
+    parser_subpath_start:,
+    previous_curve:,
+  ) = state
+  let intended_end = quantized_point(source_end, format)
+  let similarity =
+    chord_similarity(source_start, source_end, parser_current, intended_end)
+  let corrected_control = case similarity {
+    ChordSimilarity(..) -> similarity_point(source_control, similarity)
+    UnstableChord -> {
+      let drift = delta(parser_current, from: source_start)
+      svg_path.Point(
+        source_control.x +. drift.x *. 0.5,
+        source_control.y +. drift.y *. 0.5,
+      )
+    }
+  }
+  let parser_control = quantized_point(corrected_control, format)
+  let control_delta =
+    parser_control |> delta(from: parser_current) |> quantized_point(format)
+  let end_delta =
+    intended_end |> delta(from: parser_current) |> quantized_point(format)
+  let parser_end = add(parser_current, end_delta)
+  let reflected = reflected_quadratic_control(parser_current, previous_curve)
+  let smooth =
+    format.options.use_s_t
+    && formatted_points_equal(parser_control, reflected, format)
+  let command = case smooth {
+    True -> command("t", point(end_delta, format), format)
+    False ->
+      command(
+        "q",
+        point(control_delta, format) <> " " <> point(end_delta, format),
+        format,
+      )
+  }
+  let effective_control = case smooth {
+    True -> reflected
+    False -> add(parser_current, control_delta)
+  }
+  #(
+    [command],
+    RelativeParserState(
+      parser_current: parser_end,
+      parser_subpath_start:,
+      previous_curve: PreviousQuadratic(effective_control),
+    ),
+  )
+}
+
+fn parser_tracked_cubic(
+  source_start: svg_path.Point,
+  source_control1: svg_path.Point,
+  source_control2: svg_path.Point,
+  source_end: svg_path.Point,
+  state: RelativeParserState,
+  format: Format,
+) -> #(List(String), RelativeParserState) {
+  let RelativeParserState(
+    parser_current:,
+    parser_subpath_start:,
+    previous_curve:,
+  ) = state
+  let intended_end = quantized_point(source_end, format)
+  let similarity =
+    chord_similarity(source_start, source_end, parser_current, intended_end)
+  let #(corrected_control1, corrected_control2) = case similarity {
+    ChordSimilarity(..) -> #(
+      similarity_point(source_control1, similarity),
+      similarity_point(source_control2, similarity),
+    )
+    UnstableChord -> {
+      let drift = delta(parser_current, from: source_start)
+      #(
+        svg_path.Point(
+          source_control1.x +. drift.x *. 2.0 /. 3.0,
+          source_control1.y +. drift.y *. 2.0 /. 3.0,
+        ),
+        svg_path.Point(
+          source_control2.x +. drift.x /. 3.0,
+          source_control2.y +. drift.y /. 3.0,
+        ),
+      )
+    }
+  }
+  let parser_control1 = quantized_point(corrected_control1, format)
+  let parser_control2 = quantized_point(corrected_control2, format)
+  let control1_delta =
+    parser_control1 |> delta(from: parser_current) |> quantized_point(format)
+  let control2_delta =
+    parser_control2 |> delta(from: parser_current) |> quantized_point(format)
+  let end_delta =
+    intended_end |> delta(from: parser_current) |> quantized_point(format)
+  let parser_end = add(parser_current, end_delta)
+  let reflected = reflected_cubic_control(parser_current, previous_curve)
+  let smooth =
+    format.options.use_s_t
+    && formatted_points_equal(parser_control1, reflected, format)
+  let command = case smooth {
+    True ->
+      command(
+        "s",
+        point(control2_delta, format) <> " " <> point(end_delta, format),
+        format,
+      )
+    False ->
+      command(
+        "c",
+        point(control1_delta, format)
+          <> " "
+          <> point(control2_delta, format)
+          <> " "
+          <> point(end_delta, format),
+        format,
+      )
+  }
+  #(
+    [command],
+    RelativeParserState(
+      parser_current: parser_end,
+      parser_subpath_start:,
+      previous_curve: PreviousCubic(add(parser_current, control2_delta)),
+    ),
+  )
+}
+
+fn parser_tracked_arc(
+  segment: svg_path.Segment,
+  source_start: svg_path.Point,
+  source_radius: svg_path.Point,
+  source_rotation: Float,
+  large_arc: Bool,
+  sweep: Bool,
+  source_end: svg_path.Point,
+  state: RelativeParserState,
+  format: Format,
+) -> #(List(String), RelativeParserState) {
+  case source_start == source_end {
+    True ->
+      case
+        svg_path.segment_between(segment, from: 0.0, to: 0.5),
+        svg_path.segment_between(segment, from: 0.5, to: 1.0)
+      {
+        Ok(first), Ok(second) -> {
+          let #(first_commands, state) =
+            parser_tracked_segment(first, state, format)
+          let #(second_commands, state) =
+            parser_tracked_segment(second, state, format)
+          #(list.append(first_commands, second_commands), state)
+        }
+        _, _ ->
+          parser_tracked_arc_command(
+            source_start,
+            source_radius,
+            source_rotation,
+            large_arc,
+            sweep,
+            source_end,
+            state,
+            format,
+          )
+      }
+    False ->
+      parser_tracked_arc_command(
+        source_start,
+        source_radius,
+        source_rotation,
+        large_arc,
+        sweep,
+        source_end,
+        state,
+        format,
+      )
+  }
+}
+
+fn parser_tracked_arc_command(
+  source_start: svg_path.Point,
+  source_radius: svg_path.Point,
+  source_rotation: Float,
+  large_arc: Bool,
+  sweep: Bool,
+  source_end: svg_path.Point,
+  state: RelativeParserState,
+  format: Format,
+) -> #(List(String), RelativeParserState) {
+  let RelativeParserState(parser_current:, parser_subpath_start:, ..) = state
+  let intended_end = quantized_point(source_end, format)
+  let similarity =
+    chord_similarity(source_start, source_end, parser_current, intended_end)
+  let #(radius, rotation) = case similarity {
+    ChordSimilarity(scale_cos:, scale_sin:, ..) -> {
+      let scale =
+        float.square_root(scale_cos *. scale_cos +. scale_sin *. scale_sin)
+        |> result_unwrap_float(1.0)
+      #(
+        svg_path.Point(source_radius.x *. scale, source_radius.y *. scale),
+        source_rotation +. trig.atan2_degrees(scale_sin, scale_cos),
+      )
+    }
+    UnstableChord -> #(source_radius, source_rotation)
+  }
+  let end_delta =
+    intended_end |> delta(from: parser_current) |> quantized_point(format)
+  let parser_end = add(parser_current, end_delta)
+  let serialized =
+    command(
+      "a",
+      point(radius, format)
+        <> " "
+        <> number(rotation, format)
+        <> " "
+        <> flag(large_arc)
+        <> " "
+        <> flag(sweep)
+        <> " "
+        <> point(end_delta, format),
+      format,
+    )
+  #(
+    [serialized],
+    RelativeParserState(
+      parser_current: parser_end,
+      parser_subpath_start:,
+      previous_curve: NoPreviousCurve,
+    ),
+  )
+}
+
+fn chord_similarity(
+  source_start: svg_path.Point,
+  source_end: svg_path.Point,
+  parser_start: svg_path.Point,
+  parser_end: svg_path.Point,
+) -> ChordSimilarity {
+  let source_dx = source_end.x -. source_start.x
+  let source_dy = source_end.y -. source_start.y
+  let target_dx = parser_end.x -. parser_start.x
+  let target_dy = parser_end.y -. parser_start.y
+  let source_length_squared = source_dx *. source_dx +. source_dy *. source_dy
+  case source_length_squared <=. 0.000000000001 {
+    True -> UnstableChord
+    False ->
+      ChordSimilarity(
+        source_start:,
+        parser_start:,
+        scale_cos: { source_dx *. target_dx +. source_dy *. target_dy }
+          /. source_length_squared,
+        scale_sin: { source_dx *. target_dy -. source_dy *. target_dx }
+          /. source_length_squared,
+      )
+  }
+}
+
+fn similarity_point(
+  point: svg_path.Point,
+  similarity: ChordSimilarity,
+) -> svg_path.Point {
+  let assert ChordSimilarity(
+    source_start:,
+    parser_start:,
+    scale_cos:,
+    scale_sin:,
+  ) = similarity
+  let x = point.x -. source_start.x
+  let y = point.y -. source_start.y
+  svg_path.Point(
+    parser_start.x +. scale_cos *. x -. scale_sin *. y,
+    parser_start.y +. scale_sin *. x +. scale_cos *. y,
+  )
 }
 
 fn absolute_quadratic(
@@ -867,6 +1434,31 @@ fn origin() -> svg_path.Point {
 
 fn delta(point: svg_path.Point, from origin: svg_path.Point) -> svg_path.Point {
   svg_path.Point(point.x -. origin.x, point.y -. origin.y)
+}
+
+fn add(a: svg_path.Point, b: svg_path.Point) -> svg_path.Point {
+  svg_path.Point(a.x +. b.x, a.y +. b.y)
+}
+
+fn quantized_point(point: svg_path.Point, format: Format) -> svg_path.Point {
+  svg_path.Point(
+    quantized_number(point.x, format),
+    quantized_number(point.y, format),
+  )
+}
+
+fn quantized_number(value: Float, format: Format) -> Float {
+  case float.parse(raw_number(value, format.options)) {
+    Ok(quantized) -> quantized
+    Error(_) -> value
+  }
+}
+
+fn result_unwrap_float(result: Result(Float, Nil), fallback: Float) -> Float {
+  case result {
+    Ok(value) -> value
+    Error(_) -> fallback
+  }
 }
 
 fn point(point: svg_path.Point, format: Format) -> String {

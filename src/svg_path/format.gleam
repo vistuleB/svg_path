@@ -74,6 +74,19 @@ pub fn prepare(options: Options, numbers: List(Float)) -> NumberFormat {
   NumberFormat(options:, left_padding:)
 }
 
+/// Prepare a formatter from numbers that have already received right-decimal
+/// formatting but no left-padding.
+pub fn prepare_raw(options: Options, numbers: List(String)) -> NumberFormat {
+  let left_padding = case options.left_decimals {
+    Succinct -> None
+    LeftPadding(width, style) -> Some(#(int.max(width, 0), style))
+    AutoLeftPadding(style) ->
+      Some(#(raw_auto_left_padding_width(numbers), style))
+  }
+
+  NumberFormat(options:, left_padding:)
+}
+
 /// Format a number.
 pub fn number(number: Float, with format: NumberFormat) -> String {
   number
@@ -115,6 +128,10 @@ fn auto_left_padding_width(numbers: List(Float), options: Options) -> Int {
   numbers
   |> list.map(fn(number) { number |> raw_number(options) |> left_width })
   |> list.fold(0, int.max)
+}
+
+fn raw_auto_left_padding_width(numbers: List(String)) -> Int {
+  numbers |> list.map(left_width) |> list.fold(0, int.max)
 }
 
 fn left_pad(number: String, format: NumberFormat) -> String {

@@ -1,5 +1,9 @@
+import gleam/float
+import gleam/list
+import gleam/string
 import gleeunit
 import svg_path
+import svg_path/parse
 import svg_path/serialize
 
 pub fn main() -> Nil {
@@ -865,6 +869,279 @@ pub fn rounded_relative_line_uses_h_or_v_after_formatting_test() {
       options: serialize.relative_decimal_options(5),
     )
     == "m 0 0 h 10 v 20"
+}
+
+pub fn parser_tracked_relative_lines_correct_rounding_drift_test() {
+  let a = svg_path.Point(0.0, 0.0)
+  let b = svg_path.Point(0.34, 0.34)
+  let c = svg_path.Point(0.68, 0.68)
+  let d = svg_path.Point(1.02, 1.02)
+  let assert Ok(subpath) =
+    svg_path.subpath([
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
+      svg_path.Line(start: c, end: d),
+    ])
+  let path = svg_path.Path([subpath])
+  let options =
+    serialize.relative_decimal_options(1) |> serialize.use_h_v(False)
+
+  assert serialize.path_with_independent_relative_options(path, options)
+    == "m 0 0 l 0.3 0.3 l 0.3 0.3 l 0.3 0.3"
+  assert serialize.path_with_options(path, options)
+    == "m 0 0 l 0.3 0.3 l 0.4 0.4 l 0.3 0.3"
+}
+
+pub fn parser_tracked_auto_padding_uses_corrected_numbers_test() {
+  let a = svg_path.Point(0.14, 0.0)
+  let b = svg_path.Point(10.06, 0.0)
+  let assert Ok(subpath) = svg_path.subpath([svg_path.Line(start: a, end: b)])
+
+  assert serialize.path_with_parser_tracked_relative_options(
+      svg_path.Path([subpath]),
+      serialize.relative_decimal_options(1)
+        |> serialize.with_left_padding(serialize.AutoLeftPadding(serialize.Zero)),
+    )
+    == "m 00.1 00 h 10"
+}
+
+pub fn parser_tracked_relative_lines_preserve_axis_constraints_test() {
+  let a = svg_path.Point(0.04, 0.04)
+  let b = svg_path.Point(0.34, 0.34)
+  let c = svg_path.Point(0.68, 0.34)
+  let d = svg_path.Point(0.68, 0.68)
+  let assert Ok(subpath) =
+    svg_path.subpath([
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
+      svg_path.Line(start: c, end: d),
+    ])
+  let serialized =
+    serialize.path_with_parser_tracked_relative_options(
+      svg_path.Path([subpath]),
+      serialize.relative_decimal_options(1),
+    )
+
+  assert serialized == "m 0 0 l 0.3 0.3 h 0.4 v 0.4"
+  let assert Ok(svg_path.Path([parsed])) = parse.path(serialized)
+  let assert [
+    _,
+    svg_path.Line(start: horizontal_start, end: horizontal_end),
+    svg_path.Line(start: vertical_start, end: vertical_end),
+  ] = svg_path.subpath_segments(parsed)
+  assert horizontal_start.y == horizontal_end.y
+  assert vertical_start.x == vertical_end.x
+}
+
+pub fn parser_tracked_relative_cubic_uses_similarity_correction_test() {
+  let start = svg_path.Point(0.34, 0.0)
+  let end = svg_path.Point(1.39, 0.0)
+  let cubic =
+    svg_path.CubicBezier(
+      start:,
+      control1: svg_path.Point(0.34, 1.0),
+      control2: svg_path.Point(1.39, 1.0),
+      end:,
+    )
+  let assert Ok(subpath) = svg_path.subpath([cubic])
+  let serialized =
+    serialize.path_with_parser_tracked_relative_options(
+      svg_path.Path([subpath]),
+      serialize.relative_decimal_options(1),
+    )
+
+  assert serialized == "m 0.3 0 c 0 1 1.1 1 1.1 0"
+  let assert Ok(svg_path.Path([parsed])) = parse.path(serialized)
+  let assert [svg_path.CubicBezier(start: parsed_start, end: parsed_end, ..)] =
+    svg_path.subpath_segments(parsed)
+  assert parsed_start == svg_path.Point(0.3, 0.0)
+  assert float.absolute_value(parsed_end.x -. 1.4) <. 0.000000000001
+  assert parsed_end.y == 0.0
+}
+
+pub fn parser_tracked_relative_close_resets_the_parser_current_test() {
+  let a = svg_path.Point(0.34, 0.34)
+  let b = svg_path.Point(0.68, 0.34)
+  let c = svg_path.Point(1.02, 0.34)
+  let assert Ok(first) =
+    svg_path.subpath([
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: a),
+    ])
+    |> result_try_set_closed_true
+  let assert Ok(second) = svg_path.subpath([svg_path.Line(start: c, end: b)])
+
+  assert serialize.path_with_parser_tracked_relative_options(
+      svg_path.Path([first, second]),
+      serialize.relative_decimal_options(1),
+    )
+    == "m 0.3 0.3 h 0.4 z m 0.7 0 h -0.3"
+}
+
+pub fn parser_tracked_relative_arc_applies_chord_similarity_test() {
+  let start = svg_path.Point(0.34, 0.0)
+  let end = svg_path.Point(1.39, 0.0)
+  let arc =
+    svg_path.Arc(
+      start:,
+      radius: svg_path.Point(2.0, 1.0),
+      x_axis_rotation: 15.0,
+      large_arc: False,
+      sweep: True,
+      end:,
+    )
+  let assert Ok(subpath) = svg_path.subpath([arc])
+
+  assert serialize.path_with_parser_tracked_relative_options(
+      svg_path.Path([subpath]),
+      serialize.relative_decimal_options(1),
+    )
+    == "m 0.3 0 a 2.1 1 15 0 1 1.1 0"
+}
+
+pub fn parser_tracked_relative_smooth_commands_use_parser_controls_test() {
+  let a = svg_path.Point(0.04, 0.0)
+  let b = svg_path.Point(1.04, 0.0)
+  let c = svg_path.Point(2.08, 0.0)
+  let assert Ok(subpath) =
+    svg_path.subpath([
+      svg_path.CubicBezier(
+        start: a,
+        control1: svg_path.Point(0.34, 1.0),
+        control2: svg_path.Point(0.74, 1.0),
+        end: b,
+      ),
+      svg_path.CubicBezier(
+        start: b,
+        control1: svg_path.Point(1.323, -0.945),
+        control2: svg_path.Point(1.74, -1.0),
+        end: c,
+      ),
+    ])
+
+  let serialized =
+    serialize.path_with_parser_tracked_relative_options(
+      svg_path.Path([subpath]),
+      serialize.relative_decimal_options(1),
+    )
+  assert string.contains(serialized, " s ")
+}
+
+pub fn parser_tracked_relative_smooth_quadratic_uses_parser_control_test() {
+  let a = svg_path.Point(0.04, 0.0)
+  let b = svg_path.Point(1.04, 0.0)
+  let c = svg_path.Point(2.08, 0.0)
+  let assert Ok(subpath) =
+    svg_path.subpath([
+      svg_path.QuadraticBezier(
+        start: a,
+        control: svg_path.Point(0.54, 1.0),
+        end: b,
+      ),
+      svg_path.QuadraticBezier(
+        start: b,
+        control: svg_path.Point(1.513, -0.945),
+        end: c,
+      ),
+    ])
+
+  let serialized =
+    serialize.path_with_parser_tracked_relative_options(
+      svg_path.Path([subpath]),
+      serialize.relative_decimal_options(1),
+    )
+  assert string.contains(serialized, " t ")
+}
+
+pub fn parser_tracked_relative_collapsed_arc_preserves_arc_fields_test() {
+  let start = svg_path.Point(0.04, 0.0)
+  let end = svg_path.Point(0.049, 0.0)
+  let arc =
+    svg_path.Arc(
+      start:,
+      radius: svg_path.Point(2.0, 1.0),
+      x_axis_rotation: 15.0,
+      large_arc: False,
+      sweep: True,
+      end:,
+    )
+  let assert Ok(subpath) = svg_path.subpath([arc])
+
+  assert serialize.path_with_parser_tracked_relative_options(
+      svg_path.Path([subpath]),
+      serialize.relative_decimal_options(1),
+    )
+    == "m 0 0 a 2 1 15 0 1 0 0"
+}
+
+pub fn parser_tracked_relative_unstable_cubic_uses_progressive_correction_test() {
+  let point = svg_path.Point(0.04, 0.0)
+  let cubic =
+    svg_path.CubicBezier(
+      start: point,
+      control1: svg_path.Point(0.34, 1.0),
+      control2: svg_path.Point(0.34, -1.0),
+      end: point,
+    )
+  let assert Ok(subpath) = svg_path.subpath([cubic])
+
+  assert serialize.path_with_parser_tracked_relative_options(
+      svg_path.Path([subpath]),
+      serialize.relative_decimal_options(1),
+    )
+    == "m 0 0 c 0.3 1 0.3 -1 0 0"
+}
+
+pub fn parser_tracked_relative_serialization_is_stable_after_parsing_test() {
+  let source = "M 0.04 0 C 0.34 1 0.74 1 1.04 0 A 2 1 15 0 1 2.08 0 L 2.42 0.34"
+  let assert Ok(path) = parse.path(source)
+  let options = serialize.relative_decimal_options(1)
+  let once = serialize.path_with_parser_tracked_relative_options(path, options)
+  let assert Ok(reparsed) = parse.path(once)
+  let twice =
+    serialize.path_with_parser_tracked_relative_options(reparsed, options)
+
+  assert once == twice
+}
+
+pub fn parser_tracked_relative_full_arc_is_subdivided_test() {
+  let point = svg_path.Point(0.34, 0.0)
+  let arc =
+    svg_path.Arc(
+      start: point,
+      radius: svg_path.Point(10.0, 10.0),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: True,
+      end: point,
+    )
+  let assert Ok(subpath) = svg_path.subpath([arc])
+  let serialized =
+    serialize.path_with_parser_tracked_relative_options(
+      svg_path.Path([subpath]),
+      serialize.relative_decimal_options(1),
+    )
+
+  assert string.split(serialized, on: "a") |> list.length == 3
+  let assert Ok(svg_path.Path([parsed])) = parse.path(serialized)
+  let assert [
+    svg_path.Arc(
+      start: _,
+      radius: _,
+      x_axis_rotation: _,
+      large_arc: _,
+      sweep: _,
+      end: _,
+    ),
+    svg_path.Arc(
+      start: _,
+      radius: _,
+      x_axis_rotation: _,
+      large_arc: _,
+      sweep: _,
+      end: _,
+    ),
+  ] = svg_path.subpath_segments(parsed)
 }
 
 fn result_try_set_closed_with_bridge(
