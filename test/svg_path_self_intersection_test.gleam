@@ -1,4 +1,3 @@
-import gleam/list
 import gleeunit
 import svg_path
 import svg_path/intersections
@@ -87,7 +86,7 @@ pub fn subpath_self_intersections_finds_line_crossing_test() {
   assert near(second_t, 0.5)
 }
 
-pub fn subpath_self_intersections_reports_overlapping_line_endpoints_test() {
+pub fn subpath_self_intersections_rejects_overlapping_segments_test() {
   let subpath =
     svg_path.subpath_assert([
       svg_path.Line(
@@ -108,10 +107,34 @@ pub fn subpath_self_intersections_reports_overlapping_line_endpoints_test() {
       ),
     ])
 
-  let assert Ok(intersections) = intersections.subpath_self(subpath)
+  assert intersections.subpath_self(subpath)
+    == Error(svg_path.OverlappingSegments)
+}
 
-  assert list_contains_point(intersections, svg_path.Point(2.0, 0.0))
-  assert list_contains_point(intersections, svg_path.Point(8.0, 0.0))
+pub fn subpath_self_intersections_rejects_semantic_arc_overlap_test() {
+  let left =
+    svg_path.Arc(
+      start: svg_path.Point(0.0, 0.0),
+      radius: svg_path.Point(5.0, 5.0),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: True,
+      end: svg_path.Point(10.0, 0.0),
+    )
+  let same_geometry =
+    svg_path.Arc(
+      start: svg_path.Point(0.0, 0.0),
+      radius: svg_path.Point(5.0, 5.0),
+      x_axis_rotation: 0.0,
+      large_arc: True,
+      sweep: True,
+      end: svg_path.Point(10.0, 0.0),
+    )
+  let subpath =
+    svg_path.subpath_assert([left, svg_path.segment_reverse(same_geometry)])
+
+  assert intersections.subpath_self(subpath)
+    == Error(svg_path.OverlappingSegments)
 }
 
 pub fn subpath_self_intersections_ignores_adjacent_segment_join_test() {
@@ -311,19 +334,36 @@ pub fn path_self_intersections_rejects_invalid_options_test() {
     )
 }
 
-fn point_near(a: svg_path.Point, b: svg_path.Point) -> Bool {
-  near(a.x, b.x) && near(a.y, b.y)
+pub fn path_self_intersections_rejects_semantic_arc_overlap_test() {
+  let left =
+    svg_path.Arc(
+      start: svg_path.Point(0.0, 0.0),
+      radius: svg_path.Point(5.0, 5.0),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: True,
+      end: svg_path.Point(10.0, 0.0),
+    )
+  let right =
+    svg_path.Arc(
+      start: svg_path.Point(0.0, 0.0),
+      radius: svg_path.Point(5.0, 5.0),
+      x_axis_rotation: 0.0,
+      large_arc: True,
+      sweep: True,
+      end: svg_path.Point(10.0, 0.0),
+    )
+  let path =
+    svg_path.Path([
+      svg_path.subpath_assert([left]),
+      svg_path.subpath_assert([right]),
+    ])
+
+  assert intersections.path_self(path) == Error(svg_path.OverlappingSegments)
 }
 
-fn list_contains_point(
-  intersections: List(svg_path.SubpathSelfIntersection),
-  point: svg_path.Point,
-) -> Bool {
-  list.any(intersections, fn(intersection) {
-    let svg_path.SubpathSelfIntersection(point: intersection_point, ..) =
-      intersection
-    point_near(intersection_point, point)
-  })
+fn point_near(a: svg_path.Point, b: svg_path.Point) -> Bool {
+  near(a.x, b.x) && near(a.y, b.y)
 }
 
 fn near(a: Float, b: Float) -> Bool {

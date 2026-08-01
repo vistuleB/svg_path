@@ -585,7 +585,7 @@ pub type Error {
 
   /// Point-intersection logic reported an overlap that the shared overlap
   /// classifier did not confirm.
-  OverlapClassificationDisagreement
+  InconsistentOverlapClassification
 
   /// The path contains more than one non-empty subpath.
   MultipleNonemptySubpaths

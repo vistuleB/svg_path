@@ -1904,6 +1904,14 @@ pub fn segment_subpath_intersections_propagates_errors_test() {
     == Error(svg_path.OverlappingSegments)
 }
 
+pub fn segment_subpath_intersections_rejects_semantic_arc_overlap_test() {
+  let #(left, right) = semantically_equal_arcs()
+  let subpath = svg_path.subpath_assert([right])
+
+  assert intersections.segment_subpath(left, subpath)
+    == Error(svg_path.OverlappingSegments)
+}
+
 pub fn subpath_intersections_groups_and_orders_results_test() {
   let left =
     svg_path.subpath_assert_polyline([
@@ -1980,6 +1988,15 @@ pub fn subpath_intersections_propagates_errors_test() {
     )
     == Error(svg_path.InvalidIntersectionTolerance(0.0))
   assert intersections.subpath(line, line)
+    == Error(svg_path.OverlappingSegments)
+}
+
+pub fn subpath_intersections_reject_semantic_arc_overlap_test() {
+  let #(left, right) = semantically_equal_arcs()
+  let left = svg_path.subpath_assert([left])
+  let right = svg_path.subpath_assert([right])
+
+  assert intersections.subpath(left, right)
     == Error(svg_path.OverlappingSegments)
 }
 
@@ -2151,6 +2168,14 @@ pub fn path_intersections_propagates_errors_test() {
   assert intersections.path(path, path) == Error(svg_path.OverlappingSegments)
 }
 
+pub fn path_intersections_reject_semantic_arc_overlap_test() {
+  let #(left, right) = semantically_equal_arcs()
+  let left = svg_path.Path([svg_path.subpath_assert([left])])
+  let right = svg_path.Path([svg_path.subpath_assert([right])])
+
+  assert intersections.path(left, right) == Error(svg_path.OverlappingSegments)
+}
+
 pub fn segment_intersections_match_returned_parameters_test() {
   let line_a =
     svg_path.Line(
@@ -2315,4 +2340,25 @@ fn point_near_loose(a: svg_path.Point, b: svg_path.Point) -> Bool {
 
   float.absolute_value(a.x -. b.x) <=. loose_tolerance
   && float.absolute_value(a.y -. b.y) <=. loose_tolerance
+}
+
+fn semantically_equal_arcs() -> #(svg_path.Segment, svg_path.Segment) {
+  #(
+    svg_path.Arc(
+      start: svg_path.Point(0.0, 0.0),
+      radius: svg_path.Point(5.0, 5.0),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: True,
+      end: svg_path.Point(10.0, 0.0),
+    ),
+    svg_path.Arc(
+      start: svg_path.Point(0.0, 0.0),
+      radius: svg_path.Point(5.0, 5.0),
+      x_axis_rotation: 0.0,
+      large_arc: True,
+      sweep: True,
+      end: svg_path.Point(10.0, 0.0),
+    ),
+  )
 }

@@ -15,11 +15,11 @@ import svg_path.{
   type PathParameter, type PathSelfIntersection, type Point, type Segment,
   type SegmentIntersection, type SelfIntersectionOptions, type Subpath,
   type SubpathIntersection, type SubpathParameter, type SubpathSelfIntersection,
-  Arc, CubicBezier, InvalidIntersectionMaxDepth, InvalidIntersectionTolerance,
+  Arc, CubicBezier, InconsistentOverlapClassification,
+  InvalidIntersectionMaxDepth, InvalidIntersectionTolerance,
   InvalidSelfIntersectionDistanceTolerance,
-  InvalidSelfIntersectionMinimumArcLengthSeparation, Line,
-  OverlapClassificationDisagreement, OverlappingSegments, PathIntersection,
-  PathParameter, PathSelfIntersection, Point, QuadraticBezier,
+  InvalidSelfIntersectionMinimumArcLengthSeparation, Line, OverlappingSegments,
+  PathIntersection, PathParameter, PathSelfIntersection, Point, QuadraticBezier,
   SegmentIntersection, SelfIntersectionOptions, SubpathIntersection,
   SubpathParameter, SubpathSelfIntersection,
 }
@@ -70,6 +70,14 @@ pub fn segment_with(
   options options: IntersectionOptions,
 ) -> Result(List(SegmentIntersection), Error) {
   use _ <- result.try(validate_intersection_options(options))
+  segment_intersections_checked_valid_options(left, right, options)
+}
+
+fn segment_intersections_checked_valid_options(
+  left: Segment,
+  right: Segment,
+  options: IntersectionOptions,
+) -> Result(List(SegmentIntersection), Error) {
   use overlaps <- result.try(overlap_detection.detect(
     left,
     right,
@@ -79,7 +87,7 @@ pub fn segment_with(
     [_, ..] -> Error(OverlappingSegments)
     [] ->
       case segment_intersections_valid_options(left, right, options) {
-        Error(OverlappingSegments) -> Error(OverlapClassificationDisagreement)
+        Error(OverlappingSegments) -> Error(InconsistentOverlapClassification)
         result -> result
       }
   }
@@ -112,7 +120,8 @@ pub fn segment_self_with(
 /// Each result contains an intersection point, its local parameter on the
 /// standalone segment, and every corresponding parameter on the subpath.
 /// Results are ordered by the standalone segment parameter. Segment-boundary
-/// aliases are canonicalized to one traversal address.
+/// aliases are canonicalized to one traversal address. A continuous overlap
+/// with any segment of the subpath returns `OverlappingSegments`.
 pub fn segment_subpath(
   segment: Segment,
   subpath: Subpath,
@@ -149,7 +158,8 @@ pub fn segment_subpath_with(
 ///
 /// Results are ordered by the first parameter. Adjacent segment endpoints are
 /// filtered by arc-length separation, so ordinary segment joins are not
-/// reported as self-intersections.
+/// reported as self-intersections. A continuous overlap between two distinct
+/// constituent segments returns `OverlappingSegments`.
 pub fn subpath_self(
   subpath: Subpath,
 ) -> Result(List(SubpathSelfIntersection), Error) {
@@ -189,7 +199,8 @@ pub fn subpath_self_with(
 ///
 /// Each result contains an intersection point and every corresponding
 /// parameter on both subpaths. Results are ordered by the first left parameter.
-/// Segment-boundary aliases are canonicalized to one traversal address.
+/// Segment-boundary aliases are canonicalized to one traversal address. A
+/// continuous overlap between any segment pair returns `OverlappingSegments`.
 pub fn subpath(
   left: Subpath,
   right: Subpath,
@@ -221,7 +232,8 @@ pub fn subpath_with(
 ///
 /// Each result contains an intersection point and every corresponding
 /// parameter on both paths. Results are ordered by the first left parameter.
-/// Segment-boundary aliases are canonicalized to one traversal address.
+/// Segment-boundary aliases are canonicalized to one traversal address. A
+/// continuous overlap between any segment pair returns `OverlappingSegments`.
 pub fn path(left: Path, right: Path) -> Result(List(PathIntersection), Error) {
   path_with(left, right, options: default_options())
 }
@@ -250,7 +262,8 @@ pub fn path_with(
 ///
 /// This includes self-intersections inside one subpath and intersections
 /// between distinct subpaths in the same path. Results are ordered by the first
-/// path parameter.
+/// path parameter. A continuous overlap between distinct constituent segments
+/// returns `OverlappingSegments`.
 pub fn path_self(path: Path) -> Result(List(PathSelfIntersection), Error) {
   path_self_with(path, options: default_self_options())
 }
@@ -558,22 +571,11 @@ fn collect_segment_pair_self_intersections_one(
           max_depth: default_intersection_max_depth,
         )
       use intersections <- result.try(
-        case
-          segment_intersections_valid_options(
-            left.segment,
-            right.segment,
-            intersection_options,
-          )
-        {
-          Ok(intersections) -> Ok(intersections)
-          Error(OverlappingSegments) ->
-            overlapping_self_intersections(
-              left.segment,
-              right.segment,
-              options.distance_tolerance,
-            )
-          Error(error) -> Error(error)
-        },
+        segment_intersections_checked_valid_options(
+          left.segment,
+          right.segment,
+          intersection_options,
+        ),
       )
 
       Ok(
@@ -627,78 +629,6 @@ fn insert_segment_pair_self_intersection(
         second:,
         tolerance: options.distance_tolerance,
       )
-  }
-}
-
-fn overlapping_self_intersections(
-  left: Segment,
-  right: Segment,
-  tolerance: Float,
-) -> Result(List(SegmentIntersection), Error) {
-  case left, right {
-    Line(start: left_start, end: left_end),
-      Line(start: right_start, end: right_end)
-    ->
-      overlapping_line_self_intersections(
-        left_start,
-        left_end,
-        right_start,
-        right_end,
-        tolerance,
-      )
-    _, _ -> Error(OverlappingSegments)
-  }
-}
-
-fn overlapping_line_self_intersections(
-  left_start: Point,
-  left_end: Point,
-  right_start: Point,
-  right_end: Point,
-  tolerance: Float,
-) -> Result(List(SegmentIntersection), Error) {
-  let right_start_t = line_projection_t(right_start, left_start, left_end)
-  let right_end_t = line_projection_t(right_end, left_start, left_end)
-  let overlap_start = float.max(0.0, float.min(right_start_t, right_end_t))
-  let overlap_end = float.min(1.0, float.max(right_start_t, right_end_t))
-
-  case overlap_end <. overlap_start -. tolerance {
-    True -> Ok([])
-    False -> {
-      let start = clamp01(overlap_start)
-      let end = clamp01(overlap_end)
-      case end -. start <=. tolerance {
-        True -> {
-          let point = interpolate(left_start, left_end, start)
-          Ok([
-            SegmentIntersection(
-              left_t: start,
-              right_t: line_projection_t(point, right_start, right_end)
-                |> clamp01,
-              point:,
-            ),
-          ])
-        }
-        False -> {
-          let start_point = interpolate(left_start, left_end, start)
-          let end_point = interpolate(left_start, left_end, end)
-          Ok([
-            SegmentIntersection(
-              left_t: start,
-              right_t: line_projection_t(start_point, right_start, right_end)
-                |> clamp01,
-              point: start_point,
-            ),
-            SegmentIntersection(
-              left_t: end,
-              right_t: line_projection_t(end_point, right_start, right_end)
-                |> clamp01,
-              point: end_point,
-            ),
-          ])
-        }
-      }
-    }
   }
 }
 
@@ -871,11 +801,9 @@ fn collect_segment_subpath_intersections(
   case segments {
     [] -> Ok(grouped)
     [first, ..rest] -> {
-      use intersections <- result.try(segment_intersections_valid_options(
-        segment,
-        first,
-        options,
-      ))
+      use intersections <- result.try(
+        segment_intersections_checked_valid_options(segment, first, options),
+      )
       let grouped =
         list.fold(intersections, grouped, fn(grouped, intersection) {
           insert_segment_subpath_intersection(
