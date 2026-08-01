@@ -605,6 +605,10 @@ fn rounded_rectangle_union() -> String {
     |> list.fold(Ok(svg_path.path_empty()), fn(acc, next) {
       use acc <- result_try(acc)
       csg.union(acc, next, using: svg_path.Nonzero)
+      |> result.map(fn(result) {
+        let csg.CsgResult(path:, ..) = result
+        path
+      })
     })
   let round_options =
     effects.RoundCornerOptions(

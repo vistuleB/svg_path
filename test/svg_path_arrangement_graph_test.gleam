@@ -5,6 +5,7 @@ import gleam/result
 import gleeunit/should
 import svg_path
 import svg_path/arrangement_graph
+import svg_path/csg
 import svg_path/point
 
 const tolerance = 0.000001
@@ -41,7 +42,7 @@ pub fn build_preserves_source_path_grouping_test() {
       square(30.0, 0.0, 5.0),
     ])
 
-  let assert Ok(arrangement_graph.BuildResult(
+  let assert Ok(arrangement_graph.ArrangementGraphBuild(
     normalized_paths: [normalized_first, normalized_second],
     ..,
   )) = arrangement_graph.build([first, second], tolerance:, minimum_chord:)
@@ -495,21 +496,13 @@ pub fn builder_consolidates_near_equal_circles_inside_tolerance_test() {
   |> should.be_true
 }
 
-pub fn union_from_arrangement_graph_removes_interlocking_square_internal_edges_test() {
+pub fn csg_union_removes_interlocking_square_internal_edges_test() {
   let first = square(0.0, 0.0, 10.0)
   let second = square(5.0, 5.0, 10.0)
   let left = svg_path.path_from_subpath(first)
   let right = svg_path.path_from_subpath(second)
-  let assert Ok(graph) =
-    build_graph([first, second], tolerance:, minimum_chord:)
-  let assert Ok(union) =
-    arrangement_graph.union_from_arrangement_graph(
-      graph,
-      left,
-      right,
-      using: svg_path.Nonzero,
-      tolerance:,
-    )
+  let assert Ok(csg.CsgResult(path: union, ..)) =
+    csg.union(left, right, using: svg_path.Nonzero)
 
   list.length(svg_path.path_subpaths(union)) |> should.equal(1)
   svg_path.path_containment(
@@ -538,21 +531,13 @@ pub fn union_from_arrangement_graph_removes_interlocking_square_internal_edges_t
   |> should.equal(Ok(svg_path.Outside))
 }
 
-pub fn union_from_arrangement_graph_does_not_cancel_opposite_operands_test() {
+pub fn csg_union_does_not_cancel_opposite_operands_test() {
   let clockwise = square(0.0, 0.0, 10.0)
   let counterclockwise = svg_path.subpath_reverse(clockwise)
   let left = svg_path.path_from_subpath(clockwise)
   let right = svg_path.path_from_subpath(counterclockwise)
-  let assert Ok(graph) =
-    build_graph([clockwise, counterclockwise], tolerance:, minimum_chord:)
-  let assert Ok(union) =
-    arrangement_graph.union_from_arrangement_graph(
-      graph,
-      left,
-      right,
-      using: svg_path.Nonzero,
-      tolerance:,
-    )
+  let assert Ok(csg.CsgResult(path: union, ..)) =
+    csg.union(left, right, using: svg_path.Nonzero)
 
   list.length(svg_path.path_subpaths(union)) |> should.equal(1)
   svg_path.path_containment(
@@ -563,48 +548,26 @@ pub fn union_from_arrangement_graph_does_not_cancel_opposite_operands_test() {
   |> should.equal(Ok(svg_path.Inside))
 }
 
-pub fn union_from_arrangement_graph_applies_requested_fill_rule_test() {
+pub fn csg_union_applies_requested_fill_rule_test() {
   let contour = square(0.0, 0.0, 10.0)
   let doubled = svg_path.Path([contour, contour])
   let empty = svg_path.path_empty()
-  let assert Ok(graph) =
-    build_graph([contour, contour], tolerance:, minimum_chord:)
-  let assert Ok(nonzero) =
-    arrangement_graph.union_from_arrangement_graph(
-      graph,
-      doubled,
-      empty,
-      using: svg_path.Nonzero,
-      tolerance:,
-    )
-  let assert Ok(even_odd) =
-    arrangement_graph.union_from_arrangement_graph(
-      graph,
-      doubled,
-      empty,
-      using: svg_path.EvenOdd,
-      tolerance:,
-    )
+  let assert Ok(csg.CsgResult(path: nonzero, ..)) =
+    csg.union(doubled, empty, using: svg_path.Nonzero)
+  let assert Ok(csg.CsgResult(path: even_odd, ..)) =
+    csg.union(doubled, empty, using: svg_path.EvenOdd)
 
   list.length(svg_path.path_subpaths(nonzero)) |> should.equal(1)
   list.length(svg_path.path_subpaths(even_odd)) |> should.equal(0)
 }
 
-pub fn union_from_arrangement_graph_pairs_filled_sectors_at_corner_pinch_test() {
+pub fn csg_union_pairs_filled_sectors_at_corner_pinch_test() {
   let first = square(0.0, 0.0, 10.0)
   let second = square(10.0, 10.0, 10.0)
   let left = svg_path.path_from_subpath(first)
   let right = svg_path.path_from_subpath(second)
-  let assert Ok(graph) =
-    build_graph([first, second], tolerance:, minimum_chord:)
-  let assert Ok(union) =
-    arrangement_graph.union_from_arrangement_graph(
-      graph,
-      left,
-      right,
-      using: svg_path.Nonzero,
-      tolerance:,
-    )
+  let assert Ok(csg.CsgResult(path: union, ..)) =
+    csg.union(left, right, using: svg_path.Nonzero)
 
   list.length(svg_path.path_subpaths(union)) |> should.equal(2)
   svg_path.path_containment(
@@ -633,7 +596,7 @@ fn build_graph(
 ) -> Result(arrangement_graph.ArrangementGraph, arrangement_graph.Error) {
   arrangement_graph.build([svg_path.Path(subpaths)], tolerance:, minimum_chord:)
   |> result.map(fn(built) {
-    let arrangement_graph.BuildResult(graph:, ..) = built
+    let arrangement_graph.ArrangementGraphBuild(graph:, ..) = built
     graph
   })
 }

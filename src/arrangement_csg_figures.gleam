@@ -180,7 +180,7 @@ fn render_boolean_table(
 
   let assert Ok(graph_source) =
     place_like(source, source, 420.0, first_row_y, panel_width, panel_height)
-  let assert Ok(arrangement_graph.BuildResult(
+  let assert Ok(arrangement_graph.ArrangementGraphBuild(
     graph:,
     normalized_paths: [normalized_graph_source],
   )) = arrangement_graph.build([graph_source], tolerance:, minimum_chord:)
@@ -191,14 +191,18 @@ fn render_boolean_table(
       tolerance:,
     )
 
-  let assert Ok(union) = csg.union(left, right, using: rule)
-  let assert Ok(intersection) = csg.intersection(left, right, using: rule)
-  let assert Ok(difference) = csg.difference(left, minus: right, using: rule)
-  let assert Ok(reverse_difference) =
+  let assert Ok(csg.CsgResult(path: union, ..)) =
+    csg.union(left, right, using: rule)
+  let assert Ok(csg.CsgResult(path: intersection, ..)) =
+    csg.intersection(left, right, using: rule)
+  let assert Ok(csg.CsgResult(path: difference, ..)) =
+    csg.difference(left, minus: right, using: rule)
+  let assert Ok(csg.CsgResult(path: reverse_difference, ..)) =
     csg.difference(right, minus: left, using: rule)
-  let assert Ok(symmetric_difference) =
+  let assert Ok(csg.CsgResult(path: symmetric_difference, ..)) =
     csg.symmetric_difference(left, right, using: rule)
-  let assert Ok(monotone) = csg.monotone_contours(source)
+  let assert Ok(csg.CsgResult(path: monotone, ..)) =
+    csg.monotone_contours(source)
   let assert Ok(rounded_monotone) =
     effects.round_corners(monotone, radius: 0.36)
   let assert Ok(union_placed) =
@@ -406,7 +410,7 @@ fn render_case(
   let right_placed = svg_path.Path(list.drop(source_parts, left_count))
 
   let assert Ok(graph_source) = fit(source, 450.0, 132.0)
-  let assert Ok(arrangement_graph.BuildResult(
+  let assert Ok(arrangement_graph.ArrangementGraphBuild(
     graph:,
     normalized_paths: [normalized_graph_source],
   )) = arrangement_graph.build([graph_source], tolerance:, minimum_chord:)
@@ -416,7 +420,7 @@ fn render_case(
       normalized_graph_source,
       tolerance:,
     )
-  let assert Ok(boolean_result) = case operation {
+  let assert Ok(csg.CsgResult(path: boolean_result, ..)) = case operation {
     IntersectionFigure -> csg.intersection(left, right, using: rule)
     DifferenceFigure -> csg.difference(left, minus: right, using: rule)
   }

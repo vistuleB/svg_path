@@ -21,6 +21,25 @@ type BooleanCase {
   )
 }
 
+pub fn csg_result_retains_its_arrangement_build_test() {
+  let left = rectangle(0.0, 0.0, 2.0, 2.0)
+  let right = rectangle(1.0, 0.0, 3.0, 2.0)
+
+  let assert Ok(csg.CsgResult(
+    path:,
+    build: arrangement_graph.ArrangementGraphBuild(
+      graph:,
+      normalized_paths: [normalized_left, normalized_right],
+    ),
+  )) = csg.union(left, right, using: svg_path.Nonzero)
+
+  normalized_left |> svg_path.path_subpaths |> list.length |> should.equal(1)
+  normalized_right |> svg_path.path_subpaths |> list.length |> should.equal(1)
+  path |> svg_path.path_subpaths |> list.length |> should.equal(1)
+  arrangement_graph.validate(graph, tolerance:, minimum_chord: 0.00001)
+  |> should.equal(Ok(Nil))
+}
+
 pub fn overlapping_rectangles_match_expected_union_geometry_test() {
   let left = rectangle(0.0, 0.0, 2.0, 2.0)
   let right = rectangle(1.0, 0.0, 3.0, 2.0)
@@ -507,7 +526,7 @@ pub fn monotone_contours_preserve_positive_nested_winding_levels_test() {
       rectangle_subpath(5.0, 5.0, 25.0, 25.0),
       rectangle_subpath(10.0, 10.0, 20.0, 20.0),
     ])
-  let assert Ok(output) = csg.monotone_contours(input)
+  let assert Ok(csg.CsgResult(path: output, ..)) = csg.monotone_contours(input)
 
   list.length(svg_path.path_subpaths(output)) |> should.equal(3)
   assert_same_winding_field(input, output, [
@@ -525,7 +544,7 @@ pub fn monotone_contours_preserve_mixed_sign_nesting_test() {
       rectangle_subpath(5.0, 5.0, 25.0, 25.0) |> svg_path.subpath_reverse,
       rectangle_subpath(10.0, 10.0, 20.0, 20.0),
     ])
-  let assert Ok(output) = csg.monotone_contours(input)
+  let assert Ok(csg.CsgResult(path: output, ..)) = csg.monotone_contours(input)
 
   list.length(svg_path.path_subpaths(output)) |> should.equal(3)
   assert_same_winding_field(input, output, [
@@ -541,7 +560,7 @@ pub fn monotone_contours_decompose_overlapping_contours_by_level_test() {
       rectangle_subpath(0.0, 0.0, 10.0, 10.0),
       rectangle_subpath(4.0, 2.0, 14.0, 12.0),
     ])
-  let assert Ok(output) = csg.monotone_contours(input)
+  let assert Ok(csg.CsgResult(path: output, ..)) = csg.monotone_contours(input)
 
   list.length(svg_path.path_subpaths(output)) |> should.equal(2)
   assert_same_winding_field(
@@ -554,7 +573,7 @@ pub fn monotone_contours_decompose_overlapping_contours_by_level_test() {
 pub fn monotone_contours_drop_winding_neutral_copies_test() {
   let contour = rectangle_subpath(0.0, 0.0, 10.0, 10.0)
   let input = svg_path.Path([contour, svg_path.subpath_reverse(contour)])
-  let assert Ok(output) = csg.monotone_contours(input)
+  let assert Ok(csg.CsgResult(path: output, ..)) = csg.monotone_contours(input)
 
   svg_path.path_subpaths(output) |> should.equal([])
   assert_same_winding_field(input, output, [
@@ -565,7 +584,7 @@ pub fn monotone_contours_drop_winding_neutral_copies_test() {
 
 pub fn monotone_contours_split_self_intersection_into_signed_lobes_test() {
   let input = bowtie()
-  let assert Ok(output) = csg.monotone_contours(input)
+  let assert Ok(csg.CsgResult(path: output, ..)) = csg.monotone_contours(input)
 
   list.length(svg_path.path_subpaths(output)) |> should.equal(2)
   assert_same_winding_field(input, output, [
@@ -578,32 +597,48 @@ pub fn monotone_contours_split_self_intersection_into_signed_lobes_test() {
 fn union_paths(
   left: svg_path.Path,
   right: svg_path.Path,
-) -> Result(svg_path.Path, arrangement_graph.Error) {
+) -> Result(svg_path.Path, csg.Error) {
   csg.union(left, right, using: svg_path.Nonzero)
+  |> result.map(fn(result) {
+    let csg.CsgResult(path:, ..) = result
+    path
+  })
 }
 
 fn intersect_paths(
   left: svg_path.Path,
   right: svg_path.Path,
   fill_rule: svg_path.FillRule,
-) -> Result(svg_path.Path, arrangement_graph.Error) {
+) -> Result(svg_path.Path, csg.Error) {
   csg.intersection(left, right, using: fill_rule)
+  |> result.map(fn(result) {
+    let csg.CsgResult(path:, ..) = result
+    path
+  })
 }
 
 fn subtract_paths(
   left: svg_path.Path,
   right: svg_path.Path,
   fill_rule: svg_path.FillRule,
-) -> Result(svg_path.Path, arrangement_graph.Error) {
+) -> Result(svg_path.Path, csg.Error) {
   csg.difference(left, minus: right, using: fill_rule)
+  |> result.map(fn(result) {
+    let csg.CsgResult(path:, ..) = result
+    path
+  })
 }
 
 fn xor_paths(
   left: svg_path.Path,
   right: svg_path.Path,
   fill_rule: svg_path.FillRule,
-) -> Result(svg_path.Path, arrangement_graph.Error) {
+) -> Result(svg_path.Path, csg.Error) {
   csg.symmetric_difference(left, right, using: fill_rule)
+  |> result.map(fn(result) {
+    let csg.CsgResult(path:, ..) = result
+    path
+  })
 }
 
 fn boolean_case(
@@ -731,7 +766,7 @@ fn containment_is_inside(containment: svg_path.PointContainment) -> Bool {
 fn union_path_list(
   paths: List(svg_path.Path),
   accumulated: svg_path.Path,
-) -> Result(svg_path.Path, arrangement_graph.Error) {
+) -> Result(svg_path.Path, csg.Error) {
   case paths {
     [] -> Ok(accumulated)
     [first, ..rest] -> {
