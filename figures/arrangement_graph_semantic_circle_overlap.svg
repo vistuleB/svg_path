@@ -1,82 +1,42 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="940" height="520" viewBox="0 0 940 520">
-  <defs>
-    <marker id="blue-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-      <path d="M0 0 L10 5 L0 10z" fill="#2563eb" />
-    </marker>
-    <marker id="orange-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-      <path d="M0 0 L10 5 L0 10z" fill="#ea580c" />
-    </marker>
-    <marker id="graph-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
-      <path d="M0 0 L10 5 L0 10z" fill="#334155" />
-    </marker>
-  </defs>
-
-  <rect width="940" height="520" fill="#f8fafc" />
-  <line x1="470" y1="30" x2="470" y2="470" stroke="#cbd5e1" />
-  <text x="235" y="48" text-anchor="middle" font-family="system-ui, sans-serif" font-size="20" font-weight="600" fill="#0f172a">Two input subpaths</text>
-  <text x="705" y="48" text-anchor="middle" font-family="system-ui, sans-serif" font-size="20" font-weight="600" fill="#0f172a">Arrangement graph</text>
-
-  <!-- Circle 1: two clockwise 180-degree arcs, endpoints at 0 and 180 degrees. -->
-  <g fill="none" stroke="#2563eb" stroke-width="8" stroke-linecap="round" opacity="0.58" marker-end="url(#blue-arrow)">
-    <path d="M365 240 A130 130 0 0 1 105 240" />
-    <path d="M105 240 A130 130 0 0 1 365 240" />
-  </g>
-
-  <!-- Circle 2: opposite direction and endpoints rotated by 45 degrees. -->
-  <g fill="none" stroke="#ea580c" stroke-width="8" stroke-linecap="round" opacity="0.58" marker-end="url(#orange-arrow)">
-    <path d="M326.924 331.924 A130 130 0 0 0 143.076 148.076" />
-    <path d="M143.076 148.076 A130 130 0 0 0 326.924 331.924" />
-  </g>
-
-  <g font-family="system-ui, sans-serif" font-size="14">
-    <circle cx="115" cy="424" r="7" fill="#2563eb" opacity="0.72" />
-    <text x="130" y="429" fill="#1d4ed8">subpath 1: clockwise</text>
-    <circle cx="285" cy="424" r="7" fill="#ea580c" opacity="0.72" />
-    <text x="300" y="429" fill="#c2410c">subpath 2: counterclockwise, +45° phase</text>
-  </g>
-
-  <!-- Graph edges: the union of both endpoint sets divides the circle into four arcs. -->
-  <g fill="none" stroke="#334155" stroke-width="5" stroke-linecap="round" marker-end="url(#graph-arrow)">
-    <path d="M835 240 A130 130 0 0 1 796.924 331.924" />
-    <path d="M796.924 331.924 A130 130 0 0 1 575 240" />
-    <path d="M575 240 A130 130 0 0 1 613.076 148.076" />
-    <path d="M613.076 148.076 A130 130 0 0 1 835 240" />
-  </g>
-
-  <!-- Vertices occur at both circles' original arc boundaries. -->
-  <g fill="#fff" stroke="#dc2626" stroke-width="3">
-    <circle cx="835" cy="240" r="8" />
-    <circle cx="796.924" cy="331.924" r="8" />
-    <circle cx="575" cy="240" r="8" />
-    <circle cx="613.076" cy="148.076" r="8" />
-  </g>
-  <g fill="#991b1b" font-family="ui-monospace, monospace" font-size="13">
-    <text x="847" y="234">v0 · 0°</text>
-    <text x="803" y="354">v1 · 45°</text>
-    <text x="505" y="234">v2 · 180°</text>
-    <text x="555" y="130">v3 · 225°</text>
-  </g>
-
-  <!-- Multiplicity cartouches at the geometric midpoint of each graph arc. -->
-  <g font-family="ui-monospace, monospace" font-size="14" font-weight="700" fill="#0f172a" text-anchor="middle">
-    <g>
-      <rect x="798.104" y="270.758" width="54" height="30" rx="6" fill="#fff" stroke="#94a3b8" />
-      <text x="825.104" y="291">1/1</text>
-    </g>
-    <g>
-      <rect x="628.250" y="333.602" width="54" height="30" rx="6" fill="#fff" stroke="#94a3b8" />
-      <text x="655.250" y="354">1/1</text>
-    </g>
-    <g>
-      <rect x="557.896" y="179.242" width="54" height="30" rx="6" fill="#fff" stroke="#94a3b8" />
-      <text x="584.896" y="199.5">1/1</text>
-    </g>
-    <g>
-      <rect x="727.750" y="116.398" width="54" height="30" rx="6" fill="#fff" stroke="#94a3b8" />
-      <text x="754.750" y="136.7">1/1</text>
-    </g>
-  </g>
-
-  <text x="705" y="424" text-anchor="middle" font-family="system-ui, sans-serif" font-size="14" fill="#475569">4 vertices · 4 geometric edges · every edge has one occurrence per direction</text>
-  <text x="470" y="493" text-anchor="middle" font-family="system-ui, sans-serif" font-size="14" fill="#64748b">Adversarial semantic-overlap case: equal circles, incompatible arc subdivision</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 520" width="940" height="520">
+  <rect x="0" y="0" width="940" height="520" style="fill: #f8fafc; stroke: none" />
+  <path d="M 470 30 V 470" style="fill: none; stroke: #cbd5e1; stroke-width: 1" />
+  <text x="235" y="48" font-size="20" style="fill: #0f172a; font-family: system-ui, sans-serif; font-weight: 650; text-anchor: middle">Two input subpaths</text>
+  <text x="705" y="48" font-size="20" style="fill: #0f172a; font-family: system-ui, sans-serif; font-weight: 650; text-anchor: middle">Arrangement graph</text>
+  <path d="M 365 240 A 130 130 0 0 1 105 240 A 130 130 0 0 1 365 240 Z" style="fill: none; stroke: #2563eb; stroke-width: 7; stroke-opacity: 0.58" />
+  <path d="M 326.92388 331.92388 A 130 130 0 0 0 143.07612 148.07612 A 130 130 0 0 0 326.92388 331.92388 Z" style="fill: none; stroke: #ea580c; stroke-width: 7; stroke-opacity: 0.58" />
+  <circle cx="115" cy="405" r="7" style="fill: #2563eb; fill-opacity: 0.72; stroke: none" />
+  <text x="130" y="410" font-size="14" style="fill: #1d4ed8; font-family: system-ui, sans-serif; text-anchor: start">subpath 1: clockwise</text>
+  <circle cx="115" cy="431" r="7" style="fill: #ea580c; fill-opacity: 0.72; stroke: none" />
+  <text x="130" y="436" font-size="14" style="fill: #c2410c; font-family: system-ui, sans-serif; text-anchor: start">subpath 2: counterclockwise, +45° phase</text>
+  <text x="705" y="424" font-size="14" style="fill: #475569; font-family: system-ui, sans-serif; text-anchor: middle">4 vertices · 4 geometric edges · every edge has one occurrence per direction</text>
+  <text x="470" y="493" font-size="14" style="fill: #64748b; font-family: system-ui, sans-serif; text-anchor: middle">Adversarial semantic-overlap case: equal circles, incompatible arc subdivision</text>
+  <path d="M 105 240 L 119 276 H 91 Z" style="fill: #2563eb; fill-opacity: 0.58; stroke: none" />
+  <path d="M 365 240 L 351 204 H 379 Z" style="fill: #2563eb; fill-opacity: 0.58; stroke: none" />
+  <path d="M 143.07612 148.07612 L 158.63247 112.72078 L 178.43146 132.51977 Z" style="fill: #ea580c; fill-opacity: 0.58; stroke: none" />
+  <path d="M 326.92388 331.92388 L 311.36753 367.27922 L 291.56854 347.48023 Z" style="fill: #ea580c; fill-opacity: 0.58; stroke: none" />
+  <path d="M 835 240 A 130 130 0 0 1 796.92388 331.92388" style="fill: none; stroke: #334155; stroke-width: 3.25" />
+  <path d="M 800.45942 328.38835 L 801.87363 315.66043 L 813.18734 326.97413 Z" style="fill: #dc2626; fill-opacity: 1.0; stroke: none" />
+  <rect x="804.70434" y="275.34885" width="40.8" height="28.8" style="fill: #fff; stroke: #94a3b8; stroke-width: 0.75" transform="rotate(202.5 825.10434 289.74885)" />
+  <text x="825.10434" y="287.34885" font-size="11" style="fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(202.5 825.10434 289.74885)">0/0</text>
+  <text x="825.10434" y="300.54885" font-size="10" style="fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(202.5 825.10434 289.74885)">↑1/1↓</text>
+  <path d="M 796.92388 331.92388 A 130 130 0 0 1 575 240" style="fill: none; stroke: #334155; stroke-width: 3.25" />
+  <path d="M 575 245 L 583 255 H 567 Z" style="fill: #dc2626; fill-opacity: 1.0; stroke: none" />
+  <rect x="634.85115" y="345.70434" width="40.8" height="28.8" style="fill: #fff; stroke: #94a3b8; stroke-width: 0.75" transform="rotate(-67.5 655.25115 360.10434)" />
+  <text x="655.25115" y="357.70434" font-size="11" style="fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(-67.5 655.25115 360.10434)">0/0</text>
+  <text x="655.25115" y="370.90434" font-size="10" style="fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(-67.5 655.25115 360.10434)">↑1/1↓</text>
+  <path d="M 575 240 A 130 130 0 0 1 613.07612 148.07612" style="fill: none; stroke: #334155; stroke-width: 3.25" />
+  <path d="M 609.54058 151.61165 L 608.12637 164.33957 L 596.81266 153.02587 Z" style="fill: #dc2626; fill-opacity: 1.0; stroke: none" />
+  <rect x="564.49566" y="175.85115" width="40.8" height="28.8" style="fill: #fff; stroke: #94a3b8; stroke-width: 0.75" transform="rotate(22.5 584.89566 190.25115)" />
+  <text x="584.89566" y="187.85115" font-size="11" style="fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(22.5 584.89566 190.25115)">0/0</text>
+  <text x="584.89566" y="201.05115" font-size="10" style="fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(22.5 584.89566 190.25115)">↑1/1↓</text>
+  <path d="M 613.07612 148.07612 A 130 130 0 0 1 835 240" style="fill: none; stroke: #334155; stroke-width: 3.25" />
+  <path d="M 835 235 L 827 225 H 843 Z" style="fill: #dc2626; fill-opacity: 1.0; stroke: none" />
+  <rect x="734.34885" y="105.49566" width="40.8" height="28.8" style="fill: #fff; stroke: #94a3b8; stroke-width: 0.75" transform="rotate(112.5 754.74885 119.89566)" />
+  <text x="754.74885" y="117.49566" font-size="11" style="fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(112.5 754.74885 119.89566)">0/0</text>
+  <text x="754.74885" y="130.69566" font-size="10" style="fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(112.5 754.74885 119.89566)">↑1/1↓</text>
+  <circle cx="835" cy="240" r="5" style="fill: #fff; stroke: #dc2626; stroke-width: 2.25" />
+  <circle cx="796.92388" cy="331.92388" r="5" style="fill: #fff; stroke: #dc2626; stroke-width: 2.25" />
+  <circle cx="575" cy="240" r="5" style="fill: #fff; stroke: #dc2626; stroke-width: 2.25" />
+  <circle cx="613.07612" cy="148.07612" r="5" style="fill: #fff; stroke: #dc2626; stroke-width: 2.25" />
 </svg>
