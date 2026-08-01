@@ -5,6 +5,7 @@ import gleam/float
 import gleam/list
 import svg_path
 import svg_path/arrangement_graph
+import svg_path/arrangement_graph/drawing as arrangement_graph_drawing
 import svg_path/csg
 import svg_path/effects
 import svg_path/svg
@@ -185,7 +186,7 @@ fn render_boolean_table(
     normalized_paths: [normalized_graph_source],
   )) = arrangement_graph.build([graph_source], tolerance:, minimum_chord:)
   let assert Ok(graph_drawing) =
-    arrangement_graph.annotated_drawing(
+    arrangement_graph_drawing.annotated_drawing(
       graph,
       normalized_graph_source,
       tolerance:,
@@ -350,23 +351,29 @@ fn render_boolean_table(
   ]
   let source_arrows =
     list.append(
-      arrangement_graph.path_direction_arrows(left_placed, "#2563eb"),
-      arrangement_graph.path_direction_arrows(right_placed, "#e11d48"),
+      arrangement_graph_drawing.path_direction_arrows(left_placed, "#2563eb"),
+      arrangement_graph_drawing.path_direction_arrows(right_placed, "#e11d48"),
     )
   let result_arrows =
     list.flatten([
-      arrangement_graph.path_direction_arrows(union_placed, "#15803d"),
-      arrangement_graph.path_direction_arrows(intersection_placed, "#6d28d9"),
-      arrangement_graph.path_direction_arrows(difference_placed, "#b45309"),
-      arrangement_graph.path_direction_arrows(
+      arrangement_graph_drawing.path_direction_arrows(union_placed, "#15803d"),
+      arrangement_graph_drawing.path_direction_arrows(
+        intersection_placed,
+        "#6d28d9",
+      ),
+      arrangement_graph_drawing.path_direction_arrows(
+        difference_placed,
+        "#b45309",
+      ),
+      arrangement_graph_drawing.path_direction_arrows(
         reverse_difference_placed,
         "#0e7490",
       ),
-      arrangement_graph.path_direction_arrows(
+      arrangement_graph_drawing.path_direction_arrows(
         symmetric_difference_placed,
         "#be185d",
       ),
-      arrangement_graph.path_direction_arrows(
+      arrangement_graph_drawing.path_direction_arrows(
         rounded_monotone_placed,
         "#4338ca",
       ),
@@ -415,7 +422,7 @@ fn render_case(
     normalized_paths: [normalized_graph_source],
   )) = arrangement_graph.build([graph_source], tolerance:, minimum_chord:)
   let assert Ok(graph_drawing) =
-    arrangement_graph.annotated_drawing(
+    arrangement_graph_drawing.annotated_drawing(
       graph,
       normalized_graph_source,
       tolerance:,
@@ -478,11 +485,11 @@ fn render_case(
   ]
   let arrows =
     list.append(
-      arrangement_graph.path_direction_arrows(left_placed, "#2563eb"),
-      arrangement_graph.path_direction_arrows(right_placed, "#e11d48"),
+      arrangement_graph_drawing.path_direction_arrows(left_placed, "#2563eb"),
+      arrangement_graph_drawing.path_direction_arrows(right_placed, "#e11d48"),
     )
   let result_arrows =
-    arrangement_graph.path_direction_arrows(result_placed, "#7c3aed")
+    arrangement_graph_drawing.path_direction_arrows(result_placed, "#7c3aed")
   let empty_note = case svg_path.path_subpaths(boolean_result) {
     [] -> [
       svg.Text(

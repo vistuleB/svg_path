@@ -5,6 +5,7 @@ import gleam/result
 import gleeunit/should
 import svg_path
 import svg_path/arrangement_graph
+import svg_path/arrangement_graph/drawing as arrangement_graph_drawing
 import svg_path/csg
 import svg_path/point
 
@@ -283,7 +284,7 @@ pub fn drawing_contains_edges_vertices_and_multiplicity_labels_test() {
       minimum_chord:,
     )
 
-  arrangement_graph.drawing(graph)
+  arrangement_graph_drawing.drawing(graph)
   |> list.length
   |> should.equal(7)
 }
@@ -302,9 +303,9 @@ pub fn edge_annotation_pose_comes_from_segment_midpoint_and_tangent_test() {
       reverse_multiplicity: 0,
     )
 
-  arrangement_graph.edge_annotation_pose(edge)
+  arrangement_graph_drawing.edge_annotation_pose(edge)
   |> should.equal(
-    Ok(arrangement_graph.EdgeAnnotationPose(
+    Ok(arrangement_graph_drawing.EdgeAnnotationPose(
       point: svg_path.Point(5.0, 0.0),
       rotation: 90.0,
     )),
