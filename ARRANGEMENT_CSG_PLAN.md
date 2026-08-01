@@ -7,8 +7,9 @@
 - `svg_path/winding_field` owns trusting point and segment-side winding samples.
 - `svg_path/csg` is the public path-operation facade for union, intersection,
   difference, symmetric difference, and monotone contours.
-- `svg_path/legacy/csg` and `svg_path/legacy/robust_union` retain the superseded
-  implementations until their remaining useful fixtures have been migrated.
+- The superseded occurrence-ID CSG implementation and its dedicated fixtures
+  have been removed. Git history retains them if historical comparison is
+  needed.
 
 ## Historical robust-union position
 
@@ -247,7 +248,8 @@ After the behavioral tests pass:
 
 1. Remove unused prototype line-overlap helpers.
 2. Remove obsolete comments describing discarded pipeline stages.
-3. Update `ROBUST_UNION_HANDOFF.md` or replace it with a completion summary.
+3. Remove the obsolete robust-union handoff after the replacement pipeline is
+   established.
 4. Run formatting and `git diff --check`.
 5. Run the complete test suite.
 6. Investigate the arc-intersection timeout separately if it remains.

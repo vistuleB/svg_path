@@ -8,11 +8,11 @@ import gleam/string
 import gleeunit
 import svg_path
 import svg_path/convex_hull
+import svg_path/csg
 import svg_path/cut
 import svg_path/effects
 import svg_path/format as number_format
 import svg_path/intersections
-import svg_path/legacy/csg
 import svg_path/marker
 import svg_path/offset
 import svg_path/parse
