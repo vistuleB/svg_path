@@ -1,8 +1,19 @@
 //// Arrangement-graph primitives for Boolean path operations.
 ////
 //// This module provides arrangement construction, endpoint clustering,
-//// coincident-edge multiplicity, and invariant validation. `build` refines intersections and endpoint-bounded
-//// overlaps into atomic segments before inserting them as graph edges.
+//// coincident-edge multiplicity, and invariant validation. `build` refines
+//// intersections and endpoint-bounded overlaps into atomic segments before
+//// inserting them as graph edges.
+////
+//// An atomic segment has no proper intersection or partial overlap with any
+//// other edge segment. Atomic segments may meet at their endpoint vertices.
+//// Geometrically coincident atomic segments are represented by one edge with
+//// directional multiplicities.
+////
+//// The public types are transparent so callers can inspect, serialize, and
+//// draw an arrangement. `build` is the supported constructor: code that
+//// assembles these representations directly is responsible for all documented
+//// invariants.
 
 import gleam/int
 import gleam/list
@@ -20,38 +31,82 @@ import svg_path/smallest_enclosing_circle
 ///
 /// `point` is the center of the smallest circle enclosing `endpoint_samples`.
 /// Construction accepts a sample only when that circle's squared radius does
-/// not exceed the graph's squared endpoint tolerance.
+/// not exceed the graph's squared endpoint tolerance. Consequently every
+/// sample lies within `tolerance` of `point`, without making the result depend
+/// on endpoint insertion order.
 pub type ArrangementVertex {
   ArrangementVertex(
+    /// The vertex identifier referenced by incident edges.
     id: Int,
+    /// The representative location of this endpoint cluster.
     point: svg_path.Point,
+    /// The original segment endpoints assigned to this cluster.
     endpoint_samples: List(svg_path.Point),
   )
 }
 
+/// One directed geometric edge of an arrangement.
+///
+/// The stored segment runs from `start_vertex` to `end_vertex`. Its endpoints
+/// remain the normalized source endpoints and are within the build tolerance
+/// of the corresponding vertex points; construction does not move the segment
+/// to the cluster centers. The segment's chord is at least `minimum_chord`.
+///
+/// `forward_multiplicity` counts coincident source segments oriented like the
+/// stored segment, and `reverse_multiplicity` counts those oriented against it.
+/// Both are non-negative and their sum is positive in a constructed graph.
 pub type ArrangementEdge {
   ArrangementEdge(
+    /// The edge's unique identifier in a graph returned by `build`.
     id: Int,
+    /// The atomic segment, oriented from `start_vertex` to `end_vertex`.
     segment: svg_path.Segment,
+    /// Identifier of the segment's start endpoint cluster.
     start_vertex: Int,
+    /// Identifier of the segment's end endpoint cluster.
     end_vertex: Int,
+    /// Number of coincident source segments with the stored orientation.
     forward_multiplicity: Int,
+    /// Number of coincident source segments with the reverse orientation.
     reverse_multiplicity: Int,
   )
 }
 
+/// A possibly disconnected planar arrangement of normalized path segments.
+///
+/// Graphs returned by `build` have unique vertex and edge identifiers. Every
+/// edge refers to two existing, distinct vertices, and every vertex is incident
+/// to an edge. Different atomic edges have no proper intersections or partial
+/// overlaps; they meet only through endpoint clusters. Coincident pieces are
+/// consolidated into one edge with directional multiplicities.
+///
+/// Cyclic edge order is not stored. Consumers derive it from the segment
+/// geometry and vertex point. For closed-boundary input, the sum of incident
+/// edge multiplicities at every vertex is positive and even. `validate`
+/// enforces this closed-boundary condition, so an arrangement built from open
+/// subpaths may be inspectable but fail validation.
 pub type ArrangementGraph {
   ArrangementGraph(
+    /// Endpoint clusters in the arrangement.
     vertices: List(ArrangementVertex),
+    /// Non-intersecting atomic edges in the arrangement.
     edges: List(ArrangementEdge),
   )
 }
 
 /// An arrangement graph and the normalized source paths from which it was
-/// constructed. Source-path order is preserved.
+/// constructed.
+///
+/// `normalized_paths` has the same path order and count as the input to
+/// `build`; subpath order is also preserved within each path. Normalization
+/// replaces line-degenerate segment sequences before refinement and may change
+/// segment decomposition. These are the official source paths corresponding to
+/// the graph and should be used for later winding classification.
 pub type ArrangementGraphBuild {
   ArrangementGraphBuild(
+    /// The arrangement produced from `normalized_paths`.
     graph: ArrangementGraph,
+    /// Normalized sources, retaining the input path and subpath order.
     normalized_paths: List(svg_path.Path),
   )
 }
@@ -171,14 +226,15 @@ pub fn insert_atomic_segment(
   }
 }
 
-/// Build an arrangement graph from independently normalized source paths.
+/// Build an arrangement graph and return the normalized sources it represents.
 ///
-/// Source-path order is retained in the result. Construction flattens their
-/// segments, refines them at point intersections and endpoint-bounded overlap
-/// boundaries, and inserts the resulting atomic segments. Its output is
-/// independent of input processing order. Overlap detection uses endpoint
-/// projection, so semantically equal arcs need not have structurally equal SVG
-/// flags or matching original subdivision points.
+/// Normalization retains path and subpath order. Construction then flattens the
+/// normalized paths into segments, refines them at point intersections and
+/// endpoint-bounded overlap boundaries, and inserts the resulting atomic
+/// segments. Its output geometry is independent of input processing order.
+/// Overlap detection uses endpoint projection, so semantically equal arcs need
+/// not have structurally equal SVG flags or matching original subdivision
+/// points.
 pub fn build(
   paths: List(svg_path.Path),
   tolerance tolerance: Float,
@@ -712,7 +768,13 @@ fn increment_matching_edge(
   }
 }
 
-/// Validate representation invariants that do not require intersection tests.
+/// Validate local representation and closed-boundary invariants.
+///
+/// This checks multiplicity totals, vertex references, non-loop edges, endpoint
+/// tolerance, minimum chord length, endpoint-cluster centers and radii, vertex
+/// incidence, and even weighted degree. It does not test pairwise edge
+/// intersections, atomicity, identifier uniqueness, or individual directional
+/// multiplicity signs; use `build` to establish those construction invariants.
 pub fn validate(
   graph: ArrangementGraph,
   tolerance tolerance: Float,

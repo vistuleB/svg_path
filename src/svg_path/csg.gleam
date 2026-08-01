@@ -29,8 +29,19 @@ pub type Error {
   BoundarySectorMismatch(vertex: Int)
 }
 
+/// A CSG output together with the exact arrangement used to derive it.
+///
+/// Returning the build makes normalization and graph refinement visible to the
+/// caller: the result path follows the arrangement's geometry rather than
+/// silently claiming the original input geometry as its source of truth.
 pub type CsgResult {
-  CsgResult(path: svg_path.Path, build: arrangement_graph.ArrangementGraphBuild)
+  CsgResult(
+    /// The reconstructed result path for the requested operation.
+    path: svg_path.Path,
+    /// The arrangement graph and source-ordered normalized input paths used to
+    /// classify and reconstruct `path`.
+    build: arrangement_graph.ArrangementGraphBuild,
+  )
 }
 
 /// Return default ArrangementGraph CSG options.
