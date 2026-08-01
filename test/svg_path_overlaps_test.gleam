@@ -30,6 +30,31 @@ pub fn segment_overlap_and_intersection_agree_on_semantic_arc_test() {
   assert_overlap_contract(arc(), same_geometry, expected_overlap: True)
 }
 
+pub fn semantic_arc_overlap_survives_nine_decimal_tolerance_test() {
+  let same_geometry =
+    svg_path.Arc(
+      start: svg_path.Point(0.0, 0.0),
+      radius: svg_path.Point(5.0, 5.0),
+      x_axis_rotation: 0.0,
+      large_arc: True,
+      sweep: True,
+      end: svg_path.Point(10.0, 0.0),
+    )
+  let strict_tolerance = 0.000000001
+
+  let assert Ok([_]) =
+    overlaps.segment_with(arc(), same_geometry, tolerance: strict_tolerance)
+  assert intersections.segment_with(
+      arc(),
+      same_geometry,
+      options: intersections.IntersectionOptions(
+        tolerance: strict_tolerance,
+        max_depth: 48,
+      ),
+    )
+    == Error(svg_path.OverlappingSegments)
+}
+
 pub fn segment_overlap_and_intersection_agree_on_endpoint_touch_test() {
   let right =
     svg_path.Line(

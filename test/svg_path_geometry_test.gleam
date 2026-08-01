@@ -1165,6 +1165,50 @@ pub fn segment_projection_returns_curve_parameter_point_and_distance_test() {
   assert near(distance, 5.0)
 }
 
+pub fn projection_of_curve_points_respects_geometric_tolerance_test() {
+  let segments = [
+    svg_path.QuadraticBezier(
+      start: svg_path.Point(0.0, 0.0),
+      control: svg_path.Point(10.0, 20.0),
+      end: svg_path.Point(20.0, 0.0),
+    ),
+    svg_path.CubicBezier(
+      start: svg_path.Point(0.0, 0.0),
+      control1: svg_path.Point(5.0, 20.0),
+      control2: svg_path.Point(15.0, -20.0),
+      end: svg_path.Point(20.0, 0.0),
+    ),
+    svg_path.Arc(
+      start: svg_path.Point(0.0, 0.0),
+      radius: svg_path.Point(5.0, 5.0),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: True,
+      end: svg_path.Point(10.0, 0.0),
+    ),
+  ]
+  let parameters = [1.0 /. 6.0, 1.0 /. 3.0, 0.5, 2.0 /. 3.0, 5.0 /. 6.0]
+
+  segments
+  |> list.each(fn(segment) {
+    parameters
+    |> list.each(fn(t) {
+      let assert Ok(point) = svg_path.segment_point(segment, at: t)
+      let assert Ok(svg_path.SegmentProjection(distance:, ..)) =
+        svg_path.segment_projection_with(
+          point,
+          to: segment,
+          options: svg_path.DistanceOptions(
+            samples: 100,
+            tolerance: 0.000000001,
+            max_iterations: 100,
+          ),
+        )
+      assert distance <=. 0.000000001
+    })
+  })
+}
+
 pub fn segment_projection_with_rejects_invalid_options_test() {
   let line =
     svg_path.Line(

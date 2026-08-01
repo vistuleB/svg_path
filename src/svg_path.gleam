@@ -3441,10 +3441,10 @@ fn crossing_for_window(
   next_t: Float,
   next_value: Float,
 ) -> Result(Option(Float), Error) {
-  case is_close_to_zero(previous_value, options.tolerance) {
+  case previous_value == 0.0 {
     True -> Ok(Some(previous_t))
     False -> {
-      case is_close_to_zero(next_value, options.tolerance) {
+      case next_value == 0.0 {
         True -> Ok(Some(next_t))
         False -> {
           case same_sign(previous_value, next_value) {
@@ -4657,6 +4657,7 @@ fn distance_candidate_for_window(
                 segment,
                 options,
                 previous_t,
+                previous_value,
                 next_t,
               )
           }
@@ -4670,27 +4671,104 @@ fn refine_distance_candidate(
   point: Point,
   segment: Segment,
   options: DistanceOptions,
-  previous_t: Float,
-  next_t: Float,
+  left_t: Float,
+  left_value: Float,
+  right_t: Float,
 ) -> Result(Option(Float), Error) {
-  let solver_options =
-    root.Options(
-      tolerance: options.tolerance,
-      max_iterations: options.max_iterations,
-    )
+  refine_distance_candidate_loop(
+    point,
+    segment,
+    options.tolerance,
+    left_t,
+    left_value,
+    right_t,
+    options.max_iterations,
+  )
+  |> result.map(Some)
+}
 
-  case
-    root.bisect_with(
-      fn(t) { distance_stationary_value_unsafe(point, segment, t) },
-      from: previous_t,
-      to: next_t,
-      options: solver_options,
-    )
-  {
-    Ok(t) -> Ok(Some(t))
-    Error(root.MaxIterationsReached(estimate:, value:)) ->
-      Error(DistanceMaxIterationsReached(estimate:, value:))
-    Error(_) -> Ok(None)
+fn refine_distance_candidate_loop(
+  point: Point,
+  segment: Segment,
+  tolerance: Float,
+  left_t: Float,
+  left_value: Float,
+  right_t: Float,
+  remaining_iterations: Int,
+) -> Result(Float, Error) {
+  use portion <- result.try(segment_between_inside(
+    segment,
+    from: left_t,
+    to: right_t,
+  ))
+  use box <- result.try(segment_bounding_box(portion))
+  case bounding_box_diameter(box) <=. tolerance {
+    True -> best_distance_parameter(point, segment, left_t, right_t)
+    False -> {
+      let midpoint_t = left_t +. { right_t -. left_t } /. 2.0
+      use midpoint_value <- result.try(distance_stationary_value(
+        point,
+        segment,
+        midpoint_t,
+      ))
+      case remaining_iterations <= 1 {
+        True ->
+          Error(DistanceMaxIterationsReached(
+            estimate: midpoint_t,
+            value: midpoint_value,
+          ))
+        False ->
+          case midpoint_value == 0.0 {
+            True -> Ok(midpoint_t)
+            False ->
+              case same_sign(left_value, midpoint_value) {
+                True ->
+                  refine_distance_candidate_loop(
+                    point,
+                    segment,
+                    tolerance,
+                    midpoint_t,
+                    midpoint_value,
+                    right_t,
+                    remaining_iterations - 1,
+                  )
+                False ->
+                  refine_distance_candidate_loop(
+                    point,
+                    segment,
+                    tolerance,
+                    left_t,
+                    left_value,
+                    midpoint_t,
+                    remaining_iterations - 1,
+                  )
+              }
+          }
+      }
+    }
+  }
+}
+
+fn best_distance_parameter(
+  point: Point,
+  segment: Segment,
+  left_t: Float,
+  right_t: Float,
+) -> Result(Float, Error) {
+  let midpoint_t = left_t +. { right_t -. left_t } /. 2.0
+  use left <- result.try(segment_point(segment, at: left_t))
+  use midpoint <- result.try(segment_point(segment, at: midpoint_t))
+  use right <- result.try(segment_point(segment, at: right_t))
+  let left_distance = distance_squared(point, left)
+  let midpoint_distance = distance_squared(point, midpoint)
+  let right_distance = distance_squared(point, right)
+  case left_distance <=. midpoint_distance && left_distance <=. right_distance {
+    True -> Ok(left_t)
+    False ->
+      case midpoint_distance <=. right_distance {
+        True -> Ok(midpoint_t)
+        False -> Ok(right_t)
+      }
   }
 }
 
@@ -4712,16 +4790,6 @@ fn distance_stationary_value(
       }
     }
   }
-}
-
-fn distance_stationary_value_unsafe(
-  point: Point,
-  segment: Segment,
-  t: Float,
-) -> Float {
-  let assert Ok(value) = distance_stationary_value(point, segment, t)
-
-  value
 }
 
 fn smallest_segment_projection(
