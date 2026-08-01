@@ -1,5 +1,4 @@
-//// Dependency-neutral segment-overlap classification shared by point
-//// intersections and explicit encounter reporting.
+//// Dependency-neutral raw segment-overlap detection.
 
 import gleam/float
 import gleam/int
@@ -9,26 +8,17 @@ import svg_path
 
 const overlap_samples = 5
 
-/// One non-zero-length overlap interval between the same ordered pair of
-/// segments. The left parameters and points follow the left segment's
-/// traversal. The right parameters retain the corresponding traversal
-/// direction and may therefore decrease.
-pub type SegmentOverlap {
-  SegmentOverlap(
-    left_from: Float,
-    left_to: Float,
-    right_from: Float,
-    right_to: Float,
-    start: svg_path.Point,
-    end: svg_path.Point,
-  )
-}
+/// Internal transport representation. The public nominal type belongs to
+/// `svg_path/overlaps`.
+@internal
+pub type RawOverlap =
+  #(Float, Float, Float, Float, svg_path.Point, svg_path.Point)
 
 /// The result of combining two overlap intervals for the same ordered segment
 /// pair.
-pub type SegmentOverlapMerge {
+type RawOverlapMerge {
   Disjoint
-  Merged(SegmentOverlap)
+  Merged(RawOverlap)
   Contradiction
 }
 
@@ -46,46 +36,21 @@ type EndpointProjection {
   )
 }
 
-pub type SegmentEncounter {
-  Intersection(left_t: Float, right_t: Float, point: svg_path.Point)
-  Overlap(
-    left_from: Float,
-    left_to: Float,
-    right_from: Float,
-    right_to: Float,
-    start: svg_path.Point,
-    end: svg_path.Point,
-  )
-}
-
-/// Orient an overlap by increasing parameter on the left segment.
-///
-/// Reorientation swaps both right parameters as well as the geometric
-/// endpoints, preserving the correspondence between the two traversals.
-pub fn canonicalize_segment_overlap(overlap: SegmentOverlap) -> SegmentOverlap {
-  let SegmentOverlap(left_from:, left_to:, right_from:, right_to:, start:, end:) =
-    overlap
+fn canonicalize_overlap(overlap: RawOverlap) -> RawOverlap {
+  let #(left_from, left_to, right_from, right_to, start, end) = overlap
   case left_from <=. left_to {
     True -> overlap
-    False ->
-      SegmentOverlap(
-        left_from: left_to,
-        left_to: left_from,
-        right_from: right_to,
-        right_to: right_from,
-        start: end,
-        end: start,
-      )
+    False -> #(left_to, left_from, right_to, right_from, end, start)
   }
 }
 
 /// Whether an overlap has a strictly larger parameter span than `minimum_span`
 /// on both segments.
-pub fn segment_overlap_exceeds_minimum_span(
-  overlap: SegmentOverlap,
+fn overlap_exceeds_minimum_span(
+  overlap: RawOverlap,
   minimum_span minimum_span: Float,
 ) -> Bool {
-  let SegmentOverlap(left_from:, left_to:, right_from:, right_to:, ..) = overlap
+  let #(left_from, left_to, right_from, right_to, _, _) = overlap
   left_to -. left_from >. minimum_span
   && float.absolute_value(right_to -. right_from) >. minimum_span
 }
@@ -97,26 +62,26 @@ pub fn segment_overlap_exceeds_minimum_span(
 /// they overlap or touch consistently in both parameter spaces. A mismatch
 /// between the two parameter spaces or their traversal directions is a
 /// contradiction.
-pub fn merge_segment_overlaps(
-  first: SegmentOverlap,
-  second: SegmentOverlap,
+fn merge_overlaps(
+  first: RawOverlap,
+  second: RawOverlap,
   tolerance tolerance: Float,
-) -> SegmentOverlapMerge {
-  let SegmentOverlap(
-    left_from: first_left_from,
-    left_to: first_left_to,
-    right_from: first_right_from,
-    right_to: first_right_to,
-    start: first_start,
-    end: first_end,
+) -> RawOverlapMerge {
+  let #(
+    first_left_from,
+    first_left_to,
+    first_right_from,
+    first_right_to,
+    first_start,
+    first_end,
   ) = first
-  let SegmentOverlap(
-    left_from: second_left_from,
-    left_to: second_left_to,
-    right_from: second_right_from,
-    right_to: second_right_to,
-    start: second_start,
-    end: second_end,
+  let #(
+    second_left_from,
+    second_left_to,
+    second_right_from,
+    second_right_to,
+    second_start,
+    second_end,
   ) = second
   let first_right_increases = first_right_to >. first_right_from
   let second_right_increases = second_right_to >. second_right_from
@@ -218,14 +183,7 @@ pub fn merge_segment_overlaps(
                 True -> #(first_left_to, first_right_to, first_end)
                 False -> #(second_left_to, second_right_to, second_end)
               }
-              Merged(SegmentOverlap(
-                left_from:,
-                left_to:,
-                right_from:,
-                right_to:,
-                start:,
-                end:,
-              ))
+              Merged(#(left_from, left_to, right_from, right_to, start, end))
             }
           }
         }
@@ -238,53 +196,50 @@ pub fn merge_segment_overlaps(
 ///
 /// Disjoint intervals remain separate. Any contradictory pair rejects the
 /// collection.
-pub fn merge_segment_overlap_list(
-  overlaps: List(SegmentOverlap),
+fn merge_overlap_list(
+  overlaps: List(RawOverlap),
   tolerance tolerance: Float,
-) -> Result(List(SegmentOverlap), Nil) {
-  merge_segment_overlap_list_loop(overlaps, tolerance, [])
+) -> Result(List(RawOverlap), Nil) {
+  merge_overlap_list_loop(overlaps, tolerance, [])
 }
 
-fn merge_segment_overlap_list_loop(
-  overlaps: List(SegmentOverlap),
+fn merge_overlap_list_loop(
+  overlaps: List(RawOverlap),
   tolerance: Float,
-  merged: List(SegmentOverlap),
-) -> Result(List(SegmentOverlap), Nil) {
+  merged: List(RawOverlap),
+) -> Result(List(RawOverlap), Nil) {
   case overlaps {
     [] -> Ok(list.reverse(merged))
     [first, ..rest] -> {
-      use merged <- result.try(insert_segment_overlap(first, merged, tolerance))
-      merge_segment_overlap_list_loop(rest, tolerance, merged)
+      use merged <- result.try(insert_overlap(first, merged, tolerance))
+      merge_overlap_list_loop(rest, tolerance, merged)
     }
   }
 }
 
-fn insert_segment_overlap(
-  overlap: SegmentOverlap,
-  overlaps: List(SegmentOverlap),
+fn insert_overlap(
+  overlap: RawOverlap,
+  overlaps: List(RawOverlap),
   tolerance: Float,
-) -> Result(List(SegmentOverlap), Nil) {
-  insert_segment_overlap_loop(overlap, overlaps, tolerance, [])
+) -> Result(List(RawOverlap), Nil) {
+  insert_overlap_loop(overlap, overlaps, tolerance, [])
 }
 
-fn insert_segment_overlap_loop(
-  overlap: SegmentOverlap,
-  overlaps: List(SegmentOverlap),
+fn insert_overlap_loop(
+  overlap: RawOverlap,
+  overlaps: List(RawOverlap),
   tolerance: Float,
-  disjoint: List(SegmentOverlap),
-) -> Result(List(SegmentOverlap), Nil) {
+  disjoint: List(RawOverlap),
+) -> Result(List(RawOverlap), Nil) {
   case overlaps {
     [] -> Ok([overlap, ..disjoint])
     [first, ..rest] ->
-      case merge_segment_overlaps(overlap, first, tolerance:) {
+      case merge_overlaps(overlap, first, tolerance:) {
         Contradiction -> Error(Nil)
         Disjoint ->
-          insert_segment_overlap_loop(overlap, rest, tolerance, [
-            first,
-            ..disjoint
-          ])
+          insert_overlap_loop(overlap, rest, tolerance, [first, ..disjoint])
         Merged(combined) ->
-          insert_segment_overlap_loop(
+          insert_overlap_loop(
             combined,
             list.append(rest, disjoint),
             tolerance,
@@ -302,12 +257,13 @@ fn insert_segment_overlap_loop(
 /// samples on the proposed left interval must remain within `tolerance` of the
 /// proposed right interval. Compatible proposals are merged into maximal
 /// intervals.
-pub fn segment_overlaps_by_endpoint_projection_with(
+@internal
+pub fn detect_with(
   left: svg_path.Segment,
   right: svg_path.Segment,
   tolerance tolerance: Float,
   samples samples: Int,
-) -> Result(List(SegmentOverlap), svg_path.Error) {
+) -> Result(List(RawOverlap), svg_path.Error) {
   case tolerance <. 0.0 || samples <= 0 {
     True -> Ok([])
     False -> {
@@ -328,7 +284,7 @@ pub fn segment_overlaps_by_endpoint_projection_with(
           [],
         ),
       )
-      case merge_segment_overlap_list(candidates, tolerance:) {
+      case merge_overlap_list(candidates, tolerance:) {
         Ok(merged) -> Ok(merged)
         Error(Nil) -> Ok([])
       }
@@ -337,17 +293,13 @@ pub fn segment_overlaps_by_endpoint_projection_with(
 }
 
 /// Find overlap intervals using the shared five-sample policy.
-pub fn segment_overlaps(
+@internal
+pub fn detect(
   left: svg_path.Segment,
   right: svg_path.Segment,
   tolerance tolerance: Float,
-) -> Result(List(SegmentOverlap), svg_path.Error) {
-  segment_overlaps_by_endpoint_projection_with(
-    left,
-    right,
-    tolerance:,
-    samples: overlap_samples,
-  )
+) -> Result(List(RawOverlap), svg_path.Error) {
+  detect_with(left, right, tolerance:, samples: overlap_samples)
 }
 
 fn endpoint_projections(
@@ -398,8 +350,8 @@ fn overlap_candidates_from_projection_pairs(
   right: svg_path.Segment,
   tolerance: Float,
   samples: Int,
-  candidates: List(SegmentOverlap),
-) -> Result(List(SegmentOverlap), svg_path.Error) {
+  candidates: List(RawOverlap),
+) -> Result(List(RawOverlap), svg_path.Error) {
   case projections {
     [] -> Ok(list.reverse(candidates))
     [first, ..rest] -> {
@@ -431,8 +383,8 @@ fn overlap_candidates_against(
   right: svg_path.Segment,
   tolerance: Float,
   samples: Int,
-  candidates: List(SegmentOverlap),
-) -> Result(List(SegmentOverlap), svg_path.Error) {
+  candidates: List(RawOverlap),
+) -> Result(List(RawOverlap), svg_path.Error) {
   case projections {
     [] -> Ok(candidates)
     [second, ..rest] -> {
@@ -444,12 +396,7 @@ fn overlap_candidates_against(
       use accepted <- result.try(case candidate {
         Error(Nil) -> Ok(Error(Nil))
         Ok(overlap) ->
-          case
-            segment_overlap_exceeds_minimum_span(
-              overlap,
-              minimum_span: tolerance,
-            )
-          {
+          case overlap_exceeds_minimum_span(overlap, minimum_span: tolerance) {
             False -> Ok(Error(Nil))
             True -> {
               use valid <- result.try(sampled_overlap_valid(
@@ -487,7 +434,7 @@ fn overlap_from_projection_pair(
   first: EndpointProjection,
   second: EndpointProjection,
   left: svg_path.Segment,
-) -> Result(Result(SegmentOverlap, Nil), svg_path.Error) {
+) -> Result(Result(RawOverlap, Nil), svg_path.Error) {
   let EndpointProjection(
     source: first_source,
     source_t: first_source_t,
@@ -533,26 +480,26 @@ fn overlap_from_projection_pair(
   use end <- result.try(svg_path.segment_point(left, at: left_to))
   Ok(
     Ok(
-      canonicalize_segment_overlap(SegmentOverlap(
-        left_from:,
-        left_to:,
-        right_from:,
-        right_to:,
-        start:,
-        end:,
+      canonicalize_overlap(#(
+        left_from,
+        left_to,
+        right_from,
+        right_to,
+        start,
+        end,
       )),
     ),
   )
 }
 
 fn sampled_overlap_valid(
-  overlap: SegmentOverlap,
+  overlap: RawOverlap,
   left: svg_path.Segment,
   right: svg_path.Segment,
   tolerance: Float,
   samples: Int,
 ) -> Result(Bool, svg_path.Error) {
-  let SegmentOverlap(left_from:, left_to:, right_from:, right_to:, ..) = overlap
+  let #(left_from, left_to, right_from, right_to, _, _) = overlap
   use right_piece <- result.try(svg_path.segment_between_inside(
     right,
     from: min_float(right_from, right_to),

@@ -24,7 +24,7 @@ import svg_path.{
   SubpathParameter, SubpathSelfIntersection,
 }
 import svg_path/bezier
-import svg_path/segment_overlap
+import svg_path/overlap_detection
 
 const default_intersection_tolerance = 0.000000001
 
@@ -70,7 +70,7 @@ pub fn segment_with(
   options options: IntersectionOptions,
 ) -> Result(List(SegmentIntersection), Error) {
   use _ <- result.try(validate_intersection_options(options))
-  use overlaps <- result.try(segment_overlap.segment_overlaps(
+  use overlaps <- result.try(overlap_detection.detect(
     left,
     right,
     tolerance: options.tolerance,

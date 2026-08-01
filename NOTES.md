@@ -21,6 +21,12 @@
 - Possible `intersection` module extraction in a future breaking release, while
   keeping `svg_path` as the large convenience module.
 - Further orientation and topology helpers if actual caller needs appear.
+- A complete `encounters` module, when a concrete caller needs it.
+  It should return both continuous overlap intervals and isolated point
+  intersections, including isolated intersections that coexist with an
+  overlap. Point intersections covered by an overlap interval should be
+  removed. The narrow `overlaps` and `intersections` APIs should remain
+  separate projections rather than owning this combined result prematurely.
 - Full SVG path-module reshaping such as `svg_path/subpath` or
   `svg_path/segment`, only if the user experience clearly beats the current
   one-import convenience style.

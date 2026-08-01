@@ -882,37 +882,50 @@ fn global_offset_pair_splits(
   case remaining {
     [] -> Ok(collected)
     [right, ..rest] -> {
+      // Preserve the former encounter behavior explicitly: overlap endpoints
+      // take precedence; ordinary point intersections are used only when no
+      // continuous overlap exists. A future complete encounter operation can
+      // replace this branch when it reports both categories together.
+      let intersection_options = intersections.default_options()
       case
         overlaps.subpath_with(
           left,
           right,
-          options: intersections.default_options(),
+          tolerance: intersection_options.tolerance,
         )
       {
-        Ok(found) -> {
+        Ok([_, ..] as found) -> {
           let collected =
-            list.fold(found, collected, fn(acc, intersection) {
-              case intersection {
-                overlaps.SubpathIntersection(left:, right:, ..) -> [
-                  GlobalSplit(subpath_index: left_index, parameter: left),
-                  GlobalSplit(subpath_index: right_index, parameter: right),
-                  ..acc
-                ]
-                overlaps.SubpathOverlap(
-                  left_from:,
-                  left_to:,
-                  right_from:,
-                  right_to:,
-                  ..,
-                ) -> [
-                  GlobalSplit(subpath_index: left_index, parameter: left_from),
-                  GlobalSplit(subpath_index: left_index, parameter: left_to),
-                  GlobalSplit(subpath_index: right_index, parameter: right_from),
-                  GlobalSplit(subpath_index: right_index, parameter: right_to),
-                  ..acc
-                ]
-              }
-            })
+            collect_offset_overlap_splits(
+              found,
+              left_index,
+              right_index,
+              collected,
+            )
+          global_offset_pair_splits(
+            left,
+            rest,
+            left_index:,
+            right_index: right_index + 1,
+            collected:,
+          )
+        }
+        Ok([]) -> {
+          use found <- result.try(
+            intersections.subpath_with(
+              left,
+              right,
+              options: intersection_options,
+            )
+            |> result.map_error(PathError),
+          )
+          let collected =
+            collect_offset_intersection_splits(
+              found,
+              left_index,
+              right_index,
+              collected,
+            )
           global_offset_pair_splits(
             left,
             rest,
@@ -925,6 +938,49 @@ fn global_offset_pair_splits(
       }
     }
   }
+}
+
+fn collect_offset_overlap_splits(
+  found: List(overlaps.SubpathOverlap),
+  left_index: Int,
+  right_index: Int,
+  collected: List(GlobalSplit),
+) -> List(GlobalSplit) {
+  list.fold(found, collected, fn(acc, overlap) {
+    let overlaps.SubpathOverlap(
+      left_from:,
+      left_to:,
+      right_from:,
+      right_to:,
+      ..,
+    ) = overlap
+    [
+      GlobalSplit(subpath_index: left_index, parameter: left_from),
+      GlobalSplit(subpath_index: left_index, parameter: left_to),
+      GlobalSplit(subpath_index: right_index, parameter: right_from),
+      GlobalSplit(subpath_index: right_index, parameter: right_to),
+      ..acc
+    ]
+  })
+}
+
+fn collect_offset_intersection_splits(
+  found: List(svg_path.SubpathIntersection),
+  left_index: Int,
+  right_index: Int,
+  collected: List(GlobalSplit),
+) -> List(GlobalSplit) {
+  list.fold(found, collected, fn(acc, intersection) {
+    let svg_path.SubpathIntersection(left_parameters:, right_parameters:, ..) =
+      intersection
+    let acc =
+      list.fold(left_parameters, acc, fn(acc, parameter) {
+        [GlobalSplit(subpath_index: left_index, parameter:), ..acc]
+      })
+    list.fold(right_parameters, acc, fn(acc, parameter) {
+      [GlobalSplit(subpath_index: right_index, parameter:), ..acc]
+    })
+  })
 }
 
 fn global_offset_sections(

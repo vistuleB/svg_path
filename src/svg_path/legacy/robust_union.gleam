@@ -62,7 +62,19 @@ type PairEncounter {
   PairEncounter(
     left_index: Int,
     right_index: Int,
-    encounter: overlaps.SegmentEncounter,
+    encounter: LegacySegmentEncounter,
+  )
+}
+
+type LegacySegmentEncounter {
+  Intersection(left_t: Float, right_t: Float, point: svg_path.Point)
+  Overlap(
+    left_from: Float,
+    left_to: Float,
+    right_from: Float,
+    right_to: Float,
+    start: svg_path.Point,
+    end: svg_path.Point,
   )
 }
 
@@ -146,11 +158,11 @@ fn collect_junctions(encounters: List(PairEncounter)) -> List(Junction) {
   |> list.flat_map(fn(pair) {
     let PairEncounter(left_index:, right_index:, encounter:) = pair
     case encounter {
-      overlaps.Intersection(left_t:, right_t:, point:) -> [
+      Intersection(left_t:, right_t:, point:) -> [
         Junction(index: left_index, t: left_t, point:),
         Junction(index: right_index, t: right_t, point:),
       ]
-      overlaps.Overlap(..) -> []
+      Overlap(..) -> []
     }
   })
 }
@@ -1009,7 +1021,7 @@ fn collect_against(
     [right, ..tail] -> {
       let IndexedSegment(index: left_index, segment: left_segment, ..) = left
       let IndexedSegment(index: right_index, segment: right_segment, ..) = right
-      use encounters <- result.try(overlaps.segment_with(
+      use encounters <- result.try(legacy_segment_encounters(
         left_segment,
         right_segment,
         options:,
@@ -1019,6 +1031,44 @@ fn collect_against(
           [PairEncounter(left_index:, right_index:, encounter:), ..found]
         })
       collect_against(left, tail, options, found)
+    }
+  }
+}
+
+fn legacy_segment_encounters(
+  left: svg_path.Segment,
+  right: svg_path.Segment,
+  options options: intersections.IntersectionOptions,
+) -> Result(List(LegacySegmentEncounter), svg_path.Error) {
+  use found_overlaps <- result.try(overlaps.segment_with(
+    left,
+    right,
+    tolerance: options.tolerance,
+  ))
+  case found_overlaps {
+    [_, ..] ->
+      Ok(
+        list.map(found_overlaps, fn(overlap) {
+          let overlaps.SegmentOverlap(
+            left_from:,
+            left_to:,
+            right_from:,
+            right_to:,
+            start:,
+            end:,
+          ) = overlap
+          Overlap(left_from:, left_to:, right_from:, right_to:, start:, end:)
+        }),
+      )
+    [] -> {
+      use found <- result.try(intersections.segment_with(left, right, options:))
+      Ok(
+        list.map(found, fn(intersection) {
+          let svg_path.SegmentIntersection(left_t:, right_t:, point:) =
+            intersection
+          Intersection(left_t:, right_t:, point:)
+        }),
+      )
     }
   }
 }
@@ -1046,14 +1096,14 @@ fn cuts_for(
       case pair {
         PairEncounter(left_index:, right_index:, encounter:) -> {
           case encounter {
-            overlaps.Intersection(left_t:, right_t:, ..) -> {
+            Intersection(left_t:, right_t:, ..) -> {
               case index == left_index, index == right_index {
                 True, _ -> [left_t, ..cuts]
                 _, True -> [right_t, ..cuts]
                 _, _ -> cuts
               }
             }
-            overlaps.Overlap(left_from:, left_to:, right_from:, right_to:, ..) -> {
+            Overlap(left_from:, left_to:, right_from:, right_to:, ..) -> {
               case index == left_index, index == right_index {
                 True, _ -> [left_from, left_to, ..cuts]
                 _, True -> [right_from, right_to, ..cuts]
@@ -1080,14 +1130,7 @@ fn collect_replacements(
     [] -> list.reverse(replacements)
     [PairEncounter(left_index:, right_index:, encounter:), ..rest] -> {
       case encounter {
-        overlaps.Overlap(
-          left_from:,
-          left_to:,
-          right_from:,
-          right_to:,
-          start:,
-          end:,
-        ) -> {
+        Overlap(left_from:, left_to:, right_from:, right_to:, start:, end:) -> {
           let left_span = normalized_span(left_from, left_to)
           let right_span = normalized_span(right_from, right_to)
           let left_segment = case left_from <=. left_to {

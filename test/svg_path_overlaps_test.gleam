@@ -56,15 +56,9 @@ fn assert_overlap_contract(
   expected_overlap expected_overlap: Bool,
 ) {
   let options = intersections.IntersectionOptions(tolerance:, max_depth: 48)
-  let assert Ok(encounters) = overlaps.segment_with(left, right, options:)
-  let reports_overlap =
-    encounters
-    |> list.any(fn(encounter) {
-      case encounter {
-        overlaps.Overlap(..) -> True
-        overlaps.Intersection(..) -> False
-      }
-    })
+  let assert Ok(found_overlaps) =
+    overlaps.segment_with(left, right, tolerance: options.tolerance)
+  let reports_overlap = !list.is_empty(found_overlaps)
   let intersection_reports_overlap =
     intersections.segment_with(left, right, options:)
     == Error(svg_path.OverlappingSegments)
@@ -349,7 +343,7 @@ fn assert_full_overlap(
   assert intersections.segment(left, right)
     == Error(svg_path.OverlappingSegments)
   let assert Ok([encounter]) = overlaps.segment(left, right)
-  let assert overlaps.Overlap(
+  let overlaps.SegmentOverlap(
     left_from:,
     left_to:,
     right_from:,
