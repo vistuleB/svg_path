@@ -823,36 +823,45 @@ fn arc_flag(value: Float) -> Result(Bool, Error) {
 fn tokenize(input: String) -> Result(List(Token), Error) {
   input
   |> string.to_graphemes
-  |> tokenize_loop([])
+  |> tokenize_loop([], arc_argument_position: None)
 }
 
 fn tokenize_loop(
   graphemes: List(String),
   tokens: List(Token),
+  arc_argument_position arc_argument_position: Option(Int),
 ) -> Result(List(Token), Error) {
   case graphemes {
     [] -> Ok(list.reverse(tokens))
     [grapheme, ..rest] -> {
       case is_separator(grapheme) {
-        True -> tokenize_loop(rest, tokens)
+        True -> tokenize_loop(rest, tokens, arc_argument_position:)
         False -> {
           case is_command(grapheme) {
-            True -> tokenize_loop(rest, [Command(grapheme), ..tokens])
+            True ->
+              tokenize_loop(
+                rest,
+                [Command(grapheme), ..tokens],
+                arc_argument_position: case grapheme {
+                  "A" | "a" -> Some(0)
+                  _ -> None
+                },
+              )
             False -> {
               case is_number_start(grapheme) {
                 True -> {
                   let #(raw, rest) =
-                    read_number(
-                      graphemes,
-                      [],
-                      previous_was_exponent: False,
-                      has_decimal_point: False,
-                      has_exponent: False,
-                    )
+                    read_number_at_argument(graphemes, arc_argument_position)
 
                   case parse_number(raw) {
                     Ok(number) ->
-                      tokenize_loop(rest, [Number(number), ..tokens])
+                      tokenize_loop(
+                        rest,
+                        [Number(number), ..tokens],
+                        arc_argument_position: next_arc_argument_position(
+                          arc_argument_position,
+                        ),
+                      )
                     Error(_) -> Error(InvalidNumber(raw))
                   }
                 }
@@ -863,6 +872,33 @@ fn tokenize_loop(
         }
       }
     }
+  }
+}
+
+fn read_number_at_argument(
+  graphemes: List(String),
+  arc_argument_position: Option(Int),
+) -> #(String, List(String)) {
+  case arc_argument_position, graphemes {
+    Some(position), [flag, ..rest]
+      if { position == 3 || position == 4 } && { flag == "0" || flag == "1" }
+    -> #(flag, rest)
+    _, _ ->
+      read_number(
+        graphemes,
+        [],
+        previous_was_exponent: False,
+        has_decimal_point: False,
+        has_exponent: False,
+      )
+  }
+}
+
+fn next_arc_argument_position(position: Option(Int)) -> Option(Int) {
+  case position {
+    None -> None
+    Some(6) -> Some(0)
+    Some(position) -> Some(position + 1)
   }
 }
 

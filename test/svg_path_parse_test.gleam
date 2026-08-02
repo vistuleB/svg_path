@@ -1,3 +1,4 @@
+import gleam/list
 import gleeunit
 import svg_path
 import svg_path/parse
@@ -276,6 +277,28 @@ pub fn move_only_subpaths_are_ignored_among_real_subpaths_test() {
 
 pub fn invalid_arc_flags_are_rejected_test() {
   assert parse.path("M 0 0 A 5 5 0 2 1 10 0") == Error(parse.ExpectedArcFlag)
+}
+
+pub fn concatenated_arc_flags_and_endpoint_parse_test() {
+  let assert Ok(path) = parse.path("M0 0A10 10 0 0110 20")
+  let assert Ok(subpath) = svg_path.path_as_subpath(path)
+
+  assert serialize.subpath(subpath) == "M 0 0 A 10 10 0 0 1 10 20"
+}
+
+pub fn every_concatenated_arc_flag_pair_parses_test() {
+  ["0010 20", "0110 20", "1010 20", "1110 20"]
+  |> list.each(fn(arguments) {
+    let assert Ok(_) = parse.path("M0 0A10 10 0 " <> arguments)
+  })
+}
+
+pub fn concatenated_arc_flags_parse_in_repeated_argument_sets_test() {
+  let assert Ok(path) = parse.path("M0 0A10 10 0 0110 20 5 5 0 10-4-6")
+  let assert Ok(subpath) = svg_path.path_as_subpath(path)
+
+  assert serialize.subpath(subpath)
+    == "M 0 0 A 10 10 0 0 1 10 20 A 5 5 0 1 0 -4 -6"
 }
 
 pub fn unsupported_commands_are_rejected_test() {

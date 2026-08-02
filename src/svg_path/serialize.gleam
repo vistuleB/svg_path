@@ -1617,13 +1617,17 @@ fn arc_arguments(
 }
 
 fn flag_separator(options: Options) -> String {
-  let _ = options
-  " "
+  case options.minimize_whitespace {
+    True -> ""
+    False -> " "
+  }
 }
 
 fn flag_coordinate_separator(options: Options) -> String {
-  let _ = options
-  " "
+  case options.minimize_whitespace {
+    True -> ""
+    False -> " "
+  }
 }
 
 fn command(command: String, arguments: String, format: Format) -> String {

@@ -726,7 +726,7 @@ pub fn minimized_fractions_omit_leading_zero_and_use_decimal_boundary_test() {
   assert parse.path(serialized) == Ok(svg_path.Path([subpath]))
 }
 
-pub fn minimized_arc_remains_parseable_test() {
+pub fn minifying_options_concatenate_arc_flags_and_endpoint_test() {
   let a = svg_path.Point(0.0, 0.0)
   let b = svg_path.Point(3.0, -2.0)
   let subpath =
@@ -743,11 +743,10 @@ pub fn minimized_arc_remains_parseable_test() {
   let serialized =
     serialize.subpath_with_options(
       subpath,
-      options: serialize.decimal_options(0)
-        |> serialize.minimize_whitespace,
+      options: serialize.minifying_options(0),
     )
 
-  assert serialized == "M0 0A5 8 45 1 0 3-2"
+  assert serialized == "m0 0a5 8 45 103-2"
   assert parse.path(serialized) == Ok(svg_path.Path([subpath]))
 }
 
