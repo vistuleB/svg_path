@@ -31,6 +31,9 @@ pub type Error {
   /// A numeric token could not be parsed as a float.
   InvalidNumber(String)
 
+  /// A comma appeared somewhere SVG path grammar does not permit one.
+  InvalidSeparator
+
   /// The command letter is not supported by this library.
   UnsupportedCommand(String)
 }
@@ -58,9 +61,13 @@ type State {
 /// empty subpaths with start points. Closepath commands mark subpaths as
 /// closed, inserting a straight line back to the subpath start when needed.
 pub fn path(input: String) -> Result(svg_path.Path, Error) {
-  case tokenize(input) {
-    Error(error) -> Error(error)
-    Ok(tokens) -> parse_tokens(tokens, initial_state())
+  case string.trim(input) {
+    "none" -> Ok(svg_path.path_empty())
+    _ ->
+      case tokenize(input) {
+        Error(error) -> Error(error)
+        Ok(tokens) -> parse_tokens(tokens, initial_state())
+      }
   }
 }
 
@@ -540,17 +547,17 @@ fn parse_arc_loop(
           rest,
         )) -> {
           let end = target_point(state, end_x, end_y, relative)
-          let segment =
-            svg_path.Arc(
-              start: state.current,
-              radius: svg_path.Point(radius_x, radius_y),
-              x_axis_rotation:,
-              large_arc:,
-              sweep:,
-              end:,
+          case
+            append_svg_arc(
+              state,
+              radius_x,
+              radius_y,
+              x_axis_rotation,
+              large_arc,
+              sweep,
+              end,
             )
-
-          case append_segment(state, segment, end) {
+          {
             Error(error) -> Error(error)
             Ok(state) -> parse_arc_loop(rest, state, relative, parsed_any: True)
           }
@@ -563,6 +570,37 @@ fn parse_arc_loop(
         False -> Error(ExpectedNumber)
       }
     }
+  }
+}
+
+fn append_svg_arc(
+  state: State,
+  radius_x: Float,
+  radius_y: Float,
+  x_axis_rotation: Float,
+  large_arc: Bool,
+  sweep: Bool,
+  end: svg_path.Point,
+) -> Result(State, Error) {
+  let radius_x = float.absolute_value(radius_x)
+  let radius_y = float.absolute_value(radius_y)
+
+  case end == state.current, radius_x == 0.0 || radius_y == 0.0 {
+    True, _ -> Ok(clear_curve_controls(state))
+    False, True -> append_line_to(state, end)
+    False, False ->
+      append_segment(
+        state,
+        svg_path.Arc(
+          start: state.current,
+          radius: svg_path.Point(radius_x, radius_y),
+          x_axis_rotation:,
+          large_arc:,
+          sweep:,
+          end:,
+        ),
+        end,
+      )
   }
 }
 
@@ -834,40 +872,71 @@ fn tokenize_loop(
   case graphemes {
     [] -> Ok(list.reverse(tokens))
     [grapheme, ..rest] -> {
-      case is_separator(grapheme) {
+      case is_whitespace(grapheme), grapheme {
+        True, _ -> tokenize_loop(rest, tokens, arc_argument_position:)
+        False, "," -> tokenize_comma(rest, tokens, arc_argument_position)
+        False, _ ->
+          tokenize_non_separator(
+            graphemes,
+            grapheme,
+            rest,
+            tokens,
+            arc_argument_position,
+          )
+      }
+    }
+  }
+}
+
+fn tokenize_comma(
+  rest: List(String),
+  tokens: List(Token),
+  arc_argument_position: Option(Int),
+) -> Result(List(Token), Error) {
+  case tokens, drop_whitespace(rest) {
+    [Number(_), ..], [next, ..] ->
+      case is_number_start(next) {
         True -> tokenize_loop(rest, tokens, arc_argument_position:)
-        False -> {
-          case is_command(grapheme) {
-            True ->
+        False -> Error(InvalidSeparator)
+      }
+    _, _ -> Error(InvalidSeparator)
+  }
+}
+
+fn tokenize_non_separator(
+  graphemes: List(String),
+  grapheme: String,
+  rest: List(String),
+  tokens: List(Token),
+  arc_argument_position: Option(Int),
+) -> Result(List(Token), Error) {
+  case is_command(grapheme) {
+    True ->
+      tokenize_loop(
+        rest,
+        [Command(grapheme), ..tokens],
+        arc_argument_position: case grapheme {
+          "A" | "a" -> Some(0)
+          _ -> None
+        },
+      )
+    False -> {
+      case is_number_start(grapheme) {
+        False -> Error(UnsupportedCommand(grapheme))
+        True -> {
+          let #(raw, rest) =
+            read_number_at_argument(graphemes, arc_argument_position)
+
+          case parse_number(raw) {
+            Ok(number) ->
               tokenize_loop(
                 rest,
-                [Command(grapheme), ..tokens],
-                arc_argument_position: case grapheme {
-                  "A" | "a" -> Some(0)
-                  _ -> None
-                },
+                [Number(number), ..tokens],
+                arc_argument_position: next_arc_argument_position(
+                  arc_argument_position,
+                ),
               )
-            False -> {
-              case is_number_start(grapheme) {
-                True -> {
-                  let #(raw, rest) =
-                    read_number_at_argument(graphemes, arc_argument_position)
-
-                  case parse_number(raw) {
-                    Ok(number) ->
-                      tokenize_loop(
-                        rest,
-                        [Number(number), ..tokens],
-                        arc_argument_position: next_arc_argument_position(
-                          arc_argument_position,
-                        ),
-                      )
-                    Error(_) -> Error(InvalidNumber(raw))
-                  }
-                }
-                False -> Error(UnsupportedCommand(grapheme))
-              }
-            }
+            Error(_) -> Error(InvalidNumber(raw))
           }
         }
       }
@@ -966,12 +1035,23 @@ fn read_number(
   }
 }
 
-fn is_separator(grapheme: String) -> Bool {
+fn is_whitespace(grapheme: String) -> Bool {
   grapheme == " "
   || grapheme == "\n"
   || grapheme == "\r"
   || grapheme == "\t"
-  || grapheme == ","
+  || grapheme == "\u{000c}"
+}
+
+fn drop_whitespace(graphemes: List(String)) -> List(String) {
+  case graphemes {
+    [grapheme, ..rest] ->
+      case is_whitespace(grapheme) {
+        True -> drop_whitespace(rest)
+        False -> graphemes
+      }
+    _ -> graphemes
+  }
 }
 
 fn is_command(grapheme: String) -> Bool {

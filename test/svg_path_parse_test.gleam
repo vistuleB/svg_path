@@ -316,3 +316,31 @@ pub fn command_without_required_number_is_rejected_test() {
 pub fn invalid_number_is_rejected_test() {
   assert parse.path("M . 0") == Error(parse.InvalidNumber("."))
 }
+
+pub fn comma_immediately_after_command_is_rejected_test() {
+  assert parse.path("M,0,0") == Error(parse.InvalidSeparator)
+}
+
+pub fn repeated_comma_is_rejected_test() {
+  assert parse.path("M0,,0") == Error(parse.InvalidSeparator)
+}
+
+pub fn trailing_comma_is_rejected_test() {
+  assert parse.path("M0 0,") == Error(parse.InvalidSeparator)
+}
+
+pub fn comma_before_command_is_rejected_test() {
+  assert parse.path("M0 0,L1 1") == Error(parse.InvalidSeparator)
+}
+
+pub fn comma_with_surrounding_whitespace_between_numbers_parses_test() {
+  let assert Ok(path) = parse.path("M 0 , 0 L 1 , 1")
+
+  assert serialize.path(path) == "M 0 0 L 1 1"
+}
+
+pub fn svg_form_feed_whitespace_parses_test() {
+  let assert Ok(path) = parse.path("M\u{000c}0\u{000c}0L\u{000c}1\u{000c}1")
+
+  assert serialize.path(path) == "M 0 0 L 1 1"
+}

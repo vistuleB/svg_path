@@ -159,3 +159,42 @@ out of `test/`, runs `gleam test`, and restores the file before exiting.
 
 `scripts/test-all` restores `test/svg_path_convex_hull_test.gleam` if needed
 and runs the ordinary `gleam test` suite.
+
+## SVG Path Parser Conformance
+
+Parser conformance is defined by the SVG path-data grammar, including numeric
+maximal consumption, command-specific argument repetition, comma/whitespace
+placement, single-character arc flags, and path-data error handling. Supporting
+the familiar command set is not sufficient if valid compact spellings are
+rejected or invalid separator placements are accepted.
+
+The parser historically discarded commas and whitespace before interpreting
+commands. That architecture loses information required to reject inputs such as
+`M,0,0`, `M0,,0`, and `M0 0,`, and it previously prevented contextual parsing
+of concatenated arc flags. The conformance repair should preserve or validate
+separators before semantic path construction.
+
+Testing should proceed in three layers:
+
+1. Local grammar tests derived directly from the SVG 2 path-data productions,
+   covering every command, numeric boundary, optional and required separator,
+   repetition rule, arc flag combination, and representative invalid input.
+2. Data-driven cases adapted from Web Platform Tests under `svg/path/parsing`,
+   retaining the upstream filename, case description, URL, and license/source
+   attribution beside each imported fixture.
+3. Relevant path-data cases from the W3C SVG 1.1 Second Edition suite,
+   especially the `paths-data-*` tests, translated from visual browser
+   expectations into parsed geometry or rejection expectations.
+
+WPT and the W3C suite are browser-oriented rather than a standalone
+string-to-AST corpus. Imported cases therefore need an explicit mapping to one
+of: expected `Path`, expected parse error, or expected valid prefix where SVG
+user-agent error recovery is the behavior under test. Keep local strict-parser
+policy separate from browser rendering-after-error policy.
+
+Primary references:
+
+- <https://www.w3.org/TR/SVG/paths.html#PathDataBNF>
+- <https://github.com/web-platform-tests/wpt/tree/master/svg/path>
+- <https://www.w3.org/Graphics/SVG/Test/Overview.html>
+- <https://dev.w3.org/SVG/profiles/1.1F2/test/status/test_suite_status.html>
