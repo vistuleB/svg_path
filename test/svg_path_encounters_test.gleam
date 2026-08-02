@@ -222,6 +222,13 @@ pub fn subpaths_retain_overlap_and_intersections_from_other_segment_pairs_test()
         right_parameters: [svg_path.SubpathParameter(segment_index: 1, t: 0.5)],
       ),
     ]
+  assert svg_path_encounter_validation.subpath_encounters_are_valid(
+      left,
+      right,
+      result,
+      tolerance:,
+    )
+    == Ok(False)
 }
 
 pub fn segment_subpath_retains_addresses_for_overlap_and_points_test() {
@@ -256,6 +263,13 @@ pub fn segment_subpath_retains_addresses_for_overlap_and_points_test() {
         svg_path.SubpathParameter(segment_index: 2, t: 0.5),
       ]),
     ]
+  assert svg_path_encounter_validation.segment_subpath_encounters_are_valid(
+      segment,
+      subpath,
+      result,
+      tolerance:,
+    )
+    == Ok(False)
 }
 
 pub fn path_encounters_retain_subpath_and_segment_addresses_test() {
@@ -299,6 +313,70 @@ pub fn path_encounters_retain_subpath_and_segment_addresses_test() {
       ),
     )
   assert list.length(intersections) == 2
+  assert svg_path_encounter_validation.path_encounters_are_valid(
+      left,
+      right,
+      result,
+      tolerance:,
+    )
+    == Ok(False)
+}
+
+pub fn higher_level_validators_accept_pure_overlap_results_test() {
+  let segment = line(0.0, 0.0, 10.0, 0.0)
+  let assert Ok(subpath) = svg_path.subpath([segment])
+  let path = svg_path.Path([subpath])
+
+  let assert Ok(segment_subpath_result) =
+    encounters.segment_subpath(segment, subpath)
+  assert svg_path_encounter_validation.segment_subpath_encounters_are_valid(
+      segment,
+      subpath,
+      segment_subpath_result,
+      tolerance:,
+    )
+    == Ok(True)
+
+  let assert Ok(subpath_result) = encounters.subpath(subpath, subpath)
+  assert svg_path_encounter_validation.subpath_encounters_are_valid(
+      subpath,
+      subpath,
+      subpath_result,
+      tolerance:,
+    )
+    == Ok(True)
+
+  let assert Ok(path_result) = encounters.path(path, path)
+  assert svg_path_encounter_validation.path_encounters_are_valid(
+      path,
+      path,
+      path_result,
+      tolerance:,
+    )
+    == Ok(True)
+}
+
+pub fn higher_level_overlap_validators_reject_cross_segment_payloads_test() {
+  let segment = line(0.0, 0.0, 10.0, 0.0)
+  let assert Ok(subpath) =
+    svg_path.subpath([segment, line(10.0, 0.0, 20.0, 0.0)])
+  let invalid =
+    overlaps.SegmentSubpathOverlap(
+      start: svg_path.Point(0.0, 0.0),
+      end: svg_path.Point(10.0, 0.0),
+      segment_from: 0.0,
+      segment_to: 1.0,
+      subpath_from: svg_path.SubpathParameter(segment_index: 0, t: 0.0),
+      subpath_to: svg_path.SubpathParameter(segment_index: 1, t: 0.0),
+    )
+
+  assert svg_path_encounter_validation.segment_subpath_overlap_is_valid(
+      segment,
+      subpath,
+      invalid,
+      tolerance:,
+    )
+    == Ok(False)
 }
 
 fn line(start_x: Float, start_y: Float, end_x: Float, end_y: Float) {
