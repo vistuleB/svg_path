@@ -28,6 +28,8 @@ pub type Options {
     /// Whether to repeat command letters when SVG syntax allows them to be
     /// omitted.
     repeat_commands: Bool,
+    /// Whether the first line after a moveto has an explicit `L`/`l` command.
+    explicit_initial_lineto: Bool,
     /// Whether horizontal and vertical line segments should use `H`/`V` or
     /// `h`/`v` commands.
     use_h_v: Bool,
@@ -99,6 +101,7 @@ pub fn default_options() -> Options {
     minimize_whitespace: False,
     commas: False,
     repeat_commands: True,
+    explicit_initial_lineto: True,
     use_h_v: True,
     use_s_t: True,
     newlines: OneLine,
@@ -116,6 +119,7 @@ pub fn decimal_options(decimal_places: Int) -> Options {
     minimize_whitespace: False,
     commas: False,
     repeat_commands: True,
+    explicit_initial_lineto: True,
     use_h_v: True,
     use_s_t: True,
     newlines: OneLine,
@@ -134,6 +138,7 @@ pub fn fixed_decimal_options(decimal_places: Int) -> Options {
     minimize_whitespace: False,
     commas: False,
     repeat_commands: True,
+    explicit_initial_lineto: True,
     use_h_v: True,
     use_s_t: True,
     newlines: OneLine,
@@ -149,6 +154,7 @@ pub fn relative_options() -> Options {
     minimize_whitespace: False,
     commas: False,
     repeat_commands: True,
+    explicit_initial_lineto: True,
     use_h_v: True,
     use_s_t: True,
     newlines: OneLine,
@@ -164,6 +170,7 @@ pub fn relative_decimal_options(decimal_places: Int) -> Options {
     minimize_whitespace: False,
     commas: False,
     repeat_commands: True,
+    explicit_initial_lineto: True,
     use_h_v: True,
     use_s_t: True,
     newlines: OneLine,
@@ -183,6 +190,7 @@ pub fn minifying_options(decimal_places: Int) -> Options {
   relative_decimal_options(decimal_places)
   |> minimize_whitespace
   |> repeat_commands(False)
+  |> explicit_initial_lineto(False)
 }
 
 /// Create relative serialization options with fixed decimal formatting.
@@ -194,6 +202,7 @@ pub fn relative_fixed_decimal_options(decimal_places: Int) -> Options {
     minimize_whitespace: False,
     commas: False,
     repeat_commands: True,
+    explicit_initial_lineto: True,
     use_h_v: True,
     use_s_t: True,
     newlines: OneLine,
@@ -214,7 +223,10 @@ type RelativeParserState {
   )
 }
 
-/// Remove optional spaces between command letters and their arguments.
+/// Remove whitespace wherever SVG number grammar makes the boundary clear.
+///
+/// This removes command-argument spaces and numeric separators before signs,
+/// and emits fractions without a leading zero.
 pub fn minimize_whitespace(options: Options) -> Options {
   Options(..options, minimize_whitespace: True)
 }
@@ -230,6 +242,17 @@ pub fn with_commas(options: Options, commas: Bool) -> Options {
 /// repeats. Pass `False` for smaller, less verbose output.
 pub fn repeat_commands(options: Options, repeat_commands: Bool) -> Options {
   Options(..options, repeat_commands:)
+}
+
+/// Control whether the first line after each moveto includes `L`/`l`.
+///
+/// When this is `False`, the line endpoint is emitted as a second coordinate
+/// pair of the moveto command, as permitted by SVG path syntax.
+pub fn explicit_initial_lineto(
+  options: Options,
+  explicit_initial_lineto: Bool,
+) -> Options {
+  Options(..options, explicit_initial_lineto:)
 }
 
 /// Configure whether horizontal and vertical lines should use `H`/`V` or
@@ -476,10 +499,24 @@ fn serialize_absolute_subpath(
     }
     [_, ..] -> {
       let segments = serializable_segments(subpath)
-      let commands = [
-        command("M", point(start, format), format),
-      ]
-      let commands = list.append(commands, absolute_segments(segments, format))
+      let #(move, segments) = case
+        format.options.explicit_initial_lineto,
+        segments
+      {
+        False, [svg_path.Line(end:, ..), ..rest] -> #(
+          command(
+            "M",
+            join_number_groups(
+              [point(start, format), point(end, format)],
+              format,
+            ),
+            format,
+          ),
+          rest,
+        )
+        _, _ -> #(command("M", point(start, format), format), segments)
+      }
+      let commands = [move, ..absolute_segments(segments, format)]
       let commands = case svg_path.subpath_is_closed(subpath) {
         True -> list.append(commands, ["Z"])
         False -> commands
@@ -574,8 +611,33 @@ fn parser_tracked_subpath_from_state(
       parser_subpath_start: parser_start,
       previous_curve: NoPreviousCurve,
     )
-  let #(segment_commands, state) =
-    parser_tracked_segments(serializable_segments(subpath), state, [], format)
+  let #(move, segment_commands, state) = case
+    format.options.explicit_initial_lineto,
+    serializable_segments(subpath)
+  {
+    False, [svg_path.Line(start:, end:), ..rest] -> {
+      let Format(options:, number_format:) = format
+      let line_format =
+        Format(options: Options(..options, use_h_v: False), number_format:)
+      let assert #([line], state) =
+        parser_tracked_line(start, end, state, line_format)
+      let move =
+        move
+        <> command_chunk_separator(
+          move,
+          command_arguments(line, options),
+          options,
+        )
+        <> command_arguments(line, options)
+      let #(commands, state) = parser_tracked_segments(rest, state, [], format)
+      #(move, commands, state)
+    }
+    _, segments -> {
+      let #(commands, state) =
+        parser_tracked_segments(segments, state, [], format)
+      #(move, commands, state)
+    }
+  }
   let commands = [move, ..segment_commands]
 
   case svg_path.subpath_is_closed(subpath) {
@@ -770,15 +832,7 @@ fn absolute_segment_without_move(
       #(
         command(
           "A",
-          point(radius, format)
-            <> " "
-            <> number(x_axis_rotation, format)
-            <> " "
-            <> flag(large_arc)
-            <> " "
-            <> flag(sweep)
-            <> " "
-            <> point(end, format),
+          arc_arguments(radius, x_axis_rotation, large_arc, sweep, end, format),
           format,
         ),
         NoPreviousCurve,
@@ -814,15 +868,14 @@ fn relative_segment_without_move(
       #(
         command(
           "a",
-          point(radius, format)
-            <> " "
-            <> number(x_axis_rotation, format)
-            <> " "
-            <> flag(large_arc)
-            <> " "
-            <> flag(sweep)
-            <> " "
-            <> point(delta(end, start), format),
+          arc_arguments(
+            radius,
+            x_axis_rotation,
+            large_arc,
+            sweep,
+            delta(end, start),
+            format,
+          ),
           format,
         ),
         NoPreviousCurve,
@@ -966,7 +1019,10 @@ fn parser_tracked_quadratic(
     False ->
       command(
         "q",
-        point(control_delta, format) <> " " <> point(end_delta, format),
+        join_number_groups(
+          [point(control_delta, format), point(end_delta, format)],
+          format,
+        ),
         format,
       )
   }
@@ -1036,17 +1092,23 @@ fn parser_tracked_cubic(
     True ->
       command(
         "s",
-        point(control2_delta, format) <> " " <> point(end_delta, format),
+        join_number_groups(
+          [point(control2_delta, format), point(end_delta, format)],
+          format,
+        ),
         format,
       )
     False ->
       command(
         "c",
-        point(control1_delta, format)
-          <> " "
-          <> point(control2_delta, format)
-          <> " "
-          <> point(end_delta, format),
+        join_number_groups(
+          [
+            point(control1_delta, format),
+            point(control2_delta, format),
+            point(end_delta, format),
+          ],
+          format,
+        ),
         format,
       )
   }
@@ -1142,15 +1204,7 @@ fn parser_tracked_arc_command(
   let serialized =
     command(
       "a",
-      point(radius, format)
-        <> " "
-        <> number(rotation, format)
-        <> " "
-        <> flag(large_arc)
-        <> " "
-        <> flag(sweep)
-        <> " "
-        <> point(end_delta, format),
+      arc_arguments(radius, rotation, large_arc, sweep, end_delta, format),
       format,
     )
   #(
@@ -1223,7 +1277,11 @@ fn absolute_quadratic(
   {
     True -> command("T", point(end, format), format)
     False ->
-      command("Q", point(control, format) <> " " <> point(end, format), format)
+      command(
+        "Q",
+        join_number_groups([point(control, format), point(end, format)], format),
+        format,
+      )
   }
 }
 
@@ -1246,9 +1304,13 @@ fn relative_quadratic(
     False ->
       command(
         "q",
-        point(delta(control, start), format)
-          <> " "
-          <> point(delta(end, start), format),
+        join_number_groups(
+          [
+            point(delta(control, start), format),
+            point(delta(end, start), format),
+          ],
+          format,
+        ),
         format,
       )
   }
@@ -1271,15 +1333,21 @@ fn absolute_cubic(
     )
   {
     True ->
-      command("S", point(control2, format) <> " " <> point(end, format), format)
+      command(
+        "S",
+        join_number_groups(
+          [point(control2, format), point(end, format)],
+          format,
+        ),
+        format,
+      )
     False ->
       command(
         "C",
-        point(control1, format)
-          <> " "
-          <> point(control2, format)
-          <> " "
-          <> point(end, format),
+        join_number_groups(
+          [point(control1, format), point(control2, format), point(end, format)],
+          format,
+        ),
         format,
       )
   }
@@ -1304,19 +1372,26 @@ fn relative_cubic(
     True ->
       command(
         "s",
-        point(delta(control2, start), format)
-          <> " "
-          <> point(delta(end, start), format),
+        join_number_groups(
+          [
+            point(delta(control2, start), format),
+            point(delta(end, start), format),
+          ],
+          format,
+        ),
         format,
       )
     False ->
       command(
         "c",
-        point(delta(control1, start), format)
-          <> " "
-          <> point(delta(control2, start), format)
-          <> " "
-          <> point(delta(end, start), format),
+        join_number_groups(
+          [
+            point(delta(control1, start), format),
+            point(delta(control2, start), format),
+            point(delta(end, start), format),
+          ],
+          format,
+        ),
         format,
       )
   }
@@ -1372,12 +1447,7 @@ fn absolute_line(
     False -> {
       case format.options.use_h_v && start_x == end_x {
         True -> command("V", end_y, format)
-        False ->
-          command(
-            "L",
-            end_x <> coordinate_separator(format.options) <> end_y,
-            format,
-          )
+        False -> command("L", point(end, format), format)
       }
     }
   }
@@ -1398,8 +1468,7 @@ fn relative_line(
     False -> {
       case format.options.use_h_v && dx == zero {
         True -> command("v", dy, format)
-        False ->
-          command("l", dx <> coordinate_separator(format.options) <> dy, format)
+        False -> command("l", point(difference, format), format)
       }
     }
   }
@@ -1462,9 +1531,99 @@ fn result_unwrap_float(result: Result(Float, Nil), fallback: Float) -> Float {
 }
 
 fn point(point: svg_path.Point, format: Format) -> String {
-  number(point.x, format)
-  <> coordinate_separator(format.options)
-  <> number(point.y, format)
+  let x = number(point.x, format)
+  let y = number(point.y, format)
+  x <> coordinate_value_separator(x, y, format.options) <> y
+}
+
+fn join_number_groups(groups: List(String), format: Format) -> String {
+  case groups {
+    [] -> ""
+    [first, ..rest] -> join_number_groups_loop(rest, first, first, format)
+  }
+}
+
+fn join_number_groups_loop(
+  groups: List(String),
+  previous: String,
+  joined: String,
+  format: Format,
+) -> String {
+  case groups {
+    [] -> joined
+    [next, ..rest] ->
+      join_number_groups_loop(
+        rest,
+        next,
+        joined <> number_group_separator(previous, next, format.options) <> next,
+        format,
+      )
+  }
+}
+
+fn number_group_separator(
+  left: String,
+  right: String,
+  options: Options,
+) -> String {
+  case options.minimize_whitespace {
+    False -> " "
+    True -> minimized_number_separator(left, right)
+  }
+}
+
+fn coordinate_value_separator(
+  left: String,
+  right: String,
+  options: Options,
+) -> String {
+  case options.minimize_whitespace {
+    False -> coordinate_separator(options)
+    True -> minimized_number_separator(left, right)
+  }
+}
+
+fn minimized_number_separator(left: String, right: String) -> String {
+  case string.starts_with(right, "-") || string.starts_with(right, "+") {
+    True -> ""
+    False -> {
+      case string.starts_with(right, ".") && string.contains(left, ".") {
+        True -> ""
+        False -> " "
+      }
+    }
+  }
+}
+
+fn arc_arguments(
+  radius: svg_path.Point,
+  rotation: Float,
+  large_arc: Bool,
+  sweep: Bool,
+  end: svg_path.Point,
+  format: Format,
+) -> String {
+  let before_flags =
+    join_number_groups(
+      [point(radius, format), number(rotation, format)],
+      format,
+    )
+  let flags = flag(large_arc) <> flag_separator(format.options) <> flag(sweep)
+  before_flags
+  <> number_group_separator(before_flags, flags, format.options)
+  <> flags
+  <> flag_coordinate_separator(format.options)
+  <> point(end, format)
+}
+
+fn flag_separator(options: Options) -> String {
+  let _ = options
+  " "
+}
+
+fn flag_coordinate_separator(options: Options) -> String {
+  let _ = options
+  " "
 }
 
 fn command(command: String, arguments: String, format: Format) -> String {
@@ -1494,12 +1653,39 @@ fn join_commands(commands: List(String), format: Format) -> String {
 }
 
 fn join_one_line(commands: List(String), format: Format) -> String {
-  case format.options.repeat_commands {
-    True -> string.join(commands, command_separator(format.options))
-    False ->
-      commands
-      |> compact_repeated_commands(previous: "", format:)
-      |> string.join(command_separator(format.options))
+  let commands = case format.options.repeat_commands {
+    True -> commands
+    False -> compact_repeated_commands(commands, previous: "", format:)
+  }
+  join_command_chunks(commands, format.options)
+}
+
+fn join_command_chunks(commands: List(String), options: Options) -> String {
+  case commands {
+    [] -> ""
+    [first, ..rest] ->
+      list.fold(rest, first, fn(joined, next) {
+        let separator = case is_command_name(command_name(next)) {
+          True -> command_separator(options)
+          False -> command_chunk_separator(joined, next, options)
+        }
+        joined <> separator <> next
+      })
+  }
+}
+
+fn command_chunk_separator(
+  left: String,
+  right: String,
+  options: Options,
+) -> String {
+  let _ = left
+  case
+    options.minimize_whitespace
+    && { string.starts_with(right, "-") || string.starts_with(right, "+") }
+  {
+    True -> ""
+    False -> " "
   }
 }
 
@@ -1632,7 +1818,21 @@ fn compact_repeated_commands(
         False -> command
       }
 
-      [compacted, ..compact_repeated_commands(rest, previous: current, format:)]
+      let effective_current = case
+        is_move_command(current) && !format.options.explicit_initial_lineto
+      {
+        True ->
+          case current {
+            "M" -> "L"
+            _ -> "l"
+          }
+        False -> current
+      }
+
+      [
+        compacted,
+        ..compact_repeated_commands(rest, previous: effective_current, format:)
+      ]
     }
   }
 }
@@ -1654,12 +1854,7 @@ fn command_arguments(command: String, options: Options) -> String {
 }
 
 fn compacted_command_arguments(command: String, options: Options) -> String {
-  let arguments = command_arguments(command, options)
-
-  case options.minimize_whitespace {
-    True -> " " <> arguments
-    False -> arguments
-  }
+  command_arguments(command, options)
 }
 
 fn can_repeat_command(command: String) -> Bool {
@@ -1876,7 +2071,23 @@ fn serialization_format(options: Options, numbers: List(Float)) -> Format {
 }
 
 fn number(number: Float, format: Format) -> String {
-  number_format.number(number, with: format.number_format)
+  let formatted = number_format.number(number, with: format.number_format)
+  case format.options.minimize_whitespace {
+    False -> formatted
+    True -> minimize_leading_zero(formatted)
+  }
+}
+
+fn minimize_leading_zero(number: String) -> String {
+  case string.starts_with(number, "0.") {
+    True -> string.drop_start(number, up_to: 1)
+    False -> {
+      case string.starts_with(number, "-0.") {
+        True -> "-" <> string.drop_start(number, up_to: 2)
+        False -> number
+      }
+    }
+  }
 }
 
 fn raw_number(number: Float, options: Options) -> String {

@@ -627,7 +627,7 @@ pub fn relative_minimize_whitespace_removes_command_spacing_test() {
       options: serialize.relative_decimal_options(0)
         |> serialize.minimize_whitespace,
     )
-    == "m10 20l3 -2"
+    == "m10 20l3-2"
 }
 
 pub fn relative_repeat_commands_false_omits_repeated_commands_test() {
@@ -681,7 +681,129 @@ pub fn minifying_options_use_relative_minimized_output_test() {
       subpath,
       options: serialize.minifying_options(0),
     )
-    == "m10 20l3 -2 3 -2"
+    == "m10 20 3-2 3-2"
+}
+
+pub fn explicit_initial_lineto_can_be_omitted_absolute_test() {
+  let a = svg_path.Point(10.0, 20.0)
+  let b = svg_path.Point(13.0, 18.0)
+  let subpath = svg_path.subpath_assert([svg_path.Line(start: a, end: b)])
+
+  assert serialize.subpath_with_options(
+      subpath,
+      options: serialize.default_options()
+        |> serialize.explicit_initial_lineto(False),
+    )
+    == "M 10 20 13 18"
+}
+
+pub fn explicit_initial_lineto_can_be_omitted_relative_test() {
+  let a = svg_path.Point(10.0, 20.0)
+  let b = svg_path.Point(13.0, 18.0)
+  let subpath = svg_path.subpath_assert([svg_path.Line(start: a, end: b)])
+
+  assert serialize.subpath_with_options(
+      subpath,
+      options: serialize.relative_options()
+        |> serialize.explicit_initial_lineto(False),
+    )
+    == "m 10 20 3 -2"
+}
+
+pub fn minimized_fractions_omit_leading_zero_and_use_decimal_boundary_test() {
+  let a = svg_path.Point(0.6, 0.5)
+  let b = svg_path.Point(0.4, 0.3)
+  let subpath = svg_path.subpath_assert([svg_path.Line(start: a, end: b)])
+  let serialized =
+    serialize.subpath_with_options(
+      subpath,
+      options: serialize.decimal_options(1)
+        |> serialize.use_h_v(False)
+        |> serialize.minimize_whitespace,
+    )
+
+  assert serialized == "M.6.5L.4.3"
+  assert parse.path(serialized) == Ok(svg_path.Path([subpath]))
+}
+
+pub fn minimized_arc_remains_parseable_test() {
+  let a = svg_path.Point(0.0, 0.0)
+  let b = svg_path.Point(3.0, -2.0)
+  let subpath =
+    svg_path.subpath_assert([
+      svg_path.Arc(
+        start: a,
+        radius: svg_path.Point(5.0, 8.0),
+        x_axis_rotation: 45.0,
+        large_arc: True,
+        sweep: False,
+        end: b,
+      ),
+    ])
+  let serialized =
+    serialize.subpath_with_options(
+      subpath,
+      options: serialize.decimal_options(0)
+        |> serialize.minimize_whitespace,
+    )
+
+  assert serialized == "M0 0A5 8 45 1 0 3-2"
+  assert parse.path(serialized) == Ok(svg_path.Path([subpath]))
+}
+
+pub fn minifying_options_roundtrip_many_negative_fraction_vertices_test() {
+  let subpath =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(-0.97, -0.94),
+      svg_path.Point(-0.82, -0.71),
+      svg_path.Point(-0.65, -0.89),
+      svg_path.Point(-0.48, -0.62),
+      svg_path.Point(-0.31, -0.83),
+      svg_path.Point(-0.14, -0.55),
+      svg_path.Point(-0.02, -0.76),
+      svg_path.Point(-0.19, -0.43),
+      svg_path.Point(-0.37, -0.68),
+      svg_path.Point(-0.53, -0.34),
+      svg_path.Point(-0.72, -0.58),
+      svg_path.Point(-0.88, -0.27),
+      svg_path.Point(-0.99, -0.49),
+      svg_path.Point(-0.79, -0.08),
+      svg_path.Point(-0.56, -0.29),
+      svg_path.Point(-0.33, -0.01),
+    ])
+  let path = svg_path.Path([subpath])
+  let options = serialize.minifying_options(2)
+  let serialized = serialize.path_with_options(path, options:)
+  let assert Ok(parsed) = parse.path(serialized)
+
+  assert serialize.path_with_options(parsed, options:) == serialized
+}
+
+pub fn minifying_options_roundtrip_preserves_structural_path_equality_test() {
+  let subpath =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(-1.0, -1.0),
+      svg_path.Point(-0.75, -0.5),
+      svg_path.Point(-0.5, -0.75),
+      svg_path.Point(-0.25, -0.25),
+      svg_path.Point(0.0, -0.5),
+      svg_path.Point(-0.25, -1.0),
+      svg_path.Point(-0.5, -0.25),
+      svg_path.Point(-0.75, -0.75),
+      svg_path.Point(-1.0, -0.25),
+      svg_path.Point(-0.75, 0.0),
+      svg_path.Point(-0.5, -0.5),
+      svg_path.Point(-0.25, -0.75),
+      svg_path.Point(0.0, -1.0),
+      svg_path.Point(-0.25, 0.0),
+      svg_path.Point(-0.5, -1.0),
+      svg_path.Point(-1.0, -0.5),
+    ])
+  let path = svg_path.Path([subpath])
+  let serialized =
+    serialize.path_with_options(path, options: serialize.minifying_options(2))
+
+  assert parse.path(serialized) == Ok(path)
 }
 
 pub fn use_h_v_can_be_disabled_test() {

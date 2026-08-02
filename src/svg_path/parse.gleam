@@ -842,7 +842,13 @@ fn tokenize_loop(
               case is_number_start(grapheme) {
                 True -> {
                   let #(raw, rest) =
-                    read_number(graphemes, [], previous_was_exponent: False)
+                    read_number(
+                      graphemes,
+                      [],
+                      previous_was_exponent: False,
+                      has_decimal_point: False,
+                      has_exponent: False,
+                    )
 
                   case parse_number(raw) {
                     Ok(number) ->
@@ -864,33 +870,57 @@ fn read_number(
   graphemes: List(String),
   number: List(String),
   previous_was_exponent previous_was_exponent: Bool,
+  has_decimal_point has_decimal_point: Bool,
+  has_exponent has_exponent: Bool,
 ) -> #(String, List(String)) {
   case graphemes {
     [] -> #(string.join(list.reverse(number), ""), [])
     [grapheme, ..rest] -> {
-      case is_digit(grapheme) || grapheme == "." {
+      case is_digit(grapheme) {
         True ->
-          read_number(rest, [grapheme, ..number], previous_was_exponent: False)
+          read_number(
+            rest,
+            [grapheme, ..number],
+            previous_was_exponent: False,
+            has_decimal_point:,
+            has_exponent:,
+          )
         False -> {
-          case grapheme == "e" || grapheme == "E" {
+          case grapheme == "." && !has_decimal_point && !has_exponent {
             True ->
               read_number(
                 rest,
                 [grapheme, ..number],
-                previous_was_exponent: True,
+                previous_was_exponent: False,
+                has_decimal_point: True,
+                has_exponent:,
               )
             False -> {
-              case
-                { previous_was_exponent || list.is_empty(number) }
-                && { grapheme == "+" || grapheme == "-" }
-              {
+              case { grapheme == "e" || grapheme == "E" } && !has_exponent {
                 True ->
                   read_number(
                     rest,
                     [grapheme, ..number],
-                    previous_was_exponent: False,
+                    previous_was_exponent: True,
+                    has_decimal_point:,
+                    has_exponent: True,
                   )
-                False -> #(string.join(list.reverse(number), ""), graphemes)
+                False -> {
+                  case
+                    { previous_was_exponent || list.is_empty(number) }
+                    && { grapheme == "+" || grapheme == "-" }
+                  {
+                    True ->
+                      read_number(
+                        rest,
+                        [grapheme, ..number],
+                        previous_was_exponent: False,
+                        has_decimal_point:,
+                        has_exponent:,
+                      )
+                    False -> #(string.join(list.reverse(number), ""), graphemes)
+                  }
+                }
               }
             }
           }
@@ -958,6 +988,19 @@ fn parse_number(raw: String) -> Result(Float, Nil) {
 
 fn parse_decimal_number(raw: String) -> Result(Float, Nil) {
   let raw = strip_leading_plus(raw)
+  let raw = case raw {
+    "." | "-." -> raw
+    _ -> {
+      case string.starts_with(raw, ".") {
+        True -> "0" <> raw
+        False ->
+          case string.starts_with(raw, "-.") {
+            True -> "-0" <> string.drop_start(raw, up_to: 1)
+            False -> raw
+          }
+      }
+    }
+  }
 
   case float.parse(raw) {
     Ok(number) -> Ok(number)
