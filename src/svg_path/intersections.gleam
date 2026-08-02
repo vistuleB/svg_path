@@ -73,6 +73,21 @@ pub fn segment_with(
   segment_intersections_checked_valid_options(left, right, options)
 }
 
+/// Run the existing point-intersection solver without first rejecting a pair
+/// classified as overlapping.
+///
+/// This is an internal composition hook for `svg_path/encounters`. The solver
+/// itself may still return `OverlappingSegments`.
+@internal
+pub fn segment_without_overlap_precheck_with(
+  left: Segment,
+  right: Segment,
+  options options: IntersectionOptions,
+) -> Result(List(SegmentIntersection), Error) {
+  use _ <- result.try(validate_intersection_options(options))
+  segment_intersections_valid_options(left, right, options)
+}
+
 fn segment_intersections_checked_valid_options(
   left: Segment,
   right: Segment,
@@ -142,6 +157,7 @@ pub fn segment_subpath_with(
       segment,
       svg_path.subpath_segments(subpath),
       options,
+      permit_overlapping_pairs: False,
       segment_index: 0,
       grouped: [],
     ),
@@ -152,6 +168,30 @@ pub fn segment_subpath_with(
     subpath,
     options.tolerance,
   ))
+}
+
+/// Collect point intersections from non-overlapping constituent segment pairs
+/// while permitting other pairs in the segment-subpath query to overlap.
+///
+/// This is an internal composition hook for `svg_path/encounters`.
+@internal
+pub fn segment_subpath_without_overlap_precheck_with(
+  segment: Segment,
+  subpath: Subpath,
+  options options: IntersectionOptions,
+) -> Result(List(#(Point, Float, List(SubpathParameter))), Error) {
+  use _ <- result.try(validate_intersection_options(options))
+  use found <- result.try(
+    collect_segment_subpath_intersections(
+      segment,
+      svg_path.subpath_segments(subpath),
+      options,
+      permit_overlapping_pairs: True,
+      segment_index: 0,
+      grouped: [],
+    ),
+  )
+  Ok(sort_segment_subpath_intersections(found, subpath, options.tolerance))
 }
 
 /// Return point intersections where a subpath intersects itself.
@@ -220,12 +260,37 @@ pub fn subpath_with(
       svg_path.subpath_segments(left),
       right,
       options,
+      permit_overlapping_pairs: False,
       left_segment_index: 0,
       grouped: [],
     ),
   )
 
   Ok(sort_subpath_intersections(intersections, left, right, options.tolerance))
+}
+
+/// Collect point intersections from non-overlapping segment pairs while
+/// permitting other segment pairs in the same subpath query to overlap.
+///
+/// This is an internal composition hook for `svg_path/encounters`.
+@internal
+pub fn subpath_without_overlap_precheck_with(
+  left: Subpath,
+  right: Subpath,
+  options options: IntersectionOptions,
+) -> Result(List(SubpathIntersection), Error) {
+  use _ <- result.try(validate_intersection_options(options))
+  use found <- result.try(
+    collect_subpath_intersections(
+      svg_path.subpath_segments(left),
+      right,
+      options,
+      permit_overlapping_pairs: True,
+      left_segment_index: 0,
+      grouped: [],
+    ),
+  )
+  Ok(sort_subpath_intersections(found, left, right, options.tolerance))
 }
 
 /// Return the point intersections between two paths.
@@ -250,12 +315,37 @@ pub fn path_with(
       left.subpaths,
       right.subpaths,
       options,
+      permit_overlapping_pairs: False,
       left_subpath_index: 0,
       grouped: [],
     ),
   )
 
   Ok(sort_path_intersections(intersections))
+}
+
+/// Collect point intersections from non-overlapping constituent segment pairs
+/// while permitting other pairs in the path query to overlap.
+///
+/// This is an internal composition hook for `svg_path/encounters`.
+@internal
+pub fn path_without_overlap_precheck_with(
+  left: Path,
+  right: Path,
+  options options: IntersectionOptions,
+) -> Result(List(PathIntersection), Error) {
+  use _ <- result.try(validate_intersection_options(options))
+  use found <- result.try(
+    collect_path_intersections(
+      left.subpaths,
+      right.subpaths,
+      options,
+      permit_overlapping_pairs: True,
+      left_subpath_index: 0,
+      grouped: [],
+    ),
+  )
+  Ok(sort_path_intersections(found))
 }
 
 /// Return point intersections where a path intersects itself.
@@ -795,15 +885,19 @@ fn collect_segment_subpath_intersections(
   segment: Segment,
   segments: List(Segment),
   options: IntersectionOptions,
+  permit_overlapping_pairs permit_overlapping_pairs: Bool,
   segment_index segment_index: Int,
   grouped grouped: List(#(Point, Float, List(SubpathParameter))),
 ) -> Result(List(#(Point, Float, List(SubpathParameter))), Error) {
   case segments {
     [] -> Ok(grouped)
     [first, ..rest] -> {
-      use intersections <- result.try(
-        segment_intersections_checked_valid_options(segment, first, options),
-      )
+      use intersections <- result.try(segment_intersections_for_collection(
+        segment,
+        first,
+        options,
+        permit_overlapping_pairs,
+      ))
       let grouped =
         list.fold(intersections, grouped, fn(grouped, intersection) {
           insert_segment_subpath_intersection(
@@ -818,10 +912,27 @@ fn collect_segment_subpath_intersections(
         segment,
         rest,
         options,
+        permit_overlapping_pairs:,
         segment_index: segment_index + 1,
         grouped:,
       )
     }
+  }
+}
+
+fn segment_intersections_for_collection(
+  left: Segment,
+  right: Segment,
+  options: IntersectionOptions,
+  permit_overlapping_pairs: Bool,
+) -> Result(List(SegmentIntersection), Error) {
+  case permit_overlapping_pairs {
+    False -> segment_intersections_checked_valid_options(left, right, options)
+    True ->
+      case segment_intersections_valid_options(left, right, options) {
+        Error(OverlappingSegments) -> Ok([])
+        other -> other
+      }
   }
 }
 
@@ -879,6 +990,7 @@ fn collect_subpath_intersections(
   left_segments: List(Segment),
   right: Subpath,
   options: IntersectionOptions,
+  permit_overlapping_pairs permit_overlapping_pairs: Bool,
   left_segment_index left_segment_index: Int,
   grouped grouped: List(SubpathIntersection),
 ) -> Result(List(SubpathIntersection), Error) {
@@ -890,6 +1002,7 @@ fn collect_subpath_intersections(
           left_segment,
           svg_path.subpath_segments(right),
           options,
+          permit_overlapping_pairs:,
           segment_index: 0,
           grouped: [],
         ),
@@ -913,6 +1026,7 @@ fn collect_subpath_intersections(
         rest,
         right,
         options,
+        permit_overlapping_pairs:,
         left_segment_index: left_segment_index + 1,
         grouped:,
       )
@@ -1448,6 +1562,7 @@ fn collect_path_intersections(
   left_subpaths: List(Subpath),
   right_subpaths: List(Subpath),
   options: IntersectionOptions,
+  permit_overlapping_pairs permit_overlapping_pairs: Bool,
   left_subpath_index left_subpath_index: Int,
   grouped grouped: List(PathIntersection),
 ) -> Result(List(PathIntersection), Error) {
@@ -1459,6 +1574,7 @@ fn collect_path_intersections(
         left_subpath_index,
         right_subpaths,
         options,
+        permit_overlapping_pairs:,
         right_subpath_index: 0,
         grouped:,
       ))
@@ -1467,6 +1583,7 @@ fn collect_path_intersections(
         rest,
         right_subpaths,
         options,
+        permit_overlapping_pairs:,
         left_subpath_index: left_subpath_index + 1,
         grouped:,
       )
@@ -1479,6 +1596,7 @@ fn collect_path_intersections_for_left_subpath(
   left_subpath_index: Int,
   right_subpaths: List(Subpath),
   options: IntersectionOptions,
+  permit_overlapping_pairs permit_overlapping_pairs: Bool,
   right_subpath_index right_subpath_index: Int,
   grouped grouped: List(PathIntersection),
 ) -> Result(List(PathIntersection), Error) {
@@ -1490,6 +1608,7 @@ fn collect_path_intersections_for_left_subpath(
           svg_path.subpath_segments(left_subpath),
           right_subpath,
           options,
+          permit_overlapping_pairs:,
           left_segment_index: 0,
           grouped: [],
         ),
@@ -1519,6 +1638,7 @@ fn collect_path_intersections_for_left_subpath(
         left_subpath_index,
         rest,
         options,
+        permit_overlapping_pairs:,
         right_subpath_index: right_subpath_index + 1,
         grouped:,
       )
