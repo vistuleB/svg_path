@@ -9,6 +9,17 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
+## 0.27.0 - 2026-08-02
+
+- Added parser-tracked relative serialization that compensates for accumulated
+  decimal-rounding drift while preserving horizontal and vertical lines.
+- Added `explicit_initial_lineto` so the first line endpoint may be encoded as
+  an additional moveto coordinate pair.
+- Expanded `minimize_whitespace` to use signed-number and decimal boundaries
+  and to omit leading zeroes from fractions.
+- Extended the parser to accept leading-dot and adjacent decimal numbers
+  emitted by minimized serialization.
+
 ## 0.26.1 - 2026-08-01
 
 - Added proportional ArrangementGraph drawing options so nodes, edge strokes,
