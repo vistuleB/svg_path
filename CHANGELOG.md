@@ -9,6 +9,15 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
+## 0.28.0 - 2026-08-02
+
+- Added contextual parsing and minimized serialization of compact arc flags.
+- Enforced SVG comma placement and recognized form-feed as path whitespace.
+- Applied SVG arc normalization for negative radii, zero radii, and identical
+  endpoints.
+- Added parser-conformance cases adapted from Web Platform Tests and the W3C
+  SVG 1.1 Second Edition test suite.
+
 ## 0.27.0 - 2026-08-02
 
 - Added parser-tracked relative serialization that compensates for accumulated
