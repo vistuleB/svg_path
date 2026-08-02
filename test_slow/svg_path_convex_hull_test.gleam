@@ -1,3 +1,6 @@
+// This module is outside normal Gleeunit discovery. Run it through
+// scripts/test-slow, or use scripts/test-release before publishing a release.
+
 import gleam/float
 import gleam/int
 import gleam/list

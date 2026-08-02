@@ -1,3 +1,6 @@
+// This is the default convex-hull smoke module. The larger stress replacement
+// lives in test_slow/ and is run by scripts/test-slow and scripts/test-release.
+
 import gleam/list
 import svg_path
 import svg_path/convex_hull

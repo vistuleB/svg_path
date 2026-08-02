@@ -76,19 +76,27 @@ https://raw.githubusercontent.com/vistuleB/svg_path/assets-vX.Y.Z/figures/name.s
 
 Release workflow:
 
-1. Ensure the `markdown-assets` worktree contains the final README-facing SVGs
+1. Run the canonical pre-release verification command:
+
+   ```sh
+   scripts/test-release
+   ```
+
+   This includes the slow test profile; `gleam test` alone does not.
+
+2. Ensure the `markdown-assets` worktree contains the final README-facing SVGs
    for the release.
-2. Commit and push `markdown-assets`.
-3. Tag that exact `markdown-assets` commit:
+3. Commit and push `markdown-assets`.
+4. Tag that exact `markdown-assets` commit:
 
    ```sh
    git tag assets-vX.Y.Z
    git push origin assets-vX.Y.Z
    ```
 
-4. On `main`, rewrite README image URLs from `markdown-assets` to
+5. On `main`, rewrite README image URLs from `markdown-assets` to
    `assets-vX.Y.Z`.
-5. Verify the release README no longer points at the mutable branch:
+6. Verify the release README no longer points at the mutable branch:
 
    ```sh
    rg 'raw.githubusercontent.com/vistuleB/svg_path/markdown-assets' README.md
@@ -96,14 +104,14 @@ Release workflow:
 
    For a release commit, this should print nothing.
 
-6. Commit release prep on `main`, including:
+7. Commit release prep on `main`, including:
 
    - `README.md` asset URL rewrites,
    - `CHANGELOG.md`,
    - `gleam.toml` version bump.
 
-7. Tag the release commit on `main` as `vX.Y.Z`.
-8. Publish to Hex from that exact release commit.
+8. Tag the release commit on `main` as `vX.Y.Z`.
+9. Publish to Hex from that exact release commit.
 
 ## Practical Notes
 

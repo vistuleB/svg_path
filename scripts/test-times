@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$root"
+
+profile="${1:-all}"
+
+if [ "$profile" = "all" ]; then
+  echo "profile: normal"
+  "$0" normal
+  echo "profile: slow"
+  "$0" slow
+  exit 0
+fi
+
+if [ "$profile" != "normal" ] && [ "$profile" != "slow" ]; then
+  echo "Usage: $0 [all|normal|slow]" >&2
+  exit 1
+fi
+
+active="$root/test/svg_path_convex_hull_test.gleam"
+slow="$root/test_slow/svg_path_convex_hull_test.gleam"
+backup="$root/.test-disabled/svg_path_convex_hull_test.gleam"
+
+restore() {
+  if [ -f "$backup" ]; then
+    mv "$backup" "$active"
+  fi
+  rmdir "$(dirname "$backup")" 2>/dev/null || true
+}
+
+trap restore EXIT INT TERM
+
+if [ "$profile" = "slow" ]; then
+  if [ ! -f "$active" ] || [ ! -f "$slow" ] || [ -f "$backup" ]; then
+    echo "Cannot install the slow convex-hull test profile." >&2
+    exit 1
+  fi
+  mkdir -p "$(dirname "$backup")"
+  mv "$active" "$backup"
+  cp "$slow" "$active"
+fi
+
+# Compile once so the measurements below contain test execution time, not
+# repeated compiler startup time.
+gleam build >/dev/null
+
+modules=()
+while IFS= read -r file; do
+  module="${file#test/}"
+  module="${module%.gleam}"
+  module="${module//\//@}"
+  modules+=("$module")
+done < <(find test -type f -name '*_test.gleam' | LC_ALL=C sort)
+
+if [ "${#modules[@]}" -eq 0 ]; then
+  echo "No test modules found." >&2
+  exit 1
+fi
+
+module_terms=""
+for module in "${modules[@]}"; do
+  if [ -n "$module_terms" ]; then
+    module_terms="$module_terms,"
+  fi
+  module_terms="$module_terms'$module'"
+done
+
+code_paths=()
+while IFS= read -r directory; do
+  code_paths+=("-pa" "$directory")
+done < <(find build/dev/erlang -mindepth 2 -maxdepth 2 -type d -name ebin | LC_ALL=C sort)
+
+erl -noshell "${code_paths[@]}" -eval "
+  Modules = [$module_terms],
+  Run = fun(Module) ->
+    {Microseconds, Result} = timer:tc(fun() ->
+      eunit:test(Module, [no_tty, {scale_timeouts, 10}])
+    end),
+    io:format(\"~s\\t~.6f\\t~p~n\", [atom_to_list(Module), Microseconds / 1000000, Result]),
+    case Result of ok -> ok; _ -> halt(1) end
+  end,
+  lists:foreach(Run, Modules),
+  halt(0).
+"

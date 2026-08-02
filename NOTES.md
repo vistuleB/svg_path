@@ -151,14 +151,20 @@ Use these local helpers when iterating on the ordinary suite:
 scripts/test-fast
 scripts/test-all
 scripts/test-slow
+scripts/test-release
 ```
 
 `scripts/test-fast` temporarily moves `test/svg_path_convex_hull_test.gleam`
 out of `test/`, runs `gleam test`, and restores the file before exiting.
 `scripts/test-all` runs the ordinary suite and then `scripts/test-slow`.
 
-`scripts/test-all` restores `test/svg_path_convex_hull_test.gleam` if needed
-and runs the ordinary `gleam test` suite.
+`scripts/test-all` restores `test/svg_path_convex_hull_test.gleam` if needed,
+then runs both the fast and slow profiles.
+
+In test reports, name the exact command or profile that passed. Reserve “full
+suite” and “all tests” for a successful `scripts/test-all` run. Before a
+release, use `scripts/test-release`, which deliberately delegates to
+`scripts/test-all` so the slow profile cannot be omitted.
 
 ## SVG Path Parser Conformance
 

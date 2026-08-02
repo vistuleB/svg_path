@@ -17,5 +17,7 @@ if [ ! -f "$active" ]; then
 fi
 
 cd "$root"
+echo "test profile: fast"
 "$root/scripts/test-fast"
+echo "test profile: slow"
 "$root/scripts/test-slow"

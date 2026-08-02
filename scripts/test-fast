@@ -24,4 +24,5 @@ elif [ ! -f "$parked" ]; then
 fi
 
 cd "$root"
+echo "Running fast test profile (convex-hull module omitted)."
 gleam test

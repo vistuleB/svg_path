@@ -34,4 +34,5 @@ fi
 cp "$slow" "$active"
 
 cd "$root"
+echo "Running slow test profile (convex-hull stress module substituted)."
 gleam test
