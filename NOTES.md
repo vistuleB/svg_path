@@ -192,6 +192,27 @@ of: expected `Path`, expected parse error, or expected valid prefix where SVG
 user-agent error recovery is the behavior under test. Keep local strict-parser
 policy separate from browser rendering-after-error policy.
 
+The local WPT and W3C SVG 1.1 adaptations now cover these three layers. They
+are intentionally checked in as static cases rather than synchronized with
+upstream automatically.
+
+### Parse Error Locations
+
+The current public `parse.Error` describes what failed but not where it failed.
+Reliable source locations require retaining offsets through tokenization and
+semantic parsing; the current `Token` type stores only command strings and
+numeric values. Tokenizer-only offsets would be incomplete because errors such
+as a missing coordinate or an arc flag in the wrong argument position arise
+after tokenization.
+
+A compatible future API can keep `path(String) -> Result(Path, Error)` and add
+a detailed entry point returning a record such as
+`LocatedError(error:, offset:)`. The offset should identify a UTF-8 byte
+boundary in the original input, with end-of-input used for missing arguments.
+Implementing this requires located tokens plus parser state that remembers the
+active command position; it should be done as one parser refactor rather than
+adding approximate locations to the existing error variants.
+
 Primary references:
 
 - <https://www.w3.org/TR/SVG/paths.html#PathDataBNF>

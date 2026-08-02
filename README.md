@@ -939,8 +939,9 @@ uniform scale, or `Affine` for a general affine matrix. These helpers return a
 `svg_path/parse` accepts normal SVG path data syntax, including:
 
 - comma separators
-- whitespace separators
+- SVG whitespace separators, including form feed
 - compact signed numbers such as `M0-1`
+- compact arc flags such as `A10 10 0 0110 20`
 - implicit line commands after `M`
 - repeated command argument groups
 - relative and absolute commands
@@ -961,6 +962,13 @@ pub fn canonicalize() -> Result(String, parse.Error) {
 The parsed object is not just a token stream. It is normalized into this
 package's path model. For example, an implicit line after `M` becomes a
 `Line` segment internally.
+
+The parser follows the SVG path-data grammar for number consumption,
+comma/whitespace placement, command repetition, and arc flags. Its conformance
+suite includes cases adapted from Web Platform Tests and the W3C SVG 1.1
+Second Edition test suite. Unlike a browser renderer, `parse.path` is strict:
+invalid trailing data returns `Error` for the whole input instead of returning
+or rendering the valid prefix.
 
 Closepath is also represented semantically. If parsing `Z` needs a straight
 line back to the subpath start, the parser inserts that line and marks the
