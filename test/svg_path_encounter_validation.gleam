@@ -14,6 +14,15 @@ import svg_path/point
 
 const samples = [0.0, 0.25, 0.5, 0.75, 1.0]
 
+/// Diagnostic containment of an intersection's two parameter addresses in an
+/// overlap's two parameter intervals.
+pub type OverlapIntervalContainment {
+  NeitherSide
+  LeftSideOnly
+  RightSideOnly
+  BothSides
+}
+
 pub fn segment_overlap_is_valid(
   left: svg_path.Segment,
   right: svg_path.Segment,
@@ -113,13 +122,21 @@ pub fn segment_intersection_is_contained_in_overlap(
   intersection: svg_path.SegmentIntersection,
   overlap: overlaps.SegmentOverlap,
 ) -> Bool {
+  segment_intersection_overlap_interval_containment(intersection, overlap)
+  == BothSides
+}
+
+pub fn segment_intersection_overlap_interval_containment(
+  intersection: svg_path.SegmentIntersection,
+  overlap: overlaps.SegmentOverlap,
+) -> OverlapIntervalContainment {
   let svg_path.SegmentIntersection(left_t:, right_t:, ..) = intersection
   let overlaps.SegmentOverlap(left_from:, left_to:, right_from:, right_to:, ..) =
     overlap
-  left_from <=. left_t
-  && left_t <=. left_to
-  && float_min(right_from, right_to) <=. right_t
-  && right_t <=. float_max(right_from, right_to)
+  classify_interval_containment(
+    float_between(left_t, left_from, left_to),
+    float_between(right_t, right_from, right_to),
+  )
 }
 
 pub fn segment_encounters_are_valid(
@@ -146,8 +163,9 @@ pub fn segment_encounters_are_valid(
   ))
   let none_contained =
     list.all(intersections, fn(intersection) {
-      !list.any(overlap_intervals, fn(overlap) {
-        segment_intersection_is_contained_in_overlap(intersection, overlap)
+      list.all(overlap_intervals, fn(overlap) {
+        segment_intersection_overlap_interval_containment(intersection, overlap)
+        == NeitherSide
       })
     })
   Ok(overlaps_valid && intersections_valid && none_contained)
@@ -381,6 +399,19 @@ pub fn segment_subpath_intersection_is_contained_in_overlap(
   intersection: #(svg_path.Point, Float, List(svg_path.SubpathParameter)),
   overlap: overlaps.SegmentSubpathOverlap,
 ) -> Bool {
+  segment_subpath_intersection_overlap_interval_containment(
+    subpath,
+    intersection,
+    overlap,
+  )
+  == BothSides
+}
+
+pub fn segment_subpath_intersection_overlap_interval_containment(
+  subpath: svg_path.Subpath,
+  intersection: #(svg_path.Point, Float, List(svg_path.SubpathParameter)),
+  overlap: overlaps.SegmentSubpathOverlap,
+) -> OverlapIntervalContainment {
   let #(_, segment_t, subpath_parameters) = intersection
   let overlaps.SegmentSubpathOverlap(
     segment_from:,
@@ -389,13 +420,15 @@ pub fn segment_subpath_intersection_is_contained_in_overlap(
     subpath_to:,
     ..,
   ) = overlap
-  float_between(segment_t, segment_from, segment_to)
-  && list.any(subpath_parameters, subpath_parameter_between(
-    subpath,
-    _,
-    subpath_from,
-    subpath_to,
-  ))
+  classify_interval_containment(
+    float_between(segment_t, segment_from, segment_to),
+    list.any(subpath_parameters, subpath_parameter_between(
+      subpath,
+      _,
+      subpath_from,
+      subpath_to,
+    )),
+  )
 }
 
 pub fn subpath_intersection_is_contained_in_overlap(
@@ -404,22 +437,39 @@ pub fn subpath_intersection_is_contained_in_overlap(
   intersection: svg_path.SubpathIntersection,
   overlap: overlaps.SubpathOverlap,
 ) -> Bool {
+  subpath_intersection_overlap_interval_containment(
+    left,
+    right,
+    intersection,
+    overlap,
+  )
+  == BothSides
+}
+
+pub fn subpath_intersection_overlap_interval_containment(
+  left: svg_path.Subpath,
+  right: svg_path.Subpath,
+  intersection: svg_path.SubpathIntersection,
+  overlap: overlaps.SubpathOverlap,
+) -> OverlapIntervalContainment {
   let svg_path.SubpathIntersection(left_parameters:, right_parameters:, ..) =
     intersection
   let overlaps.SubpathOverlap(left_from:, left_to:, right_from:, right_to:, ..) =
     overlap
-  list.any(left_parameters, subpath_parameter_between(
-    left,
-    _,
-    left_from,
-    left_to,
-  ))
-  && list.any(right_parameters, subpath_parameter_between(
-    right,
-    _,
-    right_from,
-    right_to,
-  ))
+  classify_interval_containment(
+    list.any(left_parameters, subpath_parameter_between(
+      left,
+      _,
+      left_from,
+      left_to,
+    )),
+    list.any(right_parameters, subpath_parameter_between(
+      right,
+      _,
+      right_from,
+      right_to,
+    )),
+  )
 }
 
 pub fn path_intersection_is_contained_in_overlap(
@@ -428,17 +478,39 @@ pub fn path_intersection_is_contained_in_overlap(
   intersection: svg_path.PathIntersection,
   overlap: overlaps.PathOverlap,
 ) -> Bool {
+  path_intersection_overlap_interval_containment(
+    left,
+    right,
+    intersection,
+    overlap,
+  )
+  == BothSides
+}
+
+pub fn path_intersection_overlap_interval_containment(
+  left: svg_path.Path,
+  right: svg_path.Path,
+  intersection: svg_path.PathIntersection,
+  overlap: overlaps.PathOverlap,
+) -> OverlapIntervalContainment {
   let svg_path.PathIntersection(left_parameters:, right_parameters:, ..) =
     intersection
   let overlaps.PathOverlap(left_from:, left_to:, right_from:, right_to:, ..) =
     overlap
-  list.any(left_parameters, path_parameter_between(left, _, left_from, left_to))
-  && list.any(right_parameters, path_parameter_between(
-    right,
-    _,
-    right_from,
-    right_to,
-  ))
+  classify_interval_containment(
+    list.any(left_parameters, path_parameter_between(
+      left,
+      _,
+      left_from,
+      left_to,
+    )),
+    list.any(right_parameters, path_parameter_between(
+      right,
+      _,
+      right_from,
+      right_to,
+    )),
+  )
 }
 
 pub fn segment_subpath_encounters_are_valid(
@@ -465,12 +537,13 @@ pub fn segment_subpath_encounters_are_valid(
   ))
   let none_contained =
     list.all(intersections, fn(intersection) {
-      !list.any(overlap_intervals, fn(overlap) {
-        segment_subpath_intersection_is_contained_in_overlap(
+      list.all(overlap_intervals, fn(overlap) {
+        segment_subpath_intersection_overlap_interval_containment(
           subpath,
           intersection,
           overlap,
         )
+        == NeitherSide
       })
     })
   Ok(overlaps_valid && intersections_valid && none_contained)
@@ -500,13 +573,14 @@ pub fn subpath_encounters_are_valid(
   ))
   let none_contained =
     list.all(intersections, fn(intersection) {
-      !list.any(overlap_intervals, fn(overlap) {
-        subpath_intersection_is_contained_in_overlap(
+      list.all(overlap_intervals, fn(overlap) {
+        subpath_intersection_overlap_interval_containment(
           left,
           right,
           intersection,
           overlap,
         )
+        == NeitherSide
       })
     })
   Ok(overlaps_valid && intersections_valid && none_contained)
@@ -533,16 +607,29 @@ pub fn path_encounters_are_valid(
   ))
   let none_contained =
     list.all(intersections, fn(intersection) {
-      !list.any(overlap_intervals, fn(overlap) {
-        path_intersection_is_contained_in_overlap(
+      list.all(overlap_intervals, fn(overlap) {
+        path_intersection_overlap_interval_containment(
           left,
           right,
           intersection,
           overlap,
         )
+        == NeitherSide
       })
     })
   Ok(overlaps_valid && intersections_valid && none_contained)
+}
+
+fn classify_interval_containment(
+  left_is_contained: Bool,
+  right_is_contained: Bool,
+) -> OverlapIntervalContainment {
+  case left_is_contained, right_is_contained {
+    False, False -> NeitherSide
+    True, False -> LeftSideOnly
+    False, True -> RightSideOnly
+    True, True -> BothSides
+  }
 }
 
 fn samples_are_near(

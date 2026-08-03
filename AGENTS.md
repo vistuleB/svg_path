@@ -34,6 +34,9 @@
 ## Previewing Figures In Codex Desktop Chat
 
 - Store preview SVGs under `examples/debug/`.
+- Prefer ordinary SVG image previews over inline visualizations for static
+  drawings. SVG image previews support click-to-expand in Codex desktop;
+  inline visualizations do not have the same expansion behavior.
 - Display SVGs with ordinary Markdown image syntax using an absolute local filesystem path.
 - Do not use `file://`, relative paths, plain paths, or GUI commands such as `open`, Chrome, Inkscape, or Preview.
 - Preview SVGs must include explicit root `width` and `height` attributes in addition to `viewBox`; SVGs with only `viewBox` have failed to render inline in Codex desktop chat.
@@ -50,6 +53,8 @@
 ## Communication Style
 
 - Avoid using the word “tiny” unless it is technically relevant, such as describing a small numeric tolerance, geometry case, file size, or similar concrete measurement.
+- Use `shell` as the Markdown fence language for ASCII drawings and text-only
+  spatial diagrams so they render in monospace.
 - Keep language plain, vanilla, and jargon-free by default.
 - Prefer direct descriptions over colorful phrasing, metaphors, or dramatic wording.
 - Use technical terms when they clarify the work, but avoid unnecessary slang or invented labels.
