@@ -7,6 +7,7 @@
 //// requested tolerance.
 
 import gleam/float
+import gleam/list
 
 const default_tolerance = 0.000000001
 
@@ -32,9 +33,121 @@ pub type Error {
   MaxIterationsReached(estimate: Float, value: Float)
 }
 
+/// Whether a repeated quadratic root is returned once or with its algebraic
+/// multiplicity of two.
+pub type RepeatedRootPolicy {
+  ConsolidateRepeatedRoot
+  PreserveRepeatedRoot
+}
+
+/// Options for solving a quadratic equation.
+pub type QuadraticOptions {
+  QuadraticOptions(
+    coefficient_tolerance: Float,
+    repeated_root_policy: RepeatedRootPolicy,
+  )
+}
+
 /// Return the default bisection options.
 pub fn default_options() -> Options {
   Options(tolerance: default_tolerance, max_iterations: default_max_iterations)
+}
+
+/// Solve `a * x + b = 0` using exact zero classification.
+///
+/// An identically zero or inconsistent constant equation returns no isolated
+/// roots.
+pub fn linear(a: Float, b: Float) -> List(Float) {
+  linear_with_tolerance(a, b, 0.0)
+}
+
+/// Solve `a * x² + b * x + c = 0` using exact degree classification.
+///
+/// Real roots are returned in formula order. A repeated root is returned once.
+pub fn quadratic(a: Float, b: Float, c: Float) -> List(Float) {
+  quadratic_with(
+    a,
+    b,
+    c,
+    options: QuadraticOptions(
+      coefficient_tolerance: 0.0,
+      repeated_root_policy: ConsolidateRepeatedRoot,
+    ),
+  )
+}
+
+/// Solve `a * x² + b * x + c = 0` with explicit degree and multiplicity
+/// policy.
+///
+/// Coefficients whose absolute value is less than `coefficient_tolerance` are
+/// treated as zero. A zero or negative tolerance uses exact zero comparison.
+pub fn quadratic_with(
+  a: Float,
+  b: Float,
+  c: Float,
+  options options: QuadraticOptions,
+) -> List(Float) {
+  let tolerance = float.max(options.coefficient_tolerance, 0.0)
+  case coefficient_is_zero(a, tolerance) {
+    True -> linear_with_tolerance(b, c, tolerance)
+    False -> {
+      let discriminant = b *. b -. { 4.0 *. a *. c }
+      case discriminant <. 0.0 {
+        True -> []
+        False -> {
+          let assert Ok(root_discriminant) = float.square_root(discriminant)
+          let denominator = 2.0 *. a
+          let root = { 0.0 -. b } /. denominator
+          case root_discriminant == 0.0, options.repeated_root_policy {
+            True, ConsolidateRepeatedRoot -> [root]
+            True, PreserveRepeatedRoot -> [root, root]
+            False, _ -> [
+              { 0.0 -. b -. root_discriminant } /. denominator,
+              { 0.0 -. b +. root_discriminant } /. denominator,
+            ]
+          }
+        }
+      }
+    }
+  }
+}
+
+/// Keep roots strictly inside an interval and return them in ascending order.
+pub fn strictly_inside(
+  roots: List(Float),
+  from lower: Float,
+  to upper: Float,
+) -> List(Float) {
+  let #(lower, upper) = ordered_bracket(lower, upper)
+  roots
+  |> list.filter(fn(value) { value >. lower && value <. upper })
+  |> list.sort(by: float.compare)
+}
+
+/// Keep roots inside a closed interval and return them in ascending order.
+pub fn inside(
+  roots: List(Float),
+  from lower: Float,
+  to upper: Float,
+) -> List(Float) {
+  let #(lower, upper) = ordered_bracket(lower, upper)
+  roots
+  |> list.filter(fn(value) { value >=. lower && value <=. upper })
+  |> list.sort(by: float.compare)
+}
+
+fn linear_with_tolerance(a: Float, b: Float, tolerance: Float) -> List(Float) {
+  case coefficient_is_zero(a, tolerance) {
+    True -> []
+    False -> [{ 0.0 -. b } /. a]
+  }
+}
+
+fn coefficient_is_zero(value: Float, tolerance: Float) -> Bool {
+  case tolerance == 0.0 {
+    True -> value == 0.0
+    False -> float.absolute_value(value) <. tolerance
+  }
 }
 
 /// Find a root of `f` in a bracket using default options.

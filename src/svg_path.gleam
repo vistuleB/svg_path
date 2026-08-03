@@ -1461,7 +1461,7 @@ fn quadratic_degenerate_breaks(
     True -> []
     False -> {
       let root = { s -. c } /. denominator
-      inside_breaks([root])
+      root.strictly_inside([root], from: 0.0, to: 1.0)
     }
   }
 }
@@ -1485,7 +1485,16 @@ fn cubic_degenerate_breaks(
   let a = 0.0 -. s +. { 3.0 *. c1 } -. { 3.0 *. c2 } +. e
   let b = { 3.0 *. s } -. { 6.0 *. c1 } +. { 3.0 *. c2 }
   let c = { 3.0 *. c1 } -. { 3.0 *. s }
-  quadratic_roots_inside(3.0 *. a, 2.0 *. b, c)
+  root.quadratic_with(
+    3.0 *. a,
+    2.0 *. b,
+    c,
+    options: root.QuadraticOptions(
+      coefficient_tolerance: 0.0,
+      repeated_root_policy: root.PreserveRepeatedRoot,
+    ),
+  )
+  |> root.strictly_inside(from: 0.0, to: 1.0)
 }
 
 fn axis_coordinate(point: Point, origin: Point, axis: Point) -> Float {
@@ -1494,51 +1503,6 @@ fn axis_coordinate(point: Point, origin: Point, axis: Point) -> Float {
   case denominator == 0.0 {
     True -> 0.0
     False -> dot(relative, axis) /. denominator
-  }
-}
-
-fn quadratic_roots_inside(a: Float, b: Float, c: Float) -> List(Float) {
-  case a == 0.0 {
-    True -> {
-      case b == 0.0 {
-        True -> []
-        False -> [b /. { 0.0 -. c }] |> inside_breaks
-      }
-    }
-    False -> {
-      let discriminant = b *. b -. 4.0 *. a *. c
-      case discriminant <. 0.0 {
-        True -> []
-        False -> {
-          let root = sqrt(discriminant)
-          let first = { 0.0 -. b -. root } /. { 2.0 *. a }
-          let second = { 0.0 -. b +. root } /. { 2.0 *. a }
-          [first, second] |> list.filter(is_inside_break) |> sort_floats
-        }
-      }
-    }
-  }
-}
-
-fn inside_breaks(values: List(Float)) -> List(Float) {
-  list.filter(values, is_inside_break)
-}
-
-fn is_inside_break(value: Float) -> Bool {
-  value >. 0.0 && value <. 1.0
-}
-
-fn sort_floats(values: List(Float)) -> List(Float) {
-  case values {
-    [] -> []
-    [first] -> [first]
-    [first, second] -> {
-      case first <=. second {
-        True -> [first, second]
-        False -> [second, first]
-      }
-    }
-    _ -> values
   }
 }
 

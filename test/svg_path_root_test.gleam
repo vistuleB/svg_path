@@ -2,6 +2,45 @@ import gleam/float
 import gleeunit
 import svg_path/root
 
+pub fn linear_root_test() {
+  assert root.linear(2.0, -1.0) == [0.5]
+  assert root.linear(0.0, 1.0) == []
+  assert root.linear(0.0, 0.0) == []
+}
+
+pub fn quadratic_real_roots_test() {
+  assert root.quadratic(1.0, -3.0, 2.0) == [1.0, 2.0]
+}
+
+pub fn quadratic_reduces_to_linear_test() {
+  assert root.quadratic(0.0, 2.0, -1.0) == [0.5]
+}
+
+pub fn quadratic_repeated_root_policy_test() {
+  let preserve =
+    root.QuadraticOptions(
+      coefficient_tolerance: 0.0,
+      repeated_root_policy: root.PreserveRepeatedRoot,
+    )
+  assert root.quadratic(1.0, -2.0, 1.0) == [1.0]
+  assert root.quadratic_with(1.0, -2.0, 1.0, options: preserve) == [1.0, 1.0]
+}
+
+pub fn quadratic_coefficient_tolerance_test() {
+  let options =
+    root.QuadraticOptions(
+      coefficient_tolerance: 0.000001,
+      repeated_root_policy: root.ConsolidateRepeatedRoot,
+    )
+  assert root.quadratic_with(0.0000001, 2.0, -1.0, options:) == [0.5]
+}
+
+pub fn root_interval_filters_and_sorts_test() {
+  let values = [1.0, 0.75, -0.1, 0.25, 0.0]
+  assert root.strictly_inside(values, from: 0.0, to: 1.0) == [0.25, 0.75]
+  assert root.inside(values, from: 1.0, to: 0.0) == [0.0, 0.25, 0.75, 1.0]
+}
+
 const tolerance = 0.000001
 
 pub fn main() -> Nil {

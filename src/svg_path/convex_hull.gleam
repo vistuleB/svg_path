@@ -14,6 +14,7 @@ import gleam/result
 import svg_path
 import svg_path/ellipse
 import svg_path/point as point_helpers
+import svg_path/root
 import svg_path/trig
 
 const cubic_sample_count = 3600
@@ -1444,7 +1445,7 @@ fn segment_point_tangent_roots(
       let a = subtract(control, start)
       let b = add_points(subtract(start, scale_point(control, 2.0)), end)
       Ok(
-        quadratic_roots(cross(a, b), cross(s, b), cross(s, a))
+        tolerant_quadratic_roots(cross(a, b), cross(s, b), cross(s, a))
         |> list.filter(fn(t) { t >=. 0.0 && t <=. 1.0 }),
       )
     }
@@ -3444,7 +3445,7 @@ fn segment_support(
       let a = p0 -. 2.0 *. p1 +. p2
       let b = -2.0 *. p0 +. 2.0 *. p1
       let candidates =
-        [0.0, 1.0, ..quadratic_roots(0.0, 2.0 *. a, b)]
+        [0.0, 1.0, ..tolerant_quadratic_roots(0.0, 2.0 *. a, b)]
         |> list.filter(fn(t) { t >=. 0.0 && t <=. 1.0 })
 
       best_segment_support(segment, angle, candidates)
@@ -3458,7 +3459,7 @@ fn segment_support(
       let b = 3.0 *. p0 -. 6.0 *. p1 +. 3.0 *. p2
       let c = -3.0 *. p0 +. 3.0 *. p1
       let candidates =
-        [0.0, 1.0, ..quadratic_roots(3.0 *. a, 2.0 *. b, c)]
+        [0.0, 1.0, ..tolerant_quadratic_roots(3.0 *. a, 2.0 *. b, c)]
         |> list.filter(fn(t) { t >=. 0.0 && t <=. 1.0 })
 
       best_segment_support(segment, angle, candidates)
@@ -3935,27 +3936,16 @@ fn cross(a: svg_path.Point, b: svg_path.Point) -> Float {
   point_helpers.cross(a, b)
 }
 
-fn quadratic_roots(a: Float, b: Float, c: Float) -> List(Float) {
-  case float.absolute_value(a) <. 0.000000000001 {
-    True ->
-      case float.absolute_value(b) <. 0.000000000001 {
-        True -> []
-        False -> [{ 0.0 -. c } /. b]
-      }
-    False -> {
-      let discriminant = b *. b -. 4.0 *. a *. c
-      case discriminant <. 0.0 {
-        True -> []
-        False -> {
-          let assert Ok(root) = float.square_root(discriminant)
-          [
-            { 0.0 -. b -. root } /. { 2.0 *. a },
-            { 0.0 -. b +. root } /. { 2.0 *. a },
-          ]
-        }
-      }
-    }
-  }
+fn tolerant_quadratic_roots(a: Float, b: Float, c: Float) -> List(Float) {
+  root.quadratic_with(
+    a,
+    b,
+    c,
+    options: root.QuadraticOptions(
+      coefficient_tolerance: 0.000000000001,
+      repeated_root_policy: root.PreserveRepeatedRoot,
+    ),
+  )
 }
 
 fn average(values: List(Float)) -> Float {

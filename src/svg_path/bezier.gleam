@@ -38,6 +38,7 @@ import gleam/int
 import gleam/list
 import gleam/option.{None, Some}
 import gleam/result
+import svg_path/root
 
 const root_tolerance = 0.000000001
 
@@ -999,7 +1000,7 @@ fn cubic_extrema(
   let b = { 3.0 *. start } -. { 6.0 *. control1 } +. { 3.0 *. control2 }
   let c = { 3.0 *. control1 } -. { 3.0 *. start }
 
-  quadratic_roots(3.0 *. a, 2.0 *. b, c)
+  root.quadratic(3.0 *. a, 2.0 *. b, c)
 }
 
 fn inflection_roots(
@@ -1020,70 +1021,15 @@ fn inflection_roots(
     )
   let c = difference(scale(control1, 3.0), scale(start, 3.0))
 
-  tolerant_quadratic_roots(
+  root.quadratic_with(
     -6.0 *. cross(a, b),
     6.0 *. cross(c, a),
     2.0 *. cross(c, b),
+    options: root.QuadraticOptions(
+      coefficient_tolerance: 0.000000000001,
+      repeated_root_policy: root.PreserveRepeatedRoot,
+    ),
   )
-}
-
-fn quadratic_roots(a: Float, b: Float, c: Float) -> List(Float) {
-  case a == 0.0 {
-    True -> linear_roots(b, c)
-    False -> {
-      let discriminant = b *. b -. { 4.0 *. a *. c }
-
-      case discriminant <. 0.0 {
-        True -> []
-        False -> {
-          let assert Ok(root_discriminant) = float.square_root(discriminant)
-          let denominator = 2.0 *. a
-
-          case root_discriminant == 0.0 {
-            True -> [{ 0.0 -. b } /. denominator]
-            False -> [
-              { 0.0 -. b -. root_discriminant } /. denominator,
-              { 0.0 -. b +. root_discriminant } /. denominator,
-            ]
-          }
-        }
-      }
-    }
-  }
-}
-
-fn tolerant_quadratic_roots(a: Float, b: Float, c: Float) -> List(Float) {
-  case float.absolute_value(a) <. 0.000000000001 {
-    True -> {
-      case float.absolute_value(b) <. 0.000000000001 {
-        True -> []
-        False -> [{ 0.0 -. c } /. b]
-      }
-    }
-    False -> {
-      let discriminant = b *. b -. { 4.0 *. a *. c }
-
-      case discriminant <. 0.0 {
-        True -> []
-        False -> {
-          let assert Ok(root_discriminant) = float.square_root(discriminant)
-          let denominator = 2.0 *. a
-
-          [
-            { 0.0 -. b -. root_discriminant } /. denominator,
-            { 0.0 -. b +. root_discriminant } /. denominator,
-          ]
-        }
-      }
-    }
-  }
-}
-
-fn linear_roots(a: Float, b: Float) -> List(Float) {
-  case a == 0.0 {
-    True -> []
-    False -> [{ 0.0 -. b } /. a]
-  }
 }
 
 fn is_inside_unit_interval(t: Float) -> Bool {
