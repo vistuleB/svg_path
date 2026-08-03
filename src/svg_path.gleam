@@ -587,6 +587,13 @@ pub type Error {
   /// classifier did not confirm.
   InconsistentOverlapClassification
 
+  /// Coincident segment portions do not have a single affine correspondence
+  /// between their parameter intervals.
+  ///
+  /// Normalize or linearize degenerate, multiply traced, or non-monotone
+  /// segments before retrying the overlap operation.
+  NonAffineOverlapCorrespondence
+
   /// The path contains more than one non-empty subpath.
   MultipleNonemptySubpaths
 

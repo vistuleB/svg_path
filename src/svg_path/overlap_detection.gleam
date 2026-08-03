@@ -406,10 +406,22 @@ fn overlap_candidates_against(
                 tolerance,
                 samples,
               ))
-              Ok(case valid {
-                True -> Ok(overlap)
-                False -> Error(Nil)
-              })
+              case valid {
+                False -> Ok(Error(Nil))
+                True -> {
+                  use affine <- result.try(affine_correspondence_valid(
+                    overlap,
+                    left,
+                    right,
+                    tolerance,
+                    samples,
+                  ))
+                  case affine {
+                    True -> Ok(Ok(overlap))
+                    False -> Error(svg_path.NonAffineOverlapCorrespondence)
+                  }
+                }
+              }
             }
           }
       })
@@ -543,6 +555,65 @@ fn sampled_overlap_valid_loop(
             right_piece,
             left_from,
             left_to,
+            tolerance,
+            samples,
+            index + 1,
+          )
+      }
+    }
+  }
+}
+
+fn affine_correspondence_valid(
+  overlap: RawOverlap,
+  left: svg_path.Segment,
+  right: svg_path.Segment,
+  tolerance: Float,
+  samples: Int,
+) -> Result(Bool, svg_path.Error) {
+  let #(left_from, left_to, right_from, right_to, _, _) = overlap
+  affine_correspondence_valid_loop(
+    left,
+    right,
+    left_from,
+    left_to,
+    right_from,
+    right_to,
+    tolerance,
+    samples,
+    1,
+  )
+}
+
+fn affine_correspondence_valid_loop(
+  left: svg_path.Segment,
+  right: svg_path.Segment,
+  left_from: Float,
+  left_to: Float,
+  right_from: Float,
+  right_to: Float,
+  tolerance: Float,
+  samples: Int,
+  index: Int,
+) -> Result(Bool, svg_path.Error) {
+  case index > samples {
+    True -> Ok(True)
+    False -> {
+      let portion = int.to_float(index) /. int.to_float(samples + 1)
+      let left_t = left_from +. { left_to -. left_from } *. portion
+      let right_t = right_from +. { right_to -. right_from } *. portion
+      use left_point <- result.try(svg_path.segment_point(left, at: left_t))
+      use right_point <- result.try(svg_path.segment_point(right, at: right_t))
+      case points_near(left_point, right_point, tolerance) {
+        False -> Ok(False)
+        True ->
+          affine_correspondence_valid_loop(
+            left,
+            right,
+            left_from,
+            left_to,
+            right_from,
+            right_to,
             tolerance,
             samples,
             index + 1,

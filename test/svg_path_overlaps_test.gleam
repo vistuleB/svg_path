@@ -1,5 +1,6 @@
 import gleam/list
 import svg_path
+import svg_path/encounters
 import svg_path/intersections
 import svg_path/overlaps
 
@@ -347,6 +348,45 @@ pub fn reversed_cubic_is_one_full_overlap_test() {
       end: svg_path.Point(10.0, 0.0),
     )
   assert_full_overlap(segment, svg_path.segment_reverse(segment), 1.0, 0.0)
+}
+
+pub fn non_affinely_parameterized_line_cubics_are_rejected_test() {
+  let linear_speed =
+    svg_path.CubicBezier(
+      start: svg_path.Point(0.0, 0.0),
+      control1: svg_path.Point(1.0 /. 3.0, 0.0),
+      control2: svg_path.Point(2.0 /. 3.0, 0.0),
+      end: svg_path.Point(1.0, 0.0),
+    )
+  let cubic_speed =
+    svg_path.CubicBezier(
+      start: svg_path.Point(0.0, 0.0),
+      control1: svg_path.Point(0.0, 0.0),
+      control2: svg_path.Point(0.0, 0.0),
+      end: svg_path.Point(1.0, 0.0),
+    )
+
+  assert overlaps.segment(linear_speed, cubic_speed)
+    == Error(svg_path.NonAffineOverlapCorrespondence)
+  assert intersections.segment(linear_speed, cubic_speed)
+    == Error(svg_path.NonAffineOverlapCorrespondence)
+  assert encounters.segment(linear_speed, cubic_speed)
+    == Error(svg_path.NonAffineOverlapCorrespondence)
+}
+
+pub fn segment_overlap_exposes_affine_parameter_correspondence_test() {
+  let overlap =
+    overlaps.SegmentOverlap(
+      start: svg_path.Point(2.0, 0.0),
+      end: svg_path.Point(8.0, 0.0),
+      left_from: 0.2,
+      left_to: 0.8,
+      right_from: 0.9,
+      right_to: 0.3,
+    )
+
+  assert near(overlaps.segment_overlap_right_parameter(overlap, 0.5), 0.6)
+  assert near(overlaps.segment_overlap_left_parameter(overlap, 0.6), 0.5)
 }
 
 pub fn identical_arc_is_one_full_overlap_test() {

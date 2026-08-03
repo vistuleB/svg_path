@@ -85,7 +85,13 @@ pub fn segment_overlap_is_valid(
             left_portion,
             tolerance,
           ))
-          Ok(left_is_near && right_is_near)
+          use affine_is_near <- result.try(paired_overlap_samples_are_near(
+            left,
+            right,
+            overlap,
+            tolerance,
+          ))
+          Ok(left_is_near && right_is_near && affine_is_near)
         }
       }
     }
@@ -638,6 +644,57 @@ fn samples_are_near(
   tolerance: Float,
 ) -> Result(Bool, svg_path.Error) {
   samples_are_near_loop(samples, source, target, tolerance)
+}
+
+fn paired_overlap_samples_are_near(
+  left: svg_path.Segment,
+  right: svg_path.Segment,
+  overlap: overlaps.SegmentOverlap,
+  tolerance: Float,
+) -> Result(Bool, svg_path.Error) {
+  let overlaps.SegmentOverlap(left_from:, left_to:, ..) = overlap
+  paired_overlap_samples_are_near_loop(
+    samples,
+    left,
+    right,
+    overlap,
+    left_from,
+    left_to,
+    tolerance,
+  )
+}
+
+fn paired_overlap_samples_are_near_loop(
+  sample_parameters: List(Float),
+  left: svg_path.Segment,
+  right: svg_path.Segment,
+  overlap: overlaps.SegmentOverlap,
+  left_from: Float,
+  left_to: Float,
+  tolerance: Float,
+) -> Result(Bool, svg_path.Error) {
+  case sample_parameters {
+    [] -> Ok(True)
+    [portion, ..rest] -> {
+      let left_t = left_from +. { left_to -. left_from } *. portion
+      let right_t = overlaps.segment_overlap_right_parameter(overlap, left_t)
+      use left_point <- result.try(svg_path.segment_point(left, at: left_t))
+      use right_point <- result.try(svg_path.segment_point(right, at: right_t))
+      case point.near(left_point, right_point, tolerance:) {
+        False -> Ok(False)
+        True ->
+          paired_overlap_samples_are_near_loop(
+            rest,
+            left,
+            right,
+            overlap,
+            left_from,
+            left_to,
+            tolerance,
+          )
+      }
+    }
+  }
 }
 
 fn samples_are_near_loop(

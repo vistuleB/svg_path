@@ -12,6 +12,11 @@ const default_overlap_tolerance = 0.000000001
 /// segments. The left parameters and points follow the left segment's
 /// traversal. The right parameters retain the corresponding traversal
 /// direction and may therefore decrease.
+///
+/// The four endpoint parameters define an affine correspondence throughout
+/// the overlap. For any parameter between `left_from` and `left_to`, linearly
+/// interpolating between `right_from` and `right_to` identifies the same
+/// geometric point on the right segment, within the overlap tolerance.
 pub type SegmentOverlap {
   SegmentOverlap(
     left_from: Float,
@@ -21,6 +26,33 @@ pub type SegmentOverlap {
     start: svg_path.Point,
     end: svg_path.Point,
   )
+}
+
+/// Map a left-segment parameter through an overlap's affine correspondence.
+///
+/// For overlap values returned by this module, parameters in the closed
+/// `left_from..left_to` interval map to coincident points on the right segment.
+pub fn segment_overlap_right_parameter(
+  overlap: SegmentOverlap,
+  left_parameter: Float,
+) -> Float {
+  let SegmentOverlap(left_from:, left_to:, right_from:, right_to:, ..) = overlap
+  let portion = { left_parameter -. left_from } /. { left_to -. left_from }
+  right_from +. { right_to -. right_from } *. portion
+}
+
+/// Map a right-segment parameter through an overlap's inverse affine
+/// correspondence.
+///
+/// For overlap values returned by this module, parameters between
+/// `right_from` and `right_to` map to coincident points on the left segment.
+pub fn segment_overlap_left_parameter(
+  overlap: SegmentOverlap,
+  right_parameter: Float,
+) -> Float {
+  let SegmentOverlap(left_from:, left_to:, right_from:, right_to:, ..) = overlap
+  let portion = { right_parameter -. right_from } /. { right_to -. right_from }
+  left_from +. { left_to -. left_from } *. portion
 }
 
 /// The result of combining two overlap intervals for the same ordered segment
@@ -287,6 +319,10 @@ pub fn segment_overlaps_by_endpoint_projection_with(
 }
 
 /// Find overlap intervals using the shared five-sample policy.
+///
+/// Coincident portions whose parameter correspondence is not affine return
+/// `svg_path.NonAffineOverlapCorrespondence`. Normalize or linearize
+/// degenerate and multiply traced segments before retrying those cases.
 pub fn segment(
   left: svg_path.Segment,
   right: svg_path.Segment,
