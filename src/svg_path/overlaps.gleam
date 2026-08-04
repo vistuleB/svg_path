@@ -1,10 +1,14 @@
 //// Continuous coincident intervals between path segments.
 
 import gleam/float
+import gleam/int
 import gleam/list
+import gleam/option.{type Option, None, Some}
+import gleam/order
 import gleam/result
 import svg_path
 import svg_path/overlap_detection
+import svg_path/point
 
 const default_overlap_tolerance = 0.000000001
 
@@ -437,17 +441,82 @@ fn segment_subpath_segments(
   }
 }
 
-/// One continuous overlap between two subpath traversals. Its endpoints retain
-/// an address on both subpaths.
+/// One affine piece of a continuous overlap between two subpath traversals.
+pub type SubpathOverlapPiece {
+  SubpathOverlapPiece(
+    left_segment_index: Int,
+    right_segment_index: Int,
+    correspondence: SegmentOverlap,
+  )
+}
+
+/// One continuous overlap between two subpath traversals.
+///
+/// `pieces` is non-empty for values returned by this module. It follows the
+/// left subpath's traversal and supplies the complete piecewise-affine
+/// parameter correspondence to the right subpath.
 pub type SubpathOverlap {
   SubpathOverlap(
     start: svg_path.Point,
     end: svg_path.Point,
-    left_from: svg_path.SubpathParameter,
-    left_to: svg_path.SubpathParameter,
-    right_from: svg_path.SubpathParameter,
-    right_to: svg_path.SubpathParameter,
+    pieces: List(SubpathOverlapPiece),
   )
+}
+
+/// First parameter of a subpath overlap on the left traversal.
+pub fn subpath_overlap_left_start(
+  overlap: SubpathOverlap,
+) -> Option(svg_path.SubpathParameter) {
+  let SubpathOverlap(pieces:, ..) = overlap
+  case pieces {
+    [SubpathOverlapPiece(left_segment_index:, correspondence:, ..), ..] -> {
+      let SegmentOverlap(left_from:, ..) = correspondence
+      Some(svg_path.SubpathParameter(left_segment_index, left_from))
+    }
+    [] -> None
+  }
+}
+
+/// Last parameter of a subpath overlap on the left traversal.
+pub fn subpath_overlap_left_end(
+  overlap: SubpathOverlap,
+) -> Option(svg_path.SubpathParameter) {
+  let SubpathOverlap(pieces:, ..) = overlap
+  case list.last(pieces) {
+    Ok(SubpathOverlapPiece(left_segment_index:, correspondence:, ..)) -> {
+      let SegmentOverlap(left_to:, ..) = correspondence
+      Some(svg_path.SubpathParameter(left_segment_index, left_to))
+    }
+    Error(Nil) -> None
+  }
+}
+
+/// First corresponding parameter on the right traversal.
+pub fn subpath_overlap_right_start(
+  overlap: SubpathOverlap,
+) -> Option(svg_path.SubpathParameter) {
+  let SubpathOverlap(pieces:, ..) = overlap
+  case pieces {
+    [SubpathOverlapPiece(right_segment_index:, correspondence:, ..), ..] -> {
+      let SegmentOverlap(right_from:, ..) = correspondence
+      Some(svg_path.SubpathParameter(right_segment_index, right_from))
+    }
+    [] -> None
+  }
+}
+
+/// Last corresponding parameter on the right traversal.
+pub fn subpath_overlap_right_end(
+  overlap: SubpathOverlap,
+) -> Option(svg_path.SubpathParameter) {
+  let SubpathOverlap(pieces:, ..) = overlap
+  case list.last(pieces) {
+    Ok(SubpathOverlapPiece(right_segment_index:, correspondence:, ..)) -> {
+      let SegmentOverlap(right_to:, ..) = correspondence
+      Some(svg_path.SubpathParameter(right_segment_index, right_to))
+    }
+    Error(Nil) -> None
+  }
 }
 
 pub fn subpath(
@@ -462,13 +531,16 @@ pub fn subpath_with(
   right: svg_path.Subpath,
   tolerance tolerance: Float,
 ) -> Result(List(SubpathOverlap), svg_path.Error) {
-  subpath_left_segments(
-    svg_path.subpath_segments(left),
-    svg_path.subpath_segments(right),
-    tolerance,
-    left_index: 0,
-    found: [],
+  use pieces <- result.try(
+    subpath_left_segments(
+      svg_path.subpath_segments(left),
+      svg_path.subpath_segments(right),
+      tolerance,
+      left_index: 0,
+      found: [],
+    ),
   )
+  Ok(merge_subpath_overlap_pieces(pieces, tolerance))
 }
 
 fn subpath_left_segments(
@@ -476,8 +548,8 @@ fn subpath_left_segments(
   right: List(svg_path.Segment),
   tolerance: Float,
   left_index left_index: Int,
-  found found: List(SubpathOverlap),
-) -> Result(List(SubpathOverlap), svg_path.Error) {
+  found found: List(SubpathOverlapPiece),
+) -> Result(List(SubpathOverlapPiece), svg_path.Error) {
   case left {
     [] -> Ok(list.reverse(found))
     [first, ..rest] -> {
@@ -506,42 +578,19 @@ fn subpath_right_segments(
   tolerance: Float,
   left_index left_index: Int,
   right_index right_index: Int,
-  found found: List(SubpathOverlap),
-) -> Result(List(SubpathOverlap), svg_path.Error) {
+  found found: List(SubpathOverlapPiece),
+) -> Result(List(SubpathOverlapPiece), svg_path.Error) {
   case right {
     [] -> Ok(found)
     [first, ..rest] -> {
       use segment_overlaps <- result.try(segment_with(left, first, tolerance:))
       let found =
         list.fold(segment_overlaps, found, fn(found, overlap) {
-          let SegmentOverlap(
-            start:,
-            end:,
-            left_from:,
-            left_to:,
-            right_from:,
-            right_to:,
-          ) = overlap
           [
-            SubpathOverlap(
-              start:,
-              end:,
-              left_from: svg_path.SubpathParameter(
-                segment_index: left_index,
-                t: left_from,
-              ),
-              left_to: svg_path.SubpathParameter(
-                segment_index: left_index,
-                t: left_to,
-              ),
-              right_from: svg_path.SubpathParameter(
-                segment_index: right_index,
-                t: right_from,
-              ),
-              right_to: svg_path.SubpathParameter(
-                segment_index: right_index,
-                t: right_to,
-              ),
+            SubpathOverlapPiece(
+              left_segment_index: left_index,
+              right_segment_index: right_index,
+              correspondence: overlap,
             ),
             ..found
           ]
@@ -556,6 +605,165 @@ fn subpath_right_segments(
       )
     }
   }
+}
+
+fn merge_subpath_overlap_pieces(
+  pieces: List(SubpathOverlapPiece),
+  tolerance: Float,
+) -> List(SubpathOverlap) {
+  pieces
+  |> list.sort(by: compare_subpath_overlap_pieces)
+  |> merge_subpath_overlap_pieces_loop(tolerance, current: [], merged: [])
+}
+
+fn compare_subpath_overlap_pieces(
+  first: SubpathOverlapPiece,
+  second: SubpathOverlapPiece,
+) -> order.Order {
+  let SubpathOverlapPiece(
+    left_segment_index: first_index,
+    correspondence: SegmentOverlap(left_from: first_from, ..),
+    ..,
+  ) = first
+  let SubpathOverlapPiece(
+    left_segment_index: second_index,
+    correspondence: SegmentOverlap(left_from: second_from, ..),
+    ..,
+  ) = second
+  case int.compare(first_index, second_index) {
+    order.Eq -> float.compare(first_from, second_from)
+    other -> other
+  }
+}
+
+fn merge_subpath_overlap_pieces_loop(
+  pieces: List(SubpathOverlapPiece),
+  tolerance: Float,
+  current current: List(SubpathOverlapPiece),
+  merged merged: List(SubpathOverlap),
+) -> List(SubpathOverlap) {
+  case pieces, current {
+    [], [] -> list.reverse(merged)
+    [], _ ->
+      list.reverse([subpath_overlap_from_reversed_pieces(current), ..merged])
+    [piece, ..rest], [] ->
+      merge_subpath_overlap_pieces_loop(
+        rest,
+        tolerance,
+        current: [piece],
+        merged:,
+      )
+    [piece, ..rest], [previous, ..] ->
+      case subpath_overlap_pieces_connect(previous, piece, tolerance) {
+        True ->
+          merge_subpath_overlap_pieces_loop(
+            rest,
+            tolerance,
+            current: [piece, ..current],
+            merged:,
+          )
+        False ->
+          merge_subpath_overlap_pieces_loop(
+            rest,
+            tolerance,
+            current: [piece],
+            merged: [subpath_overlap_from_reversed_pieces(current), ..merged],
+          )
+      }
+  }
+}
+
+fn subpath_overlap_pieces_connect(
+  left: SubpathOverlapPiece,
+  right: SubpathOverlapPiece,
+  tolerance: Float,
+) -> Bool {
+  let SubpathOverlapPiece(
+    left_segment_index: left_left_index,
+    right_segment_index: left_right_index,
+    correspondence: left_overlap,
+  ) = left
+  let SubpathOverlapPiece(
+    left_segment_index: right_left_index,
+    right_segment_index: right_right_index,
+    correspondence: right_overlap,
+  ) = right
+  let SegmentOverlap(
+    end: left_end,
+    left_to: left_left_to,
+    right_to: left_right_to,
+    ..,
+  ) = left_overlap
+  let SegmentOverlap(
+    start: right_start,
+    left_from: right_left_from,
+    right_from: right_right_from,
+    ..,
+  ) = right_overlap
+  point.distance(left_end, right_start) <=. tolerance
+  && forward_subpath_parameters_connect(
+    left_left_index,
+    left_left_to,
+    right_left_index,
+    right_left_from,
+  )
+  && subpath_parameters_connect_either_direction(
+    left_right_index,
+    left_right_to,
+    right_right_index,
+    right_right_from,
+  )
+}
+
+fn forward_subpath_parameters_connect(
+  first_index: Int,
+  first_t: Float,
+  second_index: Int,
+  second_t: Float,
+) -> Bool {
+  case first_index == second_index {
+    True -> near_parameter(first_t, second_t)
+    False ->
+      second_index == first_index + 1
+      && near_parameter(first_t, 1.0)
+      && near_parameter(second_t, 0.0)
+  }
+}
+
+fn subpath_parameters_connect_either_direction(
+  first_index: Int,
+  first_t: Float,
+  second_index: Int,
+  second_t: Float,
+) -> Bool {
+  forward_subpath_parameters_connect(
+    first_index,
+    first_t,
+    second_index,
+    second_t,
+  )
+  || forward_subpath_parameters_connect(
+    second_index,
+    second_t,
+    first_index,
+    first_t,
+  )
+}
+
+fn near_parameter(first: Float, second: Float) -> Bool {
+  float.absolute_value(first -. second) <=. default_overlap_tolerance
+}
+
+fn subpath_overlap_from_reversed_pieces(
+  reversed_pieces: List(SubpathOverlapPiece),
+) -> SubpathOverlap {
+  let pieces = list.reverse(reversed_pieces)
+  let assert [first, ..] = pieces
+  let assert Ok(last) = list.last(pieces)
+  let SubpathOverlapPiece(correspondence: SegmentOverlap(start:, ..), ..) =
+    first
+  let SubpathOverlapPiece(correspondence: SegmentOverlap(end:, ..), ..) = last
+  SubpathOverlap(start:, end:, pieces:)
 }
 
 /// One overlap between constituent segments of two paths. Each constituent
@@ -640,14 +848,11 @@ fn path_right_subpaths(
       use subpath_overlaps <- result.try(subpath_with(left, first, tolerance:))
       let found =
         list.fold(subpath_overlaps, found, fn(found, overlap) {
-          let SubpathOverlap(
-            start:,
-            end:,
-            left_from:,
-            left_to:,
-            right_from:,
-            right_to:,
-          ) = overlap
+          let SubpathOverlap(start:, end:, ..) = overlap
+          let assert Some(left_from) = subpath_overlap_left_start(overlap)
+          let assert Some(left_to) = subpath_overlap_left_end(overlap)
+          let assert Some(right_from) = subpath_overlap_right_start(overlap)
+          let assert Some(right_to) = subpath_overlap_right_end(overlap)
           [
             PathOverlap(
               start:,

@@ -1,4 +1,5 @@
 import gleam/list
+import gleam/option.{Some}
 import svg_path
 import svg_path/encounters
 import svg_path/intersections
@@ -389,6 +390,107 @@ pub fn segment_overlap_exposes_affine_parameter_correspondence_test() {
   assert near(overlaps.segment_overlap_left_parameter(overlap, 0.6), 0.5)
 }
 
+pub fn subpath_overlap_maps_one_segment_to_two_segments_test() {
+  let left = polyline([0.0, 10.0])
+  let right = polyline([0.0, 5.0, 10.0])
+  let assert Ok([overlap]) = overlaps.subpath(left, right)
+  let assert overlaps.SubpathOverlap(
+    start: svg_path.Point(0.0, 0.0),
+    end: svg_path.Point(10.0, 0.0),
+    pieces: [first, second],
+  ) = overlap
+  let assert overlaps.SubpathOverlapPiece(
+    left_segment_index: 0,
+    right_segment_index: 0,
+    correspondence: first_map,
+  ) = first
+  let assert overlaps.SubpathOverlapPiece(
+    left_segment_index: 0,
+    right_segment_index: 1,
+    correspondence: second_map,
+  ) = second
+
+  assert near(overlaps.segment_overlap_right_parameter(first_map, 0.25), 0.5)
+  assert near(overlaps.segment_overlap_right_parameter(second_map, 0.75), 0.5)
+  assert overlaps.subpath_overlap_left_start(overlap)
+    == Some(svg_path.SubpathParameter(segment_index: 0, t: 0.0))
+  assert overlaps.subpath_overlap_left_end(overlap)
+    == Some(svg_path.SubpathParameter(segment_index: 0, t: 1.0))
+  assert overlaps.subpath_overlap_right_start(overlap)
+    == Some(svg_path.SubpathParameter(segment_index: 0, t: 0.0))
+  assert overlaps.subpath_overlap_right_end(overlap)
+    == Some(svg_path.SubpathParameter(segment_index: 1, t: 1.0))
+}
+
+pub fn subpath_overlap_maps_two_segments_to_one_segment_test() {
+  let left = polyline([0.0, 5.0, 10.0])
+  let right = polyline([0.0, 10.0])
+  let assert Ok([overlaps.SubpathOverlap(pieces: [first, second], ..)]) =
+    overlaps.subpath(left, right)
+  let assert overlaps.SubpathOverlapPiece(
+    left_segment_index: 0,
+    right_segment_index: 0,
+    correspondence: first_map,
+  ) = first
+  let assert overlaps.SubpathOverlapPiece(
+    left_segment_index: 1,
+    right_segment_index: 0,
+    correspondence: second_map,
+  ) = second
+
+  assert near(overlaps.segment_overlap_right_parameter(first_map, 0.5), 0.25)
+  assert near(overlaps.segment_overlap_right_parameter(second_map, 0.5), 0.75)
+}
+
+pub fn subpath_overlap_preserves_reversed_piecewise_traversal_test() {
+  let left = polyline([0.0, 10.0])
+  let right = polyline([10.0, 5.0, 0.0])
+  let assert Ok([overlap]) = overlaps.subpath(left, right)
+  let assert overlaps.SubpathOverlap(pieces: [first, second], ..) = overlap
+  let assert overlaps.SubpathOverlapPiece(
+    right_segment_index: 1,
+    correspondence: overlaps.SegmentOverlap(
+      left_from: 0.0,
+      left_to: 0.5,
+      right_from: 1.0,
+      right_to: 0.0,
+      ..,
+    ),
+    ..,
+  ) = first
+  let assert overlaps.SubpathOverlapPiece(
+    right_segment_index: 0,
+    correspondence: overlaps.SegmentOverlap(
+      left_from: 0.5,
+      left_to: 1.0,
+      right_from: 1.0,
+      right_to: 0.0,
+      ..,
+    ),
+    ..,
+  ) = second
+
+  assert overlaps.subpath_overlap_right_start(overlap)
+    == Some(svg_path.SubpathParameter(segment_index: 1, t: 1.0))
+  assert overlaps.subpath_overlap_right_end(overlap)
+    == Some(svg_path.SubpathParameter(segment_index: 0, t: 0.0))
+}
+
+pub fn disconnected_subpath_overlaps_remain_separate_test() {
+  let left = polyline([0.0, 10.0])
+  let right =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(4.0, 0.0),
+      svg_path.Point(4.0, 2.0),
+      svg_path.Point(6.0, 2.0),
+      svg_path.Point(6.0, 0.0),
+      svg_path.Point(10.0, 0.0),
+    ])
+  let assert Ok(found) = overlaps.subpath(left, right)
+  assert list.length(found) == 2
+}
+
 pub fn identical_arc_is_one_full_overlap_test() {
   let segment = arc()
   assert_full_overlap(segment, segment, 0.0, 1.0)
@@ -426,6 +528,12 @@ fn assert_full_overlap(
 
 fn line() -> svg_path.Segment {
   svg_path.Line(start: svg_path.Point(0.0, 0.0), end: svg_path.Point(10.0, 0.0))
+}
+
+fn polyline(xs: List(Float)) -> svg_path.Subpath {
+  xs
+  |> list.map(fn(x) { svg_path.Point(x, 0.0) })
+  |> svg_path.subpath_assert_polyline
 }
 
 fn segment_overlap(

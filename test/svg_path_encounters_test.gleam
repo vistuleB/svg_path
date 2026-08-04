@@ -231,6 +231,30 @@ pub fn subpaths_retain_overlap_and_intersections_from_other_segment_pairs_test()
     == Ok(False)
 }
 
+pub fn subpath_encounters_retain_piecewise_overlap_correspondence_test() {
+  let assert Ok(left) = svg_path.subpath([line(0.0, 0.0, 10.0, 0.0)])
+  let assert Ok(right) =
+    svg_path.subpath([
+      line(0.0, 0.0, 5.0, 0.0),
+      line(5.0, 0.0, 10.0, 0.0),
+    ])
+
+  let assert Ok(encounters.Encounters(
+    overlaps: [overlaps.SubpathOverlap(pieces: [first, second], ..)],
+    intersections: [],
+  )) = encounters.subpath(left, right)
+  let assert overlaps.SubpathOverlapPiece(
+    left_segment_index: 0,
+    right_segment_index: 0,
+    ..,
+  ) = first
+  let assert overlaps.SubpathOverlapPiece(
+    left_segment_index: 0,
+    right_segment_index: 1,
+    ..,
+  ) = second
+}
+
 pub fn segment_subpath_retains_addresses_for_overlap_and_points_test() {
   let segment = line(0.0, 0.0, 10.0, 0.0)
   let assert Ok(subpath) =
