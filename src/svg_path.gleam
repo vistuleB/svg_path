@@ -187,6 +187,9 @@ pub type LinearizeOptions {
 }
 
 /// Options for finding the distance from a point to a segment.
+///
+/// `samples` controls arc projection and the explicit sampling-based projection
+/// API. Quadratic and cubic projection uses polynomial root isolation instead.
 pub type DistanceOptions {
   DistanceOptions(samples: Int, tolerance: Float, max_iterations: Int)
 }
@@ -558,6 +561,9 @@ pub type Error {
 
   /// A bracketed distance candidate could not be refined within the iteration limit.
   DistanceMaxIterationsReached(estimate: Float, value: Float)
+
+  /// Polynomial distance-root isolation produced an inconsistent bracket.
+  DistanceRootIsolationFailed
 
   /// The containment tolerance must be greater than zero.
   InvalidContainmentTolerance(tolerance: Float)
@@ -2784,19 +2790,155 @@ pub fn segment_projection_with(
   to segment: Segment,
   options options: DistanceOptions,
 ) -> Result(SegmentProjection, Error) {
+  segment_projection_by_polynomial_with(point, to: segment, options:)
+}
+
+/// Return the nearest point using the original stationary-point window scan.
+///
+/// This entry point is retained for comparison with polynomial projection.
+pub fn segment_projection_by_sampling(
+  point: Point,
+  to segment: Segment,
+) -> Result(SegmentProjection, Error) {
+  segment_projection_by_sampling_with(
+    point,
+    to: segment,
+    options: default_distance_options(),
+  )
+}
+
+/// Return the nearest point using the original stationary-point window scan
+/// and explicit options.
+pub fn segment_projection_by_sampling_with(
+  point: Point,
+  to segment: Segment,
+  options options: DistanceOptions,
+) -> Result(SegmentProjection, Error) {
+  segment_projection_by_sampling_with_polish(
+    point,
+    segment,
+    options,
+    polish_iterations: options.max_iterations,
+  )
+}
+
+fn segment_projection_by_sampling_with_polish(
+  point: Point,
+  segment: Segment,
+  options: DistanceOptions,
+  polish_iterations polish_iterations: Int,
+) -> Result(SegmentProjection, Error) {
   case validate_distance_options(options) {
     Error(error) -> Error(error)
     Ok(Nil) -> {
       case segment {
         Line(start:, end:) -> Ok(point_to_line_projection(point, start, end))
         QuadraticBezier(..) | CubicBezier(..) | Arc(..) -> {
-          case distance_candidates(point, segment, options) {
+          case
+            distance_candidates_from_sampling_windows(
+              point,
+              segment,
+              options,
+              polish_iterations,
+            )
+          {
             Error(error) -> Error(error)
             Ok(candidates) ->
               smallest_segment_projection(point, segment, candidates)
           }
         }
       }
+    }
+  }
+}
+
+/// Return the nearest point using polynomial stationary-point enumeration for
+/// quadratic and cubic Beziers.
+///
+/// Lines remain analytic. Arcs retain the sampling-based implementation.
+pub fn segment_projection_by_polynomial(
+  point: Point,
+  to segment: Segment,
+) -> Result(SegmentProjection, Error) {
+  segment_projection_by_polynomial_with(
+    point,
+    to: segment,
+    options: default_distance_options(),
+  )
+}
+
+/// Return the nearest point using polynomial stationary-point enumeration and
+/// explicit options.
+pub fn segment_projection_by_polynomial_with(
+  point: Point,
+  to segment: Segment,
+  options options: DistanceOptions,
+) -> Result(SegmentProjection, Error) {
+  segment_projection_by_polynomial_with_polish(
+    point,
+    segment,
+    options,
+    polish_iterations: options.max_iterations,
+  )
+}
+
+fn segment_projection_by_polynomial_with_polish(
+  point: Point,
+  segment: Segment,
+  options: DistanceOptions,
+  polish_iterations polish_iterations: Int,
+) -> Result(SegmentProjection, Error) {
+  use _ <- result.try(validate_distance_options(options))
+  case segment {
+    Line(start:, end:) -> Ok(point_to_line_projection(point, start, end))
+    Arc(..) ->
+      segment_projection_by_sampling_with_polish(
+        point,
+        segment,
+        options,
+        polish_iterations:,
+      )
+    QuadraticBezier(..) | CubicBezier(..) -> {
+      use coefficients <- result.try(distance_stationary_polynomial(
+        point,
+        segment,
+      ))
+      let polynomial_options =
+        root.PolynomialOptions(
+          coefficient_tolerance: 0.000000000001,
+          root_tolerance: options.tolerance
+            /. segment_speed_upper_bound(segment),
+          value_tolerance: 0.000000000001,
+          max_iterations: options.max_iterations,
+          // Projection-specific polishing below uses geometric tangential
+          // error. The generic root solver only localizes the roots here.
+          polish_iterations: 0,
+        )
+      use roots <- result.try(
+        root.polynomial_roots_with(
+          coefficients,
+          from: 0.0,
+          to: 1.0,
+          options: polynomial_options,
+        )
+        |> result.map_error(distance_root_error),
+      )
+      let root_tolerance = polynomial_options.root_tolerance
+      use polished_roots <- result.try(
+        roots
+        |> list.try_map(fn(estimate) {
+          polish_distance_root_by_newton(
+            segment,
+            coefficients,
+            root.polynomial_derivative(coefficients),
+            estimate,
+            float.max(0.0, estimate -. root_tolerance),
+            float.min(1.0, estimate +. root_tolerance),
+            remaining: polish_iterations,
+          )
+        }),
+      )
+      smallest_segment_projection(point, segment, [0.0, 1.0, ..polished_roots])
     }
   }
 }
@@ -4524,10 +4666,80 @@ fn path_end_parameter_at_length_loop(
   }
 }
 
-fn distance_candidates(
+fn distance_stationary_polynomial(
+  point: Point,
+  segment: Segment,
+) -> Result(List(Float), Error) {
+  case segment {
+    QuadraticBezier(start:, control:, end:) -> {
+      let ax = start.x -. 2.0 *. control.x +. end.x
+      let ay = start.y -. 2.0 *. control.y +. end.y
+      let bx = 2.0 *. { control.x -. start.x }
+      let by = 2.0 *. { control.y -. start.y }
+      let cx = start.x -. point.x
+      let cy = start.y -. point.y
+      Ok([
+        2.0 *. { ax *. ax +. ay *. ay },
+        3.0 *. { ax *. bx +. ay *. by },
+        bx *. bx +. by *. by +. 2.0 *. { ax *. cx +. ay *. cy },
+        bx *. cx +. by *. cy,
+      ])
+    }
+    CubicBezier(start:, control1:, control2:, end:) -> {
+      let ax = 0.0 -. start.x +. 3.0 *. control1.x -. 3.0 *. control2.x +. end.x
+      let ay = 0.0 -. start.y +. 3.0 *. control1.y -. 3.0 *. control2.y +. end.y
+      let bx = 3.0 *. start.x -. 6.0 *. control1.x +. 3.0 *. control2.x
+      let by = 3.0 *. start.y -. 6.0 *. control1.y +. 3.0 *. control2.y
+      let cx = 3.0 *. { control1.x -. start.x }
+      let cy = 3.0 *. { control1.y -. start.y }
+      let dx = start.x -. point.x
+      let dy = start.y -. point.y
+      Ok([
+        3.0 *. { ax *. ax +. ay *. ay },
+        5.0 *. { ax *. bx +. ay *. by },
+        4.0 *. { ax *. cx +. ay *. cy } +. 2.0 *. { bx *. bx +. by *. by },
+        3.0 *. { ax *. dx +. ay *. dy } +. 3.0 *. { bx *. cx +. by *. cy },
+        2.0 *. { bx *. dx +. by *. dy } +. cx *. cx +. cy *. cy,
+        cx *. dx +. cy *. dy,
+      ])
+    }
+    _ -> Error(DistanceRootIsolationFailed)
+  }
+}
+
+fn segment_speed_upper_bound(segment: Segment) -> Float {
+  let bound = case segment {
+    QuadraticBezier(start:, control:, end:) ->
+      2.0 *. float.max(distance(start, control), distance(control, end))
+    CubicBezier(start:, control1:, control2:, end:) ->
+      3.0
+      *. float.max(
+        distance(start, control1),
+        float.max(distance(control1, control2), distance(control2, end)),
+      )
+    _ -> 1.0
+  }
+  float.max(bound, 1.0)
+}
+
+fn distance_root_error(error: root.Error) -> Error {
+  case error {
+    root.InvalidTolerance(tolerance) -> InvalidDistanceTolerance(tolerance)
+    root.InvalidMaxIterations(max_iterations) ->
+      InvalidDistanceMaxIterations(max_iterations)
+    root.InvalidPolishIterations(polish_iterations) ->
+      InvalidDistanceMaxIterations(polish_iterations)
+    root.MaxIterationsReached(estimate:, value:) ->
+      DistanceMaxIterationsReached(estimate:, value:)
+    root.NotBracketed(..) -> DistanceRootIsolationFailed
+  }
+}
+
+fn distance_candidates_from_sampling_windows(
   point: Point,
   segment: Segment,
   options: DistanceOptions,
+  polish_iterations: Int,
 ) -> Result(List(Float), Error) {
   case distance_stationary_value(point, segment, 0.0) {
     Error(error) -> Error(error)
@@ -4536,6 +4748,7 @@ fn distance_candidates(
         point,
         segment,
         options,
+        polish_iterations,
         index: 1,
         previous_t: 0.0,
         previous_value: first_value,
@@ -4549,6 +4762,7 @@ fn scan_distance_candidates(
   point: Point,
   segment: Segment,
   options: DistanceOptions,
+  polish_iterations: Int,
   index index: Int,
   previous_t previous_t: Float,
   previous_value previous_value: Float,
@@ -4567,6 +4781,7 @@ fn scan_distance_candidates(
               point,
               segment,
               options,
+              polish_iterations,
               previous_t,
               previous_value,
               next_t,
@@ -4579,6 +4794,7 @@ fn scan_distance_candidates(
                 point,
                 segment,
                 options,
+                polish_iterations,
                 index: index + 1,
                 previous_t: next_t,
                 previous_value: next_value,
@@ -4589,6 +4805,7 @@ fn scan_distance_candidates(
                 point,
                 segment,
                 options,
+                polish_iterations,
                 index: index + 1,
                 previous_t: next_t,
                 previous_value: next_value,
@@ -4609,6 +4826,7 @@ fn distance_candidate_for_window(
   point: Point,
   segment: Segment,
   options: DistanceOptions,
+  polish_iterations: Int,
   previous_t: Float,
   previous_value: Float,
   next_t: Float,
@@ -4623,10 +4841,11 @@ fn distance_candidate_for_window(
           case same_sign(previous_value, next_value) {
             True -> Ok(None)
             False ->
-              refine_distance_candidate(
+              refine_distance_window_by_bisection(
                 point,
                 segment,
                 options,
+                polish_iterations,
                 previous_t,
                 previous_value,
                 next_t,
@@ -4638,15 +4857,16 @@ fn distance_candidate_for_window(
   }
 }
 
-fn refine_distance_candidate(
+fn refine_distance_window_by_bisection(
   point: Point,
   segment: Segment,
   options: DistanceOptions,
+  polish_iterations: Int,
   left_t: Float,
   left_value: Float,
   right_t: Float,
 ) -> Result(Option(Float), Error) {
-  refine_distance_candidate_loop(
+  refine_distance_window_by_bisection_loop(
     point,
     segment,
     options.tolerance,
@@ -4654,11 +4874,12 @@ fn refine_distance_candidate(
     left_value,
     right_t,
     options.max_iterations,
+    polish_iterations,
   )
   |> result.map(Some)
 }
 
-fn refine_distance_candidate_loop(
+fn refine_distance_window_by_bisection_loop(
   point: Point,
   segment: Segment,
   tolerance: Float,
@@ -4666,6 +4887,7 @@ fn refine_distance_candidate_loop(
   left_value: Float,
   right_t: Float,
   remaining_iterations: Int,
+  polish_iterations: Int,
 ) -> Result(Float, Error) {
   use portion <- result.try(segment_between_inside(
     segment,
@@ -4674,7 +4896,29 @@ fn refine_distance_candidate_loop(
   ))
   use box <- result.try(segment_bounding_box(portion))
   case bounding_box_diameter(box) <=. tolerance {
-    True -> best_distance_parameter(point, segment, left_t, right_t)
+    True -> {
+      use estimate <- result.try(best_distance_parameter(
+        point,
+        segment,
+        left_t,
+        right_t,
+      ))
+      use estimate_value <- result.try(distance_stationary_value(
+        point,
+        segment,
+        estimate,
+      ))
+      polish_distance_window_by_bisection(
+        point,
+        segment,
+        left_t,
+        left_value,
+        right_t,
+        estimate,
+        estimate_value,
+        remaining: polish_iterations,
+      )
+    }
     False -> {
       let midpoint_t = left_t +. { right_t -. left_t } /. 2.0
       use midpoint_value <- result.try(distance_stationary_value(
@@ -4694,7 +4938,7 @@ fn refine_distance_candidate_loop(
             False ->
               case same_sign(left_value, midpoint_value) {
                 True ->
-                  refine_distance_candidate_loop(
+                  refine_distance_window_by_bisection_loop(
                     point,
                     segment,
                     tolerance,
@@ -4702,9 +4946,10 @@ fn refine_distance_candidate_loop(
                     midpoint_value,
                     right_t,
                     remaining_iterations - 1,
+                    polish_iterations,
                   )
                 False ->
-                  refine_distance_candidate_loop(
+                  refine_distance_window_by_bisection_loop(
                     point,
                     segment,
                     tolerance,
@@ -4712,12 +4957,171 @@ fn refine_distance_candidate_loop(
                     left_value,
                     midpoint_t,
                     remaining_iterations - 1,
+                    polish_iterations,
                   )
               }
           }
       }
     }
   }
+}
+
+fn polish_distance_window_by_bisection(
+  point: Point,
+  segment: Segment,
+  left_t: Float,
+  left_value: Float,
+  right_t: Float,
+  estimate: Float,
+  estimate_value: Float,
+  remaining remaining: Int,
+) -> Result(Float, Error) {
+  case remaining <= 0 || estimate_value == 0.0 {
+    True -> Ok(estimate)
+    False -> {
+      let midpoint_t = left_t +. { right_t -. left_t } /. 2.0
+      use midpoint_value <- result.try(distance_stationary_value(
+        point,
+        segment,
+        midpoint_t,
+      ))
+      let #(next_left, next_left_value, next_right) = case
+        same_sign(left_value, midpoint_value)
+      {
+        True -> #(midpoint_t, midpoint_value, right_t)
+        False -> #(left_t, left_value, midpoint_t)
+      }
+      use proposal <- result.try(best_distance_parameter(
+        point,
+        segment,
+        next_left,
+        next_right,
+      ))
+      use proposal_value <- result.try(distance_stationary_value(
+        point,
+        segment,
+        proposal,
+      ))
+      use progressing <- result.try(tangential_error_is_improving(
+        segment,
+        estimate,
+        estimate_value,
+        proposal,
+        proposal_value,
+      ))
+      case proposal == estimate || !progressing {
+        True -> Ok(estimate)
+        False ->
+          polish_distance_window_by_bisection(
+            point,
+            segment,
+            next_left,
+            next_left_value,
+            next_right,
+            proposal,
+            proposal_value,
+            remaining: remaining - 1,
+          )
+      }
+    }
+  }
+}
+
+fn polish_distance_root_by_newton(
+  segment: Segment,
+  coefficients: List(Float),
+  derivative: List(Float),
+  estimate: Float,
+  left: Float,
+  right: Float,
+  remaining remaining: Int,
+) -> Result(Float, Error) {
+  let estimate_value = root.polynomial_value(coefficients, at: estimate)
+  case remaining <= 0 || estimate_value == 0.0 {
+    True -> Ok(estimate)
+    False -> {
+      let derivative_value = root.polynomial_value(derivative, at: estimate)
+      let proposal = case derivative_value == 0.0 {
+        True -> left +. { right -. left } /. 2.0
+        False -> {
+          let newton = estimate -. estimate_value /. derivative_value
+          case newton >=. left, newton <=. right, newton != estimate {
+            True, True, True -> newton
+            _, _, _ -> left +. { right -. left } /. 2.0
+          }
+        }
+      }
+      let proposal_value = root.polynomial_value(coefficients, at: proposal)
+      use progressing <- result.try(tangential_error_is_improving(
+        segment,
+        estimate,
+        estimate_value,
+        proposal,
+        proposal_value,
+      ))
+      case proposal == estimate || !progressing {
+        True -> Ok(estimate)
+        False ->
+          polish_distance_root_by_newton(
+            segment,
+            coefficients,
+            derivative,
+            proposal,
+            left,
+            right,
+            remaining: remaining - 1,
+          )
+      }
+    }
+  }
+}
+
+fn tangential_error_is_improving(
+  segment: Segment,
+  previous_t: Float,
+  previous_value: Float,
+  proposal_t: Float,
+  proposal_value: Float,
+) -> Result(Bool, Error) {
+  use previous_derivative <- result.try(segment_derivative(
+    segment,
+    at: previous_t,
+  ))
+  use proposal_derivative <- result.try(segment_derivative(
+    segment,
+    at: proposal_t,
+  ))
+  let previous_speed_squared = dot(previous_derivative, previous_derivative)
+  let proposal_speed_squared = dot(proposal_derivative, proposal_derivative)
+  let reliable_speed_squared =
+    segment_derivative_scale_squared(segment) *. 0.0000000001
+  case
+    previous_speed_squared >=. reliable_speed_squared,
+    proposal_speed_squared >=. reliable_speed_squared
+  {
+    True, True ->
+      Ok(
+        proposal_value *. proposal_value *. previous_speed_squared
+        <. previous_value *. previous_value *. proposal_speed_squared,
+      )
+    _, _ -> Ok(False)
+  }
+}
+
+fn segment_derivative_scale_squared(segment: Segment) -> Float {
+  let scale = case segment {
+    Line(start:, end:) -> distance(start, end)
+    QuadraticBezier(start:, control:, end:) ->
+      2.0 *. float.max(distance(start, control), distance(control, end))
+    CubicBezier(start:, control1:, control2:, end:) ->
+      3.0
+      *. float.max(
+        distance(start, control1),
+        float.max(distance(control1, control2), distance(control2, end)),
+      )
+    Arc(..) -> 1.0
+  }
+  scale *. scale
 }
 
 fn best_distance_parameter(
