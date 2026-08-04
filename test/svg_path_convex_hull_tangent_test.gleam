@@ -363,10 +363,11 @@ pub fn cubic_point_tangent_roots_preserve_non_crossing_root_test() {
       control2: svg_path.Point(2.0 /. 3.0, 1.0 /. 3.0),
       end: svg_path.Point(1.0, 1.0),
     )
-  let roots = convex_hull.internal_cubic_point_tangent_roots(
-    segment,
-    point: svg_path.Point(0.37, 0.1369),
-  )
+  let roots =
+    convex_hull.internal_cubic_point_tangent_roots(
+      segment,
+      point: svg_path.Point(0.37, 0.1369),
+    )
 
   let assert [root] = roots
   assert near_float(root, 0.37)
@@ -381,11 +382,12 @@ pub fn cubic_chord_tangent_refinement_reaches_interior_tangency_test() {
       control2: svg_path.Point(2.0 /. 3.0, -1.0 /. 3.0),
       end: svg_path.Point(1.0, 0.0),
     )
-  let refined = convex_hull.internal_refine_chord_tangent(
-    segment,
-    approximate: 0.47,
-    other: 0.0,
-  )
+  let refined =
+    convex_hull.internal_refine_chord_tangent(
+      segment,
+      approximate: 0.47,
+      other: 0.0,
+    )
 
   assert near_float(refined, 0.5)
 }

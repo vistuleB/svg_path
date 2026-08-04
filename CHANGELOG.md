@@ -9,6 +9,34 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
+## 0.29.0 - 2026-08-05
+
+### Added
+
+- Added `svg_path/encounters` for combined overlap and isolated
+  point-intersection queries between segments, segment-subpath pairs,
+  subpaths, and paths.
+- Added segment-subpath and path overlap values with complete piecewise-affine
+  parameter correspondences and exact opposite-parameter lookup helpers.
+- Added ordered source-segment images to `ArrangementGraphBuild`, identifying
+  the atomic graph edges produced from every normalized source segment.
+- Added canonical fast, slow, and release test profiles and documented the
+  parser-conformance boundaries covered by the imported SVG fixtures.
+
+### Changed
+
+- Required every reported segment overlap to have an affine, monotone
+  parameter correspondence; unsupported multiply traced or non-monotone
+  correspondences now return `NonAffineOverlapCorrespondence`.
+- Changed offset overlap filtering to use arrangement-graph segment images
+  instead of independently rediscovering overlaps in the offset geometry.
+- Changed cubic projection to isolate stationary-distance polynomial roots and
+  refine them with bisection, while consolidating shared polynomial root logic.
+- Refined cubic convex-hull tangency and chord normalization using isolated
+  polynomial roots.
+- Reduced the public overlap and encounter API to the supported query,
+  correspondence, and explicitly derived filtering operations.
+
 ## 0.28.0 - 2026-08-02
 
 - Added contextual parsing and minimized serialization of compact arc flags.

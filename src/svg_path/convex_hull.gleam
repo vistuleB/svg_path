@@ -1571,17 +1571,18 @@ fn cubic_point_tangent_roots(
     2.0 *. cross(s, b),
     cross(s, c),
   ]
-  let assert Ok(roots) = root.polynomial_roots_with(
-    coefficients,
-    from: 0.0,
-    to: 1.0,
-    options: root.PolynomialOptions(
-      coefficient_tolerance: 0.000000000001,
-      root_tolerance: 0.000000000001,
-      value_tolerance: 0.000000000001,
-      max_iterations: 100,
-    ),
-  )
+  let assert Ok(roots) =
+    root.polynomial_roots_with(
+      coefficients,
+      from: 0.0,
+      to: 1.0,
+      options: root.PolynomialOptions(
+        coefficient_tolerance: 0.000000000001,
+        root_tolerance: 0.000000000001,
+        value_tolerance: 0.000000000001,
+        max_iterations: 100,
+      ),
+    )
   roots
 }
 
@@ -3329,40 +3330,41 @@ fn bisect_chord_tangent_loop(
   let midpoint_value = chord_tangent_value(segment, midpoint, other)
   case remaining <= 0 || midpoint_value == 0.0 {
     True -> midpoint
-    False -> case float.absolute_value(right -. left) <=. 0.000000000001 {
-      True ->
-        polish_chord_tangent_by_bisection(
-          segment,
-          other,
-          left,
-          left_value,
-          right,
-          estimate: midpoint,
-          estimate_value: midpoint_value,
-          remaining: remaining,
-        )
-      False ->
-      case same_sign(left_value, midpoint_value) {
+    False ->
+      case float.absolute_value(right -. left) <=. 0.000000000001 {
         True ->
-          bisect_chord_tangent_loop(
+          polish_chord_tangent_by_bisection(
             segment,
-            midpoint,
-            midpoint_value,
-            right,
             other,
-            remaining: remaining - 1,
-          )
-        False ->
-          bisect_chord_tangent_loop(
-            segment,
             left,
             left_value,
-            midpoint,
-            other,
-            remaining: remaining - 1,
+            right,
+            estimate: midpoint,
+            estimate_value: midpoint_value,
+            remaining: remaining,
           )
+        False ->
+          case same_sign(left_value, midpoint_value) {
+            True ->
+              bisect_chord_tangent_loop(
+                segment,
+                midpoint,
+                midpoint_value,
+                right,
+                other,
+                remaining: remaining - 1,
+              )
+            False ->
+              bisect_chord_tangent_loop(
+                segment,
+                left,
+                left_value,
+                midpoint,
+                other,
+                remaining: remaining - 1,
+              )
+          }
       }
-    }
   }
 }
 
@@ -3387,14 +3389,16 @@ fn polish_chord_tangent_by_bisection(
       }
       let proposal = next_left +. { next_right -. next_left } /. 2.0
       let proposal_value = chord_tangent_value(segment, proposal, other)
-      case chord_tangent_error_improves(
-        segment,
-        other,
-        estimate,
-        estimate_value,
-        proposal,
-        proposal_value,
-      ) {
+      case
+        chord_tangent_error_improves(
+          segment,
+          other,
+          estimate,
+          estimate_value,
+          proposal,
+          proposal_value,
+        )
+      {
         False -> estimate
         True ->
           polish_chord_tangent_by_bisection(
@@ -3420,16 +3424,10 @@ fn chord_tangent_error_improves(
   proposal_t: Float,
   proposal_value: Float,
 ) -> Bool {
-  let previous_denominator = chord_tangent_error_denominator(
-    segment,
-    previous_t,
-    other,
-  )
-  let proposal_denominator = chord_tangent_error_denominator(
-    segment,
-    proposal_t,
-    other,
-  )
+  let previous_denominator =
+    chord_tangent_error_denominator(segment, previous_t, other)
+  let proposal_denominator =
+    chord_tangent_error_denominator(segment, proposal_t, other)
   case previous_denominator, proposal_denominator {
     Some(previous_denominator), Some(proposal_denominator) ->
       proposal_value *. proposal_value *. previous_denominator
@@ -3450,10 +3448,7 @@ fn chord_tangent_error_denominator(
   let chord_squared = point_distance_squared(point, other_point)
   let reliable_tangent_squared =
     convex_hull_derivative_scale_squared(segment) *. 0.0000000001
-  case
-    tangent_squared >=. reliable_tangent_squared,
-    chord_squared >. 0.0
-  {
+  case tangent_squared >=. reliable_tangent_squared, chord_squared >. 0.0 {
     True, True -> Some(tangent_squared *. chord_squared)
     _, _ -> None
   }
