@@ -15,6 +15,10 @@ const tolerance = 0.000001
 
 const minimum_chord = 0.00001
 
+const readme_output_dir = "../../test/generated/readme"
+
+const gallery_output_dir = "../../test/generated/gallery"
+
 type FigureOperation {
   IntersectionFigure
   DifferenceFigure
@@ -23,7 +27,7 @@ type FigureOperation {
 pub fn main() -> Dynamic {
   let cases = [
     #(
-      "intersection_rectangles.svg",
+      "gallery-intersection-rectangles.svg",
       "overlapping rectangles",
       rectangle(0.0, 0.0, 80.0, 80.0),
       rectangle(40.0, 0.0, 120.0, 80.0),
@@ -31,7 +35,7 @@ pub fn main() -> Dynamic {
       IntersectionFigure,
     ),
     #(
-      "intersection_circle_rectangle.svg",
+      "gallery-intersection-circle-rectangle.svg",
       "circle and rectangle",
       circle(svg_path.Point(55.0, 50.0), 45.0),
       rectangle(45.0, 0.0, 105.0, 100.0),
@@ -39,7 +43,7 @@ pub fn main() -> Dynamic {
       IntersectionFigure,
     ),
     #(
-      "intersection_nested_nonzero.svg",
+      "gallery-intersection-nested-nonzero.svg",
       "nested contours · nonzero",
       nested_rectangles(),
       rectangle(42.0, 32.0, 78.0, 68.0),
@@ -47,7 +51,7 @@ pub fn main() -> Dynamic {
       IntersectionFigure,
     ),
     #(
-      "intersection_nested_evenodd.svg",
+      "gallery-intersection-nested-evenodd.svg",
       "nested contours · even–odd",
       nested_rectangles(),
       rectangle(42.0, 32.0, 78.0, 68.0),
@@ -55,7 +59,7 @@ pub fn main() -> Dynamic {
       IntersectionFigure,
     ),
     #(
-      "intersection_bowtie_rectangle.svg",
+      "gallery-intersection-bowtie-rectangle.svg",
       "self-crossing contour",
       bowtie(),
       rectangle(35.0, 25.0, 88.0, 82.0),
@@ -63,7 +67,7 @@ pub fn main() -> Dynamic {
       IntersectionFigure,
     ),
     #(
-      "intersection_edge_tangent.svg",
+      "gallery-intersection-edge-tangent.svg",
       "edge-tangent rectangles",
       rectangle(0.0, 0.0, 60.0, 80.0),
       rectangle(60.0, 15.0, 120.0, 65.0),
@@ -71,7 +75,7 @@ pub fn main() -> Dynamic {
       IntersectionFigure,
     ),
     #(
-      "difference_rectangles.svg",
+      "gallery-difference-rectangles.svg",
       "overlapping rectangles",
       rectangle(0.0, 0.0, 80.0, 80.0),
       rectangle(40.0, 0.0, 120.0, 80.0),
@@ -79,7 +83,7 @@ pub fn main() -> Dynamic {
       DifferenceFigure,
     ),
     #(
-      "difference_hole.svg",
+      "gallery-difference-hole.svg",
       "contained rectangle cutout",
       rectangle(0.0, 0.0, 120.0, 100.0),
       rectangle(32.0, 22.0, 88.0, 78.0),
@@ -87,7 +91,7 @@ pub fn main() -> Dynamic {
       DifferenceFigure,
     ),
     #(
-      "difference_circle_rectangle.svg",
+      "gallery-difference-circle-rectangle.svg",
       "circle minus rectangle",
       circle(svg_path.Point(55.0, 50.0), 45.0),
       rectangle(45.0, 0.0, 105.0, 100.0),
@@ -95,7 +99,7 @@ pub fn main() -> Dynamic {
       DifferenceFigure,
     ),
     #(
-      "difference_nested_nonzero.svg",
+      "gallery-difference-nested-nonzero.svg",
       "nested contours · nonzero",
       nested_rectangles(),
       rectangle(42.0, 32.0, 78.0, 68.0),
@@ -103,7 +107,7 @@ pub fn main() -> Dynamic {
       DifferenceFigure,
     ),
     #(
-      "difference_nested_evenodd.svg",
+      "gallery-difference-nested-evenodd.svg",
       "nested contours · even–odd",
       nested_rectangles(),
       rectangle(42.0, 32.0, 78.0, 68.0),
@@ -111,7 +115,7 @@ pub fn main() -> Dynamic {
       DifferenceFigure,
     ),
     #(
-      "difference_bowtie_rectangle.svg",
+      "gallery-difference-bowtie-rectangle.svg",
       "self-crossing contour minus rectangle",
       bowtie(),
       rectangle(35.0, 25.0, 88.0, 82.0),
@@ -123,7 +127,7 @@ pub fn main() -> Dynamic {
     let #(name, title, left, right, rule, operation) = entry
     let _ =
       write_file(
-        "../debug/" <> name,
+        gallery_output_dir <> "/" <> name,
         render_case(title, left, right, rule, operation),
       )
   })
@@ -139,12 +143,12 @@ pub fn main() -> Dynamic {
     ])
   let _ =
     write_file(
-      "../debug/arrangement_boolean_nonzero.svg",
+      readme_output_dir <> "/arrangement_csg_nonzero.svg",
       render_boolean_table(figure_left, figure_right, svg_path.Nonzero),
     )
   let _ =
     write_file(
-      "../debug/arrangement_boolean_evenodd.svg",
+      readme_output_dir <> "/arrangement_csg_evenodd.svg",
       render_boolean_table(figure_left, figure_right, svg_path.EvenOdd),
     )
   dyn_nil()
@@ -184,6 +188,7 @@ fn render_boolean_table(
   let assert Ok(arrangement_graph.ArrangementGraphBuild(
     graph:,
     normalized_paths: [normalized_graph_source],
+    ..,
   )) = arrangement_graph.build([graph_source], tolerance:, minimum_chord:)
   let assert Ok(graph_drawing) =
     arrangement_graph_drawing.annotated_drawing(
@@ -420,6 +425,7 @@ fn render_case(
   let assert Ok(arrangement_graph.ArrangementGraphBuild(
     graph:,
     normalized_paths: [normalized_graph_source],
+    ..,
   )) = arrangement_graph.build([graph_source], tolerance:, minimum_chord:)
   let assert Ok(graph_drawing) =
     arrangement_graph_drawing.annotated_drawing(

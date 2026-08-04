@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+readme_output="$root/test/generated/readme"
+gallery_output="$root/test/generated/gallery"
+gallery_destination="$root/docs/gallery"
+
+mkdir -p "$readme_output" "$gallery_output" "$gallery_destination"
+
+"$root/scripts/test-fast"
+(
+  cd "$root/examples/readme_arrangement_figures"
+  gleam run
+  gleam run -m arrangement_csg_figures
+)
+
+readme_figures=(
+  zero_length_closepath_probe.svg
+  arrangement_graph_overlapping_squares.svg
+  arrangement_graph_semantic_circle_overlap.svg
+  arrangement_csg_nonzero.svg
+  arrangement_csg_evenodd.svg
+)
+
+gallery_figures=(
+  gallery-rounded-rectangle-union.svg
+  gallery-intersection-rectangles.svg
+  gallery-intersection-circle-rectangle.svg
+  gallery-intersection-edge-tangent.svg
+  gallery-intersection-nested-nonzero.svg
+  gallery-intersection-nested-evenodd.svg
+  gallery-intersection-bowtie-rectangle.svg
+  gallery-difference-rectangles.svg
+  gallery-difference-circle-rectangle.svg
+  gallery-difference-hole.svg
+  gallery-difference-nested-nonzero.svg
+  gallery-difference-nested-evenodd.svg
+  gallery-difference-bowtie-rectangle.svg
+  gallery-stroke-caps.svg
+  gallery-dashed-strokes.svg
+  gallery-recursive-dashes.svg
+  gallery-figure-eight-band.svg
+  gallery-stroke-offset-tracks.svg
+  gallery-earth-tone-offsets.svg
+  gallery-stalled-offset-arc-turns.svg
+  gallery-stalled-offset-corner-zoom.svg
+  gallery-khmer-coil-offset-map.svg
+  gallery-khmer-decaying-spiral-offset-map.svg
+  gallery-crescent-hull.svg
+  gallery-cut-radiator.svg
+  gallery-marker-pose-slots.svg
+  gallery-marker-orient-semantics.svg
+  gallery-marker-reference-semantics.svg
+  gallery-marker-units-semantics.svg
+  gallery-marker-viewbox-semantics.svg
+)
+
+for figure in "${readme_figures[@]}"; do
+  test -s "$readme_output/$figure"
+done
+
+for figure in "${gallery_figures[@]}"; do
+  test -s "$gallery_output/$figure"
+  cp "$gallery_output/$figure" "$gallery_destination/$figure"
+done
+
+echo "Generated ${#readme_figures[@]} README figures in test/generated/readme."
+echo "Generated and promoted ${#gallery_figures[@]} Gallery figures."

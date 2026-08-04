@@ -18,6 +18,20 @@ absolute local Markdown image paths.
 Do not use GUI commands such as `open`, Chrome, Inkscape, or Preview for this
 workflow. Do not generate PNG fallbacks unless specifically requested.
 
+## Regenerating Every Published Figure
+
+Run the canonical generator from the repository root:
+
+```sh
+scripts/generate-published-figures
+```
+
+It regenerates the five README figures in `test/generated/readme`, regenerates
+all thirty Gallery figures in `test/generated/gallery`, verifies that every
+published filename was produced, and promotes the Gallery figures into
+`docs/gallery`. README figures still require review and promotion through the
+asset worktree described below.
+
 ## Gallery Figures
 
 Gallery figures are committed on `main`.

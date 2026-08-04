@@ -11,5 +11,8 @@ gleam run
 gleam run -m arrangement_csg_figures
 ```
 
-Preview output is written to `../debug/`. After review, follow
-`../../COMMIT_CYCLE.md` to promote selected SVGs to the README asset branch.
+Preview output is written to `../../test/generated/readme/`; the CSG module
+also writes its twelve Gallery panels to `../../test/generated/gallery/`.
+Normally run `../../scripts/generate-published-figures` from the repository
+root to regenerate the complete README and Gallery figure set, validate all
+expected outputs, and promote the Gallery copies to `../../docs/gallery/`.

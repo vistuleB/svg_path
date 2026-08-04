@@ -11,16 +11,185 @@ const tolerance = 0.000001
 
 const minimum_chord = 0.00001
 
+const output_dir = "../../test/generated/readme"
+
 pub fn main() -> Dynamic {
   let _ =
     write_file(
-      "../debug/arrangement_graph_overlapping_squares.svg",
+      output_dir <> "/arrangement_graph_overlapping_squares.svg",
       overlapping_squares(),
     )
+  let _ =
+    write_file(
+      output_dir <> "/arrangement_graph_semantic_circle_overlap.svg",
+      semantic_circle_overlap(),
+    )
   write_file(
-    "../debug/arrangement_graph_semantic_circle_overlap.svg",
-    semantic_circle_overlap(),
+    output_dir <> "/zero_length_closepath_probe.svg",
+    zero_length_closepath_probe(),
   )
+}
+
+fn zero_length_closepath_probe() -> String {
+  let background =
+    svg.Rectangle(
+      svg_path.Point(-80.0, 0.0),
+      500.0,
+      360.0,
+      "fill: white; stroke: none",
+    )
+  let guides =
+    [50.0, 120.0, 230.0, 300.0]
+    |> list.map(fn(y) {
+      svg.StyledPath(
+        svg_path.Path([
+          svg_path.subpath_assert([
+            svg_path.Line(
+              start: svg_path.Point(20.0, y),
+              end: svg_path.Point(390.0, y),
+            ),
+          ]),
+        ]),
+        "fill: none; stroke: #ddd; stroke-width: 1",
+      )
+    })
+  let points =
+    [50.0, 120.0, 230.0, 300.0]
+    |> list.flat_map(fn(y) {
+      [
+        svg.Circle(svg_path.Point(90.0, y), 2.0, "fill: red; stroke: none"),
+        svg.Circle(svg_path.Point(260.0, y), 2.0, "fill: red; stroke: none"),
+      ]
+    })
+  let move_only = fn(x, y) {
+    svg_path.Path([svg_path.subpath_empty(at: svg_path.Point(x, y))])
+  }
+  let zero_line = fn(x, y) {
+    svg_path.Path([
+      svg_path.subpath_assert([
+        svg_path.Line(start: svg_path.Point(x, y), end: svg_path.Point(x, y)),
+      ]),
+    ])
+  }
+  let closed_move = fn(x, y) {
+    svg_path.Path([
+      svg_path.subpath_empty(at: svg_path.Point(x, y))
+      |> svg_path.subpath_assert_set_closed(closed: True),
+    ])
+  }
+  let round_style =
+    "fill: none; stroke: #2563eb; stroke-width: 24; stroke-linecap: round"
+  let square_style =
+    "fill: none; stroke: #2563eb; stroke-width: 24; stroke-linecap: square"
+  let close_round_style =
+    "fill: none; stroke: #111827; stroke-width: 24; stroke-linecap: round"
+  let close_square_style =
+    "fill: none; stroke: #111827; stroke-width: 24; stroke-linecap: square"
+  let labels = [
+    svg.Text("M only", probe_heading_style(), svg_path.Point(90.0, 25.0), 12),
+    svg.Text(
+      "M then zero-length L",
+      probe_heading_style(),
+      svg_path.Point(260.0, 25.0),
+      12,
+    ),
+    svg.Text("M only", probe_heading_style(), svg_path.Point(90.0, 205.0), 12),
+    svg.Text(
+      "M then Z",
+      probe_heading_style(),
+      svg_path.Point(260.0, 205.0),
+      12,
+    ),
+    svg.Text(
+      "linecap: round",
+      probe_row_style(),
+      svg_path.Point(10.0, 54.0),
+      12,
+    ),
+    svg.Text(
+      "linecap: square",
+      probe_row_style(),
+      svg_path.Point(10.0, 124.0),
+      12,
+    ),
+    svg.Text(
+      "linecap: round",
+      probe_row_style(),
+      svg_path.Point(10.0, 234.0),
+      12,
+    ),
+    svg.Text(
+      "linecap: square",
+      probe_row_style(),
+      svg_path.Point(10.0, 304.0),
+      12,
+    ),
+    svg.Text("M 90,50", probe_code_style(), svg_path.Point(90.0, 78.0), 10),
+    svg.Text(
+      "M 260,50 L 260,50",
+      probe_code_style(),
+      svg_path.Point(260.0, 78.0),
+      10,
+    ),
+    svg.Text("M 90,120", probe_code_style(), svg_path.Point(90.0, 148.0), 10),
+    svg.Text(
+      "M 260,120 L 260,120",
+      probe_code_style(),
+      svg_path.Point(260.0, 148.0),
+      10,
+    ),
+    svg.Text("M 90,230", probe_code_style(), svg_path.Point(90.0, 258.0), 10),
+    svg.Text(
+      "M 260,230 Z",
+      probe_code_style(),
+      svg_path.Point(260.0, 258.0),
+      10,
+    ),
+    svg.Text("M 90,300", probe_code_style(), svg_path.Point(90.0, 328.0), 10),
+    svg.Text(
+      "M 260,300 Z",
+      probe_code_style(),
+      svg_path.Point(260.0, 328.0),
+      10,
+    ),
+  ]
+
+  svg.document(
+    [
+      background,
+      ..list.flatten([
+        guides,
+        points,
+        labels,
+        [
+          svg.StyledPath(move_only(90.0, 50.0), round_style),
+          svg.StyledPath(zero_line(260.0, 50.0), round_style),
+          svg.StyledPath(move_only(90.0, 120.0), square_style),
+          svg.StyledPath(zero_line(260.0, 120.0), square_style),
+          svg.StyledPath(move_only(90.0, 230.0), close_round_style),
+          svg.StyledPath(closed_move(260.0, 230.0), close_round_style),
+          svg.StyledPath(move_only(90.0, 300.0), close_square_style),
+          svg.StyledPath(closed_move(260.0, 300.0), close_square_style),
+        ],
+      ])
+    ],
+    view_box: svg_path.BoundingBox(
+      min: svg_path.Point(-80.0, 0.0),
+      max: svg_path.Point(420.0, 360.0),
+    ),
+  )
+}
+
+fn probe_heading_style() -> String {
+  "fill: #111827; font-family: system-ui, sans-serif; font-weight: 700; text-anchor: middle"
+}
+
+fn probe_row_style() -> String {
+  "fill: #111827; font-family: system-ui, sans-serif; text-anchor: end"
+}
+
+fn probe_code_style() -> String {
+  "fill: #111827; font-family: monospace; text-anchor: middle"
 }
 
 fn semantic_circle_overlap() -> String {
@@ -57,6 +226,7 @@ fn semantic_circle_overlap() -> String {
   let assert Ok(arrangement_graph.ArrangementGraphBuild(
     graph:,
     normalized_paths: [normalized_source],
+    ..,
   )) = arrangement_graph.build([graph_source], tolerance:, minimum_chord:)
   let assert Ok(graph_things) =
     drawing.annotated_drawing(graph, normalized_source, tolerance:)
@@ -166,6 +336,7 @@ fn overlapping_squares() -> String {
   let assert Ok(arrangement_graph.ArrangementGraphBuild(
     graph:,
     normalized_paths: [normalized_source],
+    ..,
   )) = arrangement_graph.build([graph_source], tolerance:, minimum_chord:)
   let assert Ok(graph_things) =
     drawing.annotated_drawing(graph, normalized_source, tolerance:)
