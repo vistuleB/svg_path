@@ -97,7 +97,7 @@ fn assert_overlap_contract(
 pub fn segment_overlap_merge_is_idempotent_test() {
   let overlap = segment_overlap(0.1, 0.9, 0.2, 0.8)
 
-  assert overlaps.merge_segment_overlaps(overlap, overlap, tolerance:)
+  assert overlaps.segment_overlap_merge(overlap, overlap, tolerance:)
     == overlaps.Merged(overlap)
 }
 
@@ -105,7 +105,7 @@ pub fn segment_overlap_merge_keeps_containing_interval_test() {
   let outer = segment_overlap(0.0, 1.0, 0.0, 1.0)
   let inner = segment_overlap(0.2, 0.8, 0.2, 0.8)
 
-  assert overlaps.merge_segment_overlaps(inner, outer, tolerance:)
+  assert overlaps.segment_overlap_merge(inner, outer, tolerance:)
     == overlaps.Merged(outer)
 }
 
@@ -114,9 +114,9 @@ pub fn segment_overlap_merge_combines_partial_intervals_test() {
   let second = segment_overlap(0.4, 1.0, 0.4, 1.0)
   let expected = segment_overlap(0.0, 1.0, 0.0, 1.0)
 
-  assert overlaps.merge_segment_overlaps(first, second, tolerance:)
+  assert overlaps.segment_overlap_merge(first, second, tolerance:)
     == overlaps.Merged(expected)
-  assert overlaps.merge_segment_overlaps(second, first, tolerance:)
+  assert overlaps.segment_overlap_merge(second, first, tolerance:)
     == overlaps.Merged(expected)
 }
 
@@ -124,7 +124,7 @@ pub fn segment_overlap_merge_combines_touching_intervals_test() {
   let first = segment_overlap(0.0, 0.5, 0.0, 0.5)
   let second = segment_overlap(0.5, 1.0, 0.5, 1.0)
 
-  assert overlaps.merge_segment_overlaps(first, second, tolerance:)
+  assert overlaps.segment_overlap_merge(first, second, tolerance:)
     == overlaps.Merged(segment_overlap(0.0, 1.0, 0.0, 1.0))
 }
 
@@ -132,7 +132,7 @@ pub fn segment_overlap_merge_preserves_reversed_traversal_test() {
   let first = segment_overlap(0.0, 0.6, 1.0, 0.4)
   let second = segment_overlap(0.4, 1.0, 0.6, 0.0)
 
-  assert overlaps.merge_segment_overlaps(first, second, tolerance:)
+  assert overlaps.segment_overlap_merge(first, second, tolerance:)
     == overlaps.Merged(segment_overlap(0.0, 1.0, 1.0, 0.0))
 }
 
@@ -140,7 +140,7 @@ pub fn segment_overlap_merge_reports_disjoint_intervals_test() {
   let first = segment_overlap(0.0, 0.2, 0.0, 0.2)
   let second = segment_overlap(0.8, 1.0, 0.8, 1.0)
 
-  assert overlaps.merge_segment_overlaps(first, second, tolerance:)
+  assert overlaps.segment_overlap_merge(first, second, tolerance:)
     == overlaps.Disjoint
 }
 
@@ -148,7 +148,7 @@ pub fn segment_overlap_merge_rejects_one_sided_overlap_test() {
   let first = segment_overlap(0.0, 0.6, 0.0, 0.2)
   let second = segment_overlap(0.4, 1.0, 0.8, 1.0)
 
-  assert overlaps.merge_segment_overlaps(first, second, tolerance:)
+  assert overlaps.segment_overlap_merge(first, second, tolerance:)
     == overlaps.Contradiction
 }
 
@@ -156,7 +156,7 @@ pub fn segment_overlap_merge_rejects_direction_change_test() {
   let first = segment_overlap(0.0, 0.6, 0.0, 0.6)
   let second = segment_overlap(0.4, 1.0, 0.6, 0.0)
 
-  assert overlaps.merge_segment_overlaps(first, second, tolerance:)
+  assert overlaps.segment_overlap_merge(first, second, tolerance:)
     == overlaps.Contradiction
 }
 
@@ -164,11 +164,11 @@ pub fn segment_overlap_merge_rejects_zero_length_interval_test() {
   let point = segment_overlap(0.5, 0.5, 0.5, 0.5)
   let interval = segment_overlap(0.0, 1.0, 0.0, 1.0)
 
-  assert overlaps.merge_segment_overlaps(point, interval, tolerance:)
+  assert overlaps.segment_overlap_merge(point, interval, tolerance:)
     == overlaps.Contradiction
 }
 
-pub fn canonicalize_segment_overlap_orients_by_left_segment_test() {
+pub fn segment_overlap_canonicalize_orients_by_left_segment_test() {
   let overlap =
     overlaps.SegmentOverlap(
       left_from: 0.8,
@@ -179,7 +179,7 @@ pub fn canonicalize_segment_overlap_orients_by_left_segment_test() {
       end: svg_path.Point(2.0, 0.0),
     )
 
-  assert overlaps.canonicalize_segment_overlap(overlap)
+  assert overlaps.segment_overlap_canonicalize(overlap)
     == overlaps.SegmentOverlap(
       left_from: 0.2,
       left_to: 0.8,
@@ -193,7 +193,7 @@ pub fn canonicalize_segment_overlap_orients_by_left_segment_test() {
 pub fn segment_overlap_minimum_span_filter_is_separate_test() {
   let overlap = segment_overlap(0.2, 0.2001, 0.4, 0.4001)
 
-  assert overlaps.canonicalize_segment_overlap(overlap) == overlap
+  assert overlaps.segment_overlap_canonicalize(overlap) == overlap
   assert !overlaps.segment_overlap_exceeds_minimum_span(
     overlap,
     minimum_span: 0.001,
@@ -205,7 +205,7 @@ pub fn segment_overlap_list_merge_closes_transitive_chain_test() {
   let second = segment_overlap(0.3, 0.7, 0.3, 0.7)
   let third = segment_overlap(0.6, 1.0, 0.6, 1.0)
 
-  assert overlaps.merge_segment_overlap_list([third, first, second], tolerance:)
+  assert overlaps.segment_overlap_list_merge([third, first, second], tolerance:)
     == Ok([segment_overlap(0.0, 1.0, 0.0, 1.0)])
 }
 
@@ -299,6 +299,21 @@ pub fn endpoint_projection_overlap_rejects_opposite_semicircles_test() {
       samples: 9,
     )
     == Ok([])
+}
+
+pub fn overlap_detection_rejects_negative_tolerance_test() {
+  assert overlaps.segment_with(line(), line(), tolerance: -0.000001)
+    == Error(svg_path.InvalidOverlapTolerance(-0.000001))
+}
+
+pub fn endpoint_projection_overlap_rejects_nonpositive_samples_test() {
+  assert overlaps.segment_overlaps_by_endpoint_projection_with(
+      line(),
+      line(),
+      tolerance:,
+      samples: 0,
+    )
+    == Error(svg_path.InvalidOverlapSamples(0))
 }
 
 pub fn identical_line_is_one_full_overlap_test() {
@@ -607,6 +622,77 @@ fn assert_full_overlap(
   assert right_to == expected_right_to
   assert start == svg_path.segment_start(left)
   assert end == svg_path.segment_end(left)
+}
+
+pub fn segment_subpath_overlap_preserves_piecewise_correspondence_test() {
+  let segment = line()
+  let subpath = polyline([0.0, 5.0, 10.0])
+  let assert Ok([overlap]) = overlaps.segment_subpath(segment, subpath)
+  let assert overlaps.SegmentSubpathOverlap(
+    pieces: [
+      overlaps.SegmentSubpathOverlapPiece(subpath_segment_index: 0, ..),
+      overlaps.SegmentSubpathOverlapPiece(subpath_segment_index: 1, ..),
+    ],
+    ..,
+  ) = overlap
+
+  assert overlaps.segment_subpath_overlap_subpath_parameter(
+      overlap,
+      0.75,
+      segment,
+      subpath,
+    )
+    == Ok(Some(svg_path.SubpathParameter(segment_index: 1, t: 0.5)))
+  assert overlaps.segment_subpath_overlap_segment_parameter(
+      overlap,
+      svg_path.SubpathParameter(segment_index: 1, t: 0.5),
+      segment,
+      subpath,
+    )
+    == Ok(Some(0.75))
+}
+
+pub fn path_overlap_preserves_subpath_correspondence_and_indices_test() {
+  let left_overlap = polyline([0.0, 10.0])
+  let right_overlap = polyline([0.0, 5.0, 10.0])
+  let left = svg_path.Path([polyline([20.0, 30.0]), left_overlap])
+  let right =
+    svg_path.Path([
+      polyline([40.0, 50.0]),
+      polyline([60.0, 70.0]),
+      right_overlap,
+    ])
+  let assert Ok([overlap]) = overlaps.path(left, right)
+  let assert overlaps.PathOverlap(
+    left_subpath_index: 1,
+    right_subpath_index: 2,
+    correspondence: overlaps.SubpathOverlap(pieces: [_, _], ..),
+  ) = overlap
+  let left_parameter =
+    svg_path.PathParameter(
+      subpath_index: 1,
+      at: svg_path.SubpathParameter(segment_index: 0, t: 0.75),
+    )
+  let right_parameter =
+    svg_path.PathParameter(
+      subpath_index: 2,
+      at: svg_path.SubpathParameter(segment_index: 1, t: 0.5),
+    )
+
+  assert overlaps.path_overlap_right_parameter(
+      overlap,
+      left_parameter,
+      left,
+      right,
+    )
+    == Ok(Some(right_parameter))
+  assert overlaps.path_overlap_left_parameter(
+      overlap,
+      right_parameter,
+      left,
+      right,
+    )
+    == Ok(Some(left_parameter))
 }
 
 fn line() -> svg_path.Segment {

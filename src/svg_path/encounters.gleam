@@ -632,7 +632,10 @@ fn shortest_subpath_parameter_motion(
 ///
 /// Parameters may move onto the overlap only when their intervening subpath
 /// arc length is at most `tolerance`. Exact opposite addresses are obtained
-/// from the overlap's piecewise-affine correspondence.
+/// from the overlap's piecewise-affine correspondence. This geometric clamp is
+/// distinct from parameter-space snapping: for an open subpath it measures the
+/// only traversal interval between the addresses; for a closed subpath it uses
+/// the shorter of the two directed arc lengths.
 pub fn subpath_parameters_are_complementary_with_overlap(
   left_parameter: svg_path.SubpathParameter,
   right_parameter: svg_path.SubpathParameter,
@@ -703,7 +706,7 @@ pub fn subpath_parameters_are_complementary_with_overlap(
   case left_to_right, right_to_left {
     True, True -> Ok(True)
     False, False -> Ok(False)
-    _, _ -> Error(svg_path.InconsistentOverlapParameterCorrespondence)
+    _, _ -> Error(svg_path.InternalOverlapParameterCorrespondenceInconsistency)
   }
 }
 
@@ -749,7 +752,8 @@ fn subpath_parameters_are_complementary_loop(
   case overlap_intervals {
     [] ->
       case saw_inconsistency {
-        True -> Error(svg_path.InconsistentOverlapParameterCorrespondence)
+        True ->
+          Error(svg_path.InternalOverlapParameterCorrespondenceInconsistency)
         False -> Ok(False)
       }
     [overlap, ..rest] ->
@@ -774,7 +778,7 @@ fn subpath_parameters_are_complementary_loop(
             tolerance,
             saw_inconsistency:,
           )
-        Error(svg_path.InconsistentOverlapParameterCorrespondence) ->
+        Error(svg_path.InternalOverlapParameterCorrespondenceInconsistency) ->
           subpath_parameters_are_complementary_loop(
             left_parameter,
             right_parameter,
@@ -959,7 +963,10 @@ fn filter_subpath_intersections(
 /// overlaps in an existing subpath encounter result.
 ///
 /// This is an optional derived view. The ordinary subpath encounter functions
-/// return their complete, unfiltered point-intersection results.
+/// return their complete, unfiltered point-intersection results. A parameter is
+/// removed only when it is complementary, after arc-length clamping by
+/// `tolerance`, to every parameter on the opposite side. Both sides are
+/// filtered against the original parameter lists.
 pub fn filter_fully_overlap_explained_subpath_intersection_parameters(
   encounters: Encounters(overlaps.SubpathOverlap, svg_path.SubpathIntersection),
   left_subpath: svg_path.Subpath,

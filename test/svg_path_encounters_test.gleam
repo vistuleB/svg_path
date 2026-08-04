@@ -447,10 +447,19 @@ pub fn segment_subpath_retains_addresses_for_overlap_and_points_test() {
     == overlaps.SegmentSubpathOverlap(
       start: svg_path.Point(0.0, 0.0),
       end: svg_path.Point(5.0, 0.0),
-      segment_from: 0.0,
-      segment_to: 0.5,
-      subpath_from: svg_path.SubpathParameter(segment_index: 0, t: 0.0),
-      subpath_to: svg_path.SubpathParameter(segment_index: 0, t: 1.0),
+      pieces: [
+        overlaps.SegmentSubpathOverlapPiece(
+          subpath_segment_index: 0,
+          correspondence: overlaps.SegmentOverlap(
+            start: svg_path.Point(0.0, 0.0),
+            end: svg_path.Point(5.0, 0.0),
+            left_from: 0.0,
+            left_to: 0.5,
+            right_from: 0.0,
+            right_to: 1.0,
+          ),
+        ),
+      ],
     )
   assert intersections
     == [
@@ -491,23 +500,25 @@ pub fn path_encounters_retain_subpath_and_segment_addresses_test() {
   ) = result
   assert overlap
     == overlaps.PathOverlap(
-      start: svg_path.Point(0.0, 0.0),
-      end: svg_path.Point(5.0, 0.0),
-      left_from: svg_path.PathParameter(
-        subpath_index: 0,
-        at: svg_path.SubpathParameter(segment_index: 0, t: 0.0),
-      ),
-      left_to: svg_path.PathParameter(
-        subpath_index: 0,
-        at: svg_path.SubpathParameter(segment_index: 0, t: 0.5),
-      ),
-      right_from: svg_path.PathParameter(
-        subpath_index: 0,
-        at: svg_path.SubpathParameter(segment_index: 0, t: 0.0),
-      ),
-      right_to: svg_path.PathParameter(
-        subpath_index: 0,
-        at: svg_path.SubpathParameter(segment_index: 0, t: 1.0),
+      left_subpath_index: 0,
+      right_subpath_index: 0,
+      correspondence: overlaps.SubpathOverlap(
+        start: svg_path.Point(0.0, 0.0),
+        end: svg_path.Point(5.0, 0.0),
+        pieces: [
+          overlaps.SubpathOverlapPiece(
+            left_segment_index: 0,
+            right_segment_index: 0,
+            correspondence: overlaps.SegmentOverlap(
+              start: svg_path.Point(0.0, 0.0),
+              end: svg_path.Point(5.0, 0.0),
+              left_from: 0.0,
+              left_to: 0.5,
+              right_from: 0.0,
+              right_to: 1.0,
+            ),
+          ),
+        ],
       ),
     )
   assert list.length(intersections) == 2
@@ -554,7 +565,7 @@ pub fn higher_level_validators_accept_pure_overlap_results_test() {
     == Ok(True)
 }
 
-pub fn higher_level_overlap_validators_reject_cross_segment_payloads_test() {
+pub fn higher_level_overlap_validators_reject_invalid_segment_index_test() {
   let segment = line(0.0, 0.0, 10.0, 0.0)
   let assert Ok(subpath) =
     svg_path.subpath([segment, line(10.0, 0.0, 20.0, 0.0)])
@@ -562,10 +573,19 @@ pub fn higher_level_overlap_validators_reject_cross_segment_payloads_test() {
     overlaps.SegmentSubpathOverlap(
       start: svg_path.Point(0.0, 0.0),
       end: svg_path.Point(10.0, 0.0),
-      segment_from: 0.0,
-      segment_to: 1.0,
-      subpath_from: svg_path.SubpathParameter(segment_index: 0, t: 0.0),
-      subpath_to: svg_path.SubpathParameter(segment_index: 1, t: 0.0),
+      pieces: [
+        overlaps.SegmentSubpathOverlapPiece(
+          subpath_segment_index: 99,
+          correspondence: overlaps.SegmentOverlap(
+            start: svg_path.Point(0.0, 0.0),
+            end: svg_path.Point(10.0, 0.0),
+            left_from: 0.0,
+            left_to: 1.0,
+            right_from: 0.0,
+            right_to: 1.0,
+          ),
+        ),
+      ],
     )
 
   assert svg_path_encounter_validation.segment_subpath_overlap_is_valid(

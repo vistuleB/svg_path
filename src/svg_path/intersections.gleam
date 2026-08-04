@@ -15,7 +15,7 @@ import svg_path.{
   type PathParameter, type PathSelfIntersection, type Point, type Segment,
   type SegmentIntersection, type SelfIntersectionOptions, type Subpath,
   type SubpathIntersection, type SubpathParameter, type SubpathSelfIntersection,
-  Arc, CubicBezier, InconsistentOverlapClassification,
+  Arc, CubicBezier, InternalOverlapClassificationInconsistency,
   InvalidIntersectionMaxDepth, InvalidIntersectionTolerance,
   InvalidSelfIntersectionDistanceTolerance,
   InvalidSelfIntersectionMinimumArcLengthSeparation, Line, OverlappingSegments,
@@ -102,7 +102,8 @@ fn segment_intersections_checked_valid_options(
     [_, ..] -> Error(OverlappingSegments)
     [] ->
       case segment_intersections_valid_options(left, right, options) {
-        Error(OverlappingSegments) -> Error(InconsistentOverlapClassification)
+        Error(OverlappingSegments) ->
+          Error(InternalOverlapClassificationInconsistency)
         result -> result
       }
   }

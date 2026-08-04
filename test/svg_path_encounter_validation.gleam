@@ -209,36 +209,72 @@ pub fn segment_subpath_overlap_is_valid(
   overlap: overlaps.SegmentSubpathOverlap,
   tolerance tolerance: Float,
 ) -> Result(Bool, svg_path.Error) {
-  let overlaps.SegmentSubpathOverlap(
-    start:,
-    end:,
-    segment_from:,
-    segment_to:,
-    subpath_from: svg_path.SubpathParameter(
-      segment_index: from_index,
-      t: from_t,
-    ),
-    subpath_to: svg_path.SubpathParameter(segment_index: to_index, t: to_t),
-  ) = overlap
-  case
-    from_index == to_index,
-    nth(svg_path.subpath_segments(subpath), from_index)
-  {
-    True, Some(subpath_segment) ->
-      segment_overlap_is_valid(
-        segment,
-        subpath_segment,
-        overlaps.SegmentOverlap(
-          start:,
-          end:,
-          left_from: segment_from,
-          left_to: segment_to,
-          right_from: from_t,
-          right_to: to_t,
-        ),
-        tolerance:,
-      )
-    _, _ -> Ok(False)
+  let overlaps.SegmentSubpathOverlap(start:, end:, pieces:) = overlap
+  case pieces {
+    [] -> Ok(False)
+    [first, ..] -> {
+      let assert Ok(last) = list.last(pieces)
+      let overlaps.SegmentSubpathOverlapPiece(
+        correspondence: overlaps.SegmentOverlap(start: first_start, ..),
+        ..,
+      ) = first
+      let overlaps.SegmentSubpathOverlapPiece(
+        correspondence: overlaps.SegmentOverlap(end: last_end, ..),
+        ..,
+      ) = last
+      case
+        point.distance(start, first_start) <=. tolerance,
+        point.distance(end, last_end) <=. tolerance
+      {
+        True, True ->
+          segment_subpath_overlap_pieces_are_valid(
+            segment,
+            svg_path.subpath_segments(subpath),
+            pieces,
+            tolerance,
+          )
+        _, _ -> Ok(False)
+      }
+    }
+  }
+}
+
+fn segment_subpath_overlap_pieces_are_valid(
+  segment: svg_path.Segment,
+  subpath_segments: List(svg_path.Segment),
+  pieces: List(overlaps.SegmentSubpathOverlapPiece),
+  tolerance: Float,
+) -> Result(Bool, svg_path.Error) {
+  case pieces {
+    [] -> Ok(True)
+    [
+      overlaps.SegmentSubpathOverlapPiece(
+        subpath_segment_index:,
+        correspondence:,
+      ),
+      ..rest
+    ] ->
+      case nth(subpath_segments, subpath_segment_index) {
+        None -> Ok(False)
+        Some(subpath_segment) -> {
+          use valid <- result.try(segment_overlap_is_valid(
+            segment,
+            subpath_segment,
+            correspondence,
+            tolerance:,
+          ))
+          case valid {
+            False -> Ok(False)
+            True ->
+              segment_subpath_overlap_pieces_are_valid(
+                segment,
+                subpath_segments,
+                rest,
+                tolerance,
+              )
+          }
+        }
+      }
   }
 }
 
@@ -319,49 +355,22 @@ pub fn path_overlap_is_valid(
   tolerance tolerance: Float,
 ) -> Result(Bool, svg_path.Error) {
   let overlaps.PathOverlap(
-    start:,
-    end:,
-    left_from: svg_path.PathParameter(
-      subpath_index: left_from_index,
-      at: left_from,
-    ),
-    left_to: svg_path.PathParameter(subpath_index: left_to_index, at: left_to),
-    right_from: svg_path.PathParameter(
-      subpath_index: right_from_index,
-      at: right_from,
-    ),
-    right_to: svg_path.PathParameter(
-      subpath_index: right_to_index,
-      at: right_to,
-    ),
+    left_subpath_index:,
+    right_subpath_index:,
+    correspondence:,
   ) = overlap
   case
-    left_from_index == left_to_index,
-    right_from_index == right_to_index,
-    nth(svg_path.path_subpaths(left), left_from_index),
-    nth(svg_path.path_subpaths(right), right_from_index)
+    nth(svg_path.path_subpaths(left), left_subpath_index),
+    nth(svg_path.path_subpaths(right), right_subpath_index)
   {
-    True, True, Some(left_subpath), Some(right_subpath) ->
+    Some(left_subpath), Some(right_subpath) ->
       subpath_overlap_is_valid(
         left_subpath,
         right_subpath,
-        overlaps.SubpathOverlap(start:, end:, pieces: [
-          overlaps.SubpathOverlapPiece(
-            left_segment_index: left_from.segment_index,
-            right_segment_index: right_from.segment_index,
-            correspondence: overlaps.SegmentOverlap(
-              start:,
-              end:,
-              left_from: left_from.t,
-              left_to: left_to.t,
-              right_from: right_from.t,
-              right_to: right_to.t,
-            ),
-          ),
-        ]),
+        correspondence,
         tolerance:,
       )
-    _, _, _, _ -> Ok(False)
+    _, _ -> Ok(False)
   }
 }
 
@@ -471,13 +480,14 @@ pub fn segment_subpath_intersection_overlap_interval_containment(
   overlap: overlaps.SegmentSubpathOverlap,
 ) -> OverlapIntervalContainment {
   let #(_, segment_t, subpath_parameters) = intersection
-  let overlaps.SegmentSubpathOverlap(
-    segment_from:,
-    segment_to:,
-    subpath_from:,
-    subpath_to:,
-    ..,
-  ) = overlap
+  let assert Some(segment_from) =
+    overlaps.segment_subpath_overlap_segment_start(overlap)
+  let assert Some(segment_to) =
+    overlaps.segment_subpath_overlap_segment_end(overlap)
+  let assert Some(subpath_from) =
+    overlaps.segment_subpath_overlap_subpath_start(overlap)
+  let assert Some(subpath_to) =
+    overlaps.segment_subpath_overlap_subpath_end(overlap)
   classify_interval_containment(
     float_between(segment_t, segment_from, segment_to),
     list.any(subpath_parameters, subpath_parameter_between(
@@ -555,8 +565,10 @@ pub fn path_intersection_overlap_interval_containment(
 ) -> OverlapIntervalContainment {
   let svg_path.PathIntersection(left_parameters:, right_parameters:, ..) =
     intersection
-  let overlaps.PathOverlap(left_from:, left_to:, right_from:, right_to:, ..) =
-    overlap
+  let assert Some(left_from) = overlaps.path_overlap_left_start(overlap)
+  let assert Some(left_to) = overlaps.path_overlap_left_end(overlap)
+  let assert Some(right_from) = overlaps.path_overlap_right_start(overlap)
+  let assert Some(right_to) = overlaps.path_overlap_right_end(overlap)
   classify_interval_containment(
     list.any(left_parameters, path_parameter_between(
       left,

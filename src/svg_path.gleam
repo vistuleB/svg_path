@@ -577,6 +577,12 @@ pub type Error {
   /// The intersection tolerance must be greater than zero.
   InvalidIntersectionTolerance(tolerance: Float)
 
+  /// The overlap tolerance must be zero or greater.
+  InvalidOverlapTolerance(tolerance: Float)
+
+  /// Endpoint-projection overlap detection requires at least one sample.
+  InvalidOverlapSamples(samples: Int)
+
   /// The intersection subdivision depth must be greater than zero.
   InvalidIntersectionMaxDepth(max_depth: Int)
 
@@ -591,10 +597,10 @@ pub type Error {
 
   /// Point-intersection logic reported an overlap that the shared overlap
   /// classifier did not confirm.
-  InconsistentOverlapClassification
+  InternalOverlapClassificationInconsistency
 
   /// Opposite-direction subpath overlap correspondence checks disagreed.
-  InconsistentOverlapParameterCorrespondence
+  InternalOverlapParameterCorrespondenceInconsistency
 
   /// Coincident segment portions do not have a single affine correspondence
   /// between their parameter intervals.

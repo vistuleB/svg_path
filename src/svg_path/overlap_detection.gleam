@@ -264,9 +264,10 @@ pub fn detect_with(
   tolerance tolerance: Float,
   samples samples: Int,
 ) -> Result(List(RawOverlap), svg_path.Error) {
-  case tolerance <. 0.0 || samples <= 0 {
-    True -> Ok([])
-    False -> {
+  case tolerance <. 0.0, samples <= 0 {
+    True, _ -> Error(svg_path.InvalidOverlapTolerance(tolerance))
+    _, True -> Error(svg_path.InvalidOverlapSamples(samples))
+    False, False -> {
       use projections <- result.try(endpoint_projections(left, right))
       let close =
         projections
