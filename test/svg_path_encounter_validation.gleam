@@ -3,6 +3,7 @@
 //// These checks validate reported geometry and parameter bookkeeping. They do
 //// not attempt to prove overlap maximality or completeness.
 
+import gleam/float
 import gleam/list
 import gleam/option.{None, Some}
 import gleam/order
@@ -170,11 +171,34 @@ pub fn segment_encounters_are_valid(
   let none_contained =
     list.all(intersections, fn(intersection) {
       list.all(overlap_intervals, fn(overlap) {
-        segment_intersection_overlap_interval_containment(intersection, overlap)
-        == NeitherSide
+        case segment_intersection_overlap_interval_containment(
+          intersection,
+          overlap,
+        ) {
+          NeitherSide -> True
+          LeftSideOnly | RightSideOnly -> False
+          BothSides ->
+            !segment_intersection_follows_overlap_correspondence(
+              intersection,
+              overlap,
+              tolerance,
+            )
+        }
       })
     })
   Ok(overlaps_valid && intersections_valid && none_contained)
+}
+
+fn segment_intersection_follows_overlap_correspondence(
+  intersection: svg_path.SegmentIntersection,
+  overlap: overlaps.SegmentOverlap,
+  tolerance: Float,
+) -> Bool {
+  let svg_path.SegmentIntersection(left_t:, right_t:, ..) = intersection
+  float.absolute_value(
+    overlaps.segment_overlap_right_parameter(overlap, left_t) -. right_t,
+  )
+    <=. tolerance
 }
 
 pub fn segment_subpath_overlap_is_valid(

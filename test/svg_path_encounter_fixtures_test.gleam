@@ -1,5 +1,6 @@
 //// Focused fixtures for classifying overlap/intersection coexistence.
 
+import gleam/list
 import svg_path
 import svg_path/encounters
 import svg_path/intersections
@@ -132,6 +133,26 @@ pub fn cubic_overlap_can_mask_another_isolated_intersection_fixture_test() {
   assert crossing.right_t == 0.75
   let assert Ok(expected) = svg_path.segment_point(curve, at: 0.25)
   assert point.near(crossing.point, expected, tolerance:)
+
+  let assert Ok(encounter) = encounters.segment(curve, curve)
+  let assert encounters.Encounters(
+    overlaps: [_],
+    intersections: recovered,
+  ) = encounter
+  assert list.length(recovered) == 2
+  assert list.any(recovered, fn(found) {
+    found.left_t == 0.25 && found.right_t == 0.75
+  })
+  assert list.any(recovered, fn(found) {
+    found.left_t == 0.75 && found.right_t == 0.25
+  })
+  assert validation.segment_encounters_are_valid(
+      curve,
+      curve,
+      encounter,
+      tolerance:,
+    )
+    == Ok(True)
 }
 
 pub fn one_sided_overlap_containment_is_flagged_fixture_test() {
