@@ -9,6 +9,15 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
+## 0.29.1 - 2026-08-05
+
+- Added `point.clockwise_aperture` and reused the point module's heading and
+  direction helpers in CSG and convex-hull calculations.
+- Added one canonical command for regenerating every published README and
+  Gallery figure from current code.
+- Regenerated all five README figures and all thirty Gallery figures, including
+  current ArrangementGraph annotations for the CSG panels.
+
 ## 0.29.0 - 2026-08-05
 
 ### Added
