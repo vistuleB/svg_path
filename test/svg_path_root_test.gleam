@@ -77,38 +77,32 @@ pub fn quintic_roots_in_unit_interval_test() {
   assert roots_are_near(roots, [0.1, 0.3, 0.5, 0.7, 0.9])
 }
 
-pub fn polynomial_polishing_reduces_residual_after_required_tolerance_test() {
-  let unpolished_options =
+pub fn polynomial_isolation_preserves_crossing_bracket_test() {
+  let options =
     root.PolynomialOptions(
       coefficient_tolerance: 0.000000000001,
       root_tolerance: 0.01,
       value_tolerance: 0.000000000001,
       max_iterations: 100,
-      polish_iterations: 0,
     )
-  let polished_options =
-    root.PolynomialOptions(..unpolished_options, polish_iterations: 3)
   let coefficients = [1.0, 0.0, 0.0, -2.0]
-  let assert Ok([unpolished]) =
-    root.polynomial_roots_with(
+  let assert Ok([root.RootIsolation(lower:, estimate:, upper:)]) =
+    root.polynomial_root_isolations_with(
       coefficients,
       from: 0.0,
       to: 2.0,
-      options: unpolished_options,
-    )
-  let assert Ok([polished]) =
-    root.polynomial_roots_with(
-      coefficients,
-      from: 0.0,
-      to: 2.0,
-      options: polished_options,
+      options:,
     )
 
-  assert float.absolute_value(root.polynomial_value(coefficients, at: polished))
-    <. float.absolute_value(root.polynomial_value(coefficients, at: unpolished))
+  assert lower <=. estimate
+  assert estimate <=. upper
+  assert root.polynomial_value(coefficients, at: lower)
+    *. root.polynomial_value(coefficients, at: upper)
+    <=. 0.0
+  assert { upper -. lower } /. 2.0 <=. options.root_tolerance
 }
 
-pub fn polynomial_safeguarded_newton_falls_back_at_zero_derivative_test() {
+pub fn polynomial_bisection_handles_flat_derivative_region_test() {
   let assert Ok([solution]) =
     root.polynomial_roots_with(
       [1.0, 0.0, 0.0, -0.001],
@@ -117,16 +111,6 @@ pub fn polynomial_safeguarded_newton_falls_back_at_zero_derivative_test() {
       options: root.default_polynomial_options(),
     )
   assert near(solution, 0.1)
-}
-
-pub fn polynomial_roots_reject_negative_polish_iterations_test() {
-  let options =
-    root.PolynomialOptions(
-      ..root.default_polynomial_options(),
-      polish_iterations: -1,
-    )
-  assert root.polynomial_roots_with([1.0, -1.0], from: 0.0, to: 1.0, options:)
-    == Error(root.InvalidPolishIterations(-1))
 }
 
 const tolerance = 0.000001
