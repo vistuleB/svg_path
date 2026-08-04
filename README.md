@@ -61,8 +61,10 @@ pub fn prepare_for_arc_averse_consumer(
   clipping region without adding closure bridges.
 - `svg_path/intersections`: segment, subpath, and path point-intersection
   queries.
-- `svg_path/overlaps`: continuous coincident intervals between segments and
-  subpaths.
+- `svg_path/overlaps`: continuous coincident intervals between segments,
+  subpaths, and paths.
+- `svg_path/encounters`: combined continuous-overlap and isolated
+  point-intersection queries.
 - `svg_path/arrangement_graph`: planar arrangements built from normalized path
   segments, including endpoint clusters and coincident-edge multiplicities.
 - `svg_path/arrangement_graph/drawing`: drawing primitives for inspecting an
@@ -863,15 +865,27 @@ overlaps.subpath(left_subpath, right_subpath)
 A `SegmentOverlap` gives the interval parameters and geometric endpoints on
 both segments. Its left parameters are canonicalized into increasing order;
 the right parameters may decrease when the two segments traverse the overlap
-in opposite directions. At a matching tolerance, `intersections.segment`
-returns `OverlappingSegments` exactly when `overlaps.segment` reports an
-overlap.
+in opposite directions. The endpoint parameters define an affine, monotone
+correspondence throughout the overlap. Coincident geometry that cannot satisfy
+that contract returns `NonAffineOverlapCorrespondence`; normalize or linearize
+such segments before overlap detection. At a matching tolerance,
+`intersections.segment` returns `OverlappingSegments` exactly when
+`overlaps.segment` reports an overlap.
 
 The overlap detector is intended for non-degenerate segments whose overlap
 boundaries occur at an endpoint of at least one input segment. Arrangement
 construction establishes that working model through normalization and repeated
-subdivision. Lower-level helpers in `svg_path/overlaps` canonicalize, validate,
-and merge compatible overlap intervals.
+subdivision. Subpath and path overlap values retain their constituent
+piecewise-affine segment correspondences, and the module provides helpers for
+mapping exact parameters from either traversal to the other.
+
+Use `svg_path/encounters` when both continuous overlaps and isolated point
+intersections are required from one query. Its segment, segment-subpath,
+subpath, and path functions return both lists without changing the underlying
+payload types. Subpath encounters retain overlap-boundary intersections by
+default; the explicitly named
+`filter_fully_overlap_explained_subpath_intersection_parameters` helper derives
+a view with parameters fully explained by overlaps removed.
 
 ### Convex Hulls
 
@@ -1317,11 +1331,13 @@ arrangement_graph.build(
 // -> Result(arrangement_graph.ArrangementGraphBuild, arrangement_graph.Error)
 ```
 
-`ArrangementGraphBuild` contains both the graph and `normalized_paths`. The
-normalized paths retain the input path and subpath order and are the official
-source geometry corresponding to the graph. Consumers that classify graph
-edges against their sources should use these paths rather than the original
-inputs.
+`ArrangementGraphBuild` contains the graph, `normalized_paths`, and
+`segment_images`. The normalized paths retain the input path and subpath order
+and are the official source geometry corresponding to the graph. Each segment
+image records, in traversal order, the graph-edge identifiers produced from
+one normalized source segment and whether each traversal reverses the stored
+edge direction. Consumers that classify graph edges against their sources
+should use these paths rather than the original inputs.
 
 The graph, vertex, and edge representations are transparent for inspection.
 Vertices retain their clustered source endpoints and use the center of the
@@ -1442,6 +1458,7 @@ values.
 ## Development
 
 ```sh
-gleam test
+scripts/test-fast
+scripts/test-slow
 gleam docs build
 ```
