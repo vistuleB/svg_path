@@ -721,7 +721,7 @@ fn convex_polygon_orientation(polygon: ConvexPolygon) -> LoopOrientation {
 
 fn convex_polygon_support_value(polygon: ConvexPolygon, angle: Float) -> Float {
   let ConvexPolygon(vertices:) = polygon
-  let direction = angle_direction(angle)
+  let direction = point_helpers.direction(degrees: angle)
   case vertices {
     [] -> -1.0 /. 0.0
     [first, ..rest] ->
@@ -754,7 +754,7 @@ fn point_point_separation(
 ) -> Option(#(Float, svg_path.Point)) {
   case points_near(only, point) {
     True -> None
-    False -> Some(#(direction_angle(subtract(point, only)), only))
+    False -> Some(#(point_helpers.heading(subtract(point, only)), only))
   }
 }
 
@@ -766,7 +766,7 @@ fn point_segment_separation(
   let closest = closest_point_on_segment(a, b, point)
   case points_near(closest, point) {
     True -> None
-    False -> Some(#(direction_angle(subtract(point, closest)), closest))
+    False -> Some(#(point_helpers.heading(subtract(point, closest)), closest))
   }
 }
 
@@ -784,7 +784,8 @@ fn point_chord_polygon_separation(
           let closest = closest_point_on_polygon(vertices, point)
           case points_near(closest, point) {
             True -> None
-            False -> Some(#(direction_angle(subtract(point, closest)), closest))
+            False ->
+              Some(#(point_helpers.heading(subtract(point, closest)), closest))
           }
         }
       }
@@ -799,7 +800,7 @@ fn point_chord_polyline_separation(
   let closest = closest_point_on_polyline(vertices, point)
   case points_near(closest, point) {
     True -> None
-    False -> Some(#(direction_angle(subtract(point, closest)), closest))
+    False -> Some(#(point_helpers.heading(subtract(point, closest)), closest))
   }
 }
 
@@ -3484,7 +3485,7 @@ fn segment_support(
   segment: svg_path.Segment,
   angle angle: Float,
 ) -> Result(SupportSample, svg_path.Error) {
-  let direction = angle_direction(angle)
+  let direction = point_helpers.direction(degrees: angle)
   case segment {
     svg_path.Line(start:, end:) -> {
       let start_value = dot(start, direction)
@@ -3535,7 +3536,7 @@ fn brute_segment_support(
   segment: svg_path.Segment,
   angle angle: Float,
 ) -> Result(SupportSample, svg_path.Error) {
-  let direction = angle_direction(angle)
+  let direction = point_helpers.direction(degrees: angle)
   use t <- result.try(
     svg_path.segment_minimize(segment, measure: fn(point) {
       0.0 -. dot(point, direction)
@@ -3573,7 +3574,7 @@ fn support_candidate(
   angle: Float,
   t: Float,
 ) -> Result(SupportSample, svg_path.Error) {
-  let direction = angle_direction(angle)
+  let direction = point_helpers.direction(degrees: angle)
   use point <- result.try(svg_path.segment_point(segment, at: t))
   Ok(SupportSample(
     angle: angle,
@@ -4014,14 +4015,6 @@ fn tolerant_quadratic_roots(a: Float, b: Float, c: Float) -> List(Float) {
 fn average(values: List(Float)) -> Float {
   list.fold(values, 0.0, fn(total, value) { total +. value })
   /. int.to_float(list.length(values))
-}
-
-fn direction_angle(direction: svg_path.Point) -> Float {
-  normalize_angle(trig.atan2_degrees(direction.y, direction.x))
-}
-
-fn angle_direction(angle: Float) -> svg_path.Point {
-  svg_path.Point(trig.cos_degrees(angle), trig.sin_degrees(angle))
 }
 
 fn dot(a: svg_path.Point, b: svg_path.Point) -> Float {

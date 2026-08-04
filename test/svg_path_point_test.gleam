@@ -17,6 +17,19 @@ pub fn basis_vectors_and_direction_test() {
   assert point.direction(degrees: 270.0) == point.up
 }
 
+pub fn clockwise_aperture_test() {
+  assert point.clockwise_aperture(from: point.right, to: point.right) == 0.0
+  assert point.clockwise_aperture(from: point.right, to: point.down) == 90.0
+  assert point.clockwise_aperture(from: point.down, to: point.right) == 270.0
+  assert point.clockwise_aperture(from: point.right, to: point.left) == 180.0
+  assert point.clockwise_aperture(from: point.up, to: point.right) == 90.0
+  assert point.clockwise_aperture(
+      from: svg_path.Point(0.0, 0.0),
+      to: point.down,
+    )
+    == 90.0
+}
+
 pub fn vector_arithmetic_test() {
   let a = svg_path.Point(3.0, 4.0)
   let b = svg_path.Point(1.0, -2.0)

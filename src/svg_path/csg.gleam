@@ -12,7 +12,7 @@ import svg_path
 import svg_path/arrangement_graph.{
   type ArrangementEdge, type ArrangementGraph, ArrangementEdge, ArrangementGraph,
 }
-import svg_path/trig
+import svg_path/point
 import svg_path/winding_field
 
 const default_minimum_chord = 0.00001
@@ -676,10 +676,7 @@ fn collect_boundary_rays(
               BoundaryRay(
                 edge_id: id,
                 starts: True,
-                angle: normalized_angle(trig.atan2_degrees(
-                  derivative.y,
-                  derivative.x,
-                )),
+                angle: point.heading(derivative),
               ),
               ..rays
             ])
@@ -697,10 +694,7 @@ fn collect_boundary_rays(
             BoundaryRay(
               edge_id: id,
               starts: False,
-              angle: normalized_angle(trig.atan2_degrees(
-                0.0 -. derivative.y,
-                0.0 -. derivative.x,
-              )),
+              angle: point.heading(point.negate(derivative)),
             ),
             ..rays
           ])
@@ -708,13 +702,6 @@ fn collect_boundary_rays(
       })
       collect_boundary_rays(rest, vertex, layer, rays)
     }
-  }
-}
-
-fn normalized_angle(angle: Float) -> Float {
-  case angle <. 0.0 {
-    True -> angle +. 360.0
-    False -> angle
   }
 }
 
