@@ -260,21 +260,21 @@ pub fn subpath_parameters_are_complementary_through_overlap_test() {
   let assert Ok(right) = svg_path.subpath([line(2.0, 0.0, 8.0, 0.0)])
   let assert Ok([overlap]) = overlaps.subpath(left, right)
 
-  assert encounters.subpath_parameters_are_complementary_with_overlap(
+  assert filter_removes_parameter_pair(
       svg_path.SubpathParameter(segment_index: 0, t: 0.5),
       svg_path.SubpathParameter(segment_index: 0, t: 0.5),
       left,
       right,
-      overlap,
+      [overlap],
       tolerance,
     )
     == Ok(True)
-  assert encounters.subpath_parameters_are_complementary_with_overlap(
+  assert filter_removes_parameter_pair(
       svg_path.SubpathParameter(segment_index: 0, t: 0.0),
       svg_path.SubpathParameter(segment_index: 0, t: 0.0),
       left,
       right,
-      overlap,
+      [overlap],
       tolerance,
     )
     == Ok(False)
@@ -286,21 +286,21 @@ pub fn subpath_parameter_complementarity_clamps_by_arc_length_test() {
   let assert Ok([overlap]) = overlaps.subpath(left, right)
   let geometric_tolerance = 0.000001
 
-  assert encounters.subpath_parameters_are_complementary_with_overlap(
+  assert filter_removes_parameter_pair(
       svg_path.SubpathParameter(segment_index: 0, t: 0.19999999),
       svg_path.SubpathParameter(segment_index: 0, t: 0.0),
       left,
       right,
-      overlap,
+      [overlap],
       geometric_tolerance,
     )
     == Ok(True)
-  assert encounters.subpath_parameters_are_complementary_with_overlap(
+  assert filter_removes_parameter_pair(
       svg_path.SubpathParameter(segment_index: 0, t: 0.19),
       svg_path.SubpathParameter(segment_index: 0, t: 0.0),
       left,
       right,
-      overlap,
+      [overlap],
       geometric_tolerance,
     )
     == Ok(False)
@@ -319,12 +319,12 @@ pub fn subpath_parameter_complementarity_uses_short_closed_seam_motion_test() {
   let assert Ok(right) = svg_path.subpath([line(0.0, 5.0, 0.0, 0.0)])
   let assert Ok([overlap]) = overlaps.subpath(left, right)
 
-  assert encounters.subpath_parameters_are_complementary_with_overlap(
+  assert filter_removes_parameter_pair(
       svg_path.SubpathParameter(segment_index: 0, t: 0.00000001),
       svg_path.SubpathParameter(segment_index: 0, t: 1.0),
       left,
       right,
-      overlap,
+      [overlap],
       0.000001,
     )
     == Ok(True)
@@ -344,7 +344,7 @@ pub fn subpath_parameter_complementarity_searches_all_overlaps_test() {
   let assert Ok(overlap_intervals) = overlaps.subpath(left, right)
   assert list.length(overlap_intervals) == 2
 
-  assert encounters.subpath_parameters_are_complementary(
+  assert filter_removes_parameter_pair(
       svg_path.SubpathParameter(segment_index: 0, t: 0.8),
       svg_path.SubpathParameter(segment_index: 4, t: 0.5),
       left,
@@ -358,7 +358,7 @@ pub fn subpath_parameter_complementarity_searches_all_overlaps_test() {
 pub fn subpath_parameter_complementarity_rejects_invalid_tolerance_test() {
   let assert Ok(subpath) = svg_path.subpath([line(0.0, 0.0, 10.0, 0.0)])
 
-  assert encounters.subpath_parameters_are_complementary(
+  assert filter_removes_parameter_pair(
       svg_path.SubpathParameter(segment_index: 0, t: 0.5),
       svg_path.SubpathParameter(segment_index: 0, t: 0.5),
       subpath,
@@ -602,4 +602,34 @@ fn line(start_x: Float, start_y: Float, end_x: Float, end_y: Float) {
     start: svg_path.Point(start_x, start_y),
     end: svg_path.Point(end_x, end_y),
   )
+}
+
+fn filter_removes_parameter_pair(
+  left_parameter: svg_path.SubpathParameter,
+  right_parameter: svg_path.SubpathParameter,
+  left: svg_path.Subpath,
+  right: svg_path.Subpath,
+  overlap_intervals: List(overlaps.SubpathOverlap),
+  tolerance: Float,
+) -> Result(Bool, svg_path.Error) {
+  let found =
+    encounters.Encounters(overlaps: overlap_intervals, intersections: [
+      svg_path.SubpathIntersection(
+        point: svg_path.Point(0.0, 0.0),
+        left_parameters: [left_parameter],
+        right_parameters: [right_parameter],
+      ),
+    ])
+  case
+    encounters.filter_fully_overlap_explained_subpath_intersection_parameters(
+      found,
+      left,
+      right,
+      tolerance,
+    )
+  {
+    Ok(encounters.Encounters(intersections: [], ..)) -> Ok(True)
+    Ok(_) -> Ok(False)
+    Error(error) -> Error(error)
+  }
 }

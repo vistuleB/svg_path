@@ -636,7 +636,7 @@ fn shortest_subpath_parameter_motion(
 /// distinct from parameter-space snapping: for an open subpath it measures the
 /// only traversal interval between the addresses; for a closed subpath it uses
 /// the shorter of the two directed arc lengths.
-pub fn subpath_parameters_are_complementary_with_overlap(
+fn subpath_parameters_are_complementary_with_overlap(
   left_parameter: svg_path.SubpathParameter,
   right_parameter: svg_path.SubpathParameter,
   left_subpath: svg_path.Subpath,
@@ -711,7 +711,7 @@ pub fn subpath_parameters_are_complementary_with_overlap(
 }
 
 /// Return whether any overlap makes two subpath parameters complementary.
-pub fn subpath_parameters_are_complementary(
+fn subpath_parameters_are_complementary(
   left_parameter: svg_path.SubpathParameter,
   right_parameter: svg_path.SubpathParameter,
   left_subpath: svg_path.Subpath,
