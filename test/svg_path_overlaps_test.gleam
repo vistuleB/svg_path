@@ -1,5 +1,5 @@
 import gleam/list
-import gleam/option.{Some}
+import gleam/option.{None, Some}
 import svg_path
 import svg_path/encounters
 import svg_path/intersections
@@ -440,6 +440,89 @@ pub fn subpath_overlap_maps_two_segments_to_one_segment_test() {
 
   assert near(overlaps.segment_overlap_right_parameter(first_map, 0.5), 0.25)
   assert near(overlaps.segment_overlap_right_parameter(second_map, 0.5), 0.75)
+}
+
+pub fn subpath_overlap_exact_lookup_accepts_internal_endpoint_aliases_test() {
+  let left = polyline([0.0, 5.0, 10.0])
+  let right = polyline([0.0, 10.0])
+  let assert Ok([overlap]) = overlaps.subpath(left, right)
+
+  assert overlaps.subpath_overlap_right_parameter(
+      overlap,
+      svg_path.SubpathParameter(segment_index: 0, t: 1.0),
+      left_subpath: left,
+      right_subpath: right,
+    )
+    == Ok(Some(svg_path.SubpathParameter(segment_index: 0, t: 0.5)))
+  assert overlaps.subpath_overlap_right_parameter(
+      overlap,
+      svg_path.SubpathParameter(segment_index: 1, t: 0.0),
+      left_subpath: left,
+      right_subpath: right,
+    )
+    == Ok(Some(svg_path.SubpathParameter(segment_index: 0, t: 0.5)))
+  assert overlaps.subpath_overlap_left_parameter(
+      overlap,
+      svg_path.SubpathParameter(segment_index: 0, t: 0.5),
+      left_subpath: left,
+      right_subpath: right,
+    )
+    == Ok(Some(svg_path.SubpathParameter(segment_index: 1, t: 0.0)))
+}
+
+pub fn subpath_overlap_exact_lookup_accepts_closed_seam_alias_test() {
+  let closed =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(1.0, 0.0),
+      svg_path.Point(1.0, 1.0),
+      svg_path.Point(0.0, 1.0),
+      svg_path.Point(0.0, 0.0),
+    ])
+    |> svg_path.subpath_assert_set_closed(closed: True)
+  let correspondence =
+    overlaps.SegmentOverlap(
+      left_from: 0.5,
+      left_to: 1.0,
+      right_from: 0.0,
+      right_to: 1.0,
+      start: svg_path.Point(0.0, 0.5),
+      end: svg_path.Point(0.0, 0.0),
+    )
+  let overlap =
+    overlaps.SubpathOverlap(
+      start: correspondence.start,
+      end: correspondence.end,
+      pieces: [
+        overlaps.SubpathOverlapPiece(
+          left_segment_index: 3,
+          right_segment_index: 0,
+          correspondence:,
+        ),
+      ],
+    )
+
+  assert overlaps.subpath_overlap_right_parameter(
+      overlap,
+      svg_path.SubpathParameter(segment_index: 0, t: 0.0),
+      left_subpath: closed,
+      right_subpath: closed,
+    )
+    == Ok(Some(svg_path.SubpathParameter(segment_index: 1, t: 0.0)))
+}
+
+pub fn subpath_overlap_exact_lookup_rejects_address_outside_overlap_test() {
+  let left = polyline([0.0, 5.0, 10.0])
+  let right = polyline([0.0, 4.0])
+  let assert Ok([overlap]) = overlaps.subpath(left, right)
+
+  assert overlaps.subpath_overlap_right_parameter(
+      overlap,
+      svg_path.SubpathParameter(segment_index: 1, t: 0.0),
+      left_subpath: left,
+      right_subpath: right,
+    )
+    == Ok(None)
 }
 
 pub fn subpath_overlap_preserves_reversed_piecewise_traversal_test() {

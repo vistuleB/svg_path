@@ -519,6 +519,205 @@ pub fn subpath_overlap_right_end(
   }
 }
 
+/// Map a left-subpath address through an overlap's exact correspondence.
+///
+/// The left subpath is used to recognize exact equivalent input addresses. The
+/// returned address is exactly canonicalized against the right subpath. This
+/// function does not snap parameters or otherwise move them geometrically.
+pub fn subpath_overlap_right_parameter(
+  overlap: SubpathOverlap,
+  left_parameter: svg_path.SubpathParameter,
+  left_subpath left_subpath: svg_path.Subpath,
+  right_subpath right_subpath: svg_path.Subpath,
+) -> Result(Option(svg_path.SubpathParameter), svg_path.Error) {
+  let SubpathOverlap(pieces:, ..) = overlap
+  let opposite =
+    subpath_overlap_opposite_parameter(
+      pieces,
+      left_parameter,
+      left_subpath,
+      source_is_left: True,
+    )
+  canonicalize_optional_subpath_parameter(opposite, right_subpath)
+}
+
+/// Map a right-subpath address through an overlap's exact correspondence.
+///
+/// The right subpath is used to recognize exact equivalent input addresses.
+/// The returned address is exactly canonicalized against the left subpath.
+/// This function does not snap parameters or otherwise move them geometrically.
+pub fn subpath_overlap_left_parameter(
+  overlap: SubpathOverlap,
+  right_parameter: svg_path.SubpathParameter,
+  left_subpath left_subpath: svg_path.Subpath,
+  right_subpath right_subpath: svg_path.Subpath,
+) -> Result(Option(svg_path.SubpathParameter), svg_path.Error) {
+  let SubpathOverlap(pieces:, ..) = overlap
+  let opposite =
+    subpath_overlap_opposite_parameter(
+      pieces,
+      right_parameter,
+      right_subpath,
+      source_is_left: False,
+    )
+  canonicalize_optional_subpath_parameter(opposite, left_subpath)
+}
+
+fn canonicalize_optional_subpath_parameter(
+  parameter: Option(svg_path.SubpathParameter),
+  subpath: svg_path.Subpath,
+) -> Result(Option(svg_path.SubpathParameter), svg_path.Error) {
+  case parameter {
+    None -> Ok(None)
+    Some(parameter) ->
+      svg_path.subpath_parameter_canonicalize(subpath, parameter:)
+      |> result.map(Some)
+  }
+}
+
+fn subpath_overlap_opposite_parameter(
+  pieces: List(SubpathOverlapPiece),
+  parameter: svg_path.SubpathParameter,
+  source_subpath: svg_path.Subpath,
+  source_is_left source_is_left: Bool,
+) -> Option(svg_path.SubpathParameter) {
+  case pieces {
+    [] -> None
+    [piece, ..rest] ->
+      case
+        subpath_overlap_piece_opposite_parameter(
+          piece,
+          parameter,
+          source_subpath,
+          source_is_left,
+        )
+      {
+        Some(opposite) -> Some(opposite)
+        None ->
+          subpath_overlap_opposite_parameter(
+            rest,
+            parameter,
+            source_subpath,
+            source_is_left,
+          )
+      }
+  }
+}
+
+fn subpath_overlap_piece_opposite_parameter(
+  piece: SubpathOverlapPiece,
+  parameter: svg_path.SubpathParameter,
+  source_subpath: svg_path.Subpath,
+  source_is_left: Bool,
+) -> Option(svg_path.SubpathParameter) {
+  let SubpathOverlapPiece(
+    left_segment_index:,
+    right_segment_index:,
+    correspondence: overlap,
+  ) = piece
+  let SegmentOverlap(left_from:, left_to:, right_from:, right_to:, ..) = overlap
+  let #(source_index, source_from, source_to, opposite_index) = case
+    source_is_left
+  {
+    True -> #(left_segment_index, left_from, left_to, right_segment_index)
+    False -> #(right_segment_index, right_from, right_to, left_segment_index)
+  }
+  let source_parameter =
+    parameter_inside_piece(
+      parameter,
+      source_index,
+      source_from,
+      source_to,
+      source_subpath,
+    )
+  case source_parameter {
+    None -> None
+    Some(source_t) -> {
+      let opposite_t = case source_is_left {
+        True -> segment_overlap_right_parameter(overlap, source_t)
+        False -> segment_overlap_left_parameter(overlap, source_t)
+      }
+      Some(svg_path.SubpathParameter(opposite_index, opposite_t))
+    }
+  }
+}
+
+fn parameter_inside_piece(
+  parameter: svg_path.SubpathParameter,
+  piece_segment_index: Int,
+  piece_from: Float,
+  piece_to: Float,
+  source_subpath: svg_path.Subpath,
+) -> Option(Float) {
+  let svg_path.SubpathParameter(segment_index:, t:) = parameter
+  case
+    segment_index == piece_segment_index,
+    float_between_inclusive(t, piece_from, piece_to)
+  {
+    True, True -> Some(t)
+    _, _ -> {
+      let from = svg_path.SubpathParameter(piece_segment_index, piece_from)
+      let to = svg_path.SubpathParameter(piece_segment_index, piece_to)
+      case
+        subpath_parameters_are_exact_endpoint_aliases(
+          parameter,
+          from,
+          source_subpath,
+        ),
+        subpath_parameters_are_exact_endpoint_aliases(
+          parameter,
+          to,
+          source_subpath,
+        )
+      {
+        True, _ -> Some(piece_from)
+        False, True -> Some(piece_to)
+        False, False -> None
+      }
+    }
+  }
+}
+
+fn subpath_parameters_are_exact_endpoint_aliases(
+  first: svg_path.SubpathParameter,
+  second: svg_path.SubpathParameter,
+  subpath: svg_path.Subpath,
+) -> Bool {
+  let svg_path.SubpathParameter(segment_index: first_index, t: first_t) = first
+  let svg_path.SubpathParameter(segment_index: second_index, t: second_t) =
+    second
+  let segment_count = list.length(svg_path.subpath_segments(subpath))
+  first == second
+  || {
+    first_t == 1.0
+    && second_t == 0.0
+    && {
+      second_index == first_index + 1
+      || {
+        svg_path.subpath_is_closed(subpath)
+        && first_index == segment_count - 1
+        && second_index == 0
+      }
+    }
+  }
+  || {
+    second_t == 1.0
+    && first_t == 0.0
+    && {
+      first_index == second_index + 1
+      || {
+        svg_path.subpath_is_closed(subpath)
+        && second_index == segment_count - 1
+        && first_index == 0
+      }
+    }
+  }
+}
+
+fn float_between_inclusive(value: Float, first: Float, second: Float) -> Bool {
+  value >=. float.min(first, second) && value <=. float.max(first, second)
+}
+
 pub fn subpath(
   left: svg_path.Subpath,
   right: svg_path.Subpath,

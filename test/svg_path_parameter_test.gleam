@@ -108,7 +108,7 @@ pub fn from_end_parameter_rejects_invalid_reversed_address_test() {
     ))
 }
 
-pub fn canonicalize_subpath_parameter_snaps_internal_segment_end_test() {
+pub fn canonicalize_subpath_parameter_only_normalizes_exact_boundaries_test() {
   let subpath =
     svg_path.subpath_assert([
       svg_path.Line(
@@ -123,13 +123,38 @@ pub fn canonicalize_subpath_parameter_snaps_internal_segment_end_test() {
 
   assert svg_path.subpath_parameter_canonicalize(
       subpath,
+      parameter: svg_path.SubpathParameter(0, 1.0),
+    )
+    == Ok(svg_path.SubpathParameter(1, 0.0))
+  assert svg_path.subpath_parameter_canonicalize(
+      subpath,
+      parameter: svg_path.SubpathParameter(0, 0.9999999),
+    )
+    == Ok(svg_path.SubpathParameter(0, 0.9999999))
+}
+
+pub fn snap_subpath_parameter_snaps_internal_segment_end_test() {
+  let subpath =
+    svg_path.subpath_assert([
+      svg_path.Line(
+        start: svg_path.Point(0.0, 0.0),
+        end: svg_path.Point(10.0, 0.0),
+      ),
+      svg_path.Line(
+        start: svg_path.Point(10.0, 0.0),
+        end: svg_path.Point(20.0, 0.0),
+      ),
+    ])
+
+  assert svg_path.subpath_parameter_snap_to_boundary(
+      subpath,
       parameter: svg_path.SubpathParameter(0, 0.9999999),
       tolerance: 0.000001,
     )
     == Ok(svg_path.SubpathParameter(1, 0.0))
 }
 
-pub fn canonicalize_subpath_parameter_snaps_closed_wrap_test() {
+pub fn snap_subpath_parameter_snaps_closed_wrap_test() {
   let subpath =
     svg_path.subpath_assert_polygon([
       svg_path.Point(0.0, 0.0),
@@ -137,7 +162,7 @@ pub fn canonicalize_subpath_parameter_snaps_closed_wrap_test() {
       svg_path.Point(10.0, 10.0),
     ])
 
-  assert svg_path.subpath_parameter_canonicalize(
+  assert svg_path.subpath_parameter_snap_to_boundary(
       subpath,
       parameter: svg_path.SubpathParameter(2, 0.9999999),
       tolerance: 0.000001,
@@ -145,7 +170,7 @@ pub fn canonicalize_subpath_parameter_snaps_closed_wrap_test() {
     == Ok(svg_path.SubpathParameter(0, 0.0))
 }
 
-pub fn canonicalize_subpath_parameter_keeps_open_final_endpoint_test() {
+pub fn snap_subpath_parameter_keeps_open_final_endpoint_test() {
   let subpath =
     svg_path.subpath_assert([
       svg_path.Line(
@@ -154,7 +179,7 @@ pub fn canonicalize_subpath_parameter_keeps_open_final_endpoint_test() {
       ),
     ])
 
-  assert svg_path.subpath_parameter_canonicalize(
+  assert svg_path.subpath_parameter_snap_to_boundary(
       subpath,
       parameter: svg_path.SubpathParameter(0, 0.9999999),
       tolerance: 0.000001,
@@ -162,7 +187,7 @@ pub fn canonicalize_subpath_parameter_keeps_open_final_endpoint_test() {
     == Ok(svg_path.SubpathParameter(0, 1.0))
 }
 
-pub fn canonicalize_subpath_parameter_rejects_invalid_inputs_test() {
+pub fn snap_subpath_parameter_rejects_invalid_inputs_test() {
   let subpath =
     svg_path.subpath_assert([
       svg_path.Line(
@@ -171,13 +196,13 @@ pub fn canonicalize_subpath_parameter_rejects_invalid_inputs_test() {
       ),
     ])
 
-  assert svg_path.subpath_parameter_canonicalize(
+  assert svg_path.subpath_parameter_snap_to_boundary(
       subpath,
       parameter: svg_path.SubpathParameter(0, 0.5),
       tolerance: 0.0,
     )
     == Error(svg_path.InvalidIntersectionTolerance(0.0))
-  assert svg_path.subpath_parameter_canonicalize(
+  assert svg_path.subpath_parameter_snap_to_boundary(
       subpath,
       parameter: svg_path.SubpathParameter(1, 0.5),
       tolerance: 0.000001,

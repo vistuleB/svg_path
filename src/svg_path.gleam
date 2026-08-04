@@ -593,6 +593,9 @@ pub type Error {
   /// classifier did not confirm.
   InconsistentOverlapClassification
 
+  /// Opposite-direction subpath overlap correspondence checks disagreed.
+  InconsistentOverlapParameterCorrespondence
+
   /// Coincident segment portions do not have a single affine correspondence
   /// between their parameter intervals.
   ///
@@ -1680,13 +1683,26 @@ pub fn subpath_parameter_from_end(
   Ok(SubpathParameter(segment_index: length - 1 - segment_index, t: 1.0 -. t))
 }
 
-/// Snap a subpath parameter to its canonical boundary address when it is within
-/// tolerance of a segment boundary.
+/// Return the exact canonical address of a subpath parameter.
 ///
-/// Internal segment ends canonicalize to the next segment's `t = 0.0`. The end
-/// of a closed subpath's last segment canonicalizes to `SubpathParameter(0,
-/// 0.0)`. The end of an open subpath's last segment remains at `t = 1.0`.
+/// An exact internal segment end canonicalizes to the next segment's `t =
+/// 0.0`. The exact end of a closed subpath's last segment canonicalizes to
+/// `SubpathParameter(0, 0.0)`. The end of an open subpath's last segment
+/// remains at `t = 1.0`. Parameters merely near a boundary are unchanged.
 pub fn subpath_parameter_canonicalize(
+  subpath: Subpath,
+  parameter parameter: SubpathParameter,
+) -> Result(SubpathParameter, Error) {
+  use parameter <- result.try(validate_subpath_parameter(subpath, parameter))
+  Ok(canonical_to_subpath_parameter(parameter))
+}
+
+/// Snap a subpath parameter to a segment boundary in parameter space, then
+/// return its canonical address.
+///
+/// `tolerance` is measured in the addressed segment's local parameter units,
+/// not in path coordinate units.
+pub fn subpath_parameter_snap_to_boundary(
   subpath: Subpath,
   parameter parameter: SubpathParameter,
   tolerance tolerance: Float,

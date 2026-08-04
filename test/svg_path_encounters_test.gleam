@@ -207,8 +207,8 @@ pub fn subpaths_retain_overlap_and_intersections_from_other_segment_pairs_test()
   let assert encounters.Encounters(overlaps: [_], intersections: intersections) =
     result
 
-  // The overlap boundary at (5, 0) is deliberately not filtered from the
-  // point results. The other point, (10, 5), is an isolated intersection.
+  // The raw result retains both the overlap boundary at (5, 0) and the
+  // isolated intersection at (10, 5).
   assert intersections
     == [
       svg_path.SubpathIntersection(
@@ -253,6 +253,180 @@ pub fn subpath_encounters_retain_piecewise_overlap_correspondence_test() {
     right_segment_index: 1,
     ..,
   ) = second
+}
+
+pub fn subpath_parameters_are_complementary_through_overlap_test() {
+  let assert Ok(left) = svg_path.subpath([line(0.0, 0.0, 10.0, 0.0)])
+  let assert Ok(right) = svg_path.subpath([line(2.0, 0.0, 8.0, 0.0)])
+  let assert Ok([overlap]) = overlaps.subpath(left, right)
+
+  assert encounters.subpath_parameters_are_complementary_with_overlap(
+      svg_path.SubpathParameter(segment_index: 0, t: 0.5),
+      svg_path.SubpathParameter(segment_index: 0, t: 0.5),
+      left,
+      right,
+      overlap,
+      tolerance,
+    )
+    == Ok(True)
+  assert encounters.subpath_parameters_are_complementary_with_overlap(
+      svg_path.SubpathParameter(segment_index: 0, t: 0.0),
+      svg_path.SubpathParameter(segment_index: 0, t: 0.0),
+      left,
+      right,
+      overlap,
+      tolerance,
+    )
+    == Ok(False)
+}
+
+pub fn subpath_parameter_complementarity_clamps_by_arc_length_test() {
+  let assert Ok(left) = svg_path.subpath([line(0.0, 0.0, 10.0, 0.0)])
+  let assert Ok(right) = svg_path.subpath([line(2.0, 0.0, 8.0, 0.0)])
+  let assert Ok([overlap]) = overlaps.subpath(left, right)
+  let geometric_tolerance = 0.000001
+
+  assert encounters.subpath_parameters_are_complementary_with_overlap(
+      svg_path.SubpathParameter(segment_index: 0, t: 0.19999999),
+      svg_path.SubpathParameter(segment_index: 0, t: 0.0),
+      left,
+      right,
+      overlap,
+      geometric_tolerance,
+    )
+    == Ok(True)
+  assert encounters.subpath_parameters_are_complementary_with_overlap(
+      svg_path.SubpathParameter(segment_index: 0, t: 0.19),
+      svg_path.SubpathParameter(segment_index: 0, t: 0.0),
+      left,
+      right,
+      overlap,
+      geometric_tolerance,
+    )
+    == Ok(False)
+}
+
+pub fn subpath_parameter_complementarity_uses_short_closed_seam_motion_test() {
+  let left =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
+      svg_path.Point(10.0, 10.0),
+      svg_path.Point(0.0, 10.0),
+      svg_path.Point(0.0, 0.0),
+    ])
+    |> svg_path.subpath_assert_set_closed(closed: True)
+  let assert Ok(right) = svg_path.subpath([line(0.0, 5.0, 0.0, 0.0)])
+  let assert Ok([overlap]) = overlaps.subpath(left, right)
+
+  assert encounters.subpath_parameters_are_complementary_with_overlap(
+      svg_path.SubpathParameter(segment_index: 0, t: 0.00000001),
+      svg_path.SubpathParameter(segment_index: 0, t: 1.0),
+      left,
+      right,
+      overlap,
+      0.000001,
+    )
+    == Ok(True)
+}
+
+pub fn subpath_parameter_complementarity_searches_all_overlaps_test() {
+  let assert Ok(left) = svg_path.subpath([line(0.0, 0.0, 10.0, 0.0)])
+  let right =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(4.0, 0.0),
+      svg_path.Point(4.0, 2.0),
+      svg_path.Point(6.0, 2.0),
+      svg_path.Point(6.0, 0.0),
+      svg_path.Point(10.0, 0.0),
+    ])
+  let assert Ok(overlap_intervals) = overlaps.subpath(left, right)
+  assert list.length(overlap_intervals) == 2
+
+  assert encounters.subpath_parameters_are_complementary(
+      svg_path.SubpathParameter(segment_index: 0, t: 0.8),
+      svg_path.SubpathParameter(segment_index: 4, t: 0.5),
+      left,
+      right,
+      overlap_intervals,
+      tolerance,
+    )
+    == Ok(True)
+}
+
+pub fn subpath_parameter_complementarity_rejects_invalid_tolerance_test() {
+  let assert Ok(subpath) = svg_path.subpath([line(0.0, 0.0, 10.0, 0.0)])
+
+  assert encounters.subpath_parameters_are_complementary(
+      svg_path.SubpathParameter(segment_index: 0, t: 0.5),
+      svg_path.SubpathParameter(segment_index: 0, t: 0.5),
+      subpath,
+      subpath,
+      [],
+      0.0,
+    )
+    == Error(svg_path.InvalidIntersectionTolerance(0.0))
+}
+
+pub fn subpath_intersection_entirely_explained_by_overlap_is_removed_test() {
+  let assert Ok(left) = svg_path.subpath([line(0.0, 0.0, 10.0, 0.0)])
+  let assert Ok(right) = svg_path.subpath([line(2.0, 0.0, 8.0, 0.0)])
+  let assert Ok(overlap_intervals) = overlaps.subpath(left, right)
+  let intersection =
+    svg_path.SubpathIntersection(
+      point: svg_path.Point(5.0, 0.0),
+      left_parameters: [svg_path.SubpathParameter(segment_index: 0, t: 0.5)],
+      right_parameters: [svg_path.SubpathParameter(segment_index: 0, t: 0.5)],
+    )
+
+  let found =
+    encounters.Encounters(overlaps: overlap_intervals, intersections: [
+      intersection,
+    ])
+  assert encounters.filter_fully_overlap_explained_subpath_intersection_parameters(
+      found,
+      left,
+      right,
+      tolerance,
+    )
+    == Ok(encounters.Encounters(overlaps: overlap_intervals, intersections: []))
+}
+
+pub fn subpath_intersection_retains_parameters_with_non_overlap_claim_test() {
+  let assert Ok(left) = svg_path.subpath([line(0.0, 0.0, 10.0, 0.0)])
+  let assert Ok(right) = svg_path.subpath([line(2.0, 0.0, 8.0, 0.0)])
+  let assert Ok(overlap_intervals) = overlaps.subpath(left, right)
+  let complementary_left = svg_path.SubpathParameter(segment_index: 0, t: 0.5)
+  let non_complementary_left =
+    svg_path.SubpathParameter(segment_index: 0, t: 0.8)
+  let right_parameter = svg_path.SubpathParameter(segment_index: 0, t: 0.5)
+  let intersection =
+    svg_path.SubpathIntersection(
+      point: svg_path.Point(5.0, 0.0),
+      left_parameters: [complementary_left, non_complementary_left],
+      right_parameters: [right_parameter],
+    )
+
+  let found =
+    encounters.Encounters(overlaps: overlap_intervals, intersections: [
+      intersection,
+    ])
+  assert encounters.filter_fully_overlap_explained_subpath_intersection_parameters(
+      found,
+      left,
+      right,
+      tolerance,
+    )
+    == Ok(
+      encounters.Encounters(overlaps: overlap_intervals, intersections: [
+        svg_path.SubpathIntersection(
+          point: svg_path.Point(5.0, 0.0),
+          left_parameters: [non_complementary_left],
+          right_parameters: [right_parameter],
+        ),
+      ]),
+    )
 }
 
 pub fn segment_subpath_retains_addresses_for_overlap_and_points_test() {

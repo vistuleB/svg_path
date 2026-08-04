@@ -60,20 +60,19 @@ pub fn point_at_overlap_boundary_through_adjacent_alias_fixture_test() {
     overlaps: [overlap],
     intersections: [boundary],
   ) = encounter
-
-  let assert svg_path.SubpathIntersection(
-    left_parameters: [left_at],
-    right_parameters: [right_at],
-    ..,
-  ) = boundary
-  assert left_at == svg_path.SubpathParameter(segment_index: 0, t: 0.5)
-  assert right_at == svg_path.SubpathParameter(segment_index: 1, t: 0.0)
   assert validation.subpath_intersection_is_contained_in_overlap(
     left,
     right,
     boundary,
     overlap,
   )
+  assert encounters.filter_fully_overlap_explained_subpath_intersection_parameters(
+      encounter,
+      left,
+      right,
+      tolerance,
+    )
+    == Ok(encounters.Encounters(overlaps: [overlap], intersections: []))
 }
 
 pub fn isolated_intersection_elsewhere_in_same_query_fixture_test() {
@@ -109,6 +108,13 @@ pub fn isolated_intersection_elsewhere_in_same_query_fixture_test() {
     overlap,
   )
   assert isolated.point == svg_path.Point(10.0, 5.0)
+  assert encounters.filter_fully_overlap_explained_subpath_intersection_parameters(
+      encounter,
+      left,
+      right,
+      tolerance,
+    )
+    == Ok(encounters.Encounters(overlaps: [overlap], intersections: [isolated]))
 }
 
 pub fn cubic_overlap_can_mask_another_isolated_intersection_fixture_test() {
@@ -135,10 +141,8 @@ pub fn cubic_overlap_can_mask_another_isolated_intersection_fixture_test() {
   assert point.near(crossing.point, expected, tolerance:)
 
   let assert Ok(encounter) = encounters.segment(curve, curve)
-  let assert encounters.Encounters(
-    overlaps: [_],
-    intersections: recovered,
-  ) = encounter
+  let assert encounters.Encounters(overlaps: [_], intersections: recovered) =
+    encounter
   assert list.length(recovered) == 2
   assert list.any(recovered, fn(found) {
     found.left_t == 0.25 && found.right_t == 0.75
