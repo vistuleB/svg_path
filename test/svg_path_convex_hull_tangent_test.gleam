@@ -353,6 +353,25 @@ pub fn point_exact_loop_tangent_subpaths_finds_cubic_interior_tangencies_test() 
   assert list.length(svg_path.subpath_segments(inside)) == 4
 }
 
+pub fn cubic_point_tangent_roots_preserve_non_crossing_root_test() {
+  // This cubic is the parabola C(t) = (t, t²). For a point C(0.37), the
+  // tangency polynomial is (t - 0.37)² and therefore does not change sign.
+  let segment =
+    svg_path.CubicBezier(
+      start: svg_path.Point(0.0, 0.0),
+      control1: svg_path.Point(1.0 /. 3.0, 0.0),
+      control2: svg_path.Point(2.0 /. 3.0, 1.0 /. 3.0),
+      end: svg_path.Point(1.0, 1.0),
+    )
+  let roots = convex_hull.internal_cubic_point_tangent_roots(
+    segment,
+    point: svg_path.Point(0.37, 0.1369),
+  )
+
+  let assert [root] = roots
+  assert near_float(root, 0.37)
+}
+
 pub fn point_exact_loop_tangent_subpaths_finds_arc_interior_tangencies_test() {
   let loop = [
     svg_path.Line(

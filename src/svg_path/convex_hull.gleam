@@ -1449,8 +1449,8 @@ fn segment_point_tangent_roots(
         |> list.filter(fn(t) { t >=. 0.0 && t <=. 1.0 }),
       )
     }
-    svg_path.CubicBezier(..) ->
-      Ok(segment_point_tangent_numeric_roots(segment, point))
+    svg_path.CubicBezier(start:, control1:, control2:, end:) ->
+      Ok(cubic_point_tangent_roots(start, control1, control2, end, point))
     svg_path.Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:) ->
       arc_point_tangent_roots(
         start,
@@ -1543,124 +1543,58 @@ fn from_ellipse_point(point: ellipse.EllipsePoint) -> svg_path.Point {
   svg_path.Point(point.x, point.y)
 }
 
-fn segment_point_tangent_numeric_roots(
-  segment: svg_path.Segment,
+fn cubic_point_tangent_roots(
+  start: svg_path.Point,
+  control1: svg_path.Point,
+  control2: svg_path.Point,
+  end: svg_path.Point,
   point: svg_path.Point,
 ) -> List(Float) {
-  let sample_count = 720
-  let first = point_tangent_value(segment, point, 0.0)
-  int.range(
-    from: 1,
-    to: sample_count,
-    with: #(0.0, first, []),
-    run: fn(state, index) {
-      let #(previous_t, previous_value, roots) = state
-      let t = int.to_float(index) /. int.to_float(sample_count)
-      let value = point_tangent_value(segment, point, t)
-      let roots = case near_zero(previous_value), near_zero(value) {
-        True, _ -> insert_near_unique_float(roots, previous_t)
-        _, True -> insert_near_unique_float(roots, t)
-        False, False -> {
-          case same_sign(previous_value, value) {
-            True -> roots
-            False ->
-              insert_near_unique_float(
-                roots,
-                bisect_point_tangent(segment, point, previous_t, t),
-              )
-          }
-        }
-      }
-      #(t, value, roots)
-    },
+  // For C(t) = a t³ + b t² + c t + d, point tangency is
+  // cross(C(t) - point, C'(t)) = 0, a quartic polynomial.
+  let a =
+    add_points(
+      add_points(scale_point(start, -1.0), scale_point(control1, 3.0)),
+      add_points(scale_point(control2, -3.0), end),
+    )
+  let b =
+    add_points(
+      add_points(scale_point(start, 3.0), scale_point(control1, -6.0)),
+      scale_point(control2, 3.0),
+    )
+  let c = scale_point(subtract(control1, start), 3.0)
+  let s = subtract(start, point)
+  let coefficients = [
+    0.0 -. cross(a, b),
+    -2.0 *. cross(a, c),
+    3.0 *. cross(s, a) -. cross(b, c),
+    2.0 *. cross(s, b),
+    cross(s, c),
+  ]
+  let assert Ok(roots) = root.polynomial_roots_with(
+    coefficients,
+    from: 0.0,
+    to: 1.0,
+    options: root.PolynomialOptions(
+      coefficient_tolerance: 0.000000000001,
+      root_tolerance: 0.000000000001,
+      value_tolerance: 0.000000000001,
+      max_iterations: 100,
+    ),
   )
-  |> fn(state) {
-    let #(_, _, roots) = state
-    roots
-  }
-  |> list.reverse
+  roots
 }
 
-fn bisect_point_tangent(
+/// Return cubic point-tangency parameters for focused numerical tests.
+@internal
+pub fn internal_cubic_point_tangent_roots(
   segment: svg_path.Segment,
-  point: svg_path.Point,
-  left left: Float,
-  right right: Float,
-) -> Float {
-  let left_value = point_tangent_value(segment, point, left)
-  bisect_point_tangent_loop(
-    segment,
-    point,
-    left,
-    left_value,
-    right,
-    remaining: 80,
-  )
-}
-
-fn bisect_point_tangent_loop(
-  segment: svg_path.Segment,
-  point: svg_path.Point,
-  left: Float,
-  left_value: Float,
-  right: Float,
-  remaining remaining: Int,
-) -> Float {
-  let midpoint = left +. { right -. left } /. 2.0
-  let midpoint_value = point_tangent_value(segment, point, midpoint)
-  case
-    remaining <= 0
-    || float.absolute_value(midpoint_value) <. 0.00000000000001
-    || float.absolute_value(right -. left) <. 0.000000000001
-  {
-    True -> midpoint
-    False ->
-      case same_sign(left_value, midpoint_value) {
-        True ->
-          bisect_point_tangent_loop(
-            segment,
-            point,
-            midpoint,
-            midpoint_value,
-            right,
-            remaining: remaining - 1,
-          )
-        False ->
-          bisect_point_tangent_loop(
-            segment,
-            point,
-            left,
-            left_value,
-            midpoint,
-            remaining: remaining - 1,
-          )
-      }
-  }
-}
-
-fn point_tangent_value(
-  segment: svg_path.Segment,
-  point: svg_path.Point,
-  t: Float,
-) -> Float {
-  let assert Ok(q) = svg_path.segment_point(segment, at: t)
-  let assert Ok(tangent) = svg_path.segment_derivative(segment, at: t)
-  cross(subtract(q, point), tangent)
-}
-
-fn near_zero(value: Float) -> Bool {
-  float.absolute_value(value) <=. 0.000000000001
-}
-
-fn insert_near_unique_float(values: List(Float), value: Float) -> List(Float) {
-  case
-    values
-    |> list.any(fn(existing) {
-      float.absolute_value(existing -. value) <=. same_t
-    })
-  {
-    True -> values
-    False -> [value, ..values]
+  point point: svg_path.Point,
+) -> List(Float) {
+  case segment {
+    svg_path.CubicBezier(start:, control1:, control2:, end:) ->
+      cubic_point_tangent_roots(start, control1, control2, end, point)
+    _ -> []
   }
 }
 
