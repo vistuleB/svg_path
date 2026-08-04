@@ -58,6 +58,126 @@ pub fn build_preserves_source_path_grouping_test() {
   |> should.equal(2)
 }
 
+pub fn segment_images_follow_crossing_source_traversals_test() {
+  let horizontal =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
+    ])
+  let vertical =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(5.0, -5.0),
+      svg_path.Point(5.0, 5.0),
+    ])
+  let assert Ok(build) =
+    arrangement_graph.build(
+      [svg_path.Path([horizontal, vertical])],
+      tolerance:,
+      minimum_chord:,
+    )
+  let assert [horizontal_image, vertical_image] = build.segment_images
+  let assert Ok(horizontal_edges) =
+    arrangement_graph.segment_image_edges(build, horizontal_image)
+  let assert Ok(vertical_edges) =
+    arrangement_graph.segment_image_edges(build, vertical_image)
+
+  let assert [#(horizontal_first, False), #(horizontal_second, False)] =
+    horizontal_edges
+  let assert [#(vertical_first, False), #(vertical_second, False)] =
+    vertical_edges
+  svg_path.segment_start(horizontal_first.segment)
+  |> should.equal(svg_path.Point(0.0, 0.0))
+  svg_path.segment_end(horizontal_second.segment)
+  |> should.equal(svg_path.Point(10.0, 0.0))
+  svg_path.segment_start(vertical_first.segment)
+  |> should.equal(svg_path.Point(5.0, -5.0))
+  svg_path.segment_end(vertical_second.segment)
+  |> should.equal(svg_path.Point(5.0, 5.0))
+}
+
+pub fn segment_images_share_coincident_edges_with_source_orientation_test() {
+  let forward =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
+    ])
+  let reverse =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(10.0, 0.0),
+      svg_path.Point(0.0, 0.0),
+    ])
+  let assert Ok(build) =
+    arrangement_graph.build(
+      [svg_path.Path([forward, reverse])],
+      tolerance:,
+      minimum_chord:,
+    )
+  let assert [forward_image, reverse_image] = build.segment_images
+  let assert arrangement_graph.ArrangementSegmentImage(
+    edges: [
+      arrangement_graph.DirectedEdgeReference(
+        edge_id: forward_id,
+        reversed: False,
+      ),
+    ],
+    ..,
+  ) = forward_image
+  let assert arrangement_graph.ArrangementSegmentImage(
+    edges: [
+      arrangement_graph.DirectedEdgeReference(
+        edge_id: reverse_id,
+        reversed: True,
+      ),
+    ],
+    ..,
+  ) = reverse_image
+
+  forward_id |> should.equal(reverse_id)
+}
+
+pub fn segment_images_map_different_source_decompositions_to_shared_edges_test() {
+  let whole =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
+    ])
+  let divided =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(5.0, 0.0),
+      svg_path.Point(10.0, 0.0),
+    ])
+  let assert Ok(build) =
+    arrangement_graph.build(
+      [svg_path.Path([whole, divided])],
+      tolerance:,
+      minimum_chord:,
+    )
+  let assert [whole_image, divided_first_image, divided_second_image] =
+    build.segment_images
+  let assert arrangement_graph.ArrangementSegmentImage(
+    path_index: 0,
+    subpath_index: 0,
+    segment_index: 0,
+    edges: [whole_first, whole_second],
+  ) = whole_image
+  let assert arrangement_graph.ArrangementSegmentImage(
+    path_index: 0,
+    subpath_index: 1,
+    segment_index: 0,
+    edges: [divided_first],
+  ) = divided_first_image
+  let assert arrangement_graph.ArrangementSegmentImage(
+    path_index: 0,
+    subpath_index: 1,
+    segment_index: 1,
+    edges: [divided_second],
+  ) = divided_second_image
+
+  whole_first |> should.equal(divided_first)
+  whole_second |> should.equal(divided_second)
+}
+
 pub fn build_rejects_invalid_tolerance_before_inspecting_sources_test() {
   arrangement_graph.build([], tolerance: 0.0, minimum_chord:)
   |> should.equal(Error(arrangement_graph.InvalidTolerance(0.0)))

@@ -102,12 +102,40 @@ pub type ArrangementGraph {
 /// replaces line-degenerate segment sequences before refinement and may change
 /// segment decomposition. These are the official source paths corresponding to
 /// the graph and should be used for later winding classification.
+///
+/// `segment_images` has one entry for every segment in `normalized_paths`, in
+/// path, subpath, and segment order. Each image lists the atomic graph edges in
+/// that segment's traversal order. A reference's `reversed` flag is true when
+/// that traversal opposes the edge's stored direction. An image can be empty
+/// when every refined piece is shorter than `minimum_chord`.
 pub type ArrangementGraphBuild {
   ArrangementGraphBuild(
     /// The arrangement produced from `normalized_paths`.
     graph: ArrangementGraph,
     /// Normalized sources, retaining the input path and subpath order.
     normalized_paths: List(svg_path.Path),
+    /// Ordered graph-edge images of every normalized source segment.
+    segment_images: List(ArrangementSegmentImage),
+  )
+}
+
+/// One graph edge traversed as part of a normalized source segment.
+///
+/// `edge_id` identifies an edge in the containing build's graph. `reversed`
+/// records whether the source traversal opposes that edge's stored segment.
+pub type DirectedEdgeReference {
+  DirectedEdgeReference(edge_id: Int, reversed: Bool)
+}
+
+/// The ordered atomic graph edges produced from one normalized source segment.
+///
+/// The three indices address the segment in the build's `normalized_paths`.
+pub type ArrangementSegmentImage {
+  ArrangementSegmentImage(
+    path_index: Int,
+    subpath_index: Int,
+    segment_index: Int,
+    edges: List(DirectedEdgeReference),
   )
 }
 
@@ -136,6 +164,9 @@ pub type Error {
   /// An edge refers to a vertex that is not in the graph.
   MissingVertex(vertex: Int)
 
+  /// A segment image refers to an edge that is not in its build graph.
+  MissingEdge(edge: Int)
+
   /// A vertex has no incident edge.
   IsolatedVertex(vertex: Int)
 
@@ -162,8 +193,44 @@ pub type Error {
   )
 }
 
+/// Resolve one segment image to graph edges and traversal directions.
+pub fn segment_image_edges(
+  build: ArrangementGraphBuild,
+  image: ArrangementSegmentImage,
+) -> Result(List(#(ArrangementEdge, Bool)), Error) {
+  let ArrangementGraphBuild(graph: ArrangementGraph(edges:, ..), ..) = build
+  let ArrangementSegmentImage(edges: references, ..) = image
+  references
+  |> list.map(fn(reference) {
+    let DirectedEdgeReference(edge_id:, reversed:) = reference
+    case list.find(edges, fn(edge) { edge.id == edge_id }) {
+      Ok(edge) -> Ok(#(edge, reversed))
+      Error(Nil) -> Error(MissingEdge(edge_id))
+    }
+  })
+  |> result.all
+}
+
 type IndexedSegment {
-  IndexedSegment(index: Int, segment: svg_path.Segment)
+  IndexedSegment(
+    index: Int,
+    path_index: Int,
+    subpath_index: Int,
+    segment_index: Int,
+    segment: svg_path.Segment,
+  )
+}
+
+type AtomicPiece {
+  AtomicPiece(
+    source_index: Int,
+    path_index: Int,
+    subpath_index: Int,
+    segment_index: Int,
+    source_from: Float,
+    source_to: Float,
+    segment: svg_path.Segment,
+  )
 }
 
 type VertexAttachment {
@@ -281,46 +348,121 @@ pub fn build(
 ) -> Result(ArrangementGraphBuild, Error) {
   use _ <- result.try(validate_options(tolerance, minimum_chord))
   use normalized_paths <- result.try(normalize_paths(paths, tolerance))
-  let segments =
-    normalized_paths
-    |> list.flat_map(svg_path.path_subpaths)
-    |> list.flat_map(svg_path.subpath_segments)
+  let segments = index_normalized_paths(normalized_paths)
   use atomic_segments <- result.try(refine_segments_to_atomic(
     segments,
     tolerance,
     minimum_chord,
   ))
-  use graph <- result.try(insert_semantic_pieces(
+  let segment_images = initial_segment_images(segments)
+  use #(graph, segment_images) <- result.try(insert_semantic_pieces_with_images(
     atomic_segments,
     empty(),
+    segment_images,
     tolerance,
     minimum_chord,
   ))
-  Ok(ArrangementGraphBuild(graph:, normalized_paths:))
+  Ok(ArrangementGraphBuild(graph:, normalized_paths:, segment_images:))
 }
 
 fn refine_segments_to_atomic(
-  segments: List(svg_path.Segment),
+  indexed: List(IndexedSegment),
   tolerance: Float,
   minimum_chord: Float,
-) -> Result(List(svg_path.Segment), Error) {
-  let indexed = index_segments(segments, 0, [])
+) -> Result(List(AtomicPiece), Error) {
   use cuts <- result.try(collect_all_cuts(indexed, tolerance, []))
   split_indexed_segments(indexed, cuts, tolerance, minimum_chord, [])
 }
 
-fn index_segments(
-  segments: List(svg_path.Segment),
-  index: Int,
-  indexed: List(IndexedSegment),
+fn index_normalized_paths(paths: List(svg_path.Path)) -> List(IndexedSegment) {
+  index_normalized_paths_loop(paths, path_index: 0, index: 0, indexed: [])
+}
+
+fn index_normalized_paths_loop(
+  paths: List(svg_path.Path),
+  path_index path_index: Int,
+  index index: Int,
+  indexed indexed: List(IndexedSegment),
 ) -> List(IndexedSegment) {
-  case segments {
+  case paths {
     [] -> list.reverse(indexed)
+    [first, ..rest] -> {
+      let #(index, indexed) =
+        index_normalized_subpaths(
+          svg_path.path_subpaths(first),
+          path_index,
+          subpath_index: 0,
+          index:,
+          indexed:,
+        )
+      index_normalized_paths_loop(
+        rest,
+        path_index: path_index + 1,
+        index:,
+        indexed:,
+      )
+    }
+  }
+}
+
+fn index_normalized_subpaths(
+  subpaths: List(svg_path.Subpath),
+  path_index: Int,
+  subpath_index subpath_index: Int,
+  index index: Int,
+  indexed indexed: List(IndexedSegment),
+) -> #(Int, List(IndexedSegment)) {
+  case subpaths {
+    [] -> #(index, indexed)
+    [first, ..rest] -> {
+      let #(index, indexed) =
+        index_normalized_segments(
+          svg_path.subpath_segments(first),
+          path_index,
+          subpath_index,
+          segment_index: 0,
+          index:,
+          indexed:,
+        )
+      index_normalized_subpaths(
+        rest,
+        path_index,
+        subpath_index: subpath_index + 1,
+        index:,
+        indexed:,
+      )
+    }
+  }
+}
+
+fn index_normalized_segments(
+  segments: List(svg_path.Segment),
+  path_index: Int,
+  subpath_index: Int,
+  segment_index segment_index: Int,
+  index index: Int,
+  indexed indexed: List(IndexedSegment),
+) -> #(Int, List(IndexedSegment)) {
+  case segments {
+    [] -> #(index, indexed)
     [first, ..rest] ->
-      index_segments(rest, index + 1, [
-        IndexedSegment(index:, segment: first),
-        ..indexed
-      ])
+      index_normalized_segments(
+        rest,
+        path_index,
+        subpath_index,
+        segment_index: segment_index + 1,
+        index: index + 1,
+        indexed: [
+          IndexedSegment(
+            index:,
+            path_index:,
+            subpath_index:,
+            segment_index:,
+            segment: first,
+          ),
+          ..indexed
+        ],
+      )
   }
 }
 
@@ -358,8 +500,8 @@ fn pair_cuts(
   right: IndexedSegment,
   tolerance: Float,
 ) -> Result(List(SegmentCut), Error) {
-  let IndexedSegment(index: left_index, segment: left_segment) = left
-  let IndexedSegment(index: right_index, segment: right_segment) = right
+  let IndexedSegment(index: left_index, segment: left_segment, ..) = left
+  let IndexedSegment(index: right_index, segment: right_segment, ..) = right
   use found_overlaps <- result.try(
     overlaps.segment_overlaps_by_endpoint_projection_with(
       left_segment,
@@ -417,11 +559,20 @@ fn split_indexed_segments(
   cuts: List(SegmentCut),
   tolerance: Float,
   minimum_chord: Float,
-  pieces: List(svg_path.Segment),
-) -> Result(List(svg_path.Segment), Error) {
+  pieces: List(AtomicPiece),
+) -> Result(List(AtomicPiece), Error) {
   case indexed {
     [] -> Ok(list.reverse(pieces))
-    [IndexedSegment(index:, segment:), ..rest] -> {
+    [
+      IndexedSegment(
+        index:,
+        path_index:,
+        subpath_index:,
+        segment_index:,
+        segment:,
+      ),
+      ..rest
+    ] -> {
       let parameters =
         [0.0, 1.0, ..cut_parameters(cuts, index, [])]
         |> list.sort(by: float_compare)
@@ -431,14 +582,16 @@ fn split_indexed_segments(
         |> result.map_error(PathError),
       )
       let retained =
-        split
-        |> list.filter(fn(piece) {
-          point.distance(
-            svg_path.segment_start(piece),
-            svg_path.segment_end(piece),
-          )
-          >=. minimum_chord
-        })
+        atomic_pieces_for_parameters(
+          split,
+          parameters,
+          index,
+          path_index,
+          subpath_index,
+          segment_index,
+          minimum_chord,
+          pieces: [],
+        )
       split_indexed_segments(
         rest,
         cuts,
@@ -447,6 +600,54 @@ fn split_indexed_segments(
         list.append(list.reverse(retained), pieces),
       )
     }
+  }
+}
+
+fn atomic_pieces_for_parameters(
+  segments: List(svg_path.Segment),
+  parameters: List(Float),
+  source_index: Int,
+  path_index: Int,
+  subpath_index: Int,
+  segment_index: Int,
+  minimum_chord: Float,
+  pieces pieces: List(AtomicPiece),
+) -> List(AtomicPiece) {
+  case segments, parameters {
+    [segment, ..segment_rest], [from, to, ..parameter_rest] -> {
+      let pieces = case
+        point.distance(
+          svg_path.segment_start(segment),
+          svg_path.segment_end(segment),
+        )
+        >=. minimum_chord
+      {
+        True -> [
+          AtomicPiece(
+            source_index:,
+            path_index:,
+            subpath_index:,
+            segment_index:,
+            source_from: from,
+            source_to: to,
+            segment:,
+          ),
+          ..pieces
+        ]
+        False -> pieces
+      }
+      atomic_pieces_for_parameters(
+        segment_rest,
+        [to, ..parameter_rest],
+        source_index,
+        path_index,
+        subpath_index,
+        segment_index,
+        minimum_chord,
+        pieces:,
+      )
+    }
+    _, _ -> list.reverse(pieces)
   }
 }
 
@@ -496,39 +697,105 @@ fn float_compare(left: Float, right: Float) -> order.Order {
   }
 }
 
-fn insert_semantic_pieces(
-  pieces: List(svg_path.Segment),
+fn initial_segment_images(
+  segments: List(IndexedSegment),
+) -> List(ArrangementSegmentImage) {
+  list.map(segments, fn(segment) {
+    let IndexedSegment(path_index:, subpath_index:, segment_index:, ..) =
+      segment
+    ArrangementSegmentImage(
+      path_index:,
+      subpath_index:,
+      segment_index:,
+      edges: [],
+    )
+  })
+}
+
+fn insert_semantic_pieces_with_images(
+  pieces: List(AtomicPiece),
   graph: ArrangementGraph,
+  images: List(ArrangementSegmentImage),
   tolerance: Float,
   minimum_chord: Float,
-) -> Result(ArrangementGraph, Error) {
+) -> Result(#(ArrangementGraph, List(ArrangementSegmentImage)), Error) {
   case pieces {
-    [] -> Ok(graph)
+    [] -> Ok(#(graph, images))
     [first, ..rest] -> {
-      use next <- result.try(insert_semantic_piece(
-        graph,
-        first,
+      let AtomicPiece(source_index:, segment:, ..) = first
+      use #(next, edge_id, reversed) <- result.try(
+        insert_semantic_piece_with_ref(graph, segment, tolerance, minimum_chord),
+      )
+      let images =
+        append_segment_image_reference(
+          images,
+          source_index,
+          DirectedEdgeReference(edge_id:, reversed:),
+        )
+      insert_semantic_pieces_with_images(
+        rest,
+        next,
+        images,
         tolerance,
         minimum_chord,
-      ))
-      insert_semantic_pieces(rest, next, tolerance, minimum_chord)
+      )
     }
   }
 }
 
-fn insert_semantic_piece(
+fn insert_semantic_piece_with_ref(
   graph: ArrangementGraph,
   segment: svg_path.Segment,
   tolerance: Float,
   minimum_chord: Float,
-) -> Result(ArrangementGraph, Error) {
+) -> Result(#(ArrangementGraph, Int, Bool), Error) {
   let ArrangementGraph(edges:, ..) = graph
   use match <- result.try(find_semantic_edge(edges, segment, tolerance))
   case match {
-    None -> insert_atomic_segment(graph, segment, tolerance:, minimum_chord:)
+    None -> {
+      let edge_id = list.length(edges)
+      use graph <- result.try(insert_atomic_segment(
+        graph,
+        segment,
+        tolerance:,
+        minimum_chord:,
+      ))
+      Ok(#(graph, edge_id, False))
+    }
     Some(#(edge_id, same_direction)) ->
-      Ok(increment_edge_by_id(graph, edge_id, same_direction))
+      Ok(#(
+        increment_edge_by_id(graph, edge_id, same_direction),
+        edge_id,
+        !same_direction,
+      ))
   }
+}
+
+fn append_segment_image_reference(
+  images: List(ArrangementSegmentImage),
+  source_index: Int,
+  reference: DirectedEdgeReference,
+) -> List(ArrangementSegmentImage) {
+  images
+  |> list.index_map(fn(image, index) {
+    case index == source_index {
+      False -> image
+      True -> {
+        let ArrangementSegmentImage(
+          path_index:,
+          subpath_index:,
+          segment_index:,
+          edges:,
+        ) = image
+        ArrangementSegmentImage(
+          path_index:,
+          subpath_index:,
+          segment_index:,
+          edges: list.append(edges, [reference]),
+        )
+      }
+    }
+  })
 }
 
 fn find_semantic_edge(

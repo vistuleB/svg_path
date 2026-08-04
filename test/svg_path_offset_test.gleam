@@ -482,49 +482,6 @@ pub fn path_offsets_straight_subpaths_test() {
   assert serialize.path(offset_path) == "M 0 -2 H 8 V -10 M 0 18 H 8 V 10"
 }
 
-pub fn legacy_global_sections_node_crossing_subpaths_test() {
-  let horizontal =
-    svg_path.subpath_assert_polyline([
-      svg_path.Point(0.0, 0.0),
-      svg_path.Point(10.0, 0.0),
-    ])
-  let vertical =
-    svg_path.subpath_assert_polyline([
-      svg_path.Point(5.0, -5.0),
-      svg_path.Point(5.0, 5.0),
-    ])
-
-  let assert Ok(sections) = offset.internal_legacy_global_sections(
-    [horizontal, vertical],
-    options: offset.default_options(),
-  )
-
-  assert serialize.path(sections)
-    == "M 0 0 H 5 M 5 0 H 10 M 5 -5 V 0 M 5 0 V 5"
-}
-
-pub fn legacy_global_sections_preserve_atomic_coincident_pieces_test() {
-  let whole =
-    svg_path.subpath_assert_polyline([
-      svg_path.Point(0.0, 0.0),
-      svg_path.Point(10.0, 0.0),
-    ])
-  let divided =
-    svg_path.subpath_assert_polyline([
-      svg_path.Point(0.0, 0.0),
-      svg_path.Point(5.0, 0.0),
-      svg_path.Point(10.0, 0.0),
-    ])
-
-  let assert Ok(sections) = offset.internal_legacy_global_sections(
-    [whole, divided],
-    options: offset.default_options(),
-  )
-
-  assert serialize.path(sections)
-    == "M 0 0 H 5 M 5 0 H 10 M 0 0 H 5 M 5 0 H 10"
-}
-
 pub fn provisional_arrangement_nodes_crossing_subpaths_test() {
   let horizontal =
     svg_path.subpath_assert_polyline([
@@ -583,13 +540,13 @@ pub fn arrangement_global_sections_expand_coincident_multiplicity_test() {
       svg_path.Point(10.0, 0.0),
     ])
 
-  let assert Ok(sections) = offset.internal_arrangement_global_sections(
-    [whole, divided],
-    options: offset.default_options(),
-  )
+  let assert Ok(sections) =
+    offset.internal_arrangement_global_sections(
+      [whole, divided],
+      options: offset.default_options(),
+    )
 
-  assert serialize.path(sections)
-    == "M 0 0 H 5 M 0 0 H 5 M 5 0 H 10 M 5 0 H 10"
+  assert serialize.path(sections) == "M 0 0 H 5 M 5 0 H 10 M 0 0 H 5 M 5 0 H 10"
 }
 
 pub fn arrangement_global_sections_preserve_opposite_multiplicity_test() {
@@ -610,52 +567,12 @@ pub fn arrangement_global_sections_preserve_opposite_multiplicity_test() {
   assert edge.forward_multiplicity == 1
   assert edge.reverse_multiplicity == 1
 
-  let assert Ok(sections) = offset.internal_arrangement_global_sections(
-    [forward, reverse],
-    options: offset.default_options(),
-  )
+  let assert Ok(sections) =
+    offset.internal_arrangement_global_sections(
+      [forward, reverse],
+      options: offset.default_options(),
+    )
   assert serialize.path(sections) == "M 0 0 H 10 M 10 0 H 0"
-}
-
-pub fn arrangement_and_legacy_sections_match_crossing_geometry_test() {
-  let provisional = [
-    svg_path.subpath_assert_polyline([
-      svg_path.Point(0.0, 0.0),
-      svg_path.Point(10.0, 0.0),
-    ]),
-    svg_path.subpath_assert_polyline([
-      svg_path.Point(5.0, -5.0),
-      svg_path.Point(5.0, 5.0),
-    ]),
-  ]
-  let options = offset.default_options()
-  let assert Ok(legacy) =
-    offset.internal_legacy_global_sections(provisional, options:)
-  let assert Ok(arranged) =
-    offset.internal_arrangement_global_sections(provisional, options:)
-
-  assert serialized_subpaths(legacy) == serialized_subpaths(arranged)
-}
-
-pub fn arrangement_and_legacy_sections_match_coincident_geometry_test() {
-  let provisional = [
-    svg_path.subpath_assert_polyline([
-      svg_path.Point(0.0, 0.0),
-      svg_path.Point(10.0, 0.0),
-    ]),
-    svg_path.subpath_assert_polyline([
-      svg_path.Point(0.0, 0.0),
-      svg_path.Point(5.0, 0.0),
-      svg_path.Point(10.0, 0.0),
-    ]),
-  ]
-  let options = offset.default_options()
-  let assert Ok(legacy) =
-    offset.internal_legacy_global_sections(provisional, options:)
-  let assert Ok(arranged) =
-    offset.internal_arrangement_global_sections(provisional, options:)
-
-  assert serialized_subpaths(legacy) == serialized_subpaths(arranged)
 }
 
 pub fn subpath_band_open_line_returns_two_capless_sides_test() {
@@ -1850,13 +1767,6 @@ fn stalled_arc_turn_panel(
   <> "; stalled="
   <> int.to_string(count_stalled_segments(svg_path.subpath_segments(source)))
   <> "</text>"
-}
-
-fn serialized_subpaths(path: svg_path.Path) -> List(String) {
-  path
-  |> svg_path.path_subpaths
-  |> list.map(serialize.subpath)
-  |> list.sort(by: string.compare)
 }
 
 fn serialize_segments(segments: List(svg_path.Segment)) -> String {

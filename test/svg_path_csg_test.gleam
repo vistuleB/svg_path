@@ -30,6 +30,7 @@ pub fn csg_result_retains_its_arrangement_build_test() {
     build: arrangement_graph.ArrangementGraphBuild(
       graph:,
       normalized_paths: [normalized_left, normalized_right],
+      ..,
     ),
   )) = csg.union(left, right, using: svg_path.Nonzero)
 

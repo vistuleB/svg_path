@@ -88,7 +88,8 @@ pub fn union_with(
     )
     |> result.map_error(ArrangementError),
   )
-  let arrangement_graph.ArrangementGraphBuild(graph:, normalized_paths:) = built
+  let arrangement_graph.ArrangementGraphBuild(graph:, normalized_paths:, ..) =
+    built
   let assert [normalized_left, normalized_right] = normalized_paths
   use path <- result.try(union_from_arrangement_graph(
     graph,
@@ -124,7 +125,8 @@ pub fn intersection_with(
     )
     |> result.map_error(ArrangementError),
   )
-  let arrangement_graph.ArrangementGraphBuild(graph:, normalized_paths:) = built
+  let arrangement_graph.ArrangementGraphBuild(graph:, normalized_paths:, ..) =
+    built
   let assert [normalized_left, normalized_right] = normalized_paths
   use path <- result.try(intersection_from_arrangement_graph(
     graph,
@@ -165,7 +167,8 @@ pub fn difference_with(
     )
     |> result.map_error(ArrangementError),
   )
-  let arrangement_graph.ArrangementGraphBuild(graph:, normalized_paths:) = built
+  let arrangement_graph.ArrangementGraphBuild(graph:, normalized_paths:, ..) =
+    built
   let assert [normalized_left, normalized_right] = normalized_paths
   use path <- result.try(difference_from_arrangement_graph(
     graph,
@@ -206,7 +209,8 @@ pub fn symmetric_difference_with(
     )
     |> result.map_error(ArrangementError),
   )
-  let arrangement_graph.ArrangementGraphBuild(graph:, normalized_paths:) = built
+  let arrangement_graph.ArrangementGraphBuild(graph:, normalized_paths:, ..) =
+    built
   let assert [normalized_left, normalized_right] = normalized_paths
   use path <- result.try(symmetric_difference_from_arrangement_graph(
     graph,
@@ -237,7 +241,8 @@ pub fn monotone_contours_with(
     )
     |> result.map_error(ArrangementError),
   )
-  let arrangement_graph.ArrangementGraphBuild(graph:, normalized_paths:) = built
+  let arrangement_graph.ArrangementGraphBuild(graph:, normalized_paths:, ..) =
+    built
   let assert [normalized_path] = normalized_paths
   use path <- result.try(monotone_contours_from_arrangement_graph(
     graph,

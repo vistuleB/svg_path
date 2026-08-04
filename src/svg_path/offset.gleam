@@ -9,7 +9,8 @@
 ////
 //// Subpath and path offsets create a provisional one-sided offset walk by
 //// connecting adjacent segment offsets with the requested join style. The
-//// public trimmed offset splits that walk at self-intersections, removes
+//// public trimmed offset builds an arrangement that nodes the provisional
+//// walks at intersections and endpoint-bounded overlaps, removes
 //// sections that lie inside the forbidden distance tube around the original
 //// subpath, then keeps the remaining sections in provisional traversal order.
 //// Because trimming can split an offset or remove it entirely, subpath and
@@ -30,11 +31,10 @@ import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import svg_path
-import svg_path/arrangement_graph
 import svg_path/area
+import svg_path/arrangement_graph
 import svg_path/bezier
 import svg_path/intersections
-import svg_path/overlaps
 import svg_path/point as point_helpers
 import svg_path/root
 import svg_path/trig
@@ -91,12 +91,6 @@ pub type Error {
 
   /// A calculation produced a non-finite coordinate.
   NonFinite
-}
-
-/// A split address on one provisional offset subpath, collected from the
-/// arrangement formed by every provisional subpath in an offset path.
-type GlobalSplit {
-  GlobalSplit(subpath_index: Int, parameter: svg_path.SubpathParameter)
 }
 
 /// Join style used when offsetting adjacent subpath segments.
@@ -529,10 +523,7 @@ pub fn path_with(
       converted: [],
     ),
   )
-  use splits <- result.try(global_offset_split_parameters(provisional))
-  use sections <- result.try(
-    global_offset_sections(provisional, splits, options, index: 0, sections: []),
-  )
+  use sections <- result.try(arrangement_global_section_chunks(provisional))
   use retained <- result.try(
     retain_global_parametric_sections(
       sections,
@@ -583,10 +574,7 @@ pub fn path_sections_with(
       converted: [],
     ),
   )
-  use splits <- result.try(global_offset_split_parameters(provisional))
-  use sections <- result.try(
-    global_offset_sections(provisional, splits, options, index: 0, sections: []),
-  )
+  use sections <- result.try(arrangement_global_section_chunks(provisional))
   use retained <- result.try(
     retain_global_parametric_sections(
       sections,
@@ -845,203 +833,6 @@ fn stroke_path_subpaths(
   }
 }
 
-fn global_offset_split_parameters(
-  provisional: List(svg_path.Subpath),
-) -> Result(List(GlobalSplit), Error) {
-  global_offset_split_parameters_loop(provisional, index: 0, collected: [])
-}
-
-fn global_offset_split_parameters_loop(
-  remaining: List(svg_path.Subpath),
-  index index: Int,
-  collected collected: List(GlobalSplit),
-) -> Result(List(GlobalSplit), Error) {
-  case remaining {
-    [] -> Ok(collected)
-    [first, ..rest] -> {
-      use self_splits <- result.try(self_intersection_split_parameters(first))
-      let collected =
-        list.fold(self_splits, collected, fn(acc, parameter) {
-          [GlobalSplit(subpath_index: index, parameter:), ..acc]
-        })
-      use collected <- result.try(global_offset_pair_splits(
-        first,
-        rest,
-        left_index: index,
-        right_index: index + 1,
-        collected:,
-      ))
-      global_offset_split_parameters_loop(rest, index: index + 1, collected:)
-    }
-  }
-}
-
-fn global_offset_pair_splits(
-  left: svg_path.Subpath,
-  remaining: List(svg_path.Subpath),
-  left_index left_index: Int,
-  right_index right_index: Int,
-  collected collected: List(GlobalSplit),
-) -> Result(List(GlobalSplit), Error) {
-  case remaining {
-    [] -> Ok(collected)
-    [right, ..rest] -> {
-      // Preserve the former encounter behavior explicitly: overlap endpoints
-      // take precedence; ordinary point intersections are used only when no
-      // continuous overlap exists. A future complete encounter operation can
-      // replace this branch when it reports both categories together.
-      let intersection_options = intersections.default_options()
-      case
-        overlaps.subpath_with(
-          left,
-          right,
-          tolerance: intersection_options.tolerance,
-        )
-      {
-        Ok([_, ..] as found) -> {
-          let collected =
-            collect_offset_overlap_splits(
-              found,
-              left_index,
-              right_index,
-              collected,
-            )
-          global_offset_pair_splits(
-            left,
-            rest,
-            left_index:,
-            right_index: right_index + 1,
-            collected:,
-          )
-        }
-        Ok([]) -> {
-          use found <- result.try(
-            intersections.subpath_with(
-              left,
-              right,
-              options: intersection_options,
-            )
-            |> result.map_error(PathError),
-          )
-          let collected =
-            collect_offset_intersection_splits(
-              found,
-              left_index,
-              right_index,
-              collected,
-            )
-          global_offset_pair_splits(
-            left,
-            rest,
-            left_index:,
-            right_index: right_index + 1,
-            collected:,
-          )
-        }
-        Error(error) -> Error(PathError(error))
-      }
-    }
-  }
-}
-
-fn collect_offset_overlap_splits(
-  found: List(overlaps.SubpathOverlap),
-  left_index: Int,
-  right_index: Int,
-  collected: List(GlobalSplit),
-) -> List(GlobalSplit) {
-  list.fold(found, collected, fn(acc, overlap) {
-    let overlaps.SubpathOverlap(
-      left_from:,
-      left_to:,
-      right_from:,
-      right_to:,
-      ..,
-    ) = overlap
-    [
-      GlobalSplit(subpath_index: left_index, parameter: left_from),
-      GlobalSplit(subpath_index: left_index, parameter: left_to),
-      GlobalSplit(subpath_index: right_index, parameter: right_from),
-      GlobalSplit(subpath_index: right_index, parameter: right_to),
-      ..acc
-    ]
-  })
-}
-
-fn collect_offset_intersection_splits(
-  found: List(svg_path.SubpathIntersection),
-  left_index: Int,
-  right_index: Int,
-  collected: List(GlobalSplit),
-) -> List(GlobalSplit) {
-  list.fold(found, collected, fn(acc, intersection) {
-    let svg_path.SubpathIntersection(left_parameters:, right_parameters:, ..) =
-      intersection
-    let acc =
-      list.fold(left_parameters, acc, fn(acc, parameter) {
-        [GlobalSplit(subpath_index: left_index, parameter:), ..acc]
-      })
-    list.fold(right_parameters, acc, fn(acc, parameter) {
-      [GlobalSplit(subpath_index: right_index, parameter:), ..acc]
-    })
-  })
-}
-
-fn global_offset_sections(
-  provisional: List(svg_path.Subpath),
-  splits: List(GlobalSplit),
-  options: Options,
-  index index: Int,
-  sections sections: List(List(svg_path.Segment)),
-) -> Result(List(List(svg_path.Segment)), Error) {
-  case provisional {
-    [] -> Ok(list.reverse(sections))
-    [first, ..rest] -> {
-      let local_splits =
-        splits
-        |> list.filter_map(fn(split) {
-          let GlobalSplit(subpath_index:, parameter:) = split
-          case subpath_index == index {
-            True -> Ok(parameter)
-            False -> Error(Nil)
-          }
-        })
-      use first_sections <- result.try(parametric_self_intersection_sections(
-        first,
-        intersections.default_options(),
-        options.fitting.tolerance,
-        extra_split_points: local_splits,
-      ))
-      global_offset_sections(
-        rest,
-        splits,
-        options,
-        index: index + 1,
-        sections: list.append(list.reverse(first_sections), sections),
-      )
-    }
-  }
-}
-
-/// Split provisional offset subpaths using the current intersection/overlap
-/// cleanup. This is a comparison hook for arrangement-graph migration tests.
-@internal
-pub fn internal_legacy_global_sections(
-  provisional: List(svg_path.Subpath),
-  options options: Options,
-) -> Result(svg_path.Path, Error) {
-  use splits <- result.try(global_offset_split_parameters(provisional))
-  use sections <- result.try(
-    global_offset_sections(provisional, splits, options, index: 0, sections: []),
-  )
-  use subpaths <- result.try(chunks_to_subpaths(
-    sections,
-    options.fitting.tolerance,
-    closed: False,
-  ))
-  Ok(svg_path.Path(subpaths:))
-}
-
 /// Build the arrangement used to node provisional offset subpaths.
 @internal
 pub fn internal_provisional_arrangement(
@@ -1062,23 +853,7 @@ pub fn internal_arrangement_global_sections(
   provisional: List(svg_path.Subpath),
   options options: Options,
 ) -> Result(svg_path.Path, Error) {
-  use build <- result.try(internal_provisional_arrangement(provisional))
-  let sections =
-    build.graph.edges
-    |> list.flat_map(fn(edge) {
-      list.append(
-        repeated_single_segment_sections(
-          edge.segment,
-          edge.forward_multiplicity,
-          [],
-        ),
-        repeated_single_segment_sections(
-          svg_path.segment_reverse(edge.segment),
-          edge.reverse_multiplicity,
-          [],
-        ),
-      )
-    })
+  use sections <- result.try(arrangement_global_section_chunks(provisional))
   use subpaths <- result.try(chunks_to_subpaths(
     sections,
     options.fitting.tolerance,
@@ -1087,19 +862,30 @@ pub fn internal_arrangement_global_sections(
   Ok(svg_path.Path(subpaths:))
 }
 
-fn repeated_single_segment_sections(
-  segment: svg_path.Segment,
-  remaining: Int,
-  sections: List(List(svg_path.Segment)),
-) -> List(List(svg_path.Segment)) {
-  case remaining <= 0 {
-    True -> sections
-    False ->
-      repeated_single_segment_sections(segment, remaining - 1, [
-        [segment],
-        ..sections
-      ])
-  }
+fn arrangement_global_section_chunks(
+  provisional: List(svg_path.Subpath),
+) -> Result(List(List(svg_path.Segment)), Error) {
+  use build <- result.try(internal_provisional_arrangement(provisional))
+  use image_sections <- result.try(
+    build.segment_images
+    |> list.map(fn(image) {
+      arrangement_graph.segment_image_edges(build, image)
+      |> result.map(fn(edges) {
+        list.map(edges, fn(directed) {
+          let #(edge, reversed) = directed
+          [
+            case reversed {
+              True -> svg_path.segment_reverse(edge.segment)
+              False -> edge.segment
+            },
+          ]
+        })
+      })
+      |> result.map_error(ArrangementGraphError)
+    })
+    |> result.all,
+  )
+  Ok(list.flatten(image_sections))
 }
 
 fn retain_global_parametric_sections(
