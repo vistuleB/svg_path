@@ -30,6 +30,7 @@ import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import svg_path
+import svg_path/arrangement_graph
 import svg_path/area
 import svg_path/bezier
 import svg_path/intersections
@@ -60,6 +61,9 @@ const default_stalled_offset_diameter = 0.01
 pub type Error {
   /// An underlying path operation failed.
   PathError(svg_path.Error)
+
+  /// Arrangement construction failed while noding provisional offset paths.
+  ArrangementGraphError(arrangement_graph.Error)
 
   /// The offset tolerance must be greater than zero.
   InvalidTolerance(tolerance: Float)
@@ -1016,6 +1020,85 @@ fn global_offset_sections(
         sections: list.append(list.reverse(first_sections), sections),
       )
     }
+  }
+}
+
+/// Split provisional offset subpaths using the current intersection/overlap
+/// cleanup. This is a comparison hook for arrangement-graph migration tests.
+@internal
+pub fn internal_legacy_global_sections(
+  provisional: List(svg_path.Subpath),
+  options options: Options,
+) -> Result(svg_path.Path, Error) {
+  use splits <- result.try(global_offset_split_parameters(provisional))
+  use sections <- result.try(
+    global_offset_sections(provisional, splits, options, index: 0, sections: []),
+  )
+  use subpaths <- result.try(chunks_to_subpaths(
+    sections,
+    options.fitting.tolerance,
+    closed: False,
+  ))
+  Ok(svg_path.Path(subpaths:))
+}
+
+/// Build the arrangement used to node provisional offset subpaths.
+@internal
+pub fn internal_provisional_arrangement(
+  provisional: List(svg_path.Subpath),
+) -> Result(arrangement_graph.ArrangementGraphBuild, Error) {
+  arrangement_graph.build(
+    [svg_path.Path(subpaths: provisional)],
+    tolerance: point_tolerance,
+    minimum_chord: point_tolerance,
+  )
+  |> result.map_error(ArrangementGraphError)
+}
+
+/// Return one atomic section for each directed provisional-edge occurrence.
+/// Coincident graph edges are expanded according to directional multiplicity.
+@internal
+pub fn internal_arrangement_global_sections(
+  provisional: List(svg_path.Subpath),
+  options options: Options,
+) -> Result(svg_path.Path, Error) {
+  use build <- result.try(internal_provisional_arrangement(provisional))
+  let sections =
+    build.graph.edges
+    |> list.flat_map(fn(edge) {
+      list.append(
+        repeated_single_segment_sections(
+          edge.segment,
+          edge.forward_multiplicity,
+          [],
+        ),
+        repeated_single_segment_sections(
+          svg_path.segment_reverse(edge.segment),
+          edge.reverse_multiplicity,
+          [],
+        ),
+      )
+    })
+  use subpaths <- result.try(chunks_to_subpaths(
+    sections,
+    options.fitting.tolerance,
+    closed: False,
+  ))
+  Ok(svg_path.Path(subpaths:))
+}
+
+fn repeated_single_segment_sections(
+  segment: svg_path.Segment,
+  remaining: Int,
+  sections: List(List(svg_path.Segment)),
+) -> List(List(svg_path.Segment)) {
+  case remaining <= 0 {
+    True -> sections
+    False ->
+      repeated_single_segment_sections(segment, remaining - 1, [
+        [segment],
+        ..sections
+      ])
   }
 }
 
