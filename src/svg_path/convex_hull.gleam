@@ -3230,6 +3230,16 @@ fn refine_chord_tangent(
   }
 }
 
+/// Refine a cubic chord-tangency parameter for focused numerical tests.
+@internal
+pub fn internal_refine_chord_tangent(
+  segment: svg_path.Segment,
+  approximate approximate: Float,
+  other other: Float,
+) -> Float {
+  refine_chord_tangent(segment, approximate:, other:)
+}
+
 fn refine_chord_tangent_scan(
   segment: svg_path.Segment,
   other other: Float,
@@ -3317,13 +3327,21 @@ fn bisect_chord_tangent_loop(
 ) -> Float {
   let midpoint = left +. { right -. left } /. 2.0
   let midpoint_value = chord_tangent_value(segment, midpoint, other)
-  case
-    remaining <= 0
-    || float.absolute_value(midpoint_value) <. 0.00000000000001
-    || float.absolute_value(right -. left) <. 0.000000000001
-  {
+  case remaining <= 0 || midpoint_value == 0.0 {
     True -> midpoint
-    False ->
+    False -> case float.absolute_value(right -. left) <=. 0.000000000001 {
+      True ->
+        polish_chord_tangent_by_bisection(
+          segment,
+          other,
+          left,
+          left_value,
+          right,
+          estimate: midpoint,
+          estimate_value: midpoint_value,
+          remaining: remaining,
+        )
+      False ->
       case same_sign(left_value, midpoint_value) {
         True ->
           bisect_chord_tangent_loop(
@@ -3344,6 +3362,122 @@ fn bisect_chord_tangent_loop(
             remaining: remaining - 1,
           )
       }
+    }
+  }
+}
+
+fn polish_chord_tangent_by_bisection(
+  segment: svg_path.Segment,
+  other: Float,
+  left: Float,
+  left_value: Float,
+  right: Float,
+  estimate estimate: Float,
+  estimate_value estimate_value: Float,
+  remaining remaining: Int,
+) -> Float {
+  case remaining <= 0 || estimate_value == 0.0 {
+    True -> estimate
+    False -> {
+      let #(next_left, next_left_value, next_right) = case
+        same_sign(left_value, estimate_value)
+      {
+        True -> #(estimate, estimate_value, right)
+        False -> #(left, left_value, estimate)
+      }
+      let proposal = next_left +. { next_right -. next_left } /. 2.0
+      let proposal_value = chord_tangent_value(segment, proposal, other)
+      case chord_tangent_error_improves(
+        segment,
+        other,
+        estimate,
+        estimate_value,
+        proposal,
+        proposal_value,
+      ) {
+        False -> estimate
+        True ->
+          polish_chord_tangent_by_bisection(
+            segment,
+            other,
+            next_left,
+            next_left_value,
+            next_right,
+            estimate: proposal,
+            estimate_value: proposal_value,
+            remaining: remaining - 1,
+          )
+      }
+    }
+  }
+}
+
+fn chord_tangent_error_improves(
+  segment: svg_path.Segment,
+  other: Float,
+  previous_t: Float,
+  previous_value: Float,
+  proposal_t: Float,
+  proposal_value: Float,
+) -> Bool {
+  let previous_denominator = chord_tangent_error_denominator(
+    segment,
+    previous_t,
+    other,
+  )
+  let proposal_denominator = chord_tangent_error_denominator(
+    segment,
+    proposal_t,
+    other,
+  )
+  case previous_denominator, proposal_denominator {
+    Some(previous_denominator), Some(proposal_denominator) ->
+      proposal_value *. proposal_value *. previous_denominator
+      <. previous_value *. previous_value *. proposal_denominator
+    _, _ -> False
+  }
+}
+
+fn chord_tangent_error_denominator(
+  segment: svg_path.Segment,
+  t: Float,
+  other: Float,
+) -> Option(Float) {
+  let assert Ok(point) = svg_path.segment_point(segment, at: t)
+  let assert Ok(other_point) = svg_path.segment_point(segment, at: other)
+  let tangent = cubic_derivative(segment, t)
+  let tangent_squared = point_helpers.norm_squared(tangent)
+  let chord_squared = point_distance_squared(point, other_point)
+  let reliable_tangent_squared =
+    convex_hull_derivative_scale_squared(segment) *. 0.0000000001
+  case
+    tangent_squared >=. reliable_tangent_squared,
+    chord_squared >. 0.0
+  {
+    True, True -> Some(tangent_squared *. chord_squared)
+    _, _ -> None
+  }
+}
+
+fn convex_hull_derivative_scale_squared(segment: svg_path.Segment) -> Float {
+  case segment {
+    svg_path.Line(start:, end:) -> point_distance_squared(start, end)
+    svg_path.QuadraticBezier(start:, control:, end:) ->
+      4.0
+      *. float.max(
+        point_distance_squared(start, control),
+        point_distance_squared(control, end),
+      )
+    svg_path.CubicBezier(start:, control1:, control2:, end:) ->
+      9.0
+      *. float.max(
+        point_distance_squared(start, control1),
+        float.max(
+          point_distance_squared(control1, control2),
+          point_distance_squared(control2, end),
+        ),
+      )
+    svg_path.Arc(..) -> 1.0
   }
 }
 

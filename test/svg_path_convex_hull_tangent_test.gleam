@@ -372,6 +372,24 @@ pub fn cubic_point_tangent_roots_preserve_non_crossing_root_test() {
   assert near_float(root, 0.37)
 }
 
+pub fn cubic_chord_tangent_refinement_reaches_interior_tangency_test() {
+  // C(t) = (t, -t² + t³) has a chord from C(0) tangent at t = 0.5.
+  let segment =
+    svg_path.CubicBezier(
+      start: svg_path.Point(0.0, 0.0),
+      control1: svg_path.Point(1.0 /. 3.0, 0.0),
+      control2: svg_path.Point(2.0 /. 3.0, -1.0 /. 3.0),
+      end: svg_path.Point(1.0, 0.0),
+    )
+  let refined = convex_hull.internal_refine_chord_tangent(
+    segment,
+    approximate: 0.47,
+    other: 0.0,
+  )
+
+  assert near_float(refined, 0.5)
+}
+
 pub fn point_exact_loop_tangent_subpaths_finds_arc_interior_tangencies_test() {
   let loop = [
     svg_path.Line(
