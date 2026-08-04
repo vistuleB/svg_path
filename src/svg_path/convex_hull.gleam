@@ -1572,8 +1572,9 @@ fn cubic_point_tangent_roots(
     2.0 *. cross(s, b),
     cross(s, c),
   ]
-  let assert Ok(roots) =
-    root.polynomial_roots_with(
+  let segment = svg_path.CubicBezier(start, control1, control2, end)
+  let assert Ok(isolations) =
+    root.polynomial_root_isolations_with(
       coefficients,
       from: 0.0,
       to: 1.0,
@@ -1584,7 +1585,47 @@ fn cubic_point_tangent_roots(
         max_iterations: 100,
       ),
     )
-  roots
+  list.map(isolations, fn(isolation) {
+    refine_polynomial_tangent_isolation(coefficients, segment, isolation)
+  })
+}
+
+fn refine_polynomial_tangent_isolation(
+  coefficients: List(Float),
+  segment: svg_path.Segment,
+  isolation: root.RootIsolation,
+) -> Float {
+  let root.RootIsolation(lower:, estimate:, upper:) = isolation
+  case lower == upper {
+    True -> estimate
+    False -> {
+      let lower_value = root.polynomial_value(coefficients, at: lower)
+      let upper_value = root.polynomial_value(coefficients, at: upper)
+      case same_sign(lower_value, upper_value) {
+        // Repeated roots are inherited from derivative isolation and do not
+        // supply a crossing bracket for the parent polynomial.
+        True -> estimate
+        False -> {
+          let assert Ok(refined) =
+            root.bisect_isolation_until(
+              fn(t) { root.polynomial_value(coefficients, at: t) },
+              from: lower,
+              to: upper,
+              max_iterations: 100,
+              certified: fn(refined_lower, refined_upper) {
+                tangent_window_is_geometrically_small(
+                  segment,
+                  refined_lower,
+                  refined_upper,
+                )
+              },
+            )
+          let root.RootIsolation(estimate:, ..) = refined
+          estimate
+        }
+      }
+    }
+  }
 }
 
 /// Return cubic point-tangency parameters for focused numerical tests.
@@ -3308,63 +3349,44 @@ fn bisect_chord_tangent(
   left left: Float,
   right right: Float,
 ) -> Float {
-  let left_value = chord_tangent_value(segment, left, other)
-  bisect_chord_tangent_loop(
-    segment,
-    left,
-    left_value,
-    right,
-    other,
-    remaining: 80,
-  )
+  let assert Ok(isolation) =
+    root.bisect_isolation_until(
+      fn(t) { chord_tangent_value(segment, t, other) },
+      from: left,
+      to: right,
+      max_iterations: 100,
+      certified: fn(lower, upper) {
+        tangent_window_is_geometrically_small(segment, lower, upper)
+      },
+    )
+  let root.RootIsolation(lower:, estimate:, upper:) = isolation
+  case lower == upper {
+    True -> estimate
+    False ->
+      polish_chord_tangent_by_bisection(
+        segment,
+        other,
+        lower,
+        chord_tangent_value(segment, lower, other),
+        upper,
+        estimate:,
+        estimate_value: chord_tangent_value(segment, estimate, other),
+        remaining: 100,
+      )
+  }
 }
 
-fn bisect_chord_tangent_loop(
+fn tangent_window_is_geometrically_small(
   segment: svg_path.Segment,
-  left: Float,
-  left_value: Float,
-  right: Float,
-  other: Float,
-  remaining remaining: Int,
-) -> Float {
-  let midpoint = left +. { right -. left } /. 2.0
-  let midpoint_value = chord_tangent_value(segment, midpoint, other)
-  case remaining <= 0 || midpoint_value == 0.0 {
-    True -> midpoint
-    False ->
-      case float.absolute_value(right -. left) <=. 0.000000000001 {
-        True ->
-          polish_chord_tangent_by_bisection(
-            segment,
-            other,
-            left,
-            left_value,
-            right,
-            estimate: midpoint,
-            estimate_value: midpoint_value,
-            remaining: remaining,
-          )
-        False ->
-          case same_sign(left_value, midpoint_value) {
-            True ->
-              bisect_chord_tangent_loop(
-                segment,
-                midpoint,
-                midpoint_value,
-                right,
-                other,
-                remaining: remaining - 1,
-              )
-            False ->
-              bisect_chord_tangent_loop(
-                segment,
-                left,
-                left_value,
-                midpoint,
-                other,
-                remaining: remaining - 1,
-              )
-          }
+  lower: Float,
+  upper: Float,
+) -> Bool {
+  case svg_path.segment_between_inside(segment, from: lower, to: upper) {
+    Error(_) -> False
+    Ok(portion) ->
+      case svg_path.segment_bounding_box(portion) {
+        Error(_) -> False
+        Ok(box) -> svg_path.bounding_box_diameter(box) <=. point_tolerance
       }
   }
 }

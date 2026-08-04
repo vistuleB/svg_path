@@ -630,6 +630,90 @@ pub fn bisect_with(
   }
 }
 
+/// Refine a sign-changing bracket until a caller-defined certification holds.
+///
+/// The returned isolation preserves both endpoints of the certified bracket.
+/// This internal variant is intended for geometric callers whose convergence
+/// condition cannot be expressed as a scalar parameter tolerance.
+@internal
+pub fn bisect_isolation_until(
+  f: fn(Float) -> Float,
+  from left: Float,
+  to right: Float,
+  max_iterations max_iterations: Int,
+  certified certified: fn(Float, Float) -> Bool,
+) -> Result(RootIsolation, Error) {
+  case max_iterations <= 0 {
+    True -> Error(InvalidMaxIterations(max_iterations))
+    False -> {
+      let #(left, right) = ordered_bracket(left, right)
+      let left_value = f(left)
+      let right_value = f(right)
+      case left_value == 0.0, right_value == 0.0 {
+        True, _ -> Ok(RootIsolation(left, left, left))
+        _, True -> Ok(RootIsolation(right, right, right))
+        False, False ->
+          case same_sign(left_value, right_value) {
+            True -> Error(NotBracketed(left, right, left_value, right_value))
+            False ->
+              bisect_isolation_until_loop(
+                f,
+                left,
+                left_value,
+                right,
+                max_iterations,
+                certified,
+              )
+          }
+      }
+    }
+  }
+}
+
+fn bisect_isolation_until_loop(
+  f: fn(Float) -> Float,
+  left: Float,
+  left_value: Float,
+  right: Float,
+  remaining_iterations: Int,
+  certified: fn(Float, Float) -> Bool,
+) -> Result(RootIsolation, Error) {
+  let midpoint = left +. { right -. left } /. 2.0
+  let midpoint_value = f(midpoint)
+  case certified(left, right) || midpoint == left || midpoint == right {
+    True -> Ok(RootIsolation(left, midpoint, right))
+    False ->
+      case remaining_iterations <= 1 {
+        True -> Error(MaxIterationsReached(midpoint, midpoint_value))
+        False ->
+          case midpoint_value == 0.0 {
+            True -> Ok(RootIsolation(midpoint, midpoint, midpoint))
+            False ->
+              case same_sign(left_value, midpoint_value) {
+                True ->
+                  bisect_isolation_until_loop(
+                    f,
+                    midpoint,
+                    midpoint_value,
+                    right,
+                    remaining_iterations - 1,
+                    certified,
+                  )
+                False ->
+                  bisect_isolation_until_loop(
+                    f,
+                    left,
+                    left_value,
+                    midpoint,
+                    remaining_iterations - 1,
+                    certified,
+                  )
+              }
+          }
+      }
+  }
+}
+
 fn bisect_loop(
   f: fn(Float) -> Float,
   left: Float,

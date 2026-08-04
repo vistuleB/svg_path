@@ -176,6 +176,55 @@ pub fn bisect_with_reports_max_iterations_test() {
   assert near(value, 0.2)
 }
 
+pub fn bisect_isolation_until_preserves_certified_bracket_test() {
+  let assert Ok(root.RootIsolation(lower:, estimate:, upper:)) =
+    root.bisect_isolation_until(
+      fn(x) { x -. 0.3 },
+      from: 0.0,
+      to: 1.0,
+      max_iterations: 100,
+      certified: fn(left, right) { right -. left <=. 0.01 },
+    )
+
+  assert lower <=. 0.3
+  assert upper >=. 0.3
+  assert upper -. lower <=. 0.01
+  assert estimate == lower +. { upper -. lower } /. 2.0
+}
+
+pub fn bisect_isolation_until_can_use_non_parameter_certification_test() {
+  let assert Ok(root.RootIsolation(lower:, upper:, ..)) =
+    root.bisect_isolation_until(
+      fn(x) { x -. 0.3 },
+      from: 0.0,
+      to: 1.0,
+      max_iterations: 100,
+      certified: fn(left, right) {
+        // Model a geometric quantity whose scale differs from parameter space.
+        { right -. left } *. 1000.0 <=. 0.01
+      },
+    )
+
+  assert lower <=. 0.3
+  assert upper >=. 0.3
+  assert { upper -. lower } *. 1000.0 <=. 0.01
+}
+
+pub fn bisect_isolation_until_stops_at_float_resolution_test() {
+  let assert Ok(root.RootIsolation(lower:, upper:, ..)) =
+    root.bisect_isolation_until(
+      fn(x) { x *. x -. 2.0 },
+      from: 1.0,
+      to: 2.0,
+      max_iterations: 200,
+      certified: fn(_, _) { False },
+    )
+
+  assert lower <. upper
+  assert lower *. lower <=. 2.0
+  assert upper *. upper >=. 2.0
+}
+
 fn near(a: Float, b: Float) -> Bool {
   float.absolute_value(a -. b) <=. tolerance
 }

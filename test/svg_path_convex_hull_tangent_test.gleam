@@ -392,6 +392,28 @@ pub fn cubic_chord_tangent_refinement_reaches_interior_tangency_test() {
   assert near_float(refined, 0.5)
 }
 
+pub fn cubic_chord_tangent_refinement_certifies_in_geometry_space_test() {
+  // This is C(t) = scale * (t, -0.74t² + t³). Its chord from C(0) is
+  // tangent at t = 0.37. The large scale makes a parameter-only stopping
+  // criterion materially weaker than a geometric one.
+  let scale = 1_000_000_000_000.0
+  let segment =
+    svg_path.CubicBezier(
+      start: svg_path.Point(0.0, 0.0),
+      control1: svg_path.Point(scale /. 3.0, 0.0),
+      control2: svg_path.Point(2.0 *. scale /. 3.0, -0.74 *. scale /. 3.0),
+      end: svg_path.Point(scale, 0.26 *. scale),
+    )
+  let refined =
+    convex_hull.internal_refine_chord_tangent(
+      segment,
+      approximate: 0.35,
+      other: 0.0,
+    )
+
+  assert float.absolute_value(refined -. 0.37) <=. 0.000000000000001
+}
+
 pub fn point_exact_loop_tangent_subpaths_finds_arc_interior_tangencies_test() {
   let loop = [
     svg_path.Line(
