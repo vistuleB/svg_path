@@ -68,6 +68,14 @@ again at a smaller scale.
 
 Shows an asymmetric two-sided band around a closed figure-eight.
 
+### Figure-Eight Convex Hulls
+
+![Figure-eight convex hulls](docs/gallery/gallery-figure-eight-convex-hulls.svg)
+
+Compares the convex hulls of the Gallery figure-eight, its asymmetric band,
+and the source and band taken together. These three cases are also numerical
+regression fixtures for the convex-hull implementation.
+
 ### Stroke Offset Tracks
 
 ![Stroke offset tracks](docs/gallery/gallery-stroke-offset-tracks.svg)

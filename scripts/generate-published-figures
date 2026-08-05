@@ -10,6 +10,10 @@ mkdir -p "$readme_output" "$gallery_output" "$gallery_destination"
 
 "$root/scripts/test-fast"
 (
+  cd "$root"
+  gleam run -m svg_path_gallery_test
+)
+(
   cd "$root/examples/readme_arrangement_figures"
   gleam run
   gleam run -m arrangement_csg_figures
@@ -41,6 +45,7 @@ gallery_figures=(
   gallery-dashed-strokes.svg
   gallery-recursive-dashes.svg
   gallery-figure-eight-band.svg
+  gallery-figure-eight-convex-hulls.svg
   gallery-stroke-offset-tracks.svg
   gallery-earth-tone-offsets.svg
   gallery-stalled-offset-arc-turns.svg
