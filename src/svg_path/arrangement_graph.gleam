@@ -259,7 +259,7 @@ fn normalize_subpaths(
     True -> Error(InvalidTolerance(tolerance))
     False ->
       subpaths
-      |> list.map(effects.subpath_colinearize(_, tolerance:))
+      |> list.map(effects.normalize_degenerate_segments(_, tolerance:))
       |> result.all
       |> result.map_error(normalization_error)
   }

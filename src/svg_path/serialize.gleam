@@ -337,6 +337,7 @@ pub fn path_with_options(
 /// used by `path_with_options` whenever `options.relative == True`. The supplied
 /// options still control formatting, shorthand commands, whitespace, and
 /// newlines; relative commands are enabled regardless of `options.relative`.
+@internal
 pub fn path_with_parser_tracked_relative_options(
   path path: svg_path.Path,
   options options: Options,
@@ -350,6 +351,7 @@ pub fn path_with_parser_tracked_relative_options(
 /// This preserves the relative serialization policy used before parser-tracked
 /// drift compensation became the default. Relative commands are enabled
 /// regardless of `options.relative`.
+@internal
 pub fn path_with_independent_relative_options(
   path path: svg_path.Path,
   options options: Options,

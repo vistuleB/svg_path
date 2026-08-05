@@ -166,7 +166,7 @@ pub fn inside(
 
 /// Evaluate a power-basis polynomial whose coefficients are ordered from the
 /// highest power to the constant term.
-pub fn polynomial_value(coefficients: List(Float), at x: Float) -> Float {
+pub fn evaluate_polynomial(coefficients: List(Float), at x: Float) -> Float {
   list.fold(coefficients, 0.0, fn(value, coefficient) {
     value *. x +. coefficient
   })
@@ -372,7 +372,7 @@ fn polynomial_root_isolations_valid(
         |> list.filter(fn(isolation) {
           let RootIsolation(estimate:, ..) = isolation
           is_close_to_zero(
-            polynomial_value(coefficients, at: estimate),
+            evaluate_polynomial(coefficients, at: estimate),
             options.value_tolerance,
           )
         })
@@ -380,7 +380,7 @@ fn polynomial_root_isolations_valid(
         [lower, upper]
         |> list.filter(fn(value) {
           is_close_to_zero(
-            polynomial_value(coefficients, at: value),
+            evaluate_polynomial(coefficients, at: value),
             options.value_tolerance,
           )
         })
@@ -419,8 +419,8 @@ fn polynomial_crossing_roots_loop(
   case boundaries {
     [] | [_] -> Ok(roots)
     [left, right, ..rest] -> {
-      let left_value = polynomial_value(coefficients, at: left)
-      let right_value = polynomial_value(coefficients, at: right)
+      let left_value = evaluate_polynomial(coefficients, at: left)
+      let right_value = evaluate_polynomial(coefficients, at: right)
       case
         same_sign(left_value, right_value)
         || left_value == 0.0
@@ -463,7 +463,7 @@ fn polynomial_refine_bracket(
   remaining_iterations: Int,
 ) -> Result(RootIsolation, Error) {
   let midpoint = left +. { right -. left } /. 2.0
-  let midpoint_value = polynomial_value(coefficients, at: midpoint)
+  let midpoint_value = evaluate_polynomial(coefficients, at: midpoint)
   case { right -. left } /. 2.0 <=. tolerance {
     True -> Ok(RootIsolation(left, midpoint, right))
     False ->
@@ -471,7 +471,7 @@ fn polynomial_refine_bracket(
         True -> Error(MaxIterationsReached(midpoint, midpoint_value))
         False -> {
           let proposal = midpoint
-          let proposal_value = polynomial_value(coefficients, at: proposal)
+          let proposal_value = evaluate_polynomial(coefficients, at: proposal)
           case proposal_value == 0.0 {
             True -> Ok(RootIsolation(proposal, proposal, proposal))
             False ->

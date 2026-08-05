@@ -207,8 +207,7 @@ fn render_boolean_table(
     csg.difference(right, minus: left, using: rule)
   let assert Ok(csg.CsgResult(path: symmetric_difference, ..)) =
     csg.symmetric_difference(left, right, using: rule)
-  let assert Ok(csg.CsgResult(path: monotone, ..)) =
-    csg.monotone_contours(source)
+  let assert Ok(csg.CsgResult(path: monotone, ..)) = csg.nested_contours(source)
   let assert Ok(rounded_monotone) =
     effects.round_corners(monotone, radius: 0.36)
   let assert Ok(union_placed) =
@@ -324,7 +323,7 @@ fn render_boolean_table(
       12,
     ),
     svg.Text(
-      "monotone_contours([path1, path2]) |> rounded_corners",
+      "nested_contours([path1, path2]) |> rounded_corners",
       label_style(),
       svg_path.Point(980.0, 608.0),
       9,

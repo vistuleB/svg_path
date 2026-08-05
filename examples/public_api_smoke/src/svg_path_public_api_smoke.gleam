@@ -31,7 +31,7 @@ pub fn main() -> Nil {
   let _ = csg.intersection(left, right, using: svg_path.Nonzero)
   let _ = csg.difference(left, minus: right, using: svg_path.Nonzero)
   let _ = csg.symmetric_difference(left, right, using: svg_path.EvenOdd)
-  let _ = csg.monotone_contours(svg_path.path_combine([left, right]))
+  let _ = csg.nested_contours(svg_path.path_combine([left, right]))
 
   let horizontal =
     svg_path.Line(

@@ -1,7 +1,7 @@
 //// ArrangementGraph-based operations on SVG paths.
 ////
 //// Binary operations interpret both operands with one fill rule. The unary
-//// `monotone_contours` operation instead preserves the complete signed integer
+//// `nested_contours` operation instead preserves the complete signed integer
 //// winding field and therefore takes no fill rule.
 
 import gleam/int
@@ -224,12 +224,12 @@ pub fn symmetric_difference_with(
 
 /// Return nested or disjoint unit-level contours with the same signed winding
 /// field as `path`.
-pub fn monotone_contours(path: svg_path.Path) -> Result(CsgResult, Error) {
-  monotone_contours_with(path, options: default_options())
+pub fn nested_contours(path: svg_path.Path) -> Result(CsgResult, Error) {
+  nested_contours_with(path, options: default_options())
 }
 
 /// Return monotone contours using explicit arrangement options.
-pub fn monotone_contours_with(
+pub fn nested_contours_with(
   path: svg_path.Path,
   options options: Options,
 ) -> Result(CsgResult, Error) {
@@ -244,7 +244,7 @@ pub fn monotone_contours_with(
   let arrangement_graph.ArrangementGraphBuild(graph:, normalized_paths:, ..) =
     built
   let assert [normalized_path] = normalized_paths
-  use path <- result.try(monotone_contours_from_arrangement_graph(
+  use path <- result.try(nested_contours_from_arrangement_graph(
     graph,
     normalized_path,
     tolerance: options.tolerance,
@@ -396,7 +396,7 @@ fn symmetric_difference_from_arrangement_graph(
 ///
 /// Winding-neutral edge multiplicity is omitted. Every retained contour adds
 /// either `1` or `-1` to the winding field inside it.
-fn monotone_contours_from_arrangement_graph(
+fn nested_contours_from_arrangement_graph(
   graph: ArrangementGraph,
   path: svg_path.Path,
   tolerance tolerance: Float,

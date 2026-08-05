@@ -318,7 +318,7 @@ pub fn fit_cubic_with_endpoints_rejects_underdetermined_samples_test() {
     )
 }
 
-pub fn split_bezier_divides_quadratic_at_t_test() {
+pub fn split_divides_quadratic_at_t_test() {
   let curve =
     bezier.QuadraticBezierData(
       start: bezier.BezierPoint(0.0, 0.0),
@@ -326,7 +326,7 @@ pub fn split_bezier_divides_quadratic_at_t_test() {
       end: bezier.BezierPoint(20.0, 0.0),
     )
 
-  let #(left, right) = bezier.split_bezier(curve, at: 0.25)
+  let #(left, right) = bezier.split(curve, at: 0.25)
   let assert bezier.QuadraticBezierData(
     start: left_start,
     control: left_control,
@@ -346,7 +346,7 @@ pub fn split_bezier_divides_quadratic_at_t_test() {
   assert point_near(right_end, bezier.BezierPoint(20.0, 0.0))
 }
 
-pub fn split_bezier_allows_endpoint_splits_test() {
+pub fn split_allows_endpoint_splits_test() {
   let curve =
     bezier.CubicBezierData(
       start: bezier.BezierPoint(0.0, 0.0),
@@ -355,8 +355,8 @@ pub fn split_bezier_allows_endpoint_splits_test() {
       end: bezier.BezierPoint(30.0, 0.0),
     )
 
-  let #(zero_start, whole_after) = bezier.split_bezier(curve, at: 0.0)
-  let #(whole_before, zero_end) = bezier.split_bezier(curve, at: 1.0)
+  let #(zero_start, whole_after) = bezier.split(curve, at: 0.0)
+  let #(whole_before, zero_end) = bezier.split(curve, at: 1.0)
 
   assert point_near(
     bezier.bezier_start(zero_start),
@@ -386,7 +386,7 @@ pub fn split_bezier_allows_endpoint_splits_test() {
   assert point_near(bezier.bezier_end(zero_end), bezier.BezierPoint(30.0, 0.0))
 }
 
-pub fn split_bezier_inside_rejects_outside_t_test() {
+pub fn split_inside_rejects_outside_t_test() {
   let curve =
     bezier.LinearBezierData(
       start: bezier.BezierPoint(0.0, 0.0),
@@ -394,21 +394,21 @@ pub fn split_bezier_inside_rejects_outside_t_test() {
     )
 
   let assert Error(bezier.SplitOutsideBezier) =
-    bezier.split_bezier_inside(curve, at: -0.01)
+    bezier.split_inside(curve, at: -0.01)
   let assert Error(bezier.SplitOutsideBezier) =
-    bezier.split_bezier_inside(curve, at: 1.01)
-  let assert Ok(_) = bezier.split_bezier_inside(curve, at: 0.0)
-  let assert Ok(_) = bezier.split_bezier_inside(curve, at: 1.0)
+    bezier.split_inside(curve, at: 1.01)
+  let assert Ok(_) = bezier.split_inside(curve, at: 0.0)
+  let assert Ok(_) = bezier.split_inside(curve, at: 1.0)
 }
 
-pub fn split_bezier_many_sorts_and_removes_duplicate_points_test() {
+pub fn split_many_sorts_and_removes_duplicate_points_test() {
   let curve =
     bezier.LinearBezierData(
       start: bezier.BezierPoint(0.0, 0.0),
       end: bezier.BezierPoint(40.0, 0.0),
     )
 
-  let pieces = bezier.split_bezier_many(curve, at: [0.75, -0.25, 0.25, 0.25])
+  let pieces = bezier.split_many(curve, at: [0.75, -0.25, 0.25, 0.25])
   let assert [first, second, third, fourth] = pieces
 
   assert point_near(bezier.bezier_start(first), bezier.BezierPoint(0.0, 0.0))
@@ -421,7 +421,7 @@ pub fn split_bezier_many_sorts_and_removes_duplicate_points_test() {
   assert point_near(bezier.bezier_end(fourth), bezier.BezierPoint(40.0, 0.0))
 }
 
-pub fn split_bezier_inside_many_rejects_any_outside_point_test() {
+pub fn split_inside_many_rejects_any_outside_point_test() {
   let curve =
     bezier.LinearBezierData(
       start: bezier.BezierPoint(0.0, 0.0),
@@ -429,12 +429,12 @@ pub fn split_bezier_inside_many_rejects_any_outside_point_test() {
     )
 
   let assert Error(bezier.SplitOutsideBezier) =
-    bezier.split_bezier_inside_many(curve, at: [0.25, 1.01])
+    bezier.split_inside_many(curve, at: [0.25, 1.01])
   let assert Error(bezier.SplitOutsideBezier) =
-    bezier.split_bezier_inside_many(curve, at: [-0.01, 0.75])
+    bezier.split_inside_many(curve, at: [-0.01, 0.75])
 }
 
-pub fn split_bezier_inside_many_trims_boundary_points_test() {
+pub fn split_inside_many_trims_boundary_points_test() {
   let curve =
     bezier.LinearBezierData(
       start: bezier.BezierPoint(0.0, 0.0),
@@ -442,7 +442,7 @@ pub fn split_bezier_inside_many_trims_boundary_points_test() {
     )
 
   let assert Ok(pieces) =
-    bezier.split_bezier_inside_many(curve, at: [1.0, 0.0, 0.5, 0.5])
+    bezier.split_inside_many(curve, at: [1.0, 0.0, 0.5, 0.5])
   let assert [first_half, second_half] = pieces
 
   assert point_near(
@@ -463,14 +463,14 @@ pub fn split_bezier_inside_many_trims_boundary_points_test() {
   )
 }
 
-pub fn split_bezier_many_keeps_boundary_points_when_they_are_interior_test() {
+pub fn split_many_keeps_boundary_points_when_they_are_interior_test() {
   let curve =
     bezier.LinearBezierData(
       start: bezier.BezierPoint(0.0, 0.0),
       end: bezier.BezierPoint(40.0, 0.0),
     )
 
-  let pieces = bezier.split_bezier_many(curve, at: [1.25, 1.0, 0.0, -0.25])
+  let pieces = bezier.split_many(curve, at: [1.25, 1.0, 0.0, -0.25])
   let assert [before_start, to_start, original_curve, past_end, back_to_end] =
     pieces
 
@@ -510,7 +510,7 @@ pub fn split_bezier_many_keeps_boundary_points_when_they_are_interior_test() {
   )
 }
 
-pub fn split_bezier_many_preserves_cubic_degree_test() {
+pub fn split_many_preserves_cubic_degree_test() {
   let curve =
     bezier.CubicBezierData(
       start: bezier.BezierPoint(0.0, 0.0),
@@ -519,7 +519,7 @@ pub fn split_bezier_many_preserves_cubic_degree_test() {
       end: bezier.BezierPoint(30.0, 0.0),
     )
 
-  let pieces = bezier.split_bezier_many(curve, at: [0.25, 0.75])
+  let pieces = bezier.split_many(curve, at: [0.25, 0.75])
   let assert [
     bezier.CubicBezierData(..),
     bezier.CubicBezierData(..),
@@ -537,7 +537,7 @@ pub fn cubic_inflection_parameters_finds_an_s_curve_inflection_test() {
     )
 
   let assert [t] = bezier.cubic_inflection_parameters(curve)
-  let pieces = bezier.split_bezier_many(curve, at: [t])
+  let pieces = bezier.split_many(curve, at: [t])
   let assert [bezier.CubicBezierData(end: split, ..), second] = pieces
 
   assert near(t, 0.5)

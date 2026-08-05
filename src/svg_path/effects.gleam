@@ -31,7 +31,7 @@ pub type Error {
 /// `svg_path.subpath_degenerate_lines`. Windows are considered from left to
 /// right, with the largest qualifying window selected first. A single
 /// degenerate segment is also replaced when no larger window qualifies.
-pub fn subpath_colinearize(
+pub fn normalize_degenerate_segments(
   subpath: svg_path.Subpath,
   tolerance tolerance: Float,
 ) -> Result(svg_path.Subpath, Error) {

@@ -520,14 +520,14 @@ pub fn symmetric_difference_is_commutative_test() {
   })
 }
 
-pub fn monotone_contours_preserve_positive_nested_winding_levels_test() {
+pub fn nested_contours_preserve_positive_nested_winding_levels_test() {
   let input =
     svg_path.Path([
       rectangle_subpath(0.0, 0.0, 30.0, 30.0),
       rectangle_subpath(5.0, 5.0, 25.0, 25.0),
       rectangle_subpath(10.0, 10.0, 20.0, 20.0),
     ])
-  let assert Ok(csg.CsgResult(path: output, ..)) = csg.monotone_contours(input)
+  let assert Ok(csg.CsgResult(path: output, ..)) = csg.nested_contours(input)
 
   list.length(svg_path.path_subpaths(output)) |> should.equal(3)
   assert_same_winding_field(input, output, [
@@ -538,14 +538,14 @@ pub fn monotone_contours_preserve_positive_nested_winding_levels_test() {
   ])
 }
 
-pub fn monotone_contours_preserve_mixed_sign_nesting_test() {
+pub fn nested_contours_preserve_mixed_sign_nesting_test() {
   let input =
     svg_path.Path([
       rectangle_subpath(0.0, 0.0, 30.0, 30.0),
       rectangle_subpath(5.0, 5.0, 25.0, 25.0) |> svg_path.subpath_reverse,
       rectangle_subpath(10.0, 10.0, 20.0, 20.0),
     ])
-  let assert Ok(csg.CsgResult(path: output, ..)) = csg.monotone_contours(input)
+  let assert Ok(csg.CsgResult(path: output, ..)) = csg.nested_contours(input)
 
   list.length(svg_path.path_subpaths(output)) |> should.equal(3)
   assert_same_winding_field(input, output, [
@@ -555,13 +555,13 @@ pub fn monotone_contours_preserve_mixed_sign_nesting_test() {
   ])
 }
 
-pub fn monotone_contours_decompose_overlapping_contours_by_level_test() {
+pub fn nested_contours_decompose_overlapping_contours_by_level_test() {
   let input =
     svg_path.Path([
       rectangle_subpath(0.0, 0.0, 10.0, 10.0),
       rectangle_subpath(4.0, 2.0, 14.0, 12.0),
     ])
-  let assert Ok(csg.CsgResult(path: output, ..)) = csg.monotone_contours(input)
+  let assert Ok(csg.CsgResult(path: output, ..)) = csg.nested_contours(input)
 
   list.length(svg_path.path_subpaths(output)) |> should.equal(2)
   assert_same_winding_field(
@@ -571,10 +571,10 @@ pub fn monotone_contours_decompose_overlapping_contours_by_level_test() {
   )
 }
 
-pub fn monotone_contours_drop_winding_neutral_copies_test() {
+pub fn nested_contours_drop_winding_neutral_copies_test() {
   let contour = rectangle_subpath(0.0, 0.0, 10.0, 10.0)
   let input = svg_path.Path([contour, svg_path.subpath_reverse(contour)])
-  let assert Ok(csg.CsgResult(path: output, ..)) = csg.monotone_contours(input)
+  let assert Ok(csg.CsgResult(path: output, ..)) = csg.nested_contours(input)
 
   svg_path.path_subpaths(output) |> should.equal([])
   assert_same_winding_field(input, output, [
@@ -583,9 +583,9 @@ pub fn monotone_contours_drop_winding_neutral_copies_test() {
   ])
 }
 
-pub fn monotone_contours_split_self_intersection_into_signed_lobes_test() {
+pub fn nested_contours_split_self_intersection_into_signed_lobes_test() {
   let input = bowtie()
-  let assert Ok(csg.CsgResult(path: output, ..)) = csg.monotone_contours(input)
+  let assert Ok(csg.CsgResult(path: output, ..)) = csg.nested_contours(input)
 
   list.length(svg_path.path_subpaths(output)) |> should.equal(2)
   assert_same_winding_field(input, output, [

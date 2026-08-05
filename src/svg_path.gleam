@@ -3194,7 +3194,7 @@ pub fn segment_split(
 ) -> Result(#(Segment, Segment), Error) {
   case segment {
     Line(..) | QuadraticBezier(..) | CubicBezier(..) ->
-      split_bezier_segment(segment, at: t)
+      split_segment(segment, at: t)
     Arc(..) -> split_arc_segment(segment, at: t)
   }
 }
@@ -3209,7 +3209,7 @@ pub fn segment_split_inside(
 ) -> Result(#(Segment, Segment), Error) {
   case segment {
     Line(..) | QuadraticBezier(..) | CubicBezier(..) -> {
-      case split_bezier_segment_inside(segment, at: t) {
+      case split_segment_inside(segment, at: t) {
         Error(_) -> Error(SplitOutsideSegment)
         Ok(split) -> Ok(split)
       }
@@ -3372,12 +3372,11 @@ fn is_zero_length_line(segment: Segment) -> Bool {
   }
 }
 
-fn split_bezier_segment(
+fn split_segment(
   segment: Segment,
   at t: Float,
 ) -> Result(#(Segment, Segment), Error) {
-  let #(left, right) =
-    segment_to_bezier_data(segment) |> bezier.split_bezier(at: t)
+  let #(left, right) = segment_to_bezier_data(segment) |> bezier.split(at: t)
   let left = segment_from_bezier_data(left)
   let right = segment_from_bezier_data(right)
 
@@ -3385,11 +3384,11 @@ fn split_bezier_segment(
   Ok(#(left, right))
 }
 
-fn split_bezier_segment_inside(
+fn split_segment_inside(
   segment: Segment,
   at t: Float,
 ) -> Result(#(Segment, Segment), Error) {
-  case segment_to_bezier_data(segment) |> bezier.split_bezier_inside(at: t) {
+  case segment_to_bezier_data(segment) |> bezier.split_inside(at: t) {
     Error(_) -> Error(SplitOutsideSegment)
     Ok(#(left, right)) -> {
       let left = segment_from_bezier_data(left)

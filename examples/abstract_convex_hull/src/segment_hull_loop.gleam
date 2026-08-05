@@ -19,7 +19,7 @@ pub type Param {
 pub fn loop(
   name: String,
   segment: svg_path.Segment,
-) -> Result(abstract_union.Loop(Param), convex_hull.HullError) {
+) -> Result(abstract_union.Loop(Param), convex_hull.Error) {
   use hull <- result.try(convex_hull.segment_hull(segment))
   let segments = svg_path.subpath_segments(hull)
 

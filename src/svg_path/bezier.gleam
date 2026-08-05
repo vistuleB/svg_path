@@ -17,14 +17,14 @@
 //// - `bezier_point(curve, at: 0.0)` is the curve start point.
 //// - `bezier_point(curve, at: 1.0)` is the curve end point.
 //// - `bezier_derivative(curve, at: t)` is the derivative with respect to `t`.
-//// - `split_bezier(curve, at: t)` preserves the curve degree and divides it
+//// - `split(curve, at: t)` preserves the curve degree and divides it
 ////   with de Casteljau's algorithm.
 //// - `map_points(curve, with: f)` maps the curve's defining points.
 ////
 //// The `at` value is not clamped. Values outside `0.0..1.0` extrapolate along
-//// the same polynomial curve. `split_bezier` follows the same unclamped policy;
-//// use `split_bezier_inside` when outside values should return an error.
-//// `split_bezier_many` and `split_bezier_inside_many` sort their split points,
+//// the same polynomial curve. `split` follows the same unclamped policy;
+//// use `split_inside` when outside values should return an error.
+//// `split_many` and `split_inside_many` sort their split points,
 //// remove exact duplicates, and trim boundary `0.0` or `1.0` split points that
 //// would only create zero-length boundary curves.
 ////
@@ -313,10 +313,7 @@ pub fn fit_cubic_with_endpoints(
 ///
 /// `t` is not clamped. Values outside `0.0..1.0` extrapolate along the same
 /// polynomial curve, matching `bezier_point`.
-pub fn split_bezier(
-  curve: BezierData,
-  at t: Float,
-) -> #(BezierData, BezierData) {
+pub fn split(curve: BezierData, at t: Float) -> #(BezierData, BezierData) {
   case curve {
     LinearBezierData(start:, end:) -> {
       let split = interpolate(start, end, t)
@@ -366,13 +363,13 @@ pub fn split_bezier(
 ///
 /// Values exactly at `0.0` or `1.0` are accepted and produce one zero-length
 /// curve.
-pub fn split_bezier_inside(
+pub fn split_inside(
   curve: BezierData,
   at t: Float,
 ) -> Result(#(BezierData, BezierData), Error) {
   case t <. 0.0 || t >. 1.0 {
     True -> Error(SplitOutsideBezier)
-    False -> Ok(split_bezier(curve, at: t))
+    False -> Ok(split(curve, at: t))
   }
 }
 
@@ -381,12 +378,12 @@ pub fn split_bezier_inside(
 /// Split points are sorted, exact duplicates are removed, and boundary `0.0`
 /// or `1.0` split points are trimmed when they would only create zero-length
 /// boundary curves. Values outside `0.0..1.0` are allowed and extrapolate along
-/// the same polynomial curve, matching `split_bezier`.
-pub fn split_bezier_many(
+/// the same polynomial curve, matching `split`.
+pub fn split_many(
   curve: BezierData,
   at points: List(Float),
 ) -> List(BezierData) {
-  split_bezier_at_progresses(curve, normalized_progresses(points))
+  split_at_progresses(curve, normalized_progresses(points))
 }
 
 /// Split a Bezier curve at multiple parameter values, erroring outside `0.0..1.0`.
@@ -394,7 +391,7 @@ pub fn split_bezier_many(
 /// Split points are sorted, exact duplicates are removed, and boundary `0.0`
 /// or `1.0` split points are trimmed when they would only create zero-length
 /// boundary curves. Values exactly at `0.0` or `1.0` are accepted.
-pub fn split_bezier_inside_many(
+pub fn split_inside_many(
   curve: BezierData,
   at points: List(Float),
 ) -> Result(List(BezierData), Error) {
@@ -402,7 +399,7 @@ pub fn split_bezier_inside_many(
 
   case list.any(points, fn(t) { t <. 0.0 || t >. 1.0 }) {
     True -> Error(SplitOutsideBezier)
-    False -> Ok(split_bezier_at_progresses(curve, points))
+    False -> Ok(split_at_progresses(curve, points))
   }
 }
 
@@ -477,14 +474,14 @@ pub fn cubic_self_intersections_with(
   }
 }
 
-fn split_bezier_at_progresses(
+fn split_at_progresses(
   curve: BezierData,
   points: List(Float),
 ) -> List(BezierData) {
-  split_bezier_between_progresses(curve, previous: 0.0, points:, pieces: [])
+  split_between_progresses(curve, previous: 0.0, points:, pieces: [])
 }
 
-fn split_bezier_between_progresses(
+fn split_between_progresses(
   curve: BezierData,
   previous previous: Float,
   points points: List(Float),
@@ -494,12 +491,10 @@ fn split_bezier_between_progresses(
     [] ->
       list.reverse([bezier_between(curve, from: previous, to: 1.0), ..pieces])
     [next, ..rest] -> {
-      split_bezier_between_progresses(
-        curve,
-        previous: next,
-        points: rest,
-        pieces: [bezier_between(curve, from: previous, to: next), ..pieces],
-      )
+      split_between_progresses(curve, previous: next, points: rest, pieces: [
+        bezier_between(curve, from: previous, to: next),
+        ..pieces
+      ])
     }
   }
 }
@@ -934,7 +929,7 @@ fn approximate_length_loop(
   case remaining_depth <= 0 || polygon -. chord <=. root_tolerance {
     True -> { polygon +. chord } /. 2.0
     False -> {
-      let #(left, right) = split_bezier(curve, at: 0.5)
+      let #(left, right) = split(curve, at: 0.5)
       approximate_length_loop(left, remaining_depth: remaining_depth - 1)
       +. approximate_length_loop(right, remaining_depth: remaining_depth - 1)
     }

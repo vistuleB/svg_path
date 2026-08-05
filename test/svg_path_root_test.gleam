@@ -41,9 +41,9 @@ pub fn root_interval_filters_and_sorts_test() {
   assert root.inside(values, from: 1.0, to: 0.0) == [0.0, 0.25, 0.75, 1.0]
 }
 
-pub fn polynomial_value_and_derivative_test() {
+pub fn evaluate_polynomial_and_derivative_test() {
   let coefficients = [2.0, -3.0, 4.0]
-  assert root.polynomial_value(coefficients, at: 2.0) == 6.0
+  assert root.evaluate_polynomial(coefficients, at: 2.0) == 6.0
   assert root.polynomial_derivative(coefficients) == [4.0, -3.0]
 }
 
@@ -96,8 +96,8 @@ pub fn polynomial_isolation_preserves_crossing_bracket_test() {
 
   assert lower <=. estimate
   assert estimate <=. upper
-  assert root.polynomial_value(coefficients, at: lower)
-    *. root.polynomial_value(coefficients, at: upper)
+  assert root.evaluate_polynomial(coefficients, at: lower)
+    *. root.evaluate_polynomial(coefficients, at: upper)
     <=. 0.0
   assert { upper -. lower } /. 2.0 <=. options.root_tolerance
 }
