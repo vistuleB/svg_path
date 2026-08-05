@@ -186,7 +186,7 @@ pub fn fit_cubic_with_endpoint_tangents_recovers_exact_cubic_test() {
     control2: original_control2,
     end: original_end,
   ) = original
-  let bezier.CubicFitError(root_sum_square:, root_mean_square:, max:) = error
+  let bezier.CubicFitReport(root_sum_square:, root_mean_square:, max:) = error
 
   assert point_near(start, original_start)
   assert point_near(control1, original_control1)
@@ -270,7 +270,7 @@ pub fn fit_cubic_with_endpoints_recovers_exact_cubic_test() {
     control2: original_control2,
     end: original_end,
   ) = original
-  let bezier.CubicFitError(root_sum_square:, root_mean_square:, max:) = error
+  let bezier.CubicFitReport(root_sum_square:, root_mean_square:, max:) = error
 
   assert point_near(start, original_start)
   assert point_near(control1, original_control1)
@@ -300,7 +300,7 @@ pub fn fit_cubic_with_endpoints_fits_noisy_samples_test() {
         #(0.9, add_point(bezier.bezier_point(original, at: 0.9), -1.0, -1.0)),
       ],
     )
-  let bezier.CubicFitError(root_sum_square:, root_mean_square:, max:) = error
+  let bezier.CubicFitReport(root_sum_square:, root_mean_square:, max:) = error
 
   assert point_near(bezier.bezier_start(fit), bezier.bezier_start(original))
   assert point_near(bezier.bezier_end(fit), bezier.bezier_end(original))

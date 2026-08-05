@@ -34,7 +34,7 @@ pub type Error {
   DisabledRendering
 
   /// An error from the core path model.
-  Core(svg_path.Error)
+  PathError(svg_path.Error)
 }
 
 /// Convert an SVG `rect` element to a subpath.
@@ -265,7 +265,7 @@ fn map_core_error(
 ) -> Result(svg_path.Subpath, Error) {
   case result {
     Ok(subpath) -> Ok(subpath)
-    Error(error) -> Error(Core(error))
+    Error(error) -> Error(PathError(error))
   }
 }
 

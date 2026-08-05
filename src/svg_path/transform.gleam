@@ -44,7 +44,7 @@ pub type Error {
   InvalidMatrix
 
   /// An error from the core path model.
-  Core(svg_path.Error)
+  PathError(svg_path.Error)
 }
 
 /// Create an affine matrix from SVG's six matrix values.
@@ -354,7 +354,7 @@ pub fn segment_about_anchor(
   anchor anchor: Anchor,
 ) -> Result(svg_path.Segment, Error) {
   case svg_path.segment_bounding_box(input) {
-    Error(error) -> Error(Core(error))
+    Error(error) -> Error(PathError(error))
     Ok(box) ->
       segment_about_point(
         input,
@@ -543,7 +543,7 @@ pub fn subpath_about_anchor(
   anchor anchor: Anchor,
 ) -> Result(svg_path.Subpath, Error) {
   case svg_path.subpath_bounding_box(input) {
-    Error(error) -> Error(Core(error))
+    Error(error) -> Error(PathError(error))
     Ok(box) ->
       subpath_about_point(
         input,
@@ -648,7 +648,7 @@ fn finalize_transformed_subpath(
     }
     _ -> {
       case svg_path.subpath(segments) {
-        Error(error) -> Error(Core(error))
+        Error(error) -> Error(PathError(error))
         Ok(transformed) -> {
           case svg_path.subpath_is_closed(original) {
             True -> close_transformed_subpath(transformed)
@@ -722,7 +722,7 @@ pub fn path_about_anchor(
   anchor anchor: Anchor,
 ) -> Result(svg_path.Path, Error) {
   case svg_path.path_bounding_box(input) {
-    Error(error) -> Error(Core(error))
+    Error(error) -> Error(PathError(error))
     Ok(box) ->
       path_about_point(input, by: transform, point: anchor_point(box, anchor))
   }
@@ -847,7 +847,7 @@ fn map_core_error(
 ) -> Result(svg_path.Subpath, Error) {
   case result {
     Ok(subpath) -> Ok(subpath)
-    Error(error) -> Error(Core(error))
+    Error(error) -> Error(PathError(error))
   }
 }
 
@@ -1014,7 +1014,7 @@ fn close_transformed_subpath(
         )
       {
         Ok(subpath) -> Ok(subpath)
-        Error(error) -> Error(Core(error))
+        Error(error) -> Error(PathError(error))
       }
     }
   }

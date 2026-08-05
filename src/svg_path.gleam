@@ -6907,7 +6907,7 @@ fn from_bezier_point(point: bezier.BezierPoint) -> Point {
   Point(point.x, point.y)
 }
 
-fn from_bezier_fit_report(report: bezier.CubicFitError) -> CubicFitReport {
+fn from_bezier_fit_report(report: bezier.CubicFitReport) -> CubicFitReport {
   CubicFitReport(
     root_sum_square: report.root_sum_square,
     root_mean_square: report.root_mean_square,

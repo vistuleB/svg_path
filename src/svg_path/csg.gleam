@@ -24,7 +24,7 @@ pub type Options {
 
 pub type Error {
   /// Arrangement construction or validation failed.
-  ArrangementError(arrangement_graph.Error)
+  ArrangementGraphError(arrangement_graph.Error)
 
   /// An underlying path operation failed.
   PathError(svg_path.Error)
@@ -86,7 +86,7 @@ pub fn union_with(
       tolerance: options.tolerance,
       minimum_chord: options.minimum_chord,
     )
-    |> result.map_error(ArrangementError),
+    |> result.map_error(ArrangementGraphError),
   )
   let arrangement_graph.ArrangementGraphBuild(graph:, normalized_paths:, ..) =
     built
@@ -123,7 +123,7 @@ pub fn intersection_with(
       tolerance: options.tolerance,
       minimum_chord: options.minimum_chord,
     )
-    |> result.map_error(ArrangementError),
+    |> result.map_error(ArrangementGraphError),
   )
   let arrangement_graph.ArrangementGraphBuild(graph:, normalized_paths:, ..) =
     built
@@ -165,7 +165,7 @@ pub fn difference_with(
       tolerance: options.tolerance,
       minimum_chord: options.minimum_chord,
     )
-    |> result.map_error(ArrangementError),
+    |> result.map_error(ArrangementGraphError),
   )
   let arrangement_graph.ArrangementGraphBuild(graph:, normalized_paths:, ..) =
     built
@@ -207,7 +207,7 @@ pub fn symmetric_difference_with(
       tolerance: options.tolerance,
       minimum_chord: options.minimum_chord,
     )
-    |> result.map_error(ArrangementError),
+    |> result.map_error(ArrangementGraphError),
   )
   let arrangement_graph.ArrangementGraphBuild(graph:, normalized_paths:, ..) =
     built
@@ -239,7 +239,7 @@ pub fn nested_contours_with(
       tolerance: options.tolerance,
       minimum_chord: options.minimum_chord,
     )
-    |> result.map_error(ArrangementError),
+    |> result.map_error(ArrangementGraphError),
   )
   let arrangement_graph.ArrangementGraphBuild(graph:, normalized_paths:, ..) =
     built

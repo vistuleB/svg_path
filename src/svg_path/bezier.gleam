@@ -53,8 +53,8 @@ pub type BoundingBox {
 }
 
 /// Error measurements for a fitted cubic.
-pub type CubicFitError {
-  CubicFitError(
+pub type CubicFitReport {
+  CubicFitReport(
     /// `sqrt(sum(distance(sample, fitted)^2))`.
     root_sum_square: Float,
     /// `sqrt(sum(distance(sample, fitted)^2) / sample_count)`.
@@ -251,7 +251,7 @@ pub fn fit_cubic_with_endpoint_tangents(
   start_tangent start_tangent: BezierPoint,
   end_tangent end_tangent: BezierPoint,
   samples samples: List(#(Float, BezierPoint)),
-) -> Result(#(BezierData, CubicFitError), Error) {
+) -> Result(#(BezierData, CubicFitReport), Error) {
   use start_direction <- result.try(unit(start_tangent))
   use end_direction <- result.try(unit(end_tangent))
   use fit <- result.try(cubic_fit_normal_equations(
@@ -290,7 +290,7 @@ pub fn fit_cubic_with_endpoints(
   start start: BezierPoint,
   end end: BezierPoint,
   samples samples: List(#(Float, BezierPoint)),
-) -> Result(#(BezierData, CubicFitError), Error) {
+) -> Result(#(BezierData, CubicFitReport), Error) {
   use controls <- result.try(cubic_endpoint_fit_normal_equations(
     samples,
     start:,
@@ -678,7 +678,7 @@ fn solve_cubic_endpoint_fit_equations(
 fn cubic_fit_error(
   samples: List(#(Float, BezierPoint)),
   curve: BezierData,
-) -> CubicFitError {
+) -> CubicFitReport {
   let #(sum_squared, max_squared, count) =
     cubic_fit_error_loop(
       samples,
@@ -689,10 +689,11 @@ fn cubic_fit_error(
     )
 
   case count == 0 {
-    True -> CubicFitError(root_sum_square: 0.0, root_mean_square: 0.0, max: 0.0)
+    True ->
+      CubicFitReport(root_sum_square: 0.0, root_mean_square: 0.0, max: 0.0)
     False -> {
       let root_sum_square = sqrt(sum_squared)
-      CubicFitError(
+      CubicFitReport(
         root_sum_square:,
         root_mean_square: sqrt(sum_squared /. int.to_float(count)),
         max: sqrt(max_squared),

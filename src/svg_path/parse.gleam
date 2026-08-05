@@ -14,7 +14,7 @@ import svg_path
 /// Errors returned while parsing SVG path data.
 pub type Error {
   /// A parsed path was internally invalid according to the core path model.
-  Core(svg_path.Error)
+  PathError(svg_path.Error)
 
   /// An arc flag was not `0` or `1`.
   ExpectedArcFlag
@@ -619,7 +619,7 @@ fn parse_close(
           policy: svg_path.Bridge,
         )
       {
-        Error(error) -> Error(Core(error))
+        Error(error) -> Error(PathError(error))
         Ok(subpath) -> {
           parse_tokens(
             tokens,
@@ -678,7 +678,7 @@ fn append_segment(
   end: svg_path.Point,
 ) -> Result(State, Error) {
   case svg_path.subpath_append_segment(state.subpath, segment) {
-    Error(error) -> Error(Core(error))
+    Error(error) -> Error(PathError(error))
     Ok(subpath) -> {
       Ok(
         State(..state, subpath: subpath, current: end, active: True)

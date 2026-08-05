@@ -148,8 +148,8 @@ pub fn disabled_rendering_returns_error_test() {
 
 pub fn invalid_point_lists_return_core_errors_test() {
   assert basic_shapes.polyline([])
-    == Error(basic_shapes.Core(svg_path.EmptySubpath))
+    == Error(basic_shapes.PathError(svg_path.EmptySubpath))
 
   assert basic_shapes.polygon([svg_path.Point(1.0, 2.0)])
-    == Error(basic_shapes.Core(svg_path.EmptySubpath))
+    == Error(basic_shapes.PathError(svg_path.EmptySubpath))
 }
