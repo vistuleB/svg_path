@@ -12,7 +12,6 @@ repository = { type = "github", user = "vistuleB", repo = "svg_path" }
 # https://gleam.run/writing-gleam/gleam-toml/.
 
 [dependencies]
-gleam_community_maths = ">= 2.0.0 and < 3.0.0"
 gleam_stdlib = ">= 1.0.0 and < 2.0.0"
 
 [dev_dependencies]

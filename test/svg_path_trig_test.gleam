@@ -54,7 +54,15 @@ pub fn trig_degrees_uses_math_for_other_angles_test() {
   assert near(trig.sin_degrees(30.0), 0.5)
   assert near(trig.cos_degrees(60.0), 0.5)
   assert near(trig.tan_degrees(30.0), 0.577350269)
+  assert near(trig.atan_degrees(1.0), 45.0)
   assert near(trig.atan2_degrees(2.0, 1.0), 63.434948823)
+  let assert Ok(acos) = trig.acos_degrees(0.5)
+  assert near(acos, 60.0)
+}
+
+pub fn acos_degrees_rejects_values_outside_its_domain_test() {
+  let assert Error(Nil) = trig.acos_degrees(-1.000001)
+  let assert Error(Nil) = trig.acos_degrees(1.000001)
 }
 
 fn near(a: Float, b: Float) -> Bool {

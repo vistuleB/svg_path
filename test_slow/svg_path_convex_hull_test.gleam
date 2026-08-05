@@ -7,14 +7,16 @@ import gleam/list
 import gleam/option.{None}
 import gleam/result
 import gleam/string
-import gleam_community/maths
 import svg_path
 import svg_path/convex_hull
 import svg_path/parse
 import svg_path/transform
+import svg_path/trig
 import svg_path_convex_hull_support as support
 
 const tolerance = 0.000001
+
+const pi = 3.141592653589793
 
 const support_unit_diameter_tolerance = 0.00000002
 
@@ -1219,7 +1221,7 @@ fn generated_arc(i: Int) -> svg_path.Segment {
 }
 
 fn wave(i: Float, salt: Float) -> Float {
-  maths.sin(i *. salt *. 12.9898) *. 50.0
+  trig.internal_sin_radians(i *. salt *. 12.9898) *. 50.0
 }
 
 fn segment_derivative_angles(segments: List(svg_path.Segment)) -> List(Float) {
@@ -1235,13 +1237,8 @@ fn segment_derivative_angles(segments: List(svg_path.Segment)) -> List(Float) {
 fn segment_derivative_angle(segment: svg_path.Segment, at t: Float) -> Float {
   let assert Ok(derivative) = svg_path.segment_derivative(segment, at: t)
 
-  maths.atan2(derivative.y, derivative.x)
-  |> radians_to_degrees
+  trig.atan2_degrees(derivative.y, derivative.x)
   |> normalize_degrees
-}
-
-fn radians_to_degrees(radians: Float) -> Float {
-  radians *. 180.0 /. maths.pi()
 }
 
 fn normalize_degrees(degrees: Float) -> Float {
@@ -1429,9 +1426,7 @@ fn point_support(point: svg_path.Point, degrees degrees: Float) -> Float {
 }
 
 fn angle_direction(degrees: Float) -> svg_path.Point {
-  let radians = degrees *. maths.pi() /. 180.0
-
-  svg_path.Point(maths.cos(radians), maths.sin(radians))
+  svg_path.Point(trig.cos_degrees(degrees), trig.sin_degrees(degrees))
 }
 
 fn dot(a: svg_path.Point, b: svg_path.Point) -> Float {
@@ -1601,13 +1596,16 @@ fn unit_circle_points(count: Int) -> List(svg_path.Point) {
 
 fn unit_circle_point(index: Int) -> svg_path.Point {
   let angle =
-    int.to_float({ index * 97 + 13 } % 10_000) /. 10_000.0 *. maths.pi() *. 2.0
+    int.to_float({ index * 97 + 13 } % 10_000) /. 10_000.0 *. pi *. 2.0
   let radius =
     int.to_float({ { index * 37 + 17 } * { index * 53 + 29 } + 5 } % 10_000)
     /. 10_000.0
   let assert Ok(radius) = float.square_root(radius)
 
-  svg_path.Point(radius *. maths.cos(angle), radius *. maths.sin(angle))
+  svg_path.Point(
+    radius *. trig.internal_cos_radians(angle),
+    radius *. trig.internal_sin_radians(angle),
+  )
 }
 
 fn one_sided_1_degree_crescent_points(count: Int) -> List(svg_path.Point) {
@@ -1655,9 +1653,11 @@ fn crescent_candidate_point(
     +. angle_span
     *. int.to_float({ index * 89 + 37 } % 10_000)
     /. 10_000.0
-  let radians = angle *. maths.pi() /. 180.0
   let circle =
-    svg_path.Point(1000.0 *. maths.cos(radians), 1000.0 *. maths.sin(radians))
+    svg_path.Point(
+      1000.0 *. trig.cos_degrees(angle),
+      1000.0 *. trig.sin_degrees(angle),
+    )
   let line_start = radius_1000_point(start_angle)
   let line_end = radius_1000_point(end_angle)
   let chord = chord_point_at_y(circle.y, line_start:, line_end:)
@@ -1723,6 +1723,8 @@ fn take_first_loop(
 }
 
 fn radius_1000_point(angle: Float) -> svg_path.Point {
-  let radians = angle *. maths.pi() /. 180.0
-  svg_path.Point(1000.0 *. maths.cos(radians), 1000.0 *. maths.sin(radians))
+  svg_path.Point(
+    1000.0 *. trig.cos_degrees(angle),
+    1000.0 *. trig.sin_degrees(angle),
+  )
 }

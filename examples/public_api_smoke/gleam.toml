@@ -2,7 +2,5 @@ name = "svg_path_public_api_smoke"
 version = "0.1.0"
 
 [dependencies]
-gleam_community_maths = { path = "../../build/packages/gleam_community_maths" }
 gleam_stdlib = { path = "../../build/packages/gleam_stdlib" }
-gleam_yielder = { path = "../../build/packages/gleam_yielder" }
 svg_path = { path = "../.." }

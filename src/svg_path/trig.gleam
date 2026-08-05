@@ -1,8 +1,6 @@
 //// Trigonometry helpers for SVG-facing degree angles.
 
 import gleam/float
-import gleam/result
-import gleam_community/maths
 
 const pi = 3.141592653589793
 
@@ -27,7 +25,7 @@ pub fn sin_degrees(degrees: Float) -> Float {
     90.0 -> 1.0
     180.0 -> 0.0
     270.0 -> -1.0
-    _ -> maths.sin(degrees_to_radians(degrees))
+    _ -> internal_sin_radians(degrees_to_radians(degrees))
   }
 }
 
@@ -38,7 +36,7 @@ pub fn cos_degrees(degrees: Float) -> Float {
     90.0 -> 0.0
     180.0 -> -1.0
     270.0 -> 0.0
-    _ -> maths.cos(degrees_to_radians(degrees))
+    _ -> internal_cos_radians(degrees_to_radians(degrees))
   }
 }
 
@@ -51,19 +49,19 @@ pub fn tan_degrees(degrees: Float) -> Float {
     180.0 -> 0.0
     225.0 -> 1.0
     315.0 -> -1.0
-    _ -> maths.tan(degrees_to_radians(degrees))
+    _ -> tan_radians(degrees_to_radians(degrees))
   }
 }
 
 /// Return `atan(x)` in degrees.
 pub fn atan_degrees(x: Float) -> Float {
-  radians_to_degrees(maths.atan(x))
+  radians_to_degrees(atan_radians(x))
 }
 
 /// Return `atan2(y, x)` in degrees.
 pub fn atan2_degrees(y: Float, x: Float) -> Float {
   case x, y {
-    0.0, 0.0 -> radians_to_degrees(maths.atan2(y, x))
+    0.0, 0.0 -> radians_to_degrees(internal_atan2_radians(y, x))
     0.0, _ -> {
       case y >. 0.0 {
         True -> 90.0
@@ -79,7 +77,7 @@ pub fn atan2_degrees(y: Float, x: Float) -> Float {
     _, _ -> {
       case float.absolute_value(x) == float.absolute_value(y) {
         True -> diagonal_atan2(y, x)
-        False -> radians_to_degrees(maths.atan2(y, x))
+        False -> radians_to_degrees(internal_atan2_radians(y, x))
       }
     }
   }
@@ -87,8 +85,53 @@ pub fn atan2_degrees(y: Float, x: Float) -> Float {
 
 /// Return `acos(x)` in degrees.
 pub fn acos_degrees(x: Float) -> Result(Float, Nil) {
-  maths.acos(x) |> result.map(radians_to_degrees)
+  case x >=. -1.0 && x <=. 1.0 {
+    True -> Ok(acos_radians(x) |> radians_to_degrees)
+    False -> Error(Nil)
+  }
 }
+
+/// Return the radian sine for internal numerical tests.
+@internal
+pub fn internal_sin_radians(radians: Float) -> Float {
+  sin_radians(radians)
+}
+
+/// Return the radian cosine for internal numerical tests.
+@internal
+pub fn internal_cos_radians(radians: Float) -> Float {
+  cos_radians(radians)
+}
+
+/// Return the radian two-argument arctangent for internal numerical tests.
+@internal
+pub fn internal_atan2_radians(y: Float, x: Float) -> Float {
+  atan2_radians(y, x)
+}
+
+@external(erlang, "math", "sin")
+@external(javascript, "./trig_ffi.mjs", "sin")
+fn sin_radians(radians: Float) -> Float
+
+@external(erlang, "math", "cos")
+@external(javascript, "./trig_ffi.mjs", "cos")
+fn cos_radians(radians: Float) -> Float
+
+@external(erlang, "math", "tan")
+@external(javascript, "./trig_ffi.mjs", "tan")
+fn tan_radians(radians: Float) -> Float
+
+@external(erlang, "math", "atan")
+@external(javascript, "./trig_ffi.mjs", "atan")
+fn atan_radians(value: Float) -> Float
+
+@external(erlang, "math", "atan2")
+@external(javascript, "./trig_ffi.mjs", "atan2")
+fn atan2_radians(y: Float, x: Float) -> Float
+
+@external(erlang, "math", "acos")
+@external(javascript, "./trig_ffi.mjs", "acos")
+fn acos_radians(value: Float) -> Float
 
 fn diagonal_atan2(y: Float, x: Float) -> Float {
   case x >. 0.0 {

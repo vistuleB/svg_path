@@ -2,9 +2,9 @@ import gleam/float
 import gleam/int
 import gleam/list
 import gleam/result
-import gleam_community/maths
 import svg_path
 import svg_path/convex_hull
+import svg_path/trig
 
 pub fn octant_angles() -> List(Float) {
   [0.0, 45.0, 90.0, 135.0, 180.0, 225.0, 270.0, 315.0]
@@ -64,8 +64,7 @@ pub fn values_near(a: Float, b: Float, tolerance tolerance: Float) -> Bool {
 }
 
 fn angle_direction(angle: Float) -> svg_path.Point {
-  let radians = angle *. maths.pi() /. 180.0
-  svg_path.Point(maths.cos(radians), maths.sin(radians))
+  svg_path.Point(trig.cos_degrees(angle), trig.sin_degrees(angle))
 }
 
 fn dot(a: svg_path.Point, b: svg_path.Point) -> Float {
