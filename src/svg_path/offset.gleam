@@ -560,6 +560,7 @@ fn all_remaining_subpaths_closed(subpaths: List(svg_path.Subpath)) -> Bool {
 
 /// Return the retained, globally split offset sections without stitching
 /// touching sections together. This is intended for construction diagnostics.
+@internal
 pub fn path_sections_with(
   path path: svg_path.Path,
   distance distance: Float,

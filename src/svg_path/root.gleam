@@ -14,11 +14,13 @@ const default_tolerance = 0.000000001
 const default_max_iterations = 100
 
 /// Options for bracketed bisection.
+@internal
 pub type Options {
   Options(tolerance: Float, max_iterations: Int)
 }
 
 /// Errors returned by root-finding helpers.
+@internal
 pub type Error {
   /// The tolerance must be greater than zero.
   InvalidTolerance(tolerance: Float)
@@ -35,12 +37,14 @@ pub type Error {
 
 /// Whether a repeated quadratic root is returned once or with its algebraic
 /// multiplicity of two.
+@internal
 pub type RepeatedRootPolicy {
   ConsolidateRepeatedRoot
   PreserveRepeatedRoot
 }
 
 /// Options for solving a quadratic equation.
+@internal
 pub type QuadraticOptions {
   QuadraticOptions(
     coefficient_tolerance: Float,
@@ -49,6 +53,7 @@ pub type QuadraticOptions {
 }
 
 /// Options for isolating and refining real polynomial roots.
+@internal
 pub type PolynomialOptions {
   PolynomialOptions(
     coefficient_tolerance: Float,
@@ -67,11 +72,12 @@ pub type RootIsolation {
 }
 
 /// Return the default bisection options.
-pub fn default_options() -> Options {
+fn default_options() -> Options {
   Options(tolerance: default_tolerance, max_iterations: default_max_iterations)
 }
 
 /// Return the default options for polynomial root isolation.
+@internal
 pub fn default_polynomial_options() -> PolynomialOptions {
   PolynomialOptions(
     coefficient_tolerance: 0.000000000001,
@@ -85,6 +91,7 @@ pub fn default_polynomial_options() -> PolynomialOptions {
 ///
 /// An identically zero or inconsistent constant equation returns no isolated
 /// roots.
+@internal
 pub fn linear(a: Float, b: Float) -> List(Float) {
   linear_with_tolerance(a, b, 0.0)
 }
@@ -92,6 +99,7 @@ pub fn linear(a: Float, b: Float) -> List(Float) {
 /// Solve `a * x² + b * x + c = 0` using exact degree classification.
 ///
 /// Real roots are returned in formula order. A repeated root is returned once.
+@internal
 pub fn quadratic(a: Float, b: Float, c: Float) -> List(Float) {
   quadratic_with(
     a,
@@ -109,6 +117,7 @@ pub fn quadratic(a: Float, b: Float, c: Float) -> List(Float) {
 ///
 /// Coefficients whose absolute value is less than `coefficient_tolerance` are
 /// treated as zero. A zero or negative tolerance uses exact zero comparison.
+@internal
 pub fn quadratic_with(
   a: Float,
   b: Float,
@@ -141,6 +150,7 @@ pub fn quadratic_with(
 }
 
 /// Keep roots strictly inside an interval and return them in ascending order.
+@internal
 pub fn strictly_inside(
   roots: List(Float),
   from lower: Float,
@@ -153,6 +163,7 @@ pub fn strictly_inside(
 }
 
 /// Keep roots inside a closed interval and return them in ascending order.
+@internal
 pub fn inside(
   roots: List(Float),
   from lower: Float,
@@ -166,6 +177,7 @@ pub fn inside(
 
 /// Evaluate a power-basis polynomial whose coefficients are ordered from the
 /// highest power to the constant term.
+@internal
 pub fn evaluate_polynomial(coefficients: List(Float), at x: Float) -> Float {
   list.fold(coefficients, 0.0, fn(value, coefficient) {
     value *. x +. coefficient
@@ -174,6 +186,7 @@ pub fn evaluate_polynomial(coefficients: List(Float), at x: Float) -> Float {
 
 /// Differentiate power-basis coefficients ordered from highest power to the
 /// constant term.
+@internal
 pub fn polynomial_derivative(coefficients: List(Float)) -> List(Float) {
   polynomial_derivative_loop(
     coefficients,
@@ -188,6 +201,7 @@ pub fn polynomial_derivative(coefficients: List(Float)) -> List(Float) {
 /// Derivative roots partition the interval into monotone pieces. Sign-changing
 /// roots are refined with bracketed bisection, while roots shared with the
 /// derivative preserve even-multiplicity roots that do not change sign.
+@internal
 pub fn polynomial_roots_with(
   coefficients: List(Float),
   from lower: Float,
@@ -245,6 +259,7 @@ pub fn polynomial_root_isolations_with(
 }
 
 /// Find all distinct real roots of `a*x³ + b*x² + c*x + d`.
+@internal
 pub fn cubic(
   a: Float,
   b: Float,
@@ -255,7 +270,7 @@ pub fn cubic(
 }
 
 /// Find all distinct real roots of a cubic using explicit numerical options.
-pub fn cubic_with(
+fn cubic_with(
   a: Float,
   b: Float,
   c: Float,
@@ -296,16 +311,6 @@ pub fn cubic_with(
       }
     }
   }
-}
-
-/// Sort roots and merge neighboring values within `tolerance`.
-pub fn consolidate(
-  roots: List(Float),
-  tolerance tolerance: Float,
-) -> List(Float) {
-  roots
-  |> list.sort(by: float.compare)
-  |> consolidate_sorted(float.max(tolerance, 0.0), kept: [])
 }
 
 fn consolidate_isolations(
@@ -537,22 +542,6 @@ fn polynomial_root_bound(leading: Float, rest: List(Float)) -> Float {
   })
 }
 
-fn consolidate_sorted(
-  roots: List(Float),
-  tolerance: Float,
-  kept kept: List(Float),
-) -> List(Float) {
-  case roots, kept {
-    [], _ -> list.reverse(kept)
-    [first, ..rest], [] -> consolidate_sorted(rest, tolerance, kept: [first])
-    [first, ..rest], [previous, ..] ->
-      case float.absolute_value(first -. previous) <=. tolerance {
-        True -> consolidate_sorted(rest, tolerance, kept:)
-        False -> consolidate_sorted(rest, tolerance, kept: [first, ..kept])
-      }
-  }
-}
-
 fn linear_with_tolerance(a: Float, b: Float, tolerance: Float) -> List(Float) {
   case coefficient_is_zero(a, tolerance) {
     True -> []
@@ -572,6 +561,7 @@ fn coefficient_is_zero(value: Float, tolerance: Float) -> Bool {
 /// `f(from)` and `f(to)` must have opposite signs, unless either endpoint is
 /// already within tolerance of zero. `from` may be greater than `to`; the
 /// bracket is normalized before solving.
+@internal
 pub fn bisect(
   f: fn(Float) -> Float,
   from left: Float,
@@ -585,6 +575,7 @@ pub fn bisect(
 /// The returned value is an approximation. Convergence succeeds when either
 /// `abs(f(estimate)) <= tolerance` or the current bracket width is no larger
 /// than `tolerance`.
+@internal
 pub fn bisect_with(
   f: fn(Float) -> Float,
   from left: Float,

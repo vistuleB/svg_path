@@ -12,6 +12,7 @@ import gleam/option.{type Option, None, Some}
 import gleam/string
 
 /// Character used for left padding.
+@internal
 pub type LeftPaddingStyle {
   /// Pad with zeroes.
   Zero
@@ -21,6 +22,7 @@ pub type LeftPaddingStyle {
 }
 
 /// Formatting for digits to the left of the decimal point.
+@internal
 pub type LeftDecimalOptions {
   /// Do not pad numbers on the left.
   Succinct
@@ -36,6 +38,7 @@ pub type LeftDecimalOptions {
 }
 
 /// Formatting for digits to the right of the decimal point.
+@internal
 pub type RightDecimalOptions {
   /// Use the system float formatter, stripped of purely trailing decimal zeroes.
   System
@@ -48,6 +51,7 @@ pub type RightDecimalOptions {
 }
 
 /// Options for numeric formatting.
+@internal
 pub type Options {
   Options(
     /// Formatting for digits to the left of the decimal point.
@@ -58,11 +62,13 @@ pub type Options {
 }
 
 /// A prepared numeric formatter.
+@internal
 pub opaque type NumberFormat {
   NumberFormat(options: Options, left_padding: Option(#(Int, LeftPaddingStyle)))
 }
 
 /// Prepare a formatter, using the supplied numbers to choose automatic padding.
+@internal
 pub fn prepare(options: Options, numbers: List(Float)) -> NumberFormat {
   let left_padding = case options.left_decimals {
     Succinct -> None
@@ -76,6 +82,7 @@ pub fn prepare(options: Options, numbers: List(Float)) -> NumberFormat {
 
 /// Prepare a formatter from numbers that have already received right-decimal
 /// formatting but no left-padding.
+@internal
 pub fn prepare_raw(options: Options, numbers: List(String)) -> NumberFormat {
   let left_padding = case options.left_decimals {
     Succinct -> None
@@ -88,6 +95,7 @@ pub fn prepare_raw(options: Options, numbers: List(String)) -> NumberFormat {
 }
 
 /// Format a number.
+@internal
 pub fn number(number: Float, with format: NumberFormat) -> String {
   number
   |> raw_number(format.options)
@@ -98,6 +106,7 @@ pub fn number(number: Float, with format: NumberFormat) -> String {
 ///
 /// Whole numbers are given an explicit `.0` suffix before left-padding is
 /// applied.
+@internal
 pub fn code_number(value: Float, with format: NumberFormat) -> String {
   let number = raw_number(value, format.options)
   let number = case
@@ -116,6 +125,7 @@ pub fn code_number(value: Float, with format: NumberFormat) -> String {
 ///
 /// This is useful when deciding which compact SVG command form a number would
 /// use before padding is added.
+@internal
 pub fn raw_number(number: Float, options: Options) -> String {
   case options.right_decimals {
     System -> number |> float.to_string |> strip_trailing_decimal_zeros

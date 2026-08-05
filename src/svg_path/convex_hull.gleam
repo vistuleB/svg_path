@@ -139,6 +139,7 @@ type LoopTangentCandidate {
   LoopTangentCandidate(param: LoopParam, point: svg_path.Point)
 }
 
+@internal
 pub type PointLoopView {
   TangentPoint
   OutsidePoint
