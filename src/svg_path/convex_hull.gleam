@@ -1553,25 +1553,8 @@ fn cubic_point_tangent_roots(
 ) -> List(Float) {
   // For C(t) = a t³ + b t² + c t + d, point tangency is
   // cross(C(t) - point, C'(t)) = 0, a quartic polynomial.
-  let a =
-    add_points(
-      add_points(scale_point(start, -1.0), scale_point(control1, 3.0)),
-      add_points(scale_point(control2, -3.0), end),
-    )
-  let b =
-    add_points(
-      add_points(scale_point(start, 3.0), scale_point(control1, -6.0)),
-      scale_point(control2, 3.0),
-    )
-  let c = scale_point(subtract(control1, start), 3.0)
-  let s = subtract(start, point)
-  let coefficients = [
-    0.0 -. cross(a, b),
-    -2.0 *. cross(a, c),
-    3.0 *. cross(s, a) -. cross(b, c),
-    2.0 *. cross(s, b),
-    cross(s, c),
-  ]
+  let coefficients =
+    cubic_point_tangent_coefficients(start, control1, control2, end, point)
   let segment = svg_path.CubicBezier(start, control1, control2, end)
   let assert Ok(isolations) =
     root.polynomial_root_isolations_with(
@@ -1588,6 +1571,46 @@ fn cubic_point_tangent_roots(
   list.map(isolations, fn(isolation) {
     refine_polynomial_tangent_isolation(coefficients, segment, isolation)
   })
+}
+
+fn cubic_point_tangent_coefficients(
+  start: svg_path.Point,
+  control1: svg_path.Point,
+  control2: svg_path.Point,
+  end: svg_path.Point,
+  point: svg_path.Point,
+) -> List(Float) {
+  let a =
+    add_points(
+      add_points(scale_point(start, -1.0), scale_point(control1, 3.0)),
+      add_points(scale_point(control2, -3.0), end),
+    )
+  let b =
+    add_points(
+      add_points(scale_point(start, 3.0), scale_point(control1, -6.0)),
+      scale_point(control2, 3.0),
+    )
+  let c = scale_point(subtract(control1, start), 3.0)
+  let s = subtract(start, point)
+  [
+    0.0 -. cross(a, b),
+    -2.0 *. cross(a, c),
+    3.0 *. cross(s, a) -. cross(b, c),
+    2.0 *. cross(s, b),
+    cross(s, c),
+  ]
+  |> normalize_tangency_coefficients
+}
+
+fn normalize_tangency_coefficients(coefficients: List(Float)) -> List(Float) {
+  let scale =
+    list.fold(coefficients, 0.0, fn(scale, coefficient) {
+      float.max(scale, float.absolute_value(coefficient))
+    })
+  case scale == 0.0 {
+    True -> coefficients
+    False -> list.map(coefficients, fn(coefficient) { coefficient /. scale })
+  }
 }
 
 fn refine_polynomial_tangent_isolation(
@@ -3254,22 +3277,7 @@ fn refine_chord_tangent(
 ) -> Float {
   case approximate <. same_t || approximate >. 1.0 -. same_t {
     True -> approximate
-    False -> {
-      let initial = chord_tangent_value(segment, approximate, other)
-      case float.absolute_value(initial) <. 0.000000000001 {
-        True -> approximate
-        False ->
-          refine_chord_tangent_scan(
-            segment,
-            other: other,
-            left: float.max(0.0, approximate -. 0.08),
-            right: float.min(1.0, approximate +. 0.08),
-            steps: 64,
-            best: approximate,
-            best_value: float.absolute_value(initial),
-          )
-      }
-    }
+    False -> refine_chord_tangent_polynomial(segment, approximate:, other:)
   }
 }
 
@@ -3283,97 +3291,75 @@ pub fn internal_refine_chord_tangent(
   refine_chord_tangent(segment, approximate:, other:)
 }
 
-fn refine_chord_tangent_scan(
+fn refine_chord_tangent_polynomial(
   segment: svg_path.Segment,
+  approximate approximate: Float,
   other other: Float,
-  left left: Float,
-  right right: Float,
-  steps steps: Int,
-  best best: Float,
-  best_value best_value: Float,
 ) -> Float {
-  let initial_value = chord_tangent_value(segment, left, other)
-  int.range(
-    from: 1,
-    to: steps,
-    with: Continue(#(left, initial_value, best, best_value)),
-    run: fn(state, i) {
-      case state {
-        Done(root) -> Done(root)
-        Continue(#(previous_t, previous_value, best, best_value)) -> {
-          let t =
-            left +. { right -. left } *. int.to_float(i) /. int.to_float(steps)
-          let value = chord_tangent_value(segment, t, other)
-          let #(best, best_value) = case
-            float.absolute_value(value) <. best_value
-          {
-            True -> #(t, float.absolute_value(value))
-            False -> #(best, best_value)
-          }
-          case
-            value == 0.0
-            || previous_value == 0.0
-            || same_sign(value, previous_value) == False
-          {
-            True ->
-              Done(bisect_chord_tangent(
-                segment,
-                other,
-                left: previous_t,
-                right: t,
-              ))
-            False -> Continue(#(t, value, best, best_value))
-          }
-        }
+  case segment {
+    svg_path.CubicBezier(start:, control1:, control2:, end:) -> {
+      let assert Ok(other_point) = svg_path.segment_point(segment, at: other)
+      let coefficients =
+        cubic_point_tangent_coefficients(
+          start,
+          control1,
+          control2,
+          end,
+          other_point,
+        )
+      let lower = float.max(0.0, approximate -. t_close)
+      let upper = float.min(1.0, approximate +. t_close)
+      let assert Ok(isolations) =
+        root.polynomial_root_isolations_with(
+          coefficients,
+          from: lower,
+          to: upper,
+          options: root.PolynomialOptions(
+            coefficient_tolerance: 0.000000000001,
+            root_tolerance: 0.000000000001,
+            value_tolerance: 0.000000000001,
+            max_iterations: 100,
+          ),
+        )
+      case nearest_chord_tangent_isolation(isolations, approximate, other) {
+        None -> approximate
+        Some(isolation) ->
+          refine_polynomial_tangent_isolation(coefficients, segment, isolation)
       }
-    },
-  )
-  |> finish_refinement_scan
-}
-
-type RefinementScan {
-  Done(Float)
-  Continue(#(Float, Float, Float, Float))
-}
-
-fn finish_refinement_scan(scan: RefinementScan) -> Float {
-  case scan {
-    Done(root) -> root
-    Continue(#(_, _, best, _)) -> best
+    }
+    _ -> approximate
   }
 }
 
-fn bisect_chord_tangent(
-  segment: svg_path.Segment,
+fn nearest_chord_tangent_isolation(
+  isolations: List(root.RootIsolation),
+  approximate: Float,
   other: Float,
-  left left: Float,
-  right right: Float,
+) -> Option(root.RootIsolation) {
+  isolations
+  |> list.filter(fn(isolation) {
+    float.absolute_value(isolation.estimate -. other) >. same_t
+  })
+  |> list.fold(None, fn(nearest, isolation) {
+    case nearest {
+      None -> Some(isolation)
+      Some(previous) ->
+        case
+          float.absolute_value(isolation.estimate -. approximate)
+          <. chord_isolation_distance(previous, approximate)
+        {
+          True -> Some(isolation)
+          False -> nearest
+        }
+    }
+  })
+}
+
+fn chord_isolation_distance(
+  isolation: root.RootIsolation,
+  approximate: Float,
 ) -> Float {
-  let assert Ok(isolation) =
-    root.bisect_isolation_until(
-      fn(t) { chord_tangent_value(segment, t, other) },
-      from: left,
-      to: right,
-      max_iterations: 100,
-      certified: fn(lower, upper) {
-        tangent_window_is_geometrically_small(segment, lower, upper)
-      },
-    )
-  let root.RootIsolation(lower:, estimate:, upper:) = isolation
-  case lower == upper {
-    True -> estimate
-    False ->
-      polish_chord_tangent_by_bisection(
-        segment,
-        other,
-        lower,
-        chord_tangent_value(segment, lower, other),
-        upper,
-        estimate:,
-        estimate_value: chord_tangent_value(segment, estimate, other),
-        remaining: 100,
-      )
-  }
+  float.absolute_value(isolation.estimate -. approximate)
 }
 
 fn tangent_window_is_geometrically_small(
@@ -3388,114 +3374,6 @@ fn tangent_window_is_geometrically_small(
         Error(_) -> False
         Ok(box) -> svg_path.bounding_box_diameter(box) <=. point_tolerance
       }
-  }
-}
-
-fn polish_chord_tangent_by_bisection(
-  segment: svg_path.Segment,
-  other: Float,
-  left: Float,
-  left_value: Float,
-  right: Float,
-  estimate estimate: Float,
-  estimate_value estimate_value: Float,
-  remaining remaining: Int,
-) -> Float {
-  case remaining <= 0 || estimate_value == 0.0 {
-    True -> estimate
-    False -> {
-      let #(next_left, next_left_value, next_right) = case
-        same_sign(left_value, estimate_value)
-      {
-        True -> #(estimate, estimate_value, right)
-        False -> #(left, left_value, estimate)
-      }
-      let proposal = next_left +. { next_right -. next_left } /. 2.0
-      let proposal_value = chord_tangent_value(segment, proposal, other)
-      case
-        chord_tangent_error_improves(
-          segment,
-          other,
-          estimate,
-          estimate_value,
-          proposal,
-          proposal_value,
-        )
-      {
-        False -> estimate
-        True ->
-          polish_chord_tangent_by_bisection(
-            segment,
-            other,
-            next_left,
-            next_left_value,
-            next_right,
-            estimate: proposal,
-            estimate_value: proposal_value,
-            remaining: remaining - 1,
-          )
-      }
-    }
-  }
-}
-
-fn chord_tangent_error_improves(
-  segment: svg_path.Segment,
-  other: Float,
-  previous_t: Float,
-  previous_value: Float,
-  proposal_t: Float,
-  proposal_value: Float,
-) -> Bool {
-  let previous_denominator =
-    chord_tangent_error_denominator(segment, previous_t, other)
-  let proposal_denominator =
-    chord_tangent_error_denominator(segment, proposal_t, other)
-  case previous_denominator, proposal_denominator {
-    Some(previous_denominator), Some(proposal_denominator) ->
-      proposal_value *. proposal_value *. previous_denominator
-      <. previous_value *. previous_value *. proposal_denominator
-    _, _ -> False
-  }
-}
-
-fn chord_tangent_error_denominator(
-  segment: svg_path.Segment,
-  t: Float,
-  other: Float,
-) -> Option(Float) {
-  let assert Ok(point) = svg_path.segment_point(segment, at: t)
-  let assert Ok(other_point) = svg_path.segment_point(segment, at: other)
-  let tangent = cubic_derivative(segment, t)
-  let tangent_squared = point_helpers.norm_squared(tangent)
-  let chord_squared = point_distance_squared(point, other_point)
-  let reliable_tangent_squared =
-    convex_hull_derivative_scale_squared(segment) *. 0.0000000001
-  case tangent_squared >=. reliable_tangent_squared, chord_squared >. 0.0 {
-    True, True -> Some(tangent_squared *. chord_squared)
-    _, _ -> None
-  }
-}
-
-fn convex_hull_derivative_scale_squared(segment: svg_path.Segment) -> Float {
-  case segment {
-    svg_path.Line(start:, end:) -> point_distance_squared(start, end)
-    svg_path.QuadraticBezier(start:, control:, end:) ->
-      4.0
-      *. float.max(
-        point_distance_squared(start, control),
-        point_distance_squared(control, end),
-      )
-    svg_path.CubicBezier(start:, control1:, control2:, end:) ->
-      9.0
-      *. float.max(
-        point_distance_squared(start, control1),
-        float.max(
-          point_distance_squared(control1, control2),
-          point_distance_squared(control2, end),
-        ),
-      )
-    svg_path.Arc(..) -> 1.0
   }
 }
 
@@ -3977,32 +3855,6 @@ fn segment_kind(segment: svg_path.Segment) -> String {
     svg_path.QuadraticBezier(..) -> "QuadraticBezier"
     svg_path.CubicBezier(..) -> "CubicBezier"
     svg_path.Arc(..) -> "Arc"
-  }
-}
-
-fn chord_tangent_value(
-  segment: svg_path.Segment,
-  t: Float,
-  other: Float,
-) -> Float {
-  let assert Ok(point) = svg_path.segment_point(segment, at: t)
-  let assert Ok(other_point) = svg_path.segment_point(segment, at: other)
-  cross(cubic_derivative(segment, t), subtract(other_point, point))
-}
-
-fn cubic_derivative(segment: svg_path.Segment, t: Float) -> svg_path.Point {
-  case segment {
-    svg_path.CubicBezier(start:, control1:, control2:, end:) -> {
-      let mt = 1.0 -. t
-      add_points(
-        add_points(
-          scale_point(subtract(control1, start), 3.0 *. mt *. mt),
-          scale_point(subtract(control2, control1), 6.0 *. mt *. t),
-        ),
-        scale_point(subtract(end, control2), 3.0 *. t *. t),
-      )
-    }
-    _ -> svg_path.Point(0.0, 0.0)
   }
 }
 

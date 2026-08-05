@@ -414,6 +414,61 @@ pub fn cubic_chord_tangent_refinement_certifies_in_geometry_space_test() {
   assert float.absolute_value(refined -. 0.37) <=. 0.000000000000001
 }
 
+pub fn cubic_chord_polynomial_refinement_matches_known_family_test() {
+  // C(t) = scale * (t, -2rt² + t³) has a chord from C(0) tangent
+  // at t = r. Exercise interior roots across the parameter interval and at
+  // materially different geometry scales.
+  list.each([0.12, 0.25, 0.37, 0.5, 0.73, 0.88], fn(expected) {
+    list.each([0.000001, 1.0, 1_000_000_000_000.0], fn(scale) {
+      let segment = chord_tangent_family(expected, scale)
+      list.each([-0.05, 0.05], fn(offset) {
+        let approximate = expected +. offset
+        let refined =
+          convex_hull.internal_refine_chord_tangent(
+            segment,
+            approximate:,
+            other: 0.0,
+          )
+        assert float.absolute_value(refined -. expected) <=. 0.000000000001
+      })
+    })
+  })
+}
+
+pub fn cubic_chord_refinement_is_scale_independent_test() {
+  let expected = 0.37
+  let approximate = 0.32
+  let segment = chord_tangent_family(expected, 0.000001)
+
+  let refined =
+    convex_hull.internal_refine_chord_tangent(segment, approximate:, other: 0.0)
+
+  assert float.absolute_value(refined -. expected) <=. 0.000000000001
+}
+
+pub fn cubic_chord_refinement_ignores_trivial_endpoint_root_test() {
+  let expected = 0.12
+  let segment = chord_tangent_family(expected, 1.0)
+
+  let refined =
+    convex_hull.internal_refine_chord_tangent(
+      segment,
+      approximate: 0.05,
+      other: 0.0,
+    )
+
+  assert float.absolute_value(refined -. expected) <=. 0.000000000001
+}
+
+fn chord_tangent_family(root: Float, scale: Float) -> svg_path.Segment {
+  svg_path.CubicBezier(
+    start: svg_path.Point(0.0, 0.0),
+    control1: svg_path.Point(scale /. 3.0, 0.0),
+    control2: svg_path.Point(2.0 *. scale /. 3.0, -2.0 *. root *. scale /. 3.0),
+    end: svg_path.Point(scale, { 1.0 -. 2.0 *. root } *. scale),
+  )
+}
+
 pub fn point_exact_loop_tangent_subpaths_finds_arc_interior_tangencies_test() {
   let loop = [
     svg_path.Line(
