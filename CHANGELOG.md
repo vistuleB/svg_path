@@ -9,6 +9,14 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
+## 0.29.2 - 2026-08-05
+
+- Replaced scale-dependent cubic chord-tangency scanning in convex-hull
+  construction with normalized polynomial root isolation.
+- Added analytic chord-tangency regressions across parameter locations and
+  geometry scales, together with figure-eight, offset-band, and combined-hull
+  support tests.
+
 ## 0.29.1 - 2026-08-05
 
 - Added `point.clockwise_aperture` and reused the point module's heading and
