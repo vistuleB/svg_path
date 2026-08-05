@@ -9,6 +9,15 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
+## 0.30.0 - 2026-08-05
+
+- Removed the `gleam_community_maths` runtime dependency; `svg_path` now depends
+  only on `gleam_stdlib`.
+- Added local Erlang and JavaScript trigonometry bindings used by the public
+  degree-based helpers and internal numerical geometry tests.
+- Added cross-backend trigonometry coverage and updated standalone examples to
+  avoid unnecessary direct dependencies.
+
 ## 0.29.2 - 2026-08-05
 
 - Replaced scale-dependent cubic chord-tangency scanning in convex-hull
