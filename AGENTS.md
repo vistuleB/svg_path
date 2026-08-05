@@ -12,14 +12,14 @@
 
 - Always report the exact test command or named profile that completed. For
   example: `` `gleam test` passes: 996 tests`` or
-  `` `scripts/test-slow` passes: 1,017 tests``.
+  `` `scripts/test-slow` passes: 21 tests``.
 - Never say “all tests pass”, “the full suite passes”, or equivalent unless
   `scripts/test-all` completed successfully in the current worktree.
 - Use these names consistently:
   - `gleam test`: default suite;
-  - `scripts/test-fast`: fast profile, which omits the convex-hull module;
-  - `scripts/test-slow`: slow profile, which substitutes the convex-hull
-    stress module;
+  - `scripts/test-fast`: the ordinary test suite, including convex-hull smoke
+    tests;
+  - `scripts/test-slow`: the additional convex-hull stress tests only;
   - `scripts/test-all`: full suite, consisting of both profiles;
   - `scripts/test-release`: canonical pre-release test command.
 - Before a release, run `scripts/test-release`. A passing `gleam test` or

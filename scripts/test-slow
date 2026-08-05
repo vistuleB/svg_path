@@ -2,37 +2,52 @@
 set -euo pipefail
 
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-active="$root/test/svg_path_convex_hull_test.gleam"
-slow="$root/test_slow/svg_path_convex_hull_test.gleam"
-backup="$root/.test-disabled/svg_path_convex_hull_test.gleam"
+active="$root/test"
+backup="$root/.test-disabled/fast-tests"
+runner="$root/test_slow/svg_path_test.gleam"
+stress="$root/test_slow/svg_path_convex_hull_test.gleam"
+support="$backup/svg_path_convex_hull_support.gleam"
 
 restore() {
-  if [ -f "$backup" ]; then
-    mkdir -p "$(dirname "$active")"
+  if [ -d "$backup" ]; then
+    if [ -d "$active" ]; then
+      rm "$active/svg_path_test.gleam"
+      rm "$active/svg_path_convex_hull_test.gleam"
+      rm "$active/svg_path_convex_hull_support.gleam"
+      rmdir "$active"
+    fi
     mv "$backup" "$active"
+    cd "$root"
+    gleam clean
   fi
-  rmdir "$(dirname "$backup")" 2>/dev/null || true
+  rmdir "$root/.test-disabled" 2>/dev/null || true
 }
 
 trap restore EXIT INT TERM
 
-if [ ! -f "$slow" ]; then
-  echo "Could not find test_slow/svg_path_convex_hull_test.gleam." >&2
+if [ ! -f "$runner" ] || [ ! -f "$stress" ]; then
+  echo "Could not find the dedicated slow-test modules." >&2
   exit 1
 fi
 
-if [ -f "$backup" ]; then
-  echo "Refusing to run with an existing parked convex hull test." >&2
+if [ -e "$backup" ]; then
+  echo "Refusing to run with an existing parked fast-test directory." >&2
   exit 1
 fi
 
-if [ -f "$active" ]; then
-  mkdir -p "$(dirname "$backup")"
-  mv "$active" "$backup"
+if [ ! -d "$active" ]; then
+  echo "Could not find the ordinary test directory." >&2
+  exit 1
 fi
 
-cp "$slow" "$active"
+mkdir -p "$(dirname "$backup")"
+mv "$active" "$backup"
+mkdir "$active"
+cp "$runner" "$active/svg_path_test.gleam"
+cp "$stress" "$active/svg_path_convex_hull_test.gleam"
+cp "$support" "$active/svg_path_convex_hull_support.gleam"
 
 cd "$root"
-echo "Running slow test profile (convex-hull stress module substituted)."
+echo "Running slow test profile (stress tests only)."
+gleam clean
 gleam test

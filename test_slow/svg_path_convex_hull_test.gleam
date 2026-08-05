@@ -62,19 +62,6 @@ pub fn path_hull_handles_two_sided_1_degree_crescent_points_and_chord_test() {
   )
 }
 
-pub fn segment_hull_returns_closed_subpath_for_line_test() {
-  let segment =
-    svg_path.Line(
-      start: svg_path.Point(0.0, 0.0),
-      end: svg_path.Point(10.0, 0.0),
-    )
-  let assert Ok(subpath) = convex_hull.segment_hull(segment)
-
-  assert svg_path.subpath_is_closed(subpath)
-  assert list.length(svg_path.subpath_segments(subpath)) == 2
-  assert support_values_match(segment, subpath)
-}
-
 pub fn segment_hull_returns_two_segments_for_point_cubic_test() {
   let segment =
     svg_path.CubicBezier(
@@ -89,45 +76,12 @@ pub fn segment_hull_returns_two_segments_for_point_cubic_test() {
   assert list.length(svg_path.subpath_segments(subpath)) == 2
 }
 
-pub fn segment_hull_returns_closed_hull_for_quadratic_test() {
-  let segment =
-    svg_path.QuadraticBezier(
-      start: svg_path.Point(0.0, 0.0),
-      control: svg_path.Point(5.0, 10.0),
-      end: svg_path.Point(10.0, 0.0),
-    )
-  let assert Ok(subpath) = convex_hull.segment_hull(segment)
-
-  assert svg_path.subpath_is_closed(subpath)
-  assert list.length(svg_path.subpath_segments(subpath)) == 2
-  assert support_values_match(segment, subpath)
-}
-
 pub fn segment_hull_handles_near_endpoint_arc_test() {
   let assert Ok(subpath) =
     convex_hull.segment_hull(near_endpoint_arc(sweep: True))
 
   assert svg_path.subpath_is_closed(subpath)
   assert list.length(svg_path.subpath_segments(subpath)) == 2
-}
-
-pub fn subpath_hull_returns_closed_hull_for_l_shaped_polyline_test() {
-  let segments = [
-    svg_path.Line(
-      start: svg_path.Point(0.0, 0.0),
-      end: svg_path.Point(20.0, 0.0),
-    ),
-    svg_path.Line(
-      start: svg_path.Point(20.0, 0.0),
-      end: svg_path.Point(20.0, 15.0),
-    ),
-  ]
-  let assert Ok(subpath) = svg_path.subpath(segments)
-  let assert Ok(hull) = convex_hull.subpath_hull(subpath)
-
-  assert svg_path.subpath_is_closed(hull)
-  assert list.length(svg_path.subpath_segments(hull)) >= 3
-  assert subpath_support_matches_bool(segments, hull)
 }
 
 pub fn subpath_hull_handles_curved_subpath_test() {
@@ -150,22 +104,6 @@ pub fn subpath_hull_handles_curved_subpath_test() {
   assert svg_path.subpath_is_closed(hull)
   assert list.length(svg_path.subpath_segments(hull)) >= 3
   assert subpath_support_matches_bool(segments, hull)
-}
-
-pub fn subpath_hull_treats_empty_subpath_as_single_point_test() {
-  let point = svg_path.Point(4.0, -3.0)
-  let assert Ok(hull) =
-    convex_hull.subpath_hull(svg_path.subpath_empty(at: point))
-
-  assert svg_path.subpath_is_closed(hull)
-  assert svg_path.subpath_segments(hull)
-    == svg_path.subpath_segments(svg_path.subpath_assert_set_closed(
-      svg_path.subpath_assert([
-        svg_path.Line(start: point, end: point),
-        svg_path.Line(start: point, end: point),
-      ]),
-      closed: True,
-    ))
 }
 
 pub fn path_hull_returns_closed_hull_for_multiple_subpaths_test() {
@@ -235,11 +173,6 @@ pub fn path_hull_handles_customer_polyline_path_test() {
   )
 }
 
-pub fn path_hull_rejects_empty_path_test() {
-  assert convex_hull.path_hull(svg_path.path_empty())
-    == Error(convex_hull.PathError(svg_path.EmptyPath))
-}
-
 pub fn path_hull_treats_path_with_only_empty_subpaths_as_points_test() {
   let left = svg_path.Point(0.0, 0.0)
   let right = svg_path.Point(10.0, 0.0)
@@ -259,24 +192,6 @@ pub fn path_hull_treats_path_with_only_empty_subpaths_as_points_test() {
   assert near_value(
     hull_support_value(svg_path.subpath_segments(hull), 180.0),
     0.0,
-  )
-}
-
-pub fn path_hull_includes_empty_subpath_start_points_test() {
-  let a = svg_path.Point(0.0, 0.0)
-  let b = svg_path.Point(2.0, 0.0)
-  let far = svg_path.Point(10.0, 0.0)
-  let path =
-    svg_path.Path([
-      svg_path.subpath_assert([svg_path.Line(start: a, end: b)]),
-      svg_path.subpath_empty(at: far),
-    ])
-  let assert Ok(hull) = convex_hull.path_hull(path)
-
-  assert svg_path.subpath_is_closed(hull)
-  assert near_value(
-    hull_support_value(svg_path.subpath_segments(hull), 0.0),
-    10.0,
   )
 }
 
@@ -577,16 +492,6 @@ fn support_mismatch_report(
   hull: svg_path.Subpath,
 ) -> Result(String, Nil) {
   support_mismatch_report_loop(multiples_of_10_degrees(), segment, hull)
-}
-
-fn support_values_match(
-  segment: svg_path.Segment,
-  hull: svg_path.Subpath,
-) -> Bool {
-  case support_mismatch_report(segment, hull) {
-    Error(Nil) -> True
-    Ok(_) -> False
-  }
 }
 
 fn support_mismatch_report_loop(

@@ -2,27 +2,8 @@
 set -euo pipefail
 
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-active="$root/test/svg_path_convex_hull_test.gleam"
-parked="$root/.test-disabled/svg_path_convex_hull_test.gleam"
-
-restore() {
-  if [ -f "$parked" ] && [ ! -f "$active" ]; then
-    mkdir -p "$(dirname "$active")"
-    mv "$parked" "$active"
-  fi
-  rmdir "$(dirname "$parked")" 2>/dev/null || true
-}
-
-trap restore EXIT INT TERM
-
-if [ -f "$active" ]; then
-  mkdir -p "$(dirname "$parked")"
-  mv "$active" "$parked"
-elif [ ! -f "$parked" ]; then
-  echo "Could not find svg_path_convex_hull_test.gleam in test/ or .test-disabled/." >&2
-  exit 1
-fi
 
 cd "$root"
-echo "Running fast test profile (convex-hull module omitted)."
+echo "Running fast test profile."
+gleam clean
 gleam test

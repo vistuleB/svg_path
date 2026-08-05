@@ -7,43 +7,57 @@ cd "$root"
 profile="${1:-all}"
 
 if [ "$profile" = "all" ]; then
-  echo "profile: normal"
-  "$0" normal
+  echo "profile: fast"
+  "$0" fast
   echo "profile: slow"
   "$0" slow
   exit 0
 fi
 
-if [ "$profile" != "normal" ] && [ "$profile" != "slow" ]; then
-  echo "Usage: $0 [all|normal|slow]" >&2
+if [ "$profile" != "fast" ] && [ "$profile" != "slow" ]; then
+  echo "Usage: $0 [all|fast|slow]" >&2
   exit 1
 fi
 
-active="$root/test/svg_path_convex_hull_test.gleam"
-slow="$root/test_slow/svg_path_convex_hull_test.gleam"
-backup="$root/.test-disabled/svg_path_convex_hull_test.gleam"
+active="$root/test"
+backup="$root/.test-disabled/fast-tests"
+runner="$root/test_slow/svg_path_test.gleam"
+stress="$root/test_slow/svg_path_convex_hull_test.gleam"
+support="$backup/svg_path_convex_hull_support.gleam"
 
 restore() {
-  if [ -f "$backup" ]; then
+  if [ -d "$backup" ]; then
+    if [ -d "$active" ]; then
+      rm "$active/svg_path_test.gleam"
+      rm "$active/svg_path_convex_hull_test.gleam"
+      rm "$active/svg_path_convex_hull_support.gleam"
+      rmdir "$active"
+    fi
     mv "$backup" "$active"
+    cd "$root"
+    gleam clean
   fi
-  rmdir "$(dirname "$backup")" 2>/dev/null || true
+  rmdir "$root/.test-disabled" 2>/dev/null || true
 }
 
 trap restore EXIT INT TERM
 
 if [ "$profile" = "slow" ]; then
-  if [ ! -f "$active" ] || [ ! -f "$slow" ] || [ -f "$backup" ]; then
-    echo "Cannot install the slow convex-hull test profile." >&2
+  if [ ! -d "$active" ] || [ ! -f "$runner" ] || [ ! -f "$stress" ] || [ -e "$backup" ]; then
+    echo "Cannot install the isolated slow-test profile." >&2
     exit 1
   fi
   mkdir -p "$(dirname "$backup")"
   mv "$active" "$backup"
-  cp "$slow" "$active"
+  mkdir "$active"
+  cp "$runner" "$active/svg_path_test.gleam"
+  cp "$stress" "$active/svg_path_convex_hull_test.gleam"
+  cp "$support" "$active/svg_path_convex_hull_support.gleam"
 fi
 
 # Compile once so the measurements below contain test execution time, not
 # repeated compiler startup time.
+gleam clean
 gleam build >/dev/null
 
 modules=()
