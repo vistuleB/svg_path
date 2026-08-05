@@ -202,13 +202,18 @@ type SplitPiece {
 }
 
 /// Return default options for offset construction.
+pub fn default_fitting_options() -> FittingOptions {
+  FittingOptions(
+    tolerance: default_tolerance,
+    samples: default_samples,
+    max_depth: default_max_depth,
+  )
+}
+
+/// Return default options for offset construction.
 pub fn default_options() -> Options {
   Options(
-    fitting: FittingOptions(
-      tolerance: default_tolerance,
-      samples: default_samples,
-      max_depth: default_max_depth,
-    ),
+    fitting: default_fitting_options(),
     trimming: svg_path.default_distance_options(),
     stalled_offset_diameter: default_stalled_offset_diameter,
     tangent_heal_angle_degrees: default_tangent_heal_angle_degrees,

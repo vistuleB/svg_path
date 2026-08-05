@@ -20,8 +20,8 @@ import svg_path.{
   InvalidSelfIntersectionDistanceTolerance,
   InvalidSelfIntersectionMinimumArcLengthSeparation, Line, OverlappingSegments,
   PathIntersection, PathParameter, PathSelfIntersection, Point, QuadraticBezier,
-  SegmentIntersection, SelfIntersectionOptions, SubpathIntersection,
-  SubpathParameter, SubpathSelfIntersection,
+  SegmentIntersection, SubpathIntersection, SubpathParameter,
+  SubpathSelfIntersection,
 }
 import svg_path/bezier
 import svg_path/overlap_detection
@@ -44,12 +44,9 @@ pub fn default_options() -> IntersectionOptions {
   )
 }
 
-/// Return the default options for subpath self-intersection detection.
-pub fn default_self_options() -> SelfIntersectionOptions {
-  SelfIntersectionOptions(
-    minimum_arc_length_separation: default_intersection_tolerance,
-    distance_tolerance: default_intersection_tolerance,
-  )
+/// Return the default options for subpath and path self-intersection detection.
+pub fn default_self_intersection_options() -> SelfIntersectionOptions {
+  svg_path.default_self_intersection_options()
 }
 
 /// Return point intersections between two segments.
@@ -118,7 +115,7 @@ fn segment_intersections_checked_valid_options(
 pub fn segment_self(
   segment: Segment,
 ) -> Result(List(SegmentIntersection), Error) {
-  segment_self_with(segment, options: default_self_options())
+  segment_self_with(segment, options: default_self_intersection_options())
 }
 
 /// Return point intersections where a segment intersects itself using explicit
@@ -204,7 +201,7 @@ pub fn segment_subpath_without_overlap_precheck_with(
 pub fn subpath_self(
   subpath: Subpath,
 ) -> Result(List(SubpathSelfIntersection), Error) {
-  subpath_self_with(subpath, options: default_self_options())
+  subpath_self_with(subpath, options: default_self_intersection_options())
 }
 
 /// Return point intersections where a subpath intersects itself using explicit
@@ -356,7 +353,7 @@ pub fn path_without_overlap_precheck_with(
 /// path parameter. A continuous overlap between distinct constituent segments
 /// returns `OverlappingSegments`.
 pub fn path_self(path: Path) -> Result(List(PathSelfIntersection), Error) {
-  path_self_with(path, options: default_self_options())
+  path_self_with(path, options: default_self_intersection_options())
 }
 
 /// Return point intersections where a path intersects itself using explicit

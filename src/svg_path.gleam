@@ -47,6 +47,8 @@ const default_distance_max_iterations = 100
 
 const default_containment_tolerance = 0.000000001
 
+const default_self_intersection_tolerance = 0.000000001
+
 const default_containment_samples = 100
 
 const default_containment_max_iterations = 100
@@ -679,6 +681,14 @@ pub fn default_containment_options() -> ContainmentOptions {
     tolerance: default_containment_tolerance,
     samples: default_containment_samples,
     max_iterations: default_containment_max_iterations,
+  )
+}
+
+/// Return the default options for subpath and path self-intersection detection.
+pub fn default_self_intersection_options() -> SelfIntersectionOptions {
+  SelfIntersectionOptions(
+    minimum_arc_length_separation: default_self_intersection_tolerance,
+    distance_tolerance: default_self_intersection_tolerance,
   )
 }
 

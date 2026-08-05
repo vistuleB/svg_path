@@ -1833,7 +1833,7 @@ fn self_intersections_result_to_string(
       case
         intersections.subpath_self_with(
           subpath,
-          options: intersections.default_self_options(),
+          options: intersections.default_self_intersection_options(),
         )
       {
         Ok(intersections) -> int.to_string(list.length(intersections))
@@ -1852,7 +1852,7 @@ fn self_intersection_points_result_to_string(
       case
         intersections.subpath_self_with(
           subpath,
-          options: intersections.default_self_options(),
+          options: intersections.default_self_intersection_options(),
         )
       {
         Ok(intersections) ->
