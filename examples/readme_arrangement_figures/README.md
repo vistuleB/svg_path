@@ -2,7 +2,7 @@
 
 This example regenerates the ArrangementGraph and CSG illustrations used by
 the README. Graph construction and graph-side rendering go through the public
-`svg_path/arrangement_graph` and `svg_path/arrangement_graph/drawing` APIs.
+`svg_path/arrangement` and `svg_path/arrangement/drawing` APIs.
 
 Run it from this directory:
 

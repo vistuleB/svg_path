@@ -4,8 +4,8 @@ import gleam/dynamic.{type Dynamic}
 import gleam/float
 import gleam/list
 import svg_path
-import svg_path/arrangement_graph
-import svg_path/arrangement_graph/drawing as arrangement_graph_drawing
+import svg_path/arrangement as arrangement_graph
+import svg_path/arrangement/drawing as arrangement_graph_drawing
 import svg_path/csg
 import svg_path/effects
 import svg_path/svg

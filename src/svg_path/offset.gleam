@@ -32,7 +32,7 @@ import gleam/option.{type Option, None, Some}
 import gleam/result
 import svg_path
 import svg_path/area
-import svg_path/arrangement_graph
+import svg_path/arrangement as arrangement_graph
 import svg_path/bezier
 import svg_path/intersections
 import svg_path/point as point_helpers

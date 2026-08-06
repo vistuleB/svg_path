@@ -5,7 +5,7 @@ import gleam/result
 import gleeunit/should
 import svg_path
 import svg_path/area
-import svg_path/arrangement_graph
+import svg_path/arrangement as arrangement_graph
 import svg_path/csg
 
 const tolerance = 0.000001

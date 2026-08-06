@@ -3,8 +3,8 @@
 import gleam/dynamic.{type Dynamic}
 import gleam/list
 import svg_path
-import svg_path/arrangement_graph
-import svg_path/arrangement_graph/drawing
+import svg_path/arrangement as arrangement_graph
+import svg_path/arrangement/drawing
 import svg_path/svg
 
 const tolerance = 0.000001

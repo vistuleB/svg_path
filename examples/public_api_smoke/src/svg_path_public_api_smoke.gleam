@@ -1,7 +1,7 @@
 //// Compile-only smoke coverage for the package's arrangement and CSG API.
 
 import svg_path
-import svg_path/arrangement_graph
+import svg_path/arrangement
 import svg_path/csg
 import svg_path/intersections
 import svg_path/overlaps
@@ -11,12 +11,12 @@ pub fn main() -> Nil {
   let right = rectangle(5.0, 0.0, 15.0, 10.0)
 
   let assert Ok(build) =
-    arrangement_graph.build(
+    arrangement.build(
       [left, right],
       tolerance: 0.000001,
       minimum_chord: 0.00001,
     )
-  let arrangement_graph.ArrangementGraphBuild(
+  let arrangement.ArrangementGraphBuild(
     graph:,
     normalized_paths:,
     segment_images:,

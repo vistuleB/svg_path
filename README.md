@@ -65,9 +65,9 @@ pub fn prepare_for_arc_averse_consumer(
   subpaths, and paths.
 - `svg_path/encounters`: combined continuous-overlap and isolated
   point-intersection queries.
-- `svg_path/arrangement_graph`: planar arrangements built from normalized path
+- `svg_path/arrangement`: planar arrangements built from normalized path
   segments, including endpoint clusters and coincident-edge multiplicities.
-- `svg_path/arrangement_graph/drawing`: drawing primitives for inspecting an
+- `svg_path/arrangement/drawing`: drawing primitives for inspecting an
   arrangement graph.
 - `svg_path/csg`: Boolean union, intersection, difference, symmetric
   difference, and nested contour reconstruction for filled paths.
@@ -1318,7 +1318,7 @@ after splitting.
 
 ## Arrangement Graphs
 
-`svg_path/arrangement_graph` constructs a planar arrangement from one or more
+`svg_path/arrangement` constructs a planar arrangement from one or more
 source paths. Construction first normalizes line-degenerate segment sequences,
 then splits segments at intersections and overlap boundaries. The resulting
 atomic edges do not intersect except at endpoint clusters. Coincident edges are
@@ -1335,14 +1335,14 @@ and directional multiplicities.
 </center>
 
 ```gleam
-import svg_path/arrangement_graph
+import svg_path/arrangement
 
-arrangement_graph.build(
+arrangement.build(
   [left, right],
   tolerance: 0.000001,
   minimum_chord: 0.00001,
 )
-// -> Result(arrangement_graph.ArrangementGraphBuild, arrangement_graph.Error)
+// -> Result(arrangement.ArrangementGraphBuild, arrangement.Error)
 ```
 
 `ArrangementGraphBuild` contains the graph, `normalized_paths`, and
@@ -1373,11 +1373,11 @@ with one occurrence in each direction.
 
 `build` is the supported constructor. Direct construction remains possible for
 inspection, serialization, and tests, but callers then assume responsibility
-for the documented graph invariants. `arrangement_graph.validate` checks local
+for the documented graph invariants. `arrangement.validate` checks local
 representation and closed-boundary invariants that do not require pairwise
 intersection tests.
 
-`svg_path/arrangement_graph/drawing` provides reusable drawing primitives for
+`svg_path/arrangement/drawing` provides reusable drawing primitives for
 the transparent graph representation. `drawing` shows vertices, edges, and
 directional multiplicities. `annotated_drawing` additionally shows winding
 levels on both sides of every edge relative to a compatible source path; it

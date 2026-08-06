@@ -9,7 +9,7 @@ import gleam/list
 import gleam/order
 import gleam/result
 import svg_path
-import svg_path/arrangement_graph.{
+import svg_path/arrangement.{
   type ArrangementEdge, type ArrangementGraph, ArrangementEdge, ArrangementGraph,
 }
 import svg_path/point
@@ -30,7 +30,7 @@ pub type Options {
 /// Errors returned by arrangement-graph CSG operations.
 pub type Error {
   /// Arrangement construction or validation failed.
-  ArrangementGraphError(arrangement_graph.Error)
+  ArrangementGraphError(arrangement.Error)
 
   /// An underlying path operation failed.
   PathError(svg_path.Error)
@@ -61,7 +61,7 @@ pub type CsgResult {
     path: svg_path.Path,
     /// The arrangement graph and source-ordered normalized input paths used to
     /// classify and reconstruct `path`.
-    build: arrangement_graph.ArrangementGraphBuild,
+    build: arrangement.ArrangementGraphBuild,
   )
 }
 
@@ -93,15 +93,14 @@ pub fn union_with(
   options options: Options,
 ) -> Result(CsgResult, Error) {
   use built <- result.try(
-    arrangement_graph.build(
+    arrangement.build(
       [left, right],
       tolerance: options.tolerance,
       minimum_chord: options.minimum_chord,
     )
     |> result.map_error(ArrangementGraphError),
   )
-  let arrangement_graph.ArrangementGraphBuild(graph:, normalized_paths:, ..) =
-    built
+  let arrangement.ArrangementGraphBuild(graph:, normalized_paths:, ..) = built
   let assert [normalized_left, normalized_right] = normalized_paths
   use path <- result.try(union_from_arrangement_graph(
     graph,
@@ -133,15 +132,14 @@ pub fn intersection_with(
   options options: Options,
 ) -> Result(CsgResult, Error) {
   use built <- result.try(
-    arrangement_graph.build(
+    arrangement.build(
       [left, right],
       tolerance: options.tolerance,
       minimum_chord: options.minimum_chord,
     )
     |> result.map_error(ArrangementGraphError),
   )
-  let arrangement_graph.ArrangementGraphBuild(graph:, normalized_paths:, ..) =
-    built
+  let arrangement.ArrangementGraphBuild(graph:, normalized_paths:, ..) = built
   let assert [normalized_left, normalized_right] = normalized_paths
   use path <- result.try(intersection_from_arrangement_graph(
     graph,
@@ -178,15 +176,14 @@ pub fn difference_with(
   options options: Options,
 ) -> Result(CsgResult, Error) {
   use built <- result.try(
-    arrangement_graph.build(
+    arrangement.build(
       [left, right],
       tolerance: options.tolerance,
       minimum_chord: options.minimum_chord,
     )
     |> result.map_error(ArrangementGraphError),
   )
-  let arrangement_graph.ArrangementGraphBuild(graph:, normalized_paths:, ..) =
-    built
+  let arrangement.ArrangementGraphBuild(graph:, normalized_paths:, ..) = built
   let assert [normalized_left, normalized_right] = normalized_paths
   use path <- result.try(difference_from_arrangement_graph(
     graph,
@@ -223,15 +220,14 @@ pub fn symmetric_difference_with(
   options options: Options,
 ) -> Result(CsgResult, Error) {
   use built <- result.try(
-    arrangement_graph.build(
+    arrangement.build(
       [left, right],
       tolerance: options.tolerance,
       minimum_chord: options.minimum_chord,
     )
     |> result.map_error(ArrangementGraphError),
   )
-  let arrangement_graph.ArrangementGraphBuild(graph:, normalized_paths:, ..) =
-    built
+  let arrangement.ArrangementGraphBuild(graph:, normalized_paths:, ..) = built
   let assert [normalized_left, normalized_right] = normalized_paths
   use path <- result.try(symmetric_difference_from_arrangement_graph(
     graph,
@@ -259,15 +255,14 @@ pub fn nested_contours_with(
   options options: Options,
 ) -> Result(CsgResult, Error) {
   use built <- result.try(
-    arrangement_graph.build(
+    arrangement.build(
       [path],
       tolerance: options.tolerance,
       minimum_chord: options.minimum_chord,
     )
     |> result.map_error(ArrangementGraphError),
   )
-  let arrangement_graph.ArrangementGraphBuild(graph:, normalized_paths:, ..) =
-    built
+  let arrangement.ArrangementGraphBuild(graph:, normalized_paths:, ..) = built
   let assert [normalized_path] = normalized_paths
   use path <- result.try(nested_contours_from_arrangement_graph(
     graph,

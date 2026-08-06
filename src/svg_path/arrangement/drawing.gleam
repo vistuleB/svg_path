@@ -5,7 +5,7 @@ import gleam/int
 import gleam/list
 import gleam/result
 import svg_path
-import svg_path/arrangement_graph.{
+import svg_path/arrangement.{
   type ArrangementEdge, type ArrangementGraph, type Error, ArrangementEdge,
   ArrangementGraph, ArrangementVertex, PathError,
 }
