@@ -676,6 +676,31 @@ pub fn path(
   }
 }
 
+/// Transform every subpath in a path, gracefully converting collapsed arcs
+/// when possible.
+///
+/// This is the path-level counterpart of `subpath_gracefully`.
+pub fn path_gracefully(
+  path: svg_path.Path,
+  by transform: Matrix,
+) -> Result(svg_path.Path, Error) {
+  case validate_matrix(transform) {
+    Error(error) -> Error(error)
+    Ok(Nil) -> {
+      case
+        transform_subpaths_gracefully(
+          svg_path.path_subpaths(path),
+          transform,
+          [],
+        )
+      {
+        Error(error) -> Error(error)
+        Ok(subpaths) -> Ok(svg_path.Path(subpaths))
+      }
+    }
+  }
+}
+
 /// Transform a bounding box by a matrix.
 ///
 /// The result is the smallest axis-aligned bounding box containing the
@@ -995,6 +1020,23 @@ fn transform_subpaths(
       case subpath(first, by: transform) {
         Error(error) -> Error(error)
         Ok(first) -> transform_subpaths(rest, transform, [first, ..transformed])
+      }
+    }
+  }
+}
+
+fn transform_subpaths_gracefully(
+  subpaths: List(svg_path.Subpath),
+  transform: Matrix,
+  transformed: List(svg_path.Subpath),
+) -> Result(List(svg_path.Subpath), Error) {
+  case subpaths {
+    [] -> Ok(list.reverse(transformed))
+    [first, ..rest] -> {
+      case subpath_gracefully(first, by: transform) {
+        Error(error) -> Error(error)
+        Ok(first) ->
+          transform_subpaths_gracefully(rest, transform, [first, ..transformed])
       }
     }
   }

@@ -661,6 +661,32 @@ pub fn graceful_closed_subpath_transform_preserves_semantic_closure_test() {
   assert serialize.subpath(transformed) == "M 5 0 H -5 Z"
 }
 
+pub fn graceful_path_transform_converts_collapsed_arcs_in_each_subpath_test() {
+  let assert Ok(first) =
+    svg_path.subpath([
+      svg_path.Arc(
+        start: svg_path.Point(5.0, 0.0),
+        radius: svg_path.Point(5.0, 5.0),
+        x_axis_rotation: 0.0,
+        large_arc: False,
+        sweep: True,
+        end: svg_path.Point(-5.0, 0.0),
+      ),
+    ])
+  let assert Ok(second) =
+    svg_path.subpath([
+      svg_path.Line(
+        start: svg_path.Point(0.0, 2.0),
+        end: svg_path.Point(4.0, 2.0),
+      ),
+    ])
+  let source = svg_path.Path([first, second])
+  let matrix = transform.matrix(a: 1.0, b: 0.0, c: 0.0, d: 0.0, e: 0.0, f: 3.0)
+  let assert Ok(transformed) = transform.path_gracefully(source, by: matrix)
+
+  assert serialize.path(transformed) == "M 5 3 H -5 M 0 3 H 4"
+}
+
 pub fn graceful_arc_transform_returns_vertical_collapsed_line_test() {
   let arc =
     svg_path.Arc(
