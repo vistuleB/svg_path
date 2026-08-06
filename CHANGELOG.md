@@ -9,6 +9,18 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
+## 0.32.0 - 2026-08-06
+
+- Renamed the public `svg_path/arrangement_graph` module to the shorter
+  `svg_path/arrangement`, and renamed its drawing submodule accordingly. The
+  public `ArrangementGraph` and `ArrangementGraphBuild` type names are
+  unchanged.
+- Expanded the README introduction to describe native curve preservation,
+  arrangement construction, fill-rule-aware Boolean semantics, and the
+  package's broader geometry operations.
+- Added references to the standard planar-arrangement model and SVG fill-rule
+  semantics underlying those APIs.
+
 ## 0.31.0 - 2026-08-06
 
 ### Added

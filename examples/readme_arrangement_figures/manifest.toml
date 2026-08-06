@@ -7,8 +7,8 @@
 # You should check this file into your source control repository.
 
 packages = [
-  { name = "gleam_stdlib", version = "1.0.3", build_tools = ["gleam"], requirements = [], otp_app = "gleam_stdlib", source = "hex", outer_checksum = "1F543AFBA5D33DA493E6087F4E4C4F20D899411343512686C98A8ABB2963CF22" },
-  { name = "svg_path", version = "0.30.0", build_tools = ["gleam"], requirements = ["gleam_stdlib"], source = "local", path = "../.." },
+  { name = "gleam_stdlib", version = "1.0.5", build_tools = ["gleam"], requirements = [], otp_app = "gleam_stdlib", source = "hex", outer_checksum = "CEE5B6C076A85B45F60C585F4316C63EC8B7127C119D5738C3958A9C4D50404E" },
+  { name = "svg_path", version = "0.32.0", build_tools = ["gleam"], requirements = ["gleam_stdlib"], source = "local", path = "../.." },
 ]
 
 [requirements]
