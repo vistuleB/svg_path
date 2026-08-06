@@ -399,11 +399,11 @@ fn do_segment_code(
 
 /// Inspect a point as `x,y`.
 pub fn point(point: svg_path.Point) -> String {
-  point_with_options(point, default_options())
+  point_with(point, default_options())
 }
 
 /// Inspect a point as `x,y` with custom options.
-pub fn point_with_options(
+pub fn point_with(
   point point: svg_path.Point,
   options options: Options,
 ) -> String {
@@ -423,11 +423,11 @@ fn do_point(
 /// The generated code assumes the `svg_path` package is imported as
 /// `svg_path`.
 pub fn point_code(point: svg_path.Point) -> String {
-  point_code_with_options(point, default_options())
+  point_code_with(point, default_options())
 }
 
 /// Inspect a point as copy-pasteable Gleam code with custom options.
-pub fn point_code_with_options(
+pub fn point_code_with(
   point point: svg_path.Point,
   options options: Options,
 ) -> String {

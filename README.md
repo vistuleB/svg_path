@@ -1263,7 +1263,7 @@ import svg_path/transform/serialize
 
 pub fn raw_transform_attribute() -> String {
   transform.translate(x: 10.0, y: 20.0)
-  |> serialize.to_string_with_options(
+  |> serialize.to_string_with(
     options: serialize.default_options() |> serialize.force_matrix,
   )
 }

@@ -11,7 +11,7 @@ pub fn point_inspects_as_comma_separated_coordinates_test() {
 }
 
 pub fn point_inspects_with_decimal_options_test() {
-  assert inspect.point_with_options(
+  assert inspect.point_with(
       svg_path.Point(10.234, -2.235),
       options: inspect.decimal_options(2),
     )
@@ -19,7 +19,7 @@ pub fn point_inspects_with_decimal_options_test() {
 }
 
 pub fn point_inspects_with_fixed_decimal_options_test() {
-  assert inspect.point_with_options(
+  assert inspect.point_with(
       svg_path.Point(10.0, -2.5),
       options: inspect.fixed_decimal_options(2),
     )
@@ -69,7 +69,7 @@ pub fn point_inspects_with_explicit_left_padding_test() {
     inspect.fixed_decimal_options(1)
     |> inspect.with_left_padding(inspect.LeftPadding(4, inspect.Zero))
 
-  assert inspect.point_with_options(svg_path.Point(2.0, -3.0), options:)
+  assert inspect.point_with(svg_path.Point(2.0, -3.0), options:)
     == "0002.0,-003.0"
 }
 
@@ -78,7 +78,7 @@ pub fn point_inspects_with_space_left_padding_test() {
     inspect.fixed_decimal_options(1)
     |> inspect.with_left_padding(inspect.LeftPadding(4, inspect.Space))
 
-  assert inspect.point_with_options(svg_path.Point(2.0, -3.0), options:)
+  assert inspect.point_with(svg_path.Point(2.0, -3.0), options:)
     == "   2.0,  -3.0"
 }
 

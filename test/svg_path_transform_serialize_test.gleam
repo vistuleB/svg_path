@@ -57,12 +57,12 @@ pub fn transform_translate_scaled_rotate_serializes_nicely_test() {
 }
 
 pub fn transform_skew_serializes_nicely_test() {
-  assert serialize.to_string_with_options(
+  assert serialize.to_string_with(
       transform.skew_x(degrees: 45.0),
       options: serialize.decimal_options(3),
     )
     == "skewX(45)"
-  assert serialize.to_string_with_options(
+  assert serialize.to_string_with(
       transform.skew_y(degrees: -30.0),
       options: serialize.decimal_options(3),
     )
@@ -74,10 +74,7 @@ pub fn transform_translate_skew_serializes_nicely_test() {
     transform.skew_x(degrees: 45.0)
     |> transform.chain(first: _, then: transform.translate(x: 10.0, y: 20.0))
 
-  assert serialize.to_string_with_options(
-      matrix,
-      options: serialize.decimal_options(3),
-    )
+  assert serialize.to_string_with(matrix, options: serialize.decimal_options(3))
     == "translate(10 20)skewX(45)"
 }
 
@@ -91,7 +88,7 @@ pub fn transform_matrix_fallback_serializes_test() {
 pub fn transform_serialization_uses_decimal_options_test() {
   let matrix = transform.translate(x: 10.234, y: -20.235)
 
-  assert serialize.to_string_with_options(
+  assert serialize.to_string_with(
       matrix,
       options: serialize.fixed_decimal_options(2),
     )
@@ -101,15 +98,12 @@ pub fn transform_serialization_uses_decimal_options_test() {
 pub fn transform_serialization_can_force_matrix_output_test() {
   let options = serialize.default_options() |> serialize.force_matrix
 
-  assert serialize.to_string_with_options(
+  assert serialize.to_string_with(
       transform.translate(x: 10.0, y: 20.0),
       options:,
     )
     == "matrix(1 0 0 1 10 20)"
-  assert serialize.to_string_with_options(
-      transform.scale(factor: 2.0),
-      options:,
-    )
+  assert serialize.to_string_with(transform.scale(factor: 2.0), options:)
     == "matrix(2 0 0 2 0 0)"
 }
 
@@ -119,8 +113,7 @@ pub fn transform_translate_scale_can_force_matrix_output_test() {
     transform.scale_xy(x: 2.0, y: 3.0)
     |> transform.chain(first: _, then: transform.translate(x: 10.0, y: 20.0))
 
-  assert serialize.to_string_with_options(matrix, options:)
-    == "matrix(2 0 0 3 10 20)"
+  assert serialize.to_string_with(matrix, options:) == "matrix(2 0 0 3 10 20)"
 }
 
 pub fn parsed_transform_serializes_to_canonical_translate_scale_test() {
@@ -164,10 +157,7 @@ pub fn parsed_translate_rotate_scale_transform_serializes_nicely_test() {
 pub fn parsed_rotate_transform_uses_requested_decimal_options_test() {
   let assert Ok(matrix) = transform_parse.attribute("rotate(30.000001)")
 
-  assert serialize.to_string_with_options(
-      matrix,
-      options: serialize.decimal_options(6),
-    )
+  assert serialize.to_string_with(matrix, options: serialize.decimal_options(6))
     == "rotate(30.000001)"
 }
 
@@ -180,9 +170,6 @@ pub fn reflected_rotation_matrix_uses_matrix_fallback_test() {
 pub fn parsed_unmatched_transform_serializes_to_matrix_test() {
   let assert Ok(matrix) = transform_parse.attribute("skewX(30)scale(2)")
 
-  assert serialize.to_string_with_options(
-      matrix,
-      options: serialize.decimal_options(3),
-    )
+  assert serialize.to_string_with(matrix, options: serialize.decimal_options(3))
     == "matrix(2 0 1.155 2 0 0)"
 }

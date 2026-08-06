@@ -69,11 +69,11 @@ pub fn force_matrix(options: Options) -> Options {
 
 /// Serialize a transform matrix with default options.
 pub fn to_string(transform: path_transform.Matrix) -> String {
-  to_string_with_options(transform, default_options())
+  to_string_with(transform, default_options())
 }
 
 /// Serialize a transform matrix with custom options.
-pub fn to_string_with_options(
+pub fn to_string_with(
   transform transform: path_transform.Matrix,
   options options: Options,
 ) -> String {
