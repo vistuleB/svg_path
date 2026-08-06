@@ -70,7 +70,7 @@ pub fn prepare_for_arc_averse_consumer(
 - `svg_path/arrangement_graph/drawing`: drawing primitives for inspecting an
   arrangement graph.
 - `svg_path/csg`: Boolean union, intersection, difference, symmetric
-  difference, and monotone contour reconstruction for filled paths.
+  difference, and nested contour reconstruction for filled paths.
 - `svg_path/cut`: split subpaths and paths at intersections with cutter
   geometry.
 - `svg_path/offset`: one-sided offsets, two-sided bands, and offset-map
@@ -924,7 +924,7 @@ import svg_path/transform
 pub fn mapped(
   source: svg_path.Path,
   target: svg_path.Path,
-) -> Result(svg_path.Path, Nil) {
+) -> Result(svg_path.Path, transform.Error) {
   let assert Ok(matrix) =
     congruency.path(source: source, target: target, tolerance: 0.000001)
 
@@ -984,6 +984,10 @@ Second Edition test suite. Unlike a browser renderer, `parse.path` is strict:
 invalid trailing data returns `Error` for the whole input instead of returning
 or rendering the valid prefix.
 
+Parser errors have the form `ParseError(reason:, remaining:)`. `remaining` is
+the exact suffix of the original input beginning at the failure location and
+is empty for a failure at end of input.
+
 Closepath is also represented semantically. If parsing `Z` needs a straight
 line back to the subpath start, the parser inserts that line and marks the
 subpath closed. If the subpath is already back at its start, no extra line is
@@ -1012,7 +1016,8 @@ repeated command letters, line breaks, left-padded numbers for visual
 alignment, explicit line commands instead of `H`/`V`, and explicit curve
 commands instead of `S`/`T`.
 
-When `options.relative == True`, the serializer compensates for accumulated drift caused by decimal rounding.
+When `options.relative == True`, the serializer compensates for accumulated
+drift caused by decimal rounding.
 
 ```gleam
 import svg_path/parse
@@ -1193,6 +1198,9 @@ attributes such as:
 ```text
 translate(10)scale(2) skewX(3)
 ```
+
+Its errors use the same `ParseError(reason:, remaining:)` convention as the
+path-data parser.
 
 Transform serialization prefers readable SVG forms when the matrix can be
 recognized clearly:
@@ -1415,7 +1423,7 @@ results under `Nonzero` and `EvenOdd`.
 The following worked example uses two paths containing two rectangles each.
 Every panel retains the same coordinate system: the first row shows the source
 paths, their arrangement graph, union, and intersection; the second shows both
-orders of difference, symmetric difference, and rounded monotone contours.
+orders of difference, symmetric difference, and rounded nested contours.
 The arrangement is constructed once from geometry, while each binary result
 classifies its edge sectors under the selected fill rule.
 
