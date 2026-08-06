@@ -146,6 +146,7 @@ pub type PointLoopView {
   InsidePoint
 }
 
+/// Errors returned by convex-hull construction.
 pub type Error {
   /// An underlying path operation failed.
   PathError(svg_path.Error)
@@ -234,6 +235,10 @@ pub fn points_hull(
   |> path_hull
 }
 
+/// Return the closed convex hull boundary of one segment.
+///
+/// The returned subpath uses exact pieces of the input curve where they lie on
+/// the hull boundary and straight support chords between those pieces.
 pub fn segment_hull(
   segment: svg_path.Segment,
 ) -> Result(svg_path.Subpath, Error) {

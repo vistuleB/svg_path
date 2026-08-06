@@ -46,7 +46,14 @@ pub type Cap {
 
 /// Options for stroke outline construction.
 pub type Options {
-  Options(width: Float, cap: Cap, offset: offset.Options)
+  Options(
+    /// Full stroke width in path-coordinate units; must be greater than zero.
+    width: Float,
+    /// Cap applied to the endpoints of open subpaths.
+    cap: Cap,
+    /// Options used to construct and join the two half-width offsets.
+    offset: offset.Options,
+  )
 }
 
 /// Options for SVG-style dash extraction.
@@ -56,8 +63,11 @@ pub type Options {
 /// Empty patterns and all-zero patterns behave like `stroke-dasharray: none`.
 pub type DashOptions {
   DashOptions(
+    /// Alternating visible and hidden lengths in path-coordinate units.
     pattern: List(Float),
+    /// Signed path-coordinate offset into the repeated dash pattern.
     offset: Float,
+    /// Options used for arc-length measurement and splitting.
     length: svg_path.LengthOptions,
   )
 }

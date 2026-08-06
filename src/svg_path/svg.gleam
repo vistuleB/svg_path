@@ -69,6 +69,9 @@ pub type ThingToDraw {
 pub type ThingsToDraw =
   List(ThingToDraw)
 
+/// Draw a labeled square-and-cross marker centered on a point.
+///
+/// `font_size` controls both the marker side length and the label text size.
 pub fn labeled_point(
   label: String,
   color: String,

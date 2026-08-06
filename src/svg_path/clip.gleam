@@ -17,13 +17,19 @@ const default_tolerance = 0.000001
 /// Options for curve clipping.
 pub type Options {
   Options(
+    /// Options used to locate clipping-boundary intersections.
     intersection: intersections.IntersectionOptions,
+    /// Options used to classify pieces against the filled clipping region.
     containment: svg_path.ContainmentOptions,
+    /// Path-coordinate tolerance used to deduplicate cut parameters.
     tolerance: Float,
   )
 }
 
 /// Return default clipping options.
+///
+/// Intersection and containment use their module defaults; cut parameters are
+/// deduplicated with a `0.000001` path-coordinate tolerance.
 pub fn default_options() -> Options {
   Options(
     intersection: intersections.default_options(),

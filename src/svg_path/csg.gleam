@@ -18,10 +18,16 @@ import svg_path/winding_field
 const default_minimum_chord = 0.00001
 
 /// Numeric options used while constructing and classifying an arrangement.
+///
+/// `tolerance` is a distance in path coordinates used for endpoint clustering,
+/// intersection and overlap detection, winding-side sampling, and final cycle
+/// joins. `minimum_chord` discards refined edge pieces whose endpoint chord is
+/// shorter than that distance. Both values must be greater than zero.
 pub type Options {
   Options(tolerance: Float, minimum_chord: Float)
 }
 
+/// Errors returned by arrangement-graph CSG operations.
 pub type Error {
   /// Arrangement construction or validation failed.
   ArrangementGraphError(arrangement_graph.Error)
@@ -59,12 +65,18 @@ pub type CsgResult {
   )
 }
 
-/// Return default ArrangementGraph CSG options.
+/// Return default arrangement-graph CSG options.
+///
+/// The default tolerance is `0.000001` path-coordinate units and the default
+/// minimum chord is `0.00001` path-coordinate units.
 pub fn default_options() -> Options {
   Options(tolerance: 0.000001, minimum_chord: default_minimum_chord)
 }
 
 /// Return the Boolean union of two paths under `using`.
+///
+/// Each operand is filled independently using the supplied rule. The result
+/// follows the normalized and refined geometry exposed through `CsgResult.build`.
 pub fn union(
   left: svg_path.Path,
   right: svg_path.Path,
@@ -102,6 +114,9 @@ pub fn union_with(
 }
 
 /// Return the Boolean intersection of two paths under `using`.
+///
+/// Each operand is filled independently using the supplied rule. The result
+/// follows the normalized and refined geometry exposed through `CsgResult.build`.
 pub fn intersection(
   left: svg_path.Path,
   right: svg_path.Path,
@@ -139,6 +154,9 @@ pub fn intersection_with(
 }
 
 /// Return `left` minus `right` under `using`.
+///
+/// Each operand is filled independently using the supplied rule. The result
+/// follows the normalized and refined geometry exposed through `CsgResult.build`.
 pub fn difference(
   left: svg_path.Path,
   minus right: svg_path.Path,
@@ -181,6 +199,9 @@ pub fn difference_with(
 }
 
 /// Return the Boolean symmetric difference of two paths under `using`.
+///
+/// Each operand is filled independently using the supplied rule. The result
+/// follows the normalized and refined geometry exposed through `CsgResult.build`.
 pub fn symmetric_difference(
   left: svg_path.Path,
   right: svg_path.Path,
@@ -224,11 +245,15 @@ pub fn symmetric_difference_with(
 
 /// Return nested or disjoint unit-level contours with the same signed winding
 /// field as `path`.
+///
+/// This operation preserves signed integer winding levels rather than applying
+/// a fill rule. The result follows the normalized and refined geometry exposed
+/// through `CsgResult.build`.
 pub fn nested_contours(path: svg_path.Path) -> Result(CsgResult, Error) {
   nested_contours_with(path, options: default_options())
 }
 
-/// Return monotone contours using explicit arrangement options.
+/// Return nested contours using explicit arrangement options.
 pub fn nested_contours_with(
   path: svg_path.Path,
   options options: Options,

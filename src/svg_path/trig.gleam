@@ -61,7 +61,7 @@ pub fn atan_degrees(x: Float) -> Float {
 /// Return `atan2(y, x)` in degrees.
 pub fn atan2_degrees(y: Float, x: Float) -> Float {
   case x, y {
-    0.0, 0.0 -> radians_to_degrees(internal_atan2_radians(y, x))
+    0.0, 0.0 -> radians_to_degrees(atan2_radians(y, x))
     0.0, _ -> {
       case y >. 0.0 {
         True -> 90.0
@@ -77,7 +77,7 @@ pub fn atan2_degrees(y: Float, x: Float) -> Float {
     _, _ -> {
       case float.absolute_value(x) == float.absolute_value(y) {
         True -> diagonal_atan2(y, x)
-        False -> radians_to_degrees(internal_atan2_radians(y, x))
+        False -> radians_to_degrees(atan2_radians(y, x))
       }
     }
   }
@@ -101,12 +101,6 @@ pub fn internal_sin_radians(radians: Float) -> Float {
 @internal
 pub fn internal_cos_radians(radians: Float) -> Float {
   cos_radians(radians)
-}
-
-/// Return the radian two-argument arctangent for internal numerical tests.
-@internal
-pub fn internal_atan2_radians(y: Float, x: Float) -> Float {
-  atan2_radians(y, x)
 }
 
 @external(erlang, "math", "sin")

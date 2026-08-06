@@ -150,26 +150,50 @@ pub fn points_bounding_box(points: List(Point)) -> Result(BoundingBox, Nil) {
 
 /// Options for detecting scalar zero crossings along a segment.
 pub type CrossingOptions {
-  CrossingOptions(samples: Int, tolerance: Float, max_iterations: Int)
+  CrossingOptions(
+    /// Number of equal parameter windows scanned before refinement.
+    samples: Int,
+    /// Maximum parameter-window width accepted during refinement.
+    tolerance: Float,
+    /// Maximum bisection steps for one candidate window.
+    max_iterations: Int,
+  )
 }
 
 /// Options for minimizing a scalar function along a segment.
 pub type MinimizeOptions {
-  MinimizeOptions(samples: Int, tolerance: Float, max_iterations: Int)
+  MinimizeOptions(
+    /// Number of equal parameter windows scanned for local minima.
+    samples: Int,
+    /// Maximum parameter-window width accepted during refinement.
+    tolerance: Float,
+    /// Maximum golden-section steps for one candidate window.
+    max_iterations: Int,
+  )
 }
 
 /// Options for approximating the length of a segment or subpath.
 pub type LengthOptions {
-  LengthOptions(tolerance: Float, max_depth: Int)
+  LengthOptions(
+    /// Maximum accepted path-coordinate error in one length estimate.
+    tolerance: Float,
+    /// Maximum recursive subdivision depth.
+    max_depth: Int,
+  )
 }
 
 /// Options for building a subpath from a parametric curve.
 pub type ParametricOptions {
   ParametricOptions(
+    /// Maximum sampled path-coordinate fitting error for one piece.
     tolerance: Float,
+    /// Number of interior fitting samples used for each candidate piece.
     samples_per_piece: Int,
+    /// Number of equal parameter pieces attempted before adaptive subdivision.
     initial_piece_count: Int,
+    /// Maximum recursive subdivision depth.
     max_depth: Int,
+    /// Optional derivative function used to constrain endpoint tangents.
     tangent: Option(fn(Float) -> Point),
   )
 }
@@ -185,7 +209,12 @@ pub type PointMapError(error) {
 
 /// Options for approximating segments with straight lines.
 pub type LinearizeOptions {
-  LinearizeOptions(tolerance: Float, max_depth: Int)
+  LinearizeOptions(
+    /// Maximum accepted path-coordinate deviation from the line approximation.
+    tolerance: Float,
+    /// Maximum recursive subdivision depth.
+    max_depth: Int,
+  )
 }
 
 /// Options for finding the distance from a point to a segment.
@@ -193,12 +222,26 @@ pub type LinearizeOptions {
 /// `samples` controls arc projection and the explicit sampling-based projection
 /// API. Quadratic and cubic projection uses polynomial root isolation instead.
 pub type DistanceOptions {
-  DistanceOptions(samples: Int, tolerance: Float, max_iterations: Int)
+  DistanceOptions(
+    /// Number of equal parameter windows used by sampling-based projection.
+    samples: Int,
+    /// Maximum geometric window diameter accepted during refinement.
+    tolerance: Float,
+    /// Maximum refinement steps for one projection candidate.
+    max_iterations: Int,
+  )
 }
 
 /// Options for classifying a point relative to a subpath's fill area.
 pub type ContainmentOptions {
-  ContainmentOptions(tolerance: Float, samples: Int, max_iterations: Int)
+  ContainmentOptions(
+    /// Path-coordinate distance at which the point is classified as boundary.
+    tolerance: Float,
+    /// Number of scan samples used by projection and crossing queries.
+    samples: Int,
+    /// Maximum refinement steps for projection and crossing candidates.
+    max_iterations: Int,
+  )
 }
 
 /// The SVG fill rule used for point containment and filled area.
@@ -223,7 +266,9 @@ pub type PathWinding {
 /// Options for finding self-intersections in one subpath.
 pub type SelfIntersectionOptions {
   SelfIntersectionOptions(
+    /// Minimum arc-length separation between two reported addresses.
     minimum_arc_length_separation: Float,
+    /// Maximum path-coordinate distance between coincident points.
     distance_tolerance: Float,
   )
 }
@@ -2839,8 +2884,7 @@ pub fn segment_projection_by_sampling(
 }
 
 /// Internal sampling projection with explicit options.
-@internal
-pub fn segment_projection_by_sampling_with(
+fn segment_projection_by_sampling_with(
   point: Point,
   to segment: Segment,
   options options: DistanceOptions,
@@ -2901,8 +2945,7 @@ pub fn segment_projection_by_polynomial(
 
 /// Return the nearest point using polynomial stationary-point enumeration and
 /// explicit options.
-@internal
-pub fn segment_projection_by_polynomial_with(
+fn segment_projection_by_polynomial_with(
   point: Point,
   to segment: Segment,
   options options: DistanceOptions,

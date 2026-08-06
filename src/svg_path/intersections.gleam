@@ -32,11 +32,19 @@ const default_intersection_max_depth = 48
 
 /// Options for finding segment, subpath, and path intersections.
 pub type IntersectionOptions {
-  IntersectionOptions(tolerance: Float, max_depth: Int)
+  IntersectionOptions(
+    /// Path-coordinate distance used for geometric coincidence tests.
+    tolerance: Float,
+    /// Maximum recursive subdivision depth for one segment pair.
+    max_depth: Int,
+  )
 }
 
 /// Return the default options for segment, subpath, and path intersection
 /// detection.
+///
+/// The default tolerance is `0.000000001` path-coordinate units and the
+/// default maximum subdivision depth is `48`.
 pub fn default_options() -> IntersectionOptions {
   IntersectionOptions(
     tolerance: default_intersection_tolerance,

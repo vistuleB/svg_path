@@ -139,6 +139,10 @@ pub type ArrangementSegmentImage {
   )
 }
 
+/// Errors returned while constructing or validating an arrangement graph.
+///
+/// `InvalidTolerance` and `InvalidMinimumChord` report invalid caller options.
+/// The remaining variants report a path failure or a violated graph invariant.
 pub type Error {
   /// An underlying path operation failed.
   PathError(svg_path.Error)
