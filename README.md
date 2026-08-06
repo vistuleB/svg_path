@@ -3,9 +3,37 @@
 [![Package Version](https://img.shields.io/hexpm/v/svg_path)](https://hex.pm/packages/svg_path)
 [![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/svg_path/)
 
-Utilities for working with SVG `d` and `transform` attributes, encompassing
-parsing, serialization, and geometric manipulation of paths, subpaths, subpath
-segments, and transform matrices.
+`svg_path` is a geometry library for SVG paths in Gleam. It parses and
+serializes SVG `d` and `transform` attributes and provides geometric operations
+on paths, subpaths, lines, quadratic and cubic Beziers, and elliptical arcs.
+Operations preserve the original curve types where possible rather than first
+flattening everything into polygons.
+
+For topology-sensitive operations, `svg_path` constructs a transparent
+`ArrangementGraph`: source curves are normalized and split at intersections
+and overlap boundaries, while coincident portions are represented once with
+directional multiplicities. This follows the standard computational-geometry
+idea of a [planar arrangement of curves](https://doc.cgal.org/latest/Arrangement_on_surface_2/index.html),
+adapted to SVG geometry with explicit source-path correspondence.
+
+Arrangement graphs support fill-rule-aware Boolean union, intersection,
+difference, and symmetric difference. Each input path is interpreted as a
+filled region under the selected SVG
+[`nonzero` or `evenodd` rule](https://www.w3.org/TR/SVG2/painting.html#FillRuleProperty);
+the Boolean operation is applied to those regions, and the resulting boundary
+is reconstructed as SVG paths.
+
+The package also includes:
+
+- isolated intersections, continuous overlaps, and combined encounter queries;
+- intersection classification and singularity-safe curve directions;
+- clipping, cutting, offsets, stroke outlines, dashes, and marker layout;
+- convex hulls, containment, area, transforms, curve fitting, and path effects;
+- decimal-aware relative serialization that compensates for accumulated
+  rounding drift.
+
+`svg_path` supports Erlang and JavaScript and has no runtime dependency beyond
+the Gleam standard library.
 
 ```sh
 gleam add svg_path@0
