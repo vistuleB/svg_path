@@ -45,6 +45,8 @@ const default_distance_tolerance = 0.000000001
 
 const default_distance_max_iterations = 100
 
+const default_direction_relative_tolerance = 0.000000001
+
 const default_containment_tolerance = 0.000000001
 
 const default_self_intersection_tolerance = 0.000000001
@@ -64,6 +66,25 @@ const default_parametric_max_depth = 10
 /// A 2D point.
 pub type Point {
   Point(x: Float, y: Float)
+}
+
+/// Singularity-safe unit traversal directions at a path parameter.
+///
+/// `incoming` points in the direction of traversal as the parameter is
+/// approached. `outgoing` points in the direction of traversal after the
+/// parameter. Either side is absent when the addressed geometry has no
+/// direction on that side.
+pub type Directions {
+  Directions(incoming: Option(Point), outgoing: Option(Point))
+}
+
+/// Options for singularity-safe direction queries.
+pub type DirectionOptions {
+  DirectionOptions(
+    /// Candidate vectors at or below this fraction of the largest local
+    /// candidate are treated as collapsed. Zero skips only exact zero vectors.
+    relative_tolerance: Float,
+  )
 }
 
 /// An axis-aligned bounding box.
@@ -509,6 +530,9 @@ pub type Error {
 
   /// A path parameter was outside the valid subpath index range.
   InvalidPathParameter(subpath_index: Int, length: Int)
+
+  /// A direction relative tolerance must be non-negative.
+  InvalidDirectionRelativeTolerance(Float)
 
   /// A subpath interval would not produce a positive-length piece.
   InvalidSubpathInterval(from: SubpathParameter, to: SubpathParameter)
@@ -1809,6 +1833,83 @@ pub fn subpath_derivative(
   segment_derivative(segment, at: t)
 }
 
+/// Return singularity-safe unit traversal directions at a subpath parameter.
+///
+/// At internal vertices and closed seams, directions are taken from the
+/// adjacent segments. Directionless segments are skipped. Open subpath ends
+/// have only the side supplied by the subpath.
+pub fn subpath_directions(
+  subpath: Subpath,
+  at parameter: SubpathParameter,
+) -> Result(Directions, Error) {
+  subpath_directions_with(
+    subpath,
+    at: parameter,
+    options: default_direction_options(),
+  )
+}
+
+/// Return singularity-safe unit traversal directions using explicit options.
+pub fn subpath_directions_with(
+  subpath: Subpath,
+  at parameter: SubpathParameter,
+  options options: DirectionOptions,
+) -> Result(Directions, Error) {
+  use _ <- result.try(validate_direction_options(options))
+  use parameter <- result.try(validate_subpath_parameter(subpath, parameter))
+  let CanonicalSubpathParameter(segment_index:, t:) = parameter
+  let segment_count = list.length(subpath.segments)
+
+  case t {
+    0.0 -> {
+      use incoming <- result.try(subpath_direction_from_segments(
+        subpath.segments,
+        from: segment_index - 1,
+        step: -1,
+        remaining: segment_count,
+        closed: subpath.closed,
+        incoming: True,
+        options:,
+      ))
+      use outgoing <- result.try(subpath_direction_from_segments(
+        subpath.segments,
+        from: segment_index,
+        step: 1,
+        remaining: segment_count,
+        closed: subpath.closed,
+        incoming: False,
+        options:,
+      ))
+      Ok(Directions(incoming:, outgoing:))
+    }
+    1.0 -> {
+      use incoming <- result.try(subpath_direction_from_segments(
+        subpath.segments,
+        from: segment_index,
+        step: -1,
+        remaining: segment_count,
+        closed: subpath.closed,
+        incoming: True,
+        options:,
+      ))
+      use outgoing <- result.try(subpath_direction_from_segments(
+        subpath.segments,
+        from: segment_index + 1,
+        step: 1,
+        remaining: segment_count,
+        closed: subpath.closed,
+        incoming: False,
+        options:,
+      ))
+      Ok(Directions(incoming:, outgoing:))
+    }
+    _ -> {
+      use segment <- result.try(nth_segment(subpath.segments, segment_index))
+      segment_directions_with(segment, at: t, options:)
+    }
+  }
+}
+
 /// Split an open subpath at a subpath parameter.
 ///
 /// The split point must be inside the subpath: it cannot be the first point,
@@ -2116,6 +2217,78 @@ pub fn segment_derivative(
         Ok(arc) -> Ok(ellipse.arc_derivative(arc, at: t) |> from_ellipse_point)
       }
     }
+  }
+}
+
+/// Return the default options for singularity-safe direction queries.
+pub fn default_direction_options() -> DirectionOptions {
+  DirectionOptions(relative_tolerance: default_direction_relative_tolerance)
+}
+
+/// Return singularity-safe unit traversal directions at a segment parameter.
+///
+/// The segment parameter may extrapolate as with `segment_point`. At `0.0`
+/// only `outgoing` is present, and at `1.0` only `incoming` is present.
+pub fn segment_directions(
+  segment: Segment,
+  at t: Float,
+) -> Result(Directions, Error) {
+  segment_directions_with(segment, at: t, options: default_direction_options())
+}
+
+/// Return singularity-safe unit traversal directions using explicit options.
+///
+/// A zero relative tolerance skips only exactly collapsed candidate vectors.
+pub fn segment_directions_with(
+  segment: Segment,
+  at t: Float,
+  options options: DirectionOptions,
+) -> Result(Directions, Error) {
+  use _ <- result.try(validate_direction_options(options))
+
+  case segment {
+    Arc(..) -> {
+      use derivative <- result.try(segment_derivative(segment, at: t))
+      let direction = vector_direction(derivative)
+      Ok(case t {
+        0.0 -> Directions(incoming: None, outgoing: direction)
+        1.0 -> Directions(incoming: direction, outgoing: None)
+        _ -> Directions(incoming: direction, outgoing: direction)
+      })
+    }
+    Line(..) | QuadraticBezier(..) | CubicBezier(..) ->
+      case t {
+        0.0 ->
+          Ok(Directions(
+            incoming: None,
+            outgoing: segment_endpoint_direction(
+              segment,
+              incoming: False,
+              options:,
+            ),
+          ))
+        1.0 ->
+          Ok(Directions(
+            incoming: segment_endpoint_direction(
+              segment,
+              incoming: True,
+              options:,
+            ),
+            outgoing: None,
+          ))
+        _ -> {
+          use split <- result.try(segment_split(segment, at: t))
+          let #(left, right) = split
+          Ok(Directions(
+            incoming: segment_endpoint_direction(left, incoming: True, options:),
+            outgoing: segment_endpoint_direction(
+              right,
+              incoming: False,
+              options:,
+            ),
+          ))
+        }
+      }
   }
 }
 
@@ -2828,6 +3001,29 @@ pub fn path_derivative(
   subpath_derivative(subpath, at:)
 }
 
+/// Return singularity-safe unit traversal directions at a path parameter.
+pub fn path_directions(
+  path: Path,
+  at parameter: PathParameter,
+) -> Result(Directions, Error) {
+  path_directions_with(
+    path,
+    at: parameter,
+    options: default_direction_options(),
+  )
+}
+
+/// Return singularity-safe unit traversal directions using explicit options.
+pub fn path_directions_with(
+  path: Path,
+  at parameter: PathParameter,
+  options options: DirectionOptions,
+) -> Result(Directions, Error) {
+  let PathParameter(subpath_index:, at:) = parameter
+  use subpath <- result.try(nth_subpath(path.subpaths, subpath_index))
+  subpath_directions_with(subpath, at:, options:)
+}
+
 /// Return the shortest distance from a point to a segment.
 ///
 /// Lines are measured exactly. Quadratic Beziers, cubic Beziers, and arcs are
@@ -3513,6 +3709,145 @@ fn arc_split_with_exact_endpoints(
   let right = segment_with_start(right, split)
   let right = segment_with_end(right, segment_end(original))
   #(left, right)
+}
+
+fn validate_direction_options(options: DirectionOptions) -> Result(Nil, Error) {
+  case options.relative_tolerance >=. 0.0 {
+    True -> Ok(Nil)
+    False ->
+      Error(InvalidDirectionRelativeTolerance(options.relative_tolerance))
+  }
+}
+
+fn segment_endpoint_direction(
+  segment: Segment,
+  incoming incoming: Bool,
+  options options: DirectionOptions,
+) -> Option(Point) {
+  let candidates = case segment, incoming {
+    Line(start:, end:), _ -> [point_difference(end, start)]
+    QuadraticBezier(start:, control:, end:), False -> [
+      point_difference(control, start),
+      point_difference(end, start),
+    ]
+    QuadraticBezier(start:, control:, end:), True -> [
+      point_difference(end, control),
+      point_difference(end, start),
+    ]
+    CubicBezier(start:, control1:, control2:, end:), False -> [
+      point_difference(control1, start),
+      point_difference(control2, start),
+      point_difference(end, start),
+    ]
+    CubicBezier(start:, control1:, control2:, end:), True -> [
+      point_difference(end, control2),
+      point_difference(end, control1),
+      point_difference(end, start),
+    ]
+    Arc(..), _ -> []
+  }
+  direction_from_candidates(candidates, options)
+}
+
+fn direction_from_candidates(
+  candidates: List(Point),
+  options: DirectionOptions,
+) -> Option(Point) {
+  let scale_squared =
+    candidates
+    |> list.fold(0.0, fn(scale, candidate) {
+      float.max(scale, dot(candidate, candidate))
+    })
+  let threshold_squared =
+    options.relative_tolerance *. options.relative_tolerance *. scale_squared
+  direction_from_candidates_loop(candidates, threshold_squared)
+}
+
+fn direction_from_candidates_loop(
+  candidates: List(Point),
+  threshold_squared: Float,
+) -> Option(Point) {
+  case candidates {
+    [] -> None
+    [candidate, ..rest] -> {
+      let magnitude_squared = dot(candidate, candidate)
+      case magnitude_squared >. threshold_squared {
+        True ->
+          Some(point_scale(
+            candidate,
+            1.0 /. float_square_root(magnitude_squared),
+          ))
+        False -> direction_from_candidates_loop(rest, threshold_squared)
+      }
+    }
+  }
+}
+
+fn vector_direction(vector: Point) -> Option(Point) {
+  let magnitude_squared = dot(vector, vector)
+  case magnitude_squared >. 0.0 {
+    True ->
+      Some(point_scale(vector, 1.0 /. float_square_root(magnitude_squared)))
+    False -> None
+  }
+}
+
+fn point_scale(point: Point, factor: Float) -> Point {
+  Point(point.x *. factor, point.y *. factor)
+}
+
+fn subpath_direction_from_segments(
+  segments: List(Segment),
+  from index: Int,
+  step step: Int,
+  remaining remaining: Int,
+  closed closed: Bool,
+  incoming incoming: Bool,
+  options options: DirectionOptions,
+) -> Result(Option(Point), Error) {
+  let length = list.length(segments)
+  case remaining <= 0 || length == 0 {
+    True -> Ok(None)
+    False -> {
+      let normalized_index = case index < 0, index >= length, closed {
+        True, _, True -> length - 1
+        _, True, True -> 0
+        _, _, _ -> index
+      }
+      case normalized_index < 0 || normalized_index >= length {
+        True -> Ok(None)
+        False -> {
+          use segment <- result.try(nth_segment(segments, normalized_index))
+          use directions <- result.try(segment_directions_with(
+            segment,
+            at: case incoming {
+              True -> 1.0
+              False -> 0.0
+            },
+            options:,
+          ))
+          let Directions(incoming: before, outgoing: after) = directions
+          let direction = case incoming {
+            True -> before
+            False -> after
+          }
+          case direction {
+            Some(_) -> Ok(direction)
+            None ->
+              subpath_direction_from_segments(
+                segments,
+                from: normalized_index + step,
+                step:,
+                remaining: remaining - 1,
+                closed:,
+                incoming:,
+                options:,
+              )
+          }
+        }
+      }
+    }
+  }
 }
 
 fn validate_crossing_options(options: CrossingOptions) -> Result(Nil, Error) {
