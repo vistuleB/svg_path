@@ -25,10 +25,92 @@ import svg_path.{
 }
 import svg_path/bezier
 import svg_path/overlap_detection
+import svg_path/point
 
 const default_intersection_tolerance = 0.000000001
 
 const default_intersection_max_depth = 48
+
+const default_classification_angular_tolerance = 0.0000001
+
+/// Options for classifying one addressed subpath intersection.
+pub type ClassificationOptions {
+  ClassificationOptions(
+    /// Options used to recover singularity-safe path directions.
+    direction_options: svg_path.DirectionOptions,
+    /// Angles at or below this many degrees are treated as coincident.
+    /// Zero compares direction headings exactly.
+    angular_tolerance: Float,
+  )
+}
+
+/// Errors returned while classifying subpath intersections.
+pub type ClassificationError {
+  /// An underlying path direction query failed.
+  PathError(svg_path.Error)
+
+  /// Angular tolerance must be finite and in `[0, 180)` degrees.
+  InvalidAngularTolerance(Float)
+}
+
+/// The oriented sense in which the right traversal crosses the left traversal.
+pub type CrossingDirection {
+  Clockwise
+  Counterclockwise
+}
+
+/// The relative traversal direction at a tangential contact.
+pub type TouchingDirection {
+  SimilarlyDirected
+  OppositelyDirected
+}
+
+/// An endpoint of an open subpath traversal.
+pub type SubpathEndpoint {
+  StartEndpoint
+  EndEndpoint
+}
+
+/// Which endpoint/interior relationship occurs at an intersection.
+pub type EndpointContact {
+  LeftEndpointToRightInterior(left: SubpathEndpoint)
+  LeftInteriorToRightEndpoint(right: SubpathEndpoint)
+  EndpointToEndpoint(left: SubpathEndpoint, right: SubpathEndpoint)
+}
+
+/// The four clockwise apertures between the two subpath traversals.
+pub type IntersectionApertures {
+  IntersectionApertures(
+    left_incoming_to_right_incoming: Float,
+    left_incoming_to_right_outgoing: Float,
+    left_outgoing_to_right_incoming: Float,
+    left_outgoing_to_right_outgoing: Float,
+  )
+}
+
+/// The local topology of one addressed subpath intersection.
+pub type IntersectionClassification {
+  /// The two traversals pass through one another.
+  Crossing(direction: CrossingDirection, apertures: IntersectionApertures)
+
+  /// The traversals meet without alternating around the intersection.
+  Touching(direction: TouchingDirection, apertures: IntersectionApertures)
+
+  /// At least one address is an endpoint of an open subpath.
+  EndpointContact(EndpointContact)
+
+  /// A required local direction could not be recovered.
+  Indeterminate
+}
+
+/// One parameter pair and its local intersection classification.
+pub type ClassifiedSubpathIntersection {
+  ClassifiedSubpathIntersection(
+    left_parameter: SubpathParameter,
+    right_parameter: SubpathParameter,
+    classification: IntersectionClassification,
+  )
+}
 
 /// Options for finding segment, subpath, and path intersections.
 pub type IntersectionOptions {
@@ -50,6 +132,130 @@ pub fn default_options() -> IntersectionOptions {
     tolerance: default_intersection_tolerance,
     max_depth: default_intersection_max_depth,
   )
+}
+
+/// Return the default options for intersection classification.
+///
+/// The direction-relative tolerance is `0.000000001`; the angular tolerance
+/// is `0.0000001` degrees.
+pub fn default_classification_options() -> ClassificationOptions {
+  ClassificationOptions(
+    direction_options: svg_path.default_direction_options(),
+    angular_tolerance: default_classification_angular_tolerance,
+  )
+}
+
+/// Classify one explicitly addressed intersection between two subpaths.
+///
+/// This operation does not search for or verify an intersection. The two
+/// parameters are interpreted as addresses of the same already-known point.
+pub fn classify_subpath_intersection(
+  left: Subpath,
+  right: Subpath,
+  left_parameter left_parameter: SubpathParameter,
+  right_parameter right_parameter: SubpathParameter,
+) -> Result(IntersectionClassification, ClassificationError) {
+  classify_subpath_intersection_with(
+    left,
+    right,
+    left_parameter:,
+    right_parameter:,
+    options: default_classification_options(),
+  )
+}
+
+/// Classify one explicitly addressed intersection using explicit options.
+pub fn classify_subpath_intersection_with(
+  left: Subpath,
+  right: Subpath,
+  left_parameter left_parameter: SubpathParameter,
+  right_parameter right_parameter: SubpathParameter,
+  options options: ClassificationOptions,
+) -> Result(IntersectionClassification, ClassificationError) {
+  use _ <- result.try(validate_classification_options(options))
+  use left_endpoint <- result.try(
+    map_path_error(subpath_endpoint(left, left_parameter)),
+  )
+  use right_endpoint <- result.try(
+    map_path_error(subpath_endpoint(right, right_parameter)),
+  )
+
+  case left_endpoint, right_endpoint {
+    Some(left), Some(right) ->
+      Ok(EndpointContact(EndpointToEndpoint(left:, right:)))
+    Some(left), None -> Ok(EndpointContact(LeftEndpointToRightInterior(left:)))
+    None, Some(right) ->
+      Ok(EndpointContact(LeftInteriorToRightEndpoint(right:)))
+    None, None -> {
+      use left_directions <- result.try(
+        map_path_error(svg_path.subpath_directions_with(
+          left,
+          at: left_parameter,
+          options: options.direction_options,
+        )),
+      )
+      use right_directions <- result.try(
+        map_path_error(svg_path.subpath_directions_with(
+          right,
+          at: right_parameter,
+          options: options.direction_options,
+        )),
+      )
+      Ok(classify_directions(
+        left_directions,
+        right_directions,
+        options.angular_tolerance,
+      ))
+    }
+  }
+}
+
+/// Classify every left/right parameter pair represented by one grouped
+/// subpath intersection.
+pub fn classify_grouped_subpath_intersection(
+  left: Subpath,
+  right: Subpath,
+  intersection: SubpathIntersection,
+) -> Result(List(ClassifiedSubpathIntersection), ClassificationError) {
+  classify_grouped_subpath_intersection_with(
+    left,
+    right,
+    intersection,
+    options: default_classification_options(),
+  )
+}
+
+/// Classify every parameter pair using explicit options.
+pub fn classify_grouped_subpath_intersection_with(
+  left: Subpath,
+  right: Subpath,
+  intersection: SubpathIntersection,
+  options options: ClassificationOptions,
+) -> Result(List(ClassifiedSubpathIntersection), ClassificationError) {
+  let SubpathIntersection(left_parameters:, right_parameters:, ..) =
+    intersection
+  use classified <- result.try(
+    left_parameters
+    |> list.flat_map(fn(left_parameter) {
+      right_parameters
+      |> list.map(fn(right_parameter) {
+        use classification <- result.try(classify_subpath_intersection_with(
+          left,
+          right,
+          left_parameter:,
+          right_parameter:,
+          options:,
+        ))
+        Ok(ClassifiedSubpathIntersection(
+          left_parameter:,
+          right_parameter:,
+          classification:,
+        ))
+      })
+    })
+    |> result.all,
+  )
+  Ok(classified)
 }
 
 /// Return the default options for subpath and path self-intersection detection.
@@ -381,6 +587,187 @@ pub fn path_self_with(
   )
 
   Ok(sort_path_self_intersections(intersections))
+}
+
+fn validate_classification_options(
+  options: ClassificationOptions,
+) -> Result(Nil, ClassificationError) {
+  case
+    options.angular_tolerance >=. 0.0
+    && options.angular_tolerance <. 180.0
+    && is_finite(options.angular_tolerance)
+  {
+    True -> Ok(Nil)
+    False -> Error(InvalidAngularTolerance(options.angular_tolerance))
+  }
+}
+
+fn map_path_error(
+  result: Result(value, svg_path.Error),
+) -> Result(value, ClassificationError) {
+  result.map_error(result, PathError)
+}
+
+fn subpath_endpoint(
+  subpath: Subpath,
+  parameter: SubpathParameter,
+) -> Result(Option(SubpathEndpoint), svg_path.Error) {
+  use parameter <- result.try(svg_path.subpath_parameter_canonicalize(
+    subpath,
+    parameter:,
+  ))
+  let SubpathParameter(segment_index:, t:) = parameter
+  let segment_count = list.length(svg_path.subpath_segments(subpath))
+
+  case svg_path.subpath_is_closed(subpath) {
+    True -> Ok(None)
+    False ->
+      case segment_index, t {
+        0, 0.0 -> Ok(Some(StartEndpoint))
+        index, 1.0 if index == segment_count - 1 -> Ok(Some(EndEndpoint))
+        _, _ -> Ok(None)
+      }
+  }
+}
+
+fn classify_directions(
+  left: svg_path.Directions,
+  right: svg_path.Directions,
+  angular_tolerance: Float,
+) -> IntersectionClassification {
+  let svg_path.Directions(incoming: left_incoming, outgoing: left_outgoing) =
+    left
+  let svg_path.Directions(incoming: right_incoming, outgoing: right_outgoing) =
+    right
+
+  case left_incoming, left_outgoing, right_incoming, right_outgoing {
+    Some(left_incoming),
+      Some(left_outgoing),
+      Some(right_incoming),
+      Some(right_outgoing)
+    -> {
+      let apertures =
+        intersection_apertures(
+          left_incoming,
+          left_outgoing,
+          right_incoming,
+          right_outgoing,
+        )
+      let left_before = point.negate(left_incoming)
+      let right_before = point.negate(right_incoming)
+      let alternating =
+        separated_by_rays(
+          left_before,
+          left_outgoing,
+          right_before,
+          right_outgoing,
+          angular_tolerance,
+        )
+        && separated_by_rays(
+          right_before,
+          right_outgoing,
+          left_before,
+          left_outgoing,
+          angular_tolerance,
+        )
+
+      case alternating {
+        True ->
+          Crossing(
+            crossing_direction(left_outgoing, right_outgoing),
+            apertures:,
+          )
+        False ->
+          Touching(
+            touching_direction(left_outgoing, right_outgoing),
+            apertures:,
+          )
+      }
+    }
+    _, _, _, _ -> Indeterminate
+  }
+}
+
+fn intersection_apertures(
+  left_incoming: Point,
+  left_outgoing: Point,
+  right_incoming: Point,
+  right_outgoing: Point,
+) -> IntersectionApertures {
+  IntersectionApertures(
+    left_incoming_to_right_incoming: point.clockwise_aperture(
+      from: left_incoming,
+      to: right_incoming,
+    ),
+    left_incoming_to_right_outgoing: point.clockwise_aperture(
+      from: left_incoming,
+      to: right_outgoing,
+    ),
+    left_outgoing_to_right_incoming: point.clockwise_aperture(
+      from: left_outgoing,
+      to: right_incoming,
+    ),
+    left_outgoing_to_right_outgoing: point.clockwise_aperture(
+      from: left_outgoing,
+      to: right_outgoing,
+    ),
+  )
+}
+
+fn separated_by_rays(
+  boundary_from: Point,
+  boundary_to: Point,
+  first: Point,
+  second: Point,
+  tolerance: Float,
+) -> Bool {
+  let aperture = point.clockwise_aperture(from: boundary_from, to: boundary_to)
+  case aperture <=. tolerance || 360.0 -. aperture <=. tolerance {
+    True -> False
+    False -> {
+      let first_aperture =
+        point.clockwise_aperture(from: boundary_from, to: first)
+      let second_aperture =
+        point.clockwise_aperture(from: boundary_from, to: second)
+      let first_inside =
+        first_aperture >. tolerance && first_aperture <. aperture -. tolerance
+      let second_inside =
+        second_aperture >. tolerance && second_aperture <. aperture -. tolerance
+      first_inside != second_inside
+    }
+  }
+}
+
+fn crossing_direction(
+  left_outgoing: Point,
+  right_outgoing: Point,
+) -> CrossingDirection {
+  case
+    point.clockwise_aperture(from: left_outgoing, to: right_outgoing) <. 180.0
+  {
+    True -> Clockwise
+    False -> Counterclockwise
+  }
+}
+
+fn touching_direction(
+  left_outgoing: Point,
+  right_outgoing: Point,
+) -> TouchingDirection {
+  let aperture =
+    point.clockwise_aperture(from: left_outgoing, to: right_outgoing)
+  case aperture <=. 90.0 || aperture >=. 270.0 {
+    True -> SimilarlyDirected
+    False -> OppositelyDirected
+  }
+}
+
+fn is_finite(value: Float) -> Bool {
+  !is_nan(value -. value)
+}
+
+fn is_nan(value: Float) -> Bool {
+  !{ value <. 0.0 || value >=. 0.0 }
 }
 
 fn clamp01(value: Float) -> Float {
