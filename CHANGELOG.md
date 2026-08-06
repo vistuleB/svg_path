@@ -9,6 +9,29 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
+## 0.31.0 - 2026-08-06
+
+### Added
+
+- Added singularity-safe segment and subpath direction queries, with explicit
+  tolerances for recovering directions when endpoint derivatives vanish.
+- Added after-the-fact subpath intersection classification for transverse
+  crossings, nontransverse contacts, endpoint contacts, and indeterminate
+  cases, including traversal apertures and equal-arc-length contact ordering.
+- Added total widening conversions from segments to subpaths and paths, and
+  from subpaths to paths.
+- Added the MIT license file and parser error suffixes that preserve the
+  unconsumed input at the point of failure.
+
+### Changed
+
+- Standardized public names for option defaults, normalization operations, and
+  error variants, while reducing the internal API surface.
+- Simplified convex-hull construction failures to one public error while
+  retaining detailed construction diagnostics internally.
+- Split ordinary and stress tests into independent fast and slow profiles used
+  together by the release test command.
+
 ## 0.30.0 - 2026-08-05
 
 - Removed the `gleam_community_maths` runtime dependency; `svg_path` now depends
