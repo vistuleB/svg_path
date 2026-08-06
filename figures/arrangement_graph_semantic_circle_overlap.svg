@@ -9,7 +9,8 @@
   <text x="130" y="410" font-size="14" style="fill: #1d4ed8; font-family: system-ui, sans-serif; text-anchor: start">subpath 1: clockwise</text>
   <circle cx="115" cy="431" r="7" style="fill: #ea580c; fill-opacity: 0.72; stroke: none" />
   <text x="130" y="436" font-size="14" style="fill: #c2410c; font-family: system-ui, sans-serif; text-anchor: start">subpath 2: counterclockwise, +45° phase</text>
-  <text x="705" y="424" font-size="14" style="fill: #475569; font-family: system-ui, sans-serif; text-anchor: middle">4 vertices · 4 geometric edges · every edge has one occurrence per direction</text>
+  <text x="705" y="410" font-size="14" style="fill: #475569; font-family: system-ui, sans-serif; text-anchor: middle">4 vertices · 4 geometric edges</text>
+  <text x="705" y="436" font-size="14" style="fill: #475569; font-family: system-ui, sans-serif; text-anchor: middle">every edge has one occurrence per direction</text>
   <text x="470" y="493" font-size="14" style="fill: #64748b; font-family: system-ui, sans-serif; text-anchor: middle">Adversarial semantic-overlap case: equal circles, incompatible arc subdivision</text>
   <path d="M 105 240 L 119 276 H 91 Z" style="fill: #2563eb; fill-opacity: 0.58; stroke: none" />
   <path d="M 365 240 L 351 204 H 379 Z" style="fill: #2563eb; fill-opacity: 0.58; stroke: none" />
