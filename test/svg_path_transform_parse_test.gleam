@@ -85,15 +85,29 @@ pub fn adjacent_signed_numbers_parse_test() {
 
 pub fn unknown_transform_is_rejected_test() {
   assert transform_parse.attribute("perspective(1)")
-    == Error(transform_parse.UnknownTransform("perspective"))
+    == Error(transform_parse.ParseError(
+      transform_parse.UnknownTransform("perspective"),
+      "perspective(1)",
+    ))
 }
 
 pub fn wrong_argument_count_is_rejected_test() {
   assert transform_parse.attribute("translate(1 2 3)")
-    == Error(transform_parse.InvalidArgumentCount("translate", 3))
+    == Error(transform_parse.ParseError(
+      transform_parse.InvalidArgumentCount("translate", 3),
+      "translate(1 2 3)",
+    ))
 }
 
 pub fn missing_close_is_rejected_test() {
   assert transform_parse.attribute("scale(2")
-    == Error(transform_parse.ExpectedClose)
+    == Error(transform_parse.ParseError(transform_parse.ExpectedClose, ""))
+}
+
+pub fn error_remaining_preserves_unicode_suffix_test() {
+  assert transform_parse.attribute("translate(1)💥more")
+    == Error(transform_parse.ParseError(
+      transform_parse.UnexpectedToken("💥"),
+      "💥more",
+    ))
 }

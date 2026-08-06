@@ -276,7 +276,8 @@ pub fn move_only_subpaths_are_ignored_among_real_subpaths_test() {
 }
 
 pub fn invalid_arc_flags_are_rejected_test() {
-  assert parse.path("M 0 0 A 5 5 0 2 1 10 0") == Error(parse.ExpectedArcFlag)
+  assert parse.path("M 0 0 A 5 5 0 2 1 10 0")
+    == Error(parse.ParseError(parse.ExpectedArcFlag, "2 1 10 0"))
 }
 
 pub fn concatenated_arc_flags_and_endpoint_parse_test() {
@@ -302,35 +303,48 @@ pub fn concatenated_arc_flags_parse_in_repeated_argument_sets_test() {
 }
 
 pub fn unsupported_commands_are_rejected_test() {
-  assert parse.path("M 0 0 R 1 2 3 4") == Error(parse.UnsupportedCommand("R"))
+  assert parse.path("M 0 0 R 1 2 3 4")
+    == Error(parse.ParseError(parse.UnsupportedCommand("R"), "R 1 2 3 4"))
 }
 
 pub fn drawing_command_before_move_is_rejected_test() {
-  assert parse.path("L 10 10") == Error(parse.ExpectedMove)
+  assert parse.path("L 10 10")
+    == Error(parse.ParseError(parse.ExpectedMove, "L 10 10"))
 }
 
 pub fn command_without_required_number_is_rejected_test() {
-  assert parse.path("M 0 0 L") == Error(parse.ExpectedNumber)
+  assert parse.path("M 0 0 L")
+    == Error(parse.ParseError(parse.ExpectedNumber, ""))
 }
 
 pub fn invalid_number_is_rejected_test() {
-  assert parse.path("M . 0") == Error(parse.InvalidNumber("."))
+  assert parse.path("M . 0")
+    == Error(parse.ParseError(parse.InvalidNumber("."), ". 0"))
 }
 
 pub fn comma_immediately_after_command_is_rejected_test() {
-  assert parse.path("M,0,0") == Error(parse.InvalidSeparator)
+  assert parse.path("M,0,0")
+    == Error(parse.ParseError(parse.InvalidSeparator, ",0,0"))
 }
 
 pub fn repeated_comma_is_rejected_test() {
-  assert parse.path("M0,,0") == Error(parse.InvalidSeparator)
+  assert parse.path("M0,,0")
+    == Error(parse.ParseError(parse.InvalidSeparator, ",,0"))
 }
 
 pub fn trailing_comma_is_rejected_test() {
-  assert parse.path("M0 0,") == Error(parse.InvalidSeparator)
+  assert parse.path("M0 0,")
+    == Error(parse.ParseError(parse.InvalidSeparator, ","))
 }
 
 pub fn comma_before_command_is_rejected_test() {
-  assert parse.path("M0 0,L1 1") == Error(parse.InvalidSeparator)
+  assert parse.path("M0 0,L1 1")
+    == Error(parse.ParseError(parse.InvalidSeparator, ",L1 1"))
+}
+
+pub fn error_remaining_preserves_unicode_suffix_test() {
+  assert parse.path("M0 0 émore")
+    == Error(parse.ParseError(parse.UnsupportedCommand("é"), "émore"))
 }
 
 pub fn comma_with_surrounding_whitespace_between_numbers_parses_test() {

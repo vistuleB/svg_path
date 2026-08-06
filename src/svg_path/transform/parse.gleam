@@ -8,11 +8,23 @@
 import gleam/float
 import gleam/int
 import gleam/list
+import gleam/result
 import gleam/string
 import svg_path/transform
 
 /// Errors returned while parsing an SVG transform attribute.
 pub type Error {
+  /// Parsing failed for `reason` at the start of `remaining`.
+  ///
+  /// `remaining` is the exact suffix of the original input beginning at the
+  /// failure location. It is empty when the failure is at end of input. A
+  /// UTF-8 byte offset can be recovered by subtracting the byte size of
+  /// `remaining` from the byte size of the original input.
+  ParseError(reason: ErrorReason, remaining: String)
+}
+
+/// The reason SVG transform parsing failed.
+pub type ErrorReason {
   /// A closing parenthesis was expected.
   ExpectedClose
 
@@ -36,10 +48,14 @@ pub type Error {
 }
 
 type Token {
-  Close
-  Name(String)
-  Number(Float)
-  Open
+  Close(at: Int)
+  Name(String, at: Int)
+  Number(Float, at: Int)
+  Open(at: Int)
+}
+
+type LocatedError {
+  LocatedError(reason: ErrorReason, at: Int)
 }
 
 /// Parse an SVG transform attribute into a matrix.
@@ -47,102 +63,133 @@ type Token {
 /// Empty strings parse as the identity matrix.
 pub fn attribute(input: String) -> Result(transform.Matrix, Error) {
   case tokenize(input) {
-    Error(error) -> Error(error)
-    Ok(tokens) -> parse_transforms(tokens, transform.identity())
+    Error(error) -> Error(public_error(input, error))
+    Ok(tokens) ->
+      parse_transforms(tokens, transform.identity(), string.length(input))
+      |> result.map_error(public_error(input, _))
   }
+}
+
+fn public_error(input: String, error: LocatedError) -> Error {
+  let LocatedError(reason:, at:) = error
+  ParseError(reason:, remaining: string.drop_start(input, up_to: at))
 }
 
 fn parse_transforms(
   tokens: List(Token),
   accumulated: transform.Matrix,
-) -> Result(transform.Matrix, Error) {
+  end_at: Int,
+) -> Result(transform.Matrix, LocatedError) {
   case tokens {
     [] -> Ok(accumulated)
-    [Name(name), Open, ..rest] -> {
-      case take_arguments(rest, []) {
+    [Name(name, name_at), Open(_), ..rest] -> {
+      case take_arguments(rest, [], end_at) {
         Error(error) -> Error(error)
         Ok(#(arguments, rest)) -> {
-          case transform_from_arguments(name, arguments) {
+          case transform_from_arguments(name, arguments, at: name_at) {
             Error(error) -> Error(error)
             Ok(next) -> {
               parse_transforms(
                 rest,
                 transform.chain(first: next, then: accumulated),
+                end_at,
               )
             }
           }
         }
       }
     }
-    [Name(_), ..] -> Error(ExpectedOpen)
-    [Open, ..] | [Close, ..] | [Number(_), ..] -> Error(ExpectedTransform)
+    [Name(_, _), ..rest] ->
+      Error(LocatedError(ExpectedOpen, token_at(rest, or: end_at)))
+    [Open(at), ..] | [Close(at), ..] | [Number(_, at), ..] ->
+      Error(LocatedError(ExpectedTransform, at))
   }
 }
 
 fn take_arguments(
   tokens: List(Token),
   arguments: List(Float),
-) -> Result(#(List(Float), List(Token)), Error) {
+  end_at: Int,
+) -> Result(#(List(Float), List(Token)), LocatedError) {
   case tokens {
-    [] -> Error(ExpectedClose)
-    [Close, ..rest] -> Ok(#(list.reverse(arguments), rest))
-    [Number(number), ..rest] -> take_arguments(rest, [number, ..arguments])
-    [Name(name), ..] -> Error(UnexpectedToken(name))
-    [Open, ..] -> Error(UnexpectedToken("("))
+    [] -> Error(LocatedError(ExpectedClose, end_at))
+    [Close(_), ..rest] -> Ok(#(list.reverse(arguments), rest))
+    [Number(number, _), ..rest] ->
+      take_arguments(rest, [number, ..arguments], end_at)
+    [Name(name, at), ..] -> Error(LocatedError(UnexpectedToken(name), at))
+    [Open(at), ..] -> Error(LocatedError(UnexpectedToken("("), at))
+  }
+}
+
+fn token_at(tokens: List(Token), or fallback: Int) -> Int {
+  case tokens {
+    [] -> fallback
+    [Close(at), ..]
+    | [Name(_, at), ..]
+    | [Number(_, at), ..]
+    | [Open(at), ..] -> at
   }
 }
 
 fn transform_from_arguments(
   name: String,
   arguments: List(Float),
-) -> Result(transform.Matrix, Error) {
+  at at: Int,
+) -> Result(transform.Matrix, LocatedError) {
   case name {
-    "matrix" -> matrix_transform(name, arguments)
-    "translate" -> translate_transform(name, arguments)
-    "scale" -> scale_transform(name, arguments)
-    "rotate" -> rotate_transform(name, arguments)
-    "skewX" -> skew_x_transform(name, arguments)
-    "skewY" -> skew_y_transform(name, arguments)
-    _ -> Error(UnknownTransform(name))
+    "matrix" -> matrix_transform(name, arguments, at:)
+    "translate" -> translate_transform(name, arguments, at:)
+    "scale" -> scale_transform(name, arguments, at:)
+    "rotate" -> rotate_transform(name, arguments, at:)
+    "skewX" -> skew_x_transform(name, arguments, at:)
+    "skewY" -> skew_y_transform(name, arguments, at:)
+    _ -> Error(LocatedError(UnknownTransform(name), at))
   }
 }
 
 fn matrix_transform(
   name: String,
   arguments: List(Float),
-) -> Result(transform.Matrix, Error) {
+  at at: Int,
+) -> Result(transform.Matrix, LocatedError) {
   case arguments {
     [a, b, c, d, e, f] -> Ok(transform.matrix(a:, b:, c:, d:, e:, f:))
-    _ -> Error(InvalidArgumentCount(name, list.length(arguments)))
+    _ ->
+      Error(LocatedError(InvalidArgumentCount(name, list.length(arguments)), at))
   }
 }
 
 fn translate_transform(
   name: String,
   arguments: List(Float),
-) -> Result(transform.Matrix, Error) {
+  at at: Int,
+) -> Result(transform.Matrix, LocatedError) {
   case arguments {
     [x] -> Ok(transform.translate(x:, y: 0.0))
     [x, y] -> Ok(transform.translate(x:, y:))
-    _ -> Error(InvalidArgumentCount(name, list.length(arguments)))
+    _ ->
+      Error(LocatedError(InvalidArgumentCount(name, list.length(arguments)), at))
   }
 }
 
 fn scale_transform(
   name: String,
   arguments: List(Float),
-) -> Result(transform.Matrix, Error) {
+  at at: Int,
+) -> Result(transform.Matrix, LocatedError) {
   case arguments {
     [factor] -> Ok(transform.scale(factor:))
     [x, y] -> Ok(transform.scale_xy(x:, y:))
-    _ -> Error(InvalidArgumentCount(name, list.length(arguments)))
+    _ ->
+      Error(LocatedError(InvalidArgumentCount(name, list.length(arguments)), at))
   }
 }
 
 fn rotate_transform(
   name: String,
   arguments: List(Float),
-) -> Result(transform.Matrix, Error) {
+  at at: Int,
+) -> Result(transform.Matrix, LocatedError) {
   case arguments {
     [degrees] -> Ok(transform.rotate(degrees:))
     [degrees, cx, cy] -> {
@@ -156,54 +203,64 @@ fn rotate_transform(
         |> transform.chain(first: _, then: move_back),
       )
     }
-    _ -> Error(InvalidArgumentCount(name, list.length(arguments)))
+    _ ->
+      Error(LocatedError(InvalidArgumentCount(name, list.length(arguments)), at))
   }
 }
 
 fn skew_x_transform(
   name: String,
   arguments: List(Float),
-) -> Result(transform.Matrix, Error) {
+  at at: Int,
+) -> Result(transform.Matrix, LocatedError) {
   case arguments {
     [degrees] -> Ok(transform.skew_x(degrees:))
-    _ -> Error(InvalidArgumentCount(name, list.length(arguments)))
+    _ ->
+      Error(LocatedError(InvalidArgumentCount(name, list.length(arguments)), at))
   }
 }
 
 fn skew_y_transform(
   name: String,
   arguments: List(Float),
-) -> Result(transform.Matrix, Error) {
+  at at: Int,
+) -> Result(transform.Matrix, LocatedError) {
   case arguments {
     [degrees] -> Ok(transform.skew_y(degrees:))
-    _ -> Error(InvalidArgumentCount(name, list.length(arguments)))
+    _ ->
+      Error(LocatedError(InvalidArgumentCount(name, list.length(arguments)), at))
   }
 }
 
-fn tokenize(input: String) -> Result(List(Token), Error) {
+fn tokenize(input: String) -> Result(List(Token), LocatedError) {
   input
   |> string.to_graphemes
-  |> tokenize_loop([])
+  |> tokenize_loop([], at: 0)
 }
 
 fn tokenize_loop(
   graphemes: List(String),
   tokens: List(Token),
-) -> Result(List(Token), Error) {
+  at at: Int,
+) -> Result(List(Token), LocatedError) {
   case graphemes {
     [] -> Ok(list.reverse(tokens))
     [grapheme, ..rest] -> {
       case is_separator(grapheme) {
-        True -> tokenize_loop(rest, tokens)
+        True -> tokenize_loop(rest, tokens, at: at + 1)
         False -> {
           case grapheme {
-            "(" -> tokenize_loop(rest, [Open, ..tokens])
-            ")" -> tokenize_loop(rest, [Close, ..tokens])
+            "(" -> tokenize_loop(rest, [Open(at), ..tokens], at: at + 1)
+            ")" -> tokenize_loop(rest, [Close(at), ..tokens], at: at + 1)
             _ -> {
               case is_name_start(grapheme) {
                 True -> {
                   let #(name, rest) = read_name(graphemes, [])
-                  tokenize_loop(rest, [Name(name), ..tokens])
+                  tokenize_loop(
+                    rest,
+                    [Name(name, at), ..tokens],
+                    at: at + string.length(name),
+                  )
                 }
                 False -> {
                   case is_number_start(grapheme) {
@@ -213,11 +270,15 @@ fn tokenize_loop(
 
                       case parse_number(raw) {
                         Ok(number) ->
-                          tokenize_loop(rest, [Number(number), ..tokens])
-                        Error(_) -> Error(InvalidNumber(raw))
+                          tokenize_loop(
+                            rest,
+                            [Number(number, at), ..tokens],
+                            at: at + string.length(raw),
+                          )
+                        Error(_) -> Error(LocatedError(InvalidNumber(raw), at))
                       }
                     }
-                    False -> Error(UnexpectedToken(grapheme))
+                    False -> Error(LocatedError(UnexpectedToken(grapheme), at))
                   }
                 }
               }
