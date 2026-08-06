@@ -33,6 +33,14 @@ const default_intersection_max_depth = 48
 
 const default_classification_angular_tolerance = 0.0000001
 
+const default_classification_distance_tolerance = 0.000000000001
+
+const default_classification_initial_arc_length = 0.000001
+
+const default_classification_maximum_arc_length = 0.25
+
+const default_classification_max_sampling_steps = 18
+
 /// Options for classifying one addressed subpath intersection.
 pub type ClassificationOptions {
   ClassificationOptions(
@@ -41,6 +49,16 @@ pub type ClassificationOptions {
     /// Angles at or below this many degrees are treated as coincident.
     /// Zero compares direction headings exactly.
     angular_tolerance: Float,
+    /// Minimum trusted path-coordinate distance from the intersection.
+    distance_tolerance: Float,
+    /// Length options used to locate samples along each subpath.
+    length_options: svg_path.LengthOptions,
+    /// First traveled distance used for nontransverse branch sampling.
+    initial_arc_length: Float,
+    /// Largest traveled distance permitted for local branch sampling.
+    maximum_arc_length: Float,
+    /// Maximum number of successively doubled arc-length samples.
+    max_sampling_steps: Int,
   )
 }
 
@@ -51,9 +69,21 @@ pub type ClassificationError {
 
   /// Angular tolerance must be finite and in `[0, 180)` degrees.
   InvalidAngularTolerance(Float)
+
+  /// Distance tolerance must be finite and non-negative.
+  InvalidClassificationDistanceTolerance(Float)
+
+  /// Initial arc length must be finite and greater than zero.
+  InvalidClassificationInitialArcLength(Float)
+
+  /// Maximum arc length must be finite and at least the initial arc length.
+  InvalidClassificationMaximumArcLength(Float)
+
+  /// At least one sampling step is required.
+  InvalidClassificationMaxSamplingSteps(Int)
 }
 
-/// The oriented sense in which the right traversal crosses the left traversal.
+/// The oriented sense in which the second traversal crosses the first.
 pub type CrossingDirection {
   Clockwise
   Counterclockwise
@@ -65,6 +95,21 @@ pub type TouchingDirection {
   OppositelyDirected
 }
 
+/// Clockwise order of two outward-pointing sampled rays near a nontransverse
+/// contact.
+///
+/// On the incoming side, each ray points from the intersection backward along
+/// its traversal, opposite to the incoming traversal direction. On the
+/// outgoing side, each ray points forward along its traversal. Oppositely
+/// directed contacts compare the incoming branch of one traversal with the
+/// outgoing branch of the other so that each value describes one geometric
+/// side of the contact.
+pub type TouchingOrder {
+  ClockwiseFromFirstToSecond
+  ClockwiseFromSecondToFirst
+  IndeterminateTouchingOrder
+}
+
 /// An endpoint of an open subpath traversal.
 pub type SubpathEndpoint {
   StartEndpoint
@@ -73,18 +118,24 @@ pub type SubpathEndpoint {
 
 /// Which endpoint/interior relationship occurs at an intersection.
 pub type EndpointContact {
-  LeftEndpointToRightInterior(left: SubpathEndpoint)
-  LeftInteriorToRightEndpoint(right: SubpathEndpoint)
-  EndpointToEndpoint(left: SubpathEndpoint, right: SubpathEndpoint)
+  FirstEndpointToSecondInterior(first: SubpathEndpoint)
+  FirstInteriorToSecondEndpoint(second: SubpathEndpoint)
+  EndpointToEndpoint(first: SubpathEndpoint, second: SubpathEndpoint)
 }
 
-/// The four clockwise apertures between the two subpath traversals.
+/// The four clockwise apertures between the two subpath traversal directions.
+///
+/// Values are angles in degrees in `[0, 360)`. Unlike `TouchingOrder`, these
+/// fields use traversal-oriented directions directly: an incoming direction
+/// points toward the intersection and an outgoing direction points away from
+/// it. In particular, the incoming apertures are not measured between the
+/// negated, outward-pointing incoming directions.
 pub type IntersectionApertures {
   IntersectionApertures(
-    left_incoming_to_right_incoming: Float,
-    left_incoming_to_right_outgoing: Float,
-    left_outgoing_to_right_incoming: Float,
-    left_outgoing_to_right_outgoing: Float,
+    first_incoming_to_second_incoming: Float,
+    first_incoming_to_second_outgoing: Float,
+    first_outgoing_to_second_incoming: Float,
+    first_outgoing_to_second_outgoing: Float,
   )
 }
 
@@ -94,7 +145,17 @@ pub type IntersectionClassification {
   Crossing(direction: CrossingDirection, apertures: IntersectionApertures)
 
   /// The traversals meet without alternating around the intersection.
-  Touching(direction: TouchingDirection, apertures: IntersectionApertures)
+  ///
+  /// `incoming_order` and `outgoing_order` describe the visible geometric
+  /// branches using outward-pointing rays sampled at equal arc lengths. The
+  /// `apertures` payload instead records the exact traversal-direction
+  /// convention documented by `IntersectionApertures`.
+  Touching(
+    direction: TouchingDirection,
+    incoming_order: TouchingOrder,
+    outgoing_order: TouchingOrder,
+    apertures: IntersectionApertures,
+  )
 
   /// At least one address is an endpoint of an open subpath.
   EndpointContact(EndpointContact)
@@ -106,8 +167,8 @@ pub type IntersectionClassification {
 /// One parameter pair and its local intersection classification.
 pub type ClassifiedSubpathIntersection {
   ClassifiedSubpathIntersection(
-    left_parameter: SubpathParameter,
-    right_parameter: SubpathParameter,
+    first_parameter: SubpathParameter,
+    second_parameter: SubpathParameter,
     classification: IntersectionClassification,
   )
 }
@@ -137,11 +198,17 @@ pub fn default_options() -> IntersectionOptions {
 /// Return the default options for intersection classification.
 ///
 /// The direction-relative tolerance is `0.000000001`; the angular tolerance
-/// is `0.0000001` degrees.
+/// is `0.0000001` degrees. Nontransverse contacts are sampled first at an arc
+/// length of `0.000001`, doubling up to `0.25` path-coordinate units.
 pub fn default_classification_options() -> ClassificationOptions {
   ClassificationOptions(
     direction_options: svg_path.default_direction_options(),
     angular_tolerance: default_classification_angular_tolerance,
+    distance_tolerance: default_classification_distance_tolerance,
+    length_options: svg_path.default_length_options(),
+    initial_arc_length: default_classification_initial_arc_length,
+    maximum_arc_length: default_classification_maximum_arc_length,
+    max_sampling_steps: default_classification_max_sampling_steps,
   )
 }
 
@@ -149,77 +216,85 @@ pub fn default_classification_options() -> ClassificationOptions {
 ///
 /// This operation does not search for or verify an intersection. The two
 /// parameters are interpreted as addresses of the same already-known point.
+/// Endpoint contacts are classified before local directions are evaluated.
+/// Transverse intersections are classified from singularity-safe directions;
+/// nontransverse branch order is determined from equal-arc-length samples.
 pub fn classify_subpath_intersection(
-  left: Subpath,
-  right: Subpath,
-  left_parameter left_parameter: SubpathParameter,
-  right_parameter right_parameter: SubpathParameter,
+  first: Subpath,
+  second: Subpath,
+  first_parameter first_parameter: SubpathParameter,
+  second_parameter second_parameter: SubpathParameter,
 ) -> Result(IntersectionClassification, ClassificationError) {
   classify_subpath_intersection_with(
-    left,
-    right,
-    left_parameter:,
-    right_parameter:,
+    first,
+    second,
+    first_parameter:,
+    second_parameter:,
     options: default_classification_options(),
   )
 }
 
 /// Classify one explicitly addressed intersection using explicit options.
 pub fn classify_subpath_intersection_with(
-  left: Subpath,
-  right: Subpath,
-  left_parameter left_parameter: SubpathParameter,
-  right_parameter right_parameter: SubpathParameter,
+  first: Subpath,
+  second: Subpath,
+  first_parameter first_parameter: SubpathParameter,
+  second_parameter second_parameter: SubpathParameter,
   options options: ClassificationOptions,
 ) -> Result(IntersectionClassification, ClassificationError) {
   use _ <- result.try(validate_classification_options(options))
-  use left_endpoint <- result.try(
-    map_path_error(subpath_endpoint(left, left_parameter)),
+  use first_endpoint <- result.try(
+    map_path_error(subpath_endpoint(first, first_parameter)),
   )
-  use right_endpoint <- result.try(
-    map_path_error(subpath_endpoint(right, right_parameter)),
+  use second_endpoint <- result.try(
+    map_path_error(subpath_endpoint(second, second_parameter)),
   )
 
-  case left_endpoint, right_endpoint {
-    Some(left), Some(right) ->
-      Ok(EndpointContact(EndpointToEndpoint(left:, right:)))
-    Some(left), None -> Ok(EndpointContact(LeftEndpointToRightInterior(left:)))
-    None, Some(right) ->
-      Ok(EndpointContact(LeftInteriorToRightEndpoint(right:)))
+  case first_endpoint, second_endpoint {
+    Some(first), Some(second) ->
+      Ok(EndpointContact(EndpointToEndpoint(first:, second:)))
+    Some(first), None ->
+      Ok(EndpointContact(FirstEndpointToSecondInterior(first:)))
+    None, Some(second) ->
+      Ok(EndpointContact(FirstInteriorToSecondEndpoint(second:)))
     None, None -> {
-      use left_directions <- result.try(
+      use first_directions <- result.try(
         map_path_error(svg_path.subpath_directions_with(
-          left,
-          at: left_parameter,
+          first,
+          at: first_parameter,
           options: options.direction_options,
         )),
       )
-      use right_directions <- result.try(
+      use second_directions <- result.try(
         map_path_error(svg_path.subpath_directions_with(
-          right,
-          at: right_parameter,
+          second,
+          at: second_parameter,
           options: options.direction_options,
         )),
       )
-      Ok(classify_directions(
-        left_directions,
-        right_directions,
-        options.angular_tolerance,
+      map_path_error(classify_directions(
+        first,
+        second,
+        first_parameter,
+        second_parameter,
+        first_directions,
+        second_directions,
+        options,
       ))
     }
   }
 }
 
-/// Classify every left/right parameter pair represented by one grouped
+/// Classify every first/second parameter pair represented by one grouped
 /// subpath intersection.
 pub fn classify_grouped_subpath_intersection(
-  left: Subpath,
-  right: Subpath,
+  first: Subpath,
+  second: Subpath,
   intersection: SubpathIntersection,
 ) -> Result(List(ClassifiedSubpathIntersection), ClassificationError) {
   classify_grouped_subpath_intersection_with(
-    left,
-    right,
+    first,
+    second,
     intersection,
     options: default_classification_options(),
   )
@@ -227,8 +302,8 @@ pub fn classify_grouped_subpath_intersection(
 
 /// Classify every parameter pair using explicit options.
 pub fn classify_grouped_subpath_intersection_with(
-  left: Subpath,
-  right: Subpath,
+  first: Subpath,
+  second: Subpath,
   intersection: SubpathIntersection,
   options options: ClassificationOptions,
 ) -> Result(List(ClassifiedSubpathIntersection), ClassificationError) {
@@ -240,15 +315,15 @@ pub fn classify_grouped_subpath_intersection_with(
       right_parameters
       |> list.map(fn(right_parameter) {
         use classification <- result.try(classify_subpath_intersection_with(
-          left,
-          right,
-          left_parameter:,
-          right_parameter:,
+          first,
+          second,
+          first_parameter: left_parameter,
+          second_parameter: right_parameter,
           options:,
         ))
         Ok(ClassifiedSubpathIntersection(
-          left_parameter:,
-          right_parameter:,
+          first_parameter: left_parameter,
+          second_parameter: right_parameter,
           classification:,
         ))
       })
@@ -592,12 +667,65 @@ pub fn path_self_with(
 fn validate_classification_options(
   options: ClassificationOptions,
 ) -> Result(Nil, ClassificationError) {
+  let svg_path.LengthOptions(tolerance: length_tolerance, max_depth:) =
+    options.length_options
+
   case
     options.angular_tolerance >=. 0.0
     && options.angular_tolerance <. 180.0
     && is_finite(options.angular_tolerance)
   {
-    True -> Ok(Nil)
+    True ->
+      case
+        options.distance_tolerance >=. 0.0
+        && is_finite(options.distance_tolerance)
+      {
+        False ->
+          Error(InvalidClassificationDistanceTolerance(
+            options.distance_tolerance,
+          ))
+        True ->
+          case length_tolerance >. 0.0 && is_finite(length_tolerance) {
+            False ->
+              Error(
+                PathError(svg_path.InvalidLengthTolerance(length_tolerance)),
+              )
+            True ->
+              case max_depth >= 0 {
+                False ->
+                  Error(PathError(svg_path.InvalidLengthMaxDepth(max_depth)))
+                True ->
+                  case
+                    options.initial_arc_length >. 0.0
+                    && is_finite(options.initial_arc_length)
+                  {
+                    False ->
+                      Error(InvalidClassificationInitialArcLength(
+                        options.initial_arc_length,
+                      ))
+                    True ->
+                      case
+                        options.maximum_arc_length
+                        >=. options.initial_arc_length
+                        && is_finite(options.maximum_arc_length)
+                      {
+                        False ->
+                          Error(InvalidClassificationMaximumArcLength(
+                            options.maximum_arc_length,
+                          ))
+                        True ->
+                          case options.max_sampling_steps > 0 {
+                            True -> Ok(Nil)
+                            False ->
+                              Error(InvalidClassificationMaxSamplingSteps(
+                                options.max_sampling_steps,
+                              ))
+                          }
+                      }
+                  }
+              }
+          }
+      }
     False -> Error(InvalidAngularTolerance(options.angular_tolerance))
   }
 }
@@ -631,10 +759,14 @@ fn subpath_endpoint(
 }
 
 fn classify_directions(
+  first: Subpath,
+  second: Subpath,
+  first_parameter: SubpathParameter,
+  second_parameter: SubpathParameter,
   left: svg_path.Directions,
   right: svg_path.Directions,
-  angular_tolerance: Float,
-) -> IntersectionClassification {
+  options: ClassificationOptions,
+) -> Result(IntersectionClassification, svg_path.Error) {
   let svg_path.Directions(incoming: left_incoming, outgoing: left_outgoing) =
     left
   let svg_path.Directions(incoming: right_incoming, outgoing: right_outgoing) =
@@ -661,31 +793,275 @@ fn classify_directions(
           left_outgoing,
           right_before,
           right_outgoing,
-          angular_tolerance,
+          options.angular_tolerance,
         )
         && separated_by_rays(
           right_before,
           right_outgoing,
           left_before,
           left_outgoing,
-          angular_tolerance,
+          options.angular_tolerance,
         )
 
       case alternating {
         True ->
-          Crossing(
+          Ok(Crossing(
             crossing_direction(left_outgoing, right_outgoing),
             apertures:,
-          )
-        False ->
-          Touching(
-            touching_direction(left_outgoing, right_outgoing),
-            apertures:,
-          )
+          ))
+        False -> {
+          let direction = touching_direction(left_outgoing, right_outgoing)
+          use intersection_point <- result.try(intersection_reference_point(
+            first,
+            second,
+            first_parameter,
+            second_parameter,
+          ))
+          use first_location <- result.try(subpath_arc_length_location(
+            first,
+            first_parameter,
+            options.length_options,
+          ))
+          use second_location <- result.try(subpath_arc_length_location(
+            second,
+            second_parameter,
+            options.length_options,
+          ))
+          let #(
+            first_incoming,
+            second_incoming,
+            first_outgoing,
+            second_outgoing,
+          ) = touching_branch_pairing(direction)
+          use incoming_order <- result.try(sample_touching_order(
+            first_location,
+            second_location,
+            intersection_point,
+            first_branch: first_incoming,
+            second_branch: second_incoming,
+            options:,
+          ))
+          use outgoing_order <- result.try(sample_touching_order(
+            first_location,
+            second_location,
+            intersection_point,
+            first_branch: first_outgoing,
+            second_branch: second_outgoing,
+            options:,
+          ))
+          Ok(Touching(direction:, incoming_order:, outgoing_order:, apertures:))
+        }
       }
     }
-    _, _, _, _ -> Indeterminate
+    _, _, _, _ -> Ok(Indeterminate)
   }
+}
+
+type TraversalBranch {
+  IncomingBranch
+  OutgoingBranch
+}
+
+fn touching_branch_pairing(
+  direction: TouchingDirection,
+) -> #(TraversalBranch, TraversalBranch, TraversalBranch, TraversalBranch) {
+  case direction {
+    SimilarlyDirected -> #(
+      IncomingBranch,
+      IncomingBranch,
+      OutgoingBranch,
+      OutgoingBranch,
+    )
+    OppositelyDirected -> #(
+      IncomingBranch,
+      OutgoingBranch,
+      OutgoingBranch,
+      IncomingBranch,
+    )
+  }
+}
+
+fn intersection_reference_point(
+  first: Subpath,
+  second: Subpath,
+  first_parameter: SubpathParameter,
+  second_parameter: SubpathParameter,
+) -> Result(Point, svg_path.Error) {
+  use first_point <- result.try(svg_path.subpath_point(
+    first,
+    at: first_parameter,
+  ))
+  use second_point <- result.try(svg_path.subpath_point(
+    second,
+    at: second_parameter,
+  ))
+  Ok(point.scale(point.add(first_point, second_point), by: 0.5))
+}
+
+type ArcLengthLocation {
+  ArcLengthLocation(subpath: Subpath, at: Float, total: Float, closed: Bool)
+}
+
+fn subpath_arc_length_location(
+  subpath: Subpath,
+  parameter: SubpathParameter,
+  length_options: svg_path.LengthOptions,
+) -> Result(ArcLengthLocation, svg_path.Error) {
+  use parameter <- result.try(svg_path.subpath_parameter_canonicalize(
+    subpath,
+    parameter:,
+  ))
+  use total <- result.try(svg_path.subpath_length_with(
+    subpath,
+    options: length_options,
+  ))
+  let start = SubpathParameter(segment_index: 0, t: 0.0)
+  use at <- result.try(case parameter == start {
+    True -> Ok(0.0)
+    False -> {
+      use portion <- result.try(svg_path.subpath_between(
+        subpath,
+        from: start,
+        to: parameter,
+      ))
+      svg_path.subpath_length_with(portion, options: length_options)
+    }
+  })
+  Ok(ArcLengthLocation(
+    subpath:,
+    at:,
+    total:,
+    closed: svg_path.subpath_is_closed(subpath),
+  ))
+}
+
+fn sample_touching_order(
+  first: ArcLengthLocation,
+  second: ArcLengthLocation,
+  intersection_point: Point,
+  first_branch first_branch: TraversalBranch,
+  second_branch second_branch: TraversalBranch,
+  options options: ClassificationOptions,
+) -> Result(TouchingOrder, svg_path.Error) {
+  sample_touching_order_loop(
+    first,
+    second,
+    intersection_point,
+    first_branch,
+    second_branch,
+    options,
+    arc_length: options.initial_arc_length,
+    remaining: options.max_sampling_steps,
+  )
+}
+
+fn sample_touching_order_loop(
+  first: ArcLengthLocation,
+  second: ArcLengthLocation,
+  intersection_point: Point,
+  first_branch: TraversalBranch,
+  second_branch: TraversalBranch,
+  options: ClassificationOptions,
+  arc_length arc_length: Float,
+  remaining remaining: Int,
+) -> Result(TouchingOrder, svg_path.Error) {
+  case remaining <= 0 {
+    True -> Ok(IndeterminateTouchingOrder)
+    False -> {
+      use first_point <- result.try(sample_subpath_branch_at_arc_length(
+        first,
+        first_branch,
+        arc_length,
+        options.length_options,
+      ))
+      use second_point <- result.try(sample_subpath_branch_at_arc_length(
+        second,
+        second_branch,
+        arc_length,
+        options.length_options,
+      ))
+      let first_ray = point.subtract(first_point, intersection_point)
+      let second_ray = point.subtract(second_point, intersection_point)
+      let order = touching_order_from_rays(first_ray, second_ray, options)
+
+      case order {
+        IndeterminateTouchingOrder
+          if arc_length <. options.maximum_arc_length
+        ->
+          sample_touching_order_loop(
+            first,
+            second,
+            intersection_point,
+            first_branch,
+            second_branch,
+            options,
+            arc_length: float.min(options.maximum_arc_length, arc_length *. 2.0),
+            remaining: remaining - 1,
+          )
+        IndeterminateTouchingOrder -> Ok(IndeterminateTouchingOrder)
+        order -> Ok(order)
+      }
+    }
+  }
+}
+
+fn sample_subpath_branch_at_arc_length(
+  location: ArcLengthLocation,
+  branch: TraversalBranch,
+  arc_length: Float,
+  length_options: svg_path.LengthOptions,
+) -> Result(Point, svg_path.Error) {
+  let ArcLengthLocation(subpath:, at:, total:, closed:) = location
+  let distance = case branch {
+    IncomingBranch -> at -. arc_length
+    OutgoingBranch -> at +. arc_length
+  }
+  let distance = case closed, total >. 0.0 {
+    True, True -> positive_remainder(distance, total)
+    _, _ -> distance |> float.max(0.0) |> float.min(total)
+  }
+  svg_path.subpath_point_at_length_with(
+    subpath,
+    distance:,
+    options: length_options,
+  )
+}
+
+fn touching_order_from_rays(
+  first_ray: Point,
+  second_ray: Point,
+  options: ClassificationOptions,
+) -> TouchingOrder {
+  let minimum_length_squared =
+    options.distance_tolerance *. options.distance_tolerance
+  case
+    point.norm_squared(first_ray) <=. minimum_length_squared
+    || point.norm_squared(second_ray) <=. minimum_length_squared
+  {
+    True -> IndeterminateTouchingOrder
+    False -> {
+      let signed_order =
+        point.clockwise_aperture(from: first_ray, to: second_ray) -. 180.0
+      let distance_from_coincidence =
+        180.0 -. float.absolute_value(signed_order)
+
+      case
+        float.absolute_value(signed_order) <=. options.angular_tolerance
+        || distance_from_coincidence <=. options.angular_tolerance
+      {
+        True -> IndeterminateTouchingOrder
+        False ->
+          case signed_order <. 0.0 {
+            True -> ClockwiseFromFirstToSecond
+            False -> ClockwiseFromSecondToFirst
+          }
+      }
+    }
+  }
+}
+
+fn positive_remainder(value: Float, modulus: Float) -> Float {
+  value -. float.floor(value /. modulus) *. modulus
 }
 
 fn intersection_apertures(
@@ -695,19 +1071,19 @@ fn intersection_apertures(
   right_outgoing: Point,
 ) -> IntersectionApertures {
   IntersectionApertures(
-    left_incoming_to_right_incoming: point.clockwise_aperture(
+    first_incoming_to_second_incoming: point.clockwise_aperture(
       from: left_incoming,
       to: right_incoming,
     ),
-    left_incoming_to_right_outgoing: point.clockwise_aperture(
+    first_incoming_to_second_outgoing: point.clockwise_aperture(
       from: left_incoming,
       to: right_outgoing,
     ),
-    left_outgoing_to_right_incoming: point.clockwise_aperture(
+    first_outgoing_to_second_incoming: point.clockwise_aperture(
       from: left_outgoing,
       to: right_incoming,
     ),
-    left_outgoing_to_right_outgoing: point.clockwise_aperture(
+    first_outgoing_to_second_outgoing: point.clockwise_aperture(
       from: left_outgoing,
       to: right_outgoing,
     ),

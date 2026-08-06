@@ -317,7 +317,7 @@ pub fn direct_subpath_and_path_helpers_delegate_to_matrices_test() {
         end: svg_path.Point(5.0, 0.0),
       ),
     ])
-  let path = svg_path.path_from_subpath(subpath)
+  let path = svg_path.subpath_as_path(subpath)
   let assert Ok(translated_subpath) =
     transform.translate_subpath(subpath, x: 10.0, y: 20.0)
   let assert Ok(scaled_path) = transform.scale_path(path, factor: 2.0)

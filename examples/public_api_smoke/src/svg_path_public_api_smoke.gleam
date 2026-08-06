@@ -45,6 +45,8 @@ pub fn main() -> Nil {
     )
   let _ = intersections.segment(horizontal, vertical)
   let _ = overlaps.segment(horizontal, horizontal)
+  let _ = svg_path.segment_as_subpath(horizontal)
+  let _ = svg_path.segment_as_path(vertical)
 
   Nil
 }
@@ -67,5 +69,5 @@ fn rectangle(
       svg_path.Line(start: d, end: a),
     ])
     |> svg_path.subpath_assert_set_closed(closed: True)
-  svg_path.path_from_subpath(subpath)
+  svg_path.subpath_as_path(subpath)
 }

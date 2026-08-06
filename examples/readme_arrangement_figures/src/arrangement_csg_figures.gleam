@@ -650,7 +650,7 @@ fn label_style() -> String {
 }
 
 fn rectangle(l: Float, t: Float, r: Float, b: Float) -> svg_path.Path {
-  svg_path.path_from_subpath(rectangle_subpath(l, t, r, b))
+  svg_path.subpath_as_path(rectangle_subpath(l, t, r, b))
 }
 
 fn rectangle_subpath(
@@ -675,7 +675,7 @@ fn nested_rectangles() -> svg_path.Path {
 }
 
 fn bowtie() -> svg_path.Path {
-  svg_path.path_from_subpath(
+  svg_path.subpath_as_path(
     svg_path.subpath_assert_polygon([
       svg_path.Point(5.0, 5.0),
       svg_path.Point(115.0, 95.0),
@@ -688,7 +688,7 @@ fn bowtie() -> svg_path.Path {
 fn circle(center: svg_path.Point, radius: Float) -> svg_path.Path {
   let left = svg_path.Point(center.x -. radius, center.y)
   let right = svg_path.Point(center.x +. radius, center.y)
-  svg_path.path_from_subpath(
+  svg_path.subpath_as_path(
     svg_path.subpath_assert([
       svg_path.Arc(
         start: right,

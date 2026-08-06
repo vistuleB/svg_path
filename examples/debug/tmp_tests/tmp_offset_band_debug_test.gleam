@@ -182,7 +182,7 @@ fn panel(
         13,
       ),
       svg.StyledPath(
-        svg_path.path_from_subpath(source),
+        svg_path.subpath_as_path(source),
         "fill: none; stroke: #9ca3af; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 5 5",
       ),
     ],

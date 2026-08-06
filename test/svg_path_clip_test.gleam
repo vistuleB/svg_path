@@ -187,7 +187,7 @@ fn rectangle(
   max_x: Float,
   max_y: Float,
 ) -> svg_path.Path {
-  svg_path.path_from_subpath(rectangle_subpath(min_x, min_y, max_x, max_y))
+  svg_path.subpath_as_path(rectangle_subpath(min_x, min_y, max_x, max_y))
 }
 
 fn rectangle_subpath(

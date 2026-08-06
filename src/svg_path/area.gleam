@@ -136,7 +136,7 @@ pub fn absolute_subpath_with(
   subpath: svg_path.Subpath,
   options options: svg_path.LinearizeOptions,
 ) -> Result(Float, svg_path.Error) {
-  absolute_path_with(svg_path.path_from_subpath(subpath), options:)
+  absolute_path_with(svg_path.subpath_as_path(subpath), options:)
 }
 
 /// Return a subpath's area-based clockwiseness as a value from `0.0` to `1.0`.
@@ -222,7 +222,7 @@ pub fn subpath_with(
   using fill_rule: svg_path.FillRule,
   options options: svg_path.LinearizeOptions,
 ) -> Result(Float, svg_path.Error) {
-  path_with(svg_path.path_from_subpath(subpath), using: fill_rule, options:)
+  path_with(svg_path.subpath_as_path(subpath), using: fill_rule, options:)
 }
 
 /// Approximate a path's combined filled area using the default linearization

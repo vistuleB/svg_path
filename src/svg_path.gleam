@@ -771,8 +771,21 @@ pub fn path_subpaths(path: Path) -> List(Subpath) {
   path.subpaths
 }
 
-/// Create a path containing a single subpath.
-pub fn path_from_subpath(subpath: Subpath) -> Path {
+/// View a segment as a one-segment open subpath.
+///
+/// This conversion is total because a single segment is necessarily a
+/// continuous segment sequence.
+pub fn segment_as_subpath(segment: Segment) -> Subpath {
+  subpath_assert([segment])
+}
+
+/// View a segment as a path containing one one-segment open subpath.
+pub fn segment_as_path(segment: Segment) -> Path {
+  segment |> segment_as_subpath |> subpath_as_path
+}
+
+/// View a subpath as a path containing that single subpath.
+pub fn subpath_as_path(subpath: Subpath) -> Path {
   Path([subpath])
 }
 

@@ -98,7 +98,7 @@ fn path_cut_points(
   options: intersections.IntersectionOptions,
 ) -> Result(List(svg_path.SubpathParameter), svg_path.Error) {
   use intersections <- result.try(intersections.path_with(
-    svg_path.path_from_subpath(subject),
+    svg_path.subpath_as_path(subject),
     cutter,
     options:,
   ))

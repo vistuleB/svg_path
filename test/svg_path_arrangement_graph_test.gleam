@@ -36,7 +36,7 @@ pub fn closed_square_builds_valid_graph_test() {
 }
 
 pub fn build_preserves_source_path_grouping_test() {
-  let first = svg_path.path_from_subpath(square(0.0, 0.0, 10.0))
+  let first = svg_path.subpath_as_path(square(0.0, 0.0, 10.0))
   let second =
     svg_path.Path([
       square(20.0, 0.0, 5.0),
@@ -652,8 +652,8 @@ pub fn builder_consolidates_near_equal_circles_inside_tolerance_test() {
 pub fn csg_union_removes_interlocking_square_internal_edges_test() {
   let first = square(0.0, 0.0, 10.0)
   let second = square(5.0, 5.0, 10.0)
-  let left = svg_path.path_from_subpath(first)
-  let right = svg_path.path_from_subpath(second)
+  let left = svg_path.subpath_as_path(first)
+  let right = svg_path.subpath_as_path(second)
   let assert Ok(csg.CsgResult(path: union, ..)) =
     csg.union(left, right, using: svg_path.Nonzero)
 
@@ -687,8 +687,8 @@ pub fn csg_union_removes_interlocking_square_internal_edges_test() {
 pub fn csg_union_does_not_cancel_opposite_operands_test() {
   let clockwise = square(0.0, 0.0, 10.0)
   let counterclockwise = svg_path.subpath_reverse(clockwise)
-  let left = svg_path.path_from_subpath(clockwise)
-  let right = svg_path.path_from_subpath(counterclockwise)
+  let left = svg_path.subpath_as_path(clockwise)
+  let right = svg_path.subpath_as_path(counterclockwise)
   let assert Ok(csg.CsgResult(path: union, ..)) =
     csg.union(left, right, using: svg_path.Nonzero)
 
@@ -717,8 +717,8 @@ pub fn csg_union_applies_requested_fill_rule_test() {
 pub fn csg_union_pairs_filled_sectors_at_corner_pinch_test() {
   let first = square(0.0, 0.0, 10.0)
   let second = square(10.0, 10.0, 10.0)
-  let left = svg_path.path_from_subpath(first)
-  let right = svg_path.path_from_subpath(second)
+  let left = svg_path.subpath_as_path(first)
+  let right = svg_path.subpath_as_path(second)
   let assert Ok(csg.CsgResult(path: union, ..)) =
     csg.union(left, right, using: svg_path.Nonzero)
 

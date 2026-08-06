@@ -846,6 +846,12 @@ intersections.path_self(path)
 Results are ordered by parameter, and boundary aliases are canonicalized. Use
 `_with` variants to supply `IntersectionOptions` or `SelfIntersectionOptions`.
 
+Known subpath intersection addresses can be classified afterward with
+`classify_subpath_intersection` as crossings, nontransverse contacts, endpoint
+contacts, or indeterminate cases. Contact order uses outward-pointing rays
+sampled at equal arc lengths; the accompanying aperture angles instead use the
+incoming and outgoing traversal directions directly.
+
 ### Segment and Subpath Overlaps
 
 Point-intersection queries deliberately cannot represent a continuous shared

@@ -667,7 +667,7 @@ fn cut_radiator() -> String {
   let assert Ok(cutter) = parse.path(cut_radiator_path_data)
   let snake = cut_radiator_snake(legs: 56)
   let assert Ok(cut_snake) =
-    cut.path(subject: svg_path.path_from_subpath(snake), by: cutter)
+    cut.path(subject: svg_path.subpath_as_path(snake), by: cutter)
   let assert Ok(kept) = keep_outside_cut(cut_snake, cutter)
 
   cut_radiator_document(kept)
@@ -996,7 +996,7 @@ fn stroke_caps() -> String {
             "fill: #fed7aa; stroke: #7c2d12; stroke-width: 2.5; stroke-linejoin: round",
           ),
           svg.StyledPath(
-            svg_path.path_from_subpath(placed),
+            svg_path.subpath_as_path(placed),
             "fill: none; stroke: #4c1d95; stroke-width: 2; stroke-dasharray: 5 5; stroke-linecap: round",
           ),
           ..path_arrows(stroke, "#7c2d12", 1.0)
@@ -1059,7 +1059,7 @@ fn dashed_strokes() -> String {
               <> "; stroke-width: 2.2; stroke-linejoin: round",
           ),
           svg.StyledPath(
-            svg_path.path_from_subpath(placed),
+            svg_path.subpath_as_path(placed),
             "fill: none; stroke: #334155; stroke-width: 1.8; stroke-dasharray: 5 6; stroke-linecap: round",
           ),
           ..path_arrows(dashed, stroke_color, 0.8)
@@ -1133,7 +1133,7 @@ fn recursive_dashes() -> String {
       ],
       [
         svg.StyledPath(
-          svg_path.path_from_subpath(source),
+          svg_path.subpath_as_path(source),
           "fill: none; stroke: #334155; stroke-width: 1.8; stroke-linecap: round; stroke-dasharray: 7 7; opacity: 0.75",
         ),
       ],
@@ -1948,7 +1948,7 @@ fn figure_eight_band() -> String {
       ],
       [
         svg.StyledPath(
-          svg_path.path_from_subpath(source),
+          svg_path.subpath_as_path(source),
           "fill: none; stroke: #be123c; stroke-width: 2.2; stroke-dasharray: 7 6; stroke-linecap: round",
         ),
       ],
@@ -2014,7 +2014,7 @@ fn stroke_offset_tracks() -> String {
         |> list.map(fn(entry) {
           let #(track, color) = entry
           svg.StyledPath(
-            svg_path.path_from_subpath(track),
+            svg_path.subpath_as_path(track),
             "fill: none; stroke: "
               <> color
               <> "; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round",
@@ -2022,7 +2022,7 @@ fn stroke_offset_tracks() -> String {
         }),
       [
         svg.StyledPath(
-          svg_path.path_from_subpath(source),
+          svg_path.subpath_as_path(source),
           "fill: none; stroke: #111827; stroke-width: 3.6; stroke-dasharray: 7 6; stroke-linecap: round",
         ),
       ],
@@ -2101,7 +2101,7 @@ fn centered_offset_family(
       |> list.index_map(fn(track, index) {
         let color = color_from(colors, index)
         svg.StyledPath(
-          svg_path.path_from_subpath(track),
+          svg_path.subpath_as_path(track),
           "fill: none; stroke: "
             <> color
             <> "; stroke-width: 2.8; stroke-linecap: round; stroke-linejoin: round",
@@ -2109,7 +2109,7 @@ fn centered_offset_family(
       }),
     [
       svg.StyledPath(
-        svg_path.path_from_subpath(placed_source),
+        svg_path.subpath_as_path(placed_source),
         "fill: none; stroke: #1f1a17; stroke-width: 3.1; stroke-dasharray: 7 6; stroke-linecap: round; stroke-linejoin: round",
       ),
     ],
@@ -2140,7 +2140,7 @@ fn rectangle_cloud_path(paths: List(svg_path.Path)) -> svg_path.Path {
 }
 
 fn square_path(x: Float, y: Float, size: Float) -> svg_path.Path {
-  svg_path.path_from_subpath(square_subpath(x, y, size))
+  svg_path.subpath_as_path(square_subpath(x, y, size))
 }
 
 fn rectangle_path(
@@ -2149,7 +2149,7 @@ fn rectangle_path(
   max_x: Float,
   max_y: Float,
 ) -> svg_path.Path {
-  svg_path.path_from_subpath(
+  svg_path.subpath_as_path(
     svg_path.subpath_assert_polygon([
       svg_path.Point(min_x, min_y),
       svg_path.Point(max_x, min_y),

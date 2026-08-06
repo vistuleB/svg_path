@@ -1150,8 +1150,25 @@ pub fn path_can_be_built_from_empty_test() {
     |> svg_path.path_append_subpath(subpath)
 
   assert path |> svg_path.path_subpaths |> list.length == 1
-  assert svg_path.path_from_subpath(subpath) |> svg_path.path_subpaths
+  assert svg_path.subpath_as_path(subpath) |> svg_path.path_subpaths
     == [subpath]
+}
+
+pub fn widening_as_conversions_preserve_the_complete_geometry_test() {
+  let segment =
+    svg_path.CubicBezier(
+      start: svg_path.Point(0.0, 0.0),
+      control1: svg_path.Point(1.0, 2.0),
+      control2: svg_path.Point(2.0, 2.0),
+      end: svg_path.Point(3.0, 0.0),
+    )
+  let subpath = svg_path.segment_as_subpath(segment)
+
+  assert svg_path.subpath_segments(subpath) == [segment]
+  assert svg_path.subpath_is_closed(subpath) == False
+  assert svg_path.segment_as_path(segment) == svg_path.subpath_as_path(subpath)
+  assert svg_path.path_as_subpath(svg_path.subpath_as_path(subpath))
+    == Ok(subpath)
 }
 
 pub fn combine_paths_concatenates_subpaths_test() {

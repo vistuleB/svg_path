@@ -107,7 +107,7 @@ pub fn subpath_cut_opens_closed_subject_at_single_cut_test() {
   let assert Ok([opened]) = cut.subpath(subject: subject, by: cutter)
 
   assert !svg_path.subpath_is_closed(opened)
-  assert serialize.path(svg_path.path_from_subpath(opened))
+  assert serialize.path(svg_path.subpath_as_path(opened))
     == "M 5 0 H 10 V 10 H 0 V 0 H 5"
 }
 

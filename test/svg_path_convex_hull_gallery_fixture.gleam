@@ -60,7 +60,7 @@ pub fn figure_eight_hull_strip() -> String {
     panel(
       0.0,
       "1. figure-eight hull",
-      svg_path.path_from_subpath(source),
+      svg_path.subpath_as_path(source),
       source_hull,
       "fill: none; stroke: #be123c; stroke-width: 4; stroke-dasharray: 10 7",
     ),
@@ -101,8 +101,7 @@ fn panel(
   subject_style: String,
 ) -> svg.ThingsToDraw {
   let subject = place_path(subject, x: x +. 180.0, y: 112.0)
-  let hull =
-    place_path(svg_path.path_from_subpath(hull), x: x +. 180.0, y: 112.0)
+  let hull = place_path(svg_path.subpath_as_path(hull), x: x +. 180.0, y: 112.0)
   [
     svg.StyledPath(
       hull,

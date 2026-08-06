@@ -60,7 +60,7 @@ fn render() -> String {
         15,
       ),
       svg.StyledPath(
-        svg_path.path_from_subpath(source),
+        svg_path.subpath_as_path(source),
         "fill: none; stroke: #9ca3af; stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 5 5",
       ),
       ..result_things
@@ -331,7 +331,7 @@ fn colored_subpaths_loop(
     [first, ..rest], [color, ..remaining_colors] ->
       colored_subpaths_loop(rest, remaining_colors, all_colors, drawn: [
         svg.StyledPath(
-          svg_path.path_from_subpath(first),
+          svg_path.subpath_as_path(first),
           "fill: none; stroke: "
             <> color
             <> "; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round",

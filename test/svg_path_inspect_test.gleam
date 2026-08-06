@@ -133,7 +133,7 @@ pub fn path_inspects_subpaths_and_segments_with_indentation_test() {
       ),
     ])
     |> result_try_set_closed_with_bridge
-  let path = svg_path.path_from_subpath(subpath)
+  let path = svg_path.subpath_as_path(subpath)
 
   assert inspect.path(path) == "Path([
   Subpath(closed, start=0,0, [
@@ -152,7 +152,7 @@ pub fn path_inspects_with_decimal_options_test() {
         end: svg_path.Point(12.234, 10.235),
       ),
     ])
-  let path = svg_path.path_from_subpath(subpath)
+  let path = svg_path.subpath_as_path(subpath)
 
   assert inspect.path_with_options(path, options: inspect.decimal_options(1))
     == "Path([
@@ -219,7 +219,7 @@ pub fn path_code_inspects_as_copy_pasteable_gleam_test() {
         end: svg_path.Point(12.0, 10.0),
       ),
     ])
-  let path = svg_path.path_from_subpath(subpath)
+  let path = svg_path.subpath_as_path(subpath)
 
   assert inspect.path_code(path) == "svg_path.Path([
   svg_path.subpath_assert([
@@ -254,7 +254,7 @@ pub fn code_inspection_respects_auto_left_padding_test() {
         end: svg_path.Point(2.0, -30.0),
       ),
     ])
-  let path = svg_path.path_from_subpath(subpath)
+  let path = svg_path.subpath_as_path(subpath)
   let options =
     inspect.fixed_decimal_options(1)
     |> inspect.with_left_padding(inspect.AutoLeftPadding(inspect.Zero))

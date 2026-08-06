@@ -139,7 +139,7 @@ pub fn four_square_union_matches_expected_boolean_semantics_test() {
 }
 
 pub fn circle_rectangle_union_preserves_arc_and_line_edges_test() {
-  let circle = svg_path.path_from_subpath(circle_subpath(10.0))
+  let circle = svg_path.subpath_as_path(circle_subpath(10.0))
   let rectangle = rectangle(0.0, -5.0, 15.0, 5.0)
   let assert Ok(union) = union_paths(circle, rectangle)
 
@@ -152,7 +152,7 @@ pub fn circle_rectangle_union_preserves_arc_and_line_edges_test() {
 }
 
 pub fn quadratic_loop_rectangle_union_preserves_quadratics_and_lines_test() {
-  let loop = svg_path.path_from_subpath(quadratic_loop())
+  let loop = svg_path.subpath_as_path(quadratic_loop())
   let rectangle = rectangle(5.0, -4.0, 14.0, 4.0)
   let assert Ok(union) = union_paths(loop, rectangle)
 
@@ -165,7 +165,7 @@ pub fn quadratic_loop_rectangle_union_preserves_quadratics_and_lines_test() {
 }
 
 pub fn cubic_loop_rectangle_union_preserves_cubics_and_lines_test() {
-  let loop = svg_path.path_from_subpath(cubic_loop())
+  let loop = svg_path.subpath_as_path(cubic_loop())
   let rectangle = rectangle(-14.0, -4.0, -5.0, 4.0)
   let assert Ok(union) = union_paths(loop, rectangle)
 
@@ -217,10 +217,7 @@ pub fn identical_rectangles_intersection_keeps_one_boundary_test() {
 
 pub fn circle_rectangle_intersection_preserves_arc_and_line_edges_test() {
   let circle =
-    svg_path.path_from_subpath(circle_subpath_at(
-      svg_path.Point(10.0, 10.0),
-      10.0,
-    ))
+    svg_path.subpath_as_path(circle_subpath_at(svg_path.Point(10.0, 10.0), 10.0))
   let rectangle = rectangle(5.0, 0.0, 20.0, 20.0)
   let assert Ok(intersection) =
     intersect_paths(circle, rectangle, svg_path.Nonzero)
@@ -255,7 +252,7 @@ pub fn intersection_semantic_matrix_test() {
       grid([2.5, 7.5, 12.5, 20.0], [-2.5, 5.0, 12.5]),
     ),
     boolean_case(
-      svg_path.path_from_subpath(circle_subpath_at(
+      svg_path.subpath_as_path(circle_subpath_at(
         svg_path.Point(10.0, 10.0),
         10.0,
       )),
@@ -276,7 +273,7 @@ pub fn intersection_semantic_matrix_test() {
       grid([2.5, 7.5, 10.0, 12.5, 17.5], [2.5, 7.5, 10.0, 12.5, 17.5]),
     ),
     boolean_case(
-      svg_path.path_from_subpath(circle_subpath_at(
+      svg_path.subpath_as_path(circle_subpath_at(
         svg_path.Point(50.0, 60.0),
         40.0,
       )),
@@ -349,7 +346,7 @@ pub fn difference_semantic_matrix_test() {
       grid([2.5, 7.5, 12.5, 20.0], [-2.5, 5.0, 12.5]),
     ),
     boolean_case(
-      svg_path.path_from_subpath(circle_subpath_at(
+      svg_path.subpath_as_path(circle_subpath_at(
         svg_path.Point(10.0, 10.0),
         10.0,
       )),
@@ -370,7 +367,7 @@ pub fn difference_semantic_matrix_test() {
       grid([2.5, 7.5, 10.0, 12.5, 17.5], [2.5, 7.5, 10.0, 12.5, 17.5]),
     ),
     boolean_case(
-      svg_path.path_from_subpath(circle_subpath_at(
+      svg_path.subpath_as_path(circle_subpath_at(
         svg_path.Point(50.0, 60.0),
         40.0,
       )),
@@ -444,10 +441,7 @@ pub fn difference_creates_hole_and_preserves_mixed_curves_test() {
   assert_containment(holed, svg_path.Point(10.0, 10.0), svg_path.Outside)
 
   let circle =
-    svg_path.path_from_subpath(circle_subpath_at(
-      svg_path.Point(10.0, 10.0),
-      10.0,
-    ))
+    svg_path.subpath_as_path(circle_subpath_at(svg_path.Point(10.0, 10.0), 10.0))
   let assert Ok(cut) =
     subtract_paths(circle, rectangle(5.0, 0.0, 20.0, 20.0), svg_path.Nonzero)
   assert has_arc(cut)
@@ -783,7 +777,7 @@ fn rectangle(
   right: Float,
   bottom: Float,
 ) -> svg_path.Path {
-  svg_path.path_from_subpath(rectangle_subpath(left, top, right, bottom))
+  svg_path.subpath_as_path(rectangle_subpath(left, top, right, bottom))
 }
 
 fn rectangle_subpath(
@@ -808,7 +802,7 @@ fn nested_rectangles() -> svg_path.Path {
 }
 
 fn bowtie() -> svg_path.Path {
-  svg_path.path_from_subpath(
+  svg_path.subpath_as_path(
     svg_path.subpath_assert_polygon([
       svg_path.Point(8.0, 8.0),
       svg_path.Point(114.0, 112.0),

@@ -294,7 +294,7 @@ fn generated_paths() -> List(svg_path.Path) {
 }
 
 fn path_from_segments(segments: List(svg_path.Segment)) -> svg_path.Path {
-  svg_path.path_from_subpath(subpath_from_segments(segments))
+  svg_path.subpath_as_path(subpath_from_segments(segments))
 }
 
 fn closed_path_from_segments(
@@ -303,7 +303,7 @@ fn closed_path_from_segments(
   let assert Ok(subpath) = svg_path.subpath(segments)
   let assert Ok(closed) = svg_path.subpath_set_closed(subpath, closed: True)
 
-  svg_path.path_from_subpath(closed)
+  svg_path.subpath_as_path(closed)
 }
 
 fn subpath_from_segments(segments: List(svg_path.Segment)) -> svg_path.Subpath {

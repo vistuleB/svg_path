@@ -1154,7 +1154,7 @@ pub fn path_parameter_at_length_rejects_invalid_distances_test() {
         end: svg_path.Point(10.0, 0.0),
       ),
     ])
-  let path = svg_path.path_from_subpath(subpath)
+  let path = svg_path.subpath_as_path(subpath)
 
   assert svg_path.path_parameter_at_length(path, distance: -1.0)
     == Error(svg_path.InvalidLengthDistance(distance: -1.0, length: 10.0))
@@ -1170,7 +1170,7 @@ pub fn path_point_rejects_invalid_path_parameters_test() {
         end: svg_path.Point(10.0, 0.0),
       ),
     ])
-  let path = svg_path.path_from_subpath(subpath)
+  let path = svg_path.subpath_as_path(subpath)
 
   assert svg_path.path_point(
       path,

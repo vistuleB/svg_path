@@ -152,7 +152,7 @@ fn split_points(
   options: Options,
 ) -> Result(List(svg_path.SubpathParameter), svg_path.Error) {
   use intersections <- result.try(intersections.path_with(
-    svg_path.path_from_subpath(input),
+    svg_path.subpath_as_path(input),
     clip_region,
     options: options.intersection,
   ))

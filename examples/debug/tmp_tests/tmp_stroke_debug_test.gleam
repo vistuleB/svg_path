@@ -139,7 +139,7 @@ fn panel(
     ],
     list.append(result_things, [
       svg.StyledPath(
-        svg_path.path_from_subpath(source),
+        svg_path.subpath_as_path(source),
         "fill: none; stroke: #ef4444; stroke-width: 1.4; stroke-dasharray: 4 4; stroke-linecap: round",
       ),
       ..subpath_arrows(source, "#ef4444", 0.9)

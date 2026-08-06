@@ -65,7 +65,7 @@ fn render() -> String {
       ),
       [
         svg.StyledPath(
-          svg_path.path_from_subpath(source),
+          svg_path.subpath_as_path(source),
           "fill: none; stroke: #ef4444; stroke-width: 2.5; stroke-dasharray: 10 10; stroke-linecap: round",
         ),
         ..segment_arrows(svg_path.subpath_segments(source), "#ef4444", 1.3)
@@ -168,7 +168,7 @@ fn draw_sections(
       let color = color(index)
       draw_sections(rest, index: index + 1, things: [
         svg.StyledPath(
-          svg_path.path_from_subpath(first),
+          svg_path.subpath_as_path(first),
           "fill: none; stroke: "
             <> color
             <> "; stroke-width: 4; stroke-linejoin: round; stroke-linecap: round",

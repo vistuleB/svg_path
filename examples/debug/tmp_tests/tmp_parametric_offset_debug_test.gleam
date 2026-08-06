@@ -538,7 +538,7 @@ fn render_diamond_zoom() -> String {
   let source = rounded_diamond()
   let assert Ok(provisional) = debug_provisional(source, offset.Round)
   let assert Ok(sections) = self_intersection_sections(provisional)
-  let placed_source = place_path(svg_path.path_from_subpath(source), 0.0, 0.0)
+  let placed_source = place_path(svg_path.subpath_as_path(source), 0.0, 0.0)
   let section_drawings =
     sections
     |> list.index_map(fn(section, index) {
@@ -550,7 +550,7 @@ fn render_diamond_zoom() -> String {
             svg_path.subpath_with(section, policy: svg_path.Wiggle)
           [
             svg.StyledPath(
-              svg_path.path_from_subpath(subpath),
+              svg_path.subpath_as_path(subpath),
               "fill: none; stroke: "
                 <> color
                 <> "; stroke-width: 0.8; stroke-linecap: round; stroke-linejoin: round",
@@ -587,14 +587,14 @@ fn render_diamond_miter_sections() -> String {
   let source = rounded_diamond()
   let assert Ok(provisional) = debug_provisional(source, offset.Round)
   let assert Ok(sections) = self_intersection_sections(provisional)
-  let source_path = svg_path.path_from_subpath(source)
+  let source_path = svg_path.subpath_as_path(source)
   let section_drawings =
     sections
     |> list.index_map(fn(section, index) {
       let color = section_color(index)
       let assert Ok(subpath) =
         svg_path.subpath_with(section, policy: svg_path.Wiggle)
-      let path = svg_path.path_from_subpath(subpath)
+      let path = svg_path.subpath_as_path(subpath)
       [
         svg.StyledPath(
           path,
@@ -631,14 +631,14 @@ fn render_diamond_miter_loop_zoom() -> String {
   let source = rounded_diamond()
   let assert Ok(provisional) = debug_provisional(source, offset.Round)
   let assert Ok(sections) = self_intersection_sections(provisional)
-  let source_path = svg_path.path_from_subpath(source)
+  let source_path = svg_path.subpath_as_path(source)
   let section_drawings =
     sections
     |> list.index_map(fn(section, index) {
       let color = section_color(index)
       let assert Ok(subpath) =
         svg_path.subpath_with(section, policy: svg_path.Wiggle)
-      let path = svg_path.path_from_subpath(subpath)
+      let path = svg_path.subpath_as_path(subpath)
       [
         svg.StyledPath(
           path,
@@ -675,7 +675,7 @@ fn render_diamond_section_survival() -> String {
   let source = rounded_diamond()
   let assert Ok(provisional) = debug_provisional(source, offset.Round)
   let assert Ok(sections) = self_intersection_sections(provisional)
-  let source_path = svg_path.path_from_subpath(source)
+  let source_path = svg_path.subpath_as_path(source)
   let section_drawings =
     sections
     |> list.index_map(fn(section, index) {
@@ -694,7 +694,7 @@ fn render_diamond_section_survival() -> String {
       }
       let assert Ok(subpath) =
         svg_path.subpath_with(section, policy: svg_path.Wiggle)
-      let path = svg_path.path_from_subpath(subpath)
+      let path = svg_path.subpath_as_path(subpath)
       [
         svg.StyledPath(
           path,
@@ -736,7 +736,7 @@ fn render_diamond_section_nine() -> String {
   let assert Ok(provisional) = debug_provisional(source, offset.Round)
   let assert Ok(sections) = self_intersection_sections(provisional)
   let assert Ok(target_section) = nth_section(sections, 9)
-  let source_path = svg_path.path_from_subpath(source)
+  let source_path = svg_path.subpath_as_path(source)
   let section_drawings =
     sections
     |> list.index_map(fn(section, index) {
@@ -799,7 +799,7 @@ fn inspected_section_segment_drawings(
     let assert Ok(subpath) =
       svg_path.subpath_with([segment], policy: svg_path.Wiggle)
     svg.StyledPath(
-      svg_path.path_from_subpath(subpath),
+      svg_path.subpath_as_path(subpath),
       "fill: none; stroke: "
         <> color
         <> "; stroke-width: 0.18; stroke-linecap: round; stroke-linejoin: round",
@@ -812,7 +812,7 @@ fn gray_section_drawing(section: List(svg_path.Segment)) -> svg.ThingsToDraw {
     svg_path.subpath_with(section, policy: svg_path.Wiggle)
   [
     svg.StyledPath(
-      svg_path.path_from_subpath(subpath),
+      svg_path.subpath_as_path(subpath),
       "fill: none; stroke: #94a3b8; stroke-width: 0.075; stroke-linecap: round; stroke-linejoin: round",
     ),
   ]
@@ -1023,7 +1023,7 @@ fn render_panel(
   let x = 8.0 +. int.to_float(col) *. { panel_w +. gap }
   let y = 38.0 +. int.to_float(row) *. { panel_h +. gap }
   let placed_source =
-    place_path(svg_path.path_from_subpath(example.source), x, y)
+    place_path(svg_path.subpath_as_path(example.source), x, y)
   let options = preview_options(join_case.join)
   let assert Ok(result) =
     offset.subpath_with(example.source, distance: example.distance, options:)
@@ -1777,7 +1777,7 @@ fn colored_path_segments(path: svg_path.Path) -> svg.ThingsToDraw {
       let assert Ok(segment_subpath) =
         svg_path.subpath_with([segment], policy: svg_path.Wiggle)
       svg.StyledPath(
-        svg_path.path_from_subpath(segment_subpath),
+        svg_path.subpath_as_path(segment_subpath),
         "fill: none; stroke: "
           <> color
           <> "; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round",
