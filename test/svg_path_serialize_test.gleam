@@ -117,7 +117,7 @@ pub fn relative_closed_subpath_keeps_final_zero_length_line_test() {
     ])
     |> result_try_set_closed_true
 
-  assert serialize.subpath_with_options(
+  assert serialize.subpath_with(
       subpath,
       options: serialize.relative_decimal_options(0),
     )
@@ -157,7 +157,7 @@ pub fn fixed_decimal_options_round_and_pad_numbers_test() {
       svg_path.Line(start: a, end: b),
     ])
 
-  assert serialize.subpath_with_options(
+  assert serialize.subpath_with(
       subpath,
       options: serialize.fixed_decimal_options(2),
     )
@@ -172,10 +172,7 @@ pub fn decimal_options_round_and_strip_trailing_zeros_test() {
       svg_path.Line(start: a, end: b),
     ])
 
-  assert serialize.subpath_with_options(
-      subpath,
-      options: serialize.decimal_options(3),
-    )
+  assert serialize.subpath_with(subpath, options: serialize.decimal_options(3))
     == "M 0 1.2 L 10.234 -20.235"
 }
 
@@ -183,7 +180,7 @@ pub fn fixed_decimal_options_keep_trailing_zeros_test() {
   let a = svg_path.Point(1.0, 1.2)
   let b = svg_path.Point(10.0, -20.0)
 
-  assert serialize.segment_with_options(
+  assert serialize.segment_with(
       svg_path.Line(start: a, end: b),
       options: serialize.fixed_decimal_options(3),
     )
@@ -194,7 +191,7 @@ pub fn fixed_decimal_options_can_use_zero_places_test() {
   let a = svg_path.Point(0.4, 1.5)
   let b = svg_path.Point(10.49, -20.5)
 
-  assert serialize.segment_with_options(
+  assert serialize.segment_with(
       svg_path.Line(start: a, end: b),
       options: serialize.fixed_decimal_options(0),
     )
@@ -205,7 +202,7 @@ pub fn left_padding_pads_serialized_numbers_test() {
   let a = svg_path.Point(0.0, -2.0)
   let b = svg_path.Point(12.2, 10.2)
 
-  assert serialize.segment_with_options(
+  assert serialize.segment_with(
       svg_path.Line(start: a, end: b),
       options: serialize.fixed_decimal_options(1)
         |> serialize.with_left_padding(serialize.LeftPadding(3, serialize.Zero)),
@@ -217,7 +214,7 @@ pub fn space_left_padding_pads_serialized_numbers_test() {
   let a = svg_path.Point(0.0, -2.0)
   let b = svg_path.Point(12.2, 10.2)
 
-  assert serialize.segment_with_options(
+  assert serialize.segment_with(
       svg_path.Line(start: a, end: b),
       options: serialize.fixed_decimal_options(1)
         |> serialize.with_left_padding(serialize.LeftPadding(3, serialize.Space)),
@@ -235,7 +232,7 @@ pub fn auto_left_padding_aligns_serialized_path_numbers_test() {
       svg_path.Line(start: b, end: c),
     ])
 
-  assert serialize.subpath_with_options(
+  assert serialize.subpath_with(
       subpath,
       options: serialize.fixed_decimal_options(1)
         |> serialize.with_left_padding(serialize.AutoLeftPadding(serialize.Zero)),
@@ -253,7 +250,7 @@ pub fn minimize_whitespace_removes_command_spacing_test() {
       svg_path.Line(start: b, end: c),
     ])
 
-  assert serialize.subpath_with_options(
+  assert serialize.subpath_with(
       subpath,
       options: serialize.decimal_options(0) |> serialize.minimize_whitespace,
     )
@@ -272,7 +269,7 @@ pub fn repeat_commands_false_omits_repeated_line_commands_test() {
       svg_path.Line(start: c, end: d),
     ])
 
-  assert serialize.subpath_with_options(
+  assert serialize.subpath_with(
       subpath,
       options: serialize.default_options() |> serialize.repeat_commands(False),
     )
@@ -293,7 +290,7 @@ pub fn repeat_commands_false_omits_repeated_h_and_v_commands_test() {
       svg_path.Line(start: d, end: e),
     ])
 
-  assert serialize.subpath_with_options(
+  assert serialize.subpath_with(
       subpath,
       options: serialize.default_options() |> serialize.repeat_commands(False),
     )
@@ -315,7 +312,7 @@ pub fn repeat_commands_false_omits_repeated_curve_commands_test() {
       svg_path.CubicBezier(start: f, control1: b, control2: d, end: a),
     ])
 
-  assert serialize.subpath_with_options(
+  assert serialize.subpath_with(
       subpath,
       options: serialize.default_options() |> serialize.repeat_commands(False),
     )
@@ -347,7 +344,7 @@ pub fn repeat_commands_false_omits_repeated_arc_commands_test() {
       ),
     ])
 
-  assert serialize.subpath_with_options(
+  assert serialize.subpath_with(
       subpath,
       options: serialize.default_options() |> serialize.repeat_commands(False),
     )
@@ -374,7 +371,7 @@ pub fn at_subpaths_puts_each_subpath_on_its_own_line_test() {
     ])
     |> result_try_set_closed_with_bridge
 
-  assert serialize.path_with_options(
+  assert serialize.path_with(
       svg_path.Path([first, second]),
       options: serialize.default_options()
         |> serialize.with_newlines(serialize.AtSubpaths),
@@ -393,7 +390,7 @@ pub fn at_segments_with_repeat_commands_true_starts_lines_with_commands_test() {
     ])
     |> result_try_set_closed_with_bridge
 
-  assert serialize.subpath_with_options(
+  assert serialize.subpath_with(
       subpath,
       options: serialize.default_options()
         |> serialize.with_newlines(serialize.AtSegments),
@@ -412,7 +409,7 @@ pub fn at_segments_with_repeat_commands_false_trails_emitted_commands_test() {
     ])
     |> result_try_set_closed_with_bridge
 
-  assert serialize.subpath_with_options(
+  assert serialize.subpath_with(
       subpath,
       options: serialize.default_options()
         |> serialize.repeat_commands(False)
@@ -429,7 +426,7 @@ pub fn at_segments_with_repeat_commands_false_starts_moves_on_new_lines_test() {
   let assert Ok(first) = svg_path.subpath([svg_path.Line(start: a, end: b)])
   let assert Ok(second) = svg_path.subpath([svg_path.Line(start: c, end: d)])
 
-  assert serialize.path_with_options(
+  assert serialize.path_with(
       svg_path.Path([first, second]),
       options: serialize.default_options()
         |> serialize.repeat_commands(False)
@@ -451,7 +448,7 @@ pub fn at_segments_with_repeat_commands_true_starts_curve_lines_with_commands_te
     ])
     |> result_try_set_closed_with_bridge
 
-  assert serialize.subpath_with_options(
+  assert serialize.subpath_with(
       subpath,
       options: serialize.default_options()
         |> serialize.with_newlines(serialize.AtSegments),
@@ -472,7 +469,7 @@ pub fn at_segments_with_repeat_commands_false_trails_curve_commands_test() {
     ])
     |> result_try_set_closed_with_bridge
 
-  assert serialize.subpath_with_options(
+  assert serialize.subpath_with(
       subpath,
       options: serialize.default_options()
         |> serialize.repeat_commands(False)
@@ -492,7 +489,7 @@ pub fn commas_separate_coordinates_inside_point_pairs_test() {
     ])
     |> result_try_set_closed_with_bridge
 
-  assert serialize.subpath_with_options(
+  assert serialize.subpath_with(
       subpath,
       options: serialize.default_options()
         |> serialize.with_commas(True)
@@ -529,7 +526,7 @@ pub fn commas_preserve_spaces_between_curve_point_pairs_test() {
       ),
     ])
 
-  assert serialize.subpath_with_options(
+  assert serialize.subpath_with(
       subpath,
       options: serialize.fixed_decimal_options(2)
         |> serialize.with_left_padding(serialize.AutoLeftPadding(
@@ -553,7 +550,7 @@ pub fn commas_apply_to_arc_radius_and_endpoint_pairs_test() {
       end: svg_path.Point(13.0, 18.0),
     )
 
-  assert serialize.segment_with_options(
+  assert serialize.segment_with(
       arc,
       options: serialize.relative_decimal_options(0)
         |> serialize.with_commas(True),
@@ -565,7 +562,7 @@ pub fn relative_options_use_relative_line_commands_test() {
   let a = svg_path.Point(10.0, 20.0)
   let b = svg_path.Point(13.0, 18.0)
 
-  assert serialize.segment_with_options(
+  assert serialize.segment_with(
       svg_path.Line(start: a, end: b),
       options: serialize.relative_decimal_options(0),
     )
@@ -588,12 +585,12 @@ pub fn relative_options_use_relative_curve_commands_test() {
       end: svg_path.Point(18.0, 28.0),
     )
 
-  assert serialize.segment_with_options(
+  assert serialize.segment_with(
       quadratic,
       options: serialize.relative_decimal_options(0),
     )
     == "m 10 20 q 2 3 5 5"
-  assert serialize.segment_with_options(
+  assert serialize.segment_with(
       cubic,
       options: serialize.relative_decimal_options(0),
     )
@@ -611,7 +608,7 @@ pub fn relative_options_use_relative_arc_endpoint_test() {
       end: svg_path.Point(13.0, 18.0),
     )
 
-  assert serialize.segment_with_options(
+  assert serialize.segment_with(
       arc,
       options: serialize.relative_decimal_options(0),
     )
@@ -622,7 +619,7 @@ pub fn relative_minimize_whitespace_removes_command_spacing_test() {
   let a = svg_path.Point(10.0, 20.0)
   let b = svg_path.Point(13.0, 18.0)
 
-  assert serialize.segment_with_options(
+  assert serialize.segment_with(
       svg_path.Line(start: a, end: b),
       options: serialize.relative_decimal_options(0)
         |> serialize.minimize_whitespace,
@@ -640,7 +637,7 @@ pub fn relative_repeat_commands_false_omits_repeated_commands_test() {
       svg_path.Line(start: b, end: c),
     ])
 
-  assert serialize.subpath_with_options(
+  assert serialize.subpath_with(
       subpath,
       options: serialize.relative_decimal_options(0)
         |> serialize.repeat_commands(False),
@@ -658,7 +655,7 @@ pub fn minimized_repeat_commands_false_omits_repeated_commands_test() {
       svg_path.Line(start: b, end: c),
     ])
 
-  assert serialize.subpath_with_options(
+  assert serialize.subpath_with(
       subpath,
       options: serialize.decimal_options(0)
         |> serialize.minimize_whitespace
@@ -677,7 +674,7 @@ pub fn minifying_options_use_relative_minimized_output_test() {
       svg_path.Line(start: b, end: c),
     ])
 
-  assert serialize.subpath_with_options(
+  assert serialize.subpath_with(
       subpath,
       options: serialize.minifying_options(0),
     )
@@ -689,7 +686,7 @@ pub fn explicit_initial_lineto_can_be_omitted_absolute_test() {
   let b = svg_path.Point(13.0, 18.0)
   let subpath = svg_path.subpath_assert([svg_path.Line(start: a, end: b)])
 
-  assert serialize.subpath_with_options(
+  assert serialize.subpath_with(
       subpath,
       options: serialize.default_options()
         |> serialize.explicit_initial_lineto(False),
@@ -702,7 +699,7 @@ pub fn explicit_initial_lineto_can_be_omitted_relative_test() {
   let b = svg_path.Point(13.0, 18.0)
   let subpath = svg_path.subpath_assert([svg_path.Line(start: a, end: b)])
 
-  assert serialize.subpath_with_options(
+  assert serialize.subpath_with(
       subpath,
       options: serialize.relative_options()
         |> serialize.explicit_initial_lineto(False),
@@ -715,7 +712,7 @@ pub fn minimized_fractions_omit_leading_zero_and_use_decimal_boundary_test() {
   let b = svg_path.Point(0.4, 0.3)
   let subpath = svg_path.subpath_assert([svg_path.Line(start: a, end: b)])
   let serialized =
-    serialize.subpath_with_options(
+    serialize.subpath_with(
       subpath,
       options: serialize.decimal_options(1)
         |> serialize.use_h_v(False)
@@ -741,10 +738,7 @@ pub fn minifying_options_concatenate_arc_flags_and_endpoint_test() {
       ),
     ])
   let serialized =
-    serialize.subpath_with_options(
-      subpath,
-      options: serialize.minifying_options(0),
-    )
+    serialize.subpath_with(subpath, options: serialize.minifying_options(0))
 
   assert serialized == "m0 0a5 8 45 103-2"
   assert parse.path(serialized) == Ok(svg_path.Path([subpath]))
@@ -772,10 +766,10 @@ pub fn minifying_options_roundtrip_many_negative_fraction_vertices_test() {
     ])
   let path = svg_path.Path([subpath])
   let options = serialize.minifying_options(2)
-  let serialized = serialize.path_with_options(path, options:)
+  let serialized = serialize.path_with(path, options:)
   let assert Ok(parsed) = parse.path(serialized)
 
-  assert serialize.path_with_options(parsed, options:) == serialized
+  assert serialize.path_with(parsed, options:) == serialized
 }
 
 pub fn minifying_options_roundtrip_preserves_structural_path_equality_test() {
@@ -800,7 +794,7 @@ pub fn minifying_options_roundtrip_preserves_structural_path_equality_test() {
     ])
   let path = svg_path.Path([subpath])
   let serialized =
-    serialize.path_with_options(path, options: serialize.minifying_options(2))
+    serialize.path_with(path, options: serialize.minifying_options(2))
 
   assert parse.path(serialized) == Ok(path)
 }
@@ -815,7 +809,7 @@ pub fn use_h_v_can_be_disabled_test() {
       svg_path.Line(start: b, end: c),
     ])
 
-  assert serialize.subpath_with_options(
+  assert serialize.subpath_with(
       subpath,
       options: serialize.default_options()
         |> serialize.use_h_v(False),
@@ -863,7 +857,7 @@ pub fn use_s_t_can_be_disabled_test() {
       svg_path.QuadraticBezier(start: c, control: d, end: e),
     ])
 
-  assert serialize.subpath_with_options(
+  assert serialize.subpath_with(
       subpath,
       options: serialize.default_options() |> serialize.use_s_t(False),
     )
@@ -882,10 +876,7 @@ pub fn use_s_t_discovers_shorthand_after_decimal_formatting_test() {
       svg_path.QuadraticBezier(start: c, control: d, end: e),
     ])
 
-  assert serialize.subpath_with_options(
-      subpath,
-      options: serialize.decimal_options(3),
-    )
+  assert serialize.subpath_with(subpath, options: serialize.decimal_options(3))
     == "M 0 0 Q 10 20 30 40 T 70 80"
 }
 
@@ -897,7 +888,7 @@ pub fn relative_options_make_moves_relative_between_subpaths_test() {
   let assert Ok(first) = svg_path.subpath([svg_path.Line(start: a, end: b)])
   let assert Ok(second) = svg_path.subpath([svg_path.Line(start: c, end: d)])
 
-  assert serialize.path_with_options(
+  assert serialize.path_with(
       svg_path.Path([
         first,
         svg_path.subpath_empty(at: b),
@@ -921,7 +912,7 @@ pub fn relative_options_move_from_closed_subpath_start_after_z_test() {
     |> result_try_set_closed_true
   let assert Ok(second) = svg_path.subpath([svg_path.Line(start: c, end: d)])
 
-  assert serialize.path_with_options(
+  assert serialize.path_with(
       svg_path.Path([first, second]),
       options: serialize.relative_decimal_options(0),
     )
@@ -936,7 +927,7 @@ pub fn minimized_relative_path_with_multiple_subpaths_test() {
   let assert Ok(first) = svg_path.subpath([svg_path.Line(start: a, end: b)])
   let assert Ok(second) = svg_path.subpath([svg_path.Line(start: c, end: d)])
 
-  assert serialize.path_with_options(
+  assert serialize.path_with(
       svg_path.Path([first, second]),
       options: serialize.relative_decimal_options(0)
         |> serialize.minimize_whitespace,
@@ -951,10 +942,7 @@ pub fn decimal_options_clamp_negative_decimal_places_to_zero_test() {
       end: svg_path.Point(10.49, -20.5),
     )
 
-  assert serialize.segment_with_options(
-      segment,
-      options: serialize.decimal_options(-3),
-    )
+  assert serialize.segment_with(segment, options: serialize.decimal_options(-3))
     == "M 0 2 L 10 -21"
 }
 
@@ -968,10 +956,7 @@ pub fn rounded_absolute_line_uses_h_or_v_after_formatting_test() {
       svg_path.Line(start: b, end: c),
     ])
 
-  assert serialize.subpath_with_options(
-      subpath,
-      options: serialize.decimal_options(5),
-    )
+  assert serialize.subpath_with(subpath, options: serialize.decimal_options(5))
     == "M 0 0 H 10 V 20"
 }
 
@@ -985,7 +970,7 @@ pub fn rounded_relative_line_uses_h_or_v_after_formatting_test() {
       svg_path.Line(start: b, end: c),
     ])
 
-  assert serialize.subpath_with_options(
+  assert serialize.subpath_with(
       subpath,
       options: serialize.relative_decimal_options(5),
     )
@@ -1009,7 +994,7 @@ pub fn parser_tracked_relative_lines_correct_rounding_drift_test() {
 
   assert serialize.path_with_independent_relative_options(path, options)
     == "m 0 0 l 0.3 0.3 l 0.3 0.3 l 0.3 0.3"
-  assert serialize.path_with_options(path, options)
+  assert serialize.path_with(path, options)
     == "m 0 0 l 0.3 0.3 l 0.4 0.4 l 0.3 0.3"
 }
 

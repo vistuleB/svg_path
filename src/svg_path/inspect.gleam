@@ -102,14 +102,11 @@ pub fn with_left_padding(
 
 /// Inspect a path as a multiline structural string.
 pub fn path(path: svg_path.Path) -> String {
-  path_with_options(path, default_options())
+  path_with(path, default_options())
 }
 
 /// Inspect a path as a multiline structural string with custom options.
-pub fn path_with_options(
-  path path: svg_path.Path,
-  options options: Options,
-) -> String {
+pub fn path_with(path path: svg_path.Path, options options: Options) -> String {
   let format = number_format(options, path_numbers(path))
   do_path(path, format)
 }
@@ -134,11 +131,11 @@ fn do_path(path: svg_path.Path, format: number_format.NumberFormat) -> String {
 /// The generated code assumes the `svg_path` package is imported as
 /// `svg_path`.
 pub fn path_code(path: svg_path.Path) -> String {
-  path_code_with_options(path, default_options())
+  path_code_with(path, default_options())
 }
 
 /// Inspect a path as copy-pasteable Gleam code with custom options.
-pub fn path_code_with_options(
+pub fn path_code_with(
   path path: svg_path.Path,
   options options: Options,
 ) -> String {
@@ -166,11 +163,11 @@ fn do_path_code(
 
 /// Inspect a subpath as a multiline structural string.
 pub fn subpath(subpath: svg_path.Subpath) -> String {
-  subpath_with_options(subpath, default_options())
+  subpath_with(subpath, default_options())
 }
 
 /// Inspect a subpath as a multiline structural string with custom options.
-pub fn subpath_with_options(
+pub fn subpath_with(
   subpath subpath: svg_path.Subpath,
   options options: Options,
 ) -> String {
@@ -213,11 +210,11 @@ fn do_subpath(
 /// The generated code assumes the `svg_path` package is imported as
 /// `svg_path`.
 pub fn subpath_code(subpath: svg_path.Subpath) -> String {
-  subpath_code_with_options(subpath, default_options())
+  subpath_code_with(subpath, default_options())
 }
 
 /// Inspect a subpath as copy-pasteable Gleam code with custom options.
-pub fn subpath_code_with_options(
+pub fn subpath_code_with(
   subpath subpath: svg_path.Subpath,
   options options: Options,
 ) -> String {
@@ -265,11 +262,11 @@ fn do_subpath_code(
 
 /// Inspect a segment as a single-line structural string.
 pub fn segment(segment: svg_path.Segment) -> String {
-  segment_with_options(segment, default_options())
+  segment_with(segment, default_options())
 }
 
 /// Inspect a segment as a single-line structural string with custom options.
-pub fn segment_with_options(
+pub fn segment_with(
   segment segment: svg_path.Segment,
   options options: Options,
 ) -> String {
@@ -335,11 +332,11 @@ fn do_segment(
 /// The generated code assumes the `svg_path` package is imported as
 /// `svg_path`.
 pub fn segment_code(segment: svg_path.Segment) -> String {
-  segment_code_with_options(segment, default_options())
+  segment_code_with(segment, default_options())
 }
 
 /// Inspect a segment as copy-pasteable Gleam code with custom options.
-pub fn segment_code_with_options(
+pub fn segment_code_with(
   segment segment: svg_path.Segment,
   options options: Options,
 ) -> String {

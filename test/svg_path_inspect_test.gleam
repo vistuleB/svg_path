@@ -43,7 +43,7 @@ pub fn segment_inspects_with_decimal_options_test() {
       end: svg_path.Point(12.234, 10.235),
     )
 
-  assert inspect.segment_with_options(
+  assert inspect.segment_with(
       segment,
       options: inspect.fixed_decimal_options(1),
     )
@@ -60,7 +60,7 @@ pub fn segment_inspects_with_auto_left_padding_test() {
     inspect.fixed_decimal_options(1)
     |> inspect.with_left_padding(inspect.AutoLeftPadding(inspect.Zero))
 
-  assert inspect.segment_with_options(segment, options:)
+  assert inspect.segment_with(segment, options:)
     == "Line(start=000.0,-05.0 end=120.0,010.0)"
 }
 
@@ -154,8 +154,7 @@ pub fn path_inspects_with_decimal_options_test() {
     ])
   let path = svg_path.subpath_as_path(subpath)
 
-  assert inspect.path_with_options(path, options: inspect.decimal_options(1))
-    == "Path([
+  assert inspect.path_with(path, options: inspect.decimal_options(1)) == "Path([
   Subpath(open, start=0,0, [
     Line(start=0,0 end=12.2,10.2)
   ])
@@ -235,10 +234,7 @@ pub fn code_inspection_respects_decimal_options_test() {
       end: svg_path.Point(12.234, 10.235),
     )
 
-  assert inspect.segment_code_with_options(
-      segment,
-      options: inspect.decimal_options(1),
-    )
+  assert inspect.segment_code_with(segment, options: inspect.decimal_options(1))
     == "svg_path.Line(start: svg_path.Point(0.0, 0.0), end: svg_path.Point(12.2, 10.2))"
 }
 
@@ -259,7 +255,7 @@ pub fn code_inspection_respects_auto_left_padding_test() {
     inspect.fixed_decimal_options(1)
     |> inspect.with_left_padding(inspect.AutoLeftPadding(inspect.Zero))
 
-  assert inspect.path_code_with_options(path, options:) == "svg_path.Path([
+  assert inspect.path_code_with(path, options:) == "svg_path.Path([
   svg_path.subpath_assert([
     svg_path.Line(start: svg_path.Point(000.0, -05.0), end: svg_path.Point(120.0, 010.0)),
     svg_path.Line(start: svg_path.Point(120.0, 010.0), end: svg_path.Point(002.0, -30.0))

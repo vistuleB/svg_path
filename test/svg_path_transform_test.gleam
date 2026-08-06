@@ -458,7 +458,7 @@ pub fn arc_shear_transform_test() {
   let matrix = transform.matrix(a: 1.0, b: 0.0, c: 1.0, d: 1.0, e: 0.0, f: 0.0)
   let assert Ok(transformed) = transform.segment(arc, by: matrix)
 
-  assert serialize.segment_with_options(
+  assert serialize.segment_with(
       transformed,
       options: serialize.decimal_options(3),
     )

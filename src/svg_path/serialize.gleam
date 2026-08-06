@@ -304,16 +304,13 @@ pub fn with_left_padding(
 /// Empty paths serialize to the empty string. Empty subpaths serialize as
 /// move-only subpaths. Closed subpaths end in `Z`.
 pub fn path(path: svg_path.Path) -> String {
-  path_with_options(path, default_options())
+  path_with(path, default_options())
 }
 
 /// Serialize a path with custom options.
 ///
 /// With relative options, closed subpaths end in `z`.
-pub fn path_with_options(
-  path path: svg_path.Path,
-  options options: Options,
-) -> String {
+pub fn path_with(path path: svg_path.Path, options options: Options) -> String {
   case options.relative {
     True -> {
       let format = parser_tracked_serialization_format(path, options)
@@ -334,7 +331,7 @@ pub fn path_with_options(
 /// parser state.
 ///
 /// This is an explicit relative-only spelling of the parser-tracked behavior
-/// used by `path_with_options` whenever `options.relative == True`. The supplied
+/// used by `path_with` whenever `options.relative == True`. The supplied
 /// options still control formatting, shorthand commands, whitespace, and
 /// newlines; relative commands are enabled regardless of `options.relative`.
 @internal
@@ -343,7 +340,7 @@ pub fn path_with_parser_tracked_relative_options(
   options options: Options,
 ) -> String {
   let options = Options(..options, relative: True)
-  path_with_options(path, options)
+  path_with(path, options)
 }
 
 /// Serialize a path using independently rounded relative segment parameters.
@@ -435,31 +432,31 @@ fn replace_svg_command_letters(serialized: String) -> String {
 ///
 /// Empty subpaths serialize as move-only subpaths. Closed subpaths end in `Z`.
 pub fn subpath(subpath: svg_path.Subpath) -> String {
-  subpath_with_options(subpath, default_options())
+  subpath_with(subpath, default_options())
 }
 
 /// Serialize a subpath with custom options.
 ///
 /// With relative options, closed subpaths end in `z`.
-pub fn subpath_with_options(
+pub fn subpath_with(
   subpath subpath: svg_path.Subpath,
   options options: Options,
 ) -> String {
   let format = serialization_format(options, subpath_numbers(subpath, options))
 
   case options.relative {
-    True -> path_with_options(svg_path.Path([subpath]), options)
+    True -> path_with(svg_path.Path([subpath]), options)
     False -> serialize_absolute_subpath(subpath, format)
   }
 }
 
 /// Serialize a segment with default options.
 pub fn segment(segment: svg_path.Segment) -> String {
-  segment_with_options(segment, default_options())
+  segment_with(segment, default_options())
 }
 
 /// Serialize a segment with custom options.
-pub fn segment_with_options(
+pub fn segment_with(
   segment segment: svg_path.Segment,
   options options: Options,
 ) -> String {
@@ -469,7 +466,7 @@ pub fn segment_with_options(
   case options.relative {
     True -> {
       let assert Ok(subpath) = svg_path.subpath([segment])
-      path_with_options(svg_path.Path([subpath]), options)
+      path_with(svg_path.Path([subpath]), options)
     }
     False -> {
       join_commands(

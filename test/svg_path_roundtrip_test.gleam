@@ -161,7 +161,7 @@ fn parse_and_serialize_with_options(
 ) -> Result(String, parse.Error) {
   case parse.path(input) {
     Error(error) -> Error(error)
-    Ok(path) -> Ok(serialize.path_with_options(path, options:))
+    Ok(path) -> Ok(serialize.path_with(path, options:))
   }
 }
 
@@ -182,7 +182,7 @@ fn assert_path_round_trips(
   path: svg_path.Path,
   options: serialize.Options,
 ) -> Nil {
-  let serialized = serialize.path_with_options(path, options:)
+  let serialized = serialize.path_with(path, options:)
 
   assert parse_and_serialize_with_options(serialized, options) == Ok(serialized)
 }
@@ -204,7 +204,7 @@ fn assert_path_multiline_round_trips(
   path: svg_path.Path,
   options: serialize.Options,
 ) -> Nil {
-  let serialized = serialize.path_with_options(path, options:)
+  let serialized = serialize.path_with(path, options:)
 
   assert parse_and_serialize_with_options(serialized, options) == Ok(serialized)
 

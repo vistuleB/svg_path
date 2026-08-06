@@ -47,7 +47,7 @@ pub fn tidy_path_data(input: String) -> String {
   let assert Ok(path) = parse.path(input)
   let options = serialize.decimal_options(2)
 
-  serialize.path_with_options(path, options:)
+  serialize.path_with(path, options:)
 }
 ```
 
@@ -1061,7 +1061,7 @@ import svg_path/serialize
 pub fn compact_path_data(input: String) -> String {
   let assert Ok(path) = parse.path(input)
 
-  serialize.path_with_options(path, options: serialize.minifying_options(2))
+  serialize.path_with(path, options: serialize.minifying_options(2))
 }
 ```
 
