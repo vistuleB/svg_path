@@ -344,6 +344,52 @@ pub fn subpath_poses_rejects_empty_subpath_test() {
     == Error(marker.EmptySubpath)
 }
 
+pub fn path_poses_concatenates_drawable_subpaths_and_skips_move_only_test() {
+  let first =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
+    ])
+  let second =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(20.0, 0.0),
+      svg_path.Point(20.0, 10.0),
+      svg_path.Point(30.0, 10.0),
+    ])
+  let path =
+    svg_path.Path([
+      first,
+      svg_path.subpath_empty(at: svg_path.Point(15.0, 15.0)),
+      second,
+    ])
+
+  let assert Ok(poses) = marker.path_poses(path, orient: marker.Auto)
+
+  assert list.length(poses) == 5
+  assert list.map(poses, fn(pose) {
+      let marker.MarkerPose(kind:, ..) = pose
+      kind
+    })
+    == [
+      marker.MarkerStart,
+      marker.MarkerEnd,
+      marker.MarkerStart,
+      marker.MarkerMid,
+      marker.MarkerEnd,
+    ]
+}
+
+pub fn path_poses_returns_empty_for_empty_and_move_only_paths_test() {
+  assert marker.path_poses(svg_path.path_empty(), orient: marker.Auto) == Ok([])
+  assert marker.path_poses(
+      svg_path.Path([
+        svg_path.subpath_empty(at: svg_path.Point(1.0, 2.0)),
+      ]),
+      orient: marker.Auto,
+    )
+    == Ok([])
+}
+
 fn basic_pose() -> marker.MarkerPose {
   marker.MarkerPose(
     kind: marker.MarkerEnd,

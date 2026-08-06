@@ -989,7 +989,7 @@ pub fn subpath_segments(subpath: Subpath) -> List(Segment) {
 ///
 /// If cleanup would remove every segment, one zero-length line is preserved so
 /// a zero-length drawing subpath does not become a move-only subpath.
-pub fn subpath_clean(subpath: Subpath) -> Subpath {
+pub fn subpath_normalize_zero_length_lines(subpath: Subpath) -> Subpath {
   let cleaned =
     subpath.segments
     |> list.filter(keeping: fn(segment) { !is_zero_length_line(segment) })
@@ -3076,128 +3076,63 @@ pub fn segment_projection_with(
   to segment: Segment,
   options options: DistanceOptions,
 ) -> Result(SegmentProjection, Error) {
-  segment_projection_by_polynomial_with(point, to: segment, options:)
-}
-
-/// Internal sampling projection retained for arcs and regression tests.
-@internal
-pub fn segment_projection_by_sampling(
-  point: Point,
-  to segment: Segment,
-) -> Result(SegmentProjection, Error) {
-  segment_projection_by_sampling_with(
-    point,
-    to: segment,
-    options: default_distance_options(),
-  )
-}
-
-/// Internal sampling projection with explicit options.
-fn segment_projection_by_sampling_with(
-  point: Point,
-  to segment: Segment,
-  options options: DistanceOptions,
-) -> Result(SegmentProjection, Error) {
-  segment_projection_by_sampling_with_polish(
-    point,
-    segment,
-    options,
-    polish_iterations: options.max_iterations,
-  )
-}
-
-fn segment_projection_by_sampling_with_polish(
-  point: Point,
-  segment: Segment,
-  options: DistanceOptions,
-  polish_iterations polish_iterations: Int,
-) -> Result(SegmentProjection, Error) {
-  case validate_distance_options(options) {
-    Error(error) -> Error(error)
-    Ok(Nil) -> {
-      case segment {
-        Line(start:, end:) -> Ok(point_to_line_projection(point, start, end))
-        QuadraticBezier(..) | CubicBezier(..) | Arc(..) -> {
-          case
-            distance_candidates_from_sampling_windows(
-              point,
-              segment,
-              options,
-              polish_iterations,
-            )
-          {
-            Error(error) -> Error(error)
-            Ok(candidates) ->
-              smallest_segment_projection(point, segment, candidates)
-          }
-        }
-      }
-    }
-  }
-}
-
-/// Return the nearest point using polynomial stationary-point enumeration for
-/// quadratic and cubic Beziers.
-///
-/// Lines remain analytic. Arcs retain the sampling-based implementation.
-@internal
-pub fn segment_projection_by_polynomial(
-  point: Point,
-  to segment: Segment,
-) -> Result(SegmentProjection, Error) {
-  segment_projection_by_polynomial_with(
-    point,
-    to: segment,
-    options: default_distance_options(),
-  )
-}
-
-/// Return the nearest point using polynomial stationary-point enumeration and
-/// explicit options.
-fn segment_projection_by_polynomial_with(
-  point: Point,
-  to segment: Segment,
-  options options: DistanceOptions,
-) -> Result(SegmentProjection, Error) {
   use _ <- result.try(validate_distance_options(options))
   case segment {
     Line(start:, end:) -> Ok(point_to_line_projection(point, start, end))
-    Arc(..) -> segment_projection_by_sampling_with(point, to: segment, options:)
-    QuadraticBezier(..) | CubicBezier(..) -> {
-      use coefficients <- result.try(distance_stationary_polynomial(
+    Arc(..) -> arc_projection_with(point, segment, options)
+    QuadraticBezier(..) | CubicBezier(..) ->
+      bezier_projection_with(point, segment, options)
+  }
+}
+
+fn arc_projection_with(
+  point: Point,
+  segment: Segment,
+  options: DistanceOptions,
+) -> Result(SegmentProjection, Error) {
+  use candidates <- result.try(arc_projection_candidates(
+    point,
+    segment,
+    options,
+    options.max_iterations,
+  ))
+  smallest_segment_projection(point, segment, candidates)
+}
+
+fn bezier_projection_with(
+  point: Point,
+  segment: Segment,
+  options: DistanceOptions,
+) -> Result(SegmentProjection, Error) {
+  use coefficients <- result.try(distance_stationary_polynomial(point, segment))
+  let polynomial_options =
+    root.PolynomialOptions(
+      coefficient_tolerance: 0.000000000001,
+      root_tolerance: options.tolerance,
+      value_tolerance: 0.000000000001,
+      max_iterations: options.max_iterations,
+    )
+  use isolations <- result.try(
+    root.polynomial_root_isolations_with(
+      coefficients,
+      from: 0.0,
+      to: 1.0,
+      options: polynomial_options,
+    )
+    |> result.map_error(distance_root_error),
+  )
+  use polished_roots <- result.try(
+    isolations
+    |> list.try_map(fn(isolation) {
+      refine_isolated_distance_root_by_bisection(
         point,
         segment,
-      ))
-      let polynomial_options =
-        root.PolynomialOptions(
-          coefficient_tolerance: 0.000000000001,
-          root_tolerance: options.tolerance,
-          value_tolerance: 0.000000000001,
-          max_iterations: options.max_iterations,
-        )
-      use isolations <- result.try(
-        root.polynomial_root_isolations_with(
-          coefficients,
-          from: 0.0,
-          to: 1.0,
-          options: polynomial_options,
-        )
-        |> result.map_error(distance_root_error),
+        options,
+        isolation,
       )
-      use polished_roots <- result.try(
-        isolations
-        |> list.try_map(fn(isolation) {
-          refine_isolated_distance_root_by_bisection(
-            point,
-            segment,
-            options,
-            isolation,
-          )
-        }),
-      )
-      smallest_segment_projection(point, segment, [0.0, 1.0, ..polished_roots])
-    }
-  }
+    }),
+  )
+  smallest_segment_projection(point, segment, [0.0, 1.0, ..polished_roots])
 }
 
 /// Return the nearest point on a subpath to an input point.
@@ -3334,6 +3269,25 @@ pub fn path_winding_with(
 ) -> Result(PathWinding, Error) {
   use _ <- result.try(validate_containment_options(options))
   path_winding_loop(point, path.subpaths, options, winding: 0)
+}
+
+/// Return the shortest distance from a point to a subpath.
+pub fn subpath_distance(
+  point: Point,
+  to subpath: Subpath,
+) -> Result(Float, Error) {
+  subpath_distance_with(point, to: subpath, options: default_distance_options())
+}
+
+/// Return the shortest distance from a point to a subpath using explicit
+/// options.
+pub fn subpath_distance_with(
+  point: Point,
+  to subpath: Subpath,
+  options options: DistanceOptions,
+) -> Result(Float, Error) {
+  subpath_projection_with(point, to: subpath, options:)
+  |> result.map(fn(projection) { projection.distance })
 }
 
 /// Return the shortest distance from a point to a path.
@@ -5113,7 +5067,7 @@ fn distance_root_error(error: root.Error) -> Error {
   }
 }
 
-fn distance_candidates_from_sampling_windows(
+fn arc_projection_candidates(
   point: Point,
   segment: Segment,
   options: DistanceOptions,
@@ -5122,7 +5076,7 @@ fn distance_candidates_from_sampling_windows(
   case distance_stationary_value(point, segment, 0.0) {
     Error(error) -> Error(error)
     Ok(first_value) -> {
-      scan_distance_candidates(
+      scan_arc_projection_candidates(
         point,
         segment,
         options,
@@ -5136,7 +5090,7 @@ fn distance_candidates_from_sampling_windows(
   }
 }
 
-fn scan_distance_candidates(
+fn scan_arc_projection_candidates(
   point: Point,
   segment: Segment,
   options: DistanceOptions,
@@ -5155,7 +5109,7 @@ fn scan_distance_candidates(
         Error(error) -> Error(error)
         Ok(next_value) -> {
           case
-            distance_candidate_for_window(
+            arc_projection_candidate_for_window(
               point,
               segment,
               options,
@@ -5168,7 +5122,7 @@ fn scan_distance_candidates(
           {
             Error(error) -> Error(error)
             Ok(None) ->
-              scan_distance_candidates(
+              scan_arc_projection_candidates(
                 point,
                 segment,
                 options,
@@ -5179,7 +5133,7 @@ fn scan_distance_candidates(
                 candidates:,
               )
             Ok(Some(candidate)) ->
-              scan_distance_candidates(
+              scan_arc_projection_candidates(
                 point,
                 segment,
                 options,
@@ -5200,7 +5154,7 @@ fn scan_distance_candidates(
   }
 }
 
-fn distance_candidate_for_window(
+fn arc_projection_candidate_for_window(
   point: Point,
   segment: Segment,
   options: DistanceOptions,
@@ -5219,7 +5173,7 @@ fn distance_candidate_for_window(
           case same_sign(previous_value, next_value) {
             True -> Ok(None)
             False ->
-              refine_distance_window_by_bisection(
+              refine_arc_projection_window_by_bisection(
                 point,
                 segment,
                 options,
@@ -5235,7 +5189,7 @@ fn distance_candidate_for_window(
   }
 }
 
-fn refine_distance_window_by_bisection(
+fn refine_arc_projection_window_by_bisection(
   point: Point,
   segment: Segment,
   options: DistanceOptions,
@@ -5244,7 +5198,7 @@ fn refine_distance_window_by_bisection(
   left_value: Float,
   right_t: Float,
 ) -> Result(Option(Float), Error) {
-  refine_distance_window_by_bisection_loop(
+  refine_arc_projection_window_by_bisection_loop(
     point,
     segment,
     options.tolerance,
@@ -5257,7 +5211,7 @@ fn refine_distance_window_by_bisection(
   |> result.map(Some)
 }
 
-fn refine_distance_window_by_bisection_loop(
+fn refine_arc_projection_window_by_bisection_loop(
   point: Point,
   segment: Segment,
   tolerance: Float,
@@ -5286,7 +5240,7 @@ fn refine_distance_window_by_bisection_loop(
         segment,
         estimate,
       ))
-      polish_distance_window_by_bisection(
+      polish_arc_projection_window_by_bisection(
         point,
         segment,
         left_t,
@@ -5316,7 +5270,7 @@ fn refine_distance_window_by_bisection_loop(
             False ->
               case same_sign(left_value, midpoint_value) {
                 True ->
-                  refine_distance_window_by_bisection_loop(
+                  refine_arc_projection_window_by_bisection_loop(
                     point,
                     segment,
                     tolerance,
@@ -5327,7 +5281,7 @@ fn refine_distance_window_by_bisection_loop(
                     polish_iterations,
                   )
                 False ->
-                  refine_distance_window_by_bisection_loop(
+                  refine_arc_projection_window_by_bisection_loop(
                     point,
                     segment,
                     tolerance,
@@ -5344,7 +5298,7 @@ fn refine_distance_window_by_bisection_loop(
   }
 }
 
-fn polish_distance_window_by_bisection(
+fn polish_arc_projection_window_by_bisection(
   point: Point,
   segment: Segment,
   left_t: Float,
@@ -5390,7 +5344,7 @@ fn polish_distance_window_by_bisection(
       case proposal == estimate || !progressing {
         True -> Ok(estimate)
         False ->
-          polish_distance_window_by_bisection(
+          polish_arc_projection_window_by_bisection(
             point,
             segment,
             next_left,
@@ -5430,7 +5384,7 @@ fn refine_isolated_distance_root_by_bisection(
         // crossing bracket for the parent polynomial.
         True -> Ok(estimate)
         False ->
-          refine_distance_window_by_bisection_loop(
+          refine_arc_projection_window_by_bisection_loop(
             point,
             segment,
             options.tolerance,

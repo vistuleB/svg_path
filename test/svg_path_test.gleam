@@ -1219,7 +1219,9 @@ pub fn path_map_and_filter_subpaths_compose_after_combine_test() {
     |> svg_path.path_filter_subpaths(keeping: fn(subpath) {
       !list.is_empty(svg_path.subpath_segments(subpath))
     })
-    |> svg_path.path_map_subpaths(with: svg_path.subpath_clean)
+    |> svg_path.path_map_subpaths(
+      with: svg_path.subpath_normalize_zero_length_lines,
+    )
 
   let assert [cleaned] = svg_path.path_subpaths(combined)
   assert svg_path.subpath_segments(cleaned) == [first, second]
@@ -1784,7 +1786,9 @@ pub fn clean_subpath_removes_zero_length_lines_test() {
   let second = svg_path.Line(start: b, end: c)
   let subpath = svg_path.subpath_assert([first, zero, second])
 
-  assert subpath |> svg_path.subpath_clean |> svg_path.subpath_segments
+  assert subpath
+    |> svg_path.subpath_normalize_zero_length_lines
+    |> svg_path.subpath_segments
     == [first, second]
 }
 
@@ -1793,7 +1797,9 @@ pub fn clean_subpath_keeps_single_zero_length_line_test() {
   let zero = svg_path.Line(start: a, end: a)
   let subpath = svg_path.subpath_assert([zero])
 
-  assert subpath |> svg_path.subpath_clean |> svg_path.subpath_segments
+  assert subpath
+    |> svg_path.subpath_normalize_zero_length_lines
+    |> svg_path.subpath_segments
     == [zero]
 }
 
@@ -1802,7 +1808,9 @@ pub fn clean_subpath_reduces_multiple_zero_length_lines_to_one_test() {
   let zero = svg_path.Line(start: a, end: a)
   let subpath = svg_path.subpath_assert([zero, zero])
 
-  assert subpath |> svg_path.subpath_clean |> svg_path.subpath_segments
+  assert subpath
+    |> svg_path.subpath_normalize_zero_length_lines
+    |> svg_path.subpath_segments
     == [zero]
 }
 
@@ -1817,7 +1825,7 @@ pub fn clean_subpath_preserves_closed_state_test() {
     ])
     |> svg_path.subpath_assert_set_closed(closed: True)
 
-  let cleaned = svg_path.subpath_clean(subpath)
+  let cleaned = svg_path.subpath_normalize_zero_length_lines(subpath)
 
   assert svg_path.subpath_is_closed(cleaned)
   assert svg_path.subpath_segments(cleaned)
@@ -1907,7 +1915,11 @@ pub fn path_map_subpaths_maps_each_subpath_test() {
       second_subpath,
     ])
 
-  let cleaned = path |> svg_path.path_map_subpaths(with: svg_path.subpath_clean)
+  let cleaned =
+    path
+    |> svg_path.path_map_subpaths(
+      with: svg_path.subpath_normalize_zero_length_lines,
+    )
   let assert [empty, cleaned_first, empty_again, cleaned_second] =
     svg_path.path_subpaths(cleaned)
 

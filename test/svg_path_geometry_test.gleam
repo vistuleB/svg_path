@@ -8,18 +8,6 @@ import svg_path/intersections
 
 const tolerance = 0.000001
 
-type ProjectionComparisonStats {
-  ProjectionComparisonStats(
-    improvements: Int,
-    improvement_sum: Float,
-    largest_improvement: Float,
-    regressions: Int,
-    regression_sum: Float,
-    largest_regression: Float,
-    ties: Int,
-  )
-}
-
 fn projection_comparison_segments() -> List(svg_path.Segment) {
   [
     svg_path.QuadraticBezier(
@@ -1228,7 +1216,7 @@ pub fn segment_projection_returns_curve_parameter_point_and_distance_test() {
   assert near(distance, 5.0)
 }
 
-pub fn polynomial_projection_returns_quadratic_parameter_point_and_distance_test() {
+pub fn projection_returns_quadratic_parameter_point_and_distance_test() {
   let curve =
     svg_path.QuadraticBezier(
       start: svg_path.Point(0.0, 0.0),
@@ -1237,105 +1225,11 @@ pub fn polynomial_projection_returns_quadratic_parameter_point_and_distance_test
     )
 
   let assert Ok(svg_path.SegmentProjection(t:, point:, distance:)) =
-    svg_path.segment_projection_by_polynomial(
-      svg_path.Point(10.0, 15.0),
-      to: curve,
-    )
+    svg_path.segment_projection(svg_path.Point(10.0, 15.0), to: curve)
 
   assert near(t, 0.5)
   assert point_near(point, svg_path.Point(10.0, 10.0))
   assert near(distance, 5.0)
-}
-
-pub fn sampling_and_polynomial_projection_agree_on_bezier_distances_test() {
-  let segments = [
-    svg_path.QuadraticBezier(
-      start: svg_path.Point(-3.0, 1.0),
-      control: svg_path.Point(2.0, 9.0),
-      end: svg_path.Point(8.0, -2.0),
-    ),
-    svg_path.CubicBezier(
-      start: svg_path.Point(-4.0, -1.0),
-      control1: svg_path.Point(9.0, 13.0),
-      control2: svg_path.Point(-8.0, 12.0),
-      end: svg_path.Point(7.0, -3.0),
-    ),
-  ]
-  let points = [
-    svg_path.Point(-7.0, -5.0),
-    svg_path.Point(-2.0, 6.0),
-    svg_path.Point(0.0, 0.0),
-    svg_path.Point(3.0, 8.0),
-    svg_path.Point(10.0, 4.0),
-  ]
-
-  segments
-  |> list.each(fn(segment) {
-    points
-    |> list.each(fn(point) {
-      let assert Ok(svg_path.SegmentProjection(distance: sampled, ..)) =
-        svg_path.segment_projection_by_sampling(point, to: segment)
-      let assert Ok(svg_path.SegmentProjection(distance: polynomial, ..)) =
-        svg_path.segment_projection_by_polynomial(point, to: segment)
-      assert near(sampled, polynomial)
-    })
-  })
-}
-
-pub fn polynomial_projection_is_not_worse_on_bezier_comparison_grid_test() {
-  let segments = projection_comparison_segments()
-  let coordinates = projection_comparison_coordinates()
-
-  let stats =
-    segments
-    |> list.fold(
-      ProjectionComparisonStats(0, 0.0, 0.0, 0, 0.0, 0.0, 0),
-      fn(stats, segment) {
-        coordinates
-        |> list.fold(stats, fn(stats, x) {
-          coordinates
-          |> list.fold(stats, fn(stats, y) {
-            let point = svg_path.Point(x, y)
-            let assert Ok(svg_path.SegmentProjection(distance: sampled, ..)) =
-              svg_path.segment_projection_by_sampling(point, to: segment)
-            let assert Ok(svg_path.SegmentProjection(distance: polynomial, ..)) =
-              svg_path.segment_projection_by_polynomial(point, to: segment)
-            let difference = sampled -. polynomial
-            case difference {
-              difference if difference >. 0.0 ->
-                ProjectionComparisonStats(
-                  ..stats,
-                  improvements: stats.improvements + 1,
-                  improvement_sum: stats.improvement_sum +. difference,
-                  largest_improvement: float.max(
-                    stats.largest_improvement,
-                    difference,
-                  ),
-                )
-              difference if difference <. 0.0 -> {
-                let regression = 0.0 -. difference
-                ProjectionComparisonStats(
-                  ..stats,
-                  regressions: stats.regressions + 1,
-                  regression_sum: stats.regression_sum +. regression,
-                  largest_regression: float.max(
-                    stats.largest_regression,
-                    regression,
-                  ),
-                )
-              }
-              _ -> ProjectionComparisonStats(..stats, ties: stats.ties + 1)
-            }
-          })
-        })
-      },
-    )
-
-  assert stats.improvements + stats.regressions + stats.ties == 324
-  assert stats.improvement_sum /. int.to_float(stats.improvements) <. tolerance
-  assert stats.regression_sum /. int.to_float(stats.regressions) <. tolerance
-  assert stats.largest_improvement <. tolerance
-  assert stats.largest_regression <=. tolerance
 }
 
 pub fn polished_bezier_projections_have_small_tangential_error_test() {
@@ -1346,21 +1240,11 @@ pub fn polished_bezier_projections_have_small_tangential_error_test() {
       projection_comparison_coordinates()
       |> list.each(fn(y) {
         let query = svg_path.Point(x, y)
-        let assert Ok(svg_path.SegmentProjection(t: sampling_t, ..)) =
-          svg_path.segment_projection_by_sampling(query, to: segment)
-        let assert Ok(svg_path.SegmentProjection(t: polynomial_t, ..)) =
-          svg_path.segment_projection_by_polynomial(query, to: segment)
-        case sampling_t >. 0.0 && sampling_t <. 1.0 {
+        let assert Ok(svg_path.SegmentProjection(t:, ..)) =
+          svg_path.segment_projection(query, to: segment)
+        case t >. 0.0 && t <. 1.0 {
           True -> {
-            assert projection_tangential_error(query, segment, sampling_t)
-              <. 0.0000001
-          }
-          False -> Nil
-        }
-        case polynomial_t >. 0.0 && polynomial_t <. 1.0 {
-          True -> {
-            assert projection_tangential_error(query, segment, polynomial_t)
-              <. 0.0000001
+            assert projection_tangential_error(query, segment, t) <. 0.0000001
           }
           False -> Nil
         }
@@ -1377,24 +1261,14 @@ pub fn projection_handles_unreliable_near_cusp_tangent_test() {
       end: svg_path.Point(0.00000001, 0.0),
     )
   let query = svg_path.Point(0.5, 0.6)
-  let assert Ok(svg_path.SegmentProjection(
-    t: sampling_t,
-    distance: sampling_distance,
-    ..,
-  )) = svg_path.segment_projection_by_sampling(query, to: segment)
-  let assert Ok(svg_path.SegmentProjection(
-    t: polynomial_t,
-    distance: polynomial_distance,
-    ..,
-  )) = svg_path.segment_projection_by_polynomial(query, to: segment)
+  let assert Ok(svg_path.SegmentProjection(t:, distance:, ..)) =
+    svg_path.segment_projection(query, to: segment)
 
-  assert sampling_t >=. 0.0 && sampling_t <=. 1.0
-  assert polynomial_t >=. 0.0 && polynomial_t <=. 1.0
-  assert sampling_distance >=. 0.0
-  assert polynomial_distance >=. 0.0
+  assert t >=. 0.0 && t <=. 1.0
+  assert distance >=. 0.0
 }
 
-pub fn polynomial_projection_of_bezier_points_respects_tolerance_test() {
+pub fn projection_of_bezier_points_respects_tolerance_test() {
   let segments = [
     svg_path.QuadraticBezier(
       start: svg_path.Point(0.0, 0.0),
@@ -1416,7 +1290,7 @@ pub fn polynomial_projection_of_bezier_points_respects_tolerance_test() {
     |> list.each(fn(t) {
       let assert Ok(point) = svg_path.segment_point(segment, at: t)
       let assert Ok(svg_path.SegmentProjection(distance:, ..)) =
-        svg_path.segment_projection_by_polynomial(point, to: segment)
+        svg_path.segment_projection(point, to: segment)
       assert distance <=. 0.000000001
     })
   })
@@ -1902,6 +1776,21 @@ pub fn path_distance_returns_projection_distance_test() {
 
   let assert Ok(distance) =
     svg_path.path_distance(svg_path.Point(4.0, 3.0), to: path)
+
+  assert near(distance, 3.0)
+}
+
+pub fn subpath_distance_returns_projection_distance_test() {
+  let subpath =
+    svg_path.subpath_assert([
+      svg_path.Line(
+        start: svg_path.Point(0.0, 0.0),
+        end: svg_path.Point(10.0, 0.0),
+      ),
+    ])
+
+  let assert Ok(distance) =
+    svg_path.subpath_distance(svg_path.Point(4.0, 3.0), to: subpath)
 
   assert near(distance, 3.0)
 }

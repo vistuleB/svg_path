@@ -157,6 +157,25 @@ pub fn subpath_poses(
   }
 }
 
+/// Return marker poses for every drawable subpath of a path.
+///
+/// Each subpath receives its own `MarkerStart` and `MarkerEnd` poses. Move-only
+/// subpaths are skipped, and an empty or move-only path returns an empty list.
+pub fn path_poses(
+  path: svg_path.Path,
+  orient orient: MarkerOrient,
+) -> Result(List(MarkerPose), Error) {
+  use poses <- result.try(
+    path
+    |> svg_path.path_subpaths
+    |> list.filter(fn(subpath) {
+      !list.is_empty(svg_path.subpath_segments(subpath))
+    })
+    |> list.try_map(fn(subpath) { subpath_poses(subpath, orient:) }),
+  )
+  Ok(list.flatten(poses))
+}
+
 /// Return a transform that places marker-local coordinates at a pose.
 ///
 /// The returned matrix rotates marker-local coordinates by the pose angle, then

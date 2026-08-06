@@ -737,6 +737,20 @@ pub fn csg_union_pairs_filled_sectors_at_corner_pinch_test() {
   |> should.equal(Ok(svg_path.Inside))
 }
 
+pub fn subpath_direction_arrows_draws_one_arrow_per_segment_test() {
+  let subpath =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
+      svg_path.Point(10.0, 10.0),
+    ])
+
+  subpath
+  |> arrangement_graph_drawing.subpath_direction_arrows("red")
+  |> list.length
+  |> should.equal(2)
+}
+
 fn closed_subpath(segments: List(svg_path.Segment)) -> svg_path.Subpath {
   svg_path.subpath_assert(segments)
   |> svg_path.subpath_assert_set_closed(closed: True)

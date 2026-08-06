@@ -84,13 +84,13 @@ pub fn segment_overlap_left_parameter(
 /// this module's mixed geometric/normalized-parameter convention. `samples`
 /// must be positive.
 @internal
-pub fn segment_overlaps_by_endpoint_projection_with(
+pub fn segment_with_samples(
   left: svg_path.Segment,
   right: svg_path.Segment,
   tolerance tolerance: Float,
   samples samples: Int,
 ) -> Result(List(SegmentOverlap), svg_path.Error) {
-  use detected <- result.try(overlap_detection.detect_with(
+  use detected <- result.try(overlap_detection.detect_with_samples(
     left,
     right,
     tolerance:,

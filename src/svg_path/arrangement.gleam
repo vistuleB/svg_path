@@ -507,7 +507,7 @@ fn pair_cuts(
   let IndexedSegment(index: left_index, segment: left_segment, ..) = left
   let IndexedSegment(index: right_index, segment: right_segment, ..) = right
   use found_overlaps <- result.try(
-    overlaps.segment_overlaps_by_endpoint_projection_with(
+    overlaps.segment_with_samples(
       left_segment,
       right_segment,
       tolerance:,
@@ -811,12 +811,7 @@ fn find_semantic_edge(
     [] -> Ok(None)
     [ArrangementEdge(id:, segment: existing, ..), ..rest] -> {
       use found <- result.try(
-        overlaps.segment_overlaps_by_endpoint_projection_with(
-          existing,
-          segment,
-          tolerance:,
-          samples: 7,
-        )
+        overlaps.segment_with_samples(existing, segment, tolerance:, samples: 7)
         |> result.map_error(PathError),
       )
       case found {

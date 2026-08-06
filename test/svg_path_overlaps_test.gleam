@@ -107,12 +107,7 @@ pub fn endpoint_projection_overlap_finds_partial_line_overlap_test() {
     )
 
   let assert Ok([overlap]) =
-    overlaps.segment_overlaps_by_endpoint_projection_with(
-      left,
-      right,
-      tolerance:,
-      samples: 5,
-    )
+    overlaps.segment_with_samples(left, right, tolerance:, samples: 5)
   let overlaps.SegmentOverlap(left_from:, left_to:, right_from:, right_to:, ..) =
     overlap
   assert near(left_from, 0.3)
@@ -134,12 +129,7 @@ pub fn endpoint_projection_overlap_preserves_reversed_line_overlap_test() {
     )
 
   let assert Ok([overlap]) =
-    overlaps.segment_overlaps_by_endpoint_projection_with(
-      left,
-      right,
-      tolerance:,
-      samples: 5,
-    )
+    overlaps.segment_with_samples(left, right, tolerance:, samples: 5)
   let overlaps.SegmentOverlap(right_from:, right_to:, ..) = overlap
   assert near(right_from, 1.0)
   assert near(right_to, 0.0)
@@ -157,12 +147,7 @@ pub fn endpoint_projection_overlap_finds_semantically_equal_arcs_test() {
     )
 
   let assert Ok([overlap]) =
-    overlaps.segment_overlaps_by_endpoint_projection_with(
-      arc(),
-      same_geometry,
-      tolerance:,
-      samples: 9,
-    )
+    overlaps.segment_with_samples(arc(), same_geometry, tolerance:, samples: 9)
   assert overlap == segment_overlap(0.0, 1.0, 0.0, 1.0)
 }
 
@@ -177,12 +162,7 @@ pub fn endpoint_projection_overlap_rejects_opposite_semicircles_test() {
       end: svg_path.Point(10.0, 0.0),
     )
 
-  assert overlaps.segment_overlaps_by_endpoint_projection_with(
-      arc(),
-      opposite,
-      tolerance:,
-      samples: 9,
-    )
+  assert overlaps.segment_with_samples(arc(), opposite, tolerance:, samples: 9)
     == Ok([])
 }
 
@@ -192,12 +172,7 @@ pub fn overlap_detection_rejects_negative_tolerance_test() {
 }
 
 pub fn endpoint_projection_overlap_rejects_nonpositive_samples_test() {
-  assert overlaps.segment_overlaps_by_endpoint_projection_with(
-      line(),
-      line(),
-      tolerance:,
-      samples: 0,
-    )
+  assert overlaps.segment_with_samples(line(), line(), tolerance:, samples: 0)
     == Error(svg_path.InvalidOverlapSamples(0))
 }
 

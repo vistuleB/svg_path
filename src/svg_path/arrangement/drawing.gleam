@@ -328,6 +328,45 @@ pub fn segment_direction_arrow_with(
   }
 }
 
+/// Draw endpoint arrowheads for every segment of a subpath.
+pub fn subpath_direction_arrows(
+  subpath: svg_path.Subpath,
+  color: String,
+) -> svg.ThingsToDraw {
+  subpath_direction_arrows_with(
+    subpath,
+    color,
+    length_scale: 1.0,
+    width_scale: 1.0,
+    arrival_offset: 0.0,
+    opacity: 1.0,
+  )
+}
+
+/// Draw independently scaled endpoint arrowheads for every segment of a
+/// subpath.
+pub fn subpath_direction_arrows_with(
+  subpath: svg_path.Subpath,
+  color: String,
+  length_scale length_scale: Float,
+  width_scale width_scale: Float,
+  arrival_offset arrival_offset: Float,
+  opacity opacity: Float,
+) -> svg.ThingsToDraw {
+  subpath
+  |> svg_path.subpath_segments
+  |> list.filter_map(fn(segment) {
+    segment_direction_arrow_with(
+      segment,
+      color,
+      length_scale:,
+      width_scale:,
+      arrival_offset:,
+      opacity:,
+    )
+  })
+}
+
 /// Draw endpoint arrowheads for every segment of a path.
 pub fn path_direction_arrows(
   path: svg_path.Path,
@@ -354,10 +393,9 @@ pub fn path_direction_arrows_with(
 ) -> svg.ThingsToDraw {
   path
   |> svg_path.path_subpaths
-  |> list.flat_map(svg_path.subpath_segments)
-  |> list.filter_map(fn(segment) {
-    segment_direction_arrow_with(
-      segment,
+  |> list.flat_map(fn(subpath) {
+    subpath_direction_arrows_with(
+      subpath,
       color,
       length_scale:,
       width_scale:,

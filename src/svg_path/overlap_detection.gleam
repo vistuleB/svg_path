@@ -258,7 +258,7 @@ fn insert_overlap_loop(
 /// proposed right interval. Compatible proposals are merged into maximal
 /// intervals.
 @internal
-pub fn detect_with(
+pub fn detect_with_samples(
   left: svg_path.Segment,
   right: svg_path.Segment,
   tolerance tolerance: Float,
@@ -300,7 +300,7 @@ pub fn detect(
   right: svg_path.Segment,
   tolerance tolerance: Float,
 ) -> Result(List(RawOverlap), svg_path.Error) {
-  detect_with(left, right, tolerance:, samples: overlap_samples)
+  detect_with_samples(left, right, tolerance:, samples: overlap_samples)
 }
 
 fn endpoint_projections(

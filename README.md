@@ -288,10 +288,11 @@ pub fn closed_triangle() -> Result(svg_path.Subpath, svg_path.Error) {
 }
 ```
 
-Use `svg_path.subpath_clean(subpath)` to remove zero-length segments from a
-`Subpath`. Note that `subpath_clean` will preserve at least one zero-length
-segment of a nonempty `Subpath` in all cases, though it will not add any new
-segments if `subpath_segments(subpath) == []` to start with.
+Use `svg_path.subpath_normalize_zero_length_lines(subpath)` to remove
+zero-length line segments from a `Subpath`. Note that
+`subpath_normalize_zero_length_lines` preserves at least one zero-length
+segment of a nonempty `Subpath`, though it does not add any new segments if
+`subpath_segments(subpath) == []` to start with.
 
 ### Paths
 
@@ -1105,7 +1106,8 @@ command "supplying" a zero-length line segment to the subpath:
 <path d="M 260,300 Z" style="fill:none; stroke:black; stroke-width:24; stroke-linecap:square;" />
 ```
 
-For that reason, `svg_path.subpath_clean` keeps one zero-length line if a
+For that reason, `svg_path.subpath_normalize_zero_length_lines` keeps one
+zero-length line if a
 subpath consists only of zero-length lines, preserving the difference between a
 zero-length subpath and a move-only subpath. It does this even for closed
 subpaths, where the choice is mainly about preserving internal representation
