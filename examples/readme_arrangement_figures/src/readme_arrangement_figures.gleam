@@ -288,9 +288,15 @@ fn semantic_circle_overlap() -> String {
           14,
         ),
         svg.Text(
-          "4 vertices · 4 geometric edges · every edge has one occurrence per direction",
+          "4 vertices · 4 geometric edges",
           legend_style("#475569", "middle"),
-          svg_path.Point(705.0, 424.0),
+          svg_path.Point(705.0, 410.0),
+          14,
+        ),
+        svg.Text(
+          "every edge has one occurrence per direction",
+          legend_style("#475569", "middle"),
+          svg_path.Point(705.0, 436.0),
           14,
         ),
         svg.Text(
