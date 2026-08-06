@@ -9,6 +9,25 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
+## 0.33.0 - 2026-08-06
+
+### Added
+
+- Added subpath distance queries, path-level marker poses, and subpath-level
+  direction-arrow drawing helpers to complete their segment/subpath/path
+  function families.
+
+### Changed
+
+- Renamed `subpath_clean` to `subpath_normalize_zero_length_lines` to state its
+  narrow normalization contract explicitly.
+- Standardized configurable serializer and inspector function names by
+  replacing their `_with_options` suffixes with `_with`.
+- Simplified internal overlap sampling names and separated production segment
+  projection into analytic line, sampled arc, and polynomial Bezier paths.
+- Removed the retired general Bezier sampling comparison path while retaining
+  fixed and numerical-quality projection regressions.
+
 ## 0.32.0 - 2026-08-06
 
 - Renamed the public `svg_path/arrangement_graph` module to the shorter
