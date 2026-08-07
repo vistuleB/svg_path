@@ -9,6 +9,23 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
+## 0.34.0 - 2026-08-07
+
+### Added
+
+- Added `transform.path_gracefully`, the path-level counterpart of
+  `transform.subpath_gracefully`, for transforms that may collapse arcs into
+  line geometry.
+
+### Changed
+
+- Completed the configurable-function naming convention by renaming
+  `inspect.point_with_options`, `inspect.point_code_with_options`, and
+  `transform/serialize.to_string_with_options` to their corresponding `_with`
+  names.
+- Revised the package description to summarize parsing, serialization, and
+  computational geometry without enumerating individual features.
+
 ## 0.33.0 - 2026-08-06
 
 ### Added
