@@ -12,6 +12,7 @@ import gleam/order
 import gleam/result
 import svg_path/bezier
 import svg_path/ellipse
+import svg_path/internal/number
 import svg_path/root
 import svg_path/trig
 
@@ -7770,7 +7771,7 @@ fn first_and_last_segments(
 }
 
 fn distance(a: Point, b: Point) -> Float {
-  distance_squared(a, b) |> float_square_root
+  number.hypot(a.x -. b.x, a.y -. b.y)
 }
 
 fn distance_squared(a: Point, b: Point) -> Float {

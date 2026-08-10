@@ -52,6 +52,13 @@ pub fn dot_cross_norm_and_distance_test() {
   assert point.distance(a, b) == 5.0
 }
 
+pub fn norm_and_distance_avoid_intermediate_overflow_test() {
+  let large = svg_path.Point(1.0e200, 0.0)
+
+  assert point.norm(large) == 1.0e200
+  assert point.distance(svg_path.Point(0.0, 0.0), large) == 1.0e200
+}
+
 pub fn midpoint_and_lerp_test() {
   let a = svg_path.Point(0.0, 10.0)
   let b = svg_path.Point(10.0, 30.0)

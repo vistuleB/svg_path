@@ -2,6 +2,7 @@
 
 import gleam/float
 import svg_path
+import svg_path/internal/number
 import svg_path/trig
 
 /// The unit vector pointing right.
@@ -90,7 +91,7 @@ pub fn norm_squared(point: svg_path.Point) -> Float {
 
 /// Return the Euclidean norm of a point as a vector.
 pub fn norm(point: svg_path.Point) -> Float {
-  norm_squared(point) |> square_root
+  number.hypot(point.x, point.y)
 }
 
 /// Return the squared distance between two points.
@@ -100,7 +101,7 @@ pub fn distance_squared(a: svg_path.Point, b: svg_path.Point) -> Float {
 
 /// Return the distance between two points.
 pub fn distance(a: svg_path.Point, b: svg_path.Point) -> Float {
-  distance_squared(a, b) |> square_root
+  number.hypot(a.x -. b.x, a.y -. b.y)
 }
 
 /// Return the midpoint between two points.
@@ -170,9 +171,4 @@ pub fn near(
   tolerance >=. 0.0
   && tolerance -. tolerance == 0.0
   && distance_squared(a, b) <=. tolerance *. tolerance
-}
-
-fn square_root(value: Float) -> Float {
-  let assert Ok(root) = float.square_root(value)
-  root
 }

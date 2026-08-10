@@ -5,6 +5,28 @@ import gleam/string
 
 const maximum_finite_float = 1.7976931348623157e308
 
+/// Return `sqrt(x² + y²)` without overflowing when the result is representable.
+@internal
+pub fn hypot(x: Float, y: Float) -> Float {
+  let x = float.absolute_value(x)
+  let y = float.absolute_value(y)
+  let largest = case x >=. y {
+    True -> x
+    False -> y
+  }
+
+  case largest == 0.0 || !is_finite(largest) {
+    True -> largest
+    False -> {
+      let scaled_x = x /. largest
+      let scaled_y = y /. largest
+      let assert Ok(scaled_length) =
+        float.square_root(scaled_x *. scaled_x +. scaled_y *. scaled_y)
+      largest *. scaled_length
+    }
+  }
+}
+
 @internal
 pub fn parse(raw: String) -> Result(Float, Nil) {
   case string.split_once(raw, on: "e") {

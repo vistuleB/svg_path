@@ -577,6 +577,18 @@ pub fn segment_length_measures_line_exactly_test() {
   assert near(length, 5.0)
 }
 
+pub fn segment_length_avoids_intermediate_overflow_test() {
+  let line =
+    svg_path.Line(
+      start: svg_path.Point(0.0, 0.0),
+      end: svg_path.Point(1.0e200, 0.0),
+    )
+
+  let assert Ok(length) = svg_path.segment_length(line)
+
+  assert length == 1.0e200
+}
+
 pub fn segment_length_approximates_quadratic_curve_test() {
   let curve =
     svg_path.QuadraticBezier(
