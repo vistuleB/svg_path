@@ -28,6 +28,7 @@ pub fn path_with(
   by cutter: svg_path.Path,
   options options: intersections.IntersectionOptions,
 ) -> Result(svg_path.Path, svg_path.Error) {
+  use _ <- result.try(intersections.validate_options(options))
   use pieces <- result.try(
     cut_subject_subpaths(subject.subpaths, cutter, options, accumulated: []),
   )

@@ -210,6 +210,15 @@ pub fn path_cut_empty_subject_returns_empty_path_test() {
     == Ok(svg_path.Path([]))
 }
 
+pub fn path_cut_empty_subject_still_validates_options_test() {
+  assert cut.path_with(
+      subject: svg_path.Path([]),
+      by: svg_path.Path([]),
+      options: intersections.IntersectionOptions(tolerance: 0.0, max_depth: 48),
+    )
+    == Error(svg_path.InvalidIntersectionTolerance(0.0))
+}
+
 pub fn path_cut_empty_cutter_returns_subject_path_test() {
   let subject =
     svg_path.subpath_assert([
