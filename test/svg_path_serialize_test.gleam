@@ -328,6 +328,54 @@ pub fn repeat_commands_false_omits_repeated_curve_commands_test() {
     == "M 0 0 Q 10 0 20 10 30 0 40 10 C 30 0 10 0 50 0 10 0 30 0 0 0"
 }
 
+pub fn repeat_commands_false_omits_repeated_smooth_commands_test() {
+  let assert Ok(quadratic_subpath) =
+    svg_path.subpath([
+      svg_path.QuadraticBezier(
+        start: svg_path.Point(0.0, 0.0),
+        control: svg_path.Point(10.0, 0.0),
+        end: svg_path.Point(20.0, 0.0),
+      ),
+      svg_path.QuadraticBezier(
+        start: svg_path.Point(20.0, 0.0),
+        control: svg_path.Point(30.0, 0.0),
+        end: svg_path.Point(40.0, 0.0),
+      ),
+      svg_path.QuadraticBezier(
+        start: svg_path.Point(40.0, 0.0),
+        control: svg_path.Point(50.0, 0.0),
+        end: svg_path.Point(60.0, 0.0),
+      ),
+    ])
+  let assert Ok(cubic_subpath) =
+    svg_path.subpath([
+      svg_path.CubicBezier(
+        start: svg_path.Point(0.0, 0.0),
+        control1: svg_path.Point(5.0, 0.0),
+        control2: svg_path.Point(10.0, 0.0),
+        end: svg_path.Point(20.0, 0.0),
+      ),
+      svg_path.CubicBezier(
+        start: svg_path.Point(20.0, 0.0),
+        control1: svg_path.Point(30.0, 0.0),
+        control2: svg_path.Point(35.0, 0.0),
+        end: svg_path.Point(40.0, 0.0),
+      ),
+      svg_path.CubicBezier(
+        start: svg_path.Point(40.0, 0.0),
+        control1: svg_path.Point(45.0, 0.0),
+        control2: svg_path.Point(50.0, 0.0),
+        end: svg_path.Point(60.0, 0.0),
+      ),
+    ])
+  let options = serialize.default_options() |> serialize.repeat_commands(False)
+
+  assert serialize.subpath_with(quadratic_subpath, options:)
+    == "M 0 0 Q 10 0 20 0 T 40 0 60 0"
+  assert serialize.subpath_with(cubic_subpath, options:)
+    == "M 0 0 C 5 0 10 0 20 0 S 35 0 40 0 50 0 60 0"
+}
+
 pub fn repeat_commands_false_omits_repeated_arc_commands_test() {
   let a = svg_path.Point(0.0, 0.0)
   let b = svg_path.Point(10.0, 0.0)
@@ -887,6 +935,33 @@ pub fn use_s_t_discovers_shorthand_after_decimal_formatting_test() {
 
   assert serialize.subpath_with(subpath, options: serialize.decimal_options(3))
     == "M 0 0 Q 10 20 30 40 T 70 80"
+}
+
+pub fn absolute_smooth_shorthand_respects_rounded_parser_state_test() {
+  let subpath =
+    svg_path.subpath_assert([
+      svg_path.CubicBezier(
+        start: svg_path.Point(0.0, 0.0),
+        control1: svg_path.Point(0.0, 0.0),
+        control2: svg_path.Point(0.04, 0.0),
+        end: svg_path.Point(0.06, 0.0),
+      ),
+      svg_path.CubicBezier(
+        start: svg_path.Point(0.06, 0.0),
+        control1: svg_path.Point(0.08, 0.0),
+        control2: svg_path.Point(0.2, 0.0),
+        end: svg_path.Point(0.3, 0.0),
+      ),
+    ])
+  let serialized =
+    serialize.subpath_with(subpath, options: serialize.decimal_options(1))
+
+  assert serialized == "M 0 0 S 0 0 0.1 0 C 0.1 0 0.2 0 0.3 0"
+  let assert Ok(parsed) = parse.path(serialized)
+  let assert [parsed_subpath] = svg_path.path_subpaths(parsed)
+  let assert [_, svg_path.CubicBezier(control1: parsed_control1, ..)] =
+    svg_path.subpath_segments(parsed_subpath)
+  assert parsed_control1 == svg_path.Point(0.1, 0.0)
 }
 
 pub fn relative_options_make_moves_relative_between_subpaths_test() {

@@ -816,15 +816,26 @@ fn absolute_segment_without_move(
       NoPreviousCurve,
     )
     svg_path.QuadraticBezier(start:, control:, end:) -> {
+      let parser_start = quantized_point(start, format)
+      let parser_control = quantized_point(control, format)
+      let reflected = reflected_quadratic_control(parser_start, previous)
+      let smooth = parser_control == reflected
       #(
-        absolute_quadratic(start, control, end, previous, format),
-        PreviousQuadratic(control),
+        absolute_quadratic(control, end, smooth, format),
+        PreviousQuadratic(case smooth {
+          True -> reflected
+          False -> parser_control
+        }),
       )
     }
     svg_path.CubicBezier(start:, control1:, control2:, end:) -> {
+      let parser_start = quantized_point(start, format)
+      let parser_control1 = quantized_point(control1, format)
+      let reflected = reflected_cubic_control(parser_start, previous)
+      let smooth = parser_control1 == reflected
       #(
-        absolute_cubic(start, control1, control2, end, previous, format),
-        PreviousCubic(control2),
+        absolute_cubic(control1, control2, end, smooth, format),
+        PreviousCubic(quantized_point(control2, format)),
       )
     }
     svg_path.Arc(radius:, x_axis_rotation:, large_arc:, sweep:, end:, ..) -> {
@@ -1227,7 +1238,10 @@ fn chord_similarity(
   let target_dx = parser_end.x -. parser_start.x
   let target_dy = parser_end.y -. parser_start.y
   let source_length_squared = source_dx *. source_dx +. source_dy *. source_dy
-  case source_length_squared <=. 0.000000000001 {
+  let target_length_squared = target_dx *. target_dx +. target_dy *. target_dy
+  case
+    source_length_squared <=. 0.000000000001 || target_length_squared == 0.0
+  {
     True -> UnstableChord
     False ->
       ChordSimilarity(
@@ -1260,20 +1274,12 @@ fn similarity_point(
 }
 
 fn absolute_quadratic(
-  start: svg_path.Point,
   control: svg_path.Point,
   end: svg_path.Point,
-  previous: PreviousCurve,
+  smooth: Bool,
   format: Format,
 ) -> String {
-  case
-    format.options.use_s_t
-    && formatted_points_equal(
-      control,
-      reflected_quadratic_control(start, previous),
-      format,
-    )
-  {
+  case format.options.use_s_t && smooth {
     True -> command("T", point(end, format), format)
     False ->
       command(
@@ -1316,21 +1322,13 @@ fn relative_quadratic(
 }
 
 fn absolute_cubic(
-  start: svg_path.Point,
   control1: svg_path.Point,
   control2: svg_path.Point,
   end: svg_path.Point,
-  previous: PreviousCurve,
+  smooth: Bool,
   format: Format,
 ) -> String {
-  case
-    format.options.use_s_t
-    && formatted_points_equal(
-      control1,
-      reflected_cubic_control(start, previous),
-      format,
-    )
-  {
+  case format.options.use_s_t && smooth {
     True ->
       command(
         "S",
@@ -1516,7 +1514,10 @@ fn quantized_point(point: svg_path.Point, format: Format) -> svg_path.Point {
 }
 
 fn quantized_number(value: Float, format: Format) -> Float {
-  case float.parse(raw_number(value, format.options)) {
+  let parseable =
+    number_format.code_number(value, with: format.number_format)
+    |> string.trim
+  case float.parse(parseable) {
     Ok(quantized) -> quantized
     Error(_) -> value
   }
@@ -1800,8 +1801,8 @@ fn is_move_command(command: String) -> Bool {
 fn is_command_name(command: String) -> Bool {
   list.contains(
     [
-      "M", "m", "L", "l", "H", "h", "V", "v", "Q", "q", "C", "c", "A", "a", "Z",
-      "z",
+      "M", "m", "L", "l", "H", "h", "V", "v", "Q", "q", "C", "c", "S", "s", "T",
+      "t", "A", "a", "Z", "z",
     ],
     command,
   )
@@ -1862,7 +1863,10 @@ fn compacted_command_arguments(command: String, options: Options) -> String {
 
 fn can_repeat_command(command: String) -> Bool {
   list.contains(
-    ["L", "l", "H", "h", "V", "v", "Q", "q", "C", "c", "A", "a"],
+    [
+      "L", "l", "H", "h", "V", "v", "Q", "q", "C", "c", "S", "s", "T", "t", "A",
+      "a",
+    ],
     command,
   )
 }
@@ -1876,37 +1880,24 @@ fn command_separator(options: Options) -> String {
 
 fn path_numbers(path: svg_path.Path, options: Options) -> List(Float) {
   case options.relative {
-    True ->
-      relative_path_numbers(svg_path.path_subpaths(path), origin(), [], options)
-    False -> {
+    True -> {
+      let #(_, groups) =
+        path
+        |> svg_path.path_subpaths
+        |> list.map_fold(origin(), fn(current, subpath) {
+          #(
+            current_after_subpath(subpath, current),
+            relative_subpath_numbers(subpath, current, options),
+          )
+        })
+      list.flat_map(groups, fn(group) { group })
+    }
+    False ->
       path
       |> svg_path.path_subpaths
-      |> list.fold([], fn(accumulated, subpath) {
-        list.append(accumulated, absolute_subpath_numbers(subpath, options))
+      |> list.flat_map(fn(subpath) {
+        absolute_subpath_numbers(subpath, options)
       })
-    }
-  }
-}
-
-fn relative_path_numbers(
-  subpaths: List(svg_path.Subpath),
-  current: svg_path.Point,
-  accumulated: List(Float),
-  options: Options,
-) -> List(Float) {
-  case subpaths {
-    [] -> accumulated
-    [subpath, ..rest] -> {
-      relative_path_numbers(
-        rest,
-        current_after_subpath(subpath, current),
-        list.append(
-          accumulated,
-          relative_subpath_numbers(subpath, current, options),
-        ),
-        options,
-      )
-    }
   }
 }
 
@@ -1926,10 +1917,12 @@ fn absolute_subpath_numbers(
   case svg_path.subpath_segments(subpath) {
     [] -> point_numbers(start)
     [_, ..] -> {
-      serializable_segments(subpath)
-      |> list.fold(point_numbers(start), fn(accumulated, segment) {
-        list.append(accumulated, absolute_segment_numbers(segment, options))
-      })
+      let segment_numbers =
+        serializable_segments(subpath)
+        |> list.flat_map(fn(segment) {
+          absolute_segment_numbers(segment, options)
+        })
+      list.append(point_numbers(start), segment_numbers)
     }
   }
 }
@@ -1944,13 +1937,12 @@ fn relative_subpath_numbers(
   case svg_path.subpath_segments(subpath) {
     [] -> point_numbers(delta(start, current))
     [_, ..] -> {
-      serializable_segments(subpath)
-      |> list.fold(
-        point_numbers(delta(start, current)),
-        fn(accumulated, segment) {
-          list.append(accumulated, relative_segment_numbers(segment, options))
-        },
-      )
+      let segment_numbers =
+        serializable_segments(subpath)
+        |> list.flat_map(fn(segment) {
+          relative_segment_numbers(segment, options)
+        })
+      list.append(point_numbers(delta(start, current)), segment_numbers)
     }
   }
 }
