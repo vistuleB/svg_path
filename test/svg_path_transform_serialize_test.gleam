@@ -95,6 +95,16 @@ pub fn transform_serialization_uses_decimal_options_test() {
     == "translate(10.23 -20.24)"
 }
 
+pub fn transform_serialization_uses_scientific_notation_when_scaling_is_unsafe_test() {
+  let matrix = transform.translate(x: 1.0e20, y: -2.5e20)
+
+  assert serialize.to_string_with(
+      matrix,
+      options: serialize.fixed_decimal_options(2),
+    )
+    == "translate(1.00e20 -2.50e20)"
+}
+
 pub fn transform_serialization_can_force_matrix_output_test() {
   let options = serialize.default_options() |> serialize.force_matrix
 

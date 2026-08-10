@@ -6,9 +6,8 @@
 //// `matrix(a b c d e f)` otherwise.
 
 import gleam/float
-import gleam/int
 import gleam/option.{type Option, None, Some}
-import gleam/string
+import svg_path/format as number_format
 import svg_path/transform as path_transform
 import svg_path/trig
 
@@ -278,79 +277,19 @@ fn close(left: Float, right: Float) -> Bool {
 }
 
 fn number(number: Float, options: Options) -> String {
-  case options.decimal_places {
-    None -> float.to_string(number)
-    Some(decimal_places) ->
-      decimal(number, decimal_places, options.fixed_decimals)
+  let right_decimals = case options.decimal_places, options.fixed_decimals {
+    None, _ -> number_format.System
+    Some(decimal_places), False -> number_format.AtMost(decimal_places)
+    Some(decimal_places), True -> number_format.Fixed(decimal_places)
   }
-}
+  let format =
+    number_format.prepare(
+      number_format.Options(
+        left_decimals: number_format.Succinct,
+        right_decimals:,
+      ),
+      [number],
+    )
 
-fn decimal(number: Float, decimal_places: Int, fixed_decimals: Bool) -> String {
-  let fixed = fixed_decimal(number, decimal_places)
-
-  case fixed_decimals {
-    True -> fixed
-    False -> strip_trailing_decimal_zeros(fixed)
-  }
-}
-
-fn fixed_decimal(number: Float, decimal_places: Int) -> String {
-  let decimal_places = int.max(decimal_places, 0)
-  let scale = power_of_ten(decimal_places)
-  let scaled = number *. scale |> float.round
-  let sign = case scaled < 0 {
-    True -> "-"
-    False -> ""
-  }
-  let absolute_scaled = int.absolute_value(scaled)
-
-  case decimal_places {
-    0 -> sign <> int.to_string(absolute_scaled)
-    _ -> {
-      let whole = absolute_scaled / power_of_ten_int(decimal_places)
-      let fractional = absolute_scaled % power_of_ten_int(decimal_places)
-      let fractional =
-        fractional
-        |> int.to_string
-        |> string.pad_start(to: decimal_places, with: "0")
-
-      sign <> int.to_string(whole) <> "." <> fractional
-    }
-  }
-}
-
-fn strip_trailing_decimal_zeros(number: String) -> String {
-  case string.split_once(number, on: ".") {
-    Error(_) -> number
-    Ok(#(whole, fractional)) -> {
-      let fractional = strip_trailing_zeros(fractional)
-
-      case fractional {
-        "" -> whole
-        _ -> whole <> "." <> fractional
-      }
-    }
-  }
-}
-
-fn strip_trailing_zeros(string: String) -> String {
-  case string.ends_with(string, "0") {
-    True -> {
-      string
-      |> string.drop_end(up_to: 1)
-      |> strip_trailing_zeros
-    }
-    False -> string
-  }
-}
-
-fn power_of_ten(exponent: Int) -> Float {
-  power_of_ten_int(exponent) |> int.to_float
-}
-
-fn power_of_ten_int(exponent: Int) -> Int {
-  case exponent <= 0 {
-    True -> 1
-    False -> 10 * power_of_ten_int(exponent - 1)
-  }
+  number_format.number(number, with: format)
 }
