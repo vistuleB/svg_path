@@ -577,10 +577,11 @@ fn split_indexed_segments(
       ),
       ..rest
     ] -> {
-      let parameters =
+      use parameters <- result.try(
         [0.0, 1.0, ..cut_parameters(cuts, index, [])]
         |> list.sort(by: float_compare)
-        |> distinct_parameters(tolerance, [])
+        |> distinct_parameters(segment, tolerance, []),
+      )
       use split <- result.try(
         svg_path.segment_between_many_inside(segment, between: parameters)
         |> result.map_error(PathError),
@@ -676,17 +677,29 @@ fn cut_parameters(
 
 fn distinct_parameters(
   parameters: List(Float),
+  segment: svg_path.Segment,
   tolerance: Float,
   distinct: List(Float),
-) -> List(Float) {
+) -> Result(List(Float), Error) {
   case parameters, distinct {
-    [], _ -> list.reverse(distinct)
-    [first, ..rest], [] -> distinct_parameters(rest, tolerance, [first])
-    [first, ..rest], [previous, ..] ->
-      case first -. previous <=. tolerance {
-        True -> distinct_parameters(rest, tolerance, distinct)
-        False -> distinct_parameters(rest, tolerance, [first, ..distinct])
+    [], _ -> Ok(list.reverse(distinct))
+    [first, ..rest], [] ->
+      distinct_parameters(rest, segment, tolerance, [first])
+    [first, ..rest], [previous, ..] -> {
+      use between <- result.try(
+        svg_path.segment_between(segment, from: previous, to: first)
+        |> result.map_error(PathError),
+      )
+      use motion <- result.try(
+        svg_path.segment_length(between)
+        |> result.map_error(PathError),
+      )
+      case motion <=. tolerance {
+        True -> distinct_parameters(rest, segment, tolerance, distinct)
+        False ->
+          distinct_parameters(rest, segment, tolerance, [first, ..distinct])
       }
+    }
   }
 }
 
@@ -823,10 +836,35 @@ fn find_semantic_edge(
             right_to:,
             ..,
           ) = overlap
+          use existing_from <- result.try(
+            svg_path.segment_point(existing, at: left_from)
+            |> result.map_error(PathError),
+          )
+          use existing_to <- result.try(
+            svg_path.segment_point(existing, at: left_to)
+            |> result.map_error(PathError),
+          )
+          use incoming_from <- result.try(
+            svg_path.segment_point(segment, at: right_from)
+            |> result.map_error(PathError),
+          )
+          use incoming_to <- result.try(
+            svg_path.segment_point(segment, at: right_to)
+            |> result.map_error(PathError),
+          )
           case
-            left_from <=. tolerance
-            && 1.0 -. left_to <=. tolerance
-            && float_absolute(right_from -. right_to) >=. 1.0 -. tolerance
+            endpoints_cover_segment(
+              existing,
+              existing_from,
+              existing_to,
+              tolerance,
+            )
+            && endpoints_cover_segment(
+              segment,
+              incoming_from,
+              incoming_to,
+              tolerance,
+            )
           {
             True -> Ok(Some(#(id, right_to >. right_from)))
             False -> find_semantic_edge(rest, segment, tolerance)
@@ -836,6 +874,23 @@ fn find_semantic_edge(
       }
     }
   }
+}
+
+fn endpoints_cover_segment(
+  segment: svg_path.Segment,
+  first: svg_path.Point,
+  second: svg_path.Point,
+  tolerance: Float,
+) -> Bool {
+  let start = svg_path.segment_start(segment)
+  let end = svg_path.segment_end(segment)
+  let forward =
+    point.distance(first, start) <=. tolerance
+    && point.distance(second, end) <=. tolerance
+  let reversed =
+    point.distance(first, end) <=. tolerance
+    && point.distance(second, start) <=. tolerance
+  forward || reversed
 }
 
 fn increment_edge_by_id(
@@ -876,13 +931,6 @@ fn increment_edge_by_id(
         }
       }),
   )
-}
-
-fn float_absolute(value: Float) -> Float {
-  case value <. 0.0 {
-    True -> 0.0 -. value
-    False -> value
-  }
 }
 
 fn attach_vertex(

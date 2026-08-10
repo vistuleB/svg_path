@@ -487,6 +487,36 @@ pub fn builder_splits_crossing_lines_at_shared_vertex_test() {
   list.length(edges) |> should.equal(4)
 }
 
+pub fn builder_keeps_geometrically_distinct_cuts_on_long_segment_test() {
+  let horizontal =
+    svg_path.subpath_assert([
+      svg_path.Line(
+        start: svg_path.Point(0.0, 0.0),
+        end: svg_path.Point(10_000.0, 0.0),
+      ),
+    ])
+  let first =
+    svg_path.subpath_assert([
+      svg_path.Line(
+        start: svg_path.Point(5000.0, -10.0),
+        end: svg_path.Point(5000.0, 10.0),
+      ),
+    ])
+  let second =
+    svg_path.subpath_assert([
+      svg_path.Line(
+        start: svg_path.Point(5005.0, -10.0),
+        end: svg_path.Point(5005.0, 10.0),
+      ),
+    ])
+
+  let assert Ok(arrangement_graph.ArrangementGraph(vertices:, edges:)) =
+    build_graph([horizontal, first, second], tolerance: 0.001, minimum_chord:)
+
+  list.length(vertices) |> should.equal(8)
+  list.length(edges) |> should.equal(7)
+}
+
 pub fn builder_refines_partial_line_overlap_and_counts_middle_test() {
   let first =
     svg_path.subpath_assert([
