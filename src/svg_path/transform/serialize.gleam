@@ -132,8 +132,10 @@ fn affine_transform(
   case linear_transform(linear, options) {
     "" -> translate_transform(translate_x, translate_y, options)
     transform ->
-      translate_optional_transform(translate_x, translate_y, options)
-      <> transform
+      join_transforms(
+        translate_optional_transform(translate_x, translate_y, options),
+        transform,
+      )
   }
 }
 
@@ -145,8 +147,18 @@ fn linear_transform(linear: LinearTransform, options: Options) -> String {
     SkewX2x2(tangent:) -> skew_x_transform(tangent, options)
     SkewY2x2(tangent:) -> skew_y_transform(tangent, options)
     RotateScale2x2(degrees:, scale_x:, scale_y:) ->
-      rotate_transform(degrees, options)
-      <> scale_optional_transform(scale_x, scale_y, options)
+      join_transforms(
+        rotate_transform(degrees, options),
+        scale_optional_transform(scale_x, scale_y, options),
+      )
+  }
+}
+
+fn join_transforms(first: String, second: String) -> String {
+  case first, second {
+    "", _ -> second
+    _, "" -> first
+    _, _ -> first <> " " <> second
   }
 }
 

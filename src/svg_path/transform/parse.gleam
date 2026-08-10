@@ -1,9 +1,8 @@
 //// SVG transform attribute parser.
 ////
 //// This module parses SVG transform lists such as
-//// `translate(10 20)rotate(30)scale(2)`. Commas are accepted where SVG allows
-//// separators, and adjacent signed numbers such as `translate(10-20)` are
-//// handled.
+//// `translate(10 20) rotate(30) scale(2)`. Commas are accepted where SVG
+//// permits them as part of a `comma-wsp` separator.
 
 import gleam/float
 import gleam/int
@@ -49,9 +48,11 @@ pub type ErrorReason {
 
 type Token {
   Close(at: Int)
+  Comma(at: Int)
   Name(String, at: Int)
   Number(Float, at: Int)
   Open(at: Int)
+  Whitespace(at: Int)
 }
 
 type LocatedError {
@@ -65,7 +66,11 @@ pub fn attribute(input: String) -> Result(transform.Matrix, Error) {
   case tokenize(input) {
     Error(error) -> Error(public_error(input, error))
     Ok(tokens) ->
-      parse_transforms(tokens, transform.identity(), string.length(input))
+      parse_transforms(
+        drop_whitespace(tokens),
+        transform.identity(),
+        string.length(input),
+      )
       |> result.map_error(public_error(input, _))
   }
 }
@@ -88,21 +93,66 @@ fn parse_transforms(
         Ok(#(arguments, rest)) -> {
           case transform_from_arguments(name, arguments, at: name_at) {
             Error(error) -> Error(error)
-            Ok(next) -> {
-              parse_transforms(
+            Ok(next) ->
+              continue_transform_list(
                 rest,
                 transform.chain(first: next, then: accumulated),
                 end_at,
               )
-            }
           }
         }
       }
     }
     [Name(_, _), ..rest] ->
       Error(LocatedError(ExpectedOpen, token_at(rest, or: end_at)))
-    [Open(at), ..] | [Close(at), ..] | [Number(_, at), ..] ->
-      Error(LocatedError(ExpectedTransform, at))
+    [Open(at), ..]
+    | [Close(at), ..]
+    | [Comma(at), ..]
+    | [Number(_, at), ..]
+    | [Whitespace(at), ..] -> Error(LocatedError(ExpectedTransform, at))
+  }
+}
+
+fn continue_transform_list(
+  tokens: List(Token),
+  accumulated: transform.Matrix,
+  end_at: Int,
+) -> Result(transform.Matrix, LocatedError) {
+  case tokens {
+    [] -> Ok(accumulated)
+    [Whitespace(_), ..] -> {
+      let rest = drop_whitespace(tokens)
+      case rest {
+        [] -> Ok(accumulated)
+        [Comma(_), ..after_comma] ->
+          parse_transform_after_separator(
+            drop_whitespace(after_comma),
+            accumulated,
+            end_at,
+          )
+        _ -> parse_transforms(rest, accumulated, end_at)
+      }
+    }
+    [Comma(_), ..rest] ->
+      parse_transform_after_separator(
+        drop_whitespace(rest),
+        accumulated,
+        end_at,
+      )
+    [token, ..] ->
+      Error(LocatedError(ExpectedTransform, token_at([token], or: end_at)))
+  }
+}
+
+fn parse_transform_after_separator(
+  tokens: List(Token),
+  accumulated: transform.Matrix,
+  end_at: Int,
+) -> Result(transform.Matrix, LocatedError) {
+  case tokens {
+    [] -> Error(LocatedError(ExpectedTransform, end_at))
+    [Comma(at), ..] -> Error(LocatedError(UnexpectedToken(","), at))
+    _ -> parse_transforms(tokens, accumulated, end_at)
   }
 }
 
@@ -111,13 +161,69 @@ fn take_arguments(
   arguments: List(Float),
   end_at: Int,
 ) -> Result(#(List(Float), List(Token)), LocatedError) {
-  case tokens {
+  case drop_whitespace(tokens) {
     [] -> Error(LocatedError(ExpectedClose, end_at))
     [Close(_), ..rest] -> Ok(#(list.reverse(arguments), rest))
     [Number(number, _), ..rest] ->
-      take_arguments(rest, [number, ..arguments], end_at)
+      take_arguments_after_number(rest, [number, ..arguments], end_at)
+    [Comma(at), ..] -> Error(LocatedError(UnexpectedToken(","), at))
     [Name(name, at), ..] -> Error(LocatedError(UnexpectedToken(name), at))
     [Open(at), ..] -> Error(LocatedError(UnexpectedToken("("), at))
+    [Whitespace(_), ..] -> panic as "drop_whitespace left whitespace"
+  }
+}
+
+fn take_arguments_after_number(
+  tokens: List(Token),
+  arguments: List(Float),
+  end_at: Int,
+) -> Result(#(List(Float), List(Token)), LocatedError) {
+  case tokens {
+    [] -> Error(LocatedError(ExpectedClose, end_at))
+    [Close(_), ..rest] -> Ok(#(list.reverse(arguments), rest))
+    [Whitespace(_), ..] -> {
+      let rest = drop_whitespace(tokens)
+      case rest {
+        [] -> Error(LocatedError(ExpectedClose, end_at))
+        [Close(_), ..after_close] -> Ok(#(list.reverse(arguments), after_close))
+        [Comma(_), ..after_comma] ->
+          take_argument_after_separator(
+            drop_whitespace(after_comma),
+            arguments,
+            end_at,
+          )
+        _ -> take_argument_after_separator(rest, arguments, end_at)
+      }
+    }
+    [Comma(_), ..rest] ->
+      take_argument_after_separator(drop_whitespace(rest), arguments, end_at)
+    [Number(_, at), ..] -> Error(LocatedError(UnexpectedToken("number"), at))
+    [Name(name, at), ..] -> Error(LocatedError(UnexpectedToken(name), at))
+    [Open(at), ..] -> Error(LocatedError(UnexpectedToken("("), at))
+  }
+}
+
+fn take_argument_after_separator(
+  tokens: List(Token),
+  arguments: List(Float),
+  end_at: Int,
+) -> Result(#(List(Float), List(Token)), LocatedError) {
+  case tokens {
+    [] -> Error(LocatedError(ExpectedClose, end_at))
+    [Number(number, _), ..rest] ->
+      take_arguments_after_number(rest, [number, ..arguments], end_at)
+    [Comma(at), ..] -> Error(LocatedError(UnexpectedToken(","), at))
+    [Close(at), ..] -> Error(LocatedError(UnexpectedToken(")"), at))
+    [Name(name, at), ..] -> Error(LocatedError(UnexpectedToken(name), at))
+    [Open(at), ..] -> Error(LocatedError(UnexpectedToken("("), at))
+    [Whitespace(_), ..] -> panic as "drop_whitespace left whitespace"
+  }
+}
+
+fn drop_whitespace(tokens: List(Token)) -> List(Token) {
+  case tokens {
+    [Whitespace(_), ..rest] -> drop_whitespace(rest)
+    _ -> tokens
   }
 }
 
@@ -125,9 +231,11 @@ fn token_at(tokens: List(Token), or fallback: Int) -> Int {
   case tokens {
     [] -> fallback
     [Close(at), ..]
+    | [Comma(at), ..]
     | [Name(_, at), ..]
     | [Number(_, at), ..]
-    | [Open(at), ..] -> at
+    | [Open(at), ..]
+    | [Whitespace(at), ..] -> at
   }
 }
 
@@ -246,12 +354,13 @@ fn tokenize_loop(
   case graphemes {
     [] -> Ok(list.reverse(tokens))
     [grapheme, ..rest] -> {
-      case is_separator(grapheme) {
-        True -> tokenize_loop(rest, tokens, at: at + 1)
+      case is_whitespace(grapheme) {
+        True -> tokenize_loop(rest, [Whitespace(at), ..tokens], at: at + 1)
         False -> {
           case grapheme {
             "(" -> tokenize_loop(rest, [Open(at), ..tokens], at: at + 1)
             ")" -> tokenize_loop(rest, [Close(at), ..tokens], at: at + 1)
+            "," -> tokenize_loop(rest, [Comma(at), ..tokens], at: at + 1)
             _ -> {
               case is_name_start(grapheme) {
                 True -> {
@@ -345,12 +454,8 @@ fn read_number(
   }
 }
 
-fn is_separator(grapheme: String) -> Bool {
-  grapheme == " "
-  || grapheme == "\n"
-  || grapheme == "\r"
-  || grapheme == "\t"
-  || grapheme == ","
+fn is_whitespace(grapheme: String) -> Bool {
+  grapheme == " " || grapheme == "\n" || grapheme == "\r" || grapheme == "\t"
 }
 
 fn is_name_start(grapheme: String) -> Bool {

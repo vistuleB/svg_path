@@ -1232,7 +1232,7 @@ The transform parser accepts normal SVG transform syntax, including compound
 attributes such as:
 
 ```text
-translate(10)scale(2) skewX(3)
+translate(10) scale(2) skewX(3)
 ```
 
 Its errors use the same `ParseError(reason:, remaining:)` convention as the
@@ -1243,9 +1243,9 @@ recognized clearly:
 
 ```text
 translate(10 20)
-translate(10 20)scale(2)
+translate(10 20) scale(2)
 rotate(30)
-translate(10 20)rotate(30)scale(2 3)
+translate(10 20) rotate(30) scale(2 3)
 ```
 
 If no clearer representation is available, it falls back to:

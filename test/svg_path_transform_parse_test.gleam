@@ -1,3 +1,4 @@
+import gleam/list
 import gleeunit
 import svg_path
 import svg_path/serialize
@@ -76,11 +77,25 @@ pub fn commas_whitespace_and_compact_numbers_parse_test() {
     == svg_path.Point(12.0, 26.0)
 }
 
-pub fn adjacent_signed_numbers_parse_test() {
-  let assert Ok(matrix) = transform_parse.attribute("translate(10-20)")
+pub fn transform_arguments_require_comma_wsp_test() {
+  let assert Error(_) = transform_parse.attribute("translate(10-20)")
+}
 
-  assert transform.point(svg_path.Point(1.0, 1.0), by: matrix)
-    == svg_path.Point(11.0, -19.0)
+pub fn transform_functions_require_comma_wsp_test() {
+  let assert Error(_) = transform_parse.attribute("translate(1)rotate(2)")
+}
+
+pub fn invalid_comma_placements_are_rejected_test() {
+  [
+    ",translate(1)",
+    "translate(1),",
+    "translate(,1)",
+    "translate(1,)",
+    "translate(1,,2)",
+  ]
+  |> list.each(fn(input) {
+    let assert Error(_) = transform_parse.attribute(input)
+  })
 }
 
 pub fn unknown_transform_is_rejected_test() {
