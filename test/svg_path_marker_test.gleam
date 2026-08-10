@@ -163,6 +163,53 @@ pub fn opposite_mid_tangents_fall_back_to_incoming_angle_test() {
     )
 }
 
+pub fn auto_orientation_recovers_collapsed_cubic_endpoint_direction_test() {
+  let subpath =
+    svg_path.subpath_assert([
+      svg_path.CubicBezier(
+        start: svg_path.Point(0.0, 0.0),
+        control1: svg_path.Point(0.0, 0.0),
+        control2: svg_path.Point(10.0, 0.0),
+        end: svg_path.Point(10.0, 0.0),
+      ),
+    ])
+
+  let assert Ok([start, end]) =
+    marker.subpath_poses(subpath, orient: marker.Auto)
+
+  assert start.angle == 0.0
+  assert end.angle == 0.0
+}
+
+pub fn auto_orientation_searches_across_collapsed_segments_test() {
+  let point = svg_path.Point(10.0, 0.0)
+  let subpath =
+    svg_path.subpath_assert([
+      svg_path.Line(start: svg_path.Point(0.0, 0.0), end: point),
+      svg_path.Line(start: point, end: point),
+      svg_path.Line(start: point, end: svg_path.Point(10.0, 10.0)),
+    ])
+
+  let assert Ok([start, first_mid, second_mid, end]) =
+    marker.subpath_poses(subpath, orient: marker.Auto)
+
+  assert start.angle == 0.0
+  assert first_mid.angle == 45.0
+  assert second_mid.angle == 45.0
+  assert end.angle == 90.0
+}
+
+pub fn auto_orientation_rejects_fully_collapsed_subpath_test() {
+  let point = svg_path.Point(10.0, 10.0)
+  let subpath =
+    svg_path.subpath_assert([
+      svg_path.Line(start: point, end: point),
+    ])
+
+  assert marker.subpath_poses(subpath, orient: marker.Auto)
+    == Error(marker.DegenerateTangent)
+}
+
 pub fn pose_transform_places_marker_origin_at_pose_test() {
   let pose =
     marker.MarkerPose(

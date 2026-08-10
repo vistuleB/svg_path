@@ -17,7 +17,7 @@ pub type Error {
   /// The subpath has no drawable segments.
   EmptySubpath
 
-  /// A marker orientation could not be computed from a zero derivative.
+  /// No traversal direction could be recovered for a marker orientation.
   DegenerateTangent
 
   /// An underlying path operation failed.
@@ -122,7 +122,9 @@ pub type MarkerLayout {
 /// segment directions respectively. Mid markers and closed-subpath start/end
 /// markers use the angle bisector of the incoming and outgoing directions. If
 /// that bisector is degenerate because the two directions are exactly opposite,
-/// the incoming direction is used.
+/// the incoming direction is used. Singular Bezier endpoint derivatives are
+/// resolved geometrically, and fully collapsed segments are skipped while
+/// searching for the nearest usable incoming or outgoing direction.
 pub fn subpath_poses(
   subpath: svg_path.Subpath,
   orient orient: MarkerOrient,
@@ -130,16 +132,24 @@ pub fn subpath_poses(
   case svg_path.subpath_segments(subpath) {
     [] -> Error(EmptySubpath)
     [first, ..rest] -> {
+      let segments = [first, ..rest]
       let last = last_segment(first, rest)
       use start_angle <- result.try(start_angle(
-        first,
-        last,
+        segments,
         orient,
         closed: svg_path.subpath_is_closed(subpath),
       ))
-      use mids <- result.try(mid_poses(first, rest, orient, poses: []))
+      use mids <- result.try(
+        mid_poses(
+          [first],
+          rest,
+          orient,
+          closed: svg_path.subpath_is_closed(subpath),
+          poses: [],
+        ),
+      )
       use end <- result.try(end_pose(
-        first,
+        segments,
         last,
         orient,
         closed: svg_path.subpath_is_closed(subpath),
@@ -261,39 +271,55 @@ pub fn layout_transform(
 }
 
 fn mid_poses(
-  previous: svg_path.Segment,
+  incoming_segments: List(svg_path.Segment),
   remaining: List(svg_path.Segment),
   orient: MarkerOrient,
+  closed closed: Bool,
   poses poses: List(MarkerPose),
 ) -> Result(List(MarkerPose), Error) {
   case remaining {
     [] -> Ok(list.reverse(poses))
     [next, ..rest] -> {
-      use angle <- result.try(mid_angle(previous, next, orient))
+      let assert [previous, ..] = incoming_segments
+      let incoming_search = case closed {
+        False -> incoming_segments
+        True -> list.append(incoming_segments, list.reverse(remaining))
+      }
+      let outgoing_search = case closed {
+        False -> remaining
+        True -> list.append(remaining, list.reverse(incoming_segments))
+      }
+      use angle <- result.try(mid_angle(
+        incoming_search,
+        outgoing_search,
+        orient,
+      ))
       let pose =
         MarkerPose(
           kind: MarkerMid,
           point: svg_path.segment_end(previous),
           angle:,
         )
-      mid_poses(next, rest, orient, poses: [pose, ..poses])
+      mid_poses([next, ..incoming_segments], rest, orient, closed:, poses: [
+        pose,
+        ..poses
+      ])
     }
   }
 }
 
 fn end_pose(
-  first: svg_path.Segment,
+  segments: List(svg_path.Segment),
   last: svg_path.Segment,
   orient: MarkerOrient,
   closed closed: Bool,
 ) -> Result(MarkerPose, Error) {
-  use angle <- result.try(end_angle(first, last, orient, closed:))
+  use angle <- result.try(end_angle(segments, orient, closed:))
   Ok(MarkerPose(kind: MarkerEnd, point: svg_path.segment_end(last), angle:))
 }
 
 fn start_angle(
-  first: svg_path.Segment,
-  last: svg_path.Segment,
+  segments: List(svg_path.Segment),
   orient: MarkerOrient,
   closed closed: Bool,
 ) -> Result(Float, Error) {
@@ -301,14 +327,14 @@ fn start_angle(
     Fixed(angle) -> Ok(angle)
     Auto -> {
       case closed {
-        True -> join_angle(last, first)
-        False -> tangent_angle(first, at: 0.0)
+        True -> join_angle(list.reverse(segments), segments)
+        False -> outgoing_angle(segments)
       }
     }
     AutoStartReverse -> {
       use angle <- result.try(case closed {
-        True -> join_angle(last, first)
-        False -> tangent_angle(first, at: 0.0)
+        True -> join_angle(list.reverse(segments), segments)
+        False -> outgoing_angle(segments)
       })
       Ok(angle +. 180.0)
     }
@@ -316,8 +342,7 @@ fn start_angle(
 }
 
 fn end_angle(
-  first: svg_path.Segment,
-  last: svg_path.Segment,
+  segments: List(svg_path.Segment),
   orient: MarkerOrient,
   closed closed: Bool,
 ) -> Result(Float, Error) {
@@ -325,30 +350,30 @@ fn end_angle(
     Fixed(angle) -> Ok(angle)
     Auto | AutoStartReverse -> {
       case closed {
-        True -> join_angle(last, first)
-        False -> tangent_angle(last, at: 1.0)
+        True -> join_angle(list.reverse(segments), segments)
+        False -> incoming_angle(list.reverse(segments))
       }
     }
   }
 }
 
 fn mid_angle(
-  incoming: svg_path.Segment,
-  outgoing: svg_path.Segment,
+  incoming_segments: List(svg_path.Segment),
+  outgoing_segments: List(svg_path.Segment),
   orient: MarkerOrient,
 ) -> Result(Float, Error) {
   case orient {
     Fixed(angle) -> Ok(angle)
-    Auto | AutoStartReverse -> join_angle(incoming, outgoing)
+    Auto | AutoStartReverse -> join_angle(incoming_segments, outgoing_segments)
   }
 }
 
 fn join_angle(
-  incoming_segment: svg_path.Segment,
-  outgoing_segment: svg_path.Segment,
+  incoming_segments: List(svg_path.Segment),
+  outgoing_segments: List(svg_path.Segment),
 ) -> Result(Float, Error) {
-  use incoming <- result.try(tangent_unit(incoming_segment, at: 1.0))
-  use outgoing <- result.try(tangent_unit(outgoing_segment, at: 0.0))
+  use incoming <- result.try(incoming_direction(incoming_segments))
+  use outgoing <- result.try(outgoing_direction(outgoing_segments))
   let bisector =
     svg_path.Point(incoming.x +. outgoing.x, incoming.y +. outgoing.y)
 
@@ -368,25 +393,49 @@ fn last_segment(
   }
 }
 
-fn tangent_angle(
-  segment: svg_path.Segment,
-  at t: Float,
-) -> Result(Float, Error) {
-  use tangent <- result.try(tangent_unit(segment, at: t))
-  Ok(angle_of(tangent))
+fn incoming_angle(segments: List(svg_path.Segment)) -> Result(Float, Error) {
+  use direction <- result.try(incoming_direction(segments))
+  Ok(angle_of(direction))
 }
 
-fn tangent_unit(
-  segment: svg_path.Segment,
-  at t: Float,
+fn outgoing_angle(segments: List(svg_path.Segment)) -> Result(Float, Error) {
+  use direction <- result.try(outgoing_direction(segments))
+  Ok(angle_of(direction))
+}
+
+fn incoming_direction(
+  segments: List(svg_path.Segment),
 ) -> Result(svg_path.Point, Error) {
-  use tangent <- result.try(
-    svg_path.segment_derivative(segment, at: t) |> result.map_error(PathError),
-  )
-  let length = vector_length(tangent)
-  case length <=. 0.0 || !is_finite(length) {
-    True -> Error(DegenerateTangent)
-    False -> Ok(svg_path.Point(tangent.x /. length, tangent.y /. length))
+  case segments {
+    [] -> Error(DegenerateTangent)
+    [segment, ..rest] -> {
+      use directions <- result.try(
+        svg_path.segment_directions(segment, at: 1.0)
+        |> result.map_error(PathError),
+      )
+      case directions.incoming {
+        Some(direction) -> Ok(direction)
+        None -> incoming_direction(rest)
+      }
+    }
+  }
+}
+
+fn outgoing_direction(
+  segments: List(svg_path.Segment),
+) -> Result(svg_path.Point, Error) {
+  case segments {
+    [] -> Error(DegenerateTangent)
+    [segment, ..rest] -> {
+      use directions <- result.try(
+        svg_path.segment_directions(segment, at: 0.0)
+        |> result.map_error(PathError),
+      )
+      case directions.outgoing {
+        Some(direction) -> Ok(direction)
+        None -> outgoing_direction(rest)
+      }
+    }
   }
 }
 
