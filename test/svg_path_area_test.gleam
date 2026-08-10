@@ -18,6 +18,33 @@ pub fn signed_points_implicitly_closes_the_loop_test() {
   assert area.signed_points([svg_path.Point(0.0, 0.0)]) == 0.0
 }
 
+pub fn area_is_stable_under_large_translation_test() {
+  let offset = 1_000_000_000_000.0
+  let size = 0.25
+  let points = square_points(offset, offset, size)
+  let subpath = svg_path.subpath_assert_polygon(points)
+
+  assert_close(area.signed_points(points), 0.0625, tolerance)
+  assert_close(area.signed_subpath(subpath), 0.0625, tolerance)
+
+  let assert Ok(filled) = area.subpath(subpath, using: svg_path.Nonzero)
+  assert_close(filled, 0.0625, tolerance)
+}
+
+pub fn fill_area_detects_intersections_at_small_coordinate_scale_test() {
+  let size = 0.0000001
+  let bow_tie =
+    svg_path.subpath_assert_polygon([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(size, size),
+      svg_path.Point(0.0, size),
+      svg_path.Point(size, 0.0),
+    ])
+
+  let assert Ok(filled) = area.subpath(bow_tie, using: svg_path.Nonzero)
+  assert_close(filled, size *. size /. 2.0, 0.00000000000000000001)
+}
+
 pub fn signed_subpath_ignores_the_closed_field_test() {
   let points = square_points(0.0, 0.0, 10.0)
   let open = svg_path.subpath_assert_polyline(points)

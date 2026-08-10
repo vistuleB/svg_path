@@ -43,7 +43,13 @@ pub fn signed_points(points: List(svg_path.Point)) -> Float {
   case points {
     [] | [_] | [_, _] -> 0.0
     [first, ..rest] ->
-      signed_points_loop(rest, first: first, previous: first, integral: 0.0)
+      signed_points_loop(
+        rest,
+        origin: first,
+        first: svg_path.Point(0.0, 0.0),
+        previous: svg_path.Point(0.0, 0.0),
+        integral: 0.0,
+      )
       /. 2.0
   }
 }
@@ -93,12 +99,9 @@ pub fn signed_subpath(subpath: svg_path.Subpath) -> Float {
       let start =
         svg_path.subpath_start(subpath)
         |> result.unwrap(svg_path.Point(0.0, 0.0))
-      let end = svg_path.subpath_end(subpath) |> result.unwrap(start)
       list.fold(segments, 0.0, fn(area, segment) {
-        area +. signed_segment(segment)
+        area +. signed_segment(rebase_segment(segment, origin: start))
       })
-      +. cross(end, start)
-      /. 2.0
     }
   }
 }
@@ -272,18 +275,57 @@ fn arrangement_area(
 
 fn signed_points_loop(
   points: List(svg_path.Point),
+  origin origin: svg_path.Point,
   first first: svg_path.Point,
   previous previous: svg_path.Point,
   integral integral: Float,
 ) -> Float {
   case points {
     [] -> integral +. cross(previous, first)
-    [point, ..rest] ->
+    [point, ..rest] -> {
+      let point = difference(point, origin)
       signed_points_loop(
         rest,
+        origin:,
         first:,
         previous: point,
         integral: integral +. cross(previous, point),
+      )
+    }
+  }
+}
+
+fn rebase_segment(
+  segment: svg_path.Segment,
+  origin origin: svg_path.Point,
+) -> svg_path.Segment {
+  case segment {
+    svg_path.Line(start:, end:) ->
+      svg_path.Line(
+        start: difference(start, origin),
+        end: difference(end, origin),
+      )
+    svg_path.QuadraticBezier(start:, control:, end:) ->
+      svg_path.QuadraticBezier(
+        start: difference(start, origin),
+        control: difference(control, origin),
+        end: difference(end, origin),
+      )
+    svg_path.CubicBezier(start:, control1:, control2:, end:) ->
+      svg_path.CubicBezier(
+        start: difference(start, origin),
+        control1: difference(control1, origin),
+        control2: difference(control2, origin),
+        end: difference(end, origin),
+      )
+    svg_path.Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:) ->
+      svg_path.Arc(
+        start: difference(start, origin),
+        radius:,
+        x_axis_rotation:,
+        large_arc:,
+        sweep:,
+        end: difference(end, origin),
       )
   }
 }
@@ -366,7 +408,7 @@ fn add_edge(
 fn arrangement_xs(edges: List(Edge), tolerance: Float) -> List(Float) {
   let endpoint_xs =
     list.flat_map(edges, fn(edge) { [edge.start.x, edge.end.x] })
-  let intersection_xs = pair_intersection_xs(edges, tolerance, accumulated: [])
+  let intersection_xs = pair_intersection_xs(edges, accumulated: [])
 
   list.append(endpoint_xs, intersection_xs)
   |> list.sort(by: float.compare)
@@ -375,7 +417,6 @@ fn arrangement_xs(edges: List(Edge), tolerance: Float) -> List(Float) {
 
 fn pair_intersection_xs(
   edges: List(Edge),
-  tolerance: Float,
   accumulated accumulated: List(Float),
 ) -> List(Float) {
   case edges {
@@ -383,27 +424,24 @@ fn pair_intersection_xs(
     [first, ..rest] -> {
       let accumulated =
         list.fold(rest, accumulated, fn(xs, second) {
-          case edge_intersection_x(first, second, tolerance) {
+          case edge_intersection_x(first, second) {
             None -> xs
             Some(x) -> [x, ..xs]
           }
         })
-      pair_intersection_xs(rest, tolerance, accumulated:)
+      pair_intersection_xs(rest, accumulated:)
     }
   }
 }
 
-fn edge_intersection_x(
-  left: Edge,
-  right: Edge,
-  tolerance: Float,
-) -> Option(Float) {
+fn edge_intersection_x(left: Edge, right: Edge) -> Option(Float) {
   let left_direction = difference(left.end, left.start)
   let right_direction = difference(right.end, right.start)
   let denominator = cross(left_direction, right_direction)
   let denominator_tolerance =
     arrangement_relative_tolerance
-    *. float.max(1.0, length(left_direction) *. length(right_direction))
+    *. length(left_direction)
+    *. length(right_direction)
   case float.absolute_value(denominator) <=. denominator_tolerance {
     True -> None
     False -> {
@@ -411,10 +449,10 @@ fn edge_intersection_x(
       let left_t = cross(offset, right_direction) /. denominator
       let right_t = cross(offset, left_direction) /. denominator
       case
-        left_t >=. 0.0 -. tolerance
-        && left_t <=. 1.0 +. tolerance
-        && right_t >=. 0.0 -. tolerance
-        && right_t <=. 1.0 +. tolerance
+        left_t >=. 0.0 -. arrangement_relative_tolerance
+        && left_t <=. 1.0 +. arrangement_relative_tolerance
+        && right_t >=. 0.0 -. arrangement_relative_tolerance
+        && right_t <=. 1.0 +. arrangement_relative_tolerance
       {
         True -> Some(left.start.x +. left_direction.x *. clamp01(left_t))
         False -> None
@@ -637,15 +675,21 @@ fn edge_y_at(edge: Edge, x: Float) -> Float {
 }
 
 fn arrangement_tolerance(edges: List(Edge)) -> Float {
-  edges
-  |> list.fold(1.0, fn(scale, edge) {
-    scale
-    |> float.max(float.absolute_value(edge.start.x))
-    |> float.max(float.absolute_value(edge.start.y))
-    |> float.max(float.absolute_value(edge.end.x))
-    |> float.max(float.absolute_value(edge.end.y))
-  })
-  |> fn(scale) { scale *. arrangement_relative_tolerance }
+  let assert [first, ..rest] = edges
+  let initial = #(first.start.x, first.start.x, first.start.y, first.start.y)
+  let #(min_x, max_x, min_y, max_y) =
+    [first, ..rest]
+    |> list.fold(initial, fn(bounds, edge) {
+      let #(min_x, max_x, min_y, max_y) = bounds
+      #(
+        min_x |> float.min(edge.start.x) |> float.min(edge.end.x),
+        max_x |> float.max(edge.start.x) |> float.max(edge.end.x),
+        min_y |> float.min(edge.start.y) |> float.min(edge.end.y),
+        max_y |> float.max(edge.start.y) |> float.max(edge.end.y),
+      )
+    })
+
+  float.max(max_x -. min_x, max_y -. min_y) *. arrangement_relative_tolerance
 }
 
 fn combine2(
