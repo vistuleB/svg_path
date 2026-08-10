@@ -109,16 +109,13 @@ pub fn number(number: Float, with format: NumberFormat) -> String {
 @internal
 pub fn code_number(value: Float, with format: NumberFormat) -> String {
   let number = raw_number(value, format.options)
-  let number = case
-    string.contains(number, ".")
-    || string.contains(number, "e")
-    || string.contains(number, "E")
-  {
-    True -> number
-    False -> number <> ".0"
+  let #(significand, exponent) = split_exponent(number)
+  let significand = case string.contains(significand, ".") {
+    True -> significand
+    False -> significand <> ".0"
   }
 
-  left_pad(number, format)
+  left_pad(significand <> exponent, format)
 }
 
 /// Format a number without applying left-padding.

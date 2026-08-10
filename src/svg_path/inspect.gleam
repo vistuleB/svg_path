@@ -495,19 +495,16 @@ fn right_decimals(
 fn path_numbers(path: svg_path.Path) -> List(Float) {
   path
   |> svg_path.path_subpaths
-  |> list.fold([], fn(accumulated, subpath) {
-    list.append(accumulated, subpath_numbers(subpath))
-  })
+  |> list.flat_map(subpath_numbers)
 }
 
 fn subpath_numbers(subpath: svg_path.Subpath) -> List(Float) {
   let assert Ok(start) = svg_path.subpath_start(subpath)
 
-  subpath
-  |> svg_path.subpath_segments
-  |> list.fold(point_numbers(start), fn(accumulated, segment) {
-    list.append(accumulated, segment_numbers(segment))
-  })
+  list.append(
+    point_numbers(start),
+    subpath |> svg_path.subpath_segments |> list.flat_map(segment_numbers),
+  )
 }
 
 fn segment_numbers(segment: svg_path.Segment) -> List(Float) {

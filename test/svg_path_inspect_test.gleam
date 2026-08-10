@@ -14,6 +14,11 @@ pub fn point_inspection_preserves_scientific_exponents_test() {
   assert inspect.point(svg_path.Point(1.0e20, 0.0)) == "1e20,0"
 }
 
+pub fn point_code_emits_valid_float_scientific_notation_test() {
+  assert inspect.point_code(svg_path.Point(1.0e20, -1.0e-20))
+    == "svg_path.Point(1.0e20, -1.0e-20)"
+}
+
 pub fn point_inspects_with_decimal_options_test() {
   assert inspect.point_with(
       svg_path.Point(10.234, -2.235),
