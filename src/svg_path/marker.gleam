@@ -9,6 +9,7 @@ import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import svg_path
+import svg_path/internal/number
 import svg_path/transform as affine
 import svg_path/trig
 
@@ -535,13 +536,16 @@ fn validate_layout(layout: MarkerLayout) -> Result(Nil, Error) {
     view_box:,
     ..,
   ) = layout
-  case marker_width <=. 0.0 || !is_finite(marker_width) {
+  case marker_width <=. 0.0 || !number.is_finite(marker_width) {
     True -> Error(InvalidMarkerWidth(marker_width))
     False ->
-      case marker_height <=. 0.0 || !is_finite(marker_height) {
+      case marker_height <=. 0.0 || !number.is_finite(marker_height) {
         True -> Error(InvalidMarkerHeight(marker_height))
         False ->
-          case marker_units, stroke_width <=. 0.0 || !is_finite(stroke_width) {
+          case
+            marker_units,
+            stroke_width <=. 0.0 || !number.is_finite(stroke_width)
+          {
             StrokeWidth, True -> Error(InvalidStrokeWidth(stroke_width))
             _, _ -> validate_view_box(view_box)
           }
@@ -560,20 +564,12 @@ fn validate_view_box(
       case
         width <=. 0.0
         || height <=. 0.0
-        || !is_finite(width)
-        || !is_finite(height)
+        || !number.is_finite(width)
+        || !number.is_finite(height)
       {
         True -> Error(InvalidViewBox(box))
         False -> Ok(Nil)
       }
     }
   }
-}
-
-fn is_finite(value: Float) -> Bool {
-  !is_nan(value -. value)
-}
-
-fn is_nan(value: Float) -> Bool {
-  !{ value <. 0.0 || value >=. 0.0 }
 }

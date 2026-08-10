@@ -9,6 +9,7 @@ import gleam/float
 import gleam/list
 import svg_path
 import svg_path/ellipse
+import svg_path/internal/number
 import svg_path/point as point_helpers
 import svg_path/trig
 
@@ -869,12 +870,12 @@ fn transform_valid_segment(
 
 fn validate_matrix(transform: Matrix) -> Result(Nil, Error) {
   case
-    is_finite(transform.a)
-    && is_finite(transform.b)
-    && is_finite(transform.c)
-    && is_finite(transform.d)
-    && is_finite(transform.e)
-    && is_finite(transform.f)
+    number.is_finite(transform.a)
+    && number.is_finite(transform.b)
+    && number.is_finite(transform.c)
+    && number.is_finite(transform.d)
+    && number.is_finite(transform.e)
+    && number.is_finite(transform.f)
   {
     True -> Ok(Nil)
     False -> Error(InvalidMatrix)
@@ -968,14 +969,6 @@ fn points_within_tolerance(
 
   tolerance >=. 0.0
   && point_helpers.distance_squared(a, b) <=. tolerance_squared
-}
-
-fn is_finite(value: Float) -> Bool {
-  !is_nan(value -. value)
-}
-
-fn is_nan(value: Float) -> Bool {
-  !{ value <. 0.0 || value >=. 0.0 }
 }
 
 fn transform_segments(

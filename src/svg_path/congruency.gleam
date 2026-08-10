@@ -14,6 +14,7 @@ import gleam/int
 import gleam/list
 import svg_path
 import svg_path/ellipse
+import svg_path/internal/number
 import svg_path/point as point_helpers
 import svg_path/transform
 
@@ -558,12 +559,12 @@ fn fit_from_matrix(
   let #(a, b, c, d, e, f) = transform.to_tuple(matrix)
 
   case
-    is_finite(a)
-    && is_finite(b)
-    && is_finite(c)
-    && is_finite(d)
-    && is_finite(e)
-    && is_finite(f)
+    number.is_finite(a)
+    && number.is_finite(b)
+    && number.is_finite(c)
+    && number.is_finite(d)
+    && number.is_finite(e)
+    && number.is_finite(f)
   {
     False -> Error(Nil)
     True -> {
@@ -601,7 +602,7 @@ fn rms_error(
       case float.square_root(mean_scaled_squares) {
         Ok(error) -> {
           let error = sums.scale *. error
-          case is_finite(error) {
+          case number.is_finite(error) {
             True -> Ok(error)
             False -> Error(Nil)
           }
@@ -615,7 +616,7 @@ fn rms_error(
 fn accumulate_squared_error(sums: ErrorSums, error: Float) -> ErrorSums {
   let magnitude = float.absolute_value(error)
 
-  case is_finite(magnitude), magnitude, sums.scale {
+  case number.is_finite(magnitude), magnitude, sums.scale {
     False, _, _ -> ErrorSums(..sums, finite: False)
     True, 0.0, _ -> sums
     True, _, 0.0 -> ErrorSums(..sums, scale: magnitude, scaled_squares: 1.0)
@@ -635,8 +636,8 @@ fn accumulate_squared_error(sums: ErrorSums, error: Float) -> ErrorSums {
 }
 
 fn determinant_is_degenerate(determinant: Float, scale: Float) -> Bool {
-  !is_finite(determinant)
-  || !is_finite(scale)
+  !number.is_finite(determinant)
+  || !number.is_finite(scale)
   || determinant <=. 0.0
   || determinant <=. scale *. 0.000000000001
 }
@@ -1080,14 +1081,6 @@ fn result_try_nil(result: Result(a, Nil), next: fn(a) -> Result(b, Nil)) {
     Ok(value) -> next(value)
     Error(Nil) -> Error(Nil)
   }
-}
-
-fn is_finite(value: Float) -> Bool {
-  !is_nan(value -. value)
-}
-
-fn is_nan(value: Float) -> Bool {
-  !{ value <. 0.0 || value >=. 0.0 }
 }
 
 fn from_ellipse_point(point: ellipse.EllipsePoint) -> svg_path.Point {

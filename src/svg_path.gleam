@@ -1369,7 +1369,7 @@ pub fn segment_degenerate_lines(
   segment: Segment,
   tolerance tolerance: Float,
 ) -> Result(Option(List(Segment)), Error) {
-  case tolerance <=. 0.0 || !finite_float(tolerance) {
+  case tolerance <=. 0.0 || !number.is_finite(tolerance) {
     True -> Error(InvalidLinearizeTolerance(tolerance))
     False -> segment_degenerate_lines_valid(segment, tolerance)
   }
@@ -1384,7 +1384,7 @@ pub fn subpath_degenerate_lines(
   subpath: Subpath,
   tolerance tolerance: Float,
 ) -> Result(Option(List(Segment)), Error) {
-  case tolerance <=. 0.0 || !finite_float(tolerance) {
+  case tolerance <=. 0.0 || !number.is_finite(tolerance) {
     True -> Error(InvalidLinearizeTolerance(tolerance))
     False -> {
       use flattened <- result.try(
@@ -1818,7 +1818,7 @@ pub fn subpath_parameter_snap_to_boundary(
   parameter parameter: SubpathParameter,
   tolerance tolerance: Float,
 ) -> Result(SubpathParameter, Error) {
-  case tolerance <=. 0.0 || !finite_float(tolerance) {
+  case tolerance <=. 0.0 || !number.is_finite(tolerance) {
     True -> Error(InvalidIntersectionTolerance(tolerance))
     False -> {
       use _ <- result.try(validate_subpath_parameter(subpath, parameter))
@@ -3694,7 +3694,7 @@ fn arc_split_with_exact_endpoints(
 fn validate_direction_options(options: DirectionOptions) -> Result(Nil, Error) {
   case
     options.relative_tolerance >=. 0.0
-    && finite_float(options.relative_tolerance)
+    && number.is_finite(options.relative_tolerance)
   {
     True -> Ok(Nil)
     False ->
@@ -3839,7 +3839,7 @@ fn validate_crossing_options(options: CrossingOptions) -> Result(Nil, Error) {
     False -> {
       case
         options.parameter_tolerance <=. 0.0
-        || !finite_float(options.parameter_tolerance)
+        || !number.is_finite(options.parameter_tolerance)
       {
         True -> Error(InvalidCrossingTolerance(options.parameter_tolerance))
         False -> {
@@ -4017,7 +4017,7 @@ fn validate_minimize_options(options: MinimizeOptions) -> Result(Nil, Error) {
     False -> {
       case
         options.parameter_tolerance <=. 0.0
-        || !finite_float(options.parameter_tolerance)
+        || !number.is_finite(options.parameter_tolerance)
       {
         True -> Error(InvalidMinimizeTolerance(options.parameter_tolerance))
         False -> {
@@ -4210,7 +4210,7 @@ fn validate_distance_options(options: DistanceOptions) -> Result(Nil, Error) {
   case options.samples <= 0 {
     True -> Error(InvalidDistanceSamples(options.samples))
     False -> {
-      case options.tolerance <=. 0.0 || !finite_float(options.tolerance) {
+      case options.tolerance <=. 0.0 || !number.is_finite(options.tolerance) {
         True -> Error(InvalidDistanceTolerance(options.tolerance))
         False -> {
           case options.max_iterations <= 0 {
@@ -4227,7 +4227,7 @@ fn validate_distance_options(options: DistanceOptions) -> Result(Nil, Error) {
 pub fn validate_containment_options(
   options: ContainmentOptions,
 ) -> Result(Nil, Error) {
-  case options.tolerance <=. 0.0 || !finite_float(options.tolerance) {
+  case options.tolerance <=. 0.0 || !number.is_finite(options.tolerance) {
     True -> Error(InvalidContainmentTolerance(options.tolerance))
     False -> {
       case options.samples <= 0 {
@@ -4246,7 +4246,7 @@ pub fn validate_containment_options(
 
 @internal
 pub fn validate_length_options(options: LengthOptions) -> Result(Nil, Error) {
-  case options.tolerance <=. 0.0 || !finite_float(options.tolerance) {
+  case options.tolerance <=. 0.0 || !number.is_finite(options.tolerance) {
     True -> Error(InvalidLengthTolerance(options.tolerance))
     False -> {
       case options.max_depth <= 0 {
@@ -4258,7 +4258,7 @@ pub fn validate_length_options(options: LengthOptions) -> Result(Nil, Error) {
 }
 
 fn validate_subdivision_max_length(max_length: Float) -> Result(Nil, Error) {
-  case max_length <=. 0.0 || !finite_float(max_length) {
+  case max_length <=. 0.0 || !number.is_finite(max_length) {
     True -> Error(InvalidSubdivisionMaxLength(max_length))
     False -> Ok(Nil)
   }
@@ -4267,7 +4267,7 @@ fn validate_subdivision_max_length(max_length: Float) -> Result(Nil, Error) {
 fn validate_parametric_options(
   options: ParametricOptions,
 ) -> Result(Nil, Error) {
-  case options.tolerance <=. 0.0 || !finite_float(options.tolerance) {
+  case options.tolerance <=. 0.0 || !number.is_finite(options.tolerance) {
     True -> Error(InvalidParametricTolerance(options.tolerance))
     False -> {
       case options.samples_per_piece < 2 {
@@ -4296,7 +4296,7 @@ fn validate_parametric_interval(
   start: Float,
   end: Float,
 ) -> Result(Nil, Error) {
-  case start == end || !finite_float(start) || !finite_float(end) {
+  case start == end || !number.is_finite(start) || !number.is_finite(end) {
     True -> Error(InvalidParametricInterval(start:, end:))
     False -> Ok(Nil)
   }
@@ -4506,18 +4506,14 @@ fn parametric_cubic_segment(
 }
 
 fn validate_zero_length_tolerance(tolerance: Float) -> Result(Nil, Error) {
-  case tolerance <. 0.0 || !finite_float(tolerance) {
+  case tolerance <. 0.0 || !number.is_finite(tolerance) {
     True -> Error(InvalidZeroLengthTolerance(tolerance))
     False -> Ok(Nil)
   }
 }
 
 fn finite_point(point: Point) -> Bool {
-  finite_float(point.x) && finite_float(point.y)
-}
-
-fn finite_float(value: Float) -> Bool {
-  value -. value == 0.0
+  number.is_finite(point.x) && number.is_finite(point.y)
 }
 
 fn subdivision_distances(
@@ -4600,7 +4596,7 @@ fn subdivide_subpaths_to_max_length(
 }
 
 fn validate_linearize_options(options: LinearizeOptions) -> Result(Nil, Error) {
-  case options.tolerance <=. 0.0 || !finite_float(options.tolerance) {
+  case options.tolerance <=. 0.0 || !number.is_finite(options.tolerance) {
     True -> Error(InvalidLinearizeTolerance(options.tolerance))
     False -> {
       case options.max_depth <= 0 {
@@ -7573,7 +7569,7 @@ fn close_subpath_with(
 fn validate_endpoint_policy(policy: EndpointPolicy) -> Result(Nil, Error) {
   case policy {
     WiggleWith(tolerance) | WiggleThenBridgeWith(tolerance) ->
-      case tolerance <. 0.0 || !finite_float(tolerance) {
+      case tolerance <. 0.0 || !number.is_finite(tolerance) {
         True -> Error(InvalidWiggleTolerance(tolerance))
         False -> Ok(Nil)
       }

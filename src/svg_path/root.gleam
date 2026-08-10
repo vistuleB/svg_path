@@ -8,10 +8,7 @@ import gleam/float
 import gleam/int
 import gleam/list
 import gleam/result
-
-fn is_finite(value: Float) -> Bool {
-  value -. value == 0.0
-}
+import svg_path/internal/number
 
 const default_tolerance = 0.000000001
 
@@ -212,7 +209,9 @@ pub fn polynomial_roots_with(
   to upper: Float,
   options options: PolynomialOptions,
 ) -> Result(List(Float), Error) {
-  case options.root_tolerance <=. 0.0 || !is_finite(options.root_tolerance) {
+  case
+    options.root_tolerance <=. 0.0 || !number.is_finite(options.root_tolerance)
+  {
     True -> Error(InvalidTolerance(options.root_tolerance))
     False ->
       case options.max_iterations <= 0 {
@@ -244,7 +243,9 @@ pub fn polynomial_root_isolations_with(
   to upper: Float,
   options options: PolynomialOptions,
 ) -> Result(List(RootIsolation), Error) {
-  case options.root_tolerance <=. 0.0 || !is_finite(options.root_tolerance) {
+  case
+    options.root_tolerance <=. 0.0 || !number.is_finite(options.root_tolerance)
+  {
     True -> Error(InvalidTolerance(options.root_tolerance))
     False ->
       case options.max_iterations <= 0 {
@@ -282,7 +283,7 @@ fn cubic_with(
   options options: PolynomialOptions,
 ) -> Result(List(Float), Error) {
   case
-    options.root_tolerance <=. 0.0 || !is_finite(options.root_tolerance),
+    options.root_tolerance <=. 0.0 || !number.is_finite(options.root_tolerance),
     options.max_iterations <= 0
   {
     True, _ -> Error(InvalidTolerance(options.root_tolerance))
@@ -589,7 +590,7 @@ pub fn bisect_with(
   to right: Float,
   options options: Options,
 ) -> Result(Float, Error) {
-  case options.tolerance <=. 0.0 || !is_finite(options.tolerance) {
+  case options.tolerance <=. 0.0 || !number.is_finite(options.tolerance) {
     True -> Error(InvalidTolerance(options.tolerance))
     False -> {
       case options.max_iterations <= 0 {

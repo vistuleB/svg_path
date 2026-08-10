@@ -10,6 +10,7 @@ import gleam/float
 import gleam/list
 import gleam/result
 import svg_path
+import svg_path/internal/number
 import svg_path/offset
 
 /// Errors returned by stroke helpers.
@@ -296,7 +297,7 @@ pub fn path_dashed_with(
 }
 
 fn validate_options(options: Options) -> Result(Nil, Error) {
-  case options.width <=. 0.0 || !is_finite(options.width) {
+  case options.width <=. 0.0 || !number.is_finite(options.width) {
     True -> Error(InvalidWidth(options.width))
     False -> Ok(Nil)
   }
@@ -338,7 +339,7 @@ fn validate_dash_pattern(pattern: List(Float)) -> Result(Nil, Error) {
   case pattern {
     [] -> Ok(Nil)
     [first, ..rest] -> {
-      case first <. 0.0 || !is_finite(first) {
+      case first <. 0.0 || !number.is_finite(first) {
         True -> Error(InvalidDashLength(first))
         False -> validate_dash_pattern(rest)
       }
@@ -347,7 +348,7 @@ fn validate_dash_pattern(pattern: List(Float)) -> Result(Nil, Error) {
 }
 
 fn validate_dash_offset(offset: Float) -> Result(Nil, Error) {
-  case is_finite(offset) {
+  case number.is_finite(offset) {
     True -> Ok(Nil)
     False -> Error(InvalidDashOffset(offset))
   }
@@ -619,14 +620,6 @@ fn to_offset_cap(cap: Cap) -> offset.Cap {
     Round -> offset.RoundCap
     Square -> offset.Square
   }
-}
-
-fn is_finite(value: Float) -> Bool {
-  !is_nan(value -. value)
-}
-
-fn is_nan(value: Float) -> Bool {
-  !{ value <. 0.0 || value >=. 0.0 }
 }
 
 fn sum(values: List(Float)) -> Float {

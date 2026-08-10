@@ -131,7 +131,8 @@ fn finite_number(number: Float) -> Result(Float, Nil) {
   }
 }
 
-fn is_finite(value: Float) -> Bool {
+@internal
+pub fn is_finite(value: Float) -> Bool {
   !is_nan(value -. value)
 }
 

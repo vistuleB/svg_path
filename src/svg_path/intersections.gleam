@@ -24,6 +24,7 @@ import svg_path.{
   SubpathSelfIntersection,
 }
 import svg_path/bezier
+import svg_path/internal/number
 import svg_path/overlap_detection
 import svg_path/point
 
@@ -673,19 +674,19 @@ fn validate_classification_options(
   case
     options.angular_tolerance >=. 0.0
     && options.angular_tolerance <. 180.0
-    && is_finite(options.angular_tolerance)
+    && number.is_finite(options.angular_tolerance)
   {
     True ->
       case
         options.distance_tolerance >=. 0.0
-        && is_finite(options.distance_tolerance)
+        && number.is_finite(options.distance_tolerance)
       {
         False ->
           Error(InvalidClassificationDistanceTolerance(
             options.distance_tolerance,
           ))
         True ->
-          case length_tolerance >. 0.0 && is_finite(length_tolerance) {
+          case length_tolerance >. 0.0 && number.is_finite(length_tolerance) {
             False ->
               Error(
                 PathError(svg_path.InvalidLengthTolerance(length_tolerance)),
@@ -697,7 +698,7 @@ fn validate_classification_options(
                 True ->
                   case
                     options.initial_arc_length >. 0.0
-                    && is_finite(options.initial_arc_length)
+                    && number.is_finite(options.initial_arc_length)
                   {
                     False ->
                       Error(InvalidClassificationInitialArcLength(
@@ -707,7 +708,7 @@ fn validate_classification_options(
                       case
                         options.maximum_arc_length
                         >=. options.initial_arc_length
-                        && is_finite(options.maximum_arc_length)
+                        && number.is_finite(options.maximum_arc_length)
                       {
                         False ->
                           Error(InvalidClassificationMaximumArcLength(
@@ -1138,14 +1139,6 @@ fn touching_direction(
   }
 }
 
-fn is_finite(value: Float) -> Bool {
-  !is_nan(value -. value)
-}
-
-fn is_nan(value: Float) -> Bool {
-  !{ value <. 0.0 || value >=. 0.0 }
-}
-
 fn clamp01(value: Float) -> Float {
   value |> float.max(0.0) |> float.min(1.0)
 }
@@ -1160,7 +1153,7 @@ fn dot(a: Point, b: Point) -> Float {
 
 @internal
 pub fn validate_options(options: IntersectionOptions) -> Result(Nil, Error) {
-  case options.tolerance <=. 0.0 || !is_finite(options.tolerance) {
+  case options.tolerance <=. 0.0 || !number.is_finite(options.tolerance) {
     True -> Error(InvalidIntersectionTolerance(options.tolerance))
     False -> {
       case options.max_depth <= 0 {
@@ -1176,7 +1169,7 @@ fn validate_self_intersection_options(
 ) -> Result(Nil, Error) {
   case
     options.minimum_arc_length_separation <=. 0.0
-    || !is_finite(options.minimum_arc_length_separation)
+    || !number.is_finite(options.minimum_arc_length_separation)
   {
     True ->
       Error(InvalidSelfIntersectionMinimumArcLengthSeparation(
@@ -1185,7 +1178,7 @@ fn validate_self_intersection_options(
     False -> {
       case
         options.distance_tolerance <=. 0.0
-        || !is_finite(options.distance_tolerance)
+        || !number.is_finite(options.distance_tolerance)
       {
         True ->
           Error(InvalidSelfIntersectionDistanceTolerance(

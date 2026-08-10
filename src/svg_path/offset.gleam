@@ -34,6 +34,7 @@ import svg_path
 import svg_path/area
 import svg_path/arrangement as arrangement_graph
 import svg_path/bezier
+import svg_path/internal/number
 import svg_path/intersections
 import svg_path/point as point_helpers
 import svg_path/root
@@ -724,7 +725,8 @@ pub fn path_untrimmed_with(
 
 fn validate_options(options: Options) -> Result(Nil, Error) {
   case
-    options.fitting.tolerance <=. 0.0 || !is_finite(options.fitting.tolerance)
+    options.fitting.tolerance <=. 0.0
+    || !number.is_finite(options.fitting.tolerance)
   {
     True -> Error(InvalidTolerance(options.fitting.tolerance))
     False ->
@@ -736,7 +738,7 @@ fn validate_options(options: Options) -> Result(Nil, Error) {
             False ->
               case
                 options.stalled_offset_diameter <. 0.0
-                || !is_finite(options.stalled_offset_diameter)
+                || !number.is_finite(options.stalled_offset_diameter)
               {
                 True ->
                   Error(InvalidStalledOffsetDiameter(
@@ -752,7 +754,7 @@ fn validate_options(options: Options) -> Result(Nil, Error) {
 fn validate_join(join: Join) -> Result(Nil, Error) {
   case join {
     Miter(miter_limit) ->
-      case miter_limit <=. 0.0 || !is_finite(miter_limit) {
+      case miter_limit <=. 0.0 || !number.is_finite(miter_limit) {
         True -> Error(InvalidMiterLimit(miter_limit))
         False -> Ok(Nil)
       }
@@ -761,7 +763,7 @@ fn validate_join(join: Join) -> Result(Nil, Error) {
 }
 
 fn validate_stroke_width(width: Float) -> Result(Nil, Error) {
-  case width <=. 0.0 || !is_finite(width) {
+  case width <=. 0.0 || !number.is_finite(width) {
     True -> Error(InvalidStrokeWidth(width))
     False -> Ok(Nil)
   }
@@ -5183,21 +5185,13 @@ fn segment_is_finite(segment: svg_path.Segment) -> Bool {
     svg_path.Arc(start:, radius:, x_axis_rotation:, end:, ..) ->
       point_is_finite(start)
       && point_is_finite(radius)
-      && is_finite(x_axis_rotation)
+      && number.is_finite(x_axis_rotation)
       && point_is_finite(end)
   }
 }
 
 fn point_is_finite(point: svg_path.Point) -> Bool {
-  is_finite(point.x) && is_finite(point.y)
-}
-
-fn is_finite(value: Float) -> Bool {
-  !is_nan(value -. value)
-}
-
-fn is_nan(value: Float) -> Bool {
-  !{ value <. 0.0 || value >=. 0.0 }
+  number.is_finite(point.x) && number.is_finite(point.y)
 }
 
 fn int_to_float(value: Int) -> Float {
