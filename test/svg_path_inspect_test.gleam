@@ -14,6 +14,15 @@ pub fn point_inspection_preserves_scientific_exponents_test() {
   assert inspect.point(svg_path.Point(1.0e20, 0.0)) == "1e20,0"
 }
 
+pub fn point_padding_measures_scientific_significands_test() {
+  let options =
+    inspect.default_options()
+    |> inspect.with_left_padding(inspect.LeftPadding(4, inspect.Zero))
+
+  assert inspect.point_with(svg_path.Point(1.0e20, 2.0), options:)
+    == "0001e20,0002"
+}
+
 pub fn point_code_emits_valid_float_scientific_notation_test() {
   assert inspect.point_code(svg_path.Point(1.0e20, -1.0e-20))
     == "svg_path.Point(1.0e20, -1.0e-20)"

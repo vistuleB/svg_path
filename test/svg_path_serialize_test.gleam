@@ -23,6 +23,16 @@ pub fn serialization_preserves_scientific_exponents_test() {
   assert serialize.subpath_with(subpath, options:) == "M 1e20 0"
 }
 
+pub fn serialized_padding_measures_scientific_significands_test() {
+  let subpath = svg_path.subpath_empty(at: svg_path.Point(1.0e20, 2.0))
+  let options =
+    serialize.default_options()
+    |> serialize.with_right_decimals(serialize.System)
+    |> serialize.with_left_padding(serialize.LeftPadding(4, serialize.Zero))
+
+  assert serialize.subpath_with(subpath, options:) == "M 0001e20 0002"
+}
+
 pub fn empty_subpath_serializes_to_move_test() {
   assert serialize.subpath(svg_path.subpath_empty(at: svg_path.Point(0.0, 0.0)))
     == "M 0 0"

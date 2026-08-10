@@ -153,9 +153,10 @@ fn pad_left_side(
   width: Int,
   style: LeftPaddingStyle,
 ) -> String {
-  let #(whole, suffix) = case string.split_once(number, on: ".") {
+  let #(significand, exponent) = split_exponent(number)
+  let #(whole, suffix) = case string.split_once(significand, on: ".") {
     Ok(#(whole, fractional)) -> #(whole, "." <> fractional)
-    Error(_) -> #(number, "")
+    Error(_) -> #(significand, "")
   }
 
   let whole = case style {
@@ -163,7 +164,7 @@ fn pad_left_side(
     Zero -> zero_pad_whole(whole, width)
   }
 
-  whole <> suffix
+  whole <> suffix <> exponent
 }
 
 fn zero_pad_whole(whole: String, width: Int) -> String {
@@ -177,9 +178,10 @@ fn zero_pad_whole(whole: String, width: Int) -> String {
 }
 
 fn left_width(number: String) -> Int {
-  case string.split_once(number, on: ".") {
+  let #(significand, _) = split_exponent(number)
+  case string.split_once(significand, on: ".") {
     Ok(#(whole, _)) -> string.length(whole)
-    Error(_) -> string.length(number)
+    Error(_) -> string.length(significand)
   }
 }
 
