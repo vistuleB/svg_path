@@ -722,13 +722,21 @@ fn cubic_fit_error_loop(
 fn validate_cubic_self_intersection_options(
   options: CubicSelfIntersectionOptions,
 ) -> Result(Nil, Error) {
-  case options.minimum_arc_length_separation <=. 0.0 {
+  case
+    options.minimum_arc_length_separation <=. 0.0
+    || options.minimum_arc_length_separation
+    -. options.minimum_arc_length_separation
+    != 0.0
+  {
     True ->
       Error(InvalidCubicSelfIntersectionMinimumArcLengthSeparation(
         options.minimum_arc_length_separation,
       ))
     False -> {
-      case options.distance_tolerance <=. 0.0 {
+      case
+        options.distance_tolerance <=. 0.0
+        || options.distance_tolerance -. options.distance_tolerance != 0.0
+      {
         True ->
           Error(InvalidCubicSelfIntersectionDistanceTolerance(
             options.distance_tolerance,

@@ -304,7 +304,10 @@ pub fn insert_atomic_segment(
   tolerance tolerance: Float,
   minimum_chord minimum_chord: Float,
 ) -> Result(ArrangementGraph, Error) {
-  case tolerance <=. 0.0, minimum_chord <=. 0.0 {
+  case
+    tolerance <=. 0.0 || tolerance -. tolerance != 0.0,
+    minimum_chord <=. 0.0 || minimum_chord -. minimum_chord != 0.0
+  {
     True, _ -> Error(InvalidTolerance(tolerance))
     _, True -> Error(InvalidMinimumChord(minimum_chord))
     False, False -> {

@@ -3682,7 +3682,10 @@ fn arc_split_with_exact_endpoints(
 }
 
 fn validate_direction_options(options: DirectionOptions) -> Result(Nil, Error) {
-  case options.relative_tolerance >=. 0.0 {
+  case
+    options.relative_tolerance >=. 0.0
+    && finite_float(options.relative_tolerance)
+  {
     True -> Ok(Nil)
     False ->
       Error(InvalidDirectionRelativeTolerance(options.relative_tolerance))
@@ -3824,7 +3827,7 @@ fn validate_crossing_options(options: CrossingOptions) -> Result(Nil, Error) {
   case options.samples <= 0 {
     True -> Error(InvalidCrossingSamples(options.samples))
     False -> {
-      case options.tolerance <=. 0.0 {
+      case options.tolerance <=. 0.0 || !finite_float(options.tolerance) {
         True -> Error(InvalidCrossingTolerance(options.tolerance))
         False -> {
           case options.max_iterations <= 0 {
@@ -3999,7 +4002,7 @@ fn validate_minimize_options(options: MinimizeOptions) -> Result(Nil, Error) {
   case options.samples <= 0 {
     True -> Error(InvalidMinimizeSamples(options.samples))
     False -> {
-      case options.tolerance <=. 0.0 {
+      case options.tolerance <=. 0.0 || !finite_float(options.tolerance) {
         True -> Error(InvalidMinimizeTolerance(options.tolerance))
         False -> {
           case options.max_iterations <= 0 {
@@ -4191,7 +4194,7 @@ fn validate_distance_options(options: DistanceOptions) -> Result(Nil, Error) {
   case options.samples <= 0 {
     True -> Error(InvalidDistanceSamples(options.samples))
     False -> {
-      case options.tolerance <=. 0.0 {
+      case options.tolerance <=. 0.0 || !finite_float(options.tolerance) {
         True -> Error(InvalidDistanceTolerance(options.tolerance))
         False -> {
           case options.max_iterations <= 0 {
@@ -4207,7 +4210,7 @@ fn validate_distance_options(options: DistanceOptions) -> Result(Nil, Error) {
 fn validate_containment_options(
   options: ContainmentOptions,
 ) -> Result(Nil, Error) {
-  case options.tolerance <=. 0.0 {
+  case options.tolerance <=. 0.0 || !finite_float(options.tolerance) {
     True -> Error(InvalidContainmentTolerance(options.tolerance))
     False -> {
       case options.samples <= 0 {
@@ -4226,7 +4229,7 @@ fn validate_containment_options(
 
 @internal
 pub fn validate_length_options(options: LengthOptions) -> Result(Nil, Error) {
-  case options.tolerance <=. 0.0 {
+  case options.tolerance <=. 0.0 || !finite_float(options.tolerance) {
     True -> Error(InvalidLengthTolerance(options.tolerance))
     False -> {
       case options.max_depth <= 0 {
@@ -4238,7 +4241,7 @@ pub fn validate_length_options(options: LengthOptions) -> Result(Nil, Error) {
 }
 
 fn validate_subdivision_max_length(max_length: Float) -> Result(Nil, Error) {
-  case max_length <=. 0.0 {
+  case max_length <=. 0.0 || !finite_float(max_length) {
     True -> Error(InvalidSubdivisionMaxLength(max_length))
     False -> Ok(Nil)
   }
@@ -4580,7 +4583,7 @@ fn subdivide_subpaths_to_max_length(
 }
 
 fn validate_linearize_options(options: LinearizeOptions) -> Result(Nil, Error) {
-  case options.tolerance <=. 0.0 {
+  case options.tolerance <=. 0.0 || !finite_float(options.tolerance) {
     True -> Error(InvalidLinearizeTolerance(options.tolerance))
     False -> {
       case options.max_depth <= 0 {

@@ -721,7 +721,9 @@ pub fn path_untrimmed_with(
 }
 
 fn validate_options(options: Options) -> Result(Nil, Error) {
-  case options.fitting.tolerance <=. 0.0 {
+  case
+    options.fitting.tolerance <=. 0.0 || !is_finite(options.fitting.tolerance)
+  {
     True -> Error(InvalidTolerance(options.fitting.tolerance))
     False ->
       case options.fitting.samples <= 0 {
@@ -730,7 +732,10 @@ fn validate_options(options: Options) -> Result(Nil, Error) {
           case options.fitting.max_depth <= 0 {
             True -> Error(InvalidMaxDepth(options.fitting.max_depth))
             False ->
-              case options.stalled_offset_diameter <. 0.0 {
+              case
+                options.stalled_offset_diameter <. 0.0
+                || !is_finite(options.stalled_offset_diameter)
+              {
                 True ->
                   Error(InvalidStalledOffsetDiameter(
                     options.stalled_offset_diameter,
@@ -744,9 +749,12 @@ fn validate_options(options: Options) -> Result(Nil, Error) {
 
 fn validate_join(join: Join) -> Result(Nil, Error) {
   case join {
-    Miter(miter_limit) if miter_limit <=. 0.0 ->
-      Error(InvalidMiterLimit(miter_limit))
-    Bevel | Miter(..) | Round -> Ok(Nil)
+    Miter(miter_limit) ->
+      case miter_limit <=. 0.0 || !is_finite(miter_limit) {
+        True -> Error(InvalidMiterLimit(miter_limit))
+        False -> Ok(Nil)
+      }
+    Bevel | Round -> Ok(Nil)
   }
 }
 

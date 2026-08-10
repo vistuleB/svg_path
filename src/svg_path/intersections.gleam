@@ -1160,7 +1160,7 @@ fn dot(a: Point, b: Point) -> Float {
 
 @internal
 pub fn validate_options(options: IntersectionOptions) -> Result(Nil, Error) {
-  case options.tolerance <=. 0.0 {
+  case options.tolerance <=. 0.0 || !is_finite(options.tolerance) {
     True -> Error(InvalidIntersectionTolerance(options.tolerance))
     False -> {
       case options.max_depth <= 0 {
@@ -1174,13 +1174,19 @@ pub fn validate_options(options: IntersectionOptions) -> Result(Nil, Error) {
 fn validate_self_intersection_options(
   options: SelfIntersectionOptions,
 ) -> Result(Nil, Error) {
-  case options.minimum_arc_length_separation <=. 0.0 {
+  case
+    options.minimum_arc_length_separation <=. 0.0
+    || !is_finite(options.minimum_arc_length_separation)
+  {
     True ->
       Error(InvalidSelfIntersectionMinimumArcLengthSeparation(
         options.minimum_arc_length_separation,
       ))
     False -> {
-      case options.distance_tolerance <=. 0.0 {
+      case
+        options.distance_tolerance <=. 0.0
+        || !is_finite(options.distance_tolerance)
+      {
         True ->
           Error(InvalidSelfIntersectionDistanceTolerance(
             options.distance_tolerance,
