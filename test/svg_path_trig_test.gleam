@@ -60,6 +60,16 @@ pub fn trig_degrees_uses_math_for_other_angles_test() {
   assert near(acos, 60.0)
 }
 
+pub fn degree_functions_accept_large_finite_angles_test() {
+  let sine = trig.sin_degrees(1.0e20)
+  let cosine = trig.cos_degrees(-1.0e20)
+  let tangent = trig.tan_degrees(1.0e20)
+
+  assert sine >=. -1.0 && sine <=. 1.0
+  assert cosine >=. -1.0 && cosine <=. 1.0
+  assert tangent <. 0.0 || tangent >=. 0.0
+}
+
 pub fn acos_degrees_rejects_values_outside_its_domain_test() {
   let assert Error(Nil) = trig.acos_degrees(-1.000001)
   let assert Error(Nil) = trig.acos_degrees(1.000001)

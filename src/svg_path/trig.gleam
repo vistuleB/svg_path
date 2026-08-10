@@ -25,7 +25,7 @@ pub fn sin_degrees(degrees: Float) -> Float {
     90.0 -> 1.0
     180.0 -> 0.0
     270.0 -> -1.0
-    _ -> internal_sin_radians(degrees_to_radians(degrees))
+    _ -> sin_radians(degrees_to_radians(degrees))
   }
 }
 
@@ -36,7 +36,7 @@ pub fn cos_degrees(degrees: Float) -> Float {
     90.0 -> 0.0
     180.0 -> -1.0
     270.0 -> 0.0
-    _ -> internal_cos_radians(degrees_to_radians(degrees))
+    _ -> cos_radians(degrees_to_radians(degrees))
   }
 }
 
@@ -89,18 +89,6 @@ pub fn acos_degrees(x: Float) -> Result(Float, Nil) {
     True -> Ok(acos_radians(x) |> radians_to_degrees)
     False -> Error(Nil)
   }
-}
-
-/// Return the radian sine for internal numerical tests.
-@internal
-pub fn internal_sin_radians(radians: Float) -> Float {
-  sin_radians(radians)
-}
-
-/// Return the radian cosine for internal numerical tests.
-@internal
-pub fn internal_cos_radians(radians: Float) -> Float {
-  cos_radians(radians)
 }
 
 @external(erlang, "math", "sin")
@@ -163,13 +151,6 @@ fn normalized_eighth_turn(degrees: Float) -> Float {
 }
 
 fn positive_remainder(value: Float, modulus: Float) -> Float {
-  case value <. 0.0 {
-    True -> positive_remainder(value +. modulus, modulus)
-    False -> {
-      case value >=. modulus {
-        True -> positive_remainder(value -. modulus, modulus)
-        False -> value
-      }
-    }
-  }
+  let assert Ok(remainder) = float.modulo(value, by: modulus)
+  remainder
 }
