@@ -1363,12 +1363,12 @@ pub fn segment_to_lines_with(
 /// the curve, in path coordinate units. `Ok(None)` means that the segment is
 /// not line-degenerate. `Ok(Some(lines))` preserves collinear backtracking;
 /// `Some([])` represents a curve with no movement. Lines themselves return
-/// `Ok(None)`. The tolerance must be greater than zero.
+/// `Ok(None)`. The tolerance must be finite and greater than zero.
 pub fn segment_degenerate_lines(
   segment: Segment,
   tolerance tolerance: Float,
 ) -> Result(Option(List(Segment)), Error) {
-  case tolerance <=. 0.0 {
+  case tolerance <=. 0.0 || !finite_float(tolerance) {
     True -> Error(InvalidLinearizeTolerance(tolerance))
     False -> segment_degenerate_lines_valid(segment, tolerance)
   }
@@ -1383,7 +1383,7 @@ pub fn subpath_degenerate_lines(
   subpath: Subpath,
   tolerance tolerance: Float,
 ) -> Result(Option(List(Segment)), Error) {
-  case tolerance <=. 0.0 {
+  case tolerance <=. 0.0 || !finite_float(tolerance) {
     True -> Error(InvalidLinearizeTolerance(tolerance))
     False -> {
       use flattened <- result.try(
