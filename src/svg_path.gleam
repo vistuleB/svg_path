@@ -648,6 +648,12 @@ pub type Error {
   /// The containment iteration limit must be greater than zero.
   InvalidContainmentMaxIterations(max_iterations: Int)
 
+  /// No regular interior sample could determine a segment's winding sides.
+  IndeterminateWindingSideLevels
+
+  /// Symmetric regular samples disagreed about a segment's winding sides.
+  InconsistentWindingSideLevels
+
   /// The intersection tolerance must be greater than zero.
   InvalidIntersectionTolerance(tolerance: Float)
 
