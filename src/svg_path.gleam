@@ -83,7 +83,8 @@ pub type Directions {
 pub type DirectionOptions {
   DirectionOptions(
     /// Candidate vectors at or below this fraction of the largest local
-    /// candidate are treated as collapsed. Zero skips only exact zero vectors.
+    /// candidate are treated as collapsed. This must be finite and
+    /// non-negative; zero skips only exact zero vectors.
     relative_tolerance: Float,
   )
 }
@@ -175,7 +176,8 @@ pub type CrossingOptions {
   CrossingOptions(
     /// Number of equal parameter windows scanned before refinement.
     samples: Int,
-    /// Maximum parameter-window width accepted during refinement.
+    /// Maximum finite, positive parameter-window width accepted during
+    /// refinement.
     parameter_tolerance: Float,
     /// Maximum bisection steps for one candidate window.
     max_iterations: Int,
@@ -187,7 +189,8 @@ pub type MinimizeOptions {
   MinimizeOptions(
     /// Number of equal parameter windows scanned for local minima.
     samples: Int,
-    /// Maximum parameter-window width accepted during refinement.
+    /// Maximum finite, positive parameter-window width accepted during
+    /// refinement.
     parameter_tolerance: Float,
     /// Maximum golden-section steps for one candidate window.
     max_iterations: Int,
@@ -197,7 +200,7 @@ pub type MinimizeOptions {
 /// Options for approximating the length of a segment or subpath.
 pub type LengthOptions {
   LengthOptions(
-    /// Maximum accepted path-coordinate error in one length estimate.
+    /// Maximum finite, positive path-coordinate error in one length estimate.
     tolerance: Float,
     /// Maximum recursive subdivision depth.
     max_depth: Int,
@@ -207,7 +210,7 @@ pub type LengthOptions {
 /// Options for building a subpath from a parametric curve.
 pub type ParametricOptions {
   ParametricOptions(
-    /// Maximum sampled path-coordinate fitting error for one piece.
+    /// Maximum finite, positive sampled fitting error for one piece.
     tolerance: Float,
     /// Number of interior fitting samples used for each candidate piece.
     samples_per_piece: Int,
@@ -232,7 +235,7 @@ pub type PointMapError(error) {
 /// Options for approximating segments with straight lines.
 pub type LinearizeOptions {
   LinearizeOptions(
-    /// Maximum accepted path-coordinate deviation from the line approximation.
+    /// Maximum finite, positive deviation from the line approximation.
     tolerance: Float,
     /// Maximum recursive subdivision depth.
     max_depth: Int,
@@ -247,7 +250,7 @@ pub type DistanceOptions {
   DistanceOptions(
     /// Number of equal parameter windows used by sampling-based projection.
     samples: Int,
-    /// Maximum geometric window diameter accepted during refinement.
+    /// Maximum finite, positive geometric window diameter during refinement.
     tolerance: Float,
     /// Maximum refinement steps for one projection candidate.
     max_iterations: Int,
@@ -257,7 +260,7 @@ pub type DistanceOptions {
 /// Options for classifying a point relative to a subpath's fill area.
 pub type ContainmentOptions {
   ContainmentOptions(
-    /// Path-coordinate distance at which the point is classified as boundary.
+    /// Finite, positive distance at which a point is classified as boundary.
     tolerance: Float,
     /// Number of scan samples used by projection and crossing queries.
     samples: Int,
@@ -288,9 +291,9 @@ pub type PathWinding {
 /// Options for finding self-intersections in one subpath.
 pub type SelfIntersectionOptions {
   SelfIntersectionOptions(
-    /// Minimum arc-length separation between two reported addresses.
+    /// Finite, positive arc-length separation between two reported addresses.
     minimum_arc_length_separation: Float,
-    /// Maximum path-coordinate distance between coincident points.
+    /// Finite, positive distance between coincident points.
     distance_tolerance: Float,
   )
 }
@@ -532,7 +535,7 @@ pub type Error {
   /// A path parameter was outside the valid subpath index range.
   InvalidPathParameter(subpath_index: Int, length: Int)
 
-  /// A direction relative tolerance must be non-negative.
+  /// A direction relative tolerance must be finite and non-negative.
   InvalidDirectionRelativeTolerance(Float)
 
   /// Geometry has no usable direction for the requested operation.
@@ -547,7 +550,7 @@ pub type Error {
   /// The number of crossing scan samples must be greater than zero.
   InvalidCrossingSamples(samples: Int)
 
-  /// The crossing tolerance must be greater than zero.
+  /// The crossing tolerance must be finite and greater than zero.
   InvalidCrossingTolerance(tolerance: Float)
 
   /// The crossing bisection iteration limit must be greater than zero.
@@ -559,7 +562,7 @@ pub type Error {
   /// The number of minimization scan samples must be greater than zero.
   InvalidMinimizeSamples(samples: Int)
 
-  /// The minimization tolerance must be greater than zero.
+  /// The minimization tolerance must be finite and greater than zero.
   InvalidMinimizeTolerance(tolerance: Float)
 
   /// The minimization iteration limit must be greater than zero.
@@ -568,7 +571,7 @@ pub type Error {
   /// A minimization window could not be refined within the iteration limit.
   MinimizeMaxIterationsReached(estimate: Float, value: Float)
 
-  /// The length approximation tolerance must be greater than zero.
+  /// The length approximation tolerance must be finite and greater than zero.
   InvalidLengthTolerance(tolerance: Float)
 
   /// The length approximation recursion limit must be greater than zero.
@@ -583,10 +586,10 @@ pub type Error {
   /// A requested arc-length distance was outside `0.0..length`.
   InvalidLengthDistance(distance: Float, length: Float)
 
-  /// The maximum segment length for subdivision must be greater than zero.
+  /// The maximum segment length must be finite and greater than zero.
   InvalidSubdivisionMaxLength(max_length: Float)
 
-  /// Parametric fitting tolerance must be greater than zero.
+  /// Parametric fitting tolerance must be finite and greater than zero.
   InvalidParametricTolerance(tolerance: Float)
 
   /// Parametric fitting needs at least two interior samples per piece.
@@ -598,7 +601,7 @@ pub type Error {
   /// Parametric fitting recursion depth must be zero or greater.
   InvalidParametricMaxDepth(max_depth: Int)
 
-  /// Parametric fitting needs distinct start and end parameters.
+  /// Parametric fitting needs distinct, finite start and end parameters.
   InvalidParametricInterval(start: Float, end: Float)
 
   /// The caller-provided parametric function produced a non-finite point.
@@ -619,7 +622,7 @@ pub type Error {
   /// A cubic fit did not have enough sample information to determine controls.
   UnderdeterminedCubicFit
 
-  /// The line approximation tolerance must be greater than zero.
+  /// The line approximation tolerance must be finite and greater than zero.
   InvalidLinearizeTolerance(tolerance: Float)
 
   /// The line approximation recursion limit must be greater than zero.
@@ -631,7 +634,7 @@ pub type Error {
   /// The number of distance scan samples must be greater than zero.
   InvalidDistanceSamples(samples: Int)
 
-  /// The distance tolerance must be greater than zero.
+  /// The distance tolerance must be finite and greater than zero.
   InvalidDistanceTolerance(tolerance: Float)
 
   /// The distance bisection iteration limit must be greater than zero.
@@ -643,7 +646,7 @@ pub type Error {
   /// Polynomial distance-root isolation produced an inconsistent bracket.
   DistanceRootIsolationFailed
 
-  /// The containment tolerance must be greater than zero.
+  /// The containment tolerance must be finite and greater than zero.
   InvalidContainmentTolerance(tolerance: Float)
 
   /// The number of containment samples must be greater than zero.
@@ -658,10 +661,10 @@ pub type Error {
   /// Symmetric regular samples disagreed about a segment's winding sides.
   InconsistentWindingSideLevels
 
-  /// The intersection tolerance must be greater than zero.
+  /// The intersection tolerance must be finite and greater than zero.
   InvalidIntersectionTolerance(tolerance: Float)
 
-  /// The overlap tolerance must be zero or greater.
+  /// The overlap tolerance must be finite and zero or greater.
   InvalidOverlapTolerance(tolerance: Float)
 
   /// Endpoint-projection overlap detection requires at least one sample.
@@ -670,10 +673,10 @@ pub type Error {
   /// The intersection subdivision depth must be greater than zero.
   InvalidIntersectionMaxDepth(max_depth: Int)
 
-  /// The self-intersection minimum arc length separation must be greater than zero.
+  /// The self-intersection arc-length separation must be finite and positive.
   InvalidSelfIntersectionMinimumArcLengthSeparation(Float)
 
-  /// The self-intersection distance tolerance must be greater than zero.
+  /// The self-intersection distance tolerance must be finite and positive.
   InvalidSelfIntersectionDistanceTolerance(Float)
 
   /// The two segments overlap in more than a single point.

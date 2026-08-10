@@ -23,7 +23,7 @@ pub type Options {
 /// Errors returned by root-finding helpers.
 @internal
 pub type Error {
-  /// The tolerance must be greater than zero.
+  /// The tolerance must be finite and greater than zero.
   InvalidTolerance(tolerance: Float)
 
   /// The maximum iteration count must be greater than zero.

@@ -111,10 +111,10 @@ pub type Error {
   /// The provided samples do not determine stable cubic handle lengths.
   UnderdeterminedCubicFit
 
-  /// Cubic self-intersection minimum arc length separation must be greater than zero.
+  /// Cubic self-intersection separation must be finite and greater than zero.
   InvalidCubicSelfIntersectionMinimumArcLengthSeparation(Float)
 
-  /// Cubic self-intersection distance tolerance must be greater than zero.
+  /// Cubic self-intersection distance tolerance must be finite and positive.
   InvalidCubicSelfIntersectionDistanceTolerance(Float)
 }
 

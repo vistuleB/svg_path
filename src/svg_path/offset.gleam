@@ -66,7 +66,7 @@ pub type Error {
   /// Arrangement construction failed while noding provisional offset paths.
   ArrangementGraphError(arrangement_graph.Error)
 
-  /// The offset tolerance must be greater than zero.
+  /// The offset tolerance must be finite and greater than zero.
   InvalidTolerance(tolerance: Float)
 
   /// The number of divergence samples must be greater than zero.
@@ -75,13 +75,13 @@ pub type Error {
   /// The recursive subdivision limit must be greater than zero.
   InvalidMaxDepth(max_depth: Int)
 
-  /// The miter limit must be greater than zero.
+  /// The miter limit must be finite and greater than zero.
   InvalidMiterLimit(miter_limit: Float)
 
-  /// The stalled offset diameter must be non-negative.
+  /// The stalled offset diameter must be finite and non-negative.
   InvalidStalledOffsetDiameter(diameter: Float)
 
-  /// Stroke width must be greater than zero.
+  /// Stroke width must be finite and greater than zero.
   InvalidStrokeWidth(width: Float)
 
   /// A segment tangent was too small to define a stable normal direction.

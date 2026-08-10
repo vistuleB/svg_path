@@ -21,7 +21,7 @@ pub type Error {
   /// An underlying offset operation failed.
   OffsetError(offset.Error)
 
-  /// Stroke width must be greater than zero.
+  /// Stroke width must be finite and greater than zero.
   InvalidWidth(width: Float)
 
   /// Dash lengths must be finite and non-negative.
@@ -49,7 +49,7 @@ pub type Cap {
 /// Options for stroke outline construction.
 pub type Options {
   Options(
-    /// Full stroke width in path-coordinate units; must be greater than zero.
+    /// Finite, positive full stroke width in path-coordinate units.
     width: Float,
     /// Cap applied to the endpoints of open subpaths.
     cap: Cap,

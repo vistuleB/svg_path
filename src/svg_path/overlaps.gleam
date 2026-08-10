@@ -7,10 +7,10 @@
 //// `svg_path.NonAffineOverlapCorrespondence`; normalize or linearize those
 //// segments before overlap detection.
 ////
-//// A supplied `tolerance` is non-negative. It is used as a Euclidean distance
-//// in path coordinates when testing coincidence and, during interval merging,
-//// as a normalized segment-parameter tolerance. Invalid negative tolerances
-//// return `svg_path.InvalidOverlapTolerance`.
+//// A supplied `tolerance` is finite and non-negative. It is used as a
+//// Euclidean distance in path coordinates when testing coincidence and,
+//// during interval merging, as a normalized segment-parameter tolerance.
+//// Invalid tolerances return `svg_path.InvalidOverlapTolerance`.
 ////
 //// Opposite-parameter lookup is exact with respect to a returned overlap. It
 //// accepts exact segment-end aliases and canonicalizes the returned address,
@@ -111,7 +111,7 @@ pub fn segment(
   segment_with(left, right, tolerance: default_overlap_tolerance)
 }
 
-/// Find segment overlaps using an explicit non-negative tolerance.
+/// Find segment overlaps using an explicit finite, non-negative tolerance.
 ///
 /// The tolerance is measured in path-coordinate distance for coincidence
 /// tests and in normalized segment parameters while merging candidates.
@@ -592,7 +592,7 @@ pub fn subpath(
   subpath_with(left, right, tolerance: default_overlap_tolerance)
 }
 
-/// Return subpath overlaps using an explicit non-negative tolerance.
+/// Return subpath overlaps using an explicit finite, non-negative tolerance.
 ///
 /// The tolerance has the module-wide geometric and normalized-parameter
 /// meaning. Continuous pieces may cross segment boundaries but never join
@@ -967,7 +967,7 @@ pub fn path(
   path_with(left, right, tolerance: default_overlap_tolerance)
 }
 
-/// Return path overlaps using an explicit non-negative tolerance.
+/// Return path overlaps using an explicit finite, non-negative tolerance.
 ///
 /// Results retain the complete subpath correspondence and the two source
 /// subpath indices. Continuous overlaps never join across subpath boundaries.
