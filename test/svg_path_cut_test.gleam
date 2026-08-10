@@ -49,6 +49,40 @@ pub fn subpath_cut_returns_subject_when_no_intersections_test() {
   assert cut.subpath(subject: subject, by: cutter) == Ok([subject])
 }
 
+pub fn subpath_cut_splits_at_partial_overlap_boundaries_test() {
+  let subject =
+    svg_path.subpath_assert([
+      svg_path.Line(
+        start: svg_path.Point(0.0, 0.0),
+        end: svg_path.Point(10.0, 0.0),
+      ),
+    ])
+  let cutter =
+    svg_path.subpath_assert([
+      svg_path.Line(
+        start: svg_path.Point(3.0, 0.0),
+        end: svg_path.Point(7.0, 0.0),
+      ),
+    ])
+
+  let assert Ok(pieces) = cut.subpath(subject: subject, by: cutter)
+
+  assert serialize.path(svg_path.Path(pieces))
+    == "M 0 0 H 3 M 3 0 H 7 M 7 0 H 10"
+}
+
+pub fn subpath_cut_ignores_full_overlap_at_open_boundaries_test() {
+  let subject =
+    svg_path.subpath_assert([
+      svg_path.Line(
+        start: svg_path.Point(0.0, 0.0),
+        end: svg_path.Point(10.0, 0.0),
+      ),
+    ])
+
+  assert cut.subpath(subject: subject, by: subject) == Ok([subject])
+}
+
 pub fn subpath_cut_ignores_open_subject_endpoint_intersections_test() {
   let subject =
     svg_path.subpath_assert([

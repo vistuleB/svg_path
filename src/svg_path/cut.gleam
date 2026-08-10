@@ -4,10 +4,13 @@
 //// subject pieces are returned.
 
 import gleam/list
+import gleam/option.{type Option, None, Some}
 import gleam/order
 import gleam/result
 import svg_path
+import svg_path/encounters
 import svg_path/intersections
+import svg_path/overlaps
 
 /// Cut a subject path by a cutter path.
 ///
@@ -60,14 +63,15 @@ pub fn subpath_with(
   by cutter: svg_path.Subpath,
   options options: intersections.IntersectionOptions,
 ) -> Result(List(svg_path.Subpath), svg_path.Error) {
-  use intersections <- result.try(intersections.subpath_with(
-    subject,
-    cutter,
-    options:,
-  ))
+  use found <- result.try(encounters.subpath_with(subject, cutter, options:))
+  let encounters.Encounters(overlaps: overlap_intervals, intersections:) = found
 
-  intersections
-  |> list.flat_map(fn(intersection) { intersection.left_parameters })
+  list.append(
+    list.flat_map(intersections, fn(intersection) {
+      intersection.left_parameters
+    }),
+    list.flat_map(overlap_intervals, subpath_overlap_cut_points),
+  )
   |> cut_at_parameters(subject: subject)
 }
 
@@ -98,23 +102,47 @@ fn path_cut_points(
   cutter: svg_path.Path,
   options: intersections.IntersectionOptions,
 ) -> Result(List(svg_path.SubpathParameter), svg_path.Error) {
-  use intersections <- result.try(intersections.path_with(
+  use found <- result.try(encounters.path_with(
     svg_path.subpath_as_path(subject),
     cutter,
     options:,
   ))
+  let encounters.Encounters(overlaps: overlap_intervals, intersections:) = found
 
-  intersections
-  |> list.flat_map(fn(intersection) {
-    intersection.left_parameters
-    |> list.filter_map(fn(parameter) {
-      case parameter {
-        svg_path.PathParameter(subpath_index: 0, at:) -> Ok(at)
-        _ -> Error(Nil)
-      }
-    })
+  list.append(
+    list.flat_map(intersections, fn(intersection) {
+      intersection.left_parameters
+    }),
+    list.flat_map(overlap_intervals, fn(overlap) {
+      list.append(
+        option_as_list(overlaps.path_overlap_left_start(overlap)),
+        option_as_list(overlaps.path_overlap_left_end(overlap)),
+      )
+    }),
+  )
+  |> list.filter_map(fn(parameter) {
+    case parameter {
+      svg_path.PathParameter(subpath_index: 0, at:) -> Ok(at)
+      _ -> Error(Nil)
+    }
   })
   |> Ok
+}
+
+fn subpath_overlap_cut_points(
+  overlap: overlaps.SubpathOverlap,
+) -> List(svg_path.SubpathParameter) {
+  list.append(
+    option_as_list(overlaps.subpath_overlap_left_start(overlap)),
+    option_as_list(overlaps.subpath_overlap_left_end(overlap)),
+  )
+}
+
+fn option_as_list(value: Option(a)) -> List(a) {
+  case value {
+    Some(value) -> [value]
+    None -> []
+  }
 }
 
 fn cut_at_parameters(
