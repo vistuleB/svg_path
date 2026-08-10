@@ -442,6 +442,7 @@ pub fn subpath_stroke_with(
   options options: Options,
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(validate_stroke_width(width))
+  use _ <- result.try(validate_options(options))
   let radius = width /. 2.0
   case svg_path.subpath_segments(subpath) {
     [] -> Ok(svg_path.path_empty())
@@ -681,6 +682,7 @@ pub fn path_stroke_with(
   options options: Options,
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(validate_stroke_width(width))
+  use _ <- result.try(validate_options(options))
   use subpaths <- result.try(
     stroke_path_subpaths(
       svg_path.path_subpaths(path),

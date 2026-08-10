@@ -68,6 +68,7 @@ pub fn path_with(
   using fill_rule: svg_path.FillRule,
   options options: Options,
 ) -> Result(svg_path.Path, svg_path.Error) {
+  use _ <- result.try(validate_options(options))
   input
   |> svg_path.path_subpaths
   |> clip_subpaths(clip_region, fill_rule, options, kept: [])
@@ -98,6 +99,7 @@ pub fn subpath_with(
   using fill_rule: svg_path.FillRule,
   options options: Options,
 ) -> Result(List(svg_path.Subpath), svg_path.Error) {
+  use _ <- result.try(validate_options(options))
   case svg_path.subpath_segments(input) {
     [] -> Ok([])
     _ -> {
@@ -119,6 +121,17 @@ pub fn subpath_with(
         }
       }
     }
+  }
+}
+
+fn validate_options(options: Options) -> Result(Nil, svg_path.Error) {
+  use _ <- result.try(intersections.validate_options(options.intersection))
+  use _ <- result.try(svg_path.validate_containment_options(options.containment))
+  case
+    options.tolerance <=. 0.0 || options.tolerance -. options.tolerance != 0.0
+  {
+    True -> Error(svg_path.InvalidIntersectionTolerance(options.tolerance))
+    False -> Ok(Nil)
   }
 }
 

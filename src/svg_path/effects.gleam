@@ -18,6 +18,9 @@ pub type Error {
   /// The radius must be greater than zero.
   InvalidRadius(radius: Float)
 
+  /// The numerical tolerance must be finite and greater than zero.
+  InvalidTolerance(tolerance: Float)
+
   /// The requested corner cannot be rounded with the current options.
   CannotRoundCorner(index: Int)
 
@@ -215,6 +218,7 @@ pub fn round_corners_with(
   radius radius: Float,
   options options: RoundCornerOptions,
 ) -> Result(svg_path.Path, Error) {
+  use _ <- result.try(validate_round_corner_inputs(radius, options))
   use subpaths <- result.try(
     round_subpaths(svg_path.path_subpaths(path), radius:, options:, rounded: []),
   )
@@ -239,22 +243,42 @@ pub fn round_subpath_corners_with(
   radius radius: Float,
   options options: RoundCornerOptions,
 ) -> Result(svg_path.Subpath, Error) {
+  use _ <- result.try(validate_round_corner_inputs(radius, options))
+  {
+    let segments = svg_path.subpath_segments(subpath)
+    case segments {
+      [] -> Ok(subpath)
+      [_] -> {
+        case svg_path.subpath_is_closed(subpath) {
+          False -> Ok(subpath)
+          True ->
+            round_subpath_corners_nonempty(subpath, segments, radius, options)
+        }
+      }
+      _ -> {
+        round_subpath_corners_nonempty(subpath, segments, radius, options)
+      }
+    }
+  }
+}
+
+fn validate_round_corner_inputs(
+  radius: Float,
+  options: RoundCornerOptions,
+) -> Result(Nil, Error) {
   case valid_radius(radius) {
     False -> Error(InvalidRadius(radius))
     True -> {
-      let segments = svg_path.subpath_segments(subpath)
-      case segments {
-        [] -> Ok(subpath)
-        [_] -> {
-          case svg_path.subpath_is_closed(subpath) {
-            False -> Ok(subpath)
-            True ->
-              round_subpath_corners_nonempty(subpath, segments, radius, options)
-          }
-        }
-        _ -> {
-          round_subpath_corners_nonempty(subpath, segments, radius, options)
-        }
+      use _ <- result.try(
+        svg_path.validate_length_options(options.length)
+        |> result.map_error(PathError),
+      )
+      case
+        options.tolerance <=. 0.0
+        || options.tolerance -. options.tolerance != 0.0
+      {
+        True -> Error(InvalidTolerance(options.tolerance))
+        False -> Ok(Nil)
       }
     }
   }

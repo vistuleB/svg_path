@@ -4207,7 +4207,8 @@ fn validate_distance_options(options: DistanceOptions) -> Result(Nil, Error) {
   }
 }
 
-fn validate_containment_options(
+@internal
+pub fn validate_containment_options(
   options: ContainmentOptions,
 ) -> Result(Nil, Error) {
   case options.tolerance <=. 0.0 || !finite_float(options.tolerance) {
