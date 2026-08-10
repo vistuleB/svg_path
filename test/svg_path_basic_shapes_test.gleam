@@ -71,7 +71,11 @@ pub fn circle_converts_to_svg_equivalent_path_test() {
   let assert Ok(subpath) = basic_shapes.circle(cx: 10.0, cy: 20.0, r: 5.0)
 
   assert serialize.subpath(subpath)
-    == "M 15 20 A 5 5 0 0 0 10 25 A 5 5 0 0 0 5 20 A 5 5 0 0 0 10 15 A 5 5 0 0 0 15 20 Z"
+    == "M 15 20 A 5 5 0 0 1 10 25 A 5 5 0 0 1 5 20 A 5 5 0 0 1 10 15 A 5 5 0 0 1 15 20 Z"
+
+  let assert [first, ..] = svg_path.subpath_segments(subpath)
+  let assert Ok(midpoint) = svg_path.segment_point(first, at: 0.5)
+  assert point_near(midpoint, svg_path.Point(13.5355339059, 23.5355339059))
 }
 
 pub fn ellipse_converts_to_svg_equivalent_path_test() {
@@ -79,7 +83,11 @@ pub fn ellipse_converts_to_svg_equivalent_path_test() {
     basic_shapes.ellipse(cx: 10.0, cy: 20.0, rx: 7.0, ry: 3.0)
 
   assert serialize.subpath(subpath)
-    == "M 17 20 A 7 3 0 0 0 10 23 A 7 3 0 0 0 3 20 A 7 3 0 0 0 10 17 A 7 3 0 0 0 17 20 Z"
+    == "M 17 20 A 7 3 0 0 1 10 23 A 7 3 0 0 1 3 20 A 7 3 0 0 1 10 17 A 7 3 0 0 1 17 20 Z"
+
+  let assert [first, ..] = svg_path.subpath_segments(subpath)
+  let assert Ok(midpoint) = svg_path.segment_point(first, at: 0.5)
+  assert point_near(midpoint, svg_path.Point(14.9497474683, 22.1213203436))
 }
 
 pub fn line_converts_to_subpath_test() {
@@ -152,4 +160,10 @@ pub fn invalid_point_lists_return_core_errors_test() {
 
   assert basic_shapes.polygon([svg_path.Point(1.0, 2.0)])
     == Error(basic_shapes.PathError(svg_path.EmptySubpath))
+}
+
+fn point_near(left: svg_path.Point, right: svg_path.Point) -> Bool {
+  let dx = left.x -. right.x
+  let dy = left.y -. right.y
+  dx *. dx +. dy *. dy <=. 0.000000000001
 }

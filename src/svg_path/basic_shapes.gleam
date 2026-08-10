@@ -153,7 +153,7 @@ pub fn ellipse(
       radius: radius,
       x_axis_rotation: 0.0,
       large_arc: False,
-      sweep: False,
+      sweep: True,
       end: svg_path.Point(cx, cy +. ry),
     ),
     svg_path.Arc(
@@ -161,7 +161,7 @@ pub fn ellipse(
       radius: radius,
       x_axis_rotation: 0.0,
       large_arc: False,
-      sweep: False,
+      sweep: True,
       end: svg_path.Point(cx -. rx, cy),
     ),
     svg_path.Arc(
@@ -169,7 +169,7 @@ pub fn ellipse(
       radius: radius,
       x_axis_rotation: 0.0,
       large_arc: False,
-      sweep: False,
+      sweep: True,
       end: svg_path.Point(cx, cy -. ry),
     ),
     svg_path.Arc(
@@ -177,7 +177,7 @@ pub fn ellipse(
       radius: radius,
       x_axis_rotation: 0.0,
       large_arc: False,
-      sweep: False,
+      sweep: True,
       end: start,
     ),
   ])
