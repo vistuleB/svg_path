@@ -215,7 +215,7 @@ fn analyze_rotation_scale(
 }
 
 fn scale_optional_transform(x: Float, y: Float, options: Options) -> String {
-  case close(x, 1.0) && close(y, 1.0) {
+  case x == 1.0 && y == 1.0 {
     True -> ""
     False -> scale_transform(x, y, options)
   }
@@ -270,10 +270,6 @@ fn length(x: Float, y: Float) -> Float {
 
 fn close_to_zero(value: Float) -> Bool {
   float.absolute_value(value) <=. rotation_scale_epsilon
-}
-
-fn close(left: Float, right: Float) -> Bool {
-  float.absolute_value(left -. right) <=. rotation_scale_epsilon
 }
 
 fn number(number: Float, options: Options) -> String {

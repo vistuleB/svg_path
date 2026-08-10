@@ -1,3 +1,4 @@
+import gleam/option.{None}
 import gleeunit
 import svg_path/transform
 import svg_path/transform/parse as transform_parse
@@ -29,6 +30,21 @@ pub fn transform_scaled_rotate_serializes_nicely_test() {
     |> transform.chain(first: _, then: transform.rotate(degrees: 90.0))
 
   assert serialize.to_string(matrix) == "rotate(90) scale(2 3)"
+}
+
+pub fn transform_serialization_preserves_near_identity_rotation_scale_test() {
+  let matrix =
+    transform.scale(factor: 1.0000005)
+    |> transform.chain(first: _, then: transform.rotate(degrees: 90.0))
+  let options =
+    serialize.Options(
+      decimal_places: None,
+      fixed_decimals: False,
+      force_matrix: False,
+    )
+
+  assert serialize.to_string_with(matrix, options:)
+    == "rotate(90) scale(1.0000005)"
 }
 
 pub fn transform_translate_scale_serializes_nicely_test() {
