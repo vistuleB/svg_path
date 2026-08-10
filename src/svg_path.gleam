@@ -1811,13 +1811,13 @@ pub fn subpath_parameter_canonicalize(
 /// return its canonical address.
 ///
 /// `tolerance` is measured in the addressed segment's local parameter units,
-/// not in path coordinate units.
+/// not in path coordinate units. It must be finite and greater than zero.
 pub fn subpath_parameter_snap_to_boundary(
   subpath: Subpath,
   parameter parameter: SubpathParameter,
   tolerance tolerance: Float,
 ) -> Result(SubpathParameter, Error) {
-  case tolerance <=. 0.0 {
+  case tolerance <=. 0.0 || !finite_float(tolerance) {
     True -> Error(InvalidIntersectionTolerance(tolerance))
     False -> {
       use _ <- result.try(validate_subpath_parameter(subpath, parameter))
