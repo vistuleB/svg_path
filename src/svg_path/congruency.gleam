@@ -58,8 +58,8 @@ type PointCloud {
   )
 }
 
-type PointSums {
-  PointSums(
+type PointMeans {
+  PointMeans(
     count: Int,
     source_x: Float,
     source_y: Float,
@@ -437,37 +437,51 @@ fn fit_affine(points: List(IndexedPoint)) -> Result(Fit, Nil) {
 fn point_centroids(
   points: List(IndexedPoint),
 ) -> Result(#(svg_path.Point, svg_path.Point), Nil) {
-  let sums =
+  let means =
     list.fold(
       points,
-      PointSums(
+      PointMeans(
         count: 0,
         source_x: 0.0,
         source_y: 0.0,
         target_x: 0.0,
         target_y: 0.0,
       ),
-      fn(sums, point) {
-        PointSums(
-          count: sums.count + 1,
-          source_x: sums.source_x +. point.source.x,
-          source_y: sums.source_y +. point.source.y,
-          target_x: sums.target_x +. point.target.x,
-          target_y: sums.target_y +. point.target.y,
+      fn(means, point) {
+        let next_count = means.count + 1
+        let previous_weight =
+          int.to_float(means.count) /. int.to_float(next_count)
+        let next_weight = 1.0 /. int.to_float(next_count)
+
+        PointMeans(
+          count: next_count,
+          source_x: means.source_x
+            *. previous_weight
+            +. point.source.x
+            *. next_weight,
+          source_y: means.source_y
+            *. previous_weight
+            +. point.source.y
+            *. next_weight,
+          target_x: means.target_x
+            *. previous_weight
+            +. point.target.x
+            *. next_weight,
+          target_y: means.target_y
+            *. previous_weight
+            +. point.target.y
+            *. next_weight,
         )
       },
     )
 
-  case sums.count <= 0 {
+  case means.count <= 0 {
     True -> Error(Nil)
-    False -> {
-      let count = int.to_float(sums.count)
-
+    False ->
       Ok(#(
-        svg_path.Point(sums.source_x /. count, sums.source_y /. count),
-        svg_path.Point(sums.target_x /. count, sums.target_y /. count),
+        svg_path.Point(means.source_x, means.source_y),
+        svg_path.Point(means.target_x, means.target_y),
       ))
-    }
   }
 }
 

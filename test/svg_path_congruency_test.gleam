@@ -213,6 +213,23 @@ pub fn fit_points_rejects_empty_and_mismatched_lists_test() {
     == Error(Nil)
 }
 
+pub fn fit_points_centroids_do_not_overflow_on_large_finite_points_test() {
+  let points = [
+    svg_path.Point(1.0e308, 1.0e308),
+    svg_path.Point(1.0e308, 1.0e308),
+  ]
+
+  let assert Ok(congruency.Fit(transform: matrix, error:)) =
+    congruency.fit_points(
+      source: points,
+      target: points,
+      family: congruency.Similar,
+    )
+
+  assert error == 0.0
+  assert transform.to_tuple(matrix) == #(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
+}
+
 pub fn line_returns_transform_mapping_source_to_target_test() {
   let source =
     svg_path.Line(
