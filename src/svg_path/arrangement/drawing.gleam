@@ -3,6 +3,7 @@
 import gleam/float
 import gleam/int
 import gleam/list
+import gleam/option.{None, Some}
 import gleam/result
 import svg_path
 import svg_path/arrangement.{
@@ -285,20 +286,15 @@ pub fn segment_direction_arrow_with(
   use endpoint <- result.try(
     svg_path.segment_point(segment, at: 1.0) |> result.replace_error(Nil),
   )
-  use derivative <- result.try(
-    svg_path.segment_derivative(segment, at: 1.0)
+  use directions <- result.try(
+    svg_path.segment_directions(segment, at: 1.0)
     |> result.replace_error(Nil),
   )
-  let magnitude =
-    float.square_root(
-      derivative.x *. derivative.x +. derivative.y *. derivative.y,
-    )
-    |> result.unwrap(0.0)
-  case magnitude <=. 0.000001 {
-    True -> Error(Nil)
-    False -> {
-      let ux = derivative.x /. magnitude
-      let uy = derivative.y /. magnitude
+  case directions.incoming {
+    None -> Error(Nil)
+    Some(direction) -> {
+      let ux = direction.x
+      let uy = direction.y
       let px = 0.0 -. uy
       let py = ux
       let point =
