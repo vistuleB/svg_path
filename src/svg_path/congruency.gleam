@@ -861,9 +861,10 @@ fn arc_field_match(
         )) -> {
           actual_large_arc == target_large_arc
           && actual_sweep == target_sweep
-          && points_within_tolerance(actual_radius, target_radius, tolerance)
-          && floats_within_tolerance(
+          && ellipse_axes_within_tolerance(
+            actual_radius,
             actual_rotation,
+            target_radius,
             target_rotation,
             tolerance,
           )
@@ -872,6 +873,53 @@ fn arc_field_match(
       }
     }
     _, _ -> True
+  }
+}
+
+fn ellipse_axes_within_tolerance(
+  actual_radius: svg_path.Point,
+  actual_rotation: Float,
+  target_radius: svg_path.Point,
+  target_rotation: Float,
+  tolerance: Float,
+) -> Bool {
+  let radii_match =
+    points_within_tolerance(actual_radius, target_radius, tolerance)
+  let both_circular =
+    floats_within_tolerance(actual_radius.x, actual_radius.y, tolerance)
+    && floats_within_tolerance(target_radius.x, target_radius.y, tolerance)
+
+  case radii_match && both_circular {
+    True -> True
+    False -> {
+      let swapped_target = svg_path.Point(target_radius.y, target_radius.x)
+      case radii_match {
+        True ->
+          axis_rotations_within_tolerance(
+            actual_rotation,
+            target_rotation,
+            tolerance,
+          )
+        False ->
+          points_within_tolerance(actual_radius, swapped_target, tolerance)
+          && axis_rotations_within_tolerance(
+            actual_rotation,
+            target_rotation +. 90.0,
+            tolerance,
+          )
+      }
+    }
+  }
+}
+
+fn axis_rotations_within_tolerance(
+  a: Float,
+  b: Float,
+  tolerance: Float,
+) -> Bool {
+  case float.modulo(float.absolute_value(a -. b), by: 180.0) {
+    Error(_) -> False
+    Ok(remainder) -> float.min(remainder, 180.0 -. remainder) <=. tolerance
   }
 }
 

@@ -358,6 +358,47 @@ pub fn arc_rejects_mismatched_flags_test() {
   assert congruency.segment(source:, target:, tolerance:) == Error(Nil)
 }
 
+pub fn arc_accepts_equivalent_axis_representations_test() {
+  let source =
+    svg_path.Arc(
+      start: svg_path.Point(0.0, 0.0),
+      radius: svg_path.Point(10.0, 5.0),
+      x_axis_rotation: 30.0,
+      large_arc: False,
+      sweep: True,
+      end: svg_path.Point(20.0, 0.0),
+    )
+  let full_turn = svg_path.Arc(..source, x_axis_rotation: 390.0)
+  let reversed_axes =
+    svg_path.Arc(
+      ..source,
+      radius: svg_path.Point(5.0, 10.0),
+      x_axis_rotation: 120.0,
+    )
+
+  assert result_is_ok(congruency.segment(source:, target: full_turn, tolerance:))
+  assert result_is_ok(congruency.segment(
+    source:,
+    target: reversed_axes,
+    tolerance:,
+  ))
+}
+
+pub fn circular_arc_ignores_axis_rotation_test() {
+  let source =
+    svg_path.Arc(
+      start: svg_path.Point(0.0, 0.0),
+      radius: svg_path.Point(10.0, 10.0),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: True,
+      end: svg_path.Point(20.0, 0.0),
+    )
+  let target = svg_path.Arc(..source, x_axis_rotation: 47.0)
+
+  assert result_is_ok(congruency.segment(source:, target:, tolerance:))
+}
+
 pub fn subpath_maps_ordered_segments_to_target_test() {
   let source =
     svg_path.subpath_assert([
