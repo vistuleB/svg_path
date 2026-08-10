@@ -12,8 +12,6 @@ import gleam/result
 import svg_path
 import svg_path/offset
 
-const dash_tolerance = 0.000000001
-
 /// Errors returned by stroke helpers.
 pub type Error {
   /// An underlying path operation failed.
@@ -176,8 +174,8 @@ pub fn subpath_dashes_with(
   subpath subpath: svg_path.Subpath,
   dash_options dash_options: DashOptions,
 ) -> Result(List(svg_path.Subpath), Error) {
+  use _ <- result.try(validate_dash_options(dash_options))
   use pattern <- result.try(normalize_dash_pattern(dash_options.pattern))
-  use _ <- result.try(validate_dash_offset(dash_options.offset))
   use length <- result.try(
     svg_path.subpath_length_with(subpath, options: dash_options.length)
     |> result.map_error(PathError),
@@ -222,6 +220,7 @@ pub fn path_dashes_with(
   path path: svg_path.Path,
   dash_options dash_options: DashOptions,
 ) -> Result(svg_path.Path, Error) {
+  use _ <- result.try(validate_dash_options(dash_options))
   use subpaths <- result.try(
     path_dashes_loop(
       svg_path.path_subpaths(path),
@@ -332,6 +331,13 @@ fn validate_dash_offset(offset: Float) -> Result(Nil, Error) {
   }
 }
 
+fn validate_dash_options(options: DashOptions) -> Result(Nil, Error) {
+  use _ <- result.try(validate_dash_pattern(options.pattern))
+  use _ <- result.try(validate_dash_offset(options.offset))
+  svg_path.validate_length_options(options.length)
+  |> result.map_error(PathError)
+}
+
 fn dash_intervals(
   length: Float,
   pattern: List(Float),
@@ -388,8 +394,11 @@ fn dash_intervals_loop(
       )
     }
     False -> {
-      let step = float_min(remaining, length -. position)
-      let next = position +. step
+      let distance_to_end = length -. position
+      let #(step, next) = case remaining >=. distance_to_end {
+        True -> #(distance_to_end, length)
+        False -> #(remaining, position +. remaining)
+      }
       let intervals = case index % 2 == 0 && step >. 0.0 {
         True -> [#(position, next), ..intervals]
         False -> intervals
@@ -452,7 +461,7 @@ fn dash_piece(
   length length: Float,
   length_options length_options: svg_path.LengthOptions,
 ) -> Result(svg_path.Subpath, svg_path.Error) {
-  case near_length(from, 0.0) && near_length(to, length) {
+  case from == 0.0 && to == length {
     True -> open_full_dash(subpath)
     False ->
       case svg_path.subpath_is_closed(subpath) {
@@ -464,10 +473,10 @@ fn dash_piece(
             options: length_options,
           )
         False -> {
-          case near_length(from, 0.0) {
+          case from == 0.0 {
             True -> first_split_piece(subpath, at: to, length_options:)
             False ->
-              case near_length(to, length) {
+              case to == length {
                 True -> last_split_piece(subpath, at: from, length_options:)
                 False ->
                   svg_path.subpath_between_lengths_with(
@@ -612,23 +621,5 @@ fn positive_remainder(value: Float, modulus: Float) -> Float {
         True -> remainder -. modulus
         False -> remainder
       }
-  }
-}
-
-fn near_length(a: Float, b: Float) -> Bool {
-  float_absolute_value(a -. b) <=. dash_tolerance
-}
-
-fn float_min(a: Float, b: Float) -> Float {
-  case a <. b {
-    True -> a
-    False -> b
-  }
-}
-
-fn float_absolute_value(value: Float) -> Float {
-  case value <. 0.0 {
-    True -> 0.0 -. value
-    False -> value
   }
 }

@@ -265,6 +265,23 @@ pub fn subpath_dashes_extracts_line_intervals_test() {
     ]
 }
 
+pub fn subpath_dashes_preserves_small_scale_intervals_test() {
+  let subpath =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(0.000000001, 0.0),
+    ])
+
+  let assert Ok([dash]) =
+    stroke.subpath_dashes(
+      subpath,
+      pattern: [0.0000000005, 0.0000000005],
+      offset: 0.0,
+    )
+
+  assert svg_path.subpath_end(dash) == Ok(svg_path.Point(0.0000000005, 0.0))
+}
+
 pub fn subpath_dashes_applies_positive_dash_offset_test() {
   let subpath =
     svg_path.subpath_assert_polyline([
@@ -418,6 +435,25 @@ pub fn path_dashes_resets_pattern_per_subpath_test() {
       "M 0 0 H 3",
       "M 0 10 H 3",
     ]
+}
+
+pub fn path_dashes_empty_path_still_validates_options_test() {
+  assert stroke.path_dashes(
+      svg_path.Path([]),
+      pattern: [-1.0, 2.0],
+      offset: 0.0,
+    )
+    == Error(stroke.InvalidDashLength(-1.0))
+
+  assert stroke.path_dashes_with(
+      svg_path.Path([]),
+      dash_options: stroke.DashOptions(
+        pattern: [1.0, 1.0],
+        offset: 0.0,
+        length: svg_path.LengthOptions(tolerance: 0.0, max_depth: 20),
+      ),
+    )
+    == Error(stroke.PathError(svg_path.InvalidLengthTolerance(0.0)))
 }
 
 pub fn subpath_dashed_strokes_each_dash_test() {

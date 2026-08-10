@@ -4224,7 +4224,8 @@ fn validate_containment_options(
   }
 }
 
-fn validate_length_options(options: LengthOptions) -> Result(Nil, Error) {
+@internal
+pub fn validate_length_options(options: LengthOptions) -> Result(Nil, Error) {
   case options.tolerance <=. 0.0 {
     True -> Error(InvalidLengthTolerance(options.tolerance))
     False -> {
