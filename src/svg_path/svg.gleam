@@ -1,4 +1,9 @@
 //// Small helpers for rendering paths as complete SVG documents.
+////
+//// This is a trusting drawing API. Numeric fields are formatted directly;
+//// callers are responsible for supplying finite coordinates, a valid bounding
+//// box, and non-negative SVG dimensions such as radii, widths, heights, and
+//// font sizes. Text and attribute strings are XML-escaped.
 
 import gleam/int
 import gleam/list
@@ -124,6 +129,9 @@ pub fn labeled_point(
 /// Render styled paths and text labels as a complete SVG document.
 ///
 /// The supplied bounding box is used directly as the document `viewBox`.
+/// This function does not validate numeric inputs or SVG-specific constraints:
+/// callers must supply finite coordinates, an ordered bounding box, and
+/// non-negative dimensions. Text and attribute values are XML-escaped.
 pub fn document(
   things things: ThingsToDraw,
   view_box view_box: svg_path.BoundingBox,
