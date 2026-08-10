@@ -18,8 +18,11 @@ pub type Error {
   /// The radius must be greater than zero.
   InvalidRadius(radius: Float)
 
-  /// The numerical tolerance must be finite and greater than zero.
-  InvalidTolerance(tolerance: Float)
+  /// The distance tolerance must be finite and greater than zero.
+  InvalidDistanceTolerance(tolerance: Float)
+
+  /// The angular tolerance must be finite and non-negative.
+  InvalidAngularTolerance(tolerance: Float)
 
   /// The requested corner cannot be rounded with the current options.
   CannotRoundCorner(index: Int)
@@ -157,7 +160,8 @@ pub type RoundCornerOptions {
   RoundCornerOptions(
     failure: FailureMode,
     length: svg_path.LengthOptions,
-    tolerance: Float,
+    distance_tolerance: Float,
+    angular_tolerance: Float,
   )
 }
 
@@ -191,7 +195,8 @@ pub fn default_round_corner_options() -> RoundCornerOptions {
   RoundCornerOptions(
     failure: ErrorOnFailure,
     length: svg_path.default_length_options(),
-    tolerance: default_tolerance,
+    distance_tolerance: default_tolerance,
+    angular_tolerance: default_tolerance,
   )
 }
 
@@ -274,11 +279,18 @@ fn validate_round_corner_inputs(
         |> result.map_error(PathError),
       )
       case
-        options.tolerance <=. 0.0
-        || options.tolerance -. options.tolerance != 0.0
+        options.distance_tolerance <=. 0.0
+        || options.distance_tolerance -. options.distance_tolerance != 0.0
       {
-        True -> Error(InvalidTolerance(options.tolerance))
-        False -> Ok(Nil)
+        True -> Error(InvalidDistanceTolerance(options.distance_tolerance))
+        False ->
+          case
+            options.angular_tolerance <. 0.0
+            || options.angular_tolerance -. options.angular_tolerance != 0.0
+          {
+            True -> Error(InvalidAngularTolerance(options.angular_tolerance))
+            False -> Ok(Nil)
+          }
       }
     }
   }
@@ -453,14 +465,14 @@ fn corner_candidate(
         index,
       ))
 
-      case angle <=. options.tolerance {
+      case angle <=. options.angular_tolerance {
         True -> Ok(None)
         False -> {
           let trim = radius *. trig.tan_degrees(angle /. 2.0)
           case
-            trim >. options.tolerance
-            && trim <. incoming.length -. options.tolerance
-            && trim <. outgoing.length -. options.tolerance
+            trim >. options.distance_tolerance
+            && trim <. incoming.length -. options.distance_tolerance
+            && trim <. outgoing.length -. options.distance_tolerance
           {
             False -> corner_failure(index, options)
             True -> {
@@ -636,11 +648,11 @@ fn corner_spec(
         outgoing_tangent,
         index,
       ))
-      case angle <=. options.tolerance {
+      case angle <=. options.angular_tolerance {
         True -> Ok(None)
         False -> {
           let trim_per_radius = trig.tan_degrees(angle /. 2.0)
-          case trim_per_radius >. options.tolerance {
+          case trim_per_radius >. 0.0 {
             False -> Ok(None)
             True ->
               Ok(
@@ -678,9 +690,9 @@ fn adapt_radii(
     True -> radii
     False -> {
       let next =
-        segment_scales(specs, infos, radii, subpath, options.tolerance)
+        segment_scales(specs, infos, radii, subpath, options.distance_tolerance)
         |> apply_radius_scales(radii)
-      case radii_near(radii, next, options.tolerance) {
+      case radii_near(radii, next, options.distance_tolerance) {
         True -> next
         False ->
           adapt_radii(
@@ -811,7 +823,10 @@ fn corners_from_specs(
     [spec, ..rest] -> {
       let radius = radius_for(spec.index, radii)
       let trim = radius *. spec.trim_per_radius
-      case radius <=. options.tolerance || trim <=. options.tolerance {
+      case
+        radius <=. options.distance_tolerance
+        || trim <=. options.distance_tolerance
+      {
         True -> corners_from_specs(rest, radii, infos, options, corners)
         False -> {
           use corner <- result.try(corner_from_spec(
@@ -926,7 +941,14 @@ fn resolve_overlapping_trims(
   subpath: svg_path.Subpath,
   options: RoundCornerOptions,
 ) -> List(Corner) {
-  case first_overlapping_segment(corners, infos, subpath, options.tolerance) {
+  case
+    first_overlapping_segment(
+      corners,
+      infos,
+      subpath,
+      options.distance_tolerance,
+    )
+  {
     Ok(_) -> corners
     Error(index) -> {
       case options.failure {
@@ -953,7 +975,9 @@ fn rounded_subpath_segments(
     [info, ..rest] -> {
       let start_trim = start_trim(info.index, corners, subpath)
       let end_trim = end_trim(info.index, corners)
-      case start_trim +. end_trim >=. info.length -. options.tolerance {
+      case
+        start_trim +. end_trim >=. info.length -. options.distance_tolerance
+      {
         True -> Error(CornerTrimsOverlap(info.index))
         False -> {
           use shortened <- result.try(
