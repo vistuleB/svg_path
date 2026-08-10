@@ -6,6 +6,7 @@ import svg_path
 
 /// Return the signed Nonzero winding level at a point. Boundary samples fall
 /// back to filled/not-filled because a signed winding is undefined there.
+@internal
 pub fn nonzero_level_at(
   point: svg_path.Point,
   within path: svg_path.Path,
@@ -36,12 +37,14 @@ pub fn nonzero_level_at(
 /// Sample the Nonzero winding field immediately on the geometric left and
 /// right of a segment. `side_sampling_distance` is the geometric distance from
 /// the segment midpoint to each sample. The first result is the left-side level.
+@internal
 pub fn segment_side_nonzero_levels(
   segment: svg_path.Segment,
   within path: svg_path.Path,
   side_sampling_distance side_sampling_distance: Float,
   options options: svg_path.ContainmentOptions,
 ) -> Result(#(Int, Int), svg_path.Error) {
+  use _ <- result.try(validate_sampling_distance(side_sampling_distance))
   use midpoint <- result.try(svg_path.segment_point(segment, at: 0.5))
   use derivative <- result.try(svg_path.segment_derivative(segment, at: 0.5))
   let length_squared =
@@ -69,5 +72,12 @@ pub fn segment_side_nonzero_levels(
       ))
       Ok(#(left_level, right_level))
     }
+  }
+}
+
+fn validate_sampling_distance(distance: Float) -> Result(Nil, svg_path.Error) {
+  case distance <=. 0.0 || distance -. distance != 0.0 {
+    True -> Error(svg_path.InvalidContainmentTolerance(distance))
+    False -> Ok(Nil)
   }
 }
