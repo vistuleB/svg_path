@@ -6,6 +6,7 @@
 
 import gleam/int
 import gleam/list
+import gleam/option.{type Option, Some}
 import gleam/order
 import gleam/result
 import svg_path
@@ -688,15 +689,19 @@ fn collect_boundary_rays(
         case edge_layer == layer && start_vertex == vertex {
           False -> Ok(rays)
           True -> {
-            use derivative <- result.try(
-              svg_path.segment_derivative(segment, at: 0.0)
+            use directions <- result.try(
+              svg_path.segment_directions(segment, at: 0.0)
               |> result.map_error(PathError),
             )
+            use direction <- result.try(direction_or_topology_error(
+              directions.outgoing,
+              vertex,
+            ))
             Ok([
               BoundaryRay(
                 edge_id: id,
                 starts: True,
-                angle: point.heading(derivative),
+                angle: point.heading(direction),
               ),
               ..rays
             ])
@@ -706,15 +711,19 @@ fn collect_boundary_rays(
       use rays <- result.try(case edge_layer == layer && end_vertex == vertex {
         False -> Ok(rays)
         True -> {
-          use derivative <- result.try(
-            svg_path.segment_derivative(segment, at: 1.0)
+          use directions <- result.try(
+            svg_path.segment_directions(segment, at: 1.0)
             |> result.map_error(PathError),
           )
+          use direction <- result.try(direction_or_topology_error(
+            directions.incoming,
+            vertex,
+          ))
           Ok([
             BoundaryRay(
               edge_id: id,
               starts: False,
-              angle: point.heading(point.negate(derivative)),
+              angle: point.heading(point.negate(direction)),
             ),
             ..rays
           ])
@@ -722,6 +731,16 @@ fn collect_boundary_rays(
       })
       collect_boundary_rays(rest, vertex, layer, rays)
     }
+  }
+}
+
+fn direction_or_topology_error(
+  direction: Option(svg_path.Point),
+  vertex: Int,
+) -> Result(svg_path.Point, Error) {
+  case direction {
+    Some(direction) -> Ok(direction)
+    _ -> Error(InternalBoundaryTopologyError(vertex:, reason: SectorMismatch))
   }
 }
 

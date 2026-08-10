@@ -64,6 +64,31 @@ pub fn adjacent_rectangles_remove_shared_edge_slit_test() {
   |> should.equal(6)
 }
 
+pub fn collapsed_cubic_endpoint_direction_reconstructs_boundary_test() {
+  let start = svg_path.Point(0.0, 0.0)
+  let input =
+    svg_path.Path([
+      svg_path.subpath_assert([
+        svg_path.CubicBezier(
+          start:,
+          control1: start,
+          control2: svg_path.Point(0.0, 10.0),
+          end: svg_path.Point(10.0, 10.0),
+        ),
+        svg_path.Line(
+          start: svg_path.Point(10.0, 10.0),
+          end: svg_path.Point(10.0, 0.0),
+        ),
+        svg_path.Line(start: svg_path.Point(10.0, 0.0), end: start),
+      ])
+      |> svg_path.subpath_assert_set_closed(closed: True),
+    ])
+
+  let assert Ok(output) = union_paths(input, svg_path.path_empty())
+
+  output |> svg_path.path_subpaths |> list.length |> should.equal(1)
+}
+
 pub fn reversed_coincident_operands_remain_filled_test() {
   let left = rectangle(0.0, 0.0, 2.0, 2.0)
   let right = svg_path.path_reverse(left)
