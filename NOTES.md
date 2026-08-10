@@ -18,6 +18,10 @@
   - drop or preserve degenerate pieces according to an explicit policy.
 - Path normalization or canonicalization helpers, only once concrete repeated
   cleanup patterns emerge.
+- Exact fixed-radius circular fillets for corners involving curves, only if
+  there is concrete demand. The current effect guarantees tangency for
+  line-line corners; a curved implementation would need a local bitangent-circle
+  solver for the two contact parameters and common center.
 - Possible `intersection` module extraction in a future breaking release, while
   keeping `svg_path` as the large convenience module.
 - Further orientation and topology helpers if actual caller needs appear.

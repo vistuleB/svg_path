@@ -194,10 +194,14 @@ pub fn default_round_corner_options() -> RoundCornerOptions {
 
 /// Round eligible corners in every subpath of a path.
 ///
-/// A rounded corner trims both incident segments and inserts a circular SVG arc
-/// tangent to their endpoint derivatives. If a corner is straight, degenerate,
-/// or lacks enough incident segment length, behavior is controlled by
-/// `RoundCornerOptions.failure`.
+/// A rounded corner trims both incident segments and inserts a circular SVG
+/// arc. For a line-line corner, the arc is an exact circular fillet tangent to
+/// both lines. When either incident segment is curved, its endpoint direction
+/// determines the trim estimate, but the inserted arc is not guaranteed to be
+/// tangent to the curve at the resulting cut point.
+///
+/// If a corner is straight, degenerate, or lacks enough incident segment
+/// length, behavior is controlled by `RoundCornerOptions.failure`.
 pub fn round_corners(
   path: svg_path.Path,
   radius radius: Float,
