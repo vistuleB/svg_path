@@ -176,6 +176,14 @@ Values outside `0.0..1.0` lead to silent extrapolation along the same algebraic
 parameterization. Use `_inside` variants of the same functions to surface
 parameter domain errors instead.
 
+For unit traversal directions that remain meaningful when the ordinary
+derivative collapses to zero, use `segment_directions`. It returns incoming
+and outgoing directions separately, since a cusp can have two different
+one-sided directions. `subpath_directions` and `path_directions` apply the same
+operation at their respective parameter types; the `_with` variants accept
+`DirectionOptions` for controlling when a derivative candidate is treated as
+collapsed.
+
 ### Subpaths
 
 A `Subpath` is opaque. It internally consists of a start point, a list of
@@ -237,8 +245,8 @@ The subpath interval helpers have deliberately narrow roles:
   `SubpathParameter`.
 
 Use `svg_path.subpath` to construct an open subpath from a nonempty list of
-contiguous segments, and `svg_path.subpath_set_closed` to change whether a subpath is
-topologically closed; note that `subpath_set_closed(_, True)` may result in an
+contiguous segments, and `svg_path.subpath_set_closed` to change whether a
+subpath is topologically closed. `subpath_set_closed(_, True)` may return an
 error, but `subpath_set_closed(_, False)` cannot:
 
 Use `SubpathParameter(index, t)` for normal forward addresses. Use
@@ -309,6 +317,11 @@ Construct paths directly via the public variant:
 ```gleam
 svg_path.Path(subpaths: [subpath])
 ```
+
+The total widening conversions are `segment_as_subpath`, `segment_as_path`,
+and `subpath_as_path`. The narrowing `path_as_subpath` succeeds when a path has
+at most one nonempty subpath; empty subpaths are ignored unless they are all
+the path contains.
 
 Retrieve subpaths with `svg_path.path_subpaths(path)`.
 
@@ -1162,6 +1175,12 @@ x' = a*x + c*y + e
 y' = b*x + d*y + f
 ```
 
+The ordinary `segment`, `subpath`, and `path` transform functions preserve
+segment types and return `DegenerateArcTransform` when an affine transform
+collapses an arc into line geometry. Use `segment_gracefully`,
+`segment_to_subpath_gracefully`, `subpath_gracefully`, or `path_gracefully`
+when collapsed arcs should instead become one or more line segments.
+
 Matrix values can be constructed and inspected as tuples:
 
 ```gleam
@@ -1316,8 +1335,7 @@ svg_path.Path([
 ```
 
 Inspection options mirror the serializer's decimal controls: rounding, fixed
-decimal places, and left padding are available through `_with_options`
-functions.
+decimal places, and left padding are available through the `_with` functions.
 
 Further documentation can be found at <https://hexdocs.pm/svg_path>.
 
