@@ -177,9 +177,15 @@ fn split_points(
     intersections |> list.flat_map(left_subpath_parameters)
   let overlap_parameters =
     overlap_intervals |> list.flat_map(left_overlap_parameters)
+  let parameters = list.append(intersection_parameters, overlap_parameters)
+  use parameters <- result.try(
+    parameters
+    |> list.try_map(fn(parameter) {
+      svg_path.subpath_parameter_canonicalize(input, parameter:)
+    }),
+  )
   let parameters =
-    list.append(intersection_parameters, overlap_parameters)
-    |> list.map(normalize_parameter(input, _))
+    parameters
     |> list.filter(should_keep_split_point(input, _))
 
   sort_unique_parameters(input, parameters, options.tolerance)
@@ -219,23 +225,6 @@ fn should_keep_split_point(
   case svg_path.subpath_is_closed(input) {
     True -> True
     False -> !is_open_boundary_parameter(input, parameter)
-  }
-}
-
-fn normalize_parameter(
-  input: svg_path.Subpath,
-  parameter: svg_path.SubpathParameter,
-) -> svg_path.SubpathParameter {
-  let length = list.length(svg_path.subpath_segments(input))
-  let closed = svg_path.subpath_is_closed(input)
-  case parameter {
-    svg_path.SubpathParameter(segment_index:, t:)
-      if t == 1.0 && segment_index < length - 1
-    -> svg_path.SubpathParameter(segment_index + 1, 0.0)
-    svg_path.SubpathParameter(segment_index:, t:)
-      if t == 1.0 && segment_index == length - 1 && closed
-    -> svg_path.SubpathParameter(0, 0.0)
-    _ -> parameter
   }
 }
 
