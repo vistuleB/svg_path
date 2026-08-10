@@ -1,6 +1,5 @@
 //// Dependency-neutral raw segment-overlap detection.
 
-import gleam/float
 import gleam/int
 import gleam/list
 import gleam/result
@@ -44,15 +43,10 @@ fn canonicalize_overlap(overlap: RawOverlap) -> RawOverlap {
   }
 }
 
-/// Whether an overlap has a strictly larger parameter span than `minimum_span`
-/// on both segments.
-fn overlap_exceeds_minimum_span(
-  overlap: RawOverlap,
-  minimum_span minimum_span: Float,
-) -> Bool {
+/// Whether an overlap has a positive parameter span on both segments.
+fn overlap_has_positive_span(overlap: RawOverlap) -> Bool {
   let #(left_from, left_to, right_from, right_to, _, _) = overlap
-  left_to -. left_from >. minimum_span
-  && float.absolute_value(right_to -. right_from) >. minimum_span
+  left_to >. left_from && right_to != right_from
 }
 
 /// Combine two overlap intervals belonging to the same ordered segment pair.
@@ -398,7 +392,7 @@ fn overlap_candidates_against(
       use accepted <- result.try(case candidate {
         Error(Nil) -> Ok(Error(Nil))
         Ok(overlap) ->
-          case overlap_exceeds_minimum_span(overlap, minimum_span: tolerance) {
+          case overlap_has_positive_span(overlap) {
             False -> Ok(Error(Nil))
             True -> {
               use valid <- result.try(sampled_overlap_valid(

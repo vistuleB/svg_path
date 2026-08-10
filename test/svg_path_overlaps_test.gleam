@@ -180,6 +180,23 @@ pub fn identical_line_is_one_full_overlap_test() {
   assert_full_overlap(line(), line(), 0.0, 1.0)
 }
 
+pub fn geometric_tolerance_is_not_used_as_parameter_span_test() {
+  let assert Ok([overlap]) =
+    overlaps.segment_with_samples(line(), line(), tolerance: 2.0, samples: 5)
+  assert overlap == segment_overlap(0.0, 1.0, 0.0, 1.0)
+}
+
+pub fn strict_tolerance_merges_full_arc_overlap_proposals_test() {
+  let assert Ok([overlap]) =
+    overlaps.segment_with_samples(
+      arc(),
+      arc(),
+      tolerance: 0.000000001,
+      samples: 9,
+    )
+  assert overlap == segment_overlap(0.0, 1.0, 0.0, 1.0)
+}
+
 pub fn reversed_line_is_one_full_overlap_test() {
   assert_full_overlap(line(), svg_path.segment_reverse(line()), 1.0, 0.0)
 }

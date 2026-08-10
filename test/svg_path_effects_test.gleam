@@ -50,6 +50,58 @@ pub fn round_corners_rounds_open_polyline_interior_join_test() {
   )
 }
 
+pub fn angular_tolerance_controls_corner_eligibility_in_degrees_test() {
+  let subpath = right_angle_subpath()
+  let skipped_options =
+    effects.RoundCornerOptions(
+      ..effects.default_round_corner_options(),
+      failure: effects.LeaveCorner,
+      angular_tolerance: 90.0,
+    )
+  let rounded_options =
+    effects.RoundCornerOptions(..skipped_options, angular_tolerance: 89.999)
+
+  assert effects.round_subpath_corners_with(
+      subpath,
+      radius: 2.0,
+      options: skipped_options,
+    )
+    == Ok(subpath)
+  let assert Ok(rounded) =
+    effects.round_subpath_corners_with(
+      subpath,
+      radius: 2.0,
+      options: rounded_options,
+    )
+  assert arc_count(svg_path.subpath_segments(rounded)) == 1
+}
+
+pub fn distance_tolerance_controls_minimum_trim_distance_test() {
+  let subpath = right_angle_subpath()
+  let skipped_options =
+    effects.RoundCornerOptions(
+      ..effects.default_round_corner_options(),
+      failure: effects.LeaveCorner,
+      distance_tolerance: 2.0,
+    )
+  let rounded_options =
+    effects.RoundCornerOptions(..skipped_options, distance_tolerance: 1.999)
+
+  assert effects.round_subpath_corners_with(
+      subpath,
+      radius: 2.0,
+      options: skipped_options,
+    )
+    == Ok(subpath)
+  let assert Ok(rounded) =
+    effects.round_subpath_corners_with(
+      subpath,
+      radius: 2.0,
+      options: rounded_options,
+    )
+  assert arc_count(svg_path.subpath_segments(rounded)) == 1
+}
+
 pub fn round_corners_supports_curve_incident_segments_test() {
   let subpath =
     svg_path.subpath_assert([
@@ -270,6 +322,14 @@ fn arc_count(segments: List(svg_path.Segment)) -> Int {
     }
   })
   |> list.length
+}
+
+fn right_angle_subpath() -> svg_path.Subpath {
+  svg_path.subpath_assert_polyline([
+    svg_path.Point(0.0, 0.0),
+    svg_path.Point(10.0, 0.0),
+    svg_path.Point(10.0, 10.0),
+  ])
 }
 
 fn all_arc_radii_near(
