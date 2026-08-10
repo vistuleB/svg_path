@@ -185,6 +185,19 @@ pub fn cut_parameter_deduplication_uses_path_coordinate_tolerance_test() {
     == Ok([])
 }
 
+pub fn closed_cut_parameter_deduplication_wraps_across_subpath_seam_test() {
+  let input = rectangle_subpath(0.0, 0.0, 10.0, 10.0)
+  let sub_tolerance_corner = rectangle(-1.0, -1.0, 0.0000002, 0.0000002)
+
+  assert clip.subpath_with(
+      input,
+      to: sub_tolerance_corner,
+      using: svg_path.Nonzero,
+      options: clip.Options(..clip.default_options(), tolerance: 0.000001),
+    )
+    == Ok([])
+}
+
 pub fn closed_subpath_survives_whole_when_fully_inside_test() {
   let input = rectangle_subpath(2.0, 2.0, 8.0, 8.0)
 

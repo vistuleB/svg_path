@@ -247,9 +247,45 @@ fn sort_unique_parameters(
   parameters: List(svg_path.SubpathParameter),
   tolerance: Float,
 ) -> Result(List(svg_path.SubpathParameter), svg_path.Error) {
-  parameters
-  |> list.sort(by: svg_path.subpath_parameters_compare)
-  |> unique_sorted_parameters(input, tolerance, kept: [])
+  use unique <- result.try(
+    parameters
+    |> list.sort(by: svg_path.subpath_parameters_compare)
+    |> unique_sorted_parameters(input, tolerance, kept: []),
+  )
+  case svg_path.subpath_is_closed(input) {
+    True -> deduplicate_closed_seam(input, unique, tolerance)
+    False -> Ok(unique)
+  }
+}
+
+fn deduplicate_closed_seam(
+  input: svg_path.Subpath,
+  parameters: List(svg_path.SubpathParameter),
+  tolerance: Float,
+) -> Result(List(svg_path.SubpathParameter), svg_path.Error) {
+  case parameters {
+    [first, _, ..] -> {
+      let assert Ok(last) = list.last(parameters)
+      use between <- result.try(svg_path.subpath_between(
+        input,
+        from: last,
+        to: first,
+      ))
+      use separation <- result.try(svg_path.subpath_length(between))
+      case separation <=. tolerance {
+        True -> Ok(without_last(parameters))
+        False -> Ok(parameters)
+      }
+    }
+    _ -> Ok(parameters)
+  }
+}
+
+fn without_last(items: List(a)) -> List(a) {
+  case items {
+    [] | [_] -> []
+    [first, ..rest] -> [first, ..without_last(rest)]
+  }
 }
 
 fn unique_sorted_parameters(
