@@ -448,7 +448,7 @@ fn classify_boolean_edges(
         winding_field.segment_side_nonzero_levels(
           segment,
           within: left_path,
-          tolerance:,
+          side_sampling_distance: tolerance *. 16.0,
           options: svg_path.default_containment_options(),
         )
         |> result.map_error(PathError),
@@ -457,7 +457,7 @@ fn classify_boolean_edges(
         winding_field.segment_side_nonzero_levels(
           segment,
           within: right_path,
-          tolerance:,
+          side_sampling_distance: tolerance *. 16.0,
           options: svg_path.default_containment_options(),
         )
         |> result.map_error(PathError),
@@ -521,7 +521,7 @@ fn classify_winding_level_edges(
         winding_field.segment_side_nonzero_levels(
           segment,
           within: path,
-          tolerance:,
+          side_sampling_distance: tolerance *. 16.0,
           options: svg_path.default_containment_options(),
         )
         |> result.map_error(PathError),

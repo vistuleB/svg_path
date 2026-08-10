@@ -34,11 +34,12 @@ pub fn nonzero_level_at(
 }
 
 /// Sample the Nonzero winding field immediately on the geometric left and
-/// right of a segment. The first result is the left-side level.
+/// right of a segment. `side_sampling_distance` is the geometric distance from
+/// the segment midpoint to each sample. The first result is the left-side level.
 pub fn segment_side_nonzero_levels(
   segment: svg_path.Segment,
   within path: svg_path.Path,
-  tolerance tolerance: Float,
+  side_sampling_distance side_sampling_distance: Float,
   options options: svg_path.ContainmentOptions,
 ) -> Result(#(Int, Int), svg_path.Error) {
   use midpoint <- result.try(svg_path.segment_point(segment, at: 0.5))
@@ -49,11 +50,10 @@ pub fn segment_side_nonzero_levels(
     True -> Ok(#(0, 0))
     False -> {
       let assert Ok(length) = float.square_root(length_squared)
-      let offset = tolerance *. 16.0
       let normal =
         svg_path.Point(
-          { 0.0 -. derivative.y } /. length *. offset,
-          derivative.x /. length *. offset,
+          { 0.0 -. derivative.y } /. length *. side_sampling_distance,
+          derivative.x /. length *. side_sampling_distance,
         )
       let left = svg_path.Point(midpoint.x +. normal.x, midpoint.y +. normal.y)
       let right = svg_path.Point(midpoint.x -. normal.x, midpoint.y -. normal.y)

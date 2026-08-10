@@ -87,28 +87,31 @@ fn merge_overlaps(
   let second_right_increases = second_right_to >. second_right_from
   let valid =
     tolerance >=. 0.0
-    && first_left_to -. first_left_from >. tolerance
-    && second_left_to -. second_left_from >. tolerance
-    && float.absolute_value(first_right_to -. first_right_from) >. tolerance
-    && float.absolute_value(second_right_to -. second_right_from) >. tolerance
+    && first_left_to >. first_left_from
+    && second_left_to >. second_left_from
+    && first_right_to != first_right_from
+    && second_right_to != second_right_from
   case valid {
     False -> Contradiction
     True -> {
+      let endpoints_touch =
+        points_near(first_end, second_start, tolerance)
+        || points_near(first_start, second_end, tolerance)
       let lefts_touch =
-        intervals_touch(
+        endpoints_touch
+        || intervals_overlap(
           first_left_from,
           first_left_to,
           second_left_from,
           second_left_to,
-          tolerance,
         )
       let rights_touch =
-        intervals_touch(
+        endpoints_touch
+        || intervals_overlap(
           min_float(first_right_from, first_right_to),
           max_float(first_right_from, first_right_to),
           min_float(second_right_from, second_right_to),
           max_float(second_right_from, second_right_to),
-          tolerance,
         )
       case lefts_touch, rights_touch {
         False, False -> Disjoint
@@ -122,7 +125,6 @@ fn merge_overlaps(
               first_right_from,
               second_right_from,
               first_right_increases,
-              tolerance,
             )
             && parameter_order_compatible(
               first_left_to,
@@ -130,7 +132,6 @@ fn merge_overlaps(
               first_right_to,
               second_right_to,
               first_right_increases,
-              tolerance,
             )
             && coincident_boundary_compatible(
               first_left_from,
@@ -624,14 +625,13 @@ fn affine_correspondence_valid_loop(
   }
 }
 
-fn intervals_touch(
+fn intervals_overlap(
   first_from: Float,
   first_to: Float,
   second_from: Float,
   second_to: Float,
-  tolerance: Float,
 ) -> Bool {
-  first_from <=. second_to +. tolerance && second_from <=. first_to +. tolerance
+  first_from <=. second_to && second_from <=. first_to
 }
 
 fn parameter_order_compatible(
@@ -640,24 +640,19 @@ fn parameter_order_compatible(
   first_right: Float,
   second_right: Float,
   right_increases: Bool,
-  tolerance: Float,
 ) -> Bool {
-  case
-    first_left <. second_left -. tolerance,
-    first_left >. second_left +. tolerance
-  {
+  case first_left <. second_left, first_left >. second_left {
     True, _ ->
       case right_increases {
-        True -> first_right <=. second_right +. tolerance
-        False -> first_right +. tolerance >=. second_right
+        True -> first_right <=. second_right
+        False -> first_right >=. second_right
       }
     _, True ->
       case right_increases {
-        True -> first_right +. tolerance >=. second_right
-        False -> first_right <=. second_right +. tolerance
+        True -> first_right >=. second_right
+        False -> first_right <=. second_right
       }
-    False, False ->
-      float.absolute_value(first_right -. second_right) <=. tolerance
+    False, False -> first_right == second_right
   }
 }
 
@@ -670,10 +665,10 @@ fn coincident_boundary_compatible(
   second_point: svg_path.Point,
   tolerance: Float,
 ) -> Bool {
-  case float.absolute_value(first_left -. second_left) <=. tolerance {
+  case first_left == second_left {
     False -> True
     True ->
-      float.absolute_value(first_right -. second_right) <=. tolerance
+      first_right == second_right
       && points_near(first_point, second_point, tolerance)
   }
 }

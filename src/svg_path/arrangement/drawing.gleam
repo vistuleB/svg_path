@@ -146,7 +146,7 @@ fn annotated_edge_things(
         winding_field.segment_side_nonzero_levels(
           segment,
           within: source,
-          tolerance:,
+          side_sampling_distance: tolerance *. 16.0,
           options: svg_path.default_containment_options(),
         )
         |> result.map_error(PathError),
