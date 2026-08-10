@@ -23,6 +23,9 @@ pub type EdgeAnnotationPose {
 }
 
 /// Proportional sizing for an annotated arrangement-graph drawing.
+///
+/// `scale` is a trusting drawing input and must be finite and greater than
+/// zero. Drawing helpers do not validate it.
 pub type AnnotatedDrawingOptions {
   AnnotatedDrawingOptions(scale: Float)
 }
@@ -100,6 +103,8 @@ pub fn annotated_drawing(
 }
 
 /// Draw an arrangement graph with proportional control over its visual scale.
+///
+/// `options.scale` must be finite and greater than zero.
 pub fn annotated_drawing_with(
   graph: ArrangementGraph,
   source: svg_path.Path,
