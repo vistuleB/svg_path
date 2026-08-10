@@ -123,6 +123,68 @@ pub fn clip_boundary_at_subpath_vertex_does_not_duplicate_split_test() {
     ]
 }
 
+pub fn coincident_clip_boundary_geometry_is_retained_test() {
+  let input =
+    svg_path.subpath_assert([
+      svg_path.Line(
+        start: svg_path.Point(2.0, 0.0),
+        end: svg_path.Point(8.0, 0.0),
+      ),
+    ])
+
+  assert clip.subpath(
+      input,
+      to: rectangle(0.0, 0.0, 10.0, 10.0),
+      using: svg_path.Nonzero,
+    )
+    == Ok([input])
+}
+
+pub fn partial_clip_boundary_overlap_splits_at_overlap_endpoint_test() {
+  let input =
+    svg_path.subpath_assert([
+      svg_path.Line(
+        start: svg_path.Point(2.0, 0.0),
+        end: svg_path.Point(12.0, 0.0),
+      ),
+    ])
+
+  let assert Ok([clipped]) =
+    clip.subpath(
+      input,
+      to: rectangle(0.0, 0.0, 10.0, 10.0),
+      using: svg_path.Nonzero,
+    )
+
+  assert svg_path.subpath_segments(clipped)
+    == [
+      svg_path.Line(
+        start: svg_path.Point(2.0, 0.0),
+        end: svg_path.Point(10.0, 0.0),
+      ),
+    ]
+}
+
+pub fn cut_parameter_deduplication_uses_path_coordinate_tolerance_test() {
+  let input =
+    svg_path.subpath_assert([
+      svg_path.Line(
+        start: svg_path.Point(-1.0, 0.5),
+        end: svg_path.Point(1.0, 0.5),
+      ),
+    ])
+  let thin_region = rectangle(0.0, 0.0, 0.0000005, 1.0)
+  let options = clip.Options(..clip.default_options(), tolerance: 0.000001)
+
+  assert clip.subpath_with(
+      input,
+      to: thin_region,
+      using: svg_path.Nonzero,
+      options:,
+    )
+    == Ok([])
+}
+
 pub fn closed_subpath_survives_whole_when_fully_inside_test() {
   let input = rectangle_subpath(2.0, 2.0, 8.0, 8.0)
 

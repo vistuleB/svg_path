@@ -7,10 +7,13 @@
 //// inserted.
 
 import gleam/list
+import gleam/option.{Some}
 import gleam/order
 import gleam/result
 import svg_path
+import svg_path/encounters
 import svg_path/intersections
+import svg_path/overlaps
 
 const default_tolerance = 0.000001
 
@@ -151,18 +154,22 @@ fn split_points(
   clip_region: svg_path.Path,
   options: Options,
 ) -> Result(List(svg_path.SubpathParameter), svg_path.Error) {
-  use intersections <- result.try(intersections.path_with(
+  use found <- result.try(encounters.path_with(
     svg_path.subpath_as_path(input),
     clip_region,
     options: options.intersection,
   ))
+  let encounters.Encounters(overlaps: overlap_intervals, intersections:) = found
+  let intersection_parameters =
+    intersections |> list.flat_map(left_subpath_parameters)
+  let overlap_parameters =
+    overlap_intervals |> list.flat_map(left_overlap_parameters)
+  let parameters =
+    list.append(intersection_parameters, overlap_parameters)
+    |> list.map(normalize_parameter(input, _))
+    |> list.filter(should_keep_split_point(input, _))
 
-  intersections
-  |> list.flat_map(left_subpath_parameters)
-  |> list.map(normalize_parameter(input, _))
-  |> list.filter(should_keep_split_point(input, _))
-  |> sort_unique_parameters
-  |> Ok
+  sort_unique_parameters(input, parameters, options.tolerance)
 }
 
 fn left_subpath_parameters(
@@ -172,6 +179,21 @@ fn left_subpath_parameters(
   |> list.filter_map(fn(parameter) {
     case parameter {
       svg_path.PathParameter(subpath_index: 0, at:) -> Ok(at)
+      _ -> Error(Nil)
+    }
+  })
+}
+
+fn left_overlap_parameters(
+  overlap: overlaps.PathOverlap,
+) -> List(svg_path.SubpathParameter) {
+  [
+    overlaps.path_overlap_left_start(overlap),
+    overlaps.path_overlap_left_end(overlap),
+  ]
+  |> list.filter_map(fn(parameter) {
+    case parameter {
+      Some(svg_path.PathParameter(subpath_index: 0, at:)) -> Ok(at)
       _ -> Error(Nil)
     }
   })
@@ -219,24 +241,44 @@ fn is_open_boundary_parameter(
 }
 
 fn sort_unique_parameters(
+  input: svg_path.Subpath,
   parameters: List(svg_path.SubpathParameter),
-) -> List(svg_path.SubpathParameter) {
+  tolerance: Float,
+) -> Result(List(svg_path.SubpathParameter), svg_path.Error) {
   parameters
   |> list.sort(by: svg_path.subpath_parameters_compare)
-  |> unique_sorted_parameters(kept: [])
+  |> unique_sorted_parameters(input, tolerance, kept: [])
 }
 
 fn unique_sorted_parameters(
   parameters: List(svg_path.SubpathParameter),
+  input: svg_path.Subpath,
+  tolerance: Float,
   kept kept: List(svg_path.SubpathParameter),
-) -> List(svg_path.SubpathParameter) {
+) -> Result(List(svg_path.SubpathParameter), svg_path.Error) {
   case parameters, kept {
-    [], _ -> list.reverse(kept)
-    [first, ..rest], [] -> unique_sorted_parameters(rest, kept: [first])
+    [], _ -> Ok(list.reverse(kept))
+    [first, ..rest], [] ->
+      unique_sorted_parameters(rest, input, tolerance, kept: [first])
     [first, ..rest], [previous, ..] ->
       case svg_path.subpath_parameters_compare(first, previous) {
-        order.Eq -> unique_sorted_parameters(rest, kept:)
-        _ -> unique_sorted_parameters(rest, kept: [first, ..kept])
+        order.Eq -> unique_sorted_parameters(rest, input, tolerance, kept:)
+        _ -> {
+          use between <- result.try(svg_path.subpath_between(
+            input,
+            from: previous,
+            to: first,
+          ))
+          use separation <- result.try(svg_path.subpath_length(between))
+          case separation <=. tolerance {
+            True -> unique_sorted_parameters(rest, input, tolerance, kept:)
+            False ->
+              unique_sorted_parameters(rest, input, tolerance, kept: [
+                first,
+                ..kept
+              ])
+          }
+        }
       }
   }
 }
