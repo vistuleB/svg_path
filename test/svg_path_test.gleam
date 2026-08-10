@@ -2659,6 +2659,36 @@ pub fn subpath_with_custom_wiggle_then_bridge_tolerance_accepts_larger_gap_test(
   assert svg_path.subpath_end(subpath) == Ok(d)
 }
 
+pub fn subpath_with_rejects_negative_custom_wiggle_tolerance_test() {
+  let segment =
+    svg_path.Line(
+      start: svg_path.Point(0.0, 0.0),
+      end: svg_path.Point(1.0, 0.0),
+    )
+
+  assert svg_path.subpath_with([segment], policy: svg_path.wiggle_with(-0.1))
+    == Error(svg_path.InvalidWiggleTolerance(-0.1))
+}
+
+pub fn subpath_with_rejects_negative_wiggle_then_bridge_tolerance_test() {
+  let first =
+    svg_path.Line(
+      start: svg_path.Point(0.0, 0.0),
+      end: svg_path.Point(1.0, 0.0),
+    )
+  let second =
+    svg_path.Line(
+      start: svg_path.Point(2.0, 0.0),
+      end: svg_path.Point(3.0, 0.0),
+    )
+
+  assert svg_path.subpath_with(
+      [first, second],
+      policy: svg_path.wiggle_then_bridge_with(-0.1),
+    )
+    == Error(svg_path.InvalidWiggleTolerance(-0.1))
+}
+
 pub fn subpath_with_wiggle_rejects_misaligned_vertical_lines_test() {
   let a = svg_path.Point(0.0, 0.0)
   let b = svg_path.Point(0.0, 10.0)

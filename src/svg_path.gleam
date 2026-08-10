@@ -534,6 +534,9 @@ pub type Error {
   /// A direction relative tolerance must be non-negative.
   InvalidDirectionRelativeTolerance(Float)
 
+  /// A custom endpoint wiggle tolerance must be finite and non-negative.
+  InvalidWiggleTolerance(Float)
+
   /// A subpath interval would not produce a positive-length piece.
   InvalidSubpathInterval(from: SubpathParameter, to: SubpathParameter)
 
@@ -6732,6 +6735,7 @@ fn open_subpath_with_segments(
   segments: List(Segment),
   policy: EndpointPolicy,
 ) -> Result(Subpath, Error) {
+  use _ <- result.try(validate_endpoint_policy(policy))
   case segments {
     [] -> Error(EmptySubpath)
     [first, ..] ->
@@ -6766,6 +6770,7 @@ fn open_subpath_with_start(
   start: Point,
   policy: EndpointPolicy,
 ) -> Result(Subpath, Error) {
+  use _ <- result.try(validate_endpoint_policy(policy))
   case policy {
     Strict -> strict_open_subpath_from(start, segments)
     Wiggle ->
@@ -7537,9 +7542,21 @@ fn close_subpath_with(
   subpath: Subpath,
   policy: EndpointPolicy,
 ) -> Result(Subpath, Error) {
+  use _ <- result.try(validate_endpoint_policy(policy))
   case subpath.closed {
     True -> Ok(subpath)
     False -> close_open_subpath_with(subpath, policy)
+  }
+}
+
+fn validate_endpoint_policy(policy: EndpointPolicy) -> Result(Nil, Error) {
+  case policy {
+    WiggleWith(tolerance) | WiggleThenBridgeWith(tolerance) ->
+      case tolerance <. 0.0 || !finite_float(tolerance) {
+        True -> Error(InvalidWiggleTolerance(tolerance))
+        False -> Ok(Nil)
+      }
+    _ -> Ok(Nil)
   }
 }
 
