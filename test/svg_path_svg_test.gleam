@@ -35,17 +35,6 @@ pub fn document_renders_a_complete_svg_document_test() {
     <> "</svg>"
 }
 
-pub fn paths_delegates_to_document_test() {
-  let box =
-    svg_path.BoundingBox(
-      min: svg_path.Point(0.0, 0.0),
-      max: svg_path.Point(1.0, 1.0),
-    )
-  let things = [svg.StyledPath(svg_path.path_empty(), "fill: none")]
-
-  assert svg.paths(things, view_box: box) == svg.document(things, view_box: box)
-}
-
 pub fn document_renders_rectangles_circles_and_ellipses_test() {
   let box =
     svg_path.BoundingBox(
@@ -84,7 +73,7 @@ pub fn paths_escapes_path_style_and_text_values_test() {
       max: svg_path.Point(1.0, 1.0),
     )
 
-  assert svg.paths(
+  assert svg.document(
       [
         svg.StyledPath(
           svg_path.path_empty(),
@@ -131,7 +120,7 @@ pub fn labeled_point_draws_marker_and_label_test() {
       max: svg_path.Point(20.0, 20.0),
     )
 
-  assert svg.paths(
+  assert svg.document(
       svg.labeled_point("p0", "red", svg_path.Point(10.0, 10.0), 4),
       view_box: box,
     )

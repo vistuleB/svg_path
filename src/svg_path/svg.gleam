@@ -158,16 +158,6 @@ pub fn document(
   <> "\n</svg>"
 }
 
-/// Render styled paths and text labels as a complete SVG document.
-///
-/// This is an older name for `document`.
-pub fn paths(
-  things things: ThingsToDraw,
-  view_box view_box: svg_path.BoundingBox,
-) -> String {
-  document(things, view_box:)
-}
-
 fn thing_element(
   thing: ThingToDraw,
   format: number_format.NumberFormat,
