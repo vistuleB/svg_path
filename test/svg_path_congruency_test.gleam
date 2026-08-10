@@ -230,6 +230,19 @@ pub fn fit_points_centroids_do_not_overflow_on_large_finite_points_test() {
   assert transform.to_tuple(matrix) == #(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
 }
 
+pub fn fit_points_rms_error_does_not_overflow_on_large_finite_residuals_test() {
+  let source = [svg_path.Point(0.0, 0.0), svg_path.Point(0.0, 0.0)]
+  let target = [
+    svg_path.Point(-1.0e200, 0.0),
+    svg_path.Point(1.0e200, 0.0),
+  ]
+
+  let assert Ok(congruency.Fit(error:, ..)) =
+    congruency.fit_points(source:, target:, family: congruency.Similar)
+
+  assert error == 1.0e200
+}
+
 pub fn line_returns_transform_mapping_source_to_target_test() {
   let source =
     svg_path.Line(

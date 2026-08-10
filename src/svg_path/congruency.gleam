@@ -84,6 +84,10 @@ type CenteredAffineSums {
   )
 }
 
+type ErrorSums {
+  ErrorSums(count: Int, scale: Float, scaled_squares: Float, finite: Bool)
+}
+
 /// Find a translation, rotation, and uniform scale mapping one ordered point
 /// list to another.
 ///
@@ -575,24 +579,28 @@ fn rms_error(
   points: List(IndexedPoint),
   matrix: transform.Matrix,
 ) -> Result(Float, Nil) {
-  let #(count, error_squared) =
-    list.fold(points, #(0, 0.0), fn(accumulated, point) {
-      let #(count, error_squared) = accumulated
-      let mapped = transform.point(point.source, by: matrix)
+  let sums =
+    list.fold(
+      points,
+      ErrorSums(count: 0, scale: 0.0, scaled_squares: 0.0, finite: True),
+      fn(sums, point) {
+        let mapped = transform.point(point.source, by: matrix)
+        let sums = ErrorSums(..sums, count: sums.count + 1)
 
-      #(
-        count + 1,
-        error_squared +. point_helpers.distance_squared(mapped, point.target),
-      )
-    })
+        sums
+        |> accumulate_squared_error(mapped.x -. point.target.x)
+        |> accumulate_squared_error(mapped.y -. point.target.y)
+      },
+    )
 
-  case count <= 0 {
+  case sums.count <= 0 || !sums.finite {
     True -> Error(Nil)
     False -> {
-      let mean_error_squared = error_squared /. int.to_float(count)
+      let mean_scaled_squares = sums.scaled_squares /. int.to_float(sums.count)
 
-      case float.square_root(mean_error_squared) {
+      case float.square_root(mean_scaled_squares) {
         Ok(error) -> {
+          let error = sums.scale *. error
           case is_finite(error) {
             True -> Ok(error)
             False -> Error(Nil)
@@ -600,6 +608,28 @@ fn rms_error(
         }
         Error(_) -> Error(Nil)
       }
+    }
+  }
+}
+
+fn accumulate_squared_error(sums: ErrorSums, error: Float) -> ErrorSums {
+  let magnitude = float.absolute_value(error)
+
+  case is_finite(magnitude), magnitude, sums.scale {
+    False, _, _ -> ErrorSums(..sums, finite: False)
+    True, 0.0, _ -> sums
+    True, _, 0.0 -> ErrorSums(..sums, scale: magnitude, scaled_squares: 1.0)
+    True, _, scale if magnitude >. scale -> {
+      let ratio = scale /. magnitude
+      ErrorSums(
+        ..sums,
+        scale: magnitude,
+        scaled_squares: 1.0 +. sums.scaled_squares *. ratio *. ratio,
+      )
+    }
+    True, _, scale -> {
+      let ratio = magnitude /. scale
+      ErrorSums(..sums, scaled_squares: sums.scaled_squares +. ratio *. ratio)
     }
   }
 }
