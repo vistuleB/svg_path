@@ -10,6 +10,10 @@ pub fn point_inspects_as_comma_separated_coordinates_test() {
   assert inspect.point(svg_path.Point(10.0, -2.5)) == "10,-2.5"
 }
 
+pub fn point_inspection_preserves_scientific_exponents_test() {
+  assert inspect.point(svg_path.Point(1.0e20, 0.0)) == "1e20,0"
+}
+
 pub fn point_inspects_with_decimal_options_test() {
   assert inspect.point_with(
       svg_path.Point(10.234, -2.235),

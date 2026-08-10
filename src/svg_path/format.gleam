@@ -221,16 +221,29 @@ fn fixed_decimal(number: Float, decimal_places: Int) -> String {
 }
 
 fn strip_trailing_decimal_zeros(number: String) -> String {
-  case string.split_once(number, on: ".") {
+  let #(significand, exponent) = split_exponent(number)
+
+  case string.split_once(significand, on: ".") {
     Error(_) -> number
     Ok(#(whole, fractional)) -> {
       let fractional = strip_trailing_zeros(fractional)
 
       case fractional {
-        "" -> whole
-        _ -> whole <> "." <> fractional
+        "" -> whole <> exponent
+        _ -> whole <> "." <> fractional <> exponent
       }
     }
+  }
+}
+
+fn split_exponent(number: String) -> #(String, String) {
+  case string.split_once(number, on: "e") {
+    Ok(#(significand, exponent)) -> #(significand, "e" <> exponent)
+    Error(_) ->
+      case string.split_once(number, on: "E") {
+        Ok(#(significand, exponent)) -> #(significand, "E" <> exponent)
+        Error(_) -> #(number, "")
+      }
   }
 }
 
