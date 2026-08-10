@@ -44,6 +44,22 @@ pub fn point_inspects_with_fixed_decimal_options_test() {
     == "10.00,-2.50"
 }
 
+pub fn decimal_options_use_scientific_notation_when_scaling_is_unsafe_test() {
+  assert inspect.point_with(
+      svg_path.Point(1.0e20, -1.0e20),
+      options: inspect.decimal_options(5),
+    )
+    == "1e20,-1e20"
+}
+
+pub fn fixed_decimal_options_fix_unsafe_scientific_significands_test() {
+  assert inspect.point_with(
+      svg_path.Point(1.0e20, -1.0e15),
+      options: inspect.fixed_decimal_options(2),
+    )
+    == "1.00e20,-1.00e15"
+}
+
 pub fn line_segment_inspects_on_one_line_test() {
   let segment =
     svg_path.Line(

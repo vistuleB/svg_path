@@ -44,9 +44,12 @@ pub type RightDecimalOptions {
   System
 
   /// Use at most this many decimal places, stripping trailing zeroes.
+  /// Scientific notation is used when fixed-point scaling would be unsafe.
   AtMost(Int)
 
   /// Use exactly this many decimal places.
+  /// Scientific notation fixes the significand to this many decimal places
+  /// when fixed-point scaling would be unsafe.
   Fixed(Int)
 }
 
@@ -186,11 +189,47 @@ fn left_width(number: String) -> Int {
 }
 
 fn decimal(number: Float, decimal_places: Int, fixed_decimals: Bool) -> String {
-  let fixed = fixed_decimal(number, decimal_places)
+  let decimal_places = int.max(decimal_places, 0)
+  let fixed = case fixed_decimal_is_safe(number, decimal_places) {
+    True -> fixed_decimal(number, decimal_places)
+    False -> scientific_decimal(number, decimal_places)
+  }
 
   case fixed_decimals {
     True -> fixed
     False -> strip_trailing_decimal_zeros(fixed)
+  }
+}
+
+fn fixed_decimal_is_safe(number: Float, decimal_places: Int) -> Bool {
+  // Integers through 2^53 are represented exactly on both supported targets.
+  // Keeping the scaled value in that range prevents target-dependent digits
+  // when the rounded Float is converted to an Int.
+  case decimal_places <= 15 {
+    False -> False
+    True ->
+      float.absolute_value(number) *. power_of_ten(decimal_places)
+      <=. 9_007_199_254_740_992.0
+  }
+}
+
+fn scientific_decimal(number: Float, decimal_places: Int) -> String {
+  number
+  |> scientific_fixed(decimal_places)
+  |> normalize_scientific_exponent
+}
+
+fn normalize_scientific_exponent(number: String) -> String {
+  let #(significand, exponent) = split_exponent(number)
+  case exponent {
+    "" -> significand
+    _ -> {
+      let exponent_digits = string.drop_start(exponent, 1)
+      case int.parse(exponent_digits) {
+        Ok(value) -> significand <> "e" <> int.to_string(value)
+        Error(_) -> number
+      }
+    }
   }
 }
 
@@ -267,3 +306,7 @@ fn power_of_ten_int(exponent: Int) -> Int {
     False -> 10 * power_of_ten_int(exponent - 1)
   }
 }
+
+@external(erlang, "format_ffi", "scientific_fixed")
+@external(javascript, "./format_ffi.mjs", "scientificFixed")
+fn scientific_fixed(number: Float, decimal_places: Int) -> String

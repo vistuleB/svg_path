@@ -33,6 +33,18 @@ pub fn serialized_padding_measures_scientific_significands_test() {
   assert serialize.subpath_with(subpath, options:) == "M 0001e20 0002"
 }
 
+pub fn serialization_uses_scientific_notation_when_scaling_is_unsafe_test() {
+  let subpath = svg_path.subpath_empty(at: svg_path.Point(1.0e20, -1.0e20))
+
+  assert serialize.subpath_with(subpath, options: serialize.decimal_options(5))
+    == "M 1e20 -1e20"
+  assert serialize.subpath_with(
+      subpath,
+      options: serialize.fixed_decimal_options(2),
+    )
+    == "M 1.00e20 -1.00e20"
+}
+
 pub fn empty_subpath_serializes_to_move_test() {
   assert serialize.subpath(svg_path.subpath_empty(at: svg_path.Point(0.0, 0.0)))
     == "M 0 0"

@@ -83,9 +83,11 @@ pub type RightDecimalOptions {
   System
 
   /// Use at most this many decimal places, stripping trailing zeroes.
+  /// Scientific notation is used when fixed-point scaling would be unsafe.
   AtMost(Int)
 
-  /// Use exactly this many decimal places.
+  /// Use exactly this many decimal places. Scientific notation fixes the
+  /// significand to this width when fixed-point scaling would be unsafe.
   Fixed(Int)
 }
 
