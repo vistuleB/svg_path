@@ -5,6 +5,7 @@
 //// transform application order, and `multiply(left:, right:)` when thinking in
 //// algebraic matrix multiplication order.
 
+import gleam/float
 import gleam/list
 import svg_path
 import svg_path/ellipse
@@ -123,6 +124,19 @@ pub fn point_pair_map(
   let source_y = source_end.y -. source_start.y
   let target_x = target_end.x -. target_start.x
   let target_y = target_end.y -. target_start.y
+  let vector_scale =
+    float.max(
+      float.max(float.absolute_value(source_x), float.absolute_value(source_y)),
+      float.max(float.absolute_value(target_x), float.absolute_value(target_y)),
+    )
+  let divisor = case vector_scale >. 0.0 {
+    True -> vector_scale
+    False -> 1.0
+  }
+  let source_x = source_x /. divisor
+  let source_y = source_y /. divisor
+  let target_x = target_x /. divisor
+  let target_y = target_y /. divisor
   let denominator = source_x *. source_x +. source_y *. source_y
   let scale_cos =
     { source_x *. target_x +. source_y *. target_y } /. denominator

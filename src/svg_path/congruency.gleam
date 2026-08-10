@@ -46,7 +46,7 @@ type PointPair {
     source_b: svg_path.Point,
     target_a: svg_path.Point,
     target_b: svg_path.Point,
-    distance_squared: Float,
+    distance_scale: Float,
   )
 }
 
@@ -123,7 +123,7 @@ fn points_with_nonnegative_tolerance(
     Ok([first, second, ..rest] as indexed) -> {
       let pair = swept_pair([first, second, ..rest])
 
-      case pair.distance_squared <=. 0.0 {
+      case pair.distance_scale <=. 0.0 {
         True -> {
           let matrix =
             transform.translate(
@@ -968,8 +968,8 @@ fn farthest_from_loop(
     [] -> best
     [first, ..remaining] -> {
       let next = case
-        point_helpers.distance_squared(point.source, first.source)
-        >. point_helpers.distance_squared(point.source, best.source)
+        point_distance_scale(point.source, first.source)
+        >. point_distance_scale(point.source, best.source)
       {
         True -> first
         False -> best
@@ -1011,8 +1011,12 @@ fn pair(
     source_b:,
     target_a:,
     target_b:,
-    distance_squared: point_helpers.distance_squared(source_a, source_b),
+    distance_scale: point_distance_scale(source_a, source_b),
   )
+}
+
+fn point_distance_scale(a: svg_path.Point, b: svg_path.Point) -> Float {
+  float.max(float.absolute_value(a.x -. b.x), float.absolute_value(a.y -. b.y))
 }
 
 fn points_within_tolerance(

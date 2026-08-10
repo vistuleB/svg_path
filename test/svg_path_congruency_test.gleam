@@ -103,6 +103,19 @@ pub fn points_maps_long_ordered_point_list_test() {
   assert point_near(transform.point(first_source, by: matrix), first_target)
 }
 
+pub fn points_match_identical_large_finite_coordinates_test() {
+  let points = [
+    svg_path.Point(-1.0e200, 0.0),
+    svg_path.Point(1.0e200, 0.0),
+    svg_path.Point(0.0, 1.0e200),
+  ]
+
+  let assert Ok(matrix) =
+    congruency.points(source: points, target: points, tolerance:)
+
+  assert transform.to_tuple(matrix) == #(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
+}
+
 pub fn fit_points_with_similar_returns_rms_error_test() {
   let source = [
     svg_path.Point(0.0, 0.0),
