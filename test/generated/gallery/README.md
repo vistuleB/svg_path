@@ -13,6 +13,7 @@
 - [Khmer fixed-radius coil offset map](gallery-khmer-coil-offset-map.svg)
 - [Khmer decaying spiral offset map](gallery-khmer-decaying-spiral-offset-map.svg)
 - [Crescent hull](gallery-crescent-hull.svg)
+- [Circle and ellipse construction verification](gallery-basic-shapes-ellipse-verification.svg)
 - [Cut radiator](gallery-cut-radiator.svg)
 - [Marker pose slots](gallery-marker-pose-slots.svg)
 - [Marker orientation semantics](gallery-marker-orient-semantics.svg)

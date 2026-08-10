@@ -93,6 +93,13 @@ pub fn generate_gallery_figures() {
       ),
     ),
     #("gallery-crescent-hull.svg", "Crescent hull", crescent_hull()),
+    #(
+      "gallery-basic-shapes-ellipse-verification.svg",
+      "Circle and ellipse construction verification",
+      generated_debug_svg(
+        "test/fixtures/gallery/basic-shapes-ellipse-verification.svg",
+      ),
+    ),
     #("gallery-cut-radiator.svg", "Cut radiator", cut_radiator()),
     #("gallery-marker-pose-slots.svg", "Marker pose slots", marker_pose_slots()),
     #(

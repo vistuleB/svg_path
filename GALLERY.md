@@ -125,6 +125,13 @@ offset shrinking by the same factor per turn.
 Shows a crescent-shaped point cloud, a reference arc and chord, and the computed
 convex hull.
 
+### Circle and Ellipse Construction
+
+![Circle and ellipse construction verification](docs/gallery/gallery-basic-shapes-ellipse-verification.svg)
+
+Checks the centers, cardinal points, bounds, start points, and quarter-arc
+directions produced by `basic_shapes.circle` and `basic_shapes.ellipse`.
+
 ### Cut Radiator
 
 ![Cut radiator](docs/gallery/gallery-cut-radiator.svg)
