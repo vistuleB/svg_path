@@ -72,16 +72,11 @@ type SimilaritySums {
   SimilaritySums(dot: Float, cross: Float, source_length_squared: Float)
 }
 
-type AffineSums {
-  AffineSums(
-    count: Int,
-    source_x: Float,
-    source_y: Float,
+type CenteredAffineSums {
+  CenteredAffineSums(
     source_xx: Float,
     source_xy: Float,
     source_yy: Float,
-    target_x: Float,
-    target_y: Float,
     source_target_xx: Float,
     source_target_yx: Float,
     source_target_xy: Float,
@@ -377,84 +372,54 @@ fn fit_similar(points: List(IndexedPoint)) -> Result(Fit, Nil) {
 }
 
 fn fit_affine(points: List(IndexedPoint)) -> Result(Fit, Nil) {
-  let sums = affine_sums(points)
-  let n = int.to_float(sums.count)
+  use centers <- result_try_nil(point_centroids(points))
+  let #(source_center, target_center) = centers
+  let sums = centered_affine_sums(points, source_center, target_center)
   let determinant =
-    sums.source_xx
-    *. { sums.source_yy *. n -. sums.source_y *. sums.source_y }
-    -. sums.source_xy
-    *. { sums.source_xy *. n -. sums.source_y *. sums.source_x }
-    +. sums.source_x
-    *. { sums.source_xy *. sums.source_y -. sums.source_yy *. sums.source_x }
+    sums.source_xx *. sums.source_yy -. sums.source_xy *. sums.source_xy
+  let determinant_scale = sums.source_xx *. sums.source_yy
 
-  case determinant_within_zero(determinant) {
+  case determinant_is_degenerate(determinant, determinant_scale) {
     True -> fit_similar(points)
     False -> {
-      use x_coefficients <- result_try_nil(solve_affine_coefficients(
-        sums,
-        rhs_x: sums.source_target_xx,
-        rhs_y: sums.source_target_yx,
-        rhs_constant: sums.target_x,
-        determinant:,
-      ))
-      use y_coefficients <- result_try_nil(solve_affine_coefficients(
-        sums,
-        rhs_x: sums.source_target_xy,
-        rhs_y: sums.source_target_yy,
-        rhs_constant: sums.target_y,
-        determinant:,
-      ))
-      let #(a, c, e) = x_coefficients
-      let #(b, d, f) = y_coefficients
+      let a =
+        {
+          sums.source_target_xx
+          *. sums.source_yy
+          -. sums.source_target_yx
+          *. sums.source_xy
+        }
+        /. determinant
+      let c =
+        {
+          sums.source_xx
+          *. sums.source_target_yx
+          -. sums.source_xy
+          *. sums.source_target_xx
+        }
+        /. determinant
+      let b =
+        {
+          sums.source_target_xy
+          *. sums.source_yy
+          -. sums.source_target_yy
+          *. sums.source_xy
+        }
+        /. determinant
+      let d =
+        {
+          sums.source_xx
+          *. sums.source_target_yy
+          -. sums.source_xy
+          *. sums.source_target_xy
+        }
+        /. determinant
+      let e = target_center.x -. a *. source_center.x -. c *. source_center.y
+      let f = target_center.y -. b *. source_center.x -. d *. source_center.y
 
       transform.matrix(a:, b:, c:, d:, e:, f:)
       |> fit_from_matrix(points, _)
     }
-  }
-}
-
-fn solve_affine_coefficients(
-  sums: AffineSums,
-  rhs_x rhs_x: Float,
-  rhs_y rhs_y: Float,
-  rhs_constant rhs_constant: Float,
-  determinant determinant: Float,
-) -> Result(#(Float, Float, Float), Nil) {
-  let n = int.to_float(sums.count)
-  let x =
-    {
-      rhs_x
-      *. { sums.source_yy *. n -. sums.source_y *. sums.source_y }
-      -. sums.source_xy
-      *. { rhs_y *. n -. sums.source_y *. rhs_constant }
-      +. sums.source_x
-      *. { rhs_y *. sums.source_y -. sums.source_yy *. rhs_constant }
-    }
-    /. determinant
-  let y =
-    {
-      sums.source_xx
-      *. { rhs_y *. n -. sums.source_y *. rhs_constant }
-      -. rhs_x
-      *. { sums.source_xy *. n -. sums.source_y *. sums.source_x }
-      +. sums.source_x
-      *. { sums.source_xy *. rhs_constant -. rhs_y *. sums.source_x }
-    }
-    /. determinant
-  let constant =
-    {
-      sums.source_xx
-      *. { sums.source_yy *. rhs_constant -. rhs_y *. sums.source_y }
-      -. sums.source_xy
-      *. { sums.source_xy *. rhs_constant -. rhs_y *. sums.source_x }
-      +. rhs_x
-      *. { sums.source_xy *. sums.source_y -. sums.source_yy *. sums.source_x }
-    }
-    /. determinant
-
-  case is_finite(x) && is_finite(y) && is_finite(constant) {
-    True -> Ok(#(x, y, constant))
-    False -> Error(Nil)
   }
 }
 
@@ -522,45 +487,36 @@ fn similarity_sums(
   )
 }
 
-fn affine_sums(points: List(IndexedPoint)) -> AffineSums {
+fn centered_affine_sums(
+  points: List(IndexedPoint),
+  source_center: svg_path.Point,
+  target_center: svg_path.Point,
+) -> CenteredAffineSums {
   list.fold(
     points,
-    AffineSums(
-      count: 0,
-      source_x: 0.0,
-      source_y: 0.0,
+    CenteredAffineSums(
       source_xx: 0.0,
       source_xy: 0.0,
       source_yy: 0.0,
-      target_x: 0.0,
-      target_y: 0.0,
       source_target_xx: 0.0,
       source_target_yx: 0.0,
       source_target_xy: 0.0,
       source_target_yy: 0.0,
     ),
     fn(sums, point) {
-      AffineSums(
-        count: sums.count + 1,
-        source_x: sums.source_x +. point.source.x,
-        source_y: sums.source_y +. point.source.y,
-        source_xx: sums.source_xx +. point.source.x *. point.source.x,
-        source_xy: sums.source_xy +. point.source.x *. point.source.y,
-        source_yy: sums.source_yy +. point.source.y *. point.source.y,
-        target_x: sums.target_x +. point.target.x,
-        target_y: sums.target_y +. point.target.y,
-        source_target_xx: sums.source_target_xx
-          +. point.source.x
-          *. point.target.x,
-        source_target_yx: sums.source_target_yx
-          +. point.source.y
-          *. point.target.x,
-        source_target_xy: sums.source_target_xy
-          +. point.source.x
-          *. point.target.y,
-        source_target_yy: sums.source_target_yy
-          +. point.source.y
-          *. point.target.y,
+      let source_x = point.source.x -. source_center.x
+      let source_y = point.source.y -. source_center.y
+      let target_x = point.target.x -. target_center.x
+      let target_y = point.target.y -. target_center.y
+
+      CenteredAffineSums(
+        source_xx: sums.source_xx +. source_x *. source_x,
+        source_xy: sums.source_xy +. source_x *. source_y,
+        source_yy: sums.source_yy +. source_y *. source_y,
+        source_target_xx: sums.source_target_xx +. source_x *. target_x,
+        source_target_yx: sums.source_target_yx +. source_y *. target_x,
+        source_target_xy: sums.source_target_xy +. source_x *. target_y,
+        source_target_yy: sums.source_target_yy +. source_y *. target_y,
       )
     },
   )
@@ -623,8 +579,11 @@ fn rms_error(
   }
 }
 
-fn determinant_within_zero(value: Float) -> Bool {
-  !is_finite(value) || float.absolute_value(value) <=. 0.000000000001
+fn determinant_is_degenerate(determinant: Float, scale: Float) -> Bool {
+  !is_finite(determinant)
+  || !is_finite(scale)
+  || determinant <=. 0.0
+  || determinant <=. scale *. 0.000000000001
 }
 
 fn path_point_cloud(

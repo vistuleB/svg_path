@@ -147,6 +147,22 @@ pub fn fit_points_with_affine_maps_square_to_parallelogram_test() {
   assert matrix_near(matrix, affine)
 }
 
+pub fn affine_fit_is_independent_of_coordinate_scale_test() {
+  let source = [
+    svg_path.Point(0.0, 0.0),
+    svg_path.Point(0.0001, 0.0),
+    svg_path.Point(0.0, 0.0001),
+  ]
+  let affine = transform.matrix(a: 2.0, b: 0.0, c: 1.0, d: 1.0, e: 0.0, f: 0.0)
+  let target = source |> list.map(transform.point(_, by: affine))
+
+  let assert Ok(congruency.Fit(transform: matrix, error:)) =
+    congruency.fit_points(source:, target:, family: congruency.Affine)
+
+  assert near(error, 0.0)
+  assert matrix_near(matrix, affine)
+}
+
 pub fn fit_points_with_affine_falls_back_to_similar_for_collinear_source_test() {
   let source = [
     svg_path.Point(0.0, 0.0),
