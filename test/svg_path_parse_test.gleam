@@ -1,4 +1,5 @@
 import gleam/list
+import gleam/string
 import gleeunit
 import svg_path
 import svg_path/parse
@@ -249,6 +250,27 @@ pub fn exponent_and_plus_signed_numbers_parse_test() {
   let assert Ok(subpath) = svg_path.path_as_subpath(path)
 
   assert serialize.subpath(subpath) == "M 10 -20 H 15"
+}
+
+pub fn overflowing_path_number_is_rejected_test() {
+  assert parse.path("M 1e400 0")
+    == Error(parse.ParseError(parse.InvalidNumber("1e400"), "1e400 0"))
+}
+
+pub fn path_exponent_scaling_preserves_finite_compensated_values_test() {
+  let assert Ok(_) = parse.path("M 0.1e309 0")
+}
+
+pub fn overflowing_path_integer_syntax_is_rejected_test() {
+  let input = "M " <> string.repeat("9", times: 400) <> " 0"
+  let assert Error(_) = parse.path(input)
+}
+
+pub fn large_path_exponents_do_not_require_linear_recursion_test() {
+  let assert Error(_) = parse.path("M 1e1000000000 0")
+  let assert Ok(path) = parse.path("M 1e-1000000000 0")
+
+  assert serialize.path(path) == "M 0 0"
 }
 
 pub fn move_only_subpath_is_preserved_test() {

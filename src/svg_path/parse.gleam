@@ -5,12 +5,12 @@
 //// implicit repeated commands, smooth curves, and arcs.
 
 import gleam/float
-import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import gleam/string
 import svg_path
+import svg_path/internal/number
 
 /// Errors returned while parsing SVG path data.
 pub type Error {
@@ -990,7 +990,7 @@ fn tokenize_non_separator(
           let #(raw, rest) =
             read_number_at_argument(graphemes, arc_argument_position)
 
-          case parse_number(raw) {
+          case number.parse(raw) {
             Ok(number) ->
               tokenize_loop(
                 rest,
@@ -1152,73 +1152,4 @@ fn is_number_start(grapheme: String) -> Bool {
 
 fn is_digit(grapheme: String) -> Bool {
   list.contains(["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"], grapheme)
-}
-
-fn parse_number(raw: String) -> Result(Float, Nil) {
-  case string.split_once(raw, on: "e") {
-    Ok(#(mantissa, exponent)) -> parse_exponent_number(mantissa, exponent)
-    Error(_) -> {
-      case string.split_once(raw, on: "E") {
-        Ok(#(mantissa, exponent)) -> parse_exponent_number(mantissa, exponent)
-        Error(_) -> parse_decimal_number(raw)
-      }
-    }
-  }
-}
-
-fn parse_decimal_number(raw: String) -> Result(Float, Nil) {
-  let raw = strip_leading_plus(raw)
-  let raw = case raw {
-    "." | "-." -> raw
-    _ -> {
-      case string.starts_with(raw, ".") {
-        True -> "0" <> raw
-        False ->
-          case string.starts_with(raw, "-.") {
-            True -> "-0" <> string.drop_start(raw, up_to: 1)
-            False -> raw
-          }
-      }
-    }
-  }
-
-  case float.parse(raw) {
-    Ok(number) -> Ok(number)
-    Error(_) -> {
-      case int.parse(raw) {
-        Ok(number) -> Ok(int.to_float(number))
-        Error(_) -> Error(Nil)
-      }
-    }
-  }
-}
-
-fn parse_exponent_number(
-  mantissa: String,
-  exponent: String,
-) -> Result(Float, Nil) {
-  case parse_decimal_number(mantissa) {
-    Error(_) -> Error(Nil)
-    Ok(mantissa) -> {
-      case exponent |> strip_leading_plus |> int.parse {
-        Error(_) -> Error(Nil)
-        Ok(exponent) -> Ok(mantissa *. power_of_ten(exponent))
-      }
-    }
-  }
-}
-
-fn strip_leading_plus(raw: String) -> String {
-  case string.starts_with(raw, "+") {
-    True -> string.drop_start(raw, up_to: 1)
-    False -> raw
-  }
-}
-
-fn power_of_ten(exponent: Int) -> Float {
-  case exponent {
-    0 -> 1.0
-    _ if exponent > 0 -> 10.0 *. power_of_ten(exponent - 1)
-    _ -> power_of_ten(exponent + 1) /. 10.0
-  }
 }

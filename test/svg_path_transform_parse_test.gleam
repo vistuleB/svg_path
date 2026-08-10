@@ -1,4 +1,5 @@
 import gleam/list
+import gleam/string
 import gleeunit
 import svg_path
 import svg_path/serialize
@@ -96,6 +97,38 @@ pub fn invalid_comma_placements_are_rejected_test() {
   |> list.each(fn(input) {
     let assert Error(_) = transform_parse.attribute(input)
   })
+}
+
+pub fn overflowing_numbers_are_rejected_test() {
+  assert transform_parse.attribute("scale(1e400)")
+    == Error(transform_parse.ParseError(
+      transform_parse.InvalidNumber("1e400"),
+      "1e400)",
+    ))
+}
+
+pub fn exponent_scaling_preserves_finite_compensated_values_test() {
+  let assert Ok(_) = transform_parse.attribute("scale(0.1e309)")
+}
+
+pub fn overflowing_integer_syntax_is_rejected_test() {
+  let input = "scale(" <> string.repeat("9", times: 400) <> ")"
+  let assert Error(_) = transform_parse.attribute(input)
+}
+
+pub fn large_exponents_do_not_require_linear_recursion_test() {
+  let assert Error(_) = transform_parse.attribute("scale(1e1000000000)")
+  let assert Ok(matrix) = transform_parse.attribute("scale(1e-1000000000)")
+
+  assert transform.point(svg_path.Point(2.0, 3.0), by: matrix)
+    == svg_path.Point(0.0, 0.0)
+}
+
+pub fn zero_with_a_large_exponent_remains_zero_test() {
+  let assert Ok(matrix) = transform_parse.attribute("scale(0e1000000000)")
+
+  assert transform.point(svg_path.Point(2.0, 3.0), by: matrix)
+    == svg_path.Point(0.0, 0.0)
 }
 
 pub fn unknown_transform_is_rejected_test() {
