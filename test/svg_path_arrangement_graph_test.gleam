@@ -464,6 +464,46 @@ pub fn edge_annotation_pose_comes_from_segment_midpoint_and_tangent_test() {
   )
 }
 
+pub fn edge_annotation_pose_uses_incoming_direction_at_stationary_reversal_test() {
+  let edge =
+    arrangement_graph.ArrangementEdge(
+      id: 0,
+      segment: svg_path.QuadraticBezier(
+        start: svg_path.Point(1.0, 0.0),
+        control: svg_path.Point(-1.0, 0.0),
+        end: svg_path.Point(1.0, 0.0),
+      ),
+      start_vertex: 0,
+      end_vertex: 1,
+      forward_multiplicity: 1,
+      reverse_multiplicity: 0,
+    )
+
+  arrangement_graph_drawing.edge_annotation_pose(edge)
+  |> should.equal(
+    Ok(arrangement_graph_drawing.EdgeAnnotationPose(
+      point: svg_path.Point(0.0, 0.0),
+      rotation: 270.0,
+    )),
+  )
+}
+
+pub fn edge_annotation_pose_rejects_directionless_segment_test() {
+  let point = svg_path.Point(1.0, 2.0)
+  let edge =
+    arrangement_graph.ArrangementEdge(
+      id: 0,
+      segment: svg_path.Line(start: point, end: point),
+      start_vertex: 0,
+      end_vertex: 0,
+      forward_multiplicity: 1,
+      reverse_multiplicity: 0,
+    )
+
+  arrangement_graph_drawing.edge_annotation_pose(edge)
+  |> should.equal(Error(svg_path.IndeterminateDirection))
+}
+
 pub fn builder_splits_crossing_lines_at_shared_vertex_test() {
   let horizontal =
     svg_path.subpath_assert([

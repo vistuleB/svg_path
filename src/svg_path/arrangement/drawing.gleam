@@ -401,15 +401,25 @@ pub fn path_direction_arrows_with(
   })
 }
 
-/// Return the midpoint and tangent-aligned orientation for an edge annotation.
+/// Return the midpoint and traversal-aligned orientation for an edge annotation.
+///
+/// At a stationary midpoint with distinct directions on either side, the
+/// incoming direction determines the orientation. The outgoing direction is
+/// used when no incoming direction exists. Directionless geometry returns
+/// `svg_path.IndeterminateDirection`.
 pub fn edge_annotation_pose(
   edge: ArrangementEdge,
 ) -> Result(EdgeAnnotationPose, svg_path.Error) {
   let ArrangementEdge(segment:, ..) = edge
   use midpoint <- result.try(svg_path.segment_point(segment, at: 0.5))
-  use tangent <- result.try(svg_path.segment_derivative(segment, at: 0.5))
-  let tangent_angle = trig.atan2_degrees(tangent.y, tangent.x)
-  Ok(EdgeAnnotationPose(point: midpoint, rotation: tangent_angle +. 90.0))
+  use directions <- result.try(svg_path.segment_directions(segment, at: 0.5))
+  let direction = case directions.incoming, directions.outgoing {
+    Some(direction), _ | None, Some(direction) -> Ok(direction)
+    None, None -> Error(svg_path.IndeterminateDirection)
+  }
+  use direction <- result.try(direction)
+  let angle = trig.atan2_degrees(direction.y, direction.x)
+  Ok(EdgeAnnotationPose(point: midpoint, rotation: angle +. 90.0))
 }
 
 fn float_min(a: Float, b: Float) -> Float {

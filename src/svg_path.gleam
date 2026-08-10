@@ -534,6 +534,9 @@ pub type Error {
   /// A direction relative tolerance must be non-negative.
   InvalidDirectionRelativeTolerance(Float)
 
+  /// Geometry has no usable direction for the requested operation.
+  IndeterminateDirection
+
   /// A custom endpoint wiggle tolerance must be finite and non-negative.
   InvalidWiggleTolerance(Float)
 
