@@ -28,6 +28,9 @@ pub type Error {
 
   /// Dash offset must be finite.
   InvalidDashOffset(offset: Float)
+
+  /// The normalized dash pattern's total length must be finite.
+  InvalidDashPatternLength
 }
 
 /// Cap style used at open subpath endpoints.
@@ -304,11 +307,30 @@ fn normalize_dash_pattern(pattern: List(Float)) -> Result(List(Float), Error) {
   case pattern, list.all(pattern, fn(length) { length == 0.0 }) {
     [], _ -> Ok([])
     _, True -> Ok([])
-    _, False ->
-      case list.length(pattern) % 2 == 1 {
+    _, False -> {
+      let normalized = case list.length(pattern) % 2 == 1 {
         True -> Ok(list.append(pattern, pattern))
         False -> Ok(pattern)
       }
+      use normalized <- result.try(normalized)
+      use _ <- result.try(validate_dash_pattern_length(normalized, total: 0.0))
+      Ok(normalized)
+    }
+  }
+}
+
+fn validate_dash_pattern_length(
+  pattern: List(Float),
+  total total: Float,
+) -> Result(Nil, Error) {
+  case pattern {
+    [] -> Ok(Nil)
+    [first, ..rest] -> {
+      case total >. 1.7976931348623157e308 -. first {
+        True -> Error(InvalidDashPatternLength)
+        False -> validate_dash_pattern_length(rest, total: total +. first)
+      }
+    }
   }
 }
 

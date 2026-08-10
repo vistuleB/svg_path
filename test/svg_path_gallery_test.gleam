@@ -1930,6 +1930,7 @@ fn stroke_error_name(error: stroke.Error) -> String {
     stroke.InvalidWidth(_) -> "InvalidWidth"
     stroke.InvalidDashLength(_) -> "InvalidDashLength"
     stroke.InvalidDashOffset(_) -> "InvalidDashOffset"
+    stroke.InvalidDashPatternLength -> "InvalidDashPatternLength"
   }
 }
 

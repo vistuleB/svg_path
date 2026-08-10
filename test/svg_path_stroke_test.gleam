@@ -485,6 +485,21 @@ pub fn subpath_dashes_rejects_invalid_pattern_and_offset_test() {
     == Error(stroke.InvalidDashLength(-1.0))
 }
 
+pub fn subpath_dashes_rejects_a_non_finite_pattern_total_test() {
+  let subpath =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
+    ])
+
+  assert stroke.subpath_dashes(
+      subpath,
+      pattern: [1.0e308, 1.0e308],
+      offset: 0.0,
+    )
+    == Error(stroke.InvalidDashPatternLength)
+}
+
 pub fn stroke_rejects_non_positive_width_test() {
   let segment =
     svg_path.Line(
