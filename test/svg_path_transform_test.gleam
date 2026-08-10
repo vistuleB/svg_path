@@ -137,6 +137,17 @@ pub fn point_pair_map_rejects_points_outside_tolerance_test() {
     == Error(Nil)
 }
 
+pub fn point_pair_map_rejects_negative_tolerance_test() {
+  assert transform.point_pair_map(
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(1.0, 0.0),
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(1.0, 0.0),
+      tolerance: -0.001,
+    )
+    == Error(Nil)
+}
+
 pub fn point_triple_map_maps_source_points_to_targets_test() {
   let source_a = svg_path.Point(1.0, 2.0)
   let source_b = svg_path.Point(3.0, 2.0)

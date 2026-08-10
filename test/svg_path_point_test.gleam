@@ -93,4 +93,5 @@ pub fn rotations_and_near_test() {
     svg_path.Point(3.0, 4.0),
     tolerance: 4.999,
   )
+  assert !point.near(a, a, tolerance: -0.001)
 }

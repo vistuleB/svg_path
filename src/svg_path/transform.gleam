@@ -952,7 +952,8 @@ fn points_within_tolerance(
 ) -> Bool {
   let tolerance_squared = tolerance *. tolerance
 
-  point_helpers.distance_squared(a, b) <=. tolerance_squared
+  tolerance >=. 0.0
+  && point_helpers.distance_squared(a, b) <=. tolerance_squared
 }
 
 fn is_finite(value: Float) -> Bool {

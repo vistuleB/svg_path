@@ -167,7 +167,9 @@ pub fn near(
   b: svg_path.Point,
   tolerance tolerance: Float,
 ) -> Bool {
-  distance_squared(a, b) <=. tolerance *. tolerance
+  tolerance >=. 0.0
+  && tolerance -. tolerance == 0.0
+  && distance_squared(a, b) <=. tolerance *. tolerance
 }
 
 fn square_root(value: Float) -> Float {

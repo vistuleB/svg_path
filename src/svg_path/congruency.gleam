@@ -97,6 +97,17 @@ pub fn points(
   target target: List(svg_path.Point),
   tolerance tolerance: Float,
 ) -> Result(transform.Matrix, Nil) {
+  case tolerance <. 0.0 {
+    True -> Error(Nil)
+    False -> points_with_nonnegative_tolerance(source, target, tolerance)
+  }
+}
+
+fn points_with_nonnegative_tolerance(
+  source: List(svg_path.Point),
+  target: List(svg_path.Point),
+  tolerance: Float,
+) -> Result(transform.Matrix, Nil) {
   case indexed_points(source, target, accumulated: []) {
     Error(_) -> Error(Nil)
     Ok([]) -> Error(Nil)
