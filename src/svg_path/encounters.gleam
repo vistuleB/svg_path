@@ -44,6 +44,7 @@ pub fn segment_with(
   Encounters(overlaps.SegmentOverlap, svg_path.SegmentIntersection),
   svg_path.Error,
 ) {
+  use _ <- result.try(intersections.validate_options(options))
   let intersections.IntersectionOptions(tolerance:, ..) = options
   use overlap_intervals <- result.try(overlaps.segment_with(
     left,
@@ -98,18 +99,22 @@ fn segment_point_encounters(
           tolerance,
         ),
       )
-      Ok(
+      let candidates =
         list.append(window_intersections, overlap_self_intersections)
-        |> list.filter(fn(intersection) {
-          !intersection_follows_an_overlap(
-            intersection,
-            overlap_intervals,
-            tolerance,
-          )
-        })
-        |> unique_segment_intersections(tolerance)
-        |> list.sort(by: fn(a, b) { float.compare(a.left_t, b.left_t) }),
-      )
+      use candidates <- result.try(filter_intersections_following_overlaps(
+        candidates,
+        left,
+        right,
+        overlap_intervals,
+        tolerance,
+      ))
+      use unique <- result.try(unique_segment_intersections(
+        candidates,
+        left,
+        right,
+        tolerance,
+      ))
+      Ok(list.sort(unique, by: fn(a, b) { float.compare(a.left_t, b.left_t) }))
     }
   }
 }
@@ -389,18 +394,95 @@ fn right_self_intersections_through_overlap(
 
 fn intersection_follows_an_overlap(
   intersection: svg_path.SegmentIntersection,
+  left: svg_path.Segment,
+  right: svg_path.Segment,
   overlap_intervals: List(overlaps.SegmentOverlap),
   tolerance: Float,
-) -> Bool {
-  list.any(overlap_intervals, fn(overlap) {
-    left_parameter_in_overlap(intersection.left_t, overlap)
-    && right_parameter_in_overlap(intersection.right_t, overlap)
-    && float.absolute_value(
-      overlaps.segment_overlap_right_parameter(overlap, intersection.left_t)
-      -. intersection.right_t,
-    )
-    <=. tolerance
-  })
+) -> Result(Bool, svg_path.Error) {
+  case overlap_intervals {
+    [] -> Ok(False)
+    [overlap, ..rest] ->
+      case
+        left_parameter_in_overlap(intersection.left_t, overlap)
+        && right_parameter_in_overlap(intersection.right_t, overlap)
+      {
+        False ->
+          intersection_follows_an_overlap(
+            intersection,
+            left,
+            right,
+            rest,
+            tolerance,
+          )
+        True -> {
+          let mapped_right =
+            overlaps.segment_overlap_right_parameter(
+              overlap,
+              intersection.left_t,
+            )
+          let mapped_left =
+            overlaps.segment_overlap_left_parameter(
+              overlap,
+              intersection.right_t,
+            )
+          use left_stalled <- result.try(segment_parameters_are_stalled(
+            left,
+            intersection.left_t,
+            mapped_left,
+            tolerance,
+          ))
+          use right_stalled <- result.try(segment_parameters_are_stalled(
+            right,
+            intersection.right_t,
+            mapped_right,
+            tolerance,
+          ))
+          case left_stalled && right_stalled {
+            True -> Ok(True)
+            False ->
+              intersection_follows_an_overlap(
+                intersection,
+                left,
+                right,
+                rest,
+                tolerance,
+              )
+          }
+        }
+      }
+  }
+}
+
+fn filter_intersections_following_overlaps(
+  intersections: List(svg_path.SegmentIntersection),
+  left: svg_path.Segment,
+  right: svg_path.Segment,
+  overlap_intervals: List(overlaps.SegmentOverlap),
+  tolerance: Float,
+) -> Result(List(svg_path.SegmentIntersection), svg_path.Error) {
+  case intersections {
+    [] -> Ok([])
+    [intersection, ..rest] -> {
+      use follows <- result.try(intersection_follows_an_overlap(
+        intersection,
+        left,
+        right,
+        overlap_intervals,
+        tolerance,
+      ))
+      use rest <- result.try(filter_intersections_following_overlaps(
+        rest,
+        left,
+        right,
+        overlap_intervals,
+        tolerance,
+      ))
+      case follows {
+        True -> Ok(rest)
+        False -> Ok([intersection, ..rest])
+      }
+    }
+  }
 }
 
 fn left_parameter_in_overlap(
@@ -422,25 +504,99 @@ fn right_parameter_in_overlap(
 
 fn unique_segment_intersections(
   intersections: List(svg_path.SegmentIntersection),
+  left: svg_path.Segment,
+  right: svg_path.Segment,
   tolerance: Float,
-) -> List(svg_path.SegmentIntersection) {
-  list.fold(intersections, [], fn(unique, intersection) {
-    case
-      list.any(unique, fn(existing) {
-        let svg_path.SegmentIntersection(
-          left_t: existing_left,
-          right_t: existing_right,
-          ..,
-        ) = existing
-        let svg_path.SegmentIntersection(left_t:, right_t:, ..) = intersection
-        float.absolute_value(existing_left -. left_t) <=. tolerance
-        && float.absolute_value(existing_right -. right_t) <=. tolerance
-      })
-    {
-      True -> unique
-      False -> [intersection, ..unique]
+) -> Result(List(svg_path.SegmentIntersection), svg_path.Error) {
+  unique_segment_intersections_loop(intersections, [], left, right, tolerance)
+}
+
+fn unique_segment_intersections_loop(
+  intersections: List(svg_path.SegmentIntersection),
+  unique: List(svg_path.SegmentIntersection),
+  left: svg_path.Segment,
+  right: svg_path.Segment,
+  tolerance: Float,
+) -> Result(List(svg_path.SegmentIntersection), svg_path.Error) {
+  case intersections {
+    [] -> Ok(unique)
+    [intersection, ..rest] -> {
+      use duplicate <- result.try(intersection_has_geometric_duplicate(
+        intersection,
+        unique,
+        left,
+        right,
+        tolerance,
+      ))
+      unique_segment_intersections_loop(
+        rest,
+        case duplicate {
+          True -> unique
+          False -> [intersection, ..unique]
+        },
+        left,
+        right,
+        tolerance,
+      )
     }
-  })
+  }
+}
+
+fn intersection_has_geometric_duplicate(
+  intersection: svg_path.SegmentIntersection,
+  existing: List(svg_path.SegmentIntersection),
+  left: svg_path.Segment,
+  right: svg_path.Segment,
+  tolerance: Float,
+) -> Result(Bool, svg_path.Error) {
+  case existing {
+    [] -> Ok(False)
+    [candidate, ..rest] -> {
+      use left_stalled <- result.try(segment_parameters_are_stalled(
+        left,
+        candidate.left_t,
+        intersection.left_t,
+        tolerance,
+      ))
+      use right_stalled <- result.try(segment_parameters_are_stalled(
+        right,
+        candidate.right_t,
+        intersection.right_t,
+        tolerance,
+      ))
+      case left_stalled && right_stalled {
+        True -> Ok(True)
+        False ->
+          intersection_has_geometric_duplicate(
+            intersection,
+            rest,
+            left,
+            right,
+            tolerance,
+          )
+      }
+    }
+  }
+}
+
+fn segment_parameters_are_stalled(
+  segment: svg_path.Segment,
+  first: Float,
+  second: Float,
+  tolerance: Float,
+) -> Result(Bool, svg_path.Error) {
+  case first == second {
+    True -> Ok(True)
+    False -> {
+      use portion <- result.try(svg_path.segment_between_inside(
+        segment,
+        from: float.min(first, second),
+        to: float.max(first, second),
+      ))
+      use motion <- result.try(svg_path.segment_length(portion))
+      Ok(motion <=. tolerance)
+    }
+  }
 }
 
 fn interpolate(from: Float, to: Float, portion: Float) -> Float {
@@ -976,6 +1132,7 @@ pub fn filter_fully_overlap_explained_subpath_intersection_parameters(
   Encounters(overlaps.SubpathOverlap, svg_path.SubpathIntersection),
   svg_path.Error,
 ) {
+  use _ <- result.try(validate_complementarity_tolerance(tolerance))
   let Encounters(overlaps: overlap_intervals, intersections:) = encounters
   use intersections <- result.try(filter_subpath_intersections(
     intersections,
@@ -1014,6 +1171,7 @@ pub fn subpath_with(
   Encounters(overlaps.SubpathOverlap, svg_path.SubpathIntersection),
   svg_path.Error,
 ) {
+  use _ <- result.try(intersections.validate_options(options))
   let intersections.IntersectionOptions(tolerance:, ..) = options
   use overlap_intervals <- result.try(overlaps.subpath_with(
     left,
@@ -1057,6 +1215,7 @@ pub fn segment_subpath_with(
   ),
   svg_path.Error,
 ) {
+  use _ <- result.try(intersections.validate_options(options))
   let intersections.IntersectionOptions(tolerance:, ..) = options
   use overlap_intervals <- result.try(overlaps.segment_subpath_with(
     segment,
@@ -1093,6 +1252,7 @@ pub fn path_with(
   Encounters(overlaps.PathOverlap, svg_path.PathIntersection),
   svg_path.Error,
 ) {
+  use _ <- result.try(intersections.validate_options(options))
   let intersections.IntersectionOptions(tolerance:, ..) = options
   use overlap_intervals <- result.try(overlaps.path_with(
     left,

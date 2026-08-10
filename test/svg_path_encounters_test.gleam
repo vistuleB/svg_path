@@ -1,6 +1,7 @@
 import gleam/list
 import svg_path
 import svg_path/encounters
+import svg_path/intersections
 import svg_path/overlaps
 import svg_path_encounter_validation
 
@@ -71,6 +72,14 @@ pub fn partial_line_overlap_has_overlap_and_no_reported_points_test() {
       tolerance:,
     )
     == Ok(True)
+}
+
+pub fn overlapping_segments_still_validate_intersection_options_test() {
+  let segment = line(0.0, 0.0, 10.0, 0.0)
+  let options = intersections.IntersectionOptions(tolerance:, max_depth: 0)
+
+  assert encounters.segment_with(segment, segment, options:)
+    == Error(svg_path.InvalidIntersectionMaxDepth(0))
 }
 
 pub fn reversed_partial_line_overlap_is_valid_test() {
@@ -391,6 +400,19 @@ pub fn subpath_intersection_entirely_explained_by_overlap_is_removed_test() {
       tolerance,
     )
     == Ok(encounters.Encounters(overlaps: overlap_intervals, intersections: []))
+}
+
+pub fn empty_filtered_encounters_still_validate_tolerance_test() {
+  let assert Ok(subpath) = svg_path.subpath([line(0.0, 0.0, 10.0, 0.0)])
+  let found = encounters.Encounters(overlaps: [], intersections: [])
+
+  assert encounters.filter_fully_overlap_explained_subpath_intersection_parameters(
+      found,
+      subpath,
+      subpath,
+      0.0,
+    )
+    == Error(svg_path.InvalidIntersectionTolerance(0.0))
 }
 
 pub fn subpath_intersection_retains_parameters_with_non_overlap_claim_test() {

@@ -355,7 +355,7 @@ pub fn segment_with(
   right: Segment,
   options options: IntersectionOptions,
 ) -> Result(List(SegmentIntersection), Error) {
-  use _ <- result.try(validate_intersection_options(options))
+  use _ <- result.try(validate_options(options))
   segment_intersections_checked_valid_options(left, right, options)
 }
 
@@ -370,7 +370,7 @@ pub fn segment_without_overlap_precheck_with(
   right: Segment,
   options options: IntersectionOptions,
 ) -> Result(List(SegmentIntersection), Error) {
-  use _ <- result.try(validate_intersection_options(options))
+  use _ <- result.try(validate_options(options))
   segment_intersections_valid_options(left, right, options)
 }
 
@@ -438,7 +438,7 @@ pub fn segment_subpath_with(
   subpath: Subpath,
   options options: IntersectionOptions,
 ) -> Result(List(#(Point, Float, List(SubpathParameter))), Error) {
-  use _ <- result.try(validate_intersection_options(options))
+  use _ <- result.try(validate_options(options))
   use intersections <- result.try(
     collect_segment_subpath_intersections(
       segment,
@@ -467,7 +467,7 @@ pub fn segment_subpath_without_overlap_precheck_with(
   subpath: Subpath,
   options options: IntersectionOptions,
 ) -> Result(List(#(Point, Float, List(SubpathParameter))), Error) {
-  use _ <- result.try(validate_intersection_options(options))
+  use _ <- result.try(validate_options(options))
   use found <- result.try(
     collect_segment_subpath_intersections(
       segment,
@@ -541,7 +541,7 @@ pub fn subpath_with(
   right: Subpath,
   options options: IntersectionOptions,
 ) -> Result(List(SubpathIntersection), Error) {
-  use _ <- result.try(validate_intersection_options(options))
+  use _ <- result.try(validate_options(options))
   use intersections <- result.try(
     collect_subpath_intersections(
       svg_path.subpath_segments(left),
@@ -566,7 +566,7 @@ pub fn subpath_without_overlap_precheck_with(
   right: Subpath,
   options options: IntersectionOptions,
 ) -> Result(List(SubpathIntersection), Error) {
-  use _ <- result.try(validate_intersection_options(options))
+  use _ <- result.try(validate_options(options))
   use found <- result.try(
     collect_subpath_intersections(
       svg_path.subpath_segments(left),
@@ -596,7 +596,7 @@ pub fn path_with(
   right: Path,
   options options: IntersectionOptions,
 ) -> Result(List(PathIntersection), Error) {
-  use _ <- result.try(validate_intersection_options(options))
+  use _ <- result.try(validate_options(options))
   use intersections <- result.try(
     collect_path_intersections(
       left.subpaths,
@@ -621,7 +621,7 @@ pub fn path_without_overlap_precheck_with(
   right: Path,
   options options: IntersectionOptions,
 ) -> Result(List(PathIntersection), Error) {
-  use _ <- result.try(validate_intersection_options(options))
+  use _ <- result.try(validate_options(options))
   use found <- result.try(
     collect_path_intersections(
       left.subpaths,
@@ -1158,9 +1158,8 @@ fn dot(a: Point, b: Point) -> Float {
   a.x *. b.x +. a.y *. b.y
 }
 
-fn validate_intersection_options(
-  options: IntersectionOptions,
-) -> Result(Nil, Error) {
+@internal
+pub fn validate_options(options: IntersectionOptions) -> Result(Nil, Error) {
   case options.tolerance <=. 0.0 {
     True -> Error(InvalidIntersectionTolerance(options.tolerance))
     False -> {
