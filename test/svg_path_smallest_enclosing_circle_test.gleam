@@ -101,6 +101,18 @@ pub fn point_permutations_produce_same_circle_test() {
   |> should.be_true
 }
 
+pub fn close_collinear_points_still_find_the_smallest_circle_test() {
+  assert_circle(
+    [
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(0.0000000000001, 0.0),
+      svg_path.Point(0.0000000000002, 0.0),
+    ],
+    svg_path.Point(0.0000000000001, 0.0),
+    0.00000000000000000000000001,
+  )
+}
+
 fn assert_circle(
   samples: List(svg_path.Point),
   expected_center: svg_path.Point,

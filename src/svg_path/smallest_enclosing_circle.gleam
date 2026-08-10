@@ -240,9 +240,7 @@ fn farthest_pair_circle(
 
 fn contains(circle: EnclosingCircle, sample: svg_path.Point) -> Bool {
   let EnclosingCircle(center:, radius_squared:) = circle
-  let slack =
-    float.max(0.000000000000000000000001, radius_squared *. 0.000000000001)
-  point.distance_squared(center, sample) <=. radius_squared +. slack
+  point.distance_squared(center, sample) <=. radius_squared
 }
 
 fn circle_with_exact_radius(
