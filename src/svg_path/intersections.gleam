@@ -2685,7 +2685,7 @@ fn line_segment_intersections(
           },
           options: svg_path.CrossingOptions(
             samples: 100,
-            tolerance: options.tolerance,
+            parameter_tolerance: options.tolerance,
             max_iterations: options.max_depth * 4,
           ),
         )

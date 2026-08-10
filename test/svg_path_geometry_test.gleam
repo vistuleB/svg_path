@@ -243,7 +243,7 @@ pub fn segment_crossings_finds_multiple_quadratic_crossings_test() {
   let options =
     svg_path.CrossingOptions(
       samples: 20,
-      tolerance: 0.000000001,
+      parameter_tolerance: 0.000000001,
       max_iterations: 100,
     )
 
@@ -289,7 +289,7 @@ pub fn segment_crossings_rejects_invalid_options_test() {
       where: fn(point) { point.x -. 5.0 },
       options: svg_path.CrossingOptions(
         samples: 0,
-        tolerance: 0.000000001,
+        parameter_tolerance: 0.000000001,
         max_iterations: 100,
       ),
     )
@@ -299,7 +299,7 @@ pub fn segment_crossings_rejects_invalid_options_test() {
       where: fn(point) { point.x -. 5.0 },
       options: svg_path.CrossingOptions(
         samples: 10,
-        tolerance: 0.0,
+        parameter_tolerance: 0.0,
         max_iterations: 100,
       ),
     )
@@ -309,7 +309,7 @@ pub fn segment_crossings_rejects_invalid_options_test() {
       where: fn(point) { point.x -. 5.0 },
       options: svg_path.CrossingOptions(
         samples: 10,
-        tolerance: 0.000000001,
+        parameter_tolerance: 0.000000001,
         max_iterations: 0,
       ),
     )
@@ -397,7 +397,7 @@ pub fn segment_minimize_with_rejects_invalid_options_test() {
       measure: fn(point) { point.x },
       options: svg_path.MinimizeOptions(
         samples: 0,
-        tolerance: 0.000000001,
+        parameter_tolerance: 0.000000001,
         max_iterations: 100,
       ),
     )
@@ -407,7 +407,7 @@ pub fn segment_minimize_with_rejects_invalid_options_test() {
       measure: fn(point) { point.x },
       options: svg_path.MinimizeOptions(
         samples: 10,
-        tolerance: 0.0,
+        parameter_tolerance: 0.0,
         max_iterations: 100,
       ),
     )
@@ -417,7 +417,7 @@ pub fn segment_minimize_with_rejects_invalid_options_test() {
       measure: fn(point) { point.x },
       options: svg_path.MinimizeOptions(
         samples: 10,
-        tolerance: 0.000000001,
+        parameter_tolerance: 0.000000001,
         max_iterations: 0,
       ),
     )

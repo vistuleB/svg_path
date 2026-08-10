@@ -175,7 +175,7 @@ pub type CrossingOptions {
     /// Number of equal parameter windows scanned before refinement.
     samples: Int,
     /// Maximum parameter-window width accepted during refinement.
-    tolerance: Float,
+    parameter_tolerance: Float,
     /// Maximum bisection steps for one candidate window.
     max_iterations: Int,
   )
@@ -187,7 +187,7 @@ pub type MinimizeOptions {
     /// Number of equal parameter windows scanned for local minima.
     samples: Int,
     /// Maximum parameter-window width accepted during refinement.
-    tolerance: Float,
+    parameter_tolerance: Float,
     /// Maximum golden-section steps for one candidate window.
     max_iterations: Int,
   )
@@ -697,7 +697,7 @@ pub type Error {
 pub fn default_crossing_options() -> CrossingOptions {
   CrossingOptions(
     samples: default_crossing_samples,
-    tolerance: default_crossing_tolerance,
+    parameter_tolerance: default_crossing_tolerance,
     max_iterations: default_crossing_max_iterations,
   )
 }
@@ -706,7 +706,7 @@ pub fn default_crossing_options() -> CrossingOptions {
 pub fn default_minimize_options() -> MinimizeOptions {
   MinimizeOptions(
     samples: default_minimize_samples,
-    tolerance: default_minimize_tolerance,
+    parameter_tolerance: default_minimize_tolerance,
     max_iterations: default_minimize_max_iterations,
   )
 }
@@ -3827,8 +3827,11 @@ fn validate_crossing_options(options: CrossingOptions) -> Result(Nil, Error) {
   case options.samples <= 0 {
     True -> Error(InvalidCrossingSamples(options.samples))
     False -> {
-      case options.tolerance <=. 0.0 || !finite_float(options.tolerance) {
-        True -> Error(InvalidCrossingTolerance(options.tolerance))
+      case
+        options.parameter_tolerance <=. 0.0
+        || !finite_float(options.parameter_tolerance)
+      {
+        True -> Error(InvalidCrossingTolerance(options.parameter_tolerance))
         False -> {
           case options.max_iterations <= 0 {
             True -> Error(InvalidCrossingMaxIterations(options.max_iterations))
@@ -3890,7 +3893,7 @@ fn scan_crossings(
                 crossings: insert_near_unique(
                   crossings,
                   crossing,
-                  options.tolerance,
+                  options.parameter_tolerance,
                 ),
               )
           }
@@ -3934,7 +3937,7 @@ fn refine_crossing(
 ) -> Result(Option(Float), Error) {
   let solver_options =
     root.Options(
-      tolerance: options.tolerance,
+      tolerance: options.parameter_tolerance,
       max_iterations: options.max_iterations,
     )
 
@@ -4002,8 +4005,11 @@ fn validate_minimize_options(options: MinimizeOptions) -> Result(Nil, Error) {
   case options.samples <= 0 {
     True -> Error(InvalidMinimizeSamples(options.samples))
     False -> {
-      case options.tolerance <=. 0.0 || !finite_float(options.tolerance) {
-        True -> Error(InvalidMinimizeTolerance(options.tolerance))
+      case
+        options.parameter_tolerance <=. 0.0
+        || !finite_float(options.parameter_tolerance)
+      {
+        True -> Error(InvalidMinimizeTolerance(options.parameter_tolerance))
         False -> {
           case options.max_iterations <= 0 {
             True -> Error(InvalidMinimizeMaxIterations(options.max_iterations))
@@ -4083,7 +4089,7 @@ fn golden_section_minimize(
             inner_left_candidate: left_candidate,
             inner_right:,
             inner_right_candidate: right_candidate,
-            tolerance: options.tolerance,
+            tolerance: options.parameter_tolerance,
             remaining_iterations: options.max_iterations,
           )
       }
