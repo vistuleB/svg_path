@@ -460,14 +460,7 @@ pub fn cubic_self_intersections_with(
     LinearBezierData(..) | QuadraticBezierData(..) -> Ok([])
     CubicBezierData(start:, control1:, control2:, end:) -> {
       let #(a, b, c) = cubic_power_coefficients(start, control1, control2, end)
-      let candidates =
-        cubic_self_intersection_candidates(a, b, c, preferred_axis: XAxis)
-        |> list.append(cubic_self_intersection_candidates(
-          a,
-          b,
-          c,
-          preferred_axis: YAxis,
-        ))
+      let candidates = cubic_self_intersection_candidates(a, b, c)
 
       Ok(filter_cubic_self_intersections(candidates, curve, options, []))
     }
@@ -726,11 +719,6 @@ fn cubic_fit_error_loop(
   }
 }
 
-type Axis {
-  XAxis
-  YAxis
-}
-
 fn validate_cubic_self_intersection_options(
   options: CubicSelfIntersectionOptions,
 ) -> Result(Nil, Error) {
@@ -774,41 +762,17 @@ fn cubic_self_intersection_candidates(
   a: BezierPoint,
   b: BezierPoint,
   c: BezierPoint,
-  preferred_axis preferred_axis: Axis,
 ) -> List(#(Float, Float)) {
-  let primary = component(a, preferred_axis)
-  let secondary_axis = other_axis(preferred_axis)
+  let cross_ab = cross(a, b)
+  let length_squared_a = dot(a, a)
 
-  case float.absolute_value(primary) <=. root_tolerance {
+  case cross_ab == 0.0 || length_squared_a == 0.0 {
     True -> []
     False -> {
-      let secondary = component(a, secondary_axis)
-      let linear =
-        component(b, secondary_axis)
-        -. secondary
-        *. component(b, preferred_axis)
-        /. primary
-      let constant =
-        component(c, secondary_axis)
-        -. secondary
-        *. component(c, preferred_axis)
-        /. primary
+      let u = { 0.0 -. cross(a, c) } /. cross_ab
+      let v = u *. u +. dot(a, add(scale(b, u), c)) /. length_squared_a
 
-      case float.absolute_value(linear) <=. root_tolerance {
-        True -> []
-        False -> {
-          let u = { 0.0 -. constant } /. linear
-          let v =
-            u
-            *. u
-            +. {
-              component(b, preferred_axis) *. u +. component(c, preferred_axis)
-            }
-            /. primary
-
-          parameters_from_sum_and_product(u, v)
-        }
-      }
+      parameters_from_sum_and_product(u, v)
     }
   }
 }
@@ -896,20 +860,6 @@ fn cubic_self_intersection_already_found(
     float.absolute_value(s -. found_s) <=. root_tolerance
     && float.absolute_value(t -. found_t) <=. root_tolerance
   })
-}
-
-fn component(point: BezierPoint, axis: Axis) -> Float {
-  case axis {
-    XAxis -> point.x
-    YAxis -> point.y
-  }
-}
-
-fn other_axis(axis: Axis) -> Axis {
-  case axis {
-    XAxis -> YAxis
-    YAxis -> XAxis
-  }
 }
 
 fn midpoint(left: BezierPoint, right: BezierPoint) -> BezierPoint {
@@ -1017,15 +967,28 @@ fn inflection_roots(
     )
   let c = difference(scale(control1, 3.0), scale(start, 3.0))
 
-  root.quadratic_with(
-    -6.0 *. cross(a, b),
-    6.0 *. cross(c, a),
-    2.0 *. cross(c, b),
-    options: root.QuadraticOptions(
-      coefficient_tolerance: 0.000000000001,
-      repeated_root_policy: root.PreserveRepeatedRoot,
-    ),
-  )
+  let quadratic = -6.0 *. cross(a, b)
+  let linear = 6.0 *. cross(c, a)
+  let constant = 2.0 *. cross(c, b)
+  let coefficient_scale =
+    float.max(
+      float.absolute_value(quadratic),
+      float.max(float.absolute_value(linear), float.absolute_value(constant)),
+    )
+
+  case coefficient_scale == 0.0 {
+    True -> []
+    False ->
+      root.quadratic_with(
+        quadratic /. coefficient_scale,
+        linear /. coefficient_scale,
+        constant /. coefficient_scale,
+        options: root.QuadraticOptions(
+          coefficient_tolerance: 0.000000000001,
+          repeated_root_policy: root.PreserveRepeatedRoot,
+        ),
+      )
+  }
 }
 
 fn is_inside_unit_interval(t: Float) -> Bool {

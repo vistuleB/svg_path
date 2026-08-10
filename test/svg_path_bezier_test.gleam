@@ -545,6 +545,20 @@ pub fn cubic_inflection_parameters_finds_an_s_curve_inflection_test() {
   assert point_near(bezier.bezier_start(second), split)
 }
 
+pub fn cubic_inflection_parameters_are_independent_of_coordinate_scale_test() {
+  let scale = 0.000000001
+  let curve =
+    bezier.CubicBezierData(
+      start: bezier.BezierPoint(0.0, 0.0),
+      control1: bezier.BezierPoint(0.0, 100.0 *. scale),
+      control2: bezier.BezierPoint(100.0 *. scale, -100.0 *. scale),
+      end: bezier.BezierPoint(100.0 *. scale, 0.0),
+    )
+
+  let assert [t] = bezier.cubic_inflection_parameters(curve)
+  assert near(t, 0.5)
+}
+
 pub fn cubic_inflection_parameters_ignores_non_inflecting_curves_test() {
   let cubic =
     bezier.CubicBezierData(
@@ -596,6 +610,35 @@ pub fn cubic_self_intersections_finds_interior_crossing_test() {
   assert near(s, 0.25)
   assert near(t, 0.75)
   assert point_near(point, bezier.bezier_point(curve, at: 0.25))
+}
+
+pub fn cubic_self_intersections_are_independent_of_coordinate_scale_test() {
+  let scale = 0.000000000001
+  let curve =
+    bezier.CubicBezierData(
+      start: bezier.BezierPoint(0.0, 0.0),
+      control1: bezier.BezierPoint(
+        -0.2708333333333333 *. scale,
+        -0.3333333333333333 *. scale,
+      ),
+      control2: bezier.BezierPoint(
+        -0.5416666666666666 *. scale,
+        -0.3333333333333333 *. scale,
+      ),
+      end: bezier.BezierPoint(0.1875 *. scale, 0.0),
+    )
+
+  let assert Ok([bezier.CubicSelfIntersection(s:, t:, ..)]) =
+    bezier.cubic_self_intersections_with(
+      curve,
+      options: bezier.CubicSelfIntersectionOptions(
+        minimum_arc_length_separation: 0.000000000000001,
+        distance_tolerance: 0.000000000000001,
+      ),
+    )
+
+  assert near(s, 0.25)
+  assert near(t, 0.75)
 }
 
 pub fn cubic_self_intersections_ignores_non_looping_cubic_test() {
