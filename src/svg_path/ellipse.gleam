@@ -138,6 +138,7 @@ pub type Cubic {
 /// a circular dependency.
 ///
 /// Has the same six-value layout as SVG `matrix(a b c d e f)`.
+@internal
 pub opaque type Affine {
   Affine(a: Float, b: Float, c: Float, d: Float, e: Float, f: Float)
 }
@@ -155,6 +156,7 @@ pub type Error {
 }
 
 /// Create an affine matrix for ellipse helpers.
+@internal
 pub fn ellipse_affine(
   a a: Float,
   b b: Float,
@@ -167,7 +169,7 @@ pub fn ellipse_affine(
 }
 
 /// Transform a point by an affine matrix.
-pub fn point(point: EllipsePoint, by transform: Affine) -> EllipsePoint {
+fn transform_point(point: EllipsePoint, by transform: Affine) -> EllipsePoint {
   EllipsePoint(
     transform.a *. point.x +. transform.c *. point.y +. transform.e,
     transform.b *. point.x +. transform.d *. point.y +. transform.f,
@@ -177,6 +179,7 @@ pub fn point(point: EllipsePoint, by transform: Affine) -> EllipsePoint {
 /// Transform an arc's radius and x-axis rotation.
 ///
 /// Returns the new radius and x-axis rotation for the transformed ellipse.
+@internal
 pub fn transformed_axes(
   radius radius: EllipsePoint,
   x_axis_rotation x_axis_rotation: Float,
@@ -197,6 +200,7 @@ pub fn transformed_axes(
 ///
 /// If the collapsed arc's extrema require more than one segment to preserve its
 /// out-and-back motion, use `collapsed_arc_subpath`.
+@internal
 pub fn collapsed_arc_line(
   start start: EllipsePoint,
   radius radius: EllipsePoint,
@@ -217,12 +221,16 @@ pub fn collapsed_arc_line(
       let y_axis = linear_point(y_axis, transform)
 
       case fully_collapsed(x_axis, y_axis) {
-        True -> Ok(#(point(start, by: transform), point(end, by: transform)))
+        True ->
+          Ok(#(
+            transform_point(start, by: transform),
+            transform_point(end, by: transform),
+          ))
         False -> {
           case collapsed_axis(x_axis, y_axis) {
             Error(error) -> Error(error)
             Ok(axis) -> {
-              let center = point(arc.center, by: transform)
+              let center = transform_point(arc.center, by: transform)
               let alpha = dot(x_axis, axis)
               let beta = dot(y_axis, axis)
               let angles =
@@ -256,6 +264,7 @@ pub fn collapsed_arc_line(
 }
 
 /// Convert an arc collapsed by an affine transform into a line-based subpath.
+@internal
 pub fn collapsed_arc_subpath(
   start start: EllipsePoint,
   radius radius: EllipsePoint,
@@ -566,12 +575,16 @@ fn collapsed_arc_points(
       let y_axis = linear_point(y_axis, transform)
 
       case fully_collapsed(x_axis, y_axis) {
-        True -> Ok([point(start, by: transform), point(end, by: transform)])
+        True ->
+          Ok([
+            transform_point(start, by: transform),
+            transform_point(end, by: transform),
+          ])
         False -> {
           case collapsed_axis(x_axis, y_axis) {
             Error(error) -> Error(error)
             Ok(axis) -> {
-              let center = point(arc.center, by: transform)
+              let center = transform_point(arc.center, by: transform)
               let alpha = dot(x_axis, axis)
               let beta = dot(y_axis, axis)
               let angles =
