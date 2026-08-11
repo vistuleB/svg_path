@@ -9,6 +9,9 @@ import gleam/result
 import gleam/string
 import svg_path
 import svg_path/convex_hull
+import svg_path/csg
+import svg_path/intersections
+import svg_path/overlaps
 import svg_path/parse
 import svg_path/transform
 import svg_path/trig
@@ -25,6 +28,32 @@ const smart_support_base_tolerance = 0.000000001
 const smart_support_unit_diameter_tolerance = 0.000000001
 
 const repair_modes_to_check = ["dumb", "ambitious"]
+
+const scale_covariance_relative_tolerance = 0.0000001
+
+// CSG currently returns InternalOverlapClassificationInconsistency for this
+// fixture at scales 1e-6 and 1e-9, even when its distance options are scaled
+// proportionally. Keep extending this sweep downward as that limitation is
+// removed.
+pub fn representative_geometry_is_covariant_at_1e_minus_3_test() {
+  assert representative_geometry_is_covariant_at_scale(0.001)
+}
+
+pub fn representative_geometry_is_covariant_at_1_test() {
+  assert representative_geometry_is_covariant_at_scale(1.0)
+}
+
+pub fn representative_geometry_is_covariant_at_1e3_test() {
+  assert representative_geometry_is_covariant_at_scale(1000.0)
+}
+
+pub fn representative_geometry_is_covariant_at_1e6_test() {
+  assert representative_geometry_is_covariant_at_scale(1_000_000.0)
+}
+
+pub fn representative_geometry_is_covariant_at_1e9_test() {
+  assert representative_geometry_is_covariant_at_scale(1_000_000_000.0)
+}
 
 pub fn point_cloud_hull_handles_1000_point_cloud_test() {
   assert point_cloud_hull_is_valid_for_count(1000)
@@ -1632,4 +1661,171 @@ fn radius_1000_point(angle: Float) -> svg_path.Point {
     1000.0 *. trig.cos_degrees(angle),
     1000.0 *. trig.sin_degrees(angle),
   )
+}
+
+fn representative_geometry_is_covariant_at_scale(scale: Float) -> Bool {
+  let cubic =
+    svg_path.CubicBezier(
+      start: svg_path.Point(-2.0, 1.0),
+      control1: svg_path.Point(0.5, 5.0),
+      control2: svg_path.Point(4.0, -3.0),
+      end: svg_path.Point(7.0, 2.0),
+    )
+  let crossing_left =
+    svg_path.Line(
+      start: svg_path.Point(0.0, 0.0),
+      end: svg_path.Point(10.0, 10.0),
+    )
+  let crossing_right =
+    svg_path.Line(
+      start: svg_path.Point(0.0, 10.0),
+      end: svg_path.Point(10.0, 0.0),
+    )
+  let overlap_left =
+    svg_path.Line(
+      start: svg_path.Point(0.0, 0.0),
+      end: svg_path.Point(10.0, 0.0),
+    )
+  let overlap_right =
+    svg_path.Line(
+      start: svg_path.Point(4.0, 0.0),
+      end: svg_path.Point(12.0, 0.0),
+    )
+  let left_path = rectangle_path(0.0, 0.0, 4.0, 3.0)
+  let right_path = rectangle_path(2.0, 1.0, 6.0, 4.0)
+
+  let assert Ok(scaled_cubic) = transform.scale_segment(cubic, factor: scale)
+  let assert Ok(reference_point) = svg_path.segment_point(cubic, at: 0.37)
+  let assert Ok(scaled_point) = svg_path.segment_point(scaled_cubic, at: 0.37)
+  let assert Ok(scaled_crossing_left) =
+    transform.scale_segment(crossing_left, factor: scale)
+  let assert Ok(scaled_crossing_right) =
+    transform.scale_segment(crossing_right, factor: scale)
+  let intersection_options =
+    intersections.IntersectionOptions(
+      tolerance: 0.000000001 *. scale,
+      max_depth: 48,
+    )
+  let assert Ok([svg_path.SegmentIntersection(left_t:, right_t:, point:)]) =
+    intersections.segment_with(
+      scaled_crossing_left,
+      scaled_crossing_right,
+      options: intersection_options,
+    )
+  let assert Ok(scaled_overlap_left) =
+    transform.scale_segment(overlap_left, factor: scale)
+  let assert Ok(scaled_overlap_right) =
+    transform.scale_segment(overlap_right, factor: scale)
+  let assert Ok([
+    overlaps.SegmentOverlap(
+      left_from:,
+      left_to:,
+      right_from:,
+      right_to:,
+      start: overlap_start,
+      end: overlap_end,
+    ),
+  ]) =
+    overlaps.segment_with(
+      scaled_overlap_left,
+      scaled_overlap_right,
+      tolerance: 0.000000001 *. scale,
+    )
+  let assert Ok(reference_hull) = convex_hull.segment_hull(cubic)
+  let assert Ok(scaled_hull) = convex_hull.segment_hull(scaled_cubic)
+  let assert Ok(reference_hull_box) =
+    svg_path.subpath_bounding_box(reference_hull)
+  let assert Ok(scaled_hull_box) = svg_path.subpath_bounding_box(scaled_hull)
+  let assert Ok(scaled_left_path) =
+    transform.scale_path(left_path, factor: scale)
+  let assert Ok(scaled_right_path) =
+    transform.scale_path(right_path, factor: scale)
+  let assert Ok(csg.CsgResult(path: union_path, ..)) =
+    csg.union_with(
+      scaled_left_path,
+      scaled_right_path,
+      using: svg_path.Nonzero,
+      options: csg.Options(
+        tolerance: 0.000001 *. scale,
+        minimum_chord: 0.00001 *. scale,
+      ),
+    )
+  let assert Ok(union_box) = svg_path.path_bounding_box(union_path)
+
+  points_nearly_equal(reference_point, unscale_point(scaled_point, scale))
+  && floats_nearly_equal(left_t, 0.5)
+  && floats_nearly_equal(right_t, 0.5)
+  && points_nearly_equal(svg_path.Point(5.0, 5.0), unscale_point(point, scale))
+  && floats_nearly_equal(left_from, 0.4)
+  && floats_nearly_equal(left_to, 1.0)
+  && floats_nearly_equal(right_from, 0.0)
+  && floats_nearly_equal(right_to, 0.75)
+  && points_nearly_equal(
+    svg_path.Point(4.0, 0.0),
+    unscale_point(overlap_start, scale),
+  )
+  && points_nearly_equal(
+    svg_path.Point(10.0, 0.0),
+    unscale_point(overlap_end, scale),
+  )
+  && boxes_nearly_equal(reference_hull_box, unscale_box(scaled_hull_box, scale))
+  && boxes_nearly_equal(
+    svg_path.BoundingBox(
+      min: svg_path.Point(0.0, 0.0),
+      max: svg_path.Point(6.0, 4.0),
+    ),
+    unscale_box(union_box, scale),
+  )
+  && list.length(svg_path.path_subpaths(union_path)) == 1
+}
+
+fn rectangle_path(
+  min_x: Float,
+  min_y: Float,
+  max_x: Float,
+  max_y: Float,
+) -> svg_path.Path {
+  let start = svg_path.Point(min_x, min_y)
+  let assert Ok(subpath) =
+    svg_path.subpath_polyline([
+      start,
+      svg_path.Point(max_x, min_y),
+      svg_path.Point(max_x, max_y),
+      svg_path.Point(min_x, max_y),
+      start,
+    ])
+  svg_path.Path([svg_path.subpath_assert_set_closed(subpath, closed: True)])
+}
+
+fn unscale_point(point: svg_path.Point, scale: Float) -> svg_path.Point {
+  svg_path.Point(point.x /. scale, point.y /. scale)
+}
+
+fn unscale_box(
+  box: svg_path.BoundingBox,
+  scale: Float,
+) -> svg_path.BoundingBox {
+  svg_path.BoundingBox(
+    min: unscale_point(box.min, scale),
+    max: unscale_point(box.max, scale),
+  )
+}
+
+fn boxes_nearly_equal(
+  left: svg_path.BoundingBox,
+  right: svg_path.BoundingBox,
+) -> Bool {
+  points_nearly_equal(left.min, right.min)
+  && points_nearly_equal(left.max, right.max)
+}
+
+fn points_nearly_equal(left: svg_path.Point, right: svg_path.Point) -> Bool {
+  floats_nearly_equal(left.x, right.x) && floats_nearly_equal(left.y, right.y)
+}
+
+fn floats_nearly_equal(left: Float, right: Float) -> Bool {
+  let magnitude =
+    float.max(float.absolute_value(left), float.absolute_value(right))
+  float.absolute_value(left -. right)
+  <=. scale_covariance_relative_tolerance *. float.max(1.0, magnitude)
 }
