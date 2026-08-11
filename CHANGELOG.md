@@ -9,6 +9,15 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
+## 0.36.0 - 2026-08-10
+
+### Changed
+
+- Reduced the supported `svg_path/ellipse` API by internalizing affine and
+  collapsed-arc transformation helpers used only by `svg_path/transform`.
+- Added deterministic cross-scale stress coverage for curve evaluation,
+  intersections, overlaps, convex hulls, transforms, and CSG topology.
+
 ## 0.35.0 - 2026-08-10
 
 ### Changed
