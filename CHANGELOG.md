@@ -9,6 +9,35 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
+## 0.35.0 - 2026-08-10
+
+### Changed
+
+- Standardized validation of geometric and parameter tolerances, including
+  finite-value checks and validation before empty-input fast paths.
+- Made point, transform, congruency, area, Bezier-feature, and convex-circle
+  calculations more stable across very small and very large coordinate scales.
+- Made winding, arrangement drawing, and CSG boundary directions recover from
+  singular derivatives by using the package's one-sided direction logic.
+- Centralized finite-number checks and transform number formatting.
+- Expanded the README and API documentation for direction queries, geometry
+  conversions, graceful transforms, and numeric option contracts.
+
+### Fixed
+
+- Enforced SVG transform separators and bounded SVG numeric parsing without
+  losing valid exponents or emitting invalid scientific Gleam literals.
+- Corrected basic ellipse placement, equivalent ellipse-axis comparison, and
+  scale-invariant affine fitting.
+- Preserved overlap boundaries while clipping and cutting, deduplicated closed
+  clipping seams, and compared arrangement cuts geometrically.
+- Preserved small dash intervals, rejected overflowing dash patterns, and
+  validated empty-path cuts and custom wiggle tolerances.
+- Preserved smallest-enclosing-circle minimality and stabilized large-distance,
+  centroid, RMS-error, and near-identity transform calculations.
+- Corrected ambiguous and singular direction arrows in arrangement and CSG
+  drawings, then regenerated the published Gallery fixtures.
+
 ## 0.34.0 - 2026-08-07
 
 ### Added

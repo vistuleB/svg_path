@@ -1126,7 +1126,7 @@ fn generated_arc(i: Int) -> svg_path.Segment {
 }
 
 fn wave(i: Float, salt: Float) -> Float {
-  trig.internal_sin_radians(i *. salt *. 12.9898) *. 50.0
+  trig.sin_degrees(trig.radians_to_degrees(i *. salt *. 12.9898)) *. 50.0
 }
 
 fn segment_derivative_angles(segments: List(svg_path.Segment)) -> List(Float) {
@@ -1508,8 +1508,8 @@ fn unit_circle_point(index: Int) -> svg_path.Point {
   let assert Ok(radius) = float.square_root(radius)
 
   svg_path.Point(
-    radius *. trig.internal_cos_radians(angle),
-    radius *. trig.internal_sin_radians(angle),
+    radius *. trig.cos_degrees(trig.radians_to_degrees(angle)),
+    radius *. trig.sin_degrees(trig.radians_to_degrees(angle)),
   )
 }
 
