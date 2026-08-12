@@ -5,10 +5,22 @@ import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import svg_path
+import svg_path/convex_hull
 import svg_path/point as point_helpers
 import svg_path/trig
 
 const default_tolerance = 0.000001
+
+/// The longest leading segment sequence certified to fit in a thin strip.
+@internal
+pub type ThinPrefix {
+  ThinPrefix(
+    segments: List(svg_path.Segment),
+    remaining: List(svg_path.Segment),
+    hull: Option(svg_path.Subpath),
+    strip: Option(convex_hull.MinimumWidthStrip),
+  )
+}
 
 /// Errors returned by path effects.
 pub type Error {
@@ -29,14 +41,17 @@ pub type Error {
 
   /// Two rounded corners would consume too much of a segment between them.
   CornerTrimsOverlap(segment_index: Int)
+
+  /// Convex-hull construction failed while normalizing degenerate segments.
+  ConvexHullError(convex_hull.Error)
 }
 
 /// Replace maximal contiguous line-degenerate windows in a subpath.
 ///
-/// Each selected window is replaced by the ordered line traversal returned by
-/// `svg_path.subpath_degenerate_lines`. Windows are considered from left to
-/// right, with the largest qualifying window selected first. A single
-/// degenerate segment is also replaced when no larger window qualifies.
+/// Each selected window is replaced by its ordered line traversal. Windows are
+/// considered from left to right. Their exact curve-preserving convex hull is
+/// grown one segment at a time, and the largest prefix certified to fit in a
+/// strip of the requested width is selected first.
 pub fn normalize_degenerate_segments(
   subpath: svg_path.Subpath,
   tolerance tolerance: Float,
@@ -82,19 +97,23 @@ fn colinearize_segments(
   case segments {
     [] -> Ok(list.reverse(converted))
     [first, ..rest] -> {
-      use window <- result.try(largest_colinear_window(
-        [first, ..rest],
-        tolerance,
-        list.length(segments),
-      ))
-      case window {
-        Some(#(lines, count)) ->
+      use pending <- result.try(
+        svg_path.subpath([first, ..rest]) |> result.map_error(PathError),
+      )
+      use prefix <- result.try(longest_thin_prefix(pending, tolerance:))
+      case prefix.segments {
+        [_, _, ..] -> {
+          use lines <- result.try(degenerate_traversal(
+            prefix.segments,
+            tolerance,
+          ))
           colinearize_segments(
-            list.drop(segments, count),
+            prefix.remaining,
             tolerance,
             converted: list.append(list.reverse(lines), converted),
           )
-        None -> {
+        }
+        _ -> {
           use replacement <- result.try(
             svg_path.segment_degenerate_lines(first, tolerance)
             |> result.map_error(PathError),
@@ -114,28 +133,117 @@ fn colinearize_segments(
   }
 }
 
-fn largest_colinear_window(
+/// Return the longest leading segment sequence certified to fit in a strip.
+@internal
+pub fn internal_longest_thin_prefix(
+  subpath: svg_path.Subpath,
+  tolerance tolerance: Float,
+) -> Result(ThinPrefix, Error) {
+  longest_thin_prefix(subpath, tolerance:)
+}
+
+fn longest_thin_prefix(
+  subpath: svg_path.Subpath,
+  tolerance tolerance: Float,
+) -> Result(ThinPrefix, Error) {
+  case svg_path.subpath_segments(subpath) {
+    [] -> Ok(ThinPrefix(segments: [], remaining: [], hull: None, strip: None))
+    [first, ..rest] -> {
+      use hull <- result.try(
+        convex_hull.segment_hull(first) |> result.map_error(ConvexHullError),
+      )
+      use decision <- result.try(
+        convex_hull.internal_convex_subpath_minimum_width_decision(
+          hull,
+          tolerance:,
+        )
+        |> result.map_error(ConvexHullError),
+      )
+      case decision {
+        convex_hull.MinimumWidthFits(strip) ->
+          longest_thin_prefix_loop(
+            rest,
+            accepted: [first],
+            hull:,
+            strip:,
+            tolerance:,
+          )
+        convex_hull.MinimumWidthExceeds(..)
+        | convex_hull.MinimumWidthUnresolved(..) ->
+          Ok(ThinPrefix(
+            segments: [],
+            remaining: [first, ..rest],
+            hull: None,
+            strip: None,
+          ))
+      }
+    }
+  }
+}
+
+fn longest_thin_prefix_loop(
+  remaining: List(svg_path.Segment),
+  accepted accepted: List(svg_path.Segment),
+  hull hull: svg_path.Subpath,
+  strip strip: convex_hull.MinimumWidthStrip,
+  tolerance tolerance: Float,
+) -> Result(ThinPrefix, Error) {
+  case remaining {
+    [] ->
+      Ok(ThinPrefix(
+        segments: list.reverse(accepted),
+        remaining: [],
+        hull: Some(hull),
+        strip: Some(strip),
+      ))
+    [first, ..rest] -> {
+      use #(candidate_hull, decision) <- result.try(
+        convex_hull.internal_convex_subpath_add_segment_and_test_width(
+          hull,
+          first,
+          tolerance:,
+        )
+        |> result.map_error(ConvexHullError),
+      )
+      case decision {
+        convex_hull.MinimumWidthFits(candidate_strip) ->
+          longest_thin_prefix_loop(
+            rest,
+            accepted: [first, ..accepted],
+            hull: candidate_hull,
+            strip: candidate_strip,
+            tolerance:,
+          )
+        convex_hull.MinimumWidthExceeds(..)
+        | convex_hull.MinimumWidthUnresolved(..) ->
+          Ok(ThinPrefix(
+            segments: list.reverse(accepted),
+            remaining: [first, ..rest],
+            hull: Some(hull),
+            strip: Some(strip),
+          ))
+      }
+    }
+  }
+}
+
+fn degenerate_traversal(
   segments: List(svg_path.Segment),
   tolerance: Float,
-  count: Int,
-) -> Result(Option(#(List(svg_path.Segment), Int)), Error) {
-  case count < 2 {
-    True -> Ok(None)
-    False -> {
-      let window_segments = list.take(segments, count)
-      case svg_path.subpath(window_segments) {
-        Error(error) -> Error(PathError(error))
-        Ok(window) -> {
-          use replacement <- result.try(
-            svg_path.subpath_degenerate_lines(window, tolerance)
-            |> result.map_error(PathError),
-          )
-          case replacement {
-            Some(lines) -> Ok(Some(#(lines, count)))
-            None -> largest_colinear_window(segments, tolerance, count - 1)
-          }
-        }
+) -> Result(List(svg_path.Segment), Error) {
+  case segments {
+    [] -> Ok([])
+    [first, ..rest] -> {
+      use replacement <- result.try(
+        svg_path.segment_degenerate_lines(first, tolerance)
+        |> result.map_error(PathError),
+      )
+      let replacement = case replacement {
+        None -> [first]
+        Some(lines) -> lines
       }
+      use remaining <- result.try(degenerate_traversal(rest, tolerance))
+      Ok(list.append(replacement, remaining))
     }
   }
 }

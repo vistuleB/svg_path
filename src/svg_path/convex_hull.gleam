@@ -10,6 +10,7 @@ import gleam/int
 import gleam/io
 import gleam/list
 import gleam/option.{type Option, None, Some}
+import gleam/order
 import gleam/result
 import svg_path
 import svg_path/ellipse
@@ -54,6 +55,8 @@ const same_t = 0.000001
 const t_close = 0.08
 
 const point_tolerance = 0.000000001
+
+const minimum_width_max_depth = 20
 
 const loop_diagnostics_enabled = False
 
@@ -144,6 +147,43 @@ pub type PointLoopView {
   TangentPoint
   OutsidePoint
   InsidePoint
+}
+
+/// A minimum-width strip enclosing a convex polygon.
+@internal
+pub type MinimumWidthStrip {
+  MinimumWidthStrip(
+    width: Float,
+    direction: svg_path.Point,
+    lower_support: Float,
+    upper_support: Float,
+  )
+}
+
+/// The certified outcome of an adaptive minimum-width search.
+@internal
+pub type MinimumWidthDecision {
+  MinimumWidthFits(strip: MinimumWidthStrip)
+  MinimumWidthExceeds(lower_bound: Float)
+  MinimumWidthUnresolved(lower_bound: Float, best_width: Float)
+}
+
+/// Two support points and their separation for one strip-normal direction.
+@internal
+pub type DirectionalSupport {
+  DirectionalSupport(
+    lower_point: svg_path.Point,
+    upper_point: svg_path.Point,
+    width: Float,
+  )
+}
+
+type WidthSample {
+  WidthSample(angle: Float, support: DirectionalSupport)
+}
+
+type WidthInterval {
+  WidthInterval(from: WidthSample, to: WidthSample)
 }
 
 /// Errors returned by convex-hull construction.
@@ -271,6 +311,560 @@ pub fn internal_segment_support(
 ) -> Result(#(Float, svg_path.Point, Float), svg_path.Error) {
   use sample <- result.try(segment_support(segment, angle: angle))
   Ok(#(sample.t, sample.point, sample.value))
+}
+
+/// Return the minimum-width strip enclosing cyclically ordered convex vertices.
+///
+/// This test-facing helper uses the direct quadratic-time polygon algorithm.
+/// Duplicate adjacent vertices and a repeated closing vertex are tolerated.
+@internal
+pub fn internal_convex_polygon_minimum_width_strip(
+  vertices: List(svg_path.Point),
+) -> MinimumWidthStrip {
+  convex_polygon_minimum_width_strip(ConvexPolygon(vertices:))
+}
+
+fn convex_polygon_minimum_width_strip(
+  polygon: ConvexPolygon,
+) -> MinimumWidthStrip {
+  let ConvexPolygon(vertices:) = polygon
+  case vertices {
+    [] -> degenerate_minimum_width_strip([])
+    [first, ..] ->
+      minimum_width_strip_for_edges(
+        list.append(vertices, [first]),
+        vertices,
+        best: None,
+      )
+  }
+}
+
+fn minimum_width_strip_for_edges(
+  edge_vertices: List(svg_path.Point),
+  vertices: List(svg_path.Point),
+  best best: Option(MinimumWidthStrip),
+) -> MinimumWidthStrip {
+  case edge_vertices {
+    [start, end, ..rest] -> {
+      let edge = subtract(end, start)
+      let best = case
+        edge
+        |> point_helpers.rotate_clockwise
+        |> point_helpers.normalize
+      {
+        Error(_) -> best
+        Ok(direction) -> {
+          let #(lower_support, upper_support) =
+            projection_extrema(vertices, direction)
+          let candidate =
+            MinimumWidthStrip(
+              width: upper_support -. lower_support,
+              direction:,
+              lower_support:,
+              upper_support:,
+            )
+          case best {
+            None -> Some(candidate)
+            Some(MinimumWidthStrip(width: best_width, ..)) ->
+              case candidate.width <. best_width {
+                True -> Some(candidate)
+                False -> best
+              }
+          }
+        }
+      }
+      minimum_width_strip_for_edges([end, ..rest], vertices, best:)
+    }
+    _ ->
+      case best {
+        Some(strip) -> strip
+        None -> degenerate_minimum_width_strip(vertices)
+      }
+  }
+}
+
+fn projection_extrema(
+  vertices: List(svg_path.Point),
+  direction: svg_path.Point,
+) -> #(Float, Float) {
+  case vertices {
+    [] -> #(0.0, 0.0)
+    [first, ..rest] -> {
+      let projection = dot(first, direction)
+      rest
+      |> list.fold(#(projection, projection), fn(extrema, point) {
+        let #(lower, upper) = extrema
+        let projection = dot(point, direction)
+        #(float.min(lower, projection), float.max(upper, projection))
+      })
+    }
+  }
+}
+
+fn degenerate_minimum_width_strip(
+  vertices: List(svg_path.Point),
+) -> MinimumWidthStrip {
+  let direction = svg_path.Point(1.0, 0.0)
+  let support = case vertices {
+    [] -> 0.0
+    [first, ..] -> dot(first, direction)
+  }
+  MinimumWidthStrip(
+    width: 0.0,
+    direction:,
+    lower_support: support,
+    upper_support: support,
+  )
+}
+
+/// Search for a qualifying strip by repeatedly dividing angular intervals
+/// into five parts. The callback must return exact directional support data.
+@internal
+pub fn internal_minimum_width_search(
+  support: fn(Float) -> DirectionalSupport,
+  diameter diameter: Float,
+  tolerance tolerance: Float,
+  max_depth max_depth: Int,
+) -> MinimumWidthDecision {
+  let samples =
+    [0.0, 72.0, 144.0, 216.0, 288.0, 360.0]
+    |> list.map(fn(angle) { WidthSample(angle:, support: support(angle)) })
+  minimum_width_search_loop(
+    samples,
+    intervals_from_samples(samples),
+    support,
+    diameter,
+    tolerance,
+    depth: 0,
+    max_depth:,
+  )
+}
+
+/// Exercise the adaptive search against a cyclically ordered convex polygon.
+@internal
+pub fn internal_convex_polygon_minimum_width_decision(
+  vertices: List(svg_path.Point),
+  tolerance tolerance: Float,
+  max_depth max_depth: Int,
+) -> MinimumWidthDecision {
+  internal_minimum_width_search(
+    fn(angle) { convex_polygon_directional_support(vertices, angle) },
+    diameter: point_set_diameter(vertices),
+    tolerance:,
+    max_depth:,
+  )
+}
+
+/// Decide whether a curve-preserving convex subpath hull fits in a thin strip.
+@internal
+pub fn internal_convex_subpath_minimum_width_decision(
+  hull: svg_path.Subpath,
+  tolerance tolerance: Float,
+) -> Result(MinimumWidthDecision, Error) {
+  let segments = svg_path.subpath_segments(hull)
+  case line_loop_vertices(segments, []) {
+    Some(vertices) -> {
+      let strip = convex_polygon_minimum_width_strip(ConvexPolygon(vertices:))
+      case strip.width <=. tolerance {
+        True -> Ok(MinimumWidthFits(strip))
+        False -> Ok(MinimumWidthExceeds(strip.width))
+      }
+    }
+    None -> {
+      use box <- result.try(
+        svg_path.subpath_bounding_box(hull)
+        |> result.map_error(PathError),
+      )
+      let diameter = point_helpers.distance(box.min, box.max)
+      Ok(internal_minimum_width_search(
+        fn(angle) { convex_subpath_directional_support(hull, angle) },
+        diameter:,
+        tolerance:,
+        max_depth: minimum_width_max_depth,
+      ))
+    }
+  }
+}
+
+fn line_loop_vertices(
+  segments: List(svg_path.Segment),
+  vertices: List(svg_path.Point),
+) -> Option(List(svg_path.Point)) {
+  case segments {
+    [] -> Some(list.reverse(vertices))
+    [svg_path.Line(start:, ..), ..rest] ->
+      line_loop_vertices(rest, [start, ..vertices])
+    [_first, ..] -> None
+  }
+}
+
+/// Add a segment to a curve-preserving convex hull and retest its thinness.
+@internal
+pub fn internal_convex_subpath_add_segment_and_test_width(
+  hull: svg_path.Subpath,
+  segment segment: svg_path.Segment,
+  tolerance tolerance: Float,
+) -> Result(#(svg_path.Subpath, MinimumWidthDecision), Error) {
+  use addition <- result.try(
+    segment_convex_loop(segment)
+    |> result.map_error(public_error),
+  )
+  let current = convex_loop(hull_input_segments(hull))
+  use combined <- result.try(
+    union_convex_loops(current, addition, repair_mode: default_repair_mode)
+    |> result.map_error(public_error),
+  )
+  let ConvexLoop(loop: Loop(segments: combined_segments), ..) = combined
+  use combined_hull <- result.try(
+    build_closed_subpath(combined_segments) |> result.map_error(public_error),
+  )
+  use decision <- result.try(internal_convex_subpath_minimum_width_decision(
+    combined_hull,
+    tolerance:,
+  ))
+  Ok(#(combined_hull, decision))
+}
+
+fn convex_subpath_directional_support(
+  hull: svg_path.Subpath,
+  angle: Float,
+) -> DirectionalSupport {
+  case svg_path.subpath_segments(hull) {
+    [] -> {
+      let assert Ok(point) = svg_path.subpath_start(hull)
+      DirectionalSupport(lower_point: point, upper_point: point, width: 0.0)
+    }
+    segments -> {
+      let loop = Loop(segments)
+      let upper = loop_support(loop, angle)
+      let lower = loop_support(loop, angle +. 180.0)
+      DirectionalSupport(
+        lower_point: lower.point,
+        upper_point: upper.point,
+        width: upper.value +. lower.value,
+      )
+    }
+  }
+}
+
+fn minimum_width_search_loop(
+  samples: List(WidthSample),
+  intervals: List(WidthInterval),
+  support: fn(Float) -> DirectionalSupport,
+  diameter: Float,
+  tolerance: Float,
+  depth depth: Int,
+  max_depth max_depth: Int,
+) -> MinimumWidthDecision {
+  let best = best_width_sample(samples)
+  let WidthSample(angle: best_angle, support: best_support) = best
+  let DirectionalSupport(width: best_width, ..) = best_support
+  case best_width <=. tolerance {
+    True -> MinimumWidthFits(width_sample_strip(best_angle, best_support))
+    False -> {
+      let inventory_lower_bound = support_inventory_minimum_width(samples)
+      case inventory_lower_bound >. tolerance {
+        True -> MinimumWidthExceeds(inventory_lower_bound)
+        False -> {
+          let interval_lower_bound =
+            intervals_minimum_lower_bound(
+              intervals,
+              fallback: inventory_lower_bound,
+              diameter:,
+            )
+          let active =
+            intervals
+            |> list.filter(fn(interval) {
+              width_interval_lower_bound(interval, diameter) <=. tolerance
+            })
+          let certified_lower_bound =
+            float.max(inventory_lower_bound, interval_lower_bound)
+          case active, depth >= max_depth {
+            [], _ -> MinimumWidthExceeds(certified_lower_bound)
+            _, True -> MinimumWidthUnresolved(certified_lower_bound, best_width)
+            _, False -> {
+              let subdivided =
+                active
+                |> list.flat_map(subdivide_width_interval(_, support))
+              let added_samples = interval_samples(subdivided)
+              minimum_width_search_loop(
+                list.append(samples, added_samples),
+                subdivided,
+                support,
+                diameter,
+                tolerance,
+                depth: depth + 1,
+                max_depth:,
+              )
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+fn intervals_from_samples(samples: List(WidthSample)) -> List(WidthInterval) {
+  case samples {
+    [first, second, ..rest] -> [
+      WidthInterval(from: first, to: second),
+      ..intervals_from_samples([second, ..rest])
+    ]
+    _ -> []
+  }
+}
+
+fn subdivide_width_interval(
+  interval: WidthInterval,
+  support: fn(Float) -> DirectionalSupport,
+) -> List(WidthInterval) {
+  let WidthInterval(
+    from: WidthSample(angle: from, ..),
+    to: WidthSample(angle: to, ..),
+  ) = interval
+  let step = { to -. from } /. 5.0
+  [0.0, 1.0, 2.0, 3.0, 4.0, 5.0]
+  |> list.map(fn(index) {
+    let angle = from +. step *. index
+    WidthSample(angle:, support: support(angle))
+  })
+  |> intervals_from_samples
+}
+
+fn interval_samples(intervals: List(WidthInterval)) -> List(WidthSample) {
+  intervals
+  |> list.flat_map(fn(interval) {
+    let WidthInterval(from:, to:) = interval
+    [from, to]
+  })
+}
+
+fn width_interval_lower_bound(
+  interval: WidthInterval,
+  diameter: Float,
+) -> Float {
+  let WidthInterval(
+    from: WidthSample(
+      angle: from_angle,
+      support: DirectionalSupport(width: from_width, ..),
+    ),
+    to: WidthSample(
+      angle: to_angle,
+      support: DirectionalSupport(width: to_width, ..),
+    ),
+  ) = interval
+  let nearest_endpoint_angle = { to_angle -. from_angle } /. 2.0
+  let maximum_direction_distance =
+    2.0 *. trig.sin_degrees(nearest_endpoint_angle /. 2.0)
+  float.min(from_width, to_width) -. diameter *. maximum_direction_distance
+}
+
+fn intervals_minimum_lower_bound(
+  intervals: List(WidthInterval),
+  fallback fallback: Float,
+  diameter diameter: Float,
+) -> Float {
+  case intervals {
+    [] -> fallback
+    [first, ..rest] ->
+      rest
+      |> list.fold(width_interval_lower_bound(first, diameter), fn(best, item) {
+        float.min(best, width_interval_lower_bound(item, diameter))
+      })
+  }
+}
+
+fn best_width_sample(samples: List(WidthSample)) -> WidthSample {
+  let assert [first, ..rest] = samples
+  rest
+  |> list.fold(first, fn(best, candidate) {
+    let WidthSample(support: DirectionalSupport(width: best_width, ..), ..) =
+      best
+    let WidthSample(support: DirectionalSupport(width: candidate_width, ..), ..) =
+      candidate
+    case candidate_width <. best_width {
+      True -> candidate
+      False -> best
+    }
+  })
+}
+
+fn width_sample_strip(
+  angle: Float,
+  support: DirectionalSupport,
+) -> MinimumWidthStrip {
+  let DirectionalSupport(lower_point:, upper_point:, width:) = support
+  let direction = point_helpers.direction(degrees: angle)
+  MinimumWidthStrip(
+    width:,
+    direction:,
+    lower_support: dot(lower_point, direction),
+    upper_support: dot(upper_point, direction),
+  )
+}
+
+fn support_inventory_minimum_width(samples: List(WidthSample)) -> Float {
+  let points =
+    samples
+    |> list.flat_map(fn(sample) {
+      let WidthSample(
+        support: DirectionalSupport(lower_point:, upper_point:, ..),
+        ..,
+      ) = sample
+      [lower_point, upper_point]
+    })
+  points
+  |> point_cloud_convex_polygon
+  |> convex_polygon_minimum_width_strip
+  |> fn(strip) { strip.width }
+}
+
+fn convex_polygon_directional_support(
+  vertices: List(svg_path.Point),
+  angle: Float,
+) -> DirectionalSupport {
+  let direction = point_helpers.direction(degrees: angle)
+  case vertices {
+    [] ->
+      DirectionalSupport(
+        lower_point: svg_path.Point(0.0, 0.0),
+        upper_point: svg_path.Point(0.0, 0.0),
+        width: 0.0,
+      )
+    [first, ..rest] -> {
+      let #(lower_point, lower_value, upper_point, upper_value) =
+        rest
+        |> list.fold(
+          #(first, dot(first, direction), first, dot(first, direction)),
+          fn(extrema, point) {
+            let #(lower_point, lower_value, upper_point, upper_value) = extrema
+            let value = dot(point, direction)
+            #(
+              case value <. lower_value {
+                True -> point
+                False -> lower_point
+              },
+              float.min(lower_value, value),
+              case value >. upper_value {
+                True -> point
+                False -> upper_point
+              },
+              float.max(upper_value, value),
+            )
+          },
+        )
+      DirectionalSupport(
+        lower_point:,
+        upper_point:,
+        width: upper_value -. lower_value,
+      )
+    }
+  }
+}
+
+fn point_set_diameter(points: List(svg_path.Point)) -> Float {
+  case points {
+    [] -> 0.0
+    [first, ..rest] ->
+      float.max(
+        farthest_distance_from(first, rest, 0.0),
+        point_set_diameter(rest),
+      )
+  }
+}
+
+fn farthest_distance_from(
+  point: svg_path.Point,
+  others: List(svg_path.Point),
+  farthest farthest: Float,
+) -> Float {
+  case others {
+    [] -> farthest
+    [first, ..rest] ->
+      farthest_distance_from(
+        point,
+        rest,
+        farthest: float.max(farthest, point_helpers.distance(point, first)),
+      )
+  }
+}
+
+fn point_cloud_convex_polygon(points: List(svg_path.Point)) -> ConvexPolygon {
+  let sorted =
+    points |> list.sort(by: point_lexicographic_compare) |> unique_points
+  case sorted {
+    [] | [_] | [_, _] -> ConvexPolygon(vertices: sorted)
+    _ -> {
+      let lower = point_cloud_half_hull(sorted, stack: []) |> list.reverse
+      let upper =
+        point_cloud_half_hull(list.reverse(sorted), stack: []) |> list.reverse
+      ConvexPolygon(vertices: list.append(
+        list.take(lower, list.length(lower) - 1),
+        list.take(upper, list.length(upper) - 1),
+      ))
+    }
+  }
+}
+
+fn point_cloud_half_hull(
+  points: List(svg_path.Point),
+  stack stack: List(svg_path.Point),
+) -> List(svg_path.Point) {
+  case points {
+    [] -> stack
+    [first, ..rest] ->
+      point_cloud_half_hull(
+        rest,
+        stack: point_cloud_half_hull_push(stack, first),
+      )
+  }
+}
+
+fn point_cloud_half_hull_push(
+  stack: List(svg_path.Point),
+  point: svg_path.Point,
+) -> List(svg_path.Point) {
+  case stack {
+    [last, previous, ..rest] ->
+      case cross(subtract(last, previous), subtract(point, last)) <=. 0.0 {
+        True -> point_cloud_half_hull_push([previous, ..rest], point)
+        False -> [point, ..stack]
+      }
+    _ -> [point, ..stack]
+  }
+}
+
+fn unique_points(points: List(svg_path.Point)) -> List(svg_path.Point) {
+  unique_points_loop(points, previous: None, unique: []) |> list.reverse
+}
+
+fn unique_points_loop(
+  points: List(svg_path.Point),
+  previous previous: Option(svg_path.Point),
+  unique unique: List(svg_path.Point),
+) -> List(svg_path.Point) {
+  case points {
+    [] -> unique
+    [first, ..rest] ->
+      case previous == Some(first) {
+        True -> unique_points_loop(rest, previous:, unique:)
+        False ->
+          unique_points_loop(rest, previous: Some(first), unique: [
+            first,
+            ..unique
+          ])
+      }
+  }
+}
+
+fn point_lexicographic_compare(
+  left: svg_path.Point,
+  right: svg_path.Point,
+) -> order.Order {
+  case float.compare(left.x, right.x) {
+    order.Eq -> float.compare(left.y, right.y)
+    ordering -> ordering
+  }
 }
 
 @internal
