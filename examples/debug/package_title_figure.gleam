@@ -1,4 +1,4 @@
-//// Scratch renderer for the package title offset case.
+//// Scratch renderer for the untrimmed package-title offset case.
 ////
 //// This is intentionally a top-level debug module, not part of `svg_path`.
 
@@ -14,13 +14,18 @@ import svg_path/svg
 
 const input = "examples/debug/package_title.svg"
 
-const output = "examples/debug/package_title_offset.svg"
+const output = "examples/debug/package_title_offset_untrimmed.svg"
 
 pub fn main() -> Dynamic {
   let assert Ok(contents) = read_file(input)
   let assert Ok(source) = parse.path(first_path_data(contents))
+  let options =
+    offset.Options(
+      ..offset.default_options(),
+      fitting: offset.FittingOptions(tolerance: 0.05, samples: 5, max_depth: 12),
+    )
   let assert Ok(offset_path) =
-    offset.path_with(source, distance: 1.0, options: offset.default_options())
+    offset.path_untrimmed_with(source, distance: 1.0, options:)
   let assert Ok(source_box) = svg_path.path_bounding_box(source)
   let assert Ok(offset_box) = svg_path.path_bounding_box(offset_path)
   let view_box = padded_box([source_box, offset_box], margin: 2.0)

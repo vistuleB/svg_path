@@ -1,4 +1,4 @@
-//// Global-offset diagnostic for the S and V package-title subpaths.
+//// Trimmed offset diagnostic for the S/V/G package-title subpaths.
 
 import gleam/dynamic.{type Dynamic}
 import gleam/float
@@ -12,75 +12,52 @@ import svg_path/svg
 
 const input = "examples/debug/package_title.svg"
 
-const output = "examples/debug/offset_sv_global.svg"
+const output = "examples/debug/offset_svg_trimmed.svg"
 
-pub fn main() -> Dynamic {
+pub fn main() -> Nil {
   let assert Ok(contents) = read_file(input)
   let assert Ok(full) = parse.path(first_path_data(contents))
-  let source = svg_path.Path(svg_path.path_subpaths(full) |> list.take(2))
-  let assert Ok(sections) =
-    offset.path_sections_with(
-      source,
-      distance: 1.0,
-      options: offset.default_options(),
+  let source =
+    svg_path.Path(
+      svg_path.path_subpaths(full)
+      |> list.take(3),
     )
+  let options =
+    offset.Options(
+      ..offset.default_options(),
+      fitting: offset.FittingOptions(tolerance: 0.01, samples: 5, max_depth: 12),
+      trimming: svg_path.DistanceOptions(
+        ..svg_path.default_distance_options(),
+        tolerance: 0.000000001,
+      ),
+    )
+  let assert Ok(offset_path) = offset.path_with(source, distance: 1.0, options:)
   let assert Ok(source_box) = svg_path.path_bounding_box(source)
-  let assert Ok(sections_box) = svg_path.path_bounding_box(sections)
-  let view_box = padded_box([source_box, sections_box], margin: 2.0)
-  write_file(output, render(source, sections, view_box))
+  let assert Ok(offset_box) = svg_path.path_bounding_box(offset_path)
+  let view_box = padded_box([source_box, offset_box], margin: 2.0)
+  write_file(output, render(source, offset_path, view_box))
 }
 
 fn render(
   source: svg_path.Path,
-  sections: svg_path.Path,
+  offset_path: svg_path.Path,
   view_box: svg_path.BoundingBox,
 ) -> String {
   svg.document(
-    things: list.append(
-      [
-        background(view_box),
-        svg.StyledPath(
-          source,
-          "fill: none; stroke: #111827; stroke-width: 0.18; stroke-dasharray: 0.7 0.45; stroke-linecap: butt; stroke-linejoin: miter",
-        ),
-      ],
-      section_things(svg_path.path_subpaths(sections), 0),
-    ),
+    things: [
+      background(view_box),
+      svg.StyledPath(
+        source,
+        "fill: none; stroke: #111827; stroke-width: 0.18; stroke-dasharray: 0.7 0.45; stroke-linecap: butt; stroke-linejoin: miter",
+      ),
+      svg.StyledPath(
+        offset_path,
+        "fill: none; stroke: #0ea5e9; stroke-width: 0.28; stroke-linecap: round; stroke-linejoin: round",
+      ),
+    ],
     view_box:,
   )
   |> with_root_size(width: 16_000, height: 3600)
-}
-
-fn section_things(
-  sections: List(svg_path.Subpath),
-  index: Int,
-) -> List(svg.ThingToDraw) {
-  case sections {
-    [] -> []
-    [first, ..rest] -> [
-      svg.StyledPath(
-        svg_path.Path([first]),
-        "fill: none; stroke: "
-          <> section_color(index)
-          <> "; stroke-width: 0.28; stroke-linecap: butt; stroke-linejoin: miter",
-      ),
-      ..section_things(rest, index + 1)
-    ]
-  }
-}
-
-fn section_color(index: Int) -> String {
-  let assert Ok(remainder) = int.remainder(index, by: 8)
-  case remainder {
-    0 -> "#e11d48"
-    1 -> "#2563eb"
-    2 -> "#16a34a"
-    3 -> "#9333ea"
-    4 -> "#ea580c"
-    5 -> "#0891b2"
-    6 -> "#ca8a04"
-    _ -> "#db2777"
-  }
 }
 
 fn background(view_box: svg_path.BoundingBox) -> svg.ThingToDraw {
@@ -143,8 +120,8 @@ fn with_root_size(
 @external(erlang, "file", "read_file")
 fn read_file(path: String) -> Result(String, Dynamic)
 
-@external(erlang, "file", "write_file")
-fn write_file(path: String, contents: String) -> Dynamic
+@external(erlang, "offset_sv_probe_ffi", "write_file")
+fn write_file(path: String, contents: String) -> Nil
 
 fn first_path_data(contents: String) -> String {
   let assert [_, after_attribute] = string.split(contents, on: " d=\"")
