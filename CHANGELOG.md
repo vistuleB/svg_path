@@ -9,6 +9,16 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
+## 0.36.1 - 2026-08-12
+
+### Changed
+
+- Replaced repeated flattening in `effects.normalize_degenerate_segments` with
+  convex-hull minimum-width checks for maximal thin-strip runs.
+- Tightened offset trimming by sampling section endpoints as well as interior
+  points and deriving trimming slack from fitting tolerance.
+- Added package-title offset debug fixtures for the S/V/G stress case.
+
 ## 0.36.0 - 2026-08-10
 
 ### Changed
