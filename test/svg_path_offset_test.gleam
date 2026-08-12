@@ -327,6 +327,59 @@ pub fn segment_rejects_invalid_options_test() {
     == Error(offset.InvalidTolerance(0.0))
 }
 
+pub fn default_offset_trimming_uses_precise_projection_test() {
+  let options = offset.default_options()
+
+  assert options.trimming.tolerance
+    == svg_path.default_distance_options().tolerance
+}
+
+pub fn section_filter_uses_fitting_tolerance_margin_test() {
+  let source =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
+    ])
+  let section =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(0.0, 0.997),
+      svg_path.Point(10.0, 0.997),
+    ])
+  let default = offset.default_options()
+  let tight =
+    offset.Options(
+      ..default,
+      fitting: offset.FittingOptions(..default.fitting, tolerance: 0.002),
+    )
+  let permissive =
+    offset.Options(
+      ..default,
+      fitting: offset.FittingOptions(..default.fitting, tolerance: 0.01),
+    )
+
+  assert offset.internal_global_section_is_valid(
+      section,
+      source: svg_path.Path([source]),
+      distance: 1.0,
+      options: default,
+    )
+    == Ok(True)
+  assert offset.internal_global_section_is_valid(
+      section,
+      source: svg_path.Path([source]),
+      distance: 1.0,
+      options: tight,
+    )
+    == Ok(False)
+  assert offset.internal_global_section_is_valid(
+      section,
+      source: svg_path.Path([source]),
+      distance: 1.0,
+      options: permissive,
+    )
+    == Ok(True)
+}
+
 pub fn segment_rejects_negative_stalled_offset_diameter_test() {
   let line =
     svg_path.Line(

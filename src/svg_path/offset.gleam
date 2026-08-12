@@ -134,11 +134,12 @@ pub type FittingOptions {
 
 /// Options for offset construction.
 ///
-/// `fitting` controls offset approximation, `trimming` controls projection and
-/// root-finding used while pruning, `stalled_offset_diameter` decides when
-/// the stalled-run builder treats an offset piece as too small to keep as an
-/// ordinary independently fitted segment, and `tangent_heal_angle_degrees` is
-/// the maximum tangent change-of-direction, in degrees, between two adjacent
+/// `fitting` controls offset approximation. `trimming` controls projection and
+/// root-finding used while pruning. The pruning distance slack is derived as
+/// `fitting.tolerance * 1.1`. `stalled_offset_diameter` decides when the
+/// stalled-run builder treats an offset piece as too small to keep as an
+/// ordinary independently fitted segment. `tangent_heal_angle_degrees` is the
+/// maximum tangent change-of-direction, in degrees, between two adjacent
 /// offset pieces that is still treated as a smooth boundary and welded to a
 /// single vertex. Larger values weld more near-smooth joins, avoiding the tiny
 /// degenerate connector segments that otherwise appear between offset pieces.
@@ -163,6 +164,16 @@ type OffsetSegment {
     source_end: svg_path.Point,
     source_start_tangent: svg_path.Point,
     source_end_tangent: svg_path.Point,
+  )
+}
+
+/// Construction-time source span for one provisional offset piece.
+@internal
+pub type OffsetPieceSource {
+  OffsetPieceSource(
+    offset_segment: svg_path.Segment,
+    source_start: svg_path.Point,
+    source_end: svg_path.Point,
   )
 }
 
@@ -219,6 +230,31 @@ pub fn default_options() -> Options {
     stalled_offset_diameter: default_stalled_offset_diameter,
     tangent_heal_angle_degrees: default_tangent_heal_angle_degrees,
     join: Miter(default_miter_limit),
+  )
+}
+
+/// Return pre-join offset pieces with their recorded source endpoint spans.
+@internal
+pub fn internal_offset_piece_sources(
+  subpath: svg_path.Subpath,
+  distance distance: Float,
+  options options: Options,
+) -> Result(List(OffsetPieceSource), Error) {
+  use _ <- result.try(validate_options(options))
+  use pieces <- result.try(build_offset_segments(
+    stalled_run_offset_builder(),
+    subpath,
+    distance,
+    options,
+  ))
+  Ok(
+    list.map(pieces, fn(piece) {
+      OffsetPieceSource(
+        offset_segment: piece.segment,
+        source_start: piece.source_start,
+        source_end: piece.source_end,
+      )
+    }),
   )
 }
 
@@ -307,9 +343,10 @@ pub fn segment_with(
 /// multiple subpaths or remove it entirely.
 ///
 /// The provisional offset is split at self-intersections. Each section is
-/// sampled at global section-length parameters `0.1, 0.2, ..., 0.9`; sections
-/// with fewer than five samples at least `abs(distance) - options.fitting.tolerance`
-/// from the original subpath are removed.
+/// sampled at global section-length parameters `0.0, 0.1, ..., 1.0`; sections
+/// with any sample closer than
+/// `abs(distance) - options.fitting.tolerance * 1.1` from the original subpath
+/// are removed.
 pub fn subpath(
   subpath: svg_path.Subpath,
   distance distance: Float,
@@ -735,19 +772,19 @@ fn validate_options(options: Options) -> Result(Nil, Error) {
         False ->
           case options.fitting.max_depth <= 0 {
             True -> Error(InvalidMaxDepth(options.fitting.max_depth))
-            False ->
-              case
-                options.stalled_offset_diameter <. 0.0
-                || !number.is_finite(options.stalled_offset_diameter)
-              {
-                True ->
-                  Error(InvalidStalledOffsetDiameter(
-                    options.stalled_offset_diameter,
-                  ))
-                False -> validate_join(options.join)
-              }
+            False -> validate_offset_diameter(options)
           }
       }
+  }
+}
+
+fn validate_offset_diameter(options: Options) -> Result(Nil, Error) {
+  case
+    options.stalled_offset_diameter <. 0.0
+    || !number.is_finite(options.stalled_offset_diameter)
+  {
+    True -> Error(InvalidStalledOffsetDiameter(options.stalled_offset_diameter))
+    False -> validate_join(options.join)
   }
 }
 
@@ -880,6 +917,56 @@ pub fn internal_arrangement_global_sections(
   Ok(svg_path.Path(subpaths:))
 }
 
+/// Return pre-filter arrangement sections and the subset rejected by trimming.
+@internal
+pub fn internal_global_section_filter_diagnostic(
+  provisional: List(svg_path.Subpath),
+  source source: svg_path.Path,
+  distance distance: Float,
+  options options: Options,
+) -> Result(#(svg_path.Path, svg_path.Path), Error) {
+  use sections <- result.try(arrangement_global_section_chunks(provisional))
+  use rejected <- result.try(
+    rejected_global_parametric_sections(
+      sections,
+      source:,
+      distance:,
+      options:,
+      rejected: [],
+    ),
+  )
+  use section_subpaths <- result.try(chunks_to_subpaths(
+    sections,
+    options.fitting.tolerance,
+    closed: False,
+  ))
+  use rejected_subpaths <- result.try(chunks_to_subpaths(
+    rejected,
+    options.fitting.tolerance,
+    closed: False,
+  ))
+  Ok(#(
+    svg_path.Path(subpaths: section_subpaths),
+    svg_path.Path(subpaths: rejected_subpaths),
+  ))
+}
+
+/// Apply the production global-section trimming predicate to one subpath.
+@internal
+pub fn internal_global_section_is_valid(
+  section: svg_path.Subpath,
+  source source: svg_path.Path,
+  distance distance: Float,
+  options options: Options,
+) -> Result(Bool, Error) {
+  global_parametric_section_is_valid(
+    svg_path.subpath_segments(section),
+    source:,
+    distance:,
+    options:,
+  )
+}
+
 fn arrangement_global_section_chunks(
   provisional: List(svg_path.Subpath),
 ) -> Result(List(List(svg_path.Segment)), Error) {
@@ -937,6 +1024,37 @@ fn retain_global_parametric_sections(
   }
 }
 
+fn rejected_global_parametric_sections(
+  sections: List(List(svg_path.Segment)),
+  source source: svg_path.Path,
+  distance distance: Float,
+  options options: Options,
+  rejected rejected: List(List(svg_path.Segment)),
+) -> Result(List(List(svg_path.Segment)), Error) {
+  case sections {
+    [] -> Ok(list.reverse(rejected))
+    [first, ..rest] -> {
+      use keep <- result.try(global_parametric_section_is_valid(
+        first,
+        source:,
+        distance:,
+        options:,
+      ))
+      let rejected = case keep {
+        True -> rejected
+        False -> [first, ..rejected]
+      }
+      rejected_global_parametric_sections(
+        rest,
+        source:,
+        distance:,
+        options:,
+        rejected:,
+      )
+    }
+  }
+}
+
 fn global_parametric_section_is_valid(
   section: List(svg_path.Segment),
   source source: svg_path.Path,
@@ -958,7 +1076,6 @@ fn global_parametric_section_is_valid(
     source:,
     distance:,
     options:,
-    count: 0,
   )
 }
 
@@ -969,10 +1086,9 @@ fn global_parametric_section_samples(
   source source: svg_path.Path,
   distance distance: Float,
   options options: Options,
-  count count: Int,
 ) -> Result(Bool, Error) {
   case samples {
-    [] -> Ok(count >= 5)
+    [] -> Ok(True)
     [first, ..rest] -> {
       use point <- result.try(
         svg_path.subpath_point_at_length(section, distance: length *. first)
@@ -987,21 +1103,18 @@ fn global_parametric_section_samples(
         )
         |> result.map_error(PathError),
       )
-      let count = case
-        projection.distance +. margin >=. float.absolute_value(distance)
-      {
-        True -> count + 1
-        False -> count
+      case projection.distance +. margin >=. float.absolute_value(distance) {
+        True ->
+          global_parametric_section_samples(
+            section,
+            length,
+            rest,
+            source:,
+            distance:,
+            options:,
+          )
+        False -> Ok(False)
       }
-      global_parametric_section_samples(
-        section,
-        length,
-        rest,
-        source:,
-        distance:,
-        options:,
-        count:,
-      )
     }
   }
 }
@@ -2003,7 +2116,7 @@ fn parametric_section_is_valid(
 }
 
 fn section_sample_parameters() -> List(Float) {
-  [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+  [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
 }
 
 fn parametric_section_has_enough_non_negative_samples(
@@ -3335,7 +3448,7 @@ fn same_point(a: svg_path.Point, b: svg_path.Point, tolerance: Float) -> Bool {
 }
 
 fn distance_margin(options: Options) -> Float {
-  options.fitting.tolerance
+  options.fitting.tolerance *. 1.1
 }
 
 fn stalled_run_offset_builder() -> OffsetBuilder {
