@@ -113,6 +113,75 @@ pub fn polynomial_bisection_handles_flat_derivative_region_test() {
   assert near(solution, 0.1)
 }
 
+pub fn classified_polynomial_roots_report_sign_changes_test() {
+  let assert Ok([
+    root.ClassifiedRoot(
+      isolation: root.RootIsolation(estimate:, ..),
+      kind: root.NegativeToPositive,
+    ),
+  ]) =
+    root.classified_polynomial_roots_with(
+      [1.0, 0.0],
+      from: -1.0,
+      to: 1.0,
+      options: root.default_polynomial_options(),
+    )
+  assert near(estimate, 0.0)
+  assert root.is_sign_change_root(root.NegativeToPositive)
+  assert root.is_crossing_root(root.PositiveToNegative)
+}
+
+pub fn classified_polynomial_roots_report_even_roots_test() {
+  let assert Ok([positive_even]) =
+    root.classified_polynomial_roots_with(
+      [1.0, 0.0, 0.0],
+      from: -1.0,
+      to: 1.0,
+      options: root.default_polynomial_options(),
+    )
+  assert positive_even.kind == root.PositiveToPositive
+  assert !root.is_sign_change_root(positive_even.kind)
+
+  let assert Ok([negative_even]) =
+    root.classified_polynomial_roots_with(
+      [-1.0, 0.0, 0.0],
+      from: -1.0,
+      to: 1.0,
+      options: root.default_polynomial_options(),
+    )
+  assert negative_even.kind == root.NegativeToNegative
+  assert !root.is_crossing_root(negative_even.kind)
+}
+
+pub fn classified_polynomial_roots_report_endpoint_ambiguity_test() {
+  let assert Ok([endpoint]) =
+    root.classified_polynomial_roots_with(
+      [1.0, 0.0],
+      from: 0.0,
+      to: 1.0,
+      options: root.default_polynomial_options(),
+    )
+  assert endpoint.kind == root.Ambiguous
+}
+
+pub fn real_01_root_helpers_classify_by_degree_test() {
+  let options = root.default_polynomial_options()
+
+  let assert Ok([linear]) = root.real_linear_01_roots(1.0, -0.25, options:)
+  assert near(root_estimate(linear), 0.25)
+  assert linear.kind == root.NegativeToPositive
+
+  let assert Ok([quadratic]) =
+    root.real_quadratic_01_roots(1.0, -1.0, 0.25, options:)
+  assert near(root_estimate(quadratic), 0.5)
+  assert quadratic.kind == root.PositiveToPositive
+
+  let assert Ok([cubic]) =
+    root.real_cubic_01_roots(1.0, 0.0, 0.0, -0.125, options:)
+  assert near(root_estimate(cubic), 0.5)
+  assert cubic.kind == root.NegativeToPositive
+}
+
 const tolerance = 0.000001
 
 pub fn main() -> Nil {
@@ -227,6 +296,12 @@ pub fn bisect_isolation_until_stops_at_float_resolution_test() {
 
 fn near(a: Float, b: Float) -> Bool {
   float.absolute_value(a -. b) <=. tolerance
+}
+
+fn root_estimate(root: root.ClassifiedRoot) -> Float {
+  let root.ClassifiedRoot(isolation: root.RootIsolation(estimate:, ..), ..) =
+    root
+  estimate
 }
 
 fn roots_are_near(found: List(Float), expected: List(Float)) -> Bool {

@@ -72,6 +72,22 @@ pub type RootIsolation {
   RootIsolation(lower: Float, estimate: Float, upper: Float)
 }
 
+/// The sign behavior of a scalar function around an isolated root.
+@internal
+pub type RootKind {
+  NegativeToPositive
+  PositiveToNegative
+  NegativeToNegative
+  PositiveToPositive
+  Ambiguous
+}
+
+/// A real polynomial root with its local sign behavior.
+@internal
+pub type ClassifiedRoot {
+  ClassifiedRoot(isolation: RootIsolation, kind: RootKind)
+}
+
 /// Return the default bisection options.
 fn default_options() -> Options {
   Options(tolerance: default_tolerance, max_iterations: default_max_iterations)
@@ -261,6 +277,98 @@ pub fn polynomial_root_isolations_with(
         }
       }
   }
+}
+
+/// Find all distinct real roots of a power-basis polynomial in a closed
+/// interval, preserving local sign behavior around each root.
+@internal
+pub fn classified_polynomial_roots_with(
+  coefficients: List(Float),
+  from lower: Float,
+  to upper: Float,
+  options options: PolynomialOptions,
+) -> Result(List(ClassifiedRoot), Error) {
+  case
+    options.root_tolerance <=. 0.0 || !number.is_finite(options.root_tolerance)
+  {
+    True -> Error(InvalidTolerance(options.root_tolerance))
+    False -> {
+      let coefficients =
+        normalize_polynomial_coefficients(
+          coefficients,
+          float.max(options.coefficient_tolerance, 0.0),
+        )
+      let #(lower, upper) = ordered_bracket(lower, upper)
+      use isolations <- result.try(polynomial_root_isolations_valid(
+        coefficients,
+        lower,
+        upper,
+        options,
+      ))
+      Ok(
+        list.map(isolations, fn(isolation) {
+          ClassifiedRoot(
+            isolation:,
+            kind: classify_polynomial_root(
+              coefficients,
+              isolation,
+              lower,
+              upper,
+              options,
+            ),
+          )
+        }),
+      )
+    }
+  }
+}
+
+/// Find classified real roots of `a*x + b` in `[0, 1]`.
+@internal
+pub fn real_linear_01_roots(
+  a: Float,
+  b: Float,
+  options options: PolynomialOptions,
+) -> Result(List(ClassifiedRoot), Error) {
+  classified_polynomial_roots_with([a, b], from: 0.0, to: 1.0, options:)
+}
+
+/// Find classified real roots of `a*x² + b*x + c` in `[0, 1]`.
+@internal
+pub fn real_quadratic_01_roots(
+  a: Float,
+  b: Float,
+  c: Float,
+  options options: PolynomialOptions,
+) -> Result(List(ClassifiedRoot), Error) {
+  classified_polynomial_roots_with([a, b, c], from: 0.0, to: 1.0, options:)
+}
+
+/// Find classified real roots of `a*x³ + b*x² + c*x + d` in `[0, 1]`.
+@internal
+pub fn real_cubic_01_roots(
+  a: Float,
+  b: Float,
+  c: Float,
+  d: Float,
+  options options: PolynomialOptions,
+) -> Result(List(ClassifiedRoot), Error) {
+  classified_polynomial_roots_with([a, b, c, d], from: 0.0, to: 1.0, options:)
+}
+
+/// Whether a classified root changes sign.
+@internal
+pub fn is_sign_change_root(kind: RootKind) -> Bool {
+  case kind {
+    NegativeToPositive | PositiveToNegative -> True
+    NegativeToNegative | PositiveToPositive | Ambiguous -> False
+  }
+}
+
+/// Alias for `is_sign_change_root`.
+@internal
+pub fn is_crossing_root(kind: RootKind) -> Bool {
+  is_sign_change_root(kind)
 }
 
 /// Find all distinct real roots of `a*x³ + b*x² + c*x + d`.
@@ -510,6 +618,166 @@ fn polynomial_refine_bracket(
               }
           }
         }
+      }
+  }
+}
+
+fn classify_polynomial_root(
+  coefficients: List(Float),
+  isolation: RootIsolation,
+  lower: Float,
+  upper: Float,
+  options: PolynomialOptions,
+) -> RootKind {
+  let RootIsolation(lower: root_lower, estimate:, upper: root_upper) = isolation
+  let value_tolerance = float.max(options.value_tolerance, 0.0)
+  let left_sample =
+    root_sample_on_left(
+      coefficients,
+      estimate,
+      root_lower,
+      lower,
+      value_tolerance,
+      options.root_tolerance,
+      remaining_expansions: 32,
+    )
+  let right_sample =
+    root_sample_on_right(
+      coefficients,
+      estimate,
+      root_upper,
+      upper,
+      value_tolerance,
+      options.root_tolerance,
+      remaining_expansions: 32,
+    )
+
+  case left_sample, right_sample {
+    Ok(left_value), Ok(right_value) ->
+      classify_root_signs(left_value, right_value, value_tolerance)
+    _, _ -> Ambiguous
+  }
+}
+
+fn root_sample_on_left(
+  coefficients: List(Float),
+  estimate: Float,
+  root_lower: Float,
+  interval_lower: Float,
+  value_tolerance: Float,
+  root_tolerance: Float,
+  remaining_expansions remaining_expansions: Int,
+) -> Result(Float, Nil) {
+  let candidate = case root_lower <. estimate {
+    True -> root_lower
+    False -> estimate -. root_tolerance
+  }
+  root_sample_on_side(
+    coefficients,
+    candidate,
+    fallback_from: estimate,
+    interval_edge: interval_lower,
+    direction: -1.0,
+    value_tolerance:,
+    root_tolerance:,
+    remaining_expansions:,
+  )
+}
+
+fn root_sample_on_right(
+  coefficients: List(Float),
+  estimate: Float,
+  root_upper: Float,
+  interval_upper: Float,
+  value_tolerance: Float,
+  root_tolerance: Float,
+  remaining_expansions remaining_expansions: Int,
+) -> Result(Float, Nil) {
+  let candidate = case root_upper >. estimate {
+    True -> root_upper
+    False -> estimate +. root_tolerance
+  }
+  root_sample_on_side(
+    coefficients,
+    candidate,
+    fallback_from: estimate,
+    interval_edge: interval_upper,
+    direction: 1.0,
+    value_tolerance:,
+    root_tolerance:,
+    remaining_expansions:,
+  )
+}
+
+fn root_sample_on_side(
+  coefficients: List(Float),
+  candidate: Float,
+  fallback_from fallback_from: Float,
+  interval_edge interval_edge: Float,
+  direction direction: Float,
+  value_tolerance value_tolerance: Float,
+  root_tolerance root_tolerance: Float,
+  remaining_expansions remaining_expansions: Int,
+) -> Result(Float, Nil) {
+  case
+    direction <. 0.0
+    && candidate <=. interval_edge
+    || direction >. 0.0
+    && candidate >=. interval_edge
+  {
+    True -> Error(Nil)
+    False -> {
+      let value = evaluate_polynomial(coefficients, at: candidate)
+      case !is_close_to_zero(value, value_tolerance) {
+        True -> Ok(value)
+        False ->
+          case remaining_expansions <= 0 {
+            True -> Error(Nil)
+            False -> {
+              let distance = float.absolute_value(candidate -. fallback_from)
+              let distance = float.max(distance *. 2.0, root_tolerance *. 2.0)
+              let next_candidate = fallback_from +. direction *. distance
+              root_sample_on_side(
+                coefficients,
+                next_candidate,
+                fallback_from:,
+                interval_edge:,
+                direction:,
+                value_tolerance:,
+                root_tolerance:,
+                remaining_expansions: remaining_expansions - 1,
+              )
+            }
+          }
+      }
+    }
+  }
+}
+
+fn classify_root_signs(
+  left_value: Float,
+  right_value: Float,
+  value_tolerance: Float,
+) -> RootKind {
+  case
+    signed_nonzero(left_value, value_tolerance),
+    signed_nonzero(right_value, value_tolerance)
+  {
+    Ok(-1), Ok(1) -> NegativeToPositive
+    Ok(1), Ok(-1) -> PositiveToNegative
+    Ok(-1), Ok(-1) -> NegativeToNegative
+    Ok(1), Ok(1) -> PositiveToPositive
+    _, _ -> Ambiguous
+  }
+}
+
+fn signed_nonzero(value: Float, tolerance: Float) -> Result(Int, Nil) {
+  case is_close_to_zero(value, tolerance) {
+    True -> Error(Nil)
+    False ->
+      case value <. 0.0 {
+        True -> Ok(-1)
+        False -> Ok(1)
       }
   }
 }
