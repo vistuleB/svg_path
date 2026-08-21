@@ -9,6 +9,26 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
+## 0.37.0 - 2026-08-21
+
+### Added
+
+- Added closest-point projection APIs for segment/segment, segment/subpath,
+  segment/path, subpath/subpath, subpath/path, and path/path queries.
+
+### Changed
+
+- Reworked segment-pair intersection and projection search around shared
+  terminal-window descent machinery and bounding-box pruning.
+- Continued arrangement graph construction cleanup around progressive noding,
+  endpoint handling, and whole-edge correspondence checks.
+
+### Fixed
+
+- Compared line-segment collinearity and line-containment tests in true
+  path-distance units rather than raw cross-product units, avoiding false
+  overlap classifications for very short line segments.
+
 ## 0.36.1 - 2026-08-12
 
 ### Changed
