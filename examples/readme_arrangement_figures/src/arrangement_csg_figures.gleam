@@ -185,11 +185,9 @@ fn render_boolean_table(
 
   let assert Ok(graph_source) =
     place_like(source, source, 420.0, first_row_y, panel_width, panel_height)
-  let assert Ok(arrangement_graph.ArrangementGraphBuild(
-    graph:,
-    normalized_paths: [normalized_graph_source],
-    ..,
-  )) = arrangement_graph.build([graph_source], tolerance:, minimum_chord:)
+  let assert Ok(arrangement_graph.ArrangementGraphBuild(graph:, ..)) =
+    arrangement_graph.build([graph_source], tolerance:, minimum_chord:)
+  let normalized_graph_source = graph_source
   let assert Ok(graph_drawing) =
     arrangement_graph_drawing.annotated_drawing(
       graph,
@@ -421,11 +419,9 @@ fn render_case(
   let right_placed = svg_path.Path(list.drop(source_parts, left_count))
 
   let assert Ok(graph_source) = fit(source, 450.0, 132.0)
-  let assert Ok(arrangement_graph.ArrangementGraphBuild(
-    graph:,
-    normalized_paths: [normalized_graph_source],
-    ..,
-  )) = arrangement_graph.build([graph_source], tolerance:, minimum_chord:)
+  let assert Ok(arrangement_graph.ArrangementGraphBuild(graph:, ..)) =
+    arrangement_graph.build([graph_source], tolerance:, minimum_chord:)
+  let normalized_graph_source = graph_source
   let assert Ok(graph_drawing) =
     arrangement_graph_drawing.annotated_drawing(
       graph,

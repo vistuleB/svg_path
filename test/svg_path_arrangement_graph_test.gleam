@@ -43,19 +43,20 @@ pub fn build_preserves_source_path_grouping_test() {
       square(30.0, 0.0, 5.0),
     ])
 
-  let assert Ok(arrangement_graph.ArrangementGraphBuild(
-    normalized_paths: [normalized_first, normalized_second],
-    ..,
-  )) = arrangement_graph.build([first, second], tolerance:, minimum_chord:)
+  let assert Ok(arrangement_graph.ArrangementGraphBuild(segment_images:, ..)) =
+    arrangement_graph.build([first, second], tolerance:, minimum_chord:)
 
-  normalized_first
+  first
   |> svg_path.path_subpaths
   |> list.length
   |> should.equal(1)
-  normalized_second
+  second
   |> svg_path.path_subpaths
   |> list.length
   |> should.equal(2)
+  segment_images
+  |> list.length
+  |> should.equal(12)
 }
 
 pub fn segment_images_follow_crossing_source_traversals_test() {
@@ -93,6 +94,122 @@ pub fn segment_images_follow_crossing_source_traversals_test() {
   |> should.equal(svg_path.Point(5.0, -5.0))
   svg_path.segment_end(vertical_second.segment)
   |> should.equal(svg_path.Point(5.0, 5.0))
+}
+
+pub fn progressive_segment_build_maps_crossing_sources_test() {
+  let horizontal =
+    svg_path.Line(
+      start: svg_path.Point(0.0, 0.0),
+      end: svg_path.Point(10.0, 0.0),
+    )
+  let vertical =
+    svg_path.Line(
+      start: svg_path.Point(5.0, -5.0),
+      end: svg_path.Point(5.0, 5.0),
+    )
+
+  let assert Ok(arrangement_graph.ArrangementSegmentBuild(
+    graph: arrangement_graph.ArrangementGraph(vertices:, edges:),
+    segment_images: [
+      arrangement_graph.ArrangementSourceSegmentImage(
+        segment_index: 0,
+        edges: horizontal_edges,
+      ),
+      arrangement_graph.ArrangementSourceSegmentImage(
+        segment_index: 1,
+        edges: vertical_edges,
+      ),
+    ],
+    edge_images: edge_images,
+    ..,
+  )) =
+    arrangement_graph.build_with(
+      [horizontal, vertical],
+      vertex_tolerance: tolerance,
+      minimum_chord: minimum_chord,
+      endpoint_sliver_tolerance: 0.0,
+    )
+
+  list.length(vertices) |> should.equal(5)
+  list.length(edges) |> should.equal(4)
+  list.length(horizontal_edges) |> should.equal(2)
+  list.length(vertical_edges) |> should.equal(2)
+  list.length(edge_images) |> should.equal(4)
+}
+
+pub fn progressive_segment_build_splits_existing_edges_by_incoming_endpoints_test() {
+  assert_near_cross_orders_agree(0.0000000001)
+  assert_near_cross_orders_agree(0.0000000004)
+}
+
+fn assert_near_cross_orders_agree(gap: Float) {
+  let assert Ok(first) =
+    arrangement_graph.build_with(
+      near_cross_order_1(gap),
+      vertex_tolerance: 0.000000001,
+      minimum_chord: 0.000000000001,
+      endpoint_sliver_tolerance: 0.0,
+    )
+  let assert Ok(second) =
+    arrangement_graph.build_with(
+      near_cross_order_2(gap),
+      vertex_tolerance: 0.000000001,
+      minimum_chord: 0.000000000001,
+      endpoint_sliver_tolerance: 0.0,
+    )
+  let arrangement_graph.ArrangementSegmentBuild(
+    graph: arrangement_graph.ArrangementGraph(
+      vertices: first_vertices,
+      edges: first_edges,
+    ),
+    ..,
+  ) = first
+  let arrangement_graph.ArrangementSegmentBuild(
+    graph: arrangement_graph.ArrangementGraph(
+      vertices: second_vertices,
+      edges: second_edges,
+    ),
+    ..,
+  ) = second
+
+  list.length(first_vertices) |> should.equal(5)
+  list.length(second_vertices) |> should.equal(5)
+  list.length(first_edges) |> should.equal(4)
+  list.length(second_edges) |> should.equal(4)
+}
+
+fn near_cross_order_1(gap: Float) -> List(svg_path.Segment) {
+  [
+    near_cross_vertical(),
+    near_cross_left(gap),
+    near_cross_right(gap),
+  ]
+}
+
+fn near_cross_order_2(gap: Float) -> List(svg_path.Segment) {
+  [
+    near_cross_left(gap),
+    near_cross_right(gap),
+    near_cross_vertical(),
+  ]
+}
+
+fn near_cross_vertical() -> svg_path.Segment {
+  svg_path.Line(start: svg_path.Point(1.0, 2.0), end: svg_path.Point(1.0, 0.0))
+}
+
+fn near_cross_left(gap: Float) -> svg_path.Segment {
+  svg_path.Line(
+    start: svg_path.Point(0.0, 1.0),
+    end: svg_path.Point(1.0 -. gap, 1.0),
+  )
+}
+
+fn near_cross_right(gap: Float) -> svg_path.Segment {
+  svg_path.Line(
+    start: svg_path.Point(1.0 +. gap, 1.0),
+    end: svg_path.Point(2.0, 1.0),
+  )
 }
 
 pub fn segment_images_share_coincident_edges_with_source_orientation_test() {
@@ -443,7 +560,7 @@ pub fn drawing_contains_edges_vertices_and_multiplicity_labels_test() {
 
 pub fn edge_annotation_pose_comes_from_segment_midpoint_and_tangent_test() {
   let edge =
-    arrangement_graph.ArrangementEdge(
+    test_edge(
       id: 0,
       segment: svg_path.Line(
         start: svg_path.Point(0.0, 0.0),
@@ -466,7 +583,7 @@ pub fn edge_annotation_pose_comes_from_segment_midpoint_and_tangent_test() {
 
 pub fn edge_annotation_pose_uses_incoming_direction_at_stationary_reversal_test() {
   let edge =
-    arrangement_graph.ArrangementEdge(
+    test_edge(
       id: 0,
       segment: svg_path.QuadraticBezier(
         start: svg_path.Point(1.0, 0.0),
@@ -491,7 +608,7 @@ pub fn edge_annotation_pose_uses_incoming_direction_at_stationary_reversal_test(
 pub fn edge_annotation_pose_rejects_directionless_segment_test() {
   let point = svg_path.Point(1.0, 2.0)
   let edge =
-    arrangement_graph.ArrangementEdge(
+    test_edge(
       id: 0,
       segment: svg_path.Line(start: point, end: point),
       start_vertex: 0,
@@ -502,6 +619,26 @@ pub fn edge_annotation_pose_rejects_directionless_segment_test() {
 
   arrangement_graph_drawing.edge_annotation_pose(edge)
   |> should.equal(Error(svg_path.IndeterminateDirection))
+}
+
+fn test_edge(
+  id id: Int,
+  segment segment: svg_path.Segment,
+  start_vertex start_vertex: Int,
+  end_vertex end_vertex: Int,
+  forward_multiplicity forward_multiplicity: Int,
+  reverse_multiplicity reverse_multiplicity: Int,
+) -> arrangement_graph.ArrangementEdge {
+  let assert Ok(bounds) = svg_path.segment_bounding_box(segment)
+  arrangement_graph.ArrangementEdge(
+    id:,
+    segment:,
+    bounds:,
+    start_vertex:,
+    end_vertex:,
+    forward_multiplicity:,
+    reverse_multiplicity:,
+  )
 }
 
 pub fn builder_splits_crossing_lines_at_shared_vertex_test() {
@@ -833,6 +970,209 @@ pub fn segment_direction_arrow_recovers_collapsed_cubic_endpoint_test() {
 
   arrangement_graph_drawing.segment_direction_arrow(segment, "red")
   |> should.be_ok
+}
+
+pub fn undirected_conversion_sums_directional_multiplicity_test() {
+  let forward =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
+    ])
+  let reverse =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(10.0, 0.0),
+      svg_path.Point(0.0, 0.0),
+    ])
+  let assert Ok(graph) =
+    build_graph([forward, reverse], tolerance:, minimum_chord:)
+  let arrangement_graph.UndirectedArrangementGraph(edges:, ..) =
+    arrangement_graph.to_undirected(graph)
+
+  let assert [edge] = edges
+  edge.multiplicity |> should.equal(2)
+}
+
+pub fn odd_even_decomposition_of_open_line_is_odd_skeleton_test() {
+  let line =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
+    ])
+  let assert Ok(graph) = build_graph([line], tolerance:, minimum_chord:)
+  let undirected = arrangement_graph.to_undirected(graph)
+  let assert Ok(decomposition) =
+    arrangement_graph.odd_even_decomposition(undirected)
+  let arrangement_graph.OddEvenDecomposition(
+    odd_skeleton: arrangement_graph.UndirectedArrangementGraph(
+      edges: odd_edges,
+      ..,
+    ),
+    even_graph: arrangement_graph.UndirectedArrangementGraph(
+      edges: even_edges,
+      ..,
+    ),
+  ) = decomposition
+
+  list.length(odd_edges) |> should.equal(1)
+  list.length(even_edges) |> should.equal(0)
+}
+
+pub fn odd_even_decomposition_of_closed_square_is_even_graph_test() {
+  let assert Ok(graph) =
+    build_graph([square(0.0, 0.0, 10.0)], tolerance:, minimum_chord:)
+  let undirected = arrangement_graph.to_undirected(graph)
+  let assert Ok(decomposition) =
+    arrangement_graph.odd_even_decomposition(undirected)
+  let arrangement_graph.OddEvenDecomposition(
+    odd_skeleton: arrangement_graph.UndirectedArrangementGraph(
+      edges: odd_edges,
+      ..,
+    ),
+    even_graph: arrangement_graph.UndirectedArrangementGraph(
+      edges: even_edges,
+      ..,
+    ),
+  ) = decomposition
+
+  list.length(odd_edges) |> should.equal(0)
+  list.length(even_edges) |> should.equal(4)
+  arrangement_graph.verify_odd_even_decomposition(undirected, decomposition)
+  |> should.equal(Ok(Nil))
+}
+
+pub fn odd_even_decomposition_splits_open_tail_from_loop_test() {
+  let subpath =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(-1.0, 0.0),
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(2.0, 0.0),
+      svg_path.Point(2.0, 2.0),
+      svg_path.Point(0.0, 2.0),
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(3.0, 0.0),
+    ])
+  let assert Ok(graph) = build_graph([subpath], tolerance:, minimum_chord:)
+  let undirected = arrangement_graph.to_undirected(graph)
+  let assert Ok(decomposition) =
+    arrangement_graph.odd_even_decomposition(undirected)
+  let arrangement_graph.OddEvenDecomposition(
+    odd_skeleton: arrangement_graph.UndirectedArrangementGraph(
+      edges: odd_edges,
+      ..,
+    ),
+    even_graph: arrangement_graph.UndirectedArrangementGraph(
+      edges: even_edges,
+      ..,
+    ),
+  ) = decomposition
+
+  list.length(odd_edges) |> should.equal(3)
+  list.length(even_edges) |> should.equal(4)
+  arrangement_graph.verify_odd_even_decomposition(undirected, decomposition)
+  |> should.equal(Ok(Nil))
+}
+
+pub fn odd_even_decomposition_handles_loop_from_two_open_subpaths_test() {
+  let first =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(2.0, 0.0),
+      svg_path.Point(2.0, 2.0),
+    ])
+  let second =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(2.0, 2.0),
+      svg_path.Point(0.0, 2.0),
+      svg_path.Point(0.0, 0.0),
+    ])
+  let assert Ok(graph) =
+    build_graph([first, second], tolerance:, minimum_chord:)
+  let undirected = arrangement_graph.to_undirected(graph)
+  let assert Ok(decomposition) =
+    arrangement_graph.odd_even_decomposition(undirected)
+  let arrangement_graph.OddEvenDecomposition(
+    odd_skeleton: arrangement_graph.UndirectedArrangementGraph(
+      edges: odd_edges,
+      ..,
+    ),
+    even_graph: arrangement_graph.UndirectedArrangementGraph(
+      edges: even_edges,
+      ..,
+    ),
+  ) = decomposition
+
+  list.length(odd_edges) |> should.equal(0)
+  list.length(even_edges) |> should.equal(4)
+}
+
+pub fn undirected_nested_contours_trace_closed_square_test() {
+  let assert Ok(graph) =
+    build_graph([square(0.0, 0.0, 10.0)], tolerance:, minimum_chord:)
+  let undirected = arrangement_graph.to_undirected(graph)
+  let assert Ok(contours) =
+    arrangement_graph.undirected_nested_contours(undirected, tolerance:)
+
+  list.length(contours) |> should.equal(1)
+  let assert [contour] = contours
+  svg_path.subpath_is_closed(contour) |> should.equal(True)
+}
+
+pub fn undirected_nested_contours_trace_loop_after_odd_skeleton_removal_test() {
+  let subpath =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(-1.0, 0.0),
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(2.0, 0.0),
+      svg_path.Point(2.0, 2.0),
+      svg_path.Point(0.0, 2.0),
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(3.0, 0.0),
+    ])
+  let assert Ok(graph) = build_graph([subpath], tolerance:, minimum_chord:)
+  let undirected = arrangement_graph.to_undirected(graph)
+  let assert Ok(decomposition) =
+    arrangement_graph.odd_even_decomposition(undirected)
+  let arrangement_graph.OddEvenDecomposition(even_graph:, ..) = decomposition
+  let assert Ok(contours) =
+    arrangement_graph.undirected_nested_contours(even_graph, tolerance:)
+
+  list.length(contours) |> should.equal(1)
+}
+
+pub fn undirected_nested_contours_trace_loop_from_two_open_subpaths_test() {
+  let first =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(2.0, 0.0),
+      svg_path.Point(2.0, 2.0),
+    ])
+  let second =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(2.0, 2.0),
+      svg_path.Point(0.0, 2.0),
+      svg_path.Point(0.0, 0.0),
+    ])
+  let assert Ok(graph) =
+    build_graph([first, second], tolerance:, minimum_chord:)
+  let undirected = arrangement_graph.to_undirected(graph)
+  let assert Ok(contours) =
+    arrangement_graph.undirected_nested_contours(undirected, tolerance:)
+
+  list.length(contours) |> should.equal(1)
+}
+
+pub fn undirected_nested_contours_trace_disjoint_closed_squares_test() {
+  let assert Ok(graph) =
+    build_graph(
+      [square(0.0, 0.0, 10.0), square(20.0, 0.0, 10.0)],
+      tolerance:,
+      minimum_chord:,
+    )
+  let undirected = arrangement_graph.to_undirected(graph)
+  let assert Ok(contours) =
+    arrangement_graph.undirected_nested_contours(undirected, tolerance:)
+
+  list.length(contours) |> should.equal(2)
 }
 
 fn closed_subpath(segments: List(svg_path.Segment)) -> svg_path.Subpath {

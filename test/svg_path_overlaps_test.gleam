@@ -52,7 +52,45 @@ pub fn semantic_arc_overlap_survives_nine_decimal_tolerance_test() {
       options: intersections.IntersectionOptions(
         tolerance: strict_tolerance,
         max_depth: 48,
-        parameter_snap: intersections.NoParameterSnap,
+        parameter_snap: intersections.DecimalParameterSnap(exponent: 7),
+      ),
+    )
+    == Error(svg_path.OverlappingSegments)
+}
+
+pub fn near_coincident_line_overlap_survives_endpoint_parameter_dust_test() {
+  let strict_tolerance = 0.000000001
+  let left =
+    svg_path.Line(
+      start: svg_path.Point(17.443943950536976, 4.1250002),
+      end: svg_path.Point(17.044995, 4.1250002),
+    )
+  let right =
+    svg_path.Line(
+      start: svg_path.Point(17.443943950536976, 4.125000200000001),
+      end: svg_path.Point(17.044995, 4.1250002),
+    )
+
+  let assert Ok([overlap]) =
+    overlaps.segment_with_samples(
+      left,
+      right,
+      tolerance: strict_tolerance,
+      samples: 7,
+    )
+  let overlaps.SegmentOverlap(left_from:, left_to:, right_from:, right_to:, ..) =
+    overlap
+  assert near(left_from, 0.0)
+  assert near(left_to, 1.0)
+  assert near(right_from, 0.0)
+  assert near(right_to, 1.0)
+  assert intersections.segment_with(
+      left,
+      right,
+      options: intersections.IntersectionOptions(
+        tolerance: strict_tolerance,
+        max_depth: 48,
+        parameter_snap: intersections.DecimalParameterSnap(exponent: 7),
       ),
     )
     == Error(svg_path.OverlappingSegments)
@@ -87,7 +125,7 @@ fn assert_overlap_contract(
     intersections.IntersectionOptions(
       tolerance:,
       max_depth: 48,
-      parameter_snap: intersections.NoParameterSnap,
+      parameter_snap: intersections.DecimalParameterSnap(exponent: 7),
     )
   let assert Ok(found_overlaps) =
     overlaps.segment_with(left, right, tolerance: options.tolerance)

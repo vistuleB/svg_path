@@ -15,17 +15,19 @@
 //// assembles these representations directly is responsible for all documented
 //// invariants.
 
+import gleam/float
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/order
 import gleam/result
 import svg_path
-import svg_path/effects
+import svg_path/internal/number
 import svg_path/intersections
 import svg_path/overlaps
 import svg_path/point
 import svg_path/smallest_enclosing_circle
+import svg_path/winding_field
 
 /// One endpoint cluster in the embedded arrangement.
 ///
@@ -48,7 +50,7 @@ pub type ArrangementVertex {
 /// One directed geometric edge of an arrangement.
 ///
 /// The stored segment runs from `start_vertex` to `end_vertex`. Its endpoints
-/// remain the normalized source endpoints and are within the build tolerance
+/// remain the source endpoints and are within the build tolerance
 /// of the corresponding vertex points; construction does not move the segment
 /// to the cluster centers. The segment's chord is at least `minimum_chord`.
 ///
@@ -61,6 +63,8 @@ pub type ArrangementEdge {
     id: Int,
     /// The atomic segment, oriented from `start_vertex` to `end_vertex`.
     segment: svg_path.Segment,
+    /// Exact axis-aligned bounding box of `segment`.
+    bounds: svg_path.BoundingBox,
     /// Identifier of the segment's start endpoint cluster.
     start_vertex: Int,
     /// Identifier of the segment's end endpoint cluster.
@@ -72,7 +76,7 @@ pub type ArrangementEdge {
   )
 }
 
-/// A possibly disconnected planar arrangement of normalized path segments.
+/// A possibly disconnected planar arrangement of source path segments.
 ///
 /// Graphs returned by `build` have unique vertex and edge identifiers. Every
 /// edge refers to two existing, distinct vertices, and every vertex is incident
@@ -94,32 +98,128 @@ pub type ArrangementGraph {
   )
 }
 
-/// An arrangement graph and the normalized source paths from which it was
-/// constructed.
+/// One undirected edge of an arrangement graph.
 ///
-/// `normalized_paths` has the same path order and count as the input to
-/// `build`; subpath order is also preserved within each path. Normalization
-/// replaces line-degenerate segment sequences before refinement and may change
-/// segment decomposition. These are the official source paths corresponding to
-/// the graph and should be used for later winding classification.
+/// This forgets source traversal direction and keeps only total multiplicity.
+/// It is intended for parity/topology operations where forward and reverse
+/// directional multiplicities should not be interpreted.
+pub type UndirectedArrangementEdge {
+  UndirectedArrangementEdge(
+    /// The corresponding arrangement edge identifier.
+    id: Int,
+    /// The edge geometry, with the same stored orientation as the source edge.
+    segment: svg_path.Segment,
+    /// Identifier of one endpoint cluster.
+    start_vertex: Int,
+    /// Identifier of the other endpoint cluster.
+    end_vertex: Int,
+    /// Total undirected multiplicity of this edge.
+    multiplicity: Int,
+  )
+}
+
+/// An arrangement graph with edge orientation forgotten.
 ///
-/// `segment_images` has one entry for every segment in `normalized_paths`, in
-/// path, subpath, and segment order. Each image lists the atomic graph edges in
-/// that segment's traversal order. A reference's `reversed` flag is true when
-/// that traversal opposes the edge's stored direction. An image can be empty
-/// when every refined piece is shorter than `minimum_chord`.
+/// `vertices` are copied from the directed arrangement. Each edge multiplicity
+/// is the sum of forward and reverse multiplicities from the source graph.
+pub type UndirectedArrangementGraph {
+  UndirectedArrangementGraph(
+    vertices: List(ArrangementVertex),
+    edges: List(UndirectedArrangementEdge),
+  )
+}
+
+/// Decomposition of an undirected arrangement into odd and even parts.
+///
+/// `odd_skeleton` is an acyclic subgraph whose odd-degree vertices are exactly
+/// the odd-degree vertices of the original graph. `even_graph` is the remaining
+/// graph after subtracting that skeleton.
+pub type OddEvenDecomposition {
+  OddEvenDecomposition(
+    odd_skeleton: UndirectedArrangementGraph,
+    even_graph: UndirectedArrangementGraph,
+  )
+}
+
+/// An arrangement graph and source-segment images for the paths from which it
+/// was constructed.
+///
+/// `segment_images` has one entry for every input segment, in path, subpath,
+/// and segment order. Each image lists the atomic graph edges in that segment's
+/// traversal order. A reference's `reversed` flag is true when that traversal
+/// opposes the edge's stored direction. An image can be empty when every
+/// refined piece is shorter than `minimum_chord`.
 pub type ArrangementGraphBuild {
   ArrangementGraphBuild(
-    /// The arrangement produced from `normalized_paths`.
+    /// The arrangement produced from the input paths.
     graph: ArrangementGraph,
-    /// Normalized sources, retaining the input path and subpath order.
-    normalized_paths: List(svg_path.Path),
-    /// Ordered graph-edge images of every normalized source segment.
+    /// Ordered graph-edge images of every source segment.
     segment_images: List(ArrangementSegmentImage),
   )
 }
 
-/// One graph edge traversed as part of a normalized source segment.
+/// One atomic graph edge in the image of one input segment.
+///
+/// `ta` and `tb` are parameters on the input segment. `reversed` records
+/// whether the input traversal opposes the stored graph edge orientation.
+/// `own` is true for the first input segment occurrence assigned to the edge.
+@internal
+pub type ArrangementSegmentEdgeImage {
+  ArrangementSegmentEdgeImage(
+    ta: Float,
+    tb: Float,
+    edge_id: Int,
+    reversed: Bool,
+    own: Bool,
+  )
+}
+
+/// The ordered atomic graph-edge image of one input segment.
+@internal
+pub type ArrangementSourceSegmentImage {
+  ArrangementSourceSegmentImage(
+    segment_index: Int,
+    edges: List(ArrangementSegmentEdgeImage),
+  )
+}
+
+/// One input segment occurrence corresponding to an arrangement edge.
+///
+/// `ta <= tb` are parameters on the input segment. `reversed` records whether
+/// the input segment traversal opposes the stored graph edge orientation.
+@internal
+pub type ArrangementEdgeSourceImage {
+  ArrangementEdgeSourceImage(
+    segment_index: Int,
+    ta: Float,
+    tb: Float,
+    reversed: Bool,
+  )
+}
+
+/// The input-segment occurrences corresponding to one arrangement edge.
+///
+/// The first source is the first occurrence found in source order and is the
+/// provisional owner used by `ArrangementSegmentEdgeImage.own`.
+@internal
+pub type ArrangementEdgeImage {
+  ArrangementEdgeImage(edge_id: Int, sources: List(ArrangementEdgeSourceImage))
+}
+
+/// Arrangement graph build result for direct segment-list construction.
+///
+/// This path does not normalize or rewrite caller input before construction.
+@internal
+pub type ArrangementSegmentBuild {
+  ArrangementSegmentBuild(
+    graph: ArrangementGraph,
+    segments: List(svg_path.Segment),
+    segment_images: List(ArrangementSourceSegmentImage),
+    edge_images: List(ArrangementEdgeImage),
+  )
+}
+
+/// One graph edge traversed as part of a source segment.
 ///
 /// `edge_id` identifies an edge in the containing build's graph. `reversed`
 /// records whether the source traversal opposes that edge's stored segment.
@@ -127,9 +227,9 @@ pub type DirectedEdgeReference {
   DirectedEdgeReference(edge_id: Int, reversed: Bool)
 }
 
-/// The ordered atomic graph edges produced from one normalized source segment.
+/// The ordered atomic graph edges produced from one source segment.
 ///
-/// The three indices address the segment in the build's `normalized_paths`.
+/// The three indices address the segment in the original input paths.
 pub type ArrangementSegmentImage {
   ArrangementSegmentImage(
     path_index: Int,
@@ -195,6 +295,15 @@ pub type Error {
     distance_squared: Float,
     tolerance_squared: Float,
   )
+
+  /// An undirected decomposition does not reconstruct the source graph.
+  UndirectedMultiplicityMismatch(edge: Int)
+
+  /// An odd skeleton contains a cycle.
+  OddSkeletonCycle(edge: Int)
+
+  /// An even undirected contour could not be traced into closed loops.
+  UndirectedTraceFailed(vertex: Int)
 }
 
 /// Resolve one segment image to graph edges and traversal directions.
@@ -213,6 +322,1502 @@ pub fn segment_image_edges(
     }
   })
   |> result.all
+}
+
+/// Forget edge orientation and keep only total edge multiplicity.
+pub fn to_undirected(graph: ArrangementGraph) -> UndirectedArrangementGraph {
+  let ArrangementGraph(vertices:, edges:) = graph
+  UndirectedArrangementGraph(
+    vertices:,
+    edges: list.map(edges, fn(edge) {
+      let ArrangementEdge(
+        id:,
+        segment:,
+        start_vertex:,
+        end_vertex:,
+        forward_multiplicity:,
+        reverse_multiplicity:,
+        ..,
+      ) = edge
+      UndirectedArrangementEdge(
+        id:,
+        segment:,
+        start_vertex:,
+        end_vertex:,
+        multiplicity: forward_multiplicity + reverse_multiplicity,
+      )
+    }),
+  )
+}
+
+/// Decompose an undirected arrangement into an acyclic odd skeleton and even
+/// remainder.
+///
+/// The odd skeleton is computed by greedily pairing odd vertices along shortest
+/// undirected paths.
+pub fn odd_even_decomposition(
+  graph: UndirectedArrangementGraph,
+) -> Result(OddEvenDecomposition, Error) {
+  let UndirectedArrangementGraph(vertices:, edges:) = graph
+  use _ <- result.try(validate_undirected_edges(edges))
+  let odd_vertices = undirected_odd_vertices(vertices, edges, odd: [])
+  use skeleton_counts <- result.try(
+    greedy_shortest_odd_skeleton_edge_counts(edges, odd_vertices, selected: []),
+  )
+  let odd_edges = apply_undirected_edge_counts(edges, skeleton_counts)
+  use even_edges <- result.try(
+    subtract_undirected_edge_counts(edges, skeleton_counts, remaining: []),
+  )
+  let decomposition =
+    OddEvenDecomposition(
+      odd_skeleton: UndirectedArrangementGraph(vertices:, edges: odd_edges),
+      even_graph: UndirectedArrangementGraph(vertices:, edges: even_edges),
+    )
+  use _ <- result.try(verify_odd_even_decomposition(graph, decomposition))
+  Ok(decomposition)
+}
+
+/// Verify that an odd/even decomposition reconstructs its source graph and
+/// satisfies the parity contracts.
+pub fn verify_odd_even_decomposition(
+  original: UndirectedArrangementGraph,
+  decomposition: OddEvenDecomposition,
+) -> Result(Nil, Error) {
+  let UndirectedArrangementGraph(vertices:, edges: original_edges) = original
+  let OddEvenDecomposition(
+    odd_skeleton: UndirectedArrangementGraph(edges: odd_edges, ..),
+    even_graph: UndirectedArrangementGraph(edges: even_edges, ..),
+  ) = decomposition
+  use _ <- result.try(validate_undirected_edges(original_edges))
+  use _ <- result.try(validate_undirected_edges(odd_edges))
+  use _ <- result.try(validate_undirected_edges(even_edges))
+  use _ <- result.try(verify_undirected_sum(
+    original_edges,
+    odd_edges,
+    even_edges,
+  ))
+  use _ <- result.try(verify_odd_skeleton_acyclic(odd_edges))
+  use _ <- result.try(verify_same_odd_vertices(
+    vertices,
+    original_edges,
+    odd_edges,
+  ))
+  verify_even_vertices(vertices, even_edges)
+}
+
+/// Trace an even undirected arrangement into nested closed contour subpaths.
+///
+/// Every retained edge unit is traced once. At each vertex, the next edge is
+/// chosen by cyclic ray order, matching the filled-sector traversal used by
+/// CSG boundary reconstruction. The input must have even weighted degree at
+/// every vertex.
+pub fn undirected_nested_contours(
+  graph: UndirectedArrangementGraph,
+  tolerance tolerance: Float,
+) -> Result(List(svg_path.Subpath), Error) {
+  let UndirectedArrangementGraph(vertices:, edges:) = graph
+  use _ <- result.try(verify_even_vertices(vertices, edges))
+  let directed = directed_contour_edges(edges, next_id: 0, directed: [])
+  trace_contour_edges(directed, tolerance, contours: [])
+}
+
+/// Reconstruct nested contours from a directed arrangement and source path.
+///
+/// This preserves signed nonzero winding levels by emitting one contour layer
+/// for each integer winding threshold, then tracing those threshold edges by
+/// cyclic filled-sector order. It is the arrangement-level primitive used by
+/// CSG `nested_contours`.
+@internal
+pub fn nested_contours_from_graph(
+  graph: ArrangementGraph,
+  path path: svg_path.Path,
+  tolerance tolerance: Float,
+) -> Result(List(svg_path.Subpath), Error) {
+  let ArrangementGraph(edges:, ..) = graph
+  use boundary <- result.try(
+    classify_nested_contour_edges(
+      edges,
+      path,
+      tolerance,
+      next_id: 0,
+      boundary: [],
+    ),
+  )
+  use links <- result.try(pair_nested_contour_sectors(boundary, links: []))
+  trace_nested_contour_edges(boundary, links, tolerance, subpaths: [])
+}
+
+type ContourEdge {
+  ContourEdge(
+    id: Int,
+    segment: svg_path.Segment,
+    start_vertex: Int,
+    end_vertex: Int,
+  )
+}
+
+type OrientedContourEdge {
+  OrientedContourEdge(edge: ContourEdge, reversed: Bool)
+}
+
+type ContourRay {
+  ContourRay(edge_id: Int, starts: Bool, angle: Float)
+}
+
+type EdgeCount {
+  EdgeCount(edge_id: Int, count: Int)
+}
+
+type NestedContourEdge {
+  NestedContourEdge(
+    id: Int,
+    layer: Int,
+    segment: svg_path.Segment,
+    start_vertex: Int,
+    end_vertex: Int,
+  )
+}
+
+type NestedContourLink {
+  NestedContourLink(edge_id: Int, successor_id: Int)
+}
+
+type NestedContourRay {
+  NestedContourRay(edge_id: Int, starts: Bool, angle: Float)
+}
+
+type SearchPath {
+  SearchPath(vertex: Int, edges: List(Int), visited: List(Int))
+}
+
+type Component {
+  Component(vertices: List(Int))
+}
+
+fn validate_undirected_edges(
+  edges: List(UndirectedArrangementEdge),
+) -> Result(Nil, Error) {
+  case edges {
+    [] -> Ok(Nil)
+    [
+      UndirectedArrangementEdge(
+        id:,
+        start_vertex:,
+        end_vertex:,
+        multiplicity:,
+        ..,
+      ),
+      ..rest
+    ] -> {
+      case multiplicity < 0 {
+        True -> Error(InvalidMultiplicity(edge: id))
+        False ->
+          case start_vertex == end_vertex {
+            True -> Error(LoopEdge(vertex: start_vertex))
+            False -> validate_undirected_edges(rest)
+          }
+      }
+    }
+  }
+}
+
+fn undirected_odd_vertices(
+  vertices: List(ArrangementVertex),
+  edges: List(UndirectedArrangementEdge),
+  odd odd: List(Int),
+) -> List(Int) {
+  case vertices {
+    [] -> list.reverse(odd)
+    [ArrangementVertex(id:, ..), ..rest] -> {
+      let degree = undirected_degree(edges, id, total: 0)
+      let odd = case int.modulo(degree, 2) {
+        Ok(1) -> [id, ..odd]
+        _ -> odd
+      }
+      undirected_odd_vertices(rest, edges, odd:)
+    }
+  }
+}
+
+fn undirected_degree(
+  edges: List(UndirectedArrangementEdge),
+  vertex: Int,
+  total total: Int,
+) -> Int {
+  case edges {
+    [] -> total
+    [
+      UndirectedArrangementEdge(start_vertex:, end_vertex:, multiplicity:, ..),
+      ..rest
+    ] -> {
+      let contribution = case start_vertex == vertex || end_vertex == vertex {
+        True -> multiplicity
+        False -> 0
+      }
+      undirected_degree(rest, vertex, total: total + contribution)
+    }
+  }
+}
+
+fn greedy_shortest_odd_skeleton_edge_counts(
+  edges: List(UndirectedArrangementEdge),
+  odd_vertices: List(Int),
+  selected selected: List(EdgeCount),
+) -> Result(List(EdgeCount), Error) {
+  case odd_vertices {
+    [] -> Ok(selected)
+    [_] -> Ok(selected)
+    [first, ..rest] -> {
+      use path <- result.try(shortest_path_to_any_odd(
+        edges,
+        from: first,
+        targets: rest,
+      ))
+      let paired = path_end_vertex(first, path, edges)
+      let odd_vertices = list.filter(rest, fn(vertex) { vertex != paired })
+      greedy_shortest_odd_skeleton_edge_counts(
+        edges,
+        odd_vertices,
+        selected: increment_edge_counts(selected, path),
+      )
+    }
+  }
+}
+
+fn shortest_path_to_any_odd(
+  edges: List(UndirectedArrangementEdge),
+  from start: Int,
+  targets targets: List(Int),
+) -> Result(List(Int), Error) {
+  breadth_first_odd_path(
+    edges,
+    queue: [SearchPath(vertex: start, edges: [], visited: [start])],
+    targets:,
+  )
+}
+
+fn breadth_first_odd_path(
+  edges: List(UndirectedArrangementEdge),
+  queue queue: List(SearchPath),
+  targets targets: List(Int),
+) -> Result(List(Int), Error) {
+  case queue {
+    [] -> Error(MissingVertex(vertex: -1))
+    [SearchPath(vertex:, edges: path_edges, visited:), ..rest] -> {
+      case path_edges != [] && list.contains(targets, vertex) {
+        True -> Ok(list.reverse(path_edges))
+        False -> {
+          let expanded =
+            incident_search_paths(edges, vertex, path_edges, visited, paths: [])
+          breadth_first_odd_path(
+            edges,
+            queue: list.append(rest, expanded),
+            targets:,
+          )
+        }
+      }
+    }
+  }
+}
+
+fn incident_search_paths(
+  edges: List(UndirectedArrangementEdge),
+  vertex: Int,
+  path_edges: List(Int),
+  visited: List(Int),
+  paths paths: List(SearchPath),
+) -> List(SearchPath) {
+  case edges {
+    [] -> list.reverse(paths)
+    [
+      UndirectedArrangementEdge(
+        id:,
+        start_vertex:,
+        end_vertex:,
+        multiplicity:,
+        ..,
+      ),
+      ..rest
+    ] -> {
+      let paths = case multiplicity <= 0 {
+        True -> paths
+        False -> {
+          case other_endpoint(vertex, start_vertex, end_vertex) {
+            Error(Nil) -> paths
+            Ok(other) ->
+              case list.contains(visited, other) {
+                True -> paths
+                False -> [
+                  SearchPath(vertex: other, edges: [id, ..path_edges], visited: [
+                    other,
+                    ..visited
+                  ]),
+                  ..paths
+                ]
+              }
+          }
+        }
+      }
+      incident_search_paths(rest, vertex, path_edges, visited, paths:)
+    }
+  }
+}
+
+fn other_endpoint(
+  vertex: Int,
+  start_vertex: Int,
+  end_vertex: Int,
+) -> Result(Int, Nil) {
+  case start_vertex == vertex, end_vertex == vertex {
+    True, _ -> Ok(end_vertex)
+    _, True -> Ok(start_vertex)
+    False, False -> Error(Nil)
+  }
+}
+
+fn path_end_vertex(
+  start: Int,
+  path: List(Int),
+  edges: List(UndirectedArrangementEdge),
+) -> Int {
+  path_end_vertex_loop(path, edges, current: start)
+}
+
+fn path_end_vertex_loop(
+  path: List(Int),
+  edges: List(UndirectedArrangementEdge),
+  current current: Int,
+) -> Int {
+  case path {
+    [] -> current
+    [edge_id, ..rest] -> {
+      let next = case undirected_edge_by_id(edges, edge_id) {
+        Ok(UndirectedArrangementEdge(start_vertex:, end_vertex:, ..)) ->
+          case start_vertex == current {
+            True -> end_vertex
+            False -> start_vertex
+          }
+        Error(Nil) -> current
+      }
+      path_end_vertex_loop(rest, edges, current: next)
+    }
+  }
+}
+
+fn undirected_edge_by_id(
+  edges: List(UndirectedArrangementEdge),
+  edge_id: Int,
+) -> Result(UndirectedArrangementEdge, Nil) {
+  case edges {
+    [] -> Error(Nil)
+    [first, ..rest] -> {
+      case first.id == edge_id {
+        True -> Ok(first)
+        False -> undirected_edge_by_id(rest, edge_id)
+      }
+    }
+  }
+}
+
+fn increment_edge_counts(
+  counts: List(EdgeCount),
+  edge_ids: List(Int),
+) -> List(EdgeCount) {
+  case edge_ids {
+    [] -> counts
+    [first, ..rest] ->
+      increment_edge_counts(increment_edge_count(counts, first), rest)
+  }
+}
+
+fn increment_edge_count(
+  counts: List(EdgeCount),
+  edge_id: Int,
+) -> List(EdgeCount) {
+  case counts {
+    [] -> [EdgeCount(edge_id:, count: 1)]
+    [EdgeCount(edge_id: first_id, count:), ..rest] -> {
+      case first_id == edge_id {
+        True -> [EdgeCount(edge_id:, count: count + 1), ..rest]
+        False -> [
+          EdgeCount(edge_id: first_id, count:),
+          ..increment_edge_count(rest, edge_id)
+        ]
+      }
+    }
+  }
+}
+
+fn edge_count(counts: List(EdgeCount), edge_id: Int) -> Int {
+  case counts {
+    [] -> 0
+    [EdgeCount(edge_id: candidate, count:), ..rest] -> {
+      case candidate == edge_id {
+        True -> count
+        False -> edge_count(rest, edge_id)
+      }
+    }
+  }
+}
+
+fn apply_undirected_edge_counts(
+  edges: List(UndirectedArrangementEdge),
+  counts: List(EdgeCount),
+) -> List(UndirectedArrangementEdge) {
+  apply_undirected_edge_counts_loop(edges, counts, converted: [])
+}
+
+fn apply_undirected_edge_counts_loop(
+  edges: List(UndirectedArrangementEdge),
+  counts: List(EdgeCount),
+  converted converted: List(UndirectedArrangementEdge),
+) -> List(UndirectedArrangementEdge) {
+  case edges {
+    [] -> list.reverse(converted)
+    [edge, ..rest] -> {
+      let UndirectedArrangementEdge(id:, ..) = edge
+      let count = edge_count(counts, id)
+      let converted = case count > 0 {
+        True -> [
+          UndirectedArrangementEdge(..edge, multiplicity: count),
+          ..converted
+        ]
+        False -> converted
+      }
+      apply_undirected_edge_counts_loop(rest, counts, converted:)
+    }
+  }
+}
+
+fn subtract_undirected_edge_counts(
+  edges: List(UndirectedArrangementEdge),
+  counts: List(EdgeCount),
+  remaining remaining: List(UndirectedArrangementEdge),
+) -> Result(List(UndirectedArrangementEdge), Error) {
+  case edges {
+    [] -> Ok(list.reverse(remaining))
+    [edge, ..rest] -> {
+      let UndirectedArrangementEdge(id:, multiplicity:, ..) = edge
+      let count = edge_count(counts, id)
+      case count > multiplicity {
+        True -> Error(UndirectedMultiplicityMismatch(edge: id))
+        False -> {
+          let remaining_multiplicity = multiplicity - count
+          let remaining = case remaining_multiplicity > 0 {
+            True -> [
+              UndirectedArrangementEdge(
+                ..edge,
+                multiplicity: remaining_multiplicity,
+              ),
+              ..remaining
+            ]
+            False -> remaining
+          }
+          subtract_undirected_edge_counts(rest, counts, remaining:)
+        }
+      }
+    }
+  }
+}
+
+fn verify_undirected_sum(
+  original: List(UndirectedArrangementEdge),
+  odd: List(UndirectedArrangementEdge),
+  even: List(UndirectedArrangementEdge),
+) -> Result(Nil, Error) {
+  case original {
+    [] -> Ok(Nil)
+    [UndirectedArrangementEdge(id:, multiplicity:, ..), ..rest] -> {
+      case
+        undirected_multiplicity_by_id(odd, id)
+        + undirected_multiplicity_by_id(even, id)
+        == multiplicity
+      {
+        True -> verify_undirected_sum(rest, odd, even)
+        False -> Error(UndirectedMultiplicityMismatch(edge: id))
+      }
+    }
+  }
+}
+
+fn undirected_multiplicity_by_id(
+  edges: List(UndirectedArrangementEdge),
+  edge_id: Int,
+) -> Int {
+  case edges {
+    [] -> 0
+    [UndirectedArrangementEdge(id:, multiplicity:, ..), ..rest] -> {
+      case id == edge_id {
+        True -> multiplicity
+        False -> undirected_multiplicity_by_id(rest, edge_id)
+      }
+    }
+  }
+}
+
+fn verify_odd_skeleton_acyclic(
+  edges: List(UndirectedArrangementEdge),
+) -> Result(Nil, Error) {
+  verify_odd_skeleton_acyclic_edges(edges, components: [])
+}
+
+fn verify_odd_skeleton_acyclic_edges(
+  edges: List(UndirectedArrangementEdge),
+  components components: List(Component),
+) -> Result(Nil, Error) {
+  case edges {
+    [] -> Ok(Nil)
+    [edge, ..rest] -> {
+      use components <- result.try(verify_odd_skeleton_edge_units(
+        edge,
+        edge.multiplicity,
+        components,
+      ))
+      verify_odd_skeleton_acyclic_edges(rest, components:)
+    }
+  }
+}
+
+fn verify_odd_skeleton_edge_units(
+  edge: UndirectedArrangementEdge,
+  count: Int,
+  components: List(Component),
+) -> Result(List(Component), Error) {
+  case count <= 0 {
+    True -> Ok(components)
+    False -> {
+      let UndirectedArrangementEdge(id:, start_vertex:, end_vertex:, ..) = edge
+      use components <- result.try(add_forest_edge(
+        components,
+        start_vertex,
+        end_vertex,
+        edge: id,
+      ))
+      verify_odd_skeleton_edge_units(edge, count - 1, components)
+    }
+  }
+}
+
+fn add_forest_edge(
+  components: List(Component),
+  a: Int,
+  b: Int,
+  edge edge_id: Int,
+) -> Result(List(Component), Error) {
+  let #(matches, others) = split_components_containing(components, a, b, [], [])
+  case matches {
+    [] -> Ok([Component(vertices: [a, b]), ..others])
+    [Component(vertices: vertices)] -> {
+      case list.contains(vertices, a) && list.contains(vertices, b) {
+        True -> Error(OddSkeletonCycle(edge: edge_id))
+        False ->
+          Ok([
+            Component(
+              vertices: add_unique_int(vertices, a) |> add_unique_int(b),
+            ),
+            ..others
+          ])
+      }
+    }
+    [first, second, ..rest] -> {
+      let Component(vertices: first_vertices) = first
+      let merged =
+        merge_components(
+          [second, ..rest],
+          vertices: add_unique_int(add_unique_int(first_vertices, a), b),
+        )
+      Ok([merged, ..others])
+    }
+  }
+}
+
+fn split_components_containing(
+  components: List(Component),
+  a: Int,
+  b: Int,
+  matches matches: List(Component),
+  others others: List(Component),
+) -> #(List(Component), List(Component)) {
+  case components {
+    [] -> #(matches, others)
+    [first, ..rest] -> {
+      let Component(vertices:) = first
+      case list.contains(vertices, a) || list.contains(vertices, b) {
+        True ->
+          split_components_containing(
+            rest,
+            a,
+            b,
+            matches: [first, ..matches],
+            others:,
+          )
+        False ->
+          split_components_containing(rest, a, b, matches:, others: [
+            first,
+            ..others
+          ])
+      }
+    }
+  }
+}
+
+fn merge_components(
+  components: List(Component),
+  vertices vertices: List(Int),
+) -> Component {
+  case components {
+    [] -> Component(vertices:)
+    [Component(vertices: first), ..rest] ->
+      merge_components(rest, vertices: add_unique_ints(vertices, first))
+  }
+}
+
+fn add_unique_ints(values: List(Int), added: List(Int)) -> List(Int) {
+  case added {
+    [] -> values
+    [first, ..rest] -> add_unique_ints(add_unique_int(values, first), rest)
+  }
+}
+
+fn add_unique_int(values: List(Int), value: Int) -> List(Int) {
+  case list.contains(values, value) {
+    True -> values
+    False -> [value, ..values]
+  }
+}
+
+fn verify_same_odd_vertices(
+  vertices: List(ArrangementVertex),
+  original: List(UndirectedArrangementEdge),
+  odd: List(UndirectedArrangementEdge),
+) -> Result(Nil, Error) {
+  case vertices {
+    [] -> Ok(Nil)
+    [ArrangementVertex(id:, ..), ..rest] -> {
+      let original_is_odd =
+        int.modulo(undirected_degree(original, id, total: 0), 2) == Ok(1)
+      let skeleton_is_odd =
+        int.modulo(undirected_degree(odd, id, total: 0), 2) == Ok(1)
+      case original_is_odd == skeleton_is_odd {
+        True -> verify_same_odd_vertices(rest, original, odd)
+        False ->
+          Error(OddWeightedDegree(
+            vertex: id,
+            degree: undirected_degree(odd, id, total: 0),
+          ))
+      }
+    }
+  }
+}
+
+fn verify_even_vertices(
+  vertices: List(ArrangementVertex),
+  edges: List(UndirectedArrangementEdge),
+) -> Result(Nil, Error) {
+  case vertices {
+    [] -> Ok(Nil)
+    [ArrangementVertex(id:, ..), ..rest] -> {
+      let degree = undirected_degree(edges, id, total: 0)
+      case int.modulo(degree, 2) {
+        Ok(0) -> verify_even_vertices(rest, edges)
+        _ -> Error(OddWeightedDegree(vertex: id, degree:))
+      }
+    }
+  }
+}
+
+fn directed_contour_edges(
+  edges: List(UndirectedArrangementEdge),
+  next_id next_id: Int,
+  directed directed: List(ContourEdge),
+) -> List(ContourEdge) {
+  case edges {
+    [] -> list.reverse(directed)
+    [
+      UndirectedArrangementEdge(
+        segment:,
+        start_vertex:,
+        end_vertex:,
+        multiplicity:,
+        ..,
+      ),
+      ..rest
+    ] -> {
+      let #(next_id, directed) =
+        add_directed_contour_edge_units(
+          segment,
+          start_vertex,
+          end_vertex,
+          multiplicity,
+          next_id,
+          directed,
+        )
+      directed_contour_edges(rest, next_id:, directed:)
+    }
+  }
+}
+
+fn add_directed_contour_edge_units(
+  segment: svg_path.Segment,
+  start_vertex: Int,
+  end_vertex: Int,
+  count: Int,
+  next_id: Int,
+  directed: List(ContourEdge),
+) -> #(Int, List(ContourEdge)) {
+  case count <= 0 {
+    True -> #(next_id, directed)
+    False ->
+      add_directed_contour_edge_units(
+        segment,
+        start_vertex,
+        end_vertex,
+        count - 1,
+        next_id + 1,
+        [
+          ContourEdge(id: next_id, segment:, start_vertex:, end_vertex:),
+          ..directed
+        ],
+      )
+  }
+}
+
+fn contour_successor(
+  edges: List(ContourEdge),
+  incoming_id: Int,
+  incoming_starts incoming_starts: Bool,
+  vertex vertex: Int,
+) -> Result(#(Int, Bool), Error) {
+  use rays <- result.try(collect_contour_rays(edges, vertex, rays: []))
+  let ordered = rays |> list.sort(by: compare_contour_rays)
+  use successor <- result.try(cyclic_contour_successor(
+    ordered,
+    incoming_id,
+    incoming_starts:,
+    first: list.first(ordered),
+    vertex:,
+  ))
+  let ContourRay(edge_id:, starts:, ..) = successor
+  Ok(#(edge_id, !starts))
+}
+
+fn collect_contour_rays(
+  edges: List(ContourEdge),
+  vertex: Int,
+  rays rays: List(ContourRay),
+) -> Result(List(ContourRay), Error) {
+  case edges {
+    [] -> Ok(rays)
+    [ContourEdge(id:, segment:, start_vertex:, end_vertex:), ..rest] -> {
+      use rays <- result.try(case start_vertex == vertex {
+        False -> Ok(rays)
+        True -> {
+          use directions <- result.try(
+            svg_path.segment_directions(segment, at: 0.0)
+            |> result.map_error(PathError),
+          )
+          use direction <- result.try(contour_direction(
+            directions.outgoing,
+            vertex:,
+          ))
+          Ok([
+            ContourRay(
+              edge_id: id,
+              starts: True,
+              angle: point.heading(direction),
+            ),
+            ..rays
+          ])
+        }
+      })
+      use rays <- result.try(case end_vertex == vertex {
+        False -> Ok(rays)
+        True -> {
+          use directions <- result.try(
+            svg_path.segment_directions(segment, at: 1.0)
+            |> result.map_error(PathError),
+          )
+          use direction <- result.try(contour_direction(
+            directions.incoming,
+            vertex:,
+          ))
+          Ok([
+            ContourRay(
+              edge_id: id,
+              starts: False,
+              angle: point.heading(point.negate(direction)),
+            ),
+            ..rays
+          ])
+        }
+      })
+      collect_contour_rays(rest, vertex, rays:)
+    }
+  }
+}
+
+fn contour_direction(
+  direction: Option(svg_path.Point),
+  vertex vertex: Int,
+) -> Result(svg_path.Point, Error) {
+  case direction {
+    Some(direction) -> Ok(direction)
+    None -> Error(UndirectedTraceFailed(vertex:))
+  }
+}
+
+fn compare_contour_rays(left: ContourRay, right: ContourRay) -> order.Order {
+  let ContourRay(angle: left_angle, ..) = left
+  let ContourRay(angle: right_angle, ..) = right
+  float_compare(left_angle, right_angle)
+}
+
+fn cyclic_contour_successor(
+  rays: List(ContourRay),
+  incoming_id: Int,
+  incoming_starts incoming_starts: Bool,
+  first first_ray: Result(ContourRay, Nil),
+  vertex vertex: Int,
+) -> Result(ContourRay, Error) {
+  case rays {
+    [] -> Error(UndirectedTraceFailed(vertex:))
+    [first, ..rest] -> {
+      let ContourRay(edge_id:, starts:, ..) = first
+      case edge_id == incoming_id && starts == incoming_starts {
+        True ->
+          case rest {
+            [next, ..] -> Ok(next)
+            [] ->
+              first_ray
+              |> result.map_error(fn(_) { UndirectedTraceFailed(vertex:) })
+          }
+        False ->
+          cyclic_contour_successor(
+            rest,
+            incoming_id,
+            incoming_starts:,
+            first: first_ray,
+            vertex:,
+          )
+      }
+    }
+  }
+}
+
+fn trace_contour_edges(
+  remaining: List(ContourEdge),
+  tolerance: Float,
+  contours contours: List(svg_path.Subpath),
+) -> Result(List(svg_path.Subpath), Error) {
+  case remaining {
+    [] -> Ok(list.reverse(contours))
+    [seed, ..rest] -> {
+      let seed = OrientedContourEdge(seed, reversed: False)
+      use traced <- result.try(trace_contour_cycle(
+        seed,
+        rest,
+        [seed],
+        list.length(remaining) + 1,
+      ))
+      let #(cycle, remaining) = traced
+      use simple_contours <- result.try(
+        cycle
+        |> list.map(oriented_contour_edge_segment)
+        |> split_contour_walk_at_repeated_vertices([], [])
+        |> contour_segment_lists_to_subpaths(tolerance, subpaths: []),
+      )
+      trace_contour_edges(
+        remaining,
+        tolerance,
+        contours: list.append(list.reverse(simple_contours), contours),
+      )
+    }
+  }
+}
+
+fn contour_segment_lists_to_subpaths(
+  contours: List(List(svg_path.Segment)),
+  tolerance: Float,
+  subpaths subpaths: List(svg_path.Subpath),
+) -> Result(List(svg_path.Subpath), Error) {
+  case contours {
+    [] -> Ok(list.reverse(subpaths))
+    [first, ..rest] -> {
+      use subpath <- result.try(
+        first
+        |> svg_path.subpath_with(policy: svg_path.WiggleWith(tolerance))
+        |> result.map_error(PathError),
+      )
+      use closed <- result.try(
+        svg_path.subpath_set_closed_with(
+          subpath,
+          closed: True,
+          policy: svg_path.WiggleWith(tolerance),
+        )
+        |> result.map_error(PathError),
+      )
+      contour_segment_lists_to_subpaths(rest, tolerance, subpaths: [
+        closed,
+        ..subpaths
+      ])
+    }
+  }
+}
+
+fn split_contour_walk_at_repeated_vertices(
+  segments: List(svg_path.Segment),
+  open open: List(svg_path.Segment),
+  contours contours: List(List(svg_path.Segment)),
+) -> List(List(svg_path.Segment)) {
+  case segments, open {
+    [], [] -> list.reverse(contours)
+    [], _ -> list.reverse([open, ..contours])
+    [first, ..rest], [] ->
+      split_contour_walk_at_repeated_vertices(rest, [first], contours:)
+    [first, ..rest], _ -> {
+      let end = svg_path.segment_end(first)
+      case split_open_contour_at_vertex(open, end) {
+        Ok(split) -> {
+          let #(prefix, suffix) = split
+          let contour = list.append(suffix, [first])
+          split_contour_walk_at_repeated_vertices(rest, prefix, contours: [
+            contour,
+            ..contours
+          ])
+        }
+        Error(Nil) ->
+          split_contour_walk_at_repeated_vertices(
+            rest,
+            list.append(open, [first]),
+            contours:,
+          )
+      }
+    }
+  }
+}
+
+fn split_open_contour_at_vertex(
+  segments: List(svg_path.Segment),
+  vertex: svg_path.Point,
+) -> Result(#(List(svg_path.Segment), List(svg_path.Segment)), Nil) {
+  split_open_contour_at_vertex_loop(
+    segments,
+    vertex,
+    prefix: [],
+    suffix_start: segments,
+  )
+}
+
+fn split_open_contour_at_vertex_loop(
+  segments: List(svg_path.Segment),
+  vertex: svg_path.Point,
+  prefix prefix: List(svg_path.Segment),
+  suffix_start suffix_start: List(svg_path.Segment),
+) -> Result(#(List(svg_path.Segment), List(svg_path.Segment)), Nil) {
+  case segments {
+    [] -> Error(Nil)
+    [first, ..rest] -> {
+      case svg_path.segment_start(first) == vertex {
+        True -> Ok(#(list.reverse(prefix), suffix_start))
+        False ->
+          split_open_contour_at_vertex_loop(
+            rest,
+            vertex,
+            prefix: [first, ..prefix],
+            suffix_start: rest,
+          )
+      }
+    }
+  }
+}
+
+fn trace_contour_cycle(
+  seed: OrientedContourEdge,
+  remaining: List(ContourEdge),
+  reversed_cycle: List(OrientedContourEdge),
+  limit: Int,
+) -> Result(#(List(OrientedContourEdge), List(ContourEdge)), Error) {
+  let OrientedContourEdge(edge: ContourEdge(id: seed_id, ..), ..) = seed
+  let assert [current, ..] = reversed_cycle
+  let OrientedContourEdge(edge: ContourEdge(id: current_id, ..), ..) = current
+  let OrientedContourEdge(reversed: current_reversed, ..) = current
+  let end_vertex = oriented_contour_edge_end_vertex(current)
+  let available = available_contour_edges(current, seed, remaining)
+  use successor <- result.try(contour_successor(
+    available,
+    current_id,
+    incoming_starts: current_reversed,
+    vertex: end_vertex,
+  ))
+  let #(successor_id, successor_reversed) = successor
+  case successor_id == seed_id {
+    True -> Ok(#(list.reverse(reversed_cycle), remaining))
+    False ->
+      case limit <= 0 {
+        True -> Error(UndirectedTraceFailed(vertex: end_vertex))
+        False -> {
+          use selected <- result.try(
+            take_contour_edge(
+              remaining,
+              successor_id,
+              vertex: end_vertex,
+              retained: [],
+            ),
+          )
+          let #(next, rest) = selected
+          let next =
+            OrientedContourEdge(edge: next, reversed: successor_reversed)
+          trace_contour_cycle(seed, rest, [next, ..reversed_cycle], limit - 1)
+        }
+      }
+  }
+}
+
+fn available_contour_edges(
+  current: OrientedContourEdge,
+  seed: OrientedContourEdge,
+  remaining: List(ContourEdge),
+) -> List(ContourEdge) {
+  let OrientedContourEdge(edge: current_edge, ..) = current
+  let OrientedContourEdge(edge: seed_edge, ..) = seed
+  case current_edge.id == seed_edge.id {
+    True -> [current_edge, ..remaining]
+    False -> [current_edge, seed_edge, ..remaining]
+  }
+}
+
+fn oriented_contour_edge_segment(
+  edge: OrientedContourEdge,
+) -> svg_path.Segment {
+  let OrientedContourEdge(edge: ContourEdge(segment:, ..), reversed:) = edge
+  case reversed {
+    True -> svg_path.segment_reverse(segment)
+    False -> segment
+  }
+}
+
+fn oriented_contour_edge_end_vertex(edge: OrientedContourEdge) -> Int {
+  let OrientedContourEdge(
+    edge: ContourEdge(start_vertex:, end_vertex:, ..),
+    reversed:,
+  ) = edge
+  case reversed {
+    True -> start_vertex
+    False -> end_vertex
+  }
+}
+
+fn take_contour_edge(
+  edges: List(ContourEdge),
+  id: Int,
+  vertex vertex: Int,
+  retained retained: List(ContourEdge),
+) -> Result(#(ContourEdge, List(ContourEdge)), Error) {
+  case edges {
+    [] -> Error(UndirectedTraceFailed(vertex:))
+    [first, ..rest] -> {
+      case first.id == id {
+        True -> Ok(#(first, list.append(list.reverse(retained), rest)))
+        False ->
+          take_contour_edge(rest, id, vertex:, retained: [first, ..retained])
+      }
+    }
+  }
+}
+
+fn classify_nested_contour_edges(
+  edges: List(ArrangementEdge),
+  path: svg_path.Path,
+  tolerance: Float,
+  next_id next_id: Int,
+  boundary boundary: List(NestedContourEdge),
+) -> Result(List(NestedContourEdge), Error) {
+  case edges {
+    [] -> Ok(list.reverse(boundary))
+    [edge, ..rest] -> {
+      let ArrangementEdge(segment:, ..) = edge
+      use levels <- result.try(
+        winding_field.segment_side_nonzero_levels(
+          segment,
+          within: path,
+          side_sampling_distance: tolerance *. 16.0,
+          options: svg_path.default_containment_options(),
+        )
+        |> result.map_error(PathError),
+      )
+      let #(left, right) = levels
+      let #(next_id, boundary) =
+        emit_nested_winding_thresholds(edge, left, right, 1, next_id, boundary)
+      classify_nested_contour_edges(rest, path, tolerance, next_id:, boundary:)
+    }
+  }
+}
+
+fn emit_nested_winding_thresholds(
+  edge: ArrangementEdge,
+  left: Int,
+  right: Int,
+  level: Int,
+  next_id: Int,
+  boundary: List(NestedContourEdge),
+) -> #(Int, List(NestedContourEdge)) {
+  let maximum = int_max(int.absolute_value(left), int.absolute_value(right))
+  case level > maximum {
+    True -> #(next_id, boundary)
+    False -> {
+      let #(next_id, boundary) =
+        emit_nested_threshold_edge(
+          edge,
+          left >= level,
+          right >= level,
+          level,
+          next_id,
+          boundary,
+        )
+      let #(next_id, boundary) =
+        emit_nested_threshold_edge(
+          edge,
+          left <= 0 - level,
+          right <= 0 - level,
+          0 - level,
+          next_id,
+          boundary,
+        )
+      emit_nested_winding_thresholds(
+        edge,
+        left,
+        right,
+        level + 1,
+        next_id,
+        boundary,
+      )
+    }
+  }
+}
+
+fn emit_nested_threshold_edge(
+  edge: ArrangementEdge,
+  active_left: Bool,
+  active_right: Bool,
+  layer: Int,
+  next_id: Int,
+  boundary: List(NestedContourEdge),
+) -> #(Int, List(NestedContourEdge)) {
+  let ArrangementEdge(segment:, start_vertex:, end_vertex:, ..) = edge
+  case active_left, active_right {
+    False, True -> #(next_id + 1, [
+      NestedContourEdge(
+        id: next_id,
+        layer:,
+        segment:,
+        start_vertex:,
+        end_vertex:,
+      ),
+      ..boundary
+    ])
+    True, False -> #(next_id + 1, [
+      NestedContourEdge(
+        id: next_id,
+        layer:,
+        segment: svg_path.segment_reverse(segment),
+        start_vertex: end_vertex,
+        end_vertex: start_vertex,
+      ),
+      ..boundary
+    ])
+    _, _ -> #(next_id, boundary)
+  }
+}
+
+fn pair_nested_contour_sectors(
+  edges: List(NestedContourEdge),
+  links links: List(NestedContourLink),
+) -> Result(List(NestedContourLink), Error) {
+  pair_nested_contour_sectors_loop(edges, edges, links)
+}
+
+fn pair_nested_contour_sectors_loop(
+  unpaired: List(NestedContourEdge),
+  all_edges: List(NestedContourEdge),
+  links: List(NestedContourLink),
+) -> Result(List(NestedContourLink), Error) {
+  case unpaired {
+    [] -> Ok(list.reverse(links))
+    [NestedContourEdge(id:, layer:, end_vertex:, ..), ..rest] -> {
+      use successor <- result.try(nested_contour_successor(
+        all_edges,
+        incoming_id: id,
+        vertex: end_vertex,
+        layer:,
+      ))
+      pair_nested_contour_sectors_loop(rest, all_edges, [
+        NestedContourLink(edge_id: id, successor_id: successor),
+        ..links
+      ])
+    }
+  }
+}
+
+fn nested_contour_successor(
+  edges: List(NestedContourEdge),
+  incoming_id incoming_id: Int,
+  vertex vertex: Int,
+  layer layer: Int,
+) -> Result(Int, Error) {
+  use rays <- result.try(
+    collect_nested_contour_rays(edges, vertex, layer, rays: []),
+  )
+  let ordered = rays |> list.sort(by: compare_nested_contour_rays)
+  use successor <- result.try(cyclic_nested_contour_successor(
+    ordered,
+    incoming_id,
+    first: list.first(ordered),
+    vertex:,
+  ))
+  let NestedContourRay(edge_id:, starts:, ..) = successor
+  case starts {
+    True -> Ok(edge_id)
+    False -> Error(UndirectedTraceFailed(vertex:))
+  }
+}
+
+fn collect_nested_contour_rays(
+  edges: List(NestedContourEdge),
+  vertex: Int,
+  layer: Int,
+  rays rays: List(NestedContourRay),
+) -> Result(List(NestedContourRay), Error) {
+  case edges {
+    [] -> Ok(rays)
+    [
+      NestedContourEdge(
+        id:,
+        layer: edge_layer,
+        segment:,
+        start_vertex:,
+        end_vertex:,
+      ),
+      ..rest
+    ] -> {
+      use rays <- result.try(
+        case edge_layer == layer && start_vertex == vertex {
+          False -> Ok(rays)
+          True -> {
+            use directions <- result.try(
+              svg_path.segment_directions(segment, at: 0.0)
+              |> result.map_error(PathError),
+            )
+            use direction <- result.try(contour_direction(
+              directions.outgoing,
+              vertex:,
+            ))
+            Ok([
+              NestedContourRay(
+                edge_id: id,
+                starts: True,
+                angle: point.heading(direction),
+              ),
+              ..rays
+            ])
+          }
+        },
+      )
+      use rays <- result.try(case edge_layer == layer && end_vertex == vertex {
+        False -> Ok(rays)
+        True -> {
+          use directions <- result.try(
+            svg_path.segment_directions(segment, at: 1.0)
+            |> result.map_error(PathError),
+          )
+          use direction <- result.try(contour_direction(
+            directions.incoming,
+            vertex:,
+          ))
+          Ok([
+            NestedContourRay(
+              edge_id: id,
+              starts: False,
+              angle: point.heading(point.negate(direction)),
+            ),
+            ..rays
+          ])
+        }
+      })
+      collect_nested_contour_rays(rest, vertex, layer, rays:)
+    }
+  }
+}
+
+fn compare_nested_contour_rays(
+  left: NestedContourRay,
+  right: NestedContourRay,
+) -> order.Order {
+  let NestedContourRay(angle: left_angle, ..) = left
+  let NestedContourRay(angle: right_angle, ..) = right
+  float_compare(left_angle, right_angle)
+}
+
+fn cyclic_nested_contour_successor(
+  rays: List(NestedContourRay),
+  incoming_id: Int,
+  first first_ray: Result(NestedContourRay, Nil),
+  vertex vertex: Int,
+) -> Result(NestedContourRay, Error) {
+  case rays {
+    [] -> Error(UndirectedTraceFailed(vertex:))
+    [first, ..rest] -> {
+      let NestedContourRay(edge_id:, starts:, ..) = first
+      case edge_id == incoming_id && !starts {
+        True ->
+          case rest {
+            [next, ..] -> Ok(next)
+            [] ->
+              first_ray
+              |> result.map_error(fn(_) { UndirectedTraceFailed(vertex:) })
+          }
+        False ->
+          cyclic_nested_contour_successor(
+            rest,
+            incoming_id,
+            first: first_ray,
+            vertex:,
+          )
+      }
+    }
+  }
+}
+
+fn trace_nested_contour_edges(
+  remaining: List(NestedContourEdge),
+  links: List(NestedContourLink),
+  tolerance: Float,
+  subpaths subpaths: List(svg_path.Subpath),
+) -> Result(List(svg_path.Subpath), Error) {
+  case remaining {
+    [] -> Ok(list.reverse(subpaths))
+    [seed, ..rest] -> {
+      let NestedContourEdge(layer:, ..) = seed
+      use traced <- result.try(trace_nested_contour_cycle(
+        seed,
+        rest,
+        links,
+        reversed_cycle: [seed],
+        limit: list.length(remaining) + 1,
+      ))
+      let #(cycle, remaining) = traced
+      use subpath <- result.try(
+        cycle
+        |> list.map(fn(edge) {
+          let NestedContourEdge(segment:, ..) = edge
+          segment
+        })
+        |> svg_path.subpath_with(policy: svg_path.WiggleWith(tolerance))
+        |> result.map_error(PathError),
+      )
+      use closed <- result.try(
+        svg_path.subpath_set_closed_with(
+          subpath,
+          closed: True,
+          policy: svg_path.WiggleWith(tolerance),
+        )
+        |> result.map_error(PathError),
+      )
+      let oriented = case layer > 0 {
+        True -> svg_path.subpath_reverse(closed)
+        False -> closed
+      }
+      trace_nested_contour_edges(remaining, links, tolerance, subpaths: [
+        oriented,
+        ..subpaths
+      ])
+    }
+  }
+}
+
+fn trace_nested_contour_cycle(
+  seed: NestedContourEdge,
+  remaining: List(NestedContourEdge),
+  links: List(NestedContourLink),
+  reversed_cycle reversed_cycle: List(NestedContourEdge),
+  limit limit: Int,
+) -> Result(#(List(NestedContourEdge), List(NestedContourEdge)), Error) {
+  let NestedContourEdge(id: seed_id, ..) = seed
+  let assert [current, ..] = reversed_cycle
+  let NestedContourEdge(id: current_id, end_vertex:, ..) = current
+  use successor_id <- result.try(nested_boundary_successor(
+    links,
+    edge_id: current_id,
+    vertex: end_vertex,
+  ))
+  case successor_id == seed_id {
+    True -> Ok(#(list.reverse(reversed_cycle), remaining))
+    False ->
+      case limit <= 0 {
+        True -> Error(UndirectedTraceFailed(vertex: end_vertex))
+        False -> {
+          use selected <- result.try(
+            take_nested_contour_edge(
+              remaining,
+              successor_id,
+              vertex: end_vertex,
+              retained: [],
+            ),
+          )
+          let #(next, rest) = selected
+          trace_nested_contour_cycle(
+            seed,
+            rest,
+            links,
+            reversed_cycle: [next, ..reversed_cycle],
+            limit: limit - 1,
+          )
+        }
+      }
+  }
+}
+
+fn nested_boundary_successor(
+  links: List(NestedContourLink),
+  edge_id edge_id: Int,
+  vertex vertex: Int,
+) -> Result(Int, Error) {
+  case links {
+    [] -> Error(UndirectedTraceFailed(vertex:))
+    [NestedContourLink(edge_id: candidate, successor_id:), ..rest] ->
+      case candidate == edge_id {
+        True -> Ok(successor_id)
+        False -> nested_boundary_successor(rest, edge_id:, vertex:)
+      }
+  }
+}
+
+fn take_nested_contour_edge(
+  edges: List(NestedContourEdge),
+  id: Int,
+  vertex vertex: Int,
+  retained retained: List(NestedContourEdge),
+) -> Result(#(NestedContourEdge, List(NestedContourEdge)), Error) {
+  case edges {
+    [] -> Error(UndirectedTraceFailed(vertex:))
+    [first, ..rest] -> {
+      let NestedContourEdge(id: candidate, ..) = first
+      case candidate == id {
+        True -> Ok(#(first, list.append(list.reverse(retained), rest)))
+        False ->
+          take_nested_contour_edge(rest, id, vertex:, retained: [
+            first,
+            ..retained
+          ])
+      }
+    }
+  }
+}
+
+fn int_max(left: Int, right: Int) -> Int {
+  case left > right {
+    True -> left
+    False -> right
+  }
 }
 
 type IndexedSegment {
@@ -237,6 +1842,15 @@ type AtomicPiece {
   )
 }
 
+type IncomingContext {
+  IncomingContext(
+    piece: AtomicPiece,
+    bounds: svg_path.BoundingBox,
+    start_match: Option(Int),
+    end_match: Option(Int),
+  )
+}
+
 type VertexAttachment {
   VertexAttachment(
     vertex: ArrangementVertex,
@@ -249,45 +1863,14 @@ type SegmentCut {
   SegmentCut(index: Int, t: Float)
 }
 
+type EndpointSide {
+  StartEndpoint
+  EndEndpoint
+}
+
 @internal
 pub fn empty() -> ArrangementGraph {
   ArrangementGraph(vertices: [], edges: [])
-}
-
-/// Replace line-degenerate segment sequences before arrangement construction.
-fn normalize_subpaths(
-  subpaths: List(svg_path.Subpath),
-  tolerance tolerance: Float,
-) -> Result(List(svg_path.Subpath), Error) {
-  case tolerance <=. 0.0 {
-    True -> Error(InvalidTolerance(tolerance))
-    False ->
-      subpaths
-      |> list.map(effects.normalize_degenerate_segments(_, tolerance:))
-      |> result.all
-      |> result.map_error(normalization_error)
-  }
-}
-
-fn normalization_error(error: effects.Error) -> Error {
-  case error {
-    effects.PathError(error) -> PathError(error)
-    _ -> InternalNormalizationError
-  }
-}
-
-fn normalize_paths(
-  paths: List(svg_path.Path),
-  tolerance: Float,
-) -> Result(List(svg_path.Path), Error) {
-  paths
-  |> list.map(fn(path) {
-    path
-    |> svg_path.path_subpaths
-    |> normalize_subpaths(tolerance:)
-    |> result.map(svg_path.Path)
-  })
-  |> result.all
 }
 
 /// Insert one atomic segment directly as an arrangement edge.
@@ -313,7 +1896,7 @@ pub fn insert_atomic_segment(
     False, False -> {
       let start = svg_path.segment_start(segment)
       let end = svg_path.segment_end(segment)
-      let chord = point.distance(start, end)
+      let chord = svg_path.segment_chord_length(segment)
       case chord <. minimum_chord {
         True -> Error(SegmentTooShort(chord:, minimum: minimum_chord))
         False -> {
@@ -339,53 +1922,1345 @@ pub fn insert_atomic_segment(
   }
 }
 
-/// Build an arrangement graph and return the normalized sources it represents.
+/// Build an arrangement graph from the input paths.
 ///
-/// Normalization retains path and subpath order. Construction then flattens the
-/// normalized paths into segments, refines them at point intersections and
-/// endpoint-bounded overlap boundaries, and inserts the resulting atomic
-/// segments. Its output geometry is independent of input processing order.
-/// Overlap detection uses endpoint projection, so semantically equal arcs need
-/// not have structurally equal SVG flags or matching original subdivision
-/// points.
+/// Construction flattens the input paths into their existing segments, then
+/// nodes them progressively at intersections and endpoint-bounded overlap
+/// boundaries.
 pub fn build(
   paths: List(svg_path.Path),
   tolerance tolerance: Float,
   minimum_chord minimum_chord: Float,
 ) -> Result(ArrangementGraphBuild, Error) {
-  use _ <- result.try(validate_options(tolerance, minimum_chord))
-  use normalized_paths <- result.try(normalize_paths(paths, tolerance))
-  let segments = index_normalized_paths(normalized_paths)
-  use atomic_segments <- result.try(refine_segments_to_atomic(
+  let indexed = index_paths(paths)
+  let segments =
+    list.map(indexed, fn(item) {
+      let IndexedSegment(segment:, ..) = item
+      segment
+    })
+  use build <- result.try(build_with(
     segments,
-    tolerance,
-    minimum_chord,
+    vertex_tolerance: tolerance,
+    minimum_chord:,
+    endpoint_sliver_tolerance: 0.0,
   ))
-  let segment_images = initial_segment_images(segments)
-  use #(graph, segment_images) <- result.try(insert_semantic_pieces_with_images(
-    atomic_segments,
-    empty(),
-    segment_images,
-    tolerance,
-    minimum_chord,
-  ))
-  Ok(ArrangementGraphBuild(graph:, normalized_paths:, segment_images:))
+  let ArrangementSegmentBuild(graph:, segment_images:, ..) = build
+  use segment_images <- result.try(
+    public_segment_images(indexed, segment_images, images: []),
+  )
+  Ok(ArrangementGraphBuild(graph:, segment_images:))
 }
 
-fn refine_segments_to_atomic(
-  indexed: List(IndexedSegment),
+/// Build an arrangement directly from a flat segment list.
+///
+/// This internal segment-list constructor does not normalize, split, or
+/// otherwise rewrite the caller's input before the progressive pass. The
+/// returned maps relate the original segment list to the final graph edges.
+@internal
+pub fn build_with(
+  segments: List(svg_path.Segment),
+  vertex_tolerance vertex_tolerance: Float,
+  minimum_chord minimum_chord: Float,
+  endpoint_sliver_tolerance endpoint_sliver_tolerance: Float,
+) -> Result(ArrangementSegmentBuild, Error) {
+  use _ <- result.try(validate_options(vertex_tolerance, minimum_chord))
+  use _ <- result.try(validate_endpoint_cut_tolerance(endpoint_sliver_tolerance))
+  let indexed = index_flat_segments(segments)
+  let pieces = indexed_segments_as_atomic_pieces(indexed, minimum_chord, [])
+  let images = initial_segment_images(indexed)
+  use #(graph, images) <- result.try(progressive_insert_pieces_loop(
+    pieces,
+    empty(),
+    images,
+    vertex_tolerance,
+    minimum_chord,
+    endpoint_sliver_tolerance,
+    iteration: 0,
+  ))
+  use segment_images <- result.try(source_segment_images(
+    segments,
+    graph,
+    images,
+    vertex_tolerance,
+  ))
+  let edge_images = edge_source_images(graph, segment_images)
+  use _ <- result.try(certify_segment_build(
+    graph,
+    segments,
+    segment_images,
+    edge_images,
+    vertex_tolerance,
+  ))
+  Ok(ArrangementSegmentBuild(graph:, segments:, segment_images:, edge_images:))
+}
+
+fn indexed_segments_as_atomic_pieces(
+  segments: List(IndexedSegment),
+  minimum_chord: Float,
+  pieces pieces: List(AtomicPiece),
+) -> List(AtomicPiece) {
+  case segments {
+    [] -> list.reverse(pieces)
+    [
+      IndexedSegment(
+        index:,
+        path_index:,
+        subpath_index:,
+        segment_index:,
+        segment:,
+      ),
+      ..rest
+    ] -> {
+      let pieces = case
+        svg_path.segment_chord_length(segment) >=. minimum_chord
+      {
+        True -> [
+          AtomicPiece(
+            source_index: index,
+            path_index:,
+            subpath_index:,
+            segment_index:,
+            source_from: 0.0,
+            source_to: 1.0,
+            segment:,
+          ),
+          ..pieces
+        ]
+        False -> pieces
+      }
+      indexed_segments_as_atomic_pieces(rest, minimum_chord, pieces:)
+    }
+  }
+}
+
+type ProgressivePieceResult {
+  ProgressivePieceInserted(
+    graph: ArrangementGraph,
+    images: List(ArrangementSegmentImage),
+  )
+  ProgressivePieceReplaced(
+    graph: ArrangementGraph,
+    images: List(ArrangementSegmentImage),
+    replacements: List(AtomicPiece),
+  )
+}
+
+fn progressive_insert_piece_direct(
+  context: IncomingContext,
+  graph: ArrangementGraph,
+  images: List(ArrangementSegmentImage),
   tolerance: Float,
   minimum_chord: Float,
-) -> Result(List(AtomicPiece), Error) {
-  use cuts <- result.try(collect_all_cuts(indexed, tolerance, []))
-  split_indexed_segments(indexed, cuts, tolerance, minimum_chord, [])
+) -> Result(ProgressivePieceResult, Error) {
+  let IncomingContext(piece:, ..) = context
+  let AtomicPiece(source_index:, ..) = piece
+  case
+    insert_corresponding_piece_with_ref(
+      context,
+      graph,
+      tolerance,
+      minimum_chord,
+    )
+  {
+    Ok(#(graph, edge_id, reversed)) -> {
+      let images =
+        append_segment_image_reference(
+          images,
+          source_index,
+          DirectedEdgeReference(edge_id:, reversed:),
+        )
+      Ok(ProgressivePieceInserted(graph, images))
+    }
+    Error(SegmentCollapsedToVertex(_vertex)) -> {
+      Ok(ProgressivePieceInserted(graph, images))
+    }
+    Error(SegmentTooShort(_chord, _minimum)) -> {
+      Ok(ProgressivePieceInserted(graph, images))
+    }
+    Error(error) -> Error(error)
+  }
 }
 
-fn index_normalized_paths(paths: List(svg_path.Path)) -> List(IndexedSegment) {
-  index_normalized_paths_loop(paths, path_index: 0, index: 0, indexed: [])
+fn progressive_insert_pieces_loop(
+  stack: List(AtomicPiece),
+  graph: ArrangementGraph,
+  images: List(ArrangementSegmentImage),
+  vertex_tolerance: Float,
+  minimum_chord: Float,
+  endpoint_sliver_tolerance: Float,
+  iteration iteration: Int,
+) -> Result(#(ArrangementGraph, List(ArrangementSegmentImage)), Error) {
+  case stack {
+    [] -> Ok(#(graph, images))
+    [first, ..rest] -> {
+      use vertex_split <- result.try(split_piece_at_existing_vertex(
+        first,
+        graph,
+        vertex_tolerance,
+        minimum_chord,
+      ))
+      case vertex_split {
+        Some(replacements) ->
+          progressive_insert_pieces_loop(
+            list.append(replacements, rest),
+            graph,
+            images,
+            vertex_tolerance,
+            minimum_chord,
+            endpoint_sliver_tolerance,
+            iteration: iteration + 1,
+          )
+        None -> {
+          use _ <- result.try(validate_piece_endpoint_vertices(
+            first,
+            graph,
+            vertex_tolerance,
+          ))
+          use result <- result.try(progressive_insert_piece(
+            first,
+            graph,
+            images,
+            vertex_tolerance,
+            minimum_chord,
+            endpoint_sliver_tolerance,
+          ))
+          case result {
+            ProgressivePieceInserted(graph, images) ->
+              progressive_insert_pieces_loop(
+                rest,
+                graph,
+                images,
+                vertex_tolerance,
+                minimum_chord,
+                endpoint_sliver_tolerance,
+                iteration: iteration + 1,
+              )
+            ProgressivePieceReplaced(graph, images, replacements) ->
+              progressive_insert_pieces_loop(
+                list.append(replacements, rest),
+                graph,
+                images,
+                vertex_tolerance,
+                minimum_chord,
+                endpoint_sliver_tolerance,
+                iteration: iteration + 1,
+              )
+          }
+        }
+      }
+    }
+  }
 }
 
-fn index_normalized_paths_loop(
+fn validate_piece_endpoint_vertices(
+  piece: AtomicPiece,
+  graph: ArrangementGraph,
+  vertex_tolerance: Float,
+) -> Result(Nil, Error) {
+  let AtomicPiece(segment:, ..) = piece
+  let ArrangementGraph(vertices:, ..) = graph
+  use _ <- result.try(unique_vertex_for_endpoint(
+    vertices,
+    svg_path.segment_start(segment),
+    vertex_tolerance,
+  ))
+  use _ <- result.try(unique_vertex_for_endpoint(
+    vertices,
+    svg_path.segment_end(segment),
+    vertex_tolerance,
+  ))
+  Ok(Nil)
+}
+
+fn split_piece_at_existing_vertex(
+  piece: AtomicPiece,
+  graph: ArrangementGraph,
+  vertex_tolerance: Float,
+  minimum_chord: Float,
+) -> Result(Option(List(AtomicPiece)), Error) {
+  let ArrangementGraph(vertices:, ..) = graph
+  use bounds <- result.try(
+    svg_path.segment_bounding_box(piece.segment) |> result.map_error(PathError),
+  )
+  use cut <- result.try(vertex_cut_parameter(
+    piece,
+    bounds,
+    vertices,
+    vertex_tolerance,
+  ))
+  case cut {
+    Some(t) -> {
+      split_atomic_piece(piece, [t], vertex_tolerance, minimum_chord)
+      |> result.map(Some)
+    }
+    None -> Ok(None)
+  }
+}
+
+fn vertex_cut_parameter(
+  piece: AtomicPiece,
+  bounds: svg_path.BoundingBox,
+  vertices: List(ArrangementVertex),
+  vertex_tolerance: Float,
+) -> Result(Option(Float), Error) {
+  let AtomicPiece(segment:, ..) = piece
+  case vertices {
+    [] -> Ok(None)
+    [ArrangementVertex(point:, ..), ..rest] -> {
+      use t <- result.try(
+        case point_in_expanded_box(point, bounds, vertex_tolerance) {
+          False -> Ok(None)
+          True ->
+            vertex_projects_to_piece_interior(point, segment, vertex_tolerance)
+        },
+      )
+      case t {
+        Some(_) -> Ok(t)
+        None -> vertex_cut_parameter(piece, bounds, rest, vertex_tolerance)
+      }
+    }
+  }
+}
+
+fn vertex_projects_to_piece_interior(
+  vertex: svg_path.Point,
+  segment: svg_path.Segment,
+  vertex_tolerance: Float,
+) -> Result(Option(Float), Error) {
+  let start = svg_path.segment_start(segment)
+  let end = svg_path.segment_end(segment)
+  case
+    point.distance(vertex, start) <=. vertex_tolerance
+    || point.distance(vertex, end) <=. vertex_tolerance
+  {
+    True -> Ok(None)
+    False ->
+      vertex_projects_to_piece_interior_uncached(
+        vertex,
+        segment,
+        vertex_tolerance,
+      )
+  }
+}
+
+fn vertex_projects_to_piece_interior_uncached(
+  vertex: svg_path.Point,
+  segment: svg_path.Segment,
+  vertex_tolerance: Float,
+) -> Result(Option(Float), Error) {
+  case segment {
+    svg_path.Line(start:, end:) ->
+      vertex_projects_to_line_interior(vertex, start, end, vertex_tolerance)
+    _ -> {
+      use projection <- result.try(
+        svg_path.segment_projection(vertex, to: segment)
+        |> result.map_error(PathError),
+      )
+      let svg_path.SegmentProjection(t:, distance:, ..) = projection
+      Ok(case distance <=. vertex_tolerance && t >. 0.0 && t <. 1.0 {
+        True -> Some(t)
+        False -> None
+      })
+    }
+  }
+}
+
+fn vertex_projects_to_line_interior(
+  vertex: svg_path.Point,
+  start: svg_path.Point,
+  end: svg_path.Point,
+  vertex_tolerance: Float,
+) -> Result(Option(Float), Error) {
+  let line = point.subtract(end, start)
+  let length_squared = point.dot(line, line)
+  case length_squared <=. 0.0 {
+    True -> Error(SegmentTooShort(chord: 0.0, minimum: vertex_tolerance))
+    False -> {
+      let raw_t =
+        point.dot(point.subtract(vertex, start), line) /. length_squared
+      let projected = point.add(start, point.scale(line, by: raw_t))
+      let distance = point.distance(vertex, projected)
+      case distance <=. vertex_tolerance {
+        False -> Ok(None)
+        True ->
+          case raw_t >. 0.0 && raw_t <. 1.0 {
+            True -> Ok(Some(raw_t))
+            False -> Ok(None)
+          }
+      }
+    }
+  }
+}
+
+fn point_in_expanded_box(
+  point: svg_path.Point,
+  box: svg_path.BoundingBox,
+  tolerance: Float,
+) -> Bool {
+  point.x >=. box.min.x -. tolerance
+  && point.x <=. box.max.x +. tolerance
+  && point.y >=. box.min.y -. tolerance
+  && point.y <=. box.max.y +. tolerance
+}
+
+fn bounding_boxes_overlap(
+  first: svg_path.BoundingBox,
+  second: svg_path.BoundingBox,
+  tolerance: Float,
+) -> Bool {
+  first.min.x <=. second.max.x +. tolerance
+  && first.max.x >=. second.min.x -. tolerance
+  && first.min.y <=. second.max.y +. tolerance
+  && first.max.y >=. second.min.y -. tolerance
+}
+
+fn segment_bounding_box_assert(
+  segment: svg_path.Segment,
+) -> svg_path.BoundingBox {
+  let assert Ok(bounds) = svg_path.segment_bounding_box(segment)
+  bounds
+}
+
+fn progressive_insert_piece(
+  piece: AtomicPiece,
+  graph: ArrangementGraph,
+  images: List(ArrangementSegmentImage),
+  vertex_tolerance: Float,
+  minimum_chord: Float,
+  endpoint_sliver_tolerance: Float,
+) -> Result(ProgressivePieceResult, Error) {
+  use context <- result.try(incoming_context(piece, graph, vertex_tolerance))
+  use endpoint_split <- result.try(split_existing_edge_at_incoming_endpoint(
+    context,
+    graph,
+    images,
+    vertex_tolerance,
+    minimum_chord,
+  ))
+  case endpoint_split {
+    Some(#(graph, images)) ->
+      Ok(ProgressivePieceReplaced(graph, images, [piece]))
+    None ->
+      progressive_insert_piece_context(
+        context,
+        graph,
+        images,
+        vertex_tolerance,
+        minimum_chord,
+        endpoint_sliver_tolerance,
+      )
+  }
+}
+
+fn incoming_context(
+  piece: AtomicPiece,
+  graph: ArrangementGraph,
+  vertex_tolerance: Float,
+) -> Result(IncomingContext, Error) {
+  let AtomicPiece(segment:, ..) = piece
+  let ArrangementGraph(vertices:, ..) = graph
+  use bounds <- result.try(
+    svg_path.segment_bounding_box(segment) |> result.map_error(PathError),
+  )
+  use start_match <- result.try(unique_vertex_for_endpoint(
+    vertices,
+    svg_path.segment_start(segment),
+    vertex_tolerance,
+  ))
+  use end_match <- result.try(unique_vertex_for_endpoint(
+    vertices,
+    svg_path.segment_end(segment),
+    vertex_tolerance,
+  ))
+  Ok(IncomingContext(piece:, bounds:, start_match:, end_match:))
+}
+
+fn progressive_insert_piece_context(
+  context: IncomingContext,
+  graph: ArrangementGraph,
+  images: List(ArrangementSegmentImage),
+  vertex_tolerance: Float,
+  minimum_chord: Float,
+  endpoint_sliver_tolerance: Float,
+) -> Result(ProgressivePieceResult, Error) {
+  let ArrangementGraph(edges:, ..) = graph
+  progressive_compare_edges(
+    context,
+    edges,
+    graph,
+    images,
+    vertex_tolerance,
+    minimum_chord,
+    endpoint_sliver_tolerance,
+  )
+}
+
+fn split_existing_edge_at_incoming_endpoint(
+  context: IncomingContext,
+  graph: ArrangementGraph,
+  images: List(ArrangementSegmentImage),
+  vertex_tolerance: Float,
+  minimum_chord: Float,
+) -> Result(Option(#(ArrangementGraph, List(ArrangementSegmentImage))), Error) {
+  let IncomingContext(piece: AtomicPiece(segment:, ..), ..) = context
+  let ArrangementGraph(edges:, ..) = graph
+  use start_result <- result.try(split_existing_edge_at_endpoint(
+    edges,
+    svg_path.segment_start(segment),
+    context,
+    graph,
+    images,
+    vertex_tolerance,
+    minimum_chord,
+  ))
+  case start_result {
+    Some(_) -> Ok(start_result)
+    None ->
+      split_existing_edge_at_endpoint(
+        edges,
+        svg_path.segment_end(segment),
+        context,
+        graph,
+        images,
+        vertex_tolerance,
+        minimum_chord,
+      )
+  }
+}
+
+fn split_existing_edge_at_endpoint(
+  edges: List(ArrangementEdge),
+  endpoint: svg_path.Point,
+  context: IncomingContext,
+  graph: ArrangementGraph,
+  images: List(ArrangementSegmentImage),
+  vertex_tolerance: Float,
+  minimum_chord: Float,
+) -> Result(Option(#(ArrangementGraph, List(ArrangementSegmentImage))), Error) {
+  case edges {
+    [] -> Ok(None)
+    [edge, ..rest] -> {
+      let IncomingContext(piece: AtomicPiece(source_index:, ..), ..) = context
+      let ArrangementEdge(id: edge_id, segment:, bounds: edge_bounds, ..) = edge
+      case edge_is_image_of_source(images, source_index, edge_id) {
+        True ->
+          split_existing_edge_at_endpoint(
+            rest,
+            endpoint,
+            context,
+            graph,
+            images,
+            vertex_tolerance,
+            minimum_chord,
+          )
+        False -> {
+          use t <- result.try(
+            case
+              point_in_expanded_box(endpoint, edge_bounds, vertex_tolerance)
+            {
+              False -> Ok(None)
+              True ->
+                vertex_projects_to_piece_interior(
+                  endpoint,
+                  segment,
+                  vertex_tolerance,
+                )
+            },
+          )
+          case t {
+            None ->
+              split_existing_edge_at_endpoint(
+                rest,
+                endpoint,
+                context,
+                graph,
+                images,
+                vertex_tolerance,
+                minimum_chord,
+              )
+            Some(t) -> {
+              use cuts <- result.try(effective_cut_parameters(
+                segment,
+                [t],
+                vertex_tolerance,
+                minimum_chord,
+              ))
+              case cuts {
+                [] ->
+                  split_existing_edge_at_endpoint(
+                    rest,
+                    endpoint,
+                    context,
+                    graph,
+                    images,
+                    vertex_tolerance,
+                    minimum_chord,
+                  )
+                [_, ..] -> {
+                  use result <- result.try(split_progressive_graph_edge(
+                    graph,
+                    images,
+                    edge_id,
+                    cuts,
+                    vertex_tolerance,
+                    minimum_chord,
+                  ))
+                  Ok(Some(result))
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+fn progressive_compare_edges(
+  context: IncomingContext,
+  edges: List(ArrangementEdge),
+  graph: ArrangementGraph,
+  images: List(ArrangementSegmentImage),
+  vertex_tolerance: Float,
+  minimum_chord: Float,
+  endpoint_sliver_tolerance: Float,
+) -> Result(ProgressivePieceResult, Error) {
+  case edges {
+    [] ->
+      progressive_insert_piece_direct(
+        context,
+        graph,
+        images,
+        vertex_tolerance,
+        minimum_chord,
+      )
+    [edge, ..rest] -> {
+      use step <- result.try(progressive_compare_edge(
+        context,
+        edge,
+        graph,
+        images,
+        vertex_tolerance,
+        minimum_chord,
+        endpoint_sliver_tolerance,
+      ))
+      case step {
+        ProgressiveContinue(graph, images) ->
+          progressive_compare_edges(
+            context,
+            rest,
+            graph,
+            images,
+            vertex_tolerance,
+            minimum_chord,
+            endpoint_sliver_tolerance,
+          )
+        ProgressiveReplaceIncoming(graph, images, replacements) ->
+          Ok(ProgressivePieceReplaced(graph, images, replacements))
+      }
+    }
+  }
+}
+
+fn progressive_compare_edge(
+  context: IncomingContext,
+  edge: ArrangementEdge,
+  graph: ArrangementGraph,
+  images: List(ArrangementSegmentImage),
+  vertex_tolerance: Float,
+  minimum_chord: Float,
+  endpoint_sliver_tolerance: Float,
+) -> Result(ProgressiveEdgeStep, Error) {
+  let IncomingContext(piece:, bounds:, start_match:, end_match:) = context
+  let AtomicPiece(source_index:, ..) = piece
+  let ArrangementEdge(id: edge_id, bounds: existing_bounds, ..) = edge
+  case edge_is_image_of_source(images, source_index, edge_id) {
+    True -> {
+      Ok(ProgressiveContinue(graph, images))
+    }
+    False -> {
+      case bounding_boxes_overlap(bounds, existing_bounds, vertex_tolerance) {
+        False -> Ok(ProgressiveContinue(graph, images))
+        True -> {
+          case edge_matches_incoming_endpoints(edge, start_match, end_match) {
+            True -> Ok(ProgressiveContinue(graph, images))
+            False -> {
+              use cuts <- result.try(pair_cuts_with_common_endpoint_sliver(
+                piece,
+                edge,
+                start_match,
+                end_match,
+                vertex_tolerance,
+                endpoint_sliver_tolerance,
+              ))
+              progressive_compare_edge_cuts(
+                piece,
+                edge,
+                graph,
+                images,
+                cuts,
+                vertex_tolerance,
+                minimum_chord,
+              )
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+fn edge_matches_incoming_endpoints(
+  edge: ArrangementEdge,
+  start_match: Option(Int),
+  end_match: Option(Int),
+) -> Bool {
+  let ArrangementEdge(start_vertex:, end_vertex:, ..) = edge
+  case start_match, end_match {
+    Some(start), Some(end) ->
+      start_vertex == start
+      && end_vertex == end
+      || start_vertex == end
+      && end_vertex == start
+    _, _ -> False
+  }
+}
+
+type ProgressiveEdgeStep {
+  ProgressiveContinue(
+    graph: ArrangementGraph,
+    images: List(ArrangementSegmentImage),
+  )
+  ProgressiveReplaceIncoming(
+    graph: ArrangementGraph,
+    images: List(ArrangementSegmentImage),
+    replacements: List(AtomicPiece),
+  )
+}
+
+fn progressive_compare_edge_cuts(
+  piece: AtomicPiece,
+  edge: ArrangementEdge,
+  graph: ArrangementGraph,
+  images: List(ArrangementSegmentImage),
+  cuts: List(SegmentCut),
+  tolerance: Float,
+  minimum_chord: Float,
+) -> Result(ProgressiveEdgeStep, Error) {
+  let AtomicPiece(segment: incoming, ..) = piece
+  let ArrangementEdge(id: edge_id, segment: existing, ..) = edge
+  let existing_parameters =
+    cut_parameters(cuts, 0, [])
+    |> list.sort(float_compare)
+  let incoming_parameters =
+    cut_parameters(cuts, 1, [])
+    |> list.sort(float_compare)
+  use existing_parameters <- result.try(effective_cut_parameters(
+    existing,
+    existing_parameters,
+    tolerance,
+    minimum_chord,
+  ))
+  use incoming_parameters <- result.try(effective_cut_parameters(
+    incoming,
+    incoming_parameters,
+    tolerance,
+    minimum_chord,
+  ))
+  case existing_parameters, incoming_parameters {
+    [], [] -> Ok(ProgressiveContinue(graph, images))
+    _, _ -> {
+      use #(graph, images) <- result.try(case existing_parameters {
+        [_, ..] -> {
+          split_progressive_graph_edge(
+            graph,
+            images,
+            edge_id,
+            existing_parameters,
+            tolerance,
+            minimum_chord,
+          )
+        }
+        [] -> Ok(#(graph, images))
+      })
+      case incoming_parameters {
+        [_, ..] -> {
+          use replacements <- result.try(split_atomic_piece(
+            piece,
+            incoming_parameters,
+            tolerance,
+            minimum_chord,
+          ))
+          Ok(ProgressiveReplaceIncoming(graph, images, replacements))
+        }
+        [] -> Ok(ProgressiveReplaceIncoming(graph, images, [piece]))
+      }
+    }
+  }
+}
+
+fn edge_is_image_of_source(
+  images: List(ArrangementSegmentImage),
+  source_index: Int,
+  edge_id: Int,
+) -> Bool {
+  edge_is_image_of_source_loop(images, source_index, edge_id, index: 0)
+}
+
+fn edge_is_image_of_source_loop(
+  images: List(ArrangementSegmentImage),
+  source_index: Int,
+  edge_id: Int,
+  index index: Int,
+) -> Bool {
+  case images {
+    [] -> False
+    [ArrangementSegmentImage(edges:, ..), ..rest] -> {
+      case index == source_index && references_contain_edge(edges, edge_id) {
+        True -> True
+        False ->
+          edge_is_image_of_source_loop(
+            rest,
+            source_index,
+            edge_id,
+            index: index + 1,
+          )
+      }
+    }
+  }
+}
+
+fn references_contain_edge(
+  references: List(DirectedEdgeReference),
+  edge_id: Int,
+) -> Bool {
+  case references {
+    [] -> False
+    [DirectedEdgeReference(edge_id: candidate, ..), ..rest] -> {
+      case candidate == edge_id {
+        True -> True
+        False -> references_contain_edge(rest, edge_id)
+      }
+    }
+  }
+}
+
+fn effective_cut_parameters(
+  segment: svg_path.Segment,
+  cuts: List(Float),
+  tolerance: Float,
+  minimum_chord: Float,
+) -> Result(List(Float), Error) {
+  use parameters <- result.try(
+    [0.0, 1.0, ..cuts]
+    |> list.sort(float_compare)
+    |> distinct_parameters(segment, tolerance, []),
+  )
+  use parameters <- result.try(retain_minimum_chord_cuts(
+    segment,
+    parameters,
+    minimum_chord,
+  ))
+  let cuts = interior_distinct_parameters(parameters, [])
+  case cuts {
+    [] -> Ok([])
+    [_, ..] -> {
+      use produces_split <- result.try(cuts_produce_retained_split(
+        segment,
+        cuts,
+        minimum_chord,
+      ))
+      case produces_split {
+        True -> Ok(cuts)
+        False -> Ok([])
+      }
+    }
+  }
+}
+
+fn interior_distinct_parameters(
+  parameters: List(Float),
+  interior interior: List(Float),
+) -> List(Float) {
+  case parameters {
+    [] | [_] | [_, _] -> list.reverse(interior)
+    [_start, first_interior, ..rest] ->
+      interior_distinct_parameters([first_interior, ..rest], [
+        first_interior,
+        ..interior
+      ])
+  }
+}
+
+fn retain_minimum_chord_cuts(
+  segment: svg_path.Segment,
+  parameters: List(Float),
+  minimum_chord: Float,
+) -> Result(List(Float), Error) {
+  case parameters {
+    [] | [_] -> Ok(parameters)
+    [start, ..rest] ->
+      retain_minimum_chord_cuts_loop(
+        segment,
+        rest,
+        previous: start,
+        retained: [start],
+        minimum_chord:,
+      )
+  }
+}
+
+fn retain_minimum_chord_cuts_loop(
+  segment: svg_path.Segment,
+  parameters: List(Float),
+  previous previous: Float,
+  retained retained: List(Float),
+  minimum_chord minimum_chord: Float,
+) -> Result(List(Float), Error) {
+  case parameters {
+    [] -> Ok(list.reverse(retained))
+    [last] -> {
+      use long_enough <- result.try(parameter_chord_long_enough(
+        segment,
+        previous,
+        last,
+        minimum_chord,
+      ))
+      let retained = case long_enough {
+        True -> [last, ..retained]
+        False -> replace_retained_end(retained, last)
+      }
+      Ok(list.reverse(retained))
+    }
+    [candidate, next, ..rest] -> {
+      use before_long_enough <- result.try(parameter_chord_long_enough(
+        segment,
+        previous,
+        candidate,
+        minimum_chord,
+      ))
+      use after_long_enough <- result.try(parameter_chord_long_enough(
+        segment,
+        candidate,
+        next,
+        minimum_chord,
+      ))
+      case before_long_enough && after_long_enough {
+        True ->
+          retain_minimum_chord_cuts_loop(
+            segment,
+            [next, ..rest],
+            previous: candidate,
+            retained: [candidate, ..retained],
+            minimum_chord:,
+          )
+        False ->
+          retain_minimum_chord_cuts_loop(
+            segment,
+            [next, ..rest],
+            previous:,
+            retained:,
+            minimum_chord:,
+          )
+      }
+    }
+  }
+}
+
+fn replace_retained_end(retained: List(Float), end: Float) -> List(Float) {
+  case retained {
+    [] -> [end]
+    [_old_end, ..rest] -> [end, ..rest]
+  }
+}
+
+fn parameter_chord_long_enough(
+  segment: svg_path.Segment,
+  from from: Float,
+  to to: Float,
+  minimum_chord minimum_chord: Float,
+) -> Result(Bool, Error) {
+  use start <- result.try(
+    svg_path.segment_point(segment, at: from)
+    |> result.map_error(PathError),
+  )
+  use end <- result.try(
+    svg_path.segment_point(segment, at: to)
+    |> result.map_error(PathError),
+  )
+  Ok(point.distance(start, end) >=. minimum_chord)
+}
+
+fn cuts_produce_retained_split(
+  segment: svg_path.Segment,
+  cuts: List(Float),
+  minimum_chord: Float,
+) -> Result(Bool, Error) {
+  use split <- result.try(
+    svg_path.segment_between_many_inside(
+      segment,
+      between: [0.0, 1.0, ..cuts] |> list.sort(float_compare),
+    )
+    |> result.map_error(PathError),
+  )
+  let retained = retained_split_segments(split, minimum_chord, retained: [])
+  case retained {
+    [_, _, ..] -> Ok(True)
+    _ -> Ok(False)
+  }
+}
+
+fn split_progressive_graph_edge(
+  graph: ArrangementGraph,
+  images: List(ArrangementSegmentImage),
+  edge_id: Int,
+  cuts: List(Float),
+  tolerance: Float,
+  minimum_chord: Float,
+) -> Result(#(ArrangementGraph, List(ArrangementSegmentImage)), Error) {
+  let ArrangementGraph(vertices:, edges:) = graph
+  use edge <- result.try(arrangement_edge_by_id(edges, edge_id))
+  let ArrangementEdge(
+    segment:,
+    forward_multiplicity:,
+    reverse_multiplicity:,
+    ..,
+  ) = edge
+  use parameters <- result.try(
+    [0.0, 1.0, ..cuts]
+    |> list.sort(float_compare)
+    |> distinct_parameters(segment, tolerance, []),
+  )
+  use split <- result.try(
+    svg_path.segment_between_many_inside(segment, between: parameters)
+    |> result.map_error(PathError),
+  )
+  let retained = retained_split_segments(split, minimum_chord, retained: [])
+  case retained {
+    [] -> Error(SegmentTooShort(chord: 0.0, minimum: minimum_chord))
+    [_, ..] -> {
+      let next_id = next_arrangement_edge_id(edges)
+      use #(vertices, replacements, references) <- result.try(
+        progressive_replacement_edges(
+          retained,
+          edge_id,
+          next_id,
+          forward_multiplicity,
+          reverse_multiplicity,
+          vertices,
+          tolerance,
+          minimum_chord,
+          edges: [],
+          references: [],
+        ),
+      )
+      let graph =
+        ArrangementGraph(
+          vertices:,
+          edges: replace_edge_with(edges, edge_id, list.reverse(replacements)),
+        )
+      let images =
+        expand_edge_references(images, edge_id, list.reverse(references))
+      Ok(#(graph, images))
+    }
+  }
+}
+
+fn next_arrangement_edge_id(edges: List(ArrangementEdge)) -> Int {
+  edges
+  |> list.fold(0, fn(max_id, edge) {
+    let ArrangementEdge(id:, ..) = edge
+    int.max(max_id, id + 1)
+  })
+}
+
+fn retained_split_segments(
+  segments: List(svg_path.Segment),
+  minimum_chord: Float,
+  retained retained: List(svg_path.Segment),
+) -> List(svg_path.Segment) {
+  case segments {
+    [] -> list.reverse(retained)
+    [first, ..rest] -> {
+      let retained = case
+        svg_path.segment_chord_length(first) >=. minimum_chord
+      {
+        True -> [first, ..retained]
+        False -> retained
+      }
+      retained_split_segments(rest, minimum_chord, retained:)
+    }
+  }
+}
+
+fn progressive_replacement_edges(
+  segments: List(svg_path.Segment),
+  first_id: Int,
+  next_id: Int,
+  forward_multiplicity: Int,
+  reverse_multiplicity: Int,
+  vertices: List(ArrangementVertex),
+  tolerance: Float,
+  minimum_chord: Float,
+  edges edges: List(ArrangementEdge),
+  references references: List(DirectedEdgeReference),
+) -> Result(
+  #(List(ArrangementVertex), List(ArrangementEdge), List(DirectedEdgeReference)),
+  Error,
+) {
+  case segments {
+    [] -> Ok(#(vertices, edges, references))
+    [segment, ..rest] -> {
+      let id = case edges {
+        [] -> first_id
+        [_, ..] -> next_id + list.length(edges) - 1
+      }
+      let start = svg_path.segment_start(segment)
+      let end = svg_path.segment_end(segment)
+      let chord = svg_path.segment_chord_length(segment)
+      case chord <. minimum_chord {
+        True ->
+          progressive_replacement_edges(
+            rest,
+            first_id,
+            next_id,
+            forward_multiplicity,
+            reverse_multiplicity,
+            vertices,
+            tolerance,
+            minimum_chord,
+            edges:,
+            references:,
+          )
+        False -> {
+          let #(vertices, start_vertex) =
+            attach_vertex(vertices, start, tolerance)
+          let #(vertices, end_vertex) = attach_vertex(vertices, end, tolerance)
+          case start_vertex == end_vertex {
+            True ->
+              progressive_replacement_edges(
+                rest,
+                first_id,
+                next_id,
+                forward_multiplicity,
+                reverse_multiplicity,
+                vertices,
+                tolerance,
+                minimum_chord,
+                edges:,
+                references:,
+              )
+            False ->
+              progressive_replacement_edges(
+                rest,
+                first_id,
+                next_id,
+                forward_multiplicity,
+                reverse_multiplicity,
+                vertices,
+                tolerance,
+                minimum_chord,
+                edges: [
+                  ArrangementEdge(
+                    id:,
+                    segment:,
+                    bounds: segment_bounding_box_assert(segment),
+                    start_vertex:,
+                    end_vertex:,
+                    forward_multiplicity:,
+                    reverse_multiplicity:,
+                  ),
+                  ..edges
+                ],
+                references: [
+                  DirectedEdgeReference(edge_id: id, reversed: False),
+                  ..references
+                ],
+              )
+          }
+        }
+      }
+    }
+  }
+}
+
+fn arrangement_edge_by_id(
+  edges: List(ArrangementEdge),
+  edge_id: Int,
+) -> Result(ArrangementEdge, Error) {
+  case edges {
+    [] -> Error(MissingEdge(edge_id))
+    [first, ..rest] -> {
+      let ArrangementEdge(id:, ..) = first
+      case id == edge_id {
+        True -> Ok(first)
+        False -> arrangement_edge_by_id(rest, edge_id)
+      }
+    }
+  }
+}
+
+fn replace_edge_with(
+  edges: List(ArrangementEdge),
+  edge_id: Int,
+  replacements: List(ArrangementEdge),
+) -> List(ArrangementEdge) {
+  case edges {
+    [] -> []
+    [first, ..rest] -> {
+      let ArrangementEdge(id:, ..) = first
+      case id == edge_id {
+        True -> list.append(replacements, rest)
+        False -> [first, ..replace_edge_with(rest, edge_id, replacements)]
+      }
+    }
+  }
+}
+
+fn expand_edge_references(
+  images: List(ArrangementSegmentImage),
+  edge_id: Int,
+  replacements: List(DirectedEdgeReference),
+) -> List(ArrangementSegmentImage) {
+  images
+  |> list.map(fn(image) {
+    let ArrangementSegmentImage(
+      path_index:,
+      subpath_index:,
+      segment_index:,
+      edges:,
+    ) = image
+    ArrangementSegmentImage(
+      path_index:,
+      subpath_index:,
+      segment_index:,
+      edges: expand_references(edges, edge_id, replacements, expanded: []),
+    )
+  })
+}
+
+fn expand_references(
+  references: List(DirectedEdgeReference),
+  edge_id: Int,
+  replacements: List(DirectedEdgeReference),
+  expanded expanded: List(DirectedEdgeReference),
+) -> List(DirectedEdgeReference) {
+  case references {
+    [] -> list.reverse(expanded)
+    [first, ..rest] -> {
+      let DirectedEdgeReference(edge_id: candidate, reversed:) = first
+      let expanded = case candidate == edge_id {
+        True -> {
+          let replacement = case reversed {
+            False -> replacements
+            True -> reverse_directed_references(replacements)
+          }
+          list.append(list.reverse(replacement), expanded)
+        }
+        False -> [first, ..expanded]
+      }
+      expand_references(rest, edge_id, replacements, expanded:)
+    }
+  }
+}
+
+fn reverse_directed_references(
+  references: List(DirectedEdgeReference),
+) -> List(DirectedEdgeReference) {
+  references
+  |> list.reverse
+  |> list.map(fn(reference) {
+    let DirectedEdgeReference(edge_id:, reversed:) = reference
+    DirectedEdgeReference(edge_id:, reversed: !reversed)
+  })
+}
+
+fn index_paths(paths: List(svg_path.Path)) -> List(IndexedSegment) {
+  index_paths_loop(paths, path_index: 0, index: 0, indexed: [])
+}
+
+fn index_flat_segments(
+  segments: List(svg_path.Segment),
+) -> List(IndexedSegment) {
+  index_flat_segments_loop(segments, index: 0, indexed: [])
+}
+
+fn index_flat_segments_loop(
+  segments: List(svg_path.Segment),
+  index index: Int,
+  indexed indexed: List(IndexedSegment),
+) -> List(IndexedSegment) {
+  case segments {
+    [] -> list.reverse(indexed)
+    [first, ..rest] ->
+      index_flat_segments_loop(rest, index: index + 1, indexed: [
+        IndexedSegment(
+          index:,
+          path_index: 0,
+          subpath_index: 0,
+          segment_index: index,
+          segment: first,
+        ),
+        ..indexed
+      ])
+  }
+}
+
+fn public_segment_images(
+  indexed: List(IndexedSegment),
+  images: List(ArrangementSourceSegmentImage),
+  images converted: List(ArrangementSegmentImage),
+) -> Result(List(ArrangementSegmentImage), Error) {
+  case images {
+    [] -> Ok(list.reverse(converted))
+    [first, ..rest] -> {
+      use converted_image <- result.try(public_segment_image(indexed, first))
+      public_segment_images(indexed, rest, images: [
+        converted_image,
+        ..converted
+      ])
+    }
+  }
+}
+
+fn public_segment_image(
+  indexed: List(IndexedSegment),
+  image: ArrangementSourceSegmentImage,
+) -> Result(ArrangementSegmentImage, Error) {
+  let ArrangementSourceSegmentImage(segment_index:, edges:) = image
+  use source <- result.try(
+    indexed_segment_at(indexed, segment_index)
+    |> result.map_error(fn(_) { InternalNormalizationError }),
+  )
+  let IndexedSegment(path_index:, subpath_index:, segment_index:, ..) = source
+  Ok(ArrangementSegmentImage(
+    path_index:,
+    subpath_index:,
+    segment_index:,
+    edges: list.map(edges, fn(edge) {
+      let ArrangementSegmentEdgeImage(edge_id:, reversed:, ..) = edge
+      DirectedEdgeReference(edge_id:, reversed:)
+    }),
+  ))
+}
+
+fn indexed_segment_at(
+  indexed: List(IndexedSegment),
+  target: Int,
+) -> Result(IndexedSegment, Nil) {
+  case indexed {
+    [] -> Error(Nil)
+    [first, ..rest] -> {
+      let IndexedSegment(index:, ..) = first
+      case index == target {
+        True -> Ok(first)
+        False -> indexed_segment_at(rest, target)
+      }
+    }
+  }
+}
+
+fn index_paths_loop(
   paths: List(svg_path.Path),
   path_index path_index: Int,
   index index: Int,
@@ -395,24 +3270,19 @@ fn index_normalized_paths_loop(
     [] -> list.reverse(indexed)
     [first, ..rest] -> {
       let #(index, indexed) =
-        index_normalized_subpaths(
+        index_subpaths(
           svg_path.path_subpaths(first),
           path_index,
           subpath_index: 0,
           index:,
           indexed:,
         )
-      index_normalized_paths_loop(
-        rest,
-        path_index: path_index + 1,
-        index:,
-        indexed:,
-      )
+      index_paths_loop(rest, path_index: path_index + 1, index:, indexed:)
     }
   }
 }
 
-fn index_normalized_subpaths(
+fn index_subpaths(
   subpaths: List(svg_path.Subpath),
   path_index: Int,
   subpath_index subpath_index: Int,
@@ -423,7 +3293,7 @@ fn index_normalized_subpaths(
     [] -> #(index, indexed)
     [first, ..rest] -> {
       let #(index, indexed) =
-        index_normalized_segments(
+        index_segments(
           svg_path.subpath_segments(first),
           path_index,
           subpath_index,
@@ -431,7 +3301,7 @@ fn index_normalized_subpaths(
           index:,
           indexed:,
         )
-      index_normalized_subpaths(
+      index_subpaths(
         rest,
         path_index,
         subpath_index: subpath_index + 1,
@@ -442,7 +3312,7 @@ fn index_normalized_subpaths(
   }
 }
 
-fn index_normalized_segments(
+fn index_segments(
   segments: List(svg_path.Segment),
   path_index: Int,
   subpath_index: Int,
@@ -453,7 +3323,7 @@ fn index_normalized_segments(
   case segments {
     [] -> #(index, indexed)
     [first, ..rest] ->
-      index_normalized_segments(
+      index_segments(
         rest,
         path_index,
         subpath_index,
@@ -473,156 +3343,298 @@ fn index_normalized_segments(
   }
 }
 
-fn collect_all_cuts(
-  segments: List(IndexedSegment),
-  tolerance: Float,
-  cuts: List(SegmentCut),
+fn pair_cuts_with_common_endpoint_sliver(
+  piece: AtomicPiece,
+  edge: ArrangementEdge,
+  incoming_start: Option(Int),
+  incoming_end: Option(Int),
+  vertex_tolerance: Float,
+  endpoint_sliver_tolerance: Float,
 ) -> Result(List(SegmentCut), Error) {
-  case segments {
-    [] -> Ok(cuts)
-    [first, ..rest] -> {
-      use cuts <- result.try(collect_cuts_against(first, rest, tolerance, cuts))
-      collect_all_cuts(rest, tolerance, cuts)
-    }
-  }
-}
-
-fn collect_cuts_against(
-  left: IndexedSegment,
-  rights: List(IndexedSegment),
-  tolerance: Float,
-  cuts: List(SegmentCut),
-) -> Result(List(SegmentCut), Error) {
-  case rights {
-    [] -> Ok(cuts)
-    [right, ..rest] -> {
-      use pair_cuts <- result.try(pair_cuts(left, right, tolerance))
-      collect_cuts_against(left, rest, tolerance, list.append(pair_cuts, cuts))
-    }
-  }
-}
-
-fn pair_cuts(
-  left: IndexedSegment,
-  right: IndexedSegment,
-  tolerance: Float,
-) -> Result(List(SegmentCut), Error) {
-  let IndexedSegment(index: left_index, segment: left_segment, ..) = left
-  let IndexedSegment(index: right_index, segment: right_segment, ..) = right
-  use found_overlaps <- result.try(
-    overlaps.segment_with_samples(
-      left_segment,
-      right_segment,
-      tolerance:,
-      samples: 7,
-    )
-    |> result.map_error(PathError),
+  let AtomicPiece(segment: incoming, ..) = piece
+  let ArrangementEdge(segment: existing, ..) = edge
+  use found <- result.try(
+    case
+      intersections.segment_with(
+        existing,
+        incoming,
+        options: intersection_options_for_graph_tolerance(vertex_tolerance),
+      )
+    {
+      Error(svg_path.OverlappingSegments) ->
+        case edge_shares_incoming_endpoint(edge, incoming_start, incoming_end) {
+          True -> Ok([])
+          False -> Error(PathError(svg_path.OverlappingSegments))
+        }
+      Ok(found) -> Ok(found)
+      Error(error) -> Error(PathError(error))
+    },
   )
-  case found_overlaps {
-    [_, ..] ->
-      Ok(
-        found_overlaps
-        |> list.flat_map(fn(overlap) {
-          let overlaps.SegmentOverlap(
-            left_from:,
-            left_to:,
-            right_from:,
-            right_to:,
-            ..,
-          ) = overlap
-          [
-            SegmentCut(index: left_index, t: left_from),
-            SegmentCut(index: left_index, t: left_to),
-            SegmentCut(index: right_index, t: right_from),
-            SegmentCut(index: right_index, t: right_to),
-          ]
-        }),
+  pair_cuts_from_hits(
+    found,
+    edge,
+    incoming,
+    incoming_start,
+    incoming_end,
+    endpoint_sliver_tolerance,
+    [],
+  )
+}
+
+fn edge_shares_incoming_endpoint(
+  edge: ArrangementEdge,
+  incoming_start: Option(Int),
+  incoming_end: Option(Int),
+) -> Bool {
+  let ArrangementEdge(start_vertex:, end_vertex:, ..) = edge
+  option_equals_int(incoming_start, start_vertex)
+  || option_equals_int(incoming_start, end_vertex)
+  || option_equals_int(incoming_end, start_vertex)
+  || option_equals_int(incoming_end, end_vertex)
+}
+
+fn option_equals_int(value: Option(Int), target: Int) -> Bool {
+  case value {
+    Some(candidate) -> candidate == target
+    None -> False
+  }
+}
+
+fn pair_cuts_from_hits(
+  hits: List(svg_path.SegmentIntersection),
+  edge: ArrangementEdge,
+  incoming: svg_path.Segment,
+  incoming_start: Option(Int),
+  incoming_end: Option(Int),
+  endpoint_sliver_tolerance: Float,
+  collected: List(SegmentCut),
+) -> Result(List(SegmentCut), Error) {
+  case hits {
+    [] -> Ok(list.reverse(collected))
+    [hit, ..rest] -> {
+      use is_common_endpoint_sliver <- result.try(
+        intersection_cut_is_common_endpoint_sliver(
+          edge,
+          incoming,
+          incoming_start,
+          incoming_end,
+          hit,
+          endpoint_sliver_tolerance,
+        ),
       )
-    [] -> {
-      use found <- result.try(
-        intersections.segment_with(
-          left_segment,
-          right_segment,
-          options: intersections.default_options(),
-        )
-        |> result.map_error(PathError),
-      )
-      Ok(
-        found
-        |> list.flat_map(fn(hit) {
+      case is_common_endpoint_sliver {
+        True ->
+          pair_cuts_from_hits(
+            rest,
+            edge,
+            incoming,
+            incoming_start,
+            incoming_end,
+            endpoint_sliver_tolerance,
+            collected,
+          )
+        False -> {
           let svg_path.SegmentIntersection(left_t:, right_t:, ..) = hit
-          [
-            SegmentCut(index: left_index, t: left_t),
-            SegmentCut(index: right_index, t: right_t),
-          ]
-        }),
-      )
+          pair_cuts_from_hits(
+            rest,
+            edge,
+            incoming,
+            incoming_start,
+            incoming_end,
+            endpoint_sliver_tolerance,
+            [
+              SegmentCut(index: 1, t: right_t),
+              SegmentCut(index: 0, t: left_t),
+              ..collected
+            ],
+          )
+        }
+      }
     }
   }
 }
 
-fn split_indexed_segments(
-  indexed: List(IndexedSegment),
-  cuts: List(SegmentCut),
+fn intersection_cut_is_common_endpoint_sliver(
+  edge: ArrangementEdge,
+  _incoming: svg_path.Segment,
+  incoming_start: Option(Int),
+  incoming_end: Option(Int),
+  hit: svg_path.SegmentIntersection,
+  endpoint_sliver_tolerance: Float,
+) -> Result(Bool, Error) {
+  case endpoint_sliver_tolerance <=. 0.0 {
+    True -> Ok(False)
+    False -> {
+      let ArrangementEdge(start_vertex:, end_vertex:, ..) = edge
+      let svg_path.SegmentIntersection(left_t:, right_t:, ..) = hit
+      let left_sides = endpoint_sliver_sides(left_t, endpoint_sliver_tolerance)
+      let right_sides =
+        endpoint_sliver_sides(right_t, endpoint_sliver_tolerance)
+      Ok(endpoint_side_lists_share_vertex(
+        left_sides,
+        right_sides,
+        start_vertex,
+        end_vertex,
+        incoming_start,
+        incoming_end,
+      ))
+    }
+  }
+}
+
+fn endpoint_sliver_sides(
+  t: Float,
+  endpoint_sliver_tolerance: Float,
+) -> List(EndpointSide) {
+  let sides = case t <=. endpoint_sliver_tolerance {
+    True -> [StartEndpoint]
+    False -> []
+  }
+  case 1.0 -. t <=. endpoint_sliver_tolerance {
+    True -> [EndEndpoint, ..sides]
+    False -> sides
+  }
+}
+
+fn endpoint_side_lists_share_vertex(
+  left_sides: List(EndpointSide),
+  right_sides: List(EndpointSide),
+  left_start_vertex: Int,
+  left_end_vertex: Int,
+  right_start_vertex: Option(Int),
+  right_end_vertex: Option(Int),
+) -> Bool {
+  left_sides
+  |> list.any(fn(left) {
+    right_sides
+    |> list.any(fn(right) {
+      endpoint_side_vertex(left, Some(left_start_vertex), Some(left_end_vertex))
+      == endpoint_side_vertex(right, right_start_vertex, right_end_vertex)
+    })
+  })
+}
+
+fn endpoint_side_vertex(
+  side: EndpointSide,
+  start_vertex: Option(Int),
+  end_vertex: Option(Int),
+) -> Option(Int) {
+  case side {
+    StartEndpoint -> start_vertex
+    EndEndpoint -> end_vertex
+  }
+}
+
+fn unique_vertex_for_endpoint(
+  vertices: List(ArrangementVertex),
+  endpoint: svg_path.Point,
+  vertex_tolerance: Float,
+) -> Result(Option(Int), Error) {
+  unique_vertex_for_endpoint_loop(
+    vertices,
+    endpoint,
+    vertex_tolerance,
+    found: None,
+  )
+}
+
+fn unique_vertex_for_endpoint_loop(
+  vertices: List(ArrangementVertex),
+  endpoint: svg_path.Point,
+  vertex_tolerance: Float,
+  found found: Option(Int),
+) -> Result(Option(Int), Error) {
+  case vertices {
+    [] -> Ok(found)
+    [ArrangementVertex(id:, point:, ..), ..rest] -> {
+      case point.distance(endpoint, point) <=. vertex_tolerance, found {
+        True, None ->
+          unique_vertex_for_endpoint_loop(
+            rest,
+            endpoint,
+            vertex_tolerance,
+            found: Some(id),
+          )
+        True, Some(_) -> Error(InternalNormalizationError)
+        False, _ ->
+          unique_vertex_for_endpoint_loop(
+            rest,
+            endpoint,
+            vertex_tolerance,
+            found:,
+          )
+      }
+    }
+  }
+}
+
+fn intersection_options_for_graph_tolerance(
+  tolerance: Float,
+) -> intersections.IntersectionOptions {
+  let defaults = intersections.default_options()
+  intersections.IntersectionOptions(
+    tolerance: tolerance /. 2.0,
+    max_depth: defaults.max_depth,
+    parameter_snap: defaults.parameter_snap,
+  )
+}
+
+fn split_atomic_piece(
+  piece: AtomicPiece,
+  cuts: List(Float),
   tolerance: Float,
   minimum_chord: Float,
-  pieces: List(AtomicPiece),
 ) -> Result(List(AtomicPiece), Error) {
-  case indexed {
-    [] -> Ok(list.reverse(pieces))
-    [
-      IndexedSegment(
-        index:,
-        path_index:,
-        subpath_index:,
-        segment_index:,
-        segment:,
-      ),
-      ..rest
-    ] -> {
-      use parameters <- result.try(
-        [0.0, 1.0, ..cut_parameters(cuts, index, [])]
-        |> list.sort(by: float_compare)
-        |> distinct_parameters(segment, tolerance, []),
-      )
-      use split <- result.try(
-        svg_path.segment_between_many_inside(segment, between: parameters)
-        |> result.map_error(PathError),
-      )
-      let retained =
-        atomic_pieces_for_parameters(
-          split,
-          parameters,
-          index,
-          path_index,
-          subpath_index,
-          segment_index,
-          minimum_chord,
-          pieces: [],
-        )
-      split_indexed_segments(
-        rest,
-        cuts,
-        tolerance,
-        minimum_chord,
-        list.append(list.reverse(retained), pieces),
-      )
-    }
-  }
+  let AtomicPiece(
+    source_index:,
+    path_index:,
+    subpath_index:,
+    segment_index:,
+    source_from:,
+    source_to:,
+    segment:,
+  ) = piece
+  use parameters <- result.try(
+    [0.0, 1.0, ..cuts]
+    |> list.sort(float_compare)
+    |> distinct_parameters(segment, tolerance, []),
+  )
+  use split <- result.try(
+    svg_path.segment_between_many_inside(segment, between: parameters)
+    |> result.map_error(PathError),
+  )
+  Ok(
+    split_atomic_pieces_for_parameters(
+      split,
+      parameters,
+      source_index,
+      path_index,
+      subpath_index,
+      segment_index,
+      source_from,
+      source_to,
+      minimum_chord,
+      pieces: [],
+    ),
+  )
 }
 
-fn atomic_pieces_for_parameters(
+fn split_atomic_pieces_for_parameters(
   segments: List(svg_path.Segment),
   parameters: List(Float),
   source_index: Int,
   path_index: Int,
   subpath_index: Int,
   segment_index: Int,
+  source_from: Float,
+  source_to: Float,
   minimum_chord: Float,
   pieces pieces: List(AtomicPiece),
 ) -> List(AtomicPiece) {
   case segments, parameters {
     [segment, ..segment_rest], [from, to, ..parameter_rest] -> {
+      let global_from = interpolate_float(source_from, source_to, from)
+      let global_to = interpolate_float(source_from, source_to, to)
       let pieces = case
         point.distance(
           svg_path.segment_start(segment),
@@ -636,27 +3648,33 @@ fn atomic_pieces_for_parameters(
             path_index:,
             subpath_index:,
             segment_index:,
-            source_from: from,
-            source_to: to,
+            source_from: global_from,
+            source_to: global_to,
             segment:,
           ),
           ..pieces
         ]
         False -> pieces
       }
-      atomic_pieces_for_parameters(
+      split_atomic_pieces_for_parameters(
         segment_rest,
         [to, ..parameter_rest],
         source_index,
         path_index,
         subpath_index,
         segment_index,
+        source_from,
+        source_to,
         minimum_chord,
         pieces:,
       )
     }
     _, _ -> list.reverse(pieces)
   }
+}
+
+fn interpolate_float(from: Float, to: Float, at t: Float) -> Float {
+  from +. { to -. from } *. t
 }
 
 fn cut_parameters(
@@ -732,48 +3750,18 @@ fn initial_segment_images(
   })
 }
 
-fn insert_semantic_pieces_with_images(
-  pieces: List(AtomicPiece),
+fn insert_corresponding_piece_with_ref(
+  context: IncomingContext,
   graph: ArrangementGraph,
-  images: List(ArrangementSegmentImage),
-  tolerance: Float,
-  minimum_chord: Float,
-) -> Result(#(ArrangementGraph, List(ArrangementSegmentImage)), Error) {
-  case pieces {
-    [] -> Ok(#(graph, images))
-    [first, ..rest] -> {
-      let AtomicPiece(source_index:, segment:, ..) = first
-      use #(next, edge_id, reversed) <- result.try(
-        insert_semantic_piece_with_ref(graph, segment, tolerance, minimum_chord),
-      )
-      let images =
-        append_segment_image_reference(
-          images,
-          source_index,
-          DirectedEdgeReference(edge_id:, reversed:),
-        )
-      insert_semantic_pieces_with_images(
-        rest,
-        next,
-        images,
-        tolerance,
-        minimum_chord,
-      )
-    }
-  }
-}
-
-fn insert_semantic_piece_with_ref(
-  graph: ArrangementGraph,
-  segment: svg_path.Segment,
   tolerance: Float,
   minimum_chord: Float,
 ) -> Result(#(ArrangementGraph, Int, Bool), Error) {
   let ArrangementGraph(edges:, ..) = graph
-  use match <- result.try(find_semantic_edge(edges, segment, tolerance))
+  let IncomingContext(piece: AtomicPiece(segment:, ..), ..) = context
+  use match <- result.try(find_corresponding_edge(context, edges, tolerance))
   case match {
     None -> {
-      let edge_id = list.length(edges)
+      let edge_id = next_arrangement_edge_id(edges)
       use graph <- result.try(insert_atomic_segment(
         graph,
         segment,
@@ -788,6 +3776,117 @@ fn insert_semantic_piece_with_ref(
         edge_id,
         !same_direction,
       ))
+  }
+}
+
+fn find_corresponding_edge(
+  context: IncomingContext,
+  edges: List(ArrangementEdge),
+  tolerance: Float,
+) -> Result(Option(#(Int, Bool)), Error) {
+  let IncomingContext(
+    piece: AtomicPiece(segment:, ..),
+    start_match:,
+    end_match:,
+    ..,
+  ) = context
+  case start_match, end_match {
+    Some(start_vertex), Some(end_vertex) ->
+      find_corresponding_edge_loop(
+        edges,
+        segment,
+        start_vertex,
+        end_vertex,
+        tolerance,
+      )
+    _, _ -> Ok(None)
+  }
+}
+
+fn find_corresponding_edge_loop(
+  edges: List(ArrangementEdge),
+  segment: svg_path.Segment,
+  start_vertex: Int,
+  end_vertex: Int,
+  tolerance: Float,
+) -> Result(Option(#(Int, Bool)), Error) {
+  case edges {
+    [] -> Ok(None)
+    [edge, ..rest] -> {
+      let ArrangementEdge(
+        id:,
+        segment: existing,
+        start_vertex: existing_start,
+        end_vertex: existing_end,
+        ..,
+      ) = edge
+      let direction = case
+        existing_start == start_vertex && existing_end == end_vertex,
+        existing_start == end_vertex && existing_end == start_vertex
+      {
+        True, _ -> Some(True)
+        _, True -> Some(False)
+        False, False -> None
+      }
+      case direction {
+        None ->
+          find_corresponding_edge_loop(
+            rest,
+            segment,
+            start_vertex,
+            end_vertex,
+            tolerance,
+          )
+        Some(same_direction) -> {
+          use overlaps <- result.try(check_edge_correspondence(
+            existing,
+            segment,
+            same_direction,
+            tolerance,
+          ))
+          case overlaps {
+            True -> Ok(Some(#(id, same_direction)))
+            False ->
+              find_corresponding_edge_loop(
+                rest,
+                segment,
+                start_vertex,
+                end_vertex,
+                tolerance,
+              )
+          }
+        }
+      }
+    }
+  }
+}
+
+fn check_edge_correspondence(
+  existing: svg_path.Segment,
+  segment: svg_path.Segment,
+  same_direction: Bool,
+  tolerance: Float,
+) -> Result(Bool, Error) {
+  let #(right_from, right_to) = case same_direction {
+    True -> #(0.0, 1.0)
+    False -> #(1.0, 0.0)
+  }
+  use overlap <- result.try(
+    overlaps.check_parameter_correspondence(
+      existing,
+      segment,
+      left_from: 0.0,
+      left_to: 1.0,
+      right_from:,
+      right_to:,
+      tolerance:,
+      samples: 7,
+    )
+    |> result.map_error(PathError),
+  )
+  case overlap {
+    Some(_) -> Ok(True)
+    None -> Ok(False)
   }
 }
 
@@ -818,82 +3917,419 @@ fn append_segment_image_reference(
   })
 }
 
-fn find_semantic_edge(
-  edges: List(ArrangementEdge),
-  segment: svg_path.Segment,
+fn source_segment_images(
+  segments: List(svg_path.Segment),
+  graph: ArrangementGraph,
+  images: List(ArrangementSegmentImage),
   tolerance: Float,
-) -> Result(Option(#(Int, Bool)), Error) {
-  case edges {
-    [] -> Ok(None)
-    [ArrangementEdge(id:, segment: existing, ..), ..rest] -> {
-      use found <- result.try(
-        overlaps.segment_with_samples(existing, segment, tolerance:, samples: 7)
-        |> result.map_error(PathError),
-      )
-      case found {
-        [overlap] -> {
-          let overlaps.SegmentOverlap(
-            left_from:,
-            left_to:,
-            right_from:,
-            right_to:,
-            ..,
-          ) = overlap
-          use existing_from <- result.try(
-            svg_path.segment_point(existing, at: left_from)
-            |> result.map_error(PathError),
-          )
-          use existing_to <- result.try(
-            svg_path.segment_point(existing, at: left_to)
-            |> result.map_error(PathError),
-          )
-          use incoming_from <- result.try(
-            svg_path.segment_point(segment, at: right_from)
-            |> result.map_error(PathError),
-          )
-          use incoming_to <- result.try(
-            svg_path.segment_point(segment, at: right_to)
-            |> result.map_error(PathError),
-          )
-          case
-            endpoints_cover_segment(
-              existing,
-              existing_from,
-              existing_to,
-              tolerance,
-            )
-            && endpoints_cover_segment(
-              segment,
-              incoming_from,
-              incoming_to,
-              tolerance,
-            )
-          {
-            True -> Ok(Some(#(id, right_to >. right_from)))
-            False -> find_semantic_edge(rest, segment, tolerance)
-          }
-        }
-        _ -> find_semantic_edge(rest, segment, tolerance)
+) -> Result(List(ArrangementSourceSegmentImage), Error) {
+  images
+  |> list.index_map(fn(image, index) {
+    case segment_at(segments, index) {
+      Ok(source) -> source_segment_image(source, graph, image, index, tolerance)
+      Error(Nil) -> Error(InternalNormalizationError)
+    }
+  })
+  |> result.all
+  |> result.map(mark_segment_ownership)
+}
+
+fn source_segment_image(
+  source: svg_path.Segment,
+  graph: ArrangementGraph,
+  image: ArrangementSegmentImage,
+  index: Int,
+  tolerance: Float,
+) -> Result(ArrangementSourceSegmentImage, Error) {
+  use edges <- result.try(segment_image_edges(
+    ArrangementGraphBuild(graph:, segment_images: []),
+    image,
+  ))
+  use edges <- result.try(
+    edges
+    |> list.map(fn(edge) {
+      let #(edge, reversed) = edge
+      source_segment_edge_image(source, edge, reversed, tolerance)
+    })
+    |> result.all,
+  )
+  let edges =
+    list.filter_map(edges, fn(edge) {
+      case edge {
+        Some(edge) -> Ok(edge)
+        None -> Error(Nil)
       }
+    })
+  Ok(ArrangementSourceSegmentImage(segment_index: index, edges:))
+}
+
+fn segment_at(
+  segments: List(svg_path.Segment),
+  target: Int,
+) -> Result(svg_path.Segment, Nil) {
+  case segments, target {
+    [], _ -> Error(Nil)
+    [first, ..], 0 -> Ok(first)
+    [_, ..rest], _ -> segment_at(rest, target - 1)
+  }
+}
+
+fn source_segment_edge_image(
+  source: svg_path.Segment,
+  edge: ArrangementEdge,
+  reversed: Bool,
+  tolerance: Float,
+) -> Result(Option(ArrangementSegmentEdgeImage), Error) {
+  let ArrangementEdge(id: edge_id, segment:, ..) = edge
+  use start_projection <- result.try(source_projection(
+    svg_path.segment_start(segment),
+    source,
+  ))
+  use end_projection <- result.try(source_projection(
+    svg_path.segment_end(segment),
+    source,
+  ))
+  let svg_path.SegmentProjection(t: ta_start, distance: start_distance, ..) =
+    start_projection
+  let svg_path.SegmentProjection(t: ta_end, distance: end_distance, ..) =
+    end_projection
+  case start_distance <=. tolerance && end_distance <=. tolerance {
+    False -> Ok(None)
+    True -> {
+      let #(ta, tb) = case reversed {
+        True -> #(ta_end, ta_start)
+        False -> #(ta_start, ta_end)
+      }
+      Ok(
+        Some(ArrangementSegmentEdgeImage(
+          ta:,
+          tb:,
+          edge_id:,
+          reversed:,
+          own: False,
+        )),
+      )
     }
   }
 }
 
-fn endpoints_cover_segment(
-  segment: svg_path.Segment,
-  first: svg_path.Point,
-  second: svg_path.Point,
+fn source_projection(
+  point: svg_path.Point,
+  source: svg_path.Segment,
+) -> Result(svg_path.SegmentProjection, Error) {
+  svg_path.segment_projection(point, to: source)
+  |> result.map_error(PathError)
+}
+
+fn mark_segment_ownership(
+  images: List(ArrangementSourceSegmentImage),
+) -> List(ArrangementSourceSegmentImage) {
+  let #(images, _) =
+    images
+    |> list.fold(#([], []), fn(state, image) {
+      let #(collected, owned_edges) = state
+      let #(image, owned_edges) = mark_image_ownership(image, owned_edges)
+      #([image, ..collected], owned_edges)
+    })
+  list.reverse(images)
+}
+
+fn mark_image_ownership(
+  image: ArrangementSourceSegmentImage,
+  owned_edges: List(Int),
+) -> #(ArrangementSourceSegmentImage, List(Int)) {
+  let ArrangementSourceSegmentImage(segment_index:, edges:) = image
+  let #(edges, owned_edges) =
+    edges
+    |> list.fold(#([], owned_edges), fn(state, edge) {
+      let #(collected, owned_edges) = state
+      let ArrangementSegmentEdgeImage(ta:, tb:, edge_id:, reversed:, ..) = edge
+      let own = !int_list_contains(owned_edges, edge_id)
+      let owned_edges = case own {
+        True -> [edge_id, ..owned_edges]
+        False -> owned_edges
+      }
+      #(
+        [
+          ArrangementSegmentEdgeImage(ta:, tb:, edge_id:, reversed:, own:),
+          ..collected
+        ],
+        owned_edges,
+      )
+    })
+  #(
+    ArrangementSourceSegmentImage(segment_index:, edges: list.reverse(edges)),
+    owned_edges,
+  )
+}
+
+fn edge_source_images(
+  graph: ArrangementGraph,
+  segment_images: List(ArrangementSourceSegmentImage),
+) -> List(ArrangementEdgeImage) {
+  let ArrangementGraph(edges:, ..) = graph
+  edges
+  |> list.map(fn(edge) {
+    let ArrangementEdge(id:, ..) = edge
+    ArrangementEdgeImage(edge_id: id, sources: edge_sources(id, segment_images))
+  })
+}
+
+fn edge_sources(
+  edge_id: Int,
+  images: List(ArrangementSourceSegmentImage),
+) -> List(ArrangementEdgeSourceImage) {
+  images
+  |> list.fold([], fn(collected, image) {
+    let ArrangementSourceSegmentImage(segment_index:, edges:) = image
+    let matches =
+      edges
+      |> list.filter_map(fn(edge) {
+        let ArrangementSegmentEdgeImage(ta:, tb:, edge_id: id, reversed:, ..) =
+          edge
+        case id == edge_id {
+          True -> {
+            let left = float.min(ta, tb)
+            let right = float.max(ta, tb)
+            Ok(ArrangementEdgeSourceImage(
+              segment_index:,
+              ta: left,
+              tb: right,
+              reversed:,
+            ))
+          }
+          False -> Error(Nil)
+        }
+      })
+    list.append(collected, matches)
+  })
+}
+
+fn certify_segment_build(
+  graph: ArrangementGraph,
+  segments: List(svg_path.Segment),
+  segment_images: List(ArrangementSourceSegmentImage),
+  edge_images: List(ArrangementEdgeImage),
   tolerance: Float,
+) -> Result(Nil, Error) {
+  use _ <- result.try(certify_segment_edges_exist(graph, segment_images))
+  use _ <- result.try(certify_source_segment_images_match_edge_images(
+    segment_images,
+    edge_images,
+  ))
+  use _ <- result.try(certify_edge_source_images_match_segment_images(
+    edge_images,
+    segment_images,
+  ))
+  certify_segment_image_geometry(graph, segments, segment_images, tolerance)
+}
+
+fn certify_segment_edges_exist(
+  graph: ArrangementGraph,
+  segment_images: List(ArrangementSourceSegmentImage),
+) -> Result(Nil, Error) {
+  let ArrangementGraph(edges:, ..) = graph
+  segment_images
+  |> list.map(fn(image) {
+    let ArrangementSourceSegmentImage(edges: references, ..) = image
+    references
+    |> list.map(fn(reference) {
+      let ArrangementSegmentEdgeImage(edge_id:, ..) = reference
+      case list.find(edges, fn(edge) { edge.id == edge_id }) {
+        Ok(_) -> Ok(Nil)
+        Error(Nil) -> Error(MissingEdge(edge_id))
+      }
+    })
+    |> result.all
+    |> result.map(fn(_) { Nil })
+  })
+  |> result.all
+  |> result.map(fn(_) { Nil })
+}
+
+fn certify_source_segment_images_match_edge_images(
+  segment_images: List(ArrangementSourceSegmentImage),
+  edge_images: List(ArrangementEdgeImage),
+) -> Result(Nil, Error) {
+  segment_images
+  |> list.map(fn(image) {
+    let ArrangementSourceSegmentImage(segment_index:, edges:) = image
+    edges
+    |> list.map(fn(edge) {
+      let ArrangementSegmentEdgeImage(edge_id:, ta:, tb:, reversed:, ..) = edge
+      case
+        edge_source_images_contain_source(
+          edge_images,
+          edge_id,
+          segment_index,
+          float.min(ta, tb),
+          float.max(ta, tb),
+          reversed,
+        )
+      {
+        True -> Ok(Nil)
+        False -> Error(InternalNormalizationError)
+      }
+    })
+    |> result.all
+    |> result.map(fn(_) { Nil })
+  })
+  |> result.all
+  |> result.map(fn(_) { Nil })
+}
+
+fn certify_edge_source_images_match_segment_images(
+  edge_images: List(ArrangementEdgeImage),
+  segment_images: List(ArrangementSourceSegmentImage),
+) -> Result(Nil, Error) {
+  edge_images
+  |> list.map(fn(image) {
+    let ArrangementEdgeImage(edge_id:, sources:) = image
+    sources
+    |> list.map(fn(source) {
+      let ArrangementEdgeSourceImage(segment_index:, ta:, tb:, reversed:) =
+        source
+      case
+        source_segment_images_contain_edge(
+          segment_images,
+          segment_index,
+          edge_id,
+          ta,
+          tb,
+          reversed,
+        )
+      {
+        True -> Ok(Nil)
+        False -> Error(InternalNormalizationError)
+      }
+    })
+    |> result.all
+    |> result.map(fn(_) { Nil })
+  })
+  |> result.all
+  |> result.map(fn(_) { Nil })
+}
+
+fn edge_source_images_contain_source(
+  edge_images: List(ArrangementEdgeImage),
+  edge_id: Int,
+  segment_index: Int,
+  ta: Float,
+  tb: Float,
+  reversed: Bool,
 ) -> Bool {
-  let start = svg_path.segment_start(segment)
-  let end = svg_path.segment_end(segment)
-  let forward =
-    point.distance(first, start) <=. tolerance
-    && point.distance(second, end) <=. tolerance
-  let reversed =
-    point.distance(first, end) <=. tolerance
-    && point.distance(second, start) <=. tolerance
-  forward || reversed
+  edge_images
+  |> list.any(fn(image) {
+    let ArrangementEdgeImage(edge_id: candidate, sources:) = image
+    candidate == edge_id
+    && sources
+    |> list.any(fn(source) {
+      let ArrangementEdgeSourceImage(
+        segment_index: candidate_segment,
+        ta: candidate_ta,
+        tb: candidate_tb,
+        reversed: candidate_reversed,
+      ) = source
+      candidate_segment == segment_index
+      && candidate_ta == ta
+      && candidate_tb == tb
+      && candidate_reversed == reversed
+    })
+  })
+}
+
+fn source_segment_images_contain_edge(
+  segment_images: List(ArrangementSourceSegmentImage),
+  segment_index: Int,
+  edge_id: Int,
+  ta: Float,
+  tb: Float,
+  reversed: Bool,
+) -> Bool {
+  segment_images
+  |> list.any(fn(image) {
+    let ArrangementSourceSegmentImage(segment_index: candidate_segment, edges:) =
+      image
+    candidate_segment == segment_index
+    && edges
+    |> list.any(fn(edge) {
+      let ArrangementSegmentEdgeImage(
+        edge_id: candidate_edge,
+        ta: candidate_ta,
+        tb: candidate_tb,
+        reversed: candidate_reversed,
+        ..,
+      ) = edge
+      candidate_edge == edge_id
+      && float.min(candidate_ta, candidate_tb) == ta
+      && float.max(candidate_ta, candidate_tb) == tb
+      && candidate_reversed == reversed
+    })
+  })
+}
+
+fn certify_segment_image_geometry(
+  graph: ArrangementGraph,
+  segments: List(svg_path.Segment),
+  segment_images: List(ArrangementSourceSegmentImage),
+  tolerance: Float,
+) -> Result(Nil, Error) {
+  segment_images
+  |> list.map(fn(image) {
+    let ArrangementSourceSegmentImage(segment_index:, edges:) = image
+    use source <- result.try(
+      segment_at(segments, segment_index)
+      |> result.map_error(fn(_) { InternalNormalizationError }),
+    )
+    edges
+    |> list.map(fn(edge) {
+      certify_segment_edge_geometry(graph, source, edge, tolerance)
+    })
+    |> result.all
+    |> result.map(fn(_) { Nil })
+  })
+  |> result.all
+  |> result.map(fn(_) { Nil })
+}
+
+fn certify_segment_edge_geometry(
+  graph: ArrangementGraph,
+  source: svg_path.Segment,
+  image: ArrangementSegmentEdgeImage,
+  tolerance: Float,
+) -> Result(Nil, Error) {
+  let ArrangementGraph(edges:, ..) = graph
+  let ArrangementSegmentEdgeImage(ta:, tb:, edge_id:, reversed:, ..) = image
+  use edge <- result.try(arrangement_edge_by_id(edges, edge_id))
+  let ArrangementEdge(segment:, ..) = edge
+  use source_a <- result.try(
+    svg_path.segment_point(source, at: ta)
+    |> result.map_error(PathError),
+  )
+  use source_b <- result.try(
+    svg_path.segment_point(source, at: tb)
+    |> result.map_error(PathError),
+  )
+  let edge_a = case reversed {
+    True -> svg_path.segment_end(segment)
+    False -> svg_path.segment_start(segment)
+  }
+  let edge_b = case reversed {
+    True -> svg_path.segment_start(segment)
+    False -> svg_path.segment_end(segment)
+  }
+  case
+    point.distance(source_a, edge_a) <=. tolerance
+    && point.distance(source_b, edge_b) <=. tolerance
+  {
+    True -> Ok(Nil)
+    False -> Error(InternalNormalizationError)
+  }
+}
+
+fn int_list_contains(values: List(Int), target: Int) -> Bool {
+  values
+  |> list.any(fn(value) { value == target })
 }
 
 fn increment_edge_by_id(
@@ -908,20 +4344,15 @@ fn increment_edge_by_id(
       |> list.map(fn(edge) {
         let ArrangementEdge(
           id:,
-          segment:,
-          start_vertex:,
-          end_vertex:,
           forward_multiplicity: forward_count,
           reverse_multiplicity: reverse_count,
+          ..,
         ) = edge
         case id == edge_id {
           False -> edge
           True ->
             ArrangementEdge(
-              id:,
-              segment:,
-              start_vertex:,
-              end_vertex:,
+              ..edge,
               forward_multiplicity: case forward {
                 True -> forward_count + 1
                 False -> forward_count
@@ -1046,8 +4477,9 @@ fn insert_or_increment_edge(
     #(False, _) ->
       list.append(edges, [
         ArrangementEdge(
-          id: list.length(edges),
+          id: next_arrangement_edge_id(edges),
           segment:,
+          bounds: segment_bounding_box_assert(segment),
           start_vertex: start_id,
           end_vertex: end_id,
           forward_multiplicity: 1,
@@ -1068,12 +4500,12 @@ fn increment_matching_edge(
     [] -> #(False, list.reverse(before))
     [first, ..rest] -> {
       let ArrangementEdge(
-        id:,
         segment: existing,
         start_vertex: existing_start,
         end_vertex: existing_end,
         forward_multiplicity: forward,
         reverse_multiplicity: reverse,
+        ..,
       ) = first
       case
         existing_start == start_id
@@ -1084,10 +4516,7 @@ fn increment_matching_edge(
           True,
           list.append(list.reverse(before), [
             ArrangementEdge(
-              id:,
-              segment: existing,
-              start_vertex: existing_start,
-              end_vertex: existing_end,
+              ..first,
               forward_multiplicity: forward + 1,
               reverse_multiplicity: reverse,
             ),
@@ -1104,10 +4533,7 @@ fn increment_matching_edge(
               True,
               list.append(list.reverse(before), [
                 ArrangementEdge(
-                  id:,
-                  segment: existing,
-                  start_vertex: existing_start,
-                  end_vertex: existing_end,
+                  ..first,
                   forward_multiplicity: forward,
                   reverse_multiplicity: reverse + 1,
                 ),
@@ -1154,6 +4580,13 @@ fn validate_options(
   }
 }
 
+fn validate_endpoint_cut_tolerance(tolerance: Float) -> Result(Nil, Error) {
+  case tolerance <. 0.0 || !number.is_finite(tolerance) {
+    True -> Error(InvalidTolerance(tolerance))
+    False -> Ok(Nil)
+  }
+}
+
 fn validate_edges(
   edges: List(ArrangementEdge),
   vertices: List(ArrangementVertex),
@@ -1170,6 +4603,7 @@ fn validate_edges(
         end_vertex:,
         forward_multiplicity:,
         reverse_multiplicity:,
+        ..,
       ),
       ..rest
     ] -> {

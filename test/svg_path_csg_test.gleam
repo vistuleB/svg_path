@@ -27,15 +27,10 @@ pub fn csg_result_retains_its_arrangement_build_test() {
 
   let assert Ok(csg.CsgResult(
     path:,
-    build: arrangement_graph.ArrangementGraphBuild(
-      graph:,
-      normalized_paths: [normalized_left, normalized_right],
-      ..,
-    ),
+    build: arrangement_graph.ArrangementSegmentBuild(graph:, segments:, ..),
   )) = csg.union(left, right, using: svg_path.Nonzero)
 
-  normalized_left |> svg_path.path_subpaths |> list.length |> should.equal(1)
-  normalized_right |> svg_path.path_subpaths |> list.length |> should.equal(1)
+  list.length(segments) |> should.equal(8)
   path |> svg_path.path_subpaths |> list.length |> should.equal(1)
   arrangement_graph.validate(graph, tolerance:, minimum_chord: 0.00001)
   |> should.equal(Ok(Nil))

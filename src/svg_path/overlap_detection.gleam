@@ -1,7 +1,9 @@
 //// Dependency-neutral raw segment-overlap detection.
 
+import gleam/float
 import gleam/int
 import gleam/list
+import gleam/option.{type Option, None, Some}
 import gleam/result
 import svg_path
 
@@ -119,6 +121,7 @@ fn merge_overlaps(
               first_right_from,
               second_right_from,
               first_right_increases,
+              tolerance,
             )
             && parameter_order_compatible(
               first_left_to,
@@ -126,6 +129,7 @@ fn merge_overlaps(
               first_right_to,
               second_right_to,
               first_right_increases,
+              tolerance,
             )
             && coincident_boundary_compatible(
               first_left_from,
@@ -296,6 +300,70 @@ pub fn detect(
   tolerance tolerance: Float,
 ) -> Result(List(RawOverlap), svg_path.Error) {
   detect_with_samples(left, right, tolerance:, samples: overlap_samples)
+}
+
+/// Check one proposed endpoint-parameter correspondence.
+///
+/// `Ok(Some(_))` means the proposed parameter interval is a positive-span
+/// affine overlap. `Ok(None)` means the proposed interval is not coincident
+/// under the supplied tolerance. A non-affine coincident correspondence is an
+/// error, matching the module-wide overlap contract.
+@internal
+pub fn check_parameter_correspondence(
+  left: svg_path.Segment,
+  right: svg_path.Segment,
+  left_from left_from: Float,
+  left_to left_to: Float,
+  right_from right_from: Float,
+  right_to right_to: Float,
+  tolerance tolerance: Float,
+  samples samples: Int,
+) -> Result(Option(RawOverlap), svg_path.Error) {
+  case tolerance <. 0.0 || tolerance -. tolerance != 0.0, samples <= 0 {
+    True, _ -> Error(svg_path.InvalidOverlapTolerance(tolerance))
+    _, True -> Error(svg_path.InvalidOverlapSamples(samples))
+    False, False -> {
+      use start <- result.try(svg_path.segment_point(left, at: left_from))
+      use end <- result.try(svg_path.segment_point(left, at: left_to))
+      let overlap =
+        canonicalize_overlap(#(
+          left_from,
+          left_to,
+          right_from,
+          right_to,
+          start,
+          end,
+        ))
+      case overlap_has_positive_span(overlap) {
+        False -> Ok(None)
+        True -> {
+          use valid_sampled <- result.try(sampled_overlap_valid(
+            overlap,
+            left,
+            right,
+            tolerance,
+            samples,
+          ))
+          case valid_sampled {
+            False -> Ok(None)
+            True -> {
+              use valid_affine <- result.try(affine_correspondence_valid(
+                overlap,
+                left,
+                right,
+                tolerance,
+                samples,
+              ))
+              case valid_affine {
+                True -> Ok(Some(overlap))
+                False -> Error(svg_path.NonAffineOverlapCorrespondence)
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
 fn endpoint_projections(
@@ -634,6 +702,7 @@ fn parameter_order_compatible(
   first_right: Float,
   second_right: Float,
   right_increases: Bool,
+  tolerance: Float,
 ) -> Bool {
   case first_left <. second_left, first_left >. second_left {
     True, _ ->
@@ -646,7 +715,8 @@ fn parameter_order_compatible(
         True -> first_right >=. second_right
         False -> first_right <=. second_right
       }
-    False, False -> first_right == second_right
+    False, False ->
+      float.absolute_value(first_right -. second_right) <=. tolerance
   }
 }
 
@@ -662,7 +732,7 @@ fn coincident_boundary_compatible(
   case first_left == second_left {
     False -> True
     True ->
-      first_right == second_right
+      float.absolute_value(first_right -. second_right) <=. tolerance
       && points_near(first_point, second_point, tolerance)
   }
 }

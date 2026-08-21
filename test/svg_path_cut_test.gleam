@@ -303,7 +303,7 @@ pub fn path_cut_dedupes_near_internal_boundary_aliases_test() {
       options: intersections.IntersectionOptions(
         tolerance: 0.000001,
         max_depth: 48,
-        parameter_snap: intersections.NoParameterSnap,
+        parameter_snap: intersections.DecimalParameterSnap(exponent: 7),
       ),
     )
 

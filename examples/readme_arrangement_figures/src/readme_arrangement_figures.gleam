@@ -223,11 +223,9 @@ fn semantic_circle_overlap() -> String {
         False,
       ),
     ])
-  let assert Ok(arrangement_graph.ArrangementGraphBuild(
-    graph:,
-    normalized_paths: [normalized_source],
-    ..,
-  )) = arrangement_graph.build([graph_source], tolerance:, minimum_chord:)
+  let assert Ok(arrangement_graph.ArrangementGraphBuild(graph:, ..)) =
+    arrangement_graph.build([graph_source], tolerance:, minimum_chord:)
+  let normalized_source = graph_source
   let assert Ok(graph_things) =
     drawing.annotated_drawing(graph, normalized_source, tolerance:)
 
@@ -339,11 +337,9 @@ fn overlapping_squares() -> String {
       square_subpath(560.0, 90.0, 740.0, 270.0),
       square_subpath(650.0, 180.0, 830.0, 360.0),
     ])
-  let assert Ok(arrangement_graph.ArrangementGraphBuild(
-    graph:,
-    normalized_paths: [normalized_source],
-    ..,
-  )) = arrangement_graph.build([graph_source], tolerance:, minimum_chord:)
+  let assert Ok(arrangement_graph.ArrangementGraphBuild(graph:, ..)) =
+    arrangement_graph.build([graph_source], tolerance:, minimum_chord:)
+  let normalized_source = graph_source
   let assert Ok(graph_things) =
     drawing.annotated_drawing(graph, normalized_source, tolerance:)
 

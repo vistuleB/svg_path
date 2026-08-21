@@ -53,16 +53,16 @@ pub type BoundaryTopologyFailure {
 
 /// A CSG output together with the exact arrangement used to derive it.
 ///
-/// Returning the build makes normalization and graph refinement visible to the
-/// caller: the result path follows the arrangement's geometry rather than
-/// silently claiming the original input geometry as its source of truth.
+/// Returning the build makes graph refinement visible to the caller: the result
+/// path follows the arrangement's geometry rather than silently claiming the
+/// original input geometry as its source of truth.
 pub type CsgResult {
   CsgResult(
     /// The reconstructed result path for the requested operation.
     path: svg_path.Path,
-    /// The arrangement graph and source-ordered normalized input paths used to
+    /// The arrangement graph and source-ordered input segment images used to
     /// classify and reconstruct `path`.
-    build: arrangement.ArrangementGraphBuild,
+    build: arrangement.ArrangementSegmentBuild,
   )
 }
 
@@ -77,7 +77,7 @@ pub fn default_options() -> Options {
 /// Return the Boolean union of two paths under `using`.
 ///
 /// Each operand is filled independently using the supplied rule. The result
-/// follows the normalized and refined geometry exposed through `CsgResult.build`.
+/// follows the refined geometry exposed through `CsgResult.build`.
 pub fn union(
   left: svg_path.Path,
   right: svg_path.Path,
@@ -93,20 +93,12 @@ pub fn union_with(
   using fill_rule: svg_path.FillRule,
   options options: Options,
 ) -> Result(CsgResult, Error) {
-  use built <- result.try(
-    arrangement.build(
-      [left, right],
-      tolerance: options.tolerance,
-      minimum_chord: options.minimum_chord,
-    )
-    |> result.map_error(ArrangementGraphError),
-  )
-  let arrangement.ArrangementGraphBuild(graph:, normalized_paths:, ..) = built
-  let assert [normalized_left, normalized_right] = normalized_paths
+  use built <- result.try(csg_arrangement_build([left, right], options))
+  let arrangement.ArrangementSegmentBuild(graph:, ..) = built
   use path <- result.try(union_from_arrangement_graph(
     graph,
-    normalized_left,
-    normalized_right,
+    left,
+    right,
     using: fill_rule,
     tolerance: options.tolerance,
   ))
@@ -116,7 +108,7 @@ pub fn union_with(
 /// Return the Boolean intersection of two paths under `using`.
 ///
 /// Each operand is filled independently using the supplied rule. The result
-/// follows the normalized and refined geometry exposed through `CsgResult.build`.
+/// follows the refined geometry exposed through `CsgResult.build`.
 pub fn intersection(
   left: svg_path.Path,
   right: svg_path.Path,
@@ -132,20 +124,12 @@ pub fn intersection_with(
   using fill_rule: svg_path.FillRule,
   options options: Options,
 ) -> Result(CsgResult, Error) {
-  use built <- result.try(
-    arrangement.build(
-      [left, right],
-      tolerance: options.tolerance,
-      minimum_chord: options.minimum_chord,
-    )
-    |> result.map_error(ArrangementGraphError),
-  )
-  let arrangement.ArrangementGraphBuild(graph:, normalized_paths:, ..) = built
-  let assert [normalized_left, normalized_right] = normalized_paths
+  use built <- result.try(csg_arrangement_build([left, right], options))
+  let arrangement.ArrangementSegmentBuild(graph:, ..) = built
   use path <- result.try(intersection_from_arrangement_graph(
     graph,
-    normalized_left,
-    normalized_right,
+    left,
+    right,
     using: fill_rule,
     tolerance: options.tolerance,
   ))
@@ -155,7 +139,7 @@ pub fn intersection_with(
 /// Return `left` minus `right` under `using`.
 ///
 /// Each operand is filled independently using the supplied rule. The result
-/// follows the normalized and refined geometry exposed through `CsgResult.build`.
+/// follows the refined geometry exposed through `CsgResult.build`.
 pub fn difference(
   left: svg_path.Path,
   minus right: svg_path.Path,
@@ -176,20 +160,12 @@ pub fn difference_with(
   using fill_rule: svg_path.FillRule,
   options options: Options,
 ) -> Result(CsgResult, Error) {
-  use built <- result.try(
-    arrangement.build(
-      [left, right],
-      tolerance: options.tolerance,
-      minimum_chord: options.minimum_chord,
-    )
-    |> result.map_error(ArrangementGraphError),
-  )
-  let arrangement.ArrangementGraphBuild(graph:, normalized_paths:, ..) = built
-  let assert [normalized_left, normalized_right] = normalized_paths
+  use built <- result.try(csg_arrangement_build([left, right], options))
+  let arrangement.ArrangementSegmentBuild(graph:, ..) = built
   use path <- result.try(difference_from_arrangement_graph(
     graph,
-    normalized_left,
-    normalized_right,
+    left,
+    right,
     using: fill_rule,
     tolerance: options.tolerance,
   ))
@@ -199,7 +175,7 @@ pub fn difference_with(
 /// Return the Boolean symmetric difference of two paths under `using`.
 ///
 /// Each operand is filled independently using the supplied rule. The result
-/// follows the normalized and refined geometry exposed through `CsgResult.build`.
+/// follows the refined geometry exposed through `CsgResult.build`.
 pub fn symmetric_difference(
   left: svg_path.Path,
   right: svg_path.Path,
@@ -220,20 +196,12 @@ pub fn symmetric_difference_with(
   using fill_rule: svg_path.FillRule,
   options options: Options,
 ) -> Result(CsgResult, Error) {
-  use built <- result.try(
-    arrangement.build(
-      [left, right],
-      tolerance: options.tolerance,
-      minimum_chord: options.minimum_chord,
-    )
-    |> result.map_error(ArrangementGraphError),
-  )
-  let arrangement.ArrangementGraphBuild(graph:, normalized_paths:, ..) = built
-  let assert [normalized_left, normalized_right] = normalized_paths
+  use built <- result.try(csg_arrangement_build([left, right], options))
+  let arrangement.ArrangementSegmentBuild(graph:, ..) = built
   use path <- result.try(symmetric_difference_from_arrangement_graph(
     graph,
-    normalized_left,
-    normalized_right,
+    left,
+    right,
     using: fill_rule,
     tolerance: options.tolerance,
   ))
@@ -255,22 +223,62 @@ pub fn nested_contours_with(
   path: svg_path.Path,
   options options: Options,
 ) -> Result(CsgResult, Error) {
-  use built <- result.try(
-    arrangement.build(
-      [path],
-      tolerance: options.tolerance,
-      minimum_chord: options.minimum_chord,
-    )
-    |> result.map_error(ArrangementGraphError),
-  )
-  let arrangement.ArrangementGraphBuild(graph:, normalized_paths:, ..) = built
-  let assert [normalized_path] = normalized_paths
+  use built <- result.try(csg_arrangement_build([path], options))
+  let arrangement.ArrangementSegmentBuild(graph:, ..) = built
   use path <- result.try(nested_contours_from_arrangement_graph(
     graph,
-    normalized_path,
+    path,
     tolerance: options.tolerance,
   ))
   Ok(CsgResult(path:, build: built))
+}
+
+fn csg_arrangement_build(
+  paths: List(svg_path.Path),
+  options: Options,
+) -> Result(arrangement.ArrangementSegmentBuild, Error) {
+  arrangement.build_with(
+    csg_path_segments(paths, segments: []),
+    vertex_tolerance: options.tolerance,
+    minimum_chord: options.minimum_chord,
+    endpoint_sliver_tolerance: 0.0,
+  )
+  |> result.map_error(ArrangementGraphError)
+}
+
+fn csg_path_segments(
+  paths: List(svg_path.Path),
+  segments segments: List(svg_path.Segment),
+) -> List(svg_path.Segment) {
+  case paths {
+    [] -> list.reverse(segments)
+    [path, ..rest] ->
+      csg_path_segments(
+        rest,
+        segments: csg_subpath_segments(svg_path.path_subpaths(path), segments:),
+      )
+  }
+}
+
+fn csg_subpath_segments(
+  subpaths: List(svg_path.Subpath),
+  segments segments: List(svg_path.Segment),
+) -> List(svg_path.Segment) {
+  case subpaths {
+    [] -> segments
+    [subpath, ..rest] ->
+      csg_subpath_segments(
+        rest,
+        segments: prepend_reversed(svg_path.subpath_segments(subpath), segments),
+      )
+  }
+}
+
+fn prepend_reversed(items: List(a), onto onto: List(a)) -> List(a) {
+  case items {
+    [] -> onto
+    [first, ..rest] -> prepend_reversed(rest, onto: [first, ..onto])
+  }
 }
 
 type BoundaryEdge {

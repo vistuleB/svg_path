@@ -99,6 +99,35 @@ pub fn segment_with_samples(
   Ok(list.map(detected, raw_overlap))
 }
 
+/// Check one proposed endpoint-parameter correspondence.
+///
+/// `Ok(Some(_))` means the proposed parameter interval is a positive-span
+/// affine overlap. `Ok(None)` means the proposed interval is not coincident
+/// under the supplied tolerance.
+@internal
+pub fn check_parameter_correspondence(
+  left: svg_path.Segment,
+  right: svg_path.Segment,
+  left_from left_from: Float,
+  left_to left_to: Float,
+  right_from right_from: Float,
+  right_to right_to: Float,
+  tolerance tolerance: Float,
+  samples samples: Int,
+) -> Result(Option(SegmentOverlap), svg_path.Error) {
+  use detected <- result.try(overlap_detection.check_parameter_correspondence(
+    left,
+    right,
+    left_from:,
+    left_to:,
+    right_from:,
+    right_to:,
+    tolerance:,
+    samples:,
+  ))
+  Ok(option.map(detected, raw_overlap))
+}
+
 /// Find overlap intervals using the shared five-sample policy.
 ///
 /// Coincident portions whose parameter correspondence is not affine return
