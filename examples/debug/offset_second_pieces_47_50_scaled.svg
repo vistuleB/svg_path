@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-99.17525 -68.7973 198.3505 137.59459" width="1400" height="900">
+  <rect x="-99.17525" y="-68.7973" width="198.3505" height="137.59459" style="fill: #ffffff; stroke: none" />
+  <path d="M 1157.17593 -109.79158 C 355.29376 -109.79158 -49.58762 19.20967 -49.58762 19.20967" style="fill: none; stroke: #9ca3af; stroke-width: 0.07; stroke-linecap: round; stroke-linejoin: round; opacity: 0.65" />
+  <path d="M -49.58762 19.20967 S -14.43469 7.67056 49.58762 -19.20967" style="fill: none; stroke: #dc2626; stroke-width: 0.12; stroke-linecap: round; stroke-linejoin: round; opacity: 0.95" />
+  <path d="M 49.58762 -19.20967 C 34.51923 -12.8831 27.91195 -10.11122 27.90256 -10.10728" style="fill: none; stroke: #16a34a; stroke-width: 0.09; stroke-linecap: round; stroke-linejoin: round; opacity: 0.95" />
+  <path d="M 27.90256 -10.10728 S 1806.87916 -768.37449 2547.54133 -1890.18619" style="fill: none; stroke: #9ca3af; stroke-width: 0.07; stroke-linecap: round; stroke-linejoin: round; opacity: 0.65" />
+  <text x="-98.99525" y="-68.4473" font-size="1" style="fill: #111827; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">scale 1e4; gray=47/50, red=48, green=49</text>
+  <circle cx="-49.58762" cy="19.20967" r="0.18" style="fill: #facc15; stroke: #111827; stroke-width: 0.04" />
+  <circle cx="49.58762" cy="-19.20967" r="0.36" style="fill: #facc15; stroke: #111827; stroke-width: 0.072" />
+  <circle cx="49.58762" cy="-19.20967" r="0.208" style="fill: #22c55e; stroke: #ffffff; stroke-width: 0.048; opacity: 0.92" />
+  <circle cx="27.90256" cy="-10.10728" r="0.18" style="fill: #22c55e; stroke: #111827; stroke-width: 0.04" />
+</svg>

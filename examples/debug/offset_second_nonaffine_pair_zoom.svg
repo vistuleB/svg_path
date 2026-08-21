@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="67.07419 3.43405 0.00003 0.00002" width="1400" height="900">
+  <rect x="67.07419" y="3.43405" width="0.00003" height="0.00002" style="fill: #ffffff; stroke: none" />
+  <path d="M 67.07419 3.43407 L 67.0742 3.43406 H 67.07421 H 67.07421" style="fill: none; stroke: #dc2626; stroke-width: 0.00000012; stroke-dasharray: 0.0000007 0.00000045; opacity: 0.45" />
+  <path d="M 67.07421 3.43406 H 67.07421 H 67.0742 L 67.07419 3.43407" style="fill: none; stroke: #2563eb; stroke-width: 0.00000012; stroke-dasharray: 0.0000007 0.00000045; opacity: 0.45" />
+  <path d="M 67.07419 3.43407 C 67.0742 3.43406 67.07421 3.43406 67.07421 3.43406" style="fill: none; stroke: #dc2626; stroke-width: 0.00000045; stroke-linecap: round; opacity: 0.88" />
+  <path d="M 67.07421 3.43406 S 67.0742 3.43406 67.07419 3.43407" style="fill: none; stroke: #2563eb; stroke-width: 0.00000028; stroke-linecap: round; opacity: 0.88" />
+  <circle cx="67.07419" cy="3.43407" r="0" style="fill: #ffffff; stroke: #dc2626; stroke-width: 0.00000022" />
+  <circle cx="67.0742" cy="3.43406" r="0" style="fill: #dc2626; opacity: 0.7" />
+  <circle cx="67.07421" cy="3.43406" r="0" style="fill: #dc2626; opacity: 0.7" />
+  <circle cx="67.07421" cy="3.43406" r="0" style="fill: #dc2626; stroke: #ffffff; stroke-width: 0.00000018" />
+  <circle cx="67.07421" cy="3.43406" r="0" style="fill: #ffffff; stroke: #2563eb; stroke-width: 0.00000022" />
+  <circle cx="67.07421" cy="3.43406" r="0" style="fill: #2563eb; opacity: 0.7" />
+  <circle cx="67.0742" cy="3.43406" r="0" style="fill: #2563eb; opacity: 0.7" />
+  <circle cx="67.07419" cy="3.43407" r="0" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.00000018" />
+</svg>

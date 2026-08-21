@@ -1,0 +1,398 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-5 -5 19.525 21.625" width="3600" height="3600">
+  <rect x="-5" y="-5" width="19.525" height="21.625" style="fill: #ffffff; stroke: none" />
+  <path d="M 8.97 4.14 L 7.965 4.275 Q 7.875 3.495 7.56 2.925 Q 7.245 2.355 6.765 1.98 Q 6.285 1.605 5.655 1.425 T 4.29 1.245 Q 3.18 1.245 2.49 1.62 Q 1.815 1.995 1.815 2.835 Q 1.815 3.345 2.145 3.645 Q 2.475 3.93 3.015 4.125 Q 3.555 4.305 4.245 4.425 Q 4.95 4.545 5.67 4.695 Q 6.39 4.83 7.08 5.055 Q 7.785 5.265 8.325 5.655 Q 8.865 6.03 9.195 6.63 Q 9.525 7.215 9.525 8.115 T 9.21 9.675 Q 8.91 10.335 8.34 10.77 Q 7.77 11.205 6.975 11.415 Q 6.18 11.625 5.205 11.625 Q 4.215 11.625 3.48 11.4 Q 2.76 11.19 2.19 10.815 Q 1.92 10.635 1.68 10.635 Q 1.575 10.635 1.35 10.86 Q 1.125 11.07 1.005 11.385 H 0 V 7.275 L 0.99 7.185 Q 1.05 7.905 1.365 8.49 T 2.19 9.495 Q 2.715 9.9 3.435 10.14 Q 4.155 10.365 5.025 10.365 Q 6.3 10.365 6.975 9.87 Q 7.65 9.36 7.65 8.28 Q 7.65 7.935 7.44 7.695 Q 7.23 7.455 6.87 7.305 Q 6.51 7.14 6.045 7.035 Q 5.58 6.93 5.055 6.855 Q 4.53 6.765 3.99 6.675 Q 3.465 6.585 2.97 6.45 Q 2.295 6.27 1.755 6.015 Q 1.215 5.745 0.84 5.355 Q 0.48 4.965 0.27 4.41 Q 0.075 3.855 0.075 3.09 Q 0.075 2.505 0.27 1.95 T 0.915 0.96 Q 1.38 0.525 2.115 0.27 Q 2.85 0 3.93 0 Q 4.935 0 5.625 0.195 T 6.84 0.69 Q 7.155 0.87 7.395 0.87 Q 7.56 0.87 7.785 0.675 Q 8.025 0.48 8.16 0.24 H 8.97 Z" style="fill: none; stroke: #e5e7eb; stroke-width: 0.04; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 8.97 4.14 L 7.965 4.275" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 7.965 4.275 Q 7.875 3.495 7.56 2.925" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 7.56 2.925 Q 7.245 2.355 6.765 1.98" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 6.765 1.98 Q 6.285 1.605 5.655 1.425" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 5.655 1.425 Q 5.025 1.245 4.29 1.245" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 4.29 1.245 Q 3.18 1.245 2.49 1.62" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 2.49 1.62 Q 1.815 1.995 1.815 2.835" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 1.815 2.835 Q 1.815 3.08369 1.89347 3.28245" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 1.89347 3.28245 Q 1.96182 3.45557 2.0897 3.59081" style="fill: none; stroke: #2563eb; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 2.0897 3.59081 Q 2.11608 3.61871 2.145 3.645" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 2.145 3.645 Q 2.475 3.93 3.015 4.125" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 3.015 4.125 Q 3.555 4.305 4.245 4.425" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 4.245 4.425 Q 4.95 4.545 5.67 4.695" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 5.67 4.695 Q 6.39 4.83 7.08 5.055" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 7.08 5.055 Q 7.785 5.265 8.325 5.655" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 8.325 5.655 Q 8.865 6.03 9.195 6.63" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 9.195 6.63 Q 9.525 7.215 9.525 8.115" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 9.525 8.115 Q 9.525 9.015 9.21 9.675" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 9.21 9.675 Q 8.91 10.335 8.34 10.77" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 8.34 10.77 Q 7.77 11.205 6.975 11.415" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 6.975 11.415 Q 6.18 11.625 5.205 11.625" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 5.205 11.625 Q 4.215 11.625 3.48 11.4" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 3.48 11.4 Q 2.76 11.19 2.19 10.815" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 2.19 10.815 Q 2.07865 10.74077 1.97241 10.69715" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 1.97241 10.69715 Q 1.82103 10.635 1.68 10.635" style="fill: none; stroke: #2563eb; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 1.68 10.635 Q 1.61468 10.635 1.50292 10.72208" style="fill: none; stroke: #2563eb; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 1.50292 10.72208 Q 1.43503 10.77497 1.35 10.86" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 1.35 10.86 Q 1.125 11.07 1.005 11.385" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 1.005 11.385 H 0" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 0 11.385 V 7.275" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 0 7.275 L 0.99 7.185" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 0.99 7.185 Q 1.05 7.905 1.365 8.49" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 1.365 8.49 Q 1.68 9.075 2.19 9.495" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 2.19 9.495 Q 2.715 9.9 3.435 10.14" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 3.435 10.14 Q 4.155 10.365 5.025 10.365" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 5.025 10.365 Q 6.3 10.365 6.975 9.87" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 6.975 9.87 Q 7.65 9.36 7.65 8.28" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 7.65 8.28 Q 7.65 8.22876 7.64537 8.17984" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 7.64537 8.17984 Q 7.61881 7.89936 7.44 7.695" style="fill: none; stroke: #2563eb; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 7.44 7.695 Q 7.23 7.455 6.87 7.305" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 6.87 7.305 Q 6.51 7.14 6.045 7.035" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 6.045 7.035 Q 5.58 6.93 5.055 6.855" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 5.055 6.855 Q 4.53 6.765 3.99 6.675" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 3.99 6.675 Q 3.465 6.585 2.97 6.45" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 2.97 6.45 Q 2.295 6.27 1.755 6.015" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 1.755 6.015 Q 1.215 5.745 0.84 5.355" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 0.84 5.355 Q 0.48 4.965 0.27 4.41" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 0.27 4.41 Q 0.075 3.855 0.075 3.09" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 0.075 3.09 Q 0.075 2.505 0.27 1.95" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 0.27 1.95 Q 0.465 1.395 0.915 0.96" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 0.915 0.96 Q 1.38 0.525 2.115 0.27" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 2.115 0.27 Q 2.85 0 3.93 0" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 3.93 0 Q 4.935 0 5.625 0.195" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 5.625 0.195 Q 6.315 0.39 6.84 0.69" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 6.84 0.69 Q 7.0315 0.79943 7.19528 0.84233" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 7.19528 0.84233 Q 7.3009 0.87 7.395 0.87" style="fill: none; stroke: #2563eb; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 7.395 0.87 Q 7.51518 0.87 7.66718 0.76656" style="fill: none; stroke: #2563eb; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 7.66718 0.76656 Q 7.72388 0.72797 7.785 0.675" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 7.785 0.675 Q 8.025 0.48 8.16 0.24" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 8.16 0.24 H 8.97" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 8.97 0.24 V 4.14" style="fill: none; stroke: #16a34a; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round" />
+  <circle cx="8.97" cy="4.14" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="7.965" cy="4.275" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="7.965" cy="4.275" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="7.56" cy="2.925" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="7.56" cy="2.925" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="6.765" cy="1.98" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="6.765" cy="1.98" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="5.655" cy="1.425" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="5.655" cy="1.425" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="4.29" cy="1.245" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="4.29" cy="1.245" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="2.49" cy="1.62" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="2.49" cy="1.62" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="1.815" cy="2.835" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="1.815" cy="2.835" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="1.89347" cy="3.28245" r="0.025" style="fill: #dc2626; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="1.89347" cy="3.28245" r="0.025" style="fill: #dc2626; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="2.0897" cy="3.59081" r="0.025" style="fill: #dc2626; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="2.0897" cy="3.59081" r="0.025" style="fill: #dc2626; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="2.145" cy="3.645" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="2.145" cy="3.645" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="3.015" cy="4.125" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="3.015" cy="4.125" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="4.245" cy="4.425" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="4.245" cy="4.425" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="5.67" cy="4.695" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="5.67" cy="4.695" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="7.08" cy="5.055" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="7.08" cy="5.055" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="8.325" cy="5.655" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="8.325" cy="5.655" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="9.195" cy="6.63" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="9.195" cy="6.63" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="9.525" cy="8.115" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="9.525" cy="8.115" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="9.21" cy="9.675" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="9.21" cy="9.675" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="8.34" cy="10.77" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="8.34" cy="10.77" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="6.975" cy="11.415" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="6.975" cy="11.415" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="5.205" cy="11.625" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="5.205" cy="11.625" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="3.48" cy="11.4" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="3.48" cy="11.4" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="2.19" cy="10.815" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="2.19" cy="10.815" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="1.97241" cy="10.69715" r="0.025" style="fill: #dc2626; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="1.97241" cy="10.69715" r="0.025" style="fill: #dc2626; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="1.68" cy="10.635" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="1.68" cy="10.635" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="1.50292" cy="10.72208" r="0.025" style="fill: #dc2626; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="1.50292" cy="10.72208" r="0.025" style="fill: #dc2626; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="1.35" cy="10.86" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="1.35" cy="10.86" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="1.005" cy="11.385" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="1.005" cy="11.385" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="0" cy="11.385" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="0" cy="11.385" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="0" cy="7.275" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="0" cy="7.275" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="0.99" cy="7.185" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="0.99" cy="7.185" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="1.365" cy="8.49" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="1.365" cy="8.49" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="2.19" cy="9.495" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="2.19" cy="9.495" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="3.435" cy="10.14" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="3.435" cy="10.14" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="5.025" cy="10.365" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="5.025" cy="10.365" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="6.975" cy="9.87" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="6.975" cy="9.87" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="7.65" cy="8.28" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="7.65" cy="8.28" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="7.64537" cy="8.17984" r="0.025" style="fill: #dc2626; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="7.64537" cy="8.17984" r="0.025" style="fill: #dc2626; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="7.44" cy="7.695" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="7.44" cy="7.695" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="6.87" cy="7.305" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="6.87" cy="7.305" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="6.045" cy="7.035" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="6.045" cy="7.035" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="5.055" cy="6.855" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="5.055" cy="6.855" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="3.99" cy="6.675" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="3.99" cy="6.675" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="2.97" cy="6.45" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="2.97" cy="6.45" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="1.755" cy="6.015" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="1.755" cy="6.015" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="0.84" cy="5.355" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="0.84" cy="5.355" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="0.27" cy="4.41" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="0.27" cy="4.41" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="0.075" cy="3.09" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="0.075" cy="3.09" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="0.27" cy="1.95" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="0.27" cy="1.95" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="0.915" cy="0.96" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="0.915" cy="0.96" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="2.115" cy="0.27" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="2.115" cy="0.27" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="3.93" cy="0" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="3.93" cy="0" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="5.625" cy="0.195" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="5.625" cy="0.195" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="6.84" cy="0.69" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="6.84" cy="0.69" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="7.19528" cy="0.84233" r="0.025" style="fill: #dc2626; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="7.19528" cy="0.84233" r="0.025" style="fill: #dc2626; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="7.395" cy="0.87" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="7.395" cy="0.87" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="7.66718" cy="0.76656" r="0.025" style="fill: #dc2626; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="7.66718" cy="0.76656" r="0.025" style="fill: #dc2626; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="7.785" cy="0.675" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="7.785" cy="0.675" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="8.16" cy="0.24" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="8.16" cy="0.24" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="8.97" cy="0.24" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="8.97" cy="0.24" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="8.97" cy="4.14" r="0.025" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.006" />
+  <path d="M 9.10313 5.1311 L 8.09813 5.2661" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 8.09813 5.2661 L 7.08837 5.40174" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 7.08837 5.40174 L 6.97159 4.38962" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 6.97159 4.38962 C 6.95344 4.23233 6.92742 4.08891 6.89476 3.95812" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 6.89476 3.95812 C 6.84095 3.74259 6.76911 3.56133 6.68476 3.40869" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 6.68476 3.40869 C 6.53396 3.13581 6.35839 2.93133 6.14936 2.76802" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 6.14936 2.76802 C 5.93621 2.60151 5.68832 2.47454 5.38028 2.38652" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 5.38028 2.38652 C 5.05933 2.29483 4.69855 2.245 4.29 2.245" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 4.29 2.245 C 3.658 2.245 3.23173 2.35345 2.97158 2.4964" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 2.97158 2.4964 C 2.88559 2.54365 2.87312 2.56951 2.85791 2.59689" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 2.85791 2.59689 C 2.84214 2.62528 2.815 2.68754 2.815 2.835" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 2.815 2.835 C 2.815 2.87527 2.81889 2.89771 2.82144 2.90806" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 2.82144 2.90806 C 2.82253 2.91246 2.82337 2.91468 2.82357 2.91516" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 2.82357 2.91516 C 2.82362 2.91527 2.82363 2.91529 2.8236 2.91523" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 2.8236 2.91523 C 2.8236 2.91522 2.82359 2.9152 2.82357 2.91516" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 2.82357 2.91516 C 2.82301 2.9141 2.81668 2.90415 2.81629 2.90374" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 2.81629 2.90374 S 2.8072 2.89567 2.8082 2.89656" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 2.8082 2.89656 C 2.81251 2.90037 2.81692 2.90421 2.82144 2.90806" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 2.82144 2.90806 C 2.92178 2.9935 3.07755 3.08817 3.34296 3.18031" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 3.34296 3.18031 C 3.64378 3.28474 3.99419 3.36715 4.41457 3.43948" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 4.41457 3.43948 C 4.89686 3.52247 5.37146 3.61653 5.86413 3.71402" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 5.86413 3.71402 C 6.21754 3.78396 6.55627 3.86452 6.89476 3.95812" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 6.89476 3.95812 C 7.05531 4.00251 7.2158 4.04984 7.37777 4.10036" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 7.37777 4.10036 C 7.94078 4.27598 8.44104 4.51178 8.90297 4.83894" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 8.90297 4.83894 C 9.02335 4.9242 9.1378 5.01521 9.2463 5.11187" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 9.2463 5.11187 C 9.57503 5.40472 9.84918 5.74944 10.06861 6.14337" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 10.06861 6.14337 C 10.39479 6.72894 10.525 7.39652 10.525 8.115" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 10.525 8.115 C 10.525 8.83023 10.3978 9.49338 10.11646 10.09728" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 10.11646 10.09728 C 9.84585 10.67816 9.45487 11.17712 8.94667 11.56495" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 8.94667 11.56495 C 8.44915 11.94464 7.86774 12.21348 7.23039 12.38184" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 7.23039 12.38184 C 6.60263 12.54766 5.92651 12.625 5.205 12.625" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 5.205 12.625 C 4.46992 12.625 3.80509 12.54087 3.19364 12.35812" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 3.19364 12.35812 C 2.7364 12.22146 2.30676 12.04456 1.91053 11.817" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 1.91053 11.817 C 1.81778 11.76373 1.72686 11.70769 1.63784 11.64874" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 1.63784 11.64874 C 1.61039 11.63056 1.59259 11.62221 1.59262 11.62222" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 1.59262 11.62222 S 1.59262 11.62222 1.59262 11.62222" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 1.59262 11.62222 S 1.59262 11.62222 1.59262 11.62222" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 1.59262 11.62222 C 1.59211 11.62201 1.62594 11.635 1.68 11.635" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 1.68 11.635 C 1.87968 11.635 1.99067 11.58053 2.04434 11.55414" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 2.04434 11.55414 C 2.09618 11.52865 2.1142 11.51382 2.11709 11.5113" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 2.11709 11.5113 C 2.11739 11.51104 2.11753 11.51091 2.11752 11.51091" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 2.11752 11.51091 C 2.11751 11.51093 2.11736 11.51106 2.11709 11.5113" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 2.11709 11.5113 C 2.11291 11.51509 2.07903 11.54613 2.04482 11.57919" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 2.04482 11.57919 C 2.01431 11.60866 1.97171 11.6564 1.93949 11.741" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 1.93949 11.741 L 1.91053 11.817" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 1.91053 11.817 L 1.69415 12.385" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 1.69415 12.385 H 1.005" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 1.005 12.385 H 0" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 0 12.385 H -1" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M -1 12.385 V 11.385" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M -1 11.385 V 7.275" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M -1 7.275 V 6.36179" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M -1 6.36179 L -0.09054 6.27911" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M -0.09054 6.27911 L 0.31738 6.24202" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 0.31738 6.24202 L 0.89946 6.18911" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 0.89946 6.18911 L 1.90287 6.09789" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 1.90287 6.09789 L 1.98655 7.10195" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 1.98655 7.10195 C 1.98918 7.13353 1.99226 7.16462 1.9958 7.19524" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 1.9958 7.19524 C 2.03237 7.51161 2.11714 7.77757 2.24547 8.0159" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 2.24547 8.0159 C 2.39575 8.29498 2.56859 8.51795 2.81333 8.71304" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 2.81333 8.71304 C 3.06032 8.90993 3.35163 9.06225 3.74226 9.18838" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 3.74226 9.18838 C 4.11132 9.30754 4.53088 9.365 5.025 9.365" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 5.025 9.365 C 5.75699 9.365 6.17525 9.21868 6.37789 9.06784" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 6.37789 9.06784 C 6.46579 9.00241 6.5127 8.93993 6.56076 8.82673" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 6.56076 8.82673 C 6.60669 8.71853 6.64583 8.55485 6.64969 8.31858" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 6.64969 8.31858 C 6.64989 8.30593 6.65 8.29307 6.65 8.28" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 6.65 8.28 C 6.65 8.27604 6.64983 8.27415 6.64982 8.2741" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 6.64982 8.2741 S 6.64982 8.2741 6.64982 8.2741" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 6.64982 8.2741 S 6.64982 8.2741 6.64982 8.2741" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 6.64982 8.2741 C 6.6502 8.27808 6.66956 8.33307 6.68741 8.35349" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 6.68741 8.35349 S 6.68742 8.3535 6.68742 8.3535" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 6.68742 8.3535 S 6.68741 8.35349 6.68741 8.35349" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 6.68741 8.35349 C 6.67999 8.34501 6.6682 8.33304 6.64969 8.31858" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 6.64969 8.31858 C 6.61823 8.29401 6.56735 8.26223 6.48538 8.22808" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 6.48538 8.22808 L 6.46924 8.22135" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 6.46924 8.22135 L 6.45335 8.21407" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 6.45335 8.21407 C 6.28858 8.13855 6.07919 8.0679 5.82474 8.01044" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 5.82474 8.01044 C 5.54371 7.94698 5.22535 7.89403 4.89979 7.84288" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 4.89979 7.84288 C 4.55056 7.78801 4.1817 7.72159 3.82332 7.66101" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 3.82332 7.66101 C 3.44269 7.59667 3.07205 7.51325 2.70961 7.4155" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 2.70961 7.4155 C 2.46414 7.3493 2.22528 7.27649 1.9958 7.19524" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 1.9958 7.19524 C 1.7588 7.11131 1.5318 7.01837 1.31786 6.91439" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 1.31786 6.91439 C 0.95452 6.7378 0.6112 6.50887 0.31738 6.24202" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 0.31738 6.24202 C 0.2459 6.1771 0.17734 6.10993 0.11214 6.04073" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 0.11214 6.04073 C -0.22689 5.68087 -0.49569 5.22899 -0.66944 4.75271" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M -0.66944 4.75271 C -0.85318 4.24906 -0.925 3.6839 -0.925 3.09" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M -0.925 3.09 C -0.925 2.58853 -0.83999 2.09247 -0.67346 1.61851" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M -0.67346 1.61851 C -0.49014 1.09675 -0.17865 0.62004 0.22589 0.23535" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 0.22589 0.23535 C 0.65444 -0.17219 1.18704 -0.46047 1.77869 -0.67175" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 1.77869 -0.67175 C 2.41943 -0.90057 3.12821 -1 3.93 -1" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 3.93 -1 C 4.66404 -1 5.3153 -0.93169 5.89696 -0.76731" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 5.89696 -0.76731 C 6.39403 -0.62683 6.85181 -0.4461 7.26653 -0.21733" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 7.26653 -0.21733 C 7.28987 -0.20445 7.31307 -0.19142 7.33614 -0.17824" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 7.33614 -0.17824 C 7.40646 -0.13806 7.44857 -0.12506 7.44868 -0.12503" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 7.44868 -0.12503 C 7.44891 -0.12497 7.43048 -0.13 7.395 -0.13" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 7.395 -0.13 C 7.21851 -0.13 7.1276 -0.07662 7.10808 -0.063" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 7.10808 -0.063 C 7.10438 -0.06042 7.10324 -0.05926 7.10457 -0.06017" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 7.10457 -0.06017 C 7.10458 -0.06017 7.10588 -0.06122 7.10808 -0.063" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 7.10808 -0.063 C 7.11481 -0.06845 7.12999 -0.08079 7.14216 -0.091" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 7.14216 -0.091 C 7.19797 -0.13784 7.23976 -0.18173 7.26653 -0.21733" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 7.26653 -0.21733 C 7.27554 -0.22931 7.28285 -0.24036 7.28842 -0.25026" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 7.28842 -0.25026 L 7.57515 -0.76" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 7.57515 -0.76 H 8.16" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 8.16 -0.76 H 8.97" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 8.97 -0.76 H 9.97" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 9.97 -0.76 V 0.24" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 9.97 0.24 V 4.14" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 9.97 4.14 V 5.01465" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 9.97 5.01465 L 9.2463 5.11187" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 9.2463 5.11187 L 9.10313 5.1311" style="fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round" />
+  <circle cx="9.10313" cy="5.1311" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="8.09813" cy="5.2661" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="7.08837" cy="5.40174" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="6.97159" cy="4.38962" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="6.89476" cy="3.95812" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="6.68476" cy="3.40869" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="6.14936" cy="2.76802" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="5.38028" cy="2.38652" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="4.29" cy="2.245" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="2.97158" cy="2.4964" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="2.85791" cy="2.59689" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="2.815" cy="2.835" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="2.82144" cy="2.90806" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="2.82357" cy="2.91516" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="2.8236" cy="2.91523" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="2.81629" cy="2.90374" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="2.8082" cy="2.89656" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="3.34296" cy="3.18031" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="4.41457" cy="3.43948" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="5.86413" cy="3.71402" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="6.89476" cy="3.95812" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="7.37777" cy="4.10036" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="8.90297" cy="4.83894" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="9.2463" cy="5.11187" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="10.06861" cy="6.14337" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="10.525" cy="8.115" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="10.11646" cy="10.09728" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="8.94667" cy="11.56495" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="7.23039" cy="12.38184" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="5.205" cy="12.625" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="3.19364" cy="12.35812" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="1.91053" cy="11.817" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="1.63784" cy="11.64874" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="1.59262" cy="11.62222" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="1.59262" cy="11.62222" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="1.68" cy="11.635" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="2.04434" cy="11.55414" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="2.11709" cy="11.5113" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="2.11752" cy="11.51091" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="2.04482" cy="11.57919" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="1.93949" cy="11.741" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="1.69415" cy="12.385" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="1.005" cy="12.385" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="0" cy="12.385" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="-1" cy="12.385" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="-1" cy="11.385" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="-1" cy="7.275" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="-1" cy="6.36179" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="-0.09054" cy="6.27911" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="0.31738" cy="6.24202" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="0.89946" cy="6.18911" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="1.90287" cy="6.09789" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="1.98655" cy="7.10195" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="1.9958" cy="7.19524" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="2.24547" cy="8.0159" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="2.81333" cy="8.71304" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="3.74226" cy="9.18838" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="5.025" cy="9.365" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="6.37789" cy="9.06784" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="6.56076" cy="8.82673" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="6.64969" cy="8.31858" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="6.65" cy="8.28" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="6.64982" cy="8.2741" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="6.64982" cy="8.2741" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="6.68741" cy="8.35349" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="6.68742" cy="8.3535" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="6.68741" cy="8.35349" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="6.64969" cy="8.31858" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="6.48538" cy="8.22808" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="6.46924" cy="8.22135" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="6.45335" cy="8.21407" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="5.82474" cy="8.01044" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="4.89979" cy="7.84288" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="3.82332" cy="7.66101" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="2.70961" cy="7.4155" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="1.9958" cy="7.19524" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="1.31786" cy="6.91439" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="0.11214" cy="6.04073" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="-0.66944" cy="4.75271" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="-0.925" cy="3.09" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="-0.67346" cy="1.61851" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="0.22589" cy="0.23535" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="1.77869" cy="-0.67175" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="3.93" cy="-1" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="5.89696" cy="-0.76731" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="7.26653" cy="-0.21733" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="7.33614" cy="-0.17824" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="7.44868" cy="-0.12503" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="7.395" cy="-0.13" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="7.10808" cy="-0.063" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="7.10457" cy="-0.06017" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="7.14216" cy="-0.091" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="7.26653" cy="-0.21733" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="7.28842" cy="-0.25026" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="7.57515" cy="-0.76" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="8.16" cy="-0.76" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="8.97" cy="-0.76" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="9.97" cy="-0.76" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="9.97" cy="0.24" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="9.97" cy="4.14" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="9.97" cy="5.01465" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+</svg>

@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0.62667 0.27333 0.10148 0.10068" width="900" height="900">
+  <rect x="0.62667" y="0.27333" width="0.10148" height="0.10068" style="fill: #ffffff; stroke: none" />
+  <path d="M 0 0 C 1 0 1 0 1 1 S 1 2 0 2" style="fill: none; stroke: #111827; stroke-width: 0.004; stroke-linecap: round; stroke-linejoin: round; opacity: 0.25" />
+  <path d="M 0 0.28 C 0.1157 0.28 0.21684 0.28002 0.30373 0.28151 C 0.39058 0.283 0.46321 0.28604 0.52072 0.29125 C 0.54946 0.29386 0.57437 0.29699 0.59524 0.30044 C 0.61612 0.3039 0.63291 0.30769 0.64556 0.31127 C 0.66492 0.31675 0.67381 0.32135 0.67684 0.32316 C 0.67865 0.32619 0.68325 0.33508 0.68873 0.35444 C 0.69231 0.36709 0.6961 0.38388 0.69956 0.40476 C 0.70301 0.42563 0.70614 0.45054 0.70875 0.47928 C 0.71396 0.53679 0.717 0.60942 0.71849 0.69627 C 0.71998 0.78316 0.72 0.8843 0.72 1 S 0.71998 1.21684 0.71849 1.30373 C 0.717 1.39058 0.71396 1.46321 0.70875 1.52072 C 0.70614 1.54946 0.70301 1.57437 0.69956 1.59524 C 0.6961 1.61612 0.69231 1.63291 0.68873 1.64556 C 0.68325 1.66492 0.67865 1.67381 0.67684 1.67684 C 0.67381 1.67865 0.66492 1.68325 0.64556 1.68873 C 0.63291 1.69231 0.61612 1.6961 0.59524 1.69956 C 0.57437 1.70301 0.54946 1.70614 0.52072 1.70875 C 0.46321 1.71396 0.39058 1.717 0.30373 1.71849 C 0.21684 1.71998 0.1157 1.72 0 1.72" style="fill: none; stroke: #94a3b8; stroke-width: 0.00015; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 0 0.28 C 0.1157 0.28 0.21684 0.28002 0.30373 0.28151" style="fill: none; stroke: #2563eb; stroke-width: 0.0003; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 0.30373 0.28151 C 0.39058 0.283 0.46321 0.28604 0.52072 0.29125" style="fill: none; stroke: #2563eb; stroke-width: 0.0003; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 0.52072 0.29125 C 0.54946 0.29386 0.57437 0.29699 0.59524 0.30044" style="fill: none; stroke: #2563eb; stroke-width: 0.0003; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 0.59524 0.30044 C 0.61612 0.3039 0.63291 0.30769 0.64556 0.31127" style="fill: none; stroke: #2563eb; stroke-width: 0.0003; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 0.64556 0.31127 C 0.66492 0.31675 0.67381 0.32135 0.67684 0.32316" style="fill: none; stroke: #2563eb; stroke-width: 0.0003; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 0.67684 0.32316 C 0.67865 0.32619 0.68325 0.33508 0.68873 0.35444" style="fill: none; stroke: #2563eb; stroke-width: 0.0003; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 0.68873 0.35444 C 0.69231 0.36709 0.6961 0.38388 0.69956 0.40476" style="fill: none; stroke: #2563eb; stroke-width: 0.0003; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 0.69956 0.40476 C 0.70301 0.42563 0.70614 0.45054 0.70875 0.47928" style="fill: none; stroke: #2563eb; stroke-width: 0.0003; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 0.70875 0.47928 C 0.71396 0.53679 0.717 0.60942 0.71849 0.69627" style="fill: none; stroke: #2563eb; stroke-width: 0.0003; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 0.71849 0.69627 C 0.71998 0.78316 0.72 0.8843 0.72 1" style="fill: none; stroke: #2563eb; stroke-width: 0.0003; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 0.72 1 C 0.72 1.1157 0.71998 1.21684 0.71849 1.30373" style="fill: none; stroke: #2563eb; stroke-width: 0.0003; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 0.71849 1.30373 C 0.717 1.39058 0.71396 1.46321 0.70875 1.52072" style="fill: none; stroke: #2563eb; stroke-width: 0.0003; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 0.70875 1.52072 C 0.70614 1.54946 0.70301 1.57437 0.69956 1.59524" style="fill: none; stroke: #2563eb; stroke-width: 0.0003; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 0.69956 1.59524 C 0.6961 1.61612 0.69231 1.63291 0.68873 1.64556" style="fill: none; stroke: #2563eb; stroke-width: 0.0003; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 0.68873 1.64556 C 0.68325 1.66492 0.67865 1.67381 0.67684 1.67684" style="fill: none; stroke: #2563eb; stroke-width: 0.0003; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 0.67684 1.67684 C 0.67381 1.67865 0.66492 1.68325 0.64556 1.68873" style="fill: none; stroke: #2563eb; stroke-width: 0.0003; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 0.64556 1.68873 C 0.63291 1.69231 0.61612 1.6961 0.59524 1.69956" style="fill: none; stroke: #2563eb; stroke-width: 0.0003; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 0.59524 1.69956 C 0.57437 1.70301 0.54946 1.70614 0.52072 1.70875" style="fill: none; stroke: #2563eb; stroke-width: 0.0003; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 0.52072 1.70875 C 0.46321 1.71396 0.39058 1.717 0.30373 1.71849" style="fill: none; stroke: #2563eb; stroke-width: 0.0003; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 0.30373 1.71849 C 0.21684 1.71998 0.1157 1.72 0 1.72" style="fill: none; stroke: #2563eb; stroke-width: 0.0003; stroke-linecap: round; stroke-linejoin: round" />
+  <circle cx="0" cy="0.28" r="0.00027" style="fill: #000000; stroke: none" />
+  <circle cx="0.30373" cy="0.28151" r="0.00027" style="fill: #000000; stroke: none" />
+  <circle cx="0.52072" cy="0.29125" r="0.00027" style="fill: #000000; stroke: none" />
+  <circle cx="0.59524" cy="0.30044" r="0.00027" style="fill: #000000; stroke: none" />
+  <circle cx="0.64556" cy="0.31127" r="0.00027" style="fill: #000000; stroke: none" />
+  <circle cx="0.67684" cy="0.32316" r="0.00027" style="fill: #000000; stroke: none" />
+  <circle cx="0.68873" cy="0.35444" r="0.00027" style="fill: #000000; stroke: none" />
+  <circle cx="0.69956" cy="0.40476" r="0.00027" style="fill: #000000; stroke: none" />
+  <circle cx="0.70875" cy="0.47928" r="0.00027" style="fill: #000000; stroke: none" />
+  <circle cx="0.71849" cy="0.69627" r="0.00027" style="fill: #000000; stroke: none" />
+  <circle cx="0.72" cy="1" r="0.00027" style="fill: #000000; stroke: none" />
+  <circle cx="0.71849" cy="1.30373" r="0.00027" style="fill: #000000; stroke: none" />
+  <circle cx="0.70875" cy="1.52072" r="0.00027" style="fill: #000000; stroke: none" />
+  <circle cx="0.69956" cy="1.59524" r="0.00027" style="fill: #000000; stroke: none" />
+  <circle cx="0.68873" cy="1.64556" r="0.00027" style="fill: #000000; stroke: none" />
+  <circle cx="0.67684" cy="1.67684" r="0.00027" style="fill: #000000; stroke: none" />
+  <circle cx="0.64556" cy="1.68873" r="0.00027" style="fill: #000000; stroke: none" />
+  <circle cx="0.59524" cy="1.69956" r="0.00027" style="fill: #000000; stroke: none" />
+  <circle cx="0.52072" cy="1.70875" r="0.00027" style="fill: #000000; stroke: none" />
+  <circle cx="0.30373" cy="1.71849" r="0.00027" style="fill: #000000; stroke: none" />
+  <circle cx="0" cy="1.72" r="0.00027" style="fill: #000000; stroke: none" />
+</svg>

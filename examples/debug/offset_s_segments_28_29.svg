@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="1.67 11.50091 0.45752 0.14409" width="1600" height="1000">
+  <rect x="1.67" y="11.50091" width="0.45752" height="0.14409" style="fill: #ffffff; stroke: none" />
+  <path d="M 1.68 11.635 C 1.95682 11.635 2.11752 11.51091 2.11752 11.51091" style="fill: none; stroke: #2563eb; stroke-width: 0.0008; stroke-linecap: round; stroke-linejoin: round; opacity: 0.9" />
+  <path d="M 2.11752 11.51091 S 2.08619 11.53922 2.04482 11.57919" style="fill: none; stroke: #dc2626; stroke-width: 0.0008; stroke-linecap: round; stroke-linejoin: round; opacity: 0.9" />
+  <circle cx="1.68" cy="11.635" r="0.00065" style="fill: #ffffff; stroke: #2563eb; stroke-width: 0.00018" />
+  <circle cx="2.11752" cy="11.51091" r="0.00065" style="fill: #ffffff; stroke: #2563eb; stroke-width: 0.00018" />
+  <circle cx="2.11752" cy="11.51091" r="0.00065" style="fill: #ffffff; stroke: #dc2626; stroke-width: 0.00018" />
+  <circle cx="2.04482" cy="11.57919" r="0.00065" style="fill: #ffffff; stroke: #dc2626; stroke-width: 0.00018" />
+  <path d="M 1.68 11.635 H 1.95682" style="fill: none; stroke: #2563eb; stroke-width: 0.00018; stroke-dasharray: 0.001 0.001; opacity: 0.75" />
+  <path d="M 2.11752 11.51091 H 2.11752" style="fill: none; stroke: #2563eb; stroke-width: 0.00018; stroke-dasharray: 0.001 0.001; opacity: 0.75" />
+  <circle cx="1.95682" cy="11.635" r="0.00052" style="fill: #ffffff; stroke: #2563eb; stroke-width: 0.00018" />
+  <circle cx="2.11752" cy="11.51091" r="0.00052" style="fill: #ffffff; stroke: #2563eb; stroke-width: 0.00018" />
+  <text x="1.95752" y="11.6343" font-size="0.001" style="fill: #2563eb; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; paint-order: stroke; stroke: #ffffff; stroke-width: 0.0002">28.1</text>
+  <text x="2.11822" y="11.51021" font-size="0.001" style="fill: #2563eb; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; paint-order: stroke; stroke: #ffffff; stroke-width: 0.0002">28.2</text>
+  <path d="M 2.11752 11.51091 H 2.11752" style="fill: none; stroke: #dc2626; stroke-width: 0.00018; stroke-dasharray: 0.001 0.001; opacity: 0.75" />
+  <path d="M 2.04482 11.57919 L 2.08619 11.53922" style="fill: none; stroke: #dc2626; stroke-width: 0.00018; stroke-dasharray: 0.001 0.001; opacity: 0.75" />
+  <circle cx="2.11752" cy="11.51091" r="0.00052" style="fill: #ffffff; stroke: #dc2626; stroke-width: 0.00018" />
+  <circle cx="2.08619" cy="11.53922" r="0.00052" style="fill: #ffffff; stroke: #dc2626; stroke-width: 0.00018" />
+  <text x="2.11822" y="11.51021" font-size="0.001" style="fill: #dc2626; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; paint-order: stroke; stroke: #ffffff; stroke-width: 0.0002">29.1</text>
+  <text x="2.08689" y="11.53852" font-size="0.001" style="fill: #dc2626; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; paint-order: stroke; stroke: #ffffff; stroke-width: 0.0002">29.2</text>
+  <text x="1.89876" y="11.57296" font-size="0.0015" style="fill: #2563eb; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; paint-order: stroke; stroke: #ffffff; stroke-width: 3.0000000000000003e-4">28</text>
+  <text x="2.08117" y="11.54505" font-size="0.0015" style="fill: #dc2626; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; paint-order: stroke; stroke: #ffffff; stroke-width: 3.0000000000000003e-4">29</text>
+</svg>

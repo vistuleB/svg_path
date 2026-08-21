@@ -34,6 +34,9 @@
 - Full SVG path-module reshaping such as `svg_path/subpath` or
   `svg_path/segment`, only if the user experience clearly beats the current
   one-import convenience style.
+- Rename or split `CrossingOptions.parameter_tolerance` in a future breaking
+  API pass. It is now used as a scalar residual tolerance by crossing
+  refinements, not as a pure parameter-space tolerance.
 
 Recently completed:
 
@@ -229,3 +232,25 @@ Primary references:
 - <https://github.com/web-platform-tests/wpt/tree/master/svg/path>
 - <https://www.w3.org/Graphics/SVG/Test/Overview.html>
 - <https://dev.w3.org/SVG/profiles/1.1F2/test/status/test_suite_status.html>
+
+## Offset Error Payloads
+
+`offset.Error.DegenerateTangent(t:)` normally reports the segment parameter
+where tangent construction failed. One current offset postcondition path
+instead returns `DegenerateTangent(1.0)` when two adjacent generated offset
+segments meet at the same point but their tangent angle exceeds the healing
+threshold. That payload is incongruous: the available diagnostic value at that
+site is the measured boundary angle, not a meaningful segment parameter.
+
+Before stabilizing or documenting that behavior, either change the error
+payload/variant to report the boundary angle or introduce a narrower offset
+postcondition error that describes the failed continuity check directly.
+
+## Ellipse Tolerance Cleanup
+
+`src/svg_path/ellipse.gleam` currently uses one module-wide
+`epsilon = 0.000000001` for several unrelated decisions: sweep-angle
+inclusion, degenerate radii, axis orthogonality, and vector normalization. If
+arc directional support or projection-extrema helpers become shared machinery,
+avoid implicitly inheriting this one tolerance. Prefer operation-local
+tolerances or an options object.

@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="420" viewBox="0 0 1120 420">
+<rect width="100%" height="100%" fill="white"/>
+<defs>
+<marker id="arrow-gray" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#6b7280"/></marker>
+<marker id="arrow-black" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#111827"/></marker>
+<marker id="arrow-red" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#dc2626"/></marker>
+</defs>
+<text x="130.0" y="28" text-anchor="middle" font-family="system-ui" font-size="14" fill="#111827">1. input provisional path</text>
+<rect x="10" y="44" width="240" height="320" fill="#f8fafc" stroke="#e5e7eb"/>
+<rect x="35" y="64" width="380" height="285" fill="none" stroke="#e5e7eb" stroke-width="1"/>
+<text x="410.0" y="28" text-anchor="middle" font-family="system-ui" font-size="14" fill="#111827">2. inside band</text>
+<rect x="290" y="44" width="240" height="320" fill="#f8fafc" stroke="#e5e7eb"/>
+<rect x="315" y="64" width="380" height="285" fill="none" stroke="#e5e7eb" stroke-width="1"/>
+<text x="690.0" y="28" text-anchor="middle" font-family="system-ui" font-size="14" fill="#111827">3. old expected</text>
+<rect x="570" y="44" width="240" height="320" fill="#f8fafc" stroke="#e5e7eb"/>
+<rect x="595" y="64" width="380" height="285" fill="none" stroke="#e5e7eb" stroke-width="1"/>
+<text x="970.0" y="28" text-anchor="middle" font-family="system-ui" font-size="14" fill="#111827">4. current output</text>
+<rect x="850" y="44" width="240" height="320" fill="#f8fafc" stroke="#e5e7eb"/>
+<rect x="875" y="64" width="380" height="285" fill="none" stroke="#e5e7eb" stroke-width="1"/>
+<polyline points="73.0,311.0 168.0,311.0 358.0,311.0 358.0,121.0 168.0,121.0 168.0,311.0" fill="none" style="stroke:#111827; stroke-width:4; stroke-linecap:round; stroke-linejoin:round; marker-mid:url(#arrow-black); marker-end:url(#arrow-black)" />
+<circle cx="73.0" cy="311.0" r="3" fill="#111827" stroke="white" stroke-width="1"/>
+<circle cx="168.0" cy="311.0" r="3" fill="#111827" stroke="white" stroke-width="1"/>
+<circle cx="358.0" cy="311.0" r="3" fill="#111827" stroke="white" stroke-width="1"/>
+<circle cx="358.0" cy="121.0" r="3" fill="#111827" stroke="white" stroke-width="1"/>
+<circle cx="168.0" cy="121.0" r="3" fill="#111827" stroke="white" stroke-width="1"/>
+<circle cx="168.0" cy="311.0" r="3" fill="#111827" stroke="white" stroke-width="1"/>
+<text x="130.0" y="386" text-anchor="middle" font-family="system-ui" font-size="12" fill="#374151">open tail + square loop</text>
+<polygon points="429.0,330.0 657.0,330.0 657.0,102.0 429.0,102.0" style="fill:#dbeafe; fill-opacity:0.42; stroke:#2563eb; stroke-width:2; stroke-dasharray:7 4" />
+<polyline points="353.0,311.0 448.0,311.0 638.0,311.0 638.0,121.0 448.0,121.0 448.0,311.0" fill="none" style="stroke:#6b7280; stroke-width:4; stroke-linecap:round; stroke-linejoin:round; marker-mid:url(#arrow-gray); marker-end:url(#arrow-gray); opacity:0.85" />
+<text x="410.0" y="386" text-anchor="middle" font-family="system-ui" font-size="12" fill="#374151">blue region supplies inside()</text>
+<polygon points="709.0,330.0 937.0,330.0 937.0,102.0 709.0,102.0" style="fill:#dbeafe; fill-opacity:0.16; stroke:#93c5fd; stroke-width:1.5; stroke-dasharray:7 4" />
+<polyline points="633.0,311.0 728.0,311.0 918.0,311.0 918.0,121.0 728.0,121.0 728.0,311.0" fill="none" style="stroke:#9ca3af; stroke-width:4; stroke-linecap:round; stroke-linejoin:round; opacity:0.25" />
+<text x="690.0" y="210" text-anchor="middle" font-family="system-ui" font-size="22" fill="#6b7280">Ok([])</text>
+<text x="690.0" y="386" text-anchor="middle" font-family="system-ui" font-size="12" fill="#374151">old test deletes everything</text>
+<polygon points="989.0,330.0 1217.0,330.0 1217.0,102.0 989.0,102.0" style="fill:#dbeafe; fill-opacity:0.16; stroke:#93c5fd; stroke-width:1.5; stroke-dasharray:7 4" />
+<polyline points="913.0,311.0 1008.0,311.0 1198.0,311.0 1198.0,121.0 1008.0,121.0 1008.0,311.0" fill="none" style="stroke:#9ca3af; stroke-width:4; stroke-linecap:round; stroke-linejoin:round; opacity:0.25" />
+<polyline points="913.0,311.0 1008.0,311.0" fill="none" style="stroke:#dc2626; stroke-width:5; stroke-linecap:round; marker-end:url(#arrow-red)" />
+<circle cx="913.0" cy="311.0" r="4" fill="#dc2626" stroke="white" stroke-width="1"/>
+<circle cx="1008.0" cy="311.0" r="4" fill="#dc2626" stroke="white" stroke-width="1"/>
+<text x="970.0" y="386" text-anchor="middle" font-family="system-ui" font-size="12" fill="#374151">surviving open tail</text>
+<text x="28" y="410" font-family="system-ui" font-size="12" fill="#111827">Geometry coordinates: tail (-5,0)→(0,0); square loop (0,0)→(10,0)→(10,10)→(0,10)→(0,0); band square (-1,-1) to (11,11).</text>
+</svg>

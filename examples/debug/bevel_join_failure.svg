@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="560" viewBox="0 0 900 560">
+  <defs>
+    <marker id="arrow-black-bevel" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#111"/>
+    </marker>
+    <marker id="arrow-green-bevel" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#16803c"/>
+    </marker>
+    <marker id="arrow-red-bevel" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#c02626"/>
+    </marker>
+    <style>
+      .grid { stroke: #e5e7eb; stroke-width: 0.025; }
+      .axis { stroke: #cbd5e1; stroke-width: 0.04; }
+      .source { fill: none; stroke: #111; stroke-width: 0.16; marker-end: url(#arrow-black-bevel); }
+      .expected { fill: none; stroke: #16803c; stroke-width: 0.14; marker-end: url(#arrow-green-bevel); }
+      .current { fill: none; stroke: #c02626; stroke-width: 0.09; marker-end: url(#arrow-red-bevel); }
+      .missing { fill: none; stroke: #f97316; stroke-width: 0.22; stroke-linecap: round; }
+      .node { fill: white; stroke-width: 0.06; }
+      .label { font: 15px ui-sans-serif, system-ui, sans-serif; fill: #111827; }
+      .small { font: 12px ui-sans-serif, system-ui, sans-serif; fill: #374151; }
+    </style>
+  </defs>
+
+  <rect width="900" height="560" fill="white"/>
+  <text x="36" y="42" class="label">bevel join failure</text>
+  <text x="36" y="68" class="small">black: source; green: expected offset; red: current result; orange: missing bevel connector</text>
+
+  <g transform="translate(170 420) scale(28 -28)">
+    <g>
+      <line x1="-2" y1="-4" x2="15" y2="-4" class="grid"/>
+      <line x1="-2" y1="-2" x2="15" y2="-2" class="grid"/>
+      <line x1="-2" y1="0" x2="15" y2="0" class="axis"/>
+      <line x1="-2" y1="2" x2="15" y2="2" class="grid"/>
+      <line x1="-2" y1="4" x2="15" y2="4" class="grid"/>
+      <line x1="-2" y1="6" x2="15" y2="6" class="grid"/>
+      <line x1="-2" y1="8" x2="15" y2="8" class="grid"/>
+      <line x1="-2" y1="10" x2="15" y2="10" class="grid"/>
+      <line x1="-2" y1="12" x2="15" y2="12" class="grid"/>
+
+      <line x1="-2" y1="-4" x2="-2" y2="12" class="grid"/>
+      <line x1="0" y1="-4" x2="0" y2="12" class="axis"/>
+      <line x1="2" y1="-4" x2="2" y2="12" class="grid"/>
+      <line x1="4" y1="-4" x2="4" y2="12" class="grid"/>
+      <line x1="6" y1="-4" x2="6" y2="12" class="grid"/>
+      <line x1="8" y1="-4" x2="8" y2="12" class="grid"/>
+      <line x1="10" y1="-4" x2="10" y2="12" class="grid"/>
+      <line x1="12" y1="-4" x2="12" y2="12" class="grid"/>
+      <line x1="14" y1="-4" x2="14" y2="12" class="grid"/>
+    </g>
+
+    <!-- source: M 0 0 H 10 V 10 -->
+    <path d="M 0 0 H 10 V 10" class="source"/>
+
+    <!-- expected: M 0 -2 H 10 L 12 0 V 10 -->
+    <path d="M 0 -2 H 10 L 12 0 V 10" class="expected"/>
+
+    <!-- current: M 0 -2 H 10 M 12 0 V 10 -->
+    <path d="M 0 -2 H 10 M 12 0 V 10" class="current"/>
+
+    <!-- missing bevel connector -->
+    <path d="M 10 -2 L 12 0" class="missing"/>
+
+    <circle cx="0" cy="0" r="0.14" class="node" stroke="#111"/>
+    <circle cx="10" cy="0" r="0.14" class="node" stroke="#111"/>
+    <circle cx="10" cy="10" r="0.14" class="node" stroke="#111"/>
+    <circle cx="10" cy="-2" r="0.12" class="node" stroke="#f97316"/>
+    <circle cx="12" cy="0" r="0.12" class="node" stroke="#f97316"/>
+  </g>
+
+  <text x="36" y="518" class="small">The expected bevel connector from (10,-2) to (12,0) is rejected by the atomic distance filter, so the output becomes two open subpaths.</text>
+</svg>

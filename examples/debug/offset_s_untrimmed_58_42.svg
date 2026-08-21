@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="1.23786 6.83439 1.55175 1.26151" width="1200" height="900">
+  <rect x="1.23786" y="6.83439" width="1.55175" height="1.26151" style="fill: #ffffff; stroke: none" />
+  <path d="M 2.70961 7.4155 C 2.21062 7.28093 1.73893 7.11905 1.31786 6.91439" style="fill: none; stroke: #2563eb; stroke-width: 0.006; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 1.98655 7.10195 C 2.01637 7.45986 2.10473 7.75453 2.24547 8.0159" style="fill: none; stroke: #dc2626; stroke-width: 0.006; stroke-linecap: round; stroke-linejoin: round" />
+  <circle cx="2.70961" cy="7.4155" r="0.006" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.0015" />
+  <circle cx="1.31786" cy="6.91439" r="0.006" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.0015" />
+  <circle cx="1.98655" cy="7.10195" r="0.006" style="fill: #dc2626; stroke: #ffffff; stroke-width: 0.0015" />
+  <circle cx="2.24547" cy="8.0159" r="0.006" style="fill: #dc2626; stroke: #ffffff; stroke-width: 0.0015" />
+<text x="1.9845155692167094" y="7.191229102918616" font-size="0.035" text-anchor="middle" dominant-baseline="middle" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.003; paint-order: stroke; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">58</text>
+<text x="2.0744163359200085" y="7.5951279673676595" font-size="0.035" text-anchor="middle" dominant-baseline="middle" style="fill: #dc2626; stroke: #ffffff; stroke-width: 0.003; paint-order: stroke; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">42</text>
+</svg>

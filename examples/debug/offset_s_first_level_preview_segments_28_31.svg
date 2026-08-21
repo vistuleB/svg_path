@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="1.67 11.50091 0.45752 0.25008" width="2200" height="2200">
+  <rect x="1.67" y="11.50091" width="0.45752" height="0.25008" style="fill: #ffffff; stroke: none" />
+  <path d="M 1.68 11.635 C 1.87956 11.635 1.99079 11.58047 2.04434 11.55414" style="fill: none; stroke: #2563eb; stroke-width: 0.0012; stroke-linecap: round; stroke-linejoin: round; opacity: 0.95" />
+  <path d="M 2.04434 11.55414 C 2.1015 11.52603 2.11756 11.51088 2.11752 11.51091" style="fill: none; stroke: #dc2626; stroke-width: 0.0012; stroke-linecap: round; stroke-linejoin: round; opacity: 0.95" />
+  <path d="M 2.11752 11.51091 C 2.11722 11.51115 2.08122 11.54402 2.04482 11.57919" style="fill: none; stroke: #16a34a; stroke-width: 0.0012; stroke-linecap: round; stroke-linejoin: round; opacity: 0.95" />
+  <path d="M 2.04482 11.57919 C 2.01434 11.60863 1.9717 11.65644 1.93949 11.741" style="fill: none; stroke: #9333ea; stroke-width: 0.0012; stroke-linecap: round; stroke-linejoin: round; opacity: 0.95" />
+  <circle cx="1.68" cy="11.635" r="0.0015" style="fill: #dc2626; stroke: #ffffff; stroke-width: 0.00025" />
+  <circle cx="2.04434" cy="11.55414" r="0.0015" style="fill: #dc2626; stroke: #ffffff; stroke-width: 0.00025" />
+  <circle cx="2.04434" cy="11.55414" r="0.0015" style="fill: #dc2626; stroke: #ffffff; stroke-width: 0.00025" />
+  <circle cx="2.11752" cy="11.51091" r="0.0015" style="fill: #dc2626; stroke: #ffffff; stroke-width: 0.00025" />
+  <circle cx="2.11752" cy="11.51091" r="0.0015" style="fill: #dc2626; stroke: #ffffff; stroke-width: 0.00025" />
+  <circle cx="2.04482" cy="11.57919" r="0.0015" style="fill: #dc2626; stroke: #ffffff; stroke-width: 0.00025" />
+  <circle cx="2.04482" cy="11.57919" r="0.0015" style="fill: #dc2626; stroke: #ffffff; stroke-width: 0.00025" />
+  <circle cx="1.93949" cy="11.741" r="0.0015" style="fill: #dc2626; stroke: #ffffff; stroke-width: 0.00025" />
+  <circle cx="2.1015" cy="11.52603" r="0.0015" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.00025" />
+  <circle cx="2.11756" cy="11.51088" r="0.0015" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.00025" />
+<text x="1.9169237319878474" y="11.601945980844054" font-size="0.004" text-anchor="middle" dominant-baseline="middle" style="fill: #111827; stroke: #ffffff; stroke-width: 0.00045; paint-order: stroke">28</text>
+<text x="2.102383006002559" y="11.519474618433438" font-size="0.004" text-anchor="middle" dominant-baseline="middle" style="fill: #111827; stroke: #ffffff; stroke-width: 0.00045; paint-order: stroke">29</text>
+<text x="2.0947082144171887" y="11.529448851202513" font-size="0.004" text-anchor="middle" dominant-baseline="middle" style="fill: #111827; stroke: #ffffff; stroke-width: 0.00045; paint-order: stroke">30</text>
+<text x="1.9928038027264634" y="11.636922667979915" font-size="0.004" text-anchor="middle" dominant-baseline="middle" style="fill: #111827; stroke: #ffffff; stroke-width: 0.00045; paint-order: stroke">31</text></svg>

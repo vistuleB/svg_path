@@ -1,0 +1,157 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-13.5 -48.90018 179 97.80036" width="1100" height="700">
+  <rect x="-13.5" y="-48.90018" width="179" height="97.80036" style="fill: #ffffff; stroke: none" />
+  <text x="76" y="-41.90018" font-size="6" style="fill: #111827; font-family: system-ui; text-anchor: middle">figure-eight stroke: submerged arrangement edges</text>
+  <path d="M 76 0 C -2 -62 -2 62 76 0 S 154 62 76 0 Z" style="fill: none; stroke: #111827; stroke-width: 0.12; stroke-linecap: round; stroke-linejoin: round; opacity: 0.35" />
+  <path d="M 76 -16.18622 C 73.58135 -17.85367 71.21169 -19.36798 68.88716 -20.73725" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <path d="M 68.88716 -20.73725 C 64.02924 -23.59884 59.36566 -25.8296 54.85624 -27.47246" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <path d="M 54.85624 -27.47246 C 45.87053 -30.7461 37.34139 -31.72828 29.59121 -30.18818" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <path d="M 29.59121 -30.18818 C 25.73029 -29.42095 22.11622 -28.01942 18.93478 -26.0701" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <path d="M 18.93478 -26.0701 C 15.75347 -24.12087 13.03463 -21.64383 10.87684 -18.85669" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <path d="M 10.87684 -18.85669 C 6.55227 -13.27079 4.5 -6.57362 4.5 0" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <path d="M 4.5 0 C 4.5 6.57362 6.55227 13.27079 10.87684 18.85669" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <path d="M 10.87684 18.85669 C 13.03463 21.64383 15.75347 24.12087 18.93478 26.0701" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <path d="M 18.93478 26.0701 C 22.11622 28.01942 25.73029 29.42095 29.59121 30.18818" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <path d="M 29.59121 30.18818 C 37.34139 31.72828 45.87053 30.7461 54.85624 27.47246" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <path d="M 54.85624 27.47246 C 59.36566 25.8296 64.02924 23.59884 68.88716 20.73725" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <path d="M 68.88716 20.73725 C 71.21169 19.36798 73.58135 17.85367 76 16.18622" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <path d="M 99.28673 0 C 101.76562 -1.3099 104.02297 -2.30697 106.04374 -3.04317" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <path d="M 106.04374 -3.04317 C 111.68303 -5.09765 115.34139 -5.08422 117.34121 -4.68682" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <path d="M 117.34121 -4.68682 C 118.35529 -4.4853 119.00685 -4.19152 119.48166 -3.9006" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <path d="M 119.48166 -3.9006 C 119.9566 -3.6096 120.28463 -3.30148 120.56434 -2.94019" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <path d="M 120.56434 -2.94019 C 121.11477 -2.22921 121.5 -1.17638 121.5 0" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <path d="M 121.5 0 C 121.5 1.17638 121.11477 2.22921 120.56434 2.94019" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <path d="M 120.56434 2.94019 C 120.28463 3.30148 119.9566 3.6096 119.48166 3.9006" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <path d="M 119.48166 3.9006 C 119.00685 4.19152 118.35529 4.4853 117.34121 4.68682" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <path d="M 117.34121 4.68682 C 115.34139 5.08422 111.68303 5.09765 106.04374 3.04317" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <path d="M 106.04374 3.04317 C 104.02297 2.30697 101.76562 1.3099 99.28673 0" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <path d="M 52.71327 0 C 50.23438 -1.3099 47.97703 -2.30697 45.95626 -3.04317" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <path d="M 45.95626 -3.04317 C 40.31697 -5.09765 36.65861 -5.08422 34.65879 -4.68682" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <path d="M 34.65879 -4.68682 C 33.64471 -4.4853 32.99315 -4.19152 32.51834 -3.9006" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <path d="M 32.51834 -3.9006 C 32.0434 -3.6096 31.71537 -3.30148 31.43566 -2.94019" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <path d="M 31.43566 -2.94019 C 30.88523 -2.22921 30.5 -1.17638 30.5 0" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <path d="M 30.5 0 C 30.5 1.17638 30.88523 2.22921 31.43566 2.94019" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <path d="M 31.43566 2.94019 C 31.71537 3.30148 32.0434 3.6096 32.51834 3.9006" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <path d="M 32.51834 3.9006 C 32.99315 4.19152 33.64471 4.4853 34.65879 4.68682" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <path d="M 34.65879 4.68682 C 36.65861 5.08422 40.31697 5.09765 45.95626 3.04317" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <path d="M 45.95626 3.04317 C 47.97703 2.30697 50.23438 1.3099 52.71327 0" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <path d="M 76 -16.18622 C 78.41865 -17.85367 80.78831 -19.36798 83.11284 -20.73725" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <path d="M 83.11284 -20.73725 C 87.97076 -23.59884 92.63434 -25.8296 97.14376 -27.47246" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <path d="M 97.14376 -27.47246 C 106.12947 -30.7461 114.65861 -31.72828 122.40879 -30.18818" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <path d="M 122.40879 -30.18818 C 126.26971 -29.42095 129.88378 -28.01942 133.06522 -26.0701" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <path d="M 133.06522 -26.0701 C 136.24653 -24.12087 138.96537 -21.64383 141.12316 -18.85669" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <path d="M 141.12316 -18.85669 C 145.44773 -13.27079 147.5 -6.57362 147.5 0" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <path d="M 147.5 0 C 147.5 6.57362 145.44773 13.27079 141.12316 18.85669" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <path d="M 141.12316 18.85669 C 138.96537 21.64383 136.24653 24.12087 133.06522 26.0701" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <path d="M 133.06522 26.0701 C 129.88378 28.01942 126.26971 29.42095 122.40879 30.18818" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <path d="M 122.40879 30.18818 C 114.65861 31.72828 106.12947 30.7461 97.14376 27.47246" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <path d="M 97.14376 27.47246 C 92.63434 25.8296 87.97076 23.59884 83.11284 20.73725" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <path d="M 83.11284 20.73725 C 80.78831 19.36798 78.41865 17.85367 76 16.18622" style="fill: none; stroke: #16a34a; stroke-width: 0.55; stroke-linecap: round; stroke-linejoin: round; opacity: 0.82" />
+  <text x="79.99907" y="-13.3219" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">0</text>
+  <text x="72.40828" y="-18.57355" font-size="0" style="fill: none"></text>
+  <text x="61.74101" y="-24.56188" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">1</text>
+  <text x="41.7604" y="-30.63547" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">2</text>
+  <text x="24.00819" y="-28.57242" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">3</text>
+  <text x="14.52199" y="-22.77761" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">4</text>
+  <text x="6.06671" y="-9.79874" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">5</text>
+  <text x="6.06671" y="9.79874" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">6</text>
+  <text x="14.52199" y="22.77761" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">7</text>
+  <text x="24.00819" y="28.57242" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">8</text>
+  <text x="41.7604" y="30.63547" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">9</text>
+  <text x="61.74101" y="24.56188" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">10</text>
+  <text x="72.40828" y="18.57355" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">11</text>
+  <text x="79.99907" y="13.3219" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">53</text>
+  <text x="90.49509" y="5.40211" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">12</text>
+  <text x="97.82246" y="0.7962" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">13</text>
+  <text x="102.83703" y="-1.73672" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">22</text>
+  <text x="113.05728" y="-4.78445" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">14</text>
+  <text x="118.61366" y="-4.32724" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">15</text>
+  <text x="120.09621" y="-3.44675" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">16</text>
+  <text x="121.23858" y="-1.64462" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">17</text>
+  <text x="121.23858" y="1.64462" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">18</text>
+  <text x="120.09621" y="3.44675" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">19</text>
+  <text x="118.61366" y="4.32724" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">20</text>
+  <text x="113.05728" y="4.78445" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">21</text>
+  <text x="102.83703" y="1.73672" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">23</text>
+  <text x="97.82246" y="-0.7962" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">24</text>
+  <text x="90.49509" y="-5.40211" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">25</text>
+  <text x="61.50491" y="5.40211" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">26</text>
+  <text x="54.17754" y="0.7962" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">27</text>
+  <text x="49.16297" y="-1.73672" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">36</text>
+  <text x="38.94272" y="-4.78445" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">28</text>
+  <text x="33.38634" y="-4.32724" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">29</text>
+  <text x="31.90379" y="-3.44675" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">30</text>
+  <text x="30.76142" y="-1.64462" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">31</text>
+  <text x="30.76142" y="1.64462" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">32</text>
+  <text x="31.90379" y="3.44675" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">33</text>
+  <text x="33.38634" y="4.32724" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">34</text>
+  <text x="38.94272" y="4.78445" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">35</text>
+  <text x="49.16297" y="1.73672" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">37</text>
+  <text x="54.17754" y="-0.7962" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">38</text>
+  <text x="61.50491" y="-5.40211" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">39</text>
+  <text x="72.00093" y="-13.3219" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">41</text>
+  <text x="79.59172" y="-18.57355" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">42</text>
+  <text x="90.25899" y="-24.56188" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">43</text>
+  <text x="110.2396" y="-30.63547" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">44</text>
+  <text x="127.99181" y="-28.57242" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">45</text>
+  <text x="137.47801" y="-22.77761" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">46</text>
+  <text x="145.93329" y="-9.79874" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">47</text>
+  <text x="145.93329" y="9.79874" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">48</text>
+  <text x="137.47801" y="22.77761" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">49</text>
+  <text x="127.99181" y="28.57242" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">50</text>
+  <text x="110.2396" y="30.63547" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">51</text>
+  <text x="90.25899" y="24.56188" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">52</text>
+  <text x="79.59172" y="18.57355" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">54</text>
+  <text x="72.00093" y="13.3219" font-size="0.3" style="fill: #111827; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: white; stroke-width: 0.12px">55</text>
+  <circle cx="84.08917" cy="-10.1767" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="68.88716" cy="-20.73725" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="54.85624" cy="-27.47246" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="29.59121" cy="-30.18818" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="18.93478" cy="-26.0701" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="10.87684" cy="-18.85669" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="4.5" cy="0" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="10.87684" cy="18.85669" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="18.93478" cy="26.0701" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="29.59121" cy="30.18818" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="54.85624" cy="27.47246" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="68.88716" cy="20.73725" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="84.08917" cy="10.1767" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="96.30903" cy="1.66499" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="106.04374" cy="-3.04317" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="117.34121" cy="-4.68682" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="119.48166" cy="-3.9006" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="120.56434" cy="-2.94019" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="121.5" cy="0" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="120.56434" cy="2.94019" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="119.48166" cy="3.9006" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="117.34121" cy="4.68682" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="106.04374" cy="3.04317" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="99.28673" cy="0" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="96.30903" cy="-1.66499" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="67.91083" cy="10.1767" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="55.69097" cy="1.66499" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="45.95626" cy="-3.04317" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="34.65879" cy="-4.68682" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="32.51834" cy="-3.9006" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="31.43566" cy="-2.94019" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="30.5" cy="0" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="31.43566" cy="2.94019" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="32.51834" cy="3.9006" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="34.65879" cy="4.68682" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="45.95626" cy="3.04317" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="52.71327" cy="0" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="55.69097" cy="-1.66499" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="67.91083" cy="-10.1767" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="76" cy="-16.18622" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="83.11284" cy="-20.73725" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="97.14376" cy="-27.47246" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="122.40879" cy="-30.18818" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="133.06522" cy="-26.0701" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="141.12316" cy="-18.85669" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="147.5" cy="0" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="141.12316" cy="18.85669" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="133.06522" cy="26.0701" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="122.40879" cy="30.18818" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="97.14376" cy="27.47246" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="83.11284" cy="20.73725" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+  <circle cx="76" cy="16.18622" r="0.8" style="fill: #111827; stroke: #ffffff; stroke-width: 0.18" />
+</svg>

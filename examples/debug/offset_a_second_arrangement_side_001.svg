@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="52.08497 -0.51 13.575 12.645" width="1800" height="1100">
+  <rect x="52.08497" y="-0.51" width="13.575" height="12.645" style="fill: #ffffff; stroke: none" />
+  <path d="M 63.67997 10.065 Q 63.82997 10.515 64.90997 10.515 V 11.385 H 59.41997 V 10.515 H 60.73997 Q 61.17497 10.515 61.17497 10.23 Q 61.17497 10.185 61.12997 10.065 L 60.52997 8.445 H 55.92497 L 55.36997 9.945 Q 55.33997 10.035 55.33997 10.125 Q 55.33997 10.515 55.99997 10.515 H 56.92997 V 11.385 H 52.83497 V 10.5 Q 53.46497 10.5 53.76497 10.395 Q 54.06497 10.29 54.13997 10.08 L 57.88997 0.24 H 60.06497 Z M 56.31497 7.335 H 60.15497 L 58.24997 2.055 Z" style="fill: none; stroke: #111827; stroke-width: 0.09; stroke-linecap: round; stroke-linejoin: round; opacity: 0.20" />
+  <path d="M 58.24263 4.98118 L 58.73108 6.335 H 57.74649 Z" style="fill: none; stroke: #2563eb; stroke-width: 0.025; stroke-linecap: round; stroke-linejoin: round; opacity: 0.72" />
+  <path d="M 59.18328 4.6418 L 60.15497 7.335" style="fill: none; stroke: #16a34a; stroke-width: 0.024; stroke-linecap: round; stroke-linejoin: round; opacity: 0.72" />
+  <path d="M 60.15497 7.335 H 56.31497" style="fill: none; stroke: #16a34a; stroke-width: 0.024; stroke-linecap: round; stroke-linejoin: round; opacity: 0.72" />
+  <path d="M 56.31497 7.335 L 58.24997 2.055" style="fill: none; stroke: #16a34a; stroke-width: 0.024; stroke-linecap: round; stroke-linejoin: round; opacity: 0.72" />
+  <path d="M 58.24997 2.055 L 59.18328 4.6418" style="fill: none; stroke: #16a34a; stroke-width: 0.024; stroke-linecap: round; stroke-linejoin: round; opacity: 0.72" />
+  <circle cx="59.18328" cy="4.6418" r="0.006" style="fill: #111827; stroke: #ffffff; stroke-width: 0.0015" />
+  <circle cx="60.15497" cy="7.335" r="0.006" style="fill: #111827; stroke: #ffffff; stroke-width: 0.0015" />
+  <circle cx="56.31497" cy="7.335" r="0.006" style="fill: #111827; stroke: #ffffff; stroke-width: 0.0015" />
+  <circle cx="58.24997" cy="2.055" r="0.006" style="fill: #111827; stroke: #ffffff; stroke-width: 0.0015" />
+  <text x="59.79141" y="5.94428" font-size="0.06" style="fill: #1d4ed8; stroke: #ffffff; stroke-width: 0.003; paint-order: stroke; text-anchor: middle; dominant-baseline: central">0</text>
+  <text x="58.23497" y="7.465" font-size="0.06" style="fill: #1d4ed8; stroke: #ffffff; stroke-width: 0.003; paint-order: stroke; text-anchor: middle; dominant-baseline: central">1</text>
+  <text x="57.16041" y="4.65027" font-size="0.06" style="fill: #1d4ed8; stroke: #ffffff; stroke-width: 0.003; paint-order: stroke; text-anchor: middle; dominant-baseline: central">2</text>
+  <text x="58.83891" y="3.30428" font-size="0.06" style="fill: #1d4ed8; stroke: #ffffff; stroke-width: 0.003; paint-order: stroke; text-anchor: middle; dominant-baseline: central">3</text>
+</svg>

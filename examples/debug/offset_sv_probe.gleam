@@ -1,27 +1,29 @@
-//// Trimmed offset diagnostic for the S/V/G package-title subpaths.
+//// Refined source and joined untrimmed offset diagnostic for the S
+//// package-title outline.
 
 import gleam/dynamic.{type Dynamic}
 import gleam/float
 import gleam/int
+import gleam/io
 import gleam/list
 import gleam/string
 import svg_path
+import svg_path/curvature
 import svg_path/offset
 import svg_path/parse
 import svg_path/svg
 
 const input = "examples/debug/package_title.svg"
 
-const output = "examples/debug/offset_svg_trimmed.svg"
+const output = "examples/debug/offset_s_joined_untrimmed.svg"
+
+const offset_distance = 1.0
 
 pub fn main() -> Nil {
   let assert Ok(contents) = read_file(input)
   let assert Ok(full) = parse.path(first_path_data(contents))
-  let source =
-    svg_path.Path(
-      svg_path.path_subpaths(full)
-      |> list.take(3),
-    )
+  let assert [s, ..] = svg_path.path_subpaths(full)
+  let source = svg_path.Path([s])
   let options =
     offset.Options(
       ..offset.default_options(),
@@ -31,16 +33,40 @@ pub fn main() -> Nil {
         tolerance: 0.000000001,
       ),
     )
-  let assert Ok(offset_path) = offset.path_with(source, distance: 1.0, options:)
+  let assert Ok(source_pieces) =
+    offset.internal_refined_source_pieces(
+      s,
+      distance: offset_distance,
+      options:,
+    )
+  let assert Ok(joined) =
+    offset.subpath_untrimmed_with(s, distance: offset_distance, options:)
+  io.println(
+    "joined untrimmed segments: "
+    <> int.to_string(list.length(svg_path.subpath_segments(joined))),
+  )
+  io.println(
+    "joined untrimmed closed: "
+    <> bool_string(svg_path.subpath_is_closed(joined)),
+  )
+  let offset_path = svg_path.Path([joined])
   let assert Ok(source_box) = svg_path.path_bounding_box(source)
   let assert Ok(offset_box) = svg_path.path_bounding_box(offset_path)
-  let view_box = padded_box([source_box, offset_box], margin: 2.0)
-  write_file(output, render(source, offset_path, view_box))
+  let view_box = padded_box([source_box, offset_box], margin: 4.0)
+  write_file(output, render(source, source_pieces, joined, view_box))
+}
+
+fn bool_string(value: Bool) -> String {
+  case value {
+    True -> "True"
+    False -> "False"
+  }
 }
 
 fn render(
   source: svg_path.Path,
-  offset_path: svg_path.Path,
+  source_pieces: List(offset.RefinedSourcePiece),
+  joined: svg_path.Subpath,
   view_box: svg_path.BoundingBox,
 ) -> String {
   svg.document(
@@ -48,16 +74,81 @@ fn render(
       background(view_box),
       svg.StyledPath(
         source,
-        "fill: none; stroke: #111827; stroke-width: 0.18; stroke-dasharray: 0.7 0.45; stroke-linecap: butt; stroke-linejoin: miter",
+        "fill: none; stroke: #e5e7eb; stroke-width: 0.04; stroke-linecap: round; stroke-linejoin: round",
       ),
-      svg.StyledPath(
-        offset_path,
-        "fill: none; stroke: #0ea5e9; stroke-width: 0.28; stroke-linecap: round; stroke-linejoin: round",
-      ),
+      ..list.append(
+        refined_source_piece_paths(source_pieces),
+        list.append(boundary_dots(source_pieces), [joined_offset_path(joined)]),
+      )
     ],
     view_box:,
   )
-  |> with_root_size(width: 16_000, height: 3600)
+  |> with_root_size(width: 3600, height: 3600)
+}
+
+fn refined_source_piece_paths(
+  pieces: List(offset.RefinedSourcePiece),
+) -> List(svg.ThingToDraw) {
+  pieces
+  |> list.map(fn(piece) {
+    let style = case piece.big {
+      True ->
+        "fill: none; stroke: "
+        <> residual_sign_color(piece.segment)
+        <> "; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round"
+      False ->
+        "fill: none; stroke: #f97316; stroke-width: 0.0367; stroke-linecap: round; stroke-linejoin: round"
+    }
+    svg.StyledPath(
+      svg_path.Path([svg_path.subpath_assert([piece.segment])]),
+      style,
+    )
+  })
+}
+
+fn residual_sign_color(segment: svg_path.Segment) -> String {
+  case
+    curvature.segment_right_normal_cusp_residual(
+      segment,
+      distance: offset_distance,
+      at: 0.5,
+    )
+  {
+    Ok(value) ->
+      case value <. 0.0 {
+        True -> "#2563eb"
+        False -> "#16a34a"
+      }
+    Error(_) -> "#6b7280"
+  }
+}
+
+fn boundary_dots(
+  pieces: List(offset.RefinedSourcePiece),
+) -> List(svg.ThingToDraw) {
+  pieces
+  |> list.flat_map(fn(piece) {
+    let start = svg_path.segment_start(piece.segment)
+    let end = svg_path.segment_end(piece.segment)
+    [
+      svg.Circle(start, 0.025, dot_style(piece.start_is_hinge)),
+      svg.Circle(end, 0.025, dot_style(piece.end_is_hinge)),
+    ]
+  })
+}
+
+fn dot_style(is_hinge: Bool) -> String {
+  case is_hinge {
+    True -> "fill: #dc2626; stroke: #ffffff; stroke-width: 0.006"
+    False -> "fill: #2563eb; stroke: #ffffff; stroke-width: 0.006"
+  }
+}
+
+fn joined_offset_path(joined: svg_path.Subpath) -> svg.ThingToDraw {
+  svg.StyledPath(
+    svg_path.Path([joined]),
+    "fill: none; stroke: #111827; stroke-width: 0.002; stroke-linecap: round; stroke-linejoin: round",
+  )
 }
 
 fn background(view_box: svg_path.BoundingBox) -> svg.ThingToDraw {

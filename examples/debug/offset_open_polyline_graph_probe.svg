@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-20 -250 1060 320" width="1040" height="320">
+  <text x="60" y="-220" font-size="12" style="fill: #111827; font-family: system-ui; text-anchor: middle">source</text>
+  <path d="M 0 0 H 10 V -10" style="fill: none; stroke: #111827; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 10 0 L 2.8 2.8 V -2.8 Z" style="fill: #111827; fill-opacity: 1.0; stroke: none" />
+  <path d="M 10 -10 L 12.8 -2.8 H 7.2 Z" style="fill: #111827; fill-opacity: 1.0; stroke: none" />
+  <text x="320" y="-220" font-size="12" style="fill: #111827; font-family: system-ui; text-anchor: middle">untrimmed provisional</text>
+  <path d="M 260 -2 H 270 L 268 0 V -10" style="fill: none; stroke: #6b7280; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 270 -2 L 262.8 0.8 V -4.8 Z" style="fill: #6b7280; fill-opacity: 1.0; stroke: none" />
+  <path d="M 268 0 L 271.11127 -7.07107 L 275.07107 -3.11127 Z" style="fill: #6b7280; fill-opacity: 1.0; stroke: none" />
+  <path d="M 268 -10 L 270.8 -2.8 H 265.2 Z" style="fill: #6b7280; fill-opacity: 1.0; stroke: none" />
+  <text x="580" y="-220" font-size="12" style="fill: #111827; font-family: system-ui; text-anchor: middle">arrangement graph used for trimming</text>
+  <path d="M 520 -2 H 528 M 528 -2 H 530 M 530 -2 L 528 0 M 528 0 V -2 M 528 -2 V -10" style="fill: none; stroke: #2563eb; stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 528 -2 L 523.05 -0.075 V -3.925 Z" style="fill: #dc2626; fill-opacity: 1.0; stroke: none" />
+  <path d="M 530 -2 L 525.05 -0.075 V -3.925 Z" style="fill: #dc2626; fill-opacity: 1.0; stroke: none" />
+  <path d="M 528 0 L 530.139 -4.86136 L 532.86136 -2.139 Z" style="fill: #dc2626; fill-opacity: 1.0; stroke: none" />
+  <path d="M 528 -2 L 529.925 2.95 H 526.075 Z" style="fill: #dc2626; fill-opacity: 1.0; stroke: none" />
+  <path d="M 528 -10 L 529.925 -5.05 H 526.075 Z" style="fill: #dc2626; fill-opacity: 1.0; stroke: none" />
+  <text x="524" y="-7" font-size="8" style="fill: #111827; font-family: ui-monospace, monospace; text-anchor: middle">e0</text>
+  <text x="529" y="-7" font-size="8" style="fill: #111827; font-family: ui-monospace, monospace; text-anchor: middle">e1</text>
+  <text x="529" y="-6" font-size="8" style="fill: #111827; font-family: ui-monospace, monospace; text-anchor: middle">e2</text>
+  <text x="528" y="-6" font-size="8" style="fill: #111827; font-family: ui-monospace, monospace; text-anchor: middle">e3</text>
+  <text x="528" y="-11" font-size="8" style="fill: #111827; font-family: ui-monospace, monospace; text-anchor: middle">e4</text>
+  <circle cx="520" cy="-2" r="2" style="fill: #ffffff; stroke: #111827; stroke-width: 1" />
+  <text x="520" y="9" font-size="7" style="fill: #111827; font-family: ui-monospace, monospace; text-anchor: middle">v0</text>
+  <circle cx="528" cy="-2" r="2" style="fill: #ffffff; stroke: #111827; stroke-width: 1" />
+  <text x="528" y="9" font-size="7" style="fill: #111827; font-family: ui-monospace, monospace; text-anchor: middle">v1</text>
+  <circle cx="530" cy="-2" r="2" style="fill: #ffffff; stroke: #111827; stroke-width: 1" />
+  <text x="530" y="9" font-size="7" style="fill: #111827; font-family: ui-monospace, monospace; text-anchor: middle">v2</text>
+  <circle cx="528" cy="0" r="2" style="fill: #ffffff; stroke: #111827; stroke-width: 1" />
+  <text x="528" y="11" font-size="7" style="fill: #111827; font-family: ui-monospace, monospace; text-anchor: middle">v3</text>
+  <circle cx="528" cy="-10" r="2" style="fill: #ffffff; stroke: #111827; stroke-width: 1" />
+  <text x="528" y="1" font-size="7" style="fill: #111827; font-family: ui-monospace, monospace; text-anchor: middle">v4</text>
+  <text x="840" y="-220" font-size="12" style="fill: #111827; font-family: system-ui; text-anchor: middle">trimmed output</text>
+  <path d="M 780 -2 H 788 V -10" style="fill: none; stroke: #dc2626; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 788 -2 L 780.8 0.8 V -4.8 Z" style="fill: #dc2626; fill-opacity: 1.0; stroke: none" />
+  <path d="M 788 -10 L 790.8 -2.8 H 785.2 Z" style="fill: #dc2626; fill-opacity: 1.0; stroke: none" />
+</svg>
