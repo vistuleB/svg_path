@@ -16,13 +16,8 @@ pub fn main() -> Nil {
       tolerance: 0.000001,
       minimum_chord: 0.00001,
     )
-  let arrangement.ArrangementGraphBuild(
-    graph:,
-    normalized_paths:,
-    segment_images:,
-  ) = build
+  let arrangement.ArrangementGraphBuild(graph:, segment_images:) = build
   let _ = graph
-  let _ = normalized_paths
   let _ = segment_images
 
   let assert Ok(union) = csg.union(left, right, using: svg_path.Nonzero)

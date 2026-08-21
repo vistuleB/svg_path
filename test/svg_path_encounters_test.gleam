@@ -76,7 +76,12 @@ pub fn partial_line_overlap_has_overlap_and_no_reported_points_test() {
 
 pub fn overlapping_segments_still_validate_intersection_options_test() {
   let segment = line(0.0, 0.0, 10.0, 0.0)
-  let options = intersections.IntersectionOptions(tolerance:, max_depth: 0)
+  let options =
+    intersections.IntersectionOptions(
+      tolerance:,
+      max_depth: 0,
+      parameter_snap: intersections.NoParameterSnap,
+    )
 
   assert encounters.segment_with(segment, segment, options:)
     == Error(svg_path.InvalidIntersectionMaxDepth(0))

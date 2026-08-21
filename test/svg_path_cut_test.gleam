@@ -186,7 +186,11 @@ pub fn subpath_cut_propagates_intersection_option_errors_test() {
   assert cut.subpath_with(
       subject: subject,
       by: cutter,
-      options: intersections.IntersectionOptions(tolerance: 0.0, max_depth: 48),
+      options: intersections.IntersectionOptions(
+        tolerance: 0.0,
+        max_depth: 48,
+        parameter_snap: intersections.NoParameterSnap,
+      ),
     )
     == Error(svg_path.InvalidIntersectionTolerance(0.0))
 }
@@ -248,7 +252,11 @@ pub fn path_cut_empty_subject_still_validates_options_test() {
   assert cut.path_with(
       subject: svg_path.Path([]),
       by: svg_path.Path([]),
-      options: intersections.IntersectionOptions(tolerance: 0.0, max_depth: 48),
+      options: intersections.IntersectionOptions(
+        tolerance: 0.0,
+        max_depth: 48,
+        parameter_snap: intersections.NoParameterSnap,
+      ),
     )
     == Error(svg_path.InvalidIntersectionTolerance(0.0))
 }
@@ -295,6 +303,7 @@ pub fn path_cut_dedupes_near_internal_boundary_aliases_test() {
       options: intersections.IntersectionOptions(
         tolerance: 0.000001,
         max_depth: 48,
+        parameter_snap: intersections.NoParameterSnap,
       ),
     )
 

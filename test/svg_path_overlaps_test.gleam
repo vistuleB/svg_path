@@ -52,6 +52,7 @@ pub fn semantic_arc_overlap_survives_nine_decimal_tolerance_test() {
       options: intersections.IntersectionOptions(
         tolerance: strict_tolerance,
         max_depth: 48,
+        parameter_snap: intersections.NoParameterSnap,
       ),
     )
     == Error(svg_path.OverlappingSegments)
@@ -82,7 +83,12 @@ fn assert_overlap_contract(
   right: svg_path.Segment,
   expected_overlap expected_overlap: Bool,
 ) {
-  let options = intersections.IntersectionOptions(tolerance:, max_depth: 48)
+  let options =
+    intersections.IntersectionOptions(
+      tolerance:,
+      max_depth: 48,
+      parameter_snap: intersections.NoParameterSnap,
+    )
   let assert Ok(found_overlaps) =
     overlaps.segment_with(left, right, tolerance: options.tolerance)
   let reports_overlap = !list.is_empty(found_overlaps)

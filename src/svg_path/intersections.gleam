@@ -12,16 +12,23 @@ import gleam/order
 import gleam/result
 import svg_path.{
   type BoundingBox, type Error, type Path, type PathIntersection,
-  type PathParameter, type PathSelfIntersection, type Point, type Segment,
-  type SegmentIntersection, type SelfIntersectionOptions, type Subpath,
-  type SubpathIntersection, type SubpathParameter, type SubpathSelfIntersection,
-  Arc, CubicBezier, InternalOverlapClassificationInconsistency,
-  InvalidIntersectionMaxDepth, InvalidIntersectionTolerance,
+  type PathParameter, type PathPathProjection, type PathSelfIntersection,
+  type Point, type Segment, type SegmentIntersection, type SegmentPathProjection,
+  type SegmentSegmentProjection, type SegmentSubpathProjection,
+  type SelfIntersectionOptions, type Subpath, type SubpathIntersection,
+  type SubpathParameter, type SubpathPathProjection,
+  type SubpathSelfIntersection, type SubpathSubpathProjection, Arc, CubicBezier,
+  EmptyPath, EmptySubpath, EmptySubpaths,
+  InternalOverlapClassificationInconsistency,
+  InternalUncertifiedSegmentIntersection, InvalidIntersectionMaxDepth,
+  InvalidIntersectionParameterSnapExponent, InvalidIntersectionTolerance,
   InvalidSelfIntersectionDistanceTolerance,
   InvalidSelfIntersectionMinimumArcLengthSeparation, Line, OverlappingSegments,
-  PathIntersection, PathParameter, PathSelfIntersection, Point, QuadraticBezier,
-  SegmentIntersection, SubpathIntersection, SubpathParameter,
-  SubpathSelfIntersection,
+  PathIntersection, PathParameter, PathPathProjection, PathSelfIntersection,
+  Point, QuadraticBezier, SegmentIntersection, SegmentPathProjection,
+  SegmentSegmentProjection, SegmentSubpathProjection, SubpathIntersection,
+  SubpathParameter, SubpathPathProjection, SubpathSelfIntersection,
+  SubpathSubpathProjection,
 }
 import svg_path/bezier
 import svg_path/internal/number
@@ -31,6 +38,14 @@ import svg_path/point
 const default_intersection_tolerance = 0.000000001
 
 const default_intersection_max_depth = 48
+
+const parameter_snap_distance_tie_slack = 0.000000000001
+
+const v4_subdivision_tolerance = 0.01
+
+const v4_terminal_grid_margin = 0.05
+
+const v4_defender_culling_enabled = False
 
 const default_classification_angular_tolerance = 0.0000001
 
@@ -174,6 +189,18 @@ pub type ClassifiedSubpathIntersection {
   )
 }
 
+/// Optional cleanup for segment-intersection parameters.
+pub type ParameterSnap {
+  /// Keep raw solver parameters.
+  NoParameterSnap
+
+  /// Suggest decimal-grid and third-tail parameter candidates at `10^-exponent`.
+  ///
+  /// Snapped candidates are only kept when their evaluated geometric distance
+  /// is no worse than the raw candidate, up to a small internal tie slack.
+  DecimalParameterSnap(exponent: Int)
+}
+
 /// Options for finding segment, subpath, and path intersections.
 pub type IntersectionOptions {
   IntersectionOptions(
@@ -181,18 +208,21 @@ pub type IntersectionOptions {
     tolerance: Float,
     /// Maximum recursive subdivision depth for one segment pair.
     max_depth: Int,
+    /// Optional parameter cleanup applied before final deduplication.
+    parameter_snap: ParameterSnap,
   )
 }
 
 /// Return the default options for segment, subpath, and path intersection
 /// detection.
 ///
-/// The default tolerance is `0.000000001` path-coordinate units and the
-/// default maximum subdivision depth is `48`.
+/// The default tolerance is `0.000000001` path-coordinate units, the default
+/// maximum subdivision depth is `48`, and parameter snapping is disabled.
 pub fn default_options() -> IntersectionOptions {
   IntersectionOptions(
     tolerance: default_intersection_tolerance,
     max_depth: default_intersection_max_depth,
+    parameter_snap: NoParameterSnap,
   )
 }
 
@@ -360,6 +390,122 @@ pub fn segment_with(
   segment_intersections_checked_valid_options(left, right, options)
 }
 
+/// Return one closest-point pair between two segments.
+///
+/// This solves the same segment-pair distance problem used by point
+/// intersection search, but it returns the best pair even when the segments do
+/// not intersect. Overlapping segments return one coincident pair with distance
+/// zero.
+pub fn segment_segment_projection(
+  left: Segment,
+  right: Segment,
+) -> Result(SegmentSegmentProjection, Error) {
+  segment_segment_projection_with(left, right, options: default_options())
+}
+
+/// Return one closest-point pair between two segments using explicit options.
+pub fn segment_segment_projection_with(
+  left: Segment,
+  right: Segment,
+  options options: IntersectionOptions,
+) -> Result(SegmentSegmentProjection, Error) {
+  use _ <- result.try(validate_options(options))
+  segment_segment_projection_valid_options(left, right, options)
+}
+
+/// Return one closest-point pair between a segment and a subpath.
+pub fn segment_subpath_projection(
+  left: Segment,
+  right: Subpath,
+) -> Result(SegmentSubpathProjection, Error) {
+  segment_subpath_projection_with(left, right, options: default_options())
+}
+
+/// Return one closest-point pair between a segment and a subpath using
+/// explicit options.
+pub fn segment_subpath_projection_with(
+  left: Segment,
+  right: Subpath,
+  options options: IntersectionOptions,
+) -> Result(SegmentSubpathProjection, Error) {
+  use _ <- result.try(validate_options(options))
+  segment_subpath_projection_valid_options(left, right, options)
+}
+
+/// Return one closest-point pair between a segment and a path.
+pub fn segment_path_projection(
+  left: Segment,
+  right: Path,
+) -> Result(SegmentPathProjection, Error) {
+  segment_path_projection_with(left, right, options: default_options())
+}
+
+/// Return one closest-point pair between a segment and a path using explicit
+/// options.
+pub fn segment_path_projection_with(
+  left: Segment,
+  right: Path,
+  options options: IntersectionOptions,
+) -> Result(SegmentPathProjection, Error) {
+  use _ <- result.try(validate_options(options))
+  segment_path_projection_valid_options(left, right, options)
+}
+
+/// Return one closest-point pair between two subpaths.
+pub fn subpath_subpath_projection(
+  left: Subpath,
+  right: Subpath,
+) -> Result(SubpathSubpathProjection, Error) {
+  subpath_subpath_projection_with(left, right, options: default_options())
+}
+
+/// Return one closest-point pair between two subpaths using explicit options.
+pub fn subpath_subpath_projection_with(
+  left: Subpath,
+  right: Subpath,
+  options options: IntersectionOptions,
+) -> Result(SubpathSubpathProjection, Error) {
+  use _ <- result.try(validate_options(options))
+  subpath_subpath_projection_valid_options(left, right, options)
+}
+
+/// Return one closest-point pair between a subpath and a path.
+pub fn subpath_path_projection(
+  left: Subpath,
+  right: Path,
+) -> Result(SubpathPathProjection, Error) {
+  subpath_path_projection_with(left, right, options: default_options())
+}
+
+/// Return one closest-point pair between a subpath and a path using explicit
+/// options.
+pub fn subpath_path_projection_with(
+  left: Subpath,
+  right: Path,
+  options options: IntersectionOptions,
+) -> Result(SubpathPathProjection, Error) {
+  use _ <- result.try(validate_options(options))
+  subpath_path_projection_valid_options(left, right, options)
+}
+
+/// Return one closest-point pair between two paths.
+pub fn path_path_projection(
+  left: Path,
+  right: Path,
+) -> Result(PathPathProjection, Error) {
+  path_path_projection_with(left, right, options: default_options())
+}
+
+/// Return one closest-point pair between two paths using explicit options.
+pub fn path_path_projection_with(
+  left: Path,
+  right: Path,
+  options options: IntersectionOptions,
+) -> Result(PathPathProjection, Error) {
+  use _ <- result.try(validate_options(options))
+  path_path_projection_valid_options(left, right, options)
+}
+
 /// Run the existing point-intersection solver without first rejecting a pair
 /// classified as overlapping.
 ///
@@ -372,7 +518,383 @@ pub fn segment_without_overlap_precheck_with(
   options options: IntersectionOptions,
 ) -> Result(List(SegmentIntersection), Error) {
   use _ <- result.try(validate_options(options))
-  segment_intersections_valid_options(left, right, options)
+  use intersections <- result.try(segment_intersections_valid_options(
+    left,
+    right,
+    options,
+  ))
+  certify_segment_intersections(left, right, intersections, options.tolerance)
+}
+
+fn polish_and_certify_segment_intersections(
+  left: Segment,
+  right: Segment,
+  intersections: List(SegmentIntersection),
+  options: IntersectionOptions,
+) -> Result(List(SegmentIntersection), Error) {
+  use intersections <- result.try(polish_segment_intersections(
+    left,
+    right,
+    intersections,
+    options.parameter_snap,
+    options.tolerance,
+  ))
+  certify_segment_intersections(left, right, intersections, options.tolerance)
+}
+
+fn certify_segment_intersections(
+  left: Segment,
+  right: Segment,
+  intersections: List(SegmentIntersection),
+  tolerance: Float,
+) -> Result(List(SegmentIntersection), Error) {
+  use certified <- result.try(
+    certify_segment_intersections_loop(
+      left,
+      right,
+      intersections,
+      tolerance,
+      certified: [],
+    ),
+  )
+  Ok(list.reverse(certified))
+}
+
+fn certify_segment_intersections_loop(
+  left: Segment,
+  right: Segment,
+  intersections: List(SegmentIntersection),
+  tolerance: Float,
+  certified certified: List(SegmentIntersection),
+) -> Result(List(SegmentIntersection), Error) {
+  case intersections {
+    [] -> Ok(certified)
+    [intersection, ..rest] -> {
+      let SegmentIntersection(left_t:, right_t:, point:) = intersection
+
+      use left_point <- result.try(svg_path.segment_point(left, at: left_t))
+      use right_point <- result.try(svg_path.segment_point(right, at: right_t))
+
+      let left_distance = distance(left_point, point)
+      let right_distance = distance(right_point, point)
+
+      case left_distance <=. tolerance && right_distance <=. tolerance {
+        True ->
+          certify_segment_intersections_loop(
+            left,
+            right,
+            rest,
+            tolerance,
+            certified: [intersection, ..certified],
+          )
+        False ->
+          Error(InternalUncertifiedSegmentIntersection(
+            left_distance:,
+            right_distance:,
+            tolerance:,
+          ))
+      }
+    }
+  }
+}
+
+fn polish_segment_intersections(
+  left: Segment,
+  right: Segment,
+  intersections: List(SegmentIntersection),
+  parameter_snap: ParameterSnap,
+  tolerance: Float,
+) -> Result(List(SegmentIntersection), Error) {
+  case parameter_snap {
+    NoParameterSnap -> Ok(sort_segment_intersections(intersections))
+    DecimalParameterSnap(exponent:) -> {
+      use polished <- result.try(
+        polish_segment_intersections_loop(
+          left,
+          right,
+          intersections,
+          exponent,
+          polished: [],
+        ),
+      )
+      Ok(
+        dedupe_segment_intersections(polished, tolerance)
+        |> sort_segment_intersections,
+      )
+    }
+  }
+}
+
+fn sort_segment_intersections(
+  intersections: List(SegmentIntersection),
+) -> List(SegmentIntersection) {
+  intersections
+  |> list.sort(by: fn(a, b) {
+    case float.compare(a.left_t, b.left_t) {
+      order.Eq -> float.compare(a.right_t, b.right_t)
+      order -> order
+    }
+  })
+}
+
+fn polish_segment_intersections_loop(
+  left: Segment,
+  right: Segment,
+  intersections: List(SegmentIntersection),
+  exponent: Int,
+  polished polished: List(SegmentIntersection),
+) -> Result(List(SegmentIntersection), Error) {
+  case intersections {
+    [] -> Ok(list.reverse(polished))
+    [intersection, ..rest] -> {
+      use polished_intersection <- result.try(polish_segment_intersection(
+        left,
+        right,
+        intersection,
+        exponent,
+      ))
+      polish_segment_intersections_loop(left, right, rest, exponent, polished: [
+        polished_intersection,
+        ..polished
+      ])
+    }
+  }
+}
+
+fn dedupe_segment_intersections(
+  intersections: List(SegmentIntersection),
+  tolerance: Float,
+) -> List(SegmentIntersection) {
+  list.fold(intersections, [], fn(deduped, intersection) {
+    insert_intersection(
+      deduped,
+      intersection,
+      point_tolerance: tolerance,
+      parameter_tolerance: intersection_parameter_dedupe_tolerance,
+    )
+  })
+  |> list.reverse
+}
+
+fn polish_segment_intersection(
+  left: Segment,
+  right: Segment,
+  intersection: SegmentIntersection,
+  exponent: Int,
+) -> Result(SegmentIntersection, Error) {
+  let scale = parameter_snap_scale(exponent)
+  let SegmentIntersection(left_t:, right_t:, ..) = intersection
+  let left_candidates = parameter_snap_candidates(left_t, scale)
+  let right_candidates = parameter_snap_candidates(right_t, scale)
+  use original <- result.try(snapped_intersection_candidate(
+    left,
+    right,
+    left_t,
+    right_t,
+    rank: 100,
+  ))
+  use best <- result.try(best_snapped_intersection_candidate(
+    left,
+    right,
+    left_candidates,
+    right_candidates,
+    best: original,
+  ))
+  Ok(best.intersection)
+}
+
+fn best_snapped_intersection_candidate(
+  left: Segment,
+  right: Segment,
+  left_candidates: List(ParameterSnapCandidate),
+  right_candidates: List(ParameterSnapCandidate),
+  best best: SnappedIntersectionCandidate,
+) -> Result(SnappedIntersectionCandidate, Error) {
+  case left_candidates {
+    [] -> Ok(best)
+    [left_candidate, ..rest] -> {
+      use best <- result.try(best_snapped_intersection_for_left_candidate(
+        left,
+        right,
+        left_candidate,
+        right_candidates,
+        best:,
+      ))
+      best_snapped_intersection_candidate(
+        left,
+        right,
+        rest,
+        right_candidates,
+        best:,
+      )
+    }
+  }
+}
+
+fn best_snapped_intersection_for_left_candidate(
+  left: Segment,
+  right: Segment,
+  left_candidate: ParameterSnapCandidate,
+  right_candidates: List(ParameterSnapCandidate),
+  best best: SnappedIntersectionCandidate,
+) -> Result(SnappedIntersectionCandidate, Error) {
+  case right_candidates {
+    [] -> Ok(best)
+    [right_candidate, ..rest] -> {
+      use candidate <- result.try(snapped_intersection_candidate(
+        left,
+        right,
+        left_candidate.t,
+        right_candidate.t,
+        rank: left_candidate.rank + right_candidate.rank,
+      ))
+      let best = better_snapped_intersection(best, candidate)
+      best_snapped_intersection_for_left_candidate(
+        left,
+        right,
+        left_candidate,
+        rest,
+        best:,
+      )
+    }
+  }
+}
+
+fn snapped_intersection_candidate(
+  left: Segment,
+  right: Segment,
+  left_t: Float,
+  right_t: Float,
+  rank rank: Int,
+) -> Result(SnappedIntersectionCandidate, Error) {
+  use left_point <- result.try(svg_path.segment_point(left, at: left_t))
+  use right_point <- result.try(svg_path.segment_point(right, at: right_t))
+  let distance_squared = distance_squared(left_point, right_point)
+  Ok(SnappedIntersectionCandidate(
+    intersection: SegmentIntersection(
+      left_t:,
+      right_t:,
+      point: midpoint(left_point, right_point),
+    ),
+    distance_squared:,
+    rank:,
+  ))
+}
+
+fn better_snapped_intersection(
+  best: SnappedIntersectionCandidate,
+  candidate: SnappedIntersectionCandidate,
+) -> SnappedIntersectionCandidate {
+  let candidate_ties_best =
+    candidate.distance_squared
+    <=. distance_squared_with_linear_slack(
+      best.distance_squared,
+      parameter_snap_distance_tie_slack,
+    )
+  let best_ties_candidate =
+    best.distance_squared
+    <=. distance_squared_with_linear_slack(
+      candidate.distance_squared,
+      parameter_snap_distance_tie_slack,
+    )
+
+  case candidate.distance_squared <. best.distance_squared {
+    True -> {
+      case best_ties_candidate && candidate.rank >= best.rank {
+        True -> best
+        False -> candidate
+      }
+    }
+    False -> {
+      case candidate_ties_best && candidate.rank < best.rank {
+        True -> candidate
+        False -> best
+      }
+    }
+  }
+}
+
+fn distance_squared_with_linear_slack(
+  distance_squared: Float,
+  distance_slack: Float,
+) -> Float {
+  let assert Ok(distance) = float.square_root(distance_squared)
+  distance_squared
+  +. 2.0
+  *. distance_slack
+  *. distance
+  +. distance_slack
+  *. distance_slack
+}
+
+fn parameter_snap_candidates(
+  t: Float,
+  scale: Float,
+) -> List(ParameterSnapCandidate) {
+  let base = float.floor(t /. scale)
+  let raw = [
+    parameter_snap_candidate(0.0, rank: 0),
+    parameter_snap_candidate({ base +. 0.0 } *. scale, rank: 0),
+    parameter_snap_candidate({ base +. 1.0 } *. scale, rank: 0),
+    parameter_snap_candidate({ base +. 1.0 /. 3.0 } *. scale, rank: 1),
+    parameter_snap_candidate({ base +. 2.0 /. 3.0 } *. scale, rank: 1),
+    parameter_snap_candidate(1.0, rank: 0),
+  ]
+  keep_parameter_snap_candidates(raw, t, scale, candidates: [])
+}
+
+fn parameter_snap_candidate(
+  t: Float,
+  rank rank: Int,
+) -> ParameterSnapCandidate {
+  let rank = case t == 0.0 || t == 1.0 {
+    True -> -1
+    False -> rank
+  }
+  ParameterSnapCandidate(t:, rank:)
+}
+
+fn keep_parameter_snap_candidates(
+  raw: List(ParameterSnapCandidate),
+  original_t: Float,
+  scale: Float,
+  candidates candidates: List(ParameterSnapCandidate),
+) -> List(ParameterSnapCandidate) {
+  case raw {
+    [] -> list.reverse(candidates)
+    [candidate, ..rest] -> {
+      case
+        candidate.t >=. 0.0
+        && candidate.t <=. 1.0
+        && float.absolute_value(candidate.t -. original_t) <=. scale
+      {
+        True ->
+          keep_parameter_snap_candidates(rest, original_t, scale, candidates: [
+            candidate,
+            ..candidates
+          ])
+        False ->
+          keep_parameter_snap_candidates(rest, original_t, scale, candidates:)
+      }
+    }
+  }
+}
+
+fn parameter_snap_scale(exponent: Int) -> Float {
+  nonnegative_integer_power(0.1, exponent, 1.0)
+}
+
+fn nonnegative_integer_power(
+  base: Float,
+  exponent: Int,
+  result: Float,
+) -> Float {
+  case exponent {
+    0 -> result
+    _ if exponent % 2 == 0 ->
+      nonnegative_integer_power(base *. base, exponent / 2, result)
+    _ -> nonnegative_integer_power(base, exponent - 1, result *. base)
+  }
 }
 
 fn segment_intersections_checked_valid_options(
@@ -391,8 +913,611 @@ fn segment_intersections_checked_valid_options(
       case segment_intersections_valid_options(left, right, options) {
         Error(OverlappingSegments) ->
           Error(InternalOverlapClassificationInconsistency)
-        result -> result
+        Error(error) -> Error(error)
+        Ok(intersections) ->
+          polish_and_certify_segment_intersections(
+            left,
+            right,
+            intersections,
+            options,
+          )
       }
+  }
+}
+
+fn segment_segment_projection_valid_options(
+  left: Segment,
+  right: Segment,
+  options: IntersectionOptions,
+) -> Result(SegmentSegmentProjection, Error) {
+  use overlaps <- result.try(overlap_detection.detect(
+    left,
+    right,
+    tolerance: options.tolerance,
+  ))
+  case overlaps {
+    [overlap, ..] ->
+      segment_segment_projection_from_overlap(left, right, overlap)
+    [] -> {
+      case left, right {
+        Line(..), Line(..) -> line_line_segment_projection(left, right, options)
+        _, _ -> {
+          use minima <- result.try(segment_pair_projection_minima(
+            left,
+            right,
+            options,
+          ))
+          let assert Ok(best) = best_distance_minimum(minima)
+          segment_segment_projection_from_minimum(left, right, best)
+        }
+      }
+    }
+  }
+}
+
+fn segment_subpath_projection_valid_options(
+  left: Segment,
+  right: Subpath,
+  options: IntersectionOptions,
+) -> Result(SegmentSubpathProjection, Error) {
+  let right_segments = svg_path.subpath_segments(right)
+  case right_segments {
+    [] -> Error(EmptySubpath)
+    _ -> {
+      use projection <- result.try(segment_list_projection(
+        [left],
+        right_segments,
+        options,
+      ))
+      let SegmentListProjection(projection:, right_index:, ..) = projection
+      Ok(segment_subpath_projection_from_segment_projection(
+        projection,
+        right_index:,
+      ))
+    }
+  }
+}
+
+fn segment_subpath_projection_from_segment_projection(
+  projection: SegmentSegmentProjection,
+  right_index right_index: Int,
+) -> SegmentSubpathProjection {
+  let SegmentSegmentProjection(
+    left_t:,
+    right_t:,
+    left_point:,
+    right_point:,
+    distance:,
+  ) = projection
+  let candidate =
+    SegmentSubpathProjection(
+      left_t:,
+      right_at: SubpathParameter(segment_index: right_index, t: right_t),
+      left_point:,
+      right_point:,
+      distance:,
+    )
+  candidate
+}
+
+fn segment_path_projection_valid_options(
+  left: Segment,
+  right: Path,
+  options: IntersectionOptions,
+) -> Result(SegmentPathProjection, Error) {
+  use right <- result.try(path_projection_segments(right))
+  let #(right_segments, right_addresses) = right
+  use projection <- result.try(segment_list_projection(
+    [left],
+    right_segments,
+    options,
+  ))
+  let SegmentListProjection(projection:, right_index:, ..) = projection
+  use right_at <- result.try(nth_path_projection_address(
+    right_addresses,
+    right_index,
+  ))
+  Ok(segment_path_projection_from_segment_projection(projection, right_at:))
+}
+
+fn segment_path_projection_from_segment_projection(
+  projection: SegmentSegmentProjection,
+  right_at right_at: PathParameter,
+) -> SegmentPathProjection {
+  let SegmentSegmentProjection(
+    left_t:,
+    right_t:,
+    left_point:,
+    right_point:,
+    distance:,
+  ) = projection
+  let candidate =
+    SegmentPathProjection(
+      left_t:,
+      right_at: path_projection_address_with_t(right_at, right_t),
+      left_point:,
+      right_point:,
+      distance:,
+    )
+  candidate
+}
+
+fn subpath_subpath_projection_valid_options(
+  left: Subpath,
+  right: Subpath,
+  options: IntersectionOptions,
+) -> Result(SubpathSubpathProjection, Error) {
+  let left_segments = svg_path.subpath_segments(left)
+  let right_segments = svg_path.subpath_segments(right)
+  case left_segments, right_segments {
+    [], _ | _, [] -> Error(EmptySubpath)
+    _, _ -> {
+      use projection <- result.try(segment_list_projection(
+        left_segments,
+        right_segments,
+        options,
+      ))
+      let SegmentListProjection(left_index:, right_index:, projection:) =
+        projection
+      Ok(subpath_subpath_projection_from_segment_projection(
+        projection,
+        left_index:,
+        right_index:,
+      ))
+    }
+  }
+}
+
+fn subpath_subpath_projection_from_segment_projection(
+  projection: SegmentSegmentProjection,
+  left_index left_index: Int,
+  right_index right_index: Int,
+) -> SubpathSubpathProjection {
+  let SegmentSegmentProjection(
+    left_t:,
+    right_t:,
+    left_point:,
+    right_point:,
+    distance:,
+  ) = projection
+  let candidate =
+    SubpathSubpathProjection(
+      left_at: SubpathParameter(segment_index: left_index, t: left_t),
+      right_at: SubpathParameter(segment_index: right_index, t: right_t),
+      left_point:,
+      right_point:,
+      distance:,
+    )
+  candidate
+}
+
+fn subpath_path_projection_valid_options(
+  left: Subpath,
+  right: Path,
+  options: IntersectionOptions,
+) -> Result(SubpathPathProjection, Error) {
+  let left_segments = svg_path.subpath_segments(left)
+  case left_segments {
+    [] -> Error(EmptySubpath)
+    _ -> {
+      use right <- result.try(path_projection_segments(right))
+      let #(right_segments, right_addresses) = right
+      use projection <- result.try(segment_list_projection(
+        left_segments,
+        right_segments,
+        options,
+      ))
+      let SegmentListProjection(left_index:, right_index:, projection:) =
+        projection
+      use right_at <- result.try(nth_path_projection_address(
+        right_addresses,
+        right_index,
+      ))
+      Ok(subpath_path_projection_from_segment_projection(
+        projection,
+        left_index:,
+        right_at:,
+      ))
+    }
+  }
+}
+
+fn subpath_path_projection_from_segment_projection(
+  projection: SegmentSegmentProjection,
+  left_index left_index: Int,
+  right_at right_at: PathParameter,
+) -> SubpathPathProjection {
+  let SegmentSegmentProjection(
+    left_t:,
+    right_t:,
+    left_point:,
+    right_point:,
+    distance:,
+  ) = projection
+  let candidate =
+    SubpathPathProjection(
+      left_at: SubpathParameter(segment_index: left_index, t: left_t),
+      right_at: path_projection_address_with_t(right_at, right_t),
+      left_point:,
+      right_point:,
+      distance:,
+    )
+  candidate
+}
+
+fn path_path_projection_valid_options(
+  left: Path,
+  right: Path,
+  options: IntersectionOptions,
+) -> Result(PathPathProjection, Error) {
+  use left <- result.try(path_projection_segments(left))
+  use right <- result.try(path_projection_segments(right))
+  let #(left_segments, left_addresses) = left
+  let #(right_segments, right_addresses) = right
+  use projection <- result.try(segment_list_projection(
+    left_segments,
+    right_segments,
+    options,
+  ))
+  let SegmentListProjection(left_index:, right_index:, projection:) = projection
+  use left_at <- result.try(nth_path_projection_address(
+    left_addresses,
+    left_index,
+  ))
+  use right_at <- result.try(nth_path_projection_address(
+    right_addresses,
+    right_index,
+  ))
+  Ok(path_path_projection_from_segment_projection(
+    projection,
+    left_at:,
+    right_at:,
+  ))
+}
+
+fn path_path_projection_from_segment_projection(
+  projection: SegmentSegmentProjection,
+  left_at left_at: PathParameter,
+  right_at right_at: PathParameter,
+) -> PathPathProjection {
+  let SegmentSegmentProjection(
+    left_t:,
+    right_t:,
+    left_point:,
+    right_point:,
+    distance:,
+  ) = projection
+  let candidate =
+    PathPathProjection(
+      left_at: path_projection_address_with_t(left_at, left_t),
+      right_at: path_projection_address_with_t(right_at, right_t),
+      left_point:,
+      right_point:,
+      distance:,
+    )
+  candidate
+}
+
+fn path_projection_address_with_t(
+  parameter: PathParameter,
+  t: Float,
+) -> PathParameter {
+  let PathParameter(subpath_index:, at:) = parameter
+  let SubpathParameter(segment_index:, ..) = at
+  PathParameter(subpath_index:, at: SubpathParameter(segment_index:, t:))
+}
+
+fn segment_list_projection(
+  left: List(Segment),
+  right: List(Segment),
+  options: IntersectionOptions,
+) -> Result(SegmentListProjection, Error) {
+  use left <- result.try(index_projection_segments(left, index: 0, indexed: []))
+  use right <- result.try(
+    index_projection_segments(right, index: 0, indexed: []),
+  )
+  segment_list_projection_loop(left, right, right, options, best: None)
+}
+
+fn index_projection_segments(
+  segments: List(Segment),
+  index index: Int,
+  indexed indexed: List(IndexedProjectionSegment),
+) -> Result(List(IndexedProjectionSegment), Error) {
+  case segments {
+    [] -> Ok(list.reverse(indexed))
+    [segment, ..rest] -> {
+      use bounds <- result.try(coarse_segment_bounding_box(segment))
+      index_projection_segments(rest, index: index + 1, indexed: [
+        IndexedProjectionSegment(index:, segment:, bounds:),
+        ..indexed
+      ])
+    }
+  }
+}
+
+fn segment_list_projection_loop(
+  left: List(IndexedProjectionSegment),
+  all_right: List(IndexedProjectionSegment),
+  remaining_right: List(IndexedProjectionSegment),
+  options: IntersectionOptions,
+  best best: Option(SegmentListProjection),
+) -> Result(SegmentListProjection, Error) {
+  case left, remaining_right {
+    [], _ ->
+      case best {
+        Some(best) -> Ok(best)
+        None ->
+          Error(InternalUncertifiedSegmentIntersection(
+            left_distance: 1.0e100,
+            right_distance: 1.0e100,
+            tolerance: options.tolerance,
+          ))
+      }
+    [_, ..left_rest], [] ->
+      segment_list_projection_loop(
+        left_rest,
+        all_right,
+        all_right,
+        options,
+        best:,
+      )
+    [left_segment, ..], [right_segment, ..right_rest] -> {
+      use best <- result.try(project_indexed_segment_pair(
+        left_segment,
+        right_segment,
+        options,
+        best:,
+      ))
+      segment_list_projection_loop(left, all_right, right_rest, options, best:)
+    }
+  }
+}
+
+fn project_indexed_segment_pair(
+  left: IndexedProjectionSegment,
+  right: IndexedProjectionSegment,
+  options: IntersectionOptions,
+  best best: Option(SegmentListProjection),
+) -> Result(Option(SegmentListProjection), Error) {
+  let skip = case best {
+    None -> False
+    Some(best) -> {
+      let SegmentListProjection(projection:, ..) = best
+      bounding_box_distance_squared(left.bounds, right.bounds)
+      >=. projection.distance *. projection.distance
+    }
+  }
+
+  case skip {
+    True -> Ok(best)
+    False -> {
+      use projection <- result.try(segment_segment_projection_valid_options(
+        left.segment,
+        right.segment,
+        options,
+      ))
+      let candidate =
+        SegmentListProjection(
+          left_index: left.index,
+          right_index: right.index,
+          projection:,
+        )
+      Ok(closer_segment_list_projection(best, candidate))
+    }
+  }
+}
+
+fn closer_segment_list_projection(
+  best: Option(SegmentListProjection),
+  candidate: SegmentListProjection,
+) -> Option(SegmentListProjection) {
+  case best {
+    None -> Some(candidate)
+    Some(best) -> {
+      let SegmentListProjection(projection: best_projection, ..) = best
+      let SegmentListProjection(projection: candidate_projection, ..) =
+        candidate
+      case candidate_projection.distance <. best_projection.distance {
+        True -> Some(candidate)
+        False -> Some(best)
+      }
+    }
+  }
+}
+
+fn path_projection_segments(
+  path: Path,
+) -> Result(#(List(Segment), List(PathParameter)), Error) {
+  case path.subpaths {
+    [] -> Error(EmptyPath)
+    subpaths ->
+      path_projection_segments_loop(
+        subpaths,
+        subpath_index: 0,
+        segments: [],
+        addresses: [],
+      )
+  }
+}
+
+fn path_projection_segments_loop(
+  subpaths: List(Subpath),
+  subpath_index subpath_index: Int,
+  segments segments: List(Segment),
+  addresses addresses: List(PathParameter),
+) -> Result(#(List(Segment), List(PathParameter)), Error) {
+  case subpaths {
+    [] -> {
+      case segments {
+        [] -> Error(EmptySubpaths)
+        _ -> Ok(#(list.reverse(segments), list.reverse(addresses)))
+      }
+    }
+    [subpath, ..rest] -> {
+      let subpath_segments = svg_path.subpath_segments(subpath)
+      let #(segments, addresses) =
+        prepend_path_projection_segments(
+          subpath_segments,
+          subpath_index:,
+          segment_index: 0,
+          segments:,
+          addresses:,
+        )
+      path_projection_segments_loop(
+        rest,
+        subpath_index: subpath_index + 1,
+        segments:,
+        addresses:,
+      )
+    }
+  }
+}
+
+fn prepend_path_projection_segments(
+  subpath_segments: List(Segment),
+  subpath_index subpath_index: Int,
+  segment_index segment_index: Int,
+  segments segments: List(Segment),
+  addresses addresses: List(PathParameter),
+) -> #(List(Segment), List(PathParameter)) {
+  case subpath_segments {
+    [] -> #(segments, addresses)
+    [segment, ..rest] ->
+      prepend_path_projection_segments(
+        rest,
+        subpath_index:,
+        segment_index: segment_index + 1,
+        segments: [segment, ..segments],
+        addresses: [
+          PathParameter(
+            subpath_index:,
+            at: SubpathParameter(segment_index:, t: 0.0),
+          ),
+          ..addresses
+        ],
+      )
+  }
+}
+
+fn nth_path_projection_address(
+  addresses: List(PathParameter),
+  index: Int,
+) -> Result(PathParameter, Error) {
+  case addresses, index {
+    [], _ ->
+      Error(InternalUncertifiedSegmentIntersection(
+        left_distance: 1.0e100,
+        right_distance: 1.0e100,
+        tolerance: 0.0,
+      ))
+    [first, ..], 0 -> Ok(first)
+    [_, ..rest], _ -> nth_path_projection_address(rest, index - 1)
+  }
+}
+
+fn line_line_segment_projection(
+  left: Segment,
+  right: Segment,
+  options: IntersectionOptions,
+) -> Result(SegmentSegmentProjection, Error) {
+  let assert Line(start: left_start, end: left_end) = left
+  let assert Line(start: right_start, end: right_end) = right
+  let left_direction = point_difference(left_end, left_start)
+  let right_direction = point_difference(right_end, right_start)
+  let denominator = cross(left_direction, right_direction)
+
+  case float.absolute_value(denominator) >. options.tolerance {
+    True -> {
+      let between_starts = point_difference(right_start, left_start)
+      let left_t = cross(between_starts, right_direction) /. denominator
+      let right_t = cross(between_starts, left_direction) /. denominator
+      case in_unit_range(left_t, 0.0) && in_unit_range(right_t, 0.0) {
+        True -> {
+          use left_point <- result.try(svg_path.segment_point(left, at: left_t))
+          use right_point <- result.try(svg_path.segment_point(
+            right,
+            at: right_t,
+          ))
+          Ok(SegmentSegmentProjection(
+            left_t:,
+            right_t:,
+            left_point:,
+            right_point:,
+            distance: 0.0,
+          ))
+        }
+        False -> line_line_endpoint_projection(left, right, options)
+      }
+    }
+    False -> line_line_endpoint_projection(left, right, options)
+  }
+}
+
+fn line_line_endpoint_projection(
+  left: Segment,
+  right: Segment,
+  options: IntersectionOptions,
+) -> Result(SegmentSegmentProjection, Error) {
+  use minima <- result.try(boundary_edge_minima(left, right, options))
+  let assert Ok(best) = best_distance_minimum(minima)
+  segment_segment_projection_from_minimum(left, right, best)
+}
+
+fn segment_segment_projection_from_overlap(
+  left: Segment,
+  right: Segment,
+  overlap: overlap_detection.RawOverlap,
+) -> Result(SegmentSegmentProjection, Error) {
+  let #(left_from, _, right_from, _, _, _) = overlap
+  use left_point <- result.try(svg_path.segment_point(left, at: left_from))
+  use right_point <- result.try(svg_path.segment_point(right, at: right_from))
+  Ok(SegmentSegmentProjection(
+    left_t: left_from,
+    right_t: right_from,
+    left_point:,
+    right_point:,
+    distance: 0.0,
+  ))
+}
+
+fn segment_segment_projection_from_minimum(
+  left: Segment,
+  right: Segment,
+  minimum: DistanceMinimum,
+) -> Result(SegmentSegmentProjection, Error) {
+  let DistanceMinimum(left_t:, right_t:, distance_squared:) = minimum
+  use left_point <- result.try(svg_path.segment_point(left, at: left_t))
+  use right_point <- result.try(svg_path.segment_point(right, at: right_t))
+  let assert Ok(distance) = float.square_root(distance_squared)
+  Ok(SegmentSegmentProjection(
+    left_t:,
+    right_t:,
+    left_point:,
+    right_point:,
+    distance:,
+  ))
+}
+
+fn best_distance_minimum(
+  minima: List(DistanceMinimum),
+) -> Result(DistanceMinimum, Error) {
+  case minima {
+    [] ->
+      Error(InternalUncertifiedSegmentIntersection(
+        left_distance: 1.0e100,
+        right_distance: 1.0e100,
+        tolerance: 0.0,
+      ))
+    [first, ..rest] ->
+      Ok(
+        list.fold(rest, first, fn(best, candidate) {
+          case candidate.distance_squared <. best.distance_squared {
+            True -> candidate
+            False -> best
+          }
+        }),
+      )
   }
 }
 
@@ -1158,6 +2283,20 @@ pub fn validate_options(options: IntersectionOptions) -> Result(Nil, Error) {
     False -> {
       case options.max_depth <= 0 {
         True -> Error(InvalidIntersectionMaxDepth(options.max_depth))
+        False -> validate_parameter_snap(options.parameter_snap)
+      }
+    }
+  }
+}
+
+fn validate_parameter_snap(
+  parameter_snap: ParameterSnap,
+) -> Result(Nil, Error) {
+  case parameter_snap {
+    NoParameterSnap -> Ok(Nil)
+    DecimalParameterSnap(exponent:) -> {
+      case exponent < 1 || exponent > 15 {
+        True -> Error(InvalidIntersectionParameterSnapExponent(exponent))
         False -> Ok(Nil)
       }
     }
@@ -1196,16 +2335,6 @@ fn segment_intersections_valid_options(
   options: IntersectionOptions,
 ) -> Result(List(SegmentIntersection), Error) {
   case left, right {
-    Line(start: left_start, end: left_end),
-      Line(start: right_start, end: right_end)
-    ->
-      line_line_intersections(
-        left_start,
-        left_end,
-        right_start,
-        right_end,
-        options.tolerance,
-      )
     Line(start:, end:), _ ->
       line_segment_intersections(
         line_start: start,
@@ -1271,6 +2400,85 @@ fn segment_self_intersections_valid_options(
 
 type IntersectionPiece {
   IntersectionPiece(segment: Segment, from: Float, to: Float)
+}
+
+type DistanceMinimum {
+  DistanceMinimum(left_t: Float, right_t: Float, distance_squared: Float)
+}
+
+type IndexedProjectionSegment {
+  IndexedProjectionSegment(index: Int, segment: Segment, bounds: BoundingBox)
+}
+
+type SegmentListProjection {
+  SegmentListProjection(
+    left_index: Int,
+    right_index: Int,
+    projection: SegmentSegmentProjection,
+  )
+}
+
+type TerminalWindow {
+  TerminalWindow(
+    id: Int,
+    left: IntersectionPiece,
+    right: IntersectionPiece,
+    start_left_t: Float,
+    start_right_t: Float,
+  )
+}
+
+type RawTerminalWindow {
+  RawTerminalWindow(
+    left: IntersectionPiece,
+    right: IntersectionPiece,
+    start_left_t: Float,
+    start_right_t: Float,
+  )
+}
+
+type ProjectionWindow {
+  ProjectionWindow(
+    left: IntersectionPiece,
+    right: IntersectionPiece,
+    remaining_depth: Int,
+  )
+}
+
+type WindowRecord {
+  WindowRecord(window: TerminalWindow, best_descent: Int)
+}
+
+type DescentStatus {
+  Pending
+  Overruled
+  Finished(List(DistanceMinimum))
+}
+
+type DescentRecord {
+  DescentRecord(
+    id: Int,
+    window_id: Int,
+    current: DistanceMinimum,
+    last_window: Option(Int),
+    status: DescentStatus,
+  )
+}
+
+type V4State {
+  V4State(windows: List(WindowRecord), descents: List(DescentRecord))
+}
+
+type ParameterSnapCandidate {
+  ParameterSnapCandidate(t: Float, rank: Int)
+}
+
+type SnappedIntersectionCandidate {
+  SnappedIntersectionCandidate(
+    intersection: SegmentIntersection,
+    distance_squared: Float,
+    rank: Int,
+  )
 }
 
 type IndexedSegment {
@@ -1426,6 +2634,7 @@ fn collect_segment_pair_self_intersections_one(
         IntersectionOptions(
           tolerance: options.distance_tolerance,
           max_depth: default_intersection_max_depth,
+          parameter_snap: NoParameterSnap,
         )
       use intersections <- result.try(
         segment_intersections_checked_valid_options(
@@ -1698,7 +2907,14 @@ fn segment_intersections_for_collection(
     True ->
       case segment_intersections_valid_options(left, right, options) {
         Error(OverlappingSegments) -> Ok([])
-        other -> other
+        Error(error) -> Error(error)
+        Ok(intersections) ->
+          certify_segment_intersections(
+            left,
+            right,
+            intersections,
+            options.tolerance,
+          )
       }
   }
 }
@@ -2121,6 +3337,7 @@ fn collect_path_self_intersections_against_rest(
         IntersectionOptions(
           tolerance: options.distance_tolerance,
           max_depth: default_intersection_max_depth,
+          parameter_snap: NoParameterSnap,
         )
       use intersections <- result.try(subpath_with(
         left,
@@ -2517,147 +3734,6 @@ fn dedupe_sorted_path_parameters(
   }
 }
 
-fn line_line_intersections(
-  left_start: Point,
-  left_end: Point,
-  right_start: Point,
-  right_end: Point,
-  tolerance: Float,
-) -> Result(List(SegmentIntersection), Error) {
-  let left_direction = point_difference(left_end, left_start)
-  let right_direction = point_difference(right_end, right_start)
-  let left_length_squared = dot(left_direction, left_direction)
-  let right_length_squared = dot(right_direction, right_direction)
-
-  case
-    left_length_squared <=. tolerance *. tolerance,
-    right_length_squared <=. tolerance *. tolerance
-  {
-    True, True -> {
-      case distance(left_start, right_start) <=. tolerance {
-        True ->
-          Ok([
-            SegmentIntersection(
-              left_t: 0.0,
-              right_t: 0.0,
-              point: midpoint(left_start, right_start),
-            ),
-          ])
-        False -> Ok([])
-      }
-    }
-    True, False -> {
-      case
-        point_on_line_segment(left_start, right_start, right_end, tolerance)
-      {
-        True ->
-          Ok([
-            SegmentIntersection(
-              left_t: 0.0,
-              right_t: line_projection_t(left_start, right_start, right_end),
-              point: left_start,
-            ),
-          ])
-        False -> Ok([])
-      }
-    }
-    False, True -> {
-      case point_on_line_segment(right_start, left_start, left_end, tolerance) {
-        True ->
-          Ok([
-            SegmentIntersection(
-              left_t: line_projection_t(right_start, left_start, left_end),
-              right_t: 0.0,
-              point: right_start,
-            ),
-          ])
-        False -> Ok([])
-      }
-    }
-    False, False -> {
-      let start_difference = point_difference(right_start, left_start)
-      let denominator = cross(left_direction, right_direction)
-
-      case float.absolute_value(denominator) <=. tolerance {
-        True -> {
-          case
-            float.absolute_value(cross(start_difference, left_direction))
-            <=. tolerance
-          {
-            True ->
-              collinear_line_intersections(
-                left_start,
-                left_end,
-                right_start,
-                right_end,
-                tolerance,
-              )
-            False -> Ok([])
-          }
-        }
-        False -> {
-          let left_t = cross(start_difference, right_direction) /. denominator
-          let right_t = cross(start_difference, left_direction) /. denominator
-
-          case
-            in_unit_range(left_t, tolerance)
-            && in_unit_range(right_t, tolerance)
-          {
-            True -> {
-              let left_t = clamp01(left_t)
-              let right_t = clamp01(right_t)
-
-              Ok([
-                SegmentIntersection(
-                  left_t:,
-                  right_t:,
-                  point: interpolate(left_start, left_end, left_t),
-                ),
-              ])
-            }
-            False -> Ok([])
-          }
-        }
-      }
-    }
-  }
-}
-
-fn collinear_line_intersections(
-  left_start: Point,
-  left_end: Point,
-  right_start: Point,
-  right_end: Point,
-  tolerance: Float,
-) -> Result(List(SegmentIntersection), Error) {
-  let right_start_t = line_projection_t(right_start, left_start, left_end)
-  let right_end_t = line_projection_t(right_end, left_start, left_end)
-  let overlap_start = float.max(0.0, float.min(right_start_t, right_end_t))
-  let overlap_end = float.min(1.0, float.max(right_start_t, right_end_t))
-
-  case overlap_end <. overlap_start -. tolerance {
-    True -> Ok([])
-    False -> {
-      case overlap_end -. overlap_start <=. tolerance {
-        True -> {
-          let left_t = clamp01({ overlap_start +. overlap_end } /. 2.0)
-          let point = interpolate(left_start, left_end, left_t)
-
-          Ok([
-            SegmentIntersection(
-              left_t:,
-              right_t: line_projection_t(point, right_start, right_end)
-                |> clamp01,
-              point:,
-            ),
-          ])
-        }
-        False -> Error(OverlappingSegments)
-      }
-    }
-  }
-}
-
 fn line_segment_intersections(
   line_start line_start: Point,
   line_end line_end: Point,
@@ -2666,58 +3742,173 @@ fn line_segment_intersections(
   options options: IntersectionOptions,
 ) -> Result(List(SegmentIntersection), Error) {
   let line_direction = point_difference(line_end, line_start)
+  let line_parameter_tolerance =
+    parameter_tolerance_for_chord(line_direction, options.tolerance)
 
   case segment_lies_on_line(segment, line_start, line_end, options.tolerance) {
     True -> Error(OverlappingSegments)
     False -> {
-      case
-        svg_path.segment_crossings_with(
-          segment,
-          where: fn(point) {
-            cross(line_direction, point_difference(point, line_start))
-          },
-          options: svg_path.CrossingOptions(
-            samples: 100,
-            parameter_tolerance: options.tolerance,
-            max_iterations: options.max_depth * 4,
-          ),
-        )
-      {
-        Error(error) -> Error(error)
-        Ok(segment_ts) -> {
-          line_segment_intersections_from_ts(
+      case segment {
+        Line(start: segment_start, end: segment_end) -> {
+          case
+            line_segments_are_collinear(
+              line_start,
+              line_end,
+              segment_start,
+              segment_end,
+              options.tolerance,
+            )
+          {
+            True ->
+              collinear_line_point_intersections(
+                line_start,
+                line_end,
+                segment_start,
+                segment_end,
+                line_is_left,
+                line_parameter_tolerance,
+              )
+            False ->
+              line_segment_intersections_by_ray(
+                line_start,
+                line_direction,
+                line_is_left,
+                segment,
+                options,
+                line_parameter_tolerance,
+              )
+          }
+        }
+        _ ->
+          line_segment_intersections_by_ray(
             line_start,
-            line_end,
+            line_direction,
             line_is_left,
             segment,
-            segment_ts,
-            options.tolerance,
-            [],
+            options,
+            line_parameter_tolerance,
           )
-        }
       }
     }
   }
 }
 
-fn line_segment_intersections_from_ts(
+fn line_segment_intersections_by_ray(
   line_start: Point,
-  line_end: Point,
+  line_direction: Point,
   line_is_left: Bool,
   segment: Segment,
-  segment_ts: List(Float),
+  options: IntersectionOptions,
+  line_parameter_tolerance: Float,
+) -> Result(List(SegmentIntersection), Error) {
+  case
+    svg_path.segment_ray_crossings_with(
+      segment,
+      origin: line_start,
+      direction: line_direction,
+      options: svg_path.CrossingOptions(
+        samples: 1,
+        signed_line_distance_tolerance: options.tolerance,
+        max_iterations: options.max_depth * 4,
+      ),
+    )
+  {
+    Error(error) -> Error(error)
+    Ok(crossings) -> {
+      line_segment_intersections_from_crossings(
+        line_is_left,
+        segment,
+        crossings,
+        options.tolerance,
+        line_parameter_tolerance,
+        [],
+      )
+    }
+  }
+}
+
+fn line_segments_are_collinear(
+  line_start: Point,
+  line_end: Point,
+  segment_start: Point,
+  segment_end: Point,
   tolerance: Float,
+) -> Bool {
+  let direction = point_difference(line_end, line_start)
+  let direction_length = distance(Point(0.0, 0.0), direction)
+  direction_length >. 0.0
+  && float.absolute_value(cross(
+    direction,
+    point_difference(segment_start, line_start),
+  ))
+  /. direction_length
+  <=. tolerance
+  && float.absolute_value(cross(
+    direction,
+    point_difference(segment_end, line_start),
+  ))
+  /. direction_length
+  <=. tolerance
+}
+
+fn collinear_line_point_intersections(
+  line_start: Point,
+  line_end: Point,
+  segment_start: Point,
+  segment_end: Point,
+  line_is_left: Bool,
+  line_parameter_tolerance: Float,
+) -> Result(List(SegmentIntersection), Error) {
+  let segment_start_line_t =
+    line_projection_t(segment_start, line_start, line_end)
+  let segment_end_line_t = line_projection_t(segment_end, line_start, line_end)
+  let overlap_start =
+    float.max(0.0, float.min(segment_start_line_t, segment_end_line_t))
+  let overlap_end =
+    float.min(1.0, float.max(segment_start_line_t, segment_end_line_t))
+
+  case overlap_end <. overlap_start -. line_parameter_tolerance {
+    True -> Ok([])
+    False -> {
+      case overlap_end -. overlap_start <=. line_parameter_tolerance {
+        True -> {
+          let line_t = clamp01({ overlap_start +. overlap_end } /. 2.0)
+          let point = interpolate(line_start, line_end, line_t)
+          let segment_t =
+            line_projection_t(point, segment_start, segment_end)
+            |> clamp01
+
+          Ok([
+            case line_is_left {
+              True ->
+                SegmentIntersection(left_t: line_t, right_t: segment_t, point:)
+              False ->
+                SegmentIntersection(left_t: segment_t, right_t: line_t, point:)
+            },
+          ])
+        }
+        False -> Error(OverlappingSegments)
+      }
+    }
+  }
+}
+
+fn line_segment_intersections_from_crossings(
+  line_is_left: Bool,
+  segment: Segment,
+  crossings: List(#(Float, Float)),
+  point_tolerance: Float,
+  line_parameter_tolerance: Float,
   intersections: List(SegmentIntersection),
 ) -> Result(List(SegmentIntersection), Error) {
-  case segment_ts {
+  case crossings {
     [] -> Ok(intersections)
-    [segment_t, ..rest] -> {
+    [crossing, ..rest] -> {
+      let #(segment_t, line_t) = crossing
       case svg_path.segment_point(segment, at: segment_t) {
         Error(error) -> Error(error)
         Ok(point) -> {
-          let line_t = line_projection_t(point, line_start, line_end)
-
-          case in_unit_range(line_t, tolerance) {
+          case in_unit_range(line_t, line_parameter_tolerance) {
             True -> {
               let intersection = case line_is_left {
                 True ->
@@ -2734,24 +3925,27 @@ fn line_segment_intersections_from_ts(
                   )
               }
 
-              line_segment_intersections_from_ts(
-                line_start,
-                line_end,
+              line_segment_intersections_from_crossings(
                 line_is_left,
                 segment,
                 rest,
-                tolerance,
-                insert_intersection(intersections, intersection, tolerance),
+                point_tolerance,
+                line_parameter_tolerance,
+                insert_intersection(
+                  intersections,
+                  intersection,
+                  point_tolerance:,
+                  parameter_tolerance: intersection_parameter_dedupe_tolerance,
+                ),
               )
             }
             False ->
-              line_segment_intersections_from_ts(
-                line_start,
-                line_end,
+              line_segment_intersections_from_crossings(
                 line_is_left,
                 segment,
                 rest,
-                tolerance,
+                point_tolerance,
+                line_parameter_tolerance,
                 intersections,
               )
           }
@@ -2761,60 +3955,205 @@ fn line_segment_intersections_from_ts(
   }
 }
 
+fn parameter_tolerance_for_chord(direction: Point, tolerance: Float) -> Float {
+  let chord = distance(Point(0.0, 0.0), direction)
+  case chord <=. 0.0 {
+    True -> intersection_parameter_dedupe_tolerance
+    False -> tolerance /. chord
+  }
+}
+
 fn curve_curve_intersections(
   left: Segment,
   right: Segment,
   options: IntersectionOptions,
 ) -> Result(List(SegmentIntersection), Error) {
-  collect_curve_curve_intersections(
-    IntersectionPiece(segment: left, from: 0.0, to: 1.0),
-    IntersectionPiece(segment: right, from: 0.0, to: 1.0),
+  use minima <- result.try(segment_pair_intersection_minima(
+    left,
+    right,
     options,
-    remaining_depth: options.max_depth,
+  ))
+  v4_segment_intersections_from_minima(
+    left,
+    right,
+    minima,
+    tolerance: options.tolerance,
     intersections: [],
   )
 }
 
-fn collect_curve_curve_intersections(
+fn segment_pair_intersection_minima(
+  left: Segment,
+  right: Segment,
+  options: IntersectionOptions,
+) -> Result(List(DistanceMinimum), Error) {
+  use boundary_minima <- result.try(boundary_edge_minima(left, right, options))
+  use raw_terminal_windows <- result.try(
+    collect_intersection_terminal_windows(
+      IntersectionPiece(segment: left, from: 0.0, to: 1.0),
+      IntersectionPiece(segment: right, from: 0.0, to: 1.0),
+      options,
+      remaining_depth: options.max_depth,
+      windows: [],
+    ),
+  )
+  let terminal_windows =
+    number_terminal_windows(list.reverse(raw_terminal_windows), next_id: 0)
+  use terminal_minima <- result.try(v4_minima_from_terminal_windows(
+    terminal_windows,
+    finish_tolerance: options.tolerance,
+  ))
+  Ok(list.append(boundary_minima, terminal_minima))
+}
+
+fn segment_pair_projection_minima(
+  left: Segment,
+  right: Segment,
+  options: IntersectionOptions,
+) -> Result(List(DistanceMinimum), Error) {
+  use boundary_minima <- result.try(boundary_edge_minima(left, right, options))
+  use best <- result.try(best_distance_minimum(boundary_minima))
+  use #(raw_terminal_windows, best) <- result.try(
+    collect_projection_terminal_windows(
+      IntersectionPiece(segment: left, from: 0.0, to: 1.0),
+      IntersectionPiece(segment: right, from: 0.0, to: 1.0),
+      best:,
+      remaining_depth: options.max_depth,
+      windows: [],
+    ),
+  )
+  let terminal_windows =
+    number_terminal_windows(list.reverse(raw_terminal_windows), next_id: 0)
+  use terminal_minima <- result.try(v4_minima_from_terminal_windows(
+    terminal_windows,
+    finish_tolerance: options.tolerance,
+  ))
+  Ok([best, ..list.append(boundary_minima, terminal_minima)])
+}
+
+fn boundary_edge_minima(
+  left: Segment,
+  right: Segment,
+  options: IntersectionOptions,
+) -> Result(List(DistanceMinimum), Error) {
+  use minima <- result.try(
+    boundary_edge_intersections_for_left(
+      left,
+      right,
+      left_t: 0.0,
+      options:,
+      minima: [],
+    ),
+  )
+  use minima <- result.try(boundary_edge_intersections_for_left(
+    left,
+    right,
+    left_t: 1.0,
+    options:,
+    minima:,
+  ))
+  use minima <- result.try(boundary_edge_intersections_for_right(
+    left,
+    right,
+    right_t: 0.0,
+    options:,
+    minima:,
+  ))
+  boundary_edge_intersections_for_right(
+    left,
+    right,
+    right_t: 1.0,
+    options:,
+    minima:,
+  )
+}
+
+fn boundary_edge_intersections_for_left(
+  left: Segment,
+  right: Segment,
+  left_t left_t: Float,
+  options options: IntersectionOptions,
+  minima minima: List(DistanceMinimum),
+) -> Result(List(DistanceMinimum), Error) {
+  use point <- result.try(svg_path.segment_point(left, at: left_t))
+  use projection <- result.try(svg_path.segment_projection_with(
+    point,
+    to: right,
+    options: distance_options_for_intersection_options(options),
+  ))
+  let svg_path.SegmentProjection(t: right_t, distance:, ..) = projection
+  boundary_edge_minimum(left_t, right_t, distance:, minima:)
+}
+
+fn boundary_edge_minimum(
+  left_t: Float,
+  right_t: Float,
+  distance distance: Float,
+  minima minima: List(DistanceMinimum),
+) -> Result(List(DistanceMinimum), Error) {
+  Ok([
+    DistanceMinimum(
+      left_t: clamp01(left_t),
+      right_t: clamp01(right_t),
+      distance_squared: distance *. distance,
+    ),
+    ..minima
+  ])
+}
+
+fn distance_options_for_intersection_options(
+  options: IntersectionOptions,
+) -> svg_path.DistanceOptions {
+  svg_path.DistanceOptions(
+    ..svg_path.default_distance_options(),
+    tolerance: options.tolerance,
+    max_iterations: options.max_depth,
+  )
+}
+
+fn boundary_edge_intersections_for_right(
+  left: Segment,
+  right: Segment,
+  right_t right_t: Float,
+  options options: IntersectionOptions,
+  minima minima: List(DistanceMinimum),
+) -> Result(List(DistanceMinimum), Error) {
+  use point <- result.try(svg_path.segment_point(right, at: right_t))
+  use projection <- result.try(svg_path.segment_projection_with(
+    point,
+    to: left,
+    options: distance_options_for_intersection_options(options),
+  ))
+  let svg_path.SegmentProjection(t: left_t, distance:, ..) = projection
+  boundary_edge_minimum(left_t, right_t, distance:, minima:)
+}
+
+fn collect_intersection_terminal_windows(
   left: IntersectionPiece,
   right: IntersectionPiece,
   options: IntersectionOptions,
   remaining_depth remaining_depth: Int,
-  intersections intersections: List(SegmentIntersection),
-) -> Result(List(SegmentIntersection), Error) {
+  windows windows: List(RawTerminalWindow),
+) -> Result(List(RawTerminalWindow), Error) {
   case
-    svg_path.segment_bounding_box(left.segment),
-    svg_path.segment_bounding_box(right.segment)
+    intersection_piece_bounding_box(left),
+    intersection_piece_bounding_box(right)
   {
     Error(error), _ | _, Error(error) -> Error(error)
     Ok(left_box), Ok(right_box) -> {
       case boxes_overlap(left_box, right_box, options.tolerance) {
-        False -> Ok(intersections)
+        False -> Ok(windows)
         True -> {
           case
             remaining_depth <= 0
             || {
-              svg_path.bounding_box_diameter(left_box) <=. options.tolerance
-              && svg_path.bounding_box_diameter(right_box) <=. options.tolerance
+              svg_path.bounding_box_diameter(left_box)
+              <=. v4_subdivision_tolerance
+              && svg_path.bounding_box_diameter(right_box)
+              <=. v4_subdivision_tolerance
             }
           {
-            True -> {
-              case
-                minimized_intersections_from_pieces(
-                  left,
-                  right,
-                  intersection_piece_tolerance(left, right, options.tolerance),
-                )
-              {
-                Error(error) -> Error(error)
-                Ok(found) ->
-                  Ok(insert_intersections(
-                    intersections,
-                    found,
-                    intersection_dedupe_tolerance(options.tolerance),
-                  ))
-              }
-            }
+            True -> Ok(add_terminal_window_grid(left, right, windows))
             False -> {
               let split_left =
                 svg_path.bounding_box_diameter(left_box)
@@ -2824,46 +4163,474 @@ fn collect_curve_curve_intersections(
                 True -> {
                   let #(first, second) = split_intersection_piece(left)
 
-                  case
-                    collect_curve_curve_intersections(
+                  use windows <- result.try(
+                    collect_intersection_terminal_windows(
                       first,
                       right,
                       options,
                       remaining_depth: remaining_depth - 1,
-                      intersections:,
-                    )
-                  {
-                    Error(error) -> Error(error)
-                    Ok(intersections) ->
-                      collect_curve_curve_intersections(
-                        second,
-                        right,
-                        options,
-                        remaining_depth: remaining_depth - 1,
-                        intersections:,
-                      )
-                  }
+                      windows:,
+                    ),
+                  )
+                  collect_intersection_terminal_windows(
+                    second,
+                    right,
+                    options,
+                    remaining_depth: remaining_depth - 1,
+                    windows:,
+                  )
                 }
                 False -> {
                   let #(first, second) = split_intersection_piece(right)
 
-                  case
-                    collect_curve_curve_intersections(
+                  use windows <- result.try(
+                    collect_intersection_terminal_windows(
                       left,
                       first,
                       options,
                       remaining_depth: remaining_depth - 1,
-                      intersections:,
-                    )
-                  {
-                    Error(error) -> Error(error)
-                    Ok(intersections) ->
-                      collect_curve_curve_intersections(
-                        left,
-                        second,
-                        options,
+                      windows:,
+                    ),
+                  )
+                  collect_intersection_terminal_windows(
+                    left,
+                    second,
+                    options,
+                    remaining_depth: remaining_depth - 1,
+                    windows:,
+                  )
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+fn collect_projection_terminal_windows(
+  left: IntersectionPiece,
+  right: IntersectionPiece,
+  best best: DistanceMinimum,
+  remaining_depth remaining_depth: Int,
+  windows windows: List(RawTerminalWindow),
+) -> Result(#(List(RawTerminalWindow), DistanceMinimum), Error) {
+  collect_projection_terminal_windows_generation(
+    this_generation: [ProjectionWindow(left:, right:, remaining_depth:)],
+    next_generation: [],
+    best:,
+    windows:,
+  )
+}
+
+fn collect_projection_terminal_windows_generation(
+  this_generation this_generation: List(ProjectionWindow),
+  next_generation next_generation: List(ProjectionWindow),
+  best best: DistanceMinimum,
+  windows windows: List(RawTerminalWindow),
+) -> Result(#(List(RawTerminalWindow), DistanceMinimum), Error) {
+  case this_generation {
+    [] -> {
+      case next_generation {
+        [] -> Ok(#(windows, best))
+        [_, ..] ->
+          collect_projection_terminal_windows_generation(
+            this_generation: next_generation,
+            next_generation: [],
+            best:,
+            windows:,
+          )
+      }
+    }
+    [ProjectionWindow(left:, right:, remaining_depth:), ..rest] -> {
+      use #(windows, best, next_generation) <- result.try(
+        inspect_projection_window(
+          left,
+          right,
+          remaining_depth:,
+          best:,
+          windows:,
+          next_generation:,
+        ),
+      )
+      collect_projection_terminal_windows_generation(
+        this_generation: rest,
+        next_generation:,
+        best:,
+        windows:,
+      )
+    }
+  }
+}
+
+fn inspect_projection_window(
+  left: IntersectionPiece,
+  right: IntersectionPiece,
+  remaining_depth remaining_depth: Int,
+  best best: DistanceMinimum,
+  windows windows: List(RawTerminalWindow),
+  next_generation next_generation: List(ProjectionWindow),
+) -> Result(
+  #(List(RawTerminalWindow), DistanceMinimum, List(ProjectionWindow)),
+  Error,
+) {
+  case
+    intersection_piece_bounding_box(left),
+    intersection_piece_bounding_box(right)
+  {
+    Error(error), _ | _, Error(error) -> Error(error)
+    Ok(left_box), Ok(right_box) -> {
+      case
+        bounding_box_distance_squared(left_box, right_box)
+        >. best.distance_squared
+      {
+        True -> Ok(#(windows, best, next_generation))
+        False -> {
+          case
+            remaining_depth <= 0
+            || {
+              svg_path.bounding_box_diameter(left_box)
+              <=. v4_subdivision_tolerance
+              && svg_path.bounding_box_diameter(right_box)
+              <=. v4_subdivision_tolerance
+            }
+          {
+            True -> {
+              let added = add_terminal_window_grid(left, right, windows)
+              use best <- result.try(best_new_raw_terminal_window_start_minimum(
+                added,
+                count: 9,
+                best:,
+              ))
+              Ok(#(added, best, next_generation))
+            }
+            False -> {
+              let split_left =
+                svg_path.bounding_box_diameter(left_box)
+                >=. svg_path.bounding_box_diameter(right_box)
+
+              case split_left {
+                True -> {
+                  let #(first, second) = split_intersection_piece(left)
+                  Ok(
+                    #(windows, best, [
+                      ProjectionWindow(
+                        left: second,
+                        right:,
                         remaining_depth: remaining_depth - 1,
-                        intersections:,
+                      ),
+                      ProjectionWindow(
+                        left: first,
+                        right:,
+                        remaining_depth: remaining_depth - 1,
+                      ),
+                      ..next_generation
+                    ]),
+                  )
+                }
+                False -> {
+                  let #(first, second) = split_intersection_piece(right)
+                  Ok(
+                    #(windows, best, [
+                      ProjectionWindow(
+                        left:,
+                        right: second,
+                        remaining_depth: remaining_depth - 1,
+                      ),
+                      ProjectionWindow(
+                        left:,
+                        right: first,
+                        remaining_depth: remaining_depth - 1,
+                      ),
+                      ..next_generation
+                    ]),
+                  )
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+fn number_terminal_windows(
+  windows: List(RawTerminalWindow),
+  next_id next_id: Int,
+) -> List(TerminalWindow) {
+  case windows {
+    [] -> []
+    [RawTerminalWindow(left:, right:, start_left_t:, start_right_t:), ..rest] -> [
+      TerminalWindow(id: next_id, left:, right:, start_left_t:, start_right_t:),
+      ..number_terminal_windows(rest, next_id: next_id + 1)
+    ]
+  }
+}
+
+fn add_terminal_window_grid(
+  left: IntersectionPiece,
+  right: IntersectionPiece,
+  windows: List(RawTerminalWindow),
+) -> List(RawTerminalWindow) {
+  let assert Ok(left_thirds) = split_intersection_piece_thirds(left)
+  let assert Ok(right_thirds) = split_intersection_piece_thirds(right)
+  add_terminal_window_grid_rows(left_thirds, right_thirds, windows)
+}
+
+fn best_new_raw_terminal_window_start_minimum(
+  windows: List(RawTerminalWindow),
+  count count: Int,
+  best best: DistanceMinimum,
+) -> Result(DistanceMinimum, Error) {
+  case windows, count {
+    _, 0 -> Ok(best)
+    [], _ -> Ok(best)
+    [RawTerminalWindow(left:, right:, start_left_t:, start_right_t:), ..rest], _
+    -> {
+      use candidate <- result.try(global_distance_minimum_at(
+        left,
+        right,
+        interpolate_float(left.from, left.to, start_left_t),
+        interpolate_float(right.from, right.to, start_right_t),
+      ))
+      let best = closer_distance_minimum(best, candidate)
+      best_new_raw_terminal_window_start_minimum(rest, count: count - 1, best:)
+    }
+  }
+}
+
+fn closer_distance_minimum(
+  best: DistanceMinimum,
+  candidate: DistanceMinimum,
+) -> DistanceMinimum {
+  case candidate.distance_squared <. best.distance_squared {
+    True -> candidate
+    False -> best
+  }
+}
+
+fn bounding_box_distance_squared(
+  left: BoundingBox,
+  right: BoundingBox,
+) -> Float {
+  let dx =
+    float.max(
+      0.0,
+      float.max(left.min.x -. right.max.x, right.min.x -. left.max.x),
+    )
+  let dy =
+    float.max(
+      0.0,
+      float.max(left.min.y -. right.max.y, right.min.y -. left.max.y),
+    )
+  dx *. dx +. dy *. dy
+}
+
+fn add_terminal_window_grid_rows(
+  lefts: List(#(IntersectionPiece, Float)),
+  rights: List(#(IntersectionPiece, Float)),
+  windows: List(RawTerminalWindow),
+) -> List(RawTerminalWindow) {
+  case lefts {
+    [] -> windows
+    [#(left, start_left_t), ..rest] ->
+      add_terminal_window_grid_rows(
+        rest,
+        rights,
+        add_terminal_window_grid_columns(left, start_left_t, rights, windows),
+      )
+  }
+}
+
+fn add_terminal_window_grid_columns(
+  left: IntersectionPiece,
+  start_left_t: Float,
+  rights: List(#(IntersectionPiece, Float)),
+  windows: List(RawTerminalWindow),
+) -> List(RawTerminalWindow) {
+  case rights {
+    [] -> windows
+    [#(right, start_right_t), ..rest] ->
+      add_terminal_window_grid_columns(left, start_left_t, rest, [
+        RawTerminalWindow(left:, right:, start_left_t:, start_right_t:),
+        ..windows
+      ])
+  }
+}
+
+fn split_intersection_piece_thirds(
+  piece: IntersectionPiece,
+) -> Result(List(#(IntersectionPiece, Float)), Error) {
+  let first_to = interpolate_float(piece.from, piece.to, 1.0 /. 3.0)
+  let second_to = interpolate_float(piece.from, piece.to, 2.0 /. 3.0)
+  Ok([
+    #(
+      IntersectionPiece(segment: piece.segment, from: piece.from, to: first_to),
+      v4_terminal_grid_margin,
+    ),
+    #(
+      IntersectionPiece(segment: piece.segment, from: first_to, to: second_to),
+      0.5,
+    ),
+    #(
+      IntersectionPiece(segment: piece.segment, from: second_to, to: piece.to),
+      1.0 -. v4_terminal_grid_margin,
+    ),
+  ])
+}
+
+fn v4_minima_from_terminal_windows(
+  windows: List(TerminalWindow),
+  finish_tolerance finish_tolerance: Float,
+) -> Result(List(DistanceMinimum), Error) {
+  use descents <- result.try(initial_descent_records(windows))
+  let state =
+    V4State(
+      windows: windows
+        |> list.map(fn(window) {
+          WindowRecord(window:, best_descent: window.id)
+        }),
+      descents:,
+    )
+  use final_state <- result.try(v4_run_descents(
+    windows,
+    state,
+    certification_tolerance: finish_tolerance,
+  ))
+  Ok(v4_finished_minima(final_state.descents, minima: []))
+}
+
+fn initial_descent_records(
+  windows: List(TerminalWindow),
+) -> Result(List(DescentRecord), Error) {
+  initial_descent_records_loop(windows, descents: [])
+}
+
+fn initial_descent_records_loop(
+  windows: List(TerminalWindow),
+  descents descents: List(DescentRecord),
+) -> Result(List(DescentRecord), Error) {
+  case windows {
+    [] -> Ok(list.reverse(descents))
+    [TerminalWindow(id:, left:, right:, start_left_t:, start_right_t:), ..rest] -> {
+      use current <- result.try(global_distance_minimum_at(
+        left,
+        right,
+        interpolate_float(left.from, left.to, start_left_t),
+        interpolate_float(right.from, right.to, start_right_t),
+      ))
+      initial_descent_records_loop(rest, descents: [
+        DescentRecord(
+          id:,
+          window_id: id,
+          current:,
+          last_window: Some(id),
+          status: Pending,
+        ),
+        ..descents
+      ])
+    }
+  }
+}
+
+fn v4_run_descents(
+  windows_to_run: List(TerminalWindow),
+  state: V4State,
+  certification_tolerance certification_tolerance: Float,
+) -> Result(V4State, Error) {
+  case windows_to_run {
+    [] -> Ok(state)
+    [window, ..rest] -> {
+      let TerminalWindow(id:, ..) = window
+      use state <- result.try(case find_descent(state.descents, id) {
+        Ok(DescentRecord(status: Pending, ..)) ->
+          v4_run_one_descent(
+            id,
+            state,
+            certification_tolerance:,
+            step: 1.0,
+            iterations: 40,
+          )
+        _ -> Ok(state)
+      })
+      v4_run_descents(rest, state, certification_tolerance:)
+    }
+  }
+}
+
+fn v4_run_one_descent(
+  descent_id: Int,
+  state: V4State,
+  certification_tolerance certification_tolerance: Float,
+  step step: Float,
+  iterations iterations: Int,
+) -> Result(V4State, Error) {
+  use descent <- result.try(find_descent(state.descents, descent_id))
+  case descent.status {
+    Overruled | Finished(_) -> Ok(state)
+    Pending -> {
+      case iterations <= 0 || step <=. 0.000000000001 {
+        True ->
+          v4_finish_descent(
+            descent,
+            state,
+            certification_tolerance,
+            remaining_iterations: iterations,
+          )
+        False -> {
+          use #(proposal, raw_left_t, raw_right_t) <- result.try(
+            gradient_distance_proposal_unclamped(descent, state, step),
+          )
+          let accepted =
+            proposal.distance_squared <. descent.current.distance_squared
+          case accepted {
+            False ->
+              v4_run_one_descent(
+                descent_id,
+                state,
+                certification_tolerance:,
+                step: step /. 2.0,
+                iterations: iterations - 1,
+              )
+            True -> {
+              let improvement =
+                descent.current.distance_squared -. proposal.distance_squared
+              let descent = DescentRecord(..descent, current: proposal)
+              let state = replace_descent(state, descent)
+              use state <- result.try(v4_handle_window_transition(
+                descent,
+                state,
+                raw_left_t,
+                raw_right_t,
+              ))
+              use descent <- result.try(find_descent(state.descents, descent_id))
+              case descent.status {
+                Overruled -> Ok(state)
+                Finished(_) -> Ok(state)
+                Pending -> {
+                  case
+                    descent.current.distance_squared == 0.0
+                    || improvement
+                    <=. certification_tolerance
+                    *. certification_tolerance
+                    *. 0.000001
+                  {
+                    True ->
+                      v4_finish_descent(
+                        descent,
+                        state,
+                        certification_tolerance,
+                        remaining_iterations: iterations,
+                      )
+                    False ->
+                      v4_run_one_descent(
+                        descent_id,
+                        state,
+                        certification_tolerance:,
+                        step:,
+                        iterations: iterations - 1,
                       )
                   }
                 }
@@ -2876,309 +4643,494 @@ fn collect_curve_curve_intersections(
   }
 }
 
+fn gradient_distance_proposal_unclamped(
+  descent: DescentRecord,
+  state: V4State,
+  step: Float,
+) -> Result(#(DistanceMinimum, Float, Float), Error) {
+  use window <- result.try(find_window(state.windows, descent.window_id))
+  let WindowRecord(window: TerminalWindow(left:, right:, ..), ..) = window
+  let DistanceMinimum(left_t:, right_t:, ..) = descent.current
+  use left_point <- result.try(global_piece_point(left, left_t))
+  use right_point <- result.try(global_piece_point(right, right_t))
+  use left_derivative <- result.try(svg_path.segment_derivative(
+    left.segment,
+    at: left_t,
+  ))
+  use right_derivative <- result.try(svg_path.segment_derivative(
+    right.segment,
+    at: right_t,
+  ))
+  let separation = point_difference(left_point, right_point)
+  let left_speed_squared =
+    float.max(dot(left_derivative, left_derivative), 0.000000000000000001)
+  let right_speed_squared =
+    float.max(dot(right_derivative, right_derivative), 0.000000000000000001)
+  let left_gradient = 2.0 *. dot(separation, left_derivative)
+  let right_gradient = -2.0 *. dot(separation, right_derivative)
+  let raw_left_t = left_t -. step *. left_gradient /. left_speed_squared
+  let raw_right_t = right_t -. step *. right_gradient /. right_speed_squared
+  use gradient_proposal <- result.try(global_distance_minimum_at(
+    left,
+    right,
+    clamp01(raw_left_t),
+    clamp01(raw_right_t),
+  ))
+  use proposal <- result.try(
+    best_gauss_newton_or_gradient_proposal(
+      left,
+      right,
+      current: descent.current,
+      separation:,
+      left_derivative:,
+      right_derivative:,
+      gradient: #(gradient_proposal, raw_left_t, raw_right_t),
+    ),
+  )
+  Ok(proposal)
+}
+
+fn best_gauss_newton_or_gradient_proposal(
+  left: IntersectionPiece,
+  right: IntersectionPiece,
+  current current: DistanceMinimum,
+  separation separation: Point,
+  left_derivative left_derivative: Point,
+  right_derivative right_derivative: Point,
+  gradient gradient: #(DistanceMinimum, Float, Float),
+) -> Result(#(DistanceMinimum, Float, Float), Error) {
+  case current.distance_squared <=. 0.000000000001 {
+    False -> Ok(gradient)
+    True ->
+      best_gauss_newton_or_gradient_polish(
+        left,
+        right,
+        current:,
+        separation:,
+        left_derivative:,
+        right_derivative:,
+        gradient:,
+      )
+  }
+}
+
+fn best_gauss_newton_or_gradient_polish(
+  left: IntersectionPiece,
+  right: IntersectionPiece,
+  current current: DistanceMinimum,
+  separation separation: Point,
+  left_derivative left_derivative: Point,
+  right_derivative right_derivative: Point,
+  gradient gradient: #(DistanceMinimum, Float, Float),
+) -> Result(#(DistanceMinimum, Float, Float), Error) {
+  let a = dot(left_derivative, left_derivative)
+  let b = 0.0 -. dot(left_derivative, right_derivative)
+  let c = dot(right_derivative, right_derivative)
+  let g1 = dot(left_derivative, separation)
+  let g2 = 0.0 -. dot(right_derivative, separation)
+  let determinant = a *. c -. b *. b
+
+  case determinant <=. 0.000000000000000001 *. float.max(a *. c, 1.0) {
+    True -> Ok(gradient)
+    False -> {
+      let delta_left = { b *. g2 -. c *. g1 } /. determinant
+      let delta_right = { b *. g1 -. a *. g2 } /. determinant
+      let raw_left_t = current.left_t +. delta_left
+      let raw_right_t = current.right_t +. delta_right
+      use candidate <- result.try(global_distance_minimum_at(
+        left,
+        right,
+        clamp01(raw_left_t),
+        clamp01(raw_right_t),
+      ))
+      let #(gradient_candidate, _, _) = gradient
+      case candidate.distance_squared <. gradient_candidate.distance_squared {
+        True -> Ok(#(candidate, raw_left_t, raw_right_t))
+        False -> Ok(gradient)
+      }
+    }
+  }
+}
+
+fn v4_handle_window_transition(
+  descent: DescentRecord,
+  state: V4State,
+  raw_left_t: Float,
+  raw_right_t: Float,
+) -> Result(V4State, Error) {
+  let containing =
+    window_containing_global_point(state.windows, raw_left_t, raw_right_t)
+
+  case descent.last_window, containing {
+    Some(last), Some(next) if last == next -> Ok(state)
+    _, None ->
+      Ok(replace_descent(state, DescentRecord(..descent, last_window: None)))
+    _, Some(next_window_id) -> {
+      case v4_defender_culling_enabled {
+        True ->
+          v4_fight_for_window(
+            descent,
+            next_window_id,
+            state,
+            raw_left_t,
+            raw_right_t,
+          )
+        False ->
+          v4_move_descent_to_window_without_culling(
+            descent,
+            next_window_id,
+            state,
+            raw_left_t,
+            raw_right_t,
+          )
+      }
+    }
+  }
+}
+
+fn v4_move_descent_to_window_without_culling(
+  descent: DescentRecord,
+  target_window_id: Int,
+  state: V4State,
+  global_left_t: Float,
+  global_right_t: Float,
+) -> Result(V4State, Error) {
+  use window_record <- result.try(find_window(state.windows, target_window_id))
+  use entrant_current <- result.try(distance_minimum_in_window(
+    window_record.window,
+    global_left_t,
+    global_right_t,
+  ))
+  let entrant =
+    DescentRecord(
+      ..descent,
+      window_id: target_window_id,
+      current: entrant_current,
+      last_window: Some(target_window_id),
+    )
+
+  Ok(replace_descent(state, entrant))
+}
+
+fn v4_fight_for_window(
+  descent: DescentRecord,
+  target_window_id: Int,
+  state: V4State,
+  global_left_t: Float,
+  global_right_t: Float,
+) -> Result(V4State, Error) {
+  use window_record <- result.try(find_window(state.windows, target_window_id))
+  use defender <- result.try(find_descent(
+    state.descents,
+    window_record.best_descent,
+  ))
+  use entrant_current <- result.try(distance_minimum_in_window(
+    window_record.window,
+    global_left_t,
+    global_right_t,
+  ))
+  let entrant =
+    DescentRecord(
+      ..descent,
+      window_id: target_window_id,
+      current: entrant_current,
+      last_window: Some(target_window_id),
+    )
+
+  case entrant.current.distance_squared <. defender.current.distance_squared {
+    _ if entrant.id == defender.id -> {
+      let state =
+        state
+        |> replace_descent(entrant)
+        |> replace_window(
+          WindowRecord(..window_record, best_descent: entrant.id),
+        )
+      Ok(state)
+    }
+    False ->
+      Ok(replace_descent(state, DescentRecord(..descent, status: Overruled)))
+    True -> {
+      let state =
+        state
+        |> replace_descent(DescentRecord(..defender, status: Overruled))
+        |> replace_descent(entrant)
+        |> replace_window(
+          WindowRecord(..window_record, best_descent: descent.id),
+        )
+      Ok(state)
+    }
+  }
+}
+
+fn distance_minimum_in_window(
+  window: TerminalWindow,
+  global_left_t: Float,
+  global_right_t: Float,
+) -> Result(DistanceMinimum, Error) {
+  global_distance_minimum_at(
+    window.left,
+    window.right,
+    global_left_t,
+    global_right_t,
+  )
+}
+
+fn intersection_piece_bounding_box(
+  piece: IntersectionPiece,
+) -> Result(BoundingBox, Error) {
+  use segment <- result.try(svg_path.segment_between(
+    piece.segment,
+    from: piece.from,
+    to: piece.to,
+  ))
+  svg_path.segment_bounding_box(segment)
+}
+
+fn global_piece_point(
+  piece: IntersectionPiece,
+  global_t: Float,
+) -> Result(Point, Error) {
+  svg_path.segment_point(piece.segment, at: global_t)
+}
+
+fn global_distance_minimum_at(
+  left: IntersectionPiece,
+  right: IntersectionPiece,
+  left_global_t: Float,
+  right_global_t: Float,
+) -> Result(DistanceMinimum, Error) {
+  use left_point <- result.try(global_piece_point(left, left_global_t))
+  use right_point <- result.try(global_piece_point(right, right_global_t))
+  let dx = left_point.x -. right_point.x
+  let dy = left_point.y -. right_point.y
+  Ok(DistanceMinimum(
+    left_t: left_global_t,
+    right_t: right_global_t,
+    distance_squared: dx *. dx +. dy *. dy,
+  ))
+}
+
+fn v4_finish_descent(
+  descent: DescentRecord,
+  state: V4State,
+  tolerance: Float,
+  remaining_iterations _remaining_iterations: Int,
+) -> Result(V4State, Error) {
+  let found = v4_window_minima(descent.current, tolerance:)
+  Ok(replace_descent(state, DescentRecord(..descent, status: Finished(found))))
+}
+
+fn v4_window_minima(
+  descent_minimum: DistanceMinimum,
+  tolerance tolerance: Float,
+) -> List(DistanceMinimum) {
+  case descent_minimum.distance_squared <=. tolerance *. tolerance {
+    True -> [descent_minimum]
+    False -> [descent_minimum]
+  }
+}
+
+fn v4_segment_intersections_from_minima(
+  left: Segment,
+  right: Segment,
+  minima: List(DistanceMinimum),
+  tolerance tolerance: Float,
+  intersections intersections: List(SegmentIntersection),
+) -> Result(List(SegmentIntersection), Error) {
+  case minima {
+    [] -> Ok(intersections)
+    [minimum, ..rest] -> {
+      let DistanceMinimum(
+        left_t: left_global_t,
+        right_t: right_global_t,
+        distance_squared:,
+      ) = minimum
+      case distance_squared <=. tolerance *. tolerance {
+        False ->
+          v4_segment_intersections_from_minima(
+            left,
+            right,
+            rest,
+            tolerance:,
+            intersections:,
+          )
+        True -> {
+          use found <- result.try(segment_intersection_from_minimum(
+            left,
+            right,
+            left_global_t,
+            right_global_t,
+          ))
+          v4_segment_intersections_from_minima(
+            left,
+            right,
+            rest,
+            tolerance:,
+            intersections: insert_intersections(
+              intersections,
+              found,
+              point_tolerance: intersection_dedupe_tolerance(tolerance),
+              parameter_tolerance: intersection_parameter_dedupe_tolerance,
+            ),
+          )
+        }
+      }
+    }
+  }
+}
+
+fn v4_finished_minima(
+  descents: List(DescentRecord),
+  minima minima: List(DistanceMinimum),
+) -> List(DistanceMinimum) {
+  case descents {
+    [] -> minima
+    [first, ..rest] -> {
+      let minima = case first.status {
+        Finished(found) -> list.append(found, minima)
+        _ -> minima
+      }
+      v4_finished_minima(rest, minima:)
+    }
+  }
+}
+
+fn find_window(
+  windows: List(WindowRecord),
+  id: Int,
+) -> Result(WindowRecord, Error) {
+  case windows {
+    [] ->
+      Error(InternalUncertifiedSegmentIntersection(
+        left_distance: 1.0e100,
+        right_distance: 1.0e100,
+        tolerance: 0.0,
+      ))
+    [first, ..rest] -> {
+      let WindowRecord(window: TerminalWindow(id: window_id, ..), ..) = first
+      case window_id == id {
+        True -> Ok(first)
+        False -> find_window(rest, id)
+      }
+    }
+  }
+}
+
+fn find_descent(
+  descents: List(DescentRecord),
+  id: Int,
+) -> Result(DescentRecord, Error) {
+  case descents {
+    [] ->
+      Error(InternalUncertifiedSegmentIntersection(
+        left_distance: 1.0e100,
+        right_distance: 1.0e100,
+        tolerance: 0.0,
+      ))
+    [first, ..rest] -> {
+      case first.id == id {
+        True -> Ok(first)
+        False -> find_descent(rest, id)
+      }
+    }
+  }
+}
+
+fn replace_descent(state: V4State, replacement: DescentRecord) -> V4State {
+  V4State(..state, descents: replace_descent_loop(state.descents, replacement))
+}
+
+fn replace_descent_loop(
+  descents: List(DescentRecord),
+  replacement: DescentRecord,
+) -> List(DescentRecord) {
+  case descents {
+    [] -> []
+    [first, ..rest] -> {
+      case first.id == replacement.id {
+        True -> [replacement, ..rest]
+        False -> [first, ..replace_descent_loop(rest, replacement)]
+      }
+    }
+  }
+}
+
+fn replace_window(state: V4State, replacement: WindowRecord) -> V4State {
+  V4State(..state, windows: replace_window_loop(state.windows, replacement))
+}
+
+fn replace_window_loop(
+  windows: List(WindowRecord),
+  replacement: WindowRecord,
+) -> List(WindowRecord) {
+  case windows {
+    [] -> []
+    [first, ..rest] -> {
+      let WindowRecord(window: TerminalWindow(id: first_id, ..), ..) = first
+      let WindowRecord(window: TerminalWindow(id: replacement_id, ..), ..) =
+        replacement
+      case first_id == replacement_id {
+        True -> [replacement, ..rest]
+        False -> [first, ..replace_window_loop(rest, replacement)]
+      }
+    }
+  }
+}
+
+fn window_containing_global_point(
+  windows: List(WindowRecord),
+  global_left_t: Float,
+  global_right_t: Float,
+) -> Option(Int) {
+  case windows {
+    [] -> None
+    [first, ..rest] -> {
+      let WindowRecord(window: TerminalWindow(id:, left:, right:, ..), ..) =
+        first
+      case
+        global_left_t >=. left.from
+        && global_left_t <=. left.to
+        && global_right_t >=. right.from
+        && global_right_t <=. right.to
+      {
+        True -> Some(id)
+        False ->
+          window_containing_global_point(rest, global_left_t, global_right_t)
+      }
+    }
+  }
+}
+
 fn split_intersection_piece(
   piece: IntersectionPiece,
 ) -> #(IntersectionPiece, IntersectionPiece) {
-  let assert Ok(#(left, right)) = svg_path.segment_split(piece.segment, at: 0.5)
   let middle = { piece.from +. piece.to } /. 2.0
 
   #(
-    IntersectionPiece(segment: left, from: piece.from, to: middle),
-    IntersectionPiece(segment: right, from: middle, to: piece.to),
+    IntersectionPiece(segment: piece.segment, from: piece.from, to: middle),
+    IntersectionPiece(segment: piece.segment, from: middle, to: piece.to),
   )
 }
 
-fn minimized_intersections_from_pieces(
-  left: IntersectionPiece,
-  right: IntersectionPiece,
-  tolerance: Float,
+fn segment_intersection_from_minimum(
+  left: Segment,
+  right: Segment,
+  left_global_t: Float,
+  right_global_t: Float,
 ) -> Result(List(SegmentIntersection), Error) {
-  use best <- result.try(best_piece_distance(
-    left.segment,
-    right.segment,
-    tolerance,
-  ))
-  let #(left_local_t, right_local_t, distance_squared) = best
-
-  case distance_squared <=. tolerance *. tolerance {
-    False -> Ok([])
-    True -> {
-      case
-        svg_path.segment_point(left.segment, at: left_local_t),
-        svg_path.segment_point(right.segment, at: right_local_t)
-      {
-        Error(error), _ | _, Error(error) -> Error(error)
-        Ok(left_point), Ok(right_point) ->
-          Ok([
-            SegmentIntersection(
-              left_t: interpolate_float(left.from, left.to, left_local_t),
-              right_t: interpolate_float(right.from, right.to, right_local_t),
-              point: midpoint(left_point, right_point),
-            ),
-          ])
-      }
-    }
-  }
-}
-
-fn intersection_piece_tolerance(
-  left: IntersectionPiece,
-  right: IntersectionPiece,
-  tolerance: Float,
-) -> Float {
   case
-    svg_path.segment_bounding_box(left.segment),
-    svg_path.segment_bounding_box(right.segment)
-  {
-    Ok(left_box), Ok(right_box) ->
-      float.max(
-        tolerance,
-        float.max(
-          svg_path.bounding_box_diameter(left_box),
-          svg_path.bounding_box_diameter(right_box),
-        ),
-      )
-    _, _ -> tolerance
-  }
-}
-
-fn best_piece_distance(
-  left: Segment,
-  right: Segment,
-  tolerance: Float,
-) -> Result(#(Float, Float, Float), Error) {
-  let starts = [#(0.0, 0.0), #(0.0, 1.0), #(1.0, 0.0), #(1.0, 1.0), #(0.5, 0.5)]
-  use best <- result.try(best_piece_distance_raw_start(
-    left,
-    right,
-    starts:,
-    best: Error(Nil),
-  ))
-  case best.2 <=. tolerance *. tolerance {
-    True -> Ok(best)
-    False ->
-      best_piece_distance_from_starts(left, right, starts:, best:, tolerance:)
-  }
-}
-
-fn best_piece_distance_raw_start(
-  left: Segment,
-  right: Segment,
-  starts starts: List(#(Float, Float)),
-  best best: Result(#(Float, Float, Float), Nil),
-) -> Result(#(Float, Float, Float), Error) {
-  case starts {
-    [] -> {
-      let assert Ok(best) = best
-      Ok(best)
-    }
-    [start, ..rest] -> {
-      let #(left_t, right_t) = start
-      use distance_squared <- result.try(segment_pair_distance_squared(
-        left,
-        left_t,
-        right,
-        right_t,
-      ))
-      let candidate = #(left_t, right_t, distance_squared)
-      let best = case best {
-        Error(_) -> Ok(candidate)
-        Ok(best) ->
-          case candidate.2 <. best.2 {
-            True -> Ok(candidate)
-            False -> Ok(best)
-          }
-      }
-      best_piece_distance_raw_start(left, right, starts: rest, best:)
-    }
-  }
-}
-
-fn best_piece_distance_from_starts(
-  left: Segment,
-  right: Segment,
-  starts starts: List(#(Float, Float)),
-  best best: #(Float, Float, Float),
-  tolerance tolerance: Float,
-) -> Result(#(Float, Float, Float), Error) {
-  case best.2 <=. tolerance *. tolerance, starts {
-    True, _ -> Ok(best)
-    _, [] -> Ok(best)
-    False, [start, ..rest] -> {
-      let #(left_t, right_t) = start
-      use candidate <- result.try(minimize_piece_distance(
-        left,
-        right,
-        left_t,
-        right_t,
-        tolerance:,
-        step: 0.25,
-        iterations: 24,
-      ))
-      let best = case candidate.2 <. best.2 {
-        True -> candidate
-        False -> best
-      }
-      best_piece_distance_from_starts(
-        left,
-        right,
-        starts: rest,
-        best:,
-        tolerance:,
-      )
-    }
-  }
-}
-
-fn minimize_piece_distance(
-  left: Segment,
-  right: Segment,
-  left_t: Float,
-  right_t: Float,
-  tolerance tolerance: Float,
-  step step: Float,
-  iterations iterations: Int,
-) -> Result(#(Float, Float, Float), Error) {
-  use distance_squared <- result.try(segment_pair_distance_squared(
-    left,
-    left_t,
-    right,
-    right_t,
-  ))
-  minimize_piece_distance_loop(
-    left,
-    right,
-    left_t,
-    right_t,
-    distance_squared,
-    tolerance:,
-    step:,
-    iterations:,
-  )
-}
-
-fn minimize_piece_distance_loop(
-  left: Segment,
-  right: Segment,
-  left_t: Float,
-  right_t: Float,
-  best_distance_squared: Float,
-  tolerance tolerance: Float,
-  step step: Float,
-  iterations iterations: Int,
-) -> Result(#(Float, Float, Float), Error) {
-  case
-    best_distance_squared <=. tolerance *. tolerance
-    || iterations <= 0
-    || step <=. 0.000000000001
-  {
-    True -> Ok(#(left_t, right_t, best_distance_squared))
-    False -> {
-      use next <- result.try(best_piece_neighbor(
-        left,
-        right,
-        left_t,
-        right_t,
-        best_distance_squared,
-        step,
-      ))
-      let #(next_left_t, next_right_t, next_distance_squared) = next
-      case next_distance_squared <. best_distance_squared {
-        True ->
-          minimize_piece_distance_loop(
-            left,
-            right,
-            next_left_t,
-            next_right_t,
-            next_distance_squared,
-            tolerance:,
-            step:,
-            iterations: iterations - 1,
-          )
-        False ->
-          minimize_piece_distance_loop(
-            left,
-            right,
-            left_t,
-            right_t,
-            best_distance_squared,
-            tolerance:,
-            step: step /. 2.0,
-            iterations: iterations - 1,
-          )
-      }
-    }
-  }
-}
-
-fn best_piece_neighbor(
-  left: Segment,
-  right: Segment,
-  left_t: Float,
-  right_t: Float,
-  best_distance_squared: Float,
-  step: Float,
-) -> Result(#(Float, Float, Float), Error) {
-  best_piece_neighbor_loop(
-    left,
-    right,
-    candidates: [
-      #(left_t -. step, right_t),
-      #(left_t +. step, right_t),
-      #(left_t, right_t -. step),
-      #(left_t, right_t +. step),
-      #(left_t -. step, right_t -. step),
-      #(left_t -. step, right_t +. step),
-      #(left_t +. step, right_t -. step),
-      #(left_t +. step, right_t +. step),
-    ],
-    best: #(left_t, right_t, best_distance_squared),
-  )
-}
-
-fn best_piece_neighbor_loop(
-  left: Segment,
-  right: Segment,
-  candidates candidates: List(#(Float, Float)),
-  best best: #(Float, Float, Float),
-) -> Result(#(Float, Float, Float), Error) {
-  case candidates {
-    [] -> Ok(best)
-    [candidate, ..rest] -> {
-      let #(left_t, right_t) = candidate
-      let left_t = clamp01(left_t)
-      let right_t = clamp01(right_t)
-      use distance_squared <- result.try(segment_pair_distance_squared(
-        left,
-        left_t,
-        right,
-        right_t,
-      ))
-      let best = case distance_squared <. best.2 {
-        True -> #(left_t, right_t, distance_squared)
-        False -> best
-      }
-      best_piece_neighbor_loop(left, right, candidates: rest, best:)
-    }
-  }
-}
-
-fn segment_pair_distance_squared(
-  left: Segment,
-  left_t: Float,
-  right: Segment,
-  right_t: Float,
-) -> Result(Float, Error) {
-  case
-    svg_path.segment_point(left, at: left_t),
-    svg_path.segment_point(right, at: right_t)
+    svg_path.segment_point(left, at: left_global_t),
+    svg_path.segment_point(right, at: right_global_t)
   {
     Error(error), _ | _, Error(error) -> Error(error)
-    Ok(left_point), Ok(right_point) -> {
-      let dx = left_point.x -. right_point.x
-      let dy = left_point.y -. right_point.y
-      Ok(dx *. dx +. dy *. dy)
-    }
+    Ok(left_point), Ok(right_point) ->
+      Ok([
+        SegmentIntersection(
+          left_t: left_global_t,
+          right_t: right_global_t,
+          point: midpoint(left_point, right_point),
+        ),
+      ])
   }
 }
 
@@ -3200,15 +5152,18 @@ fn segment_lies_on_line(
   tolerance: Float,
 ) -> Bool {
   let direction = point_difference(line_end, line_start)
+  let direction_length = distance(Point(0.0, 0.0), direction)
 
-  case segment_defining_points(segment) {
-    None -> False
-    Some(points) -> {
+  case direction_length <=. 0.0, segment_defining_points(segment) {
+    True, _ -> False
+    False, None -> False
+    False, Some(points) -> {
       list.all(points, fn(point) {
         float.absolute_value(cross(
           direction,
           point_difference(point, line_start),
         ))
+        /. direction_length
         <=. tolerance
       })
       && segment_projection_overlaps_line(
@@ -3254,18 +5209,6 @@ fn segment_defining_points(segment: Segment) -> Option(List(Point)) {
   }
 }
 
-fn point_on_line_segment(
-  point: Point,
-  start: Point,
-  end: Point,
-  tolerance: Float,
-) -> Bool {
-  let direction = point_difference(end, start)
-  float.absolute_value(cross(direction, point_difference(point, start)))
-  <=. tolerance
-  && in_unit_range(line_projection_t(point, start, end), tolerance)
-}
-
 fn line_projection_t(point: Point, start: Point, end: Point) -> Float {
   let direction = point_difference(end, start)
   let length_squared = dot(direction, direction)
@@ -3283,36 +5226,73 @@ fn in_unit_range(value: Float, tolerance: Float) -> Bool {
 fn insert_intersection(
   intersections: List(SegmentIntersection),
   intersection: SegmentIntersection,
-  tolerance: Float,
+  point_tolerance point_tolerance: Float,
+  parameter_tolerance parameter_tolerance: Float,
 ) -> List(SegmentIntersection) {
   case intersections {
     [] -> [intersection]
     [first, ..rest] -> {
       case
-        distance(first.point, intersection.point) <=. tolerance
+        distance(first.point, intersection.point) <=. point_tolerance
         || {
           float.absolute_value(first.left_t -. intersection.left_t)
-          <=. tolerance
+          <=. parameter_tolerance
           && float.absolute_value(first.right_t -. intersection.right_t)
-          <=. tolerance
+          <=. parameter_tolerance
         }
       {
-        True -> [first, ..rest]
-        False -> [first, ..insert_intersection(rest, intersection, tolerance)]
+        True -> [preferred_duplicate_intersection(first, intersection), ..rest]
+        False -> [
+          first,
+          ..insert_intersection(
+            rest,
+            intersection,
+            point_tolerance:,
+            parameter_tolerance:,
+          )
+        ]
       }
     }
   }
 }
 
+fn preferred_duplicate_intersection(
+  first: SegmentIntersection,
+  second: SegmentIntersection,
+) -> SegmentIntersection {
+  case endpoint_parameter_score(second) <. endpoint_parameter_score(first) {
+    True -> second
+    False -> first
+  }
+}
+
+fn endpoint_parameter_score(intersection: SegmentIntersection) -> Float {
+  let SegmentIntersection(left_t:, right_t:, ..) = intersection
+  endpoint_distance_in_parameter(left_t)
+  +. endpoint_distance_in_parameter(right_t)
+}
+
+fn endpoint_distance_in_parameter(t: Float) -> Float {
+  float.min(float.absolute_value(t), float.absolute_value(1.0 -. t))
+}
+
 fn insert_intersections(
   intersections: List(SegmentIntersection),
   new_intersections: List(SegmentIntersection),
-  tolerance: Float,
+  point_tolerance point_tolerance: Float,
+  parameter_tolerance parameter_tolerance: Float,
 ) -> List(SegmentIntersection) {
   list.fold(new_intersections, intersections, fn(intersections, intersection) {
-    insert_intersection(intersections, intersection, tolerance)
+    insert_intersection(
+      intersections,
+      intersection,
+      point_tolerance:,
+      parameter_tolerance:,
+    )
   })
 }
+
+const intersection_parameter_dedupe_tolerance = 0.000000001
 
 fn intersection_dedupe_tolerance(tolerance: Float) -> Float {
   float.max(tolerance *. 1_000_000.0, 0.000001)

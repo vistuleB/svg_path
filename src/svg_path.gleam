@@ -56,6 +56,10 @@ const default_containment_samples = 100
 
 const default_containment_max_iterations = 100
 
+const default_containment_horizontal_ray_angle = 0.0
+
+const default_containment_vertical_ray_angle = 90.0
+
 const default_parametric_tolerance = 0.01
 
 const default_parametric_samples_per_piece = 5
@@ -176,9 +180,8 @@ pub type CrossingOptions {
   CrossingOptions(
     /// Number of equal parameter windows scanned before refinement.
     samples: Int,
-    /// Maximum finite, positive parameter-window width accepted during
-    /// refinement.
-    parameter_tolerance: Float,
+    /// Maximum finite, positive signed line-distance residual accepted during refinement.
+    signed_line_distance_tolerance: Float,
     /// Maximum bisection steps for one candidate window.
     max_iterations: Int,
   )
@@ -266,6 +269,9 @@ pub type ContainmentOptions {
     samples: Int,
     /// Maximum refinement steps for projection and crossing candidates.
     max_iterations: Int,
+    /// Fallback ray angles, in degrees, tried when the heuristic ray gives
+    /// inconsistent positive/negative containment answers.
+    fallback_ray_angles: List(Float),
   )
 }
 
@@ -301,6 +307,96 @@ pub type SelfIntersectionOptions {
 /// A point intersection between two segments.
 pub type SegmentIntersection {
   SegmentIntersection(left_t: Float, right_t: Float, point: Point)
+}
+
+/// A closest-point pair between two segments.
+///
+/// When multiple pairs are equally nearest, this records one valid pair. The
+/// chosen parameters are not guaranteed to be canonical for ties or flat
+/// minima.
+pub type SegmentSegmentProjection {
+  SegmentSegmentProjection(
+    left_t: Float,
+    right_t: Float,
+    left_point: Point,
+    right_point: Point,
+    distance: Float,
+  )
+}
+
+/// A closest-point pair between a segment and a subpath.
+///
+/// When multiple pairs are equally nearest, this records one valid pair. The
+/// chosen parameters are not guaranteed to be canonical for ties or flat
+/// minima.
+pub type SegmentSubpathProjection {
+  SegmentSubpathProjection(
+    left_t: Float,
+    right_at: SubpathParameter,
+    left_point: Point,
+    right_point: Point,
+    distance: Float,
+  )
+}
+
+/// A closest-point pair between a segment and a path.
+///
+/// Move-only subpaths are skipped. When multiple pairs are equally nearest,
+/// this records one valid pair. The chosen parameters are not guaranteed to be
+/// canonical for ties or flat minima.
+pub type SegmentPathProjection {
+  SegmentPathProjection(
+    left_t: Float,
+    right_at: PathParameter,
+    left_point: Point,
+    right_point: Point,
+    distance: Float,
+  )
+}
+
+/// A closest-point pair between two subpaths.
+///
+/// When multiple pairs are equally nearest, this records one valid pair. The
+/// chosen parameters are not guaranteed to be canonical for ties or flat
+/// minima.
+pub type SubpathSubpathProjection {
+  SubpathSubpathProjection(
+    left_at: SubpathParameter,
+    right_at: SubpathParameter,
+    left_point: Point,
+    right_point: Point,
+    distance: Float,
+  )
+}
+
+/// A closest-point pair between a subpath and a path.
+///
+/// Move-only subpaths are skipped. When multiple pairs are equally nearest,
+/// this records one valid pair. The chosen parameters are not guaranteed to be
+/// canonical for ties or flat minima.
+pub type SubpathPathProjection {
+  SubpathPathProjection(
+    left_at: SubpathParameter,
+    right_at: PathParameter,
+    left_point: Point,
+    right_point: Point,
+    distance: Float,
+  )
+}
+
+/// A closest-point pair between two paths.
+///
+/// Move-only subpaths are skipped. When multiple pairs are equally nearest,
+/// this records one valid pair. The chosen parameters are not guaranteed to be
+/// canonical for ties or flat minima.
+pub type PathPathProjection {
+  PathPathProjection(
+    left_at: PathParameter,
+    right_at: PathParameter,
+    left_point: Point,
+    right_point: Point,
+    distance: Float,
+  )
 }
 
 /// A point where a subpath intersects itself.
@@ -379,6 +475,10 @@ type MinimizeCandidate {
 type ContainmentCalculation {
   CalculatedBoundary
   CalculatedWinding(winding: Int, crossings: Int)
+}
+
+type ContainmentRay {
+  ContainmentRay(angle: Float, direction: Point)
 }
 
 /// An SVG path, made of zero or more subpaths.
@@ -655,6 +755,12 @@ pub type Error {
   /// The containment iteration limit must be greater than zero.
   InvalidContainmentMaxIterations(max_iterations: Int)
 
+  /// A containment fallback ray angle must be finite.
+  InvalidContainmentRayAngle(angle: Float)
+
+  /// Every attempted containment ray gave inconsistent opposite-direction answers.
+  InconsistentContainment
+
   /// No regular interior sample could determine a segment's winding sides.
   IndeterminateWindingSideLevels
 
@@ -673,6 +779,9 @@ pub type Error {
   /// The intersection subdivision depth must be greater than zero.
   InvalidIntersectionMaxDepth(max_depth: Int)
 
+  /// The intersection parameter snap exponent must be between 1 and 15.
+  InvalidIntersectionParameterSnapExponent(exponent: Int)
+
   /// The self-intersection arc-length separation must be finite and positive.
   InvalidSelfIntersectionMinimumArcLengthSeparation(Float)
 
@@ -685,6 +794,14 @@ pub type Error {
   /// Point-intersection logic reported an overlap that the shared overlap
   /// classifier did not confirm.
   InternalOverlapClassificationInconsistency
+
+  /// Point-intersection logic returned parameters that do not evaluate back to
+  /// the reported point within the requested tolerance.
+  InternalUncertifiedSegmentIntersection(
+    left_distance: Float,
+    right_distance: Float,
+    tolerance: Float,
+  )
 
   /// Opposite-direction subpath overlap correspondence checks disagreed.
   InternalOverlapParameterCorrespondenceInconsistency
@@ -710,7 +827,7 @@ pub type Error {
 pub fn default_crossing_options() -> CrossingOptions {
   CrossingOptions(
     samples: default_crossing_samples,
-    parameter_tolerance: default_crossing_tolerance,
+    signed_line_distance_tolerance: default_crossing_tolerance,
     max_iterations: default_crossing_max_iterations,
   )
 }
@@ -766,6 +883,20 @@ pub fn default_containment_options() -> ContainmentOptions {
     tolerance: default_containment_tolerance,
     samples: default_containment_samples,
     max_iterations: default_containment_max_iterations,
+    fallback_ray_angles: [
+      0.0,
+      15.0,
+      30.0,
+      45.0,
+      60.0,
+      75.0,
+      90.0,
+      105.0,
+      120.0,
+      135.0,
+      150.0,
+      165.0,
+    ],
   )
 }
 
@@ -1390,17 +1521,40 @@ pub fn subpath_degenerate_lines(
   case tolerance <=. 0.0 || !number.is_finite(tolerance) {
     True -> Error(InvalidLinearizeTolerance(tolerance))
     False -> {
-      use flattened <- result.try(
-        subpath_to_lines_with(
-          subpath,
-          options: LinearizeOptions(
-            tolerance:,
-            max_depth: default_linearize_max_depth,
-          ),
-        )
-        |> result.map(subpath_segments),
+      use replacements <- result.try(
+        subpath_degenerate_line_replacements(subpath.segments, tolerance, []),
       )
-      degenerate_line_list(flattened, tolerance)
+      case replacements {
+        None -> Ok(None)
+        Some(lines) -> degenerate_line_list(lines, tolerance)
+      }
+    }
+  }
+}
+
+fn subpath_degenerate_line_replacements(
+  segments: List(Segment),
+  tolerance: Float,
+  lines lines: List(Segment),
+) -> Result(Option(List(Segment)), Error) {
+  case segments {
+    [] -> Ok(Some(list.reverse(lines)))
+    [first, ..rest] -> {
+      use replacement <- result.try(segment_degenerate_lines(first, tolerance:))
+      case first, replacement {
+        Line(..), None ->
+          subpath_degenerate_line_replacements(rest, tolerance, lines: [
+            first,
+            ..lines
+          ])
+        _, None -> Ok(None)
+        _, Some(replacement) ->
+          subpath_degenerate_line_replacements(
+            rest,
+            tolerance,
+            lines: list.append(list.reverse(replacement), lines),
+          )
+      }
     }
   }
 }
@@ -2169,6 +2323,22 @@ pub fn segment_end(segment: Segment) -> Point {
   }
 }
 
+/// Return the distance between a segment's start and end points.
+///
+/// This is the endpoint chord length. It can be zero even when a curve has
+/// nonzero interior geometry.
+pub fn segment_chord_length(segment: Segment) -> Float {
+  distance(segment_start(segment), segment_end(segment))
+}
+
+/// Return the squared distance between a segment's start and end points.
+///
+/// This is the square of the endpoint chord length. It can be zero even when a
+/// curve has nonzero interior geometry.
+pub fn segment_chord_length_squared(segment: Segment) -> Float {
+  distance_squared(segment_start(segment), segment_end(segment))
+}
+
 /// Reverse the traversal direction of a segment.
 pub fn segment_reverse(segment: Segment) -> Segment {
   case segment {
@@ -2362,6 +2532,9 @@ pub fn segment_crossings(
 }
 
 /// Find scalar sign-change crossings along a segment using explicit options.
+///
+/// Once a sign-changing sample window is found, refinement succeeds only when
+/// `abs(f(segment_point(t))) <= options.signed_line_distance_tolerance`.
 pub fn segment_crossings_with(
   segment: Segment,
   where f: fn(Point) -> Float,
@@ -2386,6 +2559,70 @@ pub fn segment_crossings_with(
       }
     }
   }
+}
+
+/// Find crossings between a segment and a ray's supporting line.
+///
+/// The ray is represented by an origin and a direction vector. Returned values
+/// are `#(segment_t, ray_t)` pairs where:
+///
+/// ```gleam
+/// segment_point(segment, at: segment_t)
+/// // is approximately
+/// origin + ray_t * direction
+/// ```
+///
+/// `ray_t >= 0.0` means the crossing lies on the positive ray. Negative
+/// `ray_t` values are returned too, so callers can choose their own filtering
+/// policy.
+///
+/// Unlike `segment_crossings_with`, this splits the segment at projection
+/// extrema before refinement, so tangent line contacts are visible without a
+/// fixed sampling grid.
+pub fn segment_ray_crossings_with(
+  segment: Segment,
+  origin origin: Point,
+  direction direction: Point,
+  options options: CrossingOptions,
+) -> Result(List(#(Float, Float)), Error) {
+  use _ <- result.try(validate_crossing_options(options))
+  use _ <- result.try(validate_ray_crossing_direction(direction))
+  let normal = ray_supporting_line_normal(direction)
+  use parameters <- result.try(segment_line_crossings_with(
+    segment,
+    point: origin,
+    normal:,
+    options:,
+  ))
+
+  ray_parameters_for_crossings(
+    segment,
+    origin,
+    direction,
+    parameters,
+    crossings: [],
+  )
+}
+
+fn segment_line_crossings_with(
+  segment: Segment,
+  point point: Point,
+  normal normal: Point,
+  options options: CrossingOptions,
+) -> Result(List(Float), Error) {
+  let signed_line_distance_tolerance =
+    options.signed_line_distance_tolerance
+    *. float_square_root(distance_squared(normal, Point(0.0, 0.0)))
+
+  use roots <- result.try(segment_line_classified_roots(
+    segment,
+    point,
+    normal,
+    signed_line_distance_tolerance,
+    options.max_iterations,
+  ))
+
+  Ok(classified_root_estimates(roots, crossings: []))
 }
 
 /// Return the segment parameter where a scalar function is minimized.
@@ -3263,6 +3500,318 @@ pub fn path_containment_with(
   )
 }
 
+@internal
+pub fn internal_path_containment_with_initial_ray_angle(
+  point: Point,
+  within path: Path,
+  using fill_rule: FillRule,
+  options options: ContainmentOptions,
+  ray_angle ray_angle: Float,
+) -> Result(PointContainment, Error) {
+  use _ <- result.try(validate_containment_options(options))
+  path_containment_with_initial_ray_angle_loop(
+    point,
+    path.subpaths,
+    fill_rule,
+    options,
+    ray_angle:,
+    winding: 0,
+    crossings: 0,
+  )
+}
+
+@internal
+pub fn internal_subpath_winding_pair_for_ray_angle(
+  point: Point,
+  within subpath: Subpath,
+  options options: ContainmentOptions,
+  ray_angle ray_angle: Float,
+) -> Result(#(Int, Int, Int, Int), Error) {
+  let ray = containment_ray_for_angle(ray_angle)
+  original_subpath_bidirectional_winding(point, subpath, ray, options:)
+}
+
+@internal
+pub fn internal_subpath_segment_winding_contributions_for_ray_angle(
+  point: Point,
+  within subpath: Subpath,
+  options options: ContainmentOptions,
+  ray_angle ray_angle: Float,
+) -> Result(List(#(Int, Int, Int)), Error) {
+  let ray = containment_ray_for_angle(ray_angle)
+  subpath_segment_winding_contributions_for_ray(
+    point,
+    subpath.segments,
+    ray,
+    options:,
+    index: 0,
+    contributions: [],
+  )
+}
+
+fn subpath_segment_winding_contributions_for_ray(
+  point: Point,
+  segments: List(Segment),
+  ray: ContainmentRay,
+  options options: ContainmentOptions,
+  index index: Int,
+  contributions contributions: List(#(Int, Int, Int)),
+) -> Result(List(#(Int, Int, Int)), Error) {
+  case segments {
+    [] -> Ok(list.reverse(contributions))
+    [segment, ..rest] -> {
+      use forward <- result.try(segment_winding_contribution(
+        point,
+        segment,
+        ray,
+        options:,
+      ))
+      use backward <- result.try(segment_winding_contribution(
+        point,
+        segment,
+        containment_ray_opposite(ray),
+        options:,
+      ))
+      subpath_segment_winding_contributions_for_ray(
+        point,
+        rest,
+        ray,
+        options:,
+        index: index + 1,
+        contributions: [#(index, forward, backward), ..contributions],
+      )
+    }
+  }
+}
+
+@internal
+pub fn internal_segment_ray_crossings_for_angle(
+  segment: Segment,
+  origin origin: Point,
+  ray_angle ray_angle: Float,
+  options options: ContainmentOptions,
+) -> Result(#(List(#(Float, Float)), List(#(Float, Float))), Error) {
+  let ray = containment_ray_for_angle(ray_angle)
+  let crossing_options =
+    CrossingOptions(
+      samples: options.samples,
+      signed_line_distance_tolerance: options.tolerance,
+      max_iterations: options.max_iterations,
+    )
+  use forward <- result.try(segment_ray_crossings_with(
+    segment,
+    origin:,
+    direction: ray.direction,
+    options: crossing_options,
+  ))
+  use backward <- result.try(segment_ray_crossings_with(
+    segment,
+    origin:,
+    direction: containment_ray_opposite(ray).direction,
+    options: crossing_options,
+  ))
+  Ok(#(forward, backward))
+}
+
+@internal
+pub fn internal_segment_line_crossing_breakpoint_values_for_angle(
+  segment: Segment,
+  origin origin: Point,
+  ray_angle ray_angle: Float,
+  options options: ContainmentOptions,
+) -> Result(List(#(Float, Float)), Error) {
+  let ray = containment_ray_for_angle(ray_angle)
+  let normal = ray_supporting_line_normal(ray.direction)
+  let tolerance =
+    options.tolerance
+    *. float_square_root(distance_squared(normal, Point(0.0, 0.0)))
+  use breakpoints <- result.try(line_crossing_breakpoints(
+    segment,
+    normal,
+    tolerance,
+  ))
+  let f = line_crossing_function(origin, normal)
+  Ok(
+    breakpoints
+    |> list.map(fn(t) { #(t, crossing_value_unsafe(segment, f, t)) }),
+  )
+}
+
+@internal
+pub fn internal_segment_ray_crossing_contributions_for_angle(
+  segment: Segment,
+  origin origin: Point,
+  ray_angle ray_angle: Float,
+  options options: ContainmentOptions,
+) -> Result(List(#(Float, Float, Int)), Error) {
+  let ray = containment_ray_for_angle(ray_angle)
+  let crossing_options =
+    CrossingOptions(
+      samples: options.samples,
+      signed_line_distance_tolerance: options.tolerance,
+      max_iterations: options.max_iterations,
+    )
+  use crossings <- result.try(segment_ray_crossings_with(
+    segment,
+    origin:,
+    direction: ray.direction,
+    options: crossing_options,
+  ))
+  segment_ray_crossing_contributions(
+    segment,
+    origin:,
+    ray:,
+    crossings:,
+    contributions: [],
+  )
+}
+
+@internal
+pub fn internal_curved_crossing_probe_values_for_angle(
+  segment: Segment,
+  origin origin: Point,
+  ray_angle ray_angle: Float,
+  t t: Float,
+  probe probe: Float,
+) -> Result(#(Float, Float), Error) {
+  let ray = containment_ray_for_angle(ray_angle)
+  use before <- result.try(segment_point(
+    segment,
+    at: float.max(0.0, t -. probe),
+  ))
+  use after <- result.try(segment_point(segment, at: float.min(1.0, t +. probe)))
+  Ok(#(
+    containment_ray_crossing_value(origin, before, ray),
+    containment_ray_crossing_value(origin, after, ray),
+  ))
+}
+
+fn segment_ray_crossing_contributions(
+  segment: Segment,
+  origin origin: Point,
+  ray ray: ContainmentRay,
+  crossings crossings: List(#(Float, Float)),
+  contributions contributions: List(#(Float, Float, Int)),
+) -> Result(List(#(Float, Float, Int)), Error) {
+  case crossings {
+    [] -> Ok(list.reverse(contributions))
+    [crossing, ..rest] -> {
+      let #(t, ray_t) = crossing
+      use contribution <- result.try(ray_crossing_contribution(
+        origin,
+        segment,
+        ray,
+        t,
+        ray_t,
+      ))
+      segment_ray_crossing_contributions(
+        segment,
+        origin:,
+        ray:,
+        crossings: rest,
+        contributions: [#(t, ray_t, contribution), ..contributions],
+      )
+    }
+  }
+}
+
+fn ray_crossing_contribution(
+  origin: Point,
+  segment: Segment,
+  ray: ContainmentRay,
+  t: Float,
+  ray_t: Float,
+) -> Result(Int, Error) {
+  case segment {
+    Line(start:, end:) ->
+      case ray_t >. 0.0 {
+        True -> Ok(line_winding_contribution(origin, start, end, ray))
+        False ->
+          case ray_t <. 0.0 {
+            True ->
+              Ok(line_winding_contribution(
+                origin,
+                start,
+                end,
+                containment_ray_opposite(ray),
+              ))
+            False -> Ok(0)
+          }
+      }
+    _ -> {
+      case ray_t >. 0.0 {
+        True -> curved_crossing_contribution(origin, segment, ray, t, ray_t)
+        False ->
+          case ray_t <. 0.0 {
+            True ->
+              curved_crossing_contribution(
+                origin,
+                segment,
+                containment_ray_opposite(ray),
+                t,
+                0.0 -. ray_t,
+              )
+            False -> Ok(0)
+          }
+      }
+    }
+  }
+}
+
+fn path_containment_with_initial_ray_angle_loop(
+  point: Point,
+  subpaths: List(Subpath),
+  fill_rule: FillRule,
+  options: ContainmentOptions,
+  ray_angle ray_angle: Float,
+  winding winding: Int,
+  crossings crossings: Int,
+) -> Result(PointContainment, Error) {
+  case subpaths {
+    [] -> Ok(containment_from_winding(winding, crossings, fill_rule))
+    [subpath, ..rest] -> {
+      case subpath.segments {
+        [] ->
+          path_containment_with_initial_ray_angle_loop(
+            point,
+            rest,
+            fill_rule,
+            options,
+            ray_angle:,
+            winding:,
+            crossings:,
+          )
+        _ -> {
+          use calculation <- result.try(
+            subpath_containment_calculation_with_initial_ray_angle(
+              point,
+              subpath,
+              options,
+              ray_angle:,
+            ),
+          )
+          case calculation {
+            CalculatedBoundary -> Ok(Boundary)
+            CalculatedWinding(
+              winding: subpath_winding,
+              crossings: subpath_crossings,
+            ) ->
+              path_containment_with_initial_ray_angle_loop(
+                point,
+                rest,
+                fill_rule,
+                options,
+                ray_angle:,
+                winding: winding + subpath_winding,
+                crossings: crossings + subpath_crossings,
+              )
+          }
+        }
+      }
+    }
+  }
+}
+
 /// Return the signed winding number of a path around a point.
 ///
 /// Open subpaths are implicitly closed, matching `path_containment`. If the
@@ -3841,10 +4390,11 @@ fn validate_crossing_options(options: CrossingOptions) -> Result(Nil, Error) {
     True -> Error(InvalidCrossingSamples(options.samples))
     False -> {
       case
-        options.parameter_tolerance <=. 0.0
-        || !number.is_finite(options.parameter_tolerance)
+        options.signed_line_distance_tolerance <=. 0.0
+        || !number.is_finite(options.signed_line_distance_tolerance)
       {
-        True -> Error(InvalidCrossingTolerance(options.parameter_tolerance))
+        True ->
+          Error(InvalidCrossingTolerance(options.signed_line_distance_tolerance))
         False -> {
           case options.max_iterations <= 0 {
             True -> Error(InvalidCrossingMaxIterations(options.max_iterations))
@@ -3906,11 +4456,387 @@ fn scan_crossings(
                 crossings: insert_near_unique(
                   crossings,
                   crossing,
-                  options.parameter_tolerance,
+                  options.signed_line_distance_tolerance,
                 ),
               )
           }
         }
+      }
+    }
+  }
+}
+
+fn validate_ray_crossing_direction(direction: Point) -> Result(Nil, Error) {
+  case
+    number.is_finite(direction.x)
+    && number.is_finite(direction.y)
+    && distance_squared(direction, Point(0.0, 0.0)) >. 0.0
+  {
+    True -> Ok(Nil)
+    False -> Error(IndeterminateDirection)
+  }
+}
+
+fn ray_supporting_line_normal(direction: Point) -> Point {
+  Point(direction.y, 0.0 -. direction.x)
+}
+
+fn ray_parameters_for_crossings(
+  segment: Segment,
+  origin: Point,
+  direction: Point,
+  parameters: List(Float),
+  crossings crossings: List(#(Float, Float)),
+) -> Result(List(#(Float, Float)), Error) {
+  case parameters {
+    [] -> Ok(list.reverse(crossings))
+    [segment_t, ..rest] -> {
+      use point <- result.try(segment_point(segment, at: segment_t))
+      let ray_t =
+        dot(point_difference(point, origin), direction)
+        /. distance_squared(direction, Point(0.0, 0.0))
+      ray_parameters_for_crossings(segment, origin, direction, rest, crossings: [
+        #(segment_t, ray_t),
+        ..crossings
+      ])
+    }
+  }
+}
+
+fn line_crossing_function(point: Point, normal: Point) -> fn(Point) -> Float {
+  fn(candidate: Point) { point_difference(candidate, point) |> dot(normal) }
+}
+
+fn line_crossing_breakpoints(
+  segment: Segment,
+  normal: Point,
+  tolerance: Float,
+) -> Result(List(Float), Error) {
+  use extrema <- result.try(segment_projection_extrema(segment, normal))
+
+  Ok(
+    [0.0, 1.0, ..extrema]
+    |> list.filter(fn(t) { t >=. 0.0 && t <=. 1.0 })
+    |> list.sort(by: float.compare)
+    |> unique_near_sorted(tolerance, previous: None, unique: [])
+    |> list.reverse,
+  )
+}
+
+fn segment_line_classified_roots(
+  segment: Segment,
+  point: Point,
+  normal: Point,
+  signed_line_distance_tolerance: Float,
+  max_iterations: Int,
+) -> Result(List(root.ClassifiedRoot), Error) {
+  let options =
+    root.PolynomialOptions(
+      coefficient_tolerance: signed_line_distance_tolerance,
+      root_tolerance: 0.000000000001,
+      value_tolerance: signed_line_distance_tolerance,
+      max_iterations:,
+    )
+  case segment {
+    Line(start:, end:) -> {
+      root.real_linear_01_roots(
+        line_crossing_linear_coefficient(start, end, normal),
+        line_crossing_constant(start, point, normal),
+        options:,
+      )
+      |> result.map_error(crossing_root_error)
+    }
+    QuadraticBezier(start:, control:, end:) -> {
+      let #(a, b, c) =
+        line_crossing_quadratic_coefficients(start, control, end, point, normal)
+      root.real_quadratic_01_roots(a, b, c, options:)
+      |> result.map_error(crossing_root_error)
+    }
+    CubicBezier(start:, control1:, control2:, end:) -> {
+      let #(a, b, c, d) =
+        line_crossing_cubic_coefficients(
+          start,
+          control1,
+          control2,
+          end,
+          point,
+          normal,
+        )
+      root.real_cubic_01_roots(a, b, c, d, options:)
+      |> result.map_error(crossing_root_error)
+    }
+    Arc(..) ->
+      arc_line_classified_roots(
+        segment,
+        point,
+        normal,
+        signed_line_distance_tolerance,
+        max_iterations,
+      )
+  }
+}
+
+fn classified_root_estimates(
+  roots: List(root.ClassifiedRoot),
+  crossings crossings: List(Float),
+) -> List(Float) {
+  case roots {
+    [] -> list.reverse(crossings)
+    [
+      root.ClassifiedRoot(isolation: root.RootIsolation(estimate:, ..), ..),
+      ..rest
+    ] -> classified_root_estimates(rest, crossings: [estimate, ..crossings])
+  }
+}
+
+fn line_crossing_linear_coefficient(
+  start: Point,
+  end: Point,
+  normal: Point,
+) -> Float {
+  dot(point_difference(end, start), normal)
+}
+
+fn line_crossing_constant(start: Point, point: Point, normal: Point) -> Float {
+  dot(point_difference(start, point), normal)
+}
+
+fn line_crossing_quadratic_coefficients(
+  start: Point,
+  control: Point,
+  end: Point,
+  point: Point,
+  normal: Point,
+) -> #(Float, Float, Float) {
+  let a =
+    dot(start, normal) -. { 2.0 *. dot(control, normal) } +. dot(end, normal)
+  let b = 2.0 *. { dot(control, normal) -. dot(start, normal) }
+  let c = line_crossing_constant(start, point, normal)
+  #(a, b, c)
+}
+
+fn line_crossing_cubic_coefficients(
+  start: Point,
+  control1: Point,
+  control2: Point,
+  end: Point,
+  point: Point,
+  normal: Point,
+) -> #(Float, Float, Float, Float) {
+  let a =
+    0.0
+    -. dot(start, normal)
+    +. { 3.0 *. dot(control1, normal) }
+    -. { 3.0 *. dot(control2, normal) }
+    +. dot(end, normal)
+  let b =
+    3.0
+    *. {
+      dot(start, normal)
+      -. { 2.0 *. dot(control1, normal) }
+      +. dot(control2, normal)
+    }
+  let c = 3.0 *. { dot(control1, normal) -. dot(start, normal) }
+  let d = line_crossing_constant(start, point, normal)
+  #(a, b, c, d)
+}
+
+fn arc_line_classified_roots(
+  segment: Segment,
+  point: Point,
+  normal: Point,
+  signed_line_distance_tolerance: Float,
+  _max_iterations: Int,
+) -> Result(List(root.ClassifiedRoot), Error) {
+  use arc <- result.try(arc_center_data(segment))
+  let x_axis = arc_x_axis(arc)
+  let y_axis = arc_y_axis(arc)
+  let alpha = dot(normal, x_axis)
+  let beta = dot(normal, y_axis)
+  let constant =
+    dot(point_difference(from_ellipse_point(arc.center), point), normal)
+  let radius = float_square_root(alpha *. alpha +. beta *. beta)
+
+  case radius <=. signed_line_distance_tolerance {
+    True -> Ok([])
+    False -> {
+      let cosine = { 0.0 -. constant } /. radius
+      let cosine_tolerance = signed_line_distance_tolerance /. radius
+      case cosine <. -1.0 || cosine >. 1.0 {
+        True -> {
+          case float.absolute_value(cosine) <=. 1.0 +. cosine_tolerance {
+            True ->
+              arc_line_roots_from_angle(
+                arc,
+                phase: trig.atan2_degrees(beta, alpha),
+                aperture: case cosine <. 0.0 {
+                  True -> 180.0
+                  False -> 0.0
+                },
+              )
+            False -> Ok([])
+          }
+        }
+        False -> {
+          use aperture <- result.try(
+            trig.acos_degrees(cosine)
+            |> result.map_error(fn(_) {
+              InvalidCrossingTolerance(signed_line_distance_tolerance)
+            }),
+          )
+          arc_line_roots_from_angle(
+            arc,
+            phase: trig.atan2_degrees(beta, alpha),
+            aperture:,
+          )
+        }
+      }
+      |> result.map(fn(roots) {
+        roots
+        |> list.map(fn(t) {
+          root.ClassifiedRoot(
+            isolation: root.RootIsolation(lower: t, estimate: t, upper: t),
+            kind: root.Ambiguous,
+          )
+        })
+      })
+    }
+  }
+}
+
+fn arc_line_roots_from_angle(
+  arc: ellipse.CenterArcData,
+  phase phase: Float,
+  aperture aperture: Float,
+) -> Result(List(Float), Error) {
+  Ok(
+    [phase +. aperture, phase -. aperture]
+    |> list.filter(fn(angle) {
+      arc_angle_in_sweep(angle, arc.start_angle, arc.delta_angle)
+    })
+    |> list.map(fn(angle) {
+      arc_angle_progress(angle, arc.start_angle, arc.delta_angle)
+      /. float.absolute_value(arc.delta_angle)
+    })
+    |> list.filter(fn(t) { t >=. 0.0 && t <=. 1.0 })
+    |> list.sort(by: float.compare)
+    |> unique_near_sorted(0.000000000001, previous: None, unique: [])
+    |> list.reverse,
+  )
+}
+
+fn arc_x_axis(arc: ellipse.CenterArcData) -> Point {
+  Point(
+    arc.radius.x *. trig.cos_degrees(arc.x_axis_rotation),
+    arc.radius.x *. trig.sin_degrees(arc.x_axis_rotation),
+  )
+}
+
+fn arc_y_axis(arc: ellipse.CenterArcData) -> Point {
+  Point(
+    0.0 -. arc.radius.y *. trig.sin_degrees(arc.x_axis_rotation),
+    arc.radius.y *. trig.cos_degrees(arc.x_axis_rotation),
+  )
+}
+
+fn arc_angle_in_sweep(
+  angle: Float,
+  start_angle: Float,
+  delta_angle: Float,
+) -> Bool {
+  case delta_angle >=. 0.0 {
+    True ->
+      positive_remainder_degrees(angle -. start_angle)
+      <=. delta_angle +. 0.000000001
+    False ->
+      positive_remainder_degrees(start_angle -. angle)
+      <=. { 0.0 -. delta_angle } +. 0.000000001
+  }
+}
+
+fn arc_angle_progress(
+  angle: Float,
+  start_angle: Float,
+  delta_angle: Float,
+) -> Float {
+  case delta_angle >=. 0.0 {
+    True -> positive_remainder_degrees(angle -. start_angle)
+    False -> positive_remainder_degrees(start_angle -. angle)
+  }
+}
+
+fn positive_remainder_degrees(angle: Float) -> Float {
+  case angle <. 0.0 {
+    True -> positive_remainder_degrees(angle +. 360.0)
+    False -> {
+      case angle >=. 360.0 {
+        True -> positive_remainder_degrees(angle -. 360.0)
+        False -> angle
+      }
+    }
+  }
+}
+
+fn crossing_root_error(error: root.Error) -> Error {
+  case error {
+    root.InvalidTolerance(tolerance) -> InvalidCrossingTolerance(tolerance)
+    root.InvalidMaxIterations(max_iterations) ->
+      InvalidCrossingMaxIterations(max_iterations)
+    root.MaxIterationsReached(estimate:, value:) ->
+      CrossingMaxIterationsReached(estimate:, value:)
+    root.NotBracketed(left:, left_value:, ..) ->
+      CrossingMaxIterationsReached(estimate: left, value: left_value)
+  }
+}
+
+fn segment_projection_extrema(
+  segment: Segment,
+  normal: Point,
+) -> Result(List(Float), Error) {
+  case segment {
+    Line(..) | QuadraticBezier(..) | CubicBezier(..) -> {
+      Ok(bezier.projection_extrema(
+        segment_to_bezier_data(segment),
+        direction: to_bezier_point(normal),
+      ))
+    }
+    Arc(..) -> {
+      use arc <- result.try(arc_center_data(segment))
+      Ok(ellipse.arc_projection_extrema(
+        arc,
+        direction: to_ellipse_point(normal),
+      ))
+    }
+  }
+}
+
+fn unique_near_sorted(
+  values: List(Float),
+  tolerance tolerance: Float,
+  previous previous: Option(Float),
+  unique unique: List(Float),
+) -> List(Float) {
+  case values {
+    [] -> unique
+    [value, ..rest] -> {
+      case previous {
+        Some(previous_value) -> {
+          case float.absolute_value(value -. previous_value) <=. tolerance {
+            True -> unique_near_sorted(rest, tolerance:, previous:, unique:)
+            False ->
+              unique_near_sorted(
+                rest,
+                tolerance:,
+                previous: Some(value),
+                unique: [value, ..unique],
+              )
+          }
+        }
+        _ ->
+          unique_near_sorted(rest, tolerance:, previous: Some(value), unique: [
+            value,
+            ..unique
+          ])
       }
     }
   }
@@ -3933,7 +4859,15 @@ fn crossing_for_window(
         False -> {
           case same_sign(previous_value, next_value) {
             True -> Ok(None)
-            False -> refine_crossing(segment, f, options, previous_t, next_t)
+            False ->
+              refine_crossing(
+                segment,
+                f,
+                options,
+                options.signed_line_distance_tolerance,
+                previous_t,
+                next_t,
+              )
           }
         }
       }
@@ -3945,27 +4879,82 @@ fn refine_crossing(
   segment: Segment,
   f: fn(Point) -> Float,
   options: CrossingOptions,
+  signed_line_distance_tolerance: Float,
   previous_t: Float,
   next_t: Float,
 ) -> Result(Option(Float), Error) {
-  let solver_options =
-    root.Options(
-      tolerance: options.parameter_tolerance,
-      max_iterations: options.max_iterations,
-    )
+  let previous_value = crossing_value_unsafe(segment, f, previous_t)
+  let next_value = crossing_value_unsafe(segment, f, next_t)
 
-  case
-    root.bisect_with(
-      fn(t) { crossing_value_unsafe(segment, f, t) },
-      from: previous_t,
-      to: next_t,
-      options: solver_options,
-    )
-  {
-    Ok(t) -> Ok(Some(t))
-    Error(root.MaxIterationsReached(estimate:, value:)) ->
-      Error(CrossingMaxIterationsReached(estimate:, value:))
-    Error(_) -> Ok(None)
+  case float.absolute_value(previous_value) <=. signed_line_distance_tolerance {
+    True -> Ok(Some(previous_t))
+    False -> {
+      case float.absolute_value(next_value) <=. signed_line_distance_tolerance {
+        True -> Ok(Some(next_t))
+        False ->
+          refine_crossing_loop(
+            segment,
+            f,
+            left_t: previous_t,
+            left_value: previous_value,
+            right_t: next_t,
+            tolerance: signed_line_distance_tolerance,
+            remaining_iterations: options.max_iterations,
+          )
+      }
+    }
+  }
+}
+
+fn refine_crossing_loop(
+  segment: Segment,
+  f: fn(Point) -> Float,
+  left_t left_t: Float,
+  left_value left_value: Float,
+  right_t right_t: Float,
+  tolerance tolerance: Float,
+  remaining_iterations remaining_iterations: Int,
+) -> Result(Option(Float), Error) {
+  let midpoint = left_t +. { right_t -. left_t } /. 2.0
+  let midpoint_value = crossing_value_unsafe(segment, f, midpoint)
+
+  case float.absolute_value(midpoint_value) <=. tolerance {
+    True -> Ok(Some(midpoint))
+    False -> {
+      case
+        remaining_iterations <= 1 || midpoint == left_t || midpoint == right_t
+      {
+        True ->
+          Error(CrossingMaxIterationsReached(
+            estimate: midpoint,
+            value: midpoint_value,
+          ))
+        False -> {
+          case same_sign(left_value, midpoint_value) {
+            True ->
+              refine_crossing_loop(
+                segment,
+                f,
+                left_t: midpoint,
+                left_value: midpoint_value,
+                right_t:,
+                tolerance:,
+                remaining_iterations: remaining_iterations - 1,
+              )
+            False ->
+              refine_crossing_loop(
+                segment,
+                f,
+                left_t:,
+                left_value:,
+                right_t: midpoint,
+                tolerance:,
+                remaining_iterations: remaining_iterations - 1,
+              )
+          }
+        }
+      }
+    }
   }
 }
 
@@ -4239,9 +5228,22 @@ pub fn validate_containment_options(
           case options.max_iterations <= 0 {
             True ->
               Error(InvalidContainmentMaxIterations(options.max_iterations))
-            False -> Ok(Nil)
+            False ->
+              validate_containment_ray_angles(options.fallback_ray_angles)
           }
         }
+      }
+    }
+  }
+}
+
+fn validate_containment_ray_angles(angles: List(Float)) -> Result(Nil, Error) {
+  case angles {
+    [] -> Ok(Nil)
+    [angle, ..rest] -> {
+      case number.is_finite(angle) {
+        True -> validate_containment_ray_angles(rest)
+        False -> Error(InvalidContainmentRayAngle(angle))
       }
     }
   }
@@ -5676,18 +6678,92 @@ fn subpath_containment_calculation(
   case boundary_distance <=. options.tolerance {
     True -> Ok(CalculatedBoundary)
     False -> {
-      let linearize_tolerance =
-        { boundary_distance -. options.tolerance } /. 2.0
-      use linearized <- result.try(subpath_to_lines_with(
+      let ray = containment_ray_for_subpath_projection(subpath, projection)
+      use winding <- result.try(original_subpath_consistent_winding(
+        point,
         subpath,
-        options: LinearizeOptions(
-          tolerance: linearize_tolerance,
-          max_depth: options.max_iterations,
-        ),
+        ray,
+        options.fallback_ray_angles,
+        options,
       ))
-      let #(winding, crossings) = linearized_subpath_winding(point, linearized)
+      let #(winding, crossings) = winding
       Ok(CalculatedWinding(winding:, crossings:))
     }
+  }
+}
+
+fn subpath_containment_calculation_with_initial_ray_angle(
+  point: Point,
+  subpath: Subpath,
+  options: ContainmentOptions,
+  ray_angle ray_angle: Float,
+) -> Result(ContainmentCalculation, Error) {
+  let distance_options =
+    DistanceOptions(
+      samples: options.samples,
+      tolerance: options.tolerance,
+      max_iterations: options.max_iterations,
+    )
+  use projection <- result.try(subpath_projection_with(
+    point,
+    to: subpath,
+    options: distance_options,
+  ))
+  let subpath_end = case list.last(subpath.segments) {
+    Ok(last) -> segment_end(last)
+    Error(_) -> subpath.start
+  }
+  let closing_distance =
+    point_to_line_projection(point, subpath_end, subpath.start).distance
+  let boundary_distance = float.min(projection.distance, closing_distance)
+
+  case boundary_distance <=. options.tolerance {
+    True -> Ok(CalculatedBoundary)
+    False -> {
+      let ray = containment_ray_for_angle(ray_angle)
+      use winding <- result.try(original_subpath_consistent_winding(
+        point,
+        subpath,
+        ray,
+        [],
+        options,
+      ))
+      let #(winding, crossings) = winding
+      Ok(CalculatedWinding(winding:, crossings:))
+    }
+  }
+}
+
+fn containment_ray_for_subpath_projection(
+  subpath: Subpath,
+  projection: SubpathProjection,
+) -> ContainmentRay {
+  let SubpathProjection(at:, ..) = projection
+  case subpath_directions(subpath, at:) {
+    Error(_) ->
+      containment_ray_for_angle(default_containment_horizontal_ray_angle)
+    Ok(directions) -> containment_ray_for_directions(directions)
+  }
+}
+
+fn containment_ray_for_directions(directions: Directions) -> ContainmentRay {
+  case directions.incoming, directions.outgoing {
+    Some(incoming), Some(outgoing) ->
+      containment_ray_for_direction(Point(
+        incoming.x +. outgoing.x,
+        incoming.y +. outgoing.y,
+      ))
+    Some(direction), None -> containment_ray_for_direction(direction)
+    None, Some(direction) -> containment_ray_for_direction(direction)
+    None, None ->
+      containment_ray_for_angle(default_containment_horizontal_ray_angle)
+  }
+}
+
+fn containment_ray_for_direction(direction: Point) -> ContainmentRay {
+  case float.absolute_value(direction.x) >=. float.absolute_value(direction.y) {
+    True -> containment_ray_for_angle(default_containment_vertical_ray_angle)
+    False -> containment_ray_for_angle(default_containment_horizontal_ray_angle)
   }
 }
 
@@ -5723,51 +6799,500 @@ fn containment_from_bool(inside: Bool) -> PointContainment {
   }
 }
 
-fn linearized_subpath_winding(point: Point, subpath: Subpath) -> #(Int, Int) {
-  let #(winding, crossings) =
-    list.fold(subpath.segments, #(0, 0), fn(total, segment) {
-      let #(winding, crossings) = total
-      let assert Line(start:, end:) = segment
-      let contribution = line_winding_contribution(point, start, end)
-
-      #(
-        winding + contribution,
-        crossings
-          + case contribution == 0 {
-          True -> 0
-          False -> 1
-        },
+fn original_subpath_consistent_winding(
+  point: Point,
+  subpath: Subpath,
+  ray: ContainmentRay,
+  fallback_ray_angles: List(Float),
+  options options: ContainmentOptions,
+) -> Result(#(Int, Int), Error) {
+  case original_subpath_opposite_windings_agree(point, subpath, ray, options:) {
+    Ok(winding) -> Ok(winding)
+    Error(InconsistentContainment) ->
+      original_subpath_fallback_winding(
+        point,
+        subpath,
+        fallback_ray_angles,
+        options:,
       )
-    })
+    Error(error) -> Error(error)
+  }
+}
+
+fn original_subpath_fallback_winding(
+  point: Point,
+  subpath: Subpath,
+  fallback_ray_angles: List(Float),
+  options options: ContainmentOptions,
+) -> Result(#(Int, Int), Error) {
+  case fallback_ray_angles {
+    [] -> Error(InconsistentContainment)
+    [angle, ..rest] -> {
+      let ray = containment_ray_for_angle(angle)
+      case
+        original_subpath_opposite_windings_agree(point, subpath, ray, options:)
+      {
+        Ok(winding) -> Ok(winding)
+        Error(InconsistentContainment) ->
+          original_subpath_fallback_winding(point, subpath, rest, options:)
+        Error(error) -> Error(error)
+      }
+    }
+  }
+}
+
+fn original_subpath_opposite_windings_agree(
+  point: Point,
+  subpath: Subpath,
+  ray: ContainmentRay,
+  options options: ContainmentOptions,
+) -> Result(#(Int, Int), Error) {
+  use bidirectional <- result.try(original_subpath_bidirectional_winding(
+    point,
+    subpath,
+    ray,
+    options:,
+  ))
+  let #(
+    forward_winding,
+    forward_crossings,
+    backward_winding,
+    backward_crossings,
+  ) = bidirectional
+  case
+    winding_answers_are_containment_compatible(
+      forward_winding,
+      forward_crossings,
+      backward_winding,
+      backward_crossings,
+    )
+  {
+    True -> Ok(#(forward_winding, forward_crossings))
+    False -> Error(InconsistentContainment)
+  }
+}
+
+fn original_subpath_bidirectional_winding(
+  point: Point,
+  subpath: Subpath,
+  ray: ContainmentRay,
+  options options: ContainmentOptions,
+) -> Result(#(Int, Int, Int, Int), Error) {
+  use winding <- result.try(original_segments_bidirectional_winding(
+    point,
+    subpath.segments,
+    ray,
+    options:,
+    forward_winding: 0,
+    forward_crossings: 0,
+    backward_winding: 0,
+    backward_crossings: 0,
+  ))
+  let #(
+    forward_winding,
+    forward_crossings,
+    backward_winding,
+    backward_crossings,
+  ) = winding
   let subpath_end = case list.last(subpath.segments) {
     Ok(last) -> segment_end(last)
     Error(_) -> subpath.start
   }
-  let closing_contribution =
-    line_winding_contribution(point, subpath_end, subpath.start)
+  let forward_closing =
+    line_winding_contribution(point, subpath_end, subpath.start, ray)
+  let backward_closing =
+    line_winding_contribution(
+      point,
+      subpath_end,
+      subpath.start,
+      containment_ray_opposite(ray),
+    )
 
-  #(
-    winding + closing_contribution,
-    crossings
-      + case closing_contribution == 0 {
-      True -> 0
-      False -> 1
-    },
+  Ok(#(
+    forward_winding + forward_closing,
+    forward_crossings + crossing_count_for_contribution(forward_closing),
+    backward_winding + backward_closing,
+    backward_crossings + crossing_count_for_contribution(backward_closing),
+  ))
+}
+
+fn winding_answers_are_containment_compatible(
+  forward_winding: Int,
+  forward_crossings: Int,
+  backward_winding: Int,
+  backward_crossings: Int,
+) -> Bool {
+  forward_winding == backward_winding
+  && crossing_parity(forward_crossings) == crossing_parity(backward_crossings)
+}
+
+fn crossing_parity(crossings: Int) -> Int {
+  let assert Ok(parity) = int.remainder(crossings, by: 2)
+  parity
+}
+
+fn original_segments_bidirectional_winding(
+  point: Point,
+  segments: List(Segment),
+  ray: ContainmentRay,
+  options options: ContainmentOptions,
+  forward_winding forward_winding: Int,
+  forward_crossings forward_crossings: Int,
+  backward_winding backward_winding: Int,
+  backward_crossings backward_crossings: Int,
+) -> Result(#(Int, Int, Int, Int), Error) {
+  case segments {
+    [] ->
+      Ok(#(
+        forward_winding,
+        forward_crossings,
+        backward_winding,
+        backward_crossings,
+      ))
+    [segment, ..rest] -> {
+      use contribution <- result.try(segment_bidirectional_winding_contribution(
+        point,
+        segment,
+        ray,
+        options:,
+      ))
+      let #(forward, backward) = contribution
+      original_segments_bidirectional_winding(
+        point,
+        rest,
+        ray,
+        options:,
+        forward_winding: forward_winding + forward,
+        forward_crossings: forward_crossings
+          + crossing_count_for_contribution(forward),
+        backward_winding: backward_winding + backward,
+        backward_crossings: backward_crossings
+          + crossing_count_for_contribution(backward),
+      )
+    }
+  }
+}
+
+fn segment_winding_contribution(
+  point: Point,
+  segment: Segment,
+  ray: ContainmentRay,
+  options options: ContainmentOptions,
+) -> Result(Int, Error) {
+  case segment {
+    Line(start:, end:) -> Ok(line_winding_contribution(point, start, end, ray))
+    _ -> curved_segment_winding_contribution(point, segment, ray, options)
+  }
+}
+
+fn segment_bidirectional_winding_contribution(
+  point: Point,
+  segment: Segment,
+  ray: ContainmentRay,
+  options options: ContainmentOptions,
+) -> Result(#(Int, Int), Error) {
+  case segment {
+    Line(start:, end:) ->
+      Ok(#(
+        line_winding_contribution(point, start, end, ray),
+        line_winding_contribution(
+          point,
+          start,
+          end,
+          containment_ray_opposite(ray),
+        ),
+      ))
+    _ ->
+      curved_segment_bidirectional_winding_contribution(
+        point,
+        segment,
+        ray,
+        options,
+      )
+  }
+}
+
+fn curved_segment_winding_contribution(
+  point: Point,
+  segment: Segment,
+  ray: ContainmentRay,
+  options: ContainmentOptions,
+) -> Result(Int, Error) {
+  let crossing_options =
+    CrossingOptions(
+      samples: options.samples,
+      signed_line_distance_tolerance: options.tolerance,
+      max_iterations: options.max_iterations,
+    )
+  use crossings <- result.try(segment_ray_crossings_with(
+    segment,
+    origin: point,
+    direction: ray.direction,
+    options: crossing_options,
+  ))
+  curved_segment_crossings_winding(point, segment, ray, crossings, winding: 0)
+}
+
+fn curved_segment_bidirectional_winding_contribution(
+  point: Point,
+  segment: Segment,
+  ray: ContainmentRay,
+  options: ContainmentOptions,
+) -> Result(#(Int, Int), Error) {
+  let crossing_options =
+    CrossingOptions(
+      samples: options.samples,
+      signed_line_distance_tolerance: options.tolerance,
+      max_iterations: options.max_iterations,
+    )
+  use crossings <- result.try(segment_ray_crossings_with(
+    segment,
+    origin: point,
+    direction: ray.direction,
+    options: crossing_options,
+  ))
+  curved_segment_crossings_bidirectional_winding(
+    point,
+    segment,
+    ray,
+    crossings,
+    forward_winding: 0,
+    backward_winding: 0,
   )
 }
 
-fn line_winding_contribution(point: Point, start: Point, end: Point) -> Int {
+fn curved_segment_crossings_winding(
+  point: Point,
+  segment: Segment,
+  ray: ContainmentRay,
+  crossings: List(#(Float, Float)),
+  winding winding: Int,
+) -> Result(Int, Error) {
+  case crossings {
+    [] -> Ok(winding)
+    [crossing, ..rest] -> {
+      let #(t, ray_t) = crossing
+      case t <. 0.0 || t >. 1.0 {
+        True ->
+          curved_segment_crossings_winding(point, segment, ray, rest, winding:)
+        False -> {
+          use contribution <- result.try(curved_crossing_contribution(
+            point,
+            segment,
+            ray,
+            t,
+            ray_t,
+          ))
+          curved_segment_crossings_winding(
+            point,
+            segment,
+            ray,
+            rest,
+            winding: winding + contribution,
+          )
+        }
+      }
+    }
+  }
+}
+
+fn curved_segment_crossings_bidirectional_winding(
+  point: Point,
+  segment: Segment,
+  ray: ContainmentRay,
+  crossings: List(#(Float, Float)),
+  forward_winding forward_winding: Int,
+  backward_winding backward_winding: Int,
+) -> Result(#(Int, Int), Error) {
+  case crossings {
+    [] -> Ok(#(forward_winding, backward_winding))
+    [crossing, ..rest] -> {
+      let #(t, ray_t) = crossing
+      case t <. 0.0 || t >. 1.0 {
+        True ->
+          curved_segment_crossings_bidirectional_winding(
+            point,
+            segment,
+            ray,
+            rest,
+            forward_winding:,
+            backward_winding:,
+          )
+        False -> {
+          use contribution <- result.try(
+            curved_crossing_bidirectional_contribution(
+              point,
+              segment,
+              ray,
+              t,
+              ray_t,
+            ),
+          )
+          let #(forward, backward) = contribution
+          curved_segment_crossings_bidirectional_winding(
+            point,
+            segment,
+            ray,
+            rest,
+            forward_winding: forward_winding + forward,
+            backward_winding: backward_winding + backward,
+          )
+        }
+      }
+    }
+  }
+}
+
+fn curved_crossing_bidirectional_contribution(
+  point: Point,
+  segment: Segment,
+  ray: ContainmentRay,
+  t: Float,
+  ray_t: Float,
+) -> Result(#(Int, Int), Error) {
+  case ray_t >. 0.0 {
+    True -> {
+      use contribution <- result.try(curved_crossing_contribution(
+        point,
+        segment,
+        ray,
+        t,
+        ray_t,
+      ))
+      Ok(#(contribution, 0))
+    }
+    False ->
+      case ray_t <. 0.0 {
+        False -> Ok(#(0, 0))
+        True -> {
+          use contribution <- result.try(curved_crossing_contribution(
+            point,
+            segment,
+            containment_ray_opposite(ray),
+            t,
+            0.0 -. ray_t,
+          ))
+          Ok(#(0, contribution))
+        }
+      }
+  }
+}
+
+fn curved_crossing_contribution(
+  point: Point,
+  segment: Segment,
+  ray: ContainmentRay,
+  t: Float,
+  ray_t: Float,
+) -> Result(Int, Error) {
+  let t = clamp01(t)
+  case ray_t >. 0.0 {
+    False -> Ok(0)
+    True -> {
+      curved_crossing_contribution_with_probe(
+        point,
+        segment,
+        ray,
+        t,
+        probe: 0.0000001,
+        max_probe: 0.001,
+      )
+    }
+  }
+}
+
+fn curved_crossing_contribution_with_probe(
+  point: Point,
+  segment: Segment,
+  ray: ContainmentRay,
+  t: Float,
+  probe probe: Float,
+  max_probe max_probe: Float,
+) -> Result(Int, Error) {
+  use before <- result.try(segment_point(
+    segment,
+    at: float.max(0.0, t -. probe),
+  ))
+  use after <- result.try(segment_point(segment, at: float.min(1.0, t +. probe)))
+  let contribution =
+    crossing_transition_contribution(
+      containment_ray_crossing_value(point, before, ray),
+      containment_ray_crossing_value(point, after, ray),
+    )
+  case contribution != 0 || probe >=. max_probe {
+    True -> Ok(contribution)
+    False ->
+      curved_crossing_contribution_with_probe(
+        point,
+        segment,
+        ray,
+        t,
+        probe: probe *. 10.0,
+        max_probe:,
+      )
+  }
+}
+
+fn containment_ray_crossing_value(
+  point: Point,
+  candidate: Point,
+  ray: ContainmentRay,
+) -> Float {
+  cross(ray.direction, point_difference(candidate, point))
+}
+
+fn containment_ray_for_angle(angle: Float) -> ContainmentRay {
+  ContainmentRay(
+    angle:,
+    direction: Point(trig.cos_degrees(angle), trig.sin_degrees(angle)),
+  )
+}
+
+fn containment_ray_opposite(ray: ContainmentRay) -> ContainmentRay {
+  let ContainmentRay(angle:, direction:) = ray
+  ContainmentRay(
+    angle: angle +. 180.0,
+    direction: Point(0.0 -. direction.x, 0.0 -. direction.y),
+  )
+}
+
+fn crossing_transition_contribution(before: Float, after: Float) -> Int {
+  case before <=. 0.0 && after >. 0.0 {
+    True -> 1
+    False ->
+      case before >. 0.0 && after <=. 0.0 {
+        True -> -1
+        False -> 0
+      }
+  }
+}
+
+fn crossing_count_for_contribution(contribution: Int) -> Int {
+  case contribution == 0 {
+    True -> 0
+    False -> 1
+  }
+}
+
+fn line_winding_contribution(
+  point: Point,
+  start: Point,
+  end: Point,
+  ray: ContainmentRay,
+) -> Int {
+  let start_y = containment_ray_crossing_value(point, start, ray)
+  let end_y = containment_ray_crossing_value(point, end, ray)
   let side = cross(point_difference(end, start), point_difference(point, start))
 
-  case start.y <=. point.y {
+  case start_y <=. 0.0 {
     True -> {
-      case end.y >. point.y && side >. 0.0 {
+      case end_y >. 0.0 && side >. 0.0 {
         True -> 1
         False -> 0
       }
     }
     False -> {
-      case end.y <=. point.y && side <. 0.0 {
+      case end_y <=. 0.0 && side <. 0.0 {
         True -> -1
         False -> 0
       }
