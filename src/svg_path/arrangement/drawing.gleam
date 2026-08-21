@@ -69,7 +69,7 @@ pub fn drawing(graph: ArrangementGraph) -> svg.ThingsToDraw {
           label,
           "fill: #0f172a; font-family: monospace; text-anchor: middle; dominant-baseline: central",
           svg_path.Point(midpoint.x, midpoint.y +. 0.5),
-          8,
+          8.0,
         ),
       ]
     })
@@ -254,10 +254,10 @@ fn annotated_edge_things(
   }
 }
 
-fn scaled_font_size(base: Float, scale: Float) -> Int {
-  let size = float.round(base *. scale)
-  case size < 1 {
-    True -> 1
+fn scaled_font_size(base: Float, scale: Float) -> Float {
+  let size = base *. scale
+  case size <. 1.0 {
+    True -> 1.0
     False -> size
   }
 }

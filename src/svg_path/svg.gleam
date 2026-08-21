@@ -57,14 +57,14 @@ pub type ThingToDraw {
   ///
   /// The fields are text content, raw CSS declarations for the `style`
   /// attribute, the text position, and the font size in SVG user units.
-  Text(String, String, svg_path.Point, Int)
+  Text(String, String, svg_path.Point, Float)
 
   /// Text rotated in degrees around the supplied origin.
   RotatedText(
     String,
     String,
     svg_path.Point,
-    Int,
+    Float,
     rotation: Float,
     origin: svg_path.Point,
   )
@@ -121,7 +121,7 @@ pub fn labeled_point(
       label,
       "fill: " <> color <> "; font-family: system-ui, sans-serif",
       svg_path.Point(right +. half_side, point.y +. half_side),
-      font_size,
+      int.to_float(font_size),
     ),
   ]
 }
@@ -288,7 +288,7 @@ fn text_element(
   label: String,
   style: String,
   point: svg_path.Point,
-  font_size: Int,
+  font_size: Float,
   format: number_format.NumberFormat,
 ) -> String {
   "  <text x=\""
@@ -296,7 +296,7 @@ fn text_element(
   <> "\" y=\""
   <> number_format.number(point.y, with: format)
   <> "\" font-size=\""
-  <> int.to_string(font_size)
+  <> number_format.number(font_size, with: format)
   <> "\" style=\""
   <> attribute_escape(style)
   <> "\">"
@@ -308,7 +308,7 @@ fn rotated_text_element(
   label: String,
   style: String,
   point: svg_path.Point,
-  font_size: Int,
+  font_size: Float,
   rotation: Float,
   origin: svg_path.Point,
   format: number_format.NumberFormat,

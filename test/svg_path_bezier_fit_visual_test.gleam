@@ -113,7 +113,7 @@ fn render_case(fit_case: FitCase, index: Int) -> svg.ThingsToDraw {
       title,
       "fill: #111827; font-family: system-ui, sans-serif; font-weight: 700",
       svg_path.Point(origin.x, origin.y -. 8.0),
-      13,
+      13.0,
     ),
   ]
   |> list.append(original_overlay(original, placement))
@@ -133,13 +133,13 @@ fn render_case(fit_case: FitCase, index: Int) -> svg.ThingsToDraw {
       "root_sum_square = " <> float.to_string(root_sum_square),
       "fill: #374151; font-family: ui-monospace, SFMono-Regular, Menlo, monospace",
       svg_path.Point(origin.x +. 8.0, origin.y +. panel_height -. 28.0),
-      9,
+      9.0,
     ),
     svg.Text(
       "taxicab_diameter = " <> float.to_string(taxicab_diameter),
       "fill: #374151; font-family: ui-monospace, SFMono-Regular, Menlo, monospace",
       svg_path.Point(origin.x +. 8.0, origin.y +. panel_height -. 12.0),
-      9,
+      9.0,
     ),
   ])
 }

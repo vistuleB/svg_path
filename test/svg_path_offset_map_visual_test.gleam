@@ -53,19 +53,19 @@ pub fn generate_khmer_text_offset_map_spiral_visual() {
           "fixed-radius coil",
           "fill: #111827; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 700",
           svg_path.Point(view_box.min.x +. 30.0, view_box.min.y +. 30.0),
-          18,
+          18.0,
         ),
         svg.Text(
           text_box_label(text_box),
           "fill: #475569; font-family: ui-monospace, SFMono-Regular, Menlo, monospace",
           svg_path.Point(view_box.min.x +. 30.0, view_box.max.y -. 30.0),
-          12,
+          12.0,
         ),
         svg.Text(
           layout_label(text_layout, coil_length),
           "fill: #475569; font-family: ui-monospace, SFMono-Regular, Menlo, monospace",
           svg_path.Point(view_box.min.x +. 30.0, view_box.max.y -. 15.0),
-          12,
+          12.0,
         ),
         svg.StyledPath(
           mapped,
@@ -109,13 +109,13 @@ pub fn generate_khmer_text_offset_map_decaying_spiral_visual() {
           "decaying spiral: radius and offset lose 20% per turn",
           "fill: #111827; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 700",
           svg_path.Point(view_box.min.x +. 30.0, view_box.min.y +. 30.0),
-          18,
+          18.0,
         ),
         svg.Text(
           layout_label(text_layout, spiral_length),
           "fill: #475569; font-family: ui-monospace, SFMono-Regular, Menlo, monospace",
           svg_path.Point(view_box.min.x +. 30.0, view_box.max.y -. 20.0),
-          12,
+          12.0,
         ),
         svg.StyledPath(
           mapped,
@@ -305,13 +305,13 @@ pub fn khmer_text_offset_map_rectangle_focus_visual_probe() {
           "source",
           "fill: #111827; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 700",
           svg_path.Point(20.0, 24.0),
-          18,
+          18.0,
         ),
         svg.Text(
           "mapped",
           "fill: #111827; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 700",
           svg_path.Point(455.0, 24.0),
-          18,
+          18.0,
         ),
         svg.StyledPath(
           source_panel_grid,
@@ -352,7 +352,7 @@ pub fn khmer_text_offset_map_rectangle_focus_visual_probe() {
             <> int.to_string(cubic_count),
           "fill: #475569; font-family: ui-monospace, SFMono-Regular, Menlo, monospace",
           svg_path.Point(20.0, 374.0),
-          12,
+          12.0,
         ),
       ]
         |> list.append(source_line_labels)
@@ -625,14 +625,14 @@ fn vertical_line_labels_loop(
     [line, ..rest] -> {
       let points = subpath_polyline_points(line)
       let label = case points {
-        [] -> svg.Text("", "fill: none", svg_path.Point(0.0, 0.0), 1)
+        [] -> svg.Text("", "fill: none", svg_path.Point(0.0, 0.0), 1.0)
         [base, ..] -> {
           let point = f(base)
           svg.Text(
             int.to_string(index),
             "fill: #111827; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 700",
             svg_path.Point(point.x -. 4.0, point.y +. 16.0),
-            12,
+            12.0,
           )
         }
       }

@@ -112,7 +112,7 @@ fn panel(
       caption,
       "fill: #172554; font-family: sans-serif; text-anchor: middle",
       svg_path.Point(x +. 180.0, 244.0),
-      16,
+      16.0,
     ),
   ]
 }

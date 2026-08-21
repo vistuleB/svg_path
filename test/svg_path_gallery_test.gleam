@@ -154,7 +154,7 @@ fn marker_pose_slots() -> String {
         "marker.subpath_poses(...) returns start, mid, and end poses",
         marker_title_style(),
         svg_path.Point(450.0, 34.0),
-        22,
+        22.0,
       ),
       svg.StyledPath(path, marker_source_path_style()),
       ..list.append(
@@ -185,7 +185,7 @@ fn marker_orientation_semantics() -> String {
         "marker.subpath_poses(...) orientation policies",
         marker_title_style(),
         svg_path.Point(450.0, 34.0),
-        22,
+        22.0,
       ),
       ..rows
       |> list.flat_map(fn(row) {
@@ -208,7 +208,7 @@ fn marker_orientation_row(
   let assert Ok(poses) = marker.subpath_poses(source, orient:)
 
   [
-    svg.Text(label, marker_label_style(), svg_path.Point(38.0, y +. 60.0), 17),
+    svg.Text(label, marker_label_style(), svg_path.Point(38.0, y +. 60.0), 17.0),
     svg.StyledPath(path, marker_source_path_style()),
     ..list.append(
       marker_pose_points(poses),
@@ -232,7 +232,7 @@ fn marker_reference_semantics() -> String {
         "refX/refY pins one marker-local point to the path pose",
         marker_title_style(),
         svg_path.Point(450.0, 34.0),
-        22,
+        22.0,
       ),
       ..rows
       |> list.flat_map(fn(row) {
@@ -260,7 +260,7 @@ fn marker_reference_row(
   let reference_point = transform.point(reference, by: matrix)
 
   [
-    svg.Text(label, marker_label_style(), svg_path.Point(38.0, y +. 5.0), 17),
+    svg.Text(label, marker_label_style(), svg_path.Point(38.0, y +. 5.0), 17.0),
     svg.StyledPath(
       svg_path.Path([source]),
       "fill: none; stroke: #cbd5e1; stroke-width: 2",
@@ -289,7 +289,7 @@ fn marker_units_semantics() -> String {
         "markerUnits changes the size of marker-local coordinates",
         marker_title_style(),
         svg_path.Point(490.0, 34.0),
-        22,
+        22.0,
       ),
       ..rows
       |> list.flat_map(fn(row) {
@@ -317,7 +317,7 @@ fn marker_viewbox_semantics() -> String {
         "viewBox + preserveAspectRatio changes marker content fitting",
         marker_title_style(),
         svg_path.Point(490.0, 34.0),
-        22,
+        22.0,
       ),
       ..rows
       |> list.flat_map(fn(row) {
@@ -347,7 +347,7 @@ fn marker_layout_row(
   let reference_point = transform.point(reference, by: matrix)
 
   [
-    svg.Text(label, marker_label_style(), svg_path.Point(40.0, y +. 6.0), 16),
+    svg.Text(label, marker_label_style(), svg_path.Point(40.0, y +. 6.0), 16.0),
     svg.StyledPath(
       svg_path.Path([source]),
       "fill: none; stroke: #cbd5e1; stroke-width: 2",
@@ -423,7 +423,7 @@ fn marker_pose_slot_labels(poses: List(marker.MarkerPose)) -> svg.ThingsToDraw {
       marker_pose_kind_label(kind),
       marker_label_style(),
       svg_path.Point(point.x, point.y +. 34.0),
-      14,
+      14.0,
     )
   })
 }
