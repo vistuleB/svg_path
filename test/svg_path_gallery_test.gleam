@@ -634,7 +634,7 @@ fn rounded_rectangle_union() -> String {
     list.flatten([
       [panel(0.0, "rectangles")],
       [panel(250.0, "raw union")],
-      [panel(500.0, "|> rounded_corners(..., 8)")],
+      [panel(500.0, "|> rounded_corners(..., 8.0)")],
       path_layer(
         rectangle_cloud_path(rectangles),
         0.0,
@@ -1738,10 +1738,7 @@ fn inserted_join_diameters_loop(
             <> " bbox_diameter="
             <> segment_bounding_box_diameter_to_string(segment)
             <> " chord="
-            <> debug_float_to_string(point_distance(
-            svg_path.segment_start(segment),
-            svg_path.segment_end(segment),
-          )),
+            <> debug_float_to_string(svg_path.segment_chord_length(segment)),
           ..joins
         ]
         _ -> joins

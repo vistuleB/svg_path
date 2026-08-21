@@ -34,6 +34,8 @@ import svg_path
 import svg_path/area
 import svg_path/arrangement as arrangement_graph
 import svg_path/bezier
+import svg_path/curvature
+import svg_path/degeneracy
 import svg_path/internal/number
 import svg_path/intersections
 import svg_path/point as point_helpers
@@ -46,13 +48,37 @@ const default_max_depth = 20
 
 const default_samples = 10
 
+const default_trimming_samples = 5
+
 const default_miter_limit = 4.0
 
 const tangent_epsilon = 0.000001
 
 const point_tolerance = 0.000000001
 
+const arrangement_tolerance = 0.000000002
+
+const submerged_side_sampling_distance = 0.001
+
+const hinge_parameter_tolerance = 0.000001
+
 const default_tangent_heal_angle_degrees = 2.0
+
+const tangent_heal_agreement_angle_degrees = 2.0
+
+const hinge_tangent_gap_degrees = 1.0
+
+const hinge_fit_tangent_nudge_degrees = 0.25
+
+const hinge_fit_line_aperture_degrees = 2.0
+
+const hinge_fit_min_handle_chord_ratio = 0.1
+
+const hinge_fit_max_handle_chord_ratio = 0.9
+
+const tangent_turn_curvature_epsilon = 0.000000001
+
+const tangent_turn_angle_epsilon = 0.001
 
 const stable_tangent_assertion_diameter = 0.01
 
@@ -65,6 +91,9 @@ pub type Error {
 
   /// Arrangement construction failed while noding provisional offset paths.
   ArrangementGraphError(arrangement_graph.Error)
+
+  /// Source normalization failed before offset construction.
+  SourceNormalizationError(degeneracy.Error)
 
   /// The offset tolerance must be finite and greater than zero.
   InvalidTolerance(tolerance: Float)
@@ -83,6 +112,12 @@ pub type Error {
 
   /// Stroke width must be finite and greater than zero.
   InvalidStrokeWidth(width: Float)
+
+  /// Band payloads used for inside classification must be closed.
+  BandSubpathNotClosed
+
+  /// A closed band or stroke candidate produced non-loop arrangement edges.
+  BandOddSkeletonNotEmpty
 
   /// A segment tangent was too small to define a stable normal direction.
   DegenerateTangent(t: Float)
@@ -123,6 +158,19 @@ pub type Cap {
   RoundCap
 }
 
+/// Closed band payload produced from one source subpath before trimming.
+///
+/// `OpenSubpathBand` is the closed outline produced from an open source
+/// subpath after caps are added. `ClosedSubpathBand` stores the two closed
+/// offset sides of a closed source subpath in corresponding source traversal
+/// order; semantically, the second side is reversed before nonzero containment
+/// is evaluated.
+@internal
+pub type OneSubpathBand {
+  OpenSubpathBand(outline: svg_path.Subpath)
+  ClosedSubpathBand(side_a: svg_path.Subpath, side_b: svg_path.Subpath)
+}
+
 /// Cubic fitting controls used by the recursive offset builders.
 ///
 /// `tolerance` bounds the sampled geometric error of a fitted offset curve,
@@ -160,11 +208,67 @@ type LengthSpan {
 type OffsetSegment {
   OffsetSegment(
     segment: svg_path.Segment,
+    source: OffsetSegmentSource,
     source_start: svg_path.Point,
     source_end: svg_path.Point,
     source_start_tangent: svg_path.Point,
     source_end_tangent: svg_path.Point,
   )
+}
+
+@internal
+pub type OffsetSegmentSource {
+  RefinedBigSource(RefinedBigSourceSegment)
+  StalledSourceRunSource(
+    source_subpath_index: Int,
+    source_start_segment_index: Int,
+    source_end_segment_index: Int,
+  )
+}
+
+@internal
+pub type RefinedBigSourceSegment {
+  RefinedBigSourceSegment(
+    source_subpath_index: Int,
+    source_segment_index: Int,
+    source_segment: svg_path.Segment,
+    source_from: Float,
+    source_to: Float,
+    segment: svg_path.Segment,
+    start_is_offset_hinge: Bool,
+    end_is_offset_hinge: Bool,
+  )
+}
+
+type SegmentEndpoint {
+  SegmentStart
+  SegmentEnd
+}
+
+type OffsetCubicEndpointPolicy {
+  OffsetPositionOnly
+  OffsetPositionAndTangent(direction: svg_path.Point)
+  OffsetPositionAndStalledTangent(direction: svg_path.Point)
+}
+
+/// Tangent turn direction in the package's SVG screen-coordinate convention.
+///
+/// Positive y points downward, so `Clockwise` means visual clockwise.
+@internal
+pub type TangentTurn {
+  Clockwise
+  CounterClockwise
+  Straight
+  CouldNotMeasure
+}
+
+/// Signed tangent rotations for a hinge-like boundary.
+///
+/// Positive angles rotate clockwise in SVG coordinates. Negative angles rotate
+/// counterclockwise.
+@internal
+pub type HingeTangentAdjustment {
+  HingeTangentAdjustment(incoming_degrees: Float, outgoing_degrees: Float)
 }
 
 /// Construction-time source span for one provisional offset piece.
@@ -174,6 +278,136 @@ pub type OffsetPieceSource {
     offset_segment: svg_path.Segment,
     source_start: svg_path.Point,
     source_end: svg_path.Point,
+  )
+}
+
+/// Construction-time source span for one provisional offset piece, annotated
+/// with the join-free portion that produced it.
+@internal
+pub type JoinFreeOffsetPieceSource {
+  JoinFreeOffsetPieceSource(
+    portion_index: Int,
+    offset_segment: svg_path.Segment,
+    source: OffsetSegmentSource,
+    source_start: svg_path.Point,
+    source_end: svg_path.Point,
+  )
+}
+
+/// Final untrimmed segment annotated with whether it came from an offset piece
+/// or an explicit join inserted between offset pieces.
+@internal
+pub type UntrimmedSegmentSource {
+  UntrimmedOffsetPiece(
+    segment: svg_path.Segment,
+    source: OffsetSegmentSource,
+    source_start: svg_path.Point,
+    source_end: svg_path.Point,
+  )
+  UntrimmedJoinPiece(
+    segment: svg_path.Segment,
+    left_source: OffsetSegmentSource,
+    right_source: OffsetSegmentSource,
+  )
+}
+
+/// Diagnostic continuity break inside one join-free output portion.
+@internal
+pub type JoinFreeContinuityBreak {
+  JoinFreeContinuityBreak(
+    portion_index: Int,
+    left_piece_index: Int,
+    distance: Float,
+    left_end: svg_path.Point,
+    right_start: svg_path.Point,
+  )
+}
+
+/// Diagnostic source boundary where smooth offset healing was proposed but
+/// rejected by the final offset-distance certification.
+@internal
+pub type HealingFailure {
+  HealingFailure(point: svg_path.Point)
+}
+
+/// Diagnostic source boundary inside a join-free portion where the stored
+/// source tangents are not close enough for smooth offset healing.
+@internal
+pub type JoinFreeTangentRejection {
+  JoinFreeTangentRejection(point: svg_path.Point, angle: Float)
+}
+
+/// Diagnostic summary for one join-free source portion.
+@internal
+pub type JoinFreePortionSummary {
+  JoinFreePortionSummary(segment_count: Int, closed: Bool)
+}
+
+/// Diagnostic result from trying to offset one join-free source portion.
+@internal
+pub type JoinFreePortionCompletion {
+  JoinFreePortionCompleted(index: Int, segment_count: Int, offset_count: Int)
+  JoinFreePortionErrored(index: Int, segment_count: Int, error: Error)
+}
+
+/// Diagnostic source piece after stalled-run classification and hinge
+/// refinement.
+@internal
+pub type RefinedSourcePiece {
+  RefinedSourcePiece(
+    segment: svg_path.Segment,
+    big: Bool,
+    start_is_hinge: Bool,
+    end_is_hinge: Bool,
+  )
+}
+
+type OffsetArrangementBuild {
+  OffsetArrangementBuild(
+    graph: arrangement_graph.ArrangementGraph,
+    indexed_segments: List(IndexedOffsetSegment),
+    segment_images: List(arrangement_graph.ArrangementSourceSegmentImage),
+    edge_images: List(arrangement_graph.ArrangementEdgeImage),
+  )
+}
+
+type OffsetArrangementSegmentGroup {
+  ProvisionalOffsetSegment
+  SourceCutSegment
+}
+
+type IndexedOffsetSegment {
+  IndexedOffsetSegment(
+    group: OffsetArrangementSegmentGroup,
+    subpath_index: Int,
+    segment: svg_path.Segment,
+  )
+}
+
+/// Diagnostic minimal loop found in an ordered atomic arrangement walk.
+@internal
+pub type AtomicWalkLoop {
+  AtomicWalkLoop(
+    start_vertex: Int,
+    edges: List(#(arrangement_graph.ArrangementEdge, Bool)),
+  )
+}
+
+type SurvivorEdge {
+  SurvivorEdge(
+    edge_id: Int,
+    start_vertex: Int,
+    end_vertex: Int,
+    segment: svg_path.Segment,
+  )
+}
+
+type SurvivorChain {
+  SurvivorChain(
+    start_vertex: Int,
+    end_vertex: Int,
+    segments: List(svg_path.Segment),
+    closed: Bool,
   )
 }
 
@@ -201,8 +435,16 @@ type OriginalRecursiveOffsetBuilderFitPolicy {
 }
 
 type SmoothSourcePiece {
-  BigSourceSegment(svg_path.Segment)
-  StalledSourceRun(List(svg_path.Segment))
+  BigSourceSegment(
+    source_segment_index: Int,
+    segment: svg_path.Segment,
+    start_is_offset_hinge: Bool,
+    end_is_offset_hinge: Bool,
+  )
+  StalledSourceRun(
+    source_start_segment_index: Int,
+    segments: List(svg_path.Segment),
+  )
 }
 
 type SplitParameter {
@@ -211,6 +453,34 @@ type SplitParameter {
 
 type SplitPiece {
   SplitPiece(segment: svg_path.Segment, start_is_cut: Bool, end_is_cut: Bool)
+}
+
+type CurvatureBehavior {
+  Ordinary
+  Hinge
+  Inflection
+  NoSignChangeHinge
+}
+
+type CurvatureSplitKind {
+  OrdinarySplit
+  CuspSplit
+  InflectionSplit
+}
+
+type CurvatureSplitParameter {
+  CurvatureSplitParameter(t: Float, kind: CurvatureSplitKind)
+}
+
+type CurvatureBoundary {
+  CurvatureBoundary(t: Float, behavior: CurvatureBehavior)
+}
+
+type OffsetCurvatureZone {
+  ForwardOutside
+  Reversing
+  ForwardOpposite
+  UnknownCurvatureZone
 }
 
 /// Return default options for offset construction.
@@ -226,36 +496,1187 @@ pub fn default_fitting_options() -> FittingOptions {
 pub fn default_options() -> Options {
   Options(
     fitting: default_fitting_options(),
-    trimming: svg_path.default_distance_options(),
+    trimming: default_trimming_options(),
     stalled_offset_diameter: default_stalled_offset_diameter,
     tangent_heal_angle_degrees: default_tangent_heal_angle_degrees,
     join: Miter(default_miter_limit),
   )
 }
 
-/// Return pre-join offset pieces with their recorded source endpoint spans.
+/// Build the nonzero inside predicate for closed band payloads.
 @internal
-pub fn internal_offset_piece_sources(
-  subpath: svg_path.Subpath,
+pub fn internal_band_inside_function(
+  bands: List(OneSubpathBand),
+) -> Result(fn(svg_path.Point) -> Result(Bool, Error), Error) {
+  use semantic_paths <- result.try(
+    one_subpath_band_semantic_paths(bands, paths: []),
+  )
+  Ok(fn(point) { point_inside_any_semantic_band(point, semantic_paths) })
+}
+
+/// Classify whether both immediate sides of a segment lie inside a predicate.
+@internal
+pub fn internal_segment_is_submerged(
+  segment: svg_path.Segment,
+  inside inside: fn(svg_path.Point) -> Result(Bool, Error),
+  side_sampling_distance side_sampling_distance: Float,
+) -> Result(Bool, Error) {
+  submerged_segment(segment, inside:, side_sampling_distance:)
+}
+
+/// Remove loops whose weighted majority of segments is submerged.
+@internal
+pub fn internal_filter_band_loops(
+  loops: List(svg_path.Subpath),
+  inside inside: fn(svg_path.Point) -> Result(Bool, Error),
+  side_sampling_distance side_sampling_distance: Float,
+) -> Result(List(svg_path.Subpath), Error) {
+  filter_loops_by_policy(
+    loops,
+    inside:,
+    side_sampling_distance:,
+    policy: BandMajoritySubmerged,
+    retained: [],
+  )
+}
+
+/// Remove loops that contain any submerged segment.
+@internal
+pub fn internal_filter_single_offset_loops(
+  loops: List(svg_path.Subpath),
+  inside inside: fn(svg_path.Point) -> Result(Bool, Error),
+  side_sampling_distance side_sampling_distance: Float,
+) -> Result(List(svg_path.Subpath), Error) {
+  filter_loops_by_policy(
+    loops,
+    inside:,
+    side_sampling_distance:,
+    policy: SingleAnySubmerged,
+    retained: [],
+  )
+}
+
+/// Extract closed even contours from a closed provisional band or stroke.
+@internal
+pub fn internal_closed_candidate_even_contours(
+  provisional: List(svg_path.Subpath),
+  options options: Options,
+) -> Result(List(svg_path.Subpath), Error) {
+  closed_candidate_even_contours(provisional, options)
+}
+
+/// Extract and filter band loops using the band inside predicate.
+@internal
+pub fn internal_topological_band_loops(
+  provisional: List(svg_path.Subpath),
+  bands bands: List(OneSubpathBand),
+  options options: Options,
+) -> Result(List(svg_path.Subpath), Error) {
+  use inside <- result.try(internal_band_inside_function(bands))
+  burn_pruned_band_survivors(provisional, inside:, options:)
+}
+
+/// Extract, filter, and orient band loops as a path.
+@internal
+pub fn internal_topological_band_path(
+  provisional: List(svg_path.Subpath),
+  bands bands: List(OneSubpathBand),
+  options options: Options,
+) -> Result(svg_path.Path, Error) {
+  use loops <- result.try(internal_topological_band_loops(
+    provisional,
+    bands:,
+    options:,
+  ))
+  orient_outline_path(svg_path.Path(subpaths: loops))
+}
+
+/// Extract and filter single-offset loops using an imaginary source band.
+@internal
+pub fn internal_topological_single_offset_loops(
+  provisional: List(svg_path.Subpath),
+  bands bands: List(OneSubpathBand),
+  options options: Options,
+) -> Result(List(svg_path.Subpath), Error) {
+  use inside <- result.try(internal_band_inside_function(bands))
+  burn_pruned_single_offset_survivors(provisional, inside:, options:)
+}
+
+/// Extract, filter, and orient single-offset loops as a path.
+@internal
+pub fn internal_topological_single_offset_path(
+  provisional: List(svg_path.Subpath),
+  bands bands: List(OneSubpathBand),
+  options options: Options,
+) -> Result(svg_path.Path, Error) {
+  use loops <- result.try(internal_topological_single_offset_loops(
+    provisional,
+    bands:,
+    options:,
+  ))
+  use oriented <- result.try(
+    orient_outline_path(svg_path.Path(subpaths: loops)),
+  )
+  Ok(oriented)
+}
+
+/// Build the imaginary closed band used to classify one single-sided offset.
+@internal
+pub fn internal_single_offset_band_candidate(
+  source: svg_path.Subpath,
   distance distance: Float,
   options options: Options,
-) -> Result(List(OffsetPieceSource), Error) {
-  use _ <- result.try(validate_options(options))
-  use pieces <- result.try(build_offset_segments(
-    stalled_run_offset_builder(),
-    subpath,
-    distance,
-    options,
-  ))
-  Ok(
-    list.map(pieces, fn(piece) {
-      OffsetPieceSource(
-        offset_segment: piece.segment,
-        source_start: piece.source_start,
-        source_end: piece.source_end,
+) -> Result(OneSubpathBand, Error) {
+  single_offset_band_candidate(source, distance, options)
+}
+
+/// Build the untrimmed closed stroke band for one source subpath.
+@internal
+pub fn internal_stroke_band_candidate(
+  source: svg_path.Subpath,
+  width width: Float,
+  cap cap: Cap,
+  options options: Options,
+) -> Result(OneSubpathBand, Error) {
+  use _ <- result.try(validate_stroke_width(width))
+  stroke_band_candidate(source, width, cap, options)
+}
+
+fn default_trimming_options() -> svg_path.DistanceOptions {
+  svg_path.DistanceOptions(
+    ..svg_path.default_distance_options(),
+    samples: default_trimming_samples,
+  )
+}
+
+fn closed_candidate_even_contours(
+  provisional: List(svg_path.Subpath),
+  options: Options,
+) -> Result(List(svg_path.Subpath), Error) {
+  use build <- result.try(provisional_arrangement(provisional))
+  let arrangement_graph.ArrangementGraphBuild(graph:, ..) = build
+  let undirected = arrangement_graph.to_undirected(graph)
+  use decomposition <- result.try(
+    arrangement_graph.odd_even_decomposition(undirected)
+    |> result.map_error(ArrangementGraphError),
+  )
+  let arrangement_graph.OddEvenDecomposition(
+    odd_skeleton: arrangement_graph.UndirectedArrangementGraph(
+      edges: odd_edges,
+      ..,
+    ),
+    even_graph: _,
+  ) = decomposition
+  case odd_edges {
+    [] ->
+      arrangement_nested_contours_from_build_graph(
+        graph,
+        svg_path.Path(provisional),
+        tolerance: options.fitting.tolerance,
       )
+    _ -> Error(BandOddSkeletonNotEmpty)
+  }
+}
+
+fn burn_pruned_single_offset_survivors(
+  provisional: List(svg_path.Subpath),
+  inside inside: fn(svg_path.Point) -> Result(Bool, Error),
+  options options: Options,
+) -> Result(List(svg_path.Subpath), Error) {
+  use build <- result.try(provisional_segment_arrangement(provisional))
+  let OffsetArrangementBuild(graph:, ..) = build
+  let undirected = arrangement_graph.to_undirected(graph)
+  use protected_vertices <- result.try(provisional_open_endpoint_vertices(
+    build,
+    provisional,
+  ))
+  use without_submerged <- result.try(delete_submerged_edges(
+    undirected,
+    inside:,
+    side_sampling_distance: submerged_side_sampling_distance,
+  ))
+  let burned = burn_unsupported_edges(without_submerged, protected_vertices:)
+  use subpaths <- result.try(source_order_survivor_subpaths(
+    build,
+    burned,
+    protected_vertices:,
+    tolerance: options.fitting.tolerance,
+  ))
+  use closed <- result.try(close_survivor_subpaths(
+    subpaths,
+    tolerance: options.fitting.tolerance,
+  ))
+  Ok(closed)
+}
+
+fn burn_pruned_band_survivors(
+  provisional: List(svg_path.Subpath),
+  inside inside: fn(svg_path.Point) -> Result(Bool, Error),
+  options options: Options,
+) -> Result(List(svg_path.Subpath), Error) {
+  use build <- result.try(provisional_segment_arrangement(provisional))
+  let OffsetArrangementBuild(graph:, ..) = build
+  let undirected = arrangement_graph.to_undirected(graph)
+  case undirected_odd_vertices(undirected) {
+    [] -> {
+      use without_submerged <- result.try(delete_submerged_edges(
+        undirected,
+        inside:,
+        side_sampling_distance: submerged_side_sampling_distance,
+      ))
+      let burned =
+        burn_unsupported_edges(without_submerged, protected_vertices: [])
+      source_order_survivor_subpaths(
+        build,
+        burned,
+        protected_vertices: [],
+        tolerance: options.fitting.tolerance,
+      )
+      |> result.try(close_survivor_subpaths(
+        _,
+        tolerance: options.fitting.tolerance,
+      ))
+    }
+    _ -> Error(BandOddSkeletonNotEmpty)
+  }
+}
+
+fn undirected_odd_vertices(
+  graph: arrangement_graph.UndirectedArrangementGraph,
+) -> List(Int) {
+  let arrangement_graph.UndirectedArrangementGraph(vertices:, edges:) = graph
+  vertices
+  |> list.filter(fn(vertex) {
+    let arrangement_graph.ArrangementVertex(id:, ..) = vertex
+    case int.modulo(undirected_weighted_degree(edges, id), by: 2) {
+      Ok(1) -> True
+      _ -> False
+    }
+  })
+  |> list.map(fn(vertex) {
+    let arrangement_graph.ArrangementVertex(id:, ..) = vertex
+    id
+  })
+}
+
+fn undirected_weighted_degree(
+  edges: List(arrangement_graph.UndirectedArrangementEdge),
+  vertex: Int,
+) -> Int {
+  case edges {
+    [] -> 0
+    [edge, ..rest] -> {
+      let arrangement_graph.UndirectedArrangementEdge(
+        start_vertex:,
+        end_vertex:,
+        multiplicity:,
+        ..,
+      ) = edge
+      let contribution = case start_vertex == vertex, end_vertex == vertex {
+        True, True -> 2 * multiplicity
+        True, False -> multiplicity
+        False, True -> multiplicity
+        False, False -> 0
+      }
+      contribution + undirected_weighted_degree(rest, vertex)
+    }
+  }
+}
+
+fn provisional_open_endpoint_vertices(
+  build: OffsetArrangementBuild,
+  provisional: List(svg_path.Subpath),
+) -> Result(List(Int), Error) {
+  let OffsetArrangementBuild(segment_images:, ..) = build
+  provisional_open_endpoint_vertices_loop(
+    build,
+    provisional,
+    segment_images,
+    protected: [],
+  )
+}
+
+fn provisional_open_endpoint_vertices_loop(
+  build: OffsetArrangementBuild,
+  provisional: List(svg_path.Subpath),
+  images: List(arrangement_graph.ArrangementSourceSegmentImage),
+  protected protected: List(Int),
+) -> Result(List(Int), Error) {
+  case provisional {
+    [] -> Ok(list.reverse(protected))
+    [first, ..rest] -> {
+      let count = list.length(svg_path.subpath_segments(first))
+      use span <- result.try(take_segment_images(images, count))
+      let #(subpath_images, remaining_images) = span
+      case svg_path.subpath_is_closed(first), subpath_images {
+        True, _ ->
+          provisional_open_endpoint_vertices_loop(
+            build,
+            rest,
+            remaining_images,
+            protected:,
+          )
+        False, [] ->
+          provisional_open_endpoint_vertices_loop(
+            build,
+            rest,
+            remaining_images,
+            protected:,
+          )
+        False, [first_image, ..] -> {
+          let assert Ok(last_image) = last_segment_image(subpath_images)
+          use start_vertex <- result.try(segment_image_start_vertex(
+            build,
+            first_image,
+          ))
+          use end_vertex <- result.try(segment_image_end_vertex(
+            build,
+            last_image,
+          ))
+          provisional_open_endpoint_vertices_loop(
+            build,
+            rest,
+            remaining_images,
+            protected: [end_vertex, start_vertex, ..protected],
+          )
+        }
+      }
+    }
+  }
+}
+
+fn take_segment_images(
+  images: List(arrangement_graph.ArrangementSourceSegmentImage),
+  count: Int,
+) -> Result(
+  #(
+    List(arrangement_graph.ArrangementSourceSegmentImage),
+    List(arrangement_graph.ArrangementSourceSegmentImage),
+  ),
+  Error,
+) {
+  case count <= 0 {
+    True -> Ok(#([], images))
+    False ->
+      case images {
+        [] ->
+          Error(ArrangementGraphError(
+            arrangement_graph.InternalNormalizationError,
+          ))
+        [first, ..rest] -> {
+          use tail <- result.try(take_segment_images(rest, count - 1))
+          let #(taken, remaining) = tail
+          Ok(#([first, ..taken], remaining))
+        }
+      }
+  }
+}
+
+fn last_segment_image(
+  images: List(arrangement_graph.ArrangementSourceSegmentImage),
+) -> Result(arrangement_graph.ArrangementSourceSegmentImage, Nil) {
+  case images {
+    [] -> Error(Nil)
+    [first] -> Ok(first)
+    [_, ..rest] -> last_segment_image(rest)
+  }
+}
+
+fn segment_image_start_vertex(
+  build: OffsetArrangementBuild,
+  image: arrangement_graph.ArrangementSourceSegmentImage,
+) -> Result(Int, Error) {
+  use edges <- result.try(source_segment_image_edges(build, image))
+  case edges {
+    [] ->
+      Error(ArrangementGraphError(arrangement_graph.InternalNormalizationError))
+    [first, ..] -> {
+      let #(edge, reversed) = first
+      case reversed {
+        True -> Ok(edge.end_vertex)
+        False -> Ok(edge.start_vertex)
+      }
+    }
+  }
+}
+
+fn segment_image_end_vertex(
+  build: OffsetArrangementBuild,
+  image: arrangement_graph.ArrangementSourceSegmentImage,
+) -> Result(Int, Error) {
+  use edges <- result.try(source_segment_image_edges(build, image))
+  use last <- result.try(
+    last_directed_edge(edges)
+    |> result.map_error(fn(_) {
+      ArrangementGraphError(arrangement_graph.InternalNormalizationError)
     }),
   )
+  let #(edge, reversed) = last
+  case reversed {
+    True -> Ok(edge.start_vertex)
+    False -> Ok(edge.end_vertex)
+  }
+}
+
+fn last_directed_edge(
+  edges: List(#(arrangement_graph.ArrangementEdge, Bool)),
+) -> Result(#(arrangement_graph.ArrangementEdge, Bool), Nil) {
+  case edges {
+    [] -> Error(Nil)
+    [first] -> Ok(first)
+    [_, ..rest] -> last_directed_edge(rest)
+  }
+}
+
+fn delete_submerged_edges(
+  graph: arrangement_graph.UndirectedArrangementGraph,
+  inside inside: fn(svg_path.Point) -> Result(Bool, Error),
+  side_sampling_distance side_sampling_distance: Float,
+) -> Result(arrangement_graph.UndirectedArrangementGraph, Error) {
+  let arrangement_graph.UndirectedArrangementGraph(vertices:, edges:) = graph
+  use retained <- result.try(
+    delete_submerged_edges_loop(
+      edges,
+      inside:,
+      side_sampling_distance:,
+      retained: [],
+    ),
+  )
+  Ok(arrangement_graph.UndirectedArrangementGraph(vertices:, edges: retained))
+}
+
+fn delete_submerged_edges_loop(
+  edges: List(arrangement_graph.UndirectedArrangementEdge),
+  inside inside: fn(svg_path.Point) -> Result(Bool, Error),
+  side_sampling_distance side_sampling_distance: Float,
+  retained retained: List(arrangement_graph.UndirectedArrangementEdge),
+) -> Result(List(arrangement_graph.UndirectedArrangementEdge), Error) {
+  case edges {
+    [] -> Ok(list.reverse(retained))
+    [edge, ..rest] -> {
+      let arrangement_graph.UndirectedArrangementEdge(segment:, ..) = edge
+      use submerged <- result.try(submerged_segment(
+        segment,
+        inside:,
+        side_sampling_distance:,
+      ))
+      let retained = case submerged {
+        True -> retained
+        False -> [edge, ..retained]
+      }
+      delete_submerged_edges_loop(
+        rest,
+        inside:,
+        side_sampling_distance:,
+        retained:,
+      )
+    }
+  }
+}
+
+fn burn_unsupported_edges(
+  graph: arrangement_graph.UndirectedArrangementGraph,
+  protected_vertices protected_vertices: List(Int),
+) -> arrangement_graph.UndirectedArrangementGraph {
+  let arrangement_graph.UndirectedArrangementGraph(vertices:, edges:) = graph
+  let retained =
+    edges
+    |> list.filter(fn(edge) {
+      !undirected_edge_is_burned(edge, edges, protected_vertices)
+    })
+  case list.length(retained) == list.length(edges) {
+    True -> graph
+    False ->
+      burn_unsupported_edges(
+        arrangement_graph.UndirectedArrangementGraph(vertices:, edges: retained),
+        protected_vertices:,
+      )
+  }
+}
+
+fn undirected_edge_is_burned(
+  edge: arrangement_graph.UndirectedArrangementEdge,
+  edges: List(arrangement_graph.UndirectedArrangementEdge),
+  protected_vertices: List(Int),
+) -> Bool {
+  let arrangement_graph.UndirectedArrangementEdge(
+    start_vertex:,
+    end_vertex:,
+    ..,
+  ) = edge
+  endpoint_burns(start_vertex, edges, protected_vertices)
+  || endpoint_burns(end_vertex, edges, protected_vertices)
+}
+
+fn endpoint_burns(
+  vertex: Int,
+  edges: List(arrangement_graph.UndirectedArrangementEdge),
+  protected_vertices: List(Int),
+) -> Bool {
+  !list.contains(protected_vertices, vertex)
+  && undirected_weighted_degree(edges, vertex) == 1
+}
+
+fn close_survivor_subpaths(
+  subpaths: List(svg_path.Subpath),
+  tolerance tolerance: Float,
+) -> Result(List(svg_path.Subpath), Error) {
+  case subpaths {
+    [] -> Ok([])
+    [first, ..rest] -> {
+      use closed <- result.try(close_survivor_subpath(first, tolerance:))
+      use rest <- result.try(close_survivor_subpaths(rest, tolerance:))
+      Ok([closed, ..rest])
+    }
+  }
+}
+
+fn close_survivor_subpath(
+  subpath: svg_path.Subpath,
+  tolerance tolerance: Float,
+) -> Result(svg_path.Subpath, Error) {
+  use start <- result.try(
+    svg_path.subpath_start(subpath) |> result.map_error(PathError),
+  )
+  use end <- result.try(
+    svg_path.subpath_end(subpath) |> result.map_error(PathError),
+  )
+  case point_helpers.distance(start, end) <=. tolerance {
+    True ->
+      svg_path.subpath_set_closed_with(
+        subpath,
+        closed: True,
+        policy: svg_path.WiggleThenBridgeWith(tolerance),
+      )
+      |> result.map_error(PathError)
+    False -> Ok(subpath)
+  }
+}
+
+fn arrangement_nested_contours_from_build_graph(
+  graph: arrangement_graph.ArrangementGraph,
+  path: svg_path.Path,
+  tolerance tolerance: Float,
+) -> Result(List(svg_path.Subpath), Error) {
+  arrangement_graph.nested_contours_from_graph(graph, path:, tolerance:)
+  |> result.map_error(ArrangementGraphError)
+}
+
+fn source_order_survivor_subpaths(
+  build: OffsetArrangementBuild,
+  graph: arrangement_graph.UndirectedArrangementGraph,
+  protected_vertices protected_vertices: List(Int),
+  tolerance tolerance: Float,
+) -> Result(List(svg_path.Subpath), Error) {
+  let OffsetArrangementBuild(segment_images:, ..) = build
+  let available_ids = undirected_edge_ids(graph)
+  use chains <- result.try(
+    source_order_survivor_chains(
+      build,
+      segment_images,
+      available_ids,
+      open: [],
+      finished: [],
+    ),
+  )
+  let chains = filter_bare_survivor_chains(chains, protected_vertices)
+  survivor_chains_to_subpaths(chains, tolerance, subpaths: [])
+}
+
+fn filter_bare_survivor_chains(
+  chains: List(SurvivorChain),
+  protected_vertices: List(Int),
+) -> List(SurvivorChain) {
+  chains
+  |> list.filter(fn(chain) {
+    let SurvivorChain(start_vertex:, end_vertex:, closed:, ..) = chain
+    closed
+    || {
+      list.contains(protected_vertices, start_vertex)
+      && list.contains(protected_vertices, end_vertex)
+    }
+  })
+}
+
+fn undirected_edge_ids(
+  graph: arrangement_graph.UndirectedArrangementGraph,
+) -> List(Int) {
+  let arrangement_graph.UndirectedArrangementGraph(edges:, ..) = graph
+  edges
+  |> list.map(fn(edge) {
+    let arrangement_graph.UndirectedArrangementEdge(id:, ..) = edge
+    id
+  })
+}
+
+fn source_order_survivor_chains(
+  build: OffsetArrangementBuild,
+  images: List(arrangement_graph.ArrangementSourceSegmentImage),
+  available_ids: List(Int),
+  open open: List(SurvivorChain),
+  finished finished: List(SurvivorChain),
+) -> Result(List(SurvivorChain), Error) {
+  case images {
+    [] -> Ok(list.reverse(finished) |> list.append(list.reverse(open)))
+    [image, ..rest] -> {
+      use image_result <- result.try(source_order_survivor_image_edges(
+        build,
+        image,
+        available_ids,
+      ))
+      let #(image_edges, available_ids) = image_result
+      let #(open, finished) =
+        append_source_order_edges(image_edges, open:, finished:)
+      source_order_survivor_chains(build, rest, available_ids, open:, finished:)
+    }
+  }
+}
+
+fn source_order_survivor_image_edges(
+  build: OffsetArrangementBuild,
+  image: arrangement_graph.ArrangementSourceSegmentImage,
+  available_ids: List(Int),
+) -> Result(#(List(SurvivorEdge), List(Int)), Error) {
+  use directed <- result.try(source_segment_image_edges(build, image))
+  Ok(source_order_survivor_directed_edges(directed, available_ids, edges: []))
+}
+
+fn source_order_survivor_directed_edges(
+  directed_edges: List(#(arrangement_graph.ArrangementEdge, Bool)),
+  available_ids: List(Int),
+  edges edges: List(SurvivorEdge),
+) -> #(List(SurvivorEdge), List(Int)) {
+  case directed_edges {
+    [] -> #(list.reverse(edges), available_ids)
+    [directed_edge, ..rest] -> {
+      let #(edge, reversed) = directed_edge
+      case take_id(edge.id, available_ids) {
+        Ok(available_ids) -> {
+          let #(start_vertex, end_vertex, segment) = case reversed {
+            True -> #(
+              edge.end_vertex,
+              edge.start_vertex,
+              svg_path.segment_reverse(edge.segment),
+            )
+            False -> #(edge.start_vertex, edge.end_vertex, edge.segment)
+          }
+          let survivor =
+            SurvivorEdge(edge_id: edge.id, start_vertex:, end_vertex:, segment:)
+          source_order_survivor_directed_edges(rest, available_ids, edges: [
+            survivor,
+            ..edges
+          ])
+        }
+        Error(Nil) ->
+          source_order_survivor_directed_edges(rest, available_ids, edges:)
+      }
+    }
+  }
+}
+
+fn take_id(id: Int, ids: List(Int)) -> Result(List(Int), Nil) {
+  case ids {
+    [] -> Error(Nil)
+    [first, ..rest] -> {
+      case first == id {
+        True -> Ok(rest)
+        False -> {
+          use rest <- result.try(take_id(id, rest))
+          Ok([first, ..rest])
+        }
+      }
+    }
+  }
+}
+
+fn append_source_order_edges(
+  edges: List(SurvivorEdge),
+  open open: List(SurvivorChain),
+  finished finished: List(SurvivorChain),
+) -> #(List(SurvivorChain), List(SurvivorChain)) {
+  case edges {
+    [] -> #(open, finished)
+    [first, ..rest] -> {
+      let #(open, finished) = append_source_order_edge(first, open:, finished:)
+      append_source_order_edges(rest, open:, finished:)
+    }
+  }
+}
+
+fn append_source_order_edge(
+  edge: SurvivorEdge,
+  open open: List(SurvivorChain),
+  finished finished: List(SurvivorChain),
+) -> #(List(SurvivorChain), List(SurvivorChain)) {
+  let SurvivorEdge(start_vertex:, end_vertex:, segment:, ..) = edge
+  let chain =
+    SurvivorChain(
+      start_vertex:,
+      end_vertex:,
+      segments: [segment],
+      closed: start_vertex == end_vertex,
+    )
+  insert_survivor_chain(chain, open, skipped: [], finished:)
+}
+
+fn insert_survivor_chain(
+  chain: SurvivorChain,
+  open: List(SurvivorChain),
+  skipped skipped: List(SurvivorChain),
+  finished finished: List(SurvivorChain),
+) -> #(List(SurvivorChain), List(SurvivorChain)) {
+  let SurvivorChain(closed:, ..) = chain
+  case closed {
+    True -> #(list.append(list.reverse(skipped), open), [chain, ..finished])
+    False -> {
+      case open {
+        [] -> #([chain, ..list.reverse(skipped)], finished)
+        [candidate, ..rest] -> {
+          case merge_survivor_chains(chain, candidate) {
+            Ok(merged) ->
+              insert_survivor_chain(
+                mark_survivor_chain_closed(merged),
+                list.append(list.reverse(skipped), rest),
+                skipped: [],
+                finished:,
+              )
+            Error(Nil) ->
+              insert_survivor_chain(
+                chain,
+                rest,
+                skipped: [candidate, ..skipped],
+                finished:,
+              )
+          }
+        }
+      }
+    }
+  }
+}
+
+fn merge_survivor_chains(
+  incoming: SurvivorChain,
+  candidate: SurvivorChain,
+) -> Result(SurvivorChain, Nil) {
+  let SurvivorChain(
+    start_vertex: incoming_start,
+    end_vertex: incoming_end,
+    segments: incoming_segments,
+    ..,
+  ) = incoming
+  let SurvivorChain(
+    start_vertex: candidate_start,
+    end_vertex: candidate_end,
+    segments: candidate_segments,
+    ..,
+  ) = candidate
+
+  case incoming_end == candidate_start {
+    True ->
+      Ok(SurvivorChain(
+        start_vertex: incoming_start,
+        end_vertex: candidate_end,
+        segments: list.append(incoming_segments, candidate_segments),
+        closed: incoming_start == candidate_end,
+      ))
+    False ->
+      case incoming_end == candidate_end {
+        True -> {
+          let candidate = reverse_survivor_chain(candidate)
+          merge_survivor_chains(incoming, candidate)
+        }
+        False ->
+          case incoming_start == candidate_end {
+            True ->
+              Ok(SurvivorChain(
+                start_vertex: candidate_start,
+                end_vertex: incoming_end,
+                segments: list.append(candidate_segments, incoming_segments),
+                closed: candidate_start == incoming_end,
+              ))
+            False ->
+              case incoming_start == candidate_start {
+                True -> {
+                  let candidate = reverse_survivor_chain(candidate)
+                  merge_survivor_chains(candidate, incoming)
+                }
+                False -> Error(Nil)
+              }
+          }
+      }
+  }
+}
+
+fn mark_survivor_chain_closed(chain: SurvivorChain) -> SurvivorChain {
+  let SurvivorChain(start_vertex:, end_vertex:, ..) = chain
+  SurvivorChain(..chain, closed: start_vertex == end_vertex)
+}
+
+fn reverse_survivor_chain(chain: SurvivorChain) -> SurvivorChain {
+  let SurvivorChain(start_vertex:, end_vertex:, segments:, closed:) = chain
+  SurvivorChain(
+    start_vertex: end_vertex,
+    end_vertex: start_vertex,
+    segments: reverse_survivor_segments(segments, reversed: []),
+    closed:,
+  )
+}
+
+fn reverse_survivor_segments(
+  segments: List(svg_path.Segment),
+  reversed reversed: List(svg_path.Segment),
+) -> List(svg_path.Segment) {
+  case segments {
+    [] -> reversed
+    [first, ..rest] ->
+      reverse_survivor_segments(rest, reversed: [
+        svg_path.segment_reverse(first),
+        ..reversed
+      ])
+  }
+}
+
+fn survivor_chains_to_subpaths(
+  chains: List(SurvivorChain),
+  tolerance: Float,
+  subpaths subpaths: List(svg_path.Subpath),
+) -> Result(List(svg_path.Subpath), Error) {
+  case chains {
+    [] -> Ok(list.reverse(subpaths))
+    [first, ..rest] -> {
+      let SurvivorChain(segments:, closed:, ..) = first
+      use subpath <- result.try(
+        svg_path.subpath_with(
+          segments,
+          policy: svg_path.WiggleThenBridgeWith(tolerance),
+        )
+        |> result.map_error(PathError),
+      )
+      use subpath <- result.try(
+        svg_path.subpath_set_closed_with(
+          subpath,
+          closed:,
+          policy: svg_path.WiggleThenBridgeWith(tolerance),
+        )
+        |> result.map_error(PathError),
+      )
+      survivor_chains_to_subpaths(rest, tolerance, subpaths: [
+        subpath,
+        ..subpaths
+      ])
+    }
+  }
+}
+
+fn single_offset_band_candidate(
+  source: svg_path.Subpath,
+  distance: Float,
+  options: Options,
+) -> Result(OneSubpathBand, Error) {
+  case svg_path.subpath_is_closed(source) {
+    True -> {
+      use zero <- result.try(
+        svg_path.subpath_set_closed_with(
+          source,
+          closed: True,
+          policy: svg_path.WiggleWith(options.fitting.tolerance),
+        )
+        |> result.map_error(PathError),
+      )
+      use side <- result.try(closed_untrimmed_side(source, distance:, options:))
+      Ok(ClosedSubpathBand(side_a: zero, side_b: side))
+    }
+    False -> {
+      use side <- result.try(subpath_untrimmed_with(source, distance:, options:))
+      use outline <- result.try(open_butt_band_outline(
+        side_a: source,
+        side_b: side,
+      ))
+      Ok(OpenSubpathBand(outline))
+    }
+  }
+}
+
+fn stroke_band_candidate(
+  source: svg_path.Subpath,
+  width: Float,
+  cap: Cap,
+  options: Options,
+) -> Result(OneSubpathBand, Error) {
+  let radius = width /. 2.0
+  case svg_path.subpath_is_closed(source) {
+    True -> {
+      use side_a <- result.try(closed_untrimmed_side(
+        source,
+        distance: 0.0 -. radius,
+        options:,
+      ))
+      use side_b <- result.try(closed_untrimmed_side(
+        source,
+        distance: radius,
+        options:,
+      ))
+      Ok(ClosedSubpathBand(side_a:, side_b:))
+    }
+    False -> {
+      use outline <- result.try(stroke_candidate_subpath(
+        source,
+        radius,
+        cap,
+        options,
+      ))
+      Ok(OpenSubpathBand(outline))
+    }
+  }
+}
+
+fn closed_untrimmed_side(
+  source: svg_path.Subpath,
+  distance distance: Float,
+  options options: Options,
+) -> Result(svg_path.Subpath, Error) {
+  use side <- result.try(subpath_untrimmed_with(source, distance:, options:))
+  svg_path.subpath_set_closed_with(
+    side,
+    closed: True,
+    policy: svg_path.WiggleWith(options.fitting.tolerance),
+  )
+  |> result.map_error(PathError)
+}
+
+fn open_butt_band_outline(
+  side_a side_a: svg_path.Subpath,
+  side_b side_b: svg_path.Subpath,
+) -> Result(svg_path.Subpath, Error) {
+  use end_cap <- result.try(open_butt_band_end_cap(side_a, side_b))
+  use start_cap <- result.try(open_butt_band_start_cap(side_a, side_b))
+  let segments =
+    list.append(
+      svg_path.subpath_segments(side_a),
+      list.append(
+        end_cap,
+        list.append(
+          reverse_segments(svg_path.subpath_segments(side_b)),
+          start_cap,
+        ),
+      ),
+    )
+  use outline <- result.try(
+    svg_path.subpath_with(segments, policy: svg_path.Wiggle)
+    |> result.map_error(PathError),
+  )
+  svg_path.subpath_set_closed_with(
+    outline,
+    closed: True,
+    policy: svg_path.Wiggle,
+  )
+  |> result.map_error(PathError)
+}
+
+fn open_butt_band_end_cap(
+  side_a: svg_path.Subpath,
+  side_b: svg_path.Subpath,
+) -> Result(List(svg_path.Segment), Error) {
+  use end_a <- result.try(
+    svg_path.subpath_end(side_a) |> result.map_error(PathError),
+  )
+  use end_b <- result.try(
+    svg_path.subpath_end(side_b) |> result.map_error(PathError),
+  )
+  Ok(line_segments_between([end_a, end_b]))
+}
+
+fn open_butt_band_start_cap(
+  side_a: svg_path.Subpath,
+  side_b: svg_path.Subpath,
+) -> Result(List(svg_path.Segment), Error) {
+  use start_a <- result.try(
+    svg_path.subpath_start(side_a) |> result.map_error(PathError),
+  )
+  use start_b <- result.try(
+    svg_path.subpath_start(side_b) |> result.map_error(PathError),
+  )
+  Ok(line_segments_between([start_b, start_a]))
+}
+
+fn one_subpath_band_semantic_paths(
+  bands: List(OneSubpathBand),
+  paths paths: List(svg_path.Path),
+) -> Result(List(svg_path.Path), Error) {
+  case bands {
+    [] -> Ok(list.reverse(paths))
+    [first, ..rest] -> {
+      use path <- result.try(one_subpath_band_semantic_path(first))
+      one_subpath_band_semantic_paths(rest, paths: [path, ..paths])
+    }
+  }
+}
+
+fn one_subpath_band_semantic_path(
+  band: OneSubpathBand,
+) -> Result(svg_path.Path, Error) {
+  case band {
+    OpenSubpathBand(outline) -> {
+      use _ <- result.try(require_closed_band_subpath(outline))
+      Ok(svg_path.Path([outline]))
+    }
+    ClosedSubpathBand(side_a, side_b) -> {
+      use _ <- result.try(require_closed_band_subpath(side_a))
+      use _ <- result.try(require_closed_band_subpath(side_b))
+      Ok(svg_path.Path([side_a, svg_path.subpath_reverse(side_b)]))
+    }
+  }
+}
+
+fn require_closed_band_subpath(
+  subpath: svg_path.Subpath,
+) -> Result(Nil, Error) {
+  case svg_path.subpath_is_closed(subpath) {
+    True -> Ok(Nil)
+    False -> Error(BandSubpathNotClosed)
+  }
+}
+
+fn point_inside_any_semantic_band(
+  point: svg_path.Point,
+  paths: List(svg_path.Path),
+) -> Result(Bool, Error) {
+  case paths {
+    [] -> Ok(False)
+    [first, ..rest] -> {
+      use inside <- result.try(point_inside_semantic_band(point, first))
+      case inside {
+        True -> Ok(True)
+        False -> point_inside_any_semantic_band(point, rest)
+      }
+    }
+  }
+}
+
+fn point_inside_semantic_band(
+  point: svg_path.Point,
+  path: svg_path.Path,
+) -> Result(Bool, Error) {
+  use containment <- result.try(
+    svg_path.path_containment(point, within: path, using: svg_path.Nonzero)
+    |> result.map_error(PathError),
+  )
+  Ok(containment == svg_path.Inside)
+}
+
+fn submerged_segment(
+  segment: svg_path.Segment,
+  inside inside: fn(svg_path.Point) -> Result(Bool, Error),
+  side_sampling_distance side_sampling_distance: Float,
+) -> Result(Bool, Error) {
+  use point <- result.try(
+    svg_path.segment_point(segment, at: 0.5) |> result.map_error(PathError),
+  )
+  use normal <- result.try(unit_normal(segment, t: 0.5))
+  let first = add(point, scale(normal, side_sampling_distance))
+  let second = add(point, scale(normal, 0.0 -. side_sampling_distance))
+  use first_inside <- result.try(inside(first))
+  use second_inside <- result.try(inside(second))
+  Ok(first_inside && second_inside)
+}
+
+type LoopFilterPolicy {
+  BandMajoritySubmerged
+  SingleAnySubmerged
+}
+
+fn filter_loops_by_policy(
+  loops: List(svg_path.Subpath),
+  inside inside: fn(svg_path.Point) -> Result(Bool, Error),
+  side_sampling_distance side_sampling_distance: Float,
+  policy policy: LoopFilterPolicy,
+  retained retained: List(svg_path.Subpath),
+) -> Result(List(svg_path.Subpath), Error) {
+  case loops {
+    [] -> Ok(list.reverse(retained))
+    [first, ..rest] -> {
+      use remove <- result.try(loop_should_be_filtered(
+        first,
+        inside:,
+        side_sampling_distance:,
+        policy:,
+      ))
+      let retained = case remove {
+        True -> retained
+        False -> [first, ..retained]
+      }
+      filter_loops_by_policy(
+        rest,
+        inside:,
+        side_sampling_distance:,
+        policy:,
+        retained:,
+      )
+    }
+  }
+}
+
+fn loop_should_be_filtered(
+  loop: svg_path.Subpath,
+  inside inside: fn(svg_path.Point) -> Result(Bool, Error),
+  side_sampling_distance side_sampling_distance: Float,
+  policy policy: LoopFilterPolicy,
+) -> Result(Bool, Error) {
+  loop_submerged_weights(
+    svg_path.subpath_segments(loop),
+    inside:,
+    side_sampling_distance:,
+    submerged_weight: 0.0,
+    total_weight: 0.0,
+    any_submerged: False,
+    policy:,
+  )
+}
+
+fn loop_submerged_weights(
+  segments: List(svg_path.Segment),
+  inside inside: fn(svg_path.Point) -> Result(Bool, Error),
+  side_sampling_distance side_sampling_distance: Float,
+  submerged_weight submerged_weight: Float,
+  total_weight total_weight: Float,
+  any_submerged any_submerged: Bool,
+  policy policy: LoopFilterPolicy,
+) -> Result(Bool, Error) {
+  case segments {
+    [] ->
+      case policy {
+        SingleAnySubmerged -> Ok(any_submerged)
+        BandMajoritySubmerged -> Ok(submerged_weight >. total_weight /. 2.0)
+      }
+    [first, ..rest] -> {
+      use submerged <- result.try(submerged_segment(
+        first,
+        inside:,
+        side_sampling_distance:,
+      ))
+      use length <- result.try(
+        svg_path.segment_length(first) |> result.map_error(PathError),
+      )
+      let submerged_weight = case submerged {
+        True -> submerged_weight +. length
+        False -> submerged_weight
+      }
+      let any_submerged = any_submerged || submerged
+      case policy, any_submerged {
+        SingleAnySubmerged, True -> Ok(True)
+        _, _ ->
+          loop_submerged_weights(
+            rest,
+            inside:,
+            side_sampling_distance:,
+            submerged_weight:,
+            total_weight: total_weight +. length,
+            any_submerged:,
+            policy:,
+          )
+      }
+    }
+  }
 }
 
 /// Build a local coordinate map around a subpath.
@@ -361,12 +1782,30 @@ pub fn subpath_with(
   options options: Options,
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(validate_options(options))
-  use provisional <- result.try(subpath_untrimmed_with(
-    subpath,
+  use source <- result.try(normalize_offset_source_subpath(subpath, options))
+  use provisional <- result.try(subpath_untrimmed_normalized_with(
+    source,
     distance:,
     options:,
   ))
-  parametric_pruned_subpath(subpath, provisional, distance, options)
+  use provisional <- result.try(cut_single_offset_provisional_by_source(
+    [provisional],
+    svg_path.Path([source]),
+    options,
+  ))
+  use band <- result.try(single_offset_band_candidate(source, distance, options))
+  internal_topological_single_offset_path(provisional, bands: [band], options:)
+}
+
+fn normalize_offset_source_subpath(
+  subpath: svg_path.Subpath,
+  options: Options,
+) -> Result(svg_path.Subpath, Error) {
+  degeneracy.normalize_degenerate_segments(
+    subpath,
+    tolerance: options.fitting.tolerance,
+  )
+  |> result.map_error(SourceNormalizationError)
 }
 
 /// Offset a subpath at two signed distances and trim the two sides together.
@@ -397,18 +1836,19 @@ pub fn subpath_band_with(
   options options: Options,
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(validate_options(options))
-  use provisional_a <- result.try(subpath_untrimmed_with(
-    subpath,
+  use source <- result.try(normalize_offset_source_subpath(subpath, options))
+  use provisional_a <- result.try(subpath_untrimmed_normalized_with(
+    source,
     distance: distance_a,
     options:,
   ))
-  use provisional_b <- result.try(subpath_untrimmed_with(
-    subpath,
+  use provisional_b <- result.try(subpath_untrimmed_normalized_with(
+    source,
     distance: distance_b,
     options:,
   ))
   use subpaths <- result.try(parametric_pruned_pair(
-    subpath,
+    source,
     provisional_a:,
     distance_a:,
     provisional_b:,
@@ -541,6 +1981,15 @@ pub fn subpath_untrimmed_with(
   options options: Options,
 ) -> Result(svg_path.Subpath, Error) {
   use _ <- result.try(validate_options(options))
+  use subpath <- result.try(normalize_offset_source_subpath(subpath, options))
+  subpath_untrimmed_normalized_with(subpath, distance:, options:)
+}
+
+fn subpath_untrimmed_normalized_with(
+  subpath: svg_path.Subpath,
+  distance distance: Float,
+  options options: Options,
+) -> Result(svg_path.Subpath, Error) {
   parametric_provisional_subpath(subpath, distance, options)
 }
 
@@ -559,46 +2008,128 @@ pub fn path_with(
   options options: Options,
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(validate_options(options))
+  let source_subpaths = svg_path.path_subpaths(path)
   use provisional <- result.try(
     parametric_untrimmed_path_subpaths(
-      svg_path.path_subpaths(path),
+      source_subpaths,
       distance,
       options,
       converted: [],
     ),
   )
-  use sections <- result.try(arrangement_global_section_chunks(provisional))
-  use retained <- result.try(
-    retain_global_parametric_sections(
-      sections,
-      source: path,
-      distance:,
-      options:,
-      retained: [],
+  use provisional <- result.try(cut_single_offset_provisional_by_source(
+    provisional,
+    path,
+    options,
+  ))
+  use bands <- result.try(
+    single_offset_band_candidates(
+      source_subpaths,
+      distance,
+      options,
+      converted: [],
     ),
   )
-  let retained = merge_touching_chunks(retained, options.fitting.tolerance)
-  use subpaths <- result.try(chunks_to_subpaths(
-    retained,
-    options.fitting.tolerance,
-    closed: all_subpaths_closed(svg_path.path_subpaths(path)),
+  use result <- result.try(internal_topological_single_offset_path(
+    provisional,
+    bands:,
+    options:,
   ))
-  Ok(svg_path.Path(subpaths:))
+  Ok(result)
 }
 
-fn all_subpaths_closed(subpaths: List(svg_path.Subpath)) -> Bool {
-  case subpaths {
-    [] -> False
-    [first, ..rest] ->
-      svg_path.subpath_is_closed(first) && all_remaining_subpaths_closed(rest)
-  }
+fn cut_single_offset_provisional_by_source(
+  provisional: List(svg_path.Subpath),
+  source: svg_path.Path,
+  options: Options,
+) -> Result(List(svg_path.Subpath), Error) {
+  use build <- result.try(provisional_source_cut_segment_arrangement(
+    provisional,
+    source,
+  ))
+  use cut <- result.try(
+    provisional
+    |> list.index_map(fn(subpath, index) {
+      cut_single_offset_provisional_subpath(
+        build,
+        subpath,
+        subpath_index: index,
+        options:,
+      )
+    })
+    |> result.all,
+  )
+  Ok(cut)
 }
 
-fn all_remaining_subpaths_closed(subpaths: List(svg_path.Subpath)) -> Bool {
+fn cut_single_offset_provisional_subpath(
+  build: OffsetArrangementBuild,
+  original: svg_path.Subpath,
+  subpath_index subpath_index: Int,
+  options options: Options,
+) -> Result(svg_path.Subpath, Error) {
+  let OffsetArrangementBuild(segment_images:, ..) = build
+  use pieces <- result.try(
+    segment_images
+    |> list.filter(fn(image) {
+      let arrangement_graph.ArrangementSourceSegmentImage(segment_index:, ..) =
+        image
+      offset_segment_index_is_in_subpath(
+        build,
+        segment_index,
+        ProvisionalOffsetSegment,
+        subpath_index,
+      )
+    })
+    |> list.map(fn(image) {
+      source_segment_image_edges(build, image)
+      |> result.map(fn(edges) {
+        edges
+        |> list.map(fn(directed) {
+          let #(edge, reversed) = directed
+          case reversed {
+            True -> svg_path.segment_reverse(edge.segment)
+            False -> edge.segment
+          }
+        })
+      })
+    })
+    |> result.all,
+  )
+  use cut <- result.try(
+    list.flatten(pieces)
+    |> svg_path.subpath_with(policy: svg_path.WiggleThenBridgeWith(
+      options.fitting.tolerance,
+    ))
+    |> result.map_error(PathError),
+  )
+  svg_path.subpath_set_closed_with(
+    cut,
+    closed: svg_path.subpath_is_closed(original),
+    policy: svg_path.WiggleThenBridgeWith(options.fitting.tolerance),
+  )
+  |> result.map_error(PathError)
+}
+
+fn single_offset_band_candidates(
+  subpaths: List(svg_path.Subpath),
+  distance: Float,
+  options: Options,
+  converted converted: List(OneSubpathBand),
+) -> Result(List(OneSubpathBand), Error) {
   case subpaths {
-    [] -> True
-    [first, ..rest] ->
-      svg_path.subpath_is_closed(first) && all_remaining_subpaths_closed(rest)
+    [] -> Ok(list.reverse(converted))
+    [first, ..rest] -> {
+      use band <- result.try(single_offset_band_candidate(
+        first,
+        distance,
+        options,
+      ))
+      single_offset_band_candidates(rest, distance, options, converted: [
+        band,
+        ..converted
+      ])
+    }
   }
 }
 
@@ -619,7 +2150,11 @@ pub fn path_sections_with(
       converted: [],
     ),
   )
-  use sections <- result.try(arrangement_global_section_chunks(provisional))
+  use sections <- result.try(arrangement_global_section_chunks(
+    provisional,
+    options,
+    cleanup: False,
+  ))
   use retained <- result.try(
     retain_global_parametric_sections(
       sections,
@@ -888,17 +2423,181 @@ fn stroke_path_subpaths(
   }
 }
 
-/// Build the arrangement used to node provisional offset subpaths.
-@internal
-pub fn internal_provisional_arrangement(
+fn provisional_arrangement(
   provisional: List(svg_path.Subpath),
 ) -> Result(arrangement_graph.ArrangementGraphBuild, Error) {
-  arrangement_graph.build(
-    [svg_path.Path(subpaths: provisional)],
-    tolerance: point_tolerance,
-    minimum_chord: point_tolerance,
+  use build <- result.try(provisional_segment_arrangement(provisional))
+  offset_public_arrangement_build(build)
+}
+
+fn offset_public_arrangement_build(
+  build: OffsetArrangementBuild,
+) -> Result(arrangement_graph.ArrangementGraphBuild, Error) {
+  let OffsetArrangementBuild(graph:, segment_images:, ..) = build
+  use images <- result.try(
+    segment_images
+    |> list.map(source_segment_image_to_public_image(build, _))
+    |> result.all,
   )
-  |> result.map_error(ArrangementGraphError)
+  Ok(arrangement_graph.ArrangementGraphBuild(graph:, segment_images: images))
+}
+
+fn source_segment_image_to_public_image(
+  build: OffsetArrangementBuild,
+  image: arrangement_graph.ArrangementSourceSegmentImage,
+) -> Result(arrangement_graph.ArrangementSegmentImage, Error) {
+  let arrangement_graph.ArrangementSourceSegmentImage(segment_index:, edges:) =
+    image
+  use indexed <- result.try(
+    offset_indexed_segment_at(build.indexed_segments, segment_index)
+    |> result.map_error(fn(_) {
+      ArrangementGraphError(arrangement_graph.InternalNormalizationError)
+    }),
+  )
+  let IndexedOffsetSegment(group:, subpath_index:, ..) = indexed
+  case group {
+    SourceCutSegment ->
+      Error(ArrangementGraphError(arrangement_graph.InternalNormalizationError))
+    ProvisionalOffsetSegment ->
+      Ok(arrangement_graph.ArrangementSegmentImage(
+        path_index: 0,
+        subpath_index:,
+        segment_index: segment_index,
+        edges: list.map(edges, fn(edge) {
+          let arrangement_graph.ArrangementSegmentEdgeImage(
+            edge_id:,
+            reversed:,
+            ..,
+          ) = edge
+          arrangement_graph.DirectedEdgeReference(edge_id:, reversed:)
+        }),
+      ))
+  }
+}
+
+fn provisional_segment_arrangement(
+  provisional: List(svg_path.Subpath),
+) -> Result(OffsetArrangementBuild, Error) {
+  let indexed =
+    indexed_offset_segments(provisional, group: ProvisionalOffsetSegment)
+  offset_segment_arrangement(indexed)
+}
+
+fn provisional_source_cut_segment_arrangement(
+  provisional: List(svg_path.Subpath),
+  source: svg_path.Path,
+) -> Result(OffsetArrangementBuild, Error) {
+  let indexed =
+    list.append(
+      indexed_offset_segments(provisional, group: ProvisionalOffsetSegment),
+      indexed_offset_segments(
+        svg_path.path_subpaths(source),
+        group: SourceCutSegment,
+      ),
+    )
+  offset_segment_arrangement(indexed)
+}
+
+fn offset_segment_arrangement(
+  indexed: List(IndexedOffsetSegment),
+) -> Result(OffsetArrangementBuild, Error) {
+  let segments =
+    indexed
+    |> list.map(fn(item) {
+      let IndexedOffsetSegment(segment:, ..) = item
+      segment
+    })
+  use build <- result.try(
+    arrangement_graph.build_with(
+      segments,
+      vertex_tolerance: arrangement_tolerance,
+      minimum_chord: arrangement_tolerance,
+      endpoint_sliver_tolerance: 0.0,
+    )
+    |> result.map_error(ArrangementGraphError),
+  )
+  let arrangement_graph.ArrangementSegmentBuild(
+    graph:,
+    segment_images:,
+    edge_images:,
+    ..,
+  ) = build
+  Ok(OffsetArrangementBuild(
+    graph:,
+    indexed_segments: indexed,
+    segment_images:,
+    edge_images:,
+  ))
+}
+
+fn indexed_offset_segments(
+  subpaths: List(svg_path.Subpath),
+  group group: OffsetArrangementSegmentGroup,
+) -> List(IndexedOffsetSegment) {
+  indexed_offset_segments_loop(subpaths, group, subpath_index: 0, collected: [])
+}
+
+fn indexed_offset_segments_loop(
+  subpaths: List(svg_path.Subpath),
+  group: OffsetArrangementSegmentGroup,
+  subpath_index subpath_index: Int,
+  collected collected: List(IndexedOffsetSegment),
+) -> List(IndexedOffsetSegment) {
+  case subpaths {
+    [] -> list.reverse(collected)
+    [first, ..rest] -> {
+      let collected =
+        first
+        |> svg_path.subpath_segments
+        |> list.fold(collected, fn(collected, segment) {
+          [IndexedOffsetSegment(group:, subpath_index:, segment:), ..collected]
+        })
+      indexed_offset_segments_loop(
+        rest,
+        group,
+        subpath_index: subpath_index + 1,
+        collected:,
+      )
+    }
+  }
+}
+
+fn source_segment_image_edges(
+  build: OffsetArrangementBuild,
+  image: arrangement_graph.ArrangementSourceSegmentImage,
+) -> Result(List(#(arrangement_graph.ArrangementEdge, Bool)), Error) {
+  let OffsetArrangementBuild(
+    graph: arrangement_graph.ArrangementGraph(edges: graph_edges, ..),
+    ..,
+  ) = build
+  let arrangement_graph.ArrangementSourceSegmentImage(edges:, ..) = image
+  edges
+  |> list.map(fn(reference) {
+    let arrangement_graph.ArrangementSegmentEdgeImage(edge_id:, reversed:, ..) =
+      reference
+    use edge <- result.try(
+      arrangement_edge_by_id(graph_edges, edge_id)
+      |> result.map_error(ArrangementGraphError),
+    )
+    Ok(#(edge, reversed))
+  })
+  |> result.all
+}
+
+fn arrangement_edge_by_id(
+  edges: List(arrangement_graph.ArrangementEdge),
+  id: Int,
+) -> Result(arrangement_graph.ArrangementEdge, arrangement_graph.Error) {
+  case edges {
+    [] -> Error(arrangement_graph.MissingEdge(id))
+    [first, ..rest] -> {
+      let arrangement_graph.ArrangementEdge(id: candidate, ..) = first
+      case candidate == id {
+        True -> Ok(first)
+        False -> arrangement_edge_by_id(rest, id)
+      }
+    }
+  }
 }
 
 /// Return one atomic section for each directed provisional-edge occurrence.
@@ -908,47 +2607,17 @@ pub fn internal_arrangement_global_sections(
   provisional: List(svg_path.Subpath),
   options options: Options,
 ) -> Result(svg_path.Path, Error) {
-  use sections <- result.try(arrangement_global_section_chunks(provisional))
+  use sections <- result.try(arrangement_global_section_chunks(
+    provisional,
+    options,
+    cleanup: False,
+  ))
   use subpaths <- result.try(chunks_to_subpaths(
     sections,
     options.fitting.tolerance,
     closed: False,
   ))
   Ok(svg_path.Path(subpaths:))
-}
-
-/// Return pre-filter arrangement sections and the subset rejected by trimming.
-@internal
-pub fn internal_global_section_filter_diagnostic(
-  provisional: List(svg_path.Subpath),
-  source source: svg_path.Path,
-  distance distance: Float,
-  options options: Options,
-) -> Result(#(svg_path.Path, svg_path.Path), Error) {
-  use sections <- result.try(arrangement_global_section_chunks(provisional))
-  use rejected <- result.try(
-    rejected_global_parametric_sections(
-      sections,
-      source:,
-      distance:,
-      options:,
-      rejected: [],
-    ),
-  )
-  use section_subpaths <- result.try(chunks_to_subpaths(
-    sections,
-    options.fitting.tolerance,
-    closed: False,
-  ))
-  use rejected_subpaths <- result.try(chunks_to_subpaths(
-    rejected,
-    options.fitting.tolerance,
-    closed: False,
-  ))
-  Ok(#(
-    svg_path.Path(subpaths: section_subpaths),
-    svg_path.Path(subpaths: rejected_subpaths),
-  ))
 }
 
 /// Apply the production global-section trimming predicate to one subpath.
@@ -967,14 +2636,47 @@ pub fn internal_global_section_is_valid(
   )
 }
 
+fn offset_segment_index_is_in_subpath(
+  build: OffsetArrangementBuild,
+  segment_index: Int,
+  group: OffsetArrangementSegmentGroup,
+  subpath_index: Int,
+) -> Bool {
+  let OffsetArrangementBuild(indexed_segments:, ..) = build
+  case offset_indexed_segment_at(indexed_segments, segment_index) {
+    Ok(IndexedOffsetSegment(
+      group: candidate_group,
+      subpath_index: candidate,
+      ..,
+    )) -> candidate_group == group && candidate == subpath_index
+    Error(Nil) -> False
+  }
+}
+
+fn offset_indexed_segment_at(
+  segments: List(IndexedOffsetSegment),
+  index: Int,
+) -> Result(IndexedOffsetSegment, Nil) {
+  case segments, index {
+    [], _ -> Error(Nil)
+    [first, ..], 0 -> Ok(first)
+    [_, ..rest], _ -> offset_indexed_segment_at(rest, index - 1)
+  }
+}
+
 fn arrangement_global_section_chunks(
   provisional: List(svg_path.Subpath),
+  options: Options,
+  cleanup cleanup: Bool,
 ) -> Result(List(List(svg_path.Segment)), Error) {
-  use build <- result.try(internal_provisional_arrangement(provisional))
+  let _ = options
+  let _ = cleanup
+  use build <- result.try(provisional_segment_arrangement(provisional))
+  let OffsetArrangementBuild(segment_images:, ..) = build
   use image_sections <- result.try(
-    build.segment_images
+    segment_images
     |> list.map(fn(image) {
-      arrangement_graph.segment_image_edges(build, image)
+      source_segment_image_edges(build, image)
       |> result.map(fn(edges) {
         list.map(edges, fn(directed) {
           let #(edge, reversed) = directed
@@ -986,7 +2688,6 @@ fn arrangement_global_section_chunks(
           ]
         })
       })
-      |> result.map_error(ArrangementGraphError)
     })
     |> result.all,
   )
@@ -1024,37 +2725,6 @@ fn retain_global_parametric_sections(
   }
 }
 
-fn rejected_global_parametric_sections(
-  sections: List(List(svg_path.Segment)),
-  source source: svg_path.Path,
-  distance distance: Float,
-  options options: Options,
-  rejected rejected: List(List(svg_path.Segment)),
-) -> Result(List(List(svg_path.Segment)), Error) {
-  case sections {
-    [] -> Ok(list.reverse(rejected))
-    [first, ..rest] -> {
-      use keep <- result.try(global_parametric_section_is_valid(
-        first,
-        source:,
-        distance:,
-        options:,
-      ))
-      let rejected = case keep {
-        True -> rejected
-        False -> [first, ..rejected]
-      }
-      rejected_global_parametric_sections(
-        rest,
-        source:,
-        distance:,
-        options:,
-        rejected:,
-      )
-    }
-  }
-}
-
 fn global_parametric_section_is_valid(
   section: List(svg_path.Segment),
   source source: svg_path.Path,
@@ -1063,7 +2733,10 @@ fn global_parametric_section_is_valid(
 ) -> Result(Bool, Error) {
   use section <- result.try(normalize_chunk(section, options.fitting.tolerance))
   use section <- result.try(
-    svg_path.subpath_with(section, policy: svg_path.Wiggle)
+    svg_path.subpath_with(
+      section,
+      policy: svg_path.WiggleWith(options.fitting.tolerance),
+    )
     |> result.map_error(PathError),
   )
   use length <- result.try(
@@ -1197,7 +2870,10 @@ fn parametric_provisional_subpath(
         closed: svg_path.subpath_is_closed(subpath),
       ))
       use provisional <- result.try(
-        svg_path.subpath_with(output_segments, policy: svg_path.Wiggle)
+        svg_path.subpath_with(
+          output_segments,
+          policy: svg_path.WiggleWith(options.fitting.tolerance),
+        )
         |> result.map_error(PathError),
       )
       case svg_path.subpath_is_closed(subpath) {
@@ -1206,7 +2882,7 @@ fn parametric_provisional_subpath(
           svg_path.subpath_set_closed_with(
             provisional,
             closed: True,
-            policy: svg_path.Wiggle,
+            policy: svg_path.WiggleWith(options.fitting.tolerance),
           )
           |> result.map_error(PathError)
       }
@@ -1314,47 +2990,17 @@ fn closed_stroke_path(
   radius radius: Float,
   options options: Options,
 ) -> Result(svg_path.Path, Error) {
-  let distance_a = 0.0 -. radius
-  let distance_b = radius
-  use provisional_a <- result.try(subpath_untrimmed_with(
+  use band <- result.try(stroke_band_candidate(
     source,
-    distance: distance_a,
-    options:,
+    radius *. 2.0,
+    Butt,
+    options,
   ))
-  use provisional_b <- result.try(subpath_untrimmed_with(
-    source,
-    distance: distance_b,
-    options:,
-  ))
-  use #(cross_a, cross_b) <- result.try(cross_side_split_parameters(
-    provisional_a,
-    provisional_b,
-  ))
-  use chunks_a <- result.try(parametric_pruned_band_side_chunks(
-    source,
-    provisional_a,
-    distance_a:,
-    distance_b:,
-    options:,
-    extra_split_points: cross_a,
-  ))
-  use chunks_b <- result.try(parametric_pruned_band_side_chunks(
-    source,
-    provisional_b,
-    distance_a:,
-    distance_b:,
-    options:,
-    extra_split_points: cross_b,
-  ))
-  let chunks =
-    list.append(chunks_a, chunks_b)
-    |> merge_connecting_chunks(options.fitting.tolerance)
-  use subpaths <- result.try(chunks_to_subpaths(
-    chunks,
-    options.fitting.tolerance,
-    closed: True,
-  ))
-  Ok(svg_path.Path(subpaths:))
+  case band {
+    OpenSubpathBand(_) -> Error(BandSubpathNotClosed)
+    ClosedSubpathBand(side_a, side_b) ->
+      internal_topological_band_path([side_a, side_b], bands: [band], options:)
+  }
 }
 
 fn orient_outline_path(path: svg_path.Path) -> Result(svg_path.Path, Error) {
@@ -1376,11 +3022,25 @@ fn orient_outline_subpaths(
   case subpaths {
     [] -> Ok(list.reverse(oriented))
     [first, ..rest] -> {
-      use depth <- result.try(outline_contour_depth(first, all))
-      let assert Ok(remainder) = int.remainder(depth, by: 2)
-      let oriented_first =
-        orient_outline_subpath(first, clockwise: remainder == 0)
+      use oriented_first <- result.try(orient_outline_subpath_from_depth(
+        first,
+        all,
+      ))
       orient_outline_subpaths(rest, all:, oriented: [oriented_first, ..oriented])
+    }
+  }
+}
+
+fn orient_outline_subpath_from_depth(
+  subpath: svg_path.Subpath,
+  all: List(svg_path.Subpath),
+) -> Result(svg_path.Subpath, Error) {
+  case svg_path.subpath_is_closed(subpath) {
+    False -> Ok(subpath)
+    True -> {
+      use depth <- result.try(outline_contour_depth(subpath, all))
+      let assert Ok(remainder) = int.remainder(depth, by: 2)
+      Ok(orient_outline_subpath(subpath, clockwise: remainder == 0))
     }
   }
 }
@@ -1668,24 +3328,6 @@ fn reverse_segments(
   |> list.map(svg_path.segment_reverse)
 }
 
-fn parametric_pruned_subpath(
-  source: svg_path.Subpath,
-  provisional: svg_path.Subpath,
-  distance: Float,
-  options: Options,
-) -> Result(svg_path.Path, Error) {
-  use subpaths <- result.try(
-    parametric_pruned_side(
-      source,
-      provisional,
-      distance,
-      options,
-      extra_split_points: [],
-    ),
-  )
-  Ok(svg_path.Path(subpaths:))
-}
-
 fn parametric_pruned_pair(
   source: svg_path.Subpath,
   provisional_a provisional_a: svg_path.Subpath,
@@ -1715,37 +3357,6 @@ fn parametric_pruned_pair(
     extra_split_points: cross_b,
   ))
   Ok(list.append(subpaths_a, subpaths_b))
-}
-
-fn parametric_pruned_side(
-  source: svg_path.Subpath,
-  provisional: svg_path.Subpath,
-  distance: Float,
-  options: Options,
-  extra_split_points extra_split_points: List(svg_path.SubpathParameter),
-) -> Result(List(svg_path.Subpath), Error) {
-  use sections <- result.try(parametric_self_intersection_sections(
-    provisional,
-    intersections.default_options(),
-    options.fitting.tolerance,
-    extra_split_points:,
-  ))
-  use retained <- result.try(
-    retain_parametric_sections(
-      sections,
-      source:,
-      distance:,
-      options:,
-      retained: [],
-    ),
-  )
-  let retained = merge_touching_chunks(retained, options.fitting.tolerance)
-  use subpaths <- result.try(chunks_to_subpaths(
-    retained,
-    options.fitting.tolerance,
-    closed: svg_path.subpath_is_closed(source),
-  ))
-  Ok(subpaths)
 }
 
 fn parametric_pruned_band_side(
@@ -2065,115 +3676,8 @@ fn append_split_pieces(
   }
 }
 
-fn retain_parametric_sections(
-  sections: List(List(svg_path.Segment)),
-  source source: svg_path.Subpath,
-  distance distance: Float,
-  options options: Options,
-  retained retained: List(List(svg_path.Segment)),
-) -> Result(List(List(svg_path.Segment)), Error) {
-  case sections {
-    [] -> Ok(list.reverse(retained))
-    [first, ..rest] -> {
-      use keep <- result.try(parametric_section_is_valid(
-        first,
-        source:,
-        distance:,
-        options:,
-      ))
-      let retained = case keep {
-        True -> [first, ..retained]
-        False -> retained
-      }
-      retain_parametric_sections(rest, source:, distance:, options:, retained:)
-    }
-  }
-}
-
-fn parametric_section_is_valid(
-  section: List(svg_path.Segment),
-  source source: svg_path.Subpath,
-  distance distance: Float,
-  options options: Options,
-) -> Result(Bool, Error) {
-  use section <- result.try(normalize_chunk(section, options.fitting.tolerance))
-  use section <- result.try(
-    svg_path.subpath_with(section, policy: svg_path.Wiggle)
-    |> result.map_error(PathError),
-  )
-  use length <- result.try(
-    svg_path.subpath_length(section) |> result.map_error(PathError),
-  )
-  parametric_section_has_enough_non_negative_samples(
-    section,
-    length,
-    section_sample_parameters(),
-    source:,
-    distance:,
-    options:,
-    count: 0,
-  )
-}
-
 fn section_sample_parameters() -> List(Float) {
   [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
-}
-
-fn parametric_section_has_enough_non_negative_samples(
-  section: svg_path.Subpath,
-  length: Float,
-  samples: List(Float),
-  source source: svg_path.Subpath,
-  distance distance: Float,
-  options options: Options,
-  count count: Int,
-) -> Result(Bool, Error) {
-  case samples {
-    [] -> Ok(count >= 5)
-    [first, ..rest] -> {
-      use point <- result.try(
-        svg_path.subpath_point_at_length(section, distance: length *. first)
-        |> result.map_error(PathError),
-      )
-      use is_non_negative <- result.try(parametric_point_is_non_negative(
-        point,
-        source:,
-        distance:,
-        options:,
-      ))
-      let count = case is_non_negative {
-        True -> count + 1
-        False -> count
-      }
-      parametric_section_has_enough_non_negative_samples(
-        section,
-        length,
-        rest,
-        source:,
-        distance:,
-        options:,
-        count:,
-      )
-    }
-  }
-}
-
-fn parametric_point_is_non_negative(
-  point: svg_path.Point,
-  source source: svg_path.Subpath,
-  distance distance: Float,
-  options options: Options,
-) -> Result(Bool, Error) {
-  let margin = distance_margin(options)
-  use projection <- result.try(
-    svg_path.subpath_projection_with(
-      point,
-      to: source,
-      options: options.trimming,
-    )
-    |> result.map_error(PathError),
-  )
-  Ok(projection.distance +. margin >=. float.absolute_value(distance))
 }
 
 fn retain_band_boundary_sections(
@@ -2219,7 +3723,10 @@ fn band_section_is_boundary(
 ) -> Result(Bool, Error) {
   use section <- result.try(normalize_chunk(section, options.fitting.tolerance))
   use section <- result.try(
-    svg_path.subpath_with(section, policy: svg_path.Wiggle)
+    svg_path.subpath_with(
+      section,
+      policy: svg_path.WiggleWith(options.fitting.tolerance),
+    )
     |> result.map_error(PathError),
   )
   use length <- result.try(
@@ -2359,7 +3866,10 @@ fn stroke_section_is_boundary(
 ) -> Result(Bool, Error) {
   use section <- result.try(normalize_chunk(section, options.fitting.tolerance))
   use section <- result.try(
-    svg_path.subpath_with(section, policy: svg_path.Wiggle)
+    svg_path.subpath_with(
+      section,
+      policy: svg_path.WiggleWith(options.fitting.tolerance),
+    )
     |> result.map_error(PathError),
   )
   use length <- result.try(
@@ -3080,93 +4590,6 @@ fn merge_touching_chunks(
   }
 }
 
-fn merge_connecting_chunks(
-  chunks: List(List(svg_path.Segment)),
-  tolerance: Float,
-) -> List(List(svg_path.Segment)) {
-  let #(merged, changed) =
-    merge_connecting_chunks_pass(chunks, tolerance, merged: [])
-  case changed {
-    True -> merge_connecting_chunks(merged, tolerance)
-    False -> merged
-  }
-}
-
-fn merge_connecting_chunks_pass(
-  chunks: List(List(svg_path.Segment)),
-  tolerance: Float,
-  merged merged: List(List(svg_path.Segment)),
-) -> #(List(List(svg_path.Segment)), Bool) {
-  case chunks {
-    [] -> #(list.reverse(merged), False)
-    [first, ..remaining] ->
-      case find_connecting_chunk(first, remaining, tolerance, skipped: []) {
-        Ok(#(connected, rest)) -> #(
-          list.reverse(merged) |> list.append([connected, ..rest]),
-          True,
-        )
-        Error(Nil) ->
-          merge_connecting_chunks_pass(remaining, tolerance, merged: [
-            first,
-            ..merged
-          ])
-      }
-  }
-}
-
-fn find_connecting_chunk(
-  current: List(svg_path.Segment),
-  candidates: List(List(svg_path.Segment)),
-  tolerance: Float,
-  skipped skipped: List(List(svg_path.Segment)),
-) -> Result(#(List(svg_path.Segment), List(List(svg_path.Segment))), Nil) {
-  case candidates {
-    [] -> Error(Nil)
-    [first, ..rest] ->
-      case connect_chunks(current, first, tolerance) {
-        Ok(connected) ->
-          Ok(#(connected, list.append(list.reverse(skipped), rest)))
-        Error(Nil) ->
-          find_connecting_chunk(current, rest, tolerance, skipped: [
-            first,
-            ..skipped
-          ])
-      }
-  }
-}
-
-fn connect_chunks(
-  left: List(svg_path.Segment),
-  right: List(svg_path.Segment),
-  tolerance: Float,
-) -> Result(List(svg_path.Segment), Nil) {
-  case left, right, list.last(left), list.last(right) {
-    [left_first, ..], [right_first, ..], Ok(left_last), Ok(right_last) -> {
-      let left_start = svg_path.segment_start(left_first)
-      let left_end = svg_path.segment_end(left_last)
-      let right_start = svg_path.segment_start(right_first)
-      let right_end = svg_path.segment_end(right_last)
-      case same_point(left_end, right_start, tolerance) {
-        True -> Ok(list.append(left, right))
-        False ->
-          case same_point(left_end, right_end, tolerance) {
-            True -> Ok(list.append(left, reverse_segments(right)))
-            False ->
-              case same_point(left_start, right_end, tolerance) {
-                True -> Ok(list.append(right, left))
-                False ->
-                  case same_point(left_start, right_start, tolerance) {
-                    True -> Ok(list.append(reverse_segments(right), left))
-                    False -> Error(Nil)
-                  }
-              }
-          }
-      }
-    }
-    _, _, _, _ -> Error(Nil)
-  }
-}
-
 fn chunks_to_subpaths(
   chunks: List(List(svg_path.Segment)),
   tolerance: Float,
@@ -3195,7 +4618,10 @@ fn chunks_to_subpaths_loop(
         False -> first
       }
       use subpath <- result.try(
-        svg_path.subpath_with(first, policy: svg_path.Wiggle)
+        svg_path.subpath_with(
+          first,
+          policy: svg_path.WiggleThenBridgeWith(tolerance),
+        )
         |> result.map_error(PathError),
       )
       use subpath <- result.try(case close {
@@ -3203,7 +4629,7 @@ fn chunks_to_subpaths_loop(
           svg_path.subpath_set_closed_with(
             subpath,
             closed: True,
-            policy: svg_path.Wiggle,
+            policy: svg_path.WiggleThenBridgeWith(tolerance),
           )
           |> result.map_error(PathError)
         False -> Ok(subpath)
@@ -3516,31 +4942,30 @@ fn join_free_portions(
   }
 }
 
-fn original_recursive_smooth_offset_builder() -> SmoothOffsetBuilder {
-  SmoothOffsetBuilder(build: original_recursive_smooth_offset_segments)
-}
-
 fn stalled_run_smooth_offset_builder() -> SmoothOffsetBuilder {
   SmoothOffsetBuilder(build: stalled_run_smooth_offset_segments)
 }
 
-fn original_recursive_smooth_offset_segments(
+fn stalled_run_smooth_offset_segments(
   portion: JoinFreePortion,
   distance: Float,
   options: Options,
 ) -> Result(List(OffsetSegment), Error) {
-  let JoinFreePortion(subpath:, closed:) = portion
-  offset_subpath_segments(
-    svg_path.subpath_segments(subpath),
-    distance,
-    options,
-    fit_policy: OriginalRecursiveFit,
-    closed:,
-    converted: [],
+  use offsets <- result.try(
+    stalled_run_smooth_offset_segments_without_postconditions(
+      portion,
+      distance,
+      options,
+    ),
   )
+  use _ <- result.try(assert_smooth_offset_postconditions(
+    offsets,
+    options.tangent_heal_angle_degrees,
+  ))
+  Ok(offsets)
 }
 
-fn stalled_run_smooth_offset_segments(
+fn stalled_run_smooth_offset_segments_without_postconditions(
   portion: JoinFreePortion,
   distance: Float,
   options: Options,
@@ -3552,6 +4977,7 @@ fn stalled_run_smooth_offset_segments(
       distance,
       threshold: options.stalled_offset_diameter,
     )
+    |> mark_smooth_source_piece_cross_hinges(distance)
   use offsets <- result.try(
     offset_smooth_source_pieces(
       pieces,
@@ -3561,10 +4987,6 @@ fn stalled_run_smooth_offset_segments(
       converted: [],
     ),
   )
-  use _ <- result.try(assert_smooth_offset_postconditions(
-    offsets,
-    options.tangent_heal_angle_degrees,
-  ))
   Ok(offsets)
 }
 
@@ -3577,7 +4999,9 @@ fn classify_smooth_source_pieces(
     segments,
     distance,
     threshold,
+    source_segment_index: 0,
     stalled: [],
+    stalled_start_index: 0,
     pieces: [],
   )
 }
@@ -3586,12 +5010,15 @@ fn classify_smooth_source_pieces_loop(
   segments: List(svg_path.Segment),
   distance: Float,
   threshold: Float,
+  source_segment_index source_segment_index: Int,
   stalled stalled: List(svg_path.Segment),
+  stalled_start_index stalled_start_index: Int,
   pieces pieces: List(SmoothSourcePiece),
 ) -> List(SmoothSourcePiece) {
   case segments {
     [] -> {
-      let pieces = prepend_stalled_source_run(stalled, to: pieces)
+      let pieces =
+        prepend_stalled_source_run(stalled, stalled_start_index, to: pieces)
       list.reverse(pieces)
     }
     [first, ..rest] -> {
@@ -3601,17 +5028,33 @@ fn classify_smooth_source_pieces_loop(
             rest,
             distance,
             threshold,
+            source_segment_index: source_segment_index + 1,
             stalled: [first, ..stalled],
+            stalled_start_index: case stalled {
+              [] -> source_segment_index
+              _ -> stalled_start_index
+            },
             pieces:,
           )
         False -> {
-          let pieces = prepend_stalled_source_run(stalled, to: pieces)
+          let pieces =
+            prepend_stalled_source_run(stalled, stalled_start_index, to: pieces)
           classify_smooth_source_pieces_loop(
             rest,
             distance,
             threshold,
+            source_segment_index: source_segment_index + 1,
             stalled: [],
-            pieces: [BigSourceSegment(first), ..pieces],
+            stalled_start_index: source_segment_index + 1,
+            pieces: [
+              BigSourceSegment(
+                source_segment_index: source_segment_index,
+                segment: first,
+                start_is_offset_hinge: False,
+                end_is_offset_hinge: False,
+              ),
+              ..pieces
+            ],
           )
         }
       }
@@ -3621,12 +5064,114 @@ fn classify_smooth_source_pieces_loop(
 
 fn prepend_stalled_source_run(
   stalled: List(svg_path.Segment),
+  stalled_start_index: Int,
   to pieces: List(SmoothSourcePiece),
 ) -> List(SmoothSourcePiece) {
   case stalled {
     [] -> pieces
-    _ -> [StalledSourceRun(list.reverse(stalled)), ..pieces]
+    _ -> [
+      StalledSourceRun(
+        source_start_segment_index: stalled_start_index,
+        segments: list.reverse(stalled),
+      ),
+      ..pieces
+    ]
   }
+}
+
+fn mark_smooth_source_piece_cross_hinges(
+  pieces: List(SmoothSourcePiece),
+  distance: Float,
+) -> List(SmoothSourcePiece) {
+  case pieces {
+    [] | [_] -> pieces
+    [first, second, ..rest] ->
+      mark_smooth_source_piece_cross_hinges_loop(
+        first,
+        [second, ..rest],
+        distance,
+        marked: [],
+      )
+  }
+}
+
+fn mark_smooth_source_piece_cross_hinges_loop(
+  previous: SmoothSourcePiece,
+  rest: List(SmoothSourcePiece),
+  distance: Float,
+  marked marked: List(SmoothSourcePiece),
+) -> List(SmoothSourcePiece) {
+  case rest {
+    [] -> list.reverse([previous, ..marked])
+    [next, ..remaining] -> {
+      let #(previous, next) =
+        mark_adjacent_smooth_source_piece_cross_hinge(previous, next, distance)
+      mark_smooth_source_piece_cross_hinges_loop(
+        next,
+        remaining,
+        distance,
+        marked: [previous, ..marked],
+      )
+    }
+  }
+}
+
+fn mark_adjacent_smooth_source_piece_cross_hinge(
+  left: SmoothSourcePiece,
+  right: SmoothSourcePiece,
+  distance: Float,
+) -> #(SmoothSourcePiece, SmoothSourcePiece) {
+  case left, right {
+    BigSourceSegment(
+      source_segment_index: left_index,
+      segment: left_segment,
+      start_is_offset_hinge: left_start_hinge,
+      ..,
+    ),
+      BigSourceSegment(
+        source_segment_index: right_index,
+        segment: right_segment,
+        end_is_offset_hinge: right_end_hinge,
+        ..,
+      )
+    -> {
+      case
+        source_segments_have_boundary_hinge(
+          left_segment,
+          right_segment,
+          distance,
+        )
+      {
+        True -> #(
+          BigSourceSegment(
+            source_segment_index: left_index,
+            segment: left_segment,
+            start_is_offset_hinge: left_start_hinge,
+            end_is_offset_hinge: True,
+          ),
+          BigSourceSegment(
+            source_segment_index: right_index,
+            segment: right_segment,
+            start_is_offset_hinge: True,
+            end_is_offset_hinge: right_end_hinge,
+          ),
+        )
+        False -> #(left, right)
+      }
+    }
+    _, _ -> #(left, right)
+  }
+}
+
+fn source_segments_have_boundary_hinge(
+  left: svg_path.Segment,
+  right: svg_path.Segment,
+  distance: Float,
+) -> Bool {
+  offset_curvature_zones_form_hinge(
+    Some(offset_curvature_zone(left, distance, 1.0)),
+    Some(offset_curvature_zone(right, distance, 0.0)),
+  )
 }
 
 fn source_segment_offset_is_stalled(
@@ -3655,13 +5200,12 @@ fn offset_smooth_source_pieces(
   converted converted: List(OffsetSegment),
 ) -> Result(List(OffsetSegment), Error) {
   case pieces {
-    [] ->
-      heal_offset_boundaries(
-        list.reverse(converted),
-        distance,
-        options.tangent_heal_angle_degrees,
-        closed:,
-      )
+    [] -> {
+      let offsets =
+        list.reverse(converted)
+        |> mark_cross_source_offset_hinges(distance, closed:)
+      heal_offset_boundaries(offsets, distance, options, closed:)
+    }
     [first, ..rest] -> {
       use offsets <- result.try(offset_smooth_source_piece(
         first,
@@ -3679,28 +5223,770 @@ fn offset_smooth_source_pieces(
   }
 }
 
+fn mark_cross_source_offset_hinges(
+  offsets: List(OffsetSegment),
+  distance: Float,
+  closed closed: Bool,
+) -> List(OffsetSegment) {
+  let marked = mark_linear_cross_source_offset_hinges(offsets, distance)
+  case closed, marked {
+    True, [first, second, ..rest] -> {
+      let assert Ok(last) = list.last([first, second, ..rest])
+      let #(last, first) =
+        mark_adjacent_cross_source_offset_hinge(last, first, distance)
+      [first, ..replace_last([second, ..rest], last, previous: [])]
+    }
+    _, _ -> marked
+  }
+}
+
+fn mark_linear_cross_source_offset_hinges(
+  offsets: List(OffsetSegment),
+  distance: Float,
+) -> List(OffsetSegment) {
+  case offsets {
+    [] | [_] -> offsets
+    [first, second, ..rest] ->
+      mark_linear_cross_source_offset_hinges_loop(
+        first,
+        [second, ..rest],
+        distance,
+        marked: [],
+      )
+  }
+}
+
+fn mark_linear_cross_source_offset_hinges_loop(
+  previous: OffsetSegment,
+  rest: List(OffsetSegment),
+  distance: Float,
+  marked marked: List(OffsetSegment),
+) -> List(OffsetSegment) {
+  case rest {
+    [] -> list.reverse([previous, ..marked])
+    [next, ..remaining] -> {
+      let #(previous, next) =
+        mark_adjacent_cross_source_offset_hinge(previous, next, distance)
+      mark_linear_cross_source_offset_hinges_loop(
+        next,
+        remaining,
+        distance,
+        marked: [previous, ..marked],
+      )
+    }
+  }
+}
+
+fn mark_adjacent_cross_source_offset_hinge(
+  left: OffsetSegment,
+  right: OffsetSegment,
+  distance: Float,
+) -> #(OffsetSegment, OffsetSegment) {
+  case left.source, right.source {
+    RefinedBigSource(left_source), RefinedBigSource(right_source) -> {
+      case
+        refined_sources_have_cross_source_hinge(
+          left_source,
+          right_source,
+          distance,
+        )
+      {
+        True -> #(
+          set_offset_segment_source_end_hinge(left),
+          set_offset_segment_source_start_hinge(right),
+        )
+        False -> #(left, right)
+      }
+    }
+    _, _ -> #(left, right)
+  }
+}
+
+fn refined_sources_have_cross_source_hinge(
+  left: RefinedBigSourceSegment,
+  right: RefinedBigSourceSegment,
+  distance: Float,
+) -> Bool {
+  let RefinedBigSourceSegment(
+    source_subpath_index: left_subpath,
+    source_segment_index: left_index,
+    ..,
+  ) = left
+  let RefinedBigSourceSegment(
+    source_subpath_index: right_subpath,
+    source_segment_index: right_index,
+    ..,
+  ) = right
+  left_subpath == right_subpath
+  && left_index != right_index
+  && offset_curvature_zones_form_hinge(
+    Some(refined_source_interval_zone(left, distance)),
+    Some(refined_source_interval_zone(right, distance)),
+  )
+}
+
+fn refined_source_interval_zone(
+  source: RefinedBigSourceSegment,
+  distance: Float,
+) -> OffsetCurvatureZone {
+  let RefinedBigSourceSegment(source_segment:, source_from:, source_to:, ..) =
+    source
+  offset_curvature_zone(
+    source_segment,
+    distance,
+    { source_from +. source_to } /. 2.0,
+  )
+}
+
+fn set_offset_segment_source_start_hinge(
+  offset: OffsetSegment,
+) -> OffsetSegment {
+  case offset.source {
+    RefinedBigSource(source) ->
+      OffsetSegment(
+        ..offset,
+        source: RefinedBigSource(
+          RefinedBigSourceSegment(..source, start_is_offset_hinge: True),
+        ),
+      )
+    StalledSourceRunSource(..) -> offset
+  }
+}
+
+fn set_offset_segment_source_end_hinge(offset: OffsetSegment) -> OffsetSegment {
+  case offset.source {
+    RefinedBigSource(source) ->
+      OffsetSegment(
+        ..offset,
+        source: RefinedBigSource(
+          RefinedBigSourceSegment(..source, end_is_offset_hinge: True),
+        ),
+      )
+    StalledSourceRunSource(..) -> offset
+  }
+}
+
+fn replace_last(
+  rest: List(OffsetSegment),
+  last: OffsetSegment,
+  previous previous: List(OffsetSegment),
+) -> List(OffsetSegment) {
+  case rest {
+    [] -> list.reverse(previous)
+    [_] -> list.reverse([last, ..previous])
+    [first, ..remaining] ->
+      replace_last(remaining, last, previous: [first, ..previous])
+  }
+}
+
 fn offset_smooth_source_piece(
   piece: SmoothSourcePiece,
   distance: Float,
   options: Options,
 ) -> Result(List(OffsetSegment), Error) {
   case piece {
-    BigSourceSegment(segment) -> {
-      use subpath <- result.try(
-        svg_path.subpath_with([segment], policy: svg_path.Strict)
-        |> result.map_error(PathError),
+    BigSourceSegment(
+      source_segment_index:,
+      segment:,
+      start_is_offset_hinge:,
+      end_is_offset_hinge:,
+    ) -> {
+      use pieces <- result.try(refine_big_source_segment_at_hinges(
+        segment,
+        source_subpath_index: 0,
+        source_segment_index:,
+        start_is_offset_hinge:,
+        end_is_offset_hinge:,
+        distance:,
+      ))
+      offset_refined_big_source_segments(
+        pieces,
+        distance,
+        options,
+        converted: [],
       )
-      let SmoothOffsetBuilder(build:) =
-        original_recursive_smooth_offset_builder()
-      build(JoinFreePortion(subpath:, closed: False), distance, options)
     }
-    StalledSourceRun(segments) -> offset_stalled_source_run(segments, distance)
+    StalledSourceRun(source_start_segment_index:, segments:) ->
+      offset_stalled_source_run(
+        segments,
+        source_start_segment_index:,
+        distance:,
+      )
+  }
+}
+
+fn refine_big_source_segment_at_hinges(
+  segment: svg_path.Segment,
+  source_subpath_index source_subpath_index: Int,
+  source_segment_index source_segment_index: Int,
+  start_is_offset_hinge start_is_offset_hinge: Bool,
+  end_is_offset_hinge end_is_offset_hinge: Bool,
+  distance distance: Float,
+) -> Result(List(RefinedBigSourceSegment), Error) {
+  let hinge_parameters =
+    offset_hinge_parameters(segment, distance)
+    |> list.filter(fn(t) { t >. point_tolerance && t <. 1.0 -. point_tolerance })
+    |> list.map(fn(t) { CurvatureSplitParameter(t, CuspSplit) })
+  let inflection_parameters =
+    offset_inflection_parameters(segment)
+    |> list.filter(fn(t) { t >. point_tolerance && t <. 1.0 -. point_tolerance })
+    |> list.map(fn(t) { CurvatureSplitParameter(t, InflectionSplit) })
+
+  let parameters =
+    [
+      CurvatureSplitParameter(0.0, OrdinarySplit),
+      CurvatureSplitParameter(1.0, OrdinarySplit),
+    ]
+    |> list.append(hinge_parameters)
+    |> list.append(inflection_parameters)
+    |> list.sort(by: fn(a, b) {
+      let CurvatureSplitParameter(t: left, ..) = a
+      let CurvatureSplitParameter(t: right, ..) = b
+      float.compare(left, right)
+    })
+    |> unique_curvature_split_parameters(hinge_parameter_tolerance, [])
+    |> classify_curvature_boundaries(segment, distance)
+    |> apply_endpoint_hinge_overrides(
+      start_is_offset_hinge:,
+      end_is_offset_hinge:,
+    )
+  use pieces <- result.try(split_refined_big_source_segment(
+    source_segment: segment,
+    source_subpath_index:,
+    source_segment_index:,
+    parameters:,
+  ))
+  split_bezier_hinge_hinge_refined_sources(pieces, refined: [])
+}
+
+fn split_bezier_hinge_hinge_refined_sources(
+  pieces: List(RefinedBigSourceSegment),
+  refined refined: List(RefinedBigSourceSegment),
+) -> Result(List(RefinedBigSourceSegment), Error) {
+  case pieces {
+    [] -> Ok(list.reverse(refined))
+    [first, ..rest] -> {
+      let RefinedBigSourceSegment(
+        segment:,
+        start_is_offset_hinge:,
+        end_is_offset_hinge:,
+        ..,
+      ) = first
+      case
+        start_is_offset_hinge
+        && end_is_offset_hinge
+        && segment_is_bezier(segment)
+      {
+        True -> {
+          use split <- result.try(split_refined_big_source_at_midpoint(first))
+          let #(left, right) = split
+          split_bezier_hinge_hinge_refined_sources(rest, refined: [
+            right,
+            left,
+            ..refined
+          ])
+        }
+        False ->
+          split_bezier_hinge_hinge_refined_sources(rest, refined: [
+            first,
+            ..refined
+          ])
+      }
+    }
+  }
+}
+
+fn segment_is_bezier(segment: svg_path.Segment) -> Bool {
+  case segment {
+    svg_path.QuadraticBezier(..) | svg_path.CubicBezier(..) -> True
+    svg_path.Line(..) | svg_path.Arc(..) -> False
+  }
+}
+
+fn split_refined_big_source_segment(
+  source_segment source_segment: svg_path.Segment,
+  source_subpath_index source_subpath_index: Int,
+  source_segment_index source_segment_index: Int,
+  parameters parameters: List(CurvatureBoundary),
+) -> Result(List(RefinedBigSourceSegment), Error) {
+  case parameters {
+    [] | [_] -> Ok([])
+    [from, to, ..rest] -> {
+      let CurvatureBoundary(t: from_t, behavior: from_behavior) = from
+      let CurvatureBoundary(t: to_t, behavior: to_behavior) = to
+      use pieces <- result.try(
+        split_refined_big_source_segment(
+          source_segment:,
+          source_subpath_index:,
+          source_segment_index:,
+          parameters: [to, ..rest],
+        ),
+      )
+      case to_t -. from_t <=. point_tolerance {
+        True -> Ok(pieces)
+        False -> {
+          use segments <- result.try(
+            svg_path.segment_between_many_inside(source_segment, between: [
+              from_t,
+              to_t,
+            ])
+            |> result.map_error(PathError),
+          )
+          let refined =
+            list.map(segments, fn(segment) {
+              RefinedBigSourceSegment(
+                source_subpath_index:,
+                source_segment_index:,
+                source_segment:,
+                source_from: from_t,
+                source_to: to_t,
+                segment:,
+                start_is_offset_hinge: curvature_behavior_is_hinge(
+                  from_behavior,
+                ),
+                end_is_offset_hinge: curvature_behavior_is_hinge(to_behavior),
+              )
+            })
+          Ok(list.append(refined, pieces))
+        }
+      }
+    }
+  }
+}
+
+fn unique_curvature_split_parameters(
+  values: List(CurvatureSplitParameter),
+  tolerance: Float,
+  unique unique: List(CurvatureSplitParameter),
+) -> List(CurvatureSplitParameter) {
+  case values {
+    [] -> list.reverse(unique)
+    [first, ..rest] -> {
+      let CurvatureSplitParameter(t: first_t, kind: first_kind) = first
+      case unique {
+        [previous, ..previous_rest] -> {
+          let CurvatureSplitParameter(t: previous_t, kind: previous_kind) =
+            previous
+          case float.absolute_value(first_t -. previous_t) <=. tolerance {
+            True ->
+              unique_curvature_split_parameters(rest, tolerance, unique: [
+                CurvatureSplitParameter(
+                  previous_t,
+                  merge_curvature_split_kind(previous_kind, first_kind),
+                ),
+                ..previous_rest
+              ])
+            False ->
+              unique_curvature_split_parameters(rest, tolerance, unique: [
+                first,
+                ..unique
+              ])
+          }
+        }
+        [] ->
+          unique_curvature_split_parameters(rest, tolerance, unique: [first])
+      }
+    }
+  }
+}
+
+fn merge_curvature_split_kind(
+  left: CurvatureSplitKind,
+  right: CurvatureSplitKind,
+) -> CurvatureSplitKind {
+  case left, right {
+    InflectionSplit, _ | _, InflectionSplit -> InflectionSplit
+    CuspSplit, _ | _, CuspSplit -> CuspSplit
+    _, _ -> OrdinarySplit
+  }
+}
+
+fn classify_curvature_boundaries(
+  parameters: List(CurvatureSplitParameter),
+  segment: svg_path.Segment,
+  distance: Float,
+) -> List(CurvatureBoundary) {
+  let zones = curvature_interval_zones(parameters, segment, distance, zones: [])
+  classify_curvature_boundaries_loop(
+    parameters,
+    zones,
+    previous_zone: None,
+    boundaries: [],
+  )
+}
+
+fn curvature_interval_zones(
+  parameters: List(CurvatureSplitParameter),
+  segment: svg_path.Segment,
+  distance: Float,
+  zones zones: List(OffsetCurvatureZone),
+) -> List(OffsetCurvatureZone) {
+  case parameters {
+    [] | [_] -> list.reverse(zones)
+    [from, to, ..rest] -> {
+      let CurvatureSplitParameter(t: from_t, ..) = from
+      let CurvatureSplitParameter(t: to_t, ..) = to
+      let midpoint = { from_t +. to_t } /. 2.0
+      curvature_interval_zones([to, ..rest], segment, distance, zones: [
+        offset_curvature_zone(segment, distance, midpoint),
+        ..zones
+      ])
+    }
+  }
+}
+
+fn classify_curvature_boundaries_loop(
+  parameters: List(CurvatureSplitParameter),
+  zones: List(OffsetCurvatureZone),
+  previous_zone previous_zone: Option(OffsetCurvatureZone),
+  boundaries boundaries: List(CurvatureBoundary),
+) -> List(CurvatureBoundary) {
+  case parameters {
+    [] -> list.reverse(boundaries)
+    [first, ..rest] -> {
+      let CurvatureSplitParameter(t:, kind:) = first
+      let next_zone = case zones {
+        [zone, ..] -> Some(zone)
+        [] -> None
+      }
+      let behavior = curvature_boundary_behavior(kind, previous_zone, next_zone)
+      classify_curvature_boundaries_loop(
+        rest,
+        case zones {
+          [_, ..remaining] -> remaining
+          [] -> []
+        },
+        previous_zone: next_zone,
+        boundaries: [CurvatureBoundary(t:, behavior:), ..boundaries],
+      )
+    }
+  }
+}
+
+fn curvature_boundary_behavior(
+  kind: CurvatureSplitKind,
+  previous_zone: Option(OffsetCurvatureZone),
+  next_zone: Option(OffsetCurvatureZone),
+) -> CurvatureBehavior {
+  case kind {
+    InflectionSplit -> Inflection
+    CuspSplit ->
+      case offset_curvature_zones_form_hinge(previous_zone, next_zone) {
+        True -> Hinge
+        False -> NoSignChangeHinge
+      }
+    OrdinarySplit ->
+      case offset_curvature_zones_form_hinge(previous_zone, next_zone) {
+        True -> Hinge
+        False -> Ordinary
+      }
+  }
+}
+
+fn offset_curvature_zone(
+  segment: svg_path.Segment,
+  distance: Float,
+  t: Float,
+) -> OffsetCurvatureZone {
+  case curvature.segment_right_normal_radius(segment, at: t) {
+    Ok(radius) -> offset_curvature_radius_zone(radius, distance)
+    Error(_) ->
+      case curvature.segment_right_normal_curvature(segment, at: t) {
+        Ok(value) if value >. hinge_parameter_tolerance -> ForwardOpposite
+        Ok(value) if value <. 0.0 -. hinge_parameter_tolerance ->
+          ForwardOpposite
+        Ok(_) -> ForwardOutside
+        Error(_) -> UnknownCurvatureZone
+      }
+  }
+}
+
+fn offset_curvature_radius_zone(radius: Float, distance: Float) {
+  let tolerance = hinge_parameter_tolerance
+  case distance >=. 0.0 {
+    True ->
+      case radius <. 0.0 -. tolerance {
+        True -> ForwardOpposite
+        False ->
+          case radius <. distance -. tolerance {
+            True -> Reversing
+            False -> ForwardOutside
+          }
+      }
+    False ->
+      case radius >. tolerance {
+        True -> ForwardOpposite
+        False ->
+          case radius >. distance +. tolerance {
+            True -> Reversing
+            False -> ForwardOutside
+          }
+      }
+  }
+}
+
+fn offset_curvature_zones_form_hinge(
+  previous: Option(OffsetCurvatureZone),
+  next: Option(OffsetCurvatureZone),
+) -> Bool {
+  case previous, next {
+    Some(Reversing), Some(ForwardOutside)
+    | Some(Reversing), Some(ForwardOpposite)
+    | Some(ForwardOutside), Some(Reversing)
+    | Some(ForwardOpposite), Some(Reversing)
+    -> True
+    _, _ -> False
+  }
+}
+
+fn curvature_behavior_is_hinge(behavior: CurvatureBehavior) -> Bool {
+  case behavior {
+    Hinge -> True
+    _ -> False
+  }
+}
+
+fn apply_endpoint_hinge_overrides(
+  boundaries: List(CurvatureBoundary),
+  start_is_offset_hinge start_is_offset_hinge: Bool,
+  end_is_offset_hinge end_is_offset_hinge: Bool,
+) -> List(CurvatureBoundary) {
+  boundaries
+  |> apply_start_hinge_override(start_is_offset_hinge)
+  |> apply_end_hinge_override(end_is_offset_hinge)
+}
+
+fn apply_start_hinge_override(
+  boundaries: List(CurvatureBoundary),
+  override: Bool,
+) -> List(CurvatureBoundary) {
+  case override, boundaries {
+    True, [first, ..rest] -> {
+      let CurvatureBoundary(t:, ..) = first
+      [CurvatureBoundary(t:, behavior: Hinge), ..rest]
+    }
+    _, _ -> boundaries
+  }
+}
+
+fn apply_end_hinge_override(
+  boundaries: List(CurvatureBoundary),
+  override: Bool,
+) -> List(CurvatureBoundary) {
+  case override, boundaries {
+    True, [_, ..] ->
+      replace_last_curvature_boundary(boundaries, Hinge, previous: [])
+    _, _ -> boundaries
+  }
+}
+
+fn replace_last_curvature_boundary(
+  boundaries: List(CurvatureBoundary),
+  behavior: CurvatureBehavior,
+  previous previous: List(CurvatureBoundary),
+) -> List(CurvatureBoundary) {
+  case boundaries {
+    [] -> list.reverse(previous)
+    [last] -> {
+      let CurvatureBoundary(t:, ..) = last
+      list.reverse([CurvatureBoundary(t:, behavior:), ..previous])
+    }
+    [first, ..rest] ->
+      replace_last_curvature_boundary(rest, behavior, previous: [
+        first,
+        ..previous
+      ])
+  }
+}
+
+fn offset_refined_big_source_segments(
+  pieces: List(RefinedBigSourceSegment),
+  distance: Float,
+  options: Options,
+  converted converted: List(OffsetSegment),
+) -> Result(List(OffsetSegment), Error) {
+  case pieces {
+    [] -> Ok(list.reverse(converted))
+    [first, ..rest] -> {
+      use offsets <- result.try(offset_refined_big_source_segment(
+        first,
+        distance,
+        options,
+      ))
+      offset_refined_big_source_segments(
+        rest,
+        distance,
+        options,
+        converted: list.append(list.reverse(offsets), converted),
+      )
+    }
+  }
+}
+
+fn offset_refined_big_source_segment(
+  source: RefinedBigSourceSegment,
+  distance: Float,
+  options: Options,
+) -> Result(List(OffsetSegment), Error) {
+  let RefinedBigSourceSegment(segment:, ..) = source
+  case segment {
+    svg_path.Line(..) -> {
+      use offset_start <- result.try(offset_point(segment, t: 0.0, distance:))
+      use offset_end <- result.try(offset_point(segment, t: 1.0, distance:))
+      use offset <- result.try(build_offset_segment(
+        source: RefinedBigSource(source),
+        segment: svg_path.Line(start: offset_start, end: offset_end),
+      ))
+      Ok([offset])
+    }
+    svg_path.Arc(..) -> {
+      case circular_arc_offset_radius(segment, distance) {
+        Ok(radius) -> {
+          case float.absolute_value(radius) <=. point_tolerance {
+            True -> Error(DegenerateTangent(0.0))
+            False -> {
+              use arc <- result.try(offset_circular_arc_segment_raw(
+                segment,
+                distance,
+                radius,
+              ))
+              use offset <- result.try(build_offset_segment(
+                source: RefinedBigSource(source),
+                segment: arc,
+              ))
+              Ok([offset])
+            }
+          }
+        }
+        Error(_) ->
+          recursive_offset_refined_big_source_segment(
+            source,
+            distance,
+            options,
+            depth: options.fitting.max_depth,
+          )
+      }
+    }
+    _ ->
+      recursive_offset_refined_big_source_segment(
+        source,
+        distance,
+        options,
+        depth: options.fitting.max_depth,
+      )
+  }
+}
+
+fn recursive_offset_refined_big_source_segment(
+  source: RefinedBigSourceSegment,
+  distance: Float,
+  options: Options,
+  depth depth: Int,
+) -> Result(List(OffsetSegment), Error) {
+  let RefinedBigSourceSegment(segment:, ..) = source
+  use candidate <- result.try(fitted_refined_big_source_offset(source, distance))
+  use divergence <- result.try(smart_offset_divergence(
+    segment,
+    candidate,
+    distance,
+    options,
+  ))
+
+  case divergence <=. raw_fitting_tolerance(options) {
+    True -> {
+      use offset <- result.try(build_offset_segment(
+        source: RefinedBigSource(source),
+        segment: candidate,
+      ))
+      Ok([offset])
+    }
+    False ->
+      case depth <= 0 {
+        True -> Error(MaxDepthReached(divergence))
+        False -> {
+          use split <- result.try(split_refined_big_source_at_midpoint(source))
+          let #(left, right) = split
+          use left_offset <- result.try(
+            recursive_offset_refined_big_source_segment(
+              left,
+              distance,
+              options,
+              depth: depth - 1,
+            ),
+          )
+          use right_offset <- result.try(
+            recursive_offset_refined_big_source_segment(
+              right,
+              distance,
+              options,
+              depth: depth - 1,
+            ),
+          )
+          Ok(list.append(left_offset, right_offset))
+        }
+      }
+  }
+}
+
+fn split_refined_big_source_at_midpoint(
+  source: RefinedBigSourceSegment,
+) -> Result(#(RefinedBigSourceSegment, RefinedBigSourceSegment), Error) {
+  let RefinedBigSourceSegment(source_from:, source_to:, segment:, ..) = source
+  use split <- result.try(
+    svg_path.segment_split(segment, at: 0.5)
+    |> result.map_error(PathError),
+  )
+  let #(left, right) = split
+  let source_mid = source_from +. { source_to -. source_from } /. 2.0
+  Ok(#(
+    RefinedBigSourceSegment(
+      ..source,
+      source_to: source_mid,
+      segment: left,
+      end_is_offset_hinge: False,
+    ),
+    RefinedBigSourceSegment(
+      ..source,
+      source_from: source_mid,
+      segment: right,
+      start_is_offset_hinge: False,
+    ),
+  ))
+}
+
+fn offset_hinge_parameters(
+  segment: svg_path.Segment,
+  distance: Float,
+) -> List(Float) {
+  case
+    curvature.segment_right_normal_cusp_parameters(
+      segment,
+      distance:,
+      options: curvature.default_options(),
+    )
+  {
+    Ok(parameters) -> parameters
+    Error(_) -> []
+  }
+}
+
+fn offset_inflection_parameters(segment: svg_path.Segment) -> List(Float) {
+  let options =
+    curvature.Options(
+      tolerance: hinge_parameter_tolerance,
+      samples: 100,
+      max_depth: 32,
+    )
+  case curvature.segment_inflection_parameters(segment, options:) {
+    Ok(parameters) -> parameters
+    Error(_) -> []
   }
 }
 
 fn offset_stalled_source_run(
   segments: List(svg_path.Segment),
-  distance: Float,
+  source_start_segment_index source_start_segment_index: Int,
+  distance distance: Float,
 ) -> Result(List(OffsetSegment), Error) {
   case segments {
     [] -> Ok([])
@@ -3733,6 +6019,8 @@ fn offset_stalled_source_run(
               offset_nonempty_stalled_source_run(
                 first,
                 last,
+                source_start_segment_index,
+                list.length([first, ..rest]),
                 start,
                 end,
                 samples,
@@ -3755,6 +6043,8 @@ fn stalled_run_collapsed(
 fn offset_nonempty_stalled_source_run(
   first: svg_path.Segment,
   last: svg_path.Segment,
+  source_start_segment_index: Int,
+  source_segment_count: Int,
   start: svg_path.Point,
   end: svg_path.Point,
   samples: List(#(Float, bezier.BezierPoint)),
@@ -3781,6 +6071,13 @@ fn offset_nonempty_stalled_source_run(
     True -> {
       use offset <- result.try(make_offset_segment(
         segment:,
+        source: StalledSourceRunSource(
+          source_subpath_index: 0,
+          source_start_segment_index:,
+          source_end_segment_index: source_start_segment_index
+            + source_segment_count
+            - 1,
+        ),
         source_start: svg_path.segment_start(first),
         source_end: svg_path.segment_end(last),
         source_start_tangent:,
@@ -3875,16 +6172,20 @@ fn assert_smooth_offset_boundary(
       case left.source_end == right.source_start {
         False -> Ok(Nil)
         True ->
-          assert_smooth_offset_tangent_boundary(
-            left.segment,
-            right.segment,
-            heal_angle,
-          )
+          case offset_boundary_is_known_hinge(left, right) {
+            True -> Ok(Nil)
+            False ->
+              assert_continuous_offset_tangent_boundary(
+                left.segment,
+                right.segment,
+                heal_angle,
+              )
+          }
       }
   }
 }
 
-fn assert_smooth_offset_tangent_boundary(
+fn assert_continuous_offset_tangent_boundary(
   left: svg_path.Segment,
   right: svg_path.Segment,
   heal_angle: Float,
@@ -3901,7 +6202,7 @@ fn assert_smooth_offset_tangent_boundary(
       use right_tangent <- result.try(unit_tangent(right, t: 0.0))
       let angle =
         float.absolute_value(signed_angle(left_tangent, right_tangent))
-      case angle <=. heal_angle {
+      case angle <=. heal_angle || { 180.0 -. angle } <=. heal_angle {
         True -> Ok(Nil)
         False -> Error(DegenerateTangent(1.0))
       }
@@ -4015,62 +6316,27 @@ fn source_boundary_is_smooth(
   }
 }
 
-fn offset_subpath_segments(
-  segments: List(svg_path.Segment),
-  distance: Float,
-  options: Options,
-  fit_policy fit_policy: OriginalRecursiveOffsetBuilderFitPolicy,
-  closed closed: Bool,
-  converted converted: List(OffsetSegment),
-) -> Result(List(OffsetSegment), Error) {
-  case segments {
-    [] ->
-      heal_offset_boundaries(
-        list.reverse(converted),
-        distance,
-        options.tangent_heal_angle_degrees,
-        closed: closed,
-      )
-    [first, ..rest] -> {
-      use offsets <- result.try(offset_source_segment_with_builder(
-        first,
-        distance,
-        options,
-        fit_policy,
-      ))
-      offset_subpath_segments(
-        rest,
-        distance,
-        options,
-        fit_policy:,
-        closed:,
-        converted: list.append(list.reverse(offsets), converted),
-      )
-    }
-  }
-}
-
 fn heal_offset_boundaries(
   offsets: List(OffsetSegment),
   distance: Float,
-  heal_angle: Float,
+  options: Options,
   closed closed: Bool,
 ) -> Result(List(OffsetSegment), Error) {
   use healed <- result.try(heal_adjacent_offset_boundaries(
     offsets,
     distance,
-    heal_angle,
+    options,
   ))
   case closed {
     False -> Ok(healed)
-    True -> heal_wrapping_offset_boundary(healed, distance, heal_angle)
+    True -> heal_wrapping_offset_boundary(healed, distance, options)
   }
 }
 
 fn heal_adjacent_offset_boundaries(
   offsets: List(OffsetSegment),
   distance: Float,
-  heal_angle: Float,
+  options: Options,
 ) -> Result(List(OffsetSegment), Error) {
   case offsets {
     [] | [_] -> Ok(offsets)
@@ -4079,13 +6345,13 @@ fn heal_adjacent_offset_boundaries(
         first,
         second,
         distance,
-        heal_angle,
+        options,
       ))
       heal_adjacent_offset_boundaries_loop(
         second,
         rest,
         distance,
-        heal_angle,
+        options,
         healed: [
           first,
         ],
@@ -4098,7 +6364,7 @@ fn heal_adjacent_offset_boundaries_loop(
   previous: OffsetSegment,
   rest: List(OffsetSegment),
   distance: Float,
-  heal_angle: Float,
+  options: Options,
   healed healed: List(OffsetSegment),
 ) -> Result(List(OffsetSegment), Error) {
   case rest {
@@ -4108,13 +6374,13 @@ fn heal_adjacent_offset_boundaries_loop(
         previous,
         next,
         distance,
-        heal_angle,
+        options,
       ))
       heal_adjacent_offset_boundaries_loop(
         next,
         remaining,
         distance,
-        heal_angle,
+        options,
         healed: [previous, ..healed],
       )
     }
@@ -4124,7 +6390,7 @@ fn heal_adjacent_offset_boundaries_loop(
 fn heal_wrapping_offset_boundary(
   offsets: List(OffsetSegment),
   distance: Float,
-  heal_angle: Float,
+  options: Options,
 ) -> Result(List(OffsetSegment), Error) {
   case offsets {
     [] | [_] -> Ok(offsets)
@@ -4134,7 +6400,7 @@ fn heal_wrapping_offset_boundary(
         last,
         first,
         distance,
-        heal_angle,
+        options,
       ))
       Ok([first, ..replace_last_offset(rest, last)])
     }
@@ -4145,17 +6411,195 @@ fn heal_offset_boundary(
   left: OffsetSegment,
   right: OffsetSegment,
   distance: Float,
-  heal_angle: Float,
+  options: Options,
 ) -> Result(#(OffsetSegment, OffsetSegment), Error) {
-  case shared_boundary_tangent(left, right, heal_angle) {
+  case heal_hinge_offset_boundary(left, right, distance, options) {
+    Ok(healed) -> Ok(healed)
+    Error(_) -> heal_smooth_offset_boundary(left, right, distance, options)
+  }
+}
+
+fn heal_smooth_offset_boundary(
+  left: OffsetSegment,
+  right: OffsetSegment,
+  distance: Float,
+  options: Options,
+) -> Result(#(OffsetSegment, OffsetSegment), Error) {
+  case
+    shared_boundary_tangent(left, right, options.tangent_heal_angle_degrees)
+  {
     Error(_) -> Ok(#(left, right))
     Ok(tangent) -> {
       let corner = left.source_end
       let point = add(corner, scale(rotate_clockwise(tangent), distance))
-      let left = snap_offset_end_to_boundary(left, point, tangent)
-      let right = snap_offset_start_to_boundary(right, point, tangent)
-      Ok(#(left, right))
+      let healed_left = snap_offset_end_to_boundary(left, point, tangent)
+      let healed_right = snap_offset_start_to_boundary(right, point, tangent)
+      case
+        certified_healed_boundary(
+          healed_left:,
+          healed_right:,
+          distance:,
+          options:,
+        )
+      {
+        True -> Ok(#(healed_left, healed_right))
+        False -> Ok(#(left, right))
+      }
     }
+  }
+}
+
+fn heal_hinge_offset_boundary(
+  left: OffsetSegment,
+  right: OffsetSegment,
+  distance: Float,
+  options: Options,
+) -> Result(#(OffsetSegment, OffsetSegment), Error) {
+  use _ <- result.try(bool_result(offset_boundary_is_known_hinge(left, right)))
+  let boundary =
+    interpolate(
+      svg_path.segment_end(left.segment),
+      svg_path.segment_start(right.segment),
+      0.5,
+    )
+  let healed_left = snap_offset_end_position_only(left, boundary)
+  let healed_right = snap_offset_start_position_only(right, boundary)
+  case
+    certified_healed_boundary(healed_left:, healed_right:, distance:, options:)
+  {
+    True -> Ok(#(healed_left, healed_right))
+    False -> Error(NonFinite)
+  }
+}
+
+fn snap_offset_end_position_only(
+  offset: OffsetSegment,
+  end: svg_path.Point,
+) -> OffsetSegment {
+  let delta = subtract(end, svg_path.segment_end(offset.segment))
+  OffsetSegment(
+    ..offset,
+    segment: translate_segment_end_handle(offset.segment, end, delta),
+  )
+}
+
+fn snap_offset_start_position_only(
+  offset: OffsetSegment,
+  start: svg_path.Point,
+) -> OffsetSegment {
+  let delta = subtract(start, svg_path.segment_start(offset.segment))
+  OffsetSegment(
+    ..offset,
+    segment: translate_segment_start_handle(offset.segment, start, delta),
+  )
+}
+
+fn translate_segment_start_handle(
+  segment: svg_path.Segment,
+  start: svg_path.Point,
+  delta: svg_path.Point,
+) -> svg_path.Segment {
+  case segment {
+    svg_path.Line(end:, ..) -> svg_path.Line(start:, end:)
+    svg_path.QuadraticBezier(control:, end:, ..) ->
+      svg_path.QuadraticBezier(start:, control: add(control, delta), end:)
+    svg_path.CubicBezier(control1:, control2:, end:, ..) ->
+      svg_path.CubicBezier(
+        start:,
+        control1: add(control1, delta),
+        control2:,
+        end:,
+      )
+    svg_path.Arc(radius:, x_axis_rotation:, large_arc:, sweep:, end:, ..) ->
+      svg_path.Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:)
+  }
+}
+
+fn translate_segment_end_handle(
+  segment: svg_path.Segment,
+  end: svg_path.Point,
+  delta: svg_path.Point,
+) -> svg_path.Segment {
+  case segment {
+    svg_path.Line(start:, ..) -> svg_path.Line(start:, end:)
+    svg_path.QuadraticBezier(start:, control:, ..) ->
+      svg_path.QuadraticBezier(start:, control: add(control, delta), end:)
+    svg_path.CubicBezier(start:, control1:, control2:, ..) ->
+      svg_path.CubicBezier(
+        start:,
+        control1:,
+        control2: add(control2, delta),
+        end:,
+      )
+    svg_path.Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, ..) ->
+      svg_path.Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:)
+  }
+}
+
+fn offset_boundary_is_known_hinge(
+  left: OffsetSegment,
+  right: OffsetSegment,
+) -> Bool {
+  offset_segment_source_end_is_hinge(left.source)
+  && offset_segment_source_start_is_hinge(right.source)
+}
+
+fn offset_segment_source_start_is_hinge(source: OffsetSegmentSource) -> Bool {
+  case source {
+    RefinedBigSource(refined) -> {
+      let RefinedBigSourceSegment(start_is_offset_hinge:, ..) = refined
+      start_is_offset_hinge
+    }
+    StalledSourceRunSource(..) -> False
+  }
+}
+
+fn offset_segment_source_end_is_hinge(source: OffsetSegmentSource) -> Bool {
+  case source {
+    RefinedBigSource(refined) -> {
+      let RefinedBigSourceSegment(end_is_offset_hinge:, ..) = refined
+      end_is_offset_hinge
+    }
+    StalledSourceRunSource(..) -> False
+  }
+}
+
+fn certified_healed_boundary(
+  healed_left healed_left: OffsetSegment,
+  healed_right healed_right: OffsetSegment,
+  distance distance: Float,
+  options options: Options,
+) -> Bool {
+  healed_offset_certified(healed_left, distance, options)
+  && healed_offset_certified(healed_right, distance, options)
+}
+
+fn healed_offset_certified(
+  healed: OffsetSegment,
+  distance: Float,
+  options: Options,
+) -> Bool {
+  case offset_segment_certification_source(healed.source) {
+    None -> True
+    Some(source_segment) ->
+      case
+        offset_divergence(source_segment, healed.segment, distance, options)
+      {
+        Ok(divergence) -> divergence <=. options.fitting.tolerance
+        Error(_) -> False
+      }
+  }
+}
+
+fn offset_segment_certification_source(
+  source: OffsetSegmentSource,
+) -> Option(svg_path.Segment) {
+  case source {
+    RefinedBigSource(refined) -> {
+      let RefinedBigSourceSegment(segment:, ..) = refined
+      Some(segment)
+    }
+    StalledSourceRunSource(..) -> None
   }
 }
 
@@ -4224,6 +6668,7 @@ fn snap_offset_segment_start(
   start: svg_path.Point,
   tangent: svg_path.Point,
 ) -> svg_path.Segment {
+  let tangent = nearest_boundary_tangent(segment, tangent, at_end: False)
   case segment {
     svg_path.Line(end:, ..) -> svg_path.Line(start:, end:)
     svg_path.QuadraticBezier(control:, end:, ..) -> {
@@ -4253,6 +6698,7 @@ fn snap_offset_segment_end(
   end: svg_path.Point,
   tangent: svg_path.Point,
 ) -> svg_path.Segment {
+  let tangent = nearest_boundary_tangent(segment, tangent, at_end: True)
   case segment {
     svg_path.Line(start:, ..) -> svg_path.Line(start:, end:)
     svg_path.QuadraticBezier(start:, control:, ..) -> {
@@ -4275,6 +6721,210 @@ fn snap_offset_segment_end(
     svg_path.Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, ..) ->
       svg_path.Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:)
   }
+}
+
+fn nearest_boundary_tangent(
+  segment: svg_path.Segment,
+  tangent: svg_path.Point,
+  at_end at_end: Bool,
+) -> svg_path.Point {
+  let t = case at_end {
+    True -> 1.0
+    False -> 0.0
+  }
+  case unit_tangent(segment, t:) {
+    Ok(current) ->
+      case dot(current, tangent) <. 0.0 {
+        True -> scale(tangent, -1.0)
+        False -> tangent
+      }
+    Error(_) -> tangent
+  }
+}
+
+fn endpoint_tangent_turn(
+  segment: svg_path.Segment,
+  endpoint: SegmentEndpoint,
+) -> TangentTurn {
+  case segment {
+    svg_path.Line(..) -> Straight
+    _ -> {
+      let t = case endpoint {
+        SegmentStart -> 0.0
+        SegmentEnd -> 1.0
+      }
+      case curvature.segment_right_normal_curvature(segment, at: t) {
+        Ok(value) ->
+          case float.absolute_value(value) >. tangent_turn_curvature_epsilon {
+            True ->
+              case value <. 0.0 {
+                True -> Clockwise
+                False -> CounterClockwise
+              }
+            False -> endpoint_tangent_turn_from_chord(segment, endpoint)
+          }
+        Error(_) -> endpoint_tangent_turn_from_chord(segment, endpoint)
+      }
+    }
+  }
+}
+
+fn endpoint_tangent_turn_from_chord(
+  segment: svg_path.Segment,
+  endpoint: SegmentEndpoint,
+) -> TangentTurn {
+  let chord =
+    subtract(svg_path.segment_end(segment), svg_path.segment_start(segment))
+  case unit_vector(chord, t: 0.5) {
+    Error(_) -> CouldNotMeasure
+    Ok(chord_direction) ->
+      case endpoint {
+        SegmentStart ->
+          case unit_tangent(segment, t: 0.0) {
+            Error(_) -> CouldNotMeasure
+            Ok(tangent) ->
+              tangent_turn_from_aperture(point_helpers.clockwise_aperture(
+                from: tangent,
+                to: chord_direction,
+              ))
+          }
+        SegmentEnd ->
+          case unit_tangent(segment, t: 1.0) {
+            Error(_) -> CouldNotMeasure
+            Ok(tangent) ->
+              tangent_turn_from_aperture(point_helpers.clockwise_aperture(
+                from: chord_direction,
+                to: tangent,
+              ))
+          }
+      }
+  }
+}
+
+fn tangent_turn_from_aperture(aperture: Float) -> TangentTurn {
+  case
+    aperture <=. tangent_turn_angle_epsilon
+    || 360.0 -. aperture <=. tangent_turn_angle_epsilon
+  {
+    True -> Straight
+    False ->
+      case
+        float.absolute_value(aperture -. 180.0) <=. tangent_turn_angle_epsilon
+      {
+        True -> CouldNotMeasure
+        False ->
+          case aperture <. 180.0 {
+            True -> Clockwise
+            False -> CounterClockwise
+          }
+      }
+  }
+}
+
+fn bool_result(condition: Bool) -> Result(Nil, Error) {
+  case condition {
+    True -> Ok(Nil)
+    False -> Error(NonFinite)
+  }
+}
+
+/// Compute the angular perturbation needed to make a near-cusp tangent pair
+/// strictly ordered.
+///
+/// `incoming_direction` is the left segment's endpoint tangent in traversal
+/// direction. `outgoing_direction` is the right segment's start tangent in
+/// traversal direction. Returned angles are SVG-clockwise degrees to apply to
+/// those same tangent vectors. Longer chord lengths receive smaller
+/// perturbations.
+@internal
+pub fn internal_hinge_tangent_adjustment(
+  incoming_direction incoming_direction: svg_path.Point,
+  outgoing_direction outgoing_direction: svg_path.Point,
+  incoming_turn incoming_turn: TangentTurn,
+  outgoing_turn outgoing_turn: TangentTurn,
+  incoming_chord incoming_chord: Float,
+  outgoing_chord outgoing_chord: Float,
+  required_gap_degrees required_gap_degrees: Float,
+) -> Result(HingeTangentAdjustment, Nil) {
+  use turn <- result.try(combine_tangent_turns(incoming_turn, outgoing_turn))
+  let total_chord = incoming_chord +. outgoing_chord
+  case total_chord >. 0.0 && required_gap_degrees >=. 0.0 {
+    False -> Error(Nil)
+    True -> {
+      let incoming_weight = outgoing_chord /. total_chord
+      let outgoing_weight = incoming_chord /. total_chord
+      let gap = hinge_existing_gap(incoming_direction, outgoing_direction, turn)
+      let missing_gap = float.max(0.0, required_gap_degrees -. gap)
+      let incoming_magnitude = missing_gap *. incoming_weight
+      let outgoing_magnitude = missing_gap *. outgoing_weight
+      case turn {
+        Clockwise ->
+          Ok(HingeTangentAdjustment(
+            incoming_degrees: 0.0 -. incoming_magnitude,
+            outgoing_degrees: outgoing_magnitude,
+          ))
+        CounterClockwise ->
+          Ok(HingeTangentAdjustment(
+            incoming_degrees: incoming_magnitude,
+            outgoing_degrees: 0.0 -. outgoing_magnitude,
+          ))
+        Straight -> Error(Nil)
+        CouldNotMeasure -> Error(Nil)
+      }
+    }
+  }
+}
+
+fn combine_tangent_turns(
+  incoming: TangentTurn,
+  outgoing: TangentTurn,
+) -> Result(TangentTurn, Nil) {
+  case incoming, outgoing {
+    Clockwise, Clockwise -> Ok(Clockwise)
+    Clockwise, Straight -> Ok(Clockwise)
+    Straight, Clockwise -> Ok(Clockwise)
+    CounterClockwise, CounterClockwise -> Ok(CounterClockwise)
+    CounterClockwise, Straight -> Ok(CounterClockwise)
+    Straight, CounterClockwise -> Ok(CounterClockwise)
+    Straight, Straight -> Ok(Straight)
+    _, _ -> Error(Nil)
+  }
+}
+
+fn hinge_existing_gap(
+  incoming_direction: svg_path.Point,
+  outgoing_direction: svg_path.Point,
+  turn: TangentTurn,
+) -> Float {
+  let opposite_outgoing = scale(outgoing_direction, -1.0)
+  case turn {
+    Clockwise ->
+      local_aperture(point_helpers.clockwise_aperture(
+        from: incoming_direction,
+        to: opposite_outgoing,
+      ))
+    CounterClockwise ->
+      local_aperture(point_helpers.clockwise_aperture(
+        from: opposite_outgoing,
+        to: incoming_direction,
+      ))
+    Straight -> 0.0
+    CouldNotMeasure -> 0.0
+  }
+}
+
+fn local_aperture(aperture: Float) -> Float {
+  case aperture <=. 180.0 {
+    True -> aperture
+    False -> 0.0 -. { 360.0 -. aperture }
+  }
+}
+
+fn rotate_direction(
+  direction: svg_path.Point,
+  degrees: Float,
+) -> svg_path.Point {
+  point_helpers.direction(degrees: point_helpers.heading(direction) +. degrees)
 }
 
 fn last_list_item(items: List(a)) -> Result(a, Error) {
@@ -4405,7 +7055,7 @@ fn offset_source_segment_with_builder(
       use offset_start <- result.try(offset_point(segment, t: 0.0, distance:))
       use offset_end <- result.try(offset_point(segment, t: 1.0, distance:))
       use offset <- result.try(build_offset_segment(
-        source: segment,
+        source: whole_refined_big_source(segment, distance),
         segment: svg_path.Line(start: offset_start, end: offset_end),
       ))
       Ok([offset])
@@ -4451,6 +7101,22 @@ fn offset_circular_arc_segment(
   distance: Float,
   radius: Float,
 ) -> Result(OffsetSegment, Error) {
+  use arc <- result.try(offset_circular_arc_segment_raw(
+    segment,
+    distance,
+    radius,
+  ))
+  build_offset_segment(
+    source: whole_refined_big_source(segment, distance),
+    segment: arc,
+  )
+}
+
+fn offset_circular_arc_segment_raw(
+  segment: svg_path.Segment,
+  distance: Float,
+  radius: Float,
+) -> Result(svg_path.Segment, Error) {
   use start <- result.try(offset_point(segment, t: 0.0, distance:))
   use end <- result.try(offset_point(segment, t: 1.0, distance:))
   use center <- result.try(
@@ -4468,7 +7134,7 @@ fn offset_circular_arc_segment(
       sweep: center.delta_angle >=. 0.0,
       end:,
     )
-  build_offset_segment(source: segment, segment: arc)
+  Ok(arc)
 }
 
 fn circular_arc_offset_radius(
@@ -4493,15 +7159,17 @@ fn circular_arc_offset_radius(
 }
 
 fn build_offset_segment(
-  source source: svg_path.Segment,
+  source source: OffsetSegmentSource,
   segment segment: svg_path.Segment,
 ) -> Result(OffsetSegment, Error) {
-  use source_start_tangent <- result.try(unit_tangent(source, t: 0.0))
-  use source_end_tangent <- result.try(unit_tangent(source, t: 1.0))
+  let source_segment = offset_segment_source_segment(source)
+  use source_start_tangent <- result.try(unit_tangent(source_segment, t: 0.0))
+  use source_end_tangent <- result.try(unit_tangent(source_segment, t: 1.0))
   make_offset_segment(
     segment:,
-    source_start: svg_path.segment_start(source),
-    source_end: svg_path.segment_end(source),
+    source:,
+    source_start: svg_path.segment_start(source_segment),
+    source_end: svg_path.segment_end(source_segment),
     source_start_tangent:,
     source_end_tangent:,
   )
@@ -4509,6 +7177,7 @@ fn build_offset_segment(
 
 fn make_offset_segment(
   segment segment: svg_path.Segment,
+  source source: OffsetSegmentSource,
   source_start source_start: svg_path.Point,
   source_end source_end: svg_path.Point,
   source_start_tangent source_start_tangent: svg_path.Point,
@@ -4516,10 +7185,46 @@ fn make_offset_segment(
 ) -> Result(OffsetSegment, Error) {
   Ok(OffsetSegment(
     segment:,
+    source:,
     source_start:,
     source_end:,
     source_start_tangent:,
     source_end_tangent:,
+  ))
+}
+
+fn offset_segment_source_segment(
+  source: OffsetSegmentSource,
+) -> svg_path.Segment {
+  case source {
+    RefinedBigSource(refined) -> {
+      let RefinedBigSourceSegment(segment:, ..) = refined
+      segment
+    }
+    StalledSourceRunSource(..) -> {
+      // Stalled run offset segments pass source points and tangents directly and
+      // should not ask for a single representative segment.
+      svg_path.Line(
+        start: svg_path.Point(0.0, 0.0),
+        end: svg_path.Point(0.0, 0.0),
+      )
+    }
+  }
+}
+
+fn whole_refined_big_source(
+  segment: svg_path.Segment,
+  _distance: Float,
+) -> OffsetSegmentSource {
+  RefinedBigSource(RefinedBigSourceSegment(
+    source_subpath_index: 0,
+    source_segment_index: 0,
+    source_segment: segment,
+    source_from: 0.0,
+    source_to: 1.0,
+    segment:,
+    start_is_offset_hinge: False,
+    end_is_offset_hinge: False,
   ))
 }
 
@@ -4588,10 +7293,10 @@ fn recursive_offset_cubic_segment(
     options,
   ))
 
-  case divergence <=. options.fitting.tolerance {
+  case divergence <=. raw_fitting_tolerance(options) {
     True -> {
       use offset <- result.try(build_offset_segment(
-        source: segment,
+        source: whole_refined_big_source(segment, distance),
         segment: candidate,
       ))
       Ok([offset])
@@ -4637,10 +7342,10 @@ fn smart_recursive_offset_cubic_segment(
     options,
   ))
 
-  case divergence <=. options.fitting.tolerance {
+  case divergence <=. raw_fitting_tolerance(options) {
     True -> {
       use offset <- result.try(build_offset_segment(
-        source: segment,
+        source: whole_refined_big_source(segment, distance),
         segment: candidate,
       ))
       Ok([offset])
@@ -4670,6 +7375,10 @@ fn smart_recursive_offset_cubic_segment(
         }
       }
   }
+}
+
+fn raw_fitting_tolerance(options: Options) -> Float {
+  options.fitting.tolerance *. 0.5
 }
 
 fn fitted_cubic_offset(
@@ -4721,6 +7430,748 @@ fn smart_fitted_cubic_offset(
   case segment_is_finite(candidate) {
     True -> Ok(candidate)
     False -> Error(NonFinite)
+  }
+}
+
+fn fitted_refined_big_source_offset(
+  source: RefinedBigSourceSegment,
+  distance: Float,
+) -> Result(svg_path.Segment, Error) {
+  let RefinedBigSourceSegment(segment:, ..) = source
+  use start <- result.try(offset_point(segment, t: 0.0, distance:))
+  use end <- result.try(offset_point(segment, t: 1.0, distance:))
+  let samples =
+    available_offset_fit_samples(
+      segment,
+      distance,
+      [0.2, 0.35, 0.5, 0.65, 0.8],
+      samples: [],
+    )
+  let start_policy =
+    refined_big_source_endpoint_policy(source, distance, endpoint: SegmentStart)
+  let end_policy =
+    refined_big_source_endpoint_policy(source, distance, endpoint: SegmentEnd)
+  use _ <- result.try(reject_bezier_hinge_hinge_refined_source(source))
+  let policy_fit =
+    fit_offset_cubic_with_endpoint_policies(
+      start:,
+      end:,
+      start_policy:,
+      end_policy:,
+      samples:,
+    )
+  let fallback_fit = smart_fitted_cubic_offset(segment, distance)
+  use candidate <- result.try(
+    policy_fit
+    |> result.or(fallback_fit),
+  )
+
+  case segment_is_finite(candidate) {
+    True -> Ok(candidate)
+    False -> Error(NonFinite)
+  }
+}
+
+fn reject_bezier_hinge_hinge_refined_source(
+  source: RefinedBigSourceSegment,
+) -> Result(Nil, Error) {
+  let RefinedBigSourceSegment(
+    segment:,
+    start_is_offset_hinge:,
+    end_is_offset_hinge:,
+    ..,
+  ) = source
+  case
+    start_is_offset_hinge && end_is_offset_hinge && segment_is_bezier(segment)
+  {
+    True -> Error(NonFinite)
+    False -> Ok(Nil)
+  }
+}
+
+fn refined_big_source_endpoint_policy(
+  source: RefinedBigSourceSegment,
+  distance: Float,
+  endpoint endpoint: SegmentEndpoint,
+) -> OffsetCubicEndpointPolicy {
+  let RefinedBigSourceSegment(
+    segment:,
+    start_is_offset_hinge:,
+    end_is_offset_hinge:,
+    ..,
+  ) = source
+  let t = case endpoint {
+    SegmentStart -> 0.0
+    SegmentEnd -> 1.0
+  }
+  let is_hinge = case endpoint {
+    SegmentStart -> start_is_offset_hinge
+    SegmentEnd -> end_is_offset_hinge
+  }
+  let opposite_t = case endpoint {
+    SegmentStart -> 1.0
+    SegmentEnd -> 0.0
+  }
+  let reversed = refined_source_interval_zone(source, distance) == Reversing
+  let opposite_direction = offset_derivative(segment, t: opposite_t, distance:)
+  case offset_derivative(segment, t:, distance:) {
+    Error(_) -> OffsetPositionOnly
+    Ok(direction) -> {
+      let direction = endpoint_policy_direction(direction, reversed)
+      let opposite_direction =
+        opposite_direction
+        |> result.map(fn(direction) {
+          endpoint_policy_direction(direction, reversed)
+        })
+      case is_hinge {
+        False -> OffsetPositionAndTangent(direction)
+        True -> {
+          let turn = endpoint_tangent_turn(segment, endpoint)
+          let nudged =
+            nudged_hinge_fit_direction(
+              direction,
+              opposite_direction,
+              turn,
+              endpoint,
+              reversed,
+            )
+          OffsetPositionAndStalledTangent(nudged)
+        }
+      }
+    }
+  }
+}
+
+fn endpoint_policy_direction(
+  direction: svg_path.Point,
+  reversed: Bool,
+) -> svg_path.Point {
+  case reversed {
+    True -> rotate_direction(direction, 180.0)
+    False -> direction
+  }
+}
+
+fn nudged_hinge_fit_direction(
+  direction: svg_path.Point,
+  opposite_direction: Result(svg_path.Point, Error),
+  turn: TangentTurn,
+  endpoint: SegmentEndpoint,
+  _reversed: Bool,
+) -> svg_path.Point {
+  let base_desired_degrees =
+    case turn, endpoint {
+      Clockwise, SegmentStart -> 1.0
+      Clockwise, SegmentEnd -> -1.0
+      CounterClockwise, SegmentStart -> -1.0
+      CounterClockwise, SegmentEnd -> 1.0
+      Straight, _ | CouldNotMeasure, _ -> 0.0
+    }
+    *. hinge_fit_tangent_nudge_degrees
+  let desired_degrees = base_desired_degrees
+  let degrees = case opposite_direction {
+    Ok(opposite_direction) ->
+      clamped_hinge_fit_nudge(direction, opposite_direction, desired_degrees)
+    Error(_) -> desired_degrees
+  }
+  rotate_direction(direction, degrees)
+}
+
+fn clamped_hinge_fit_nudge(
+  hinge_direction: svg_path.Point,
+  opposite_direction: svg_path.Point,
+  desired_degrees: Float,
+) -> Float {
+  let room = signed_angle(hinge_direction, opposite_direction)
+  case room *. desired_degrees <=. 0.0 {
+    True -> 0.0
+    False -> {
+      let room_abs = float.absolute_value(room)
+      let desired_abs = float.absolute_value(desired_degrees)
+      case room_abs <=. desired_abs {
+        True -> room *. 0.5
+        False -> desired_degrees
+      }
+    }
+  }
+}
+
+fn fit_offset_cubic_with_endpoint_policies(
+  start start: svg_path.Point,
+  end end: svg_path.Point,
+  start_policy start_policy: OffsetCubicEndpointPolicy,
+  end_policy end_policy: OffsetCubicEndpointPolicy,
+  samples samples: List(#(Float, bezier.BezierPoint)),
+) -> Result(svg_path.Segment, Error) {
+  case start_policy, end_policy {
+    OffsetPositionAndStalledTangent(start_direction),
+      OffsetPositionAndStalledTangent(end_direction)
+    ->
+      fit_offset_cubic_both_stalled(
+        start:,
+        end:,
+        start_direction:,
+        end_direction:,
+      )
+    _, _ ->
+      fit_offset_cubic_with_non_both_stalled_endpoint_policies(
+        start:,
+        end:,
+        start_policy:,
+        end_policy:,
+        samples:,
+      )
+  }
+}
+
+fn fit_offset_cubic_with_non_both_stalled_endpoint_policies(
+  start start: svg_path.Point,
+  end end: svg_path.Point,
+  start_policy start_policy: OffsetCubicEndpointPolicy,
+  end_policy end_policy: OffsetCubicEndpointPolicy,
+  samples samples: List(#(Float, bezier.BezierPoint)),
+) -> Result(svg_path.Segment, Error) {
+  let start = to_bezier_point(start)
+  let end = to_bezier_point(end)
+  use curve <- result.try(fit_offset_cubic_data_with_endpoint_policies(
+    start:,
+    end:,
+    start_policy:,
+    end_policy:,
+    samples:,
+  ))
+  fitted_curve_to_segment(curve)
+}
+
+fn fit_offset_cubic_data_with_endpoint_policies(
+  start start: bezier.BezierPoint,
+  end end: bezier.BezierPoint,
+  start_policy start_policy: OffsetCubicEndpointPolicy,
+  end_policy end_policy: OffsetCubicEndpointPolicy,
+  samples samples: List(#(Float, bezier.BezierPoint)),
+) -> Result(bezier.BezierData, Error) {
+  case start_policy, end_policy {
+    OffsetPositionAndTangent(start_direction),
+      OffsetPositionAndTangent(end_direction)
+    -> {
+      use fit <- result.try(
+        bezier.fit_cubic_with_endpoint_tangents(
+          start:,
+          end:,
+          start_tangent: to_bezier_point(start_direction),
+          end_tangent: to_bezier_point(end_direction),
+          samples:,
+        )
+        |> result.map_error(cubic_fit_error),
+      )
+      let #(curve, _) = fit
+      Ok(curve)
+    }
+    OffsetPositionOnly, OffsetPositionOnly -> {
+      use fit <- result.try(
+        bezier.fit_cubic_with_endpoints(start:, end:, samples:)
+        |> result.map_error(cubic_fit_error),
+      )
+      let #(curve, _) = fit
+      Ok(curve)
+    }
+    OffsetPositionAndStalledTangent(_start_direction),
+      OffsetPositionAndStalledTangent(_end_direction)
+    -> Error(NonFinite)
+    OffsetPositionAndStalledTangent(start_direction),
+      OffsetPositionAndTangent(end_direction)
+    ->
+      fit_offset_cubic_start_stalled_end_tangent(
+        start:,
+        end:,
+        start_direction:,
+        end_direction:,
+        samples:,
+      )
+    OffsetPositionAndTangent(start_direction),
+      OffsetPositionAndStalledTangent(end_direction)
+    ->
+      fit_offset_cubic_start_tangent_end_stalled(
+        start:,
+        end:,
+        start_direction:,
+        end_direction:,
+        samples:,
+      )
+    OffsetPositionAndStalledTangent(start_direction), OffsetPositionOnly ->
+      fit_offset_cubic_start_stalled_end_position(
+        start:,
+        end:,
+        start_direction:,
+        samples:,
+      )
+    OffsetPositionOnly, OffsetPositionAndStalledTangent(end_direction) ->
+      fit_offset_cubic_start_position_end_stalled(
+        start:,
+        end:,
+        end_direction:,
+        samples:,
+      )
+    OffsetPositionAndTangent(start_direction), OffsetPositionOnly ->
+      fit_offset_cubic_start_tangent_end_position(
+        start:,
+        end:,
+        start_direction:,
+        samples:,
+      )
+    OffsetPositionOnly, OffsetPositionAndTangent(end_direction) ->
+      fit_offset_cubic_start_position_end_tangent(
+        start:,
+        end:,
+        end_direction:,
+        samples:,
+      )
+  }
+}
+
+fn fit_offset_cubic_both_stalled(
+  start start: svg_path.Point,
+  end end: svg_path.Point,
+  start_direction start_direction: svg_path.Point,
+  end_direction end_direction: svg_path.Point,
+) -> Result(svg_path.Segment, Error) {
+  let chord = subtract(end, start)
+  use chord_direction <- result.try(unit_vector(chord, t: 0.5))
+  let start_angle =
+    float.absolute_value(signed_angle(start_direction, chord_direction))
+  let end_angle =
+    float.absolute_value(signed_angle(end_direction, chord_direction))
+  case
+    start_angle <=. hinge_tangent_gap_degrees
+    && end_angle <=. hinge_tangent_gap_degrees
+  {
+    True -> Ok(svg_path.Line(start:, end:))
+    False -> Error(NonFinite)
+  }
+}
+
+fn fit_offset_cubic_start_stalled_end_tangent(
+  start start: bezier.BezierPoint,
+  end end: bezier.BezierPoint,
+  start_direction start_direction: svg_path.Point,
+  end_direction end_direction: svg_path.Point,
+  samples samples: List(#(Float, bezier.BezierPoint)),
+) -> Result(bezier.BezierData, Error) {
+  let start_point = from_bezier_point(start)
+  let end_point = from_bezier_point(end)
+  use c2 <- result.try(stalled_start_control2(
+    start: start_point,
+    end: end_point,
+    start_direction:,
+    end_direction:,
+    samples:,
+  ))
+  Ok(bezier.CubicBezierData(
+    start:,
+    control1: start,
+    control2: to_bezier_point(c2),
+    end:,
+  ))
+}
+
+fn fit_offset_cubic_start_tangent_end_stalled(
+  start start: bezier.BezierPoint,
+  end end: bezier.BezierPoint,
+  start_direction start_direction: svg_path.Point,
+  end_direction end_direction: svg_path.Point,
+  samples samples: List(#(Float, bezier.BezierPoint)),
+) -> Result(bezier.BezierData, Error) {
+  let start_point = from_bezier_point(start)
+  let end_point = from_bezier_point(end)
+  use c1 <- result.try(stalled_end_control1(
+    start: start_point,
+    end: end_point,
+    start_direction:,
+    end_direction:,
+    samples:,
+  ))
+  Ok(bezier.CubicBezierData(
+    start:,
+    control1: to_bezier_point(c1),
+    control2: end,
+    end:,
+  ))
+}
+
+fn fit_offset_cubic_start_stalled_end_position(
+  start start: bezier.BezierPoint,
+  end end: bezier.BezierPoint,
+  start_direction start_direction: svg_path.Point,
+  samples samples: List(#(Float, bezier.BezierPoint)),
+) -> Result(bezier.BezierData, Error) {
+  let start_point = from_bezier_point(start)
+  let end_point = from_bezier_point(end)
+  use b <- result.try(fit_start_tangent_one_handle(
+    start: start_point,
+    end: end_point,
+    direction: start_direction,
+    control2: end_point,
+    samples:,
+  ))
+  Ok(bezier.CubicBezierData(
+    start:,
+    control1: start,
+    control2: to_bezier_point(add(start_point, scale(start_direction, b))),
+    end:,
+  ))
+}
+
+fn fit_offset_cubic_start_position_end_stalled(
+  start start: bezier.BezierPoint,
+  end end: bezier.BezierPoint,
+  end_direction end_direction: svg_path.Point,
+  samples samples: List(#(Float, bezier.BezierPoint)),
+) -> Result(bezier.BezierData, Error) {
+  let start_point = from_bezier_point(start)
+  let end_point = from_bezier_point(end)
+  use a <- result.try(fit_end_tangent_one_handle(
+    start: start_point,
+    end: end_point,
+    control1: start_point,
+    direction: end_direction,
+    samples:,
+  ))
+  Ok(bezier.CubicBezierData(
+    start:,
+    control1: to_bezier_point(subtract(end_point, scale(end_direction, a))),
+    control2: end,
+    end:,
+  ))
+}
+
+fn fit_offset_cubic_start_tangent_end_position(
+  start start: bezier.BezierPoint,
+  end end: bezier.BezierPoint,
+  start_direction start_direction: svg_path.Point,
+  samples samples: List(#(Float, bezier.BezierPoint)),
+) -> Result(bezier.BezierData, Error) {
+  let start_point = from_bezier_point(start)
+  let end_point = from_bezier_point(end)
+  use a <- result.try(fit_start_tangent_one_handle(
+    start: start_point,
+    end: end_point,
+    direction: start_direction,
+    control2: end_point,
+    samples:,
+  ))
+  Ok(bezier.CubicBezierData(
+    start:,
+    control1: to_bezier_point(add(start_point, scale(start_direction, a))),
+    control2: end,
+    end:,
+  ))
+}
+
+fn fit_offset_cubic_start_position_end_tangent(
+  start start: bezier.BezierPoint,
+  end end: bezier.BezierPoint,
+  end_direction end_direction: svg_path.Point,
+  samples samples: List(#(Float, bezier.BezierPoint)),
+) -> Result(bezier.BezierData, Error) {
+  let start_point = from_bezier_point(start)
+  let end_point = from_bezier_point(end)
+  use b <- result.try(fit_end_tangent_one_handle(
+    start: start_point,
+    end: end_point,
+    control1: start_point,
+    direction: end_direction,
+    samples:,
+  ))
+  Ok(bezier.CubicBezierData(
+    start:,
+    control1: start,
+    control2: to_bezier_point(subtract(end_point, scale(end_direction, b))),
+    end:,
+  ))
+}
+
+fn stalled_start_control2(
+  start start: svg_path.Point,
+  end end: svg_path.Point,
+  start_direction start_direction: svg_path.Point,
+  end_direction end_direction: svg_path.Point,
+  samples _samples: List(#(Float, bezier.BezierPoint)),
+) -> Result(svg_path.Point, Error) {
+  case
+    direction_line_intersection(
+      start,
+      start_direction,
+      end,
+      scale(end_direction, -1.0),
+    )
+  {
+    Ok(point) -> {
+      let handle = point_distance(end, point)
+      let chord = point_distance(start, end)
+      case handle >=. 0.0 && handle <=. 2.0 *. chord {
+        True -> Ok(point)
+        False ->
+          stalled_start_control2_by_bisection(
+            start:,
+            end:,
+            start_direction:,
+            end_direction:,
+          )
+      }
+    }
+    Error(_) ->
+      stalled_start_control2_by_bisection(
+        start:,
+        end:,
+        start_direction:,
+        end_direction:,
+      )
+  }
+}
+
+fn stalled_end_control1(
+  start start: svg_path.Point,
+  end end: svg_path.Point,
+  start_direction start_direction: svg_path.Point,
+  end_direction end_direction: svg_path.Point,
+  samples _samples: List(#(Float, bezier.BezierPoint)),
+) -> Result(svg_path.Point, Error) {
+  case direction_line_intersection(start, start_direction, end, end_direction) {
+    Ok(point) -> {
+      let handle = point_distance(start, point)
+      let chord = point_distance(start, end)
+      case handle >=. 0.0 && handle <=. 2.0 *. chord {
+        True -> Ok(point)
+        False ->
+          stalled_end_control1_by_bisection(
+            start:,
+            end:,
+            start_direction:,
+            end_direction:,
+          )
+      }
+    }
+    Error(_) ->
+      stalled_end_control1_by_bisection(
+        start:,
+        end:,
+        start_direction:,
+        end_direction:,
+      )
+  }
+}
+
+fn direction_line_intersection(
+  a: svg_path.Point,
+  a_direction: svg_path.Point,
+  b: svg_path.Point,
+  b_direction: svg_path.Point,
+) -> Result(svg_path.Point, Error) {
+  use a_unit <- result.try(unit_vector(a_direction, t: 0.0))
+  use b_unit <- result.try(unit_vector(b_direction, t: 0.0))
+  let determinant = cross(a_unit, b_unit)
+  case
+    float.absolute_value(determinant)
+    <. trig.sin_degrees(hinge_fit_line_aperture_degrees)
+  {
+    True -> Error(NonFinite)
+    False -> {
+      let delta = subtract(b, a)
+      let scale_a = cross(delta, b_unit) /. determinant
+      Ok(add(a, scale(a_unit, scale_a)))
+    }
+  }
+}
+
+fn stalled_start_control2_by_bisection(
+  start start: svg_path.Point,
+  end end: svg_path.Point,
+  start_direction start_direction: svg_path.Point,
+  end_direction end_direction: svg_path.Point,
+) -> Result(svg_path.Point, Error) {
+  let chord = point_distance(start, end)
+  let from = hinge_fit_min_handle_chord_ratio *. chord
+  let to = hinge_fit_max_handle_chord_ratio *. chord
+  let point_for = fn(handle) { subtract(end, scale(end_direction, handle)) }
+  let score = fn(handle) {
+    case unit_vector(subtract(point_for(handle), start), t: 0.0) {
+      Error(_) -> 0.0
+      Ok(direction) -> cross(start_direction, direction)
+    }
+  }
+  use handle <- result.try(bisect_signed_zero(score, from, to, iterations: 40))
+  Ok(point_for(handle))
+}
+
+fn stalled_end_control1_by_bisection(
+  start start: svg_path.Point,
+  end end: svg_path.Point,
+  start_direction start_direction: svg_path.Point,
+  end_direction end_direction: svg_path.Point,
+) -> Result(svg_path.Point, Error) {
+  let chord = point_distance(start, end)
+  let from = hinge_fit_min_handle_chord_ratio *. chord
+  let to = hinge_fit_max_handle_chord_ratio *. chord
+  let point_for = fn(handle) { add(start, scale(start_direction, handle)) }
+  let score = fn(handle) {
+    case unit_vector(subtract(point_for(handle), end), t: 1.0) {
+      Error(_) -> 0.0
+      Ok(direction) -> cross(end_direction, direction)
+    }
+  }
+  use handle <- result.try(bisect_signed_zero(score, from, to, iterations: 40))
+  Ok(point_for(handle))
+}
+
+fn bisect_signed_zero(
+  score: fn(Float) -> Float,
+  from: Float,
+  to: Float,
+  iterations iterations: Int,
+) -> Result(Float, Error) {
+  let from_score = score(from)
+  let to_score = score(to)
+  case from_score == 0.0 {
+    True -> Ok(from)
+    False ->
+      case to_score == 0.0 {
+        True -> Ok(to)
+        False ->
+          case from_score *. to_score >. 0.0 {
+            True -> Error(NonFinite)
+            False ->
+              Ok(bisect_signed_zero_loop(
+                score,
+                from,
+                to,
+                from_score,
+                iterations:,
+              ))
+          }
+      }
+  }
+}
+
+fn bisect_signed_zero_loop(
+  score: fn(Float) -> Float,
+  from: Float,
+  to: Float,
+  from_score: Float,
+  iterations iterations: Int,
+) -> Float {
+  case iterations <= 0 {
+    True -> { from +. to } /. 2.0
+    False -> {
+      let middle = { from +. to } /. 2.0
+      let middle_score = score(middle)
+      case middle_score == 0.0 {
+        True -> middle
+        False ->
+          case from_score *. middle_score <=. 0.0 {
+            True ->
+              bisect_signed_zero_loop(
+                score,
+                from,
+                middle,
+                from_score,
+                iterations: iterations - 1,
+              )
+            False ->
+              bisect_signed_zero_loop(
+                score,
+                middle,
+                to,
+                middle_score,
+                iterations: iterations - 1,
+              )
+          }
+      }
+    }
+  }
+}
+
+fn fit_start_tangent_one_handle(
+  start start: svg_path.Point,
+  end end: svg_path.Point,
+  direction direction: svg_path.Point,
+  control2 control2: svg_path.Point,
+  samples samples: List(#(Float, bezier.BezierPoint)),
+) -> Result(Float, Error) {
+  fit_one_handle(
+    samples,
+    fixed: fn(t) {
+      let u = 1.0 -. t
+      add(
+        add(scale(start, u *. u *. u), scale(control2, 3.0 *. u *. t *. t)),
+        scale(end, t *. t *. t),
+      )
+    },
+    column: fn(t) {
+      let u = 1.0 -. t
+      scale(direction, 3.0 *. u *. u *. t)
+    },
+  )
+}
+
+fn fit_end_tangent_one_handle(
+  start start: svg_path.Point,
+  end end: svg_path.Point,
+  control1 control1: svg_path.Point,
+  direction direction: svg_path.Point,
+  samples samples: List(#(Float, bezier.BezierPoint)),
+) -> Result(Float, Error) {
+  fit_one_handle(
+    samples,
+    fixed: fn(t) {
+      let u = 1.0 -. t
+      add(
+        add(scale(start, u *. u *. u), scale(control1, 3.0 *. u *. u *. t)),
+        scale(end, t *. t *. t),
+      )
+    },
+    column: fn(t) {
+      let u = 1.0 -. t
+      scale(direction, -3.0 *. u *. t *. t)
+    },
+  )
+}
+
+fn fit_one_handle(
+  samples: List(#(Float, bezier.BezierPoint)),
+  fixed fixed: fn(Float) -> svg_path.Point,
+  column column: fn(Float) -> svg_path.Point,
+) -> Result(Float, Error) {
+  fit_one_handle_loop(samples, fixed, column, ata: 0.0, atb: 0.0, count: 0)
+}
+
+fn fit_one_handle_loop(
+  samples: List(#(Float, bezier.BezierPoint)),
+  fixed: fn(Float) -> svg_path.Point,
+  column: fn(Float) -> svg_path.Point,
+  ata ata: Float,
+  atb atb: Float,
+  count count: Int,
+) -> Result(Float, Error) {
+  case samples {
+    [] -> {
+      case count == 0 || float.absolute_value(ata) <=. point_tolerance {
+        True -> Error(NonFinite)
+        False -> Ok(atb /. ata)
+      }
+    }
+    [sample, ..rest] -> {
+      let #(t, point) = sample
+      let target = subtract(from_bezier_point(point), fixed(t))
+      let col = column(t)
+      fit_one_handle_loop(
+        rest,
+        fixed,
+        column,
+        ata: ata +. dot(col, col),
+        atb: atb +. dot(col, target),
+        count: count + 1,
+      )
+    }
   }
 }
 
@@ -5173,46 +8624,45 @@ fn unit_tangent(
   segment: svg_path.Segment,
   t t: Float,
 ) -> Result(svg_path.Point, Error) {
-  case svg_path.segment_derivative(segment, at: t) {
-    Ok(derivative) -> {
-      case point_length(derivative) >. tangent_epsilon {
-        True -> Ok(scale(derivative, 1.0 /. point_length(derivative)))
-        False -> fallback_unit_tangent(segment, t:)
-      }
-    }
-    Error(error) -> Error(PathError(error))
+  use directions <- result.try(
+    svg_path.segment_directions(segment, at: t) |> result.map_error(PathError),
+  )
+  case t {
+    0.0 -> required_direction(directions.outgoing, t:)
+    1.0 -> required_direction(directions.incoming, t:)
+    _ -> interior_unit_tangent(directions, t:)
   }
 }
 
-fn fallback_unit_tangent(
-  segment: svg_path.Segment,
+fn required_direction(
+  direction: Option(svg_path.Point),
   t t: Float,
 ) -> Result(svg_path.Point, Error) {
-  let fallback_t = case t <=. 0.0 {
-    True -> 0.001
-    False ->
-      case t >=. 1.0 {
-        True -> 0.999
-        False -> t +. 0.001
-      }
+  case direction {
+    Some(direction) -> Ok(direction)
+    None -> Error(DegenerateTangent(t))
   }
+}
 
-  use derivative <- result.try(
-    svg_path.segment_derivative(segment, at: fallback_t)
-    |> result.map_error(PathError),
-  )
-
-  case point_length(derivative) >. tangent_epsilon {
-    True -> Ok(scale(derivative, 1.0 /. point_length(derivative)))
-    False -> {
-      let start = svg_path.segment_start(segment)
-      let end = svg_path.segment_end(segment)
-      let chord = subtract(end, start)
-      case point_length(chord) >. tangent_epsilon {
-        True -> Ok(scale(chord, 1.0 /. point_length(chord)))
+fn interior_unit_tangent(
+  directions: svg_path.Directions,
+  t t: Float,
+) -> Result(svg_path.Point, Error) {
+  case directions.incoming, directions.outgoing {
+    Some(incoming), Some(outgoing) -> {
+      let angle = float.absolute_value(signed_angle(incoming, outgoing))
+      case angle <=. tangent_heal_agreement_angle_degrees {
         False -> Error(DegenerateTangent(t))
+        True -> {
+          let sum = add(incoming, outgoing)
+          case point_length(sum) >. tangent_epsilon {
+            True -> unit_vector(sum, t:)
+            False -> Error(DegenerateTangent(t))
+          }
+        }
       }
     }
+    _, _ -> Error(DegenerateTangent(t))
   }
 }
 

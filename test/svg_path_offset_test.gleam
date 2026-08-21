@@ -4,8 +4,11 @@ import gleam/int
 import gleam/list
 import gleam/string
 import svg_path
+import svg_path/arrangement as arrangement_graph
 import svg_path/format as number_format
 import svg_path/offset
+import svg_path/parse
+import svg_path/point
 import svg_path/serialize
 import svg_path/trig
 
@@ -55,6 +58,159 @@ pub fn segment_offsets_line_to_left_for_negative_distance_test() {
         end: svg_path.Point(-3.0, 10.0),
       ),
     ]
+}
+
+pub fn hinge_tangent_adjustment_opens_clockwise_gap_test() {
+  let assert Ok(adjustment) =
+    offset.internal_hinge_tangent_adjustment(
+      incoming_direction: point.direction(degrees: 0.0),
+      outgoing_direction: point.direction(degrees: 180.0),
+      incoming_turn: offset.Clockwise,
+      outgoing_turn: offset.Clockwise,
+      incoming_chord: 1.0,
+      outgoing_chord: 1.0,
+      required_gap_degrees: 1.0,
+    )
+
+  assert_hinge_gap(
+    incoming_direction: point.direction(degrees: 0.0),
+    outgoing_direction: point.direction(degrees: 180.0),
+    adjustment:,
+    expected_turn: offset.Clockwise,
+    at_least: 1.0,
+  )
+  assert_near(adjustment.incoming_degrees, -0.5)
+  assert_near(adjustment.outgoing_degrees, 0.5)
+}
+
+pub fn hinge_tangent_adjustment_opens_counterclockwise_gap_test() {
+  let assert Ok(adjustment) =
+    offset.internal_hinge_tangent_adjustment(
+      incoming_direction: point.direction(degrees: 0.0),
+      outgoing_direction: point.direction(degrees: 180.0),
+      incoming_turn: offset.CounterClockwise,
+      outgoing_turn: offset.CounterClockwise,
+      incoming_chord: 1.0,
+      outgoing_chord: 1.0,
+      required_gap_degrees: 1.0,
+    )
+
+  assert_hinge_gap(
+    incoming_direction: point.direction(degrees: 0.0),
+    outgoing_direction: point.direction(degrees: 180.0),
+    adjustment:,
+    expected_turn: offset.CounterClockwise,
+    at_least: 1.0,
+  )
+  assert_near(adjustment.incoming_degrees, 0.5)
+  assert_near(adjustment.outgoing_degrees, -0.5)
+}
+
+pub fn hinge_tangent_adjustment_uses_existing_gap_test() {
+  let assert Ok(adjustment) =
+    offset.internal_hinge_tangent_adjustment(
+      incoming_direction: point.direction(degrees: 0.0),
+      outgoing_direction: point.direction(degrees: 180.5),
+      incoming_turn: offset.Clockwise,
+      outgoing_turn: offset.Clockwise,
+      incoming_chord: 1.0,
+      outgoing_chord: 1.0,
+      required_gap_degrees: 1.0,
+    )
+
+  assert_hinge_gap(
+    incoming_direction: point.direction(degrees: 0.0),
+    outgoing_direction: point.direction(degrees: 180.5),
+    adjustment:,
+    expected_turn: offset.Clockwise,
+    at_least: 1.0,
+  )
+  assert_near(adjustment.incoming_degrees, -0.25)
+  assert_near(adjustment.outgoing_degrees, 0.25)
+}
+
+pub fn hinge_tangent_adjustment_corrects_wrong_side_gap_test() {
+  let assert Ok(adjustment) =
+    offset.internal_hinge_tangent_adjustment(
+      incoming_direction: point.direction(degrees: 0.0),
+      outgoing_direction: point.direction(degrees: 179.5),
+      incoming_turn: offset.Clockwise,
+      outgoing_turn: offset.Clockwise,
+      incoming_chord: 1.0,
+      outgoing_chord: 1.0,
+      required_gap_degrees: 1.0,
+    )
+
+  assert_hinge_gap(
+    incoming_direction: point.direction(degrees: 0.0),
+    outgoing_direction: point.direction(degrees: 179.5),
+    adjustment:,
+    expected_turn: offset.Clockwise,
+    at_least: 1.0,
+  )
+  assert_near(adjustment.incoming_degrees, -0.75)
+  assert_near(adjustment.outgoing_degrees, 0.75)
+}
+
+pub fn hinge_tangent_adjustment_weights_shorter_segment_more_test() {
+  let assert Ok(adjustment) =
+    offset.internal_hinge_tangent_adjustment(
+      incoming_direction: point.direction(degrees: 0.0),
+      outgoing_direction: point.direction(degrees: 180.0),
+      incoming_turn: offset.Clockwise,
+      outgoing_turn: offset.Clockwise,
+      incoming_chord: 1.0,
+      outgoing_chord: 9.0,
+      required_gap_degrees: 1.0,
+    )
+
+  assert_near(adjustment.incoming_degrees, -0.9)
+  assert_near(adjustment.outgoing_degrees, 0.1)
+}
+
+pub fn hinge_tangent_adjustment_treats_straight_as_other_turn_test() {
+  let assert Ok(adjustment) =
+    offset.internal_hinge_tangent_adjustment(
+      incoming_direction: point.direction(degrees: 0.0),
+      outgoing_direction: point.direction(degrees: 180.0),
+      incoming_turn: offset.Straight,
+      outgoing_turn: offset.CounterClockwise,
+      incoming_chord: 1.0,
+      outgoing_chord: 1.0,
+      required_gap_degrees: 1.0,
+    )
+
+  assert_hinge_gap(
+    incoming_direction: point.direction(degrees: 0.0),
+    outgoing_direction: point.direction(degrees: 180.0),
+    adjustment:,
+    expected_turn: offset.CounterClockwise,
+    at_least: 1.0,
+  )
+}
+
+pub fn hinge_tangent_adjustment_rejects_ambiguous_turns_test() {
+  assert offset.internal_hinge_tangent_adjustment(
+      incoming_direction: point.direction(degrees: 0.0),
+      outgoing_direction: point.direction(degrees: 180.0),
+      incoming_turn: offset.Clockwise,
+      outgoing_turn: offset.CounterClockwise,
+      incoming_chord: 1.0,
+      outgoing_chord: 1.0,
+      required_gap_degrees: 1.0,
+    )
+    == Error(Nil)
+
+  assert offset.internal_hinge_tangent_adjustment(
+      incoming_direction: point.direction(degrees: 0.0),
+      outgoing_direction: point.direction(degrees: 180.0),
+      incoming_turn: offset.CouldNotMeasure,
+      outgoing_turn: offset.Clockwise,
+      incoming_chord: 1.0,
+      outgoing_chord: 1.0,
+      required_gap_degrees: 1.0,
+    )
+    == Error(Nil)
 }
 
 pub fn subpath_offset_map_maps_local_coordinates_to_right_side_test() {
@@ -169,6 +325,46 @@ pub fn subpath_offset_map_composes_with_try_map_path_points_test() {
         ),
       ]),
     ])
+}
+
+pub fn package_title_s_iterated_offset_keeps_three_closed_first_offset_subpaths_test() {
+  let assert Ok(contents) = read_file("examples/debug/package_title.svg")
+  let assert Ok(title) = parse.path(first_path_data(contents))
+  let assert Ok(s) = first_subpath(title)
+  let source = svg_path.Path([s])
+  let options =
+    offset.Options(
+      ..offset.default_options(),
+      fitting: offset.FittingOptions(tolerance: 0.01, samples: 5, max_depth: 12),
+      trimming: svg_path.DistanceOptions(
+        ..svg_path.default_distance_options(),
+        tolerance: 0.000000001,
+      ),
+    )
+
+  let assert Ok(first_offset) =
+    offset.path_with(source, distance: 1.0, options:)
+  let first_offset_subpaths = svg_path.path_subpaths(first_offset)
+  assert list.length(first_offset_subpaths) == 3
+  assert all_subpaths_closed(first_offset_subpaths)
+
+  let assert Ok(_second_offset) =
+    offset.path_with(first_offset, distance: 1.0, options:)
+}
+
+fn first_subpath(path: svg_path.Path) -> Result(svg_path.Subpath, Nil) {
+  case svg_path.path_subpaths(path) {
+    [first, ..] -> Ok(first)
+    [] -> Error(Nil)
+  }
+}
+
+fn all_subpaths_closed(subpaths: List(svg_path.Subpath)) -> Bool {
+  case subpaths {
+    [] -> True
+    [first, ..rest] ->
+      svg_path.subpath_is_closed(first) && all_subpaths_closed(rest)
+  }
 }
 
 pub fn segment_offsets_quadratic_to_cubic_pieces_within_tolerance_test() {
@@ -330,6 +526,7 @@ pub fn segment_rejects_invalid_options_test() {
 pub fn default_offset_trimming_uses_precise_projection_test() {
   let options = offset.default_options()
 
+  assert options.trimming.samples == 5
   assert options.trimming.tolerance
     == svg_path.default_distance_options().tolerance
 }
@@ -476,7 +673,7 @@ pub fn subpath_offsets_closed_square_inset_test() {
   let assert [offset_subpath] = svg_path.path_subpaths(offset_path)
 
   assert svg_path.subpath_is_closed(offset_subpath)
-  assert serialize.subpath(offset_subpath) == "M 2 2 H 8 V 8 H 2 Z"
+  assert serialize.subpath(offset_subpath) == "M 2 8 V 2 H 8 V 8 Z"
 }
 
 pub fn subpath_untrimmed_offsets_closed_square_and_preserves_closed_state_test() {
@@ -548,7 +745,11 @@ pub fn provisional_arrangement_nodes_crossing_subpaths_test() {
     ])
 
   let assert Ok(build) =
-    offset.internal_provisional_arrangement([horizontal, vertical])
+    arrangement_graph.build(
+      [svg_path.Path([horizontal, vertical])],
+      tolerance: 0.000000002,
+      minimum_chord: 0.000000002,
+    )
 
   assert list.length(build.graph.vertices) == 5
   assert list.length(build.graph.edges) == 4
@@ -571,7 +772,11 @@ pub fn provisional_arrangement_consolidates_coincident_pieces_test() {
     ])
 
   let assert Ok(build) =
-    offset.internal_provisional_arrangement([whole, divided])
+    arrangement_graph.build(
+      [svg_path.Path([whole, divided])],
+      tolerance: 0.000000002,
+      minimum_chord: 0.000000002,
+    )
 
   assert list.length(build.graph.vertices) == 3
   assert list.length(build.graph.edges) == 2
@@ -615,7 +820,11 @@ pub fn arrangement_global_sections_preserve_opposite_multiplicity_test() {
     ])
 
   let assert Ok(build) =
-    offset.internal_provisional_arrangement([forward, reverse])
+    arrangement_graph.build(
+      [svg_path.Path([forward, reverse])],
+      tolerance: 0.000000002,
+      minimum_chord: 0.000000002,
+    )
   let assert [edge] = build.graph.edges
   assert edge.forward_multiplicity == 1
   assert edge.reverse_multiplicity == 1
@@ -762,7 +971,7 @@ pub fn subpath_stroke_closed_square_uses_band_test() {
   let assert Ok(stroke) = offset.subpath_stroke(square, width: 4.0)
 
   assert serialize.path(stroke)
-    == "M 2 2 V 8 H 8 V 2 Z M 0 -2 H 10 H 12 V 0 V 10 V 12 H 10 H 0 H -2 V 10 V 0 V -2 Z"
+    == "M 2 8 H 8 V 2 H 2 Z M -2 -2 H 0 H 10 H 12 V 0 V 10 V 12 H 10 H 0 H -2 V 10 V 0 Z"
 }
 
 pub fn subpath_stroke_rejects_invalid_width_test() {
@@ -774,6 +983,255 @@ pub fn subpath_stroke_rejects_invalid_width_test() {
 
   assert offset.subpath_stroke(subpath, width: 0.0)
     == Error(offset.InvalidStrokeWidth(0.0))
+}
+
+pub fn band_inside_function_uses_nonzero_for_open_subpath_band_test() {
+  let outline =
+    svg_path.subpath_assert_polygon([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
+      svg_path.Point(10.0, 10.0),
+      svg_path.Point(0.0, 10.0),
+    ])
+  let assert Ok(inside) =
+    offset.internal_band_inside_function([offset.OpenSubpathBand(outline)])
+
+  assert inside(svg_path.Point(5.0, 5.0)) == Ok(True)
+  assert inside(svg_path.Point(15.0, 5.0)) == Ok(False)
+}
+
+pub fn band_inside_function_reverses_second_closed_subpath_side_test() {
+  let outer =
+    svg_path.subpath_assert_polygon([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
+      svg_path.Point(10.0, 10.0),
+      svg_path.Point(0.0, 10.0),
+    ])
+  let inner =
+    svg_path.subpath_assert_polygon([
+      svg_path.Point(2.0, 2.0),
+      svg_path.Point(8.0, 2.0),
+      svg_path.Point(8.0, 8.0),
+      svg_path.Point(2.0, 8.0),
+    ])
+  let assert Ok(inside) =
+    offset.internal_band_inside_function([
+      offset.ClosedSubpathBand(outer, inner),
+    ])
+
+  assert inside(svg_path.Point(1.0, 1.0)) == Ok(True)
+  assert inside(svg_path.Point(5.0, 5.0)) == Ok(False)
+  assert inside(svg_path.Point(12.0, 5.0)) == Ok(False)
+}
+
+pub fn band_inside_function_rejects_open_payload_test() {
+  let open =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
+    ])
+
+  assert offset.internal_band_inside_function([offset.OpenSubpathBand(open)])
+    == Error(offset.BandSubpathNotClosed)
+}
+
+pub fn segment_is_submerged_checks_both_immediate_sides_test() {
+  let outline =
+    svg_path.subpath_assert_polygon([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
+      svg_path.Point(10.0, 10.0),
+      svg_path.Point(0.0, 10.0),
+    ])
+  let assert Ok(inside) =
+    offset.internal_band_inside_function([offset.OpenSubpathBand(outline)])
+  let middle =
+    svg_path.Line(
+      start: svg_path.Point(2.0, 5.0),
+      end: svg_path.Point(8.0, 5.0),
+    )
+  let boundary =
+    svg_path.Line(
+      start: svg_path.Point(2.0, 0.0),
+      end: svg_path.Point(8.0, 0.0),
+    )
+
+  assert offset.internal_segment_is_submerged(
+      middle,
+      inside:,
+      side_sampling_distance: 0.5,
+    )
+    == Ok(True)
+  assert offset.internal_segment_is_submerged(
+      boundary,
+      inside:,
+      side_sampling_distance: 0.5,
+    )
+    == Ok(False)
+}
+
+pub fn band_loop_filter_keeps_loop_without_submerged_majority_test() {
+  let loop = square_loop()
+  let inside = fn(point: svg_path.Point) { Ok(point.x <. 1.0) }
+
+  assert offset.internal_filter_band_loops(
+      [loop],
+      inside:,
+      side_sampling_distance: 0.5,
+    )
+    == Ok([loop])
+}
+
+pub fn band_loop_filter_removes_loop_with_submerged_majority_test() {
+  let loop = square_loop()
+  let inside = fn(point: svg_path.Point) { Ok(point.x <. 6.0) }
+
+  assert offset.internal_filter_band_loops(
+      [loop],
+      inside:,
+      side_sampling_distance: 0.5,
+    )
+    == Ok([])
+}
+
+pub fn single_offset_loop_filter_removes_loop_with_any_submerged_segment_test() {
+  let loop = square_loop()
+  let inside = fn(point: svg_path.Point) { Ok(point.x <. 1.0) }
+
+  assert offset.internal_filter_single_offset_loops(
+      [loop],
+      inside:,
+      side_sampling_distance: 0.5,
+    )
+    == Ok([])
+}
+
+pub fn closed_candidate_even_contours_extracts_square_loop_test() {
+  let loop = square_loop()
+
+  let assert Ok(loops) =
+    offset.internal_closed_candidate_even_contours(
+      [loop],
+      options: offset.default_options(),
+    )
+
+  assert list.length(loops) == 1
+  let assert [only] = loops
+  assert svg_path.subpath_is_closed(only)
+}
+
+pub fn closed_candidate_even_contours_rejects_open_tail_test() {
+  let open =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
+    ])
+
+  assert offset.internal_closed_candidate_even_contours(
+      [open],
+      options: offset.default_options(),
+    )
+    == Error(offset.BandOddSkeletonNotEmpty)
+}
+
+pub fn topological_band_loops_filters_submerged_loop_test() {
+  let loop = square_loop()
+  let containing_band =
+    svg_path.subpath_assert_polygon([
+      svg_path.Point(-1.0, -1.0),
+      svg_path.Point(11.0, -1.0),
+      svg_path.Point(11.0, 11.0),
+      svg_path.Point(-1.0, 11.0),
+    ])
+
+  assert offset.internal_topological_band_loops(
+      [loop],
+      bands: [offset.OpenSubpathBand(containing_band)],
+      options: offset.default_options(),
+    )
+    == Ok([])
+}
+
+pub fn topological_single_offset_path_preserves_open_tail_test() {
+  let provisional =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(-5.0, 0.0),
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
+      svg_path.Point(10.0, 10.0),
+      svg_path.Point(0.0, 10.0),
+      svg_path.Point(0.0, 0.0),
+    ])
+  let containing_band =
+    svg_path.subpath_assert_polygon([
+      svg_path.Point(-1.0, -1.0),
+      svg_path.Point(11.0, -1.0),
+      svg_path.Point(11.0, 11.0),
+      svg_path.Point(-1.0, 11.0),
+    ])
+
+  let assert Ok(path) =
+    offset.internal_topological_single_offset_path(
+      [provisional],
+      bands: [offset.OpenSubpathBand(containing_band)],
+      options: offset.default_options(),
+    )
+  let assert [tail] = svg_path.path_subpaths(path)
+  let assert [segment] = svg_path.subpath_segments(tail)
+
+  assert !svg_path.subpath_is_closed(tail)
+  assert svg_path.segment_start(segment) == svg_path.Point(-5.0, 0.0)
+  assert svg_path.segment_end(segment) == svg_path.Point(0.0, 0.0)
+}
+
+pub fn single_offset_band_candidate_closes_open_source_test() {
+  let open =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
+    ])
+
+  let assert Ok(offset.OpenSubpathBand(outline)) =
+    offset.internal_single_offset_band_candidate(
+      open,
+      distance: 2.0,
+      options: offset.default_options(),
+    )
+
+  assert svg_path.subpath_is_closed(outline)
+}
+
+pub fn single_offset_band_candidate_keeps_closed_source_as_two_sides_test() {
+  let closed = square_loop()
+
+  let assert Ok(offset.ClosedSubpathBand(side_a:, side_b:)) =
+    offset.internal_single_offset_band_candidate(
+      closed,
+      distance: 2.0,
+      options: offset.default_options(),
+    )
+
+  assert svg_path.subpath_is_closed(side_a)
+  assert svg_path.subpath_is_closed(side_b)
+}
+
+pub fn stroke_band_candidate_closes_open_source_test() {
+  let open =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
+    ])
+
+  let assert Ok(offset.OpenSubpathBand(outline)) =
+    offset.internal_stroke_band_candidate(
+      open,
+      width: 4.0,
+      cap: offset.Butt,
+      options: offset.default_options(),
+    )
+
+  assert svg_path.subpath_is_closed(outline)
 }
 
 pub fn subpath_prunes_self_crossed_inset_sections_test() {
@@ -793,7 +1251,7 @@ pub fn subpath_prunes_self_crossed_inset_sections_test() {
   let assert Ok(trimmed) = offset.subpath_with(shape, distance: -24.0, options:)
 
   assert serialize.path(trimmed)
-    == "M 24 24 H 46.7621 A 24 24 0 0 0 46 30 V 90 A 24 24 0 0 0 46.7621 96 H 24 Z"
+    == "M 24 96 V 24 H 46.7621 A 24 24 0 0 0 46 30 V 90 A 24 24 0 0 0 46.7621 96 Z"
 }
 
 pub fn path_offsets_closed_subpaths_test() {
@@ -816,7 +1274,7 @@ pub fn path_offsets_closed_subpaths_test() {
   let assert Ok(trimmed) = offset.path(path, distance: -2.0)
 
   assert list.length(svg_path.path_subpaths(trimmed)) == 2
-  assert serialize.path(trimmed) == "M 2 2 H 8 V 8 H 2 Z M 22 2 H 28 V 8 H 22 Z"
+  assert serialize.path(trimmed) == "M 2 8 V 2 H 8 V 8 Z M 22 8 V 2 H 28 V 8 Z"
 }
 
 pub fn subpath_offsets_open_polyline_with_default_miter_test() {
@@ -881,7 +1339,7 @@ pub fn subpath_prunes_negative_inset_sections_test() {
 
   assert list.length(svg_path.path_subpaths(parametric)) == 1
   assert serialize.path(parametric)
-    == "M 24 24 H 46.7621 A 24 24 0 0 0 46 30 V 90 A 24 24 0 0 0 46.7621 96 H 24 Z"
+    == "M 24 96 V 24 H 46.7621 A 24 24 0 0 0 46 30 V 90 A 24 24 0 0 0 46.7621 96 Z"
 }
 
 pub fn subpath_ignores_adjacent_local_contacts_test() {
@@ -1195,6 +1653,41 @@ fn clean_zero(value: Float) -> Float {
     True -> 0.0
     False -> value
   }
+}
+
+fn assert_near(actual: Float, expected: Float) -> Nil {
+  assert float.absolute_value(actual -. expected) <=. 0.000000001
+}
+
+fn assert_hinge_gap(
+  incoming_direction incoming_direction: svg_path.Point,
+  outgoing_direction outgoing_direction: svg_path.Point,
+  adjustment adjustment: offset.HingeTangentAdjustment,
+  expected_turn expected_turn: offset.TangentTurn,
+  at_least at_least: Float,
+) -> Nil {
+  let offset.HingeTangentAdjustment(incoming_degrees:, outgoing_degrees:) =
+    adjustment
+  let incoming = rotate_direction(incoming_direction, incoming_degrees)
+  let outgoing = rotate_direction(outgoing_direction, outgoing_degrees)
+  let opposite_outgoing = svg_path.Point(0.0 -. outgoing.x, 0.0 -. outgoing.y)
+  let gap = case expected_turn {
+    offset.Clockwise ->
+      point.clockwise_aperture(from: incoming, to: opposite_outgoing)
+    offset.CounterClockwise ->
+      point.clockwise_aperture(from: opposite_outgoing, to: incoming)
+    offset.Straight -> 0.0
+    offset.CouldNotMeasure -> 0.0
+  }
+  assert gap +. 0.000000001 >=. at_least
+  assert gap <=. 180.0
+}
+
+fn rotate_direction(
+  direction: svg_path.Point,
+  degrees: Float,
+) -> svg_path.Point {
+  point.direction(degrees: point.heading(direction) +. degrees)
 }
 
 fn circle_angle_tangent(angle: Float) -> svg_path.Point {
@@ -1829,6 +2322,15 @@ fn serialize_segments(segments: List(svg_path.Segment)) -> String {
   }
 }
 
+fn square_loop() -> svg_path.Subpath {
+  svg_path.subpath_assert_polygon([
+    svg_path.Point(0.0, 0.0),
+    svg_path.Point(10.0, 0.0),
+    svg_path.Point(10.0, 10.0),
+    svg_path.Point(0.0, 10.0),
+  ])
+}
+
 fn add_point(a: svg_path.Point, b: svg_path.Point) -> svg_path.Point {
   svg_path.Point(a.x +. b.x, a.y +. b.y)
 }
@@ -1864,3 +2366,12 @@ fn escape(text: String) -> String {
 
 @external(erlang, "file", "write_file")
 fn write_file(path: String, contents: String) -> Dynamic
+
+@external(erlang, "file", "read_file")
+fn read_file(path: String) -> Result(String, Dynamic)
+
+fn first_path_data(contents: String) -> String {
+  let assert [_, after_attribute] = string.split(contents, on: " d=\"")
+  let assert [data, ..] = string.split(after_attribute, on: "\"")
+  data
+}
