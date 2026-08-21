@@ -6,21 +6,11 @@ import gleam/option.{type Option, None, Some}
 import gleam/result
 import svg_path
 import svg_path/convex_hull
+import svg_path/degeneracy
 import svg_path/point as point_helpers
 import svg_path/trig
 
 const default_tolerance = 0.000001
-
-/// The longest leading segment sequence certified to fit in a thin strip.
-@internal
-pub type ThinPrefix {
-  ThinPrefix(
-    segments: List(svg_path.Segment),
-    remaining: List(svg_path.Segment),
-    hull: Option(svg_path.Subpath),
-    strip: Option(convex_hull.MinimumWidthStrip),
-  )
-}
 
 /// Errors returned by path effects.
 pub type Error {
@@ -56,195 +46,14 @@ pub fn normalize_degenerate_segments(
   subpath: svg_path.Subpath,
   tolerance tolerance: Float,
 ) -> Result(svg_path.Subpath, Error) {
-  case tolerance <=. 0.0 {
-    True -> Error(PathError(svg_path.InvalidLinearizeTolerance(tolerance)))
-    False -> {
-      use segments <- result.try(
-        colinearize_segments(
-          svg_path.subpath_segments(subpath),
-          tolerance,
-          converted: [],
-        ),
-      )
-      use open <- result.try(case segments {
-        [] -> {
-          use start <- result.try(
-            svg_path.subpath_start(subpath) |> result.map_error(PathError),
-          )
-          Ok(svg_path.subpath_empty(at: start))
-        }
-        _ -> svg_path.subpath(segments) |> result.map_error(PathError)
-      })
-      case svg_path.subpath_is_closed(subpath) {
-        False -> Ok(open)
-        True ->
-          svg_path.subpath_set_closed_with(
-            open,
-            closed: True,
-            policy: svg_path.Strict,
-          )
-          |> result.map_error(PathError)
-      }
-    }
-  }
+  degeneracy.normalize_degenerate_segments(subpath, tolerance:)
+  |> result.map_error(degeneracy_error)
 }
 
-fn colinearize_segments(
-  segments: List(svg_path.Segment),
-  tolerance: Float,
-  converted converted: List(svg_path.Segment),
-) -> Result(List(svg_path.Segment), Error) {
-  case segments {
-    [] -> Ok(list.reverse(converted))
-    [first, ..rest] -> {
-      use pending <- result.try(
-        svg_path.subpath([first, ..rest]) |> result.map_error(PathError),
-      )
-      use prefix <- result.try(longest_thin_prefix(pending, tolerance:))
-      case prefix.segments {
-        [_, _, ..] -> {
-          use lines <- result.try(degenerate_traversal(
-            prefix.segments,
-            tolerance,
-          ))
-          colinearize_segments(
-            prefix.remaining,
-            tolerance,
-            converted: list.append(list.reverse(lines), converted),
-          )
-        }
-        _ -> {
-          use replacement <- result.try(
-            svg_path.segment_degenerate_lines(first, tolerance)
-            |> result.map_error(PathError),
-          )
-          let replacement = case replacement {
-            None -> [first]
-            Some(lines) -> lines
-          }
-          colinearize_segments(
-            rest,
-            tolerance,
-            converted: list.append(list.reverse(replacement), converted),
-          )
-        }
-      }
-    }
-  }
-}
-
-/// Return the longest leading segment sequence certified to fit in a strip.
-@internal
-pub fn internal_longest_thin_prefix(
-  subpath: svg_path.Subpath,
-  tolerance tolerance: Float,
-) -> Result(ThinPrefix, Error) {
-  longest_thin_prefix(subpath, tolerance:)
-}
-
-fn longest_thin_prefix(
-  subpath: svg_path.Subpath,
-  tolerance tolerance: Float,
-) -> Result(ThinPrefix, Error) {
-  case svg_path.subpath_segments(subpath) {
-    [] -> Ok(ThinPrefix(segments: [], remaining: [], hull: None, strip: None))
-    [first, ..rest] -> {
-      use hull <- result.try(
-        convex_hull.segment_hull(first) |> result.map_error(ConvexHullError),
-      )
-      use decision <- result.try(
-        convex_hull.internal_convex_subpath_minimum_width_decision(
-          hull,
-          tolerance:,
-        )
-        |> result.map_error(ConvexHullError),
-      )
-      case decision {
-        convex_hull.MinimumWidthFits(strip) ->
-          longest_thin_prefix_loop(
-            rest,
-            accepted: [first],
-            hull:,
-            strip:,
-            tolerance:,
-          )
-        convex_hull.MinimumWidthExceeds(..)
-        | convex_hull.MinimumWidthUnresolved(..) ->
-          Ok(ThinPrefix(
-            segments: [],
-            remaining: [first, ..rest],
-            hull: None,
-            strip: None,
-          ))
-      }
-    }
-  }
-}
-
-fn longest_thin_prefix_loop(
-  remaining: List(svg_path.Segment),
-  accepted accepted: List(svg_path.Segment),
-  hull hull: svg_path.Subpath,
-  strip strip: convex_hull.MinimumWidthStrip,
-  tolerance tolerance: Float,
-) -> Result(ThinPrefix, Error) {
-  case remaining {
-    [] ->
-      Ok(ThinPrefix(
-        segments: list.reverse(accepted),
-        remaining: [],
-        hull: Some(hull),
-        strip: Some(strip),
-      ))
-    [first, ..rest] -> {
-      use #(candidate_hull, decision) <- result.try(
-        convex_hull.internal_convex_subpath_add_segment_and_test_width(
-          hull,
-          first,
-          tolerance:,
-        )
-        |> result.map_error(ConvexHullError),
-      )
-      case decision {
-        convex_hull.MinimumWidthFits(candidate_strip) ->
-          longest_thin_prefix_loop(
-            rest,
-            accepted: [first, ..accepted],
-            hull: candidate_hull,
-            strip: candidate_strip,
-            tolerance:,
-          )
-        convex_hull.MinimumWidthExceeds(..)
-        | convex_hull.MinimumWidthUnresolved(..) ->
-          Ok(ThinPrefix(
-            segments: list.reverse(accepted),
-            remaining: [first, ..rest],
-            hull: Some(hull),
-            strip: Some(strip),
-          ))
-      }
-    }
-  }
-}
-
-fn degenerate_traversal(
-  segments: List(svg_path.Segment),
-  tolerance: Float,
-) -> Result(List(svg_path.Segment), Error) {
-  case segments {
-    [] -> Ok([])
-    [first, ..rest] -> {
-      use replacement <- result.try(
-        svg_path.segment_degenerate_lines(first, tolerance)
-        |> result.map_error(PathError),
-      )
-      let replacement = case replacement {
-        None -> [first]
-        Some(lines) -> lines
-      }
-      use remaining <- result.try(degenerate_traversal(rest, tolerance))
-      Ok(list.append(replacement, remaining))
-    }
+fn degeneracy_error(error: degeneracy.Error) -> Error {
+  case error {
+    degeneracy.PathError(error) -> PathError(error)
+    degeneracy.ConvexHullError(error) -> ConvexHullError(error)
   }
 }
 

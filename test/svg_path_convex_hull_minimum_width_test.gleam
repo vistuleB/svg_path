@@ -3,7 +3,7 @@ import gleam/list
 import gleam/option.{None, Some}
 import svg_path
 import svg_path/convex_hull
-import svg_path/effects
+import svg_path/degeneracy
 import svg_path/point
 
 const tolerance = 0.000000001
@@ -219,8 +219,8 @@ pub fn longest_thin_prefix_stops_before_the_first_wide_addition_test() {
   let fourth = line(2.0, 2.0, 3.0, 2.0)
   let subpath = svg_path.subpath_assert([first, second, third, fourth])
   let assert Ok(prefix) =
-    effects.internal_longest_thin_prefix(subpath, tolerance: 0.01)
-  let effects.ThinPrefix(segments:, remaining:, hull:, strip:) = prefix
+    degeneracy.internal_longest_thin_prefix(subpath, tolerance: 0.01)
+  let degeneracy.ThinPrefix(segments:, remaining:, hull:, strip:) = prefix
   assert segments == [first, second]
   assert remaining == [third, fourth]
   let assert Some(_) = hull
@@ -237,8 +237,8 @@ pub fn longest_thin_prefix_can_be_empty_test() {
     )
   let subpath = svg_path.subpath_assert([first])
   let assert Ok(prefix) =
-    effects.internal_longest_thin_prefix(subpath, tolerance: 0.1)
-  let effects.ThinPrefix(segments:, remaining:, hull:, strip:) = prefix
+    degeneracy.internal_longest_thin_prefix(subpath, tolerance: 0.1)
+  let degeneracy.ThinPrefix(segments:, remaining:, hull:, strip:) = prefix
   assert segments == []
   assert remaining == [first]
   assert hull == None

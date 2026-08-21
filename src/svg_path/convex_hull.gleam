@@ -7,12 +7,12 @@
 
 import gleam/float
 import gleam/int
-import gleam/io
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/order
 import gleam/result
 import svg_path
+import svg_path/bezier
 import svg_path/ellipse
 import svg_path/point as point_helpers
 import svg_path/root
@@ -58,11 +58,7 @@ const point_tolerance = 0.000000001
 
 const minimum_width_max_depth = 20
 
-const loop_diagnostics_enabled = False
-
 const orientation_turn_tolerance = 0.000000001
-
-const tangent_turn_sample_count = 24
 
 type SupportSample {
   SupportSample(angle: Float, t: Float, point: svg_path.Point, value: Float)
@@ -155,6 +151,8 @@ pub type MinimumWidthStrip {
   MinimumWidthStrip(
     width: Float,
     direction: svg_path.Point,
+    lower_point: svg_path.Point,
+    upper_point: svg_path.Point,
     lower_support: Float,
     upper_support: Float,
   )
@@ -354,12 +352,14 @@ fn minimum_width_strip_for_edges(
       {
         Error(_) -> best
         Ok(direction) -> {
-          let #(lower_support, upper_support) =
+          let #(lower_point, lower_support, upper_point, upper_support) =
             projection_extrema(vertices, direction)
           let candidate =
             MinimumWidthStrip(
               width: upper_support -. lower_support,
               direction:,
+              lower_point:,
+              upper_point:,
               lower_support:,
               upper_support:,
             )
@@ -386,16 +386,27 @@ fn minimum_width_strip_for_edges(
 fn projection_extrema(
   vertices: List(svg_path.Point),
   direction: svg_path.Point,
-) -> #(Float, Float) {
+) -> #(svg_path.Point, Float, svg_path.Point, Float) {
   case vertices {
-    [] -> #(0.0, 0.0)
+    [] -> #(svg_path.Point(0.0, 0.0), 0.0, svg_path.Point(0.0, 0.0), 0.0)
     [first, ..rest] -> {
       let projection = dot(first, direction)
       rest
-      |> list.fold(#(projection, projection), fn(extrema, point) {
-        let #(lower, upper) = extrema
+      |> list.fold(#(first, projection, first, projection), fn(extrema, point) {
+        let #(lower_point, lower, upper_point, upper) = extrema
         let projection = dot(point, direction)
-        #(float.min(lower, projection), float.max(upper, projection))
+        #(
+          case projection <. lower {
+            True -> point
+            False -> lower_point
+          },
+          float.min(lower, projection),
+          case projection >. upper {
+            True -> point
+            False -> upper_point
+          },
+          float.max(upper, projection),
+        )
       })
     }
   }
@@ -405,6 +416,10 @@ fn degenerate_minimum_width_strip(
   vertices: List(svg_path.Point),
 ) -> MinimumWidthStrip {
   let direction = svg_path.Point(1.0, 0.0)
+  let point = case vertices {
+    [] -> svg_path.Point(0.0, 0.0)
+    [first, ..] -> first
+  }
   let support = case vertices {
     [] -> 0.0
     [first, ..] -> dot(first, direction)
@@ -412,6 +427,8 @@ fn degenerate_minimum_width_strip(
   MinimumWidthStrip(
     width: 0.0,
     direction:,
+    lower_point: point,
+    upper_point: point,
     lower_support: support,
     upper_support: support,
   )
@@ -698,6 +715,8 @@ fn width_sample_strip(
   MinimumWidthStrip(
     width:,
     direction:,
+    lower_point:,
+    upper_point:,
     lower_support: dot(lower_point, direction),
     upper_support: dot(upper_point, direction),
   )
@@ -865,15 +884,6 @@ fn point_lexicographic_compare(
     order.Eq -> float.compare(left.y, right.y)
     ordering -> ordering
   }
-}
-
-@internal
-pub fn internal_brute_segment_support(
-  segment: svg_path.Segment,
-  angle angle: Float,
-) -> Result(#(Float, svg_path.Point, Float), svg_path.Error) {
-  use sample <- result.try(brute_segment_support(segment, angle: angle))
-  Ok(#(sample.t, sample.point, sample.value))
 }
 
 @internal
@@ -2168,6 +2178,10 @@ fn to_ellipse_point(point: svg_path.Point) -> ellipse.EllipsePoint {
   ellipse.EllipsePoint(point.x, point.y)
 }
 
+fn to_bezier_point(point: svg_path.Point) -> bezier.BezierPoint {
+  bezier.BezierPoint(point.x, point.y)
+}
+
 fn from_ellipse_point(point: ellipse.EllipsePoint) -> svg_path.Point {
   svg_path.Point(point.x, point.y)
 }
@@ -2490,65 +2504,6 @@ fn segment_tangent_turn_algebraic(
             False -> Ok(Nil)
           }
         DegenerateOrientation -> Error(1.0)
-      }
-    }
-  }
-}
-
-fn segment_tangent_turn_numerical(
-  segment: svg_path.Segment,
-  orientation orientation: LoopOrientation,
-) -> Result(Nil, Float) {
-  case segment {
-    svg_path.Line(..) -> Ok(Nil)
-    _ -> {
-      let sample_count = tangent_turn_sample_count
-      case segment_derivative_sample(segment, 0, sample_count) {
-        Error(_) -> Ok(Nil)
-        Ok(first) ->
-          segment_tangent_turn_numerical_loop(
-            segment,
-            orientation,
-            sample_count: sample_count,
-            sample_index: 1,
-            previous: first,
-            worst: 0.0,
-          )
-      }
-    }
-  }
-}
-
-fn segment_tangent_turn_numerical_loop(
-  segment: svg_path.Segment,
-  orientation: LoopOrientation,
-  sample_count sample_count: Int,
-  sample_index sample_index: Int,
-  previous previous: svg_path.Point,
-  worst worst: Float,
-) -> Result(Nil, Float) {
-  case sample_index > sample_count {
-    True ->
-      case worst == 0.0 {
-        True -> Ok(Nil)
-        False -> Error(worst)
-      }
-    False -> {
-      case segment_derivative_sample(segment, sample_index, sample_count) {
-        Error(_) -> Ok(Nil)
-        Ok(current) -> {
-          let turn = cross(previous, current)
-          let scale = point_length(previous) *. point_length(current)
-          let amount = turn_against_orientation_amount(turn, scale, orientation)
-          segment_tangent_turn_numerical_loop(
-            segment,
-            orientation,
-            sample_count:,
-            sample_index: sample_index + 1,
-            previous: current,
-            worst: float.max(worst, amount),
-          )
-        }
       }
     }
   }
@@ -2950,10 +2905,7 @@ fn build_closed_subpath(
     |> map_path_error
   {
     Error(error) -> Error(error)
-    Ok(subpath) -> {
-      diagnose_closed_loop(svg_path.subpath_segments(subpath))
-      Ok(subpath)
-    }
+    Ok(subpath) -> Ok(subpath)
   }
 }
 
@@ -2973,13 +2925,9 @@ fn union_loop_segments(
   case union_piece_segments(pieces, loop_a, loop_b) {
     [] -> {
       use segments <- result.try(dominant_loop_segments(loop_a, loop_b))
-      diagnose_closed_loop(segments)
       Ok(segments)
     }
-    segments -> {
-      diagnose_closed_loop(segments)
-      Ok(segments)
-    }
+    segments -> Ok(segments)
   }
 }
 
@@ -4018,67 +3966,59 @@ fn segment_support(
   let direction = point_helpers.direction(degrees: angle)
   case segment {
     svg_path.Line(start:, end:) -> {
-      let start_value = dot(start, direction)
-      let end_value = dot(end, direction)
-      case end_value >. start_value {
-        True ->
-          Ok(SupportSample(angle: angle, t: 1.0, point: end, value: end_value))
-        False ->
-          Ok(SupportSample(
-            angle: angle,
-            t: 0.0,
-            point: start,
-            value: start_value,
-          ))
-      }
+      best_segment_support(segment, angle, [
+        0.0,
+        1.0,
+        ..bezier.projection_extrema(
+          bezier.LinearBezierData(
+            start: to_bezier_point(start),
+            end: to_bezier_point(end),
+          ),
+          direction: to_bezier_point(direction),
+        )
+      ])
     }
     svg_path.QuadraticBezier(start:, control:, end:) -> {
-      let p0 = dot(start, direction)
-      let p1 = dot(control, direction)
-      let p2 = dot(end, direction)
-      let a = p0 -. 2.0 *. p1 +. p2
-      let b = -2.0 *. p0 +. 2.0 *. p1
-      let candidates =
-        [0.0, 1.0, ..tolerant_quadratic_roots(0.0, 2.0 *. a, b)]
-        |> list.filter(fn(t) { t >=. 0.0 && t <=. 1.0 })
-
-      best_segment_support(segment, angle, candidates)
+      best_segment_support(segment, angle, [
+        0.0,
+        1.0,
+        ..bezier.projection_extrema(
+          bezier.QuadraticBezierData(
+            start: to_bezier_point(start),
+            control: to_bezier_point(control),
+            end: to_bezier_point(end),
+          ),
+          direction: to_bezier_point(direction),
+        )
+      ])
     }
     svg_path.CubicBezier(start:, control1:, control2:, end:) -> {
-      let p0 = dot(start, direction)
-      let p1 = dot(control1, direction)
-      let p2 = dot(control2, direction)
-      let p3 = dot(end, direction)
-      let a = 0.0 -. p0 +. 3.0 *. p1 -. 3.0 *. p2 +. p3
-      let b = 3.0 *. p0 -. 6.0 *. p1 +. 3.0 *. p2
-      let c = -3.0 *. p0 +. 3.0 *. p1
-      let candidates =
-        [0.0, 1.0, ..tolerant_quadratic_roots(3.0 *. a, 2.0 *. b, c)]
-        |> list.filter(fn(t) { t >=. 0.0 && t <=. 1.0 })
-
-      best_segment_support(segment, angle, candidates)
+      best_segment_support(segment, angle, [
+        0.0,
+        1.0,
+        ..bezier.projection_extrema(
+          bezier.CubicBezierData(
+            start: to_bezier_point(start),
+            control1: to_bezier_point(control1),
+            control2: to_bezier_point(control2),
+            end: to_bezier_point(end),
+          ),
+          direction: to_bezier_point(direction),
+        )
+      ])
     }
-    svg_path.Arc(..) -> brute_segment_support(segment, angle: angle)
+    svg_path.Arc(..) -> {
+      use arc <- result.try(svg_path.arc_center_data(segment))
+      best_segment_support(segment, angle, [
+        0.0,
+        1.0,
+        ..ellipse.arc_projection_extrema(
+          arc,
+          direction: to_ellipse_point(direction),
+        )
+      ])
+    }
   }
-}
-
-fn brute_segment_support(
-  segment: svg_path.Segment,
-  angle angle: Float,
-) -> Result(SupportSample, svg_path.Error) {
-  let direction = point_helpers.direction(degrees: angle)
-  use t <- result.try(
-    svg_path.segment_minimize(segment, measure: fn(point) {
-      0.0 -. dot(point, direction)
-    }),
-  )
-  use point <- result.try(svg_path.segment_point(segment, at: t))
-  Ok(SupportSample(
-    angle: angle,
-    t: t,
-    point: point,
-    value: dot(point, direction),
-  ))
 }
 
 fn best_segment_support(
@@ -4195,139 +4135,6 @@ type LoopOrientation {
   CounterClockwise
   Clockwise
   DegenerateOrientation
-}
-
-fn diagnose_closed_loop(segments: List(svg_path.Segment)) -> Nil {
-  case loop_diagnostics_enabled {
-    False -> Nil
-    True -> {
-      case loop_orientation(segments) {
-        DegenerateOrientation -> Nil
-        orientation -> {
-          diagnose_endpoint_turns(segments, orientation)
-          diagnose_segment_tangent_turns(segments, orientation)
-        }
-      }
-    }
-  }
-}
-
-fn diagnose_endpoint_turns(
-  segments: List(svg_path.Segment),
-  orientation: LoopOrientation,
-) -> Nil {
-  case loop_vertices(segments) {
-    [] | [_] | [_, _] -> Nil
-    [first, second, ..] as vertices -> {
-      vertices
-      |> list.append([first, second])
-      |> diagnose_endpoint_turns_loop(orientation, 0)
-    }
-  }
-}
-
-fn diagnose_endpoint_turns_loop(
-  points: List(svg_path.Point),
-  orientation: LoopOrientation,
-  index: Int,
-) -> Nil {
-  case points {
-    [a, b, c, ..rest] -> {
-      let ab = subtract(b, a)
-      let bc = subtract(c, b)
-      let turn = cross(ab, bc)
-      let scale = point_length(ab) *. point_length(bc)
-
-      case turn_is_against_orientation(turn, scale, orientation) {
-        True ->
-          io.println(
-            "[convex_hull diagnostic] endpoint right turn at vertex "
-            <> int.to_string(index)
-            <> " turn="
-            <> float.to_string(turn)
-            <> " scale="
-            <> float.to_string(scale)
-            <> " point="
-            <> point_string(b),
-          )
-        False -> Nil
-      }
-
-      diagnose_endpoint_turns_loop([b, c, ..rest], orientation, index + 1)
-    }
-    _ -> Nil
-  }
-}
-
-fn diagnose_segment_tangent_turns(
-  segments: List(svg_path.Segment),
-  orientation: LoopOrientation,
-) -> Nil {
-  diagnose_segment_tangent_turns_loop(segments, orientation, 0)
-}
-
-fn diagnose_segment_tangent_turns_loop(
-  segments: List(svg_path.Segment),
-  orientation: LoopOrientation,
-  index: Int,
-) -> Nil {
-  case segments {
-    [] -> Nil
-    [segment, ..rest] -> {
-      diagnose_segment_tangent_turn(segment, orientation, index)
-      diagnose_segment_tangent_turns_loop(rest, orientation, index + 1)
-    }
-  }
-}
-
-fn diagnose_segment_tangent_turn(
-  segment: svg_path.Segment,
-  orientation: LoopOrientation,
-  segment_index: Int,
-) -> Nil {
-  diagnose_segment_tangent_turn_result(
-    segment,
-    segment_index,
-    check: "algebraic",
-    result: segment_tangent_turn_algebraic(segment, orientation:),
-  )
-  diagnose_segment_tangent_turn_result(
-    segment,
-    segment_index,
-    check: "numerical",
-    result: segment_tangent_turn_numerical(segment, orientation:),
-  )
-}
-
-fn diagnose_segment_tangent_turn_result(
-  segment: svg_path.Segment,
-  segment_index: Int,
-  check check: String,
-  result result: Result(Nil, Float),
-) -> Nil {
-  case result {
-    Ok(_) -> Nil
-    Error(amount) ->
-      io.println(
-        "[convex_hull diagnostic] "
-        <> check
-        <> " segment tangent reversal at segment "
-        <> int.to_string(segment_index)
-        <> " ("
-        <> segment_kind(segment)
-        <> ") amount="
-        <> float.to_string(amount),
-      )
-  }
-}
-
-fn segment_derivative_sample(
-  segment: svg_path.Segment,
-  index: Int,
-  sample_count: Int,
-) -> Result(svg_path.Point, svg_path.Error) {
-  let t = int.to_float(index) /. int.to_float(sample_count)
-  svg_path.segment_derivative(segment, at: t)
 }
 
 fn loop_orientation(segments: List(svg_path.Segment)) -> LoopOrientation {
@@ -4473,19 +4280,6 @@ fn point_distance_squared(a: svg_path.Point, b: svg_path.Point) -> Float {
 
 fn point_length(point: svg_path.Point) -> Float {
   point_helpers.norm(point)
-}
-
-fn point_string(point: svg_path.Point) -> String {
-  "(" <> float.to_string(point.x) <> ", " <> float.to_string(point.y) <> ")"
-}
-
-fn segment_kind(segment: svg_path.Segment) -> String {
-  case segment {
-    svg_path.Line(..) -> "Line"
-    svg_path.QuadraticBezier(..) -> "QuadraticBezier"
-    svg_path.CubicBezier(..) -> "CubicBezier"
-    svg_path.Arc(..) -> "Arc"
-  }
 }
 
 fn add_points(a: svg_path.Point, b: svg_path.Point) -> svg_path.Point {

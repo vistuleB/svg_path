@@ -250,6 +250,38 @@ pub fn normalize_degenerate_segments_preserves_closed_one_line_replacement_test(
   )
 }
 
+pub fn normalize_degenerate_segments_coalesces_thin_line_window_test() {
+  let subpath =
+    svg_path.subpath_assert([
+      svg_path.Line(
+        start: svg_path.Point(0.0, 0.0),
+        end: svg_path.Point(1.0, 0.0),
+      ),
+      svg_path.Line(
+        start: svg_path.Point(1.0, 0.0),
+        end: svg_path.Point(2.0, 0.0),
+      ),
+      svg_path.Line(
+        start: svg_path.Point(2.0, 0.0),
+        end: svg_path.Point(3.0, 0.0),
+      ),
+      svg_path.Line(
+        start: svg_path.Point(3.0, 0.0),
+        end: svg_path.Point(4.0, 0.0),
+      ),
+    ])
+
+  let assert Ok(cleaned) =
+    effects.normalize_degenerate_segments(subpath, tolerance: 0.001)
+  assert svg_path.subpath_segments(cleaned)
+    == [
+      svg_path.Line(
+        start: svg_path.Point(0.0, 0.0),
+        end: svg_path.Point(4.0, 0.0),
+      ),
+    ]
+}
+
 pub fn normalize_degenerate_segments_preserves_closed_two_line_backtracking_test() {
   let open =
     svg_path.subpath_assert([

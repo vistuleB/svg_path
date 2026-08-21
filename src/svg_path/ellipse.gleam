@@ -373,6 +373,36 @@ pub fn arc_bounding_box(arc: CenterArcData) -> BoundingBox {
   |> list.fold(BoundingBox(min: first, max: first), include_point)
 }
 
+/// Return the parameters where an arc's projection onto `direction` is
+/// stationary.
+pub fn arc_projection_extrema(
+  arc: CenterArcData,
+  direction direction: EllipsePoint,
+) -> List(Float) {
+  let x_axis_x = arc.radius.x *. trig.cos_degrees(arc.x_axis_rotation)
+  let x_axis_y = arc.radius.x *. trig.sin_degrees(arc.x_axis_rotation)
+  let y_axis_x = 0.0 -. arc.radius.y *. trig.sin_degrees(arc.x_axis_rotation)
+  let y_axis_y = arc.radius.y *. trig.cos_degrees(arc.x_axis_rotation)
+  let alpha = direction.x *. x_axis_x +. direction.y *. x_axis_y
+  let beta = direction.x *. y_axis_x +. direction.y *. y_axis_y
+
+  case alpha == 0.0 && beta == 0.0 {
+    True -> []
+    False -> {
+      let support_angle = trig.atan2_degrees(beta, alpha)
+      [support_angle, support_angle +. 180.0]
+      |> list.filter(fn(angle) {
+        angle_in_sweep(angle, arc.start_angle, arc.delta_angle)
+      })
+      |> list.map(fn(angle) {
+        angle_progress(angle, arc.start_angle, arc.delta_angle)
+        /. float.absolute_value(arc.delta_angle)
+      })
+      |> list.filter(fn(t) { t >=. 0.0 && t <=. 1.0 })
+    }
+  }
+}
+
 /// Split an arc at angular progress `t`.
 ///
 /// `t` is not clamped. Values outside `0.0..1.0` extrapolate along the same

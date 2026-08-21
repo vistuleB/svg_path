@@ -294,7 +294,10 @@ pub fn smart_segment_support_matches_brute_support_at_10_degree_steps_test() {
     |> list.all(fn(angle) {
       case
         convex_hull.internal_segment_support(segment, angle: angle),
-        convex_hull.internal_brute_segment_support(segment, angle: angle)
+        segment_support_point(segment, angle)
+        |> result.map(fn(point) {
+          #(0.0, point, point_support(point, degrees: angle))
+        })
       {
         Ok(#(_, _, smart_value)), Ok(#(_, _, brute_value)) ->
           float.absolute_value(smart_value -. brute_value)
@@ -1705,6 +1708,7 @@ fn representative_geometry_is_covariant_at_scale(scale: Float) -> Bool {
     intersections.IntersectionOptions(
       tolerance: 0.000000001 *. scale,
       max_depth: 48,
+      parameter_snap: intersections.NoParameterSnap,
     )
   let assert Ok([svg_path.SegmentIntersection(left_t:, right_t:, point:)]) =
     intersections.segment_with(

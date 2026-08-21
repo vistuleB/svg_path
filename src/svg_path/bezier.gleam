@@ -195,13 +195,81 @@ pub fn bezier_derivative(curve: BezierData, at t: Float) -> BezierPoint {
 /// Return the curve's exact axis-aligned bounding box over `0.0..1.0`.
 pub fn bezier_bounding_box(curve: BezierData) -> BoundingBox {
   let points =
-    [0.0, 1.0, ..bezier_extrema(curve)]
+    [0.0, 1.0, ..bezier_axis_extrema(curve)]
     |> list.map(fn(t) { bezier_point(curve, at: t) })
 
   let assert [first, ..rest] = points
 
   rest
   |> list.fold(BoundingBox(min: first, max: first), include_point)
+}
+
+/// Return the parameters where a line's projection onto `direction` is
+/// stationary.
+///
+/// A non-degenerate line has no interior projection extrema. Degenerate lines
+/// are flat in every direction; this helper returns an empty list for them too.
+pub fn line_projection_extrema(
+  _start: BezierPoint,
+  _end: BezierPoint,
+  _direction: BezierPoint,
+) -> List(Float) {
+  []
+}
+
+/// Return the parameters where a quadratic Bezier's projection onto
+/// `direction` is stationary.
+pub fn quadratic_projection_extrema(
+  start: BezierPoint,
+  control: BezierPoint,
+  end: BezierPoint,
+  direction: BezierPoint,
+) -> List(Float) {
+  let p0 = dot(start, direction)
+  let p1 = dot(control, direction)
+  let p2 = dot(end, direction)
+  let a = p0 -. 2.0 *. p1 +. p2
+  let b = -2.0 *. p0 +. 2.0 *. p1
+
+  tolerant_quadratic_roots(0.0, 2.0 *. a, b)
+  |> list.filter(is_inside_unit_interval)
+}
+
+/// Return the parameters where a cubic Bezier's projection onto `direction` is
+/// stationary.
+pub fn cubic_projection_extrema(
+  start: BezierPoint,
+  control1: BezierPoint,
+  control2: BezierPoint,
+  end: BezierPoint,
+  direction: BezierPoint,
+) -> List(Float) {
+  let p0 = dot(start, direction)
+  let p1 = dot(control1, direction)
+  let p2 = dot(control2, direction)
+  let p3 = dot(end, direction)
+  let a = 0.0 -. p0 +. 3.0 *. p1 -. 3.0 *. p2 +. p3
+  let b = 3.0 *. p0 -. 6.0 *. p1 +. 3.0 *. p2
+  let c = -3.0 *. p0 +. 3.0 *. p1
+
+  tolerant_quadratic_roots(3.0 *. a, 2.0 *. b, c)
+  |> list.filter(is_inside_unit_interval)
+}
+
+/// Return the parameters where a Bezier curve's projection onto `direction` is
+/// stationary.
+pub fn projection_extrema(
+  curve: BezierData,
+  direction direction: BezierPoint,
+) -> List(Float) {
+  case curve {
+    LinearBezierData(start:, end:) ->
+      line_projection_extrema(start, end, direction)
+    QuadraticBezierData(start:, control:, end:) ->
+      quadratic_projection_extrema(start, control, end, direction)
+    CubicBezierData(start:, control1:, control2:, end:) ->
+      cubic_projection_extrema(start, control1, control2, end, direction)
+  }
 }
 
 /// Map a Bezier curve's defining points.
@@ -918,7 +986,7 @@ fn normalized_progresses(points: List(Float)) -> List(Float) {
   |> trim_end_progress
 }
 
-fn bezier_extrema(curve: BezierData) -> List(Float) {
+fn bezier_axis_extrema(curve: BezierData) -> List(Float) {
   case curve {
     LinearBezierData(..) -> []
     QuadraticBezierData(start:, control:, end:) ->
@@ -955,6 +1023,18 @@ fn cubic_extrema(
   let c = { 3.0 *. control1 } -. { 3.0 *. start }
 
   root.quadratic(3.0 *. a, 2.0 *. b, c)
+}
+
+fn tolerant_quadratic_roots(a: Float, b: Float, c: Float) -> List(Float) {
+  root.quadratic_with(
+    a,
+    b,
+    c,
+    options: root.QuadraticOptions(
+      coefficient_tolerance: 0.000000000001,
+      repeated_root_policy: root.PreserveRepeatedRoot,
+    ),
+  )
 }
 
 fn inflection_roots(
