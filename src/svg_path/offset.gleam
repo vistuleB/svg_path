@@ -2942,14 +2942,15 @@ fn offset_segment_arrangement(
       let IndexedOffsetSegment(segment:, ..) = item
       segment
     })
-  use build <- result.try(
+  let build_result =
     arrangement_graph.build_with(
       segments,
       vertex_tolerance: arrangement_tolerance,
       minimum_chord: arrangement_tolerance,
-      endpoint_sliver_tolerance: 0.0,
+      endpoint_sliver_tolerance: 0.0001,
     )
-    |> result.map_error(ArrangementGraphError),
+  use build <- result.try(
+    build_result |> result.map_error(ArrangementGraphError),
   )
   let arrangement_graph.ArrangementSegmentBuild(
     graph:,
@@ -7013,27 +7014,19 @@ fn heal_smooth_offset_boundary(
   distance: Float,
   options: Options,
 ) -> Result(#(OffsetSegment, OffsetSegment), Error) {
+  let boundary =
+    interpolate(
+      svg_path.segment_end(left.segment),
+      svg_path.segment_start(right.segment),
+      0.5,
+    )
+  let healed_left = snap_offset_end_position_only(left, boundary)
+  let healed_right = snap_offset_start_position_only(right, boundary)
   case
-    shared_boundary_tangent(left, right, options.tangent_heal_angle_degrees)
+    certified_healed_boundary(healed_left:, healed_right:, distance:, options:)
   {
-    Error(_) -> Ok(#(left, right))
-    Ok(tangent) -> {
-      let corner = left.source_end
-      let point = add(corner, scale(rotate_clockwise(tangent), distance))
-      let healed_left = snap_offset_end_to_boundary(left, point, tangent)
-      let healed_right = snap_offset_start_to_boundary(right, point, tangent)
-      case
-        certified_healed_boundary(
-          healed_left:,
-          healed_right:,
-          distance:,
-          options:,
-        )
-      {
-        True -> Ok(#(healed_left, healed_right))
-        False -> Ok(#(left, right))
-      }
-    }
+    True -> Ok(#(healed_left, healed_right))
+    False -> Ok(#(left, right))
   }
 }
 
@@ -7188,145 +7181,6 @@ fn offset_segment_certification_source(
       Some(segment)
     }
     StalledSourceRunSource(..) -> None
-  }
-}
-
-fn shared_boundary_tangent(
-  left: OffsetSegment,
-  right: OffsetSegment,
-  heal_angle: Float,
-) -> Result(svg_path.Point, Error) {
-  let left_tangent = left.source_end_tangent
-  let right_tangent = right.source_start_tangent
-  let angle = float.absolute_value(signed_angle(left_tangent, right_tangent))
-  case angle <=. heal_angle {
-    False -> Error(NonFinite)
-    True -> unit_vector(add(left_tangent, right_tangent), t: 1.0)
-  }
-}
-
-fn snap_offset_end_to_boundary(
-  offset: OffsetSegment,
-  point: svg_path.Point,
-  tangent: svg_path.Point,
-) -> OffsetSegment {
-  OffsetSegment(
-    ..offset,
-    segment: snap_offset_segment_boundary(
-      offset.segment,
-      point,
-      tangent,
-      at_end: True,
-    ),
-    source_end_tangent: tangent,
-  )
-}
-
-fn snap_offset_start_to_boundary(
-  offset: OffsetSegment,
-  point: svg_path.Point,
-  tangent: svg_path.Point,
-) -> OffsetSegment {
-  OffsetSegment(
-    ..offset,
-    segment: snap_offset_segment_boundary(
-      offset.segment,
-      point,
-      tangent,
-      at_end: False,
-    ),
-    source_start_tangent: tangent,
-  )
-}
-
-fn snap_offset_segment_boundary(
-  segment: svg_path.Segment,
-  point: svg_path.Point,
-  tangent: svg_path.Point,
-  at_end at_end: Bool,
-) -> svg_path.Segment {
-  case at_end {
-    True -> snap_offset_segment_end(segment, point, tangent)
-    False -> snap_offset_segment_start(segment, point, tangent)
-  }
-}
-
-fn snap_offset_segment_start(
-  segment: svg_path.Segment,
-  start: svg_path.Point,
-  tangent: svg_path.Point,
-) -> svg_path.Segment {
-  let tangent = nearest_boundary_tangent(segment, tangent, at_end: False)
-  case segment {
-    svg_path.Line(end:, ..) -> svg_path.Line(start:, end:)
-    svg_path.QuadraticBezier(control:, end:, ..) -> {
-      let handle = point_distance(control, svg_path.segment_start(segment))
-      svg_path.QuadraticBezier(
-        start:,
-        control: add(start, scale(tangent, handle)),
-        end:,
-      )
-    }
-    svg_path.CubicBezier(control1:, control2:, end:, ..) -> {
-      let handle = point_distance(control1, svg_path.segment_start(segment))
-      svg_path.CubicBezier(
-        start:,
-        control1: add(start, scale(tangent, handle)),
-        control2:,
-        end:,
-      )
-    }
-    svg_path.Arc(radius:, x_axis_rotation:, large_arc:, sweep:, end:, ..) ->
-      svg_path.Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:)
-  }
-}
-
-fn snap_offset_segment_end(
-  segment: svg_path.Segment,
-  end: svg_path.Point,
-  tangent: svg_path.Point,
-) -> svg_path.Segment {
-  let tangent = nearest_boundary_tangent(segment, tangent, at_end: True)
-  case segment {
-    svg_path.Line(start:, ..) -> svg_path.Line(start:, end:)
-    svg_path.QuadraticBezier(start:, control:, ..) -> {
-      let handle = point_distance(control, svg_path.segment_end(segment))
-      svg_path.QuadraticBezier(
-        start:,
-        control: subtract(end, scale(tangent, handle)),
-        end:,
-      )
-    }
-    svg_path.CubicBezier(start:, control1:, control2:, ..) -> {
-      let handle = point_distance(control2, svg_path.segment_end(segment))
-      svg_path.CubicBezier(
-        start:,
-        control1:,
-        control2: subtract(end, scale(tangent, handle)),
-        end:,
-      )
-    }
-    svg_path.Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, ..) ->
-      svg_path.Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:)
-  }
-}
-
-fn nearest_boundary_tangent(
-  segment: svg_path.Segment,
-  tangent: svg_path.Point,
-  at_end at_end: Bool,
-) -> svg_path.Point {
-  let t = case at_end {
-    True -> 1.0
-    False -> 0.0
-  }
-  case unit_tangent(segment, t:) {
-    Ok(current) ->
-      case dot(current, tangent) <. 0.0 {
-        True -> scale(tangent, -1.0)
-        False -> tangent
-      }
-    Error(_) -> tangent
   }
 }
 
