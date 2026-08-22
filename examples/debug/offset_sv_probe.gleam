@@ -33,12 +33,8 @@ pub fn main() -> Nil {
         tolerance: 0.000000001,
       ),
     )
-  let assert Ok(source_pieces) =
-    offset.internal_refined_source_pieces(
-      s,
-      distance: offset_distance,
-      options:,
-    )
+  let assert Ok(source_trace) =
+    offset.internal_offset_source_trace(s, distance: offset_distance, options:)
   let assert Ok(joined) =
     offset.subpath_untrimmed_with(s, distance: offset_distance, options:)
   io.println(
@@ -53,7 +49,10 @@ pub fn main() -> Nil {
   let assert Ok(source_box) = svg_path.path_bounding_box(source)
   let assert Ok(offset_box) = svg_path.path_bounding_box(offset_path)
   let view_box = padded_box([source_box, offset_box], margin: 4.0)
-  write_file(output, render(source, source_pieces, joined, view_box))
+  write_file(
+    output,
+    render(source, source_trace_pieces(source_trace), joined, view_box),
+  )
 }
 
 fn bool_string(value: Bool) -> String {
@@ -65,7 +64,7 @@ fn bool_string(value: Bool) -> String {
 
 fn render(
   source: svg_path.Path,
-  source_pieces: List(offset.RefinedSourcePiece),
+  source_pieces: List(offset.OffsetSourceTracePiece),
   joined: svg_path.Subpath,
   view_box: svg_path.BoundingBox,
 ) -> String {
@@ -86,24 +85,41 @@ fn render(
   |> with_root_size(width: 3600, height: 3600)
 }
 
+fn source_trace_pieces(
+  portions: List(offset.OffsetSourceTracePortion),
+) -> List(offset.OffsetSourceTracePiece) {
+  portions
+  |> list.flat_map(fn(portion) {
+    let offset.OffsetSourceTracePortion(pieces:, ..) = portion
+    pieces
+  })
+}
+
 fn refined_source_piece_paths(
-  pieces: List(offset.RefinedSourcePiece),
+  pieces: List(offset.OffsetSourceTracePiece),
 ) -> List(svg.ThingToDraw) {
   pieces
   |> list.map(fn(piece) {
-    let style = case piece.big {
-      True ->
+    let segment = trace_piece_segment(piece)
+    let style = case piece {
+      offset.OffsetSourceTraceRefinedBig(..) ->
         "fill: none; stroke: "
-        <> residual_sign_color(piece.segment)
+        <> residual_sign_color(segment)
         <> "; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round"
-      False ->
+      offset.OffsetSourceTraceStalled(..) ->
         "fill: none; stroke: #f97316; stroke-width: 0.0367; stroke-linecap: round; stroke-linejoin: round"
     }
-    svg.StyledPath(
-      svg_path.Path([svg_path.subpath_assert([piece.segment])]),
-      style,
-    )
+    svg.StyledPath(svg_path.Path([svg_path.subpath_assert([segment])]), style)
   })
+}
+
+fn trace_piece_segment(
+  piece: offset.OffsetSourceTracePiece,
+) -> svg_path.Segment {
+  case piece {
+    offset.OffsetSourceTraceRefinedBig(segment:, ..) -> segment
+    offset.OffsetSourceTraceStalled(segment:, ..) -> segment
+  }
 }
 
 fn residual_sign_color(segment: svg_path.Segment) -> String {
@@ -124,17 +140,29 @@ fn residual_sign_color(segment: svg_path.Segment) -> String {
 }
 
 fn boundary_dots(
-  pieces: List(offset.RefinedSourcePiece),
+  pieces: List(offset.OffsetSourceTracePiece),
 ) -> List(svg.ThingToDraw) {
   pieces
   |> list.flat_map(fn(piece) {
-    let start = svg_path.segment_start(piece.segment)
-    let end = svg_path.segment_end(piece.segment)
+    let segment = trace_piece_segment(piece)
+    let start = svg_path.segment_start(segment)
+    let end = svg_path.segment_end(segment)
+    let #(start_is_hinge, end_is_hinge) = trace_piece_hinges(piece)
     [
-      svg.Circle(start, 0.025, dot_style(piece.start_is_hinge)),
-      svg.Circle(end, 0.025, dot_style(piece.end_is_hinge)),
+      svg.Circle(start, 0.025, dot_style(start_is_hinge)),
+      svg.Circle(end, 0.025, dot_style(end_is_hinge)),
     ]
   })
+}
+
+fn trace_piece_hinges(piece: offset.OffsetSourceTracePiece) -> #(Bool, Bool) {
+  case piece {
+    offset.OffsetSourceTraceRefinedBig(start_is_hinge:, end_is_hinge:, ..) -> #(
+      start_is_hinge,
+      end_is_hinge,
+    )
+    offset.OffsetSourceTraceStalled(..) -> #(False, False)
+  }
 }
 
 fn dot_style(is_hinge: Bool) -> String {

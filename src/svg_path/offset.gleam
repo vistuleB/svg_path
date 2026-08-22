@@ -10,9 +10,10 @@
 //// Subpath and path offsets create a provisional one-sided offset walk by
 //// connecting adjacent segment offsets with the requested join style. The
 //// public trimmed offset builds an arrangement that nodes the provisional
-//// walks at intersections and endpoint-bounded overlaps, removes
-//// sections that lie inside the forbidden distance tube around the original
-//// subpath, then keeps the remaining sections in provisional traversal order.
+//// walks at intersections and endpoint-bounded overlaps, classifies
+//// arrangement edges against an offset-band inside predicate, removes
+//// submerged and unsupported edges, then reconstructs survivors in provisional
+//// traversal order.
 //// Because trimming can split an offset or remove it entirely, subpath and
 //// path offsets return `Path`.
 ////
@@ -276,97 +277,6 @@ pub type HingeTangentAdjustment {
   HingeTangentAdjustment(incoming_degrees: Float, outgoing_degrees: Float)
 }
 
-/// Construction-time source span for one provisional offset piece.
-@internal
-pub type OffsetPieceSource {
-  OffsetPieceSource(
-    offset_segment: svg_path.Segment,
-    source_start: svg_path.Point,
-    source_end: svg_path.Point,
-  )
-}
-
-/// Construction-time source span for one provisional offset piece, annotated
-/// with the join-free portion that produced it.
-@internal
-pub type JoinFreeOffsetPieceSource {
-  JoinFreeOffsetPieceSource(
-    portion_index: Int,
-    offset_segment: svg_path.Segment,
-    source: OffsetSegmentSource,
-    source_start: svg_path.Point,
-    source_end: svg_path.Point,
-  )
-}
-
-/// Final untrimmed segment annotated with whether it came from an offset piece
-/// or an explicit join inserted between offset pieces.
-@internal
-pub type UntrimmedSegmentSource {
-  UntrimmedOffsetPiece(
-    segment: svg_path.Segment,
-    source: OffsetSegmentSource,
-    source_start: svg_path.Point,
-    source_end: svg_path.Point,
-  )
-  UntrimmedJoinPiece(
-    segment: svg_path.Segment,
-    left_source: OffsetSegmentSource,
-    right_source: OffsetSegmentSource,
-  )
-}
-
-/// Diagnostic continuity break inside one join-free output portion.
-@internal
-pub type JoinFreeContinuityBreak {
-  JoinFreeContinuityBreak(
-    portion_index: Int,
-    left_piece_index: Int,
-    distance: Float,
-    left_end: svg_path.Point,
-    right_start: svg_path.Point,
-  )
-}
-
-/// Diagnostic source boundary where smooth offset healing was proposed but
-/// rejected by the final offset-distance certification.
-@internal
-pub type HealingFailure {
-  HealingFailure(point: svg_path.Point)
-}
-
-/// Diagnostic source boundary inside a join-free portion where the stored
-/// source tangents are not close enough for smooth offset healing.
-@internal
-pub type JoinFreeTangentRejection {
-  JoinFreeTangentRejection(point: svg_path.Point, angle: Float)
-}
-
-/// Diagnostic summary for one join-free source portion.
-@internal
-pub type JoinFreePortionSummary {
-  JoinFreePortionSummary(segment_count: Int, closed: Bool)
-}
-
-/// Diagnostic result from trying to offset one join-free source portion.
-@internal
-pub type JoinFreePortionCompletion {
-  JoinFreePortionCompleted(index: Int, segment_count: Int, offset_count: Int)
-  JoinFreePortionErrored(index: Int, segment_count: Int, error: Error)
-}
-
-/// Diagnostic source piece after stalled-run classification and hinge
-/// refinement.
-@internal
-pub type RefinedSourcePiece {
-  RefinedSourcePiece(
-    segment: svg_path.Segment,
-    big: Bool,
-    start_is_hinge: Bool,
-    end_is_hinge: Bool,
-  )
-}
-
 /// Diagnostic view of one join-free portion in the actual offset pipeline.
 @internal
 pub type OffsetSourceTracePortion {
@@ -414,15 +324,6 @@ type IndexedOffsetSegment {
   )
 }
 
-/// Diagnostic minimal loop found in an ordered atomic arrangement walk.
-@internal
-pub type AtomicWalkLoop {
-  AtomicWalkLoop(
-    start_vertex: Int,
-    edges: List(#(arrangement_graph.ArrangementEdge, Bool)),
-  )
-}
-
 type SurvivorEdge {
   SurvivorEdge(
     edge_id: Int,
@@ -441,30 +342,11 @@ type SurvivorChain {
   )
 }
 
-type OffsetBuilder {
-  OffsetBuilder(
-    build: fn(svg_path.Subpath, Float, Options) ->
-      Result(List(OffsetSegment), Error),
-  )
-}
-
 type JoinFreePortion {
   JoinFreePortion(subpath: svg_path.Subpath, closed: Bool)
 }
 
-type SmoothOffsetBuilder {
-  SmoothOffsetBuilder(
-    build: fn(JoinFreePortion, Float, Options) ->
-      Result(List(OffsetSegment), Error),
-  )
-}
-
-type OriginalRecursiveOffsetBuilderFitPolicy {
-  OriginalRecursiveFit
-  SmartOriginalRecursiveFit
-}
-
-type SmoothSourcePiece {
+type OffsetSourcePiece {
   BigSourceSegment(
     source_segment_index: Int,
     segment: svg_path.Segment,
@@ -1801,7 +1683,6 @@ pub fn segment_with(
     segment,
     distance,
     options,
-    OriginalRecursiveFit,
   ))
   pieces
   |> list.map(fn(piece) { piece.segment })
@@ -3294,7 +3175,6 @@ fn parametric_provisional_subpath(
     }
     [_, ..] -> {
       use offset_segments <- result.try(build_offset_segments(
-        stalled_run_offset_builder(),
         subpath,
         distance,
         options,
@@ -3324,16 +3204,6 @@ fn parametric_provisional_subpath(
       }
     }
   }
-}
-
-fn build_offset_segments(
-  builder: OffsetBuilder,
-  subpath: svg_path.Subpath,
-  distance: Float,
-  options: Options,
-) -> Result(List(OffsetSegment), Error) {
-  let OffsetBuilder(build:) = builder
-  build(subpath, distance, options)
 }
 
 fn parametric_joined_offset_segments(
@@ -4777,7 +4647,6 @@ fn join_offset_segment_start(
     segment,
     distance,
     options,
-    OriginalRecursiveFit,
   ))
   case offsets {
     [] -> Error(NonFinite)
@@ -4794,7 +4663,6 @@ fn join_offset_segment_end(
     segment,
     distance,
     options,
-    OriginalRecursiveFit,
   ))
   offsets |> list.last |> result.map_error(fn(_) { NonFinite })
 }
@@ -5313,47 +5181,33 @@ fn distance_margin(options: Options) -> Float {
   options.fitting.tolerance *. 1.1
 }
 
-fn stalled_run_offset_builder() -> OffsetBuilder {
-  offset_builder_with(
-    splitter: join_free_portions,
-    smooth_builder: stalled_run_smooth_offset_builder(),
-  )
-}
-
-fn offset_builder_with(
-  splitter splitter: fn(svg_path.Subpath, Options) ->
-    Result(List(JoinFreePortion), Error),
-  smooth_builder smooth_builder: SmoothOffsetBuilder,
-) -> OffsetBuilder {
-  OffsetBuilder(build: fn(subpath, distance, options) {
-    use portions <- result.try(splitter(subpath, options))
-    build_offset_portions(
-      portions,
-      distance,
-      options,
-      smooth_builder,
-      converted: [],
-    )
-  })
+fn build_offset_segments(
+  subpath: svg_path.Subpath,
+  distance: Float,
+  options: Options,
+) -> Result(List(OffsetSegment), Error) {
+  use portions <- result.try(join_free_portions(subpath, options))
+  build_offset_portions(portions, distance, options, converted: [])
 }
 
 fn build_offset_portions(
   portions: List(JoinFreePortion),
   distance: Float,
   options: Options,
-  smooth_builder: SmoothOffsetBuilder,
   converted converted: List(OffsetSegment),
 ) -> Result(List(OffsetSegment), Error) {
   case portions {
     [] -> Ok(list.reverse(converted))
     [first, ..rest] -> {
-      let SmoothOffsetBuilder(build:) = smooth_builder
-      use offsets <- result.try(build(first, distance, options))
+      use offsets <- result.try(stalled_run_offset_segments(
+        first,
+        distance,
+        options,
+      ))
       build_offset_portions(
         rest,
         distance,
         options,
-        smooth_builder,
         converted: list.append(list.reverse(offsets), converted),
       )
     }
@@ -5425,16 +5279,16 @@ fn offset_source_trace_pieces(
   options: Options,
 ) -> List(OffsetSourceTracePiece) {
   svg_path.subpath_segments(subpath)
-  |> classify_smooth_source_pieces(
+  |> classify_offset_source_pieces(
     distance,
     threshold: options.stalled_offset_diameter,
   )
-  |> mark_smooth_source_piece_cross_hinges(distance)
+  |> mark_offset_source_piece_cross_hinges(distance)
   |> offset_source_trace_smooth_pieces(distance, traced: [])
 }
 
 fn offset_source_trace_smooth_pieces(
-  pieces: List(SmoothSourcePiece),
+  pieces: List(OffsetSourcePiece),
   distance: Float,
   traced traced: List(OffsetSourceTracePiece),
 ) -> List(OffsetSourceTracePiece) {
@@ -5529,22 +5383,16 @@ fn offset_source_trace_stalled(
   }
 }
 
-fn stalled_run_smooth_offset_builder() -> SmoothOffsetBuilder {
-  SmoothOffsetBuilder(build: stalled_run_smooth_offset_segments)
-}
-
-fn stalled_run_smooth_offset_segments(
+fn stalled_run_offset_segments(
   portion: JoinFreePortion,
   distance: Float,
   options: Options,
 ) -> Result(List(OffsetSegment), Error) {
-  use offsets <- result.try(
-    stalled_run_smooth_offset_segments_without_postconditions(
-      portion,
-      distance,
-      options,
-    ),
-  )
+  use offsets <- result.try(stalled_run_offset_segments_without_postconditions(
+    portion,
+    distance,
+    options,
+  ))
   use _ <- result.try(assert_smooth_offset_postconditions(
     offsets,
     options.tangent_heal_angle_degrees,
@@ -5552,7 +5400,7 @@ fn stalled_run_smooth_offset_segments(
   Ok(offsets)
 }
 
-fn stalled_run_smooth_offset_segments_without_postconditions(
+fn stalled_run_offset_segments_without_postconditions(
   portion: JoinFreePortion,
   distance: Float,
   options: Options,
@@ -5560,29 +5408,23 @@ fn stalled_run_smooth_offset_segments_without_postconditions(
   let JoinFreePortion(subpath:, closed:) = portion
   let pieces =
     svg_path.subpath_segments(subpath)
-    |> classify_smooth_source_pieces(
+    |> classify_offset_source_pieces(
       distance,
       threshold: options.stalled_offset_diameter,
     )
-    |> mark_smooth_source_piece_cross_hinges(distance)
+    |> mark_offset_source_piece_cross_hinges(distance)
   use offsets <- result.try(
-    offset_smooth_source_pieces(
-      pieces,
-      distance,
-      options,
-      closed:,
-      converted: [],
-    ),
+    offset_source_pieces(pieces, distance, options, closed:, converted: []),
   )
   Ok(offsets)
 }
 
-fn classify_smooth_source_pieces(
+fn classify_offset_source_pieces(
   segments: List(svg_path.Segment),
   distance: Float,
   threshold threshold: Float,
-) -> List(SmoothSourcePiece) {
-  classify_smooth_source_pieces_loop(
+) -> List(OffsetSourcePiece) {
+  classify_offset_source_pieces_loop(
     segments,
     distance,
     threshold,
@@ -5593,15 +5435,15 @@ fn classify_smooth_source_pieces(
   )
 }
 
-fn classify_smooth_source_pieces_loop(
+fn classify_offset_source_pieces_loop(
   segments: List(svg_path.Segment),
   distance: Float,
   threshold: Float,
   source_segment_index source_segment_index: Int,
   stalled stalled: List(svg_path.Segment),
   stalled_start_index stalled_start_index: Int,
-  pieces pieces: List(SmoothSourcePiece),
-) -> List(SmoothSourcePiece) {
+  pieces pieces: List(OffsetSourcePiece),
+) -> List(OffsetSourcePiece) {
   case segments {
     [] -> {
       let pieces =
@@ -5611,7 +5453,7 @@ fn classify_smooth_source_pieces_loop(
     [first, ..rest] -> {
       case source_segment_offset_is_stalled(first, distance, threshold) {
         True ->
-          classify_smooth_source_pieces_loop(
+          classify_offset_source_pieces_loop(
             rest,
             distance,
             threshold,
@@ -5626,7 +5468,7 @@ fn classify_smooth_source_pieces_loop(
         False -> {
           let pieces =
             prepend_stalled_source_run(stalled, stalled_start_index, to: pieces)
-          classify_smooth_source_pieces_loop(
+          classify_offset_source_pieces_loop(
             rest,
             distance,
             threshold,
@@ -5652,8 +5494,8 @@ fn classify_smooth_source_pieces_loop(
 fn prepend_stalled_source_run(
   stalled: List(svg_path.Segment),
   stalled_start_index: Int,
-  to pieces: List(SmoothSourcePiece),
-) -> List(SmoothSourcePiece) {
+  to pieces: List(OffsetSourcePiece),
+) -> List(OffsetSourcePiece) {
   case stalled {
     [] -> pieces
     _ -> [
@@ -5666,14 +5508,14 @@ fn prepend_stalled_source_run(
   }
 }
 
-fn mark_smooth_source_piece_cross_hinges(
-  pieces: List(SmoothSourcePiece),
+fn mark_offset_source_piece_cross_hinges(
+  pieces: List(OffsetSourcePiece),
   distance: Float,
-) -> List(SmoothSourcePiece) {
+) -> List(OffsetSourcePiece) {
   case pieces {
     [] | [_] -> pieces
     [first, second, ..rest] ->
-      mark_smooth_source_piece_cross_hinges_loop(
+      mark_offset_source_piece_cross_hinges_loop(
         first,
         [second, ..rest],
         distance,
@@ -5682,18 +5524,18 @@ fn mark_smooth_source_piece_cross_hinges(
   }
 }
 
-fn mark_smooth_source_piece_cross_hinges_loop(
-  previous: SmoothSourcePiece,
-  rest: List(SmoothSourcePiece),
+fn mark_offset_source_piece_cross_hinges_loop(
+  previous: OffsetSourcePiece,
+  rest: List(OffsetSourcePiece),
   distance: Float,
-  marked marked: List(SmoothSourcePiece),
-) -> List(SmoothSourcePiece) {
+  marked marked: List(OffsetSourcePiece),
+) -> List(OffsetSourcePiece) {
   case rest {
     [] -> list.reverse([previous, ..marked])
     [next, ..remaining] -> {
       let #(previous, next) =
-        mark_adjacent_smooth_source_piece_cross_hinge(previous, next, distance)
-      mark_smooth_source_piece_cross_hinges_loop(
+        mark_adjacent_offset_source_piece_cross_hinge(previous, next, distance)
+      mark_offset_source_piece_cross_hinges_loop(
         next,
         remaining,
         distance,
@@ -5703,11 +5545,11 @@ fn mark_smooth_source_piece_cross_hinges_loop(
   }
 }
 
-fn mark_adjacent_smooth_source_piece_cross_hinge(
-  left: SmoothSourcePiece,
-  right: SmoothSourcePiece,
+fn mark_adjacent_offset_source_piece_cross_hinge(
+  left: OffsetSourcePiece,
+  right: OffsetSourcePiece,
   distance: Float,
-) -> #(SmoothSourcePiece, SmoothSourcePiece) {
+) -> #(OffsetSourcePiece, OffsetSourcePiece) {
   case left, right {
     BigSourceSegment(
       source_segment_index: left_index,
@@ -5781,8 +5623,8 @@ fn source_segment_offset_is_stalled(
   }
 }
 
-fn offset_smooth_source_pieces(
-  pieces: List(SmoothSourcePiece),
+fn offset_source_pieces(
+  pieces: List(OffsetSourcePiece),
   distance: Float,
   options: Options,
   closed closed: Bool,
@@ -5796,12 +5638,8 @@ fn offset_smooth_source_pieces(
       heal_offset_boundaries(offsets, distance, options, closed:)
     }
     [first, ..rest] -> {
-      use offsets <- result.try(offset_smooth_source_piece(
-        first,
-        distance,
-        options,
-      ))
-      offset_smooth_source_pieces(
+      use offsets <- result.try(offset_source_piece(first, distance, options))
+      offset_source_pieces(
         rest,
         distance,
         options,
@@ -5968,8 +5806,8 @@ fn replace_last(
   }
 }
 
-fn offset_smooth_source_piece(
-  piece: SmoothSourcePiece,
+fn offset_source_piece(
+  piece: OffsetSourcePiece,
   distance: Float,
   options: Options,
 ) -> Result(List(OffsetSegment), Error) {
@@ -7490,7 +7328,6 @@ fn offset_source_segment_with_builder(
   segment: svg_path.Segment,
   distance: Float,
   options: Options,
-  fit_policy: OriginalRecursiveOffsetBuilderFitPolicy,
 ) -> Result(List(OffsetSegment), Error) {
   case segment {
     svg_path.Line(..) -> {
@@ -7518,21 +7355,19 @@ fn offset_source_segment_with_builder(
           }
         }
         Error(_) ->
-          offset_cubic_segments_with_builder(
+          offset_cubic_segments(
             svg_path.segment_to_cubic_beziers(segment),
             distance,
             options,
-            fit_policy,
             converted: [],
           )
       }
     }
     svg_path.QuadraticBezier(..) | svg_path.CubicBezier(..) ->
-      offset_cubic_segments_with_builder(
+      offset_cubic_segments(
         svg_path.segment_to_cubic_beziers(segment),
         distance,
         options,
-        fit_policy,
         converted: [],
       )
   }
@@ -7670,54 +7505,28 @@ fn whole_refined_big_source(
   ))
 }
 
-fn offset_cubic_segments_with_builder(
+fn offset_cubic_segments(
   segments: List(svg_path.Segment),
   distance: Float,
   options: Options,
-  fit_policy: OriginalRecursiveOffsetBuilderFitPolicy,
   converted converted: List(OffsetSegment),
 ) -> Result(List(OffsetSegment), Error) {
   case segments {
     [] -> Ok(list.reverse(converted))
     [first, ..rest] -> {
-      use offset <- result.try(offset_cubic_segment_with_builder(
+      use offset <- result.try(recursive_offset_cubic_segment(
         first,
         distance,
         options,
-        fit_policy,
+        depth: options.fitting.max_depth,
       ))
-      offset_cubic_segments_with_builder(
+      offset_cubic_segments(
         rest,
         distance,
         options,
-        fit_policy,
         converted: list.append(list.reverse(offset), converted),
       )
     }
-  }
-}
-
-fn offset_cubic_segment_with_builder(
-  segment: svg_path.Segment,
-  distance: Float,
-  options: Options,
-  fit_policy: OriginalRecursiveOffsetBuilderFitPolicy,
-) -> Result(List(OffsetSegment), Error) {
-  case fit_policy {
-    OriginalRecursiveFit ->
-      recursive_offset_cubic_segment(
-        segment,
-        distance,
-        options,
-        depth: options.fitting.max_depth,
-      )
-    SmartOriginalRecursiveFit ->
-      smart_recursive_offset_cubic_segment(
-        segment,
-        distance,
-        options,
-        depth: options.fitting.max_depth,
-      )
   }
 }
 
@@ -7759,55 +7568,6 @@ fn recursive_offset_cubic_segment(
             depth: depth - 1,
           ))
           use right_offset <- result.try(recursive_offset_cubic_segment(
-            right,
-            distance,
-            options,
-            depth: depth - 1,
-          ))
-          Ok(list.append(left_offset, right_offset))
-        }
-      }
-  }
-}
-
-fn smart_recursive_offset_cubic_segment(
-  segment: svg_path.Segment,
-  distance: Float,
-  options: Options,
-  depth depth: Int,
-) -> Result(List(OffsetSegment), Error) {
-  use candidate <- result.try(smart_fitted_cubic_offset(segment, distance))
-  use divergence <- result.try(smart_offset_divergence(
-    segment,
-    candidate,
-    distance,
-    options,
-  ))
-
-  case divergence <=. raw_fitting_tolerance(options) {
-    True -> {
-      use offset <- result.try(build_offset_segment(
-        source: whole_refined_big_source(segment, distance),
-        segment: candidate,
-      ))
-      Ok([offset])
-    }
-    False ->
-      case depth <= 0 {
-        True -> Error(MaxDepthReached(divergence))
-        False -> {
-          use split <- result.try(
-            svg_path.segment_split(segment, at: 0.5)
-            |> result.map_error(PathError),
-          )
-          let #(left, right) = split
-          use left_offset <- result.try(smart_recursive_offset_cubic_segment(
-            left,
-            distance,
-            options,
-            depth: depth - 1,
-          ))
-          use right_offset <- result.try(smart_recursive_offset_cubic_segment(
             right,
             distance,
             options,
