@@ -9113,33 +9113,6 @@ fn close_open_subpath_with(
   custom_close_open_subpath(subpath, reconcile)
 }
 
-fn strict_close_open_subpath(subpath: Subpath) -> Result(Subpath, Error) {
-  case subpath.segments {
-    [] -> Ok(Subpath(..subpath, closed: True))
-    _ -> strict_close_nonempty_subpath(subpath)
-  }
-}
-
-fn strict_close_nonempty_subpath(subpath: Subpath) -> Result(Subpath, Error) {
-  case start_and_end(subpath) {
-    Error(error) -> Error(error)
-    Ok(#(first, last)) if first == last -> {
-      Ok(Subpath(..subpath, closed: True))
-    }
-    Ok(#(first, last)) -> {
-      let previous_index = list.length(subpath.segments) - 1
-
-      Error(Discontinuous(
-        previous_index:,
-        next_index: 0,
-        expected: first,
-        got: last,
-        distance: distance(first, last),
-      ))
-    }
-  }
-}
-
 fn custom_close_open_subpath(
   subpath: Subpath,
   reconcile: CustomPolicy,
@@ -9180,20 +9153,26 @@ fn validate_custom_closed_segments(
     _ -> {
       case strict_open_subpath_from(start, segments) {
         Error(error) -> Error(error)
-        Ok(subpath) -> strict_close_open_subpath(subpath)
+        Ok(subpath) -> validate_closed_subpath_end(subpath)
       }
     }
   }
 }
 
-fn start_and_end(subpath: Subpath) -> Result(#(Point, Point), Error) {
-  case subpath_start(subpath) {
-    Error(error) -> Error(error)
-    Ok(first) -> {
-      case subpath_end(subpath) {
-        Error(error) -> Error(error)
-        Ok(last) -> Ok(#(first, last))
-      }
+fn validate_closed_subpath_end(subpath: Subpath) -> Result(Subpath, Error) {
+  use last <- result.try(subpath_end(subpath))
+  case subpath.start == last {
+    True -> Ok(Subpath(..subpath, closed: True))
+    False -> {
+      let previous_index = list.length(subpath.segments) - 1
+
+      Error(Discontinuous(
+        previous_index:,
+        next_index: 0,
+        expected: subpath.start,
+        got: last,
+        distance: distance(subpath.start, last),
+      ))
     }
   }
 }
