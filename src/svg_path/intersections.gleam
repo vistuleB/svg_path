@@ -41,11 +41,9 @@ const default_intersection_max_depth = 48
 
 const parameter_snap_distance_tie_slack = 0.000000000001
 
-const v4_subdivision_tolerance = 0.01
+const terminal_subdivision_tolerance = 0.01
 
-const v4_terminal_grid_margin = 0.05
-
-const v4_defender_culling_enabled = False
+const terminal_grid_margin = 0.05
 
 const default_classification_angular_tolerance = 0.0000001
 
@@ -2446,12 +2444,11 @@ type ProjectionWindow {
 }
 
 type WindowRecord {
-  WindowRecord(window: TerminalWindow, best_descent: Int)
+  WindowRecord(window: TerminalWindow)
 }
 
 type DescentStatus {
   Pending
-  Overruled
   Finished(List(DistanceMinimum))
 }
 
@@ -2465,8 +2462,8 @@ type DescentRecord {
   )
 }
 
-type V4State {
-  V4State(windows: List(WindowRecord), descents: List(DescentRecord))
+type DescentState {
+  DescentState(windows: List(WindowRecord), descents: List(DescentRecord))
 }
 
 type ParameterSnapCandidate {
@@ -3973,7 +3970,7 @@ fn curve_curve_intersections(
     right,
     options,
   ))
-  v4_segment_intersections_from_minima(
+  segment_intersections_from_minima(
     left,
     right,
     minima,
@@ -3999,7 +3996,7 @@ fn segment_pair_intersection_minima(
   )
   let terminal_windows =
     number_terminal_windows(list.reverse(raw_terminal_windows), next_id: 0)
-  use terminal_minima <- result.try(v4_minima_from_terminal_windows(
+  use terminal_minima <- result.try(minima_from_terminal_windows(
     terminal_windows,
     finish_tolerance: options.tolerance,
   ))
@@ -4024,7 +4021,7 @@ fn segment_pair_projection_minima(
   )
   let terminal_windows =
     number_terminal_windows(list.reverse(raw_terminal_windows), next_id: 0)
-  use terminal_minima <- result.try(v4_minima_from_terminal_windows(
+  use terminal_minima <- result.try(minima_from_terminal_windows(
     terminal_windows,
     finish_tolerance: options.tolerance,
   ))
@@ -4148,9 +4145,9 @@ fn collect_intersection_terminal_windows(
             remaining_depth <= 0
             || {
               svg_path.bounding_box_diameter(left_box)
-              <=. v4_subdivision_tolerance
+              <=. terminal_subdivision_tolerance
               && svg_path.bounding_box_diameter(right_box)
-              <=. v4_subdivision_tolerance
+              <=. terminal_subdivision_tolerance
             }
           {
             True -> Ok(add_terminal_window_grid(left, right, windows))
@@ -4291,9 +4288,9 @@ fn inspect_projection_window(
             remaining_depth <= 0
             || {
               svg_path.bounding_box_diameter(left_box)
-              <=. v4_subdivision_tolerance
+              <=. terminal_subdivision_tolerance
               && svg_path.bounding_box_diameter(right_box)
-              <=. v4_subdivision_tolerance
+              <=. terminal_subdivision_tolerance
             }
           {
             True -> {
@@ -4468,7 +4465,7 @@ fn split_intersection_piece_thirds(
   Ok([
     #(
       IntersectionPiece(segment: piece.segment, from: piece.from, to: first_to),
-      v4_terminal_grid_margin,
+      terminal_grid_margin,
     ),
     #(
       IntersectionPiece(segment: piece.segment, from: first_to, to: second_to),
@@ -4476,30 +4473,27 @@ fn split_intersection_piece_thirds(
     ),
     #(
       IntersectionPiece(segment: piece.segment, from: second_to, to: piece.to),
-      1.0 -. v4_terminal_grid_margin,
+      1.0 -. terminal_grid_margin,
     ),
   ])
 }
 
-fn v4_minima_from_terminal_windows(
+fn minima_from_terminal_windows(
   windows: List(TerminalWindow),
   finish_tolerance finish_tolerance: Float,
 ) -> Result(List(DistanceMinimum), Error) {
   use descents <- result.try(initial_descent_records(windows))
   let state =
-    V4State(
-      windows: windows
-        |> list.map(fn(window) {
-          WindowRecord(window:, best_descent: window.id)
-        }),
+    DescentState(
+      windows: windows |> list.map(fn(window) { WindowRecord(window:) }),
       descents:,
     )
-  use final_state <- result.try(v4_run_descents(
+  use final_state <- result.try(run_descents(
     windows,
     state,
     certification_tolerance: finish_tolerance,
   ))
-  Ok(v4_finished_minima(final_state.descents, minima: []))
+  Ok(finished_minima(final_state.descents, minima: []))
 }
 
 fn initial_descent_records(
@@ -4535,18 +4529,18 @@ fn initial_descent_records_loop(
   }
 }
 
-fn v4_run_descents(
+fn run_descents(
   windows_to_run: List(TerminalWindow),
-  state: V4State,
+  state: DescentState,
   certification_tolerance certification_tolerance: Float,
-) -> Result(V4State, Error) {
+) -> Result(DescentState, Error) {
   case windows_to_run {
     [] -> Ok(state)
     [window, ..rest] -> {
       let TerminalWindow(id:, ..) = window
       use state <- result.try(case find_descent(state.descents, id) {
         Ok(DescentRecord(status: Pending, ..)) ->
-          v4_run_one_descent(
+          run_one_descent(
             id,
             state,
             certification_tolerance:,
@@ -4555,25 +4549,25 @@ fn v4_run_descents(
           )
         _ -> Ok(state)
       })
-      v4_run_descents(rest, state, certification_tolerance:)
+      run_descents(rest, state, certification_tolerance:)
     }
   }
 }
 
-fn v4_run_one_descent(
+fn run_one_descent(
   descent_id: Int,
-  state: V4State,
+  state: DescentState,
   certification_tolerance certification_tolerance: Float,
   step step: Float,
   iterations iterations: Int,
-) -> Result(V4State, Error) {
+) -> Result(DescentState, Error) {
   use descent <- result.try(find_descent(state.descents, descent_id))
   case descent.status {
-    Overruled | Finished(_) -> Ok(state)
+    Finished(_) -> Ok(state)
     Pending -> {
       case iterations <= 0 || step <=. 0.000000000001 {
         True ->
-          v4_finish_descent(
+          finish_descent(
             descent,
             state,
             certification_tolerance,
@@ -4587,7 +4581,7 @@ fn v4_run_one_descent(
             proposal.distance_squared <. descent.current.distance_squared
           case accepted {
             False ->
-              v4_run_one_descent(
+              run_one_descent(
                 descent_id,
                 state,
                 certification_tolerance:,
@@ -4599,7 +4593,7 @@ fn v4_run_one_descent(
                 descent.current.distance_squared -. proposal.distance_squared
               let descent = DescentRecord(..descent, current: proposal)
               let state = replace_descent(state, descent)
-              use state <- result.try(v4_handle_window_transition(
+              use state <- result.try(handle_window_transition(
                 descent,
                 state,
                 raw_left_t,
@@ -4607,7 +4601,6 @@ fn v4_run_one_descent(
               ))
               use descent <- result.try(find_descent(state.descents, descent_id))
               case descent.status {
-                Overruled -> Ok(state)
                 Finished(_) -> Ok(state)
                 Pending -> {
                   case
@@ -4618,14 +4611,14 @@ fn v4_run_one_descent(
                     *. 0.000001
                   {
                     True ->
-                      v4_finish_descent(
+                      finish_descent(
                         descent,
                         state,
                         certification_tolerance,
                         remaining_iterations: iterations,
                       )
                     False ->
-                      v4_run_one_descent(
+                      run_one_descent(
                         descent_id,
                         state,
                         certification_tolerance:,
@@ -4645,11 +4638,11 @@ fn v4_run_one_descent(
 
 fn gradient_distance_proposal_unclamped(
   descent: DescentRecord,
-  state: V4State,
+  state: DescentState,
   step: Float,
 ) -> Result(#(DistanceMinimum, Float, Float), Error) {
   use window <- result.try(find_window(state.windows, descent.window_id))
-  let WindowRecord(window: TerminalWindow(left:, right:, ..), ..) = window
+  let WindowRecord(window: TerminalWindow(left:, right:, ..)) = window
   let DistanceMinimum(left_t:, right_t:, ..) = descent.current
   use left_point <- result.try(global_piece_point(left, left_t))
   use right_point <- result.try(global_piece_point(right, right_t))
@@ -4752,12 +4745,12 @@ fn best_gauss_newton_or_gradient_polish(
   }
 }
 
-fn v4_handle_window_transition(
+fn handle_window_transition(
   descent: DescentRecord,
-  state: V4State,
+  state: DescentState,
   raw_left_t: Float,
   raw_right_t: Float,
-) -> Result(V4State, Error) {
+) -> Result(DescentState, Error) {
   let containing =
     window_containing_global_point(state.windows, raw_left_t, raw_right_t)
 
@@ -4766,35 +4759,24 @@ fn v4_handle_window_transition(
     _, None ->
       Ok(replace_descent(state, DescentRecord(..descent, last_window: None)))
     _, Some(next_window_id) -> {
-      case v4_defender_culling_enabled {
-        True ->
-          v4_fight_for_window(
-            descent,
-            next_window_id,
-            state,
-            raw_left_t,
-            raw_right_t,
-          )
-        False ->
-          v4_move_descent_to_window_without_culling(
-            descent,
-            next_window_id,
-            state,
-            raw_left_t,
-            raw_right_t,
-          )
-      }
+      move_descent_to_window(
+        descent,
+        next_window_id,
+        state,
+        raw_left_t,
+        raw_right_t,
+      )
     }
   }
 }
 
-fn v4_move_descent_to_window_without_culling(
+fn move_descent_to_window(
   descent: DescentRecord,
   target_window_id: Int,
-  state: V4State,
+  state: DescentState,
   global_left_t: Float,
   global_right_t: Float,
-) -> Result(V4State, Error) {
+) -> Result(DescentState, Error) {
   use window_record <- result.try(find_window(state.windows, target_window_id))
   use entrant_current <- result.try(distance_minimum_in_window(
     window_record.window,
@@ -4810,56 +4792,6 @@ fn v4_move_descent_to_window_without_culling(
     )
 
   Ok(replace_descent(state, entrant))
-}
-
-fn v4_fight_for_window(
-  descent: DescentRecord,
-  target_window_id: Int,
-  state: V4State,
-  global_left_t: Float,
-  global_right_t: Float,
-) -> Result(V4State, Error) {
-  use window_record <- result.try(find_window(state.windows, target_window_id))
-  use defender <- result.try(find_descent(
-    state.descents,
-    window_record.best_descent,
-  ))
-  use entrant_current <- result.try(distance_minimum_in_window(
-    window_record.window,
-    global_left_t,
-    global_right_t,
-  ))
-  let entrant =
-    DescentRecord(
-      ..descent,
-      window_id: target_window_id,
-      current: entrant_current,
-      last_window: Some(target_window_id),
-    )
-
-  case entrant.current.distance_squared <. defender.current.distance_squared {
-    _ if entrant.id == defender.id -> {
-      let state =
-        state
-        |> replace_descent(entrant)
-        |> replace_window(
-          WindowRecord(..window_record, best_descent: entrant.id),
-        )
-      Ok(state)
-    }
-    False ->
-      Ok(replace_descent(state, DescentRecord(..descent, status: Overruled)))
-    True -> {
-      let state =
-        state
-        |> replace_descent(DescentRecord(..defender, status: Overruled))
-        |> replace_descent(entrant)
-        |> replace_window(
-          WindowRecord(..window_record, best_descent: descent.id),
-        )
-      Ok(state)
-    }
-  }
 }
 
 fn distance_minimum_in_window(
@@ -4910,17 +4842,17 @@ fn global_distance_minimum_at(
   ))
 }
 
-fn v4_finish_descent(
+fn finish_descent(
   descent: DescentRecord,
-  state: V4State,
+  state: DescentState,
   tolerance: Float,
   remaining_iterations _remaining_iterations: Int,
-) -> Result(V4State, Error) {
-  let found = v4_window_minima(descent.current, tolerance:)
+) -> Result(DescentState, Error) {
+  let found = window_minima(descent.current, tolerance:)
   Ok(replace_descent(state, DescentRecord(..descent, status: Finished(found))))
 }
 
-fn v4_window_minima(
+fn window_minima(
   descent_minimum: DistanceMinimum,
   tolerance tolerance: Float,
 ) -> List(DistanceMinimum) {
@@ -4930,7 +4862,7 @@ fn v4_window_minima(
   }
 }
 
-fn v4_segment_intersections_from_minima(
+fn segment_intersections_from_minima(
   left: Segment,
   right: Segment,
   minima: List(DistanceMinimum),
@@ -4947,7 +4879,7 @@ fn v4_segment_intersections_from_minima(
       ) = minimum
       case distance_squared <=. tolerance *. tolerance {
         False ->
-          v4_segment_intersections_from_minima(
+          segment_intersections_from_minima(
             left,
             right,
             rest,
@@ -4961,7 +4893,7 @@ fn v4_segment_intersections_from_minima(
             left_global_t,
             right_global_t,
           ))
-          v4_segment_intersections_from_minima(
+          segment_intersections_from_minima(
             left,
             right,
             rest,
@@ -4979,7 +4911,7 @@ fn v4_segment_intersections_from_minima(
   }
 }
 
-fn v4_finished_minima(
+fn finished_minima(
   descents: List(DescentRecord),
   minima minima: List(DistanceMinimum),
 ) -> List(DistanceMinimum) {
@@ -4990,7 +4922,7 @@ fn v4_finished_minima(
         Finished(found) -> list.append(found, minima)
         _ -> minima
       }
-      v4_finished_minima(rest, minima:)
+      finished_minima(rest, minima:)
     }
   }
 }
@@ -5007,7 +4939,7 @@ fn find_window(
         tolerance: 0.0,
       ))
     [first, ..rest] -> {
-      let WindowRecord(window: TerminalWindow(id: window_id, ..), ..) = first
+      let WindowRecord(window: TerminalWindow(id: window_id, ..)) = first
       case window_id == id {
         True -> Ok(first)
         False -> find_window(rest, id)
@@ -5036,8 +4968,14 @@ fn find_descent(
   }
 }
 
-fn replace_descent(state: V4State, replacement: DescentRecord) -> V4State {
-  V4State(..state, descents: replace_descent_loop(state.descents, replacement))
+fn replace_descent(
+  state: DescentState,
+  replacement: DescentRecord,
+) -> DescentState {
+  DescentState(
+    ..state,
+    descents: replace_descent_loop(state.descents, replacement),
+  )
 }
 
 fn replace_descent_loop(
@@ -5055,28 +4993,6 @@ fn replace_descent_loop(
   }
 }
 
-fn replace_window(state: V4State, replacement: WindowRecord) -> V4State {
-  V4State(..state, windows: replace_window_loop(state.windows, replacement))
-}
-
-fn replace_window_loop(
-  windows: List(WindowRecord),
-  replacement: WindowRecord,
-) -> List(WindowRecord) {
-  case windows {
-    [] -> []
-    [first, ..rest] -> {
-      let WindowRecord(window: TerminalWindow(id: first_id, ..), ..) = first
-      let WindowRecord(window: TerminalWindow(id: replacement_id, ..), ..) =
-        replacement
-      case first_id == replacement_id {
-        True -> [replacement, ..rest]
-        False -> [first, ..replace_window_loop(rest, replacement)]
-      }
-    }
-  }
-}
-
 fn window_containing_global_point(
   windows: List(WindowRecord),
   global_left_t: Float,
@@ -5085,8 +5001,7 @@ fn window_containing_global_point(
   case windows {
     [] -> None
     [first, ..rest] -> {
-      let WindowRecord(window: TerminalWindow(id:, left:, right:, ..), ..) =
-        first
+      let WindowRecord(window: TerminalWindow(id:, left:, right:, ..)) = first
       case
         global_left_t >=. left.from
         && global_left_t <=. left.to
