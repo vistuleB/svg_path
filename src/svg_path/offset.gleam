@@ -73,7 +73,7 @@ const source_tangent_colinearization_angle_degrees = 2.0
 
 const hinge_tangent_gap_degrees = 1.0
 
-const hinge_fit_tangent_nudge_degrees = 0.25
+const hinge_fit_tangent_nudge_degrees = 0.5
 
 const hinge_fit_line_aperture_degrees = 2.0
 
@@ -5770,10 +5770,12 @@ fn source_segment_offset_is_stalled(
     Error(_) ->
       case
         offset_point(segment, t: 0.0, distance:),
+        offset_point(segment, t: 0.5, distance:),
         offset_point(segment, t: 1.0, distance:)
       {
-        Ok(start), Ok(end) -> point_distance(start, end) <=. threshold
-        _, _ -> False
+        Ok(start), Ok(mid), Ok(end) ->
+          point_distance(start, mid) +. point_distance(mid, end) <=. threshold
+        _, _, _ -> False
       }
   }
 }
