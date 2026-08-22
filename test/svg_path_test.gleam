@@ -2689,39 +2689,48 @@ pub fn subpath_with_rejects_negative_wiggle_then_bridge_tolerance_test() {
     == Error(svg_path.InvalidWiggleTolerance(-0.1))
 }
 
-pub fn subpath_with_wiggle_rejects_misaligned_vertical_lines_test() {
+pub fn subpath_with_wiggle_bridges_misaligned_vertical_lines_test() {
   let a = svg_path.Point(0.0, 0.0)
   let b = svg_path.Point(0.0, 10.0)
   let c = svg_path.Point(0.0000000001, 10.0000000001)
   let d = svg_path.Point(0.0000000001, 20.0)
 
-  assert svg_path.subpath_with(
+  let assert Ok(subpath) =
+    svg_path.subpath_with(
       [
         svg_path.Line(start: a, end: b),
         svg_path.Line(start: c, end: d),
       ],
       policy: svg_path.Wiggle,
     )
-    == Error(svg_path.IncompatibleVerticalWiggle(previous_end: b, next_start: c))
+  assert svg_path.subpath_segments(subpath)
+    == [
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
+      svg_path.Line(start: c, end: d),
+    ]
 }
 
-pub fn subpath_with_wiggle_rejects_misaligned_horizontal_lines_test() {
+pub fn subpath_with_wiggle_bridges_misaligned_horizontal_lines_test() {
   let a = svg_path.Point(0.0, 0.0)
   let b = svg_path.Point(10.0, 0.0)
   let c = svg_path.Point(10.0000000001, 0.0000000001)
   let d = svg_path.Point(20.0, 0.0000000001)
 
-  assert svg_path.subpath_with(
+  let assert Ok(subpath) =
+    svg_path.subpath_with(
       [
         svg_path.Line(start: a, end: b),
         svg_path.Line(start: c, end: d),
       ],
       policy: svg_path.Wiggle,
     )
-    == Error(svg_path.IncompatibleHorizontalWiggle(
-      previous_end: b,
-      next_start: c,
-    ))
+  assert svg_path.subpath_segments(subpath)
+    == [
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
+      svg_path.Line(start: c, end: d),
+    ]
 }
 
 pub fn append_segment_discontinuous_error_reports_segment_indices_test() {
@@ -2959,7 +2968,7 @@ pub fn subpath_with_custom_reconciles_a_gap_test() {
     svg_path.subpath_with(
       [svg_path.Line(start: a, end: b), svg_path.Line(start: c, end: d)],
       policy: svg_path.Custom(fn(previous, next, _is_closing) {
-        #(line_to_end(previous, c), [], next)
+        [line_to_end(previous, c), next]
       }),
     )
 
@@ -2977,16 +2986,14 @@ pub fn subpath_with_custom_can_insert_a_connector_test() {
     svg_path.subpath_with(
       [svg_path.Line(start: a, end: b), svg_path.Line(start: c, end: d)],
       policy: svg_path.Custom(fn(previous, next, _is_closing) {
-        #(
+        [
           previous,
-          [
-            svg_path.Line(
-              start: svg_path.segment_end(previous),
-              end: svg_path.segment_start(next),
-            ),
-          ],
+          svg_path.Line(
+            start: svg_path.segment_end(previous),
+            end: svg_path.segment_start(next),
+          ),
           next,
-        )
+        ]
       }),
     )
 
@@ -3009,14 +3016,12 @@ pub fn subpath_with_custom_can_insert_multiple_connectors_test() {
     svg_path.subpath_with(
       [svg_path.Line(start: a, end: b), svg_path.Line(start: c, end: d)],
       policy: svg_path.Custom(fn(previous, next, _is_closing) {
-        #(
+        [
           previous,
-          [
-            svg_path.Line(start: svg_path.segment_end(previous), end: elbow),
-            svg_path.Line(start: elbow, end: svg_path.segment_start(next)),
-          ],
+          svg_path.Line(start: svg_path.segment_end(previous), end: elbow),
+          svg_path.Line(start: elbow, end: svg_path.segment_start(next)),
           next,
-        )
+        ]
       }),
     )
 
@@ -3038,7 +3043,7 @@ pub fn subpath_with_custom_rejects_invalid_results_test() {
   assert svg_path.subpath_with(
       [svg_path.Line(start: a, end: b), svg_path.Line(start: c, end: d)],
       policy: svg_path.Custom(fn(previous, next, _is_closing) {
-        #(previous, [], next)
+        [previous, next]
       }),
     )
     == Error(svg_path.Discontinuous(
@@ -3048,6 +3053,28 @@ pub fn subpath_with_custom_rejects_invalid_results_test() {
       got: c,
       distance: 10.0,
     ))
+}
+
+pub fn subpath_with_custom_empty_replacement_deletes_both_segments_test() {
+  let a = svg_path.Point(0.0, 0.0)
+  let b = svg_path.Point(10.0, 0.0)
+  let c = svg_path.Point(20.0, 0.0)
+  let d = svg_path.Point(30.0, 0.0)
+  let e = svg_path.Point(40.0, 0.0)
+  let f = svg_path.Point(50.0, 0.0)
+
+  let assert Ok(subpath) =
+    svg_path.subpath_with(
+      [
+        svg_path.Line(start: a, end: b),
+        svg_path.Line(start: c, end: d),
+        svg_path.Line(start: e, end: f),
+      ],
+      policy: svg_path.Custom(fn(_previous, _next, _is_closing) { [] }),
+    )
+
+  assert svg_path.subpath_segments(subpath) == [svg_path.Line(start: e, end: f)]
+  assert svg_path.subpath_start(subpath) == Ok(e)
 }
 
 pub fn append_segment_with_custom_can_rewrite_the_incoming_segment_test() {
@@ -3063,11 +3090,10 @@ pub fn append_segment_with_custom_can_rewrite_the_incoming_segment_test() {
       subpath,
       svg_path.Line(start: c, end: d),
       policy: svg_path.Custom(fn(previous, _next, _is_closing) {
-        #(
+        [
           previous,
-          [],
           svg_path.Line(start: svg_path.segment_end(previous), end: e),
-        )
+        ]
       }),
     )
 
@@ -3087,7 +3113,7 @@ pub fn join_with_custom_reconciles_a_gap_test() {
     svg_path.subpath_join_with(
       [first, second],
       policy: svg_path.Custom(fn(previous, next, _is_closing) {
-        #(previous, [], line_from_start(next, svg_path.segment_end(previous)))
+        [previous, line_from_start(next, svg_path.segment_end(previous))]
       }),
     )
 
@@ -3126,7 +3152,7 @@ pub fn set_closed_with_custom_reconciles_the_closing_gap_test() {
       subpath,
       closed: True,
       policy: svg_path.Custom(fn(last, first, _is_closing) {
-        #(line_to_end(last, svg_path.segment_start(first)), [], first)
+        [line_to_end(last, svg_path.segment_start(first))]
       }),
     )
 
@@ -3151,8 +3177,8 @@ pub fn custom_policy_receives_closing_join_flag_test() {
       closed: True,
       policy: svg_path.Custom(fn(last, first, is_closing) {
         case is_closing {
-          True -> #(line_to_end(last, svg_path.segment_start(first)), [], first)
-          False -> #(last, [], first)
+          True -> [line_to_end(last, svg_path.segment_start(first))]
+          False -> [last, first]
         }
       }),
     )
@@ -3174,17 +3200,43 @@ pub fn set_closed_with_custom_rejects_invalid_results_test() {
   assert svg_path.subpath_set_closed_with(
       subpath,
       closed: True,
-      policy: svg_path.Custom(fn(last, first, _is_closing) {
-        #(last, [], first)
-      }),
+      policy: svg_path.Custom(fn(last, first, _is_closing) { [last, first] }),
     )
     == Error(svg_path.Discontinuous(
-      previous_index: 1,
-      next_index: 0,
-      expected: a,
-      got: c,
+      previous_index: 0,
+      next_index: 1,
+      expected: c,
+      got: a,
       distance: 14.142135623730951,
     ))
+}
+
+pub fn set_closed_with_custom_empty_replacement_deletes_last_segment_test() {
+  let a = svg_path.Point(0.0, 0.0)
+  let b = svg_path.Point(10.0, 0.0)
+  let c = svg_path.Point(10.0, 10.0)
+  let subpath =
+    svg_path.subpath_assert([
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
+      svg_path.Line(start: c, end: a),
+      svg_path.Line(start: a, end: c),
+    ])
+
+  let assert Ok(closed) =
+    svg_path.subpath_set_closed_with(
+      subpath,
+      closed: True,
+      policy: svg_path.Custom(fn(_last, _first, _is_closing) { [] }),
+    )
+
+  assert svg_path.subpath_is_closed(closed)
+  assert svg_path.subpath_segments(closed)
+    == [
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
+      svg_path.Line(start: c, end: a),
+    ]
 }
 
 pub fn set_closed_true_empty_subpath_closes_test() {
@@ -3351,7 +3403,7 @@ pub fn set_closed_with_wiggle_replaces_nearby_endpoints_test() {
   assert svg_path.subpath_start(subpath) == svg_path.subpath_end(subpath)
 }
 
-pub fn set_closed_with_wiggle_rejects_misaligned_vertical_lines_test() {
+pub fn set_closed_with_wiggle_closes_misaligned_vertical_lines_test() {
   let a = svg_path.Point(0.0, 0.0)
   let b = svg_path.Point(0.0, 10.0)
   let c = svg_path.Point(0.0000000001, 0.0000000001)
@@ -3363,15 +3415,18 @@ pub fn set_closed_with_wiggle_rejects_misaligned_vertical_lines_test() {
       svg_path.Line(start: c, end: d),
     ])
 
-  assert svg_path.subpath_set_closed_with(
+  let assert Ok(closed) =
+    svg_path.subpath_set_closed_with(
       subpath,
       closed: True,
       policy: svg_path.Wiggle,
     )
-    == Error(svg_path.IncompatibleVerticalWiggle(previous_end: d, next_start: a))
+  assert svg_path.subpath_is_closed(closed)
+  let assert [_first, _second, _third, last] = svg_path.subpath_segments(closed)
+  assert svg_path.segment_end(last) == a
 }
 
-pub fn set_closed_with_wiggle_rejects_misaligned_horizontal_lines_test() {
+pub fn set_closed_with_wiggle_closes_misaligned_horizontal_lines_test() {
   let a = svg_path.Point(0.0, 0.0)
   let b = svg_path.Point(10.0, 0.0)
   let c = svg_path.Point(0.0000000001, 0.0000000001)
@@ -3383,15 +3438,15 @@ pub fn set_closed_with_wiggle_rejects_misaligned_horizontal_lines_test() {
       svg_path.Line(start: c, end: d),
     ])
 
-  assert svg_path.subpath_set_closed_with(
+  let assert Ok(closed) =
+    svg_path.subpath_set_closed_with(
       subpath,
       closed: True,
       policy: svg_path.Wiggle,
     )
-    == Error(svg_path.IncompatibleHorizontalWiggle(
-      previous_end: d,
-      next_start: a,
-    ))
+  assert svg_path.subpath_is_closed(closed)
+  let assert [_first, _second, _third, last] = svg_path.subpath_segments(closed)
+  assert svg_path.segment_end(last) == a
 }
 
 fn result_try_append_segment_with_line(

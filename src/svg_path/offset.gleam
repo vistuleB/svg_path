@@ -58,7 +58,7 @@ const point_tolerance = 0.000000001
 
 const arrangement_tolerance = 0.000000002
 
-const submerged_side_sampling_distance = 0.001
+const submerged_side_sampling_distance = 0.00000005
 
 const hinge_parameter_tolerance = 0.000001
 
@@ -360,6 +360,31 @@ pub type RefinedSourcePiece {
     start_is_hinge: Bool,
     end_is_hinge: Bool,
   )
+}
+
+/// Diagnostic view of one join-free portion in the actual offset pipeline.
+@internal
+pub type OffsetSourceTracePortion {
+  OffsetSourceTracePortion(
+    index: Int,
+    subpath: svg_path.Subpath,
+    pieces: List(OffsetSourceTracePiece),
+  )
+}
+
+/// Diagnostic view of one source piece inside a join-free portion.
+@internal
+pub type OffsetSourceTracePiece {
+  OffsetSourceTraceRefinedBig(
+    source_segment_index: Int,
+    refined_piece_index: Int,
+    source_from: Float,
+    source_to: Float,
+    segment: svg_path.Segment,
+    start_is_hinge: Bool,
+    end_is_hinge: Bool,
+  )
+  OffsetSourceTraceStalled(source_segment_index: Int, segment: svg_path.Segment)
 }
 
 type OffsetArrangementBuild {
@@ -759,6 +784,29 @@ fn undirected_odd_vertices(
   })
 }
 
+fn undirected_incidence_degree(
+  edges: List(arrangement_graph.UndirectedArrangementEdge),
+  vertex: Int,
+) -> Int {
+  case edges {
+    [] -> 0
+    [edge, ..rest] -> {
+      let arrangement_graph.UndirectedArrangementEdge(
+        start_vertex:,
+        end_vertex:,
+        ..,
+      ) = edge
+      let contribution = case start_vertex == vertex, end_vertex == vertex {
+        True, True -> 2
+        True, False -> 1
+        False, True -> 1
+        False, False -> 0
+      }
+      contribution + undirected_incidence_degree(rest, vertex)
+    }
+  }
+}
+
 fn undirected_weighted_degree(
   edges: List(arrangement_graph.UndirectedArrangementEdge),
   vertex: Int,
@@ -1014,7 +1062,7 @@ fn endpoint_burns(
   protected_vertices: List(Int),
 ) -> Bool {
   !list.contains(protected_vertices, vertex)
-  && undirected_weighted_degree(edges, vertex) == 1
+  && undirected_incidence_degree(edges, vertex) == 1
 }
 
 fn close_survivor_subpaths(
@@ -2050,16 +2098,29 @@ fn cut_single_offset_provisional_by_source(
   use cut <- result.try(
     provisional
     |> list.index_map(fn(subpath, index) {
-      cut_single_offset_provisional_subpath(
-        build,
-        subpath,
-        subpath_index: index,
-        options:,
-      )
+      case svg_path.subpath_segments(subpath) {
+        [] -> Ok(None)
+        [_, ..] -> {
+          use cut <- result.try(cut_single_offset_provisional_subpath(
+            build,
+            subpath,
+            subpath_index: index,
+            options:,
+          ))
+          Ok(Some(cut))
+        }
+      }
     })
     |> result.all,
   )
-  Ok(cut)
+  Ok(
+    list.filter_map(cut, fn(subpath) {
+      case subpath {
+        None -> Error(Nil)
+        Some(subpath) -> Ok(subpath)
+      }
+    }),
+  )
 }
 
 fn cut_single_offset_provisional_subpath(
@@ -4939,6 +5000,157 @@ fn join_free_portions(
         closed: svg_path.subpath_is_closed(subpath),
       ))
     }
+  }
+}
+
+/// Return the actual join-free portions and refined source pieces used by the
+/// offset pipeline. This is for debug fixtures only.
+@internal
+pub fn internal_offset_source_trace(
+  subpath subpath: svg_path.Subpath,
+  distance distance: Float,
+  options options: Options,
+) -> Result(List(OffsetSourceTracePortion), Error) {
+  use _ <- result.try(validate_options(options))
+  use subpath <- result.try(normalize_offset_source_subpath(subpath, options))
+  use portions <- result.try(join_free_portions(subpath, options))
+  Ok(offset_source_trace_portions(portions, distance, options, index: 0))
+}
+
+fn offset_source_trace_portions(
+  portions: List(JoinFreePortion),
+  distance: Float,
+  options: Options,
+  index index: Int,
+) -> List(OffsetSourceTracePortion) {
+  case portions {
+    [] -> []
+    [first, ..rest] -> {
+      let JoinFreePortion(subpath:, ..) = first
+      [
+        OffsetSourceTracePortion(
+          index:,
+          subpath:,
+          pieces: offset_source_trace_pieces(subpath, distance, options),
+        ),
+        ..offset_source_trace_portions(
+          rest,
+          distance,
+          options,
+          index: index + 1,
+        )
+      ]
+    }
+  }
+}
+
+fn offset_source_trace_pieces(
+  subpath: svg_path.Subpath,
+  distance: Float,
+  options: Options,
+) -> List(OffsetSourceTracePiece) {
+  svg_path.subpath_segments(subpath)
+  |> classify_smooth_source_pieces(
+    distance,
+    threshold: options.stalled_offset_diameter,
+  )
+  |> mark_smooth_source_piece_cross_hinges(distance)
+  |> offset_source_trace_smooth_pieces(distance, traced: [])
+}
+
+fn offset_source_trace_smooth_pieces(
+  pieces: List(SmoothSourcePiece),
+  distance: Float,
+  traced traced: List(OffsetSourceTracePiece),
+) -> List(OffsetSourceTracePiece) {
+  case pieces {
+    [] -> list.reverse(traced)
+    [first, ..rest] -> {
+      let next_traced = case first {
+        BigSourceSegment(
+          source_segment_index:,
+          segment:,
+          start_is_offset_hinge:,
+          end_is_offset_hinge:,
+        ) -> {
+          case
+            refine_big_source_segment_at_hinges(
+              segment,
+              source_subpath_index: 0,
+              source_segment_index:,
+              start_is_offset_hinge:,
+              end_is_offset_hinge:,
+              distance:,
+            )
+          {
+            Ok(refined) ->
+              list.append(
+                offset_source_trace_refined_big(refined, 0, []),
+                traced,
+              )
+            Error(_) -> traced
+          }
+        }
+        StalledSourceRun(source_start_segment_index:, segments:) ->
+          list.append(
+            offset_source_trace_stalled(
+              segments,
+              source_start_segment_index,
+              [],
+            ),
+            traced,
+          )
+      }
+      offset_source_trace_smooth_pieces(rest, distance, traced: next_traced)
+    }
+  }
+}
+
+fn offset_source_trace_refined_big(
+  refined: List(RefinedBigSourceSegment),
+  refined_piece_index: Int,
+  traced: List(OffsetSourceTracePiece),
+) -> List(OffsetSourceTracePiece) {
+  case refined {
+    [] -> traced
+    [first, ..rest] -> {
+      let RefinedBigSourceSegment(
+        source_segment_index:,
+        source_from:,
+        source_to:,
+        segment:,
+        start_is_offset_hinge:,
+        end_is_offset_hinge:,
+        ..,
+      ) = first
+      offset_source_trace_refined_big(rest, refined_piece_index + 1, [
+        OffsetSourceTraceRefinedBig(
+          source_segment_index:,
+          refined_piece_index:,
+          source_from:,
+          source_to:,
+          segment:,
+          start_is_hinge: start_is_offset_hinge,
+          end_is_hinge: end_is_offset_hinge,
+        ),
+        ..traced
+      ])
+    }
+  }
+}
+
+fn offset_source_trace_stalled(
+  segments: List(svg_path.Segment),
+  source_segment_index: Int,
+  traced: List(OffsetSourceTracePiece),
+) -> List(OffsetSourceTracePiece) {
+  case segments {
+    [] -> traced
+    [first, ..rest] ->
+      offset_source_trace_stalled(rest, source_segment_index + 1, [
+        OffsetSourceTraceStalled(source_segment_index:, segment: first),
+        ..traced
+      ])
   }
 }
 

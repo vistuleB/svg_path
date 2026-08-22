@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="52.95669 9.26972 1.26343 1.31186" width="900" height="650">
+  <rect x="51.78497" y="-0.81" width="14.175" height="13.245" style="fill: #ffffff; stroke: none" />
+  <path d="M 63.67997 10.065 Q 63.82997 10.515 64.90997 10.515 V 11.385 H 59.41997 V 10.515 H 60.73997 Q 61.17497 10.515 61.17497 10.23 Q 61.17497 10.185 61.12997 10.065 L 60.52997 8.445 H 55.92497 L 55.36997 9.945 Q 55.33997 10.035 55.33997 10.125 Q 55.33997 10.515 55.99997 10.515 H 56.92997 V 11.385 H 52.83497 V 10.5 Q 53.46497 10.5 53.76497 10.395 Q 54.06497 10.29 54.13997 10.08 L 57.88997 0.24 H 60.06497 Z" style="fill: none; stroke: #9ca3af; stroke-width: 0.00035; opacity: 0.35" />
+  <path d="M 64.67609 9.73296 C 64.59393 9.48649 64.42159 9.4158 64.42159 9.4158 S 64.54459 9.465 64.90997 9.465 H 65.95997 V 10.515 V 11.385 V 12.435 H 64.90997 H 59.41997 H 58.36997 V 11.385 V 10.515 V 9.465 H 59.41997 H 60.73997 C 60.74458 9.465 60.74708 9.46488 60.74708 9.46488 S 60.60847 9.47302 60.44483 9.59803 C 60.35014 9.67037 60.25452 9.78394 60.19718 9.90911 C 60.1401 10.03372 60.12497 10.15141 60.12497 10.23 C 60.12497 10.36227 60.15378 10.45306 60.15378 10.45306 S 60.15084 10.44445 60.14608 10.43168 L 59.54534 8.80968 L 60.52997 9.495 H 55.92497 L 56.90973 8.80936 L 56.36041 10.2932 S 56.38997 10.20434 56.38997 10.125 C 56.38997 10.06191 56.37874 9.96922 56.33895 9.86978 C 56.29909 9.77019 56.23211 9.67409 56.16129 9.60653 C 56.03088 9.48213 55.91375 9.46034 55.91375 9.46034 S 55.94006 9.465 55.99997 9.465 H 56.92997 H 57.97997 V 10.515 V 11.385 V 12.435 H 56.92997 H 52.83497 H 51.78497 V 11.385 V 10.5 V 9.45 H 52.83497 C 53.2758 9.45 53.41884 9.4037 53.41884 9.4037 S 53.41873 9.40373 53.41866 9.40376 C 53.41854 9.4038 53.41835 9.40386 53.41811 9.40395 C 53.41872 9.40373 53.41918 9.40357 53.41948 9.40345 C 53.41979 9.40334 53.41994 9.40328 53.41994 9.40328 S 53.37777 9.41993 53.32186 9.46972 C 53.20731 9.57172 53.15498 9.71646 53.15498 9.71646 L 56.90881 -0.13392 L 57.16646 -0.81 H 57.88997 H 60.06497 H 60.79746 L 61.05039 -0.12257 L 64.66539 9.70243 L 64.67097 9.71761 Z" style="fill: none; stroke: #2563eb; stroke-width: 0.00025; stroke-linecap: round; stroke-linejoin: round; opacity: 0.75" />
+  <path d="M 52.83497 10.5 Q 53.44596 10.5 53.74656 10.40124" style="fill: none; stroke: #16a34a; stroke-width: 0.00225; stroke-linecap: round; stroke-linejoin: round; opacity: 0.9" />
+  <circle cx="52.83497" cy="10.5" r="0.0015" style="fill: #ffffff; stroke: #16a34a; stroke-width: 0.0008" />
+  <circle cx="53.74656" cy="10.40124" r="0.0015" style="fill: #16a34a; stroke: #ffffff; stroke-width: 0.0008" />
+  <text x="53.29077" y="10.45062" font-size="0.0065" style="fill: #16a34a; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; text-anchor: middle; dominant-baseline: central">J10.0</text>
+  <path d="M 53.74656 10.40124 Q 53.75124 10.39971 53.75584 10.39815" style="fill: none; stroke: #ca8a04; stroke-width: 0.00225; stroke-linecap: round; stroke-linejoin: round; opacity: 0.9" />
+  <circle cx="53.74656" cy="10.40124" r="0.0015" style="fill: #ffffff; stroke: #ca8a04; stroke-width: 0.0008" />
+  <circle cx="53.75584" cy="10.39815" r="0.0015" style="fill: #ca8a04; stroke: #ffffff; stroke-width: 0.0008" />
+  <text x="53.7512" y="10.39969" font-size="0.0065" style="fill: #ca8a04; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; text-anchor: middle; dominant-baseline: central">J10.1</text>
+  <path d="M 53.75584 10.39815 Q 53.76045 10.39658 53.76497 10.395" style="fill: none; stroke: #16a34a; stroke-width: 0.00225; stroke-linecap: round; stroke-linejoin: round; opacity: 0.9" />
+  <circle cx="53.75584" cy="10.39815" r="0.0015" style="fill: #ffffff; stroke: #16a34a; stroke-width: 0.0008" />
+  <circle cx="53.76497" cy="10.395" r="0.0015" style="fill: #16a34a; stroke: #ffffff; stroke-width: 0.0008" />
+  <text x="53.76041" y="10.39657" font-size="0.0065" style="fill: #16a34a; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; text-anchor: middle; dominant-baseline: central">J10.2</text>
+  <path d="M 53.76497 10.395 Q 53.77427 10.39175 53.78335 10.38839" style="fill: none; stroke: #16a34a; stroke-width: 0.00225; stroke-linecap: round; stroke-linejoin: round; opacity: 0.9" />
+  <circle cx="53.76497" cy="10.395" r="0.0015" style="fill: #ffffff; stroke: #16a34a; stroke-width: 0.0008" />
+  <circle cx="53.78335" cy="10.38839" r="0.0015" style="fill: #16a34a; stroke: #ffffff; stroke-width: 0.0008" />
+  <text x="53.77416" y="10.3917" font-size="0.0065" style="fill: #16a34a; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; text-anchor: middle; dominant-baseline: central">J10.3</text>
+  <path d="M 53.78335 10.38839 Q 53.79243 10.38504 53.80129 10.38158" style="fill: none; stroke: #ca8a04; stroke-width: 0.00225; stroke-linecap: round; stroke-linejoin: round; opacity: 0.9" />
+  <circle cx="53.78335" cy="10.38839" r="0.0015" style="fill: #ffffff; stroke: #ca8a04; stroke-width: 0.0008" />
+  <circle cx="53.80129" cy="10.38158" r="0.0015" style="fill: #ca8a04; stroke: #ffffff; stroke-width: 0.0008" />
+  <text x="53.79232" y="10.38499" font-size="0.0065" style="fill: #ca8a04; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; text-anchor: middle; dominant-baseline: central">J10.4</text>
+  <path d="M 53.80129 10.38158 Q 53.93546 10.32929 54.02013 10.25389" style="fill: none; stroke: #16a34a; stroke-width: 0.00225; stroke-linecap: round; stroke-linejoin: round; opacity: 0.9" />
+  <circle cx="53.80129" cy="10.38158" r="0.0015" style="fill: #ffffff; stroke: #16a34a; stroke-width: 0.0008" />
+  <circle cx="54.02013" cy="10.25389" r="0.0015" style="fill: #16a34a; stroke: #ffffff; stroke-width: 0.0008" />
+  <text x="53.91071" y="10.31774" font-size="0.0065" style="fill: #16a34a; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; text-anchor: middle; dominant-baseline: central">J10.5</text>
+  <path d="M 54.02013 10.25389 Q 54.1048 10.17849 54.13997 10.08" style="fill: none; stroke: #ca8a04; stroke-width: 0.00225; stroke-linecap: round; stroke-linejoin: round; opacity: 0.9" />
+  <circle cx="54.02013" cy="10.25389" r="0.0015" style="fill: #ffffff; stroke: #ca8a04; stroke-width: 0.0008" />
+  <circle cx="54.13997" cy="10.08" r="0.0015" style="fill: #ca8a04; stroke: #ffffff; stroke-width: 0.0008" />
+  <text x="54.08005" y="10.16694" font-size="0.0065" style="fill: #ca8a04; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; text-anchor: middle; dominant-baseline: central">J10.6</text>
+  <path d="M 54.13997 10.08 L 57.88997 0.24" style="fill: none; stroke: #16a34a; stroke-width: 0.00225; stroke-linecap: round; stroke-linejoin: round; opacity: 0.9" />
+  <circle cx="54.13997" cy="10.08" r="0.0015" style="fill: #ffffff; stroke: #16a34a; stroke-width: 0.0008" />
+  <circle cx="57.88997" cy="0.24" r="0.0015" style="fill: #16a34a; stroke: #ffffff; stroke-width: 0.0008" />
+  <text x="54.20013" y="9.28972" font-size="0.0065" style="fill: #16a34a; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; text-anchor: middle; dominant-baseline: central">J10.7</text>
+  <path d="M 53.32186 9.46972 C 53.20731 9.57172 53.15498 9.71646 53.15498 9.71646" style="fill: none; stroke: #7c3aed; stroke-width: 0.003; stroke-linecap: round; stroke-linejoin: round; opacity: 0.95" />
+  <path d="M 52.83497 9.45 C 53.0339 9.45 53.17219 9.44057 53.26406 9.43022" style="fill: none; stroke: #ef4444; stroke-width: 0.0006; stroke-linecap: round; stroke-linejoin: round; opacity: 0.62" />
+  <path d="M 53.26406 9.43022 C 53.37577 9.41764 53.41884 9.4037 53.41884 9.4037" style="fill: none; stroke: #ef4444; stroke-width: 0.0006; stroke-linecap: round; stroke-linejoin: round; opacity: 0.62" />
+  <path d="M 53.41884 9.4037 S 53.41873 9.40373 53.41866 9.40376" style="fill: none; stroke: #ef4444; stroke-width: 0.0006; stroke-linecap: round; stroke-linejoin: round; opacity: 0.62" />
+  <path d="M 53.41866 9.40376 C 53.41854 9.4038 53.41835 9.40386 53.41811 9.40395" style="fill: none; stroke: #ef4444; stroke-width: 0.0006; stroke-linecap: round; stroke-linejoin: round; opacity: 0.62" />
+  <path d="M 53.41811 9.40395 C 53.41872 9.40373 53.41918 9.40357 53.41948 9.40345" style="fill: none; stroke: #ef4444; stroke-width: 0.0006; stroke-linecap: round; stroke-linejoin: round; opacity: 0.62" />
+  <path d="M 53.41948 9.40345 C 53.41979 9.40334 53.41994 9.40328 53.41994 9.40328" style="fill: none; stroke: #ef4444; stroke-width: 0.0006; stroke-linecap: round; stroke-linejoin: round; opacity: 0.62" />
+  <path d="M 53.41994 9.40328 S 53.37777 9.41993 53.32186 9.46972" style="fill: none; stroke: #ef4444; stroke-width: 0.0006; stroke-linecap: round; stroke-linejoin: round; opacity: 0.62" />
+  <path d="M 53.32186 9.46972 C 53.21925 9.56109 53.16656 9.68676 53.15669 9.71196" style="fill: none; stroke: #ef4444; stroke-width: 0.0006; stroke-linecap: round; stroke-linejoin: round; opacity: 0.62" />
+  <path d="M 53.15669 9.71196 C 53.15554 9.71489 53.15498 9.71646 53.15498 9.71646" style="fill: none; stroke: #ef4444; stroke-width: 0.0006; stroke-linecap: round; stroke-linejoin: round; opacity: 0.62" />
+  <path d="M 53.15498 9.71646 L 53.15669 9.71196" style="fill: none; stroke: #ef4444; stroke-width: 0.0006; stroke-linecap: round; stroke-linejoin: round; opacity: 0.62" />
+  <path d="M 53.15669 9.71196 L 53.26406 9.43022" style="fill: none; stroke: #ef4444; stroke-width: 0.0006; stroke-linecap: round; stroke-linejoin: round; opacity: 0.62" />
+  <path d="M 53.26406 9.43022 L 56.90881 -0.13392" style="fill: none; stroke: #ef4444; stroke-width: 0.0006; stroke-linecap: round; stroke-linejoin: round; opacity: 0.62" />
+  <text x="53.04952" y="9.44011" font-size="0.009" style="fill: #1e3a8a; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; text-anchor: middle; dominant-baseline: central">A62</text>
+  <text x="53.34145" y="9.41696" font-size="0.009" style="fill: #1e3a8a; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; text-anchor: middle; dominant-baseline: central">A69</text>
+  <text x="53.41875" y="9.40373" font-size="0.009" style="fill: #1e3a8a; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; text-anchor: middle; dominant-baseline: central">A63</text>
+  <text x="53.41838" y="9.40385" font-size="0.009" style="fill: #1e3a8a; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; text-anchor: middle; dominant-baseline: central">A64</text>
+  <text x="53.41879" y="9.4037" font-size="0.009" style="fill: #1e3a8a; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; text-anchor: middle; dominant-baseline: central">A65</text>
+  <text x="53.41971" y="9.40337" font-size="0.009" style="fill: #1e3a8a; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; text-anchor: middle; dominant-baseline: central">A66</text>
+  <text x="53.3709" y="9.4365" font-size="0.009" style="fill: #1e3a8a; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; text-anchor: middle; dominant-baseline: central">A67</text>
+  <text x="53.23927" y="9.59084" font-size="0.009" style="fill: #1e3a8a; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; text-anchor: middle; dominant-baseline: central">A68</text>
+  <text x="53.15583" y="9.71421" font-size="0.009" style="fill: #1e3a8a; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; text-anchor: middle; dominant-baseline: central">A70</text>
+  <text x="53.15583" y="9.71421" font-size="0.009" style="fill: #1e3a8a; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; text-anchor: middle; dominant-baseline: central">A71</text>
+  <text x="53.21038" y="9.57109" font-size="0.009" style="fill: #1e3a8a; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; text-anchor: middle; dominant-baseline: central">A72</text>
+  <text x="55.08643" y="4.64815" font-size="0.009" style="fill: #1e3a8a; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; text-anchor: middle; dominant-baseline: central">A73</text>
+  <circle cx="52.83497" cy="9.45" r="0.0011" style="fill: #111827; stroke: none; opacity: 0.9" />
+  <circle cx="53.26406" cy="9.43022" r="0.0011" style="fill: #111827; stroke: none; opacity: 0.9" />
+  <circle cx="53.26406" cy="9.43022" r="0.0011" style="fill: #111827; stroke: none; opacity: 0.9" />
+  <circle cx="53.41884" cy="9.4037" r="0.0011" style="fill: #111827; stroke: none; opacity: 0.9" />
+  <circle cx="53.41884" cy="9.4037" r="0.0011" style="fill: #111827; stroke: none; opacity: 0.9" />
+  <circle cx="53.41866" cy="9.40376" r="0.0011" style="fill: #111827; stroke: none; opacity: 0.9" />
+  <circle cx="53.41866" cy="9.40376" r="0.0011" style="fill: #111827; stroke: none; opacity: 0.9" />
+  <circle cx="53.41811" cy="9.40395" r="0.0011" style="fill: #111827; stroke: none; opacity: 0.9" />
+  <circle cx="53.41811" cy="9.40395" r="0.0011" style="fill: #111827; stroke: none; opacity: 0.9" />
+  <circle cx="53.41948" cy="9.40345" r="0.0011" style="fill: #111827; stroke: none; opacity: 0.9" />
+  <circle cx="53.41948" cy="9.40345" r="0.0011" style="fill: #111827; stroke: none; opacity: 0.9" />
+  <circle cx="53.41994" cy="9.40328" r="0.0011" style="fill: #111827; stroke: none; opacity: 0.9" />
+  <circle cx="53.41994" cy="9.40328" r="0.0011" style="fill: #111827; stroke: none; opacity: 0.9" />
+  <circle cx="53.32186" cy="9.46972" r="0.0011" style="fill: #111827; stroke: none; opacity: 0.9" />
+  <circle cx="53.32186" cy="9.46972" r="0.0011" style="fill: #111827; stroke: none; opacity: 0.9" />
+  <circle cx="53.15669" cy="9.71196" r="0.0011" style="fill: #111827; stroke: none; opacity: 0.9" />
+  <circle cx="53.15669" cy="9.71196" r="0.0011" style="fill: #111827; stroke: none; opacity: 0.9" />
+  <circle cx="53.15498" cy="9.71646" r="0.0011" style="fill: #111827; stroke: none; opacity: 0.9" />
+  <circle cx="53.15498" cy="9.71646" r="0.0011" style="fill: #111827; stroke: none; opacity: 0.9" />
+  <circle cx="53.15669" cy="9.71196" r="0.0011" style="fill: #111827; stroke: none; opacity: 0.9" />
+  <circle cx="53.15669" cy="9.71196" r="0.0011" style="fill: #111827; stroke: none; opacity: 0.9" />
+  <circle cx="53.26406" cy="9.43022" r="0.0011" style="fill: #111827; stroke: none; opacity: 0.9" />
+  <circle cx="53.26406" cy="9.43022" r="0.0011" style="fill: #111827; stroke: none; opacity: 0.9" />
+  <circle cx="56.90881" cy="-0.13392" r="0.0011" style="fill: #111827; stroke: none; opacity: 0.9" />
+</svg>

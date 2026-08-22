@@ -152,6 +152,69 @@ pub fn round_corners_rounds_closed_one_segment_cusp_test() {
   assert has_cubic(segments)
 }
 
+pub fn stretch_to_join_endpoint_policy_meets_at_midpoint_test() {
+  let a = svg_path.Point(0.0, 0.0)
+  let b = svg_path.Point(10.0, 0.0)
+  let c = svg_path.Point(20.0, 0.0)
+  let d = svg_path.Point(30.0, 0.0)
+
+  let assert Ok(subpath) =
+    svg_path.subpath_with(
+      [svg_path.Line(start: a, end: b), svg_path.Line(start: c, end: d)],
+      policy: effects.stretch_to_join_endpoint_policy(),
+    )
+
+  assert svg_path.subpath_segments(subpath)
+    == [
+      svg_path.Line(start: a, end: svg_path.Point(15.0, 0.0)),
+      svg_path.Line(start: svg_path.Point(15.0, 0.0), end: d),
+    ]
+}
+
+pub fn stretch_to_join_endpoint_policy_closes_by_dragging_last_end_test() {
+  let a = svg_path.Point(0.0, 0.0)
+  let b = svg_path.Point(10.0, 0.0)
+  let c = svg_path.Point(10.0, 10.0)
+  let near_a = svg_path.Point(1.0, 0.0)
+  let subpath =
+    svg_path.subpath_assert([
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
+      svg_path.Line(start: c, end: near_a),
+    ])
+
+  let assert Ok(closed) =
+    svg_path.subpath_set_closed_with(
+      subpath,
+      closed: True,
+      policy: effects.stretch_to_join_endpoint_policy(),
+    )
+
+  assert svg_path.subpath_is_closed(closed)
+  assert svg_path.subpath_segments(closed)
+    == [
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
+      svg_path.Line(start: c, end: a),
+    ]
+}
+
+pub fn stretch_to_join_endpoint_policy_closes_near_loop_single_segment_test() {
+  let a = svg_path.Point(0.0, 0.0)
+  let near_a = svg_path.Point(0.01, 0.0)
+  let subpath = svg_path.subpath_assert([svg_path.Line(start: a, end: near_a)])
+
+  let assert Ok(closed) =
+    svg_path.subpath_set_closed_with(
+      subpath,
+      closed: True,
+      policy: effects.stretch_to_join_endpoint_policy(),
+    )
+
+  assert svg_path.subpath_is_closed(closed)
+  assert svg_path.subpath_segments(closed) == [svg_path.Line(start: a, end: a)]
+}
+
 pub fn round_corners_errors_when_radius_does_not_fit_test() {
   let subpath =
     svg_path.subpath_assert_polyline([

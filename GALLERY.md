@@ -90,6 +90,21 @@ colors.
 Shows three one-sided offset studies with each panel centered from the computed
 geometry bounds.
 
+### Package Title First Offset
+
+![Package title first offset](docs/gallery/gallery-package-title-first-offset.svg)
+
+Shows the package title outline, its untrimmed single offset, and the trimmed
+single offset used to stress arrangement-based offset pruning.
+
+### Package Title Second Offset Arrangement
+
+![Package title second offset arrangement](docs/gallery/gallery-package-title-second-offset-arrangement.svg)
+
+Shows the second-offset arrangement graph for the package title stress fixture:
+red submerged edges, green non-submerged edges, yellow first-round dangling
+edges, and purple final survivor edges.
+
 ### Stalled Offset Arc Turns
 
 ![Stalled offset arc turns](docs/gallery/gallery-stalled-offset-arc-turns.svg)

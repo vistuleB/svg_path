@@ -8,6 +8,7 @@ import svg_path
 import svg_path/convex_hull
 import svg_path/degeneracy
 import svg_path/point as point_helpers
+import svg_path/transform
 import svg_path/trig
 
 const default_tolerance = 0.000001
@@ -54,6 +55,84 @@ fn degeneracy_error(error: degeneracy.Error) -> Error {
   case error {
     degeneracy.PathError(error) -> PathError(error)
     degeneracy.ConvexHullError(error) -> ConvexHullError(error)
+  }
+}
+
+/// Return an endpoint policy that stretches adjacent segments to meet.
+///
+/// For an ordinary adjacent pair, the shared endpoint is the midpoint of
+/// `previous.end` and `next.start`. For a closing pair, `previous.end` is
+/// moved to `next.start`, which is the fixed subpath start.
+pub fn stretch_to_join_endpoint_policy() -> svg_path.EndpointPolicy {
+  svg_path.Custom(fn(previous, next, closing) {
+    stretch_to_join_segments(previous, next, closing)
+  })
+}
+
+fn stretch_to_join_segments(
+  previous: svg_path.Segment,
+  next: svg_path.Segment,
+  closing: Bool,
+) -> List(svg_path.Segment) {
+  let previous_start = svg_path.segment_start(previous)
+  let previous_end = svg_path.segment_end(previous)
+  let next_start = svg_path.segment_start(next)
+  let next_end = svg_path.segment_end(next)
+  let join = case closing {
+    True -> next_start
+    False -> point_helpers.midpoint(previous_end, next_start)
+  }
+
+  case
+    stretch_segment(previous, target_start: previous_start, target_end: join)
+  {
+    Error(_) -> [previous, next]
+    Ok(stretched_previous) -> {
+      case closing {
+        True -> [stretched_previous]
+        False -> {
+          case stretch_segment(next, target_start: join, target_end: next_end) {
+            Error(_) -> [previous, next]
+            Ok(stretched_next) -> [stretched_previous, stretched_next]
+          }
+        }
+      }
+    }
+  }
+}
+
+fn stretch_segment(
+  segment: svg_path.Segment,
+  target_start target_start: svg_path.Point,
+  target_end target_end: svg_path.Point,
+) -> Result(svg_path.Segment, Nil) {
+  let source_start = svg_path.segment_start(segment)
+  let source_end = svg_path.segment_end(segment)
+  use transform <- result.try(transform.point_pair_map(
+    source_start:,
+    source_end:,
+    target_start:,
+    target_end:,
+    tolerance: default_tolerance,
+  ))
+  transform.segment(segment, by: transform)
+  |> result.map(snap_segment_endpoints(_, start: target_start, end: target_end))
+  |> result.map_error(fn(_) { Nil })
+}
+
+fn snap_segment_endpoints(
+  segment: svg_path.Segment,
+  start start: svg_path.Point,
+  end end: svg_path.Point,
+) -> svg_path.Segment {
+  case segment {
+    svg_path.Line(..) -> svg_path.Line(start:, end:)
+    svg_path.QuadraticBezier(control:, ..) ->
+      svg_path.QuadraticBezier(start:, control:, end:)
+    svg_path.CubicBezier(control1:, control2:, ..) ->
+      svg_path.CubicBezier(start:, control1:, control2:, end:)
+    svg_path.Arc(radius:, x_axis_rotation:, large_arc:, sweep:, ..) ->
+      svg_path.Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:)
   }
 }
 
