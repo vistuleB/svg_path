@@ -3005,6 +3005,32 @@ pub fn subpath_with_custom_can_insert_a_connector_test() {
     ]
 }
 
+pub fn subpath_with_custom_runs_on_exact_adjacent_pair_test() {
+  let a = svg_path.Point(0.0, 0.0)
+  let b = svg_path.Point(10.0, 0.0)
+  let c = svg_path.Point(20.0, 0.0)
+  let elbow = svg_path.Point(10.0, 10.0)
+
+  let assert Ok(subpath) =
+    svg_path.subpath_with(
+      [svg_path.Line(start: a, end: b), svg_path.Line(start: b, end: c)],
+      policy: svg_path.Custom(fn(previous, next, _is_closing) {
+        [
+          previous,
+          svg_path.Line(start: svg_path.segment_end(previous), end: elbow),
+          svg_path.Line(start: elbow, end: svg_path.segment_end(next)),
+        ]
+      }),
+    )
+
+  assert svg_path.subpath_segments(subpath)
+    == [
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: elbow),
+      svg_path.Line(start: elbow, end: c),
+    ]
+}
+
 pub fn subpath_with_custom_can_insert_multiple_connectors_test() {
   let a = svg_path.Point(0.0, 0.0)
   let b = svg_path.Point(10.0, 0.0)
@@ -3185,6 +3211,43 @@ pub fn custom_policy_receives_closing_join_flag_test() {
 
   assert svg_path.subpath_is_closed(closed)
   assert svg_path.subpath_end(closed) == Ok(a)
+}
+
+pub fn set_closed_with_custom_runs_on_exact_closing_pair_test() {
+  let a = svg_path.Point(0.0, 0.0)
+  let b = svg_path.Point(10.0, 0.0)
+  let c = svg_path.Point(10.0, 10.0)
+  let elbow = svg_path.Point(5.0, 5.0)
+  let subpath =
+    svg_path.subpath_assert([
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
+      svg_path.Line(start: c, end: a),
+    ])
+
+  let assert Ok(closed) =
+    svg_path.subpath_set_closed_with(
+      subpath,
+      closed: True,
+      policy: svg_path.Custom(fn(last, _first, is_closing) {
+        case is_closing {
+          True -> [
+            svg_path.Line(start: svg_path.segment_start(last), end: elbow),
+            svg_path.Line(end: a, start: elbow),
+          ]
+          False -> [last]
+        }
+      }),
+    )
+
+  assert svg_path.subpath_is_closed(closed)
+  assert svg_path.subpath_segments(closed)
+    == [
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
+      svg_path.Line(start: c, end: elbow),
+      svg_path.Line(start: elbow, end: a),
+    ]
 }
 
 pub fn set_closed_with_custom_rejects_invalid_results_test() {

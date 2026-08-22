@@ -1,5 +1,9 @@
 # Notes
 
+## Local Commit Style
+
+- Use lowercase commit subjects.
+
 ## Wishlist
 
 - Full marker rendering as geometry, only if there is real caller demand. The

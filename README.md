@@ -107,6 +107,10 @@ pub fn prepare_for_arc_averse_consumer(
   and dashed stroke geometry.
 - `svg_path/marker`: marker pose computation and marker layout transforms.
 - `svg_path/effects`: one-off artistic path effects such as corner rounding.
+- `svg_path/degeneracy`: normalization of near-degenerate geometry into simpler
+  segments.
+- `svg_path/curvature`: signed curvature and right-normal radius helpers for
+  segments.
 - `svg_path/convex_hull`: convex hulls for segments, subpaths, paths, and point
   lists.
 - `svg_path/bezier`: Bezier fitting and low-level Bezier geometry helpers.
@@ -344,8 +348,7 @@ svg_path.path_end(path)
 ## Subpath-Building
 
 Helper functions in the root module let users employ an `EndpointPolicy` option
-to specify different types of error-recovery behavior for non-matching
-endpoints:
+to specify different types of reconciliation behavior for adjacent endpoints:
 
 ```gleam
 pub type EndpointPolicy {
@@ -355,21 +358,24 @@ pub type EndpointPolicy {
   Bridge
   WiggleThenBridge
   WiggleThenBridgeWith(Float)
-  Custom(fn(Segment, Segment, Bool) -> #(Segment, List(Segment), Segment))
+  Custom(fn(Segment, Segment, Bool) -> List(Segment))
 }
 ```
 
 `Strict` is the behavior of `subpath`, requiring exact endpoint
 equality. `Wiggle` moves nearby endpoints together within the package's default
 wiggle tolerance of 1e-9 while respecting the horizontality and verticality
-of `Line` segments. `wiggle_with(tolerance)` provides the same policy with an
-explicit tolerance. `Bridge` keeps existing endpoints in place and inserts a
-straight line segment when needed.
-`WiggleThenBridge`, as the name implies, first tries `Wiggle` before falling
-back on `Bridge`; `wiggle_then_bridge_with(tolerance)` is its configurable
-counterpart. `Custom` gives callers a hook for bespoke endpoint reconciliation.
-Its third callback argument is `True` only for the closing join from the last
-segment back to the first segment of a closed subpath.
+of `Line` segments: horizontal and vertical lines stay horizontal and vertical.
+If adjacent horizontal/horizontal or vertical/vertical lines are misaligned, a
+bridge is inserted regardless of endpoint distance.
+`wiggle_with(tolerance)` provides the same policy with an explicit tolerance.
+`Bridge` keeps existing endpoints in place and inserts a straight line segment
+when needed. `WiggleThenBridge` applies the same pair-local wiggle behavior
+when adjacent endpoints are within tolerance, and otherwise bridges that pair;
+`wiggle_then_bridge_with(tolerance)` is its configurable counterpart. `Custom`
+gives callers a hook for bespoke endpoint reconciliation. Its third callback
+argument is `True` only for the closing join from the last segment back to the
+first segment of a closed subpath.
 
 Functions that accept an `EndpointPolicy` end in `_with`. Including:
 
@@ -417,12 +423,15 @@ svg_path.subpath_assert_set_closed(subpath, closed)
 svg_path.subpath_assert_set_closed_with(subpath, closed, policy)
 ```
 
-`Custom` receives each non-matching adjacent pair as `previous` and `next`, then
-returns an adjusted previous segment, any inserted connector segments, and an
-adjusted next segment. It is called only when the two endpoints do not already
-match. A custom policy can change all aspects of both adjacent segments or
-insert bridge-like segments between them. Errors are generated on final-pass
-verification of the returned subpath.
+`Custom` receives adjacent segments as `previous` and `next`. For ordinary
+adjacent pairs, its returned list replaces the pair. For the closing join from
+the last segment back to the first segment of a closed subpath, the returned
+list replaces only the last segment. An empty list deletes the replaced segment
+or pair. If the returned list is nonempty, its first segment must start where
+`previous` started; the constructor verifies the final subpath afterward. A
+custom policy can adjust, delete, replace, or insert bridge-like segments. It
+may be called even when the original adjacent endpoints already match, so it
+can also perform coalescing or cleanup effects.
 
 ### Joining Subpaths
 
@@ -1393,13 +1402,11 @@ arrangement.build(
 // -> Result(arrangement.ArrangementGraphBuild, arrangement.Error)
 ```
 
-`ArrangementGraphBuild` contains the graph, `normalized_paths`, and
-`segment_images`. The normalized paths retain the input path and subpath order
-and are the official source geometry corresponding to the graph. Each segment
-image records, in traversal order, the graph-edge identifiers produced from
-one normalized source segment and whether each traversal reverses the stored
-edge direction. Consumers that classify graph edges against their sources
-should use these paths rather than the original inputs.
+`ArrangementGraphBuild` contains the graph and `segment_images`. Each segment
+image records, in original path, subpath, and segment order, the graph-edge
+identifiers produced from one source segment and whether each traversal
+reverses the stored edge direction. An image can be empty when all pieces of an
+input segment are shorter than `minimum_chord`.
 
 The graph, vertex, and edge representations are transparent for inspection.
 Vertices retain their clustered source endpoints and use the center of the
@@ -1462,10 +1469,10 @@ let arrangement_build = output.build
 ```
 
 `CsgResult.path` is the reconstructed output path. `CsgResult.build` is the
-exact `ArrangementGraphBuild` used to compute it, exposing both the normalized
-source paths and the arrangement graph for inspection or drawing. This matters
-because endpoint clustering and segment refinement make the arrangement's
-geometry the source of truth for the returned path.
+exact `ArrangementGraphBuild` used to compute it, exposing the arrangement
+graph and source-segment images for inspection or drawing. This matters because
+endpoint clustering and segment refinement make the arrangement's geometry the
+source of truth for the returned path.
 
 Boolean operations can produce no components, one component, multiple
 components, holes, or islands inside holes. Multiple subpaths in each operand

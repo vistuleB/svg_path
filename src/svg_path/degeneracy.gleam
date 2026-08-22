@@ -381,7 +381,10 @@ fn rebuilt_candidate_width_decision(
   tolerance: Float,
 ) -> Result(#(svg_path.Subpath, convex_hull.MinimumWidthDecision), Error) {
   use subpath <- result.try(
-    svg_path.subpath(list.reverse(reversed_segments))
+    svg_path.subpath_with(
+      list.reverse(reversed_segments),
+      policy: svg_path.WiggleThenBridgeWith(tolerance),
+    )
     |> result.map_error(PathError),
   )
   use hull <- result.try(
