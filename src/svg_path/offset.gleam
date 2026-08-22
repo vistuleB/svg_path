@@ -40,6 +40,7 @@ import svg_path/internal/number
 import svg_path/intersections
 import svg_path/point as point_helpers
 import svg_path/root
+import svg_path/transform
 import svg_path/trig
 
 const default_tolerance = 0.01
@@ -64,7 +65,11 @@ const hinge_parameter_tolerance = 0.000001
 
 const default_tangent_heal_angle_degrees = 2.0
 
+const join_free_tangent_alignment_angle_degrees = 0.001
+
 const tangent_heal_agreement_angle_degrees = 2.0
+
+const source_tangent_colinearization_angle_degrees = 2.0
 
 const hinge_tangent_gap_degrees = 1.0
 
@@ -1849,11 +1854,380 @@ fn normalize_offset_source_subpath(
   subpath: svg_path.Subpath,
   options: Options,
 ) -> Result(svg_path.Subpath, Error) {
-  degeneracy.normalize_degenerate_segments(
+  use subpath <- result.try(eliminate_small_offset_source_segments(
     subpath,
-    tolerance: options.fitting.tolerance,
+    tolerance: 0.001,
+  ))
+  use subpath <- result.try(
+    degeneracy.normalize_degenerate_segments(
+      subpath,
+      tolerance: options.fitting.tolerance,
+    )
+    |> result.map_error(SourceNormalizationError),
   )
-  |> result.map_error(SourceNormalizationError)
+  use subpath <- result.try(colinearize_offset_source_tangents(
+    subpath,
+    tolerance: source_tangent_colinearization_angle_degrees,
+  ))
+  Ok(subpath)
+}
+
+fn colinearize_offset_source_tangents(
+  subpath: svg_path.Subpath,
+  tolerance tolerance: Float,
+) -> Result(svg_path.Subpath, Error) {
+  case
+    colinearize_adjacent_source_tangents(
+      svg_path.subpath_segments(subpath),
+      tolerance,
+    )
+  {
+    [] -> Ok(subpath)
+    segments -> {
+      use normalized <- result.try(
+        svg_path.subpath_with(
+          segments,
+          policy: svg_path.WiggleThenBridgeWith(point_tolerance),
+        )
+        |> result.map_error(PathError),
+      )
+      svg_path.subpath_set_closed_with(
+        normalized,
+        closed: svg_path.subpath_is_closed(subpath),
+        policy: svg_path.WiggleThenBridgeWith(point_tolerance),
+      )
+      |> result.map_error(PathError)
+    }
+  }
+}
+
+fn colinearize_adjacent_source_tangents(
+  segments: List(svg_path.Segment),
+  tolerance: Float,
+) -> List(svg_path.Segment) {
+  case segments {
+    [] -> []
+    [first, ..rest] ->
+      colinearize_adjacent_source_tangents_loop(
+        previous: first,
+        rest: rest,
+        tolerance:,
+        normalized: [],
+      )
+  }
+}
+
+fn colinearize_adjacent_source_tangents_loop(
+  previous previous: svg_path.Segment,
+  rest rest: List(svg_path.Segment),
+  tolerance tolerance: Float,
+  normalized normalized: List(svg_path.Segment),
+) -> List(svg_path.Segment) {
+  case rest {
+    [] -> list.reverse([previous, ..normalized])
+    [next, ..remaining] -> {
+      let #(previous, next) =
+        colinearize_source_tangent_boundary(previous, next, tolerance)
+      colinearize_adjacent_source_tangents_loop(
+        previous: next,
+        rest: remaining,
+        tolerance:,
+        normalized: [previous, ..normalized],
+      )
+    }
+  }
+}
+
+fn colinearize_source_tangent_boundary(
+  left: svg_path.Segment,
+  right: svg_path.Segment,
+  tolerance: Float,
+) -> #(svg_path.Segment, svg_path.Segment) {
+  case unit_tangent(left, t: 1.0), unit_tangent(right, t: 0.0) {
+    Ok(left_tangent), Ok(right_tangent) -> {
+      let angle = signed_angle(left_tangent, right_tangent)
+      case float.absolute_value(angle) <=. tolerance {
+        False -> #(left, right)
+        True -> {
+          let direction = averaged_boundary_tangent(left_tangent, right_tangent)
+          let left = snap_source_end_tangent(left, direction)
+          let right = snap_source_start_tangent(right, direction)
+          #(left, right)
+        }
+      }
+    }
+    _, _ -> #(left, right)
+  }
+}
+
+fn averaged_boundary_tangent(
+  left_tangent: svg_path.Point,
+  right_tangent: svg_path.Point,
+) -> svg_path.Point {
+  let sum = add(left_tangent, right_tangent)
+  case point_length(sum) >. tangent_epsilon {
+    True ->
+      case unit_vector(sum, t: 1.0) {
+        Ok(direction) -> direction
+        Error(_) -> left_tangent
+      }
+    False -> left_tangent
+  }
+}
+
+fn snap_source_end_tangent(
+  segment: svg_path.Segment,
+  direction: svg_path.Point,
+) -> svg_path.Segment {
+  case segment {
+    svg_path.QuadraticBezier(start:, control:, end:) -> {
+      let control1 = add(start, scale(subtract(control, start), 2.0 /. 3.0))
+      let control2 = add(end, scale(subtract(control, end), 2.0 /. 3.0))
+      let handle = point_distance(control2, end)
+      svg_path.CubicBezier(
+        start:,
+        control1:,
+        control2: add(end, scale(direction, 0.0 -. handle)),
+        end:,
+      )
+    }
+    svg_path.CubicBezier(start:, control1:, control2:, end:) -> {
+      let handle = point_distance(control2, end)
+      svg_path.CubicBezier(
+        start:,
+        control1:,
+        control2: add(end, scale(direction, 0.0 -. handle)),
+        end:,
+      )
+    }
+    _ -> segment
+  }
+}
+
+fn snap_source_start_tangent(
+  segment: svg_path.Segment,
+  direction: svg_path.Point,
+) -> svg_path.Segment {
+  case segment {
+    svg_path.QuadraticBezier(start:, control:, end:) -> {
+      let control1 = add(start, scale(subtract(control, start), 2.0 /. 3.0))
+      let control2 = add(end, scale(subtract(control, end), 2.0 /. 3.0))
+      let handle = point_distance(control1, start)
+      svg_path.CubicBezier(
+        start:,
+        control1: add(start, scale(direction, handle)),
+        control2:,
+        end:,
+      )
+    }
+    svg_path.CubicBezier(start:, control1:, control2:, end:) -> {
+      let handle = point_distance(control1, start)
+      svg_path.CubicBezier(
+        start:,
+        control1: add(start, scale(direction, handle)),
+        control2:,
+        end:,
+      )
+    }
+    _ -> segment
+  }
+}
+
+fn eliminate_small_offset_source_segments(
+  subpath: svg_path.Subpath,
+  tolerance tolerance: Float,
+) -> Result(svg_path.Subpath, Error) {
+  let segments = svg_path.subpath_segments(subpath)
+  case eliminate_small_segments(segments, tolerance) {
+    [] -> Ok(subpath)
+    normalized -> {
+      use normalized <- result.try(
+        svg_path.subpath_with(
+          normalized,
+          policy: svg_path.WiggleThenBridgeWith(tolerance),
+        )
+        |> result.map_error(PathError),
+      )
+      svg_path.subpath_set_closed_with(
+        normalized,
+        closed: svg_path.subpath_is_closed(subpath),
+        policy: svg_path.WiggleThenBridgeWith(tolerance),
+      )
+      |> result.map_error(PathError)
+    }
+  }
+}
+
+fn eliminate_small_segments(
+  segments: List(svg_path.Segment),
+  tolerance: Float,
+) -> List(svg_path.Segment) {
+  case segments {
+    [] -> []
+    [first, ..rest] ->
+      case segment_is_short(first, tolerance), rest {
+        True, [next, ..remaining] -> {
+          let next =
+            stretch_segment_start(
+              next,
+              to: svg_path.segment_start(first),
+              tolerance:,
+            )
+          eliminate_small_segments([next, ..remaining], tolerance)
+        }
+        _, _ ->
+          eliminate_small_segments_loop(
+            previous: first,
+            rest: rest,
+            tolerance:,
+            normalized: [],
+          )
+      }
+  }
+}
+
+fn eliminate_small_segments_loop(
+  previous previous: svg_path.Segment,
+  rest rest: List(svg_path.Segment),
+  tolerance tolerance: Float,
+  normalized normalized: List(svg_path.Segment),
+) -> List(svg_path.Segment) {
+  case rest {
+    [] ->
+      case segment_is_short(previous, tolerance), normalized {
+        True, [before, ..remaining] -> {
+          let before =
+            stretch_segment_end(
+              before,
+              to: svg_path.segment_end(previous),
+              tolerance:,
+            )
+          list.reverse([before, ..remaining])
+        }
+        _, _ -> list.reverse([previous, ..normalized])
+      }
+    [next, ..remaining] -> {
+      case segment_is_short(next, tolerance) {
+        False ->
+          eliminate_small_segments_loop(
+            previous: next,
+            rest: remaining,
+            tolerance:,
+            normalized: [previous, ..normalized],
+          )
+        True ->
+          case remaining {
+            [] -> {
+              let previous =
+                stretch_segment_end(
+                  previous,
+                  to: svg_path.segment_end(next),
+                  tolerance:,
+                )
+              eliminate_small_segments_loop(
+                previous:,
+                rest: [],
+                tolerance:,
+                normalized:,
+              )
+            }
+            [after, ..after_remaining] -> {
+              let join =
+                interpolate(
+                  svg_path.segment_start(next),
+                  svg_path.segment_end(next),
+                  0.5,
+                )
+              let previous = stretch_segment_end(previous, to: join, tolerance:)
+              let after = stretch_segment_start(after, to: join, tolerance:)
+              eliminate_small_segments_loop(
+                previous:,
+                rest: [after, ..after_remaining],
+                tolerance:,
+                normalized:,
+              )
+            }
+          }
+      }
+    }
+  }
+}
+
+fn segment_is_short(segment: svg_path.Segment, tolerance: Float) -> Bool {
+  case segment_diameter(segment) {
+    Ok(diameter) -> diameter <. tolerance
+    Error(_) -> False
+  }
+}
+
+fn stretch_segment_start(
+  segment: svg_path.Segment,
+  to target_start: svg_path.Point,
+  tolerance tolerance: Float,
+) -> svg_path.Segment {
+  stretch_segment(
+    segment,
+    target_start:,
+    target_end: svg_path.segment_end(segment),
+    tolerance:,
+  )
+}
+
+fn stretch_segment_end(
+  segment: svg_path.Segment,
+  to target_end: svg_path.Point,
+  tolerance tolerance: Float,
+) -> svg_path.Segment {
+  stretch_segment(
+    segment,
+    target_start: svg_path.segment_start(segment),
+    target_end:,
+    tolerance:,
+  )
+}
+
+fn stretch_segment(
+  segment: svg_path.Segment,
+  target_start target_start: svg_path.Point,
+  target_end target_end: svg_path.Point,
+  tolerance tolerance: Float,
+) -> svg_path.Segment {
+  let source_start = svg_path.segment_start(segment)
+  let source_end = svg_path.segment_end(segment)
+  case
+    transform.point_pair_map(
+      source_start:,
+      source_end:,
+      target_start:,
+      target_end:,
+      tolerance:,
+    )
+  {
+    Error(_) -> svg_path.Line(start: target_start, end: target_end)
+    Ok(matrix) -> {
+      case transform.segment(segment, by: matrix) {
+        Error(_) -> svg_path.Line(start: target_start, end: target_end)
+        Ok(segment) ->
+          snap_segment_endpoints(segment, start: target_start, end: target_end)
+      }
+    }
+  }
+}
+
+fn snap_segment_endpoints(
+  segment: svg_path.Segment,
+  start start: svg_path.Point,
+  end end: svg_path.Point,
+) -> svg_path.Segment {
+  case segment {
+    svg_path.Line(..) -> svg_path.Line(start:, end:)
+    svg_path.QuadraticBezier(control:, ..) ->
+      svg_path.QuadraticBezier(start:, control:, end:)
+    svg_path.CubicBezier(control1:, control2:, ..) ->
+      svg_path.CubicBezier(start:, control1:, control2:, end:)
+    svg_path.Arc(radius:, x_axis_rotation:, large_arc:, sweep:, ..) ->
+      svg_path.Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:)
+  }
 }
 
 /// Offset a subpath at two signed distances and trim the two sides together.
@@ -6516,13 +6890,13 @@ fn mark_closed_join_free_portion(
 fn source_boundary_is_smooth(
   left: svg_path.Segment,
   right: svg_path.Segment,
-  options: Options,
+  _options: Options,
 ) -> Bool {
   case unit_tangent(left, t: 1.0), unit_tangent(right, t: 0.0) {
     Ok(left_tangent), Ok(right_tangent) -> {
       let angle =
         float.absolute_value(signed_angle(left_tangent, right_tangent))
-      angle <=. options.tangent_heal_angle_degrees
+      angle <=. join_free_tangent_alignment_angle_degrees
     }
     _, _ -> False
   }
