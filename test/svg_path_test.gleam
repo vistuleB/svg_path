@@ -1735,6 +1735,90 @@ pub fn subpath_with_wiggle_rejects_empty_and_accepts_single_segment_inputs_test(
   assert svg_path.subpath_segments(subpath) == [line]
 }
 
+pub fn subpath_rebuild_with_applies_policy_to_existing_segments_test() {
+  let a = svg_path.Point(0.0, 0.0)
+  let b = svg_path.Point(10.0, 0.0)
+  let c = svg_path.Point(20.0, 0.0)
+  let first = svg_path.Line(start: a, end: b)
+  let second = svg_path.Line(start: b, end: c)
+  let subpath = svg_path.subpath_assert([first, second])
+  let coalesce_lines =
+    svg_path.Custom(fn(previous, next, closing) {
+      case previous, next, closing {
+        svg_path.Line(start: start, end: _),
+          svg_path.Line(start: _, end: end),
+          False
+        -> [svg_path.Line(start:, end:)]
+        _, _, True -> [previous]
+        _, _, False -> [previous, next]
+      }
+    })
+
+  let assert Ok(rebuilt) =
+    svg_path.subpath_rebuild_with(subpath, policy: coalesce_lines)
+
+  assert svg_path.subpath_segments(rebuilt) == [svg_path.Line(start: a, end: c)]
+  assert !svg_path.subpath_is_closed(rebuilt)
+}
+
+pub fn subpath_rebuild_with_preserves_closed_state_test() {
+  let a = svg_path.Point(0.0, 0.0)
+  let b = svg_path.Point(10.0, 0.0)
+  let c = svg_path.Point(10.0, 10.0)
+  let d = svg_path.Point(0.0, 10.0)
+  let open =
+    svg_path.subpath_assert([
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
+      svg_path.Line(start: c, end: d),
+      svg_path.Line(start: d, end: a),
+    ])
+  let assert Ok(closed) = svg_path.subpath_set_closed(open, closed: True)
+
+  let assert Ok(rebuilt) =
+    svg_path.subpath_rebuild_with(closed, policy: svg_path.Strict)
+
+  assert svg_path.subpath_is_closed(rebuilt)
+  assert svg_path.subpath_segments(rebuilt) == svg_path.subpath_segments(closed)
+}
+
+pub fn path_rebuild_with_rebuilds_each_subpath_test() {
+  let a = svg_path.Point(0.0, 0.0)
+  let b = svg_path.Point(10.0, 0.0)
+  let c = svg_path.Point(20.0, 0.0)
+  let d = svg_path.Point(30.0, 0.0)
+  let first =
+    svg_path.subpath_assert([
+      svg_path.Line(start: a, end: b),
+      svg_path.Line(start: b, end: c),
+    ])
+  let second = svg_path.subpath_assert([svg_path.Line(start: c, end: d)])
+  let empty = svg_path.subpath_empty(at: a)
+  let path = svg_path.Path([empty, first, second])
+  let coalesce_lines =
+    svg_path.Custom(fn(previous, next, closing) {
+      case previous, next, closing {
+        svg_path.Line(start: start, end: _),
+          svg_path.Line(start: _, end: end),
+          False
+        -> [svg_path.Line(start:, end:)]
+        _, _, True -> [previous]
+        _, _, False -> [previous, next]
+      }
+    })
+
+  let assert Ok(rebuilt_path) =
+    svg_path.path_rebuild_with(path, policy: coalesce_lines)
+  let assert [rebuilt_empty, rebuilt_first, rebuilt_second] =
+    svg_path.path_subpaths(rebuilt_path)
+
+  assert rebuilt_empty == empty
+  assert svg_path.subpath_segments(rebuilt_first)
+    == [svg_path.Line(start: a, end: c)]
+  assert svg_path.subpath_segments(rebuilt_second)
+    == [svg_path.Line(start: c, end: d)]
+}
+
 pub fn subpath_with_wiggle_then_line_prefers_wiggle_test() {
   let a = svg_path.Point(0.0, 0.0)
   let b = svg_path.Point(10.0, 0.0)

@@ -435,6 +435,11 @@ custom policy can adjust, delete, replace, or insert bridge-like segments. It
 may be called even when the original adjacent endpoints already match, so it
 can also perform coalescing or cleanup effects.
 
+Use `subpath_rebuild_with` to re-run an endpoint policy over an existing
+subpath's segment list while preserving its open/closed state. Empty subpaths
+are preserved unchanged. `path_rebuild_with` applies the same operation to each
+subpath independently.
+
 ### Joining Subpaths
 
 `subpath_join` combines open subpaths into one open subpath. With the default

@@ -964,6 +964,21 @@ pub fn path_map_subpaths(path: Path, with f: fn(Subpath) -> Subpath) -> Path {
   |> Path
 }
 
+/// Rebuild every subpath in a path using an endpoint policy.
+///
+/// This re-runs endpoint reconciliation on each subpath's current segment list
+/// and preserves each subpath's open/closed state. Empty subpaths are
+/// preserved unchanged.
+pub fn path_rebuild_with(
+  path: Path,
+  policy endpoint_policy: EndpointPolicy,
+) -> Result(Path, Error) {
+  use subpaths <- result.try(
+    path_rebuild_subpaths_with(path.subpaths, endpoint_policy, rebuilt: []),
+  )
+  Ok(Path(subpaths:))
+}
+
 /// Keep only the subpaths that satisfy a predicate.
 pub fn path_filter_subpaths(
   path: Path,
@@ -1019,6 +1034,35 @@ pub fn subpath_with(
   policy endpoint_policy: EndpointPolicy,
 ) -> Result(Subpath, Error) {
   open_subpath_with_segments(segments, endpoint_policy)
+}
+
+/// Rebuild a subpath using an endpoint policy.
+///
+/// This re-runs endpoint reconciliation on the subpath's current segment list
+/// and preserves the subpath's open/closed state. Empty subpaths are preserved
+/// unchanged.
+pub fn subpath_rebuild_with(
+  subpath: Subpath,
+  policy endpoint_policy: EndpointPolicy,
+) -> Result(Subpath, Error) {
+  case subpath.segments {
+    [] -> Ok(subpath)
+    segments -> {
+      use rebuilt <- result.try(open_subpath_with_segments(
+        segments,
+        endpoint_policy,
+      ))
+      case subpath.closed {
+        False -> Ok(rebuilt)
+        True ->
+          subpath_set_closed_with(
+            rebuilt,
+            closed: True,
+            policy: endpoint_policy,
+          )
+      }
+    }
+  }
 }
 
 /// Create an open subpath connecting the given points with line segments.
@@ -7588,6 +7632,23 @@ fn map_subpaths_points(
         Error(error) -> Error(error)
         Ok(subpath) -> map_subpaths_points(rest, f, [subpath, ..mapped])
       }
+    }
+  }
+}
+
+fn path_rebuild_subpaths_with(
+  subpaths: List(Subpath),
+  policy policy: EndpointPolicy,
+  rebuilt rebuilt: List(Subpath),
+) -> Result(List(Subpath), Error) {
+  case subpaths {
+    [] -> Ok(list.reverse(rebuilt))
+    [subpath, ..rest] -> {
+      use rebuilt_subpath <- result.try(subpath_rebuild_with(subpath, policy:))
+      path_rebuild_subpaths_with(rest, policy:, rebuilt: [
+        rebuilt_subpath,
+        ..rebuilt
+      ])
     }
   }
 }
