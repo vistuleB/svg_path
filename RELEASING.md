@@ -23,5 +23,14 @@ This checklist supplements the figure and asset-tag workflow in
    test ! -e .test-disabled/svg_path_convex_hull_test.gleam
    ```
 
-4. Complete the README figure, changelog, version, asset-tag, release-tag, and
+4. Confirm that no temporary package-source debug module is present:
+
+   ```sh
+   test ! -e src/svg_path/debug.gleam
+   ```
+
+   Debug/probe constants should live in `examples/debug/` fixtures rather than
+   in package source.
+
+5. Complete the README figure, changelog, version, asset-tag, release-tag, and
    publication steps in `COMMIT_CYCLE.md`.

@@ -9,7 +9,6 @@ import gleam/result
 import gleam/string
 import svg_path
 import svg_path/arrangement
-import svg_path/debug
 import svg_path/offset
 import svg_path/parse
 import svg_path/svg
@@ -20,9 +19,19 @@ const output = "examples/debug/package_title_subpath6_segment48_zoom.svg"
 
 const offset_distance = 1.05
 
+const source_subpath_index = 6
+
+const highlighted_offset_segment_index = 48
+
+const focus_join_free_index = 10
+
+const focus_source_segment_index = 1
+
+const focus_refined_piece_index = 2
+
+const focus_arrangement_edge_id = 68
+
 pub fn main() -> Nil {
-  let #(source_subpath_index, highlighted_offset_segment_index) =
-    debug.package_title_refined_source_probe
   let assert Ok(contents) = read_file(input)
   let assert Ok(full_source) = parse.path(first_path_data(contents))
   let assert Ok(source_subpath) =
@@ -80,14 +89,12 @@ fn render(
     )
   let arrangement.ArrangementGraphBuild(graph:, segment_images:) = build
   let arrangement.ArrangementGraph(edges: arrangement_edges, ..) = graph
-  let #(focus_join_free, focus_source, focus_refined) =
-    debug.package_title_refined_source_focus
   let assert Ok(preimage_box) = case
     trace_refined_source_piece(
       trace,
-      join_free_index: focus_join_free,
-      source_index: focus_source,
-      refined_index: focus_refined,
+      join_free_index: focus_join_free_index,
+      source_index: focus_source_segment_index,
+      refined_index: focus_refined_piece_index,
     )
   {
     Ok(offset.OffsetSourceTraceRefinedBig(segment:, ..)) ->
@@ -95,7 +102,7 @@ fn render(
     _ -> Error(svg_path.SplitOutsideSegment)
   }
   let assert Ok(focus_edge) =
-    edge_with_id(arrangement_edges, debug.package_title_arrangement_edge_focus)
+    edge_with_id(arrangement_edges, focus_arrangement_edge_id)
   let arrangement.ArrangementEdge(segment: focus_edge_segment, ..) = focus_edge
   let assert Ok(edge_box) = svg_path.segment_bounding_box(focus_edge_segment)
   let focus_box = combine_boxes(edge_box, preimage_box) |> pad_box(margin: 0.2)
