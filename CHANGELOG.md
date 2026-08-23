@@ -9,6 +9,33 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
+## 0.38.0 - 2026-08-22
+
+### Added
+
+- Added package-title offset stress fixtures covering repeated offsets of the
+  `SVG_PATH` title geometry.
+
+### Changed
+
+- Reworked single-offset trimming around submerged-edge pruning and unsupported
+  edge burning on the arrangement graph.
+- Refined offset source preparation around curvature zones, hinge/inflection
+  splitting, stalled pieces, and JoinFree tangent normalization.
+- Simplified offset internals after the new source-preparation and trimming
+  pipeline became the main path.
+- Cleaned up intersection descent state now that no-cull terminal-window
+  descent is the active solver.
+- Routed subpath closing through the same lowered endpoint-policy machinery
+  used by ordinary custom reconciliation.
+
+### Fixed
+
+- Preserved horizontal and vertical endpoint-policy reconciliation by bridging
+  misaligned axis-aligned line pairs instead of forcing incompatible wiggles.
+- Improved offset stability around cusp-like hinge boundaries and very short
+  arrangement-graph edges.
+
 ## 0.37.0 - 2026-08-21
 
 ### Added
