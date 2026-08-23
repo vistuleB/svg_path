@@ -10,10 +10,11 @@ Operations preserve the original curve types where possible rather than first
 flattening everything into polygons.
 
 For topology-sensitive operations, `svg_path` constructs a transparent
-`ArrangementGraph`: source curves are normalized and split at intersections
-and overlap boundaries, while coincident portions are represented once with
-directional multiplicities. This follows the standard computational-geometry
-idea of a [planar arrangement of curves](https://doc.cgal.org/latest/Arrangement_on_surface_2/index.html),
+`ArrangementGraph`: source curves are progressively split at intersections,
+endpoint contacts, and overlap boundaries, while coincident portions are
+represented once with directional multiplicities. This follows the standard
+computational-geometry idea of a
+[planar arrangement of curves](https://doc.cgal.org/latest/Arrangement_on_surface_2/index.html),
 adapted to SVG geometry with explicit source-path correspondence.
 
 Arrangement graphs support fill-rule-aware Boolean union, intersection,
@@ -93,8 +94,8 @@ pub fn prepare_for_arc_averse_consumer(
   subpaths, and paths.
 - `svg_path/encounters`: combined continuous-overlap and isolated
   point-intersection queries.
-- `svg_path/arrangement`: planar arrangements built from normalized path
-  segments, including endpoint clusters and coincident-edge multiplicities.
+- `svg_path/arrangement`: planar arrangements built by progressively noding
+  path segments, including endpoint clusters and coincident-edge multiplicities.
 - `svg_path/arrangement/drawing`: drawing primitives for inspecting an
   arrangement graph.
 - `svg_path/csg`: Boolean union, intersection, difference, symmetric
@@ -931,10 +932,11 @@ such segments before overlap detection. At a matching tolerance,
 
 The overlap detector is intended for non-degenerate segments whose overlap
 boundaries occur at an endpoint of at least one input segment. Arrangement
-construction establishes that working model through normalization and repeated
-subdivision. Subpath and path overlap values retain their constituent
-piecewise-affine segment correspondences, and the module provides helpers for
-mapping exact parameters from either traversal to the other.
+construction establishes that working model through progressive endpoint,
+intersection, and overlap-boundary splitting. Subpath and path overlap values
+retain their constituent piecewise-affine segment correspondences, and the
+module provides helpers for mapping exact parameters from either traversal to
+the other.
 
 Use `svg_path/encounters` when both continuous overlaps and isolated point
 intersections are required from one query. Its segment, segment-subpath,
@@ -1376,10 +1378,11 @@ after splitting.
 ## Arrangement Graphs
 
 `svg_path/arrangement` constructs a planar arrangement from one or more
-source paths. Construction first normalizes line-degenerate segment sequences,
-then splits segments at intersections and overlap boundaries. The resulting
-atomic edges do not intersect except at endpoint clusters. Coincident edges are
-stored once with forward and reverse multiplicities.
+source paths. Construction preserves the caller's segment geometry while
+progressively splitting segments at intersections, endpoint contacts, and
+overlap boundaries. The resulting atomic edges do not intersect except at
+endpoint clusters. Coincident edges are stored once with forward and reverse
+multiplicities.
 
 For two overlapping squares, the input boundaries cross at two points. Those
 crossings become vertices, and the four original sides that pass through them
