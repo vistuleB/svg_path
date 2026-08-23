@@ -81,6 +81,7 @@ pub fn prepare_for_arc_averse_consumer(
   transforms.
 - `svg_path/transform/parse` and `svg_path/transform/serialize`: SVG
   `transform` attribute parsing and serialization.
+- `svg_path/trig`: degree-based trigonometry helpers for SVG-facing angles.
 - `svg_path/ellipse`: endpoint and center arc data, arc conversion, evaluation,
   splitting, bounding boxes, and cubic approximation.
 - `svg_path/congruency`: semantic ordered congruency checks under translation,
@@ -89,7 +90,7 @@ pub fn prepare_for_arc_averse_consumer(
 - `svg_path/clip`: curve clipping that keeps original geometry inside a filled
   clipping region without adding closure bridges.
 - `svg_path/intersections`: segment, subpath, and path point-intersection
-  queries.
+  queries, plus closest-point pair projections.
 - `svg_path/overlaps`: continuous coincident intervals between segments,
   subpaths, and paths.
 - `svg_path/encounters`: combined continuous-overlap and isolated
