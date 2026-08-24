@@ -24,6 +24,37 @@ const stalled_arc_turn_distance = 39.999
 
 const stalled_arc_turn_threshold = 0.01
 
+pub fn endpoint_near_reversal_is_absorbed_into_stalled_piece_test() {
+  let segment =
+    svg_path.CubicBezier(
+      start: svg_path.Point(21.684995, 1.2450002000000002),
+      control1: svg_path.Point(21.494995, 1.3150002000000003),
+      control2: svg_path.Point(21.37800567659191, 1.4211122301564318),
+      end: svg_path.Point(21.324995, 1.5600002000000002),
+    )
+  let assert Ok(source) =
+    svg_path.subpath_with([segment], policy: svg_path.Strict)
+  let options =
+    offset.Options(
+      ..offset.default_options(),
+      fitting: offset.FittingOptions(tolerance: 0.01, samples: 5, max_depth: 12),
+    )
+  let assert Ok([
+    offset.OffsetSourceTracePortion(
+      pieces: [
+        offset.OffsetSourceTraceStalled(segment: stalled, ..),
+        offset.OffsetSourceTraceDRefined(source_from:, ..),
+        ..
+      ],
+      ..,
+    ),
+  ]) = offset.internal_offset_source_trace(source, distance: 1.04, options:)
+
+  assert svg_path.segment_chord_length(stalled) <. 0.001
+  assert float.absolute_value(source_from -. 0.00019493877887725834)
+    <. 0.000000001
+}
+
 pub fn segment_offsets_line_to_the_right_of_direction_test() {
   let line =
     svg_path.Line(

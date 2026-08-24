@@ -379,7 +379,7 @@ fn refine_root(
     False -> {
       let mid = { a +. b } /. 2.0
       use vm <- result.try(f(mid))
-      case float.absolute_value(vm) <=. options.tolerance {
+      case vm == 0.0 {
         True -> Ok(mid)
         False ->
           case sign_change(va, vm) {

@@ -255,7 +255,17 @@ type CNotStalledSegment {
 
 @internal
 pub type CStalledSegment {
-  CStalledSegment(prepared: APreparedSegment)
+  CStalledSegment(
+    prepared: APreparedSegment,
+    prepared_from: Float,
+    prepared_to: Float,
+    segment: svg_path.Segment,
+  )
+}
+
+type DOffsetPiece {
+  DNotStalled(DRefinedSegment)
+  DStalled(CStalledSegment)
 }
 
 @internal
@@ -5235,46 +5245,56 @@ fn offset_source_trace_pieces(
   distance: Float,
   options: Options,
 ) -> List(OffsetSourceTracePiece) {
-  subpath
-  |> prepared_segments(source_subpath_index: 0)
-  |> classify_prepared_segments(
-    distance,
-    threshold: options.stalled_offset_diameter,
-  )
-  |> mark_classified_segment_cross_reversals(distance)
-  |> offset_source_trace_classified_segments(distance, traced: [])
+  let classified =
+    subpath
+    |> prepared_segments(source_subpath_index: 0)
+    |> classify_prepared_segments(
+      distance,
+      threshold: options.stalled_offset_diameter,
+    )
+    |> mark_classified_segment_cross_reversals(distance)
+  case
+    refine_b_classified_segments_for_offset(
+      classified,
+      distance,
+      options.stalled_offset_diameter,
+      refined: [],
+    )
+  {
+    Error(_) -> []
+    Ok(refined) ->
+      offset_source_trace_d_offset_pieces(
+        refined,
+        refined_piece_index: 0,
+        traced: [],
+      )
+  }
 }
 
-fn offset_source_trace_classified_segments(
-  pieces: List(BClassifiedSegment),
-  distance: Float,
+fn offset_source_trace_d_offset_pieces(
+  pieces: List(DOffsetPiece),
+  refined_piece_index refined_piece_index: Int,
   traced traced: List(OffsetSourceTracePiece),
 ) -> List(OffsetSourceTracePiece) {
   case pieces {
     [] -> list.reverse(traced)
-    [first, ..rest] -> {
-      let next_traced = case first {
-        BNotStalled(not_stalled) -> {
-          case
-            refine_c_not_stalled_segment_at_boundaries(not_stalled, distance:)
-          {
-            Ok(refined) ->
-              list.append(offset_source_trace_d_refined(refined, 0, []), traced)
-            Error(_) -> traced
-          }
-        }
-        BStalled(CStalledSegment(prepared: segment)) -> {
-          let APreparedSegment(source_segment_index:, ..) = segment
-          list.append(
-            offset_source_trace_stalled([segment], source_segment_index, []),
-            traced,
-          )
-        }
-      }
-      offset_source_trace_classified_segments(
+    [DNotStalled(first), ..rest] -> {
+      let next = offset_source_trace_d_refined([first], refined_piece_index, [])
+      offset_source_trace_d_offset_pieces(
         rest,
-        distance,
-        traced: next_traced,
+        refined_piece_index: refined_piece_index + 1,
+        traced: list.append(next, traced),
+      )
+    }
+    [DStalled(CStalledSegment(prepared:, segment:, ..)), ..rest] -> {
+      let APreparedSegment(source_segment_index:, ..) = prepared
+      offset_source_trace_d_offset_pieces(
+        rest,
+        refined_piece_index: refined_piece_index + 1,
+        traced: [
+          OffsetSourceTraceStalled(source_segment_index:, segment:),
+          ..traced
+        ],
       )
     }
   }
@@ -5306,23 +5326,6 @@ fn offset_source_trace_d_refined(
           start_is_reversal: boundary_is_reversal(start_boundary),
           end_is_reversal: boundary_is_reversal(end_boundary),
         ),
-        ..traced
-      ])
-    }
-  }
-}
-
-fn offset_source_trace_stalled(
-  segments: List(APreparedSegment),
-  source_segment_index: Int,
-  traced: List(OffsetSourceTracePiece),
-) -> List(OffsetSourceTracePiece) {
-  case segments {
-    [] -> traced
-    [first, ..rest] -> {
-      let APreparedSegment(segment:, ..) = first
-      offset_source_trace_stalled(rest, source_segment_index + 1, [
-        OffsetSourceTraceStalled(source_segment_index:, segment:),
         ..traced
       ])
     }
@@ -5394,7 +5397,12 @@ fn classify_prepared_segments_loop(
       case source_segment_offset_is_stalled(segment, distance, threshold) {
         True ->
           classify_prepared_segments_loop(rest, distance, threshold, pieces: [
-            BStalled(CStalledSegment(prepared: first)),
+            BStalled(CStalledSegment(
+              prepared: first,
+              prepared_from: 0.0,
+              prepared_to: 1.0,
+              segment:,
+            )),
             ..pieces
           ])
         False -> {
@@ -5576,64 +5584,108 @@ fn offset_classified_segments(
   closed closed: Bool,
   converted converted: List(FUnhealedOffsetSegment),
 ) -> Result(List(GHealedOffsetSegment), Error) {
+  use refined <- result.try(
+    refine_b_classified_segments_for_offset(
+      pieces,
+      distance,
+      options.stalled_offset_diameter,
+      refined: [],
+    ),
+  )
+  use offsets <- result.try(offset_d_offset_pieces(
+    refined,
+    distance,
+    options,
+    portion_index:,
+    converted:,
+  ))
+  let offsets =
+    mark_cross_source_reversal_boundaries(offsets, distance, closed:)
+  heal_offset_boundaries(offsets, distance, options, closed:)
+}
+
+fn offset_d_offset_pieces(
+  pieces: List(DOffsetPiece),
+  distance: Float,
+  options: Options,
+  portion_index portion_index: Int,
+  converted converted: List(FUnhealedOffsetSegment),
+) -> Result(List(FUnhealedOffsetSegment), Error) {
   case pieces {
-    [] -> {
-      let offsets =
-        list.reverse(converted)
-        |> mark_cross_source_reversal_boundaries(distance, closed:)
-      heal_offset_boundaries(offsets, distance, options, closed:)
+    [] -> Ok(list.reverse(converted))
+    [DStalled(first), ..rest] -> {
+      let #(run, rest) = collect_d_stalled_run(first, rest, collected: [])
+      use offsets <- result.try(offset_c_stalled_run(run, distance:))
+      offset_d_offset_pieces(
+        rest,
+        distance,
+        options,
+        portion_index:,
+        converted: list.append(list.reverse(offsets), converted),
+      )
     }
-    [first, ..rest] -> {
-      case first {
-        BStalled(stalled) -> {
-          let #(run, rest) = collect_c_stalled_run(stalled, rest)
-          use offsets <- result.try(offset_c_stalled_run(run, distance:))
-          offset_classified_segments(
-            rest,
-            distance,
-            options,
-            portion_index:,
-            closed:,
-            converted: list.append(list.reverse(offsets), converted),
-          )
-        }
-        BNotStalled(_) -> {
-          use offsets <- result.try(offset_classified_segment(
-            first,
-            distance,
-            options,
-            portion_index:,
-          ))
-          offset_classified_segments(
-            rest,
-            distance,
-            options,
-            portion_index:,
-            closed:,
-            converted: list.append(list.reverse(offsets), converted),
-          )
-        }
-      }
+    [DNotStalled(first), ..rest] -> {
+      use offsets <- result.try(
+        offset_e_join_free_segments(
+          join_free_segments([first], portion_index:),
+          distance,
+          options,
+          converted: [],
+        ),
+      )
+      offset_d_offset_pieces(
+        rest,
+        distance,
+        options,
+        portion_index:,
+        converted: list.append(list.reverse(offsets), converted),
+      )
     }
   }
 }
 
-fn collect_c_stalled_run(
-  first: CStalledSegment,
-  rest: List(BClassifiedSegment),
-) -> #(List(CStalledSegment), List(BClassifiedSegment)) {
-  let #(segments, rest) = take_c_stalled_segments(rest, collected: [first])
-  #(segments, rest)
+fn refine_b_classified_segments_for_offset(
+  pieces: List(BClassifiedSegment),
+  distance: Float,
+  stalled_threshold: Float,
+  refined refined: List(DOffsetPiece),
+) -> Result(List(DOffsetPiece), Error) {
+  case pieces {
+    [] -> {
+      Ok(list.reverse(refined))
+    }
+    [BStalled(stalled), ..rest] ->
+      refine_b_classified_segments_for_offset(
+        rest,
+        distance,
+        stalled_threshold,
+        refined: [DStalled(stalled), ..refined],
+      )
+    [BNotStalled(not_stalled), ..rest] -> {
+      use next <- result.try(refine_c_not_stalled_segment_for_offset(
+        not_stalled,
+        distance,
+        stalled_threshold,
+      ))
+      refine_b_classified_segments_for_offset(
+        rest,
+        distance,
+        stalled_threshold,
+        refined: list.append(list.reverse(next), refined),
+      )
+    }
+  }
 }
 
-fn take_c_stalled_segments(
-  rest: List(BClassifiedSegment),
+fn collect_d_stalled_run(
+  first: CStalledSegment,
+  rest: List(DOffsetPiece),
   collected collected: List(CStalledSegment),
-) -> #(List(CStalledSegment), List(BClassifiedSegment)) {
+) -> #(List(CStalledSegment), List(DOffsetPiece)) {
   case rest {
-    [BStalled(stalled), ..remaining] ->
-      take_c_stalled_segments(remaining, collected: [stalled, ..collected])
-    _ -> #(list.reverse(collected), rest)
+    [DStalled(stalled), ..remaining] ->
+      collect_d_stalled_run(first, remaining, collected: [stalled, ..collected])
+    _ -> #([first, ..list.reverse(collected)], rest)
   }
 }
 
@@ -5830,32 +5882,6 @@ fn replace_last(
   }
 }
 
-fn offset_classified_segment(
-  piece: BClassifiedSegment,
-  distance: Float,
-  options: Options,
-  portion_index portion_index: Int,
-) -> Result(List(FUnhealedOffsetSegment), Error) {
-  case piece {
-    BNotStalled(not_stalled) -> {
-      use pieces <- result.try(refine_c_not_stalled_segment_at_boundaries(
-        not_stalled,
-        distance:,
-      ))
-      offset_e_join_free_segments(
-        pieces
-          |> join_free_segments(portion_index:),
-        distance,
-        options,
-        converted: [],
-      )
-    }
-    BStalled(stalled) -> {
-      offset_c_stalled_run([stalled], distance:)
-    }
-  }
-}
-
 fn refine_c_not_stalled_segment_at_boundaries(
   source: CNotStalledSegment,
   distance distance: Float,
@@ -5891,6 +5917,194 @@ fn refine_c_not_stalled_segment_at_boundaries(
     parameters:,
   ))
   split_bezier_double_radius_reversal_d_segments(pieces, distance, refined: [])
+}
+
+fn refine_c_not_stalled_segment_for_offset(
+  source: CNotStalledSegment,
+  distance: Float,
+  stalled_threshold: Float,
+) -> Result(List(DOffsetPiece), Error) {
+  use refined <- result.try(refine_c_not_stalled_segment_at_boundaries(
+    source,
+    distance:,
+  ))
+  use start_adjusted <- result.try(late_stall_near_start(
+    refined,
+    distance,
+    stalled_threshold,
+  ))
+  late_stall_near_end(start_adjusted, distance, stalled_threshold)
+}
+
+fn late_stall_near_start(
+  pieces: List(DRefinedSegment),
+  distance: Float,
+  stalled_threshold: Float,
+) -> Result(List(DOffsetPiece), Error) {
+  case pieces {
+    [first, second, ..rest] -> {
+      let DRefinedSegment(
+        prepared:,
+        prepared_from: first_from,
+        prepared_to: root_t,
+        end_boundary:,
+        ..,
+      ) = first
+      let DRefinedSegment(
+        prepared: second_prepared,
+        prepared_from: second_from,
+        prepared_to: second_to,
+        end_boundary: second_end_boundary,
+        ..,
+      ) = second
+      let expanded_to = root_t *. 2.0
+      case
+        prepared == second_prepared
+        && first_from == 0.0
+        && boundary_is_reversal(end_boundary)
+        && second_from == root_t
+        && expanded_to <. second_to -. point_tolerance
+      {
+        False -> Ok(list.map(pieces, DNotStalled))
+        True -> {
+          use stalled_segment <- result.try(prepared_segment_between(
+            prepared,
+            0.0,
+            expanded_to,
+          ))
+          case
+            source_segment_offset_is_stalled(
+              stalled_segment,
+              distance,
+              stalled_threshold,
+            )
+          {
+            False -> Ok(list.map(pieces, DNotStalled))
+            True -> {
+              use remainder <- result.try(prepared_segment_between(
+                prepared,
+                expanded_to,
+                second_to,
+              ))
+              Ok([
+                DStalled(CStalledSegment(
+                  prepared:,
+                  prepared_from: 0.0,
+                  prepared_to: expanded_to,
+                  segment: stalled_segment,
+                )),
+                DNotStalled(DRefinedSegment(
+                  prepared:,
+                  prepared_from: expanded_to,
+                  prepared_to: second_to,
+                  segment: remainder,
+                  start_boundary: Ordinary,
+                  end_boundary: second_end_boundary,
+                )),
+                ..list.map(rest, DNotStalled)
+              ])
+            }
+          }
+        }
+      }
+    }
+    _ -> Ok(list.map(pieces, DNotStalled))
+  }
+}
+
+fn late_stall_near_end(
+  pieces: List(DOffsetPiece),
+  distance: Float,
+  stalled_threshold: Float,
+) -> Result(List(DOffsetPiece), Error) {
+  let reversed = list.reverse(pieces)
+  case reversed {
+    [DNotStalled(last), DNotStalled(previous), ..rest] -> {
+      let DRefinedSegment(
+        prepared:,
+        prepared_from: root_t,
+        prepared_to: last_to,
+        start_boundary:,
+        ..,
+      ) = last
+      let DRefinedSegment(
+        prepared: previous_prepared,
+        prepared_from: previous_from,
+        prepared_to: previous_to,
+        start_boundary: previous_start_boundary,
+        ..,
+      ) = previous
+      let expanded_from = root_t *. 2.0 -. 1.0
+      case
+        prepared == previous_prepared
+        && last_to == 1.0
+        && boundary_is_reversal(start_boundary)
+        && previous_to == root_t
+        && expanded_from >. previous_from +. point_tolerance
+      {
+        False -> Ok(pieces)
+        True -> {
+          use stalled_segment <- result.try(prepared_segment_between(
+            prepared,
+            expanded_from,
+            1.0,
+          ))
+          case
+            source_segment_offset_is_stalled(
+              stalled_segment,
+              distance,
+              stalled_threshold,
+            )
+          {
+            False -> Ok(pieces)
+            True -> {
+              use remainder <- result.try(prepared_segment_between(
+                prepared,
+                previous_from,
+                expanded_from,
+              ))
+              Ok(
+                list.reverse([
+                  DStalled(CStalledSegment(
+                    prepared:,
+                    prepared_from: expanded_from,
+                    prepared_to: 1.0,
+                    segment: stalled_segment,
+                  )),
+                  DNotStalled(DRefinedSegment(
+                    prepared:,
+                    prepared_from: previous_from,
+                    prepared_to: expanded_from,
+                    segment: remainder,
+                    start_boundary: previous_start_boundary,
+                    end_boundary: Ordinary,
+                  )),
+                  ..rest
+                ]),
+              )
+            }
+          }
+        }
+      }
+    }
+    _ -> Ok(pieces)
+  }
+}
+
+fn prepared_segment_between(
+  prepared: APreparedSegment,
+  from: Float,
+  to: Float,
+) -> Result(svg_path.Segment, Error) {
+  let APreparedSegment(segment:, ..) = prepared
+  use segments <- result.try(
+    svg_path.segment_between_many_inside(segment, between: [from, to])
+    |> result.map_error(PathError),
+  )
+  case segments {
+    [between] -> Ok(between)
+    _ -> Error(NonFinite)
+  }
 }
 
 fn split_bezier_double_radius_reversal_d_segments(
@@ -6373,7 +6587,6 @@ fn recursive_offset_e_join_free_segment(
     distance,
     options,
   ))
-
   case divergence <=. raw_fitting_tolerance(options) {
     True -> {
       use offset <- result.try(build_offset_segment(
@@ -6497,7 +6710,7 @@ fn offset_c_stalled_run(
 ) -> Result(List(FUnhealedOffsetSegment), Error) {
   let segments =
     list.map(run, fn(segment) {
-      let CStalledSegment(prepared: APreparedSegment(segment:, ..)) = segment
+      let CStalledSegment(segment:, ..) = segment
       segment
     })
   case segments {
@@ -7651,7 +7864,7 @@ fn offset_segment_source_start(source: OffsetSegmentSource) -> svg_path.Point {
       case segments {
         [] -> svg_path.Point(0.0, 0.0)
         [first, ..] -> {
-          let CStalledSegment(prepared: APreparedSegment(segment:, ..)) = first
+          let CStalledSegment(segment:, ..) = first
           svg_path.segment_start(segment)
         }
       }
@@ -7670,7 +7883,7 @@ fn offset_segment_source_end(source: OffsetSegmentSource) -> svg_path.Point {
       case list.last(segments) {
         Error(_) -> svg_path.Point(0.0, 0.0)
         Ok(last) -> {
-          let CStalledSegment(prepared: APreparedSegment(segment:, ..)) = last
+          let CStalledSegment(segment:, ..) = last
           svg_path.segment_end(segment)
         }
       }
@@ -7852,12 +8065,17 @@ fn d_refined_endpoint_reaches_offset_radius(
   distance: Float,
   endpoint: SegmentEndpoint,
 ) -> Bool {
-  let DRefinedSegment(segment:, ..) = source
+  let DRefinedSegment(
+    prepared: APreparedSegment(segment: prepared_segment, ..),
+    prepared_from:,
+    prepared_to:,
+    ..,
+  ) = source
   let t = case endpoint {
-    SegmentStart -> 0.0
-    SegmentEnd -> 1.0
+    SegmentStart -> prepared_from
+    SegmentEnd -> prepared_to
   }
-  segment_parameter_reaches_offset_radius(segment, t, distance)
+  prepared_parameter_reaches_offset_radius(prepared_segment, t, distance)
 }
 
 fn e_join_free_endpoint_reaches_offset_radius(
@@ -7866,28 +8084,71 @@ fn e_join_free_endpoint_reaches_offset_radius(
   endpoint: SegmentEndpoint,
 ) -> Bool {
   let EJoinFreeSegment(
-    refined: DRefinedSegment(segment: refined_segment, ..),
+    refined: DRefinedSegment(
+      prepared: APreparedSegment(segment: prepared_segment, ..),
+      prepared_from:,
+      prepared_to:,
+      ..,
+    ),
     refined_from:,
     refined_to:,
     ..,
   ) = source
-  let t = case endpoint {
+  let refined_t = case endpoint {
     SegmentStart -> refined_from
     SegmentEnd -> refined_to
   }
-  segment_parameter_reaches_offset_radius(refined_segment, t, distance)
+  let prepared_t =
+    prepared_from +. { prepared_to -. prepared_from } *. refined_t
+  prepared_parameter_reaches_offset_radius(
+    prepared_segment,
+    prepared_t,
+    distance,
+  )
 }
 
-fn segment_parameter_reaches_offset_radius(
+fn prepared_parameter_reaches_offset_radius(
   segment: svg_path.Segment,
   t: Float,
   distance: Float,
 ) -> Bool {
-  case curvature.segment_right_normal_radius(segment, at: t) {
-    Ok(radius) ->
-      float.absolute_value(radius -. distance) <=. curvature_parameter_tolerance
-    Error(_) -> False
+  let residual = radius_residual(segment, t, distance)
+  case residual {
+    Ok(value) ->
+      case float.absolute_value(value) <=. curvature_parameter_tolerance {
+        True -> True
+        False -> parameter_brackets_offset_radius(segment, t, distance)
+      }
+    Error(_) -> parameter_brackets_offset_radius(segment, t, distance)
   }
+}
+
+fn parameter_brackets_offset_radius(
+  segment: svg_path.Segment,
+  t: Float,
+  distance: Float,
+) -> Bool {
+  let delta = curvature_parameter_tolerance *. 2.0
+  case t >. delta && t <. 1.0 -. delta {
+    False -> False
+    True ->
+      case
+        radius_residual(segment, t -. delta, distance),
+        radius_residual(segment, t +. delta, distance)
+      {
+        Ok(left), Ok(right) -> left *. right <=. 0.0
+        _, _ -> False
+      }
+  }
+}
+
+fn radius_residual(
+  segment: svg_path.Segment,
+  t: Float,
+  distance: Float,
+) -> Result(Float, Nil) {
+  curvature.segment_right_normal_radius(segment, at: t)
+  |> result.map(fn(radius) { radius -. distance })
 }
 
 fn reject_bezier_double_radius_reversal_e_segment(
@@ -7917,10 +8178,6 @@ fn e_join_free_endpoint_policy(
   endpoint endpoint: SegmentEndpoint,
 ) -> CubicEndpointFitPolicy {
   let EJoinFreeSegment(segment:, start_boundary:, end_boundary:, ..) = source
-  let t = case endpoint {
-    SegmentStart -> 0.0
-    SegmentEnd -> 1.0
-  }
   let is_reversal = case endpoint {
     SegmentStart -> boundary_is_reversal(start_boundary)
     SegmentEnd -> boundary_is_reversal(end_boundary)
@@ -7932,7 +8189,15 @@ fn e_join_free_endpoint_policy(
     SegmentEnd -> 0.0
   }
   let opposite_direction = offset_derivative(segment, t: opposite_t, distance:)
-  case offset_derivative(segment, t:, distance:) {
+  case
+    e_join_free_endpoint_offset_direction(
+      source,
+      distance,
+      endpoint,
+      is_reversal,
+      reaches_offset_radius,
+    )
+  {
     Error(_) -> FitPositionOnly
     Ok(direction) -> {
       case is_reversal {
@@ -7953,6 +8218,32 @@ fn e_join_free_endpoint_policy(
         }
       }
     }
+  }
+}
+
+fn e_join_free_endpoint_offset_direction(
+  source: EJoinFreeSegment,
+  distance: Float,
+  endpoint: SegmentEndpoint,
+  is_reversal: Bool,
+  reaches_offset_radius: Bool,
+) -> Result(svg_path.Point, Error) {
+  let EJoinFreeSegment(segment:, ..) = source
+  let endpoint_t = case endpoint {
+    SegmentStart -> 0.0
+    SegmentEnd -> 1.0
+  }
+  let interior_t = case endpoint {
+    SegmentStart -> curvature_parameter_tolerance *. 2.0
+    SegmentEnd -> 1.0 -. curvature_parameter_tolerance *. 2.0
+  }
+  case is_reversal && reaches_offset_radius {
+    False -> offset_derivative(segment, t: endpoint_t, distance:)
+    True ->
+      case offset_derivative(segment, t: interior_t, distance:) {
+        Ok(direction) -> Ok(direction)
+        Error(_) -> offset_derivative(segment, t: endpoint_t, distance:)
+      }
   }
 }
 
@@ -8266,6 +8557,7 @@ fn fit_offset_cubic_start_stalled_end_position(
 ) -> Result(bezier.BezierData, Error) {
   let start_point = from_bezier_point(start)
   let end_point = from_bezier_point(end)
+  use start_direction <- result.try(unit_vector(start_direction, t: 0.0))
   use b <- result.try(fit_start_tangent_one_handle(
     start: start_point,
     end: end_point,
@@ -8290,6 +8582,7 @@ fn fit_offset_cubic_start_position_end_stalled(
 ) -> Result(bezier.BezierData, Error) {
   let start_point = from_bezier_point(start)
   let end_point = from_bezier_point(end)
+  use end_direction <- result.try(unit_vector(end_direction, t: 1.0))
   use a <- result.try(fit_end_tangent_one_handle(
     start: start_point,
     end: end_point,
@@ -8314,6 +8607,7 @@ fn fit_offset_cubic_start_tangent_end_position(
 ) -> Result(bezier.BezierData, Error) {
   let start_point = from_bezier_point(start)
   let end_point = from_bezier_point(end)
+  use start_direction <- result.try(unit_vector(start_direction, t: 0.0))
   use a <- result.try(fit_start_tangent_one_handle(
     start: start_point,
     end: end_point,
@@ -8338,6 +8632,7 @@ fn fit_offset_cubic_start_position_end_tangent(
 ) -> Result(bezier.BezierData, Error) {
   let start_point = from_bezier_point(start)
   let end_point = from_bezier_point(end)
+  use end_direction <- result.try(unit_vector(end_direction, t: 1.0))
   use b <- result.try(fit_end_tangent_one_handle(
     start: start_point,
     end: end_point,
@@ -8378,7 +8673,7 @@ fn stalled_start_control2(
   end end: svg_path.Point,
   start_direction start_direction: svg_path.Point,
   end_direction end_direction: svg_path.Point,
-  samples _samples: List(#(Float, bezier.BezierPoint)),
+  samples samples: List(#(Float, bezier.BezierPoint)),
 ) -> Result(svg_path.Point, Error) {
   case
     direction_line_intersection(
@@ -8403,11 +8698,12 @@ fn stalled_start_control2(
       }
     }
     Error(_) ->
-      stalled_start_control2_by_bisection(
+      stalled_start_control2_parallel_or_bisection(
         start:,
         end:,
         start_direction:,
         end_direction:,
+        samples:,
       )
   }
 }
@@ -8417,7 +8713,7 @@ fn stalled_end_control1(
   end end: svg_path.Point,
   start_direction start_direction: svg_path.Point,
   end_direction end_direction: svg_path.Point,
-  samples _samples: List(#(Float, bezier.BezierPoint)),
+  samples samples: List(#(Float, bezier.BezierPoint)),
 ) -> Result(svg_path.Point, Error) {
   case direction_line_intersection(start, start_direction, end, end_direction) {
     Ok(point) -> {
@@ -8435,12 +8731,89 @@ fn stalled_end_control1(
       }
     }
     Error(_) ->
+      stalled_end_control1_parallel_or_bisection(
+        start:,
+        end:,
+        start_direction:,
+        end_direction:,
+        samples:,
+      )
+  }
+}
+
+fn stalled_start_control2_parallel_or_bisection(
+  start start: svg_path.Point,
+  end end: svg_path.Point,
+  start_direction start_direction: svg_path.Point,
+  end_direction end_direction: svg_path.Point,
+  samples samples: List(#(Float, bezier.BezierPoint)),
+) -> Result(svg_path.Point, Error) {
+  case directions_follow_chord(start, end, start_direction, end_direction) {
+    False ->
+      stalled_start_control2_by_bisection(
+        start:,
+        end:,
+        start_direction:,
+        end_direction:,
+      )
+    True -> {
+      use end_direction <- result.try(unit_vector(end_direction, t: 1.0))
+      use handle <- result.try(fit_end_tangent_one_handle(
+        start:,
+        end:,
+        control1: start,
+        direction: end_direction,
+        samples:,
+      ))
+      use _ <- result.try(validate_reversal_handle_scalar(start, end, handle))
+      Ok(subtract(end, scale(end_direction, handle)))
+    }
+  }
+}
+
+fn stalled_end_control1_parallel_or_bisection(
+  start start: svg_path.Point,
+  end end: svg_path.Point,
+  start_direction start_direction: svg_path.Point,
+  end_direction end_direction: svg_path.Point,
+  samples samples: List(#(Float, bezier.BezierPoint)),
+) -> Result(svg_path.Point, Error) {
+  case directions_follow_chord(start, end, start_direction, end_direction) {
+    False ->
       stalled_end_control1_by_bisection(
         start:,
         end:,
         start_direction:,
         end_direction:,
       )
+    True -> {
+      use start_direction <- result.try(unit_vector(start_direction, t: 0.0))
+      use handle <- result.try(fit_start_tangent_one_handle(
+        start:,
+        end:,
+        direction: start_direction,
+        control2: end,
+        samples:,
+      ))
+      use _ <- result.try(validate_reversal_handle_scalar(start, end, handle))
+      Ok(add(start, scale(start_direction, handle)))
+    }
+  }
+}
+
+fn directions_follow_chord(
+  start: svg_path.Point,
+  end: svg_path.Point,
+  start_direction: svg_path.Point,
+  end_direction: svg_path.Point,
+) -> Bool {
+  case unit_vector(subtract(end, start), t: 0.5) {
+    Error(_) -> False
+    Ok(chord_direction) ->
+      float.absolute_value(signed_angle(start_direction, chord_direction))
+      <=. reversal_tangent_gap_degrees
+      && float.absolute_value(signed_angle(end_direction, chord_direction))
+      <=. reversal_tangent_gap_degrees
   }
 }
 
@@ -8585,7 +8958,10 @@ fn fit_start_tangent_one_handle(
     fixed: fn(t) {
       let u = 1.0 -. t
       add(
-        add(scale(start, u *. u *. u), scale(control2, 3.0 *. u *. t *. t)),
+        add(
+          scale(start, u *. u *. u +. 3.0 *. u *. u *. t),
+          scale(control2, 3.0 *. u *. t *. t),
+        ),
         scale(end, t *. t *. t),
       )
     },
@@ -8609,7 +8985,7 @@ fn fit_end_tangent_one_handle(
       let u = 1.0 -. t
       add(
         add(scale(start, u *. u *. u), scale(control1, 3.0 *. u *. u *. t)),
-        scale(end, t *. t *. t),
+        scale(end, 3.0 *. u *. t *. t +. t *. t *. t),
       )
     },
     column: fn(t) {
