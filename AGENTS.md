@@ -40,6 +40,11 @@
 - Display SVGs with ordinary Markdown image syntax using an absolute local filesystem path.
 - Do not use `file://`, relative paths, plain paths, or GUI commands such as `open`, Chrome, Inkscape, or Preview.
 - Preview SVGs must include explicit root `width` and `height` attributes in addition to `viewBox`; SVGs with only `viewBox` have failed to render inline in Codex desktop chat.
+- Every generated SVG preview must draw a white background rectangle first,
+  with `x`, `y`, `width`, and `height` exactly covering the root `viewBox`.
+  When the figure preserves an original SVG document view, cover the entire
+  original SVG viewBox. Do not use percentages or a geometry-only bounding box
+  for this background rectangle.
 - In this repo, this exact pattern has rendered successfully in Codex desktop chat:
 
   `![svg preview probe](<absolute-path-to-repo>/examples/debug/svg_preview_probe.svg)`

@@ -223,6 +223,27 @@ pub fn fit_cubic_with_endpoint_tangents_uses_forward_end_tangent_test() {
   )
 }
 
+pub fn fit_cubic_with_endpoint_tangents_clamps_negative_handles_test() {
+  let start = bezier.BezierPoint(0.0, 0.0)
+  let end = bezier.BezierPoint(1.0, 0.0)
+  let assert Ok(#(fit, _)) =
+    bezier.fit_cubic_with_endpoint_tangents(
+      start:,
+      end:,
+      start_tangent: bezier.BezierPoint(1.0, 0.0),
+      end_tangent: bezier.BezierPoint(1.0, 0.0),
+      samples: [
+        #(0.25, bezier.BezierPoint(-1.0, 0.0)),
+        #(0.5, bezier.BezierPoint(-1.0, 0.0)),
+        #(0.75, bezier.BezierPoint(-1.0, 0.0)),
+      ],
+    )
+  let assert bezier.CubicBezierData(control1:, control2:, ..) = fit
+
+  assert control1.x >=. start.x
+  assert control2.x <=. end.x
+}
+
 pub fn fit_cubic_with_endpoint_tangents_rejects_degenerate_tangent_test() {
   let assert Error(bezier.DegenerateTangent) =
     bezier.fit_cubic_with_endpoint_tangents(

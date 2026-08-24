@@ -36,7 +36,7 @@
 import gleam/float
 import gleam/int
 import gleam/list
-import gleam/option.{None, Some}
+import gleam/option.{type Option, None, Some}
 import gleam/result
 import svg_path/root
 
@@ -653,18 +653,162 @@ fn solve_cubic_fit_equations(
 ) -> Result(#(Float, Float), Error) {
   case count == 0 {
     True -> Error(UnderdeterminedCubicFit)
-    False -> {
-      let determinant = ata00 *. ata11 -. ata01 *. ata01
-      case float.absolute_value(determinant) <=. root_tolerance {
-        True -> Error(UnderdeterminedCubicFit)
+    False ->
+      solve_nonnegative_cubic_fit_equations(
+        ata00,
+        ata01,
+        ata11,
+        atb0,
+        atb1,
+      )
+  }
+}
+
+fn solve_nonnegative_cubic_fit_equations(
+  ata00: Float,
+  ata01: Float,
+  ata11: Float,
+  atb0: Float,
+  atb1: Float,
+) -> Result(#(Float, Float), Error) {
+  let unconstrained =
+    unconstrained_cubic_fit_equations(ata00, ata01, ata11, atb0, atb1)
+    |> result.map(fn(pair) {
+      let #(a, b) = pair
+      case a >=. 0.0 && b >=. 0.0 {
+        True -> [pair]
+        False -> []
+      }
+    })
+    |> result.unwrap([])
+
+  let candidates =
+    [
+      #(0.0, 0.0),
+      #(nonnegative_axis_fit(ata00, atb0), 0.0),
+      #(0.0, nonnegative_axis_fit(ata11, atb1)),
+      ..unconstrained
+    ]
+
+  case best_cubic_fit_candidate(candidates, ata00, ata01, ata11, atb0, atb1) {
+    Some(candidate) -> Ok(candidate)
+    None -> Error(UnderdeterminedCubicFit)
+  }
+}
+
+fn unconstrained_cubic_fit_equations(
+  ata00: Float,
+  ata01: Float,
+  ata11: Float,
+  atb0: Float,
+  atb1: Float,
+) -> Result(#(Float, Float), Error) {
+  let determinant = ata00 *. ata11 -. ata01 *. ata01
+  case float.absolute_value(determinant) <=. root_tolerance {
+    True -> Error(UnderdeterminedCubicFit)
+    False ->
+      Ok(#(
+        { atb0 *. ata11 -. atb1 *. ata01 } /. determinant,
+        { ata00 *. atb1 -. ata01 *. atb0 } /. determinant,
+      ))
+  }
+}
+
+fn nonnegative_axis_fit(ata: Float, atb: Float) -> Float {
+  case ata <=. root_tolerance {
+    True -> 0.0
+    False -> float.max(0.0, atb /. ata)
+  }
+}
+
+fn best_cubic_fit_candidate(
+  candidates: List(#(Float, Float)),
+  ata00: Float,
+  ata01: Float,
+  ata11: Float,
+  atb0: Float,
+  atb1: Float,
+) -> Option(#(Float, Float)) {
+  case candidates {
+    [] -> None
+    [first, ..rest] ->
+      Some(best_cubic_fit_candidate_loop(
+        rest,
+        ata00,
+        ata01,
+        ata11,
+        atb0,
+        atb1,
+        best: first,
+        best_score: cubic_fit_candidate_score(
+          first,
+          ata00,
+          ata01,
+          ata11,
+          atb0,
+          atb1,
+        ),
+      ))
+  }
+}
+
+fn best_cubic_fit_candidate_loop(
+  candidates: List(#(Float, Float)),
+  ata00: Float,
+  ata01: Float,
+  ata11: Float,
+  atb0: Float,
+  atb1: Float,
+  best best: #(Float, Float),
+  best_score best_score: Float,
+) -> #(Float, Float) {
+  case candidates {
+    [] -> best
+    [candidate, ..rest] -> {
+      let score =
+        cubic_fit_candidate_score(candidate, ata00, ata01, ata11, atb0, atb1)
+      case score <. best_score {
+        True ->
+          best_cubic_fit_candidate_loop(
+            rest,
+            ata00,
+            ata01,
+            ata11,
+            atb0,
+            atb1,
+            best: candidate,
+            best_score: score,
+          )
         False ->
-          Ok(#(
-            { atb0 *. ata11 -. atb1 *. ata01 } /. determinant,
-            { ata00 *. atb1 -. ata01 *. atb0 } /. determinant,
-          ))
+          best_cubic_fit_candidate_loop(
+            rest,
+            ata00,
+            ata01,
+            ata11,
+            atb0,
+            atb1,
+            best:,
+            best_score:,
+          )
       }
     }
   }
+}
+
+fn cubic_fit_candidate_score(
+  candidate: #(Float, Float),
+  ata00: Float,
+  ata01: Float,
+  ata11: Float,
+  atb0: Float,
+  atb1: Float,
+) -> Float {
+  let #(a, b) = candidate
+  ata00 *. a *. a
+  +. 2.0 *. ata01 *. a *. b
+  +. ata11 *. b *. b
+  -. 2.0 *. atb0 *. a
+  -. 2.0 *. atb1 *. b
 }
 
 fn cubic_endpoint_fit_normal_equations(

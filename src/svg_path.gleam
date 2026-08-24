@@ -10,6 +10,7 @@ import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/order
 import gleam/result
+import svg_path/affine
 import svg_path/bezier
 import svg_path/ellipse
 import svg_path/internal/number
@@ -631,6 +632,9 @@ pub type Error {
 
   /// Nonlinear point mapping cannot preserve an SVG arc segment.
   CannotMapArcNonlinearly
+
+  /// A point-pair similarity needs distinct source points.
+  DegeneratePointPairSimilarity
 
   /// A splice was requested with invalid bounds.
   ///
@@ -1395,6 +1399,383 @@ pub fn path_try_map_points(
   case try_map_subpaths_points(path.subpaths, f, []) {
     Error(error) -> Error(error)
     Ok(subpaths) -> Ok(Path(subpaths:))
+  }
+}
+
+/// Map a point by the similarity taking `source_start` and `source_end` to
+/// `target_start` and `target_end`.
+///
+/// If the input point is exactly `source_start` or `source_end`, the returned
+/// point is exactly the corresponding target point.
+pub fn point_by_point_pair_similarity(
+  point: Point,
+  source_start source_start: Point,
+  source_end source_end: Point,
+  target_start target_start: Point,
+  target_end target_end: Point,
+) -> Result(Point, Error) {
+  use similarity <- result.try(point_pair_similarity(
+    source_start:,
+    source_end:,
+    target_start:,
+    target_end:,
+  ))
+  Ok(point_by_point_pair_similarity_transform(
+    point,
+    similarity,
+    source_start:,
+    source_end:,
+    target_start:,
+    target_end:,
+  ))
+}
+
+/// Map a segment by the similarity taking `source_start` and `source_end` to
+/// `target_start` and `target_end`.
+///
+/// Segment defining points exactly equal to `source_start` or `source_end` are
+/// mapped exactly to the corresponding target point.
+pub fn segment_by_point_pair_similarity(
+  segment: Segment,
+  source_start source_start: Point,
+  source_end source_end: Point,
+  target_start target_start: Point,
+  target_end target_end: Point,
+) -> Result(Segment, Error) {
+  use similarity <- result.try(point_pair_similarity(
+    source_start:,
+    source_end:,
+    target_start:,
+    target_end:,
+  ))
+  segment_by_point_pair_similarity_transform(
+    segment,
+    similarity,
+    source_start:,
+    source_end:,
+    target_start:,
+    target_end:,
+  )
+}
+
+/// Map a subpath by the similarity taking `source_start` and `source_end` to
+/// `target_start` and `target_end`.
+pub fn subpath_by_point_pair_similarity(
+  subpath: Subpath,
+  source_start source_start: Point,
+  source_end source_end: Point,
+  target_start target_start: Point,
+  target_end target_end: Point,
+) -> Result(Subpath, Error) {
+  use similarity <- result.try(point_pair_similarity(
+    source_start:,
+    source_end:,
+    target_start:,
+    target_end:,
+  ))
+  use segments <- result.try(
+    map_segments_by_point_pair_similarity(
+      subpath.segments,
+      similarity,
+      source_start:,
+      source_end:,
+      target_start:,
+      target_end:,
+      mapped: [],
+    ),
+  )
+  Ok(Subpath(
+    start: point_by_point_pair_similarity_transform(
+      subpath.start,
+      similarity,
+      source_start:,
+      source_end:,
+      target_start:,
+      target_end:,
+    ),
+    segments:,
+    closed: subpath.closed,
+  ))
+}
+
+/// Map a path by the similarity taking `source_start` and `source_end` to
+/// `target_start` and `target_end`.
+pub fn path_by_point_pair_similarity(
+  path: Path,
+  source_start source_start: Point,
+  source_end source_end: Point,
+  target_start target_start: Point,
+  target_end target_end: Point,
+) -> Result(Path, Error) {
+  use similarity <- result.try(point_pair_similarity(
+    source_start:,
+    source_end:,
+    target_start:,
+    target_end:,
+  ))
+  use subpaths <- result.try(
+    map_subpaths_by_point_pair_similarity(
+      path.subpaths,
+      similarity,
+      source_start:,
+      source_end:,
+      target_start:,
+      target_end:,
+      mapped: [],
+    ),
+  )
+  Ok(Path(subpaths:))
+}
+
+/// Remap a segment so its current endpoints become `new_start` and `new_end`.
+///
+/// The returned segment starts exactly at `new_start` and ends exactly at
+/// `new_end`.
+pub fn segment_remap_endpoints(
+  segment: Segment,
+  new_start new_start: Point,
+  new_end new_end: Point,
+) -> Result(Segment, Error) {
+  use mapped <- result.try(segment_by_point_pair_similarity(
+    segment,
+    source_start: segment_start(segment),
+    source_end: segment_end(segment),
+    target_start: new_start,
+    target_end: new_end,
+  ))
+  Ok(segment_with_start_and_end(mapped, new_start, new_end))
+}
+
+/// Remap a subpath so its current endpoints become `new_start` and `new_end`.
+///
+/// Empty subpaths keep their empty segment list and move to `new_start`.
+pub fn subpath_remap_endpoints(
+  subpath: Subpath,
+  new_start new_start: Point,
+  new_end new_end: Point,
+) -> Result(Subpath, Error) {
+  case subpath.segments {
+    [] -> Ok(Subpath(start: new_start, segments: [], closed: subpath.closed))
+    _ -> {
+      use current_end <- result.try(subpath_end(subpath))
+      use mapped <- result.try(subpath_by_point_pair_similarity(
+        subpath,
+        source_start: subpath.start,
+        source_end: current_end,
+        target_start: new_start,
+        target_end: new_end,
+      ))
+      let segments = case mapped.segments {
+        [] -> []
+        [first, ..rest] ->
+          force_subpath_endpoints(
+            [segment_with_start(first, new_start), ..rest],
+            new_end,
+          )
+      }
+      Ok(Subpath(start: new_start, segments:, closed: mapped.closed))
+    }
+  }
+}
+
+fn point_pair_similarity(
+  source_start source_start: Point,
+  source_end source_end: Point,
+  target_start target_start: Point,
+  target_end target_end: Point,
+) -> Result(affine.Affine, Error) {
+  affine.point_pair_similarity(
+    source_start: point_tuple(source_start),
+    source_end: point_tuple(source_end),
+    target_start: point_tuple(target_start),
+    target_end: point_tuple(target_end),
+  )
+  |> result.map_error(fn(_) { DegeneratePointPairSimilarity })
+}
+
+fn point_by_point_pair_similarity_transform(
+  point: Point,
+  similarity: affine.Affine,
+  source_start source_start: Point,
+  source_end source_end: Point,
+  target_start target_start: Point,
+  target_end target_end: Point,
+) -> Point {
+  case point == source_start {
+    True -> target_start
+    False ->
+      case point == source_end {
+        True -> target_end
+        False -> point_by_similarity(point, similarity)
+      }
+  }
+}
+
+fn point_by_similarity(point: Point, similarity: affine.Affine) -> Point {
+  let #(x, y) = affine.point(similarity, x: point.x, y: point.y)
+  Point(x, y)
+}
+
+fn segment_by_point_pair_similarity_transform(
+  segment: Segment,
+  similarity: affine.Affine,
+  source_start source_start: Point,
+  source_end source_end: Point,
+  target_start target_start: Point,
+  target_end target_end: Point,
+) -> Result(Segment, Error) {
+  let f = fn(point) {
+    point_by_point_pair_similarity_transform(
+      point,
+      similarity,
+      source_start:,
+      source_end:,
+      target_start:,
+      target_end:,
+    )
+  }
+  case segment {
+    Line(start:, end:) -> Ok(Line(start: f(start), end: f(end)))
+    QuadraticBezier(start:, control:, end:) ->
+      Ok(QuadraticBezier(start: f(start), control: f(control), end: f(end)))
+    CubicBezier(start:, control1:, control2:, end:) ->
+      Ok(CubicBezier(
+        start: f(start),
+        control1: f(control1),
+        control2: f(control2),
+        end: f(end),
+      ))
+    Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:) -> {
+      let scale = point_pair_similarity_scale(similarity)
+      case scale == 0.0 {
+        True -> Error(CannotMapArcNonlinearly)
+        False ->
+          Ok(Arc(
+            start: f(start),
+            radius: Point(
+              float.absolute_value(radius.x *. scale),
+              float.absolute_value(radius.y *. scale),
+            ),
+            x_axis_rotation: x_axis_rotation
+              +. point_pair_similarity_rotation(similarity),
+            large_arc:,
+            sweep: case scale >=. 0.0 {
+              True -> sweep
+              False -> !sweep
+            },
+            end: f(end),
+          ))
+      }
+    }
+  }
+}
+
+fn map_segments_by_point_pair_similarity(
+  segments: List(Segment),
+  similarity: affine.Affine,
+  source_start source_start: Point,
+  source_end source_end: Point,
+  target_start target_start: Point,
+  target_end target_end: Point,
+  mapped mapped: List(Segment),
+) -> Result(List(Segment), Error) {
+  case segments {
+    [] -> Ok(list.reverse(mapped))
+    [segment, ..rest] -> {
+      use mapped_segment <- result.try(
+        segment_by_point_pair_similarity_transform(
+          segment,
+          similarity,
+          source_start:,
+          source_end:,
+          target_start:,
+          target_end:,
+        ),
+      )
+      map_segments_by_point_pair_similarity(
+        rest,
+        similarity,
+        source_start:,
+        source_end:,
+        target_start:,
+        target_end:,
+        mapped: [mapped_segment, ..mapped],
+      )
+    }
+  }
+}
+
+fn map_subpaths_by_point_pair_similarity(
+  subpaths: List(Subpath),
+  similarity: affine.Affine,
+  source_start source_start: Point,
+  source_end source_end: Point,
+  target_start target_start: Point,
+  target_end target_end: Point,
+  mapped mapped: List(Subpath),
+) -> Result(List(Subpath), Error) {
+  case subpaths {
+    [] -> Ok(list.reverse(mapped))
+    [subpath, ..rest] -> {
+      use segments <- result.try(
+        map_segments_by_point_pair_similarity(
+          subpath.segments,
+          similarity,
+          source_start:,
+          source_end:,
+          target_start:,
+          target_end:,
+          mapped: [],
+        ),
+      )
+      let mapped_subpath =
+        Subpath(
+          start: point_by_point_pair_similarity_transform(
+            subpath.start,
+            similarity,
+            source_start:,
+            source_end:,
+            target_start:,
+            target_end:,
+          ),
+          segments:,
+          closed: subpath.closed,
+        )
+      map_subpaths_by_point_pair_similarity(
+        rest,
+        similarity,
+        source_start:,
+        source_end:,
+        target_start:,
+        target_end:,
+        mapped: [mapped_subpath, ..mapped],
+      )
+    }
+  }
+}
+
+fn point_pair_similarity_scale(similarity: affine.Affine) -> Float {
+  let #(a, b, _, _, _, _) = affine.to_tuple(similarity)
+  float_square_root(a *. a +. b *. b)
+}
+
+fn point_pair_similarity_rotation(similarity: affine.Affine) -> Float {
+  let #(a, b, _, _, _, _) = affine.to_tuple(similarity)
+  trig.atan2_degrees(b, a)
+}
+
+fn point_tuple(point: Point) -> #(Float, Float) {
+  #(point.x, point.y)
+}
+
+fn force_subpath_endpoints(
+  segments: List(Segment),
+  end: Point,
+) -> List(Segment) {
+  case segments {
+    [] -> []
+    [last] -> [segment_with_end(last, end)]
+    [first, ..rest] -> [first, ..force_subpath_endpoints(rest, end)]
   }
 }
 

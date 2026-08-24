@@ -73,6 +73,7 @@
 
 import gleam/float
 import gleam/list
+import svg_path/affine
 import svg_path/trig
 
 const epsilon = 0.000000001
@@ -134,15 +135,6 @@ pub type Cubic {
   )
 }
 
-/// Equivalent of `transform.Matrix`, redefined by the ellipse module to avoid
-/// a circular dependency.
-///
-/// Has the same six-value layout as SVG `matrix(a b c d e f)`.
-@internal
-pub opaque type Affine {
-  Affine(a: Float, b: Float, c: Float, d: Float, e: Float, f: Float)
-}
-
 /// Errors returned by ellipse and collapsed-arc helpers.
 pub type Error {
   /// The source arc cannot be converted to center-parameter form.
@@ -155,25 +147,13 @@ pub type Error {
   SplitOutsideArc
 }
 
-/// Create an affine matrix for ellipse helpers.
-@internal
-pub fn ellipse_affine(
-  a a: Float,
-  b b: Float,
-  c c: Float,
-  d d: Float,
-  e e: Float,
-  f f: Float,
-) -> Affine {
-  Affine(a:, b:, c:, d:, e:, f:)
-}
-
 /// Transform a point by an affine matrix.
-fn transform_point(point: EllipsePoint, by transform: Affine) -> EllipsePoint {
-  EllipsePoint(
-    transform.a *. point.x +. transform.c *. point.y +. transform.e,
-    transform.b *. point.x +. transform.d *. point.y +. transform.f,
-  )
+fn transform_point(
+  point: EllipsePoint,
+  by transform: affine.Affine,
+) -> EllipsePoint {
+  let #(x, y) = affine.point(transform, x: point.x, y: point.y)
+  EllipsePoint(x, y)
 }
 
 /// Transform an arc's radius and x-axis rotation.
@@ -183,7 +163,7 @@ fn transform_point(point: EllipsePoint, by transform: Affine) -> EllipsePoint {
 pub fn transformed_axes(
   radius radius: EllipsePoint,
   x_axis_rotation x_axis_rotation: Float,
-  by transform: Affine,
+  by transform: affine.Affine,
 ) -> Result(#(EllipsePoint, Float), Error) {
   case arc_axes(radius, x_axis_rotation) {
     Error(error) -> Error(error)
@@ -208,7 +188,7 @@ pub fn collapsed_arc_line(
   large_arc large_arc: Bool,
   sweep sweep: Bool,
   end end: EllipsePoint,
-  by transform: Affine,
+  by transform: affine.Affine,
 ) -> Result(#(EllipsePoint, EllipsePoint), Error) {
   case
     do_endpoint_to_center(start, radius, x_axis_rotation, large_arc, sweep, end)
@@ -272,7 +252,7 @@ pub fn collapsed_arc_subpath(
   large_arc large_arc: Bool,
   sweep sweep: Bool,
   end end: EllipsePoint,
-  by transform: Affine,
+  by transform: affine.Affine,
 ) -> Result(List(EllipsePoint), Error) {
   collapsed_arc_points(
     start,
@@ -592,7 +572,7 @@ fn collapsed_arc_points(
   large_arc: Bool,
   sweep: Bool,
   end: EllipsePoint,
-  transform: Affine,
+  transform: affine.Affine,
 ) -> Result(List(EllipsePoint), Error) {
   case
     do_endpoint_to_center(start, radius, x_axis_rotation, large_arc, sweep, end)
@@ -1087,11 +1067,9 @@ fn offset(
   )
 }
 
-fn linear_point(point: EllipsePoint, transform: Affine) -> EllipsePoint {
-  EllipsePoint(
-    transform.a *. point.x +. transform.c *. point.y,
-    transform.b *. point.x +. transform.d *. point.y,
-  )
+fn linear_point(point: EllipsePoint, transform: affine.Affine) -> EllipsePoint {
+  let #(x, y) = affine.linear_point(transform, x: point.x, y: point.y)
+  EllipsePoint(x, y)
 }
 
 fn dot(a: EllipsePoint, b: EllipsePoint) -> Float {

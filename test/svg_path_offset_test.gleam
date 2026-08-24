@@ -60,9 +60,9 @@ pub fn segment_offsets_line_to_left_for_negative_distance_test() {
     ]
 }
 
-pub fn hinge_tangent_adjustment_opens_clockwise_gap_test() {
+pub fn reversal_tangent_adjustment_opens_clockwise_gap_test() {
   let assert Ok(adjustment) =
-    offset.internal_hinge_tangent_adjustment(
+    offset.internal_reversal_tangent_adjustment(
       incoming_direction: point.direction(degrees: 0.0),
       outgoing_direction: point.direction(degrees: 180.0),
       incoming_turn: offset.Clockwise,
@@ -72,7 +72,7 @@ pub fn hinge_tangent_adjustment_opens_clockwise_gap_test() {
       required_gap_degrees: 1.0,
     )
 
-  assert_hinge_gap(
+  assert_reversal_gap(
     incoming_direction: point.direction(degrees: 0.0),
     outgoing_direction: point.direction(degrees: 180.0),
     adjustment:,
@@ -83,9 +83,9 @@ pub fn hinge_tangent_adjustment_opens_clockwise_gap_test() {
   assert_near(adjustment.outgoing_degrees, 0.5)
 }
 
-pub fn hinge_tangent_adjustment_opens_counterclockwise_gap_test() {
+pub fn reversal_tangent_adjustment_opens_counterclockwise_gap_test() {
   let assert Ok(adjustment) =
-    offset.internal_hinge_tangent_adjustment(
+    offset.internal_reversal_tangent_adjustment(
       incoming_direction: point.direction(degrees: 0.0),
       outgoing_direction: point.direction(degrees: 180.0),
       incoming_turn: offset.CounterClockwise,
@@ -95,7 +95,7 @@ pub fn hinge_tangent_adjustment_opens_counterclockwise_gap_test() {
       required_gap_degrees: 1.0,
     )
 
-  assert_hinge_gap(
+  assert_reversal_gap(
     incoming_direction: point.direction(degrees: 0.0),
     outgoing_direction: point.direction(degrees: 180.0),
     adjustment:,
@@ -106,9 +106,9 @@ pub fn hinge_tangent_adjustment_opens_counterclockwise_gap_test() {
   assert_near(adjustment.outgoing_degrees, -0.5)
 }
 
-pub fn hinge_tangent_adjustment_uses_existing_gap_test() {
+pub fn reversal_tangent_adjustment_uses_existing_gap_test() {
   let assert Ok(adjustment) =
-    offset.internal_hinge_tangent_adjustment(
+    offset.internal_reversal_tangent_adjustment(
       incoming_direction: point.direction(degrees: 0.0),
       outgoing_direction: point.direction(degrees: 180.5),
       incoming_turn: offset.Clockwise,
@@ -118,7 +118,7 @@ pub fn hinge_tangent_adjustment_uses_existing_gap_test() {
       required_gap_degrees: 1.0,
     )
 
-  assert_hinge_gap(
+  assert_reversal_gap(
     incoming_direction: point.direction(degrees: 0.0),
     outgoing_direction: point.direction(degrees: 180.5),
     adjustment:,
@@ -129,9 +129,9 @@ pub fn hinge_tangent_adjustment_uses_existing_gap_test() {
   assert_near(adjustment.outgoing_degrees, 0.25)
 }
 
-pub fn hinge_tangent_adjustment_corrects_wrong_side_gap_test() {
+pub fn reversal_tangent_adjustment_corrects_wrong_side_gap_test() {
   let assert Ok(adjustment) =
-    offset.internal_hinge_tangent_adjustment(
+    offset.internal_reversal_tangent_adjustment(
       incoming_direction: point.direction(degrees: 0.0),
       outgoing_direction: point.direction(degrees: 179.5),
       incoming_turn: offset.Clockwise,
@@ -141,7 +141,7 @@ pub fn hinge_tangent_adjustment_corrects_wrong_side_gap_test() {
       required_gap_degrees: 1.0,
     )
 
-  assert_hinge_gap(
+  assert_reversal_gap(
     incoming_direction: point.direction(degrees: 0.0),
     outgoing_direction: point.direction(degrees: 179.5),
     adjustment:,
@@ -152,9 +152,9 @@ pub fn hinge_tangent_adjustment_corrects_wrong_side_gap_test() {
   assert_near(adjustment.outgoing_degrees, 0.75)
 }
 
-pub fn hinge_tangent_adjustment_weights_shorter_segment_more_test() {
+pub fn reversal_tangent_adjustment_weights_shorter_segment_more_test() {
   let assert Ok(adjustment) =
-    offset.internal_hinge_tangent_adjustment(
+    offset.internal_reversal_tangent_adjustment(
       incoming_direction: point.direction(degrees: 0.0),
       outgoing_direction: point.direction(degrees: 180.0),
       incoming_turn: offset.Clockwise,
@@ -168,9 +168,9 @@ pub fn hinge_tangent_adjustment_weights_shorter_segment_more_test() {
   assert_near(adjustment.outgoing_degrees, 0.1)
 }
 
-pub fn hinge_tangent_adjustment_treats_straight_as_other_turn_test() {
+pub fn reversal_tangent_adjustment_treats_straight_as_other_turn_test() {
   let assert Ok(adjustment) =
-    offset.internal_hinge_tangent_adjustment(
+    offset.internal_reversal_tangent_adjustment(
       incoming_direction: point.direction(degrees: 0.0),
       outgoing_direction: point.direction(degrees: 180.0),
       incoming_turn: offset.Straight,
@@ -180,7 +180,7 @@ pub fn hinge_tangent_adjustment_treats_straight_as_other_turn_test() {
       required_gap_degrees: 1.0,
     )
 
-  assert_hinge_gap(
+  assert_reversal_gap(
     incoming_direction: point.direction(degrees: 0.0),
     outgoing_direction: point.direction(degrees: 180.0),
     adjustment:,
@@ -189,8 +189,8 @@ pub fn hinge_tangent_adjustment_treats_straight_as_other_turn_test() {
   )
 }
 
-pub fn hinge_tangent_adjustment_rejects_ambiguous_turns_test() {
-  assert offset.internal_hinge_tangent_adjustment(
+pub fn reversal_tangent_adjustment_rejects_ambiguous_turns_test() {
+  assert offset.internal_reversal_tangent_adjustment(
       incoming_direction: point.direction(degrees: 0.0),
       outgoing_direction: point.direction(degrees: 180.0),
       incoming_turn: offset.Clockwise,
@@ -201,7 +201,7 @@ pub fn hinge_tangent_adjustment_rejects_ambiguous_turns_test() {
     )
     == Error(Nil)
 
-  assert offset.internal_hinge_tangent_adjustment(
+  assert offset.internal_reversal_tangent_adjustment(
       incoming_direction: point.direction(degrees: 0.0),
       outgoing_direction: point.direction(degrees: 180.0),
       incoming_turn: offset.CouldNotMeasure,
@@ -1659,14 +1659,14 @@ fn assert_near(actual: Float, expected: Float) -> Nil {
   assert float.absolute_value(actual -. expected) <=. 0.000000001
 }
 
-fn assert_hinge_gap(
+fn assert_reversal_gap(
   incoming_direction incoming_direction: svg_path.Point,
   outgoing_direction outgoing_direction: svg_path.Point,
-  adjustment adjustment: offset.HingeTangentAdjustment,
+  adjustment adjustment: offset.ReversalTangentAdjustment,
   expected_turn expected_turn: offset.TangentTurn,
   at_least at_least: Float,
 ) -> Nil {
-  let offset.HingeTangentAdjustment(incoming_degrees:, outgoing_degrees:) =
+  let offset.ReversalTangentAdjustment(incoming_degrees:, outgoing_degrees:) =
     adjustment
   let incoming = rotate_direction(incoming_direction, incoming_degrees)
   let outgoing = rotate_direction(outgoing_direction, outgoing_degrees)

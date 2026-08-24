@@ -74,6 +74,85 @@ pub fn reverse_segment_swaps_start_and_end_test() {
   assert svg_path.segment_end(reversed) == svg_path.segment_start(segment)
 }
 
+pub fn point_pair_similarity_maps_anchor_points_exactly_test() {
+  let p1 = svg_path.Point(1.0, 2.0)
+  let p2 = svg_path.Point(4.0, 2.0)
+  let q1 = svg_path.Point(10.0, -5.0)
+  let q2 = svg_path.Point(10.0, 1.0)
+
+  let assert Ok(mapped_start) =
+    svg_path.point_by_point_pair_similarity(
+      p1,
+      source_start: p1,
+      source_end: p2,
+      target_start: q1,
+      target_end: q2,
+    )
+  let assert Ok(mapped_end) =
+    svg_path.point_by_point_pair_similarity(
+      p2,
+      source_start: p1,
+      source_end: p2,
+      target_start: q1,
+      target_end: q2,
+    )
+
+  assert mapped_start == q1
+  assert mapped_end == q2
+}
+
+pub fn segment_remap_endpoints_maps_endpoints_exactly_test() {
+  let segment =
+    svg_path.CubicBezier(
+      start: svg_path.Point(1.0, 2.0),
+      control1: svg_path.Point(2.0, 3.0),
+      control2: svg_path.Point(3.0, 4.0),
+      end: svg_path.Point(4.0, 2.0),
+    )
+  let new_start = svg_path.Point(10.0, -5.0)
+  let new_end = svg_path.Point(10.0, 1.0)
+  let assert Ok(remapped) =
+    svg_path.segment_remap_endpoints(segment, new_start, new_end)
+
+  assert svg_path.segment_start(remapped) == new_start
+  assert svg_path.segment_end(remapped) == new_end
+}
+
+pub fn path_point_pair_similarity_maps_arcs_test() {
+  let source_start = svg_path.Point(0.0, 0.0)
+  let source_end = svg_path.Point(2.0, 0.0)
+  let target_start = svg_path.Point(10.0, 20.0)
+  let target_end = svg_path.Point(10.0, 24.0)
+  let path =
+    svg_path.Arc(
+      start: source_start,
+      radius: svg_path.Point(1.0, 2.0),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: True,
+      end: source_end,
+    )
+    |> svg_path.segment_as_path
+
+  let assert Ok(remapped) =
+    svg_path.path_by_point_pair_similarity(
+      path,
+      source_start:,
+      source_end:,
+      target_start:,
+      target_end:,
+    )
+  let assert [subpath] = svg_path.path_subpaths(remapped)
+  let assert [svg_path.Arc(start:, radius:, x_axis_rotation:, sweep:, end:, ..)] =
+    svg_path.subpath_segments(subpath)
+
+  assert start == target_start
+  assert end == target_end
+  assert radius == svg_path.Point(2.0, 4.0)
+  assert x_axis_rotation == 90.0
+  assert sweep
+}
+
 pub fn segment_point_evaluates_lines_quadratics_cubics_and_arcs_test() {
   let assert Ok(line_point) =
     svg_path.segment_point(

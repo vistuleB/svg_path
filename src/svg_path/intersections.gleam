@@ -43,7 +43,7 @@ const parameter_snap_distance_tie_slack = 0.000000000001
 
 const terminal_subdivision_tolerance = 0.01
 
-const terminal_grid_margin = 0.05
+const terminal_grid_margin = 0.0
 
 const default_classification_angular_tolerance = 0.0000001
 
@@ -4545,7 +4545,7 @@ fn run_descents(
             state,
             certification_tolerance:,
             step: 1.0,
-            iterations: 40,
+            iterations: 45,
           )
         _ -> Ok(state)
       })
@@ -4575,7 +4575,12 @@ fn run_one_descent(
           )
         False -> {
           use #(proposal, raw_left_t, raw_right_t) <- result.try(
-            gradient_distance_proposal_unclamped(descent, state, step),
+            gradient_distance_proposal_unclamped(
+              descent,
+              state,
+              step,
+              use_tangent_line_crossing: iterations % 2 == 0,
+            ),
           )
           let accepted =
             proposal.distance_squared <. descent.current.distance_squared
@@ -4640,6 +4645,7 @@ fn gradient_distance_proposal_unclamped(
   descent: DescentRecord,
   state: DescentState,
   step: Float,
+  use_tangent_line_crossing use_tangent_line_crossing: Bool,
 ) -> Result(#(DistanceMinimum, Float, Float), Error) {
   use window <- result.try(find_window(state.windows, descent.window_id))
   let WindowRecord(window: TerminalWindow(left:, right:, ..)) = window
@@ -4669,17 +4675,16 @@ fn gradient_distance_proposal_unclamped(
     clamp01(raw_left_t),
     clamp01(raw_right_t),
   ))
-  use proposal <- result.try(
-    best_gauss_newton_or_gradient_proposal(
-      left,
-      right,
-      current: descent.current,
-      separation:,
-      left_derivative:,
-      right_derivative:,
-      gradient: #(gradient_proposal, raw_left_t, raw_right_t),
-    ),
-  )
+  use proposal <- result.try(best_gauss_newton_or_gradient_proposal(
+    left,
+    right,
+    current: descent.current,
+    separation:,
+    left_derivative:,
+    right_derivative:,
+    gradient: #(gradient_proposal, raw_left_t, raw_right_t),
+    use_tangent_line_crossing:,
+  ))
   Ok(proposal)
 }
 
@@ -4691,10 +4696,47 @@ fn best_gauss_newton_or_gradient_proposal(
   left_derivative left_derivative: Point,
   right_derivative right_derivative: Point,
   gradient gradient: #(DistanceMinimum, Float, Float),
+  use_tangent_line_crossing use_tangent_line_crossing: Bool,
 ) -> Result(#(DistanceMinimum, Float, Float), Error) {
-  case current.distance_squared <=. 0.000000000001 {
+  case current.distance_squared <=. 0.0001 *. 0.0001 {
     False -> Ok(gradient)
     True ->
+      best_alternating_local_crossing_polish(
+        left,
+        right,
+        current:,
+        separation:,
+        left_derivative:,
+        right_derivative:,
+        gradient:,
+        use_tangent_line_crossing:,
+      )
+  }
+}
+
+fn best_alternating_local_crossing_polish(
+  left: IntersectionPiece,
+  right: IntersectionPiece,
+  current current: DistanceMinimum,
+  separation separation: Point,
+  left_derivative left_derivative: Point,
+  right_derivative right_derivative: Point,
+  gradient gradient: #(DistanceMinimum, Float, Float),
+  use_tangent_line_crossing use_tangent_line_crossing: Bool,
+) -> Result(#(DistanceMinimum, Float, Float), Error) {
+  case use_tangent_line_crossing {
+    True -> {
+      use tangent <- result.try(tangent_line_crossing_proposal(
+        left,
+        right,
+        current:,
+        separation:,
+        left_derivative:,
+        right_derivative:,
+      ))
+      Ok(best_distance_proposal(gradient, tangent))
+    }
+    False ->
       best_gauss_newton_or_gradient_polish(
         left,
         right,
@@ -4742,6 +4784,52 @@ fn best_gauss_newton_or_gradient_polish(
         False -> Ok(gradient)
       }
     }
+  }
+}
+
+fn tangent_line_crossing_proposal(
+  left: IntersectionPiece,
+  right: IntersectionPiece,
+  current current: DistanceMinimum,
+  separation separation: Point,
+  left_derivative left_derivative: Point,
+  right_derivative right_derivative: Point,
+) -> Result(#(DistanceMinimum, Float, Float), Error) {
+  let determinant = cross(left_derivative, right_derivative)
+  let scale =
+    float.max(
+      float.max(dot(left_derivative, left_derivative), 1.0)
+        *. float.max(dot(right_derivative, right_derivative), 1.0),
+      1.0,
+    )
+
+  case determinant *. determinant <=. 0.000000000000000001 *. scale {
+    True -> Ok(#(current, current.left_t, current.right_t))
+    False -> {
+      let delta_left = 0.0 -. cross(separation, right_derivative) /. determinant
+      let delta_right = 0.0 -. cross(separation, left_derivative) /. determinant
+      let raw_left_t = current.left_t +. delta_left
+      let raw_right_t = current.right_t +. delta_right
+      use candidate <- result.try(global_distance_minimum_at(
+        left,
+        right,
+        clamp01(raw_left_t),
+        clamp01(raw_right_t),
+      ))
+      Ok(#(candidate, raw_left_t, raw_right_t))
+    }
+  }
+}
+
+fn best_distance_proposal(
+  first: #(DistanceMinimum, Float, Float),
+  second: #(DistanceMinimum, Float, Float),
+) -> #(DistanceMinimum, Float, Float) {
+  let #(first_minimum, _, _) = first
+  let #(second_minimum, _, _) = second
+  case second_minimum.distance_squared <. first_minimum.distance_squared {
+    True -> second
+    False -> first
   }
 }
 

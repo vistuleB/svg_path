@@ -5,13 +5,12 @@
 //// transform application order, and `multiply(left:, right:)` when thinking in
 //// algebraic matrix multiplication order.
 
-import gleam/float
 import gleam/list
+import gleam/result
 import svg_path
+import svg_path/affine
 import svg_path/ellipse
-import svg_path/internal/number
 import svg_path/point as point_helpers
-import svg_path/trig
 
 /// An opaque SVG affine transform matrix.
 ///
@@ -65,14 +64,12 @@ pub fn matrix(
 pub fn from_tuple(
   values: #(Float, Float, Float, Float, Float, Float),
 ) -> Matrix {
-  let #(a, b, c, d, e, f) = values
-
-  matrix(a:, b:, c:, d:, e:, f:)
+  affine.from_tuple(values) |> from_affine
 }
 
 /// The identity transform.
 pub fn identity() -> Matrix {
-  matrix(a: 1.0, b: 0.0, c: 0.0, d: 1.0, e: 0.0, f: 0.0)
+  affine.identity() |> from_affine
 }
 
 /// Chain two transforms in application order.
@@ -87,14 +84,7 @@ pub fn chain(first first: Matrix, then second: Matrix) -> Matrix {
 ///
 /// `multiply(left: a, right: b)` returns `a * b`.
 pub fn multiply(left left: Matrix, right right: Matrix) -> Matrix {
-  matrix(
-    a: left.a *. right.a +. left.c *. right.b,
-    b: left.b *. right.a +. left.d *. right.b,
-    c: left.a *. right.c +. left.c *. right.d,
-    d: left.b *. right.c +. left.d *. right.d,
-    e: left.a *. right.e +. left.c *. right.f +. left.e,
-    f: left.b *. right.e +. left.d *. right.f +. left.f,
-  )
+  affine.multiply(left: to_affine(left), right: to_affine(right)) |> from_affine
 }
 
 /// Create a matrix that applies a transform about a point.
@@ -102,9 +92,8 @@ pub fn about_point(
   transform transform: Matrix,
   point point: svg_path.Point,
 ) -> Matrix {
-  translate(x: 0.0 -. point.x, y: 0.0 -. point.y)
-  |> chain(first: _, then: transform)
-  |> chain(first: _, then: translate(x: point.x, y: point.y))
+  affine.about_point(to_affine(transform), x: point.x, y: point.y)
+  |> from_affine
 }
 
 /// Find a translation, rotation, and uniform scale mapping one point pair to
@@ -121,54 +110,22 @@ pub fn point_pair_map(
   target_end target_end: svg_path.Point,
   tolerance tolerance: Float,
 ) -> Result(Matrix, Nil) {
-  let source_x = source_end.x -. source_start.x
-  let source_y = source_end.y -. source_start.y
-  let target_x = target_end.x -. target_start.x
-  let target_y = target_end.y -. target_start.y
-  let vector_scale =
-    float.max(
-      float.max(float.absolute_value(source_x), float.absolute_value(source_y)),
-      float.max(float.absolute_value(target_x), float.absolute_value(target_y)),
-    )
-  let divisor = case vector_scale >. 0.0 {
-    True -> vector_scale
-    False -> 1.0
-  }
-  let source_x = source_x /. divisor
-  let source_y = source_y /. divisor
-  let target_x = target_x /. divisor
-  let target_y = target_y /. divisor
-  let denominator = source_x *. source_x +. source_y *. source_y
-  let scale_cos =
-    { source_x *. target_x +. source_y *. target_y } /. denominator
-  let scale_sin =
-    { source_x *. target_y -. source_y *. target_x } /. denominator
-  let transform =
-    matrix(
-      a: scale_cos,
-      b: scale_sin,
-      c: 0.0 -. scale_sin,
-      d: scale_cos,
-      e: target_start.x
-        -. { scale_cos *. source_start.x -. scale_sin *. source_start.y },
-      f: target_start.y
-        -. { scale_sin *. source_start.x +. scale_cos *. source_start.y },
-    )
+  use transform <- result.try(affine.point_pair_similarity(
+    source_start: point_tuple(source_start),
+    source_end: point_tuple(source_end),
+    target_start: point_tuple(target_start),
+    target_end: point_tuple(target_end),
+  ))
+  let transform = from_affine(transform)
+  let mapped_start = point(source_start, by: transform)
+  let mapped_end = point(source_end, by: transform)
 
-  case validate_matrix(transform) {
-    Error(_) -> Error(Nil)
-    Ok(Nil) -> {
-      let mapped_start = point(source_start, by: transform)
-      let mapped_end = point(source_end, by: transform)
-
-      case
-        points_within_tolerance(mapped_start, target_start, tolerance)
-        && points_within_tolerance(mapped_end, target_end, tolerance)
-      {
-        True -> Ok(transform)
-        False -> Error(Nil)
-      }
-    }
+  case
+    points_within_tolerance(mapped_start, target_start, tolerance)
+    && points_within_tolerance(mapped_end, target_end, tolerance)
+  {
+    True -> Ok(transform)
+    False -> Error(Nil)
   }
 }
 
@@ -187,55 +144,32 @@ pub fn point_triple_map(
   target_c target_c: svg_path.Point,
   tolerance tolerance: Float,
 ) -> Result(Matrix, Nil) {
-  let source_ab_x = source_b.x -. source_a.x
-  let source_ab_y = source_b.y -. source_a.y
-  let source_ac_x = source_c.x -. source_a.x
-  let source_ac_y = source_c.y -. source_a.y
-  let target_ab_x = target_b.x -. target_a.x
-  let target_ab_y = target_b.y -. target_a.y
-  let target_ac_x = target_c.x -. target_a.x
-  let target_ac_y = target_c.y -. target_a.y
-  let denominator = source_ab_x *. source_ac_y -. source_ab_y *. source_ac_x
-  let a =
-    { target_ab_x *. source_ac_y -. target_ac_x *. source_ab_y } /. denominator
-  let b =
-    { target_ab_y *. source_ac_y -. target_ac_y *. source_ab_y } /. denominator
-  let c =
-    { target_ac_x *. source_ab_x -. target_ab_x *. source_ac_x } /. denominator
-  let d =
-    { target_ac_y *. source_ab_x -. target_ab_y *. source_ac_x } /. denominator
-  let transform =
-    matrix(
-      a:,
-      b:,
-      c:,
-      d:,
-      e: target_a.x -. { a *. source_a.x +. c *. source_a.y },
-      f: target_a.y -. { b *. source_a.x +. d *. source_a.y },
-    )
+  use transform <- result.try(affine.point_triple_map(
+    source_a: point_tuple(source_a),
+    source_b: point_tuple(source_b),
+    source_c: point_tuple(source_c),
+    target_a: point_tuple(target_a),
+    target_b: point_tuple(target_b),
+    target_c: point_tuple(target_c),
+  ))
+  let transform = from_affine(transform)
+  let mapped_a = point(source_a, by: transform)
+  let mapped_b = point(source_b, by: transform)
+  let mapped_c = point(source_c, by: transform)
 
-  case validate_matrix(transform) {
-    Error(_) -> Error(Nil)
-    Ok(Nil) -> {
-      let mapped_a = point(source_a, by: transform)
-      let mapped_b = point(source_b, by: transform)
-      let mapped_c = point(source_c, by: transform)
-
-      case
-        points_within_tolerance(mapped_a, target_a, tolerance)
-        && points_within_tolerance(mapped_b, target_b, tolerance)
-        && points_within_tolerance(mapped_c, target_c, tolerance)
-      {
-        True -> Ok(transform)
-        False -> Error(Nil)
-      }
-    }
+  case
+    points_within_tolerance(mapped_a, target_a, tolerance)
+    && points_within_tolerance(mapped_b, target_b, tolerance)
+    && points_within_tolerance(mapped_c, target_c, tolerance)
+  {
+    True -> Ok(transform)
+    False -> Error(Nil)
   }
 }
 
 /// Create a translation matrix.
 pub fn translate(x x: Float, y y: Float) -> Matrix {
-  matrix(a: 1.0, b: 0.0, c: 0.0, d: 1.0, e: x, f: y)
+  affine.translate(x:, y:) |> from_affine
 }
 
 /// Create a uniform scale matrix.
@@ -245,47 +179,35 @@ pub fn scale(factor factor: Float) -> Matrix {
 
 /// Create a non-uniform scale matrix.
 pub fn scale_xy(x x: Float, y y: Float) -> Matrix {
-  matrix(a: x, b: 0.0, c: 0.0, d: y, e: 0.0, f: 0.0)
+  affine.scale_xy(x:, y:) |> from_affine
 }
 
 /// Create a rotation matrix from an angle in degrees.
 pub fn rotate(degrees degrees: Float) -> Matrix {
-  let cosine = trig.cos_degrees(degrees)
-  let sine = trig.sin_degrees(degrees)
-
-  matrix(a: cosine, b: sine, c: 0.0 -. sine, d: cosine, e: 0.0, f: 0.0)
+  affine.rotate(degrees:) |> from_affine
 }
 
 /// Create an x-axis skew matrix from an angle in degrees.
 pub fn skew_x(degrees degrees: Float) -> Matrix {
-  matrix(a: 1.0, b: 0.0, c: trig.tan_degrees(degrees), d: 1.0, e: 0.0, f: 0.0)
+  affine.skew_x(degrees:) |> from_affine
 }
 
 /// Create a y-axis skew matrix from an angle in degrees.
 pub fn skew_y(degrees degrees: Float) -> Matrix {
-  matrix(a: 1.0, b: trig.tan_degrees(degrees), c: 0.0, d: 1.0, e: 0.0, f: 0.0)
+  affine.skew_y(degrees:) |> from_affine
 }
 
 /// Return SVG's six matrix values as `#(a, b, c, d, e, f)`.
 pub fn to_tuple(
   transform: Matrix,
 ) -> #(Float, Float, Float, Float, Float, Float) {
-  #(
-    transform.a,
-    transform.b,
-    transform.c,
-    transform.d,
-    transform.e,
-    transform.f,
-  )
+  transform |> to_affine |> affine.to_tuple
 }
 
 /// Transform a point by a matrix.
 pub fn point(point: svg_path.Point, by transform: Matrix) -> svg_path.Point {
-  svg_path.Point(
-    transform.a *. point.x +. transform.c *. point.y +. transform.e,
-    transform.b *. point.x +. transform.d *. point.y +. transform.f,
-  )
+  let #(x, y) = affine.point(to_affine(transform), x: point.x, y: point.y)
+  svg_path.Point(x, y)
 }
 
 /// Translate a point.
@@ -457,7 +379,7 @@ pub fn segment_gracefully(
               large_arc:,
               sweep:,
               end: to_ellipse_point(end),
-              by: affine(transform),
+              by: to_affine(transform),
             )
           {
             Ok(line) -> {
@@ -504,7 +426,7 @@ pub fn segment_to_subpath_gracefully(
               large_arc:,
               sweep:,
               end: to_ellipse_point(end),
-              by: affine(transform),
+              by: to_affine(transform),
             )
           {
             Ok(points) -> {
@@ -849,7 +771,7 @@ fn transform_valid_segment(
         ellipse.transformed_axes(
           radius: to_ellipse_point(radius),
           x_axis_rotation:,
-          by: affine(transform),
+          by: to_affine(transform),
         )
       {
         Error(_) -> Error(DegenerateArcTransform)
@@ -869,14 +791,7 @@ fn transform_valid_segment(
 }
 
 fn validate_matrix(transform: Matrix) -> Result(Nil, Error) {
-  case
-    number.is_finite(transform.a)
-    && number.is_finite(transform.b)
-    && number.is_finite(transform.c)
-    && number.is_finite(transform.d)
-    && number.is_finite(transform.e)
-    && number.is_finite(transform.f)
-  {
+  case transform |> to_affine |> affine.is_finite {
     True -> Ok(Nil)
     False -> Error(InvalidMatrix)
   }
@@ -908,8 +823,8 @@ fn anchor_point(box: svg_path.BoundingBox, anchor: Anchor) -> svg_path.Point {
   }
 }
 
-fn affine(transform: Matrix) -> ellipse.Affine {
-  ellipse.ellipse_affine(
+fn to_affine(transform: Matrix) -> affine.Affine {
+  affine.matrix(
     a: transform.a,
     b: transform.b,
     c: transform.c,
@@ -917,6 +832,15 @@ fn affine(transform: Matrix) -> ellipse.Affine {
     e: transform.e,
     f: transform.f,
   )
+}
+
+fn from_affine(transform: affine.Affine) -> Matrix {
+  let #(a, b, c, d, e, f) = affine.to_tuple(transform)
+  Matrix(a:, b:, c:, d:, e:, f:)
+}
+
+fn point_tuple(point: svg_path.Point) -> #(Float, Float) {
+  #(point.x, point.y)
 }
 
 fn to_ellipse_point(point: svg_path.Point) -> ellipse.EllipsePoint {
@@ -1071,12 +995,8 @@ fn close_transformed_subpath(
 }
 
 fn transformed_sweep(sweep: Bool, transform: Matrix) -> Bool {
-  case determinant(transform) <. 0.0 {
+  case transform |> to_affine |> affine.determinant <. 0.0 {
     True -> !sweep
     False -> sweep
   }
-}
-
-fn determinant(transform: Matrix) -> Float {
-  transform.a *. transform.d -. transform.b *. transform.c
 }
