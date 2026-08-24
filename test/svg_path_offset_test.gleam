@@ -392,6 +392,31 @@ pub fn segment_offsets_quadratic_to_cubic_pieces_within_tolerance_test() {
   assert max_offset_error(curve, offset_subpath, distance: 5.0) <=. 0.01
 }
 
+pub fn segment_offset_preserves_reversed_offset_tangent_direction_test() {
+  let curve =
+    svg_path.CubicBezier(
+      start: svg_path.Point(72.63756968951799, 2.697503894403671),
+      control1: svg_path.Point(72.63562808208563, 2.697622530169285),
+      control2: svg_path.Point(72.63354998266372, 2.6977495058451253),
+      end: svg_path.Point(72.63043, 2.69644),
+    )
+  let default = offset.default_options()
+  let options =
+    offset.Options(
+      ..default,
+      fitting: offset.FittingOptions(
+        ..default.fitting,
+        tolerance: 0.01,
+        samples: 5,
+      ),
+    )
+
+  let assert Ok(offset_subpath) =
+    offset.segment_with(curve, distance: 0.4, options:)
+
+  assert svg_path.subpath_segments(offset_subpath) != []
+}
+
 pub fn segment_offsets_circular_arc_exactly_test() {
   let arc =
     svg_path.Arc(

@@ -7809,34 +7809,6 @@ fn fitted_cubic_offset(
   }
 }
 
-fn smart_fitted_cubic_offset(
-  segment: svg_path.Segment,
-  distance: Float,
-) -> Result(svg_path.Segment, Error) {
-  use start <- result.try(offset_point(segment, t: 0.0, distance:))
-  use end <- result.try(offset_point(segment, t: 1.0, distance:))
-  let samples =
-    available_offset_fit_samples(
-      segment,
-      distance,
-      [0.2, 0.35, 0.5, 0.65, 0.8],
-      samples: [],
-    )
-  use curve <- result.try(fit_cubic_offset_curve(
-    segment,
-    distance,
-    start:,
-    end:,
-    samples:,
-  ))
-  use candidate <- result.try(fitted_curve_to_segment(curve))
-
-  case segment_is_finite(candidate) {
-    True -> Ok(candidate)
-    False -> Error(NonFinite)
-  }
-}
-
 fn fit_e_join_free_offset_segment(
   source: EJoinFreeSegment,
   distance: Float,
@@ -7867,11 +7839,7 @@ fn fit_e_join_free_offset_segment(
       end_policy:,
       samples:,
     )
-  let fallback_fit = smart_fitted_cubic_offset(segment, distance)
-  use candidate <- result.try(
-    policy_fit
-    |> result.or(fallback_fit),
-  )
+  use candidate <- result.try(policy_fit)
 
   case segment_is_finite(candidate) {
     True -> Ok(candidate)
@@ -7963,18 +7931,10 @@ fn e_join_free_endpoint_policy(
     SegmentStart -> 1.0
     SegmentEnd -> 0.0
   }
-  let reversed =
-    refined_source_interval_zone(source, distance) == InsideOffsetRadius
   let opposite_direction = offset_derivative(segment, t: opposite_t, distance:)
   case offset_derivative(segment, t:, distance:) {
     Error(_) -> FitPositionOnly
     Ok(direction) -> {
-      let direction = endpoint_policy_direction(direction, reversed)
-      let opposite_direction =
-        opposite_direction
-        |> result.map(fn(direction) {
-          endpoint_policy_direction(direction, reversed)
-        })
       case is_reversal {
         False -> FitPositionAndDirection(direction)
         True -> {
@@ -7985,7 +7945,6 @@ fn e_join_free_endpoint_policy(
               opposite_direction,
               turn,
               endpoint,
-              reversed,
             )
           case reaches_offset_radius {
             True -> FitPositionAndDirectionWithCollapsedHandle(nudged)
@@ -7997,22 +7956,11 @@ fn e_join_free_endpoint_policy(
   }
 }
 
-fn endpoint_policy_direction(
-  direction: svg_path.Point,
-  reversed: Bool,
-) -> svg_path.Point {
-  case reversed {
-    True -> rotate_direction(direction, 180.0)
-    False -> direction
-  }
-}
-
 fn nudged_reversal_fit_direction(
   direction: svg_path.Point,
   opposite_direction: Result(svg_path.Point, Error),
   turn: TangentTurn,
   endpoint: SegmentEndpoint,
-  _reversed: Bool,
 ) -> svg_path.Point {
   let base_desired_degrees =
     case turn, endpoint {
@@ -8203,8 +8151,8 @@ fn recover_collapsed_direction_fit(
 ) -> Result(bezier.BezierData, Error) {
   case curve {
     bezier.CubicBezierData(control1:, control2:, ..) -> {
-      let start_collapsed = bezier_points_near(start, control1)
-      let end_collapsed = bezier_points_near(end, control2)
+      let start_collapsed = bezier_points_equal(start, control1)
+      let end_collapsed = bezier_points_equal(end, control2)
       case start_collapsed, end_collapsed {
         True, True -> Error(NonFinite)
         True, False ->
@@ -8234,12 +8182,11 @@ fn recover_collapsed_direction_fit(
   }
 }
 
-fn bezier_points_near(
+fn bezier_points_equal(
   left: bezier.BezierPoint,
   right: bezier.BezierPoint,
 ) -> Bool {
-  point_distance(from_bezier_point(left), from_bezier_point(right))
-  <=. point_tolerance
+  left.x == right.x && left.y == right.y
 }
 
 fn fit_offset_cubic_both_stalled(
@@ -8994,7 +8941,7 @@ fn offset_derivative(
     )
 
   let candidate =
-    subtract(derivative, scale(rotate_clockwise(tangent_change), distance))
+    add(derivative, scale(rotate_clockwise(tangent_change), distance))
 
   case point_is_finite(candidate) {
     True -> Ok(candidate)
