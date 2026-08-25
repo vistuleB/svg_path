@@ -1151,18 +1151,6 @@ pub fn band_loop_filter_removes_loop_with_submerged_majority_test() {
     == Ok([])
 }
 
-pub fn single_offset_loop_filter_removes_loop_with_any_submerged_segment_test() {
-  let loop = square_loop()
-  let inside = fn(point: svg_path.Point) { Ok(point.x <. 1.0) }
-
-  assert offset.internal_filter_single_offset_loops(
-      [loop],
-      inside:,
-      side_sampling_distance: 0.5,
-    )
-    == Ok([])
-}
-
 pub fn closed_candidate_even_contours_extracts_square_loop_test() {
   let loop = square_loop()
 
@@ -1207,38 +1195,6 @@ pub fn topological_band_loops_filters_submerged_loop_test() {
       options: offset.default_options(),
     )
     == Ok([])
-}
-
-pub fn topological_single_offset_path_preserves_open_tail_test() {
-  let provisional =
-    svg_path.subpath_assert_polyline([
-      svg_path.Point(-5.0, 0.0),
-      svg_path.Point(0.0, 0.0),
-      svg_path.Point(10.0, 0.0),
-      svg_path.Point(10.0, 10.0),
-      svg_path.Point(0.0, 10.0),
-      svg_path.Point(0.0, 0.0),
-    ])
-  let containing_band =
-    svg_path.subpath_assert_polygon([
-      svg_path.Point(-1.0, -1.0),
-      svg_path.Point(11.0, -1.0),
-      svg_path.Point(11.0, 11.0),
-      svg_path.Point(-1.0, 11.0),
-    ])
-
-  let assert Ok(path) =
-    offset.internal_topological_single_offset_path(
-      [provisional],
-      bands: [offset.OpenSubpathBand(containing_band)],
-      options: offset.default_options(),
-    )
-  let assert [tail] = svg_path.path_subpaths(path)
-  let assert [segment] = svg_path.subpath_segments(tail)
-
-  assert !svg_path.subpath_is_closed(tail)
-  assert svg_path.segment_start(segment) == svg_path.Point(-5.0, 0.0)
-  assert svg_path.segment_end(segment) == svg_path.Point(0.0, 0.0)
 }
 
 pub fn single_offset_band_candidate_closes_open_source_test() {

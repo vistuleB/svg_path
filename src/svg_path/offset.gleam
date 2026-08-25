@@ -8,16 +8,17 @@
 //// is offset recursively.
 ////
 //// Subpath and path offsets first normalize the source, split it into
-//// not-stalled and stalled pieces, build a provisional one-sided offset walk,
+//// not-stalled and stalled pieces, build an untrimmed one-sided offset walk,
 //// and connect adjacent offset pieces with the requested join style. The
-//// public trimmed offset cuts that provisional walk by the source path, builds
-//// an arrangement, classifies arrangement edges against an offset-band inside
-//// predicate, removes submerged and unsupported edges, then reconstructs
-//// survivors in provisional traversal order.
+//// public trimmed single offset builds one arrangement from that walk and its
+//// final refined zero-offset source pieces. Zero-source-only edges are removed
+//// directly; offset edges are classified against an offset-band inside
+//// predicate before unsupported edges are burned. Survivors are reconstructed
+//// in untrimmed traversal order.
 //// Because trimming can split an offset or remove it entirely, subpath and
 //// path offsets return `Path`.
 ////
-//// The `*_untrimmed` helpers expose the provisional offset walk directly. It
+//// The `*_untrimmed` helpers expose the untrimmed offset walk directly. It
 //// is useful for debugging, drawing raw construction geometry, or implementing
 //// a different trimming policy.
 ////
@@ -94,7 +95,7 @@ pub type Error {
   /// An underlying path operation failed.
   PathError(svg_path.Error)
 
-  /// Arrangement construction failed while noding provisional offset paths.
+  /// Arrangement construction failed while noding offset geometry.
   ArrangementGraphError(arrangement_graph.Error)
 
   /// Source normalization failed before offset construction.
@@ -351,6 +352,29 @@ pub type OffsetSourceTracePiece {
   OffsetSourceTraceStalled(source_segment_index: Int, segment: svg_path.Segment)
 }
 
+/// Diagnostic snapshot of the production single-offset arrangement before
+/// unsupported-edge burning.
+@internal
+pub type SingleOffsetArrangementTrace {
+  SingleOffsetArrangementTrace(
+    source: svg_path.Subpath,
+    untrimmed: svg_path.Subpath,
+    semantic_paths: List(svg_path.Path),
+    graph: arrangement_graph.ArrangementGraph,
+    edges: List(SingleOffsetArrangementTraceEdge),
+  )
+}
+
+/// Initial production classification of one single-offset arrangement edge.
+@internal
+pub type SingleOffsetArrangementTraceEdge {
+  SingleOffsetArrangementTraceEdge(
+    edge: arrangement_graph.ArrangementEdge,
+    submerged: Bool,
+    zero_source_only: Bool,
+  )
+}
+
 type OffsetArrangementBuild {
   OffsetArrangementBuild(
     graph: arrangement_graph.ArrangementGraph,
@@ -361,8 +385,22 @@ type OffsetArrangementBuild {
 }
 
 type OffsetArrangementSegmentGroup {
-  ProvisionalOffsetSegment
-  SourceCutSegment
+  UntrimmedOffsetSegment
+  ZeroOffsetSourceSegment
+}
+
+type SingleOffsetUntrimmedBuild {
+  SingleOffsetUntrimmedBuild(
+    subpath: svg_path.Subpath,
+    zero_source: svg_path.Subpath,
+  )
+}
+
+type OffsetSegmentsBuild {
+  OffsetSegmentsBuild(
+    offsets: List(GHealedOffsetSegment),
+    zero_source_segments: List(svg_path.Segment),
+  )
 }
 
 type IndexedOffsetSegment {
@@ -480,29 +518,7 @@ pub fn internal_filter_band_loops(
   inside inside: fn(svg_path.Point) -> Result(Bool, Error),
   side_sampling_distance side_sampling_distance: Float,
 ) -> Result(List(svg_path.Subpath), Error) {
-  filter_loops_by_policy(
-    loops,
-    inside:,
-    side_sampling_distance:,
-    policy: BandMajoritySubmerged,
-    retained: [],
-  )
-}
-
-/// Remove loops that contain any submerged segment.
-@internal
-pub fn internal_filter_single_offset_loops(
-  loops: List(svg_path.Subpath),
-  inside inside: fn(svg_path.Point) -> Result(Bool, Error),
-  side_sampling_distance side_sampling_distance: Float,
-) -> Result(List(svg_path.Subpath), Error) {
-  filter_loops_by_policy(
-    loops,
-    inside:,
-    side_sampling_distance:,
-    policy: SingleAnySubmerged,
-    retained: [],
-  )
+  filter_band_loops(loops, inside:, side_sampling_distance:, retained: [])
 }
 
 /// Extract closed even contours from a closed provisional band or stroke.
@@ -540,26 +556,30 @@ pub fn internal_topological_band_path(
   orient_outline_path(svg_path.Path(subpaths: loops))
 }
 
-/// Extract and filter single-offset loops using an imaginary source band.
-@internal
-pub fn internal_topological_single_offset_loops(
-  provisional: List(svg_path.Subpath),
+fn single_offset_survivor_subpaths(
+  untrimmed: List(svg_path.Subpath),
+  zero_source_segments zero_source_segments: List(svg_path.Segment),
   bands bands: List(OneSubpathBand),
   options options: Options,
 ) -> Result(List(svg_path.Subpath), Error) {
   use inside <- result.try(internal_band_inside_function(bands))
-  burn_pruned_single_offset_survivors(provisional, inside:, options:)
+  burn_pruned_single_offset_survivors(
+    untrimmed,
+    zero_source_segments:,
+    inside:,
+    options:,
+  )
 }
 
-/// Extract, filter, and orient single-offset loops as a path.
-@internal
-pub fn internal_topological_single_offset_path(
-  provisional: List(svg_path.Subpath),
+fn trim_single_offset_path(
+  untrimmed: List(svg_path.Subpath),
+  zero_source_segments zero_source_segments: List(svg_path.Segment),
   bands bands: List(OneSubpathBand),
   options options: Options,
 ) -> Result(svg_path.Path, Error) {
-  use loops <- result.try(internal_topological_single_offset_loops(
-    provisional,
+  use loops <- result.try(single_offset_survivor_subpaths(
+    untrimmed,
+    zero_source_segments:,
     bands:,
     options:,
   ))
@@ -569,14 +589,91 @@ pub fn internal_topological_single_offset_path(
   Ok(oriented)
 }
 
-/// Build the imaginary closed band used to classify one single-sided offset.
+/// Build the exact closed band used to classify one single-sided offset.
 @internal
 pub fn internal_single_offset_band_candidate(
   source: svg_path.Subpath,
   distance distance: Float,
   options options: Options,
 ) -> Result(OneSubpathBand, Error) {
-  single_offset_band_candidate(source, distance, options)
+  use _ <- result.try(validate_options(options))
+  use normalized <- result.try(normalize_source_subpath(source, options))
+  use build <- result.try(build_single_offset_untrimmed(
+    normalized,
+    distance:,
+    options:,
+  ))
+  single_offset_band_from_sides(build.zero_source, build.subpath)
+}
+
+/// Return the production single-offset arrangement and its initial edge
+/// classifications before unsupported-edge burning.
+@internal
+pub fn internal_single_offset_arrangement_trace(
+  subpath subpath: svg_path.Subpath,
+  distance distance: Float,
+  options options: Options,
+) -> Result(SingleOffsetArrangementTrace, Error) {
+  use _ <- result.try(validate_options(options))
+  use normalized <- result.try(normalize_source_subpath(subpath, options))
+  use untrimmed_build <- result.try(build_single_offset_untrimmed(
+    normalized,
+    distance:,
+    options:,
+  ))
+  let SingleOffsetUntrimmedBuild(subpath: untrimmed, zero_source:) =
+    untrimmed_build
+  use band <- result.try(single_offset_band_from_sides(zero_source, untrimmed))
+  use semantic_paths <- result.try(
+    one_subpath_band_semantic_paths([band], paths: []),
+  )
+  let inside = fn(point) {
+    point_inside_any_semantic_band(point, semantic_paths)
+  }
+  use build <- result.try(single_offset_segment_arrangement(
+    [untrimmed],
+    zero_source_segments: svg_path.subpath_segments(zero_source),
+  ))
+  let OffsetArrangementBuild(
+    graph: arrangement_graph.ArrangementGraph(edges: graph_edges, ..) as graph,
+    ..,
+  ) = build
+  use edges <- result.try(
+    graph_edges
+    |> list.map(fn(edge) {
+      let arrangement_graph.ArrangementEdge(id:, segment:, ..) = edge
+      let zero_source_only =
+        !arrangement_edge_has_group(build, id, UntrimmedOffsetSegment)
+      case zero_source_only {
+        True ->
+          Ok(SingleOffsetArrangementTraceEdge(
+            edge:,
+            submerged: True,
+            zero_source_only: True,
+          ))
+        False -> {
+          use submerged <- result.try(submerged_segment(
+            segment,
+            inside:,
+            side_sampling_distance: submerged_side_sampling_distance,
+          ))
+          Ok(SingleOffsetArrangementTraceEdge(
+            edge:,
+            submerged:,
+            zero_source_only: False,
+          ))
+        }
+      }
+    })
+    |> result.all,
+  )
+  Ok(SingleOffsetArrangementTrace(
+    source: normalized,
+    untrimmed:,
+    semantic_paths:,
+    graph:,
+    edges:,
+  ))
 }
 
 /// Build the untrimmed closed stroke band for one source subpath.
@@ -628,16 +725,23 @@ fn closed_candidate_even_contours(
 }
 
 fn burn_pruned_single_offset_survivors(
-  provisional: List(svg_path.Subpath),
+  untrimmed: List(svg_path.Subpath),
+  zero_source_segments zero_source_segments: List(svg_path.Segment),
   inside inside: fn(svg_path.Point) -> Result(Bool, Error),
   options options: Options,
 ) -> Result(List(svg_path.Subpath), Error) {
-  use build <- result.try(provisional_segment_arrangement(provisional))
+  use build <- result.try(single_offset_segment_arrangement(
+    untrimmed,
+    zero_source_segments:,
+  ))
   let OffsetArrangementBuild(graph:, ..) = build
-  let undirected = arrangement_graph.to_undirected(graph)
-  use protected_vertices <- result.try(provisional_open_endpoint_vertices(
+  let undirected =
+    graph
+    |> arrangement_graph.to_undirected
+    |> retain_offset_image_edges(build)
+  use protected_vertices <- result.try(untrimmed_open_endpoint_vertices(
     build,
-    provisional,
+    untrimmed,
   ))
   use without_submerged <- result.try(delete_submerged_edges(
     undirected,
@@ -755,26 +859,26 @@ fn undirected_weighted_degree(
   }
 }
 
-fn provisional_open_endpoint_vertices(
+fn untrimmed_open_endpoint_vertices(
   build: OffsetArrangementBuild,
-  provisional: List(svg_path.Subpath),
+  untrimmed: List(svg_path.Subpath),
 ) -> Result(List(Int), Error) {
   let OffsetArrangementBuild(segment_images:, ..) = build
-  provisional_open_endpoint_vertices_loop(
+  untrimmed_open_endpoint_vertices_loop(
     build,
-    provisional,
+    untrimmed,
     segment_images,
     protected: [],
   )
 }
 
-fn provisional_open_endpoint_vertices_loop(
+fn untrimmed_open_endpoint_vertices_loop(
   build: OffsetArrangementBuild,
-  provisional: List(svg_path.Subpath),
+  untrimmed: List(svg_path.Subpath),
   images: List(arrangement_graph.ArrangementSourceSegmentImage),
   protected protected: List(Int),
 ) -> Result(List(Int), Error) {
-  case provisional {
+  case untrimmed {
     [] -> Ok(list.reverse(protected))
     [first, ..rest] -> {
       let count = list.length(svg_path.subpath_segments(first))
@@ -782,14 +886,14 @@ fn provisional_open_endpoint_vertices_loop(
       let #(subpath_images, remaining_images) = span
       case svg_path.subpath_is_closed(first), subpath_images {
         True, _ ->
-          provisional_open_endpoint_vertices_loop(
+          untrimmed_open_endpoint_vertices_loop(
             build,
             rest,
             remaining_images,
             protected:,
           )
         False, [] ->
-          provisional_open_endpoint_vertices_loop(
+          untrimmed_open_endpoint_vertices_loop(
             build,
             rest,
             remaining_images,
@@ -805,7 +909,7 @@ fn provisional_open_endpoint_vertices_loop(
             build,
             last_image,
           ))
-          provisional_open_endpoint_vertices_loop(
+          untrimmed_open_endpoint_vertices_loop(
             build,
             rest,
             remaining_images,
@@ -1041,6 +1145,16 @@ fn source_order_survivor_subpaths(
   tolerance tolerance: Float,
 ) -> Result(List(svg_path.Subpath), Error) {
   let OffsetArrangementBuild(segment_images:, ..) = build
+  let segment_images =
+    list.filter(segment_images, fn(image) {
+      let arrangement_graph.ArrangementSourceSegmentImage(segment_index:, ..) =
+        image
+      offset_segment_index_has_group(
+        build,
+        segment_index,
+        UntrimmedOffsetSegment,
+      )
+    })
   let available_ids = undirected_edge_ids(graph)
   use chains <- result.try(
     source_order_survivor_chains(
@@ -1340,29 +1454,16 @@ fn survivor_chains_to_subpaths(
   }
 }
 
-fn single_offset_band_candidate(
-  source: svg_path.Subpath,
-  distance: Float,
-  options: Options,
+fn single_offset_band_from_sides(
+  zero_source: svg_path.Subpath,
+  offset: svg_path.Subpath,
 ) -> Result(OneSubpathBand, Error) {
-  case svg_path.subpath_is_closed(source) {
-    True -> {
-      use zero <- result.try(
-        svg_path.subpath_set_closed_with(
-          source,
-          closed: True,
-          policy: svg_path.WiggleWith(options.fitting.tolerance),
-        )
-        |> result.map_error(PathError),
-      )
-      use side <- result.try(closed_untrimmed_side(source, distance:, options:))
-      Ok(ClosedSubpathBand(side_a: zero, side_b: side))
-    }
+  case svg_path.subpath_is_closed(zero_source) {
+    True -> Ok(ClosedSubpathBand(side_a: zero_source, side_b: offset))
     False -> {
-      use side <- result.try(subpath_untrimmed_with(source, distance:, options:))
       use outline <- result.try(open_butt_band_outline(
-        side_a: source,
-        side_b: side,
+        side_a: zero_source,
+        side_b: offset,
       ))
       Ok(OpenSubpathBand(outline))
     }
@@ -1552,16 +1653,10 @@ fn submerged_segment(
   Ok(first_inside && second_inside)
 }
 
-type LoopFilterPolicy {
-  BandMajoritySubmerged
-  SingleAnySubmerged
-}
-
-fn filter_loops_by_policy(
+fn filter_band_loops(
   loops: List(svg_path.Subpath),
   inside inside: fn(svg_path.Point) -> Result(Bool, Error),
   side_sampling_distance side_sampling_distance: Float,
-  policy policy: LoopFilterPolicy,
   retained retained: List(svg_path.Subpath),
 ) -> Result(List(svg_path.Subpath), Error) {
   case loops {
@@ -1571,19 +1666,12 @@ fn filter_loops_by_policy(
         first,
         inside:,
         side_sampling_distance:,
-        policy:,
       ))
       let retained = case remove {
         True -> retained
         False -> [first, ..retained]
       }
-      filter_loops_by_policy(
-        rest,
-        inside:,
-        side_sampling_distance:,
-        policy:,
-        retained:,
-      )
+      filter_band_loops(rest, inside:, side_sampling_distance:, retained:)
     }
   }
 }
@@ -1592,7 +1680,6 @@ fn loop_should_be_filtered(
   loop: svg_path.Subpath,
   inside inside: fn(svg_path.Point) -> Result(Bool, Error),
   side_sampling_distance side_sampling_distance: Float,
-  policy policy: LoopFilterPolicy,
 ) -> Result(Bool, Error) {
   loop_submerged_weights(
     svg_path.subpath_segments(loop),
@@ -1600,8 +1687,6 @@ fn loop_should_be_filtered(
     side_sampling_distance:,
     submerged_weight: 0.0,
     total_weight: 0.0,
-    any_submerged: False,
-    policy:,
   )
 }
 
@@ -1611,15 +1696,9 @@ fn loop_submerged_weights(
   side_sampling_distance side_sampling_distance: Float,
   submerged_weight submerged_weight: Float,
   total_weight total_weight: Float,
-  any_submerged any_submerged: Bool,
-  policy policy: LoopFilterPolicy,
 ) -> Result(Bool, Error) {
   case segments {
-    [] ->
-      case policy {
-        SingleAnySubmerged -> Ok(any_submerged)
-        BandMajoritySubmerged -> Ok(submerged_weight >. total_weight /. 2.0)
-      }
+    [] -> Ok(submerged_weight >. total_weight /. 2.0)
     [first, ..rest] -> {
       use submerged <- result.try(submerged_segment(
         first,
@@ -1633,20 +1712,13 @@ fn loop_submerged_weights(
         True -> submerged_weight +. length
         False -> submerged_weight
       }
-      let any_submerged = any_submerged || submerged
-      case policy, any_submerged {
-        SingleAnySubmerged, True -> Ok(True)
-        _, _ ->
-          loop_submerged_weights(
-            rest,
-            inside:,
-            side_sampling_distance:,
-            submerged_weight:,
-            total_weight: total_weight +. length,
-            any_submerged:,
-            policy:,
-          )
-      }
+      loop_submerged_weights(
+        rest,
+        inside:,
+        side_sampling_distance:,
+        submerged_weight:,
+        total_weight: total_weight +. length,
+      )
     }
   }
 }
@@ -1732,9 +1804,10 @@ pub fn segment_with(
 /// a path because trimming self-intersections can split the offset into
 /// multiple subpaths or remove it entirely.
 ///
-/// Trimming cuts the provisional offset by the source path, nodes it as an
-/// arrangement, removes submerged and unsupported arrangement edges, and
-/// reconstructs surviving edges in provisional traversal order.
+/// Trimming nodes the untrimmed offset together with its final refined
+/// zero-offset source pieces, removes zero-source-only, submerged, and
+/// unsupported arrangement edges, and reconstructs surviving offset edges in
+/// untrimmed traversal order.
 pub fn subpath(
   subpath: svg_path.Subpath,
   distance distance: Float,
@@ -1750,22 +1823,20 @@ pub fn subpath_with(
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(validate_options(options))
   use normalized <- result.try(normalize_source_subpath(subpath, options))
-  use untrimmed <- result.try(build_untrimmed_subpath_offset(
+  use untrimmed_build <- result.try(build_single_offset_untrimmed(
     normalized,
     distance:,
     options:,
   ))
-  use untrimmed <- result.try(cut_single_offset_untrimmed_by_source(
+  let SingleOffsetUntrimmedBuild(subpath: untrimmed, zero_source:) =
+    untrimmed_build
+  use band <- result.try(single_offset_band_from_sides(zero_source, untrimmed))
+  trim_single_offset_path(
     [untrimmed],
-    svg_path.Path([normalized]),
-    options,
-  ))
-  use band <- result.try(single_offset_band_candidate(
-    normalized,
-    distance,
-    options,
-  ))
-  internal_topological_single_offset_path(untrimmed, bands: [band], options:)
+    zero_source_segments: svg_path.subpath_segments(zero_source),
+    bands: [band],
+    options:,
+  )
 }
 
 fn normalize_source_subpath(
@@ -1783,11 +1854,31 @@ fn normalize_source_subpath(
     )
     |> result.map_error(SourceNormalizationError),
   )
-  use subpath <- result.try(colinearize_offset_source_tangents(
-    subpath,
-    tolerance: source_tangent_colinearization_angle_degrees,
-  ))
-  Ok(subpath)
+  case svg_path.subpath_segments(subpath) {
+    [] -> Ok(subpath)
+    [_, ..] ->
+      colinearize_offset_source_tangents(
+        subpath,
+        tolerance: source_tangent_colinearization_angle_degrees,
+      )
+  }
+}
+
+fn normalize_source_path(
+  path: svg_path.Path,
+  options: Options,
+) -> Result(svg_path.Path, Error) {
+  path
+  |> svg_path.path_subpaths
+  |> list.map(fn(subpath) { normalize_source_subpath(subpath, options) })
+  |> result.all
+  |> result.map(fn(subpaths) {
+    svg_path.Path(
+      list.filter(subpaths, fn(subpath) {
+        !list.is_empty(svg_path.subpath_segments(subpath))
+      }),
+    )
+  })
 }
 
 fn colinearize_offset_source_tangents(
@@ -2127,12 +2218,12 @@ pub fn subpath_band_with(
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(validate_options(options))
   use normalized <- result.try(normalize_source_subpath(subpath, options))
-  use untrimmed_a <- result.try(build_untrimmed_subpath_offset(
+  use untrimmed_a <- result.try(untrimmed_subpath_from_normalized_source(
     normalized,
     distance: distance_a,
     options:,
   ))
-  use untrimmed_b <- result.try(build_untrimmed_subpath_offset(
+  use untrimmed_b <- result.try(untrimmed_subpath_from_normalized_source(
     normalized,
     distance: distance_b,
     options:,
@@ -2254,7 +2345,7 @@ pub fn subpath_stroke_with(
 
 /// Offset a subpath without trimming self-intersections.
 ///
-/// This returns the provisional one-sided offset walk. Adjacent segment offsets
+/// This returns the untrimmed one-sided offset walk. Adjacent segment offsets
 /// are connected with `default_options().join`; the result may self-intersect or
 /// contain sections that a trimmed offset would remove.
 pub fn subpath_untrimmed(
@@ -2272,15 +2363,16 @@ pub fn subpath_untrimmed_with(
 ) -> Result(svg_path.Subpath, Error) {
   use _ <- result.try(validate_options(options))
   use normalized <- result.try(normalize_source_subpath(subpath, options))
-  build_untrimmed_subpath_offset(normalized, distance:, options:)
+  untrimmed_subpath_from_normalized_source(normalized, distance:, options:)
 }
 
-fn build_untrimmed_subpath_offset(
+fn untrimmed_subpath_from_normalized_source(
   subpath: svg_path.Subpath,
   distance distance: Float,
   options options: Options,
 ) -> Result(svg_path.Subpath, Error) {
-  parametric_untrimmed_subpath(subpath, distance, options)
+  build_single_offset_untrimmed(subpath, distance, options)
+  |> result.map(fn(build) { build.subpath })
 }
 
 /// Offset every subpath in a path by a signed distance.
@@ -2298,137 +2390,44 @@ pub fn path_with(
   options options: Options,
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(validate_options(options))
-  let source_subpaths = svg_path.path_subpaths(path)
-  use untrimmed <- result.try(
-    untrimmed_offset_path_subpaths(
+  use normalized <- result.try(normalize_source_path(path, options))
+  let source_subpaths = svg_path.path_subpaths(normalized)
+  use untrimmed_builds <- result.try(
+    single_offset_untrimmed_path_builds(
       source_subpaths,
       distance,
       options,
       converted: [],
     ),
   )
-  use untrimmed <- result.try(cut_single_offset_untrimmed_by_source(
-    untrimmed,
-    path,
-    options,
-  ))
+  let untrimmed = list.map(untrimmed_builds, fn(build) { build.subpath })
+  let zero_source_segments =
+    untrimmed_builds
+    |> list.flat_map(fn(build) { svg_path.subpath_segments(build.zero_source) })
   use bands <- result.try(
-    single_offset_band_candidates(
-      source_subpaths,
-      distance,
-      options,
-      converted: [],
-    ),
+    single_offset_band_candidates_from_builds(untrimmed_builds, converted: []),
   )
-  use result <- result.try(internal_topological_single_offset_path(
+  use result <- result.try(trim_single_offset_path(
     untrimmed,
+    zero_source_segments:,
     bands:,
     options:,
   ))
   Ok(result)
 }
 
-fn cut_single_offset_untrimmed_by_source(
-  untrimmed: List(svg_path.Subpath),
-  source: svg_path.Path,
-  options: Options,
-) -> Result(List(svg_path.Subpath), Error) {
-  use build <- result.try(provisional_source_cut_segment_arrangement(
-    untrimmed,
-    source,
-  ))
-  use cut <- result.try(
-    untrimmed
-    |> list.index_map(fn(subpath, index) {
-      case svg_path.subpath_segments(subpath) {
-        [] -> Ok(None)
-        [_, ..] -> {
-          use cut <- result.try(cut_single_offset_untrimmed_subpath(
-            build,
-            subpath,
-            subpath_index: index,
-            options:,
-          ))
-          Ok(Some(cut))
-        }
-      }
-    })
-    |> result.all,
-  )
-  Ok(
-    list.filter_map(cut, fn(subpath) {
-      case subpath {
-        None -> Error(Nil)
-        Some(subpath) -> Ok(subpath)
-      }
-    }),
-  )
-}
-
-fn cut_single_offset_untrimmed_subpath(
-  build: OffsetArrangementBuild,
-  original: svg_path.Subpath,
-  subpath_index subpath_index: Int,
-  options options: Options,
-) -> Result(svg_path.Subpath, Error) {
-  let OffsetArrangementBuild(segment_images:, ..) = build
-  use pieces <- result.try(
-    segment_images
-    |> list.filter(fn(image) {
-      let arrangement_graph.ArrangementSourceSegmentImage(segment_index:, ..) =
-        image
-      offset_segment_index_is_in_subpath(
-        build,
-        segment_index,
-        ProvisionalOffsetSegment,
-        subpath_index,
-      )
-    })
-    |> list.map(fn(image) {
-      source_segment_image_edges(build, image)
-      |> result.map(fn(edges) {
-        edges
-        |> list.map(fn(directed) {
-          let #(edge, reversed) = directed
-          case reversed {
-            True -> svg_path.segment_reverse(edge.segment)
-            False -> edge.segment
-          }
-        })
-      })
-    })
-    |> result.all,
-  )
-  use cut <- result.try(
-    list.flatten(pieces)
-    |> svg_path.subpath_with(policy: svg_path.WiggleThenBridgeWith(
-      options.fitting.tolerance,
-    ))
-    |> result.map_error(PathError),
-  )
-  svg_path.subpath_set_closed_with(
-    cut,
-    closed: svg_path.subpath_is_closed(original),
-    policy: svg_path.WiggleThenBridgeWith(options.fitting.tolerance),
-  )
-  |> result.map_error(PathError)
-}
-
-fn single_offset_band_candidates(
-  subpaths: List(svg_path.Subpath),
-  distance: Float,
-  options: Options,
+fn single_offset_band_candidates_from_builds(
+  builds: List(SingleOffsetUntrimmedBuild),
   converted converted: List(OneSubpathBand),
 ) -> Result(List(OneSubpathBand), Error) {
-  case subpaths {
+  case builds {
     [] -> Ok(list.reverse(converted))
     [first, ..rest] -> {
-      use band <- result.try(single_offset_band_candidate(
-        first,
-        distance,
-        options,
+      use band <- result.try(single_offset_band_from_sides(
+        first.zero_source,
+        first.subpath,
       ))
-      single_offset_band_candidates(rest, distance, options, converted: [
+      single_offset_band_candidates_from_builds(rest, converted: [
         band,
         ..converted
       ])
@@ -2666,6 +2665,28 @@ fn untrimmed_offset_path_subpaths(
   }
 }
 
+fn single_offset_untrimmed_path_builds(
+  subpaths: List(svg_path.Subpath),
+  distance: Float,
+  options: Options,
+  converted converted: List(SingleOffsetUntrimmedBuild),
+) -> Result(List(SingleOffsetUntrimmedBuild), Error) {
+  case subpaths {
+    [] -> Ok(list.reverse(converted))
+    [first, ..rest] -> {
+      use build <- result.try(build_single_offset_untrimmed(
+        first,
+        distance:,
+        options:,
+      ))
+      single_offset_untrimmed_path_builds(rest, distance, options, converted: [
+        build,
+        ..converted
+      ])
+    }
+  }
+}
+
 fn untrimmed_band_path_subpaths(
   subpaths: List(svg_path.Subpath),
   distance_a: Float,
@@ -2759,9 +2780,9 @@ fn source_segment_image_to_public_image(
   )
   let IndexedOffsetSegment(group:, subpath_index:, ..) = indexed
   case group {
-    SourceCutSegment ->
+    ZeroOffsetSourceSegment ->
       Error(ArrangementGraphError(arrangement_graph.InternalNormalizationError))
-    ProvisionalOffsetSegment ->
+    UntrimmedOffsetSegment ->
       Ok(arrangement_graph.ArrangementSegmentImage(
         path_index: 0,
         subpath_index:,
@@ -2782,21 +2803,24 @@ fn provisional_segment_arrangement(
   provisional: List(svg_path.Subpath),
 ) -> Result(OffsetArrangementBuild, Error) {
   let indexed =
-    indexed_offset_segments(provisional, group: ProvisionalOffsetSegment)
+    indexed_offset_segments(provisional, group: UntrimmedOffsetSegment)
   offset_segment_arrangement(indexed)
 }
 
-fn provisional_source_cut_segment_arrangement(
-  provisional: List(svg_path.Subpath),
-  source: svg_path.Path,
+fn single_offset_segment_arrangement(
+  untrimmed: List(svg_path.Subpath),
+  zero_source_segments zero_source_segments: List(svg_path.Segment),
 ) -> Result(OffsetArrangementBuild, Error) {
   let indexed =
     list.append(
-      indexed_offset_segments(provisional, group: ProvisionalOffsetSegment),
-      indexed_offset_segments(
-        svg_path.path_subpaths(source),
-        group: SourceCutSegment,
-      ),
+      indexed_offset_segments(untrimmed, group: UntrimmedOffsetSegment),
+      list.map(zero_source_segments, fn(segment) {
+        IndexedOffsetSegment(
+          group: ZeroOffsetSourceSegment,
+          subpath_index: 0,
+          segment:,
+        )
+      }),
     )
   offset_segment_arrangement(indexed)
 }
@@ -2940,21 +2964,49 @@ pub fn internal_global_section_is_valid(
   )
 }
 
-fn offset_segment_index_is_in_subpath(
+fn offset_segment_index_has_group(
   build: OffsetArrangementBuild,
   segment_index: Int,
   group: OffsetArrangementSegmentGroup,
-  subpath_index: Int,
 ) -> Bool {
   let OffsetArrangementBuild(indexed_segments:, ..) = build
   case offset_indexed_segment_at(indexed_segments, segment_index) {
-    Ok(IndexedOffsetSegment(
-      group: candidate_group,
-      subpath_index: candidate,
-      ..,
-    )) -> candidate_group == group && candidate == subpath_index
+    Ok(IndexedOffsetSegment(group: candidate_group, ..)) ->
+      candidate_group == group
     Error(Nil) -> False
   }
+}
+
+fn retain_offset_image_edges(
+  graph: arrangement_graph.UndirectedArrangementGraph,
+  build: OffsetArrangementBuild,
+) -> arrangement_graph.UndirectedArrangementGraph {
+  let arrangement_graph.UndirectedArrangementGraph(vertices:, edges:) = graph
+  let retained =
+    list.filter(edges, fn(edge) {
+      let arrangement_graph.UndirectedArrangementEdge(id:, ..) = edge
+      arrangement_edge_has_group(build, id, UntrimmedOffsetSegment)
+    })
+  arrangement_graph.UndirectedArrangementGraph(vertices:, edges: retained)
+}
+
+fn arrangement_edge_has_group(
+  build: OffsetArrangementBuild,
+  edge_id: Int,
+  group: OffsetArrangementSegmentGroup,
+) -> Bool {
+  build.edge_images
+  |> list.any(fn(image) {
+    let arrangement_graph.ArrangementEdgeImage(edge_id: candidate, sources:) =
+      image
+    candidate == edge_id
+    && sources
+    |> list.any(fn(source) {
+      let arrangement_graph.ArrangementEdgeSourceImage(segment_index:, ..) =
+        source
+      offset_segment_index_has_group(build, segment_index, group)
+    })
+  })
 }
 
 fn offset_indexed_segment_at(
@@ -3126,23 +3178,33 @@ fn parametric_band_path_subpaths(
   }
 }
 
-fn parametric_untrimmed_subpath(
+fn build_single_offset_untrimmed(
   subpath: svg_path.Subpath,
-  distance: Float,
-  options: Options,
-) -> Result(svg_path.Subpath, Error) {
+  distance distance: Float,
+  options options: Options,
+) -> Result(SingleOffsetUntrimmedBuild, Error) {
   case svg_path.subpath_segments(subpath) {
     [] -> {
       use start <- result.try(
         svg_path.subpath_start(subpath) |> result.map_error(PathError),
       )
-      Ok(svg_path.subpath_empty(at: start))
+      Ok(SingleOffsetUntrimmedBuild(
+        subpath: svg_path.subpath_empty(at: start),
+        zero_source: svg_path.subpath_empty(at: start),
+      ))
     }
     [_, ..] -> {
-      use offset_segments <- result.try(build_offset_segments(
+      use offset_build <- result.try(build_offset_segments_with_zero_source(
         subpath,
         distance,
         options,
+      ))
+      let OffsetSegmentsBuild(offsets: offset_segments, zero_source_segments:) =
+        offset_build
+      use zero_source <- result.try(subpath_from_zero_source_segments(
+        zero_source_segments,
+        closed: svg_path.subpath_is_closed(subpath),
+        tolerance: options.fitting.tolerance,
       ))
       use output_segments <- result.try(parametric_joined_offset_segments(
         offset_segments,
@@ -3150,7 +3212,7 @@ fn parametric_untrimmed_subpath(
         options.join,
         closed: svg_path.subpath_is_closed(subpath),
       ))
-      use provisional <- result.try(
+      use untrimmed <- result.try(
         svg_path.subpath_with(
           output_segments,
           policy: svg_path.WiggleWith(options.fitting.tolerance),
@@ -3158,17 +3220,39 @@ fn parametric_untrimmed_subpath(
         |> result.map_error(PathError),
       )
       case svg_path.subpath_is_closed(subpath) {
-        False -> Ok(provisional)
-        True ->
-          svg_path.subpath_set_closed_with(
-            provisional,
-            closed: True,
-            policy: svg_path.WiggleWith(options.fitting.tolerance),
+        False ->
+          Ok(SingleOffsetUntrimmedBuild(subpath: untrimmed, zero_source:))
+        True -> {
+          use closed <- result.try(
+            svg_path.subpath_set_closed_with(
+              untrimmed,
+              closed: True,
+              policy: svg_path.WiggleWith(options.fitting.tolerance),
+            )
+            |> result.map_error(PathError),
           )
-          |> result.map_error(PathError)
+          Ok(SingleOffsetUntrimmedBuild(subpath: closed, zero_source:))
+        }
       }
     }
   }
+}
+
+fn subpath_from_zero_source_segments(
+  segments: List(svg_path.Segment),
+  closed closed: Bool,
+  tolerance tolerance: Float,
+) -> Result(svg_path.Subpath, Error) {
+  use subpath <- result.try(
+    svg_path.subpath_with(segments, policy: svg_path.WiggleWith(tolerance))
+    |> result.map_error(PathError),
+  )
+  svg_path.subpath_set_closed_with(
+    subpath,
+    closed:,
+    policy: svg_path.WiggleWith(tolerance),
+  )
+  |> result.map_error(PathError)
 }
 
 fn parametric_joined_offset_segments(
@@ -5145,34 +5229,52 @@ fn distance_margin(options: Options) -> Float {
   options.fitting.tolerance *. 1.1
 }
 
-fn build_offset_segments(
+fn build_offset_segments_with_zero_source(
   subpath: svg_path.Subpath,
   distance: Float,
   options: Options,
-) -> Result(List(GHealedOffsetSegment), Error) {
+) -> Result(OffsetSegmentsBuild, Error) {
   use portions <- result.try(join_free_portions(subpath, options))
-  build_offset_portions(portions, distance, options, converted: [])
+  build_offset_portions_with_zero_source(
+    portions,
+    distance,
+    options,
+    converted_offsets: [],
+    converted_zero_source: [],
+  )
 }
 
-fn build_offset_portions(
+fn build_offset_portions_with_zero_source(
   portions: List(JoinFreePortion),
   distance: Float,
   options: Options,
-  converted converted: List(GHealedOffsetSegment),
-) -> Result(List(GHealedOffsetSegment), Error) {
+  converted_offsets converted_offsets: List(GHealedOffsetSegment),
+  converted_zero_source converted_zero_source: List(svg_path.Segment),
+) -> Result(OffsetSegmentsBuild, Error) {
   case portions {
-    [] -> Ok(list.reverse(converted))
+    [] ->
+      Ok(OffsetSegmentsBuild(
+        offsets: list.reverse(converted_offsets),
+        zero_source_segments: list.reverse(converted_zero_source),
+      ))
     [first, ..rest] -> {
-      use offsets <- result.try(stalled_run_offset_segments(
+      use build <- result.try(stalled_run_offset_segments_with_zero_source(
         first,
         distance,
         options,
       ))
-      build_offset_portions(
+      build_offset_portions_with_zero_source(
         rest,
         distance,
         options,
-        converted: list.append(list.reverse(offsets), converted),
+        converted_offsets: list.append(
+          list.reverse(build.offsets),
+          converted_offsets,
+        ),
+        converted_zero_source: list.append(
+          list.reverse(build.zero_source_segments),
+          converted_zero_source,
+        ),
       )
     }
   }
@@ -5332,28 +5434,28 @@ fn offset_source_trace_d_refined(
   }
 }
 
-fn stalled_run_offset_segments(
+fn stalled_run_offset_segments_with_zero_source(
   portion: JoinFreePortion,
   distance: Float,
   options: Options,
-) -> Result(List(GHealedOffsetSegment), Error) {
-  use offsets <- result.try(stalled_run_offset_segments_without_postconditions(
+) -> Result(OffsetSegmentsBuild, Error) {
+  use build <- result.try(stalled_run_offset_segments_without_postconditions(
     portion,
     distance,
     options,
   ))
   use _ <- result.try(assert_smooth_offset_postconditions(
-    g_healed_to_f_unhealed_offset_segments(offsets),
+    g_healed_to_f_unhealed_offset_segments(build.offsets),
     options.tangent_heal_angle_degrees,
   ))
-  Ok(offsets)
+  Ok(build)
 }
 
 fn stalled_run_offset_segments_without_postconditions(
   portion: JoinFreePortion,
   distance: Float,
   options: Options,
-) -> Result(List(GHealedOffsetSegment), Error) {
+) -> Result(OffsetSegmentsBuild, Error) {
   let JoinFreePortion(index:, subpath:, closed:) = portion
   let pieces =
     subpath
@@ -5363,17 +5465,14 @@ fn stalled_run_offset_segments_without_postconditions(
       threshold: options.stalled_offset_diameter,
     )
     |> mark_classified_segment_cross_reversals(distance)
-  use offsets <- result.try(
-    offset_classified_segments(
-      pieces,
-      distance,
-      options,
-      portion_index: index,
-      closed:,
-      converted: [],
-    ),
+  offset_classified_segments_with_zero_source(
+    pieces,
+    distance,
+    options,
+    portion_index: index,
+    closed:,
+    converted: [],
   )
-  Ok(offsets)
 }
 
 fn classify_prepared_segments(
@@ -5576,14 +5675,14 @@ fn source_segment_offset_is_stalled(
   }
 }
 
-fn offset_classified_segments(
+fn offset_classified_segments_with_zero_source(
   pieces: List(BClassifiedSegment),
   distance: Float,
   options: Options,
   portion_index portion_index: Int,
   closed closed: Bool,
   converted converted: List(FUnhealedOffsetSegment),
-) -> Result(List(GHealedOffsetSegment), Error) {
+) -> Result(OffsetSegmentsBuild, Error) {
   use refined <- result.try(
     refine_b_classified_segments_for_offset(
       pieces,
@@ -5601,7 +5700,86 @@ fn offset_classified_segments(
   ))
   let offsets =
     mark_cross_source_reversal_boundaries(offsets, distance, closed:)
-  heal_offset_boundaries(offsets, distance, options, closed:)
+  use healed <- result.try(heal_offset_boundaries(
+    offsets,
+    distance,
+    options,
+    closed:,
+  ))
+  Ok(OffsetSegmentsBuild(
+    offsets: healed,
+    zero_source_segments: zero_source_segments_from_d_pieces(
+      refined,
+      healed,
+      converted: [],
+    ),
+  ))
+}
+
+fn zero_source_segments_from_d_pieces(
+  pieces: List(DOffsetPiece),
+  offsets: List(GHealedOffsetSegment),
+  converted converted: List(svg_path.Segment),
+) -> List(svg_path.Segment) {
+  case pieces {
+    [] -> list.reverse(converted)
+    [DStalled(first), ..rest] -> {
+      let #(run, remaining_pieces) =
+        collect_d_stalled_run(first, rest, collected: [])
+      let remaining_offsets = case offsets {
+        [GHealedOffsetSegment(source: OffsetFromStalledRun(source), ..), ..tail]
+          if source == run
+        -> tail
+        _ -> offsets
+      }
+      let segments =
+        list.map(run, fn(piece) {
+          let CStalledSegment(segment:, ..) = piece
+          segment
+        })
+      zero_source_segments_from_d_pieces(
+        remaining_pieces,
+        remaining_offsets,
+        converted: list.append(list.reverse(segments), converted),
+      )
+    }
+    [DNotStalled(first), ..rest] -> {
+      let #(segments, remaining_offsets) =
+        take_d_refined_zero_source_segments(offsets, first, taken: [])
+      zero_source_segments_from_d_pieces(
+        rest,
+        remaining_offsets,
+        converted: list.append(list.reverse(segments), converted),
+      )
+    }
+  }
+}
+
+fn take_d_refined_zero_source_segments(
+  offsets: List(GHealedOffsetSegment),
+  refined: DRefinedSegment,
+  taken taken: List(svg_path.Segment),
+) -> #(List(svg_path.Segment), List(GHealedOffsetSegment)) {
+  case offsets {
+    [
+      GHealedOffsetSegment(
+        source: OffsetFromJoinFree(EJoinFreeSegment(
+          refined: source_refined,
+          segment:,
+          ..,
+        )),
+        ..,
+      ),
+      ..rest
+    ]
+      if source_refined == refined
+    ->
+      take_d_refined_zero_source_segments(rest, refined, taken: [
+        segment,
+        ..taken
+      ])
+    _ -> #(list.reverse(taken), offsets)
+  }
 }
 
 fn offset_d_offset_pieces(
