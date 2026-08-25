@@ -212,6 +212,106 @@ pub fn adding_a_segment_returns_the_augmented_hull_and_width_decision_test() {
   let assert convex_hull.MinimumWidthExceeds(..) = third_decision
 }
 
+pub fn public_minimum_width_finds_rotated_rectangle_thickness_test() {
+  let vertices =
+    rectangle_at_angle(
+      center: svg_path.Point(3.0, -2.0),
+      length: 12.0,
+      width: 0.4,
+      angle: 31.7,
+    )
+  let subpath = polygon_subpath(vertices)
+  let assert Ok(extremum) =
+    convex_hull.subpath_minimum_width_with(
+      subpath,
+      options: convex_hull.WidthSearchOptions(accuracy: 0.000001, max_depth: 12),
+    )
+  let convex_hull.WidthExtremum(
+    width:,
+    lower_bound:,
+    upper_bound:,
+    converged:,
+    ..,
+  ) = extremum
+  assert converged
+  assert float.absolute_value(width -. 0.4) <=. 0.000001
+  assert lower_bound <=. 0.4
+  assert upper_bound >=. 0.4
+  assert upper_bound -. lower_bound <=. 0.0000011
+}
+
+pub fn public_diameter_returns_witness_pair_and_midpoint_test() {
+  let subpath =
+    polygon_subpath([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(3.0, 4.0),
+      svg_path.Point(0.0, 1.0),
+    ])
+  let assert Ok(extremum) =
+    convex_hull.subpath_diameter_with(
+      subpath,
+      options: convex_hull.WidthSearchOptions(accuracy: 0.000001, max_depth: 12),
+    )
+  let convex_hull.WidthExtremum(
+    lower_point:,
+    upper_point:,
+    center:,
+    width:,
+    lower_bound:,
+    upper_bound:,
+    converged:,
+    ..,
+  ) = extremum
+  assert converged
+  assert float.absolute_value(width -. 5.0) <=. 0.000001
+  assert float.absolute_value(point.distance(lower_point, upper_point) -. 5.0)
+    <=. 0.000001
+  assert point.distance(center, svg_path.Point(1.5, 2.0)) <=. 0.000001
+  assert lower_bound <=. 5.0
+  assert upper_bound >=. 5.0
+  assert upper_bound -. lower_bound <=. 0.0000011
+}
+
+pub fn path_diameter_uses_direct_support_across_move_only_subpaths_test() {
+  let path =
+    svg_path.Path([
+      svg_path.subpath_empty(at: svg_path.Point(0.0, 0.0)),
+      svg_path.subpath_empty(at: svg_path.Point(3.0, 4.0)),
+    ])
+  let assert Ok(extremum) = convex_hull.path_diameter(path)
+  let convex_hull.WidthExtremum(
+    lower_point:,
+    upper_point:,
+    width:,
+    converged:,
+    ..,
+  ) = extremum
+  assert converged
+  assert float.absolute_value(width -. 5.0) <=. tolerance
+  assert float.absolute_value(point.distance(lower_point, upper_point) -. 5.0)
+    <=. tolerance
+}
+
+pub fn width_extremum_reports_depth_limit_before_convergence_test() {
+  let subpath =
+    rectangle_at_angle(
+      center: svg_path.Point(0.0, 0.0),
+      length: 7.0,
+      width: 2.0,
+      angle: 13.0,
+    )
+    |> polygon_subpath
+  let assert Ok(extremum) =
+    convex_hull.subpath_minimum_width_with(
+      subpath,
+      options: convex_hull.WidthSearchOptions(accuracy: 0.0, max_depth: 0),
+    )
+  let convex_hull.WidthExtremum(converged:, lower_bound:, upper_bound:, ..) =
+    extremum
+  assert !converged
+  assert lower_bound <. upper_bound
+}
+
 pub fn longest_thin_prefix_stops_before_the_first_wide_addition_test() {
   let first = line(0.0, 0.0, 1.0, 0.0)
   let second = line(1.0, 0.0, 2.0, 0.0)
@@ -312,6 +412,37 @@ fn rectangle_at_angle(
     add(add(center, along), across),
     add(add(center, point.scale(along, by: -1.0)), across),
   ]
+}
+
+fn polygon_subpath(vertices: List(svg_path.Point)) -> svg_path.Subpath {
+  let assert [first, ..rest] = vertices
+  let segments = case rest {
+    [] -> []
+    [second, ..remaining] ->
+      polygon_segments(first, second, remaining, [
+        svg_path.Line(start: first, end: second),
+      ])
+  }
+  svg_path.subpath_assert_set_closed(
+    svg_path.subpath_assert(segments),
+    closed: True,
+  )
+}
+
+fn polygon_segments(
+  first: svg_path.Point,
+  previous: svg_path.Point,
+  remaining: List(svg_path.Point),
+  reversed: List(svg_path.Segment),
+) -> List(svg_path.Segment) {
+  case remaining {
+    [] -> list.reverse([svg_path.Line(start: previous, end: first), ..reversed])
+    [next, ..rest] ->
+      polygon_segments(first, next, rest, [
+        svg_path.Line(start: previous, end: next),
+        ..reversed
+      ])
+  }
 }
 
 fn add(left: svg_path.Point, right: svg_path.Point) -> svg_path.Point {

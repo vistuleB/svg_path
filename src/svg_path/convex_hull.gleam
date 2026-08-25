@@ -58,6 +58,10 @@ const point_tolerance = 0.000000001
 
 const minimum_width_max_depth = 20
 
+const default_width_search_accuracy = 0.000000001
+
+const default_width_search_max_depth = 20
+
 const orientation_turn_tolerance = 0.000000001
 
 type SupportSample {
@@ -184,6 +188,46 @@ type WidthInterval {
   WidthInterval(from: WidthSample, to: WidthSample)
 }
 
+type WidthExtremumKind {
+  MinimumWidth
+  MaximumWidth
+}
+
+/// The supporting points and nonnegative width of a convex set in one unit
+/// direction supplied to a directional-support callback.
+pub type DirectionalExtent {
+  DirectionalExtent(
+    lower_point: svg_path.Point,
+    upper_point: svg_path.Point,
+    width: Float,
+  )
+}
+
+/// Options for minimum-width and diameter searches.
+pub type WidthSearchOptions {
+  WidthSearchOptions(accuracy: Float, max_depth: Int)
+}
+
+/// A directional width extremum and the bounds established for its value.
+///
+/// `center` is the midpoint of the two support witnesses. For minimum width it
+/// is a representative point on the strip's center line. For diameter it is
+/// the midpoint of the diameter witnesses; it is not generally the center of
+/// a minimum enclosing circle. `converged` reports whether the established
+/// bounds met the requested accuracy before the depth limit was reached.
+pub type WidthExtremum {
+  WidthExtremum(
+    direction: svg_path.Point,
+    lower_point: svg_path.Point,
+    upper_point: svg_path.Point,
+    center: svg_path.Point,
+    width: Float,
+    lower_bound: Float,
+    upper_bound: Float,
+    converged: Bool,
+  )
+}
+
 /// Errors returned by convex-hull construction.
 pub type Error {
   /// An underlying path operation failed.
@@ -282,6 +326,133 @@ pub fn segment_hull(
 ) -> Result(svg_path.Subpath, Error) {
   construct_segment_hull(segment)
   |> result.map_error(public_error)
+}
+
+/// Return the default options for directional width optimization.
+pub fn default_width_search_options() -> WidthSearchOptions {
+  WidthSearchOptions(
+    accuracy: default_width_search_accuracy,
+    max_depth: default_width_search_max_depth,
+  )
+}
+
+/// Approximate the minimum width of a segment's convex hull.
+pub fn segment_minimum_width(
+  segment: svg_path.Segment,
+) -> Result(WidthExtremum, Error) {
+  segment_minimum_width_with(segment, options: default_width_search_options())
+}
+
+/// Approximate the minimum width of a segment's convex hull using options.
+pub fn segment_minimum_width_with(
+  segment: svg_path.Segment,
+  options options: WidthSearchOptions,
+) -> Result(WidthExtremum, Error) {
+  use box <- result.try(
+    svg_path.segment_bounding_box(segment) |> result.map_error(PathError),
+  )
+  Ok(source_width_extremum([segment], box, options:, find: MinimumWidth))
+}
+
+/// Approximate the minimum width of a subpath's convex hull.
+pub fn subpath_minimum_width(
+  subpath: svg_path.Subpath,
+) -> Result(WidthExtremum, Error) {
+  subpath_minimum_width_with(subpath, options: default_width_search_options())
+}
+
+/// Approximate the minimum width of a subpath's convex hull using options.
+pub fn subpath_minimum_width_with(
+  subpath: svg_path.Subpath,
+  options options: WidthSearchOptions,
+) -> Result(WidthExtremum, Error) {
+  source_segments_width_extremum(
+    hull_input_segments(subpath),
+    options:,
+    find: MinimumWidth,
+  )
+}
+
+/// Approximate the minimum width of a path's convex hull.
+pub fn path_minimum_width(path: svg_path.Path) -> Result(WidthExtremum, Error) {
+  path_minimum_width_with(path, options: default_width_search_options())
+}
+
+/// Approximate the minimum width of a path's convex hull using options.
+pub fn path_minimum_width_with(
+  path: svg_path.Path,
+  options options: WidthSearchOptions,
+) -> Result(WidthExtremum, Error) {
+  source_segments_width_extremum(
+    path |> svg_path.path_subpaths |> list.flat_map(hull_input_segments),
+    options:,
+    find: MinimumWidth,
+  )
+}
+
+/// Approximate a segment's diameter and return a realizing support pair.
+pub fn segment_diameter(
+  segment: svg_path.Segment,
+) -> Result(WidthExtremum, Error) {
+  segment_diameter_with(segment, options: default_width_search_options())
+}
+
+/// Approximate a segment's diameter using directional search options.
+pub fn segment_diameter_with(
+  segment: svg_path.Segment,
+  options options: WidthSearchOptions,
+) -> Result(WidthExtremum, Error) {
+  use box <- result.try(
+    svg_path.segment_bounding_box(segment) |> result.map_error(PathError),
+  )
+  Ok(source_width_extremum([segment], box, options:, find: MaximumWidth))
+}
+
+/// Approximate a subpath's diameter and return a realizing support pair.
+pub fn subpath_diameter(
+  subpath: svg_path.Subpath,
+) -> Result(WidthExtremum, Error) {
+  subpath_diameter_with(subpath, options: default_width_search_options())
+}
+
+/// Approximate a subpath's diameter using directional search options.
+pub fn subpath_diameter_with(
+  subpath: svg_path.Subpath,
+  options options: WidthSearchOptions,
+) -> Result(WidthExtremum, Error) {
+  source_segments_width_extremum(
+    hull_input_segments(subpath),
+    options:,
+    find: MaximumWidth,
+  )
+}
+
+/// Approximate a path's diameter and return a realizing support pair.
+pub fn path_diameter(path: svg_path.Path) -> Result(WidthExtremum, Error) {
+  path_diameter_with(path, options: default_width_search_options())
+}
+
+/// Approximate a path's diameter using directional search options.
+pub fn path_diameter_with(
+  path: svg_path.Path,
+  options options: WidthSearchOptions,
+) -> Result(WidthExtremum, Error) {
+  source_segments_width_extremum(
+    path |> svg_path.path_subpaths |> list.flat_map(hull_input_segments),
+    options:,
+    find: MaximumWidth,
+  )
+}
+
+fn source_segments_width_extremum(
+  segments: List(svg_path.Segment),
+  options options: WidthSearchOptions,
+  find find: WidthExtremumKind,
+) -> Result(WidthExtremum, Error) {
+  use box <- result.try(
+    loop_bounding_box(segments) |> result.map_error(PathError),
+  )
+  Ok(source_width_extremum(segments, box, options:, find:))
 }
 
 fn construct_segment_hull(
@@ -434,6 +605,117 @@ fn degenerate_minimum_width_strip(
   )
 }
 
+/// Find the minimum directional width exposed by a support callback.
+///
+/// The callback receives a unit direction. `diameter_upper_bound` must bound
+/// the diameter of the represented convex set.
+pub fn minimum_width(
+  support: fn(svg_path.Point) -> DirectionalExtent,
+  diameter_upper_bound diameter_upper_bound: Float,
+) -> WidthExtremum {
+  minimum_width_with(
+    support,
+    diameter_upper_bound:,
+    options: default_width_search_options(),
+  )
+}
+
+/// Find the minimum directional width using explicit search options.
+pub fn minimum_width_with(
+  support: fn(svg_path.Point) -> DirectionalExtent,
+  diameter_upper_bound diameter_upper_bound: Float,
+  options options: WidthSearchOptions,
+) -> WidthExtremum {
+  directional_width_extremum(
+    support,
+    diameter_upper_bound:,
+    options:,
+    find: MinimumWidth,
+  )
+}
+
+/// Find the diameter exposed by a directional support callback.
+///
+/// The callback receives a unit direction. `diameter_upper_bound` must bound
+/// the diameter of the represented convex set.
+pub fn diameter(
+  support: fn(svg_path.Point) -> DirectionalExtent,
+  diameter_upper_bound diameter_upper_bound: Float,
+) -> WidthExtremum {
+  diameter_with(
+    support,
+    diameter_upper_bound:,
+    options: default_width_search_options(),
+  )
+}
+
+/// Find the diameter using explicit directional search options.
+pub fn diameter_with(
+  support: fn(svg_path.Point) -> DirectionalExtent,
+  diameter_upper_bound diameter_upper_bound: Float,
+  options options: WidthSearchOptions,
+) -> WidthExtremum {
+  directional_width_extremum(
+    support,
+    diameter_upper_bound:,
+    options:,
+    find: MaximumWidth,
+  )
+}
+
+fn source_width_extremum(
+  segments: List(svg_path.Segment),
+  box: svg_path.BoundingBox,
+  options options: WidthSearchOptions,
+  find find: WidthExtremumKind,
+) -> WidthExtremum {
+  let diameter_upper_bound = point_helpers.distance(box.min, box.max)
+  let support = fn(direction) {
+    segments_directional_extent(segments, direction)
+  }
+  directional_width_extremum(support, diameter_upper_bound:, options:, find:)
+}
+
+fn directional_width_extremum(
+  support: fn(svg_path.Point) -> DirectionalExtent,
+  diameter_upper_bound diameter_upper_bound: Float,
+  options options: WidthSearchOptions,
+  find find: WidthExtremumKind,
+) -> WidthExtremum {
+  let WidthSearchOptions(accuracy:, max_depth:) = options
+  let internal_support = fn(angle) {
+    let direction = point_helpers.direction(degrees: angle)
+    let DirectionalExtent(lower_point:, upper_point:, width:) =
+      support(direction)
+    DirectionalSupport(lower_point:, upper_point:, width:)
+  }
+  let samples = initial_width_samples(internal_support)
+  case find {
+    MinimumWidth ->
+      minimum_width_optimization_loop(
+        samples,
+        intervals_from_samples(samples),
+        internal_support,
+        float.absolute_value(diameter_upper_bound),
+        float.max(0.0, accuracy),
+        depth: 0,
+        max_depth: int.max(0, max_depth),
+        discarded_lower_bound: None,
+      )
+    MaximumWidth ->
+      maximum_width_optimization_loop(
+        samples,
+        intervals_from_samples(samples),
+        internal_support,
+        float.absolute_value(diameter_upper_bound),
+        float.max(0.0, accuracy),
+        depth: 0,
+        max_depth: int.max(0, max_depth),
+        discarded_upper_bound: None,
+      )
+  }
+}
+
 /// Search for a qualifying strip by repeatedly dividing angular intervals
 /// into five parts. The callback must return exact directional support data.
 @internal
@@ -443,9 +725,7 @@ pub fn internal_minimum_width_search(
   tolerance tolerance: Float,
   max_depth max_depth: Int,
 ) -> MinimumWidthDecision {
-  let samples =
-    [0.0, 72.0, 144.0, 216.0, 288.0, 360.0]
-    |> list.map(fn(angle) { WidthSample(angle:, support: support(angle)) })
+  let samples = initial_width_samples(support)
   minimum_width_search_loop(
     samples,
     intervals_from_samples(samples),
@@ -455,6 +735,13 @@ pub fn internal_minimum_width_search(
     depth: 0,
     max_depth:,
   )
+}
+
+fn initial_width_samples(
+  support: fn(Float) -> DirectionalSupport,
+) -> List(WidthSample) {
+  [0.0, 36.0, 72.0, 108.0, 144.0, 180.0]
+  |> list.map(fn(angle) { WidthSample(angle:, support: support(angle)) })
 }
 
 /// Exercise the adaptive search against a cyclically ordered convex polygon.
@@ -564,6 +851,21 @@ fn convex_subpath_directional_support(
   }
 }
 
+fn segments_directional_extent(
+  segments: List(svg_path.Segment),
+  direction: svg_path.Point,
+) -> DirectionalExtent {
+  let loop = Loop(segments)
+  let angle = point_helpers.heading(direction)
+  let upper = loop_support(loop, angle)
+  let lower = loop_support(loop, angle +. 180.0)
+  DirectionalExtent(
+    lower_point: lower.point,
+    upper_point: upper.point,
+    width: upper.value +. lower.value,
+  )
+}
+
 fn minimum_width_search_loop(
   samples: List(WidthSample),
   intervals: List(WidthInterval),
@@ -600,10 +902,8 @@ fn minimum_width_search_loop(
             [], _ -> MinimumWidthExceeds(certified_lower_bound)
             _, True -> MinimumWidthUnresolved(certified_lower_bound, best_width)
             _, False -> {
-              let subdivided =
-                active
-                |> list.flat_map(subdivide_width_interval(_, support))
-              let added_samples = interval_samples(subdivided)
+              let #(subdivided, added_samples) =
+                subdivide_width_intervals(active, support)
               minimum_width_search_loop(
                 list.append(samples, added_samples),
                 subdivided,
@@ -621,6 +921,238 @@ fn minimum_width_search_loop(
   }
 }
 
+fn minimum_width_optimization_loop(
+  samples: List(WidthSample),
+  intervals: List(WidthInterval),
+  support: fn(Float) -> DirectionalSupport,
+  diameter: Float,
+  accuracy: Float,
+  depth depth: Int,
+  max_depth max_depth: Int,
+  discarded_lower_bound discarded_lower_bound: Option(Float),
+) -> WidthExtremum {
+  let best = best_width_sample(samples)
+  let WidthSample(angle: best_angle, support: best_support) = best
+  let DirectionalSupport(width: best_width, ..) = best_support
+  let bounds =
+    list.map(intervals, fn(interval) {
+      #(interval, width_interval_lower_bound(interval, diameter))
+    })
+  let interval_lower_bound =
+    bounds
+    |> list.map(fn(pair) { pair.1 })
+    |> minimum_float_option
+    |> minimum_option(discarded_lower_bound)
+  let inventory_lower_bound = support_inventory_minimum_width(samples)
+  let lower_bound = case interval_lower_bound {
+    None -> best_width
+    Some(bound) -> float.max(0.0, float.max(inventory_lower_bound, bound))
+  }
+  let converged = best_width -. lower_bound <=. accuracy
+  case converged || depth >= max_depth {
+    True ->
+      width_extremum(
+        best_angle,
+        best_support,
+        lower_bound,
+        best_width,
+        converged,
+      )
+    False -> {
+      let #(active, discarded) =
+        bounds
+        |> list.partition(fn(pair) { pair.1 <. best_width -. accuracy })
+      case active {
+        [] ->
+          width_extremum(
+            best_angle,
+            best_support,
+            float.max(0.0, best_width -. accuracy),
+            best_width,
+            True,
+          )
+        [_, ..] -> {
+          let newly_discarded =
+            discarded |> list.map(fn(pair) { pair.1 }) |> minimum_float_option
+          let discarded_lower_bound =
+            minimum_option(discarded_lower_bound, newly_discarded)
+          let #(subdivided, added_samples) =
+            active
+            |> list.map(fn(pair) { pair.0 })
+            |> subdivide_width_intervals(support)
+          minimum_width_optimization_loop(
+            list.append(samples, added_samples),
+            subdivided,
+            support,
+            diameter,
+            accuracy,
+            depth: depth + 1,
+            max_depth:,
+            discarded_lower_bound:,
+          )
+        }
+      }
+    }
+  }
+}
+
+fn maximum_width_optimization_loop(
+  samples: List(WidthSample),
+  intervals: List(WidthInterval),
+  support: fn(Float) -> DirectionalSupport,
+  diameter: Float,
+  accuracy: Float,
+  depth depth: Int,
+  max_depth max_depth: Int,
+  discarded_upper_bound discarded_upper_bound: Option(Float),
+) -> WidthExtremum {
+  let best = widest_sample(samples)
+  let WidthSample(angle: best_angle, support: best_support) = best
+  let DirectionalSupport(width: best_width, ..) = best_support
+  let bounds =
+    list.map(intervals, fn(interval) {
+      #(interval, width_interval_upper_bound(interval, diameter))
+    })
+  let upper_bound =
+    bounds
+    |> list.map(fn(pair) { pair.1 })
+    |> maximum_float_option
+    |> maximum_option(discarded_upper_bound)
+    |> option.unwrap(best_width)
+    |> float.max(best_width)
+  let converged = upper_bound -. best_width <=. accuracy
+  case converged || depth >= max_depth {
+    True ->
+      width_extremum(
+        best_angle,
+        best_support,
+        best_width,
+        upper_bound,
+        converged,
+      )
+    False -> {
+      let #(active, discarded) =
+        bounds
+        |> list.partition(fn(pair) { pair.1 >. best_width +. accuracy })
+      case active {
+        [] ->
+          width_extremum(
+            best_angle,
+            best_support,
+            best_width,
+            best_width +. accuracy,
+            True,
+          )
+        [_, ..] -> {
+          let newly_discarded =
+            discarded |> list.map(fn(pair) { pair.1 }) |> maximum_float_option
+          let discarded_upper_bound =
+            maximum_option(discarded_upper_bound, newly_discarded)
+          let #(subdivided, added_samples) =
+            active
+            |> list.map(fn(pair) { pair.0 })
+            |> subdivide_width_intervals(support)
+          maximum_width_optimization_loop(
+            list.append(samples, added_samples),
+            subdivided,
+            support,
+            diameter,
+            accuracy,
+            depth: depth + 1,
+            max_depth:,
+            discarded_upper_bound:,
+          )
+        }
+      }
+    }
+  }
+}
+
+fn width_interval_upper_bound(
+  interval: WidthInterval,
+  diameter: Float,
+) -> Float {
+  let WidthInterval(
+    from: WidthSample(
+      angle: from_angle,
+      support: DirectionalSupport(width: from_width, ..),
+    ),
+    to: WidthSample(
+      angle: to_angle,
+      support: DirectionalSupport(width: to_width, ..),
+    ),
+  ) = interval
+  let nearest_endpoint_angle = { to_angle -. from_angle } /. 2.0
+  let maximum_direction_distance =
+    2.0 *. trig.sin_degrees(nearest_endpoint_angle /. 2.0)
+  float.max(from_width, to_width) +. diameter *. maximum_direction_distance
+}
+
+fn width_extremum(
+  angle: Float,
+  support: DirectionalSupport,
+  lower_bound: Float,
+  upper_bound: Float,
+  converged: Bool,
+) -> WidthExtremum {
+  let DirectionalSupport(lower_point:, upper_point:, width:) = support
+  WidthExtremum(
+    direction: point_helpers.direction(degrees: angle),
+    lower_point:,
+    upper_point:,
+    center: svg_path.Point(
+      { lower_point.x +. upper_point.x } /. 2.0,
+      { lower_point.y +. upper_point.y } /. 2.0,
+    ),
+    width:,
+    lower_bound:,
+    upper_bound:,
+    converged:,
+  )
+}
+
+fn widest_sample(samples: List(WidthSample)) -> WidthSample {
+  let assert [first, ..rest] = samples
+  list.fold(rest, first, fn(best, candidate) {
+    let WidthSample(support: DirectionalSupport(width: best_width, ..), ..) =
+      best
+    let WidthSample(support: DirectionalSupport(width: width, ..), ..) =
+      candidate
+    case width >. best_width {
+      True -> candidate
+      False -> best
+    }
+  })
+}
+
+fn minimum_float_option(values: List(Float)) -> Option(Float) {
+  case values {
+    [] -> None
+    [first, ..rest] -> Some(list.fold(rest, first, float.min))
+  }
+}
+
+fn maximum_float_option(values: List(Float)) -> Option(Float) {
+  case values {
+    [] -> None
+    [first, ..rest] -> Some(list.fold(rest, first, float.max))
+  }
+}
+
+fn minimum_option(left: Option(Float), right: Option(Float)) -> Option(Float) {
+  case left, right {
+    None, other | other, None -> other
+    Some(a), Some(b) -> Some(float.min(a, b))
+  }
+}
+
+fn maximum_option(left: Option(Float), right: Option(Float)) -> Option(Float) {
+  case left, right {
+    None, other | other, None -> other
+    Some(a), Some(b) -> Some(float.max(a, b))
+  }
+}
+
 fn intervals_from_samples(samples: List(WidthSample)) -> List(WidthInterval) {
   case samples {
     [first, second, ..rest] -> [
@@ -631,29 +1163,34 @@ fn intervals_from_samples(samples: List(WidthSample)) -> List(WidthInterval) {
   }
 }
 
+fn subdivide_width_intervals(
+  intervals: List(WidthInterval),
+  support: fn(Float) -> DirectionalSupport,
+) -> #(List(WidthInterval), List(WidthSample)) {
+  intervals
+  |> list.fold(#([], []), fn(accumulated, interval) {
+    let #(all_intervals, all_samples) = accumulated
+    let #(subdivided, samples) = subdivide_width_interval(interval, support)
+    #(list.append(subdivided, all_intervals), list.append(samples, all_samples))
+  })
+}
+
 fn subdivide_width_interval(
   interval: WidthInterval,
   support: fn(Float) -> DirectionalSupport,
-) -> List(WidthInterval) {
+) -> #(List(WidthInterval), List(WidthSample)) {
   let WidthInterval(
-    from: WidthSample(angle: from, ..),
-    to: WidthSample(angle: to, ..),
+    from: WidthSample(angle: from_angle, ..) as from,
+    to: WidthSample(angle: to_angle, ..) as to,
   ) = interval
-  let step = { to -. from } /. 5.0
-  [0.0, 1.0, 2.0, 3.0, 4.0, 5.0]
-  |> list.map(fn(index) {
-    let angle = from +. step *. index
-    WidthSample(angle:, support: support(angle))
-  })
-  |> intervals_from_samples
-}
-
-fn interval_samples(intervals: List(WidthInterval)) -> List(WidthSample) {
-  intervals
-  |> list.flat_map(fn(interval) {
-    let WidthInterval(from:, to:) = interval
-    [from, to]
-  })
+  let step = { to_angle -. from_angle } /. 5.0
+  let interior =
+    [1.0, 2.0, 3.0, 4.0]
+    |> list.map(fn(index) {
+      let angle = from_angle +. step *. index
+      WidthSample(angle:, support: support(angle))
+    })
+  #(intervals_from_samples([from, ..list.append(interior, [to])]), interior)
 }
 
 fn width_interval_lower_bound(
