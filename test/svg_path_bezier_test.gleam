@@ -186,7 +186,8 @@ pub fn fit_cubic_with_endpoint_tangents_recovers_exact_cubic_test() {
     control2: original_control2,
     end: original_end,
   ) = original
-  let bezier.CubicFitReport(root_sum_square:, root_mean_square:, max:) = error
+  let bezier.CubicFitReport(root_sum_square:, root_mean_square:, max:, ..) =
+    error
 
   assert point_near(start, original_start)
   assert point_near(control1, original_control1)
@@ -195,6 +196,8 @@ pub fn fit_cubic_with_endpoint_tangents_recovers_exact_cubic_test() {
   assert near(root_sum_square, 0.0)
   assert near(root_mean_square, 0.0)
   assert near(max, 0.0)
+  assert error.start_handle == bezier.PositiveHandle
+  assert error.end_handle == bezier.PositiveHandle
 }
 
 pub fn fit_cubic_with_endpoint_tangents_uses_forward_end_tangent_test() {
@@ -223,10 +226,46 @@ pub fn fit_cubic_with_endpoint_tangents_uses_forward_end_tangent_test() {
   )
 }
 
+pub fn fit_cubic_with_endpoint_tangents_accepts_small_well_conditioned_equations_test() {
+  let original =
+    bezier.CubicBezierData(
+      start: bezier.BezierPoint(0.0, 0.0),
+      control1: bezier.BezierPoint(2.0, 3.0),
+      control2: bezier.BezierPoint(7.0, -2.0),
+      end: bezier.BezierPoint(10.0, 1.0),
+    )
+  let assert Ok(#(fit, report)) =
+    bezier.fit_cubic_with_endpoint_tangents(
+      start: bezier.bezier_start(original),
+      end: bezier.bezier_end(original),
+      start_tangent: bezier.bezier_derivative(original, at: 0.0),
+      end_tangent: bezier.bezier_derivative(original, at: 1.0),
+      samples: [
+        #(0.0001, bezier.bezier_point(original, at: 0.0001)),
+        #(0.0002, bezier.bezier_point(original, at: 0.0002)),
+      ],
+    )
+  let assert bezier.CubicBezierData(
+    control1: fit_control1,
+    control2: fit_control2,
+    ..,
+  ) = fit
+  let bezier.CubicBezierData(
+    control1: original_control1,
+    control2: original_control2,
+    ..,
+  ) = original
+
+  assert point_near(fit_control1, original_control1)
+  assert point_near(fit_control2, original_control2)
+  assert report.start_handle == bezier.PositiveHandle
+  assert report.end_handle == bezier.PositiveHandle
+}
+
 pub fn fit_cubic_with_endpoint_tangents_clamps_negative_handles_test() {
   let start = bezier.BezierPoint(0.0, 0.0)
   let end = bezier.BezierPoint(1.0, 0.0)
-  let assert Ok(#(fit, _)) =
+  let assert Ok(#(fit, report)) =
     bezier.fit_cubic_with_endpoint_tangents(
       start:,
       end:,
@@ -242,6 +281,7 @@ pub fn fit_cubic_with_endpoint_tangents_clamps_negative_handles_test() {
 
   assert control1.x >=. start.x
   assert control2.x <=. end.x
+  assert report.start_handle == bezier.CollapsedHandle
 }
 
 pub fn fit_cubic_with_endpoint_tangents_rejects_degenerate_tangent_test() {
@@ -291,7 +331,8 @@ pub fn fit_cubic_with_endpoints_recovers_exact_cubic_test() {
     control2: original_control2,
     end: original_end,
   ) = original
-  let bezier.CubicFitReport(root_sum_square:, root_mean_square:, max:) = error
+  let bezier.CubicFitReport(root_sum_square:, root_mean_square:, max:, ..) =
+    error
 
   assert point_near(start, original_start)
   assert point_near(control1, original_control1)
@@ -300,6 +341,8 @@ pub fn fit_cubic_with_endpoints_recovers_exact_cubic_test() {
   assert near(root_sum_square, 0.0)
   assert near(root_mean_square, 0.0)
   assert near(max, 0.0)
+  assert error.start_handle == bezier.UnconstrainedHandle
+  assert error.end_handle == bezier.UnconstrainedHandle
 }
 
 pub fn fit_cubic_with_endpoints_fits_noisy_samples_test() {
@@ -321,13 +364,48 @@ pub fn fit_cubic_with_endpoints_fits_noisy_samples_test() {
         #(0.9, add_point(bezier.bezier_point(original, at: 0.9), -1.0, -1.0)),
       ],
     )
-  let bezier.CubicFitReport(root_sum_square:, root_mean_square:, max:) = error
+  let bezier.CubicFitReport(root_sum_square:, root_mean_square:, max:, ..) =
+    error
 
   assert point_near(bezier.bezier_start(fit), bezier.bezier_start(original))
   assert point_near(bezier.bezier_end(fit), bezier.bezier_end(original))
   assert root_sum_square >. 0.0
   assert root_mean_square >. 0.0
   assert max >. 0.0
+}
+
+pub fn fit_cubic_with_endpoints_accepts_small_well_conditioned_equations_test() {
+  let original =
+    bezier.CubicBezierData(
+      start: bezier.BezierPoint(0.0, 0.0),
+      control1: bezier.BezierPoint(2.0, 3.0),
+      control2: bezier.BezierPoint(7.0, -2.0),
+      end: bezier.BezierPoint(10.0, 1.0),
+    )
+  let assert Ok(#(fit, report)) =
+    bezier.fit_cubic_with_endpoints(
+      start: bezier.bezier_start(original),
+      end: bezier.bezier_end(original),
+      samples: [
+        #(0.0001, bezier.bezier_point(original, at: 0.0001)),
+        #(0.0002, bezier.bezier_point(original, at: 0.0002)),
+      ],
+    )
+  let assert bezier.CubicBezierData(
+    control1: fit_control1,
+    control2: fit_control2,
+    ..,
+  ) = fit
+  let bezier.CubicBezierData(
+    control1: original_control1,
+    control2: original_control2,
+    ..,
+  ) = original
+
+  assert point_near(fit_control1, original_control1)
+  assert point_near(fit_control2, original_control2)
+  assert report.start_handle == bezier.UnconstrainedHandle
+  assert report.end_handle == bezier.UnconstrainedHandle
 }
 
 pub fn fit_cubic_with_endpoints_rejects_underdetermined_samples_test() {

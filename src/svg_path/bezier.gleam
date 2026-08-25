@@ -42,6 +42,8 @@ import svg_path/root
 
 const root_tolerance = 0.000000001
 
+const fit_conditioning_relative_tolerance = 0.000000000001
+
 /// A lightweight point used by the Bezier math helpers.
 pub type BezierPoint {
   BezierPoint(x: Float, y: Float)
@@ -50,6 +52,18 @@ pub type BezierPoint {
 /// An axis-aligned bounding box for a Bezier curve.
 pub type BoundingBox {
   BoundingBox(min: BezierPoint, max: BezierPoint)
+}
+
+/// Constraint state of one fitted cubic control handle.
+pub type CubicFitHandleState {
+  /// The fit did not constrain this handle to a direction.
+  UnconstrainedHandle
+
+  /// The direction-constrained handle has positive length.
+  PositiveHandle
+
+  /// The nonnegative fit selected zero handle length.
+  CollapsedHandle
 }
 
 /// Error measurements for a fitted cubic.
@@ -61,6 +75,10 @@ pub type CubicFitReport {
     root_mean_square: Float,
     /// The largest sample distance.
     max: Float,
+    /// Constraint state of the handle adjacent to the curve start.
+    start_handle: CubicFitHandleState,
+    /// Constraint state of the handle adjacent to the curve end.
+    end_handle: CubicFitHandleState,
   )
 }
 
@@ -345,7 +363,14 @@ pub fn fit_cubic_with_endpoint_tangents(
     )
   let error = cubic_fit_error(samples, curve)
 
-  Ok(#(curve, error))
+  Ok(#(
+    curve,
+    CubicFitReport(
+      ..error,
+      start_handle: handle_state(a),
+      end_handle: handle_state(b),
+    ),
+  ))
 }
 
 /// Fit a cubic with fixed endpoints and no tangent constraints.
@@ -374,7 +399,21 @@ pub fn fit_cubic_with_endpoints(
   let curve = CubicBezierData(start:, control1:, control2:, end:)
   let error = cubic_fit_error(samples, curve)
 
-  Ok(#(curve, error))
+  Ok(#(
+    curve,
+    CubicFitReport(
+      ..error,
+      start_handle: UnconstrainedHandle,
+      end_handle: UnconstrainedHandle,
+    ),
+  ))
+}
+
+fn handle_state(length: Float) -> CubicFitHandleState {
+  case length == 0.0 {
+    True -> CollapsedHandle
+    False -> PositiveHandle
+  }
 }
 
 /// Split a Bezier curve at parameter `t`.
@@ -654,13 +693,7 @@ fn solve_cubic_fit_equations(
   case count == 0 {
     True -> Error(UnderdeterminedCubicFit)
     False ->
-      solve_nonnegative_cubic_fit_equations(
-        ata00,
-        ata01,
-        ata11,
-        atb0,
-        atb1,
-      )
+      solve_nonnegative_cubic_fit_equations(ata00, ata01, ata11, atb0, atb1)
   }
 }
 
@@ -682,13 +715,12 @@ fn solve_nonnegative_cubic_fit_equations(
     })
     |> result.unwrap([])
 
-  let candidates =
-    [
-      #(0.0, 0.0),
-      #(nonnegative_axis_fit(ata00, atb0), 0.0),
-      #(0.0, nonnegative_axis_fit(ata11, atb1)),
-      ..unconstrained
-    ]
+  let candidates = [
+    #(0.0, 0.0),
+    #(nonnegative_axis_fit(ata00, atb0), 0.0),
+    #(0.0, nonnegative_axis_fit(ata11, atb1)),
+    ..unconstrained
+  ]
 
   case best_cubic_fit_candidate(candidates, ata00, ata01, ata11, atb0, atb1) {
     Some(candidate) -> Ok(candidate)
@@ -704,7 +736,7 @@ fn unconstrained_cubic_fit_equations(
   atb1: Float,
 ) -> Result(#(Float, Float), Error) {
   let determinant = ata00 *. ata11 -. ata01 *. ata01
-  case float.absolute_value(determinant) <=. root_tolerance {
+  case normal_equations_are_singular(ata00, ata01, ata11) {
     True -> Error(UnderdeterminedCubicFit)
     False ->
       Ok(#(
@@ -715,10 +747,22 @@ fn unconstrained_cubic_fit_equations(
 }
 
 fn nonnegative_axis_fit(ata: Float, atb: Float) -> Float {
-  case ata <=. root_tolerance {
+  case ata <=. 0.0 {
     True -> 0.0
     False -> float.max(0.0, atb /. ata)
   }
+}
+
+fn normal_equations_are_singular(
+  ata00: Float,
+  ata01: Float,
+  ata11: Float,
+) -> Bool {
+  let determinant = ata00 *. ata11 -. ata01 *. ata01
+  let scale = float.absolute_value(ata00 *. ata11)
+  scale <=. 0.0
+  || float.absolute_value(determinant)
+  <=. fit_conditioning_relative_tolerance *. scale
 }
 
 fn best_cubic_fit_candidate(
@@ -804,11 +848,22 @@ fn cubic_fit_candidate_score(
   atb1: Float,
 ) -> Float {
   let #(a, b) = candidate
-  ata00 *. a *. a
-  +. 2.0 *. ata01 *. a *. b
-  +. ata11 *. b *. b
-  -. 2.0 *. atb0 *. a
-  -. 2.0 *. atb1 *. b
+  ata00
+  *. a
+  *. a
+  +. 2.0
+  *. ata01
+  *. a
+  *. b
+  +. ata11
+  *. b
+  *. b
+  -. 2.0
+  *. atb0
+  *. a
+  -. 2.0
+  *. atb1
+  *. b
 }
 
 fn cubic_endpoint_fit_normal_equations(
@@ -862,7 +917,7 @@ fn solve_cubic_endpoint_fit_equations(
     True -> Error(UnderdeterminedCubicFit)
     False -> {
       let determinant = ata00 *. ata11 -. ata01 *. ata01
-      case float.absolute_value(determinant) <=. root_tolerance {
+      case normal_equations_are_singular(ata00, ata01, ata11) {
         True -> Error(UnderdeterminedCubicFit)
         False ->
           Ok(#(
@@ -895,13 +950,21 @@ fn cubic_fit_error(
 
   case count == 0 {
     True ->
-      CubicFitReport(root_sum_square: 0.0, root_mean_square: 0.0, max: 0.0)
+      CubicFitReport(
+        root_sum_square: 0.0,
+        root_mean_square: 0.0,
+        max: 0.0,
+        start_handle: UnconstrainedHandle,
+        end_handle: UnconstrainedHandle,
+      )
     False -> {
       let root_sum_square = sqrt(sum_squared)
       CubicFitReport(
         root_sum_square:,
         root_mean_square: sqrt(sum_squared /. int.to_float(count)),
         max: sqrt(max_squared),
+        start_handle: UnconstrainedHandle,
+        end_handle: UnconstrainedHandle,
       )
     }
   }

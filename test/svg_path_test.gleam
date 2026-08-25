@@ -525,7 +525,7 @@ pub fn fit_cubic_with_endpoint_tangents_returns_root_segment_test() {
     control2: original_control2,
     end: original_end,
   ) = original
-  let svg_path.CubicFitReport(root_sum_square:, root_mean_square:, max:) =
+  let svg_path.CubicFitReport(root_sum_square:, root_mean_square:, max:, ..) =
     report
 
   assert point_near(start, original_start)

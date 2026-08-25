@@ -99,7 +99,19 @@ pub type BoundingBox {
   BoundingBox(min: Point, max: Point)
 }
 
-/// Error measurements for a fitted cubic Bezier segment.
+/// Constraint state of one fitted cubic control handle.
+pub type CubicFitHandleState {
+  /// The fit did not constrain this handle to a direction.
+  UnconstrainedHandle
+
+  /// The direction-constrained handle has positive length.
+  PositiveHandle
+
+  /// The nonnegative fit selected zero handle length.
+  CollapsedHandle
+}
+
+/// Error measurements and active handle constraints for a fitted cubic.
 pub type CubicFitReport {
   CubicFitReport(
     /// `sqrt(sum(distance(sample, fitted)^2))`.
@@ -108,6 +120,10 @@ pub type CubicFitReport {
     root_mean_square: Float,
     /// The largest sample distance.
     max: Float,
+    /// Constraint state of the handle adjacent to the segment start.
+    start_handle: CubicFitHandleState,
+    /// Constraint state of the handle adjacent to the segment end.
+    end_handle: CubicFitHandleState,
   )
 }
 
@@ -9303,7 +9319,19 @@ fn from_bezier_fit_report(report: bezier.CubicFitReport) -> CubicFitReport {
     root_sum_square: report.root_sum_square,
     root_mean_square: report.root_mean_square,
     max: report.max,
+    start_handle: from_bezier_fit_handle_state(report.start_handle),
+    end_handle: from_bezier_fit_handle_state(report.end_handle),
   )
+}
+
+fn from_bezier_fit_handle_state(
+  state: bezier.CubicFitHandleState,
+) -> CubicFitHandleState {
+  case state {
+    bezier.UnconstrainedHandle -> UnconstrainedHandle
+    bezier.PositiveHandle -> PositiveHandle
+    bezier.CollapsedHandle -> CollapsedHandle
+  }
 }
 
 fn from_bezier_error(error: bezier.Error) -> Error {

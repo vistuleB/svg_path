@@ -8384,9 +8384,10 @@ fn fit_offset_cubic_data_with_endpoint_policies(
         )
         |> result.map_error(cubic_fit_error),
       )
-      let #(curve, _) = fit
+      let #(curve, report) = fit
       recover_collapsed_direction_fit(
         curve,
+        report,
         start:,
         end:,
         start_direction:,
@@ -8460,50 +8461,37 @@ fn fit_offset_cubic_data_with_endpoint_policies(
 
 fn recover_collapsed_direction_fit(
   curve: bezier.BezierData,
+  report: bezier.CubicFitReport,
   start start: bezier.BezierPoint,
   end end: bezier.BezierPoint,
   start_direction start_direction: svg_path.Point,
   end_direction end_direction: svg_path.Point,
   samples samples: List(#(Float, bezier.BezierPoint)),
 ) -> Result(bezier.BezierData, Error) {
-  case curve {
-    bezier.CubicBezierData(control1:, control2:, ..) -> {
-      let start_collapsed = bezier_points_equal(start, control1)
-      let end_collapsed = bezier_points_equal(end, control2)
-      case start_collapsed, end_collapsed {
-        True, True -> Error(NonFinite)
-        True, False ->
-          fit_offset_cubic_data_with_endpoint_policies(
-            start:,
-            end:,
-            start_policy: FitPositionAndDirectionWithCollapsedHandle(
-              start_direction,
-            ),
-            end_policy: FitPositionAndDirection(end_direction),
-            samples:,
-          )
-        False, True ->
-          fit_offset_cubic_data_with_endpoint_policies(
-            start:,
-            end:,
-            start_policy: FitPositionAndDirection(start_direction),
-            end_policy: FitPositionAndDirectionWithCollapsedHandle(
-              end_direction,
-            ),
-            samples:,
-          )
-        False, False -> Ok(curve)
-      }
-    }
-    _ -> Ok(curve)
+  case report.start_handle, report.end_handle {
+    bezier.CollapsedHandle, bezier.CollapsedHandle -> Error(NonFinite)
+    bezier.CollapsedHandle, bezier.PositiveHandle ->
+      fit_offset_cubic_data_with_endpoint_policies(
+        start:,
+        end:,
+        start_policy: FitPositionAndDirectionWithCollapsedHandle(
+          start_direction,
+        ),
+        end_policy: FitPositionAndDirection(end_direction),
+        samples:,
+      )
+    bezier.PositiveHandle, bezier.CollapsedHandle ->
+      fit_offset_cubic_data_with_endpoint_policies(
+        start:,
+        end:,
+        start_policy: FitPositionAndDirection(start_direction),
+        end_policy: FitPositionAndDirectionWithCollapsedHandle(end_direction),
+        samples:,
+      )
+    bezier.PositiveHandle, bezier.PositiveHandle -> Ok(curve)
+    bezier.UnconstrainedHandle, _ | _, bezier.UnconstrainedHandle ->
+      Error(NonFinite)
   }
-}
-
-fn bezier_points_equal(
-  left: bezier.BezierPoint,
-  right: bezier.BezierPoint,
-) -> Bool {
-  left.x == right.x && left.y == right.y
 }
 
 fn fit_offset_cubic_both_stalled(

@@ -98,7 +98,7 @@ fn render_case(fit_case: FitCase, index: Int) -> svg.ThingsToDraw {
     drawing_box(start, end, start_tangent, end_tangent, samples, fit, original)
   let placement = panel_placement(index, box)
   let origin = panel_origin(index)
-  let bezier.CubicFitReport(root_sum_square:, root_mean_square: _, max: _) =
+  let bezier.CubicFitReport(root_sum_square:, root_mean_square: _, max: _, ..) =
     error
   let taxicab_diameter = box_taxicab_diameter(box)
 
