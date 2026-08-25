@@ -2,6 +2,7 @@ import gleam/dynamic.{type Dynamic}
 import gleam/float
 import gleam/int
 import gleam/list
+import gleam/option.{Some}
 import gleam/string
 import svg_path
 import svg_path/arrangement as arrangement_graph
@@ -23,6 +24,51 @@ const stalled_arc_turn_radius = 40.0
 const stalled_arc_turn_distance = 39.999
 
 const stalled_arc_turn_threshold = 0.01
+
+pub fn reversal_boundaries_store_endpoint_curvature_test() {
+  let segment =
+    svg_path.CubicBezier(
+      start: svg_path.Point(0.0, 0.0),
+      control1: svg_path.Point(1.0, 0.0),
+      control2: svg_path.Point(1.0, 0.0),
+      end: svg_path.Point(1.0, 1.0),
+    )
+  let assert Ok(source) =
+    svg_path.subpath_with([segment], policy: svg_path.Strict)
+  let distance = -0.27
+  let assert Ok(portions) =
+    offset.internal_offset_source_trace(
+      source,
+      distance:,
+      options: offset.default_options(),
+    )
+  let reversal_curvatures =
+    portions
+    |> list.flat_map(fn(portion) {
+      let offset.OffsetSourceTracePortion(pieces:, ..) = portion
+      pieces
+      |> list.flat_map(fn(piece) {
+        case piece {
+          offset.OffsetSourceTraceDRefined(start_boundary:, end_boundary:, ..) -> [
+            start_boundary,
+            end_boundary,
+          ]
+          offset.OffsetSourceTraceStalled(..) -> []
+        }
+      })
+    })
+    |> list.filter_map(fn(boundary) {
+      case boundary {
+        offset.ReversalBoundary(Some(curvature)) -> Ok(curvature)
+        _ -> Error(Nil)
+      }
+    })
+
+  assert reversal_curvatures != []
+  assert list.all(reversal_curvatures, fn(value) {
+    value != 0.0 && float.absolute_value(1.0 /. value -. distance) <. 0.00001
+  })
+}
 
 pub fn endpoint_near_reversal_is_absorbed_into_stalled_piece_test() {
   let segment =

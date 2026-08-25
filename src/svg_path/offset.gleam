@@ -346,6 +346,8 @@ pub type OffsetSourceTracePiece {
     source_from: Float,
     source_to: Float,
     segment: svg_path.Segment,
+    start_boundary: BoundaryKind,
+    end_boundary: BoundaryKind,
     start_is_reversal: Bool,
     end_is_reversal: Bool,
   )
@@ -444,7 +446,7 @@ type SplitPiece {
 @internal
 pub type BoundaryKind {
   Ordinary
-  ReversalBoundary
+  ReversalBoundary(right_normal_curvature: Option(Float))
   Inflection
   NonReversalBoundaryTouch
 }
@@ -5408,6 +5410,8 @@ fn offset_source_trace_d_refined(
           source_from: prepared_from,
           source_to: prepared_to,
           segment:,
+          start_boundary:,
+          end_boundary:,
           start_is_reversal: boundary_is_reversal(start_boundary),
           end_is_reversal: boundary_is_reversal(end_boundary),
         ),
@@ -5609,13 +5613,13 @@ fn mark_adjacent_classified_segment_cross_reversal(
             CNotStalledSegment(
               ..left_not_stalled,
               start_boundary: left_start_boundary,
-              end_boundary: ReversalBoundary,
+              end_boundary: reversal_boundary(left_segment, 1.0),
             ),
           ),
           BNotStalled(
             CNotStalledSegment(
               ..right_not_stalled,
-              start_boundary: ReversalBoundary,
+              start_boundary: reversal_boundary(right_segment, 0.0),
               end_boundary: right_end_boundary,
             ),
           ),
@@ -5988,14 +5992,20 @@ fn set_offset_segment_source_start_reversal(
   offset: FUnhealedOffsetSegment,
 ) -> FUnhealedOffsetSegment {
   case offset.source {
-    OffsetFromJoinFree(source) ->
+    OffsetFromJoinFree(source) -> {
+      let boundary =
+        ReversalBoundary(e_join_free_source_endpoint_curvature(
+          source,
+          SegmentStart,
+        ))
       FUnhealedOffsetSegment(
         ..offset,
         source: OffsetFromJoinFree(set_join_free_segment_start_boundary(
           source,
-          ReversalBoundary,
+          boundary,
         )),
       )
+    }
     OffsetFromStalledRun(..) -> offset
   }
 }
@@ -6004,14 +6014,20 @@ fn set_offset_segment_source_end_reversal(
   offset: FUnhealedOffsetSegment,
 ) -> FUnhealedOffsetSegment {
   case offset.source {
-    OffsetFromJoinFree(source) ->
+    OffsetFromJoinFree(source) -> {
+      let boundary =
+        ReversalBoundary(e_join_free_source_endpoint_curvature(
+          source,
+          SegmentEnd,
+        ))
       FUnhealedOffsetSegment(
         ..offset,
         source: OffsetFromJoinFree(set_join_free_segment_end_boundary(
           source,
-          ReversalBoundary,
+          boundary,
         )),
       )
+    }
     OffsetFromStalledRun(..) -> offset
   }
 }
@@ -6465,6 +6481,7 @@ fn classify_curvature_boundaries(
   classify_curvature_boundaries_loop(
     parameters,
     zones,
+    segment,
     previous_zone: None,
     boundaries: [],
   )
@@ -6493,6 +6510,7 @@ fn curvature_interval_zones(
 fn classify_curvature_boundaries_loop(
   parameters: List(CurvatureSplitParameter),
   zones: List(OffsetCurvatureZone),
+  segment: svg_path.Segment,
   previous_zone previous_zone: Option(OffsetCurvatureZone),
   boundaries boundaries: List(CurvatureBoundary),
 ) -> List(CurvatureBoundary) {
@@ -6504,13 +6522,20 @@ fn classify_curvature_boundaries_loop(
         [zone, ..] -> Some(zone)
         [] -> None
       }
-      let behavior = curvature_boundary_behavior(kind, previous_zone, next_zone)
+      let behavior =
+        curvature_boundary_behavior(
+          kind,
+          previous_zone,
+          next_zone,
+          reversal_curvature: source_endpoint_curvature(segment, t),
+        )
       classify_curvature_boundaries_loop(
         rest,
         case zones {
           [_, ..remaining] -> remaining
           [] -> []
         },
+        segment,
         previous_zone: next_zone,
         boundaries: [CurvatureBoundary(t:, boundary: behavior), ..boundaries],
       )
@@ -6522,6 +6547,7 @@ fn curvature_boundary_behavior(
   kind: CurvatureSplitKind,
   previous_zone: Option(OffsetCurvatureZone),
   next_zone: Option(OffsetCurvatureZone),
+  reversal_curvature reversal_curvature: Option(Float),
 ) -> BoundaryKind {
   case kind {
     InflectionSplit -> Inflection
@@ -6529,14 +6555,14 @@ fn curvature_boundary_behavior(
       case
         offset_curvature_zones_form_reversal_boundary(previous_zone, next_zone)
       {
-        True -> ReversalBoundary
+        True -> ReversalBoundary(reversal_curvature)
         False -> NonReversalBoundaryTouch
       }
     OrdinarySplit ->
       case
         offset_curvature_zones_form_reversal_boundary(previous_zone, next_zone)
       {
-        True -> ReversalBoundary
+        True -> ReversalBoundary(reversal_curvature)
         False -> Ordinary
       }
   }
@@ -6599,8 +6625,22 @@ fn offset_curvature_zones_form_reversal_boundary(
 
 fn boundary_is_reversal(boundary: BoundaryKind) -> Bool {
   case boundary {
-    ReversalBoundary -> True
+    ReversalBoundary(_) -> True
     _ -> False
+  }
+}
+
+fn reversal_boundary(segment: svg_path.Segment, t: Float) -> BoundaryKind {
+  ReversalBoundary(source_endpoint_curvature(segment, t))
+}
+
+fn source_endpoint_curvature(
+  segment: svg_path.Segment,
+  t: Float,
+) -> Option(Float) {
+  case curvature.segment_right_normal_curvature(segment, at: t) {
+    Ok(value) -> Some(value)
+    Error(_) -> None
   }
 }
 
@@ -8085,17 +8125,12 @@ fn d_refined_endpoint_reaches_offset_radius(
   distance: Float,
   endpoint: SegmentEndpoint,
 ) -> Bool {
-  let DRefinedSegment(
-    prepared: APreparedSegment(segment: prepared_segment, ..),
-    prepared_from:,
-    prepared_to:,
-    ..,
-  ) = source
-  let t = case endpoint {
-    SegmentStart -> prepared_from
-    SegmentEnd -> prepared_to
+  let DRefinedSegment(start_boundary:, end_boundary:, ..) = source
+  let boundary = case endpoint {
+    SegmentStart -> start_boundary
+    SegmentEnd -> end_boundary
   }
-  prepared_parameter_reaches_offset_radius(prepared_segment, t, distance)
+  boundary_reaches_offset_radius(boundary, distance)
 }
 
 fn e_join_free_endpoint_reaches_offset_radius(
@@ -8103,6 +8138,33 @@ fn e_join_free_endpoint_reaches_offset_radius(
   distance: Float,
   endpoint: SegmentEndpoint,
 ) -> Bool {
+  let EJoinFreeSegment(start_boundary:, end_boundary:, ..) = source
+  let boundary = case endpoint {
+    SegmentStart -> start_boundary
+    SegmentEnd -> end_boundary
+  }
+  boundary_reaches_offset_radius(boundary, distance)
+}
+
+fn boundary_reaches_offset_radius(
+  boundary: BoundaryKind,
+  distance: Float,
+) -> Bool {
+  case boundary {
+    ReversalBoundary(Some(value)) if value != 0.0 -> {
+      let radius = 1.0 /. value
+      number.is_finite(radius)
+      && float.absolute_value(radius -. distance)
+      <=. curvature_parameter_tolerance
+    }
+    _ -> False
+  }
+}
+
+fn e_join_free_source_endpoint_curvature(
+  source: EJoinFreeSegment,
+  endpoint: SegmentEndpoint,
+) -> Option(Float) {
   let EJoinFreeSegment(
     refined: DRefinedSegment(
       prepared: APreparedSegment(segment: prepared_segment, ..),
@@ -8120,55 +8182,7 @@ fn e_join_free_endpoint_reaches_offset_radius(
   }
   let prepared_t =
     prepared_from +. { prepared_to -. prepared_from } *. refined_t
-  prepared_parameter_reaches_offset_radius(
-    prepared_segment,
-    prepared_t,
-    distance,
-  )
-}
-
-fn prepared_parameter_reaches_offset_radius(
-  segment: svg_path.Segment,
-  t: Float,
-  distance: Float,
-) -> Bool {
-  let residual = radius_residual(segment, t, distance)
-  case residual {
-    Ok(value) ->
-      case float.absolute_value(value) <=. curvature_parameter_tolerance {
-        True -> True
-        False -> parameter_brackets_offset_radius(segment, t, distance)
-      }
-    Error(_) -> parameter_brackets_offset_radius(segment, t, distance)
-  }
-}
-
-fn parameter_brackets_offset_radius(
-  segment: svg_path.Segment,
-  t: Float,
-  distance: Float,
-) -> Bool {
-  let delta = curvature_parameter_tolerance *. 2.0
-  case t >. delta && t <. 1.0 -. delta {
-    False -> False
-    True ->
-      case
-        radius_residual(segment, t -. delta, distance),
-        radius_residual(segment, t +. delta, distance)
-      {
-        Ok(left), Ok(right) -> left *. right <=. 0.0
-        _, _ -> False
-      }
-  }
-}
-
-fn radius_residual(
-  segment: svg_path.Segment,
-  t: Float,
-  distance: Float,
-) -> Result(Float, Nil) {
-  curvature.segment_right_normal_radius(segment, at: t)
-  |> result.map(fn(radius) { radius -. distance })
+  source_endpoint_curvature(prepared_segment, prepared_t)
 }
 
 fn reject_bezier_double_radius_reversal_e_segment(
