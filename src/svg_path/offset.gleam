@@ -4628,34 +4628,26 @@ fn band_join_region(
   distance_b distance_b: Float,
   options options: Options,
 ) -> Result(Option(svg_path.Subpath), Error) {
-  use left_a <- result.try(join_offset_segment_end(left, distance_a, options))
-  use right_a <- result.try(join_offset_segment_start(
-    right,
-    distance_a,
-    options,
-  ))
-  use left_b <- result.try(join_offset_segment_end(left, distance_b, options))
-  use right_b <- result.try(join_offset_segment_start(
-    right,
-    distance_b,
-    options,
-  ))
+  use left_a <- result.try(join_offset_segment_end(left, distance_a))
+  use right_a <- result.try(join_offset_segment_start(right, distance_a))
+  use left_b <- result.try(join_offset_segment_end(left, distance_b))
+  use right_b <- result.try(join_offset_segment_start(right, distance_b))
   use join_a <- result.try(parametric_join_segments(
-    f_unhealed_to_g_healed_offset_segment(left_a),
-    f_unhealed_to_g_healed_offset_segment(right_a),
+    left_a,
+    right_a,
     distance_a,
     options.join,
   ))
   use join_b <- result.try(parametric_join_segments(
-    f_unhealed_to_g_healed_offset_segment(left_b),
-    f_unhealed_to_g_healed_offset_segment(right_b),
+    left_b,
+    right_b,
     distance_b,
     options.join,
   ))
-  use left_a_end <- result.try(offset_segment_end(left_a))
-  use right_a_start <- result.try(offset_segment_start(right_a))
-  use left_b_end <- result.try(offset_segment_end(left_b))
-  use right_b_start <- result.try(offset_segment_start(right_b))
+  let left_a_end = svg_path.segment_end(left_a.segment)
+  let right_a_start = svg_path.segment_start(right_a.segment)
+  let left_b_end = svg_path.segment_end(left_b.segment)
+  let right_b_start = svg_path.segment_start(right_b.segment)
   let segments =
     list.append(
       join_a,
@@ -4690,42 +4682,45 @@ fn band_join_region(
 fn join_offset_segment_start(
   segment: svg_path.Segment,
   distance: Float,
-  options: Options,
-) -> Result(FUnhealedOffsetSegment, Error) {
-  use offsets <- result.try(offset_source_segment_with_builder(
-    segment,
-    distance,
-    options,
-  ))
-  case offsets {
-    [] -> Error(NonFinite)
-    [first, ..] -> Ok(first)
-  }
+) -> Result(GHealedOffsetSegment, Error) {
+  join_offset_segment_endpoint(segment, distance, endpoint: SegmentStart)
 }
 
 fn join_offset_segment_end(
   segment: svg_path.Segment,
   distance: Float,
-  options: Options,
-) -> Result(FUnhealedOffsetSegment, Error) {
-  use offsets <- result.try(offset_source_segment_with_builder(
-    segment,
+) -> Result(GHealedOffsetSegment, Error) {
+  join_offset_segment_endpoint(segment, distance, endpoint: SegmentEnd)
+}
+
+fn join_offset_segment_endpoint(
+  segment: svg_path.Segment,
+  distance: Float,
+  endpoint endpoint: SegmentEndpoint,
+) -> Result(GHealedOffsetSegment, Error) {
+  let t = case endpoint {
+    SegmentStart -> 0.0
+    SegmentEnd -> 1.0
+  }
+  use point <- result.try(offset_point(segment, t:, distance:))
+  let source = whole_e_join_free_source(segment)
+  let assert OffsetFromJoinFree(join_free) = source
+  use policy <- result.try(e_join_free_endpoint_policy(
+    join_free,
     distance,
-    options,
+    endpoint:,
   ))
-  offsets |> list.last |> result.map_error(fn(_) { NonFinite })
-}
-
-fn offset_segment_start(
-  offset: FUnhealedOffsetSegment,
-) -> Result(svg_path.Point, Error) {
-  Ok(svg_path.segment_start(offset.segment))
-}
-
-fn offset_segment_end(
-  offset: FUnhealedOffsetSegment,
-) -> Result(svg_path.Point, Error) {
-  Ok(svg_path.segment_end(offset.segment))
+  use direction <- result.try(case policy {
+    FitPositionAndDirection(direction)
+    | FitPositionAndDirectionWithCollapsedHandle(direction) -> Ok(direction)
+    FitPositionOnly -> Error(NonFinite)
+  })
+  Ok(GHealedOffsetSegment(
+    segment: svg_path.Line(start: point, end: point),
+    source:,
+    nudged_start_tangent_direction: direction,
+    nudged_end_tangent_direction: direction,
+  ))
 }
 
 fn in_band_segment_parameters(
@@ -6066,12 +6061,17 @@ fn refine_c_not_stalled_segment_at_boundaries(
 ) -> Result(List(DRefinedSegment), Error) {
   let CNotStalledSegment(prepared:, start_boundary:, end_boundary:) = source
   let APreparedSegment(segment:, ..) = prepared
+  use reversal_parameters <- result.try(offset_reversal_parameters(
+    segment,
+    distance,
+  ))
   let reversal_parameters =
-    offset_reversal_parameters(segment, distance)
+    reversal_parameters
     |> list.filter(fn(t) { t >. point_tolerance && t <. 1.0 -. point_tolerance })
     |> list.map(fn(t) { CurvatureSplitParameter(t, CuspSplit) })
+  use inflection_parameters <- result.try(offset_inflection_parameters(segment))
   let inflection_parameters =
-    offset_inflection_parameters(segment)
+    inflection_parameters
     |> list.filter(fn(t) { t >. point_tolerance && t <. 1.0 -. point_tolerance })
     |> list.map(fn(t) { CurvatureSplitParameter(t, InflectionSplit) })
 
@@ -6723,10 +6723,9 @@ fn offset_e_join_free_segment(
                 distance,
                 radius,
               ))
-              use offset <- result.try(build_offset_segment(
-                distance: distance,
+              use offset <- result.try(build_exact_arc_offset_segment(
+                arc,
                 source: OffsetFromJoinFree(source),
-                segment: arc,
               ))
               Ok([offset])
             }
@@ -6856,30 +6855,26 @@ fn split_d_refined_segment_at_midpoint(
 fn offset_reversal_parameters(
   segment: svg_path.Segment,
   distance: Float,
-) -> List(Float) {
-  case
-    curvature.segment_right_normal_cusp_parameters(
-      segment,
-      distance:,
-      options: curvature.default_options(),
-    )
-  {
-    Ok(parameters) -> parameters
-    Error(_) -> []
-  }
+) -> Result(List(Float), Error) {
+  curvature.segment_right_normal_cusp_parameters(
+    segment,
+    distance:,
+    options: curvature.default_options(),
+  )
+  |> result.map_error(fn(_) { NonFinite })
 }
 
-fn offset_inflection_parameters(segment: svg_path.Segment) -> List(Float) {
+fn offset_inflection_parameters(
+  segment: svg_path.Segment,
+) -> Result(List(Float), Error) {
   let options =
     curvature.Options(
       tolerance: curvature_parameter_tolerance,
       samples: 100,
       max_depth: 32,
     )
-  case curvature.segment_inflection_parameters(segment, options:) {
-    Ok(parameters) -> parameters
-    Error(_) -> []
-  }
+  curvature.segment_inflection_parameters(segment, options:)
+  |> result.map_error(fn(_) { NonFinite })
 }
 
 fn offset_c_stalled_run(
@@ -6911,10 +6906,14 @@ fn offset_c_stalled_run(
         False -> {
           case rest, circular_arc_offset_radius(first, distance) {
             [], Ok(radius) -> {
-              use offset <- result.try(offset_circular_arc_segment(
+              use arc <- result.try(offset_circular_arc_segment_raw(
                 first,
                 distance,
                 radius,
+              ))
+              use offset <- result.try(build_exact_arc_offset_segment(
+                arc,
+                source: OffsetFromStalledRun(run),
               ))
               Ok([offset])
             }
@@ -7849,71 +7848,18 @@ fn line_segments_between(
   }
 }
 
-fn offset_source_segment_with_builder(
-  segment: svg_path.Segment,
-  distance: Float,
-  options: Options,
-) -> Result(List(FUnhealedOffsetSegment), Error) {
-  case segment {
-    svg_path.Line(..) -> {
-      use offset_start <- result.try(offset_point(segment, t: 0.0, distance:))
-      use offset_end <- result.try(offset_point(segment, t: 1.0, distance:))
-      use offset <- result.try(build_offset_segment(
-        distance: distance,
-        source: whole_e_join_free_source(segment, distance),
-        segment: svg_path.Line(start: offset_start, end: offset_end),
-      ))
-      Ok([offset])
-    }
-    svg_path.Arc(..) -> {
-      case circular_arc_offset_radius(segment, distance) {
-        Ok(radius) -> {
-          case float.absolute_value(radius) <=. point_tolerance {
-            True -> Error(DegenerateTangent(0.0))
-            False -> {
-              use offset <- result.try(offset_circular_arc_segment(
-                segment,
-                distance,
-                radius,
-              ))
-              Ok([offset])
-            }
-          }
-        }
-        Error(_) ->
-          offset_cubic_segments(
-            svg_path.segment_to_cubic_beziers(segment),
-            distance,
-            options,
-            converted: [],
-          )
-      }
-    }
-    svg_path.QuadraticBezier(..) | svg_path.CubicBezier(..) ->
-      offset_cubic_segments(
-        svg_path.segment_to_cubic_beziers(segment),
-        distance,
-        options,
-        converted: [],
-      )
-  }
-}
-
-fn offset_circular_arc_segment(
-  segment: svg_path.Segment,
-  distance: Float,
-  radius: Float,
+fn build_exact_arc_offset_segment(
+  arc: svg_path.Segment,
+  source source: OffsetSegmentSource,
 ) -> Result(FUnhealedOffsetSegment, Error) {
-  use arc <- result.try(offset_circular_arc_segment_raw(
-    segment,
-    distance,
-    radius,
-  ))
-  build_offset_segment(
-    distance: distance,
-    source: whole_e_join_free_source(segment, distance),
+  use start_tangent <- result.try(unit_tangent(arc, t: 0.0))
+  use end_tangent <- result.try(unit_tangent(arc, t: 1.0))
+  Ok(make_offset_segment(
     segment: arc,
-  )
+    source:,
+    nudged_start_tangent_direction: start_tangent,
+    nudged_end_tangent_direction: end_tangent,
+  ))
 }
 
 fn offset_circular_arc_segment_raw(
@@ -8009,7 +7955,11 @@ fn offset_segment_nudged_tangent_direction(
 ) -> Result(svg_path.Point, Error) {
   case source {
     OffsetFromJoinFree(join_free) -> {
-      let policy = e_join_free_endpoint_policy(join_free, distance, endpoint:)
+      use policy <- result.try(e_join_free_endpoint_policy(
+        join_free,
+        distance,
+        endpoint:,
+      ))
       case policy {
         FitPositionOnly -> unit_tangent_at_endpoint(offset_segment, endpoint:)
         FitPositionAndDirection(direction)
@@ -8069,10 +8019,7 @@ fn offset_segment_source_end(source: OffsetSegmentSource) -> svg_path.Point {
   }
 }
 
-fn whole_e_join_free_source(
-  segment: svg_path.Segment,
-  _distance: Float,
-) -> OffsetSegmentSource {
+fn whole_e_join_free_source(segment: svg_path.Segment) -> OffsetSegmentSource {
   let prepared =
     APreparedSegment(source_subpath_index: 0, source_segment_index: 0, segment:)
   let refined =
@@ -8097,107 +8044,8 @@ fn whole_e_join_free_source(
   ))
 }
 
-fn offset_cubic_segments(
-  segments: List(svg_path.Segment),
-  distance: Float,
-  options: Options,
-  converted converted: List(FUnhealedOffsetSegment),
-) -> Result(List(FUnhealedOffsetSegment), Error) {
-  case segments {
-    [] -> Ok(list.reverse(converted))
-    [first, ..rest] -> {
-      use offset <- result.try(recursive_offset_cubic_segment(
-        first,
-        distance,
-        options,
-        depth: options.fitting.max_depth,
-      ))
-      offset_cubic_segments(
-        rest,
-        distance,
-        options,
-        converted: list.append(list.reverse(offset), converted),
-      )
-    }
-  }
-}
-
-fn recursive_offset_cubic_segment(
-  segment: svg_path.Segment,
-  distance: Float,
-  options: Options,
-  depth depth: Int,
-) -> Result(List(FUnhealedOffsetSegment), Error) {
-  use candidate <- result.try(fitted_cubic_offset(segment, distance))
-  use divergence <- result.try(offset_divergence(
-    segment,
-    candidate,
-    distance,
-    options,
-  ))
-
-  case divergence <=. raw_fitting_tolerance(options) {
-    True -> {
-      use offset <- result.try(build_offset_segment(
-        distance: distance,
-        source: whole_e_join_free_source(segment, distance),
-        segment: candidate,
-      ))
-      Ok([offset])
-    }
-    False ->
-      case depth <= 0 {
-        True -> Error(MaxDepthReached(divergence))
-        False -> {
-          use split <- result.try(
-            svg_path.segment_split(segment, at: 0.5)
-            |> result.map_error(PathError),
-          )
-          let #(left, right) = split
-          use left_offset <- result.try(recursive_offset_cubic_segment(
-            left,
-            distance,
-            options,
-            depth: depth - 1,
-          ))
-          use right_offset <- result.try(recursive_offset_cubic_segment(
-            right,
-            distance,
-            options,
-            depth: depth - 1,
-          ))
-          Ok(list.append(left_offset, right_offset))
-        }
-      }
-  }
-}
-
 fn raw_fitting_tolerance(options: Options) -> Float {
   options.fitting.tolerance *. 0.5
-}
-
-fn fitted_cubic_offset(
-  segment: svg_path.Segment,
-  distance: Float,
-) -> Result(svg_path.Segment, Error) {
-  use start <- result.try(offset_point(segment, t: 0.0, distance:))
-  use end <- result.try(offset_point(segment, t: 1.0, distance:))
-  use samples <- result.try(
-    offset_fit_samples(segment, distance, [0.25, 0.5, 0.75], samples: []),
-  )
-  use curve <- result.try(fit_cubic_offset_curve(
-    segment,
-    distance,
-    start:,
-    end:,
-    samples:,
-  ))
-  use candidate <- result.try(fitted_curve_to_segment(curve))
-
-  case segment_is_finite(candidate) {
-    True -> Ok(candidate)
-    False -> Error(NonFinite)
-  }
 }
 
 fn fit_e_join_free_offset_segment(
@@ -8214,10 +8062,16 @@ fn fit_e_join_free_offset_segment(
       [0.2, 0.35, 0.5, 0.65, 0.8],
       samples: [],
     )
-  let start_policy =
-    e_join_free_endpoint_policy(source, distance, endpoint: SegmentStart)
-  let end_policy =
-    e_join_free_endpoint_policy(source, distance, endpoint: SegmentEnd)
+  use start_policy <- result.try(e_join_free_endpoint_policy(
+    source,
+    distance,
+    endpoint: SegmentStart,
+  ))
+  use end_policy <- result.try(e_join_free_endpoint_policy(
+    source,
+    distance,
+    endpoint: SegmentEnd,
+  ))
   use _ <- result.try(reject_bezier_double_radius_reversal_e_segment(
     source,
     distance,
@@ -8354,7 +8208,7 @@ fn e_join_free_endpoint_policy(
   source: EJoinFreeSegment,
   distance: Float,
   endpoint endpoint: SegmentEndpoint,
-) -> CubicEndpointFitPolicy {
+) -> Result(CubicEndpointFitPolicy, Error) {
   let EJoinFreeSegment(segment:, start_boundary:, end_boundary:, ..) = source
   let is_reversal = case endpoint {
     SegmentStart -> boundary_is_reversal(start_boundary)
@@ -8367,33 +8221,27 @@ fn e_join_free_endpoint_policy(
     SegmentEnd -> 0.0
   }
   let opposite_direction = offset_derivative(segment, t: opposite_t, distance:)
-  case
-    e_join_free_endpoint_offset_direction(
-      source,
-      distance,
-      endpoint,
-      is_reversal,
-      reaches_offset_radius,
-    )
-  {
-    Error(_) -> FitPositionOnly
-    Ok(direction) -> {
-      case is_reversal {
-        False -> FitPositionAndDirection(direction)
-        True -> {
-          let turn = endpoint_tangent_turn(segment, endpoint)
-          let nudged =
-            nudged_reversal_fit_direction(
-              direction,
-              opposite_direction,
-              turn,
-              endpoint,
-            )
-          case reaches_offset_radius {
-            True -> FitPositionAndDirectionWithCollapsedHandle(nudged)
-            False -> FitPositionAndDirection(nudged)
-          }
-        }
+  use direction <- result.try(e_join_free_endpoint_offset_direction(
+    source,
+    distance,
+    endpoint,
+    is_reversal,
+    reaches_offset_radius,
+  ))
+  case is_reversal {
+    False -> Ok(FitPositionAndDirection(direction))
+    True -> {
+      let turn = endpoint_tangent_turn(segment, endpoint)
+      let nudged =
+        nudged_reversal_fit_direction(
+          direction,
+          opposite_direction,
+          turn,
+          endpoint,
+        )
+      case reaches_offset_radius {
+        True -> Ok(FitPositionAndDirectionWithCollapsedHandle(nudged))
+        False -> Ok(FitPositionAndDirection(nudged))
       }
     }
   }
@@ -9208,77 +9056,6 @@ fn fit_one_handle_loop(
         atb: atb +. dot(col, target),
         count: count + 1,
       )
-    }
-  }
-}
-
-fn fit_cubic_offset_curve(
-  segment: svg_path.Segment,
-  distance: Float,
-  start start: svg_path.Point,
-  end end: svg_path.Point,
-  samples samples: List(#(Float, bezier.BezierPoint)),
-) -> Result(bezier.BezierData, Error) {
-  case
-    offset_derivative(segment, t: 0.0, distance:),
-    offset_derivative(segment, t: 1.0, distance:)
-  {
-    Ok(start_tangent), Ok(end_tangent) -> {
-      case
-        bezier.fit_cubic_with_endpoint_tangents(
-          start: to_bezier_point(start),
-          end: to_bezier_point(end),
-          start_tangent: to_bezier_point(start_tangent),
-          end_tangent: to_bezier_point(end_tangent),
-          samples:,
-        )
-        |> result.map_error(cubic_fit_error)
-      {
-        Ok(#(curve, _)) -> Ok(curve)
-        Error(DegenerateTangent(_)) ->
-          fit_cubic_offset_curve_from_points(start:, end:, samples:)
-        Error(error) -> Error(error)
-      }
-    }
-    Error(DegenerateTangent(_)), _ ->
-      fit_cubic_offset_curve_from_points(start:, end:, samples:)
-    _, Error(DegenerateTangent(_)) ->
-      fit_cubic_offset_curve_from_points(start:, end:, samples:)
-    _, _ -> fit_cubic_offset_curve_from_points(start:, end:, samples:)
-  }
-}
-
-fn fit_cubic_offset_curve_from_points(
-  start start: svg_path.Point,
-  end end: svg_path.Point,
-  samples samples: List(#(Float, bezier.BezierPoint)),
-) -> Result(bezier.BezierData, Error) {
-  use fit <- result.try(
-    bezier.fit_cubic_with_endpoints(
-      start: to_bezier_point(start),
-      end: to_bezier_point(end),
-      samples:,
-    )
-    |> result.map_error(cubic_fit_error),
-  )
-  let #(curve, _) = fit
-  Ok(curve)
-}
-
-fn offset_fit_samples(
-  segment: svg_path.Segment,
-  distance: Float,
-  t_values: List(Float),
-  samples samples: List(#(Float, bezier.BezierPoint)),
-) -> Result(List(#(Float, bezier.BezierPoint)), Error) {
-  case t_values {
-    [] -> Ok(list.reverse(samples))
-    [t, ..rest] -> {
-      use point <- result.try(offset_point(segment, t:, distance:))
-      offset_fit_samples(segment, distance, rest, samples: [
-        #(t, to_bezier_point(point)),
-        ..samples
-      ])
     }
   }
 }
