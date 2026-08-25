@@ -521,35 +521,35 @@ pub fn internal_filter_band_loops(
   filter_band_loops(loops, inside:, side_sampling_distance:, retained: [])
 }
 
-/// Extract closed even contours from a closed provisional band or stroke.
+/// Extract closed even contours from a closed untrimmed band or stroke.
 @internal
 pub fn internal_closed_candidate_even_contours(
-  provisional: List(svg_path.Subpath),
+  untrimmed: List(svg_path.Subpath),
   options options: Options,
 ) -> Result(List(svg_path.Subpath), Error) {
-  closed_candidate_even_contours(provisional, options)
+  closed_candidate_even_contours(untrimmed, options)
 }
 
 /// Extract and filter band loops using the band inside predicate.
 @internal
 pub fn internal_topological_band_loops(
-  provisional: List(svg_path.Subpath),
+  untrimmed: List(svg_path.Subpath),
   bands bands: List(OneSubpathBand),
   options options: Options,
 ) -> Result(List(svg_path.Subpath), Error) {
   use inside <- result.try(internal_band_inside_function(bands))
-  burn_pruned_band_survivors(provisional, inside:, options:)
+  burn_pruned_band_survivors(untrimmed, inside:, options:)
 }
 
 /// Extract, filter, and orient band loops as a path.
 @internal
 pub fn internal_topological_band_path(
-  provisional: List(svg_path.Subpath),
+  untrimmed: List(svg_path.Subpath),
   bands bands: List(OneSubpathBand),
   options options: Options,
 ) -> Result(svg_path.Path, Error) {
   use loops <- result.try(internal_topological_band_loops(
-    provisional,
+    untrimmed,
     bands:,
     options:,
   ))
@@ -696,10 +696,10 @@ fn default_trimming_options() -> svg_path.DistanceOptions {
 }
 
 fn closed_candidate_even_contours(
-  provisional: List(svg_path.Subpath),
+  untrimmed: List(svg_path.Subpath),
   options: Options,
 ) -> Result(List(svg_path.Subpath), Error) {
-  use build <- result.try(provisional_arrangement(provisional))
+  use build <- result.try(untrimmed_arrangement(untrimmed))
   let arrangement_graph.ArrangementGraphBuild(graph:, ..) = build
   let undirected = arrangement_graph.to_undirected(graph)
   use decomposition <- result.try(
@@ -717,7 +717,7 @@ fn closed_candidate_even_contours(
     [] ->
       arrangement_nested_contours_from_build_graph(
         graph,
-        svg_path.Path(provisional),
+        svg_path.Path(untrimmed),
         tolerance: options.fitting.tolerance,
       )
     _ -> Error(BandOddSkeletonNotEmpty)
@@ -763,11 +763,11 @@ fn burn_pruned_single_offset_survivors(
 }
 
 fn burn_pruned_band_survivors(
-  provisional: List(svg_path.Subpath),
+  untrimmed: List(svg_path.Subpath),
   inside inside: fn(svg_path.Point) -> Result(Bool, Error),
   options options: Options,
 ) -> Result(List(svg_path.Subpath), Error) {
-  use build <- result.try(provisional_segment_arrangement(provisional))
+  use build <- result.try(untrimmed_segment_arrangement(untrimmed))
   let OffsetArrangementBuild(graph:, ..) = build
   let undirected = arrangement_graph.to_undirected(graph)
   case undirected_odd_vertices(undirected) {
@@ -2193,7 +2193,7 @@ fn stretch_segment(
 
 /// Offset a subpath at two signed distances and trim the two sides together.
 ///
-/// No endpoint caps are added. The two provisional offset walks are trimmed
+/// No endpoint caps are added. The two untrimmed offset walks are trimmed
 /// together as a capless band. This supports ordinary capless stroke sides,
 /// one-sided bands, and asymmetric bands such as two positive offsets.
 pub fn subpath_band(
@@ -2241,7 +2241,7 @@ pub fn subpath_band_with(
 
 /// Offset a subpath at two signed distances without trimming either side.
 ///
-/// This returns the two provisional offset walks in one path, with the
+/// This returns the two untrimmed offset walks in one path, with the
 /// `distance_a` side first and the `distance_b` side second. No caps, bridges,
 /// pairwise trimming, self-intersection pruning, or fill-rule interpretation
 /// are added.
@@ -2282,7 +2282,7 @@ pub fn subpath_band_untrimmed_with(
 
 /// Stroke a subpath with the default butt cap.
 ///
-/// Open subpaths build one closed provisional stroke boundary from the two
+/// Open subpaths build one closed untrimmed stroke boundary from the two
 /// offset sides and endpoint caps, then keep sections that separate points
 /// inside the intended stroke from points outside it. Closed subpaths use the
 /// same capless construction as `subpath_band`.
@@ -2444,7 +2444,7 @@ pub fn path_sections_with(
   options options: Options,
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(validate_options(options))
-  use provisional <- result.try(
+  use untrimmed <- result.try(
     untrimmed_offset_path_subpaths(
       svg_path.path_subpaths(path),
       distance,
@@ -2452,11 +2452,7 @@ pub fn path_sections_with(
       converted: [],
     ),
   )
-  use sections <- result.try(arrangement_global_section_chunks(
-    provisional,
-    options,
-    cleanup: False,
-  ))
+  use sections <- result.try(arrangement_global_section_chunks(untrimmed))
   use retained <- result.try(
     retain_global_parametric_sections(
       sections,
@@ -2747,10 +2743,10 @@ fn stroke_path_subpaths(
   }
 }
 
-fn provisional_arrangement(
-  provisional: List(svg_path.Subpath),
+fn untrimmed_arrangement(
+  untrimmed: List(svg_path.Subpath),
 ) -> Result(arrangement_graph.ArrangementGraphBuild, Error) {
-  use build <- result.try(provisional_segment_arrangement(provisional))
+  use build <- result.try(untrimmed_segment_arrangement(untrimmed))
   offset_public_arrangement_build(build)
 }
 
@@ -2799,11 +2795,11 @@ fn source_segment_image_to_public_image(
   }
 }
 
-fn provisional_segment_arrangement(
-  provisional: List(svg_path.Subpath),
+fn untrimmed_segment_arrangement(
+  untrimmed: List(svg_path.Subpath),
 ) -> Result(OffsetArrangementBuild, Error) {
   let indexed =
-    indexed_offset_segments(provisional, group: UntrimmedOffsetSegment)
+    indexed_offset_segments(untrimmed, group: UntrimmedOffsetSegment)
   offset_segment_arrangement(indexed)
 }
 
@@ -2928,18 +2924,14 @@ fn arrangement_edge_by_id(
   }
 }
 
-/// Return one atomic section for each directed provisional-edge occurrence.
+/// Return one atomic section for each directed untrimmed-edge occurrence.
 /// Coincident graph edges are expanded according to directional multiplicity.
 @internal
 pub fn internal_arrangement_global_sections(
-  provisional: List(svg_path.Subpath),
+  untrimmed: List(svg_path.Subpath),
   options options: Options,
 ) -> Result(svg_path.Path, Error) {
-  use sections <- result.try(arrangement_global_section_chunks(
-    provisional,
-    options,
-    cleanup: False,
-  ))
+  use sections <- result.try(arrangement_global_section_chunks(untrimmed))
   use subpaths <- result.try(chunks_to_subpaths(
     sections,
     options.fitting.tolerance,
@@ -3021,13 +3013,9 @@ fn offset_indexed_segment_at(
 }
 
 fn arrangement_global_section_chunks(
-  provisional: List(svg_path.Subpath),
-  options: Options,
-  cleanup cleanup: Bool,
+  untrimmed: List(svg_path.Subpath),
 ) -> Result(List(List(svg_path.Segment)), Error) {
-  let _ = options
-  let _ = cleanup
-  use build <- result.try(provisional_segment_arrangement(provisional))
+  use build <- result.try(untrimmed_segment_arrangement(untrimmed))
   let OffsetArrangementBuild(segment_images:, ..) = build
   use image_sections <- result.try(
     segment_images
