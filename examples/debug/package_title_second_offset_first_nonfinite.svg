@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="620" viewBox="0 0 1200 620">
+  <rect x="0" y="0" width="1200" height="620" fill="#ffffff"/>
+  <text x="40" y="42" font-family="ui-monospace, Menlo, monospace" font-size="20" fill="#111827">first failing E segment (source geometry)</text>
+  <g transform="translate(40 95) scale(30000 30000) translate(-1.743 -11.0425)">
+    <path d="M 1.7498725835859625 11.044379002776811 C 1.7480311234929118 11.043932234503817 1.7462092992931102 11.043504085498013 1.744407030212391 11.043094009822813" fill="none" stroke="#16a34a" stroke-width="0.00007"/>
+    <circle cx="1.7498725835859625" cy="11.044379002776811" r="0.00012" fill="#db2777"/>
+    <circle cx="1.744407030212391" cy="11.043094009822813" r="0.00009" fill="#111827"/>
+  </g>
+  <text x="40" y="285" font-family="ui-monospace, Menlo, monospace" font-size="17" fill="#db2777">reversal start</text>
+  <text x="40" y="310" font-family="ui-monospace, Menlo, monospace" font-size="17" fill="#111827">ordinary end</text>
+
+  <text x="610" y="42" font-family="ui-monospace, Menlo, monospace" font-size="20" fill="#111827">offset samples and requested start direction</text>
+  <g transform="translate(620 150) scale(1000000 1000000) translate(-1.65554 -11.43307)">
+    <polyline points="1.6555620540267262,11.433101942689362 1.655566065634742,11.433102907919748 1.6555743334650195,11.433104878745338 1.655587101217347,11.433107893825452 1.6556043616634528,11.43311193109383 1.6556261074626086,11.433116968485823 1.6556620661840231,11.433125202626162" fill="none" stroke="#2563eb" stroke-width="0.0000014"/>
+    <circle cx="1.6555620540267262" cy="11.433101942689362" r="0.0000035" fill="#db2777"/>
+    <circle cx="1.6556620661840231" cy="11.433125202626162" r="0.000003" fill="#111827"/>
+    <line x1="1.6555620540267262" y1="11.433101942689362" x2="1.6555134636592753" y2="11.433090153872999" stroke="#dc2626" stroke-width="0.0000022"/>
+    <line x1="1.6555620540267262" y1="11.433101942689362" x2="1.6556108295143502" y2="11.433113072017495" stroke="#16a34a" stroke-width="0.0000022"/>
+  </g>
+  <text x="620" y="360" font-family="ui-monospace, Menlo, monospace" font-size="17" fill="#2563eb">sample locus; chord direction 13.0926°</text>
+  <text x="620" y="389" font-family="ui-monospace, Menlo, monospace" font-size="17" fill="#dc2626">requested collapsed-handle direction 193.6374°</text>
+  <text x="620" y="418" font-family="ui-monospace, Menlo, monospace" font-size="17" fill="#16a34a">one-sided interior direction ≈ 13.64°</text>
+  <text x="40" y="505" font-family="ui-monospace, Menlo, monospace" font-size="18" fill="#111827">At local t=0, R=0.40000007099 and the offset derivative points backward.</text>
+  <text x="40" y="535" font-family="ui-monospace, Menlo, monospace" font-size="18" fill="#111827">Between t=1e-6 and 1e-5, R crosses 0.4; afterward the offset moves forward.</text>
+  <text x="40" y="565" font-family="ui-monospace, Menlo, monospace" font-size="18" fill="#111827">The root split is slightly early, so endpoint-sign sampling selects the wrong tangent side.</text>
+</svg>

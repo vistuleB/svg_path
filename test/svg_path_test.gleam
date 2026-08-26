@@ -248,6 +248,22 @@ pub fn segment_derivative_evaluates_lines_quadratics_cubics_and_arcs_test() {
   assert near(arc_derivative.y, 0.0)
 }
 
+pub fn segment_second_derivative_evaluates_arc_analytically_test() {
+  let arc =
+    svg_path.Arc(
+      start: svg_path.Point(0.0, 0.0),
+      radius: svg_path.Point(10.0, 10.0),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: True,
+      end: svg_path.Point(20.0, 0.0),
+    )
+
+  let assert Ok(second) = svg_path.segment_second_derivative(arc, at: 0.5)
+
+  assert point_near(second, svg_path.Point(0.0, 98.69604401089359))
+}
+
 pub fn segment_bounding_box_handles_lines_beziers_and_arcs_test() {
   let assert Ok(line_box) =
     svg_path.segment_bounding_box(svg_path.Line(

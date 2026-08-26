@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 520" width="1800" height="520">
+<rect x="0" y="0" width="1800" height="520" fill="white"/>
+<text x="300" y="30" text-anchor="middle" font-family="system-ui,sans-serif" font-size="19" fill="#202020">source E-segments (2×)</text>
+<text x="900" y="30" text-anchor="middle" font-family="system-ui,sans-serif" font-size="19" fill="#202020">untrimmed-offset segments (2×)</text>
+<text x="1500" y="30" text-anchor="middle" font-family="system-ui,sans-serif" font-size="19" fill="#202020">micro-loop 2 (10×)</text>
+<svg x="20" y="45" width="560" height="450" viewBox="13.806994999999999 1.1590002000000001 1.056000000000001 0.8319999999999999" preserveAspectRatio="xMidYMid meet">
+  <rect x="13.80699" y="1.159" width="1.056" height="0.832" style="fill:white" />
+  <path d="M 14.29 1.38 C 14.29 1.44 14.305 1.505 14.335 1.575" style="fill:none;stroke:#2166d5;stroke-width:0.00225;stroke-linecap:round" />
+  <text x="14.30124" y="1.45135" font-size="0.032" style="fill:#2166d5;font-family:system-ui,sans-serif;font-weight:700;text-anchor:middle;paint-order:stroke;stroke:white;stroke-width:0.004">E8.3g0</text>
+  <circle cx="14.29" cy="1.38" r="0.006" style="fill:#2166d5" />
+  <circle cx="14.335" cy="1.575" r="0.006" style="fill:#2166d5" />
+  <path d="M 14.335 1.575 L 17.21499 9.585" style="fill:none;stroke:#e67e22;stroke-width:0.00225;stroke-linecap:round" />
+  <text x="14.43579" y="1.83295" font-size="0.032" style="fill:#e67e22;font-family:system-ui,sans-serif;font-weight:700;text-anchor:middle;paint-order:stroke;stroke:white;stroke-width:0.004">E9.0g0</text>
+  <circle cx="14.335" cy="1.575" r="0.006" style="fill:#e67e22" />
+  <circle cx="17.21499" cy="9.585" r="0.006" style="fill:#e67e22" />
+</svg>
+<svg x="620" y="45" width="560" height="450" viewBox="14.782450415609391 0.8566621647388366 1.056000000000001 0.8319999999999999" preserveAspectRatio="xMidYMid meet">
+  <rect x="14.78245" y="0.85666" width="1.056" height="0.832" style="fill:white" />
+  <path d="M 15.33 1.38 C 15.33 1.26549 15.30266 1.19274 15.29091 1.16532" style="fill:none;stroke:#2166d5;stroke-width:0.00225;stroke-linecap:round" />
+  <text x="15.31486" y="1.2176" font-size="0.032" style="fill:#2166d5;font-family:system-ui,sans-serif;font-weight:700;text-anchor:middle;paint-order:stroke;stroke:white;stroke-width:0.004">U31</text>
+  <circle cx="15.33" cy="1.38" r="0.006" style="fill:#2166d5" />
+  <circle cx="15.29091" cy="1.16532" r="0.006" style="fill:#2166d5" />
+  <path d="M 15.29091 1.16532 A 1.04 1.04 0 0 0 15.31366 1.22312" style="fill:none;stroke:#e67e22;stroke-width:0.00225;stroke-linecap:round" />
+  <text x="15.30185" y="1.17199" font-size="0.032" style="fill:#e67e22;font-family:system-ui,sans-serif;font-weight:700;text-anchor:middle;paint-order:stroke;stroke:white;stroke-width:0.004">U32</text>
+  <circle cx="15.29091" cy="1.16532" r="0.006" style="fill:#e67e22" />
+  <circle cx="15.31366" cy="1.22312" r="0.006" style="fill:#e67e22" />
+</svg>
+<svg x="1220" y="45" width="560" height="450" viewBox="15.191242028189029 1.0978327659451488 0.2112000000000016 0.16639999999999988" preserveAspectRatio="xMidYMid meet">
+  <rect x="15.19124" y="1.09783" width="0.2112" height="0.1664" style="fill:white" />
+  <path d="M 15.29091 1.16532 A 1.04 1.04 0 0 0 15.30278 1.19674" style="fill:none;stroke:#b2182b;stroke-width:0.00045;stroke-linecap:round" />
+  <text x="15.30072" y="1.17808" font-size="0.007" style="fill:#b2182b;font-family:system-ui,sans-serif;font-weight:700;text-anchor:middle;paint-order:stroke;stroke:white;stroke-width:0.0008">A38</text>
+  <circle cx="15.29091" cy="1.16532" r="0.0013" style="fill:#b2182b" />
+  <circle cx="15.30278" cy="1.19674" r="0.0013" style="fill:#b2182b" />
+  <path d="M 15.30278 1.19674 C 15.29826 1.18311 15.29403 1.17261 15.29091 1.16532" style="fill:none;stroke:#762a83;stroke-width:0.00045;stroke-linecap:round" />
+  <text x="15.30032" y="1.17565" font-size="0.007" style="fill:#762a83;font-family:system-ui,sans-serif;font-weight:700;text-anchor:middle;paint-order:stroke;stroke:white;stroke-width:0.0008">A37</text>
+  <circle cx="15.30278" cy="1.19674" r="0.0013" style="fill:#762a83" />
+  <circle cx="15.29091" cy="1.16532" r="0.0013" style="fill:#762a83" />
+</svg>
+</svg>

@@ -2466,6 +2466,22 @@ pub fn subpath_derivative(
   segment_derivative(segment, at: t)
 }
 
+/// Return a subpath's segment second derivative at a subpath parameter.
+///
+/// The parameter must address a segment in the subpath, with `t` inside
+/// `0.0..1.0`. Internal segment-end parameters are evaluated through their
+/// canonical next-segment start address.
+pub fn subpath_second_derivative(
+  subpath: Subpath,
+  at parameter: SubpathParameter,
+) -> Result(Point, Error) {
+  use parameter <- result.try(validate_subpath_parameter(subpath, parameter))
+  let CanonicalSubpathParameter(segment_index:, t:) = parameter
+  use segment <- result.try(nth_segment(subpath.segments, segment_index))
+
+  segment_second_derivative(segment, at: t)
+}
+
 /// Return singularity-safe unit traversal directions at a subpath parameter.
 ///
 /// At internal vertices and closed seams, directions are taken from the
@@ -2865,6 +2881,40 @@ pub fn segment_derivative(
         Error(error) -> Error(error)
         Ok(arc) -> Ok(ellipse.arc_derivative(arc, at: t) |> from_ellipse_point)
       }
+    }
+  }
+}
+
+/// Return a segment's second derivative with respect to parameter `t`.
+///
+/// `t` is not clamped.
+pub fn segment_second_derivative(
+  segment: Segment,
+  at t: Float,
+) -> Result(Point, Error) {
+  case segment {
+    Line(..) -> Ok(Point(0.0, 0.0))
+    QuadraticBezier(start:, control:, end:) ->
+      Ok(Point(
+        2.0 *. { start.x -. 2.0 *. control.x +. end.x },
+        2.0 *. { start.y -. 2.0 *. control.y +. end.y },
+      ))
+    CubicBezier(start:, control1:, control2:, end:) -> {
+      let left =
+        Point(
+          start.x -. 2.0 *. control1.x +. control2.x,
+          start.y -. 2.0 *. control1.y +. control2.y,
+        )
+      let right =
+        Point(
+          control1.x -. 2.0 *. control2.x +. end.x,
+          control1.y -. 2.0 *. control2.y +. end.y,
+        )
+      Ok(point_scale(interpolate(left, right, t), 6.0))
+    }
+    Arc(..) -> {
+      use arc <- result.try(arc_center_data(segment))
+      Ok(ellipse.arc_second_derivative(arc, at: t) |> from_ellipse_point)
     }
   }
 }
@@ -3715,6 +3765,16 @@ pub fn path_derivative(
   let PathParameter(subpath_index:, at:) = parameter
   use subpath <- result.try(nth_subpath(path.subpaths, subpath_index))
   subpath_derivative(subpath, at:)
+}
+
+/// Return a path's segment second derivative at a path parameter.
+pub fn path_second_derivative(
+  path: Path,
+  at parameter: PathParameter,
+) -> Result(Point, Error) {
+  let PathParameter(subpath_index:, at:) = parameter
+  use subpath <- result.try(nth_subpath(path.subpaths, subpath_index))
+  subpath_second_derivative(subpath, at:)
 }
 
 /// Return singularity-safe unit traversal directions at a path parameter.

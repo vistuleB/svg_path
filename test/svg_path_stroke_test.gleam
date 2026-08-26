@@ -100,7 +100,7 @@ pub fn subpath_stroke_with_bevel_join_keeps_corner_cut_test() {
   let assert Ok(path) = stroke.subpath_with(subpath, options:)
   let assert [outline] = svg_path.path_subpaths(path)
 
-  assert serialize.subpath(outline) == "M 9 1 H 0 V -1 H 10 L 11 0 V 10 H 9 Z"
+  assert serialize.subpath(outline) == "M 0 -1 H 10 L 11 0 V 10 H 9 V 1 H 0 Z"
 }
 
 pub fn subpath_stroke_with_round_join_adds_join_arcs_test() {
@@ -117,7 +117,7 @@ pub fn subpath_stroke_with_round_join_adds_join_arcs_test() {
 
   assert arc_count(svg_path.subpath_segments(outline)) == 1
   assert serialize.subpath(outline)
-    == "M 9 1 H 0 V -1 H 10 A 1 1 0 0 1 11 0 V 10 H 9 Z"
+    == "M 0 -1 H 10 A 1 1 0 0 1 11 0 V 10 H 9 V 1 H 0 Z"
 }
 
 pub fn subpath_stroke_with_miter_join_extends_to_apex_test() {
@@ -135,7 +135,7 @@ pub fn subpath_stroke_with_miter_join_extends_to_apex_test() {
   let assert Ok(path) = stroke.subpath_with(subpath, options:)
   let assert [outline] = svg_path.path_subpaths(path)
 
-  assert serialize.subpath(outline) == "M 9 1 H 0 V -1 H 10 H 11 V 0 V 10 H 9 Z"
+  assert serialize.subpath(outline) == "M 0 -1 H 10 H 11 V 0 V 10 H 9 V 1 H 0 Z"
 }
 
 pub fn subpath_stroke_with_low_miter_limit_falls_back_to_bevel_test() {

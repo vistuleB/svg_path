@@ -342,6 +342,17 @@ pub fn arc_derivative(arc: CenterArcData, at t: Float) -> EllipsePoint {
   scale(arc_derivative_at_angle(arc, angle_at(arc, t)), arc.delta_angle)
 }
 
+/// Return the second derivative with respect to angular progress `t`.
+pub fn arc_second_derivative(arc: CenterArcData, at t: Float) -> EllipsePoint {
+  let angle = angle_at(arc, t)
+  let radians_per_degree = trig.degrees_to_radians(1.0)
+  let angular_speed = arc.delta_angle *. radians_per_degree
+  scale(
+    ellipse_second_derivative_radians(arc, angle),
+    angular_speed *. angular_speed,
+  )
+}
+
 /// Return the arc's exact axis-aligned bounding box.
 pub fn arc_bounding_box(arc: CenterArcData) -> BoundingBox {
   let points =
@@ -733,6 +744,18 @@ fn ellipse_derivative_radians(
   let sin_phi = trig.sin_degrees(arc.x_axis_rotation)
   let x = 0.0 -. arc.radius.x *. trig.sin_degrees(angle)
   let y = arc.radius.y *. trig.cos_degrees(angle)
+
+  EllipsePoint(cos_phi *. x -. sin_phi *. y, sin_phi *. x +. cos_phi *. y)
+}
+
+fn ellipse_second_derivative_radians(
+  arc: CenterArcData,
+  angle: Float,
+) -> EllipsePoint {
+  let cos_phi = trig.cos_degrees(arc.x_axis_rotation)
+  let sin_phi = trig.sin_degrees(arc.x_axis_rotation)
+  let x = 0.0 -. arc.radius.x *. trig.cos_degrees(angle)
+  let y = 0.0 -. arc.radius.y *. trig.sin_degrees(angle)
 
   EllipsePoint(cos_phi *. x -. sin_phi *. y, sin_phi *. x +. cos_phi *. y)
 }

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="52.03497 -0.70245 13.675 12.88745" width="1200" height="760">
+  <rect x="52.03497" y="-0.70245" width="13.675" height="12.88745" style="fill: #ffffff; stroke: none" />
+  <path d="M 63.67997 10.065 Q 63.82997 10.515 64.90997 10.515 V 11.385 H 59.41997 V 10.515 H 60.73997 Q 61.17497 10.515 61.17497 10.23 Q 61.17497 10.185 61.12997 10.065 L 60.52997 8.445 H 55.92497 L 55.36997 9.945 Q 55.33997 10.035 55.33997 10.125 Q 55.33997 10.515 55.99997 10.515 H 56.92997 V 11.385 H 52.83497 V 10.5 Q 53.46497 10.5 53.76497 10.395 Q 54.06497 10.29 54.13997 10.08 L 57.88997 0.24 H 60.06497 Z" style="fill: #111827; stroke: none; opacity: 0.08" />
+  <path d="M 63.67997 10.065 Q 63.82997 10.515 64.90997 10.515 V 11.385 H 59.41997 V 10.515 H 60.73997 Q 61.17497 10.515 61.17497 10.23 Q 61.17497 10.185 61.12997 10.065 L 60.52997 8.445 H 55.92497 L 55.36997 9.945 Q 55.33997 10.035 55.33997 10.125 Q 55.33997 10.515 55.99997 10.515 H 56.92997 V 11.385 H 52.83497 V 10.5 Q 53.46497 10.5 53.76497 10.395 Q 54.06497 10.29 54.13997 10.08 L 57.88997 0.24 H 60.06497 Z" style="fill: none; stroke: #9ca3af; stroke-width: 0.008; stroke-linecap: round; stroke-linejoin: round; opacity: 0.6" />
+  <path d="M 53.76497 10.395 C 53.96497 10.325 54.08703 10.21891 54.13997 10.08" style="fill: none; stroke: #16a34a; stroke-width: 0.026; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 54.13997 10.08 L 57.88997 0.24" style="fill: none; stroke: #f59e0b; stroke-width: 0.026; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 53.63283 10.01746 C 53.76557 9.971 53.7662 9.93755 53.7662 9.93755" style="fill: none; stroke: #2563eb; stroke-width: 0.018; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 53.7662 9.93755 L 57.5162 0.09755" style="fill: none; stroke: #dc2626; stroke-width: 0.018; stroke-linecap: round; stroke-linejoin: round" />
+  <circle cx="53.76497" cy="10.395" r="0.022" style="fill: #16a34a; stroke: #ffffff; stroke-width: 0.005" />
+  <circle cx="54.13997" cy="10.08" r="0.022" style="fill: #16a34a; stroke: #ffffff; stroke-width: 0.005" />
+  <circle cx="54.13997" cy="10.08" r="0.022" style="fill: #f59e0b; stroke: #ffffff; stroke-width: 0.005" />
+  <circle cx="57.88997" cy="0.24" r="0.022" style="fill: #f59e0b; stroke: #ffffff; stroke-width: 0.005" />
+  <circle cx="53.63283" cy="10.01746" r="0.022" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.005" />
+  <circle cx="53.7662" cy="9.93755" r="0.022" style="fill: #2563eb; stroke: #ffffff; stroke-width: 0.005" />
+  <circle cx="53.7662" cy="9.93755" r="0.022" style="fill: #dc2626; stroke: #ffffff; stroke-width: 0.005" />
+  <circle cx="57.5162" cy="0.09755" r="0.022" style="fill: #dc2626; stroke: #ffffff; stroke-width: 0.005" />
+  <text x="53.51712" y="10.06926" font-size="0.13" style="fill: #1d4ed8; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">U10.1</text>
+  <text x="55.2062" y="6.70875" font-size="0.13" style="fill: #b91c1c; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">U10.2</text>
+</svg>

@@ -21,6 +21,7 @@ import svg_path/svg
 import svg_path/transform
 import svg_path/trig
 import svg_path_convex_hull_gallery_fixture as convex_hull_gallery_fixture
+import svg_path_figure_eight_correspondence_fixture as figure_eight_correspondence_fixture
 
 const output_dir = "test/generated/gallery"
 
@@ -54,6 +55,11 @@ pub fn generate_gallery_figures() {
       "gallery-figure-eight-band.svg",
       "Figure-eight asymmetric band",
       figure_eight_band(),
+    ),
+    #(
+      "gallery-figure-eight-correspondence-blocks.svg",
+      "Figure-eight synchronized correspondence blocks",
+      figure_eight_correspondence_fixture.figure_eight_correspondence_blocks(),
     ),
     #(
       "gallery-figure-eight-convex-hulls.svg",

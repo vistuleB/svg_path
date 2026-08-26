@@ -37,7 +37,7 @@ pub fn default_annotated_drawing_options() -> AnnotatedDrawingOptions {
 
 /// Draw edges, clustered vertices, vertex ids, and directional multiplicities.
 pub fn drawing(graph: ArrangementGraph) -> svg.ThingsToDraw {
-  let ArrangementGraph(vertices:, edges:) = graph
+  let ArrangementGraph(vertices:, edges:, ..) = graph
   let edge_things =
     edges
     |> list.flat_map(fn(edge) {
@@ -113,7 +113,7 @@ pub fn annotated_drawing_with(
 ) -> Result(svg.ThingsToDraw, Error) {
   let AnnotatedDrawingOptions(scale:) = options
   let node_radius = 5.0 *. scale
-  let ArrangementGraph(vertices:, edges:) = graph
+  let ArrangementGraph(vertices:, edges:, ..) = graph
   use edge_things <- result.try(
     annotated_edge_things(edges, source, tolerance, scale, node_radius, []),
   )

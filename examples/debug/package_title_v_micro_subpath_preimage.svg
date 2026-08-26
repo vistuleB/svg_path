@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="620" viewBox="14.18 1.05 1.38 0.72">
+  <rect x="14.18" y="1.05" width="1.38" height="0.72" fill="#ffffff"/>
+  <path d="M 14.289995 1.3800002 C 14.289995 1.4400002 14.304995 1.5050002 14.334995 1.5750002" fill="none" stroke="#16a34a" stroke-width="0.004"/>
+  <path d="M 14.334995 1.5750002 L 17.214995 9.5850002" fill="none" stroke="#94a3b8" stroke-width="0.004"/>
+  <path d="M 15.329995 1.3800002 C 15.329995 1.2654870174929627 15.302657269292386 1.1927441516494122 15.290905831218783 1.1653241294776735" fill="none" stroke="#2563eb" stroke-width="0.004"/>
+  <path d="M 15.290905831218783 1.1653241294776735 L 15.313658009229648 1.2231213652208004" fill="none" stroke="#f59e0b" stroke-width="0.004"/>
+  <path d="M 15.299184768340407 1.1863550690339895 C 15.296047848676993 1.1776587067376196 15.29318396123348 1.1706397661786314 15.290905831218783 1.1653241294776735 L 15.299184768340407 1.1863550690339892" fill="none" stroke="#dc2626" stroke-width="0.008"/>
+  <circle cx="15.299184768340407" cy="1.1863550690339895" r="0.007" fill="#111827"/>
+  <circle cx="15.290905831218783" cy="1.1653241294776735" r="0.007" fill="#111827"/>
+  <text x="14.27" y="1.35" font-family="ui-monospace, Menlo, monospace" font-size="0.035" fill="#166534">E8.0g0 source</text>
+  <text x="14.38" y="1.61" font-family="ui-monospace, Menlo, monospace" font-size="0.035" fill="#475569">E9.0g0 source line</text>
+  <text x="15.19" y="1.31" font-family="ui-monospace, Menlo, monospace" font-size="0.035" fill="#1d4ed8">offset of E8.0g0</text>
+  <text x="15.32" y="1.18" font-family="ui-monospace, Menlo, monospace" font-size="0.035" fill="#b45309">fallback join line</text>
+  <text x="15.00" y="1.10" font-family="ui-monospace, Menlo, monospace" font-size="0.035" fill="#b91c1c">surviving micro-subpath</text>
+</svg>

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="6.867163005621969 0.1714104034294519 0.8319924815008551 0.47202997388196744" width="1200" height="1200">
+  <rect x="6.867163005621969" y="0.1714104034294519" width="0.8319924815008551" height="0.47202997388196744" style="fill: #ffffff; stroke: none" />
+  <path d="M 7.038455575342733 0.3427029731502162 L 7.259151087709977 0.4688146945029266 L 7.395 0.47000023 L 7.395 0.47000023" style="fill: none; stroke: #a16207; stroke-width: 0.00055; stroke-dasharray: 0.0022 0.00165; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 7.373618375814566 0.47214780759065506 L 7.373618375814566 0.47214780759065506 L 7.420909817840983 0.4583583630179477 L 7.52786291740206 0.3686009467876846" style="fill: none; stroke: #166534; stroke-width: 0.00055; stroke-dasharray: 0.0022 0.00165; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 7.038455575342733 0.3427029731502162 C 7.259151087709977 0.4688146945029266 7.395 0.47000023 7.395 0.47000023" style="fill: none; stroke: #facc15; stroke-width: 0.0018; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 7.373618375814566 0.47214780759065506 C 7.373618375814566 0.47214780759065506 7.420909817840983 0.4583583630179477 7.52786291740206 0.3686009467876846" style="fill: none; stroke: #16a34a; stroke-width: 0.0018; stroke-linecap: round; stroke-linejoin: round" />
+  <circle cx="7.038455575342733" cy="0.3427029731502162" r="0.0012" style="fill: #facc15; stroke: #111827; stroke-width: 0.00019999999999999998" />
+  <circle cx="7.259151087709977" cy="0.4688146945029266" r="0.0012" style="fill: #f59e0b; stroke: #111827; stroke-width: 0.00019999999999999998" />
+  <circle cx="7.395" cy="0.47000023" r="0.0012" style="fill: #f59e0b; stroke: #111827; stroke-width: 0.00019999999999999998" />
+  <circle cx="7.395" cy="0.47000023" r="0.0012" style="fill: #facc15; stroke: #111827; stroke-width: 0.00019999999999999998" />
+  <circle cx="7.373618375814566" cy="0.47214780759065506" r="0.0012" style="fill: #16a34a; stroke: #111827; stroke-width: 0.00019999999999999998" />
+  <circle cx="7.373618375814566" cy="0.47214780759065506" r="0.0012" style="fill: #22c55e; stroke: #111827; stroke-width: 0.00019999999999999998" />
+  <circle cx="7.420909817840983" cy="0.4583583630179477" r="0.0012" style="fill: #22c55e; stroke: #111827; stroke-width: 0.00019999999999999998" />
+  <circle cx="7.52786291740206" cy="0.3686009467876846" r="0.0012" style="fill: #16a34a; stroke: #111827; stroke-width: 0.00019999999999999998" />
+  <text x="7.039955575342733" y="0.3412029731502162" style="fill: #111827; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.004px">70.s</text>
+  <text x="7.260651087709977" y="0.4673146945029266" style="fill: #111827; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.004px">70.1</text>
+  <text x="7.3965" y="0.46850023" style="fill: #111827; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.004px">70.2</text>
+  <text x="7.3965" y="0.46850023" style="fill: #111827; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.004px">70.e</text>
+  <text x="7.375118375814566" y="0.47064780759065505" style="fill: #111827; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.004px">73.s</text>
+  <text x="7.375118375814566" y="0.47064780759065505" style="fill: #111827; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.004px">73.1</text>
+  <text x="7.422409817840983" y="0.4568583630179477" style="fill: #111827; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.004px">73.2</text>
+  <text x="7.52936291740206" y="0.3671009467876846" style="fill: #111827; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.004px">73.e</text>
+  <path d="M 7.381488301183321 0.46910595260979576 L 7.381488984721601 0.4691103002404961" style="fill: none; stroke: #ec4899; stroke-width: 0.00035; stroke-linecap: round" />
+  <circle cx="7.381488301183321" cy="0.46910595260979576" r="0.0015" style="fill: #ec4899; stroke: #111827; stroke-width: 0.000175" />
+  <circle cx="7.381488984721601" cy="0.4691103002404961" r="0.0015" style="fill: #06b6d4; stroke: #111827; stroke-width: 0.000175" />
+  <text x="7.382988301183321" y="0.46710595260979576" style="fill: #be185d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.004px">70@0.8158</text>
+  <text x="7.382988984721601" y="0.4731103002404961" style="fill: #0e7490; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.004px">73@0.2332</text>
+</svg>

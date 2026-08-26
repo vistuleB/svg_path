@@ -102,7 +102,7 @@ fn refined_source_piece_paths(
   |> list.map(fn(piece) {
     let segment = trace_piece_segment(piece)
     let style = case piece {
-      offset.OffsetSourceTraceRefinedBig(..) ->
+      offset.OffsetSourceTraceDRefined(..) ->
         "fill: none; stroke: "
         <> residual_sign_color(segment)
         <> "; stroke-width: 0.0267; stroke-linecap: round; stroke-linejoin: round"
@@ -117,7 +117,7 @@ fn trace_piece_segment(
   piece: offset.OffsetSourceTracePiece,
 ) -> svg_path.Segment {
   case piece {
-    offset.OffsetSourceTraceRefinedBig(segment:, ..) -> segment
+    offset.OffsetSourceTraceDRefined(segment:, ..) -> segment
     offset.OffsetSourceTraceStalled(segment:, ..) -> segment
   }
 }
@@ -147,26 +147,26 @@ fn boundary_dots(
     let segment = trace_piece_segment(piece)
     let start = svg_path.segment_start(segment)
     let end = svg_path.segment_end(segment)
-    let #(start_is_hinge, end_is_hinge) = trace_piece_hinges(piece)
+    let #(start_is_reversal, end_is_reversal) = trace_piece_reversals(piece)
     [
-      svg.Circle(start, 0.025, dot_style(start_is_hinge)),
-      svg.Circle(end, 0.025, dot_style(end_is_hinge)),
+      svg.Circle(start, 0.025, dot_style(start_is_reversal)),
+      svg.Circle(end, 0.025, dot_style(end_is_reversal)),
     ]
   })
 }
 
-fn trace_piece_hinges(piece: offset.OffsetSourceTracePiece) -> #(Bool, Bool) {
+fn trace_piece_reversals(piece: offset.OffsetSourceTracePiece) -> #(Bool, Bool) {
   case piece {
-    offset.OffsetSourceTraceRefinedBig(start_is_hinge:, end_is_hinge:, ..) -> #(
-      start_is_hinge,
-      end_is_hinge,
+    offset.OffsetSourceTraceDRefined(start_is_reversal:, end_is_reversal:, ..) -> #(
+      start_is_reversal,
+      end_is_reversal,
     )
     offset.OffsetSourceTraceStalled(..) -> #(False, False)
   }
 }
 
-fn dot_style(is_hinge: Bool) -> String {
-  case is_hinge {
+fn dot_style(is_reversal: Bool) -> String {
+  case is_reversal {
     True -> "fill: #dc2626; stroke: #ffffff; stroke-width: 0.006"
     False -> "fill: #2563eb; stroke: #ffffff; stroke-width: 0.006"
   }

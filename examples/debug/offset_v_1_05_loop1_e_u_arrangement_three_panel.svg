@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 520" width="1800" height="520">
+  <rect x="0" y="0" width="1800" height="520" fill="#ffffff"/>
+  <text x="300" y="30" text-anchor="middle" font-family="system-ui,sans-serif" font-size="19" fill="#202020">source E-segments</text>
+  <text x="900" y="30" text-anchor="middle" font-family="system-ui,sans-serif" font-size="19" fill="#202020">untrimmed-offset segments</text>
+  <text x="1500" y="30" text-anchor="middle" font-family="system-ui,sans-serif" font-size="19" fill="#202020">micro-loop 1</text>
+
+  <svg x="20" y="45" width="560" height="450" viewBox="13.806995 1.1590002 1.056 0.832" preserveAspectRatio="xMidYMid meet">
+    <rect x="13.806995" y="1.1590002" width="1.056" height="0.832" fill="#ffffff"/>
+    <path d="M 14.289995 1.3800002 C 14.289995 1.4400002 14.304995 1.5050002 14.334995 1.5750002" fill="none" stroke="#2166d5" stroke-width="0.001125" stroke-linecap="round"/>
+    <text x="14.30124" y="1.45135" font-size="0.032" fill="#2166d5" font-family="system-ui,sans-serif" font-weight="700" text-anchor="middle" paint-order="stroke" stroke="#ffffff" stroke-width="0.004">E8.3g0</text>
+    <circle cx="14.289995" cy="1.3800002" r="0.003" fill="#2166d5"/>
+    <circle cx="14.334995" cy="1.5750002" r="0.003" fill="#2166d5"/>
+    <path d="M 14.334995 1.5750002 L 17.214995 9.5850002" fill="none" stroke="#e67e22" stroke-width="0.001125" stroke-linecap="round"/>
+    <text x="14.43579" y="1.83295" font-size="0.032" fill="#e67e22" font-family="system-ui,sans-serif" font-weight="700" text-anchor="middle" paint-order="stroke" stroke="#ffffff" stroke-width="0.004">E9.0g0</text>
+    <circle cx="14.334995" cy="1.5750002" r="0.003" fill="#e67e22"/>
+  </svg>
+
+  <svg x="620" y="45" width="560" height="450" viewBox="14.7824504 0.8566622 1.056 0.832" preserveAspectRatio="xMidYMid meet">
+    <rect x="14.7824504" y="0.8566622" width="1.056" height="0.832" fill="#ffffff"/>
+    <path d="M 15.339995 1.3800002 C 15.339995 1.2638090061 15.3122501757 1.1897416896 15.3000972815 1.1613849365" fill="none" stroke="#2166d5" stroke-width="0.001125" stroke-linecap="round"/>
+    <text x="15.317" y="1.221" font-size="0.032" fill="#2166d5" font-family="system-ui,sans-serif" font-weight="700" text-anchor="middle" paint-order="stroke" stroke="#ffffff" stroke-width="0.004">U37</text>
+    <circle cx="15.339995" cy="1.3800002" r="0.003" fill="#2166d5"/>
+    <circle cx="15.3000972815" cy="1.1613849365" r="0.003" fill="#2166d5"/>
+    <path d="M 15.3000972815 1.1613849365 L 15.3230682305 1.2197379149" fill="none" stroke="#e67e22" stroke-width="0.001125" stroke-linecap="round"/>
+    <text x="15.312" y="1.174" font-size="0.032" fill="#e67e22" font-family="system-ui,sans-serif" font-weight="700" text-anchor="middle" paint-order="stroke" stroke="#ffffff" stroke-width="0.004">U38</text>
+    <circle cx="15.3000972815" cy="1.1613849365" r="0.003" fill="#e67e22"/>
+    <circle cx="15.3230682305" cy="1.2197379149" r="0.003" fill="#e67e22"/>
+  </svg>
+
+  <svg x="1220" y="45" width="560" height="450" viewBox="15.1987498 1.0889876 0.2112 0.1664" preserveAspectRatio="xMidYMid meet">
+    <rect x="15.1987498" y="1.0889876" width="0.2112" height="0.1664" fill="#ffffff"/>
+    <path d="M 15.3000972815 1.1613849365 L 15.3086023022 1.182990195" fill="none" stroke="#e67e22" stroke-width="0.000225" stroke-linecap="round"/>
+    <text x="15.3097" y="1.1765" font-size="0.007" fill="#e67e22" font-family="system-ui,sans-serif" font-weight="700" text-anchor="middle" paint-order="stroke" stroke="#ffffff" stroke-width="0.0008">A49</text>
+    <circle cx="15.3000972815" cy="1.1613849365" r="0.00065" fill="#e67e22"/>
+    <circle cx="15.3086023022" cy="1.182990195" r="0.00065" fill="#e67e22"/>
+    <path d="M 15.3086023022 1.182990195 C 15.3053920959 1.1740897513 15.3024520095 1.1668793017 15.3000972815 1.1613849365" fill="none" stroke="#2166d5" stroke-width="0.000225" stroke-linecap="round"/>
+    <text x="15.3022" y="1.1732" font-size="0.007" fill="#2166d5" font-family="system-ui,sans-serif" font-weight="700" text-anchor="middle" paint-order="stroke" stroke="#ffffff" stroke-width="0.0008">A48</text>
+  </svg>
+</svg>

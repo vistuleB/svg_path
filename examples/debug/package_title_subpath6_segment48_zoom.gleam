@@ -97,7 +97,7 @@ fn render(
       refined_index: focus_refined_piece_index,
     )
   {
-    Ok(offset.OffsetSourceTraceRefinedBig(segment:, ..)) ->
+    Ok(offset.OffsetSourceTraceDRefined(segment:, ..)) ->
       svg_path.segment_bounding_box(segment)
     _ -> Error(svg_path.SplitOutsideSegment)
   }
@@ -195,7 +195,7 @@ fn find_refined_source_piece(
     [] -> Error(Nil)
     [first, ..rest] ->
       case first {
-        offset.OffsetSourceTraceRefinedBig(
+        offset.OffsetSourceTraceDRefined(
           source_segment_index:,
           refined_piece_index:,
           ..,
@@ -253,7 +253,7 @@ fn trace_piece_segment(
   piece: offset.OffsetSourceTracePiece,
 ) -> svg_path.Segment {
   case piece {
-    offset.OffsetSourceTraceRefinedBig(segment:, ..) -> segment
+    offset.OffsetSourceTraceDRefined(segment:, ..) -> segment
     offset.OffsetSourceTraceStalled(segment:, ..) -> segment
   }
 }
@@ -278,7 +278,7 @@ fn trace_piece_overlays(
     }
     let label_point = clamp_point_to_box(label_point, view_box, margin: 0.02)
     let #(label, color) = case piece {
-      offset.OffsetSourceTraceRefinedBig(refined_piece_index:, ..) -> #(
+      offset.OffsetSourceTraceDRefined(refined_piece_index:, ..) -> #(
         "J" <> int.to_string(portion_index) <> "." <> int.to_string(piece_index),
         case refined_piece_index % 2 == 0 {
           True -> "#16a34a"

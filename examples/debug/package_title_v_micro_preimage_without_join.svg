@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="620" viewBox="14.18 1.05 1.38 0.72">
+  <rect x="14.18" y="1.05" width="1.38" height="0.72" fill="#ffffff"/>
+  <path d="M 14.289995 1.3800002 C 14.289995 1.4400002 14.304995 1.5050002 14.334995 1.5750002" fill="none" stroke="#16a34a" stroke-width="0.001"/>
+  <path d="M 14.334995 1.5750002 L 17.214995 9.5850002" fill="none" stroke="#94a3b8" stroke-width="0.001"/>
+  <path d="M 15.329995 1.3800002 C 15.329995 1.2654870174929627 15.302657269292386 1.1927441516494122 15.290905831218783 1.1653241294776735" fill="none" stroke="#2563eb" stroke-width="0.001"/>
+  <path d="M 15.313658009229648 1.2231213652208004 L 18.19365800922965 9.2331213652208" fill="none" stroke="#0891b2" stroke-width="0.001"/>
+  <circle cx="14.334995" cy="1.5750002" r="0.002" fill="#111827"/>
+  <circle cx="15.290905831218783" cy="1.1653241294776735" r="0.002" fill="#111827"/>
+  <text x="14.27" y="1.35" font-family="ui-monospace, Menlo, monospace" font-size="0.024" fill="#166534">E8.0g0</text>
+  <text x="14.38" y="1.61" font-family="ui-monospace, Menlo, monospace" font-size="0.024" fill="#475569">E9.0g0</text>
+  <text x="15.19" y="1.31" font-family="ui-monospace, Menlo, monospace" font-size="0.024" fill="#1d4ed8">offset of E8.0g0</text>
+  <text x="15.35" y="1.27" font-family="ui-monospace, Menlo, monospace" font-size="0.024" fill="#0e7490">offset of E9.0g0</text>
+</svg>

@@ -1,0 +1,192 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="51.03497 -1.56 20.7509 26.61474" width="900" height="900">
+  <rect x="51.03497" y="-1.56" width="20.7509" height="26.61474" style="fill: #ffffff; stroke: none" />
+  <path d="M 63.67997 10.065 Q 63.82997 10.515 64.90997 10.515 V 11.385 H 59.41997 V 10.515 H 60.73997 Q 61.17497 10.515 61.17497 10.23 Q 61.17497 10.185 61.12997 10.065 L 60.52997 8.445 H 55.92497 L 55.36997 9.945 Q 55.33997 10.035 55.33997 10.125 Q 55.33997 10.515 55.99997 10.515 H 56.92997 V 11.385 H 52.83497 V 10.5 Q 53.46497 10.5 53.76497 10.395 Q 54.06497 10.29 54.13997 10.08 L 57.88997 0.24 H 60.06497 Z M 56.31497 7.335 H 60.15497 L 58.24997 2.055 Z" style="fill: #111827; stroke: none; opacity: 0.14" />
+  <path d="M 64.0575 9.93266 L 64.05945 9.93851 S 64.11828 10.115 64.90997 10.115 H 65.30997 V 10.515 V 11.385 V 11.785 H 64.90997 H 59.41997 H 59.01997 V 11.385 V 10.515 V 10.115 H 59.41997 H 60.72194 L 60.25157 8.845 H 56.20348 L 55.74512 10.0838 C 55.74476 10.08476 55.74437 10.0859 55.74397 10.08726 C 55.78415 10.09952 55.86217 10.115 55.99997 10.115 H 56.92997 H 57.32997 V 10.515 V 11.385 V 11.785 H 56.92997 H 52.83497 H 52.43497 V 11.385 V 10.5 V 10.1 H 52.83497 C 53.23336 10.1 53.51085 10.06015 53.63283 10.01746 C 53.75159 9.97589 53.7662 9.93755 53.7662 9.93755 L 57.5162 0.09755 L 57.61435 -0.16 H 57.88997 H 60.06497 H 60.34401 L 60.44037 0.10188 L 64.05537 9.92688 Z M 58.24704 3.22547 L 56.88758 6.935 H 59.58542 Z" style="fill: none; stroke: #2563eb; stroke-width: 0.025; stroke-linecap: round; stroke-linejoin: round" />
+  <path d="M 64.43697 9.80617 C 64.43762 9.80812 64.43827 9.81007 64.43892 9.81202 C 78.72829 41.88034 64.42396 9.77392 64.42396 9.77392 C 64.41656 9.7577 64.40616 9.73981 64.40616 9.73981 C 64.38953 9.71176 64.36737 9.68725 64.36737 9.68725 C 64.34238 9.66011 64.32246 9.64953 64.32246 9.64953 S 64.45116 9.715 64.90997 9.715 H 65.30997 H 65.70997 V 10.115 V 11.785 V 12.185 H 65.30997 H 59.01997 H 58.61997 V 11.785 V 10.115 V 9.715 H 59.01997 H 60.72194 L 60.34684 10.25393 L 59.87647 8.98393 L 60.25157 9.245 H 56.20348 L 56.57863 8.98379 L 56.11967 10.22438 L 55.87713 9.70821 C 55.87245 9.70657 55.86945 9.70578 55.86945 9.70578 S 55.90723 9.715 55.99997 9.715 H 57.32997 H 57.72997 V 10.115 V 11.785 V 12.185 H 57.32997 H 52.43497 H 52.03497 V 11.785 V 10.1 V 9.7 H 52.43497 H 52.83497 C 53.2044 9.7 53.46456 9.65256 53.50069 9.63991 C 53.51298 9.63561 53.51885 9.63275 53.51885 9.63275 S 53.49916 9.64278 53.47382 9.6677 C 53.47382 9.6677 53.44975 9.69178 53.43125 9.71948 C 53.43125 9.71948 53.41921 9.73786 53.4105 9.75468 C 53.4105 9.75468 60.39107 -4.01889 53.39242 9.79511 L 57.24057 -0.30245 L 57.33873 -0.56 H 57.61435 H 60.34401 H 60.62306 L 60.71941 -0.29812 L 64.43289 9.79454 L 64.43502 9.80032 Z M 58.62261 3.36311 L 57.26315 7.07264 L 56.88758 6.535 H 59.58542 L 59.20916 7.07075 L 57.87078 3.36123 Z" style="fill: none; stroke: #dc2626; stroke-width: 0.018; stroke-linecap: round; stroke-linejoin: round" />
+  <circle cx="64.43892" cy="9.81202" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="64.43697" cy="9.80617" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="64.43795" y="9.80909" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">0</text>
+  <circle cx="64.42396" cy="9.77392" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="64.43892" cy="9.81202" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="69.78995" y="21.81859" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">1</text>
+  <circle cx="64.40616" cy="9.73981" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="64.42396" cy="9.77392" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="64.41229" y="9.75078" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">2</text>
+  <circle cx="64.36737" cy="9.68725" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="64.40616" cy="9.73981" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="64.38053" y="9.70301" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">3</text>
+  <circle cx="64.32246" cy="9.64953" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="64.36737" cy="9.68725" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="64.33554" y="9.65821" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">4</text>
+  <circle cx="64.90997" cy="9.715" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="64.32246" cy="9.64953" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="64.44416" y="9.68226" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">5</text>
+  <circle cx="65.30997" cy="9.715" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="64.90997" cy="9.715" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="65.10997" y="9.715" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">6</text>
+  <circle cx="65.70997" cy="9.715" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="65.30997" cy="9.715" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="65.50997" y="9.715" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">7</text>
+  <circle cx="65.70997" cy="10.115" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="65.70997" cy="9.715" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="65.70997" y="9.915" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">8</text>
+  <circle cx="65.70997" cy="11.785" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="65.70997" cy="10.115" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="65.70997" y="10.95" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">9</text>
+  <circle cx="65.70997" cy="12.185" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="65.70997" cy="11.785" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="65.70997" y="11.985" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">10</text>
+  <circle cx="65.30997" cy="12.185" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="65.70997" cy="12.185" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="65.50997" y="12.185" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">11</text>
+  <circle cx="59.01997" cy="12.185" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="65.30997" cy="12.185" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="62.16497" y="12.185" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">12</text>
+  <circle cx="58.61997" cy="12.185" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="59.01997" cy="12.185" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="58.81997" y="12.185" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">13</text>
+  <circle cx="58.61997" cy="11.785" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="58.61997" cy="12.185" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="58.61997" y="11.985" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">14</text>
+  <circle cx="58.61997" cy="10.115" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="58.61997" cy="11.785" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="58.61997" y="10.95" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">15</text>
+  <circle cx="58.61997" cy="9.715" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="58.61997" cy="10.115" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="58.61997" y="9.915" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">16</text>
+  <circle cx="59.01997" cy="9.715" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="58.61997" cy="9.715" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="58.81997" y="9.715" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">17</text>
+  <circle cx="60.72194" cy="9.715" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="59.01997" cy="9.715" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="59.87096" y="9.715" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">18</text>
+  <circle cx="60.34684" cy="10.25393" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="60.72194" cy="9.715" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="60.53439" y="9.98446" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">19</text>
+  <circle cx="59.87647" cy="8.98393" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="60.34684" cy="10.25393" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="60.11165" y="9.61893" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">20</text>
+  <circle cx="60.25157" cy="9.245" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="59.87647" cy="8.98393" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="60.06402" y="9.11446" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">21</text>
+  <circle cx="56.20348" cy="9.245" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="60.25157" cy="9.245" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="58.22752" y="9.245" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">22</text>
+  <circle cx="56.57863" cy="8.98379" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="56.20348" cy="9.245" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="56.39105" y="9.11439" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">23</text>
+  <circle cx="56.11967" cy="10.22438" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="56.57863" cy="8.98379" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="56.34915" y="9.60408" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">24</text>
+  <circle cx="55.87713" cy="9.70821" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="56.11967" cy="10.22438" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="55.9984" y="9.9663" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">25</text>
+  <circle cx="55.86945" cy="9.70578" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="55.87713" cy="9.70821" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="55.87153" y="9.70638" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">26</text>
+  <circle cx="55.99997" cy="9.715" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="55.86945" cy="9.70578" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="55.89993" y="9.71039" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">27</text>
+  <circle cx="57.32997" cy="9.715" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="55.99997" cy="9.715" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="56.66497" y="9.715" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">28</text>
+  <circle cx="57.72997" cy="9.715" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="57.32997" cy="9.715" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="57.52997" y="9.715" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">29</text>
+  <circle cx="57.72997" cy="10.115" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="57.72997" cy="9.715" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="57.72997" y="9.915" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">30</text>
+  <circle cx="57.72997" cy="11.785" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="57.72997" cy="10.115" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="57.72997" y="10.95" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">31</text>
+  <circle cx="57.72997" cy="12.185" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="57.72997" cy="11.785" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="57.72997" y="11.985" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">32</text>
+  <circle cx="57.32997" cy="12.185" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="57.72997" cy="12.185" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="57.52997" y="12.185" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">33</text>
+  <circle cx="52.43497" cy="12.185" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="57.32997" cy="12.185" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="54.88247" y="12.185" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">34</text>
+  <circle cx="52.03497" cy="12.185" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="52.43497" cy="12.185" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="52.23497" y="12.185" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">35</text>
+  <circle cx="52.03497" cy="11.785" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="52.03497" cy="12.185" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="52.03497" y="11.985" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">36</text>
+  <circle cx="52.03497" cy="10.1" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="52.03497" cy="11.785" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="52.03497" y="10.9425" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">37</text>
+  <circle cx="52.03497" cy="9.7" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="52.03497" cy="10.1" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="52.03497" y="9.9" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">38</text>
+  <circle cx="52.43497" cy="9.7" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="52.03497" cy="9.7" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="52.23497" y="9.7" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">39</text>
+  <circle cx="52.83497" cy="9.7" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="52.43497" cy="9.7" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="52.63497" y="9.7" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">40</text>
+  <circle cx="53.50069" cy="9.63991" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="52.83497" cy="9.7" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="53.29282" y="9.6747" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">41</text>
+  <circle cx="53.51885" cy="9.63275" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="53.50069" cy="9.63991" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="53.51438" y="9.63472" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">42</text>
+  <circle cx="53.47382" cy="9.6677" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="53.51885" cy="9.63275" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="53.50584" y="9.64088" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">43</text>
+  <circle cx="53.43125" cy="9.71948" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="53.47382" cy="9.6677" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="53.45947" y="9.6832" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">44</text>
+  <circle cx="53.4105" cy="9.75468" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="53.43125" cy="9.71948" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="53.42414" y="9.73077" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">45</text>
+  <circle cx="53.39242" cy="9.79511" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="53.4105" cy="9.75468" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="56.02595" y="4.59464" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">46</text>
+  <circle cx="57.24057" cy="-0.30245" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="53.39242" cy="9.79511" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="55.3165" y="4.74633" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">47</text>
+  <circle cx="57.33873" cy="-0.56" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="57.24057" cy="-0.30245" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="57.28965" y="-0.43122" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">48</text>
+  <circle cx="57.61435" cy="-0.56" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="57.33873" cy="-0.56" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="57.47654" y="-0.56" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">49</text>
+  <circle cx="60.34401" cy="-0.56" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="57.61435" cy="-0.56" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="58.97918" y="-0.56" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">50</text>
+  <circle cx="60.62306" cy="-0.56" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="60.34401" cy="-0.56" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="60.48353" y="-0.56" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">51</text>
+  <circle cx="60.71941" cy="-0.29812" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="60.62306" cy="-0.56" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="60.67123" y="-0.42906" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">52</text>
+  <circle cx="64.43289" cy="9.79454" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="60.71941" cy="-0.29812" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="62.57615" y="4.74821" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">53</text>
+  <circle cx="64.43502" cy="9.80032" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="64.43289" cy="9.79454" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="64.43396" y="9.79743" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">54</text>
+  <circle cx="64.43697" cy="9.80617" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="64.43502" cy="9.80032" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="64.436" y="9.80325" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">55</text>
+  <circle cx="57.26315" cy="7.07264" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="58.62261" cy="3.36311" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="57.94288" y="5.21788" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">56</text>
+  <circle cx="56.88758" cy="6.535" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="57.26315" cy="7.07264" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="57.07537" y="6.80382" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">57</text>
+  <circle cx="59.58542" cy="6.535" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="56.88758" cy="6.535" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="58.2365" y="6.535" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">58</text>
+  <circle cx="59.20916" cy="7.07075" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="59.58542" cy="6.535" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="59.39729" y="6.80288" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">59</text>
+  <circle cx="57.87078" cy="3.36123" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="59.20916" cy="7.07075" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="58.53997" y="5.21599" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">60</text>
+  <circle cx="58.62261" cy="3.36311" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <circle cx="57.87078" cy="3.36123" r="0.025" style="fill: #111827; stroke: #ffffff; stroke-width: 0.006" />
+  <text x="58.24669" y="3.36217" font-size="0.13" style="fill: #7f1d1d; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">61</text>
+</svg>

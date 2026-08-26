@@ -68,6 +68,13 @@ again at a smaller scale.
 
 Shows an asymmetric two-sided band around a closed figure-eight.
 
+### Figure-Eight Correspondence Blocks
+
+![Figure-eight correspondence blocks](docs/gallery/gallery-figure-eight-correspondence-blocks.svg)
+
+Shows the maximum-granularity synchronized inner/outer correspondence regions
+used to construct the asymmetric figure-eight band.
+
 ### Figure-Eight Convex Hulls
 
 ![Figure-eight convex hulls](docs/gallery/gallery-figure-eight-convex-hulls.svg)

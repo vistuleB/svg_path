@@ -29,6 +29,10 @@ import svg_path/point
 import svg_path/smallest_enclosing_circle
 import svg_path/winding_field
 
+const cyclic_order_max_attempts = 3
+
+const cyclic_order_minimum_angle_degrees = 0.1
+
 /// One endpoint cluster in the embedded arrangement.
 ///
 /// `point` is the center of the smallest circle enclosing `endpoint_samples`.
@@ -76,6 +80,15 @@ pub type ArrangementEdge {
   )
 }
 
+/// One arrangement edge with an outward orientation from an incident vertex.
+///
+/// `reversed` is false when the oriented edge follows the stored edge direction
+/// and true when it opposes it.
+@internal
+pub type OrientedArrangementEdge {
+  OrientedArrangementEdge(edge_id: Int, reversed: Bool)
+}
+
 /// A possibly disconnected planar arrangement of source path segments.
 ///
 /// Graphs returned by `build` have unique vertex and edge identifiers. Every
@@ -84,17 +97,23 @@ pub type ArrangementEdge {
 /// overlaps; they meet only through endpoint clusters. Coincident pieces are
 /// consolidated into one edge with directional multiplicities.
 ///
-/// Cyclic edge order is not stored. Consumers derive it from the segment
-/// geometry and vertex point. For closed-boundary input, the sum of incident
-/// edge multiplicities at every vertex is positive and even. `validate`
-/// enforces this closed-boundary condition, so an arrangement built from open
-/// subpaths may be inspectable but fail validation.
+/// `cyclic_orders` records every incident oriented edge in clockwise SVG order
+/// at each vertex. Each edge is directed outward from its vertex. The outer
+/// list gives the certified clockwise order of groups. Oriented edges within one
+/// group could not be separated by the configured geometric tests; their
+/// order is a deterministic best-effort majority order across sampled radii.
+/// For closed-boundary input, the sum of incident edge multiplicities at every
+/// vertex is positive and even. `validate` enforces this closed-boundary
+/// condition, so an arrangement built from open subpaths may be inspectable but
+/// fail validation.
 pub type ArrangementGraph {
   ArrangementGraph(
     /// Endpoint clusters in the arrangement.
     vertices: List(ArrangementVertex),
     /// Non-intersecting atomic edges in the arrangement.
     edges: List(ArrangementEdge),
+    /// Clockwise incident oriented-edge order for every vertex.
+    cyclic_orders: List(#(Int, List(List(OrientedArrangementEdge)))),
   )
 }
 
@@ -304,6 +323,520 @@ pub type Error {
 
   /// An even undirected contour could not be traced into closed loops.
   UndirectedTraceFailed(vertex: Int)
+
+  /// A cyclic edge order was requested for a vertex outside the graph.
+  CyclicOrderMissingVertex(vertex: Int)
+
+  /// No positive common sampling radius exists at a vertex.
+  CyclicOrderRadiusUnavailable(vertex: Int)
+
+  /// A cyclic-order search requires at least one sampling radius.
+  InvalidCyclicOrderAttempts(max_attempts: Int)
+
+  /// An incident edge did not yield a certified first circle intersection.
+  CyclicOrderCircleIntersectionFailed(vertex: Int, edge: Int, radius: Float)
+}
+
+type CyclicOrderSample {
+  CyclicOrderSample(
+    oriented_edge: OrientedArrangementEdge,
+    point: svg_path.Point,
+    angle: Float,
+  )
+}
+
+/// Compute clockwise cyclic oriented-edge orders without modifying the graph.
+///
+/// This is an experimental embedding helper. At each vertex it samples every
+/// incident edge on a common circle, beginning at `0.8` times the least
+/// opposite-endpoint distance and continuing at `0.8` times the previous
+/// radius, up to `max_attempts` total radii. The largest successful radius
+/// determines certified group boundaries. All successful radii vote on the
+/// best-effort order within each uncertified group.
+@internal
+pub fn cyclic_orders_with(
+  graph: ArrangementGraph,
+  tolerance tolerance: Float,
+  max_attempts max_attempts: Int,
+) -> Result(List(#(Int, List(List(OrientedArrangementEdge)))), Error) {
+  case tolerance >. 0.0 && number.is_finite(tolerance), max_attempts > 0 {
+    False, _ -> Error(InvalidTolerance(tolerance))
+    _, False -> Error(InvalidCyclicOrderAttempts(max_attempts))
+    True, True -> {
+      let ArrangementGraph(vertices:, ..) = graph
+      cyclic_orders_for_vertices(
+        vertices,
+        graph,
+        tolerance,
+        max_attempts,
+        orders: [],
+      )
+    }
+  }
+}
+
+fn cyclic_orders_for_vertices(
+  vertices: List(ArrangementVertex),
+  graph: ArrangementGraph,
+  tolerance: Float,
+  max_attempts: Int,
+  orders orders: List(#(Int, List(List(OrientedArrangementEdge)))),
+) -> Result(List(#(Int, List(List(OrientedArrangementEdge)))), Error) {
+  case vertices {
+    [] -> Ok(list.reverse(orders))
+    [ArrangementVertex(id:, ..), ..rest] -> {
+      use cyclic_order <- result.try(vertex_cyclic_order_with(
+        graph,
+        vertex_id: id,
+        tolerance:,
+        max_attempts:,
+      ))
+      cyclic_orders_for_vertices(rest, graph, tolerance, max_attempts, orders: [
+        #(id, cyclic_order),
+        ..orders
+      ])
+    }
+  }
+}
+
+/// Compute the clockwise cyclic oriented-edge order at one vertex.
+@internal
+pub fn vertex_cyclic_order_with(
+  graph: ArrangementGraph,
+  vertex_id vertex_id: Int,
+  tolerance tolerance: Float,
+  max_attempts max_attempts: Int,
+) -> Result(List(List(OrientedArrangementEdge)), Error) {
+  case tolerance >. 0.0 && number.is_finite(tolerance), max_attempts > 0 {
+    False, _ -> Error(InvalidTolerance(tolerance))
+    _, False -> Error(InvalidCyclicOrderAttempts(max_attempts))
+    True, True -> {
+      let ArrangementGraph(vertices:, edges:, ..) = graph
+      use vertex <- result.try(
+        list.find(vertices, fn(vertex) { vertex.id == vertex_id })
+        |> result.map_error(fn(_) { CyclicOrderMissingVertex(vertex_id) }),
+      )
+      let incident =
+        incident_oriented_edges(edges, vertex_id, oriented_edges: [])
+      case incident {
+        [] -> Error(IsolatedVertex(vertex_id))
+        [only] -> Ok([[only]])
+        _ -> {
+          use radius <- result.try(initial_cyclic_order_radius(
+            incident,
+            edges,
+            vertex.point,
+            vertex_id,
+          ))
+          cyclic_order_attempts(
+            incident,
+            edges,
+            vertex.point,
+            vertex_id,
+            radius,
+            tolerance,
+            remaining: max_attempts,
+            previous_error: None,
+            successful_samples: [],
+          )
+        }
+      }
+    }
+  }
+}
+
+fn incident_oriented_edges(
+  edges: List(ArrangementEdge),
+  vertex_id: Int,
+  oriented_edges oriented_edges: List(OrientedArrangementEdge),
+) -> List(OrientedArrangementEdge) {
+  case edges {
+    [] -> list.reverse(oriented_edges)
+    [edge, ..rest] -> {
+      let oriented_edges = case edge.start_vertex == vertex_id {
+        True -> [
+          OrientedArrangementEdge(edge.id, reversed: False),
+          ..oriented_edges
+        ]
+        False -> oriented_edges
+      }
+      let oriented_edges = case edge.end_vertex == vertex_id {
+        True -> [
+          OrientedArrangementEdge(edge.id, reversed: True),
+          ..oriented_edges
+        ]
+        False -> oriented_edges
+      }
+      incident_oriented_edges(rest, vertex_id, oriented_edges:)
+    }
+  }
+}
+
+fn initial_cyclic_order_radius(
+  oriented_edges: List(OrientedArrangementEdge),
+  edges: List(ArrangementEdge),
+  vertex: svg_path.Point,
+  vertex_id: Int,
+) -> Result(Float, Error) {
+  use distances <- result.try(
+    oriented_edges
+    |> list.map(fn(oriented_edge) {
+      use edge <- result.try(edge_for_oriented_edge(edges, oriented_edge))
+      let segment = outward_oriented_edge_segment(edge, oriented_edge)
+      Ok(point.distance(vertex, svg_path.segment_end(segment)))
+    })
+    |> result.all,
+  )
+  case distances {
+    [] -> Error(CyclicOrderRadiusUnavailable(vertex_id))
+    [first, ..rest] -> {
+      let minimum = list.fold(rest, first, float.min)
+      case minimum >. 0.0 && number.is_finite(minimum) {
+        True -> Ok(0.8 *. minimum)
+        False -> Error(CyclicOrderRadiusUnavailable(vertex_id))
+      }
+    }
+  }
+}
+
+fn cyclic_order_attempts(
+  oriented_edges: List(OrientedArrangementEdge),
+  edges: List(ArrangementEdge),
+  vertex: svg_path.Point,
+  vertex_id: Int,
+  radius: Float,
+  tolerance: Float,
+  remaining remaining: Int,
+  previous_error previous_error: Option(Error),
+  successful_samples successful_samples: List(List(CyclicOrderSample)),
+) -> Result(List(List(OrientedArrangementEdge)), Error) {
+  case remaining <= 0 || radius <=. tolerance /. 2.0 {
+    True -> {
+      case list.reverse(successful_samples) {
+        [] ->
+          case previous_error {
+            Some(error) -> Error(error)
+            None -> Error(CyclicOrderRadiusUnavailable(vertex_id))
+          }
+        [reference, ..] as samples_by_radius -> {
+          let groups = group_cyclic_order_samples(reference, tolerance)
+          Ok(order_ambiguous_cyclic_groups(groups, samples_by_radius))
+        }
+      }
+    }
+    False ->
+      case
+        cyclic_order_samples_at_radius(
+          oriented_edges,
+          edges,
+          vertex,
+          vertex_id,
+          radius,
+          tolerance,
+        )
+      {
+        Ok(samples) ->
+          cyclic_order_attempts(
+            oriented_edges,
+            edges,
+            vertex,
+            vertex_id,
+            radius *. 0.8,
+            tolerance,
+            remaining: remaining - 1,
+            previous_error:,
+            successful_samples: [samples, ..successful_samples],
+          )
+        Error(error) ->
+          cyclic_order_attempts(
+            oriented_edges,
+            edges,
+            vertex,
+            vertex_id,
+            radius *. 0.8,
+            tolerance,
+            remaining: remaining - 1,
+            previous_error: Some(error),
+            successful_samples:,
+          )
+      }
+  }
+}
+
+fn cyclic_order_samples_at_radius(
+  oriented_edges: List(OrientedArrangementEdge),
+  edges: List(ArrangementEdge),
+  vertex: svg_path.Point,
+  vertex_id: Int,
+  radius: Float,
+  tolerance: Float,
+) -> Result(List(CyclicOrderSample), Error) {
+  use samples <- result.try(
+    oriented_edges
+    |> list.map(fn(oriented_edge) {
+      circle_sample_for_oriented_edge(
+        edges,
+        oriented_edge,
+        vertex,
+        vertex_id,
+        radius,
+        tolerance,
+      )
+    })
+    |> result.all,
+  )
+  Ok(list.sort(samples, by: compare_cyclic_order_samples))
+}
+
+fn circle_sample_for_oriented_edge(
+  edges: List(ArrangementEdge),
+  oriented_edge: OrientedArrangementEdge,
+  vertex: svg_path.Point,
+  vertex_id: Int,
+  radius: Float,
+  tolerance: Float,
+) -> Result(CyclicOrderSample, Error) {
+  use edge <- result.try(edge_for_oriented_edge(edges, oriented_edge))
+  let segment = outward_oriented_edge_segment(edge, oriented_edge)
+  let radius_squared = radius *. radius
+  let residual_tolerance = tolerance *. { 2.0 *. radius +. tolerance }
+  use roots <- result.try(
+    svg_path.segment_crossings_with(
+      segment,
+      where: fn(candidate) {
+        point.distance_squared(candidate, vertex) -. radius_squared
+      },
+      options: svg_path.CrossingOptions(
+        samples: 100,
+        signed_line_distance_tolerance: residual_tolerance,
+        max_iterations: 100,
+      ),
+    )
+    |> result.map_error(PathError),
+  )
+  use t <- result.try(
+    list.find(roots, fn(t) { t >. 0.0 && t <=. 1.0 })
+    |> result.map_error(fn(_) {
+      CyclicOrderCircleIntersectionFailed(vertex_id, edge.id, radius)
+    }),
+  )
+  use sample <- result.try(
+    svg_path.segment_point(segment, at: t)
+    |> result.map_error(PathError),
+  )
+  Ok(CyclicOrderSample(
+    oriented_edge:,
+    point: sample,
+    angle: point.heading(point.subtract(sample, vertex)),
+  ))
+}
+
+fn edge_for_oriented_edge(
+  edges: List(ArrangementEdge),
+  oriented_edge: OrientedArrangementEdge,
+) -> Result(ArrangementEdge, Error) {
+  list.find(edges, fn(edge) { edge.id == oriented_edge.edge_id })
+  |> result.map_error(fn(_) { MissingEdge(oriented_edge.edge_id) })
+}
+
+fn outward_oriented_edge_segment(
+  edge: ArrangementEdge,
+  oriented_edge: OrientedArrangementEdge,
+) -> svg_path.Segment {
+  case oriented_edge.reversed {
+    True -> svg_path.segment_reverse(edge.segment)
+    False -> edge.segment
+  }
+}
+
+fn compare_cyclic_order_samples(
+  left: CyclicOrderSample,
+  right: CyclicOrderSample,
+) -> order.Order {
+  float_compare(left.angle, right.angle)
+}
+
+fn group_cyclic_order_samples(
+  samples: List(CyclicOrderSample),
+  tolerance: Float,
+) -> List(List(OrientedArrangementEdge)) {
+  case samples {
+    [] -> []
+    [first, ..rest] -> {
+      let groups =
+        group_linear_cyclic_order_samples(
+          rest,
+          previous: first,
+          tolerance:,
+          current: [first],
+          groups: [],
+        )
+      let groups = list.reverse(groups)
+      case groups {
+        [] -> []
+        [_] -> cyclic_sample_groups_to_oriented_edges(groups)
+        [first_group, ..middle_and_last] -> {
+          let assert Ok(last_group) = list.last(middle_and_last)
+          let assert Ok(last_sample) = list.last(last_group)
+          case
+            cyclic_order_samples_are_separated(last_sample, first, tolerance)
+          {
+            True -> cyclic_sample_groups_to_oriented_edges(groups)
+            False -> {
+              let middle =
+                list.take(middle_and_last, list.length(middle_and_last) - 1)
+              cyclic_sample_groups_to_oriented_edges([
+                list.append(last_group, first_group),
+                ..middle
+              ])
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+fn group_linear_cyclic_order_samples(
+  samples: List(CyclicOrderSample),
+  previous previous: CyclicOrderSample,
+  tolerance tolerance: Float,
+  current current: List(CyclicOrderSample),
+  groups groups: List(List(CyclicOrderSample)),
+) -> List(List(CyclicOrderSample)) {
+  case samples {
+    [] -> [list.reverse(current), ..groups]
+    [next, ..rest] ->
+      case cyclic_order_samples_are_separated(previous, next, tolerance) {
+        True ->
+          group_linear_cyclic_order_samples(
+            rest,
+            previous: next,
+            tolerance:,
+            current: [next],
+            groups: [list.reverse(current), ..groups],
+          )
+        False ->
+          group_linear_cyclic_order_samples(
+            rest,
+            previous: next,
+            tolerance:,
+            current: [next, ..current],
+            groups:,
+          )
+      }
+  }
+}
+
+fn cyclic_order_samples_are_separated(
+  first: CyclicOrderSample,
+  second: CyclicOrderSample,
+  tolerance: Float,
+) -> Bool {
+  let distance = point.distance(first.point, second.point)
+  let raw_angle = float.absolute_value(second.angle -. first.angle)
+  let angle = float.min(raw_angle, 360.0 -. raw_angle)
+  distance >. tolerance || angle >=. cyclic_order_minimum_angle_degrees
+}
+
+fn cyclic_sample_groups_to_oriented_edges(
+  groups: List(List(CyclicOrderSample)),
+) -> List(List(OrientedArrangementEdge)) {
+  list.map(groups, fn(group) {
+    list.map(group, fn(sample) { sample.oriented_edge })
+  })
+}
+
+fn order_ambiguous_cyclic_groups(
+  groups: List(List(OrientedArrangementEdge)),
+  samples_by_radius: List(List(CyclicOrderSample)),
+) -> List(List(OrientedArrangementEdge)) {
+  list.map(groups, fn(group) {
+    case group {
+      [] -> []
+      [_] -> group
+      _ ->
+        list.sort(group, by: fn(left, right) {
+          let left_score = cyclic_majority_score(left, group, samples_by_radius)
+          let right_score =
+            cyclic_majority_score(right, group, samples_by_radius)
+          case int.compare(right_score, left_score) {
+            order.Eq -> compare_oriented_edge_identity(left, right)
+            comparison -> comparison
+          }
+        })
+    }
+  })
+}
+
+fn cyclic_majority_score(
+  candidate: OrientedArrangementEdge,
+  group: List(OrientedArrangementEdge),
+  samples_by_radius: List(List(CyclicOrderSample)),
+) -> Int {
+  list.fold(group, 0, fn(score, other) {
+    case oriented_edges_equal(candidate, other) {
+      True -> score
+      False ->
+        score
+        + list.fold(samples_by_radius, 0, fn(wins, samples) {
+          case
+            cyclic_sample_angle(samples, candidate),
+            cyclic_sample_angle(samples, other)
+          {
+            Ok(candidate_angle), Ok(other_angle) ->
+              case clockwise_angle_precedes(candidate_angle, other_angle) {
+                True -> wins + 1
+                False -> wins
+              }
+            _, _ -> wins
+          }
+        })
+    }
+  })
+}
+
+fn cyclic_sample_angle(
+  samples: List(CyclicOrderSample),
+  oriented_edge: OrientedArrangementEdge,
+) -> Result(Float, Nil) {
+  use sample <- result.try(
+    list.find(samples, fn(sample) {
+      oriented_edges_equal(sample.oriented_edge, oriented_edge)
+    }),
+  )
+  Ok(sample.angle)
+}
+
+fn clockwise_angle_precedes(left: Float, right: Float) -> Bool {
+  let raw_delta = right -. left
+  let delta = case raw_delta <. 0.0 {
+    True -> raw_delta +. 360.0
+    False -> raw_delta
+  }
+  delta >. 0.0 && delta <. 180.0
+}
+
+fn oriented_edges_equal(
+  left: OrientedArrangementEdge,
+  right: OrientedArrangementEdge,
+) -> Bool {
+  left.edge_id == right.edge_id && left.reversed == right.reversed
+}
+
+fn compare_oriented_edge_identity(
+  left: OrientedArrangementEdge,
+  right: OrientedArrangementEdge,
+) -> order.Order {
+  case int.compare(left.edge_id, right.edge_id) {
+    order.Eq ->
+      case left.reversed, right.reversed {
+        False, True -> order.Lt
+        True, False -> order.Gt
+        _, _ -> order.Eq
+      }
+    comparison -> comparison
+  }
 }
 
 /// Resolve one segment image to graph edges and traversal directions.
@@ -326,7 +859,7 @@ pub fn segment_image_edges(
 
 /// Forget edge orientation and keep only total edge multiplicity.
 pub fn to_undirected(graph: ArrangementGraph) -> UndirectedArrangementGraph {
-  let ArrangementGraph(vertices:, edges:) = graph
+  let ArrangementGraph(vertices:, edges:, ..) = graph
   UndirectedArrangementGraph(
     vertices:,
     edges: list.map(edges, fn(edge) {
@@ -1870,7 +2403,7 @@ type EndpointSide {
 
 @internal
 pub fn empty() -> ArrangementGraph {
-  ArrangementGraph(vertices: [], edges: [])
+  ArrangementGraph(vertices: [], edges: [], cyclic_orders: [])
 }
 
 /// Insert one atomic segment directly as an arrangement edge.
@@ -1900,21 +2433,24 @@ pub fn insert_atomic_segment(
       case chord <. minimum_chord {
         True -> Error(SegmentTooShort(chord:, minimum: minimum_chord))
         False -> {
-          let ArrangementGraph(vertices:, edges:) = graph
+          let ArrangementGraph(vertices:, edges:, ..) = graph
           let #(vertices, start_id) = attach_vertex(vertices, start, tolerance)
           let #(vertices, end_id) = attach_vertex(vertices, end, tolerance)
           case start_id == end_id {
             True -> Error(SegmentCollapsedToVertex(vertex: start_id))
             False ->
-              Ok(ArrangementGraph(
-                vertices:,
-                edges: insert_or_increment_edge(
-                  edges,
-                  segment,
-                  start_id,
-                  end_id,
+              Ok(
+                ArrangementGraph(
+                  vertices:,
+                  edges: insert_or_increment_edge(
+                    edges,
+                    segment,
+                    start_id,
+                    end_id,
+                  ),
+                  cyclic_orders: [],
                 ),
-              ))
+              )
           }
         }
       }
@@ -1991,6 +2527,13 @@ pub fn build_with(
     edge_images,
     vertex_tolerance,
   ))
+  use cyclic_orders <- result.try(cyclic_orders_with(
+    graph,
+    tolerance: vertex_tolerance,
+    max_attempts: cyclic_order_max_attempts,
+  ))
+  let ArrangementGraph(vertices:, edges:, ..) = graph
+  let graph = ArrangementGraph(vertices:, edges:, cyclic_orders:)
   Ok(ArrangementSegmentBuild(graph:, segments:, segment_images:, edge_images:))
 }
 
@@ -2918,7 +3461,7 @@ fn split_progressive_graph_edge(
   tolerance: Float,
   minimum_chord: Float,
 ) -> Result(#(ArrangementGraph, List(ArrangementSegmentImage)), Error) {
-  let ArrangementGraph(vertices:, edges:) = graph
+  let ArrangementGraph(vertices:, edges:, ..) = graph
   use edge <- result.try(arrangement_edge_by_id(edges, edge_id))
   let ArrangementEdge(
     segment:,
@@ -2958,6 +3501,7 @@ fn split_progressive_graph_edge(
         ArrangementGraph(
           vertices:,
           edges: replace_edge_with(edges, edge_id, list.reverse(replacements)),
+          cyclic_orders: [],
         )
       let images =
         expand_edge_references(images, edge_id, list.reverse(references))
@@ -4337,7 +4881,7 @@ fn increment_edge_by_id(
   edge_id: Int,
   forward: Bool,
 ) -> ArrangementGraph {
-  let ArrangementGraph(vertices:, edges:) = graph
+  let ArrangementGraph(vertices:, edges:, cyclic_orders:) = graph
   ArrangementGraph(
     vertices:,
     edges: edges
@@ -4364,6 +4908,7 @@ fn increment_edge_by_id(
             )
         }
       }),
+    cyclic_orders:,
   )
 }
 
@@ -4564,7 +5109,7 @@ pub fn validate(
   minimum_chord minimum_chord: Float,
 ) -> Result(Nil, Error) {
   use _ <- result.try(validate_options(tolerance, minimum_chord))
-  let ArrangementGraph(vertices:, edges:) = graph
+  let ArrangementGraph(vertices:, edges:, ..) = graph
   use _ <- result.try(validate_edges(edges, vertices, tolerance, minimum_chord))
   validate_vertices(vertices, edges, tolerance)
 }

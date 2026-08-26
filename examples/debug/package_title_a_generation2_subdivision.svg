@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="60.6994 10.07257 0.54501 0.38738" width="1200" height="900">
+  <rect x="60.6994" y="10.07257" width="0.54501" height="0.38738" style="fill: #ffffff; stroke: none" />
+  <path d="M 61.13273 10.37995 C 61.14681 10.35957 61.15737 10.33688 61.16441 10.31189" style="fill: none; stroke: #16a34a; stroke-width: 0.003; stroke-linecap: round" />
+  <circle cx="61.13273" cy="10.37995" r="0.008" style="fill: #16a34a; stroke: #ffffff; stroke-width: 0.0026666666666666666" />
+  <circle cx="61.16441" cy="10.31189" r="0.008" style="fill: #16a34a; stroke: #ffffff; stroke-width: 0.0026666666666666666" />
+  <path d="M 61.13273 10.37995 L 61.14681 10.35957" style="fill: none; stroke: #86efac; stroke-width: 0.0015; stroke-dasharray: 0.0045000000000000005 0.0045000000000000005" />
+  <path d="M 61.15737 10.33688 L 61.16441 10.31189" style="fill: none; stroke: #86efac; stroke-width: 0.0015; stroke-dasharray: 0.0045000000000000005 0.0045000000000000005" />
+  <circle cx="61.14681" cy="10.35957" r="0.006" style="fill: #86efac; stroke: #ffffff; stroke-width: 0.002" />
+  <circle cx="61.15737" cy="10.33688" r="0.006" style="fill: #86efac; stroke: #ffffff; stroke-width: 0.002" />
+  <path d="M 60.80364 10.15257 S 60.78668 10.17759 60.7794 10.20343" style="fill: none; stroke: #dc2626; stroke-width: 0.003; stroke-linecap: round" />
+  <circle cx="60.80364" cy="10.15257" r="0.008" style="fill: #dc2626; stroke: #ffffff; stroke-width: 0.0026666666666666666" />
+  <circle cx="60.7794" cy="10.20343" r="0.008" style="fill: #dc2626; stroke: #ffffff; stroke-width: 0.0026666666666666666" />
+  <path d="M 60.80364 10.15257 H 60.80364" style="fill: none; stroke: #fca5a5; stroke-width: 0.0015; stroke-dasharray: 0.0045000000000000005 0.0045000000000000005" />
+  <path d="M 60.78668 10.17759 L 60.7794 10.20343" style="fill: none; stroke: #fca5a5; stroke-width: 0.0015; stroke-dasharray: 0.0045000000000000005 0.0045000000000000005" />
+  <circle cx="60.80364" cy="10.15257" r="0.006" style="fill: #fca5a5; stroke: #ffffff; stroke-width: 0.002" />
+  <circle cx="60.78668" cy="10.17759" r="0.006" style="fill: #fca5a5; stroke: #ffffff; stroke-width: 0.002" />
+  <text x="61.16321" y="10.33565" font-size="0.018" style="fill: #166534; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; paint-order: stroke; stroke: #ffffff; stroke-width: 0.004">E4.1g2</text>
+  <text x="61.14473" y="10.36795" font-size="0.018" style="fill: #166534; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; paint-order: stroke; stroke: #ffffff; stroke-width: 0.004">s</text>
+  <text x="61.17641" y="10.29989" font-size="0.018" style="fill: #166534; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; paint-order: stroke; stroke: #ffffff; stroke-width: 0.004">e</text>
+  <text x="60.80625" y="10.18631" font-size="0.018" style="fill: #991b1b; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; paint-order: stroke; stroke: #ffffff; stroke-width: 0.004">U candidate</text>
+  <text x="60.7114" y="10.09757" font-size="0.018" style="fill: #111827; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; paint-order: stroke; stroke: #ffffff; stroke-width: 0.004">divergence=0.011641035047315527</text>
+</svg>

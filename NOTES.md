@@ -237,6 +237,17 @@ Primary references:
 - <https://www.w3.org/Graphics/SVG/Test/Overview.html>
 - <https://dev.w3.org/SVG/profiles/1.1F2/test/status/test_suite_status.html>
 
+## Offset Micro-Loop Regressions
+
+- The isolated package-title `V` at offset distance `0.4` is **not** a current
+  micro-loop example. With fitting tolerance `0.01`, it produces one ordinary
+  closed survivor with 45 arrangement edges. That survivor is not band-sized,
+  so small-loop filtering constructs no blocks and removes nothing. Do not use
+  the historical `0.4` drawings as evidence of current behavior.
+- The isolated package-title `V` at offset distance `1.04` remains the current
+  micro-loop regression. Before direct-containment filtering it produces three
+  two-edge micro-loops plus the main contour.
+
 ## Offset Error Payloads
 
 `offset.Error.DegenerateTangent(t:)` normally reports the segment parameter

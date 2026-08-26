@@ -27,12 +27,119 @@ pub fn closed_square_builds_valid_graph_test() {
     ])
 
   let assert Ok(graph) = build_graph([square], tolerance:, minimum_chord:)
-  let arrangement_graph.ArrangementGraph(vertices:, edges:) = graph
+  let arrangement_graph.ArrangementGraph(vertices:, edges:, ..) = graph
 
   list.length(vertices) |> should.equal(4)
   list.length(edges) |> should.equal(4)
   arrangement_graph.validate(graph, tolerance:, minimum_chord:)
   |> should.equal(Ok(Nil))
+}
+
+pub fn cyclic_order_uses_clockwise_common_circle_positions_test() {
+  let center = svg_path.Point(0.0, 0.0)
+  let rays = [
+    svg_path.Line(start: center, end: svg_path.Point(10.0, 0.0)),
+    svg_path.Line(start: center, end: svg_path.Point(0.0, 10.0)),
+    svg_path.Line(start: center, end: svg_path.Point(-10.0, 0.0)),
+    svg_path.Line(start: svg_path.Point(0.0, -10.0), end: center),
+  ]
+  let assert Ok(arrangement_graph.ArrangementSegmentBuild(graph:, ..)) =
+    arrangement_graph.build_with(
+      rays,
+      vertex_tolerance: tolerance,
+      minimum_chord:,
+      endpoint_sliver_tolerance: 0.0,
+    )
+  let assert Ok(order) =
+    arrangement_graph.vertex_cyclic_order_with(
+      graph,
+      vertex_id: 0,
+      tolerance:,
+      max_attempts: 3,
+    )
+
+  order
+  |> list.flatten
+  |> list.map(fn(oriented_edge) {
+    let arrangement_graph.OrientedArrangementEdge(edge_id:, reversed:) =
+      oriented_edge
+    #(edge_id, reversed)
+  })
+  |> should.equal([#(0, False), #(1, False), #(2, False), #(3, True)])
+}
+
+pub fn cyclic_order_separates_equal_endpoint_tangents_on_circle_test() {
+  let center = svg_path.Point(0.0, 0.0)
+  let rays = [
+    svg_path.QuadraticBezier(
+      start: center,
+      control: svg_path.Point(5.0, 0.0),
+      end: svg_path.Point(10.0, 3.0),
+    ),
+    svg_path.QuadraticBezier(
+      start: center,
+      control: svg_path.Point(5.0, 0.0),
+      end: svg_path.Point(10.0, -3.0),
+    ),
+    svg_path.Line(start: center, end: svg_path.Point(-10.0, 0.0)),
+  ]
+  let assert Ok(arrangement_graph.ArrangementSegmentBuild(graph:, ..)) =
+    arrangement_graph.build_with(
+      rays,
+      vertex_tolerance: tolerance,
+      minimum_chord:,
+      endpoint_sliver_tolerance: 0.0,
+    )
+  let assert Ok(order) =
+    arrangement_graph.vertex_cyclic_order_with(
+      graph,
+      vertex_id: 0,
+      tolerance:,
+      max_attempts: 3,
+    )
+
+  order
+  |> list.flatten
+  |> list.map(fn(oriented_edge) { oriented_edge.edge_id })
+  |> should.equal([0, 2, 1])
+}
+
+pub fn cyclic_order_groups_circle_points_below_both_separation_limits_test() {
+  let center = svg_path.Point(0.0, 0.0)
+  let rays = [
+    svg_path.Line(start: center, end: svg_path.Point(10.0, 0.0)),
+    svg_path.Line(start: center, end: svg_path.Point(10.0, 0.00000001)),
+  ]
+  let assert Ok(arrangement_graph.ArrangementSegmentBuild(graph:, ..)) =
+    arrangement_graph.build_with(
+      rays,
+      vertex_tolerance: 0.000000001,
+      minimum_chord:,
+      endpoint_sliver_tolerance: 0.0,
+    )
+  let assert Ok(groups) =
+    arrangement_graph.vertex_cyclic_order_with(
+      graph,
+      vertex_id: 0,
+      tolerance:,
+      max_attempts: 3,
+    )
+  groups
+  |> list.map(fn(group) { list.map(group, fn(edge) { edge.edge_id }) })
+  |> should.equal([[0, 1]])
+}
+
+pub fn cyclic_orders_cover_every_vertex_of_built_square_test() {
+  let assert Ok(arrangement_graph.ArrangementGraph(cyclic_orders: orders, ..)) =
+    build_graph([square(0.0, 0.0, 10.0)], tolerance:, minimum_chord:)
+
+  list.length(orders) |> should.equal(4)
+  orders
+  |> list.all(fn(entry) {
+    let #(_, order) = entry
+    list.length(list.flatten(order)) == 2
+  })
+  |> should.be_true
 }
 
 pub fn build_preserves_source_path_grouping_test() {
@@ -109,7 +216,7 @@ pub fn progressive_segment_build_maps_crossing_sources_test() {
     )
 
   let assert Ok(arrangement_graph.ArrangementSegmentBuild(
-    graph: arrangement_graph.ArrangementGraph(vertices:, edges:),
+    graph: arrangement_graph.ArrangementGraph(vertices:, edges:, ..),
     segment_images: [
       arrangement_graph.ArrangementSourceSegmentImage(
         segment_index: 0,
@@ -161,6 +268,7 @@ fn assert_near_cross_orders_agree(gap: Float) {
     graph: arrangement_graph.ArrangementGraph(
       vertices: first_vertices,
       edges: first_edges,
+      ..,
     ),
     ..,
   ) = first
@@ -168,6 +276,7 @@ fn assert_near_cross_orders_agree(gap: Float) {
     graph: arrangement_graph.ArrangementGraph(
       vertices: second_vertices,
       edges: second_edges,
+      ..,
     ),
     ..,
   ) = second
@@ -307,7 +416,11 @@ pub fn build_rejects_invalid_minimum_chord_before_inspecting_sources_test() {
 
 pub fn validation_rejects_invalid_numeric_options_test() {
   arrangement_graph.validate(
-    arrangement_graph.ArrangementGraph(vertices: [], edges: []),
+    arrangement_graph.ArrangementGraph(
+      vertices: [],
+      edges: [],
+      cyclic_orders: [],
+    ),
     tolerance:,
     minimum_chord: 0.0,
   )
@@ -422,6 +535,7 @@ pub fn validation_rejects_vertex_sample_outside_official_tolerance_test() {
         ),
       ],
       edges: [],
+      cyclic_orders: [],
     )
 
   arrangement_graph.validate(graph, tolerance: 1.0, minimum_chord:)
@@ -445,6 +559,7 @@ pub fn validation_rejects_noncanonical_vertex_center_test() {
         ),
       ],
       edges: [],
+      cyclic_orders: [],
     )
 
   let assert Error(arrangement_graph.VertexCenterMismatch(
@@ -465,6 +580,7 @@ pub fn validation_rejects_vertex_without_endpoint_samples_test() {
         ),
       ],
       edges: [],
+      cyclic_orders: [],
     )
 
   arrangement_graph.validate(graph, tolerance:, minimum_chord:)
@@ -657,7 +773,7 @@ pub fn builder_splits_crossing_lines_at_shared_vertex_test() {
       ),
     ])
 
-  let assert Ok(arrangement_graph.ArrangementGraph(vertices:, edges:)) =
+  let assert Ok(arrangement_graph.ArrangementGraph(vertices:, edges:, ..)) =
     build_graph([horizontal, vertical], tolerance:, minimum_chord:)
 
   list.length(vertices) |> should.equal(5)
@@ -687,7 +803,7 @@ pub fn builder_keeps_geometrically_distinct_cuts_on_long_segment_test() {
       ),
     ])
 
-  let assert Ok(arrangement_graph.ArrangementGraph(vertices:, edges:)) =
+  let assert Ok(arrangement_graph.ArrangementGraph(vertices:, edges:, ..)) =
     build_graph([horizontal, first, second], tolerance: 0.001, minimum_chord:)
 
   list.length(vertices) |> should.equal(8)
@@ -710,7 +826,7 @@ pub fn builder_refines_partial_line_overlap_and_counts_middle_test() {
       ),
     ])
 
-  let assert Ok(arrangement_graph.ArrangementGraph(vertices:, edges:)) =
+  let assert Ok(arrangement_graph.ArrangementGraph(vertices:, edges:, ..)) =
     build_graph([first, second], tolerance:, minimum_chord:)
 
   list.length(vertices) |> should.equal(4)
@@ -771,7 +887,7 @@ pub fn builder_consolidates_phase_shifted_opposite_circle_arcs_test() {
 
   let assert Ok(graph) =
     build_graph([clockwise, counterclockwise], tolerance:, minimum_chord:)
-  let arrangement_graph.ArrangementGraph(vertices:, edges:) = graph
+  let arrangement_graph.ArrangementGraph(vertices:, edges:, ..) = graph
 
   list.length(vertices) |> should.equal(4)
   list.length(edges) |> should.equal(4)
@@ -840,7 +956,7 @@ pub fn builder_consolidates_near_equal_circles_inside_tolerance_test() {
       tolerance: graph_tolerance,
       minimum_chord:,
     )
-  let arrangement_graph.ArrangementGraph(vertices:, edges:) = graph
+  let arrangement_graph.ArrangementGraph(vertices:, edges:, ..) = graph
 
   list.length(vertices) |> should.equal(2)
   list.length(edges) |> should.equal(2)

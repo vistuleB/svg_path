@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-969.91433 -1410.23109 1118.34528 1623.25856" width="1400" height="900">
+  <rect x="-969.91433" y="-1410.23109" width="1118.34528" height="1623.25856" style="fill: #ffffff; stroke: none" />
+  <path d="M 0 0 L -849.91433 -1290.23109" style="fill: none; stroke: #dc2626; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; opacity: 0.55" />
+  <path d="M 0 0 L -849.91433 -1290.23109" style="fill: none; stroke: #dc2626; stroke-width: 1.75; stroke-dasharray: 10.5 10.5; opacity: 0.8" />
+  <circle cx="28.43095" cy="93.02748" r="10.5" style="fill: #7c3aed; stroke: #ffffff; stroke-width: 3.5" />
+  <text x="28.43235" y="93.02628" font-size="24" style="fill: #581c87; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; paint-order: stroke; stroke: #ffffff; stroke-width: 0.012">s1</text>
+  <circle cx="4.86596" cy="28.07262" r="10.5" style="fill: #7c3aed; stroke: #ffffff; stroke-width: 3.5" />
+  <text x="4.86736" y="28.07142" font-size="24" style="fill: #581c87; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; paint-order: stroke; stroke: #ffffff; stroke-width: 0.012">s2</text>
+  <circle cx="-19.65689" cy="-35.97814" r="10.5" style="fill: #7c3aed; stroke: #ffffff; stroke-width: 3.5" />
+  <text x="-19.65549" y="-35.97934" font-size="24" style="fill: #581c87; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; paint-order: stroke; stroke: #ffffff; stroke-width: 0.012">s3</text>
+  <circle cx="-45.10294" cy="-99.0729" r="10.5" style="fill: #7c3aed; stroke: #ffffff; stroke-width: 3.5" />
+  <text x="-45.10154" y="-99.0741" font-size="24" style="fill: #581c87; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; paint-order: stroke; stroke: #ffffff; stroke-width: 0.012">s4</text>
+  <circle cx="-71.43388" cy="-161.15957" r="10.5" style="fill: #7c3aed; stroke: #ffffff; stroke-width: 3.5" />
+  <text x="-71.43248" y="-161.16077" font-size="24" style="fill: #581c87; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; paint-order: stroke; stroke: #ffffff; stroke-width: 0.012">s5</text>
+  <circle cx="0" cy="0" r="12.6" style="fill: #dc2626; stroke: #ffffff; stroke-width: 4.2" />
+  <circle cx="-849.91433" cy="-1290.23109" r="12.6" style="fill: #dc2626; stroke: #ffffff; stroke-width: 4.2" />
+  <text x="0.0014" y="-0.0015" font-size="24" style="fill: #991b1b; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; paint-order: stroke; stroke: #ffffff; stroke-width: 0.012">offset start</text>
+  <text x="-849.91293" y="-1290.22889" font-size="24" style="fill: #991b1b; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; paint-order: stroke; stroke: #ffffff; stroke-width: 0.012">offset end</text>
+</svg>

@@ -1022,8 +1022,7 @@ fn render_panel(
 ) -> svg.ThingsToDraw {
   let x = 8.0 +. int.to_float(col) *. { panel_w +. gap }
   let y = 38.0 +. int.to_float(row) *. { panel_h +. gap }
-  let placed_source =
-    place_path(svg_path.subpath_as_path(example.source), x, y)
+  let placed_source = place_path(svg_path.subpath_as_path(example.source), x, y)
   let options = preview_options(join_case.join)
   let assert Ok(result) =
     offset.subpath_with(example.source, distance: example.distance, options:)
