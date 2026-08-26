@@ -90,9 +90,13 @@ const stable_tangent_assertion_diameter = 0.01
 
 const default_stalled_offset_diameter = 0.01
 
-const join_or_reversed_loop_filtering_enabled = True
+type LoopCleanupMethod {
+  NoLoopCleanup
+  BlockBasedLoopCleanup
+  ProvenanceBasedLoopCleanup
+}
 
-const direct_containment_loop_filtering_enabled = False
+const loop_cleanup_method = ProvenanceBasedLoopCleanup
 
 /// Errors returned by offset helpers.
 pub type Error {
@@ -943,7 +947,10 @@ fn arrangement_edge_is_entirely_join_or_reversed(
 ) -> Bool {
   case images {
     [] -> False
-    [arrangement_graph.ArrangementEdgeImage(edge_id: candidate, sources:), ..rest] ->
+    [
+      arrangement_graph.ArrangementEdgeImage(edge_id: candidate, sources:),
+      ..rest
+    ] ->
       case candidate == edge_id {
         False ->
           arrangement_edge_is_entirely_join_or_reversed(
@@ -954,10 +961,8 @@ fn arrangement_edge_is_entirely_join_or_reversed(
         True ->
           !list.is_empty(sources)
           && list.all(sources, fn(source) {
-            let arrangement_graph.ArrangementEdgeSourceImage(
-              segment_index:,
-              ..,
-            ) = source
+            let arrangement_graph.ArrangementEdgeSourceImage(segment_index:, ..) =
+              source
             case offset_segment_provenance_at(provenance, segment_index) {
               Ok(JoinOffsetSegment) | Ok(ReversedOffsetSegment) -> True
               Ok(OtherOffsetSegment) | Error(_) -> False
@@ -974,8 +979,7 @@ fn offset_segment_provenance_at(
   case provenance, index {
     [], _ -> Error(Nil)
     [first, ..], 0 -> Ok(first)
-    [_, ..rest], _ if index > 0 ->
-      offset_segment_provenance_at(rest, index - 1)
+    [_, ..rest], _ if index > 0 -> offset_segment_provenance_at(rest, index - 1)
     _, _ -> Error(Nil)
   }
 }
@@ -1763,22 +1767,7 @@ fn trim_single_offset_builds(
     bands:,
     options:,
   ))
-  let SingleOffsetLoopTrace(loops:, ..) = trace
-  let loops = case join_or_reversed_loop_filtering_enabled {
-    True -> filter_entirely_join_or_reversed_arrangement_loops(trace, loops)
-    False -> loops
-  }
-  use loops <- result.try(case direct_containment_loop_filtering_enabled {
-    False -> {
-      Ok(loops)
-    }
-    True ->
-      internal_filter_directly_contained_arrangement_loops(
-        SingleOffsetLoopTrace(..trace, loops:),
-        inner_offset: 0.0,
-        outer_offset: distance,
-      )
-  })
+  use loops <- result.try(clean_single_offset_loops(trace, distance))
   let subpaths =
     loops
     |> list.map(fn(loop) {
@@ -1790,6 +1779,24 @@ fn trim_single_offset_builds(
     })
   use oriented <- result.try(orient_outline_path(svg_path.Path(subpaths:)))
   Ok(oriented)
+}
+
+fn clean_single_offset_loops(
+  trace: SingleOffsetLoopTrace,
+  distance: Float,
+) -> Result(List(ArrangementLoop), Error) {
+  let SingleOffsetLoopTrace(loops:, ..) = trace
+  case loop_cleanup_method {
+    NoLoopCleanup -> Ok(loops)
+    BlockBasedLoopCleanup ->
+      internal_filter_directly_contained_arrangement_loops(
+        trace,
+        inner_offset: 0.0,
+        outer_offset: distance,
+      )
+    ProvenanceBasedLoopCleanup ->
+      Ok(filter_entirely_join_or_reversed_arrangement_loops(trace, loops))
+  }
 }
 
 fn filter_entirely_join_or_reversed_arrangement_loops(
@@ -4772,11 +4779,10 @@ fn repeated_offset_segment_provenance(
   case count <= 0 {
     True -> repeated
     False ->
-      repeated_offset_segment_provenance(
+      repeated_offset_segment_provenance(provenance, count - 1, repeated: [
         provenance,
-        count - 1,
-        repeated: [provenance, ..repeated],
-      )
+        ..repeated
+      ])
   }
 }
 
