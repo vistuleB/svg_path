@@ -53,7 +53,7 @@ pub fn side_levels_fall_back_from_a_midpoint_cusp_test() {
       side_sampling_distance: 0.0001,
       options: svg_path.default_containment_options(),
     )
-    == Ok(#(0, -1))
+    == Ok(#(-1, 0))
 }
 
 pub fn side_levels_reject_a_segment_without_a_regular_sample_test() {

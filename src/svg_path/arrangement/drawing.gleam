@@ -162,11 +162,8 @@ fn annotated_edge_things(
       )
       let #(left_winding, right_winding) = levels
       let EdgeAnnotationPose(point: midpoint, rotation:) = pose
-      // SVG's display Y axis is the reflection of the Cartesian Y axis used
-      // by the side-level calculation. Swap the textual order so the first
-      // number appears on the physical left of the directed edge.
       let winding_label =
-        int.to_string(right_winding) <> "/" <> int.to_string(left_winding)
+        int.to_string(left_winding) <> "/" <> int.to_string(right_winding)
       let multiplicity_label =
         "↑"
         <> int.to_string(forward_multiplicity)

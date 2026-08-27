@@ -2038,7 +2038,7 @@ fn emit_nested_threshold_edge(
 ) -> #(Int, List(NestedContourEdge)) {
   let ArrangementEdge(segment:, start_vertex:, end_vertex:, ..) = edge
   case active_left, active_right {
-    False, True -> #(next_id + 1, [
+    True, False -> #(next_id + 1, [
       NestedContourEdge(
         id: next_id,
         layer:,
@@ -2048,7 +2048,7 @@ fn emit_nested_threshold_edge(
       ),
       ..boundary
     ])
-    True, False -> #(next_id + 1, [
+    False, True -> #(next_id + 1, [
       NestedContourEdge(
         id: next_id,
         layer:,

@@ -88,8 +88,8 @@ pub fn projection_test() {
 pub fn rotations_and_near_test() {
   let a = svg_path.Point(2.0, 3.0)
 
-  assert point.rotate_clockwise(a) == svg_path.Point(3.0, -2.0)
-  assert point.rotate_counterclockwise(a) == svg_path.Point(-3.0, 2.0)
+  assert point.rotate_clockwise(a) == svg_path.Point(-3.0, 2.0)
+  assert point.rotate_counterclockwise(a) == svg_path.Point(3.0, -2.0)
   assert point.near(
     svg_path.Point(0.0, 0.0),
     svg_path.Point(3.0, 4.0),

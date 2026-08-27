@@ -111,7 +111,7 @@ pub fn prepare_for_arc_averse_consumer(
 - `svg_path/effects`: one-off artistic path effects such as corner rounding.
 - `svg_path/degeneracy`: normalization of near-degenerate geometry into simpler
   segments.
-- `svg_path/curvature`: signed curvature and right-normal radius helpers for
+- `svg_path/curvature`: signed curvature and visual-left-normal radius helpers for
   segments.
 - `svg_path/convex_hull`: convex hulls for segments, subpaths, paths, and point
   lists.

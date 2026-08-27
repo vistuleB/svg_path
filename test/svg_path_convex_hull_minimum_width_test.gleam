@@ -397,7 +397,7 @@ fn rectangle_at_angle(
 ) -> List(svg_path.Point) {
   let along = point.direction(degrees: angle) |> point.scale(by: length /. 2.0)
   let across =
-    point.rotate_clockwise(along)
+    point.rotate_counterclockwise(along)
     |> point.normalize
     |> fn(result) {
       let assert Ok(direction) = result

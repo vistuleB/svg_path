@@ -518,7 +518,7 @@ fn minimum_width_strip_for_edges(
       let edge = subtract(end, start)
       let best = case
         edge
-        |> point_helpers.rotate_clockwise
+        |> point_helpers.rotate_counterclockwise
         |> point_helpers.normalize
       {
         Error(_) -> best

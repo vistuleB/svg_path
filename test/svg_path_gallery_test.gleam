@@ -3316,7 +3316,7 @@ fn float_square_root(value: Float) -> Float {
 }
 
 fn rotate_counterclockwise(point: svg_path.Point) -> svg_path.Point {
-  svg_path.Point(0.0 -. point.y, point.x)
+  svg_path.Point(point.y, 0.0 -. point.x)
 }
 
 fn float_to_string(value: Float) -> String {

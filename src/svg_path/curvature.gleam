@@ -95,42 +95,42 @@ pub fn segment_derivatives(
   }
 }
 
-/// Return right-normal signed curvature at a segment parameter.
+/// Return visual-left-normal signed curvature at a segment parameter.
 ///
-/// Positive values mean the curve bends toward the right normal used by
-/// `svg_path/offset`; negative values mean it bends toward the left normal.
+/// Positive values mean the curve bends toward the visual left of its tangent;
+/// negative values mean it bends toward the visual right. Directional words
+/// use SVG page coordinates, where positive y points down.
 /// Lines return `0.0`. Degenerate zero-speed parameters return an error.
-pub fn segment_right_normal_curvature(
+pub fn segment_left_normal_curvature(
   segment: svg_path.Segment,
   at t: Float,
 ) -> Result(Float, Nil) {
   use data <- result.try(segment_derivatives_nil(segment, at: t))
-  use curvature <- result.try(left_normal_curvature_from_derivatives(data))
-  Ok(0.0 -. curvature)
+  left_normal_curvature_from_derivatives(data)
 }
 
-/// Return right-normal signed radius of curvature at a segment parameter.
+/// Return visual-left-normal signed radius of curvature at a segment parameter.
 ///
 /// Lines and inflection points return `Error(Nil)` because their radius is
 /// infinite. Degenerate zero-speed parameters also return `Error(Nil)`.
-pub fn segment_right_normal_radius(
+pub fn segment_left_normal_radius(
   segment: svg_path.Segment,
   at t: Float,
 ) -> Result(Float, Nil) {
-  use curvature <- result.try(segment_right_normal_curvature(segment, at: t))
+  use curvature <- result.try(segment_left_normal_curvature(segment, at: t))
   case curvature == 0.0 {
     True -> Error(Nil)
     False -> Ok(1.0 /. curvature)
   }
 }
 
-/// Return `abs(R_right(t) - distance) < margin` without evaluating `R_right(t)`
+/// Return `abs(R_left(t) - distance) < margin` without evaluating `R_left(t)`
 /// directly.
 ///
 /// Algebraically, for finite nonzero curvature this is equivalent to:
 ///
 /// `abs(|p'|^3 + distance * cross(p', p'')) < margin * abs(cross(p', p''))`.
-pub fn segment_right_normal_radius_close_to(
+pub fn segment_left_normal_radius_close_to(
   segment: svg_path.Segment,
   distance distance: Float,
   margin margin: Float,
@@ -140,40 +140,40 @@ pub fn segment_right_normal_radius_close_to(
     True -> Error(Nil)
     False -> {
       use data <- result.try(segment_derivatives_nil(segment, at: t))
-      right_normal_radius_close_to(data, distance: distance, margin: margin)
+      left_normal_radius_close_to(data, distance: distance, margin: margin)
     }
   }
 }
 
-/// Return the right-normal cusp residual
+/// Return the visual-left-normal cusp residual
 /// `|p'|^3 + distance * cross(p', p'')`.
 ///
-/// A zero residual means the right-normal signed radius equals `distance`,
+/// A zero residual means the visual-left-normal signed radius equals `distance`,
 /// assuming finite nonzero curvature.
 @internal
-pub fn segment_right_normal_cusp_residual(
+pub fn segment_left_normal_cusp_residual(
   segment: svg_path.Segment,
   distance distance: Float,
   at t: Float,
 ) -> Result(Float, Nil) {
   use data <- result.try(segment_derivatives_nil(segment, at: t))
-  right_normal_cusp_residual_from_derivatives(data, distance: distance)
+  left_normal_cusp_residual_from_derivatives(data, distance: distance)
 }
 
-/// Sample and refine parameters where right-normal signed radius equals
+/// Sample and refine parameters where visual-left-normal signed radius equals
 /// `distance`.
 ///
 /// This is conservative root discovery over the cusp residual. It detects
 /// sign-changing roots and exact sampled roots. Repeated roots that do not
 /// change sign can be added later using polynomial candidates.
-pub fn segment_right_normal_cusp_parameters(
+pub fn segment_left_normal_cusp_parameters(
   segment: svg_path.Segment,
   distance distance: Float,
   options options: Options,
 ) -> Result(List(Float), Nil) {
   use _ <- result.try(validate_options(options))
   let residual = fn(t) {
-    segment_right_normal_cusp_residual(segment, distance:, at: t)
+    segment_left_normal_cusp_residual(segment, distance:, at: t)
   }
   sampled_roots(residual, options)
 }
@@ -220,13 +220,13 @@ fn to_bezier_point(point: svg_path.Point) -> bezier.BezierPoint {
   bezier.BezierPoint(point.x, point.y)
 }
 
-/// Sample intervals where right-normal signed radius is within `margin` of
+/// Sample intervals where visual-left-normal signed radius is within `margin` of
 /// `distance`.
 ///
 /// This is a conservative sampled classifier. Adjacent close samples are merged
 /// into parameter bands. It is intended as a first staging helper for offset
 /// stalled-run detection, not as a final exact algebraic interval solver.
-pub fn segment_right_normal_radius_close_bands(
+pub fn segment_left_normal_radius_close_bands(
   segment: svg_path.Segment,
   distance distance: Float,
   margin margin: Float,
@@ -237,7 +237,7 @@ pub fn segment_right_normal_radius_close_bands(
     True -> Error(Nil)
     False -> {
       let close = fn(t) {
-        segment_right_normal_radius_close_to(segment, distance:, margin:, at: t)
+        segment_left_normal_radius_close_to(segment, distance:, margin:, at: t)
       }
       sampled_bands(close, options)
     }
@@ -261,12 +261,12 @@ fn left_normal_curvature_from_derivatives(
     True -> Error(Nil)
     False -> {
       let assert Ok(speed) = float.square_root(speed_squared)
-      Ok(cross(first, second) /. { speed_squared *. speed })
+      Ok({ 0.0 -. cross(first, second) } /. { speed_squared *. speed })
     }
   }
 }
 
-fn right_normal_radius_close_to(
+fn left_normal_radius_close_to(
   data: Derivatives,
   distance distance: Float,
   margin margin: Float,
@@ -287,7 +287,7 @@ fn right_normal_radius_close_to(
   }
 }
 
-fn right_normal_cusp_residual_from_derivatives(
+fn left_normal_cusp_residual_from_derivatives(
   data: Derivatives,
   distance distance: Float,
 ) -> Result(Float, Nil) {

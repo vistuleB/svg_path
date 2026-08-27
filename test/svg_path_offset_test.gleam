@@ -225,7 +225,7 @@ pub fn endpoint_near_reversal_is_absorbed_into_stalled_piece_test() {
     <. 0.000000001
 }
 
-pub fn segment_offsets_line_to_the_right_of_direction_test() {
+pub fn segment_offsets_line_to_visual_left_for_positive_distance_test() {
   let line =
     svg_path.Line(
       start: svg_path.Point(0.0, 0.0),
@@ -243,7 +243,7 @@ pub fn segment_offsets_line_to_the_right_of_direction_test() {
     ]
 }
 
-pub fn segment_offsets_line_to_left_for_negative_distance_test() {
+pub fn segment_offsets_line_to_visual_right_for_negative_distance_test() {
   let line =
     svg_path.Line(
       start: svg_path.Point(0.0, 0.0),
@@ -2714,4 +2714,31 @@ fn first_path_data(contents: String) -> String {
   let assert [_, after_attribute] = string.split(contents, on: " d=\"")
   let assert [data, ..] = string.split(after_attribute, on: "\"")
   data
+}
+
+pub fn pairwise_healing_loop_short_circuit_is_idempotent_test() {
+  let previous =
+    svg_path.QuadraticBezier(
+      start: svg_path.Point(0.0, 0.0),
+      control: svg_path.Point(0.5, 2.0),
+      end: svg_path.Point(1.0, 0.0),
+    )
+  let next =
+    svg_path.QuadraticBezier(
+      start: svg_path.Point(1.0, 0.0),
+      control: svg_path.Point(0.5, -1.0),
+      end: svg_path.Point(0.0, 1.0),
+    )
+  let assert Ok(#(rebuilt_previous, rebuilt_next)) =
+    offset.internal_short_circuit_adjacent_offset_segment_loop(previous, next)
+
+  assert svg_path.segment_end(rebuilt_previous)
+    == svg_path.segment_start(rebuilt_next)
+  assert svg_path.segment_end(rebuilt_previous)
+    != svg_path.segment_end(previous)
+  assert offset.internal_short_circuit_adjacent_offset_segment_loop(
+      rebuilt_previous,
+      rebuilt_next,
+    )
+    == Ok(#(rebuilt_previous, rebuilt_next))
 }

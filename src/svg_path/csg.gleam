@@ -486,11 +486,11 @@ fn classify_boolean_edges(
           operation,
         )
       let boundary = case filled_left, filled_right {
-        False, True -> [
+        True, False -> [
           BoundaryEdge(id:, layer: 0, segment:, start_vertex:, end_vertex:),
           ..boundary
         ]
-        True, False -> [
+        False, True -> [
           BoundaryEdge(
             id:,
             layer: 0,
@@ -588,11 +588,11 @@ fn emit_threshold_boundary(
 ) -> #(Int, List(BoundaryEdge)) {
   let ArrangementEdge(segment:, start_vertex:, end_vertex:, ..) = edge
   case active_left, active_right {
-    False, True -> #(next_id + 1, [
+    True, False -> #(next_id + 1, [
       BoundaryEdge(id: next_id, layer:, segment:, start_vertex:, end_vertex:),
       ..boundary
     ])
-    True, False -> #(next_id + 1, [
+    False, True -> #(next_id + 1, [
       BoundaryEdge(
         id: next_id,
         layer:,

@@ -83,8 +83,8 @@ fn sample_segment_sides(
       let assert Ok(length) = float.square_root(length_squared)
       let normal =
         svg_path.Point(
-          { 0.0 -. derivative.y } /. length *. side_sampling_distance,
-          derivative.x /. length *. side_sampling_distance,
+          derivative.y /. length *. side_sampling_distance,
+          { 0.0 -. derivative.x } /. length *. side_sampling_distance,
         )
       let left = svg_path.Point(sample.x +. normal.x, sample.y +. normal.y)
       let right = svg_path.Point(sample.x -. normal.x, sample.y -. normal.y)

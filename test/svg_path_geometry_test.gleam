@@ -2083,6 +2083,38 @@ pub fn path_winding_accumulates_subpath_winding_test() {
     == Ok(svg_path.BoundaryWinding)
 }
 
+pub fn clockwise_svg_circle_has_positive_winding_test() {
+  let right = svg_path.Point(1.0, 0.0)
+  let left = svg_path.Point(-1.0, 0.0)
+  let clockwise_circle =
+    svg_path.subpath_assert([
+      svg_path.Arc(
+        start: right,
+        radius: svg_path.Point(1.0, 1.0),
+        x_axis_rotation: 0.0,
+        large_arc: False,
+        sweep: True,
+        end: left,
+      ),
+      svg_path.Arc(
+        start: left,
+        radius: svg_path.Point(1.0, 1.0),
+        x_axis_rotation: 0.0,
+        large_arc: False,
+        sweep: True,
+        end: right,
+      ),
+    ])
+  let assert Ok(clockwise_circle) =
+    svg_path.subpath_set_closed(clockwise_circle, closed: True)
+  let path = svg_path.Path([clockwise_circle])
+
+  assert svg_path.path_winding(svg_path.Point(0.0, 0.0), within: path)
+    == Ok(svg_path.Winding(1))
+  assert svg_path.path_winding(svg_path.Point(2.0, 0.0), within: path)
+    == Ok(svg_path.Winding(0))
+}
+
 pub fn path_containment_empty_and_move_only_paths_are_outside_test() {
   let point = svg_path.Point(5.0, 5.0)
   let move_only = svg_path.subpath_empty(at: point)
