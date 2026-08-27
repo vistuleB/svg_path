@@ -4,7 +4,6 @@ import gleam/int
 import gleam/list
 import gleam/option.{Some}
 import gleam/string
-import gleeunit/should
 import svg_path
 import svg_path/arrangement as arrangement_graph
 import svg_path/format as number_format
@@ -25,52 +24,6 @@ const stalled_arc_turn_radius = 40.0
 const stalled_arc_turn_distance = 39.999
 
 const stalled_arc_turn_threshold = 0.01
-
-pub fn arrangement_loop_band_size_uses_geometric_diameter_test() {
-  let loop =
-    offset.ArrangementLoop(
-      subpath: svg_path.subpath_assert_polygon([
-        svg_path.Point(0.0, 0.0),
-        svg_path.Point(1.0, 0.0),
-        svg_path.Point(1.0, 1.0),
-        svg_path.Point(0.0, 1.0),
-      ]),
-      edges: [],
-    )
-
-  offset.internal_arrangement_loop_is_band_sized(
-    loop,
-    inner_offset: -1.0,
-    outer_offset: 1.0,
-  )
-  |> should.equal(Ok(True))
-  offset.internal_arrangement_loop_is_band_sized(
-    loop,
-    inner_offset: 0.0,
-    outer_offset: 1.0,
-  )
-  |> should.equal(Ok(False))
-}
-
-pub fn arrangement_loop_band_size_rejects_open_subpath_test() {
-  let loop =
-    offset.ArrangementLoop(
-      subpath: svg_path.subpath_assert([
-        svg_path.Line(
-          start: svg_path.Point(0.0, 0.0),
-          end: svg_path.Point(1.0, 0.0),
-        ),
-      ]),
-      edges: [],
-    )
-
-  offset.internal_arrangement_loop_is_band_sized(
-    loop,
-    inner_offset: -1.0,
-    outer_offset: 1.0,
-  )
-  |> should.equal(Error(offset.ArrangementLoopNotClosed))
-}
 
 pub fn reversal_boundaries_store_endpoint_curvature_test() {
   let segment =
@@ -127,7 +80,7 @@ pub fn synchronized_offsets_share_nonstalled_refinement_leaves_test() {
     )
   let assert Ok(source) =
     svg_path.subpath_with([segment], policy: svg_path.Strict)
-  let assert Ok(blocks) =
+  let assert Ok(correspondences) =
     offset.internal_synchronized_offset_trace(
       source,
       inner_distance: 0.0,
@@ -135,20 +88,23 @@ pub fn synchronized_offsets_share_nonstalled_refinement_leaves_test() {
       options: offset.default_options(),
     )
   let paired =
-    blocks
-    |> list.filter(fn(block) {
-      let offset.SynchronizedOffsetTraceBlock(
+    correspondences
+    |> list.filter(fn(correspondence) {
+      let offset.SynchronizedOffsetTraceCorrespondence(
         inner_stalled:,
         outer_stalled:,
         ..,
-      ) = block
+      ) = correspondence
       !inner_stalled && !outer_stalled
     })
 
   assert paired != []
-  assert list.all(paired, fn(block) {
-    let offset.SynchronizedOffsetTraceBlock(inner_leaves:, outer_leaves:, ..) =
-      block
+  assert list.all(paired, fn(correspondence) {
+    let offset.SynchronizedOffsetTraceCorrespondence(
+      inner_leaves:,
+      outer_leaves:,
+      ..,
+    ) = correspondence
     synchronized_trace_spans(inner_leaves)
     == synchronized_trace_spans(outer_leaves)
   })
@@ -156,7 +112,7 @@ pub fn synchronized_offsets_share_nonstalled_refinement_leaves_test() {
 
 pub fn synchronized_offsets_keep_stalled_side_as_one_run_test() {
   let source = stalled_arc_turn_source(4, use_arcs: True)
-  let assert Ok(blocks) =
+  let assert Ok(correspondences) =
     offset.internal_synchronized_offset_trace(
       source,
       inner_distance: 0.0,
@@ -164,9 +120,12 @@ pub fn synchronized_offsets_keep_stalled_side_as_one_run_test() {
       options: offset.default_options(),
     )
 
-  assert list.any(blocks, fn(block) {
-    let offset.SynchronizedOffsetTraceBlock(outer_stalled:, outer_leaves:, ..) =
-      block
+  assert list.any(correspondences, fn(correspondence) {
+    let offset.SynchronizedOffsetTraceCorrespondence(
+      outer_stalled:,
+      outer_leaves:,
+      ..,
+    ) = correspondence
     outer_stalled && list.length(outer_leaves) >= 4
   })
 }
@@ -594,66 +553,6 @@ pub fn package_title_s_iterated_offset_keeps_three_closed_first_offset_subpaths_
     offset.path_with(first_offset, distance: 1.0, options:)
 }
 
-pub fn package_title_v_micro_loops_reach_block_face_pipeline_test() {
-  let assert Ok(contents) = read_file("examples/debug/package_title.svg")
-  let assert Ok(title) = parse.path(first_path_data(contents))
-  let assert [_, v, ..] = svg_path.path_subpaths(title)
-  let options =
-    offset.Options(
-      ..offset.default_options(),
-      fitting: offset.FittingOptions(tolerance: 0.01, samples: 5, max_depth: 12),
-      trimming: svg_path.DistanceOptions(
-        ..svg_path.default_distance_options(),
-        tolerance: 0.000000001,
-      ),
-    )
-  let assert Ok(trace) =
-    offset.internal_single_offset_loop_trace(v, distance: 1.04, options:)
-  let offset.SingleOffsetLoopTrace(graph:, loops:, blocks:, ..) = trace
-  assert list.length(blocks) == 51
-  assert list.length(loops) == 4
-  let assert [first, second, third, main] = loops
-  assert arrangement_loop_edge_count(first) == 2
-  assert arrangement_loop_edge_count(second) == 2
-  assert arrangement_loop_edge_count(third) == 2
-  assert offset.internal_arrangement_loop_is_entirely_join_or_reversed(
-    trace,
-    first,
-  )
-  assert offset.internal_arrangement_loop_is_entirely_join_or_reversed(
-    trace,
-    second,
-  )
-  assert offset.internal_arrangement_loop_is_entirely_join_or_reversed(
-    trace,
-    third,
-  )
-  assert !offset.internal_arrangement_loop_is_entirely_join_or_reversed(
-    trace,
-    main,
-  )
-  // The analysis graph contains only the inner and outer subpaths.
-  assert arrangement_loop_edge_count(main) > 2
-  // Each deleted loop has at least one endpoint whose clockwise cyclic order
-  // reaches the surrounding arrangement face after the loop edges are skipped.
-  assert offset.internal_arrangement_loop_ghosts_share_face(graph, first)
-    == Ok(True)
-  assert offset.internal_arrangement_loop_ghosts_share_face(graph, second)
-    == Ok(True)
-  assert offset.internal_arrangement_loop_ghosts_share_face(graph, third)
-    == Ok(True)
-  let assert Ok(filtered) =
-    offset.internal_filter_directly_contained_arrangement_loops(
-      trace,
-      inner_offset: 0.0,
-      outer_offset: 1.04,
-    )
-  assert list.length(filtered) == 1
-  let assert [filtered_main] = filtered
-  assert arrangement_loop_edge_count(filtered_main)
-    == arrangement_loop_edge_count(main)
-}
-
 pub fn package_title_v_1_05_public_offset_filters_micro_loops_test() {
   let assert Ok(contents) = read_file("examples/debug/package_title.svg")
   let assert Ok(title) = parse.path(first_path_data(contents))
@@ -672,32 +571,36 @@ pub fn package_title_v_1_05_public_offset_filters_micro_loops_test() {
   let subpaths = svg_path.path_subpaths(result)
 
   assert list.length(subpaths) == 1
-  assert list.all(subpaths, fn(subpath) {
-    offset.internal_arrangement_loop_is_band_sized(
-      offset.ArrangementLoop(subpath:, edges: []),
-      inner_offset: 0.0,
-      outer_offset: 1.05,
-    )
-    == Ok(False)
-  })
+  assert list.all(subpaths, svg_path.subpath_is_closed)
 }
 
-pub fn single_offset_loop_trace_skips_blocks_without_small_loops_test() {
-  let assert Ok(trace) =
-    offset.internal_single_offset_loop_trace(
-      square_loop(),
-      distance: 1.0,
-      options: offset.default_options(),
+pub fn package_title_a_and_v_1_05_bevel_offsets_filter_micro_loops_test() {
+  let assert Ok(contents) = read_file("examples/debug/package_title.svg")
+  let assert Ok(title) = parse.path(first_path_data(contents))
+  let assert [_, v, _, _, _, _, a_outer, a_inner, ..] =
+    svg_path.path_subpaths(title)
+  let options =
+    offset.Options(
+      ..offset.default_options(),
+      fitting: offset.FittingOptions(tolerance: 0.01, samples: 5, max_depth: 12),
+      trimming: svg_path.DistanceOptions(
+        ..svg_path.default_distance_options(),
+        tolerance: 0.000000001,
+      ),
+      join: offset.Bevel,
     )
-  let offset.SingleOffsetLoopTrace(loops:, blocks:, ..) = trace
 
-  assert list.length(loops) == 1
-  assert blocks == []
-}
+  let assert Ok(v_offset) =
+    offset.path_with(svg_path.Path([v]), distance: 1.05, options:)
+  let assert Ok(a_offset) =
+    offset.path_with(
+      svg_path.Path([a_outer, a_inner]),
+      distance: 1.05,
+      options:,
+    )
 
-fn arrangement_loop_edge_count(loop: offset.ArrangementLoop) -> Int {
-  let offset.ArrangementLoop(edges:, ..) = loop
-  list.length(edges)
+  assert list.length(svg_path.path_subpaths(v_offset)) == 1
+  assert list.length(svg_path.path_subpaths(a_offset)) == 2
 }
 
 fn first_subpath(path: svg_path.Path) -> Result(svg_path.Subpath, Nil) {
