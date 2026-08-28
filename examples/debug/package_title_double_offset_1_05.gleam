@@ -255,7 +255,6 @@ fn offset_error_to_string(error: offset.Error) -> String {
     offset.InvalidStrokeWidth(width) ->
       "InvalidStrokeWidth(" <> float.to_string(width) <> ")"
     offset.BandSubpathNotClosed -> "BandSubpathNotClosed"
-    offset.BandOddSkeletonNotEmpty -> "BandOddSkeletonNotEmpty"
     offset.DegenerateTangent(t) ->
       "DegenerateTangent(" <> float.to_string(t) <> ")"
     offset.MaxDepthReached(error) ->

@@ -126,9 +126,6 @@ pub type Error {
   /// Band payloads used for inside classification must be closed.
   BandSubpathNotClosed
 
-  /// A closed band or stroke candidate produced non-loop arrangement edges.
-  BandOddSkeletonNotEmpty
-
   /// A segment tangent was too small to define a stable normal direction.
   DegenerateTangent(t: Float)
 
@@ -797,25 +794,6 @@ pub fn internal_segment_is_submerged(
   submerged_segment(segment, inside:, side_sampling_distance:)
 }
 
-/// Remove loops whose weighted majority of segments is submerged.
-@internal
-pub fn internal_filter_band_loops(
-  loops: List(svg_path.Subpath),
-  inside inside: fn(svg_path.Point) -> Result(Bool, Error),
-  side_sampling_distance side_sampling_distance: Float,
-) -> Result(List(svg_path.Subpath), Error) {
-  filter_band_loops(loops, inside:, side_sampling_distance:, retained: [])
-}
-
-/// Extract closed even contours from a closed untrimmed band or stroke.
-@internal
-pub fn internal_closed_candidate_even_contours(
-  untrimmed: List(svg_path.Subpath),
-  options options: Options,
-) -> Result(List(svg_path.Subpath), Error) {
-  closed_candidate_even_contours(untrimmed, options)
-}
-
 /// Extract and filter band loops using the band inside predicate.
 @internal
 pub fn internal_topological_band_loops(
@@ -1168,35 +1146,6 @@ fn default_trimming_options() -> svg_path.DistanceOptions {
     ..svg_path.default_distance_options(),
     samples: default_trimming_samples,
   )
-}
-
-fn closed_candidate_even_contours(
-  untrimmed: List(svg_path.Subpath),
-  options: Options,
-) -> Result(List(svg_path.Subpath), Error) {
-  use build <- result.try(untrimmed_arrangement(untrimmed))
-  let arrangement_graph.ArrangementGraphBuild(graph:, ..) = build
-  let undirected = arrangement_graph.to_undirected(graph)
-  use decomposition <- result.try(
-    arrangement_graph.odd_even_decomposition(undirected)
-    |> result.map_error(ArrangementGraphError),
-  )
-  let arrangement_graph.OddEvenDecomposition(
-    odd_skeleton: arrangement_graph.UndirectedArrangementGraph(
-      edges: odd_edges,
-      ..,
-    ),
-    even_graph: _,
-  ) = decomposition
-  case odd_edges {
-    [] ->
-      arrangement_nested_contours_from_build_graph(
-        graph,
-        svg_path.Path(untrimmed),
-        tolerance: options.fitting.tolerance,
-      )
-    _ -> Error(BandOddSkeletonNotEmpty)
-  }
 }
 
 fn prune_single_offset_arrangement_build(
@@ -1670,15 +1619,6 @@ fn close_survivor_subpath(
       |> result.map_error(PathError)
     False -> Ok(subpath)
   }
-}
-
-fn arrangement_nested_contours_from_build_graph(
-  graph: arrangement_graph.ArrangementGraph,
-  path: svg_path.Path,
-  tolerance tolerance: Float,
-) -> Result(List(svg_path.Subpath), Error) {
-  arrangement_graph.nested_contours_from_graph(graph, path:, tolerance:)
-  |> result.map_error(ArrangementGraphError)
 }
 
 fn source_order_survivor_subpaths(
@@ -2254,76 +2194,6 @@ fn submerged_segment(
   use first_inside <- result.try(inside(first))
   use second_inside <- result.try(inside(second))
   Ok(first_inside && second_inside)
-}
-
-fn filter_band_loops(
-  loops: List(svg_path.Subpath),
-  inside inside: fn(svg_path.Point) -> Result(Bool, Error),
-  side_sampling_distance side_sampling_distance: Float,
-  retained retained: List(svg_path.Subpath),
-) -> Result(List(svg_path.Subpath), Error) {
-  case loops {
-    [] -> Ok(list.reverse(retained))
-    [first, ..rest] -> {
-      use remove <- result.try(loop_should_be_filtered(
-        first,
-        inside:,
-        side_sampling_distance:,
-      ))
-      let retained = case remove {
-        True -> retained
-        False -> [first, ..retained]
-      }
-      filter_band_loops(rest, inside:, side_sampling_distance:, retained:)
-    }
-  }
-}
-
-fn loop_should_be_filtered(
-  loop: svg_path.Subpath,
-  inside inside: fn(svg_path.Point) -> Result(Bool, Error),
-  side_sampling_distance side_sampling_distance: Float,
-) -> Result(Bool, Error) {
-  loop_submerged_weights(
-    svg_path.subpath_segments(loop),
-    inside:,
-    side_sampling_distance:,
-    submerged_weight: 0.0,
-    total_weight: 0.0,
-  )
-}
-
-fn loop_submerged_weights(
-  segments: List(svg_path.Segment),
-  inside inside: fn(svg_path.Point) -> Result(Bool, Error),
-  side_sampling_distance side_sampling_distance: Float,
-  submerged_weight submerged_weight: Float,
-  total_weight total_weight: Float,
-) -> Result(Bool, Error) {
-  case segments {
-    [] -> Ok(submerged_weight >. total_weight /. 2.0)
-    [first, ..rest] -> {
-      use submerged <- result.try(submerged_segment(
-        first,
-        inside:,
-        side_sampling_distance:,
-      ))
-      use length <- result.try(
-        svg_path.segment_length(first) |> result.map_error(PathError),
-      )
-      let submerged_weight = case submerged {
-        True -> submerged_weight +. length
-        False -> submerged_weight
-      }
-      loop_submerged_weights(
-        rest,
-        inside:,
-        side_sampling_distance:,
-        submerged_weight:,
-        total_weight: total_weight +. length,
-      )
-    }
-  }
 }
 
 /// Build a local coordinate map around a subpath.
@@ -3349,58 +3219,6 @@ fn stroke_path_subpaths(
         ),
       )
     }
-  }
-}
-
-fn untrimmed_arrangement(
-  untrimmed: List(svg_path.Subpath),
-) -> Result(arrangement_graph.ArrangementGraphBuild, Error) {
-  use build <- result.try(untrimmed_segment_arrangement(untrimmed))
-  offset_public_arrangement_build(build)
-}
-
-fn offset_public_arrangement_build(
-  build: OffsetArrangementBuild,
-) -> Result(arrangement_graph.ArrangementGraphBuild, Error) {
-  let OffsetArrangementBuild(graph:, segment_images:, ..) = build
-  use images <- result.try(
-    segment_images
-    |> list.map(source_segment_image_to_public_image(build, _))
-    |> result.all,
-  )
-  Ok(arrangement_graph.ArrangementGraphBuild(graph:, segment_images: images))
-}
-
-fn source_segment_image_to_public_image(
-  build: OffsetArrangementBuild,
-  image: arrangement_graph.ArrangementSourceSegmentImage,
-) -> Result(arrangement_graph.ArrangementSegmentImage, Error) {
-  let arrangement_graph.ArrangementSourceSegmentImage(segment_index:, edges:) =
-    image
-  use indexed <- result.try(
-    offset_indexed_segment_at(build.indexed_segments, segment_index)
-    |> result.map_error(fn(_) {
-      ArrangementGraphError(arrangement_graph.InternalNormalizationError)
-    }),
-  )
-  let IndexedOffsetSegment(group:, subpath_index:, ..) = indexed
-  case group {
-    ZeroOffsetSourceSegment ->
-      Error(ArrangementGraphError(arrangement_graph.InternalNormalizationError))
-    UntrimmedOffsetSegment ->
-      Ok(arrangement_graph.ArrangementSegmentImage(
-        path_index: 0,
-        subpath_index:,
-        segment_index: segment_index,
-        edges: list.map(edges, fn(edge) {
-          let arrangement_graph.ArrangementSegmentEdgeImage(
-            edge_id:,
-            reversed:,
-            ..,
-          ) = edge
-          arrangement_graph.DirectedEdgeReference(edge_id:, reversed:)
-        }),
-      ))
   }
 }
 

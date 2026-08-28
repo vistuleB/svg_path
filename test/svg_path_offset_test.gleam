@@ -1490,58 +1490,6 @@ pub fn segment_is_submerged_checks_both_immediate_sides_test() {
     == Ok(False)
 }
 
-pub fn band_loop_filter_keeps_loop_without_submerged_majority_test() {
-  let loop = square_loop()
-  let inside = fn(point: svg_path.Point) { Ok(point.x <. 1.0) }
-
-  assert offset.internal_filter_band_loops(
-      [loop],
-      inside:,
-      side_sampling_distance: 0.5,
-    )
-    == Ok([loop])
-}
-
-pub fn band_loop_filter_removes_loop_with_submerged_majority_test() {
-  let loop = square_loop()
-  let inside = fn(point: svg_path.Point) { Ok(point.x <. 6.0) }
-
-  assert offset.internal_filter_band_loops(
-      [loop],
-      inside:,
-      side_sampling_distance: 0.5,
-    )
-    == Ok([])
-}
-
-pub fn closed_candidate_even_contours_extracts_square_loop_test() {
-  let loop = square_loop()
-
-  let assert Ok(loops) =
-    offset.internal_closed_candidate_even_contours(
-      [loop],
-      options: offset.default_options(),
-    )
-
-  assert list.length(loops) == 1
-  let assert [only] = loops
-  assert svg_path.subpath_is_closed(only)
-}
-
-pub fn closed_candidate_even_contours_rejects_open_tail_test() {
-  let open =
-    svg_path.subpath_assert_polyline([
-      svg_path.Point(0.0, 0.0),
-      svg_path.Point(10.0, 0.0),
-    ])
-
-  assert offset.internal_closed_candidate_even_contours(
-      [open],
-      options: offset.default_options(),
-    )
-    == Error(offset.BandOddSkeletonNotEmpty)
-}
-
 pub fn topological_band_loops_filters_submerged_loop_test() {
   let loop = square_loop()
   let containing_band =
