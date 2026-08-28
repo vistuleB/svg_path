@@ -22,71 +22,71 @@
   <path d="M 560 90 H 740" style="fill: none; stroke: #334155; stroke-width: 3.25" />
   <path d="M 735 90 L 725 98 V 82 Z" style="fill: #dc2626; fill-opacity: 1.0; stroke: none" />
   <rect x="629.6" y="75.6" width="40.8" height="28.8" style="fill: #fff; stroke: #94a3b8; stroke-width: 0.75" transform="rotate(90 650 90)" />
-  <text x="650" y="87.6" font-size="11" style="fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(90 650 90)">0/1</text>
-  <text x="650" y="100.8" font-size="10" style="fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(90 650 90)">↑1/0↓</text>
+  <text x="650" y="87.6" font-size="10.8" style="fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(90 650 90)">0/1</text>
+  <text x="650" y="100.8" font-size="9.6" style="fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(90 650 90)">↑1/0↓</text>
   <path d="M 740 90 V 180" style="fill: none; stroke: #334155; stroke-width: 3.25" />
   <path d="M 740 175 L 732 165 H 748 Z" style="fill: #dc2626; fill-opacity: 1.0; stroke: none" />
   <rect x="719.6" y="120.6" width="40.8" height="28.8" style="fill: #fff; stroke: #94a3b8; stroke-width: 0.75" transform="rotate(180 740 135)" />
-  <text x="740" y="132.6" font-size="11" style="fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(180 740 135)">0/1</text>
-  <text x="740" y="145.8" font-size="10" style="fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(180 740 135)">↑1/0↓</text>
+  <text x="740" y="132.6" font-size="10.8" style="fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(180 740 135)">0/1</text>
+  <text x="740" y="145.8" font-size="9.6" style="fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(180 740 135)">↑1/0↓</text>
   <path d="M 740 180 V 270" style="fill: none; stroke: #334155; stroke-width: 3.25" />
   <path d="M 740 265 L 732 255 H 748 Z" style="fill: #dc2626; fill-opacity: 1.0; stroke: none" />
   <rect x="719.6" y="210.6" width="40.8" height="28.8" style="fill: #fff; stroke: #94a3b8; stroke-width: 0.75" transform="rotate(180 740 225)" />
-  <text x="740" y="222.6" font-size="11" style="fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(180 740 225)">1/2</text>
-  <text x="740" y="235.8" font-size="10" style="fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(180 740 225)">↑1/0↓</text>
+  <text x="740" y="222.6" font-size="10.8" style="fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(180 740 225)">1/2</text>
+  <text x="740" y="235.8" font-size="9.6" style="fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(180 740 225)">↑1/0↓</text>
   <path d="M 740 270 H 650" style="fill: none; stroke: #334155; stroke-width: 3.25" />
   <path d="M 655 270 L 665 262 V 278 Z" style="fill: #dc2626; fill-opacity: 1.0; stroke: none" />
   <rect x="674.6" y="255.6" width="40.8" height="28.8" style="fill: #fff; stroke: #94a3b8; stroke-width: 0.75" transform="rotate(270 695 270)" />
-  <text x="695" y="267.6" font-size="11" style="fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(270 695 270)">1/2</text>
-  <text x="695" y="280.8" font-size="10" style="fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(270 695 270)">↑1/0↓</text>
+  <text x="695" y="267.6" font-size="10.8" style="fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(270 695 270)">1/2</text>
+  <text x="695" y="280.8" font-size="9.6" style="fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(270 695 270)">↑1/0↓</text>
   <path d="M 650 270 H 560" style="fill: none; stroke: #334155; stroke-width: 3.25" />
   <path d="M 565 270 L 575 262 V 278 Z" style="fill: #dc2626; fill-opacity: 1.0; stroke: none" />
   <rect x="584.6" y="255.6" width="40.8" height="28.8" style="fill: #fff; stroke: #94a3b8; stroke-width: 0.75" transform="rotate(270 605 270)" />
-  <text x="605" y="267.6" font-size="11" style="fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(270 605 270)">0/1</text>
-  <text x="605" y="280.8" font-size="10" style="fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(270 605 270)">↑1/0↓</text>
+  <text x="605" y="267.6" font-size="10.8" style="fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(270 605 270)">0/1</text>
+  <text x="605" y="280.8" font-size="9.6" style="fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(270 605 270)">↑1/0↓</text>
   <path d="M 560 270 V 90" style="fill: none; stroke: #334155; stroke-width: 3.25" />
   <path d="M 560 95 L 568 105 H 552 Z" style="fill: #dc2626; fill-opacity: 1.0; stroke: none" />
   <rect x="539.6" y="165.6" width="40.8" height="28.8" style="fill: #fff; stroke: #94a3b8; stroke-width: 0.75" transform="rotate(0 560 180)" />
-  <text x="560" y="177.6" font-size="11" style="fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(0 560 180)">0/1</text>
-  <text x="560" y="190.8" font-size="10" style="fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(0 560 180)">↑1/0↓</text>
+  <text x="560" y="177.6" font-size="10.8" style="fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(0 560 180)">0/1</text>
+  <text x="560" y="190.8" font-size="9.6" style="fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(0 560 180)">↑1/0↓</text>
   <path d="M 650 180 H 740" style="fill: none; stroke: #334155; stroke-width: 3.25" />
   <path d="M 735 180 L 725 188 V 172 Z" style="fill: #dc2626; fill-opacity: 1.0; stroke: none" />
   <rect x="674.6" y="165.6" width="40.8" height="28.8" style="fill: #fff; stroke: #94a3b8; stroke-width: 0.75" transform="rotate(90 695 180)" />
-  <text x="695" y="177.6" font-size="11" style="fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(90 695 180)">1/2</text>
-  <text x="695" y="190.8" font-size="10" style="fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(90 695 180)">↑1/0↓</text>
+  <text x="695" y="177.6" font-size="10.8" style="fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(90 695 180)">1/2</text>
+  <text x="695" y="190.8" font-size="9.6" style="fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(90 695 180)">↑1/0↓</text>
   <path d="M 740 180 H 830" style="fill: none; stroke: #334155; stroke-width: 3.25" />
   <path d="M 825 180 L 815 188 V 172 Z" style="fill: #dc2626; fill-opacity: 1.0; stroke: none" />
   <rect x="764.6" y="165.6" width="40.8" height="28.8" style="fill: #fff; stroke: #94a3b8; stroke-width: 0.75" transform="rotate(90 785 180)" />
-  <text x="785" y="177.6" font-size="11" style="fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(90 785 180)">0/1</text>
-  <text x="785" y="190.8" font-size="10" style="fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(90 785 180)">↑1/0↓</text>
+  <text x="785" y="177.6" font-size="10.8" style="fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(90 785 180)">0/1</text>
+  <text x="785" y="190.8" font-size="9.6" style="fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(90 785 180)">↑1/0↓</text>
   <path d="M 830 180 V 360" style="fill: none; stroke: #334155; stroke-width: 3.25" />
   <path d="M 830 355 L 822 345 H 838 Z" style="fill: #dc2626; fill-opacity: 1.0; stroke: none" />
   <rect x="809.6" y="255.6" width="40.8" height="28.8" style="fill: #fff; stroke: #94a3b8; stroke-width: 0.75" transform="rotate(180 830 270)" />
-  <text x="830" y="267.6" font-size="11" style="fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(180 830 270)">0/1</text>
-  <text x="830" y="280.8" font-size="10" style="fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(180 830 270)">↑1/0↓</text>
+  <text x="830" y="267.6" font-size="10.8" style="fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(180 830 270)">0/1</text>
+  <text x="830" y="280.8" font-size="9.6" style="fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(180 830 270)">↑1/0↓</text>
   <path d="M 830 360 H 650" style="fill: none; stroke: #334155; stroke-width: 3.25" />
   <path d="M 655 360 L 665 352 V 368 Z" style="fill: #dc2626; fill-opacity: 1.0; stroke: none" />
   <rect x="719.6" y="345.6" width="40.8" height="28.8" style="fill: #fff; stroke: #94a3b8; stroke-width: 0.75" transform="rotate(270 740 360)" />
-  <text x="740" y="357.6" font-size="11" style="fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(270 740 360)">0/1</text>
-  <text x="740" y="370.8" font-size="10" style="fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(270 740 360)">↑1/0↓</text>
+  <text x="740" y="357.6" font-size="10.8" style="fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(270 740 360)">0/1</text>
+  <text x="740" y="370.8" font-size="9.6" style="fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(270 740 360)">↑1/0↓</text>
   <path d="M 650 360 V 270" style="fill: none; stroke: #334155; stroke-width: 3.25" />
   <path d="M 650 275 L 658 285 H 642 Z" style="fill: #dc2626; fill-opacity: 1.0; stroke: none" />
   <rect x="629.6" y="300.6" width="40.8" height="28.8" style="fill: #fff; stroke: #94a3b8; stroke-width: 0.75" transform="rotate(0 650 315)" />
-  <text x="650" y="312.6" font-size="11" style="fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(0 650 315)">0/1</text>
-  <text x="650" y="325.8" font-size="10" style="fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(0 650 315)">↑1/0↓</text>
+  <text x="650" y="312.6" font-size="10.8" style="fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(0 650 315)">0/1</text>
+  <text x="650" y="325.8" font-size="9.6" style="fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(0 650 315)">↑1/0↓</text>
   <path d="M 650 270 V 180" style="fill: none; stroke: #334155; stroke-width: 3.25" />
   <path d="M 650 185 L 658 195 H 642 Z" style="fill: #dc2626; fill-opacity: 1.0; stroke: none" />
   <rect x="629.6" y="210.6" width="40.8" height="28.8" style="fill: #fff; stroke: #94a3b8; stroke-width: 0.75" transform="rotate(0 650 225)" />
-  <text x="650" y="222.6" font-size="11" style="fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(0 650 225)">1/2</text>
-  <text x="650" y="235.8" font-size="10" style="fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(0 650 225)">↑1/0↓</text>
+  <text x="650" y="222.6" font-size="10.8" style="fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(0 650 225)">1/2</text>
+  <text x="650" y="235.8" font-size="9.6" style="fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(0 650 225)">↑1/0↓</text>
   <circle cx="560" cy="90" r="5" style="fill: #fff; stroke: #dc2626; stroke-width: 2.25" />
   <circle cx="740" cy="90" r="5" style="fill: #fff; stroke: #dc2626; stroke-width: 2.25" />
-  <circle cx="740" cy="180" r="5" style="fill: #fff; stroke: #dc2626; stroke-width: 2.25" />
   <circle cx="740" cy="270" r="5" style="fill: #fff; stroke: #dc2626; stroke-width: 2.25" />
-  <circle cx="650" cy="270" r="5" style="fill: #fff; stroke: #dc2626; stroke-width: 2.25" />
   <circle cx="560" cy="270" r="5" style="fill: #fff; stroke: #dc2626; stroke-width: 2.25" />
+  <circle cx="740" cy="180" r="5" style="fill: #fff; stroke: #dc2626; stroke-width: 2.25" />
   <circle cx="650" cy="180" r="5" style="fill: #fff; stroke: #dc2626; stroke-width: 2.25" />
   <circle cx="830" cy="180" r="5" style="fill: #fff; stroke: #dc2626; stroke-width: 2.25" />
   <circle cx="830" cy="360" r="5" style="fill: #fff; stroke: #dc2626; stroke-width: 2.25" />
   <circle cx="650" cy="360" r="5" style="fill: #fff; stroke: #dc2626; stroke-width: 2.25" />
+  <circle cx="650" cy="270" r="5" style="fill: #fff; stroke: #dc2626; stroke-width: 2.25" />
 </svg>

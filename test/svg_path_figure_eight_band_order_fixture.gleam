@@ -5,17 +5,13 @@ import svg_path
 import svg_path/offset
 import svg_path/serialize
 
-const inner_18_outer_34_output =
-  "examples/debug/figure_eight_band_inner_18_outer_34.svg"
+const inner_18_outer_34_output = "examples/debug/figure_eight_band_inner_18_outer_34.svg"
 
-const inner_34_outer_18_output =
-  "examples/debug/figure_eight_band_inner_34_outer_18.svg"
+const inner_34_outer_18_output = "examples/debug/figure_eight_band_inner_34_outer_18.svg"
 
-const inner_minus_18_outer_minus_34_output =
-  "examples/debug/figure_eight_band_inner_minus_18_outer_minus_34.svg"
+const inner_minus_18_outer_minus_34_output = "examples/debug/figure_eight_band_inner_minus_18_outer_minus_34.svg"
 
-const inner_minus_34_outer_minus_18_output =
-  "examples/debug/figure_eight_band_inner_minus_34_outer_minus_18.svg"
+const inner_minus_34_outer_minus_18_output = "examples/debug/figure_eight_band_inner_minus_34_outer_minus_18.svg"
 
 pub fn main() -> Nil {
   let source = figure_eight()
@@ -117,14 +113,28 @@ fn drawing(
   let width = max.x -. min.x
   let height = max.y -. min.y
   "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1000\" height=\"700\" viewBox=\""
-  <> float.to_string(min.x) <> " " <> float.to_string(min.y) <> " "
-  <> float.to_string(width) <> " " <> float.to_string(height) <> "\">\n"
-  <> "  <rect x=\"" <> float.to_string(min.x) <> "\" y=\""
-  <> float.to_string(min.y) <> "\" width=\"" <> float.to_string(width)
-  <> "\" height=\"" <> float.to_string(height) <> "\" fill=\"white\" />\n"
-  <> "  <path d=\"" <> serialize.path(band)
+  <> float.to_string(min.x)
+  <> " "
+  <> float.to_string(min.y)
+  <> " "
+  <> float.to_string(width)
+  <> " "
+  <> float.to_string(height)
+  <> "\">\n"
+  <> "  <rect x=\""
+  <> float.to_string(min.x)
+  <> "\" y=\""
+  <> float.to_string(min.y)
+  <> "\" width=\""
+  <> float.to_string(width)
+  <> "\" height=\""
+  <> float.to_string(height)
+  <> "\" fill=\"white\" />\n"
+  <> "  <path d=\""
+  <> serialize.path(band)
   <> "\" fill=\"#86efac\" fill-opacity=\"0.62\" fill-rule=\"nonzero\" stroke=\"#15803d\" stroke-width=\"2.5\" stroke-linejoin=\"round\" />\n"
-  <> "  <path d=\"" <> serialize.subpath(source)
+  <> "  <path d=\""
+  <> serialize.subpath(source)
   <> "\" fill=\"none\" stroke=\"#dc2626\" stroke-width=\"2.0\" stroke-dasharray=\"8 6\" />\n"
   <> "</svg>\n"
 }

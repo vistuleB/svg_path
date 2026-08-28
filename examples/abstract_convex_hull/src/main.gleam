@@ -949,7 +949,7 @@ fn render_demo(label: String, paths: List(svg_path.Path)) -> String {
         label,
         "fill: #333; font-family: system-ui, sans-serif",
         svg_path.Point(0.0, -7.0),
-        7,
+        7.0,
       ),
     ]),
     view_box: svg_path.BoundingBox(

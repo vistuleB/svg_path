@@ -2,7 +2,7 @@ name = "abstract_convex_hull"
 version = "0.1.0"
 
 [dependencies]
-gleam_community_maths = { path = "../../build/packages/gleam_community_maths" }
-gleam_stdlib = { path = "../../build/packages/gleam_stdlib" }
-gleam_yielder = { path = "../../build/packages/gleam_yielder" }
+gleam_community_maths = ">= 2.0.2 and < 3.0.0"
+gleam_stdlib = ">= 1.0.0 and < 2.0.0"
+gleam_yielder = ">= 1.1.0 and < 2.0.0"
 svg_path = { path = "../.." }

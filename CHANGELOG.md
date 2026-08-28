@@ -9,6 +9,46 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
+## 0.39.0 - 2026-08-28
+
+### Added
+
+- Added the public `svg_path/affine` module for raw affine-matrix construction,
+  composition, and point mapping.
+- Added endpoint-policy rebuild and point-pair similarity helpers, endpoint
+  remapping helpers, and segment, subpath, and path second derivatives.
+- Added convex minimum-width and diameter searches for segments, subpaths,
+  paths, and point sets.
+- Added Bezier fit reports that expose error measurements and collapsed-handle
+  constraint states.
+- Added arrangement source-image lookup and best-effort cyclic edge ordering at
+  vertices.
+
+### Changed
+
+- Aligned clockwise rotation and normal-direction APIs with visual SVG
+  coordinates, where positive y points downward; positive offsets now follow
+  the visual left normal.
+- Reworked arrangement construction around progressive endpoint, intersection,
+  and overlap-boundary splitting while preserving caller segment geometry.
+- Reworked offset construction around synchronized two-sided source refinement,
+  explicit curvature-boundary payloads, stalled-piece handling, and
+  arrangement-backed source provenance.
+- Trimmed the two sides of a band locally before their shared band arrangement,
+  retaining submerged runs that have no reversed source preimage.
+- Replaced undirected and odd-even offset contour machinery with directed
+  arrangement traversal and winding-side opinions.
+
+### Fixed
+
+- Rejected false endpoint intersections and adjacent offset loops while
+  preserving genuine endpoint overlaps.
+- Corrected round-join sweep orientation and reversal classification.
+- Improved cusp and collapsed-handle fitting, tangent nudging, and recursive
+  refinement around reversal boundaries.
+- Preserved complete contours across repeated offsets and asymmetric positive
+  and negative bands.
+
 ## 0.38.0 - 2026-08-22
 
 ### Added

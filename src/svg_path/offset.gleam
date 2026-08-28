@@ -2667,6 +2667,11 @@ pub fn subpath_band(
 }
 
 /// Offset a subpath at two signed distances using explicit options.
+///
+/// Each synchronized side is first noded and trimmed on its own. A submerged
+/// run without any reversed source preimage is retained because it does not
+/// represent a reversal-generated fold. The surviving sides are then assembled
+/// into a band and trimmed together using their directed winding-side opinions.
 pub fn subpath_band_with(
   subpath subpath: svg_path.Subpath,
   distance_a distance_a: Float,

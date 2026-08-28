@@ -1090,7 +1090,7 @@ pub fn path_offsets_straight_subpaths_test() {
   assert serialize.path(offset_path) == "M 0 -2 H 8 V -10 M 0 18 H 8 V 10"
 }
 
-pub fn provisional_arrangement_nodes_crossing_subpaths_test() {
+pub fn arrangement_nodes_crossing_subpaths_test() {
   let horizontal =
     svg_path.subpath_assert_polyline([
       svg_path.Point(0.0, 0.0),
@@ -1116,7 +1116,7 @@ pub fn provisional_arrangement_nodes_crossing_subpaths_test() {
   })
 }
 
-pub fn provisional_arrangement_consolidates_coincident_pieces_test() {
+pub fn arrangement_consolidates_coincident_pieces_test() {
   let whole =
     svg_path.subpath_assert_polyline([
       svg_path.Point(0.0, 0.0),
@@ -2652,6 +2652,66 @@ fn square_loop() -> svg_path.Subpath {
     svg_path.Point(10.0, 10.0),
     svg_path.Point(0.0, 10.0),
   ])
+}
+
+fn two_cut_corner_loop() -> svg_path.Subpath {
+  svg_path.subpath_assert([
+    svg_path.Line(svg_path.Point(1.0, 0.0), svg_path.Point(3.0, 0.0)),
+    svg_path.Arc(
+      start: svg_path.Point(3.0, 0.0),
+      radius: svg_path.Point(1.0, 1.0),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: False,
+      end: svg_path.Point(4.0, 1.0),
+    ),
+    svg_path.Line(svg_path.Point(4.0, 1.0), svg_path.Point(4.0, 3.0)),
+    svg_path.Line(svg_path.Point(4.0, 3.0), svg_path.Point(3.0, 4.0)),
+    svg_path.Line(svg_path.Point(3.0, 4.0), svg_path.Point(1.0, 4.0)),
+    svg_path.Arc(
+      start: svg_path.Point(1.0, 4.0),
+      radius: svg_path.Point(1.0, 1.0),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: False,
+      end: svg_path.Point(0.0, 3.0),
+    ),
+    svg_path.Line(svg_path.Point(0.0, 3.0), svg_path.Point(0.0, 1.0)),
+    svg_path.Line(svg_path.Point(0.0, 1.0), svg_path.Point(1.0, 0.0)),
+  ])
+  |> svg_path.subpath_assert_set_closed(closed: True)
+}
+
+pub fn side_local_band_trimming_preserves_positive_band_test() {
+  let options = offset.Options(..offset.default_options(), join: offset.Round)
+  let assert Ok(band) =
+    offset.subpath_band_with(
+      two_cut_corner_loop(),
+      distance_a: 1.7,
+      distance_b: 1.8,
+      options:,
+    )
+  let assert [first, second] = svg_path.path_subpaths(band)
+  assert svg_path.subpath_is_closed(first)
+  assert svg_path.subpath_is_closed(second)
+  let assert Ok(filled_area) = area.path(band, using: svg_path.Nonzero)
+  assert filled_area >. 0.0
+}
+
+pub fn side_local_band_trimming_preserves_negative_band_test() {
+  let options = offset.Options(..offset.default_options(), join: offset.Round)
+  let assert Ok(band) =
+    offset.subpath_band_with(
+      two_cut_corner_loop(),
+      distance_a: -0.7,
+      distance_b: -0.8,
+      options:,
+    )
+  let assert [first, second] = svg_path.path_subpaths(band)
+  assert svg_path.subpath_is_closed(first)
+  assert svg_path.subpath_is_closed(second)
+  let assert Ok(filled_area) = area.path(band, using: svg_path.Nonzero)
+  assert filled_area >. 0.0
 }
 
 fn add_point(a: svg_path.Point, b: svg_path.Point) -> svg_path.Point {

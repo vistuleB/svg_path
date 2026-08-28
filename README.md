@@ -77,8 +77,9 @@ pub fn prepare_for_arc_averse_consumer(
 - `svg_path/point`: small helper library for the `svg_path.Point` type.
 - `svg_path/parse` and `svg_path/serialize`: SVG path-data parsing and
   serialization.
-- `svg_path/transform`: SVG-style affine transform matrices and geometry
-  transforms.
+- `svg_path/affine`: raw six-value affine matrices, composition, and point
+  mapping.
+- `svg_path/transform`: applying affine transforms to SVG path geometry.
 - `svg_path/transform/parse` and `svg_path/transform/serialize`: SVG
   `transform` attribute parsing and serialization.
 - `svg_path/trig`: degree-based trigonometry helpers for SVG-facing angles.
@@ -111,8 +112,8 @@ pub fn prepare_for_arc_averse_consumer(
 - `svg_path/effects`: one-off artistic path effects such as corner rounding.
 - `svg_path/degeneracy`: normalization of near-degenerate geometry into simpler
   segments.
-- `svg_path/curvature`: signed curvature and visual-left-normal radius helpers for
-  segments.
+- `svg_path/curvature`: signed curvature and visual-left-normal radius helpers
+  for segments.
 - `svg_path/convex_hull`: convex hulls for segments, subpaths, paths, and point
   lists.
 - `svg_path/bezier`: Bezier fitting and low-level Bezier geometry helpers.
@@ -1119,7 +1120,7 @@ There is a similar difference between `M 0,0` and `M 0,0 Z`, with the `Z`
 command "supplying" a zero-length line segment to the subpath:
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.38.0/figures/zero_length_closepath_probe.svg" alt="Zero-length closepath probe">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.39.0/figures/zero_length_closepath_probe.svg" alt="Zero-length closepath probe">
 </center>
 
 ```xml
@@ -1397,7 +1398,7 @@ the right panel shows the resulting vertices, directed edges, winding levels,
 and directional multiplicities.
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.38.0/figures/arrangement_graph_overlapping_squares.svg" alt="Two overlapping square subpaths and their arrangement graph">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.39.0/figures/arrangement_graph_overlapping_squares.svg" alt="Two overlapping square subpaths and their arrangement graph">
 </center>
 
 ```gleam
@@ -1432,7 +1433,7 @@ circle at all four source endpoints and represents each geometric edge once,
 with one occurrence in each direction.
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.38.0/figures/arrangement_graph_semantic_circle_overlap.svg" alt="Oppositely directed equal circles with phase-shifted arc subdivisions and their arrangement graph">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.39.0/figures/arrangement_graph_semantic_circle_overlap.svg" alt="Oppositely directed equal circles with phase-shifted arc subdivisions and their arrangement graph">
 </center>
 
 `build` is the supported constructor. Direct construction remains possible for
@@ -1502,7 +1503,7 @@ black numbers are the winding levels immediately to the left and right of each
 directed edge; its red numbers are forward and reverse source multiplicities.
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.38.0/figures/arrangement_csg_nonzero.svg" alt="Eight-panel ArrangementGraph CSG example using the Nonzero fill rule">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.39.0/figures/arrangement_csg_nonzero.svg" alt="Eight-panel ArrangementGraph CSG example using the Nonzero fill rule">
 </center>
 
 The same inputs and arrangement produce different Boolean boundaries under
@@ -1511,7 +1512,7 @@ final `nested_contours` panel is unchanged because that unary operation
 preserves the complete signed winding field and does not take a fill rule.
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.38.0/figures/arrangement_csg_evenodd.svg" alt="Eight-panel ArrangementGraph CSG example using the EvenOdd fill rule">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.39.0/figures/arrangement_csg_evenodd.svg" alt="Eight-panel ArrangementGraph CSG example using the EvenOdd fill rule">
 </center>
 
 For points away from a boundary:

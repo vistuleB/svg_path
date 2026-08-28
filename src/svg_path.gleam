@@ -2764,8 +2764,7 @@ pub fn subpath_assert_join_with(
 ) -> Subpath {
   case subpath_join_with(subpaths, policy: endpoint_policy) {
     Ok(subpath) -> subpath
-    Error(_) ->
-      panic as "svg_path.subpath_assert_join received invalid subpaths"
+    Error(_) -> panic as "svg_path.subpath_assert_join received invalid subpaths"
   }
 }
 

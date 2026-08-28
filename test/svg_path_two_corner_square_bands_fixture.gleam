@@ -60,14 +60,28 @@ fn drawing(source: svg_path.Subpath, band: svg_path.Path) -> String {
   let width = max.x -. min.x +. 2.0 *. padding
   let height = max.y -. min.y +. 2.0 *. padding
   "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"900\" height=\"900\" viewBox=\""
-  <> float.to_string(x) <> " " <> float.to_string(y) <> " "
-  <> float.to_string(width) <> " " <> float.to_string(height) <> "\">\n"
-  <> "  <rect x=\"" <> float.to_string(x) <> "\" y=\""
-  <> float.to_string(y) <> "\" width=\"" <> float.to_string(width)
-  <> "\" height=\"" <> float.to_string(height) <> "\" fill=\"white\" />\n"
-  <> "  <path d=\"" <> serialize.path(band)
+  <> float.to_string(x)
+  <> " "
+  <> float.to_string(y)
+  <> " "
+  <> float.to_string(width)
+  <> " "
+  <> float.to_string(height)
+  <> "\">\n"
+  <> "  <rect x=\""
+  <> float.to_string(x)
+  <> "\" y=\""
+  <> float.to_string(y)
+  <> "\" width=\""
+  <> float.to_string(width)
+  <> "\" height=\""
+  <> float.to_string(height)
+  <> "\" fill=\"white\" />\n"
+  <> "  <path d=\""
+  <> serialize.path(band)
   <> "\" fill=\"#f97316\" fill-opacity=\"0.48\" fill-rule=\"nonzero\" stroke=\"#c2410c\" stroke-width=\"0.025\" stroke-linejoin=\"round\" />\n"
-  <> "  <path d=\"" <> serialize.subpath(source)
+  <> "  <path d=\""
+  <> serialize.subpath(source)
   <> "\" fill=\"none\" stroke=\"#2563eb\" stroke-width=\"0.035\" stroke-dasharray=\"0.10 0.08\" stroke-linejoin=\"round\" />\n"
   <> "</svg>\n"
 }

@@ -2109,9 +2109,7 @@ fn sample_touching_order_loop(
       let order = touching_order_from_rays(first_ray, second_ray, options)
 
       case order {
-        IndeterminateTouchingOrder
-          if arc_length <. options.maximum_arc_length
-        ->
+        IndeterminateTouchingOrder if arc_length <. options.maximum_arc_length ->
           sample_touching_order_loop(
             first,
             second,
