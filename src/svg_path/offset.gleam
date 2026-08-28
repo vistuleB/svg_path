@@ -838,8 +838,7 @@ fn topological_band_path_with_opinions(
 }
 
 /// Extract, filter, and orient band loops as a path.
-@internal
-pub fn internal_topological_band_path(
+fn topological_band_path(
   untrimmed: List(svg_path.Subpath),
   bands bands: List(OneSubpathBand),
   options options: Options,
@@ -2811,7 +2810,7 @@ pub fn subpath_stroke_with(
                 cap,
                 options,
               ))
-              use stroke <- result.try(internal_topological_band_path(
+              use stroke <- result.try(topological_band_path(
                 [candidate],
                 bands: [OpenSubpathBand(candidate)],
                 options:,
