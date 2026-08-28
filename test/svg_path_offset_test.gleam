@@ -174,11 +174,15 @@ pub fn synchronized_offsets_retain_matched_join_geometry_test() {
       after_portion_index: 0,
       inner_segments:,
       outer_segments:,
+      inner_reversed:,
+      outer_reversed:,
     ),
   ] = joins
 
   assert inner_segments != []
   assert outer_segments != []
+  assert inner_reversed == False
+  assert outer_reversed == True
 }
 
 fn synchronized_trace_spans(

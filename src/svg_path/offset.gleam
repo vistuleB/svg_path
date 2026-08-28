@@ -386,6 +386,8 @@ pub type SynchronizedOffsetTraceJoin {
     after_portion_index: Int,
     inner_segments: List(svg_path.Segment),
     outer_segments: List(svg_path.Segment),
+    inner_reversed: Bool,
+    outer_reversed: Bool,
   )
 }
 
@@ -463,6 +465,7 @@ type HPreimageSource {
     after_portion_index: Int,
     side: BandSide,
     join_segment_index: Int,
+    reversed: Bool,
   )
 }
 
@@ -482,7 +485,12 @@ type HPreimageSubpath {
 ///
 /// `preimage` remains immutable even when `segment` is shortened.
 type ICulledOffsetSegment {
-  ICulledOffsetSegment(segment: svg_path.Segment, preimage: HPreimageSegment)
+  ICulledOffsetSegment(
+    segment: svg_path.Segment,
+    preimage: HPreimageSegment,
+    preimage_from: Float,
+    preimage_to: Float,
+  )
 }
 
 type ICulledOffsetSubpath {
@@ -558,6 +566,8 @@ type OffsetJoinCorrespondence {
     after_portion_index: Int,
     inner: List(svg_path.Segment),
     outer: List(svg_path.Segment),
+    inner_reversed: Bool,
+    outer_reversed: Bool,
     inner_start: svg_path.Point,
     inner_end: svg_path.Point,
     outer_start: svg_path.Point,
@@ -3905,17 +3915,24 @@ fn assemble_preimage_segments(
             assemble_preimage_segments(rest, [], side:),
           )
         [join, ..remaining_joins] -> {
-          let OffsetJoinCorrespondence(after_portion_index:, inner:, outer:, ..) =
-            join
-          let raw_join_segments = case side {
-            Inner -> inner
-            Outer -> outer
+          let OffsetJoinCorrespondence(
+            after_portion_index:,
+            inner:,
+            outer:,
+            inner_reversed:,
+            outer_reversed:,
+            ..,
+          ) = join
+          let #(raw_join_segments, join_reversed) = case side {
+            Inner -> #(inner, inner_reversed)
+            Outer -> #(outer, outer_reversed)
           }
           let join_segments =
             indexed_join_preimage_segments(
               raw_join_segments,
               after_portion_index,
               side,
+              join_reversed,
               index: 0,
               assembled: [],
             )
@@ -3936,6 +3953,7 @@ fn indexed_join_preimage_segments(
   segments: List(svg_path.Segment),
   after_portion_index: Int,
   side: BandSide,
+  reversed: Bool,
   index index: Int,
   assembled assembled: List(HPreimageSegment),
 ) -> List(HPreimageSegment) {
@@ -3946,6 +3964,7 @@ fn indexed_join_preimage_segments(
         rest,
         after_portion_index,
         side,
+        reversed,
         index: index + 1,
         assembled: [
           HPreimageSegment(
@@ -3954,6 +3973,7 @@ fn indexed_join_preimage_segments(
               after_portion_index:,
               side:,
               join_segment_index: index,
+              reversed:,
             ),
           ),
           ..assembled
@@ -3969,7 +3989,12 @@ fn cull_adjacent_preimage_loops(
   let segments =
     list.map(segments, fn(preimage) {
       let HPreimageSegment(segment:, ..) = preimage
-      ICulledOffsetSegment(segment:, preimage:)
+      ICulledOffsetSegment(
+        segment:,
+        preimage:,
+        preimage_from: 0.0,
+        preimage_to: 1.0,
+      )
     })
   use segments <- result.try(cull_adjacent_offset_segment_loops(segments))
   use segments <- result.try(case closed {
@@ -4039,12 +4064,27 @@ fn cull_offset_segment_loop(
   {
     True -> Ok(#(left, right))
     False -> {
-      use #(left_segment, right_segment) <- result.try(
-        short_circuit_adjacent_offset_segment_loop(left.segment, right.segment),
+      use #(left_segment, left_to, right_segment, right_from) <- result.try(
+        short_circuit_adjacent_offset_segment_loop_with_parameters(
+          left.segment,
+          right.segment,
+        ),
       )
+      let left_preimage_to =
+        interval_parameter(left.preimage_from, left.preimage_to, left_to)
+      let right_preimage_from =
+        interval_parameter(right.preimage_from, right.preimage_to, right_from)
       Ok(#(
-        ICulledOffsetSegment(..left, segment: left_segment),
-        ICulledOffsetSegment(..right, segment: right_segment),
+        ICulledOffsetSegment(
+          ..left,
+          segment: left_segment,
+          preimage_to: left_preimage_to,
+        ),
+        ICulledOffsetSegment(
+          ..right,
+          segment: right_segment,
+          preimage_from: right_preimage_from,
+        ),
       ))
     }
   }
@@ -4065,8 +4105,9 @@ fn h_preimage_is_reversed(preimage: HPreimageSegment) -> Bool {
           dot(offset_tangent, source_tangent) <. 0.0
         _, _ -> False
       }
-    HealedPreimage(GHealedOffsetSegment(source: OffsetFromStalledRun(_), ..))
-    | JoinPreimage(..) -> False
+    HealedPreimage(GHealedOffsetSegment(source: OffsetFromStalledRun(_), ..)) ->
+      False
+    JoinPreimage(reversed:, ..) -> reversed
   }
 }
 
@@ -4208,15 +4249,78 @@ fn synchronized_join_correspondence(
   ))
   let #(inner_start, inner_end) = inner_boundary
   let #(outer_start, outer_end) = outer_boundary
+  use inner_reversed <- result.try(join_is_geometrically_reversed(
+    left_inner,
+    right_inner,
+    inner_start,
+    inner_end,
+  ))
+  use outer_reversed <- result.try(join_is_geometrically_reversed(
+    left_outer,
+    right_outer,
+    outer_start,
+    outer_end,
+  ))
   Ok(OffsetJoinCorrespondence(
     after_portion_index: portion_index,
     inner: inner_join,
     outer: outer_join,
+    inner_reversed:,
+    outer_reversed:,
     inner_start:,
     inner_end:,
     outer_start:,
     outer_end:,
   ))
+}
+
+fn join_is_geometrically_reversed(
+  left: List(GHealedOffsetSegment),
+  right: List(GHealedOffsetSegment),
+  join_start: svg_path.Point,
+  join_end: svg_path.Point,
+) -> Result(Bool, Error) {
+  use previous <- result.try(last_list_item(left))
+  use next <- result.try(case right {
+    [first, ..] -> Ok(first)
+    [] -> Error(DegenerateTangent(0.0))
+  })
+  use incoming <- result.try(offset_source_endpoint_unit_tangent(
+    previous.source,
+    endpoint: SegmentEnd,
+  ))
+  use outgoing <- result.try(offset_source_endpoint_unit_tangent(
+    next.source,
+    endpoint: SegmentStart,
+  ))
+  let average_direction = add(incoming, outgoing)
+  let join_chord = subtract(join_end, join_start)
+  Ok(dot(average_direction, join_chord) <. 0.0)
+}
+
+fn offset_source_endpoint_unit_tangent(
+  source: OffsetSegmentSource,
+  endpoint endpoint: SegmentEndpoint,
+) -> Result(svg_path.Point, Error) {
+  case source {
+    OffsetFromJoinFree(EJoinFreeSegment(segment:, ..)) ->
+      unit_tangent_at_endpoint(segment, endpoint:)
+    OffsetFromStalledRun(run) -> {
+      use segment <- result.try(case endpoint {
+        SegmentStart ->
+          case run {
+            [CStalledSegment(segment:, ..), ..] -> Ok(segment)
+            [] -> Error(DegenerateTangent(0.0))
+          }
+        SegmentEnd -> {
+          use last <- result.try(last_list_item(run))
+          let CStalledSegment(segment:, ..) = last
+          Ok(segment)
+        }
+      })
+      unit_tangent_at_endpoint(segment, endpoint:)
+    }
+  }
 }
 
 fn offset_portion_join_boundary(
@@ -5236,12 +5340,16 @@ pub fn internal_synchronized_join_trace(
         after_portion_index:,
         inner: inner_segments,
         outer: outer_segments,
+        inner_reversed:,
+        outer_reversed:,
         ..,
       ) = correspondence
       SynchronizedOffsetTraceJoin(
         after_portion_index:,
         inner_segments:,
         outer_segments:,
+        inner_reversed:,
+        outer_reversed:,
       )
     }),
   )
@@ -7883,11 +7991,21 @@ fn short_circuit_adjacent_offset_segment_loop(
   left: svg_path.Segment,
   right: svg_path.Segment,
 ) -> Result(#(svg_path.Segment, svg_path.Segment), Error) {
+  use #(left, _, right, _) <- result.try(
+    short_circuit_adjacent_offset_segment_loop_with_parameters(left, right),
+  )
+  Ok(#(left, right))
+}
+
+fn short_circuit_adjacent_offset_segment_loop_with_parameters(
+  left: svg_path.Segment,
+  right: svg_path.Segment,
+) -> Result(#(svg_path.Segment, Float, svg_path.Segment, Float), Error) {
   use intersections <- result.try(
     intersections.segment(left, right) |> result.map_error(PathError),
   )
   case earliest_interior_adjacent_intersection(intersections, best: None) {
-    None -> Ok(#(left, right))
+    None -> Ok(#(left, 1.0, right, 0.0))
     Some(svg_path.SegmentIntersection(left_t:, right_t:, point:)) -> {
       use retained_left <- result.try(
         svg_path.segment_between_inside(left, from: 0.0, to: left_t)
@@ -7899,10 +8017,16 @@ fn short_circuit_adjacent_offset_segment_loop(
       )
       Ok(#(
         segment_with_end(retained_left, point),
+        left_t,
         segment_with_start(retained_right, point),
+        right_t,
       ))
     }
   }
+}
+
+fn interval_parameter(from: Float, to: Float, local: Float) -> Float {
+  from +. { to -. from } *. local
 }
 
 fn earliest_interior_adjacent_intersection(
