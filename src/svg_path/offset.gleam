@@ -1460,7 +1460,7 @@ fn arrangement_edge_winding_opinion(
   edge_id: Int,
 ) -> Result(WindingSideOpinion, Error) {
   let OffsetArrangementBuild(edge_images:, ..) = build
-  case list.find(edge_images, fn(image) { image.edge_id == edge_id }) {
+  case arrangement_edge_image_by_id(edge_images, edge_id) {
     Error(Nil) ->
       Error(ArrangementGraphError(arrangement_graph.InternalNormalizationError))
     Ok(arrangement_graph.ArrangementEdgeImage(sources:, ..)) ->
@@ -3460,18 +3460,23 @@ fn arrangement_edge_has_group(
   edge_id: Int,
   group: OffsetArrangementSegmentGroup,
 ) -> Bool {
-  build.edge_images
-  |> list.any(fn(image) {
-    let arrangement_graph.ArrangementEdgeImage(edge_id: candidate, sources:) =
-      image
-    candidate == edge_id
-    && sources
-    |> list.any(fn(source) {
-      let arrangement_graph.ArrangementEdgeSourceImage(segment_index:, ..) =
-        source
-      offset_segment_index_has_group(build, segment_index, group)
-    })
-  })
+  case arrangement_edge_image_by_id(build.edge_images, edge_id) {
+    Error(Nil) -> False
+    Ok(arrangement_graph.ArrangementEdgeImage(sources:, ..)) ->
+      sources
+      |> list.any(fn(source) {
+        let arrangement_graph.ArrangementEdgeSourceImage(segment_index:, ..) =
+          source
+        offset_segment_index_has_group(build, segment_index, group)
+      })
+  }
+}
+
+fn arrangement_edge_image_by_id(
+  images: List(arrangement_graph.ArrangementEdgeImage),
+  edge_id: Int,
+) -> Result(arrangement_graph.ArrangementEdgeImage, Nil) {
+  list.find(images, fn(image) { image.edge_id == edge_id })
 }
 
 fn offset_indexed_segment_at(
