@@ -937,10 +937,8 @@ pub fn internal_single_offset_arrangement_trace(
     distance:,
   ))
   let OffsetArrangementBuild(graph:, ..) = arrangement
-  let arrangement_graph.UndirectedArrangementGraph(edges:, ..) =
-    graph
-    |> arrangement_graph.to_undirected
-    |> retain_offset_image_edges(arrangement)
+  let arrangement_graph.ArrangementGraph(edges:, ..) =
+    retain_offset_image_edges(graph, arrangement)
   arrangement_trace_edges(
     edges,
     inside,
@@ -1083,7 +1081,7 @@ fn unique_ints(values: List(Int), unique unique: List(Int)) -> List(Int) {
 }
 
 fn arrangement_trace_edges(
-  edges: List(arrangement_graph.UndirectedArrangementEdge),
+  edges: List(arrangement_graph.ArrangementEdge),
   inside: fn(svg_path.Point) -> Result(Bool, Error),
   side_sampling_distance: Float,
   traced traced: List(SingleOffsetArrangementTraceEdge),
@@ -1091,7 +1089,7 @@ fn arrangement_trace_edges(
   case edges {
     [] -> Ok(list.reverse(traced))
     [first, ..rest] -> {
-      let arrangement_graph.UndirectedArrangementEdge(id:, segment:, ..) = first
+      let arrangement_graph.ArrangementEdge(id:, segment:, ..) = first
       use submerged <- result.try(submerged_segment(
         segment,
         inside:,
@@ -1155,17 +1153,14 @@ fn prune_single_offset_arrangement_build(
   options: Options,
 ) -> Result(SingleOffsetLoopTrace, Error) {
   let OffsetArrangementBuild(graph:, ..) = build
-  let undirected =
-    graph
-    |> arrangement_graph.to_undirected
-    |> retain_offset_image_edges(build)
+  let directed = retain_offset_image_edges(graph, build)
   use protected_vertices <- result.try(untrimmed_open_endpoint_vertices(
     build,
     untrimmed,
   ))
   use without_submerged <- result.try(delete_winding_mismatched_edges(
     build,
-    undirected,
+    directed,
     winding:,
     side_sampling_distance: submerged_side_sampling_distance,
   ))
@@ -1211,14 +1206,13 @@ fn burn_pruned_band_survivors(
 ) -> Result(List(svg_path.Subpath), Error) {
   use build <- result.try(band_segment_arrangement(untrimmed, winding_opinions))
   let OffsetArrangementBuild(graph:, ..) = build
-  let undirected = arrangement_graph.to_undirected(graph)
   use protected_vertices <- result.try(untrimmed_open_endpoint_vertices(
     build,
     untrimmed,
   ))
   use without_submerged <- result.try(delete_winding_mismatched_edges(
     build,
-    undirected,
+    graph,
     winding:,
     side_sampling_distance: submerged_side_sampling_distance,
   ))
@@ -1232,25 +1226,22 @@ fn burn_pruned_band_survivors(
   |> result.try(close_survivor_subpaths(_, tolerance: options.fitting.tolerance))
 }
 
-fn undirected_incidence_degree(
-  edges: List(arrangement_graph.UndirectedArrangementEdge),
+fn incidence_degree(
+  edges: List(arrangement_graph.ArrangementEdge),
   vertex: Int,
 ) -> Int {
   case edges {
     [] -> 0
     [edge, ..rest] -> {
-      let arrangement_graph.UndirectedArrangementEdge(
-        start_vertex:,
-        end_vertex:,
-        ..,
-      ) = edge
+      let arrangement_graph.ArrangementEdge(start_vertex:, end_vertex:, ..) =
+        edge
       let contribution = case start_vertex == vertex, end_vertex == vertex {
         True, True -> 2
         True, False -> 1
         False, True -> 1
         False, False -> 0
       }
-      contribution + undirected_incidence_degree(rest, vertex)
+      contribution + incidence_degree(rest, vertex)
     }
   }
 }
@@ -1402,11 +1393,12 @@ fn last_directed_edge(
 
 fn delete_winding_mismatched_edges(
   build: OffsetArrangementBuild,
-  graph: arrangement_graph.UndirectedArrangementGraph,
+  graph: arrangement_graph.ArrangementGraph,
   winding winding: fn(svg_path.Point) -> Result(Int, Error),
   side_sampling_distance side_sampling_distance: Float,
-) -> Result(arrangement_graph.UndirectedArrangementGraph, Error) {
-  let arrangement_graph.UndirectedArrangementGraph(vertices:, edges:) = graph
+) -> Result(arrangement_graph.ArrangementGraph, Error) {
+  let arrangement_graph.ArrangementGraph(vertices:, edges:, cyclic_orders:) =
+    graph
   use retained <- result.try(
     delete_winding_mismatched_edges_loop(
       build,
@@ -1416,16 +1408,20 @@ fn delete_winding_mismatched_edges(
       retained: [],
     ),
   )
-  Ok(arrangement_graph.UndirectedArrangementGraph(vertices:, edges: retained))
+  Ok(arrangement_graph.ArrangementGraph(
+    vertices:,
+    edges: retained,
+    cyclic_orders:,
+  ))
 }
 
 fn delete_winding_mismatched_edges_loop(
   build: OffsetArrangementBuild,
-  edges: List(arrangement_graph.UndirectedArrangementEdge),
+  edges: List(arrangement_graph.ArrangementEdge),
   winding winding: fn(svg_path.Point) -> Result(Int, Error),
   side_sampling_distance side_sampling_distance: Float,
-  retained retained: List(arrangement_graph.UndirectedArrangementEdge),
-) -> Result(List(arrangement_graph.UndirectedArrangementEdge), Error) {
+  retained retained: List(arrangement_graph.ArrangementEdge),
+) -> Result(List(arrangement_graph.ArrangementEdge), Error) {
   case edges {
     [] -> Ok(list.reverse(retained))
     [edge, ..rest] -> {
@@ -1452,11 +1448,11 @@ fn delete_winding_mismatched_edges_loop(
 
 fn arrangement_edge_winding_matches_opinion(
   build: OffsetArrangementBuild,
-  edge: arrangement_graph.UndirectedArrangementEdge,
+  edge: arrangement_graph.ArrangementEdge,
   winding winding: fn(svg_path.Point) -> Result(Int, Error),
   side_sampling_distance side_sampling_distance: Float,
 ) -> Result(Bool, Error) {
-  let arrangement_graph.UndirectedArrangementEdge(id:, segment:, ..) = edge
+  let arrangement_graph.ArrangementEdge(id:, segment:, ..) = edge
   use expected <- result.try(arrangement_edge_winding_opinion(build, id))
   use point <- result.try(
     svg_path.segment_point(segment, at: 0.5) |> result.map_error(PathError),
@@ -1543,46 +1539,45 @@ fn arrangement_source_winding_opinions(
 }
 
 fn burn_unsupported_edges(
-  graph: arrangement_graph.UndirectedArrangementGraph,
+  graph: arrangement_graph.ArrangementGraph,
   protected_vertices protected_vertices: List(Int),
-) -> arrangement_graph.UndirectedArrangementGraph {
-  let arrangement_graph.UndirectedArrangementGraph(vertices:, edges:) = graph
+) -> arrangement_graph.ArrangementGraph {
+  let arrangement_graph.ArrangementGraph(vertices:, edges:, cyclic_orders:) =
+    graph
   let retained =
     edges
-    |> list.filter(fn(edge) {
-      !undirected_edge_is_burned(edge, edges, protected_vertices)
-    })
+    |> list.filter(fn(edge) { !edge_is_burned(edge, edges, protected_vertices) })
   case list.length(retained) == list.length(edges) {
     True -> graph
     False ->
       burn_unsupported_edges(
-        arrangement_graph.UndirectedArrangementGraph(vertices:, edges: retained),
+        arrangement_graph.ArrangementGraph(
+          vertices:,
+          edges: retained,
+          cyclic_orders:,
+        ),
         protected_vertices:,
       )
   }
 }
 
-fn undirected_edge_is_burned(
-  edge: arrangement_graph.UndirectedArrangementEdge,
-  edges: List(arrangement_graph.UndirectedArrangementEdge),
+fn edge_is_burned(
+  edge: arrangement_graph.ArrangementEdge,
+  edges: List(arrangement_graph.ArrangementEdge),
   protected_vertices: List(Int),
 ) -> Bool {
-  let arrangement_graph.UndirectedArrangementEdge(
-    start_vertex:,
-    end_vertex:,
-    ..,
-  ) = edge
+  let arrangement_graph.ArrangementEdge(start_vertex:, end_vertex:, ..) = edge
   endpoint_burns(start_vertex, edges, protected_vertices)
   || endpoint_burns(end_vertex, edges, protected_vertices)
 }
 
 fn endpoint_burns(
   vertex: Int,
-  edges: List(arrangement_graph.UndirectedArrangementEdge),
+  edges: List(arrangement_graph.ArrangementEdge),
   protected_vertices: List(Int),
 ) -> Bool {
   !list.contains(protected_vertices, vertex)
-  && undirected_incidence_degree(edges, vertex) == 1
+  && incidence_degree(edges, vertex) == 1
 }
 
 fn close_survivor_subpaths(
@@ -1623,7 +1618,7 @@ fn close_survivor_subpath(
 
 fn source_order_survivor_subpaths(
   build: OffsetArrangementBuild,
-  graph: arrangement_graph.UndirectedArrangementGraph,
+  graph: arrangement_graph.ArrangementGraph,
   protected_vertices protected_vertices: List(Int),
   tolerance tolerance: Float,
 ) -> Result(List(svg_path.Subpath), Error) {
@@ -1643,7 +1638,7 @@ fn source_order_survivor_subpaths(
 
 fn source_order_survivor_loops(
   build: OffsetArrangementBuild,
-  graph: arrangement_graph.UndirectedArrangementGraph,
+  graph: arrangement_graph.ArrangementGraph,
   protected_vertices protected_vertices: List(Int),
   tolerance tolerance: Float,
 ) -> Result(List(ArrangementLoop), Error) {
@@ -1658,7 +1653,7 @@ fn source_order_survivor_loops(
         UntrimmedOffsetSegment,
       )
     })
-  let available_ids = undirected_edge_ids(graph)
+  let available_ids = arrangement_edge_ids(graph)
   use chains <- result.try(
     source_order_survivor_chains(
       build,
@@ -1687,13 +1682,13 @@ fn filter_bare_survivor_chains(
   })
 }
 
-fn undirected_edge_ids(
-  graph: arrangement_graph.UndirectedArrangementGraph,
+fn arrangement_edge_ids(
+  graph: arrangement_graph.ArrangementGraph,
 ) -> List(Int) {
-  let arrangement_graph.UndirectedArrangementGraph(edges:, ..) = graph
+  let arrangement_graph.ArrangementGraph(edges:, ..) = graph
   edges
   |> list.map(fn(edge) {
-    let arrangement_graph.UndirectedArrangementEdge(id:, ..) = edge
+    let arrangement_graph.ArrangementEdge(id:, ..) = edge
     id
   })
 }
@@ -3471,16 +3466,17 @@ fn offset_segment_index_has_group(
 }
 
 fn retain_offset_image_edges(
-  graph: arrangement_graph.UndirectedArrangementGraph,
+  graph: arrangement_graph.ArrangementGraph,
   build: OffsetArrangementBuild,
-) -> arrangement_graph.UndirectedArrangementGraph {
-  let arrangement_graph.UndirectedArrangementGraph(vertices:, edges:) = graph
+) -> arrangement_graph.ArrangementGraph {
+  let arrangement_graph.ArrangementGraph(vertices:, edges:, cyclic_orders:) =
+    graph
   let retained =
     list.filter(edges, fn(edge) {
-      let arrangement_graph.UndirectedArrangementEdge(id:, ..) = edge
+      let arrangement_graph.ArrangementEdge(id:, ..) = edge
       arrangement_edge_has_group(build, id, UntrimmedOffsetSegment)
     })
-  arrangement_graph.UndirectedArrangementGraph(vertices:, edges: retained)
+  arrangement_graph.ArrangementGraph(vertices:, edges: retained, cyclic_orders:)
 }
 
 fn arrangement_edge_has_group(
@@ -4300,13 +4296,7 @@ fn j_segments_from_i_edge_images(
       ) = edge
       use matches <- result.try(arrangement_edge_winding_matches_opinion(
         build,
-        arrangement_graph.UndirectedArrangementEdge(
-          id: edge_id,
-          segment: edge_segment,
-          start_vertex: edge_start,
-          end_vertex: edge_end,
-          multiplicity: 1,
-        ),
+        edge,
         winding:,
         side_sampling_distance: submerged_side_sampling_distance,
       ))

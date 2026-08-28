@@ -117,37 +117,6 @@ pub type ArrangementGraph {
   )
 }
 
-/// One undirected edge of an arrangement graph.
-///
-/// This forgets source traversal direction and keeps only total multiplicity.
-/// It is intended for parity/topology operations where forward and reverse
-/// directional multiplicities should not be interpreted.
-pub type UndirectedArrangementEdge {
-  UndirectedArrangementEdge(
-    /// The corresponding arrangement edge identifier.
-    id: Int,
-    /// The edge geometry, with the same stored orientation as the source edge.
-    segment: svg_path.Segment,
-    /// Identifier of one endpoint cluster.
-    start_vertex: Int,
-    /// Identifier of the other endpoint cluster.
-    end_vertex: Int,
-    /// Total undirected multiplicity of this edge.
-    multiplicity: Int,
-  )
-}
-
-/// An arrangement graph with edge orientation forgotten.
-///
-/// `vertices` are copied from the directed arrangement. Each edge multiplicity
-/// is the sum of forward and reverse multiplicities from the source graph.
-pub type UndirectedArrangementGraph {
-  UndirectedArrangementGraph(
-    vertices: List(ArrangementVertex),
-    edges: List(UndirectedArrangementEdge),
-  )
-}
-
 /// An arrangement graph and source-segment images for the paths from which it
 /// was constructed.
 ///
@@ -837,32 +806,6 @@ pub fn segment_image_edges(
     }
   })
   |> result.all
-}
-
-/// Forget edge orientation and keep only total edge multiplicity.
-pub fn to_undirected(graph: ArrangementGraph) -> UndirectedArrangementGraph {
-  let ArrangementGraph(vertices:, edges:, ..) = graph
-  UndirectedArrangementGraph(
-    vertices:,
-    edges: list.map(edges, fn(edge) {
-      let ArrangementEdge(
-        id:,
-        segment:,
-        start_vertex:,
-        end_vertex:,
-        forward_multiplicity:,
-        reverse_multiplicity:,
-        ..,
-      ) = edge
-      UndirectedArrangementEdge(
-        id:,
-        segment:,
-        start_vertex:,
-        end_vertex:,
-        multiplicity: forward_multiplicity + reverse_multiplicity,
-      )
-    }),
-  )
 }
 
 /// Reconstruct nested contours from a directed arrangement and source path.

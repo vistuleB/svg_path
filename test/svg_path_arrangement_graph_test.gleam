@@ -1088,26 +1088,6 @@ pub fn segment_direction_arrow_recovers_collapsed_cubic_endpoint_test() {
   |> should.be_ok
 }
 
-pub fn undirected_conversion_sums_directional_multiplicity_test() {
-  let forward =
-    svg_path.subpath_assert_polyline([
-      svg_path.Point(0.0, 0.0),
-      svg_path.Point(10.0, 0.0),
-    ])
-  let reverse =
-    svg_path.subpath_assert_polyline([
-      svg_path.Point(10.0, 0.0),
-      svg_path.Point(0.0, 0.0),
-    ])
-  let assert Ok(graph) =
-    build_graph([forward, reverse], tolerance:, minimum_chord:)
-  let arrangement_graph.UndirectedArrangementGraph(edges:, ..) =
-    arrangement_graph.to_undirected(graph)
-
-  let assert [edge] = edges
-  edge.multiplicity |> should.equal(2)
-}
-
 fn closed_subpath(segments: List(svg_path.Segment)) -> svg_path.Subpath {
   svg_path.subpath_assert(segments)
   |> svg_path.subpath_assert_set_closed(closed: True)
