@@ -431,6 +431,17 @@ type OffsetArrangementBuild {
   )
 }
 
+/// Arrangement data retained while offset edges are classified and burned.
+///
+/// Removing edges invalidates an `ArrangementGraph`'s cyclic orders, which
+/// this trimming phase does not use.
+type OffsetTrimGraph {
+  OffsetTrimGraph(
+    vertices: List(arrangement_graph.ArrangementVertex),
+    edges: List(arrangement_graph.ArrangementEdge),
+  )
+}
+
 type OffsetArrangementSegmentGroup {
   UntrimmedOffsetSegment
   ZeroOffsetSourceSegment
@@ -937,7 +948,7 @@ pub fn internal_single_offset_arrangement_trace(
     distance:,
   ))
   let OffsetArrangementBuild(graph:, ..) = arrangement
-  let arrangement_graph.ArrangementGraph(edges:, ..) =
+  let OffsetTrimGraph(edges:, ..) =
     retain_offset_image_edges(graph, arrangement)
   arrangement_trace_edges(
     edges,
@@ -1153,14 +1164,14 @@ fn prune_single_offset_arrangement_build(
   options: Options,
 ) -> Result(SingleOffsetLoopTrace, Error) {
   let OffsetArrangementBuild(graph:, ..) = build
-  let directed = retain_offset_image_edges(graph, build)
+  let trim_graph = retain_offset_image_edges(graph, build)
   use protected_vertices <- result.try(untrimmed_open_endpoint_vertices(
     build,
     untrimmed,
   ))
   use without_submerged <- result.try(delete_winding_mismatched_edges(
     build,
-    directed,
+    trim_graph,
     winding:,
     side_sampling_distance: submerged_side_sampling_distance,
   ))
@@ -1212,7 +1223,7 @@ fn burn_pruned_band_survivors(
   ))
   use without_submerged <- result.try(delete_winding_mismatched_edges(
     build,
-    graph,
+    offset_trim_graph(graph),
     winding:,
     side_sampling_distance: submerged_side_sampling_distance,
   ))
@@ -1393,12 +1404,11 @@ fn last_directed_edge(
 
 fn delete_winding_mismatched_edges(
   build: OffsetArrangementBuild,
-  graph: arrangement_graph.ArrangementGraph,
+  graph: OffsetTrimGraph,
   winding winding: fn(svg_path.Point) -> Result(Int, Error),
   side_sampling_distance side_sampling_distance: Float,
-) -> Result(arrangement_graph.ArrangementGraph, Error) {
-  let arrangement_graph.ArrangementGraph(vertices:, edges:, cyclic_orders:) =
-    graph
+) -> Result(OffsetTrimGraph, Error) {
+  let OffsetTrimGraph(vertices:, edges:) = graph
   use retained <- result.try(
     delete_winding_mismatched_edges_loop(
       build,
@@ -1408,11 +1418,7 @@ fn delete_winding_mismatched_edges(
       retained: [],
     ),
   )
-  Ok(arrangement_graph.ArrangementGraph(
-    vertices:,
-    edges: retained,
-    cyclic_orders:,
-  ))
+  Ok(OffsetTrimGraph(vertices:, edges: retained))
 }
 
 fn delete_winding_mismatched_edges_loop(
@@ -1539,11 +1545,10 @@ fn arrangement_source_winding_opinions(
 }
 
 fn burn_unsupported_edges(
-  graph: arrangement_graph.ArrangementGraph,
+  graph: OffsetTrimGraph,
   protected_vertices protected_vertices: List(Int),
-) -> arrangement_graph.ArrangementGraph {
-  let arrangement_graph.ArrangementGraph(vertices:, edges:, cyclic_orders:) =
-    graph
+) -> OffsetTrimGraph {
+  let OffsetTrimGraph(vertices:, edges:) = graph
   let retained =
     edges
     |> list.filter(fn(edge) { !edge_is_burned(edge, edges, protected_vertices) })
@@ -1551,11 +1556,7 @@ fn burn_unsupported_edges(
     True -> graph
     False ->
       burn_unsupported_edges(
-        arrangement_graph.ArrangementGraph(
-          vertices:,
-          edges: retained,
-          cyclic_orders:,
-        ),
+        OffsetTrimGraph(vertices:, edges: retained),
         protected_vertices:,
       )
   }
@@ -1618,7 +1619,7 @@ fn close_survivor_subpath(
 
 fn source_order_survivor_subpaths(
   build: OffsetArrangementBuild,
-  graph: arrangement_graph.ArrangementGraph,
+  graph: OffsetTrimGraph,
   protected_vertices protected_vertices: List(Int),
   tolerance tolerance: Float,
 ) -> Result(List(svg_path.Subpath), Error) {
@@ -1638,7 +1639,7 @@ fn source_order_survivor_subpaths(
 
 fn source_order_survivor_loops(
   build: OffsetArrangementBuild,
-  graph: arrangement_graph.ArrangementGraph,
+  graph: OffsetTrimGraph,
   protected_vertices protected_vertices: List(Int),
   tolerance tolerance: Float,
 ) -> Result(List(ArrangementLoop), Error) {
@@ -1682,10 +1683,8 @@ fn filter_bare_survivor_chains(
   })
 }
 
-fn arrangement_edge_ids(
-  graph: arrangement_graph.ArrangementGraph,
-) -> List(Int) {
-  let arrangement_graph.ArrangementGraph(edges:, ..) = graph
+fn arrangement_edge_ids(graph: OffsetTrimGraph) -> List(Int) {
+  let OffsetTrimGraph(edges:, ..) = graph
   edges
   |> list.map(fn(edge) {
     let arrangement_graph.ArrangementEdge(id:, ..) = edge
@@ -3468,15 +3467,21 @@ fn offset_segment_index_has_group(
 fn retain_offset_image_edges(
   graph: arrangement_graph.ArrangementGraph,
   build: OffsetArrangementBuild,
-) -> arrangement_graph.ArrangementGraph {
-  let arrangement_graph.ArrangementGraph(vertices:, edges:, cyclic_orders:) =
-    graph
+) -> OffsetTrimGraph {
+  let arrangement_graph.ArrangementGraph(vertices:, edges:, ..) = graph
   let retained =
     list.filter(edges, fn(edge) {
       let arrangement_graph.ArrangementEdge(id:, ..) = edge
       arrangement_edge_has_group(build, id, UntrimmedOffsetSegment)
     })
-  arrangement_graph.ArrangementGraph(vertices:, edges: retained, cyclic_orders:)
+  OffsetTrimGraph(vertices:, edges: retained)
+}
+
+fn offset_trim_graph(
+  graph: arrangement_graph.ArrangementGraph,
+) -> OffsetTrimGraph {
+  let arrangement_graph.ArrangementGraph(vertices:, edges:, ..) = graph
+  OffsetTrimGraph(vertices:, edges:)
 }
 
 fn arrangement_edge_has_group(
