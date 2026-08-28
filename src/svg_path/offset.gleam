@@ -40,6 +40,7 @@ import svg_path/curvature
 import svg_path/degeneracy
 import svg_path/internal/number
 import svg_path/intersections
+import svg_path/overlaps
 import svg_path/point as point_helpers
 import svg_path/trig
 
@@ -90,6 +91,8 @@ const tangent_turn_angle_epsilon = 0.001
 const stable_tangent_assertion_diameter = 0.01
 
 const default_stalled_offset_diameter = 0.01
+
+const adjacent_loop_overlap_endpoint_parameter_tolerance = 0.00001
 
 /// Errors returned by offset helpers.
 pub type Error {
@@ -4093,7 +4096,11 @@ fn cull_adjacent_offset_segment_loops(
     [] | [_] -> Ok(segments)
     [first, second, ..rest] -> {
       use #(first, second) <- result.try(cull_offset_segment_loop(first, second))
-      cull_adjacent_offset_segment_loops_loop(second, rest, culled: [first])
+      case second {
+        Some(second) ->
+          cull_adjacent_offset_segment_loops_loop(second, rest, culled: [first])
+        None -> cull_adjacent_offset_segment_loops_loop(first, rest, culled: [])
+      }
     }
   }
 }
@@ -4110,10 +4117,15 @@ fn cull_adjacent_offset_segment_loops_loop(
         previous,
         next,
       ))
-      cull_adjacent_offset_segment_loops_loop(next, remaining, culled: [
-        previous,
-        ..culled
-      ])
+      case next {
+        Some(next) ->
+          cull_adjacent_offset_segment_loops_loop(next, remaining, culled: [
+            previous,
+            ..culled
+          ])
+        None ->
+          cull_adjacent_offset_segment_loops_loop(previous, remaining, culled:)
+      }
     }
   }
 }
@@ -4126,7 +4138,10 @@ fn cull_wrapping_offset_segment_loop(
     [first, ..rest] -> {
       use last <- result.try(last_list_item(rest))
       use #(last, first) <- result.try(cull_offset_segment_loop(last, first))
-      Ok([first, ..replace_last_culled_offset(rest, last)])
+      case first {
+        Some(first) -> Ok([first, ..replace_last_culled_offset(rest, last)])
+        None -> Ok(replace_last_culled_offset(rest, last))
+      }
     }
   }
 }
@@ -4134,7 +4149,7 @@ fn cull_wrapping_offset_segment_loop(
 fn cull_offset_segment_loop(
   left: ICulledOffsetSegment,
   right: ICulledOffsetSegment,
-) -> Result(#(ICulledOffsetSegment, ICulledOffsetSegment), Error) {
+) -> Result(#(ICulledOffsetSegment, Option(ICulledOffsetSegment)), Error) {
   // This adjacent-pair rule could later be generalized to non-adjacent
   // self-intersections: split the resulting figure-eight into its two closed
   // sides, then remove the smaller side when its boundary starts and ends in
@@ -4144,30 +4159,133 @@ fn cull_offset_segment_loop(
     h_preimage_is_reversed(left.preimage)
     == h_preimage_is_reversed(right.preimage)
   {
-    True -> Ok(#(left, right))
+    True -> Ok(#(left, Some(right)))
     False -> {
-      use #(left_segment, left_to, right_segment, right_from) <- result.try(
+      case
         short_circuit_adjacent_offset_segment_loop_with_parameters(
           left.segment,
           right.segment,
-        ),
+        )
+      {
+        Error(PathError(svg_path.OverlappingSegments)) ->
+          cull_adjacent_offset_segment_overlap(left, right)
+        Error(error) -> Error(error)
+        Ok(#(left_segment, left_to, right_segment, right_from)) -> {
+          let left_preimage_to =
+            interval_parameter(left.preimage_from, left.preimage_to, left_to)
+          let right_preimage_from =
+            interval_parameter(
+              right.preimage_from,
+              right.preimage_to,
+              right_from,
+            )
+          Ok(#(
+            ICulledOffsetSegment(
+              ..left,
+              segment: left_segment,
+              preimage_to: left_preimage_to,
+            ),
+            Some(
+              ICulledOffsetSegment(
+                ..right,
+                segment: right_segment,
+                preimage_from: right_preimage_from,
+              ),
+            ),
+          ))
+        }
+      }
+    }
+  }
+}
+
+fn cull_adjacent_offset_segment_overlap(
+  left: ICulledOffsetSegment,
+  right: ICulledOffsetSegment,
+) -> Result(#(ICulledOffsetSegment, Option(ICulledOffsetSegment)), Error) {
+  use found <- result.try(
+    overlaps.segment(left.segment, right.segment) |> result.map_error(PathError),
+  )
+  case adjacent_endpoint_overlap(found) {
+    Error(_) -> Ok(#(left, Some(right)))
+    Ok(overlap) -> {
+      let overlaps.SegmentOverlap(left_from:, right_from:, right_to:, ..) =
+        overlap
+      let right_end = float.max(right_from, right_to)
+      use shared <- result.try(
+        svg_path.segment_point(right.segment, at: right_end)
+        |> result.map_error(PathError),
       )
-      let left_preimage_to =
-        interval_parameter(left.preimage_from, left.preimage_to, left_to)
-      let right_preimage_from =
-        interval_parameter(right.preimage_from, right.preimage_to, right_from)
-      Ok(#(
+      use left_segment <- result.try(
+        svg_path.segment_between_inside(left.segment, from: 0.0, to: left_from)
+        |> result.map_error(PathError),
+      )
+      let left =
         ICulledOffsetSegment(
           ..left,
-          segment: left_segment,
-          preimage_to: left_preimage_to,
-        ),
-        ICulledOffsetSegment(
-          ..right,
-          segment: right_segment,
-          preimage_from: right_preimage_from,
-        ),
-      ))
+          segment: segment_with_end(left_segment, shared),
+          preimage_to: interval_parameter(
+            left.preimage_from,
+            left.preimage_to,
+            left_from,
+          ),
+        )
+      case
+        right_end >=. 1.0 -. adjacent_loop_overlap_endpoint_parameter_tolerance
+      {
+        True -> Ok(#(left, None))
+        False -> {
+          use right_segment <- result.try(
+            svg_path.segment_between_inside(
+              right.segment,
+              from: right_end,
+              to: 1.0,
+            )
+            |> result.map_error(PathError),
+          )
+          Ok(#(
+            left,
+            Some(
+              ICulledOffsetSegment(
+                ..right,
+                segment: segment_with_start(right_segment, shared),
+                preimage_from: interval_parameter(
+                  right.preimage_from,
+                  right.preimage_to,
+                  right_end,
+                ),
+              ),
+            ),
+          ))
+        }
+      }
+    }
+  }
+}
+
+fn adjacent_endpoint_overlap(
+  found: List(overlaps.SegmentOverlap),
+) -> Result(overlaps.SegmentOverlap, Nil) {
+  case found {
+    [] -> Error(Nil)
+    [first, ..rest] -> {
+      let overlaps.SegmentOverlap(
+        left_from:,
+        left_to:,
+        right_from:,
+        right_to:,
+        ..,
+      ) = first
+      let right_start = float.min(right_from, right_to)
+      case
+        left_from <. 1.0
+        && left_to >=. 1.0 -. adjacent_loop_overlap_endpoint_parameter_tolerance
+        && right_start <=. adjacent_loop_overlap_endpoint_parameter_tolerance
+        && float.max(right_from, right_to) >. 0.0
+      {
+        True -> Ok(first)
+        False -> adjacent_endpoint_overlap(rest)
+      }
     }
   }
 }
