@@ -134,6 +134,24 @@ pub type Error {
 
   /// A calculation produced a non-finite coordinate.
   NonFinite
+
+  /// Arrangement segment-image counts did not match offset segment counts.
+  InternalSegmentImageCountMismatch
+
+  /// A source segment's arrangement image contained no graph edges.
+  InternalEmptySegmentImage(segment_index: Int)
+
+  /// An arrangement edge had no source-image record.
+  InternalMissingEdgeImage(edge_id: Int)
+
+  /// An arrangement source image referenced no indexed offset segment.
+  InternalMissingIndexedSegment(segment_index: Int)
+
+  /// An indexed offset segment had no winding-side opinion.
+  InternalMissingWindingOpinion(segment_index: Int)
+
+  /// Surviving arrangement segments no longer formed their source-order walk.
+  InternalSurvivorOrderMismatch
 }
 
 /// Join style used when offsetting adjacent subpath segments.
@@ -1308,10 +1326,7 @@ fn take_segment_images(
     True -> Ok(#([], images))
     False ->
       case images {
-        [] ->
-          Error(ArrangementGraphError(
-            arrangement_graph.InternalNormalizationError,
-          ))
+        [] -> Error(InternalSegmentImageCountMismatch)
         [first, ..rest] -> {
           use tail <- result.try(take_segment_images(rest, count - 1))
           let #(taken, remaining) = tail
@@ -1335,10 +1350,11 @@ fn segment_image_start_vertex(
   build: OffsetArrangementBuild,
   image: arrangement_graph.ArrangementSourceSegmentImage,
 ) -> Result(Int, Error) {
+  let arrangement_graph.ArrangementSourceSegmentImage(segment_index:, ..) =
+    image
   use edges <- result.try(source_segment_image_edges(build, image))
   case edges {
-    [] ->
-      Error(ArrangementGraphError(arrangement_graph.InternalNormalizationError))
+    [] -> Error(InternalEmptySegmentImage(segment_index:))
     [first, ..] -> {
       let #(edge, reversed) = first
       case reversed {
@@ -1353,12 +1369,12 @@ fn segment_image_end_vertex(
   build: OffsetArrangementBuild,
   image: arrangement_graph.ArrangementSourceSegmentImage,
 ) -> Result(Int, Error) {
+  let arrangement_graph.ArrangementSourceSegmentImage(segment_index:, ..) =
+    image
   use edges <- result.try(source_segment_image_edges(build, image))
   use last <- result.try(
     last_directed_edge(edges)
-    |> result.map_error(fn(_) {
-      ArrangementGraphError(arrangement_graph.InternalNormalizationError)
-    }),
+    |> result.map_error(fn(_) { InternalEmptySegmentImage(segment_index:) }),
   )
   let #(edge, reversed) = last
   case reversed {
@@ -1461,8 +1477,7 @@ fn arrangement_edge_winding_opinion(
 ) -> Result(WindingSideOpinion, Error) {
   let OffsetArrangementBuild(edge_images:, ..) = build
   case arrangement_edge_image_by_id(edge_images, edge_id) {
-    Error(Nil) ->
-      Error(ArrangementGraphError(arrangement_graph.InternalNormalizationError))
+    Error(Nil) -> Error(InternalMissingEdgeImage(edge_id:))
     Ok(arrangement_graph.ArrangementEdgeImage(sources:, ..)) ->
       arrangement_source_winding_opinions(
         build,
@@ -1488,16 +1503,13 @@ fn arrangement_source_winding_opinions(
       use indexed <- result.try(
         offset_indexed_segment_at(build.indexed_segments, segment_index)
         |> result.map_error(fn(_) {
-          ArrangementGraphError(arrangement_graph.InternalNormalizationError)
+          InternalMissingIndexedSegment(segment_index:)
         }),
       )
       let IndexedOffsetSegment(winding_opinion:, ..) = indexed
       use source_opinion <- result.try(case winding_opinion {
         Some(opinion) -> Ok(opinion)
-        None ->
-          Error(ArrangementGraphError(
-            arrangement_graph.InternalNormalizationError,
-          ))
+        None -> Error(InternalMissingWindingOpinion(segment_index:))
       })
       let WindingSideOpinion(left:, right:) = source_opinion
       let source_opinion = case reversed {
@@ -4165,10 +4177,7 @@ fn trim_i_culled_offset_subpath(
         [_, ..] -> {
           use _ <- result.try(case j_segments_form_ordered_walk(survivors) {
             True -> Ok(Nil)
-            False ->
-              Error(ArrangementGraphError(
-                arrangement_graph.InternalNormalizationError,
-              ))
+            False -> Error(InternalSurvivorOrderMismatch)
           })
           Ok(
             Some(KTrimmedOffsetSubpath(
@@ -4226,8 +4235,7 @@ fn j_segments_from_i_images(
         split: list.append(list.reverse(pieces), split),
       )
     }
-    _, _ ->
-      Error(ArrangementGraphError(arrangement_graph.InternalNormalizationError))
+    _, _ -> Error(InternalSegmentImageCountMismatch)
   }
 }
 
@@ -4265,9 +4273,7 @@ fn j_segments_from_i_edge_images(
       ) = build
       use edge <- result.try(
         arrangement_edge_by_id(graph_edges, edge_id)
-        |> result.map_error(fn(_) {
-          ArrangementGraphError(arrangement_graph.InternalNormalizationError)
-        }),
+        |> result.map_error(ArrangementGraphError),
       )
       let arrangement_graph.ArrangementEdge(
         segment: edge_segment,
