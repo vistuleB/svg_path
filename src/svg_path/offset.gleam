@@ -896,30 +896,6 @@ pub fn internal_single_offset_band_candidate(
   band_from_sides(build.zero_source, 0.0, build.subpath, distance)
 }
 
-/// Run single-offset trimming while retaining each survivor's arrangement
-/// edge traversal.
-@internal
-pub fn internal_single_offset_loop_trace(
-  source: svg_path.Subpath,
-  distance distance: Float,
-  options options: Options,
-) -> Result(SingleOffsetLoopTrace, Error) {
-  use _ <- result.try(validate_options(options))
-  use normalized <- result.try(normalize_source_subpath(source, options))
-  use build <- result.try(build_single_offset_untrimmed(
-    normalized,
-    distance:,
-    options:,
-  ))
-  use band <- result.try(band_from_sides(
-    build.zero_source,
-    0.0,
-    build.subpath,
-    distance,
-  ))
-  single_offset_builds_loop_trace([build], distance, bands: [band], options:)
-}
-
 /// Return the offset-image edges and submerged classification from the exact
 /// production single-offset arrangement. This is for debug fixtures only.
 @internal
