@@ -1528,15 +1528,15 @@ pub fn single_offset_band_candidate_closes_open_source_test() {
 pub fn single_offset_band_candidate_keeps_closed_source_as_two_sides_test() {
   let closed = square_loop()
 
-  let assert Ok(offset.ClosedSubpathBand(side_a:, side_b:)) =
+  let assert Ok(offset.ClosedSubpathBand(exterior:, interior:)) =
     offset.internal_single_offset_band_candidate(
       closed,
       distance: 2.0,
       options: offset.default_options(),
     )
 
-  assert svg_path.subpath_is_closed(side_a)
-  assert svg_path.subpath_is_closed(side_b)
+  assert svg_path.subpath_is_closed(exterior)
+  assert svg_path.subpath_is_closed(interior)
 }
 
 pub fn untrimmed_stroke_band_closes_open_source_test() {

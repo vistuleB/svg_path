@@ -175,7 +175,7 @@ pub type Cap {
 @internal
 pub type OneSubpathBand {
   OpenSubpathBand(outline: svg_path.Subpath)
-  ClosedSubpathBand(side_a: svg_path.Subpath, side_b: svg_path.Subpath)
+  ClosedSubpathBand(exterior: svg_path.Subpath, interior: svg_path.Subpath)
 }
 
 /// One reconstructed closed offset loop together with its graph traversal.
@@ -1971,7 +1971,7 @@ fn band_from_sides(
     False -> #(side_b, side_a)
   }
   case svg_path.subpath_is_closed(side_a) {
-    True -> Ok(ClosedSubpathBand(side_a: exterior, side_b: interior))
+    True -> Ok(ClosedSubpathBand(exterior:, interior:))
     False -> {
       use outline <- result.try(open_butt_band_outline(
         side_a: exterior,
@@ -2001,7 +2001,7 @@ fn untrimmed_stroke_band(
         distance: radius,
         options:,
       ))
-      Ok(ClosedSubpathBand(side_a: side_b, side_b: side_a))
+      Ok(ClosedSubpathBand(exterior: side_b, interior: side_a))
     }
     False -> {
       use outline <- result.try(untrimmed_stroke_outline(
