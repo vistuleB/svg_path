@@ -953,7 +953,7 @@ pub fn internal_path_offset_source_trace(
     ),
   )
   use bands <- result.try(
-    single_offset_band_candidates_from_builds(builds, distance, converted: []),
+    single_offset_bands_from_builds(builds, distance, converted: []),
   )
   use trace <- result.try(single_offset_builds_loop_trace(
     builds,
@@ -1115,14 +1115,14 @@ fn single_offset_builds_loop_trace(
 
 /// Build the untrimmed closed stroke band for one source subpath.
 @internal
-pub fn internal_stroke_band_candidate(
+pub fn internal_untrimmed_stroke_band(
   source: svg_path.Subpath,
   width width: Float,
   cap cap: Cap,
   options options: Options,
 ) -> Result(OneSubpathBand, Error) {
   use _ <- result.try(validate_stroke_width(width))
-  stroke_band_candidate(source, width, cap, options)
+  untrimmed_stroke_band(source, width, cap, options)
 }
 
 fn default_trimming_options() -> svg_path.DistanceOptions {
@@ -1982,7 +1982,7 @@ fn band_from_sides(
   }
 }
 
-fn stroke_band_candidate(
+fn untrimmed_stroke_band(
   source: svg_path.Subpath,
   width: Float,
   cap: Cap,
@@ -2004,7 +2004,7 @@ fn stroke_band_candidate(
       Ok(ClosedSubpathBand(side_a: side_b, side_b: side_a))
     }
     False -> {
-      use outline <- result.try(stroke_candidate_subpath(
+      use outline <- result.try(untrimmed_stroke_outline(
         source,
         radius,
         cap,
@@ -2804,15 +2804,15 @@ pub fn subpath_stroke_with(
               orient_outline_path(stroke)
             }
             False -> {
-              use candidate <- result.try(stroke_candidate_subpath(
+              use untrimmed <- result.try(untrimmed_stroke_outline(
                 subpath,
                 radius,
                 cap,
                 options,
               ))
               use stroke <- result.try(topological_band_path(
-                [candidate],
-                bands: [OpenSubpathBand(candidate)],
+                [untrimmed],
+                bands: [OpenSubpathBand(untrimmed)],
                 options:,
               ))
               orient_outline_path(stroke)
@@ -2881,11 +2881,7 @@ pub fn path_with(
     ),
   )
   use bands <- result.try(
-    single_offset_band_candidates_from_builds(
-      untrimmed_builds,
-      distance,
-      converted: [],
-    ),
+    single_offset_bands_from_builds(untrimmed_builds, distance, converted: []),
   )
   use result <- result.try(trim_single_offset_builds(
     untrimmed_builds,
@@ -2896,7 +2892,7 @@ pub fn path_with(
   Ok(result)
 }
 
-fn single_offset_band_candidates_from_builds(
+fn single_offset_bands_from_builds(
   builds: List(SingleOffsetUntrimmedBuild),
   distance: Float,
   converted converted: List(OneSubpathBand),
@@ -2910,7 +2906,7 @@ fn single_offset_band_candidates_from_builds(
         first.subpath,
         distance,
       ))
-      single_offset_band_candidates_from_builds(rest, distance, converted: [
+      single_offset_bands_from_builds(rest, distance, converted: [
         band,
         ..converted
       ])
@@ -4764,7 +4760,7 @@ fn closed_stroke_path(
   radius radius: Float,
   options options: Options,
 ) -> Result(svg_path.Path, Error) {
-  use band <- result.try(stroke_band_candidate(
+  use band <- result.try(untrimmed_stroke_band(
     source,
     radius *. 2.0,
     Butt,
@@ -4994,7 +4990,7 @@ fn orient_outline_subpath(
   }
 }
 
-fn stroke_candidate_subpath(
+fn untrimmed_stroke_outline(
   source: svg_path.Subpath,
   radius: Float,
   cap: Cap,

@@ -1539,7 +1539,7 @@ pub fn single_offset_band_candidate_keeps_closed_source_as_two_sides_test() {
   assert svg_path.subpath_is_closed(side_b)
 }
 
-pub fn stroke_band_candidate_closes_open_source_test() {
+pub fn untrimmed_stroke_band_closes_open_source_test() {
   let open =
     svg_path.subpath_assert_polyline([
       svg_path.Point(0.0, 0.0),
@@ -1547,7 +1547,7 @@ pub fn stroke_band_candidate_closes_open_source_test() {
     ])
 
   let assert Ok(offset.OpenSubpathBand(outline)) =
-    offset.internal_stroke_band_candidate(
+    offset.internal_untrimmed_stroke_band(
       open,
       width: 4.0,
       cap: offset.Butt,
