@@ -22,6 +22,7 @@ import gleam/option.{type Option, None, Some}
 import gleam/order
 import gleam/result
 import svg_path
+import svg_path/area
 import svg_path/internal/number
 import svg_path/intersections
 import svg_path/overlaps
@@ -115,6 +116,53 @@ pub type ArrangementGraph {
     /// Clockwise incident oriented-edge order for every vertex.
     cyclic_orders: List(#(Int, List(List(OrientedArrangementEdge)))),
   )
+}
+
+/// The planar dual derived from an `ArrangementGraph`.
+///
+/// `faces` contains exactly one infinite face, identified by `outer: True`,
+/// and that face is first. `edge_faces` records the faces on the visual left
+/// and right of every stored arrangement-edge direction.
+pub type DualArrangementGraph {
+  DualArrangementGraph(
+    faces: List(ArrangementFace),
+    edge_faces: List(ArrangementEdgeFaces),
+  )
+}
+
+/// One connected open region of the plane complementary to an arrangement.
+///
+/// `outer` is true only for the infinite face. For a bounded face, the first
+/// walk is its enclosing outer walk and any remaining walks surround islands.
+/// The infinite face has no enclosing outer walk, so all of its walks have
+/// `outer: False`.
+pub type ArrangementFace {
+  ArrangementFace(id: Int, outer: Bool, walks: List(ArrangementFaceWalk))
+}
+
+/// One connected boundary component of an arrangement face.
+///
+/// `outer` identifies the enclosing boundary of a bounded face. Such a walk is
+/// always first in its face's walk list. Every edge is traversed with the face
+/// on its visual left.
+pub type ArrangementFaceWalk {
+  ArrangementFaceWalk(outer: Bool, edges: List(ArrangementFaceEdge))
+}
+
+/// One arrangement edge used by a face boundary walk.
+///
+/// `left` is true when the face lies on the visual left of the edge's stored
+/// direction. A face walk follows the stored direction when `left` is true and
+/// reverses it otherwise.
+pub type ArrangementFaceEdge {
+  ArrangementFaceEdge(edge_id: Int, left: Bool)
+}
+
+/// The two dual faces incident to one arrangement edge.
+///
+/// A bridge has the same face on both sides.
+pub type ArrangementEdgeFaces {
+  ArrangementEdgeFaces(edge_id: Int, left_face: Int, right_face: Int)
 }
 
 /// An arrangement graph and source-segment images for the paths from which it
@@ -286,6 +334,27 @@ pub type Error {
 
   /// An incident edge did not yield a certified first circle intersection.
   CyclicOrderCircleIntersectionFailed(vertex: Int, edge: Int, radius: Float)
+
+  /// A dual walk could not find the cyclic order at its arrival vertex.
+  DualMissingCyclicOrder(vertex: Int)
+
+  /// A dual walk could not find its incoming edge in a vertex's cyclic order.
+  DualMissingIncidentEdge(vertex: Int, edge: Int)
+
+  /// A dual walk repeated an edge side before returning to its start.
+  DualWalkDidNotClose(edge: Int, left: Bool)
+
+  /// A face boundary could not provide a non-boundary point on its left side.
+  DualFaceSampleUnavailable(edge: Int, left: Bool)
+
+  /// A bounded face did not have exactly one enclosing outer walk.
+  DualInvalidOuterWalkCount(count: Int)
+
+  /// An arrangement edge side was absent from the derived faces.
+  DualMissingEdgeFace(edge: Int, left: Bool)
+
+  /// Dual construction did not identify exactly one infinite face.
+  DualInvalidOuterFaceCount(count: Int)
 }
 
 type CyclicOrderSample {
@@ -788,6 +857,527 @@ fn compare_oriented_edge_identity(
       }
     comparison -> comparison
   }
+}
+
+type DualWalkCandidate {
+  DualWalkCandidate(walk: ArrangementFaceWalk, signature: List(Bool))
+}
+
+/// Derive the planar dual without modifying the arrangement graph.
+///
+/// The existing clockwise cyclic orders determine face successors. Boundary
+/// walks are grouped when points immediately on their visual-left sides occupy
+/// the same combination of nested boundary regions.
+pub fn dual(graph: ArrangementGraph) -> Result(DualArrangementGraph, Error) {
+  let ArrangementGraph(edges:, ..) = graph
+  case edges {
+    [] ->
+      Ok(
+        DualArrangementGraph(
+          faces: [ArrangementFace(id: 0, outer: True, walks: [])],
+          edge_faces: [],
+        ),
+      )
+    _ -> {
+      use walks <- result.try(dual_face_walks(graph))
+      use candidates <- result.try(dual_walk_candidates(walks, graph))
+      use faces <- result.try(dual_faces(candidates))
+      use edge_faces <- result.try(
+        dual_edge_faces(edges, faces, edge_faces: []),
+      )
+      Ok(DualArrangementGraph(faces:, edge_faces:))
+    }
+  }
+}
+
+fn dual_face_walks(
+  graph: ArrangementGraph,
+) -> Result(List(ArrangementFaceWalk), Error) {
+  let ArrangementGraph(edges:, ..) = graph
+  let remaining =
+    edges
+    |> list.flat_map(fn(edge) {
+      [
+        ArrangementFaceEdge(edge.id, left: True),
+        ArrangementFaceEdge(edge.id, left: False),
+      ]
+    })
+  dual_face_walks_loop(graph, remaining, walks: [])
+}
+
+fn dual_face_walks_loop(
+  graph: ArrangementGraph,
+  remaining: List(ArrangementFaceEdge),
+  walks walks: List(ArrangementFaceWalk),
+) -> Result(List(ArrangementFaceWalk), Error) {
+  case remaining {
+    [] -> Ok(list.reverse(walks))
+    [start, ..] -> {
+      use edges <- result.try(dual_face_walk(
+        graph,
+        start,
+        current: start,
+        visited: [],
+        remaining_steps: list.length(remaining) + list.length(walks) * 2 + 1,
+      ))
+      let remaining =
+        list.filter(remaining, fn(candidate) {
+          !list.any(edges, fn(edge) { dual_face_edges_equal(edge, candidate) })
+        })
+      dual_face_walks_loop(graph, remaining, walks: [
+        ArrangementFaceWalk(outer: False, edges:),
+        ..walks
+      ])
+    }
+  }
+}
+
+fn dual_face_walk(
+  graph: ArrangementGraph,
+  start: ArrangementFaceEdge,
+  current current: ArrangementFaceEdge,
+  visited visited: List(ArrangementFaceEdge),
+  remaining_steps remaining_steps: Int,
+) -> Result(List(ArrangementFaceEdge), Error) {
+  case remaining_steps <= 0 {
+    True -> Error(DualWalkDidNotClose(start.edge_id, start.left))
+    False -> {
+      use next <- result.try(dual_face_successor(graph, current))
+      let visited = [current, ..visited]
+      case dual_face_edges_equal(next, start) {
+        True -> Ok(list.reverse(visited))
+        False ->
+          case
+            list.any(visited, fn(edge) { dual_face_edges_equal(edge, next) })
+          {
+            True -> Error(DualWalkDidNotClose(start.edge_id, start.left))
+            False ->
+              dual_face_walk(
+                graph,
+                start,
+                current: next,
+                visited:,
+                remaining_steps: remaining_steps - 1,
+              )
+          }
+      }
+    }
+  }
+}
+
+fn dual_face_successor(
+  graph: ArrangementGraph,
+  current: ArrangementFaceEdge,
+) -> Result(ArrangementFaceEdge, Error) {
+  let ArrangementGraph(edges:, cyclic_orders:, ..) = graph
+  use edge <- result.try(
+    list.find(edges, fn(edge) { edge.id == current.edge_id })
+    |> result.replace_error(MissingEdge(current.edge_id)),
+  )
+  let arrival_vertex = case current.left {
+    True -> edge.end_vertex
+    False -> edge.start_vertex
+  }
+  let incoming_reversed = current.left
+  use groups <- result.try(
+    list.find_map(cyclic_orders, fn(entry) {
+      let #(vertex, groups) = entry
+      case vertex == arrival_vertex {
+        True -> Ok(groups)
+        False -> Error(Nil)
+      }
+    })
+    |> result.replace_error(DualMissingCyclicOrder(arrival_vertex)),
+  )
+  let order = list.flatten(groups)
+  use next <- result.try(dual_next_clockwise_edge(
+    order,
+    vertex: arrival_vertex,
+    incoming_edge: current.edge_id,
+    incoming_reversed:,
+  ))
+  Ok(ArrangementFaceEdge(edge_id: next.edge_id, left: !next.reversed))
+}
+
+fn dual_next_clockwise_edge(
+  order: List(OrientedArrangementEdge),
+  vertex vertex: Int,
+  incoming_edge incoming_edge: Int,
+  incoming_reversed incoming_reversed: Bool,
+) -> Result(OrientedArrangementEdge, Error) {
+  case order {
+    [] -> Error(DualMissingIncidentEdge(vertex, incoming_edge))
+    [first, ..] ->
+      dual_next_clockwise_edge_loop(
+        order,
+        first,
+        vertex,
+        incoming_edge,
+        incoming_reversed,
+      )
+  }
+}
+
+fn dual_next_clockwise_edge_loop(
+  remaining: List(OrientedArrangementEdge),
+  first: OrientedArrangementEdge,
+  vertex: Int,
+  incoming_edge: Int,
+  incoming_reversed: Bool,
+) -> Result(OrientedArrangementEdge, Error) {
+  case remaining {
+    [] -> Error(DualMissingIncidentEdge(vertex, incoming_edge))
+    [current] ->
+      case
+        current.edge_id == incoming_edge
+        && current.reversed == incoming_reversed
+      {
+        True -> Ok(first)
+        False -> Error(DualMissingIncidentEdge(vertex, incoming_edge))
+      }
+    [current, next, ..rest] ->
+      case
+        current.edge_id == incoming_edge
+        && current.reversed == incoming_reversed
+      {
+        True -> Ok(next)
+        False ->
+          dual_next_clockwise_edge_loop(
+            [next, ..rest],
+            first,
+            vertex,
+            incoming_edge,
+            incoming_reversed,
+          )
+      }
+  }
+}
+
+fn dual_walk_candidates(
+  walks: List(ArrangementFaceWalk),
+  graph: ArrangementGraph,
+) -> Result(List(DualWalkCandidate), Error) {
+  use prepared <- result.try(
+    walks
+    |> list.map(fn(walk) {
+      use subpath <- result.try(dual_face_walk_subpath(walk, graph))
+      Ok(#(walk, subpath))
+    })
+    |> result.all,
+  )
+  let subpaths = list.map(prepared, fn(item) { item.1 })
+  prepared
+  |> list.map(fn(item) {
+    let #(walk, subpath) = item
+    use sampled <- result.try(dual_face_walk_sample(
+      walk,
+      subpath,
+      graph,
+      subpaths,
+    ))
+    let #(_sample, signature) = sampled
+    let outer = area.signed_subpath(subpath) <. 0.0
+    Ok(DualWalkCandidate(walk: ArrangementFaceWalk(..walk, outer:), signature:))
+  })
+  |> result.all
+}
+
+fn dual_face_walk_subpath(
+  walk: ArrangementFaceWalk,
+  graph: ArrangementGraph,
+) -> Result(svg_path.Subpath, Error) {
+  use segments <- result.try(
+    walk.edges
+    |> list.map(fn(reference) { dual_face_edge_segment(reference, graph) })
+    |> result.all,
+  )
+  use subpath <- result.try(
+    svg_path.subpath(segments)
+    |> result.map_error(PathError),
+  )
+  svg_path.subpath_set_closed(subpath, closed: True)
+  |> result.map_error(PathError)
+}
+
+fn dual_face_edge_segment(
+  reference: ArrangementFaceEdge,
+  graph: ArrangementGraph,
+) -> Result(svg_path.Segment, Error) {
+  let ArrangementGraph(edges:, vertices:, ..) = graph
+  use edge <- result.try(
+    list.find(edges, fn(edge) { edge.id == reference.edge_id })
+    |> result.replace_error(MissingEdge(reference.edge_id)),
+  )
+  let #(segment, start_vertex, end_vertex) = case reference.left {
+    True -> #(edge.segment, edge.start_vertex, edge.end_vertex)
+    False -> #(
+      svg_path.segment_reverse(edge.segment),
+      edge.end_vertex,
+      edge.start_vertex,
+    )
+  }
+  use start <- result.try(
+    list.find(vertices, fn(vertex) { vertex.id == start_vertex })
+    |> result.map(fn(vertex) { vertex.point })
+    |> result.replace_error(MissingVertex(start_vertex)),
+  )
+  use end <- result.try(
+    list.find(vertices, fn(vertex) { vertex.id == end_vertex })
+    |> result.map(fn(vertex) { vertex.point })
+    |> result.replace_error(MissingVertex(end_vertex)),
+  )
+  svg_path.segment_remap_endpoints(segment, new_start: start, new_end: end)
+  |> result.map_error(PathError)
+}
+
+fn dual_face_walk_sample(
+  walk: ArrangementFaceWalk,
+  subpath: svg_path.Subpath,
+  graph: ArrangementGraph,
+  subpaths: List(svg_path.Subpath),
+) -> Result(#(svg_path.Point, List(Bool)), Error) {
+  case walk.edges {
+    [] -> Error(DualFaceSampleUnavailable(-1, True))
+    [first, ..] -> {
+      use segment <- result.try(dual_face_edge_segment(first, graph))
+      use midpoint <- result.try(
+        svg_path.segment_point(segment, at: 0.5)
+        |> result.map_error(PathError),
+      )
+      use derivative <- result.try(
+        svg_path.segment_derivative(segment, at: 0.5)
+        |> result.map_error(PathError),
+      )
+      let direction = case point.normalize(derivative) {
+        Ok(direction) -> direction
+        Error(Nil) ->
+          point.subtract(
+            svg_path.segment_end(segment),
+            svg_path.segment_start(segment),
+          )
+          |> point.normalize
+          |> result.unwrap(svg_path.Point(1.0, 0.0))
+      }
+      let distance = svg_path.segment_chord_length(segment) *. 0.0001
+      dual_face_walk_sample_at_distance(
+        first,
+        midpoint,
+        point.rotate_counterclockwise(direction),
+        subpath,
+        subpaths,
+        distance,
+        remaining_attempts: 12,
+      )
+    }
+  }
+}
+
+fn dual_face_walk_sample_at_distance(
+  edge: ArrangementFaceEdge,
+  midpoint: svg_path.Point,
+  normal: svg_path.Point,
+  subpath: svg_path.Subpath,
+  subpaths: List(svg_path.Subpath),
+  distance: Float,
+  remaining_attempts remaining_attempts: Int,
+) -> Result(#(svg_path.Point, List(Bool)), Error) {
+  case remaining_attempts <= 0 || distance <=. 0.0 {
+    True -> Error(DualFaceSampleUnavailable(edge.edge_id, edge.left))
+    False -> {
+      let sample = point.add(midpoint, point.scale(normal, by: distance))
+      let options =
+        svg_path.ContainmentOptions(
+          ..svg_path.default_containment_options(),
+          tolerance: distance *. 0.01,
+        )
+      case
+        svg_path.subpath_containment_with(
+          sample,
+          within: subpath,
+          using: svg_path.Nonzero,
+          options:,
+        )
+      {
+        Ok(svg_path.Boundary) ->
+          dual_face_walk_sample_at_distance(
+            edge,
+            midpoint,
+            normal,
+            subpath,
+            subpaths,
+            distance *. 0.5,
+            remaining_attempts: remaining_attempts - 1,
+          )
+        Ok(_) ->
+          case dual_containment_signature(sample, subpaths, options) {
+            Ok(Some(signature)) -> Ok(#(sample, signature))
+            Ok(None) ->
+              dual_face_walk_sample_at_distance(
+                edge,
+                midpoint,
+                normal,
+                subpath,
+                subpaths,
+                distance *. 0.5,
+                remaining_attempts: remaining_attempts - 1,
+              )
+            Error(error) -> Error(error)
+          }
+        Error(error) -> Error(PathError(error))
+      }
+    }
+  }
+}
+
+fn dual_containment_signature(
+  sample: svg_path.Point,
+  subpaths: List(svg_path.Subpath),
+  options: svg_path.ContainmentOptions,
+) -> Result(Option(List(Bool)), Error) {
+  dual_containment_signature_loop(sample, subpaths, options, signature: [])
+}
+
+fn dual_containment_signature_loop(
+  sample: svg_path.Point,
+  subpaths: List(svg_path.Subpath),
+  options: svg_path.ContainmentOptions,
+  signature signature: List(Bool),
+) -> Result(Option(List(Bool)), Error) {
+  case subpaths {
+    [] -> Ok(Some(list.reverse(signature)))
+    [subpath, ..rest] ->
+      case
+        svg_path.subpath_containment_with(
+          sample,
+          within: subpath,
+          using: svg_path.Nonzero,
+          options:,
+        )
+      {
+        Ok(svg_path.Boundary) -> Ok(None)
+        Ok(svg_path.Inside) ->
+          dual_containment_signature_loop(sample, rest, options, signature: [
+            True,
+            ..signature
+          ])
+        Ok(svg_path.Outside) ->
+          dual_containment_signature_loop(sample, rest, options, signature: [
+            False,
+            ..signature
+          ])
+        Error(error) -> Error(PathError(error))
+      }
+  }
+}
+
+fn dual_faces(
+  candidates: List(DualWalkCandidate),
+) -> Result(List(ArrangementFace), Error) {
+  let groups = dual_group_walk_candidates(candidates, groups: [])
+  let #(outer_groups, bounded_groups) =
+    list.partition(groups, fn(group) {
+      case group {
+        [] -> False
+        [candidate, ..] -> list.all(candidate.signature, fn(value) { !value })
+      }
+    })
+  case outer_groups {
+    [outer_group] ->
+      [outer_group, ..bounded_groups]
+      |> list.index_map(fn(group, id) { dual_face_from_group(group, id) })
+      |> result.all
+    groups -> Error(DualInvalidOuterFaceCount(list.length(groups)))
+  }
+}
+
+fn dual_group_walk_candidates(
+  candidates: List(DualWalkCandidate),
+  groups groups: List(List(DualWalkCandidate)),
+) -> List(List(DualWalkCandidate)) {
+  case candidates {
+    [] -> list.reverse(groups)
+    [first, ..rest] -> {
+      let #(same, different) =
+        list.partition(rest, fn(candidate) {
+          candidate.signature == first.signature
+        })
+      dual_group_walk_candidates(different, groups: [[first, ..same], ..groups])
+    }
+  }
+}
+
+fn dual_face_from_group(
+  group: List(DualWalkCandidate),
+  id: Int,
+) -> Result(ArrangementFace, Error) {
+  let #(outer_walks, island_walks) =
+    group
+    |> list.map(fn(candidate) { candidate.walk })
+    |> list.partition(fn(walk) { walk.outer })
+  let outer = case group {
+    [] -> False
+    [candidate, ..] -> list.all(candidate.signature, fn(value) { !value })
+  }
+  case outer, list.length(outer_walks) {
+    True, 0 -> Ok(ArrangementFace(id:, outer: True, walks: island_walks))
+    False, 1 ->
+      Ok(ArrangementFace(
+        id:,
+        outer: False,
+        walks: list.append(outer_walks, island_walks),
+      ))
+    _, count -> Error(DualInvalidOuterWalkCount(count))
+  }
+}
+
+fn dual_edge_faces(
+  edges: List(ArrangementEdge),
+  faces: List(ArrangementFace),
+  edge_faces edge_faces: List(ArrangementEdgeFaces),
+) -> Result(List(ArrangementEdgeFaces), Error) {
+  case edges {
+    [] -> Ok(list.reverse(edge_faces))
+    [edge, ..rest] -> {
+      use left_face <- result.try(dual_find_edge_face(
+        faces,
+        edge.id,
+        left: True,
+      ))
+      use right_face <- result.try(dual_find_edge_face(
+        faces,
+        edge.id,
+        left: False,
+      ))
+      dual_edge_faces(rest, faces, edge_faces: [
+        ArrangementEdgeFaces(edge.id, left_face:, right_face:),
+        ..edge_faces
+      ])
+    }
+  }
+}
+
+fn dual_find_edge_face(
+  faces: List(ArrangementFace),
+  edge_id: Int,
+  left left: Bool,
+) -> Result(Int, Error) {
+  faces
+  |> list.find(fn(face) {
+    face.walks
+    |> list.any(fn(walk) {
+      walk.edges
+      |> list.any(fn(edge) { edge.edge_id == edge_id && edge.left == left })
+    })
+  })
+  |> result.map(fn(face) { face.id })
+  |> result.replace_error(DualMissingEdgeFace(edge_id, left))
+}
+
+fn dual_face_edges_equal(
+  left: ArrangementFaceEdge,
+  right: ArrangementFaceEdge,
+) -> Bool {
+  left.edge_id == right.edge_id && left.left == right.left
 }
 
 /// Resolve one segment image to graph edges and traversal directions.

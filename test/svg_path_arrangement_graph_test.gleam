@@ -142,6 +142,160 @@ pub fn cyclic_orders_cover_every_vertex_of_built_square_test() {
   |> should.be_true
 }
 
+pub fn dual_square_has_infinite_and_bounded_faces_test() {
+  let assert Ok(graph) =
+    build_graph([square(0.0, 0.0, 10.0)], tolerance:, minimum_chord:)
+  let assert Ok(arrangement_graph.DualArrangementGraph(faces:, edge_faces:)) =
+    arrangement_graph.dual(graph)
+  let assert [outer, bounded] = faces
+  let assert arrangement_graph.ArrangementFace(
+    id: outer_id,
+    outer: True,
+    walks: [outer_walk],
+  ) = outer
+  let assert arrangement_graph.ArrangementFace(
+    id: bounded_id,
+    outer: False,
+    walks: [bounded_walk],
+  ) = bounded
+  outer_id |> should.equal(0)
+  bounded_id |> should.equal(1)
+  outer_walk.outer |> should.be_false
+  bounded_walk.outer |> should.be_true
+  list.length(outer_walk.edges) |> should.equal(4)
+  list.length(bounded_walk.edges) |> should.equal(4)
+  list.length(edge_faces) |> should.equal(4)
+}
+
+pub fn dual_infinite_face_collects_disconnected_islands_test() {
+  let assert Ok(graph) =
+    build_graph(
+      [square(0.0, 0.0, 10.0), square(20.0, 0.0, 10.0)],
+      tolerance:,
+      minimum_chord:,
+    )
+  let assert Ok(arrangement_graph.DualArrangementGraph(faces:, ..)) =
+    arrangement_graph.dual(graph)
+  let assert [outer, _, _] = faces
+  outer.outer |> should.be_true
+  list.length(outer.walks) |> should.equal(2)
+  outer.walks
+  |> list.all(fn(walk) { !walk.outer })
+  |> should.be_true
+}
+
+pub fn dual_bounded_face_orders_outer_walk_before_island_test() {
+  let assert Ok(graph) =
+    build_graph(
+      [square(0.0, 0.0, 20.0), square(5.0, 5.0, 5.0)],
+      tolerance:,
+      minimum_chord:,
+    )
+  let assert Ok(arrangement_graph.DualArrangementGraph(faces:, ..)) =
+    arrangement_graph.dual(graph)
+  let assert Ok(face) =
+    list.find(faces, fn(face) { !face.outer && list.length(face.walks) == 2 })
+  let assert [outer_walk, island_walk] = face.walks
+  outer_walk.outer |> should.be_true
+  island_walk.outer |> should.be_false
+}
+
+pub fn dual_bounded_face_collects_two_island_walks_test() {
+  let assert Ok(graph) =
+    build_graph(
+      [
+        rectangle(0.0, 0.0, 30.0, 20.0),
+        square(5.0, 5.0, 5.0),
+        square(20.0, 5.0, 5.0),
+      ],
+      tolerance:,
+      minimum_chord:,
+    )
+  let assert Ok(arrangement_graph.DualArrangementGraph(faces:, ..)) =
+    arrangement_graph.dual(graph)
+  let assert Ok(face) =
+    list.find(faces, fn(face) { !face.outer && list.length(face.walks) == 3 })
+  let assert [outer_walk, first_island, second_island] = face.walks
+  outer_walk.outer |> should.be_true
+  first_island.outer |> should.be_false
+  second_island.outer |> should.be_false
+}
+
+pub fn dual_bridge_has_same_face_on_both_sides_test() {
+  let line =
+    svg_path.subpath_assert([
+      svg_path.Line(
+        start: svg_path.Point(0.0, 0.0),
+        end: svg_path.Point(10.0, 0.0),
+      ),
+    ])
+  let assert Ok(graph) = build_graph([line], tolerance:, minimum_chord:)
+  let assert Ok(arrangement_graph.DualArrangementGraph(
+    faces: [face],
+    edge_faces: [edge_faces],
+  )) = arrangement_graph.dual(graph)
+  face.outer |> should.be_true
+  let arrangement_graph.ArrangementEdgeFaces(left_face:, right_face:, ..) =
+    edge_faces
+  left_face |> should.equal(right_face)
+}
+
+pub fn dual_empty_graph_is_the_infinite_face_test() {
+  let assert Ok(arrangement_graph.DualArrangementGraph(
+    faces: [arrangement_graph.ArrangementFace(id: 0, outer: True, walks: [])],
+    edge_faces: [],
+  )) = arrangement_graph.empty() |> arrangement_graph.dual
+}
+
+pub fn dual_overlapping_squares_partition_every_edge_side_test() {
+  let assert Ok(graph) =
+    build_graph(
+      [square(0.0, 0.0, 10.0), square(5.0, 0.0, 10.0)],
+      tolerance:,
+      minimum_chord:,
+    )
+  let assert Ok(arrangement_graph.DualArrangementGraph(faces:, edge_faces:)) =
+    arrangement_graph.dual(graph)
+  list.length(faces) |> should.equal(4)
+  let arrangement_graph.ArrangementGraph(edges:, ..) = graph
+  list.length(edge_faces) |> should.equal(list.length(edges))
+  faces
+  |> list.flat_map(fn(face) { face.walks })
+  |> list.flat_map(fn(walk) { walk.edges })
+  |> list.length
+  |> should.equal(list.length(edges) * 2)
+}
+
+pub fn dual_self_crossing_bowtie_has_two_bounded_faces_test() {
+  let bowtie =
+    closed_subpath([
+      svg_path.Line(
+        start: svg_path.Point(0.0, 0.0),
+        end: svg_path.Point(10.0, 10.0),
+      ),
+      svg_path.Line(
+        start: svg_path.Point(10.0, 10.0),
+        end: svg_path.Point(0.0, 10.0),
+      ),
+      svg_path.Line(
+        start: svg_path.Point(0.0, 10.0),
+        end: svg_path.Point(10.0, 0.0),
+      ),
+      svg_path.Line(
+        start: svg_path.Point(10.0, 0.0),
+        end: svg_path.Point(0.0, 0.0),
+      ),
+    ])
+  let assert Ok(graph) = build_graph([bowtie], tolerance:, minimum_chord:)
+  let assert Ok(arrangement_graph.DualArrangementGraph(faces:, ..)) =
+    arrangement_graph.dual(graph)
+  list.length(faces) |> should.equal(3)
+  faces
+  |> list.filter(fn(face) { !face.outer })
+  |> list.length
+  |> should.equal(2)
+}
+
 pub fn build_preserves_source_path_grouping_test() {
   let first = svg_path.subpath_as_path(square(0.0, 0.0, 10.0))
   let second =
@@ -1146,10 +1300,19 @@ fn insert_clustered_endpoints(
 }
 
 fn square(x: Float, y: Float, side: Float) -> svg_path.Subpath {
+  rectangle(x, y, side, side)
+}
+
+fn rectangle(
+  x: Float,
+  y: Float,
+  width: Float,
+  height: Float,
+) -> svg_path.Subpath {
   let a = svg_path.Point(x, y)
-  let b = svg_path.Point(x +. side, y)
-  let c = svg_path.Point(x +. side, y +. side)
-  let d = svg_path.Point(x, y +. side)
+  let b = svg_path.Point(x +. width, y)
+  let c = svg_path.Point(x +. width, y +. height)
+  let d = svg_path.Point(x, y +. height)
   closed_subpath([
     svg_path.Line(start: a, end: b),
     svg_path.Line(start: b, end: c),
