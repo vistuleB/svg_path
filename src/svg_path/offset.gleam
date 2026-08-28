@@ -501,6 +501,45 @@ type ICulledOffsetSubpath {
   )
 }
 
+/// One I-segment section in original traversal order after arrangement noding.
+type JArrangementSplitOffsetSegment {
+  JArrangementSplitOffsetSegment(
+    segment: svg_path.Segment,
+    preimage: ICulledOffsetSegment,
+    preimage_from: Float,
+    preimage_to: Float,
+    edge_id: Int,
+    start_vertex: Int,
+    end_vertex: Int,
+    reversed: Bool,
+    submerged: Bool,
+  )
+}
+
+type JArrangementSplitOffsetSubpath {
+  JArrangementSplitOffsetSubpath(
+    segments: List(JArrangementSplitOffsetSegment),
+    closed: Bool,
+    side: BandSide,
+  )
+}
+
+/// One side-local survivor after winding-run rescue and ordered burning.
+type KTrimmedOffsetSegment {
+  KTrimmedOffsetSegment(
+    segment: svg_path.Segment,
+    preimage: JArrangementSplitOffsetSegment,
+  )
+}
+
+type KTrimmedOffsetSubpath {
+  KTrimmedOffsetSubpath(segments: List(KTrimmedOffsetSegment), closed: Bool)
+}
+
+type JSegmentRun {
+  JSegmentRun(segments: List(JArrangementSplitOffsetSegment), submerged: Bool)
+}
+
 type OffsetDistances {
   OffsetDistances(inner: Float, outer: Float)
 }
@@ -596,6 +635,8 @@ type SynchronizedUntrimmedBuild {
   SynchronizedUntrimmedBuild(
     inner: svg_path.Subpath,
     outer: svg_path.Subpath,
+    inner_culled: ICulledOffsetSubpath,
+    outer_culled: ICulledOffsetSubpath,
     correspondences: List(OffsetCorrespondence),
     portions: List(SynchronizedHealedPortion),
     join_correspondences: List(OffsetJoinCorrespondence),
@@ -2786,30 +2827,58 @@ pub fn subpath_band_with(
     outer_distance: distance_b,
     options:,
   ))
-  let SynchronizedUntrimmedBuild(inner: untrimmed_a, outer: untrimmed_b, ..) =
-    build
-  use band <- result.try(band_from_sides(
-    untrimmed_a,
+  let SynchronizedUntrimmedBuild(
+    inner_culled: culled_a,
+    outer_culled: culled_b,
+    ..,
+  ) = build
+  use trimmed_a <- result.try(trim_i_culled_offset_subpath(
+    culled_a,
+    normalized,
     distance_a,
-    untrimmed_b,
-    distance_b,
-  ))
-  let winding_opinions = case distance_a >=. distance_b {
-    True -> [
-      WindingSideOpinion(left: 0, right: 1),
-      WindingSideOpinion(left: 1, right: 0),
-    ]
-    False -> [
-      WindingSideOpinion(left: 1, right: 0),
-      WindingSideOpinion(left: 0, right: 1),
-    ]
-  }
-  topological_band_path_with_opinions(
-    [untrimmed_a, untrimmed_b],
-    [band],
-    winding_opinions,
     options,
-  )
+  ))
+  use trimmed_b <- result.try(trim_i_culled_offset_subpath(
+    culled_b,
+    normalized,
+    distance_b,
+    options,
+  ))
+  case trimmed_a, trimmed_b {
+    None, _ | _, None -> Ok(svg_path.path_empty())
+    Some(trimmed_a), Some(trimmed_b) -> {
+      use untrimmed_a <- result.try(k_trimmed_subpath_geometry(
+        trimmed_a,
+        options.fitting.tolerance,
+      ))
+      use untrimmed_b <- result.try(k_trimmed_subpath_geometry(
+        trimmed_b,
+        options.fitting.tolerance,
+      ))
+      use band <- result.try(band_from_sides(
+        untrimmed_a,
+        distance_a,
+        untrimmed_b,
+        distance_b,
+      ))
+      let winding_opinions = case distance_a >=. distance_b {
+        True -> [
+          WindingSideOpinion(left: 0, right: 1),
+          WindingSideOpinion(left: 1, right: 0),
+        ]
+        False -> [
+          WindingSideOpinion(left: 1, right: 0),
+          WindingSideOpinion(left: 0, right: 1),
+        ]
+      }
+      topological_band_path_with_opinions(
+        [untrimmed_a, untrimmed_b],
+        [band],
+        winding_opinions,
+        options,
+      )
+    }
+  }
 }
 
 /// Offset a subpath at two signed distances without trimming either side.
@@ -3763,6 +3832,7 @@ fn build_single_offset_untrimmed(
     correspondences:,
     portions:,
     join_correspondences:,
+    ..,
   ) = build
   Ok(SingleOffsetUntrimmedBuild(
     subpath:,
@@ -3789,6 +3859,16 @@ fn build_synchronized_untrimmed(
         SynchronizedUntrimmedBuild(
           inner: svg_path.subpath_empty(at: start),
           outer: svg_path.subpath_empty(at: start),
+          inner_culled: ICulledOffsetSubpath(
+            segments: [],
+            closed: svg_path.subpath_is_closed(subpath),
+            side: Inner,
+          ),
+          outer_culled: ICulledOffsetSubpath(
+            segments: [],
+            closed: svg_path.subpath_is_closed(subpath),
+            side: Outer,
+          ),
           correspondences: [],
           portions: [],
           join_correspondences: [],
@@ -3845,6 +3925,8 @@ fn build_synchronized_untrimmed(
       Ok(SynchronizedUntrimmedBuild(
         inner:,
         outer:,
+        inner_culled:,
+        outer_culled:,
         correspondences:,
         portions:,
         join_correspondences:,
@@ -4127,6 +4209,427 @@ fn culled_offset_subpath_segments(
 ) -> List(svg_path.Segment) {
   let ICulledOffsetSubpath(segments:, ..) = subpath
   list.map(segments, fn(segment) { segment.segment })
+}
+
+/// Trim one I-side in source order while using an arrangement for noding and
+/// winding classification only.
+fn trim_i_culled_offset_subpath(
+  subpath: ICulledOffsetSubpath,
+  zero_source: svg_path.Subpath,
+  distance: Float,
+  options: Options,
+) -> Result(Option(KTrimmedOffsetSubpath), Error) {
+  let ICulledOffsetSubpath(segments:, closed:, ..) = subpath
+  case segments {
+    [] -> Ok(None)
+    [_, ..] -> {
+      use geometry <- result.try(subpath_from_synchronized_segments(
+        list.map(segments, fn(segment) { segment.segment }),
+        closed:,
+        tolerance: options.fitting.tolerance,
+      ))
+      use band <- result.try(band_from_sides(
+        zero_source,
+        0.0,
+        geometry,
+        distance,
+      ))
+      use winding <- result.try(internal_band_winding_function([band]))
+      use build <- result.try(single_offset_segment_arrangement(
+        [geometry],
+        zero_source_segments: svg_path.subpath_segments(zero_source),
+        distance:,
+      ))
+      use split <- result.try(j_subpath_from_i_arrangement(
+        subpath,
+        build,
+        winding,
+      ))
+      let rescued = rescue_j_submerged_runs(split)
+      let survivors = burn_exposed_j_segments(rescued)
+      case survivors {
+        [] -> Ok(None)
+        [_, ..] -> {
+          use _ <- result.try(case j_segments_form_ordered_walk(survivors) {
+            True -> Ok(Nil)
+            False ->
+              Error(ArrangementGraphError(
+                arrangement_graph.InternalNormalizationError,
+              ))
+          })
+          Ok(
+            Some(KTrimmedOffsetSubpath(
+              segments: list.map(survivors, fn(segment) {
+                KTrimmedOffsetSegment(
+                  segment: segment.segment,
+                  preimage: segment,
+                )
+              }),
+              closed: closed && j_segments_form_closed_walk(survivors),
+            )),
+          )
+        }
+      }
+    }
+  }
+}
+
+fn j_subpath_from_i_arrangement(
+  subpath: ICulledOffsetSubpath,
+  build: OffsetArrangementBuild,
+  winding: fn(svg_path.Point) -> Result(Int, Error),
+) -> Result(JArrangementSplitOffsetSubpath, Error) {
+  let ICulledOffsetSubpath(segments:, closed:, side:) = subpath
+  let OffsetArrangementBuild(segment_images:, ..) = build
+  use image_span <- result.try(take_segment_images(
+    segment_images,
+    list.length(segments),
+  ))
+  let #(images, _) = image_span
+  use split_segments <- result.try(
+    j_segments_from_i_images(segments, images, build, winding, split: []),
+  )
+  Ok(JArrangementSplitOffsetSubpath(segments: split_segments, closed:, side:))
+}
+
+fn j_segments_from_i_images(
+  segments: List(ICulledOffsetSegment),
+  images: List(arrangement_graph.ArrangementSourceSegmentImage),
+  build: OffsetArrangementBuild,
+  winding: fn(svg_path.Point) -> Result(Int, Error),
+  split split: List(JArrangementSplitOffsetSegment),
+) -> Result(List(JArrangementSplitOffsetSegment), Error) {
+  case segments, images {
+    [], [] -> Ok(list.reverse(split))
+    [segment, ..remaining_segments], [image, ..remaining_images] -> {
+      use pieces <- result.try(
+        j_segments_from_i_image(segment, image, build, winding, split: []),
+      )
+      j_segments_from_i_images(
+        remaining_segments,
+        remaining_images,
+        build,
+        winding,
+        split: list.append(list.reverse(pieces), split),
+      )
+    }
+    _, _ ->
+      Error(ArrangementGraphError(arrangement_graph.InternalNormalizationError))
+  }
+}
+
+fn j_segments_from_i_image(
+  source: ICulledOffsetSegment,
+  image: arrangement_graph.ArrangementSourceSegmentImage,
+  build: OffsetArrangementBuild,
+  winding: fn(svg_path.Point) -> Result(Int, Error),
+  split split: List(JArrangementSplitOffsetSegment),
+) -> Result(List(JArrangementSplitOffsetSegment), Error) {
+  let arrangement_graph.ArrangementSourceSegmentImage(edges:, ..) = image
+  j_segments_from_i_edge_images(source, edges, build, winding, split:)
+}
+
+fn j_segments_from_i_edge_images(
+  source: ICulledOffsetSegment,
+  images: List(arrangement_graph.ArrangementSegmentEdgeImage),
+  build: OffsetArrangementBuild,
+  winding: fn(svg_path.Point) -> Result(Int, Error),
+  split split: List(JArrangementSplitOffsetSegment),
+) -> Result(List(JArrangementSplitOffsetSegment), Error) {
+  case images {
+    [] -> Ok(list.reverse(split))
+    [image, ..rest] -> {
+      let arrangement_graph.ArrangementSegmentEdgeImage(
+        ta:,
+        tb:,
+        edge_id:,
+        reversed: edge_reversed,
+        ..,
+      ) = image
+      let OffsetArrangementBuild(
+        graph: arrangement_graph.ArrangementGraph(edges: graph_edges, ..),
+        ..,
+      ) = build
+      use edge <- result.try(
+        arrangement_edge_by_id(graph_edges, edge_id)
+        |> result.map_error(fn(_) {
+          ArrangementGraphError(arrangement_graph.InternalNormalizationError)
+        }),
+      )
+      let arrangement_graph.ArrangementEdge(
+        segment: edge_segment,
+        start_vertex: edge_start,
+        end_vertex: edge_end,
+        ..,
+      ) = edge
+      use matches <- result.try(arrangement_edge_winding_matches_opinion(
+        build,
+        arrangement_graph.UndirectedArrangementEdge(
+          id: edge_id,
+          segment: edge_segment,
+          start_vertex: edge_start,
+          end_vertex: edge_end,
+          multiplicity: 1,
+        ),
+        winding:,
+        side_sampling_distance: submerged_side_sampling_distance,
+      ))
+      let #(segment, start_vertex, end_vertex) = case edge_reversed {
+        True -> #(svg_path.segment_reverse(edge_segment), edge_end, edge_start)
+        False -> #(edge_segment, edge_start, edge_end)
+      }
+      let preimage_from =
+        interval_parameter(source.preimage_from, source.preimage_to, ta)
+      let preimage_to =
+        interval_parameter(source.preimage_from, source.preimage_to, tb)
+      j_segments_from_i_edge_images(source, rest, build, winding, split: [
+        JArrangementSplitOffsetSegment(
+          segment:,
+          preimage: source,
+          preimage_from:,
+          preimage_to:,
+          edge_id:,
+          start_vertex:,
+          end_vertex:,
+          reversed: h_preimage_is_reversed(source.preimage),
+          submerged: !matches,
+        ),
+        ..split
+      ])
+    }
+  }
+}
+
+fn rescue_j_submerged_runs(
+  subpath: JArrangementSplitOffsetSubpath,
+) -> List(JArrangementSplitOffsetSegment) {
+  let JArrangementSplitOffsetSubpath(segments:, closed:, ..) = subpath
+  let runs = j_segment_runs(segments, runs: [])
+  let rescued = list.map(runs, rescue_j_segment_run)
+  let rescued = case closed, runs {
+    True, [first, _, ..] -> {
+      let assert Ok(last) = last_j_run(runs)
+      case first.submerged && last.submerged {
+        False -> rescued
+        True -> {
+          let wrapping_reversed =
+            j_run_contains_reversed(first) || j_run_contains_reversed(last)
+          rescued
+          |> replace_first_j_run(
+            JSegmentRun(
+              ..first,
+              segments: set_j_segments_submerged(
+                first.segments,
+                wrapping_reversed,
+              ),
+            ),
+          )
+          |> replace_last_j_run(
+            JSegmentRun(
+              ..last,
+              segments: set_j_segments_submerged(
+                last.segments,
+                wrapping_reversed,
+              ),
+            ),
+          )
+        }
+      }
+    }
+    _, _ -> rescued
+  }
+  rescued |> list.flat_map(fn(run) { run.segments })
+}
+
+fn j_segment_runs(
+  segments: List(JArrangementSplitOffsetSegment),
+  runs runs: List(JSegmentRun),
+) -> List(JSegmentRun) {
+  case segments {
+    [] -> list.reverse(runs)
+    [first, ..rest] -> {
+      let #(same, remaining) = take_j_run(rest, first.submerged, taken: [first])
+      j_segment_runs(remaining, runs: [
+        JSegmentRun(segments: same, submerged: first.submerged),
+        ..runs
+      ])
+    }
+  }
+}
+
+fn take_j_run(
+  segments: List(JArrangementSplitOffsetSegment),
+  submerged: Bool,
+  taken taken: List(JArrangementSplitOffsetSegment),
+) -> #(
+  List(JArrangementSplitOffsetSegment),
+  List(JArrangementSplitOffsetSegment),
+) {
+  case segments {
+    [first, ..rest] if first.submerged == submerged ->
+      take_j_run(rest, submerged, taken: [first, ..taken])
+    _ -> #(list.reverse(taken), segments)
+  }
+}
+
+fn rescue_j_segment_run(run: JSegmentRun) -> JSegmentRun {
+  case run.submerged && !j_run_contains_reversed(run) {
+    True ->
+      JSegmentRun(
+        ..run,
+        segments: set_j_segments_submerged(run.segments, False),
+      )
+    False -> run
+  }
+}
+
+fn j_run_contains_reversed(run: JSegmentRun) -> Bool {
+  list.any(run.segments, fn(segment) { segment.reversed })
+}
+
+fn set_j_segments_submerged(
+  segments: List(JArrangementSplitOffsetSegment),
+  submerged: Bool,
+) -> List(JArrangementSplitOffsetSegment) {
+  list.map(segments, fn(segment) {
+    JArrangementSplitOffsetSegment(..segment, submerged:)
+  })
+}
+
+fn last_j_run(runs: List(JSegmentRun)) -> Result(JSegmentRun, Nil) {
+  case runs {
+    [] -> Error(Nil)
+    [run] -> Ok(run)
+    [_, ..rest] -> last_j_run(rest)
+  }
+}
+
+fn replace_first_j_run(
+  runs: List(JSegmentRun),
+  replacement: JSegmentRun,
+) -> List(JSegmentRun) {
+  case runs {
+    [] -> []
+    [_, ..rest] -> [replacement, ..rest]
+  }
+}
+
+fn replace_last_j_run(
+  runs: List(JSegmentRun),
+  replacement: JSegmentRun,
+) -> List(JSegmentRun) {
+  case runs {
+    [] -> []
+    [_] -> [replacement]
+    [first, ..rest] -> [first, ..replace_last_j_run(rest, replacement)]
+  }
+}
+
+fn burn_exposed_j_segments(
+  segments: List(JArrangementSplitOffsetSegment),
+) -> List(JArrangementSplitOffsetSegment) {
+  burn_exposed_j_segments_until_stable(
+    list.filter(segments, fn(segment) { !segment.submerged }),
+  )
+}
+
+fn burn_exposed_j_segments_until_stable(
+  segments: List(JArrangementSplitOffsetSegment),
+) -> List(JArrangementSplitOffsetSegment) {
+  case segments {
+    [] | [_] -> segments
+    [first, ..] -> {
+      let assert Ok(last) = last_j_segment(segments)
+      let retained =
+        retain_supported_j_segments(
+          segments,
+          first.start_vertex,
+          last.end_vertex,
+          earlier_ends: [],
+          retained: [],
+        )
+      case list.length(retained) == list.length(segments) {
+        True -> retained
+        False -> burn_exposed_j_segments_until_stable(retained)
+      }
+    }
+  }
+}
+
+fn retain_supported_j_segments(
+  segments: List(JArrangementSplitOffsetSegment),
+  protected_start: Int,
+  protected_end: Int,
+  earlier_ends earlier_ends: List(Int),
+  retained retained: List(JArrangementSplitOffsetSegment),
+) -> List(JArrangementSplitOffsetSegment) {
+  case segments {
+    [] -> list.reverse(retained)
+    [first, ..rest] -> {
+      let start_supported =
+        first.start_vertex == protected_start
+        || list.contains(earlier_ends, first.start_vertex)
+      let end_supported =
+        first.end_vertex == protected_end
+        || list.any(rest, fn(later) { later.start_vertex == first.end_vertex })
+      let retained = case start_supported && end_supported {
+        True -> [first, ..retained]
+        False -> retained
+      }
+      retain_supported_j_segments(
+        rest,
+        protected_start,
+        protected_end,
+        earlier_ends: [first.end_vertex, ..earlier_ends],
+        retained:,
+      )
+    }
+  }
+}
+
+fn last_j_segment(
+  segments: List(JArrangementSplitOffsetSegment),
+) -> Result(JArrangementSplitOffsetSegment, Nil) {
+  case segments {
+    [] -> Error(Nil)
+    [segment] -> Ok(segment)
+    [_, ..rest] -> last_j_segment(rest)
+  }
+}
+
+fn j_segments_form_closed_walk(
+  segments: List(JArrangementSplitOffsetSegment),
+) -> Bool {
+  case segments {
+    [] -> False
+    [first, ..] -> {
+      let assert Ok(last) = last_j_segment(segments)
+      first.start_vertex == last.end_vertex
+    }
+  }
+}
+
+fn j_segments_form_ordered_walk(
+  segments: List(JArrangementSplitOffsetSegment),
+) -> Bool {
+  case segments {
+    [] | [_] -> True
+    [first, second, ..rest] ->
+      first.end_vertex == second.start_vertex
+      && j_segments_form_ordered_walk([second, ..rest])
+  }
+}
+
+fn k_trimmed_subpath_geometry(
+  subpath: KTrimmedOffsetSubpath,
+  tolerance: Float,
+) -> Result(svg_path.Subpath, Error) {
+  let KTrimmedOffsetSubpath(segments:, closed:) = subpath
+  subpath_from_synchronized_segments(
+    list.map(segments, fn(segment) { segment.segment }),
+    closed:,
+    tolerance:,
+  )
 }
 
 fn parametric_join_segments(

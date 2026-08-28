@@ -953,7 +953,7 @@ pub fn subpath_untrimmed_round_join_uses_source_corner_center_test() {
     == "M 1 -1.8 H 3 A 1.8 1.8 0 0 1 4.8 0 A 0.8 0.8 0 0 0 4 -0.8"
 }
 
-pub fn subpath_band_scores_round_line_arc_joins_test() {
+pub fn subpath_band_side_trimming_removes_round_join_loops_test() {
   let source =
     svg_path.subpath_assert([
       svg_path.Line(
@@ -1002,7 +1002,7 @@ pub fn subpath_band_scores_round_line_arc_joins_test() {
 
   let assert Ok(band) =
     offset.subpath_band_with(source, distance_a: 1.7, distance_b: 1.8, options:)
-  assert list.length(svg_path.path_subpaths(band)) == 4
+  assert list.length(svg_path.path_subpaths(band)) == 2
 }
 
 pub fn subpath_offsets_open_polyline_to_trimmed_intersection_test() {
