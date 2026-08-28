@@ -5,6 +5,7 @@ import gleam/list
 import gleam/option.{Some}
 import gleam/string
 import svg_path
+import svg_path/area
 import svg_path/arrangement as arrangement_graph
 import svg_path/format as number_format
 import svg_path/offset
@@ -995,8 +996,9 @@ pub fn subpath_band_scores_round_line_arc_joins_test() {
     |> svg_path.subpath_assert_set_closed(closed: True)
   let options = offset.Options(..offset.default_options(), join: offset.Round)
 
-  let assert Ok(_) =
+  let assert Ok(band) =
     offset.subpath_band_with(source, distance_a: 1.7, distance_b: 1.8, options:)
+  assert list.length(svg_path.path_subpaths(band)) == 4
 }
 
 pub fn subpath_offsets_open_polyline_to_trimmed_intersection_test() {
@@ -1220,6 +1222,35 @@ pub fn subpath_band_closed_square_returns_two_closed_sides_test() {
   assert svg_path.subpath_is_closed(outer)
   assert serialize.path(offset_path)
     == "M 2 2 V 8 H 8 V 2 Z M 0 -2 H 10 H 12 V 0 V 10 V 12 H 10 H 0 H -2 V 10 V 0 V -2 Z"
+}
+
+pub fn concave_band_orients_overlapping_contours_for_nonzero_fill_test() {
+  let source =
+    svg_path.subpath_assert_polygon([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(150.0, 0.0),
+      svg_path.Point(150.0, 38.0),
+      svg_path.Point(94.0, 38.0),
+      svg_path.Point(94.0, 78.0),
+      svg_path.Point(150.0, 78.0),
+      svg_path.Point(150.0, 116.0),
+      svg_path.Point(0.0, 116.0),
+    ])
+  let default = offset.default_options()
+  let options =
+    offset.Options(
+      ..default,
+      fitting: offset.FittingOptions(..default.fitting, tolerance: 0.01),
+      join: offset.Round,
+    )
+  let assert Ok(band) = offset.subpath_band_with(source, -12.0, -14.0, options)
+  let dominant_areas =
+    svg_path.path_subpaths(band)
+    |> list.map(area.signed_subpath)
+    |> list.filter(fn(value) { float.absolute_value(value) >. 1000.0 })
+  let assert [first, second] = dominant_areas
+
+  assert first *. second <. 0.0
 }
 
 pub fn figure_eight_band_joins_reversed_outer_chunks_test() {
