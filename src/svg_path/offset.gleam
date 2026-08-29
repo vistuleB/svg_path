@@ -103,6 +103,15 @@ const default_stalled_offset_diameter = 0.01
 
 const adjacent_loop_endpoint_parameter_tolerance = 0.0001
 
+type BandBurnPolicy {
+  DanglingEdgeBurn
+  ForcedParityBurn
+}
+
+fn band_burn_policy() -> BandBurnPolicy {
+  ForcedParityBurn
+}
+
 /// Errors returned by offset helpers.
 pub type Error {
   /// An underlying path operation failed.
@@ -110,6 +119,9 @@ pub type Error {
 
   /// Arrangement construction failed while noding offset geometry.
   ArrangementGraphError(arrangement_graph.Error)
+
+  /// Forced parity pruning could not determine a unique feasible assignment.
+  ForcedParityPruningError(arrangement_graph.ForcedParityError)
 
   /// Source normalization failed before offset construction.
   SourceNormalizationError(degeneracy.Error)
@@ -161,6 +173,12 @@ pub type Error {
 
   /// Surviving arrangement segments no longer formed their source-order walk.
   InternalSurvivorOrderMismatch
+
+  /// Source-order reconstruction did not consume an assigned edge capacity.
+  InternalSurvivorCapacityMismatch(edge_id: Int, remaining: Int)
+
+  /// Forced-parity band reconstruction produced an open chain.
+  InternalForcedParityOpenChain(start_vertex: Int, end_vertex: Int)
 }
 
 /// Join style used when offsetting adjacent subpath segments.
@@ -473,6 +491,9 @@ type OffsetTrimGraph {
   OffsetTrimGraph(
     vertices: List(arrangement_graph.ArrangementVertex),
     edges: List(arrangement_graph.ArrangementEdge),
+    /// Empty uses the former one-use-per-edge reconstruction. Otherwise these
+    /// are the exact undirected capacities reconstruction must consume.
+    edge_capacities: List(#(Int, Int)),
   )
 }
 
@@ -763,6 +784,10 @@ type SurvivorChain {
     edges: List(SurvivorEdge),
     closed: Bool,
   )
+}
+
+type AvailableEdgeCapacity {
+  AvailableEdgeCapacity(edge_id: Int, remaining: Int)
 }
 
 type JoinFreePortion {
@@ -1731,8 +1756,12 @@ fn trim_band_arrangement(
     winding:,
     side_sampling_distance: submerged_side_sampling_distance,
   ))
-  let without_dangling =
-    burn_dangling_edges(without_submerged, protected_vertices:)
+  use without_dangling <- result.try(case band_burn_policy() {
+    DanglingEdgeBurn ->
+      Ok(burn_dangling_edges(without_submerged, protected_vertices:))
+    ForcedParityBurn ->
+      forced_parity_burn(without_submerged, protected_vertices)
+  })
   source_order_survivor_subpaths(
     build,
     without_dangling,
@@ -1740,6 +1769,44 @@ fn trim_band_arrangement(
     tolerance: options.fitting.tolerance,
   )
   |> result.try(close_survivor_subpaths(_, tolerance: options.fitting.tolerance))
+}
+
+fn forced_parity_burn(
+  graph: OffsetTrimGraph,
+  protected_vertices: List(Int),
+) -> Result(OffsetTrimGraph, Error) {
+  let OffsetTrimGraph(vertices:, edges:, ..) = graph
+  let arrangement =
+    arrangement_graph.ArrangementGraph(vertices:, edges:, cyclic_orders: [])
+  use assignments <- result.try(
+    arrangement_graph.forced_parity_capacities(
+      arrangement,
+      vertex_parities: list.map(protected_vertices, fn(vertex) { #(vertex, 1) }),
+    )
+    |> result.map_error(ForcedParityPruningError),
+  )
+  let edge_capacities =
+    list.map(assignments, fn(assignment) {
+      let arrangement_graph.EdgeCapacityAssignment(edge_id:, capacity:) =
+        assignment
+      #(edge_id, capacity)
+    })
+  let edges =
+    edges
+    |> list.filter_map(fn(edge) {
+      case
+        list.find(assignments, fn(candidate) { candidate.edge_id == edge.id })
+      {
+        Error(_) -> Error(Nil)
+        Ok(arrangement_graph.EdgeCapacityAssignment(capacity:, ..)) -> {
+          case capacity > 0 {
+            True -> Ok(edge)
+            False -> Error(Nil)
+          }
+        }
+      }
+    })
+  Ok(OffsetTrimGraph(vertices:, edges:, edge_capacities:))
 }
 
 fn incidence_degree(
@@ -1911,7 +1978,7 @@ fn delete_winding_mismatched_edges(
   winding winding: fn(svg_path.Point) -> Result(Int, Error),
   side_sampling_distance side_sampling_distance: Float,
 ) -> Result(OffsetTrimGraph, Error) {
-  let OffsetTrimGraph(vertices:, edges:) = graph
+  let OffsetTrimGraph(vertices:, edges:, edge_capacities:) = graph
   use retained <- result.try(
     delete_winding_mismatched_edges_loop(
       build,
@@ -1921,7 +1988,7 @@ fn delete_winding_mismatched_edges(
       retained: [],
     ),
   )
-  Ok(OffsetTrimGraph(vertices:, edges: retained))
+  Ok(OffsetTrimGraph(vertices:, edges: retained, edge_capacities:))
 }
 
 fn delete_winding_mismatched_edges_loop(
@@ -2053,7 +2120,7 @@ fn burn_dangling_edges(
   graph: OffsetTrimGraph,
   protected_vertices protected_vertices: List(Int),
 ) -> OffsetTrimGraph {
-  let OffsetTrimGraph(vertices:, edges:) = graph
+  let OffsetTrimGraph(vertices:, edges:, edge_capacities:) = graph
   let retained =
     edges
     |> list.filter(fn(edge) {
@@ -2063,7 +2130,7 @@ fn burn_dangling_edges(
     True -> graph
     False ->
       burn_dangling_edges(
-        OffsetTrimGraph(vertices:, edges: retained),
+        OffsetTrimGraph(vertices:, edges: retained, edge_capacities:),
         protected_vertices:,
       )
   }
@@ -2161,16 +2228,17 @@ fn source_order_survivor_loops(
         UntrimmedOffsetSegment,
       )
     })
-  let available_ids = arrangement_edge_ids(graph)
-  use chains <- result.try(
-    source_order_survivor_chains(
-      build,
-      segment_images,
-      available_ids,
-      open: [],
-      finished: [],
-    ),
+  let available = arrangement_edge_capacities(graph)
+  use chain_result <- result.try(
+    source_order_survivor_chains(build, segment_images, available, open: []),
   )
+  let #(chains, remaining) = chain_result
+  use _ <- result.try(assert_capacities_consumed(remaining))
+  use _ <- result.try(assert_forced_parity_chains_valid(
+    graph,
+    chains,
+    protected_vertices,
+  ))
   let chains = filter_bare_survivor_chains(chains, protected_vertices)
   survivor_chains_to_arrangement_loops(chains, tolerance, loops: [])
 }
@@ -2190,34 +2258,78 @@ fn filter_bare_survivor_chains(
   })
 }
 
-fn arrangement_edge_ids(graph: OffsetTrimGraph) -> List(Int) {
-  let OffsetTrimGraph(edges:, ..) = graph
-  edges
-  |> list.map(fn(edge) {
-    let arrangement_graph.ArrangementEdge(id:, ..) = edge
-    id
-  })
+fn arrangement_edge_capacities(
+  graph: OffsetTrimGraph,
+) -> List(AvailableEdgeCapacity) {
+  let OffsetTrimGraph(edges:, edge_capacities:, ..) = graph
+  case edge_capacities {
+    [] -> list.map(edges, fn(edge) { AvailableEdgeCapacity(edge.id, 1) })
+    capacities ->
+      capacities
+      |> list.filter_map(fn(entry) {
+        case entry.1 > 0 {
+          True -> Ok(AvailableEdgeCapacity(entry.0, entry.1))
+          False -> Error(Nil)
+        }
+      })
+  }
+}
+
+fn assert_capacities_consumed(
+  capacities: List(AvailableEdgeCapacity),
+) -> Result(Nil, Error) {
+  case capacities {
+    [] -> Ok(Nil)
+    [AvailableEdgeCapacity(edge_id:, remaining:), ..] ->
+      Error(InternalSurvivorCapacityMismatch(edge_id:, remaining:))
+  }
+}
+
+fn assert_forced_parity_chains_valid(
+  graph: OffsetTrimGraph,
+  chains: List(SurvivorChain),
+  protected_vertices: List(Int),
+) -> Result(Nil, Error) {
+  let OffsetTrimGraph(edge_capacities:, ..) = graph
+  case edge_capacities {
+    [] -> Ok(Nil)
+    _ ->
+      case
+        list.find(chains, fn(chain) {
+          !chain.closed
+          && !{
+            list.contains(protected_vertices, chain.start_vertex)
+            && list.contains(protected_vertices, chain.end_vertex)
+          }
+        })
+      {
+        Ok(chain) ->
+          Error(InternalForcedParityOpenChain(
+            start_vertex: chain.start_vertex,
+            end_vertex: chain.end_vertex,
+          ))
+        Error(_) -> Ok(Nil)
+      }
+  }
 }
 
 fn source_order_survivor_chains(
   build: OffsetArrangementBuild,
   images: List(arrangement_graph.ArrangementSourceSegmentImage),
-  available_ids: List(Int),
+  available: List(AvailableEdgeCapacity),
   open open: List(SurvivorChain),
-  finished finished: List(SurvivorChain),
-) -> Result(List(SurvivorChain), Error) {
+) -> Result(#(List(SurvivorChain), List(AvailableEdgeCapacity)), Error) {
   case images {
-    [] -> Ok(list.reverse(finished) |> list.append(list.reverse(open)))
+    [] -> Ok(#(list.reverse(open), available))
     [image, ..rest] -> {
       use image_result <- result.try(source_order_survivor_image_edges(
         build,
         image,
-        available_ids,
+        available,
       ))
-      let #(image_edges, available_ids) = image_result
-      let #(open, finished) =
-        append_source_order_edges(image_edges, open:, finished:)
-      source_order_survivor_chains(build, rest, available_ids, open:, finished:)
+      let #(image_edges, available) = image_result
+      let open = append_source_order_edges(image_edges, open:)
+      source_order_survivor_chains(build, rest, available, open:)
     }
   }
 }
@@ -2225,23 +2337,23 @@ fn source_order_survivor_chains(
 fn source_order_survivor_image_edges(
   build: OffsetArrangementBuild,
   image: arrangement_graph.ArrangementSourceSegmentImage,
-  available_ids: List(Int),
-) -> Result(#(List(SurvivorEdge), List(Int)), Error) {
+  available: List(AvailableEdgeCapacity),
+) -> Result(#(List(SurvivorEdge), List(AvailableEdgeCapacity)), Error) {
   use directed <- result.try(source_segment_image_edges(build, image))
-  Ok(source_order_survivor_directed_edges(directed, available_ids, edges: []))
+  Ok(source_order_survivor_directed_edges(directed, available, edges: []))
 }
 
 fn source_order_survivor_directed_edges(
   directed_edges: List(#(arrangement_graph.ArrangementEdge, Bool)),
-  available_ids: List(Int),
+  available: List(AvailableEdgeCapacity),
   edges edges: List(SurvivorEdge),
-) -> #(List(SurvivorEdge), List(Int)) {
+) -> #(List(SurvivorEdge), List(AvailableEdgeCapacity)) {
   case directed_edges {
-    [] -> #(list.reverse(edges), available_ids)
+    [] -> #(list.reverse(edges), available)
     [directed_edge, ..rest] -> {
       let #(edge, reversed) = directed_edge
-      case take_id(edge.id, available_ids) {
-        Ok(available_ids) -> {
+      case take_edge_capacity(edge.id, available) {
+        Ok(available) -> {
           let #(start_vertex, end_vertex, segment) = case reversed {
             True -> #(
               edge.end_vertex,
@@ -2258,26 +2370,38 @@ fn source_order_survivor_directed_edges(
               end_vertex:,
               segment:,
             )
-          source_order_survivor_directed_edges(rest, available_ids, edges: [
+          source_order_survivor_directed_edges(rest, available, edges: [
             survivor,
             ..edges
           ])
         }
         Error(Nil) ->
-          source_order_survivor_directed_edges(rest, available_ids, edges:)
+          source_order_survivor_directed_edges(rest, available, edges:)
       }
     }
   }
 }
 
-fn take_id(id: Int, ids: List(Int)) -> Result(List(Int), Nil) {
-  case ids {
+fn take_edge_capacity(
+  id: Int,
+  capacities: List(AvailableEdgeCapacity),
+) -> Result(List(AvailableEdgeCapacity), Nil) {
+  case capacities {
     [] -> Error(Nil)
     [first, ..rest] -> {
-      case first == id {
-        True -> Ok(rest)
+      let AvailableEdgeCapacity(edge_id:, remaining:) = first
+      case edge_id == id {
+        True ->
+          case remaining == 1 {
+            True -> Ok(rest)
+            False ->
+              Ok([
+                AvailableEdgeCapacity(edge_id:, remaining: remaining - 1),
+                ..rest
+              ])
+          }
         False -> {
-          use rest <- result.try(take_id(id, rest))
+          use rest <- result.try(take_edge_capacity(id, rest))
           Ok([first, ..rest])
         }
       }
@@ -2288,13 +2412,12 @@ fn take_id(id: Int, ids: List(Int)) -> Result(List(Int), Nil) {
 fn append_source_order_edges(
   edges: List(SurvivorEdge),
   open open: List(SurvivorChain),
-  finished finished: List(SurvivorChain),
-) -> #(List(SurvivorChain), List(SurvivorChain)) {
+) -> List(SurvivorChain) {
   case edges {
-    [] -> #(open, finished)
+    [] -> open
     [first, ..rest] -> {
-      let #(open, finished) = append_source_order_edge(first, open:, finished:)
-      append_source_order_edges(rest, open:, finished:)
+      let open = append_source_order_edge(first, open:)
+      append_source_order_edges(rest, open:)
     }
   }
 }
@@ -2302,8 +2425,7 @@ fn append_source_order_edges(
 fn append_source_order_edge(
   edge: SurvivorEdge,
   open open: List(SurvivorChain),
-  finished finished: List(SurvivorChain),
-) -> #(List(SurvivorChain), List(SurvivorChain)) {
+) -> List(SurvivorChain) {
   let SurvivorEdge(start_vertex:, end_vertex:, ..) = edge
   let chain =
     SurvivorChain(
@@ -2312,39 +2434,26 @@ fn append_source_order_edge(
       edges: [edge],
       closed: start_vertex == end_vertex,
     )
-  insert_survivor_chain(chain, open, skipped: [], finished:)
+  insert_survivor_chain(chain, open, skipped: [])
 }
 
 fn insert_survivor_chain(
   chain: SurvivorChain,
   open: List(SurvivorChain),
   skipped skipped: List(SurvivorChain),
-  finished finished: List(SurvivorChain),
-) -> #(List(SurvivorChain), List(SurvivorChain)) {
-  let SurvivorChain(closed:, ..) = chain
-  case closed {
-    True -> #(list.append(list.reverse(skipped), open), [chain, ..finished])
-    False -> {
-      case open {
-        [] -> #([chain, ..list.reverse(skipped)], finished)
-        [candidate, ..rest] -> {
-          case merge_survivor_chains(chain, candidate) {
-            Ok(merged) ->
-              insert_survivor_chain(
-                mark_survivor_chain_closed(merged),
-                list.append(list.reverse(skipped), rest),
-                skipped: [],
-                finished:,
-              )
-            Error(Nil) ->
-              insert_survivor_chain(
-                chain,
-                rest,
-                skipped: [candidate, ..skipped],
-                finished:,
-              )
-          }
-        }
+) -> List(SurvivorChain) {
+  case open {
+    [] -> [mark_survivor_chain_closed(chain), ..list.reverse(skipped)]
+    [candidate, ..rest] -> {
+      case merge_survivor_chains(chain, candidate) {
+        Ok(merged) ->
+          insert_survivor_chain(
+            mark_survivor_chain_closed(merged),
+            list.append(list.reverse(skipped), rest),
+            skipped: [],
+          )
+        Error(Nil) ->
+          insert_survivor_chain(chain, rest, skipped: [candidate, ..skipped])
       }
     }
   }
@@ -4273,14 +4382,14 @@ fn retain_offset_image_edges(
       let arrangement_graph.ArrangementEdge(id:, ..) = edge
       arrangement_edge_has_group(build, id, UntrimmedOffsetSegment)
     })
-  OffsetTrimGraph(vertices:, edges: retained)
+  OffsetTrimGraph(vertices:, edges: retained, edge_capacities: [])
 }
 
 fn offset_trim_graph(
   graph: arrangement_graph.ArrangementGraph,
 ) -> OffsetTrimGraph {
   let arrangement_graph.ArrangementGraph(vertices:, edges:, ..) = graph
-  OffsetTrimGraph(vertices:, edges:)
+  OffsetTrimGraph(vertices:, edges:, edge_capacities: [])
 }
 
 fn arrangement_edge_has_group(

@@ -35,6 +35,139 @@ pub fn closed_square_builds_valid_graph_test() {
   |> should.equal(Ok(Nil))
 }
 
+pub fn forced_parity_reduces_unique_edge_without_mutating_graph_test() {
+  let line =
+    svg_path.Line(
+      start: svg_path.Point(0.0, 0.0),
+      end: svg_path.Point(10.0, 0.0),
+    )
+  let assert Ok(arrangement_graph.ArrangementSegmentBuild(graph:, ..)) =
+    arrangement_graph.build_with(
+      [line, line],
+      vertex_tolerance: tolerance,
+      minimum_chord:,
+      endpoint_sliver_tolerance: 0.0,
+    )
+  let arrangement_graph.ArrangementGraph(vertices:, edges: original_edges, ..) =
+    graph
+  let assert [start, end] = vertices
+  let assert [original_edge] = original_edges
+  original_edge.forward_multiplicity |> should.equal(2)
+
+  let assert Ok([arrangement_graph.EdgeCapacityAssignment(capacity:, ..)]) =
+    arrangement_graph.forced_parity_capacities(graph, vertex_parities: [
+      #(start.id, 1),
+      #(end.id, 1),
+    ])
+  capacity |> should.equal(1)
+  original_edge.forward_multiplicity |> should.equal(2)
+}
+
+pub fn forced_parity_reports_unresolved_diamond_choice_test() {
+  let source = svg_path.Point(0.0, 0.0)
+  let upper = svg_path.Point(5.0, -5.0)
+  let lower = svg_path.Point(5.0, 5.0)
+  let sink = svg_path.Point(10.0, 0.0)
+  let segments = [
+    svg_path.Line(start: source, end: upper),
+    svg_path.Line(start: upper, end: sink),
+    svg_path.Line(start: source, end: lower),
+    svg_path.Line(start: lower, end: sink),
+  ]
+  let assert Ok(arrangement_graph.ArrangementSegmentBuild(graph:, ..)) =
+    arrangement_graph.build_with(
+      segments,
+      vertex_tolerance: tolerance,
+      minimum_chord:,
+      endpoint_sliver_tolerance: 0.0,
+    )
+  let arrangement_graph.ArrangementGraph(vertices:, ..) = graph
+  let assert Ok(source_vertex) =
+    list.find(vertices, fn(vertex) { vertex.point == source })
+  let assert Ok(sink_vertex) =
+    list.find(vertices, fn(vertex) { vertex.point == sink })
+
+  let assert Error(arrangement_graph.ForcedParityAmbiguous(vertices)) =
+    arrangement_graph.forced_parity_capacities(graph, vertex_parities: [
+      #(source_vertex.id, 1),
+      #(sink_vertex.id, 1),
+    ])
+  list.length(vertices) |> should.equal(2)
+}
+
+pub fn forced_parity_reports_capacity_infeasibility_test() {
+  let line =
+    svg_path.Line(
+      start: svg_path.Point(0.0, 0.0),
+      end: svg_path.Point(10.0, 0.0),
+    )
+  let assert Ok(arrangement_graph.ArrangementSegmentBuild(graph:, ..)) =
+    arrangement_graph.build_with(
+      [line],
+      vertex_tolerance: tolerance,
+      minimum_chord:,
+      endpoint_sliver_tolerance: 0.0,
+    )
+  let assert arrangement_graph.ArrangementGraph(vertices: [start, end], ..) =
+    graph
+
+  arrangement_graph.forced_parity_capacities(graph, vertex_parities: [
+    #(start.id, 0),
+    #(end.id, 1),
+  ])
+  |> should.equal(Error(arrangement_graph.ForcedParityInfeasible(end.id)))
+}
+
+pub fn forced_parity_sums_forward_and_reverse_capacity_test() {
+  let start_point = svg_path.Point(0.0, 0.0)
+  let end_point = svg_path.Point(10.0, 0.0)
+  let forward = svg_path.Line(start: start_point, end: end_point)
+  let reverse = svg_path.Line(start: end_point, end: start_point)
+  let assert Ok(arrangement_graph.ArrangementSegmentBuild(graph:, ..)) =
+    arrangement_graph.build_with(
+      [forward, reverse],
+      vertex_tolerance: tolerance,
+      minimum_chord:,
+      endpoint_sliver_tolerance: 0.0,
+    )
+  let assert Ok([arrangement_graph.EdgeCapacityAssignment(capacity:, ..)]) =
+    arrangement_graph.forced_parity_capacities(graph, vertex_parities: [])
+  capacity |> should.equal(2)
+}
+
+pub fn forced_parity_rejects_invalid_vertex_parities_test() {
+  let line =
+    svg_path.Line(
+      start: svg_path.Point(0.0, 0.0),
+      end: svg_path.Point(10.0, 0.0),
+    )
+  let assert Ok(arrangement_graph.ArrangementSegmentBuild(graph:, ..)) =
+    arrangement_graph.build_with(
+      [line],
+      vertex_tolerance: tolerance,
+      minimum_chord:,
+      endpoint_sliver_tolerance: 0.0,
+    )
+  let assert arrangement_graph.ArrangementGraph(vertices: [start, _], ..) =
+    graph
+
+  arrangement_graph.forced_parity_capacities(graph, vertex_parities: [
+    #(start.id, 0),
+    #(start.id, 1),
+  ])
+  |> should.equal(
+    Error(arrangement_graph.ForcedParityDuplicateVertex(start.id)),
+  )
+  arrangement_graph.forced_parity_capacities(graph, vertex_parities: [#(999, 0)])
+  |> should.equal(Error(arrangement_graph.ForcedParityMissingVertex(999)))
+  arrangement_graph.forced_parity_capacities(graph, vertex_parities: [
+    #(start.id, 2),
+  ])
+  |> should.equal(
+    Error(arrangement_graph.ForcedParityInvalidVertexParity(start.id, 2)),
+  )
+}
+
 pub fn cyclic_order_uses_clockwise_common_circle_positions_test() {
   let center = svg_path.Point(0.0, 0.0)
   let rays = [
