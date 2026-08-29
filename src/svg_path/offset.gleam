@@ -1703,8 +1703,9 @@ fn trim_single_offset_arrangement(
     winding:,
     side_sampling_distance: submerged_side_sampling_distance,
   ))
-  let without_dangling =
-    burn_dangling_edges(without_submerged, protected_vertices:)
+  use without_dangling <- result.try(
+    forced_parity_burn(without_submerged, protected_vertices),
+  )
   use loops <- result.try(source_order_survivor_loops(
     build,
     without_dangling,
@@ -1781,7 +1782,7 @@ fn forced_parity_burn(
   use assignments <- result.try(
     arrangement_graph.forced_parity_capacities(
       arrangement,
-      vertex_parities: list.map(protected_vertices, fn(vertex) { #(vertex, 1) }),
+      vertex_parities: protected_vertex_parities(protected_vertices),
     )
     |> result.map_error(ForcedParityPruningError),
   )
@@ -1807,6 +1808,28 @@ fn forced_parity_burn(
       }
     })
   Ok(OffsetTrimGraph(vertices:, edges:, edge_capacities:))
+}
+
+fn protected_vertex_parities(vertices: List(Int)) -> List(#(Int, Int)) {
+  vertices
+  |> unique_ints(unique: [])
+  |> list.filter_map(fn(vertex) {
+    case int_occurrences(vertices, vertex) % 2 {
+      1 -> Ok(#(vertex, 1))
+      _ -> Error(Nil)
+    }
+  })
+}
+
+fn int_occurrences(values: List(Int), target: Int) -> Int {
+  case values {
+    [] -> 0
+    [first, ..rest] ->
+      case first == target {
+        True -> 1 + int_occurrences(rest, target)
+        False -> int_occurrences(rest, target)
+      }
+  }
 }
 
 fn incidence_degree(
