@@ -4,34 +4,31 @@
 [![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/svg_path/)
 
 `svg_path` is a geometry library for SVG paths in Gleam. It parses and
-serializes SVG `d` and `transform` attributes and provides geometric operations
-on paths, subpaths, lines, quadratic and cubic Beziers, and elliptical arcs.
-Operations preserve the original curve types where possible rather than first
-flattening everything into polygons.
-
-For topology-sensitive operations, `svg_path` constructs a transparent
-`ArrangementGraph`: source curves are progressively split at intersections,
-endpoint contacts, and overlap boundaries, while coincident portions are
-represented once with directional multiplicities. This follows the standard
-computational-geometry idea of a
-[planar arrangement of curves](https://doc.cgal.org/latest/Arrangement_on_surface_2/index.html),
-adapted to SVG geometry with explicit source-path correspondence.
-
-Arrangement graphs support fill-rule-aware Boolean union, intersection,
-difference, and symmetric difference. Each input path is interpreted as a
-filled region under the selected SVG
-[`nonzero` or `evenodd` rule](https://www.w3.org/TR/SVG2/painting.html#FillRuleProperty);
-the Boolean operation is applied to those regions, and the resulting boundary
-is reconstructed as SVG paths.
+serializes SVG `d` and `transform` attributes and works directly with paths,
+subpaths, lines, quadratic and cubic Beziers, and elliptical arcs. Operations
+preserve the original curve types where possible rather than flattening them
+into polygons.
 
 The package also includes:
 
-- isolated intersections, continuous overlaps, and combined encounter queries;
-- intersection classification and singularity-safe curve directions;
-- clipping, cutting, offsets, stroke outlines, dashes, and marker layout;
-- convex hulls, containment, area, transforms, curve fitting, and path effects;
+- construction, editing, evaluation, differentiation, splitting, and
+  singularity-safe curve directions;
+- isolated intersections, continuous overlaps, combined encounter queries,
+  and closest-point pair projections;
+- fill-rule-aware union, intersection, difference, and symmetric difference
+  under SVG `nonzero` and `evenodd` rules;
+- clipping, cutting, one- and two-sided offsets, stroke outlines, dashes, and
+  marker layout;
+- bounding boxes, convex hulls, containment, area, transforms, curve fitting,
+  basic-shape conversion, and path effects;
 - decimal-aware relative serialization that compensates for accumulated
   rounding drift.
+
+Topology-sensitive operations use planar arrangements of the original curves.
+Segments are progressively split at intersections, endpoint contacts, and
+overlap boundaries; coincident portions retain directional multiplicities and
+source correspondence. This supports robust reconstruction without replacing
+the input geometry with a polygonal approximation.
 
 `svg_path` supports Erlang and JavaScript and has no runtime dependency beyond
 the Gleam standard library.

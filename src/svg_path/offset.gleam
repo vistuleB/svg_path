@@ -53,7 +53,7 @@ import svg_path/trig
 
 const default_tolerance = 0.01
 
-const maximum_refinement_generation = 4
+const maximum_refinement_generation = 5
 
 const default_max_depth = maximum_refinement_generation
 
