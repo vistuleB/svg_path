@@ -103,7 +103,7 @@ const stable_tangent_assertion_diameter = 0.01
 
 const default_stalled_offset_diameter = 0.01
 
-const adjacent_loop_overlap_endpoint_parameter_tolerance = 0.00001
+const adjacent_loop_endpoint_parameter_tolerance = 0.0001
 
 /// Errors returned by offset helpers.
 pub type Error {
@@ -5098,9 +5098,7 @@ fn cull_adjacent_offset_segment_overlap(
             left_from,
           ),
         )
-      case
-        right_end >=. 1.0 -. adjacent_loop_overlap_endpoint_parameter_tolerance
-      {
+      case right_end >=. 1.0 -. adjacent_loop_endpoint_parameter_tolerance {
         True -> Ok(#(left, None))
         False -> {
           use right_segment <- result.try(
@@ -5147,8 +5145,8 @@ fn adjacent_endpoint_overlap(
       let right_start = float.min(right_from, right_to)
       case
         left_from <. 1.0
-        && left_to >=. 1.0 -. adjacent_loop_overlap_endpoint_parameter_tolerance
-        && right_start <=. adjacent_loop_overlap_endpoint_parameter_tolerance
+        && left_to >=. 1.0 -. adjacent_loop_endpoint_parameter_tolerance
+        && right_start <=. adjacent_loop_endpoint_parameter_tolerance
         && float.max(right_from, right_to) >. 0.0
       {
         True -> Ok(first)
@@ -9704,8 +9702,15 @@ fn earliest_interior_adjacent_intersection(
     [] -> best
     [intersection, ..rest] -> {
       let svg_path.SegmentIntersection(left_t:, right_t:, ..) = intersection
+      // Contacts this close to the already-shared endpoint are not an
+      // adjacent loop. Arc reconstruction can otherwise turn an exact
+      // internal tangency into a second numerical root immediately beside
+      // that endpoint.
       let interior =
-        left_t >. 0.0 && left_t <. 1.0 && right_t >. 0.0 && right_t <. 1.0
+        left_t >. 0.0
+        && left_t <. 1.0 -. adjacent_loop_endpoint_parameter_tolerance
+        && right_t >. adjacent_loop_endpoint_parameter_tolerance
+        && right_t <. 1.0
       let best = case interior, best {
         False, _ -> best
         True, None -> Some(intersection)

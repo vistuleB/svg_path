@@ -2535,7 +2535,7 @@ pub fn segment_intersections_with_rejects_invalid_options_test() {
     == Error(svg_path.InvalidIntersectionParameterSnapExponent(0))
 }
 
-pub fn intersection_terminal_window_limit_is_reported_test() {
+pub fn translated_monotone_cubics_are_certified_disjoint_test() {
   let left =
     svg_path.CubicBezier(
       start: svg_path.Point(0.0, 0.0),
@@ -2559,7 +2559,7 @@ pub fn intersection_terminal_window_limit_is_reported_test() {
         tolerance: 0.000000001,
       ),
     )
-    == Error(svg_path.IntersectionTerminalWindowLimitExceeded(1000))
+    == Ok([])
 }
 
 pub fn segment_subpath_intersections_groups_and_orders_results_test() {

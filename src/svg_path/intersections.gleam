@@ -20,9 +20,9 @@ import svg_path.{
   type SubpathSelfIntersection, type SubpathSubpathProjection, Arc, CubicBezier,
   EmptyPath, EmptySubpath, EmptySubpaths,
   InternalOverlapClassificationInconsistency,
-  InternalUncertifiedSegmentIntersection, InvalidIntersectionMaxDepth,
+  InternalUncertifiedSegmentIntersection,
+  IntersectionTerminalWindowLimitExceeded, InvalidIntersectionMaxDepth,
   InvalidIntersectionParameterSnapExponent, InvalidIntersectionTolerance,
-  IntersectionTerminalWindowLimitExceeded,
   InvalidSelfIntersectionDistanceTolerance,
   InvalidSelfIntersectionMinimumArcLengthSeparation, Line, OverlappingSegments,
   PathIntersection, PathParameter, PathPathProjection, PathSelfIntersection,
@@ -33,6 +33,7 @@ import svg_path.{
 }
 import svg_path/bezier
 import svg_path/internal/number
+import svg_path/intersections2
 import svg_path/overlap_detection
 import svg_path/point
 
@@ -3966,6 +3967,25 @@ fn curve_curve_intersections(
   right: Segment,
   options: IntersectionOptions,
 ) -> Result(List(SegmentIntersection), Error) {
+  case
+    intersections2.segment_with(
+      left,
+      right,
+      tolerance: options.tolerance,
+      max_depth: options.max_depth,
+    )
+  {
+    Error(IntersectionTerminalWindowLimitExceeded(_)) ->
+      legacy_curve_curve_intersections(left, right, options)
+    result -> result
+  }
+}
+
+fn legacy_curve_curve_intersections(
+  left: Segment,
+  right: Segment,
+  options: IntersectionOptions,
+) -> Result(List(SegmentIntersection), Error) {
   use minima <- result.try(segment_pair_intersection_minima(
     left,
     right,
@@ -4151,8 +4171,7 @@ fn collect_intersection_terminal_windows(
               <=. terminal_subdivision_tolerance
             }
           {
-            True ->
-              add_intersection_terminal_window_grid(left, right, windows)
+            True -> add_intersection_terminal_window_grid(left, right, windows)
             False -> {
               let split_left =
                 svg_path.bounding_box_diameter(left_box)

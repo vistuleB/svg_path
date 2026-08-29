@@ -227,12 +227,11 @@ fn graph_label_text(
   color: String,
   size: Float,
 ) -> String {
-  let assert Ok(svg_path.BoundingBox(min:, max:)) =
-    svg_path.segment_bounding_box(segment)
+  let assert Ok(point) = svg_path.segment_point(segment, at: 0.5)
   "  <text x=\""
-  <> float.to_string({ min.x +. max.x } /. 2.0)
+  <> float.to_string(point.x)
   <> "\" y=\""
-  <> float.to_string({ min.y +. max.y } /. 2.0)
+  <> float.to_string(point.y)
   <> "\" fill=\""
   <> color
   <> "\" font-size=\""
@@ -312,14 +311,11 @@ fn graph_point(point: svg_path.Point) -> String {
 }
 
 fn graph_label(segment: svg_path.Segment, id: Int, color: String) -> String {
-  let assert Ok(svg_path.BoundingBox(min:, max:)) =
-    svg_path.segment_bounding_box(segment)
-  let x = { min.x +. max.x } /. 2.0
-  let y = { min.y +. max.y } /. 2.0
+  let assert Ok(point) = svg_path.segment_point(segment, at: 0.5)
   "  <text x=\""
-  <> float.to_string(x)
+  <> float.to_string(point.x)
   <> "\" y=\""
-  <> float.to_string(y)
+  <> float.to_string(point.y)
   <> "\" fill=\""
   <> color
   <> "\" font-size=\"3\" text-anchor=\"middle\">"
