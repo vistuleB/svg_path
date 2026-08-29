@@ -11,13 +11,13 @@ import svg_path/svg
 
 const input = "examples/debug/package_title.svg"
 
-const output = "examples/debug/package_title_three_offsets_1_04_current.svg"
+const output = "examples/debug/package_title_seven_offsets_1_04_current.svg"
 
 pub fn main() -> Nil {
   let assert Ok(contents) = read_file(input)
   let assert Ok(source) = parse.path(first_path_data(contents))
   let options = offset.default_options()
-  let levels = offset_levels(source, options, remaining: 3, completed: [])
+  let levels = offset_levels(source, options, remaining: 7, completed: [])
   io.println("completed levels: " <> int.to_string(list.length(levels)))
   let _ = write_file(output, render(source, levels))
   Nil
@@ -34,7 +34,7 @@ fn offset_levels(
     _ ->
       case offset.path_with(current, distance: 1.04, options:) {
         Ok(next) -> {
-          io.println("completed offset " <> int.to_string(4 - remaining))
+          io.println("completed offset " <> int.to_string(8 - remaining))
           offset_levels(next, options, remaining: remaining - 1, completed: [
             next,
             ..completed
@@ -49,7 +49,15 @@ fn offset_levels(
 }
 
 fn render(source: svg_path.Path, levels: List(svg_path.Path)) -> String {
-  let colors = ["#2563eb", "#dc2626", "#16a34a"]
+  let colors = [
+    "#2563eb",
+    "#dc2626",
+    "#16a34a",
+    "#9333ea",
+    "#ea580c",
+    "#0891b2",
+    "#be185d",
+  ]
   let view_box =
     [source, ..levels]
     |> list.filter_map(svg_path.path_bounding_box)

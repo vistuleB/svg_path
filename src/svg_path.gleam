@@ -808,6 +808,9 @@ pub type Error {
   /// The intersection subdivision depth must be greater than zero.
   InvalidIntersectionMaxDepth(max_depth: Int)
 
+  /// Intersection search generated more terminal windows than its safety limit.
+  IntersectionTerminalWindowLimitExceeded(limit: Int)
+
   /// The intersection parameter snap exponent must be between 1 and 15.
   InvalidIntersectionParameterSnapExponent(exponent: Int)
 

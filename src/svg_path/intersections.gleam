@@ -22,6 +22,7 @@ import svg_path.{
   InternalOverlapClassificationInconsistency,
   InternalUncertifiedSegmentIntersection, InvalidIntersectionMaxDepth,
   InvalidIntersectionParameterSnapExponent, InvalidIntersectionTolerance,
+  IntersectionTerminalWindowLimitExceeded,
   InvalidSelfIntersectionDistanceTolerance,
   InvalidSelfIntersectionMinimumArcLengthSeparation, Line, OverlappingSegments,
   PathIntersection, PathParameter, PathPathProjection, PathSelfIntersection,
@@ -44,6 +45,8 @@ const parameter_snap_distance_tie_slack = 0.000000000001
 const terminal_subdivision_tolerance = 0.01
 
 const terminal_grid_margin = 0.0
+
+const maximum_intersection_terminal_windows = 1000
 
 const default_classification_angular_tolerance = 0.0000001
 
@@ -4148,7 +4151,8 @@ fn collect_intersection_terminal_windows(
               <=. terminal_subdivision_tolerance
             }
           {
-            True -> Ok(add_terminal_window_grid(left, right, windows))
+            True ->
+              add_intersection_terminal_window_grid(left, right, windows)
             False -> {
               let split_left =
                 svg_path.bounding_box_diameter(left_box)
@@ -4201,6 +4205,23 @@ fn collect_intersection_terminal_windows(
         }
       }
     }
+  }
+}
+
+fn add_intersection_terminal_window_grid(
+  left: IntersectionPiece,
+  right: IntersectionPiece,
+  windows: List(RawTerminalWindow),
+) -> Result(List(RawTerminalWindow), Error) {
+  // Every terminal pair contributes a fixed 3x3 grid. Check before allocating
+  // it so pathological near-coincident pairs cannot grow the search without a
+  // deterministic bound.
+  case list.length(windows) + 9 > maximum_intersection_terminal_windows {
+    True ->
+      Error(IntersectionTerminalWindowLimitExceeded(
+        maximum_intersection_terminal_windows,
+      ))
+    False -> Ok(add_terminal_window_grid(left, right, windows))
   }
 }
 

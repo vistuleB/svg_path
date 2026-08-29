@@ -2535,6 +2535,33 @@ pub fn segment_intersections_with_rejects_invalid_options_test() {
     == Error(svg_path.InvalidIntersectionParameterSnapExponent(0))
 }
 
+pub fn intersection_terminal_window_limit_is_reported_test() {
+  let left =
+    svg_path.CubicBezier(
+      start: svg_path.Point(0.0, 0.0),
+      control1: svg_path.Point(3.0, 1.0),
+      control2: svg_path.Point(7.0, 1.0),
+      end: svg_path.Point(10.0, 0.0),
+    )
+  let right =
+    svg_path.CubicBezier(
+      start: svg_path.Point(0.0, 0.00000001),
+      control1: svg_path.Point(3.0, 1.00000001),
+      control2: svg_path.Point(7.0, 1.00000001),
+      end: svg_path.Point(10.0, 0.00000001),
+    )
+
+  assert intersections.segment_with(
+      left,
+      right,
+      options: intersections.IntersectionOptions(
+        ..intersections.default_options(),
+        tolerance: 0.000000001,
+      ),
+    )
+    == Error(svg_path.IntersectionTerminalWindowLimitExceeded(1000))
+}
+
 pub fn segment_subpath_intersections_groups_and_orders_results_test() {
   let segment =
     svg_path.Line(

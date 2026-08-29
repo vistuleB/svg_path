@@ -1539,6 +1539,40 @@ pub fn single_offset_band_candidate_keeps_closed_source_as_two_sides_test() {
   assert svg_path.subpath_is_closed(interior)
 }
 
+pub fn source_face_contamination_pruning_keeps_square_offset_test() {
+  let source = svg_path.Path([square_loop()])
+  let assert Ok(trimmed) =
+    offset.internal_path_with_source_face_contamination(
+      source,
+      distance: 2.0,
+      options: offset.default_options(),
+      enabled: True,
+    )
+  let assert [subpath] = svg_path.path_subpaths(trimmed)
+  assert svg_path.subpath_is_closed(subpath)
+}
+
+pub fn source_face_contamination_prunes_closed_subpaths_independently_test() {
+  let second =
+    svg_path.subpath_assert_polygon([
+      svg_path.Point(20.0, 0.0),
+      svg_path.Point(30.0, 0.0),
+      svg_path.Point(30.0, 10.0),
+      svg_path.Point(20.0, 10.0),
+    ])
+  let source = svg_path.Path([square_loop(), second])
+  let assert Ok(trimmed) =
+    offset.internal_path_with_source_face_contamination(
+      source,
+      distance: 2.0,
+      options: offset.default_options(),
+      enabled: True,
+    )
+  let subpaths = svg_path.path_subpaths(trimmed)
+  assert list.length(subpaths) == 2
+  assert list.all(subpaths, svg_path.subpath_is_closed)
+}
+
 pub fn untrimmed_stroke_band_closes_open_source_test() {
   let open =
     svg_path.subpath_assert_polyline([
