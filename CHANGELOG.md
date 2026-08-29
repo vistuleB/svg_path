@@ -9,6 +9,37 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
+## 0.40.0 - 2026-08-29
+
+### Added
+
+- Added planar-dual construction for arrangement graphs, including explicit
+  faces, boundary walks, outer-face identification, and per-edge face
+  incidence.
+- Added an experimental window-preserving curve-intersection module with
+  bounded search, chord-crossing seeds, tangent-line refinement, and direct
+  circular-arc handling.
+- Added symmetric figure-eight band fixtures and Gallery examples for
+  asymmetric signed offsets.
+
+### Changed
+
+- Reworked single-offset trimming around source-face contamination and
+  arrangement-backed survivor reconstruction.
+- Simplified offset trimming internals and made repeated offset construction
+  retain multiple valid survivor loops.
+- Refreshed the README overview and made published Gallery generation verify
+  and promote every linked figure.
+
+### Fixed
+
+- Improved curve-intersection searches for narrow transverse crossings and
+  added a terminal-window safety limit for pathological searches.
+- Corrected adjacent reversed-loop cleanup when neighboring offset segments
+  overlap rather than intersect at an isolated point.
+- Raised the recursive offset-refinement cap and corrected malformed Gallery
+  dimensions caused by a fixture-only number formatter.
+
 ## 0.39.0 - 2026-08-28
 
 ### Added
