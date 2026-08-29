@@ -57,6 +57,11 @@ pub fn generate_gallery_figures() {
       figure_eight_band(),
     ),
     #(
+      "gallery-symmetric-figure-eight-bands.svg",
+      "Symmetric figure-eight bands",
+      symmetric_figure_eight_bands(),
+    ),
+    #(
       "gallery-figure-eight-correspondence-blocks.svg",
       "Figure-eight synchronized correspondence blocks",
       figure_eight_correspondence_fixture.figure_eight_correspondence_blocks(),
@@ -1979,6 +1984,79 @@ fn figure_eight_band() -> String {
     width: 860.0,
     height: 380.0,
   )
+}
+
+fn symmetric_figure_eight_bands() -> String {
+  let assert Ok(contents) =
+    read_file("examples/debug/loop_8_symmetric_arcs.svg")
+  let assert Ok(svg_path.Path([source])) =
+    parse.path(first_svg_path_data(contents))
+  let options = offset.Options(..offset.default_options(), join: offset.Round)
+  let assert Ok(wide_band) =
+    offset.subpath_band_with(
+      source,
+      distance_a: -5.0,
+      distance_b: 25.0,
+      options:,
+    )
+  let assert Ok(outer_band) =
+    offset.subpath_band_with(
+      source,
+      distance_a: 10.0,
+      distance_b: 20.0,
+      options:,
+    )
+
+  let left = symmetric_figure_eight_panel(source, wide_band, x: 20.0)
+  let right = symmetric_figure_eight_panel(source, outer_band, x: 610.0)
+  "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1200\" height=\"560\" viewBox=\"0 0 1200 560\">\n"
+  <> "  <rect x=\"0\" y=\"0\" width=\"1200\" height=\"560\" fill=\"white\" />\n"
+  <> "  <text x=\"305\" y=\"35\" text-anchor=\"middle\" font-family=\"sans-serif\" font-size=\"22\" fill=\"#3f3f46\">−5 to +25</text>\n"
+  <> "  <text x=\"895\" y=\"35\" text-anchor=\"middle\" font-family=\"sans-serif\" font-size=\"22\" fill=\"#3f3f46\">+10 to +20</text>\n"
+  <> left
+  <> right
+  <> "</svg>\n"
+}
+
+fn symmetric_figure_eight_panel(
+  source: svg_path.Subpath,
+  band: svg_path.Path,
+  x x: Float,
+) -> String {
+  let geometry = svg_path.Path([source, ..svg_path.path_subpaths(band)])
+  let assert Ok(svg_path.BoundingBox(min:, max:)) =
+    svg_path.path_bounding_box(geometry)
+  let geometry_width = max.x -. min.x
+  let geometry_height = max.y -. min.y
+  let padding = float.max(geometry_width, geometry_height) *. 0.12
+  let view_x = min.x -. padding
+  let view_y = min.y -. padding
+  let view_width = geometry_width +. 2.0 *. padding
+  let view_height = geometry_height +. 2.0 *. padding
+  "  <svg x=\""
+  <> float_to_string(x)
+  <> "\" y=\"50\" width=\"570\" height=\"490\" viewBox=\""
+  <> float_to_string(view_x)
+  <> " "
+  <> float_to_string(view_y)
+  <> " "
+  <> float_to_string(view_width)
+  <> " "
+  <> float_to_string(view_height)
+  <> "\" preserveAspectRatio=\"xMidYMid meet\">\n"
+  <> "    <path d=\""
+  <> serialize.path(band)
+  <> "\" fill=\"#d946ef\" fill-opacity=\"0.46\" fill-rule=\"nonzero\" stroke=\"#a21caf\" stroke-width=\"0.9\" stroke-linejoin=\"round\" />\n"
+  <> "    <path d=\""
+  <> serialize.subpath(source)
+  <> "\" fill=\"none\" stroke=\"#18181b\" stroke-width=\"0.8\" stroke-dasharray=\"4 3\" stroke-linecap=\"round\" />\n"
+  <> "  </svg>\n"
+}
+
+fn first_svg_path_data(contents: String) -> String {
+  let assert [_, after_attribute] = string.split(contents, on: " d=\"")
+  let assert [data, ..] = string.split(after_attribute, on: "\"")
+  data
 }
 
 fn stroke_offset_tracks() -> String {

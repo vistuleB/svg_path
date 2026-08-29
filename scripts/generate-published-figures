@@ -45,6 +45,7 @@ gallery_figures=(
   gallery-dashed-strokes.svg
   gallery-recursive-dashes.svg
   gallery-figure-eight-band.svg
+  gallery-symmetric-figure-eight-bands.svg
   gallery-figure-eight-correspondence-blocks.svg
   gallery-figure-eight-convex-hulls.svg
   gallery-stroke-offset-tracks.svg

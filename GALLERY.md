@@ -68,6 +68,13 @@ again at a smaller scale.
 
 Shows an asymmetric two-sided band around a closed figure-eight.
 
+### Symmetric Figure-Eight Bands
+
+![Symmetric figure-eight bands](docs/gallery/gallery-symmetric-figure-eight-bands.svg)
+
+Compares a wide band crossing both sides of the source (`−5` to `+25`) with a
+narrower band lying entirely on its positive-offset side (`+10` to `+20`).
+
 ### Figure-Eight Correspondence Blocks
 
 ![Figure-eight correspondence blocks](docs/gallery/gallery-figure-eight-correspondence-blocks.svg)

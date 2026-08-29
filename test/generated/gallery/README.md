@@ -5,6 +5,7 @@
 - [Dashed strokes](gallery-dashed-strokes.svg)
 - [Recursive dashes](gallery-recursive-dashes.svg)
 - [Figure-eight asymmetric band](gallery-figure-eight-band.svg)
+- [Symmetric figure-eight bands](gallery-symmetric-figure-eight-bands.svg)
 - [Figure-eight synchronized correspondence blocks](gallery-figure-eight-correspondence-blocks.svg)
 - [Figure-eight convex-hull regressions](gallery-figure-eight-convex-hulls.svg)
 - [Stroke offset tracks](gallery-stroke-offset-tracks.svg)
