@@ -838,26 +838,26 @@ fn cut_radiator_document(path: svg_path.Path) -> String {
   let height = width
 
   "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 "
-  <> float_to_string(width)
+  <> gallery_float_to_string(width)
   <> " "
-  <> float_to_string(height)
+  <> gallery_float_to_string(height)
   <> "\" width=\""
-  <> float_to_string(width)
+  <> gallery_float_to_string(width)
   <> "\" height=\""
-  <> float_to_string(height)
+  <> gallery_float_to_string(height)
   <> "\">\n"
   <> "  <rect width=\"100%\" height=\"100%\" fill=\"#ffffff\"/>\n"
   <> "  <g transform=\"translate("
-  <> float_to_string(margin)
+  <> gallery_float_to_string(margin)
   <> " "
-  <> float_to_string(margin)
+  <> gallery_float_to_string(margin)
   <> ") scale("
-  <> float_to_string(scale)
+  <> gallery_float_to_string(scale)
   <> ")\">\n"
   <> "    <rect x=\"0\" y=\"0\" width=\""
-  <> float_to_string(cut_radiator_square_size)
+  <> gallery_float_to_string(cut_radiator_square_size)
   <> "\" height=\""
-  <> float_to_string(cut_radiator_square_size)
+  <> gallery_float_to_string(cut_radiator_square_size)
   <> "\" fill=\"#f8fafc\" stroke=\"#111827\" stroke-width=\"0.055\"/>\n"
   <> "    <path d=\""
   <> serialize.path(path)
@@ -2034,15 +2034,15 @@ fn symmetric_figure_eight_panel(
   let view_width = geometry_width +. 2.0 *. padding
   let view_height = geometry_height +. 2.0 *. padding
   "  <svg x=\""
-  <> float_to_string(x)
+  <> gallery_float_to_string(x)
   <> "\" y=\"50\" width=\"570\" height=\"490\" viewBox=\""
-  <> float_to_string(view_x)
+  <> gallery_float_to_string(view_x)
   <> " "
-  <> float_to_string(view_y)
+  <> gallery_float_to_string(view_y)
   <> " "
-  <> float_to_string(view_width)
+  <> gallery_float_to_string(view_width)
   <> " "
-  <> float_to_string(view_height)
+  <> gallery_float_to_string(view_height)
   <> "\" preserveAspectRatio=\"xMidYMid meet\">\n"
   <> "    <path d=\""
   <> serialize.path(band)
@@ -3268,7 +3268,7 @@ fn path_layer(
         <> "; stroke: "
         <> stroke
         <> "; stroke-width: "
-        <> float_to_string(width)
+        <> gallery_float_to_string(width)
         <> "; stroke-linejoin: round",
     ),
     ..path_arrows(placed, arrows, 0.9)
@@ -3395,14 +3395,6 @@ fn float_square_root(value: Float) -> Float {
 
 fn rotate_counterclockwise(point: svg_path.Point) -> svg_path.Point {
   svg_path.Point(point.y, 0.0 -. point.x)
-}
-
-fn float_to_string(value: Float) -> String {
-  case value {
-    2.0 -> "2"
-    3.0 -> "3"
-    _ -> "2.5"
-  }
 }
 
 fn gallery_float_to_string(value: Float) -> String {

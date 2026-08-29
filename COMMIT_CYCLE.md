@@ -27,7 +27,7 @@ scripts/generate-published-figures
 ```
 
 It regenerates the five README figures in `test/generated/readme`, regenerates
-all thirty Gallery figures in `test/generated/gallery`, verifies that every
+all published Gallery figures in `test/generated/gallery`, verifies that every
 published filename was produced, and promotes the Gallery figures into
 `docs/gallery`. README figures still require review and promotion through the
 asset worktree described below.
