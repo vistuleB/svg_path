@@ -600,9 +600,9 @@ type JArrangementSplitOffsetSubpath {
   )
 }
 
-/// One partial source-ordered walk considered by the closed-walk fallback.
-type IToMAmbiguousWalkState {
-  IToMAmbiguousWalkState(
+/// One partial source-ordered walk considered by I-to-M reconstruction.
+type IToMClosedWalkState {
+  IToMClosedWalkState(
     first_start_vertex: Int,
     end_vertex: Int,
     last_index: Int,
@@ -1177,14 +1177,7 @@ fn contamination_arrangement_trace_builds(
       use survivors <- result.try(
         case svg_path.subpath_is_closed(build.subpath) {
           True -> {
-            let OffsetArrangementBuild(graph:, ..) = arrangement
-            use chains <- result.try(parity_survivor_chains_from_j_segments(
-              split.segments,
-              graph,
-              protected_vertices: [],
-              ambiguous_fallback: True,
-            ))
-            use _ <- result.try(assert_survivor_chains_closed(chains))
+            let chains = i_to_m_survivor_chains(split.segments)
             Ok(j_segments_from_survivor_chains(chains))
           }
           False -> Ok(split.segments)
@@ -1424,14 +1417,7 @@ fn offside_trimmed_single_offset_subpath(
         dual,
         contaminated,
       ))
-      let OffsetArrangementBuild(graph:, ..) = arrangement
-      use chains <- result.try(parity_survivor_chains_from_j_segments(
-        split.segments,
-        graph,
-        protected_vertices: [],
-        ambiguous_fallback: True,
-      ))
-      use _ <- result.try(assert_survivor_chains_closed(chains))
+      let chains = i_to_m_survivor_chains(split.segments)
       chains
       |> list.try_map(fn(chain) {
         use subpath <- result.try(subpath_from_synchronized_segments(
@@ -5112,11 +5098,10 @@ fn finish_i_to_k_with_parity(
         True -> []
         False -> [expected_start, expected_end]
       }
-      use chains <- result.try(parity_survivor_chains_from_j_segments(
+      use chains <- result.try(i_to_k_parity_survivor_chains(
         retained,
         graph,
         protected_vertices: protected,
-        ambiguous_fallback: False,
       ))
       case chains {
         [chain] ->
@@ -5128,11 +5113,10 @@ fn finish_i_to_k_with_parity(
   }
 }
 
-fn parity_survivor_chains_from_j_segments(
+fn i_to_k_parity_survivor_chains(
   segments: List(JArrangementSplitOffsetSegment),
   graph: arrangement_graph.ArrangementGraph,
   protected_vertices protected_vertices: List(Int),
-  ambiguous_fallback ambiguous_fallback: Bool,
 ) -> Result(List(SurvivorChain), Error) {
   let retained =
     list.filter(segments, fn(segment) { !segment.deletion_candidate })
@@ -5140,19 +5124,15 @@ fn parity_survivor_chains_from_j_segments(
     [] -> Ok([])
     [_, ..] -> {
       let initial = j_segment_edge_capacities(graph, retained)
-      let reduced =
+      use assignments <- result.try(
         arrangement_graph.forced_parity_capacities_with(
           graph,
           initial,
           vertex_parities: protected_vertex_parities(protected_vertices),
         )
-      case reduced, ambiguous_fallback {
-        Error(arrangement_graph.ForcedParityAmbiguous(_)), True ->
-          Ok(i_to_m_ambiguous_survivor_chains(retained))
-        Error(error), _ -> Error(ForcedParityPruningError(error))
-        Ok(assignments), _ ->
-          j_segment_parity_chains_from_assignments(retained, assignments)
-      }
+        |> result.map_error(ForcedParityPruningError),
+      )
+      j_segment_parity_chains_from_assignments(retained, assignments)
     }
   }
 }
@@ -5212,16 +5192,6 @@ fn j_segment_survivor_edge(
     segment: segment.segment,
     j_preimage: Some(segment),
   )
-}
-
-fn assert_survivor_chains_closed(
-  chains: List(SurvivorChain),
-) -> Result(Nil, Error) {
-  case list.find(chains, fn(chain) { !chain.closed }) {
-    Error(_) -> Ok(Nil)
-    Ok(chain) ->
-      Error(InternalForcedParityOpenChain(chain.start_vertex, chain.end_vertex))
-  }
 }
 
 fn j_segments_from_survivor_chains(
@@ -5556,14 +5526,14 @@ fn set_j_segments_submerged(
   })
 }
 
-fn i_to_m_ambiguous_survivor_chains(
+fn i_to_m_survivor_chains(
   segments: List(JArrangementSplitOffsetSegment),
 ) -> List(SurvivorChain) {
-  i_to_m_maximal_closed_j_walk_decomposition(segments)
+  i_to_m_closed_j_walk_decomposition(segments)
   |> list.map(j_walk_to_survivor_chain)
 }
 
-fn i_to_m_fallback_closed_j_walk(
+fn i_to_m_closed_j_walk(
   segments: List(JArrangementSplitOffsetSegment),
 ) -> List(JArrangementSplitOffsetSegment) {
   let available =
@@ -5573,49 +5543,48 @@ fn i_to_m_fallback_closed_j_walk(
       let #(segment, _) = indexed
       !segment.deletion_candidate
     })
-  let #(_, best) =
-    i_to_m_fallback_closed_j_walk_loop(available, states: [], best: None)
+  let #(_, best) = i_to_m_closed_j_walk_loop(available, states: [], best: None)
   case best {
     None -> []
-    Some(IToMAmbiguousWalkState(segments_reversed:, ..)) ->
+    Some(IToMClosedWalkState(segments_reversed:, ..)) ->
       list.reverse(segments_reversed)
   }
 }
 
-fn i_to_m_maximal_closed_j_walk_decomposition(
+fn i_to_m_closed_j_walk_decomposition(
   segments: List(JArrangementSplitOffsetSegment),
 ) -> List(List(JArrangementSplitOffsetSegment)) {
-  let walk = i_to_m_fallback_closed_j_walk(segments)
+  let walk = i_to_m_closed_j_walk(segments)
   case walk {
     [] -> []
     [_, ..] -> {
       let remaining =
         list.filter(segments, fn(segment) { !list.contains(walk, segment) })
-      [walk, ..i_to_m_maximal_closed_j_walk_decomposition(remaining)]
+      [walk, ..i_to_m_closed_j_walk_decomposition(remaining)]
     }
   }
 }
 
-fn i_to_m_fallback_closed_j_walk_loop(
+fn i_to_m_closed_j_walk_loop(
   segments: List(#(JArrangementSplitOffsetSegment, Int)),
-  states states: List(IToMAmbiguousWalkState),
-  best best: Option(IToMAmbiguousWalkState),
-) -> #(List(IToMAmbiguousWalkState), Option(IToMAmbiguousWalkState)) {
+  states states: List(IToMClosedWalkState),
+  best best: Option(IToMClosedWalkState),
+) -> #(List(IToMClosedWalkState), Option(IToMClosedWalkState)) {
   case segments {
     [] -> #(states, best)
     [indexed, ..rest] -> {
       let #(segment, index) = indexed
-      let starting = i_to_m_fallback_walk_start(segment, index)
+      let starting = i_to_m_closed_walk_start(segment, index)
       let extended =
         states
         |> list.filter(fn(state) { state.end_vertex == segment.start_vertex })
         |> list.map(fn(state) {
-          i_to_m_fallback_walk_extend(state, segment, index)
+          i_to_m_closed_walk_extend(state, segment, index)
         })
       let new_states = [starting, ..extended]
       let states =
         new_states
-        |> list.fold(states, insert_better_i_to_m_fallback_walk_state)
+        |> list.fold(states, insert_better_i_to_m_closed_walk_state)
       let best =
         new_states
         |> list.filter(fn(state) {
@@ -5625,42 +5594,42 @@ fn i_to_m_fallback_closed_j_walk_loop(
           case best {
             None -> Some(candidate)
             Some(current) ->
-              case i_to_m_fallback_walk_is_better(candidate, current) {
+              case i_to_m_closed_walk_is_better(candidate, current) {
                 True -> Some(candidate)
                 False -> best
               }
           }
         })
-      i_to_m_fallback_closed_j_walk_loop(rest, states:, best:)
+      i_to_m_closed_j_walk_loop(rest, states:, best:)
     }
   }
 }
 
-fn i_to_m_fallback_walk_start(
+fn i_to_m_closed_walk_start(
   segment: JArrangementSplitOffsetSegment,
   index: Int,
-) -> IToMAmbiguousWalkState {
-  IToMAmbiguousWalkState(
+) -> IToMClosedWalkState {
+  IToMClosedWalkState(
     first_start_vertex: segment.start_vertex,
     end_vertex: segment.end_vertex,
     last_index: index,
-    retained_span: i_to_m_fallback_segment_span(segment),
+    retained_span: i_to_m_segment_span(segment),
     skipped_runs: 0,
     indices_reversed: [index],
     segments_reversed: [segment],
   )
 }
 
-fn i_to_m_fallback_walk_extend(
-  state: IToMAmbiguousWalkState,
+fn i_to_m_closed_walk_extend(
+  state: IToMClosedWalkState,
   segment: JArrangementSplitOffsetSegment,
   index: Int,
-) -> IToMAmbiguousWalkState {
-  IToMAmbiguousWalkState(
+) -> IToMClosedWalkState {
+  IToMClosedWalkState(
     ..state,
     end_vertex: segment.end_vertex,
     last_index: index,
-    retained_span: state.retained_span +. i_to_m_fallback_segment_span(segment),
+    retained_span: state.retained_span +. i_to_m_segment_span(segment),
     skipped_runs: state.skipped_runs
       + case index == state.last_index + 1 {
         True -> 0
@@ -5671,16 +5640,14 @@ fn i_to_m_fallback_walk_extend(
   )
 }
 
-fn i_to_m_fallback_segment_span(
-  segment: JArrangementSplitOffsetSegment,
-) -> Float {
+fn i_to_m_segment_span(segment: JArrangementSplitOffsetSegment) -> Float {
   float.absolute_value(segment.preimage_to -. segment.preimage_from)
 }
 
-fn insert_better_i_to_m_fallback_walk_state(
-  states: List(IToMAmbiguousWalkState),
-  candidate: IToMAmbiguousWalkState,
-) -> List(IToMAmbiguousWalkState) {
+fn insert_better_i_to_m_closed_walk_state(
+  states: List(IToMClosedWalkState),
+  candidate: IToMClosedWalkState,
+) -> List(IToMClosedWalkState) {
   case states {
     [] -> [candidate]
     [first, ..rest] -> {
@@ -5690,22 +5657,22 @@ fn insert_better_i_to_m_fallback_walk_state(
         && first.last_index == candidate.last_index
       case same_state {
         True ->
-          case i_to_m_fallback_walk_is_better(candidate, first) {
+          case i_to_m_closed_walk_is_better(candidate, first) {
             True -> [candidate, ..rest]
             False -> states
           }
         False -> [
           first,
-          ..insert_better_i_to_m_fallback_walk_state(rest, candidate)
+          ..insert_better_i_to_m_closed_walk_state(rest, candidate)
         ]
       }
     }
   }
 }
 
-fn i_to_m_fallback_walk_is_better(
-  candidate: IToMAmbiguousWalkState,
-  current: IToMAmbiguousWalkState,
+fn i_to_m_closed_walk_is_better(
+  candidate: IToMClosedWalkState,
+  current: IToMClosedWalkState,
 ) -> Bool {
   case
     candidate.retained_span >. current.retained_span,
