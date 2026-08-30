@@ -95,6 +95,38 @@ pub fn forced_parity_reports_unresolved_diamond_choice_test() {
   list.length(vertices) |> should.equal(2)
 }
 
+pub fn forced_parity_reduces_unique_edge_at_higher_threshold_test() {
+  let a = svg_path.Point(0.0, 0.0)
+  let b = svg_path.Point(10.0, 0.0)
+  let c = svg_path.Point(5.0, 10.0)
+  let assert Ok(arrangement_graph.ArrangementSegmentBuild(graph:, ..)) =
+    arrangement_graph.build_with(
+      [
+        svg_path.Line(start: a, end: b),
+        svg_path.Line(start: b, end: c),
+        svg_path.Line(start: c, end: a),
+      ],
+      vertex_tolerance: tolerance,
+      minimum_chord:,
+      endpoint_sliver_tolerance: 0.0,
+    )
+  let arrangement_graph.ArrangementGraph(edges:, ..) = graph
+  let assert [first, second, third] = edges
+  let assert Ok(reduced) =
+    arrangement_graph.forced_parity_capacities_with(
+      graph,
+      [
+        arrangement_graph.EdgeCapacityAssignment(first.id, 2),
+        arrangement_graph.EdgeCapacityAssignment(second.id, 3),
+        arrangement_graph.EdgeCapacityAssignment(third.id, 2),
+      ],
+      vertex_parities: [],
+    )
+  reduced
+  |> list.map(fn(assignment) { assignment.capacity })
+  |> should.equal([2, 2, 2])
+}
+
 pub fn forced_parity_reports_capacity_infeasibility_test() {
   let line =
     svg_path.Line(
@@ -133,6 +165,42 @@ pub fn forced_parity_sums_forward_and_reverse_capacity_test() {
   let assert Ok([arrangement_graph.EdgeCapacityAssignment(capacity:, ..)]) =
     arrangement_graph.forced_parity_capacities(graph, vertex_parities: [])
   capacity |> should.equal(2)
+}
+
+pub fn forced_parity_accepts_explicit_initial_capacities_test() {
+  let line =
+    svg_path.Line(
+      start: svg_path.Point(0.0, 0.0),
+      end: svg_path.Point(10.0, 0.0),
+    )
+  let assert Ok(arrangement_graph.ArrangementSegmentBuild(graph:, ..)) =
+    arrangement_graph.build_with(
+      [line, line],
+      vertex_tolerance: tolerance,
+      minimum_chord:,
+      endpoint_sliver_tolerance: 0.0,
+    )
+  let assert arrangement_graph.ArrangementGraph(
+    vertices: [start, end],
+    edges: [edge],
+    ..,
+  ) = graph
+
+  let assert Ok([arrangement_graph.EdgeCapacityAssignment(capacity:, ..)]) =
+    arrangement_graph.forced_parity_capacities_with(
+      graph,
+      [arrangement_graph.EdgeCapacityAssignment(edge.id, 0)],
+      vertex_parities: [],
+    )
+  capacity |> should.equal(0)
+
+  let assert Ok([arrangement_graph.EdgeCapacityAssignment(capacity:, ..)]) =
+    arrangement_graph.forced_parity_capacities_with(
+      graph,
+      [arrangement_graph.EdgeCapacityAssignment(edge.id, 2)],
+      vertex_parities: [#(start.id, 1), #(end.id, 1)],
+    )
+  capacity |> should.equal(1)
 }
 
 pub fn forced_parity_rejects_invalid_vertex_parities_test() {

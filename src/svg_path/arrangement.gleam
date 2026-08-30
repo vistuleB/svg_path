@@ -130,6 +130,10 @@ pub type ForcedParityError {
   ForcedParityMissingVertex(vertex: Int)
   ForcedParityDuplicateVertex(vertex: Int)
   ForcedParityInvalidVertexParity(vertex: Int, parity: Int)
+  ForcedParityMissingEdgeCapacity(edge_id: Int)
+  ForcedParityDuplicateEdgeCapacity(edge_id: Int)
+  ForcedParityUnknownEdgeCapacity(edge_id: Int)
+  ForcedParityInvalidEdgeCapacity(edge_id: Int, capacity: Int)
   ForcedParityInfeasible(vertex: Int)
   ForcedParityAmbiguous(vertices: List(Int))
 }
@@ -1935,7 +1939,6 @@ pub fn forced_parity_capacities(
   graph: ArrangementGraph,
   vertex_parities vertex_parities: List(#(Int, Int)),
 ) -> Result(List(EdgeCapacityAssignment), ForcedParityError) {
-  use _ <- result.try(validate_forced_parities(graph, vertex_parities))
   let ArrangementGraph(edges:, ..) = graph
   let assignments =
     list.map(edges, fn(edge) {
@@ -1944,7 +1947,62 @@ pub fn forced_parity_capacities(
         capacity: edge.forward_multiplicity + edge.reverse_multiplicity,
       )
     })
-  forced_parity_reduce(graph, vertex_parities, assignments)
+  forced_parity_capacities_with(graph, assignments, vertex_parities:)
+}
+
+/// Apply forced parity reduction from explicit undirected edge capacities.
+///
+/// The graph supplies topology only. `initial_capacities` must contain exactly
+/// one nonnegative assignment for every graph edge; zero-capacity edges remain
+/// present in the graph but do not participate in a forced reduction.
+@internal
+pub fn forced_parity_capacities_with(
+  graph: ArrangementGraph,
+  initial_capacities: List(EdgeCapacityAssignment),
+  vertex_parities vertex_parities: List(#(Int, Int)),
+) -> Result(List(EdgeCapacityAssignment), ForcedParityError) {
+  use _ <- result.try(validate_forced_parities(graph, vertex_parities))
+  use _ <- result.try(validate_edge_capacities(graph, initial_capacities))
+  forced_parity_reduce(graph, vertex_parities, initial_capacities)
+}
+
+fn validate_edge_capacities(
+  graph: ArrangementGraph,
+  assignments: List(EdgeCapacityAssignment),
+) -> Result(Nil, ForcedParityError) {
+  let ArrangementGraph(edges:, ..) = graph
+  use _ <- result.try(
+    assignments
+    |> list.fold(Ok(Nil), fn(valid, assignment) {
+      use _ <- result.try(valid)
+      let EdgeCapacityAssignment(edge_id:, capacity:) = assignment
+      case capacity < 0 {
+        True -> Error(ForcedParityInvalidEdgeCapacity(edge_id, capacity))
+        False ->
+          case list.any(edges, fn(edge) { edge.id == edge_id }) {
+            False -> Error(ForcedParityUnknownEdgeCapacity(edge_id))
+            True ->
+              case
+                assignments
+                |> list.filter(fn(other) { other.edge_id == edge_id })
+                |> list.length
+                |> fn(count) { count > 1 }
+              {
+                True -> Error(ForcedParityDuplicateEdgeCapacity(edge_id))
+                False -> Ok(Nil)
+              }
+          }
+      }
+    }),
+  )
+  edges
+  |> list.fold(Ok(Nil), fn(valid, edge) {
+    use _ <- result.try(valid)
+    case list.any(assignments, fn(candidate) { candidate.edge_id == edge.id }) {
+      True -> Ok(Nil)
+      False -> Error(ForcedParityMissingEdgeCapacity(edge.id))
+    }
+  })
 }
 
 fn validate_forced_parities(
@@ -1990,15 +2048,14 @@ fn forced_parity_reduce(
     Ok(state) -> Error(ForcedParityInfeasible(state.vertex))
     Error(_) ->
       case
-        list.find(mismatched, fn(state) {
-          list.length(state.positive_edges) == 1
+        list.find_map(mismatched, fn(state) {
+          forced_parity_reduction_edge(state, assignments, threshold: 1)
         })
       {
-        Ok(VertexParityState(positive_edges: [edge_id], ..)) ->
+        Ok(edge_id) ->
           assignments
           |> reduce_edge_capacity(edge_id)
           |> forced_parity_reduce(graph, vertex_parities, _)
-        Ok(_) -> panic as "positive edge count changed"
         Error(_) ->
           case mismatched {
             [] -> Ok(assignments)
@@ -2010,6 +2067,26 @@ fn forced_parity_reduce(
               )
           }
       }
+  }
+}
+
+fn forced_parity_reduction_edge(
+  state: VertexParityState,
+  assignments: List(EdgeCapacityAssignment),
+  threshold threshold: Int,
+) -> Result(Int, Nil) {
+  let qualifying =
+    state.positive_edges
+    |> list.filter(fn(edge_id) {
+      let assert Ok(EdgeCapacityAssignment(capacity:, ..)) =
+        list.find(assignments, fn(assignment) { assignment.edge_id == edge_id })
+      capacity >= threshold
+    })
+  case qualifying {
+    [edge_id] -> Ok(edge_id)
+    [] -> Error(Nil)
+    [_, _, ..] ->
+      forced_parity_reduction_edge(state, assignments, threshold: threshold + 1)
   }
 }
 

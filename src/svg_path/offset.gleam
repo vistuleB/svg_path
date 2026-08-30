@@ -179,6 +179,23 @@ pub type Error {
 
   /// Forced-parity band reconstruction produced an open chain.
   InternalForcedParityOpenChain(start_vertex: Int, end_vertex: Int)
+
+  /// I-to-K parity reconstruction produced the wrong number of subpaths.
+  InternalIToKSubpathCount(actual: Int)
+
+  /// Closed I-to-K input reconstructed as an open subpath.
+  InternalIToKExpectedClosedSubpath
+
+  /// Open I-to-K input did not preserve its original endpoint vertices.
+  InternalIToKEndpointMismatch(
+    expected_start: Int,
+    actual_start: Int,
+    expected_end: Int,
+    actual_end: Int,
+  )
+
+  /// I-to-K reconstruction lost the J-occurrence provenance of an edge.
+  InternalIToKMissingJPreimage(edge_id: Int)
 }
 
 /// Join style used when offsetting adjacent subpath segments.
@@ -774,6 +791,7 @@ type SurvivorEdge {
     start_vertex: Int,
     end_vertex: Int,
     segment: svg_path.Segment,
+    j_preimage: Option(JArrangementSplitOffsetSegment),
   )
 }
 
@@ -1703,9 +1721,10 @@ fn trim_single_offset_arrangement(
     winding:,
     side_sampling_distance: submerged_side_sampling_distance,
   ))
-  use without_dangling <- result.try(
-    forced_parity_burn(without_submerged, protected_vertices),
-  )
+  use without_dangling <- result.try(forced_parity_burn(
+    without_submerged,
+    protected_vertices,
+  ))
   use loops <- result.try(source_order_survivor_loops(
     build,
     without_dangling,
@@ -2392,6 +2411,7 @@ fn source_order_survivor_directed_edges(
               start_vertex:,
               end_vertex:,
               segment:,
+              j_preimage: None,
             )
           source_order_survivor_directed_edges(rest, available, edges: [
             survivor,
@@ -2566,6 +2586,7 @@ fn reverse_survivor_edges(
         start_vertex:,
         end_vertex:,
         segment:,
+        j_preimage:,
       ),
       ..rest
     ] ->
@@ -2576,6 +2597,7 @@ fn reverse_survivor_edges(
           start_vertex: end_vertex,
           end_vertex: start_vertex,
           segment: svg_path.segment_reverse(segment),
+          j_preimage:,
         ),
         ..reversed
       ])
@@ -5119,32 +5141,165 @@ fn trim_i_culled_offset_subpath(
         winding,
       ))
       let rescued = rescue_j_submerged_runs(split)
-      let survivors = case closed {
-        True -> canonical_closed_j_walk(rescued)
-        False -> burn_exposed_j_segments(rescued)
+      finish_i_to_k_with_parity(split, rescued, build)
+    }
+  }
+}
+
+fn finish_i_to_k_with_parity(
+  split: JArrangementSplitOffsetSubpath,
+  rescued: List(JArrangementSplitOffsetSegment),
+  build: OffsetArrangementBuild,
+) -> Result(Option(KTrimmedOffsetSubpath), Error) {
+  let JArrangementSplitOffsetSubpath(segments: original, closed:, ..) = split
+  let retained =
+    list.filter(rescued, fn(segment) { !segment.deletion_candidate })
+  case retained {
+    [] -> Ok(None)
+    [_, ..] -> {
+      use endpoints <- result.try(i_to_k_expected_endpoints(original, closed))
+      let #(expected_start, expected_end) = endpoints
+      let OffsetArrangementBuild(graph:, ..) = build
+      let initial = i_to_k_initial_edge_capacities(graph, retained)
+      let protected = case closed {
+        True -> []
+        False -> [expected_start, expected_end]
       }
-      case survivors {
-        [] -> Ok(None)
-        [_, ..] -> {
-          use _ <- result.try(case j_segments_form_ordered_walk(survivors) {
-            True -> Ok(Nil)
-            False -> Error(InternalSurvivorOrderMismatch)
-          })
-          Ok(
-            Some(KTrimmedOffsetSubpath(
-              segments: list.map(survivors, fn(segment) {
-                KTrimmedOffsetSegment(
-                  segment: segment.segment,
-                  preimage: segment,
-                )
-              }),
-              closed: closed && j_segments_form_closed_walk(survivors),
-            )),
-          )
-        }
+      use assignments <- result.try(
+        arrangement_graph.forced_parity_capacities_with(
+          graph,
+          initial,
+          vertex_parities: protected_vertex_parities(protected),
+        )
+        |> result.map_error(ForcedParityPruningError),
+      )
+      let available =
+        assignments
+        |> list.filter_map(fn(assignment) {
+          case assignment.capacity > 0 {
+            True ->
+              Ok(AvailableEdgeCapacity(assignment.edge_id, assignment.capacity))
+            False -> Error(Nil)
+          }
+        })
+      use chain_result <- result.try(
+        j_source_order_survivor_chains(retained, available, open: []),
+      )
+      let #(chains, remaining) = chain_result
+      use _ <- result.try(assert_capacities_consumed(remaining))
+      case chains {
+        [chain] ->
+          i_to_k_subpath_from_chain(chain, closed, expected_start, expected_end)
+          |> result.map(Some)
+        _ -> Error(InternalIToKSubpathCount(list.length(chains)))
       }
     }
   }
+}
+
+fn i_to_k_expected_endpoints(
+  segments: List(JArrangementSplitOffsetSegment),
+  closed: Bool,
+) -> Result(#(Int, Int), Error) {
+  case segments {
+    [] -> Error(InternalSegmentImageCountMismatch)
+    [first, ..] -> {
+      use last <- result.try(
+        last_j_segment(segments)
+        |> result.map_error(fn(_) { InternalSegmentImageCountMismatch }),
+      )
+      case closed {
+        True -> Ok(#(first.start_vertex, first.start_vertex))
+        False -> Ok(#(first.start_vertex, last.end_vertex))
+      }
+    }
+  }
+}
+
+fn i_to_k_initial_edge_capacities(
+  graph: arrangement_graph.ArrangementGraph,
+  retained: List(JArrangementSplitOffsetSegment),
+) -> List(arrangement_graph.EdgeCapacityAssignment) {
+  let arrangement_graph.ArrangementGraph(edges:, ..) = graph
+  list.map(edges, fn(edge) {
+    arrangement_graph.EdgeCapacityAssignment(
+      edge.id,
+      retained
+        |> list.filter(fn(segment) { segment.edge_id == edge.id })
+        |> list.length,
+    )
+  })
+}
+
+fn j_source_order_survivor_chains(
+  segments: List(JArrangementSplitOffsetSegment),
+  available: List(AvailableEdgeCapacity),
+  open open: List(SurvivorChain),
+) -> Result(#(List(SurvivorChain), List(AvailableEdgeCapacity)), Error) {
+  case segments {
+    [] -> Ok(#(list.reverse(open), available))
+    [segment, ..rest] ->
+      case take_edge_capacity(segment.edge_id, available) {
+        Error(Nil) -> j_source_order_survivor_chains(rest, available, open:)
+        Ok(available) -> {
+          let edge =
+            SurvivorEdge(
+              edge_id: segment.edge_id,
+              reversed: False,
+              start_vertex: segment.start_vertex,
+              end_vertex: segment.end_vertex,
+              segment: segment.segment,
+              j_preimage: Some(segment),
+            )
+          j_source_order_survivor_chains(
+            rest,
+            available,
+            open: append_source_order_edge(edge, open:),
+          )
+        }
+      }
+  }
+}
+
+fn i_to_k_subpath_from_chain(
+  chain: SurvivorChain,
+  expected_closed: Bool,
+  expected_start: Int,
+  expected_end: Int,
+) -> Result(KTrimmedOffsetSubpath, Error) {
+  use chain <- result.try(case expected_closed {
+    True ->
+      case chain.closed {
+        True -> Ok(chain)
+        False -> Error(InternalIToKExpectedClosedSubpath)
+      }
+    False ->
+      case
+        chain.start_vertex == expected_start && chain.end_vertex == expected_end,
+        chain.start_vertex == expected_end && chain.end_vertex == expected_start
+      {
+        True, _ -> Ok(chain)
+        False, True -> Ok(reverse_survivor_chain(chain))
+        False, False ->
+          Error(InternalIToKEndpointMismatch(
+            expected_start:,
+            actual_start: chain.start_vertex,
+            expected_end:,
+            actual_end: chain.end_vertex,
+          ))
+      }
+  })
+  use segments <- result.try(
+    chain.edges
+    |> list.try_map(fn(edge) {
+      case edge.j_preimage {
+        None -> Error(InternalIToKMissingJPreimage(edge.edge_id))
+        Some(preimage) ->
+          Ok(KTrimmedOffsetSegment(segment: edge.segment, preimage:))
+      }
+    }),
+  )
+  Ok(KTrimmedOffsetSubpath(segments:, closed: expected_closed))
 }
 
 fn j_subpath_from_i_arrangement(
@@ -5577,68 +5732,6 @@ fn replace_last_j_run(
   }
 }
 
-fn burn_exposed_j_segments(
-  segments: List(JArrangementSplitOffsetSegment),
-) -> List(JArrangementSplitOffsetSegment) {
-  burn_exposed_j_segments_until_stable(
-    list.filter(segments, fn(segment) { !segment.deletion_candidate }),
-  )
-}
-
-fn burn_exposed_j_segments_until_stable(
-  segments: List(JArrangementSplitOffsetSegment),
-) -> List(JArrangementSplitOffsetSegment) {
-  case segments {
-    [] | [_] -> segments
-    [first, ..] -> {
-      let assert Ok(last) = last_j_segment(segments)
-      let retained =
-        retain_supported_j_segments(
-          segments,
-          first.start_vertex,
-          last.end_vertex,
-          earlier_ends: [],
-          retained: [],
-        )
-      case list.length(retained) == list.length(segments) {
-        True -> retained
-        False -> burn_exposed_j_segments_until_stable(retained)
-      }
-    }
-  }
-}
-
-fn retain_supported_j_segments(
-  segments: List(JArrangementSplitOffsetSegment),
-  protected_start: Int,
-  protected_end: Int,
-  earlier_ends earlier_ends: List(Int),
-  retained retained: List(JArrangementSplitOffsetSegment),
-) -> List(JArrangementSplitOffsetSegment) {
-  case segments {
-    [] -> list.reverse(retained)
-    [first, ..rest] -> {
-      let start_supported =
-        first.start_vertex == protected_start
-        || list.contains(earlier_ends, first.start_vertex)
-      let end_supported =
-        first.end_vertex == protected_end
-        || list.any(rest, fn(later) { later.start_vertex == first.end_vertex })
-      let retained = case start_supported && end_supported {
-        True -> [first, ..retained]
-        False -> retained
-      }
-      retain_supported_j_segments(
-        rest,
-        protected_start,
-        protected_end,
-        earlier_ends: [first.end_vertex, ..earlier_ends],
-        retained:,
-      )
-    }
-  }
-}
-
 fn last_j_segment(
   segments: List(JArrangementSplitOffsetSegment),
 ) -> Result(JArrangementSplitOffsetSegment, Nil) {
@@ -5646,29 +5739,6 @@ fn last_j_segment(
     [] -> Error(Nil)
     [segment] -> Ok(segment)
     [_, ..rest] -> last_j_segment(rest)
-  }
-}
-
-fn j_segments_form_closed_walk(
-  segments: List(JArrangementSplitOffsetSegment),
-) -> Bool {
-  case segments {
-    [] -> False
-    [first, ..] -> {
-      let assert Ok(last) = last_j_segment(segments)
-      first.start_vertex == last.end_vertex
-    }
-  }
-}
-
-fn j_segments_form_ordered_walk(
-  segments: List(JArrangementSplitOffsetSegment),
-) -> Bool {
-  case segments {
-    [] | [_] -> True
-    [first, second, ..rest] ->
-      first.end_vertex == second.start_vertex
-      && j_segments_form_ordered_walk([second, ..rest])
   }
 }
 
