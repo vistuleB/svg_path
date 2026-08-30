@@ -608,8 +608,7 @@ type JArrangementSplitOffsetSubpath {
   )
 }
 
-/// One partial source-ordered walk considered by the canonical J-walk dynamic
-/// program. Occurrence indices only increase as segments are appended.
+/// One partial source-ordered walk considered by the closed-walk fallback.
 type JOrderedWalkState {
   JOrderedWalkState(
     first_start_vertex: Int,
@@ -1183,12 +1182,31 @@ fn contamination_arrangement_trace_builds(
         dual,
         contaminated,
       ))
-      let survivors = case svg_path.subpath_is_closed(build.subpath) {
-        True ->
-          maximal_closed_j_walk_decomposition(split.segments)
-          |> list.flatten
-        False -> split.segments
-      }
+      use survivors <- result.try(
+        case svg_path.subpath_is_closed(build.subpath) {
+          True -> {
+            let OffsetArrangementBuild(graph:, ..) = arrangement
+            use chains <- result.try(j_parity_survivor_chains(
+              split.segments,
+              graph,
+              protected_vertices: [],
+              ambiguous_fallback: True,
+            ))
+            use _ <- result.try(assert_survivor_chains_closed(chains))
+            Ok(
+              chains
+              |> list.flat_map(fn(chain) { chain.edges })
+              |> list.filter_map(fn(edge) {
+                case edge.j_preimage {
+                  Some(preimage) -> Ok(preimage)
+                  None -> Error(Nil)
+                }
+              }),
+            )
+          }
+          False -> Ok(split.segments)
+        },
+      )
       let survivor_edge_ids =
         list.map(survivors, fn(segment) { segment.edge_id })
       let traced =
@@ -1423,10 +1441,18 @@ fn offside_trimmed_single_offset_subpath(
         dual,
         contaminated,
       ))
-      maximal_closed_j_walk_decomposition(split.segments)
-      |> list.try_map(fn(survivors) {
+      let OffsetArrangementBuild(graph:, ..) = arrangement
+      use chains <- result.try(j_parity_survivor_chains(
+        split.segments,
+        graph,
+        protected_vertices: [],
+        ambiguous_fallback: True,
+      ))
+      use _ <- result.try(assert_survivor_chains_closed(chains))
+      chains
+      |> list.try_map(fn(chain) {
         use subpath <- result.try(subpath_from_synchronized_segments(
-          list.map(survivors, fn(segment) { segment.segment }),
+          list.map(chain.edges, fn(edge) { edge.segment }),
           closed: True,
           tolerance: options.fitting.tolerance,
         ))
@@ -5160,33 +5186,16 @@ fn finish_i_to_k_with_parity(
       use endpoints <- result.try(i_to_k_expected_endpoints(original, closed))
       let #(expected_start, expected_end) = endpoints
       let OffsetArrangementBuild(graph:, ..) = build
-      let initial = i_to_k_initial_edge_capacities(graph, retained)
       let protected = case closed {
         True -> []
         False -> [expected_start, expected_end]
       }
-      use assignments <- result.try(
-        arrangement_graph.forced_parity_capacities_with(
-          graph,
-          initial,
-          vertex_parities: protected_vertex_parities(protected),
-        )
-        |> result.map_error(ForcedParityPruningError),
-      )
-      let available =
-        assignments
-        |> list.filter_map(fn(assignment) {
-          case assignment.capacity > 0 {
-            True ->
-              Ok(AvailableEdgeCapacity(assignment.edge_id, assignment.capacity))
-            False -> Error(Nil)
-          }
-        })
-      use chain_result <- result.try(
-        j_source_order_survivor_chains(retained, available, open: []),
-      )
-      let #(chains, remaining) = chain_result
-      use _ <- result.try(assert_capacities_consumed(remaining))
+      use chains <- result.try(j_parity_survivor_chains(
+        retained,
+        graph,
+        protected_vertices: protected,
+        ambiguous_fallback: False,
+      ))
       case chains {
         [chain] ->
           i_to_k_subpath_from_chain(chain, closed, expected_start, expected_end)
@@ -5194,6 +5203,105 @@ fn finish_i_to_k_with_parity(
         _ -> Error(InternalIToKSubpathCount(list.length(chains)))
       }
     }
+  }
+}
+
+fn j_parity_survivor_chains(
+  segments: List(JArrangementSplitOffsetSegment),
+  graph: arrangement_graph.ArrangementGraph,
+  protected_vertices protected_vertices: List(Int),
+  ambiguous_fallback ambiguous_fallback: Bool,
+) -> Result(List(SurvivorChain), Error) {
+  let retained =
+    list.filter(segments, fn(segment) { !segment.deletion_candidate })
+  case retained {
+    [] -> Ok([])
+    [_, ..] -> {
+      let initial = i_to_k_initial_edge_capacities(graph, retained)
+      let reduced =
+        arrangement_graph.forced_parity_capacities_with(
+          graph,
+          initial,
+          vertex_parities: protected_vertex_parities(protected_vertices),
+        )
+      case reduced, ambiguous_fallback {
+        Error(arrangement_graph.ForcedParityAmbiguous(_)), True ->
+          Ok(
+            maximal_closed_j_walk_decomposition(retained)
+            |> list.map(j_walk_to_survivor_chain),
+          )
+        Error(error), _ -> Error(ForcedParityPruningError(error))
+        Ok(assignments), _ ->
+          j_parity_chains_from_assignments(retained, assignments)
+      }
+    }
+  }
+}
+
+fn j_parity_chains_from_assignments(
+  retained: List(JArrangementSplitOffsetSegment),
+  assignments: List(arrangement_graph.EdgeCapacityAssignment),
+) -> Result(List(SurvivorChain), Error) {
+  let available =
+    assignments
+    |> list.filter_map(fn(assignment) {
+      case assignment.capacity > 0 {
+        True ->
+          Ok(AvailableEdgeCapacity(assignment.edge_id, assignment.capacity))
+        False -> Error(Nil)
+      }
+    })
+  use result <- result.try(
+    j_source_order_survivor_chains(retained, available, open: []),
+  )
+  let #(chains, remaining) = result
+  use _ <- result.try(assert_capacities_consumed(remaining))
+  Ok(chains)
+}
+
+fn j_walk_to_survivor_chain(
+  walk: List(JArrangementSplitOffsetSegment),
+) -> SurvivorChain {
+  let assert [first, ..rest] = walk
+  let initial =
+    SurvivorChain(
+      start_vertex: first.start_vertex,
+      end_vertex: first.end_vertex,
+      edges: [j_segment_survivor_edge(first)],
+      closed: first.start_vertex == first.end_vertex,
+    )
+  rest
+  |> list.fold(initial, fn(chain, segment) {
+    SurvivorChain(
+      ..chain,
+      end_vertex: segment.end_vertex,
+      edges: [j_segment_survivor_edge(segment), ..chain.edges],
+      closed: chain.start_vertex == segment.end_vertex,
+    )
+  })
+  |> fn(chain) { SurvivorChain(..chain, edges: list.reverse(chain.edges)) }
+}
+
+fn j_segment_survivor_edge(
+  segment: JArrangementSplitOffsetSegment,
+) -> SurvivorEdge {
+  SurvivorEdge(
+    edge_id: segment.edge_id,
+    reversed: False,
+    start_vertex: segment.start_vertex,
+    end_vertex: segment.end_vertex,
+    segment: segment.segment,
+    j_preimage: Some(segment),
+  )
+}
+
+fn assert_survivor_chains_closed(
+  chains: List(SurvivorChain),
+) -> Result(Nil, Error) {
+  case list.find(chains, fn(chain) { !chain.closed }) {
+    Error(_) -> Ok(Nil)
+    Ok(chain) ->
+      Error(InternalForcedParityOpenChain(chain.start_vertex, chain.end_vertex))
   }
 }
 
@@ -5516,12 +5624,6 @@ fn set_j_segments_submerged(
   })
 }
 
-/// Return one canonical closed walk through source-ordered J occurrences.
-///
-/// This is a longest-path dynamic program over the DAG whose transitions move
-/// strictly forward in occurrence order and join equal arrangement vertices.
-/// Closure is a terminal condition, never a transition back to an earlier
-/// occurrence. Consequently no segment occurrence can be repeated.
 fn canonical_closed_j_walk(
   segments: List(JArrangementSplitOffsetSegment),
 ) -> List(JArrangementSplitOffsetSegment) {
@@ -5541,11 +5643,6 @@ fn canonical_closed_j_walk(
   }
 }
 
-/// Decompose the available J-segment occurrences into a maximal deterministic
-/// collection of edge-disjoint closed walks.
-///
-/// This is used only by contamination I-to-M pruning. I-to-K trimming retains
-/// its single canonical-walk behavior.
 fn maximal_closed_j_walk_decomposition(
   segments: List(JArrangementSplitOffsetSegment),
 ) -> List(List(JArrangementSplitOffsetSegment)) {
