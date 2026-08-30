@@ -558,6 +558,33 @@ pub fn package_title_s_iterated_offset_keeps_three_closed_first_offset_subpaths_
     offset.path_with(first_offset, distance: 1.0, options:)
 }
 
+pub fn final_cusp_trimming_handles_open_side_umbrella_test() {
+  let p1 = svg_path.Point(0.0, -1.0)
+  let p2 = svg_path.Point(0.8660254037844386, -0.5)
+  let p3 = svg_path.Point(0.8660254037844386, 0.5)
+  let p4 = svg_path.Point(0.0, 1.0)
+  let p5 = svg_path.Point(-0.8660254037844386, 0.5)
+  let p6 = svg_path.Point(-0.8660254037844386, -0.5)
+  let source =
+    svg_path.subpath_assert([
+      svg_path.Line(p1, p6),
+      svg_path.Line(p6, p3),
+      svg_path.Line(p3, p2),
+      svg_path.Line(p2, p5),
+      svg_path.Line(p5, p4),
+    ])
+  let options = offset.Options(..offset.default_options(), join: offset.Round)
+  let assert Ok(result) =
+    offset.internal_path_with_final_cusp_trimming(
+      svg_path.Path([source]),
+      distance: 0.15,
+      options:,
+    )
+  let assert [subpath] = svg_path.path_subpaths(result)
+  assert !svg_path.subpath_is_closed(subpath)
+  assert !list.is_empty(svg_path.subpath_segments(subpath))
+}
+
 pub fn package_title_v_1_05_public_offset_filters_micro_loops_test() {
   let assert Ok(contents) = read_file("examples/debug/package_title.svg")
   let assert Ok(title) = parse.path(first_path_data(contents))

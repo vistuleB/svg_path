@@ -245,6 +245,12 @@ type SingleOffsetLoopTrace {
   SingleOffsetLoopTrace(loops: List(ArrangementLoop))
 }
 
+/// Experimental choice of the final single-offset trimming operation.
+type FinalSingleOffsetTrimming {
+  SubmergedTrimming
+  SubmergedRunWithReversedTrimming
+}
+
 /// Cubic fitting controls used by the recursive offset builders.
 ///
 /// `tolerance` bounds the sampled geometric error of a fitted offset curve,
@@ -577,6 +583,30 @@ type ICulledOffsetSubpath {
   )
 }
 
+/// A position-independent offset segment retained across trimming stages.
+///
+/// `preimage` and its parameter interval remain stable while trimming nodes,
+/// shortens, deletes, and reconstructs the current `segment` geometry.
+type TracedOffsetSegment {
+  TracedOffsetSegment(
+    segment: svg_path.Segment,
+    preimage: HPreimageSegment,
+    preimage_from: Float,
+    preimage_to: Float,
+    reversed: Bool,
+  )
+}
+
+/// One current offset walk with segment-level construction provenance.
+type TracedOffsetSubpath {
+  TracedOffsetSubpath(
+    segments: List(TracedOffsetSegment),
+    closed: Bool,
+    side: BandSide,
+    source_subpath_index: Int,
+  )
+}
+
 /// One I-segment section in original traversal order after arrangement noding.
 type JArrangementSplitOffsetSegment {
   JArrangementSplitOffsetSegment(
@@ -625,11 +655,129 @@ type KTrimmedOffsetSubpath {
   KTrimmedOffsetSubpath(segments: List(KTrimmedOffsetSegment), closed: Bool)
 }
 
-/// One single-offset side after offside trimming.
-type MOffsideTrimmedOffsetSubpath {
-  MOffsideTrimmedOffsetSubpath(
-    subpath: svg_path.Subpath,
-    source_subpath_index: Int,
+fn traced_subpath_from_i(
+  subpath: ICulledOffsetSubpath,
+  source_subpath_index: Int,
+) -> TracedOffsetSubpath {
+  let ICulledOffsetSubpath(segments:, closed:, side:) = subpath
+  TracedOffsetSubpath(
+    segments: list.map(segments, fn(segment) {
+      TracedOffsetSegment(
+        segment: segment.segment,
+        preimage: segment.preimage,
+        preimage_from: segment.preimage_from,
+        preimage_to: segment.preimage_to,
+        reversed: h_preimage_is_reversed(segment.preimage),
+      )
+    }),
+    closed:,
+    side:,
+    source_subpath_index:,
+  )
+}
+
+fn traced_subpath_from_survivor_chain(
+  chain: SurvivorChain,
+  side: BandSide,
+  source_subpath_index: Int,
+) -> Result(TracedOffsetSubpath, Error) {
+  use segments <- result.try(
+    chain.edges
+    |> list.map(fn(edge) {
+      use j <- result.try(
+        edge.j_preimage
+        |> option.to_result(InternalMissingIndexedSegment(edge.edge_id)),
+      )
+      Ok(TracedOffsetSegment(
+        segment: edge.segment,
+        preimage: j.preimage.preimage,
+        preimage_from: j.preimage_from,
+        preimage_to: j.preimage_to,
+        reversed: j.reversed,
+      ))
+    })
+    |> result.all,
+  )
+  Ok(TracedOffsetSubpath(
+    segments:,
+    closed: chain.closed,
+    side:,
+    source_subpath_index:,
+  ))
+}
+
+fn traced_subpath_geometry(
+  traced: TracedOffsetSubpath,
+  tolerance: Float,
+) -> Result(svg_path.Subpath, Error) {
+  subpath_from_synchronized_segments(
+    list.map(traced.segments, fn(segment) { segment.segment }),
+    closed: traced.closed,
+    tolerance:,
+  )
+}
+
+fn i_subpath_from_traced(traced: TracedOffsetSubpath) -> ICulledOffsetSubpath {
+  ICulledOffsetSubpath(
+    segments: list.map(traced.segments, fn(segment) {
+      ICulledOffsetSegment(
+        segment: segment.segment,
+        preimage: segment.preimage,
+        preimage_from: segment.preimage_from,
+        preimage_to: segment.preimage_to,
+      )
+    }),
+    closed: traced.closed,
+    side: traced.side,
+  )
+}
+
+fn traced_subpath_from_k(
+  subpath: KTrimmedOffsetSubpath,
+  source_subpath_index: Int,
+  side: BandSide,
+) -> TracedOffsetSubpath {
+  let KTrimmedOffsetSubpath(segments:, closed:) = subpath
+  TracedOffsetSubpath(
+    segments: list.map(segments, fn(segment) {
+      let KTrimmedOffsetSegment(segment: geometry, preimage:) = segment
+      let JArrangementSplitOffsetSegment(
+        preimage: i_preimage,
+        preimage_from:,
+        preimage_to:,
+        reversed:,
+        ..,
+      ) = preimage
+      TracedOffsetSegment(
+        segment: geometry,
+        preimage: i_preimage.preimage,
+        preimage_from:,
+        preimage_to:,
+        reversed:,
+      )
+    }),
+    closed:,
+    side:,
+    source_subpath_index:,
+  )
+}
+
+fn cusp_trim_traced_subpath(
+  traced: TracedOffsetSubpath,
+  zero_source: svg_path.Subpath,
+  distance: Float,
+  options: Options,
+) -> Result(Option(TracedOffsetSubpath), Error) {
+  use trimmed <- result.try(trim_i_culled_offset_subpath(
+    i_subpath_from_traced(traced),
+    zero_source,
+    distance,
+    options,
+  ))
+  Ok(
+    option.map(trimmed, fn(subpath) {
+      traced_subpath_from_k(subpath, traced.source_subpath_index, traced.side)
+    }),
   )
 }
 
@@ -892,19 +1040,22 @@ fn internal_band_winding_function(
 
 fn offside_trimmed_single_offset_winding_function(
   builds: List(SingleOffsetUntrimmedBuild),
-  trimmed: List(MOffsideTrimmedOffsetSubpath),
+  trimmed: List(TracedOffsetSubpath),
   distance: Float,
   bands: List(OneSubpathBand),
+  tolerance: Float,
 ) -> Result(fn(svg_path.Point) -> Result(Int, Error), Error) {
-  let subpaths =
+  use subpaths <- result.try(
     offside_trimmed_single_offset_winding_subpaths(
       builds,
       trimmed,
       distance,
       bands,
+      tolerance,
       source_subpath_index: 0,
       collected: [],
-    )
+    ),
+  )
   let path = svg_path.Path(subpaths:)
   Ok(fn(point) {
     use winding <- result.try(
@@ -920,21 +1071,23 @@ fn offside_trimmed_single_offset_winding_function(
 
 fn offside_trimmed_single_offset_winding_subpaths(
   builds: List(SingleOffsetUntrimmedBuild),
-  trimmed: List(MOffsideTrimmedOffsetSubpath),
+  trimmed: List(TracedOffsetSubpath),
   distance: Float,
   bands: List(OneSubpathBand),
+  tolerance: Float,
   source_subpath_index source_subpath_index: Int,
   collected collected: List(svg_path.Subpath),
-) -> List(svg_path.Subpath) {
+) -> Result(List(svg_path.Subpath), Error) {
   case builds, bands {
-    [], _ -> list.reverse(collected)
+    [], _ -> Ok(list.reverse(collected))
     [build, ..rest], [band, ..remaining_bands] -> {
       let offset_subpaths =
         trimmed
         |> list.filter(fn(item) {
           item.source_subpath_index == source_subpath_index
         })
-        |> list.map(fn(item) { item.subpath })
+        |> list.map(fn(item) { traced_subpath_geometry(item, tolerance) })
+      use offset_subpaths <- result.try(result.all(offset_subpaths))
       let semantic_subpaths = case svg_path.subpath_is_closed(build.subpath) {
         False ->
           case band {
@@ -962,11 +1115,12 @@ fn offside_trimmed_single_offset_winding_subpaths(
         trimmed,
         distance,
         remaining_bands,
+        tolerance,
         source_subpath_index: source_subpath_index + 1,
         collected: list.append(list.reverse(semantic_subpaths), collected),
       )
     }
-    [_, ..], [] -> list.reverse(collected)
+    [_, ..], [] -> Ok(list.reverse(collected))
   }
 }
 
@@ -1039,6 +1193,7 @@ fn trim_single_offset_builds(
     bands:,
     options:,
     source_face_contamination: True,
+    final_trimming: SubmergedTrimming,
   )
 }
 
@@ -1048,6 +1203,7 @@ fn trim_single_offset_builds_with_contamination(
   bands bands: List(OneSubpathBand),
   options options: Options,
   source_face_contamination source_face_contamination: Bool,
+  final_trimming final_trimming: FinalSingleOffsetTrimming,
 ) -> Result(svg_path.Path, Error) {
   use trace <- result.try(single_offset_builds_loop_trace(
     builds,
@@ -1055,6 +1211,7 @@ fn trim_single_offset_builds_with_contamination(
     bands:,
     options:,
     source_face_contamination:,
+    final_trimming:,
   ))
   let SingleOffsetLoopTrace(loops:) = trace
   let subpaths =
@@ -1232,6 +1389,7 @@ fn single_offset_builds_loop_trace(
   bands bands: List(OneSubpathBand),
   options options: Options,
   source_face_contamination source_face_contamination: Bool,
+  final_trimming final_trimming: FinalSingleOffsetTrimming,
 ) -> Result(SingleOffsetLoopTrace, Error) {
   let original_untrimmed = list.map(builds, fn(build) { build.subpath })
   let zero_source_segments =
@@ -1249,7 +1407,45 @@ fn single_offset_builds_loop_trace(
     options,
     enabled: source_face_contamination,
   ))
-  let untrimmed = list.map(offside_trimmed, fn(trimmed) { trimmed.subpath })
+  case final_trimming {
+    SubmergedRunWithReversedTrimming ->
+      cusp_trimmed_single_offset_loop_trace(
+        offside_trimmed,
+        builds,
+        distance,
+        options,
+      )
+    SubmergedTrimming ->
+      submerged_trimmed_single_offset_loop_trace(
+        offside_trimmed,
+        builds,
+        original_arrangement,
+        zero_source_segments,
+        distance,
+        bands,
+        options,
+        source_face_contamination,
+      )
+  }
+}
+
+fn submerged_trimmed_single_offset_loop_trace(
+  offside_trimmed: List(TracedOffsetSubpath),
+  builds: List(SingleOffsetUntrimmedBuild),
+  original_arrangement: OffsetArrangementBuild,
+  zero_source_segments: List(svg_path.Segment),
+  distance: Float,
+  bands: List(OneSubpathBand),
+  options: Options,
+  source_face_contamination: Bool,
+) -> Result(SingleOffsetLoopTrace, Error) {
+  use untrimmed <- result.try(
+    offside_trimmed
+    |> list.map(fn(trimmed) {
+      traced_subpath_geometry(trimmed, options.fitting.tolerance)
+    })
+    |> result.all,
+  )
   use winding <- result.try(case source_face_contamination {
     True ->
       offside_trimmed_single_offset_winding_function(
@@ -1257,6 +1453,7 @@ fn single_offset_builds_loop_trace(
         offside_trimmed,
         distance,
         bands,
+        options.fitting.tolerance,
       )
     False -> internal_band_winding_function(bands)
   })
@@ -1272,22 +1469,91 @@ fn single_offset_builds_loop_trace(
   trim_single_offset_arrangement(arrangement, untrimmed, winding, options)
 }
 
+fn cusp_trimmed_single_offset_loop_trace(
+  offside_trimmed: List(TracedOffsetSubpath),
+  builds: List(SingleOffsetUntrimmedBuild),
+  distance: Float,
+  options: Options,
+) -> Result(SingleOffsetLoopTrace, Error) {
+  use traced <- result.try(
+    cusp_trimmed_single_offset_subpaths(
+      offside_trimmed,
+      builds,
+      distance,
+      options,
+      trimmed: [],
+    ),
+  )
+  use loops <- result.try(
+    traced
+    |> list.map(fn(subpath) {
+      use geometry <- result.try(traced_subpath_geometry(
+        subpath,
+        options.fitting.tolerance,
+      ))
+      Ok(ArrangementLoop(subpath: geometry, edges: []))
+    })
+    |> result.all,
+  )
+  Ok(SingleOffsetLoopTrace(loops:))
+}
+
+fn cusp_trimmed_single_offset_subpaths(
+  subpaths: List(TracedOffsetSubpath),
+  builds: List(SingleOffsetUntrimmedBuild),
+  distance: Float,
+  options: Options,
+  trimmed trimmed: List(TracedOffsetSubpath),
+) -> Result(List(TracedOffsetSubpath), Error) {
+  case subpaths {
+    [] -> Ok(list.reverse(trimmed))
+    [traced, ..rest] -> {
+      use build <- result.try(
+        list_at(builds, traced.source_subpath_index)
+        |> result.map_error(fn(_) { InternalSegmentImageCountMismatch }),
+      )
+      use result <- result.try(cusp_trim_traced_subpath(
+        traced,
+        build.zero_source,
+        distance,
+        options,
+      ))
+      cusp_trimmed_single_offset_subpaths(
+        rest,
+        builds,
+        distance,
+        options,
+        trimmed: case result {
+          Some(subpath) -> [subpath, ..trimmed]
+          None -> trimmed
+        },
+      )
+    }
+  }
+}
+
+fn list_at(values: List(a), index: Int) -> Result(a, Nil) {
+  case values, index {
+    [], _ -> Error(Nil)
+    [first, ..], 0 -> Ok(first)
+    [_, ..rest], index if index > 0 -> list_at(rest, index - 1)
+    _, _ -> Error(Nil)
+  }
+}
+
 fn offside_trimmed_single_offset_subpaths(
   builds: List(SingleOffsetUntrimmedBuild),
   arrangement: OffsetArrangementBuild,
   distance: Float,
   options: Options,
   enabled enabled: Bool,
-) -> Result(List(MOffsideTrimmedOffsetSubpath), Error) {
+) -> Result(List(TracedOffsetSubpath), Error) {
   case enabled {
     False ->
       Ok(
         builds
         |> list.index_map(fn(build, index) {
-          MOffsideTrimmedOffsetSubpath(
-            subpath: build.subpath,
-            source_subpath_index: index,
-          )
+          traced_subpath_from_i(build.culled, index)
         }),
       )
     True ->
@@ -1305,7 +1571,7 @@ fn offside_trimmed_single_offset_subpaths_enabled(
   arrangement: OffsetArrangementBuild,
   distance: Float,
   options: Options,
-) -> Result(List(MOffsideTrimmedOffsetSubpath), Error) {
+) -> Result(List(TracedOffsetSubpath), Error) {
   let offset_count =
     builds
     |> list.fold(0, fn(count, build) {
@@ -1342,8 +1608,8 @@ fn offside_trimmed_single_offset_subpaths_loop(
   distance: Float,
   options: Options,
   source_subpath_index source_subpath_index: Int,
-  trimmed trimmed: List(MOffsideTrimmedOffsetSubpath),
-) -> Result(List(MOffsideTrimmedOffsetSubpath), Error) {
+  trimmed trimmed: List(TracedOffsetSubpath),
+) -> Result(List(TracedOffsetSubpath), Error) {
   case builds {
     [] -> Ok(list.reverse(trimmed))
     [build, ..rest] -> {
@@ -1393,16 +1659,13 @@ fn offside_trimmed_single_offset_subpath(
   arrangement: OffsetArrangementBuild,
   dual: arrangement_graph.DualArrangementGraph,
   distance: Float,
-  options: Options,
+  _options: Options,
   source_subpath_index: Int,
-) -> Result(List(MOffsideTrimmedOffsetSubpath), Error) {
+) -> Result(List(TracedOffsetSubpath), Error) {
   case svg_path.subpath_is_closed(build.subpath) && distance != 0.0 {
     False ->
       Ok([
-        MOffsideTrimmedOffsetSubpath(
-          subpath: build.subpath,
-          source_subpath_index:,
-        ),
+        traced_subpath_from_i(build.culled, source_subpath_index),
       ])
     True -> {
       let barriers = segment_image_edge_ids(zero_images, ids: [])
@@ -1420,12 +1683,12 @@ fn offside_trimmed_single_offset_subpath(
       let chains = i_to_m_survivor_chains(split.segments)
       chains
       |> list.try_map(fn(chain) {
-        use subpath <- result.try(subpath_from_synchronized_segments(
-          list.map(chain.edges, fn(edge) { edge.segment }),
-          closed: True,
-          tolerance: options.fitting.tolerance,
+        use traced <- result.try(traced_subpath_from_survivor_chain(
+          chain,
+          build.culled.side,
+          source_subpath_index,
         ))
-        Ok(MOffsideTrimmedOffsetSubpath(subpath:, source_subpath_index:))
+        Ok(traced)
       })
     }
   }
@@ -3805,6 +4068,40 @@ pub fn internal_path_with_source_face_contamination(
     bands:,
     options:,
     source_face_contamination: enabled,
+    final_trimming: SubmergedTrimming,
+  )
+}
+
+/// Run the production single-offset pipeline with cusp trimming in place of
+/// the final general submerged-trimming pass. This is for experiments and
+/// debug fixtures while the alternate policy is evaluated.
+@internal
+pub fn internal_path_with_final_cusp_trimming(
+  path path: svg_path.Path,
+  distance distance: Float,
+  options options: Options,
+) -> Result(svg_path.Path, Error) {
+  use _ <- result.try(validate_options(options))
+  use normalized <- result.try(normalize_source_path(path, options))
+  let source_subpaths = svg_path.path_subpaths(normalized)
+  use builds <- result.try(
+    single_offset_untrimmed_path_builds(
+      source_subpaths,
+      distance,
+      options,
+      converted: [],
+    ),
+  )
+  use bands <- result.try(
+    single_offset_bands_from_builds(builds, distance, converted: []),
+  )
+  trim_single_offset_builds_with_contamination(
+    builds,
+    distance,
+    bands:,
+    options:,
+    source_face_contamination: True,
+    final_trimming: SubmergedRunWithReversedTrimming,
   )
 }
 
