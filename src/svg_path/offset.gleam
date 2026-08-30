@@ -14,14 +14,15 @@
 //// subpath, the arrangement dual floods the signed source-side faces and
 //// removes offside offset occurrences. A second arrangement classifies the
 //// remaining offset edges by their measured and expected winding pairs,
-//// removes mismatches, burns dangling degree-1 edges, and reconstructs the
-//// survivors in source order.
+//// removes winding mismatches, applies forced parity-capacity reductions,
+//// and reconstructs the survivors in source order.
 ////
 //// Band construction shares source refinement between its two sides. Each
 //// side is first noded against the zero-offset source and trimmed in source
 //// order, retaining submerged runs that contain no reversed preimage. The two
-//// surviving sides are then noded together; winding mismatches and dangling
-//// degree-1 edges are removed before the final band walks are reconstructed.
+//// surviving sides are then noded together; winding mismatches and forced
+//// parity-capacity reductions are applied before the final band walks are
+//// reconstructed.
 //// Because trimming can split an offset or remove it entirely, subpath and
 //// path offsets return `Path`.
 ////
@@ -102,15 +103,6 @@ const stable_tangent_assertion_diameter = 0.01
 const default_stalled_offset_diameter = 0.01
 
 const adjacent_loop_endpoint_parameter_tolerance = 0.0001
-
-type BandBurnPolicy {
-  DanglingEdgeBurn
-  ForcedParityBurn
-}
-
-fn band_burn_policy() -> BandBurnPolicy {
-  ForcedParityBurn
-}
 
 /// Errors returned by offset helpers.
 pub type Error {
@@ -460,7 +452,7 @@ pub type SynchronizedOffsetTraceArea {
 }
 
 /// One offset-image edge in the pre-I-to-M arrangement, together with its
-/// source-face contamination and canonical M-walk status.
+/// source-face contamination and final M-survivor status.
 @internal
 pub type SingleOffsetContaminationTraceEdge {
   SingleOffsetContaminationTraceEdge(
@@ -500,7 +492,7 @@ type OffsetArrangementBuild {
   )
 }
 
-/// Arrangement data retained while offset edges are classified and burned.
+/// Arrangement data retained while offset edges are classified and reduced.
 ///
 /// Removing edges invalidates an `ArrangementGraph`'s cyclic orders, which
 /// this trimming phase does not use.
@@ -508,9 +500,9 @@ type OffsetTrimGraph {
   OffsetTrimGraph(
     vertices: List(arrangement_graph.ArrangementVertex),
     edges: List(arrangement_graph.ArrangementEdge),
-    /// Empty uses the former one-use-per-edge reconstruction. Otherwise these
-    /// are the exact undirected capacities reconstruction must consume.
-    edge_capacities: List(#(Int, Int)),
+    /// `None` means capacities have not yet been reduced. `Some` contains the
+    /// exact undirected capacities reconstruction must consume.
+    edge_capacities: Option(List(#(Int, Int))),
   )
 }
 
@@ -609,8 +601,8 @@ type JArrangementSplitOffsetSubpath {
 }
 
 /// One partial source-ordered walk considered by the closed-walk fallback.
-type JOrderedWalkState {
-  JOrderedWalkState(
+type IToMAmbiguousWalkState {
+  IToMAmbiguousWalkState(
     first_start_vertex: Int,
     end_vertex: Int,
     last_index: Int,
@@ -621,7 +613,7 @@ type JOrderedWalkState {
   )
 }
 
-/// One side-local survivor after winding-run rescue and ordered burning.
+/// One side-local survivor after winding-run rescue and parity reduction.
 type KTrimmedOffsetSegment {
   KTrimmedOffsetSegment(
     segment: svg_path.Segment,
@@ -1186,23 +1178,14 @@ fn contamination_arrangement_trace_builds(
         case svg_path.subpath_is_closed(build.subpath) {
           True -> {
             let OffsetArrangementBuild(graph:, ..) = arrangement
-            use chains <- result.try(j_parity_survivor_chains(
+            use chains <- result.try(parity_survivor_chains_from_j_segments(
               split.segments,
               graph,
               protected_vertices: [],
               ambiguous_fallback: True,
             ))
             use _ <- result.try(assert_survivor_chains_closed(chains))
-            Ok(
-              chains
-              |> list.flat_map(fn(chain) { chain.edges })
-              |> list.filter_map(fn(edge) {
-                case edge.j_preimage {
-                  Some(preimage) -> Ok(preimage)
-                  None -> Error(Nil)
-                }
-              }),
-            )
+            Ok(j_segments_from_survivor_chains(chains))
           }
           False -> Ok(split.segments)
         },
@@ -1442,7 +1425,7 @@ fn offside_trimmed_single_offset_subpath(
         contaminated,
       ))
       let OffsetArrangementBuild(graph:, ..) = arrangement
-      use chains <- result.try(j_parity_survivor_chains(
+      use chains <- result.try(parity_survivor_chains_from_j_segments(
         split.segments,
         graph,
         protected_vertices: [],
@@ -1747,13 +1730,13 @@ fn trim_single_offset_arrangement(
     winding:,
     side_sampling_distance: submerged_side_sampling_distance,
   ))
-  use without_dangling <- result.try(forced_parity_burn(
+  use parity_reduced <- result.try(forced_parity_reduce_trim_graph(
     without_submerged,
     protected_vertices,
   ))
   use loops <- result.try(source_order_survivor_loops(
     build,
-    without_dangling,
+    parity_reduced,
     protected_vertices:,
     tolerance: options.fitting.tolerance,
   ))
@@ -1802,22 +1785,20 @@ fn trim_band_arrangement(
     winding:,
     side_sampling_distance: submerged_side_sampling_distance,
   ))
-  use without_dangling <- result.try(case band_burn_policy() {
-    DanglingEdgeBurn ->
-      Ok(burn_dangling_edges(without_submerged, protected_vertices:))
-    ForcedParityBurn ->
-      forced_parity_burn(without_submerged, protected_vertices)
-  })
+  use parity_reduced <- result.try(forced_parity_reduce_trim_graph(
+    without_submerged,
+    protected_vertices,
+  ))
   source_order_survivor_subpaths(
     build,
-    without_dangling,
+    parity_reduced,
     protected_vertices:,
     tolerance: options.fitting.tolerance,
   )
   |> result.try(close_survivor_subpaths(_, tolerance: options.fitting.tolerance))
 }
 
-fn forced_parity_burn(
+fn forced_parity_reduce_trim_graph(
   graph: OffsetTrimGraph,
   protected_vertices: List(Int),
 ) -> Result(OffsetTrimGraph, Error) {
@@ -1852,7 +1833,7 @@ fn forced_parity_burn(
         }
       }
     })
-  Ok(OffsetTrimGraph(vertices:, edges:, edge_capacities:))
+  Ok(OffsetTrimGraph(vertices:, edges:, edge_capacities: Some(edge_capacities)))
 }
 
 fn protected_vertex_parities(vertices: List(Int)) -> List(#(Int, Int)) {
@@ -1874,26 +1855,6 @@ fn int_occurrences(values: List(Int), target: Int) -> Int {
         True -> 1 + int_occurrences(rest, target)
         False -> int_occurrences(rest, target)
       }
-  }
-}
-
-fn incidence_degree(
-  edges: List(arrangement_graph.ArrangementEdge),
-  vertex: Int,
-) -> Int {
-  case edges {
-    [] -> 0
-    [edge, ..rest] -> {
-      let arrangement_graph.ArrangementEdge(start_vertex:, end_vertex:, ..) =
-        edge
-      let contribution = case start_vertex == vertex, end_vertex == vertex {
-        True, True -> 2
-        True, False -> 1
-        False, True -> 1
-        False, False -> 0
-      }
-      contribution + incidence_degree(rest, vertex)
-    }
   }
 }
 
@@ -2184,45 +2145,6 @@ fn arrangement_source_winding_opinions(
   }
 }
 
-fn burn_dangling_edges(
-  graph: OffsetTrimGraph,
-  protected_vertices protected_vertices: List(Int),
-) -> OffsetTrimGraph {
-  let OffsetTrimGraph(vertices:, edges:, edge_capacities:) = graph
-  let retained =
-    edges
-    |> list.filter(fn(edge) {
-      !edge_is_dangling(edge, edges, protected_vertices)
-    })
-  case list.length(retained) == list.length(edges) {
-    True -> graph
-    False ->
-      burn_dangling_edges(
-        OffsetTrimGraph(vertices:, edges: retained, edge_capacities:),
-        protected_vertices:,
-      )
-  }
-}
-
-fn edge_is_dangling(
-  edge: arrangement_graph.ArrangementEdge,
-  edges: List(arrangement_graph.ArrangementEdge),
-  protected_vertices: List(Int),
-) -> Bool {
-  let arrangement_graph.ArrangementEdge(start_vertex:, end_vertex:, ..) = edge
-  endpoint_is_dangling(start_vertex, edges, protected_vertices)
-  || endpoint_is_dangling(end_vertex, edges, protected_vertices)
-}
-
-fn endpoint_is_dangling(
-  vertex: Int,
-  edges: List(arrangement_graph.ArrangementEdge),
-  protected_vertices: List(Int),
-) -> Bool {
-  !list.contains(protected_vertices, vertex)
-  && incidence_degree(edges, vertex) == 1
-}
-
 fn close_survivor_subpaths(
   subpaths: List(svg_path.Subpath),
   tolerance tolerance: Float,
@@ -2331,8 +2253,8 @@ fn arrangement_edge_capacities(
 ) -> List(AvailableEdgeCapacity) {
   let OffsetTrimGraph(edges:, edge_capacities:, ..) = graph
   case edge_capacities {
-    [] -> list.map(edges, fn(edge) { AvailableEdgeCapacity(edge.id, 1) })
-    capacities ->
+    None -> list.map(edges, fn(edge) { AvailableEdgeCapacity(edge.id, 1) })
+    Some(capacities) ->
       capacities
       |> list.filter_map(fn(entry) {
         case entry.1 > 0 {
@@ -2360,8 +2282,8 @@ fn assert_forced_parity_chains_valid(
 ) -> Result(Nil, Error) {
   let OffsetTrimGraph(edge_capacities:, ..) = graph
   case edge_capacities {
-    [] -> Ok(Nil)
-    _ ->
+    None -> Ok(Nil)
+    Some(_) ->
       case
         list.find(chains, fn(chain) {
           !chain.closed
@@ -2967,9 +2889,9 @@ pub fn segment_with(
 /// multiple subpaths or remove it entirely.
 ///
 /// Trimming nodes the untrimmed offset together with its final refined
-/// zero-offset source pieces, removes zero-source-only, submerged, and
-/// dangling arrangement edges, and reconstructs surviving offset edges in
-/// untrimmed traversal order.
+/// zero-offset source pieces, removes zero-source-only and winding-mismatched
+/// arrangement capacities, applies forced parity reductions, and reconstructs
+/// surviving offset edges in untrimmed traversal order.
 pub fn subpath(
   subpath: svg_path.Subpath,
   distance distance: Float,
@@ -4453,14 +4375,14 @@ fn retain_offset_image_edges(
       let arrangement_graph.ArrangementEdge(id:, ..) = edge
       arrangement_edge_has_group(build, id, UntrimmedOffsetSegment)
     })
-  OffsetTrimGraph(vertices:, edges: retained, edge_capacities: [])
+  OffsetTrimGraph(vertices:, edges: retained, edge_capacities: None)
 }
 
 fn offset_trim_graph(
   graph: arrangement_graph.ArrangementGraph,
 ) -> OffsetTrimGraph {
   let arrangement_graph.ArrangementGraph(vertices:, edges:, ..) = graph
-  OffsetTrimGraph(vertices:, edges:, edge_capacities: [])
+  OffsetTrimGraph(vertices:, edges:, edge_capacities: None)
 }
 
 fn arrangement_edge_has_group(
@@ -5190,7 +5112,7 @@ fn finish_i_to_k_with_parity(
         True -> []
         False -> [expected_start, expected_end]
       }
-      use chains <- result.try(j_parity_survivor_chains(
+      use chains <- result.try(parity_survivor_chains_from_j_segments(
         retained,
         graph,
         protected_vertices: protected,
@@ -5206,7 +5128,7 @@ fn finish_i_to_k_with_parity(
   }
 }
 
-fn j_parity_survivor_chains(
+fn parity_survivor_chains_from_j_segments(
   segments: List(JArrangementSplitOffsetSegment),
   graph: arrangement_graph.ArrangementGraph,
   protected_vertices protected_vertices: List(Int),
@@ -5217,7 +5139,7 @@ fn j_parity_survivor_chains(
   case retained {
     [] -> Ok([])
     [_, ..] -> {
-      let initial = i_to_k_initial_edge_capacities(graph, retained)
+      let initial = j_segment_edge_capacities(graph, retained)
       let reduced =
         arrangement_graph.forced_parity_capacities_with(
           graph,
@@ -5226,19 +5148,16 @@ fn j_parity_survivor_chains(
         )
       case reduced, ambiguous_fallback {
         Error(arrangement_graph.ForcedParityAmbiguous(_)), True ->
-          Ok(
-            maximal_closed_j_walk_decomposition(retained)
-            |> list.map(j_walk_to_survivor_chain),
-          )
+          Ok(i_to_m_ambiguous_survivor_chains(retained))
         Error(error), _ -> Error(ForcedParityPruningError(error))
         Ok(assignments), _ ->
-          j_parity_chains_from_assignments(retained, assignments)
+          j_segment_parity_chains_from_assignments(retained, assignments)
       }
     }
   }
 }
 
-fn j_parity_chains_from_assignments(
+fn j_segment_parity_chains_from_assignments(
   retained: List(JArrangementSplitOffsetSegment),
   assignments: List(arrangement_graph.EdgeCapacityAssignment),
 ) -> Result(List(SurvivorChain), Error) {
@@ -5305,6 +5224,19 @@ fn assert_survivor_chains_closed(
   }
 }
 
+fn j_segments_from_survivor_chains(
+  chains: List(SurvivorChain),
+) -> List(JArrangementSplitOffsetSegment) {
+  chains
+  |> list.flat_map(fn(chain) { chain.edges })
+  |> list.filter_map(fn(edge) {
+    case edge.j_preimage {
+      Some(preimage) -> Ok(preimage)
+      None -> Error(Nil)
+    }
+  })
+}
+
 fn i_to_k_expected_endpoints(
   segments: List(JArrangementSplitOffsetSegment),
   closed: Bool,
@@ -5324,7 +5256,7 @@ fn i_to_k_expected_endpoints(
   }
 }
 
-fn i_to_k_initial_edge_capacities(
+fn j_segment_edge_capacities(
   graph: arrangement_graph.ArrangementGraph,
   retained: List(JArrangementSplitOffsetSegment),
 ) -> List(arrangement_graph.EdgeCapacityAssignment) {
@@ -5624,7 +5556,14 @@ fn set_j_segments_submerged(
   })
 }
 
-fn canonical_closed_j_walk(
+fn i_to_m_ambiguous_survivor_chains(
+  segments: List(JArrangementSplitOffsetSegment),
+) -> List(SurvivorChain) {
+  i_to_m_maximal_closed_j_walk_decomposition(segments)
+  |> list.map(j_walk_to_survivor_chain)
+}
+
+fn i_to_m_fallback_closed_j_walk(
   segments: List(JArrangementSplitOffsetSegment),
 ) -> List(JArrangementSplitOffsetSegment) {
   let available =
@@ -5635,46 +5574,48 @@ fn canonical_closed_j_walk(
       !segment.deletion_candidate
     })
   let #(_, best) =
-    canonical_closed_j_walk_loop(available, states: [], best: None)
+    i_to_m_fallback_closed_j_walk_loop(available, states: [], best: None)
   case best {
     None -> []
-    Some(JOrderedWalkState(segments_reversed:, ..)) ->
+    Some(IToMAmbiguousWalkState(segments_reversed:, ..)) ->
       list.reverse(segments_reversed)
   }
 }
 
-fn maximal_closed_j_walk_decomposition(
+fn i_to_m_maximal_closed_j_walk_decomposition(
   segments: List(JArrangementSplitOffsetSegment),
 ) -> List(List(JArrangementSplitOffsetSegment)) {
-  let walk = canonical_closed_j_walk(segments)
+  let walk = i_to_m_fallback_closed_j_walk(segments)
   case walk {
     [] -> []
     [_, ..] -> {
       let remaining =
         list.filter(segments, fn(segment) { !list.contains(walk, segment) })
-      [walk, ..maximal_closed_j_walk_decomposition(remaining)]
+      [walk, ..i_to_m_maximal_closed_j_walk_decomposition(remaining)]
     }
   }
 }
 
-fn canonical_closed_j_walk_loop(
+fn i_to_m_fallback_closed_j_walk_loop(
   segments: List(#(JArrangementSplitOffsetSegment, Int)),
-  states states: List(JOrderedWalkState),
-  best best: Option(JOrderedWalkState),
-) -> #(List(JOrderedWalkState), Option(JOrderedWalkState)) {
+  states states: List(IToMAmbiguousWalkState),
+  best best: Option(IToMAmbiguousWalkState),
+) -> #(List(IToMAmbiguousWalkState), Option(IToMAmbiguousWalkState)) {
   case segments {
     [] -> #(states, best)
     [indexed, ..rest] -> {
       let #(segment, index) = indexed
-      let starting = j_ordered_walk_start(segment, index)
+      let starting = i_to_m_fallback_walk_start(segment, index)
       let extended =
         states
         |> list.filter(fn(state) { state.end_vertex == segment.start_vertex })
-        |> list.map(fn(state) { j_ordered_walk_extend(state, segment, index) })
+        |> list.map(fn(state) {
+          i_to_m_fallback_walk_extend(state, segment, index)
+        })
       let new_states = [starting, ..extended]
       let states =
         new_states
-        |> list.fold(states, insert_better_j_ordered_walk_state)
+        |> list.fold(states, insert_better_i_to_m_fallback_walk_state)
       let best =
         new_states
         |> list.filter(fn(state) {
@@ -5684,42 +5625,42 @@ fn canonical_closed_j_walk_loop(
           case best {
             None -> Some(candidate)
             Some(current) ->
-              case j_ordered_walk_is_better(candidate, current) {
+              case i_to_m_fallback_walk_is_better(candidate, current) {
                 True -> Some(candidate)
                 False -> best
               }
           }
         })
-      canonical_closed_j_walk_loop(rest, states:, best:)
+      i_to_m_fallback_closed_j_walk_loop(rest, states:, best:)
     }
   }
 }
 
-fn j_ordered_walk_start(
+fn i_to_m_fallback_walk_start(
   segment: JArrangementSplitOffsetSegment,
   index: Int,
-) -> JOrderedWalkState {
-  JOrderedWalkState(
+) -> IToMAmbiguousWalkState {
+  IToMAmbiguousWalkState(
     first_start_vertex: segment.start_vertex,
     end_vertex: segment.end_vertex,
     last_index: index,
-    retained_span: j_segment_preimage_span(segment),
+    retained_span: i_to_m_fallback_segment_span(segment),
     skipped_runs: 0,
     indices_reversed: [index],
     segments_reversed: [segment],
   )
 }
 
-fn j_ordered_walk_extend(
-  state: JOrderedWalkState,
+fn i_to_m_fallback_walk_extend(
+  state: IToMAmbiguousWalkState,
   segment: JArrangementSplitOffsetSegment,
   index: Int,
-) -> JOrderedWalkState {
-  JOrderedWalkState(
+) -> IToMAmbiguousWalkState {
+  IToMAmbiguousWalkState(
     ..state,
     end_vertex: segment.end_vertex,
     last_index: index,
-    retained_span: state.retained_span +. j_segment_preimage_span(segment),
+    retained_span: state.retained_span +. i_to_m_fallback_segment_span(segment),
     skipped_runs: state.skipped_runs
       + case index == state.last_index + 1 {
         True -> 0
@@ -5730,14 +5671,16 @@ fn j_ordered_walk_extend(
   )
 }
 
-fn j_segment_preimage_span(segment: JArrangementSplitOffsetSegment) -> Float {
+fn i_to_m_fallback_segment_span(
+  segment: JArrangementSplitOffsetSegment,
+) -> Float {
   float.absolute_value(segment.preimage_to -. segment.preimage_from)
 }
 
-fn insert_better_j_ordered_walk_state(
-  states: List(JOrderedWalkState),
-  candidate: JOrderedWalkState,
-) -> List(JOrderedWalkState) {
+fn insert_better_i_to_m_fallback_walk_state(
+  states: List(IToMAmbiguousWalkState),
+  candidate: IToMAmbiguousWalkState,
+) -> List(IToMAmbiguousWalkState) {
   case states {
     [] -> [candidate]
     [first, ..rest] -> {
@@ -5747,19 +5690,22 @@ fn insert_better_j_ordered_walk_state(
         && first.last_index == candidate.last_index
       case same_state {
         True ->
-          case j_ordered_walk_is_better(candidate, first) {
+          case i_to_m_fallback_walk_is_better(candidate, first) {
             True -> [candidate, ..rest]
             False -> states
           }
-        False -> [first, ..insert_better_j_ordered_walk_state(rest, candidate)]
+        False -> [
+          first,
+          ..insert_better_i_to_m_fallback_walk_state(rest, candidate)
+        ]
       }
     }
   }
 }
 
-fn j_ordered_walk_is_better(
-  candidate: JOrderedWalkState,
-  current: JOrderedWalkState,
+fn i_to_m_fallback_walk_is_better(
+  candidate: IToMAmbiguousWalkState,
+  current: IToMAmbiguousWalkState,
 ) -> Bool {
   case
     candidate.retained_span >. current.retained_span,
