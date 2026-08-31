@@ -12,6 +12,8 @@ const output = "examples/debug/side_umbrella_round_offset_plus_0_2_trimming.svg"
 
 const double_output = "examples/debug/double_side_umbrella_round_offset_plus_0_2_trimming.svg"
 
+const readme_output = "test/generated/readme/single_offset_final_trimming.svg"
+
 pub fn main() -> Nil {
   let source = side_umbrella()
   let cusp = offset_path(source, offset.CuspTrimming)
@@ -23,11 +25,10 @@ pub fn main() -> Nil {
   let double_cusp = offset_path(double, offset.CuspTrimming)
   let double_in_band = offset_path(double, offset.InBandTrimming)
   let double_none = offset_path(double, offset.NoTrimming)
-  let _ =
-    write_file(
-      double_output,
-      double_drawing(double, double_cusp, double_in_band, double_none),
-    )
+  let double_contents =
+    double_drawing(double, double_cusp, double_in_band, double_none)
+  let _ = write_file(double_output, double_contents)
+  let _ = write_file(readme_output, double_contents)
   Nil
 }
 

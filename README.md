@@ -1379,6 +1379,164 @@ boundary of the clipping region are retained. Segment types are preserved where
 possible: lines remain lines, Beziers remain Beziers, and arcs remain arcs
 after splitting.
 
+## Offsets, Bands, and Stroke Outlines
+
+`svg_path/offset` constructs offsets from the original curve types. Lines and
+circular arcs are offset exactly. Quadratic and cubic Beziers and non-circular
+arcs are represented by fitted cubic Beziers, checked against the source's true
+normal displacement, and subdivided when the fit exceeds the requested
+tolerance.
+
+Positive offsets point along the visual left normal in SVG screen coordinates;
+negative offsets point along the visual right normal. For example, a positive
+offset of a horizontal line directed from left to right appears above that
+line.
+
+```gleam
+import svg_path/offset
+
+offset.segment(segment, offset: 12.0)
+// -> Result(svg_path.Subpath, offset.Error)
+
+offset.subpath(subpath, offset: 12.0)
+offset.path(path, offset: 12.0)
+// -> Result(svg_path.Path, offset.Error)
+```
+
+A segment offset returns a `Subpath` because one source curve may require
+several fitted pieces. Subpath and path offsets return a `Path`: trimming may
+split one offset walk into multiple subpaths or remove it entirely.
+
+The `_with` variants accept `offset.Options`. The join can be `Bevel`,
+`Miter(miter_limit:)`, or `Round`. `Options.fitting` controls fitted-curve
+accuracy and maximum subdivision depth. `Options.distance_options` controls
+the projection and root-finding tolerances used during trimming; it is not a
+trimming-policy switch.
+
+Use `subpath_untrimmed`, `path_untrimmed`, or their `_with` variants to obtain
+the connected offset walks before topological trimming. These are useful for
+inspection or for callers implementing a different trimming policy, but they
+may retain self-intersections, reversal folds, and regions lying on the wrong
+side of a closed source contour.
+
+### Single-Offset Trimming
+
+`SingleOffsetTrimming` controls two consecutive stages:
+
+```gleam
+let options =
+  offset.Options(
+    ..offset.default_options(),
+    single_offset_trimming: offset.SingleOffsetTrimming(
+      offside: True,
+      final_trimming: offset.InBandTrimming,
+    ),
+  )
+```
+
+`offside` applies only to closed source subpaths. The source and its offset
+define a signed intervening region. Face-contamination through the arrangement
+graph removes offset portions lying on the wrong side of that region. Open
+source subpaths have no closed source face, so this stage has no effect on
+them.
+
+The final stage is selected independently:
+
+| `SingleOffsetFinalTrimming` | Behavior |
+| --- | --- |
+| `NoTrimming` | Return the walks surviving the optional offside stage. |
+| `CuspTrimming` | Remove side-local submerged folds whose run contains reversed offset geometry. |
+| `InBandTrimming` | Apply the complete source-to-offset winding classification and parity-capacity reconstruction. This includes the effect of cusp trimming. |
+
+The following open source has no offside stage, so the panels isolate the three
+final-trimming choices:
+
+<center>
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/single_offset_final_trimming.svg" alt="Single offset with no final trimming, cusp trimming, and in-band trimming">
+</center>
+
+For closed contours, `offside` is an additional and independent operation. In
+this example the source contains oppositely oriented concentric rectangles;
+the final trimming mode is `NoTrimming` in both panels:
+
+<center>
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/single_offset_offside_trimming.svg" alt="Single offset of concentric rectangles with offside trimming disabled and enabled">
+</center>
+
+The defaults are `offside: True` and
+`final_trimming: offset.InBandTrimming`. Adjacent reversed/non-reversed loops
+created locally during offset assembly are conservatively collapsed before
+these public trimming stages; that construction cleanup is intentionally not a
+public switch.
+
+### Two-Sided Bands
+
+`subpath_band` and `path_band` construct and jointly trim two signed offsets:
+
+```gleam
+offset.subpath_band(
+  subpath,
+  inner_offset: 18.0,
+  outer_offset: 34.0,
+)
+
+offset.path_band(
+  path,
+  inner_offset: 18.0,
+  outer_offset: 34.0,
+)
+```
+
+`inner` and `outer` are caller-assigned roles, not a numeric-order
+restriction. Either ordering is accepted. Exchanging the values reverses the
+orientation of the resulting band. Bands do not add endpoint caps; use
+`subpath_stroke` or `path_stroke` when an open source needs `Butt`, `Square`,
+or `RoundCap` endpoints.
+
+Band trimming has three independent Boolean controls:
+
+```gleam
+let options =
+  offset.Options(
+    ..offset.default_options(),
+    band_trimming: offset.BandTrimming(
+      inner_cusps: True,
+      outer_cusps: True,
+      in_band: True,
+    ),
+  )
+```
+
+- `inner_cusps` applies side-local cusp trimming to the caller-designated
+  inner offset.
+- `outer_cusps` applies the same operation to the caller-designated outer
+  offset.
+- `in_band` performs the final joint winding classification and
+  parity-capacity reconstruction after the two sides are assembled.
+
+The cusp switches act before joint band trimming. The four-concave-corner
+example below holds `in_band: True` while changing the two side-local switches:
+
+<center>
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/band_cusp_trimming.svg" alt="Band trimming with both, one, and neither side-local cusp pass enabled">
+</center>
+
+The figure-eight below holds both cusp switches at `True` and changes only the
+final joint pass:
+
+<center>
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/band_in_band_trimming.svg" alt="Figure-eight band with in-band trimming disabled and enabled">
+</center>
+
+All three band switches default to `True`. Turning a stage off is useful for
+inspection and for specialized callers that want to preserve intermediate
+geometry, but the result can retain reversal folds, self-intersections, or
+disconnected loops that the default pipeline removes.
+
+`subpath_band_untrimmed`, `path_band_untrimmed`, and their `_with` variants
+return the two synchronized offset sides without side-local or joint trimming.
+They preserve inner-then-outer ordering and add no caps or bridges.
+
 ## Arrangement Graphs
 
 `svg_path/arrangement` constructs a planar arrangement from one or more

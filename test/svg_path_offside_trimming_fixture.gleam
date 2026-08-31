@@ -7,11 +7,15 @@ import svg_path/serialize
 
 const output = "examples/debug/concentric_rectangles_single_offset_offside_comparison.svg"
 
+const readme_output = "test/generated/readme/single_offset_offside_trimming.svg"
+
 pub fn main() -> Nil {
   let source = concentric_rectangles()
   let without_offside = single_offset(source, offside: False)
   let with_offside = single_offset(source, offside: True)
-  let _ = write_file(output, drawing(source, without_offside, with_offside))
+  let contents = drawing(source, without_offside, with_offside)
+  let _ = write_file(output, contents)
+  let _ = write_file(readme_output, contents)
   Nil
 }
 

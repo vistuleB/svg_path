@@ -18,6 +18,13 @@ mkdir -p "$readme_output" "$gallery_output" "$gallery_destination"
   gleam run
   gleam run -m arrangement_csg_figures
 )
+(
+  cd "$root"
+  gleam run -m svg_path_side_umbrella_offset_fixture
+  gleam run -m svg_path_offside_trimming_fixture
+  gleam run -m svg_path_two_corner_square_bands_fixture
+  gleam run -m svg_path_band_trimming_fixture
+)
 
 readme_figures=(
   zero_length_closepath_probe.svg
@@ -25,6 +32,10 @@ readme_figures=(
   arrangement_graph_semantic_circle_overlap.svg
   arrangement_csg_nonzero.svg
   arrangement_csg_evenodd.svg
+  single_offset_final_trimming.svg
+  single_offset_offside_trimming.svg
+  band_cusp_trimming.svg
+  band_in_band_trimming.svg
 )
 
 gallery_figures=(

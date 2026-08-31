@@ -6,12 +6,16 @@ import svg_path/serialize
 
 const output = "examples/debug/four_concave_corner_square_band_trimming_comparison.svg"
 
+const readme_output = "test/generated/readme/band_cusp_trimming.svg"
+
 pub fn main() -> Nil {
   let source = source_subpath()
   let all = band(source, inner_cusps: True, outer_cusps: True)
   let outer_only = band(source, inner_cusps: False, outer_cusps: True)
   let neither = band(source, inner_cusps: False, outer_cusps: False)
-  let _ = write_file(output, drawing(source, all, outer_only, neither))
+  let contents = drawing(source, all, outer_only, neither)
+  let _ = write_file(output, contents)
+  let _ = write_file(readme_output, contents)
   Nil
 }
 

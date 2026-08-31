@@ -6,11 +6,15 @@ import svg_path/serialize
 
 const output = "examples/debug/figure_eight_band_in_band_comparison.svg"
 
+const readme_output = "test/generated/readme/band_in_band_trimming.svg"
+
 pub fn main() -> Nil {
   let source = figure_eight()
   let without_in_band = band(source, in_band: False)
   let with_in_band = band(source, in_band: True)
-  let _ = write_file(output, drawing(source, without_in_band, with_in_band))
+  let contents = drawing(source, without_in_band, with_in_band)
+  let _ = write_file(output, contents)
+  let _ = write_file(readme_output, contents)
   Nil
 }
 
