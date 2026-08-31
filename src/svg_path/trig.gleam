@@ -1,6 +1,7 @@
 //// Trigonometry helpers for SVG-facing degree angles.
 
 import gleam/float
+import svg_path/internal/number
 
 const pi = 3.141592653589793
 
@@ -19,6 +20,9 @@ pub fn radians_to_degrees(radians: Float) -> Float {
 }
 
 /// Return the sine of an angle in degrees.
+///
+/// Non-finite inputs propagate through the platform trigonometric function
+/// instead of causing angle normalization to panic.
 pub fn sin_degrees(degrees: Float) -> Float {
   case normalized_quarter_turn(degrees) {
     0.0 -> 0.0
@@ -30,6 +34,9 @@ pub fn sin_degrees(degrees: Float) -> Float {
 }
 
 /// Return the cosine of an angle in degrees.
+///
+/// Non-finite inputs propagate through the platform trigonometric function
+/// instead of causing angle normalization to panic.
 pub fn cos_degrees(degrees: Float) -> Float {
   case normalized_quarter_turn(degrees) {
     0.0 -> 1.0
@@ -41,6 +48,9 @@ pub fn cos_degrees(degrees: Float) -> Float {
 }
 
 /// Return the tangent of an angle in degrees.
+///
+/// Non-finite inputs propagate through the platform trigonometric function
+/// instead of causing angle normalization to panic.
 pub fn tan_degrees(degrees: Float) -> Float {
   case normalized_eighth_turn(degrees) {
     0.0 -> 0.0
@@ -133,20 +143,31 @@ fn diagonal_atan2(y: Float, x: Float) -> Float {
 }
 
 fn normalized_quarter_turn(degrees: Float) -> Float {
-  let normalized = positive_remainder(degrees, full_turn_degrees)
+  case number.is_finite(degrees) {
+    False -> degrees
+    True -> {
+      let normalized = positive_remainder(degrees, full_turn_degrees)
 
-  case normalized {
-    0.0 | 90.0 | 180.0 | 270.0 -> normalized
-    _ -> degrees
+      case normalized {
+        0.0 | 90.0 | 180.0 | 270.0 -> normalized
+        _ -> degrees
+      }
+    }
   }
 }
 
 fn normalized_eighth_turn(degrees: Float) -> Float {
-  let normalized = positive_remainder(degrees, full_turn_degrees)
+  case number.is_finite(degrees) {
+    False -> degrees
+    True -> {
+      let normalized = positive_remainder(degrees, full_turn_degrees)
 
-  case normalized {
-    0.0 | 45.0 | 90.0 | 135.0 | 180.0 | 225.0 | 270.0 | 315.0 -> normalized
-    _ -> degrees
+      case normalized {
+        0.0 | 45.0 | 90.0 | 135.0 | 180.0 | 225.0 | 270.0 | 315.0 ->
+          normalized
+        _ -> degrees
+      }
+    }
   }
 }
 
