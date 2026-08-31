@@ -163,9 +163,6 @@ pub type Error {
   /// An indexed offset segment had no winding-side opinion.
   InternalMissingWindingOpinion(segment_index: Int)
 
-  /// Surviving arrangement segments no longer formed their source-order walk.
-  InternalSurvivorOrderMismatch
-
   /// Source-order reconstruction did not consume an assigned edge capacity.
   InternalSurvivorCapacityMismatch(edge_id: Int, remaining: Int)
 
@@ -1005,7 +1002,7 @@ pub fn default_fitting_options() -> FittingOptions {
 pub fn default_options() -> Options {
   Options(
     fitting: default_fitting_options(),
-    distance_options: default_trimming_options(),
+    distance_options: default_distance_options(),
     stalled_offset_diameter: default_stalled_offset_diameter,
     tangent_heal_angle_degrees: default_tangent_heal_angle_degrees,
     join: Miter(default_miter_limit),
@@ -1210,30 +1207,12 @@ fn trim_single_offset_builds(
 ) -> Result(svg_path.Path, Error) {
   let SingleOffsetTrimming(offside:, final_trimming:) =
     options.single_offset_trimming
-  trim_single_offset_builds_with_contamination(
-    builds,
-    distance,
-    bands:,
-    options:,
-    source_face_contamination: offside,
-    final_trimming:,
-  )
-}
-
-fn trim_single_offset_builds_with_contamination(
-  builds: List(SingleOffsetUntrimmedBuild),
-  distance: Float,
-  bands bands: List(OneSubpathBand),
-  options options: Options,
-  source_face_contamination source_face_contamination: Bool,
-  final_trimming final_trimming: SingleOffsetFinalTrimming,
-) -> Result(svg_path.Path, Error) {
   use subpaths <- result.try(final_single_offset_subpaths(
     builds,
     distance,
     bands:,
     options:,
-    source_face_contamination:,
+    offside:,
     final_trimming:,
   ))
   let subpaths =
@@ -1406,7 +1385,7 @@ fn final_single_offset_subpaths(
   distance: Float,
   bands bands: List(OneSubpathBand),
   options options: Options,
-  source_face_contamination source_face_contamination: Bool,
+  offside offside: Bool,
   final_trimming final_trimming: SingleOffsetFinalTrimming,
 ) -> Result(List(svg_path.Subpath), Error) {
   let original_untrimmed = list.map(builds, fn(build) { build.subpath })
@@ -1423,7 +1402,7 @@ fn final_single_offset_subpaths(
     original_arrangement,
     distance,
     options,
-    enabled: source_face_contamination,
+    enabled: offside,
   ))
   case final_trimming {
     CuspTrimming ->
@@ -1442,7 +1421,7 @@ fn final_single_offset_subpaths(
         distance,
         bands,
         options,
-        source_face_contamination,
+        offside,
       )
     NoTrimming ->
       offside_trimmed
@@ -1461,7 +1440,7 @@ fn submerged_trimmed_single_offset_subpaths(
   distance: Float,
   bands: List(OneSubpathBand),
   options: Options,
-  source_face_contamination: Bool,
+  offside: Bool,
 ) -> Result(List(svg_path.Subpath), Error) {
   use untrimmed <- result.try(
     offside_trimmed
@@ -1470,7 +1449,7 @@ fn submerged_trimmed_single_offset_subpaths(
     })
     |> result.all,
   )
-  use winding <- result.try(case source_face_contamination {
+  use winding <- result.try(case offside {
     True ->
       offside_trimmed_single_offset_winding_function(
         builds,
@@ -1481,7 +1460,7 @@ fn submerged_trimmed_single_offset_subpaths(
       )
     False -> internal_band_winding_function(bands)
   })
-  use arrangement <- result.try(case source_face_contamination {
+  use arrangement <- result.try(case offside {
     False -> Ok(original_arrangement)
     True ->
       single_offset_segment_arrangement(
@@ -1971,7 +1950,7 @@ pub fn internal_untrimmed_stroke_band(
   untrimmed_stroke_band(source, width, cap, options)
 }
 
-fn default_trimming_options() -> svg_path.DistanceOptions {
+fn default_distance_options() -> svg_path.DistanceOptions {
   svg_path.DistanceOptions(
     ..svg_path.default_distance_options(),
     samples: default_trimming_samples,
@@ -4045,72 +4024,6 @@ pub fn path_with(
   Ok(result)
 }
 
-/// Run the production single-offset pipeline with explicit control over the
-/// experimental closed-source face-contamination pass.
-@internal
-pub fn internal_path_with_source_face_contamination(
-  path path: svg_path.Path,
-  distance distance: Float,
-  options options: Options,
-  enabled enabled: Bool,
-) -> Result(svg_path.Path, Error) {
-  use _ <- result.try(validate_options(options))
-  use normalized <- result.try(normalize_source_path(path, options))
-  let source_subpaths = svg_path.path_subpaths(normalized)
-  use builds <- result.try(
-    single_offset_untrimmed_path_builds(
-      source_subpaths,
-      distance,
-      options,
-      converted: [],
-    ),
-  )
-  use bands <- result.try(
-    single_offset_bands_from_builds(builds, distance, converted: []),
-  )
-  trim_single_offset_builds_with_contamination(
-    builds,
-    distance,
-    bands:,
-    options:,
-    source_face_contamination: enabled,
-    final_trimming: InBandTrimming,
-  )
-}
-
-/// Run the production single-offset pipeline with cusp trimming in place of
-/// the final general submerged-trimming pass. This is for experiments and
-/// debug fixtures while the alternate policy is evaluated.
-@internal
-pub fn internal_path_with_final_cusp_trimming(
-  path path: svg_path.Path,
-  distance distance: Float,
-  options options: Options,
-) -> Result(svg_path.Path, Error) {
-  use _ <- result.try(validate_options(options))
-  use normalized <- result.try(normalize_source_path(path, options))
-  let source_subpaths = svg_path.path_subpaths(normalized)
-  use builds <- result.try(
-    single_offset_untrimmed_path_builds(
-      source_subpaths,
-      distance,
-      options,
-      converted: [],
-    ),
-  )
-  use bands <- result.try(
-    single_offset_bands_from_builds(builds, distance, converted: []),
-  )
-  trim_single_offset_builds_with_contamination(
-    builds,
-    distance,
-    bands:,
-    options:,
-    source_face_contamination: True,
-    final_trimming: CuspTrimming,
-  )
-}
-
 fn single_offset_bands_from_builds(
   builds: List(SingleOffsetUntrimmedBuild),
   distance: Float,
@@ -4406,18 +4319,6 @@ fn stroke_path_subpaths(
   }
 }
 
-fn untrimmed_segment_arrangement(
-  untrimmed: List(svg_path.Subpath),
-) -> Result(OffsetArrangementBuild, Error) {
-  let indexed =
-    indexed_offset_segments(
-      untrimmed,
-      group: UntrimmedOffsetSegment,
-      winding_opinions: [],
-    )
-  offset_segment_arrangement(indexed)
-}
-
 fn band_segment_arrangement(
   untrimmed: List(svg_path.Subpath),
   winding_opinions: List(WindingSideOpinion),
@@ -4609,38 +4510,6 @@ fn arrangement_edge_by_id(
   }
 }
 
-/// Return one atomic section for each directed untrimmed-edge occurrence.
-/// Coincident graph edges are expanded according to directional multiplicity.
-@internal
-pub fn internal_arrangement_global_sections(
-  untrimmed: List(svg_path.Subpath),
-  options options: Options,
-) -> Result(svg_path.Path, Error) {
-  use sections <- result.try(arrangement_global_section_chunks(untrimmed))
-  use subpaths <- result.try(chunks_to_subpaths(
-    sections,
-    options.fitting.tolerance,
-    closed: False,
-  ))
-  Ok(svg_path.Path(subpaths:))
-}
-
-/// Apply the production global-section trimming predicate to one subpath.
-@internal
-pub fn internal_global_section_is_valid(
-  section: svg_path.Subpath,
-  source source: svg_path.Path,
-  distance distance: Float,
-  options options: Options,
-) -> Result(Bool, Error) {
-  global_parametric_section_is_valid(
-    svg_path.subpath_segments(section),
-    source:,
-    distance:,
-    options:,
-  )
-}
-
 fn offset_segment_index_has_group(
   build: OffsetArrangementBuild,
   segment_index: Int,
@@ -4706,99 +4575,6 @@ fn offset_indexed_segment_at(
     [], _ -> Error(Nil)
     [first, ..], 0 -> Ok(first)
     [_, ..rest], _ -> offset_indexed_segment_at(rest, index - 1)
-  }
-}
-
-fn arrangement_global_section_chunks(
-  untrimmed: List(svg_path.Subpath),
-) -> Result(List(List(svg_path.Segment)), Error) {
-  use build <- result.try(untrimmed_segment_arrangement(untrimmed))
-  let OffsetArrangementBuild(segment_images:, ..) = build
-  use image_sections <- result.try(
-    segment_images
-    |> list.map(fn(image) {
-      source_segment_image_edges(build, image)
-      |> result.map(fn(edges) {
-        list.map(edges, fn(directed) {
-          let #(edge, reversed) = directed
-          [
-            case reversed {
-              True -> svg_path.segment_reverse(edge.segment)
-              False -> edge.segment
-            },
-          ]
-        })
-      })
-    })
-    |> result.all,
-  )
-  Ok(list.flatten(image_sections))
-}
-
-fn global_parametric_section_is_valid(
-  section: List(svg_path.Segment),
-  source source: svg_path.Path,
-  distance distance: Float,
-  options options: Options,
-) -> Result(Bool, Error) {
-  use section <- result.try(normalize_chunk(section, options.fitting.tolerance))
-  use section <- result.try(
-    svg_path.subpath_with(
-      section,
-      policy: svg_path.WiggleWith(options.fitting.tolerance),
-    )
-    |> result.map_error(PathError),
-  )
-  use length <- result.try(
-    svg_path.subpath_length(section) |> result.map_error(PathError),
-  )
-  global_parametric_section_samples(
-    section,
-    length,
-    section_sample_parameters(),
-    source:,
-    distance:,
-    options:,
-  )
-}
-
-fn global_parametric_section_samples(
-  section: svg_path.Subpath,
-  length: Float,
-  samples: List(Float),
-  source source: svg_path.Path,
-  distance distance: Float,
-  options options: Options,
-) -> Result(Bool, Error) {
-  case samples {
-    [] -> Ok(True)
-    [first, ..rest] -> {
-      use point <- result.try(
-        svg_path.subpath_point_at_length(section, distance: length *. first)
-        |> result.map_error(PathError),
-      )
-      let margin = distance_margin(options)
-      use projection <- result.try(
-        svg_path.path_projection_with(
-          point,
-          to: source,
-          options: options.distance_options,
-        )
-        |> result.map_error(PathError),
-      )
-      case projection.distance +. margin >=. float.absolute_value(distance) {
-        True ->
-          global_parametric_section_samples(
-            section,
-            length,
-            rest,
-            source:,
-            distance:,
-            options:,
-          )
-        False -> Ok(False)
-      }
-    }
   }
 }
 
@@ -6765,225 +6541,6 @@ fn reverse_segments(
   segments
   |> list.reverse
   |> list.map(svg_path.segment_reverse)
-}
-
-fn section_sample_parameters() -> List(Float) {
-  [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
-}
-
-fn merge_touching_chunk_pair(
-  left: List(svg_path.Segment),
-  right: List(svg_path.Segment),
-  tolerance: Float,
-) -> Option(List(svg_path.Segment)) {
-  case left, list.last(left), right, list.last(right) {
-    [left_first, ..], Ok(left_last), [right_first, ..], Ok(right_last) -> {
-      let left_start = svg_path.segment_start(left_first)
-      let left_end = svg_path.segment_end(left_last)
-      let right_start = svg_path.segment_start(right_first)
-      let right_end = svg_path.segment_end(right_last)
-      case
-        same_point(left_end, right_start, tolerance),
-        same_point(left_end, right_end, tolerance),
-        same_point(left_start, right_end, tolerance),
-        same_point(left_start, right_start, tolerance)
-      {
-        True, _, _, _ -> Some(list.append(left, right))
-        _, True, _, _ -> Some(list.append(left, reverse_segments(right)))
-        _, _, True, _ -> Some(list.append(right, left))
-        _, _, _, True -> Some(list.append(reverse_segments(left), right))
-        _, _, _, _ -> None
-      }
-    }
-    _, _, _, _ -> None
-  }
-}
-
-fn chunks_to_subpaths(
-  chunks: List(List(svg_path.Segment)),
-  tolerance: Float,
-  closed closed: Bool,
-) -> Result(List(svg_path.Subpath), Error) {
-  let chunks = case closed {
-    True -> merge_wrapping_chunks(chunks, tolerance)
-    False -> chunks
-  }
-  chunks_to_subpaths_loop(chunks, tolerance, closed:, subpaths: [])
-}
-
-fn chunks_to_subpaths_loop(
-  chunks: List(List(svg_path.Segment)),
-  tolerance: Float,
-  closed closed: Bool,
-  subpaths subpaths: List(svg_path.Subpath),
-) -> Result(List(svg_path.Subpath), Error) {
-  case chunks {
-    [] -> Ok(list.reverse(subpaths))
-    [first, ..rest] -> {
-      let close = closed_chunk(first, tolerance) && closed
-      use first <- result.try(normalize_chunk(first, tolerance))
-      let first = case close {
-        True -> snap_chunk_end_to_start(first)
-        False -> first
-      }
-      use subpath <- result.try(
-        svg_path.subpath_with(
-          first,
-          policy: svg_path.WiggleThenBridgeWith(tolerance),
-        )
-        |> result.map_error(PathError),
-      )
-      use subpath <- result.try(case close {
-        True ->
-          svg_path.subpath_set_closed_with(
-            subpath,
-            closed: True,
-            policy: svg_path.WiggleThenBridgeWith(tolerance),
-          )
-          |> result.map_error(PathError)
-        False -> Ok(subpath)
-      })
-      chunks_to_subpaths_loop(rest, tolerance, closed:, subpaths: [
-        subpath,
-        ..subpaths
-      ])
-    }
-  }
-}
-
-fn normalize_chunk(
-  chunk: List(svg_path.Segment),
-  tolerance: Float,
-) -> Result(List(svg_path.Segment), Error) {
-  case chunk {
-    [] -> Ok([])
-    [_, ..] -> {
-      use subpath <- result.try(
-        svg_path.subpath_with(
-          chunk,
-          policy: snap_chunk_endpoint_policy(tolerance),
-        )
-        |> result.map_error(PathError),
-      )
-      Ok(svg_path.subpath_segments(subpath))
-    }
-  }
-}
-
-fn snap_chunk_endpoint_policy(tolerance: Float) -> svg_path.EndpointPolicy {
-  svg_path.Custom(fn(previous, next, closing) {
-    let previous_end = svg_path.segment_end(previous)
-    let next_start = svg_path.segment_start(next)
-    case same_point(previous_end, next_start, tolerance), closing {
-      True, True -> [snap_segment_end(previous, next_start)]
-      True, False -> [previous, snap_segment_start(next, previous_end)]
-      False, True -> [previous]
-      False, False -> [previous, next]
-    }
-  })
-}
-
-fn snap_chunk_end_to_start(
-  chunk: List(svg_path.Segment),
-) -> List(svg_path.Segment) {
-  case chunk {
-    [] -> []
-    [first, ..] -> {
-      let start = svg_path.segment_start(first)
-      let assert Ok(last) = list.last(chunk)
-      replace_last_segment_unchecked(chunk, snap_segment_end(last, start))
-    }
-  }
-}
-
-fn replace_last_segment_unchecked(
-  segments: List(svg_path.Segment),
-  replacement: svg_path.Segment,
-) -> List(svg_path.Segment) {
-  case segments {
-    [] -> []
-    [_] -> [replacement]
-    [first, ..rest] -> [
-      first,
-      ..replace_last_segment_unchecked(rest, replacement)
-    ]
-  }
-}
-
-fn snap_segment_start(
-  segment: svg_path.Segment,
-  start: svg_path.Point,
-) -> svg_path.Segment {
-  case segment {
-    svg_path.Line(end:, ..) -> svg_path.Line(start:, end:)
-    svg_path.QuadraticBezier(control:, end:, ..) ->
-      svg_path.QuadraticBezier(start:, control:, end:)
-    svg_path.CubicBezier(control1:, control2:, end:, ..) ->
-      svg_path.CubicBezier(start:, control1:, control2:, end:)
-    svg_path.Arc(radius:, x_axis_rotation:, large_arc:, sweep:, end:, ..) ->
-      svg_path.Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:)
-  }
-}
-
-fn snap_segment_end(
-  segment: svg_path.Segment,
-  end: svg_path.Point,
-) -> svg_path.Segment {
-  case segment {
-    svg_path.Line(start:, ..) -> svg_path.Line(start:, end:)
-    svg_path.QuadraticBezier(start:, control:, ..) ->
-      svg_path.QuadraticBezier(start:, control:, end:)
-    svg_path.CubicBezier(start:, control1:, control2:, ..) ->
-      svg_path.CubicBezier(start:, control1:, control2:, end:)
-    svg_path.Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, ..) ->
-      svg_path.Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:)
-  }
-}
-
-fn merge_wrapping_chunks(
-  chunks: List(List(svg_path.Segment)),
-  tolerance: Float,
-) -> List(List(svg_path.Segment)) {
-  case chunks {
-    [] | [_] -> chunks
-    [first, ..rest] -> {
-      let assert Ok(last) = list.last(rest)
-      case merge_touching_chunk_pair(last, first, tolerance) {
-        Some(merged) -> {
-          let rest_without_last = drop_last(rest)
-          [merged, ..rest_without_last]
-        }
-        None -> chunks
-      }
-    }
-  }
-}
-
-fn closed_chunk(chunk: List(svg_path.Segment), tolerance: Float) -> Bool {
-  case chunk, list.last(chunk) {
-    [first, ..], Ok(last) ->
-      same_point(
-        svg_path.segment_start(first),
-        svg_path.segment_end(last),
-        tolerance,
-      )
-    _, _ -> False
-  }
-}
-
-fn drop_last(items: List(a)) -> List(a) {
-  case items {
-    [] | [_] -> []
-    [first, ..rest] -> [first, ..drop_last(rest)]
-  }
-}
-
-fn same_point(a: svg_path.Point, b: svg_path.Point, tolerance: Float) -> Bool {
-  point_helpers.distance_squared(a, b) <=. tolerance *. tolerance
-}
-
-fn distance_margin(options: Options) -> Float {
-  options.fitting.tolerance *. 1.1
 }
 
 fn build_synchronized_offset_segments(

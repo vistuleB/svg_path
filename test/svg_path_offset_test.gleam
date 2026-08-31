@@ -26,7 +26,7 @@ const stalled_arc_turn_distance = 39.999
 
 const stalled_arc_turn_threshold = 0.01
 
-pub fn default_trimming_options_test() {
+pub fn default_distance_options_test() {
   let options = offset.default_options()
   assert options.single_offset_trimming
     == offset.SingleOffsetTrimming(
@@ -635,13 +635,17 @@ pub fn final_cusp_trimming_handles_open_side_umbrella_test() {
       svg_path.Line(p2, p5),
       svg_path.Line(p5, p4),
     ])
-  let options = offset.Options(..offset.default_options(), join: offset.Round)
-  let assert Ok(result) =
-    offset.internal_path_with_final_cusp_trimming(
-      svg_path.Path([source]),
-      distance: 0.15,
-      options:,
+  let options =
+    offset.Options(
+      ..offset.default_options(),
+      join: offset.Round,
+      single_offset_trimming: offset.SingleOffsetTrimming(
+        offside: True,
+        final_trimming: offset.CuspTrimming,
+      ),
     )
+  let assert Ok(result) =
+    offset.path_with(svg_path.Path([source]), offset: 0.15, options:)
   let assert [subpath] = svg_path.path_subpaths(result)
   assert !svg_path.subpath_is_closed(subpath)
   assert !list.is_empty(svg_path.subpath_segments(subpath))
@@ -895,52 +899,6 @@ pub fn default_offset_trimming_uses_precise_projection_test() {
   assert options.distance_options.samples == 5
   assert options.distance_options.tolerance
     == svg_path.default_distance_options().tolerance
-}
-
-pub fn section_filter_uses_fitting_tolerance_margin_test() {
-  let source =
-    svg_path.subpath_assert_polyline([
-      svg_path.Point(0.0, 0.0),
-      svg_path.Point(10.0, 0.0),
-    ])
-  let section =
-    svg_path.subpath_assert_polyline([
-      svg_path.Point(0.0, 0.997),
-      svg_path.Point(10.0, 0.997),
-    ])
-  let default = offset.default_options()
-  let tight =
-    offset.Options(
-      ..default,
-      fitting: offset.FittingOptions(..default.fitting, tolerance: 0.002),
-    )
-  let permissive =
-    offset.Options(
-      ..default,
-      fitting: offset.FittingOptions(..default.fitting, tolerance: 0.01),
-    )
-
-  assert offset.internal_global_section_is_valid(
-      section,
-      source: svg_path.Path([source]),
-      distance: 1.0,
-      options: default,
-    )
-    == Ok(True)
-  assert offset.internal_global_section_is_valid(
-      section,
-      source: svg_path.Path([source]),
-      distance: 1.0,
-      options: tight,
-    )
-    == Ok(False)
-  assert offset.internal_global_section_is_valid(
-      section,
-      source: svg_path.Path([source]),
-      distance: 1.0,
-      options: permissive,
-    )
-    == Ok(True)
 }
 
 pub fn segment_rejects_negative_stalled_offset_diameter_test() {
@@ -1229,58 +1187,6 @@ pub fn arrangement_consolidates_coincident_pieces_test() {
   assert list.all(build.graph.edges, fn(edge) {
     edge.forward_multiplicity == 2 && edge.reverse_multiplicity == 0
   })
-}
-
-pub fn arrangement_global_sections_expand_coincident_multiplicity_test() {
-  let whole =
-    svg_path.subpath_assert_polyline([
-      svg_path.Point(0.0, 0.0),
-      svg_path.Point(10.0, 0.0),
-    ])
-  let divided =
-    svg_path.subpath_assert_polyline([
-      svg_path.Point(0.0, 0.0),
-      svg_path.Point(5.0, 0.0),
-      svg_path.Point(10.0, 0.0),
-    ])
-
-  let assert Ok(sections) =
-    offset.internal_arrangement_global_sections(
-      [whole, divided],
-      options: offset.default_options(),
-    )
-
-  assert serialize.path(sections) == "M 0 0 H 5 M 5 0 H 10 M 0 0 H 5 M 5 0 H 10"
-}
-
-pub fn arrangement_global_sections_preserve_opposite_multiplicity_test() {
-  let forward =
-    svg_path.subpath_assert_polyline([
-      svg_path.Point(0.0, 0.0),
-      svg_path.Point(10.0, 0.0),
-    ])
-  let reverse =
-    svg_path.subpath_assert_polyline([
-      svg_path.Point(10.0, 0.0),
-      svg_path.Point(0.0, 0.0),
-    ])
-
-  let assert Ok(build) =
-    arrangement_graph.build(
-      [svg_path.Path([forward, reverse])],
-      tolerance: 0.000000002,
-      minimum_chord: 0.000000002,
-    )
-  let assert [edge] = build.graph.edges
-  assert edge.forward_multiplicity == 1
-  assert edge.reverse_multiplicity == 1
-
-  let assert Ok(sections) =
-    offset.internal_arrangement_global_sections(
-      [forward, reverse],
-      options: offset.default_options(),
-    )
-  assert serialize.path(sections) == "M 0 0 H 10 M 10 0 H 0"
 }
 
 pub fn subpath_band_open_line_returns_two_capless_sides_test() {
@@ -1631,20 +1537,15 @@ pub fn single_offset_band_candidate_keeps_closed_source_as_two_sides_test() {
   assert svg_path.subpath_is_closed(interior)
 }
 
-pub fn source_face_contamination_pruning_keeps_square_offset_test() {
+pub fn offside_trimming_keeps_square_offset_test() {
   let source = svg_path.Path([square_loop()])
   let assert Ok(trimmed) =
-    offset.internal_path_with_source_face_contamination(
-      source,
-      distance: 2.0,
-      options: offset.default_options(),
-      enabled: True,
-    )
+    offset.path_with(source, offset: 2.0, options: offset.default_options())
   let assert [subpath] = svg_path.path_subpaths(trimmed)
   assert svg_path.subpath_is_closed(subpath)
 }
 
-pub fn source_face_contamination_prunes_closed_subpaths_independently_test() {
+pub fn offside_trimming_prunes_closed_subpaths_independently_test() {
   let second =
     svg_path.subpath_assert_polygon([
       svg_path.Point(20.0, 0.0),
@@ -1654,12 +1555,7 @@ pub fn source_face_contamination_prunes_closed_subpaths_independently_test() {
     ])
   let source = svg_path.Path([square_loop(), second])
   let assert Ok(trimmed) =
-    offset.internal_path_with_source_face_contamination(
-      source,
-      distance: 2.0,
-      options: offset.default_options(),
-      enabled: True,
-    )
+    offset.path_with(source, offset: 2.0, options: offset.default_options())
   let subpaths = svg_path.path_subpaths(trimmed)
   assert list.length(subpaths) == 2
   assert list.all(subpaths, svg_path.subpath_is_closed)
