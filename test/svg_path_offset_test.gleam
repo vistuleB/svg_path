@@ -99,11 +99,11 @@ pub fn reversal_boundaries_store_endpoint_curvature_test() {
     )
   let assert Ok(source) =
     svg_path.subpath_with([segment], policy: svg_path.Strict)
-  let distance = -0.27
+  let offset_amount = -0.27
   let assert Ok(portions) =
     offset.internal_offset_source_trace(
       source,
-      distance:,
+      offset: offset_amount,
       options: offset.default_options(),
     )
   let reversal_curvatures =
@@ -130,7 +130,8 @@ pub fn reversal_boundaries_store_endpoint_curvature_test() {
 
   assert reversal_curvatures != []
   assert list.all(reversal_curvatures, fn(value) {
-    value != 0.0 && float.absolute_value(1.0 /. value -. distance) <. 0.00001
+    value != 0.0
+    && float.absolute_value(1.0 /. value -. offset_amount) <. 0.00001
   })
 }
 
@@ -286,7 +287,7 @@ pub fn endpoint_near_reversal_is_absorbed_into_stalled_piece_test() {
       ],
       ..,
     ),
-  ]) = offset.internal_offset_source_trace(source, distance: 1.04, options:)
+  ]) = offset.internal_offset_source_trace(source, offset: 1.04, options:)
 
   assert svg_path.segment_chord_length(stalled) <. 0.001
   assert float.absolute_value(source_from -. 0.00019493877887725834)
@@ -1516,7 +1517,7 @@ pub fn single_offset_band_candidate_closes_open_source_test() {
   let assert Ok(offset.OpenSubpathBand(outline)) =
     offset.internal_single_offset_band_candidate(
       open,
-      distance: 2.0,
+      offset: 2.0,
       options: offset.default_options(),
     )
 
@@ -1529,7 +1530,7 @@ pub fn single_offset_band_candidate_keeps_closed_source_as_two_sides_test() {
   let assert Ok(offset.ClosedSubpathBand(exterior:, interior:)) =
     offset.internal_single_offset_band_candidate(
       closed,
-      distance: 2.0,
+      offset: 2.0,
       options: offset.default_options(),
     )
 

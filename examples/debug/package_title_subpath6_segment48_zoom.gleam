@@ -52,7 +52,7 @@ pub fn main() -> Nil {
   let assert Ok(trace) =
     offset.internal_offset_source_trace(
       source_subpath,
-      distance: offset_distance,
+      offset: offset_distance,
       options:,
     )
   write_file(

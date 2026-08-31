@@ -34,7 +34,7 @@ pub fn main() -> Nil {
       ),
     )
   let assert Ok(source_trace) =
-    offset.internal_offset_source_trace(s, distance: offset_distance, options:)
+    offset.internal_offset_source_trace(s, offset: offset_distance, options:)
   let assert Ok(joined) =
     offset.subpath_untrimmed_with(s, offset: offset_distance, options:)
   io.println(

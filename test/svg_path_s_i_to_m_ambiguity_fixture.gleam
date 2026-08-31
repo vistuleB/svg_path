@@ -29,7 +29,7 @@ pub fn main() -> Nil {
   let assert Ok(trace) =
     offset.internal_path_single_offset_contamination_arrangement_trace(
       source,
-      distance: 1.0,
+      offset: 1.0,
       options:,
     )
   let _ = write_file(output, drawing(source, trace))

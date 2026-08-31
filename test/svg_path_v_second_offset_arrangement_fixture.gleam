@@ -26,7 +26,7 @@ pub fn main() -> Nil {
   let assert Ok(trace) =
     offset.internal_path_single_offset_contamination_arrangement_trace(
       second,
-      distance: 1.04,
+      offset: 1.04,
       options:,
     )
   let assert Ok(third) = offset.path_with(second, offset: 1.04, options:)
