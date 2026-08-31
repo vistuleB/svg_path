@@ -20,22 +20,22 @@ pub fn figure_eight_correspondence_blocks() -> String {
   let assert Ok(band) =
     offset.subpath_band_with(
       source,
-      distance_a: 18.0,
-      distance_b: 34.0,
+      inner_offset: 18.0,
+      outer_offset: 34.0,
       options:,
     )
   let assert Ok(blocks) =
     offset.internal_synchronized_offset_area_trace(
       source,
-      inner_distance: 18.0,
-      outer_distance: 34.0,
+      inner_offset: 18.0,
+      outer_offset: 34.0,
       options:,
     )
   let assert Ok(joins) =
     offset.internal_synchronized_join_trace(
       source,
-      inner_distance: 18.0,
-      outer_distance: 34.0,
+      inner_offset: 18.0,
+      outer_offset: 34.0,
       options:,
     )
   let block_drawings =

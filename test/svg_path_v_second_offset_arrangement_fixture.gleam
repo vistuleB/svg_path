@@ -12,8 +12,7 @@ const input = "examples/debug/package_title.svg"
 
 const first_output = "examples/debug/v_second_offset_1_04_fixture.svg"
 
-const arrangement_output =
-  "examples/debug/v_third_offset_i_to_m_arrangement_1_04.svg"
+const arrangement_output = "examples/debug/v_third_offset_i_to_m_arrangement_1_04.svg"
 
 const third_output = "examples/debug/v_third_offset_1_04_final.svg"
 
@@ -22,15 +21,15 @@ pub fn main() -> Nil {
   let assert Ok(title) = parse.path(first_path_data(contents))
   let assert [_, v, ..] = svg_path.path_subpaths(title)
   let options = offset.default_options()
-  let assert Ok(first) = offset.subpath_with(v, distance: 1.04, options:)
-  let assert Ok(second) = offset.path_with(first, distance: 1.04, options:)
+  let assert Ok(first) = offset.subpath_with(v, offset: 1.04, options:)
+  let assert Ok(second) = offset.path_with(first, offset: 1.04, options:)
   let assert Ok(trace) =
     offset.internal_path_single_offset_contamination_arrangement_trace(
       second,
       distance: 1.04,
       options:,
     )
-  let assert Ok(third) = offset.path_with(second, distance: 1.04, options:)
+  let assert Ok(third) = offset.path_with(second, offset: 1.04, options:)
   let _ = write_file(first_output, first_offset_drawing(first, second))
   let _ = write_file(arrangement_output, arrangement_drawing(second, trace))
   let _ = write_file(third_output, third_offset_drawing(first, second, third))
@@ -65,14 +64,15 @@ fn third_offset_drawing(
   <> "</svg>\n"
 }
 
-fn first_offset_drawing(source: svg_path.Path, offset: svg_path.Path) -> String {
+fn first_offset_drawing(
+  source: svg_path.Path,
+  offset: svg_path.Path,
+) -> String {
   let geometry =
-    svg_path.Path(
-      list.append(
-        svg_path.path_subpaths(source),
-        svg_path.path_subpaths(offset),
-      ),
-    )
+    svg_path.Path(list.append(
+      svg_path.path_subpaths(source),
+      svg_path.path_subpaths(offset),
+    ))
   let view_box = padded_box(geometry, 0.8)
   document_start(view_box, 900, 900)
   <> background(view_box)

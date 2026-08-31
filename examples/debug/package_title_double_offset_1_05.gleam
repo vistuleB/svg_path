@@ -25,14 +25,14 @@ pub fn main() -> Nil {
     offset.Options(
       ..offset.default_options(),
       fitting: offset.FittingOptions(tolerance: 0.01, samples: 5, max_depth: 12),
-      trimming: svg_path.DistanceOptions(
+      distance_options: svg_path.DistanceOptions(
         ..svg_path.default_distance_options(),
         tolerance: 0.000000001,
       ),
     )
 
   let assert Ok(first_offset) =
-    offset.path_with(source, distance: offset_distance, options:)
+    offset.path_with(source, offset: offset_distance, options:)
   io.println(
     "first offset subpaths: "
     <> int.to_string(list.length(svg_path.path_subpaths(first_offset))),
@@ -41,11 +41,7 @@ pub fn main() -> Nil {
   report_subpath_segments("first offset", first_offset, 4)
 
   let second_untrimmed =
-    offset.path_untrimmed_with(
-      first_offset,
-      distance: offset_distance,
-      options:,
-    )
+    offset.path_untrimmed_with(first_offset, offset: offset_distance, options:)
   case second_untrimmed {
     Ok(untrimmed) -> {
       io.println(
@@ -61,7 +57,7 @@ pub fn main() -> Nil {
   }
 
   let second_trimmed =
-    offset.path_with(first_offset, distance: offset_distance, options:)
+    offset.path_with(first_offset, offset: offset_distance, options:)
   case second_trimmed {
     Ok(second_offset) -> {
       io.println(

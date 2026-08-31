@@ -24,27 +24,27 @@ pub fn main() -> Nil {
     offset.Options(
       ..offset.default_options(),
       fitting: offset.FittingOptions(tolerance: 0.01, samples: 5, max_depth: 12),
-      trimming: svg_path.DistanceOptions(
+      distance_options: svg_path.DistanceOptions(
         ..svg_path.default_distance_options(),
         tolerance: 0.000000001,
       ),
     )
 
   let assert Ok(first_offset) =
-    offset.path_with(source, distance: offset_distance, options:)
+    offset.path_with(source, offset: offset_distance, options:)
   io.println(
     "first offset subpaths: "
     <> int.to_string(list.length(svg_path.path_subpaths(first_offset))),
   )
 
   let assert Ok(second_offset) =
-    offset.path_with(first_offset, distance: offset_distance, options:)
+    offset.path_with(first_offset, offset: offset_distance, options:)
   io.println(
     "second offset subpaths: "
     <> int.to_string(list.length(svg_path.path_subpaths(second_offset))),
   )
   let third_offset =
-    offset.path_with(second_offset, distance: offset_distance, options:)
+    offset.path_with(second_offset, offset: offset_distance, options:)
   case third_offset {
     Ok(third_offset) ->
       io.println(

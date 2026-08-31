@@ -28,7 +28,12 @@ fn render() -> String {
     )
 
   let result_things = case
-    retained_band_sections(source, distance_a: 15.0, distance_b: 30.0, options:)
+    retained_band_sections(
+      source,
+      inner_offset: 15.0,
+      outer_offset: 30.0,
+      options:,
+    )
   {
     Ok(sections) ->
       list.append(
@@ -74,18 +79,18 @@ fn render() -> String {
 
 fn retained_band_sections(
   source: svg_path.Subpath,
-  distance_a distance_a: Float,
-  distance_b distance_b: Float,
+  inner_offset inner_offset: Float,
+  outer_offset outer_offset: Float,
   options options: offset.Options,
 ) -> Result(List(svg_path.Subpath), offset.Error) {
   use provisional_a <- result.try(offset.subpath_untrimmed_with(
     source,
-    distance: distance_a,
+    offset: inner_offset,
     options:,
   ))
   use provisional_b <- result.try(offset.subpath_untrimmed_with(
     source,
-    distance: distance_b,
+    offset: outer_offset,
     options:,
   ))
   use #(cross_a, cross_b) <- result.try(cross_side_split_parameters(
@@ -95,14 +100,14 @@ fn retained_band_sections(
   use sections_a <- result.try(retained_sections_for_side(
     source,
     provisional_a,
-    distance_a,
+    inner_offset,
     options,
     extra_split_points: cross_a,
   ))
   use sections_b <- result.try(retained_sections_for_side(
     source,
     provisional_b,
-    distance_b,
+    outer_offset,
     options,
     extra_split_points: cross_b,
   ))
@@ -288,7 +293,7 @@ fn section_has_enough_non_negative_samples(
         svg_path.subpath_projection_with(
           point,
           to: source,
-          options: options.trimming,
+          options: options.distance_options,
         )
         |> result.map_error(offset.PathError),
       )

@@ -19,29 +19,29 @@ pub fn main() -> Nil {
   let assert Ok(inner_18_outer_34) =
     offset.subpath_band_with(
       source,
-      distance_a: 18.0,
-      distance_b: 34.0,
+      inner_offset: 18.0,
+      outer_offset: 34.0,
       options:,
     )
   let assert Ok(inner_34_outer_18) =
     offset.subpath_band_with(
       source,
-      distance_a: 34.0,
-      distance_b: 18.0,
+      inner_offset: 34.0,
+      outer_offset: 18.0,
       options:,
     )
   let assert Ok(inner_minus_18_outer_minus_34) =
     offset.subpath_band_with(
       source,
-      distance_a: -18.0,
-      distance_b: -34.0,
+      inner_offset: -18.0,
+      outer_offset: -34.0,
       options:,
     )
   let assert Ok(inner_minus_34_outer_minus_18) =
     offset.subpath_band_with(
       source,
-      distance_a: -34.0,
-      distance_b: -18.0,
+      inner_offset: -34.0,
+      outer_offset: -18.0,
       options:,
     )
   let band_subpaths =

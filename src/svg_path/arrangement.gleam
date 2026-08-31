@@ -124,6 +124,17 @@ pub type EdgeCapacityAssignment {
   EdgeCapacityAssignment(edge_id: Int, capacity: Int)
 }
 
+/// A requested parity for the total capacity incident to one vertex.
+///
+/// A required request remains an invariant even when incident capacity reaches
+/// zero. A preferred request participates in the same forced reductions while
+/// positive capacity remains, but permits the vertex to become isolated.
+@internal
+pub type VertexParityRequest {
+  RequiredVertexParity(vertex: Int, parity: Int)
+  PreferredVertexParity(vertex: Int, parity: Int)
+}
+
 /// Failure of forced parity pruning.
 @internal
 pub type ForcedParityError {
@@ -142,6 +153,7 @@ type VertexParityState {
   VertexParityState(
     vertex: Int,
     parity: Int,
+    preferred: Bool,
     incident_capacity: Int,
     positive_edges: List(Int),
   )
@@ -1937,7 +1949,7 @@ pub fn empty() -> ArrangementGraph {
 @internal
 pub fn forced_parity_capacities(
   graph: ArrangementGraph,
-  vertex_parities vertex_parities: List(#(Int, Int)),
+  vertex_parities vertex_parities: List(VertexParityRequest),
 ) -> Result(List(EdgeCapacityAssignment), ForcedParityError) {
   let ArrangementGraph(edges:, ..) = graph
   let assignments =
@@ -1959,7 +1971,7 @@ pub fn forced_parity_capacities(
 pub fn forced_parity_capacities_with(
   graph: ArrangementGraph,
   initial_capacities: List(EdgeCapacityAssignment),
-  vertex_parities vertex_parities: List(#(Int, Int)),
+  vertex_parities vertex_parities: List(VertexParityRequest),
 ) -> Result(List(EdgeCapacityAssignment), ForcedParityError) {
   use _ <- result.try(validate_forced_parities(graph, vertex_parities))
   use _ <- result.try(validate_edge_capacities(graph, initial_capacities))
@@ -2007,16 +2019,22 @@ fn validate_edge_capacities(
 
 fn validate_forced_parities(
   graph: ArrangementGraph,
-  vertex_parities: List(#(Int, Int)),
+  vertex_parities: List(VertexParityRequest),
 ) -> Result(Nil, ForcedParityError) {
   let ArrangementGraph(vertices:, ..) = graph
   case vertex_parities {
     [] -> Ok(Nil)
-    [#(vertex, parity), ..rest] ->
+    [first, ..rest] -> {
+      let #(vertex, parity) = vertex_parity_request(first)
       case parity == 0 || parity == 1 {
         False -> Error(ForcedParityInvalidVertexParity(vertex, parity))
         True ->
-          case list.any(rest, fn(other) { other.0 == vertex }) {
+          case
+            list.any(rest, fn(other) {
+              let #(other_vertex, _) = vertex_parity_request(other)
+              other_vertex == vertex
+            })
+          {
             True -> Error(ForcedParityDuplicateVertex(vertex))
             False ->
               case
@@ -2027,12 +2045,20 @@ fn validate_forced_parities(
               }
           }
       }
+    }
+  }
+}
+
+fn vertex_parity_request(request: VertexParityRequest) -> #(Int, Int) {
+  case request {
+    RequiredVertexParity(vertex:, parity:) -> #(vertex, parity)
+    PreferredVertexParity(vertex:, parity:) -> #(vertex, parity)
   }
 }
 
 fn forced_parity_reduce(
   graph: ArrangementGraph,
-  vertex_parities: List(#(Int, Int)),
+  vertex_parities: List(VertexParityRequest),
   assignments: List(EdgeCapacityAssignment),
 ) -> Result(List(EdgeCapacityAssignment), ForcedParityError) {
   let ArrangementGraph(vertices:, ..) = graph
@@ -2043,6 +2069,10 @@ fn forced_parity_reduce(
   let mismatched =
     list.filter(states, fn(state) {
       state.incident_capacity % 2 != state.parity
+      && case state.preferred && state.incident_capacity == 0 {
+        True -> False
+        False -> True
+      }
     })
   case list.find(mismatched, fn(state) { state.positive_edges == [] }) {
     Ok(state) -> Error(ForcedParityInfeasible(state.vertex))
@@ -2106,21 +2136,26 @@ fn reduce_edge_capacity(
 fn forced_parity_vertex_state(
   graph: ArrangementGraph,
   assignments: List(EdgeCapacityAssignment),
-  vertex_parities: List(#(Int, Int)),
+  vertex_parities: List(VertexParityRequest),
   vertex: Int,
 ) -> VertexParityState {
   let ArrangementGraph(edges:, ..) = graph
-  let parity = case
-    list.find(vertex_parities, fn(entry) { entry.0 == vertex })
+  let #(parity, preferred) = case
+    list.find(vertex_parities, fn(request) {
+      let #(request_vertex, _) = vertex_parity_request(request)
+      request_vertex == vertex
+    })
   {
-    Ok(entry) -> entry.1
-    Error(_) -> 0
+    Ok(RequiredVertexParity(parity:, ..)) -> #(parity, False)
+    Ok(PreferredVertexParity(parity:, ..)) -> #(parity, True)
+    Error(_) -> #(0, False)
   }
   list.fold(
     edges,
     VertexParityState(
       vertex:,
       parity:,
+      preferred:,
       incident_capacity: 0,
       positive_edges: [],
     ),

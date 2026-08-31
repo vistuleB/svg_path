@@ -26,6 +26,69 @@ const stalled_arc_turn_distance = 39.999
 
 const stalled_arc_turn_threshold = 0.01
 
+pub fn default_trimming_options_test() {
+  let options = offset.default_options()
+  assert options.single_offset_trimming
+    == offset.SingleOffsetTrimming(
+      offside: True,
+      final_trimming: offset.InBandTrimming,
+    )
+  assert options.band_trimming
+    == offset.BandTrimming(inner_cusps: True, outer_cusps: True, in_band: True)
+}
+
+pub fn public_single_offset_trimming_branches_test() {
+  let source =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
+      svg_path.Point(10.0, 10.0),
+    ])
+  let finishes = [
+    offset.CuspTrimming,
+    offset.InBandTrimming,
+    offset.NoTrimming,
+  ]
+  finishes
+  |> list.each(fn(finish) {
+    let options =
+      offset.Options(
+        ..offset.default_options(),
+        single_offset_trimming: offset.SingleOffsetTrimming(
+          offside: False,
+          final_trimming: finish,
+        ),
+      )
+    let assert Ok(path) = offset.subpath_with(source, offset: 1.0, options:)
+    assert svg_path.path_subpaths(path) != []
+  })
+}
+
+pub fn public_band_trimming_branches_test() {
+  let source =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
+      svg_path.Point(10.0, 10.0),
+    ])
+  let policies = [
+    offset.BandTrimming(inner_cusps: False, outer_cusps: True, in_band: True),
+    offset.BandTrimming(inner_cusps: True, outer_cusps: False, in_band: False),
+  ]
+  policies
+  |> list.each(fn(band_trimming) {
+    let options = offset.Options(..offset.default_options(), band_trimming:)
+    let assert Ok(path) =
+      offset.subpath_band_with(
+        source,
+        inner_offset: -1.0,
+        outer_offset: 1.0,
+        options:,
+      )
+    assert svg_path.path_subpaths(path) != []
+  })
+}
+
 pub fn reversal_boundaries_store_endpoint_curvature_test() {
   let segment =
     svg_path.CubicBezier(
@@ -84,8 +147,8 @@ pub fn synchronized_offsets_share_nonstalled_refinement_leaves_test() {
   let assert Ok(correspondences) =
     offset.internal_synchronized_offset_trace(
       source,
-      inner_distance: 0.0,
-      outer_distance: -0.27,
+      inner_offset: 0.0,
+      outer_offset: -0.27,
       options: offset.default_options(),
     )
   let paired =
@@ -116,8 +179,8 @@ pub fn synchronized_offsets_keep_stalled_side_as_one_run_test() {
   let assert Ok(correspondences) =
     offset.internal_synchronized_offset_trace(
       source,
-      inner_distance: 0.0,
-      outer_distance: stalled_arc_turn_distance,
+      inner_offset: 0.0,
+      outer_offset: stalled_arc_turn_distance,
       options: offset.default_options(),
     )
 
@@ -140,9 +203,9 @@ pub fn synchronized_offsets_accept_reversed_distance_order_test() {
       ),
     ])
   let assert Ok(forward) =
-    offset.subpath_band_untrimmed(source, distance_a: -0.5, distance_b: 1.0)
+    offset.subpath_band_untrimmed(source, inner_offset: -0.5, outer_offset: 1.0)
   let assert Ok(reversed) =
-    offset.subpath_band_untrimmed(source, distance_a: 1.0, distance_b: -0.5)
+    offset.subpath_band_untrimmed(source, inner_offset: 1.0, outer_offset: -0.5)
   let assert [forward_inner, forward_outer] = svg_path.path_subpaths(forward)
   let assert [reversed_inner, reversed_outer] = svg_path.path_subpaths(reversed)
 
@@ -165,8 +228,8 @@ pub fn synchronized_offsets_retain_matched_join_geometry_test() {
   let assert Ok(joins) =
     offset.internal_synchronized_join_trace(
       source,
-      inner_distance: -0.25,
-      outer_distance: 0.5,
+      inner_offset: -0.25,
+      outer_offset: 0.5,
       options: offset.default_options(),
     )
   let assert [
@@ -237,7 +300,7 @@ pub fn segment_offsets_line_to_visual_left_for_positive_distance_test() {
       end: svg_path.Point(10.0, 0.0),
     )
 
-  let assert Ok(offset) = offset.segment(line, distance: 2.0)
+  let assert Ok(offset) = offset.segment(line, offset: 2.0)
 
   assert svg_path.subpath_segments(offset)
     == [
@@ -255,7 +318,7 @@ pub fn segment_offsets_line_to_visual_right_for_negative_distance_test() {
       end: svg_path.Point(0.0, 10.0),
     )
 
-  let assert Ok(offset) = offset.segment(line, distance: -3.0)
+  let assert Ok(offset) = offset.segment(line, offset: -3.0)
 
   assert svg_path.subpath_segments(offset)
     == [
@@ -542,20 +605,19 @@ pub fn package_title_s_iterated_offset_keeps_three_closed_first_offset_subpaths_
     offset.Options(
       ..offset.default_options(),
       fitting: offset.FittingOptions(tolerance: 0.01, samples: 5, max_depth: 12),
-      trimming: svg_path.DistanceOptions(
+      distance_options: svg_path.DistanceOptions(
         ..svg_path.default_distance_options(),
         tolerance: 0.000000001,
       ),
     )
 
-  let assert Ok(first_offset) =
-    offset.path_with(source, distance: 1.0, options:)
+  let assert Ok(first_offset) = offset.path_with(source, offset: 1.0, options:)
   let first_offset_subpaths = svg_path.path_subpaths(first_offset)
   assert list.length(first_offset_subpaths) == 3
   assert all_subpaths_closed(first_offset_subpaths)
 
   let assert Ok(_second_offset) =
-    offset.path_with(first_offset, distance: 1.0, options:)
+    offset.path_with(first_offset, offset: 1.0, options:)
 }
 
 pub fn final_cusp_trimming_handles_open_side_umbrella_test() {
@@ -593,13 +655,13 @@ pub fn package_title_v_1_05_public_offset_filters_micro_loops_test() {
     offset.Options(
       ..offset.default_options(),
       fitting: offset.FittingOptions(tolerance: 0.01, samples: 5, max_depth: 12),
-      trimming: svg_path.DistanceOptions(
+      distance_options: svg_path.DistanceOptions(
         ..svg_path.default_distance_options(),
         tolerance: 0.000000001,
       ),
     )
   let assert Ok(result) =
-    offset.path_with(svg_path.Path([v]), distance: 1.05, options:)
+    offset.path_with(svg_path.Path([v]), offset: 1.05, options:)
   let subpaths = svg_path.path_subpaths(result)
 
   assert list.length(subpaths) == 1
@@ -615,7 +677,7 @@ pub fn package_title_a_and_v_1_05_bevel_offsets_filter_micro_loops_test() {
     offset.Options(
       ..offset.default_options(),
       fitting: offset.FittingOptions(tolerance: 0.01, samples: 5, max_depth: 12),
-      trimming: svg_path.DistanceOptions(
+      distance_options: svg_path.DistanceOptions(
         ..svg_path.default_distance_options(),
         tolerance: 0.000000001,
       ),
@@ -623,13 +685,9 @@ pub fn package_title_a_and_v_1_05_bevel_offsets_filter_micro_loops_test() {
     )
 
   let assert Ok(v_offset) =
-    offset.path_with(svg_path.Path([v]), distance: 1.05, options:)
+    offset.path_with(svg_path.Path([v]), offset: 1.05, options:)
   let assert Ok(a_offset) =
-    offset.path_with(
-      svg_path.Path([a_outer, a_inner]),
-      distance: 1.05,
-      options:,
-    )
+    offset.path_with(svg_path.Path([a_outer, a_inner]), offset: 1.05, options:)
 
   assert list.length(svg_path.path_subpaths(v_offset)) == 1
   assert list.length(svg_path.path_subpaths(a_offset)) == 2
@@ -669,7 +727,7 @@ pub fn segment_offsets_quadratic_to_cubic_pieces_within_tolerance_test() {
     )
 
   let assert Ok(offset_subpath) =
-    offset.segment_with(curve, distance: 5.0, options:)
+    offset.segment_with(curve, offset: 5.0, options:)
 
   assert svg_path.subpath_segments(offset_subpath) != []
   assert max_offset_error(curve, offset_subpath, distance: 5.0) <=. 0.01
@@ -695,7 +753,7 @@ pub fn segment_offset_preserves_reversed_offset_tangent_direction_test() {
     )
 
   let assert Ok(offset_subpath) =
-    offset.segment_with(curve, distance: 0.4, options:)
+    offset.segment_with(curve, offset: 0.4, options:)
 
   assert svg_path.subpath_segments(offset_subpath) != []
 }
@@ -711,7 +769,7 @@ pub fn segment_offsets_circular_arc_exactly_test() {
       end: svg_path.Point(0.0, 10.0),
     )
 
-  let assert Ok(offset_subpath) = offset.segment(arc, distance: 2.0)
+  let assert Ok(offset_subpath) = offset.segment(arc, offset: 2.0)
 
   assert serialize.subpath(offset_subpath) == "M 12 0 A 12 12 0 0 1 0 12"
 }
@@ -727,7 +785,7 @@ pub fn segment_offsets_circular_arc_across_center_test() {
       end: svg_path.Point(0.0, -10.0),
     )
 
-  let assert Ok(offset_subpath) = offset.segment(arc, distance: 12.0)
+  let assert Ok(offset_subpath) = offset.segment(arc, offset: 12.0)
 
   assert serialize.subpath(offset_subpath) == "M -2 0 A 2 2 0 0 0 0 2"
 }
@@ -743,7 +801,7 @@ pub fn segment_offsets_near_collapsed_circular_arc_exactly_test() {
       end: svg_path.Point(0.0, -40.0),
     )
 
-  let assert Ok(offset_subpath) = offset.segment(arc, distance: 39.999)
+  let assert Ok(offset_subpath) = offset.segment(arc, offset: 39.999)
 
   assert serialize.subpath(offset_subpath)
     == "M 0.001 0 A 0.001 0.001 0 0 0 0 -0.001"
@@ -760,7 +818,7 @@ pub fn segment_rejects_collapsed_circular_arc_offset_test() {
       end: svg_path.Point(0.0, -40.0),
     )
 
-  assert offset.segment(arc, distance: 40.0)
+  assert offset.segment(arc, offset: 40.0)
     == Error(offset.DegenerateTangent(0.0))
 }
 
@@ -775,7 +833,7 @@ pub fn subpath_offsets_one_small_circular_arc_as_arc_test() {
     )
 
   let assert Ok(offset_subpath) =
-    offset.subpath_untrimmed_with(source, distance: 39.999, options:)
+    offset.subpath_untrimmed_with(source, offset: 39.999, options:)
 
   let corner_segments = stalled_arc_turn_corner_segments(offset_subpath)
 
@@ -801,7 +859,7 @@ pub fn subpath_offsets_many_small_circular_arcs_as_one_sampled_segment_test() {
     )
 
   let assert Ok(offset_subpath) =
-    offset.subpath_untrimmed_with(source, distance: 39.999, options:)
+    offset.subpath_untrimmed_with(source, offset: 39.999, options:)
 
   let corner_segments = stalled_arc_turn_corner_segments(offset_subpath)
 
@@ -827,15 +885,15 @@ pub fn segment_rejects_invalid_options_test() {
       fitting: offset.FittingOptions(..default.fitting, tolerance: 0.0),
     )
 
-  assert offset.segment_with(line, distance: 1.0, options:)
+  assert offset.segment_with(line, offset: 1.0, options:)
     == Error(offset.InvalidTolerance(0.0))
 }
 
 pub fn default_offset_trimming_uses_precise_projection_test() {
   let options = offset.default_options()
 
-  assert options.trimming.samples == 5
-  assert options.trimming.tolerance
+  assert options.distance_options.samples == 5
+  assert options.distance_options.tolerance
     == svg_path.default_distance_options().tolerance
 }
 
@@ -894,7 +952,7 @@ pub fn segment_rejects_negative_stalled_offset_diameter_test() {
   let options =
     offset.Options(..offset.default_options(), stalled_offset_diameter: -1.0)
 
-  assert offset.segment_with(line, distance: 1.0, options:)
+  assert offset.segment_with(line, offset: 1.0, options:)
     == Error(offset.InvalidStalledOffsetDiameter(-1.0))
 }
 
@@ -905,7 +963,7 @@ pub fn segment_rejects_zero_length_line_test() {
       end: svg_path.Point(1.0, 2.0),
     )
 
-  assert offset.segment(line, distance: 1.0)
+  assert offset.segment(line, offset: 1.0)
     == Error(offset.DegenerateTangent(0.0))
 }
 
@@ -919,7 +977,7 @@ pub fn subpath_untrimmed_offsets_open_polyline_with_bevel_join_test() {
   let options = offset.Options(..offset.default_options(), join: offset.Bevel)
 
   let assert Ok(offset_subpath) =
-    offset.subpath_untrimmed_with(subpath, distance: 2.0, options:)
+    offset.subpath_untrimmed_with(subpath, offset: 2.0, options:)
 
   assert serialize.subpath(offset_subpath) == "M 0 -2 H 10 L 12 0 V 10"
 }
@@ -932,8 +990,7 @@ pub fn subpath_untrimmed_offsets_open_polyline_with_miter_join_by_default_test()
       svg_path.Point(10.0, 10.0),
     ])
 
-  let assert Ok(offset_subpath) =
-    offset.subpath_untrimmed(subpath, distance: 2.0)
+  let assert Ok(offset_subpath) = offset.subpath_untrimmed(subpath, offset: 2.0)
 
   assert serialize.subpath(offset_subpath) == "M 0 -2 H 10 H 12 V 0 V 10"
 }
@@ -948,7 +1005,7 @@ pub fn subpath_untrimmed_offsets_open_polyline_with_round_join_test() {
   let options = offset.Options(..offset.default_options(), join: offset.Round)
 
   let assert Ok(offset_subpath) =
-    offset.subpath_untrimmed_with(subpath, distance: 2.0, options:)
+    offset.subpath_untrimmed_with(subpath, offset: 2.0, options:)
 
   assert has_arc(svg_path.subpath_segments(offset_subpath))
   assert serialize.subpath(offset_subpath)
@@ -974,7 +1031,7 @@ pub fn subpath_untrimmed_round_join_uses_source_corner_center_test() {
   let options = offset.Options(..offset.default_options(), join: offset.Round)
 
   let assert Ok(offset_subpath) =
-    offset.subpath_untrimmed_with(source, distance: 1.8, options:)
+    offset.subpath_untrimmed_with(source, offset: 1.8, options:)
 
   assert serialize.subpath(offset_subpath)
     == "M 1 -1.8 H 3 A 1.8 1.8 0 0 1 4.8 0 A 0.8 0.8 0 0 0 4 -0.8"
@@ -1028,7 +1085,12 @@ pub fn subpath_band_side_trimming_removes_round_join_loops_test() {
   let options = offset.Options(..offset.default_options(), join: offset.Round)
 
   let assert Ok(band) =
-    offset.subpath_band_with(source, distance_a: 1.7, distance_b: 1.8, options:)
+    offset.subpath_band_with(
+      source,
+      inner_offset: 1.7,
+      outer_offset: 1.8,
+      options:,
+    )
   assert list.length(svg_path.path_subpaths(band)) == 2
 }
 
@@ -1040,7 +1102,7 @@ pub fn subpath_offsets_open_polyline_to_trimmed_intersection_test() {
       svg_path.Point(10.0, -10.0),
     ])
 
-  let assert Ok(offset_path) = offset.subpath(subpath, distance: 2.0)
+  let assert Ok(offset_path) = offset.subpath(subpath, offset: 2.0)
 
   assert serialize.path(offset_path) == "M 0 -2 H 8 V -10"
 }
@@ -1054,7 +1116,7 @@ pub fn subpath_offsets_closed_square_inset_test() {
       svg_path.Point(0.0, 10.0),
     ])
 
-  let assert Ok(offset_path) = offset.subpath(square, distance: -2.0)
+  let assert Ok(offset_path) = offset.subpath(square, offset: -2.0)
   let assert [offset_subpath] = svg_path.path_subpaths(offset_path)
 
   assert svg_path.subpath_is_closed(offset_subpath)
@@ -1070,8 +1132,7 @@ pub fn subpath_untrimmed_offsets_closed_square_and_preserves_closed_state_test()
       svg_path.Point(0.0, 10.0),
     ])
 
-  let assert Ok(offset_subpath) =
-    offset.subpath_untrimmed(square, distance: 2.0)
+  let assert Ok(offset_subpath) = offset.subpath_untrimmed(square, offset: 2.0)
 
   assert svg_path.subpath_is_closed(offset_subpath)
   assert list.length(svg_path.subpath_segments(offset_subpath)) == 12
@@ -1090,7 +1151,7 @@ pub fn path_untrimmed_offsets_every_subpath_test() {
     ])
   let path = svg_path.Path(subpaths: [first, second])
 
-  let assert Ok(offset_path) = offset.path_untrimmed(path, distance: 1.0)
+  let assert Ok(offset_path) = offset.path_untrimmed(path, offset: 1.0)
 
   assert list.length(svg_path.path_subpaths(offset_path)) == 2
   assert serialize.path(offset_path) == "M 0 -1 H 10 M 0 9 H 10"
@@ -1111,7 +1172,7 @@ pub fn path_offsets_straight_subpaths_test() {
     ])
   let path = svg_path.Path(subpaths: [first, second])
 
-  let assert Ok(offset_path) = offset.path(path, distance: 2.0)
+  let assert Ok(offset_path) = offset.path(path, offset: 2.0)
 
   assert list.length(svg_path.path_subpaths(offset_path)) == 2
   assert serialize.path(offset_path) == "M 0 -2 H 8 V -10 M 0 18 H 8 V 10"
@@ -1230,7 +1291,7 @@ pub fn subpath_band_open_line_returns_two_capless_sides_test() {
     ])
 
   let assert Ok(offset_path) =
-    offset.subpath_band(subpath, distance_a: -1.0, distance_b: 2.0)
+    offset.subpath_band(subpath, inner_offset: -1.0, outer_offset: 2.0)
 
   assert list.length(svg_path.path_subpaths(offset_path)) == 2
   assert serialize.path(offset_path) == "M 0 1 H 10 M 0 -2 H 10"
@@ -1246,7 +1307,7 @@ pub fn subpath_band_closed_square_returns_two_closed_sides_test() {
     ])
 
   let assert Ok(offset_path) =
-    offset.subpath_band(square, distance_a: -2.0, distance_b: 2.0)
+    offset.subpath_band(square, inner_offset: -2.0, outer_offset: 2.0)
   let assert [inner, outer] = svg_path.path_subpaths(offset_path)
 
   assert svg_path.subpath_is_closed(inner)
@@ -1306,8 +1367,8 @@ pub fn figure_eight_band_joins_reversed_outer_chunks_test() {
   let assert Ok(band) =
     offset.subpath_band_with(
       figure_eight,
-      distance_a: 18.0,
-      distance_b: 34.0,
+      inner_offset: 18.0,
+      outer_offset: 34.0,
       options:,
     )
   let subpaths = svg_path.path_subpaths(band)
@@ -1330,7 +1391,7 @@ pub fn path_band_offsets_every_subpath_on_both_sides_test() {
   let path = svg_path.Path(subpaths: [first, second])
 
   let assert Ok(offset_path) =
-    offset.path_band(path, distance_a: -1.0, distance_b: 1.0)
+    offset.path_band(path, inner_offset: -1.0, outer_offset: 1.0)
 
   assert list.length(svg_path.path_subpaths(offset_path)) == 4
   assert serialize.path(offset_path)
@@ -1346,7 +1407,11 @@ pub fn subpath_band_untrimmed_returns_two_raw_sides_test() {
     ])
 
   let assert Ok(offset_path) =
-    offset.subpath_band_untrimmed(subpath, distance_a: -1.0, distance_b: 2.0)
+    offset.subpath_band_untrimmed(
+      subpath,
+      inner_offset: -1.0,
+      outer_offset: 2.0,
+    )
 
   assert list.length(svg_path.path_subpaths(offset_path)) == 2
   assert serialize.path(offset_path)
@@ -1367,7 +1432,7 @@ pub fn path_band_untrimmed_returns_two_raw_sides_per_subpath_test() {
   let path = svg_path.Path(subpaths: [first, second])
 
   let assert Ok(offset_path) =
-    offset.path_band_untrimmed(path, distance_a: -1.0, distance_b: 1.0)
+    offset.path_band_untrimmed(path, inner_offset: -1.0, outer_offset: 1.0)
 
   assert list.length(svg_path.path_subpaths(offset_path)) == 4
   assert serialize.path(offset_path)
@@ -1632,7 +1697,7 @@ pub fn subpath_prunes_self_crossed_inset_sections_test() {
     ])
 
   let options = offset.Options(..offset.default_options(), join: offset.Round)
-  let assert Ok(trimmed) = offset.subpath_with(shape, distance: -24.0, options:)
+  let assert Ok(trimmed) = offset.subpath_with(shape, offset: -24.0, options:)
 
   assert serialize.path(trimmed)
     == "M 24 24 H 46.7621 A 24 24 0 0 0 46 30 V 90 A 24 24 0 0 0 46.7621 96 H 24 Z"
@@ -1655,7 +1720,7 @@ pub fn path_offsets_closed_subpaths_test() {
     ])
   let path = svg_path.Path(subpaths: [first, second])
 
-  let assert Ok(trimmed) = offset.path(path, distance: -2.0)
+  let assert Ok(trimmed) = offset.path(path, offset: -2.0)
 
   assert list.length(svg_path.path_subpaths(trimmed)) == 2
   assert serialize.path(trimmed) == "M 2 2 H 8 V 8 H 2 Z M 22 2 H 28 V 8 H 22 Z"
@@ -1669,7 +1734,7 @@ pub fn subpath_offsets_open_polyline_with_default_miter_test() {
       svg_path.Point(10.0, 10.0),
     ])
 
-  let assert Ok(offset_path) = offset.subpath(subpath, distance: 2.0)
+  let assert Ok(offset_path) = offset.subpath(subpath, offset: 2.0)
 
   assert serialize.path(offset_path) == "M 0 -2 H 10 H 12 V 0 V 10"
 }
@@ -1684,7 +1749,7 @@ pub fn subpath_can_use_round_join_test() {
   let options = offset.Options(..offset.default_options(), join: offset.Round)
 
   let assert Ok(offset_path) =
-    offset.subpath_with(subpath, distance: 2.0, options:)
+    offset.subpath_with(subpath, offset: 2.0, options:)
 
   assert serialize.path(offset_path) == "M 0 -2 H 10 A 2 2 0 0 1 12 0 V 10"
 }
@@ -1699,7 +1764,7 @@ pub fn subpath_can_use_bevel_join_test() {
   let options = offset.Options(..offset.default_options(), join: offset.Bevel)
 
   let assert Ok(offset_path) =
-    offset.subpath_with(subpath, distance: 2.0, options:)
+    offset.subpath_with(subpath, offset: 2.0, options:)
 
   assert serialize.path(offset_path) == "M 0 -2 H 10 L 12 0 V 10"
 }
@@ -1719,7 +1784,7 @@ pub fn subpath_prunes_negative_inset_sections_test() {
 
   let options = offset.Options(..offset.default_options(), join: offset.Round)
   let assert Ok(parametric) =
-    offset.subpath_with(shape, distance: -24.0, options:)
+    offset.subpath_with(shape, offset: -24.0, options:)
 
   assert list.length(svg_path.path_subpaths(parametric)) == 1
   assert serialize.path(parametric)
@@ -1757,7 +1822,7 @@ pub fn subpath_ignores_adjacent_local_contacts_test() {
 
   let options = offset.Options(..offset.default_options(), join: offset.Round)
   let assert Ok(parametric) =
-    offset.subpath_with(shape, distance: -16.0, options:)
+    offset.subpath_with(shape, offset: -16.0, options:)
 
   assert list.length(svg_path.path_subpaths(parametric)) == 1
 }
@@ -1775,7 +1840,7 @@ pub fn path_offsets_every_subpath_test() {
     ])
   let path = svg_path.Path(subpaths: [first, second])
 
-  let assert Ok(offset_path) = offset.path(path, distance: 1.0)
+  let assert Ok(offset_path) = offset.path(path, offset: 1.0)
 
   assert list.length(svg_path.path_subpaths(offset_path)) == 2
   assert serialize.path(offset_path) == "M 0 -1 H 10 M 0 9 H 10"
@@ -1848,7 +1913,7 @@ fn stalled_arc_turn_case(
   let result =
     offset.subpath_untrimmed_with(
       source,
-      distance: stalled_arc_turn_distance,
+      offset: stalled_arc_turn_distance,
       options:,
     )
   #(row_label, unit_label, subdivisions, source, result)
@@ -2748,8 +2813,8 @@ pub fn side_local_band_trimming_preserves_positive_band_test() {
   let assert Ok(band) =
     offset.subpath_band_with(
       two_cut_corner_loop(),
-      distance_a: 1.7,
-      distance_b: 1.8,
+      inner_offset: 1.7,
+      outer_offset: 1.8,
       options:,
     )
   let assert [first, second] = svg_path.path_subpaths(band)
@@ -2764,8 +2829,8 @@ pub fn side_local_band_trimming_preserves_negative_band_test() {
   let assert Ok(band) =
     offset.subpath_band_with(
       two_cut_corner_loop(),
-      distance_a: -0.7,
-      distance_b: -0.8,
+      inner_offset: -0.7,
+      outer_offset: -0.8,
       options:,
     )
   let assert [first, second] = svg_path.path_subpaths(band)

@@ -33,9 +33,9 @@ fn render() -> String {
       ),
     )
   let assert Ok(negative) =
-    offset.subpath_untrimmed_with(source, distance: 0.0 -. radius(), options:)
+    offset.subpath_untrimmed_with(source, offset: 0.0 -. radius(), options:)
   let assert Ok(positive) =
-    offset.subpath_untrimmed_with(source, distance: radius(), options:)
+    offset.subpath_untrimmed_with(source, offset: radius(), options:)
   let #(negative_cross, positive_cross) =
     cross_split_parameters(negative, positive)
   let negative_sections = split_sections(negative, extra: negative_cross)

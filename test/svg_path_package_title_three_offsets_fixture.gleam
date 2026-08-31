@@ -32,7 +32,7 @@ fn offset_levels(
   case remaining {
     0 -> list.reverse(completed)
     _ ->
-      case offset.path_with(current, distance: 1.04, options:) {
+      case offset.path_with(current, offset: 1.04, options:) {
         Ok(next) -> {
           io.println("completed offset " <> int.to_string(8 - remaining))
           offset_levels(next, options, remaining: remaining - 1, completed: [

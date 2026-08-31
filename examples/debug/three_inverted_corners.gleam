@@ -70,19 +70,19 @@ pub fn main() -> Nil {
   let assert Ok(untrimmed_1_2) =
     offset.subpath_untrimmed_with(
       source,
-      distance: 1.2,
+      offset: 1.2,
       options: offset.default_options(),
     )
   let assert Ok(untrimmed_1_8) =
     offset.subpath_untrimmed_with(
       source,
-      distance: 1.8,
+      offset: 1.8,
       options: offset.default_options(),
     )
   let assert Ok(untrimmed_1_8_round) =
     offset.subpath_untrimmed_with(
       source,
-      distance: 1.8,
+      offset: 1.8,
       options: offset.Options(..offset.default_options(), join: offset.Round),
     )
   let _ =

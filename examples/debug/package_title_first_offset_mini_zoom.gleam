@@ -28,14 +28,14 @@ pub fn main() -> Nil {
     offset.Options(
       ..offset.default_options(),
       fitting: offset.FittingOptions(tolerance: 0.01, samples: 5, max_depth: 12),
-      trimming: svg_path.DistanceOptions(
+      distance_options: svg_path.DistanceOptions(
         ..svg_path.default_distance_options(),
         tolerance: 0.000000001,
       ),
     )
 
   let assert Ok(untrimmed_first_offset) =
-    offset.path_untrimmed_with(source, distance: offset_distance, options:)
+    offset.path_untrimmed_with(source, offset: offset_distance, options:)
   io.println(
     "untrimmed first offset subpaths: "
     <> int.to_string(
@@ -43,7 +43,7 @@ pub fn main() -> Nil {
     ),
   )
   let assert Ok(trimmed_first_offset) =
-    offset.path_with(source, distance: offset_distance, options:)
+    offset.path_with(source, offset: offset_distance, options:)
 
   write_file(
     output,

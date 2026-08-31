@@ -56,8 +56,8 @@ pub fn forced_parity_reduces_unique_edge_without_mutating_graph_test() {
 
   let assert Ok([arrangement_graph.EdgeCapacityAssignment(capacity:, ..)]) =
     arrangement_graph.forced_parity_capacities(graph, vertex_parities: [
-      #(start.id, 1),
-      #(end.id, 1),
+      arrangement_graph.RequiredVertexParity(start.id, 1),
+      arrangement_graph.RequiredVertexParity(end.id, 1),
     ])
   capacity |> should.equal(1)
   original_edge.forward_multiplicity |> should.equal(2)
@@ -89,8 +89,8 @@ pub fn forced_parity_reports_unresolved_diamond_choice_test() {
 
   let assert Error(arrangement_graph.ForcedParityAmbiguous(vertices)) =
     arrangement_graph.forced_parity_capacities(graph, vertex_parities: [
-      #(source_vertex.id, 1),
-      #(sink_vertex.id, 1),
+      arrangement_graph.RequiredVertexParity(source_vertex.id, 1),
+      arrangement_graph.RequiredVertexParity(sink_vertex.id, 1),
     ])
   list.length(vertices) |> should.equal(2)
 }
@@ -144,10 +144,50 @@ pub fn forced_parity_reports_capacity_infeasibility_test() {
     graph
 
   arrangement_graph.forced_parity_capacities(graph, vertex_parities: [
-    #(start.id, 0),
-    #(end.id, 1),
+    arrangement_graph.RequiredVertexParity(start.id, 0),
+    arrangement_graph.RequiredVertexParity(end.id, 1),
   ])
   |> should.equal(Error(arrangement_graph.ForcedParityInfeasible(end.id)))
+}
+
+pub fn preferred_parity_guides_reduction_but_allows_isolation_test() {
+  let line =
+    svg_path.Line(
+      start: svg_path.Point(0.0, 0.0),
+      end: svg_path.Point(10.0, 0.0),
+    )
+  let assert Ok(arrangement_graph.ArrangementSegmentBuild(graph:, ..)) =
+    arrangement_graph.build_with(
+      [line],
+      vertex_tolerance: tolerance,
+      minimum_chord:,
+      endpoint_sliver_tolerance: 0.0,
+    )
+  let assert arrangement_graph.ArrangementGraph(vertices: [start, end], ..) =
+    graph
+
+  let assert Ok([arrangement_graph.EdgeCapacityAssignment(capacity:, ..)]) =
+    arrangement_graph.forced_parity_capacities(graph, vertex_parities: [
+      arrangement_graph.RequiredVertexParity(start.id, 0),
+      arrangement_graph.PreferredVertexParity(end.id, 1),
+    ])
+  capacity |> should.equal(0)
+
+  let assert Ok(arrangement_graph.ArrangementSegmentBuild(graph:, ..)) =
+    arrangement_graph.build_with(
+      [line, line],
+      vertex_tolerance: tolerance,
+      minimum_chord:,
+      endpoint_sliver_tolerance: 0.0,
+    )
+  let assert arrangement_graph.ArrangementGraph(vertices: [start, end], ..) =
+    graph
+  let assert Ok([arrangement_graph.EdgeCapacityAssignment(capacity:, ..)]) =
+    arrangement_graph.forced_parity_capacities(graph, vertex_parities: [
+      arrangement_graph.PreferredVertexParity(start.id, 1),
+      arrangement_graph.PreferredVertexParity(end.id, 1),
+    ])
+  capacity |> should.equal(1)
 }
 
 pub fn forced_parity_sums_forward_and_reverse_capacity_test() {
@@ -198,7 +238,10 @@ pub fn forced_parity_accepts_explicit_initial_capacities_test() {
     arrangement_graph.forced_parity_capacities_with(
       graph,
       [arrangement_graph.EdgeCapacityAssignment(edge.id, 2)],
-      vertex_parities: [#(start.id, 1), #(end.id, 1)],
+      vertex_parities: [
+        arrangement_graph.RequiredVertexParity(start.id, 1),
+        arrangement_graph.RequiredVertexParity(end.id, 1),
+      ],
     )
   capacity |> should.equal(1)
 }
@@ -220,16 +263,18 @@ pub fn forced_parity_rejects_invalid_vertex_parities_test() {
     graph
 
   arrangement_graph.forced_parity_capacities(graph, vertex_parities: [
-    #(start.id, 0),
-    #(start.id, 1),
+    arrangement_graph.RequiredVertexParity(start.id, 0),
+    arrangement_graph.RequiredVertexParity(start.id, 1),
   ])
   |> should.equal(
     Error(arrangement_graph.ForcedParityDuplicateVertex(start.id)),
   )
-  arrangement_graph.forced_parity_capacities(graph, vertex_parities: [#(999, 0)])
+  arrangement_graph.forced_parity_capacities(graph, vertex_parities: [
+    arrangement_graph.RequiredVertexParity(999, 0),
+  ])
   |> should.equal(Error(arrangement_graph.ForcedParityMissingVertex(999)))
   arrangement_graph.forced_parity_capacities(graph, vertex_parities: [
-    #(start.id, 2),
+    arrangement_graph.RequiredVertexParity(start.id, 2),
   ])
   |> should.equal(
     Error(arrangement_graph.ForcedParityInvalidVertexParity(start.id, 2)),

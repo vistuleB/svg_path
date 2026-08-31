@@ -28,7 +28,7 @@ pub fn main() -> Nil {
     offset.Options(
       ..offset.default_options(),
       fitting: offset.FittingOptions(tolerance: 0.01, samples: 5, max_depth: 12),
-      trimming: svg_path.DistanceOptions(
+      distance_options: svg_path.DistanceOptions(
         ..svg_path.default_distance_options(),
         tolerance: 0.000000001,
       ),
@@ -36,7 +36,7 @@ pub fn main() -> Nil {
   let assert Ok(source_trace) =
     offset.internal_offset_source_trace(s, distance: offset_distance, options:)
   let assert Ok(joined) =
-    offset.subpath_untrimmed_with(s, distance: offset_distance, options:)
+    offset.subpath_untrimmed_with(s, offset: offset_distance, options:)
   io.println(
     "joined untrimmed segments: "
     <> int.to_string(list.length(svg_path.subpath_segments(joined))),
@@ -155,7 +155,9 @@ fn boundary_dots(
   })
 }
 
-fn trace_piece_reversals(piece: offset.OffsetSourceTracePiece) -> #(Bool, Bool) {
+fn trace_piece_reversals(
+  piece: offset.OffsetSourceTracePiece,
+) -> #(Bool, Bool) {
   case piece {
     offset.OffsetSourceTraceDRefined(start_is_reversal:, end_is_reversal:, ..) -> #(
       start_is_reversal,

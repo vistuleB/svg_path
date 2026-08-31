@@ -30,8 +30,8 @@ pub fn figure_eight() -> svg_path.Subpath {
 pub fn figure_eight_band() -> Result(svg_path.Path, offset.Error) {
   offset.subpath_band_with(
     figure_eight(),
-    distance_a: 18.0,
-    distance_b: 34.0,
+    inner_offset: 18.0,
+    outer_offset: 34.0,
     options: offset.Options(..offset.default_options(), join: offset.Round),
   )
 }

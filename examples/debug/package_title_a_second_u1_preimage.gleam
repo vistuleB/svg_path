@@ -12,9 +12,13 @@ import svg_path/parse
 import svg_path/svg
 
 const input = "examples/debug/package_title.svg"
+
 const output = "examples/debug/package_title_a_second_u1_preimage.svg"
+
 const e_zoom_output = "examples/debug/package_title_a_e0_0g3_zoom.svg"
+
 const sample_closeup_output = "examples/debug/package_title_a_u1_offset_samples_closeup.svg"
+
 const distance = 0.4
 
 pub fn main() -> Nil {
@@ -28,21 +32,27 @@ pub fn main() -> Nil {
     offset.Options(
       ..offset.default_options(),
       fitting: offset.FittingOptions(tolerance: 0.01, samples: 5, max_depth: 12),
-      trimming: svg_path.DistanceOptions(
+      distance_options: svg_path.DistanceOptions(
         ..svg_path.default_distance_options(),
         tolerance: 0.000000001,
       ),
     )
 
-  let assert Ok(first_offset) = offset.path_with(source_a, distance:, options:)
+  let assert Ok(first_offset) = offset.path_with(source_a, offset:, options:)
   let assert Ok(second_untrimmed) =
-    offset.path_untrimmed_with(first_offset, distance:, options:)
-  let assert Ok(u1) = untrimmed_segment(second_untrimmed, subpath_index: 0, segment_index: 1)
+    offset.path_untrimmed_with(first_offset, offset:, options:)
+  let assert Ok(u1) =
+    untrimmed_segment(second_untrimmed, subpath_index: 0, segment_index: 1)
   let e_segment = u1_preimage()
 
-  let _ = write_file(output, render(source_a, first_offset, second_untrimmed, e_segment, u1))
+  let _ =
+    write_file(
+      output,
+      render(source_a, first_offset, second_untrimmed, e_segment, u1),
+    )
   let _ = write_file(e_zoom_output, render_e_zoom(first_offset, e_segment, u1))
-  let _ = write_file(sample_closeup_output, render_sample_closeup(e_segment, u1))
+  let _ =
+    write_file(sample_closeup_output, render_sample_closeup(e_segment, u1))
   Nil
 }
 
@@ -97,26 +107,26 @@ fn render(
     svg.StyledPath(
       first_offset,
       "fill: none; stroke: #2563eb; stroke-width: "
-      <> float.to_string(stroke)
-      <> "; stroke-linecap: round; stroke-linejoin: round; opacity: 0.45",
+        <> float.to_string(stroke)
+        <> "; stroke-linecap: round; stroke-linejoin: round; opacity: 0.45",
     ),
     svg.StyledPath(
       second_untrimmed,
       "fill: none; stroke: #9ca3af; stroke-width: "
-      <> float.to_string(stroke)
-      <> "; stroke-linecap: round; stroke-linejoin: round; opacity: 0.45",
+        <> float.to_string(stroke)
+        <> "; stroke-linecap: round; stroke-linejoin: round; opacity: 0.45",
     ),
     svg.StyledPath(
       segment_path(e_segment),
       "fill: none; stroke: #16a34a; stroke-width: "
-      <> float.to_string(2.5 *. stroke)
-      <> "; stroke-linecap: round; stroke-linejoin: round",
+        <> float.to_string(2.5 *. stroke)
+        <> "; stroke-linecap: round; stroke-linejoin: round",
     ),
     svg.StyledPath(
       segment_path(u1),
       "fill: none; stroke: #dc2626; stroke-width: "
-      <> float.to_string(2.5 *. stroke)
-      <> "; stroke-linecap: round; stroke-linejoin: round",
+        <> float.to_string(2.5 *. stroke)
+        <> "; stroke-linecap: round; stroke-linejoin: round",
     ),
     endpoint_dot(svg_path.segment_start(e_segment), "#16a34a", 0.012),
     endpoint_dot(svg_path.segment_end(e_segment), "#16a34a", 0.012),
@@ -155,7 +165,8 @@ fn render_e_zoom(
   let stroke = 0.00006
   let dot = 0.00018
   let font = 0.00042
-  let assert svg_path.CubicBezier(start:, control1:, control2:, end:) = e_segment
+  let assert svg_path.CubicBezier(start:, control1:, control2:, end:) =
+    e_segment
   let sample_markers =
     offset_sample_markers(
       e_segment,
@@ -172,48 +183,73 @@ fn render_e_zoom(
     svg.StyledPath(
       first_offset,
       "fill: none; stroke: #9ca3af; stroke-width: "
-      <> float.to_string(stroke)
-      <> "; stroke-linecap: round; stroke-linejoin: round; opacity: 0.55",
+        <> float.to_string(stroke)
+        <> "; stroke-linecap: round; stroke-linejoin: round; opacity: 0.55",
     ),
     svg.StyledPath(
       segment_path(u1),
       "fill: none; stroke: #dc2626; stroke-width: "
-      <> float.to_string(4.0 *. stroke)
-      <> "; stroke-linecap: round; stroke-linejoin: round",
+        <> float.to_string(4.0 *. stroke)
+        <> "; stroke-linecap: round; stroke-linejoin: round",
     ),
     svg.StyledPath(
       segment_path(e_segment),
       "fill: none; stroke: #16a34a; stroke-width: "
-      <> float.to_string(4.0 *. stroke)
-      <> "; stroke-linecap: round; stroke-linejoin: round",
+        <> float.to_string(4.0 *. stroke)
+        <> "; stroke-linecap: round; stroke-linejoin: round",
     ),
     svg.StyledPath(
       segment_path(svg_path.Line(start:, end: control1)),
       "fill: none; stroke: #64748b; stroke-width: "
-      <> float.to_string(stroke)
-      <> "; stroke-dasharray: "
-      <> float.to_string(3.0 *. stroke)
-      <> " "
-      <> float.to_string(3.0 *. stroke),
+        <> float.to_string(stroke)
+        <> "; stroke-dasharray: "
+        <> float.to_string(3.0 *. stroke)
+        <> " "
+        <> float.to_string(3.0 *. stroke),
     ),
     svg.StyledPath(
       segment_path(svg_path.Line(start: control2, end:)),
       "fill: none; stroke: #64748b; stroke-width: "
-      <> float.to_string(stroke)
-      <> "; stroke-dasharray: "
-      <> float.to_string(3.0 *. stroke)
-      <> " "
-      <> float.to_string(3.0 *. stroke),
+        <> float.to_string(stroke)
+        <> "; stroke-dasharray: "
+        <> float.to_string(3.0 *. stroke)
+        <> " "
+        <> float.to_string(3.0 *. stroke),
     ),
     endpoint_dot(start, "#16a34a", dot),
     endpoint_dot(end, "#16a34a", dot),
     endpoint_dot(control1, "#2563eb", dot),
     endpoint_dot(control2, "#f59e0b", dot),
-    svg.Text("start/c1", label_style("#166534"), svg_path.Point(start.x +. 0.0002, start.y -. 0.00035), font),
-    svg.Text("c2", label_style("#92400e"), svg_path.Point(control2.x +. 0.0002, control2.y -. 0.00035), font),
-    svg.Text("end", label_style("#166534"), svg_path.Point(end.x +. 0.0002, end.y +. 0.00055), font),
-    svg.Text("E0.0g3", label_style("#166534"), label_point(e_segment, 0.55, svg_path.Point(0.00025, 0.0003)), font),
-    svg.Text("U1", label_style("#991b1b"), label_point(u1, 0.50, svg_path.Point(0.00025, 0.0003)), font),
+    svg.Text(
+      "start/c1",
+      label_style("#166534"),
+      svg_path.Point(start.x +. 0.0002, start.y -. 0.00035),
+      font,
+    ),
+    svg.Text(
+      "c2",
+      label_style("#92400e"),
+      svg_path.Point(control2.x +. 0.0002, control2.y -. 0.00035),
+      font,
+    ),
+    svg.Text(
+      "end",
+      label_style("#166534"),
+      svg_path.Point(end.x +. 0.0002, end.y +. 0.00055),
+      font,
+    ),
+    svg.Text(
+      "E0.0g3",
+      label_style("#166534"),
+      label_point(e_segment, 0.55, svg_path.Point(0.00025, 0.0003)),
+      font,
+    ),
+    svg.Text(
+      "U1",
+      label_style("#991b1b"),
+      label_point(u1, 0.5, svg_path.Point(0.00025, 0.0003)),
+      font,
+    ),
     ..sample_markers
   ]
 
@@ -243,18 +279,18 @@ fn render_sample_closeup(
     svg.StyledPath(
       segment_path(u1),
       "fill: none; stroke: #dc2626; stroke-width: "
-      <> float.to_string(stroke)
-      <> "; stroke-linecap: round; stroke-linejoin: round; opacity: 0.55",
+        <> float.to_string(stroke)
+        <> "; stroke-linecap: round; stroke-linejoin: round; opacity: 0.55",
     ),
     svg.StyledPath(
       segment_path(svg_path.Line(start: offset_start, end: offset_end)),
       "fill: none; stroke: #dc2626; stroke-width: "
-      <> float.to_string(stroke /. 2.0)
-      <> "; stroke-dasharray: "
-      <> float.to_string(3.0 *. stroke)
-      <> " "
-      <> float.to_string(3.0 *. stroke)
-      <> "; opacity: 0.8",
+        <> float.to_string(stroke /. 2.0)
+        <> "; stroke-dasharray: "
+        <> float.to_string(3.0 *. stroke)
+        <> " "
+        <> float.to_string(3.0 *. stroke)
+        <> "; opacity: 0.8",
     ),
     ..sample_closeup_markers(samples, dot: dot, font: font)
   ]
@@ -329,13 +365,23 @@ fn scale_point(
 
 fn point_box(points: List(svg_path.Point)) -> svg_path.BoundingBox {
   let assert [first, ..] = points
-  list.fold(points, svg_path.BoundingBox(min: first, max: first), fn(acc, point) {
-    let svg_path.BoundingBox(min:, max:) = acc
-    svg_path.BoundingBox(
-      min: svg_path.Point(float.min(min.x, point.x), float.min(min.y, point.y)),
-      max: svg_path.Point(float.max(max.x, point.x), float.max(max.y, point.y)),
-    )
-  })
+  list.fold(
+    points,
+    svg_path.BoundingBox(min: first, max: first),
+    fn(acc, point) {
+      let svg_path.BoundingBox(min:, max:) = acc
+      svg_path.BoundingBox(
+        min: svg_path.Point(
+          float.min(min.x, point.x),
+          float.min(min.y, point.y),
+        ),
+        max: svg_path.Point(
+          float.max(max.x, point.x),
+          float.max(max.y, point.y),
+        ),
+      )
+    },
+  )
 }
 
 fn padded_point_box(
@@ -398,7 +444,8 @@ fn offset_sample_markers(
     case e_offset_point(source, t, distance) {
       Error(_) -> []
       Ok(sample) -> {
-        let projection = svg_path.segment_projection_with(sample, to: candidate, options:)
+        let projection =
+          svg_path.segment_projection_with(sample, to: candidate, options:)
         let projection_point = case projection {
           Ok(svg_path.SegmentProjection(point:, ..)) -> point
           Error(_) -> sample
@@ -407,20 +454,20 @@ fn offset_sample_markers(
           svg.StyledPath(
             segment_path(svg_path.Line(start: sample, end: projection_point)),
             "fill: none; stroke: #7c3aed; stroke-width: "
-            <> float.to_string(line_width)
-            <> "; opacity: 0.75",
+              <> float.to_string(line_width)
+              <> "; opacity: 0.75",
           ),
           svg.Circle(
             sample,
             sample_radius,
             "fill: #7c3aed; stroke: #ffffff; stroke-width: "
-            <> float.to_string(sample_radius /. 3.0),
+              <> float.to_string(sample_radius /. 3.0),
           ),
           svg.Circle(
             projection_point,
             projection_radius,
             "fill: #f97316; stroke: #ffffff; stroke-width: "
-            <> float.to_string(projection_radius /. 3.0),
+              <> float.to_string(projection_radius /. 3.0),
           ),
           svg.Text(
             "s" <> int.to_string(index),
@@ -440,15 +487,19 @@ fn e_offset_point(
   distance: Float,
 ) -> Result(svg_path.Point, Nil) {
   case svg_path.segment_point(segment, t), unit_normal_for_debug(segment, t) {
-    Ok(point), Ok(normal) -> Ok(svg_path.Point(
-      point.x +. distance *. normal.x,
-      point.y +. distance *. normal.y,
-    ))
+    Ok(point), Ok(normal) ->
+      Ok(svg_path.Point(
+        point.x +. distance *. normal.x,
+        point.y +. distance *. normal.y,
+      ))
     _, _ -> Error(Nil)
   }
 }
 
-fn unit_normal_for_debug(segment: svg_path.Segment, t: Float) -> Result(svg_path.Point, Nil) {
+fn unit_normal_for_debug(
+  segment: svg_path.Segment,
+  t: Float,
+) -> Result(svg_path.Point, Nil) {
   case svg_path.segment_directions(segment, at: t) {
     Ok(svg_path.Directions(incoming:, outgoing:)) -> {
       let direction = case incoming, outgoing {
@@ -480,14 +531,18 @@ fn label_style(color: String) -> String {
   <> "; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; paint-order: stroke; stroke: #ffffff; stroke-width: 0.012"
 }
 
-fn endpoint_dot(point: svg_path.Point, color: String, radius: Float) -> svg.ThingToDraw {
+fn endpoint_dot(
+  point: svg_path.Point,
+  color: String,
+  radius: Float,
+) -> svg.ThingToDraw {
   svg.Circle(
     point,
     radius,
     "fill: "
-    <> color
-    <> "; stroke: #ffffff; stroke-width: "
-    <> float.to_string(radius /. 3.0),
+      <> color
+      <> "; stroke: #ffffff; stroke-width: "
+      <> float.to_string(radius /. 3.0),
   )
 }
 

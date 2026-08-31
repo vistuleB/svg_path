@@ -18,8 +18,8 @@ type Example {
   Example(
     label: String,
     source: svg_path.Subpath,
-    distance_a: Float,
-    distance_b: Float,
+    inner_offset: Float,
+    outer_offset: Float,
     join: offset.Join,
   )
 }
@@ -38,8 +38,8 @@ fn render() -> String {
         example: Example(
           label: "open curve: -10 / 10",
           source: open_curve(),
-          distance_a: -10.0,
-          distance_b: 10.0,
+          inner_offset: -10.0,
+          outer_offset: 10.0,
           join: offset.Round,
         ),
       ),
@@ -49,8 +49,8 @@ fn render() -> String {
         example: Example(
           label: "open curve: 6 / 18",
           source: open_curve(),
-          distance_a: 6.0,
-          distance_b: 18.0,
+          inner_offset: 6.0,
+          outer_offset: 18.0,
           join: offset.Round,
         ),
       ),
@@ -60,8 +60,8 @@ fn render() -> String {
         example: Example(
           label: "concave closed: -14 / 14",
           source: concave_polygon(),
-          distance_a: -14.0,
-          distance_b: 14.0,
+          inner_offset: -14.0,
+          outer_offset: 14.0,
           join: offset.Round,
         ),
       ),
@@ -71,8 +71,8 @@ fn render() -> String {
         example: Example(
           label: "diamond miter: -22 / 8",
           source: diamond(),
-          distance_a: -22.0,
-          distance_b: 8.0,
+          inner_offset: -22.0,
+          outer_offset: 8.0,
           join: offset.Miter(4.0),
         ),
       ),
@@ -82,8 +82,8 @@ fn render() -> String {
         example: Example(
           label: "smooth figure-eight: -16 / 16",
           source: smooth_figure_eight(),
-          distance_a: -16.0,
-          distance_b: 16.0,
+          inner_offset: -16.0,
+          outer_offset: 16.0,
           join: offset.Round,
         ),
       ),
@@ -93,8 +93,8 @@ fn render() -> String {
         example: Example(
           label: "narrow concavity: -18 / 8",
           source: narrow_concavity(),
-          distance_a: -18.0,
-          distance_b: 8.0,
+          inner_offset: -18.0,
+          outer_offset: 8.0,
           join: offset.Round,
         ),
       ),
@@ -104,8 +104,8 @@ fn render() -> String {
         example: Example(
           label: "upright figure-eight bevel: 4 / 8",
           source: upright_figure_eight(),
-          distance_a: 4.0,
-          distance_b: 8.0,
+          inner_offset: 4.0,
+          outer_offset: 8.0,
           join: offset.Bevel,
         ),
       ),
@@ -115,8 +115,8 @@ fn render() -> String {
         example: Example(
           label: "upright figure-eight bevel: -8 / 8",
           source: upright_figure_eight(),
-          distance_a: -8.0,
-          distance_b: 8.0,
+          inner_offset: -8.0,
+          outer_offset: 8.0,
           join: offset.Bevel,
         ),
       ),
@@ -138,7 +138,7 @@ fn panel(
 ) -> svg.ThingsToDraw {
   let x = int_to_float(column) *. { panel_w +. gap }
   let y = int_to_float(row) *. { panel_h +. gap }
-  let Example(label:, source:, distance_a:, distance_b:, join:) = example
+  let Example(label:, source:, inner_offset:, outer_offset:, join:) = example
   let matrix = transform.translate(x: x +. 34.0, y: y +. 48.0)
   let assert Ok(source) = transform.subpath(source, by: matrix)
   let default = offset.default_options()
@@ -149,7 +149,7 @@ fn panel(
       join:,
     )
   let result_things = case
-    offset.subpath_band_with(source, distance_a:, distance_b:, options:)
+    offset.subpath_band_with(source, inner_offset:, outer_offset:, options:)
   {
     Ok(result) -> [
       svg.StyledPath(

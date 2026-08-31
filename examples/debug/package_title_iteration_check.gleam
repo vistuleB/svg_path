@@ -20,7 +20,7 @@ pub fn main() -> Nil {
     offset.Options(
       ..offset.default_options(),
       fitting: offset.FittingOptions(tolerance: 0.01, samples: 5, max_depth: 12),
-      trimming: svg_path.DistanceOptions(
+      distance_options: svg_path.DistanceOptions(
         ..svg_path.default_distance_options(),
         tolerance: 0.000000001,
       ),
@@ -67,7 +67,7 @@ fn offset_levels(
   case remaining {
     0 -> list.reverse(reversed)
     _ ->
-      case offset.path_with(current, distance:, options:) {
+      case offset.path_with(current, offset:, options:) {
         Ok(next) ->
           offset_levels(next, distance, remaining - 1, options, [
             next,

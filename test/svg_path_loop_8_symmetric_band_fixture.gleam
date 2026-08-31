@@ -25,8 +25,8 @@ pub fn main() -> Nil {
   let untrimmed =
     offset.subpath_band_untrimmed_with(
       source,
-      distance_a: -5.0,
-      distance_b: 25.0,
+      inner_offset: -5.0,
+      outer_offset: 25.0,
       options:,
     )
   io.println(case untrimmed {
@@ -39,22 +39,22 @@ pub fn main() -> Nil {
   let assert Ok(trace) =
     offset.internal_subpath_band_arrangement_trace(
       source,
-      distance_a: -5.0,
-      distance_b: 25.0,
+      inner_offset: -5.0,
+      outer_offset: 25.0,
       options:,
     )
   let assert Ok(k_trace) =
     offset.internal_subpath_band_k_trimming_arrangement_trace(
       source,
-      distance_a: -5.0,
-      distance_b: 25.0,
+      inner_offset: -5.0,
+      outer_offset: 25.0,
       options:,
     )
   let assert Ok(band) =
     offset.subpath_band_with(
       source,
-      distance_a: -5.0,
-      distance_b: 25.0,
+      inner_offset: -5.0,
+      outer_offset: 25.0,
       options:,
     )
   let _ = write_file(output, drawing(source, band))

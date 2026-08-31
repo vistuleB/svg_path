@@ -899,9 +899,9 @@ pub fn generate_recursive_dash_cap_report() {
   let stroke_options =
     stroke.Options(width: 6.0, cap: stroke.Round, offset: options)
   let radius = 3.0
-  let positive = offset.subpath_untrimmed_with(dash, distance: radius, options:)
+  let positive = offset.subpath_untrimmed_with(dash, offset: radius, options:)
   let negative =
-    offset.subpath_untrimmed_with(dash, distance: 0.0 -. radius, options:)
+    offset.subpath_untrimmed_with(dash, offset: 0.0 -. radius, options:)
   let start_cap = debug_round_start_cap(dash, radius)
   let end_cap = debug_round_end_cap(dash, radius)
   let candidate = case positive, negative, start_cap, end_cap {
@@ -1689,7 +1689,7 @@ fn raw_offset_segments(
   case segments {
     [] -> list.reverse(accumulated)
     [segment, ..rest] -> {
-      let next = case offset.segment_with(segment, distance:, options:) {
+      let next = case offset.segment_with(segment, offset: distance, options:) {
         Ok(subpath) -> list.reverse(svg_path.subpath_segments(subpath))
         Error(_) -> []
       }
@@ -1802,7 +1802,9 @@ fn individual_offset_piece_counts(
   case segments {
     [] -> list.reverse(counts)
     [segment, ..rest] -> {
-      let count = case offset.segment_with(segment, distance:, options:) {
+      let count = case
+        offset.segment_with(segment, offset: distance, options:)
+      {
         Ok(offset) ->
           int.to_string(list.length(svg_path.subpath_segments(offset)))
         Error(_) -> "Error"
@@ -1960,8 +1962,8 @@ fn figure_eight_band() -> String {
   let assert Ok(band) =
     offset.subpath_band_with(
       source,
-      distance_a: 18.0,
-      distance_b: 34.0,
+      inner_offset: 18.0,
+      outer_offset: 34.0,
       options:,
     )
 
@@ -1995,15 +1997,15 @@ fn symmetric_figure_eight_bands() -> String {
   let assert Ok(wide_band) =
     offset.subpath_band_with(
       source,
-      distance_a: -5.0,
-      distance_b: 25.0,
+      inner_offset: -5.0,
+      outer_offset: 25.0,
       options:,
     )
   let assert Ok(outer_band) =
     offset.subpath_band_with(
       source,
-      distance_a: 10.0,
-      distance_b: 20.0,
+      inner_offset: 10.0,
+      outer_offset: 20.0,
       options:,
     )
 
@@ -2075,7 +2077,7 @@ fn stroke_offset_tracks() -> String {
     |> list.map(fn(entry) {
       let #(distance, color) = entry
       let assert Ok(track) =
-        offset.subpath_untrimmed_with(source, distance:, options:)
+        offset.subpath_untrimmed_with(source, offset: distance, options:)
       #(track, color)
     })
   let geometry_path =
@@ -2176,15 +2178,15 @@ fn package_title_first_offset() -> String {
     offset.Options(
       ..offset.default_options(),
       fitting: offset.FittingOptions(tolerance: 0.01, samples: 5, max_depth: 12),
-      trimming: svg_path.DistanceOptions(
+      distance_options: svg_path.DistanceOptions(
         ..svg_path.default_distance_options(),
         tolerance: 0.000000001,
       ),
     )
   let distance = 1.05
   let assert Ok(untrimmed) =
-    offset.path_untrimmed_with(source, distance:, options:)
-  let assert Ok(trimmed) = offset.path_with(source, distance:, options:)
+    offset.path_untrimmed_with(source, offset: distance, options:)
+  let assert Ok(trimmed) = offset.path_with(source, offset: distance, options:)
   package_title_first_offset_document(source, untrimmed, trimmed)
 }
 
@@ -2300,7 +2302,7 @@ fn centered_offset_family(
     distances
     |> list.map(fn(distance) {
       let assert Ok(track) =
-        offset.subpath_untrimmed_with(source, distance:, options:)
+        offset.subpath_untrimmed_with(source, offset: distance, options:)
       track
     })
   let geometry_path = svg_path.Path([source, ..tracks])
@@ -2457,7 +2459,7 @@ fn stalled_arc_turn_case(
   let result =
     offset.subpath_untrimmed_with(
       source,
-      distance: stalled_arc_turn_distance,
+      offset: stalled_arc_turn_distance,
       options:,
     )
   #(row_label, unit_label, subdivisions, source, result)

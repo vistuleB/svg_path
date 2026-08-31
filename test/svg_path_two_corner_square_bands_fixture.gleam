@@ -4,25 +4,40 @@ import svg_path
 import svg_path/offset
 import svg_path/serialize
 
-const outside_output = "examples/debug/two_corner_square_band_1_7_1_8_current.svg"
-
-const inside_output = "examples/debug/two_corner_square_band_minus_0_7_minus_0_8_current.svg"
+const output = "examples/debug/four_concave_corner_square_band_trimming_comparison.svg"
 
 pub fn main() -> Nil {
   let source = source_subpath()
-  let options = offset.Options(..offset.default_options(), join: offset.Round)
-  let assert Ok(outside) =
-    offset.subpath_band_with(source, distance_a: 1.7, distance_b: 1.8, options:)
-  let assert Ok(inside) =
+  let all = band(source, inner_cusps: True, outer_cusps: True)
+  let outer_only = band(source, inner_cusps: False, outer_cusps: True)
+  let neither = band(source, inner_cusps: False, outer_cusps: False)
+  let _ = write_file(output, drawing(source, all, outer_only, neither))
+  Nil
+}
+
+fn band(
+  source: svg_path.Subpath,
+  inner_cusps inner_cusps: Bool,
+  outer_cusps outer_cusps: Bool,
+) -> svg_path.Path {
+  let options =
+    offset.Options(
+      ..offset.default_options(),
+      join: offset.Round,
+      band_trimming: offset.BandTrimming(
+        inner_cusps:,
+        outer_cusps:,
+        in_band: True,
+      ),
+    )
+  let assert Ok(band) =
     offset.subpath_band_with(
       source,
-      distance_a: -0.7,
-      distance_b: -0.8,
+      inner_offset: 1.7,
+      outer_offset: 1.8,
       options:,
     )
-  let _ = write_file(outside_output, drawing(source, outside))
-  let _ = write_file(inside_output, drawing(source, inside))
-  Nil
+  band
 }
 
 fn source_subpath() -> svg_path.Subpath {
@@ -30,11 +45,11 @@ fn source_subpath() -> svg_path.Subpath {
     svg_path.Line(svg_path.Point(1.0, 0.0), svg_path.Point(3.0, 0.0)),
     inward_arc(svg_path.Point(3.0, 0.0), svg_path.Point(4.0, 1.0)),
     svg_path.Line(svg_path.Point(4.0, 1.0), svg_path.Point(4.0, 3.0)),
-    svg_path.Line(svg_path.Point(4.0, 3.0), svg_path.Point(3.0, 4.0)),
+    inward_arc(svg_path.Point(4.0, 3.0), svg_path.Point(3.0, 4.0)),
     svg_path.Line(svg_path.Point(3.0, 4.0), svg_path.Point(1.0, 4.0)),
     inward_arc(svg_path.Point(1.0, 4.0), svg_path.Point(0.0, 3.0)),
     svg_path.Line(svg_path.Point(0.0, 3.0), svg_path.Point(0.0, 1.0)),
-    svg_path.Line(svg_path.Point(0.0, 1.0), svg_path.Point(1.0, 0.0)),
+    inward_arc(svg_path.Point(0.0, 1.0), svg_path.Point(1.0, 0.0)),
   ])
   |> svg_path.subpath_assert_set_closed(closed: True)
 }
@@ -50,40 +65,96 @@ fn inward_arc(start: svg_path.Point, end: svg_path.Point) -> svg_path.Segment {
   )
 }
 
-fn drawing(source: svg_path.Subpath, band: svg_path.Path) -> String {
+fn drawing(
+  source: svg_path.Subpath,
+  all: svg_path.Path,
+  outer_only: svg_path.Path,
+  neither: svg_path.Path,
+) -> String {
+  let view_box =
+    svg_path.BoundingBox(
+      min: svg_path.Point(0.0, 0.0),
+      max: svg_path.Point(22.0, 7.5),
+    )
+  document_start(view_box)
+  <> background(view_box)
+  <> panel(
+    source,
+    all,
+    "inner_cusps: True · outer_cusps: True · in_band: True",
+    center_x: 3.75,
+  )
+  <> panel(
+    source,
+    outer_only,
+    "inner_cusps: False · outer_cusps: True · in_band: True",
+    center_x: 11.0,
+  )
+  <> panel(
+    source,
+    neither,
+    "inner_cusps: False · outer_cusps: False · in_band: True",
+    center_x: 18.25,
+  )
+  <> "</svg>\n"
+}
+
+fn panel(
+  source: svg_path.Subpath,
+  band: svg_path.Path,
+  label: String,
+  center_x center_x: Float,
+) -> String {
   let geometry = svg_path.Path([source, ..svg_path.path_subpaths(band)])
   let assert Ok(svg_path.BoundingBox(min:, max:)) =
     svg_path.path_bounding_box(geometry)
-  let padding = 0.45
-  let x = min.x -. padding
-  let y = min.y -. padding
-  let width = max.x -. min.x +. 2.0 *. padding
-  let height = max.y -. min.y +. 2.0 *. padding
-  "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"900\" height=\"900\" viewBox=\""
-  <> float.to_string(x)
+  let center_y = { min.y +. max.y } /. 2.0
+  let geometry_center_x = { min.x +. max.x } /. 2.0
+  "  <g transform=\"translate("
+  <> float.to_string(center_x)
+  <> " 4.05) scale(0.72) translate("
+  <> float.to_string(0.0 -. geometry_center_x)
   <> " "
-  <> float.to_string(y)
-  <> " "
-  <> float.to_string(width)
-  <> " "
-  <> float.to_string(height)
-  <> "\">\n"
-  <> "  <rect x=\""
-  <> float.to_string(x)
-  <> "\" y=\""
-  <> float.to_string(y)
-  <> "\" width=\""
-  <> float.to_string(width)
-  <> "\" height=\""
-  <> float.to_string(height)
-  <> "\" fill=\"white\" />\n"
-  <> "  <path d=\""
+  <> float.to_string(0.0 -. center_y)
+  <> ")\">\n"
+  <> "    <path d=\""
   <> serialize.path(band)
   <> "\" fill=\"#f97316\" fill-opacity=\"0.48\" fill-rule=\"nonzero\" stroke=\"#c2410c\" stroke-width=\"0.025\" stroke-linejoin=\"round\" />\n"
-  <> "  <path d=\""
+  <> "    <path d=\""
   <> serialize.subpath(source)
   <> "\" fill=\"none\" stroke=\"#2563eb\" stroke-width=\"0.035\" stroke-dasharray=\"0.10 0.08\" stroke-linejoin=\"round\" />\n"
-  <> "</svg>\n"
+  <> "  </g>\n"
+  <> "  <text x=\""
+  <> float.to_string(center_x)
+  <> "\" y=\"0.38\" font-family=\"sans-serif\" font-size=\"0.16\" font-weight=\"600\" fill=\"#111827\" text-anchor=\"middle\">"
+  <> label
+  <> "</text>\n"
+}
+
+fn document_start(view_box: svg_path.BoundingBox) -> String {
+  let svg_path.BoundingBox(min:, max:) = view_box
+  "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1800\" height=\"620\" viewBox=\""
+  <> float.to_string(min.x)
+  <> " "
+  <> float.to_string(min.y)
+  <> " "
+  <> float.to_string(max.x -. min.x)
+  <> " "
+  <> float.to_string(max.y -. min.y)
+  <> "\">\n"
+}
+
+fn background(view_box: svg_path.BoundingBox) -> String {
+  let svg_path.BoundingBox(min:, max:) = view_box
+  "  <rect x=\""
+  <> float.to_string(min.x)
+  <> "\" y=\""
+  <> float.to_string(min.y)
+  <> "\" width=\""
+  <> float.to_string(max.x -. min.x)
+  <> "\" height=\""
+  <> float.to_string(max.y -. min.y)
+  <> "\" fill=\"white\" />\n"
 }
 
 @external(erlang, "file", "write_file")

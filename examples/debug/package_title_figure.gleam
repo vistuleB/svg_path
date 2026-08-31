@@ -25,7 +25,7 @@ pub fn main() -> Dynamic {
       fitting: offset.FittingOptions(tolerance: 0.05, samples: 5, max_depth: 12),
     )
   let assert Ok(offset_path) =
-    offset.path_untrimmed_with(source, distance: 1.0, options:)
+    offset.path_untrimmed_with(source, offset: 1.0, options:)
   let assert Ok(source_box) = svg_path.path_bounding_box(source)
   let assert Ok(offset_box) = svg_path.path_bounding_box(offset_path)
   let view_box = padded_box([source_box, offset_box], margin: 2.0)
