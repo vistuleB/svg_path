@@ -9,6 +9,16 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
+## 0.41.1 - 2026-08-31
+
+### Changed
+
+- Documented the exact provenance, topology, and result-cardinality contracts
+  between offside, cusp, and final in-band offset trimming.
+- Replaced private post-culling alphabetic stage names with descriptive traced,
+  arrangement-split, cusp-trimmed, and offside terminology while preserving
+  the published offset error constructors.
+
 ## 0.41.0 - 2026-08-31
 
 ### Added
