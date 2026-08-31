@@ -1452,7 +1452,7 @@ The following open source has no offside stage, so the panels isolate the three
 final-trimming choices:
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/single_offset_final_trimming.svg" alt="Single offset with no final trimming, cusp trimming, and in-band trimming">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.41.0/figures/single_offset_final_trimming.svg" alt="Single offset with no final trimming, cusp trimming, and in-band trimming">
 </center>
 
 For closed contours, `offside` is an additional and independent operation. In
@@ -1460,7 +1460,7 @@ this example the source contains oppositely oriented concentric rectangles;
 the final trimming mode is `NoTrimming` in both panels:
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/single_offset_offside_trimming.svg" alt="Single offset of concentric rectangles with offside trimming disabled and enabled">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.41.0/figures/single_offset_offside_trimming.svg" alt="Single offset of concentric rectangles with offside trimming disabled and enabled">
 </center>
 
 The defaults are `offside: True` and
@@ -1518,14 +1518,14 @@ The cusp switches act before joint band trimming. The four-concave-corner
 example below holds `in_band: True` while changing the two side-local switches:
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/band_cusp_trimming.svg" alt="Band trimming with both, one, and neither side-local cusp pass enabled">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.41.0/figures/band_cusp_trimming.svg" alt="Band trimming with both, one, and neither side-local cusp pass enabled">
 </center>
 
 The figure-eight below holds both cusp switches at `True` and changes only the
 final joint pass:
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/band_in_band_trimming.svg" alt="Figure-eight band with in-band trimming disabled and enabled">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.41.0/figures/band_in_band_trimming.svg" alt="Figure-eight band with in-band trimming disabled and enabled">
 </center>
 
 All three band switches default to `True`. Turning a stage off is useful for

@@ -9,6 +9,34 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
+## 0.41.0 - 2026-08-31
+
+### Added
+
+- Added public single-offset trimming controls for optional offside trimming
+  and selectable cusp, complete in-band, or no final trimming.
+- Added public band trimming controls for independent inner- and outer-cusp
+  passes and optional final in-band trimming.
+- Added README figures documenting the geometry produced by each trimming
+  option.
+
+### Changed
+
+- Replaced degree-based dangling-edge pruning with multiplicity-aware parity
+  capacity reduction and closed-walk reconstruction.
+- Modularized the single-offset trimming pipeline so offside and final trimming
+  stages preserve traced segment provenance while remaining independently
+  configurable.
+- Clarified signed-offset naming throughout the offset implementation and
+  removed obsolete experimental trimming paths.
+
+### Fixed
+
+- Preserved valid closed survivor loops during offside trimming instead of
+  forcing one globally ordered survivor chain.
+- Corrected open-offset endpoint parity handling so coincident or exhausted
+  preferred endpoints do not produce false pruning failures.
+
 ## 0.40.0 - 2026-08-29
 
 ### Added
