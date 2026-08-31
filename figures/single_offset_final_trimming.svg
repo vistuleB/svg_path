@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="540" viewBox="0.0 0.0 10.5 3.2">
+  <rect x="0.0" y="0.0" width="10.5" height="3.2" fill="white" />
+  <g transform="translate(1.75 1.72) scale(0.75) translate(-1.0 0.04999999999999999)">
+    <path d="M -1 0 L -0.5 0.86603 L 0.5 -0.86603 H -0.5 L 0.5 0.86603 L 1 0 L 1.5 0.86603 L 2.5 -0.86603 H 1.5 L 2.5 0.86603 L 3 0" fill="none" stroke="#94a3b8" stroke-width="0.025" stroke-linejoin="round" />
+    <path d="M -0.82679 -0.1 L -0.32679 0.76603 A 0.2 0.2 0 0 0 -0.67321 0.76603 L 0.32679 -0.96603 A 0.2 0.2 0 0 0 0.5 -0.66603 H -0.5 A 0.2 0.2 0 0 0 -0.32679 -0.96603 L 0.67321 0.76603 A 0.2 0.2 0 0 0 0.32679 0.76603 L 0.82679 -0.1 A 0.2 0.2 0 0 1 1.17321 -0.1 L 1.67321 0.76603 A 0.2 0.2 0 0 0 1.32679 0.76603 L 2.32679 -0.96603 A 0.2 0.2 0 0 0 2.5 -0.66603 H 1.5 A 0.2 0.2 0 0 0 1.67321 -0.96603 L 2.67321 0.76603 A 0.2 0.2 0 0 0 2.32679 0.76603 L 2.82679 -0.1" fill="none" stroke="#2563eb" stroke-width="0.0175" stroke-linecap="round" stroke-linejoin="round" />
+  <circle cx="-1.0" cy="0.0" r="0.028" fill="#111827" />
+  <circle cx="-0.5" cy="0.8660254037844386" r="0.028" fill="#111827" />
+  <circle cx="0.5" cy="-0.8660254037844386" r="0.028" fill="#111827" />
+  <circle cx="-0.5" cy="-0.8660254037844386" r="0.028" fill="#111827" />
+  <circle cx="0.5" cy="0.8660254037844386" r="0.028" fill="#111827" />
+  <circle cx="1.0" cy="0.0" r="0.028" fill="#111827" />
+  <circle cx="1.5" cy="0.8660254037844386" r="0.028" fill="#111827" />
+  <circle cx="2.5" cy="-0.8660254037844386" r="0.028" fill="#111827" />
+  <circle cx="1.5" cy="-0.8660254037844386" r="0.028" fill="#111827" />
+  <circle cx="2.5" cy="0.8660254037844386" r="0.028" fill="#111827" />
+  <circle cx="3.0" cy="0.0" r="0.028" fill="#111827" />
+  </g>
+  <text x="1.75" y="0.28" font-family="sans-serif" font-size="0.16" font-weight="600" fill="#111827" text-anchor="middle">No final trimming</text>
+  <text x="1.75" y="3.02" font-family="sans-serif" font-size="0.13" fill="#b91c1c" text-anchor="middle"></text>
+  <g transform="translate(5.25 1.72) scale(0.75) translate(-1.0 0.0)">
+    <path d="M -1 0 L -0.5 0.86603 L 0.5 -0.86603 H -0.5 L 0.5 0.86603 L 1 0 L 1.5 0.86603 L 2.5 -0.86603 H 1.5 L 2.5 0.86603 L 3 0" fill="none" stroke="#94a3b8" stroke-width="0.025" stroke-linejoin="round" />
+    <path d="M -0.82679 -0.1 L -0.5 0.46603 L -0.11547 -0.2 L 0 -0.4 L 0.15359 -0.66603 H -0.15359 L 0 -0.4 L 0.11547 -0.2 L 0.5 0.46603 L 0.82679 -0.1 A 0.2 0.2 0 0 1 1.17321 -0.1 L 1.5 0.46603 L 1.88453 -0.2 L 2 -0.4 L 2.15359 -0.66603 H 1.84641 L 2 -0.4 L 2.11547 -0.2 L 2.5 0.46603 L 2.82679 -0.1" fill="none" stroke="#2563eb" stroke-width="0.0175" stroke-linecap="round" stroke-linejoin="round" />
+  <circle cx="-1.0" cy="0.0" r="0.028" fill="#111827" />
+  <circle cx="-0.5" cy="0.8660254037844386" r="0.028" fill="#111827" />
+  <circle cx="0.5" cy="-0.8660254037844386" r="0.028" fill="#111827" />
+  <circle cx="-0.5" cy="-0.8660254037844386" r="0.028" fill="#111827" />
+  <circle cx="0.5" cy="0.8660254037844386" r="0.028" fill="#111827" />
+  <circle cx="1.0" cy="0.0" r="0.028" fill="#111827" />
+  <circle cx="1.5" cy="0.8660254037844386" r="0.028" fill="#111827" />
+  <circle cx="2.5" cy="-0.8660254037844386" r="0.028" fill="#111827" />
+  <circle cx="1.5" cy="-0.8660254037844386" r="0.028" fill="#111827" />
+  <circle cx="2.5" cy="0.8660254037844386" r="0.028" fill="#111827" />
+  <circle cx="3.0" cy="0.0" r="0.028" fill="#111827" />
+  </g>
+  <text x="5.25" y="0.28" font-family="sans-serif" font-size="0.16" font-weight="600" fill="#111827" text-anchor="middle">Cusp trimming</text>
+  <text x="5.25" y="3.02" font-family="sans-serif" font-size="0.13" fill="#b91c1c" text-anchor="middle"></text>
+  <g transform="translate(8.75 1.72) scale(0.75) translate(-1.0 0.0)">
+    <path d="M -1 0 L -0.5 0.86603 L 0.5 -0.86603 H -0.5 L 0.5 0.86603 L 1 0 L 1.5 0.86603 L 2.5 -0.86603 H 1.5 L 2.5 0.86603 L 3 0" fill="none" stroke="#94a3b8" stroke-width="0.025" stroke-linejoin="round" />
+    <path d="M 0 -0.4 L -0.15359 -0.66603 H 0.15359 Z M 2 -0.4 L 1.84641 -0.66603 H 2.15359 Z" fill="none" stroke="#2563eb" stroke-width="0.0175" stroke-linecap="round" stroke-linejoin="round" />
+  <circle cx="-1.0" cy="0.0" r="0.028" fill="#111827" />
+  <circle cx="-0.5" cy="0.8660254037844386" r="0.028" fill="#111827" />
+  <circle cx="0.5" cy="-0.8660254037844386" r="0.028" fill="#111827" />
+  <circle cx="-0.5" cy="-0.8660254037844386" r="0.028" fill="#111827" />
+  <circle cx="0.5" cy="0.8660254037844386" r="0.028" fill="#111827" />
+  <circle cx="1.0" cy="0.0" r="0.028" fill="#111827" />
+  <circle cx="1.5" cy="0.8660254037844386" r="0.028" fill="#111827" />
+  <circle cx="2.5" cy="-0.8660254037844386" r="0.028" fill="#111827" />
+  <circle cx="1.5" cy="-0.8660254037844386" r="0.028" fill="#111827" />
+  <circle cx="2.5" cy="0.8660254037844386" r="0.028" fill="#111827" />
+  <circle cx="3.0" cy="0.0" r="0.028" fill="#111827" />
+  </g>
+  <text x="8.75" y="0.28" font-family="sans-serif" font-size="0.16" font-weight="600" fill="#111827" text-anchor="middle">In-band trimming</text>
+  <text x="8.75" y="3.02" font-family="sans-serif" font-size="0.13" fill="#b91c1c" text-anchor="middle"></text>
+</svg>
