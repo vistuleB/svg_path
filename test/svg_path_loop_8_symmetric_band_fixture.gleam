@@ -14,7 +14,7 @@ const output = "examples/debug/loop_8_symmetric_band_minus_5_plus_25.svg"
 
 const arrangement_output = "examples/debug/loop_8_symmetric_band_minus_5_plus_25_arrangement.svg"
 
-const k_arrangement_output = "examples/debug/loop_8_symmetric_band_minus_5_plus_25_k_arrangement.svg"
+const cusp_arrangement_output = "examples/debug/loop_8_symmetric_band_minus_5_plus_25_cusp_arrangement.svg"
 
 const a24_closeup_output = "examples/debug/loop_8_symmetric_band_minus_5_plus_25_a24_closeup.svg"
 
@@ -43,8 +43,8 @@ pub fn main() -> Nil {
       outer_offset: 25.0,
       options:,
     )
-  let assert Ok(k_trace) =
-    offset.internal_subpath_band_k_trimming_arrangement_trace(
+  let assert Ok(cusp_trace) =
+    offset.internal_subpath_band_cusp_trimming_arrangement_trace(
       source,
       inner_offset: -5.0,
       outer_offset: 25.0,
@@ -60,18 +60,21 @@ pub fn main() -> Nil {
   let _ = write_file(output, drawing(source, band))
   let _ = write_file(arrangement_output, arrangement_drawing(source, trace))
   let _ =
-    write_file(k_arrangement_output, k_arrangement_drawing(source, k_trace))
-  let _ = write_file(a24_closeup_output, a24_closeup_drawing(k_trace))
+    write_file(
+      cusp_arrangement_output,
+      cusp_arrangement_drawing(source, cusp_trace),
+    )
+  let _ = write_file(a24_closeup_output, a24_closeup_drawing(cusp_trace))
   Nil
 }
 
-fn k_arrangement_drawing(
+fn cusp_arrangement_drawing(
   source: svg_path.Subpath,
-  trace: List(offset.KTrimmingArrangementTraceEdge),
+  trace: List(offset.CuspTrimmingArrangementTraceEdge),
 ) -> String {
   let edge_subpaths =
     list.map(trace, fn(item) {
-      let offset.KTrimmingArrangementTraceEdge(segment:, ..) = item
+      let offset.CuspTrimmingArrangementTraceEdge(segment:, ..) = item
       svg_path.segment_as_subpath(segment)
     })
   let assert Ok(svg_path.BoundingBox(min:, max:)) =
@@ -83,7 +86,7 @@ fn k_arrangement_drawing(
   let height = max.y -. min.y +. 2.0 *. padding
   let edges =
     list.fold(trace, "", fn(markup, item) {
-      let offset.KTrimmingArrangementTraceEdge(
+      let offset.CuspTrimmingArrangementTraceEdge(
         side_index:,
         id:,
         segment:,
@@ -118,11 +121,11 @@ fn k_arrangement_drawing(
 }
 
 fn a24_closeup_drawing(
-  trace: List(offset.KTrimmingArrangementTraceEdge),
+  trace: List(offset.CuspTrimmingArrangementTraceEdge),
 ) -> String {
   let neighborhood =
     list.filter(trace, fn(item) {
-      let offset.KTrimmingArrangementTraceEdge(side_index:, id:, ..) = item
+      let offset.CuspTrimmingArrangementTraceEdge(side_index:, id:, ..) = item
       side_index == 0 && id >= 23 && id <= 25
     })
   let assert [_, _, _] = neighborhood
@@ -134,7 +137,7 @@ fn a24_closeup_drawing(
   let y = center_y -. height /. 2.0
   let edges =
     list.fold(neighborhood, "", fn(markup, item) {
-      let offset.KTrimmingArrangementTraceEdge(id:, segment:, submerged:, ..) =
+      let offset.CuspTrimmingArrangementTraceEdge(id:, segment:, submerged:, ..) =
         item
       let color = case submerged {
         True -> "#dc2626"

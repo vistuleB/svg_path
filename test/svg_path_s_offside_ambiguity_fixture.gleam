@@ -10,7 +10,7 @@ import svg_path/serialize
 
 const input = "examples/debug/package_title.svg"
 
-const output = "examples/debug/package_title_s_first_offset_i_to_m_ambiguity.svg"
+const output = "examples/debug/package_title_s_first_offset_offside_ambiguity.svg"
 
 pub fn main() -> Nil {
   let assert Ok(contents) = read_file(input)

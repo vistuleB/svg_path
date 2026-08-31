@@ -12,7 +12,7 @@ const input = "examples/debug/package_title.svg"
 
 const first_output = "examples/debug/v_second_offset_1_04_fixture.svg"
 
-const arrangement_output = "examples/debug/v_third_offset_i_to_m_arrangement_1_04.svg"
+const arrangement_output = "examples/debug/v_third_offset_offside_arrangement_1_04.svg"
 
 const third_output = "examples/debug/v_third_offset_1_04_final.svg"
 

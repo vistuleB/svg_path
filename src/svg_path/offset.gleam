@@ -169,22 +169,22 @@ pub type Error {
   /// Forced-parity band reconstruction produced an open chain.
   InternalForcedParityOpenChain(start_vertex: Int, end_vertex: Int)
 
-  /// I-to-K parity reconstruction produced the wrong number of subpaths.
-  InternalIToKSubpathCount(actual: Int)
+  /// Cusp trimming reconstructed the wrong number of survivor subpaths.
+  InternalCuspTrimSubpathCount(actual: Int)
 
-  /// Closed I-to-K input reconstructed as an open subpath.
-  InternalIToKExpectedClosedSubpath
+  /// Closed cusp-trimming input reconstructed as an open subpath.
+  InternalCuspTrimExpectedClosedSubpath
 
-  /// Open I-to-K input did not preserve its original endpoint vertices.
-  InternalIToKEndpointMismatch(
+  /// Open cusp-trimming input did not preserve its endpoint vertices.
+  InternalCuspTrimEndpointMismatch(
     expected_start: Int,
     actual_start: Int,
     expected_end: Int,
     actual_end: Int,
   )
 
-  /// I-to-K reconstruction lost the J-occurrence provenance of an edge.
-  InternalIToKMissingJPreimage(edge_id: Int)
+  /// Cusp reconstruction lost an edge's arrangement-split provenance.
+  InternalCuspTrimMissingArrangementPreimage(edge_id: Int)
 }
 
 /// Join style used when offsetting adjacent subpath segments.
@@ -230,6 +230,16 @@ pub type OneSubpathBand {
 }
 
 /// Final trimming applied to a single offset after optional offside trimming.
+///
+/// `CuspTrimming` applies the side-local cusp trimmer independently to every
+/// surviving offset walk. It can delete a walk, but a retained walk must keep
+/// its original open/closed topology and, when open, its original endpoints.
+///
+/// `InBandTrimming` constructs the current zero-to-offset band arrangement and
+/// performs the general winding and parity-capacity trim. It subsumes cusp
+/// trimming and may return any number of reconstructed survivor subpaths.
+///
+/// `NoTrimming` returns the geometry surviving optional offside trimming.
 pub type SingleOffsetFinalTrimming {
   CuspTrimming
   InBandTrimming
@@ -238,9 +248,13 @@ pub type SingleOffsetFinalTrimming {
 
 /// Trimming controls for a single offset.
 ///
-/// `offside` enables face-contamination trimming for closed source subpaths.
-/// `final_trimming` selects the final trimming operation. In-band trimming
-/// includes cusp removal and is the default, more comprehensive operation.
+/// `offside` enables face-contamination trimming for each closed source
+/// subpath independently. One closed input offset walk may become zero, one,
+/// or several closed survivor walks. Open source subpaths pass through this
+/// stage unchanged.
+///
+/// `final_trimming` selects the terminal operation. In-band trimming includes
+/// cusp removal and is the default, more comprehensive operation.
 pub type SingleOffsetTrimming {
   SingleOffsetTrimming(offside: Bool, final_trimming: SingleOffsetFinalTrimming)
 }
@@ -465,8 +479,8 @@ pub type SynchronizedOffsetTraceArea {
   )
 }
 
-/// One offset-image edge in the pre-I-to-M arrangement, together with its
-/// source-face contamination and final M-survivor status.
+/// One offset-image edge in the offside-trimming arrangement, together with
+/// its source-face contamination and final survivor status.
 @internal
 pub type SingleOffsetContaminationTraceEdge {
   SingleOffsetContaminationTraceEdge(
@@ -487,8 +501,8 @@ pub type BandArrangementTraceEdge {
 }
 
 @internal
-pub type KTrimmingArrangementTraceEdge {
-  KTrimmingArrangementTraceEdge(
+pub type CuspTrimmingArrangementTraceEdge {
+  CuspTrimmingArrangementTraceEdge(
     side_index: Int,
     id: Int,
     segment: svg_path.Segment,
@@ -572,9 +586,27 @@ type HPreimageSubpath {
   )
 }
 
+// Trimming-stage data flow
+//
+//   H: healed offset pieces and joins with immutable construction provenance
+//   I: H geometry after adjacent-loop culling; a piece may represent an
+//      interval of its immutable H preimage
+//   Traced: the common interchange representation between optional trimmers
+//   ArrangementSplit: an I/Traced walk split into source order by arrangement
+//                     vertices
+//   CuspTrimmed: the optional single survivor of side-local cusp trimming
+//
+// Offside trimming maps one I walk to zero or more Traced walks. Cusp trimming
+// temporarily lowers one Traced walk to I, splits it by an arrangement, and
+// raises its optional CuspTrimmed survivor back to Traced. Final in-band
+// trimming consumes Traced geometry and returns ordinary Subpaths; no later
+// stage needs construction provenance.
+
 /// One post-healing segment after local loop culling.
 ///
 /// `preimage` remains immutable even when `segment` is shortened.
+/// `segment` is the current geometry representing the ordered parameter
+/// interval `preimage_from..preimage_to` of `preimage.segment`.
 type ICulledOffsetSegment {
   ICulledOffsetSegment(
     segment: svg_path.Segment,
@@ -592,10 +624,18 @@ type ICulledOffsetSubpath {
   )
 }
 
-/// A position-independent offset segment retained across trimming stages.
+/// A trimming-stage-independent offset segment.
 ///
-/// `preimage` and its parameter interval remain stable while trimming nodes,
-/// shortens, deletes, and reconstructs the current `segment` geometry.
+/// This is the common segment representation accepted and returned by optional
+/// trimming stages. `segment` is the current surviving geometry. `preimage`
+/// identifies its immutable H-stage construction source, and the ordered
+/// `preimage_from..preimage_to` interval identifies the represented portion of
+/// `preimage.segment`. Arrangement noding may narrow that interval but must not
+/// replace its coordinate system.
+///
+/// `reversed` classifies the represented preimage geometry relative to its
+/// E-source. It is construction provenance, not the orientation of an
+/// arrangement edge; reversing an arrangement edge does not toggle it.
 type TracedOffsetSegment {
   TracedOffsetSegment(
     segment: svg_path.Segment,
@@ -607,6 +647,12 @@ type TracedOffsetSegment {
 }
 
 /// One current offset walk with segment-level construction provenance.
+///
+/// Segments are stored in the current source traversal order and must form the
+/// walk described by `closed`. `side` retains the caller-designated Inner or
+/// Outer role. `source_subpath_index` identifies the prepared source subpath
+/// and its zero-source geometry; it remains unchanged if trimming splits one
+/// input walk into several survivor walks.
 type TracedOffsetSubpath {
   TracedOffsetSubpath(
     segments: List(TracedOffsetSegment),
@@ -617,8 +663,15 @@ type TracedOffsetSubpath {
 }
 
 /// One I-segment section in original traversal order after arrangement noding.
-type JArrangementSplitOffsetSegment {
-  JArrangementSplitOffsetSegment(
+///
+/// `segment` is oriented in the I walk's traversal direction. `edge_id` and
+/// the vertex ids identify its arrangement image. `preimage_from..preimage_to`
+/// is expressed directly in the immutable H preimage's parameter space, not
+/// in the immediate I segment's local parameter space. `deletion_candidate`
+/// records the current trimming classification and may later be cleared when
+/// a submerged run is rescued.
+type ArrangementSplitTracedSegment {
+  ArrangementSplitTracedSegment(
     segment: svg_path.Segment,
     preimage: ICulledOffsetSegment,
     preimage_from: Float,
@@ -631,37 +684,42 @@ type JArrangementSplitOffsetSegment {
   )
 }
 
-type JArrangementSplitOffsetSubpath {
-  JArrangementSplitOffsetSubpath(
-    segments: List(JArrangementSplitOffsetSegment),
+type ArrangementSplitTracedSubpath {
+  ArrangementSplitTracedSubpath(
+    segments: List(ArrangementSplitTracedSegment),
     closed: Bool,
     side: BandSide,
   )
 }
 
-/// One partial source-ordered walk considered by I-to-M reconstruction.
-type IToMClosedWalkState {
-  IToMClosedWalkState(
+/// One partial source-ordered walk considered by offside reconstruction.
+type OffsideClosedWalkState {
+  OffsideClosedWalkState(
     first_start_vertex: Int,
     end_vertex: Int,
     last_index: Int,
     retained_span: Float,
     skipped_runs: Int,
     indices_reversed: List(Int),
-    segments_reversed: List(JArrangementSplitOffsetSegment),
+    segments_reversed: List(ArrangementSplitTracedSegment),
   )
 }
 
 /// One side-local survivor after winding-run rescue and parity reduction.
-type KTrimmedOffsetSegment {
-  KTrimmedOffsetSegment(
+///
+/// A cusp-trimmed result is deliberately more restrictive than an offside
+/// result: cusp trimming requires either no survivor or exactly one survivor
+/// with the input walk's open/closed topology and, for an open walk, its
+/// original endpoint vertices.
+type CuspTrimmedSegment {
+  CuspTrimmedSegment(
     segment: svg_path.Segment,
-    preimage: JArrangementSplitOffsetSegment,
+    preimage: ArrangementSplitTracedSegment,
   )
 }
 
-type KTrimmedOffsetSubpath {
-  KTrimmedOffsetSubpath(segments: List(KTrimmedOffsetSegment), closed: Bool)
+type CuspTrimmedSubpath {
+  CuspTrimmedSubpath(segments: List(CuspTrimmedSegment), closed: Bool)
 }
 
 fn traced_subpath_from_i(
@@ -685,6 +743,11 @@ fn traced_subpath_from_i(
   )
 }
 
+/// Raise an offside survivor chain into the common traced representation.
+///
+/// Every survivor edge must carry the arrangement-split preimage installed when
+/// the original I walk was split by the arrangement. This preserves provenance
+/// and the H-parameter interval through offside reconstruction.
 fn traced_subpath_from_survivor_chain(
   chain: SurvivorChain,
   side: BandSide,
@@ -694,7 +757,7 @@ fn traced_subpath_from_survivor_chain(
     chain.edges
     |> list.map(fn(edge) {
       use j <- result.try(
-        edge.j_preimage
+        edge.arrangement_preimage
         |> option.to_result(InternalMissingIndexedSegment(edge.edge_id)),
       )
       Ok(TracedOffsetSegment(
@@ -715,6 +778,9 @@ fn traced_subpath_from_survivor_chain(
   ))
 }
 
+/// Materialize the current traced walk as ordinary SVG path geometry.
+///
+/// This is the terminal boundary at which trimming provenance may be discarded.
 fn traced_subpath_geometry(
   traced: TracedOffsetSubpath,
   tolerance: Float,
@@ -726,6 +792,9 @@ fn traced_subpath_geometry(
   )
 }
 
+/// Lower a traced walk to the structural input expected by the cusp trimmer.
+/// This does not restore older I geometry: the traced segment's current
+/// geometry and current H-parameter interval remain authoritative.
 fn i_subpath_from_traced(traced: TracedOffsetSubpath) -> ICulledOffsetSubpath {
   ICulledOffsetSubpath(
     segments: list.map(traced.segments, fn(segment) {
@@ -741,16 +810,19 @@ fn i_subpath_from_traced(traced: TracedOffsetSubpath) -> ICulledOffsetSubpath {
   )
 }
 
+/// Raise the unique cusp-trimmed survivor into the common traced representation.
+/// Its arrangement-split preimage supplies the narrowed H-parameter interval
+/// and REVERSED classification established before parity reconstruction.
 fn traced_subpath_from_k(
-  subpath: KTrimmedOffsetSubpath,
+  subpath: CuspTrimmedSubpath,
   source_subpath_index: Int,
   side: BandSide,
 ) -> TracedOffsetSubpath {
-  let KTrimmedOffsetSubpath(segments:, closed:) = subpath
+  let CuspTrimmedSubpath(segments:, closed:) = subpath
   TracedOffsetSubpath(
     segments: list.map(segments, fn(segment) {
-      let KTrimmedOffsetSegment(segment: geometry, preimage:) = segment
-      let JArrangementSplitOffsetSegment(
+      let CuspTrimmedSegment(segment: geometry, preimage:) = segment
+      let ArrangementSplitTracedSegment(
         preimage: i_preimage,
         preimage_from:,
         preimage_to:,
@@ -771,6 +843,10 @@ fn traced_subpath_from_k(
   )
 }
 
+/// Apply side-local cusp trimming to one traced walk.
+///
+/// `None` means that the walk was removed completely. `Some` is guaranteed by
+/// the cusp-trimming contract to preserve the input topology and open endpoints.
 fn cusp_trim_traced_subpath(
   traced: TracedOffsetSubpath,
   zero_source: svg_path.Subpath,
@@ -790,8 +866,11 @@ fn cusp_trim_traced_subpath(
   )
 }
 
-type JSegmentRun {
-  JSegmentRun(segments: List(JArrangementSplitOffsetSegment), submerged: Bool)
+type ArrangementSplitRun {
+  ArrangementSplitRun(
+    segments: List(ArrangementSplitTracedSegment),
+    submerged: Bool,
+  )
 }
 
 type OffsetDistances {
@@ -939,7 +1018,7 @@ type SurvivorEdge {
     start_vertex: Int,
     end_vertex: Int,
     segment: svg_path.Segment,
-    j_preimage: Option(JArrangementSplitOffsetSegment),
+    arrangement_preimage: Option(ArrangementSplitTracedSegment),
   )
 }
 
@@ -1321,7 +1400,7 @@ fn contamination_arrangement_trace_builds(
         contamination_seed_faces(build_zero_images, dual, offset, seeded: []),
       )
       let contaminated = propagate_contaminated_faces(dual, barriers, seeds)
-      use split <- result.try(j_subpath_from_i_contamination(
+      use split <- result.try(arrangement_split_subpath_from_i_contamination(
         build.culled,
         build_offset_images,
         arrangement,
@@ -1331,8 +1410,8 @@ fn contamination_arrangement_trace_builds(
       use survivors <- result.try(
         case svg_path.subpath_is_closed(build.subpath) {
           True -> {
-            let chains = i_to_m_survivor_chains(split.segments)
-            Ok(j_segments_from_survivor_chains(chains))
+            let chains = offside_survivor_chains(split.segments)
+            Ok(arrangement_split_segments_from_survivor_chains(chains))
           }
           False -> Ok(split.segments)
         },
@@ -1380,6 +1459,14 @@ fn unique_ints(values: List(Int), unique unique: List(Int)) -> List(Int) {
   }
 }
 
+/// Run the configurable single-offset trimming pipeline.
+///
+/// Small-loop culling has already produced one I walk per untrimmed build.
+/// This function first enters Traced form, optionally replaces each closed I
+/// walk with its offside survivor walks, and then selects exactly one terminal
+/// operation: cusp-only trimming, general in-band trimming, or materialization
+/// without further trimming. Cusp and in-band trimming are alternatives;
+/// in-band trimming already performs the more general submerged removal.
 fn final_single_offset_subpaths(
   builds: List(SingleOffsetUntrimmedBuild),
   offset: Float,
@@ -1432,6 +1519,13 @@ fn final_single_offset_subpaths(
   }
 }
 
+/// Finish a single offset with the general in-band trimmer.
+///
+/// The input is the exact set of traced walks surviving offside trimming. When
+/// offside trimming ran, both the winding path and arrangement are rebuilt
+/// from that current geometry; classification is therefore never computed
+/// against the obsolete pre-offside offset. This is a terminal operation and
+/// returns ordinary Subpaths rather than TracedOffsetSubpaths.
 fn submerged_trimmed_single_offset_subpaths(
   offside_trimmed: List(TracedOffsetSubpath),
   builds: List(SingleOffsetUntrimmedBuild),
@@ -1472,6 +1566,10 @@ fn submerged_trimmed_single_offset_subpaths(
   trim_single_offset_arrangement(arrangement, untrimmed, winding, options)
 }
 
+/// Finish a single offset using only side-local cusp trimming.
+///
+/// Each traced walk is processed independently and may survive once or be
+/// deleted. Provenance remains available until all results are materialized.
 fn cusp_trimmed_single_offset_subpaths_result(
   offside_trimmed: List(TracedOffsetSubpath),
   builds: List(SingleOffsetUntrimmedBuild),
@@ -1537,6 +1635,12 @@ fn list_at(values: List(a), index: Int) -> Result(a, Nil) {
   }
 }
 
+/// Enter the common traced representation and optionally apply closed-subpath
+/// offside trimming.
+///
+/// With trimming disabled there is one traced walk per build. With trimming
+/// enabled, each closed build may yield zero or more closed traced walks, all
+/// retaining the build's `source_subpath_index`; open builds remain one-to-one.
 fn offside_trimmed_single_offset_subpaths(
   builds: List(SingleOffsetUntrimmedBuild),
   arrangement: OffsetArrangementBuild,
@@ -1562,6 +1666,7 @@ fn offside_trimmed_single_offset_subpaths(
   }
 }
 
+/// Construct the common arrangement and dual used by enabled offside trimming.
 fn offside_trimmed_single_offset_subpaths_enabled(
   builds: List(SingleOffsetUntrimmedBuild),
   arrangement: OffsetArrangementBuild,
@@ -1669,14 +1774,14 @@ fn offside_trimmed_single_offset_subpath(
         contamination_seed_faces(zero_images, dual, offset, seeded: []),
       )
       let contaminated = propagate_contaminated_faces(dual, barriers, seeds)
-      use split <- result.try(j_subpath_from_i_contamination(
+      use split <- result.try(arrangement_split_subpath_from_i_contamination(
         build.culled,
         offset_images,
         arrangement,
         dual,
         contaminated,
       ))
-      let chains = i_to_m_survivor_chains(split.segments)
+      let chains = offside_survivor_chains(split.segments)
       chains
       |> list.try_map(fn(chain) {
         use traced <- result.try(traced_subpath_from_survivor_chain(
@@ -1797,16 +1902,16 @@ fn dual_edge_faces(
   })
 }
 
-fn j_subpath_from_i_contamination(
+fn arrangement_split_subpath_from_i_contamination(
   subpath: ICulledOffsetSubpath,
   images: List(arrangement_graph.ArrangementSourceSegmentImage),
   build: OffsetArrangementBuild,
   dual: arrangement_graph.DualArrangementGraph,
   contaminated: List(Int),
-) -> Result(JArrangementSplitOffsetSubpath, Error) {
+) -> Result(ArrangementSplitTracedSubpath, Error) {
   let ICulledOffsetSubpath(segments:, closed:, side:) = subpath
   use split <- result.try(
-    j_segments_from_i_contamination_images(
+    arrangement_split_segments_from_i_contamination_images(
       segments,
       images,
       build,
@@ -1815,22 +1920,22 @@ fn j_subpath_from_i_contamination(
       split: [],
     ),
   )
-  Ok(JArrangementSplitOffsetSubpath(segments: split, closed:, side:))
+  Ok(ArrangementSplitTracedSubpath(segments: split, closed:, side:))
 }
 
-fn j_segments_from_i_contamination_images(
+fn arrangement_split_segments_from_i_contamination_images(
   segments: List(ICulledOffsetSegment),
   images: List(arrangement_graph.ArrangementSourceSegmentImage),
   build: OffsetArrangementBuild,
   dual: arrangement_graph.DualArrangementGraph,
   contaminated: List(Int),
-  split split: List(JArrangementSplitOffsetSegment),
-) -> Result(List(JArrangementSplitOffsetSegment), Error) {
+  split split: List(ArrangementSplitTracedSegment),
+) -> Result(List(ArrangementSplitTracedSegment), Error) {
   case segments, images {
     [], [] -> Ok(list.reverse(split))
     [segment, ..remaining_segments], [image, ..remaining_images] -> {
       use pieces <- result.try(
-        j_segments_from_i_contamination_image(
+        arrangement_split_segments_from_i_contamination_image(
           segment,
           image,
           build,
@@ -1839,7 +1944,7 @@ fn j_segments_from_i_contamination_images(
           split: [],
         ),
       )
-      j_segments_from_i_contamination_images(
+      arrangement_split_segments_from_i_contamination_images(
         remaining_segments,
         remaining_images,
         build,
@@ -1852,16 +1957,16 @@ fn j_segments_from_i_contamination_images(
   }
 }
 
-fn j_segments_from_i_contamination_image(
+fn arrangement_split_segments_from_i_contamination_image(
   source: ICulledOffsetSegment,
   source_image: arrangement_graph.ArrangementSourceSegmentImage,
   build: OffsetArrangementBuild,
   dual: arrangement_graph.DualArrangementGraph,
   contaminated: List(Int),
-  split split: List(JArrangementSplitOffsetSegment),
-) -> Result(List(JArrangementSplitOffsetSegment), Error) {
+  split split: List(ArrangementSplitTracedSegment),
+) -> Result(List(ArrangementSplitTracedSegment), Error) {
   let arrangement_graph.ArrangementSourceSegmentImage(edges:, ..) = source_image
-  j_segments_from_i_contamination_edges(
+  arrangement_split_segments_from_i_contamination_edges(
     source,
     edges,
     build,
@@ -1871,14 +1976,14 @@ fn j_segments_from_i_contamination_image(
   )
 }
 
-fn j_segments_from_i_contamination_edges(
+fn arrangement_split_segments_from_i_contamination_edges(
   source: ICulledOffsetSegment,
   edges: List(arrangement_graph.ArrangementSegmentEdgeImage),
   build: OffsetArrangementBuild,
   dual: arrangement_graph.DualArrangementGraph,
   contaminated: List(Int),
-  split split: List(JArrangementSplitOffsetSegment),
-) -> Result(List(JArrangementSplitOffsetSegment), Error) {
+  split split: List(ArrangementSplitTracedSegment),
+) -> Result(List(ArrangementSplitTracedSegment), Error) {
   case edges {
     [] -> Ok(list.reverse(split))
     [image, ..rest] -> {
@@ -1913,14 +2018,14 @@ fn j_segments_from_i_contamination_edges(
         interval_parameter(source.preimage_from, source.preimage_to, ta)
       let preimage_to =
         interval_parameter(source.preimage_from, source.preimage_to, tb)
-      j_segments_from_i_contamination_edges(
+      arrangement_split_segments_from_i_contamination_edges(
         source,
         rest,
         build,
         dual,
         contaminated,
         split: [
-          JArrangementSplitOffsetSegment(
+          ArrangementSplitTracedSegment(
             segment:,
             preimage: source,
             preimage_from:,
@@ -1957,6 +2062,13 @@ fn default_distance_options() -> svg_path.DistanceOptions {
   )
 }
 
+/// Terminal general-purpose trimming for current single-offset geometry.
+///
+/// Only offset-image edges are eligible to survive. Winding-mismatched edges
+/// receive zero initial capacity, forced parity reduction removes necessarily
+/// dangling capacity, and reconstruction consumes the remaining capacities in
+/// source order. Open input endpoints are preferred parity-one vertices while
+/// attached, but complete deletion of an endpoint component is permitted.
 fn trim_single_offset_arrangement(
   build: OffsetArrangementBuild,
   untrimmed: List(svg_path.Subpath),
@@ -1988,6 +2100,11 @@ fn trim_single_offset_arrangement(
   close_survivor_subpaths(subpaths, tolerance: options.fitting.tolerance)
 }
 
+/// Terminal joint trimming for a completed band boundary.
+///
+/// Both sides and any caps are arranged together. Winding-side opinions define
+/// which arrangement images match the semantic band; parity-capacity reduction
+/// and source-order reconstruction then produce closed survivor subpaths.
 fn trim_band_arrangement(
   untrimmed: List(svg_path.Subpath),
   winding winding: fn(svg_path.Point) -> Result(Int, Error),
@@ -2565,7 +2682,7 @@ fn source_order_survivor_directed_edges(
               start_vertex:,
               end_vertex:,
               segment:,
-              j_preimage: None,
+              arrangement_preimage: None,
             )
           source_order_survivor_directed_edges(rest, available, edges: [
             survivor,
@@ -2740,7 +2857,7 @@ fn reverse_survivor_edges(
         start_vertex:,
         end_vertex:,
         segment:,
-        j_preimage:,
+        arrangement_preimage:,
       ),
       ..rest
     ] ->
@@ -2751,7 +2868,7 @@ fn reverse_survivor_edges(
           start_vertex: end_vertex,
           end_vertex: start_vertex,
           segment: svg_path.segment_reverse(segment),
-          j_preimage:,
+          arrangement_preimage:,
         ),
         ..reversed
       ])
@@ -3633,7 +3750,7 @@ fn trim_band_side_cusps(
       case trimmed {
         None -> Ok(None)
         Some(trimmed) ->
-          k_trimmed_subpath_geometry(trimmed, options.fitting.tolerance)
+          cusp_trimmed_subpath_geometry(trimmed, options.fitting.tolerance)
           |> result.map(Some)
       }
     }
@@ -3676,11 +3793,11 @@ pub fn internal_subpath_band_arrangement_trace(
   case trimmed_a, trimmed_b {
     None, _ | _, None -> Ok([])
     Some(trimmed_a), Some(trimmed_b) -> {
-      use untrimmed_a <- result.try(k_trimmed_subpath_geometry(
+      use untrimmed_a <- result.try(cusp_trimmed_subpath_geometry(
         trimmed_a,
         options.fitting.tolerance,
       ))
-      use untrimmed_b <- result.try(k_trimmed_subpath_geometry(
+      use untrimmed_b <- result.try(cusp_trimmed_subpath_geometry(
         trimmed_b,
         options.fitting.tolerance,
       ))
@@ -3714,15 +3831,15 @@ pub fn internal_subpath_band_arrangement_trace(
   }
 }
 
-/// Trace both production side-local arrangements immediately before I-to-K
-/// pruning.
+/// Trace both production side-local arrangements immediately before cusp
+/// trimming.
 @internal
-pub fn internal_subpath_band_k_trimming_arrangement_trace(
+pub fn internal_subpath_band_cusp_trimming_arrangement_trace(
   subpath subpath: svg_path.Subpath,
   inner_offset inner_offset: Float,
   outer_offset outer_offset: Float,
   options options: Options,
-) -> Result(List(KTrimmingArrangementTraceEdge), Error) {
+) -> Result(List(CuspTrimmingArrangementTraceEdge), Error) {
   use _ <- result.try(validate_options(options))
   use normalized <- result.try(normalize_source_subpath(subpath, options))
   use build <- result.try(build_synchronized_untrimmed(
@@ -3736,14 +3853,14 @@ pub fn internal_subpath_band_k_trimming_arrangement_trace(
     outer_culled: culled_b,
     ..,
   ) = build
-  use first <- result.try(k_trimming_arrangement_trace_for_side(
+  use first <- result.try(cusp_trimming_arrangement_trace_for_side(
     culled_a,
     normalized,
     inner_offset,
     side_index: 0,
     options:,
   ))
-  use second <- result.try(k_trimming_arrangement_trace_for_side(
+  use second <- result.try(cusp_trimming_arrangement_trace_for_side(
     culled_b,
     normalized,
     outer_offset,
@@ -3753,13 +3870,13 @@ pub fn internal_subpath_band_k_trimming_arrangement_trace(
   Ok(list.append(first, second))
 }
 
-fn k_trimming_arrangement_trace_for_side(
+fn cusp_trimming_arrangement_trace_for_side(
   subpath: ICulledOffsetSubpath,
   zero_source: svg_path.Subpath,
   offset: Float,
   side_index side_index: Int,
   options options: Options,
-) -> Result(List(KTrimmingArrangementTraceEdge), Error) {
+) -> Result(List(CuspTrimmingArrangementTraceEdge), Error) {
   let ICulledOffsetSubpath(segments:, closed:, ..) = subpath
   use geometry <- result.try(subpath_from_synchronized_segments(
     list.map(segments, fn(segment) { segment.segment }),
@@ -3777,7 +3894,7 @@ fn k_trimming_arrangement_trace_for_side(
     graph: arrangement_graph.ArrangementGraph(edges:, ..),
     ..,
   ) = arrangement
-  k_trimming_arrangement_trace_edges(
+  cusp_trimming_arrangement_trace_edges(
     edges,
     arrangement,
     winding,
@@ -3786,13 +3903,13 @@ fn k_trimming_arrangement_trace_for_side(
   )
 }
 
-fn k_trimming_arrangement_trace_edges(
+fn cusp_trimming_arrangement_trace_edges(
   edges: List(arrangement_graph.ArrangementEdge),
   build: OffsetArrangementBuild,
   winding: fn(svg_path.Point) -> Result(Int, Error),
   side_index: Int,
-  traced traced: List(KTrimmingArrangementTraceEdge),
-) -> Result(List(KTrimmingArrangementTraceEdge), Error) {
+  traced traced: List(CuspTrimmingArrangementTraceEdge),
+) -> Result(List(CuspTrimmingArrangementTraceEdge), Error) {
   case edges {
     [] -> Ok(list.reverse(traced))
     [edge, ..rest] -> {
@@ -3803,13 +3920,13 @@ fn k_trimming_arrangement_trace_edges(
         winding:,
         side_sampling_distance: submerged_side_sampling_distance,
       ))
-      k_trimming_arrangement_trace_edges(
+      cusp_trimming_arrangement_trace_edges(
         rest,
         build,
         winding,
         side_index,
         traced: [
-          KTrimmingArrangementTraceEdge(
+          CuspTrimmingArrangementTraceEdge(
             side_index:,
             id:,
             segment:,
@@ -5117,12 +5234,23 @@ fn culled_offset_subpath_segments(
 
 /// Trim one I-side in source order while using an arrangement for noding and
 /// winding classification only.
+///
+/// The offset and its zero source define a temporary closed semantic band.
+/// Arrangement edges whose measured winding disagrees with that band are
+/// initial deletion candidates. A maximal candidate run is rescued unless it
+/// contains REVERSED geometry. Parity-capacity reduction then removes forced
+/// dangling material and reconstructs source-ordered survivors.
+///
+/// Contract: return `None` when nothing survives; otherwise return exactly one
+/// cusp-trimmed subpath with the same open/closed topology as the input and,
+/// for an open input, the same endpoint vertices. Multiple survivors are an
+/// internal error.
 fn trim_i_culled_offset_subpath(
   subpath: ICulledOffsetSubpath,
   zero_source: svg_path.Subpath,
   offset: Float,
   options: Options,
-) -> Result(Option(KTrimmedOffsetSubpath), Error) {
+) -> Result(Option(CuspTrimmedSubpath), Error) {
   let ICulledOffsetSubpath(segments:, closed:, ..) = subpath
   case segments {
     [] -> Ok(None)
@@ -5139,52 +5267,57 @@ fn trim_i_culled_offset_subpath(
         zero_source_segments: svg_path.subpath_segments(zero_source),
         offset:,
       ))
-      use split <- result.try(j_subpath_from_i_arrangement(
+      use split <- result.try(arrangement_split_subpath_from_i_arrangement(
         subpath,
         build,
         winding,
       ))
-      let rescued = rescue_j_submerged_runs(split)
-      finish_i_to_k_with_parity(split, rescued, build)
+      let rescued = rescue_arrangement_split_submerged_runs(split)
+      finish_cusp_trim_with_parity(split, rescued, build)
     }
   }
 }
 
-fn finish_i_to_k_with_parity(
-  split: JArrangementSplitOffsetSubpath,
-  rescued: List(JArrangementSplitOffsetSegment),
+fn finish_cusp_trim_with_parity(
+  split: ArrangementSplitTracedSubpath,
+  rescued: List(ArrangementSplitTracedSegment),
   build: OffsetArrangementBuild,
-) -> Result(Option(KTrimmedOffsetSubpath), Error) {
-  let JArrangementSplitOffsetSubpath(segments: original, closed:, ..) = split
+) -> Result(Option(CuspTrimmedSubpath), Error) {
+  let ArrangementSplitTracedSubpath(segments: original, closed:, ..) = split
   let retained =
     list.filter(rescued, fn(segment) { !segment.deletion_candidate })
   case retained {
     [] -> Ok(None)
     [_, ..] -> {
-      use endpoints <- result.try(i_to_k_expected_endpoints(original, closed))
+      use endpoints <- result.try(cusp_trim_expected_endpoints(original, closed))
       let #(expected_start, expected_end) = endpoints
       let OffsetArrangementBuild(graph:, ..) = build
       let protected = case closed {
         True -> []
         False -> [expected_start, expected_end]
       }
-      use chains <- result.try(i_to_k_parity_survivor_chains(
+      use chains <- result.try(cusp_trim_parity_survivor_chains(
         retained,
         graph,
         protected_vertices: protected,
       ))
       case chains {
         [chain] ->
-          i_to_k_subpath_from_chain(chain, closed, expected_start, expected_end)
+          cusp_trim_subpath_from_chain(
+            chain,
+            closed,
+            expected_start,
+            expected_end,
+          )
           |> result.map(Some)
-        _ -> Error(InternalIToKSubpathCount(list.length(chains)))
+        _ -> Error(InternalCuspTrimSubpathCount(list.length(chains)))
       }
     }
   }
 }
 
-fn i_to_k_parity_survivor_chains(
-  segments: List(JArrangementSplitOffsetSegment),
+fn cusp_trim_parity_survivor_chains(
+  segments: List(ArrangementSplitTracedSegment),
   graph: arrangement_graph.ArrangementGraph,
   protected_vertices protected_vertices: List(Int),
 ) -> Result(List(SurvivorChain), Error) {
@@ -5193,7 +5326,7 @@ fn i_to_k_parity_survivor_chains(
   case retained {
     [] -> Ok([])
     [_, ..] -> {
-      let initial = j_segment_edge_capacities(graph, retained)
+      let initial = arrangement_split_edge_capacities(graph, retained)
       use assignments <- result.try(
         arrangement_graph.forced_parity_capacities_with(
           graph,
@@ -5202,13 +5335,13 @@ fn i_to_k_parity_survivor_chains(
         )
         |> result.map_error(ForcedParityPruningError),
       )
-      j_segment_parity_chains_from_assignments(retained, assignments)
+      arrangement_split_parity_chains_from_assignments(retained, assignments)
     }
   }
 }
 
-fn j_segment_parity_chains_from_assignments(
-  retained: List(JArrangementSplitOffsetSegment),
+fn arrangement_split_parity_chains_from_assignments(
+  retained: List(ArrangementSplitTracedSegment),
   assignments: List(arrangement_graph.EdgeCapacityAssignment),
 ) -> Result(List(SurvivorChain), Error) {
   let available =
@@ -5221,22 +5354,26 @@ fn j_segment_parity_chains_from_assignments(
       }
     })
   use result <- result.try(
-    j_source_order_survivor_chains(retained, available, open: []),
+    arrangement_split_source_order_survivor_chains(
+      retained,
+      available,
+      open: [],
+    ),
   )
   let #(chains, remaining) = result
   use _ <- result.try(assert_capacities_consumed(remaining))
   Ok(chains)
 }
 
-fn j_walk_to_survivor_chain(
-  walk: List(JArrangementSplitOffsetSegment),
+fn arrangement_split_walk_to_survivor_chain(
+  walk: List(ArrangementSplitTracedSegment),
 ) -> SurvivorChain {
   let assert [first, ..rest] = walk
   let initial =
     SurvivorChain(
       start_vertex: first.start_vertex,
       end_vertex: first.end_vertex,
-      edges: [j_segment_survivor_edge(first)],
+      edges: [arrangement_split_survivor_edge(first)],
       closed: first.start_vertex == first.end_vertex,
     )
   rest
@@ -5244,15 +5381,15 @@ fn j_walk_to_survivor_chain(
     SurvivorChain(
       ..chain,
       end_vertex: segment.end_vertex,
-      edges: [j_segment_survivor_edge(segment), ..chain.edges],
+      edges: [arrangement_split_survivor_edge(segment), ..chain.edges],
       closed: chain.start_vertex == segment.end_vertex,
     )
   })
   |> fn(chain) { SurvivorChain(..chain, edges: list.reverse(chain.edges)) }
 }
 
-fn j_segment_survivor_edge(
-  segment: JArrangementSplitOffsetSegment,
+fn arrangement_split_survivor_edge(
+  segment: ArrangementSplitTracedSegment,
 ) -> SurvivorEdge {
   SurvivorEdge(
     edge_id: segment.edge_id,
@@ -5260,32 +5397,32 @@ fn j_segment_survivor_edge(
     start_vertex: segment.start_vertex,
     end_vertex: segment.end_vertex,
     segment: segment.segment,
-    j_preimage: Some(segment),
+    arrangement_preimage: Some(segment),
   )
 }
 
-fn j_segments_from_survivor_chains(
+fn arrangement_split_segments_from_survivor_chains(
   chains: List(SurvivorChain),
-) -> List(JArrangementSplitOffsetSegment) {
+) -> List(ArrangementSplitTracedSegment) {
   chains
   |> list.flat_map(fn(chain) { chain.edges })
   |> list.filter_map(fn(edge) {
-    case edge.j_preimage {
+    case edge.arrangement_preimage {
       Some(preimage) -> Ok(preimage)
       None -> Error(Nil)
     }
   })
 }
 
-fn i_to_k_expected_endpoints(
-  segments: List(JArrangementSplitOffsetSegment),
+fn cusp_trim_expected_endpoints(
+  segments: List(ArrangementSplitTracedSegment),
   closed: Bool,
 ) -> Result(#(Int, Int), Error) {
   case segments {
     [] -> Error(InternalSegmentImageCountMismatch)
     [first, ..] -> {
       use last <- result.try(
-        last_j_segment(segments)
+        last_arrangement_split_segment(segments)
         |> result.map_error(fn(_) { InternalSegmentImageCountMismatch }),
       )
       case closed {
@@ -5296,9 +5433,9 @@ fn i_to_k_expected_endpoints(
   }
 }
 
-fn j_segment_edge_capacities(
+fn arrangement_split_edge_capacities(
   graph: arrangement_graph.ArrangementGraph,
-  retained: List(JArrangementSplitOffsetSegment),
+  retained: List(ArrangementSplitTracedSegment),
 ) -> List(arrangement_graph.EdgeCapacityAssignment) {
   let arrangement_graph.ArrangementGraph(edges:, ..) = graph
   list.map(edges, fn(edge) {
@@ -5311,8 +5448,8 @@ fn j_segment_edge_capacities(
   })
 }
 
-fn j_source_order_survivor_chains(
-  segments: List(JArrangementSplitOffsetSegment),
+fn arrangement_split_source_order_survivor_chains(
+  segments: List(ArrangementSplitTracedSegment),
   available: List(AvailableEdgeCapacity),
   open open: List(SurvivorChain),
 ) -> Result(#(List(SurvivorChain), List(AvailableEdgeCapacity)), Error) {
@@ -5320,7 +5457,8 @@ fn j_source_order_survivor_chains(
     [] -> Ok(#(list.reverse(open), available))
     [segment, ..rest] ->
       case take_edge_capacity(segment.edge_id, available) {
-        Error(Nil) -> j_source_order_survivor_chains(rest, available, open:)
+        Error(Nil) ->
+          arrangement_split_source_order_survivor_chains(rest, available, open:)
         Ok(available) -> {
           let edge =
             SurvivorEdge(
@@ -5329,9 +5467,9 @@ fn j_source_order_survivor_chains(
               start_vertex: segment.start_vertex,
               end_vertex: segment.end_vertex,
               segment: segment.segment,
-              j_preimage: Some(segment),
+              arrangement_preimage: Some(segment),
             )
-          j_source_order_survivor_chains(
+          arrangement_split_source_order_survivor_chains(
             rest,
             available,
             open: append_source_order_edge(edge, open:),
@@ -5341,17 +5479,17 @@ fn j_source_order_survivor_chains(
   }
 }
 
-fn i_to_k_subpath_from_chain(
+fn cusp_trim_subpath_from_chain(
   chain: SurvivorChain,
   expected_closed: Bool,
   expected_start: Int,
   expected_end: Int,
-) -> Result(KTrimmedOffsetSubpath, Error) {
+) -> Result(CuspTrimmedSubpath, Error) {
   use chain <- result.try(case expected_closed {
     True ->
       case chain.closed {
         True -> Ok(chain)
-        False -> Error(InternalIToKExpectedClosedSubpath)
+        False -> Error(InternalCuspTrimExpectedClosedSubpath)
       }
     False ->
       case
@@ -5361,7 +5499,7 @@ fn i_to_k_subpath_from_chain(
         True, _ -> Ok(chain)
         False, True -> Ok(reverse_survivor_chain(chain))
         False, False ->
-          Error(InternalIToKEndpointMismatch(
+          Error(InternalCuspTrimEndpointMismatch(
             expected_start:,
             actual_start: chain.start_vertex,
             expected_end:,
@@ -5372,21 +5510,21 @@ fn i_to_k_subpath_from_chain(
   use segments <- result.try(
     chain.edges
     |> list.try_map(fn(edge) {
-      case edge.j_preimage {
-        None -> Error(InternalIToKMissingJPreimage(edge.edge_id))
+      case edge.arrangement_preimage {
+        None -> Error(InternalCuspTrimMissingArrangementPreimage(edge.edge_id))
         Some(preimage) ->
-          Ok(KTrimmedOffsetSegment(segment: edge.segment, preimage:))
+          Ok(CuspTrimmedSegment(segment: edge.segment, preimage:))
       }
     }),
   )
-  Ok(KTrimmedOffsetSubpath(segments:, closed: expected_closed))
+  Ok(CuspTrimmedSubpath(segments:, closed: expected_closed))
 }
 
-fn j_subpath_from_i_arrangement(
+fn arrangement_split_subpath_from_i_arrangement(
   subpath: ICulledOffsetSubpath,
   build: OffsetArrangementBuild,
   winding: fn(svg_path.Point) -> Result(Int, Error),
-) -> Result(JArrangementSplitOffsetSubpath, Error) {
+) -> Result(ArrangementSplitTracedSubpath, Error) {
   let ICulledOffsetSubpath(segments:, closed:, side:) = subpath
   let OffsetArrangementBuild(segment_images:, ..) = build
   use image_span <- result.try(take_segment_images(
@@ -5395,25 +5533,37 @@ fn j_subpath_from_i_arrangement(
   ))
   let #(images, _) = image_span
   use split_segments <- result.try(
-    j_segments_from_i_images(segments, images, build, winding, split: []),
+    arrangement_split_segments_from_i_images(
+      segments,
+      images,
+      build,
+      winding,
+      split: [],
+    ),
   )
-  Ok(JArrangementSplitOffsetSubpath(segments: split_segments, closed:, side:))
+  Ok(ArrangementSplitTracedSubpath(segments: split_segments, closed:, side:))
 }
 
-fn j_segments_from_i_images(
+fn arrangement_split_segments_from_i_images(
   segments: List(ICulledOffsetSegment),
   images: List(arrangement_graph.ArrangementSourceSegmentImage),
   build: OffsetArrangementBuild,
   winding: fn(svg_path.Point) -> Result(Int, Error),
-  split split: List(JArrangementSplitOffsetSegment),
-) -> Result(List(JArrangementSplitOffsetSegment), Error) {
+  split split: List(ArrangementSplitTracedSegment),
+) -> Result(List(ArrangementSplitTracedSegment), Error) {
   case segments, images {
     [], [] -> Ok(list.reverse(split))
     [segment, ..remaining_segments], [image, ..remaining_images] -> {
       use pieces <- result.try(
-        j_segments_from_i_image(segment, image, build, winding, split: []),
+        arrangement_split_segments_from_i_image(
+          segment,
+          image,
+          build,
+          winding,
+          split: [],
+        ),
       )
-      j_segments_from_i_images(
+      arrangement_split_segments_from_i_images(
         remaining_segments,
         remaining_images,
         build,
@@ -5425,24 +5575,30 @@ fn j_segments_from_i_images(
   }
 }
 
-fn j_segments_from_i_image(
+fn arrangement_split_segments_from_i_image(
   source: ICulledOffsetSegment,
   image: arrangement_graph.ArrangementSourceSegmentImage,
   build: OffsetArrangementBuild,
   winding: fn(svg_path.Point) -> Result(Int, Error),
-  split split: List(JArrangementSplitOffsetSegment),
-) -> Result(List(JArrangementSplitOffsetSegment), Error) {
+  split split: List(ArrangementSplitTracedSegment),
+) -> Result(List(ArrangementSplitTracedSegment), Error) {
   let arrangement_graph.ArrangementSourceSegmentImage(edges:, ..) = image
-  j_segments_from_i_edge_images(source, edges, build, winding, split:)
+  arrangement_split_segments_from_i_edge_images(
+    source,
+    edges,
+    build,
+    winding,
+    split:,
+  )
 }
 
-fn j_segments_from_i_edge_images(
+fn arrangement_split_segments_from_i_edge_images(
   source: ICulledOffsetSegment,
   images: List(arrangement_graph.ArrangementSegmentEdgeImage),
   build: OffsetArrangementBuild,
   winding: fn(svg_path.Point) -> Result(Int, Error),
-  split split: List(JArrangementSplitOffsetSegment),
-) -> Result(List(JArrangementSplitOffsetSegment), Error) {
+  split split: List(ArrangementSplitTracedSegment),
+) -> Result(List(ArrangementSplitTracedSegment), Error) {
   case images {
     [] -> Ok(list.reverse(split))
     [image, ..rest] -> {
@@ -5481,52 +5637,59 @@ fn j_segments_from_i_edge_images(
         interval_parameter(source.preimage_from, source.preimage_to, ta)
       let preimage_to =
         interval_parameter(source.preimage_from, source.preimage_to, tb)
-      j_segments_from_i_edge_images(source, rest, build, winding, split: [
-        JArrangementSplitOffsetSegment(
-          segment:,
-          preimage: source,
-          preimage_from:,
-          preimage_to:,
-          edge_id:,
-          start_vertex:,
-          end_vertex:,
-          reversed: h_preimage_is_reversed(source.preimage),
-          deletion_candidate: !matches,
-        ),
-        ..split
-      ])
+      arrangement_split_segments_from_i_edge_images(
+        source,
+        rest,
+        build,
+        winding,
+        split: [
+          ArrangementSplitTracedSegment(
+            segment:,
+            preimage: source,
+            preimage_from:,
+            preimage_to:,
+            edge_id:,
+            start_vertex:,
+            end_vertex:,
+            reversed: h_preimage_is_reversed(source.preimage),
+            deletion_candidate: !matches,
+          ),
+          ..split
+        ],
+      )
     }
   }
 }
 
-fn rescue_j_submerged_runs(
-  subpath: JArrangementSplitOffsetSubpath,
-) -> List(JArrangementSplitOffsetSegment) {
-  let JArrangementSplitOffsetSubpath(segments:, closed:, ..) = subpath
-  let runs = j_segment_runs(segments, runs: [])
-  let rescued = list.map(runs, rescue_j_segment_run)
+fn rescue_arrangement_split_submerged_runs(
+  subpath: ArrangementSplitTracedSubpath,
+) -> List(ArrangementSplitTracedSegment) {
+  let ArrangementSplitTracedSubpath(segments:, closed:, ..) = subpath
+  let runs = arrangement_split_runs(segments, runs: [])
+  let rescued = list.map(runs, rescue_arrangement_split_run)
   let rescued = case closed, runs {
     True, [first, _, ..] -> {
-      let assert Ok(last) = last_j_run(runs)
+      let assert Ok(last) = last_arrangement_split_run(runs)
       case first.submerged && last.submerged {
         False -> rescued
         True -> {
           let wrapping_reversed =
-            j_run_contains_reversed(first) || j_run_contains_reversed(last)
+            arrangement_split_run_contains_reversed(first)
+            || arrangement_split_run_contains_reversed(last)
           rescued
-          |> replace_first_j_run(
-            JSegmentRun(
+          |> replace_first_arrangement_split_run(
+            ArrangementSplitRun(
               ..first,
-              segments: set_j_segments_submerged(
+              segments: set_arrangement_split_segments_submerged(
                 first.segments,
                 wrapping_reversed,
               ),
             ),
           )
-          |> replace_last_j_run(
-            JSegmentRun(
+          |> replace_last_arrangement_split_run(
+            ArrangementSplitRun(
               ..last,
-              segments: set_j_segments_submerged(
+              segments: set_arrangement_split_segments_submerged(
                 last.segments,
                 wrapping_reversed,
               ),
@@ -5540,72 +5703,78 @@ fn rescue_j_submerged_runs(
   rescued |> list.flat_map(fn(run) { run.segments })
 }
 
-fn j_segment_runs(
-  segments: List(JArrangementSplitOffsetSegment),
-  runs runs: List(JSegmentRun),
-) -> List(JSegmentRun) {
+fn arrangement_split_runs(
+  segments: List(ArrangementSplitTracedSegment),
+  runs runs: List(ArrangementSplitRun),
+) -> List(ArrangementSplitRun) {
   case segments {
     [] -> list.reverse(runs)
     [first, ..rest] -> {
       let #(same, remaining) =
-        take_j_run(rest, first.deletion_candidate, taken: [first])
-      j_segment_runs(remaining, runs: [
-        JSegmentRun(segments: same, submerged: first.deletion_candidate),
+        take_arrangement_split_run(rest, first.deletion_candidate, taken: [
+          first,
+        ])
+      arrangement_split_runs(remaining, runs: [
+        ArrangementSplitRun(segments: same, submerged: first.deletion_candidate),
         ..runs
       ])
     }
   }
 }
 
-fn take_j_run(
-  segments: List(JArrangementSplitOffsetSegment),
+fn take_arrangement_split_run(
+  segments: List(ArrangementSplitTracedSegment),
   submerged: Bool,
-  taken taken: List(JArrangementSplitOffsetSegment),
-) -> #(
-  List(JArrangementSplitOffsetSegment),
-  List(JArrangementSplitOffsetSegment),
-) {
+  taken taken: List(ArrangementSplitTracedSegment),
+) -> #(List(ArrangementSplitTracedSegment), List(ArrangementSplitTracedSegment)) {
   case segments {
     [first, ..rest] if first.deletion_candidate == submerged ->
-      take_j_run(rest, submerged, taken: [first, ..taken])
+      take_arrangement_split_run(rest, submerged, taken: [first, ..taken])
     _ -> #(list.reverse(taken), segments)
   }
 }
 
-fn rescue_j_segment_run(run: JSegmentRun) -> JSegmentRun {
-  case run.submerged && !j_run_contains_reversed(run) {
+fn rescue_arrangement_split_run(
+  run: ArrangementSplitRun,
+) -> ArrangementSplitRun {
+  case run.submerged && !arrangement_split_run_contains_reversed(run) {
     True ->
-      JSegmentRun(
+      ArrangementSplitRun(
         ..run,
-        segments: set_j_segments_submerged(run.segments, False),
+        segments: set_arrangement_split_segments_submerged(run.segments, False),
       )
     False -> run
   }
 }
 
-fn j_run_contains_reversed(run: JSegmentRun) -> Bool {
+fn arrangement_split_run_contains_reversed(run: ArrangementSplitRun) -> Bool {
   list.any(run.segments, fn(segment) { segment.reversed })
 }
 
-fn set_j_segments_submerged(
-  segments: List(JArrangementSplitOffsetSegment),
+fn set_arrangement_split_segments_submerged(
+  segments: List(ArrangementSplitTracedSegment),
   submerged: Bool,
-) -> List(JArrangementSplitOffsetSegment) {
+) -> List(ArrangementSplitTracedSegment) {
   list.map(segments, fn(segment) {
-    JArrangementSplitOffsetSegment(..segment, deletion_candidate: submerged)
+    ArrangementSplitTracedSegment(..segment, deletion_candidate: submerged)
   })
 }
 
-fn i_to_m_survivor_chains(
-  segments: List(JArrangementSplitOffsetSegment),
+/// Decompose the non-offside arrangement-split segments into maximal closed
+/// source-ordered walks. Unlike cusp trimming, offside trimming intentionally
+/// permits several survivors from one closed input walk; each resulting chain
+/// is raised independently into a TracedOffsetSubpath carrying the same
+/// source-subpath identity.
+fn offside_survivor_chains(
+  segments: List(ArrangementSplitTracedSegment),
 ) -> List(SurvivorChain) {
-  i_to_m_closed_j_walk_decomposition(segments)
-  |> list.map(j_walk_to_survivor_chain)
+  offside_closed_walk_decomposition(segments)
+  |> list.map(arrangement_split_walk_to_survivor_chain)
 }
 
-fn i_to_m_closed_j_walk(
-  segments: List(JArrangementSplitOffsetSegment),
-) -> List(JArrangementSplitOffsetSegment) {
+fn offside_closed_walk(
+  segments: List(ArrangementSplitTracedSegment),
+) -> List(ArrangementSplitTracedSegment) {
   let available =
     segments
     |> list.index_map(fn(segment, index) { #(segment, index) })
@@ -5613,48 +5782,48 @@ fn i_to_m_closed_j_walk(
       let #(segment, _) = indexed
       !segment.deletion_candidate
     })
-  let #(_, best) = i_to_m_closed_j_walk_loop(available, states: [], best: None)
+  let #(_, best) = offside_closed_walk_loop(available, states: [], best: None)
   case best {
     None -> []
-    Some(IToMClosedWalkState(segments_reversed:, ..)) ->
+    Some(OffsideClosedWalkState(segments_reversed:, ..)) ->
       list.reverse(segments_reversed)
   }
 }
 
-fn i_to_m_closed_j_walk_decomposition(
-  segments: List(JArrangementSplitOffsetSegment),
-) -> List(List(JArrangementSplitOffsetSegment)) {
-  let walk = i_to_m_closed_j_walk(segments)
+fn offside_closed_walk_decomposition(
+  segments: List(ArrangementSplitTracedSegment),
+) -> List(List(ArrangementSplitTracedSegment)) {
+  let walk = offside_closed_walk(segments)
   case walk {
     [] -> []
     [_, ..] -> {
       let remaining =
         list.filter(segments, fn(segment) { !list.contains(walk, segment) })
-      [walk, ..i_to_m_closed_j_walk_decomposition(remaining)]
+      [walk, ..offside_closed_walk_decomposition(remaining)]
     }
   }
 }
 
-fn i_to_m_closed_j_walk_loop(
-  segments: List(#(JArrangementSplitOffsetSegment, Int)),
-  states states: List(IToMClosedWalkState),
-  best best: Option(IToMClosedWalkState),
-) -> #(List(IToMClosedWalkState), Option(IToMClosedWalkState)) {
+fn offside_closed_walk_loop(
+  segments: List(#(ArrangementSplitTracedSegment, Int)),
+  states states: List(OffsideClosedWalkState),
+  best best: Option(OffsideClosedWalkState),
+) -> #(List(OffsideClosedWalkState), Option(OffsideClosedWalkState)) {
   case segments {
     [] -> #(states, best)
     [indexed, ..rest] -> {
       let #(segment, index) = indexed
-      let starting = i_to_m_closed_walk_start(segment, index)
+      let starting = offside_closed_walk_start(segment, index)
       let extended =
         states
         |> list.filter(fn(state) { state.end_vertex == segment.start_vertex })
         |> list.map(fn(state) {
-          i_to_m_closed_walk_extend(state, segment, index)
+          offside_closed_walk_extend(state, segment, index)
         })
       let new_states = [starting, ..extended]
       let states =
         new_states
-        |> list.fold(states, insert_better_i_to_m_closed_walk_state)
+        |> list.fold(states, insert_better_offside_closed_walk_state)
       let best =
         new_states
         |> list.filter(fn(state) {
@@ -5664,42 +5833,42 @@ fn i_to_m_closed_j_walk_loop(
           case best {
             None -> Some(candidate)
             Some(current) ->
-              case i_to_m_closed_walk_is_better(candidate, current) {
+              case offside_closed_walk_is_better(candidate, current) {
                 True -> Some(candidate)
                 False -> best
               }
           }
         })
-      i_to_m_closed_j_walk_loop(rest, states:, best:)
+      offside_closed_walk_loop(rest, states:, best:)
     }
   }
 }
 
-fn i_to_m_closed_walk_start(
-  segment: JArrangementSplitOffsetSegment,
+fn offside_closed_walk_start(
+  segment: ArrangementSplitTracedSegment,
   index: Int,
-) -> IToMClosedWalkState {
-  IToMClosedWalkState(
+) -> OffsideClosedWalkState {
+  OffsideClosedWalkState(
     first_start_vertex: segment.start_vertex,
     end_vertex: segment.end_vertex,
     last_index: index,
-    retained_span: i_to_m_segment_span(segment),
+    retained_span: offside_segment_span(segment),
     skipped_runs: 0,
     indices_reversed: [index],
     segments_reversed: [segment],
   )
 }
 
-fn i_to_m_closed_walk_extend(
-  state: IToMClosedWalkState,
-  segment: JArrangementSplitOffsetSegment,
+fn offside_closed_walk_extend(
+  state: OffsideClosedWalkState,
+  segment: ArrangementSplitTracedSegment,
   index: Int,
-) -> IToMClosedWalkState {
-  IToMClosedWalkState(
+) -> OffsideClosedWalkState {
+  OffsideClosedWalkState(
     ..state,
     end_vertex: segment.end_vertex,
     last_index: index,
-    retained_span: state.retained_span +. i_to_m_segment_span(segment),
+    retained_span: state.retained_span +. offside_segment_span(segment),
     skipped_runs: state.skipped_runs
       + case index == state.last_index + 1 {
         True -> 0
@@ -5710,14 +5879,14 @@ fn i_to_m_closed_walk_extend(
   )
 }
 
-fn i_to_m_segment_span(segment: JArrangementSplitOffsetSegment) -> Float {
+fn offside_segment_span(segment: ArrangementSplitTracedSegment) -> Float {
   float.absolute_value(segment.preimage_to -. segment.preimage_from)
 }
 
-fn insert_better_i_to_m_closed_walk_state(
-  states: List(IToMClosedWalkState),
-  candidate: IToMClosedWalkState,
-) -> List(IToMClosedWalkState) {
+fn insert_better_offside_closed_walk_state(
+  states: List(OffsideClosedWalkState),
+  candidate: OffsideClosedWalkState,
+) -> List(OffsideClosedWalkState) {
   case states {
     [] -> [candidate]
     [first, ..rest] -> {
@@ -5727,22 +5896,22 @@ fn insert_better_i_to_m_closed_walk_state(
         && first.last_index == candidate.last_index
       case same_state {
         True ->
-          case i_to_m_closed_walk_is_better(candidate, first) {
+          case offside_closed_walk_is_better(candidate, first) {
             True -> [candidate, ..rest]
             False -> states
           }
         False -> [
           first,
-          ..insert_better_i_to_m_closed_walk_state(rest, candidate)
+          ..insert_better_offside_closed_walk_state(rest, candidate)
         ]
       }
     }
   }
 }
 
-fn i_to_m_closed_walk_is_better(
-  candidate: IToMClosedWalkState,
-  current: IToMClosedWalkState,
+fn offside_closed_walk_is_better(
+  candidate: OffsideClosedWalkState,
+  current: OffsideClosedWalkState,
 ) -> Bool {
   case
     candidate.retained_span >. current.retained_span,
@@ -5783,50 +5952,55 @@ fn int_list_lexicographically_before(
   }
 }
 
-fn last_j_run(runs: List(JSegmentRun)) -> Result(JSegmentRun, Nil) {
+fn last_arrangement_split_run(
+  runs: List(ArrangementSplitRun),
+) -> Result(ArrangementSplitRun, Nil) {
   case runs {
     [] -> Error(Nil)
     [run] -> Ok(run)
-    [_, ..rest] -> last_j_run(rest)
+    [_, ..rest] -> last_arrangement_split_run(rest)
   }
 }
 
-fn replace_first_j_run(
-  runs: List(JSegmentRun),
-  replacement: JSegmentRun,
-) -> List(JSegmentRun) {
+fn replace_first_arrangement_split_run(
+  runs: List(ArrangementSplitRun),
+  replacement: ArrangementSplitRun,
+) -> List(ArrangementSplitRun) {
   case runs {
     [] -> []
     [_, ..rest] -> [replacement, ..rest]
   }
 }
 
-fn replace_last_j_run(
-  runs: List(JSegmentRun),
-  replacement: JSegmentRun,
-) -> List(JSegmentRun) {
+fn replace_last_arrangement_split_run(
+  runs: List(ArrangementSplitRun),
+  replacement: ArrangementSplitRun,
+) -> List(ArrangementSplitRun) {
   case runs {
     [] -> []
     [_] -> [replacement]
-    [first, ..rest] -> [first, ..replace_last_j_run(rest, replacement)]
+    [first, ..rest] -> [
+      first,
+      ..replace_last_arrangement_split_run(rest, replacement)
+    ]
   }
 }
 
-fn last_j_segment(
-  segments: List(JArrangementSplitOffsetSegment),
-) -> Result(JArrangementSplitOffsetSegment, Nil) {
+fn last_arrangement_split_segment(
+  segments: List(ArrangementSplitTracedSegment),
+) -> Result(ArrangementSplitTracedSegment, Nil) {
   case segments {
     [] -> Error(Nil)
     [segment] -> Ok(segment)
-    [_, ..rest] -> last_j_segment(rest)
+    [_, ..rest] -> last_arrangement_split_segment(rest)
   }
 }
 
-fn k_trimmed_subpath_geometry(
-  subpath: KTrimmedOffsetSubpath,
+fn cusp_trimmed_subpath_geometry(
+  subpath: CuspTrimmedSubpath,
   tolerance: Float,
 ) -> Result(svg_path.Subpath, Error) {
-  let KTrimmedOffsetSubpath(segments:, closed:) = subpath
+  let CuspTrimmedSubpath(segments:, closed:) = subpath
   subpath_from_synchronized_segments(
     list.map(segments, fn(segment) { segment.segment }),
     closed:,
