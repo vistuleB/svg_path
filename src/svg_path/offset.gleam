@@ -170,13 +170,17 @@ pub type Error {
   InternalForcedParityOpenChain(start_vertex: Int, end_vertex: Int)
 
   /// Cusp trimming reconstructed the wrong number of survivor subpaths.
-  InternalCuspTrimSubpathCount(actual: Int)
+  ///
+  /// The historical `IToK` constructor name is retained for compatibility.
+  InternalIToKSubpathCount(actual: Int)
 
   /// Closed cusp-trimming input reconstructed as an open subpath.
-  InternalCuspTrimExpectedClosedSubpath
+  /// The historical `IToK` constructor name is retained for compatibility.
+  InternalIToKExpectedClosedSubpath
 
   /// Open cusp-trimming input did not preserve its endpoint vertices.
-  InternalCuspTrimEndpointMismatch(
+  /// The historical `IToK` constructor name is retained for compatibility.
+  InternalIToKEndpointMismatch(
     expected_start: Int,
     actual_start: Int,
     expected_end: Int,
@@ -184,7 +188,8 @@ pub type Error {
   )
 
   /// Cusp reconstruction lost an edge's arrangement-split provenance.
-  InternalCuspTrimMissingArrangementPreimage(edge_id: Int)
+  /// The historical `IToK`/`J` constructor name is retained for compatibility.
+  InternalIToKMissingJPreimage(edge_id: Int)
 }
 
 /// Join style used when offsetting adjacent subpath segments.
@@ -5314,7 +5319,7 @@ fn finish_cusp_trim_with_parity(
             expected_end,
           )
           |> result.map(Some)
-        _ -> Error(InternalCuspTrimSubpathCount(list.length(chains)))
+        _ -> Error(InternalIToKSubpathCount(list.length(chains)))
       }
     }
   }
@@ -5493,7 +5498,7 @@ fn cusp_trim_subpath_from_chain(
     True ->
       case chain.closed {
         True -> Ok(chain)
-        False -> Error(InternalCuspTrimExpectedClosedSubpath)
+        False -> Error(InternalIToKExpectedClosedSubpath)
       }
     False ->
       case
@@ -5503,7 +5508,7 @@ fn cusp_trim_subpath_from_chain(
         True, _ -> Ok(chain)
         False, True -> Ok(reverse_survivor_chain(chain))
         False, False ->
-          Error(InternalCuspTrimEndpointMismatch(
+          Error(InternalIToKEndpointMismatch(
             expected_start:,
             actual_start: chain.start_vertex,
             expected_end:,
@@ -5515,7 +5520,7 @@ fn cusp_trim_subpath_from_chain(
     chain.edges
     |> list.try_map(fn(edge) {
       case edge.arrangement_preimage {
-        None -> Error(InternalCuspTrimMissingArrangementPreimage(edge.edge_id))
+        None -> Error(InternalIToKMissingJPreimage(edge.edge_id))
         Some(preimage) ->
           Ok(CuspTrimmedSegment(
             segment: edge.segment,
