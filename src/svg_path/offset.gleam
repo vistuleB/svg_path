@@ -714,7 +714,7 @@ type OffsideClosedWalkState {
 type CuspTrimmedSegment {
   CuspTrimmedSegment(
     segment: svg_path.Segment,
-    preimage: ArrangementSplitTracedSegment,
+    arrangement_preimage: ArrangementSplitTracedSegment,
   )
 }
 
@@ -756,16 +756,16 @@ fn traced_subpath_from_survivor_chain(
   use segments <- result.try(
     chain.edges
     |> list.map(fn(edge) {
-      use j <- result.try(
+      use split <- result.try(
         edge.arrangement_preimage
         |> option.to_result(InternalMissingIndexedSegment(edge.edge_id)),
       )
       Ok(TracedOffsetSegment(
         segment: edge.segment,
-        preimage: j.preimage.preimage,
-        preimage_from: j.preimage_from,
-        preimage_to: j.preimage_to,
-        reversed: j.reversed,
+        preimage: split.preimage.preimage,
+        preimage_from: split.preimage_from,
+        preimage_to: split.preimage_to,
+        reversed: split.reversed,
       ))
     })
     |> result.all,
@@ -813,7 +813,7 @@ fn i_subpath_from_traced(traced: TracedOffsetSubpath) -> ICulledOffsetSubpath {
 /// Raise the unique cusp-trimmed survivor into the common traced representation.
 /// Its arrangement-split preimage supplies the narrowed H-parameter interval
 /// and REVERSED classification established before parity reconstruction.
-fn traced_subpath_from_k(
+fn traced_subpath_from_cusp_trimmed(
   subpath: CuspTrimmedSubpath,
   source_subpath_index: Int,
   side: BandSide,
@@ -821,17 +821,17 @@ fn traced_subpath_from_k(
   let CuspTrimmedSubpath(segments:, closed:) = subpath
   TracedOffsetSubpath(
     segments: list.map(segments, fn(segment) {
-      let CuspTrimmedSegment(segment: geometry, preimage:) = segment
+      let CuspTrimmedSegment(segment: geometry, arrangement_preimage:) = segment
       let ArrangementSplitTracedSegment(
-        preimage: i_preimage,
+        preimage: i_segment,
         preimage_from:,
         preimage_to:,
         reversed:,
         ..,
-      ) = preimage
+      ) = arrangement_preimage
       TracedOffsetSegment(
         segment: geometry,
-        preimage: i_preimage.preimage,
+        preimage: i_segment.preimage,
         preimage_from:,
         preimage_to:,
         reversed:,
@@ -853,7 +853,7 @@ fn cusp_trim_traced_subpath(
   offset: Float,
   options: Options,
 ) -> Result(Option(TracedOffsetSubpath), Error) {
-  use trimmed <- result.try(trim_i_culled_offset_subpath(
+  use trimmed <- result.try(cusp_trim_i_subpath(
     i_subpath_from_traced(traced),
     zero_source,
     offset,
@@ -861,7 +861,11 @@ fn cusp_trim_traced_subpath(
   ))
   Ok(
     option.map(trimmed, fn(subpath) {
-      traced_subpath_from_k(subpath, traced.source_subpath_index, traced.side)
+      traced_subpath_from_cusp_trimmed(
+        subpath,
+        traced.source_subpath_index,
+        traced.side,
+      )
     }),
   )
 }
@@ -1320,9 +1324,9 @@ pub fn internal_single_offset_band_candidate(
   band_from_sides(build.zero_source, 0.0, build.subpath, offset)
 }
 
-/// Return the I-subpath arrangement edges and their offside classification
-/// before contamination pruning constructs M-subpaths for a path. This is for
-/// debug fixtures only.
+/// Return arrangement-split offset edges with their offside classification
+/// before contamination pruning reconstructs survivor walks. This is for debug
+/// fixtures only.
 @internal
 pub fn internal_path_single_offset_contamination_arrangement_trace(
   source source: svg_path.Path,
@@ -3741,7 +3745,7 @@ fn trim_band_side_cusps(
       |> traced_subpath_geometry(options.fitting.tolerance)
       |> result.map(Some)
     True -> {
-      use trimmed <- result.try(trim_i_culled_offset_subpath(
+      use trimmed <- result.try(cusp_trim_i_subpath(
         subpath,
         zero_source,
         offset,
@@ -3778,13 +3782,13 @@ pub fn internal_subpath_band_arrangement_trace(
     outer_culled: culled_b,
     ..,
   ) = build
-  use trimmed_a <- result.try(trim_i_culled_offset_subpath(
+  use trimmed_a <- result.try(cusp_trim_i_subpath(
     culled_a,
     normalized,
     inner_offset,
     options,
   ))
-  use trimmed_b <- result.try(trim_i_culled_offset_subpath(
+  use trimmed_b <- result.try(cusp_trim_i_subpath(
     culled_b,
     normalized,
     outer_offset,
@@ -5245,7 +5249,7 @@ fn culled_offset_subpath_segments(
 /// cusp-trimmed subpath with the same open/closed topology as the input and,
 /// for an open input, the same endpoint vertices. Multiple survivors are an
 /// internal error.
-fn trim_i_culled_offset_subpath(
+fn cusp_trim_i_subpath(
   subpath: ICulledOffsetSubpath,
   zero_source: svg_path.Subpath,
   offset: Float,
@@ -5513,7 +5517,10 @@ fn cusp_trim_subpath_from_chain(
       case edge.arrangement_preimage {
         None -> Error(InternalCuspTrimMissingArrangementPreimage(edge.edge_id))
         Some(preimage) ->
-          Ok(CuspTrimmedSegment(segment: edge.segment, preimage:))
+          Ok(CuspTrimmedSegment(
+            segment: edge.segment,
+            arrangement_preimage: preimage,
+          ))
       }
     }),
   )
