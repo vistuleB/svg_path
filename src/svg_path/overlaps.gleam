@@ -7,10 +7,11 @@
 //// `svg_path.NonAffineOverlapCorrespondence`; normalize or linearize those
 //// segments before overlap detection.
 ////
-//// A supplied `tolerance` is finite and non-negative. It is used as a
-//// Euclidean distance in path coordinates when testing coincidence and,
-//// during interval merging, as a normalized segment-parameter tolerance.
-//// Invalid tolerances return `svg_path.InvalidOverlapTolerance`.
+//// A supplied `tolerance` is finite and non-negative. It is used only as a
+//// Euclidean distance in path coordinates when testing coincidence and
+//// joining geometrically adjacent pieces. Internal fixed parameter-space
+//// tolerances reconcile endpoint projections and segment-boundary pieces.
+//// Invalid geometric tolerances return `svg_path.InvalidOverlapTolerance`.
 ////
 //// Opposite-parameter lookup is exact with respect to a returned overlap. It
 //// accepts exact segment-end aliases and canonicalizes the returned address,
@@ -54,6 +55,8 @@ pub type SegmentOverlap {
 ///
 /// For overlap values returned by this module, parameters in the closed
 /// `left_from..left_to` interval map to coincident points on the right segment.
+/// Behavior is undefined for manually constructed overlaps with a zero left
+/// parameter span.
 pub fn segment_overlap_right_parameter(
   overlap: SegmentOverlap,
   left_parameter: Float,
@@ -68,6 +71,8 @@ pub fn segment_overlap_right_parameter(
 ///
 /// For overlap values returned by this module, parameters between
 /// `right_from` and `right_to` map to coincident points on the left segment.
+/// Behavior is undefined for manually constructed overlaps with a zero right
+/// parameter span.
 pub fn segment_overlap_left_parameter(
   overlap: SegmentOverlap,
   right_parameter: Float,
@@ -80,9 +85,8 @@ pub fn segment_overlap_left_parameter(
 /// Find sampled overlap intervals proposed by endpoint projections.
 ///
 /// This algorithm assumes non-degenerate segments and that every overlap
-/// boundary is an endpoint of at least one input segment. `tolerance` follows
-/// this module's mixed geometric/normalized-parameter convention. `samples`
-/// must be positive.
+/// boundary is an endpoint of at least one input segment. `tolerance` is a
+/// Euclidean distance in path coordinates. `samples` must be positive.
 @internal
 pub fn segment_with_samples(
   left: svg_path.Segment,
@@ -142,8 +146,8 @@ pub fn segment(
 
 /// Find segment overlaps using an explicit finite, non-negative tolerance.
 ///
-/// The tolerance is measured in path-coordinate distance for coincidence
-/// tests and in normalized segment parameters while merging candidates.
+/// The tolerance is measured in path-coordinate distance. Candidate parameter
+/// comparisons use an internal fixed parameter-space tolerance.
 pub fn segment_with(
   left: svg_path.Segment,
   right: svg_path.Segment,
@@ -191,7 +195,7 @@ pub fn segment_subpath(
 ///
 /// Overlaps follow the standalone segment's traversal. Adjacent constituent
 /// segment overlaps are joined when their parameter correspondences connect.
-/// `tolerance` has the module-wide geometric and normalized-parameter meaning.
+/// `tolerance` is measured in path-coordinate distance.
 pub fn segment_subpath_with(
   segment: svg_path.Segment,
   subpath: svg_path.Subpath,
@@ -623,9 +627,9 @@ pub fn subpath(
 
 /// Return subpath overlaps using an explicit finite, non-negative tolerance.
 ///
-/// The tolerance has the module-wide geometric and normalized-parameter
-/// meaning. Continuous pieces may cross segment boundaries but never join
-/// across a discontinuity in either traversal.
+/// The tolerance is measured in path-coordinate distance. Continuous pieces
+/// may cross segment boundaries but never join across a discontinuity in
+/// either traversal.
 pub fn subpath_with(
   left: svg_path.Subpath,
   right: svg_path.Subpath,
@@ -1000,8 +1004,7 @@ pub fn path(
 ///
 /// Results retain the complete subpath correspondence and the two source
 /// subpath indices. Continuous overlaps never join across subpath boundaries.
-/// The tolerance has the module-wide geometric and normalized-parameter
-/// meaning.
+/// The tolerance is measured in path-coordinate distance.
 pub fn path_with(
   left: svg_path.Path,
   right: svg_path.Path,
