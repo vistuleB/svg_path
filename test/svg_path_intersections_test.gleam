@@ -3,7 +3,6 @@ import gleam/list
 import gleeunit/should
 import svg_path
 import svg_path/intersections
-import svg_path/intersections2
 
 fn arc_pair() -> #(svg_path.Segment, svg_path.Segment) {
   #(
@@ -26,9 +25,9 @@ fn arc_pair() -> #(svg_path.Segment, svg_path.Segment) {
   )
 }
 
-pub fn windowed_arc_arc_crossing_regression_test() {
+pub fn arc_arc_crossing_regression_test() {
   let #(left, right) = arc_pair()
-  let assert Ok(found) = intersections2.segment(left, right)
+  let assert Ok(found) = intersections.segment(left, right)
   list.length(found)
   |> should.equal(1)
 }
@@ -45,18 +44,18 @@ pub fn production_arc_arc_crossing_regression_both_orders_test() {
   )
 }
 
-pub fn windowed_cubic_cubic_crossing_regression_test() {
+pub fn cubic_cubic_crossing_regression_test() {
   let #(left_arc, right_arc) = arc_pair()
   let left_cubics = svg_path.segment_arcs_to_cubic_beziers(left_arc)
   let right_cubics = svg_path.segment_arcs_to_cubic_beziers(right_arc)
   let assert Ok(left) = list.last(left_cubics)
   let assert [right, ..] = right_cubics
-  let assert Ok(found) = intersections2.segment(left, right)
+  let assert Ok(found) = intersections.segment(left, right)
   list.length(found)
   |> should.equal(1)
 }
 
-pub fn windowed_symmetric_kissing_quadratics_test() {
+pub fn symmetric_kissing_quadratics_regression_test() {
   let upper =
     svg_path.QuadraticBezier(
       start: svg_path.Point(-1.0, 1.0),
@@ -69,7 +68,7 @@ pub fn windowed_symmetric_kissing_quadratics_test() {
       control: svg_path.Point(0.0, 1.0),
       end: svg_path.Point(1.0, -1.0),
     )
-  let assert Ok([intersection]) = intersections2.segment(upper, lower)
+  let assert Ok([intersection]) = intersections.segment(upper, lower)
   should.be_true(float.absolute_value(intersection.left_t -. 0.5) <=. 0.0000001)
   should.be_true(
     float.absolute_value(intersection.right_t -. 0.5) <=. 0.0000001,
@@ -136,7 +135,7 @@ pub fn production_two_close_quadratic_crossings_test() {
   list.length(found) |> should.equal(2)
 }
 
-pub fn windowed_flat_cubic_crossing_test() {
+pub fn flat_cubic_crossing_regression_test() {
   let rising =
     svg_path.CubicBezier(
       start: svg_path.Point(0.0, -0.125),
@@ -151,12 +150,12 @@ pub fn windowed_flat_cubic_crossing_test() {
       control2: svg_path.Point(2.0 /. 3.0, 0.125),
       end: svg_path.Point(1.0, -0.125),
     )
-  let assert Ok([intersection]) = intersections2.segment(rising, falling)
+  let assert Ok([intersection]) = intersections.segment(rising, falling)
   should.be_true(float.absolute_value(intersection.left_t -. 0.5) <=. 0.000001)
   should.be_true(float.absolute_value(intersection.right_t -. 0.5) <=. 0.000001)
 }
 
-pub fn windowed_disjoint_quadratics_test() {
+pub fn disjoint_quadratics_regression_test() {
   let upper =
     svg_path.QuadraticBezier(
       start: svg_path.Point(-1.0, 2.0),
@@ -169,11 +168,11 @@ pub fn windowed_disjoint_quadratics_test() {
       control: svg_path.Point(0.0, -1.0),
       end: svg_path.Point(1.0, -2.0),
     )
-  intersections2.segment(upper, lower)
+  intersections.segment(upper, lower)
   |> should.equal(Ok([]))
 }
 
-pub fn windowed_adjacent_quadratic_crossing_test() {
+pub fn adjacent_quadratic_crossing_regression_test() {
   let previous =
     svg_path.QuadraticBezier(
       start: svg_path.Point(0.0, 0.0),
@@ -186,11 +185,11 @@ pub fn windowed_adjacent_quadratic_crossing_test() {
       control: svg_path.Point(0.5, -1.0),
       end: svg_path.Point(0.0, 1.0),
     )
-  let assert Ok(found) = intersections2.segment(previous, next)
+  let assert Ok(found) = intersections.segment(previous, next)
   list.length(found) |> should.equal(2)
 }
 
-pub fn production_falls_back_when_window_guard_is_reached_test() {
+pub fn window_guard_fallback_regression_test() {
   let previous =
     svg_path.CubicBezier(
       start: svg_path.Point(3.7326908112839723, 3.0798423879604986),
@@ -205,8 +204,6 @@ pub fn production_falls_back_when_window_guard_is_reached_test() {
       control2: svg_path.Point(3.813617440000867, 2.8517024128302615),
       end: svg_path.Point(3.8148384145946803, 2.834959380847173),
     )
-  intersections2.segment(previous, next)
-  |> should.equal(Error(svg_path.IntersectionTerminalWindowLimitExceeded(1000)))
   let assert Ok(found) = intersections.segment(previous, next)
   should.be_true(list.length(found) >= 1)
 }
