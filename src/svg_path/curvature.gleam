@@ -53,46 +53,14 @@ pub fn default_options() -> Options {
 
 /// Return first and second parameter derivatives for a segment at `t`.
 ///
-/// Lines return zero second derivative. Arcs are converted to cubic Bezier
-/// pieces only as a fallback for now; callers that need exact ellipse curvature
-/// should use a later arc-specialized helper.
+/// Lines return zero second derivative. Arcs use exact ellipse derivatives.
 pub fn segment_derivatives(
   segment: svg_path.Segment,
   at t: Float,
 ) -> Result(Derivatives, svg_path.Error) {
-  case segment {
-    svg_path.Line(start:, end:) ->
-      Ok(Derivatives(first: subtract(end, start), second: point(0.0, 0.0)))
-
-    svg_path.QuadraticBezier(start:, control:, end:) -> {
-      let first =
-        add(
-          scale(subtract(control, start), 2.0 *. { 1.0 -. t }),
-          scale(subtract(end, control), 2.0 *. t),
-        )
-      let second =
-        scale(add(subtract(end, control), subtract(start, control)), 2.0)
-      Ok(Derivatives(first:, second:))
-    }
-
-    svg_path.CubicBezier(start:, control1:, control2:, end:) -> {
-      let mt = 1.0 -. t
-      let first =
-        add3(
-          scale(subtract(control1, start), 3.0 *. mt *. mt),
-          scale(subtract(control2, control1), 6.0 *. mt *. t),
-          scale(subtract(end, control2), 3.0 *. t *. t),
-        )
-      let second =
-        add(
-          scale(add(subtract(control2, scale(control1, 2.0)), start), 6.0 *. mt),
-          scale(add(subtract(end, scale(control2, 2.0)), control1), 6.0 *. t),
-        )
-      Ok(Derivatives(first:, second:))
-    }
-
-    svg_path.Arc(..) -> arc_derivatives_by_cubic_fallback(segment, at: t)
-  }
+  use first <- result.try(svg_path.segment_derivative(segment, at: t))
+  use second <- result.try(svg_path.segment_second_derivative(segment, at: t))
+  Ok(Derivatives(first:, second:))
 }
 
 /// Return visual-left-normal signed curvature at a segment parameter.
@@ -188,7 +156,8 @@ pub fn segment_inflection_parameters(
 ) -> Result(List(Float), Nil) {
   use _ <- result.try(validate_options(options))
   case segment {
-    svg_path.Line(..) -> Ok([])
+    svg_path.Line(..) | svg_path.QuadraticBezier(..) | svg_path.Arc(..) ->
+      Ok([])
     svg_path.CubicBezier(start:, control1:, control2:, end:) ->
       bezier.CubicBezierData(
         start: to_bezier_point(start),
@@ -198,21 +167,6 @@ pub fn segment_inflection_parameters(
       )
       |> bezier.cubic_inflection_parameters
       |> Ok
-
-    _ ->
-      case segment_inflection_residual_is_flat(segment, options.tolerance) {
-        True -> Ok([])
-        False -> {
-          let residual = fn(t) { segment_inflection_residual(segment, at: t) }
-          use roots <- result.try(sampled_roots(residual, options))
-          Ok(
-            roots
-            |> list.filter(fn(t) {
-              t >. options.tolerance && t <. 1.0 -. options.tolerance
-            }),
-          )
-        }
-      }
   }
 }
 
@@ -302,28 +256,6 @@ fn left_normal_cusp_residual_from_derivatives(
   }
 }
 
-fn segment_inflection_residual(
-  segment: svg_path.Segment,
-  at t: Float,
-) -> Result(Float, Nil) {
-  use data <- result.try(segment_derivatives_nil(segment, at: t))
-  let Derivatives(first:, second:) = data
-  Ok(cross(first, second))
-}
-
-fn segment_inflection_residual_is_flat(
-  segment: svg_path.Segment,
-  tolerance: Float,
-) -> Bool {
-  [0.0, 0.25, 0.5, 0.75, 1.0]
-  |> list.all(fn(t) {
-    case segment_inflection_residual(segment, at: t) {
-      Ok(value) -> float.absolute_value(value) <=. tolerance
-      Error(_) -> False
-    }
-  })
-}
-
 fn sampled_roots(
   f: fn(Float) -> Result(Float, Nil),
   options: Options,
@@ -345,6 +277,14 @@ fn sampled_roots_loop(
       let b = int_to_float(index + 1) /. int_to_float(options.samples)
       let roots = case f(a), f(b) {
         Ok(va), Ok(vb) -> {
+          let roots = case va == 0.0 {
+            True -> [a, ..roots]
+            False -> roots
+          }
+          let roots = case vb == 0.0 {
+            True -> [b, ..roots]
+            False -> roots
+          }
           case sign_change(va, vb) {
             True -> {
               case refine_root(f, a, b, va, vb, options, depth: 0) {
@@ -462,16 +402,6 @@ fn validate_options(options: Options) -> Result(Nil, Nil) {
   }
 }
 
-fn arc_derivatives_by_cubic_fallback(
-  segment: svg_path.Segment,
-  at t: Float,
-) -> Result(Derivatives, svg_path.Error) {
-  case svg_path.segment_to_cubic_beziers(segment) {
-    [] -> Error(svg_path.DegenerateArc)
-    [first, ..] -> segment_derivatives(first, at: clamp(t, min: 0.0, max: 1.0))
-  }
-}
-
 fn unique_sorted_parameters(
   values: List(Float),
   tolerance: Float,
@@ -506,40 +436,12 @@ fn sign_change(a: Float, b: Float) -> Bool {
   { a <. 0.0 && b >. 0.0 } || { a >. 0.0 && b <. 0.0 }
 }
 
-fn point(x: Float, y: Float) -> svg_path.Point {
-  svg_path.Point(x, y)
-}
-
-fn add(a: svg_path.Point, b: svg_path.Point) -> svg_path.Point {
-  point(a.x +. b.x, a.y +. b.y)
-}
-
-fn add3(
-  a: svg_path.Point,
-  b: svg_path.Point,
-  c: svg_path.Point,
-) -> svg_path.Point {
-  add(add(a, b), c)
-}
-
-fn subtract(a: svg_path.Point, b: svg_path.Point) -> svg_path.Point {
-  point(a.x -. b.x, a.y -. b.y)
-}
-
-fn scale(a: svg_path.Point, factor: Float) -> svg_path.Point {
-  point(a.x *. factor, a.y *. factor)
-}
-
 fn dot(a: svg_path.Point, b: svg_path.Point) -> Float {
   a.x *. b.x +. a.y *. b.y
 }
 
 fn cross(a: svg_path.Point, b: svg_path.Point) -> Float {
   a.x *. b.y -. a.y *. b.x
-}
-
-fn clamp(value: Float, min min: Float, max max: Float) -> Float {
-  float.max(min, float.min(max, value))
 }
 
 fn int_to_float(value: Int) -> Float {

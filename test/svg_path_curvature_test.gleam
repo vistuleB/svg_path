@@ -78,6 +78,38 @@ pub fn segment_inflection_parameters_ignore_flat_cubic_test() {
     == Ok([])
 }
 
+pub fn arc_curvature_uses_exact_ellipse_derivatives_test() {
+  let arc =
+    svg_path.Arc(
+      start: svg_path.Point(4.0, 0.0),
+      radius: svg_path.Point(4.0, 4.0),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: True,
+      end: svg_path.Point(0.0, 4.0),
+    )
+
+  let assert Ok(radius) = curvature.segment_left_normal_radius(arc, at: 0.5)
+  assert near(radius, -4.0)
+}
+
+pub fn cusp_parameters_retain_exact_sampled_root_test() {
+  let parabola =
+    svg_path.QuadraticBezier(
+      start: svg_path.Point(-1.0, 1.0),
+      control: svg_path.Point(0.0, 0.0),
+      end: svg_path.Point(1.0, 1.0),
+    )
+
+  let assert Ok(parameters) =
+    curvature.segment_left_normal_cusp_parameters(
+      parabola,
+      distance: -1.0,
+      options: curvature.default_options(),
+    )
+  assert list_contains_near(parameters, 0.5)
+}
+
 fn visually_downward_cubic() -> svg_path.Segment {
   svg_path.CubicBezier(
     start: svg_path.Point(0.0, 0.0),
@@ -98,4 +130,12 @@ fn visually_upward_cubic() -> svg_path.Segment {
 
 fn near(a: Float, b: Float) -> Bool {
   float.absolute_value(a -. b) <=. tolerance
+}
+
+fn list_contains_near(values: List(Float), expected: Float) -> Bool {
+  case values {
+    [] -> False
+    [first, ..rest] ->
+      near(first, expected) || list_contains_near(rest, expected)
+  }
 }
