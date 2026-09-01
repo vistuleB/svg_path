@@ -3,6 +3,7 @@ import gleam/list
 import gleeunit/should
 import svg_path
 import svg_path/intersections
+import svg_path/transform
 
 fn arc_pair() -> #(svg_path.Segment, svg_path.Segment) {
   #(
@@ -206,4 +207,36 @@ pub fn window_guard_fallback_regression_test() {
     )
   let assert Ok(found) = intersections.segment(previous, next)
   should.be_true(list.length(found) >= 1)
+}
+
+pub fn near_parallel_line_projection_is_scale_invariant_test() {
+  let left =
+    svg_path.Line(
+      start: svg_path.Point(-1.0, -0.00000001),
+      end: svg_path.Point(1.0, 0.00000001),
+    )
+  let right =
+    svg_path.Line(
+      start: svg_path.Point(-1.0, 0.00000001),
+      end: svg_path.Point(1.0, -0.00000001),
+    )
+
+  [0.000001, 1.0, 1_000_000.0]
+  |> list.each(fn(scale) {
+    let assert Ok(scaled_left) = transform.scale_segment(left, factor: scale)
+    let assert Ok(scaled_right) = transform.scale_segment(right, factor: scale)
+    let assert Ok(projection) =
+      intersections.segment_segment_projection_with(
+        scaled_left,
+        scaled_right,
+        options: intersections.IntersectionOptions(
+          tolerance: 0.000000000001 *. scale,
+          max_depth: 48,
+          parameter_snap: intersections.NoParameterSnap,
+        ),
+      )
+    should.be_true(float.absolute_value(projection.left_t -. 0.5) <=. 0.000001)
+    should.be_true(float.absolute_value(projection.right_t -. 0.5) <=. 0.000001)
+    projection.distance |> should.equal(0.0)
+  })
 }

@@ -49,6 +49,11 @@ const terminal_subdivision_tolerance = 0.01
 
 const maximum_intersection_terminal_windows = 1000
 
+// Squared sine of the smallest angle for which a two-direction solve is
+// treated as numerically independent. Keeping this dimensionless makes the
+// decision invariant under uniform scaling of the geometry.
+const direction_relative_conditioning_tolerance = 0.000000000000000001
+
 const default_classification_angular_tolerance = 0.0000001
 
 const default_classification_distance_tolerance = 0.000000000001
@@ -1429,7 +1434,7 @@ fn line_line_segment_projection(
   let right_direction = point_difference(right_end, right_start)
   let denominator = cross(left_direction, right_direction)
 
-  case float.absolute_value(denominator) >. options.tolerance {
+  case directions_are_independent(left_direction, right_direction) {
     True -> {
       let between_starts = point_difference(right_start, left_start)
       let left_t = cross(between_starts, right_direction) /. denominator
@@ -2274,6 +2279,18 @@ fn point_difference(a: Point, b: Point) -> Point {
 
 fn dot(a: Point, b: Point) -> Float {
   a.x *. b.x +. a.y *. b.y
+}
+
+fn directions_are_independent(left: Point, right: Point) -> Bool {
+  let left_norm_squared = dot(left, left)
+  let right_norm_squared = dot(right, right)
+  let determinant = cross(left, right)
+  left_norm_squared >. 0.0
+  && right_norm_squared >. 0.0
+  && determinant *. determinant
+  >. direction_relative_conditioning_tolerance
+  *. left_norm_squared
+  *. right_norm_squared
 }
 
 @internal
@@ -4473,9 +4490,9 @@ fn window_preserving_refine_tangent_crossing(
           right_direction.x,
           right_direction.y,
         )
-      case float.absolute_value(denominator) <=. 0.000000000000000001 {
-        True -> Ok(None)
-        False -> {
+      case directions_are_independent(left_direction, right_direction) {
+        False -> Ok(None)
+        True -> {
           let dx = right_point.x -. left_point.x
           let dy = right_point.y -. left_point.y
           let left_step =
@@ -4825,19 +4842,22 @@ fn window_preserving_chord_closest_parameters(
   let e = window_preserving_dot(vx, vy, wx, wy)
   let denominator = a *. c -. b *. b
   let well_conditioned =
-    float.absolute_value(denominator) >. 0.000000000000000001
-  let left = case a <=. 0.000000000000000001, c <=. 0.000000000000000001 {
+    a >. 0.0
+    && c >. 0.0
+    && float.absolute_value(denominator)
+    >. direction_relative_conditioning_tolerance *. a *. c
+  let left = case a == 0.0, c == 0.0 {
     True, _ -> 0.0
     _, True -> window_preserving_clamp01(0.0 -. d /. a)
     False, False if well_conditioned ->
       window_preserving_clamp01({ b *. e -. c *. d } /. denominator)
     _, _ -> window_preserving_clamp01(0.0 -. d /. a)
   }
-  let right = case c <=. 0.000000000000000001 {
+  let right = case c == 0.0 {
     True -> 0.0
     False -> window_preserving_clamp01({ b *. left +. e } /. c)
   }
-  let left = case a <=. 0.000000000000000001 {
+  let left = case a == 0.0 {
     True -> 0.0
     False -> window_preserving_clamp01({ b *. right -. d } /. a)
   }
@@ -4866,9 +4886,9 @@ fn window_preserving_chord_crossing(
   let sx = q2.x -. q.x
   let sy = q2.y -. q.y
   let denominator = window_preserving_cross(rx, ry, sx, sy)
-  case float.absolute_value(denominator) <=. 0.000000000000000001 {
-    True -> None
-    False -> {
+  case directions_are_independent(Point(rx, ry), Point(sx, sy)) {
+    False -> None
+    True -> {
       let qpx = q.x -. p.x
       let qpy = q.y -. p.y
       let left_t = window_preserving_cross(qpx, qpy, sx, sy) /. denominator
@@ -5824,7 +5844,11 @@ fn best_gauss_newton_or_gradient_polish(
   let g2 = 0.0 -. dot(right_derivative, separation)
   let determinant = a *. c -. b *. b
 
-  case determinant <=. 0.000000000000000001 *. float.max(a *. c, 1.0) {
+  case
+    a == 0.0
+    || c == 0.0
+    || determinant <=. direction_relative_conditioning_tolerance *. a *. c
+  {
     True -> Ok(gradient)
     False -> {
       let delta_left = { b *. g2 -. c *. g1 } /. determinant
@@ -5855,16 +5879,9 @@ fn tangent_line_crossing_proposal(
   right_derivative right_derivative: Point,
 ) -> Result(#(DistanceMinimum, Float, Float), Error) {
   let determinant = cross(left_derivative, right_derivative)
-  let scale =
-    float.max(
-      float.max(dot(left_derivative, left_derivative), 1.0)
-        *. float.max(dot(right_derivative, right_derivative), 1.0),
-      1.0,
-    )
-
-  case determinant *. determinant <=. 0.000000000000000001 *. scale {
-    True -> Ok(#(current, current.left_t, current.right_t))
-    False -> {
+  case directions_are_independent(left_derivative, right_derivative) {
+    False -> Ok(#(current, current.left_t, current.right_t))
+    True -> {
       let delta_left = 0.0 -. cross(separation, right_derivative) /. determinant
       let delta_right = 0.0 -. cross(separation, left_derivative) /. determinant
       let raw_left_t = current.left_t +. delta_left
