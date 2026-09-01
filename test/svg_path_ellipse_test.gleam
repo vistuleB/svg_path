@@ -1,6 +1,7 @@
 import gleam/float
 import gleeunit
 import svg_path
+import svg_path/affine
 import svg_path/ellipse
 import svg_path_arc_bbox_fixtures
 
@@ -86,6 +87,44 @@ pub fn arc_derivative_follows_arc_traversal_direction_test() {
   assert near(ellipse.arc_derivative(sweep_arc, at: 0.5).y, 0.0)
   assert ellipse.arc_derivative(non_sweep_arc, at: 0.5).x >. 0.0
   assert near(ellipse.arc_derivative(non_sweep_arc, at: 0.5).y, 0.0)
+}
+
+pub fn transformed_axes_accepts_radii_below_old_squared_threshold_test() {
+  let assert Ok(#(radius, _rotation)) =
+    ellipse.transformed_axes(
+      radius: ellipse.EllipsePoint(0.00001, 0.00002),
+      x_axis_rotation: 17.0,
+      by: affine.identity(),
+    )
+
+  assert near(float.min(radius.x, radius.y), 0.00001)
+  assert near(float.max(radius.x, radius.y), 0.00002)
+}
+
+pub fn collapsed_arc_collinearity_is_scale_relative_test() {
+  let nearly_rank_one =
+    affine.matrix(a: 1.0, b: 0.0, c: 1.0, d: 0.0000000001, e: 0.0, f: 0.0)
+
+  let assert Ok(_) =
+    ellipse.collapsed_arc_line(
+      start: ellipse.EllipsePoint(1.0, 0.0),
+      radius: ellipse.EllipsePoint(1.0, 1.0),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: True,
+      end: ellipse.EllipsePoint(-1.0, 0.0),
+      by: nearly_rank_one,
+    )
+  let assert Ok(_) =
+    ellipse.collapsed_arc_line(
+      start: ellipse.EllipsePoint(1.0e9, 0.0),
+      radius: ellipse.EllipsePoint(1.0e9, 1.0e9),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: True,
+      end: ellipse.EllipsePoint(-1.0e9, 0.0),
+      by: nearly_rank_one,
+    )
 }
 
 pub fn arc_bounding_box_of_sweep_half_circle_uses_lower_half_test() {

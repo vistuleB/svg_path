@@ -76,7 +76,15 @@ import gleam/list
 import svg_path/affine
 import svg_path/trig
 
-const epsilon = 0.000000001
+const scalar_tolerance = 0.000000001
+
+const parameter_tolerance = 0.000000001
+
+const degree_tolerance = 0.000000001
+
+const length_tolerance = 0.000000001
+
+const squared_length_tolerance = 0.000000000000000001
 
 const quarter_turn = 90.0
 
@@ -639,7 +647,7 @@ fn collapsed_arc_points(
 fn cubic_split_progresses(arc: CenterArcData) -> List(Float) {
   let delta = float.absolute_value(arc.delta_angle)
 
-  case delta <=. quarter_turn +. epsilon {
+  case delta <=. quarter_turn +. degree_tolerance {
     True -> []
     False ->
       cubic_split_progresses_from(
@@ -655,7 +663,7 @@ fn cubic_split_progresses_from(
   step step: Float,
   points points: List(Float),
 ) -> List(Float) {
-  case next >=. 1.0 -. epsilon {
+  case next >=. 1.0 -. parameter_tolerance {
     True -> list.reverse(points)
     False ->
       cubic_split_progresses_from(next: next +. step, step:, points: [
@@ -771,7 +779,7 @@ fn do_endpoint_to_center(
   let rx = float.absolute_value(radius.x)
   let ry = float.absolute_value(radius.y)
 
-  case rx <=. epsilon || ry <=. epsilon {
+  case rx <=. length_tolerance || ry <=. length_tolerance {
     True -> Error(DegenerateInputArc)
     False -> {
       let cos_phi = trig.cos_degrees(x_axis_rotation)
@@ -868,27 +876,28 @@ fn collapsed_axis(
   x_axis: EllipsePoint,
   y_axis: EllipsePoint,
 ) -> Result(EllipsePoint, Error) {
-  case float.absolute_value(cross(x_axis, y_axis)) <=. epsilon {
-    False -> Error(NotCollapsedToLine)
-    True -> {
-      let x_length = length(x_axis)
-      let y_length = length(y_axis)
+  let x_length = length(x_axis)
+  let y_length = length(y_axis)
+  let cross_tolerance = scalar_tolerance *. x_length *. y_length
 
-      case x_length >. epsilon || y_length >. epsilon {
+  case x_length <=. length_tolerance && y_length <=. length_tolerance {
+    True -> Error(NotCollapsedToLine)
+    False -> {
+      case float.absolute_value(cross(x_axis, y_axis)) <=. cross_tolerance {
+        False -> Error(NotCollapsedToLine)
         True -> {
           case x_length >=. y_length {
             True -> Ok(scale(x_axis, 1.0 /. x_length))
             False -> Ok(scale(y_axis, 1.0 /. y_length))
           }
         }
-        False -> Error(NotCollapsedToLine)
       }
     }
   }
 }
 
 fn fully_collapsed(x_axis: EllipsePoint, y_axis: EllipsePoint) -> Bool {
-  length(x_axis) <=. epsilon && length(y_axis) <=. epsilon
+  length(x_axis) <=. length_tolerance && length(y_axis) <=. length_tolerance
 }
 
 fn collapsed_candidate_angles(
@@ -919,8 +928,8 @@ fn collapsed_ordered_angles(
     [minimum_angle, maximum_angle]
     |> list.filter(fn(angle) {
       let progress = angle_progress(angle, start_angle, delta_angle)
-      progress >. epsilon
-      && progress <. float.absolute_value(delta_angle) -. epsilon
+      progress >. degree_tolerance
+      && progress <. float.absolute_value(delta_angle) -. degree_tolerance
     })
     |> list.map(fn(angle) {
       #(angle_progress(angle, start_angle, delta_angle), angle)
@@ -979,10 +988,12 @@ fn angle_in_sweep(
   delta_angle: Float,
 ) -> Bool {
   case delta_angle >=. 0.0 {
-    True -> positive_remainder(angle -. start_angle) <=. delta_angle +. epsilon
+    True ->
+      positive_remainder(angle -. start_angle)
+      <=. delta_angle +. degree_tolerance
     False ->
       positive_remainder(start_angle -. angle)
-      <=. { 0.0 -. delta_angle } +. epsilon
+      <=. { 0.0 -. delta_angle } +. degree_tolerance
   }
 }
 
@@ -1005,7 +1016,7 @@ fn arc_axes(
   let rx = float.absolute_value(radius.x)
   let ry = float.absolute_value(radius.y)
 
-  case rx <=. epsilon || ry <=. epsilon {
+  case rx <=. length_tolerance || ry <=. length_tolerance {
     True -> Error(DegenerateInputArc)
     False -> {
       let cos_phi = trig.cos_degrees(x_axis_rotation)
@@ -1031,7 +1042,9 @@ fn extract_axes(
   let lambda1 = { sxx +. syy +. discriminant } /. 2.0
   let lambda2 = { sxx +. syy -. discriminant } /. 2.0
 
-  case lambda1 <=. epsilon || lambda2 <=. epsilon {
+  case
+    lambda1 <=. squared_length_tolerance || lambda2 <=. squared_length_tolerance
+  {
     True -> Error(DegenerateInputArc)
     False -> {
       let axis1 = eigenvector(sxx, sxy, syy, lambda1)
@@ -1064,7 +1077,10 @@ fn eigenvector(
   syy: Float,
   lambda: Float,
 ) -> EllipsePoint {
-  case float.absolute_value(sxy) >. epsilon {
+  let matrix_scale =
+    float.max(float.absolute_value(sxx), float.absolute_value(syy))
+
+  case float.absolute_value(sxy) >. scalar_tolerance *. matrix_scale {
     True -> normalize(EllipsePoint(sxy, lambda -. sxx))
     False -> {
       case sxx >=. syy {
@@ -1110,7 +1126,7 @@ fn length(point: EllipsePoint) -> Float {
 fn normalize(point: EllipsePoint) -> EllipsePoint {
   let point_length = length(point)
 
-  case point_length <=. epsilon {
+  case point_length <=. scalar_tolerance {
     True -> EllipsePoint(1.0, 0.0)
     False -> scale(point, 1.0 /. point_length)
   }
