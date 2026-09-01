@@ -8,6 +8,32 @@ import svg_path/transform
 
 const tolerance = 0.000001
 
+pub fn semantic_congruency_rejects_invalid_angle_tolerance_test() {
+  let line =
+    svg_path.Line(
+      start: svg_path.Point(0.0, 0.0),
+      end: svg_path.Point(1.0, 0.0),
+    )
+
+  assert congruency.segment_with(
+      source: line,
+      target: line,
+      tolerance: congruency.CongruencyTolerance(
+        distance: tolerance,
+        angle: -1.0,
+      ),
+    )
+    == Error(Nil)
+  assert result_is_ok(congruency.segment_with(
+    source: line,
+    target: line,
+    tolerance: congruency.CongruencyTolerance(
+      distance: tolerance,
+      angle: 0.0,
+    ),
+  ))
+}
+
 pub fn main() -> Nil {
   gleeunit.main()
 }

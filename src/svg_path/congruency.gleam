@@ -37,6 +37,18 @@ pub type Fit {
   Fit(transform: transform.Matrix, error: Float)
 }
 
+/// Independent geometric tolerances for semantic congruency checks.
+pub type CongruencyTolerance {
+  CongruencyTolerance(
+    /// Maximum coordinate and radius error, in SVG user-space units.
+    distance: Float,
+    /// Maximum ellipse-axis rotation error, in degrees.
+    angle: Float,
+  )
+}
+
+const default_angle_tolerance = 0.000000001
+
 type IndexedPoint {
   IndexedPoint(source: svg_path.Point, target: svg_path.Point)
 }
@@ -200,13 +212,37 @@ pub fn segment(
   target target: svg_path.Segment,
   tolerance tolerance: Float,
 ) -> Result(transform.Matrix, Nil) {
+  segment_with(
+    source:,
+    target:,
+    tolerance: CongruencyTolerance(
+      distance: tolerance,
+      angle: default_angle_tolerance,
+    ),
+  )
+}
+
+/// Find a semantic segment congruency using independent distance and angle
+/// tolerances.
+pub fn segment_with(
+  source source: svg_path.Segment,
+  target target: svg_path.Segment,
+  tolerance tolerance: CongruencyTolerance,
+) -> Result(transform.Matrix, Nil) {
+  use _ <- result_try_nil(validate_congruency_tolerance(tolerance))
   case segment_points(source, target) {
     Error(_) -> Error(Nil)
     Ok(#(source_extra, target_extra, has_arc)) -> {
       let source_points = [svg_path.segment_start(source), ..source_extra]
       let target_points = [svg_path.segment_start(target), ..target_extra]
 
-      case points(source: source_points, target: target_points, tolerance:) {
+      case
+        points(
+          source: source_points,
+          target: target_points,
+          tolerance: tolerance.distance,
+        )
+      {
         Error(_) -> Error(Nil)
         Ok(matrix) -> {
           case has_arc {
@@ -249,10 +285,34 @@ pub fn subpath(
   target target: svg_path.Subpath,
   tolerance tolerance: Float,
 ) -> Result(transform.Matrix, Nil) {
+  subpath_with(
+    source:,
+    target:,
+    tolerance: CongruencyTolerance(
+      distance: tolerance,
+      angle: default_angle_tolerance,
+    ),
+  )
+}
+
+/// Find an ordered subpath congruency using independent distance and angle
+/// tolerances.
+pub fn subpath_with(
+  source source: svg_path.Subpath,
+  target target: svg_path.Subpath,
+  tolerance tolerance: CongruencyTolerance,
+) -> Result(transform.Matrix, Nil) {
+  use _ <- result_try_nil(validate_congruency_tolerance(tolerance))
   case subpath_point_cloud(source, target) {
     Error(_) -> Error(Nil)
     Ok(cloud) -> {
-      case points(source: cloud.source, target: cloud.target, tolerance:) {
+      case
+        points(
+          source: cloud.source,
+          target: cloud.target,
+          tolerance: tolerance.distance,
+        )
+      {
         Error(_) -> Error(Nil)
         Ok(matrix) -> {
           case
@@ -293,6 +353,24 @@ pub fn path(
   target target: svg_path.Path,
   tolerance tolerance: Float,
 ) -> Result(transform.Matrix, Nil) {
+  path_with(
+    source:,
+    target:,
+    tolerance: CongruencyTolerance(
+      distance: tolerance,
+      angle: default_angle_tolerance,
+    ),
+  )
+}
+
+/// Find an ordered path congruency using independent distance and angle
+/// tolerances.
+pub fn path_with(
+  source source: svg_path.Path,
+  target target: svg_path.Path,
+  tolerance tolerance: CongruencyTolerance,
+) -> Result(transform.Matrix, Nil) {
+  use _ <- result_try_nil(validate_congruency_tolerance(tolerance))
   case
     path_point_cloud(
       svg_path.path_subpaths(source),
@@ -301,7 +379,13 @@ pub fn path(
   {
     Error(_) -> Error(Nil)
     Ok(cloud) -> {
-      case points(source: cloud.source, target: cloud.target, tolerance:) {
+      case
+        points(
+          source: cloud.source,
+          target: cloud.target,
+          tolerance: tolerance.distance,
+        )
+      {
         Error(_) -> Error(Nil)
         Ok(matrix) -> {
           case
@@ -838,7 +922,7 @@ fn arc_fields_match(
   source: List(svg_path.Segment),
   target: List(svg_path.Segment),
   matrix: transform.Matrix,
-  tolerance: Float,
+  tolerance: CongruencyTolerance,
 ) -> Bool {
   case source, target {
     [], [] -> True
@@ -854,7 +938,7 @@ fn path_arc_fields_match(
   source: List(svg_path.Subpath),
   target: List(svg_path.Subpath),
   matrix: transform.Matrix,
-  tolerance: Float,
+  tolerance: CongruencyTolerance,
 ) -> Bool {
   case source, target {
     [], [] -> True
@@ -870,7 +954,7 @@ fn subpath_arc_fields_match(
   source: svg_path.Subpath,
   target: svg_path.Subpath,
   matrix: transform.Matrix,
-  tolerance: Float,
+  tolerance: CongruencyTolerance,
 ) -> Bool {
   arc_fields_match(
     svg_path.subpath_segments(source),
@@ -884,7 +968,7 @@ fn arc_field_match(
   source: svg_path.Segment,
   target: svg_path.Segment,
   matrix: transform.Matrix,
-  tolerance: Float,
+  tolerance: CongruencyTolerance,
 ) -> Bool {
   case source, target {
     svg_path.Arc(..),
@@ -911,7 +995,8 @@ fn arc_field_match(
             actual_rotation,
             target_radius,
             target_rotation,
-            tolerance,
+            tolerance.distance,
+            tolerance.angle,
           )
         }
         _ -> False
@@ -926,13 +1011,22 @@ fn ellipse_axes_within_tolerance(
   actual_rotation: Float,
   target_radius: svg_path.Point,
   target_rotation: Float,
-  tolerance: Float,
+  distance_tolerance: Float,
+  angle_tolerance: Float,
 ) -> Bool {
   let radii_match =
-    points_within_tolerance(actual_radius, target_radius, tolerance)
+    points_within_tolerance(actual_radius, target_radius, distance_tolerance)
   let both_circular =
-    floats_within_tolerance(actual_radius.x, actual_radius.y, tolerance)
-    && floats_within_tolerance(target_radius.x, target_radius.y, tolerance)
+    floats_within_tolerance(
+      actual_radius.x,
+      actual_radius.y,
+      distance_tolerance,
+    )
+    && floats_within_tolerance(
+      target_radius.x,
+      target_radius.y,
+      distance_tolerance,
+    )
 
   case radii_match && both_circular {
     True -> True
@@ -943,14 +1037,18 @@ fn ellipse_axes_within_tolerance(
           axis_rotations_within_tolerance(
             actual_rotation,
             target_rotation,
-            tolerance,
+            angle_tolerance,
           )
         False ->
-          points_within_tolerance(actual_radius, swapped_target, tolerance)
+          points_within_tolerance(
+            actual_radius,
+            swapped_target,
+            distance_tolerance,
+          )
           && axis_rotations_within_tolerance(
             actual_rotation,
             target_rotation +. 90.0,
-            tolerance,
+            angle_tolerance,
           )
       }
     }
@@ -965,6 +1063,20 @@ fn axis_rotations_within_tolerance(
   case float.modulo(float.absolute_value(a -. b), by: 180.0) {
     Error(_) -> False
     Ok(remainder) -> float.min(remainder, 180.0 -. remainder) <=. tolerance
+  }
+}
+
+fn validate_congruency_tolerance(
+  tolerance: CongruencyTolerance,
+) -> Result(Nil, Nil) {
+  case
+    tolerance.distance >=. 0.0
+    && number.is_finite(tolerance.distance)
+    && tolerance.angle >=. 0.0
+    && number.is_finite(tolerance.angle)
+  {
+    True -> Ok(Nil)
+    False -> Error(Nil)
   }
 }
 
