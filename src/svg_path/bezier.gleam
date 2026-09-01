@@ -40,7 +40,9 @@ import gleam/option.{type Option, None, Some}
 import gleam/result
 import svg_path/root
 
-const root_tolerance = 0.000000001
+const parameter_tolerance = 0.000000001
+
+const length_tolerance = 0.000000001
 
 const fit_conditioning_relative_tolerance = 0.000000000001
 
@@ -522,7 +524,9 @@ pub fn cubic_inflection_parameters(curve: BezierData) -> List(Float) {
   case curve {
     CubicBezierData(start:, control1:, control2:, end:) ->
       inflection_roots(start, control1, control2, end)
-      |> list.filter(fn(t) { t >. root_tolerance && t <. 1.0 -. root_tolerance })
+      |> list.filter(fn(t) {
+        t >. parameter_tolerance && t <. 1.0 -. parameter_tolerance
+      })
       |> sort_unique_close_progresses
     LinearBezierData(..) | QuadraticBezierData(..) -> []
   }
@@ -531,8 +535,8 @@ pub fn cubic_inflection_parameters(curve: BezierData) -> List(Float) {
 /// Return the default options for direct cubic self-intersection detection.
 pub fn default_cubic_self_intersection_options() -> CubicSelfIntersectionOptions {
   CubicSelfIntersectionOptions(
-    minimum_arc_length_separation: root_tolerance,
-    distance_tolerance: root_tolerance,
+    minimum_arc_length_separation: length_tolerance,
+    distance_tolerance: length_tolerance,
   )
 }
 
@@ -1140,8 +1144,8 @@ fn cubic_self_intersection_already_found(
   let CubicSelfIntersection(s:, t:, ..) = intersection
   list.any(found, fn(found_intersection) {
     let CubicSelfIntersection(s: found_s, t: found_t, ..) = found_intersection
-    float.absolute_value(s -. found_s) <=. root_tolerance
-    && float.absolute_value(t -. found_t) <=. root_tolerance
+    float.absolute_value(s -. found_s) <=. parameter_tolerance
+    && float.absolute_value(t -. found_t) <=. parameter_tolerance
   })
 }
 
@@ -1160,7 +1164,7 @@ fn approximate_length_loop(
   let chord = distance(bezier_start(curve), bezier_end(curve))
   let polygon = control_polygon_length(curve)
 
-  case remaining_depth <= 0 || polygon -. chord <=. root_tolerance {
+  case remaining_depth <= 0 || polygon -. chord <=. length_tolerance {
     True -> { polygon +. chord } /. 2.0
     False -> {
       let #(left, right) = split(curve, at: 0.5)
@@ -1328,7 +1332,7 @@ fn unique_close_progresses(
   case points {
     [] -> kept
     [point, ..rest] -> {
-      case float.absolute_value(point -. previous) <=. root_tolerance {
+      case float.absolute_value(point -. previous) <=. parameter_tolerance {
         True -> unique_close_progresses(rest, previous:, kept:)
         False ->
           unique_close_progresses(rest, previous: point, kept: [point, ..kept])
@@ -1396,7 +1400,7 @@ fn scale(point: BezierPoint, factor: Float) -> BezierPoint {
 
 fn unit(point: BezierPoint) -> Result(BezierPoint, Error) {
   let length = sqrt(distance_squared(point, BezierPoint(0.0, 0.0)))
-  case length <=. root_tolerance {
+  case length <=. length_tolerance {
     True -> Error(DegenerateTangent)
     False -> Ok(scale(point, 1.0 /. length))
   }
