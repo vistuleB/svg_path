@@ -10,6 +10,7 @@ import gleam/order
 import gleam/result
 import svg_path
 import svg_path/intersections
+import svg_path/internal/number
 import svg_path/overlaps
 
 /// Continuous overlaps and point intersections reported for one query.
@@ -890,7 +891,7 @@ fn subpath_parameters_are_complementary(
 fn validate_complementarity_tolerance(
   tolerance: Float,
 ) -> Result(Nil, svg_path.Error) {
-  case tolerance >. 0.0 {
+  case tolerance >. 0.0 && number.is_finite(tolerance) {
     True -> Ok(Nil)
     False -> Error(svg_path.InvalidIntersectionTolerance(tolerance))
   }

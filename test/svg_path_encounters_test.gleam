@@ -383,6 +383,21 @@ pub fn subpath_parameter_complementarity_rejects_invalid_tolerance_test() {
     == Error(svg_path.InvalidIntersectionTolerance(0.0))
 }
 
+pub fn subpath_parameter_complementarity_rejects_infinite_tolerance_test() {
+  let assert Ok(subpath) = svg_path.subpath([line(0.0, 0.0, 10.0, 0.0)])
+  let infinity = 1.0 /. 0.0
+
+  assert filter_removes_parameter_pair(
+      svg_path.SubpathParameter(segment_index: 0, t: 0.5),
+      svg_path.SubpathParameter(segment_index: 0, t: 0.5),
+      subpath,
+      subpath,
+      [],
+      infinity,
+    )
+    == Error(svg_path.InvalidIntersectionTolerance(infinity))
+}
+
 pub fn subpath_intersection_entirely_explained_by_overlap_is_removed_test() {
   let assert Ok(left) = svg_path.subpath([line(0.0, 0.0, 10.0, 0.0)])
   let assert Ok(right) = svg_path.subpath([line(2.0, 0.0, 8.0, 0.0)])
