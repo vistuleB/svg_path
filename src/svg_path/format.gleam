@@ -11,6 +11,8 @@ import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/string
 
+const maximum_decimal_places = 100
+
 /// Character used for left padding.
 @internal
 pub type LeftPaddingStyle {
@@ -189,7 +191,10 @@ fn left_width(number: String) -> Int {
 }
 
 fn decimal(number: Float, decimal_places: Int, fixed_decimals: Bool) -> String {
-  let decimal_places = int.max(decimal_places, 0)
+  // JavaScript's `toExponential` accepts at most 100 fractional digits.
+  // Clamp both targets to that shared range; additional digits cannot carry
+  // information from an IEEE-754 Float in any case.
+  let decimal_places = decimal_places |> int.max(0) |> int.min(maximum_decimal_places)
   let fixed = case fixed_decimal_is_safe(number, decimal_places) {
     True -> fixed_decimal(number, decimal_places)
     False -> scientific_decimal(number, decimal_places)
