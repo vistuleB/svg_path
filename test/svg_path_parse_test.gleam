@@ -284,8 +284,8 @@ pub fn zero_length_line_subpath_is_not_move_only_test() {
   let assert Ok(path) = parse.path("M 0 0 L 0 0")
   let assert [subpath] = svg_path.path_subpaths(path)
 
-  assert svg_path.subpath_start(subpath) == Ok(a)
-  assert svg_path.subpath_end(subpath) == Ok(a)
+  assert svg_path.subpath_start(subpath) == a
+  assert svg_path.subpath_end(subpath) == a
   assert svg_path.subpath_segments(subpath) == [svg_path.Line(start: a, end: a)]
   assert serialize.path(path) == "M 0 0 H 0"
 }

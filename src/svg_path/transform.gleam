@@ -571,7 +571,7 @@ fn finalize_transformed_subpath(
   segments: List(svg_path.Segment),
   transform: Matrix,
 ) -> Result(svg_path.Subpath, Error) {
-  let assert Ok(start) = svg_path.subpath_start(original)
+  let start = svg_path.subpath_start(original)
   let start = point(start, transform)
 
   case segments {

@@ -58,12 +58,7 @@ pub fn normalize_degenerate_segments(
         ),
       )
       use open <- result.try(case segments {
-        [] -> {
-          use start <- result.try(
-            svg_path.subpath_start(subpath) |> result.map_error(PathError),
-          )
-          Ok(svg_path.subpath_empty(at: start))
-        }
+        [] -> Ok(svg_path.subpath_empty(at: svg_path.subpath_start(subpath)))
         _ ->
           svg_path.subpath_with(
             segments,

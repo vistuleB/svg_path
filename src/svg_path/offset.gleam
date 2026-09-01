@@ -2515,12 +2515,8 @@ fn close_survivor_subpath(
   subpath: svg_path.Subpath,
   tolerance tolerance: Float,
 ) -> Result(svg_path.Subpath, Error) {
-  use start <- result.try(
-    svg_path.subpath_start(subpath) |> result.map_error(PathError),
-  )
-  use end <- result.try(
-    svg_path.subpath_end(subpath) |> result.map_error(PathError),
-  )
+  let start = svg_path.subpath_start(subpath)
+  let end = svg_path.subpath_end(subpath)
   case point_helpers.distance(start, end) <=. tolerance {
     True ->
       svg_path.subpath_set_closed_with(
@@ -3027,12 +3023,8 @@ fn open_butt_band_end_cap(
   side_a: svg_path.Subpath,
   side_b: svg_path.Subpath,
 ) -> Result(List(svg_path.Segment), Error) {
-  use end_a <- result.try(
-    svg_path.subpath_end(side_a) |> result.map_error(PathError),
-  )
-  use end_b <- result.try(
-    svg_path.subpath_end(side_b) |> result.map_error(PathError),
-  )
+  let end_a = svg_path.subpath_end(side_a)
+  let end_b = svg_path.subpath_end(side_b)
   Ok(line_segments_between([end_a, end_b]))
 }
 
@@ -3040,12 +3032,8 @@ fn open_butt_band_start_cap(
   side_a: svg_path.Subpath,
   side_b: svg_path.Subpath,
 ) -> Result(List(svg_path.Segment), Error) {
-  use start_a <- result.try(
-    svg_path.subpath_start(side_a) |> result.map_error(PathError),
-  )
-  use start_b <- result.try(
-    svg_path.subpath_start(side_b) |> result.map_error(PathError),
-  )
+  let start_a = svg_path.subpath_start(side_a)
+  let start_b = svg_path.subpath_start(side_b)
   Ok(line_segments_between([start_b, start_a]))
 }
 
@@ -4769,9 +4757,7 @@ fn build_synchronized_untrimmed(
   let distances = OffsetDistances(inner: inner_offset, outer: outer_offset)
   case svg_path.subpath_segments(subpath) {
     [] -> {
-      use start <- result.try(
-        svg_path.subpath_start(subpath) |> result.map_error(PathError),
-      )
+      let start = svg_path.subpath_start(subpath)
       Ok(
         SynchronizedUntrimmedBuild(
           inner: svg_path.subpath_empty(at: start),
@@ -6533,9 +6519,7 @@ fn zero_length_stroke_path(
   radius radius: Float,
   cap cap: Cap,
 ) -> Result(svg_path.Path, Error) {
-  use center <- result.try(
-    svg_path.subpath_start(subpath) |> result.map_error(PathError),
-  )
+  let center = svg_path.subpath_start(subpath)
   case cap {
     Butt -> Ok(svg_path.path_empty())
     RoundCap -> zero_length_round_stroke_path(center, radius)
@@ -6622,9 +6606,7 @@ fn stroke_end_cap(
   radius: Float,
   cap: Cap,
 ) -> Result(List(svg_path.Segment), Error) {
-  use end <- result.try(
-    svg_path.subpath_end(source) |> result.map_error(PathError),
-  )
+  let end = svg_path.subpath_end(source)
   let assert Ok(last) = list.last(svg_path.subpath_segments(source))
   use tangent <- result.try(unit_tangent(last, t: 1.0))
   stroke_cap_segments(center: end, tangent:, radius:, cap:, at_end: True)
@@ -6635,9 +6617,7 @@ fn stroke_start_cap(
   radius: Float,
   cap: Cap,
 ) -> Result(List(svg_path.Segment), Error) {
-  use start <- result.try(
-    svg_path.subpath_start(source) |> result.map_error(PathError),
-  )
+  let start = svg_path.subpath_start(source)
   let assert [first, ..] = svg_path.subpath_segments(source)
   use tangent <- result.try(unit_tangent(first, t: 0.0))
   stroke_cap_segments(center: start, tangent:, radius:, cap:, at_end: False)

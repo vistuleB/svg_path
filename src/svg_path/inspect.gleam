@@ -186,7 +186,7 @@ fn do_subpath(
     False -> "open"
   }
 
-  let assert Ok(start) = svg_path.subpath_start(subpath)
+  let start = svg_path.subpath_start(subpath)
   let start = "start=" <> do_point(start, format)
 
   case svg_path.subpath_segments(subpath) {
@@ -228,7 +228,7 @@ fn do_subpath_code(
   subpath: svg_path.Subpath,
   format: number_format.NumberFormat,
 ) -> String {
-  let assert Ok(start) = svg_path.subpath_start(subpath)
+  let start = svg_path.subpath_start(subpath)
 
   case svg_path.subpath_segments(subpath) {
     [] -> {
@@ -501,7 +501,7 @@ fn path_numbers(path: svg_path.Path) -> List(Float) {
 }
 
 fn subpath_numbers(subpath: svg_path.Subpath) -> List(Float) {
-  let assert Ok(start) = svg_path.subpath_start(subpath)
+  let start = svg_path.subpath_start(subpath)
 
   list.append(
     point_numbers(start),

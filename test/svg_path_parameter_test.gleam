@@ -230,7 +230,7 @@ pub fn from_end_parameter_can_address_open_at_test() {
   let assert Ok(opened) = svg_path.subpath_open_at(subpath, at: parameter)
 
   assert svg_path.subpath_segments(opened) == [bc, cd, da, ab]
-  assert svg_path.subpath_start(opened) == Ok(b)
+  assert svg_path.subpath_start(opened) == b
 }
 
 pub fn from_end_parameter_can_address_subpath_between_test() {
@@ -637,8 +637,8 @@ pub fn subpaths_between_closed_accepts_single_split_point_test() {
     ])
 
   assert !svg_path.subpath_is_closed(opened)
-  assert svg_path.subpath_start(opened) == Ok(svg_path.Point(10.0, 5.0))
-  assert svg_path.subpath_end(opened) == Ok(svg_path.Point(10.0, 5.0))
+  assert svg_path.subpath_start(opened) == svg_path.Point(10.0, 5.0)
+  assert svg_path.subpath_end(opened) == svg_path.Point(10.0, 5.0)
   assert svg_path.subpath_segments(opened)
     == [
       svg_path.Line(start: svg_path.Point(10.0, 5.0), end: c),

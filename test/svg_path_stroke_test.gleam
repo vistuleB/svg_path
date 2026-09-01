@@ -279,7 +279,7 @@ pub fn subpath_dashes_preserves_small_scale_intervals_test() {
       offset: 0.0,
     )
 
-  assert svg_path.subpath_end(dash) == Ok(svg_path.Point(0.0000000005, 0.0))
+  assert svg_path.subpath_end(dash) == svg_path.Point(0.0000000005, 0.0)
 }
 
 pub fn subpath_dashes_applies_positive_dash_offset_test() {

@@ -234,7 +234,7 @@ fn source_nodes(source: svg_path.Subpath) -> String {
     |> list.fold("", fn(markup, segment) {
       node(svg_path.segment_start(segment), markup)
     })
-  let assert Ok(end) = svg_path.subpath_end(source)
+  let end = svg_path.subpath_end(source)
   node(end, starts)
 }
 
@@ -254,7 +254,7 @@ fn source_vertices(source: svg_path.Subpath) -> String {
     |> list.index_fold("", fn(markup, segment, index) {
       vertex(svg_path.segment_start(segment), vertex_label(index), markup)
     })
-  let assert Ok(end) = svg_path.subpath_end(source)
+  let end = svg_path.subpath_end(source)
   vertex(end, 4, starts)
 }
 

@@ -835,7 +835,7 @@ fn convex_subpath_directional_support(
 ) -> DirectionalSupport {
   case svg_path.subpath_segments(hull) {
     [] -> {
-      let assert Ok(point) = svg_path.subpath_start(hull)
+      let point = svg_path.subpath_start(hull)
       DirectionalSupport(lower_point: point, upper_point: point, width: 0.0)
     }
     segments -> {
@@ -1597,7 +1597,7 @@ fn segment_convex_loops(
 fn hull_input_segments(subpath: svg_path.Subpath) -> List(svg_path.Segment) {
   case svg_path.subpath_segments(subpath) {
     [] -> {
-      let assert Ok(start) = svg_path.subpath_start(subpath)
+      let start = svg_path.subpath_start(subpath)
       [point_segment(start)]
     }
     segments -> segments
@@ -2298,12 +2298,12 @@ fn loop_endpoints(loop: Loop) -> List(svg_path.Point) {
 }
 
 fn subpath_start(subpath: svg_path.Subpath) -> svg_path.Point {
-  let assert Ok(point) = svg_path.subpath_start(subpath)
+  let point = svg_path.subpath_start(subpath)
   point
 }
 
 fn subpath_end(subpath: svg_path.Subpath) -> svg_path.Point {
-  let assert Ok(point) = svg_path.subpath_end(subpath)
+  let point = svg_path.subpath_end(subpath)
   point
 }
 

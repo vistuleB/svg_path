@@ -27,10 +27,7 @@ pub fn semantic_congruency_rejects_invalid_angle_tolerance_test() {
   assert result_is_ok(congruency.segment_with(
     source: line,
     target: line,
-    tolerance: congruency.CongruencyTolerance(
-      distance: tolerance,
-      angle: 0.0,
-    ),
+    tolerance: congruency.CongruencyTolerance(distance: tolerance, angle: 0.0),
   ))
 }
 
@@ -994,16 +991,11 @@ fn same_segment(actual: svg_path.Segment, expected: svg_path.Segment) -> Bool {
 }
 
 fn same_subpath(actual: svg_path.Subpath, expected: svg_path.Subpath) -> Bool {
-  case svg_path.subpath_start(actual), svg_path.subpath_start(expected) {
-    Ok(actual_start), Ok(expected_start) -> {
-      point_near(actual_start, expected_start)
-      && same_segments(
-        svg_path.subpath_segments(actual),
-        svg_path.subpath_segments(expected),
-      )
-    }
-    _, _ -> False
-  }
+  point_near(svg_path.subpath_start(actual), svg_path.subpath_start(expected))
+  && same_segments(
+    svg_path.subpath_segments(actual),
+    svg_path.subpath_segments(expected),
+  )
 }
 
 fn same_path(actual: svg_path.Path, expected: svg_path.Path) -> Bool {

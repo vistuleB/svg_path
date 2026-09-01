@@ -1576,7 +1576,7 @@ pub fn subpath_remap_endpoints(
   case subpath.segments {
     [] -> Ok(Subpath(start: new_start, segments: [], closed: subpath.closed))
     _ -> {
-      use current_end <- result.try(subpath_end(subpath))
+      let current_end = subpath_end(subpath)
       use mapped <- result.try(subpath_by_point_pair_similarity(
         subpath,
         source_start: subpath.start,
@@ -2661,15 +2661,15 @@ pub fn subpath_between_many(
 }
 
 /// Return the start point of a subpath.
-pub fn subpath_start(subpath: Subpath) -> Result(Point, Error) {
-  Ok(subpath.start)
+pub fn subpath_start(subpath: Subpath) -> Point {
+  subpath.start
 }
 
 /// Return the end point of a subpath.
-pub fn subpath_end(subpath: Subpath) -> Result(Point, Error) {
+pub fn subpath_end(subpath: Subpath) -> Point {
   case list.last(subpath.segments) {
-    Ok(last) -> Ok(segment_end(last))
-    Error(_) -> Ok(subpath.start)
+    Ok(last) -> segment_end(last)
+    Error(_) -> subpath.start
   }
 }
 
@@ -8054,14 +8054,14 @@ fn splice_segments(
 fn first_subpath_start(subpaths: List(Subpath)) -> Result(Point, Error) {
   case subpaths {
     [] -> Error(EmptySubpaths)
-    [subpath, ..] -> subpath_start(subpath)
+    [subpath, ..] -> Ok(subpath_start(subpath))
   }
 }
 
 fn first_subpath_end(subpaths: List(Subpath)) -> Result(Point, Error) {
   case subpaths {
     [] -> Error(EmptySubpaths)
-    [subpath, ..] -> subpath_end(subpath)
+    [subpath, ..] -> Ok(subpath_end(subpath))
   }
 }
 
@@ -9692,7 +9692,7 @@ fn validate_custom_closed_segments(
 }
 
 fn validate_closed_subpath_end(subpath: Subpath) -> Result(Subpath, Error) {
-  use last <- result.try(subpath_end(subpath))
+  let last = subpath_end(subpath)
   case subpath.start == last {
     True -> Ok(Subpath(..subpath, closed: True))
     False -> {

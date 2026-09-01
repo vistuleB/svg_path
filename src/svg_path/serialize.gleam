@@ -486,7 +486,7 @@ fn serialize_absolute_subpath(
   subpath: svg_path.Subpath,
   format: Format,
 ) -> String {
-  let assert Ok(start) = svg_path.subpath_start(subpath)
+  let start = svg_path.subpath_start(subpath)
 
   case svg_path.subpath_segments(subpath) {
     [] -> {
@@ -598,7 +598,7 @@ fn parser_tracked_subpath_from_state(
   state: RelativeParserState,
   format: Format,
 ) -> #(List(String), RelativeParserState) {
-  let assert Ok(source_start) = svg_path.subpath_start(subpath)
+  let source_start = svg_path.subpath_start(subpath)
   let RelativeParserState(parser_current:, ..) = state
   let move_delta =
     quantized_point(source_start, format)
@@ -682,7 +682,7 @@ fn subpath_from_current(
   current: svg_path.Point,
   format: Format,
 ) -> String {
-  let assert Ok(start) = svg_path.subpath_start(subpath)
+  let start = svg_path.subpath_start(subpath)
 
   case svg_path.subpath_segments(subpath) {
     [] -> {
@@ -1475,22 +1475,17 @@ fn relative_line(
 
 fn current_after_subpath(
   subpath: svg_path.Subpath,
-  current: svg_path.Point,
+  _current: svg_path.Point,
 ) -> svg_path.Point {
   case svg_path.subpath_segments(subpath) {
     [] -> {
-      let assert Ok(start) = svg_path.subpath_start(subpath)
+      let start = svg_path.subpath_start(subpath)
       start
     }
     [first, ..] -> {
       case svg_path.subpath_is_closed(subpath) {
         True -> svg_path.segment_start(first)
-        False -> {
-          case svg_path.subpath_end(subpath) {
-            Ok(end) -> end
-            Error(_) -> current
-          }
-        }
+        False -> svg_path.subpath_end(subpath)
       }
     }
   }
@@ -1914,7 +1909,7 @@ fn absolute_subpath_numbers(
   subpath: svg_path.Subpath,
   options: Options,
 ) -> List(Float) {
-  let assert Ok(start) = svg_path.subpath_start(subpath)
+  let start = svg_path.subpath_start(subpath)
 
   case svg_path.subpath_segments(subpath) {
     [] -> point_numbers(start)
@@ -1934,7 +1929,7 @@ fn relative_subpath_numbers(
   current: svg_path.Point,
   options: Options,
 ) -> List(Float) {
-  let assert Ok(start) = svg_path.subpath_start(subpath)
+  let start = svg_path.subpath_start(subpath)
 
   case svg_path.subpath_segments(subpath) {
     [] -> point_numbers(delta(start, current))

@@ -776,18 +776,13 @@ fn subpath_point_cloud(
   source: svg_path.Subpath,
   target: svg_path.Subpath,
 ) -> Result(PointCloud, Nil) {
-  case svg_path.subpath_start(source), svg_path.subpath_start(target) {
-    Ok(source_start), Ok(target_start) -> {
-      subpath_points(
-        svg_path.subpath_segments(source),
-        svg_path.subpath_segments(target),
-        [source_start],
-        [target_start],
-        has_arc: False,
-      )
-    }
-    _, _ -> Error(Nil)
-  }
+  subpath_points(
+    svg_path.subpath_segments(source),
+    svg_path.subpath_segments(target),
+    [svg_path.subpath_start(source)],
+    [svg_path.subpath_start(target)],
+    has_arc: False,
+  )
 }
 
 fn subpath_points(

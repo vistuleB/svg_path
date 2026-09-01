@@ -686,12 +686,12 @@ fn conflicting_tangent_line_like_loop() -> List(svg_path.Segment) {
 }
 
 fn subpath_start(subpath: svg_path.Subpath) -> svg_path.Point {
-  let assert Ok(point) = svg_path.subpath_start(subpath)
+  let point = svg_path.subpath_start(subpath)
   point
 }
 
 fn subpath_end(subpath: svg_path.Subpath) -> svg_path.Point {
-  let assert Ok(point) = svg_path.subpath_end(subpath)
+  let point = svg_path.subpath_end(subpath)
   point
 }
 

@@ -640,7 +640,7 @@ fn parse_close(
   case ensure_active(state) {
     Error(error) -> Error(error)
     Ok(Nil) -> {
-      let assert Ok(start) = svg_path.subpath_start(state.subpath)
+      let start = svg_path.subpath_start(state.subpath)
       case
         svg_path.subpath_set_closed_with(
           state.subpath,

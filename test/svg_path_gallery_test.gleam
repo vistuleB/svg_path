@@ -939,8 +939,8 @@ pub fn generate_recursive_dash_cap_report() {
           <> int.to_string(list.length(svg_path.subpath_segments(dash))),
         "dash length: "
           <> length_result_to_string(svg_path.subpath_length(dash)),
-        "start point: " <> point_result_to_string(svg_path.subpath_start(dash)),
-        "end point: " <> point_result_to_string(svg_path.subpath_end(dash)),
+        "start point: " <> point_to_string(svg_path.subpath_start(dash)),
+        "end point: " <> point_to_string(svg_path.subpath_end(dash)),
         "first derivative length at t=0: "
           <> derivative_length_result_to_string(first_segment(dash), 0.0),
         "last derivative length at t=1: "
@@ -1486,7 +1486,7 @@ fn debug_round_start_cap(
 ) -> Result(svg_path.Segment, svg_path.Error) {
   let first = first_segment(source)
   use tangent <- result_try(debug_unit_tangent(first, 0.0))
-  use start <- result_try(svg_path.subpath_start(source))
+  let start = svg_path.subpath_start(source)
   Ok(debug_round_cap(start, tangent, radius, at_end: False))
 }
 
@@ -1496,7 +1496,7 @@ fn debug_round_end_cap(
 ) -> Result(svg_path.Segment, svg_path.Error) {
   let last = last_segment(source)
   use tangent <- result_try(debug_unit_tangent(last, 1.0))
-  use end <- result_try(svg_path.subpath_end(source))
+  let end = svg_path.subpath_end(source)
   Ok(debug_round_cap(end, tangent, radius, at_end: True))
 }
 
@@ -1573,15 +1573,6 @@ fn scale_point(point: svg_path.Point, factor: Float) -> svg_path.Point {
 fn length_result_to_string(result: Result(Float, svg_path.Error)) -> String {
   case result {
     Ok(length) -> debug_float_to_string(length)
-    Error(_) -> "Error"
-  }
-}
-
-fn point_result_to_string(
-  result: Result(svg_path.Point, svg_path.Error),
-) -> String {
-  case result {
-    Ok(point) -> point_to_string(point)
     Error(_) -> "Error"
   }
 }

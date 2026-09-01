@@ -315,7 +315,7 @@ fn has_arc(subpath: svg_path.Subpath) -> Bool {
 }
 
 fn assert_start(subpath: svg_path.Subpath, expected: svg_path.Point) {
-  let assert Ok(actual) = svg_path.subpath_start(subpath)
+  let actual = svg_path.subpath_start(subpath)
   assert same_point(actual, expected)
 }
 

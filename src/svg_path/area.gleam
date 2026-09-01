@@ -96,9 +96,7 @@ pub fn signed_subpath(subpath: svg_path.Subpath) -> Float {
   case segments {
     [] -> 0.0
     _ -> {
-      let start =
-        svg_path.subpath_start(subpath)
-        |> result.unwrap(svg_path.Point(0.0, 0.0))
+      let start = svg_path.subpath_start(subpath)
       list.fold(segments, 0.0, fn(area, segment) {
         area +. signed_segment(rebase_segment(segment, origin: start))
       })
@@ -382,10 +380,8 @@ fn subpath_edges(
               let assert svg_path.Line(start:, end:) = segment
               add_edge(start, end, edges)
             })
-          let start =
-            svg_path.subpath_start(subpath)
-            |> result.unwrap(svg_path.Point(0.0, 0.0))
-          let end = svg_path.subpath_end(subpath) |> result.unwrap(start)
+          let start = svg_path.subpath_start(subpath)
+          let end = svg_path.subpath_end(subpath)
 
           subpath_edges(rest, accumulated: add_edge(end, start, accumulated))
         }
