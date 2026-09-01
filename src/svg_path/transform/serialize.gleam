@@ -197,19 +197,29 @@ fn analyze_rotation_scale(
   let scale_x = length(a, b)
   let scale_y = length(c, d)
   let determinant = a *. d -. b *. c
-  let dot_product = a *. c +. b *. d
 
   case
     scale_x >. rotation_scale_epsilon
     && scale_y >. rotation_scale_epsilon
     && determinant >. rotation_scale_epsilon
-    && close_to_zero(dot_product)
   {
     False -> Matrix2x2
     True -> {
-      let rotation_degrees = trig.atan2_degrees(b, a)
+      let normalized_a = a /. scale_x
+      let normalized_b = b /. scale_x
+      let normalized_c = c /. scale_y
+      let normalized_d = d /. scale_y
+      let normalized_dot_product =
+        normalized_a *. normalized_c +. normalized_b *. normalized_d
 
-      RotateScale2x2(degrees: rotation_degrees, scale_x:, scale_y:)
+      case close_to_zero(normalized_dot_product) {
+        False -> Matrix2x2
+        True -> {
+          let rotation_degrees = trig.atan2_degrees(b, a)
+
+          RotateScale2x2(degrees: rotation_degrees, scale_x:, scale_y:)
+        }
+      }
     }
   }
 }

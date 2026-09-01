@@ -32,6 +32,14 @@ pub fn transform_scaled_rotate_serializes_nicely_test() {
   assert serialize.to_string(matrix) == "rotate(90) scale(2 3)"
 }
 
+pub fn transform_rotation_scale_recognition_is_scale_independent_test() {
+  let matrix =
+    transform.scale_xy(x: 2.0e6, y: 3.0e6)
+    |> transform.chain(first: _, then: transform.rotate(degrees: 30.0))
+
+  assert serialize.to_string(matrix) == "rotate(30) scale(2000000 3000000)"
+}
+
 pub fn transform_serialization_preserves_near_identity_rotation_scale_test() {
   let matrix =
     transform.scale(factor: 1.0000005)
