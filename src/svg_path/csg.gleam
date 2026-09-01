@@ -430,13 +430,9 @@ fn nested_contours_from_arrangement_graph(
   path: svg_path.Path,
   tolerance tolerance: Float,
 ) -> Result(svg_path.Path, Error) {
-  let ArrangementGraph(edges:, ..) = graph
-  use boundary <- result.try(
-    classify_winding_level_edges(edges, path, tolerance, 0, []),
-  )
-  use links <- result.try(pair_boundary_sectors(boundary, []))
   use subpaths <- result.try(
-    trace_winding_level_edges(boundary, links, tolerance, []),
+    arrangement.nested_contours_from_graph(graph, path, tolerance)
+    |> result.map_error(ArrangementGraphError),
   )
   Ok(svg_path.Path(subpaths))
 }
@@ -512,97 +508,6 @@ fn classify_boolean_edges(
         boundary,
       )
     }
-  }
-}
-
-fn classify_winding_level_edges(
-  edges: List(ArrangementEdge),
-  path: svg_path.Path,
-  tolerance: Float,
-  next_id: Int,
-  boundary: List(BoundaryEdge),
-) -> Result(List(BoundaryEdge), Error) {
-  case edges {
-    [] -> Ok(list.reverse(boundary))
-    [edge, ..rest] -> {
-      let ArrangementEdge(segment:, ..) = edge
-      use levels <- result.try(
-        winding_field.segment_side_nonzero_levels(
-          segment,
-          within: path,
-          side_sampling_distance: tolerance *. 16.0,
-          options: svg_path.default_containment_options(),
-        )
-        |> result.map_error(PathError),
-      )
-      let #(left, right) = levels
-      let #(next_id, boundary) =
-        emit_winding_thresholds(edge, left, right, 1, next_id, boundary)
-      classify_winding_level_edges(rest, path, tolerance, next_id, boundary)
-    }
-  }
-}
-
-fn emit_winding_thresholds(
-  edge: ArrangementEdge,
-  left: Int,
-  right: Int,
-  level: Int,
-  next_id: Int,
-  boundary: List(BoundaryEdge),
-) -> #(Int, List(BoundaryEdge)) {
-  let maximum = int_max(int.absolute_value(left), int.absolute_value(right))
-  case level > maximum {
-    True -> #(next_id, boundary)
-    False -> {
-      let #(next_id, boundary) =
-        emit_threshold_boundary(
-          edge,
-          left >= level,
-          right >= level,
-          level,
-          next_id,
-          boundary,
-        )
-      let #(next_id, boundary) =
-        emit_threshold_boundary(
-          edge,
-          left <= 0 - level,
-          right <= 0 - level,
-          0 - level,
-          next_id,
-          boundary,
-        )
-      emit_winding_thresholds(edge, left, right, level + 1, next_id, boundary)
-    }
-  }
-}
-
-fn emit_threshold_boundary(
-  edge: ArrangementEdge,
-  active_left: Bool,
-  active_right: Bool,
-  layer: Int,
-  next_id: Int,
-  boundary: List(BoundaryEdge),
-) -> #(Int, List(BoundaryEdge)) {
-  let ArrangementEdge(segment:, start_vertex:, end_vertex:, ..) = edge
-  case active_left, active_right {
-    True, False -> #(next_id + 1, [
-      BoundaryEdge(id: next_id, layer:, segment:, start_vertex:, end_vertex:),
-      ..boundary
-    ])
-    False, True -> #(next_id + 1, [
-      BoundaryEdge(
-        id: next_id,
-        layer:,
-        segment: svg_path.segment_reverse(segment),
-        start_vertex: end_vertex,
-        end_vertex: start_vertex,
-      ),
-      ..boundary
-    ])
-    _, _ -> #(next_id, boundary)
   }
 }
 
@@ -823,53 +728,6 @@ fn trace_boundary_edges(
   }
 }
 
-fn trace_winding_level_edges(
-  remaining: List(BoundaryEdge),
-  links: List(BoundaryLink),
-  tolerance: Float,
-  subpaths: List(svg_path.Subpath),
-) -> Result(List(svg_path.Subpath), Error) {
-  case remaining {
-    [] -> Ok(list.reverse(subpaths))
-    [seed, ..rest] -> {
-      let BoundaryEdge(layer:, ..) = seed
-      use traced <- result.try(trace_boundary_cycle(
-        seed,
-        rest,
-        links,
-        [seed],
-        list.length(remaining) + 1,
-      ))
-      let #(cycle, remaining) = traced
-      use subpath <- result.try(
-        cycle
-        |> list.map(fn(edge) {
-          let BoundaryEdge(segment:, ..) = edge
-          segment
-        })
-        |> svg_path.subpath_with(policy: svg_path.WiggleWith(tolerance))
-        |> result.map_error(PathError),
-      )
-      use closed <- result.try(
-        svg_path.subpath_set_closed_with(
-          subpath,
-          closed: True,
-          policy: svg_path.WiggleWith(tolerance),
-        )
-        |> result.map_error(PathError),
-      )
-      let oriented = case layer > 0 {
-        True -> svg_path.subpath_reverse(closed)
-        False -> closed
-      }
-      trace_winding_level_edges(remaining, links, tolerance, [
-        oriented,
-        ..subpaths
-      ])
-    }
-  }
-}
-
 fn trace_boundary_cycle(
   seed: BoundaryEdge,
   remaining: List(BoundaryEdge),
@@ -941,13 +799,6 @@ fn take_boundary_edge(
         False -> take_boundary_edge(rest, id, vertex, [first, ..retained])
       }
     }
-  }
-}
-
-fn int_max(a: Int, b: Int) -> Int {
-  case a > b {
-    True -> a
-    False -> b
   }
 }
 
