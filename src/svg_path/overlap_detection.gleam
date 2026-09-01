@@ -9,6 +9,8 @@ import svg_path
 
 const overlap_samples = 5
 
+const overlap_parameter_tolerance = 0.000000000001
+
 /// Internal transport representation. The public nominal type belongs to
 /// `svg_path/overlaps`.
 @internal
@@ -121,7 +123,6 @@ fn merge_overlaps(
               first_right_from,
               second_right_from,
               first_right_increases,
-              tolerance,
             )
             && parameter_order_compatible(
               first_left_to,
@@ -129,7 +130,6 @@ fn merge_overlaps(
               first_right_to,
               second_right_to,
               first_right_increases,
-              tolerance,
             )
             && coincident_boundary_compatible(
               first_left_from,
@@ -702,7 +702,6 @@ fn parameter_order_compatible(
   first_right: Float,
   second_right: Float,
   right_increases: Bool,
-  tolerance: Float,
 ) -> Bool {
   case first_left <. second_left, first_left >. second_left {
     True, _ ->
@@ -716,7 +715,8 @@ fn parameter_order_compatible(
         False -> first_right <=. second_right
       }
     False, False ->
-      float.absolute_value(first_right -. second_right) <=. tolerance
+      float.absolute_value(first_right -. second_right)
+      <=. overlap_parameter_tolerance
   }
 }
 
@@ -732,7 +732,8 @@ fn coincident_boundary_compatible(
   case first_left == second_left {
     False -> True
     True ->
-      float.absolute_value(first_right -. second_right) <=. tolerance
+      float.absolute_value(first_right -. second_right)
+      <=. overlap_parameter_tolerance
       && points_near(first_point, second_point, tolerance)
   }
 }
