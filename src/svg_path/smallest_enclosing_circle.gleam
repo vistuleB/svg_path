@@ -178,42 +178,23 @@ fn circumcircle(
   second: svg_path.Point,
   third: svg_path.Point,
 ) -> EnclosingCircle {
-  let denominator =
-    2.0
-    *. {
-      first.x
-      *. { second.y -. third.y }
-      +. second.x
-      *. { third.y -. first.y }
-      +. third.x
-      *. { first.y -. second.y }
-    }
+  // Work relative to the first point. Expanding the formula in absolute
+  // coordinates loses precision when a small configuration is translated far
+  // from the origin.
+  let ax = second.x -. first.x
+  let ay = second.y -. first.y
+  let bx = third.x -. first.x
+  let by = third.y -. first.y
+  let denominator = 2.0 *. { ax *. by -. ay *. bx }
   case denominator == 0.0 {
     True -> farthest_pair_circle(first, second, third)
     False -> {
-      let first_norm = first.x *. first.x +. first.y *. first.y
-      let second_norm = second.x *. second.x +. second.y *. second.y
-      let third_norm = third.x *. third.x +. third.y *. third.y
+      let a_norm = ax *. ax +. ay *. ay
+      let b_norm = bx *. bx +. by *. by
       let center =
         svg_path.Point(
-          x: {
-            first_norm
-            *. { second.y -. third.y }
-            +. second_norm
-            *. { third.y -. first.y }
-            +. third_norm
-            *. { first.y -. second.y }
-          }
-            /. denominator,
-          y: {
-            first_norm
-            *. { third.x -. second.x }
-            +. second_norm
-            *. { first.x -. third.x }
-            +. third_norm
-            *. { second.x -. first.x }
-          }
-            /. denominator,
+          x: first.x +. { a_norm *. by -. b_norm *. ay } /. denominator,
+          y: first.y +. { ax *. b_norm -. bx *. a_norm } /. denominator,
         )
       EnclosingCircle(
         center:,

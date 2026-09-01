@@ -113,6 +113,19 @@ pub fn close_collinear_points_still_find_the_smallest_circle_test() {
   )
 }
 
+pub fn circumcircle_is_stable_after_large_translation_test() {
+  let origin = 1.0e12
+  assert_circle(
+    [
+      svg_path.Point(origin, origin),
+      svg_path.Point(origin +. 2.0, origin),
+      svg_path.Point(origin +. 1.0, origin +. 2.0),
+    ],
+    svg_path.Point(origin +. 1.0, origin +. 0.75),
+    1.5625,
+  )
+}
+
 fn assert_circle(
   samples: List(svg_path.Point),
   expected_center: svg_path.Point,
