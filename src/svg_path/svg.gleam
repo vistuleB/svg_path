@@ -5,7 +5,6 @@
 //// box, and non-negative SVG dimensions such as radii, widths, heights, and
 //// font sizes. Text and attribute strings are XML-escaped.
 
-import gleam/int
 import gleam/list
 import gleam/string
 import svg_path
@@ -81,9 +80,9 @@ pub fn labeled_point(
   label: String,
   color: String,
   point: svg_path.Point,
-  font_size: Int,
+  font_size: Float,
 ) -> ThingsToDraw {
-  let side = int.to_float(font_size)
+  let side = font_size
   let half_side = side /. 2.0
   let left = point.x -. half_side
   let right = point.x +. half_side
@@ -121,7 +120,7 @@ pub fn labeled_point(
       label,
       "fill: " <> color <> "; font-family: system-ui, sans-serif",
       svg_path.Point(right +. half_side, point.y +. half_side),
-      int.to_float(font_size),
+      font_size,
     ),
   ]
 }

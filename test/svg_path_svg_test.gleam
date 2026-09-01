@@ -121,11 +121,45 @@ pub fn labeled_point_draws_marker_and_label_test() {
     )
 
   assert svg.document(
-      svg.labeled_point("p0", "red", svg_path.Point(10.0, 10.0), 4),
+      svg.labeled_point("p0", "red", svg_path.Point(10.0, 10.0), 4.0),
       view_box: box,
     )
     == "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\" width=\"20\" height=\"20\">\n"
     <> "  <path d=\"M 8 8 H 12 V 12 H 8 Z M 8 8 L 12 12 M 8 12 L 12 8\" style=\"fill: none; stroke: red; stroke-width: 1; stroke-linecap: square; stroke-linejoin: miter\" />\n"
     <> "  <text x=\"14\" y=\"12\" font-size=\"4\" style=\"fill: red; font-family: system-ui, sans-serif\">p0</text>\n"
+    <> "</svg>"
+}
+
+pub fn document_renders_rotated_rectangles_and_text_test() {
+  let box =
+    svg_path.BoundingBox(
+      min: svg_path.Point(0.0, 0.0),
+      max: svg_path.Point(20.0, 20.0),
+    )
+
+  assert svg.document(
+      [
+        svg.RotatedRectangle(
+          svg_path.Point(1.0, 2.0),
+          3.0,
+          4.0,
+          "fill: red",
+          rotation: 45.0,
+          origin: svg_path.Point(5.0, 6.0),
+        ),
+        svg.RotatedText(
+          "label",
+          "fill: black",
+          svg_path.Point(7.0, 8.0),
+          9.0,
+          rotation: -30.0,
+          origin: svg_path.Point(1.0, 2.0),
+        ),
+      ],
+      view_box: box,
+    )
+    == "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 20 20\" width=\"20\" height=\"20\">\n"
+    <> "  <rect x=\"1\" y=\"2\" width=\"3\" height=\"4\" style=\"fill: red\" transform=\"rotate(45 5 6)\" />\n"
+    <> "  <text x=\"7\" y=\"8\" font-size=\"9\" style=\"fill: black\" transform=\"rotate(-30 1 2)\">label</text>\n"
     <> "</svg>"
 }

@@ -77,7 +77,7 @@ pub fn drawing(graph: ArrangementGraph) -> svg.ThingsToDraw {
     vertices
     |> list.flat_map(fn(vertex) {
       let ArrangementVertex(id:, point:, ..) = vertex
-      svg.labeled_point("v" <> int.to_string(id), "#dc2626", point, 8)
+      svg.labeled_point("v" <> int.to_string(id), "#dc2626", point, 8.0)
     })
   list.append(edge_things, vertex_things)
 }

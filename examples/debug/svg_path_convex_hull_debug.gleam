@@ -467,8 +467,8 @@ fn drawing_svg(
       ),
       ..piece_things
     ]
-    |> list.append(svg.labeled_point("start", "#e63946", start, 5))
-    |> list.append(svg.labeled_point("end", "#2a9d8f", end, 5))
+    |> list.append(svg.labeled_point("start", "#e63946", start, 5.0))
+    |> list.append(svg.labeled_point("end", "#2a9d8f", end, 5.0))
 
   svg.document(things, view_box: pad_box(box, padding: 20.0))
 }
