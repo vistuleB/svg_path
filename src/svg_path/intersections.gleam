@@ -45,8 +45,6 @@ const parameter_snap_distance_tie_slack = 0.000000000001
 
 const terminal_subdivision_tolerance = 0.01
 
-const terminal_grid_margin = 0.0
-
 const maximum_intersection_terminal_windows = 1000
 
 const default_classification_angular_tolerance = 0.0000001
@@ -4503,7 +4501,7 @@ fn split_intersection_piece_thirds(
   Ok([
     #(
       IntersectionPiece(segment: piece.segment, from: piece.from, to: first_to),
-      terminal_grid_margin,
+      0.0,
     ),
     #(
       IntersectionPiece(segment: piece.segment, from: first_to, to: second_to),
@@ -4511,7 +4509,7 @@ fn split_intersection_piece_thirds(
     ),
     #(
       IntersectionPiece(segment: piece.segment, from: second_to, to: piece.to),
-      1.0 -. terminal_grid_margin,
+      1.0,
     ),
   ])
 }
@@ -4527,7 +4525,7 @@ fn minima_from_terminal_windows(
       descents:,
     )
   use final_state <- result.try(run_descents(
-    windows,
+    descents,
     state,
     certification_tolerance: finish_tolerance,
   ))
@@ -4547,45 +4545,58 @@ fn initial_descent_records_loop(
   case windows {
     [] -> Ok(list.reverse(descents))
     [TerminalWindow(id:, left:, right:, start_left_t:, start_right_t:), ..rest] -> {
-      use current <- result.try(global_distance_minimum_at(
-        left,
-        right,
-        interpolate_float(left.from, left.to, start_left_t),
-        interpolate_float(right.from, right.to, start_right_t),
-      ))
-      initial_descent_records_loop(rest, descents: [
-        DescentRecord(
-          id:,
-          window_id: id,
-          current:,
-          last_window: Some(id),
-          status: Pending,
-        ),
-        ..descents
-      ])
+      case initial_descent_seed(start_left_t, start_right_t) {
+        False -> initial_descent_records_loop(rest, descents:)
+        True -> {
+          use current <- result.try(global_distance_minimum_at(
+            left,
+            right,
+            interpolate_float(left.from, left.to, start_left_t),
+            interpolate_float(right.from, right.to, start_right_t),
+          ))
+          initial_descent_records_loop(rest, descents: [
+            DescentRecord(
+              id:,
+              window_id: id,
+              current:,
+              last_window: Some(id),
+              status: Pending,
+            ),
+            ..descents
+          ])
+        }
+      }
     }
   }
 }
 
+fn initial_descent_seed(left_t: Float, right_t: Float) -> Bool {
+  // Preserve all nine terminal windows for descent movement, but only seed
+  // descents at the four corners and the center of the parameter square.
+  let left_boundary = left_t == 0.0 || left_t == 1.0
+  let right_boundary = right_t == 0.0 || right_t == 1.0
+  left_boundary && right_boundary || { left_t == 0.5 && right_t == 0.5 }
+}
+
 fn run_descents(
-  windows_to_run: List(TerminalWindow),
+  descents_to_run: List(DescentRecord),
   state: DescentState,
   certification_tolerance certification_tolerance: Float,
 ) -> Result(DescentState, Error) {
-  case windows_to_run {
+  case descents_to_run {
     [] -> Ok(state)
-    [window, ..rest] -> {
-      let TerminalWindow(id:, ..) = window
-      use state <- result.try(case find_descent(state.descents, id) {
-        Ok(DescentRecord(status: Pending, ..)) ->
+    [descent, ..rest] -> {
+      use current <- result.try(find_descent(state.descents, descent.id))
+      use state <- result.try(case current.status {
+        Pending ->
           run_one_descent(
-            id,
+            current.id,
             state,
             certification_tolerance:,
             step: 1.0,
             iterations: 45,
           )
-        _ -> Ok(state)
+        Finished(_) -> Ok(state)
       })
       run_descents(rest, state, certification_tolerance:)
     }
