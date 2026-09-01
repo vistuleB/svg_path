@@ -306,8 +306,8 @@ pub type ArrangementSegmentImage {
 
 /// Errors returned while constructing or validating an arrangement graph.
 ///
-/// `InvalidTolerance` and `InvalidMinimumChord` report invalid caller options.
-/// The remaining variants report a path failure or a violated graph invariant.
+/// The numeric-option variants report invalid caller options. The remaining
+/// variants report a path failure or a violated graph invariant.
 pub type Error {
   /// An underlying path operation failed.
   PathError(svg_path.Error)
@@ -320,6 +320,10 @@ pub type Error {
 
   /// Minimum edge chord length must be greater than zero.
   InvalidMinimumChord(minimum_chord: Float)
+
+  /// Endpoint-sliver tolerance is a parameter-space quantity and must be
+  /// finite and non-negative.
+  InvalidEndpointSliverTolerance(tolerance: Float)
 
   /// A segment is shorter than the required minimum chord length.
   SegmentTooShort(chord: Float, minimum: Float)
@@ -4893,7 +4897,10 @@ fn validate_options(
   tolerance: Float,
   minimum_chord: Float,
 ) -> Result(Nil, Error) {
-  case tolerance <=. 0.0, minimum_chord <=. 0.0 {
+  case
+    tolerance <=. 0.0 || !number.is_finite(tolerance),
+    minimum_chord <=. 0.0 || !number.is_finite(minimum_chord)
+  {
     True, _ -> Error(InvalidTolerance(tolerance))
     _, True -> Error(InvalidMinimumChord(minimum_chord))
     False, False -> Ok(Nil)
@@ -4902,7 +4909,7 @@ fn validate_options(
 
 fn validate_endpoint_cut_tolerance(tolerance: Float) -> Result(Nil, Error) {
   case tolerance <. 0.0 || !number.is_finite(tolerance) {
-    True -> Error(InvalidTolerance(tolerance))
+    True -> Error(InvalidEndpointSliverTolerance(tolerance))
     False -> Ok(Nil)
   }
 }

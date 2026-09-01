@@ -814,6 +814,32 @@ pub fn build_rejects_invalid_minimum_chord_before_inspecting_sources_test() {
   |> should.equal(Error(arrangement_graph.InvalidMinimumChord(0.0)))
 }
 
+pub fn build_rejects_nonfinite_numeric_options_test() {
+  let infinity = 1.0 /. 0.0
+  let nan = 0.0 /. 0.0
+
+  arrangement_graph.build([], tolerance: infinity, minimum_chord:)
+  |> should.equal(Error(arrangement_graph.InvalidTolerance(infinity)))
+  arrangement_graph.build([], tolerance:, minimum_chord: infinity)
+  |> should.equal(Error(arrangement_graph.InvalidMinimumChord(infinity)))
+  arrangement_graph.build([], tolerance: nan, minimum_chord:)
+  |> should.be_error
+  arrangement_graph.build([], tolerance:, minimum_chord: nan)
+  |> should.be_error
+}
+
+pub fn build_with_rejects_negative_endpoint_sliver_tolerance_test() {
+  arrangement_graph.build_with(
+    [],
+    vertex_tolerance: tolerance,
+    minimum_chord:,
+    endpoint_sliver_tolerance: -0.1,
+  )
+  |> should.equal(
+    Error(arrangement_graph.InvalidEndpointSliverTolerance(-0.1)),
+  )
+}
+
 pub fn validation_rejects_invalid_numeric_options_test() {
   arrangement_graph.validate(
     arrangement_graph.ArrangementGraph(
