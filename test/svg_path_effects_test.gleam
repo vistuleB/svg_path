@@ -1,9 +1,27 @@
 import gleam/float
 import gleam/list
 import svg_path
+import svg_path/degeneracy
 import svg_path/effects
 
 const tolerance = 0.000001
+
+pub fn normalize_degenerate_segments_rejects_nonfinite_tolerance_test() {
+  let subpath =
+    svg_path.segment_as_subpath(
+      svg_path.Line(svg_path.Point(0.0, 0.0), svg_path.Point(1.0, 0.0)),
+    )
+  let infinity = 1.0 /. 0.0
+  let nan = 0.0 /. 0.0
+
+  assert degeneracy.normalize_degenerate_segments(subpath, infinity)
+    == Error(degeneracy.PathError(
+      svg_path.InvalidLinearizeTolerance(infinity),
+    ))
+  let assert Error(degeneracy.PathError(
+    svg_path.InvalidLinearizeTolerance(_),
+  )) = degeneracy.normalize_degenerate_segments(subpath, nan)
+}
 
 pub fn round_corners_rounds_closed_square_test() {
   let square =

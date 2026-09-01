@@ -7,6 +7,7 @@ import gleam/option.{type Option, None, Some}
 import gleam/result
 import svg_path
 import svg_path/convex_hull
+import svg_path/internal/number
 import svg_path/point
 
 type LineWindow {
@@ -46,7 +47,7 @@ pub fn normalize_degenerate_segments(
   subpath: svg_path.Subpath,
   tolerance tolerance: Float,
 ) -> Result(svg_path.Subpath, Error) {
-  case tolerance <=. 0.0 {
+  case tolerance <=. 0.0 || !number.is_finite(tolerance) {
     True -> Error(PathError(svg_path.InvalidLinearizeTolerance(tolerance)))
     False -> {
       use segments <- result.try(
