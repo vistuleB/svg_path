@@ -3260,6 +3260,28 @@ pub fn subpath_with_custom_rejects_invalid_results_test() {
     ))
 }
 
+pub fn subpath_with_custom_rejects_replacement_that_changes_previous_start_test() {
+  let a = svg_path.Point(0.0, 0.0)
+  let b = svg_path.Point(10.0, 0.0)
+  let c = svg_path.Point(20.0, 0.0)
+  let d = svg_path.Point(30.0, 0.0)
+  let changed_start = svg_path.Point(5.0, 5.0)
+
+  assert svg_path.subpath_with(
+      [svg_path.Line(start: a, end: b), svg_path.Line(start: c, end: d)],
+      policy: svg_path.Custom(fn(_previous, next, _is_closing) {
+        [svg_path.Line(start: changed_start, end: c), next]
+      }),
+    )
+    == Error(svg_path.Discontinuous(
+      previous_index: -1,
+      next_index: 0,
+      expected: a,
+      got: changed_start,
+      distance: 7.0710678118654755,
+    ))
+}
+
 pub fn subpath_with_custom_empty_replacement_deletes_both_segments_test() {
   let a = svg_path.Point(0.0, 0.0)
   let b = svg_path.Point(10.0, 0.0)
@@ -3450,6 +3472,28 @@ pub fn set_closed_with_custom_rejects_invalid_results_test() {
       expected: c,
       got: a,
       distance: 14.142135623730951,
+    ))
+}
+
+pub fn set_closed_with_custom_rejects_replacement_that_changes_subpath_start_test() {
+  let a = svg_path.Point(0.0, 0.0)
+  let b = svg_path.Point(10.0, 0.0)
+  let changed_start = svg_path.Point(5.0, 5.0)
+  let subpath = svg_path.subpath_assert([svg_path.Line(start: a, end: b)])
+
+  assert svg_path.subpath_set_closed_with(
+      subpath,
+      closed: True,
+      policy: svg_path.Custom(fn(_last, _first, _is_closing) {
+        [svg_path.Line(start: changed_start, end: changed_start)]
+      }),
+    )
+    == Error(svg_path.Discontinuous(
+      previous_index: -1,
+      next_index: 0,
+      expected: a,
+      got: changed_start,
+      distance: 7.0710678118654755,
     ))
 }
 
