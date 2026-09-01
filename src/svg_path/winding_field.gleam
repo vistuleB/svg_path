@@ -46,6 +46,7 @@ pub fn segment_side_nonzero_levels(
   options options: svg_path.ContainmentOptions,
 ) -> Result(#(Int, Int), svg_path.Error) {
   use _ <- result.try(validate_sampling_distance(side_sampling_distance))
+  use _ <- result.try(svg_path.validate_containment_options(options))
   use midpoint <- result.try(sample_segment_sides(
     segment,
     at: 0.5,
