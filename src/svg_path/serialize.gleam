@@ -10,6 +10,7 @@ import gleam/list
 import gleam/string
 import svg_path
 import svg_path/format as number_format
+import svg_path/internal/number as numeric
 import svg_path/trig
 
 /// Options for SVG path data serialization.
@@ -910,7 +911,6 @@ fn parser_tracked_segment(
       parser_tracked_cubic(start, control1, control2, end, state, format)
     svg_path.Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:) ->
       parser_tracked_arc(
-        segment,
         start,
         radius,
         x_axis_rotation,
@@ -1135,7 +1135,6 @@ fn parser_tracked_cubic(
 }
 
 fn parser_tracked_arc(
-  segment: svg_path.Segment,
   source_start: svg_path.Point,
   source_radius: svg_path.Point,
   source_rotation: Float,
@@ -1146,30 +1145,43 @@ fn parser_tracked_arc(
   format: Format,
 ) -> #(List(String), RelativeParserState) {
   case source_start == source_end {
-    True ->
-      case
-        svg_path.segment_between(segment, from: 0.0, to: 0.5),
-        svg_path.segment_between(segment, from: 0.5, to: 1.0)
-      {
-        Ok(first), Ok(second) -> {
-          let #(first_commands, state) =
-            parser_tracked_segment(first, state, format)
-          let #(second_commands, state) =
-            parser_tracked_segment(second, state, format)
-          #(list.append(first_commands, second_commands), state)
-        }
-        _, _ ->
-          parser_tracked_arc_command(
-            source_start,
-            source_radius,
-            source_rotation,
-            large_arc,
-            sweep,
-            source_end,
-            state,
-            format,
-          )
-      }
+    True -> {
+      // A same-endpoint SVG arc command draws nothing. Replace the library's
+      // full-arc representation with two ordinary endpoint arcs without
+      // sending the indeterminate endpoint form through ellipse conversion.
+      let midpoint =
+        svg_path.Point(
+          source_start.x
+            +. float.absolute_value(source_radius.x)
+            *. trig.cos_degrees(source_rotation),
+          source_start.y
+            +. float.absolute_value(source_radius.x)
+            *. trig.sin_degrees(source_rotation),
+        )
+      let first =
+        svg_path.Arc(
+          start: source_start,
+          radius: source_radius,
+          x_axis_rotation: source_rotation,
+          large_arc: False,
+          sweep:,
+          end: midpoint,
+        )
+      let second =
+        svg_path.Arc(
+          start: midpoint,
+          radius: source_radius,
+          x_axis_rotation: source_rotation,
+          large_arc: False,
+          sweep:,
+          end: source_end,
+        )
+      let #(first_commands, state) =
+        parser_tracked_segment(first, state, format)
+      let #(second_commands, state) =
+        parser_tracked_segment(second, state, format)
+      #(list.append(first_commands, second_commands), state)
+    }
     False ->
       parser_tracked_arc_command(
         source_start,
@@ -1241,19 +1253,21 @@ fn chord_similarity(
   let target_dy = parser_end.y -. parser_start.y
   let source_length_squared = source_dx *. source_dx +. source_dy *. source_dy
   let target_length_squared = target_dx *. target_dx +. target_dy *. target_dy
-  case
-    source_length_squared <=. 0.000000000001 || target_length_squared == 0.0
-  {
+  case source_length_squared == 0.0 || target_length_squared == 0.0 {
     True -> UnstableChord
-    False ->
-      ChordSimilarity(
-        source_start:,
-        parser_start:,
-        scale_cos: { source_dx *. target_dx +. source_dy *. target_dy }
-          /. source_length_squared,
-        scale_sin: { source_dx *. target_dy -. source_dy *. target_dx }
-          /. source_length_squared,
-      )
+    False -> {
+      let scale_cos =
+        { source_dx *. target_dx +. source_dy *. target_dy }
+        /. source_length_squared
+      let scale_sin =
+        { source_dx *. target_dy -. source_dy *. target_dx }
+        /. source_length_squared
+      case numeric.is_finite(scale_cos) && numeric.is_finite(scale_sin) {
+        True ->
+          ChordSimilarity(source_start:, parser_start:, scale_cos:, scale_sin:)
+        False -> UnstableChord
+      }
+    }
   }
 }
 
