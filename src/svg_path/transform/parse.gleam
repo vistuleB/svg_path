@@ -38,6 +38,9 @@ pub type ErrorReason {
   /// A numeric token could not be parsed as a float.
   InvalidNumber(String)
 
+  /// Finite transform arguments produced a non-finite composed matrix.
+  NonFiniteTransform
+
   /// A token appeared where it is not valid.
   UnexpectedToken(String)
 
@@ -92,12 +95,13 @@ fn parse_transforms(
         Ok(#(arguments, rest)) -> {
           case transform_from_arguments(name, arguments, at: name_at) {
             Error(error) -> Error(error)
-            Ok(next) ->
-              continue_transform_list(
-                rest,
-                transform.chain(first: next, then: accumulated),
-                end_at,
-              )
+            Ok(next) -> {
+              case checked_chain(first: next, then: accumulated) {
+                Error(_) -> Error(LocatedError(NonFiniteTransform, name_at))
+                Ok(accumulated) ->
+                  continue_transform_list(rest, accumulated, end_at)
+              }
+            }
           }
         }
       }
@@ -110,6 +114,56 @@ fn parse_transforms(
     | [Number(_, at), ..]
     | [Whitespace(at), ..] -> Error(LocatedError(ExpectedTransform, at))
   }
+}
+
+fn matrix_is_finite(matrix: transform.Matrix) -> Bool {
+  let #(a, b, c, d, e, f) = transform.to_tuple(matrix)
+  number.is_finite(a)
+  && number.is_finite(b)
+  && number.is_finite(c)
+  && number.is_finite(d)
+  && number.is_finite(e)
+  && number.is_finite(f)
+}
+
+fn checked_chain(
+  first first: transform.Matrix,
+  then second: transform.Matrix,
+) -> Result(transform.Matrix, Nil) {
+  checked_multiply(left: second, right: first)
+}
+
+fn checked_multiply(
+  left left: transform.Matrix,
+  right right: transform.Matrix,
+) -> Result(transform.Matrix, Nil) {
+  let #(la, lb, lc, ld, le, lf) = transform.to_tuple(left)
+  let #(ra, rb, rc, rd, re, rf) = transform.to_tuple(right)
+  use a <- result.try(checked_pair_sum(la, ra, lc, rb))
+  use b <- result.try(checked_pair_sum(lb, ra, ld, rb))
+  use c <- result.try(checked_pair_sum(la, rc, lc, rd))
+  use d <- result.try(checked_pair_sum(lb, rc, ld, rd))
+  use e <- result.try(checked_pair_sum(la, re, lc, rf))
+  use e <- result.try(number.checked_sum(e, le))
+  use f <- result.try(checked_pair_sum(lb, re, ld, rf))
+  use f <- result.try(number.checked_sum(f, lf))
+  let matrix = transform.matrix(a:, b:, c:, d:, e:, f:)
+
+  case matrix_is_finite(matrix) {
+    True -> Ok(matrix)
+    False -> Error(Nil)
+  }
+}
+
+fn checked_pair_sum(
+  first_left: Float,
+  first_right: Float,
+  second_left: Float,
+  second_right: Float,
+) -> Result(Float, Nil) {
+  use first <- result.try(number.checked_product(first_left, first_right))
+  use second <- result.try(number.checked_product(second_left, second_right))
+  number.checked_sum(first, second)
 }
 
 fn continue_transform_list(
@@ -304,11 +358,12 @@ fn rotate_transform(
       let rotate = transform.rotate(degrees:)
       let move_back = transform.translate(x: cx, y: cy)
 
-      Ok(
-        move_to_origin
-        |> transform.chain(first: _, then: rotate)
-        |> transform.chain(first: _, then: move_back),
+      use rotated <- result.try(
+        checked_chain(first: move_to_origin, then: rotate)
+        |> result.map_error(fn(_) { LocatedError(NonFiniteTransform, at) }),
       )
+      checked_chain(first: rotated, then: move_back)
+      |> result.map_error(fn(_) { LocatedError(NonFiniteTransform, at) })
     }
     _ ->
       Error(LocatedError(InvalidArgumentCount(name, list.length(arguments)), at))

@@ -107,6 +107,14 @@ pub fn overflowing_numbers_are_rejected_test() {
     ))
 }
 
+pub fn finite_transforms_whose_composition_overflows_are_rejected_test() {
+  assert transform_parse.attribute("scale(1e308) scale(1e308)")
+    == Error(transform_parse.ParseError(
+      transform_parse.NonFiniteTransform,
+      "scale(1e308)",
+    ))
+}
+
 pub fn exponent_scaling_preserves_finite_compensated_values_test() {
   let assert Ok(_) = transform_parse.attribute("scale(0.1e309)")
 }

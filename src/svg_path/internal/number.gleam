@@ -114,13 +114,38 @@ fn nonnegative_integer_power(
   }
 }
 
-fn checked_product(first: Float, second: Float) -> Result(Float, Nil) {
+@internal
+pub fn checked_product(first: Float, second: Float) -> Result(Float, Nil) {
+  let absolute_second = float.absolute_value(second)
+
+  case first == 0.0 || second == 0.0, absolute_second <=. 1.0 {
+    True, _ -> Ok(0.0)
+    False, True -> Ok(first *. second)
+    False, False ->
+      case
+        float.absolute_value(first)
+        >. maximum_finite_float /. absolute_second
+      {
+        True -> Error(Nil)
+        False -> Ok(first *. second)
+      }
+  }
+}
+
+/// Add two finite floats, rejecting a result outside the finite Float range.
+@internal
+pub fn checked_sum(first: Float, second: Float) -> Result(Float, Nil) {
+  let same_sign =
+    { first >. 0.0 && second >. 0.0 }
+    || { first <. 0.0 && second <. 0.0 }
+
   case
-    float.absolute_value(first)
-    >. maximum_finite_float /. float.absolute_value(second)
+    same_sign
+    && float.absolute_value(first)
+      >. maximum_finite_float -. float.absolute_value(second)
   {
     True -> Error(Nil)
-    False -> Ok(first *. second)
+    False -> Ok(first +. second)
   }
 }
 
