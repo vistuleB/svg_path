@@ -12,6 +12,13 @@ pub fn quadratic_real_roots_test() {
   assert root.quadratic(1.0, -3.0, 2.0) == [1.0, 2.0]
 }
 
+pub fn quadratic_preserves_small_root_under_large_scale_separation_test() {
+  let assert [small, large] = root.quadratic(1.0, -1.0e16, 1.0)
+
+  assert small == 1.0e-16
+  assert large == 1.0e16
+}
+
 pub fn quadratic_reduces_to_linear_test() {
   assert root.quadratic(0.0, 2.0, -1.0) == [0.5]
 }
@@ -81,7 +88,7 @@ pub fn polynomial_isolation_preserves_crossing_bracket_test() {
   let options =
     root.PolynomialOptions(
       coefficient_tolerance: 0.000000000001,
-      root_tolerance: 0.01,
+      parameter_tolerance: 0.01,
       value_tolerance: 0.000000000001,
       max_iterations: 100,
     )
@@ -99,7 +106,7 @@ pub fn polynomial_isolation_preserves_crossing_bracket_test() {
   assert root.evaluate_polynomial(coefficients, at: lower)
     *. root.evaluate_polynomial(coefficients, at: upper)
     <=. 0.0
-  assert { upper -. lower } /. 2.0 <=. options.root_tolerance
+  assert { upper -. lower } /. 2.0 <=. options.parameter_tolerance
 }
 
 pub fn polynomial_bisection_handles_flat_derivative_region_test() {

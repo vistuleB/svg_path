@@ -2742,7 +2742,7 @@ fn cubic_point_tangent_roots(
       to: 1.0,
       options: root.PolynomialOptions(
         coefficient_tolerance: 0.000000000001,
-        root_tolerance: 0.000000000001,
+        parameter_tolerance: 0.000000000001,
         value_tolerance: 0.000000000001,
         max_iterations: 100,
       ),
@@ -4431,7 +4431,7 @@ fn refine_chord_tangent_polynomial(
           to: upper,
           options: root.PolynomialOptions(
             coefficient_tolerance: 0.000000000001,
-            root_tolerance: 0.000000000001,
+            parameter_tolerance: 0.000000000001,
             value_tolerance: 0.000000000001,
             max_iterations: 100,
           ),

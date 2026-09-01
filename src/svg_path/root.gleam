@@ -58,7 +58,7 @@ pub type QuadraticOptions {
 pub type PolynomialOptions {
   PolynomialOptions(
     coefficient_tolerance: Float,
-    root_tolerance: Float,
+    parameter_tolerance: Float,
     value_tolerance: Float,
     max_iterations: Int,
   )
@@ -98,7 +98,7 @@ fn default_options() -> Options {
 pub fn default_polynomial_options() -> PolynomialOptions {
   PolynomialOptions(
     coefficient_tolerance: 0.000000000001,
-    root_tolerance: default_tolerance,
+    parameter_tolerance: default_tolerance,
     value_tolerance: default_tolerance,
     max_iterations: default_max_iterations,
   )
@@ -155,10 +155,26 @@ pub fn quadratic_with(
           case root_discriminant == 0.0, options.repeated_root_policy {
             True, ConsolidateRepeatedRoot -> [root]
             True, PreserveRepeatedRoot -> [root, root]
-            False, _ -> [
-              { 0.0 -. b -. root_discriminant } /. denominator,
-              { 0.0 -. b +. root_discriminant } /. denominator,
-            ]
+            False, _ -> {
+              // Choose the numerator that adds same-sign magnitudes, then use
+              // the product of the roots, c / a, to recover the other root.
+              // This avoids cancelling nearly equal values in the smaller
+              // root's direct quadratic-formula numerator.
+              let q = case b >=. 0.0 {
+                True -> -0.5 *. { b +. root_discriminant }
+                False -> -0.5 *. { b -. root_discriminant }
+              }
+              let stable_root = q /. a
+              let recovered_root = c /. q
+
+              // Preserve the documented direct-formula order: the root from
+              // (-b - sqrt(discriminant)) precedes the root from
+              // (-b + sqrt(discriminant)), regardless of the sign of a.
+              case b >=. 0.0 {
+                True -> [stable_root, recovered_root]
+                False -> [recovered_root, stable_root]
+              }
+            }
           }
         }
       }
@@ -226,9 +242,10 @@ pub fn polynomial_roots_with(
   options options: PolynomialOptions,
 ) -> Result(List(Float), Error) {
   case
-    options.root_tolerance <=. 0.0 || !number.is_finite(options.root_tolerance)
+    options.parameter_tolerance <=. 0.0
+    || !number.is_finite(options.parameter_tolerance)
   {
-    True -> Error(InvalidTolerance(options.root_tolerance))
+    True -> Error(InvalidTolerance(options.parameter_tolerance))
     False ->
       case options.max_iterations <= 0 {
         True -> Error(InvalidMaxIterations(options.max_iterations))
@@ -260,9 +277,10 @@ pub fn polynomial_root_isolations_with(
   options options: PolynomialOptions,
 ) -> Result(List(RootIsolation), Error) {
   case
-    options.root_tolerance <=. 0.0 || !number.is_finite(options.root_tolerance)
+    options.parameter_tolerance <=. 0.0
+    || !number.is_finite(options.parameter_tolerance)
   {
-    True -> Error(InvalidTolerance(options.root_tolerance))
+    True -> Error(InvalidTolerance(options.parameter_tolerance))
     False ->
       case options.max_iterations <= 0 {
         True -> Error(InvalidMaxIterations(options.max_iterations))
@@ -289,9 +307,10 @@ pub fn classified_polynomial_roots_with(
   options options: PolynomialOptions,
 ) -> Result(List(ClassifiedRoot), Error) {
   case
-    options.root_tolerance <=. 0.0 || !number.is_finite(options.root_tolerance)
+    options.parameter_tolerance <=. 0.0
+    || !number.is_finite(options.parameter_tolerance)
   {
-    True -> Error(InvalidTolerance(options.root_tolerance))
+    True -> Error(InvalidTolerance(options.parameter_tolerance))
     False -> {
       let coefficients =
         normalize_polynomial_coefficients(
@@ -391,10 +410,11 @@ fn cubic_with(
   options options: PolynomialOptions,
 ) -> Result(List(Float), Error) {
   case
-    options.root_tolerance <=. 0.0 || !number.is_finite(options.root_tolerance),
+    options.parameter_tolerance <=. 0.0
+      || !number.is_finite(options.parameter_tolerance),
     options.max_iterations <= 0
   {
-    True, _ -> Error(InvalidTolerance(options.root_tolerance))
+    True, _ -> Error(InvalidTolerance(options.parameter_tolerance))
     _, True -> Error(InvalidMaxIterations(options.max_iterations))
     False, False -> {
       let coefficients =
@@ -482,7 +502,8 @@ fn polynomial_root_isolations_valid(
         upper,
         options,
       ))
-      let critical = consolidate_isolations(critical, options.root_tolerance)
+      let critical =
+        consolidate_isolations(critical, options.parameter_tolerance)
       let critical_values =
         list.map(critical, fn(isolation) {
           let RootIsolation(estimate:, ..) = isolation
@@ -516,7 +537,7 @@ fn polynomial_root_isolations_valid(
       )
       Ok(
         list.append(endpoints, list.append(repeated, crossing))
-        |> consolidate_isolations(options.root_tolerance),
+        |> consolidate_isolations(options.parameter_tolerance),
       )
     }
   }
@@ -560,7 +581,7 @@ fn polynomial_crossing_roots_loop(
             left,
             left_value,
             right,
-            options.root_tolerance,
+            options.parameter_tolerance,
             options.max_iterations,
           ))
           polynomial_crossing_roots_loop(
@@ -638,7 +659,7 @@ fn classify_polynomial_root(
       root_lower,
       lower,
       value_tolerance,
-      options.root_tolerance,
+      options.parameter_tolerance,
       remaining_expansions: 32,
     )
   let right_sample =
@@ -648,7 +669,7 @@ fn classify_polynomial_root(
       root_upper,
       upper,
       value_tolerance,
-      options.root_tolerance,
+      options.parameter_tolerance,
       remaining_expansions: 32,
     )
 
@@ -665,12 +686,12 @@ fn root_sample_on_left(
   root_lower: Float,
   interval_lower: Float,
   value_tolerance: Float,
-  root_tolerance: Float,
+  parameter_tolerance: Float,
   remaining_expansions remaining_expansions: Int,
 ) -> Result(Float, Nil) {
   let candidate = case root_lower <. estimate {
     True -> root_lower
-    False -> estimate -. root_tolerance
+    False -> estimate -. parameter_tolerance
   }
   root_sample_on_side(
     coefficients,
@@ -679,7 +700,7 @@ fn root_sample_on_left(
     interval_edge: interval_lower,
     direction: -1.0,
     value_tolerance:,
-    root_tolerance:,
+    parameter_tolerance:,
     remaining_expansions:,
   )
 }
@@ -690,12 +711,12 @@ fn root_sample_on_right(
   root_upper: Float,
   interval_upper: Float,
   value_tolerance: Float,
-  root_tolerance: Float,
+  parameter_tolerance: Float,
   remaining_expansions remaining_expansions: Int,
 ) -> Result(Float, Nil) {
   let candidate = case root_upper >. estimate {
     True -> root_upper
-    False -> estimate +. root_tolerance
+    False -> estimate +. parameter_tolerance
   }
   root_sample_on_side(
     coefficients,
@@ -704,7 +725,7 @@ fn root_sample_on_right(
     interval_edge: interval_upper,
     direction: 1.0,
     value_tolerance:,
-    root_tolerance:,
+    parameter_tolerance:,
     remaining_expansions:,
   )
 }
@@ -716,7 +737,7 @@ fn root_sample_on_side(
   interval_edge interval_edge: Float,
   direction direction: Float,
   value_tolerance value_tolerance: Float,
-  root_tolerance root_tolerance: Float,
+  parameter_tolerance parameter_tolerance: Float,
   remaining_expansions remaining_expansions: Int,
 ) -> Result(Float, Nil) {
   case
@@ -735,7 +756,8 @@ fn root_sample_on_side(
             True -> Error(Nil)
             False -> {
               let distance = float.absolute_value(candidate -. fallback_from)
-              let distance = float.max(distance *. 2.0, root_tolerance *. 2.0)
+              let distance =
+                float.max(distance *. 2.0, parameter_tolerance *. 2.0)
               let next_candidate = fallback_from +. direction *. distance
               root_sample_on_side(
                 coefficients,
@@ -744,7 +766,7 @@ fn root_sample_on_side(
                 interval_edge:,
                 direction:,
                 value_tolerance:,
-                root_tolerance:,
+                parameter_tolerance:,
                 remaining_expansions: remaining_expansions - 1,
               )
             }

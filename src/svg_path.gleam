@@ -3873,7 +3873,7 @@ fn bezier_projection_with(
   let polynomial_options =
     root.PolynomialOptions(
       coefficient_tolerance: 0.000000000001,
-      root_tolerance: options.tolerance,
+      parameter_tolerance: options.tolerance,
       value_tolerance: 0.000000000001,
       max_iterations: options.max_iterations,
     )
@@ -5045,7 +5045,7 @@ fn segment_line_classified_roots(
   let options =
     root.PolynomialOptions(
       coefficient_tolerance: signed_line_distance_tolerance,
-      root_tolerance: 0.000000000001,
+      parameter_tolerance: 0.000000000001,
       value_tolerance: signed_line_distance_tolerance,
       max_iterations:,
     )
