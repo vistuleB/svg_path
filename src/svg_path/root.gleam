@@ -1,8 +1,7 @@
 //// Bracketed root-finding helpers for scalar functions.
 ////
-//// `bisect` implements standard bracketed bisection. Polynomial root isolation
-//// partitions an interval at derivative roots, then refines each sign-changing
-//// monotone window with bracketed bisection.
+//// Polynomial root isolation partitions an interval at derivative roots, then
+//// refines each sign-changing monotone window with bracketed bisection.
 
 import gleam/float
 import gleam/int
@@ -13,12 +12,6 @@ import svg_path/internal/number
 const default_tolerance = 0.000000001
 
 const default_max_iterations = 100
-
-/// Options for bracketed bisection.
-@internal
-pub type Options {
-  Options(tolerance: Float, max_iterations: Int)
-}
 
 /// Errors returned by root-finding helpers.
 @internal
@@ -86,11 +79,6 @@ pub type RootKind {
 @internal
 pub type ClassifiedRoot {
   ClassifiedRoot(isolation: RootIsolation, kind: RootKind)
-}
-
-/// Return the default bisection options.
-fn default_options() -> Options {
-  Options(tolerance: default_tolerance, max_iterations: default_max_iterations)
 }
 
 /// Return the default options for polynomial root isolation.
@@ -308,10 +296,12 @@ pub fn classified_polynomial_roots_with(
 ) -> Result(List(ClassifiedRoot), Error) {
   case
     options.parameter_tolerance <=. 0.0
-    || !number.is_finite(options.parameter_tolerance)
+      || !number.is_finite(options.parameter_tolerance),
+    options.max_iterations <= 0
   {
-    True -> Error(InvalidTolerance(options.parameter_tolerance))
-    False -> {
+    True, _ -> Error(InvalidTolerance(options.parameter_tolerance))
+    _, True -> Error(InvalidMaxIterations(options.max_iterations))
+    False, False -> {
       let coefficients =
         normalize_polynomial_coefficients(
           coefficients,
@@ -854,71 +844,6 @@ fn coefficient_is_zero(value: Float, tolerance: Float) -> Bool {
   }
 }
 
-/// Find a root of `f` in a bracket using default options.
-///
-/// `f(from)` and `f(to)` must have opposite signs, unless either endpoint is
-/// already within tolerance of zero. `from` may be greater than `to`; the
-/// bracket is normalized before solving.
-@internal
-pub fn bisect(
-  f: fn(Float) -> Float,
-  from left: Float,
-  to right: Float,
-) -> Result(Float, Error) {
-  bisect_with(f, from: left, to: right, options: default_options())
-}
-
-/// Find a root of `f` in a bracket using explicit options.
-///
-/// The returned value is an approximation. Convergence succeeds when either
-/// `abs(f(estimate)) <= tolerance` or the current bracket width is no larger
-/// than `tolerance`.
-@internal
-pub fn bisect_with(
-  f: fn(Float) -> Float,
-  from left: Float,
-  to right: Float,
-  options options: Options,
-) -> Result(Float, Error) {
-  case options.tolerance <=. 0.0 || !number.is_finite(options.tolerance) {
-    True -> Error(InvalidTolerance(options.tolerance))
-    False -> {
-      case options.max_iterations <= 0 {
-        True -> Error(InvalidMaxIterations(options.max_iterations))
-        False -> {
-          let #(left, right) = ordered_bracket(left, right)
-          let left_value = f(left)
-          let right_value = f(right)
-
-          case is_close_to_zero(left_value, options.tolerance) {
-            True -> Ok(left)
-            False -> {
-              case is_close_to_zero(right_value, options.tolerance) {
-                True -> Ok(right)
-                False -> {
-                  case same_sign(left_value, right_value) {
-                    True ->
-                      Error(NotBracketed(left, right, left_value, right_value))
-                    False ->
-                      bisect_loop(
-                        f,
-                        left,
-                        left_value,
-                        right,
-                        options.tolerance,
-                        options.max_iterations,
-                      )
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
 /// Refine a sign-changing bracket until a caller-defined certification holds.
 ///
 /// The returned isolation preserves both endpoints of the certified bracket.
@@ -1000,52 +925,6 @@ fn bisect_isolation_until_loop(
               }
           }
       }
-  }
-}
-
-fn bisect_loop(
-  f: fn(Float) -> Float,
-  left: Float,
-  left_value: Float,
-  right: Float,
-  tolerance: Float,
-  remaining_iterations: Int,
-) -> Result(Float, Error) {
-  let midpoint = left +. { right -. left } /. 2.0
-  let midpoint_value = f(midpoint)
-
-  case
-    is_close_to_zero(midpoint_value, tolerance)
-    || { right -. left } /. 2.0 <=. tolerance
-  {
-    True -> Ok(midpoint)
-    False -> {
-      case remaining_iterations <= 1 {
-        True -> Error(MaxIterationsReached(midpoint, midpoint_value))
-        False -> {
-          case same_sign(left_value, midpoint_value) {
-            True ->
-              bisect_loop(
-                f,
-                midpoint,
-                midpoint_value,
-                right,
-                tolerance,
-                remaining_iterations - 1,
-              )
-            False ->
-              bisect_loop(
-                f,
-                left,
-                left_value,
-                midpoint,
-                tolerance,
-                remaining_iterations - 1,
-              )
-          }
-        }
-      }
-    }
   }
 }
 
