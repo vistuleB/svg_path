@@ -1873,8 +1873,8 @@ fn point_is_strictly_inside_edge(
 ) -> Bool {
   let tolerance = orientation_turn_tolerance *. scale
   case orientation {
-    CounterClockwise -> turn >. tolerance
-    Clockwise -> turn <. 0.0 -. tolerance
+    Clockwise -> turn >. tolerance
+    CounterClockwise -> turn <. 0.0 -. tolerance
     DegenerateOrientation -> False
   }
 }
@@ -1886,8 +1886,8 @@ fn convex_polygon_orientation(polygon: ConvexPolygon) -> LoopOrientation {
     True -> DegenerateOrientation
     False ->
       case area >. 0.0 {
-        True -> CounterClockwise
-        False -> Clockwise
+        True -> Clockwise
+        False -> CounterClockwise
       }
   }
 }
@@ -1996,12 +1996,12 @@ fn point_loop_view(
     True -> TangentPoint
     False ->
       case orientation {
-        CounterClockwise ->
+        Clockwise ->
           case arriving_turn <. 0.0 {
             True -> OutsidePoint
             False -> InsidePoint
           }
-        Clockwise ->
+        CounterClockwise ->
           case arriving_turn >. 0.0 {
             True -> OutsidePoint
             False -> InsidePoint
@@ -2438,9 +2438,9 @@ fn line_like_orientation(
       let turn = cross(edge, offset)
       let scale = point_length(edge) *. point_length(offset)
       case orientation_from_turn(turn, scale) {
-        CounterClockwise -> Clockwise
         Clockwise -> CounterClockwise
-        DegenerateOrientation -> CounterClockwise
+        CounterClockwise -> Clockwise
+        DegenerateOrientation -> Clockwise
       }
     }
     _ -> DegenerateOrientation
@@ -2450,10 +2450,10 @@ fn line_like_orientation(
 fn orientation_from_turn(turn: Float, scale: Float) -> LoopOrientation {
   let tolerance = orientation_turn_tolerance *. scale
   case turn >. tolerance {
-    True -> CounterClockwise
+    True -> Clockwise
     False ->
       case turn <. 0.0 -. tolerance {
-        True -> Clockwise
+        True -> CounterClockwise
         False -> DegenerateOrientation
       }
   }
@@ -3025,12 +3025,12 @@ fn segment_tangent_turn_algebraic(
     }
     svg_path.Arc(sweep:, ..) -> {
       case orientation {
-        CounterClockwise ->
+        Clockwise ->
           case sweep {
             True -> Ok(Nil)
             False -> Error(1.0)
           }
-        Clockwise ->
+        CounterClockwise ->
           case sweep {
             True -> Error(1.0)
             False -> Ok(Nil)
@@ -3092,8 +3092,8 @@ fn curvature_wrong_way_amount(
   orientation: LoopOrientation,
 ) -> Float {
   case orientation {
-    CounterClockwise -> float.max(0.0, 0.0 -. value)
-    Clockwise -> float.max(0.0, value)
+    Clockwise -> float.max(0.0, 0.0 -. value)
+    CounterClockwise -> float.max(0.0, value)
     DegenerateOrientation -> float.absolute_value(value)
   }
 }
@@ -3254,8 +3254,8 @@ fn point_is_inside_edge(
 ) -> Bool {
   let tolerance = orientation_turn_tolerance *. scale
   case orientation {
-    CounterClockwise -> turn >=. 0.0 -. tolerance
-    Clockwise -> turn <=. tolerance
+    Clockwise -> turn >=. 0.0 -. tolerance
+    CounterClockwise -> turn <=. tolerance
     DegenerateOrientation -> False
   }
 }
@@ -4659,8 +4659,8 @@ fn piece_to_segment(
 }
 
 type LoopOrientation {
-  CounterClockwise
   Clockwise
+  CounterClockwise
   DegenerateOrientation
 }
 
@@ -4671,8 +4671,8 @@ fn loop_orientation(segments: List(svg_path.Segment)) -> LoopOrientation {
     True -> DegenerateOrientation
     False ->
       case area >. 0.0 {
-        True -> CounterClockwise
-        False -> Clockwise
+        True -> Clockwise
+        False -> CounterClockwise
       }
   }
 }
@@ -4791,8 +4791,8 @@ fn turn_against_orientation_amount(
 ) -> Float {
   let tolerance = orientation_turn_tolerance *. scale
   case orientation {
-    CounterClockwise -> float.max(0.0, { 0.0 -. tolerance } -. turn)
-    Clockwise -> float.max(0.0, turn -. tolerance)
+    Clockwise -> float.max(0.0, { 0.0 -. tolerance } -. turn)
+    CounterClockwise -> float.max(0.0, turn -. tolerance)
     DegenerateOrientation -> 0.0
   }
 }

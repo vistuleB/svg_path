@@ -97,24 +97,24 @@ pub fn point_chord_polygon_loop_separation_handles_line_like_loop_test() {
   assert points_near(closest, svg_path.Point(5.0, 0.0))
 }
 
-pub fn point_loop_view_classifies_ccw_outside_arc_point_test() {
+pub fn point_loop_view_classifies_clockwise_outside_arc_point_test() {
   assert convex_hull.internal_point_loop_view(
       point: svg_path.Point(15.0, 5.0),
       at: svg_path.Point(10.0, 5.0),
       arriving: svg_path.Point(0.0, 1.0),
       leaving: svg_path.Point(0.0, 1.0),
-      clockwise: False,
+      clockwise: True,
     )
     == convex_hull.OutsidePoint
 }
 
-pub fn point_loop_view_classifies_ccw_inside_arc_point_test() {
+pub fn point_loop_view_classifies_clockwise_inside_arc_point_test() {
   assert convex_hull.internal_point_loop_view(
       point: svg_path.Point(15.0, 5.0),
       at: svg_path.Point(0.0, 5.0),
       arriving: svg_path.Point(0.0, -1.0),
       leaving: svg_path.Point(0.0, -1.0),
-      clockwise: False,
+      clockwise: True,
     )
     == convex_hull.InsidePoint
 }
@@ -130,13 +130,13 @@ pub fn point_loop_view_classifies_ccw_tangent_corner_test() {
     == convex_hull.TangentPoint
 }
 
-pub fn point_loop_view_classifies_clockwise_outside_arc_point_test() {
+pub fn point_loop_view_classifies_counterclockwise_outside_arc_point_test() {
   assert convex_hull.internal_point_loop_view(
       point: svg_path.Point(15.0, 5.0),
       at: svg_path.Point(10.0, 5.0),
       arriving: svg_path.Point(0.0, -1.0),
       leaving: svg_path.Point(0.0, -1.0),
-      clockwise: True,
+      clockwise: False,
     )
     == convex_hull.OutsidePoint
 }
@@ -521,23 +521,23 @@ pub fn segment_tangent_monotone_accepts_lines_test() {
 }
 
 pub fn segment_tangent_monotone_checks_quadratic_orientation_test() {
-  let counterclockwise =
+  let clockwise =
     svg_path.QuadraticBezier(
       start: svg_path.Point(0.0, 0.0),
       control: svg_path.Point(1.0, -1.0),
       end: svg_path.Point(2.0, 0.0),
     )
-  let clockwise =
+  let counterclockwise =
     svg_path.QuadraticBezier(
       start: svg_path.Point(0.0, 0.0),
       control: svg_path.Point(1.0, 1.0),
       end: svg_path.Point(2.0, 0.0),
     )
 
-  assert_monotone(counterclockwise, clockwise: False)
-  assert_not_monotone(counterclockwise, clockwise: True, by_at_least: 2.0)
   assert_monotone(clockwise, clockwise: True)
   assert_not_monotone(clockwise, clockwise: False, by_at_least: 2.0)
+  assert_monotone(counterclockwise, clockwise: False)
+  assert_not_monotone(counterclockwise, clockwise: True, by_at_least: 2.0)
 }
 
 pub fn segment_tangent_monotone_accepts_monotone_cubic_test() {
@@ -549,8 +549,8 @@ pub fn segment_tangent_monotone_accepts_monotone_cubic_test() {
       end: svg_path.Point(0.0, 1.0),
     )
 
-  assert_monotone(segment, clockwise: False)
-  assert_not_monotone(segment, clockwise: True, by_at_least: 0.3)
+  assert_monotone(segment, clockwise: True)
+  assert_not_monotone(segment, clockwise: False, by_at_least: 0.3)
 }
 
 pub fn segment_tangent_monotone_rejects_sign_changing_cubic_test() {
@@ -567,7 +567,7 @@ pub fn segment_tangent_monotone_rejects_sign_changing_cubic_test() {
 }
 
 pub fn segment_tangent_monotone_checks_arc_sweep_test() {
-  let counterclockwise =
+  let clockwise =
     svg_path.Arc(
       start: svg_path.Point(1.0, 0.0),
       radius: svg_path.Point(1.0, 1.0),
@@ -576,7 +576,7 @@ pub fn segment_tangent_monotone_checks_arc_sweep_test() {
       sweep: True,
       end: svg_path.Point(0.0, 1.0),
     )
-  let clockwise =
+  let counterclockwise =
     svg_path.Arc(
       start: svg_path.Point(1.0, 0.0),
       radius: svg_path.Point(1.0, 1.0),
@@ -586,10 +586,10 @@ pub fn segment_tangent_monotone_checks_arc_sweep_test() {
       end: svg_path.Point(0.0, -1.0),
     )
 
-  assert_monotone(counterclockwise, clockwise: False)
-  assert_not_monotone(counterclockwise, clockwise: True, by_at_least: 1.0)
   assert_monotone(clockwise, clockwise: True)
   assert_not_monotone(clockwise, clockwise: False, by_at_least: 1.0)
+  assert_monotone(counterclockwise, clockwise: False)
+  assert_not_monotone(counterclockwise, clockwise: True, by_at_least: 1.0)
 }
 
 fn square_loop() -> List(svg_path.Segment) {
