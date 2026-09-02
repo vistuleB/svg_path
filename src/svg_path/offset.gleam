@@ -70,6 +70,10 @@ const point_tolerance = 0.000000001
 
 const point_parameter_tolerance = 0.000000001
 
+const direction_determinant_tolerance = 0.000000001
+
+const angle_tolerance_degrees = 0.000000001
+
 const arrangement_tolerance = 0.000000002
 
 const submerged_side_sampling_distance = 0.00000005
@@ -10239,7 +10243,7 @@ fn round_join(
       let start_radius = point_helpers.subtract(start, corner)
       let end_radius = point_helpers.subtract(end, corner)
       let angle = signed_angle(start_radius, end_radius)
-      case float.absolute_value(angle) <=. point_tolerance {
+      case float.absolute_value(angle) <=. angle_tolerance_degrees {
         True -> Ok(line_segments_between([start, end]))
         False ->
           Ok([
@@ -10265,7 +10269,7 @@ fn directed_line_intersection(
 ) -> Result(svg_path.Point, Nil) {
   let delta = point_helpers.subtract(right_start, left_start)
   let determinant = point_helpers.cross(left_direction, right_direction)
-  case float.absolute_value(determinant) <=. point_tolerance {
+  case float.absolute_value(determinant) <=. direction_determinant_tolerance {
     True -> Error(Nil)
     False -> {
       let left_t = point_helpers.cross(delta, right_direction) /. determinant
