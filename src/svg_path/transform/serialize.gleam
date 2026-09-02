@@ -13,6 +13,8 @@ import svg_path/trig
 
 const rotation_scale_epsilon = 0.000001
 
+const identity_scale_epsilon = 0.0000000000001
+
 type LinearTransform {
   Matrix2x2
   Identity2x2
@@ -225,10 +227,14 @@ fn analyze_rotation_scale(
 }
 
 fn scale_optional_transform(x: Float, y: Float, options: Options) -> String {
-  case x == 1.0 && y == 1.0 {
+  case close_to_identity_scale(x) && close_to_identity_scale(y) {
     True -> ""
     False -> scale_transform(x, y, options)
   }
+}
+
+fn close_to_identity_scale(value: Float) -> Bool {
+  float.absolute_value(value -. 1.0) <=. identity_scale_epsilon
 }
 
 fn skew_x_transform(tangent: Float, options: Options) -> String {

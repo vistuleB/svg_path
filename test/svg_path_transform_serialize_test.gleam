@@ -1,4 +1,5 @@
 import gleam/option.{None}
+import gleam/string
 import gleeunit
 import svg_path/transform
 import svg_path/transform/parse as transform_parse
@@ -53,6 +54,15 @@ pub fn transform_serialization_preserves_near_identity_rotation_scale_test() {
 
   assert serialize.to_string_with(matrix, options:)
     == "rotate(90) scale(1.0000005)"
+
+  let machine_epsilon_scale =
+    transform.scale(factor: 1.00000000000005)
+    |> transform.chain(first: _, then: transform.rotate(degrees: 30.125))
+
+  assert !string.contains(
+    serialize.to_string_with(machine_epsilon_scale, options:),
+    "scale",
+  )
 }
 
 pub fn transform_translate_scale_serializes_nicely_test() {
