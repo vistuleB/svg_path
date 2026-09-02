@@ -66,6 +66,8 @@ const default_miter_limit = 4.0
 
 const tangent_epsilon = 0.000001
 
+const tangent_agreement_epsilon = 0.000001
+
 const point_tolerance = 0.000000001
 
 const point_parameter_tolerance = 0.000000001
@@ -3378,7 +3380,7 @@ fn averaged_boundary_tangent(
   right_tangent: svg_path.Point,
 ) -> svg_path.Point {
   let sum = point_helpers.add(left_tangent, right_tangent)
-  case point_helpers.norm(sum) >. tangent_epsilon {
+  case point_helpers.norm(sum) >. tangent_agreement_epsilon {
     True ->
       case unit_vector(sum, t: 1.0) {
         Ok(direction) -> direction
@@ -11849,7 +11851,7 @@ fn interior_unit_tangent(
         False -> Error(DegenerateTangent(t))
         True -> {
           let sum = point_helpers.add(incoming, outgoing)
-          case point_helpers.norm(sum) >. tangent_epsilon {
+          case point_helpers.norm(sum) >. tangent_agreement_epsilon {
             True -> unit_vector(sum, t:)
             False -> Error(DegenerateTangent(t))
           }
