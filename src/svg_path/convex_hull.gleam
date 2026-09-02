@@ -2740,12 +2740,7 @@ fn cubic_point_tangent_roots(
       coefficients,
       from: 0.0,
       to: 1.0,
-      options: root.PolynomialOptions(
-        coefficient_tolerance: 0.000000000001,
-        parameter_tolerance: 0.000000000001,
-        value_tolerance: 0.000000000001,
-        max_iterations: 100,
-      ),
+      options: root.PolynomialOptions(max_iterations: 100),
     )
   list.map(isolations, fn(isolation) {
     refine_polynomial_tangent_isolation(coefficients, segment, isolation)
@@ -4429,12 +4424,7 @@ fn refine_chord_tangent_polynomial(
           coefficients,
           from: lower,
           to: upper,
-          options: root.PolynomialOptions(
-            coefficient_tolerance: 0.000000000001,
-            parameter_tolerance: 0.000000000001,
-            value_tolerance: 0.000000000001,
-            max_iterations: 100,
-          ),
+          options: root.PolynomialOptions(max_iterations: 100),
         )
       case nearest_chord_tangent_isolation(isolations, approximate, other) {
         None -> approximate

@@ -6,19 +6,18 @@
 import gleam/float
 import gleam/int
 import gleam/list
+import gleam/option.{type Option, None, Some}
 import gleam/result
-import svg_path/internal/number
 
-const default_tolerance = 0.000000001
+const parameter_tolerance = 0.000000001
+
+const relative_value_tolerance = 0.000000000001
 
 const default_max_iterations = 100
 
 /// Errors returned by root-finding helpers.
 @internal
 pub type Error {
-  /// The tolerance must be finite and greater than zero.
-  InvalidTolerance(tolerance: Float)
-
   /// The maximum iteration count must be greater than zero.
   InvalidMaxIterations(max_iterations: Int)
 
@@ -47,19 +46,19 @@ pub type QuadraticOptions {
 }
 
 /// Options for isolating and refining real polynomial roots.
+///
+/// Polynomial roots use a fixed parameter tolerance of `1e-9` and a fixed
+/// coefficient-relative value tolerance of `1e-12` throughout the package.
 @internal
 pub type PolynomialOptions {
-  PolynomialOptions(
-    coefficient_tolerance: Float,
-    parameter_tolerance: Float,
-    value_tolerance: Float,
-    max_iterations: Int,
-  )
+  PolynomialOptions(max_iterations: Int)
 }
 
-/// A real polynomial root isolated inside a closed parameter interval.
+/// A real polynomial root and the final parameter window used by its caller.
 ///
-/// Exact, endpoint, and repeated-root isolations may have equal bounds.
+/// Crossing roots retain their sign-changing bisection bracket. Direct and
+/// repeated-root estimates receive a centered `1e-9` window, clamped to the
+/// requested domain and away from neighboring root windows.
 @internal
 pub type RootIsolation {
   RootIsolation(lower: Float, estimate: Float, upper: Float)
@@ -84,12 +83,7 @@ pub type ClassifiedRoot {
 /// Return the default options for polynomial root isolation.
 @internal
 pub fn default_polynomial_options() -> PolynomialOptions {
-  PolynomialOptions(
-    coefficient_tolerance: 0.000000000001,
-    parameter_tolerance: default_tolerance,
-    value_tolerance: default_tolerance,
-    max_iterations: default_max_iterations,
-  )
+  PolynomialOptions(max_iterations: default_max_iterations)
 }
 
 /// Solve `a * x + b = 0` using exact zero classification.
@@ -229,28 +223,19 @@ pub fn polynomial_roots_with(
   to upper: Float,
   options options: PolynomialOptions,
 ) -> Result(List(Float), Error) {
-  case
-    options.parameter_tolerance <=. 0.0
-    || !number.is_finite(options.parameter_tolerance)
-  {
-    True -> Error(InvalidTolerance(options.parameter_tolerance))
-    False ->
-      case options.max_iterations <= 0 {
-        True -> Error(InvalidMaxIterations(options.max_iterations))
-        False -> {
-          let tolerance = float.max(options.coefficient_tolerance, 0.0)
-          let coefficients =
-            normalize_polynomial_coefficients(coefficients, tolerance)
-          let #(lower, upper) = ordered_bracket(lower, upper)
-          use isolations <- result.try(polynomial_root_isolations_valid(
-            coefficients,
-            lower,
-            upper,
-            options,
-          ))
-          Ok(list.map(isolations, fn(isolation) { isolation.estimate }))
-        }
-      }
+  case options.max_iterations <= 0 {
+    True -> Error(InvalidMaxIterations(options.max_iterations))
+    False -> {
+      let coefficients = normalize_polynomial_coefficients(coefficients)
+      let #(lower, upper) = ordered_bracket(lower, upper)
+      use isolations <- result.try(polynomial_root_isolations_valid(
+        coefficients,
+        lower,
+        upper,
+        options,
+      ))
+      Ok(list.map(isolations, fn(isolation) { isolation.estimate }))
+    }
   }
 }
 
@@ -264,24 +249,19 @@ pub fn polynomial_root_isolations_with(
   to upper: Float,
   options options: PolynomialOptions,
 ) -> Result(List(RootIsolation), Error) {
-  case
-    options.parameter_tolerance <=. 0.0
-    || !number.is_finite(options.parameter_tolerance)
-  {
-    True -> Error(InvalidTolerance(options.parameter_tolerance))
-    False ->
-      case options.max_iterations <= 0 {
-        True -> Error(InvalidMaxIterations(options.max_iterations))
-        False -> {
-          let coefficients =
-            normalize_polynomial_coefficients(
-              coefficients,
-              float.max(options.coefficient_tolerance, 0.0),
-            )
-          let #(lower, upper) = ordered_bracket(lower, upper)
-          polynomial_root_isolations_valid(coefficients, lower, upper, options)
-        }
-      }
+  case options.max_iterations <= 0 {
+    True -> Error(InvalidMaxIterations(options.max_iterations))
+    False -> {
+      let coefficients = normalize_polynomial_coefficients(coefficients)
+      let #(lower, upper) = ordered_bracket(lower, upper)
+      use isolations <- result.try(polynomial_root_isolations_valid(
+        coefficients,
+        lower,
+        upper,
+        options,
+      ))
+      Ok(finalize_root_windows(isolations, lower, upper))
+    }
   }
 }
 
@@ -294,19 +274,10 @@ pub fn classified_polynomial_roots_with(
   to upper: Float,
   options options: PolynomialOptions,
 ) -> Result(List(ClassifiedRoot), Error) {
-  case
-    options.parameter_tolerance <=. 0.0
-      || !number.is_finite(options.parameter_tolerance),
-    options.max_iterations <= 0
-  {
-    True, _ -> Error(InvalidTolerance(options.parameter_tolerance))
-    _, True -> Error(InvalidMaxIterations(options.max_iterations))
-    False, False -> {
-      let coefficients =
-        normalize_polynomial_coefficients(
-          coefficients,
-          float.max(options.coefficient_tolerance, 0.0),
-        )
+  case options.max_iterations <= 0 {
+    True -> Error(InvalidMaxIterations(options.max_iterations))
+    False -> {
+      let coefficients = normalize_polynomial_coefficients(coefficients)
       let #(lower, upper) = ordered_bracket(lower, upper)
       use isolations <- result.try(polynomial_root_isolations_valid(
         coefficients,
@@ -314,17 +285,13 @@ pub fn classified_polynomial_roots_with(
         upper,
         options,
       ))
+      let isolations = finalize_root_windows(isolations, lower, upper)
+      let value_scale = polynomial_value_scale(coefficients)
       Ok(
         list.map(isolations, fn(isolation) {
           ClassifiedRoot(
             isolation:,
-            kind: classify_polynomial_root(
-              coefficients,
-              isolation,
-              lower,
-              upper,
-              options,
-            ),
+            kind: classify_polynomial_root(coefficients, isolation, value_scale),
           )
         }),
       )
@@ -399,19 +366,10 @@ fn cubic_with(
   d: Float,
   options options: PolynomialOptions,
 ) -> Result(List(Float), Error) {
-  case
-    options.parameter_tolerance <=. 0.0
-      || !number.is_finite(options.parameter_tolerance),
-    options.max_iterations <= 0
-  {
-    True, _ -> Error(InvalidTolerance(options.parameter_tolerance))
-    _, True -> Error(InvalidMaxIterations(options.max_iterations))
-    False, False -> {
-      let coefficients =
-        normalize_polynomial_coefficients(
-          [a, b, c, d],
-          float.max(options.coefficient_tolerance, 0.0),
-        )
+  case options.max_iterations <= 0 {
+    True -> Error(InvalidMaxIterations(options.max_iterations))
+    False -> {
+      let coefficients = normalize_polynomial_coefficients([a, b, c, d])
       case coefficients {
         [] | [_] -> Ok([])
         [linear_a, linear_b] -> Ok(linear(linear_a, linear_b))
@@ -421,7 +379,9 @@ fn cubic_with(
             quadratic_b,
             quadratic_c,
             options: QuadraticOptions(
-              coefficient_tolerance: options.coefficient_tolerance,
+              coefficient_tolerance: polynomial_coefficient_tolerance(
+                coefficients,
+              ),
               repeated_root_policy: ConsolidateRepeatedRoot,
             ),
           ))
@@ -439,33 +399,25 @@ fn cubic_with(
   }
 }
 
-fn consolidate_isolations(
-  isolations: List(RootIsolation),
-  tolerance: Float,
-) -> List(RootIsolation) {
+fn distinct_isolations(isolations: List(RootIsolation)) -> List(RootIsolation) {
   isolations
   |> list.sort(by: fn(left, right) {
     float.compare(left.estimate, right.estimate)
   })
-  |> consolidate_sorted_isolations(float.max(tolerance, 0.0), kept: [])
+  |> distinct_sorted_isolations(kept: [])
 }
 
-fn consolidate_sorted_isolations(
+fn distinct_sorted_isolations(
   isolations: List(RootIsolation),
-  tolerance: Float,
   kept kept: List(RootIsolation),
 ) -> List(RootIsolation) {
   case isolations, kept {
     [], _ -> list.reverse(kept)
-    [first, ..rest], [] ->
-      consolidate_sorted_isolations(rest, tolerance, kept: [first])
+    [first, ..rest], [] -> distinct_sorted_isolations(rest, kept: [first])
     [first, ..rest], [previous, ..] ->
-      case
-        float.absolute_value(first.estimate -. previous.estimate) <=. tolerance
-      {
-        True -> consolidate_sorted_isolations(rest, tolerance, kept:)
-        False ->
-          consolidate_sorted_isolations(rest, tolerance, kept: [first, ..kept])
+      case first.estimate == previous.estimate {
+        True -> distinct_sorted_isolations(rest, kept:)
+        False -> distinct_sorted_isolations(rest, kept: [first, ..kept])
       }
   }
 }
@@ -476,11 +428,26 @@ fn polynomial_root_isolations_valid(
   upper: Float,
   options: PolynomialOptions,
 ) -> Result(List(RootIsolation), Error) {
+  let coefficient_tolerance = polynomial_coefficient_tolerance(coefficients)
   case coefficients {
     [] | [_] -> Ok([])
     [a, b] ->
       Ok(
-        linear_with_tolerance(a, b, options.coefficient_tolerance)
+        linear_with_tolerance(a, b, coefficient_tolerance)
+        |> inside(from: lower, to: upper)
+        |> list.map(fn(root) { RootIsolation(root, root, root) }),
+      )
+    [a, b, c] ->
+      Ok(
+        quadratic_with(
+          a,
+          b,
+          c,
+          options: QuadraticOptions(
+            coefficient_tolerance:,
+            repeated_root_policy: ConsolidateRepeatedRoot,
+          ),
+        )
         |> inside(from: lower, to: upper)
         |> list.map(fn(root) { RootIsolation(root, root, root) }),
       )
@@ -492,8 +459,7 @@ fn polynomial_root_isolations_valid(
         upper,
         options,
       ))
-      let critical =
-        consolidate_isolations(critical, options.parameter_tolerance)
+      let critical = distinct_isolations(critical)
       let critical_values =
         list.map(critical, fn(isolation) {
           let RootIsolation(estimate:, ..) = isolation
@@ -503,17 +469,24 @@ fn polynomial_root_isolations_valid(
         critical
         |> list.filter(fn(isolation) {
           let RootIsolation(estimate:, ..) = isolation
-          is_close_to_zero(
+          value_is_close_to_zero(
             evaluate_polynomial(coefficients, at: estimate),
-            options.value_tolerance,
+            polynomial_value_scale(coefficients),
+          )
+        })
+        |> list.map(fn(isolation) {
+          RootIsolation(
+            isolation.estimate,
+            isolation.estimate,
+            isolation.estimate,
           )
         })
       let endpoints =
         [lower, upper]
         |> list.filter(fn(value) {
-          is_close_to_zero(
+          value_is_close_to_zero(
             evaluate_polynomial(coefficients, at: value),
-            options.value_tolerance,
+            polynomial_value_scale(coefficients),
           )
         })
         |> list.map(fn(root) { RootIsolation(root, root, root) })
@@ -527,7 +500,7 @@ fn polynomial_root_isolations_valid(
       )
       Ok(
         list.append(endpoints, list.append(repeated, crossing))
-        |> consolidate_isolations(options.parameter_tolerance),
+        |> distinct_isolations,
       )
     }
   }
@@ -553,10 +526,11 @@ fn polynomial_crossing_roots_loop(
     [left, right, ..rest] -> {
       let left_value = evaluate_polynomial(coefficients, at: left)
       let right_value = evaluate_polynomial(coefficients, at: right)
+      let value_scale = polynomial_value_scale(coefficients)
       case
         same_sign(left_value, right_value)
-        || left_value == 0.0
-        || right_value == 0.0
+        || value_is_close_to_zero(left_value, value_scale)
+        || value_is_close_to_zero(right_value, value_scale)
       {
         True ->
           polynomial_crossing_roots_loop(
@@ -571,7 +545,7 @@ fn polynomial_crossing_roots_loop(
             left,
             left_value,
             right,
-            options.parameter_tolerance,
+            parameter_tolerance,
             options.max_iterations,
           ))
           polynomial_crossing_roots_loop(
@@ -596,7 +570,7 @@ fn polynomial_refine_bracket(
 ) -> Result(RootIsolation, Error) {
   let midpoint = left +. { right -. left } /. 2.0
   let midpoint_value = evaluate_polynomial(coefficients, at: midpoint)
-  case { right -. left } /. 2.0 <=. tolerance {
+  case right -. left <=. tolerance {
     True -> Ok(RootIsolation(left, midpoint, right))
     False ->
       case remaining_iterations <= 1 {
@@ -605,7 +579,7 @@ fn polynomial_refine_bracket(
           let proposal = midpoint
           let proposal_value = evaluate_polynomial(coefficients, at: proposal)
           case proposal_value == 0.0 {
-            True -> Ok(RootIsolation(proposal, proposal, proposal))
+            True -> Ok(RootIsolation(left, proposal, right))
             False ->
               case same_sign(left_value, proposal_value) {
                 True ->
@@ -636,130 +610,54 @@ fn polynomial_refine_bracket(
 fn classify_polynomial_root(
   coefficients: List(Float),
   isolation: RootIsolation,
-  lower: Float,
-  upper: Float,
-  options: PolynomialOptions,
+  value_scale: Float,
 ) -> RootKind {
-  let RootIsolation(lower: root_lower, estimate:, upper: root_upper) = isolation
-  let value_tolerance = float.max(options.value_tolerance, 0.0)
-  let left_sample =
-    root_sample_on_left(
-      coefficients,
-      estimate,
-      root_lower,
-      lower,
-      value_tolerance,
-      options.parameter_tolerance,
-      remaining_expansions: 32,
+  let RootIsolation(lower:, estimate:, upper:) = isolation
+  let sampled =
+    classify_root_signs(
+      evaluate_polynomial(coefficients, at: lower),
+      evaluate_polynomial(coefficients, at: upper),
+      value_scale,
     )
-  let right_sample =
-    root_sample_on_right(
-      coefficients,
-      estimate,
-      root_upper,
-      upper,
-      value_tolerance,
-      options.parameter_tolerance,
-      remaining_expansions: 32,
-    )
-
-  case left_sample, right_sample {
-    Ok(left_value), Ok(right_value) ->
-      classify_root_signs(left_value, right_value, value_tolerance)
-    _, _ -> Ambiguous
+  case sampled {
+    Ambiguous -> classify_root_from_derivatives(coefficients, estimate)
+    kind -> kind
   }
 }
 
-fn root_sample_on_left(
+fn classify_root_from_derivatives(
   coefficients: List(Float),
   estimate: Float,
-  root_lower: Float,
-  interval_lower: Float,
-  value_tolerance: Float,
-  parameter_tolerance: Float,
-  remaining_expansions remaining_expansions: Int,
-) -> Result(Float, Nil) {
-  let candidate = case root_lower <. estimate {
-    True -> root_lower
-    False -> estimate -. parameter_tolerance
-  }
-  root_sample_on_side(
-    coefficients,
-    candidate,
-    fallback_from: estimate,
-    interval_edge: interval_lower,
-    direction: -1.0,
-    value_tolerance:,
-    parameter_tolerance:,
-    remaining_expansions:,
+) -> RootKind {
+  classify_root_from_derivatives_loop(
+    polynomial_derivative(coefficients),
+    estimate,
+    order: 1,
   )
 }
 
-fn root_sample_on_right(
+fn classify_root_from_derivatives_loop(
   coefficients: List(Float),
   estimate: Float,
-  root_upper: Float,
-  interval_upper: Float,
-  value_tolerance: Float,
-  parameter_tolerance: Float,
-  remaining_expansions remaining_expansions: Int,
-) -> Result(Float, Nil) {
-  let candidate = case root_upper >. estimate {
-    True -> root_upper
-    False -> estimate +. parameter_tolerance
-  }
-  root_sample_on_side(
-    coefficients,
-    candidate,
-    fallback_from: estimate,
-    interval_edge: interval_upper,
-    direction: 1.0,
-    value_tolerance:,
-    parameter_tolerance:,
-    remaining_expansions:,
-  )
-}
-
-fn root_sample_on_side(
-  coefficients: List(Float),
-  candidate: Float,
-  fallback_from fallback_from: Float,
-  interval_edge interval_edge: Float,
-  direction direction: Float,
-  value_tolerance value_tolerance: Float,
-  parameter_tolerance parameter_tolerance: Float,
-  remaining_expansions remaining_expansions: Int,
-) -> Result(Float, Nil) {
-  case
-    direction <. 0.0
-    && candidate <=. interval_edge
-    || direction >. 0.0
-    && candidate >=. interval_edge
-  {
-    True -> Error(Nil)
-    False -> {
-      let value = evaluate_polynomial(coefficients, at: candidate)
-      case !is_close_to_zero(value, value_tolerance) {
-        True -> Ok(value)
+  order order: Int,
+) -> RootKind {
+  case coefficients {
+    [] -> Ambiguous
+    _ -> {
+      let value = evaluate_polynomial(coefficients, at: estimate)
+      case value_is_close_to_zero(value, polynomial_value_scale(coefficients)) {
+        True ->
+          classify_root_from_derivatives_loop(
+            polynomial_derivative(coefficients),
+            estimate,
+            order: order + 1,
+          )
         False ->
-          case remaining_expansions <= 0 {
-            True -> Error(Nil)
-            False -> {
-              let distance = float.absolute_value(candidate -. fallback_from)
-              let distance =
-                float.max(distance *. 2.0, parameter_tolerance *. 2.0)
-              let next_candidate = fallback_from +. direction *. distance
-              root_sample_on_side(
-                coefficients,
-                next_candidate,
-                fallback_from:,
-                interval_edge:,
-                direction:,
-                value_tolerance:,
-                parameter_tolerance:,
-                remaining_expansions: remaining_expansions - 1,
-              )
-            }
+          case int.is_odd(order), value >. 0.0 {
+            True, True -> NegativeToPositive
+            True, False -> PositiveToNegative
+            False, True -> PositiveToPositive
+            False, False -> NegativeToNegative
           }
       }
     }
@@ -769,11 +667,11 @@ fn root_sample_on_side(
 fn classify_root_signs(
   left_value: Float,
   right_value: Float,
-  value_tolerance: Float,
+  value_scale: Float,
 ) -> RootKind {
   case
-    signed_nonzero(left_value, value_tolerance),
-    signed_nonzero(right_value, value_tolerance)
+    signed_nonzero(left_value, value_scale),
+    signed_nonzero(right_value, value_scale)
   {
     Ok(-1), Ok(1) -> NegativeToPositive
     Ok(1), Ok(-1) -> PositiveToNegative
@@ -783,8 +681,8 @@ fn classify_root_signs(
   }
 }
 
-fn signed_nonzero(value: Float, tolerance: Float) -> Result(Int, Nil) {
-  case is_close_to_zero(value, tolerance) {
+fn signed_nonzero(value: Float, scale: Float) -> Result(Int, Nil) {
+  case value_is_close_to_zero(value, scale) {
     True -> Error(Nil)
     False ->
       case value <. 0.0 {
@@ -809,15 +707,85 @@ fn polynomial_derivative_loop(
   }
 }
 
-fn normalize_polynomial_coefficients(
-  coefficients: List(Float),
-  tolerance: Float,
-) -> List(Float) {
+fn finalize_root_windows(
+  isolations: List(RootIsolation),
+  lower: Float,
+  upper: Float,
+) -> List(RootIsolation) {
+  let isolations = distinct_isolations(isolations)
+  finalize_root_windows_loop(
+    isolations,
+    lower,
+    upper,
+    previous_estimate: None,
+    finalized: [],
+  )
+}
+
+fn finalize_root_windows_loop(
+  isolations: List(RootIsolation),
+  domain_lower: Float,
+  domain_upper: Float,
+  previous_estimate previous_estimate: Option(Float),
+  finalized finalized: List(RootIsolation),
+) -> List(RootIsolation) {
+  case isolations {
+    [] -> list.reverse(finalized)
+    [isolation, ..rest] -> {
+      let RootIsolation(lower:, estimate:, upper:) = isolation
+      let left_limit = case previous_estimate {
+        None -> domain_lower
+        Some(previous) -> previous +. { estimate -. previous } /. 2.0
+      }
+      let right_limit = case rest {
+        [] -> domain_upper
+        [next, ..] -> estimate +. { next.estimate -. estimate } /. 2.0
+      }
+      let #(window_lower, window_upper) = case lower == upper {
+        True -> #(
+          estimate -. parameter_tolerance /. 2.0,
+          estimate +. parameter_tolerance /. 2.0,
+        )
+        False -> #(lower, upper)
+      }
+      let finalized_isolation =
+        RootIsolation(
+          lower: float.max(left_limit, window_lower),
+          estimate:,
+          upper: float.min(right_limit, window_upper),
+        )
+      finalize_root_windows_loop(
+        rest,
+        domain_lower,
+        domain_upper,
+        previous_estimate: Some(estimate),
+        finalized: [finalized_isolation, ..finalized],
+      )
+    }
+  }
+}
+
+fn polynomial_value_scale(coefficients: List(Float)) -> Float {
+  list.fold(coefficients, 0.0, fn(scale, coefficient) {
+    float.max(scale, float.absolute_value(coefficient))
+  })
+}
+
+fn polynomial_coefficient_tolerance(coefficients: List(Float)) -> Float {
+  polynomial_value_scale(coefficients) *. relative_value_tolerance
+}
+
+fn value_is_close_to_zero(value: Float, scale: Float) -> Bool {
+  float.absolute_value(value) <=. scale *. relative_value_tolerance
+}
+
+fn normalize_polynomial_coefficients(coefficients: List(Float)) -> List(Float) {
+  let tolerance = polynomial_coefficient_tolerance(coefficients)
   case coefficients {
     [] | [_] -> coefficients
     [first, ..rest] ->
       case coefficient_is_zero(first, tolerance) {
-        True -> normalize_polynomial_coefficients(rest, tolerance)
+        True -> normalize_polynomial_coefficients(rest)
         False -> coefficients
       }
   }
@@ -933,10 +901,6 @@ fn ordered_bracket(left: Float, right: Float) -> #(Float, Float) {
     True -> #(left, right)
     False -> #(right, left)
   }
-}
-
-fn is_close_to_zero(value: Float, tolerance: Float) -> Bool {
-  float.absolute_value(value) <=. tolerance
 }
 
 fn same_sign(a: Float, b: Float) -> Bool {

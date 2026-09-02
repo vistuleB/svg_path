@@ -3871,12 +3871,7 @@ fn bezier_projection_with(
 ) -> Result(SegmentProjection, Error) {
   use coefficients <- result.try(distance_stationary_polynomial(point, segment))
   let polynomial_options =
-    root.PolynomialOptions(
-      coefficient_tolerance: 0.000000000001,
-      parameter_tolerance: options.tolerance,
-      value_tolerance: 0.000000000001,
-      max_iterations: options.max_iterations,
-    )
+    root.PolynomialOptions(max_iterations: options.max_iterations)
   use isolations <- result.try(
     root.polynomial_root_isolations_with(
       coefficients,
@@ -5042,13 +5037,7 @@ fn segment_line_classified_roots(
   signed_line_distance_tolerance: Float,
   max_iterations: Int,
 ) -> Result(List(root.ClassifiedRoot), Error) {
-  let options =
-    root.PolynomialOptions(
-      coefficient_tolerance: signed_line_distance_tolerance,
-      parameter_tolerance: 0.000000000001,
-      value_tolerance: signed_line_distance_tolerance,
-      max_iterations:,
-    )
+  let options = root.PolynomialOptions(max_iterations:)
   case segment {
     Line(start:, end:) -> {
       root.real_linear_01_roots(
@@ -5291,7 +5280,6 @@ fn positive_remainder_degrees(angle: Float) -> Float {
 
 fn crossing_root_error(error: root.Error) -> Error {
   case error {
-    root.InvalidTolerance(tolerance) -> InvalidCrossingTolerance(tolerance)
     root.InvalidMaxIterations(max_iterations) ->
       InvalidCrossingMaxIterations(max_iterations)
     root.MaxIterationsReached(estimate:, value:) ->
@@ -6595,7 +6583,6 @@ fn distance_stationary_polynomial(
 
 fn distance_root_error(error: root.Error) -> Error {
   case error {
-    root.InvalidTolerance(tolerance) -> InvalidDistanceTolerance(tolerance)
     root.InvalidMaxIterations(max_iterations) ->
       InvalidDistanceMaxIterations(max_iterations)
     root.MaxIterationsReached(estimate:, value:) ->
@@ -6953,8 +6940,10 @@ fn tangential_error_is_improving(
   ))
   let previous_speed_squared = dot(previous_derivative, previous_derivative)
   let proposal_speed_squared = dot(proposal_derivative, proposal_derivative)
-  let reliable_speed_squared =
-    segment_derivative_scale_squared(segment) *. 0.0000000001
+  use derivative_scale_squared <- result.try(segment_derivative_scale_squared(
+    segment,
+  ))
+  let reliable_speed_squared = derivative_scale_squared *. 0.0000000001
   case
     previous_speed_squared >=. reliable_speed_squared,
     proposal_speed_squared >=. reliable_speed_squared
@@ -6968,20 +6957,33 @@ fn tangential_error_is_improving(
   }
 }
 
-fn segment_derivative_scale_squared(segment: Segment) -> Float {
-  let scale = case segment {
-    Line(start:, end:) -> distance(start, end)
+fn segment_derivative_scale_squared(segment: Segment) -> Result(Float, Error) {
+  use scale <- result.try(case segment {
+    Line(start:, end:) -> Ok(distance(start, end))
     QuadraticBezier(start:, control:, end:) ->
-      2.0 *. float.max(distance(start, control), distance(control, end))
+      Ok(2.0 *. float.max(distance(start, control), distance(control, end)))
     CubicBezier(start:, control1:, control2:, end:) ->
-      3.0
-      *. float.max(
-        distance(start, control1),
-        float.max(distance(control1, control2), distance(control2, end)),
+      Ok(
+        3.0
+        *. float.max(
+          distance(start, control1),
+          float.max(distance(control1, control2), distance(control2, end)),
+        ),
       )
-    Arc(..) -> 1.0
-  }
-  scale *. scale
+    Arc(..) -> {
+      use arc <- result.try(arc_center_data(segment))
+      let angular_travel =
+        float.absolute_value(trig.degrees_to_radians(arc.delta_angle))
+      Ok(
+        angular_travel
+        *. float.max(
+          float.absolute_value(arc.radius.x),
+          float.absolute_value(arc.radius.y),
+        ),
+      )
+    }
+  })
+  Ok(scale *. scale)
 }
 
 fn best_distance_parameter(

@@ -85,13 +85,7 @@ pub fn quintic_roots_in_unit_interval_test() {
 }
 
 pub fn polynomial_isolation_preserves_crossing_bracket_test() {
-  let options =
-    root.PolynomialOptions(
-      coefficient_tolerance: 0.000000000001,
-      parameter_tolerance: 0.01,
-      value_tolerance: 0.000000000001,
-      max_iterations: 100,
-    )
+  let options = root.PolynomialOptions(max_iterations: 100)
   let coefficients = [1.0, 0.0, 0.0, -2.0]
   let assert Ok([root.RootIsolation(lower:, estimate:, upper:)]) =
     root.polynomial_root_isolations_with(
@@ -106,7 +100,38 @@ pub fn polynomial_isolation_preserves_crossing_bracket_test() {
   assert root.evaluate_polynomial(coefficients, at: lower)
     *. root.evaluate_polynomial(coefficients, at: upper)
     <=. 0.0
-  assert { upper -. lower } /. 2.0 <=. options.parameter_tolerance
+  assert upper -. lower <=. 0.000000001
+}
+
+pub fn direct_polynomial_root_receives_fixed_parameter_window_test() {
+  let assert Ok([root.RootIsolation(lower:, estimate:, upper:)]) =
+    root.polynomial_root_isolations_with(
+      [1.0, -1.0, 0.25],
+      from: 0.0,
+      to: 1.0,
+      options: root.default_polynomial_options(),
+    )
+
+  assert estimate == 0.5
+  assert lower == 0.5 -. 0.000000001 /. 2.0
+  assert upper == 0.5 +. 0.000000001 /. 2.0
+}
+
+pub fn polynomial_classification_is_coefficient_scale_independent_test() {
+  let classify = fn(scale) {
+    let assert Ok([classified]) =
+      root.classified_polynomial_roots_with(
+        [scale, 0.0, 0.0],
+        from: -1.0,
+        to: 1.0,
+        options: root.default_polynomial_options(),
+      )
+    classified.kind
+  }
+
+  assert classify(0.000000000000000001) == root.PositiveToPositive
+  assert classify(1.0) == root.PositiveToPositive
+  assert classify(1.0e18) == root.PositiveToPositive
 }
 
 pub fn polynomial_bisection_handles_flat_derivative_region_test() {
@@ -160,20 +185,37 @@ pub fn classified_polynomial_roots_report_even_roots_test() {
   assert !root.is_crossing_root(negative_even.kind)
 }
 
-pub fn classified_polynomial_roots_report_endpoint_ambiguity_test() {
-  let assert Ok([endpoint]) =
+pub fn classified_polynomial_roots_classify_endpoint_roots_test() {
+  let assert Ok([linear_start]) =
     root.classified_polynomial_roots_with(
       [1.0, 0.0],
       from: 0.0,
       to: 1.0,
       options: root.default_polynomial_options(),
     )
-  assert endpoint.kind == root.Ambiguous
+  assert linear_start.kind == root.NegativeToPositive
+
+  let assert Ok([linear_end]) =
+    root.classified_polynomial_roots_with(
+      [-1.0, 1.0],
+      from: 0.0,
+      to: 1.0,
+      options: root.default_polynomial_options(),
+    )
+  assert linear_end.kind == root.PositiveToNegative
+
+  let assert Ok([quadratic_start]) =
+    root.classified_polynomial_roots_with(
+      [-1.0, 0.0, 0.0],
+      from: 0.0,
+      to: 1.0,
+      options: root.default_polynomial_options(),
+    )
+  assert quadratic_start.kind == root.NegativeToNegative
 }
 
 pub fn classified_polynomial_roots_reject_invalid_iterations_test() {
-  let options = root.default_polynomial_options()
-  let options = root.PolynomialOptions(..options, max_iterations: 0)
+  let options = root.PolynomialOptions(max_iterations: 0)
 
   assert root.classified_polynomial_roots_with(
       [1.0, -1.0],

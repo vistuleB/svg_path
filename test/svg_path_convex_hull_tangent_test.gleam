@@ -429,7 +429,7 @@ pub fn cubic_chord_polynomial_refinement_matches_known_family_test() {
             approximate:,
             other: 0.0,
           )
-        assert float.absolute_value(refined -. expected) <=. 0.000000000001
+        assert float.absolute_value(refined -. expected) <=. 0.000000001
       })
     })
   })
@@ -443,7 +443,7 @@ pub fn cubic_chord_refinement_is_scale_independent_test() {
   let refined =
     convex_hull.internal_refine_chord_tangent(segment, approximate:, other: 0.0)
 
-  assert float.absolute_value(refined -. expected) <=. 0.000000000001
+  assert float.absolute_value(refined -. expected) <=. 0.000000001
 }
 
 pub fn cubic_chord_refinement_ignores_trivial_endpoint_root_test() {
@@ -457,7 +457,7 @@ pub fn cubic_chord_refinement_ignores_trivial_endpoint_root_test() {
       other: 0.0,
     )
 
-  assert float.absolute_value(refined -. expected) <=. 0.000000000001
+  assert float.absolute_value(refined -. expected) <=. 0.000000001
 }
 
 fn chord_tangent_family(root: Float, scale: Float) -> svg_path.Segment {
