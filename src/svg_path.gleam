@@ -3948,7 +3948,7 @@ pub fn subpath_containment(
 ///
 /// `tolerance` is measured in path coordinate units and determines the width
 /// classified as `Boundary`. `samples` and `max_iterations` control numerical
-/// projection and adaptive line approximation for curves.
+/// projection and ray-crossing queries.
 pub fn subpath_containment_with(
   point: Point,
   within subpath: Subpath,
