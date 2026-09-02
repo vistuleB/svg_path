@@ -68,6 +68,8 @@ const tangent_epsilon = 0.000001
 
 const point_tolerance = 0.000000001
 
+const point_parameter_tolerance = 0.000000001
+
 const arrangement_tolerance = 0.000000002
 
 const submerged_side_sampling_distance = 0.00000005
@@ -75,6 +77,14 @@ const submerged_side_sampling_distance = 0.00000005
 const band_orientation_side_sampling_distance = 0.0001
 
 const curvature_parameter_tolerance = 0.000001
+
+// Curvature has inverse-length units; keep this distinct from the parameter
+// tolerance even while both use the same numeric default.
+const curvature_value_tolerance = 0.000001
+
+// Radius values have length units and must not reuse parameter-space or
+// inverse-length curvature tolerances.
+const curvature_radius_tolerance = 0.000001
 
 const default_tangent_heal_angle_degrees = 2.0
 
@@ -132,6 +142,9 @@ pub type Error {
 
   /// The stalled offset diameter must be finite and non-negative.
   InvalidStalledOffsetDiameter(diameter: Float)
+
+  /// The tangent-healing angle must be finite and non-negative.
+  InvalidTangentHealAngleDegrees(angle: Float)
 
   /// Stroke width must be finite and greater than zero.
   InvalidStrokeWidth(width: Float)
@@ -278,7 +291,8 @@ pub type BandTrimming {
 ///
 /// `tolerance` bounds the sampled geometric error of a fitted offset curve,
 /// `samples` controls the number of check samples, and `max_depth` limits
-/// recursive subdivision.
+/// recursive subdivision. The offset pipeline additionally caps refinement at
+/// five generations, so values above five do not increase refinement depth.
 pub type FittingOptions {
   FittingOptions(tolerance: Float, samples: Int, max_depth: Int)
 }
@@ -3711,7 +3725,7 @@ pub fn subpath_band_with(
           WindingSideOpinion(left: 0, right: 1),
         ]
       }
-      case in_band {
+      use path <- result.try(case in_band {
         True ->
           topological_band_path_with_opinions(
             [untrimmed_a, untrimmed_b],
@@ -3720,6 +3734,10 @@ pub fn subpath_band_with(
             options,
           )
         False -> one_subpath_band_semantic_path(band)
+      })
+      case inner_offset >. outer_offset {
+        True -> Ok(svg_path.path_reverse(path))
+        False -> Ok(path)
       }
     }
   }
@@ -4303,6 +4321,17 @@ fn validate_offset_diameter(options: Options) -> Result(Nil, Error) {
     || !number.is_finite(options.stalled_offset_diameter)
   {
     True -> Error(InvalidStalledOffsetDiameter(options.stalled_offset_diameter))
+    False -> validate_tangent_heal_angle(options)
+  }
+}
+
+fn validate_tangent_heal_angle(options: Options) -> Result(Nil, Error) {
+  case
+    options.tangent_heal_angle_degrees <. 0.0
+    || !number.is_finite(options.tangent_heal_angle_degrees)
+  {
+    True ->
+      Error(InvalidTangentHealAngleDegrees(options.tangent_heal_angle_degrees))
     False -> validate_join(options.join)
   }
 }
@@ -7871,11 +7900,15 @@ fn synchronized_curvature_split_parameters(
   use inflections <- result.try(offset_inflection_parameters(segment))
   let reversals =
     list.append(inner_reversals, outer_reversals)
-    |> list.filter(fn(t) { t >. point_tolerance && t <. 1.0 -. point_tolerance })
+    |> list.filter(fn(t) {
+      t >. point_parameter_tolerance && t <. 1.0 -. point_parameter_tolerance
+    })
     |> list.map(fn(t) { CurvatureSplitParameter(t, CuspSplit) })
   let inflections =
     inflections
-    |> list.filter(fn(t) { t >. point_tolerance && t <. 1.0 -. point_tolerance })
+    |> list.filter(fn(t) {
+      t >. point_parameter_tolerance && t <. 1.0 -. point_parameter_tolerance
+    })
     |> list.map(fn(t) { CurvatureSplitParameter(t, InflectionSplit) })
   Ok(
     [
@@ -7918,7 +7951,7 @@ fn split_prepared_segment_for_both_offsets(
             outer_status,
             synchronized:,
           ))
-          case to_t -. from_t <=. point_tolerance {
+          case to_t -. from_t <=. point_parameter_tolerance {
             True -> Ok(rest)
             False -> {
               use segment <- result.try(prepared_segment_between(
@@ -7977,7 +8010,7 @@ fn synchronized_late_stall_near_start(
     None -> Ok(sources)
     Some(root_t) -> {
       let expanded_to = root_t *. 2.0
-      case expanded_to >=. 1.0 -. point_tolerance {
+      case expanded_to >=. 1.0 -. point_parameter_tolerance {
         True -> Ok(sources)
         False -> {
           let assert [first, ..] = sources
@@ -8003,7 +8036,7 @@ fn synchronized_late_stall_near_start(
               Ok(
                 list.map(split, fn(source) {
                   let SynchronizedSourceSegment(prepared_to:, ..) = source
-                  case prepared_to <=. expanded_to +. point_tolerance {
+                  case prepared_to <=. expanded_to +. point_parameter_tolerance {
                     True -> set_synchronized_side_stalled(source, side)
                     False -> source
                   }
@@ -8027,7 +8060,7 @@ fn synchronized_late_stall_near_end(
     None -> Ok(sources)
     Some(root_t) -> {
       let expanded_from = root_t *. 2.0 -. 1.0
-      case expanded_from <=. point_tolerance {
+      case expanded_from <=. point_parameter_tolerance {
         True -> Ok(sources)
         False -> {
           let assert [first, ..] = sources
@@ -8053,7 +8086,7 @@ fn synchronized_late_stall_near_end(
               Ok(
                 list.map(split, fn(source) {
                   let SynchronizedSourceSegment(prepared_from:, ..) = source
-                  case prepared_from >=. expanded_from -. point_tolerance {
+                  case prepared_from >=. expanded_from -. point_parameter_tolerance {
                     True -> set_synchronized_side_stalled(source, side)
                     False -> source
                   }
@@ -8140,8 +8173,8 @@ fn split_synchronized_sources_at(
     [first, ..rest] -> {
       let SynchronizedSourceSegment(prepared_from:, prepared_to:, ..) = first
       case
-        parameter >. prepared_from +. point_tolerance
-        && parameter <. prepared_to -. point_tolerance
+        parameter >. prepared_from +. point_parameter_tolerance
+        && parameter <. prepared_to -. point_parameter_tolerance
       {
         False -> {
           use rest <- result.try(split_synchronized_sources_at(rest, parameter))
@@ -8371,8 +8404,8 @@ fn offset_curvature_zone(
     Ok(radius) -> offset_curvature_radius_zone(radius, offset)
     Error(_) ->
       case curvature.segment_left_normal_curvature(segment, at: t) {
-        Ok(value) if value >. curvature_parameter_tolerance -> Opposite
-        Ok(value) if value <. 0.0 -. curvature_parameter_tolerance -> Opposite
+        Ok(value) if value >. curvature_value_tolerance -> Opposite
+        Ok(value) if value <. 0.0 -. curvature_value_tolerance -> Opposite
         Ok(_) -> OutsideOffsetRadius
         Error(_) -> UnknownCurvatureZone
       }
@@ -8380,7 +8413,7 @@ fn offset_curvature_zone(
 }
 
 fn offset_curvature_radius_zone(radius: Float, offset: Float) {
-  let tolerance = curvature_parameter_tolerance
+  let tolerance = curvature_radius_tolerance
   case offset >=. 0.0 {
     True ->
       case radius <. 0.0 -. tolerance {
@@ -10505,8 +10538,7 @@ fn boundary_reaches_offset_radius(
     ReversalBoundary(Some(value)) if value != 0.0 -> {
       let radius = 1.0 /. value
       number.is_finite(radius)
-      && float.absolute_value(radius -. offset)
-      <=. curvature_parameter_tolerance
+      && float.absolute_value(radius -. offset) <=. curvature_radius_tolerance
     }
     _ -> False
   }
