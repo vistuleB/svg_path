@@ -47,6 +47,8 @@ const default_distance_tolerance = 0.000000001
 
 const default_distance_max_iterations = 100
 
+const distance_parameter_tolerance = 0.000000001
+
 const default_direction_relative_tolerance = 0.000000001
 
 const default_containment_tolerance = 0.000000001
@@ -6597,6 +6599,8 @@ fn arc_projection_candidates(
   options: DistanceOptions,
   polish_iterations: Int,
 ) -> Result(List(Float), Error) {
+  use derivative_scale <- result.try(segment_derivative_scale(segment))
+  let stationary_value_tolerance = options.tolerance *. derivative_scale
   case distance_stationary_value(point, segment, 0.0) {
     Error(error) -> Error(error)
     Ok(first_value) -> {
@@ -6608,6 +6612,7 @@ fn arc_projection_candidates(
         index: 1,
         previous_t: 0.0,
         previous_value: first_value,
+        stationary_value_tolerance:,
         candidates: [1.0, 0.0],
       )
     }
@@ -6622,6 +6627,7 @@ fn scan_arc_projection_candidates(
   index index: Int,
   previous_t previous_t: Float,
   previous_value previous_value: Float,
+  stationary_value_tolerance stationary_value_tolerance: Float,
   candidates candidates: List(Float),
 ) -> Result(List(Float), Error) {
   case index > options.samples {
@@ -6642,6 +6648,7 @@ fn scan_arc_projection_candidates(
               previous_value,
               next_t,
               next_value,
+              stationary_value_tolerance,
             )
           {
             Error(error) -> Error(error)
@@ -6654,6 +6661,7 @@ fn scan_arc_projection_candidates(
                 index: index + 1,
                 previous_t: next_t,
                 previous_value: next_value,
+                stationary_value_tolerance:,
                 candidates:,
               )
             Ok(Some(candidate)) ->
@@ -6665,10 +6673,11 @@ fn scan_arc_projection_candidates(
                 index: index + 1,
                 previous_t: next_t,
                 previous_value: next_value,
+                stationary_value_tolerance:,
                 candidates: insert_near_unique(
                   candidates,
                   candidate,
-                  options.tolerance,
+                  distance_parameter_tolerance,
                 ),
               )
           }
@@ -6687,11 +6696,12 @@ fn arc_projection_candidate_for_window(
   previous_value: Float,
   next_t: Float,
   next_value: Float,
+  stationary_value_tolerance: Float,
 ) -> Result(Option(Float), Error) {
-  case is_close_to_zero(previous_value, options.tolerance) {
+  case is_close_to_zero(previous_value, stationary_value_tolerance) {
     True -> Ok(Some(previous_t))
     False -> {
-      case is_close_to_zero(next_value, options.tolerance) {
+      case is_close_to_zero(next_value, stationary_value_tolerance) {
         True -> Ok(Some(next_t))
         False -> {
           case same_sign(previous_value, next_value) {
@@ -6958,7 +6968,12 @@ fn tangential_error_is_improving(
 }
 
 fn segment_derivative_scale_squared(segment: Segment) -> Result(Float, Error) {
-  use scale <- result.try(case segment {
+  use scale <- result.try(segment_derivative_scale(segment))
+  Ok(scale *. scale)
+}
+
+fn segment_derivative_scale(segment: Segment) -> Result(Float, Error) {
+  case segment {
     Line(start:, end:) -> Ok(distance(start, end))
     QuadraticBezier(start:, control:, end:) ->
       Ok(2.0 *. float.max(distance(start, control), distance(control, end)))
@@ -6982,8 +6997,7 @@ fn segment_derivative_scale_squared(segment: Segment) -> Result(Float, Error) {
         ),
       )
     }
-  })
-  Ok(scale *. scale)
+  }
 }
 
 fn best_distance_parameter(
