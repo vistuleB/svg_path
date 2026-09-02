@@ -47,7 +47,7 @@ const default_distance_tolerance = 0.000000001
 
 const default_distance_max_iterations = 100
 
-const distance_parameter_tolerance = 0.000000001
+const curve_parameter_tolerance = 0.000000001
 
 const default_direction_relative_tolerance = 0.000000001
 
@@ -4965,7 +4965,7 @@ fn scan_crossings(
                 crossings: insert_near_unique(
                   crossings,
                   crossing,
-                  options.signed_line_distance_tolerance,
+                  curve_parameter_tolerance,
                 ),
               )
           }
@@ -6677,7 +6677,7 @@ fn scan_arc_projection_candidates(
                 candidates: insert_near_unique(
                   candidates,
                   candidate,
-                  distance_parameter_tolerance,
+                  curve_parameter_tolerance,
                 ),
               )
           }
