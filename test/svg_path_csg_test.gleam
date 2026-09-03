@@ -468,7 +468,7 @@ pub fn difference_creates_hole_and_preserves_mixed_curves_test() {
   assert has_line(cut)
 }
 
-pub fn difference_adapts_old_hole_orientation_tests() {
+pub fn difference_adapts_old_hole_orientation_test() {
   let probe = rectangle(7.0, 7.0, 13.0, 13.0)
   let assert Ok(nonzero) =
     subtract_paths(nested_rectangles(), probe, svg_path.Nonzero)
