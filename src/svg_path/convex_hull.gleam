@@ -64,6 +64,8 @@ const default_width_search_max_depth = 20
 
 const orientation_turn_tolerance = 0.000000001
 
+const width_lower_bound_roundoff_factor = 0.000000000001
+
 type SupportSample {
   SupportSample(angle: Float, t: Float, point: svg_path.Point, value: Float)
 }
@@ -701,6 +703,7 @@ fn directional_width_extremum(
         depth: 0,
         max_depth: int.max(0, max_depth),
         discarded_lower_bound: None,
+        lower_bound_roundoff: width_lower_bound_roundoff(diameter_upper_bound),
       )
     MaximumWidth ->
       maximum_width_optimization_loop(
@@ -930,6 +933,7 @@ fn minimum_width_optimization_loop(
   depth depth: Int,
   max_depth max_depth: Int,
   discarded_lower_bound discarded_lower_bound: Option(Float),
+  lower_bound_roundoff lower_bound_roundoff: Float,
 ) -> WidthExtremum {
   let best = best_width_sample(samples)
   let WidthSample(angle: best_angle, support: best_support) = best
@@ -944,10 +948,12 @@ fn minimum_width_optimization_loop(
     |> minimum_float_option
     |> minimum_option(discarded_lower_bound)
   let inventory_lower_bound = support_inventory_minimum_width(samples)
-  let lower_bound = case interval_lower_bound {
+  let raw_lower_bound = case interval_lower_bound {
     None -> best_width
     Some(bound) -> float.max(0.0, float.max(inventory_lower_bound, bound))
   }
+  let lower_bound =
+    float.max(0.0, raw_lower_bound -. lower_bound_roundoff)
   let converged = best_width -. lower_bound <=. accuracy
   case converged || depth >= max_depth {
     True ->
@@ -989,11 +995,17 @@ fn minimum_width_optimization_loop(
             depth: depth + 1,
             max_depth:,
             discarded_lower_bound:,
+            lower_bound_roundoff:,
           )
         }
       }
     }
   }
+}
+
+fn width_lower_bound_roundoff(diameter: Float) -> Float {
+  float.max(1.0, float.absolute_value(diameter))
+  *. width_lower_bound_roundoff_factor
 }
 
 fn maximum_width_optimization_loop(
