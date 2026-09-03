@@ -214,6 +214,25 @@ pub fn synchronized_offsets_accept_reversed_distance_order_test() {
   assert forward_outer == reversed_inner
 }
 
+pub fn exchanging_band_offsets_reverses_result_orientation_test() {
+  let source =
+    svg_path.subpath_assert_polygon([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
+      svg_path.Point(10.0, 8.0),
+      svg_path.Point(0.0, 8.0),
+    ])
+  let assert Ok(forward) =
+    offset.subpath_band(source, inner_offset: -1.0, outer_offset: 1.0)
+  let assert Ok(reversed) =
+    offset.subpath_band(source, inner_offset: 1.0, outer_offset: -1.0)
+
+  assert float.absolute_value(
+      area.signed_path(forward) +. area.signed_path(reversed),
+    )
+    <. 0.000000001
+}
+
 pub fn synchronized_offsets_retain_matched_join_geometry_test() {
   let source =
     svg_path.subpath_assert([
@@ -913,6 +932,19 @@ pub fn segment_rejects_negative_stalled_offset_diameter_test() {
 
   assert offset.segment_with(line, offset: 1.0, options:)
     == Error(offset.InvalidStalledOffsetDiameter(-1.0))
+}
+
+pub fn segment_rejects_negative_tangent_heal_angle_test() {
+  let line =
+    svg_path.Line(
+      start: svg_path.Point(0.0, 0.0),
+      end: svg_path.Point(10.0, 0.0),
+    )
+  let options =
+    offset.Options(..offset.default_options(), tangent_heal_angle_degrees: -1.0)
+
+  assert offset.segment_with(line, offset: 1.0, options:)
+    == Error(offset.InvalidTangentHealAngleDegrees(-1.0))
 }
 
 pub fn segment_rejects_zero_length_line_test() {
