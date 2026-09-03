@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+  width="640" height="720" viewBox="-0.35 -0.35 2.7 3.7">
+  <rect x="-0.35" y="-0.35" width="2.7" height="3.7" fill="white"/>
+
+  <!-- Union of five unit squares: (0,0), (1,0), (0,1), (0,2), (1,2). -->
+  <path
+    d="M 0 0 H 2 V 1 H 1 V 2 H 2 V 3 H 0 V 0 Z"
+    fill="#d9dee8"
+    stroke="#18243a"
+    stroke-width="0.045"
+    stroke-linejoin="miter"/>
+</svg>

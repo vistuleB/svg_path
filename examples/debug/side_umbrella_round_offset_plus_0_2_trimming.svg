@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="540" viewBox="0.0 0.0 9.0 3.2">
+  <rect x="0.0" y="0.0" width="9.0" height="3.2" fill="white" />
+  <g transform="translate(1.5 1.72) scale(1.0) translate(0.0 0.0)">
+    <path d="M 0 -1 L -0.86603 -0.5 L 0.86603 0.5 V -0.5 L -0.86603 0.5 L 0 1" fill="none" stroke="#94a3b8" stroke-width="0.025" stroke-linejoin="round" />
+    <path d="M 0.1 -0.82679 L -0.46603 -0.5 L 0.2 -0.11547 L 0.4 0 L 0.66603 0.15359 V -0.15359 L 0.4 0 L 0.2 0.11547 L -0.46603 0.5 L 0.1 0.82679" fill="none" stroke="#2563eb" stroke-width="0.0175" stroke-linecap="round" stroke-linejoin="round" />
+  <circle cx="0.0" cy="-1.0" r="0.028" fill="#111827" />
+  <text x="0.0" y="-1.085" font-family="sans-serif" font-size="0.11" fill="#1e3a8a" stroke="white" stroke-width="0.025" paint-order="stroke fill" text-anchor="middle">1</text>
+  <circle cx="-0.8660254037844386" cy="-0.5" r="0.028" fill="#111827" />
+  <text x="-0.8660254037844386" y="-0.585" font-family="sans-serif" font-size="0.11" fill="#1e3a8a" stroke="white" stroke-width="0.025" paint-order="stroke fill" text-anchor="middle">6</text>
+  <circle cx="0.8660254037844386" cy="0.5" r="0.028" fill="#111827" />
+  <text x="0.8660254037844386" y="0.415" font-family="sans-serif" font-size="0.11" fill="#1e3a8a" stroke="white" stroke-width="0.025" paint-order="stroke fill" text-anchor="middle">3</text>
+  <circle cx="0.8660254037844386" cy="-0.5" r="0.028" fill="#111827" />
+  <text x="0.8660254037844386" y="-0.585" font-family="sans-serif" font-size="0.11" fill="#1e3a8a" stroke="white" stroke-width="0.025" paint-order="stroke fill" text-anchor="middle">2</text>
+  <circle cx="-0.8660254037844386" cy="0.5" r="0.028" fill="#111827" />
+  <text x="-0.8660254037844386" y="0.415" font-family="sans-serif" font-size="0.11" fill="#1e3a8a" stroke="white" stroke-width="0.025" paint-order="stroke fill" text-anchor="middle">5</text>
+  <circle cx="0.0" cy="1.0" r="0.028" fill="#111827" />
+  <text x="0.0" y="0.915" font-family="sans-serif" font-size="0.11" fill="#1e3a8a" stroke="white" stroke-width="0.025" paint-order="stroke fill" text-anchor="middle">4</text>
+  </g>
+  <text x="1.5" y="0.28" font-family="sans-serif" font-size="0.16" font-weight="600" fill="#111827" text-anchor="middle">Cusp trimming</text>
+  <text x="1.5" y="3.02" font-family="sans-serif" font-size="0.13" fill="#b91c1c" text-anchor="middle"></text>
+  <g transform="translate(4.5 1.72) scale(1.0) translate(0.0 0.0)">
+    <path d="M 0 -1 L -0.86603 -0.5 L 0.86603 0.5 V -0.5 L -0.86603 0.5 L 0 1" fill="none" stroke="#94a3b8" stroke-width="0.025" stroke-linejoin="round" />
+    <path d="M 0.4 0 L 0.66603 -0.15359 V 0.15359 Z" fill="none" stroke="#2563eb" stroke-width="0.0175" stroke-linecap="round" stroke-linejoin="round" />
+  <circle cx="0.0" cy="-1.0" r="0.028" fill="#111827" />
+  <text x="0.0" y="-1.085" font-family="sans-serif" font-size="0.11" fill="#1e3a8a" stroke="white" stroke-width="0.025" paint-order="stroke fill" text-anchor="middle">1</text>
+  <circle cx="-0.8660254037844386" cy="-0.5" r="0.028" fill="#111827" />
+  <text x="-0.8660254037844386" y="-0.585" font-family="sans-serif" font-size="0.11" fill="#1e3a8a" stroke="white" stroke-width="0.025" paint-order="stroke fill" text-anchor="middle">6</text>
+  <circle cx="0.8660254037844386" cy="0.5" r="0.028" fill="#111827" />
+  <text x="0.8660254037844386" y="0.415" font-family="sans-serif" font-size="0.11" fill="#1e3a8a" stroke="white" stroke-width="0.025" paint-order="stroke fill" text-anchor="middle">3</text>
+  <circle cx="0.8660254037844386" cy="-0.5" r="0.028" fill="#111827" />
+  <text x="0.8660254037844386" y="-0.585" font-family="sans-serif" font-size="0.11" fill="#1e3a8a" stroke="white" stroke-width="0.025" paint-order="stroke fill" text-anchor="middle">2</text>
+  <circle cx="-0.8660254037844386" cy="0.5" r="0.028" fill="#111827" />
+  <text x="-0.8660254037844386" y="0.415" font-family="sans-serif" font-size="0.11" fill="#1e3a8a" stroke="white" stroke-width="0.025" paint-order="stroke fill" text-anchor="middle">5</text>
+  <circle cx="0.0" cy="1.0" r="0.028" fill="#111827" />
+  <text x="0.0" y="0.915" font-family="sans-serif" font-size="0.11" fill="#1e3a8a" stroke="white" stroke-width="0.025" paint-order="stroke fill" text-anchor="middle">4</text>
+  </g>
+  <text x="4.5" y="0.28" font-family="sans-serif" font-size="0.16" font-weight="600" fill="#111827" text-anchor="middle">In-band trimming</text>
+  <text x="4.5" y="3.02" font-family="sans-serif" font-size="0.13" fill="#b91c1c" text-anchor="middle"></text>
+  <g transform="translate(7.5 1.72) scale(1.0) translate(-0.04999999999999999 0.0)">
+    <path d="M 0 -1 L -0.86603 -0.5 L 0.86603 0.5 V -0.5 L -0.86603 0.5 L 0 1" fill="none" stroke="#94a3b8" stroke-width="0.025" stroke-linejoin="round" />
+    <path d="M 0.1 -0.82679 L -0.76603 -0.32679 A 0.2 0.2 0 0 0 -0.76603 -0.67321 L 0.96603 0.32679 A 0.2 0.2 0 0 0 0.66603 0.5 V -0.5 A 0.2 0.2 0 0 0 0.96603 -0.32679 L -0.76603 0.67321 A 0.2 0.2 0 0 0 -0.76603 0.32679 L 0.1 0.82679" fill="none" stroke="#2563eb" stroke-width="0.0175" stroke-linecap="round" stroke-linejoin="round" />
+  <circle cx="0.0" cy="-1.0" r="0.028" fill="#111827" />
+  <text x="0.0" y="-1.085" font-family="sans-serif" font-size="0.11" fill="#1e3a8a" stroke="white" stroke-width="0.025" paint-order="stroke fill" text-anchor="middle">1</text>
+  <circle cx="-0.8660254037844386" cy="-0.5" r="0.028" fill="#111827" />
+  <text x="-0.8660254037844386" y="-0.585" font-family="sans-serif" font-size="0.11" fill="#1e3a8a" stroke="white" stroke-width="0.025" paint-order="stroke fill" text-anchor="middle">6</text>
+  <circle cx="0.8660254037844386" cy="0.5" r="0.028" fill="#111827" />
+  <text x="0.8660254037844386" y="0.415" font-family="sans-serif" font-size="0.11" fill="#1e3a8a" stroke="white" stroke-width="0.025" paint-order="stroke fill" text-anchor="middle">3</text>
+  <circle cx="0.8660254037844386" cy="-0.5" r="0.028" fill="#111827" />
+  <text x="0.8660254037844386" y="-0.585" font-family="sans-serif" font-size="0.11" fill="#1e3a8a" stroke="white" stroke-width="0.025" paint-order="stroke fill" text-anchor="middle">2</text>
+  <circle cx="-0.8660254037844386" cy="0.5" r="0.028" fill="#111827" />
+  <text x="-0.8660254037844386" y="0.415" font-family="sans-serif" font-size="0.11" fill="#1e3a8a" stroke="white" stroke-width="0.025" paint-order="stroke fill" text-anchor="middle">5</text>
+  <circle cx="0.0" cy="1.0" r="0.028" fill="#111827" />
+  <text x="0.0" y="0.915" font-family="sans-serif" font-size="0.11" fill="#1e3a8a" stroke="white" stroke-width="0.025" paint-order="stroke fill" text-anchor="middle">4</text>
+  </g>
+  <text x="7.5" y="0.28" font-family="sans-serif" font-size="0.16" font-weight="600" fill="#111827" text-anchor="middle">No final trimming</text>
+  <text x="7.5" y="3.02" font-family="sans-serif" font-size="0.13" fill="#b91c1c" text-anchor="middle"></text>
+</svg>

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="760" viewBox="-1.2160254037844385 -1.35 2.432050807568877 2.7">
+  <rect x="-1.2160254037844385" y="-1.35" width="2.432050807568877" height="2.7" fill="white" />
+  <path d="M 0 -1 L -0.86603 -0.5 L 0.86603 0.5 V -0.5 L -0.86603 0.5 L 0 1 Z" fill="none" stroke="#94a3b8" stroke-width="0.025" stroke-linejoin="round" />
+  <path d="" fill="none" stroke="#2563eb" stroke-width="0.035" stroke-linecap="round" stroke-linejoin="round" />
+  <circle cx="0.0" cy="-1.0" r="0.028" fill="#111827" />
+  <text x="0.0" y="-1.085" font-family="sans-serif" font-size="0.11" fill="#1e3a8a" stroke="white" stroke-width="0.025" paint-order="stroke fill" text-anchor="middle">1</text>
+  <circle cx="-0.8660254037844386" cy="-0.5" r="0.028" fill="#111827" />
+  <text x="-0.8660254037844386" y="-0.585" font-family="sans-serif" font-size="0.11" fill="#1e3a8a" stroke="white" stroke-width="0.025" paint-order="stroke fill" text-anchor="middle">6</text>
+  <circle cx="0.8660254037844386" cy="0.5" r="0.028" fill="#111827" />
+  <text x="0.8660254037844386" y="0.415" font-family="sans-serif" font-size="0.11" fill="#1e3a8a" stroke="white" stroke-width="0.025" paint-order="stroke fill" text-anchor="middle">3</text>
+  <circle cx="0.8660254037844386" cy="-0.5" r="0.028" fill="#111827" />
+  <text x="0.8660254037844386" y="-0.585" font-family="sans-serif" font-size="0.11" fill="#1e3a8a" stroke="white" stroke-width="0.025" paint-order="stroke fill" text-anchor="middle">2</text>
+  <circle cx="-0.8660254037844386" cy="0.5" r="0.028" fill="#111827" />
+  <text x="-0.8660254037844386" y="0.415" font-family="sans-serif" font-size="0.11" fill="#1e3a8a" stroke="white" stroke-width="0.025" paint-order="stroke fill" text-anchor="middle">5</text>
+  <circle cx="0.0" cy="1.0" r="0.028" fill="#111827" />
+  <text x="0.0" y="0.915" font-family="sans-serif" font-size="0.11" fill="#1e3a8a" stroke="white" stroke-width="0.025" paint-order="stroke fill" text-anchor="middle">4</text>
+</svg>

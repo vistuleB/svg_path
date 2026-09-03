@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="500" viewBox="43.14822104433242 213.41210098931091 0.11225813683736932 0.12395782397117387">
+  <rect x="43.14822104433242" y="213.41210098931091" width="0.11225813683736932" height="0.12395782397117387" fill="white" />
+  <path d="M 82.59575 220.40579 A 170 170 0 0 0 82.58268 220.47981" fill="none" stroke="#dc2626" stroke-width="0.0012" stroke-linecap="round" stroke-opacity="0.58" />
+  <circle cx="82.59575124145098" cy="220.40578607927145" r="0.0022" fill="#111827" />
+  <circle cx="82.58268198792463" cy="220.47980979662182" r="0.0022" fill="#111827" />
+  <text x="82.5672166146878" y="220.42879793794665" fill="#dc2626" font-size="0.0085" text-anchor="middle">a23</text>
+  <path d="M 82.6092 220.34093 A 20.01 20.01 0 0 1 82.59575 220.40579" fill="none" stroke="#dc2626" stroke-width="0.0012" stroke-linecap="round" stroke-opacity="0.58" />
+  <circle cx="82.60920101224804" cy="220.34092587189443" r="0.0022" fill="#111827" />
+  <circle cx="82.59575124145091" cy="220.40578607927148" r="0.0022" fill="#111827" />
+  <text x="82.62247612684946" y="220.37035597558298" fill="#dc2626" font-size="0.0085" text-anchor="middle">a24</text>
+  <path d="M 82.59575 220.40579 A 20.01 20.01 0 0 1 43.20327 213.46078" fill="none" stroke="#16a34a" stroke-width="0.0012" stroke-linecap="round" stroke-opacity="0.58" />
+  <circle cx="82.59575124145091" cy="220.40578607927148" r="0.0022" fill="#111827" />
+  <circle cx="43.20327438610259" cy="213.46078441769137" r="0.0022" fill="#111827" />
+  <text x="62.82253912563346" y="224.90459839385585" fill="#16a34a" font-size="0.0085" text-anchor="middle">a25</text>
+</svg>

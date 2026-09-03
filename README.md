@@ -9,7 +9,7 @@ subpaths, lines, quadratic and cubic Beziers, and elliptical arcs. Operations
 preserve the original curve types where possible rather than flattening them
 into polygons.
 
-The package also includes:
+The package includes:
 
 - construction, editing, evaluation, differentiation, splitting, and
   singularity-safe curve directions;

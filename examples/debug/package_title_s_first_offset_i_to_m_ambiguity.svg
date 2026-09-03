@@ -1,0 +1,426 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="-1.50000002861023 -1.4999997711181599 12.52500002861023 14.62499977111816">
+  <rect x="-1.50000002861023" y="-1.4999997711181599" width="12.52500002861023" height="14.62499977111816" fill="white" />
+  <path d="M 8.97 4.14 L 7.965 4.275 Q 7.875 3.495 7.56 2.925 Q 7.245 2.355 6.765 1.98 Q 6.285 1.605 5.655 1.425 T 4.29 1.245 Q 3.18 1.245 2.49 1.62 Q 1.815 1.995 1.815 2.835 Q 1.815 3.345 2.145 3.645 Q 2.475 3.93 3.015 4.125 Q 3.555 4.305 4.245 4.425 Q 4.95 4.545 5.67 4.695 Q 6.39 4.83 7.08 5.055 Q 7.785 5.265 8.325 5.655 Q 8.865 6.03 9.195 6.63 Q 9.525 7.215 9.525 8.115 T 9.21 9.675 Q 8.91 10.335 8.34 10.77 Q 7.77 11.205 6.975 11.415 Q 6.18 11.625 5.205 11.625 Q 4.215 11.625 3.48 11.4 Q 2.76 11.19 2.19 10.815 Q 1.92 10.635 1.68 10.635 Q 1.575 10.635 1.35 10.86 Q 1.125 11.07 1.005 11.385 H 0 V 7.275 L 0.99 7.185 Q 1.05 7.905 1.365 8.49 T 2.19 9.495 Q 2.715 9.9 3.435 10.14 Q 4.155 10.365 5.025 10.365 Q 6.3 10.365 6.975 9.87 Q 7.65 9.36 7.65 8.28 Q 7.65 7.935 7.44 7.695 Q 7.23 7.455 6.87 7.305 Q 6.51 7.14 6.045 7.035 Q 5.58 6.93 5.055 6.855 Q 4.53 6.765 3.99 6.675 Q 3.465 6.585 2.97 6.45 Q 2.295 6.27 1.755 6.015 Q 1.215 5.745 0.84 5.355 Q 0.48 4.965 0.27 4.41 Q 0.075 3.855 0.075 3.09 Q 0.075 2.505 0.27 1.95 T 0.915 0.96 Q 1.38 0.525 2.115 0.27 Q 2.85 0 3.93 0 Q 4.935 0 5.625 0.195 T 6.84 0.69 Q 7.155 0.87 7.395 0.87 Q 7.56 0.87 7.785 0.675 Q 8.025 0.48 8.16 0.24 H 8.97 Z" fill="none" stroke="#94a3b8" stroke-width="0.025" opacity="0.55" />
+  <path d="M 9.10313 5.1311 L 8.09813 5.2661" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="9.103132598713698" cy="5.131098434868642" r="0.025" fill="#111827" />
+  <circle cx="8.098132598713699" cy="5.266098434868642" r="0.025" fill="#111827" />
+  <text x="8.600632598713698" y="5.138598434868642" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a0</text>
+  <path d="M 8.09813 5.2661 L 7.74282 5.31383" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="8.098132598713699" cy="5.266098434868642" r="0.025" fill="#111827" />
+  <circle cx="7.742816275359438" cy="5.313827493229661" r="0.025" fill="#111827" />
+  <text x="7.920474437036568" y="5.229962964049152" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a1</text>
+  <path d="M 7.74282 5.31383 L 7.08837 5.40174" fill="none" stroke="#dc2626" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="7.742816275359438" cy="5.313827493229661" r="0.025" fill="#111827" />
+  <circle cx="7.088373382352371" cy="5.40173773258882" r="0.025" fill="#111827" />
+  <text x="7.415594828855904" y="5.2977826129092405" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a121</text>
+  <path d="M 7.08837 5.40174 L 7.04719 5.04481" fill="none" stroke="#dc2626" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="7.088373382352371" cy="5.40173773258882" r="0.025" fill="#111827" />
+  <circle cx="7.047189198578599" cy="5.044808139882791" r="0.025" fill="#111827" />
+  <text x="7.067781290465485" y="5.163272936235805" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a2</text>
+  <path d="M 7.04719 5.04481 L 6.97159 4.38962" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="7.047189198578599" cy="5.044808139882791" r="0.025" fill="#111827" />
+  <circle cx="6.971591064128869" cy="4.389624307985129" r="0.025" fill="#111827" />
+  <text x="7.009390131353735" y="4.65721622393396" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a118</text>
+  <path d="M 6.97159 4.38962 C 6.95345 4.23243 6.92746 4.0891 6.89483 3.95837" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="6.971591064128869" cy="4.389624307985129" r="0.025" fill="#111827" />
+  <circle cx="6.894827761177636" cy="3.958371117391208" r="0.07" fill="#f59e0b" />
+  <text x="6.938643333642453" y="4.104073442385185" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a3</text>
+  <path d="M 6.89483 3.95837 C 6.84101 3.74273 6.76914 3.56139 6.68476 3.40869" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="6.894827761177636" cy="3.958371117391208" r="0.07" fill="#f59e0b" />
+  <circle cx="6.684758464560731" cy="3.4086863116901225" r="0.025" fill="#111827" />
+  <text x="6.801255164642618" y="3.5999260723128708" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a19</text>
+  <path d="M 6.68476 3.40869 C 6.53397 3.13584 6.35836 2.93131 6.14936 2.76802" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="6.684758464560731" cy="3.4086863116901225" r="0.025" fill="#111827" />
+  <circle cx="6.1493559580276855" cy="2.7680245737245635" r="0.025" fill="#111827" />
+  <text x="6.4388901543945405" y="2.9872690729070728" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a4</text>
+  <path d="M 6.14936 2.76802 C 5.93623 2.60152 5.6883 2.47453 5.38028 2.38652" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="6.1493559580276855" cy="2.7680245737245635" r="0.025" fill="#111827" />
+  <circle cx="5.380278872102622" cy="2.3865241476408228" r="0.025" fill="#111827" />
+  <text x="5.800403320432595" y="2.4878374001576353" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a5</text>
+  <path d="M 5.38028 2.38652 C 5.05933 2.29483 4.69855 2.245 4.29 2.245" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="5.380278872102622" cy="2.3865241476408228" r="0.025" fill="#111827" />
+  <circle cx="4.29" cy="2.2450002" r="0.025" fill="#111827" />
+  <text x="4.8679927240449326" y="2.221375325815078" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a6</text>
+  <path d="M 4.29 2.245 C 3.65536 2.245 3.22614 2.35652 2.97158 2.4964" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="4.29" cy="2.2450002" r="0.025" fill="#111827" />
+  <circle cx="2.97158330566164" cy="2.4964005193221737" r="0.025" fill="#111827" />
+  <text x="3.4882609583437105" y="2.258245684820287" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a7</text>
+  <path d="M 2.97158 2.4964 C 2.88825 2.54219 2.87291 2.56826 2.858 2.59515" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="2.97158330566164" cy="2.4964005193221737" r="0.025" fill="#111827" />
+  <circle cx="2.858003859536095" cy="2.5951549646700505" r="0.025" fill="#111827" />
+  <text x="2.8891309540537495" y="2.4928655096578827" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a8</text>
+  <path d="M 2.858 2.59515 C 2.84244 2.62324 2.815 2.68677 2.815 2.835" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="2.858003859536095" cy="2.5951549646700505" r="0.025" fill="#111827" />
+  <circle cx="2.8150000000000004" cy="2.8350002" r="0.025" fill="#111827" />
+  <text x="2.8306656274811557" y="2.610025015464404" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a9</text>
+  <path d="M 2.815 2.835 C 2.815 2.87153 2.81825 2.89472 2.8208 2.9073" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="2.8150000000000004" cy="2.8350002" r="0.025" fill="#111827" />
+  <circle cx="2.8207989369395254" cy="2.9072985075595956" r="0.025" fill="#111827" />
+  <text x="2.816942744038258" y="2.8201325545736298" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a10</text>
+  <path d="M 2.8208 2.9073 C 2.82245 2.91543 2.82381 2.91913 2.82381 2.91913" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="2.8207989369395254" cy="2.9072985075595956" r="0.025" fill="#111827" />
+  <circle cx="2.823808162237877" cy="2.919132448404279" r="0.025" fill="#111827" />
+  <text x="2.822922416009862" y="2.856266617907366" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a13</text>
+  <path d="M 2.82381 2.91913 S 2.82188 2.91415 2.81717 2.90731" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="2.823808162237877" cy="2.919132448404279" r="0.025" fill="#111827" />
+  <circle cx="2.817171837458845" cy="2.9073056084126074" r="0.025" fill="#111827" />
+  <text x="2.822254634134804" y="2.855785535893515" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a11</text>
+  <path d="M 2.81717 2.90731 C 2.81319 2.90152 2.80836 2.8967 2.8082 2.89656" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="2.817171837458845" cy="2.9073056084126074" r="0.025" fill="#111827" />
+  <circle cx="2.8082000574791746" cy="2.896558028713788" r="0.025" fill="#111827" />
+  <text x="2.8112530814964054" y="2.839815174236394" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a12</text>
+  <path d="M 2.8082 2.89656 C 2.81226 2.90009 2.81646 2.90368 2.8208 2.9073" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="2.8082000574791746" cy="2.896558028713788" r="0.025" fill="#111827" />
+  <circle cx="2.8207989369395587" cy="2.9072985075596147" r="0.025" fill="#111827" />
+  <text x="2.814395441534719" y="2.8418954260196916" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a14</text>
+  <path d="M 2.8208 2.9073 C 2.91798 2.98846 3.08524 3.09084 3.34296 3.18031" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="2.8207989369395587" cy="2.9072985075596147" r="0.025" fill="#111827" />
+  <circle cx="3.3429613044755238" cy="3.180309042654536" r="0.025" fill="#111827" />
+  <text x="3.021678565659932" y="2.9806885490413557" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a15</text>
+  <path d="M 3.34296 3.18031 C 3.62881 3.27954 3.98981 3.3664 4.41457 3.43948" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="3.3429613044755238" cy="3.180309042654536" r="0.025" fill="#111827" />
+  <circle cx="4.414570535170023" cy="3.4394821465874044" r="0.025" fill="#111827" />
+  <text x="3.826672555871" y="3.2597016601512183" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a16</text>
+  <path d="M 4.41457 3.43948 C 4.8959 3.5223 5.37274 3.61678 5.84829 3.71089" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="4.414570535170023" cy="3.4394821465874044" r="0.025" fill="#111827" />
+  <circle cx="5.8482885274793635" cy="3.7108893913541534" r="0.025" fill="#111827" />
+  <text x="5.133599364662544" y="3.5109516583048324" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a17</text>
+  <path d="M 5.84829 3.71089 C 5.85357 3.71193 5.85885 3.71298 5.86413 3.71402" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="5.8482885274793635" cy="3.7108893913541534" r="0.025" fill="#111827" />
+  <circle cx="5.8641311471585045" cy="3.7140246153380163" r="0.025" fill="#111827" />
+  <text x="5.856209956733238" y="3.652457033141899" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a18</text>
+  <path d="M 5.86413 3.71402 C 6.21315 3.78309 6.55651 3.86499 6.89483 3.95837" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="5.8641311471585045" cy="3.7140246153380163" r="0.025" fill="#111827" />
+  <circle cx="6.894827761182184" cy="3.958371117382566" r="0.07" fill="#f59e0b" />
+  <text x="6.383491435644618" y="3.767082169782347" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a20</text>
+  <path d="M 6.89483 3.95837 C 7.05694 4.00312 7.2179 4.0505 7.37777 4.10036" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="6.894827761182184" cy="3.958371117382566" r="0.07" fill="#f59e0b" />
+  <circle cx="7.377773198506973" cy="4.100363555903973" r="0.025" fill="#111827" />
+  <text x="7.137142361026741" y="3.967446338775629" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a21</text>
+  <path d="M 7.37777 4.10036 C 7.92989 4.27258 8.44382 4.51375 8.90297 4.83894" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="7.377773198506973" cy="4.100363555903973" r="0.025" fill="#111827" />
+  <circle cx="8.902967900669694" cy="4.83894070106903" r="0.025" fill="#111827" />
+  <text x="8.175235548176786" y="4.352288874827322" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a22</text>
+  <path d="M 8.90297 4.83894 C 9.0224 4.92353 9.13676 5.01466 9.24567 5.11195" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="8.902967900669694" cy="4.83894070106903" r="0.025" fill="#111827" />
+  <circle cx="9.245666057255615" cy="5.111952149393915" r="0.07" fill="#f59e0b" />
+  <text x="9.078263724183625" y="4.910682940067689" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a23</text>
+  <path d="M 9.24567 5.11195 C 9.57247 5.40389 9.85018 5.75124 10.06861 6.14337" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="9.245666057255615" cy="5.111952149393915" r="0.07" fill="#f59e0b" />
+  <circle cx="10.068609837801853" cy="6.143373185443865" r="0.025" fill="#111827" />
+  <text x="9.69777719157247" y="5.530090460494853" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a100</text>
+  <path d="M 10.06861 6.14337 C 10.39114 6.72239 10.525 7.39354 10.525 8.115" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="10.068609837801853" cy="6.143373185443865" r="0.025" fill="#111827" />
+  <circle cx="10.524999999999999" cy="8.1150002" r="0.025" fill="#111827" />
+  <text x="10.417753056214059" y="7.015771071921545" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a24</text>
+  <path d="M 10.525 8.115 C 10.525 8.83561 10.39233 9.50513 10.11646 10.09728" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="10.524999999999999" cy="8.1150002" r="0.025" fill="#111827" />
+  <circle cx="10.116463243870529" cy="10.097284923275325" r="0.025" fill="#111827" />
+  <text x="10.424180166742907" y="9.09431176911605" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a25</text>
+  <path d="M 10.11646 10.09728 C 9.85125 10.66658 9.45986 11.17331 8.94667 11.56495" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="10.116463243870529" cy="10.097284923275325" r="0.025" fill="#111827" />
+  <circle cx="8.94667331935019" cy="11.564951246045078" r="0.025" fill="#111827" />
+  <text x="9.62455765645262" y="10.837739713191299" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a26</text>
+  <path d="M 8.94667 11.56495 C 8.44914 11.94465 7.86775 12.21348 7.23039 12.38184" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="8.94667331935019" cy="11.564951246045078" r="0.025" fill="#111827" />
+  <circle cx="7.230391122837031" cy="12.381837822168764" r="0.025" fill="#111827" />
+  <text x="8.140966489872678" y="11.992646055798435" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a27</text>
+  <path d="M 7.23039 12.38184 C 6.60263 12.54766 5.92651 12.625 5.205 12.625" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="7.230391122837031" cy="12.381837822168764" r="0.025" fill="#111827" />
+  <circle cx="5.205" cy="12.625" r="0.025" fill="#111827" />
+  <text x="6.2528516869560615" y="12.505602690153689" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a28</text>
+  <path d="M 5.205 12.625 C 4.4664 12.625 3.79617 12.53821 3.19364 12.35812" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="5.205" cy="12.625" r="0.025" fill="#111827" />
+  <circle cx="3.193636560557028" cy="12.358121067793832" r="0.025" fill="#111827" />
+  <text x="4.148292644557838" y="12.49909265903001" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a29</text>
+  <path d="M 3.19364 12.35812 C 2.74334 12.22354 2.31216 12.04766 1.91053 11.817" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="3.193636560557028" cy="12.358121067793832" r="0.025" fill="#111827" />
+  <circle cx="1.9105323345527756" cy="11.817003253583195" r="0.025" fill="#111827" />
+  <text x="2.5338327962291394" y="12.063588711477212" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a30</text>
+  <path d="M 1.91053 11.817 C 1.81802 11.76388 1.72708 11.70784 1.63784 11.64874" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="1.9105323345527756" cy="11.817003253583195" r="0.025" fill="#111827" />
+  <circle cx="1.637839085029745" cy="11.648737563013214" r="0.025" fill="#111827" />
+  <text x="1.7729624142434641" y="11.675111949139362" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a38</text>
+  <path d="M 1.63784 11.64874 C 1.60775 11.62881 1.59199 11.62226 1.59199 11.62226" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="1.637839085029745" cy="11.648737563013214" r="0.025" fill="#111827" />
+  <circle cx="1.591993524289782" cy="11.6222649407507" r="0.025" fill="#111827" />
+  <text x="1.603634715169359" y="11.568029772783872" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a31</text>
+  <path d="M 1.59199 11.62226 S 1.62422 11.635 1.68 11.635" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="1.591993524289782" cy="11.6222649407507" r="0.025" fill="#111827" />
+  <circle cx="1.68" cy="11.635000000000002" r="0.025" fill="#111827" />
+  <text x="1.6150794362562864" y="11.56863247037535" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a32</text>
+  <path d="M 1.68 11.635 C 1.87833 11.635 1.9919 11.58049 2.04639 11.55389" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="1.68" cy="11.635000000000002" r="0.025" fill="#111827" />
+  <circle cx="2.0463859507563247" cy="11.553885425640871" r="0.025" fill="#111827" />
+  <text x="1.917133030848049" y="11.544419500544105" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a33</text>
+  <path d="M 2.04639 11.55389 C 2.07574 11.53955 2.09383 11.52839 2.10508 11.52115" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="2.0463859507563247" cy="11.553885425640871" r="0.025" fill="#111827" />
+  <circle cx="2.1050797603245313" cy="11.521149672883597" r="0.025" fill="#111827" />
+  <text x="2.0825218778191306" y="11.47485963470135" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a34</text>
+  <path d="M 2.10508 11.52115 C 2.11465 11.51499 2.12071 11.51044 2.12071 11.51044" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="2.1050797603245313" cy="11.521149672883597" r="0.025" fill="#111827" />
+  <circle cx="2.120714292309227" cy="11.51044464898575" r="0.025" fill="#111827" />
+  <text x="2.11648654067323" y="11.453485532055078" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a35</text>
+  <path d="M 2.12071 11.51044 S 2.09653 11.52923 2.04482 11.57919" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="2.120714292309227" cy="11.51044464898575" r="0.025" fill="#111827" />
+  <circle cx="2.044815703679842" cy="11.579187832155055" r="0.025" fill="#111827" />
+  <text x="2.102158220816701" y="11.466080223136089" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a36</text>
+  <path d="M 2.04482 11.57919 C 1.99721 11.62518 1.96789 11.66643 1.93949 11.741" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="2.044815703679842" cy="11.579187832155055" r="0.025" fill="#111827" />
+  <circle cx="1.9394877349289676" cy="11.74099532759199" r="0.025" fill="#111827" />
+  <text x="1.984953462302589" y="11.589374869685306" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a37</text>
+  <path d="M 1.93949 11.741 L 1.91053 11.817" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="1.9394877349289676" cy="11.74099532759199" r="0.025" fill="#111827" />
+  <circle cx="1.9105323345515446" cy="11.817003253582726" r="0.025" fill="#111827" />
+  <text x="1.9250100347402561" y="11.718999290587357" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a39</text>
+  <path d="M 1.91053 11.817 L 1.69415 12.385" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="1.9105323345515446" cy="11.817003253582726" r="0.025" fill="#111827" />
+  <circle cx="1.694152621630677" cy="12.385000000000002" r="0.025" fill="#111827" />
+  <text x="1.8023424780911108" y="12.041001626791363" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a40</text>
+  <path d="M 1.69415 12.385 H 1.005" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="1.694152621630677" cy="12.385000000000002" r="0.025" fill="#111827" />
+  <circle cx="1.005" cy="12.385000000000002" r="0.025" fill="#111827" />
+  <text x="1.3495763108153385" y="12.325000000000001" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a41</text>
+  <path d="M 1.005 12.385 H 0" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="1.005" cy="12.385000000000002" r="0.025" fill="#111827" />
+  <circle cx="-2.8610230000000023e-8" cy="12.385000000000002" r="0.025" fill="#111827" />
+  <text x="0.502499985694885" y="12.325000000000001" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a42</text>
+  <path d="M 0 12.385 H -1" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="-2.8610230000000023e-8" cy="12.385000000000002" r="0.025" fill="#111827" />
+  <circle cx="-1.00000002861023" cy="12.385000000000002" r="0.025" fill="#111827" />
+  <text x="-0.50000002861023" y="12.325000000000001" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a43</text>
+  <path d="M -1 12.385 V 11.385" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="-1.00000002861023" cy="12.385000000000002" r="0.025" fill="#111827" />
+  <circle cx="-1.00000002861023" cy="11.385000000000002" r="0.025" fill="#111827" />
+  <text x="-1.00000002861023" y="11.825000000000001" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a44</text>
+  <path d="M -1 11.385 V 7.275" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="-1.00000002861023" cy="11.385000000000002" r="0.025" fill="#111827" />
+  <circle cx="-1.00000002861023" cy="7.2750002" r="0.025" fill="#111827" />
+  <text x="-1.00000002861023" y="9.2700001" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a45</text>
+  <path d="M -1 7.275 V 6.36179" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="-1.00000002861023" cy="7.2750002" r="0.025" fill="#111827" />
+  <circle cx="-1.00000002861023" cy="6.36178556218995" r="0.025" fill="#111827" />
+  <text x="-1.00000002861023" y="6.758392881094975" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a46</text>
+  <path d="M -1 6.36179 L -0.09054 6.27911" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="-1.00000002861023" cy="6.36178556218995" r="0.025" fill="#111827" />
+  <circle cx="-0.09053577477880144" cy="6.279106993543755" r="0.025" fill="#111827" />
+  <text x="-0.5452679016945157" y="6.260446277866853" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a47</text>
+  <path d="M -0.09054 6.27911 L 0.31684 6.24207" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="-0.09053577477880144" cy="6.279106993543755" r="0.025" fill="#111827" />
+  <circle cx="0.31684190317384026" cy="6.242072659132435" r="0.025" fill="#111827" />
+  <text x="0.1131530641975194" y="6.200589826338096" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a48</text>
+  <path d="M 0.31684 6.24207 L 0.89946 6.18911" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="0.31684190317384026" cy="6.242072659132435" r="0.025" fill="#111827" />
+  <circle cx="0.8994642238314285" cy="6.1891069935437555" r="0.025" fill="#111827" />
+  <text x="0.6081530635026344" y="6.155589826338096" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a74</text>
+  <path d="M 0.89946 6.18911 L 1.90287 6.09789" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="0.8994642238314285" cy="6.1891069935437555" r="0.025" fill="#111827" />
+  <circle cx="1.9028734989332283" cy="6.097887968406447" r="0.025" fill="#111827" />
+  <text x="1.4011688613823283" y="6.083497480975102" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a49</text>
+  <path d="M 1.90287 6.09789 L 1.98655 7.10195" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="1.9028734989332283" cy="6.097887968406447" r="0.025" fill="#111827" />
+  <circle cx="1.9865457282448797" cy="7.10195472014626" r="0.025" fill="#111827" />
+  <text x="1.944709613589054" y="6.539921344276354" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a50</text>
+  <path d="M 1.98655 7.10195 C 1.98919 7.1337 1.9923 7.16495 1.99586 7.19572" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="1.9865457282448797" cy="7.10195472014626" r="0.025" fill="#111827" />
+  <circle cx="1.9958596982401948" cy="7.195722203297731" r="0.025" fill="#111827" />
+  <text x="1.990858906208019" y="7.08920375498776" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a51</text>
+  <path d="M 1.99586 7.19572 C 2.03246 7.51187 2.11722 7.77771 2.24547 8.0159" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="1.9958596982401948" cy="7.195722203297731" r="0.025" fill="#111827" />
+  <circle cx="2.2454710904981727" cy="8.015900359463265" r="0.025" fill="#111827" />
+  <text x="2.086294790233989" y="7.575047718817074" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a71</text>
+  <path d="M 2.24547 8.0159 C 2.40077 8.3043 2.5855 8.53143 2.81333 8.71304" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="2.2454710904981727" cy="8.015900359463265" r="0.025" fill="#111827" />
+  <circle cx="2.8133343897425407" cy="8.713044805770704" r="0.025" fill="#111827" />
+  <text x="2.502199905348501" y="8.344517088891477" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a52</text>
+  <path d="M 2.81333 8.71304 C 3.0486 8.90058 3.35448 9.06316 3.74226 9.18838" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="2.8133343897425407" cy="8.713044805770704" r="0.025" fill="#111827" />
+  <circle cx="3.7422649305178153" cy="9.188375986813131" r="0.025" fill="#111827" />
+  <text x="3.2206025196573744" y="8.914083605590063" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a53</text>
+  <path d="M 3.74226 9.18838 C 4.09897 9.30355 4.52528 9.365 5.025 9.365" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="3.7422649305178153" cy="9.188375986813131" r="0.025" fill="#111827" />
+  <circle cx="5.025" cy="9.365" r="0.025" fill="#111827" />
+  <text x="4.330000731468277" y="9.259878440081446" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a54</text>
+  <path d="M 5.025 9.365 C 5.7613 9.365 6.18303 9.21289 6.37789 9.06784" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="5.025" cy="9.365" r="0.025" fill="#111827" />
+  <circle cx="6.377886441471023" cy="9.067843483253913" r="0.025" fill="#111827" />
+  <text x="5.904483604932631" y="9.210814270422066" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a55</text>
+  <path d="M 6.37789 9.06784 C 6.46185 9.00534 6.51341 8.94208 6.56108 8.82933" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="6.377886441471023" cy="9.067843483253913" r="0.025" fill="#111827" />
+  <circle cx="6.56107992516986" cy="8.829330085116103" r="0.025" fill="#111827" />
+  <text x="6.483096165199393" y="8.907430422291243" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a56</text>
+  <path d="M 6.56108 8.82933 C 6.60669 8.72144 6.64583 8.5562 6.64969 8.3187" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="6.56107992516986" cy="8.829330085116103" r="0.025" fill="#111827" />
+  <circle cx="6.649688861705463" cy="8.318696864389912" r="0.025" fill="#111827" />
+  <text x="6.621043182217489" y="8.562615704122573" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a57</text>
+  <path d="M 6.64969 8.3187 C 6.64989 8.30601 6.65 8.29311 6.65 8.28" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="6.649688861705463" cy="8.318696864389912" r="0.025" fill="#111827" />
+  <circle cx="6.65" cy="8.2800002" r="0.025" fill="#111827" />
+  <text x="6.649921665584159" y="8.239504144955161" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a61</text>
+  <path d="M 6.65 8.28 C 6.65 8.27619 6.64982 8.2741 6.64982 8.2741" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="6.65" cy="8.2800002" r="0.025" fill="#111827" />
+  <circle cx="6.649820331099626" cy="8.27409925703765" r="0.025" fill="#111827" />
+  <text x="6.649910165549813" y="8.21562140028899" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a58</text>
+  <path d="M 6.64982 8.2741 S 6.65125 8.28788 6.65995 8.30842" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="6.649820331099626" cy="8.27409925703765" r="0.025" fill="#111827" />
+  <circle cx="6.659946500054169" cy="8.308420208067822" r="0.025" fill="#111827" />
+  <text x="6.651620975202334" y="8.223557630835659" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a59</text>
+  <path d="M 6.65995 8.30842 C 6.66782 8.32702 6.68041 8.34535 6.68742 8.3535" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="6.659946500054169" cy="8.308420208067822" r="0.025" fill="#111827" />
+  <circle cx="6.687423305293122" cy="8.353504807868518" r="0.025" fill="#111827" />
+  <text x="6.674009465959293" y="8.27487794166874" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a60</text>
+  <path d="M 6.68742 8.3535 C 6.67991 8.34507 6.66814 8.33314 6.64969 8.3187" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="6.687423305293122" cy="8.353504807868518" r="0.025" fill="#111827" />
+  <circle cx="6.649688861705462" cy="8.318696864389912" r="0.025" fill="#111827" />
+  <text x="6.6726590740453675" y="8.278351545985787" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a62</text>
+  <path d="M 6.64969 8.3187 C 6.61829 8.29413 6.56752 8.2623 6.48538 8.22808" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="6.649688861705462" cy="8.318696864389912" r="0.025" fill="#111827" />
+  <circle cx="6.485384615384617" cy="8.228077123076924" r="0.025" fill="#111827" />
+  <text x="6.586561428822414" y="8.217007171829335" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a63</text>
+  <path d="M 6.48538 8.22808 L 6.46924 8.22135" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="6.485384615384617" cy="8.228077123076924" r="0.025" fill="#111827" />
+  <circle cx="6.469242435111842" cy="8.221351214629934" r="0.025" fill="#111827" />
+  <text x="6.4773135252482295" y="8.164714168853427" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a64</text>
+  <path d="M 6.46924 8.22135 L 6.45335 8.21407" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="6.469242435111842" cy="8.221351214629934" r="0.025" fill="#111827" />
+  <circle cx="6.453345289506786" cy="8.214065022894284" r="0.025" fill="#111827" />
+  <text x="6.461293862309314" y="8.157708118762107" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a65</text>
+  <path d="M 6.45335 8.21407 C 6.28857 8.13854 6.0792 8.0679 5.82474 8.01044" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="6.453345289506786" cy="8.214065022894284" r="0.025" fill="#111827" />
+  <circle cx="5.824739128565357" cy="8.010441202067707" r="0.025" fill="#111827" />
+  <text x="6.17267344333994" y="8.045479455737745" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a66</text>
+  <path d="M 5.82474 8.01044 C 5.60969 7.96188 5.35884 7.91949 5.07859 7.87284" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="5.824739128565357" cy="8.010441202067707" r="0.025" fill="#111827" />
+  <circle cx="5.078590800891508" cy="7.872844373319325" r="0.025" fill="#111827" />
+  <text x="5.47611544979244" y="7.880923712940535" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a67</text>
+  <path d="M 5.07859 7.87284 C 5.01659 7.86252 4.95315 7.85197 4.88835 7.84102" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="5.078590800891508" cy="7.872844373319325" r="0.025" fill="#111827" />
+  <circle cx="4.888349406110907" cy="7.841016213843799" r="0.025" fill="#111827" />
+  <text x="4.98451728024896" y="7.797167390842914" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a68</text>
+  <path d="M 4.88835 7.84102 L 3.82335 7.66102" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="4.888349406110907" cy="7.841016213843799" r="0.025" fill="#111827" />
+  <circle cx="3.823349406110907" cy="7.6610162138438" r="0.025" fill="#111827" />
+  <text x="4.355849406110908" y="7.6910162138438" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a69</text>
+  <path d="M 3.82335 7.66102 C 3.43787 7.59586 3.06681 7.51184 2.70961 7.4155" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="3.823349406110907" cy="7.6610162138438" r="0.025" fill="#111827" />
+  <circle cx="2.7096089329087443" cy="7.415503432609338" r="0.025" fill="#111827" />
+  <text x="3.2558738396644467" y="7.489953480796809" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a70</text>
+  <path d="M 2.70961 7.4155 C 2.46561 7.3497 2.22748 7.27771 1.99586 7.19572" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="2.7096089329087443" cy="7.415503432609338" r="0.025" fill="#111827" />
+  <circle cx="1.9958596982401953" cy="7.195722203297732" r="0.025" fill="#111827" />
+  <text x="2.3480922390547248" y="7.251679886410762" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a72</text>
+  <path d="M 1.99586 7.19572 C 1.76309 7.11333 1.53688 7.02084 1.31786 6.91439" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="1.9958596982401953" cy="7.195722203297732" r="0.025" fill="#111827" />
+  <circle cx="1.317862465539678" cy="6.91439487196885" r="0.025" fill="#111827" />
+  <text x="1.651701514688171" y="7.004079842934776" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a73</text>
+  <path d="M 1.31786 6.91439 C 0.94761 6.73444 0.6103 6.50975 0.31684 6.24207" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="1.317862465539678" cy="6.91439487196885" r="0.025" fill="#111827" />
+  <circle cx="0.31684190317375366" cy="6.242072659131483" r="0.025" fill="#111827" />
+  <text x="0.7885540720071063" y="6.551130591521254" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a75</text>
+  <path d="M 0.31684 6.24207 C 0.246 6.17746 0.17772 6.11033 0.11214 6.04073" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="0.31684190317375366" cy="6.242072659131483" r="0.025" fill="#111827" />
+  <circle cx="0.11214396503455804" cy="6.040730202286432" r="0.025" fill="#111827" />
+  <text x="0.21251874151181555" y="6.083271281821596" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a76</text>
+  <path d="M 0.11214 6.04073 C -0.23064 5.67689 -0.49234 5.23818 -0.66944 4.75271" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="0.11214396503455804" cy="6.040730202286432" r="0.025" fill="#111827" />
+  <circle cx="-0.6694400304881902" cy="4.752713615965513" r="0.025" fill="#111827" />
+  <text x="-0.3407788216788351" y="5.382330824823948" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a77</text>
+  <path d="M -0.66944 4.75271 C -0.85886 4.23347 -0.925 3.67738 -0.925 3.09" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="-0.6694400304881902" cy="4.752713615965513" r="0.025" fill="#111827" />
+  <circle cx="-0.9250000300000003" cy="3.0900002000000013" r="0.025" fill="#111827" />
+  <text x="-0.8682531060886487" y="3.8869110302141014" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a78</text>
+  <path d="M -0.925 3.09 C -0.925 2.58852 -0.83999 2.09249 -0.67346 1.61851" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="-0.9250000300000003" cy="3.0900002000000013" r="0.025" fill="#111827" />
+  <circle cx="-0.6734601696511321" cy="1.6185142049874415" r="0.025" fill="#111827" />
+  <text x="-0.8616793948790975" y="2.283942454399782" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a79</text>
+  <path d="M -0.67346 1.61851 C -0.492 1.10205 -0.18676 0.62776 0.22589 0.23535" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="-0.6734601696511321" cy="1.6185142049874415" r="0.025" fill="#111827" />
+  <circle cx="0.22588728840440014" cy="0.23534602828436807" r="0.025" fill="#111827" />
+  <text x="-0.31048233812014936" y="0.8204091213966742" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a80</text>
+  <path d="M 0.22589 0.23535 C 0.66759 -0.18469 1.20296 -0.46615 1.77869 -0.67175" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="0.22588728840440014" cy="0.23534602828436807" r="0.025" fill="#111827" />
+  <circle cx="1.7786911459609156" cy="-0.6717515179117932" r="0.025" fill="#111827" />
+  <text x="0.9520278003251947" y="-0.3586173605991701" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a81</text>
+  <path d="M 1.77869 -0.67175 C 2.4074 -0.89627 3.1236 -1 3.93 -1" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="1.7786911459609156" cy="-0.6717515179117932" r="0.025" fill="#111827" />
+  <circle cx="3.93" cy="-0.99999977111816" r="0.025" fill="#111827" />
+  <text x="2.787712583740736" y="-0.9800705341307159" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a82</text>
+  <path d="M 3.93 -1 C 4.66401 -1 5.31533 -0.93168 5.89696 -0.76731" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="3.93" cy="-0.99999977111816" r="0.025" fill="#111827" />
+  <circle cx="5.896957005948001" cy="-0.7673091729031407" r="0.025" fill="#111827" />
+  <text x="4.97062149103788" y="-1.0052946749732006" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a83</text>
+  <path d="M 5.89696 -0.76731 C 6.39408 -0.62682 6.85191 -0.44606 7.26667 -0.21725" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="5.896957005948001" cy="-0.7673091729031407" r="0.025" fill="#111827" />
+  <circle cx="7.266665518611815" cy="-0.21725085689076107" r="0.025" fill="#111827" />
+  <text x="6.6127008905002125" y="-0.5853985773252386" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a84</text>
+  <path d="M 7.26667 -0.21725 C 7.28996 -0.2044 7.31312 -0.1914 7.33614 -0.17824" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="7.266665518611815" cy="-0.21725085689076107" r="0.025" fill="#111827" />
+  <circle cx="7.336138938356832" cy="-0.17824291212445975" r="0.025" fill="#111827" />
+  <text x="7.301504388625512" y="-0.25786107512289175" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a90</text>
+  <path d="M 7.33614 -0.17824 C 7.41171 -0.13506 7.44868 -0.12503 7.44868 -0.12503" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="7.336138938356832" cy="-0.17824291212445975" r="0.025" fill="#111827" />
+  <circle cx="7.4486841944295215" cy="-0.1250289983647641" r="0.025" fill="#111827" />
+  <text x="7.420749693038313" y="-0.19544274001882017" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a85</text>
+  <path d="M 7.44868 -0.12503 S 7.42901 -0.13 7.395 -0.13" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="7.4486841944295215" cy="-0.1250289983647641" r="0.025" fill="#111827" />
+  <circle cx="7.395" cy="-0.12999976999999996" r="0.025" fill="#111827" />
+  <text x="7.434595772534724" y="-0.18751438418238203" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a86</text>
+  <path d="M 7.395 -0.13 C 7.29157 -0.13 7.21374 -0.10835 7.16844 -0.09161" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="7.395" cy="-0.12999976999999996" r="0.025" fill="#111827" />
+  <circle cx="7.168439529474127" cy="-0.09160861512790508" r="0.025" fill="#111827" />
+  <text x="7.259922158811129" y="-0.17708043458497374" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a87</text>
+  <path d="M 7.16844 -0.09161 C 7.12774 -0.07657 7.10503 -0.06212 7.10503 -0.06212" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="7.168439529474127" cy="-0.09160861512790508" r="0.025" fill="#111827" />
+  <circle cx="7.105026271001358" cy="-0.06212069707819862" r="0.025" fill="#111827" />
+  <text x="7.121470403977944" y="-0.13122605818703764" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a88</text>
+  <path d="M 7.10503 -0.06212 S 7.11785 -0.0706 7.14216 -0.091" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="7.105026271001358" cy="-0.06212069707819862" r="0.025" fill="#111827" />
+  <circle cx="7.142157293505152" cy="-0.09099797803078863" r="0.025" fill="#111827" />
+  <text x="7.114474924293776" y="-0.12890826789929619" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a89</text>
+  <path d="M 7.14216 -0.091 C 7.20572 -0.14434 7.24384 -0.18662 7.26667 -0.21725" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="7.142157293505152" cy="-0.09099797803078863" r="0.025" fill="#111827" />
+  <circle cx="7.266665518611816" cy="-0.21725085689076093" r="0.025" fill="#111827" />
+  <text x="7.219690322358502" y="-0.2226424033631015" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a91</text>
+  <path d="M 7.26667 -0.21725 C 7.27648 -0.23042 7.28346 -0.24144 7.28842 -0.25026" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="7.266665518611816" cy="-0.21725085689076093" r="0.025" fill="#111827" />
+  <circle cx="7.288424462875454" cy="-0.2502610096325658" r="0.025" fill="#111827" />
+  <text x="7.279365501248237" y="-0.2953892766969739" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a92</text>
+  <path d="M 7.28842 -0.25026 L 7.57515 -0.76" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="7.288424462875454" cy="-0.2502610096325658" r="0.025" fill="#111827" />
+  <circle cx="7.5751525155821415" cy="-0.7599997700000001" r="0.025" fill="#111827" />
+  <text x="7.431788489228798" y="-0.5651303898162829" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a93</text>
+  <path d="M 7.57515 -0.76 H 8.16" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="7.5751525155821415" cy="-0.7599997700000001" r="0.025" fill="#111827" />
+  <circle cx="8.16" cy="-0.7599997700000001" r="0.025" fill="#111827" />
+  <text x="7.867576257791071" y="-0.8199997700000001" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a94</text>
+  <path d="M 8.16 -0.76 H 8.97" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="8.16" cy="-0.7599997700000001" r="0.025" fill="#111827" />
+  <circle cx="8.97" cy="-0.7599997700000001" r="0.025" fill="#111827" />
+  <text x="8.565000000000001" y="-0.8199997700000001" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a95</text>
+  <path d="M 8.97 -0.76 H 9.97" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="8.97" cy="-0.7599997700000001" r="0.025" fill="#111827" />
+  <circle cx="9.97" cy="-0.7599997700000001" r="0.025" fill="#111827" />
+  <text x="9.47" y="-0.8199997700000001" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a96</text>
+  <path d="M 9.97 -0.76 V 0.24" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="9.97" cy="-0.7599997700000001" r="0.025" fill="#111827" />
+  <circle cx="9.97" cy="0.24000022999999998" r="0.025" fill="#111827" />
+  <text x="9.97" y="-0.31999977000000007" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a97</text>
+  <path d="M 9.97 0.24 V 4.14" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="9.97" cy="0.24000022999999998" r="0.025" fill="#111827" />
+  <circle cx="9.97" cy="4.1400002" r="0.025" fill="#111827" />
+  <text x="9.97" y="2.130000215" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a98</text>
+  <path d="M 9.97 4.14 V 5.01465" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="9.97" cy="4.1400002" r="0.025" fill="#111827" />
+  <circle cx="9.97" cy="5.014653560068989" r="0.025" fill="#111827" />
+  <text x="9.97" y="4.517326880034495" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a99</text>
+  <path d="M 9.97 5.01465 L 9.24567 5.11195" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="9.97" cy="5.014653560068989" r="0.025" fill="#111827" />
+  <circle cx="9.245666057255477" cy="5.111952149392881" r="0.07" fill="#f59e0b" />
+  <text x="9.607833028627738" y="5.0033028547309355" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a101</text>
+  <path d="M 9.24567 5.11195 L 9.10313 5.1311" fill="none" stroke="#16a34a" stroke-width="0.035" stroke-linecap="round" />
+  <circle cx="9.245666057255477" cy="5.111952149392881" r="0.07" fill="#f59e0b" />
+  <circle cx="9.103132598713698" cy="5.131098434868642" r="0.025" fill="#111827" />
+  <text x="9.174399327984588" y="5.061525292130762" font-family="sans-serif" font-size="0.09" fill="#1e3a8a" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">a102</text>
+  <text x="6.894827761177636" y="3.898371117391208" font-family="sans-serif" font-size="0.09" fill="#92400e" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">v19</text>
+  <text x="9.245666057255615" y="5.051952149393915" font-family="sans-serif" font-size="0.09" fill="#92400e" stroke="white" stroke-width="0.018" paint-order="stroke fill" text-anchor="middle">v94</text>
+</svg>
