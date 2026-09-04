@@ -10625,7 +10625,7 @@ fn e_join_free_endpoint_policy(
     SegmentStart -> 1.0
     SegmentEnd -> 0.0
   }
-  let opposite_direction = offset_derivative(segment, t: opposite_t, offset:)
+  let opposite_direction = offset_direction(segment, t: opposite_t, offset:)
   use direction <- result.try(e_join_free_endpoint_offset_direction(
     source,
     offset,
@@ -10669,11 +10669,11 @@ fn e_join_free_endpoint_offset_direction(
     SegmentEnd -> 1.0 -. curvature_parameter_tolerance *. 2.0
   }
   case is_reversal && reaches_offset_radius {
-    False -> offset_derivative(segment, t: endpoint_t, offset:)
+    False -> offset_direction(segment, t: endpoint_t, offset:)
     True ->
-      case offset_derivative(segment, t: interior_t, offset:) {
+      case offset_direction(segment, t: interior_t, offset:) {
         Ok(direction) -> Ok(direction)
-        Error(_) -> offset_derivative(segment, t: endpoint_t, offset:)
+        Error(_) -> offset_direction(segment, t: endpoint_t, offset:)
       }
   }
 }
@@ -11667,41 +11667,89 @@ fn offset_point(
   }
 }
 
-fn offset_derivative(
+fn offset_direction(
   segment: svg_path.Segment,
   t t: Float,
   offset offset: Float,
 ) -> Result(svg_path.Point, Error) {
-  use derivative <- result.try(
-    svg_path.segment_derivative(segment, at: t) |> result.map_error(PathError),
-  )
-  use second <- result.try(
-    svg_path.segment_second_derivative(segment, at: t)
-    |> result.map_error(PathError),
-  )
-  use speed <- result.try(length(derivative, t:))
+  use tangent <- result.try(unit_tangent(segment, t:))
+  case offset == 0.0 {
+    True -> Ok(tangent)
+    False ->
+      case curvature.segment_left_normal_curvature(segment, at: t) {
+        Ok(curvature) ->
+          offset_direction_from_curvature(tangent, curvature, offset, t:)
+        Error(_) ->
+          offset_endpoint_direction_limit(segment, tangent, t:, offset:)
+      }
+  }
+}
 
-  let tangent_change =
-    point_helpers.subtract(
-      point_helpers.scale(second, 1.0 /. speed),
-      point_helpers.scale(
-        derivative,
-        point_helpers.dot(derivative, second) /. { speed *. speed *. speed },
-      ),
-    )
+fn offset_endpoint_direction_limit(
+  segment: svg_path.Segment,
+  tangent: svg_path.Point,
+  t t: Float,
+  offset offset: Float,
+) -> Result(svg_path.Point, Error) {
+  case t == 0.0 || t == 1.0 {
+    False -> Error(DegenerateTangent(t))
+    True ->
+      offset_endpoint_direction_limit_from_interior(
+        segment,
+        tangent,
+        endpoint_t: t,
+        interior_distance: curvature_parameter_tolerance,
+        offset:,
+      )
+  }
+}
 
-  let candidate =
-    point_helpers.add(
-      derivative,
-      point_helpers.scale(
-        point_helpers.rotate_counterclockwise(tangent_change),
-        offset,
-      ),
-    )
+fn offset_endpoint_direction_limit_from_interior(
+  segment: svg_path.Segment,
+  tangent: svg_path.Point,
+  endpoint_t endpoint_t: Float,
+  interior_distance interior_distance: Float,
+  offset offset: Float,
+) -> Result(svg_path.Point, Error) {
+  case interior_distance >. 0.01 {
+    True -> Error(DegenerateTangent(endpoint_t))
+    False -> {
+      let interior_t = case endpoint_t {
+        0.0 -> interior_distance
+        _ -> 1.0 -. interior_distance
+      }
+      case curvature.segment_left_normal_curvature(segment, at: interior_t) {
+        Ok(curvature) ->
+          offset_direction_from_curvature(
+            tangent,
+            curvature,
+            offset,
+            t: endpoint_t,
+          )
+        Error(_) ->
+          offset_endpoint_direction_limit_from_interior(
+            segment,
+            tangent,
+            endpoint_t:,
+            interior_distance: interior_distance *. 10.0,
+            offset:,
+          )
+      }
+    }
+  }
+}
 
-  case point_is_finite(candidate) {
-    True -> Ok(candidate)
-    False -> Error(NonFinite)
+fn offset_direction_from_curvature(
+  tangent: svg_path.Point,
+  curvature: Float,
+  offset: Float,
+  t t: Float,
+) -> Result(svg_path.Point, Error) {
+  let speed_factor = 1.0 -. offset *. curvature
+  case speed_factor >. 0.0, speed_factor <. 0.0 {
+    True, _ -> Ok(tangent)
+    False, True -> Ok(point_helpers.scale(tangent, -1.0))
+    False, False -> Error(DegenerateTangent(t))
   }
 }
 

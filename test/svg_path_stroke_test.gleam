@@ -73,6 +73,23 @@ pub fn round_caps_use_normalized_source_endpoint_directions_test() {
   assert svg_path.subpath_is_closed(outline)
 }
 
+pub fn stroke_accepts_a_directed_cubic_with_a_stationary_start_parameter_test() {
+  let subpath =
+    svg_path.subpath_assert([
+      svg_path.CubicBezier(
+        start: svg_path.Point(438.1699, -68.829),
+        control1: svg_path.Point(438.1699, -68.829),
+        control2: svg_path.Point(410.55765339720045, -44.345920281737655),
+        end: svg_path.Point(408.4367, -42.4248),
+      ),
+    ])
+
+  let assert Ok(path) = stroke.subpath(subpath, width: 0.5)
+  let assert [outline] = svg_path.path_subpaths(path)
+
+  assert svg_path.subpath_is_closed(outline)
+}
+
 pub fn zero_length_subpath_stroke_with_butt_cap_returns_empty_path_test() {
   let a = svg_path.Point(3.0, 4.0)
   let subpath = svg_path.subpath_assert([svg_path.Line(start: a, end: a)])
