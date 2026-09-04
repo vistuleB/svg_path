@@ -9,6 +9,14 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
+## 0.42.1 - 2026-09-04
+
+### Fixed
+
+- Constructed both stroke offset sides and endpoint caps from one normalized
+  source, preventing round-cap discontinuities when source normalization
+  changes an endpoint direction.
+
 ## 0.42.0 - 2026-09-04
 
 ### Added

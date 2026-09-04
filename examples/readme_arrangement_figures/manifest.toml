@@ -8,7 +8,7 @@
 
 packages = [
   { name = "gleam_stdlib", version = "1.0.5", build_tools = ["gleam"], requirements = [], otp_app = "gleam_stdlib", source = "hex", outer_checksum = "CEE5B6C076A85B45F60C585F4316C63EC8B7127C119D5738C3958A9C4D50404E" },
-  { name = "svg_path", version = "0.42.0", build_tools = ["gleam"], requirements = ["gleam_stdlib"], source = "local", path = "../.." },
+  { name = "svg_path", version = "0.42.1", build_tools = ["gleam"], requirements = ["gleam_stdlib"], source = "local", path = "../.." },
 ]
 
 [requirements]
