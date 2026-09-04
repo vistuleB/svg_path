@@ -3,7 +3,31 @@ import gleam/list
 import gleeunit/should
 import svg_path
 import svg_path/intersections
+import svg_path/point
 import svg_path/transform
+
+pub fn cubic_line_crossing_is_polished_to_geometric_tolerance_test() {
+  let cubic =
+    svg_path.CubicBezier(
+      start: svg_path.Point(414.88052040592544, -47.067344225071885),
+      control1: svg_path.Point(426.1136826390859, -57.05005309466557),
+      control2: svg_path.Point(449.164205229028, -77.53651654700472),
+      end: svg_path.Point(451.6059453674826, -80.02528267799268),
+    )
+  let line =
+    svg_path.Line(
+      start: svg_path.Point(451.57604163009046, -79.71204505188506),
+      end: svg_path.Point(450.98094163009046, -80.60954505188505),
+    )
+
+  let assert Ok([intersection]) = intersections.segment(cubic, line)
+  let assert Ok(cubic_point) =
+    svg_path.segment_point(cubic, at: intersection.left_t)
+  let assert Ok(line_point) =
+    svg_path.segment_point(line, at: intersection.right_t)
+
+  should.be_true(point.distance(cubic_point, line_point) <=. 1.0e-9)
+}
 
 fn arc_pair() -> #(svg_path.Segment, svg_path.Segment) {
   #(

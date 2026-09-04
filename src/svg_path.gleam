@@ -3129,7 +3129,14 @@ fn segment_line_crossings_with(
     options.max_iterations,
   ))
 
-  Ok(classified_root_estimates(roots, crossings: []))
+  polish_line_crossing_roots(
+    segment,
+    line_crossing_function(point, normal),
+    roots,
+    options,
+    signed_line_distance_tolerance,
+    crossings: [],
+  )
 }
 
 /// Return the segment parameter where a scalar function is minimized.
@@ -5082,16 +5089,76 @@ fn segment_line_classified_roots(
   }
 }
 
-fn classified_root_estimates(
+fn polish_line_crossing_roots(
+  segment: Segment,
+  crossing_function: fn(Point) -> Float,
   roots: List(root.ClassifiedRoot),
+  options: CrossingOptions,
+  signed_line_distance_tolerance: Float,
   crossings crossings: List(Float),
-) -> List(Float) {
+) -> Result(List(Float), Error) {
   case roots {
-    [] -> list.reverse(crossings)
+    [] -> Ok(list.reverse(crossings))
     [
-      root.ClassifiedRoot(isolation: root.RootIsolation(estimate:, ..), ..),
+      root.ClassifiedRoot(
+        isolation: root.RootIsolation(lower:, estimate:, upper:),
+        kind:,
+      ),
       ..rest
-    ] -> classified_root_estimates(rest, crossings: [estimate, ..crossings])
+    ] -> {
+      use estimate_value <- result.try(crossing_value(
+        segment,
+        crossing_function,
+        estimate,
+      ))
+      case
+        float.absolute_value(estimate_value) <=. signed_line_distance_tolerance
+      {
+        True ->
+          polish_line_crossing_roots(
+            segment,
+            crossing_function,
+            rest,
+            options,
+            signed_line_distance_tolerance,
+            crossings: [estimate, ..crossings],
+          )
+        False ->
+          case kind {
+            root.NegativeToPositive | root.PositiveToNegative -> {
+              use polished <- result.try(refine_crossing(
+                segment,
+                crossing_function,
+                options,
+                signed_line_distance_tolerance,
+                lower,
+                upper,
+              ))
+              case polished {
+                Some(parameter) ->
+                  polish_line_crossing_roots(
+                    segment,
+                    crossing_function,
+                    rest,
+                    options,
+                    signed_line_distance_tolerance,
+                    crossings: [parameter, ..crossings],
+                  )
+                None ->
+                  Error(CrossingMaxIterationsReached(
+                    estimate:,
+                    value: estimate_value,
+                  ))
+              }
+            }
+            _ ->
+              Error(CrossingMaxIterationsReached(
+                estimate:,
+                value: estimate_value,
+              ))
+          }
+      }
+    }
   }
 }
 
