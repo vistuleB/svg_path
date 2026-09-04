@@ -2964,23 +2964,24 @@ fn untrimmed_stroke_band(
   options: Options,
 ) -> Result(OneSubpathBand, Error) {
   let radius = width /. 2.0
+  use normalized <- result.try(normalize_source_subpath(source, options))
   case svg_path.subpath_is_closed(source) {
     True -> {
-      use side_a <- result.try(closed_untrimmed_side(
-        source,
+      use side_a <- result.try(closed_untrimmed_side_from_normalized_source(
+        normalized,
         offset: 0.0 -. radius,
         options:,
       ))
-      use side_b <- result.try(closed_untrimmed_side(
-        source,
+      use side_b <- result.try(closed_untrimmed_side_from_normalized_source(
+        normalized,
         offset: radius,
         options:,
       ))
       Ok(ClosedSubpathBand(exterior: side_b, interior: side_a))
     }
     False -> {
-      use outline <- result.try(untrimmed_stroke_outline(
-        source,
+      use outline <- result.try(untrimmed_stroke_outline_from_normalized_source(
+        normalized,
         radius,
         cap,
         options,
@@ -2990,12 +2991,12 @@ fn untrimmed_stroke_band(
   }
 }
 
-fn closed_untrimmed_side(
+fn closed_untrimmed_side_from_normalized_source(
   source: svg_path.Subpath,
   offset offset: Float,
   options options: Options,
 ) -> Result(svg_path.Subpath, Error) {
-  use side <- result.try(subpath_untrimmed_with(
+  use side <- result.try(untrimmed_subpath_from_normalized_source(
     source,
     offset: offset,
     options:,
@@ -6512,12 +6513,27 @@ fn untrimmed_stroke_outline(
   cap: Cap,
   options: Options,
 ) -> Result(svg_path.Subpath, Error) {
-  use positive <- result.try(subpath_untrimmed_with(
+  use normalized <- result.try(normalize_source_subpath(source, options))
+  untrimmed_stroke_outline_from_normalized_source(
+    normalized,
+    radius,
+    cap,
+    options,
+  )
+}
+
+fn untrimmed_stroke_outline_from_normalized_source(
+  source: svg_path.Subpath,
+  radius: Float,
+  cap: Cap,
+  options: Options,
+) -> Result(svg_path.Subpath, Error) {
+  use positive <- result.try(untrimmed_subpath_from_normalized_source(
     source,
     offset: radius,
     options:,
   ))
-  use negative <- result.try(subpath_untrimmed_with(
+  use negative <- result.try(untrimmed_subpath_from_normalized_source(
     source,
     offset: 0.0 -. radius,
     options:,
@@ -8040,7 +8056,9 @@ fn synchronized_late_stall_near_start(
               Ok(
                 list.map(split, fn(source) {
                   let SynchronizedSourceSegment(prepared_to:, ..) = source
-                  case prepared_to <=. expanded_to +. point_parameter_tolerance {
+                  case
+                    prepared_to <=. expanded_to +. point_parameter_tolerance
+                  {
                     True -> set_synchronized_side_stalled(source, side)
                     False -> source
                   }
@@ -8090,7 +8108,9 @@ fn synchronized_late_stall_near_end(
               Ok(
                 list.map(split, fn(source) {
                   let SynchronizedSourceSegment(prepared_from:, ..) = source
-                  case prepared_from >=. expanded_from -. point_parameter_tolerance {
+                  case
+                    prepared_from >=. expanded_from -. point_parameter_tolerance
+                  {
                     True -> set_synchronized_side_stalled(source, side)
                     False -> source
                   }

@@ -50,6 +50,29 @@ pub fn subpath_stroke_with_round_cap_serializes_semicircles_test() {
     == "M 0 -1 H 10 A 1 1 0 0 1 10 1 H 0 A 1 1 0 0 1 0 -1 Z"
 }
 
+pub fn round_caps_use_normalized_source_endpoint_directions_test() {
+  let subpath =
+    svg_path.subpath_assert([
+      svg_path.CubicBezier(
+        start: svg_path.Point(119.39091517239682, 120.68941214016728),
+        control1: svg_path.Point(119.99661582931833, 120.39944456042525),
+        control2: svg_path.Point(120.60455242265807, 120.1171740145196),
+        end: svg_path.Point(121.21463749128954, 119.84268982753466),
+      ),
+    ])
+  let options =
+    stroke.Options(
+      width: 6.0,
+      cap: stroke.Round,
+      offset: offset.Options(..offset.default_options(), join: offset.Round),
+    )
+
+  let assert Ok(path) = stroke.subpath_with(subpath, options:)
+  let assert [outline] = svg_path.path_subpaths(path)
+
+  assert svg_path.subpath_is_closed(outline)
+}
+
 pub fn zero_length_subpath_stroke_with_butt_cap_returns_empty_path_test() {
   let a = svg_path.Point(3.0, 4.0)
   let subpath = svg_path.subpath_assert([svg_path.Line(start: a, end: a)])
