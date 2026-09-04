@@ -801,6 +801,9 @@ pub type Error {
   /// The intersection tolerance must be finite and greater than zero.
   InvalidIntersectionTolerance(tolerance: Float)
 
+  /// The subpath-parameter snap tolerance must be finite and greater than zero.
+  InvalidParameterSnapTolerance(tolerance: Float)
+
   /// The overlap tolerance must be finite and zero or greater.
   InvalidOverlapTolerance(tolerance: Float)
 
@@ -2431,7 +2434,7 @@ pub fn subpath_parameter_snap_to_boundary(
   tolerance tolerance: Float,
 ) -> Result(SubpathParameter, Error) {
   case tolerance <=. 0.0 || !number.is_finite(tolerance) {
-    True -> Error(InvalidIntersectionTolerance(tolerance))
+    True -> Error(InvalidParameterSnapTolerance(tolerance))
     False -> {
       use _ <- result.try(validate_subpath_parameter(subpath, parameter))
       Ok(canonicalize_subpath_parameter_unchecked(parameter, subpath, tolerance))

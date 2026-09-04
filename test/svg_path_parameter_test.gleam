@@ -201,7 +201,7 @@ pub fn snap_subpath_parameter_rejects_invalid_inputs_test() {
       parameter: svg_path.SubpathParameter(0, 0.5),
       tolerance: 0.0,
     )
-    == Error(svg_path.InvalidIntersectionTolerance(0.0))
+    == Error(svg_path.InvalidParameterSnapTolerance(0.0))
   assert svg_path.subpath_parameter_snap_to_boundary(
       subpath,
       parameter: svg_path.SubpathParameter(1, 0.5),
