@@ -9,6 +9,17 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
+## 0.42.2 - 2026-09-04
+
+### Fixed
+
+- Derived offset directions from signed curvature and one-sided endpoint
+  tangents, allowing directed curves with stationary endpoint
+  parameterizations to be stroked.
+- Polished sign-changing line-intersection roots to the caller's geometric
+  tolerance instead of treating fixed parameter-space accuracy as equivalent
+  to geometric accuracy.
+
 ## 0.42.1 - 2026-09-04
 
 ### Fixed
