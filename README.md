@@ -1117,7 +1117,7 @@ There is a similar difference between `M 0,0` and `M 0,0 Z`, with the `Z`
 command "supplying" a zero-length line segment to the subpath:
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.40.0/figures/zero_length_closepath_probe.svg" alt="Zero-length closepath probe">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.42.0/figures/zero_length_closepath_probe.svg" alt="Zero-length closepath probe">
 </center>
 
 ```xml
@@ -1452,7 +1452,7 @@ The following open source has no offside stage, so the panels isolate the three
 final-trimming choices:
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.41.0/figures/single_offset_final_trimming.svg" alt="Single offset with no final trimming, cusp trimming, and in-band trimming">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.42.0/figures/single_offset_final_trimming.svg" alt="Single offset with no final trimming, cusp trimming, and in-band trimming">
 </center>
 
 For closed contours, `offside` is an additional and independent operation. In
@@ -1460,7 +1460,7 @@ this example the source contains oppositely oriented concentric rectangles;
 the final trimming mode is `NoTrimming` in both panels:
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.41.0/figures/single_offset_offside_trimming.svg" alt="Single offset of concentric rectangles with offside trimming disabled and enabled">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.42.0/figures/single_offset_offside_trimming.svg" alt="Single offset of concentric rectangles with offside trimming disabled and enabled">
 </center>
 
 The defaults are `offside: True` and
@@ -1518,14 +1518,14 @@ The cusp switches act before joint band trimming. The four-concave-corner
 example below holds `in_band: True` while changing the two side-local switches:
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.41.0/figures/band_cusp_trimming.svg" alt="Band trimming with both, one, and neither side-local cusp pass enabled">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.42.0/figures/band_cusp_trimming.svg" alt="Band trimming with both, one, and neither side-local cusp pass enabled">
 </center>
 
 The figure-eight below holds both cusp switches at `True` and changes only the
 final joint pass:
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.41.0/figures/band_in_band_trimming.svg" alt="Figure-eight band with in-band trimming disabled and enabled">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.42.0/figures/band_in_band_trimming.svg" alt="Figure-eight band with in-band trimming disabled and enabled">
 </center>
 
 All three band switches default to `True`. Turning a stage off is useful for
@@ -1553,7 +1553,7 @@ the right panel shows the resulting vertices, directed edges, winding levels,
 and directional multiplicities.
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.40.0/figures/arrangement_graph_overlapping_squares.svg" alt="Two overlapping square subpaths and their arrangement graph">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.42.0/figures/arrangement_graph_overlapping_squares.svg" alt="Two overlapping square subpaths and their arrangement graph">
 </center>
 
 ```gleam
@@ -1588,7 +1588,7 @@ circle at all four source endpoints and represents each geometric edge once,
 with one occurrence in each direction.
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.40.0/figures/arrangement_graph_semantic_circle_overlap.svg" alt="Oppositely directed equal circles with phase-shifted arc subdivisions and their arrangement graph">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.42.0/figures/arrangement_graph_semantic_circle_overlap.svg" alt="Oppositely directed equal circles with phase-shifted arc subdivisions and their arrangement graph">
 </center>
 
 `build` is the supported constructor. Direct construction remains possible for
@@ -1658,7 +1658,7 @@ black numbers are the winding levels immediately to the left and right of each
 directed edge; its red numbers are forward and reverse source multiplicities.
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.40.0/figures/arrangement_csg_nonzero.svg" alt="Eight-panel ArrangementGraph CSG example using the Nonzero fill rule">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.42.0/figures/arrangement_csg_nonzero.svg" alt="Eight-panel ArrangementGraph CSG example using the Nonzero fill rule">
 </center>
 
 The same inputs and arrangement produce different Boolean boundaries under
@@ -1667,7 +1667,7 @@ final `nested_contours` panel is unchanged because that unary operation
 preserves the complete signed winding field and does not take a fill rule.
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.40.0/figures/arrangement_csg_evenodd.svg" alt="Eight-panel ArrangementGraph CSG example using the EvenOdd fill rule">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.42.0/figures/arrangement_csg_evenodd.svg" alt="Eight-panel ArrangementGraph CSG example using the EvenOdd fill rule">
 </center>
 
 For points away from a boundary:

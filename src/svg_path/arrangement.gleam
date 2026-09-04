@@ -4025,15 +4025,28 @@ fn distinct_parameters(
     [first, ..rest], [] ->
       distinct_parameters(rest, segment, tolerance, [first])
     [first, ..rest], [previous, ..] -> {
-      use between <- result.try(
-        svg_path.segment_between(segment, from: previous, to: first)
+      use previous_point <- result.try(
+        svg_path.segment_point(segment, at: previous)
         |> result.map_error(PathError),
       )
-      use motion <- result.try(segment_taxicab_diameter(between))
-      case motion <=. tolerance {
+      use first_point <- result.try(
+        svg_path.segment_point(segment, at: first)
+        |> result.map_error(PathError),
+      )
+      case previous_point == first_point {
         True -> distinct_parameters(rest, segment, tolerance, distinct)
-        False ->
-          distinct_parameters(rest, segment, tolerance, [first, ..distinct])
+        False -> {
+          use between <- result.try(
+            svg_path.segment_between(segment, from: previous, to: first)
+            |> result.map_error(PathError),
+          )
+          use motion <- result.try(segment_taxicab_diameter(between))
+          case motion <=. tolerance {
+            True -> distinct_parameters(rest, segment, tolerance, distinct)
+            False ->
+              distinct_parameters(rest, segment, tolerance, [first, ..distinct])
+          }
+        }
       }
     }
   }

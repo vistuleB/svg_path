@@ -35,6 +35,36 @@ pub fn closed_square_builds_valid_graph_test() {
   |> should.equal(Ok(Nil))
 }
 
+pub fn coincident_arc_cut_parameters_do_not_create_degenerate_arcs_test() {
+  let left = svg_path.Point(378.75, 132.0)
+  let right = svg_path.Point(513.75, 132.0)
+  let circle =
+    closed_subpath([
+      svg_path.Arc(
+        start: right,
+        radius: svg_path.Point(67.5, 67.5),
+        x_axis_rotation: 0.0,
+        large_arc: False,
+        sweep: True,
+        end: left,
+      ),
+      svg_path.Arc(
+        start: left,
+        radius: svg_path.Point(67.5, 67.5),
+        x_axis_rotation: 0.0,
+        large_arc: False,
+        sweep: True,
+        end: right,
+      ),
+    ])
+  let cutter = rectangle(431.25, 57.0, 90.0, 150.0)
+
+  let assert Ok(graph) =
+    build_graph([circle, cutter], tolerance:, minimum_chord:)
+  arrangement_graph.validate(graph, tolerance:, minimum_chord:)
+  |> should.equal(Ok(Nil))
+}
+
 pub fn forced_parity_reduces_unique_edge_without_mutating_graph_test() {
   let line =
     svg_path.Line(
@@ -835,9 +865,7 @@ pub fn build_with_rejects_negative_endpoint_sliver_tolerance_test() {
     minimum_chord:,
     endpoint_sliver_tolerance: -0.1,
   )
-  |> should.equal(
-    Error(arrangement_graph.InvalidEndpointSliverTolerance(-0.1)),
-  )
+  |> should.equal(Error(arrangement_graph.InvalidEndpointSliverTolerance(-0.1)))
 }
 
 pub fn validation_rejects_invalid_numeric_options_test() {

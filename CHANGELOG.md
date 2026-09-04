@@ -9,6 +9,65 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
+## 0.42.0 - 2026-09-04
+
+### Added
+
+- Exposed arrangement segment-build provenance, including ordered source
+  segment images, edge-source images, ownership, parameter intervals, and
+  traversal orientation.
+- Added `CongruencyTolerance` and configurable `segment_with`, `subpath_with`,
+  and `path_with` congruency queries so coordinate and direction tolerances are
+  represented separately.
+- Added checked floating-point sum and product helpers for calculations that
+  must reject overflow.
+- Added `InvalidParameterSnapTolerance` so subpath-parameter snapping no longer
+  reports an unrelated intersection-tolerance error.
+
+### Changed
+
+- Made `subpath_start` and `subpath_end` total functions returning `Point`
+  directly; a `Subpath` always retains its start even when it has no segments.
+- Folded the experimental windowed intersection implementation into
+  `svg_path/intersections` and removed the separate `intersections2` module.
+- Simplified intersection descent seeding and made its numerical conditioning
+  scale invariant.
+- Standardized internal polynomial root isolation on a fixed parameter
+  tolerance and coefficient-relative value tolerance, with final windows that
+  record the intervals actually used for root classification.
+- Separated geometric, parameter, projection, crossing, overlap, congruency,
+  tangent-agreement, and offset-join tolerances where one scalar had previously
+  served incompatible units or contracts.
+- Aligned convex-hull clockwise and counterclockwise results with visual SVG
+  coordinates.
+
+### Fixed
+
+- Stabilized quadratic and higher-degree polynomial root isolation, including
+  cancellation-prone quadratic roots, repeated roots, endpoint roots, and
+  closely spaced classification windows.
+- Corrected curvature derivative and curvature-root calculations and improved
+  ellipse tolerance handling across coordinate scales.
+- Corrected circular-arc projection speed bounds and rejected coincident arc
+  endpoints during endpoint-to-center conversion instead of allowing a
+  division by zero.
+- Propagated non-finite trigonometric inputs rather than manufacturing finite
+  answers from them.
+- Stabilized smallest-enclosing-circle translation, convex minimum-width lower
+  bounds, and relative arc serialization near floating-point limits.
+- Prevented transform tolerance squaring and transform composition from
+  overflowing, and made orthogonality checks consistent across scales.
+- Suppressed machine-noise identity scales in transform serialization while
+  preserving intentional near-identity scales.
+- Added finite-value and range validation for arrangement, winding-field,
+  degeneracy, encounter, formatting, and related numerical options.
+- Accepted fractional font sizes in arrangement labels instead of truncating
+  them to integers.
+- Replaced unstable arc-length checks used to distinguish arrangement cuts
+  with bounded geometric diameter checks.
+- Hardened empty-container, degenerate-similarity, CSG, and arrangement edge
+  cases found by the independent F# parity audit.
+
 ## 0.41.1 - 2026-08-31
 
 ### Changed
