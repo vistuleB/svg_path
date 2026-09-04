@@ -228,7 +228,6 @@ pub type ArrangementGraphBuild {
 /// `ta` and `tb` are parameters on the input segment. `reversed` records
 /// whether the input traversal opposes the stored graph edge orientation.
 /// `own` is true for the first input segment occurrence assigned to the edge.
-@internal
 pub type ArrangementSegmentEdgeImage {
   ArrangementSegmentEdgeImage(
     ta: Float,
@@ -240,7 +239,6 @@ pub type ArrangementSegmentEdgeImage {
 }
 
 /// The ordered atomic graph-edge image of one input segment.
-@internal
 pub type ArrangementSourceSegmentImage {
   ArrangementSourceSegmentImage(
     segment_index: Int,
@@ -252,7 +250,6 @@ pub type ArrangementSourceSegmentImage {
 ///
 /// `ta <= tb` are parameters on the input segment. `reversed` records whether
 /// the input segment traversal opposes the stored graph edge orientation.
-@internal
 pub type ArrangementEdgeSourceImage {
   ArrangementEdgeSourceImage(
     segment_index: Int,
@@ -266,7 +263,6 @@ pub type ArrangementEdgeSourceImage {
 ///
 /// The first source is the first occurrence found in source order and is the
 /// provisional owner used by `ArrangementSegmentEdgeImage.own`.
-@internal
 pub type ArrangementEdgeImage {
   ArrangementEdgeImage(edge_id: Int, sources: List(ArrangementEdgeSourceImage))
 }
@@ -274,7 +270,6 @@ pub type ArrangementEdgeImage {
 /// Arrangement graph build result for direct segment-list construction.
 ///
 /// This path does not normalize or rewrite caller input before construction.
-@internal
 pub type ArrangementSegmentBuild {
   ArrangementSegmentBuild(
     graph: ArrangementGraph,
