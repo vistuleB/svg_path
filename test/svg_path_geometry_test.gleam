@@ -1023,6 +1023,29 @@ pub fn segment_length_with_rejects_invalid_options_test() {
     == Error(svg_path.InvalidLengthMaxDepth(0))
 }
 
+pub fn segment_length_with_reports_exhausted_refinement_depth_test() {
+  let curve =
+    svg_path.CubicBezier(
+      start: svg_path.Point(0.0, 0.0),
+      control1: svg_path.Point(0.0, 100.0),
+      control2: svg_path.Point(100.0, -100.0),
+      end: svg_path.Point(100.0, 0.0),
+    )
+
+  case
+    svg_path.segment_length_with(
+      curve,
+      options: svg_path.LengthOptions(tolerance: 1.0e-30, max_depth: 1),
+    )
+  {
+    Error(svg_path.LengthMaxDepthReached(estimate:, error:)) -> {
+      assert estimate >. 0.0
+      assert error >. 0.0
+    }
+    _ -> panic as "expected exhausted length refinement depth"
+  }
+}
+
 pub fn subpath_length_sums_segment_lengths_test() {
   let subpath =
     svg_path.subpath_assert([

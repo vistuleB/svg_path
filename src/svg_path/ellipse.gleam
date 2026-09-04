@@ -779,7 +779,7 @@ fn do_endpoint_to_center(
   let rx = float.absolute_value(radius.x)
   let ry = float.absolute_value(radius.y)
 
-  case rx <=. length_tolerance || ry <=. length_tolerance {
+  case rx <=. length_tolerance || ry <=. length_tolerance || start == end {
     True -> Error(DegenerateInputArc)
     False -> {
       let cos_phi = trig.cos_degrees(x_axis_rotation)

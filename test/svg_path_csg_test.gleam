@@ -552,6 +552,20 @@ pub fn nested_contours_preserve_positive_nested_winding_levels_test() {
   ])
 }
 
+pub fn nested_contours_preserve_coincident_positive_winding_layers_test() {
+  let contour = rectangle_subpath(0.0, 0.0, 10.0, 10.0)
+  let input = svg_path.Path([contour, contour])
+  let assert Ok(csg.CsgResult(path: output, ..)) = csg.nested_contours(input)
+
+  let contours = svg_path.path_subpaths(output)
+  list.length(contours) |> should.equal(2)
+  contours
+  |> list.each(fn(contour) {
+    svg_path.subpath_is_closed(contour) |> should.be_true
+    svg_path.subpath_segments(contour) |> list.length |> should.equal(4)
+  })
+}
+
 pub fn nested_contours_preserve_mixed_sign_nesting_test() {
   let input =
     svg_path.Path([

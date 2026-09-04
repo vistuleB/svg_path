@@ -4034,15 +4034,24 @@ fn distinct_parameters(
         svg_path.segment_between(segment, from: previous, to: first)
         |> result.map_error(PathError),
       )
-      use motion <- result.try(
-        svg_path.segment_length(between)
-        |> result.map_error(PathError),
-      )
+      use motion <- result.try(segment_taxicab_diameter(between))
       case motion <=. tolerance {
         True -> distinct_parameters(rest, segment, tolerance, distinct)
         False ->
           distinct_parameters(rest, segment, tolerance, [first, ..distinct])
       }
+    }
+  }
+}
+
+fn segment_taxicab_diameter(segment: svg_path.Segment) -> Result(Float, Error) {
+  case segment {
+    svg_path.Arc(start:, end:, ..) if start == end -> Ok(0.0)
+    _ -> {
+      use bounds <- result.try(
+        svg_path.segment_bounding_box(segment) |> result.map_error(PathError),
+      )
+      Ok(svg_path.bounding_box_diameter(bounds))
     }
   }
 }

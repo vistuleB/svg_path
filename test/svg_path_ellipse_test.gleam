@@ -427,6 +427,22 @@ pub fn endpoint_to_center_scales_small_radii_up_test() {
   assert point_near(arc.radius, ellipse.EllipsePoint(10.0, 10.0))
 }
 
+pub fn endpoint_to_center_rejects_coincident_endpoints_test() {
+  let point = ellipse.EllipsePoint(3.0, 4.0)
+  let endpoint =
+    ellipse.EndpointArcData(
+      start: point,
+      radius: ellipse.EllipsePoint(10.0, 20.0),
+      x_axis_rotation: 30.0,
+      large_arc: True,
+      sweep: False,
+      end: point,
+    )
+
+  assert ellipse.endpoint_to_center(endpoint)
+    == Error(ellipse.DegenerateInputArc)
+}
+
 pub fn center_to_endpoint_round_trips_arc_data_test() {
   let endpoint =
     ellipse.EndpointArcData(

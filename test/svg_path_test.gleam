@@ -161,19 +161,21 @@ pub fn point_pair_similarity_rejects_a_degenerate_source_pair_for_empty_containe
   let empty_path = svg_path.path_empty()
 
   assert svg_path.subpath_by_point_pair_similarity(
-    empty_subpath,
-    source_start: source,
-    source_end: source,
-    target_start:,
-    target_end:,
-  ) == Error(svg_path.DegeneratePointPairSimilarity)
+      empty_subpath,
+      source_start: source,
+      source_end: source,
+      target_start:,
+      target_end:,
+    )
+    == Error(svg_path.DegeneratePointPairSimilarity)
   assert svg_path.path_by_point_pair_similarity(
-    empty_path,
-    source_start: source,
-    source_end: source,
-    target_start:,
-    target_end:,
-  ) == Error(svg_path.DegeneratePointPairSimilarity)
+      empty_path,
+      source_start: source,
+      source_end: source,
+      target_start:,
+      target_end:,
+    )
+    == Error(svg_path.DegeneratePointPairSimilarity)
 }
 
 pub fn segment_point_evaluates_lines_quadratics_cubics_and_arcs_test() {
@@ -221,6 +223,23 @@ pub fn segment_point_evaluates_lines_quadratics_cubics_and_arcs_test() {
   assert point_near(quadratic_point, svg_path.Point(10.0, 10.0))
   assert point_near(cubic_point, svg_path.Point(15.0, 22.5))
   assert point_near(arc_point, svg_path.Point(10.0, -10.0))
+}
+
+pub fn segment_point_returns_stored_arc_endpoints_exactly_test() {
+  let start = svg_path.Point(1.23456789, -2.34567891)
+  let end = svg_path.Point(9.87654321, 7.65432109)
+  let arc =
+    svg_path.Arc(
+      start:,
+      radius: svg_path.Point(8.1, 5.7),
+      x_axis_rotation: 23.0,
+      large_arc: False,
+      sweep: True,
+      end:,
+    )
+
+  assert svg_path.segment_point(arc, at: 0.0) == Ok(start)
+  assert svg_path.segment_point(arc, at: 1.0) == Ok(end)
 }
 
 pub fn segment_derivative_evaluates_lines_quadratics_cubics_and_arcs_test() {
@@ -1817,6 +1836,17 @@ pub fn append_segment_with_wiggle_rejects_start_gaps_beyond_tolerance_test() {
     ))
 }
 
+pub fn append_segment_with_bridge_does_not_insert_a_zero_length_bridge_test() {
+  let start = svg_path.Point(0.0, 0.0)
+  let end = svg_path.Point(10.0, 0.0)
+  let segment = svg_path.Line(start:, end:)
+  let assert Ok(appended) =
+    svg_path.subpath_empty(at: start)
+    |> svg_path.subpath_append_segment_with(segment, policy: svg_path.Bridge)
+
+  assert svg_path.subpath_segments(appended) == [segment]
+}
+
 pub fn subpath_with_wiggle_replaces_nearby_sequential_endpoints_test() {
   let a = svg_path.Point(0.0, 0.0)
   let b = svg_path.Point(10.0, 0.0)
@@ -2985,6 +3015,13 @@ pub fn join_treats_empty_open_subpaths_as_identity_values_test() {
   assert svg_path.subpath_join([empty_start, subpath]) == Ok(subpath)
   assert svg_path.subpath_join([subpath, empty_end]) == Ok(subpath)
   assert svg_path.subpath_join([empty_start, empty_end]) == Ok(empty_start)
+}
+
+pub fn join_with_validates_policy_for_only_empty_subpaths_test() {
+  let empty = svg_path.subpath_empty(at: svg_path.Point(0.0, 0.0))
+
+  assert svg_path.subpath_join_with([empty], policy: svg_path.wiggle_with(-1.0))
+    == Error(svg_path.InvalidWiggleTolerance(-1.0))
 }
 
 pub fn join_treats_interleaved_empty_subpaths_as_identity_values_test() {
