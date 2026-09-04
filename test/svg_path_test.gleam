@@ -153,6 +153,29 @@ pub fn path_point_pair_similarity_maps_arcs_test() {
   assert sweep
 }
 
+pub fn point_pair_similarity_rejects_a_degenerate_source_pair_for_empty_containers_test() {
+  let source = svg_path.Point(1.0, 2.0)
+  let target_start = svg_path.Point(10.0, 20.0)
+  let target_end = svg_path.Point(30.0, 40.0)
+  let empty_subpath = svg_path.subpath_empty(at: source)
+  let empty_path = svg_path.path_empty()
+
+  assert svg_path.subpath_by_point_pair_similarity(
+    empty_subpath,
+    source_start: source,
+    source_end: source,
+    target_start:,
+    target_end:,
+  ) == Error(svg_path.DegeneratePointPairSimilarity)
+  assert svg_path.path_by_point_pair_similarity(
+    empty_path,
+    source_start: source,
+    source_end: source,
+    target_start:,
+    target_end:,
+  ) == Error(svg_path.DegeneratePointPairSimilarity)
+}
+
 pub fn segment_point_evaluates_lines_quadratics_cubics_and_arcs_test() {
   let assert Ok(line_point) =
     svg_path.segment_point(
