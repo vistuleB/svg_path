@@ -154,12 +154,12 @@ offset shrinking by the same factor per turn.
 Shows a crescent-shaped point cloud, a reference arc and chord, and the computed
 convex hull.
 
-### Circle and Ellipse Construction
+### Package Title Nine Offsets
 
-![Circle and ellipse construction verification](docs/gallery/gallery-basic-shapes-ellipse-verification.svg)
+![Package title nine offsets](docs/gallery/gallery-package-title-nine-offsets.svg)
 
-Checks the centers, cardinal points, bounds, start points, and quarter-arc
-directions produced by `basic_shapes.circle` and `basic_shapes.ellipse`.
+Nine successive `offset.path` rings, each spaced 1.04 from the previous ring,
+pushed outward from the `SVG_PATH` text outline.
 
 ### Cut Radiator
 

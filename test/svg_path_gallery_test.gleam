@@ -117,11 +117,9 @@ pub fn generate_gallery_figures() {
     ),
     #("gallery-crescent-hull.svg", "Crescent hull", crescent_hull()),
     #(
-      "gallery-basic-shapes-ellipse-verification.svg",
-      "Circle and ellipse construction verification",
-      generated_debug_svg(
-        "test/fixtures/gallery/basic-shapes-ellipse-verification.svg",
-      ),
+      "gallery-package-title-nine-offsets.svg",
+      "Package title nine offsets",
+      package_title_nine_offsets(),
     ),
     #("gallery-cut-radiator.svg", "Cut radiator", cut_radiator()),
     #("gallery-marker-pose-slots.svg", "Marker pose slots", marker_pose_slots()),
@@ -2215,6 +2213,60 @@ fn package_title_first_path_data(contents: String) -> String {
   let assert [_, after_attribute] = string.split(contents, on: " d=\"")
   let assert [data, ..] = string.split(after_attribute, on: "\"")
   data
+}
+
+fn package_title_nine_offsets() -> String {
+  let assert Ok(contents) = read_file("examples/debug/package_title.svg")
+  let assert Ok(source) = parse.path(package_title_first_path_data(contents))
+  let options = offset.default_options()
+  let levels =
+    list.fold(
+      list.repeat(1, 9),
+      [source],
+      fn(levels, _) {
+        let assert Ok(previous) = list.last(levels)
+        let assert Ok(next) =
+          offset.path_with(previous, offset: 1.04, options:)
+        [next, ..levels]
+      },
+    )
+    |> list.reverse
+  package_title_nine_offsets_document(source, list.drop(levels, 1))
+}
+
+fn package_title_nine_offsets_document(
+  source: svg_path.Path,
+  levels: List(svg_path.Path),
+) -> String {
+  let colors = [
+    "#2563eb",
+    "#dc2626",
+    "#16a34a",
+    "#9333ea",
+    "#ea580c",
+    "#0891b2",
+    "#be185d",
+    "#4f46e5",
+    "#0d9488",
+  ]
+  let view_box = padded_box(path_boxes([source, ..levels]), margin: 2.0)
+  let offset_things =
+    list.map2(levels, colors, fn(path, color) {
+      svg.StyledPath(
+        path,
+        "fill: none; stroke: "
+          <> color
+          <> "; stroke-width: 0.055; stroke-linecap: round; stroke-linejoin: round",
+      )
+    })
+  let things = [
+    gallery_background(view_box),
+    svg.StyledPath(source, "fill: #111827; stroke: none; opacity: 0.14"),
+    ..offset_things
+  ]
+
+  svg.document(things:, view_box:)
+  |> gallery_with_root_size(width: 1800, height: 440)
 }
 
 fn path_boxes(paths: List(svg_path.Path)) -> List(svg_path.BoundingBox) {
