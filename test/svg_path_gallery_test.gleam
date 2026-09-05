@@ -524,7 +524,7 @@ fn stroke_caps() -> String {
         ]
       }),
     ),
-    width: 730.0,
+    width: 750.0,
     height: 220.0,
   )
 }
@@ -587,7 +587,7 @@ fn dashed_strokes() -> String {
         ]
       }),
     ),
-    width: 730.0,
+    width: 750.0,
     height: 220.0,
   )
 }
