@@ -9,10 +9,10 @@
   <path d="M 216 102.15615 L 220.5 94.36192 H 211.5 Z" style="fill: #365314; stroke: none" />
   <path d="M 152 127.59615 L 156.5 119.80192 H 147.5 Z" style="fill: #365314; stroke: none" />
   <path d="M 232 146.39615 L 236.5 138.60192 H 227.5 Z" style="fill: #365314; stroke: none" />
-  <path d="M 298 56 H 256 V 152 H 280 V 180 H 402 V 152 H 408 V 186 H 482 V 120 H 466 V 72 H 406 V 34 H 298 Z M 352 122 V 98 H 374 V 122 Z" style="fill: #bfdbfe; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
-  <path d="M 371.27615 180 L 363.48192 175.5 V 184.5 Z" style="fill: #1f2937; stroke: none" />
-  <path d="M 364.47615 98 L 356.68192 93.5 V 102.5 Z" style="fill: #1f2937; stroke: none" />
-  <path d="M 540 56 H 514 A 8 8 0 0 0 506 64 V 144 A 8 8 0 0 0 514 152 H 522 A 8 8 0 0 1 530 160 V 172 A 8 8 0 0 0 538 180 H 644 A 8 8 0 0 0 652 172 V 155 A 3 3 0 0 1 655 152 H 655 A 3 3 0 0 1 658 155 V 178 A 8 8 0 0 0 666 186 H 724 A 8 8 0 0 0 732 178 V 128 A 8 8 0 0 0 724 120 H 724 A 8 8 0 0 1 716 112 V 80 A 8 8 0 0 0 708 72 H 664 A 8 8 0 0 1 656 64 V 42 A 8 8 0 0 0 648 34 H 556 A 8 8 0 0 0 548 42 V 48 A 8 8 0 0 1 540 56 Z M 602 114 V 106 A 8 8 0 0 1 610 98 H 616 A 8 8 0 0 1 624 106 V 114 A 8 8 0 0 1 616 122 H 610 A 8 8 0 0 1 602 114 Z" style="fill: #bbf7d0; stroke: #14532d; stroke-width: 3; stroke-linejoin: round" />
-  <path d="M 625.79102 180 L 617.99679 175.5 V 184.5 Z" style="fill: #14532d; stroke: none" />
-  <path d="M 621.23997 98.02863 L 613.47055 93.48593 L 613.42117 102.4858 Z" style="fill: #14532d; stroke: none" />
+  <path d="M 256 56 H 298 V 34 H 406 V 72 H 466 V 120 H 482 V 186 H 408 V 152 H 402 V 180 H 280 V 152 H 256 Z M 374 122 V 98 H 352 V 122 Z" style="fill: #bfdbfe; stroke: #1f2937; stroke-width: 3; stroke-linejoin: round" />
+  <path d="M 466 83.27615 L 470.5 75.48192 H 461.5 Z" style="fill: #1f2937; stroke: none" />
+  <path d="M 361.52385 98 L 369.31808 102.5 V 93.5 Z" style="fill: #1f2937; stroke: none" />
+  <path d="M 514 56 H 540 A 8 8 0 0 0 548 48 V 42 A 8 8 0 0 1 556 34 H 648 A 8 8 0 0 1 656 42 V 64 A 8 8 0 0 0 664 72 H 708 A 8 8 0 0 1 716 80 V 112 A 8 8 0 0 0 724 120 H 724 A 8 8 0 0 1 732 128 V 178 A 8 8 0 0 1 724 186 H 666 A 8 8 0 0 1 658 178 V 155 A 3 3 0 0 0 655 152 H 655 A 3 3 0 0 0 652 155 V 172 A 8 8 0 0 1 644 180 H 538 A 8 8 0 0 1 530 172 V 160 A 8 8 0 0 0 522 152 H 514 A 8 8 0 0 1 506 144 V 64 A 8 8 0 0 1 514 56 Z M 624 114 V 106 A 8 8 0 0 0 616 98 H 610 A 8 8 0 0 0 602 106 V 114 A 8 8 0 0 0 610 122 H 616 A 8 8 0 0 0 624 114 Z" style="fill: #bbf7d0; stroke: #14532d; stroke-width: 3; stroke-linejoin: round" />
+  <path d="M 716 91.22465 L 720.5 83.43042 H 711.5 Z" style="fill: #14532d; stroke: none" />
+  <path d="M 604.76003 98.02863 L 612.57883 102.4858 L 612.52945 93.48593 Z" style="fill: #14532d; stroke: none" />
 </svg>
