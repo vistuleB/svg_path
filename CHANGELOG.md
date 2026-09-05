@@ -9,6 +9,22 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
+## 0.43.0 - 2026-09-05
+
+### Changed
+
+- Oriented Boolean boundary output so outer contours are traced clockwise with
+  filled space on the right of each directed boundary edge for `union`,
+  `intersection`, `difference`, and `symmetric_difference`.
+- Collapsed corner-pinch unions (two filled regions meeting at exactly one
+  point, such as squares touching at a corner) into a single self-touching loop
+  instead of two degenerate loops, following the same filled-sector pairing.
+
+### Added
+
+- Corner-pinch union regression tests covering reversed operand orientations,
+  the opposite touch diagonal, and both combined.
+
 ## 0.42.3 - 2026-09-05
 
 ### Fixed
