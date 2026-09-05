@@ -1491,12 +1491,10 @@ fn symmetric_figure_eight_bands() -> String {
       options:,
     )
 
-  let left = symmetric_figure_eight_panel(source, wide_band, x: 20.0)
-  let right = symmetric_figure_eight_panel(source, outer_band, x: 602.0)
-  "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1200\" height=\"560\" viewBox=\"0 0 1200 560\">\n"
-  <> "  <rect x=\"0\" y=\"0\" width=\"1200\" height=\"560\" fill=\"white\" />\n"
-  <> "  <text x=\"305\" y=\"35\" text-anchor=\"middle\" font-family=\"sans-serif\" font-size=\"22\" fill=\"#3f3f46\">−5 to +25</text>\n"
-  <> "  <text x=\"895\" y=\"35\" text-anchor=\"middle\" font-family=\"sans-serif\" font-size=\"22\" fill=\"#3f3f46\">+10 to +20</text>\n"
+  let left = symmetric_figure_eight_panel(source, wide_band, x: 18.0)
+  let right = symmetric_figure_eight_panel(source, outer_band, x: 532.0)
+  "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1050\" height=\"460\" viewBox=\"0 0 1050 460\">\n"
+  <> "  <rect x=\"0\" y=\"0\" width=\"1050\" height=\"460\" fill=\"white\" />\n"
   <> left
   <> right
   <> "</svg>\n"
@@ -1519,7 +1517,7 @@ fn symmetric_figure_eight_panel(
   let view_height = geometry_height +. 2.0 *. padding
   "  <svg x=\""
   <> gallery_float_to_string(x)
-  <> "\" y=\"50\" width=\"570\" height=\"490\" viewBox=\""
+  <> "\" y=\"14\" width=\"500\" height=\"430\" viewBox=\""
   <> gallery_float_to_string(view_x)
   <> " "
   <> gallery_float_to_string(view_y)
