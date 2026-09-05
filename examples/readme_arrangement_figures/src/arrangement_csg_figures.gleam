@@ -435,7 +435,8 @@ fn render_case(
   let result_placed = case svg_path.path_subpaths(boolean_result) {
     [] -> boolean_result
     _ -> {
-      let assert Ok(value) = fit(boolean_result, 750.0, 132.0)
+      let assert Ok(value) =
+        place_like(boolean_result, source, 750.0, 132.0, 190.0, 150.0)
       value
     }
   }

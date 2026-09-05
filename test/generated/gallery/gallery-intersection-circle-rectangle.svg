@@ -6,7 +6,7 @@
   <text x="750" y="48" font-size="11" style="fill: #475569; font-family: system-ui; text-anchor: middle">intersection</text>
   <path d="M 213.75 132 A 67.5 67.5 0 0 1 78.75 132 A 67.5 67.5 0 0 1 213.75 132 Z" style="fill: #2563eb; fill-opacity: 0.16; fill-rule: nonzero; stroke: #2563eb; stroke-width: 1.5" />
   <path d="M 131.25 57 H 221.25 V 207 H 131.25 Z" style="fill: #e11d48; fill-opacity: 0.16; fill-rule: nonzero; stroke: #e11d48; stroke-width: 1.5" />
-  <path d="M 704.16667 205.1247 A 75 75 0 0 0 795.83333 132 A 75 75 0 0 0 704.16667 58.8753 Z" style="fill: #7c3aed; fill-opacity: 0.24; fill-rule: nonzero; stroke: #7c3aed; stroke-width: 2" />
+  <path d="M 731.25 197.81223 A 67.5 67.5 0 0 0 813.75 132 A 67.5 67.5 0 0 0 731.25 66.18777 Z" style="fill: #7c3aed; fill-opacity: 0.24; fill-rule: nonzero; stroke: #7c3aed; stroke-width: 2" />
   <path d="M 78.75 132 L 82.25 141 H 75.25 Z" style="fill: #2563eb; fill-opacity: 1.0; stroke: none" />
   <path d="M 213.75 132 L 210.25 123 H 217.25 Z" style="fill: #2563eb; fill-opacity: 1.0; stroke: none" />
   <path d="M 221.25 57 L 212.25 60.5 V 53.5 Z" style="fill: #e11d48; fill-opacity: 1.0; stroke: none" />
@@ -65,7 +65,7 @@
   <circle cx="431.25" cy="207" r="5" style="fill: #fff; stroke: #dc2626; stroke-width: 2.25" />
   <circle cx="431.25" cy="197.81223" r="5" style="fill: #fff; stroke: #dc2626; stroke-width: 2.25" />
   <circle cx="431.25" cy="66.18777" r="5" style="fill: #fff; stroke: #dc2626; stroke-width: 2.25" />
-  <path d="M 795.83333 132 L 799.33333 141 H 792.33333 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
-  <path d="M 704.16667 58.8753 L 712.16385 53.46281 L 713.71941 60.28778 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
-  <path d="M 704.16667 205.1247 L 700.66667 196.1247 H 707.66667 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
+  <path d="M 813.75 132 L 817.25 141 H 810.25 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
+  <path d="M 731.25 66.18777 L 739.24719 60.77528 L 740.80274 67.60025 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
+  <path d="M 731.25 197.81223 L 727.75 188.81223 H 734.75 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
 </svg>
