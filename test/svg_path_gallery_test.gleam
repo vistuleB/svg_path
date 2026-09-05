@@ -1492,8 +1492,8 @@ fn symmetric_figure_eight_bands() -> String {
     )
 
   let left = symmetric_figure_eight_panel(source, outer_band, x: 18.0)
-  let right = symmetric_figure_eight_panel(source, wide_band, x: 532.0)
-  "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1050\" height=\"460\" viewBox=\"0 0 1050 460\">\n"
+  let right = symmetric_figure_eight_panel(source, wide_band, x: 512.0)
+  "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"960\" height=\"460\" viewBox=\"30 0 960 460\">\n"
   <> "  <rect x=\"0\" y=\"0\" width=\"1050\" height=\"460\" fill=\"white\" />\n"
   <> left
   <> right
