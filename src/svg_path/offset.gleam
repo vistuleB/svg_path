@@ -207,6 +207,18 @@ pub type Error {
   /// Cusp reconstruction lost an edge's arrangement-split provenance.
   /// The historical `IToK`/`J` constructor name is retained for compatibility.
   InternalIToKMissingJPreimage(edge_id: Int)
+
+  /// Survivor-chain edges could not be joined into a continuous subpath: a
+  /// joint gap exceeded the wiggle tolerance. The joined edges are
+  /// library-reconstructed arrangement output, so this is never user input
+  /// fault.
+  InternalSurvivorChainDiscontinuous(
+    previous_index: Int,
+    next_index: Int,
+    expected: svg_path.Point,
+    got: svg_path.Point,
+    distance: Float,
+  )
 }
 
 /// Join style used when offsetting adjacent subpath segments.
@@ -2915,9 +2927,10 @@ fn survivor_chains_to_subpaths(
       use subpath <- result.try(
         svg_path.subpath_with(
           segments,
-          policy: svg_path.WiggleThenBridgeWith(tolerance),
+          policy: svg_path.WiggleWith(tolerance),
         )
-        |> result.map_error(PathError),
+        |> result.map_error(PathError)
+        |> result.map_error(survivor_chain_discontinuity),
       )
       use subpath <- result.try(
         svg_path.subpath_set_closed_with(
@@ -2932,6 +2945,30 @@ fn survivor_chains_to_subpaths(
         ..subpaths
       ])
     }
+  }
+}
+
+/// Reclassify a rebuild discontinuity between survivor-chain edges as an
+/// internal construction failure: the joined edges are library-reconstructed
+/// arrangement output, so a gap beyond the wiggle tolerance is never user
+/// input fault. Any other error passes through unchanged.
+fn survivor_chain_discontinuity(error: Error) -> Error {
+  case error {
+    PathError(svg_path.Discontinuous(
+      previous_index:,
+      next_index:,
+      expected:,
+      got:,
+      distance:,
+    )) ->
+      InternalSurvivorChainDiscontinuous(
+        previous_index:,
+        next_index:,
+        expected:,
+        got:,
+        distance:,
+      )
+    _ -> error
   }
 }
 
