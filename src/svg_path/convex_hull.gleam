@@ -246,6 +246,17 @@ pub type ConstructionError {
   /// `Subpath`.
   ConstructionPathError(svg_path.Error)
 
+  /// The generated hull pieces could not be joined into a continuous subpath:
+  /// a joint gap exceeded the wiggle tolerance. The joined segments are
+  /// library-generated, so this is never user input fault.
+  HullPiecesDiscontinuous(
+    previous_index: Int,
+    next_index: Int,
+    expected: svg_path.Point,
+    got: svg_path.Point,
+    distance: Float,
+  )
+
   /// The final hull-piece sequence failed the invariant that curve pieces must
   /// be separated by line pieces.
   ConsecutiveCurves
@@ -3437,19 +3448,45 @@ fn build_closed_subpath(
   segments: List(svg_path.Segment),
 ) -> Result(svg_path.Subpath, ConstructionError) {
   use subpath <- result.try(
-    svg_path.subpath_with(segments, policy: svg_path.WiggleThenBridge)
-    |> map_path_error,
+    svg_path.subpath_with(segments, policy: svg_path.Wiggle)
+    |> map_path_error
+    |> result.map_error(hull_piece_discontinuity),
   )
   case
     svg_path.subpath_set_closed_with(
       subpath,
       closed: True,
-      policy: svg_path.WiggleThenBridge,
+      policy: svg_path.Wiggle,
     )
     |> map_path_error
+    |> result.map_error(hull_piece_discontinuity)
   {
     Error(error) -> Error(error)
     Ok(subpath) -> Ok(subpath)
+  }
+}
+
+/// Reclassify a rebuild discontinuity between hull pieces as an internal
+/// construction failure: the joined segments are library-generated, so a gap
+/// beyond the wiggle tolerance is never user input fault. Any other error
+/// passes through unchanged.
+fn hull_piece_discontinuity(error: ConstructionError) -> ConstructionError {
+  case error {
+    ConstructionPathError(svg_path.Discontinuous(
+      previous_index:,
+      next_index:,
+      expected:,
+      got:,
+      distance:,
+    )) ->
+      HullPiecesDiscontinuous(
+        previous_index:,
+        next_index:,
+        expected:,
+        got:,
+        distance:,
+      )
+    _ -> error
   }
 }
 
