@@ -2110,14 +2110,14 @@ fn loop_plus_point_hull(
     ])
 
   use subpath <- result.try(
-    svg_path.subpath_with(segments, policy: svg_path.WiggleThenBridge)
+    svg_path.subpath_with(segments, policy: svg_path.Strict)
     |> map_path_error,
   )
   use closed <- result.try(
     svg_path.subpath_set_closed_with(
       subpath,
       closed: True,
-      policy: svg_path.WiggleThenBridge,
+      policy: svg_path.Strict,
     )
     |> map_path_error,
   )
@@ -3163,7 +3163,7 @@ fn build_open_subpath_from_vertices(
   case vertices_to_lines(vertices) {
     [] -> Error(TangentSearchDegenerateLoop)
     segments ->
-      svg_path.subpath_with(segments, policy: svg_path.WiggleThenBridge)
+      svg_path.subpath_with(segments, policy: svg_path.Strict)
       |> map_path_error
   }
 }
