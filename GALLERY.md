@@ -119,20 +119,6 @@ Shows the second-offset arrangement graph for the package title stress fixture:
 red submerged edges, green non-submerged edges, yellow first-round dangling
 edges, and purple final survivor edges.
 
-### Stalled Offset Arc Turns
-
-![Stalled offset arc turns](docs/gallery/gallery-stalled-offset-arc-turns.svg)
-
-Compares near-collapsed quarter-turn offsets made from true circular arcs and
-from cubic approximations, with `1`, `4`, and `30` pieces.
-
-### Stalled Offset Corner Zoom
-
-![Stalled offset corner zoom](docs/gallery/gallery-stalled-offset-corner-zoom.svg)
-
-Zooms into the same six cases, showing offset samples, endpoint tangents, and
-the fitted or exact corner replacement.
-
 ### Khmer Offset Map Coil
 
 ![Khmer offset map coil](docs/gallery/gallery-khmer-coil-offset-map.svg)

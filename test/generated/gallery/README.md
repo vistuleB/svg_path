@@ -12,8 +12,6 @@
 - [Earth-tone offsets](gallery-earth-tone-offsets.svg)
 - [Package title first offset](gallery-package-title-first-offset.svg)
 - [Package title second offset arrangement](gallery-package-title-second-offset-arrangement.svg)
-- [Stalled offset arc turns](gallery-stalled-offset-arc-turns.svg)
-- [Stalled offset corner zoom](gallery-stalled-offset-corner-zoom.svg)
 - [Khmer fixed-radius coil offset map](gallery-khmer-coil-offset-map.svg)
 - [Khmer decaying spiral offset map](gallery-khmer-decaying-spiral-offset-map.svg)
 - [Crescent hull](gallery-crescent-hull.svg)
