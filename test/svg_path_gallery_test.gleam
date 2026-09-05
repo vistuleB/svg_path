@@ -50,7 +50,7 @@ pub fn generate_gallery_figures() {
     ),
     #(
       "gallery-symmetric-figure-eight-bands.svg",
-      "Symmetric figure-eight bands",
+      "Stretched figure-eight bands",
       symmetric_figure_eight_bands(),
     ),
     #(
