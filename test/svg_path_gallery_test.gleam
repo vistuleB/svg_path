@@ -1492,7 +1492,7 @@ fn symmetric_figure_eight_bands() -> String {
     )
 
   let left = symmetric_figure_eight_panel(source, wide_band, x: 20.0)
-  let right = symmetric_figure_eight_panel(source, outer_band, x: 610.0)
+  let right = symmetric_figure_eight_panel(source, outer_band, x: 602.0)
   "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1200\" height=\"560\" viewBox=\"0 0 1200 560\">\n"
   <> "  <rect x=\"0\" y=\"0\" width=\"1200\" height=\"560\" fill=\"white\" />\n"
   <> "  <text x=\"305\" y=\"35\" text-anchor=\"middle\" font-family=\"sans-serif\" font-size=\"22\" fill=\"#3f3f46\">−5 to +25</text>\n"
