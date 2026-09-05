@@ -126,7 +126,8 @@ Release workflow:
    - `gleam.toml` version bump.
 
 8. Tag the release commit on `main` as `vX.Y.Z`.
-9. Publish to Hex from that exact release commit.
+9. Let the user run the final `gleam publish` commands from that exact
+   release commit.
 
 ## Practical Notes
 
