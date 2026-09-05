@@ -62,7 +62,7 @@ pub fn normalize_degenerate_segments(
         _ ->
           svg_path.subpath_with(
             segments,
-            policy: svg_path.WiggleThenBridgeWith(tolerance),
+            policy: svg_path.Strict,
           )
           |> result.map_error(PathError)
       })
@@ -72,7 +72,7 @@ pub fn normalize_degenerate_segments(
           svg_path.subpath_set_closed_with(
             open,
             closed: True,
-            policy: svg_path.WiggleThenBridgeWith(tolerance),
+            policy: svg_path.Strict,
           )
           |> result.map_error(PathError)
       }
@@ -379,7 +379,7 @@ fn rebuilt_candidate_width_decision(
   use subpath <- result.try(
     svg_path.subpath_with(
       list.reverse(reversed_segments),
-      policy: svg_path.WiggleThenBridgeWith(tolerance),
+      policy: svg_path.Strict,
     )
     |> result.map_error(PathError),
   )
