@@ -1514,6 +1514,75 @@ pub fn csg_union_pairs_filled_sectors_at_corner_pinch_test() {
   |> should.equal(Ok(svg_path.Inside))
 }
 
+pub fn csg_union_pairs_filled_sectors_at_corner_pinch_reversed_orientation_test() {
+  let first = square(0.0, 0.0, 10.0) |> svg_path.subpath_reverse
+  let second = square(10.0, 10.0, 10.0) |> svg_path.subpath_reverse
+  let left = svg_path.subpath_as_path(first)
+  let right = svg_path.subpath_as_path(second)
+  let assert Ok(csg.CsgResult(path: union, ..)) =
+    csg.union(left, right, using: svg_path.Nonzero)
+
+  list.length(svg_path.path_subpaths(union)) |> should.equal(1)
+  svg_path.path_containment(
+    svg_path.Point(5.0, 5.0),
+    within: union,
+    using: svg_path.Nonzero,
+  )
+  |> should.equal(Ok(svg_path.Inside))
+  svg_path.path_containment(
+    svg_path.Point(15.0, 15.0),
+    within: union,
+    using: svg_path.Nonzero,
+  )
+  |> should.equal(Ok(svg_path.Inside))
+}
+
+pub fn csg_union_pairs_filled_sectors_at_other_corner_pinch_test() {
+  let first = square(0.0, 10.0, 10.0)
+  let second = square(10.0, 0.0, 10.0)
+  let left = svg_path.subpath_as_path(first)
+  let right = svg_path.subpath_as_path(second)
+  let assert Ok(csg.CsgResult(path: union, ..)) =
+    csg.union(left, right, using: svg_path.Nonzero)
+
+  list.length(svg_path.path_subpaths(union)) |> should.equal(1)
+  svg_path.path_containment(
+    svg_path.Point(5.0, 15.0),
+    within: union,
+    using: svg_path.Nonzero,
+  )
+  |> should.equal(Ok(svg_path.Inside))
+  svg_path.path_containment(
+    svg_path.Point(15.0, 5.0),
+    within: union,
+    using: svg_path.Nonzero,
+  )
+  |> should.equal(Ok(svg_path.Inside))
+}
+
+pub fn csg_union_pairs_filled_sectors_at_other_corner_pinch_reversed_orientation_test() {
+  let first = square(0.0, 10.0, 10.0) |> svg_path.subpath_reverse
+  let second = square(10.0, 0.0, 10.0) |> svg_path.subpath_reverse
+  let left = svg_path.subpath_as_path(first)
+  let right = svg_path.subpath_as_path(second)
+  let assert Ok(csg.CsgResult(path: union, ..)) =
+    csg.union(left, right, using: svg_path.Nonzero)
+
+  list.length(svg_path.path_subpaths(union)) |> should.equal(1)
+  svg_path.path_containment(
+    svg_path.Point(5.0, 15.0),
+    within: union,
+    using: svg_path.Nonzero,
+  )
+  |> should.equal(Ok(svg_path.Inside))
+  svg_path.path_containment(
+    svg_path.Point(15.0, 5.0),
+    within: union,
+    using: svg_path.Nonzero,
+  )
+  |> should.equal(Ok(svg_path.Inside))
+}
+
 pub fn subpath_direction_arrows_draws_one_arrow_per_segment_test() {
   let subpath =
     svg_path.subpath_assert_polyline([
