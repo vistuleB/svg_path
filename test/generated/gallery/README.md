@@ -17,8 +17,3 @@
 - [Crescent hull](gallery-crescent-hull.svg)
 - [Package title nine offsets](gallery-package-title-nine-offsets.svg)
 - [Cut radiator](gallery-cut-radiator.svg)
-- [Marker pose slots](gallery-marker-pose-slots.svg)
-- [Marker orientation semantics](gallery-marker-orient-semantics.svg)
-- [Marker reference semantics](gallery-marker-reference-semantics.svg)
-- [Marker units semantics](gallery-marker-units-semantics.svg)
-- [Marker viewBox semantics](gallery-marker-viewbox-semantics.svg)

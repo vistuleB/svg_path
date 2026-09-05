@@ -154,37 +154,3 @@ pushed outward from the `SVG_PATH` text outline.
 Shows a dense snaking subpath cut by a text outline, with the pieces inside the
 outline removed.
 
-### Marker Pose Slots
-
-![Marker pose slots](docs/gallery/gallery-marker-pose-slots.svg)
-
-Shows the `MarkerStart`, `MarkerMid`, and `MarkerEnd` poses computed from a
-single subpath.
-
-### Marker Orientation Semantics
-
-![Marker orientation semantics](docs/gallery/gallery-marker-orient-semantics.svg)
-
-Compares `Auto`, `AutoStartReverse`, and a fixed marker orientation.
-
-### Marker Reference Semantics
-
-![Marker reference semantics](docs/gallery/gallery-marker-reference-semantics.svg)
-
-Shows how `refX` and `refY` choose which marker-local point lands on the path
-pose.
-
-### Marker Units Semantics
-
-![Marker units semantics](docs/gallery/gallery-marker-units-semantics.svg)
-
-Shows the difference between marker-local `UserSpaceOnUse` units and
-`StrokeWidth` units.
-
-### Marker ViewBox Semantics
-
-![Marker viewBox semantics](docs/gallery/gallery-marker-viewbox-semantics.svg)
-
-Compares the marker-local transforms for `Stretch`, `Meet`, and `Slice`
-viewBox fitting. This figure shows transform semantics, not full marker
-viewport clipping.

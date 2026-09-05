@@ -68,11 +68,6 @@ gallery_figures=(
   gallery-crescent-hull.svg
   gallery-package-title-nine-offsets.svg
   gallery-cut-radiator.svg
-  gallery-marker-pose-slots.svg
-  gallery-marker-orient-semantics.svg
-  gallery-marker-reference-semantics.svg
-  gallery-marker-units-semantics.svg
-  gallery-marker-viewbox-semantics.svg
 )
 
 for figure in "${readme_figures[@]}"; do
