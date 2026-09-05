@@ -119,16 +119,16 @@ Shows the second-offset arrangement graph for the package title stress fixture:
 red submerged edges, green non-submerged edges, yellow first-round dangling
 edges, and purple final survivor edges.
 
-### Khmer Offset Map Coil
+### Lazy Dog Offset Coil
 
-![Khmer offset map coil](docs/gallery/gallery-khmer-coil-offset-map.svg)
+![Lazy dog offset coil](docs/gallery/gallery-lazy-dog-offset-coil.svg)
 
 Maps a path extracted from an SVG text sample into `(distance, offset)` space
 and then onto a fixed-radius coil with `offset.subpath_offset_map`.
 
-### Khmer Offset Map Spiral
+### Lazy Dog Offset Decaying Spiral
 
-![Khmer offset map spiral](docs/gallery/gallery-khmer-decaying-spiral-offset-map.svg)
+![Lazy dog offset decaying spiral](docs/gallery/gallery-lazy-dog-offset-decaying-spiral.svg)
 
 Uses the same text sample on a decaying spiral, with both radius and local
 offset shrinking by the same factor per turn.

@@ -55,18 +55,6 @@ pub fn generate_khmer_text_offset_map_spiral_visual() {
           svg_path.Point(view_box.min.x +. 30.0, view_box.min.y +. 30.0),
           18.0,
         ),
-        svg.Text(
-          text_box_label(text_box),
-          "fill: #475569; font-family: ui-monospace, SFMono-Regular, Menlo, monospace",
-          svg_path.Point(view_box.min.x +. 30.0, view_box.max.y -. 30.0),
-          12.0,
-        ),
-        svg.Text(
-          layout_label(text_layout, coil_length),
-          "fill: #475569; font-family: ui-monospace, SFMono-Regular, Menlo, monospace",
-          svg_path.Point(view_box.min.x +. 30.0, view_box.max.y -. 15.0),
-          12.0,
-        ),
         svg.StyledPath(
           mapped,
           "fill: #0f766e; fill-opacity: 0.78; stroke: #064e3b; stroke-width: 0.25",
@@ -110,12 +98,6 @@ pub fn generate_khmer_text_offset_map_decaying_spiral_visual() {
           "fill: #111827; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 700",
           svg_path.Point(view_box.min.x +. 30.0, view_box.min.y +. 30.0),
           18.0,
-        ),
-        svg.Text(
-          layout_label(text_layout, spiral_length),
-          "fill: #475569; font-family: ui-monospace, SFMono-Regular, Menlo, monospace",
-          svg_path.Point(view_box.min.x +. 30.0, view_box.max.y -. 20.0),
-          12.0,
         ),
         svg.StyledPath(
           mapped,
@@ -1323,24 +1305,6 @@ fn points_to_segments(
     [next, ..remaining] ->
       points_to_segments(next, remaining, previous: point, segments:)
   }
-}
-
-fn text_box_label(box: svg_path.BoundingBox) -> String {
-  "source box: width="
-  <> float.to_string(svg_path.bounding_box_width(box))
-  <> ", height="
-  <> float.to_string(svg_path.bounding_box_height(box))
-}
-
-fn layout_label(layout: TextLayout, coil_length: Float) -> String {
-  "coil length="
-  <> float.to_string(coil_length)
-  <> "; text length="
-  <> float.to_string(layout.text_length)
-  <> "; copies="
-  <> int.to_string(layout.full_copies)
-  <> " + remainder "
-  <> float.to_string(layout.remainder)
 }
 
 @external(erlang, "file", "read_file")

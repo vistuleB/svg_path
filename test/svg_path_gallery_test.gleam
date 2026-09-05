@@ -88,13 +88,13 @@ pub fn generate_gallery_figures() {
       ),
     ),
     #(
-      "gallery-khmer-coil-offset-map.svg",
-      "Khmer fixed-radius coil offset map",
+      "gallery-lazy-dog-offset-coil.svg",
+      "Lazy Dog Offset Coil",
       generated_debug_svg("examples/debug/the_quick_brown_khmer_spiral_map.svg"),
     ),
     #(
-      "gallery-khmer-decaying-spiral-offset-map.svg",
-      "Khmer decaying spiral offset map",
+      "gallery-lazy-dog-offset-decaying-spiral.svg",
+      "Lazy Dog Offset Decaying Spiral",
       generated_debug_svg(
         "examples/debug/the_quick_brown_khmer_decaying_spiral_map.svg",
       ),
