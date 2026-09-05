@@ -1717,7 +1717,7 @@ fn package_title_nine_offsets() -> String {
       list.repeat(1, 9),
       [source],
       fn(levels, _) {
-        let assert Ok(previous) = list.last(levels)
+        let assert Ok(previous) = list.first(levels)
         let assert Ok(next) =
           offset.path_with(previous, offset: 1.04, options:)
         [next, ..levels]
