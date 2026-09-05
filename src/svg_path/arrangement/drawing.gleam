@@ -188,7 +188,7 @@ fn annotated_edge_things(
       let usable_chord = chord -. 2.0 *. node_radius
       let label_scale = case usable_chord <=. 0.0 {
         True -> 0.0
-        False -> float_min(1.2 *. drawing_scale, usable_chord *. 0.8 /. 24.0)
+        False -> float_min(1.2 *. drawing_scale, usable_chord *. 0.6 /. 24.0)
       }
       let label_things = case label_scale <=. 0.0 {
         True -> []

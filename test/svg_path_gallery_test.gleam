@@ -681,7 +681,7 @@ fn rounded_rectangle_union() -> String {
         arrows: "#14532d",
       ),
     ]),
-    width: 730.0,
+    width: 750.0,
     height: 220.0,
   )
 }

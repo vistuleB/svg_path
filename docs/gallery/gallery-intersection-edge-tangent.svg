@@ -22,9 +22,9 @@
   <text x="402.5" y="79.46667" font-size="9.6" style="fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(90 402.5 68.66667)">↑1/0↓</text>
   <path d="M 450 68.66667 V 92.41667" style="fill: none; stroke: #334155; stroke-width: 3.25" />
   <path d="M 450 87.41667 L 442 77.41667 H 458 Z" style="fill: #dc2626; fill-opacity: 1.0; stroke: none" />
-  <rect x="442.20833" y="75.04167" width="15.58333" height="11" style="fill: #fff; stroke: #94a3b8; stroke-width: 0.75" transform="rotate(180 450 80.54167)" />
-  <text x="450" y="79.625" font-size="4.125" style="fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(180 450 80.54167)">0/1</text>
-  <text x="450" y="84.66667" font-size="3.66667" style="fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(180 450 80.54167)">↑1/0↓</text>
+  <rect x="444.15625" y="76.41667" width="11.6875" height="8.25" style="fill: #fff; stroke: #94a3b8; stroke-width: 0.75" transform="rotate(180 450 80.54167)" />
+  <text x="450" y="79.85417" font-size="3.09375" style="fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(180 450 80.54167)">0/1</text>
+  <text x="450" y="83.63542" font-size="2.75" style="fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(180 450 80.54167)">↑1/0↓</text>
   <path d="M 450 92.41667 V 171.58333" style="fill: none; stroke: #334155; stroke-width: 3.25" />
   <path d="M 450 166.58333 L 442 156.58333 H 458 Z" style="fill: #dc2626; fill-opacity: 1.0; stroke: none" />
   <rect x="429.6" y="117.6" width="40.8" height="28.8" style="fill: #fff; stroke: #94a3b8; stroke-width: 0.75" transform="rotate(180 450 132)" />
@@ -32,9 +32,9 @@
   <text x="450" y="142.8" font-size="9.6" style="fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(180 450 132)">↑1/1↓</text>
   <path d="M 450 171.58333 V 195.33333" style="fill: none; stroke: #334155; stroke-width: 3.25" />
   <path d="M 450 190.33333 L 442 180.33333 H 458 Z" style="fill: #dc2626; fill-opacity: 1.0; stroke: none" />
-  <rect x="442.20833" y="177.95833" width="15.58333" height="11" style="fill: #fff; stroke: #94a3b8; stroke-width: 0.75" transform="rotate(180 450 183.45833)" />
-  <text x="450" y="182.54167" font-size="4.125" style="fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(180 450 183.45833)">0/1</text>
-  <text x="450" y="187.58333" font-size="3.66667" style="fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(180 450 183.45833)">↑1/0↓</text>
+  <rect x="444.15625" y="179.33333" width="11.6875" height="8.25" style="fill: #fff; stroke: #94a3b8; stroke-width: 0.75" transform="rotate(180 450 183.45833)" />
+  <text x="450" y="182.77083" font-size="3.09375" style="fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(180 450 183.45833)">0/1</text>
+  <text x="450" y="186.55208" font-size="2.75" style="fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(180 450 183.45833)">↑1/0↓</text>
   <path d="M 450 195.33333 H 355" style="fill: none; stroke: #334155; stroke-width: 3.25" />
   <path d="M 360 195.33333 L 370 187.33333 V 203.33333 Z" style="fill: #dc2626; fill-opacity: 1.0; stroke: none" />
   <rect x="382.1" y="180.93333" width="40.8" height="28.8" style="fill: #fff; stroke: #94a3b8; stroke-width: 0.75" transform="rotate(270 402.5 195.33333)" />
