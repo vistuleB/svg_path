@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="-136.24566 -153.78832 285.32211 310.3265" width="285.32211" height="310.3265">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-136.24566 -153.78832 285.32211 310.3265" width="570.64422" height="620.653">
   <rect x="-136.24566" y="-153.78832" width="285.32211" height="310.3265" style="fill: #ffffff; stroke: none" />
   <text x="-106.24566" y="-123.78832" font-size="18" style="fill: #111827; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 700">decaying spiral: radius and offset lose 20% per turn</text>
   <text x="-106.24566" y="136.53818" font-size="12" style="fill: #475569; font-family: ui-monospace, SFMono-Regular, Menlo, monospace">coil length=1894.2824545530511; text length=259.2224760441739; copies=12 + remainder 192.8356802233343</text>
