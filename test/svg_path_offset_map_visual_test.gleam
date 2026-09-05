@@ -36,7 +36,7 @@ pub fn generate_khmer_text_offset_map_spiral_visual() {
   let d = extract_path_data(source_svg)
   let assert Ok(text_path) = parse.path(d)
   let assert Ok(text_box) = svg_path.path_bounding_box(text_path)
-  let coil = coil_subpath(turns: 5, samples: 900)
+  let coil = coil_subpath(turns: 6, samples: 900)
   let assert Ok(coil_length) = svg_path.subpath_length(coil)
   let assert Ok(coil_map) = offset.subpath_offset_map(coil)
   let text_layout = text_layout(text_box, coil_length)
@@ -49,12 +49,6 @@ pub fn generate_khmer_text_offset_map_spiral_visual() {
     svg.document(
       things: [
         background_rectangle(view_box),
-        svg.Text(
-          "fixed-radius coil",
-          "fill: #111827; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 700",
-          svg_path.Point(view_box.min.x +. 30.0, view_box.min.y +. 30.0),
-          18.0,
-        ),
         svg.StyledPath(
           mapped,
           "fill: #0f766e; fill-opacity: 0.78; stroke: #064e3b; stroke-width: 0.25",
@@ -93,12 +87,6 @@ pub fn generate_khmer_text_offset_map_decaying_spiral_visual() {
     svg.document(
       things: [
         background_rectangle(view_box),
-        svg.Text(
-          "decaying spiral: radius and offset lose 20% per turn",
-          "fill: #111827; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 700",
-          svg_path.Point(view_box.min.x +. 30.0, view_box.min.y +. 30.0),
-          18.0,
-        ),
         svg.StyledPath(
           mapped,
           "fill: #581c87; fill-opacity: 0.78; stroke: #2e1065; stroke-width: 0.2",
@@ -984,7 +972,7 @@ fn offset_map_view_box(
   content_box: svg_path.BoundingBox,
 ) -> svg_path.BoundingBox {
   svg_path.BoundingBox(
-    min: svg_path.Point(content_box.min.x -. 30.0, content_box.min.y -. 55.0),
+    min: svg_path.Point(content_box.min.x -. 30.0, content_box.min.y -. 30.0),
     max: svg_path.Point(content_box.max.x +. 30.0, content_box.max.y +. 45.0),
   )
 }

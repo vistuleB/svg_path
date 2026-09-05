@@ -119,14 +119,12 @@ Shows the second-offset arrangement graph for the package title stress fixture:
 red submerged edges, green non-submerged edges, yellow first-round dangling
 edges, and purple final survivor edges.
 
-### Lazy Dog Offset Coil
+### Offset Text
 
 ![Lazy dog offset coil](docs/gallery/gallery-lazy-dog-offset-coil.svg)
 
 Maps a path extracted from an SVG text sample into `(distance, offset)` space
 and then onto a fixed-radius coil with `offset.subpath_offset_map`.
-
-### Lazy Dog Offset Decaying Spiral
 
 ![Lazy dog offset decaying spiral](docs/gallery/gallery-lazy-dog-offset-decaying-spiral.svg)
 
