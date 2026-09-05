@@ -13,6 +13,8 @@ This checklist supplements the figure and asset-tag workflow in
 
    This runs both the fast profile and the slow convex-hull profile. Neither
    `gleam test` nor `scripts/test-fast` alone is full release verification.
+   The slow profile lives in `test_slow/` and is documented in
+   `test_slow/README.md`.
 
 2. Report the command precisely. The phrase “full suite passes” is reserved
    for a successful `scripts/test-all` or `scripts/test-release` run.

@@ -96,7 +96,8 @@ Release workflow:
    scripts/test-release
    ```
 
-   This includes the slow test profile; `gleam test` alone does not.
+   This includes the slow test profile; `gleam test` alone does not. See
+   `test_slow/README.md` for how that profile is structured.
 
 2. Ensure the `markdown-assets` worktree contains the final README-facing SVGs
    for the release.

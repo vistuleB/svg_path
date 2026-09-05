@@ -1,6 +1,21 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# WHY THIS SCRIPT SWAPS test/ INSTEAD OF RUNNING A SUBSET
+#
+# The Gleam test toolchain cannot run a subset of tests. `gleam test` (via
+# `gleeunit.main()`) scans the `test/` directory at runtime and runs every
+# `*_test` function in every module it finds; there is no module-selection or
+# exclusion flag, and Gleeunit ignores command-line arguments. The only lever
+# is which files physically sit under `test/`, so to run the slow stress suite
+# in isolation we park the ordinary suite at `.test-disabled/fast-tests/`,
+# install the slow copies below, run the profile, and restore the ordinary
+# suite on exit (even on error, via the trap).
+#
+# The stress module deliberately reuses the module name
+# `svg_path_convex_hull_test`, so it also cannot coexist with the fast suite in
+# one build. Details: test_slow/README.md
+
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 active="$root/test"
 backup="$root/.test-disabled/fast-tests"
