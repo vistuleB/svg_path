@@ -6,7 +6,7 @@
   <text x="750" y="48" font-size="11" style="fill: #475569; font-family: system-ui; text-anchor: middle">intersection</text>
   <path d="M 58.33333 72 L 241.66667 222 V 72 L 58.33333 222 Z" style="fill: #2563eb; fill-opacity: 0.16; fill-rule: nonzero; stroke: #2563eb; stroke-width: 1.5" />
   <path d="M 108.33333 105.33333 H 196.66667 V 200.33333 H 108.33333 Z" style="fill: #e11d48; fill-opacity: 0.16; fill-rule: nonzero; stroke: #e11d48; stroke-width: 1.5" />
-  <path d="M 750 147 L 708.33333 112.90909 V 181.09091 Z M 750 147 L 796.66667 185.18182 V 108.81818 Z" style="fill: #7c3aed; fill-opacity: 0.24; fill-rule: nonzero; stroke: #7c3aed; stroke-width: 2" />
+  <path d="M 708.33333 112.90909 L 750 147 L 796.66667 108.81818 V 185.18182 L 750 147 L 708.33333 181.09091 Z" style="fill: #7c3aed; fill-opacity: 0.24; fill-rule: nonzero; stroke: #7c3aed; stroke-width: 2" />
   <path d="M 241.66667 222 L 232.48472 219.00971 L 236.91738 213.59201 Z" style="fill: #2563eb; fill-opacity: 1.0; stroke: none" />
   <path d="M 241.66667 72 L 245.16667 81 H 238.16667 Z" style="fill: #2563eb; fill-opacity: 1.0; stroke: none" />
   <path d="M 58.33333 222 L 63.08262 213.59201 L 67.51528 219.00971 Z" style="fill: #2563eb; fill-opacity: 1.0; stroke: none" />
@@ -112,10 +112,10 @@
   <circle cx="408.33333" cy="200.33333" r="5" style="fill: #fff; stroke: #dc2626; stroke-width: 2.25" />
   <circle cx="408.33333" cy="112.90909" r="5" style="fill: #fff; stroke: #dc2626; stroke-width: 2.25" />
   <circle cx="408.33333" cy="181.09091" r="5" style="fill: #fff; stroke: #dc2626; stroke-width: 2.25" />
-  <path d="M 708.33333 112.90909 L 717.51528 115.89938 L 713.08262 121.31708 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
-  <path d="M 708.33333 181.09091 L 704.83333 172.09091 H 711.83333 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
-  <path d="M 750 147 L 745.25072 155.40799 L 740.81805 149.99029 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
-  <path d="M 796.66667 185.18182 L 787.48472 182.19153 L 791.91738 176.77383 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
-  <path d="M 796.66667 108.81818 L 800.16667 117.81818 H 793.16667 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
-  <path d="M 750 147 L 754.74928 138.59201 L 759.18195 144.00971 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
+  <path d="M 750 147 L 740.81805 144.00971 L 745.25072 138.59201 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
+  <path d="M 796.66667 108.81818 L 791.91738 117.22617 L 787.48472 111.80847 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
+  <path d="M 796.66667 185.18182 L 793.16667 176.18182 H 800.16667 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
+  <path d="M 750 147 L 759.18195 149.99029 L 754.74928 155.40799 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
+  <path d="M 708.33333 181.09091 L 713.08262 172.68292 L 717.51528 178.10062 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
+  <path d="M 708.33333 112.90909 L 711.83333 121.90909 H 704.83333 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
 </svg>

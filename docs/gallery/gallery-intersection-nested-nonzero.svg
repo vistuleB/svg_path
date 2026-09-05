@@ -6,7 +6,7 @@
   <text x="750" y="48" font-size="11" style="fill: #475569; font-family: system-ui; text-anchor: middle">intersection</text>
   <path d="M 60 72 H 240 V 222 H 60 Z M 105 105 H 195 V 189 H 105 Z" style="fill: #2563eb; fill-opacity: 0.16; fill-rule: nonzero; stroke: #2563eb; stroke-width: 1.5" />
   <path d="M 123 120 H 177 V 174 H 123 Z" style="fill: #e11d48; fill-opacity: 0.16; fill-rule: nonzero; stroke: #e11d48; stroke-width: 1.5" />
-  <path d="M 777 120 H 723 V 174 H 777 Z" style="fill: #7c3aed; fill-opacity: 0.24; fill-rule: nonzero; stroke: #7c3aed; stroke-width: 2" />
+  <path d="M 723 120 H 777 V 174 H 723 Z" style="fill: #7c3aed; fill-opacity: 0.24; fill-rule: nonzero; stroke: #7c3aed; stroke-width: 2" />
   <path d="M 240 72 L 231 75.5 V 68.5 Z" style="fill: #2563eb; fill-opacity: 1.0; stroke: none" />
   <path d="M 240 222 L 236.5 213 H 243.5 Z" style="fill: #2563eb; fill-opacity: 1.0; stroke: none" />
   <path d="M 60 222 L 69 218.5 V 225.5 Z" style="fill: #2563eb; fill-opacity: 1.0; stroke: none" />
@@ -91,8 +91,8 @@
   <circle cx="477" cy="120" r="5" style="fill: #fff; stroke: #dc2626; stroke-width: 2.25" />
   <circle cx="477" cy="174" r="5" style="fill: #fff; stroke: #dc2626; stroke-width: 2.25" />
   <circle cx="423" cy="174" r="5" style="fill: #fff; stroke: #dc2626; stroke-width: 2.25" />
-  <path d="M 723 120 L 732 116.5 V 123.5 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
-  <path d="M 723 174 L 719.5 165 H 726.5 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
-  <path d="M 777 174 L 768 177.5 V 170.5 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
-  <path d="M 777 120 L 780.5 129 H 773.5 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
+  <path d="M 777 120 L 768 123.5 V 116.5 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
+  <path d="M 777 174 L 773.5 165 H 780.5 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
+  <path d="M 723 174 L 732 170.5 V 177.5 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
+  <path d="M 723 120 L 726.5 129 H 719.5 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
 </svg>

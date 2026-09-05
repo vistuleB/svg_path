@@ -27,11 +27,11 @@
   <path d="M 867.5 577.5 H 867.5 M 867.5 565 L 880 577.5 M 867.5 552.5 L 892.5 577.5 M 867.5 540 L 905 577.5 M 867.5 527.5 L 917.5 577.5 M 867.5 515 L 930 577.5 M 867.5 502.5 L 942.5 577.5 M 867.5 490 L 955 577.5 M 867.5 477.5 L 967.5 577.5 M 867.5 465 L 980 577.5 M 867.5 452.5 L 992.5 577.5 M 867.5 440 L 1005 577.5 M 867.5 427.5 L 1017.5 577.5 M 867.5 415 L 1030 577.5 M 867.5 402.5 L 1042.5 577.5 M 867.5 390 L 1055 577.5 M 867.5 377.5 L 1067.5 577.5 M 867.5 365 L 1080 577.5 M 867.5 352.5 L 1092.5 577.5 M 880 352.5 L 1092.5 565 M 892.5 352.5 L 1092.5 552.5 M 905 352.5 L 1092.5 540 M 917.5 352.5 L 1092.5 527.5 M 930 352.5 L 1092.5 515 M 942.5 352.5 L 1092.5 502.5 M 955 352.5 L 1092.5 490 M 967.5 352.5 L 1092.5 477.5 M 980 352.5 L 1092.5 465 M 992.5 352.5 L 1092.5 452.5 M 1005 352.5 L 1092.5 440 M 1017.5 352.5 L 1092.5 427.5 M 1030 352.5 L 1092.5 415 M 1042.5 352.5 L 1092.5 402.5 M 1055 352.5 L 1092.5 390 M 1067.5 352.5 L 1092.5 377.5 M 1080 352.5 L 1092.5 365 M 1092.5 352.5 H 1092.5" style="fill: none; stroke: #94a3b8; stroke-opacity: 0.22; stroke-width: 0.55" />
   <path d="M 27.5 72.5 H 177.5 V 222.5 H 27.5 Z M 140 185 H 252.5 V 260 H 140 Z" style="fill: #2563eb; fill-opacity: 0.22; fill-rule: nonzero; stroke: #2563eb; stroke-width: 2" />
   <path d="M 65 222.5 H 252.5 V 297.5 H 65 Z M 102.5 147.5 H 215 V 260 H 102.5 Z" style="fill: #e11d48; fill-opacity: 0.22; fill-rule: nonzero; stroke: #e11d48; stroke-width: 2" />
-  <path d="M 737.5 72.5 H 587.5 V 222.5 H 625 V 297.5 H 812.5 V 260 V 222.5 V 185 H 775 V 147.5 H 737.5 Z" style="fill: #16a34a; fill-opacity: 0.22; fill-rule: nonzero; stroke: #15803d; stroke-width: 2" />
-  <path d="M 1017.5 185 V 147.5 H 942.5 V 222.5 H 980 V 260 H 1055 H 1092.5 V 222.5 H 1055 V 185 Z" style="fill: #7c3aed; fill-opacity: 0.22; fill-rule: nonzero; stroke: #6d28d9; stroke-width: 2" />
-  <path d="M 177.5 352.5 H 27.5 V 502.5 H 65 H 102.5 V 427.5 H 177.5 Z M 252.5 465 H 215 V 502.5 H 252.5 Z" style="fill: #d97706; fill-opacity: 0.22; fill-rule: nonzero; stroke: #b45309; stroke-width: 2" />
-  <path d="M 382.5 502.5 H 345 V 577.5 H 532.5 V 540 H 495 H 420 V 502.5 Z M 495 427.5 H 457.5 V 465 H 495 Z" style="fill: #0891b2; fill-opacity: 0.22; fill-rule: nonzero; stroke: #0e7490; stroke-width: 2" />
-  <path d="M 737.5 352.5 H 587.5 V 502.5 H 625 V 577.5 H 812.5 V 540 H 775 H 700 V 502.5 H 662.5 V 427.5 H 737.5 Z M 737.5 427.5 V 465 H 775 V 427.5 Z M 812.5 465 H 775 V 502.5 H 812.5 Z" style="fill: #db2777; fill-opacity: 0.22; fill-rule: nonzero; stroke: #be185d; stroke-width: 2" />
+  <path d="M 587.5 72.5 H 737.5 V 147.5 H 775 V 185 H 812.5 V 222.5 V 260 V 297.5 H 625 V 222.5 H 587.5 Z" style="fill: #16a34a; fill-opacity: 0.22; fill-rule: nonzero; stroke: #15803d; stroke-width: 2" />
+  <path d="M 1017.5 147.5 V 185 H 1055 V 222.5 H 1092.5 V 260 H 1055 H 980 V 222.5 H 942.5 V 147.5 Z" style="fill: #7c3aed; fill-opacity: 0.22; fill-rule: nonzero; stroke: #6d28d9; stroke-width: 2" />
+  <path d="M 27.5 352.5 H 177.5 V 427.5 H 102.5 V 502.5 H 65 H 27.5 Z M 215 465 H 252.5 V 502.5 H 215 Z" style="fill: #d97706; fill-opacity: 0.22; fill-rule: nonzero; stroke: #b45309; stroke-width: 2" />
+  <path d="M 345 502.5 H 382.5 H 420 V 540 H 495 H 532.5 V 577.5 H 345 Z M 457.5 427.5 H 495 V 465 H 457.5 Z" style="fill: #0891b2; fill-opacity: 0.22; fill-rule: nonzero; stroke: #0e7490; stroke-width: 2" />
+  <path d="M 587.5 352.5 H 737.5 V 427.5 H 775 V 465 H 812.5 V 502.5 H 775 V 465 H 737.5 V 427.5 H 662.5 V 502.5 H 700 V 540 H 775 H 812.5 V 577.5 H 625 V 502.5 H 587.5 Z" style="fill: #db2777; fill-opacity: 0.22; fill-rule: nonzero; stroke: #be185d; stroke-width: 2" />
   <path d="M 1017.5 366 V 414 A 13.5 13.5 0 0 0 1031 427.5 H 1041.5 A 13.5 13.5 0 0 1 1055 441 V 451.5 A 13.5 13.5 0 0 0 1068.5 465 H 1079 A 13.5 13.5 0 0 1 1092.5 478.5 V 502.5 V 540 V 564 A 13.5 13.5 0 0 1 1079 577.5 H 918.5 A 13.5 13.5 0 0 1 905 564 V 516 A 13.5 13.5 0 0 0 891.5 502.5 H 881 A 13.5 13.5 0 0 1 867.5 489 V 366 A 13.5 13.5 0 0 1 881 352.5 H 1004 A 13.5 13.5 0 0 1 1017.5 366 Z M 1031 465 H 1041.5 A 13.5 13.5 0 0 1 1055 478.5 V 489 A 13.5 13.5 0 0 0 1068.5 502.5 H 1079 A 13.5 13.5 0 0 1 1092.5 516 V 526.5 A 13.5 13.5 0 0 1 1079 540 H 1055 H 980 H 956 A 13.5 13.5 0 0 1 942.5 526.5 V 502.5 V 441 A 13.5 13.5 0 0 1 956 427.5 H 1004 A 13.5 13.5 0 0 1 1017.5 441 V 451.5 A 13.5 13.5 0 0 0 1031 465 Z M 1031 502.5 H 1041.5 A 13.5 13.5 0 0 1 1055 516 V 526.5 A 13.5 13.5 0 0 1 1041.5 540 H 993.5 A 13.5 13.5 0 0 1 980 526.5 V 502.5 V 478.5 A 13.5 13.5 0 0 1 993.5 465 H 1004 A 13.5 13.5 0 0 1 1017.5 478.5 V 489 A 13.5 13.5 0 0 0 1031 502.5 Z" style="fill: #4f46e5; fill-opacity: 0.22; fill-rule: nonzero; stroke: #4338ca; stroke-width: 2" />
   <path d="M 177.5 72.5 L 168.5 76 V 69 Z" style="fill: #2563eb; fill-opacity: 1.0; stroke: none" />
   <path d="M 177.5 222.5 L 174 213.5 H 181 Z" style="fill: #2563eb; fill-opacity: 1.0; stroke: none" />
@@ -226,73 +226,73 @@
   <circle cx="495" cy="222.5" r="5" style="fill: #fff; stroke: #dc2626; stroke-width: 2.25" />
   <circle cx="382.5" cy="260" r="5" style="fill: #fff; stroke: #dc2626; stroke-width: 2.25" />
   <circle cx="382.5" cy="222.5" r="5" style="fill: #fff; stroke: #dc2626; stroke-width: 2.25" />
-  <path d="M 587.5 72.5 L 596.5 69 V 76 Z" style="fill: #15803d; fill-opacity: 1.0; stroke: none" />
-  <path d="M 587.5 222.5 L 584 213.5 H 591 Z" style="fill: #15803d; fill-opacity: 1.0; stroke: none" />
-  <path d="M 625 222.5 L 616 226 V 219 Z" style="fill: #15803d; fill-opacity: 1.0; stroke: none" />
-  <path d="M 625 297.5 L 621.5 288.5 H 628.5 Z" style="fill: #15803d; fill-opacity: 1.0; stroke: none" />
-  <path d="M 812.5 297.5 L 803.5 301 V 294 Z" style="fill: #15803d; fill-opacity: 1.0; stroke: none" />
-  <path d="M 812.5 260 L 816 269 H 809 Z" style="fill: #15803d; fill-opacity: 1.0; stroke: none" />
-  <path d="M 812.5 222.5 L 816 231.5 H 809 Z" style="fill: #15803d; fill-opacity: 1.0; stroke: none" />
-  <path d="M 812.5 185 L 816 194 H 809 Z" style="fill: #15803d; fill-opacity: 1.0; stroke: none" />
-  <path d="M 775 185 L 784 181.5 V 188.5 Z" style="fill: #15803d; fill-opacity: 1.0; stroke: none" />
-  <path d="M 775 147.5 L 778.5 156.5 H 771.5 Z" style="fill: #15803d; fill-opacity: 1.0; stroke: none" />
-  <path d="M 737.5 147.5 L 746.5 144 V 151 Z" style="fill: #15803d; fill-opacity: 1.0; stroke: none" />
-  <path d="M 737.5 72.5 L 741 81.5 H 734 Z" style="fill: #15803d; fill-opacity: 1.0; stroke: none" />
-  <path d="M 1017.5 147.5 L 1021 156.5 H 1014 Z" style="fill: #6d28d9; fill-opacity: 1.0; stroke: none" />
-  <path d="M 942.5 147.5 L 951.5 144 V 151 Z" style="fill: #6d28d9; fill-opacity: 1.0; stroke: none" />
-  <path d="M 942.5 222.5 L 939 213.5 H 946 Z" style="fill: #6d28d9; fill-opacity: 1.0; stroke: none" />
-  <path d="M 980 222.5 L 971 226 V 219 Z" style="fill: #6d28d9; fill-opacity: 1.0; stroke: none" />
-  <path d="M 980 260 L 976.5 251 H 983.5 Z" style="fill: #6d28d9; fill-opacity: 1.0; stroke: none" />
-  <path d="M 1055 260 L 1046 263.5 V 256.5 Z" style="fill: #6d28d9; fill-opacity: 1.0; stroke: none" />
-  <path d="M 1092.5 260 L 1083.5 263.5 V 256.5 Z" style="fill: #6d28d9; fill-opacity: 1.0; stroke: none" />
-  <path d="M 1092.5 222.5 L 1096 231.5 H 1089 Z" style="fill: #6d28d9; fill-opacity: 1.0; stroke: none" />
-  <path d="M 1055 222.5 L 1064 219 V 226 Z" style="fill: #6d28d9; fill-opacity: 1.0; stroke: none" />
-  <path d="M 1055 185 L 1058.5 194 H 1051.5 Z" style="fill: #6d28d9; fill-opacity: 1.0; stroke: none" />
-  <path d="M 1017.5 185 L 1026.5 181.5 V 188.5 Z" style="fill: #6d28d9; fill-opacity: 1.0; stroke: none" />
-  <path d="M 27.5 352.5 L 36.5 349 V 356 Z" style="fill: #b45309; fill-opacity: 1.0; stroke: none" />
-  <path d="M 27.5 502.5 L 24 493.5 H 31 Z" style="fill: #b45309; fill-opacity: 1.0; stroke: none" />
-  <path d="M 65 502.5 L 56 506 V 499 Z" style="fill: #b45309; fill-opacity: 1.0; stroke: none" />
-  <path d="M 102.5 502.5 L 93.5 506 V 499 Z" style="fill: #b45309; fill-opacity: 1.0; stroke: none" />
-  <path d="M 102.5 427.5 L 106 436.5 H 99 Z" style="fill: #b45309; fill-opacity: 1.0; stroke: none" />
-  <path d="M 177.5 427.5 L 168.5 431 V 424 Z" style="fill: #b45309; fill-opacity: 1.0; stroke: none" />
-  <path d="M 177.5 352.5 L 181 361.5 H 174 Z" style="fill: #b45309; fill-opacity: 1.0; stroke: none" />
-  <path d="M 215 465 L 224 461.5 V 468.5 Z" style="fill: #b45309; fill-opacity: 1.0; stroke: none" />
-  <path d="M 215 502.5 L 211.5 493.5 H 218.5 Z" style="fill: #b45309; fill-opacity: 1.0; stroke: none" />
-  <path d="M 252.5 502.5 L 243.5 506 V 499 Z" style="fill: #b45309; fill-opacity: 1.0; stroke: none" />
-  <path d="M 252.5 465 L 256 474 H 249 Z" style="fill: #b45309; fill-opacity: 1.0; stroke: none" />
-  <path d="M 345 502.5 L 354 499 V 506 Z" style="fill: #0e7490; fill-opacity: 1.0; stroke: none" />
-  <path d="M 345 577.5 L 341.5 568.5 H 348.5 Z" style="fill: #0e7490; fill-opacity: 1.0; stroke: none" />
-  <path d="M 532.5 577.5 L 523.5 581 V 574 Z" style="fill: #0e7490; fill-opacity: 1.0; stroke: none" />
-  <path d="M 532.5 540 L 536 549 H 529 Z" style="fill: #0e7490; fill-opacity: 1.0; stroke: none" />
-  <path d="M 495 540 L 504 536.5 V 543.5 Z" style="fill: #0e7490; fill-opacity: 1.0; stroke: none" />
-  <path d="M 420 540 L 429 536.5 V 543.5 Z" style="fill: #0e7490; fill-opacity: 1.0; stroke: none" />
-  <path d="M 420 502.5 L 423.5 511.5 H 416.5 Z" style="fill: #0e7490; fill-opacity: 1.0; stroke: none" />
-  <path d="M 382.5 502.5 L 391.5 499 V 506 Z" style="fill: #0e7490; fill-opacity: 1.0; stroke: none" />
-  <path d="M 457.5 427.5 L 466.5 424 V 431 Z" style="fill: #0e7490; fill-opacity: 1.0; stroke: none" />
-  <path d="M 457.5 465 L 454 456 H 461 Z" style="fill: #0e7490; fill-opacity: 1.0; stroke: none" />
-  <path d="M 495 465 L 486 468.5 V 461.5 Z" style="fill: #0e7490; fill-opacity: 1.0; stroke: none" />
-  <path d="M 495 427.5 L 498.5 436.5 H 491.5 Z" style="fill: #0e7490; fill-opacity: 1.0; stroke: none" />
-  <path d="M 587.5 352.5 L 596.5 349 V 356 Z" style="fill: #be185d; fill-opacity: 1.0; stroke: none" />
-  <path d="M 587.5 502.5 L 584 493.5 H 591 Z" style="fill: #be185d; fill-opacity: 1.0; stroke: none" />
-  <path d="M 625 502.5 L 616 506 V 499 Z" style="fill: #be185d; fill-opacity: 1.0; stroke: none" />
-  <path d="M 625 577.5 L 621.5 568.5 H 628.5 Z" style="fill: #be185d; fill-opacity: 1.0; stroke: none" />
-  <path d="M 812.5 577.5 L 803.5 581 V 574 Z" style="fill: #be185d; fill-opacity: 1.0; stroke: none" />
-  <path d="M 812.5 540 L 816 549 H 809 Z" style="fill: #be185d; fill-opacity: 1.0; stroke: none" />
-  <path d="M 775 540 L 784 536.5 V 543.5 Z" style="fill: #be185d; fill-opacity: 1.0; stroke: none" />
-  <path d="M 700 540 L 709 536.5 V 543.5 Z" style="fill: #be185d; fill-opacity: 1.0; stroke: none" />
-  <path d="M 700 502.5 L 703.5 511.5 H 696.5 Z" style="fill: #be185d; fill-opacity: 1.0; stroke: none" />
-  <path d="M 662.5 502.5 L 671.5 499 V 506 Z" style="fill: #be185d; fill-opacity: 1.0; stroke: none" />
-  <path d="M 662.5 427.5 L 666 436.5 H 659 Z" style="fill: #be185d; fill-opacity: 1.0; stroke: none" />
-  <path d="M 737.5 427.5 L 728.5 431 V 424 Z" style="fill: #be185d; fill-opacity: 1.0; stroke: none" />
-  <path d="M 737.5 352.5 L 741 361.5 H 734 Z" style="fill: #be185d; fill-opacity: 1.0; stroke: none" />
-  <path d="M 737.5 465 L 734 456 H 741 Z" style="fill: #be185d; fill-opacity: 1.0; stroke: none" />
-  <path d="M 775 465 L 766 468.5 V 461.5 Z" style="fill: #be185d; fill-opacity: 1.0; stroke: none" />
-  <path d="M 775 427.5 L 778.5 436.5 H 771.5 Z" style="fill: #be185d; fill-opacity: 1.0; stroke: none" />
-  <path d="M 737.5 427.5 L 746.5 424 V 431 Z" style="fill: #be185d; fill-opacity: 1.0; stroke: none" />
-  <path d="M 775 465 L 784 461.5 V 468.5 Z" style="fill: #be185d; fill-opacity: 1.0; stroke: none" />
-  <path d="M 775 502.5 L 771.5 493.5 H 778.5 Z" style="fill: #be185d; fill-opacity: 1.0; stroke: none" />
-  <path d="M 812.5 502.5 L 803.5 506 V 499 Z" style="fill: #be185d; fill-opacity: 1.0; stroke: none" />
-  <path d="M 812.5 465 L 816 474 H 809 Z" style="fill: #be185d; fill-opacity: 1.0; stroke: none" />
+  <path d="M 737.5 72.5 L 728.5 76 V 69 Z" style="fill: #15803d; fill-opacity: 1.0; stroke: none" />
+  <path d="M 737.5 147.5 L 734 138.5 H 741 Z" style="fill: #15803d; fill-opacity: 1.0; stroke: none" />
+  <path d="M 775 147.5 L 766 151 V 144 Z" style="fill: #15803d; fill-opacity: 1.0; stroke: none" />
+  <path d="M 775 185 L 771.5 176 H 778.5 Z" style="fill: #15803d; fill-opacity: 1.0; stroke: none" />
+  <path d="M 812.5 185 L 803.5 188.5 V 181.5 Z" style="fill: #15803d; fill-opacity: 1.0; stroke: none" />
+  <path d="M 812.5 222.5 L 809 213.5 H 816 Z" style="fill: #15803d; fill-opacity: 1.0; stroke: none" />
+  <path d="M 812.5 260 L 809 251 H 816 Z" style="fill: #15803d; fill-opacity: 1.0; stroke: none" />
+  <path d="M 812.5 297.5 L 809 288.5 H 816 Z" style="fill: #15803d; fill-opacity: 1.0; stroke: none" />
+  <path d="M 625 297.5 L 634 294 V 301 Z" style="fill: #15803d; fill-opacity: 1.0; stroke: none" />
+  <path d="M 625 222.5 L 628.5 231.5 H 621.5 Z" style="fill: #15803d; fill-opacity: 1.0; stroke: none" />
+  <path d="M 587.5 222.5 L 596.5 219 V 226 Z" style="fill: #15803d; fill-opacity: 1.0; stroke: none" />
+  <path d="M 587.5 72.5 L 591 81.5 H 584 Z" style="fill: #15803d; fill-opacity: 1.0; stroke: none" />
+  <path d="M 1017.5 185 L 1014 176 H 1021 Z" style="fill: #6d28d9; fill-opacity: 1.0; stroke: none" />
+  <path d="M 1055 185 L 1046 188.5 V 181.5 Z" style="fill: #6d28d9; fill-opacity: 1.0; stroke: none" />
+  <path d="M 1055 222.5 L 1051.5 213.5 H 1058.5 Z" style="fill: #6d28d9; fill-opacity: 1.0; stroke: none" />
+  <path d="M 1092.5 222.5 L 1083.5 226 V 219 Z" style="fill: #6d28d9; fill-opacity: 1.0; stroke: none" />
+  <path d="M 1092.5 260 L 1089 251 H 1096 Z" style="fill: #6d28d9; fill-opacity: 1.0; stroke: none" />
+  <path d="M 1055 260 L 1064 256.5 V 263.5 Z" style="fill: #6d28d9; fill-opacity: 1.0; stroke: none" />
+  <path d="M 980 260 L 989 256.5 V 263.5 Z" style="fill: #6d28d9; fill-opacity: 1.0; stroke: none" />
+  <path d="M 980 222.5 L 983.5 231.5 H 976.5 Z" style="fill: #6d28d9; fill-opacity: 1.0; stroke: none" />
+  <path d="M 942.5 222.5 L 951.5 219 V 226 Z" style="fill: #6d28d9; fill-opacity: 1.0; stroke: none" />
+  <path d="M 942.5 147.5 L 946 156.5 H 939 Z" style="fill: #6d28d9; fill-opacity: 1.0; stroke: none" />
+  <path d="M 1017.5 147.5 L 1008.5 151 V 144 Z" style="fill: #6d28d9; fill-opacity: 1.0; stroke: none" />
+  <path d="M 177.5 352.5 L 168.5 356 V 349 Z" style="fill: #b45309; fill-opacity: 1.0; stroke: none" />
+  <path d="M 177.5 427.5 L 174 418.5 H 181 Z" style="fill: #b45309; fill-opacity: 1.0; stroke: none" />
+  <path d="M 102.5 427.5 L 111.5 424 V 431 Z" style="fill: #b45309; fill-opacity: 1.0; stroke: none" />
+  <path d="M 102.5 502.5 L 99 493.5 H 106 Z" style="fill: #b45309; fill-opacity: 1.0; stroke: none" />
+  <path d="M 65 502.5 L 74 499 V 506 Z" style="fill: #b45309; fill-opacity: 1.0; stroke: none" />
+  <path d="M 27.5 502.5 L 36.5 499 V 506 Z" style="fill: #b45309; fill-opacity: 1.0; stroke: none" />
+  <path d="M 27.5 352.5 L 31 361.5 H 24 Z" style="fill: #b45309; fill-opacity: 1.0; stroke: none" />
+  <path d="M 252.5 465 L 243.5 468.5 V 461.5 Z" style="fill: #b45309; fill-opacity: 1.0; stroke: none" />
+  <path d="M 252.5 502.5 L 249 493.5 H 256 Z" style="fill: #b45309; fill-opacity: 1.0; stroke: none" />
+  <path d="M 215 502.5 L 224 499 V 506 Z" style="fill: #b45309; fill-opacity: 1.0; stroke: none" />
+  <path d="M 215 465 L 218.5 474 H 211.5 Z" style="fill: #b45309; fill-opacity: 1.0; stroke: none" />
+  <path d="M 382.5 502.5 L 373.5 506 V 499 Z" style="fill: #0e7490; fill-opacity: 1.0; stroke: none" />
+  <path d="M 420 502.5 L 411 506 V 499 Z" style="fill: #0e7490; fill-opacity: 1.0; stroke: none" />
+  <path d="M 420 540 L 416.5 531 H 423.5 Z" style="fill: #0e7490; fill-opacity: 1.0; stroke: none" />
+  <path d="M 495 540 L 486 543.5 V 536.5 Z" style="fill: #0e7490; fill-opacity: 1.0; stroke: none" />
+  <path d="M 532.5 540 L 523.5 543.5 V 536.5 Z" style="fill: #0e7490; fill-opacity: 1.0; stroke: none" />
+  <path d="M 532.5 577.5 L 529 568.5 H 536 Z" style="fill: #0e7490; fill-opacity: 1.0; stroke: none" />
+  <path d="M 345 577.5 L 354 574 V 581 Z" style="fill: #0e7490; fill-opacity: 1.0; stroke: none" />
+  <path d="M 345 502.5 L 348.5 511.5 H 341.5 Z" style="fill: #0e7490; fill-opacity: 1.0; stroke: none" />
+  <path d="M 495 427.5 L 486 431 V 424 Z" style="fill: #0e7490; fill-opacity: 1.0; stroke: none" />
+  <path d="M 495 465 L 491.5 456 H 498.5 Z" style="fill: #0e7490; fill-opacity: 1.0; stroke: none" />
+  <path d="M 457.5 465 L 466.5 461.5 V 468.5 Z" style="fill: #0e7490; fill-opacity: 1.0; stroke: none" />
+  <path d="M 457.5 427.5 L 461 436.5 H 454 Z" style="fill: #0e7490; fill-opacity: 1.0; stroke: none" />
+  <path d="M 737.5 352.5 L 728.5 356 V 349 Z" style="fill: #be185d; fill-opacity: 1.0; stroke: none" />
+  <path d="M 737.5 427.5 L 734 418.5 H 741 Z" style="fill: #be185d; fill-opacity: 1.0; stroke: none" />
+  <path d="M 775 427.5 L 766 431 V 424 Z" style="fill: #be185d; fill-opacity: 1.0; stroke: none" />
+  <path d="M 775 465 L 771.5 456 H 778.5 Z" style="fill: #be185d; fill-opacity: 1.0; stroke: none" />
+  <path d="M 812.5 465 L 803.5 468.5 V 461.5 Z" style="fill: #be185d; fill-opacity: 1.0; stroke: none" />
+  <path d="M 812.5 502.5 L 809 493.5 H 816 Z" style="fill: #be185d; fill-opacity: 1.0; stroke: none" />
+  <path d="M 775 502.5 L 784 499 V 506 Z" style="fill: #be185d; fill-opacity: 1.0; stroke: none" />
+  <path d="M 775 465 L 778.5 474 H 771.5 Z" style="fill: #be185d; fill-opacity: 1.0; stroke: none" />
+  <path d="M 737.5 465 L 746.5 461.5 V 468.5 Z" style="fill: #be185d; fill-opacity: 1.0; stroke: none" />
+  <path d="M 737.5 427.5 L 741 436.5 H 734 Z" style="fill: #be185d; fill-opacity: 1.0; stroke: none" />
+  <path d="M 662.5 427.5 L 671.5 424 V 431 Z" style="fill: #be185d; fill-opacity: 1.0; stroke: none" />
+  <path d="M 662.5 502.5 L 659 493.5 H 666 Z" style="fill: #be185d; fill-opacity: 1.0; stroke: none" />
+  <path d="M 700 502.5 L 691 506 V 499 Z" style="fill: #be185d; fill-opacity: 1.0; stroke: none" />
+  <path d="M 700 540 L 696.5 531 H 703.5 Z" style="fill: #be185d; fill-opacity: 1.0; stroke: none" />
+  <path d="M 775 540 L 766 543.5 V 536.5 Z" style="fill: #be185d; fill-opacity: 1.0; stroke: none" />
+  <path d="M 812.5 540 L 803.5 543.5 V 536.5 Z" style="fill: #be185d; fill-opacity: 1.0; stroke: none" />
+  <path d="M 812.5 577.5 L 809 568.5 H 816 Z" style="fill: #be185d; fill-opacity: 1.0; stroke: none" />
+  <path d="M 625 577.5 L 634 574 V 581 Z" style="fill: #be185d; fill-opacity: 1.0; stroke: none" />
+  <path d="M 625 502.5 L 628.5 511.5 H 621.5 Z" style="fill: #be185d; fill-opacity: 1.0; stroke: none" />
+  <path d="M 587.5 502.5 L 596.5 499 V 506 Z" style="fill: #be185d; fill-opacity: 1.0; stroke: none" />
+  <path d="M 587.5 352.5 L 591 361.5 H 584 Z" style="fill: #be185d; fill-opacity: 1.0; stroke: none" />
   <path d="M 1017.5 414 L 1014 405 H 1021 Z" style="fill: #4338ca; fill-opacity: 1.0; stroke: none" />
   <path d="M 1031 427.5 L 1022 431 V 424 Z" style="fill: #4338ca; fill-opacity: 1.0; stroke: none" />
   <path d="M 1041.5 427.5 L 1032.5 431 V 424 Z" style="fill: #4338ca; fill-opacity: 1.0; stroke: none" />

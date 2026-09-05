@@ -1499,7 +1499,7 @@ pub fn csg_union_pairs_filled_sectors_at_corner_pinch_test() {
   let assert Ok(csg.CsgResult(path: union, ..)) =
     csg.union(left, right, using: svg_path.Nonzero)
 
-  list.length(svg_path.path_subpaths(union)) |> should.equal(2)
+  list.length(svg_path.path_subpaths(union)) |> should.equal(1)
   svg_path.path_containment(
     svg_path.Point(5.0, 5.0),
     within: union,

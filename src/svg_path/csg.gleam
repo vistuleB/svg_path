@@ -483,10 +483,6 @@ fn classify_boolean_edges(
         )
       let boundary = case filled_left, filled_right {
         True, False -> [
-          BoundaryEdge(id:, layer: 0, segment:, start_vertex:, end_vertex:),
-          ..boundary
-        ]
-        False, True -> [
           BoundaryEdge(
             id:,
             layer: 0,
@@ -494,6 +490,10 @@ fn classify_boolean_edges(
             start_vertex: end_vertex,
             end_vertex: start_vertex,
           ),
+          ..boundary
+        ]
+        False, True -> [
+          BoundaryEdge(id:, layer: 0, segment:, start_vertex:, end_vertex:),
           ..boundary
         ]
         _, _ -> boundary

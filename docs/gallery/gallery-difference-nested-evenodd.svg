@@ -6,7 +6,7 @@
   <text x="750" y="48" font-size="11" style="fill: #475569; font-family: system-ui; text-anchor: middle">difference</text>
   <path d="M 60 72 H 240 V 222 H 60 Z M 105 105 H 195 V 189 H 105 Z" style="fill: #2563eb; fill-opacity: 0.16; fill-rule: evenodd; stroke: #2563eb; stroke-width: 1.5" />
   <path d="M 123 120 H 177 V 174 H 123 Z" style="fill: #e11d48; fill-opacity: 0.16; fill-rule: evenodd; stroke: #e11d48; stroke-width: 1.5" />
-  <path d="M 840 72 H 660 V 222 H 840 Z M 705 105 H 795 V 189 H 705 Z" style="fill: #7c3aed; fill-opacity: 0.24; fill-rule: evenodd; stroke: #7c3aed; stroke-width: 2" />
+  <path d="M 660 72 H 840 V 222 H 660 Z M 795 105 H 705 V 189 H 795 Z" style="fill: #7c3aed; fill-opacity: 0.24; fill-rule: evenodd; stroke: #7c3aed; stroke-width: 2" />
   <path d="M 240 72 L 231 75.5 V 68.5 Z" style="fill: #2563eb; fill-opacity: 1.0; stroke: none" />
   <path d="M 240 222 L 236.5 213 H 243.5 Z" style="fill: #2563eb; fill-opacity: 1.0; stroke: none" />
   <path d="M 60 222 L 69 218.5 V 225.5 Z" style="fill: #2563eb; fill-opacity: 1.0; stroke: none" />
@@ -91,12 +91,12 @@
   <circle cx="477" cy="120" r="5" style="fill: #fff; stroke: #dc2626; stroke-width: 2.25" />
   <circle cx="477" cy="174" r="5" style="fill: #fff; stroke: #dc2626; stroke-width: 2.25" />
   <circle cx="423" cy="174" r="5" style="fill: #fff; stroke: #dc2626; stroke-width: 2.25" />
-  <path d="M 660 72 L 669 68.5 V 75.5 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
-  <path d="M 660 222 L 656.5 213 H 663.5 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
-  <path d="M 840 222 L 831 225.5 V 218.5 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
-  <path d="M 840 72 L 843.5 81 H 836.5 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
-  <path d="M 795 105 L 786 108.5 V 101.5 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
-  <path d="M 795 189 L 791.5 180 H 798.5 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
-  <path d="M 705 189 L 714 185.5 V 192.5 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
-  <path d="M 705 105 L 708.5 114 H 701.5 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
+  <path d="M 840 72 L 831 75.5 V 68.5 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
+  <path d="M 840 222 L 836.5 213 H 843.5 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
+  <path d="M 660 222 L 669 218.5 V 225.5 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
+  <path d="M 660 72 L 663.5 81 H 656.5 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
+  <path d="M 705 105 L 714 101.5 V 108.5 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
+  <path d="M 705 189 L 701.5 180 H 708.5 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
+  <path d="M 795 189 L 786 192.5 V 185.5 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
+  <path d="M 795 105 L 798.5 114 H 791.5 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
 </svg>

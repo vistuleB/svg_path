@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 260" width="900" height="260">
+  <rect x="0" y="0" width="900" height="260" style="fill: #f8fafc; stroke: none" />
+  <text x="18" y="25" font-size="15" style="fill: #0f172a; font-family: system-ui; font-weight: 600">union of corner-touching squares · clockwise orientation</text>
+  <text x="150" y="48" font-size="11" style="fill: #475569; font-family: system-ui; text-anchor: middle">operands</text>
+  <text x="450" y="48" font-size="11" style="fill: #475569; font-family: system-ui; text-anchor: middle">arrangement graph</text>
+  <text x="750" y="48" font-size="11" style="fill: #475569; font-family: system-ui; text-anchor: middle">union · one self-touching loop</text>
+  <path d="M 75 72 H 150 V 147 H 75 Z" style="fill: #2563eb; fill-opacity: 0.16; fill-rule: nonzero; stroke: #2563eb; stroke-width: 1.5" />
+  <path d="M 150 147 H 225 V 222 H 150 Z" style="fill: #e11d48; fill-opacity: 0.16; fill-rule: nonzero; stroke: #e11d48; stroke-width: 1.5" />
+  <path d="M 675 72 H 750 V 147 H 825 V 222 H 750 V 147 H 675 Z" style="fill: #7c3aed; fill-opacity: 0.24; fill-rule: nonzero; stroke: #7c3aed; stroke-width: 2" />
+  <path d="M 150 72 L 141 75.5 V 68.5 Z" style="fill: #2563eb; fill-opacity: 1.0; stroke: none" />
+  <path d="M 150 147 L 146.5 138 H 153.5 Z" style="fill: #2563eb; fill-opacity: 1.0; stroke: none" />
+  <path d="M 75 147 L 84 143.5 V 150.5 Z" style="fill: #2563eb; fill-opacity: 1.0; stroke: none" />
+  <path d="M 75 72 L 78.5 81 H 71.5 Z" style="fill: #2563eb; fill-opacity: 1.0; stroke: none" />
+  <path d="M 225 147 L 216 150.5 V 143.5 Z" style="fill: #e11d48; fill-opacity: 1.0; stroke: none" />
+  <path d="M 225 222 L 221.5 213 H 228.5 Z" style="fill: #e11d48; fill-opacity: 1.0; stroke: none" />
+  <path d="M 150 222 L 159 218.5 V 225.5 Z" style="fill: #e11d48; fill-opacity: 1.0; stroke: none" />
+  <path d="M 150 147 L 153.5 156 H 146.5 Z" style="fill: #e11d48; fill-opacity: 1.0; stroke: none" />
+  <path d="M 375 72 H 450" style="fill: none; stroke: #334155; stroke-width: 3.25" />
+  <path d="M 445 72 L 435 80 V 64 Z" style="fill: #dc2626; fill-opacity: 1.0; stroke: none" />
+  <rect x="392.1" y="57.6" width="40.8" height="28.8" style="fill: #fff; stroke: #94a3b8; stroke-width: 0.75" transform="rotate(90 412.5 72)" />
+  <text x="412.5" y="69.6" font-size="10.8" style="fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(90 412.5 72)">0/1</text>
+  <text x="412.5" y="82.8" font-size="9.6" style="fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(90 412.5 72)">↑1/0↓</text>
+  <path d="M 450 72 V 147" style="fill: none; stroke: #334155; stroke-width: 3.25" />
+  <path d="M 450 142 L 442 132 H 458 Z" style="fill: #dc2626; fill-opacity: 1.0; stroke: none" />
+  <rect x="429.6" y="95.1" width="40.8" height="28.8" style="fill: #fff; stroke: #94a3b8; stroke-width: 0.75" transform="rotate(180 450 109.5)" />
+  <text x="450" y="107.1" font-size="10.8" style="fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(180 450 109.5)">0/1</text>
+  <text x="450" y="120.3" font-size="9.6" style="fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(180 450 109.5)">↑1/0↓</text>
+  <path d="M 450 147 H 375" style="fill: none; stroke: #334155; stroke-width: 3.25" />
+  <path d="M 380 147 L 390 139 V 155 Z" style="fill: #dc2626; fill-opacity: 1.0; stroke: none" />
+  <rect x="392.1" y="132.6" width="40.8" height="28.8" style="fill: #fff; stroke: #94a3b8; stroke-width: 0.75" transform="rotate(270 412.5 147)" />
+  <text x="412.5" y="144.6" font-size="10.8" style="fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(270 412.5 147)">0/1</text>
+  <text x="412.5" y="157.8" font-size="9.6" style="fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(270 412.5 147)">↑1/0↓</text>
+  <path d="M 375 147 V 72" style="fill: none; stroke: #334155; stroke-width: 3.25" />
+  <path d="M 375 77 L 383 87 H 367 Z" style="fill: #dc2626; fill-opacity: 1.0; stroke: none" />
+  <rect x="354.6" y="95.1" width="40.8" height="28.8" style="fill: #fff; stroke: #94a3b8; stroke-width: 0.75" transform="rotate(0 375 109.5)" />
+  <text x="375" y="107.1" font-size="10.8" style="fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(0 375 109.5)">0/1</text>
+  <text x="375" y="120.3" font-size="9.6" style="fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(0 375 109.5)">↑1/0↓</text>
+  <path d="M 450 147 H 525" style="fill: none; stroke: #334155; stroke-width: 3.25" />
+  <path d="M 520 147 L 510 155 V 139 Z" style="fill: #dc2626; fill-opacity: 1.0; stroke: none" />
+  <rect x="467.1" y="132.6" width="40.8" height="28.8" style="fill: #fff; stroke: #94a3b8; stroke-width: 0.75" transform="rotate(90 487.5 147)" />
+  <text x="487.5" y="144.6" font-size="10.8" style="fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(90 487.5 147)">0/1</text>
+  <text x="487.5" y="157.8" font-size="9.6" style="fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(90 487.5 147)">↑1/0↓</text>
+  <path d="M 525 147 V 222" style="fill: none; stroke: #334155; stroke-width: 3.25" />
+  <path d="M 525 217 L 517 207 H 533 Z" style="fill: #dc2626; fill-opacity: 1.0; stroke: none" />
+  <rect x="504.6" y="170.1" width="40.8" height="28.8" style="fill: #fff; stroke: #94a3b8; stroke-width: 0.75" transform="rotate(180 525 184.5)" />
+  <text x="525" y="182.1" font-size="10.8" style="fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(180 525 184.5)">0/1</text>
+  <text x="525" y="195.3" font-size="9.6" style="fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(180 525 184.5)">↑1/0↓</text>
+  <path d="M 525 222 H 450" style="fill: none; stroke: #334155; stroke-width: 3.25" />
+  <path d="M 455 222 L 465 214 V 230 Z" style="fill: #dc2626; fill-opacity: 1.0; stroke: none" />
+  <rect x="467.1" y="207.6" width="40.8" height="28.8" style="fill: #fff; stroke: #94a3b8; stroke-width: 0.75" transform="rotate(270 487.5 222)" />
+  <text x="487.5" y="219.6" font-size="10.8" style="fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(270 487.5 222)">0/1</text>
+  <text x="487.5" y="232.8" font-size="9.6" style="fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(270 487.5 222)">↑1/0↓</text>
+  <path d="M 450 222 V 147" style="fill: none; stroke: #334155; stroke-width: 3.25" />
+  <path d="M 450 152 L 458 162 H 442 Z" style="fill: #dc2626; fill-opacity: 1.0; stroke: none" />
+  <rect x="429.6" y="170.1" width="40.8" height="28.8" style="fill: #fff; stroke: #94a3b8; stroke-width: 0.75" transform="rotate(0 450 184.5)" />
+  <text x="450" y="182.1" font-size="10.8" style="fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(0 450 184.5)">0/1</text>
+  <text x="450" y="195.3" font-size="9.6" style="fill: #dc2626; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle" transform="rotate(0 450 184.5)">↑1/0↓</text>
+  <circle cx="375" cy="72" r="5" style="fill: #fff; stroke: #dc2626; stroke-width: 2.25" />
+  <circle cx="450" cy="72" r="5" style="fill: #fff; stroke: #dc2626; stroke-width: 2.25" />
+  <circle cx="450" cy="147" r="5" style="fill: #fff; stroke: #dc2626; stroke-width: 2.25" />
+  <circle cx="375" cy="147" r="5" style="fill: #fff; stroke: #dc2626; stroke-width: 2.25" />
+  <circle cx="525" cy="147" r="5" style="fill: #fff; stroke: #dc2626; stroke-width: 2.25" />
+  <circle cx="525" cy="222" r="5" style="fill: #fff; stroke: #dc2626; stroke-width: 2.25" />
+  <circle cx="450" cy="222" r="5" style="fill: #fff; stroke: #dc2626; stroke-width: 2.25" />
+  <path d="M 750 72 L 741 75.5 V 68.5 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
+  <path d="M 750 147 L 746.5 138 H 753.5 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
+  <path d="M 825 147 L 816 150.5 V 143.5 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
+  <path d="M 825 222 L 821.5 213 H 828.5 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
+  <path d="M 750 222 L 759 218.5 V 225.5 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
+  <path d="M 750 147 L 753.5 156 H 746.5 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
+  <path d="M 675 147 L 684 143.5 V 150.5 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
+  <path d="M 675 72 L 678.5 81 H 671.5 Z" style="fill: #7c3aed; fill-opacity: 1.0; stroke: none" />
+</svg>
