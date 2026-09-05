@@ -9,6 +9,18 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
+## 0.42.3 - 2026-09-05
+
+### Fixed
+
+- Hardened endpoint reconciliation across degeneracy, convex-hull, and offset
+  survivor-chain rebuilds, using strict joins where replacement geometry is
+  exact and tolerant joins where evaluation noise remains.
+- Reclassified post-repair residual gaps as distinct construction failures
+  (`HullPiecesDiscontinuous`, `InternalSurvivorChainDiscontinuous`) instead of
+  surfacing ordinary `Discontinuous` subpath errors, so callers can tell
+  internal construction exhaustion from user-facing segment mistakes.
+
 ## 0.42.2 - 2026-09-04
 
 ### Fixed
