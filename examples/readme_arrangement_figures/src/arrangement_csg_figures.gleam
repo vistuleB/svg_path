@@ -412,13 +412,13 @@ fn render_case(
       svg_path.path_subpaths(left),
       svg_path.path_subpaths(right),
     ))
-  let assert Ok(source_placed) = fit(source, 150.0, 132.0)
+  let assert Ok(source_placed) = fit(source, 150.0, 147.0)
   let source_parts = svg_path.path_subpaths(source_placed)
   let left_count = list.length(svg_path.path_subpaths(left))
   let left_placed = svg_path.Path(list.take(source_parts, left_count))
   let right_placed = svg_path.Path(list.drop(source_parts, left_count))
 
-  let assert Ok(graph_source) = fit(source, 450.0, 132.0)
+  let assert Ok(graph_source) = fit(source, 450.0, 147.0)
   let assert Ok(arrangement_graph.ArrangementGraphBuild(graph:, ..)) =
     arrangement_graph.build([graph_source], tolerance:, minimum_chord:)
   let normalized_graph_source = graph_source
@@ -436,7 +436,7 @@ fn render_case(
     [] -> boolean_result
     _ -> {
       let assert Ok(value) =
-        place_like(boolean_result, source, 750.0, 132.0, 190.0, 150.0)
+        place_like(boolean_result, source, 750.0, 147.0, 190.0, 150.0)
       value
     }
   }
@@ -497,7 +497,7 @@ fn render_case(
       svg.Text(
         "∅",
         "fill: #7c3aed; font-family: system-ui; text-anchor: middle",
-        svg_path.Point(750.0, 143.0),
+        svg_path.Point(750.0, 158.0),
         28.0,
       ),
     ]
