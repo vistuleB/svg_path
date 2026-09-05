@@ -72,8 +72,9 @@ Shows an asymmetric two-sided band around a closed figure-eight.
 
 ![Stretched figure-eight bands](docs/gallery/gallery-symmetric-figure-eight-bands.svg)
 
-Compares a wide band crossing both sides of the source (`−5` to `+25`) with a
-narrower band lying entirely on its positive-offset side (`+10` to `+20`).
+Compares a narrower band lying entirely on its positive-offset side (`+10` to
+`+20`, left) with a wide band crossing both sides of the source (`−5` to `+25`,
+right).
 
 ### Figure-Eight Correspondence Blocks
 
