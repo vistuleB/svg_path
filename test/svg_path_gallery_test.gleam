@@ -2030,14 +2030,6 @@ fn figure_eight() -> svg_path.Subpath {
   |> svg_path.subpath_assert_set_closed(closed: True)
 }
 
-fn escape(text: String) -> String {
-  text
-  |> string.replace("&", "\\&amp;")
-  |> string.replace("\"", "\\&quot;")
-  |> string.replace("<", "\\&lt;")
-  |> string.replace(">", "\\&gt;")
-}
-
 fn offset_track_source() -> svg_path.Subpath {
   svg_path.subpath_assert([
     svg_path.CubicBezier(
