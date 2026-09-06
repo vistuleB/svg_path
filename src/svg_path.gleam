@@ -2294,6 +2294,11 @@ pub fn subpath_is_closed(subpath: Subpath) -> Bool {
   subpath.closed
 }
 
+/// Check whether a subpath has no segments (a move-only subpath).
+pub fn subpath_is_empty(subpath: Subpath) -> Bool {
+  list.is_empty(subpath.segments)
+}
+
 /// Set a subpath's semantic closed state.
 ///
 /// Setting `closed` to `False` always succeeds. Setting it to `True` requires a

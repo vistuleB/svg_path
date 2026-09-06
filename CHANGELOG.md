@@ -36,6 +36,8 @@ rather than only the tag object.
 
 ### Added
 
+- `svg_path.subpath_is_empty`, a predicate for move-only subpaths with no
+  segments.
 - Regression tests for exact zero-tolerance normalization, zero-tolerance
   corner rounding, exact trim-consume overlap failures, and an inward
   square-spiral adapt-radius collapse.
