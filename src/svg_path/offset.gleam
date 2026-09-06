@@ -122,6 +122,15 @@ const adjacent_loop_endpoint_parameter_tolerance = 0.0001
 
 /// Errors returned by offset helpers.
 pub type Error {
+  /// The internal winding classifier reached a boundary state unexpectedly.
+  InconsistentContainment
+
+  /// An internal contour probe received no segments.
+  EmptySubpath
+
+  /// An offset-map distance lies outside the source length range.
+  InvalidOffsetMapDistance(distance: Float, length: Float)
+
   /// An underlying path operation failed.
   PathError(svg_path.Error)
 
@@ -1170,8 +1179,7 @@ fn internal_band_winding_function(
     )
     case winding {
       svg_path.Winding(value) -> Ok(value)
-      svg_path.BoundaryWinding ->
-        Error(PathError(svg_path.InconsistentContainment))
+      svg_path.BoundaryWinding -> Error(InconsistentContainment)
     }
   })
 }
@@ -1201,8 +1209,7 @@ fn offside_trimmed_single_offset_winding_function(
     )
     case winding {
       svg_path.Winding(value) -> Ok(value)
-      svg_path.BoundaryWinding ->
-        Error(PathError(svg_path.InconsistentContainment))
+      svg_path.BoundaryWinding -> Error(InconsistentContainment)
     }
   })
 }
@@ -6716,7 +6723,7 @@ fn outline_contour_probe_segments(
   segments: List(svg_path.Segment),
 ) -> Result(svg_path.Point, Error) {
   case segments {
-    [] -> Error(PathError(svg_path.EmptySubpath))
+    [] -> Error(EmptySubpath)
     [first, ..rest] -> {
       use point <- result.try(
         svg_path.segment_point(first, at: 0.5) |> result.map_error(PathError),
@@ -11876,13 +11883,7 @@ fn offset_map_distance(
     True -> Ok(positive_remainder(distance, total_length))
     False ->
       case distance <. 0.0 || distance >. total_length {
-        True ->
-          Error(
-            PathError(svg_path.InvalidLengthDistance(
-              distance:,
-              length: total_length,
-            )),
-          )
+        True -> Error(InvalidOffsetMapDistance(distance:, length: total_length))
         False -> Ok(distance)
       }
   }
