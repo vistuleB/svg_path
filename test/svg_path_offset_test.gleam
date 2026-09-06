@@ -612,12 +612,7 @@ pub fn subpath_offset_map_rejects_open_subpath_distances_outside_length_test() {
   let assert Ok(map) = offset.subpath_offset_map(subpath)
 
   assert map(svg_path.Point(11.0, 0.0))
-    == Error(
-      offset.PathError(svg_path.InvalidLengthDistance(
-        distance: 11.0,
-        length: 10.0,
-      )),
-    )
+    == Error(offset.InvalidOffsetMapDistance(11.0, 10.0))
 }
 
 pub fn subpath_offset_map_rejects_zero_length_subpath_test() {
