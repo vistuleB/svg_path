@@ -661,15 +661,13 @@ fn adapt_radii(
 ) -> List(AssignedRadius) {
   case iteration >= 24 {
     True -> radii
-    False -> {
-      let next =
-        segment_scales(specs, infos, radii, subpath, options.distance_tolerance)
-        |> apply_radius_scales(radii)
-      case radii_near(radii, next, options.distance_tolerance) {
-        True -> next
+    False ->
+      case radii_feasible(specs, infos, radii, subpath, options.distance_tolerance) {
+        True -> radii
         False ->
-          adapt_radii(
-            next,
+          segment_scales(specs, infos, radii, subpath, options.distance_tolerance)
+          |> apply_radius_scales(radii)
+          |> adapt_radii(
             specs,
             infos,
             subpath,
@@ -677,8 +675,25 @@ fn adapt_radii(
             iteration: iteration + 1,
           )
       }
-    }
   }
+}
+
+fn radii_feasible(
+  specs: List(CornerSpec),
+  infos: List(SegmentInfo),
+  radii: List(AssignedRadius),
+  subpath: svg_path.Subpath,
+  tolerance: Float,
+) -> Bool {
+  infos
+  |> list.all(fn(info) {
+    let before_index = previous_corner_index(info.index, subpath)
+    let before = find_spec(before_index, specs)
+    let after = find_spec(info.index, specs)
+    let total = spec_trim(before, radii) +. spec_trim(after, radii)
+    let available = float.max(0.0, info.length -. 2.0 *. tolerance)
+    total <=. available
+  })
 }
 
 fn segment_scales(
@@ -765,21 +780,6 @@ fn scale_for(index: Int, scales: List(AssignedScale)) -> Float {
         True -> scale.scale
         False -> scale_for(index, rest)
       }
-    }
-  }
-}
-
-fn radii_near(
-  left: List(AssignedRadius),
-  right: List(AssignedRadius),
-  tolerance: Float,
-) -> Bool {
-  case left {
-    [] -> True
-    [radius, ..rest] -> {
-      float.absolute_value(radius.radius -. radius_for(radius.index, right))
-      <=. tolerance
-      && radii_near(rest, right, tolerance)
     }
   }
 }

@@ -442,6 +442,37 @@ pub fn round_corners_can_adapt_radius_to_fit_short_segments_test() {
   assert all_arc_radii_near(segments, expected: 4.999999)
 }
 
+pub fn round_corners_adapts_tight_inward_spiral_test() {
+  let spiral =
+    svg_path.subpath_assert_polygon([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(8.0, 0.0),
+      svg_path.Point(8.0, 8.0),
+      svg_path.Point(2.0, 8.0),
+      svg_path.Point(2.0, 2.0),
+      svg_path.Point(6.0, 2.0),
+      svg_path.Point(6.0, 6.0),
+      svg_path.Point(4.0, 6.0),
+      svg_path.Point(4.0, 4.0),
+      svg_path.Point(4.0, 10.0),
+      svg_path.Point(0.0, 10.0),
+    ])
+  let options =
+    effects.RoundCornerOptions(
+      ..effects.default_round_corner_options(),
+      failure: effects.AdaptRadius,
+      distance_tolerance: 1.0,
+    )
+
+  let assert Ok(rounded) =
+    effects.round_subpath_corners_with(spiral, radius: 2.0, options:)
+  let segments = svg_path.subpath_segments(rounded)
+
+  assert svg_path.subpath_is_closed(rounded)
+  assert arc_count(segments) == 4
+  assert all_arc_radii_near(segments, expected: 2.0)
+}
+
 pub fn normalize_degenerate_segments_replaces_degenerate_segments_test() {
   let subpath =
     svg_path.subpath_assert([
