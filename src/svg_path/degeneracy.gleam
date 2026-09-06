@@ -30,6 +30,9 @@ pub type ThinPrefix {
 
 /// Errors returned by degeneracy cleanup helpers.
 pub type Error {
+  /// The linearization tolerance must be finite and non-negative.
+  InvalidTolerance(Float)
+
   /// An underlying path operation failed.
   PathError(svg_path.Error)
 
@@ -49,7 +52,7 @@ pub fn normalize_degenerate_segments(
   tolerance tolerance: Float,
 ) -> Result(svg_path.Subpath, Error) {
   case tolerance <. 0.0 || !number.is_finite(tolerance) {
-    True -> Error(PathError(svg_path.InvalidLinearizeTolerance(tolerance)))
+    True -> Error(InvalidTolerance(tolerance))
     False -> {
       use segments <- result.try(
         colinearize_segments(
@@ -61,10 +64,7 @@ pub fn normalize_degenerate_segments(
       use open <- result.try(case segments {
         [] -> Ok(svg_path.subpath_empty(at: svg_path.subpath_start(subpath)))
         _ ->
-          svg_path.subpath_with(
-            segments,
-            policy: svg_path.Strict,
-          )
+          svg_path.subpath_with(segments, policy: svg_path.Strict)
           |> result.map_error(PathError)
       })
       case svg_path.subpath_is_closed(subpath) {

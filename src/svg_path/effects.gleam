@@ -14,6 +14,9 @@ const default_tolerance = 0.000001
 
 /// Errors returned by path effects.
 pub type Error {
+  /// The degeneracy linearization tolerance must be finite and non-negative.
+  InvalidDegeneracyTolerance(Float)
+
   /// An underlying path operation failed.
   PathError(svg_path.Error)
 
@@ -53,6 +56,8 @@ pub fn normalize_degenerate_segments(
 
 fn degeneracy_error(error: degeneracy.Error) -> Error {
   case error {
+    degeneracy.InvalidTolerance(tolerance) ->
+      InvalidDegeneracyTolerance(tolerance)
     degeneracy.PathError(error) -> PathError(error)
     degeneracy.ConvexHullError(error) -> ConvexHullError(error)
   }
