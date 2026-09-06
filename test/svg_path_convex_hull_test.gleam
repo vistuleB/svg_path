@@ -90,7 +90,7 @@ pub fn path_hull_includes_empty_subpath_start_points_test() {
 
 pub fn path_hull_rejects_empty_path_test() {
   assert convex_hull.path_hull(svg_path.path_empty())
-    == Error(convex_hull.PathError(svg_path.EmptyPath))
+    == Error(convex_hull.EmptyPath)
 }
 
 fn support_values_match(

@@ -24,8 +24,7 @@ pub fn point_cloud_hull_handles_10_point_cloud_test() {
 }
 
 pub fn point_cloud_hull_rejects_empty_point_cloud_test() {
-  assert convex_hull.points_hull([])
-    == Error(convex_hull.PathError(svg_path.EmptyPath))
+  assert convex_hull.points_hull([]) == Error(convex_hull.EmptyPath)
 }
 
 pub fn point_cloud_hull_handles_points_test() {
