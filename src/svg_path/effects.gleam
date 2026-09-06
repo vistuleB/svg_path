@@ -539,7 +539,7 @@ fn round_subpath_corners_adaptively(
   use specs <- result.try(corner_specs(pairs, options, specs: []))
   let assigned =
     initial_radii(specs, radius)
-    |> adapt_radii(specs, infos, subpath, options, iteration: 0)
+    |> adapt_radii(specs, infos, subpath, options)
   use corners <- result.try(
     corners_from_specs(specs, assigned, infos, options, []),
   )
@@ -657,43 +657,9 @@ fn adapt_radii(
   infos: List(SegmentInfo),
   subpath: svg_path.Subpath,
   options: RoundCornerOptions,
-  iteration iteration: Int,
 ) -> List(AssignedRadius) {
-  case iteration >= 24 {
-    True -> radii
-    False ->
-      case radii_feasible(specs, infos, radii, subpath, options.distance_tolerance) {
-        True -> radii
-        False ->
-          segment_scales(specs, infos, radii, subpath, options.distance_tolerance)
-          |> apply_radius_scales(radii)
-          |> adapt_radii(
-            specs,
-            infos,
-            subpath,
-            options,
-            iteration: iteration + 1,
-          )
-      }
-  }
-}
-
-fn radii_feasible(
-  specs: List(CornerSpec),
-  infos: List(SegmentInfo),
-  radii: List(AssignedRadius),
-  subpath: svg_path.Subpath,
-  tolerance: Float,
-) -> Bool {
-  infos
-  |> list.all(fn(info) {
-    let before_index = previous_corner_index(info.index, subpath)
-    let before = find_spec(before_index, specs)
-    let after = find_spec(info.index, specs)
-    let total = spec_trim(before, radii) +. spec_trim(after, radii)
-    let available = float.max(0.0, info.length -. 2.0 *. tolerance)
-    total <=. available
-  })
+  segment_scales(specs, infos, radii, subpath, options.distance_tolerance)
+  |> apply_radius_scales(radii)
 }
 
 fn segment_scales(
