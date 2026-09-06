@@ -13,6 +13,12 @@ rather than only the tag object.
 
 ### Changed
 
+- Replaced the opaque `Nil` error in curvature helpers
+  (`curvature.segment_left_normal_curvature`, `segment_left_normal_radius`,
+  `segment_left_normal_radius_close_to`, `segment_left_normal_cusp_parameters`,
+  `segment_inflection_parameters`, and `segment_left_normal_radius_close_bands`)
+  with a typed `CurvatureError`, so callers can distinguish invalid option
+  arguments from degenerate or infinite-radius geometry.
 - Allowed `0.0` tolerance for degenerate-line normalization
   (`normalize_degenerate_segments`, `segment_degenerate_lines`, and
   `subpath_degenerate_lines`), which now collapse a window only when its strip

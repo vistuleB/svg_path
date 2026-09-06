@@ -9,6 +9,83 @@ pub fn main() -> Nil {
   gleeunit.main()
 }
 
+pub fn invalid_tolerance_reports_invalid_curvature_tolerance_test() {
+  let invalid = curvature.Options(tolerance: 0.0, samples: 100, max_depth: 32)
+
+  let assert Error(curvature.InvalidCurvatureTolerance(value)) =
+    curvature.segment_left_normal_cusp_parameters(
+      visually_upward_cubic(),
+      distance: 0.27,
+      options: invalid,
+    )
+
+  assert value == 0.0
+}
+
+pub fn invalid_samples_reports_invalid_curvature_samples_test() {
+  let invalid =
+    curvature.Options(tolerance: 0.000000001, samples: 0, max_depth: 32)
+
+  let assert Error(curvature.InvalidCurvatureSamples(value)) =
+    curvature.segment_left_normal_cusp_parameters(
+      visually_upward_cubic(),
+      distance: 0.27,
+      options: invalid,
+    )
+
+  assert value == 0
+}
+
+pub fn invalid_max_depth_reports_invalid_curvature_max_depth_test() {
+  let invalid =
+    curvature.Options(tolerance: 0.000000001, samples: 100, max_depth: 0)
+
+  let assert Error(curvature.InvalidCurvatureMaxDepth(value)) =
+    curvature.segment_left_normal_cusp_parameters(
+      visually_upward_cubic(),
+      distance: 0.27,
+      options: invalid,
+    )
+
+  assert value == 0
+}
+
+pub fn invalid_margin_reports_invalid_curvature_margin_test() {
+  let assert Error(curvature.InvalidCurvatureMargin(value)) =
+    curvature.segment_left_normal_radius_close_to(
+      visually_upward_cubic(),
+      distance: 0.27,
+      margin: -1.0,
+      at: 0.5,
+    )
+
+  assert value == -1.0
+}
+
+pub fn line_radius_reports_infinite_radius_of_curvature_test() {
+  let line =
+    svg_path.Line(
+      start: svg_path.Point(0.0, 0.0),
+      end: svg_path.Point(1.0, 0.0),
+    )
+
+  let assert Error(curvature.InfiniteRadiusOfCurvature) =
+    curvature.segment_left_normal_radius(line, at: 0.5)
+}
+
+pub fn collapsed_segment_reports_degenerate_curvature_derivative_test() {
+  let collapsed =
+    svg_path.CubicBezier(
+      start: svg_path.Point(0.0, 0.0),
+      control1: svg_path.Point(0.0, 0.0),
+      control2: svg_path.Point(0.0, 0.0),
+      end: svg_path.Point(0.0, 0.0),
+    )
+
+  let assert Error(curvature.DegenerateCurvatureDerivative) =
+    curvature.segment_left_normal_curvature(collapsed, at: 0.5)
+}
+
 pub fn left_normal_radius_uses_offset_normal_sign_test() {
   let visually_downward = visually_downward_cubic()
   let visually_upward = visually_upward_cubic()
