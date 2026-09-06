@@ -9,6 +9,28 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
+## 0.44.0 - 2026-09-05
+
+### Changed
+
+- Allowed `0.0` tolerance for degenerate-line normalization
+  (`normalize_degenerate_segments`, `segment_degenerate_lines`, and
+  `subpath_degenerate_lines`), which now collapse a window only when its strip
+  width is exactly zero; negative and non-finite tolerances remain rejected.
+- Allowed `0.0` for `RoundCornerOptions.distance_tolerance`, so a zero
+  tolerance rounds corners exactly and drops only corners whose radius or trim
+  is exactly zero; negative and non-finite tolerances remain rejected.
+- Rebased `AdaptRadius` corner rounding onto a single feasibility-bounded
+  scale pass instead of a convergence check, so corner radii land at the
+  min-scale fixed point directly and the epsilon comparison and iteration
+  limit are gone.
+
+### Added
+
+- Regression tests for exact zero-tolerance normalization, zero-tolerance
+  corner rounding, exact trim-consume overlap failures, and an inward
+  square-spiral adapt-radius collapse.
+
 ## 0.43.0 - 2026-09-05
 
 ### Changed
