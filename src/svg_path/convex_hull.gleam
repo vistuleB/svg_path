@@ -235,6 +235,15 @@ pub type Error {
   /// An underlying path operation failed.
   PathError(svg_path.Error)
 
+  /// A generated hull construction operation failed in a path helper.
+  ConstructionPathError(svg_path.Error)
+
+  /// The construction input contained no subpaths.
+  ConstructionEmptyInput
+
+  /// A generated hull arc could not be constructed.
+  ConstructionDegenerateArc
+
   /// The input path contained no subpaths.
   EmptyPath
 
@@ -244,6 +253,26 @@ pub type Error {
 
 /// Detailed construction failures used by internal diagnostics and tests.
 @internal
+pub type ConstructionFunction {
+  LoopPlusPointHull
+  ExactLoopEndpointTangentCandidate
+  ExactLoopInteriorTangentCandidates
+  BuildOpenSubpathFromSegments
+  BuildOpenSubpathFromVertices
+  BuildClosedSubpath
+  PieceToSegment
+}
+
+@internal
+pub type ConstructionOperation {
+  SubpathWith
+  SubpathSetClosedWith
+  SegmentDerivative
+  SegmentPoint
+  SegmentBetween
+}
+
+@internal
 pub type ConstructionError {
   /// The construction input contained no subpaths.
   EmptyConstructionInput
@@ -251,19 +280,11 @@ pub type ConstructionError {
   /// An arc could not be converted into a valid construction representation.
   DegenerateArc
 
-  /// The generated hull segments could not be converted into a valid closed
-  /// `Subpath`.
-  ConstructionPathError(svg_path.Error)
-
-  /// The generated hull pieces could not be joined into a continuous subpath:
-  /// a joint gap exceeded the wiggle tolerance. The joined segments are
-  /// library-generated, so this is never user input fault.
-  HullPiecesDiscontinuous(
-    previous_index: Int,
-    next_index: Int,
-    expected: svg_path.Point,
-    got: svg_path.Point,
-    distance: Float,
+  /// A generated path operation failed, with its construction context.
+  ConstructionPathFailure(
+    function: ConstructionFunction,
+    operation: ConstructionOperation,
+    error: svg_path.Error,
   )
 
   /// The final hull-piece sequence failed the invariant that curve pieces must
@@ -490,7 +511,9 @@ fn construct_segment_hull(
 
 fn public_error(error: ConstructionError) -> Error {
   case error {
-    ConstructionPathError(error) -> PathError(error)
+    ConstructionPathFailure(error:, ..) -> ConstructionPathError(error)
+    EmptyConstructionInput -> ConstructionEmptyInput
+    DegenerateArc -> ConstructionDegenerateArc
     _ -> ConstructionFailed
   }
 }
@@ -2130,7 +2153,7 @@ fn loop_plus_point_hull(
 
   use subpath <- result.try(
     svg_path.subpath_with(segments, policy: svg_path.Strict)
-    |> map_path_error,
+    |> map_path_error(function: LoopPlusPointHull, operation: SubpathWith),
   )
   use closed <- result.try(
     svg_path.subpath_set_closed_with(
@@ -2138,7 +2161,10 @@ fn loop_plus_point_hull(
       closed: True,
       policy: svg_path.Strict,
     )
-    |> map_path_error,
+    |> map_path_error(
+      function: LoopPlusPointHull,
+      operation: SubpathSetClosedWith,
+    ),
   )
   Ok(Loop(svg_path.subpath_segments(closed)))
 }
@@ -2600,10 +2626,18 @@ fn exact_loop_endpoint_tangent_candidate(
   let segment = segment_at(segments, index)
   let previous = segment_at(segments, previous_index(index, count))
   use arriving <- result.try(
-    svg_path.segment_derivative(previous, at: 1.0) |> map_path_error,
+    svg_path.segment_derivative(previous, at: 1.0)
+    |> map_path_error(
+      function: ExactLoopEndpointTangentCandidate,
+      operation: SegmentDerivative,
+    ),
   )
   use leaving <- result.try(
-    svg_path.segment_derivative(segment, at: 0.0) |> map_path_error,
+    svg_path.segment_derivative(segment, at: 0.0)
+    |> map_path_error(
+      function: ExactLoopEndpointTangentCandidate,
+      operation: SegmentDerivative,
+    ),
   )
   let q = svg_path.segment_start(segment)
 
@@ -2629,7 +2663,11 @@ fn exact_loop_interior_tangent_candidates(
   |> list.fold(Ok([]), fn(candidates, t) {
     use candidates <- result.try(candidates)
     use q <- result.try(
-      svg_path.segment_point(segment, at: t) |> map_path_error,
+      svg_path.segment_point(segment, at: t)
+      |> map_path_error(
+        function: ExactLoopInteriorTangentCandidates,
+        operation: SegmentPoint,
+      ),
     )
     Ok(
       list.append(candidates, [
@@ -2934,7 +2972,10 @@ fn build_open_subpath_from_segments(
     [] -> Error(TangentSearchDegenerateLoop)
     _ ->
       svg_path.subpath_with(segments, policy: svg_path.WiggleThenBridge)
-      |> map_path_error
+      |> map_path_error(
+        function: BuildOpenSubpathFromSegments,
+        operation: SubpathWith,
+      )
   }
 }
 
@@ -3181,7 +3222,10 @@ fn build_open_subpath_from_vertices(
     [] -> Error(TangentSearchDegenerateLoop)
     segments ->
       svg_path.subpath_with(segments, policy: svg_path.Strict)
-      |> map_path_error
+      |> map_path_error(
+        function: BuildOpenSubpathFromVertices,
+        operation: SubpathWith,
+      )
   }
 }
 
@@ -3455,8 +3499,7 @@ fn build_closed_subpath(
 ) -> Result(svg_path.Subpath, ConstructionError) {
   use subpath <- result.try(
     svg_path.subpath_with(segments, policy: svg_path.Wiggle)
-    |> map_path_error
-    |> result.map_error(hull_piece_discontinuity),
+    |> map_path_error(function: BuildClosedSubpath, operation: SubpathWith),
   )
   case
     svg_path.subpath_set_closed_with(
@@ -3464,8 +3507,10 @@ fn build_closed_subpath(
       closed: True,
       policy: svg_path.Wiggle,
     )
-    |> map_path_error
-    |> result.map_error(hull_piece_discontinuity)
+    |> map_path_error(
+      function: BuildClosedSubpath,
+      operation: SubpathSetClosedWith,
+    )
   {
     Error(error) -> Error(error)
     Ok(subpath) -> Ok(subpath)
@@ -3476,26 +3521,6 @@ fn build_closed_subpath(
 /// construction failure: the joined segments are library-generated, so a gap
 /// beyond the wiggle tolerance is never user input fault. Any other error
 /// passes through unchanged.
-fn hull_piece_discontinuity(error: ConstructionError) -> ConstructionError {
-  case error {
-    ConstructionPathError(svg_path.Discontinuous(
-      previous_index:,
-      next_index:,
-      expected:,
-      got:,
-      distance:,
-    )) ->
-      HullPiecesDiscontinuous(
-        previous_index:,
-        next_index:,
-        expected:,
-        got:,
-        distance:,
-      )
-    _ -> error
-  }
-}
-
 fn union_loop_segments(
   left: List(svg_path.Segment),
   right: List(svg_path.Segment),
@@ -4698,15 +4723,15 @@ fn piece_to_segment(
   case piece {
     HullCurve(from, to) ->
       svg_path.segment_between(segment, from: from, to: to)
-      |> map_path_error
+      |> map_path_error(function: PieceToSegment, operation: SegmentBetween)
     HullLine(from, to) -> {
       use start <- result.try(
         svg_path.segment_point(segment, at: from)
-        |> map_path_error,
+        |> map_path_error(function: PieceToSegment, operation: SegmentPoint),
       )
       use end <- result.try(
         svg_path.segment_point(segment, at: to)
-        |> map_path_error,
+        |> map_path_error(function: PieceToSegment, operation: SegmentPoint),
       )
       Ok(svg_path.Line(start: start, end: end))
     }
@@ -4903,8 +4928,12 @@ fn dot(a: svg_path.Point, b: svg_path.Point) -> Float {
 
 fn map_path_error(
   result: Result(a, svg_path.Error),
+  function function: ConstructionFunction,
+  operation operation: ConstructionOperation,
 ) -> Result(a, ConstructionError) {
-  result.map_error(result, ConstructionPathError)
+  result.map_error(result, fn(error) {
+    ConstructionPathFailure(function:, operation:, error:)
+  })
 }
 
 fn clamp(value: Float, minimum: Float, maximum: Float) -> Float {
