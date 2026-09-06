@@ -19,6 +19,9 @@ rather than only the tag object.
   `segment_inflection_parameters`, and `segment_left_normal_radius_close_bands`)
   with a typed `CurvatureError`, so callers can distinguish invalid option
   arguments from degenerate or infinite-radius geometry.
+- Allowed `0.0` curvature `tolerance` options, so sampled root and band
+  discovery refines to `max_depth` and merges only exactly-equal parameters;
+  negative and non-finite tolerances remain rejected.
 - Allowed `0.0` tolerance for degenerate-line normalization
   (`normalize_degenerate_segments`, `segment_degenerate_lines`, and
   `subpath_degenerate_lines`), which now collapse a window only when its strip

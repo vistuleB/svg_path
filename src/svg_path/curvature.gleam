@@ -25,7 +25,7 @@ const default_max_depth = 32
 /// caller were invalid, and the offending value is carried) and geometry errors
 /// (a degenerate or infinite configuration in the segment itself).
 pub type CurvatureError {
-  /// A curvature `tolerance` option was invalid (not finite or not positive).
+  /// A curvature `tolerance` option was invalid (not finite or negative).
   InvalidCurvatureTolerance(Float)
   /// A curvature `samples` option was invalid (not positive).
   InvalidCurvatureSamples(Int)
@@ -418,7 +418,7 @@ fn sampled_bands_loop(
 }
 
 fn validate_options(options: Options) -> Result(Nil, CurvatureError) {
-  case options.tolerance <=. 0.0 || !number.is_finite(options.tolerance) {
+  case options.tolerance <. 0.0 || !number.is_finite(options.tolerance) {
     True -> Error(InvalidCurvatureTolerance(options.tolerance))
     False ->
       case options.samples <= 0 {
