@@ -252,7 +252,7 @@ fn validate_round_corner_inputs(
         |> result.map_error(PathError),
       )
       case
-        options.distance_tolerance <=. 0.0
+        options.distance_tolerance <. 0.0
         || options.distance_tolerance -. options.distance_tolerance != 0.0
       {
         True -> Error(InvalidDistanceTolerance(options.distance_tolerance))

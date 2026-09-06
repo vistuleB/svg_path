@@ -473,6 +473,97 @@ pub fn round_corners_adapts_tight_inward_spiral_test() {
   assert all_arc_radii_near(segments, expected: 2.0)
 }
 
+pub fn round_corners_accepts_zero_distance_tolerance_test() {
+  let square =
+    svg_path.subpath_assert_polygon([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(4.0, 0.0),
+      svg_path.Point(4.0, 4.0),
+      svg_path.Point(0.0, 4.0),
+    ])
+  let zero_options =
+    effects.RoundCornerOptions(
+      ..effects.default_round_corner_options(),
+      distance_tolerance: 0.0,
+    )
+  let wide_options =
+    effects.RoundCornerOptions(
+      ..effects.default_round_corner_options(),
+      distance_tolerance: 1.0,
+    )
+
+  let assert Ok(rounded) =
+    effects.round_subpath_corners_with(square, radius: 1.0, options: zero_options)
+  let segments = svg_path.subpath_segments(rounded)
+  assert arc_count(segments) == 4
+  assert all_arc_radii_near(segments, expected: 1.0)
+
+  assert effects.round_subpath_corners_with(square, radius: 1.0, options: wide_options)
+    == Error(effects.CannotRoundCorner(0))
+}
+
+pub fn round_corners_rejects_negative_distance_tolerance_test() {
+  let square =
+    svg_path.subpath_assert_polygon([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(4.0, 0.0),
+      svg_path.Point(4.0, 4.0),
+      svg_path.Point(0.0, 4.0),
+    ])
+  let options =
+    effects.RoundCornerOptions(
+      ..effects.default_round_corner_options(),
+      distance_tolerance: -0.000001,
+    )
+
+  assert effects.round_subpath_corners_with(square, radius: 1.0, options:)
+    == Error(effects.InvalidDistanceTolerance(-0.000001))
+}
+
+pub fn round_corners_zero_tolerance_errors_on_exact_trim_consume_test() {
+  let polyline =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(4.0, 0.0),
+      svg_path.Point(4.0, 4.0),
+      svg_path.Point(8.0, 4.0),
+    ])
+  let options =
+    effects.RoundCornerOptions(
+      ..effects.default_round_corner_options(),
+      distance_tolerance: 0.0,
+    )
+
+  assert effects.round_subpath_corners_with(polyline, radius: 2.0, options:)
+    == Error(effects.CornerTrimsOverlap(1))
+}
+
+pub fn round_corners_adapt_zero_tolerance_rejects_exact_center_consume_test() {
+  let spiral =
+    svg_path.subpath_assert_polygon([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(8.0, 0.0),
+      svg_path.Point(8.0, 8.0),
+      svg_path.Point(2.0, 8.0),
+      svg_path.Point(2.0, 2.0),
+      svg_path.Point(6.0, 2.0),
+      svg_path.Point(6.0, 6.0),
+      svg_path.Point(4.0, 6.0),
+      svg_path.Point(4.0, 4.0),
+      svg_path.Point(4.0, 10.0),
+      svg_path.Point(0.0, 10.0),
+    ])
+  let options =
+    effects.RoundCornerOptions(
+      ..effects.default_round_corner_options(),
+      failure: effects.AdaptRadius,
+      distance_tolerance: 0.0,
+    )
+
+  assert effects.round_subpath_corners_with(spiral, radius: 2.0, options:)
+    == Error(effects.CornerTrimsOverlap(4))
+}
+
 pub fn normalize_degenerate_segments_replaces_degenerate_segments_test() {
   let subpath =
     svg_path.subpath_assert([
