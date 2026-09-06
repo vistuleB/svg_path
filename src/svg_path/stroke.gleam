@@ -22,7 +22,7 @@ pub type Error {
   PathError(svg_path.Error)
 
   /// An underlying offset operation failed.
-  OffsetError(offset.Error)
+  OffsetError(offset.InternalError)
 
   /// Stroke width must be finite and greater than zero.
   InvalidWidth(width: Float)

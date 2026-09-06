@@ -71,7 +71,7 @@ pub fn main() -> Nil {
 fn render(
   source: svg_path.Path,
   first_offset: svg_path.Path,
-  second_offset: Result(svg_path.Path, offset.Error),
+  second_offset: Result(svg_path.Path, offset.InternalError),
 ) -> String {
   let boxes = case second_offset {
     Ok(second_offset) -> path_boxes([source, first_offset, second_offset])

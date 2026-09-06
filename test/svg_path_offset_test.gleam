@@ -612,14 +612,14 @@ pub fn subpath_offset_map_rejects_open_subpath_distances_outside_length_test() {
   let assert Ok(map) = offset.subpath_offset_map(subpath)
 
   assert map(svg_path.Point(11.0, 0.0))
-    == Error(offset.InvalidOffsetMapDistance(11.0, 10.0))
+    == Error(offset.InternalInvalidOffsetMapDistance(11.0, 10.0))
 }
 
 pub fn subpath_offset_map_rejects_zero_length_subpath_test() {
   let subpath = svg_path.subpath_empty(at: svg_path.Point(0.0, 0.0))
 
   assert offset.subpath_offset_map(subpath)
-    == Error(offset.DegenerateTangent(0.0))
+    == Error(offset.InternalDegenerateTangent(0.0))
 }
 
 pub fn subpath_offset_map_composes_with_try_map_path_points_test() {
@@ -944,7 +944,7 @@ pub fn segment_rejects_collapsed_circular_arc_offset_test() {
       offset: 40.0,
       join: offset.Miter(offset.default_miter_limit),
     )
-    == Error(offset.DegenerateTangent(0.0))
+    == Error(offset.InternalDegenerateTangent(0.0))
 }
 
 pub fn subpath_offsets_one_small_circular_arc_as_arc_test() {
@@ -1024,7 +1024,7 @@ pub fn segment_rejects_invalid_options_test() {
       join: offset.Miter(offset.default_miter_limit),
       options:,
     )
-    == Error(offset.InvalidTolerance(0.0))
+    == Error(offset.InternalInvalidTolerance(0.0))
 }
 
 pub fn default_offset_trimming_uses_precise_projection_test() {
@@ -1050,7 +1050,7 @@ pub fn segment_rejects_negative_stalled_offset_diameter_test() {
       join: offset.Miter(offset.default_miter_limit),
       options:,
     )
-    == Error(offset.InvalidStalledOffsetDiameter(-1.0))
+    == Error(offset.InternalInvalidStalledOffsetDiameter(-1.0))
 }
 
 pub fn segment_rejects_negative_tangent_heal_angle_test() {
@@ -1068,7 +1068,7 @@ pub fn segment_rejects_negative_tangent_heal_angle_test() {
       join: offset.Miter(offset.default_miter_limit),
       options:,
     )
-    == Error(offset.InvalidTangentHealAngleDegrees(-1.0))
+    == Error(offset.InternalInvalidTangentHealAngleDegrees(-1.0))
 }
 
 pub fn segment_rejects_zero_length_line_test() {
@@ -1083,7 +1083,7 @@ pub fn segment_rejects_zero_length_line_test() {
       offset: 1.0,
       join: offset.Miter(offset.default_miter_limit),
     )
-    == Error(offset.DegenerateTangent(0.0))
+    == Error(offset.InternalDegenerateTangent(0.0))
 }
 
 pub fn subpath_untrimmed_offsets_open_polyline_with_bevel_join_test() {
@@ -1746,7 +1746,7 @@ pub fn subpath_stroke_rejects_invalid_width_test() {
       join: offset.Miter(offset.default_miter_limit),
       cap: offset.Butt,
     )
-    == Error(offset.InvalidStrokeWidth(0.0))
+    == Error(offset.InternalInvalidStrokeWidth(0.0))
 }
 
 pub fn band_inside_function_uses_nonzero_for_open_subpath_band_test() {
@@ -1797,7 +1797,7 @@ pub fn band_inside_function_rejects_open_payload_test() {
     ])
 
   assert offset.internal_band_inside_function([offset.OpenSubpathBand(open)])
-    == Error(offset.BandSubpathNotClosed)
+    == Error(offset.InternalBandSubpathNotClosed)
 }
 
 pub fn segment_is_submerged_checks_both_immediate_sides_test() {
@@ -2209,7 +2209,7 @@ fn stalled_arc_turn_case(
   String,
   Int,
   svg_path.Subpath,
-  Result(svg_path.Subpath, offset.Error),
+  Result(svg_path.Subpath, offset.InternalError),
 ) {
   let source = stalled_arc_turn_source(subdivisions, use_arcs:)
   let default = offset.default_options()
@@ -2490,7 +2490,7 @@ fn stalled_arc_turn_report(
       String,
       Int,
       svg_path.Subpath,
-      Result(svg_path.Subpath, offset.Error),
+      Result(svg_path.Subpath, offset.InternalError),
     ),
   ),
 ) -> String {
@@ -2514,7 +2514,7 @@ fn stalled_arc_turn_case_report(
     String,
     Int,
     svg_path.Subpath,
-    Result(svg_path.Subpath, offset.Error),
+    Result(svg_path.Subpath, offset.InternalError),
   ),
 ) -> String {
   let #(row_label, unit_label, subdivisions, source, result) = example
@@ -2544,7 +2544,7 @@ fn stalled_arc_turn_case_report(
 }
 
 fn stalled_arc_turn_corner_summary(
-  result: Result(svg_path.Subpath, offset.Error),
+  result: Result(svg_path.Subpath, offset.InternalError),
 ) -> String {
   case result {
     Error(error) -> "Error: " <> string.inspect(error)
@@ -2559,7 +2559,7 @@ fn stalled_arc_turn_corner_summary(
 }
 
 fn stalled_arc_turn_offset_result_summary(
-  result: Result(svg_path.Subpath, offset.Error),
+  result: Result(svg_path.Subpath, offset.InternalError),
 ) -> String {
   case result {
     Ok(subpath) ->
@@ -2572,7 +2572,7 @@ fn stalled_arc_turn_offset_result_summary(
 }
 
 fn stalled_arc_turn_corner_label(
-  result: Result(svg_path.Subpath, offset.Error),
+  result: Result(svg_path.Subpath, offset.InternalError),
 ) -> String {
   case result {
     Error(_) -> "Error"
@@ -2586,7 +2586,7 @@ fn stalled_arc_turn_corner_label(
 }
 
 fn stalled_arc_turn_corner_segment_count(
-  result: Result(svg_path.Subpath, offset.Error),
+  result: Result(svg_path.Subpath, offset.InternalError),
 ) -> String {
   case result {
     Error(_) -> "Error"
@@ -2627,7 +2627,7 @@ fn stalled_arc_turn_svg(
       String,
       Int,
       svg_path.Subpath,
-      Result(svg_path.Subpath, offset.Error),
+      Result(svg_path.Subpath, offset.InternalError),
     ),
   ),
 ) -> String {
@@ -2645,7 +2645,7 @@ fn stalled_arc_turn_zoom_svg(
       String,
       Int,
       svg_path.Subpath,
-      Result(svg_path.Subpath, offset.Error),
+      Result(svg_path.Subpath, offset.InternalError),
     ),
   ),
 ) -> String {
@@ -2666,7 +2666,7 @@ fn stalled_arc_turn_zoom_panel(
     String,
     Int,
     svg_path.Subpath,
-    Result(svg_path.Subpath, offset.Error),
+    Result(svg_path.Subpath, offset.InternalError),
   ),
   index: Int,
 ) -> String {
@@ -2760,7 +2760,7 @@ fn stalled_arc_turn_zoom_panel(
 
 fn stalled_arc_turn_zoom_box(
   source: svg_path.Subpath,
-  result: Result(svg_path.Subpath, offset.Error),
+  result: Result(svg_path.Subpath, offset.InternalError),
 ) -> #(Float, Float, Float) {
   let points =
     list.append(
@@ -2840,7 +2840,7 @@ fn stalled_arc_turn_segment_sample_points(
 }
 
 fn stalled_arc_turn_corner_diagnostic_points(
-  result: Result(svg_path.Subpath, offset.Error),
+  result: Result(svg_path.Subpath, offset.InternalError),
 ) -> List(svg_path.Point) {
   case result {
     Error(_) -> []
@@ -3008,7 +3008,7 @@ fn stalled_arc_turn_panel(
     String,
     Int,
     svg_path.Subpath,
-    Result(svg_path.Subpath, offset.Error),
+    Result(svg_path.Subpath, offset.InternalError),
   ),
   index: Int,
 ) -> String {

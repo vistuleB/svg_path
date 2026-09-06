@@ -35,7 +35,7 @@ pub fn main() -> Nil {
 fn offset_path(
   source: svg_path.Subpath,
   final_trimming: offset.SingleOffsetFinalTrimming,
-) -> Result(svg_path.Path, offset.Error) {
+) -> Result(svg_path.Path, offset.InternalError) {
   let options =
     offset.Options(
       ..offset.default_options(),
@@ -86,9 +86,9 @@ fn double_side_umbrella(source: svg_path.Subpath) -> svg_path.Subpath {
 
 fn drawing(
   source: svg_path.Subpath,
-  cusp: Result(svg_path.Path, offset.Error),
-  in_band: Result(svg_path.Path, offset.Error),
-  none: Result(svg_path.Path, offset.Error),
+  cusp: Result(svg_path.Path, offset.InternalError),
+  in_band: Result(svg_path.Path, offset.InternalError),
+  none: Result(svg_path.Path, offset.InternalError),
 ) -> String {
   let view_box =
     svg_path.BoundingBox(
@@ -132,9 +132,9 @@ fn drawing(
 
 fn double_drawing(
   source: svg_path.Subpath,
-  cusp: Result(svg_path.Path, offset.Error),
-  in_band: Result(svg_path.Path, offset.Error),
-  none: Result(svg_path.Path, offset.Error),
+  cusp: Result(svg_path.Path, offset.InternalError),
+  in_band: Result(svg_path.Path, offset.InternalError),
+  none: Result(svg_path.Path, offset.InternalError),
 ) -> String {
   let view_box =
     svg_path.BoundingBox(
@@ -178,7 +178,7 @@ fn double_drawing(
 
 fn panel(
   source: svg_path.Subpath,
-  result: Result(svg_path.Path, offset.Error),
+  result: Result(svg_path.Path, offset.InternalError),
   label: String,
   center_x center_x: Float,
   center_y center_y: Float,

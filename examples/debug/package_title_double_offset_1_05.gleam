@@ -181,8 +181,8 @@ fn bool_to_string(value: Bool) -> String {
 fn render(
   source: svg_path.Path,
   first_offset: svg_path.Path,
-  second_untrimmed: Result(svg_path.Path, offset.Error),
-  second_offset: Result(svg_path.Path, offset.Error),
+  second_untrimmed: Result(svg_path.Path, offset.InternalError),
+  second_offset: Result(svg_path.Path, offset.InternalError),
 ) -> String {
   let paths = case second_untrimmed, second_offset {
     _, Ok(second) -> [source, first_offset, second]
@@ -249,30 +249,30 @@ fn render(
   |> with_root_size(width: 1800, height: 420)
 }
 
-fn offset_error_to_string(error: offset.Error) -> String {
+fn offset_error_to_string(error: offset.InternalError) -> String {
   case error {
-    offset.PathError(error) ->
+    offset.InternalPathError(error) ->
       "PathError(" <> path_error_to_string(error) <> ")"
-    offset.ArrangementGraphError(_) -> "ArrangementGraphError"
-    offset.SourceNormalizationError(_) -> "SourceNormalizationError"
-    offset.InvalidTolerance(tolerance) ->
+    offset.InternalArrangementGraphError(_) -> "ArrangementGraphError"
+    offset.InternalSourceNormalizationError(_) -> "SourceNormalizationError"
+    offset.InternalInvalidTolerance(tolerance) ->
       "InvalidTolerance(" <> float.to_string(tolerance) <> ")"
-    offset.InvalidSamples(samples) ->
+    offset.InternalInvalidSamples(samples) ->
       "InvalidSamples(" <> int.to_string(samples) <> ")"
-    offset.InvalidMaxDepth(max_depth) ->
+    offset.InternalInvalidMaxDepth(max_depth) ->
       "InvalidMaxDepth(" <> int.to_string(max_depth) <> ")"
-    offset.InvalidMiterLimit(miter_limit) ->
+    offset.InternalInvalidMiterLimit(miter_limit) ->
       "InvalidMiterLimit(" <> float.to_string(miter_limit) <> ")"
-    offset.InvalidStalledOffsetDiameter(diameter) ->
+    offset.InternalInvalidStalledOffsetDiameter(diameter) ->
       "InvalidStalledOffsetDiameter(" <> float.to_string(diameter) <> ")"
-    offset.InvalidStrokeWidth(width) ->
+    offset.InternalInvalidStrokeWidth(width) ->
       "InvalidStrokeWidth(" <> float.to_string(width) <> ")"
-    offset.BandSubpathNotClosed -> "BandSubpathNotClosed"
-    offset.DegenerateTangent(t) ->
+    offset.InternalBandSubpathNotClosed -> "BandSubpathNotClosed"
+    offset.InternalDegenerateTangent(t) ->
       "DegenerateTangent(" <> float.to_string(t) <> ")"
-    offset.MaxDepthReached(error) ->
+    offset.InternalMaxDepthReached(error) ->
       "MaxDepthReached(" <> float.to_string(error) <> ")"
-    offset.NonFinite -> "NonFinite"
+    offset.InternalNonFinite -> "NonFinite"
   }
 }
 

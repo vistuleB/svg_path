@@ -1161,7 +1161,7 @@ fn subpath_result_to_string(
 }
 
 fn offset_subpath_result_to_string(
-  result: Result(svg_path.Subpath, offset.Error),
+  result: Result(svg_path.Subpath, offset.InternalError),
 ) -> String {
   case result {
     Ok(subpath) -> subpath_summary_to_string(subpath)
@@ -1170,7 +1170,7 @@ fn offset_subpath_result_to_string(
 }
 
 fn inserted_join_diameters_to_string(
-  result: Result(svg_path.Subpath, offset.Error),
+  result: Result(svg_path.Subpath, offset.InternalError),
 ) -> String {
   case result {
     Error(error) -> offset_error_to_string(error)
@@ -1385,9 +1385,9 @@ fn subpath_summary_to_string(subpath: svg_path.Subpath) -> String {
   <> ")"
 }
 
-fn offset_error_to_string(error: offset.Error) -> String {
+fn offset_error_to_string(error: offset.InternalError) -> String {
   case error {
-    offset.DegenerateTangent(t) ->
+    offset.InternalDegenerateTangent(t) ->
       "DegenerateTangent(" <> debug_float_to_string(t) <> ")"
     _ -> "OffsetError"
   }
@@ -1485,7 +1485,7 @@ fn debug_float_to_string(value: Float) -> String {
 
 fn stroke_error_name(error: stroke.Error) -> String {
   case error {
-    stroke.OffsetError(offset.DegenerateTangent(t)) ->
+    stroke.OffsetError(offset.InternalDegenerateTangent(t)) ->
       "OffsetError(DegenerateTangent(" <> debug_float_to_string(t) <> "))"
     stroke.OffsetError(_) -> "OffsetError(...)"
     stroke.PathError(_) -> "PathError(...)"

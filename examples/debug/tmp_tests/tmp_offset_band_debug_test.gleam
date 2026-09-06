@@ -196,19 +196,19 @@ fn panel(
   )
 }
 
-fn error_label(error: offset.Error) -> String {
+fn error_label(error: offset.InternalError) -> String {
   case error {
-    offset.PathError(svg_path.OverlappingSegments) ->
+    offset.InternalPathError(svg_path.OverlappingSegments) ->
       "Error: overlapping offset sections"
-    offset.PathError(_) -> "Error: path operation failed"
-    offset.InvalidTolerance(_) -> "Error: invalid tolerance"
-    offset.InvalidSamples(_) -> "Error: invalid samples"
-    offset.InvalidMaxDepth(_) -> "Error: invalid max depth"
-    offset.InvalidMiterLimit(_) -> "Error: invalid miter limit"
-    offset.InvalidStrokeWidth(_) -> "Error: invalid stroke width"
-    offset.DegenerateTangent(_) -> "Error: degenerate tangent"
-    offset.MaxDepthReached(_) -> "Error: max depth reached"
-    offset.NonFinite -> "Error: non-finite coordinate"
+    offset.InternalPathError(_) -> "Error: path operation failed"
+    offset.InternalInvalidTolerance(_) -> "Error: invalid tolerance"
+    offset.InternalInvalidSamples(_) -> "Error: invalid samples"
+    offset.InternalInvalidMaxDepth(_) -> "Error: invalid max depth"
+    offset.InternalInvalidMiterLimit(_) -> "Error: invalid miter limit"
+    offset.InternalInvalidStrokeWidth(_) -> "Error: invalid stroke width"
+    offset.InternalDegenerateTangent(_) -> "Error: degenerate tangent"
+    offset.InternalMaxDepthReached(_) -> "Error: max depth reached"
+    offset.InternalNonFinite -> "Error: non-finite coordinate"
   }
 }
 

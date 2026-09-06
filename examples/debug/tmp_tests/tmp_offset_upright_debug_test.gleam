@@ -83,7 +83,7 @@ fn retained_band_sections(
   outer_offset outer_offset: Float,
   join join: offset.Join,
   options options: offset.Options,
-) -> Result(List(svg_path.Subpath), offset.Error) {
+) -> Result(List(svg_path.Subpath), offset.InternalError) {
   use provisional_a <- result.try(offset.subpath_untrimmed_with(
     source,
     offset: inner_offset,
@@ -123,7 +123,7 @@ fn retained_sections_for_side(
   distance: Float,
   options: offset.Options,
   extra_split_points extra_split_points: List(svg_path.SubpathParameter),
-) -> Result(List(svg_path.Subpath), offset.Error) {
+) -> Result(List(svg_path.Subpath), offset.InternalError) {
   use sections <- result.try(split_sections(provisional, extra_split_points:))
   retain_sections(sections, source, distance, options, retained: [])
 }
@@ -131,7 +131,7 @@ fn retained_sections_for_side(
 fn split_sections(
   subpath: svg_path.Subpath,
   extra_split_points extra_split_points: List(svg_path.SubpathParameter),
-) -> Result(List(svg_path.Subpath), offset.Error) {
+) -> Result(List(svg_path.Subpath), offset.InternalError) {
   use self_points <- result.try(self_split_parameters(subpath))
   let split_points =
     list.append(self_points, extra_split_points)
@@ -142,13 +142,13 @@ fn split_sections(
     [] -> Ok([subpath])
     _ ->
       svg_path.subpath_between_many(subpath, between: split_points)
-      |> result.map_error(offset.PathError)
+      |> result.map_error(offset.InternalPathError)
   }
 }
 
 fn self_split_parameters(
   subpath: svg_path.Subpath,
-) -> Result(List(svg_path.SubpathParameter), offset.Error) {
+) -> Result(List(svg_path.SubpathParameter), offset.InternalError) {
   use intersections <- result.try(
     svg_path.subpath_self_intersections_with(
       subpath,
@@ -157,7 +157,7 @@ fn self_split_parameters(
         distance_tolerance: 0.000000001,
       ),
     )
-    |> result.map_error(offset.PathError),
+    |> result.map_error(offset.InternalPathError),
   )
 
   Ok(
@@ -177,7 +177,7 @@ fn cross_side_split_parameters(
   right: svg_path.Subpath,
 ) -> Result(
   #(List(svg_path.SubpathParameter), List(svg_path.SubpathParameter)),
-  offset.Error,
+  offset.InternalError,
 ) {
   use intersections <- result.try(
     svg_path.subpath_intersections_with(
@@ -185,7 +185,7 @@ fn cross_side_split_parameters(
       right,
       options: svg_path.default_intersection_options(),
     )
-    |> result.map_error(offset.PathError),
+    |> result.map_error(offset.InternalPathError),
   )
   let left_parameters =
     intersections
@@ -242,7 +242,7 @@ fn retain_sections(
   distance: Float,
   options: offset.Options,
   retained retained: List(svg_path.Subpath),
-) -> Result(List(svg_path.Subpath), offset.Error) {
+) -> Result(List(svg_path.Subpath), offset.InternalError) {
   case sections {
     [] -> Ok(list.reverse(retained))
     [first, ..rest] -> {
@@ -261,9 +261,9 @@ fn section_is_valid(
   source: svg_path.Subpath,
   distance: Float,
   options: offset.Options,
-) -> Result(Bool, offset.Error) {
+) -> Result(Bool, offset.InternalError) {
   use length <- result.try(
-    svg_path.subpath_length(section) |> result.map_error(offset.PathError),
+    svg_path.subpath_length(section) |> result.map_error(offset.InternalPathError),
   )
   section_has_enough_non_negative_samples(
     section,
@@ -284,13 +284,13 @@ fn section_has_enough_non_negative_samples(
   distance: Float,
   options: offset.Options,
   count count: Int,
-) -> Result(Bool, offset.Error) {
+) -> Result(Bool, offset.InternalError) {
   case samples {
     [] -> Ok(count >= 5)
     [first, ..rest] -> {
       use point <- result.try(
         svg_path.subpath_point_at_length(section, distance: length *. first)
-        |> result.map_error(offset.PathError),
+        |> result.map_error(offset.InternalPathError),
       )
       use projection <- result.try(
         svg_path.subpath_projection_with(
@@ -298,7 +298,7 @@ fn section_has_enough_non_negative_samples(
           to: source,
           options: options.distance_options,
         )
-        |> result.map_error(offset.PathError),
+        |> result.map_error(offset.InternalPathError),
       )
       let count = case
         projection.distance +. options.fitting.tolerance

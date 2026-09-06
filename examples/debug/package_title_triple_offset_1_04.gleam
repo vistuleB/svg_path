@@ -80,7 +80,7 @@ fn render(
   source: svg_path.Path,
   first_offset: svg_path.Path,
   second_offset: svg_path.Path,
-  third_offset: Result(svg_path.Path, offset.Error),
+  third_offset: Result(svg_path.Path, offset.InternalError),
 ) -> String {
   let boxes = case third_offset {
     Ok(third_offset) ->
