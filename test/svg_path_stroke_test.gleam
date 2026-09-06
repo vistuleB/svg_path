@@ -501,7 +501,7 @@ pub fn path_dashes_empty_path_still_validates_options_test() {
       dash_options: stroke.DashOptions(
         pattern: [1.0, 1.0],
         offset: 0.0,
-        length: svg_path.LengthOptions(tolerance: 0.0, max_depth: 20),
+        length_options: svg_path.LengthOptions(tolerance: 0.0, max_depth: 20),
       ),
     )
     == Error(stroke.PathError(svg_path.InvalidLengthTolerance(0.0)))

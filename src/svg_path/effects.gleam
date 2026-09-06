@@ -132,7 +132,7 @@ pub type FailureMode {
 pub type RoundCornerOptions {
   RoundCornerOptions(
     failure: FailureMode,
-    length: svg_path.LengthOptions,
+    length_options: svg_path.LengthOptions,
     distance_tolerance: Float,
     angular_tolerance: Float,
   )
@@ -167,7 +167,7 @@ type AssignedScale {
 pub fn default_round_corner_options() -> RoundCornerOptions {
   RoundCornerOptions(
     failure: ErrorOnFailure,
-    length: svg_path.default_length_options(),
+    length_options: svg_path.default_length_options(),
     distance_tolerance: default_tolerance,
     angular_tolerance: default_tolerance,
   )
@@ -248,7 +248,7 @@ fn validate_round_corner_inputs(
     False -> Error(InvalidRadius(radius))
     True -> {
       use _ <- result.try(
-        svg_path.validate_length_options(options.length)
+        svg_path.validate_length_options(options.length_options)
         |> result.map_error(PathError),
       )
       case
@@ -275,7 +275,7 @@ fn round_subpath_corners_nonempty(
   radius: Float,
   options: RoundCornerOptions,
 ) -> Result(svg_path.Subpath, Error) {
-  use infos <- result.try(segment_infos(segments, options.length, []))
+  use infos <- result.try(segment_infos(segments, options.length_options, []))
   case options.failure {
     AdaptRadius ->
       round_subpath_corners_adaptively(subpath, infos, radius, options)
@@ -453,7 +453,7 @@ fn corner_candidate(
                 svg_path.segment_point_at_length_with(
                   incoming.segment,
                   distance: incoming.length -. trim,
-                  options: options.length,
+                  options: options.length_options,
                 )
                 |> result.map_error(PathError),
               )
@@ -461,7 +461,7 @@ fn corner_candidate(
                 svg_path.segment_point_at_length_with(
                   outgoing.segment,
                   distance: trim,
-                  options: options.length,
+                  options: options.length_options,
                 )
                 |> result.map_error(PathError),
               )
@@ -799,7 +799,7 @@ fn corner_from_spec(
     svg_path.segment_point_at_length_with(
       incoming.segment,
       distance: incoming.length -. trim,
-      options: options.length,
+      options: options.length_options,
     )
     |> result.map_error(PathError),
   )
@@ -807,7 +807,7 @@ fn corner_from_spec(
     svg_path.segment_point_at_length_with(
       outgoing.segment,
       distance: trim,
-      options: options.length,
+      options: options.length_options,
     )
     |> result.map_error(PathError),
   )
@@ -924,7 +924,7 @@ fn rounded_subpath_segments(
               info.segment,
               from: start_trim,
               to: info.length -. end_trim,
-              options: options.length,
+              options: options.length_options,
             )
             |> result.map_error(PathError),
           )

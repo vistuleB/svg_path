@@ -70,7 +70,7 @@ pub type DashOptions {
     /// Signed path-coordinate offset into the repeated dash pattern.
     offset: Float,
     /// Options used for arc-length measurement and splitting.
-    length: svg_path.LengthOptions,
+    length_options: svg_path.LengthOptions,
   )
 }
 
@@ -86,7 +86,11 @@ pub fn default_dash_options(
   pattern pattern: List(Float),
   offset offset: Float,
 ) -> DashOptions {
-  DashOptions(pattern:, offset:, length: svg_path.default_length_options())
+  DashOptions(
+    pattern:,
+    offset:,
+    length_options: svg_path.default_length_options(),
+  )
 }
 
 /// Stroke a segment using default options with the given width.
@@ -181,7 +185,7 @@ pub fn subpath_dashes_with(
   use _ <- result.try(validate_dash_options(dash_options))
   use pattern <- result.try(normalize_dash_pattern(dash_options.pattern))
   use length <- result.try(
-    svg_path.subpath_length_with(subpath, options: dash_options.length)
+    svg_path.subpath_length_with(subpath, options: dash_options.length_options)
     |> result.map_error(PathError),
   )
 
@@ -197,7 +201,7 @@ pub fn subpath_dashes_with(
             intervals,
             subpath,
             length,
-            dash_options.length,
+            dash_options.length_options,
             accumulated: [],
           )
         }
@@ -357,7 +361,7 @@ fn validate_dash_offset(offset: Float) -> Result(Nil, Error) {
 fn validate_dash_options(options: DashOptions) -> Result(Nil, Error) {
   use _ <- result.try(validate_dash_pattern(options.pattern))
   use _ <- result.try(validate_dash_offset(options.offset))
-  svg_path.validate_length_options(options.length)
+  svg_path.validate_length_options(options.length_options)
   |> result.map_error(PathError)
 }
 
