@@ -42,12 +42,13 @@ pub type Error {
 /// Each selected window is replaced by its ordered line traversal. Windows are
 /// considered from left to right. Their exact curve-preserving convex hull is
 /// grown one segment at a time, and the largest prefix certified to fit in a
-/// strip of the requested width is selected first.
+/// strip of the requested width is selected first. A `0.0` tolerance collapses
+/// a window only when its strip width is exactly zero.
 pub fn normalize_degenerate_segments(
   subpath: svg_path.Subpath,
   tolerance tolerance: Float,
 ) -> Result(svg_path.Subpath, Error) {
-  case tolerance <=. 0.0 || !number.is_finite(tolerance) {
+  case tolerance <. 0.0 || !number.is_finite(tolerance) {
     True -> Error(PathError(svg_path.InvalidLinearizeTolerance(tolerance)))
     False -> {
       use segments <- result.try(

@@ -6,21 +6,177 @@ import svg_path/effects
 
 const tolerance = 0.000001
 
-pub fn normalize_degenerate_segments_rejects_nonfinite_tolerance_test() {
+pub fn normalize_degenerate_segments_accepts_zero_tolerance_test() {
   let subpath =
     svg_path.segment_as_subpath(
       svg_path.Line(svg_path.Point(0.0, 0.0), svg_path.Point(1.0, 0.0)),
     )
-  let infinity = 1.0 /. 0.0
-  let nan = 0.0 /. 0.0
 
-  assert degeneracy.normalize_degenerate_segments(subpath, infinity)
+  let assert Ok(normalized) =
+    degeneracy.normalize_degenerate_segments(subpath, 0.0)
+
+  assert svg_path.subpath_segments(normalized)
+    == [svg_path.Line(svg_path.Point(0.0, 0.0), svg_path.Point(1.0, 0.0))]
+}
+
+pub fn normalize_degenerate_segments_rejects_negative_tolerance_test() {
+  let subpath =
+    svg_path.segment_as_subpath(
+      svg_path.Line(svg_path.Point(0.0, 0.0), svg_path.Point(1.0, 0.0)),
+    )
+
+  assert degeneracy.normalize_degenerate_segments(subpath, -0.000001)
     == Error(degeneracy.PathError(
-      svg_path.InvalidLinearizeTolerance(infinity),
+      svg_path.InvalidLinearizeTolerance(-0.000001),
     ))
-  let assert Error(degeneracy.PathError(
-    svg_path.InvalidLinearizeTolerance(_),
-  )) = degeneracy.normalize_degenerate_segments(subpath, nan)
+}
+
+pub fn normalize_degenerate_segments_with_zero_tolerance_collapses_exact_collinear_test() {
+  let subpath =
+    svg_path.subpath_assert([
+      svg_path.Line(svg_path.Point(0.0, 0.0), svg_path.Point(1.0, 0.0)),
+      svg_path.Line(svg_path.Point(1.0, 0.0), svg_path.Point(2.0, 0.0)),
+      svg_path.Line(svg_path.Point(2.0, 0.0), svg_path.Point(3.0, 0.0)),
+    ])
+
+  let assert Ok(normalized) =
+    degeneracy.normalize_degenerate_segments(subpath, 0.0)
+
+  assert svg_path.subpath_segments(normalized)
+    == [svg_path.Line(svg_path.Point(0.0, 0.0), svg_path.Point(3.0, 0.0))]
+}
+
+pub fn normalize_degenerate_segments_with_zero_tolerance_keeps_near_collinear_lines_test() {
+  let subpath =
+    svg_path.subpath_assert([
+      svg_path.Line(svg_path.Point(0.0, 0.0), svg_path.Point(1.0, 0.0)),
+      svg_path.Line(
+        svg_path.Point(1.0, 0.0),
+        svg_path.Point(2.0, 1.0e-9),
+      ),
+      svg_path.Line(
+        svg_path.Point(2.0, 1.0e-9),
+        svg_path.Point(3.0, 0.0),
+      ),
+    ])
+
+  let assert Ok(normalized) =
+    degeneracy.normalize_degenerate_segments(subpath, 0.0)
+
+  assert svg_path.subpath_segments(normalized)
+    == svg_path.subpath_segments(subpath)
+}
+
+pub fn normalize_degenerate_segments_with_zero_tolerance_collapses_exact_collinear_quadratic_test() {
+  let curve =
+    svg_path.QuadraticBezier(
+      start: svg_path.Point(0.0, 0.0),
+      control: svg_path.Point(3.0, 3.0),
+      end: svg_path.Point(6.0, 6.0),
+    )
+  let subpath = svg_path.subpath_assert([curve])
+
+  let assert Ok(normalized) =
+    degeneracy.normalize_degenerate_segments(subpath, 0.0)
+
+  assert svg_path.subpath_segments(normalized)
+    == [svg_path.Line(svg_path.Point(0.0, 0.0), svg_path.Point(6.0, 6.0))]
+}
+
+pub fn normalize_degenerate_segments_with_zero_tolerance_keeps_near_collinear_quadratic_test() {
+  let curve =
+    svg_path.QuadraticBezier(
+      start: svg_path.Point(0.0, 0.0),
+      control: svg_path.Point(3.0, 3.0000001),
+      end: svg_path.Point(6.0, 6.0),
+    )
+  let subpath = svg_path.subpath_assert([curve])
+
+  let assert Ok(strict) =
+    degeneracy.normalize_degenerate_segments(subpath, 0.0)
+
+  assert svg_path.subpath_segments(strict) == [curve]
+  assert has_quadratic(svg_path.subpath_segments(strict))
+
+  let assert Ok(loose) =
+    degeneracy.normalize_degenerate_segments(subpath, 0.000001)
+
+  assert svg_path.subpath_segments(loose)
+    == [svg_path.Line(svg_path.Point(0.0, 0.0), svg_path.Point(6.0, 6.0))]
+}
+
+pub fn normalize_degenerate_segments_with_zero_tolerance_collapses_exact_collinear_cubic_test() {
+  let curve =
+    svg_path.CubicBezier(
+      start: svg_path.Point(0.0, 0.0),
+      control1: svg_path.Point(1.0, 1.0),
+      control2: svg_path.Point(2.0, 2.0),
+      end: svg_path.Point(3.0, 3.0),
+    )
+  let subpath = svg_path.subpath_assert([curve])
+
+  let assert Ok(normalized) =
+    degeneracy.normalize_degenerate_segments(subpath, 0.0)
+
+  assert svg_path.subpath_segments(normalized)
+    == [svg_path.Line(svg_path.Point(0.0, 0.0), svg_path.Point(3.0, 3.0))]
+}
+
+pub fn normalize_degenerate_segments_with_zero_tolerance_collapses_horizontal_cubic_test() {
+  let curve =
+    svg_path.CubicBezier(
+      start: svg_path.Point(0.0, 0.0),
+      control1: svg_path.Point(1.0, 0.0),
+      control2: svg_path.Point(2.0, 0.0),
+      end: svg_path.Point(3.0, 0.0),
+    )
+  let subpath = svg_path.subpath_assert([curve])
+
+  let assert Ok(normalized) =
+    degeneracy.normalize_degenerate_segments(subpath, 0.0)
+
+  assert svg_path.subpath_segments(normalized)
+    == [svg_path.Line(svg_path.Point(0.0, 0.0), svg_path.Point(3.0, 0.0))]
+}
+
+pub fn normalize_degenerate_segments_with_zero_tolerance_keeps_near_collinear_cubic_test() {
+  let curve =
+    svg_path.CubicBezier(
+      start: svg_path.Point(0.0, 0.0),
+      control1: svg_path.Point(1.0, 1.0),
+      control2: svg_path.Point(2.0, 2.0000001),
+      end: svg_path.Point(3.0, 3.0),
+    )
+  let subpath = svg_path.subpath_assert([curve])
+
+  let assert Ok(strict) =
+    degeneracy.normalize_degenerate_segments(subpath, 0.0)
+
+  assert svg_path.subpath_segments(strict) == [curve]
+  assert has_cubic(svg_path.subpath_segments(strict))
+
+  let assert Ok(loose) =
+    degeneracy.normalize_degenerate_segments(subpath, 0.000001)
+
+  assert svg_path.subpath_segments(loose)
+    == [svg_path.Line(svg_path.Point(0.0, 0.0), svg_path.Point(3.0, 3.0))]
+}
+
+pub fn normalize_degenerate_segments_with_zero_tolerance_collapses_stretched_cubic_test() {
+  let curve =
+    svg_path.CubicBezier(
+      start: svg_path.Point(0.0, 0.0),
+      control1: svg_path.Point(2.0, 1.0),
+      control2: svg_path.Point(4.0, 2.0),
+      end: svg_path.Point(6.0, 3.0),
+    )
+  let subpath = svg_path.subpath_assert([curve])
+
+  let assert Ok(normalized) =
+    degeneracy.normalize_degenerate_segments(subpath, 0.0)
+
+  assert svg_path.subpath_segments(normalized)
+    == [svg_path.Line(svg_path.Point(0.0, 0.0), svg_path.Point(6.0, 3.0))]
 }
 
 pub fn round_corners_rounds_closed_square_test() {
