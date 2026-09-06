@@ -621,7 +621,7 @@ fn stroke_subpaths(
 fn to_offset_cap(cap: Cap) -> offset.Cap {
   case cap {
     Butt -> offset.Butt
-    Round -> offset.RoundCap
+    Round -> offset.Round
     Square -> offset.Square
   }
 }

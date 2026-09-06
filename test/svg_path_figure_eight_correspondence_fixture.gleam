@@ -16,7 +16,8 @@ pub fn main() {
 
 pub fn figure_eight_correspondence_blocks() -> String {
   let source = figure_eight()
-  let options = offset.Options(..offset.default_options(), join: offset.Round)
+  let options =
+    offset.Options(..offset.default_options(), join: offset.RoundJoin)
   let assert Ok(band) =
     offset.subpath_band_with(
       source,

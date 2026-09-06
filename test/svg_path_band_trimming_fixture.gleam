@@ -22,7 +22,7 @@ fn band(source: svg_path.Subpath, in_band in_band: Bool) -> svg_path.Path {
   let options =
     offset.Options(
       ..offset.default_options(),
-      join: offset.Round,
+      join: offset.RoundJoin,
       band_trimming: offset.BandTrimming(
         inner_cusps: True,
         outer_cusps: True,

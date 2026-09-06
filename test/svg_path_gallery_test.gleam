@@ -123,7 +123,6 @@ pub fn generate_gallery_figures() {
   assert figures != []
 }
 
-
 fn rounded_rectangle_union() -> String {
   let rectangles = rectangle_stack()
   let assert Ok(union) =
@@ -371,7 +370,7 @@ pub fn generate_recursive_dash_cap_report() {
     stroke.Options(
       width: 58.0,
       cap: stroke.Round,
-      offset: offset.Options(..offset.default_options(), join: offset.Round),
+      offset: offset.Options(..offset.default_options(), join: offset.RoundJoin),
     )
   let assert Ok(first_stroke) =
     stroke.subpath_dashed_with(
@@ -386,7 +385,8 @@ pub fn generate_recursive_dash_cap_report() {
   let assert Ok(dashes) =
     stroke.subpath_dashes(outline, pattern: [17.0, 9.0], offset: 3.0)
   let dash = nth_subpath(dashes, 4)
-  let options = offset.Options(..offset.default_options(), join: offset.Round)
+  let options =
+    offset.Options(..offset.default_options(), join: offset.RoundJoin)
   let stroke_options =
     stroke.Options(width: 6.0, cap: stroke.Round, offset: options)
   let radius = 3.0
@@ -497,7 +497,7 @@ fn stroke_caps() -> String {
   let examples = [
     #(0.0, "butt", offset.Butt),
     #(250.0, "square", offset.Square),
-    #(500.0, "round", offset.RoundCap),
+    #(500.0, "round", offset.Round),
   ]
 
   document(
@@ -507,7 +507,7 @@ fn stroke_caps() -> String {
         let #(x, label, cap) = example
         let placed = place_subpath(source, x +. 42.0, 112.0)
         let options =
-          offset.Options(..offset.default_options(), join: offset.Round)
+          offset.Options(..offset.default_options(), join: offset.RoundJoin)
         let assert Ok(stroke) =
           offset.subpath_stroke_with(placed, width: 28.0, cap:, options:)
         [
@@ -557,7 +557,7 @@ fn dashed_strokes() -> String {
             cap: stroke.Round,
             offset: offset.Options(
               ..offset.default_options(),
-              join: offset.Round,
+              join: offset.RoundJoin,
             ),
           )
         let assert Ok(dashed) =
@@ -606,7 +606,7 @@ fn recursive_dashes() -> String {
     stroke.Options(
       width: 58.0,
       cap: stroke.Round,
-      offset: offset.Options(..offset.default_options(), join: offset.Round),
+      offset: offset.Options(..offset.default_options(), join: offset.RoundJoin),
     )
   let assert Ok(first_stroke) =
     stroke.subpath_dashed_with(
@@ -621,7 +621,7 @@ fn recursive_dashes() -> String {
     stroke.Options(
       width: 6.0,
       cap: stroke.Round,
-      offset: offset.Options(..offset.default_options(), join: offset.Round),
+      offset: offset.Options(..offset.default_options(), join: offset.RoundJoin),
     )
   let assert Ok(second_paths) =
     recursive_dash_outline_strokes(
@@ -1440,7 +1440,8 @@ fn stroke_error_name(error: stroke.Error) -> String {
 
 fn figure_eight_band() -> String {
   let source = place_subpath(figure_eight(), 430.0, 190.0)
-  let options = offset.Options(..offset.default_options(), join: offset.Round)
+  let options =
+    offset.Options(..offset.default_options(), join: offset.RoundJoin)
   let assert Ok(band) =
     offset.subpath_band_with(
       source,
@@ -1475,7 +1476,8 @@ fn symmetric_figure_eight_bands() -> String {
     read_file("examples/debug/loop_8_symmetric_arcs.svg")
   let assert Ok(svg_path.Path([source])) =
     parse.path(first_svg_path_data(contents))
-  let options = offset.Options(..offset.default_options(), join: offset.Round)
+  let options =
+    offset.Options(..offset.default_options(), join: offset.RoundJoin)
   let assert Ok(wide_band) =
     offset.subpath_band_with(
       source,
@@ -1543,7 +1545,8 @@ fn first_svg_path_data(contents: String) -> String {
 
 fn stroke_offset_tracks() -> String {
   let source = offset_track_source()
-  let options = offset.Options(..offset.default_options(), join: offset.Round)
+  let options =
+    offset.Options(..offset.default_options(), join: offset.RoundJoin)
   let offsets = [
     #(-42.0, "#7f1d1d"),
     #(-28.0, "#c2410c"),
@@ -1617,7 +1620,8 @@ fn stroke_offset_tracks() -> String {
 }
 
 fn earth_tone_offsets() -> String {
-  let options = offset.Options(..offset.default_options(), join: offset.Round)
+  let options =
+    offset.Options(..offset.default_options(), join: offset.RoundJoin)
   let colors = ["#5f4339", "#8a5a3c", "#a36a2d", "#7c6a3d", "#51633f"]
   document(
     list.flatten([
@@ -1711,16 +1715,11 @@ fn package_title_nine_offsets() -> String {
   let assert Ok(source) = parse.path(package_title_first_path_data(contents))
   let options = offset.default_options()
   let levels =
-    list.fold(
-      list.repeat(1, 9),
-      [source],
-      fn(levels, _) {
-        let assert Ok(previous) = list.first(levels)
-        let assert Ok(next) =
-          offset.path_with(previous, offset: 1.04, options:)
-        [next, ..levels]
-      },
-    )
+    list.fold(list.repeat(1, 9), [source], fn(levels, _) {
+      let assert Ok(previous) = list.first(levels)
+      let assert Ok(next) = offset.path_with(previous, offset: 1.04, options:)
+      [next, ..levels]
+    })
     |> list.reverse
   package_title_nine_offsets_document(source, list.drop(levels, 1))
 }

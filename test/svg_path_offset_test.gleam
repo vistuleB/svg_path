@@ -658,7 +658,7 @@ pub fn final_cusp_trimming_handles_open_side_umbrella_test() {
   let options =
     offset.Options(
       ..offset.default_options(),
-      join: offset.Round,
+      join: offset.RoundJoin,
       single_offset_trimming: offset.SingleOffsetTrimming(
         offside: True,
         final_trimming: offset.CuspTrimming,
@@ -853,7 +853,7 @@ pub fn subpath_offsets_one_small_circular_arc_as_arc_test() {
     offset.Options(
       ..default,
       fitting: offset.FittingOptions(..default.fitting, tolerance: 0.001),
-      join: offset.Round,
+      join: offset.RoundJoin,
     )
 
   let assert Ok(offset_subpath) =
@@ -879,7 +879,7 @@ pub fn subpath_offsets_many_small_circular_arcs_as_one_sampled_segment_test() {
     offset.Options(
       ..default,
       fitting: offset.FittingOptions(..default.fitting, tolerance: 0.001),
-      join: offset.Round,
+      join: offset.RoundJoin,
     )
 
   let assert Ok(offset_subpath) =
@@ -993,7 +993,8 @@ pub fn subpath_untrimmed_offsets_open_polyline_with_round_join_test() {
       svg_path.Point(10.0, 0.0),
       svg_path.Point(10.0, 10.0),
     ])
-  let options = offset.Options(..offset.default_options(), join: offset.Round)
+  let options =
+    offset.Options(..offset.default_options(), join: offset.RoundJoin)
 
   let assert Ok(offset_subpath) =
     offset.subpath_untrimmed_with(subpath, offset: 2.0, options:)
@@ -1019,7 +1020,8 @@ pub fn subpath_untrimmed_round_join_uses_source_corner_center_test() {
         end: svg_path.Point(4.0, 1.0),
       ),
     ])
-  let options = offset.Options(..offset.default_options(), join: offset.Round)
+  let options =
+    offset.Options(..offset.default_options(), join: offset.RoundJoin)
 
   let assert Ok(offset_subpath) =
     offset.subpath_untrimmed_with(source, offset: 1.8, options:)
@@ -1073,7 +1075,8 @@ pub fn subpath_band_side_trimming_removes_round_join_loops_test() {
       ),
     ])
     |> svg_path.subpath_assert_set_closed(closed: True)
-  let options = offset.Options(..offset.default_options(), join: offset.Round)
+  let options =
+    offset.Options(..offset.default_options(), join: offset.RoundJoin)
 
   let assert Ok(band) =
     offset.subpath_band_with(
@@ -1272,7 +1275,7 @@ pub fn concave_band_orients_overlapping_contours_for_nonzero_fill_test() {
     offset.Options(
       ..default,
       fitting: offset.FittingOptions(..default.fitting, tolerance: 0.01),
-      join: offset.Round,
+      join: offset.RoundJoin,
     )
   let assert Ok(band) = offset.subpath_band_with(source, -12.0, -14.0, options)
   let dominant_areas =
@@ -1301,7 +1304,8 @@ pub fn figure_eight_band_joins_reversed_outer_chunks_test() {
       ),
     ])
     |> svg_path.subpath_assert_set_closed(closed: True)
-  let options = offset.Options(..offset.default_options(), join: offset.Round)
+  let options =
+    offset.Options(..offset.default_options(), join: offset.RoundJoin)
 
   let assert Ok(band) =
     offset.subpath_band_with(
@@ -1625,7 +1629,8 @@ pub fn subpath_prunes_self_crossed_inset_sections_test() {
       svg_path.Point(0.0, 120.0),
     ])
 
-  let options = offset.Options(..offset.default_options(), join: offset.Round)
+  let options =
+    offset.Options(..offset.default_options(), join: offset.RoundJoin)
   let assert Ok(trimmed) = offset.subpath_with(shape, offset: -24.0, options:)
 
   assert serialize.path(trimmed)
@@ -1675,7 +1680,8 @@ pub fn subpath_can_use_round_join_test() {
       svg_path.Point(10.0, 0.0),
       svg_path.Point(10.0, 10.0),
     ])
-  let options = offset.Options(..offset.default_options(), join: offset.Round)
+  let options =
+    offset.Options(..offset.default_options(), join: offset.RoundJoin)
 
   let assert Ok(offset_path) =
     offset.subpath_with(subpath, offset: 2.0, options:)
@@ -1711,7 +1717,8 @@ pub fn subpath_prunes_negative_inset_sections_test() {
       svg_path.Point(0.0, 120.0),
     ])
 
-  let options = offset.Options(..offset.default_options(), join: offset.Round)
+  let options =
+    offset.Options(..offset.default_options(), join: offset.RoundJoin)
   let assert Ok(parametric) =
     offset.subpath_with(shape, offset: -24.0, options:)
 
@@ -1749,7 +1756,8 @@ pub fn subpath_ignores_adjacent_local_contacts_test() {
       ),
     ])
 
-  let options = offset.Options(..offset.default_options(), join: offset.Round)
+  let options =
+    offset.Options(..offset.default_options(), join: offset.RoundJoin)
   let assert Ok(parametric) =
     offset.subpath_with(shape, offset: -16.0, options:)
 
@@ -1837,7 +1845,7 @@ fn stalled_arc_turn_case(
     offset.Options(
       ..default,
       fitting: offset.FittingOptions(..default.fitting, tolerance: 0.001),
-      join: offset.Round,
+      join: offset.RoundJoin,
     )
   let result =
     offset.subpath_untrimmed_with(
@@ -2738,7 +2746,8 @@ fn two_cut_corner_loop() -> svg_path.Subpath {
 }
 
 pub fn side_local_band_trimming_preserves_positive_band_test() {
-  let options = offset.Options(..offset.default_options(), join: offset.Round)
+  let options =
+    offset.Options(..offset.default_options(), join: offset.RoundJoin)
   let assert Ok(band) =
     offset.subpath_band_with(
       two_cut_corner_loop(),
@@ -2754,7 +2763,8 @@ pub fn side_local_band_trimming_preserves_positive_band_test() {
 }
 
 pub fn side_local_band_trimming_preserves_negative_band_test() {
-  let options = offset.Options(..offset.default_options(), join: offset.Round)
+  let options =
+    offset.Options(..offset.default_options(), join: offset.RoundJoin)
   let assert Ok(band) =
     offset.subpath_band_with(
       two_cut_corner_loop(),

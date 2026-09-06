@@ -32,7 +32,7 @@ pub fn figure_eight_band() -> Result(svg_path.Path, offset.Error) {
     figure_eight(),
     inner_offset: 18.0,
     outer_offset: 34.0,
-    options: offset.Options(..offset.default_options(), join: offset.Round),
+    options: offset.Options(..offset.default_options(), join: offset.RoundJoin),
   )
 }
 

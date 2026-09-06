@@ -65,7 +65,7 @@ pub fn round_caps_use_normalized_source_endpoint_directions_test() {
     stroke.Options(
       width: 6.0,
       cap: stroke.Round,
-      offset: offset.Options(..offset.default_options(), join: offset.Round),
+      offset: offset.Options(..offset.default_options(), join: offset.RoundJoin),
     )
 
   let assert Ok(path) = stroke.subpath_with(subpath, options:)
@@ -160,7 +160,7 @@ pub fn subpath_stroke_with_round_join_adds_join_arcs_test() {
     stroke.Options(
       ..stroke.default_options(),
       width: 2.0,
-      offset: offset.Options(..offset.default_options(), join: offset.Round),
+      offset: offset.Options(..offset.default_options(), join: offset.RoundJoin),
     )
 
   let assert Ok(path) = stroke.subpath_with(subpath, options:)

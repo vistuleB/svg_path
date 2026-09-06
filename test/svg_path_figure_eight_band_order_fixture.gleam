@@ -15,7 +15,8 @@ const inner_minus_34_outer_minus_18_output = "examples/debug/figure_eight_band_i
 
 pub fn main() -> Nil {
   let source = figure_eight()
-  let options = offset.Options(..offset.default_options(), join: offset.Round)
+  let options =
+    offset.Options(..offset.default_options(), join: offset.RoundJoin)
   let assert Ok(inner_18_outer_34) =
     offset.subpath_band_with(
       source,

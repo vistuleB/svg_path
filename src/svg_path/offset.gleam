@@ -235,7 +235,7 @@ pub type Join {
   Miter(miter_limit: Float)
 
   /// Connect adjacent offset segments with a circular SVG arc.
-  Round
+  RoundJoin
 }
 
 /// Cap style used at open stroke endpoints.
@@ -247,7 +247,7 @@ pub type Cap {
   Square
 
   /// Add a semicircular endpoint cap.
-  RoundCap
+  Round
 }
 
 /// Closed band payload produced from one source subpath before trimming.
@@ -2925,10 +2925,7 @@ fn survivor_chains_to_subpaths(
           segment
         })
       use subpath <- result.try(
-        svg_path.subpath_with(
-          segments,
-          policy: svg_path.WiggleWith(tolerance),
-        )
+        svg_path.subpath_with(segments, policy: svg_path.WiggleWith(tolerance))
         |> result.map_error(PathError)
         |> result.map_error(survivor_chain_discontinuity),
       )
@@ -4385,7 +4382,7 @@ fn validate_join(join: Join) -> Result(Nil, Error) {
         True -> Error(InvalidMiterLimit(miter_limit))
         False -> Ok(Nil)
       }
-    Bevel | Round -> Ok(Nil)
+    Bevel | RoundJoin -> Ok(Nil)
   }
 }
 
@@ -6092,7 +6089,7 @@ fn parametric_join_segments(
         Bevel -> Ok(line_segments_between([start, end]))
         Miter(miter_limit) ->
           directed_miter_join(left, right, start, end, offset, miter_limit)
-        Round -> round_join(left, right, start, end, offset)
+        RoundJoin -> round_join(left, right, start, end, offset)
       }
   }
 }
@@ -6608,7 +6605,7 @@ fn zero_length_stroke_path(
   let center = svg_path.subpath_start(subpath)
   case cap {
     Butt -> Ok(svg_path.path_empty())
-    RoundCap -> zero_length_round_stroke_path(center, radius)
+    Round -> zero_length_round_stroke_path(center, radius)
     Square -> zero_length_square_stroke_path(center, radius)
   }
 }
@@ -6755,7 +6752,7 @@ fn stroke_cap_segments(
           )
       }
     }
-    RoundCap -> {
+    Round -> {
       let start = case at_end {
         True -> positive
         False -> negative

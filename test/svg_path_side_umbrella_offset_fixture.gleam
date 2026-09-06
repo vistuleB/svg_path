@@ -39,7 +39,7 @@ fn offset_path(
   let options =
     offset.Options(
       ..offset.default_options(),
-      join: offset.Round,
+      join: offset.RoundJoin,
       single_offset_trimming: offset.SingleOffsetTrimming(
         offside: False,
         final_trimming:,
