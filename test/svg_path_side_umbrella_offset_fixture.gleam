@@ -39,13 +39,18 @@ fn offset_path(
   let options =
     offset.Options(
       ..offset.default_options(),
-      join: offset.RoundJoin,
       single_offset_trimming: offset.SingleOffsetTrimming(
         offside: False,
         final_trimming:,
       ),
     )
-  offset.subpath_with(source, offset: 0.2, options:)
+  offset.subpath_with(
+    source,
+    offset: 0.2,
+    join: offset.Round,
+    cap: offset.Butt,
+    options:,
+  )
 }
 
 fn side_umbrella() -> svg_path.Subpath {

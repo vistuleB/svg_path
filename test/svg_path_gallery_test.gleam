@@ -367,15 +367,12 @@ pub fn generate_recursive_dash_cap_report() {
   let _ = ensure_dir("examples/debug/recursive-dash-cap-report.txt")
   let source = place_subpath(recursive_dash_source(), 92.0, 154.0)
   let first_options =
-    stroke.Options(
-      width: 58.0,
-      cap: stroke.Round,
-      join: offset.RoundJoin,
-      offset: offset.Options(..offset.default_options(), join: offset.RoundJoin),
-    )
+    stroke.Options(width: 58.0, offset: offset.default_options())
   let assert Ok(first_stroke) =
     stroke.subpath_dashed_with(
       source,
+      join: stroke.Round,
+      cap: stroke.RoundCap,
       options: first_options,
       dash_options: stroke.default_dash_options(
         pattern: [112.0, 48.0],
@@ -386,19 +383,23 @@ pub fn generate_recursive_dash_cap_report() {
   let assert Ok(dashes) =
     stroke.subpath_dashes(outline, pattern: [17.0, 9.0], offset: 3.0)
   let dash = nth_subpath(dashes, 4)
-  let options =
-    offset.Options(..offset.default_options(), join: offset.RoundJoin)
-  let stroke_options =
-    stroke.Options(
-      width: 6.0,
-      cap: stroke.Round,
-      join: offset.RoundJoin,
-      offset: options,
-    )
+  let options = offset.default_options()
+  let stroke_options = stroke.Options(width: 6.0, offset: options)
   let radius = 3.0
-  let positive = offset.subpath_untrimmed_with(dash, offset: radius, options:)
+  let positive =
+    offset.subpath_untrimmed_with(
+      dash,
+      offset: radius,
+      join: offset.Round,
+      options:,
+    )
   let negative =
-    offset.subpath_untrimmed_with(dash, offset: 0.0 -. radius, options:)
+    offset.subpath_untrimmed_with(
+      dash,
+      offset: 0.0 -. radius,
+      join: offset.Round,
+      options:,
+    )
   let start_cap = debug_round_start_cap(dash, radius)
   let end_cap = debug_round_end_cap(dash, radius)
   let candidate = case positive, negative, start_cap, end_cap {
@@ -448,12 +449,14 @@ pub fn generate_recursive_dash_cap_report() {
           <> individual_offset_piece_counts_to_string(
           svg_path.subpath_segments(dash),
           distance: radius,
+          join: offset.Round,
           options: options,
         ),
         "negative individual offset pieces: "
           <> individual_offset_piece_counts_to_string(
           svg_path.subpath_segments(dash),
           distance: 0.0 -. radius,
+          join: offset.Round,
           options: options,
         ),
         "positive side: " <> offset_subpath_result_to_string(positive),
@@ -466,12 +469,14 @@ pub fn generate_recursive_dash_cap_report() {
           <> raw_offset_pair_report(
           svg_path.subpath_segments(dash),
           distance: radius,
+          join: offset.Round,
           options: options,
         ),
         "negative raw pair 0->1 before join: "
           <> raw_offset_pair_report(
           svg_path.subpath_segments(dash),
           distance: 0.0 -. radius,
+          join: offset.Round,
           options: options,
         ),
         "assembled candidate: " <> subpath_result_to_string(candidate),
@@ -481,6 +486,8 @@ pub fn generate_recursive_dash_cap_report() {
         "full stroke result: "
           <> stroke_result_to_string(stroke.subpath_with(
           dash,
+          join: stroke.Round,
+          cap: stroke.RoundCap,
           options: stroke_options,
         )),
       ],
@@ -503,7 +510,7 @@ fn stroke_caps() -> String {
   let examples = [
     #(0.0, "butt", offset.Butt),
     #(250.0, "square", offset.Square),
-    #(500.0, "round", offset.Round),
+    #(500.0, "round", offset.RoundCap),
   ]
 
   document(
@@ -512,14 +519,15 @@ fn stroke_caps() -> String {
       |> list.map(fn(example) {
         let #(x, label, cap) = example
         let placed = place_subpath(source, x +. 42.0, 112.0)
-        let options =
-          offset.Options(
-            ..offset.default_options(),
-            join: offset.RoundJoin,
-            cap:,
-          )
+        let options = offset.default_options()
         let assert Ok(stroke) =
-          offset.subpath_stroke_with(placed, width: 28.0, options:)
+          offset.subpath_stroke_with(
+            placed,
+            width: 28.0,
+            join: offset.Round,
+            cap:,
+            options:,
+          )
         [
           panel(x, label),
           svg.StyledPath(
@@ -562,18 +570,12 @@ fn dashed_strokes() -> String {
           example
         let placed = place_subpath(source, x +. 22.0, 118.0)
         let options =
-          stroke.Options(
-            width: 16.0,
-            cap: stroke.Round,
-            join: offset.RoundJoin,
-            offset: offset.Options(
-              ..offset.default_options(),
-              join: offset.RoundJoin,
-            ),
-          )
+          stroke.Options(width: 16.0, offset: offset.default_options())
         let assert Ok(dashed) =
           stroke.subpath_dashed_with(
             placed,
+            join: stroke.Round,
+            cap: stroke.RoundCap,
             options:,
             dash_options: stroke.default_dash_options(
               pattern:,
@@ -614,15 +616,12 @@ fn recursive_dashes() -> String {
       offset: first_dash_offset,
     )
   let first_options =
-    stroke.Options(
-      width: 58.0,
-      cap: stroke.Round,
-      join: offset.RoundJoin,
-      offset: offset.Options(..offset.default_options(), join: offset.RoundJoin),
-    )
+    stroke.Options(width: 58.0, offset: offset.default_options())
   let assert Ok(first_stroke) =
     stroke.subpath_dashed_with(
       source,
+      join: stroke.Round,
+      cap: stroke.RoundCap,
       options: first_options,
       dash_options: stroke.default_dash_options(
         pattern: first_dash_pattern,
@@ -630,15 +629,12 @@ fn recursive_dashes() -> String {
       ),
     )
   let second_options =
-    stroke.Options(
-      width: 6.0,
-      cap: stroke.Round,
-      join: offset.RoundJoin,
-      offset: offset.Options(..offset.default_options(), join: offset.RoundJoin),
-    )
+    stroke.Options(width: 6.0, offset: offset.default_options())
   let assert Ok(second_paths) =
     recursive_dash_outline_strokes(
       svg_path.path_subpaths(first_stroke),
+      join: stroke.Round,
+      cap: stroke.RoundCap,
       options: second_options,
       accumulated: [],
     )
@@ -798,6 +794,8 @@ fn gallery_positive_remainder(value: Float, modulus: Float) -> Float {
 
 fn recursive_dash_outline_strokes(
   outlines: List(svg_path.Subpath),
+  join join: stroke.Join,
+  cap cap: stroke.Cap,
   options options: stroke.Options,
   accumulated accumulated: List(svg_path.Path),
 ) -> Result(List(svg_path.Path), stroke.Error) {
@@ -807,14 +805,30 @@ fn recursive_dash_outline_strokes(
       case stroke.subpath_dashes(outline, pattern: [17.0, 9.0], offset: 3.0) {
         Ok(dashes) -> {
           use stroked <- result_try(
-            stroke_non_degenerate_dashes(dashes, options:, accumulated: []),
+            stroke_non_degenerate_dashes(
+              dashes,
+              join:,
+              cap:,
+              options:,
+              accumulated: [],
+            ),
           )
-          recursive_dash_outline_strokes(rest, options:, accumulated: [
-            svg_path.Path(stroked),
-            ..accumulated
-          ])
+          recursive_dash_outline_strokes(
+            rest,
+            join:,
+            cap:,
+            options:,
+            accumulated: [svg_path.Path(stroked), ..accumulated],
+          )
         }
-        Error(_) -> recursive_dash_outline_strokes(rest, options:, accumulated:)
+        Error(_) ->
+          recursive_dash_outline_strokes(
+            rest,
+            join:,
+            cap:,
+            options:,
+            accumulated:,
+          )
       }
     }
   }
@@ -935,6 +949,8 @@ fn crescent_point_markers(points: List(svg_path.Point)) -> svg.ThingsToDraw {
 
 fn stroke_non_degenerate_dashes(
   dashes: List(svg_path.Subpath),
+  join join: stroke.Join,
+  cap cap: stroke.Cap,
   options options: stroke.Options,
   accumulated accumulated: List(svg_path.Subpath),
 ) -> Result(List(svg_path.Subpath), stroke.Error) {
@@ -943,10 +959,12 @@ fn stroke_non_degenerate_dashes(
     [dash, ..rest] -> {
       case svg_path.subpath_length(dash) {
         Ok(length) if length >. 0.1 -> {
-          case stroke.subpath_with(dash, options:) {
+          case stroke.subpath_with(dash, join:, cap:, options:) {
             Ok(stroked) ->
               stroke_non_degenerate_dashes(
                 rest,
+                join:,
+                cap:,
                 options:,
                 accumulated: list.append(
                   svg_path.path_subpaths(stroked),
@@ -954,10 +972,23 @@ fn stroke_non_degenerate_dashes(
                 ),
               )
             Error(_) ->
-              stroke_non_degenerate_dashes(rest, options:, accumulated:)
+              stroke_non_degenerate_dashes(
+                rest,
+                join:,
+                cap:,
+                options:,
+                accumulated:,
+              )
           }
         }
-        _ -> stroke_non_degenerate_dashes(rest, options:, accumulated:)
+        _ ->
+          stroke_non_degenerate_dashes(
+            rest,
+            join:,
+            cap:,
+            options:,
+            accumulated:,
+          )
       }
     }
   }
@@ -1155,9 +1186,11 @@ fn inserted_join_diameters_to_string(
 fn raw_offset_pair_report(
   segments: List(svg_path.Segment),
   distance distance: Float,
+  join join: offset.Join,
   options options: offset.Options,
 ) -> String {
-  let raw = raw_offset_segments(segments, distance:, options:, accumulated: [])
+  let raw =
+    raw_offset_segments(segments, distance:, join:, options:, accumulated: [])
   case raw {
     [left, right, ..] -> {
       let left_end = svg_path.segment_end(left)
@@ -1178,19 +1211,23 @@ fn raw_offset_pair_report(
 fn raw_offset_segments(
   segments: List(svg_path.Segment),
   distance distance: Float,
+  join join: offset.Join,
   options options: offset.Options,
   accumulated accumulated: List(svg_path.Segment),
 ) -> List(svg_path.Segment) {
   case segments {
     [] -> list.reverse(accumulated)
     [segment, ..rest] -> {
-      let next = case offset.segment_with(segment, offset: distance, options:) {
+      let next = case
+        offset.segment_with(segment, offset: distance, join:, options:)
+      {
         Ok(subpath) -> list.reverse(svg_path.subpath_segments(subpath))
         Error(_) -> []
       }
       raw_offset_segments(
         rest,
         distance:,
+        join:,
         options:,
         accumulated: list.append(next, accumulated),
       )
@@ -1278,10 +1315,17 @@ fn segment_bounding_box_diameter_to_string(
 fn individual_offset_piece_counts_to_string(
   segments: List(svg_path.Segment),
   distance distance: Float,
+  join join: offset.Join,
   options options: offset.Options,
 ) -> String {
   let counts =
-    individual_offset_piece_counts(segments, distance:, options:, counts: [])
+    individual_offset_piece_counts(
+      segments,
+      distance:,
+      join:,
+      options:,
+      counts: [],
+    )
   "counts="
   <> string.join(counts, ",")
   <> "; total="
@@ -1291,6 +1335,7 @@ fn individual_offset_piece_counts_to_string(
 fn individual_offset_piece_counts(
   segments: List(svg_path.Segment),
   distance distance: Float,
+  join join: offset.Join,
   options options: offset.Options,
   counts counts: List(String),
 ) -> List(String) {
@@ -1298,13 +1343,13 @@ fn individual_offset_piece_counts(
     [] -> list.reverse(counts)
     [segment, ..rest] -> {
       let count = case
-        offset.segment_with(segment, offset: distance, options:)
+        offset.segment_with(segment, offset: distance, join:, options:)
       {
         Ok(offset) ->
           int.to_string(list.length(svg_path.subpath_segments(offset)))
         Error(_) -> "Error"
       }
-      individual_offset_piece_counts(rest, distance:, options:, counts: [
+      individual_offset_piece_counts(rest, distance:, join:, options:, counts: [
         count,
         ..counts
       ])
@@ -1453,13 +1498,14 @@ fn stroke_error_name(error: stroke.Error) -> String {
 
 fn figure_eight_band() -> String {
   let source = place_subpath(figure_eight(), 430.0, 190.0)
-  let options =
-    offset.Options(..offset.default_options(), join: offset.RoundJoin)
+  let options = offset.default_options()
   let assert Ok(band) =
     offset.subpath_band_with(
       source,
       inner_offset: 18.0,
       outer_offset: 34.0,
+      join: offset.Round,
+      cap: offset.Butt,
       options:,
     )
 
@@ -1489,13 +1535,14 @@ fn symmetric_figure_eight_bands() -> String {
     read_file("examples/debug/loop_8_symmetric_arcs.svg")
   let assert Ok(svg_path.Path([source])) =
     parse.path(first_svg_path_data(contents))
-  let options =
-    offset.Options(..offset.default_options(), join: offset.RoundJoin)
+  let options = offset.default_options()
   let assert Ok(wide_band) =
     offset.subpath_band_with(
       source,
       inner_offset: -5.0,
       outer_offset: 25.0,
+      join: offset.Round,
+      cap: offset.Butt,
       options:,
     )
   let assert Ok(outer_band) =
@@ -1503,6 +1550,8 @@ fn symmetric_figure_eight_bands() -> String {
       source,
       inner_offset: 10.0,
       outer_offset: 20.0,
+      join: offset.Round,
+      cap: offset.Butt,
       options:,
     )
 
@@ -1558,8 +1607,7 @@ fn first_svg_path_data(contents: String) -> String {
 
 fn stroke_offset_tracks() -> String {
   let source = offset_track_source()
-  let options =
-    offset.Options(..offset.default_options(), join: offset.RoundJoin)
+  let options = offset.default_options()
   let offsets = [
     #(-42.0, "#7f1d1d"),
     #(-28.0, "#c2410c"),
@@ -1573,7 +1621,12 @@ fn stroke_offset_tracks() -> String {
     |> list.map(fn(entry) {
       let #(distance, color) = entry
       let assert Ok(track) =
-        offset.subpath_untrimmed_with(source, offset: distance, options:)
+        offset.subpath_untrimmed_with(
+          source,
+          offset: distance,
+          join: offset.Round,
+          options:,
+        )
       #(track, color)
     })
   let geometry_path =
@@ -1633,8 +1686,7 @@ fn stroke_offset_tracks() -> String {
 }
 
 fn earth_tone_offsets() -> String {
-  let options =
-    offset.Options(..offset.default_options(), join: offset.RoundJoin)
+  let options = offset.default_options()
   let colors = ["#5f4339", "#8a5a3c", "#a36a2d", "#7c6a3d", "#51633f"]
   document(
     list.flatten([
@@ -1646,6 +1698,7 @@ fn earth_tone_offsets() -> String {
         panel_center: svg_path.Point(119.0, 112.0),
         distances: [8.0, 16.0, 24.0, 32.0, 40.0],
         colors:,
+        join: offset.Round,
         options:,
       ),
       centered_offset_family(
@@ -1653,6 +1706,7 @@ fn earth_tone_offsets() -> String {
         panel_center: svg_path.Point(369.0, 112.0),
         distances: [8.0, 16.0, 24.0, 32.0, 40.0],
         colors:,
+        join: offset.Round,
         options:,
       ),
       centered_offset_family(
@@ -1660,6 +1714,7 @@ fn earth_tone_offsets() -> String {
         panel_center: svg_path.Point(619.0, 112.0),
         distances: [8.0, 16.0, 24.0, 32.0, 40.0],
         colors:,
+        join: offset.Round,
         options:,
       ),
     ]),
@@ -1682,8 +1737,20 @@ fn package_title_first_offset() -> String {
     )
   let distance = 1.05
   let assert Ok(untrimmed) =
-    offset.path_untrimmed_with(source, offset: distance, options:)
-  let assert Ok(trimmed) = offset.path_with(source, offset: distance, options:)
+    offset.path_untrimmed_with(
+      source,
+      offset: distance,
+      join: offset.Miter(offset.default_miter_limit),
+      options:,
+    )
+  let assert Ok(trimmed) =
+    offset.path_with(
+      source,
+      offset: distance,
+      join: offset.Miter(offset.default_miter_limit),
+      cap: offset.Butt,
+      options:,
+    )
   package_title_first_offset_document(source, untrimmed, trimmed)
 }
 
@@ -1730,7 +1797,14 @@ fn package_title_nine_offsets() -> String {
   let levels =
     list.fold(list.repeat(1, 9), [source], fn(levels, _) {
       let assert Ok(previous) = list.first(levels)
-      let assert Ok(next) = offset.path_with(previous, offset: 1.04, options:)
+      let assert Ok(next) =
+        offset.path_with(
+          previous,
+          offset: 1.04,
+          join: offset.Miter(offset.default_miter_limit),
+          cap: offset.Butt,
+          options:,
+        )
       [next, ..levels]
     })
     |> list.reverse
@@ -1842,13 +1916,14 @@ fn centered_offset_family(
   panel_center panel_center: svg_path.Point,
   distances distances: List(Float),
   colors colors: List(String),
+  join join: offset.Join,
   options options: offset.Options,
 ) -> svg.ThingsToDraw {
   let tracks =
     distances
     |> list.map(fn(distance) {
       let assert Ok(track) =
-        offset.subpath_untrimmed_with(source, offset: distance, options:)
+        offset.subpath_untrimmed_with(source, offset: distance, join:, options:)
       track
     })
   let geometry_path = svg_path.Path([source, ..tracks])

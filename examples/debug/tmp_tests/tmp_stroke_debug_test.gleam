@@ -100,10 +100,9 @@ fn panel(
     offset.Options(
       ..default,
       fitting: offset.FittingOptions(..default.fitting, tolerance: 0.01),
-      join:,
     )
   let result_things = case
-    offset.subpath_stroke_with(source, width:, cap:, options:)
+    offset.subpath_stroke_with(source, width:, join:, cap:, options:)
   {
     Ok(result) -> [
       svg.StyledPath(

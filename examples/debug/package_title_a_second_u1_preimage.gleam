@@ -38,9 +38,21 @@ pub fn main() -> Nil {
       ),
     )
 
-  let assert Ok(first_offset) = offset.path_with(source_a, offset:, options:)
+  let assert Ok(first_offset) =
+    offset.path_with(
+      source_a,
+      offset:,
+      join: offset.Miter(offset.default_miter_limit),
+      cap: offset.Butt,
+      options:,
+    )
   let assert Ok(second_untrimmed) =
-    offset.path_untrimmed_with(first_offset, offset:, options:)
+    offset.path_untrimmed_with(
+      first_offset,
+      offset:,
+      join: offset.Miter(offset.default_miter_limit),
+      options:,
+    )
   let assert Ok(u1) =
     untrimmed_segment(second_untrimmed, subpath_index: 0, segment_index: 1)
   let e_segment = u1_preimage()

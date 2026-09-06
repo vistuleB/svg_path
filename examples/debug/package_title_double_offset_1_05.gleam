@@ -32,7 +32,13 @@ pub fn main() -> Nil {
     )
 
   let assert Ok(first_offset) =
-    offset.path_with(source, offset: offset_distance, options:)
+    offset.path_with(
+      source,
+      offset: offset_distance,
+      join: offset.Miter(offset.default_miter_limit),
+      cap: offset.Butt,
+      options:,
+    )
   io.println(
     "first offset subpaths: "
     <> int.to_string(list.length(svg_path.path_subpaths(first_offset))),
@@ -41,7 +47,12 @@ pub fn main() -> Nil {
   report_subpath_segments("first offset", first_offset, 4)
 
   let second_untrimmed =
-    offset.path_untrimmed_with(first_offset, offset: offset_distance, options:)
+    offset.path_untrimmed_with(
+      first_offset,
+      offset: offset_distance,
+      join: offset.Miter(offset.default_miter_limit),
+      options:,
+    )
   case second_untrimmed {
     Ok(untrimmed) -> {
       io.println(
@@ -57,7 +68,13 @@ pub fn main() -> Nil {
   }
 
   let second_trimmed =
-    offset.path_with(first_offset, offset: offset_distance, options:)
+    offset.path_with(
+      first_offset,
+      offset: offset_distance,
+      join: offset.Miter(offset.default_miter_limit),
+      cap: offset.Butt,
+      options:,
+    )
   case second_trimmed {
     Ok(second_offset) -> {
       io.println(

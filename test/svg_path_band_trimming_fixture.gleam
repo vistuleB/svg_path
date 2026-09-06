@@ -22,7 +22,6 @@ fn band(source: svg_path.Subpath, in_band in_band: Bool) -> svg_path.Path {
   let options =
     offset.Options(
       ..offset.default_options(),
-      join: offset.RoundJoin,
       band_trimming: offset.BandTrimming(
         inner_cusps: True,
         outer_cusps: True,
@@ -34,6 +33,8 @@ fn band(source: svg_path.Subpath, in_band in_band: Bool) -> svg_path.Path {
       source,
       inner_offset: 18.0,
       outer_offset: 34.0,
+      join: offset.Round,
+      cap: offset.Butt,
       options:,
     )
   band

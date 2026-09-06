@@ -30,6 +30,7 @@ pub fn main() -> Nil {
     offset.internal_path_single_offset_contamination_arrangement_trace(
       source,
       offset: 1.0,
+      join: offset.Miter(offset.default_miter_limit),
       options:,
     )
   let _ = write_file(output, drawing(source, trace))

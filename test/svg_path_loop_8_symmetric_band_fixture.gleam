@@ -27,6 +27,7 @@ pub fn main() -> Nil {
       source,
       inner_offset: -5.0,
       outer_offset: 25.0,
+      join: offset.Miter(offset.default_miter_limit),
       options:,
     )
   io.println(case untrimmed {
@@ -41,6 +42,8 @@ pub fn main() -> Nil {
       source,
       inner_offset: -5.0,
       outer_offset: 25.0,
+      join: offset.Miter(offset.default_miter_limit),
+      cap: offset.Butt,
       options:,
     )
   let assert Ok(cusp_trace) =
@@ -48,6 +51,8 @@ pub fn main() -> Nil {
       source,
       inner_offset: -5.0,
       outer_offset: 25.0,
+      join: offset.Miter(offset.default_miter_limit),
+      cap: offset.Butt,
       options:,
     )
   let assert Ok(band) =
@@ -55,6 +60,8 @@ pub fn main() -> Nil {
       source,
       inner_offset: -5.0,
       outer_offset: 25.0,
+      join: offset.Miter(offset.default_miter_limit),
+      cap: offset.Butt,
       options:,
     )
   let _ = write_file(output, drawing(source, band))

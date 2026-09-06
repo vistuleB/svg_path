@@ -35,7 +35,12 @@ pub fn main() -> Nil {
     )
 
   let assert Ok(untrimmed_first_offset) =
-    offset.path_untrimmed_with(source, offset: offset_distance, options:)
+    offset.path_untrimmed_with(
+      source,
+      offset: offset_distance,
+      join: offset.Miter(offset.default_miter_limit),
+      options:,
+    )
   io.println(
     "untrimmed first offset subpaths: "
     <> int.to_string(
@@ -43,7 +48,13 @@ pub fn main() -> Nil {
     ),
   )
   let assert Ok(trimmed_first_offset) =
-    offset.path_with(source, offset: offset_distance, options:)
+    offset.path_with(
+      source,
+      offset: offset_distance,
+      join: offset.Miter(offset.default_miter_limit),
+      cap: offset.Butt,
+      options:,
+    )
 
   write_file(
     output,

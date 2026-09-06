@@ -12,7 +12,13 @@ pub fn segment_stroke_with_butt_caps_returns_closed_outline_test() {
       end: svg_path.Point(10.0, 0.0),
     )
 
-  let assert Ok(path) = stroke.segment(segment, width: 2.0)
+  let assert Ok(path) =
+    stroke.segment(
+      segment,
+      width: 2.0,
+      join: stroke.Miter(offset.default_miter_limit),
+      cap: stroke.Butt,
+    )
   let assert [outline] = svg_path.path_subpaths(path)
 
   assert svg_path.subpath_is_closed(outline)
@@ -25,10 +31,15 @@ pub fn subpath_stroke_with_round_caps_adds_two_cap_arcs_test() {
       svg_path.Point(0.0, 0.0),
       svg_path.Point(10.0, 0.0),
     ])
-  let options =
-    stroke.Options(..stroke.default_options(), width: 2.0, cap: stroke.Round)
+  let options = stroke.Options(..stroke.default_options(), width: 2.0)
 
-  let assert Ok(path) = stroke.subpath_with(subpath, options:)
+  let assert Ok(path) =
+    stroke.subpath_with(
+      subpath,
+      join: stroke.Miter(offset.default_miter_limit),
+      cap: stroke.RoundCap,
+      options:,
+    )
   let assert [outline] = svg_path.path_subpaths(path)
 
   assert svg_path.subpath_is_closed(outline)
@@ -41,10 +52,15 @@ pub fn subpath_stroke_with_round_cap_serializes_semicircles_test() {
       svg_path.Point(0.0, 0.0),
       svg_path.Point(10.0, 0.0),
     ])
-  let options =
-    stroke.Options(..stroke.default_options(), width: 2.0, cap: stroke.Round)
+  let options = stroke.Options(..stroke.default_options(), width: 2.0)
 
-  let assert Ok(path) = stroke.subpath_with(subpath, options:)
+  let assert Ok(path) =
+    stroke.subpath_with(
+      subpath,
+      join: stroke.Miter(offset.default_miter_limit),
+      cap: stroke.RoundCap,
+      options:,
+    )
   let assert [outline] = svg_path.path_subpaths(path)
 
   assert serialize.subpath(outline)
@@ -61,15 +77,15 @@ pub fn round_caps_use_normalized_source_endpoint_directions_test() {
         end: svg_path.Point(121.21463749128954, 119.84268982753466),
       ),
     ])
-  let options =
-    stroke.Options(
-      width: 6.0,
-      cap: stroke.Round,
-      join: offset.RoundJoin,
-      offset: offset.Options(..offset.default_options(), join: offset.RoundJoin),
-    )
+  let options = stroke.Options(width: 6.0, offset: offset.default_options())
 
-  let assert Ok(path) = stroke.subpath_with(subpath, options:)
+  let assert Ok(path) =
+    stroke.subpath_with(
+      subpath,
+      join: stroke.Round,
+      cap: stroke.RoundCap,
+      options:,
+    )
   let assert [outline] = svg_path.path_subpaths(path)
 
   assert svg_path.subpath_is_closed(outline)
@@ -86,7 +102,13 @@ pub fn stroke_accepts_a_directed_cubic_with_a_stationary_start_parameter_test() 
       ),
     ])
 
-  let assert Ok(path) = stroke.subpath(subpath, width: 0.5)
+  let assert Ok(path) =
+    stroke.subpath(
+      subpath,
+      width: 0.5,
+      join: stroke.Miter(offset.default_miter_limit),
+      cap: stroke.Butt,
+    )
   let assert [outline] = svg_path.path_subpaths(path)
 
   assert svg_path.subpath_is_closed(outline)
@@ -97,7 +119,13 @@ pub fn stroke_accepts_stationary_start_and_steep_crossing_regression_test() {
     "M 52.0515 277.5936 C 60.8159 269.8805 69.4564 262.0312 78.0103 254.0832 C 90.3339 242.6296 103.2476 231.8349 115.7828 220.6132 C 130.2062 207.6966 145.0563 195.2589 159.5077 182.3759 C 174.8593 168.6928 190.2079 155.0085 205.5564 141.3241 C 221.3130 127.2946 236.5355 112.9876 252.5219 98.9002 C 269.0418 84.3451 285.5518 69.4646 301.8246 54.9526 C 315.7254 42.5566 329.1876 29.6822 343.2148 17.4364 C 355.3230 6.8667 367.4950 -3.6205 379.2403 -14.5886 C 389.0271 -23.7278 399.1082 -32.5430 409.0340 -41.5293 C 411.1546 -43.4486 448.6067 -76.6113 451.7844 -79.8502 L 451.1893 -80.7477 L 438.1699 -68.8290 S 410.5574 -44.3462 408.4367 -42.4248 C 398.5096 -33.4354 388.4254 -24.6214 378.6363 -15.4802 C 366.8934 -4.5162 354.7278 5.9713 342.6241 16.5370 C 328.5969 28.7828 315.0311 41.5393 301.2383 54.0513 C 284.6189 69.1310 268.4477 83.4487 251.9223 98.0067 C 236.0946 111.9500 220.7179 126.3970 204.9624 140.4256 L 158.9147 181.4785 C 144.4612 194.3614 129.6131 206.8013 115.1878 219.7157 C 102.6522 230.9416 89.7322 241.7360 77.4054 253.1905 C 68.8548 261.1355 60.2187 268.9829 51.4564 276.6961 L 52.0505 277.5924 Z"
   let assert Ok(path) = parse.path(source)
 
-  let assert Ok(stroked) = stroke.path(path, width: 0.5)
+  let assert Ok(stroked) =
+    stroke.path(
+      path,
+      width: 0.5,
+      join: stroke.Miter(offset.default_miter_limit),
+      cap: stroke.Butt,
+    )
 
   assert svg_path.path_subpaths(stroked) != []
 }
@@ -106,7 +134,13 @@ pub fn zero_length_subpath_stroke_with_butt_cap_returns_empty_path_test() {
   let a = svg_path.Point(3.0, 4.0)
   let subpath = svg_path.subpath_assert([svg_path.Line(start: a, end: a)])
 
-  let assert Ok(path) = stroke.subpath(subpath, width: 2.0)
+  let assert Ok(path) =
+    stroke.subpath(
+      subpath,
+      width: 2.0,
+      join: stroke.Miter(offset.default_miter_limit),
+      cap: stroke.Butt,
+    )
 
   assert svg_path.path_subpaths(path) == []
 }
@@ -114,10 +148,15 @@ pub fn zero_length_subpath_stroke_with_butt_cap_returns_empty_path_test() {
 pub fn zero_length_subpath_stroke_with_round_cap_returns_circle_test() {
   let a = svg_path.Point(3.0, 4.0)
   let subpath = svg_path.subpath_assert([svg_path.Line(start: a, end: a)])
-  let options =
-    stroke.Options(..stroke.default_options(), width: 2.0, cap: stroke.Round)
+  let options = stroke.Options(..stroke.default_options(), width: 2.0)
 
-  let assert Ok(path) = stroke.subpath_with(subpath, options:)
+  let assert Ok(path) =
+    stroke.subpath_with(
+      subpath,
+      join: stroke.Miter(offset.default_miter_limit),
+      cap: stroke.RoundCap,
+      options:,
+    )
   let assert [outline] = svg_path.path_subpaths(path)
 
   assert svg_path.subpath_is_closed(outline)
@@ -130,10 +169,15 @@ pub fn subpath_stroke_with_square_caps_extends_by_half_width_test() {
       svg_path.Point(0.0, 0.0),
       svg_path.Point(10.0, 0.0),
     ])
-  let options =
-    stroke.Options(..stroke.default_options(), width: 2.0, cap: stroke.Square)
+  let options = stroke.Options(..stroke.default_options(), width: 2.0)
 
-  let assert Ok(path) = stroke.subpath_with(subpath, options:)
+  let assert Ok(path) =
+    stroke.subpath_with(
+      subpath,
+      join: stroke.Miter(offset.default_miter_limit),
+      cap: stroke.Square,
+      options:,
+    )
   let assert [outline] = svg_path.path_subpaths(path)
 
   assert serialize.subpath(outline)
@@ -142,10 +186,10 @@ pub fn subpath_stroke_with_square_caps_extends_by_half_width_test() {
 
 pub fn subpath_stroke_with_bevel_join_keeps_corner_cut_test() {
   let subpath = right_angle_subpath()
-  let options =
-    stroke.Options(..stroke.default_options(), width: 2.0, join: offset.Bevel)
+  let options = stroke.Options(..stroke.default_options(), width: 2.0)
 
-  let assert Ok(path) = stroke.subpath_with(subpath, options:)
+  let assert Ok(path) =
+    stroke.subpath_with(subpath, join: stroke.Bevel, cap: stroke.Butt, options:)
   let assert [outline] = svg_path.path_subpaths(path)
 
   assert serialize.subpath(outline) == "M 0 -1 H 10 L 11 0 V 10 H 9 V 1 H 0 Z"
@@ -153,14 +197,10 @@ pub fn subpath_stroke_with_bevel_join_keeps_corner_cut_test() {
 
 pub fn subpath_stroke_with_round_join_adds_join_arcs_test() {
   let subpath = right_angle_subpath()
-  let options =
-    stroke.Options(
-      ..stroke.default_options(),
-      width: 2.0,
-      join: offset.RoundJoin,
-    )
+  let options = stroke.Options(..stroke.default_options(), width: 2.0)
 
-  let assert Ok(path) = stroke.subpath_with(subpath, options:)
+  let assert Ok(path) =
+    stroke.subpath_with(subpath, join: stroke.Round, cap: stroke.Butt, options:)
   let assert [outline] = svg_path.path_subpaths(path)
 
   assert arc_count(svg_path.subpath_segments(outline)) == 1
@@ -170,14 +210,15 @@ pub fn subpath_stroke_with_round_join_adds_join_arcs_test() {
 
 pub fn subpath_stroke_with_miter_join_extends_to_apex_test() {
   let subpath = right_angle_subpath()
-  let options =
-    stroke.Options(
-      ..stroke.default_options(),
-      width: 2.0,
-      join: offset.Miter(4.0),
-    )
+  let options = stroke.Options(..stroke.default_options(), width: 2.0)
 
-  let assert Ok(path) = stroke.subpath_with(subpath, options:)
+  let assert Ok(path) =
+    stroke.subpath_with(
+      subpath,
+      join: stroke.Miter(4.0),
+      cap: stroke.Butt,
+      options:,
+    )
   let assert [outline] = svg_path.path_subpaths(path)
 
   assert serialize.subpath(outline) == "M 0 -1 H 10 H 11 V 0 V 10 H 9 V 1 H 0 Z"
@@ -185,18 +226,17 @@ pub fn subpath_stroke_with_miter_join_extends_to_apex_test() {
 
 pub fn subpath_stroke_with_low_miter_limit_falls_back_to_bevel_test() {
   let subpath = right_angle_subpath()
-  let low_miter =
-    stroke.Options(
-      ..stroke.default_options(),
-      width: 2.0,
-      join: offset.Miter(1.0),
-    )
-  let bevel =
-    stroke.Options(..stroke.default_options(), width: 2.0, join: offset.Bevel)
+  let options = stroke.Options(..stroke.default_options(), width: 2.0)
 
   let assert Ok(low_miter_path) =
-    stroke.subpath_with(subpath, options: low_miter)
-  let assert Ok(bevel_path) = stroke.subpath_with(subpath, options: bevel)
+    stroke.subpath_with(
+      subpath,
+      join: stroke.Miter(1.0),
+      cap: stroke.Butt,
+      options:,
+    )
+  let assert Ok(bevel_path) =
+    stroke.subpath_with(subpath, join: stroke.Bevel, cap: stroke.Butt, options:)
 
   assert serialize.path(low_miter_path) == serialize.path(bevel_path)
 }
@@ -204,10 +244,15 @@ pub fn subpath_stroke_with_low_miter_limit_falls_back_to_bevel_test() {
 pub fn zero_length_subpath_stroke_with_square_cap_returns_square_test() {
   let a = svg_path.Point(3.0, 4.0)
   let subpath = svg_path.subpath_assert([svg_path.Line(start: a, end: a)])
-  let options =
-    stroke.Options(..stroke.default_options(), width: 2.0, cap: stroke.Square)
+  let options = stroke.Options(..stroke.default_options(), width: 2.0)
 
-  let assert Ok(path) = stroke.subpath_with(subpath, options:)
+  let assert Ok(path) =
+    stroke.subpath_with(
+      subpath,
+      join: stroke.Miter(offset.default_miter_limit),
+      cap: stroke.Square,
+      options:,
+    )
   let assert [outline] = svg_path.path_subpaths(path)
 
   assert svg_path.subpath_is_closed(outline)
@@ -223,7 +268,13 @@ pub fn closed_subpath_stroke_returns_two_closed_contours_test() {
       svg_path.Point(0.0, 10.0),
     ])
 
-  let assert Ok(path) = stroke.subpath(square, width: 2.0)
+  let assert Ok(path) =
+    stroke.subpath(
+      square,
+      width: 2.0,
+      join: stroke.Miter(offset.default_miter_limit),
+      cap: stroke.Butt,
+    )
   let subpaths = svg_path.path_subpaths(path)
 
   assert list.length(subpaths) == 2
@@ -248,7 +299,13 @@ pub fn self_meeting_closed_subpath_stroke_uses_band_sections_test() {
     ])
     |> svg_path.subpath_assert_set_closed(closed: True)
 
-  let assert Ok(path) = stroke.subpath(figure_eight, width: 26.0)
+  let assert Ok(path) =
+    stroke.subpath(
+      figure_eight,
+      width: 26.0,
+      join: stroke.Miter(offset.default_miter_limit),
+      cap: stroke.Butt,
+    )
   let subpaths = svg_path.path_subpaths(path)
 
   assert list.length(subpaths) == 3
@@ -280,7 +337,12 @@ pub fn path_stroke_strokes_each_subpath_test() {
     ])
 
   let assert Ok(path) =
-    stroke.path(svg_path.Path(subpaths: [first, second]), width: 2.0)
+    stroke.path(
+      svg_path.Path(subpaths: [first, second]),
+      width: 2.0,
+      join: stroke.Miter(offset.default_miter_limit),
+      cap: stroke.Butt,
+    )
 
   assert list.length(svg_path.path_subpaths(path)) == 2
 }
@@ -502,7 +564,14 @@ pub fn subpath_dashed_strokes_each_dash_test() {
     ])
 
   let assert Ok(path) =
-    stroke.subpath_dashed(subpath, width: 2.0, pattern: [3.0, 2.0], offset: 0.0)
+    stroke.subpath_dashed(
+      subpath,
+      width: 2.0,
+      pattern: [3.0, 2.0],
+      offset: 0.0,
+      join: stroke.Miter(offset.default_miter_limit),
+      cap: stroke.Butt,
+    )
 
   assert list.length(svg_path.path_subpaths(path)) == 2
   assert svg_path.path_subpaths(path) |> list.map(serialize.subpath)
@@ -545,7 +614,13 @@ pub fn stroke_rejects_non_positive_width_test() {
       end: svg_path.Point(10.0, 0.0),
     )
 
-  assert stroke.segment(segment, width: 0.0) == Error(stroke.InvalidWidth(0.0))
+  assert stroke.segment(
+      segment,
+      width: 0.0,
+      join: stroke.Miter(offset.default_miter_limit),
+      cap: stroke.Butt,
+    )
+    == Error(stroke.InvalidWidth(0.0))
 }
 
 fn arc_count(segments: List(svg_path.Segment)) -> Int {

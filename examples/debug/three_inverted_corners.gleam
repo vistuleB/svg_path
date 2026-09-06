@@ -71,19 +71,22 @@ pub fn main() -> Nil {
     offset.subpath_untrimmed_with(
       source,
       offset: 1.2,
+      join: offset.Miter(offset.default_miter_limit),
       options: offset.default_options(),
     )
   let assert Ok(untrimmed_1_8) =
     offset.subpath_untrimmed_with(
       source,
       offset: 1.8,
+      join: offset.Miter(offset.default_miter_limit),
       options: offset.default_options(),
     )
   let assert Ok(untrimmed_1_8_round) =
     offset.subpath_untrimmed_with(
       source,
       offset: 1.8,
-      options: offset.Options(..offset.default_options(), join: offset.Round),
+      join: offset.Round,
+      options: offset.default_options(),
     )
   let _ =
     write_file(

@@ -36,7 +36,12 @@ pub fn main() -> Nil {
   let assert Ok(source_trace) =
     offset.internal_offset_source_trace(s, offset: offset_distance, options:)
   let assert Ok(joined) =
-    offset.subpath_untrimmed_with(s, offset: offset_distance, options:)
+    offset.subpath_untrimmed_with(
+      s,
+      offset: offset_distance,
+      join: offset.Miter(offset.default_miter_limit),
+      options:,
+    )
   io.println(
     "joined untrimmed segments: "
     <> int.to_string(list.length(svg_path.subpath_segments(joined))),

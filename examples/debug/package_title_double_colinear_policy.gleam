@@ -31,13 +31,26 @@ pub fn main() -> Nil {
     )
 
   let assert Ok(first_offset) =
-    offset.path_with(source, offset: offset_distance, options:)
+    offset.path_with(
+      source,
+      offset: offset_distance,
+      join: offset.Miter(offset.default_miter_limit),
+      cap: offset.Butt,
+      options:,
+    )
   io.println(
     "first offset subpaths: "
     <> int.to_string(list.length(svg_path.path_subpaths(first_offset))),
   )
 
-  let second = offset.path_with(first_offset, offset: offset_distance, options:)
+  let second =
+    offset.path_with(
+      first_offset,
+      offset: offset_distance,
+      join: offset.Miter(offset.default_miter_limit),
+      cap: offset.Butt,
+      options:,
+    )
   case second {
     Ok(second_offset) -> {
       io.println(

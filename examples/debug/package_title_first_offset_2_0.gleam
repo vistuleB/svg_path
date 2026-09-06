@@ -24,7 +24,14 @@ pub fn main() -> Nil {
         tolerance: 0.000000001,
       ),
     )
-  let assert Ok(first_offset) = offset.path_with(source, offset: 2.0, options:)
+  let assert Ok(first_offset) =
+    offset.path_with(
+      source,
+      offset: 2.0,
+      join: offset.Miter(offset.default_miter_limit),
+      cap: offset.Butt,
+      options:,
+    )
   let boxes =
     [
       svg_path.path_bounding_box(source),

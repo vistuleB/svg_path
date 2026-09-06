@@ -21,15 +21,37 @@ pub fn main() -> Nil {
   let assert Ok(title) = parse.path(first_path_data(contents))
   let assert [_, v, ..] = svg_path.path_subpaths(title)
   let options = offset.default_options()
-  let assert Ok(first) = offset.subpath_with(v, offset: 1.04, options:)
-  let assert Ok(second) = offset.path_with(first, offset: 1.04, options:)
+  let assert Ok(first) =
+    offset.subpath_with(
+      v,
+      offset: 1.04,
+      join: offset.Miter(offset.default_miter_limit),
+      cap: offset.Butt,
+      options:,
+    )
+  let assert Ok(second) =
+    offset.path_with(
+      first,
+      offset: 1.04,
+      join: offset.Miter(offset.default_miter_limit),
+      cap: offset.Butt,
+      options:,
+    )
   let assert Ok(trace) =
     offset.internal_path_single_offset_contamination_arrangement_trace(
       second,
       offset: 1.04,
+      join: offset.Miter(offset.default_miter_limit),
       options:,
     )
-  let assert Ok(third) = offset.path_with(second, offset: 1.04, options:)
+  let assert Ok(third) =
+    offset.path_with(
+      second,
+      offset: 1.04,
+      join: offset.Miter(offset.default_miter_limit),
+      cap: offset.Butt,
+      options:,
+    )
   let _ = write_file(first_output, first_offset_drawing(first, second))
   let _ = write_file(arrangement_output, arrangement_drawing(second, trace))
   let _ = write_file(third_output, third_offset_drawing(first, second, third))

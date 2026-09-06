@@ -32,7 +32,15 @@ fn offset_levels(
   case remaining {
     0 -> list.reverse(completed)
     _ ->
-      case offset.path_with(current, offset: 1.04, options:) {
+      case
+        offset.path_with(
+          current,
+          offset: 1.04,
+          join: offset.Miter(offset.default_miter_limit),
+          cap: offset.Butt,
+          options:,
+        )
+      {
         Ok(next) -> {
           io.println("completed offset " <> int.to_string(10 - remaining))
           offset_levels(next, options, remaining: remaining - 1, completed: [

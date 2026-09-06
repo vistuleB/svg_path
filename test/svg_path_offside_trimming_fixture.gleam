@@ -53,13 +53,19 @@ fn single_offset(
   let options =
     offset.Options(
       ..offset.default_options(),
-      join: offset.RoundJoin,
       single_offset_trimming: offset.SingleOffsetTrimming(
         offside:,
         final_trimming: offset.NoTrimming,
       ),
     )
-  let assert Ok(path) = offset.path_with(source, offset: 1.2, options:)
+  let assert Ok(path) =
+    offset.path_with(
+      source,
+      offset: 1.2,
+      join: offset.Round,
+      cap: offset.Butt,
+      options:,
+    )
   path
 }
 

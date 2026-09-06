@@ -20,7 +20,13 @@ pub fn main() -> Nil {
       svg_path.Point(2.0, 3.0),
       svg_path.Point(0.0, 3.0),
     ])
-  let assert Ok(offset_path) = offset.subpath(source, offset: 0.5)
+  let assert Ok(offset_path) =
+    offset.subpath(
+      source,
+      offset: 0.5,
+      join: offset.Miter(offset.default_miter_limit),
+      cap: offset.Butt,
+    )
   let offset.FittingOptions(tolerance:, ..) = offset.default_fitting_options()
   let assert Ok(normalized_subpaths) =
     offset_path

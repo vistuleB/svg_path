@@ -67,7 +67,15 @@ fn offset_levels(
   case remaining {
     0 -> list.reverse(reversed)
     _ ->
-      case offset.path_with(current, offset:, options:) {
+      case
+        offset.path_with(
+          current,
+          offset: distance,
+          join: offset.Miter(offset.default_miter_limit),
+          cap: offset.Butt,
+          options:,
+        )
+      {
         Ok(next) ->
           offset_levels(next, distance, remaining - 1, options, [
             next,

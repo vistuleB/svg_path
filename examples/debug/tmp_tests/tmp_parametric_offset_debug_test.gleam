@@ -39,7 +39,7 @@ type Example {
   Example(label: String, source: svg_path.Subpath, distance: Float)
 }
 
-fn preview_options(join: offset.Join) -> offset.Options {
+fn preview_options() -> offset.Options {
   let default = offset.default_options()
   offset.Options(
     ..default,
@@ -47,7 +47,6 @@ fn preview_options(join: offset.Join) -> offset.Options {
       ..default.fitting,
       tolerance: preview_tolerance,
     ),
-    join:,
   )
 }
 
@@ -94,8 +93,15 @@ fn print_parametric_cut_diagnostics(
   distance: Float,
 ) -> Nil {
   let assert Ok(provisional) = debug_provisional_with(source, join, distance)
-  let options = preview_options(join)
-  let assert Ok(result) = offset.subpath_with(source, offset:, options:)
+  let options = preview_options()
+  let assert Ok(result) =
+    offset.subpath_with(
+      source,
+      offset: distance,
+      join:,
+      cap: offset.Butt,
+      options:,
+    )
   let segments = svg_path.subpath_segments(provisional)
   let cuts =
     count_intersection_cuts(
@@ -456,9 +462,15 @@ fn print_diamond_round_negative_section_diagnostics() -> Nil {
 
 fn print_diamond_round_negative_distances() -> Nil {
   let source = rounded_diamond()
-  let options = preview_options(offset.Round)
+  let options = preview_options()
   let assert Ok(result) =
-    offset.subpath_with(source, offset: offset_distance, options:)
+    offset.subpath_with(
+      source,
+      offset: offset_distance,
+      join: offset.Round,
+      cap: offset.Butt,
+      options:,
+    )
   let threshold =
     float.absolute_value(offset_distance) -. debug_distance_margin()
   io.println("")
@@ -1023,9 +1035,15 @@ fn render_panel(
   let x = 8.0 +. int.to_float(col) *. { panel_w +. gap }
   let y = 38.0 +. int.to_float(row) *. { panel_h +. gap }
   let placed_source = place_path(svg_path.subpath_as_path(example.source), x, y)
-  let options = preview_options(join_case.join)
+  let options = preview_options()
   let assert Ok(result) =
-    offset.subpath_with(example.source, offset: example.distance, options:)
+    offset.subpath_with(
+      example.source,
+      offset: example.distance,
+      join: join_case.join,
+      cap: offset.Butt,
+      options:,
+    )
   let placed_result = place_path(result, x, y)
 
   [
@@ -1195,11 +1213,11 @@ fn debug_provisional_with(
   join: offset.Join,
   distance distance: Float,
 ) -> Result(svg_path.Subpath, Nil) {
-  let options = preview_options(join)
+  let options = preview_options()
   case join {
     offset.Round -> {
       let assert Ok(subpath) =
-        offset.subpath_untrimmed_with(source, offset:, options:)
+        offset.subpath_untrimmed_with(source, offset: distance, join:, options:)
       Ok(subpath)
     }
     _ -> {
@@ -1207,7 +1225,7 @@ fn debug_provisional_with(
         svg_path.subpath_segments(source)
         |> list.map(fn(segment) {
           let assert Ok(offset_subpath) =
-            offset.segment_with(segment, offset:, options:)
+            offset.segment_with(segment, offset: distance, join:, options:)
           DebugOffsetPiece(
             source: segment,
             offset: svg_path.subpath_segments(offset_subpath),

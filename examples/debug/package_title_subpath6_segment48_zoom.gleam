@@ -48,7 +48,12 @@ pub fn main() -> Nil {
     )
 
   let assert Ok(untrimmed_first_offset) =
-    offset.path_untrimmed_with(source, offset: offset_distance, options:)
+    offset.path_untrimmed_with(
+      source,
+      offset: offset_distance,
+      join: offset.Miter(offset.default_miter_limit),
+      options:,
+    )
   let assert Ok(trace) =
     offset.internal_offset_source_trace(
       source_subpath,

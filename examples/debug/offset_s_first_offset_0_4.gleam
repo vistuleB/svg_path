@@ -32,7 +32,13 @@ pub fn main() -> Nil {
     )
 
   let assert Ok(first_offset) =
-    offset.path_with(source, offset: offset_distance, options:)
+    offset.path_with(
+      source,
+      offset: offset_distance,
+      join: offset.Miter(offset.default_miter_limit),
+      cap: offset.Butt,
+      options:,
+    )
 
   let assert Ok(source_box) = svg_path.path_bounding_box(source)
   let assert Ok(offset_box) = svg_path.path_bounding_box(first_offset)

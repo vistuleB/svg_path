@@ -24,7 +24,6 @@ fn render() -> String {
     offset.Options(
       ..default,
       fitting: offset.FittingOptions(..default.fitting, tolerance: 0.01),
-      join: offset.Round,
     )
 
   let result_things = case
@@ -32,6 +31,7 @@ fn render() -> String {
       source,
       inner_offset: 15.0,
       outer_offset: 30.0,
+      join: offset.Round,
       options:,
     )
   {
@@ -81,16 +81,19 @@ fn retained_band_sections(
   source: svg_path.Subpath,
   inner_offset inner_offset: Float,
   outer_offset outer_offset: Float,
+  join join: offset.Join,
   options options: offset.Options,
 ) -> Result(List(svg_path.Subpath), offset.Error) {
   use provisional_a <- result.try(offset.subpath_untrimmed_with(
     source,
     offset: inner_offset,
+    join:,
     options:,
   ))
   use provisional_b <- result.try(offset.subpath_untrimmed_with(
     source,
     offset: outer_offset,
+    join:,
     options:,
   ))
   use #(cross_a, cross_b) <- result.try(cross_side_split_parameters(

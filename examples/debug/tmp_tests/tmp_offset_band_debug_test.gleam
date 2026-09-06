@@ -146,10 +146,16 @@ fn panel(
     offset.Options(
       ..default,
       fitting: offset.FittingOptions(..default.fitting, tolerance: 0.01),
-      join:,
     )
   let result_things = case
-    offset.subpath_band_with(source, inner_offset:, outer_offset:, options:)
+    offset.subpath_band_with(
+      source,
+      inner_offset:,
+      outer_offset:,
+      join:,
+      cap: offset.Butt,
+      options:,
+    )
   {
     Ok(result) -> [
       svg.StyledPath(

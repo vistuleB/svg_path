@@ -31,9 +31,11 @@
 //// a different trimming policy.
 ////
 //// `subpath_band` and `path_band` construct two signed offset walks and trim
-//// them together without adding endpoint caps. `subpath_stroke` and
-//// `path_stroke` add endpoint caps for open subpaths. Closed strokes use the
-//// same capless per-subpath band construction.
+//// them together without adding endpoint caps to the arranged walks. Their
+//// `cap` style closes the internal winding bands for open sources; disabling
+//// in-band trimming returns that capped band outline. `subpath_stroke` and
+//// `path_stroke` add endpoint caps to the arranged outline for open subpaths.
+//// Closed strokes use capless per-subpath band construction.
 
 import gleam/float
 import gleam/int
@@ -235,10 +237,10 @@ pub type Join {
   Miter(miter_limit: Float)
 
   /// Connect adjacent offset segments with a circular SVG arc.
-  RoundJoin
+  Round
 }
 
-/// Cap style used at open stroke endpoints.
+/// Cap style used at open stroke endpoints and to close open-source winding bands.
 pub type Cap {
   /// End the stroke exactly at the endpoint.
   Butt
@@ -247,7 +249,7 @@ pub type Cap {
   Square
 
   /// Add a semicircular endpoint cap.
-  Round
+  RoundCap
 }
 
 /// Closed band payload produced from one source subpath before trimming.
@@ -313,7 +315,7 @@ pub type FittingOptions {
   FittingOptions(tolerance: Float, samples: Int, max_depth: Int)
 }
 
-/// Options for offset construction.
+/// Technical options for offset construction; styles are explicit parameters.
 ///
 /// `fitting` controls offset approximation. `distance_options` controls
 /// projection and root-finding used while pruning. `stalled_offset_diameter`
@@ -329,9 +331,6 @@ pub type Options {
     distance_options: svg_path.DistanceOptions,
     stalled_offset_diameter: Float,
     tangent_heal_angle_degrees: Float,
-    join: Join,
-    /// Cap applied to the endpoints of open subpaths.
-    cap: Cap,
     single_offset_trimming: SingleOffsetTrimming,
     band_trimming: BandTrimming,
   )
@@ -888,12 +887,14 @@ fn cusp_trim_traced_subpath(
   traced: TracedOffsetSubpath,
   zero_source: svg_path.Subpath,
   offset: Float,
+  cap: Cap,
   options: Options,
 ) -> Result(Option(TracedOffsetSubpath), Error) {
   use trimmed <- result.try(cusp_trim_i_subpath(
     i_subpath_from_traced(traced),
     zero_source,
     offset,
+    cap,
     options,
   ))
   Ok(
@@ -1118,15 +1119,13 @@ pub fn default_fitting_options() -> FittingOptions {
   )
 }
 
-/// Return default options for offset construction.
+/// Return default technical options for offset construction.
 pub fn default_options() -> Options {
   Options(
     fitting: default_fitting_options(),
     distance_options: default_distance_options(),
     stalled_offset_diameter: default_stalled_offset_diameter,
     tangent_heal_angle_degrees: default_tangent_heal_angle_degrees,
-    join: Miter(default_miter_limit),
-    cap: Butt,
     single_offset_trimming: SingleOffsetTrimming(
       offside: True,
       final_trimming: InBandTrimming,
@@ -1324,6 +1323,7 @@ fn trim_single_offset_builds(
   builds: List(SingleOffsetUntrimmedBuild),
   offset: Float,
   bands bands: List(OneSubpathBand),
+  cap cap: Cap,
   options options: Options,
 ) -> Result(svg_path.Path, Error) {
   let SingleOffsetTrimming(offside:, final_trimming:) =
@@ -1332,6 +1332,7 @@ fn trim_single_offset_builds(
     builds,
     offset,
     bands:,
+    cap:,
     options:,
     offside:,
     final_trimming:,
@@ -1350,22 +1351,20 @@ fn trim_single_offset_builds(
 pub fn internal_single_offset_band_candidate(
   source: svg_path.Subpath,
   offset offset: Float,
+  join join: Join,
+  cap cap: Cap,
   options options: Options,
 ) -> Result(OneSubpathBand, Error) {
   use _ <- result.try(validate_options(options))
+  use _ <- result.try(validate_join(join))
   use normalized <- result.try(normalize_source_subpath(source, options))
   use build <- result.try(build_single_offset_untrimmed(
     normalized,
     offset:,
+    join:,
     options:,
   ))
-  band_from_sides(
-    build.zero_source,
-    0.0,
-    build.subpath,
-    offset,
-    cap: options.cap,
-  )
+  band_from_sides(build.zero_source, 0.0, build.subpath, offset, cap:)
 }
 
 /// Return arrangement-split offset edges with their offside classification
@@ -1375,14 +1374,17 @@ pub fn internal_single_offset_band_candidate(
 pub fn internal_path_single_offset_contamination_arrangement_trace(
   source source: svg_path.Path,
   offset offset: Float,
+  join join: Join,
   options options: Options,
 ) -> Result(List(SingleOffsetContaminationTraceEdge), Error) {
   use _ <- result.try(validate_options(options))
+  use _ <- result.try(validate_join(join))
   use normalized <- result.try(normalize_source_path(source, options))
   use builds <- result.try(
     single_offset_untrimmed_path_builds(
       svg_path.path_subpaths(normalized),
       offset,
+      join,
       options,
       converted: [],
     ),
@@ -1519,6 +1521,7 @@ fn final_single_offset_subpaths(
   builds: List(SingleOffsetUntrimmedBuild),
   offset: Float,
   bands bands: List(OneSubpathBand),
+  cap cap: Cap,
   options options: Options,
   offside offside: Bool,
   final_trimming final_trimming: SingleOffsetFinalTrimming,
@@ -1545,6 +1548,7 @@ fn final_single_offset_subpaths(
         offside_trimmed,
         builds,
         offset,
+        cap,
         options,
       )
     InBandTrimming ->
@@ -1622,6 +1626,7 @@ fn cusp_trimmed_single_offset_subpaths_result(
   offside_trimmed: List(TracedOffsetSubpath),
   builds: List(SingleOffsetUntrimmedBuild),
   offset: Float,
+  cap: Cap,
   options: Options,
 ) -> Result(List(svg_path.Subpath), Error) {
   use traced <- result.try(
@@ -1629,6 +1634,7 @@ fn cusp_trimmed_single_offset_subpaths_result(
       offside_trimmed,
       builds,
       offset,
+      cap,
       options,
       trimmed: [],
     ),
@@ -1644,6 +1650,7 @@ fn cusp_trimmed_single_offset_subpaths(
   subpaths: List(TracedOffsetSubpath),
   builds: List(SingleOffsetUntrimmedBuild),
   offset: Float,
+  cap: Cap,
   options: Options,
   trimmed trimmed: List(TracedOffsetSubpath),
 ) -> Result(List(TracedOffsetSubpath), Error) {
@@ -1658,12 +1665,14 @@ fn cusp_trimmed_single_offset_subpaths(
         traced,
         build.zero_source,
         offset,
+        cap,
         options,
       ))
       cusp_trimmed_single_offset_subpaths(
         rest,
         builds,
         offset,
+        cap,
         options,
         trimmed: case result {
           Some(subpath) -> [subpath, ..trimmed]
@@ -2096,11 +2105,12 @@ fn arrangement_split_segments_from_i_contamination_edges(
 pub fn internal_untrimmed_stroke_band(
   source: svg_path.Subpath,
   width width: Float,
+  join join: Join,
   cap cap: Cap,
   options options: Options,
 ) -> Result(OneSubpathBand, Error) {
   use _ <- result.try(validate_stroke_width(width))
-  untrimmed_stroke_band(source, width, cap, options)
+  untrimmed_stroke_band(source, width, join, cap, options)
 }
 
 fn default_distance_options() -> svg_path.DistanceOptions {
@@ -3005,6 +3015,7 @@ fn band_from_sides(
 fn untrimmed_stroke_band(
   source: svg_path.Subpath,
   width: Float,
+  join: Join,
   cap: Cap,
   options: Options,
 ) -> Result(OneSubpathBand, Error) {
@@ -3015,11 +3026,13 @@ fn untrimmed_stroke_band(
       use side_a <- result.try(closed_untrimmed_side_from_normalized_source(
         normalized,
         offset: 0.0 -. radius,
+        join:,
         options:,
       ))
       use side_b <- result.try(closed_untrimmed_side_from_normalized_source(
         normalized,
         offset: radius,
+        join:,
         options:,
       ))
       Ok(ClosedSubpathBand(exterior: side_b, interior: side_a))
@@ -3028,6 +3041,7 @@ fn untrimmed_stroke_band(
       use outline <- result.try(untrimmed_stroke_outline_from_normalized_source(
         normalized,
         radius,
+        join,
         cap,
         options,
       ))
@@ -3039,11 +3053,13 @@ fn untrimmed_stroke_band(
 fn closed_untrimmed_side_from_normalized_source(
   source: svg_path.Subpath,
   offset offset: Float,
+  join join: Join,
   options options: Options,
 ) -> Result(svg_path.Subpath, Error) {
   use side <- result.try(untrimmed_subpath_from_normalized_source(
     source,
     offset: offset,
+    join:,
     options:,
   ))
   svg_path.subpath_set_closed_with(
@@ -3093,7 +3109,7 @@ fn open_band_end_cap(
   let end_b = svg_path.subpath_end(side_b)
   case cap {
     Butt -> Ok(line_segments_between([end_a, end_b]))
-    Square | Round -> {
+    Square | RoundCap -> {
       let radius = point_helpers.distance(end_a, end_b) /. 2.0
       case list.last(svg_path.subpath_segments(side_a)) {
         Error(_) -> Ok(line_segments_between([end_a, end_b]))
@@ -3116,7 +3132,7 @@ fn open_band_start_cap(
   let start_b = svg_path.subpath_start(side_b)
   case cap {
     Butt -> Ok(line_segments_between([start_b, start_a]))
-    Square | Round -> {
+    Square | RoundCap -> {
       let radius = point_helpers.distance(start_a, start_b) /. 2.0
       case list.first(svg_path.subpath_segments(side_b)) {
         Error(_) -> Ok(line_segments_between([start_b, start_a]))
@@ -3146,7 +3162,7 @@ fn band_cap_segments(
   case cap {
     Butt -> Ok(line_segments_between([from, to]))
     Square -> Ok(line_segments_between([from, extended_from, extended_to, to]))
-    Round -> {
+    RoundCap -> {
       Ok([
         svg_path.Arc(
           start: from,
@@ -3301,24 +3317,27 @@ pub fn subpath_offset_map_with(
 /// Curves return an open subpath because the result may need several pieces to
 /// stay within tolerance. Circular arcs offset to circular arcs; non-circular
 /// arcs and Beziers use cubic fitting.
+/// `join` connects any separate traversals produced by degenerate normalization.
 pub fn segment(
   segment: svg_path.Segment,
   offset offset: Float,
+  join join: Join,
 ) -> Result(svg_path.Subpath, Error) {
-  segment_with(segment, offset:, options: default_options())
+  segment_with(segment, offset:, join:, options: default_options())
 }
 
 /// Offset one segment by a signed normal displacement using explicit options.
 pub fn segment_with(
   segment segment: svg_path.Segment,
   offset offset: Float,
+  join join: Join,
   options options: Options,
 ) -> Result(svg_path.Subpath, Error) {
   use source <- result.try(
     svg_path.subpath_with([segment], policy: svg_path.Strict)
     |> result.map_error(PathError),
   )
-  case subpath_untrimmed_with(source, offset:, options:) {
+  case subpath_untrimmed_with(source, offset:, join:, options:) {
     Error(PathError(svg_path.EmptySubpath)) -> Error(DegenerateTangent(0.0))
     result -> result
   }
@@ -3327,7 +3346,7 @@ pub fn segment_with(
 /// Offset a subpath by a signed normal displacement.
 ///
 /// Positive offsets point along the visual left normal. Adjacent
-/// offset segments are connected using `default_options().join`. The result is
+/// offset segments are connected using `join`. The result is
 /// a path because trimming self-intersections can split the offset into
 /// multiple subpaths or remove it entirely.
 ///
@@ -3335,24 +3354,31 @@ pub fn segment_with(
 /// zero-offset source pieces, removes zero-source-only and winding-mismatched
 /// arrangement capacities, applies forced parity reductions, and reconstructs
 /// surviving offset edges in untrimmed traversal order.
+/// `cap` closes the internal winding bands at open source endpoints.
 pub fn subpath(
   subpath: svg_path.Subpath,
   offset offset: Float,
+  join join: Join,
+  cap cap: Cap,
 ) -> Result(svg_path.Path, Error) {
-  subpath_with(subpath, offset:, options: default_options())
+  subpath_with(subpath, offset:, join:, cap:, options: default_options())
 }
 
 /// Offset a subpath by a signed normal displacement using explicit options.
 pub fn subpath_with(
   subpath subpath: svg_path.Subpath,
   offset offset: Float,
+  join join: Join,
+  cap cap: Cap,
   options options: Options,
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(validate_options(options))
+  use _ <- result.try(validate_join(join))
   use normalized <- result.try(normalize_source_subpath(subpath, options))
   use untrimmed_build <- result.try(build_single_offset_untrimmed(
     normalized,
     offset:,
+    join:,
     options:,
   ))
   use band <- result.try(band_from_sides(
@@ -3360,9 +3386,15 @@ pub fn subpath_with(
     0.0,
     untrimmed_build.subpath,
     offset,
-    cap: options.cap,
+    cap:,
   ))
-  trim_single_offset_builds([untrimmed_build], offset, bands: [band], options:)
+  trim_single_offset_builds(
+    [untrimmed_build],
+    offset,
+    bands: [band],
+    cap:,
+    options:,
+  )
 }
 
 fn normalize_source_subpath(
@@ -3759,8 +3791,9 @@ fn stretch_segment(
 
 /// Offset a subpath at two signed normal displacements and trim the sides.
 ///
-/// No endpoint caps are added. The two untrimmed offset walks are trimmed
-/// together as a capless band. This supports ordinary capless stroke sides,
+/// No endpoint caps are added to the arranged offset walks. `cap` closes the
+/// internal winding bands for open sources. Disabling in-band trimming returns
+/// the capped band outline instead. This supports ordinary capless stroke sides,
 /// one-sided bands, and asymmetric bands such as two positive offsets.
 /// Either numeric ordering is accepted. Exchanging `inner_offset` and
 /// `outer_offset` reverses the orientation of the resulting band.
@@ -3768,11 +3801,15 @@ pub fn subpath_band(
   subpath: svg_path.Subpath,
   inner_offset inner_offset: Float,
   outer_offset outer_offset: Float,
+  join join: Join,
+  cap cap: Cap,
 ) -> Result(svg_path.Path, Error) {
   subpath_band_with(
     subpath,
     inner_offset:,
     outer_offset:,
+    join:,
+    cap:,
     options: default_options(),
   )
 }
@@ -3787,14 +3824,18 @@ pub fn subpath_band_with(
   subpath subpath: svg_path.Subpath,
   inner_offset inner_offset: Float,
   outer_offset outer_offset: Float,
+  join join: Join,
+  cap cap: Cap,
   options options: Options,
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(validate_options(options))
+  use _ <- result.try(validate_join(join))
   use normalized <- result.try(normalize_source_subpath(subpath, options))
   use build <- result.try(build_synchronized_untrimmed(
     normalized,
     inner_offset: inner_offset,
     outer_offset: outer_offset,
+    join:,
     options:,
   ))
   let SynchronizedUntrimmedBuild(
@@ -3807,6 +3848,7 @@ pub fn subpath_band_with(
     culled_a,
     normalized,
     inner_offset,
+    cap,
     options,
     enabled: inner_cusps,
   ))
@@ -3814,6 +3856,7 @@ pub fn subpath_band_with(
     culled_b,
     normalized,
     outer_offset,
+    cap,
     options,
     enabled: outer_cusps,
   ))
@@ -3825,7 +3868,7 @@ pub fn subpath_band_with(
         inner_offset,
         untrimmed_b,
         outer_offset,
-        cap: options.cap,
+        cap:,
       ))
       let winding_opinions = case inner_offset >=. outer_offset {
         True -> [
@@ -3859,6 +3902,7 @@ fn trim_band_side_cusps(
   subpath: ICulledOffsetSubpath,
   zero_source: svg_path.Subpath,
   offset: Float,
+  cap: Cap,
   options: Options,
   enabled enabled: Bool,
 ) -> Result(Option(svg_path.Subpath), Error) {
@@ -3872,6 +3916,7 @@ fn trim_band_side_cusps(
         subpath,
         zero_source,
         offset,
+        cap,
         options,
       ))
       case trimmed {
@@ -3890,14 +3935,18 @@ pub fn internal_subpath_band_arrangement_trace(
   subpath subpath: svg_path.Subpath,
   inner_offset inner_offset: Float,
   outer_offset outer_offset: Float,
+  join join: Join,
+  cap cap: Cap,
   options options: Options,
 ) -> Result(List(BandArrangementTraceEdge), Error) {
   use _ <- result.try(validate_options(options))
+  use _ <- result.try(validate_join(join))
   use normalized <- result.try(normalize_source_subpath(subpath, options))
   use build <- result.try(build_synchronized_untrimmed(
     normalized,
     inner_offset: inner_offset,
     outer_offset: outer_offset,
+    join:,
     options:,
   ))
   let SynchronizedUntrimmedBuild(
@@ -3909,12 +3958,14 @@ pub fn internal_subpath_band_arrangement_trace(
     culled_a,
     normalized,
     inner_offset,
+    cap,
     options,
   ))
   use trimmed_b <- result.try(cusp_trim_i_subpath(
     culled_b,
     normalized,
     outer_offset,
+    cap,
     options,
   ))
   case trimmed_a, trimmed_b {
@@ -3933,7 +3984,7 @@ pub fn internal_subpath_band_arrangement_trace(
         inner_offset,
         untrimmed_b,
         outer_offset,
-        cap: options.cap,
+        cap:,
       ))
       let winding_opinions = case inner_offset >=. outer_offset {
         True -> [
@@ -3966,14 +4017,18 @@ pub fn internal_subpath_band_cusp_trimming_arrangement_trace(
   subpath subpath: svg_path.Subpath,
   inner_offset inner_offset: Float,
   outer_offset outer_offset: Float,
+  join join: Join,
+  cap cap: Cap,
   options options: Options,
 ) -> Result(List(CuspTrimmingArrangementTraceEdge), Error) {
   use _ <- result.try(validate_options(options))
+  use _ <- result.try(validate_join(join))
   use normalized <- result.try(normalize_source_subpath(subpath, options))
   use build <- result.try(build_synchronized_untrimmed(
     normalized,
     inner_offset: inner_offset,
     outer_offset: outer_offset,
+    join:,
     options:,
   ))
   let SynchronizedUntrimmedBuild(
@@ -3986,6 +4041,7 @@ pub fn internal_subpath_band_cusp_trimming_arrangement_trace(
     normalized,
     inner_offset,
     side_index: 0,
+    cap:,
     options:,
   ))
   use second <- result.try(cusp_trimming_arrangement_trace_for_side(
@@ -3993,6 +4049,7 @@ pub fn internal_subpath_band_cusp_trimming_arrangement_trace(
     normalized,
     outer_offset,
     side_index: 1,
+    cap:,
     options:,
   ))
   Ok(list.append(first, second))
@@ -4003,6 +4060,7 @@ fn cusp_trimming_arrangement_trace_for_side(
   zero_source: svg_path.Subpath,
   offset: Float,
   side_index side_index: Int,
+  cap cap: Cap,
   options options: Options,
 ) -> Result(List(CuspTrimmingArrangementTraceEdge), Error) {
   let ICulledOffsetSubpath(segments:, closed:, ..) = subpath
@@ -4016,7 +4074,7 @@ fn cusp_trimming_arrangement_trace_for_side(
     0.0,
     geometry,
     offset,
-    cap: options.cap,
+    cap:,
   ))
   use winding <- result.try(internal_band_winding_function([band]))
   use arrangement <- result.try(single_offset_segment_arrangement(
@@ -4112,11 +4170,13 @@ pub fn subpath_band_untrimmed(
   subpath: svg_path.Subpath,
   inner_offset inner_offset: Float,
   outer_offset outer_offset: Float,
+  join join: Join,
 ) -> Result(svg_path.Path, Error) {
   subpath_band_untrimmed_with(
     subpath,
     inner_offset:,
     outer_offset:,
+    join:,
     options: default_options(),
   )
 }
@@ -4127,21 +4187,24 @@ pub fn subpath_band_untrimmed_with(
   subpath subpath: svg_path.Subpath,
   inner_offset inner_offset: Float,
   outer_offset outer_offset: Float,
+  join join: Join,
   options options: Options,
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(validate_options(options))
+  use _ <- result.try(validate_join(join))
   use normalized <- result.try(normalize_source_subpath(subpath, options))
   use build <- result.try(build_synchronized_untrimmed(
     normalized,
     inner_offset: inner_offset,
     outer_offset: outer_offset,
+    join:,
     options:,
   ))
   let SynchronizedUntrimmedBuild(inner: side_a, outer: side_b, ..) = build
   Ok(svg_path.Path(subpaths: [side_a, side_b]))
 }
 
-/// Stroke a subpath with the default butt cap.
+/// Stroke a subpath using explicit join and cap styles.
 ///
 /// Open subpaths build one closed untrimmed stroke boundary from the two
 /// offset sides and endpoint caps, then keep sections that separate points
@@ -4150,18 +4213,23 @@ pub fn subpath_band_untrimmed_with(
 pub fn subpath_stroke(
   subpath: svg_path.Subpath,
   width width: Float,
+  join join: Join,
+  cap cap: Cap,
 ) -> Result(svg_path.Path, Error) {
-  subpath_stroke_with(subpath, width:, options: default_options())
+  subpath_stroke_with(subpath, width:, join:, cap:, options: default_options())
 }
 
-/// Stroke a subpath using explicit cap and offset options.
+/// Stroke a subpath using explicit join, cap, and technical options.
 pub fn subpath_stroke_with(
   subpath subpath: svg_path.Subpath,
   width width: Float,
+  join join: Join,
+  cap cap: Cap,
   options options: Options,
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(validate_stroke_width(width))
   use _ <- result.try(validate_options(options))
+  use _ <- result.try(validate_join(join))
   let radius = width /. 2.0
   case svg_path.subpath_segments(subpath) {
     [] -> Ok(svg_path.path_empty())
@@ -4170,13 +4238,15 @@ pub fn subpath_stroke_with(
         svg_path.subpath_is_zero_length(subpath, tolerance: point_tolerance)
       {
         Error(error) -> Error(PathError(error))
-        Ok(True) -> zero_length_stroke_path(subpath, radius:, cap: options.cap)
+        Ok(True) -> zero_length_stroke_path(subpath, radius:, cap:)
         Ok(False) -> {
           case svg_path.subpath_is_closed(subpath) {
             True -> {
               use stroke <- result.try(closed_stroke_path(
                 subpath,
                 radius: radius,
+                join:,
+                cap:,
                 options: options,
               ))
               orient_outline_path(stroke)
@@ -4185,7 +4255,8 @@ pub fn subpath_stroke_with(
               use untrimmed <- result.try(untrimmed_stroke_outline(
                 subpath,
                 radius,
-                options.cap,
+                join,
+                cap,
                 options,
               ))
               use stroke <- result.try(topological_band_path(
@@ -4204,32 +4275,41 @@ pub fn subpath_stroke_with(
 /// Offset a subpath without trimming self-intersections.
 ///
 /// This returns the untrimmed one-sided offset walk. Adjacent segment offsets
-/// are connected with `default_options().join`; the result may self-intersect or
+/// are connected with `join`; the result may self-intersect or
 /// contain sections that a trimmed offset would remove.
 pub fn subpath_untrimmed(
   subpath: svg_path.Subpath,
   offset offset: Float,
+  join join: Join,
 ) -> Result(svg_path.Subpath, Error) {
-  subpath_untrimmed_with(subpath, offset:, options: default_options())
+  subpath_untrimmed_with(subpath, offset:, join:, options: default_options())
 }
 
 /// Offset a subpath without trimming self-intersections using explicit options.
 pub fn subpath_untrimmed_with(
   subpath subpath: svg_path.Subpath,
   offset offset: Float,
+  join join: Join,
   options options: Options,
 ) -> Result(svg_path.Subpath, Error) {
   use _ <- result.try(validate_options(options))
+  use _ <- result.try(validate_join(join))
   use normalized <- result.try(normalize_source_subpath(subpath, options))
-  untrimmed_subpath_from_normalized_source(normalized, offset: offset, options:)
+  untrimmed_subpath_from_normalized_source(
+    normalized,
+    offset: offset,
+    join:,
+    options:,
+  )
 }
 
 fn untrimmed_subpath_from_normalized_source(
   subpath: svg_path.Subpath,
   offset offset: Float,
+  join join: Join,
   options options: Options,
 ) -> Result(svg_path.Subpath, Error) {
-  build_single_offset_untrimmed(subpath, offset, options)
+  build_single_offset_untrimmed(subpath, offset, join, options)
   |> result.map(fn(build) { build.subpath })
 }
 
@@ -4237,23 +4317,29 @@ fn untrimmed_subpath_from_normalized_source(
 pub fn path(
   path: svg_path.Path,
   offset offset: Float,
+  join join: Join,
+  cap cap: Cap,
 ) -> Result(svg_path.Path, Error) {
-  path_with(path, offset:, options: default_options())
+  path_with(path, offset:, join:, cap:, options: default_options())
 }
 
 /// Offset every subpath by a signed normal displacement using explicit options.
 pub fn path_with(
   path path: svg_path.Path,
   offset offset: Float,
+  join join: Join,
+  cap cap: Cap,
   options options: Options,
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(validate_options(options))
+  use _ <- result.try(validate_join(join))
   use normalized <- result.try(normalize_source_path(path, options))
   let source_subpaths = svg_path.path_subpaths(normalized)
   use untrimmed_builds <- result.try(
     single_offset_untrimmed_path_builds(
       source_subpaths,
       offset,
+      join,
       options,
       converted: [],
     ),
@@ -4262,7 +4348,7 @@ pub fn path_with(
     single_offset_bands_from_builds(
       untrimmed_builds,
       offset,
-      cap: options.cap,
+      cap:,
       converted: [],
     ),
   )
@@ -4270,6 +4356,7 @@ pub fn path_with(
     untrimmed_builds,
     offset,
     bands:,
+    cap:,
     options:,
   ))
   Ok(result)
@@ -4305,8 +4392,17 @@ pub fn path_band(
   path: svg_path.Path,
   inner_offset inner_offset: Float,
   outer_offset outer_offset: Float,
+  join join: Join,
+  cap cap: Cap,
 ) -> Result(svg_path.Path, Error) {
-  path_band_with(path, inner_offset:, outer_offset:, options: default_options())
+  path_band_with(
+    path,
+    inner_offset:,
+    outer_offset:,
+    join:,
+    cap:,
+    options: default_options(),
+  )
 }
 
 /// Offset every subpath in a path at two signed normal displacements using
@@ -4315,14 +4411,19 @@ pub fn path_band_with(
   path path: svg_path.Path,
   inner_offset inner_offset: Float,
   outer_offset outer_offset: Float,
+  join join: Join,
+  cap cap: Cap,
   options options: Options,
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(validate_options(options))
+  use _ <- result.try(validate_join(join))
   use subpaths <- result.try(
     band_path_subpaths(
       svg_path.path_subpaths(path),
       inner_offset,
       outer_offset,
+      join,
+      cap,
       options,
       converted: [],
     ),
@@ -4336,11 +4437,13 @@ pub fn path_band_untrimmed(
   path: svg_path.Path,
   inner_offset inner_offset: Float,
   outer_offset outer_offset: Float,
+  join join: Join,
 ) -> Result(svg_path.Path, Error) {
   path_band_untrimmed_with(
     path,
     inner_offset:,
     outer_offset:,
+    join:,
     options: default_options(),
   )
 }
@@ -4351,14 +4454,17 @@ pub fn path_band_untrimmed_with(
   path path: svg_path.Path,
   inner_offset inner_offset: Float,
   outer_offset outer_offset: Float,
+  join join: Join,
   options options: Options,
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(validate_options(options))
+  use _ <- result.try(validate_join(join))
   use subpaths <- result.try(
     untrimmed_band_path_subpaths(
       svg_path.path_subpaths(path),
       inner_offset,
       outer_offset,
+      join,
       options,
       converted: [],
     ),
@@ -4366,26 +4472,33 @@ pub fn path_band_untrimmed_with(
   Ok(svg_path.Path(subpaths:))
 }
 
-/// Stroke every subpath in a path with the default butt cap.
+/// Stroke every subpath in a path using explicit join and cap styles.
 pub fn path_stroke(
   path: svg_path.Path,
   width width: Float,
+  join join: Join,
+  cap cap: Cap,
 ) -> Result(svg_path.Path, Error) {
-  path_stroke_with(path, width:, options: default_options())
+  path_stroke_with(path, width:, join:, cap:, options: default_options())
 }
 
-/// Stroke every subpath in a path using explicit cap and offset options.
+/// Stroke every subpath in a path using explicit join, cap, and technical options.
 pub fn path_stroke_with(
   path path: svg_path.Path,
   width width: Float,
+  join join: Join,
+  cap cap: Cap,
   options options: Options,
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(validate_stroke_width(width))
   use _ <- result.try(validate_options(options))
+  use _ <- result.try(validate_join(join))
   use subpaths <- result.try(
     stroke_path_subpaths(
       svg_path.path_subpaths(path),
       width,
+      join,
+      cap,
       options,
       converted: [],
     ),
@@ -4397,8 +4510,9 @@ pub fn path_stroke_with(
 pub fn path_untrimmed(
   path: svg_path.Path,
   offset offset: Float,
+  join join: Join,
 ) -> Result(svg_path.Path, Error) {
-  path_untrimmed_with(path, offset:, options: default_options())
+  path_untrimmed_with(path, offset:, join:, options: default_options())
 }
 
 /// Offset every subpath in a path without trimming self-intersections using
@@ -4406,13 +4520,16 @@ pub fn path_untrimmed(
 pub fn path_untrimmed_with(
   path path: svg_path.Path,
   offset offset: Float,
+  join join: Join,
   options options: Options,
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(validate_options(options))
+  use _ <- result.try(validate_join(join))
   use subpaths <- result.try(
     untrimmed_offset_path_subpaths(
       svg_path.path_subpaths(path),
       offset,
+      join,
       options,
       converted: [],
     ),
@@ -4455,7 +4572,7 @@ fn validate_tangent_heal_angle(options: Options) -> Result(Nil, Error) {
   {
     True ->
       Error(InvalidTangentHealAngleDegrees(options.tangent_heal_angle_degrees))
-    False -> validate_join(options.join)
+    False -> Ok(Nil)
   }
 }
 
@@ -4466,7 +4583,7 @@ fn validate_join(join: Join) -> Result(Nil, Error) {
         True -> Error(InvalidMiterLimit(miter_limit))
         False -> Ok(Nil)
       }
-    Bevel | RoundJoin -> Ok(Nil)
+    Bevel | Round -> Ok(Nil)
   }
 }
 
@@ -4480,6 +4597,7 @@ fn validate_stroke_width(width: Float) -> Result(Nil, Error) {
 fn untrimmed_offset_path_subpaths(
   subpaths: List(svg_path.Subpath),
   offset: Float,
+  join: Join,
   options options: Options,
   converted converted: List(svg_path.Subpath),
 ) -> Result(List(svg_path.Subpath), Error) {
@@ -4489,9 +4607,10 @@ fn untrimmed_offset_path_subpaths(
       use offset_subpath <- result.try(subpath_untrimmed_with(
         first,
         offset:,
+        join:,
         options:,
       ))
-      untrimmed_offset_path_subpaths(rest, offset, options, converted: [
+      untrimmed_offset_path_subpaths(rest, offset, join, options, converted: [
         offset_subpath,
         ..converted
       ])
@@ -4502,6 +4621,7 @@ fn untrimmed_offset_path_subpaths(
 fn single_offset_untrimmed_path_builds(
   subpaths: List(svg_path.Subpath),
   offset: Float,
+  join: Join,
   options: Options,
   converted converted: List(SingleOffsetUntrimmedBuild),
 ) -> Result(List(SingleOffsetUntrimmedBuild), Error) {
@@ -4511,12 +4631,16 @@ fn single_offset_untrimmed_path_builds(
       use build <- result.try(build_single_offset_untrimmed(
         first,
         offset:,
+        join:,
         options:,
       ))
-      single_offset_untrimmed_path_builds(rest, offset, options, converted: [
-        build,
-        ..converted
-      ])
+      single_offset_untrimmed_path_builds(
+        rest,
+        offset,
+        join,
+        options,
+        converted: [build, ..converted],
+      )
     }
   }
 }
@@ -4525,6 +4649,7 @@ fn untrimmed_band_path_subpaths(
   subpaths: List(svg_path.Subpath),
   inner_offset: Float,
   outer_offset: Float,
+  join: Join,
   options: Options,
   converted converted: List(svg_path.Subpath),
 ) -> Result(List(svg_path.Subpath), Error) {
@@ -4535,12 +4660,14 @@ fn untrimmed_band_path_subpaths(
         first,
         inner_offset:,
         outer_offset:,
+        join:,
         options:,
       ))
       untrimmed_band_path_subpaths(
         rest,
         inner_offset,
         outer_offset,
+        join,
         options,
         converted: list.append(
           list.reverse(svg_path.path_subpaths(band)),
@@ -4554,16 +4681,26 @@ fn untrimmed_band_path_subpaths(
 fn stroke_path_subpaths(
   subpaths: List(svg_path.Subpath),
   width: Float,
+  join: Join,
+  cap: Cap,
   options: Options,
   converted converted: List(svg_path.Subpath),
 ) -> Result(List(svg_path.Subpath), Error) {
   case subpaths {
     [] -> Ok(list.reverse(converted))
     [first, ..rest] -> {
-      use stroke <- result.try(subpath_stroke_with(first, width:, options:))
+      use stroke <- result.try(subpath_stroke_with(
+        first,
+        width:,
+        join:,
+        cap:,
+        options:,
+      ))
       stroke_path_subpaths(
         rest,
         width,
+        join,
+        cap,
         options,
         converted: list.append(
           list.reverse(svg_path.path_subpaths(stroke)),
@@ -4837,6 +4974,8 @@ fn band_path_subpaths(
   subpaths: List(svg_path.Subpath),
   inner_offset: Float,
   outer_offset: Float,
+  join: Join,
+  cap: Cap,
   options: Options,
   converted converted: List(svg_path.Subpath),
 ) -> Result(List(svg_path.Subpath), Error) {
@@ -4847,12 +4986,16 @@ fn band_path_subpaths(
         first,
         inner_offset:,
         outer_offset:,
+        join:,
+        cap:,
         options:,
       ))
       band_path_subpaths(
         rest,
         inner_offset,
         outer_offset,
+        join,
+        cap,
         options,
         converted: list.append(
           list.reverse(svg_path.path_subpaths(offset)),
@@ -4866,12 +5009,14 @@ fn band_path_subpaths(
 fn build_single_offset_untrimmed(
   subpath: svg_path.Subpath,
   offset offset: Float,
+  join join: Join,
   options options: Options,
 ) -> Result(SingleOffsetUntrimmedBuild, Error) {
   use build <- result.try(build_synchronized_untrimmed(
     subpath,
     inner_offset: 0.0,
     outer_offset: offset,
+    join:,
     options:,
   ))
   let SynchronizedUntrimmedBuild(
@@ -4897,6 +5042,7 @@ fn build_synchronized_untrimmed(
   subpath: svg_path.Subpath,
   inner_offset inner_offset: Float,
   outer_offset outer_offset: Float,
+  join join: Join,
   options options: Options,
 ) -> Result(SynchronizedUntrimmedBuild, Error) {
   let distances = OffsetDistances(inner: inner_offset, outer: outer_offset)
@@ -4934,7 +5080,7 @@ fn build_synchronized_untrimmed(
       use join_correspondences <- result.try(synchronized_join_correspondences(
         portions,
         distances,
-        options.join,
+        join,
         closed: svg_path.subpath_is_closed(subpath),
       ))
       let closed = svg_path.subpath_is_closed(subpath)
@@ -5389,6 +5535,7 @@ fn cusp_trim_i_subpath(
   subpath: ICulledOffsetSubpath,
   zero_source: svg_path.Subpath,
   offset: Float,
+  cap: Cap,
   options: Options,
 ) -> Result(Option(CuspTrimmedSubpath), Error) {
   let ICulledOffsetSubpath(segments:, closed:, ..) = subpath
@@ -5405,7 +5552,7 @@ fn cusp_trim_i_subpath(
         0.0,
         geometry,
         offset,
-        cap: options.cap,
+        cap:,
       ))
       use winding <- result.try(internal_band_winding_function([band]))
       use build <- result.try(single_offset_segment_arrangement(
@@ -6172,7 +6319,7 @@ fn parametric_join_segments(
         Bevel -> Ok(line_segments_between([start, end]))
         Miter(miter_limit) ->
           directed_miter_join(left, right, start, end, offset, miter_limit)
-        RoundJoin -> round_join(left, right, start, end, offset)
+        Round -> round_join(left, right, start, end, offset)
       }
   }
 }
@@ -6381,12 +6528,15 @@ fn join_between_offset_portions(
 fn closed_stroke_path(
   source: svg_path.Subpath,
   radius radius: Float,
+  join join: Join,
+  cap cap: Cap,
   options options: Options,
 ) -> Result(svg_path.Path, Error) {
   use band <- result.try(untrimmed_stroke_band(
     source,
     radius *. 2.0,
-    Butt,
+    join,
+    cap,
     options,
   ))
   case band {
@@ -6627,6 +6777,7 @@ fn orient_outline_subpath(
 fn untrimmed_stroke_outline(
   source: svg_path.Subpath,
   radius: Float,
+  join: Join,
   cap: Cap,
   options: Options,
 ) -> Result(svg_path.Subpath, Error) {
@@ -6634,6 +6785,7 @@ fn untrimmed_stroke_outline(
   untrimmed_stroke_outline_from_normalized_source(
     normalized,
     radius,
+    join,
     cap,
     options,
   )
@@ -6642,17 +6794,20 @@ fn untrimmed_stroke_outline(
 fn untrimmed_stroke_outline_from_normalized_source(
   source: svg_path.Subpath,
   radius: Float,
+  join: Join,
   cap: Cap,
   options: Options,
 ) -> Result(svg_path.Subpath, Error) {
   use positive <- result.try(untrimmed_subpath_from_normalized_source(
     source,
     offset: radius,
+    join:,
     options:,
   ))
   use negative <- result.try(untrimmed_subpath_from_normalized_source(
     source,
     offset: 0.0 -. radius,
+    join:,
     options:,
   ))
   use end_cap <- result.try(stroke_end_cap(source, radius, cap))
@@ -6688,7 +6843,7 @@ fn zero_length_stroke_path(
   let center = svg_path.subpath_start(subpath)
   case cap {
     Butt -> Ok(svg_path.path_empty())
-    Round -> zero_length_round_stroke_path(center, radius)
+    RoundCap -> zero_length_round_stroke_path(center, radius)
     Square -> zero_length_square_stroke_path(center, radius)
   }
 }
@@ -6835,7 +6990,7 @@ fn stroke_cap_segments(
           )
       }
     }
-    Round -> {
+    RoundCap -> {
       let start = case at_end {
         True -> positive
         False -> negative
@@ -7156,14 +7311,17 @@ pub fn internal_synchronized_join_trace(
   subpath subpath: svg_path.Subpath,
   inner_offset inner_offset: Float,
   outer_offset outer_offset: Float,
+  join join: Join,
   options options: Options,
 ) -> Result(List(SynchronizedOffsetTraceJoin), Error) {
   use _ <- result.try(validate_options(options))
+  use _ <- result.try(validate_join(join))
   use normalized <- result.try(normalize_source_subpath(subpath, options))
   use build <- result.try(build_synchronized_untrimmed(
     normalized,
     inner_offset:,
     outer_offset:,
+    join:,
     options:,
   ))
   let SynchronizedUntrimmedBuild(join_correspondences:, ..) = build

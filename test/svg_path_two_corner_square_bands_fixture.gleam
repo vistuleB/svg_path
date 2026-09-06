@@ -27,7 +27,6 @@ fn band(
   let options =
     offset.Options(
       ..offset.default_options(),
-      join: offset.RoundJoin,
       band_trimming: offset.BandTrimming(
         inner_cusps:,
         outer_cusps:,
@@ -39,6 +38,8 @@ fn band(
       source,
       inner_offset: 1.7,
       outer_offset: 1.8,
+      join: offset.Round,
+      cap: offset.Butt,
       options:,
     )
   band

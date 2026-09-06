@@ -1395,30 +1395,54 @@ line.
 ```gleam
 import svg_path/offset
 
-offset.segment(segment, offset: 12.0)
+offset.segment(
+  segment,
+  offset: 12.0,
+  join: offset.Miter(offset.default_miter_limit),
+)
 // -> Result(svg_path.Subpath, offset.Error)
 
-offset.subpath(subpath, offset: 12.0)
-offset.path(path, offset: 12.0)
+offset.subpath(
+  subpath,
+  offset: 12.0,
+  join: offset.Miter(offset.default_miter_limit),
+  cap: offset.Butt,
+)
+offset.path(
+  path,
+  offset: 12.0,
+  join: offset.Miter(offset.default_miter_limit),
+  cap: offset.Butt,
+)
 // -> Result(svg_path.Path, offset.Error)
 ```
 
 A segment offset returns a `Subpath` because one source curve may require
 several fitted pieces. Subpath and path offsets return a `Path`: trimming may
 split one offset walk into multiple subpaths or remove it entirely.
+Segment offsets take `join:` to connect separate traversals produced by
+degenerate normalization, but do not take `cap:`. The offset-map helpers take
+neither style.
 
-The `_with` variants accept `offset.Options`. The join can be `Bevel`,
-`Miter(miter_limit:)`, or `RoundJoin`, and the endpoint cap defaults to `Butt`
-with `Square` or `Round` available for open sources. `Options.fitting` controls
-fitted-curve accuracy and maximum subdivision depth. `Options.distance_options`
-controls the projection and root-finding tolerances used during trimming; it is
-not a trimming-policy switch.
+Joins and caps are explicit labeled arguments, not fields of `offset.Options`.
+Choose `join: offset.Bevel`, `offset.Miter(miter_limit:)`, or `offset.Round`,
+and `cap: offset.Butt`, `offset.Square`, or `offset.RoundCap` wherever the operation
+constructs an open-source band or stroke outline. Single-offset trimming also
+takes `cap:` for its internal source-to-offset winding band; this does not add
+caps to the returned one-sided offset walk.
+
+The `_with` variants additionally accept `options: offset.Options` for fitting,
+numerical tolerances, and trimming controls. The forms without `_with` supply
+only these technical defaults, not a join or cap choice. `Options.fitting`
+controls fitted-curve accuracy and maximum subdivision depth.
+`Options.distance_options` controls the projection and root-finding tolerances
+used during trimming; it is not a trimming-policy switch.
 
 Use `subpath_untrimmed`, `path_untrimmed`, or their `_with` variants to obtain
 the connected offset walks before topological trimming. These are useful for
 inspection or for callers implementing a different trimming policy, but they
 may retain self-intersections, reversal folds, and regions lying on the wrong
-side of a closed source contour.
+side of a closed source contour. They take `join:` but no `cap:`.
 
 ### Single-Offset Trimming
 
@@ -1479,20 +1503,28 @@ offset.subpath_band(
   subpath,
   inner_offset: 18.0,
   outer_offset: 34.0,
+  join: offset.Round,
+  cap: offset.Butt,
 )
 
 offset.path_band(
   path,
   inner_offset: 18.0,
   outer_offset: 34.0,
+  join: offset.Round,
+  cap: offset.Butt,
 )
 ```
 
 `inner` and `outer` are caller-assigned roles, not a numeric-order
 restriction. Either ordering is accepted. Exchanging the values reverses the
-orientation of the resulting band. Bands cap open-source endpoints with
-`options.cap`, which defaults to `Butt`; the `Square` and `Round` caps extend
-or round the open ends the same way `subpath_stroke` does.
+orientation of the resulting band. The explicit `cap:` argument determines
+how open-source endpoints are connected in the internal winding band. With
+`band_trimming.in_band: False`, the returned assembled outline exposes these
+caps: `Butt` connects the sides directly, while `Square` and `RoundCap` extend or
+round the ends. With the default `in_band: True`, reconstruction can return
+capless offset sides; selecting a cap does not guarantee visible caps in the
+trimmed output. Use the stroke APIs when you need a stroke outline.
 
 Band trimming has three independent Boolean controls:
 
@@ -1537,6 +1569,41 @@ disconnected loops that the default pipeline removes.
 `subpath_band_untrimmed`, `path_band_untrimmed`, and their `_with` variants
 return the two synchronized offset sides without side-local or joint trimming.
 They preserve inner-then-outer ordering and add no caps or bridges.
+These untrimmed functions take an explicit `join:` but no `cap:`.
+
+### Stroke Styles
+
+`svg_path/stroke` has its own parallel `stroke.Join` and `stroke.Cap` types:
+`stroke.Bevel`, `stroke.Miter(miter_limit:)`, and `stroke.Round` select the
+join; `stroke.Butt`, `stroke.RoundCap`, and `stroke.Square` select the cap.
+Use these constructors at the stroke layer, not the corresponding `offset.*`
+constructors.
+
+```gleam
+import svg_path/stroke
+
+stroke.subpath(subpath, width: 8.0, join: stroke.Round, cap: stroke.RoundCap)
+
+let options = stroke.Options(..stroke.default_options(), width: 8.0)
+stroke.path_with(path, join: stroke.Bevel, cap: stroke.Square, options:)
+
+stroke.subpath_dashed(
+  subpath,
+  width: 8.0,
+  pattern: [12.0, 6.0],
+  offset: 0.0,
+  join: stroke.Round,
+  cap: stroke.RoundCap,
+)
+```
+
+All stroke-outline entry points (`segment`, `subpath`, `path`,
+`subpath_dashed`, and `path_dashed`, including their `_with` forms) require
+explicit `join:` and `cap:` arguments. `stroke.Options` contains only `width`
+and nested `offset.Options` in `offset`; neither options type stores styles.
+The non-`_with` forms accept `width:` directly and default only the technical
+options. Pure dash extraction (`subpath_dashes`, `path_dashes`, and their
+`_with` forms) is unchanged and takes no join or cap.
 
 ## Arrangement Graphs
 
