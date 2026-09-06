@@ -361,3 +361,38 @@ pub fn classification_rejects_out_of_range_angular_tolerance_test() {
     )
     == Error(intersections.InvalidAngularTolerance(180.0))
 }
+
+pub fn classification_reports_local_length_option_errors_directly_test() {
+  let left = line_subpath(svg_path.Point(-1.0, 0.0), svg_path.Point(1.0, 0.0))
+  let right = line_subpath(svg_path.Point(0.0, -1.0), svg_path.Point(0.0, 1.0))
+  let options =
+    intersections.ClassificationOptions(
+      ..intersections.default_classification_options(),
+      length_options: svg_path.LengthOptions(tolerance: 0.0, max_depth: 20),
+    )
+  assert intersections.classify_subpath_intersection_with(
+      left,
+      right,
+      first_parameter: svg_path.SubpathParameter(0, 0.5),
+      second_parameter: svg_path.SubpathParameter(0, 0.5),
+      options:,
+    )
+    == Error(intersections.InvalidClassificationLengthTolerance(0.0))
+
+  let options =
+    intersections.ClassificationOptions(
+      ..intersections.default_classification_options(),
+      length_options: svg_path.LengthOptions(
+        tolerance: 0.000000001,
+        max_depth: -1,
+      ),
+    )
+  assert intersections.classify_subpath_intersection_with(
+      left,
+      right,
+      first_parameter: svg_path.SubpathParameter(0, 0.5),
+      second_parameter: svg_path.SubpathParameter(0, 0.5),
+      options:,
+    )
+    == Error(intersections.InvalidClassificationLengthMaxDepth(-1))
+}

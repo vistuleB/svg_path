@@ -12,9 +12,9 @@ import gleam/option.{type Option, None, Some}
 import gleam/order
 import gleam/result
 import svg_path.{
-  type BoundingBox, type Error, type Path, type PathIntersection,
-  type PathParameter, type PathPathProjection, type PathSelfIntersection,
-  type Point, type Segment, type SegmentIntersection, type SegmentPathProjection,
+  type BoundingBox, type Path, type PathIntersection, type PathParameter,
+  type PathPathProjection, type PathSelfIntersection, type Point, type Segment,
+  type SegmentIntersection, type SegmentPathProjection,
   type SegmentSegmentProjection, type SegmentSubpathProjection,
   type SelfIntersectionOptions, type Subpath, type SubpathIntersection,
   type SubpathParameter, type SubpathPathProjection,
@@ -86,24 +86,30 @@ pub type ClassificationOptions {
 }
 
 /// Errors returned while classifying subpath intersections.
-pub type ClassificationError {
+pub type Error {
   /// An underlying path direction query failed.
   PathError(svg_path.Error)
 
   /// Angular tolerance must be finite and in `[0, 180)` degrees.
   InvalidAngularTolerance(Float)
 
+  /// Length tolerance used by classification.
+  InvalidClassificationLengthTolerance(Float)
+
+  /// Maximum length-option depth used by classification.
+  InvalidClassificationLengthMaxDepth(Int)
+
   /// Distance tolerance must be finite and non-negative.
-  InvalidClassificationDistanceTolerance(Float)
+  InvalidDistanceTolerance(Float)
 
   /// Initial arc length must be finite and greater than zero.
-  InvalidClassificationInitialArcLength(Float)
+  InvalidInitialArcLength(Float)
 
   /// Maximum arc length must be finite and at least the initial arc length.
-  InvalidClassificationMaximumArcLength(Float)
+  InvalidMaximumArcLength(Float)
 
   /// At least one sampling step is required.
-  InvalidClassificationMaxSamplingSteps(Int)
+  InvalidMaxSamplingSteps(Int)
 }
 
 /// The oriented sense in which the second traversal crosses the first.
@@ -262,7 +268,7 @@ pub fn classify_subpath_intersection(
   second: Subpath,
   first_parameter first_parameter: SubpathParameter,
   second_parameter second_parameter: SubpathParameter,
-) -> Result(IntersectionClassification, ClassificationError) {
+) -> Result(IntersectionClassification, Error) {
   classify_subpath_intersection_with(
     first,
     second,
@@ -279,13 +285,15 @@ pub fn classify_subpath_intersection_with(
   first_parameter first_parameter: SubpathParameter,
   second_parameter second_parameter: SubpathParameter,
   options options: ClassificationOptions,
-) -> Result(IntersectionClassification, ClassificationError) {
+) -> Result(IntersectionClassification, Error) {
   use _ <- result.try(validate_classification_options(options))
   use first_endpoint <- result.try(
-    map_path_error(subpath_endpoint(first, first_parameter)),
+    subpath_endpoint(first, first_parameter)
+    |> result.map_error(PathError),
   )
   use second_endpoint <- result.try(
-    map_path_error(subpath_endpoint(second, second_parameter)),
+    subpath_endpoint(second, second_parameter)
+    |> result.map_error(PathError),
   )
 
   case first_endpoint, second_endpoint {
@@ -297,20 +305,22 @@ pub fn classify_subpath_intersection_with(
       Ok(EndpointContact(FirstInteriorToSecondEndpoint(second:)))
     None, None -> {
       use first_directions <- result.try(
-        map_path_error(svg_path.subpath_directions_with(
+        svg_path.subpath_directions_with(
           first,
           at: first_parameter,
           options: options.direction_options,
-        )),
+        )
+        |> result.map_error(PathError),
       )
       use second_directions <- result.try(
-        map_path_error(svg_path.subpath_directions_with(
+        svg_path.subpath_directions_with(
           second,
           at: second_parameter,
           options: options.direction_options,
-        )),
+        )
+        |> result.map_error(PathError),
       )
-      map_path_error(classify_directions(
+      classify_directions(
         first,
         second,
         first_parameter,
@@ -318,7 +328,8 @@ pub fn classify_subpath_intersection_with(
         first_directions,
         second_directions,
         options,
-      ))
+      )
+      |> result.map_error(PathError)
     }
   }
 }
@@ -329,7 +340,7 @@ pub fn classify_grouped_subpath_intersection(
   first: Subpath,
   second: Subpath,
   intersection: SubpathIntersection,
-) -> Result(List(ClassifiedSubpathIntersection), ClassificationError) {
+) -> Result(List(ClassifiedSubpathIntersection), Error) {
   classify_grouped_subpath_intersection_with(
     first,
     second,
@@ -344,7 +355,7 @@ pub fn classify_grouped_subpath_intersection_with(
   second: Subpath,
   intersection: SubpathIntersection,
   options options: ClassificationOptions,
-) -> Result(List(ClassifiedSubpathIntersection), ClassificationError) {
+) -> Result(List(ClassifiedSubpathIntersection), Error) {
   let SubpathIntersection(left_parameters:, right_parameters:, ..) =
     intersection
   use classified <- result.try(
@@ -383,7 +394,7 @@ pub fn default_self_intersection_options() -> SelfIntersectionOptions {
 pub fn segment(
   left: Segment,
   right: Segment,
-) -> Result(List(SegmentIntersection), Error) {
+) -> Result(List(SegmentIntersection), svg_path.Error) {
   segment_with(left, right, options: default_options())
 }
 
@@ -392,7 +403,7 @@ pub fn segment_with(
   left: Segment,
   right: Segment,
   options options: IntersectionOptions,
-) -> Result(List(SegmentIntersection), Error) {
+) -> Result(List(SegmentIntersection), svg_path.Error) {
   use _ <- result.try(validate_options(options))
   segment_intersections_checked_valid_options(left, right, options)
 }
@@ -406,7 +417,7 @@ pub fn segment_with(
 pub fn segment_segment_projection(
   left: Segment,
   right: Segment,
-) -> Result(SegmentSegmentProjection, Error) {
+) -> Result(SegmentSegmentProjection, svg_path.Error) {
   segment_segment_projection_with(left, right, options: default_options())
 }
 
@@ -415,7 +426,7 @@ pub fn segment_segment_projection_with(
   left: Segment,
   right: Segment,
   options options: IntersectionOptions,
-) -> Result(SegmentSegmentProjection, Error) {
+) -> Result(SegmentSegmentProjection, svg_path.Error) {
   use _ <- result.try(validate_options(options))
   segment_segment_projection_valid_options(left, right, options)
 }
@@ -424,7 +435,7 @@ pub fn segment_segment_projection_with(
 pub fn segment_subpath_projection(
   left: Segment,
   right: Subpath,
-) -> Result(SegmentSubpathProjection, Error) {
+) -> Result(SegmentSubpathProjection, svg_path.Error) {
   segment_subpath_projection_with(left, right, options: default_options())
 }
 
@@ -434,7 +445,7 @@ pub fn segment_subpath_projection_with(
   left: Segment,
   right: Subpath,
   options options: IntersectionOptions,
-) -> Result(SegmentSubpathProjection, Error) {
+) -> Result(SegmentSubpathProjection, svg_path.Error) {
   use _ <- result.try(validate_options(options))
   segment_subpath_projection_valid_options(left, right, options)
 }
@@ -443,7 +454,7 @@ pub fn segment_subpath_projection_with(
 pub fn segment_path_projection(
   left: Segment,
   right: Path,
-) -> Result(SegmentPathProjection, Error) {
+) -> Result(SegmentPathProjection, svg_path.Error) {
   segment_path_projection_with(left, right, options: default_options())
 }
 
@@ -453,7 +464,7 @@ pub fn segment_path_projection_with(
   left: Segment,
   right: Path,
   options options: IntersectionOptions,
-) -> Result(SegmentPathProjection, Error) {
+) -> Result(SegmentPathProjection, svg_path.Error) {
   use _ <- result.try(validate_options(options))
   segment_path_projection_valid_options(left, right, options)
 }
@@ -462,7 +473,7 @@ pub fn segment_path_projection_with(
 pub fn subpath_subpath_projection(
   left: Subpath,
   right: Subpath,
-) -> Result(SubpathSubpathProjection, Error) {
+) -> Result(SubpathSubpathProjection, svg_path.Error) {
   subpath_subpath_projection_with(left, right, options: default_options())
 }
 
@@ -471,7 +482,7 @@ pub fn subpath_subpath_projection_with(
   left: Subpath,
   right: Subpath,
   options options: IntersectionOptions,
-) -> Result(SubpathSubpathProjection, Error) {
+) -> Result(SubpathSubpathProjection, svg_path.Error) {
   use _ <- result.try(validate_options(options))
   subpath_subpath_projection_valid_options(left, right, options)
 }
@@ -480,7 +491,7 @@ pub fn subpath_subpath_projection_with(
 pub fn subpath_path_projection(
   left: Subpath,
   right: Path,
-) -> Result(SubpathPathProjection, Error) {
+) -> Result(SubpathPathProjection, svg_path.Error) {
   subpath_path_projection_with(left, right, options: default_options())
 }
 
@@ -490,7 +501,7 @@ pub fn subpath_path_projection_with(
   left: Subpath,
   right: Path,
   options options: IntersectionOptions,
-) -> Result(SubpathPathProjection, Error) {
+) -> Result(SubpathPathProjection, svg_path.Error) {
   use _ <- result.try(validate_options(options))
   subpath_path_projection_valid_options(left, right, options)
 }
@@ -499,7 +510,7 @@ pub fn subpath_path_projection_with(
 pub fn path_path_projection(
   left: Path,
   right: Path,
-) -> Result(PathPathProjection, Error) {
+) -> Result(PathPathProjection, svg_path.Error) {
   path_path_projection_with(left, right, options: default_options())
 }
 
@@ -508,7 +519,7 @@ pub fn path_path_projection_with(
   left: Path,
   right: Path,
   options options: IntersectionOptions,
-) -> Result(PathPathProjection, Error) {
+) -> Result(PathPathProjection, svg_path.Error) {
   use _ <- result.try(validate_options(options))
   path_path_projection_valid_options(left, right, options)
 }
@@ -523,7 +534,7 @@ pub fn segment_without_overlap_precheck_with(
   left: Segment,
   right: Segment,
   options options: IntersectionOptions,
-) -> Result(List(SegmentIntersection), Error) {
+) -> Result(List(SegmentIntersection), svg_path.Error) {
   use _ <- result.try(validate_options(options))
   use intersections <- result.try(segment_intersections_valid_options(
     left,
@@ -538,7 +549,7 @@ fn polish_and_certify_segment_intersections(
   right: Segment,
   intersections: List(SegmentIntersection),
   options: IntersectionOptions,
-) -> Result(List(SegmentIntersection), Error) {
+) -> Result(List(SegmentIntersection), svg_path.Error) {
   use intersections <- result.try(polish_segment_intersections(
     left,
     right,
@@ -554,7 +565,7 @@ fn certify_segment_intersections(
   right: Segment,
   intersections: List(SegmentIntersection),
   tolerance: Float,
-) -> Result(List(SegmentIntersection), Error) {
+) -> Result(List(SegmentIntersection), svg_path.Error) {
   use certified <- result.try(
     certify_segment_intersections_loop(
       left,
@@ -573,7 +584,7 @@ fn certify_segment_intersections_loop(
   intersections: List(SegmentIntersection),
   tolerance: Float,
   certified certified: List(SegmentIntersection),
-) -> Result(List(SegmentIntersection), Error) {
+) -> Result(List(SegmentIntersection), svg_path.Error) {
   case intersections {
     [] -> Ok(certified)
     [intersection, ..rest] -> {
@@ -611,7 +622,7 @@ fn polish_segment_intersections(
   intersections: List(SegmentIntersection),
   parameter_snap: ParameterSnap,
   tolerance: Float,
-) -> Result(List(SegmentIntersection), Error) {
+) -> Result(List(SegmentIntersection), svg_path.Error) {
   case parameter_snap {
     NoParameterSnap -> Ok(sort_segment_intersections(intersections))
     DecimalParameterSnap(exponent:) -> {
@@ -650,7 +661,7 @@ fn polish_segment_intersections_loop(
   intersections: List(SegmentIntersection),
   exponent: Int,
   polished polished: List(SegmentIntersection),
-) -> Result(List(SegmentIntersection), Error) {
+) -> Result(List(SegmentIntersection), svg_path.Error) {
   case intersections {
     [] -> Ok(list.reverse(polished))
     [intersection, ..rest] -> {
@@ -688,7 +699,7 @@ fn polish_segment_intersection(
   right: Segment,
   intersection: SegmentIntersection,
   exponent: Int,
-) -> Result(SegmentIntersection, Error) {
+) -> Result(SegmentIntersection, svg_path.Error) {
   let scale = parameter_snap_scale(exponent)
   let SegmentIntersection(left_t:, right_t:, ..) = intersection
   let left_candidates = parameter_snap_candidates(left_t, scale)
@@ -716,7 +727,7 @@ fn best_snapped_intersection_candidate(
   left_candidates: List(ParameterSnapCandidate),
   right_candidates: List(ParameterSnapCandidate),
   best best: SnappedIntersectionCandidate,
-) -> Result(SnappedIntersectionCandidate, Error) {
+) -> Result(SnappedIntersectionCandidate, svg_path.Error) {
   case left_candidates {
     [] -> Ok(best)
     [left_candidate, ..rest] -> {
@@ -744,7 +755,7 @@ fn best_snapped_intersection_for_left_candidate(
   left_candidate: ParameterSnapCandidate,
   right_candidates: List(ParameterSnapCandidate),
   best best: SnappedIntersectionCandidate,
-) -> Result(SnappedIntersectionCandidate, Error) {
+) -> Result(SnappedIntersectionCandidate, svg_path.Error) {
   case right_candidates {
     [] -> Ok(best)
     [right_candidate, ..rest] -> {
@@ -773,7 +784,7 @@ fn snapped_intersection_candidate(
   left_t: Float,
   right_t: Float,
   rank rank: Int,
-) -> Result(SnappedIntersectionCandidate, Error) {
+) -> Result(SnappedIntersectionCandidate, svg_path.Error) {
   use left_point <- result.try(svg_path.segment_point(left, at: left_t))
   use right_point <- result.try(svg_path.segment_point(right, at: right_t))
   let distance_squared = distance_squared(left_point, right_point)
@@ -908,7 +919,7 @@ fn segment_intersections_checked_valid_options(
   left: Segment,
   right: Segment,
   options: IntersectionOptions,
-) -> Result(List(SegmentIntersection), Error) {
+) -> Result(List(SegmentIntersection), svg_path.Error) {
   use overlaps <- result.try(overlap_detection.detect(
     left,
     right,
@@ -936,7 +947,7 @@ fn segment_segment_projection_valid_options(
   left: Segment,
   right: Segment,
   options: IntersectionOptions,
-) -> Result(SegmentSegmentProjection, Error) {
+) -> Result(SegmentSegmentProjection, svg_path.Error) {
   use overlaps <- result.try(overlap_detection.detect(
     left,
     right,
@@ -966,7 +977,7 @@ fn segment_subpath_projection_valid_options(
   left: Segment,
   right: Subpath,
   options: IntersectionOptions,
-) -> Result(SegmentSubpathProjection, Error) {
+) -> Result(SegmentSubpathProjection, svg_path.Error) {
   let right_segments = svg_path.subpath_segments(right)
   case right_segments {
     [] -> Error(EmptySubpath)
@@ -1011,7 +1022,7 @@ fn segment_path_projection_valid_options(
   left: Segment,
   right: Path,
   options: IntersectionOptions,
-) -> Result(SegmentPathProjection, Error) {
+) -> Result(SegmentPathProjection, svg_path.Error) {
   use right <- result.try(path_projection_segments(right))
   let #(right_segments, right_addresses) = right
   use projection <- result.try(segment_list_projection(
@@ -1053,7 +1064,7 @@ fn subpath_subpath_projection_valid_options(
   left: Subpath,
   right: Subpath,
   options: IntersectionOptions,
-) -> Result(SubpathSubpathProjection, Error) {
+) -> Result(SubpathSubpathProjection, svg_path.Error) {
   let left_segments = svg_path.subpath_segments(left)
   let right_segments = svg_path.subpath_segments(right)
   case left_segments, right_segments {
@@ -1102,7 +1113,7 @@ fn subpath_path_projection_valid_options(
   left: Subpath,
   right: Path,
   options: IntersectionOptions,
-) -> Result(SubpathPathProjection, Error) {
+) -> Result(SubpathPathProjection, svg_path.Error) {
   let left_segments = svg_path.subpath_segments(left)
   case left_segments {
     [] -> Error(EmptySubpath)
@@ -1156,7 +1167,7 @@ fn path_path_projection_valid_options(
   left: Path,
   right: Path,
   options: IntersectionOptions,
-) -> Result(PathPathProjection, Error) {
+) -> Result(PathPathProjection, svg_path.Error) {
   use left <- result.try(path_projection_segments(left))
   use right <- result.try(path_projection_segments(right))
   let #(left_segments, left_addresses) = left
@@ -1218,7 +1229,7 @@ fn segment_list_projection(
   left: List(Segment),
   right: List(Segment),
   options: IntersectionOptions,
-) -> Result(SegmentListProjection, Error) {
+) -> Result(SegmentListProjection, svg_path.Error) {
   use left <- result.try(index_projection_segments(left, index: 0, indexed: []))
   use right <- result.try(
     index_projection_segments(right, index: 0, indexed: []),
@@ -1230,7 +1241,7 @@ fn index_projection_segments(
   segments: List(Segment),
   index index: Int,
   indexed indexed: List(IndexedProjectionSegment),
-) -> Result(List(IndexedProjectionSegment), Error) {
+) -> Result(List(IndexedProjectionSegment), svg_path.Error) {
   case segments {
     [] -> Ok(list.reverse(indexed))
     [segment, ..rest] -> {
@@ -1249,7 +1260,7 @@ fn segment_list_projection_loop(
   remaining_right: List(IndexedProjectionSegment),
   options: IntersectionOptions,
   best best: Option(SegmentListProjection),
-) -> Result(SegmentListProjection, Error) {
+) -> Result(SegmentListProjection, svg_path.Error) {
   case left, remaining_right {
     [], _ ->
       case best {
@@ -1286,7 +1297,7 @@ fn project_indexed_segment_pair(
   right: IndexedProjectionSegment,
   options: IntersectionOptions,
   best best: Option(SegmentListProjection),
-) -> Result(Option(SegmentListProjection), Error) {
+) -> Result(Option(SegmentListProjection), svg_path.Error) {
   let skip = case best {
     None -> False
     Some(best) -> {
@@ -1335,7 +1346,7 @@ fn closer_segment_list_projection(
 
 fn path_projection_segments(
   path: Path,
-) -> Result(#(List(Segment), List(PathParameter)), Error) {
+) -> Result(#(List(Segment), List(PathParameter)), svg_path.Error) {
   case path.subpaths {
     [] -> Error(EmptyPath)
     subpaths ->
@@ -1353,7 +1364,7 @@ fn path_projection_segments_loop(
   subpath_index subpath_index: Int,
   segments segments: List(Segment),
   addresses addresses: List(PathParameter),
-) -> Result(#(List(Segment), List(PathParameter)), Error) {
+) -> Result(#(List(Segment), List(PathParameter)), svg_path.Error) {
   case subpaths {
     [] -> {
       case segments {
@@ -1410,7 +1421,7 @@ fn prepend_path_projection_segments(
 fn nth_path_projection_address(
   addresses: List(PathParameter),
   index: Int,
-) -> Result(PathParameter, Error) {
+) -> Result(PathParameter, svg_path.Error) {
   case addresses, index {
     [], _ ->
       Error(InternalUncertifiedSegmentIntersection(
@@ -1427,7 +1438,7 @@ fn line_line_segment_projection(
   left: Segment,
   right: Segment,
   options: IntersectionOptions,
-) -> Result(SegmentSegmentProjection, Error) {
+) -> Result(SegmentSegmentProjection, svg_path.Error) {
   let assert Line(start: left_start, end: left_end) = left
   let assert Line(start: right_start, end: right_end) = right
   let left_direction = point_difference(left_end, left_start)
@@ -1465,7 +1476,7 @@ fn line_line_endpoint_projection(
   left: Segment,
   right: Segment,
   options: IntersectionOptions,
-) -> Result(SegmentSegmentProjection, Error) {
+) -> Result(SegmentSegmentProjection, svg_path.Error) {
   use minima <- result.try(boundary_edge_minima(left, right, options))
   let assert Ok(best) = best_distance_minimum(minima)
   segment_segment_projection_from_minimum(left, right, best)
@@ -1475,7 +1486,7 @@ fn segment_segment_projection_from_overlap(
   left: Segment,
   right: Segment,
   overlap: overlap_detection.RawOverlap,
-) -> Result(SegmentSegmentProjection, Error) {
+) -> Result(SegmentSegmentProjection, svg_path.Error) {
   let #(left_from, _, right_from, _, _, _) = overlap
   use left_point <- result.try(svg_path.segment_point(left, at: left_from))
   use right_point <- result.try(svg_path.segment_point(right, at: right_from))
@@ -1492,7 +1503,7 @@ fn segment_segment_projection_from_minimum(
   left: Segment,
   right: Segment,
   minimum: DistanceMinimum,
-) -> Result(SegmentSegmentProjection, Error) {
+) -> Result(SegmentSegmentProjection, svg_path.Error) {
   let DistanceMinimum(left_t:, right_t:, distance_squared:) = minimum
   use left_point <- result.try(svg_path.segment_point(left, at: left_t))
   use right_point <- result.try(svg_path.segment_point(right, at: right_t))
@@ -1508,7 +1519,7 @@ fn segment_segment_projection_from_minimum(
 
 fn best_distance_minimum(
   minima: List(DistanceMinimum),
-) -> Result(DistanceMinimum, Error) {
+) -> Result(DistanceMinimum, svg_path.Error) {
   case minima {
     [] ->
       Error(InternalUncertifiedSegmentIntersection(
@@ -1536,7 +1547,7 @@ fn best_distance_minimum(
 /// that endpoint pair when both radii are nonzero.
 pub fn segment_self(
   segment: Segment,
-) -> Result(List(SegmentIntersection), Error) {
+) -> Result(List(SegmentIntersection), svg_path.Error) {
   segment_self_with(segment, options: default_self_intersection_options())
 }
 
@@ -1545,7 +1556,7 @@ pub fn segment_self(
 pub fn segment_self_with(
   segment: Segment,
   options options: SelfIntersectionOptions,
-) -> Result(List(SegmentIntersection), Error) {
+) -> Result(List(SegmentIntersection), svg_path.Error) {
   use _ <- result.try(validate_self_intersection_options(options))
   segment_self_intersections_valid_options(segment, options)
 }
@@ -1560,7 +1571,7 @@ pub fn segment_self_with(
 pub fn segment_subpath(
   segment: Segment,
   subpath: Subpath,
-) -> Result(List(#(Point, Float, List(SubpathParameter))), Error) {
+) -> Result(List(#(Point, Float, List(SubpathParameter))), svg_path.Error) {
   segment_subpath_with(segment, subpath, options: default_options())
 }
 
@@ -1570,7 +1581,7 @@ pub fn segment_subpath_with(
   segment: Segment,
   subpath: Subpath,
   options options: IntersectionOptions,
-) -> Result(List(#(Point, Float, List(SubpathParameter))), Error) {
+) -> Result(List(#(Point, Float, List(SubpathParameter))), svg_path.Error) {
   use _ <- result.try(validate_options(options))
   use intersections <- result.try(
     collect_segment_subpath_intersections(
@@ -1599,7 +1610,7 @@ pub fn segment_subpath_without_overlap_precheck_with(
   segment: Segment,
   subpath: Subpath,
   options options: IntersectionOptions,
-) -> Result(List(#(Point, Float, List(SubpathParameter))), Error) {
+) -> Result(List(#(Point, Float, List(SubpathParameter))), svg_path.Error) {
   use _ <- result.try(validate_options(options))
   use found <- result.try(
     collect_segment_subpath_intersections(
@@ -1622,7 +1633,7 @@ pub fn segment_subpath_without_overlap_precheck_with(
 /// constituent segments returns `OverlappingSegments`.
 pub fn subpath_self(
   subpath: Subpath,
-) -> Result(List(SubpathSelfIntersection), Error) {
+) -> Result(List(SubpathSelfIntersection), svg_path.Error) {
   subpath_self_with(subpath, options: default_self_intersection_options())
 }
 
@@ -1631,7 +1642,7 @@ pub fn subpath_self(
 pub fn subpath_self_with(
   subpath: Subpath,
   options options: SelfIntersectionOptions,
-) -> Result(List(SubpathSelfIntersection), Error) {
+) -> Result(List(SubpathSelfIntersection), svg_path.Error) {
   use _ <- result.try(validate_self_intersection_options(options))
   use total_length <- result.try(svg_path.subpath_length(subpath))
   use indexed_segments <- result.try(
@@ -1664,7 +1675,7 @@ pub fn subpath_self_with(
 pub fn subpath(
   left: Subpath,
   right: Subpath,
-) -> Result(List(SubpathIntersection), Error) {
+) -> Result(List(SubpathIntersection), svg_path.Error) {
   subpath_with(left, right, options: default_options())
 }
 
@@ -1673,7 +1684,7 @@ pub fn subpath_with(
   left: Subpath,
   right: Subpath,
   options options: IntersectionOptions,
-) -> Result(List(SubpathIntersection), Error) {
+) -> Result(List(SubpathIntersection), svg_path.Error) {
   use _ <- result.try(validate_options(options))
   use intersections <- result.try(
     collect_subpath_intersections(
@@ -1698,7 +1709,7 @@ pub fn subpath_without_overlap_precheck_with(
   left: Subpath,
   right: Subpath,
   options options: IntersectionOptions,
-) -> Result(List(SubpathIntersection), Error) {
+) -> Result(List(SubpathIntersection), svg_path.Error) {
   use _ <- result.try(validate_options(options))
   use found <- result.try(
     collect_subpath_intersections(
@@ -1719,7 +1730,10 @@ pub fn subpath_without_overlap_precheck_with(
 /// parameter on both paths. Results are ordered by the first left parameter.
 /// Segment-boundary aliases are canonicalized to one traversal address. A
 /// continuous overlap between any segment pair returns `OverlappingSegments`.
-pub fn path(left: Path, right: Path) -> Result(List(PathIntersection), Error) {
+pub fn path(
+  left: Path,
+  right: Path,
+) -> Result(List(PathIntersection), svg_path.Error) {
   path_with(left, right, options: default_options())
 }
 
@@ -1728,7 +1742,7 @@ pub fn path_with(
   left: Path,
   right: Path,
   options options: IntersectionOptions,
-) -> Result(List(PathIntersection), Error) {
+) -> Result(List(PathIntersection), svg_path.Error) {
   use _ <- result.try(validate_options(options))
   use intersections <- result.try(
     collect_path_intersections(
@@ -1753,7 +1767,7 @@ pub fn path_without_overlap_precheck_with(
   left: Path,
   right: Path,
   options options: IntersectionOptions,
-) -> Result(List(PathIntersection), Error) {
+) -> Result(List(PathIntersection), svg_path.Error) {
   use _ <- result.try(validate_options(options))
   use found <- result.try(
     collect_path_intersections(
@@ -1774,7 +1788,9 @@ pub fn path_without_overlap_precheck_with(
 /// between distinct subpaths in the same path. Results are ordered by the first
 /// path parameter. A continuous overlap between distinct constituent segments
 /// returns `OverlappingSegments`.
-pub fn path_self(path: Path) -> Result(List(PathSelfIntersection), Error) {
+pub fn path_self(
+  path: Path,
+) -> Result(List(PathSelfIntersection), svg_path.Error) {
   path_self_with(path, options: default_self_intersection_options())
 }
 
@@ -1783,7 +1799,7 @@ pub fn path_self(path: Path) -> Result(List(PathSelfIntersection), Error) {
 pub fn path_self_with(
   path: Path,
   options options: SelfIntersectionOptions,
-) -> Result(List(PathSelfIntersection), Error) {
+) -> Result(List(PathSelfIntersection), svg_path.Error) {
   use _ <- result.try(validate_self_intersection_options(options))
   use intersections <- result.try(
     collect_path_self_intersections(
@@ -1799,7 +1815,7 @@ pub fn path_self_with(
 
 fn validate_classification_options(
   options: ClassificationOptions,
-) -> Result(Nil, ClassificationError) {
+) -> Result(Nil, Error) {
   let svg_path.LengthOptions(tolerance: length_tolerance, max_depth:) =
     options.length_options
 
@@ -1813,29 +1829,21 @@ fn validate_classification_options(
         options.distance_tolerance >=. 0.0
         && number.is_finite(options.distance_tolerance)
       {
-        False ->
-          Error(InvalidClassificationDistanceTolerance(
-            options.distance_tolerance,
-          ))
+        False -> Error(InvalidDistanceTolerance(options.distance_tolerance))
         True ->
           case length_tolerance >. 0.0 && number.is_finite(length_tolerance) {
             False ->
-              Error(
-                PathError(svg_path.InvalidLengthTolerance(length_tolerance)),
-              )
+              Error(InvalidClassificationLengthTolerance(length_tolerance))
             True ->
               case max_depth >= 0 {
-                False ->
-                  Error(PathError(svg_path.InvalidLengthMaxDepth(max_depth)))
+                False -> Error(InvalidClassificationLengthMaxDepth(max_depth))
                 True ->
                   case
                     options.initial_arc_length >. 0.0
                     && number.is_finite(options.initial_arc_length)
                   {
                     False ->
-                      Error(InvalidClassificationInitialArcLength(
-                        options.initial_arc_length,
-                      ))
+                      Error(InvalidInitialArcLength(options.initial_arc_length))
                     True ->
                       case
                         options.maximum_arc_length
@@ -1843,14 +1851,14 @@ fn validate_classification_options(
                         && number.is_finite(options.maximum_arc_length)
                       {
                         False ->
-                          Error(InvalidClassificationMaximumArcLength(
+                          Error(InvalidMaximumArcLength(
                             options.maximum_arc_length,
                           ))
                         True ->
                           case options.max_sampling_steps > 0 {
                             True -> Ok(Nil)
                             False ->
-                              Error(InvalidClassificationMaxSamplingSteps(
+                              Error(InvalidMaxSamplingSteps(
                                 options.max_sampling_steps,
                               ))
                           }
@@ -1861,12 +1869,6 @@ fn validate_classification_options(
       }
     False -> Error(InvalidAngularTolerance(options.angular_tolerance))
   }
-}
-
-fn map_path_error(
-  result: Result(value, svg_path.Error),
-) -> Result(value, ClassificationError) {
-  result.map_error(result, PathError)
 }
 
 fn subpath_endpoint(
@@ -2294,7 +2296,9 @@ fn directions_are_independent(left: Point, right: Point) -> Bool {
 }
 
 @internal
-pub fn validate_options(options: IntersectionOptions) -> Result(Nil, Error) {
+pub fn validate_options(
+  options: IntersectionOptions,
+) -> Result(Nil, svg_path.Error) {
   case options.tolerance <=. 0.0 || !number.is_finite(options.tolerance) {
     True -> Error(InvalidIntersectionTolerance(options.tolerance))
     False -> {
@@ -2308,7 +2312,7 @@ pub fn validate_options(options: IntersectionOptions) -> Result(Nil, Error) {
 
 fn validate_parameter_snap(
   parameter_snap: ParameterSnap,
-) -> Result(Nil, Error) {
+) -> Result(Nil, svg_path.Error) {
   case parameter_snap {
     NoParameterSnap -> Ok(Nil)
     DecimalParameterSnap(exponent:) -> {
@@ -2322,7 +2326,7 @@ fn validate_parameter_snap(
 
 fn validate_self_intersection_options(
   options: SelfIntersectionOptions,
-) -> Result(Nil, Error) {
+) -> Result(Nil, svg_path.Error) {
   case
     options.minimum_arc_length_separation <=. 0.0
     || !number.is_finite(options.minimum_arc_length_separation)
@@ -2350,7 +2354,7 @@ fn segment_intersections_valid_options(
   left: Segment,
   right: Segment,
   options: IntersectionOptions,
-) -> Result(List(SegmentIntersection), Error) {
+) -> Result(List(SegmentIntersection), svg_path.Error) {
   case left, right {
     Line(start:, end:), _ ->
       line_segment_intersections(
@@ -2375,7 +2379,7 @@ fn segment_intersections_valid_options(
 fn segment_self_intersections_valid_options(
   segment: Segment,
   options: SelfIntersectionOptions,
-) -> Result(List(SegmentIntersection), Error) {
+) -> Result(List(SegmentIntersection), svg_path.Error) {
   case segment {
     CubicBezier(..) -> {
       let bezier_options =
@@ -2511,7 +2515,7 @@ fn indexed_segments_with_lengths(
   index index: Int,
   prefix prefix: Float,
   accumulated accumulated: List(IndexedSegment),
-) -> Result(List(IndexedSegment), Error) {
+) -> Result(List(IndexedSegment), svg_path.Error) {
   case segments {
     [] -> Ok(list.reverse(accumulated))
     [first, ..rest] -> {
@@ -2535,7 +2539,7 @@ fn collect_subpath_self_intersections(
   total_length: Float,
   options: SelfIntersectionOptions,
   found found: List(SubpathSelfIntersection),
-) -> Result(List(SubpathSelfIntersection), Error) {
+) -> Result(List(SubpathSelfIntersection), svg_path.Error) {
   case segments {
     [] -> Ok(found)
     [first, ..rest] -> {
@@ -2567,7 +2571,7 @@ fn collect_single_segment_self_intersections(
   segment: IndexedSegment,
   options: SelfIntersectionOptions,
   found found: List(SubpathSelfIntersection),
-) -> Result(List(SubpathSelfIntersection), Error) {
+) -> Result(List(SubpathSelfIntersection), svg_path.Error) {
   case segment.segment {
     CubicBezier(..) -> {
       let bezier_options =
@@ -2608,7 +2612,7 @@ fn collect_segment_pair_self_intersections(
   total_length: Float,
   options: SelfIntersectionOptions,
   found found: List(SubpathSelfIntersection),
-) -> Result(List(SubpathSelfIntersection), Error) {
+) -> Result(List(SubpathSelfIntersection), svg_path.Error) {
   case rights {
     [] -> Ok(found)
     [right, ..rest] -> {
@@ -2639,7 +2643,7 @@ fn collect_segment_pair_self_intersections_one(
   total_length: Float,
   options: SelfIntersectionOptions,
   found found: List(SubpathSelfIntersection),
-) -> Result(List(SubpathSelfIntersection), Error) {
+) -> Result(List(SubpathSelfIntersection), svg_path.Error) {
   use left_box <- result.try(coarse_segment_bounding_box(left.segment))
   use right_box <- result.try(coarse_segment_bounding_box(right.segment))
 
@@ -2844,7 +2848,9 @@ fn sort_subpath_self_intersections(
   })
 }
 
-fn coarse_segment_bounding_box(segment: Segment) -> Result(BoundingBox, Error) {
+fn coarse_segment_bounding_box(
+  segment: Segment,
+) -> Result(BoundingBox, svg_path.Error) {
   case segment {
     Line(start:, end:) -> Ok(assert_points_bounding_box([start, end]))
     QuadraticBezier(start:, control:, end:) ->
@@ -2860,7 +2866,7 @@ fn assert_points_bounding_box(points: List(Point)) -> BoundingBox {
   box
 }
 
-fn bezier_self_intersection_error(error: bezier.Error) -> Error {
+fn bezier_self_intersection_error(error: bezier.Error) -> svg_path.Error {
   case error {
     bezier.InvalidCubicSelfIntersectionMinimumArcLengthSeparation(value) ->
       InvalidSelfIntersectionMinimumArcLengthSeparation(value)
@@ -2880,7 +2886,7 @@ fn collect_segment_subpath_intersections(
   permit_overlapping_pairs permit_overlapping_pairs: Bool,
   segment_index segment_index: Int,
   grouped grouped: List(#(Point, Float, List(SubpathParameter))),
-) -> Result(List(#(Point, Float, List(SubpathParameter))), Error) {
+) -> Result(List(#(Point, Float, List(SubpathParameter))), svg_path.Error) {
   case segments {
     [] -> Ok(grouped)
     [first, ..rest] -> {
@@ -2917,7 +2923,7 @@ fn segment_intersections_for_collection(
   right: Segment,
   options: IntersectionOptions,
   permit_overlapping_pairs: Bool,
-) -> Result(List(SegmentIntersection), Error) {
+) -> Result(List(SegmentIntersection), svg_path.Error) {
   case permit_overlapping_pairs {
     False -> segment_intersections_checked_valid_options(left, right, options)
     True ->
@@ -2992,7 +2998,7 @@ fn collect_subpath_intersections(
   permit_overlapping_pairs permit_overlapping_pairs: Bool,
   left_segment_index left_segment_index: Int,
   grouped grouped: List(SubpathIntersection),
-) -> Result(List(SubpathIntersection), Error) {
+) -> Result(List(SubpathIntersection), svg_path.Error) {
   case left_segments {
     [] -> Ok(grouped)
     [left_segment, ..rest] -> {
@@ -3286,7 +3292,7 @@ fn collect_path_self_intersections(
   options: SelfIntersectionOptions,
   subpath_index subpath_index: Int,
   found found: List(PathSelfIntersection),
-) -> Result(List(PathSelfIntersection), Error) {
+) -> Result(List(PathSelfIntersection), svg_path.Error) {
   case subpaths {
     [] -> Ok(found)
     [first, ..rest] -> {
@@ -3320,7 +3326,7 @@ fn collect_path_self_intersections_inside_subpath(
   subpath_index: Int,
   options: SelfIntersectionOptions,
   found found: List(PathSelfIntersection),
-) -> Result(List(PathSelfIntersection), Error) {
+) -> Result(List(PathSelfIntersection), svg_path.Error) {
   use intersections <- result.try(subpath_self_with(subpath, options:))
 
   Ok(
@@ -3345,7 +3351,7 @@ fn collect_path_self_intersections_against_rest(
   options: SelfIntersectionOptions,
   right_subpath_index right_subpath_index: Int,
   found found: List(PathSelfIntersection),
-) -> Result(List(PathSelfIntersection), Error) {
+) -> Result(List(PathSelfIntersection), svg_path.Error) {
   case rights {
     [] -> Ok(found)
     [right, ..rest] -> {
@@ -3565,7 +3571,7 @@ fn collect_path_intersections(
   permit_overlapping_pairs permit_overlapping_pairs: Bool,
   left_subpath_index left_subpath_index: Int,
   grouped grouped: List(PathIntersection),
-) -> Result(List(PathIntersection), Error) {
+) -> Result(List(PathIntersection), svg_path.Error) {
   case left_subpaths {
     [] -> Ok(grouped)
     [left_subpath, ..rest] -> {
@@ -3599,7 +3605,7 @@ fn collect_path_intersections_for_left_subpath(
   permit_overlapping_pairs permit_overlapping_pairs: Bool,
   right_subpath_index right_subpath_index: Int,
   grouped grouped: List(PathIntersection),
-) -> Result(List(PathIntersection), Error) {
+) -> Result(List(PathIntersection), svg_path.Error) {
   case right_subpaths {
     [] -> Ok(grouped)
     [right_subpath, ..rest] -> {
@@ -3756,7 +3762,7 @@ fn line_segment_intersections(
   line_is_left line_is_left: Bool,
   segment segment: Segment,
   options options: IntersectionOptions,
-) -> Result(List(SegmentIntersection), Error) {
+) -> Result(List(SegmentIntersection), svg_path.Error) {
   let line_direction = point_difference(line_end, line_start)
   let line_parameter_tolerance =
     parameter_tolerance_for_chord(line_direction, options.tolerance)
@@ -3816,7 +3822,7 @@ fn line_segment_intersections_by_ray(
   segment: Segment,
   options: IntersectionOptions,
   line_parameter_tolerance: Float,
-) -> Result(List(SegmentIntersection), Error) {
+) -> Result(List(SegmentIntersection), svg_path.Error) {
   case
     svg_path.segment_ray_crossings_with(
       segment,
@@ -3874,7 +3880,7 @@ fn collinear_line_point_intersections(
   segment_end: Point,
   line_is_left: Bool,
   line_parameter_tolerance: Float,
-) -> Result(List(SegmentIntersection), Error) {
+) -> Result(List(SegmentIntersection), svg_path.Error) {
   let segment_start_line_t =
     line_projection_t(segment_start, line_start, line_end)
   let segment_end_line_t = line_projection_t(segment_end, line_start, line_end)
@@ -3916,7 +3922,7 @@ fn line_segment_intersections_from_crossings(
   point_tolerance: Float,
   line_parameter_tolerance: Float,
   intersections: List(SegmentIntersection),
-) -> Result(List(SegmentIntersection), Error) {
+) -> Result(List(SegmentIntersection), svg_path.Error) {
   case crossings {
     [] -> Ok(intersections)
     [crossing, ..rest] -> {
@@ -4994,7 +5000,7 @@ fn curve_curve_intersections(
   left: Segment,
   right: Segment,
   options: IntersectionOptions,
-) -> Result(List(SegmentIntersection), Error) {
+) -> Result(List(SegmentIntersection), svg_path.Error) {
   case
     window_preserving_segment_with(
       left,
@@ -5013,7 +5019,7 @@ fn legacy_curve_curve_intersections(
   left: Segment,
   right: Segment,
   options: IntersectionOptions,
-) -> Result(List(SegmentIntersection), Error) {
+) -> Result(List(SegmentIntersection), svg_path.Error) {
   use minima <- result.try(segment_pair_intersection_minima(
     left,
     right,
@@ -5032,7 +5038,7 @@ fn segment_pair_intersection_minima(
   left: Segment,
   right: Segment,
   options: IntersectionOptions,
-) -> Result(List(DistanceMinimum), Error) {
+) -> Result(List(DistanceMinimum), svg_path.Error) {
   use boundary_minima <- result.try(boundary_edge_minima(left, right, options))
   use raw_terminal_windows <- result.try(
     collect_intersection_terminal_windows(
@@ -5056,7 +5062,7 @@ fn segment_pair_projection_minima(
   left: Segment,
   right: Segment,
   options: IntersectionOptions,
-) -> Result(List(DistanceMinimum), Error) {
+) -> Result(List(DistanceMinimum), svg_path.Error) {
   use boundary_minima <- result.try(boundary_edge_minima(left, right, options))
   use best <- result.try(best_distance_minimum(boundary_minima))
   use #(raw_terminal_windows, best) <- result.try(
@@ -5081,7 +5087,7 @@ fn boundary_edge_minima(
   left: Segment,
   right: Segment,
   options: IntersectionOptions,
-) -> Result(List(DistanceMinimum), Error) {
+) -> Result(List(DistanceMinimum), svg_path.Error) {
   use minima <- result.try(
     boundary_edge_intersections_for_left(
       left,
@@ -5120,7 +5126,7 @@ fn boundary_edge_intersections_for_left(
   left_t left_t: Float,
   options options: IntersectionOptions,
   minima minima: List(DistanceMinimum),
-) -> Result(List(DistanceMinimum), Error) {
+) -> Result(List(DistanceMinimum), svg_path.Error) {
   use point <- result.try(svg_path.segment_point(left, at: left_t))
   use projection <- result.try(svg_path.segment_projection_with(
     point,
@@ -5136,7 +5142,7 @@ fn boundary_edge_minimum(
   right_t: Float,
   distance distance: Float,
   minima minima: List(DistanceMinimum),
-) -> Result(List(DistanceMinimum), Error) {
+) -> Result(List(DistanceMinimum), svg_path.Error) {
   Ok([
     DistanceMinimum(
       left_t: clamp01(left_t),
@@ -5163,7 +5169,7 @@ fn boundary_edge_intersections_for_right(
   right_t right_t: Float,
   options options: IntersectionOptions,
   minima minima: List(DistanceMinimum),
-) -> Result(List(DistanceMinimum), Error) {
+) -> Result(List(DistanceMinimum), svg_path.Error) {
   use point <- result.try(svg_path.segment_point(right, at: right_t))
   use projection <- result.try(svg_path.segment_projection_with(
     point,
@@ -5180,7 +5186,7 @@ fn collect_intersection_terminal_windows(
   options: IntersectionOptions,
   remaining_depth remaining_depth: Int,
   windows windows: List(RawTerminalWindow),
-) -> Result(List(RawTerminalWindow), Error) {
+) -> Result(List(RawTerminalWindow), svg_path.Error) {
   case
     intersection_piece_bounding_box(left),
     intersection_piece_bounding_box(right)
@@ -5259,7 +5265,7 @@ fn add_intersection_terminal_window_grid(
   left: IntersectionPiece,
   right: IntersectionPiece,
   windows: List(RawTerminalWindow),
-) -> Result(List(RawTerminalWindow), Error) {
+) -> Result(List(RawTerminalWindow), svg_path.Error) {
   // Every terminal pair contributes a fixed 3x3 grid. Check before allocating
   // it so pathological near-coincident pairs cannot grow the search without a
   // deterministic bound.
@@ -5278,7 +5284,7 @@ fn collect_projection_terminal_windows(
   best best: DistanceMinimum,
   remaining_depth remaining_depth: Int,
   windows windows: List(RawTerminalWindow),
-) -> Result(#(List(RawTerminalWindow), DistanceMinimum), Error) {
+) -> Result(#(List(RawTerminalWindow), DistanceMinimum), svg_path.Error) {
   collect_projection_terminal_windows_generation(
     this_generation: [ProjectionWindow(left:, right:, remaining_depth:)],
     next_generation: [],
@@ -5292,7 +5298,7 @@ fn collect_projection_terminal_windows_generation(
   next_generation next_generation: List(ProjectionWindow),
   best best: DistanceMinimum,
   windows windows: List(RawTerminalWindow),
-) -> Result(#(List(RawTerminalWindow), DistanceMinimum), Error) {
+) -> Result(#(List(RawTerminalWindow), DistanceMinimum), svg_path.Error) {
   case this_generation {
     [] -> {
       case next_generation {
@@ -5336,7 +5342,7 @@ fn inspect_projection_window(
   next_generation next_generation: List(ProjectionWindow),
 ) -> Result(
   #(List(RawTerminalWindow), DistanceMinimum, List(ProjectionWindow)),
-  Error,
+  svg_path.Error,
 ) {
   case
     intersection_piece_bounding_box(left),
@@ -5446,7 +5452,7 @@ fn best_new_raw_terminal_window_start_minimum(
   windows: List(RawTerminalWindow),
   count count: Int,
   best best: DistanceMinimum,
-) -> Result(DistanceMinimum, Error) {
+) -> Result(DistanceMinimum, svg_path.Error) {
   case windows, count {
     _, 0 -> Ok(best)
     [], _ -> Ok(best)
@@ -5525,7 +5531,7 @@ fn add_terminal_window_grid_columns(
 
 fn split_intersection_piece_thirds(
   piece: IntersectionPiece,
-) -> Result(List(#(IntersectionPiece, Float)), Error) {
+) -> Result(List(#(IntersectionPiece, Float)), svg_path.Error) {
   let first_to = interpolate_float(piece.from, piece.to, 1.0 /. 3.0)
   let second_to = interpolate_float(piece.from, piece.to, 2.0 /. 3.0)
   Ok([
@@ -5547,7 +5553,7 @@ fn split_intersection_piece_thirds(
 fn minima_from_terminal_windows(
   windows: List(TerminalWindow),
   finish_tolerance finish_tolerance: Float,
-) -> Result(List(DistanceMinimum), Error) {
+) -> Result(List(DistanceMinimum), svg_path.Error) {
   use descents <- result.try(initial_descent_records(windows))
   let state =
     DescentState(
@@ -5564,14 +5570,14 @@ fn minima_from_terminal_windows(
 
 fn initial_descent_records(
   windows: List(TerminalWindow),
-) -> Result(List(DescentRecord), Error) {
+) -> Result(List(DescentRecord), svg_path.Error) {
   initial_descent_records_loop(windows, descents: [])
 }
 
 fn initial_descent_records_loop(
   windows: List(TerminalWindow),
   descents descents: List(DescentRecord),
-) -> Result(List(DescentRecord), Error) {
+) -> Result(List(DescentRecord), svg_path.Error) {
   case windows {
     [] -> Ok(list.reverse(descents))
     [TerminalWindow(id:, left:, right:, start_left_t:, start_right_t:), ..rest] -> {
@@ -5612,7 +5618,7 @@ fn run_descents(
   descents_to_run: List(DescentRecord),
   state: DescentState,
   certification_tolerance certification_tolerance: Float,
-) -> Result(DescentState, Error) {
+) -> Result(DescentState, svg_path.Error) {
   case descents_to_run {
     [] -> Ok(state)
     [descent, ..rest] -> {
@@ -5639,7 +5645,7 @@ fn run_one_descent(
   certification_tolerance certification_tolerance: Float,
   step step: Float,
   iterations iterations: Int,
-) -> Result(DescentState, Error) {
+) -> Result(DescentState, svg_path.Error) {
   use descent <- result.try(find_descent(state.descents, descent_id))
   case descent.status {
     Finished(_) -> Ok(state)
@@ -5725,7 +5731,7 @@ fn gradient_distance_proposal_unclamped(
   state: DescentState,
   step: Float,
   use_tangent_line_crossing use_tangent_line_crossing: Bool,
-) -> Result(#(DistanceMinimum, Float, Float), Error) {
+) -> Result(#(DistanceMinimum, Float, Float), svg_path.Error) {
   use window <- result.try(find_window(state.windows, descent.window_id))
   let WindowRecord(window: TerminalWindow(left:, right:, ..)) = window
   let DistanceMinimum(left_t:, right_t:, ..) = descent.current
@@ -5776,7 +5782,7 @@ fn best_gauss_newton_or_gradient_proposal(
   right_derivative right_derivative: Point,
   gradient gradient: #(DistanceMinimum, Float, Float),
   use_tangent_line_crossing use_tangent_line_crossing: Bool,
-) -> Result(#(DistanceMinimum, Float, Float), Error) {
+) -> Result(#(DistanceMinimum, Float, Float), svg_path.Error) {
   case current.distance_squared <=. 0.0001 *. 0.0001 {
     False -> Ok(gradient)
     True ->
@@ -5802,7 +5808,7 @@ fn best_alternating_local_crossing_polish(
   right_derivative right_derivative: Point,
   gradient gradient: #(DistanceMinimum, Float, Float),
   use_tangent_line_crossing use_tangent_line_crossing: Bool,
-) -> Result(#(DistanceMinimum, Float, Float), Error) {
+) -> Result(#(DistanceMinimum, Float, Float), svg_path.Error) {
   case use_tangent_line_crossing {
     True -> {
       use tangent <- result.try(tangent_line_crossing_proposal(
@@ -5836,7 +5842,7 @@ fn best_gauss_newton_or_gradient_polish(
   left_derivative left_derivative: Point,
   right_derivative right_derivative: Point,
   gradient gradient: #(DistanceMinimum, Float, Float),
-) -> Result(#(DistanceMinimum, Float, Float), Error) {
+) -> Result(#(DistanceMinimum, Float, Float), svg_path.Error) {
   let a = dot(left_derivative, left_derivative)
   let b = 0.0 -. dot(left_derivative, right_derivative)
   let c = dot(right_derivative, right_derivative)
@@ -5877,7 +5883,7 @@ fn tangent_line_crossing_proposal(
   separation separation: Point,
   left_derivative left_derivative: Point,
   right_derivative right_derivative: Point,
-) -> Result(#(DistanceMinimum, Float, Float), Error) {
+) -> Result(#(DistanceMinimum, Float, Float), svg_path.Error) {
   let determinant = cross(left_derivative, right_derivative)
   case directions_are_independent(left_derivative, right_derivative) {
     False -> Ok(#(current, current.left_t, current.right_t))
@@ -5914,7 +5920,7 @@ fn handle_window_transition(
   state: DescentState,
   raw_left_t: Float,
   raw_right_t: Float,
-) -> Result(DescentState, Error) {
+) -> Result(DescentState, svg_path.Error) {
   let containing =
     window_containing_global_point(state.windows, raw_left_t, raw_right_t)
 
@@ -5940,7 +5946,7 @@ fn move_descent_to_window(
   state: DescentState,
   global_left_t: Float,
   global_right_t: Float,
-) -> Result(DescentState, Error) {
+) -> Result(DescentState, svg_path.Error) {
   use window_record <- result.try(find_window(state.windows, target_window_id))
   use entrant_current <- result.try(distance_minimum_in_window(
     window_record.window,
@@ -5962,7 +5968,7 @@ fn distance_minimum_in_window(
   window: TerminalWindow,
   global_left_t: Float,
   global_right_t: Float,
-) -> Result(DistanceMinimum, Error) {
+) -> Result(DistanceMinimum, svg_path.Error) {
   global_distance_minimum_at(
     window.left,
     window.right,
@@ -5973,7 +5979,7 @@ fn distance_minimum_in_window(
 
 fn intersection_piece_bounding_box(
   piece: IntersectionPiece,
-) -> Result(BoundingBox, Error) {
+) -> Result(BoundingBox, svg_path.Error) {
   use segment <- result.try(svg_path.segment_between(
     piece.segment,
     from: piece.from,
@@ -5985,7 +5991,7 @@ fn intersection_piece_bounding_box(
 fn global_piece_point(
   piece: IntersectionPiece,
   global_t: Float,
-) -> Result(Point, Error) {
+) -> Result(Point, svg_path.Error) {
   svg_path.segment_point(piece.segment, at: global_t)
 }
 
@@ -5994,7 +6000,7 @@ fn global_distance_minimum_at(
   right: IntersectionPiece,
   left_global_t: Float,
   right_global_t: Float,
-) -> Result(DistanceMinimum, Error) {
+) -> Result(DistanceMinimum, svg_path.Error) {
   use left_point <- result.try(global_piece_point(left, left_global_t))
   use right_point <- result.try(global_piece_point(right, right_global_t))
   let dx = left_point.x -. right_point.x
@@ -6011,7 +6017,7 @@ fn finish_descent(
   state: DescentState,
   tolerance: Float,
   remaining_iterations _remaining_iterations: Int,
-) -> Result(DescentState, Error) {
+) -> Result(DescentState, svg_path.Error) {
   let found = window_minima(descent.current, tolerance:)
   Ok(replace_descent(state, DescentRecord(..descent, status: Finished(found))))
 }
@@ -6032,7 +6038,7 @@ fn segment_intersections_from_minima(
   minima: List(DistanceMinimum),
   tolerance tolerance: Float,
   intersections intersections: List(SegmentIntersection),
-) -> Result(List(SegmentIntersection), Error) {
+) -> Result(List(SegmentIntersection), svg_path.Error) {
   case minima {
     [] -> Ok(intersections)
     [minimum, ..rest] -> {
@@ -6094,7 +6100,7 @@ fn finished_minima(
 fn find_window(
   windows: List(WindowRecord),
   id: Int,
-) -> Result(WindowRecord, Error) {
+) -> Result(WindowRecord, svg_path.Error) {
   case windows {
     [] ->
       Error(InternalUncertifiedSegmentIntersection(
@@ -6115,7 +6121,7 @@ fn find_window(
 fn find_descent(
   descents: List(DescentRecord),
   id: Int,
-) -> Result(DescentRecord, Error) {
+) -> Result(DescentRecord, svg_path.Error) {
   case descents {
     [] ->
       Error(InternalUncertifiedSegmentIntersection(
@@ -6196,7 +6202,7 @@ fn segment_intersection_from_minimum(
   right: Segment,
   left_global_t: Float,
   right_global_t: Float,
-) -> Result(List(SegmentIntersection), Error) {
+) -> Result(List(SegmentIntersection), svg_path.Error) {
   case
     svg_path.segment_point(left, at: left_global_t),
     svg_path.segment_point(right, at: right_global_t)
