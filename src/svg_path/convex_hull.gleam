@@ -235,6 +235,9 @@ pub type Error {
   /// An underlying path operation failed.
   PathError(svg_path.Error)
 
+  /// The input path contained no subpaths.
+  EmptyPath
+
   /// Hull construction failed because an internal invariant was not satisfied.
   ConstructionFailed
 }
@@ -242,6 +245,12 @@ pub type Error {
 /// Detailed construction failures used by internal diagnostics and tests.
 @internal
 pub type ConstructionError {
+  /// The construction input contained no subpaths.
+  EmptyConstructionInput
+
+  /// An arc could not be converted into a valid construction representation.
+  DegenerateArc
+
   /// The generated hull segments could not be converted into a valid closed
   /// `Subpath`.
   ConstructionPathError(svg_path.Error)
@@ -308,7 +317,7 @@ pub fn subpath_hull(
 /// path.
 pub fn path_hull(path: svg_path.Path) -> Result(svg_path.Subpath, Error) {
   case svg_path.path_subpaths(path) {
-    [] -> Error(PathError(svg_path.EmptyPath))
+    [] -> Error(EmptyPath)
     subpaths -> {
       subpaths
       |> list.flat_map(hull_input_segments)
@@ -963,8 +972,7 @@ fn minimum_width_optimization_loop(
     None -> best_width
     Some(bound) -> float.max(0.0, float.max(inventory_lower_bound, bound))
   }
-  let lower_bound =
-    float.max(0.0, raw_lower_bound -. lower_bound_roundoff)
+  let lower_bound = float.max(0.0, raw_lower_bound -. lower_bound_roundoff)
   let converged = best_width -. lower_bound <=. accuracy
   case converged || depth >= max_depth {
     True ->
@@ -1496,7 +1504,7 @@ pub fn internal_path_hull_with_repair_mode(
   repair_mode repair_mode: String,
 ) -> Result(svg_path.Subpath, ConstructionError) {
   case svg_path.path_subpaths(path) {
-    [] -> Error(ConstructionPathError(svg_path.EmptyPath))
+    [] -> Error(EmptyConstructionInput)
     subpaths -> {
       subpaths
       |> list.flat_map(hull_input_segments)
@@ -2681,7 +2689,7 @@ fn arc_point_tangent_roots(
     )
   use arc <- result.try(
     ellipse.endpoint_to_center(endpoint)
-    |> result.map_error(fn(_) { ConstructionPathError(svg_path.DegenerateArc) }),
+    |> result.map_error(fn(_) { DegenerateArc }),
   )
 
   let local = ellipse_local_point(point, arc)
@@ -2697,9 +2705,7 @@ fn arc_point_tangent_roots(
       let base = trig.atan2_degrees(b, a)
       use offset <- result.try(
         trig.acos_degrees(ratio)
-        |> result.map_error(fn(_) {
-          ConstructionPathError(svg_path.DegenerateArc)
-        }),
+        |> result.map_error(fn(_) { DegenerateArc }),
       )
       Ok(
         [base -. offset, base +. offset]
