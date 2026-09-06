@@ -3682,6 +3682,8 @@ fn pair_cuts_with_common_endpoint_sliver(
       Error(svg_path.OverlappingSegments) ->
         case edge_shares_incoming_endpoint(edge, incoming_start, incoming_end) {
           True -> Ok([])
+          // Preserve the delegated overlap error when arrangement policy
+          // rejects a non-shared overlapping segment pair.
           False -> Error(PathError(svg_path.OverlappingSegments))
         }
       Ok(found) -> Ok(found)
