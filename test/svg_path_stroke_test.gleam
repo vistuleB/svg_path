@@ -65,6 +65,7 @@ pub fn round_caps_use_normalized_source_endpoint_directions_test() {
     stroke.Options(
       width: 6.0,
       cap: stroke.Round,
+      join: offset.RoundJoin,
       offset: offset.Options(..offset.default_options(), join: offset.RoundJoin),
     )
 
@@ -142,11 +143,7 @@ pub fn subpath_stroke_with_square_caps_extends_by_half_width_test() {
 pub fn subpath_stroke_with_bevel_join_keeps_corner_cut_test() {
   let subpath = right_angle_subpath()
   let options =
-    stroke.Options(
-      ..stroke.default_options(),
-      width: 2.0,
-      offset: offset.Options(..offset.default_options(), join: offset.Bevel),
-    )
+    stroke.Options(..stroke.default_options(), width: 2.0, join: offset.Bevel)
 
   let assert Ok(path) = stroke.subpath_with(subpath, options:)
   let assert [outline] = svg_path.path_subpaths(path)
@@ -160,7 +157,7 @@ pub fn subpath_stroke_with_round_join_adds_join_arcs_test() {
     stroke.Options(
       ..stroke.default_options(),
       width: 2.0,
-      offset: offset.Options(..offset.default_options(), join: offset.RoundJoin),
+      join: offset.RoundJoin,
     )
 
   let assert Ok(path) = stroke.subpath_with(subpath, options:)
@@ -177,10 +174,7 @@ pub fn subpath_stroke_with_miter_join_extends_to_apex_test() {
     stroke.Options(
       ..stroke.default_options(),
       width: 2.0,
-      offset: offset.Options(
-        ..offset.default_options(),
-        join: offset.Miter(4.0),
-      ),
+      join: offset.Miter(4.0),
     )
 
   let assert Ok(path) = stroke.subpath_with(subpath, options:)
@@ -195,17 +189,10 @@ pub fn subpath_stroke_with_low_miter_limit_falls_back_to_bevel_test() {
     stroke.Options(
       ..stroke.default_options(),
       width: 2.0,
-      offset: offset.Options(
-        ..offset.default_options(),
-        join: offset.Miter(1.0),
-      ),
+      join: offset.Miter(1.0),
     )
   let bevel =
-    stroke.Options(
-      ..stroke.default_options(),
-      width: 2.0,
-      offset: offset.Options(..offset.default_options(), join: offset.Bevel),
-    )
+    stroke.Options(..stroke.default_options(), width: 2.0, join: offset.Bevel)
 
   let assert Ok(low_miter_path) =
     stroke.subpath_with(subpath, options: low_miter)

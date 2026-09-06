@@ -62,7 +62,7 @@ const default_samples = 10
 
 const default_trimming_samples = 5
 
-const default_miter_limit = 4.0
+pub const default_miter_limit = 4.0
 
 const small_unit_division_tolerance = 0.000001
 
@@ -330,6 +330,8 @@ pub type Options {
     stalled_offset_diameter: Float,
     tangent_heal_angle_degrees: Float,
     join: Join,
+    /// Cap applied to the endpoints of open subpaths.
+    cap: Cap,
     single_offset_trimming: SingleOffsetTrimming,
     band_trimming: BandTrimming,
   )
@@ -1124,6 +1126,7 @@ pub fn default_options() -> Options {
     stalled_offset_diameter: default_stalled_offset_diameter,
     tangent_heal_angle_degrees: default_tangent_heal_angle_degrees,
     join: Miter(default_miter_limit),
+    cap: Butt,
     single_offset_trimming: SingleOffsetTrimming(
       offside: True,
       final_trimming: InBandTrimming,
@@ -1356,7 +1359,13 @@ pub fn internal_single_offset_band_candidate(
     offset:,
     options:,
   ))
-  band_from_sides(build.zero_source, 0.0, build.subpath, offset)
+  band_from_sides(
+    build.zero_source,
+    0.0,
+    build.subpath,
+    offset,
+    cap: options.cap,
+  )
 }
 
 /// Return arrangement-split offset edges with their offside classification
@@ -2974,6 +2983,7 @@ fn band_from_sides(
   inner_offset: Float,
   side_b: svg_path.Subpath,
   outer_offset: Float,
+  cap cap: Cap,
 ) -> Result(OneSubpathBand, Error) {
   let #(exterior, interior) = case inner_offset >=. outer_offset {
     True -> #(side_a, side_b)
@@ -2982,9 +2992,10 @@ fn band_from_sides(
   case svg_path.subpath_is_closed(side_a) {
     True -> Ok(ClosedSubpathBand(exterior:, interior:))
     False -> {
-      use outline <- result.try(open_butt_band_outline(
+      use outline <- result.try(open_band_outline(
         side_a: exterior,
         side_b: interior,
+        cap:,
       ))
       Ok(OpenSubpathBand(outline))
     }
@@ -3043,12 +3054,13 @@ fn closed_untrimmed_side_from_normalized_source(
   |> result.map_error(PathError)
 }
 
-fn open_butt_band_outline(
+fn open_band_outline(
   side_a side_a: svg_path.Subpath,
   side_b side_b: svg_path.Subpath,
+  cap cap: Cap,
 ) -> Result(svg_path.Subpath, Error) {
-  use end_cap <- result.try(open_butt_band_end_cap(side_a, side_b))
-  use start_cap <- result.try(open_butt_band_start_cap(side_a, side_b))
+  use end_cap <- result.try(open_band_end_cap(side_a, side_b, cap))
+  use start_cap <- result.try(open_band_start_cap(side_a, side_b, cap))
   let segments =
     list.append(
       svg_path.subpath_segments(side_a),
@@ -3072,22 +3084,81 @@ fn open_butt_band_outline(
   |> result.map_error(PathError)
 }
 
-fn open_butt_band_end_cap(
+fn open_band_end_cap(
   side_a: svg_path.Subpath,
   side_b: svg_path.Subpath,
+  cap: Cap,
 ) -> Result(List(svg_path.Segment), Error) {
   let end_a = svg_path.subpath_end(side_a)
   let end_b = svg_path.subpath_end(side_b)
-  Ok(line_segments_between([end_a, end_b]))
+  case cap {
+    Butt -> Ok(line_segments_between([end_a, end_b]))
+    Square | Round -> {
+      let radius = point_helpers.distance(end_a, end_b) /. 2.0
+      case list.last(svg_path.subpath_segments(side_a)) {
+        Error(_) -> Ok(line_segments_between([end_a, end_b]))
+        Ok(last) ->
+          case unit_tangent(last, t: 1.0) {
+            Error(error) -> Error(error)
+            Ok(tangent) -> band_cap_segments(end_a, end_b, tangent, radius, cap)
+          }
+      }
+    }
+  }
 }
 
-fn open_butt_band_start_cap(
+fn open_band_start_cap(
   side_a: svg_path.Subpath,
   side_b: svg_path.Subpath,
+  cap: Cap,
 ) -> Result(List(svg_path.Segment), Error) {
   let start_a = svg_path.subpath_start(side_a)
   let start_b = svg_path.subpath_start(side_b)
-  Ok(line_segments_between([start_b, start_a]))
+  case cap {
+    Butt -> Ok(line_segments_between([start_b, start_a]))
+    Square | Round -> {
+      let radius = point_helpers.distance(start_a, start_b) /. 2.0
+      case list.first(svg_path.subpath_segments(side_b)) {
+        Error(_) -> Ok(line_segments_between([start_b, start_a]))
+        Ok(first) ->
+          case unit_tangent(first, t: 0.0) {
+            Error(error) -> Error(error)
+            Ok(tangent) -> {
+              let outward = point_helpers.scale(tangent, -1.0)
+              band_cap_segments(start_b, start_a, outward, radius, cap)
+            }
+          }
+      }
+    }
+  }
+}
+
+fn band_cap_segments(
+  from: svg_path.Point,
+  to: svg_path.Point,
+  outward: svg_path.Point,
+  radius: Float,
+  cap: Cap,
+) -> Result(List(svg_path.Segment), Error) {
+  let extended_from =
+    point_helpers.add(from, point_helpers.scale(outward, radius))
+  let extended_to = point_helpers.add(to, point_helpers.scale(outward, radius))
+  case cap {
+    Butt -> Ok(line_segments_between([from, to]))
+    Square -> Ok(line_segments_between([from, extended_from, extended_to, to]))
+    Round -> {
+      Ok([
+        svg_path.Arc(
+          start: from,
+          radius: svg_path.Point(radius, radius),
+          x_axis_rotation: 0.0,
+          large_arc: False,
+          sweep: True,
+          end: to,
+        ),
+      ])
+    }
+  }
 }
 
 fn one_subpath_band_semantic_paths(
@@ -3289,6 +3360,7 @@ pub fn subpath_with(
     0.0,
     untrimmed_build.subpath,
     offset,
+    cap: options.cap,
   ))
   trim_single_offset_builds([untrimmed_build], offset, bands: [band], options:)
 }
@@ -3753,6 +3825,7 @@ pub fn subpath_band_with(
         inner_offset,
         untrimmed_b,
         outer_offset,
+        cap: options.cap,
       ))
       let winding_opinions = case inner_offset >=. outer_offset {
         True -> [
@@ -3860,6 +3933,7 @@ pub fn internal_subpath_band_arrangement_trace(
         inner_offset,
         untrimmed_b,
         outer_offset,
+        cap: options.cap,
       ))
       let winding_opinions = case inner_offset >=. outer_offset {
         True -> [
@@ -3937,7 +4011,13 @@ fn cusp_trimming_arrangement_trace_for_side(
     closed:,
     tolerance: options.fitting.tolerance,
   ))
-  use band <- result.try(band_from_sides(zero_source, 0.0, geometry, offset))
+  use band <- result.try(band_from_sides(
+    zero_source,
+    0.0,
+    geometry,
+    offset,
+    cap: options.cap,
+  ))
   use winding <- result.try(internal_band_winding_function([band]))
   use arrangement <- result.try(single_offset_segment_arrangement(
     [geometry],
@@ -4071,14 +4151,13 @@ pub fn subpath_stroke(
   subpath: svg_path.Subpath,
   width width: Float,
 ) -> Result(svg_path.Path, Error) {
-  subpath_stroke_with(subpath, width:, cap: Butt, options: default_options())
+  subpath_stroke_with(subpath, width:, options: default_options())
 }
 
 /// Stroke a subpath using explicit cap and offset options.
 pub fn subpath_stroke_with(
   subpath subpath: svg_path.Subpath,
   width width: Float,
-  cap cap: Cap,
   options options: Options,
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(validate_stroke_width(width))
@@ -4091,7 +4170,7 @@ pub fn subpath_stroke_with(
         svg_path.subpath_is_zero_length(subpath, tolerance: point_tolerance)
       {
         Error(error) -> Error(PathError(error))
-        Ok(True) -> zero_length_stroke_path(subpath, radius:, cap:)
+        Ok(True) -> zero_length_stroke_path(subpath, radius:, cap: options.cap)
         Ok(False) -> {
           case svg_path.subpath_is_closed(subpath) {
             True -> {
@@ -4106,7 +4185,7 @@ pub fn subpath_stroke_with(
               use untrimmed <- result.try(untrimmed_stroke_outline(
                 subpath,
                 radius,
-                cap,
+                options.cap,
                 options,
               ))
               use stroke <- result.try(topological_band_path(
@@ -4180,7 +4259,12 @@ pub fn path_with(
     ),
   )
   use bands <- result.try(
-    single_offset_bands_from_builds(untrimmed_builds, offset, converted: []),
+    single_offset_bands_from_builds(
+      untrimmed_builds,
+      offset,
+      cap: options.cap,
+      converted: [],
+    ),
   )
   use result <- result.try(trim_single_offset_builds(
     untrimmed_builds,
@@ -4194,6 +4278,7 @@ pub fn path_with(
 fn single_offset_bands_from_builds(
   builds: List(SingleOffsetUntrimmedBuild),
   offset: Float,
+  cap cap: Cap,
   converted converted: List(OneSubpathBand),
 ) -> Result(List(OneSubpathBand), Error) {
   case builds {
@@ -4204,8 +4289,9 @@ fn single_offset_bands_from_builds(
         0.0,
         first.subpath,
         offset,
+        cap:,
       ))
-      single_offset_bands_from_builds(rest, offset, converted: [
+      single_offset_bands_from_builds(rest, offset, cap:, converted: [
         band,
         ..converted
       ])
@@ -4285,14 +4371,13 @@ pub fn path_stroke(
   path: svg_path.Path,
   width width: Float,
 ) -> Result(svg_path.Path, Error) {
-  path_stroke_with(path, width:, cap: Butt, options: default_options())
+  path_stroke_with(path, width:, options: default_options())
 }
 
 /// Stroke every subpath in a path using explicit cap and offset options.
 pub fn path_stroke_with(
   path path: svg_path.Path,
   width width: Float,
-  cap cap: Cap,
   options options: Options,
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(validate_stroke_width(width))
@@ -4301,7 +4386,6 @@ pub fn path_stroke_with(
     stroke_path_subpaths(
       svg_path.path_subpaths(path),
       width,
-      cap,
       options,
       converted: [],
     ),
@@ -4470,23 +4554,16 @@ fn untrimmed_band_path_subpaths(
 fn stroke_path_subpaths(
   subpaths: List(svg_path.Subpath),
   width: Float,
-  cap: Cap,
   options: Options,
   converted converted: List(svg_path.Subpath),
 ) -> Result(List(svg_path.Subpath), Error) {
   case subpaths {
     [] -> Ok(list.reverse(converted))
     [first, ..rest] -> {
-      use stroke <- result.try(subpath_stroke_with(
-        first,
-        width:,
-        cap:,
-        options:,
-      ))
+      use stroke <- result.try(subpath_stroke_with(first, width:, options:))
       stroke_path_subpaths(
         rest,
         width,
-        cap,
         options,
         converted: list.append(
           list.reverse(svg_path.path_subpaths(stroke)),
@@ -5323,7 +5400,13 @@ fn cusp_trim_i_subpath(
         closed:,
         tolerance: options.fitting.tolerance,
       ))
-      use band <- result.try(band_from_sides(zero_source, 0.0, geometry, offset))
+      use band <- result.try(band_from_sides(
+        zero_source,
+        0.0,
+        geometry,
+        offset,
+        cap: options.cap,
+      ))
       use winding <- result.try(internal_band_winding_function([band]))
       use build <- result.try(single_offset_segment_arrangement(
         [geometry],

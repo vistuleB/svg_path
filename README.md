@@ -1408,10 +1408,11 @@ several fitted pieces. Subpath and path offsets return a `Path`: trimming may
 split one offset walk into multiple subpaths or remove it entirely.
 
 The `_with` variants accept `offset.Options`. The join can be `Bevel`,
-`Miter(miter_limit:)`, or `Round`. `Options.fitting` controls fitted-curve
-accuracy and maximum subdivision depth. `Options.distance_options` controls
-the projection and root-finding tolerances used during trimming; it is not a
-trimming-policy switch.
+`Miter(miter_limit:)`, or `RoundJoin`, and the endpoint cap defaults to `Butt`
+with `Square` or `Round` available for open sources. `Options.fitting` controls
+fitted-curve accuracy and maximum subdivision depth. `Options.distance_options`
+controls the projection and root-finding tolerances used during trimming; it is
+not a trimming-policy switch.
 
 Use `subpath_untrimmed`, `path_untrimmed`, or their `_with` variants to obtain
 the connected offset walks before topological trimming. These are useful for
@@ -1489,9 +1490,9 @@ offset.path_band(
 
 `inner` and `outer` are caller-assigned roles, not a numeric-order
 restriction. Either ordering is accepted. Exchanging the values reverses the
-orientation of the resulting band. Bands do not add endpoint caps; use
-`subpath_stroke` or `path_stroke` when an open source needs `Butt`, `Square`,
-or `RoundCap` endpoints.
+orientation of the resulting band. Bands cap open-source endpoints with
+`options.cap`, which defaults to `Butt`; the `Square` and `Round` caps extend
+or round the open ends the same way `subpath_stroke` does.
 
 Band trimming has three independent Boolean controls:
 

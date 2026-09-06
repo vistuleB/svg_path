@@ -370,6 +370,7 @@ pub fn generate_recursive_dash_cap_report() {
     stroke.Options(
       width: 58.0,
       cap: stroke.Round,
+      join: offset.RoundJoin,
       offset: offset.Options(..offset.default_options(), join: offset.RoundJoin),
     )
   let assert Ok(first_stroke) =
@@ -388,7 +389,12 @@ pub fn generate_recursive_dash_cap_report() {
   let options =
     offset.Options(..offset.default_options(), join: offset.RoundJoin)
   let stroke_options =
-    stroke.Options(width: 6.0, cap: stroke.Round, offset: options)
+    stroke.Options(
+      width: 6.0,
+      cap: stroke.Round,
+      join: offset.RoundJoin,
+      offset: options,
+    )
   let radius = 3.0
   let positive = offset.subpath_untrimmed_with(dash, offset: radius, options:)
   let negative =
@@ -507,9 +513,13 @@ fn stroke_caps() -> String {
         let #(x, label, cap) = example
         let placed = place_subpath(source, x +. 42.0, 112.0)
         let options =
-          offset.Options(..offset.default_options(), join: offset.RoundJoin)
+          offset.Options(
+            ..offset.default_options(),
+            join: offset.RoundJoin,
+            cap:,
+          )
         let assert Ok(stroke) =
-          offset.subpath_stroke_with(placed, width: 28.0, cap:, options:)
+          offset.subpath_stroke_with(placed, width: 28.0, options:)
         [
           panel(x, label),
           svg.StyledPath(
@@ -555,6 +565,7 @@ fn dashed_strokes() -> String {
           stroke.Options(
             width: 16.0,
             cap: stroke.Round,
+            join: offset.RoundJoin,
             offset: offset.Options(
               ..offset.default_options(),
               join: offset.RoundJoin,
@@ -606,6 +617,7 @@ fn recursive_dashes() -> String {
     stroke.Options(
       width: 58.0,
       cap: stroke.Round,
+      join: offset.RoundJoin,
       offset: offset.Options(..offset.default_options(), join: offset.RoundJoin),
     )
   let assert Ok(first_stroke) =
@@ -621,6 +633,7 @@ fn recursive_dashes() -> String {
     stroke.Options(
       width: 6.0,
       cap: stroke.Round,
+      join: offset.RoundJoin,
       offset: offset.Options(..offset.default_options(), join: offset.RoundJoin),
     )
   let assert Ok(second_paths) =

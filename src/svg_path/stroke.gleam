@@ -53,6 +53,8 @@ pub type Options {
     width: Float,
     /// Cap applied to the endpoints of open subpaths.
     cap: Cap,
+    /// Join applied where the two half-width offsets meet.
+    join: offset.Join,
     /// Options used to construct and join the two half-width offsets.
     offset: offset.Options,
   )
@@ -76,7 +78,12 @@ pub type DashOptions {
 
 /// Return default stroke options.
 pub fn default_options() -> Options {
-  Options(width: 1.0, cap: Butt, offset: offset.default_options())
+  Options(
+    width: 1.0,
+    cap: Butt,
+    join: offset.Miter(offset.default_miter_limit),
+    offset: offset.default_options(),
+  )
 }
 
 /// Return default dash extraction options for a pattern and dash offset.
@@ -132,8 +139,11 @@ pub fn subpath_with(
   offset.subpath_stroke_with(
     subpath,
     width: options.width,
-    cap: to_offset_cap(options.cap),
-    options: options.offset,
+    options: offset.Options(
+      ..options.offset,
+      cap: to_offset_cap(options.cap),
+      join: options.join,
+    ),
   )
   |> result.map_error(OffsetError)
 }

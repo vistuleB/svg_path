@@ -1406,11 +1406,91 @@ pub fn subpath_stroke_open_line_with_square_cap_extends_ends_test() {
     offset.subpath_stroke_with(
       subpath,
       width: 2.0,
-      cap: offset.Square,
-      options: offset.default_options(),
+      options: offset.Options(..offset.default_options(), cap: offset.Square),
     )
 
   assert serialize.path(stroke) == "M 0 -1 H 10 H 11 V 1 H 10 H 0 H -1 V -1 Z"
+}
+
+pub fn band_round_cap_matches_stroke_round_cap_outline_test() {
+  let subpath =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
+    ])
+  let options =
+    offset.Options(
+      ..offset.default_options(),
+      cap: offset.Round,
+      band_trimming: offset.BandTrimming(
+        inner_cusps: True,
+        outer_cusps: True,
+        in_band: False,
+      ),
+    )
+  let assert Ok(band) =
+    offset.subpath_band_with(
+      subpath,
+      inner_offset: -1.0,
+      outer_offset: 1.0,
+      options:,
+    )
+
+  assert serialize.path(band)
+    == "M 0 -1 H 10 A 1 1 0 0 1 10 1 H 0 A 1 1 0 0 1 0 -1 Z"
+}
+
+pub fn band_square_cap_matches_stroke_square_cap_outline_test() {
+  let subpath =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
+    ])
+  let options =
+    offset.Options(
+      ..offset.default_options(),
+      cap: offset.Square,
+      band_trimming: offset.BandTrimming(
+        inner_cusps: True,
+        outer_cusps: True,
+        in_band: False,
+      ),
+    )
+  let assert Ok(band) =
+    offset.subpath_band_with(
+      subpath,
+      inner_offset: -1.0,
+      outer_offset: 1.0,
+      options:,
+    )
+
+  assert serialize.path(band) == "M 0 -1 H 10 H 11 V 1 H 10 H 0 H -1 V -1 Z"
+}
+
+pub fn band_butt_cap_outline_is_unchanged_test() {
+  let subpath =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
+    ])
+  let options =
+    offset.Options(
+      ..offset.default_options(),
+      band_trimming: offset.BandTrimming(
+        inner_cusps: True,
+        outer_cusps: True,
+        in_band: False,
+      ),
+    )
+  let assert Ok(band) =
+    offset.subpath_band_with(
+      subpath,
+      inner_offset: -1.0,
+      outer_offset: 1.0,
+      options:,
+    )
+
+  assert serialize.path(band) == "M 0 -1 H 10 V 1 H 0 Z"
 }
 
 pub fn subpath_stroke_closed_square_uses_band_test() {
