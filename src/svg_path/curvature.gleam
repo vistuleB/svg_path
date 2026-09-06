@@ -24,7 +24,7 @@ const default_max_depth = 32
 /// Cases are split into options-authorization errors (arguments supplied by the
 /// caller were invalid, and the offending value is carried) and geometry errors
 /// (a degenerate or infinite configuration in the segment itself).
-pub type CurvatureError {
+pub type Error {
   /// A curvature `tolerance` option was invalid (not finite or negative).
   InvalidCurvatureTolerance(Float)
   /// A curvature `samples` option was invalid (not positive).
@@ -94,7 +94,7 @@ pub fn segment_derivatives(
 pub fn segment_left_normal_curvature(
   segment: svg_path.Segment,
   at t: Float,
-) -> Result(Float, CurvatureError) {
+) -> Result(Float, Error) {
   use data <- result.try(segment_derivatives_curvature(segment, at: t))
   left_normal_curvature_from_derivatives(data)
 }
@@ -107,7 +107,7 @@ pub fn segment_left_normal_curvature(
 pub fn segment_left_normal_radius(
   segment: svg_path.Segment,
   at t: Float,
-) -> Result(Float, CurvatureError) {
+) -> Result(Float, Error) {
   use curvature <- result.try(segment_left_normal_curvature(segment, at: t))
   case curvature == 0.0 {
     True -> Error(InfiniteRadiusOfCurvature)
@@ -126,7 +126,7 @@ pub fn segment_left_normal_radius_close_to(
   distance distance: Float,
   margin margin: Float,
   at t: Float,
-) -> Result(Bool, CurvatureError) {
+) -> Result(Bool, Error) {
   case margin <. 0.0 || !number.is_finite(margin) {
     True -> Error(InvalidCurvatureMargin(margin))
     False -> {
@@ -146,7 +146,7 @@ pub fn segment_left_normal_cusp_residual(
   segment: svg_path.Segment,
   distance distance: Float,
   at t: Float,
-) -> Result(Float, CurvatureError) {
+) -> Result(Float, Error) {
   use data <- result.try(segment_derivatives_curvature(segment, at: t))
   left_normal_cusp_residual_from_derivatives(data, distance: distance)
 }
@@ -161,7 +161,7 @@ pub fn segment_left_normal_cusp_parameters(
   segment: svg_path.Segment,
   distance distance: Float,
   options options: Options,
-) -> Result(List(Float), CurvatureError) {
+) -> Result(List(Float), Error) {
   use _ <- result.try(validate_options(options))
   let residual = fn(t) {
     segment_left_normal_cusp_residual(segment, distance:, at: t)
@@ -176,7 +176,7 @@ pub fn segment_left_normal_cusp_parameters(
 pub fn segment_inflection_parameters(
   segment: svg_path.Segment,
   options options: Options,
-) -> Result(List(Float), CurvatureError) {
+) -> Result(List(Float), Error) {
   use _ <- result.try(validate_options(options))
   case segment {
     svg_path.Line(..) | svg_path.QuadraticBezier(..) | svg_path.Arc(..) ->
@@ -208,7 +208,7 @@ pub fn segment_left_normal_radius_close_bands(
   distance distance: Float,
   margin margin: Float,
   options options: Options,
-) -> Result(List(CurvatureBand), CurvatureError) {
+) -> Result(List(CurvatureBand), Error) {
   use _ <- result.try(validate_options(options))
   case margin <. 0.0 || !number.is_finite(margin) {
     True -> Error(InvalidCurvatureMargin(margin))
@@ -224,14 +224,14 @@ pub fn segment_left_normal_radius_close_bands(
 fn segment_derivatives_curvature(
   segment: svg_path.Segment,
   at t: Float,
-) -> Result(Derivatives, CurvatureError) {
+) -> Result(Derivatives, Error) {
   segment_derivatives(segment, at: t)
   |> result.map_error(fn(_) { DegenerateCurvatureDerivative })
 }
 
 fn left_normal_curvature_from_derivatives(
   data: Derivatives,
-) -> Result(Float, CurvatureError) {
+) -> Result(Float, Error) {
   let Derivatives(first:, second:) = data
   let speed_squared = dot(first, first)
   case speed_squared <=. 0.0 || !number.is_finite(speed_squared) {
@@ -247,7 +247,7 @@ fn left_normal_radius_close_to(
   data: Derivatives,
   distance distance: Float,
   margin margin: Float,
-) -> Result(Bool, CurvatureError) {
+) -> Result(Bool, Error) {
   let Derivatives(first:, second:) = data
   let speed_squared = dot(first, first)
   let c = cross(first, second)
@@ -271,7 +271,7 @@ fn left_normal_radius_close_to(
 fn left_normal_cusp_residual_from_derivatives(
   data: Derivatives,
   distance distance: Float,
-) -> Result(Float, CurvatureError) {
+) -> Result(Float, Error) {
   let Derivatives(first:, second:) = data
   let speed_squared = dot(first, first)
   case speed_squared <=. 0.0 || !number.is_finite(speed_squared) {
@@ -284,19 +284,19 @@ fn left_normal_cusp_residual_from_derivatives(
 }
 
 fn sampled_roots(
-  f: fn(Float) -> Result(Float, CurvatureError),
+  f: fn(Float) -> Result(Float, Error),
   options: Options,
-) -> Result(List(Float), CurvatureError) {
+) -> Result(List(Float), Error) {
   sampled_roots_loop(f, options, index: 0, roots: [])
   |> result.map(unique_sorted_parameters(_, options.tolerance))
 }
 
 fn sampled_roots_loop(
-  f: fn(Float) -> Result(Float, CurvatureError),
+  f: fn(Float) -> Result(Float, Error),
   options: Options,
   index index: Int,
   roots roots: List(Float),
-) -> Result(List(Float), CurvatureError) {
+) -> Result(List(Float), Error) {
   case index >= options.samples {
     True -> Ok(roots)
     False -> {
@@ -330,14 +330,14 @@ fn sampled_roots_loop(
 }
 
 fn refine_root(
-  f: fn(Float) -> Result(Float, CurvatureError),
+  f: fn(Float) -> Result(Float, Error),
   a: Float,
   b: Float,
   va: Float,
   vb: Float,
   options: Options,
   depth depth: Int,
-) -> Result(Float, CurvatureError) {
+) -> Result(Float, Error) {
   case
     depth >= options.max_depth
     || float.absolute_value(b -. a) <=. options.tolerance
@@ -364,19 +364,19 @@ fn refine_root(
 }
 
 fn sampled_bands(
-  close: fn(Float) -> Result(Bool, CurvatureError),
+  close: fn(Float) -> Result(Bool, Error),
   options: Options,
-) -> Result(List(CurvatureBand), CurvatureError) {
+) -> Result(List(CurvatureBand), Error) {
   sampled_bands_loop(close, options, index: 0, open: None, bands: [])
 }
 
 fn sampled_bands_loop(
-  close: fn(Float) -> Result(Bool, CurvatureError),
+  close: fn(Float) -> Result(Bool, Error),
   options: Options,
   index index: Int,
   open open: Option(Float),
   bands bands: List(CurvatureBand),
-) -> Result(List(CurvatureBand), CurvatureError) {
+) -> Result(List(CurvatureBand), Error) {
   case index > options.samples {
     True -> {
       let bands = case open {
@@ -417,7 +417,7 @@ fn sampled_bands_loop(
   }
 }
 
-fn validate_options(options: Options) -> Result(Nil, CurvatureError) {
+fn validate_options(options: Options) -> Result(Nil, Error) {
   case options.tolerance <. 0.0 || !number.is_finite(options.tolerance) {
     True -> Error(InvalidCurvatureTolerance(options.tolerance))
     False ->
