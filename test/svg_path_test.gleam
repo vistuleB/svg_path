@@ -2099,16 +2099,14 @@ pub fn subpath_is_zero_length_requires_non_empty_subpath_test() {
 
 pub fn subpath_is_empty_detects_move_only_subpath_test() {
   let at = svg_path.Point(2.0, 3.0)
+  let line =
+    svg_path.Line(
+      start: svg_path.Point(0.0, 0.0),
+      end: svg_path.Point(0.0, 0.0),
+    )
 
   assert svg_path.subpath_is_empty(svg_path.subpath_empty(at:))
-  assert !svg_path.subpath_is_empty(
-    svg_path.subpath_assert([
-      svg_path.Line(
-        start: svg_path.Point(0.0, 0.0),
-        end: svg_path.Point(1.0, 0.0),
-      ),
-    ]),
-  )
+  assert !svg_path.subpath_is_empty(svg_path.subpath_assert([line]))
 }
 
 pub fn subpath_is_zero_length_checks_every_segment_test() {
