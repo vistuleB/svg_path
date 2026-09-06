@@ -17,6 +17,9 @@ pub const up = svg_path.Point(0.0, -1.0)
 /// The unit vector pointing down in SVG coordinates.
 pub const down = svg_path.Point(0.0, 1.0)
 
+/// The zero vector.
+pub const zero = svg_path.Point(0.0, 0.0)
+
 /// Return the unit vector pointing at an SVG angle in degrees.
 ///
 /// `0` points right, `90` points down, `180` points left, and `270` points up.

@@ -11,6 +11,7 @@ pub fn basis_vectors_and_direction_test() {
   assert point.left == svg_path.Point(-1.0, 0.0)
   assert point.up == svg_path.Point(0.0, -1.0)
   assert point.down == svg_path.Point(0.0, 1.0)
+  assert point.zero == svg_path.Point(0.0, 0.0)
   assert point.direction(degrees: 0.0) == point.right
   assert point.direction(degrees: 90.0) == point.down
   assert point.direction(degrees: 180.0) == point.left
