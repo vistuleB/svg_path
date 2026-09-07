@@ -1060,7 +1060,6 @@ pub fn subpath(
   cap cap: Cap,
 ) -> Result(svg_path.Path, Error) {
   subpath_with(subpath, offset:, join:, cap:, options: default_options())
-  |> result.map_error(public_error)
 }
 
 /// Offset a subpath by a signed normal displacement using explicit options.
@@ -1070,30 +1069,33 @@ pub fn subpath_with(
   join join: Join,
   cap cap: Cap,
   options options: Options,
-) -> Result(svg_path.Path, InternalError) {
-  use _ <- result.try(validate_options(options))
-  use _ <- result.try(validate_join(join))
-  use normalized <- result.try(normalize_source_subpath(subpath, options))
-  use untrimmed_build <- result.try(build_single_offset_untrimmed(
-    normalized,
-    offset:,
-    join:,
-    options:,
-  ))
-  use band <- result.try(band_from_sides(
-    untrimmed_build.zero_source,
-    0.0,
-    untrimmed_build.subpath,
-    offset,
-    cap:,
-  ))
-  trim_single_offset_builds(
-    [untrimmed_build],
-    offset,
-    bands: [band],
-    cap:,
-    options:,
-  )
+) -> Result(svg_path.Path, Error) {
+  let result = {
+    use _ <- result.try(validate_options(options))
+    use _ <- result.try(validate_join(join))
+    use normalized <- result.try(normalize_source_subpath(subpath, options))
+    use untrimmed_build <- result.try(build_single_offset_untrimmed(
+      normalized,
+      offset:,
+      join:,
+      options:,
+    ))
+    use band <- result.try(band_from_sides(
+      untrimmed_build.zero_source,
+      0.0,
+      untrimmed_build.subpath,
+      offset,
+      cap:,
+    ))
+    trim_single_offset_builds(
+      [untrimmed_build],
+      offset,
+      bands: [band],
+      cap:,
+      options:,
+    )
+  }
+  result |> result.map_error(public_error)
 }
 
 fn normalize_source_subpath(
