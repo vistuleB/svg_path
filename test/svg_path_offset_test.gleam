@@ -1746,7 +1746,7 @@ pub fn subpath_stroke_rejects_invalid_width_test() {
       join: offset.Miter(offset.default_miter_limit),
       cap: offset.Butt,
     )
-    == Error(offset.InternalInvalidStrokeWidth(0.0))
+    == Error(offset.InvalidStrokeWidth(0.0))
 }
 
 pub fn band_inside_function_uses_nonzero_for_open_subpath_band_test() {

@@ -1058,8 +1058,9 @@ pub fn subpath(
   offset offset: Float,
   join join: Join,
   cap cap: Cap,
-) -> Result(svg_path.Path, InternalError) {
+) -> Result(svg_path.Path, Error) {
   subpath_with(subpath, offset:, join:, cap:, options: default_options())
+  |> result.map_error(public_error)
 }
 
 /// Offset a subpath by a signed normal displacement using explicit options.
@@ -1168,7 +1169,7 @@ pub fn subpath_band(
   outer_offset outer_offset: Float,
   join join: Join,
   cap cap: Cap,
-) -> Result(svg_path.Path, InternalError) {
+) -> Result(svg_path.Path, Error) {
   subpath_band_with(
     subpath,
     inner_offset:,
@@ -1177,6 +1178,7 @@ pub fn subpath_band(
     cap:,
     options: default_options(),
   )
+  |> result.map_error(public_error)
 }
 
 /// Offset a subpath at two signed normal displacements using explicit options.
@@ -1509,8 +1511,9 @@ pub fn subpath_stroke(
   width width: Float,
   join join: Join,
   cap cap: Cap,
-) -> Result(svg_path.Path, InternalError) {
+) -> Result(svg_path.Path, Error) {
   subpath_stroke_with(subpath, width:, join:, cap:, options: default_options())
+  |> result.map_error(public_error)
 }
 
 /// Stroke a subpath using explicit join, cap, and technical options.
@@ -1613,8 +1616,9 @@ pub fn path(
   offset offset: Float,
   join join: Join,
   cap cap: Cap,
-) -> Result(svg_path.Path, InternalError) {
+) -> Result(svg_path.Path, Error) {
   path_with(path, offset:, join:, cap:, options: default_options())
+  |> result.map_error(public_error)
 }
 
 /// Offset every subpath by a signed normal displacement using explicit options.
@@ -1688,7 +1692,7 @@ pub fn path_band(
   outer_offset outer_offset: Float,
   join join: Join,
   cap cap: Cap,
-) -> Result(svg_path.Path, InternalError) {
+) -> Result(svg_path.Path, Error) {
   path_band_with(
     path,
     inner_offset:,
@@ -1697,6 +1701,7 @@ pub fn path_band(
     cap:,
     options: default_options(),
   )
+  |> result.map_error(public_error)
 }
 
 /// Offset every subpath in a path at two signed normal displacements using
