@@ -1924,25 +1924,6 @@ pub fn offside_trimming_prunes_closed_subpaths_independently_test() {
   assert list.all(subpaths, svg_path.subpath_is_closed)
 }
 
-pub fn untrimmed_stroke_band_closes_open_source_test() {
-  let open =
-    svg_path.subpath_assert_polyline([
-      svg_path.Point(0.0, 0.0),
-      svg_path.Point(10.0, 0.0),
-    ])
-
-  let assert Ok(offset.OpenSubpathBand(outline)) =
-    offset.internal_untrimmed_stroke_band(
-      open,
-      width: 4.0,
-      join: offset.Miter(offset.default_miter_limit),
-      cap: offset.Butt,
-      options: offset.default_options(),
-    )
-
-  assert svg_path.subpath_is_closed(outline)
-}
-
 pub fn subpath_prunes_self_crossed_inset_sections_test() {
   let shape =
     svg_path.subpath_assert_polygon([

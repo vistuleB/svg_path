@@ -425,20 +425,6 @@ fn topological_band_path_with_opinions(
 }
 
 /// Extract, filter, and orient band loops as a path.
-fn topological_band_path(
-  untrimmed: List(svg_path.Subpath),
-  bands bands: List(OneSubpathBand),
-  options options: Options,
-) -> Result(svg_path.Path, InternalError) {
-  use loops <- result.try(internal_topological_band_loops(
-    untrimmed,
-    bands:,
-    options:,
-  ))
-  use winding <- result.try(internal_band_winding_function(bands))
-  orient_band_path(svg_path.Path(subpaths: loops), winding)
-}
-
 fn trim_single_offset_builds(
   builds: List(SingleOffsetUntrimmedBuild),
   offset: Float,
@@ -709,17 +695,6 @@ fn cusp_trimmed_single_offset_subpaths(
   }
 }
 
-pub fn internal_untrimmed_stroke_band(
-  source: svg_path.Subpath,
-  width width: Float,
-  join join: Join,
-  cap cap: Cap,
-  options options: Options,
-) -> Result(OneSubpathBand, InternalError) {
-  use _ <- result.try(validate_stroke_width(width))
-  untrimmed_stroke_band(source, width, join, cap, options)
-}
-
 fn trim_single_offset_arrangement(
   build: OffsetArrangementBuild,
   untrimmed: List(svg_path.Subpath),
@@ -880,64 +855,6 @@ fn band_from_sides(
       Ok(OpenSubpathBand(outline))
     }
   }
-}
-
-fn untrimmed_stroke_band(
-  source: svg_path.Subpath,
-  width: Float,
-  join: Join,
-  cap: Cap,
-  options: Options,
-) -> Result(OneSubpathBand, InternalError) {
-  let radius = width /. 2.0
-  use normalized <- result.try(normalize_source_subpath(source, options))
-  case svg_path.subpath_is_closed(source) {
-    True -> {
-      use side_a <- result.try(closed_untrimmed_side_from_normalized_source(
-        normalized,
-        offset: 0.0 -. radius,
-        join:,
-        options:,
-      ))
-      use side_b <- result.try(closed_untrimmed_side_from_normalized_source(
-        normalized,
-        offset: radius,
-        join:,
-        options:,
-      ))
-      Ok(ClosedSubpathBand(exterior: side_b, interior: side_a))
-    }
-    False -> {
-      use outline <- result.try(untrimmed_stroke_outline_from_normalized_source(
-        normalized,
-        radius,
-        join,
-        cap,
-        options,
-      ))
-      Ok(OpenSubpathBand(outline))
-    }
-  }
-}
-
-fn closed_untrimmed_side_from_normalized_source(
-  source: svg_path.Subpath,
-  offset offset: Float,
-  join join: Join,
-  options options: Options,
-) -> Result(svg_path.Subpath, InternalError) {
-  use side <- result.try(untrimmed_subpath_from_normalized_source(
-    source,
-    offset: offset,
-    join:,
-    options:,
-  ))
-  svg_path.subpath_set_closed_with(
-    side,
-    closed: True,
-    policy: svg_path.WiggleWith(options.fitting.tolerance),
-  )
-  |> result.map_error(InternalPathError)
 }
 
 fn open_band_outline(
@@ -2300,183 +2217,6 @@ fn cusp_trimmed_subpath_geometry(
     closed:,
     tolerance:,
   )
-}
-
-fn closed_stroke_path(
-  source: svg_path.Subpath,
-  radius radius: Float,
-  join join: Join,
-  cap cap: Cap,
-  options options: Options,
-) -> Result(svg_path.Path, InternalError) {
-  use band <- result.try(untrimmed_stroke_band(
-    source,
-    radius *. 2.0,
-    join,
-    cap,
-    options,
-  ))
-  case band {
-    OpenSubpathBand(_) -> Error(InternalBandSubpathNotClosed)
-    ClosedSubpathBand(exterior, interior) ->
-      topological_band_path_with_opinions(
-        [interior, exterior],
-        [band],
-        [
-          WindingSideOpinion(left: 1, right: 0),
-          WindingSideOpinion(left: 0, right: 1),
-        ],
-        options,
-      )
-  }
-}
-
-fn untrimmed_stroke_outline(
-  source: svg_path.Subpath,
-  radius: Float,
-  join: Join,
-  cap: Cap,
-  options: Options,
-) -> Result(svg_path.Subpath, InternalError) {
-  use normalized <- result.try(normalize_source_subpath(source, options))
-  untrimmed_stroke_outline_from_normalized_source(
-    normalized,
-    radius,
-    join,
-    cap,
-    options,
-  )
-}
-
-fn untrimmed_stroke_outline_from_normalized_source(
-  source: svg_path.Subpath,
-  radius: Float,
-  join: Join,
-  cap: Cap,
-  options: Options,
-) -> Result(svg_path.Subpath, InternalError) {
-  use positive <- result.try(untrimmed_subpath_from_normalized_source(
-    source,
-    offset: radius,
-    join:,
-    options:,
-  ))
-  use negative <- result.try(untrimmed_subpath_from_normalized_source(
-    source,
-    offset: 0.0 -. radius,
-    join:,
-    options:,
-  ))
-  use end_cap <- result.try(stroke_end_cap(source, radius, cap))
-  use start_cap <- result.try(stroke_start_cap(source, radius, cap))
-  let segments =
-    list.append(
-      svg_path.subpath_segments(positive),
-      list.append(
-        end_cap,
-        list.append(
-          reverse_segments(svg_path.subpath_segments(negative)),
-          start_cap,
-        ),
-      ),
-    )
-  use candidate <- result.try(
-    svg_path.subpath_with(segments, policy: svg_path.Wiggle)
-    |> result.map_error(InternalPathError),
-  )
-  svg_path.subpath_set_closed_with(
-    candidate,
-    closed: True,
-    policy: svg_path.Wiggle,
-  )
-  |> result.map_error(InternalPathError)
-}
-
-fn zero_length_stroke_path(
-  subpath: svg_path.Subpath,
-  radius radius: Float,
-  cap cap: Cap,
-) -> Result(svg_path.Path, InternalError) {
-  let center = svg_path.subpath_start(subpath)
-  case cap {
-    Butt -> Ok(svg_path.path_empty())
-    RoundCap -> zero_length_round_stroke_path(center, radius)
-    Square -> zero_length_square_stroke_path(center, radius)
-  }
-}
-
-fn zero_length_round_stroke_path(
-  center: svg_path.Point,
-  radius: Float,
-) -> Result(svg_path.Path, InternalError) {
-  let right = point_helpers.add(center, svg_path.Point(radius, 0.0))
-  let left = point_helpers.add(center, svg_path.Point(0.0 -. radius, 0.0))
-  let segments = [
-    svg_path.Arc(
-      start: right,
-      radius: svg_path.Point(radius, radius),
-      x_axis_rotation: 0.0,
-      large_arc: False,
-      sweep: True,
-      end: left,
-    ),
-    svg_path.Arc(
-      start: left,
-      radius: svg_path.Point(radius, radius),
-      x_axis_rotation: 0.0,
-      large_arc: False,
-      sweep: True,
-      end: right,
-    ),
-  ]
-  use outline <- result.try(
-    svg_path.subpath_with(segments, policy: svg_path.Strict)
-    |> result.map_error(InternalPathError),
-  )
-  use closed <- result.try(
-    svg_path.subpath_set_closed_with(
-      outline,
-      closed: True,
-      policy: svg_path.Strict,
-    )
-    |> result.map_error(InternalPathError),
-  )
-  Ok(svg_path.Path(subpaths: [closed]))
-}
-
-fn zero_length_square_stroke_path(
-  center: svg_path.Point,
-  radius: Float,
-) -> Result(svg_path.Path, InternalError) {
-  let top_left =
-    point_helpers.add(center, svg_path.Point(0.0 -. radius, 0.0 -. radius))
-  let top_right =
-    point_helpers.add(center, svg_path.Point(radius, 0.0 -. radius))
-  let bottom_right = point_helpers.add(center, svg_path.Point(radius, radius))
-  let bottom_left =
-    point_helpers.add(center, svg_path.Point(0.0 -. radius, radius))
-  use outline <- result.try(
-    svg_path.subpath_with(
-      line_segments_between([
-        top_left,
-        top_right,
-        bottom_right,
-        bottom_left,
-        top_left,
-      ]),
-      policy: svg_path.Strict,
-    )
-    |> result.map_error(InternalPathError),
-  )
-  use closed <- result.try(
-    svg_path.subpath_set_closed_with(
-      outline,
-      closed: True,
-      policy: svg_path.Strict,
-    )
-    |> result.map_error(InternalPathError),
-  )
-  Ok(svg_path.Path(subpaths: [closed]))
 }
 
 fn build_synchronized_offset_segments(
@@ -5905,13 +5645,6 @@ fn validate_join(join: Join) -> Result(Nil, InternalError) {
   }
 }
 
-fn validate_stroke_width(width: Float) -> Result(Nil, InternalError) {
-  case width <=. 0.0 || !number.is_finite(width) {
-    True -> Error(InternalInvalidStrokeWidth(width))
-    False -> Ok(Nil)
-  }
-}
-
 fn band_segment_arrangement(
   untrimmed: List(svg_path.Subpath),
   winding_opinions: List(WindingSideOpinion),
@@ -7520,97 +7253,6 @@ fn orient_outline_subpath(
   case is_clockwise == clockwise {
     True -> subpath
     False -> svg_path.subpath_reverse(subpath)
-  }
-}
-
-fn stroke_end_cap(
-  source: svg_path.Subpath,
-  radius: Float,
-  cap: Cap,
-) -> Result(List(svg_path.Segment), InternalError) {
-  let end = svg_path.subpath_end(source)
-  let assert Ok(last) = list.last(svg_path.subpath_segments(source))
-  use tangent <- result.try(unit_tangent(last, t: 1.0))
-  stroke_cap_segments(center: end, tangent:, radius:, cap:, at_end: True)
-}
-
-fn stroke_start_cap(
-  source: svg_path.Subpath,
-  radius: Float,
-  cap: Cap,
-) -> Result(List(svg_path.Segment), InternalError) {
-  let start = svg_path.subpath_start(source)
-  let assert [first, ..] = svg_path.subpath_segments(source)
-  use tangent <- result.try(unit_tangent(first, t: 0.0))
-  stroke_cap_segments(center: start, tangent:, radius:, cap:, at_end: False)
-}
-
-fn stroke_cap_segments(
-  center center: svg_path.Point,
-  tangent tangent: svg_path.Point,
-  radius radius: Float,
-  cap cap: Cap,
-  at_end at_end: Bool,
-) -> Result(List(svg_path.Segment), InternalError) {
-  let normal = point_helpers.rotate_counterclockwise(tangent)
-  let positive = point_helpers.add(center, point_helpers.scale(normal, radius))
-  let negative =
-    point_helpers.add(center, point_helpers.scale(normal, 0.0 -. radius))
-  case cap {
-    Butt -> {
-      case at_end {
-        True -> Ok(line_segments_between([positive, negative]))
-        False -> Ok(line_segments_between([negative, positive]))
-      }
-    }
-    Square -> {
-      let extension = case at_end {
-        True -> point_helpers.scale(tangent, radius)
-        False -> point_helpers.scale(tangent, 0.0 -. radius)
-      }
-      let positive_extended = point_helpers.add(positive, extension)
-      let negative_extended = point_helpers.add(negative, extension)
-      case at_end {
-        True ->
-          Ok(
-            line_segments_between([
-              positive,
-              positive_extended,
-              negative_extended,
-              negative,
-            ]),
-          )
-        False ->
-          Ok(
-            line_segments_between([
-              negative,
-              negative_extended,
-              positive_extended,
-              positive,
-            ]),
-          )
-      }
-    }
-    RoundCap -> {
-      let start = case at_end {
-        True -> positive
-        False -> negative
-      }
-      let end = case at_end {
-        True -> negative
-        False -> positive
-      }
-      Ok([
-        svg_path.Arc(
-          start:,
-          radius: svg_path.Point(radius, radius),
-          x_axis_rotation: 0.0,
-          large_arc: False,
-          sweep: True,
-          end:,
-        ),
-      ])
-    }
   }
 }
 
