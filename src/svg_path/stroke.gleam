@@ -15,6 +15,7 @@ import gleam/result
 import svg_path
 import svg_path/internal/number
 import svg_path/offset
+import svg_path/point as point_helpers
 
 /// Errors returned by stroke helpers.
 pub type Error {
@@ -156,14 +157,93 @@ pub fn subpath_with(
   options options: Options,
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(validate_options(options))
-  offset.subpath_stroke_with(
-    subpath,
-    width: options.width,
-    join: to_offset_join(join),
-    cap: to_offset_cap(cap),
-    options: to_offset_options(options),
-  )
-  |> result.map_error(OffsetError)
+  let band_trimming = case svg_path.subpath_is_closed(subpath) {
+    True -> options.offset.band_trimming
+    False -> offset.BandTrimming(..options.offset.band_trimming, in_band: False)
+  }
+  let offset_options = offset.Options(..options.offset, band_trimming:)
+  case svg_path.subpath_is_zero_length(subpath, tolerance: 0.000000001) {
+    Error(error) -> Error(PathError(error))
+    Ok(True) ->
+      zero_length_stroke(subpath, width: options.width /. 2.0, cap:)
+      |> result.map_error(PathError)
+    Ok(False) ->
+      offset.subpath_band_with(
+        subpath,
+        inner_offset: 0.0 -. options.width /. 2.0,
+        outer_offset: options.width /. 2.0,
+        join: to_offset_join(join),
+        cap: to_offset_cap(cap),
+        options: offset_options,
+      )
+      |> result.map_error(OffsetError)
+  }
+}
+
+fn zero_length_stroke(
+  subpath: svg_path.Subpath,
+  width width: Float,
+  cap cap: Cap,
+) -> Result(svg_path.Path, svg_path.Error) {
+  let center = svg_path.subpath_start(subpath)
+  case cap {
+    Butt -> Ok(svg_path.path_empty())
+    RoundCap -> {
+      let right = point_helpers.add(center, svg_path.Point(width, 0.0))
+      let left = point_helpers.add(center, svg_path.Point(0.0 -. width, 0.0))
+      use outline <- result.try(svg_path.subpath_with(
+        [
+          svg_path.Arc(
+            start: right,
+            radius: svg_path.Point(width, width),
+            x_axis_rotation: 0.0,
+            large_arc: False,
+            sweep: True,
+            end: left,
+          ),
+          svg_path.Arc(
+            start: left,
+            radius: svg_path.Point(width, width),
+            x_axis_rotation: 0.0,
+            large_arc: False,
+            sweep: True,
+            end: right,
+          ),
+        ],
+        policy: svg_path.Strict,
+      ))
+      use closed <- result.try(svg_path.subpath_set_closed_with(
+        outline,
+        closed: True,
+        policy: svg_path.Strict,
+      ))
+      Ok(svg_path.Path([closed]))
+    }
+    Square -> {
+      let top_left =
+        point_helpers.add(center, svg_path.Point(0.0 -. width, 0.0 -. width))
+      let top_right =
+        point_helpers.add(center, svg_path.Point(width, 0.0 -. width))
+      let bottom_right = point_helpers.add(center, svg_path.Point(width, width))
+      let bottom_left =
+        point_helpers.add(center, svg_path.Point(0.0 -. width, width))
+      use outline <- result.try(svg_path.subpath_with(
+        [
+          svg_path.Line(start: top_left, end: top_right),
+          svg_path.Line(start: top_right, end: bottom_right),
+          svg_path.Line(start: bottom_right, end: bottom_left),
+          svg_path.Line(start: bottom_left, end: top_left),
+        ],
+        policy: svg_path.Strict,
+      ))
+      use closed <- result.try(svg_path.subpath_set_closed_with(
+        outline,
+        closed: True,
+        policy: svg_path.Strict,
+      ))
+      Ok(svg_path.Path([closed]))
+    }
+  }
 }
 
 /// Stroke every subpath in a path using default options with the given width.
@@ -672,10 +752,6 @@ fn stroke_subpaths(
       )
     }
   }
-}
-
-fn to_offset_options(options: Options) -> offset.Options {
-  options.offset
 }
 
 fn to_offset_join(join: Join) -> offset.Join {

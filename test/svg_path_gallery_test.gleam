@@ -508,9 +508,9 @@ fn stroke_caps() -> String {
       ),
     ])
   let examples = [
-    #(0.0, "butt", offset.Butt),
-    #(250.0, "square", offset.Square),
-    #(500.0, "round", offset.RoundCap),
+    #(0.0, "butt", stroke.Butt),
+    #(250.0, "square", stroke.Square),
+    #(500.0, "round", stroke.RoundCap),
   ]
 
   document(
@@ -519,15 +519,10 @@ fn stroke_caps() -> String {
       |> list.map(fn(example) {
         let #(x, label, cap) = example
         let placed = place_subpath(source, x +. 42.0, 112.0)
-        let options = offset.default_options()
+        let options =
+          stroke.Options(width: 28.0, offset: offset.default_options())
         let assert Ok(stroke) =
-          offset.subpath_stroke_with(
-            placed,
-            width: 28.0,
-            join: offset.Round,
-            cap:,
-            options:,
-          )
+          stroke.subpath_with(placed, join: stroke.Round, cap:, options:)
         [
           panel(x, label),
           svg.StyledPath(

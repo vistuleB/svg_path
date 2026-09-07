@@ -1534,71 +1534,7 @@ pub fn subpath_band_untrimmed_with(
 /// offset sides and endpoint caps, then keep sections that separate points
 /// inside the intended stroke from points outside it. Closed subpaths use the
 /// same capless construction as `subpath_band`.
-pub fn subpath_stroke(
-  subpath: svg_path.Subpath,
-  width width: Float,
-  join join: Join,
-  cap cap: Cap,
-) -> Result(svg_path.Path, Error) {
-  subpath_stroke_with(subpath, width:, join:, cap:, options: default_options())
-}
-
 /// Stroke a subpath using explicit join, cap, and technical options.
-pub fn subpath_stroke_with(
-  subpath subpath: svg_path.Subpath,
-  width width: Float,
-  join join: Join,
-  cap cap: Cap,
-  options options: Options,
-) -> Result(svg_path.Path, Error) {
-  let result = {
-    use _ <- result.try(validate_stroke_width(width))
-    use _ <- result.try(validate_options(options))
-    use _ <- result.try(validate_join(join))
-    let radius = width /. 2.0
-    case svg_path.subpath_segments(subpath) {
-      [] -> Ok(svg_path.path_empty())
-      _ ->
-        case
-          svg_path.subpath_is_zero_length(subpath, tolerance: point_tolerance)
-        {
-          Error(error) -> Error(InternalPathError(error))
-          Ok(True) -> zero_length_stroke_path(subpath, radius:, cap:)
-          Ok(False) -> {
-            case svg_path.subpath_is_closed(subpath) {
-              True -> {
-                use stroke <- result.try(closed_stroke_path(
-                  subpath,
-                  radius: radius,
-                  join:,
-                  cap:,
-                  options: options,
-                ))
-                orient_outline_path(stroke)
-              }
-              False -> {
-                use untrimmed <- result.try(untrimmed_stroke_outline(
-                  subpath,
-                  radius,
-                  join,
-                  cap,
-                  options,
-                ))
-                use stroke <- result.try(topological_band_path(
-                  [untrimmed],
-                  bands: [OpenSubpathBand(untrimmed)],
-                  options:,
-                ))
-                orient_outline_path(stroke)
-              }
-            }
-          }
-        }
-    }
-  }
-  result |> result.map_error(public_error)
-}
-
 /// Offset a subpath without trimming self-intersections.
 ///
 /// This returns the untrimmed one-sided offset walk. Adjacent segment offsets
@@ -1814,43 +1750,7 @@ pub fn path_band_untrimmed_with(
 }
 
 /// Stroke every subpath in a path using explicit join and cap styles.
-pub fn path_stroke(
-  path: svg_path.Path,
-  width width: Float,
-  join join: Join,
-  cap cap: Cap,
-) -> Result(svg_path.Path, Error) {
-  path_stroke_with(path, width:, join:, cap:, options: default_options())
-}
-
 /// Stroke every subpath in a path using explicit join, cap, and technical options.
-pub fn path_stroke_with(
-  path path: svg_path.Path,
-  width width: Float,
-  join join: Join,
-  cap cap: Cap,
-  options options: Options,
-) -> Result(svg_path.Path, Error) {
-  use _ <- result.try(
-    validate_stroke_width(width) |> result.map_error(public_error),
-  )
-  use _ <- result.try(
-    validate_options(options) |> result.map_error(public_error),
-  )
-  use _ <- result.try(validate_join(join) |> result.map_error(public_error))
-  use subpaths <- result.try(
-    stroke_path_subpaths(
-      svg_path.path_subpaths(path),
-      width,
-      join,
-      cap,
-      options,
-      converted: [],
-    ),
-  )
-  Ok(svg_path.Path(subpaths:))
-}
-
 /// Offset every subpath in a path without trimming self-intersections.
 pub fn path_untrimmed(
   path: svg_path.Path,
@@ -1961,39 +1861,6 @@ fn untrimmed_band_path_subpaths(
         options,
         converted: list.append(
           list.reverse(svg_path.path_subpaths(band)),
-          converted,
-        ),
-      )
-    }
-  }
-}
-
-fn stroke_path_subpaths(
-  subpaths: List(svg_path.Subpath),
-  width: Float,
-  join: Join,
-  cap: Cap,
-  options: Options,
-  converted converted: List(svg_path.Subpath),
-) -> Result(List(svg_path.Subpath), Error) {
-  case subpaths {
-    [] -> Ok(list.reverse(converted))
-    [first, ..rest] -> {
-      use stroke <- result.try(subpath_stroke_with(
-        first,
-        width:,
-        join:,
-        cap:,
-        options:,
-      ))
-      stroke_path_subpaths(
-        rest,
-        width,
-        join,
-        cap,
-        options,
-        converted: list.append(
-          list.reverse(svg_path.path_subpaths(stroke)),
           converted,
         ),
       )

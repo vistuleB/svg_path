@@ -4,6 +4,7 @@ import gleam/int
 import gleam/list
 import svg_path
 import svg_path/offset
+import svg_path/stroke
 import svg_path/svg
 import svg_path/transform
 
@@ -40,8 +41,8 @@ fn render() -> String {
           label: "open line / butt",
           source: open_line(),
           width: 24.0,
-          cap: offset.Butt,
-          join: offset.Miter(4.0),
+          cap: stroke.Butt,
+          join: stroke.Miter(4.0),
         ),
       ),
       panel(
@@ -51,8 +52,8 @@ fn render() -> String {
           label: "open line / square",
           source: open_line(),
           width: 24.0,
-          cap: offset.Square,
-          join: offset.Miter(4.0),
+          cap: stroke.Square,
+          join: stroke.Miter(4.0),
         ),
       ),
       panel(
@@ -62,8 +63,8 @@ fn render() -> String {
           label: "open curve / round",
           source: open_curve(),
           width: 22.0,
-          cap: offset.RoundCap,
-          join: offset.Round,
+          cap: stroke.RoundCap,
+          join: stroke.Round,
         ),
       ),
       panel(
@@ -73,8 +74,8 @@ fn render() -> String {
           label: "closed figure-eight",
           source: figure_eight(),
           width: 26.0,
-          cap: offset.Butt,
-          join: offset.Round,
+          cap: stroke.Butt,
+          join: stroke.Round,
         ),
       ),
     ]),
@@ -102,7 +103,12 @@ fn panel(
       fitting: offset.FittingOptions(..default.fitting, tolerance: 0.01),
     )
   let result_things = case
-    offset.subpath_stroke_with(source, width:, join:, cap:, options:)
+    stroke.subpath_with(
+      source,
+      join:,
+      cap:,
+      options: stroke.Options(width:, offset: options),
+    )
   {
     Ok(result) -> [
       svg.StyledPath(

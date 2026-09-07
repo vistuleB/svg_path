@@ -12,6 +12,7 @@ import svg_path/offset
 import svg_path/parse
 import svg_path/point
 import svg_path/serialize
+import svg_path/stroke
 import svg_path/trig
 
 const stalled_arc_turn_svg_output = "examples/debug/stalled-offset-arc-turns.svg"
@@ -1597,11 +1598,11 @@ pub fn subpath_stroke_open_line_with_butt_cap_returns_closed_outline_test() {
     ])
 
   let assert Ok(stroke) =
-    offset.subpath_stroke(
+    stroke.subpath(
       subpath,
       width: 2.0,
-      join: offset.Miter(offset.default_miter_limit),
-      cap: offset.Butt,
+      join: stroke.Miter(offset.default_miter_limit),
+      cap: stroke.Butt,
     )
 
   assert list.length(svg_path.path_subpaths(stroke)) == 1
@@ -1616,12 +1617,11 @@ pub fn subpath_stroke_open_line_with_square_cap_extends_ends_test() {
     ])
 
   let assert Ok(stroke) =
-    offset.subpath_stroke_with(
+    stroke.subpath_with(
       subpath,
-      width: 2.0,
-      join: offset.Miter(offset.default_miter_limit),
-      cap: offset.Square,
-      options: offset.default_options(),
+      join: stroke.Miter(offset.default_miter_limit),
+      cap: stroke.Square,
+      options: stroke.Options(width: 2.0, offset: offset.default_options()),
     )
 
   assert serialize.path(stroke) == "M 0 -1 H 10 H 11 V 1 H 10 H 0 H -1 V -1 Z"
@@ -1722,11 +1722,11 @@ pub fn subpath_stroke_closed_square_uses_band_test() {
     ])
 
   let assert Ok(stroke) =
-    offset.subpath_stroke(
+    stroke.subpath(
       square,
       width: 4.0,
-      join: offset.Miter(offset.default_miter_limit),
-      cap: offset.Butt,
+      join: stroke.Miter(offset.default_miter_limit),
+      cap: stroke.Butt,
     )
 
   assert serialize.path(stroke)
@@ -1740,13 +1740,13 @@ pub fn subpath_stroke_rejects_invalid_width_test() {
       svg_path.Point(10.0, 0.0),
     ])
 
-  assert offset.subpath_stroke(
+  assert stroke.subpath(
       subpath,
       width: 0.0,
-      join: offset.Miter(offset.default_miter_limit),
-      cap: offset.Butt,
+      join: stroke.Miter(offset.default_miter_limit),
+      cap: stroke.Butt,
     )
-    == Error(offset.InvalidStrokeWidth(0.0))
+    == Error(stroke.InvalidWidth(0.0))
 }
 
 pub fn band_inside_function_uses_nonzero_for_open_subpath_band_test() {
