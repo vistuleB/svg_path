@@ -1485,7 +1485,7 @@ fn debug_float_to_string(value: Float) -> String {
 
 fn stroke_error_name(error: stroke.Error) -> String {
   case error {
-    stroke.OffsetError(offset.InternalDegenerateTangent(t)) ->
+    stroke.OffsetError(offset.DegenerateTangent(t)) ->
       "OffsetError(DegenerateTangent(" <> debug_float_to_string(t) <> "))"
     stroke.OffsetError(_) -> "OffsetError(...)"
     stroke.PathError(_) -> "PathError(...)"
