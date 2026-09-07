@@ -1467,7 +1467,7 @@ pub fn subpath_band_untrimmed(
   inner_offset inner_offset: Float,
   outer_offset outer_offset: Float,
   join join: Join,
-) -> Result(svg_path.Path, InternalError) {
+) -> Result(svg_path.Path, Error) {
   subpath_band_untrimmed_with(
     subpath,
     inner_offset:,
@@ -1485,17 +1485,25 @@ pub fn subpath_band_untrimmed_with(
   outer_offset outer_offset: Float,
   join join: Join,
   options options: Options,
-) -> Result(svg_path.Path, InternalError) {
-  use _ <- result.try(validate_options(options))
-  use _ <- result.try(validate_join(join))
-  use normalized <- result.try(normalize_source_subpath(subpath, options))
-  use build <- result.try(build_synchronized_untrimmed(
-    normalized,
-    inner_offset: inner_offset,
-    outer_offset: outer_offset,
-    join:,
-    options:,
-  ))
+) -> Result(svg_path.Path, Error) {
+  use _ <- result.try(
+    validate_options(options) |> result.map_error(public_error),
+  )
+  use _ <- result.try(validate_join(join) |> result.map_error(public_error))
+  use normalized <- result.try(
+    normalize_source_subpath(subpath, options)
+    |> result.map_error(public_error),
+  )
+  use build <- result.try(
+    build_synchronized_untrimmed(
+      normalized,
+      inner_offset: inner_offset,
+      outer_offset: outer_offset,
+      join:,
+      options:,
+    )
+    |> result.map_error(public_error),
+  )
   let SynchronizedUntrimmedBuild(inner: side_a, outer: side_b, ..) = build
   Ok(svg_path.Path(subpaths: [side_a, side_b]))
 }
@@ -1737,7 +1745,7 @@ pub fn path_band_untrimmed(
   inner_offset inner_offset: Float,
   outer_offset outer_offset: Float,
   join join: Join,
-) -> Result(svg_path.Path, InternalError) {
+) -> Result(svg_path.Path, Error) {
   path_band_untrimmed_with(
     path,
     inner_offset:,
@@ -1755,9 +1763,11 @@ pub fn path_band_untrimmed_with(
   outer_offset outer_offset: Float,
   join join: Join,
   options options: Options,
-) -> Result(svg_path.Path, InternalError) {
-  use _ <- result.try(validate_options(options))
-  use _ <- result.try(validate_join(join))
+) -> Result(svg_path.Path, Error) {
+  use _ <- result.try(
+    validate_options(options) |> result.map_error(public_error),
+  )
+  use _ <- result.try(validate_join(join) |> result.map_error(public_error))
   use subpaths <- result.try(
     untrimmed_band_path_subpaths(
       svg_path.path_subpaths(path),
@@ -1894,7 +1904,7 @@ fn untrimmed_band_path_subpaths(
   join: Join,
   options: Options,
   converted converted: List(svg_path.Subpath),
-) -> Result(List(svg_path.Subpath), InternalError) {
+) -> Result(List(svg_path.Subpath), Error) {
   case subpaths {
     [] -> Ok(list.reverse(converted))
     [first, ..rest] -> {
