@@ -972,6 +972,17 @@ pub fn final_cusp_trimming_handles_open_side_umbrella_test() {
   let assert [subpath] = svg_path.path_subpaths(result)
   assert !svg_path.subpath_is_closed(subpath)
   assert !list.is_empty(svg_path.subpath_segments(subpath))
+  list.each([offset.RoundCap, offset.Square], fn(cap) {
+    let assert Ok(with_cap) =
+      offset.path_with(
+        svg_path.Path([source]),
+        offset: 0.15,
+        join: offset.Round,
+        cap:,
+        options:,
+      )
+    assert with_cap == result
+  })
 }
 
 pub fn package_title_v_1_05_public_offset_filters_micro_loops_test() {

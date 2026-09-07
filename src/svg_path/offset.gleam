@@ -1964,7 +1964,7 @@ fn cusp_trim_i_subpath(
   subpath: ICulledOffsetSubpath,
   zero_source: svg_path.Subpath,
   offset: Float,
-  cap: Cap,
+  _cap: Cap,
   options: Options,
 ) -> Result(Option(CuspTrimmedSubpath), InternalError) {
   let ICulledOffsetSubpath(segments:, closed:, ..) = subpath
@@ -1981,7 +1981,10 @@ fn cusp_trim_i_subpath(
         0.0,
         geometry,
         offset,
-        cap:,
+        // This region defines side-local cusp membership, not the final
+        // stroke outline. Always close it along endpoint normals with Butt;
+        // a final round/square cap must not change cusp classification.
+        cap: Butt,
       ))
       use winding <- result.try(internal_band_winding_function([band]))
       use build <- result.try(single_offset_segment_arrangement(
@@ -2925,6 +2928,7 @@ pub type SingleOffsetTrimming {
 /// `inner_cusps` and `outer_cusps` independently enable side-local cusp
 /// trimming for the caller-designated inner and outer offsets. The names keep
 /// those caller-designated roles even when `inner_offset > outer_offset`.
+/// Each cusp-trimming region uses Butt closures, independently of the final cap.
 /// `in_band` enables the final joint submerged trimming pass.
 pub type BandTrimming {
   BandTrimming(inner_cusps: Bool, outer_cusps: Bool, in_band: Bool)

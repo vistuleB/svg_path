@@ -6,7 +6,7 @@
 - [Recursive dashes](gallery-recursive-dashes.svg)
 - [Figure-eight asymmetric band](gallery-figure-eight-band.svg)
 - [Stretched figure-eight bands](gallery-symmetric-figure-eight-bands.svg)
-- [Figure-eight synchronized correspondence blocks](gallery-figure-eight-correspondence-blocks.svg)
+- [Figure-eight band correspondence blocks](gallery-figure-eight-correspondence-blocks.svg)
 - [Figure-eight convex-hull regressions](gallery-figure-eight-convex-hulls.svg)
 - [Stroke offset tracks](gallery-stroke-offset-tracks.svg)
 - [Earth-tone offsets](gallery-earth-tone-offsets.svg)
