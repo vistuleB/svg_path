@@ -51,10 +51,10 @@ pub fn forced_parity_reduces_unique_edge_without_mutating_graph_test() {
   let assert [original_edge] = original_edges
   original_edge.forward_multiplicity |> should.equal(2)
 
-  let assert Ok([arrangement_graph.EdgeCapacityAssignment(capacity:, ..)]) =
+  let assert Ok([offset.EdgeCapacityAssignment(capacity:, ..)]) =
     offset.forced_parity_capacities(graph, vertex_parities: [
-      arrangement_graph.RequiredVertexParity(start.id, 1),
-      arrangement_graph.RequiredVertexParity(end.id, 1),
+      offset.RequiredVertexParity(start.id, 1),
+      offset.RequiredVertexParity(end.id, 1),
     ])
   capacity |> should.equal(1)
   original_edge.forward_multiplicity |> should.equal(2)
@@ -84,10 +84,10 @@ pub fn forced_parity_reports_unresolved_diamond_choice_test() {
   let assert Ok(sink_vertex) =
     list.find(vertices, fn(vertex) { vertex.point == sink })
 
-  let assert Error(arrangement_graph.ForcedParityAmbiguous(vertices)) =
+  let assert Error(offset.ForcedParityAmbiguous(vertices)) =
     offset.forced_parity_capacities(graph, vertex_parities: [
-      arrangement_graph.RequiredVertexParity(source_vertex.id, 1),
-      arrangement_graph.RequiredVertexParity(sink_vertex.id, 1),
+      offset.RequiredVertexParity(source_vertex.id, 1),
+      offset.RequiredVertexParity(sink_vertex.id, 1),
     ])
   list.length(vertices) |> should.equal(2)
 }
@@ -113,9 +113,9 @@ pub fn forced_parity_reduces_unique_edge_at_higher_threshold_test() {
     offset.forced_parity_capacities_with(
       graph,
       [
-        arrangement_graph.EdgeCapacityAssignment(first.id, 2),
-        arrangement_graph.EdgeCapacityAssignment(second.id, 3),
-        arrangement_graph.EdgeCapacityAssignment(third.id, 2),
+        offset.EdgeCapacityAssignment(first.id, 2),
+        offset.EdgeCapacityAssignment(second.id, 3),
+        offset.EdgeCapacityAssignment(third.id, 2),
       ],
       vertex_parities: [],
     )
@@ -141,10 +141,10 @@ pub fn forced_parity_reports_capacity_infeasibility_test() {
     graph
 
   offset.forced_parity_capacities(graph, vertex_parities: [
-    arrangement_graph.RequiredVertexParity(start.id, 0),
-    arrangement_graph.RequiredVertexParity(end.id, 1),
+    offset.RequiredVertexParity(start.id, 0),
+    offset.RequiredVertexParity(end.id, 1),
   ])
-  |> should.equal(Error(arrangement_graph.ForcedParityInfeasible(end.id)))
+  |> should.equal(Error(offset.ForcedParityInfeasible(end.id)))
 }
 
 pub fn preferred_parity_guides_reduction_but_allows_isolation_test() {
@@ -163,10 +163,10 @@ pub fn preferred_parity_guides_reduction_but_allows_isolation_test() {
   let assert arrangement_graph.ArrangementGraph(vertices: [start, end], ..) =
     graph
 
-  let assert Ok([arrangement_graph.EdgeCapacityAssignment(capacity:, ..)]) =
+  let assert Ok([offset.EdgeCapacityAssignment(capacity:, ..)]) =
     offset.forced_parity_capacities(graph, vertex_parities: [
-      arrangement_graph.RequiredVertexParity(start.id, 0),
-      arrangement_graph.PreferredVertexParity(end.id, 1),
+      offset.RequiredVertexParity(start.id, 0),
+      offset.PreferredVertexParity(end.id, 1),
     ])
   capacity |> should.equal(0)
 
@@ -179,10 +179,10 @@ pub fn preferred_parity_guides_reduction_but_allows_isolation_test() {
     )
   let assert arrangement_graph.ArrangementGraph(vertices: [start, end], ..) =
     graph
-  let assert Ok([arrangement_graph.EdgeCapacityAssignment(capacity:, ..)]) =
+  let assert Ok([offset.EdgeCapacityAssignment(capacity:, ..)]) =
     offset.forced_parity_capacities(graph, vertex_parities: [
-      arrangement_graph.PreferredVertexParity(start.id, 1),
-      arrangement_graph.PreferredVertexParity(end.id, 1),
+      offset.PreferredVertexParity(start.id, 1),
+      offset.PreferredVertexParity(end.id, 1),
     ])
   capacity |> should.equal(1)
 }
@@ -199,7 +199,7 @@ pub fn forced_parity_sums_forward_and_reverse_capacity_test() {
       minimum_chord:,
       endpoint_sliver_tolerance: 0.0,
     )
-  let assert Ok([arrangement_graph.EdgeCapacityAssignment(capacity:, ..)]) =
+  let assert Ok([offset.EdgeCapacityAssignment(capacity:, ..)]) =
     offset.forced_parity_capacities(graph, vertex_parities: [])
   capacity |> should.equal(2)
 }
@@ -223,21 +223,21 @@ pub fn forced_parity_accepts_explicit_initial_capacities_test() {
     ..,
   ) = graph
 
-  let assert Ok([arrangement_graph.EdgeCapacityAssignment(capacity:, ..)]) =
+  let assert Ok([offset.EdgeCapacityAssignment(capacity:, ..)]) =
     offset.forced_parity_capacities_with(
       graph,
-      [arrangement_graph.EdgeCapacityAssignment(edge.id, 0)],
+      [offset.EdgeCapacityAssignment(edge.id, 0)],
       vertex_parities: [],
     )
   capacity |> should.equal(0)
 
-  let assert Ok([arrangement_graph.EdgeCapacityAssignment(capacity:, ..)]) =
+  let assert Ok([offset.EdgeCapacityAssignment(capacity:, ..)]) =
     offset.forced_parity_capacities_with(
       graph,
-      [arrangement_graph.EdgeCapacityAssignment(edge.id, 2)],
+      [offset.EdgeCapacityAssignment(edge.id, 2)],
       vertex_parities: [
-        arrangement_graph.RequiredVertexParity(start.id, 1),
-        arrangement_graph.RequiredVertexParity(end.id, 1),
+        offset.RequiredVertexParity(start.id, 1),
+        offset.RequiredVertexParity(end.id, 1),
       ],
     )
   capacity |> should.equal(1)
@@ -260,22 +260,18 @@ pub fn forced_parity_rejects_invalid_vertex_parities_test() {
     graph
 
   offset.forced_parity_capacities(graph, vertex_parities: [
-    arrangement_graph.RequiredVertexParity(start.id, 0),
-    arrangement_graph.RequiredVertexParity(start.id, 1),
+    offset.RequiredVertexParity(start.id, 0),
+    offset.RequiredVertexParity(start.id, 1),
   ])
-  |> should.equal(
-    Error(arrangement_graph.ForcedParityDuplicateVertex(start.id)),
-  )
+  |> should.equal(Error(offset.ForcedParityDuplicateVertex(start.id)))
   offset.forced_parity_capacities(graph, vertex_parities: [
-    arrangement_graph.RequiredVertexParity(999, 0),
+    offset.RequiredVertexParity(999, 0),
   ])
-  |> should.equal(Error(arrangement_graph.ForcedParityMissingVertex(999)))
+  |> should.equal(Error(offset.ForcedParityMissingVertex(999)))
   offset.forced_parity_capacities(graph, vertex_parities: [
-    arrangement_graph.RequiredVertexParity(start.id, 2),
+    offset.RequiredVertexParity(start.id, 2),
   ])
-  |> should.equal(
-    Error(arrangement_graph.ForcedParityInvalidVertexParity(start.id, 2)),
-  )
+  |> should.equal(Error(offset.ForcedParityInvalidVertexParity(start.id, 2)))
 }
 
 pub fn default_distance_options_test() {

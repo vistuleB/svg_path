@@ -118,37 +118,6 @@ pub type ArrangementGraph {
   )
 }
 
-/// Undirected edge capacity produced by forced parity pruning.
-@internal
-pub type EdgeCapacityAssignment {
-  EdgeCapacityAssignment(edge_id: Int, capacity: Int)
-}
-
-/// A requested parity for the total capacity incident to one vertex.
-///
-/// A required request remains an invariant even when incident capacity reaches
-/// zero. A preferred request participates in the same forced reductions while
-/// positive capacity remains, but permits the vertex to become isolated.
-@internal
-pub type VertexParityRequest {
-  RequiredVertexParity(vertex: Int, parity: Int)
-  PreferredVertexParity(vertex: Int, parity: Int)
-}
-
-/// Failure of forced parity pruning.
-@internal
-pub type ForcedParityError {
-  ForcedParityMissingVertex(vertex: Int)
-  ForcedParityDuplicateVertex(vertex: Int)
-  ForcedParityInvalidVertexParity(vertex: Int, parity: Int)
-  ForcedParityMissingEdgeCapacity(edge_id: Int)
-  ForcedParityDuplicateEdgeCapacity(edge_id: Int)
-  ForcedParityUnknownEdgeCapacity(edge_id: Int)
-  ForcedParityInvalidEdgeCapacity(edge_id: Int, capacity: Int)
-  ForcedParityInfeasible(vertex: Int)
-  ForcedParityAmbiguous(vertices: List(Int))
-}
-
 /// The planar dual derived from an `ArrangementGraph`.
 ///
 /// `faces` contains exactly one infinite face, identified by `outer: True`,
