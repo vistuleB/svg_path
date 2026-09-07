@@ -5,6 +5,42 @@ import svg_path/parse
 import svg_path/serialize
 import svg_path/stroke
 
+// Gallery round-cap dash piece 5: its inner offset can disappear under
+// independent cusp trimming, but its complete stroke must remain visible.
+pub fn stroke_preserves_gallery_hairpin_dash_test() {
+  let source =
+    svg_path.subpath_assert([
+      svg_path.CubicBezier(
+        start: svg_path.Point(720.8878345566945, 136.73890607319447),
+        control1: svg_path.Point(725.5345471691022, 152.13173280113733),
+        control2: svg_path.Point(724.2017606479264, 168.46101515319256),
+        end: svg_path.Point(714.3795973596922, 163.26995325089777),
+      ),
+    ])
+  let assert Ok(path) =
+    stroke.subpath(
+      source,
+      width: 16.0,
+      join: stroke.Round,
+      cap: stroke.RoundCap,
+    )
+  let assert [outline] = svg_path.path_subpaths(path)
+  assert svg_path.subpath_is_closed(outline)
+  assert arc_count(svg_path.subpath_segments(outline)) >= 2
+  let assert Ok(svg_path.Inside) =
+    svg_path.path_containment(
+      svg_path.subpath_start(source),
+      within: path,
+      using: svg_path.Nonzero,
+    )
+  let assert Ok(svg_path.Inside) =
+    svg_path.path_containment(
+      svg_path.subpath_end(source),
+      within: path,
+      using: svg_path.Nonzero,
+    )
+}
+
 pub fn segment_stroke_with_butt_caps_returns_closed_outline_test() {
   let segment =
     svg_path.Line(

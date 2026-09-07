@@ -217,7 +217,9 @@ type IndexedOffsetSegment {
   )
 }
 
-type WindingSideOpinion {
+/// Expected winding sides for a directed boundary preimage.
+@internal
+pub type WindingSideOpinion {
   WindingSideOpinion(left: Int, right: Int)
 }
 
@@ -408,7 +410,9 @@ pub fn internal_topological_band_loops(
   )
 }
 
-fn topological_band_path_with_opinions(
+/// Shared implementation used by stroke construction.
+@internal
+pub fn topological_band_path_with_opinions(
   untrimmed: List(svg_path.Subpath),
   bands: List(OneSubpathBand),
   winding_opinions: List(WindingSideOpinion),
@@ -958,7 +962,9 @@ pub fn subpath_with(
   result |> result.map_error(public_error)
 }
 
-fn normalize_source_subpath(
+/// Shared implementation used by stroke construction.
+@internal
+pub fn normalize_source_subpath(
   subpath: svg_path.Subpath,
   options: Options,
 ) -> Result(svg_path.Subpath, InternalError) {
@@ -1057,7 +1063,8 @@ pub fn subpath_band_with(
   options options: Options,
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(
-    validate_options(options) |> result.map_error(public_error),
+    validate_options(options)
+    |> result.map_error(public_error),
   )
   use _ <- result.try(validate_join(join) |> result.map_error(public_error))
   use normalized <- result.try(
@@ -1202,7 +1209,8 @@ pub fn subpath_band_untrimmed_with(
   options options: Options,
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(
-    validate_options(options) |> result.map_error(public_error),
+    validate_options(options)
+    |> result.map_error(public_error),
   )
   use _ <- result.try(validate_join(join) |> result.map_error(public_error))
   use normalized <- result.try(
@@ -1251,7 +1259,8 @@ pub fn subpath_untrimmed_with(
   options options: Options,
 ) -> Result(svg_path.Subpath, Error) {
   use _ <- result.try(
-    validate_options(options) |> result.map_error(public_error),
+    validate_options(options)
+    |> result.map_error(public_error),
   )
   use _ <- result.try(validate_join(join) |> result.map_error(public_error))
   use normalized <- result.try(
@@ -1267,7 +1276,9 @@ pub fn subpath_untrimmed_with(
   |> result.map_error(public_error)
 }
 
-fn untrimmed_subpath_from_normalized_source(
+/// Shared implementation used by stroke construction.
+@internal
+pub fn untrimmed_subpath_from_normalized_source(
   subpath: svg_path.Subpath,
   offset offset: Float,
   join join: Join,
@@ -1296,7 +1307,8 @@ pub fn path_with(
   options options: Options,
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(
-    validate_options(options) |> result.map_error(public_error),
+    validate_options(options)
+    |> result.map_error(public_error),
   )
   use _ <- result.try(validate_join(join) |> result.map_error(public_error))
   use normalized <- result.try(
@@ -1384,7 +1396,8 @@ pub fn path_band_with(
   options options: Options,
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(
-    validate_options(options) |> result.map_error(public_error),
+    validate_options(options)
+    |> result.map_error(public_error),
   )
   use _ <- result.try(validate_join(join) |> result.map_error(public_error))
   use subpaths <- result.try(
@@ -1428,7 +1441,8 @@ pub fn path_band_untrimmed_with(
   options options: Options,
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(
-    validate_options(options) |> result.map_error(public_error),
+    validate_options(options)
+    |> result.map_error(public_error),
   )
   use _ <- result.try(validate_join(join) |> result.map_error(public_error))
   use subpaths <- result.try(
@@ -1464,7 +1478,8 @@ pub fn path_untrimmed_with(
   options options: Options,
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(
-    validate_options(options) |> result.map_error(public_error),
+    validate_options(options)
+    |> result.map_error(public_error),
   )
   use _ <- result.try(validate_join(join) |> result.map_error(public_error))
   use subpaths <- result.try(
@@ -2795,7 +2810,9 @@ pub type Error {
 }
 
 /// Convert internal offset failures at public API boundaries.
-fn public_error(error: InternalError) -> Error {
+/// Shared implementation used by stroke construction.
+@internal
+pub fn public_error(error: InternalError) -> Error {
   case error {
     InternalInvalidOffsetMapDistance(distance:, length:) ->
       InvalidOffsetMapDistance(distance:, length:)
@@ -3449,7 +3466,9 @@ pub fn internal_band_inside_function(
   Ok(fn(point) { point_inside_any_semantic_band(point, semantic_paths) })
 }
 
-fn internal_band_winding_function(
+/// Build the winding function used for whole-outline trimming.
+@internal
+pub fn internal_band_winding_function(
   bands: List(OneSubpathBand),
 ) -> Result(fn(svg_path.Point) -> Result(Int, InternalError), InternalError) {
   use semantic_paths <- result.try(
@@ -5154,7 +5173,9 @@ fn stretch_segment(
   }
 }
 
-fn validate_options(options: Options) -> Result(Nil, InternalError) {
+/// Shared implementation used by stroke construction.
+@internal
+pub fn validate_options(options: Options) -> Result(Nil, InternalError) {
   case
     options.fitting.tolerance <=. 0.0
     || !number.is_finite(options.fitting.tolerance)
@@ -5198,7 +5219,9 @@ fn validate_tangent_heal_angle(options: Options) -> Result(Nil, InternalError) {
   }
 }
 
-fn validate_join(join: Join) -> Result(Nil, InternalError) {
+/// Shared implementation used by stroke construction.
+@internal
+pub fn validate_join(join: Join) -> Result(Nil, InternalError) {
   case join {
     Miter(miter_limit) ->
       case miter_limit <=. 0.0 || !number.is_finite(miter_limit) {
@@ -6583,7 +6606,9 @@ fn join_between_offset_portions(
   }
 }
 
-fn orient_band_path(
+/// Shared implementation used by stroke construction.
+@internal
+pub fn orient_band_path(
   path: svg_path.Path,
   winding: fn(svg_path.Point) -> Result(Int, InternalError),
 ) -> Result(svg_path.Path, InternalError) {
@@ -6655,7 +6680,9 @@ fn orient_band_subpath(
   }
 }
 
-fn orient_outline_path(
+/// Shared implementation used by stroke construction.
+@internal
+pub fn orient_outline_path(
   path: svg_path.Path,
 ) -> Result(svg_path.Path, InternalError) {
   use subpaths <- result.try(
@@ -11282,7 +11309,9 @@ fn unit_normal(
   Ok(point_helpers.rotate_counterclockwise(tangent))
 }
 
-fn unit_tangent(
+/// Shared implementation used by stroke construction.
+@internal
+pub fn unit_tangent(
   segment: svg_path.Segment,
   t t: Float,
 ) -> Result(svg_path.Point, InternalError) {
