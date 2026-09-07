@@ -3397,26 +3397,11 @@ pub type InternalError {
 }
 
 pub type Error {
-  /// The internal winding classifier reached a boundary state unexpectedly.
-  InconsistentContainment
-
-  /// An internal contour probe received no segments.
-  EmptySubpath
-
   /// An offset-map distance lies outside the source length range.
   InvalidOffsetMapDistance(distance: Float, length: Float)
 
   /// An underlying path operation failed.
   PathError(svg_path.Error)
-
-  /// Arrangement construction failed while noding offset geometry.
-  ArrangementGraphError(arrangement_graph.Error)
-
-  /// Forced parity pruning could not determine a unique feasible assignment.
-  ForcedParityPruningError(arrangement_graph.ForcedParityError)
-
-  /// Source normalization failed before offset construction.
-  SourceNormalizationError(degeneracy.Error)
 
   /// The offset tolerance must be finite and greater than zero.
   InvalidTolerance(tolerance: Float)
@@ -3439,9 +3424,6 @@ pub type Error {
   /// Stroke width must be finite and greater than zero.
   InvalidStrokeWidth(width: Float)
 
-  /// Band payloads used for inside classification must be closed.
-  BandSubpathNotClosed
-
   /// A segment tangent was too small to define a stable normal direction.
   DegenerateTangent(t: Float)
 
@@ -3450,74 +3432,16 @@ pub type Error {
 
   /// A calculation produced a non-finite coordinate.
   NonFinite
-
-  /// Arrangement segment-image counts did not match offset segment counts.
-  SegmentImageCountMismatch
-
-  /// A source segment's arrangement image contained no graph edges.
-  EmptySegmentImage(segment_index: Int)
-
-  /// An arrangement edge had no source-image record.
-  MissingEdgeImage(edge_id: Int)
-
-  /// An arrangement source image referenced no indexed offset segment.
-  MissingIndexedSegment(segment_index: Int)
-
-  /// An indexed offset segment had no winding-side opinion.
-  MissingWindingOpinion(segment_index: Int)
-
-  /// Source-order reconstruction did not consume an assigned edge capacity.
-  SurvivorCapacityMismatch(edge_id: Int, remaining: Int)
-
-  /// Forced-parity band reconstruction produced an open chain.
-  ForcedParityOpenChain(start_vertex: Int, end_vertex: Int)
-
-  /// Cusp trimming reconstructed the wrong number of survivor subpaths.
-  ///
-  /// The historical `IToK` constructor name is retained for compatibility.
-  IToKSubpathCount(actual: Int)
-
-  /// Closed cusp-trimming input reconstructed as an open subpath.
-  /// The historical `IToK` constructor name is retained for compatibility.
-  IToKExpectedClosedSubpath
-
-  /// Open cusp-trimming input did not preserve its endpoint vertices.
-  /// The historical `IToK` constructor name is retained for compatibility.
-  IToKEndpointMismatch(
-    expected_start: Int,
-    actual_start: Int,
-    expected_end: Int,
-    actual_end: Int,
-  )
-
-  /// Cusp reconstruction lost an edge's arrangement-split provenance.
-  /// The historical `IToK`/`J` constructor name is retained for compatibility.
-  IToKMissingJPreimage(edge_id: Int)
-
-  /// Survivor-chain edges could not be joined into a continuous subpath: a
-  /// joint gap exceeded the wiggle tolerance. The joined edges are
-  /// library-reconstructed arrangement output, so this is never user input
-  /// fault.
-  SurvivorChainDiscontinuous(
-    previous_index: Int,
-    next_index: Int,
-    expected: svg_path.Point,
-    got: svg_path.Point,
-    distance: Float,
-  )
+  /// An internal offset construction failure that has no stable public detail.
+  ConstructionFailed
 }
 
 /// Convert internal offset failures at public API boundaries.
 fn public_error(error: InternalError) -> Error {
   case error {
-    InternalInconsistentContainment -> InconsistentContainment
-    InternalEmptySubpath -> EmptySubpath
     InternalInvalidOffsetMapDistance(distance:, length:) ->
       InvalidOffsetMapDistance(distance:, length:)
     InternalPathError(value) -> PathError(value)
-    InternalArrangementGraphError(value) -> ArrangementGraphError(value)
-    InternalForcedParityPruningError(value) -> ForcedParityPruningError(value)
-    InternalSourceNormalizationError(value) -> SourceNormalizationError(value)
     InternalInvalidTolerance(tolerance:) -> InvalidTolerance(tolerance:)
     InternalInvalidSamples(samples:) -> InvalidSamples(samples:)
     InternalInvalidMaxDepth(max_depth:) -> InvalidMaxDepth(max_depth:)
@@ -3527,51 +3451,10 @@ fn public_error(error: InternalError) -> Error {
     InternalInvalidTangentHealAngleDegrees(angle:) ->
       InvalidTangentHealAngleDegrees(angle:)
     InternalInvalidStrokeWidth(width:) -> InvalidStrokeWidth(width:)
-    InternalBandSubpathNotClosed -> BandSubpathNotClosed
     InternalDegenerateTangent(t:) -> DegenerateTangent(t:)
     InternalMaxDepthReached(error:) -> MaxDepthReached(error:)
     InternalNonFinite -> NonFinite
-    InternalSegmentImageCountMismatch -> SegmentImageCountMismatch
-    InternalEmptySegmentImage(segment_index:) ->
-      EmptySegmentImage(segment_index:)
-    InternalMissingEdgeImage(edge_id:) -> MissingEdgeImage(edge_id:)
-    InternalMissingIndexedSegment(segment_index:) ->
-      MissingIndexedSegment(segment_index:)
-    InternalMissingWindingOpinion(segment_index:) ->
-      MissingWindingOpinion(segment_index:)
-    InternalSurvivorCapacityMismatch(edge_id:, remaining:) ->
-      SurvivorCapacityMismatch(edge_id:, remaining:)
-    InternalForcedParityOpenChain(start_vertex:, end_vertex:) ->
-      ForcedParityOpenChain(start_vertex:, end_vertex:)
-    InternalIToKSubpathCount(actual:) -> IToKSubpathCount(actual:)
-    InternalIToKExpectedClosedSubpath -> IToKExpectedClosedSubpath
-    InternalIToKEndpointMismatch(
-      expected_start:,
-      actual_start:,
-      expected_end:,
-      actual_end:,
-    ) ->
-      IToKEndpointMismatch(
-        expected_start:,
-        actual_start:,
-        expected_end:,
-        actual_end:,
-      )
-    InternalIToKMissingJPreimage(edge_id:) -> IToKMissingJPreimage(edge_id:)
-    InternalSurvivorChainDiscontinuous(
-      previous_index:,
-      next_index:,
-      expected:,
-      got:,
-      distance:,
-    ) ->
-      SurvivorChainDiscontinuous(
-        previous_index:,
-        next_index:,
-        expected:,
-        got:,
-        distance:,
-      )
+    _ -> ConstructionFailed
   }
 }
 
