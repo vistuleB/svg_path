@@ -3152,6 +3152,7 @@ const default_stalled_offset_diameter = 0.01
 const adjacent_loop_endpoint_parameter_tolerance = 0.0001
 
 /// Errors returned by offset helpers.
+@internal
 pub type InternalError {
   /// The internal winding classifier reached a boundary state unexpectedly.
   InternalInconsistentContainment
