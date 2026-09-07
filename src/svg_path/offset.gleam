@@ -2946,7 +2946,7 @@ pub type InternalError {
   InternalDegenerateTangent(t: Float)
 
   /// Refinement could not produce an offset within the requested tolerance.
-  InternalMaxDepthReached(error: Float)
+  InternalMaxDepthReached(divergence: Float)
 
   /// A calculation produced a non-finite coordinate.
   InternalNonFinite
@@ -3039,7 +3039,7 @@ pub type Error {
   DegenerateTangent(t: Float)
 
   /// Refinement could not produce an offset within the requested tolerance.
-  MaxDepthReached(error: Float)
+  MaxDepthReached(divergence: Float)
 
   /// A calculation produced a non-finite coordinate.
   NonFinite
@@ -3063,7 +3063,7 @@ fn public_error(error: InternalError) -> Error {
       InvalidTangentHealAngleDegrees(angle:)
     InternalInvalidStrokeWidth(width:) -> InvalidStrokeWidth(width:)
     InternalDegenerateTangent(t:) -> DegenerateTangent(t:)
-    InternalMaxDepthReached(error:) -> MaxDepthReached(error:)
+    InternalMaxDepthReached(divergence:) -> MaxDepthReached(divergence:)
     InternalNonFinite -> NonFinite
     _ -> ConstructionFailed
   }
