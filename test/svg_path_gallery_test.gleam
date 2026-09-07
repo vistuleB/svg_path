@@ -31,19 +31,6 @@ pub fn main() -> Nil {
   generate_gallery_figures()
 }
 
-/// Regenerate only the stroke figures when checking stroke construction.
-pub fn generate_stroke_figures() -> Nil {
-  let _ = ensure_dir("examples/debug/stroke-migration-dashes.svg")
-  let _ =
-    write_file("examples/debug/stroke-migration-dashes.svg", dashed_strokes())
-  let _ =
-    write_file(
-      "examples/debug/stroke-migration-recursive-dashes.svg",
-      recursive_dashes(),
-    )
-  Nil
-}
-
 pub fn generate_gallery_figures() {
   let _ = ensure_dir(output_dir <> "/README.md")
 
