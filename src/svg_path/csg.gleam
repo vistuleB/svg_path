@@ -31,7 +31,7 @@ pub type Options {
 /// Errors returned by arrangement-graph CSG operations.
 pub type Error {
   /// Arrangement construction or validation failed.
-  ArrangementGraphError(arrangement.Error)
+  ArrangementGraphError
 
   /// An underlying path operation failed.
   PathError(svg_path.Error)
@@ -243,7 +243,7 @@ fn csg_arrangement_build(
     minimum_chord: options.minimum_chord,
     endpoint_sliver_tolerance: 0.0,
   )
-  |> result.map_error(ArrangementGraphError)
+  |> result.map_error(fn(_) { ArrangementGraphError })
 }
 
 fn csg_path_segments(
@@ -432,7 +432,7 @@ fn nested_contours_from_arrangement_graph(
 ) -> Result(svg_path.Path, Error) {
   use subpaths <- result.try(
     arrangement.nested_contours_from_graph(graph, path, tolerance)
-    |> result.map_error(ArrangementGraphError),
+    |> result.map_error(fn(_) { ArrangementGraphError }),
   )
   Ok(svg_path.Path(subpaths))
 }

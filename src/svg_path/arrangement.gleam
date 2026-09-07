@@ -262,12 +262,109 @@ pub type ArrangementSegmentImage {
 ///
 /// The numeric-option variants report invalid caller options. The remaining
 /// variants report a path failure or a violated graph invariant.
-pub type Error {
+@internal
+pub type InternalError {
   /// An underlying path operation failed.
-  PathError(svg_path.Error)
+  InternalPathError(svg_path.Error)
 
   /// Normalization failed for a reason outside its path-operation contract.
   InternalNormalizationError
+
+  /// Endpoint tolerance must be greater than zero.
+  InternalInvalidTolerance(tolerance: Float)
+
+  /// Minimum edge chord length must be greater than zero.
+  InternalInvalidMinimumChord(minimum_chord: Float)
+
+  /// Endpoint-sliver tolerance is a parameter-space quantity and must be
+  /// finite and non-negative.
+  InternalInvalidEndpointSliverTolerance(tolerance: Float)
+
+  /// A segment is shorter than the required minimum chord length.
+  InternalSegmentTooShort(chord: Float, minimum: Float)
+
+  /// Endpoint clustering collapsed an inserted segment to one vertex.
+  InternalSegmentCollapsedToVertex(vertex: Int)
+
+  /// A graph edge refers to the same vertex at both ends.
+  InternalLoopEdge(vertex: Int)
+
+  /// An edge refers to a vertex that is not in the graph.
+  InternalMissingVertex(vertex: Int)
+
+  /// A segment image refers to an edge that is not in its build graph.
+  InternalMissingEdge(edge: Int)
+
+  /// A vertex has no incident edge.
+  InternalIsolatedVertex(vertex: Int)
+
+  /// An edge's total directional multiplicity is not positive.
+  InternalInvalidMultiplicity(edge: Int)
+
+  /// A closed-boundary graph has an odd weighted degree at a vertex.
+  InternalOddWeightedDegree(vertex: Int, degree: Int)
+
+  /// A segment endpoint is farther than tolerance from its vertex point.
+  InternalEdgeEndpointMismatch(edge: Int, vertex: Int, distance: Float)
+
+  /// A vertex does not retain any source endpoints for its cluster.
+  InternalVertexWithoutEndpointSamples(vertex: Int)
+
+  /// A vertex point is not the canonical center of its endpoint samples.
+  InternalVertexCenterMismatch(vertex: Int, distance_squared: Float)
+
+  /// A vertex's endpoint cluster exceeds the graph tolerance.
+  InternalVertexSampleOutsideTolerance(
+    vertex: Int,
+    distance_squared: Float,
+    tolerance_squared: Float,
+  )
+
+  /// A contour could not be traced into closed loops.
+  InternalContourTraceFailed(vertex: Int)
+
+  /// A cyclic edge order was requested for a vertex outside the graph.
+  InternalCyclicOrderMissingVertex(vertex: Int)
+
+  /// No positive common sampling radius exists at a vertex.
+  InternalCyclicOrderRadiusUnavailable(vertex: Int)
+
+  /// A cyclic-order search requires at least one sampling radius.
+  InternalInvalidCyclicOrderAttempts(max_attempts: Int)
+
+  /// An incident edge did not yield a certified first circle intersection.
+  InternalCyclicOrderCircleIntersectionFailed(
+    vertex: Int,
+    edge: Int,
+    radius: Float,
+  )
+
+  /// A dual walk could not find the cyclic order at its arrival vertex.
+  InternalDualMissingCyclicOrder(vertex: Int)
+
+  /// A dual walk could not find its incoming edge in a vertex's cyclic order.
+  InternalDualMissingIncidentEdge(vertex: Int, edge: Int)
+
+  /// A dual walk repeated an edge side before returning to its start.
+  InternalDualWalkDidNotClose(edge: Int, left: Bool)
+
+  /// A face boundary could not provide a non-boundary point on its left side.
+  InternalDualFaceSampleUnavailable(edge: Int, left: Bool)
+
+  /// A bounded face did not have exactly one enclosing outer walk.
+  InternalDualInvalidOuterWalkCount(count: Int)
+
+  /// An arrangement edge side was absent from the derived faces.
+  InternalDualMissingEdgeFace(edge: Int, left: Bool)
+
+  /// Dual construction did not identify exactly one infinite face.
+  InternalDualInvalidOuterFaceCount(count: Int)
+}
+
+/// Stable errors returned by arrangement construction and validation.
+pub type Error {
+  /// An underlying path operation failed.
+  PathError(svg_path.Error)
 
   /// Endpoint tolerance must be greater than zero.
   InvalidTolerance(tolerance: Float)
@@ -275,85 +372,29 @@ pub type Error {
   /// Minimum edge chord length must be greater than zero.
   InvalidMinimumChord(minimum_chord: Float)
 
-  /// Endpoint-sliver tolerance is a parameter-space quantity and must be
-  /// finite and non-negative.
+  /// Endpoint-sliver tolerance must be finite and non-negative.
   InvalidEndpointSliverTolerance(tolerance: Float)
 
-  /// A segment is shorter than the required minimum chord length.
+  /// A segment is shorter than the requested minimum chord length.
   SegmentTooShort(chord: Float, minimum: Float)
 
-  /// Endpoint clustering collapsed an inserted segment to one vertex.
-  SegmentCollapsedToVertex(vertex: Int)
+  /// The arrangement construction or validation failed an internal invariant.
+  ConstructionFailed
+}
 
-  /// A graph edge refers to the same vertex at both ends.
-  LoopEdge(vertex: Int)
-
-  /// An edge refers to a vertex that is not in the graph.
-  MissingVertex(vertex: Int)
-
-  /// A segment image refers to an edge that is not in its build graph.
-  MissingEdge(edge: Int)
-
-  /// A vertex has no incident edge.
-  IsolatedVertex(vertex: Int)
-
-  /// An edge's total directional multiplicity is not positive.
-  InvalidMultiplicity(edge: Int)
-
-  /// A closed-boundary graph has an odd weighted degree at a vertex.
-  OddWeightedDegree(vertex: Int, degree: Int)
-
-  /// A segment endpoint is farther than tolerance from its vertex point.
-  EdgeEndpointMismatch(edge: Int, vertex: Int, distance: Float)
-
-  /// A vertex does not retain any source endpoints for its cluster.
-  VertexWithoutEndpointSamples(vertex: Int)
-
-  /// A vertex point is not the canonical center of its endpoint samples.
-  VertexCenterMismatch(vertex: Int, distance_squared: Float)
-
-  /// A vertex's endpoint cluster exceeds the graph tolerance.
-  VertexSampleOutsideTolerance(
-    vertex: Int,
-    distance_squared: Float,
-    tolerance_squared: Float,
-  )
-
-  /// A contour could not be traced into closed loops.
-  ContourTraceFailed(vertex: Int)
-
-  /// A cyclic edge order was requested for a vertex outside the graph.
-  CyclicOrderMissingVertex(vertex: Int)
-
-  /// No positive common sampling radius exists at a vertex.
-  CyclicOrderRadiusUnavailable(vertex: Int)
-
-  /// A cyclic-order search requires at least one sampling radius.
-  InvalidCyclicOrderAttempts(max_attempts: Int)
-
-  /// An incident edge did not yield a certified first circle intersection.
-  CyclicOrderCircleIntersectionFailed(vertex: Int, edge: Int, radius: Float)
-
-  /// A dual walk could not find the cyclic order at its arrival vertex.
-  DualMissingCyclicOrder(vertex: Int)
-
-  /// A dual walk could not find its incoming edge in a vertex's cyclic order.
-  DualMissingIncidentEdge(vertex: Int, edge: Int)
-
-  /// A dual walk repeated an edge side before returning to its start.
-  DualWalkDidNotClose(edge: Int, left: Bool)
-
-  /// A face boundary could not provide a non-boundary point on its left side.
-  DualFaceSampleUnavailable(edge: Int, left: Bool)
-
-  /// A bounded face did not have exactly one enclosing outer walk.
-  DualInvalidOuterWalkCount(count: Int)
-
-  /// An arrangement edge side was absent from the derived faces.
-  DualMissingEdgeFace(edge: Int, left: Bool)
-
-  /// Dual construction did not identify exactly one infinite face.
-  DualInvalidOuterFaceCount(count: Int)
+/// Convert internal arrangement failures at public API boundaries.
+fn public_error(error: InternalError) -> Error {
+  case error {
+    InternalPathError(value) -> PathError(value)
+    InternalInvalidTolerance(tolerance:) -> InvalidTolerance(tolerance:)
+    InternalInvalidMinimumChord(minimum_chord:) ->
+      InvalidMinimumChord(minimum_chord:)
+    InternalInvalidEndpointSliverTolerance(tolerance:) ->
+      InvalidEndpointSliverTolerance(tolerance:)
+    InternalSegmentTooShort(chord:, minimum:) ->
+      SegmentTooShort(chord:, minimum:)
+    _ -> ConstructionFailed
+  }
 }
 
 type CyclicOrderSample {
@@ -377,10 +418,10 @@ pub fn cyclic_orders_with(
   graph: ArrangementGraph,
   tolerance tolerance: Float,
   max_attempts max_attempts: Int,
-) -> Result(List(#(Int, List(List(OrientedArrangementEdge)))), Error) {
+) -> Result(List(#(Int, List(List(OrientedArrangementEdge)))), InternalError) {
   case tolerance >. 0.0 && number.is_finite(tolerance), max_attempts > 0 {
-    False, _ -> Error(InvalidTolerance(tolerance))
-    _, False -> Error(InvalidCyclicOrderAttempts(max_attempts))
+    False, _ -> Error(InternalInvalidTolerance(tolerance))
+    _, False -> Error(InternalInvalidCyclicOrderAttempts(max_attempts))
     True, True -> {
       let ArrangementGraph(vertices:, ..) = graph
       cyclic_orders_for_vertices(
@@ -400,7 +441,7 @@ fn cyclic_orders_for_vertices(
   tolerance: Float,
   max_attempts: Int,
   orders orders: List(#(Int, List(List(OrientedArrangementEdge)))),
-) -> Result(List(#(Int, List(List(OrientedArrangementEdge)))), Error) {
+) -> Result(List(#(Int, List(List(OrientedArrangementEdge)))), InternalError) {
   case vertices {
     [] -> Ok(list.reverse(orders))
     [ArrangementVertex(id:, ..), ..rest] -> {
@@ -425,20 +466,22 @@ pub fn vertex_cyclic_order_with(
   vertex_id vertex_id: Int,
   tolerance tolerance: Float,
   max_attempts max_attempts: Int,
-) -> Result(List(List(OrientedArrangementEdge)), Error) {
+) -> Result(List(List(OrientedArrangementEdge)), InternalError) {
   case tolerance >. 0.0 && number.is_finite(tolerance), max_attempts > 0 {
-    False, _ -> Error(InvalidTolerance(tolerance))
-    _, False -> Error(InvalidCyclicOrderAttempts(max_attempts))
+    False, _ -> Error(InternalInvalidTolerance(tolerance))
+    _, False -> Error(InternalInvalidCyclicOrderAttempts(max_attempts))
     True, True -> {
       let ArrangementGraph(vertices:, edges:, ..) = graph
       use vertex <- result.try(
         list.find(vertices, fn(vertex) { vertex.id == vertex_id })
-        |> result.map_error(fn(_) { CyclicOrderMissingVertex(vertex_id) }),
+        |> result.map_error(fn(_) {
+          InternalCyclicOrderMissingVertex(vertex_id)
+        }),
       )
       let incident =
         incident_oriented_edges(edges, vertex_id, oriented_edges: [])
       case incident {
-        [] -> Error(IsolatedVertex(vertex_id))
+        [] -> Error(InternalIsolatedVertex(vertex_id))
         [only] -> Ok([[only]])
         _ -> {
           use radius <- result.try(initial_cyclic_order_radius(
@@ -496,7 +539,7 @@ fn initial_cyclic_order_radius(
   edges: List(ArrangementEdge),
   vertex: svg_path.Point,
   vertex_id: Int,
-) -> Result(Float, Error) {
+) -> Result(Float, InternalError) {
   use distances <- result.try(
     oriented_edges
     |> list.map(fn(oriented_edge) {
@@ -507,12 +550,12 @@ fn initial_cyclic_order_radius(
     |> result.all,
   )
   case distances {
-    [] -> Error(CyclicOrderRadiusUnavailable(vertex_id))
+    [] -> Error(InternalCyclicOrderRadiusUnavailable(vertex_id))
     [first, ..rest] -> {
       let minimum = list.fold(rest, first, float.min)
       case minimum >. 0.0 && number.is_finite(minimum) {
         True -> Ok(0.8 *. minimum)
-        False -> Error(CyclicOrderRadiusUnavailable(vertex_id))
+        False -> Error(InternalCyclicOrderRadiusUnavailable(vertex_id))
       }
     }
   }
@@ -526,16 +569,16 @@ fn cyclic_order_attempts(
   radius: Float,
   tolerance: Float,
   remaining remaining: Int,
-  previous_error previous_error: Option(Error),
+  previous_error previous_error: Option(InternalError),
   successful_samples successful_samples: List(List(CyclicOrderSample)),
-) -> Result(List(List(OrientedArrangementEdge)), Error) {
+) -> Result(List(List(OrientedArrangementEdge)), InternalError) {
   case remaining <= 0 || radius <=. tolerance /. 2.0 {
     True -> {
       case list.reverse(successful_samples) {
         [] ->
           case previous_error {
             Some(error) -> Error(error)
-            None -> Error(CyclicOrderRadiusUnavailable(vertex_id))
+            None -> Error(InternalCyclicOrderRadiusUnavailable(vertex_id))
           }
         [reference, ..] as samples_by_radius -> {
           let groups = group_cyclic_order_samples(reference, tolerance)
@@ -589,7 +632,7 @@ fn cyclic_order_samples_at_radius(
   vertex_id: Int,
   radius: Float,
   tolerance: Float,
-) -> Result(List(CyclicOrderSample), Error) {
+) -> Result(List(CyclicOrderSample), InternalError) {
   use samples <- result.try(
     oriented_edges
     |> list.map(fn(oriented_edge) {
@@ -614,7 +657,7 @@ fn circle_sample_for_oriented_edge(
   vertex_id: Int,
   radius: Float,
   tolerance: Float,
-) -> Result(CyclicOrderSample, Error) {
+) -> Result(CyclicOrderSample, InternalError) {
   use edge <- result.try(edge_for_oriented_edge(edges, oriented_edge))
   let segment = outward_oriented_edge_segment(edge, oriented_edge)
   let radius_squared = radius *. radius
@@ -631,17 +674,17 @@ fn circle_sample_for_oriented_edge(
         max_iterations: 100,
       ),
     )
-    |> result.map_error(PathError),
+    |> result.map_error(InternalPathError),
   )
   use t <- result.try(
     list.find(roots, fn(t) { t >. 0.0 && t <=. 1.0 })
     |> result.map_error(fn(_) {
-      CyclicOrderCircleIntersectionFailed(vertex_id, edge.id, radius)
+      InternalCyclicOrderCircleIntersectionFailed(vertex_id, edge.id, radius)
     }),
   )
   use sample <- result.try(
     svg_path.segment_point(segment, at: t)
-    |> result.map_error(PathError),
+    |> result.map_error(InternalPathError),
   )
   Ok(CyclicOrderSample(
     oriented_edge:,
@@ -653,9 +696,9 @@ fn circle_sample_for_oriented_edge(
 fn edge_for_oriented_edge(
   edges: List(ArrangementEdge),
   oriented_edge: OrientedArrangementEdge,
-) -> Result(ArrangementEdge, Error) {
+) -> Result(ArrangementEdge, InternalError) {
   list.find(edges, fn(edge) { edge.id == oriented_edge.edge_id })
-  |> result.map_error(fn(_) { MissingEdge(oriented_edge.edge_id) })
+  |> result.map_error(fn(_) { InternalMissingEdge(oriented_edge.edge_id) })
 }
 
 fn outward_oriented_edge_segment(
@@ -868,30 +911,33 @@ type DualWalkCandidate {
 /// walks are grouped when points immediately on their visual-left sides occupy
 /// the same combination of nested boundary regions.
 pub fn dual(graph: ArrangementGraph) -> Result(DualArrangementGraph, Error) {
-  let ArrangementGraph(edges:, ..) = graph
-  case edges {
-    [] ->
-      Ok(
-        DualArrangementGraph(
-          faces: [ArrangementFace(id: 0, outer: True, walks: [])],
-          edge_faces: [],
-        ),
-      )
-    _ -> {
-      use walks <- result.try(dual_face_walks(graph))
-      use candidates <- result.try(dual_walk_candidates(walks, graph))
-      use faces <- result.try(dual_faces(candidates))
-      use edge_faces <- result.try(
-        dual_edge_faces(edges, faces, edge_faces: []),
-      )
-      Ok(DualArrangementGraph(faces:, edge_faces:))
+  let result = {
+    let ArrangementGraph(edges:, ..) = graph
+    case edges {
+      [] ->
+        Ok(
+          DualArrangementGraph(
+            faces: [ArrangementFace(id: 0, outer: True, walks: [])],
+            edge_faces: [],
+          ),
+        )
+      _ -> {
+        use walks <- result.try(dual_face_walks(graph))
+        use candidates <- result.try(dual_walk_candidates(walks, graph))
+        use faces <- result.try(dual_faces(candidates))
+        use edge_faces <- result.try(
+          dual_edge_faces(edges, faces, edge_faces: []),
+        )
+        Ok(DualArrangementGraph(faces:, edge_faces:))
+      }
     }
   }
+  result |> result.map_error(public_error)
 }
 
 fn dual_face_walks(
   graph: ArrangementGraph,
-) -> Result(List(ArrangementFaceWalk), Error) {
+) -> Result(List(ArrangementFaceWalk), InternalError) {
   let ArrangementGraph(edges:, ..) = graph
   let remaining =
     edges
@@ -908,7 +954,7 @@ fn dual_face_walks_loop(
   graph: ArrangementGraph,
   remaining: List(ArrangementFaceEdge),
   walks walks: List(ArrangementFaceWalk),
-) -> Result(List(ArrangementFaceWalk), Error) {
+) -> Result(List(ArrangementFaceWalk), InternalError) {
   case remaining {
     [] -> Ok(list.reverse(walks))
     [start, ..] -> {
@@ -937,9 +983,9 @@ fn dual_face_walk(
   current current: ArrangementFaceEdge,
   visited visited: List(ArrangementFaceEdge),
   remaining_steps remaining_steps: Int,
-) -> Result(List(ArrangementFaceEdge), Error) {
+) -> Result(List(ArrangementFaceEdge), InternalError) {
   case remaining_steps <= 0 {
-    True -> Error(DualWalkDidNotClose(start.edge_id, start.left))
+    True -> Error(InternalDualWalkDidNotClose(start.edge_id, start.left))
     False -> {
       use next <- result.try(dual_face_successor(graph, current))
       let visited = [current, ..visited]
@@ -949,7 +995,8 @@ fn dual_face_walk(
           case
             list.any(visited, fn(edge) { dual_face_edges_equal(edge, next) })
           {
-            True -> Error(DualWalkDidNotClose(start.edge_id, start.left))
+            True ->
+              Error(InternalDualWalkDidNotClose(start.edge_id, start.left))
             False ->
               dual_face_walk(
                 graph,
@@ -967,11 +1014,11 @@ fn dual_face_walk(
 fn dual_face_successor(
   graph: ArrangementGraph,
   current: ArrangementFaceEdge,
-) -> Result(ArrangementFaceEdge, Error) {
+) -> Result(ArrangementFaceEdge, InternalError) {
   let ArrangementGraph(edges:, cyclic_orders:, ..) = graph
   use edge <- result.try(
     list.find(edges, fn(edge) { edge.id == current.edge_id })
-    |> result.replace_error(MissingEdge(current.edge_id)),
+    |> result.replace_error(InternalMissingEdge(current.edge_id)),
   )
   let arrival_vertex = case current.left {
     True -> edge.end_vertex
@@ -986,7 +1033,7 @@ fn dual_face_successor(
         False -> Error(Nil)
       }
     })
-    |> result.replace_error(DualMissingCyclicOrder(arrival_vertex)),
+    |> result.replace_error(InternalDualMissingCyclicOrder(arrival_vertex)),
   )
   let order = list.flatten(groups)
   use next <- result.try(dual_next_clockwise_edge(
@@ -1003,9 +1050,9 @@ fn dual_next_clockwise_edge(
   vertex vertex: Int,
   incoming_edge incoming_edge: Int,
   incoming_reversed incoming_reversed: Bool,
-) -> Result(OrientedArrangementEdge, Error) {
+) -> Result(OrientedArrangementEdge, InternalError) {
   case order {
-    [] -> Error(DualMissingIncidentEdge(vertex, incoming_edge))
+    [] -> Error(InternalDualMissingIncidentEdge(vertex, incoming_edge))
     [first, ..] ->
       dual_next_clockwise_edge_loop(
         order,
@@ -1023,16 +1070,16 @@ fn dual_next_clockwise_edge_loop(
   vertex: Int,
   incoming_edge: Int,
   incoming_reversed: Bool,
-) -> Result(OrientedArrangementEdge, Error) {
+) -> Result(OrientedArrangementEdge, InternalError) {
   case remaining {
-    [] -> Error(DualMissingIncidentEdge(vertex, incoming_edge))
+    [] -> Error(InternalDualMissingIncidentEdge(vertex, incoming_edge))
     [current] ->
       case
         current.edge_id == incoming_edge
         && current.reversed == incoming_reversed
       {
         True -> Ok(first)
-        False -> Error(DualMissingIncidentEdge(vertex, incoming_edge))
+        False -> Error(InternalDualMissingIncidentEdge(vertex, incoming_edge))
       }
     [current, next, ..rest] ->
       case
@@ -1055,7 +1102,7 @@ fn dual_next_clockwise_edge_loop(
 fn dual_walk_candidates(
   walks: List(ArrangementFaceWalk),
   graph: ArrangementGraph,
-) -> Result(List(DualWalkCandidate), Error) {
+) -> Result(List(DualWalkCandidate), InternalError) {
   use prepared <- result.try(
     walks
     |> list.map(fn(walk) {
@@ -1084,7 +1131,7 @@ fn dual_walk_candidates(
 fn dual_face_walk_subpath(
   walk: ArrangementFaceWalk,
   graph: ArrangementGraph,
-) -> Result(svg_path.Subpath, Error) {
+) -> Result(svg_path.Subpath, InternalError) {
   use segments <- result.try(
     walk.edges
     |> list.map(fn(reference) { dual_face_edge_segment(reference, graph) })
@@ -1092,20 +1139,20 @@ fn dual_face_walk_subpath(
   )
   use subpath <- result.try(
     svg_path.subpath(segments)
-    |> result.map_error(PathError),
+    |> result.map_error(InternalPathError),
   )
   svg_path.subpath_set_closed(subpath, closed: True)
-  |> result.map_error(PathError)
+  |> result.map_error(InternalPathError)
 }
 
 fn dual_face_edge_segment(
   reference: ArrangementFaceEdge,
   graph: ArrangementGraph,
-) -> Result(svg_path.Segment, Error) {
+) -> Result(svg_path.Segment, InternalError) {
   let ArrangementGraph(edges:, vertices:, ..) = graph
   use edge <- result.try(
     list.find(edges, fn(edge) { edge.id == reference.edge_id })
-    |> result.replace_error(MissingEdge(reference.edge_id)),
+    |> result.replace_error(InternalMissingEdge(reference.edge_id)),
   )
   let #(segment, start_vertex, end_vertex) = case reference.left {
     True -> #(edge.segment, edge.start_vertex, edge.end_vertex)
@@ -1118,15 +1165,15 @@ fn dual_face_edge_segment(
   use start <- result.try(
     list.find(vertices, fn(vertex) { vertex.id == start_vertex })
     |> result.map(fn(vertex) { vertex.point })
-    |> result.replace_error(MissingVertex(start_vertex)),
+    |> result.replace_error(InternalMissingVertex(start_vertex)),
   )
   use end <- result.try(
     list.find(vertices, fn(vertex) { vertex.id == end_vertex })
     |> result.map(fn(vertex) { vertex.point })
-    |> result.replace_error(MissingVertex(end_vertex)),
+    |> result.replace_error(InternalMissingVertex(end_vertex)),
   )
   svg_path.segment_remap_endpoints(segment, new_start: start, new_end: end)
-  |> result.map_error(PathError)
+  |> result.map_error(InternalPathError)
 }
 
 fn dual_face_walk_sample(
@@ -1134,18 +1181,18 @@ fn dual_face_walk_sample(
   subpath: svg_path.Subpath,
   graph: ArrangementGraph,
   subpaths: List(svg_path.Subpath),
-) -> Result(#(svg_path.Point, List(Bool)), Error) {
+) -> Result(#(svg_path.Point, List(Bool)), InternalError) {
   case walk.edges {
-    [] -> Error(DualFaceSampleUnavailable(-1, True))
+    [] -> Error(InternalDualFaceSampleUnavailable(-1, True))
     [first, ..] -> {
       use segment <- result.try(dual_face_edge_segment(first, graph))
       use midpoint <- result.try(
         svg_path.segment_point(segment, at: 0.5)
-        |> result.map_error(PathError),
+        |> result.map_error(InternalPathError),
       )
       use derivative <- result.try(
         svg_path.segment_derivative(segment, at: 0.5)
-        |> result.map_error(PathError),
+        |> result.map_error(InternalPathError),
       )
       let direction = case point.normalize(derivative) {
         Ok(direction) -> direction
@@ -1179,9 +1226,9 @@ fn dual_face_walk_sample_at_distance(
   subpaths: List(svg_path.Subpath),
   distance: Float,
   remaining_attempts remaining_attempts: Int,
-) -> Result(#(svg_path.Point, List(Bool)), Error) {
+) -> Result(#(svg_path.Point, List(Bool)), InternalError) {
   case remaining_attempts <= 0 || distance <=. 0.0 {
-    True -> Error(DualFaceSampleUnavailable(edge.edge_id, edge.left))
+    True -> Error(InternalDualFaceSampleUnavailable(edge.edge_id, edge.left))
     False -> {
       let sample = point.add(midpoint, point.scale(normal, by: distance))
       let options =
@@ -1222,7 +1269,7 @@ fn dual_face_walk_sample_at_distance(
               )
             Error(error) -> Error(error)
           }
-        Error(error) -> Error(PathError(error))
+        Error(error) -> Error(InternalPathError(error))
       }
     }
   }
@@ -1232,7 +1279,7 @@ fn dual_containment_signature(
   sample: svg_path.Point,
   subpaths: List(svg_path.Subpath),
   options: svg_path.ContainmentOptions,
-) -> Result(Option(List(Bool)), Error) {
+) -> Result(Option(List(Bool)), InternalError) {
   dual_containment_signature_loop(sample, subpaths, options, signature: [])
 }
 
@@ -1241,7 +1288,7 @@ fn dual_containment_signature_loop(
   subpaths: List(svg_path.Subpath),
   options: svg_path.ContainmentOptions,
   signature signature: List(Bool),
-) -> Result(Option(List(Bool)), Error) {
+) -> Result(Option(List(Bool)), InternalError) {
   case subpaths {
     [] -> Ok(Some(list.reverse(signature)))
     [subpath, ..rest] ->
@@ -1264,14 +1311,14 @@ fn dual_containment_signature_loop(
             False,
             ..signature
           ])
-        Error(error) -> Error(PathError(error))
+        Error(error) -> Error(InternalPathError(error))
       }
   }
 }
 
 fn dual_faces(
   candidates: List(DualWalkCandidate),
-) -> Result(List(ArrangementFace), Error) {
+) -> Result(List(ArrangementFace), InternalError) {
   let groups = dual_group_walk_candidates(candidates, groups: [])
   let #(outer_groups, bounded_groups) =
     list.partition(groups, fn(group) {
@@ -1285,7 +1332,7 @@ fn dual_faces(
       [outer_group, ..bounded_groups]
       |> list.index_map(fn(group, id) { dual_face_from_group(group, id) })
       |> result.all
-    groups -> Error(DualInvalidOuterFaceCount(list.length(groups)))
+    groups -> Error(InternalDualInvalidOuterFaceCount(list.length(groups)))
   }
 }
 
@@ -1308,7 +1355,7 @@ fn dual_group_walk_candidates(
 fn dual_face_from_group(
   group: List(DualWalkCandidate),
   id: Int,
-) -> Result(ArrangementFace, Error) {
+) -> Result(ArrangementFace, InternalError) {
   let #(outer_walks, island_walks) =
     group
     |> list.map(fn(candidate) { candidate.walk })
@@ -1325,7 +1372,7 @@ fn dual_face_from_group(
         outer: False,
         walks: list.append(outer_walks, island_walks),
       ))
-    _, count -> Error(DualInvalidOuterWalkCount(count))
+    _, count -> Error(InternalDualInvalidOuterWalkCount(count))
   }
 }
 
@@ -1333,7 +1380,7 @@ fn dual_edge_faces(
   edges: List(ArrangementEdge),
   faces: List(ArrangementFace),
   edge_faces edge_faces: List(ArrangementEdgeFaces),
-) -> Result(List(ArrangementEdgeFaces), Error) {
+) -> Result(List(ArrangementEdgeFaces), InternalError) {
   case edges {
     [] -> Ok(list.reverse(edge_faces))
     [edge, ..rest] -> {
@@ -1359,7 +1406,7 @@ fn dual_find_edge_face(
   faces: List(ArrangementFace),
   edge_id: Int,
   left left: Bool,
-) -> Result(Int, Error) {
+) -> Result(Int, InternalError) {
   faces
   |> list.find(fn(face) {
     face.walks
@@ -1369,7 +1416,7 @@ fn dual_find_edge_face(
     })
   })
   |> result.map(fn(face) { face.id })
-  |> result.replace_error(DualMissingEdgeFace(edge_id, left))
+  |> result.replace_error(InternalDualMissingEdgeFace(edge_id, left))
 }
 
 fn dual_face_edges_equal(
@@ -1384,6 +1431,14 @@ pub fn segment_image_edges(
   build: ArrangementGraphBuild,
   image: ArrangementSegmentImage,
 ) -> Result(List(#(ArrangementEdge, Bool)), Error) {
+  segment_image_edges_internal(build, image)
+  |> result.map_error(public_error)
+}
+
+fn segment_image_edges_internal(
+  build: ArrangementGraphBuild,
+  image: ArrangementSegmentImage,
+) -> Result(List(#(ArrangementEdge, Bool)), InternalError) {
   let ArrangementGraphBuild(graph: ArrangementGraph(edges:, ..), ..) = build
   let ArrangementSegmentImage(edges: references, ..) = image
   references
@@ -1391,7 +1446,7 @@ pub fn segment_image_edges(
     let DirectedEdgeReference(edge_id:, reversed:) = reference
     case list.find(edges, fn(edge) { edge.id == edge_id }) {
       Ok(edge) -> Ok(#(edge, reversed))
-      Error(Nil) -> Error(MissingEdge(edge_id))
+      Error(Nil) -> Error(InternalMissingEdge(edge_id))
     }
   })
   |> result.all
@@ -1408,7 +1463,7 @@ pub fn nested_contours_from_graph(
   graph: ArrangementGraph,
   path path: svg_path.Path,
   tolerance tolerance: Float,
-) -> Result(List(svg_path.Subpath), Error) {
+) -> Result(List(svg_path.Subpath), InternalError) {
   let ArrangementGraph(edges:, ..) = graph
   use boundary <- result.try(
     classify_nested_contour_edges(
@@ -1447,7 +1502,7 @@ fn classify_nested_contour_edges(
   tolerance: Float,
   next_id next_id: Int,
   boundary boundary: List(NestedContourEdge),
-) -> Result(List(NestedContourEdge), Error) {
+) -> Result(List(NestedContourEdge), InternalError) {
   case edges {
     [] -> Ok(list.reverse(boundary))
     [edge, ..rest] -> {
@@ -1459,7 +1514,7 @@ fn classify_nested_contour_edges(
           side_sampling_distance: tolerance *. 16.0,
           options: svg_path.default_containment_options(),
         )
-        |> result.map_error(PathError),
+        |> result.map_error(InternalPathError),
       )
       let #(left, right) = levels
       let #(next_id, boundary) =
@@ -1548,7 +1603,7 @@ fn emit_nested_threshold_edge(
 fn pair_nested_contour_sectors(
   edges: List(NestedContourEdge),
   links links: List(NestedContourLink),
-) -> Result(List(NestedContourLink), Error) {
+) -> Result(List(NestedContourLink), InternalError) {
   pair_nested_contour_sectors_loop(edges, edges, links)
 }
 
@@ -1556,7 +1611,7 @@ fn pair_nested_contour_sectors_loop(
   unpaired: List(NestedContourEdge),
   all_edges: List(NestedContourEdge),
   links: List(NestedContourLink),
-) -> Result(List(NestedContourLink), Error) {
+) -> Result(List(NestedContourLink), InternalError) {
   case unpaired {
     [] -> Ok(list.reverse(links))
     [NestedContourEdge(id:, layer:, end_vertex:, ..), ..rest] -> {
@@ -1579,7 +1634,7 @@ fn nested_contour_successor(
   incoming_id incoming_id: Int,
   vertex vertex: Int,
   layer layer: Int,
-) -> Result(Int, Error) {
+) -> Result(Int, InternalError) {
   use rays <- result.try(
     collect_nested_contour_rays(edges, vertex, layer, rays: []),
   )
@@ -1593,7 +1648,7 @@ fn nested_contour_successor(
   let NestedContourRay(edge_id:, starts:, ..) = successor
   case starts {
     True -> Ok(edge_id)
-    False -> Error(ContourTraceFailed(vertex:))
+    False -> Error(InternalContourTraceFailed(vertex:))
   }
 }
 
@@ -1602,7 +1657,7 @@ fn collect_nested_contour_rays(
   vertex: Int,
   layer: Int,
   rays rays: List(NestedContourRay),
-) -> Result(List(NestedContourRay), Error) {
+) -> Result(List(NestedContourRay), InternalError) {
   case edges {
     [] -> Ok(rays)
     [
@@ -1621,7 +1676,7 @@ fn collect_nested_contour_rays(
           True -> {
             use directions <- result.try(
               svg_path.segment_directions(segment, at: 0.0)
-              |> result.map_error(PathError),
+              |> result.map_error(InternalPathError),
             )
             use direction <- result.try(contour_direction(
               directions.outgoing,
@@ -1643,7 +1698,7 @@ fn collect_nested_contour_rays(
         True -> {
           use directions <- result.try(
             svg_path.segment_directions(segment, at: 1.0)
-            |> result.map_error(PathError),
+            |> result.map_error(InternalPathError),
           )
           use direction <- result.try(contour_direction(
             directions.incoming,
@@ -1667,10 +1722,10 @@ fn collect_nested_contour_rays(
 fn contour_direction(
   direction: Option(svg_path.Point),
   vertex vertex: Int,
-) -> Result(svg_path.Point, Error) {
+) -> Result(svg_path.Point, InternalError) {
   case direction {
     Some(direction) -> Ok(direction)
-    None -> Error(ContourTraceFailed(vertex:))
+    None -> Error(InternalContourTraceFailed(vertex:))
   }
 }
 
@@ -1688,9 +1743,9 @@ fn cyclic_nested_contour_successor(
   incoming_id: Int,
   first first_ray: Result(NestedContourRay, Nil),
   vertex vertex: Int,
-) -> Result(NestedContourRay, Error) {
+) -> Result(NestedContourRay, InternalError) {
   case rays {
-    [] -> Error(ContourTraceFailed(vertex:))
+    [] -> Error(InternalContourTraceFailed(vertex:))
     [first, ..rest] -> {
       let NestedContourRay(edge_id:, starts:, ..) = first
       case edge_id == incoming_id && !starts {
@@ -1699,7 +1754,7 @@ fn cyclic_nested_contour_successor(
             [next, ..] -> Ok(next)
             [] ->
               first_ray
-              |> result.map_error(fn(_) { ContourTraceFailed(vertex:) })
+              |> result.map_error(fn(_) { InternalContourTraceFailed(vertex:) })
           }
         False ->
           cyclic_nested_contour_successor(
@@ -1718,7 +1773,7 @@ fn trace_nested_contour_edges(
   links: List(NestedContourLink),
   tolerance: Float,
   subpaths subpaths: List(svg_path.Subpath),
-) -> Result(List(svg_path.Subpath), Error) {
+) -> Result(List(svg_path.Subpath), InternalError) {
   case remaining {
     [] -> Ok(list.reverse(subpaths))
     [seed, ..rest] -> {
@@ -1738,7 +1793,7 @@ fn trace_nested_contour_edges(
           segment
         })
         |> svg_path.subpath_with(policy: svg_path.WiggleWith(tolerance))
-        |> result.map_error(PathError),
+        |> result.map_error(InternalPathError),
       )
       use closed <- result.try(
         svg_path.subpath_set_closed_with(
@@ -1746,7 +1801,7 @@ fn trace_nested_contour_edges(
           closed: True,
           policy: svg_path.WiggleWith(tolerance),
         )
-        |> result.map_error(PathError),
+        |> result.map_error(InternalPathError),
       )
       let oriented = case layer > 0 {
         True -> svg_path.subpath_reverse(closed)
@@ -1766,7 +1821,7 @@ fn trace_nested_contour_cycle(
   links: List(NestedContourLink),
   reversed_cycle reversed_cycle: List(NestedContourEdge),
   limit limit: Int,
-) -> Result(#(List(NestedContourEdge), List(NestedContourEdge)), Error) {
+) -> Result(#(List(NestedContourEdge), List(NestedContourEdge)), InternalError) {
   let NestedContourEdge(id: seed_id, ..) = seed
   let assert [current, ..] = reversed_cycle
   let NestedContourEdge(id: current_id, end_vertex:, ..) = current
@@ -1779,7 +1834,7 @@ fn trace_nested_contour_cycle(
     True -> Ok(#(list.reverse(reversed_cycle), remaining))
     False ->
       case limit <= 0 {
-        True -> Error(ContourTraceFailed(vertex: end_vertex))
+        True -> Error(InternalContourTraceFailed(vertex: end_vertex))
         False -> {
           use selected <- result.try(
             take_nested_contour_edge(
@@ -1806,9 +1861,9 @@ fn nested_boundary_successor(
   links: List(NestedContourLink),
   edge_id edge_id: Int,
   vertex vertex: Int,
-) -> Result(Int, Error) {
+) -> Result(Int, InternalError) {
   case links {
-    [] -> Error(ContourTraceFailed(vertex:))
+    [] -> Error(InternalContourTraceFailed(vertex:))
     [NestedContourLink(edge_id: candidate, successor_id:), ..rest] ->
       case candidate == edge_id {
         True -> Ok(successor_id)
@@ -1822,9 +1877,9 @@ fn take_nested_contour_edge(
   id: Int,
   vertex vertex: Int,
   retained retained: List(NestedContourEdge),
-) -> Result(#(NestedContourEdge, List(NestedContourEdge)), Error) {
+) -> Result(#(NestedContourEdge, List(NestedContourEdge)), InternalError) {
   case edges {
-    [] -> Error(ContourTraceFailed(vertex:))
+    [] -> Error(InternalContourTraceFailed(vertex:))
     [first, ..rest] -> {
       let NestedContourEdge(id: candidate, ..) = first
       case candidate == id {
@@ -1917,25 +1972,25 @@ pub fn insert_atomic_segment(
   segment: svg_path.Segment,
   tolerance tolerance: Float,
   minimum_chord minimum_chord: Float,
-) -> Result(ArrangementGraph, Error) {
+) -> Result(ArrangementGraph, InternalError) {
   case
     tolerance <=. 0.0 || tolerance -. tolerance != 0.0,
     minimum_chord <=. 0.0 || minimum_chord -. minimum_chord != 0.0
   {
-    True, _ -> Error(InvalidTolerance(tolerance))
-    _, True -> Error(InvalidMinimumChord(minimum_chord))
+    True, _ -> Error(InternalInvalidTolerance(tolerance))
+    _, True -> Error(InternalInvalidMinimumChord(minimum_chord))
     False, False -> {
       let start = svg_path.segment_start(segment)
       let end = svg_path.segment_end(segment)
       let chord = svg_path.segment_chord_length(segment)
       case chord <. minimum_chord {
-        True -> Error(SegmentTooShort(chord:, minimum: minimum_chord))
+        True -> Error(InternalSegmentTooShort(chord:, minimum: minimum_chord))
         False -> {
           let ArrangementGraph(vertices:, edges:, ..) = graph
           let #(vertices, start_id) = attach_vertex(vertices, start, tolerance)
           let #(vertices, end_id) = attach_vertex(vertices, end, tolerance)
           case start_id == end_id {
-            True -> Error(SegmentCollapsedToVertex(vertex: start_id))
+            True -> Error(InternalSegmentCollapsedToVertex(vertex: start_id))
             False ->
               Ok(
                 ArrangementGraph(
@@ -1966,23 +2021,26 @@ pub fn build(
   tolerance tolerance: Float,
   minimum_chord minimum_chord: Float,
 ) -> Result(ArrangementGraphBuild, Error) {
-  let indexed = index_paths(paths)
-  let segments =
-    list.map(indexed, fn(item) {
-      let IndexedSegment(segment:, ..) = item
-      segment
-    })
-  use build <- result.try(build_with(
-    segments,
-    vertex_tolerance: tolerance,
-    minimum_chord:,
-    endpoint_sliver_tolerance: 0.0,
-  ))
-  let ArrangementSegmentBuild(graph:, segment_images:, ..) = build
-  use segment_images <- result.try(
-    public_segment_images(indexed, segment_images, images: []),
-  )
-  Ok(ArrangementGraphBuild(graph:, segment_images:))
+  let result = {
+    let indexed = index_paths(paths)
+    let segments =
+      list.map(indexed, fn(item) {
+        let IndexedSegment(segment:, ..) = item
+        segment
+      })
+    use build <- result.try(build_with(
+      segments,
+      vertex_tolerance: tolerance,
+      minimum_chord:,
+      endpoint_sliver_tolerance: 0.0,
+    ))
+    let ArrangementSegmentBuild(graph:, segment_images:, ..) = build
+    use segment_images <- result.try(
+      public_segment_images(indexed, segment_images, images: []),
+    )
+    Ok(ArrangementGraphBuild(graph:, segment_images:))
+  }
+  result |> result.map_error(public_error)
 }
 
 /// Build an arrangement directly from a flat segment list.
@@ -1996,7 +2054,7 @@ pub fn build_with(
   vertex_tolerance vertex_tolerance: Float,
   minimum_chord minimum_chord: Float,
   endpoint_sliver_tolerance endpoint_sliver_tolerance: Float,
-) -> Result(ArrangementSegmentBuild, Error) {
+) -> Result(ArrangementSegmentBuild, InternalError) {
   use _ <- result.try(validate_options(vertex_tolerance, minimum_chord))
   use _ <- result.try(validate_endpoint_cut_tolerance(endpoint_sliver_tolerance))
   let indexed = index_flat_segments(segments)
@@ -2092,7 +2150,7 @@ fn progressive_insert_piece_direct(
   images: List(ArrangementSegmentImage),
   tolerance: Float,
   minimum_chord: Float,
-) -> Result(ProgressivePieceResult, Error) {
+) -> Result(ProgressivePieceResult, InternalError) {
   let IncomingContext(piece:, ..) = context
   let AtomicPiece(source_index:, ..) = piece
   case
@@ -2112,10 +2170,10 @@ fn progressive_insert_piece_direct(
         )
       Ok(ProgressivePieceInserted(graph, images))
     }
-    Error(SegmentCollapsedToVertex(_vertex)) -> {
+    Error(InternalSegmentCollapsedToVertex(_vertex)) -> {
       Ok(ProgressivePieceInserted(graph, images))
     }
-    Error(SegmentTooShort(_chord, _minimum)) -> {
+    Error(InternalSegmentTooShort(_chord, _minimum)) -> {
       Ok(ProgressivePieceInserted(graph, images))
     }
     Error(error) -> Error(error)
@@ -2130,7 +2188,7 @@ fn progressive_insert_pieces_loop(
   minimum_chord: Float,
   endpoint_sliver_tolerance: Float,
   iteration iteration: Int,
-) -> Result(#(ArrangementGraph, List(ArrangementSegmentImage)), Error) {
+) -> Result(#(ArrangementGraph, List(ArrangementSegmentImage)), InternalError) {
   case stack {
     [] -> Ok(#(graph, images))
     [first, ..rest] -> {
@@ -2197,7 +2255,7 @@ fn validate_piece_endpoint_vertices(
   piece: AtomicPiece,
   graph: ArrangementGraph,
   vertex_tolerance: Float,
-) -> Result(Nil, Error) {
+) -> Result(Nil, InternalError) {
   let AtomicPiece(segment:, ..) = piece
   let ArrangementGraph(vertices:, ..) = graph
   use _ <- result.try(unique_vertex_for_endpoint(
@@ -2218,10 +2276,11 @@ fn split_piece_at_existing_vertex(
   graph: ArrangementGraph,
   vertex_tolerance: Float,
   minimum_chord: Float,
-) -> Result(Option(List(AtomicPiece)), Error) {
+) -> Result(Option(List(AtomicPiece)), InternalError) {
   let ArrangementGraph(vertices:, ..) = graph
   use bounds <- result.try(
-    svg_path.segment_bounding_box(piece.segment) |> result.map_error(PathError),
+    svg_path.segment_bounding_box(piece.segment)
+    |> result.map_error(InternalPathError),
   )
   use cut <- result.try(vertex_cut_parameter(
     piece,
@@ -2243,7 +2302,7 @@ fn vertex_cut_parameter(
   bounds: svg_path.BoundingBox,
   vertices: List(ArrangementVertex),
   vertex_tolerance: Float,
-) -> Result(Option(Float), Error) {
+) -> Result(Option(Float), InternalError) {
   let AtomicPiece(segment:, ..) = piece
   case vertices {
     [] -> Ok(None)
@@ -2267,7 +2326,7 @@ fn vertex_projects_to_piece_interior(
   vertex: svg_path.Point,
   segment: svg_path.Segment,
   vertex_tolerance: Float,
-) -> Result(Option(Float), Error) {
+) -> Result(Option(Float), InternalError) {
   let start = svg_path.segment_start(segment)
   let end = svg_path.segment_end(segment)
   case
@@ -2288,14 +2347,14 @@ fn vertex_projects_to_piece_interior_uncached(
   vertex: svg_path.Point,
   segment: svg_path.Segment,
   vertex_tolerance: Float,
-) -> Result(Option(Float), Error) {
+) -> Result(Option(Float), InternalError) {
   case segment {
     svg_path.Line(start:, end:) ->
       vertex_projects_to_line_interior(vertex, start, end, vertex_tolerance)
     _ -> {
       use projection <- result.try(
         svg_path.segment_projection(vertex, to: segment)
-        |> result.map_error(PathError),
+        |> result.map_error(InternalPathError),
       )
       let svg_path.SegmentProjection(t:, distance:, ..) = projection
       Ok(case distance <=. vertex_tolerance && t >. 0.0 && t <. 1.0 {
@@ -2311,11 +2370,12 @@ fn vertex_projects_to_line_interior(
   start: svg_path.Point,
   end: svg_path.Point,
   vertex_tolerance: Float,
-) -> Result(Option(Float), Error) {
+) -> Result(Option(Float), InternalError) {
   let line = point.subtract(end, start)
   let length_squared = point.dot(line, line)
   case length_squared <=. 0.0 {
-    True -> Error(SegmentTooShort(chord: 0.0, minimum: vertex_tolerance))
+    True ->
+      Error(InternalSegmentTooShort(chord: 0.0, minimum: vertex_tolerance))
     False -> {
       let raw_t =
         point.dot(point.subtract(vertex, start), line) /. length_squared
@@ -2369,7 +2429,7 @@ fn progressive_insert_piece(
   vertex_tolerance: Float,
   minimum_chord: Float,
   endpoint_sliver_tolerance: Float,
-) -> Result(ProgressivePieceResult, Error) {
+) -> Result(ProgressivePieceResult, InternalError) {
   use context <- result.try(incoming_context(piece, graph, vertex_tolerance))
   use endpoint_split <- result.try(split_existing_edge_at_incoming_endpoint(
     context,
@@ -2397,11 +2457,12 @@ fn incoming_context(
   piece: AtomicPiece,
   graph: ArrangementGraph,
   vertex_tolerance: Float,
-) -> Result(IncomingContext, Error) {
+) -> Result(IncomingContext, InternalError) {
   let AtomicPiece(segment:, ..) = piece
   let ArrangementGraph(vertices:, ..) = graph
   use bounds <- result.try(
-    svg_path.segment_bounding_box(segment) |> result.map_error(PathError),
+    svg_path.segment_bounding_box(segment)
+    |> result.map_error(InternalPathError),
   )
   use start_match <- result.try(unique_vertex_for_endpoint(
     vertices,
@@ -2423,7 +2484,7 @@ fn progressive_insert_piece_context(
   vertex_tolerance: Float,
   minimum_chord: Float,
   endpoint_sliver_tolerance: Float,
-) -> Result(ProgressivePieceResult, Error) {
+) -> Result(ProgressivePieceResult, InternalError) {
   let ArrangementGraph(edges:, ..) = graph
   progressive_compare_edges(
     context,
@@ -2442,7 +2503,10 @@ fn split_existing_edge_at_incoming_endpoint(
   images: List(ArrangementSegmentImage),
   vertex_tolerance: Float,
   minimum_chord: Float,
-) -> Result(Option(#(ArrangementGraph, List(ArrangementSegmentImage))), Error) {
+) -> Result(
+  Option(#(ArrangementGraph, List(ArrangementSegmentImage))),
+  InternalError,
+) {
   let IncomingContext(piece: AtomicPiece(segment:, ..), ..) = context
   let ArrangementGraph(edges:, ..) = graph
   use start_result <- result.try(split_existing_edge_at_endpoint(
@@ -2477,7 +2541,10 @@ fn split_existing_edge_at_endpoint(
   images: List(ArrangementSegmentImage),
   vertex_tolerance: Float,
   minimum_chord: Float,
-) -> Result(Option(#(ArrangementGraph, List(ArrangementSegmentImage))), Error) {
+) -> Result(
+  Option(#(ArrangementGraph, List(ArrangementSegmentImage))),
+  InternalError,
+) {
   case edges {
     [] -> Ok(None)
     [edge, ..rest] -> {
@@ -2565,7 +2632,7 @@ fn progressive_compare_edges(
   vertex_tolerance: Float,
   minimum_chord: Float,
   endpoint_sliver_tolerance: Float,
-) -> Result(ProgressivePieceResult, Error) {
+) -> Result(ProgressivePieceResult, InternalError) {
   case edges {
     [] ->
       progressive_insert_piece_direct(
@@ -2611,7 +2678,7 @@ fn progressive_compare_edge(
   vertex_tolerance: Float,
   minimum_chord: Float,
   endpoint_sliver_tolerance: Float,
-) -> Result(ProgressiveEdgeStep, Error) {
+) -> Result(ProgressiveEdgeStep, InternalError) {
   let IncomingContext(piece:, bounds:, start_match:, end_match:) = context
   let AtomicPiece(source_index:, ..) = piece
   let ArrangementEdge(id: edge_id, bounds: existing_bounds, ..) = edge
@@ -2687,7 +2754,7 @@ fn progressive_compare_edge_cuts(
   cuts: List(SegmentCut),
   tolerance: Float,
   minimum_chord: Float,
-) -> Result(ProgressiveEdgeStep, Error) {
+) -> Result(ProgressiveEdgeStep, InternalError) {
   let AtomicPiece(segment: incoming, ..) = piece
   let ArrangementEdge(id: edge_id, segment: existing, ..) = edge
   let existing_parameters =
@@ -2791,7 +2858,7 @@ fn effective_cut_parameters(
   cuts: List(Float),
   tolerance: Float,
   minimum_chord: Float,
-) -> Result(List(Float), Error) {
+) -> Result(List(Float), InternalError) {
   use parameters <- result.try(
     [0.0, 1.0, ..cuts]
     |> list.sort(float_compare)
@@ -2837,7 +2904,7 @@ fn retain_minimum_chord_cuts(
   segment: svg_path.Segment,
   parameters: List(Float),
   minimum_chord: Float,
-) -> Result(List(Float), Error) {
+) -> Result(List(Float), InternalError) {
   case parameters {
     [] | [_] -> Ok(parameters)
     [start, ..rest] ->
@@ -2857,7 +2924,7 @@ fn retain_minimum_chord_cuts_loop(
   previous previous: Float,
   retained retained: List(Float),
   minimum_chord minimum_chord: Float,
-) -> Result(List(Float), Error) {
+) -> Result(List(Float), InternalError) {
   case parameters {
     [] -> Ok(list.reverse(retained))
     [last] -> {
@@ -2920,14 +2987,14 @@ fn parameter_chord_long_enough(
   from from: Float,
   to to: Float,
   minimum_chord minimum_chord: Float,
-) -> Result(Bool, Error) {
+) -> Result(Bool, InternalError) {
   use start <- result.try(
     svg_path.segment_point(segment, at: from)
-    |> result.map_error(PathError),
+    |> result.map_error(InternalPathError),
   )
   use end <- result.try(
     svg_path.segment_point(segment, at: to)
-    |> result.map_error(PathError),
+    |> result.map_error(InternalPathError),
   )
   Ok(point.distance(start, end) >=. minimum_chord)
 }
@@ -2936,13 +3003,13 @@ fn cuts_produce_retained_split(
   segment: svg_path.Segment,
   cuts: List(Float),
   minimum_chord: Float,
-) -> Result(Bool, Error) {
+) -> Result(Bool, InternalError) {
   use split <- result.try(
     svg_path.segment_between_many_inside(
       segment,
       between: [0.0, 1.0, ..cuts] |> list.sort(float_compare),
     )
-    |> result.map_error(PathError),
+    |> result.map_error(InternalPathError),
   )
   let retained = retained_split_segments(split, minimum_chord, retained: [])
   case retained {
@@ -2958,7 +3025,7 @@ fn split_progressive_graph_edge(
   cuts: List(Float),
   tolerance: Float,
   minimum_chord: Float,
-) -> Result(#(ArrangementGraph, List(ArrangementSegmentImage)), Error) {
+) -> Result(#(ArrangementGraph, List(ArrangementSegmentImage)), InternalError) {
   let ArrangementGraph(vertices:, edges:, ..) = graph
   use edge <- result.try(arrangement_edge_by_id(edges, edge_id))
   let ArrangementEdge(
@@ -2974,11 +3041,11 @@ fn split_progressive_graph_edge(
   )
   use split <- result.try(
     svg_path.segment_between_many_inside(segment, between: parameters)
-    |> result.map_error(PathError),
+    |> result.map_error(InternalPathError),
   )
   let retained = retained_split_segments(split, minimum_chord, retained: [])
   case retained {
-    [] -> Error(SegmentTooShort(chord: 0.0, minimum: minimum_chord))
+    [] -> Error(InternalSegmentTooShort(chord: 0.0, minimum: minimum_chord))
     [_, ..] -> {
       let next_id = next_arrangement_edge_id(edges)
       use #(vertices, replacements, references) <- result.try(
@@ -3048,7 +3115,7 @@ fn progressive_replacement_edges(
   references references: List(DirectedEdgeReference),
 ) -> Result(
   #(List(ArrangementVertex), List(ArrangementEdge), List(DirectedEdgeReference)),
-  Error,
+  InternalError,
 ) {
   case segments {
     [] -> Ok(#(vertices, edges, references))
@@ -3129,9 +3196,9 @@ fn progressive_replacement_edges(
 fn arrangement_edge_by_id(
   edges: List(ArrangementEdge),
   edge_id: Int,
-) -> Result(ArrangementEdge, Error) {
+) -> Result(ArrangementEdge, InternalError) {
   case edges {
-    [] -> Error(MissingEdge(edge_id))
+    [] -> Error(InternalMissingEdge(edge_id))
     [first, ..rest] -> {
       let ArrangementEdge(id:, ..) = first
       case id == edge_id {
@@ -3252,7 +3319,7 @@ fn public_segment_images(
   indexed: List(IndexedSegment),
   images: List(ArrangementSourceSegmentImage),
   images converted: List(ArrangementSegmentImage),
-) -> Result(List(ArrangementSegmentImage), Error) {
+) -> Result(List(ArrangementSegmentImage), InternalError) {
   case images {
     [] -> Ok(list.reverse(converted))
     [first, ..rest] -> {
@@ -3268,7 +3335,7 @@ fn public_segment_images(
 fn public_segment_image(
   indexed: List(IndexedSegment),
   image: ArrangementSourceSegmentImage,
-) -> Result(ArrangementSegmentImage, Error) {
+) -> Result(ArrangementSegmentImage, InternalError) {
   let ArrangementSourceSegmentImage(segment_index:, edges:) = image
   use source <- result.try(
     indexed_segment_at(indexed, segment_index)
@@ -3392,7 +3459,7 @@ fn pair_cuts_with_common_endpoint_sliver(
   incoming_end: Option(Int),
   vertex_tolerance: Float,
   endpoint_sliver_tolerance: Float,
-) -> Result(List(SegmentCut), Error) {
+) -> Result(List(SegmentCut), InternalError) {
   let AtomicPiece(segment: incoming, ..) = piece
   let ArrangementEdge(segment: existing, ..) = edge
   use found <- result.try(
@@ -3408,10 +3475,10 @@ fn pair_cuts_with_common_endpoint_sliver(
           True -> Ok([])
           // Preserve the delegated overlap error when arrangement policy
           // rejects a non-shared overlapping segment pair.
-          False -> Error(PathError(svg_path.OverlappingSegments))
+          False -> Error(InternalPathError(svg_path.OverlappingSegments))
         }
       Ok(found) -> Ok(found)
-      Error(error) -> Error(PathError(error))
+      Error(error) -> Error(InternalPathError(error))
     },
   )
   pair_cuts_from_hits(
@@ -3452,7 +3519,7 @@ fn pair_cuts_from_hits(
   incoming_end: Option(Int),
   endpoint_sliver_tolerance: Float,
   collected: List(SegmentCut),
-) -> Result(List(SegmentCut), Error) {
+) -> Result(List(SegmentCut), InternalError) {
   case hits {
     [] -> Ok(list.reverse(collected))
     [hit, ..rest] -> {
@@ -3505,7 +3572,7 @@ fn intersection_cut_is_common_endpoint_sliver(
   incoming_end: Option(Int),
   hit: svg_path.SegmentIntersection,
   endpoint_sliver_tolerance: Float,
-) -> Result(Bool, Error) {
+) -> Result(Bool, InternalError) {
   case endpoint_sliver_tolerance <=. 0.0 {
     True -> Ok(False)
     False -> {
@@ -3573,7 +3640,7 @@ fn unique_vertex_for_endpoint(
   vertices: List(ArrangementVertex),
   endpoint: svg_path.Point,
   vertex_tolerance: Float,
-) -> Result(Option(Int), Error) {
+) -> Result(Option(Int), InternalError) {
   unique_vertex_for_endpoint_loop(
     vertices,
     endpoint,
@@ -3587,7 +3654,7 @@ fn unique_vertex_for_endpoint_loop(
   endpoint: svg_path.Point,
   vertex_tolerance: Float,
   found found: Option(Int),
-) -> Result(Option(Int), Error) {
+) -> Result(Option(Int), InternalError) {
   case vertices {
     [] -> Ok(found)
     [ArrangementVertex(id:, point:, ..), ..rest] -> {
@@ -3628,7 +3695,7 @@ fn split_atomic_piece(
   cuts: List(Float),
   tolerance: Float,
   minimum_chord: Float,
-) -> Result(List(AtomicPiece), Error) {
+) -> Result(List(AtomicPiece), InternalError) {
   let AtomicPiece(
     source_index:,
     path_index:,
@@ -3645,7 +3712,7 @@ fn split_atomic_piece(
   )
   use split <- result.try(
     svg_path.segment_between_many_inside(segment, between: parameters)
-    |> result.map_error(PathError),
+    |> result.map_error(InternalPathError),
   )
   Ok(
     split_atomic_pieces_for_parameters(
@@ -3745,7 +3812,7 @@ fn distinct_parameters(
   segment: svg_path.Segment,
   tolerance: Float,
   distinct: List(Float),
-) -> Result(List(Float), Error) {
+) -> Result(List(Float), InternalError) {
   case parameters, distinct {
     [], _ -> Ok(list.reverse(distinct))
     [first, ..rest], [] ->
@@ -3753,18 +3820,18 @@ fn distinct_parameters(
     [first, ..rest], [previous, ..] -> {
       use previous_point <- result.try(
         svg_path.segment_point(segment, at: previous)
-        |> result.map_error(PathError),
+        |> result.map_error(InternalPathError),
       )
       use first_point <- result.try(
         svg_path.segment_point(segment, at: first)
-        |> result.map_error(PathError),
+        |> result.map_error(InternalPathError),
       )
       case previous_point == first_point {
         True -> distinct_parameters(rest, segment, tolerance, distinct)
         False -> {
           use between <- result.try(
             svg_path.segment_between(segment, from: previous, to: first)
-            |> result.map_error(PathError),
+            |> result.map_error(InternalPathError),
           )
           use motion <- result.try(segment_taxicab_diameter(between))
           case motion <=. tolerance {
@@ -3778,12 +3845,15 @@ fn distinct_parameters(
   }
 }
 
-fn segment_taxicab_diameter(segment: svg_path.Segment) -> Result(Float, Error) {
+fn segment_taxicab_diameter(
+  segment: svg_path.Segment,
+) -> Result(Float, InternalError) {
   case segment {
     svg_path.Arc(start:, end:, ..) if start == end -> Ok(0.0)
     _ -> {
       use bounds <- result.try(
-        svg_path.segment_bounding_box(segment) |> result.map_error(PathError),
+        svg_path.segment_bounding_box(segment)
+        |> result.map_error(InternalPathError),
       )
       Ok(svg_path.bounding_box_diameter(bounds))
     }
@@ -3821,7 +3891,7 @@ fn insert_corresponding_piece_with_ref(
   graph: ArrangementGraph,
   tolerance: Float,
   minimum_chord: Float,
-) -> Result(#(ArrangementGraph, Int, Bool), Error) {
+) -> Result(#(ArrangementGraph, Int, Bool), InternalError) {
   let ArrangementGraph(edges:, ..) = graph
   let IncomingContext(piece: AtomicPiece(segment:, ..), ..) = context
   use match <- result.try(find_corresponding_edge(context, edges, tolerance))
@@ -3849,7 +3919,7 @@ fn find_corresponding_edge(
   context: IncomingContext,
   edges: List(ArrangementEdge),
   tolerance: Float,
-) -> Result(Option(#(Int, Bool)), Error) {
+) -> Result(Option(#(Int, Bool)), InternalError) {
   let IncomingContext(
     piece: AtomicPiece(segment:, ..),
     start_match:,
@@ -3875,7 +3945,7 @@ fn find_corresponding_edge_loop(
   start_vertex: Int,
   end_vertex: Int,
   tolerance: Float,
-) -> Result(Option(#(Int, Bool)), Error) {
+) -> Result(Option(#(Int, Bool)), InternalError) {
   case edges {
     [] -> Ok(None)
     [edge, ..rest] -> {
@@ -3932,7 +4002,7 @@ fn check_edge_correspondence(
   segment: svg_path.Segment,
   same_direction: Bool,
   tolerance: Float,
-) -> Result(Bool, Error) {
+) -> Result(Bool, InternalError) {
   let #(right_from, right_to) = case same_direction {
     True -> #(0.0, 1.0)
     False -> #(1.0, 0.0)
@@ -3948,7 +4018,7 @@ fn check_edge_correspondence(
       tolerance:,
       samples: 7,
     )
-    |> result.map_error(PathError),
+    |> result.map_error(InternalPathError),
   )
   case overlap {
     Some(_) -> Ok(True)
@@ -3988,7 +4058,7 @@ fn source_segment_images(
   graph: ArrangementGraph,
   images: List(ArrangementSegmentImage),
   tolerance: Float,
-) -> Result(List(ArrangementSourceSegmentImage), Error) {
+) -> Result(List(ArrangementSourceSegmentImage), InternalError) {
   images
   |> list.index_map(fn(image, index) {
     case segment_at(segments, index) {
@@ -4006,8 +4076,8 @@ fn source_segment_image(
   image: ArrangementSegmentImage,
   index: Int,
   tolerance: Float,
-) -> Result(ArrangementSourceSegmentImage, Error) {
-  use edges <- result.try(segment_image_edges(
+) -> Result(ArrangementSourceSegmentImage, InternalError) {
+  use edges <- result.try(segment_image_edges_internal(
     ArrangementGraphBuild(graph:, segment_images: []),
     image,
   ))
@@ -4045,7 +4115,7 @@ fn source_segment_edge_image(
   edge: ArrangementEdge,
   reversed: Bool,
   tolerance: Float,
-) -> Result(Option(ArrangementSegmentEdgeImage), Error) {
+) -> Result(Option(ArrangementSegmentEdgeImage), InternalError) {
   let ArrangementEdge(id: edge_id, segment:, ..) = edge
   use start_projection <- result.try(source_projection(
     svg_path.segment_start(segment),
@@ -4082,9 +4152,9 @@ fn source_segment_edge_image(
 fn source_projection(
   point: svg_path.Point,
   source: svg_path.Segment,
-) -> Result(svg_path.SegmentProjection, Error) {
+) -> Result(svg_path.SegmentProjection, InternalError) {
   svg_path.segment_projection(point, to: source)
-  |> result.map_error(PathError)
+  |> result.map_error(InternalPathError)
 }
 
 fn mark_segment_ownership(
@@ -4177,7 +4247,7 @@ fn certify_segment_build(
   segment_images: List(ArrangementSourceSegmentImage),
   edge_images: List(ArrangementEdgeImage),
   tolerance: Float,
-) -> Result(Nil, Error) {
+) -> Result(Nil, InternalError) {
   use _ <- result.try(certify_segment_edges_exist(graph, segment_images))
   use _ <- result.try(certify_source_segment_images_match_edge_images(
     segment_images,
@@ -4193,7 +4263,7 @@ fn certify_segment_build(
 fn certify_segment_edges_exist(
   graph: ArrangementGraph,
   segment_images: List(ArrangementSourceSegmentImage),
-) -> Result(Nil, Error) {
+) -> Result(Nil, InternalError) {
   let ArrangementGraph(edges:, ..) = graph
   segment_images
   |> list.map(fn(image) {
@@ -4203,7 +4273,7 @@ fn certify_segment_edges_exist(
       let ArrangementSegmentEdgeImage(edge_id:, ..) = reference
       case list.find(edges, fn(edge) { edge.id == edge_id }) {
         Ok(_) -> Ok(Nil)
-        Error(Nil) -> Error(MissingEdge(edge_id))
+        Error(Nil) -> Error(InternalMissingEdge(edge_id))
       }
     })
     |> result.all
@@ -4216,7 +4286,7 @@ fn certify_segment_edges_exist(
 fn certify_source_segment_images_match_edge_images(
   segment_images: List(ArrangementSourceSegmentImage),
   edge_images: List(ArrangementEdgeImage),
-) -> Result(Nil, Error) {
+) -> Result(Nil, InternalError) {
   segment_images
   |> list.map(fn(image) {
     let ArrangementSourceSegmentImage(segment_index:, edges:) = image
@@ -4247,7 +4317,7 @@ fn certify_source_segment_images_match_edge_images(
 fn certify_edge_source_images_match_segment_images(
   edge_images: List(ArrangementEdgeImage),
   segment_images: List(ArrangementSourceSegmentImage),
-) -> Result(Nil, Error) {
+) -> Result(Nil, InternalError) {
   edge_images
   |> list.map(fn(image) {
     let ArrangementEdgeImage(edge_id:, sources:) = image
@@ -4339,7 +4409,7 @@ fn certify_segment_image_geometry(
   segments: List(svg_path.Segment),
   segment_images: List(ArrangementSourceSegmentImage),
   tolerance: Float,
-) -> Result(Nil, Error) {
+) -> Result(Nil, InternalError) {
   segment_images
   |> list.map(fn(image) {
     let ArrangementSourceSegmentImage(segment_index:, edges:) = image
@@ -4363,18 +4433,18 @@ fn certify_segment_edge_geometry(
   source: svg_path.Segment,
   image: ArrangementSegmentEdgeImage,
   tolerance: Float,
-) -> Result(Nil, Error) {
+) -> Result(Nil, InternalError) {
   let ArrangementGraph(edges:, ..) = graph
   let ArrangementSegmentEdgeImage(ta:, tb:, edge_id:, reversed:, ..) = image
   use edge <- result.try(arrangement_edge_by_id(edges, edge_id))
   let ArrangementEdge(segment:, ..) = edge
   use source_a <- result.try(
     svg_path.segment_point(source, at: ta)
-    |> result.map_error(PathError),
+    |> result.map_error(InternalPathError),
   )
   use source_b <- result.try(
     svg_path.segment_point(source, at: tb)
-    |> result.map_error(PathError),
+    |> result.map_error(InternalPathError),
   )
   let edge_a = case reversed {
     True -> svg_path.segment_end(segment)
@@ -4630,29 +4700,39 @@ pub fn validate(
   tolerance tolerance: Float,
   minimum_chord minimum_chord: Float,
 ) -> Result(Nil, Error) {
-  use _ <- result.try(validate_options(tolerance, minimum_chord))
-  let ArrangementGraph(vertices:, edges:, ..) = graph
-  use _ <- result.try(validate_edges(edges, vertices, tolerance, minimum_chord))
-  validate_vertices(vertices, edges, tolerance)
+  let result = {
+    use _ <- result.try(validate_options(tolerance, minimum_chord))
+    let ArrangementGraph(vertices:, edges:, ..) = graph
+    use _ <- result.try(validate_edges(
+      edges,
+      vertices,
+      tolerance,
+      minimum_chord,
+    ))
+    validate_vertices(vertices, edges, tolerance)
+  }
+  result |> result.map_error(public_error)
 }
 
 fn validate_options(
   tolerance: Float,
   minimum_chord: Float,
-) -> Result(Nil, Error) {
+) -> Result(Nil, InternalError) {
   case
     tolerance <=. 0.0 || !number.is_finite(tolerance),
     minimum_chord <=. 0.0 || !number.is_finite(minimum_chord)
   {
-    True, _ -> Error(InvalidTolerance(tolerance))
-    _, True -> Error(InvalidMinimumChord(minimum_chord))
+    True, _ -> Error(InternalInvalidTolerance(tolerance))
+    _, True -> Error(InternalInvalidMinimumChord(minimum_chord))
     False, False -> Ok(Nil)
   }
 }
 
-fn validate_endpoint_cut_tolerance(tolerance: Float) -> Result(Nil, Error) {
+fn validate_endpoint_cut_tolerance(
+  tolerance: Float,
+) -> Result(Nil, InternalError) {
   case tolerance <. 0.0 || !number.is_finite(tolerance) {
-    True -> Error(InvalidEndpointSliverTolerance(tolerance))
+    True -> Error(InternalInvalidEndpointSliverTolerance(tolerance))
     False -> Ok(Nil)
   }
 }
@@ -4662,7 +4742,7 @@ fn validate_edges(
   vertices: List(ArrangementVertex),
   tolerance: Float,
   minimum_chord: Float,
-) -> Result(Nil, Error) {
+) -> Result(Nil, InternalError) {
   case edges {
     [] -> Ok(Nil)
     [
@@ -4678,10 +4758,10 @@ fn validate_edges(
       ..rest
     ] -> {
       case forward_multiplicity + reverse_multiplicity <= 0 {
-        True -> Error(InvalidMultiplicity(edge: id))
+        True -> Error(InternalInvalidMultiplicity(edge: id))
         False ->
           case start_vertex == end_vertex {
-            True -> Error(LoopEdge(vertex: start_vertex))
+            True -> Error(InternalLoopEdge(vertex: start_vertex))
             False -> {
               use start <- result.try(vertex_point(vertices, start_vertex))
               use end <- result.try(vertex_point(vertices, end_vertex))
@@ -4691,7 +4771,7 @@ fn validate_edges(
                 point.distance(svg_path.segment_end(segment), end)
               case start_distance >. tolerance {
                 True ->
-                  Error(EdgeEndpointMismatch(
+                  Error(InternalEdgeEndpointMismatch(
                     edge: id,
                     vertex: start_vertex,
                     distance: start_distance,
@@ -4699,7 +4779,7 @@ fn validate_edges(
                 False ->
                   case end_distance >. tolerance {
                     True ->
-                      Error(EdgeEndpointMismatch(
+                      Error(InternalEdgeEndpointMismatch(
                         edge: id,
                         vertex: end_vertex,
                         distance: end_distance,
@@ -4712,7 +4792,10 @@ fn validate_edges(
                         )
                       case chord <. minimum_chord {
                         True ->
-                          Error(SegmentTooShort(chord:, minimum: minimum_chord))
+                          Error(InternalSegmentTooShort(
+                            chord:,
+                            minimum: minimum_chord,
+                          ))
                         False ->
                           validate_edges(
                             rest,
@@ -4735,7 +4818,7 @@ fn validate_vertices(
   vertices: List(ArrangementVertex),
   edges: List(ArrangementEdge),
   tolerance: Float,
-) -> Result(Nil, Error) {
+) -> Result(Nil, InternalError) {
   case vertices {
     [] -> Ok(Nil)
     [ArrangementVertex(id:, point:, endpoint_samples:), ..rest] -> {
@@ -4747,10 +4830,10 @@ fn validate_vertices(
       ))
       let degree = weighted_degree(edges, id, 0)
       case degree == 0 {
-        True -> Error(IsolatedVertex(vertex: id))
+        True -> Error(InternalIsolatedVertex(vertex: id))
         False ->
           case int.modulo(degree, 2) != Ok(0) {
-            True -> Error(OddWeightedDegree(vertex: id, degree:))
+            True -> Error(InternalOddWeightedDegree(vertex: id, degree:))
             False -> validate_vertices(rest, edges, tolerance)
           }
       }
@@ -4763,9 +4846,9 @@ fn validate_vertex_samples(
   center: svg_path.Point,
   vertex: Int,
   tolerance_squared: Float,
-) -> Result(Nil, Error) {
+) -> Result(Nil, InternalError) {
   case samples {
-    [] -> Error(VertexWithoutEndpointSamples(vertex:))
+    [] -> Error(InternalVertexWithoutEndpointSamples(vertex:))
     _ -> {
       let assert Ok(smallest_enclosing_circle.EnclosingCircle(
         center: expected_center,
@@ -4773,14 +4856,14 @@ fn validate_vertex_samples(
       )) = smallest_enclosing_circle.points(samples)
       case center == expected_center {
         False ->
-          Error(VertexCenterMismatch(
+          Error(InternalVertexCenterMismatch(
             vertex:,
             distance_squared: point.distance_squared(center, expected_center),
           ))
         True ->
           case radius_squared <=. tolerance_squared {
             False ->
-              Error(VertexSampleOutsideTolerance(
+              Error(InternalVertexSampleOutsideTolerance(
                 vertex:,
                 distance_squared: radius_squared,
                 tolerance_squared:,
@@ -4821,7 +4904,7 @@ fn weighted_degree(
 fn vertex_point(
   vertices: List(ArrangementVertex),
   id: Int,
-) -> Result(svg_path.Point, Error) {
+) -> Result(svg_path.Point, InternalError) {
   case
     list.find(vertices, fn(vertex) {
       let ArrangementVertex(id: candidate, ..) = vertex
@@ -4829,6 +4912,6 @@ fn vertex_point(
     })
   {
     Ok(ArrangementVertex(point:, ..)) -> Ok(point)
-    Error(_) -> Error(MissingVertex(vertex: id))
+    Error(_) -> Error(InternalMissingVertex(vertex: id))
   }
 }

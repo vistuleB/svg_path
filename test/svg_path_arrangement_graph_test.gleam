@@ -1,4 +1,3 @@
-import gleam/float
 import gleam/int
 import gleam/list
 import gleam/result
@@ -619,7 +618,9 @@ pub fn build_with_rejects_negative_endpoint_sliver_tolerance_test() {
     minimum_chord:,
     endpoint_sliver_tolerance: -0.1,
   )
-  |> should.equal(Error(arrangement_graph.InvalidEndpointSliverTolerance(-0.1)))
+  |> should.equal(
+    Error(arrangement_graph.InternalInvalidEndpointSliverTolerance(-0.1)),
+  )
 }
 
 pub fn validation_rejects_invalid_numeric_options_test() {
@@ -645,7 +646,9 @@ pub fn insertion_reports_tolerance_cluster_collapse_test() {
     tolerance: 1.0,
     minimum_chord: 0.1,
   )
-  |> should.equal(Error(arrangement_graph.SegmentCollapsedToVertex(vertex: 0)))
+  |> should.equal(
+    Error(arrangement_graph.InternalSegmentCollapsedToVertex(vertex: 0)),
+  )
 }
 
 pub fn two_endpoint_samples_use_enclosing_circle_midpoint_test() {
@@ -747,13 +750,7 @@ pub fn validation_rejects_vertex_sample_outside_official_tolerance_test() {
     )
 
   arrangement_graph.validate(graph, tolerance: 1.0, minimum_chord:)
-  |> should.equal(
-    Error(arrangement_graph.VertexSampleOutsideTolerance(
-      vertex: 0,
-      distance_squared: 4.0,
-      tolerance_squared: 1.0,
-    )),
-  )
+  |> should.equal(Error(arrangement_graph.ConstructionFailed))
 }
 
 pub fn validation_rejects_noncanonical_vertex_center_test() {
@@ -770,11 +767,8 @@ pub fn validation_rejects_noncanonical_vertex_center_test() {
       cyclic_orders: [],
     )
 
-  let assert Error(arrangement_graph.VertexCenterMismatch(
-    vertex: 0,
-    distance_squared:,
-  )) = arrangement_graph.validate(graph, tolerance: 1.0, minimum_chord:)
-  assert float.absolute_value(distance_squared -. 0.01) <. tolerance
+  arrangement_graph.validate(graph, tolerance: 1.0, minimum_chord:)
+  |> should.equal(Error(arrangement_graph.ConstructionFailed))
 }
 
 pub fn validation_rejects_vertex_without_endpoint_samples_test() {
@@ -792,7 +786,7 @@ pub fn validation_rejects_vertex_without_endpoint_samples_test() {
     )
 
   arrangement_graph.validate(graph, tolerance:, minimum_chord:)
-  |> should.equal(Error(arrangement_graph.VertexWithoutEndpointSamples(0)))
+  |> should.equal(Error(arrangement_graph.ConstructionFailed))
 }
 
 pub fn reversed_duplicate_increments_reverse_multiplicity_test() {
@@ -840,9 +834,7 @@ pub fn open_chain_fails_final_even_degree_invariant_test() {
     )
 
   arrangement_graph.validate(graph, tolerance:, minimum_chord:)
-  |> should.equal(
-    Error(arrangement_graph.OddWeightedDegree(vertex: 0, degree: 1)),
-  )
+  |> should.equal(Error(arrangement_graph.ConstructionFailed))
 }
 
 pub fn short_chord_is_rejected_test() {
@@ -856,7 +848,7 @@ pub fn short_chord_is_rejected_test() {
     minimum_chord:,
   )
   |> should.equal(
-    Error(arrangement_graph.SegmentTooShort(
+    Error(arrangement_graph.InternalSegmentTooShort(
       chord: 0.000001,
       minimum: minimum_chord,
     )),
@@ -1385,7 +1377,7 @@ fn build_graph(
 fn graph_with_clustered_endpoints(
   endpoints: List(svg_path.Point),
   cluster_tolerance: Float,
-) -> Result(arrangement_graph.ArrangementGraph, arrangement_graph.Error) {
+) -> Result(arrangement_graph.ArrangementGraph, arrangement_graph.InternalError) {
   insert_clustered_endpoints(
     endpoints,
     arrangement_graph.empty(),
@@ -1399,7 +1391,7 @@ fn insert_clustered_endpoints(
   graph: arrangement_graph.ArrangementGraph,
   index index: Int,
   cluster_tolerance cluster_tolerance: Float,
-) -> Result(arrangement_graph.ArrangementGraph, arrangement_graph.Error) {
+) -> Result(arrangement_graph.ArrangementGraph, arrangement_graph.InternalError) {
   case endpoints {
     [] -> Ok(graph)
     [endpoint, ..rest] -> {

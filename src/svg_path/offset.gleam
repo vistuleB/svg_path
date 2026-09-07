@@ -516,7 +516,7 @@ pub fn internal_path_single_offset_contamination_arrangement_trace(
   let #(offset_images, zero_images) = split
   use dual <- result.try(
     arrangement_graph.dual(arrangement.graph)
-    |> result.map_error(InternalArrangementGraphError),
+    |> result.map_error(arrangement_error),
   )
   contamination_arrangement_trace_builds(
     builds,
@@ -2907,7 +2907,10 @@ pub type InternalError {
   InternalPathError(svg_path.Error)
 
   /// Arrangement construction failed while noding offset geometry.
-  InternalArrangementGraphError(arrangement_graph.Error)
+  InternalArrangementGraphError(arrangement_graph.InternalError)
+
+  /// Arrangement construction failed without a stable internal payload.
+  InternalArrangementGraphConstructionFailed
 
   /// Forced parity pruning could not determine a unique feasible assignment.
   InternalForcedParityPruningError(ForcedParityError)
@@ -3063,6 +3066,21 @@ fn public_error(error: InternalError) -> Error {
     InternalMaxDepthReached(error:) -> MaxDepthReached(error:)
     InternalNonFinite -> NonFinite
     _ -> ConstructionFailed
+  }
+}
+
+fn arrangement_error(error: arrangement_graph.Error) -> InternalError {
+  case error {
+    arrangement_graph.PathError(value) -> InternalPathError(value)
+    arrangement_graph.InvalidTolerance(value) -> InternalInvalidTolerance(value)
+    arrangement_graph.InvalidMinimumChord(_value) ->
+      InternalArrangementGraphConstructionFailed
+    arrangement_graph.InvalidEndpointSliverTolerance(_value) ->
+      InternalArrangementGraphConstructionFailed
+    arrangement_graph.SegmentTooShort(_, _) ->
+      InternalArrangementGraphConstructionFailed
+    arrangement_graph.ConstructionFailed ->
+      InternalArrangementGraphConstructionFailed
   }
 }
 
@@ -3912,7 +3930,7 @@ fn offside_trimmed_single_offset_subpaths_enabled(
   let #(offset_images, zero_images) = split
   use dual <- result.try(
     arrangement_graph.dual(arrangement.graph)
-    |> result.map_error(InternalArrangementGraphError),
+    |> result.map_error(arrangement_error),
   )
   offside_trimmed_single_offset_subpaths_loop(
     builds,
@@ -4125,7 +4143,7 @@ fn dual_edge_faces(
   edge_faces
   |> list.find(fn(edge) { edge.edge_id == edge_id })
   |> result.map_error(fn(_) {
-    InternalArrangementGraphError(arrangement_graph.MissingEdge(edge_id))
+    InternalArrangementGraphError(arrangement_graph.InternalMissingEdge(edge_id))
   })
 }
 
@@ -5820,9 +5838,9 @@ fn source_segment_image_edges(
 fn arrangement_edge_by_id(
   edges: List(arrangement_graph.ArrangementEdge),
   id: Int,
-) -> Result(arrangement_graph.ArrangementEdge, arrangement_graph.Error) {
+) -> Result(arrangement_graph.ArrangementEdge, arrangement_graph.InternalError) {
   case edges {
-    [] -> Error(arrangement_graph.MissingEdge(id))
+    [] -> Error(arrangement_graph.InternalMissingEdge(id))
     [first, ..rest] -> {
       let arrangement_graph.ArrangementEdge(id: candidate, ..) = first
       case candidate == id {
