@@ -1178,7 +1178,6 @@ pub fn subpath_band(
     cap:,
     options: default_options(),
   )
-  |> result.map_error(public_error)
 }
 
 /// Offset a subpath at two signed normal displacements using explicit options.
@@ -1194,49 +1193,66 @@ pub fn subpath_band_with(
   join join: Join,
   cap cap: Cap,
   options options: Options,
-) -> Result(svg_path.Path, InternalError) {
-  use _ <- result.try(validate_options(options))
-  use _ <- result.try(validate_join(join))
-  use normalized <- result.try(normalize_source_subpath(subpath, options))
-  use build <- result.try(build_synchronized_untrimmed(
-    normalized,
-    inner_offset: inner_offset,
-    outer_offset: outer_offset,
-    join:,
-    options:,
-  ))
+) -> Result(svg_path.Path, Error) {
+  use _ <- result.try(
+    validate_options(options) |> result.map_error(public_error),
+  )
+  use _ <- result.try(validate_join(join) |> result.map_error(public_error))
+  use normalized <- result.try(
+    normalize_source_subpath(subpath, options)
+    |> result.map_error(public_error),
+  )
+  use build <- result.try(
+    build_synchronized_untrimmed(
+      normalized,
+      inner_offset: inner_offset,
+      outer_offset: outer_offset,
+      join:,
+      options:,
+    )
+    |> result.map_error(public_error),
+  )
   let SynchronizedUntrimmedBuild(
     inner_culled: culled_a,
     outer_culled: culled_b,
     ..,
   ) = build
   let BandTrimming(inner_cusps:, outer_cusps:, in_band:) = options.band_trimming
-  use untrimmed_a <- result.try(trim_band_side_cusps(
-    culled_a,
-    normalized,
-    inner_offset,
-    cap,
-    options,
-    enabled: inner_cusps,
-  ))
-  use untrimmed_b <- result.try(trim_band_side_cusps(
-    culled_b,
-    normalized,
-    outer_offset,
-    cap,
-    options,
-    enabled: outer_cusps,
-  ))
+  use untrimmed_a <- result.try(
+    trim_band_side_cusps(
+      culled_a,
+      normalized,
+      inner_offset,
+      cap,
+      options,
+      enabled: inner_cusps,
+    )
+    |> result.map_error(public_error),
+  )
+  use untrimmed_b <- result.try(
+    trim_band_side_cusps(
+      culled_b,
+      normalized,
+      outer_offset,
+      cap,
+      options,
+      enabled: outer_cusps,
+    )
+    |> result.map_error(public_error),
+  )
   case untrimmed_a, untrimmed_b {
     None, _ | _, None -> Ok(svg_path.path_empty())
     Some(untrimmed_a), Some(untrimmed_b) -> {
-      use band <- result.try(band_from_sides(
-        untrimmed_a,
-        inner_offset,
-        untrimmed_b,
-        outer_offset,
-        cap:,
-      ))
+      use band <- result.try(
+        band_from_sides(
+          untrimmed_a,
+          inner_offset,
+          untrimmed_b,
+          outer_offset,
+          cap:,
+        )
+        |> result.map_error(public_error),
+      )
       let winding_opinions = case inner_offset >=. outer_offset {
         True -> [
           WindingSideOpinion(left: 0, right: 1),
@@ -1247,16 +1263,19 @@ pub fn subpath_band_with(
           WindingSideOpinion(left: 0, right: 1),
         ]
       }
-      use path <- result.try(case in_band {
-        True ->
-          topological_band_path_with_opinions(
-            [untrimmed_a, untrimmed_b],
-            [band],
-            winding_opinions,
-            options,
-          )
-        False -> one_subpath_band_semantic_path(band)
-      })
+      use path <- result.try(
+        case in_band {
+          True ->
+            topological_band_path_with_opinions(
+              [untrimmed_a, untrimmed_b],
+              [band],
+              winding_opinions,
+              options,
+            )
+          False -> one_subpath_band_semantic_path(band)
+        }
+        |> result.map_error(public_error),
+      )
       case inner_offset >. outer_offset {
         True -> Ok(svg_path.path_reverse(path))
         False -> Ok(path)
@@ -1709,7 +1728,6 @@ pub fn path_band(
     cap:,
     options: default_options(),
   )
-  |> result.map_error(public_error)
 }
 
 /// Offset every subpath in a path at two signed normal displacements using
@@ -1721,9 +1739,11 @@ pub fn path_band_with(
   join join: Join,
   cap cap: Cap,
   options options: Options,
-) -> Result(svg_path.Path, InternalError) {
-  use _ <- result.try(validate_options(options))
-  use _ <- result.try(validate_join(join))
+) -> Result(svg_path.Path, Error) {
+  use _ <- result.try(
+    validate_options(options) |> result.map_error(public_error),
+  )
+  use _ <- result.try(validate_join(join) |> result.map_error(public_error))
   use subpaths <- result.try(
     band_path_subpaths(
       svg_path.path_subpaths(path),
@@ -1971,7 +1991,7 @@ fn band_path_subpaths(
   cap: Cap,
   options: Options,
   converted converted: List(svg_path.Subpath),
-) -> Result(List(svg_path.Subpath), InternalError) {
+) -> Result(List(svg_path.Subpath), Error) {
   case subpaths {
     [] -> Ok(list.reverse(converted))
     [first, ..rest] -> {

@@ -27,7 +27,7 @@ pub fn figure_eight() -> svg_path.Subpath {
   |> svg_path.subpath_assert_set_closed(closed: True)
 }
 
-pub fn figure_eight_band() -> Result(svg_path.Path, offset.InternalError) {
+pub fn figure_eight_band() -> Result(svg_path.Path, offset.Error) {
   offset.subpath_band_with(
     figure_eight(),
     inner_offset: 18.0,
@@ -38,7 +38,7 @@ pub fn figure_eight_band() -> Result(svg_path.Path, offset.InternalError) {
   )
 }
 
-pub fn combined_path() -> Result(svg_path.Path, offset.InternalError) {
+pub fn combined_path() -> Result(svg_path.Path, offset.Error) {
   use band <- result.try(figure_eight_band())
   Ok(svg_path.Path([figure_eight(), ..svg_path.path_subpaths(band)]))
 }
