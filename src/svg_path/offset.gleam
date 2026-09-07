@@ -1035,9 +1035,8 @@ pub fn segment_with(
     |> result.map_error(public_error),
   )
   case subpath_untrimmed_with(source, offset:, join:, options:) {
-    Error(InternalPathError(svg_path.EmptySubpath)) ->
-      Error(DegenerateTangent(0.0))
-    result -> result |> result.map_error(public_error)
+    Error(PathError(svg_path.EmptySubpath)) -> Error(DegenerateTangent(0.0))
+    result -> result
   }
 }
 
@@ -1609,7 +1608,7 @@ pub fn subpath_untrimmed(
   subpath: svg_path.Subpath,
   offset offset: Float,
   join join: Join,
-) -> Result(svg_path.Subpath, InternalError) {
+) -> Result(svg_path.Subpath, Error) {
   subpath_untrimmed_with(subpath, offset:, join:, options: default_options())
 }
 
@@ -1619,16 +1618,22 @@ pub fn subpath_untrimmed_with(
   offset offset: Float,
   join join: Join,
   options options: Options,
-) -> Result(svg_path.Subpath, InternalError) {
-  use _ <- result.try(validate_options(options))
-  use _ <- result.try(validate_join(join))
-  use normalized <- result.try(normalize_source_subpath(subpath, options))
+) -> Result(svg_path.Subpath, Error) {
+  use _ <- result.try(
+    validate_options(options) |> result.map_error(public_error),
+  )
+  use _ <- result.try(validate_join(join) |> result.map_error(public_error))
+  use normalized <- result.try(
+    normalize_source_subpath(subpath, options)
+    |> result.map_error(public_error),
+  )
   untrimmed_subpath_from_normalized_source(
     normalized,
     offset: offset,
     join:,
     options:,
   )
+  |> result.map_error(public_error)
 }
 
 fn untrimmed_subpath_from_normalized_source(
@@ -1848,7 +1853,7 @@ pub fn path_untrimmed(
   path: svg_path.Path,
   offset offset: Float,
   join join: Join,
-) -> Result(svg_path.Path, InternalError) {
+) -> Result(svg_path.Path, Error) {
   path_untrimmed_with(path, offset:, join:, options: default_options())
 }
 
@@ -1859,9 +1864,11 @@ pub fn path_untrimmed_with(
   offset offset: Float,
   join join: Join,
   options options: Options,
-) -> Result(svg_path.Path, InternalError) {
-  use _ <- result.try(validate_options(options))
-  use _ <- result.try(validate_join(join))
+) -> Result(svg_path.Path, Error) {
+  use _ <- result.try(
+    validate_options(options) |> result.map_error(public_error),
+  )
+  use _ <- result.try(validate_join(join) |> result.map_error(public_error))
   use subpaths <- result.try(
     untrimmed_offset_path_subpaths(
       svg_path.path_subpaths(path),
@@ -1880,7 +1887,7 @@ fn untrimmed_offset_path_subpaths(
   join: Join,
   options options: Options,
   converted converted: List(svg_path.Subpath),
-) -> Result(List(svg_path.Subpath), InternalError) {
+) -> Result(List(svg_path.Subpath), Error) {
   case subpaths {
     [] -> Ok(list.reverse(converted))
     [first, ..rest] -> {

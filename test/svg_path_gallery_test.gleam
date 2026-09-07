@@ -1161,7 +1161,7 @@ fn subpath_result_to_string(
 }
 
 fn offset_subpath_result_to_string(
-  result: Result(svg_path.Subpath, offset.InternalError),
+  result: Result(svg_path.Subpath, offset.Error),
 ) -> String {
   case result {
     Ok(subpath) -> subpath_summary_to_string(subpath)
@@ -1170,7 +1170,7 @@ fn offset_subpath_result_to_string(
 }
 
 fn inserted_join_diameters_to_string(
-  result: Result(svg_path.Subpath, offset.InternalError),
+  result: Result(svg_path.Subpath, offset.Error),
 ) -> String {
   case result {
     Error(error) -> offset_error_to_string(error)
@@ -1385,9 +1385,9 @@ fn subpath_summary_to_string(subpath: svg_path.Subpath) -> String {
   <> ")"
 }
 
-fn offset_error_to_string(error: offset.InternalError) -> String {
+fn offset_error_to_string(error: offset.Error) -> String {
   case error {
-    offset.InternalDegenerateTangent(t) ->
+    offset.DegenerateTangent(t) ->
       "DegenerateTangent(" <> debug_float_to_string(t) <> ")"
     _ -> "OffsetError"
   }

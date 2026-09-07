@@ -2209,7 +2209,7 @@ fn stalled_arc_turn_case(
   String,
   Int,
   svg_path.Subpath,
-  Result(svg_path.Subpath, offset.InternalError),
+  Result(svg_path.Subpath, offset.Error),
 ) {
   let source = stalled_arc_turn_source(subdivisions, use_arcs:)
   let default = offset.default_options()
@@ -2490,7 +2490,7 @@ fn stalled_arc_turn_report(
       String,
       Int,
       svg_path.Subpath,
-      Result(svg_path.Subpath, offset.InternalError),
+      Result(svg_path.Subpath, offset.Error),
     ),
   ),
 ) -> String {
@@ -2514,7 +2514,7 @@ fn stalled_arc_turn_case_report(
     String,
     Int,
     svg_path.Subpath,
-    Result(svg_path.Subpath, offset.InternalError),
+    Result(svg_path.Subpath, offset.Error),
   ),
 ) -> String {
   let #(row_label, unit_label, subdivisions, source, result) = example
@@ -2544,7 +2544,7 @@ fn stalled_arc_turn_case_report(
 }
 
 fn stalled_arc_turn_corner_summary(
-  result: Result(svg_path.Subpath, offset.InternalError),
+  result: Result(svg_path.Subpath, offset.Error),
 ) -> String {
   case result {
     Error(error) -> "Error: " <> string.inspect(error)
@@ -2559,7 +2559,7 @@ fn stalled_arc_turn_corner_summary(
 }
 
 fn stalled_arc_turn_offset_result_summary(
-  result: Result(svg_path.Subpath, offset.InternalError),
+  result: Result(svg_path.Subpath, offset.Error),
 ) -> String {
   case result {
     Ok(subpath) ->
@@ -2572,7 +2572,7 @@ fn stalled_arc_turn_offset_result_summary(
 }
 
 fn stalled_arc_turn_corner_label(
-  result: Result(svg_path.Subpath, offset.InternalError),
+  result: Result(svg_path.Subpath, offset.Error),
 ) -> String {
   case result {
     Error(_) -> "Error"
@@ -2586,7 +2586,7 @@ fn stalled_arc_turn_corner_label(
 }
 
 fn stalled_arc_turn_corner_segment_count(
-  result: Result(svg_path.Subpath, offset.InternalError),
+  result: Result(svg_path.Subpath, offset.Error),
 ) -> String {
   case result {
     Error(_) -> "Error"
@@ -2627,7 +2627,7 @@ fn stalled_arc_turn_svg(
       String,
       Int,
       svg_path.Subpath,
-      Result(svg_path.Subpath, offset.InternalError),
+      Result(svg_path.Subpath, offset.Error),
     ),
   ),
 ) -> String {
@@ -2645,7 +2645,7 @@ fn stalled_arc_turn_zoom_svg(
       String,
       Int,
       svg_path.Subpath,
-      Result(svg_path.Subpath, offset.InternalError),
+      Result(svg_path.Subpath, offset.Error),
     ),
   ),
 ) -> String {
@@ -2666,7 +2666,7 @@ fn stalled_arc_turn_zoom_panel(
     String,
     Int,
     svg_path.Subpath,
-    Result(svg_path.Subpath, offset.InternalError),
+    Result(svg_path.Subpath, offset.Error),
   ),
   index: Int,
 ) -> String {
@@ -2760,7 +2760,7 @@ fn stalled_arc_turn_zoom_panel(
 
 fn stalled_arc_turn_zoom_box(
   source: svg_path.Subpath,
-  result: Result(svg_path.Subpath, offset.InternalError),
+  result: Result(svg_path.Subpath, offset.Error),
 ) -> #(Float, Float, Float) {
   let points =
     list.append(
@@ -2840,7 +2840,7 @@ fn stalled_arc_turn_segment_sample_points(
 }
 
 fn stalled_arc_turn_corner_diagnostic_points(
-  result: Result(svg_path.Subpath, offset.InternalError),
+  result: Result(svg_path.Subpath, offset.Error),
 ) -> List(svg_path.Point) {
   case result {
     Error(_) -> []
@@ -3008,7 +3008,7 @@ fn stalled_arc_turn_panel(
     String,
     Int,
     svg_path.Subpath,
-    Result(svg_path.Subpath, offset.InternalError),
+    Result(svg_path.Subpath, offset.Error),
   ),
   index: Int,
 ) -> String {
