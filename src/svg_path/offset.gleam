@@ -2244,37 +2244,6 @@ pub fn internal_synchronized_join_trace(
   )
 }
 
-/// Return the final healed offset geometry paired by source correspondence.
-@internal
-pub fn internal_synchronized_offset_area_trace(
-  subpath subpath: svg_path.Subpath,
-  inner_offset inner_offset: Float,
-  outer_offset outer_offset: Float,
-  options options: Options,
-) -> Result(List(SynchronizedOffsetTraceArea), InternalError) {
-  use _ <- result.try(validate_options(options))
-  use normalized <- result.try(normalize_source_subpath(subpath, options))
-  use build <- result.try(build_synchronized_offset_segments(
-    normalized,
-    OffsetDistances(inner: inner_offset, outer: outer_offset),
-    options,
-  ))
-  let SynchronizedOffsetSegmentsBuild(
-    inner_offsets:,
-    outer_offsets:,
-    correspondences:,
-    ..,
-  ) = build
-  Ok(
-    synchronized_offset_trace_areas(
-      correspondences,
-      inner_offsets,
-      outer_offsets,
-      traced: [],
-    ),
-  )
-}
-
 fn synchronized_offset_source_trace_portions(
   portions: List(JoinFreePortion),
   offset: Float,
@@ -3140,17 +3109,6 @@ pub type SynchronizedOffsetTraceJoin {
     outer_segments: List(svg_path.Segment),
     inner_reversed: Bool,
     outer_reversed: Bool,
-  )
-}
-
-/// The healed offset geometry on both sides of one source correspondence.
-@internal
-pub type SynchronizedOffsetTraceArea {
-  SynchronizedOffsetTraceArea(
-    portion_index: Int,
-    correspondence_index: Int,
-    inner_segments: List(svg_path.Segment),
-    outer_segments: List(svg_path.Segment),
   )
 }
 
@@ -6937,100 +6895,6 @@ fn split_synchronized_source_at_midpoint(
       end_boundary:,
     ),
   ))
-}
-
-fn synchronized_offset_trace_areas(
-  correspondences: List(OffsetCorrespondence),
-  inner_offsets: List(GHealedOffsetSegment),
-  outer_offsets: List(GHealedOffsetSegment),
-  traced traced: List(SynchronizedOffsetTraceArea),
-) -> List(SynchronizedOffsetTraceArea) {
-  case correspondences {
-    [] -> list.reverse(traced)
-    [first, ..rest] -> {
-      let OffsetCorrespondence(
-        portion_index:,
-        correspondence_index:,
-        inner: inner_source,
-        outer: outer_source,
-        inner_offset_count:,
-        outer_offset_count:,
-        ..,
-      ) = first
-      let inner = list.take(inner_offsets, inner_offset_count)
-      let outer = list.take(outer_offsets, outer_offset_count)
-      let areas =
-        synchronized_max_granularity_trace_areas(
-          portion_index,
-          correspondence_index,
-          inner_source,
-          outer_source,
-          list.map(inner, fn(offset) { offset.segment }),
-          list.map(outer, fn(offset) { offset.segment }),
-        )
-      synchronized_offset_trace_areas(
-        rest,
-        list.drop(inner_offsets, inner_offset_count),
-        list.drop(outer_offsets, outer_offset_count),
-        traced: list.append(list.reverse(areas), traced),
-      )
-    }
-  }
-}
-
-fn synchronized_max_granularity_trace_areas(
-  portion_index: Int,
-  correspondence_index: Int,
-  inner_source: SynchronizedSideSource,
-  outer_source: SynchronizedSideSource,
-  inner_segments: List(svg_path.Segment),
-  outer_segments: List(svg_path.Segment),
-) -> List(SynchronizedOffsetTraceArea) {
-  case inner_source, outer_source {
-    SplitSideSource(left: inner_left, right: inner_right),
-      SplitSideSource(left: outer_left, right: outer_right)
-    -> {
-      let inner_left_count = synchronized_side_source_offset_count(inner_left)
-      let outer_left_count = synchronized_side_source_offset_count(outer_left)
-      list.append(
-        synchronized_max_granularity_trace_areas(
-          portion_index,
-          correspondence_index,
-          inner_left,
-          outer_left,
-          list.take(inner_segments, inner_left_count),
-          list.take(outer_segments, outer_left_count),
-        ),
-        synchronized_max_granularity_trace_areas(
-          portion_index,
-          correspondence_index,
-          inner_right,
-          outer_right,
-          list.drop(inner_segments, inner_left_count),
-          list.drop(outer_segments, outer_left_count),
-        ),
-      )
-    }
-    _, _ -> [
-      SynchronizedOffsetTraceArea(
-        portion_index:,
-        correspondence_index:,
-        inner_segments:,
-        outer_segments:,
-      ),
-    ]
-  }
-}
-
-fn synchronized_side_source_offset_count(
-  source: SynchronizedSideSource,
-) -> Int {
-  case source {
-    RefinableSideSource(_) | StalledSideSource(_) -> 1
-    SplitSideSource(left:, right:) ->
-      synchronized_side_source_offset_count(left)
-      + synchronized_side_source_offset_count(right)
-  }
 }
 
 fn synchronized_offset_trace_correspondence(

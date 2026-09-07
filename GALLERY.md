@@ -80,8 +80,8 @@ right).
 
 ![Figure-eight correspondence blocks](docs/gallery/gallery-figure-eight-correspondence-blocks.svg)
 
-Shows the maximum-granularity synchronized inner/outer correspondence regions
-used to construct the asymmetric figure-eight band.
+Shows the per-segment correspondence blocks between the untrimmed inner and
+outer offset walks of the asymmetric figure-eight band.
 
 ### Figure-Eight Convex Hulls
 

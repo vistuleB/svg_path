@@ -55,7 +55,7 @@ pub fn generate_gallery_figures() {
     ),
     #(
       "gallery-figure-eight-correspondence-blocks.svg",
-      "Figure-eight synchronized correspondence blocks",
+      "Figure-eight band correspondence blocks",
       figure_eight_correspondence_fixture.figure_eight_correspondence_blocks(),
     ),
     #(
