@@ -273,7 +273,7 @@ pub type ConstructionOperation {
 }
 
 @internal
-pub type ConstructionError {
+pub type InternalError {
   /// The construction input contained no subpaths.
   EmptyConstructionInput
 
@@ -500,7 +500,7 @@ fn source_segments_width_extremum(
 
 fn construct_segment_hull(
   segment: svg_path.Segment,
-) -> Result(svg_path.Subpath, ConstructionError) {
+) -> Result(svg_path.Subpath, InternalError) {
   case segment {
     svg_path.Line(..) -> line_hull(segment)
     svg_path.QuadraticBezier(..) | svg_path.Arc(..) ->
@@ -509,7 +509,7 @@ fn construct_segment_hull(
   }
 }
 
-fn public_error(error: ConstructionError) -> Error {
+fn public_error(error: InternalError) -> Error {
   case error {
     ConstructionPathFailure(error:, ..) -> ConstructionPathError(error)
     EmptyConstructionInput -> ConstructionEmptyInput
@@ -1489,7 +1489,7 @@ pub fn internal_point_chord_polygon_loop_separation(
 pub fn internal_point_chord_polygon_tangent_subpaths(
   segments: List(svg_path.Segment),
   point point: svg_path.Point,
-) -> Result(#(svg_path.Subpath, svg_path.Subpath), ConstructionError) {
+) -> Result(#(svg_path.Subpath, svg_path.Subpath), InternalError) {
   point_chord_polygon_tangent_subpaths(Loop(segments), point)
 }
 
@@ -1497,7 +1497,7 @@ pub fn internal_point_chord_polygon_tangent_subpaths(
 pub fn internal_point_exact_loop_tangent_subpaths(
   segments: List(svg_path.Segment),
   point point: svg_path.Point,
-) -> Result(#(svg_path.Subpath, svg_path.Subpath), ConstructionError) {
+) -> Result(#(svg_path.Subpath, svg_path.Subpath), InternalError) {
   point_exact_loop_tangent_subpaths(Loop(segments), point)
 }
 
@@ -1505,7 +1505,7 @@ pub fn internal_point_exact_loop_tangent_subpaths(
 pub fn internal_loop_plus_point_hull(
   segments: List(svg_path.Segment),
   point point: svg_path.Point,
-) -> Result(List(svg_path.Segment), ConstructionError) {
+) -> Result(List(svg_path.Segment), InternalError) {
   use loop <- result.try(loop_plus_point_hull(Loop(segments), point))
   let Loop(segments:) = loop
   Ok(segments)
@@ -1515,7 +1515,7 @@ pub fn internal_loop_plus_point_hull(
 pub fn internal_loop_plus_points_hull(
   segments: List(svg_path.Segment),
   points points: List(svg_path.Point),
-) -> Result(List(svg_path.Segment), ConstructionError) {
+) -> Result(List(svg_path.Segment), InternalError) {
   use loop <- result.try(dumb_repair_loop_with_points(Loop(segments), points))
   let Loop(segments:) = loop
   Ok(segments)
@@ -1525,7 +1525,7 @@ pub fn internal_loop_plus_points_hull(
 pub fn internal_path_hull_with_repair_mode(
   path: svg_path.Path,
   repair_mode repair_mode: String,
-) -> Result(svg_path.Subpath, ConstructionError) {
+) -> Result(svg_path.Subpath, InternalError) {
   case svg_path.path_subpaths(path) {
     [] -> Error(EmptyConstructionInput)
     subpaths -> {
@@ -1540,7 +1540,7 @@ pub fn internal_path_hull_with_repair_mode(
 pub fn internal_ambitious_repair_loop_with_loop(
   current: List(svg_path.Segment),
   addition addition: List(svg_path.Segment),
-) -> Result(List(svg_path.Segment), ConstructionError) {
+) -> Result(List(svg_path.Segment), InternalError) {
   use loop <- result.try(ambitious_repair_loop_with_loop(
     Loop(current),
     addition: Loop(addition),
@@ -1555,7 +1555,7 @@ pub fn internal_find_seeded_worst_direction(
   loop_b: List(svg_path.Segment),
   direction direction: Float,
   threshold threshold: Float,
-) -> Result(#(Float, Float), ConstructionError) {
+) -> Result(#(Float, Float), InternalError) {
   find_seeded_worst_direction(
     Loop(loop_a),
     Loop(loop_b),
@@ -1617,7 +1617,7 @@ pub fn internal_point_loop_view(
 fn segments_hull(
   segments: List(svg_path.Segment),
   repair_mode repair_mode: String,
-) -> Result(svg_path.Subpath, ConstructionError) {
+) -> Result(svg_path.Subpath, InternalError) {
   use loops <- result.try(segment_convex_loops(segments))
   let loops = maybe_prefilter_convex_loops(loops)
   let repair_point_groups = convex_loop_endpoint_groups(loops)
@@ -1638,7 +1638,7 @@ fn segments_hull(
 
 fn segment_convex_loops(
   segments: List(svg_path.Segment),
-) -> Result(List(ConvexLoop), ConstructionError) {
+) -> Result(List(ConvexLoop), InternalError) {
   segments
   |> list.fold(Ok([]), fn(loops, segment) {
     use loops <- result.try(loops)
@@ -1664,14 +1664,14 @@ fn point_segment(point: svg_path.Point) -> svg_path.Segment {
 
 fn segment_hull_segments(
   segment: svg_path.Segment,
-) -> Result(List(svg_path.Segment), ConstructionError) {
+) -> Result(List(svg_path.Segment), InternalError) {
   use subpath <- result.try(construct_segment_hull(segment))
   Ok(svg_path.subpath_segments(subpath))
 }
 
 fn segment_convex_loop(
   segment: svg_path.Segment,
-) -> Result(ConvexLoop, ConstructionError) {
+) -> Result(ConvexLoop, InternalError) {
   use segments <- result.try(segment_hull_segments(segment))
   Ok(convex_loop(segments))
 }
@@ -1713,7 +1713,7 @@ fn add_distinct_point(
 fn union_convex_loop_list(
   loops: List(ConvexLoop),
   repair_mode repair_mode: String,
-) -> Result(ConvexLoop, ConstructionError) {
+) -> Result(ConvexLoop, InternalError) {
   case loops {
     [] -> Error(LoopUnionCollapsed)
     [first, ..rest] ->
@@ -1729,7 +1729,7 @@ fn union_convex_loops(
   left: ConvexLoop,
   right: ConvexLoop,
   repair_mode repair_mode: String,
-) -> Result(ConvexLoop, ConstructionError) {
+) -> Result(ConvexLoop, InternalError) {
   let ConvexLoop(loop: Loop(left_segments), enclosure: _) = left
   let ConvexLoop(loop: Loop(right_segments), enclosure: _) = right
   use segments <- result.try(union_loop_segments(left_segments, right_segments))
@@ -2072,7 +2072,7 @@ fn opposite_signs(a: Float, b: Float) -> Bool {
 fn point_chord_polygon_tangent_subpaths(
   loop: Loop,
   point: svg_path.Point,
-) -> Result(#(svg_path.Subpath, svg_path.Subpath), ConstructionError) {
+) -> Result(#(svg_path.Subpath, svg_path.Subpath), InternalError) {
   let Loop(segments:) = loop
   let vertices = loop_vertices(segments)
   let orientation = convex_polygon_orientation(ConvexPolygon(vertices:))
@@ -2101,7 +2101,7 @@ fn point_chord_polygon_tangent_subpaths(
 fn point_exact_loop_tangent_subpaths(
   loop: Loop,
   point: svg_path.Point,
-) -> Result(#(svg_path.Subpath, svg_path.Subpath), ConstructionError) {
+) -> Result(#(svg_path.Subpath, svg_path.Subpath), InternalError) {
   // This exact tangent split is a specialized point-repair path. The seeded
   // ordinary loop-union path can cover similar cases, so revisit whether both
   // routes are worth keeping once the repair logic settles.
@@ -2140,7 +2140,7 @@ fn point_exact_loop_tangent_subpaths(
 fn loop_plus_point_hull(
   loop: Loop,
   point: svg_path.Point,
-) -> Result(Loop, ConstructionError) {
+) -> Result(Loop, InternalError) {
   use split <- result.try(point_exact_loop_tangent_subpaths(loop, point))
   let #(_removed, kept) = split
   let start = subpath_start(kept)
@@ -2172,14 +2172,14 @@ fn loop_plus_point_hull(
 fn dumb_repair_loop_with_points(
   loop: Loop,
   points: List(svg_path.Point),
-) -> Result(Loop, ConstructionError) {
+) -> Result(Loop, InternalError) {
   repair_loop_with_points(loop, list.append(points, points))
 }
 
 fn dumb_repair_loop_with_point_groups(
   loop: Loop,
   point_groups: List(List(svg_path.Point)),
-) -> Result(Loop, ConstructionError) {
+) -> Result(Loop, InternalError) {
   let repair_points =
     point_groups
     |> list.fold([], fn(points, group) {
@@ -2196,7 +2196,7 @@ fn dumb_repair_loop_with_point_groups(
 fn repair_loop_with_points(
   loop: Loop,
   points: List(svg_path.Point),
-) -> Result(Loop, ConstructionError) {
+) -> Result(Loop, InternalError) {
   points
   |> list.fold(Ok(loop), fn(current, point) {
     use current <- result.try(current)
@@ -2210,7 +2210,7 @@ fn repair_loop_with_points(
 fn dumb_repair_loop_with_point(
   loop: Loop,
   point: svg_path.Point,
-) -> Result(Loop, ConstructionError) {
+) -> Result(Loop, InternalError) {
   case loop_plus_point_hull(loop, point) {
     Ok(loop) -> Ok(loop)
     Error(TangentSearchExpectedTwoTangencies(_)) ->
@@ -2223,7 +2223,7 @@ fn dumb_repair_loop_with_point(
 fn union_loop_with_point(
   loop: Loop,
   point: svg_path.Point,
-) -> Result(Loop, ConstructionError) {
+) -> Result(Loop, InternalError) {
   let point_loop = Loop([point_segment(point)])
   case point_chord_polygon_loop_separation(loop, point) {
     None -> Ok(loop)
@@ -2253,7 +2253,7 @@ fn final_repair_loop(
   source_loops source_loops: List(ConvexLoop),
   repair_point_groups repair_point_groups: List(List(svg_path.Point)),
   repair_mode repair_mode: String,
-) -> Result(Loop, ConstructionError) {
+) -> Result(Loop, InternalError) {
   case repair_mode {
     mode if mode == repair_mode_ambitious ->
       ambitious_repair_loop_with_loops(loop, additions: source_loops)
@@ -2268,7 +2268,7 @@ fn configured_repair_loop_with_loop(
   current: Loop,
   addition addition: Loop,
   repair_mode repair_mode: String,
-) -> Result(Loop, ConstructionError) {
+) -> Result(Loop, InternalError) {
   case repair_mode {
     mode if mode == repair_mode_ambitious ->
       ambitious_repair_loop_with_loop(current, addition:)
@@ -2281,7 +2281,7 @@ fn configured_repair_loop_with_loop(
 fn ambitious_repair_loop_with_loops(
   current: Loop,
   additions additions: List(ConvexLoop),
-) -> Result(Loop, ConstructionError) {
+) -> Result(Loop, InternalError) {
   additions
   |> list.fold(Ok(current), fn(current, addition) {
     use current <- result.try(current)
@@ -2293,7 +2293,7 @@ fn ambitious_repair_loop_with_loops(
 fn ambitious_repair_loop_with_loop(
   current: Loop,
   addition addition: Loop,
-) -> Result(Loop, ConstructionError) {
+) -> Result(Loop, InternalError) {
   use seed_angles <- result.try(ambitious_repair_seed_angles(current, addition:))
   case seed_angles {
     [] -> Ok(current)
@@ -2311,7 +2311,7 @@ fn ambitious_repair_loop_with_loop(
 fn ambitious_repair_seed_angles(
   current: Loop,
   addition addition: Loop,
-) -> Result(List(Float), ConstructionError) {
+) -> Result(List(Float), InternalError) {
   loop_endpoints(addition)
   |> list.fold(Ok([]), fn(seed_angles, point) {
     use seed_angles <- result.try(seed_angles)
@@ -2520,7 +2520,7 @@ fn line_like_loop_tangent_subpaths(
   loop: Loop,
   point: svg_path.Point,
   orientation: LoopOrientation,
-) -> Result(#(svg_path.Subpath, svg_path.Subpath), ConstructionError) {
+) -> Result(#(svg_path.Subpath, svg_path.Subpath), InternalError) {
   let Loop(segments:) = loop
   case loop_vertices(segments) {
     [a, b] -> {
@@ -2541,7 +2541,7 @@ fn line_like_loop_tangent_subpaths(
 fn loop_vertex_param(
   segments: List(svg_path.Segment),
   point: svg_path.Point,
-) -> Result(LoopParam, ConstructionError) {
+) -> Result(LoopParam, InternalError) {
   loop_vertex_param_loop(segments, point, index: 0)
 }
 
@@ -2549,7 +2549,7 @@ fn loop_vertex_param_loop(
   segments: List(svg_path.Segment),
   point: svg_path.Point,
   index index: Int,
-) -> Result(LoopParam, ConstructionError) {
+) -> Result(LoopParam, InternalError) {
   case segments {
     [] -> Error(TangentSearchDegenerateLoop)
     [segment, ..rest] ->
@@ -2563,7 +2563,7 @@ fn loop_vertex_param_loop(
 fn validate_loop_endpoint_convexity(
   segments: List(svg_path.Segment),
   orientation: LoopOrientation,
-) -> Result(Nil, ConstructionError) {
+) -> Result(Nil, InternalError) {
   loop_vertices(segments)
   |> validate_chord_polygon_convex(orientation)
 }
@@ -2571,7 +2571,7 @@ fn validate_loop_endpoint_convexity(
 fn validate_loop_segment_convexity(
   segments: List(svg_path.Segment),
   orientation: LoopOrientation,
-) -> Result(Nil, ConstructionError) {
+) -> Result(Nil, InternalError) {
   int.range(
     from: 0,
     to: list.length(segments) - 1,
@@ -2591,7 +2591,7 @@ fn point_exact_loop_tangent_candidates(
   loop: Loop,
   point: svg_path.Point,
   orientation: LoopOrientation,
-) -> Result(List(LoopTangentCandidate), ConstructionError) {
+) -> Result(List(LoopTangentCandidate), InternalError) {
   let Loop(segments:) = loop
   int.range(
     from: 0,
@@ -2621,7 +2621,7 @@ fn exact_loop_endpoint_tangent_candidate(
   index: Int,
   point: svg_path.Point,
   orientation: LoopOrientation,
-) -> Result(List(LoopTangentCandidate), ConstructionError) {
+) -> Result(List(LoopTangentCandidate), InternalError) {
   let count = list.length(segments)
   let segment = segment_at(segments, index)
   let previous = segment_at(segments, previous_index(index, count))
@@ -2653,7 +2653,7 @@ fn exact_loop_interior_tangent_candidates(
   index: Int,
   point: svg_path.Point,
   orientation _: LoopOrientation,
-) -> Result(List(LoopTangentCandidate), ConstructionError) {
+) -> Result(List(LoopTangentCandidate), InternalError) {
   let segment = segment_at(segments, index)
   use roots <- result.try(segment_point_tangent_roots(segment, point))
 
@@ -2680,7 +2680,7 @@ fn exact_loop_interior_tangent_candidates(
 fn segment_point_tangent_roots(
   segment: svg_path.Segment,
   point: svg_path.Point,
-) -> Result(List(Float), ConstructionError) {
+) -> Result(List(Float), InternalError) {
   case segment {
     svg_path.Line(..) -> Ok([])
     svg_path.QuadraticBezier(start:, control:, end:) -> {
@@ -2715,7 +2715,7 @@ fn arc_point_tangent_roots(
   sweep: Bool,
   end: svg_path.Point,
   point: svg_path.Point,
-) -> Result(List(Float), ConstructionError) {
+) -> Result(List(Float), InternalError) {
   let endpoint =
     ellipse.EndpointArcData(
       start: to_ellipse_point(start),
@@ -2946,7 +2946,7 @@ fn loop_tangent_chains_to_subpaths(
   second: LoopTangentCandidate,
   point: svg_path.Point,
   orientation: LoopOrientation,
-) -> Result(#(svg_path.Subpath, svg_path.Subpath), ConstructionError) {
+) -> Result(#(svg_path.Subpath, svg_path.Subpath), InternalError) {
   let LoopTangentCandidate(param: first_param, point: _) = first
   let LoopTangentCandidate(param: second_param, point: _) = second
   let first_segments = loop_piece_segments(loop, first_param, second_param)
@@ -2966,7 +2966,7 @@ fn loop_tangent_chains_to_subpaths(
 
 fn build_open_subpath_from_segments(
   segments: List(svg_path.Segment),
-) -> Result(svg_path.Subpath, ConstructionError) {
+) -> Result(svg_path.Subpath, InternalError) {
   let segments = remove_point_like_segments(segments)
   case segments {
     [] -> Error(TangentSearchDegenerateLoop)
@@ -3004,7 +3004,7 @@ fn segment_chain_is_outside(
 fn validate_chord_polygon_convex(
   vertices: List(svg_path.Point),
   orientation: LoopOrientation,
-) -> Result(Nil, ConstructionError) {
+) -> Result(Nil, InternalError) {
   int.range(
     from: 0,
     to: list.length(vertices) - 1,
@@ -3174,7 +3174,7 @@ fn tangent_chains_to_subpaths(
   second: TangentCandidate,
   point: svg_path.Point,
   orientation: LoopOrientation,
-) -> Result(#(svg_path.Subpath, svg_path.Subpath), ConstructionError) {
+) -> Result(#(svg_path.Subpath, svg_path.Subpath), InternalError) {
   let TangentCandidate(vertex_index: first_index, point: _) = first
   let TangentCandidate(vertex_index: second_index, point: _) = second
   let first_chain = vertex_chain(vertices, from: first_index, to: second_index)
@@ -3217,7 +3217,7 @@ fn vertex_chain_is_outside(
 
 fn build_open_subpath_from_vertices(
   vertices: List(svg_path.Point),
-) -> Result(svg_path.Subpath, ConstructionError) {
+) -> Result(svg_path.Subpath, InternalError) {
   case vertices_to_lines(vertices) {
     [] -> Error(TangentSearchDegenerateLoop)
     segments ->
@@ -3452,7 +3452,7 @@ fn bounding_box_polygon(box: svg_path.BoundingBox) -> ConvexPolygon {
 
 fn line_hull(
   segment: svg_path.Segment,
-) -> Result(svg_path.Subpath, ConstructionError) {
+) -> Result(svg_path.Subpath, InternalError) {
   case segment_is_point_like(segment) {
     True -> build_hull(segment, [HullLine(0.0, 0.0), HullLine(0.0, 0.0)])
     False -> build_hull(segment, [HullLine(0.0, 1.0), HullLine(1.0, 0.0)])
@@ -3461,7 +3461,7 @@ fn line_hull(
 
 fn simple_curve_hull(
   segment: svg_path.Segment,
-) -> Result(svg_path.Subpath, ConstructionError) {
+) -> Result(svg_path.Subpath, InternalError) {
   case segment_is_point_like(segment) {
     True -> build_hull(segment, [HullLine(0.0, 0.0), HullLine(0.0, 0.0)])
     False -> build_hull(segment, [HullCurve(0.0, 1.0), HullLine(1.0, 0.0)])
@@ -3470,7 +3470,7 @@ fn simple_curve_hull(
 
 fn cubic_hull(
   segment: svg_path.Segment,
-) -> Result(svg_path.Subpath, ConstructionError) {
+) -> Result(svg_path.Subpath, InternalError) {
   case segment_is_point_like(segment) {
     True -> build_hull(segment, [HullLine(0.0, 0.0), HullLine(0.0, 0.0)])
     False -> {
@@ -3489,14 +3489,14 @@ fn cubic_hull(
 fn build_hull(
   segment: svg_path.Segment,
   pieces: List(HullPiece),
-) -> Result(svg_path.Subpath, ConstructionError) {
+) -> Result(svg_path.Subpath, InternalError) {
   use segments <- result.try(pieces_to_segments(segment, pieces))
   build_closed_subpath(segments)
 }
 
 fn build_closed_subpath(
   segments: List(svg_path.Segment),
-) -> Result(svg_path.Subpath, ConstructionError) {
+) -> Result(svg_path.Subpath, InternalError) {
   use subpath <- result.try(
     svg_path.subpath_with(segments, policy: svg_path.Wiggle)
     |> map_path_error(function: BuildClosedSubpath, operation: SubpathWith),
@@ -3524,7 +3524,7 @@ fn build_closed_subpath(
 fn union_loop_segments(
   left: List(svg_path.Segment),
   right: List(svg_path.Segment),
-) -> Result(List(svg_path.Segment), ConstructionError) {
+) -> Result(List(svg_path.Segment), InternalError) {
   let loop_a = Loop(left)
   let loop_b = Loop(right)
   let pieces =
@@ -3546,7 +3546,7 @@ fn union_loop_segments(
 fn dominant_loop_segments(
   loop_a: Loop,
   loop_b: Loop,
-) -> Result(List(svg_path.Segment), ConstructionError) {
+) -> Result(List(svg_path.Segment), InternalError) {
   case loop_support_dominance(loop_a, loop_b, loop_union_sample_count) {
     LoopADominates -> {
       let Loop(segments:) = loop_a
@@ -3721,7 +3721,7 @@ fn find_seeded_worst_direction(
   loop_b: Loop,
   direction direction: Float,
   threshold threshold: Float,
-) -> Result(#(Float, Float), ConstructionError) {
+) -> Result(#(Float, Float), InternalError) {
   let max_drift = threshold
   let initial =
     SeededWorstDirectionState(
@@ -4663,7 +4663,7 @@ fn support_candidate(
 
 fn reject_consecutive_curves(
   pieces: List(HullPiece),
-) -> Result(List(HullPiece), ConstructionError) {
+) -> Result(List(HullPiece), InternalError) {
   case has_consecutive_curves(pieces) {
     True -> Error(ConsecutiveCurves)
     False -> Ok(pieces)
@@ -4707,7 +4707,7 @@ fn hull_pieces_are_consecutive_curves(
 fn pieces_to_segments(
   segment: svg_path.Segment,
   pieces: List(HullPiece),
-) -> Result(List(svg_path.Segment), ConstructionError) {
+) -> Result(List(svg_path.Segment), InternalError) {
   list.fold(pieces, Ok([]), fn(segments, piece) {
     use segments <- result.try(segments)
     use segment <- result.try(piece_to_segment(segment, piece))
@@ -4719,7 +4719,7 @@ fn pieces_to_segments(
 fn piece_to_segment(
   segment: svg_path.Segment,
   piece: HullPiece,
-) -> Result(svg_path.Segment, ConstructionError) {
+) -> Result(svg_path.Segment, InternalError) {
   case piece {
     HullCurve(from, to) ->
       svg_path.segment_between(segment, from: from, to: to)
@@ -4930,7 +4930,7 @@ fn map_path_error(
   result: Result(a, svg_path.Error),
   function function: ConstructionFunction,
   operation operation: ConstructionOperation,
-) -> Result(a, ConstructionError) {
+) -> Result(a, InternalError) {
   result.map_error(result, fn(error) {
     ConstructionPathFailure(function:, operation:, error:)
   })
