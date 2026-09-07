@@ -479,8 +479,8 @@ fn selected_segments_to_path(
   text_box: svg_path.BoundingBox,
   x_scale: Float,
   start_distance: Float,
-  coil_map: fn(svg_path.Point) -> Result(svg_path.Point, offset.InternalError),
-) -> Result(svg_path.Path, svg_path.PointMapError(offset.InternalError)) {
+  coil_map: fn(svg_path.Point) -> Result(svg_path.Point, offset.Error),
+) -> Result(svg_path.Path, svg_path.PointMapError(offset.Error)) {
   selected_segments_to_subpaths(
     segments,
     text_box,
@@ -505,9 +505,9 @@ fn selected_segments_to_subpaths(
   text_box: svg_path.BoundingBox,
   x_scale: Float,
   start_distance: Float,
-  coil_map: fn(svg_path.Point) -> Result(svg_path.Point, offset.InternalError),
+  coil_map: fn(svg_path.Point) -> Result(svg_path.Point, offset.Error),
   mapped: List(svg_path.Subpath),
-) -> Result(List(svg_path.Subpath), svg_path.PointMapError(offset.InternalError)) {
+) -> Result(List(svg_path.Subpath), svg_path.PointMapError(offset.Error)) {
   case segments {
     [] -> Ok(list.reverse(mapped))
     [segment, ..rest] -> {
@@ -540,7 +540,7 @@ fn map_control_points(
   text_box: svg_path.BoundingBox,
   x_scale: Float,
   start_distance: Float,
-  coil_map: fn(svg_path.Point) -> Result(svg_path.Point, offset.InternalError),
+  coil_map: fn(svg_path.Point) -> Result(svg_path.Point, offset.Error),
   mapped mapped: List(ControlMark),
 ) -> List(ControlMark) {
   case points {
@@ -652,8 +652,8 @@ fn mapped_rectangle_subpath(
   text_box: svg_path.BoundingBox,
   x_scale: Float,
   start_distance: Float,
-  coil_map: fn(svg_path.Point) -> Result(svg_path.Point, offset.InternalError),
-) -> Result(svg_path.Subpath, svg_path.PointMapError(offset.InternalError)) {
+  coil_map: fn(svg_path.Point) -> Result(svg_path.Point, offset.Error),
+) -> Result(svg_path.Subpath, svg_path.PointMapError(offset.Error)) {
   rectangle_points(rectangle, side_samples: 60, points: [])
   |> map_rectangle_points(text_box, x_scale, start_distance, coil_map, [])
   |> result.map(points_to_subpath)
@@ -765,7 +765,7 @@ fn print_vertical_base_diagnostics(
   verticals: List(svg_path.Subpath),
   text_box: svg_path.BoundingBox,
   x_scale: Float,
-  coil_map: fn(svg_path.Point) -> Result(svg_path.Point, offset.InternalError),
+  coil_map: fn(svg_path.Point) -> Result(svg_path.Point, offset.Error),
 ) -> Nil {
   let samples =
     verticals
@@ -778,7 +778,7 @@ fn print_vertical_base_diagnostics(
 fn mapped_vertical_base_sample(
   text_box: svg_path.BoundingBox,
   x_scale: Float,
-  coil_map: fn(svg_path.Point) -> Result(svg_path.Point, offset.InternalError),
+  coil_map: fn(svg_path.Point) -> Result(svg_path.Point, offset.Error),
 ) -> fn(svg_path.Subpath) -> #(svg_path.Point, Float) {
   fn(line: svg_path.Subpath) {
     let points = subpath_polyline_points(line)
@@ -902,9 +902,9 @@ fn map_rectangle_points(
   text_box: svg_path.BoundingBox,
   x_scale: Float,
   start_distance: Float,
-  coil_map: fn(svg_path.Point) -> Result(svg_path.Point, offset.InternalError),
+  coil_map: fn(svg_path.Point) -> Result(svg_path.Point, offset.Error),
   mapped: List(svg_path.Point),
-) -> Result(List(svg_path.Point), svg_path.PointMapError(offset.InternalError)) {
+) -> Result(List(svg_path.Point), svg_path.PointMapError(offset.Error)) {
   case points {
     [] -> Ok(list.reverse(mapped))
     [point, ..rest] -> {
@@ -930,8 +930,8 @@ fn map_vertical_grid(
   verticals: List(svg_path.Subpath),
   text_box: svg_path.BoundingBox,
   x_scale: Float,
-  coil_map: fn(svg_path.Point) -> Result(svg_path.Point, offset.InternalError),
-) -> Result(List(svg_path.Subpath), svg_path.PointMapError(offset.InternalError)) {
+  coil_map: fn(svg_path.Point) -> Result(svg_path.Point, offset.Error),
+) -> Result(List(svg_path.Subpath), svg_path.PointMapError(offset.Error)) {
   map_vertical_grid_loop(verticals, text_box, x_scale, coil_map, mapped: [])
 }
 
@@ -939,9 +939,9 @@ fn map_vertical_grid_loop(
   verticals: List(svg_path.Subpath),
   text_box: svg_path.BoundingBox,
   x_scale: Float,
-  coil_map: fn(svg_path.Point) -> Result(svg_path.Point, offset.InternalError),
+  coil_map: fn(svg_path.Point) -> Result(svg_path.Point, offset.Error),
   mapped mapped: List(svg_path.Subpath),
-) -> Result(List(svg_path.Subpath), svg_path.PointMapError(offset.InternalError)) {
+) -> Result(List(svg_path.Subpath), svg_path.PointMapError(offset.Error)) {
   case verticals {
     [] -> Ok(list.reverse(mapped))
     [line, ..rest] -> {
@@ -1028,8 +1028,8 @@ fn repeated_text_on_coil(
   text_path: svg_path.Path,
   text_box: svg_path.BoundingBox,
   layout: TextLayout,
-  coil_map: fn(svg_path.Point) -> Result(svg_path.Point, offset.InternalError),
-) -> Result(svg_path.Path, svg_path.PointMapError(offset.InternalError)) {
+  coil_map: fn(svg_path.Point) -> Result(svg_path.Point, offset.Error),
+) -> Result(svg_path.Path, svg_path.PointMapError(offset.Error)) {
   let copies =
     repeated_text_copies(
       text_path,
@@ -1077,7 +1077,7 @@ fn repeated_text_copies(
   text_path: svg_path.Path,
   text_box: svg_path.BoundingBox,
   layout: TextLayout,
-  coil_map: fn(svg_path.Point) -> Result(svg_path.Point, offset.InternalError),
+  coil_map: fn(svg_path.Point) -> Result(svg_path.Point, offset.Error),
   index index: Int,
   mapped mapped: List(svg_path.Path),
 ) -> List(svg_path.Path) {
@@ -1113,8 +1113,8 @@ fn map_text_copy_to_coil(
   x_scale: Float,
   start_distance: Float,
   available_width available_width: Float,
-  coil_map coil_map: fn(svg_path.Point) -> Result(svg_path.Point, offset.InternalError),
-) -> Result(svg_path.Path, svg_path.PointMapError(offset.InternalError)) {
+  coil_map coil_map: fn(svg_path.Point) -> Result(svg_path.Point, offset.Error),
+) -> Result(svg_path.Path, svg_path.PointMapError(offset.Error)) {
   svg_path.path_try_map_points(text_path, with: fn(point) {
     source_point_to_offset_point(
       svg_path.Point(
@@ -1134,8 +1134,8 @@ fn source_point_to_offset_point(
   text_box: svg_path.BoundingBox,
   x_scale: Float,
   start_distance: Float,
-  coil_map: fn(svg_path.Point) -> Result(svg_path.Point, offset.InternalError),
-) -> Result(svg_path.Point, offset.InternalError) {
+  coil_map: fn(svg_path.Point) -> Result(svg_path.Point, offset.Error),
+) -> Result(svg_path.Point, offset.Error) {
   let height = svg_path.bounding_box_height(text_box)
   let source_x = point.x -. text_box.min.x
   let distance = start_distance +. source_x *. x_scale
@@ -1231,8 +1231,8 @@ fn decaying_spiral_tangent_at_degrees(degrees: Float) -> svg_path.Point {
 
 fn decaying_offset_map(
   spiral_length: Float,
-  spiral_map: fn(svg_path.Point) -> Result(svg_path.Point, offset.InternalError),
-) -> fn(svg_path.Point) -> Result(svg_path.Point, offset.InternalError) {
+  spiral_map: fn(svg_path.Point) -> Result(svg_path.Point, offset.Error),
+) -> fn(svg_path.Point) -> Result(svg_path.Point, offset.Error) {
   fn(point: svg_path.Point) {
     let mapped_length = slowed_spiral_length(point.x, spiral_length)
     let length =

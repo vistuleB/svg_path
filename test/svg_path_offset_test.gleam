@@ -612,14 +612,14 @@ pub fn subpath_offset_map_rejects_open_subpath_distances_outside_length_test() {
   let assert Ok(map) = offset.subpath_offset_map(subpath)
 
   assert map(svg_path.Point(11.0, 0.0))
-    == Error(offset.InternalInvalidOffsetMapDistance(11.0, 10.0))
+    == Error(offset.InvalidOffsetMapDistance(11.0, 10.0))
 }
 
 pub fn subpath_offset_map_rejects_zero_length_subpath_test() {
   let subpath = svg_path.subpath_empty(at: svg_path.Point(0.0, 0.0))
 
   assert offset.subpath_offset_map(subpath)
-    == Error(offset.InternalDegenerateTangent(0.0))
+    == Error(offset.DegenerateTangent(0.0))
 }
 
 pub fn subpath_offset_map_composes_with_try_map_path_points_test() {
@@ -944,7 +944,7 @@ pub fn segment_rejects_collapsed_circular_arc_offset_test() {
       offset: 40.0,
       join: offset.Miter(offset.default_miter_limit),
     )
-    == Error(offset.InternalDegenerateTangent(0.0))
+    == Error(offset.DegenerateTangent(0.0))
 }
 
 pub fn subpath_offsets_one_small_circular_arc_as_arc_test() {
@@ -1024,7 +1024,7 @@ pub fn segment_rejects_invalid_options_test() {
       join: offset.Miter(offset.default_miter_limit),
       options:,
     )
-    == Error(offset.InternalInvalidTolerance(0.0))
+    == Error(offset.InvalidTolerance(0.0))
 }
 
 pub fn default_offset_trimming_uses_precise_projection_test() {
@@ -1050,7 +1050,7 @@ pub fn segment_rejects_negative_stalled_offset_diameter_test() {
       join: offset.Miter(offset.default_miter_limit),
       options:,
     )
-    == Error(offset.InternalInvalidStalledOffsetDiameter(-1.0))
+    == Error(offset.InvalidStalledOffsetDiameter(-1.0))
 }
 
 pub fn segment_rejects_negative_tangent_heal_angle_test() {
@@ -1068,7 +1068,7 @@ pub fn segment_rejects_negative_tangent_heal_angle_test() {
       join: offset.Miter(offset.default_miter_limit),
       options:,
     )
-    == Error(offset.InternalInvalidTangentHealAngleDegrees(-1.0))
+    == Error(offset.InvalidTangentHealAngleDegrees(-1.0))
 }
 
 pub fn segment_rejects_zero_length_line_test() {
@@ -1083,7 +1083,7 @@ pub fn segment_rejects_zero_length_line_test() {
       offset: 1.0,
       join: offset.Miter(offset.default_miter_limit),
     )
-    == Error(offset.InternalDegenerateTangent(0.0))
+    == Error(offset.DegenerateTangent(0.0))
 }
 
 pub fn subpath_untrimmed_offsets_open_polyline_with_bevel_join_test() {
