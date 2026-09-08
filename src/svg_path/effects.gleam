@@ -919,18 +919,26 @@ fn rounded_subpath_segments(
     [info, ..rest] -> {
       let start_trim = start_trim(info.index, corners, subpath)
       let end_trim = end_trim(info.index, corners)
+      let has_trim = start_trim >. 0.0 || end_trim >. 0.0
       case
-        start_trim +. end_trim >=. info.length -. options.distance_tolerance
+        has_trim
+        && start_trim +. end_trim >=. info.length -. options.distance_tolerance
       {
         True -> Error(CornerTrimsOverlap(info.index))
         False -> {
           use shortened <- result.try(
-            svg_path.segment_between_lengths_with(
-              info.segment,
-              from: start_trim,
-              to: info.length -. end_trim,
-              options: options.length_options,
-            )
+            case has_trim {
+              // Untouched segments, including zero-length ones, are not
+              // over-consumed and need no inverse-length reconstruction.
+              False -> Ok(info.segment)
+              True ->
+                svg_path.segment_between_lengths_with(
+                  info.segment,
+                  from: start_trim,
+                  to: info.length -. end_trim,
+                  options: options.length_options,
+                )
+            }
             |> result.map_error(PathError),
           )
           let rounded = case corner_after(info.index, corners) {
@@ -953,10 +961,11 @@ fn first_overlapping_segment(
   case infos {
     [] -> Ok(Nil)
     [info, ..rest] -> {
+      let start_trim = start_trim(info.index, corners, subpath)
+      let end_trim = end_trim(info.index, corners)
       case
-        start_trim(info.index, corners, subpath)
-        +. end_trim(info.index, corners)
-        >=. info.length -. tolerance
+        { start_trim >. 0.0 || end_trim >. 0.0 }
+        && start_trim +. end_trim >=. info.length -. tolerance
       {
         True -> Error(info.index)
         False -> first_overlapping_segment(corners, rest, subpath, tolerance)

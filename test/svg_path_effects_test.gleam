@@ -6,6 +6,52 @@ import svg_path/effects
 
 const tolerance = 0.000001
 
+pub fn leave_corner_preserves_untrimmed_zero_length_segments_test() {
+  let options = effects.default_round_corner_options()
+  let options =
+    effects.RoundCornerOptions(..options, failure: effects.LeaveCorner)
+  list.each(
+    [
+      [
+        svg_path.Point(0.0, 0.0),
+        svg_path.Point(0.0, 0.0),
+        svg_path.Point(10.0, 0.0),
+        svg_path.Point(10.0, 10.0),
+      ],
+      [
+        svg_path.Point(0.0, 0.0),
+        svg_path.Point(10.0, 0.0),
+        svg_path.Point(10.0, 0.0),
+        svg_path.Point(10.0, 10.0),
+      ],
+      [
+        svg_path.Point(0.0, 0.0),
+        svg_path.Point(10.0, 0.0),
+        svg_path.Point(10.0, 10.0),
+        svg_path.Point(10.0, 10.0),
+      ],
+    ],
+    fn(points) {
+      let source = svg_path.subpath_assert_polyline(points)
+      let assert Ok(rounded) =
+        effects.round_subpath_corners_with(source, 1.0, options)
+      assert svg_path.subpath_start(rounded) == svg_path.subpath_start(source)
+      assert svg_path.subpath_end(rounded) == svg_path.subpath_end(source)
+      let original_zero =
+        svg_path.subpath_segments(source)
+        |> list.filter(fn(s) {
+          svg_path.segment_start(s) == svg_path.segment_end(s)
+        })
+      let remaining_zero =
+        svg_path.subpath_segments(rounded)
+        |> list.filter(fn(s) {
+          svg_path.segment_start(s) == svg_path.segment_end(s)
+        })
+      assert remaining_zero == original_zero
+    },
+  )
+}
+
 pub fn normalize_degenerate_segments_accepts_zero_tolerance_test() {
   let subpath =
     svg_path.segment_as_subpath(svg_path.Line(
