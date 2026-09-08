@@ -189,6 +189,9 @@ pub fn transformed_axes(
 ///
 /// If the collapsed arc's extrema require more than one segment to preserve its
 /// out-and-back motion, use `collapsed_arc_subpath`.
+/// A monotone collapse preserves the transformed endpoints in traversal order.
+/// Otherwise this single-line approximation spans the extrema, oriented by the
+/// net endpoint displacement (low to high if that displacement is zero).
 @internal
 pub fn collapsed_arc_line(
   start start: EllipsePoint,
@@ -223,7 +226,7 @@ pub fn collapsed_arc_line(
               let alpha = dot(x_axis, axis)
               let beta = dot(y_axis, axis)
               let angles =
-                collapsed_candidate_angles(
+                collapsed_ordered_angles(
                   arc.start_angle,
                   arc.delta_angle,
                   alpha,
@@ -243,7 +246,27 @@ pub fn collapsed_arc_line(
                   #(float.min(low, scalar), float.max(high, scalar))
                 })
 
-              Ok(#(offset(center, axis, low), offset(center, axis, high)))
+              let transformed_start = transform_point(start, by: transform)
+              let transformed_end = transform_point(end, by: transform)
+              case angles {
+                [_, _] -> Ok(#(transformed_start, transformed_end))
+                _ -> {
+                  let forward =
+                    dot(transformed_end, axis) >=. dot(transformed_start, axis)
+                  case forward {
+                    True ->
+                      Ok(#(
+                        offset(center, axis, low),
+                        offset(center, axis, high),
+                      ))
+                    False ->
+                      Ok(#(
+                        offset(center, axis, high),
+                        offset(center, axis, low),
+                      ))
+                  }
+                }
+              }
             }
           }
         }
@@ -375,6 +398,9 @@ pub fn arc_bounding_box(arc: CenterArcData) -> BoundingBox {
 
 /// Return the parameters where an arc's projection onto `direction` is
 /// stationary.
+///
+/// Includes each visit for sweeps longer than one turn, in parameter order.
+/// A zero sweep or constant projection has no isolated extrema and returns `[]`.
 pub fn arc_projection_extrema(
   arc: CenterArcData,
   direction direction: EllipsePoint,
@@ -386,20 +412,38 @@ pub fn arc_projection_extrema(
   let alpha = direction.x *. x_axis_x +. direction.y *. x_axis_y
   let beta = direction.x *. y_axis_x +. direction.y *. y_axis_y
 
-  case number.is_zero(alpha) && number.is_zero(beta) {
+  case
+    number.is_zero(arc.delta_angle)
+    || { number.is_zero(alpha) && number.is_zero(beta) }
+  {
     True -> []
     False -> {
       let support_angle = trig.atan2_degrees(beta, alpha)
       [support_angle, support_angle +. 180.0]
-      |> list.filter(fn(angle) {
-        angle_in_sweep(angle, arc.start_angle, arc.delta_angle)
+      |> list.flat_map(fn(angle) {
+        repeated_angle_parameters(
+          angle_progress(angle, arc.start_angle, arc.delta_angle),
+          float.absolute_value(arc.delta_angle),
+          [],
+        )
       })
-      |> list.map(fn(angle) {
-        angle_progress(angle, arc.start_angle, arc.delta_angle)
-        /. float.absolute_value(arc.delta_angle)
-      })
-      |> list.filter(fn(t) { t >=. 0.0 && t <=. 1.0 })
+      |> list.sort(float.compare)
     }
+  }
+}
+
+fn repeated_angle_parameters(
+  progress: Float,
+  sweep: Float,
+  found: List(Float),
+) -> List(Float) {
+  case progress >. sweep {
+    True -> list.reverse(found)
+    False ->
+      repeated_angle_parameters(progress +. full_turn, sweep, [
+        progress /. sweep,
+        ..found
+      ])
   }
 }
 
@@ -781,7 +825,9 @@ fn do_endpoint_to_center(
   let rx = float.absolute_value(radius.x)
   let ry = float.absolute_value(radius.y)
 
-  case rx <=. length_tolerance || ry <=. length_tolerance || start == end {
+  let coincident =
+    number.is_zero(start.x -. end.x) && number.is_zero(start.y -. end.y)
+  case rx <=. length_tolerance || ry <=. length_tolerance || coincident {
     True -> Error(DegenerateInputArc)
     False -> {
       let cos_phi = trig.cos_degrees(x_axis_rotation)
@@ -900,21 +946,6 @@ fn collapsed_axis(
 
 fn fully_collapsed(x_axis: EllipsePoint, y_axis: EllipsePoint) -> Bool {
   length(x_axis) <=. length_tolerance && length(y_axis) <=. length_tolerance
-}
-
-fn collapsed_candidate_angles(
-  start_angle: Float,
-  delta_angle: Float,
-  alpha: Float,
-  beta: Float,
-) -> List(Float) {
-  let end_angle = start_angle +. delta_angle
-  let maximum_angle = trig.atan2_degrees(beta, alpha)
-  let minimum_angle = maximum_angle +. half_turn
-
-  [minimum_angle, maximum_angle]
-  |> list.filter(fn(angle) { angle_in_sweep(angle, start_angle, delta_angle) })
-  |> list.append([start_angle, end_angle])
 }
 
 fn collapsed_ordered_angles(
@@ -1126,12 +1157,12 @@ fn length(point: EllipsePoint) -> Float {
 }
 
 fn normalize(point: EllipsePoint) -> EllipsePoint {
-  let point_length = length(point)
-
-  case point_length <=. scalar_tolerance {
-    True -> EllipsePoint(1.0, 0.0)
-    False -> scale(point, 1.0 /. point_length)
-  }
+  // The eigenvector caller guarantees a nonzero x component. Its magnitude
+  // reflects the ellipse's squared scale, not the reliability of its direction.
+  let largest =
+    float.max(float.absolute_value(point.x), float.absolute_value(point.y))
+  let scaled = EllipsePoint(point.x /. largest, point.y /. largest)
+  scale(scaled, 1.0 /. number.hypot(scaled.x, scaled.y))
 }
 
 fn scale(point: EllipsePoint, factor: Float) -> EllipsePoint {

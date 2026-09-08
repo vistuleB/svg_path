@@ -555,7 +555,7 @@ pub fn graceful_arc_transform_returns_collapsed_line_test() {
   let matrix = transform.matrix(a: 1.0, b: 0.0, c: 0.0, d: 0.0, e: 0.0, f: 0.0)
   let assert Ok(segment) = transform.segment_gracefully(arc, by: matrix)
 
-  assert serialize.segment(segment) == "M -5 0 H 5"
+  assert serialize.segment(segment) == "M 5 0 H -5"
 }
 
 pub fn graceful_arc_transform_follows_full_collapse_to_point_test() {
@@ -727,7 +727,7 @@ pub fn graceful_arc_transform_returns_vertical_collapsed_line_test() {
   let matrix = transform.matrix(a: 0.0, b: 0.0, c: 0.0, d: 1.0, e: 10.0, f: 0.0)
   let assert Ok(segment) = transform.segment_gracefully(arc, by: matrix)
 
-  assert serialize.segment(segment) == "M 10 -5 V 5"
+  assert serialize.segment(segment) == "M 10 5 V -5"
 }
 
 pub fn graceful_non_degenerate_arc_transform_returns_arc_test() {
