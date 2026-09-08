@@ -2443,6 +2443,7 @@ pub fn subpath_parameter_from_end(
 /// 0.0`. The exact end of a closed subpath's last segment canonicalizes to
 /// `SubpathParameter(0, 0.0)`. The end of an open subpath's last segment
 /// remains at `t = 1.0`. Parameters merely near a boundary are unchanged.
+/// A local `t = -0.0` canonicalizes to `0.0`.
 pub fn subpath_parameter_canonicalize(
   subpath: Subpath,
   parameter parameter: SubpathParameter,
@@ -2873,6 +2874,7 @@ pub fn segment_reverse(segment: Segment) -> Segment {
 /// `t` is not clamped. Values outside `0.0..1.0` extrapolate along the same
 /// segment.
 pub fn segment_point(segment: Segment, at t: Float) -> Result(Point, Error) {
+  let t = number.normalize_zero(t)
   case t {
     0.0 -> Ok(segment_start(segment))
     1.0 -> Ok(segment_end(segment))
@@ -2979,6 +2981,7 @@ pub fn segment_directions_with(
   options options: DirectionOptions,
 ) -> Result(Directions, Error) {
   use _ <- result.try(validate_direction_options(options))
+  let t = number.normalize_zero(t)
 
   case segment {
     Arc(..) -> {
@@ -4624,6 +4627,8 @@ pub fn segment_between(
   from from: Float,
   to to: Float,
 ) -> Result(Segment, Error) {
+  let from = number.normalize_zero(from)
+  let to = number.normalize_zero(to)
   case from == to {
     True -> {
       case segment_point(segment, at: from) {
@@ -8523,6 +8528,7 @@ fn canonical_subpath_parameter(
   closed closed: Bool,
 ) -> CanonicalSubpathParameter {
   let SubpathParameter(segment_index:, t:) = parameter
+  let t = number.normalize_zero(t)
   case t == 1.0 && segment_index + 1 < length {
     True -> CanonicalSubpathParameter(segment_index: segment_index + 1, t: 0.0)
     False ->
