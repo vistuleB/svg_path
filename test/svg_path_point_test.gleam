@@ -1,3 +1,4 @@
+import gleam/list
 import gleeunit
 import svg_path
 import svg_path/point
@@ -118,6 +119,54 @@ pub fn normalize_test() {
   let assert Ok(unit) = point.normalize(svg_path.Point(3.0, 4.0))
   assert point.near(unit, svg_path.Point(0.6, 0.8), tolerance: 0.000000001)
   assert point.normalize(svg_path.Point(0.0, 0.0)) == Error(Nil)
+}
+
+pub fn normalize_extreme_cardinal_vectors_test() {
+  list.each([1.0e-310, 1.7976931348623157e308], fn(magnitude) {
+    assert point.normalize(svg_path.Point(magnitude, 0.0)) == Ok(point.right)
+    assert point.normalize(svg_path.Point(0.0 -. magnitude, 0.0))
+      == Ok(point.left)
+    assert point.normalize(svg_path.Point(0.0, magnitude)) == Ok(point.down)
+    assert point.normalize(svg_path.Point(0.0, 0.0 -. magnitude))
+      == Ok(point.up)
+  })
+}
+
+pub fn normalize_extreme_noncardinal_vectors_test() {
+  list.each([1.0e-310, 1.7976931348623157e308], fn(magnitude) {
+    list.each([1.0, -1.0], fn(sign_x) {
+      list.each([1.0, -1.0], fn(sign_y) {
+        let assert Ok(unit) =
+          point.normalize(svg_path.Point(
+            sign_x *. magnitude,
+            sign_y *. magnitude,
+          ))
+        assert point.near(
+          unit,
+          svg_path.Point(
+            sign_x *. 0.7071067811865475,
+            sign_y *. 0.7071067811865475,
+          ),
+          tolerance: 1.0e-15,
+        )
+      })
+    })
+  })
+  list.each(
+    [svg_path.Point(3.0e-310, -4.0e-310), svg_path.Point(3.0e307, -4.0e307)],
+    fn(vector) {
+      let assert Ok(unit) = point.normalize(vector)
+      assert point.near(unit, svg_path.Point(0.6, -0.8), tolerance: 1.0e-13)
+    },
+  )
+}
+
+pub fn normalize_signed_zero_vectors_test() {
+  list.each([0.0, -0.0], fn(x) {
+    list.each([0.0, -0.0], fn(y) {
+      assert point.normalize(svg_path.Point(x, y)) == Error(Nil)
+    })
+  })
 }
 
 pub fn projection_test() {

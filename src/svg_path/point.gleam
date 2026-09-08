@@ -150,11 +150,20 @@ pub fn lerp(
 }
 
 /// Return a unit vector with the same direction as `point`.
+/// Returns `Error(Nil)` for a zero vector. Finite nonzero vectors are scaled
+/// before computing their length to avoid intermediate overflow or underflow.
 pub fn normalize(point: svg_path.Point) -> Result(svg_path.Point, Nil) {
-  let length = norm(point)
-  case number.is_zero(length) {
+  let largest =
+    float.max(float.absolute_value(point.x), float.absolute_value(point.y))
+  case number.is_zero(largest) {
     True -> Error(Nil)
-    False -> Ok(scale(point, by: 1.0 /. length))
+    False -> {
+      // Divide coordinates directly: the reciprocal of a subnormal scale can
+      // overflow even though each coordinate divided by that scale is bounded.
+      let scaled = svg_path.Point(point.x /. largest, point.y /. largest)
+      let length = norm(scaled)
+      Ok(svg_path.Point(scaled.x /. length, scaled.y /. length))
+    }
   }
 }
 
