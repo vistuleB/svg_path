@@ -38,6 +38,7 @@ import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
+import svg_path/internal/number
 import svg_path/root
 
 const parameter_tolerance = 0.000000001
@@ -1374,10 +1375,16 @@ fn insert_unique_progress(sorted: List(Float), point: Float) -> List(Float) {
 }
 
 fn interpolate(start: BezierPoint, end: BezierPoint, t: Float) -> BezierPoint {
-  BezierPoint(
-    start.x +. { end.x -. start.x } *. t,
-    start.y +. { end.y -. start.y } *. t,
-  )
+  // Avoid rounding away from the stored endpoints, including when t is -0.0.
+  case number.is_zero(t), t == 1.0 {
+    True, _ -> start
+    _, True -> end
+    False, False ->
+      BezierPoint(
+        start.x +. { end.x -. start.x } *. t,
+        start.y +. { end.y -. start.y } *. t,
+      )
+  }
 }
 
 fn difference(left: BezierPoint, right: BezierPoint) -> BezierPoint {
