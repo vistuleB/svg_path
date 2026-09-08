@@ -82,9 +82,8 @@ type LoopSupport {
   LoopSupport(param: LoopParam, point: svg_path.Point, value: Float)
 }
 
-type LoopParam {
-  LoopParam(segment_index: Int, t: Float)
-}
+type LoopParam =
+  svg_path.SubpathParameter
 
 type Loop {
   Loop(segments: List(svg_path.Segment))
@@ -101,8 +100,16 @@ type ConvexLoop {
 type UnionPiece {
   HullLineAB(LoopParam, LoopParam)
   HullLineBA(LoopParam, LoopParam)
-  LoopPieceA(LoopParam, LoopParam)
-  LoopPieceB(LoopParam, LoopParam)
+  LoopPieceA(LoopPiece)
+  LoopPieceB(LoopPiece)
+}
+
+// Traversal intent is independent of cyclic address equality. In particular,
+// a supporting vertex contributes OnePoint, never an implicit full circuit.
+type LoopPiece {
+  FullLoop
+  OnePoint(at: LoopParam)
+  Portion(from: LoopParam, to: LoopParam)
 }
 
 type LoopWinner {
@@ -2709,7 +2716,7 @@ fn loop_vertex_param_loop(
     [] -> Error(TangentSearchDegenerateLoop)
     [segment, ..rest] ->
       case points_near(svg_path.segment_start(segment), point) {
-        True -> Ok(LoopParam(segment_index: index, t: 0.0))
+        True -> Ok(svg_path.SubpathParameter(segment_index: index, t: 0.0))
         False -> loop_vertex_param_loop(rest, point, index: index + 1)
       }
   }
@@ -2798,7 +2805,12 @@ fn exact_loop_endpoint_tangent_candidate(
 
   case point_loop_view(point, q, arriving, leaving, orientation:) {
     TangentPoint ->
-      Ok([LoopTangentCandidate(param: LoopParam(index, 0.0), point: q)])
+      Ok([
+        LoopTangentCandidate(
+          param: svg_path.SubpathParameter(index, 0.0),
+          point: q,
+        ),
+      ])
     _ -> Ok([])
   }
 }
@@ -2826,7 +2838,10 @@ fn exact_loop_interior_tangent_candidates(
     )
     Ok(
       list.append(candidates, [
-        LoopTangentCandidate(param: LoopParam(index, t), point: q),
+        LoopTangentCandidate(
+          param: svg_path.SubpathParameter(index, t),
+          point: q,
+        ),
       ]),
     )
   })
@@ -3104,8 +3119,10 @@ fn loop_tangent_chains_to_subpaths(
 ) -> Result(#(svg_path.Subpath, svg_path.Subpath), InternalError) {
   let LoopTangentCandidate(param: first_param, point: _) = first
   let LoopTangentCandidate(param: second_param, point: _) = second
-  let first_segments = loop_piece_segments(loop, first_param, second_param)
-  let second_segments = loop_piece_segments(loop, second_param, first_param)
+  let first_segments =
+    loop_piece_segments(loop, loop_portion(loop, first_param, second_param))
+  let second_segments =
+    loop_piece_segments(loop, loop_portion(loop, second_param, first_param))
   use first_subpath <- result.try(build_open_subpath_from_segments(
     first_segments,
   ))
@@ -3756,7 +3773,7 @@ fn loop_union(
 
   case boundaries {
     [] -> all_one_loop(samples)
-    _ -> loop_pieces_from_boundaries(boundaries)
+    _ -> loop_pieces_from_boundaries(boundaries, loop_a, loop_b)
   }
 }
 
@@ -3768,8 +3785,8 @@ fn union_piece_segments(
   pieces
   |> list.flat_map(fn(piece) {
     case piece {
-      LoopPieceA(from, to) -> loop_piece_segments(loop_a, from, to)
-      LoopPieceB(from, to) -> loop_piece_segments(loop_b, from, to)
+      LoopPieceA(piece) -> loop_piece_segments(loop_a, piece)
+      LoopPieceB(piece) -> loop_piece_segments(loop_b, piece)
       HullLineAB(a, b) -> [
         svg_path.Line(start: loop_point(loop_a, a), end: loop_point(loop_b, b)),
       ]
@@ -4085,14 +4102,26 @@ fn loop_bisect_boundary(
 
 fn loop_pieces_from_boundaries(
   boundaries: List(LoopBoundary),
+  loop_a: Loop,
+  loop_b: Loop,
 ) -> List(UnionPiece) {
   boundaries
   |> circular_pairs
   |> list.map(fn(boundary_pair) {
     let #(start_boundary, end_boundary) = boundary_pair
     let loop_piece = case start_boundary.to {
-      LoopA -> LoopPieceA(start_boundary.a.param, end_boundary.a.param)
-      LoopB -> LoopPieceB(start_boundary.b.param, end_boundary.b.param)
+      LoopA ->
+        LoopPieceA(loop_portion(
+          loop_a,
+          start_boundary.a.param,
+          end_boundary.a.param,
+        ))
+      LoopB ->
+        LoopPieceB(loop_portion(
+          loop_b,
+          start_boundary.b.param,
+          end_boundary.b.param,
+        ))
     }
     let line_piece = case end_boundary.from, end_boundary.to {
       LoopA, LoopB -> HullLineAB(end_boundary.a.param, end_boundary.b.param)
@@ -4109,8 +4138,8 @@ fn all_one_loop(samples: List(LoopSample)) -> List(UnionPiece) {
     [] -> []
     [first, ..] -> {
       case first.winner {
-        LoopA -> [LoopPieceA(first.a.param, first.a.param)]
-        LoopB -> [LoopPieceB(first.b.param, first.b.param)]
+        LoopA -> [LoopPieceA(FullLoop)]
+        LoopB -> [LoopPieceB(FullLoop)]
       }
     }
   }
@@ -4137,7 +4166,7 @@ fn segment_loop_support(
 ) -> LoopSupport {
   let assert Ok(sample) = segment_support(segment, angle: angle)
   LoopSupport(
-    param: LoopParam(segment_index: index, t: sample.t),
+    param: svg_path.SubpathParameter(segment_index: index, t: sample.t),
     point: sample.point,
     value: sample.value,
   )
@@ -4145,55 +4174,74 @@ fn segment_loop_support(
 
 fn loop_point(loop: Loop, param: LoopParam) -> svg_path.Point {
   let Loop(segments:) = loop
-  let LoopParam(segment_index:, t:) = param
+  let svg_path.SubpathParameter(segment_index:, t:) = param
   let assert Ok(segment) = nth(segments, segment_index)
   let assert Ok(point) = svg_path.segment_point(segment, at: t)
   point
 }
 
-fn loop_piece_segments(
+fn loop_piece_segments(loop: Loop, piece: LoopPiece) -> List(svg_path.Segment) {
+  case piece {
+    FullLoop -> loop.segments
+    OnePoint(_) -> []
+    Portion(from, to) -> loop_portion_segments(loop, from, to)
+  }
+}
+
+fn loop_portion(loop: Loop, from: LoopParam, to: LoopParam) -> LoopPiece {
+  let from = normalize_loop_param(loop, from)
+  let to = normalize_loop_param(loop, to)
+  case from == to {
+    True -> OnePoint(from)
+    False -> Portion(from, to)
+  }
+}
+
+// Canonicalize exact endpoint aliases, including the closing vertex. Nearby
+// parameters are deliberately not merged: short portions remain portions.
+fn normalize_loop_param(loop: Loop, param: LoopParam) -> LoopParam {
+  case param.t == 1.0 {
+    True ->
+      svg_path.SubpathParameter(
+        next_index(param.segment_index, list.length(loop.segments)),
+        0.0,
+      )
+    False ->
+      case number.is_zero(param.t) {
+        True -> svg_path.SubpathParameter(param.segment_index, 0.0)
+        False -> param
+      }
+  }
+}
+
+fn loop_portion_segments(
   loop: Loop,
   from: LoopParam,
   to: LoopParam,
 ) -> List(svg_path.Segment) {
   let Loop(segments:) = loop
-  let LoopParam(segment_index: from_index, t: from_t) = from
-  let LoopParam(segment_index: to_index, t: to_t) = to
-  case
-    from_index == to_index && float.absolute_value(from_t -. to_t) <=. same_t
-  {
-    True -> segments
-    False ->
-      case from_index == to_index {
-        True ->
-          case from_t <=. to_t {
-            True -> [
-              loop_partial_segment(
-                segment_at(segments, from_index),
-                from_t,
-                to_t,
-              ),
-            ]
-            False ->
-              loop_wrapped_same_segment_piece(
-                segments,
-                from_index,
-                from_t,
-                to_t,
-              )
-          }
+  let svg_path.SubpathParameter(segment_index: from_index, t: from_t) = from
+  let svg_path.SubpathParameter(segment_index: to_index, t: to_t) = to
+  case from_index == to_index {
+    True ->
+      case from_t <=. to_t {
+        True -> [
+          loop_partial_segment(segment_at(segments, from_index), from_t, to_t),
+        ]
         False ->
-          walk_segment_indices(from_index, to_index, list.length(segments), [])
-          |> list.reverse
-          |> list.map(fn(index) {
-            let segment = segment_at(segments, index)
-            case index == from_index, index == to_index {
-              True, _ -> loop_partial_segment(segment, from_t, 1.0)
-              _, True -> loop_partial_segment(segment, 0.0, to_t)
-              _, _ -> loop_partial_segment(segment, 0.0, 1.0)
-            }
-          })
+          loop_wrapped_same_segment_piece(segments, from_index, from_t, to_t)
       }
+    False ->
+      walk_segment_indices(from_index, to_index, list.length(segments), [])
+      |> list.reverse
+      |> list.map(fn(index) {
+        let segment = segment_at(segments, index)
+        case index == from_index, index == to_index {
+          True, _ -> loop_partial_segment(segment, from_t, 1.0)
+          _, True -> loop_partial_segment(segment, 0.0, to_t)
+          _, _ -> loop_partial_segment(segment, 0.0, 1.0)
+        }
+      })
   }
 }
 
