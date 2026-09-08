@@ -28,6 +28,40 @@ pub fn minified_number_groups_preserve_integer_decimal_boundaries_test() {
   })
 }
 
+pub fn minified_subpath_lines_separate_repeated_command_arguments_test() {
+  list.each(
+    [
+      [
+        svg_path.Point(0.0, 0.0),
+        svg_path.Point(1.0, 0.0),
+        svg_path.Point(2.0, 0.0),
+        svg_path.Point(3.0, 0.0),
+      ],
+      [
+        svg_path.Point(0.0, 0.0),
+        svg_path.Point(0.0, 1.0),
+        svg_path.Point(0.0, 2.0),
+        svg_path.Point(0.0, 3.0),
+      ],
+      [
+        svg_path.Point(0.0, 0.0),
+        svg_path.Point(1.0, 1.0),
+        svg_path.Point(2.0, 2.0),
+        svg_path.Point(3.0, 3.0),
+      ],
+    ],
+    fn(points) {
+      let source =
+        svg_path.subpath_assert_polyline(points) |> svg_path.subpath_as_path
+      let options =
+        serialize.minifying_options(5)
+        |> serialize.with_newlines(serialize.AtSubpaths)
+        |> serialize.explicit_initial_lineto(True)
+      assert parse.path(serialize.path_with(source, options)) == Ok(source)
+    },
+  )
+}
+
 pub fn serialization_preserves_scientific_exponents_test() {
   let subpath = svg_path.subpath_empty(at: svg_path.Point(1.0e20, 0.0))
   let options =

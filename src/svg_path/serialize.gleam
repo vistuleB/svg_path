@@ -1727,7 +1727,11 @@ fn join_with_subpath_separators(
     [command, next, ..rest] -> {
       let separator = case is_move_command(command_name(next)) {
         True -> "\n"
-        False -> command_separator(format.options)
+        False ->
+          case is_command_name(command_name(next)) {
+            True -> command_separator(format.options)
+            False -> command_chunk_separator(command, next, format.options)
+          }
       }
 
       join_with_subpath_separators(
