@@ -21,10 +21,11 @@ const default_max_depth = 32
 
 /// Error returned by curvature helpers.
 ///
-/// Cases are split into options-authorization errors (arguments supplied by the
-/// caller were invalid, and the offending value is carried) and geometry errors
-/// (a degenerate or infinite configuration in the segment itself).
+/// Cases distinguish invalid options (carrying the supplied value), underlying
+/// path-operation failures, and degenerate or infinite curvature geometry.
 pub type Error {
+  /// An underlying segment derivative query failed, for example arc conversion.
+  PathError(svg_path.Error)
   /// A curvature `tolerance` option was invalid (not finite or negative).
   InvalidCurvatureTolerance(Float)
   /// A curvature `samples` option was invalid (not positive).
@@ -226,7 +227,7 @@ fn segment_derivatives_curvature(
   at t: Float,
 ) -> Result(Derivatives, Error) {
   segment_derivatives(segment, at: t)
-  |> result.map_error(fn(_) { DegenerateCurvatureDerivative })
+  |> result.map_error(PathError)
 }
 
 fn left_normal_curvature_from_derivatives(

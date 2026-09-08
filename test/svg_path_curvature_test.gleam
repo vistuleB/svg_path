@@ -169,6 +169,20 @@ pub fn segment_inflection_parameters_ignore_flat_cubic_test() {
     == Ok([])
 }
 
+pub fn invalid_arc_curvature_preserves_path_error_test() {
+  let arc =
+    svg_path.Arc(
+      start: svg_path.Point(0.0, 0.0),
+      radius: svg_path.Point(1.0, 1.0),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: True,
+      end: svg_path.Point(0.0, 0.0),
+    )
+  assert curvature.segment_left_normal_curvature(arc, at: 0.5)
+    == Error(curvature.PathError(svg_path.DegenerateArc))
+}
+
 pub fn arc_curvature_uses_exact_ellipse_derivatives_test() {
   let arc =
     svg_path.Arc(

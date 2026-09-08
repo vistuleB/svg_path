@@ -5,7 +5,7 @@ import svg_path/parse
 import svg_path/serialize
 import svg_path/stroke
 
-pub fn empty_path_stroke_defers_join_validation_test() {
+pub fn empty_path_stroke_validates_join_test() {
   let empty = svg_path.path_empty()
   assert stroke.path_with(
       empty,
@@ -13,7 +13,7 @@ pub fn empty_path_stroke_defers_join_validation_test() {
       cap: stroke.Butt,
       options: stroke.default_options(),
     )
-    == Ok(empty)
+    == Error(stroke.OffsetError(offset.InvalidMiterLimit(0.0)))
   assert stroke.path_with(
       empty,
       join: stroke.Miter(0.0),
@@ -34,7 +34,7 @@ pub fn empty_path_stroke_defers_join_validation_test() {
     == Error(stroke.OffsetError(offset.InvalidMiterLimit(0.0)))
 }
 
-pub fn empty_dashed_path_stroke_defers_join_validation_test() {
+pub fn empty_dashed_path_stroke_validates_join_test() {
   let source =
     svg_path.subpath_assert([
       svg_path.Line(svg_path.Point(0.0, 0.0), svg_path.Point(10.0, 0.0)),
@@ -49,7 +49,24 @@ pub fn empty_dashed_path_stroke_defers_join_validation_test() {
         offset: 0.0,
       ),
     )
-    == Ok(svg_path.path_empty())
+    == Error(stroke.OffsetError(offset.InvalidMiterLimit(0.0)))
+}
+
+pub fn empty_path_stroke_validates_fitting_options_test() {
+  let defaults = stroke.default_options()
+  let fitting = offset.FittingOptions(..defaults.offset.fitting, samples: 0)
+  let options =
+    stroke.Options(
+      ..defaults,
+      offset: offset.Options(..defaults.offset, fitting:),
+    )
+  assert stroke.path_with(
+      svg_path.path_empty(),
+      join: stroke.Round,
+      cap: stroke.Butt,
+      options:,
+    )
+    == Error(stroke.OffsetError(offset.InvalidSamples(0)))
 }
 
 // Gallery round-cap dash piece 5: its inner offset can disappear under

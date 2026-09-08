@@ -635,6 +635,7 @@ pub fn subpath_with(
   right: svg_path.Subpath,
   tolerance tolerance: Float,
 ) -> Result(List(SubpathOverlap), svg_path.Error) {
+  use _ <- result.try(validate_tolerance(tolerance))
   use pieces <- result.try(
     subpath_left_segments(
       svg_path.subpath_segments(left),
@@ -1010,6 +1011,7 @@ pub fn path_with(
   right: svg_path.Path,
   tolerance tolerance: Float,
 ) -> Result(List(PathOverlap), svg_path.Error) {
+  use _ <- result.try(validate_tolerance(tolerance))
   path_left_subpaths(
     left.subpaths,
     right.subpaths,
@@ -1017,6 +1019,13 @@ pub fn path_with(
     left_subpath_index: 0,
     found: [],
   )
+}
+
+fn validate_tolerance(tolerance: Float) -> Result(Nil, svg_path.Error) {
+  case tolerance <. 0.0 || tolerance -. tolerance != 0.0 {
+    True -> Error(svg_path.InvalidOverlapTolerance(tolerance))
+    False -> Ok(Nil)
+  }
 }
 
 fn path_left_subpaths(

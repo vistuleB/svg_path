@@ -2872,10 +2872,9 @@ fn bezier_self_intersection_error(error: bezier.Error) -> svg_path.Error {
       InvalidSelfIntersectionMinimumArcLengthSeparation(value)
     bezier.InvalidCubicSelfIntersectionDistanceTolerance(value) ->
       InvalidSelfIntersectionDistanceTolerance(value)
-    bezier.SplitOutsideBezier
-    | bezier.DegenerateTangent
-    | bezier.UnderdeterminedCubicFit ->
-      InvalidSelfIntersectionDistanceTolerance(0.0)
+    bezier.SplitOutsideBezier -> svg_path.SplitOutsideSegment
+    bezier.DegenerateTangent -> svg_path.DegenerateCubicFitTangent
+    bezier.UnderdeterminedCubicFit -> svg_path.UnderdeterminedCubicFit
   }
 }
 

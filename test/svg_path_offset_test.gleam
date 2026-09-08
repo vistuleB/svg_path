@@ -8,6 +8,7 @@ import gleeunit/should
 import svg_path
 import svg_path/area
 import svg_path/arrangement as arrangement_graph
+import svg_path/bezier
 import svg_path/format as number_format
 import svg_path/offset
 import svg_path/parse
@@ -15,6 +16,17 @@ import svg_path/point
 import svg_path/serialize
 import svg_path/stroke
 import svg_path/trig
+
+pub fn cubic_fit_failures_do_not_invent_public_numeric_diagnostics_test() {
+  assert offset.public_error(offset.InternalBezierFitError(
+      bezier.UnderdeterminedCubicFit,
+    ))
+    == offset.ConstructionFailed
+  assert offset.public_error(offset.InternalBezierFitError(
+      bezier.DegenerateTangent,
+    ))
+    == offset.ConstructionFailed
+}
 
 const stalled_arc_turn_svg_output = "examples/debug/stalled-offset-arc-turns.svg"
 

@@ -153,6 +153,8 @@ pub fn is_finite(transform: Affine) -> Bool {
 /// another.
 ///
 /// Points are represented as raw coordinate tuples.
+/// Returns `Error(Nil)` if the source pair cannot determine a similarity or
+/// the resulting transform is non-finite.
 pub fn point_pair_similarity(
   source_start source_start: #(Float, Float),
   source_end source_end: #(Float, Float),
@@ -208,6 +210,8 @@ pub fn point_pair_similarity(
 /// Find an affine transform mapping one point triple to another.
 ///
 /// Points are represented as raw coordinate tuples.
+/// Returns `Error(Nil)` if the source triple cannot determine an affine map or
+/// the resulting transform is non-finite.
 pub fn point_triple_map(
   source_a source_a: #(Float, Float),
   source_b source_b: #(Float, Float),

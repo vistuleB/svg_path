@@ -2657,6 +2657,9 @@ const adjacent_loop_endpoint_parameter_tolerance = 0.0001
 /// Errors returned by offset helpers.
 @internal
 pub type InternalError {
+  /// Cubic fitting failed; retain its cause without inventing an endpoint or
+  /// attributing an underdetermined system to non-finite arithmetic.
+  InternalBezierFitError(bezier.Error)
   /// The internal winding classifier reached a boundary state unexpectedly.
   InternalInconsistentContainment
 
@@ -10882,10 +10885,7 @@ fn fitted_curve_to_segment(
 }
 
 fn cubic_fit_error(error: bezier.Error) -> InternalError {
-  case error {
-    bezier.DegenerateTangent -> InternalDegenerateTangent(0.0)
-    _ -> InternalNonFinite
-  }
+  InternalBezierFitError(error)
 }
 
 fn length_spans(

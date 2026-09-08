@@ -7,6 +7,19 @@ import svg_path/overlaps
 
 const tolerance = 0.000001
 
+pub fn empty_overlaps_validate_tolerance_test() {
+  let empty = svg_path.path_empty()
+  let subpath = svg_path.subpath_empty(at: svg_path.Point(0.0, 0.0))
+  let nonempty = svg_path.subpath_as_path(subpath)
+  assert overlaps.path_with(empty, nonempty, tolerance: -1.0)
+    == Error(svg_path.InvalidOverlapTolerance(-1.0))
+  assert overlaps.path_with(nonempty, empty, tolerance: -1.0)
+    == Error(svg_path.InvalidOverlapTolerance(-1.0))
+  assert overlaps.subpath_with(subpath, subpath, tolerance: -1.0)
+    == Error(svg_path.InvalidOverlapTolerance(-1.0))
+  assert overlaps.path_with(empty, empty, tolerance: 0.0) == Ok([])
+}
+
 pub fn segment_overlap_and_intersection_agree_on_partial_line_test() {
   let left = line()
   let right =

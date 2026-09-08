@@ -133,7 +133,7 @@ pub fn segment_with(
   cap cap: Cap,
   options options: Options,
 ) -> Result(svg_path.Path, Error) {
-  use _ <- result.try(validate_options(options))
+  use _ <- result.try(validate_options(options, join))
   use subpath <- result.try(
     svg_path.subpath([segment]) |> result.map_error(PathError),
   )
@@ -161,13 +161,11 @@ pub fn subpath_with(
   cap cap: Cap,
   options options: Options,
 ) -> Result(svg_path.Path, Error) {
-  use _ <- result.try(validate_options(options))
+  use _ <- result.try(validate_options(options, join))
   let width = options.width
   let join = to_offset_join(join)
   let options = options.offset
   let result = {
-    use _ <- result.try(offset.validate_options(options))
-    use _ <- result.try(offset.validate_join(join))
     let radius = width /. 2.0
     case svg_path.subpath_segments(subpath) {
       [] -> Ok(svg_path.path_empty())
@@ -594,7 +592,7 @@ pub fn path_with(
   cap cap: Cap,
   options options: Options,
 ) -> Result(svg_path.Path, Error) {
-  use _ <- result.try(validate_options(options))
+  use _ <- result.try(validate_options(options, join))
   use subpaths <- result.try(
     stroke_subpaths(
       svg_path.path_subpaths(path),
@@ -718,7 +716,7 @@ pub fn subpath_dashed_with(
   options options: Options,
   dash_options dash_options: DashOptions,
 ) -> Result(svg_path.Path, Error) {
-  use _ <- result.try(validate_options(options))
+  use _ <- result.try(validate_options(options, join))
   use dashes <- result.try(subpath_dashes_with(subpath, dash_options:))
   use subpaths <- result.try(
     stroke_subpaths(dashes, join, cap, options, stroked: []),
@@ -757,14 +755,25 @@ pub fn path_dashed_with(
   options options: Options,
   dash_options dash_options: DashOptions,
 ) -> Result(svg_path.Path, Error) {
-  use _ <- result.try(validate_options(options))
+  use _ <- result.try(validate_options(options, join))
   use dashes <- result.try(path_dashes_with(path, dash_options:))
   path_with(dashes, join:, cap:, options:)
 }
 
-fn validate_options(options: Options) -> Result(Nil, Error) {
-  case options.width <=. 0.0 || !number.is_finite(options.width) {
-    True -> Error(InvalidWidth(options.width))
+fn validate_options(options: Options, join: Join) -> Result(Nil, Error) {
+  // Validate before traversing geometry, including empty paths and dash output.
+  use _ <- result.try(validate_width(options.width))
+  let validation = {
+    use _ <- result.try(offset.validate_options(options.offset))
+    offset.validate_join(to_offset_join(join))
+  }
+  validation
+  |> result.map_error(fn(error) { OffsetError(offset.public_error(error)) })
+}
+
+fn validate_width(width: Float) -> Result(Nil, Error) {
+  case width <=. 0.0 || !number.is_finite(width) {
+    True -> Error(InvalidWidth(width))
     False -> Ok(Nil)
   }
 }
