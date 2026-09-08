@@ -1,8 +1,9 @@
-//// Compile-only smoke coverage for the package's arrangement and CSG API.
+//// Compile-only smoke coverage for public geometry APIs.
 
 import svg_path
 import svg_path/arrangement
 import svg_path/csg
+import svg_path/curvature
 import svg_path/intersections
 import svg_path/overlaps
 
@@ -42,6 +43,12 @@ pub fn main() -> Nil {
   let _ = overlaps.segment(horizontal, horizontal)
   let _ = svg_path.segment_as_subpath(horizontal)
   let _ = svg_path.segment_as_path(vertical)
+  let assert Ok(1000.0) =
+    curvature.segment_left_normal_cusp_residual(
+      horizontal,
+      distance: 2.0,
+      at: 0.5,
+    )
 
   Nil
 }

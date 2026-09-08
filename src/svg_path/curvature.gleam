@@ -1,8 +1,12 @@
-//// Curvature helpers for offset construction and diagnostics.
+//// Signed curvature, radius, inflection points, and offset-cusp diagnostics.
 ////
-//// This module is intentionally more experimental than the root `svg_path`
-//// API. Offset code needs curvature values, cusp residuals, and near-cusp band
-//// classifiers before we know which helpers deserve a stable public surface.
+//// Signs refer to the visual left normal in SVG coordinates (positive y down).
+//// Curvature has inverse-length units; radius, target distances, and margins
+//// have length units. Parameters refer to the segment's `0.0..1.0` interval.
+////
+//// Pointwise queries evaluate segment derivatives directly. Cusp-parameter and
+//// near-radius-band discovery use sampling and are not exhaustive root or
+//// interval solvers; their individual contracts describe the limitations.
 
 import gleam/float
 import gleam/int
@@ -43,6 +47,9 @@ pub type Error {
 }
 
 /// Options for sampled cusp/root/band discovery.
+/// All fields are validated by discovery functions. Band discovery uses only
+/// `samples`; inflection discovery is algebraic and uses none of these fields
+/// after validation.
 pub type Options {
   Options(
     /// Numeric tolerance for roots and interval widths in parameter space.
@@ -142,7 +149,9 @@ pub fn segment_left_normal_radius_close_to(
 ///
 /// A zero residual means the visual-left-normal signed radius equals `distance`,
 /// assuming finite nonzero curvature.
-@internal
+/// Its magnitude depends on parameter speed: it has cubed-length units for a
+/// dimensionless parameter and is not a geometric distance error. Lines return
+/// `|p'|^3`; zero-speed parameters return `DegenerateCurvatureDerivative`.
 pub fn segment_left_normal_cusp_residual(
   segment: svg_path.Segment,
   distance distance: Float,
@@ -155,9 +164,12 @@ pub fn segment_left_normal_cusp_residual(
 /// Sample and refine parameters where visual-left-normal signed radius equals
 /// `distance`.
 ///
-/// This is conservative root discovery over the cusp residual. It detects
-/// sign-changing roots and exact sampled roots. Repeated roots that do not
-/// change sign can be added later using polynomial candidates.
+/// Samples the cusp residual on a uniform grid and bisects sign-changing
+/// windows. Exact sampled zeros are included. Multiple roots within one window
+/// and non-sign-changing roots between samples may be missed. Windows whose
+/// evaluations fail are skipped, including failed bisections. At `max_depth`,
+/// bisection returns the current midpoint without an accuracy guarantee.
+/// Results are sorted and merged within `options.tolerance` in parameter space.
 pub fn segment_left_normal_cusp_parameters(
   segment: svg_path.Segment,
   distance distance: Float,
@@ -170,10 +182,12 @@ pub fn segment_left_normal_cusp_parameters(
   sampled_roots(residual, options)
 }
 
-/// Sample and refine interior inflection parameters.
+/// Return algebraically computed interior inflection parameters.
 ///
 /// This solves `cross(p'(t), p''(t)) = 0`. Lines and identically flat pieces
 /// return an empty list. Roots at the segment endpoints are filtered out.
+/// Cubics use the Bezier inflection solver; lines, quadratics, and arcs return
+/// an empty list. Options are validated but do not affect the algebraic solve.
 pub fn segment_inflection_parameters(
   segment: svg_path.Segment,
   options options: Options,
@@ -201,9 +215,11 @@ fn to_bezier_point(point: svg_path.Point) -> bezier.BezierPoint {
 /// Sample intervals where visual-left-normal signed radius is within `margin` of
 /// `distance`.
 ///
-/// This is a conservative sampled classifier. Adjacent close samples are merged
-/// into parameter bands. It is intended as a first staging helper for offset
-/// stalled-run detection, not as a final exact algebraic interval solver.
+/// Adjacent close samples on a uniform grid are merged into parameter bands.
+/// A band starts at its first close sample and ends at the first subsequent
+/// non-close sample (or `1.0`). Evaluation errors count as non-close samples.
+/// These bands are approximate: narrow intervals may be missed, and not every
+/// point inside a returned band is guaranteed to satisfy the predicate.
 pub fn segment_left_normal_radius_close_bands(
   segment: svg_path.Segment,
   distance distance: Float,

@@ -9,6 +9,20 @@ pub fn main() -> Nil {
   gleeunit.main()
 }
 
+pub fn line_cusp_residual_is_speed_cubed_test() {
+  let line =
+    svg_path.Line(
+      start: svg_path.Point(0.0, 0.0),
+      end: svg_path.Point(3.0, 4.0),
+    )
+  assert curvature.segment_left_normal_cusp_residual(
+      line,
+      distance: 2.0,
+      at: 0.5,
+    )
+    == Ok(125.0)
+}
+
 pub fn invalid_tolerance_reports_invalid_curvature_tolerance_test() {
   let invalid = curvature.Options(tolerance: -0.5, samples: 100, max_depth: 32)
 
