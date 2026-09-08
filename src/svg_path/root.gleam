@@ -334,17 +334,11 @@ pub fn real_cubic_01_roots(
 
 /// Whether a classified root changes sign.
 @internal
-pub fn is_sign_change_root(kind: RootKind) -> Bool {
+pub fn is_crossing_root(kind: RootKind) -> Bool {
   case kind {
     NegativeToPositive | PositiveToNegative -> True
     NegativeToNegative | PositiveToPositive | Ambiguous -> False
   }
-}
-
-/// Alias for `is_sign_change_root`.
-@internal
-pub fn is_crossing_root(kind: RootKind) -> Bool {
-  is_sign_change_root(kind)
 }
 
 /// Find all distinct real roots of `a*x³ + b*x² + c*x + d`.

@@ -2860,7 +2860,7 @@ pub fn segment_point(segment: Segment, at t: Float) -> Result(Point, Error) {
         Line(..) | QuadraticBezier(..) | CubicBezier(..) -> {
           Ok(
             segment_to_bezier_data(segment)
-            |> bezier.bezier_point(at: t)
+            |> bezier.point(at: t)
             |> from_bezier_point,
           )
         }
@@ -2886,7 +2886,7 @@ pub fn segment_derivative(
     Line(..) | QuadraticBezier(..) | CubicBezier(..) -> {
       Ok(
         segment_to_bezier_data(segment)
-        |> bezier.bezier_derivative(at: t)
+        |> bezier.derivative(at: t)
         |> from_bezier_point,
       )
     }
@@ -3012,7 +3012,7 @@ pub fn segment_bounding_box(segment: Segment) -> Result(BoundingBox, Error) {
       Ok(BoundingBox(min: min_point(start, end), max: max_point(start, end)))
     QuadraticBezier(..) | CubicBezier(..) -> {
       let bezier.BoundingBox(min:, max:) =
-        segment_to_bezier_data(segment) |> bezier.bezier_bounding_box
+        segment_to_bezier_data(segment) |> bezier.bounding_box
 
       Ok(BoundingBox(min: from_bezier_point(min), max: from_bezier_point(max)))
     }
@@ -3073,6 +3073,23 @@ pub fn segment_crossings_with(
       }
     }
   }
+}
+
+/// Find crossings with a ray's supporting line using default crossing options.
+///
+/// Like `segment_ray_crossings_with`, this includes negative ray parameters;
+/// callers can filter those out when they need only the positive ray.
+pub fn segment_ray_crossings(
+  segment: Segment,
+  origin origin: Point,
+  direction direction: Point,
+) -> Result(List(#(Float, Float)), Error) {
+  segment_ray_crossings_with(
+    segment,
+    origin:,
+    direction:,
+    options: default_crossing_options(),
+  )
 }
 
 /// Find crossings between a segment and a ray's supporting line.

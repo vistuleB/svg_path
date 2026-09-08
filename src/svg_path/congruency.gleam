@@ -152,7 +152,7 @@ fn points_with_nonnegative_tolerance(
         }
         False -> {
           case
-            transform.point_pair_map(
+            transform.point_pair_similarity(
               source_start: pair.source_a,
               source_end: pair.source_b,
               target_start: pair.target_a,

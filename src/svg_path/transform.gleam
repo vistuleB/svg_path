@@ -103,7 +103,7 @@ pub fn about_point(
 /// and `source_end` within `tolerance` of `target_end`. Returns `Error(Nil)`
 /// when the direct point-pair construction produces non-finite values or the
 /// final mapped points are outside tolerance.
-pub fn point_pair_map(
+pub fn point_pair_similarity(
   source_start source_start: svg_path.Point,
   source_end source_end: svg_path.Point,
   target_start target_start: svg_path.Point,

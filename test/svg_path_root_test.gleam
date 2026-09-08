@@ -159,7 +159,7 @@ pub fn classified_polynomial_roots_report_sign_changes_test() {
       options: root.default_polynomial_options(),
     )
   assert near(estimate, 0.0)
-  assert root.is_sign_change_root(root.NegativeToPositive)
+  assert root.is_crossing_root(root.NegativeToPositive)
   assert root.is_crossing_root(root.PositiveToNegative)
 }
 
@@ -172,7 +172,7 @@ pub fn classified_polynomial_roots_report_even_roots_test() {
       options: root.default_polynomial_options(),
     )
   assert positive_even.kind == root.PositiveToPositive
-  assert !root.is_sign_change_root(positive_even.kind)
+  assert !root.is_crossing_root(positive_even.kind)
 
   let assert Ok([negative_even]) =
     root.classified_polynomial_roots_with(

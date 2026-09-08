@@ -88,13 +88,13 @@ pub fn about_point_matrix_transforms_points_about_point_test() {
     == svg_path.Point(5.0, 8.0)
 }
 
-pub fn point_pair_map_maps_source_points_to_targets_test() {
+pub fn point_pair_similarity_maps_source_points_to_targets_test() {
   let source_start = svg_path.Point(1.0, 2.0)
   let source_end = svg_path.Point(4.0, 2.0)
   let target_start = svg_path.Point(10.0, -5.0)
   let target_end = svg_path.Point(10.0, 1.0)
   let assert Ok(matrix) =
-    transform.point_pair_map(
+    transform.point_pair_similarity(
       source_start,
       source_end,
       target_start,
@@ -107,13 +107,13 @@ pub fn point_pair_map_maps_source_points_to_targets_test() {
   assert transform.to_tuple(matrix) == #(0.0, 2.0, -2.0, 0.0, 14.0, -7.0)
 }
 
-pub fn point_pair_map_maps_distinct_source_to_collapsed_target_test() {
+pub fn point_pair_similarity_maps_distinct_source_to_collapsed_target_test() {
   let source_start = svg_path.Point(1.0, 2.0)
   let source_end = svg_path.Point(4.0, 2.0)
   let target_start = svg_path.Point(10.0, -5.0)
   let target_end = svg_path.Point(10.0, -5.0)
   let assert Ok(matrix) =
-    transform.point_pair_map(
+    transform.point_pair_similarity(
       source_start,
       source_end,
       target_start,
@@ -126,12 +126,12 @@ pub fn point_pair_map_maps_distinct_source_to_collapsed_target_test() {
   assert transform.to_tuple(matrix) == #(0.0, 0.0, 0.0, 0.0, 10.0, -5.0)
 }
 
-pub fn point_pair_map_handles_large_finite_vectors_test() {
+pub fn point_pair_similarity_handles_large_finite_vectors_test() {
   let source_start = svg_path.Point(-1.0e200, 0.0)
   let source_end = svg_path.Point(1.0e200, 0.0)
 
   let assert Ok(matrix) =
-    transform.point_pair_map(
+    transform.point_pair_similarity(
       source_start,
       source_end,
       source_start,
@@ -142,8 +142,8 @@ pub fn point_pair_map_handles_large_finite_vectors_test() {
   assert transform.to_tuple(matrix) == #(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
 }
 
-pub fn point_pair_map_rejects_points_outside_tolerance_test() {
-  assert transform.point_pair_map(
+pub fn point_pair_similarity_rejects_points_outside_tolerance_test() {
+  assert transform.point_pair_similarity(
       svg_path.Point(1.0, 2.0),
       svg_path.Point(1.0, 2.0),
       svg_path.Point(10.0, -5.0),
@@ -153,8 +153,8 @@ pub fn point_pair_map_rejects_points_outside_tolerance_test() {
     == Error(Nil)
 }
 
-pub fn point_pair_map_rejects_negative_tolerance_test() {
-  assert transform.point_pair_map(
+pub fn point_pair_similarity_rejects_negative_tolerance_test() {
+  assert transform.point_pair_similarity(
       svg_path.Point(0.0, 0.0),
       svg_path.Point(1.0, 0.0),
       svg_path.Point(0.0, 0.0),

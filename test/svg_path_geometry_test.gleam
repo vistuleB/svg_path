@@ -514,6 +514,28 @@ pub fn segment_crossings_finds_arc_crossing_test() {
   assert near(crossing, 0.5)
 }
 
+pub fn segment_ray_crossings_defaults_match_explicit_options_test() {
+  let line =
+    svg_path.Line(
+      start: svg_path.Point(10.0, -5.0),
+      end: svg_path.Point(10.0, 5.0),
+    )
+  let origin = svg_path.Point(5.0, 0.0)
+  let direction = svg_path.Point(1.0, 0.0)
+  let assert Ok(crossings) =
+    svg_path.segment_ray_crossings(line, origin:, direction:)
+  assert Ok(crossings)
+    == svg_path.segment_ray_crossings_with(
+      line,
+      origin:,
+      direction:,
+      options: svg_path.default_crossing_options(),
+    )
+  let assert [#(crossing, ray_t)] = crossings
+  assert near(crossing, 0.5)
+  assert near(ray_t, 5.0)
+}
+
 pub fn segment_ray_crossings_finds_line_crossing_test() {
   let line =
     svg_path.Line(

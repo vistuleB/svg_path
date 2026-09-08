@@ -292,8 +292,8 @@ fn curve_subpath(
     _ ->
       svg_path.subpath_assert([
         svg_path.Line(
-          start: place(bezier.bezier_start(curve), placement),
-          end: place(bezier.bezier_end(curve), placement),
+          start: place(bezier.start(curve), placement),
+          end: place(bezier.end(curve), placement),
         ),
       ])
   }
@@ -377,7 +377,7 @@ fn curve_points(curve: bezier.BezierData) -> List(bezier.BezierPoint) {
     0.0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65,
     0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0,
   ]
-  |> list.map(fn(t) { bezier.bezier_point(curve, at: t) })
+  |> list.map(fn(t) { bezier.point(curve, at: t) })
 }
 
 fn sample_points(
@@ -440,10 +440,10 @@ fn exact_case(
   FitCase(
     title:,
     original: Some(curve),
-    start: bezier.bezier_start(curve),
-    end: bezier.bezier_end(curve),
-    start_tangent: bezier.bezier_derivative(curve, at: 0.0),
-    end_tangent: bezier.bezier_derivative(curve, at: 1.0),
+    start: bezier.start(curve),
+    end: bezier.end(curve),
+    start_tangent: bezier.derivative(curve, at: 0.0),
+    end_tangent: bezier.derivative(curve, at: 1.0),
     samples: sample_curve(curve, ts),
   )
 }
@@ -456,10 +456,10 @@ fn noisy_case(
   FitCase(
     title:,
     original: None,
-    start: bezier.bezier_start(curve),
-    end: bezier.bezier_end(curve),
-    start_tangent: bezier.bezier_derivative(curve, at: 0.0),
-    end_tangent: bezier.bezier_derivative(curve, at: 1.0),
+    start: bezier.start(curve),
+    end: bezier.end(curve),
+    start_tangent: bezier.derivative(curve, at: 0.0),
+    end_tangent: bezier.derivative(curve, at: 1.0),
     samples: ts_and_noise |> list.map(noisy_sample(curve, _)),
   )
 }
@@ -469,7 +469,7 @@ fn noisy_sample(
   sample: #(Float, bezier.BezierPoint),
 ) -> #(Float, bezier.BezierPoint) {
   let #(t, noise) = sample
-  let point = bezier.bezier_point(curve, at: t)
+  let point = bezier.point(curve, at: t)
   #(t, bezier.BezierPoint(x: point.x +. noise.x, y: point.y +. noise.y))
 }
 
@@ -478,7 +478,7 @@ fn sample_curve(
   ts: List(Float),
 ) -> List(#(Float, bezier.BezierPoint)) {
   ts
-  |> list.map(fn(t) { #(t, bezier.bezier_point(curve, at: t)) })
+  |> list.map(fn(t) { #(t, bezier.point(curve, at: t)) })
 }
 
 fn cases() -> List(FitCase) {

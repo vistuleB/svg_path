@@ -14,9 +14,9 @@
 //// control point, and a cubic Bezier has two control points. All evaluation
 //// and splitting helpers use the standard Bezier parameter `t`:
 ////
-//// - `bezier_point(curve, at: 0.0)` is the curve start point.
-//// - `bezier_point(curve, at: 1.0)` is the curve end point.
-//// - `bezier_derivative(curve, at: t)` is the derivative with respect to `t`.
+//// - `point(curve, at: 0.0)` is the curve start point.
+//// - `point(curve, at: 1.0)` is the curve end point.
+//// - `derivative(curve, at: t)` is the derivative with respect to `t`.
 //// - `split(curve, at: t)` preserves the curve degree and divides it
 ////   with de Casteljau's algorithm.
 //// - `map_points(curve, with: f)` maps the curve's defining points.
@@ -139,7 +139,7 @@ pub type Error {
 }
 
 /// Return the curve's start point.
-pub fn bezier_start(curve: BezierData) -> BezierPoint {
+pub fn start(curve: BezierData) -> BezierPoint {
   case curve {
     LinearBezierData(start:, ..)
     | QuadraticBezierData(start:, ..)
@@ -148,7 +148,7 @@ pub fn bezier_start(curve: BezierData) -> BezierPoint {
 }
 
 /// Return the curve's end point.
-pub fn bezier_end(curve: BezierData) -> BezierPoint {
+pub fn end(curve: BezierData) -> BezierPoint {
   case curve {
     LinearBezierData(end:, ..)
     | QuadraticBezierData(end:, ..)
@@ -161,7 +161,7 @@ pub fn bezier_end(curve: BezierData) -> BezierPoint {
 /// `t` is not clamped. `0.0` evaluates the start of the curve, `1.0` evaluates
 /// the end of the curve, and values outside that range extrapolate along the
 /// same polynomial curve.
-pub fn bezier_point(curve: BezierData, at t: Float) -> BezierPoint {
+pub fn point(curve: BezierData, at t: Float) -> BezierPoint {
   case curve {
     LinearBezierData(start:, end:) -> interpolate(start, end, t)
     QuadraticBezierData(start:, control:, end:) -> {
@@ -186,7 +186,7 @@ pub fn bezier_point(curve: BezierData, at t: Float) -> BezierPoint {
 }
 
 /// Return the derivative with respect to Bezier parameter `t`.
-pub fn bezier_derivative(curve: BezierData, at t: Float) -> BezierPoint {
+pub fn derivative(curve: BezierData, at t: Float) -> BezierPoint {
   case curve {
     LinearBezierData(start:, end:) -> difference(end, start)
     QuadraticBezierData(start:, control:, end:) -> {
@@ -213,10 +213,10 @@ pub fn bezier_derivative(curve: BezierData, at t: Float) -> BezierPoint {
 }
 
 /// Return the curve's exact axis-aligned bounding box over `0.0..1.0`.
-pub fn bezier_bounding_box(curve: BezierData) -> BoundingBox {
+pub fn bounding_box(curve: BezierData) -> BoundingBox {
   let points =
     [0.0, 1.0, ..bezier_axis_extrema(curve)]
-    |> list.map(fn(t) { bezier_point(curve, at: t) })
+    |> list.map(fn(t) { point(curve, at: t) })
 
   let assert [first, ..rest] = points
 
@@ -421,7 +421,7 @@ fn handle_state(length: Float) -> CubicFitHandleState {
 /// Split a Bezier curve at parameter `t`.
 ///
 /// `t` is not clamped. Values outside `0.0..1.0` extrapolate along the same
-/// polynomial curve, matching `bezier_point`.
+/// polynomial curve, matching `point`.
 pub fn split(curve: BezierData, at t: Float) -> #(BezierData, BezierData) {
   case curve {
     LinearBezierData(start:, end:) -> {
@@ -608,8 +608,8 @@ fn bezier_between(
   from from: Float,
   to to: Float,
 ) -> BezierData {
-  let start = bezier_point(curve, at: from)
-  let end = bezier_point(curve, at: to)
+  let start = point(curve, at: from)
+  let end = point(curve, at: to)
   let delta = to -. from
 
   case curve {
@@ -617,23 +617,15 @@ fn bezier_between(
     QuadraticBezierData(..) -> {
       QuadraticBezierData(
         start:,
-        control: offset(start, bezier_derivative(curve, at: from), delta /. 2.0),
+        control: offset(start, derivative(curve, at: from), delta /. 2.0),
         end:,
       )
     }
     CubicBezierData(..) -> {
       CubicBezierData(
         start:,
-        control1: offset(
-          start,
-          bezier_derivative(curve, at: from),
-          delta /. 3.0,
-        ),
-        control2: offset(
-          end,
-          bezier_derivative(curve, at: to),
-          0.0 -. delta /. 3.0,
-        ),
+        control1: offset(start, derivative(curve, at: from), delta /. 3.0),
+        control2: offset(end, derivative(curve, at: to), 0.0 -. delta /. 3.0),
         end:,
       )
     }
@@ -984,9 +976,9 @@ fn cubic_fit_error_loop(
   case samples {
     [] -> #(sum_squared, max_squared, count)
     [sample, ..rest] -> {
-      let #(t, point) = sample
-      let fitted = bezier_point(curve, at: t)
-      let error_squared = distance_squared(point, fitted)
+      let #(t, sample_point) = sample
+      let fitted = point(curve, at: t)
+      let error_squared = distance_squared(sample_point, fitted)
       cubic_fit_error_loop(
         rest,
         curve,
@@ -1120,8 +1112,8 @@ fn cubic_self_intersection_from_candidate(
   case s >=. 0.0 && t <=. 1.0 {
     False -> None
     True -> {
-      let left = bezier_point(curve, at: s)
-      let right = bezier_point(curve, at: t)
+      let left = point(curve, at: s)
+      let right = point(curve, at: t)
       let arc_length =
         bezier_between(curve, from: s, to: t) |> approximate_length
       case
@@ -1161,7 +1153,7 @@ fn approximate_length_loop(
   curve: BezierData,
   remaining_depth remaining_depth: Int,
 ) -> Float {
-  let chord = distance(bezier_start(curve), bezier_end(curve))
+  let chord = distance(start(curve), end(curve))
   let polygon = control_polygon_length(curve)
 
   case remaining_depth <= 0 || polygon -. chord <=. length_tolerance {
