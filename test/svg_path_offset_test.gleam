@@ -2058,41 +2058,6 @@ pub fn band_inside_function_rejects_open_payload_test() {
     == Error(offset.InternalBandSubpathNotClosed)
 }
 
-pub fn segment_is_submerged_checks_both_immediate_sides_test() {
-  let outline =
-    svg_path.subpath_assert_polygon([
-      svg_path.Point(0.0, 0.0),
-      svg_path.Point(10.0, 0.0),
-      svg_path.Point(10.0, 10.0),
-      svg_path.Point(0.0, 10.0),
-    ])
-  let assert Ok(inside) =
-    offset.internal_band_inside_function([offset.OpenSubpathBand(outline)])
-  let middle =
-    svg_path.Line(
-      start: svg_path.Point(2.0, 5.0),
-      end: svg_path.Point(8.0, 5.0),
-    )
-  let boundary =
-    svg_path.Line(
-      start: svg_path.Point(2.0, 0.0),
-      end: svg_path.Point(8.0, 0.0),
-    )
-
-  assert offset.internal_segment_is_submerged(
-      middle,
-      inside:,
-      side_sampling_distance: 0.5,
-    )
-    == Ok(True)
-  assert offset.internal_segment_is_submerged(
-      boundary,
-      inside:,
-      side_sampling_distance: 0.5,
-    )
-    == Ok(False)
-}
-
 pub fn topological_band_loops_filters_submerged_loop_test() {
   let loop = square_loop()
   let containing_band =

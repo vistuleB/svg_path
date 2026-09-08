@@ -205,7 +205,6 @@ fn error_label(error: offset.InternalError) -> String {
     offset.InternalInvalidSamples(_) -> "Error: invalid samples"
     offset.InternalInvalidMaxDepth(_) -> "Error: invalid max depth"
     offset.InternalInvalidMiterLimit(_) -> "Error: invalid miter limit"
-    offset.InternalInvalidStrokeWidth(_) -> "Error: invalid stroke width"
     offset.InternalDegenerateTangent(_) -> "Error: degenerate tangent"
     offset.InternalMaxDepthReached(_) -> "Error: max depth reached"
     offset.InternalNonFinite -> "Error: non-finite coordinate"

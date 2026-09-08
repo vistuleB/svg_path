@@ -5,6 +5,53 @@ import svg_path/parse
 import svg_path/serialize
 import svg_path/stroke
 
+pub fn empty_path_stroke_defers_join_validation_test() {
+  let empty = svg_path.path_empty()
+  assert stroke.path_with(
+      empty,
+      join: stroke.Miter(0.0),
+      cap: stroke.Butt,
+      options: stroke.default_options(),
+    )
+    == Ok(empty)
+  assert stroke.path_with(
+      empty,
+      join: stroke.Miter(0.0),
+      cap: stroke.Butt,
+      options: stroke.Options(..stroke.default_options(), width: 0.0),
+    )
+    == Error(stroke.InvalidWidth(0.0))
+  let source =
+    svg_path.subpath_assert([
+      svg_path.Line(svg_path.Point(0.0, 0.0), svg_path.Point(10.0, 0.0)),
+    ])
+  assert stroke.path_with(
+      svg_path.subpath_as_path(source),
+      join: stroke.Miter(0.0),
+      cap: stroke.Butt,
+      options: stroke.default_options(),
+    )
+    == Error(stroke.OffsetError(offset.InvalidMiterLimit(0.0)))
+}
+
+pub fn empty_dashed_path_stroke_defers_join_validation_test() {
+  let source =
+    svg_path.subpath_assert([
+      svg_path.Line(svg_path.Point(0.0, 0.0), svg_path.Point(10.0, 0.0)),
+    ])
+  assert stroke.path_dashed_with(
+      svg_path.subpath_as_path(source),
+      join: stroke.Miter(0.0),
+      cap: stroke.Butt,
+      options: stroke.default_options(),
+      dash_options: stroke.default_dash_options(
+        pattern: [0.0, 20.0],
+        offset: 0.0,
+      ),
+    )
+    == Ok(svg_path.path_empty())
+}
+
 // Gallery round-cap dash piece 5: its inner offset can disappear under
 // independent cusp trimming, but its complete stroke must remain visible.
 pub fn stroke_preserves_gallery_hairpin_dash_test() {

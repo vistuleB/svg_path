@@ -265,8 +265,6 @@ fn offset_error_to_string(error: offset.InternalError) -> String {
       "InvalidMiterLimit(" <> float.to_string(miter_limit) <> ")"
     offset.InternalInvalidStalledOffsetDiameter(diameter) ->
       "InvalidStalledOffsetDiameter(" <> float.to_string(diameter) <> ")"
-    offset.InternalInvalidStrokeWidth(width) ->
-      "InvalidStrokeWidth(" <> float.to_string(width) <> ")"
     offset.InternalBandSubpathNotClosed -> "BandSubpathNotClosed"
     offset.InternalDegenerateTangent(t) ->
       "DegenerateTangent(" <> float.to_string(t) <> ")"

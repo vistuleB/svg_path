@@ -835,6 +835,12 @@ fn open_band_outline(
   |> result.map_error(InternalPathError)
 }
 
+/// Build a local coordinate map around a subpath.
+///
+/// The returned function interprets `x` as arc length along the source and `y`
+/// as signed offset along its visual left normal. Open subpaths reject `x`
+/// outside `0.0..subpath_length`; closed subpaths wrap it modulo their length.
+/// Empty and zero-length subpaths cannot define this map and return an error.
 pub fn subpath_offset_map(
   subpath: svg_path.Subpath,
 ) -> Result(fn(svg_path.Point) -> Result(svg_path.Point, Error), Error) {
@@ -1231,13 +1237,6 @@ pub fn subpath_band_untrimmed_with(
   Ok(svg_path.Path(subpaths: [side_a, side_b]))
 }
 
-/// Stroke a subpath using explicit join and cap styles.
-///
-/// Open subpaths build one closed untrimmed stroke boundary from the two
-/// offset sides and endpoint caps, then keep sections that separate points
-/// inside the intended stroke from points outside it. Closed subpaths use the
-/// same capless construction as `subpath_band`.
-/// Stroke a subpath using explicit join, cap, and technical options.
 /// Offset a subpath without trimming self-intersections.
 ///
 /// This returns the untrimmed one-sided offset walk. Adjacent segment offsets
@@ -2528,6 +2527,8 @@ fn prepend_join_free_portion(
   }
 }
 
+// Regression-test hook for adjacent-loop culling and its idempotence.
+@internal
 pub fn internal_short_circuit_adjacent_offset_segment_loop(
   left: svg_path.Segment,
   right: svg_path.Segment,
@@ -2701,9 +2702,6 @@ pub type InternalError {
   /// The tangent-healing angle must be finite and non-negative.
   InternalInvalidTangentHealAngleDegrees(angle: Float)
 
-  /// Stroke width must be finite and greater than zero.
-  InternalInvalidStrokeWidth(width: Float)
-
   /// Band payloads used for inside classification must be closed.
   InternalBandSubpathNotClosed
 
@@ -2797,9 +2795,6 @@ pub type Error {
   /// The tangent-healing angle must be finite and non-negative.
   InvalidTangentHealAngleDegrees(angle: Float)
 
-  /// Stroke width must be finite and greater than zero.
-  InvalidStrokeWidth(width: Float)
-
   /// A segment tangent was too small to define a stable normal direction.
   DegenerateTangent(t: Float)
 
@@ -2828,7 +2823,6 @@ pub fn public_error(error: InternalError) -> Error {
       InvalidStalledOffsetDiameter(diameter:)
     InternalInvalidTangentHealAngleDegrees(angle:) ->
       InvalidTangentHealAngleDegrees(angle:)
-    InternalInvalidStrokeWidth(width:) -> InvalidStrokeWidth(width:)
     InternalDegenerateTangent(t:) -> DegenerateTangent(t:)
     InternalMaxDepthReached(divergence:) -> MaxDepthReached(divergence:)
     InternalNonFinite -> NonFinite
@@ -3451,10 +3445,6 @@ fn traced_subpath_from_cusp_trimmed(
   )
 }
 
-/// Apply side-local cusp trimming to one traced walk.
-///
-/// `None` means that the walk was removed completely. `Some` is guaranteed by
-/// the cusp-trimming contract to preserve the input topology and open endpoints.
 fn refinement_depth(options: Options) -> Int {
   int.min(options.fitting.max_depth, maximum_refinement_generation)
 }
@@ -3493,14 +3483,6 @@ pub fn internal_band_winding_function(
       svg_path.BoundaryWinding -> Error(InternalInconsistentContainment)
     }
   })
-}
-
-pub fn internal_segment_is_submerged(
-  segment: svg_path.Segment,
-  inside inside: fn(svg_path.Point) -> Result(Bool, InternalError),
-  side_sampling_distance side_sampling_distance: Float,
-) -> Result(Bool, InternalError) {
-  submerged_segment(segment, inside:, side_sampling_distance:)
 }
 
 fn unique_ints(values: List(Int), unique unique: List(Int)) -> List(Int) {
@@ -4817,41 +4799,6 @@ fn point_inside_semantic_band(
   Ok(containment == svg_path.Inside)
 }
 
-fn submerged_segment(
-  segment: svg_path.Segment,
-  inside inside: fn(svg_path.Point) -> Result(Bool, InternalError),
-  side_sampling_distance side_sampling_distance: Float,
-) -> Result(Bool, InternalError) {
-  use point <- result.try(
-    svg_path.segment_point(segment, at: 0.5)
-    |> result.map_error(InternalPathError),
-  )
-  use normal <- result.try(unit_normal(segment, t: 0.5))
-  let first =
-    point_helpers.add(
-      point,
-      point_helpers.scale(normal, side_sampling_distance),
-    )
-  let second =
-    point_helpers.add(
-      point,
-      point_helpers.scale(normal, 0.0 -. side_sampling_distance),
-    )
-  use first_inside <- result.try(inside(first))
-  use second_inside <- result.try(inside(second))
-  Ok(first_inside && second_inside)
-}
-
-/// Build a local coordinate map around a subpath.
-///
-/// The returned function interprets its input point as local path coordinates:
-/// `x` is true arc length along the source subpath, and `y` is signed offset
-/// from that point. Positive offsets use this module's usual convention:
-/// to the visual left of the subpath direction.
-///
-/// Open subpaths reject `x` values outside `0.0..subpath_length`. Closed
-/// subpaths wrap `x` modulo the subpath length. Empty and zero-length subpaths
-/// cannot define a stable normal direction and return an error.
 fn colinearize_offset_source_tangents(
   subpath: svg_path.Subpath,
   tolerance tolerance: Float,
