@@ -115,6 +115,19 @@ pub fn midpoint_and_lerp_test() {
   assert point.lerp(a, b, t: 2.0) == svg_path.Point(20.0, 50.0)
 }
 
+pub fn interpolation_avoids_opposite_endpoint_overflow_test() {
+  let a = svg_path.Point(-1.0e308, 1.0e308)
+  let b = svg_path.Point(1.0e308, -1.0e308)
+  assert point.midpoint(a, b) == point.zero
+  let quarter = point.lerp(a, b, t: 0.25)
+  assert quarter.x /. 1.0e308 >=. -0.500000000000001
+  assert quarter.x /. 1.0e308 <=. -0.499999999999999
+  assert quarter.y /. 1.0e308 >=. 0.499999999999999
+  assert quarter.y /. 1.0e308 <=. 0.500000000000001
+  assert point.lerp(a, b, t: 0.0) == a
+  assert point.lerp(a, b, t: 1.0) == b
+}
+
 pub fn normalize_test() {
   let assert Ok(unit) = point.normalize(svg_path.Point(3.0, 4.0))
   assert point.near(unit, svg_path.Point(0.6, 0.8), tolerance: 0.000000001)
@@ -178,6 +191,88 @@ pub fn projection_test() {
   assert point.project(a, onto: svg_path.Point(0.0, 0.0)) == Error(Nil)
   assert point.scalar_projection(a, onto: svg_path.Point(0.0, 0.0))
     == Error(Nil)
+}
+
+pub fn projection_extreme_target_scale_test() {
+  list.each([1.0e-200, 1.0e200], fn(magnitude) {
+    assert point.project(
+        svg_path.Point(3.0, 4.0),
+        onto: svg_path.Point(magnitude, 0.0),
+      )
+      == Ok(svg_path.Point(3.0, 0.0))
+    assert point.scalar_projection(
+        svg_path.Point(3.0, 4.0),
+        onto: svg_path.Point(0.0 -. magnitude, 0.0),
+      )
+      == Ok(-3.0)
+    let assert Ok(projected) =
+      point.project(
+        svg_path.Point(5.0, 0.0),
+        onto: svg_path.Point(3.0 *. magnitude, 4.0 *. magnitude),
+      )
+    assert point.near(projected, svg_path.Point(1.8, 2.4), tolerance: 1.0e-14)
+  })
+}
+
+pub fn projection_preserves_mixed_scale_source_test() {
+  let source = svg_path.Point(1.0e308, 1.0e-300)
+  assert point.project(source, onto: point.down)
+    == Ok(svg_path.Point(0.0, 1.0e-300))
+  assert point.scalar_projection(source, onto: point.down) == Ok(1.0e-300)
+}
+
+pub fn projection_avoids_unrepresentable_scalar_intermediate_test() {
+  let maximum = 1.7976931348623157e308
+  let source = svg_path.Point(maximum, maximum)
+  let assert Ok(projected) =
+    point.project(source, onto: svg_path.Point(1.0, 1.0))
+  assert projected.x /. maximum >. 0.999999999999999
+  assert projected.y /. maximum >. 0.999999999999999
+  assert point.scalar_projection(source, onto: svg_path.Point(1.0, 1.0))
+    == Error(Nil)
+  assert point.scalar_projection(
+      svg_path.Point(maximum, 0.0 -. maximum),
+      onto: svg_path.Point(1.0, 1.0),
+    )
+    == Ok(0.0)
+}
+
+pub fn near_extreme_scales_test() {
+  list.each([1.0e-200, 1.0e200], fn(magnitude) {
+    assert !point.near(
+      point.zero,
+      svg_path.Point(10.0 *. magnitude, 0.0),
+      tolerance: magnitude,
+    )
+    assert point.near(
+      point.zero,
+      svg_path.Point(0.3 *. magnitude, 0.4 *. magnitude),
+      tolerance: magnitude,
+    )
+    assert !point.near(
+      point.zero,
+      svg_path.Point(0.8 *. magnitude, 0.8 *. magnitude),
+      tolerance: magnitude,
+    )
+    assert point.near(
+      point.zero,
+      svg_path.Point(magnitude, 0.0),
+      tolerance: magnitude,
+    )
+  })
+  let maximum = 1.7976931348623157e308
+  assert !point.near(
+    svg_path.Point(maximum, 0.0),
+    svg_path.Point(0.0 -. maximum, 0.0),
+    tolerance: maximum,
+  )
+  assert !point.near(
+    point.zero,
+    svg_path.Point(maximum, maximum),
+    tolerance: maximum,
+  )
+  assert !point.near(point.zero, svg_path.Point(1.0e-310, 0.0), tolerance: 0.0)
+  assert point.near(svg_path.Point(-0.0, 0.0), point.zero, tolerance: -0.0)
 }
 
 pub fn rotations_and_near_test() {

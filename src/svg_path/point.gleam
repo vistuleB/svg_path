@@ -1,6 +1,7 @@
 //// Small helper library for the `svg_path.Point` type.
 
 import gleam/float
+import gleam/result
 import svg_path
 import svg_path/internal/number
 import svg_path/trig
@@ -145,7 +146,21 @@ pub fn lerp(
     True, _ -> a
     _, True -> b
     _, _ ->
-      svg_path.Point(a.x +. { b.x -. a.x } *. t, a.y +. { b.y -. a.y } *. t)
+      svg_path.Point(lerp_coordinate(a.x, b.x, t), lerp_coordinate(a.y, b.y, t))
+  }
+}
+
+fn lerp_coordinate(a: Float, b: Float, t: Float) -> Float {
+  // Opposite-sign endpoints can overflow b-a even though any point between
+  // them is representable. Weighted terms cannot overflow for 0 < t < 1,
+  // and their opposite signs make their sum safe as well.
+  case
+    t >. 0.0
+    && t <. 1.0
+    && { { a <. 0.0 && b >. 0.0 } || { a >. 0.0 && b <. 0.0 } }
+  {
+    True -> a *. { 1.0 -. t } +. b *. t
+    False -> a +. { b -. a } *. t
   }
 }
 
@@ -168,27 +183,36 @@ pub fn normalize(point: svg_path.Point) -> Result(svg_path.Point, Nil) {
 }
 
 /// Project `point` onto `onto`.
+/// Returns `Error(Nil)` for a zero target vector or a non-finite result.
 pub fn project(
   point point: svg_path.Point,
   onto onto: svg_path.Point,
 ) -> Result(svg_path.Point, Nil) {
-  let denominator = norm_squared(onto)
-  case number.is_zero(denominator) {
-    True -> Error(Nil)
-    False -> Ok(scale(onto, by: dot(point, onto) /. denominator))
-  }
+  use unit <- result.try(normalize(onto))
+  let x_contribution = point.x *. unit.x
+  let y_contribution = point.y *. unit.y
+  // Distribute the final multiplication before adding: the scalar projection
+  // can overflow even when both coordinates of the vector result are finite.
+  // Do not rescale the source: that could erase its smaller coordinate.
+  use x <- result.try(number.checked_sum(
+    x_contribution *. unit.x,
+    y_contribution *. unit.x,
+  ))
+  use y <- result.try(number.checked_sum(
+    x_contribution *. unit.y,
+    y_contribution *. unit.y,
+  ))
+  Ok(svg_path.Point(x, y))
 }
 
 /// Return the scalar projection of `point` onto `onto`.
+/// Returns `Error(Nil)` for a zero target vector or a non-finite result.
 pub fn scalar_projection(
   point point: svg_path.Point,
   onto onto: svg_path.Point,
 ) -> Result(Float, Nil) {
-  let length = norm(onto)
-  case number.is_zero(length) {
-    True -> Error(Nil)
-    False -> Ok(dot(point, onto) /. length)
-  }
+  use unit <- result.try(normalize(onto))
+  number.checked_sum(point.x *. unit.x, point.y *. unit.y)
 }
 
 /// Rotate a point as a vector by 90 degrees clockwise.
@@ -207,7 +231,32 @@ pub fn near(
   b: svg_path.Point,
   tolerance tolerance: Float,
 ) -> Bool {
-  tolerance >=. 0.0
-  && tolerance -. tolerance == 0.0
-  && distance_squared(a, b) <=. tolerance *. tolerance
+  case tolerance >=. 0.0 && number.is_finite(tolerance) {
+    False -> False
+    True -> {
+      // A difference that overflows is necessarily outside any finite tolerance.
+      case
+        number.checked_sum(a.x, 0.0 -. b.x),
+        number.checked_sum(a.y, 0.0 -. b.y)
+      {
+        Ok(dx), Ok(dy) -> {
+          case number.is_zero(tolerance) {
+            True -> number.is_zero(dx) && number.is_zero(dy)
+            False -> {
+              // Reject outside the coordinate box before dividing, so neither
+              // ratios nor their squares can overflow. Do not square tolerance.
+              float.absolute_value(dx) <=. tolerance
+              && float.absolute_value(dy) <=. tolerance
+              && {
+                let x = dx /. tolerance
+                let y = dy /. tolerance
+                x *. x +. y *. y <=. 1.0
+              }
+            }
+          }
+        }
+        _, _ -> False
+      }
+    }
+  }
 }
