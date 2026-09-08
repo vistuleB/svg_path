@@ -56,18 +56,32 @@ pub fn invalid_tolerance_reports_invalid_curvature_tolerance_test() {
   assert value == -0.5
 }
 
-pub fn zero_tolerance_options_are_accepted_test() {
+pub fn zero_tolerance_reports_unconverged_curvature_bracket_test() {
   let exact = curvature.Options(tolerance: 0.0, max_depth: 32)
 
-  let assert Ok(parameters) =
+  // Zero tolerance is valid, but this root is not hit exactly by bisection.
+  // Exhaustion must report the remaining bracket, not return an approximation.
+  let assert Error(curvature.CurvatureMaxDepthReached(lower:, upper:)) =
     curvature.segment_left_normal_cusp_parameters(
       visually_upward_cubic(),
       distance: 0.27,
       options: exact,
     )
-  let assert [left, right] = parameters
-  assert near(left, 0.4786978280544282)
-  assert near(right, 0.5213021719455719)
+  assert lower <. upper
+  assert upper -. lower <. tolerance
+  let assert Ok(lower_residual) =
+    curvature.segment_left_normal_cusp_residual(
+      visually_upward_cubic(),
+      distance: 0.27,
+      at: lower,
+    )
+  let assert Ok(upper_residual) =
+    curvature.segment_left_normal_cusp_residual(
+      visually_upward_cubic(),
+      distance: 0.27,
+      at: upper,
+    )
+  assert lower_residual *. upper_residual <. 0.0
 }
 
 pub fn invalid_max_depth_reports_invalid_curvature_max_depth_test() {
