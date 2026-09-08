@@ -109,6 +109,7 @@ pub fn segment_with_samples(
 /// `Ok(Some(_))` means the proposed parameter interval is a positive-span
 /// affine overlap. `Ok(None)` means the proposed interval is not coincident
 /// under the supplied tolerance.
+/// Both endpoint pairs are checked explicitly, in addition to interior samples.
 @internal
 pub fn check_parameter_correspondence(
   left: svg_path.Segment,

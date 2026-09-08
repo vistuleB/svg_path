@@ -233,6 +233,55 @@ pub fn endpoint_projection_overlap_rejects_nonpositive_samples_test() {
     == Error(svg_path.InvalidOverlapSamples(0))
 }
 
+pub fn explicit_correspondence_rejects_mismatching_endpoint_pairs_test() {
+  // Every interior sample passes at tolerance 1; an endpoint does not.
+  list.each(
+    [
+      svg_path.Line(svg_path.Point(0.0, 1.1), svg_path.Point(10.0, 0.0)),
+      svg_path.Line(svg_path.Point(0.0, 0.0), svg_path.Point(10.0, 1.1)),
+    ],
+    fn(right) {
+      assert overlaps.check_parameter_correspondence(
+          line(),
+          right,
+          left_from: 0.0,
+          left_to: 1.0,
+          right_from: 0.0,
+          right_to: 1.0,
+          tolerance: 1.0,
+          samples: 5,
+        )
+        == Ok(None)
+      assert overlaps.check_parameter_correspondence(
+          line(),
+          svg_path.segment_reverse(right),
+          left_from: 0.0,
+          left_to: 1.0,
+          right_from: 1.0,
+          right_to: 0.0,
+          tolerance: 1.0,
+          samples: 5,
+        )
+        == Ok(None)
+    },
+  )
+}
+
+pub fn explicit_correspondence_accepts_endpoints_at_tolerance_test() {
+  let right = svg_path.Line(svg_path.Point(0.0, 1.0), svg_path.Point(10.0, 1.0))
+  let assert Ok(Some(_)) =
+    overlaps.check_parameter_correspondence(
+      line(),
+      right,
+      left_from: 0.0,
+      left_to: 1.0,
+      right_from: 0.0,
+      right_to: 1.0,
+      tolerance: 1.0,
+      samples: 5,
+    )
+}
+
 pub fn identical_line_is_one_full_overlap_test() {
   assert_full_overlap(line(), line(), 0.0, 1.0)
 }

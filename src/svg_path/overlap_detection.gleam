@@ -308,6 +308,7 @@ pub fn detect(
 /// affine overlap. `Ok(None)` means the proposed interval is not coincident
 /// under the supplied tolerance. A non-affine coincident correspondence is an
 /// error, matching the module-wide overlap contract.
+/// Both endpoint pairs are checked explicitly, in addition to interior samples.
 @internal
 pub fn check_parameter_correspondence(
   left: svg_path.Segment,
@@ -337,13 +338,27 @@ pub fn check_parameter_correspondence(
       case overlap_has_positive_span(overlap) {
         False -> Ok(None)
         True -> {
-          use valid_sampled <- result.try(sampled_overlap_valid(
-            overlap,
-            left,
+          use right_start <- result.try(svg_path.segment_point(
             right,
-            tolerance,
-            samples,
+            at: right_from,
           ))
+          use right_end <- result.try(svg_path.segment_point(
+            right,
+            at: right_to,
+          ))
+          // Unlike endpoint-projection proposals, supplied correspondences
+          // have not yet established endpoint coincidence. Interior samples
+          // alone can miss an endpoint mismatch, even between two lines.
+          use valid_sampled <- result.try(
+            case
+              points_near(start, right_start, tolerance)
+              && points_near(end, right_end, tolerance)
+            {
+              False -> Ok(False)
+              True ->
+                sampled_overlap_valid(overlap, left, right, tolerance, samples)
+            },
+          )
           case valid_sampled {
             False -> Ok(None)
             True -> {
