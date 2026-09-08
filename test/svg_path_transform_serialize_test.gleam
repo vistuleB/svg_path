@@ -9,6 +9,19 @@ pub fn main() -> Nil {
   gleeunit.main()
 }
 
+pub fn signed_zero_matrix_entries_do_not_add_operations_test() {
+  assert serialize.to_string(
+      transform.from_tuple(#(1.0, -0.0, -0.0, 1.0, -0.0, -0.0)),
+    )
+    == "translate(0)"
+  assert serialize.to_string(
+      transform.from_tuple(#(2.0, -0.0, -0.0, 2.0, -0.0, -0.0)),
+    )
+    == "scale(2)"
+  assert serialize.to_string(transform.translate(x: 10.0, y: -0.0))
+    == "translate(10)"
+}
+
 pub fn transform_translate_serializes_nicely_test() {
   assert serialize.to_string(transform.translate(x: 10.0, y: 0.0))
     == "translate(10)"

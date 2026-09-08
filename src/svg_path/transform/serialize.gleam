@@ -8,6 +8,7 @@
 import gleam/float
 import gleam/option.{type Option, None, Some}
 import svg_path/format as number_format
+import svg_path/internal/number as numeric
 import svg_path/transform as path_transform
 import svg_path/trig
 
@@ -79,6 +80,13 @@ pub fn to_string_with(
   options options: Options,
 ) -> String {
   let #(a, b, c, d, e, f) = path_transform.to_tuple(transform)
+  // Exact matrix-shape recognition must not depend on the sign of zero.
+  let a = numeric.normalize_zero(a)
+  let b = numeric.normalize_zero(b)
+  let c = numeric.normalize_zero(c)
+  let d = numeric.normalize_zero(d)
+  let e = numeric.normalize_zero(e)
+  let f = numeric.normalize_zero(f)
 
   case options.force_matrix {
     True -> matrix_transform(a, b, c, d, e, f, options)
