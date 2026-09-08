@@ -336,6 +336,8 @@ pub fn map_points(
 /// The scalar handle lengths `a` and `b` are chosen by least squares against
 /// the provided `(t, point)` samples. Samples are allowed at any `t`, but
 /// endpoint samples do not add handle information.
+/// Returns `UnderdeterminedCubicFit` if the samples provide no handle information,
+/// including an empty sample list or samples only at `t = 0` and `t = 1`.
 pub fn fit_cubic_with_endpoint_tangents(
   start start: BezierPoint,
   end end: BezierPoint,
@@ -718,7 +720,10 @@ fn solve_cubic_fit_equations(
   atb1: Float,
   count: Int,
 ) -> Result(#(Float, Float), Error) {
-  case count == 0 {
+  // Endpoint samples count as samples but both handle basis functions vanish.
+  // Do not let the nonnegative solver's zero-handle candidate conceal that
+  // there is no information determining either handle length.
+  case count == 0 || { number.is_zero(ata00) && number.is_zero(ata11) } {
     True -> Error(UnderdeterminedCubicFit)
     False ->
       solve_nonnegative_cubic_fit_equations(ata00, ata01, ata11, atb0, atb1)

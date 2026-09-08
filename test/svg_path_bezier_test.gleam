@@ -295,6 +295,19 @@ pub fn fit_cubic_with_endpoint_tangents_rejects_degenerate_tangent_test() {
     )
 }
 
+pub fn fit_cubic_with_endpoint_tangents_rejects_endpoint_only_samples_test() {
+  let start = bezier.BezierPoint(0.0, 0.0)
+  let end = bezier.BezierPoint(3.0, 0.0)
+  assert bezier.fit_cubic_with_endpoint_tangents(
+      start:,
+      end:,
+      start_tangent: bezier.BezierPoint(1.0, 1.0),
+      end_tangent: bezier.BezierPoint(1.0, -1.0),
+      samples: [#(0.0, start), #(-0.0, start), #(1.0, end)],
+    )
+    == Error(bezier.UnderdeterminedCubicFit)
+}
+
 pub fn fit_cubic_with_endpoint_tangents_rejects_underdetermined_samples_test() {
   let assert Error(bezier.UnderdeterminedCubicFit) =
     bezier.fit_cubic_with_endpoint_tangents(
