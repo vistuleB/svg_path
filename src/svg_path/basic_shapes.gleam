@@ -6,6 +6,7 @@
 import gleam/float
 import gleam/option.{type Option, None, Some}
 import svg_path
+import svg_path/internal/number
 
 /// Errors returned by SVG primitive conversion helpers.
 pub type Error {
@@ -126,7 +127,7 @@ pub fn circle(
   cy cy: Float,
   r r: Float,
 ) -> Result(svg_path.Subpath, Error) {
-  case r <. 0.0, r == 0.0 {
+  case r <. 0.0, number.is_zero(r) {
     True, _ -> Error(InvalidCircleRadius(r))
     _, True -> Error(DisabledRendering)
     False, False -> ellipse(cx:, cy:, rx: r, ry: r)
@@ -214,7 +215,11 @@ pub fn polygon(
 }
 
 fn validate_rect_size(width: Float, height: Float) -> Result(Nil, Error) {
-  case width <. 0.0, height <. 0.0, width == 0.0 || height == 0.0 {
+  case
+    width <. 0.0,
+    height <. 0.0,
+    number.is_zero(width) || number.is_zero(height)
+  {
     True, _, _ -> Error(InvalidRectWidth(width))
     _, True, _ -> Error(InvalidRectHeight(height))
     _, _, True -> Error(DisabledRendering)
@@ -245,7 +250,7 @@ fn rect_radii(
 }
 
 fn validate_ellipse_radii(rx: Float, ry: Float) -> Result(Nil, Error) {
-  case rx <. 0.0, ry <. 0.0, rx == 0.0 || ry == 0.0 {
+  case rx <. 0.0, ry <. 0.0, number.is_zero(rx) || number.is_zero(ry) {
     True, _, _ -> Error(InvalidEllipseRadiusX(rx))
     _, True, _ -> Error(InvalidEllipseRadiusY(ry))
     _, _, True -> Error(DisabledRendering)

@@ -8,6 +8,33 @@ pub fn main() -> Nil {
   gleeunit.main()
 }
 
+pub fn negative_zero_sizes_disable_rendering_test() {
+  assert basic_shapes.circle(cx: 0.0, cy: 0.0, r: -0.0)
+    == Error(basic_shapes.DisabledRendering)
+  assert basic_shapes.ellipse(cx: 0.0, cy: 0.0, rx: -0.0, ry: 1.0)
+    == Error(basic_shapes.DisabledRendering)
+  assert basic_shapes.ellipse(cx: 0.0, cy: 0.0, rx: 1.0, ry: -0.0)
+    == Error(basic_shapes.DisabledRendering)
+  assert basic_shapes.rect(
+      x: 0.0,
+      y: 0.0,
+      width: -0.0,
+      height: 1.0,
+      rx: None,
+      ry: None,
+    )
+    == Error(basic_shapes.DisabledRendering)
+  assert basic_shapes.rect(
+      x: 0.0,
+      y: 0.0,
+      width: 1.0,
+      height: -0.0,
+      rx: None,
+      ry: None,
+    )
+    == Error(basic_shapes.DisabledRendering)
+}
+
 pub fn rect_converts_to_svg_equivalent_path_test() {
   let assert Ok(subpath) =
     basic_shapes.rect(
