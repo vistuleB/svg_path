@@ -2205,8 +2205,8 @@ fn point_loop_view(
   let leaving_turn = cross(sight, leaving)
 
   case
-    arriving_turn == 0.0
-    || leaving_turn == 0.0
+    number.is_zero(arriving_turn)
+    || number.is_zero(leaving_turn)
     || opposite_signs(arriving_turn, leaving_turn)
   {
     True -> TangentPoint
@@ -3320,7 +3320,7 @@ fn cubic_curvature_values(
   let qa = cross(v, w)
   let qb = 2.0 *. cross(u, w)
   let qc = cross(u, v)
-  let candidates = case qa == 0.0 {
+  let candidates = case number.is_zero(qa) {
     True -> [0.0, 1.0]
     False -> {
       let critical = { 0.0 -. qb } /. { 2.0 *. qa }
