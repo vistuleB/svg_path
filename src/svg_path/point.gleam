@@ -126,7 +126,13 @@ pub fn lerp(
   b: svg_path.Point,
   t t: Float,
 ) -> svg_path.Point {
-  svg_path.Point(a.x +. { b.x -. a.x } *. t, a.y +. { b.y -. a.y } *. t)
+  // Preserve the supplied endpoints without cancellation or overflowing b-a.
+  case number.is_zero(t), t == 1.0 {
+    True, _ -> a
+    _, True -> b
+    _, _ ->
+      svg_path.Point(a.x +. { b.x -. a.x } *. t, a.y +. { b.y -. a.y } *. t)
+  }
 }
 
 /// Return a unit vector with the same direction as `point`.

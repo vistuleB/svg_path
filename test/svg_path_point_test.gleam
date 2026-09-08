@@ -60,6 +60,28 @@ pub fn norm_and_distance_avoid_intermediate_overflow_test() {
   assert point.distance(svg_path.Point(0.0, 0.0), large) == 1.0e200
 }
 
+pub fn lerp_preserves_exact_end_despite_cancellation_test() {
+  let a = svg_path.Point(1.0, 10_000_000_000_000_000.0)
+  let b = svg_path.Point(0.1, 1.0)
+  assert point.lerp(a, b, t: 1.0) == b
+}
+
+pub fn lerp_endpoints_avoid_overflowing_difference_test() {
+  let a = svg_path.Point(-1.0e308, 1.0e308)
+  let b = svg_path.Point(1.0e308, -1.0e308)
+  assert point.lerp(a, b, t: 0.0) == a
+  assert point.lerp(a, b, t: -0.0) == a
+  assert point.lerp(a, b, t: 1.0) == b
+}
+
+pub fn lerp_preserves_signed_zero_endpoint_coordinates_test() {
+  let a = svg_path.Point(-0.0, 0.0)
+  let b = svg_path.Point(0.0, -0.0)
+  assert point.lerp(a, b, t: 0.0) == a
+  assert point.lerp(a, b, t: -0.0) == a
+  assert point.lerp(a, b, t: 1.0) == b
+}
+
 pub fn midpoint_and_lerp_test() {
   let a = svg_path.Point(0.0, 10.0)
   let b = svg_path.Point(10.0, 30.0)
