@@ -6,10 +6,15 @@ import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import svg_path
+import svg_path/point
 
 const overlap_samples = 5
 
 const overlap_parameter_tolerance = 0.000000000001
+
+type OverlapCandidates {
+  OverlapCandidates(affine: List(RawOverlap), non_affine: List(RawOverlap))
+}
 
 /// Internal transport representation. The public nominal type belongs to
 /// `svg_path/overlaps`.
@@ -252,7 +257,9 @@ fn insert_overlap_loop(
 ///
 /// This experimental algorithm assumes non-degenerate segments and that every
 /// overlap boundary is an endpoint of at least one input segment. Every pair
-/// of endpoint projections within `tolerance` proposes an interval. Interior
+/// of endpoint matches within `tolerance` proposes an interval. Matches include
+/// both explicit target endpoints as alternatives to the closest projection.
+/// Interior
 /// samples on the proposed left interval must remain within `tolerance` of the
 /// proposed right interval. Compatible proposals are merged into maximal
 /// intervals.
@@ -274,19 +281,28 @@ pub fn detect_with_samples(
           let EndpointProjection(distance:, ..) = projection
           distance <=. tolerance
         })
-      use candidates <- result.try(
-        overlap_candidates_from_projection_pairs(
-          close,
-          left,
-          right,
-          tolerance,
-          samples,
-          [],
-        ),
-      )
-      case merge_overlap_list(candidates, tolerance:) {
-        Ok(merged) -> Ok(merged)
-        Error(Nil) -> Ok([])
+      use candidates <- result.try(overlap_candidates_from_projection_pairs(
+        close,
+        left,
+        right,
+        tolerance,
+        samples,
+        OverlapCandidates([], []),
+      ))
+      // A failed parameter pairing is not proof of non-affinity when another
+      // pairing explains the same two parameter intervals (e.g. a closed
+      // curve has two endpoint addresses at the same geometric point).
+      case
+        list.any(candidates.non_affine, fn(rejected) {
+          !candidate_covered(rejected, candidates.affine)
+        })
+      {
+        True -> Error(svg_path.NonAffineOverlapCorrespondence)
+        False ->
+          case merge_overlap_list(candidates.affine, tolerance:) {
+            Ok(merged) -> Ok(merged)
+            Error(Nil) -> Ok([])
+          }
       }
     }
   }
@@ -381,46 +397,108 @@ pub fn check_parameter_correspondence(
   }
 }
 
+// Coverage is about the parameter domains, not the rejected orientation.
+// Require both domains to be explained; an unrelated accepted overlap must
+// not suppress a genuine non-affine overlap elsewhere on the curves.
+fn candidate_covered(
+  candidate: RawOverlap,
+  accepted: List(RawOverlap),
+) -> Bool {
+  let #(lf, lt, rf, rt, _, _) = candidate
+  let left =
+    list.map(accepted, fn(item) {
+      let #(a, b, _, _, _, _) = item
+      #(min_float(a, b), max_float(a, b))
+    })
+  let right =
+    list.map(accepted, fn(item) {
+      let #(_, _, a, b, _, _) = item
+      #(min_float(a, b), max_float(a, b))
+    })
+  intervals_cover(
+    list.sort(left, fn(a, b) { float.compare(a.0, b.0) }),
+    min_float(lf, lt),
+    max_float(lf, lt),
+  )
+  && intervals_cover(
+    list.sort(right, fn(a, b) { float.compare(a.0, b.0) }),
+    min_float(rf, rt),
+    max_float(rf, rt),
+  )
+}
+
+fn intervals_cover(
+  intervals: List(#(Float, Float)),
+  from: Float,
+  to: Float,
+) -> Bool {
+  case from >=. to, intervals {
+    True, _ -> True
+    False, [] -> False
+    False, [#(start, end), ..rest] ->
+      case start >. from {
+        True -> False
+        False -> intervals_cover(rest, max_float(from, end), to)
+      }
+  }
+}
+
 fn endpoint_projections(
   left: svg_path.Segment,
   right: svg_path.Segment,
 ) -> Result(List(EndpointProjection), svg_path.Error) {
-  use left_start <- result.try(endpoint_projection(
+  use left_start <- result.try(endpoint_projection_alternatives(
     LeftEndpoint,
     0.0,
     svg_path.segment_start(left),
     right,
   ))
-  use left_end <- result.try(endpoint_projection(
+  use left_end <- result.try(endpoint_projection_alternatives(
     LeftEndpoint,
     1.0,
     svg_path.segment_end(left),
     right,
   ))
-  use right_start <- result.try(endpoint_projection(
+  use right_start <- result.try(endpoint_projection_alternatives(
     RightEndpoint,
     0.0,
     svg_path.segment_start(right),
     left,
   ))
-  use right_end <- result.try(endpoint_projection(
+  use right_end <- result.try(endpoint_projection_alternatives(
     RightEndpoint,
     1.0,
     svg_path.segment_end(right),
     left,
   ))
-  Ok([left_start, left_end, right_start, right_end])
+  Ok(list.unique(list.flatten([left_start, left_end, right_start, right_end])))
 }
 
-fn endpoint_projection(
+fn endpoint_projection_alternatives(
   source: ProjectionSource,
   source_t: Float,
   point: svg_path.Point,
   target: svg_path.Segment,
-) -> Result(EndpointProjection, svg_path.Error) {
+) -> Result(List(EndpointProjection), svg_path.Error) {
   use projection <- result.try(svg_path.segment_projection(point, to: target))
   let svg_path.SegmentProjection(t: target_t, distance:, ..) = projection
-  Ok(EndpointProjection(source:, source_t:, target_t:, distance:))
+  // Projection returns one closest address, not every matching address.
+  // Keep explicit endpoint alternatives; the caller filters by tolerance.
+  Ok([
+    EndpointProjection(source:, source_t:, target_t:, distance:),
+    EndpointProjection(
+      source:,
+      source_t:,
+      target_t: 0.0,
+      distance: point.distance(point, svg_path.segment_start(target)),
+    ),
+    EndpointProjection(
+      source:,
+      source_t:,
+      target_t: 1.0,
+      distance: point.distance(point, svg_path.segment_end(target)),
+    ),
+  ])
 }
 
 fn overlap_candidates_from_projection_pairs(
@@ -429,10 +507,10 @@ fn overlap_candidates_from_projection_pairs(
   right: svg_path.Segment,
   tolerance: Float,
   samples: Int,
-  candidates: List(RawOverlap),
-) -> Result(List(RawOverlap), svg_path.Error) {
+  candidates: OverlapCandidates,
+) -> Result(OverlapCandidates, svg_path.Error) {
   case projections {
-    [] -> Ok(list.reverse(candidates))
+    [] -> Ok(candidates)
     [first, ..rest] -> {
       use candidates <- result.try(overlap_candidates_against(
         first,
@@ -462,8 +540,8 @@ fn overlap_candidates_against(
   right: svg_path.Segment,
   tolerance: Float,
   samples: Int,
-  candidates: List(RawOverlap),
-) -> Result(List(RawOverlap), svg_path.Error) {
+  candidates: OverlapCandidates,
+) -> Result(OverlapCandidates, svg_path.Error) {
   case projections {
     [] -> Ok(candidates)
     [second, ..rest] -> {
@@ -496,8 +574,8 @@ fn overlap_candidates_against(
                     samples,
                   ))
                   case affine {
-                    True -> Ok(Ok(overlap))
-                    False -> Error(svg_path.NonAffineOverlapCorrespondence)
+                    True -> Ok(Ok(#(overlap, True)))
+                    False -> Ok(Ok(#(overlap, False)))
                   }
                 }
               }
@@ -505,7 +583,13 @@ fn overlap_candidates_against(
           }
       })
       let candidates = case accepted {
-        Ok(overlap) -> [overlap, ..candidates]
+        Ok(#(overlap, True)) ->
+          OverlapCandidates(..candidates, affine: [overlap, ..candidates.affine])
+        Ok(#(overlap, False)) ->
+          OverlapCandidates(..candidates, non_affine: [
+            overlap,
+            ..candidates.non_affine
+          ])
         Error(Nil) -> candidates
       }
       overlap_candidates_against(

@@ -378,6 +378,35 @@ pub fn reversed_cubic_is_one_full_overlap_test() {
   assert_full_overlap(segment, svg_path.segment_reverse(segment), 1.0, 0.0)
 }
 
+pub fn closed_cubic_identity_overlap_keeps_endpoint_alternatives_test() {
+  let curve =
+    svg_path.CubicBezier(
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(3.0, 4.0),
+      svg_path.Point(-3.0, 4.0),
+      svg_path.Point(0.0, 0.0),
+    )
+  assert_full_overlap(curve, curve, 0.0, 1.0)
+  let assert Ok(found) = encounters.segment(curve, curve)
+  assert list.length(found.overlaps) == 1
+  assert list.length(found.intersections) == 2
+}
+
+pub fn closed_cubic_reversed_overlap_keeps_endpoint_alternatives_test() {
+  let curve =
+    svg_path.CubicBezier(
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(3.0, 4.0),
+      svg_path.Point(-3.0, 4.0),
+      svg_path.Point(0.0, 0.0),
+    )
+  let reversed = svg_path.segment_reverse(curve)
+  assert_full_overlap(curve, reversed, 1.0, 0.0)
+  let assert Ok(found) = encounters.segment(curve, reversed)
+  assert list.length(found.overlaps) == 1
+  assert list.length(found.intersections) == 2
+}
+
 pub fn non_affinely_parameterized_line_cubics_are_rejected_test() {
   let linear_speed =
     svg_path.CubicBezier(
