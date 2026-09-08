@@ -180,7 +180,12 @@ pub fn transformed_axes(
       let x_axis = linear_point(x_axis, transform)
       let y_axis = linear_point(y_axis, transform)
 
-      extract_axes(x_axis, y_axis)
+      // Test the original linear map as well: multiplying and rotating the
+      // axes can obscure an exactly singular input through rounding.
+      case number.is_zero(affine.determinant(transform)) {
+        True -> Error(DegenerateInputArc)
+        False -> extract_axes(x_axis, y_axis)
+      }
     }
   }
 }
@@ -1085,7 +1090,14 @@ fn extract_axes(
   let discriminant =
     square_root({ sxx -. syy } *. { sxx -. syy } +. 4.0 *. sxy *. sxy)
   let lambda1 = { sxx +. syy +. discriminant } /. 2.0
-  let lambda2 = { sxx +. syy -. discriminant } /. 2.0
+  // For S = B B^T, det(S) = det(B)^2 = lambda1 * lambda2.
+  // Avoid subtracting nearly equal trace/discriminant values for lambda2,
+  // and avoid computing det(S) by another cancellation-prone subtraction.
+  let determinant = x_axis.x *. y_axis.y -. x_axis.y *. y_axis.x
+  let lambda2 = case lambda1 >. squared_length_tolerance {
+    True -> determinant *. determinant /. lambda1
+    False -> 0.0
+  }
 
   case
     lambda1 <=. squared_length_tolerance || lambda2 <=. squared_length_tolerance

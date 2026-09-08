@@ -101,6 +101,20 @@ pub fn transformed_axes_accepts_radii_below_old_squared_threshold_test() {
   assert near(float.max(radius.x, radius.y), 0.00002)
 }
 
+pub fn transformed_axes_preserves_small_nonsingular_eigenvalue_test() {
+  let assert Ok(#(radius, _)) =
+    ellipse.transformed_axes(
+      radius: ellipse.EllipsePoint(3.0, 2.0),
+      x_axis_rotation: 2.0,
+      by: affine.scale_xy(x: 1.0, y: 0.00000001),
+    )
+  // Product of singular values equals the absolute determinant of the
+  // transformed ellipse axes: 3 * 2 * 1e-8.
+  assert float.absolute_value(radius.x *. radius.y /. 0.00000006 -. 1.0)
+    <. 0.000000001
+  assert float.min(radius.x, radius.y) >. 0.00000001
+}
+
 pub fn collapsed_arc_collinearity_is_scale_relative_test() {
   let nearly_rank_one =
     affine.matrix(a: 1.0, b: 0.0, c: 1.0, d: 0.0000000001, e: 0.0, f: 0.0)

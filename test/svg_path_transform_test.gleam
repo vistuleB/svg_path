@@ -525,6 +525,34 @@ pub fn arc_degenerate_transform_errors_test() {
     == Error(transform.DegenerateArcTransform)
 }
 
+pub fn singular_oblique_arc_transform_uses_graceful_collapse_test() {
+  let arc =
+    svg_path.Arc(
+      svg_path.Point(3.0, 4.0),
+      svg_path.Point(3.0, 2.0),
+      2.0,
+      False,
+      True,
+      svg_path.Point(-3.0, 4.0),
+    )
+  let matrix = transform.matrix(1.0, 2.0, 0.0, 0.0, 0.0, 0.0)
+  assert transform.segment(arc, by: matrix)
+    == Error(transform.DegenerateArcTransform)
+  let assert Ok(svg_path.Line(..)) =
+    transform.segment_gracefully(arc, by: matrix)
+  let assert Ok(collapsed) =
+    transform.segment_to_subpath_gracefully(arc, by: matrix)
+  assert svg_path.subpath_start(collapsed)
+    == transform.point(svg_path.segment_start(arc), by: matrix)
+  assert svg_path.subpath_end(collapsed)
+    == transform.point(svg_path.segment_end(arc), by: matrix)
+  list.each(svg_path.subpath_segments(collapsed), fn(segment) {
+    let assert svg_path.Line(start:, end:) = segment
+    assert near(start.y, 2.0 *. start.x)
+    assert near(end.y, 2.0 *. end.x)
+  })
+}
+
 pub fn strict_subpath_transform_errors_on_collapsed_arc_test() {
   let assert Ok(subpath) =
     svg_path.subpath([
