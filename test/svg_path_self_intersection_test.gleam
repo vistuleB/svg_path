@@ -8,6 +8,19 @@ pub fn main() -> Nil {
   gleeunit.main()
 }
 
+pub fn segment_self_intersections_preserves_closed_cubic_endpoints_test() {
+  let curve =
+    svg_path.CubicBezier(
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(0.1, 1.0),
+      svg_path.Point(-1.0, 0.2),
+      svg_path.Point(0.0, 0.0),
+    )
+  let assert Ok([hit]) = intersections.segment_self(curve)
+  assert hit.left_t == 0.0
+  assert hit.right_t == 1.0
+}
+
 pub fn segment_self_intersections_finds_cubic_crossing_test() {
   let curve =
     svg_path.CubicBezier(

@@ -574,9 +574,38 @@ pub fn cubic_self_intersections_with(
     LinearBezierData(..) | QuadraticBezierData(..) -> Ok([])
     CubicBezierData(start:, control1:, control2:, end:) -> {
       let #(a, b, c) = cubic_power_coefficients(start, control1, control2, end)
-      let candidates = cubic_self_intersection_candidates(a, b, c)
-
-      Ok(filter_cubic_self_intersections(candidates, curve, options, []))
+      // Preserve known boundary parameters instead of recovering them from
+      // the sum/product formula, which can round them outside [0, 1].
+      let boundary_candidates = case
+        number.is_zero(start.x -. end.x) && number.is_zero(start.y -. end.y)
+      {
+        True -> [#(0.0, 1.0)]
+        False -> {
+          let #(reverse_a, reverse_b, reverse_c) =
+            cubic_power_coefficients(end, control2, control1, start)
+          list.append(
+            list.map(cubic_start_return_parameters(a, b, c), fn(t) { #(0.0, t) }),
+            list.map(
+              cubic_start_return_parameters(reverse_a, reverse_b, reverse_c),
+              fn(t) { #(1.0 -. t, 1.0) },
+            ),
+          )
+        }
+      }
+      case
+        filter_cubic_self_intersections(boundary_candidates, curve, options, [])
+      {
+        [] ->
+          Ok(
+            filter_cubic_self_intersections(
+              cubic_self_intersection_candidates(a, b, c),
+              curve,
+              options,
+              [],
+            ),
+          )
+        found -> Ok(found)
+      }
     }
   }
 }
@@ -1040,6 +1069,45 @@ fn cubic_power_coefficients(
   )
 }
 
+// B(t) - B(0) = t * (a*t^2 + b*t + c). Factor out the known
+// endpoint root, then solve one coordinate of the remaining quadratic.
+// The caller verifies the full two-dimensional intersection and arc length.
+fn cubic_start_return_parameters(
+  a: BezierPoint,
+  b: BezierPoint,
+  c: BezierPoint,
+) -> List(Float) {
+  // Keep the same degeneracy exclusion as the ordinary cubic solver:
+  // a and b must span the plane for an isolated ordinary cubic crossing.
+  case number.is_zero(cross(a, b)) {
+    True -> []
+    False -> {
+      let x_scale =
+        float.absolute_value(a.x)
+        +. float.absolute_value(b.x)
+        +. float.absolute_value(c.x)
+      let y_scale =
+        float.absolute_value(a.y)
+        +. float.absolute_value(b.y)
+        +. float.absolute_value(c.y)
+      let #(a, b, c) = case x_scale >=. y_scale {
+        True -> #(a.x, b.x, c.x)
+        False -> #(a.y, b.y, c.y)
+      }
+      root.quadratic_with(
+        a,
+        b,
+        c,
+        options: root.QuadraticOptions(
+          coefficient_tolerance: 0.0,
+          repeated_root_policy: root.PreserveRepeatedRoot,
+        ),
+      )
+      |> list.filter(fn(t) { t >. 0.0 && t <. 1.0 })
+    }
+  }
+}
+
 fn cubic_self_intersection_candidates(
   a: BezierPoint,
   b: BezierPoint,
@@ -1117,16 +1185,22 @@ fn cubic_self_intersection_from_candidate(
     True -> {
       let left = point(curve, at: s)
       let right = point(curve, at: t)
-      let arc_length =
-        bezier_between(curve, from: s, to: t) |> approximate_length
       case
-        arc_length >=. options.minimum_arc_length_separation
-        && distance_squared(left, right)
+        distance_squared(left, right)
         <=. options.distance_tolerance *. options.distance_tolerance
       {
         False -> None
-        True ->
-          Some(CubicSelfIntersection(s:, t:, point: midpoint(left, right)))
+        True -> {
+          // Coordinate roots usually fail the other coordinate. Reject them
+          // before computing the more expensive arc-length separation.
+          let arc_length =
+            bezier_between(curve, from: s, to: t) |> approximate_length
+          case arc_length >=. options.minimum_arc_length_separation {
+            False -> None
+            True ->
+              Some(CubicSelfIntersection(s:, t:, point: midpoint(left, right)))
+          }
+        }
       }
     }
   }

@@ -640,6 +640,72 @@ pub fn cubic_self_intersections_finds_loop_test() {
   assert point_near(point, bezier.BezierPoint(0.0, 0.0))
 }
 
+pub fn cubic_self_intersections_preserves_closed_endpoint_parameters_test() {
+  let curve =
+    bezier.CubicBezierData(
+      bezier.BezierPoint(0.0, 0.0),
+      bezier.BezierPoint(0.1, 1.0),
+      bezier.BezierPoint(-1.0, 0.2),
+      bezier.BezierPoint(0.0, 0.0),
+    )
+  let assert Ok([hit]) = bezier.cubic_self_intersections(curve)
+  assert hit.s == 0.0
+  assert hit.t == 1.0
+  assert hit.point == bezier.BezierPoint(0.0, 0.0)
+}
+
+pub fn cubic_self_intersections_finds_start_interior_and_reverse_test() {
+  let start = bezier.BezierPoint(0.0, 0.0)
+  let control1 = bezier.BezierPoint(1.0, 0.0)
+  let control2 = bezier.BezierPoint(0.0, 1.0)
+  let end = bezier.BezierPoint(-3.0, -3.0)
+  let assert Ok([hit]) =
+    bezier.cubic_self_intersections(bezier.CubicBezierData(
+      start,
+      control1,
+      control2,
+      end,
+    ))
+  assert hit.s == 0.0
+  assert near(hit.t, 0.5)
+  let assert Ok([hit]) =
+    bezier.cubic_self_intersections(bezier.CubicBezierData(
+      end,
+      control2,
+      control1,
+      start,
+    ))
+  assert near(hit.s, 0.5)
+  assert hit.t == 1.0
+}
+
+pub fn cubic_self_intersections_preserves_rounded_endpoint_interior_parameters_test() {
+  let a = bezier.BezierPoint(0.0, 0.0)
+  let b = bezier.BezierPoint(0.1, 1.0)
+  let c = bezier.BezierPoint(-1.0, 0.2)
+  let d = bezier.BezierPoint(2.7, -3.5999999999999996)
+  let assert Ok([hit]) =
+    bezier.cubic_self_intersections(bezier.CubicBezierData(a, b, c, d))
+  assert hit.s == 0.0
+  assert near(hit.t, 0.5)
+  let assert Ok([hit]) =
+    bezier.cubic_self_intersections(bezier.CubicBezierData(d, c, b, a))
+  assert near(hit.s, 0.5)
+  assert hit.t == 1.0
+}
+
+pub fn cubic_self_intersections_rejects_one_coordinate_endpoint_return_test() {
+  // x(0.5) == x(0), but y is strictly increasing: no self-intersection.
+  let curve =
+    bezier.CubicBezierData(
+      bezier.BezierPoint(0.0, 0.0),
+      bezier.BezierPoint(1.0, 1.0),
+      bezier.BezierPoint(0.0, 2.0),
+      bezier.BezierPoint(-3.0, 3.0),
+    )
+  assert bezier.cubic_self_intersections(curve) == Ok([])
+}
+
 pub fn cubic_self_intersections_finds_interior_crossing_test() {
   let curve =
     bezier.CubicBezierData(
