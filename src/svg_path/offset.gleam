@@ -3662,7 +3662,7 @@ fn offside_trimmed_single_offset_subpath(
   _options: Options,
   source_subpath_index: Int,
 ) -> Result(List(TracedOffsetSubpath), InternalError) {
-  case svg_path.subpath_is_closed(build.subpath) && offset != 0.0 {
+  case svg_path.subpath_is_closed(build.subpath) && !number.is_zero(offset) {
     False ->
       Ok([
         traced_subpath_from_i(build.culled, source_subpath_index),
@@ -9941,11 +9941,16 @@ fn boundary_reaches_offset_radius(
   offset: Float,
 ) -> Bool {
   case boundary {
-    ReversalBoundary(Some(value)) if value != 0.0 -> {
-      let radius = 1.0 /. value
-      number.is_finite(radius)
-      && float.absolute_value(radius -. offset) <=. curvature_radius_tolerance
-    }
+    ReversalBoundary(Some(value)) ->
+      case number.is_zero(value) {
+        True -> False
+        False -> {
+          let radius = 1.0 /. value
+          number.is_finite(radius)
+          && float.absolute_value(radius -. offset)
+          <=. curvature_radius_tolerance
+        }
+      }
     _ -> False
   }
 }
@@ -10704,10 +10709,10 @@ fn bisect_signed_zero(
 ) -> Result(Float, InternalError) {
   let from_score = score(from)
   let to_score = score(to)
-  case from_score == 0.0 {
+  case number.is_zero(from_score) {
     True -> Ok(from)
     False ->
-      case to_score == 0.0 {
+      case number.is_zero(to_score) {
         True -> Ok(to)
         False ->
           case from_score *. to_score >. 0.0 {
@@ -10737,7 +10742,7 @@ fn bisect_signed_zero_loop(
     False -> {
       let middle = { from +. to } /. 2.0
       let middle_score = score(middle)
-      case middle_score == 0.0 {
+      case number.is_zero(middle_score) {
         True -> middle
         False ->
           case from_score *. middle_score <=. 0.0 {
@@ -11051,7 +11056,7 @@ fn offset_direction(
   offset offset: Float,
 ) -> Result(svg_path.Point, InternalError) {
   use tangent <- result.try(unit_tangent(segment, t:))
-  case offset == 0.0 {
+  case number.is_zero(offset) {
     True -> Ok(tangent)
     False ->
       case curvature.segment_left_normal_curvature(segment, at: t) {
@@ -11069,7 +11074,7 @@ fn offset_endpoint_direction_limit(
   t t: Float,
   offset offset: Float,
 ) -> Result(svg_path.Point, InternalError) {
-  case t == 0.0 || t == 1.0 {
+  case number.is_zero(t) || t == 1.0 {
     False -> Error(InternalDegenerateTangent(t))
     True ->
       offset_endpoint_direction_limit_from_interior(
@@ -11092,7 +11097,7 @@ fn offset_endpoint_direction_limit_from_interior(
   case interior_distance >. 0.01 {
     True -> Error(InternalDegenerateTangent(endpoint_t))
     False -> {
-      let interior_t = case endpoint_t {
+      let interior_t = case number.normalize_zero(endpoint_t) {
         0.0 -> interior_distance
         _ -> 1.0 -. interior_distance
       }
@@ -11271,7 +11276,7 @@ pub fn unit_tangent(
     svg_path.segment_directions(segment, at: t)
     |> result.map_error(InternalPathError),
   )
-  case t {
+  case number.normalize_zero(t) {
     0.0 -> required_direction(directions.outgoing, t:)
     1.0 -> required_direction(directions.incoming, t:)
     _ -> interior_unit_tangent(directions, t:)
