@@ -1659,6 +1659,27 @@ pub fn projection_returns_quadratic_parameter_point_and_distance_test() {
   assert near(distance, 5.0)
 }
 
+pub fn projection_keeps_better_isolation_endpoint_without_sign_change_test() {
+  let original =
+    svg_path.QuadraticBezier(
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(5.0, 1.1076024267822504),
+      svg_path.Point(10.0, 0.0),
+    )
+  let from = 0.24867968684993685
+  let to = 0.802967485692352
+  let assert Ok(portion) = svg_path.segment_between(original, from:, to:)
+  let reversed = svg_path.segment_reverse(portion)
+  let assert Ok(query) =
+    svg_path.segment_point(original, at: from +. { to -. from } *. 0.5)
+  // At the root window's upper endpoint (0.5), geometric evaluation gives a
+  // slightly negative stationary value. Both window endpoints then have the
+  // same sign; returning its midpoint used to report distance 2.58e-9.
+  let assert Ok(projection) = svg_path.segment_projection(query, to: reversed)
+  assert projection.distance <. 0.000000000001
+  assert float.absolute_value(projection.t -. 0.5) <. 0.000000000001
+}
+
 pub fn polished_bezier_projections_have_small_tangential_error_test() {
   projection_comparison_segments()
   |> list.each(fn(segment) {

@@ -7079,9 +7079,13 @@ fn refine_isolated_distance_root_by_bisection(
         upper,
       ))
       case same_sign(lower_value, upper_value) {
-        // Repeated roots inherited from derivative isolation do not provide a
-        // crossing bracket for the parent polynomial.
-        True -> Ok(estimate)
+        // Repeated roots need not provide a crossing bracket. Also, polynomial
+        // isolation and geometric evaluation can round differently at a root
+        // on the window boundary. Without a crossing we cannot bisect by sign,
+        // but must not discard an endpoint that projects better than estimate.
+        True ->
+          smallest_segment_projection(point, segment, [estimate, lower, upper])
+          |> result.map(fn(projection) { projection.t })
         False ->
           refine_arc_projection_window_by_bisection_loop(
             point,

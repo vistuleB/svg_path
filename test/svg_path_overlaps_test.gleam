@@ -278,6 +278,35 @@ pub fn reversed_quadratic_is_one_full_overlap_test() {
   assert_full_overlap(segment, svg_path.segment_reverse(segment), 1.0, 0.0)
 }
 
+pub fn reversed_quadratic_portion_is_not_rejected_by_projection_test() {
+  let original =
+    svg_path.QuadraticBezier(
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(5.0, 1.1076024267822504),
+      svg_path.Point(10.0, 0.0),
+    )
+  let from = 0.24867968684993685
+  let to = 0.802967485692352
+  let assert Ok(portion) = svg_path.segment_between(original, from:, to:)
+  let reversed = svg_path.segment_reverse(portion)
+  let assert Ok([overlap]) = overlaps.segment(original, reversed)
+  assert near(overlap.left_from, from)
+  assert near(overlap.left_to, to)
+  assert near(overlap.right_from, 1.0)
+  assert near(overlap.right_to, 0.0)
+  let assert Ok(Some(_)) =
+    overlaps.check_parameter_correspondence(
+      original,
+      reversed,
+      left_from: from,
+      left_to: to,
+      right_from: 1.0,
+      right_to: 0.0,
+      tolerance: 0.000000001,
+      samples: 5,
+    )
+}
+
 pub fn identical_cubic_is_one_full_overlap_test() {
   let segment =
     svg_path.CubicBezier(
