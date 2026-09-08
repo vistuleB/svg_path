@@ -33,8 +33,8 @@
 //// `subpath_band` and `path_band` construct two signed offset walks and trim
 //// them together without adding endpoint caps to the arranged walks. Their
 //// `cap` style closes the internal winding bands for open sources; disabling
-//// in-band trimming returns that capped band outline. `subpath_stroke` and
-//// `path_stroke` add endpoint caps to the arranged outline for open subpaths.
+//// in-band trimming returns that capped band outline. The separate
+//// `svg_path/stroke` module adds endpoint caps to the arranged outline for open subpaths.
 //// Closed strokes use capless per-subpath band construction.
 
 fn traced_subpath_geometry(
@@ -3415,9 +3415,9 @@ fn traced_subpath_from_survivor_chain(
   ))
 }
 
-/// Materialize the current traced walk as ordinary SVG path geometry.
-///
-/// This is the terminal boundary at which trimming provenance may be discarded.
+/// Adapt the current traced walk to the cusp trimmer's structural input.
+/// Preserve current geometry, H-preimages, and their parameter intervals;
+/// the caller retains the source-subpath index when raising the result again.
 fn i_subpath_from_traced(traced: TracedOffsetSubpath) -> ICulledOffsetSubpath {
   ICulledOffsetSubpath(
     segments: list.map(traced.segments, fn(segment) {
@@ -3942,7 +3942,7 @@ fn arrangement_split_segments_from_i_contamination_edges(
   }
 }
 
-/// Build the untrimmed closed stroke band for one source subpath.
+/// Projection options using the trimming pipeline's sampling budget.
 fn default_distance_options() -> svg_path.DistanceOptions {
   svg_path.DistanceOptions(
     ..svg_path.default_distance_options(),
@@ -9120,9 +9120,7 @@ fn heal_offset_boundary(
   }
 }
 
-/// Remove the loop enclosed around the shared endpoint of two consecutive
-/// post-healing offset preimages. This is exposed internally for focused
-/// instrumentation.
+/// Map a local parameter into its enclosing preimage interval.
 fn interval_parameter(from: Float, to: Float, local: Float) -> Float {
   from +. { to -. from } *. local
 }
