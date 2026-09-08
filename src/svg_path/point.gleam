@@ -30,7 +30,7 @@ pub fn direction(degrees degrees: Float) -> svg_path.Point {
 /// Return the clockwise SVG heading of a vector in degrees from positive X.
 ///
 /// `0` points right, `90` points down, `180` points left, and `270` points up.
-/// A zero vector has heading `0`.
+/// The result is in `[0, 360)`. A zero vector has heading `0`.
 pub fn heading(vector: svg_path.Point) -> Float {
   case number.is_zero(vector.x) && number.is_zero(vector.y) {
     True -> 0.0
@@ -38,10 +38,11 @@ pub fn heading(vector: svg_path.Point) -> Float {
       let degrees = trig.atan2_degrees(vector.y, vector.x)
       let turns = float.floor(degrees /. 360.0)
       let normalized = degrees -. turns *. 360.0
-      case normalized <. 0.0 {
+      let normalized = case normalized <. 0.0 {
         True -> normalized +. 360.0
         False -> normalized
       }
+      canonical_turn_endpoint(normalized)
     }
   }
 }
@@ -56,9 +57,22 @@ pub fn clockwise_aperture(
   to to: svg_path.Point,
 ) -> Float {
   let difference = heading(to) -. heading(from)
-  case difference <. 0.0 {
+  let aperture = case difference <. 0.0 {
     True -> difference +. 360.0
     False -> difference
+  }
+  canonical_turn_endpoint(aperture)
+}
+
+// A small negative angle is representable near zero, but adding 360 can round
+// to exactly 360: Float spacing is coarser at that magnitude. Apply this after
+// the final arithmetic in both heading and aperture (the latter can introduce
+// the same rounding independently). No epsilon: representable angles below
+// 360 remain unchanged; only the excluded upper endpoint maps back to zero.
+fn canonical_turn_endpoint(degrees: Float) -> Float {
+  case degrees >=. 360.0 {
+    True -> 0.0
+    False -> degrees
   }
 }
 

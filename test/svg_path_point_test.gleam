@@ -31,6 +31,29 @@ pub fn clockwise_aperture_test() {
     == 90.0
 }
 
+pub fn heading_maps_rounded_full_turn_to_zero_test() {
+  assert point.heading(svg_path.Point(1.0, -1.0e-16)) == 0.0
+}
+
+pub fn aperture_maps_independently_rounded_full_turn_to_zero_test() {
+  let from = svg_path.Point(1.0, 1.0e-16)
+  // Both headings are already in range; adding 360 to their negative
+  // difference introduces the excluded endpoint independently of heading.
+  assert point.heading(from) >. 0.0
+  assert point.clockwise_aperture(from: from, to: point.right) == 0.0
+}
+
+pub fn near_full_turn_remains_distinct_when_representable_test() {
+  let heading = point.heading(svg_path.Point(1.0, -1.0e-10))
+  let aperture =
+    point.clockwise_aperture(
+      from: svg_path.Point(1.0, 1.0e-10),
+      to: point.right,
+    )
+  assert heading >. 359.0 && heading <. 360.0
+  assert aperture >. 359.0 && aperture <. 360.0
+}
+
 pub fn vector_arithmetic_test() {
   let a = svg_path.Point(3.0, 4.0)
   let b = svg_path.Point(1.0, -2.0)
