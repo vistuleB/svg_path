@@ -39,8 +39,9 @@ const cyclic_order_minimum_angle_degrees = 0.1
 /// `point` is the center of the smallest circle enclosing `endpoint_samples`.
 /// Construction accepts a sample only when that circle's squared radius does
 /// not exceed the graph's squared endpoint tolerance. Consequently every
-/// sample lies within `tolerance` of `point`, without making the result depend
-/// on endpoint insertion order.
+/// sample lies within `tolerance` of `point`. The enclosing-circle center is
+/// determined by the samples in a given cluster, but greedy assignment of
+/// endpoints to clusters can depend on insertion order.
 pub type ArrangementVertex {
   ArrangementVertex(
     /// The vertex identifier referenced by incident edges.
@@ -1959,11 +1960,6 @@ pub fn empty() -> ArrangementGraph {
   ArrangementGraph(vertices: [], edges: [], cyclic_orders: [])
 }
 
-/// Apply every uniquely forced undirected parity-capacity reduction.
-///
-/// An omitted vertex has parity zero. The graph remains unchanged. A parity
-/// mismatch forces a one-unit reduction only when exactly one positive-capacity
-/// edge is incident to the vertex.
 /// Insert one atomic segment directly as an arrangement edge.
 ///
 /// Endpoints within `tolerance` join the same vertex. A structurally identical
