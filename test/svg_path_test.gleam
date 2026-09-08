@@ -1071,6 +1071,32 @@ pub fn split_segment_divides_arc_test() {
   assert point_near(svg_path.segment_end(right), svg_path.Point(20.0, 0.0))
 }
 
+pub fn endpoint_arc_splits_return_usable_empty_lines_test() {
+  let arc =
+    svg_path.Arc(
+      svg_path.Point(1.0, 0.0),
+      svg_path.Point(1.0, 1.0),
+      0.0,
+      False,
+      True,
+      svg_path.Point(0.0, 1.0),
+    )
+  list.each([svg_path.segment_split, svg_path.segment_split_inside], fn(split) {
+    list.each([0.0, -0.0, 1.0], fn(t) {
+      let assert Ok(#(left, right)) = split(arc, t)
+      let #(empty, retained, endpoint) = case t == 1.0 {
+        True -> #(right, left, svg_path.segment_end(arc))
+        False -> #(left, right, svg_path.segment_start(arc))
+      }
+      assert empty == svg_path.Line(endpoint, endpoint)
+      assert retained == arc
+      assert svg_path.segment_length(empty) == Ok(0.0)
+      assert svg_path.segment_point(empty, 0.5) == Ok(endpoint)
+      assert svg_path.segment_length(retained) == svg_path.segment_length(arc)
+    })
+  })
+}
+
 pub fn split_segment_inside_rejects_outside_t_test() {
   let segment =
     svg_path.CubicBezier(

@@ -4595,7 +4595,8 @@ pub fn segment_split(
 /// Split a segment at parameter `t`, returning an error outside `0.0..1.0`.
 ///
 /// Values exactly at `0.0` or `1.0` are accepted and produce one zero-length
-/// segment.
+/// segment. For an Arc, the empty portion is a Line and the other portion is
+/// the original Arc, since coincident-endpoint arcs have no defined ellipse.
 pub fn segment_split_inside(
   segment: Segment,
   at t: Float,
@@ -4849,12 +4850,24 @@ fn arc_split_with_exact_endpoints(
   right: Segment,
   t: Float,
 ) -> #(Segment, Segment) {
-  let left = segment_with_start(left, segment_start(original))
-  let assert Ok(split) = segment_point(original, at: t)
-  let left = segment_with_end(left, split)
-  let right = segment_with_start(right, split)
-  let right = segment_with_end(right, segment_end(original))
-  #(left, right)
+  case number.is_zero(t), t == 1.0 {
+    True, _ -> {
+      let start = segment_start(original)
+      #(Line(start, start), original)
+    }
+    _, True -> {
+      let end = segment_end(original)
+      #(original, Line(end, end))
+    }
+    _, _ -> {
+      let left = segment_with_start(left, segment_start(original))
+      let assert Ok(split) = segment_point(original, at: t)
+      let left = segment_with_end(left, split)
+      let right = segment_with_start(right, split)
+      let right = segment_with_end(right, segment_end(original))
+      #(left, right)
+    }
+  }
 }
 
 fn validate_direction_options(options: DirectionOptions) -> Result(Nil, Error) {
