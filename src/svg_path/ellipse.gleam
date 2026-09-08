@@ -74,6 +74,7 @@
 import gleam/float
 import gleam/list
 import svg_path/affine
+import svg_path/internal/number
 import svg_path/trig
 
 const scalar_tolerance = 0.000000001
@@ -385,7 +386,7 @@ pub fn arc_projection_extrema(
   let alpha = direction.x *. x_axis_x +. direction.y *. x_axis_y
   let beta = direction.x *. y_axis_x +. direction.y *. y_axis_y
 
-  case alpha == 0.0 && beta == 0.0 {
+  case number.is_zero(alpha) && number.is_zero(beta) {
     True -> []
     False -> {
       let support_angle = trig.atan2_degrees(beta, alpha)
@@ -533,6 +534,7 @@ fn split_arc_between_progresses(
 
 fn normalized_progresses(points: List(Float)) -> List(Float) {
   points
+  |> list.map(number.normalize_zero)
   |> sort_unique_progresses
   |> trim_start_progress
   |> trim_end_progress
