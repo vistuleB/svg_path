@@ -49,6 +49,16 @@ pub fn rect_converts_to_svg_equivalent_path_test() {
   assert serialize.subpath(subpath) == "M 10 20 H 110 V 70 H 10 Z"
 }
 
+pub fn either_zero_corner_radius_preserves_all_rectangle_corners_test() {
+  let assert Ok(expected) = basic_shapes.rect(3.0, 4.0, 10.0, 10.0, None, None)
+  let assert Ok(zero_y) =
+    basic_shapes.rect(3.0, 4.0, 10.0, 10.0, Some(2.0), Some(0.0))
+  let assert Ok(zero_x) =
+    basic_shapes.rect(3.0, 4.0, 10.0, 10.0, Some(0.0), Some(2.0))
+  assert zero_y == expected
+  assert zero_x == expected
+}
+
 pub fn rounded_rect_converts_to_svg_equivalent_path_test() {
   let assert Ok(subpath) =
     basic_shapes.rect(

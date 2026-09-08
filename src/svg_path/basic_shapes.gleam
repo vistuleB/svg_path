@@ -42,7 +42,8 @@ pub type Error {
 ///
 /// The equivalent path starts at `(x + rx, y)` and proceeds clockwise. If only
 /// one corner radius is present, the missing radius uses the same value. Radii
-/// are clamped so they are no greater than half the rectangle extent.
+/// are clamped so they are no greater than half the rectangle extent. If either
+/// effective radius is zero, the rectangle is unrounded and starts at `(x, y)`.
 pub fn rect(
   x x: Float,
   y y: Float,
@@ -56,7 +57,10 @@ pub fn rect(
   let #(rx, ry) = radii
   let x2 = x +. width
   let y2 = y +. height
-  let start = svg_path.Point(x +. rx, y)
+  let start = case rx >. 0.0 && ry >. 0.0 {
+    True -> svg_path.Point(x +. rx, y)
+    False -> svg_path.Point(x, y)
+  }
 
   let segments = case rx >. 0.0 && ry >. 0.0 {
     False -> [
