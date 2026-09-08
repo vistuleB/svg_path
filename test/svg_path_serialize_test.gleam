@@ -1364,7 +1364,7 @@ pub fn parser_tracked_relative_serialization_is_stable_after_parsing_test() {
   assert once == twice
 }
 
-pub fn parser_tracked_relative_full_arc_is_subdivided_test() {
+pub fn parser_tracked_relative_coincident_arc_does_not_invent_geometry_test() {
   let point = svg_path.Point(0.34, 0.0)
   let arc =
     svg_path.Arc(
@@ -1382,26 +1382,22 @@ pub fn parser_tracked_relative_full_arc_is_subdivided_test() {
       serialize.relative_decimal_options(1),
     )
 
-  assert string.split(serialized, on: "a") |> list.length == 3
+  assert serialized == "m 0.3 0 a 10 10 0 0 1 0 0"
   let assert Ok(svg_path.Path([parsed])) = parse.path(serialized)
-  let assert [
-    svg_path.Arc(
-      start: _,
-      radius: _,
-      x_axis_rotation: _,
-      large_arc: _,
-      sweep: _,
-      end: _,
-    ),
-    svg_path.Arc(
-      start: _,
-      radius: _,
-      x_axis_rotation: _,
-      large_arc: _,
-      sweep: _,
-      end: _,
-    ),
-  ] = svg_path.subpath_segments(parsed)
+  assert parsed == svg_path.subpath_empty(at: svg_path.Point(0.3, 0.0))
+}
+
+pub fn relative_coincident_zero_radius_arc_terminates_test() {
+  let point = svg_path.Point(0.0, 0.0)
+  list.each([svg_path.Point(0.0, 2.0), svg_path.Point(2.0, 0.0)], fn(radius) {
+    let arc = svg_path.Arc(point, radius, 0.0, False, True, point)
+    let source = svg_path.subpath_assert([arc]) |> svg_path.subpath_as_path
+    let encoded = serialize.path_with(source, serialize.relative_options())
+    let assert Ok(parsed) = parse.path(encoded)
+    assert parse.path(serialize.path(source)) == Ok(parsed)
+    assert parsed == svg_path.subpath_as_path(svg_path.subpath_empty(at: point))
+    assert string.split(encoded, on: "a") |> list.length == 2
+  })
 }
 
 fn result_try_set_closed_with_bridge(

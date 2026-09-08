@@ -1144,68 +1144,8 @@ fn parser_tracked_arc(
   state: RelativeParserState,
   format: Format,
 ) -> #(List(String), RelativeParserState) {
-  case source_start == source_end {
-    True -> {
-      // A same-endpoint SVG arc command draws nothing. Replace the library's
-      // full-arc representation with two ordinary endpoint arcs without
-      // sending the indeterminate endpoint form through ellipse conversion.
-      let midpoint =
-        svg_path.Point(
-          source_start.x
-            +. float.absolute_value(source_radius.x)
-            *. trig.cos_degrees(source_rotation),
-          source_start.y
-            +. float.absolute_value(source_radius.x)
-            *. trig.sin_degrees(source_rotation),
-        )
-      let first =
-        svg_path.Arc(
-          start: source_start,
-          radius: source_radius,
-          x_axis_rotation: source_rotation,
-          large_arc: False,
-          sweep:,
-          end: midpoint,
-        )
-      let second =
-        svg_path.Arc(
-          start: midpoint,
-          radius: source_radius,
-          x_axis_rotation: source_rotation,
-          large_arc: False,
-          sweep:,
-          end: source_end,
-        )
-      let #(first_commands, state) =
-        parser_tracked_segment(first, state, format)
-      let #(second_commands, state) =
-        parser_tracked_segment(second, state, format)
-      #(list.append(first_commands, second_commands), state)
-    }
-    False ->
-      parser_tracked_arc_command(
-        source_start,
-        source_radius,
-        source_rotation,
-        large_arc,
-        sweep,
-        source_end,
-        state,
-        format,
-      )
-  }
-}
-
-fn parser_tracked_arc_command(
-  source_start: svg_path.Point,
-  source_radius: svg_path.Point,
-  source_rotation: Float,
-  large_arc: Bool,
-  sweep: Bool,
-  source_end: svg_path.Point,
-  state: RelativeParserState,
-  format: Format,
-) -> #(List(String), RelativeParserState) {
+  // Coincident endpoints are an SVG no-op, not an implicit full ellipse.
+  // Serialize that endpoint form directly, including when a radius is zero.
   let RelativeParserState(parser_current:, parser_subpath_start:, ..) = state
   let intended_end = quantized_point(source_end, format)
   let similarity =
