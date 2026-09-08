@@ -18,6 +18,15 @@ pub fn is_zero_accepts_both_signs_without_a_tolerance_test() {
   assert !number.is_zero(-1.0e-310)
 }
 
+pub fn normalize_zero_canonicalizes_only_exact_zeros_test() {
+  assert number.normalize_zero(0.0) == 0.0
+  assert number.normalize_zero(-0.0) == 0.0
+  assert number.normalize_zero(0.0 *. -1.0) == 0.0
+  list.each([1.0, -1.0, 1.0e-310, -1.0e-310], fn(value) {
+    assert number.normalize_zero(value) == value
+  })
+}
+
 pub fn signed_zero_vectors_have_zero_heading_and_no_direction_test() {
   list.each([0.0, -0.0], fn(x) {
     list.each([0.0, -0.0], fn(y) {

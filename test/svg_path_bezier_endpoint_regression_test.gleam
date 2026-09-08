@@ -43,3 +43,27 @@ fn curves() -> List(bezier.BezierData) {
     ),
   ]
 }
+
+pub fn split_many_trims_both_signed_zero_boundaries_test() {
+  let curve =
+    bezier.LinearBezierData(
+      bezier.BezierPoint(1.0, 0.0),
+      bezier.BezierPoint(0.1, 0.2),
+    )
+  assert bezier.split_many(curve, at: [-0.0]) == [curve]
+  assert bezier.split_many(curve, at: [0.0, -0.0, 0.0, 1.0]) == [curve]
+  assert bezier.split_inside_many(curve, at: [-0.0, 0.0, -0.0, 1.0])
+    == Ok([curve])
+}
+
+pub fn split_many_deduplicates_signed_zero_inside_extrapolated_range_test() {
+  let curve =
+    bezier.LinearBezierData(
+      bezier.BezierPoint(0.0, 0.0),
+      bezier.BezierPoint(1.0, 0.0),
+    )
+  // Here zero is an interior cut, so boundary trimming cannot hide duplicates.
+  let expected = bezier.split_many(curve, at: [-0.5, 0.0, 0.5])
+  assert list.length(expected) == 4
+  assert bezier.split_many(curve, at: [0.5, -0.0, -0.5, 0.0, -0.0]) == expected
+}

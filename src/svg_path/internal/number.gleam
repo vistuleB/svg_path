@@ -10,6 +10,16 @@ pub fn is_zero(value: Float) -> Bool {
   value == 0.0 || value == -0.0
 }
 
+/// Canonicalize either signed zero to `0.0`, leaving other values unchanged.
+/// Useful before exact equality checks, such as deduplication on Erlang.
+@internal
+pub fn normalize_zero(value: Float) -> Float {
+  case is_zero(value) {
+    True -> 0.0
+    False -> value
+  }
+}
+
 /// Return `sqrt(x² + y²)` without overflowing when the result is representable.
 @internal
 pub fn hypot(x: Float, y: Float) -> Float {

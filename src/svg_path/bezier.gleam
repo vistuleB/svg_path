@@ -1187,6 +1187,7 @@ fn distance(left: BezierPoint, right: BezierPoint) -> Float {
 
 fn normalized_progresses(points: List(Float)) -> List(Float) {
   points
+  |> list.map(number.normalize_zero)
   |> sort_unique_progresses
   |> trim_start_progress
   |> trim_end_progress
