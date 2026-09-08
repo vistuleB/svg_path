@@ -14,6 +14,7 @@ import gleam/result
 import svg_path
 import svg_path/bezier
 import svg_path/ellipse
+import svg_path/internal/number
 import svg_path/point as point_helpers
 import svg_path/root
 import svg_path/trig
@@ -525,6 +526,37 @@ pub fn internal_segment_support(
   Ok(#(sample.t, sample.point, sample.value))
 }
 
+/// Maximize dot(point, direction), returning #(parameter, point, raw support).
+/// The direction need not be unit length. No Euclidean normalization is used:
+/// divide the difference of opposite supports by the direction's norm for a
+/// geometric width. A zero direction returns the start at t = 0 with support 0.
+/// Search arithmetic rescales by the largest component to avoid losing roots
+/// for very small directions or overflowing solely from very large directions.
+/// The returned raw dot product must still be representable as a Float.
+@internal
+pub fn internal_segment_support_in_direction(
+  segment: svg_path.Segment,
+  direction direction: svg_path.Point,
+) -> Result(#(Float, svg_path.Point, Float), svg_path.Error) {
+  let scale =
+    float.max(
+      float.absolute_value(direction.x),
+      float.absolute_value(direction.y),
+    )
+  case number.is_zero(scale) {
+    True -> Ok(#(0.0, svg_path.segment_start(segment), 0.0))
+    False -> {
+      let search_direction =
+        svg_path.Point(direction.x /. scale, direction.y /. scale)
+      use #(t, support_point, _) <- result.try(segment_support_in_direction(
+        segment,
+        search_direction,
+      ))
+      Ok(#(t, support_point, dot(support_point, direction)))
+    }
+  }
+}
+
 /// Return the minimum-width strip enclosing cyclically ordered convex vertices.
 ///
 /// This test-facing helper uses the direct quadratic-time polygon algorithm.
@@ -919,30 +951,42 @@ fn minimum_width_search_loop(
   depth depth: Int,
   max_depth max_depth: Int,
 ) -> MinimumWidthDecision {
+  let roundoff = width_lower_bound_roundoff(diameter)
   let best = best_width_sample(samples)
   let WidthSample(angle: best_angle, support: best_support) = best
   let DirectionalSupport(width: best_width, ..) = best_support
   case best_width <=. tolerance {
     True -> MinimumWidthFits(width_sample_strip(best_angle, best_support))
     False -> {
-      let inventory_lower_bound = support_inventory_minimum_width(samples)
+      let inventory_lower_bound =
+        float.max(0.0, support_inventory_minimum_width(samples) -. roundoff)
       case inventory_lower_bound >. tolerance {
         True -> MinimumWidthExceeds(inventory_lower_bound)
         False -> {
-          let interval_lower_bound =
+          let raw_interval_lower_bound =
             intervals_minimum_lower_bound(
               intervals,
               fallback: inventory_lower_bound,
               diameter:,
             )
+          let interval_lower_bound =
+            float.max(0.0, raw_interval_lower_bound -. roundoff)
           let active =
             intervals
             |> list.filter(fn(interval) {
-              width_interval_lower_bound(interval, diameter) <=. tolerance
+              // Subtract the rounding allowance before pruning, not merely
+              // when reporting the final bound: pruning is irreversible.
+              width_interval_lower_bound(interval, diameter) -. roundoff
+              <=. tolerance
             })
           let certified_lower_bound =
             float.max(inventory_lower_bound, interval_lower_bound)
-          case active, depth >= max_depth {
+          // Below the rounding allowance, further angular subdivision cannot
+          // reliably certify the threshold. Do not turn uncertainty into Fits
+          // or Exceeds, or proliferate indistinguishable angular windows.
+          let unresolved =
+            depth >= max_depth || best_width -. tolerance <=. roundoff
+          case active, unresolved {
             [], _ -> MinimumWidthExceeds(certified_lower_bound)
             _, True -> MinimumWidthUnresolved(certified_lower_bound, best_width)
             _, False -> {
@@ -4539,9 +4583,20 @@ fn segment_support(
   angle angle: Float,
 ) -> Result(SupportSample, svg_path.Error) {
   let direction = point_helpers.direction(degrees: angle)
+  use #(t, point, value) <- result.try(segment_support_in_direction(
+    segment,
+    direction,
+  ))
+  Ok(SupportSample(angle:, t:, point:, value:))
+}
+
+fn segment_support_in_direction(
+  segment: svg_path.Segment,
+  direction: svg_path.Point,
+) -> Result(#(Float, svg_path.Point, Float), svg_path.Error) {
   case segment {
     svg_path.Line(start:, end:) -> {
-      best_segment_support(segment, angle, [
+      best_segment_support(segment, direction, [
         0.0,
         1.0,
         ..bezier.projection_extrema(
@@ -4554,7 +4609,7 @@ fn segment_support(
       ])
     }
     svg_path.QuadraticBezier(start:, control:, end:) -> {
-      best_segment_support(segment, angle, [
+      best_segment_support(segment, direction, [
         0.0,
         1.0,
         ..bezier.projection_extrema(
@@ -4568,7 +4623,7 @@ fn segment_support(
       ])
     }
     svg_path.CubicBezier(start:, control1:, control2:, end:) -> {
-      best_segment_support(segment, angle, [
+      best_segment_support(segment, direction, [
         0.0,
         1.0,
         ..bezier.projection_extrema(
@@ -4584,7 +4639,7 @@ fn segment_support(
     }
     svg_path.Arc(..) -> {
       use arc <- result.try(svg_path.arc_center_data(segment))
-      best_segment_support(segment, angle, [
+      best_segment_support(segment, direction, [
         0.0,
         1.0,
         ..ellipse.arc_projection_extrema(
@@ -4598,16 +4653,16 @@ fn segment_support(
 
 fn best_segment_support(
   segment: svg_path.Segment,
-  angle: Float,
+  direction: svg_path.Point,
   candidates: List(Float),
-) -> Result(SupportSample, svg_path.Error) {
+) -> Result(#(Float, svg_path.Point, Float), svg_path.Error) {
   let assert [first, ..rest] = candidates
-  use first <- result.try(support_candidate(segment, angle, first))
+  use first <- result.try(support_candidate(segment, direction, first))
   rest
   |> list.fold(Ok(first), fn(best, t) {
     use best <- result.try(best)
-    use candidate <- result.try(support_candidate(segment, angle, t))
-    case candidate.value >. best.value {
+    use candidate <- result.try(support_candidate(segment, direction, t))
+    case candidate.2 >. best.2 {
       True -> Ok(candidate)
       False -> Ok(best)
     }
@@ -4616,17 +4671,11 @@ fn best_segment_support(
 
 fn support_candidate(
   segment: svg_path.Segment,
-  angle: Float,
+  direction: svg_path.Point,
   t: Float,
-) -> Result(SupportSample, svg_path.Error) {
-  let direction = point_helpers.direction(degrees: angle)
+) -> Result(#(Float, svg_path.Point, Float), svg_path.Error) {
   use point <- result.try(svg_path.segment_point(segment, at: t))
-  Ok(SupportSample(
-    angle: angle,
-    t: t,
-    point: point,
-    value: dot(point, direction),
-  ))
+  Ok(#(t, point, dot(point, direction)))
 }
 
 fn reject_consecutive_curves(

@@ -8,6 +8,51 @@ import svg_path/point
 
 const tolerance = 0.000000001
 
+pub fn collinear_bezier_width_is_not_certified_positive_test() {
+  let segment =
+    svg_path.QuadraticBezier(
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(-20.0, 0.0),
+      svg_path.Point(0.0, 0.0),
+    )
+  let assert Ok(hull) = convex_hull.segment_hull(segment)
+  let assert Ok(decision) =
+    convex_hull.internal_convex_subpath_minimum_width_decision(hull, 0.0)
+  case decision {
+    convex_hull.MinimumWidthFits(strip) -> {
+      assert strip.width == 0.0
+    }
+    convex_hull.MinimumWidthUnresolved(lower_bound, _) -> {
+      assert lower_bound == 0.0
+    }
+    convex_hull.MinimumWidthExceeds(_) ->
+      panic as "collinear curve has zero width"
+  }
+}
+
+pub fn width_threshold_roundoff_remains_unresolved_not_exceeds_test() {
+  // This callback describes a circle: every direction has the same width.
+  // A sub-roundoff difference must not become a positive lower-bound proof.
+  let decision =
+    convex_hull.internal_minimum_width_search(
+      fn(angle) {
+        let normal = point.direction(angle)
+        convex_hull.DirectionalSupport(
+          lower_point: point.scale(normal, -0.5000000000001),
+          upper_point: point.scale(normal, 0.5000000000001),
+          width: 1.0000000000002,
+        )
+      },
+      diameter: 1.0000000000002,
+      tolerance: 1.0,
+      max_depth: 20,
+    )
+  let assert convex_hull.MinimumWidthUnresolved(lower_bound, best_width) =
+    decision
+  assert lower_bound <=. 1.0
+  assert best_width >. 1.0
+}
+
 pub fn point_and_line_polygons_have_zero_width_test() {
   assert width([svg_path.Point(3.0, 4.0)]) == 0.0
   assert near(
