@@ -5,12 +5,24 @@
 //// `y' = b*x + d*y + f`.
 
 import gleam/float
+import gleam/result
 import svg_path/internal/number
 import svg_path/trig
 
 /// A two-dimensional affine transform in SVG's six-value matrix form.
 pub type Affine {
   Affine(a: Float, b: Float, c: Float, d: Float, e: Float, f: Float)
+}
+
+/// Failures while constructing a transform from point correspondences.
+pub type Error {
+  /// The source pair has zero separation in the scaled calculation.
+  DegenerateSourcePair
+  /// The source triple has zero determinant in the calculation, for example
+  /// when its points are collinear or repeated.
+  DegenerateSourceTriple
+  /// Construction produced a non-finite denominator or matrix coefficient.
+  NonFiniteTransform
 }
 
 /// Create an affine matrix from SVG's six matrix values.
@@ -153,14 +165,33 @@ pub fn is_finite(transform: Affine) -> Bool {
 /// another.
 ///
 /// Points are represented as raw coordinate tuples.
-/// Returns `Error(Nil)` if the source pair cannot determine a similarity or
-/// the resulting transform is non-finite.
+/// Returns `DegenerateSourcePair` for zero computed source separation, or
+/// `NonFiniteTransform` when construction produces non-finite values.
 pub fn point_pair_similarity(
   source_start source_start: #(Float, Float),
   source_end source_end: #(Float, Float),
   target_start target_start: #(Float, Float),
   target_end target_end: #(Float, Float),
-) -> Result(Affine, Nil) {
+) -> Result(Affine, Error) {
+  with_arithmetic_errors(
+    fn() {
+      do_point_pair_similarity(
+        source_start,
+        source_end,
+        target_start,
+        target_end,
+      )
+    },
+    NonFiniteTransform,
+  )
+}
+
+fn do_point_pair_similarity(
+  source_start: #(Float, Float),
+  source_end: #(Float, Float),
+  target_start: #(Float, Float),
+  target_end: #(Float, Float),
+) -> Result(Affine, Error) {
   let #(source_start_x, source_start_y) = source_start
   let #(source_end_x, source_end_y) = source_end
   let #(target_start_x, target_start_y) = target_start
@@ -184,8 +215,9 @@ pub fn point_pair_similarity(
   let target_y = target_y /. divisor
   let denominator = source_x *. source_x +. source_y *. source_y
   case denominator == 0.0 {
-    True -> Error(Nil)
+    True -> Error(DegenerateSourcePair)
     False -> {
+      use _ <- result.try(finite_denominator(denominator))
       let a = { source_x *. target_x +. source_y *. target_y } /. denominator
       let b = { source_x *. target_y -. source_y *. target_x } /. denominator
       let c = 0.0 -. b
@@ -201,7 +233,7 @@ pub fn point_pair_similarity(
         )
       case is_finite(transform) {
         True -> Ok(transform)
-        False -> Error(Nil)
+        False -> Error(NonFiniteTransform)
       }
     }
   }
@@ -210,8 +242,8 @@ pub fn point_pair_similarity(
 /// Find an affine transform mapping one point triple to another.
 ///
 /// Points are represented as raw coordinate tuples.
-/// Returns `Error(Nil)` if the source triple cannot determine an affine map or
-/// the resulting transform is non-finite.
+/// Returns `DegenerateSourceTriple` for a zero computed source determinant,
+/// or `NonFiniteTransform` when construction produces non-finite values.
 pub fn point_triple_map(
   source_a source_a: #(Float, Float),
   source_b source_b: #(Float, Float),
@@ -219,7 +251,30 @@ pub fn point_triple_map(
   target_a target_a: #(Float, Float),
   target_b target_b: #(Float, Float),
   target_c target_c: #(Float, Float),
-) -> Result(Affine, Nil) {
+) -> Result(Affine, Error) {
+  with_arithmetic_errors(
+    fn() {
+      do_point_triple_map(
+        source_a,
+        source_b,
+        source_c,
+        target_a,
+        target_b,
+        target_c,
+      )
+    },
+    NonFiniteTransform,
+  )
+}
+
+fn do_point_triple_map(
+  source_a: #(Float, Float),
+  source_b: #(Float, Float),
+  source_c: #(Float, Float),
+  target_a: #(Float, Float),
+  target_b: #(Float, Float),
+  target_c: #(Float, Float),
+) -> Result(Affine, Error) {
   let #(source_a_x, source_a_y) = source_a
   let #(source_b_x, source_b_y) = source_b
   let #(source_c_x, source_c_y) = source_c
@@ -235,6 +290,12 @@ pub fn point_triple_map(
   let target_ac_x = target_c_x -. target_a_x
   let target_ac_y = target_c_y -. target_a_y
   let denominator = source_ab_x *. source_ac_y -. source_ab_y *. source_ac_x
+  // Do not divide by zero: Gleam's zero-division behavior can otherwise yield
+  // a finite matrix even though these correspondences do not determine one.
+  use _ <- result.try(case denominator == 0.0 {
+    True -> Error(DegenerateSourceTriple)
+    False -> finite_denominator(denominator)
+  })
   let a =
     { target_ab_x *. source_ac_y -. target_ac_x *. source_ab_y } /. denominator
   let b =
@@ -255,6 +316,23 @@ pub fn point_triple_map(
 
   case is_finite(transform) {
     True -> Ok(transform)
-    False -> Error(Nil)
+    False -> Error(NonFiniteTransform)
   }
+}
+
+fn finite_denominator(denominator: Float) -> Result(Nil, Error) {
+  case number.is_finite(denominator) {
+    True -> Ok(Nil)
+    False -> Error(NonFiniteTransform)
+  }
+}
+
+// Erlang raises on floating-point overflow; JavaScript produces non-finite
+// values that the explicit checks above reject. Only catch arithmetic errors.
+@external(erlang, "affine_ffi", "with_arithmetic_errors")
+fn with_arithmetic_errors(
+  compute: fn() -> Result(a, Error),
+  _overflow: Error,
+) -> Result(a, Error) {
+  compute()
 }

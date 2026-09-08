@@ -101,7 +101,7 @@ pub fn about_point(
 ///
 /// The returned matrix maps `source_start` within `tolerance` of `target_start`
 /// and `source_end` within `tolerance` of `target_end`. Returns `Error(Nil)`
-/// when the direct point-pair construction produces non-finite values or the
+/// when the source pair is degenerate, construction produces non-finite values, or the
 /// final mapped points are outside tolerance.
 pub fn point_pair_similarity(
   source_start source_start: svg_path.Point,
@@ -110,12 +110,15 @@ pub fn point_pair_similarity(
   target_end target_end: svg_path.Point,
   tolerance tolerance: Float,
 ) -> Result(Matrix, Nil) {
-  use transform <- result.try(affine.point_pair_similarity(
-    source_start: point_tuple(source_start),
-    source_end: point_tuple(source_end),
-    target_start: point_tuple(target_start),
-    target_end: point_tuple(target_end),
-  ))
+  use transform <- result.try(
+    affine.point_pair_similarity(
+      source_start: point_tuple(source_start),
+      source_end: point_tuple(source_end),
+      target_start: point_tuple(target_start),
+      target_end: point_tuple(target_end),
+    )
+    |> result.map_error(fn(_) { Nil }),
+  )
   let transform = from_affine(transform)
   let mapped_start = point(source_start, by: transform)
   let mapped_end = point(source_end, by: transform)
@@ -133,7 +136,7 @@ pub fn point_pair_similarity(
 ///
 /// The returned matrix maps `source_a`, `source_b`, and `source_c` within
 /// `tolerance` of `target_a`, `target_b`, and `target_c`. Returns `Error(Nil)`
-/// when the direct point-triple construction produces non-finite values or the
+/// when the source triple is degenerate, construction produces non-finite values, or the
 /// final mapped points are outside tolerance.
 pub fn point_triple_map(
   source_a source_a: svg_path.Point,
@@ -144,14 +147,17 @@ pub fn point_triple_map(
   target_c target_c: svg_path.Point,
   tolerance tolerance: Float,
 ) -> Result(Matrix, Nil) {
-  use transform <- result.try(affine.point_triple_map(
-    source_a: point_tuple(source_a),
-    source_b: point_tuple(source_b),
-    source_c: point_tuple(source_c),
-    target_a: point_tuple(target_a),
-    target_b: point_tuple(target_b),
-    target_c: point_tuple(target_c),
-  ))
+  use transform <- result.try(
+    affine.point_triple_map(
+      source_a: point_tuple(source_a),
+      source_b: point_tuple(source_b),
+      source_c: point_tuple(source_c),
+      target_a: point_tuple(target_a),
+      target_b: point_tuple(target_b),
+      target_c: point_tuple(target_c),
+    )
+    |> result.map_error(fn(_) { Nil }),
+  )
   let transform = from_affine(transform)
   let mapped_a = point(source_a, by: transform)
   let mapped_b = point(source_b, by: transform)
