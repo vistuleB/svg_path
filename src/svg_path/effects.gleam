@@ -23,7 +23,7 @@ pub type Error {
   /// The radius must be greater than zero.
   InvalidRadius(radius: Float)
 
-  /// The distance tolerance must be finite and greater than zero.
+  /// The distance tolerance must be finite and non-negative.
   InvalidDistanceTolerance(tolerance: Float)
 
   /// The angular tolerance must be finite and non-negative.
@@ -127,9 +127,9 @@ pub type FailureMode {
   LeaveCorner
 
   /// Reduce corner radii as needed after considering all segment constraints.
-  /// This first measures every eligible corner, then repeatedly applies the
-  /// strongest per-segment radius limits together so the result does not depend
-  /// on segment order.
+  /// This first measures every eligible corner, collects the strongest
+  /// per-segment limits, then applies them together in one scaling pass rather
+  /// than adjusting each radius as segments are visited.
   AdaptRadius
 }
 
