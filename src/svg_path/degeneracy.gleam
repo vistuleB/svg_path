@@ -283,13 +283,7 @@ fn longest_thin_prefix(
       use hull <- result.try(
         convex_hull.segment_hull(first) |> result.map_error(ConvexHullError),
       )
-      use decision <- result.try(
-        convex_hull.internal_convex_subpath_minimum_width_decision(
-          hull,
-          tolerance:,
-        )
-        |> result.map_error(ConvexHullError),
-      )
+      use decision <- result.try(source_width_decision([first], hull, tolerance))
       case decision {
         convex_hull.MinimumWidthFits(strip) ->
           longest_thin_prefix_loop(
@@ -336,6 +330,13 @@ fn longest_thin_prefix_loop(
         )
         |> result.map_error(ConvexHullError),
       )
+      let decision = case
+        convex_hull.internal_source_strip_candidate([first, ..accepted])
+      {
+        Ok(Some(candidate)) if candidate.width <=. tolerance ->
+          convex_hull.MinimumWidthFits(candidate)
+        _ -> decision
+      }
       case decision {
         convex_hull.MinimumWidthFits(candidate_strip) ->
           longest_thin_prefix_loop(
@@ -386,11 +387,29 @@ fn rebuilt_candidate_width_decision(
   use hull <- result.try(
     convex_hull.subpath_hull(subpath) |> result.map_error(ConvexHullError),
   )
-  use decision <- result.try(
-    convex_hull.internal_convex_subpath_minimum_width_decision(hull, tolerance:)
-    |> result.map_error(ConvexHullError),
-  )
+  use decision <- result.try(source_width_decision(
+    reversed_segments,
+    hull,
+    tolerance,
+  ))
   Ok(#(hull, decision))
+}
+
+fn source_width_decision(
+  segments: List(svg_path.Segment),
+  hull: svg_path.Subpath,
+  tolerance: Float,
+) -> Result(convex_hull.MinimumWidthDecision, Error) {
+  case convex_hull.internal_source_strip_candidate(segments) {
+    Ok(Some(strip)) if strip.width <=. tolerance ->
+      Ok(convex_hull.MinimumWidthFits(strip))
+    _ ->
+      convex_hull.internal_convex_subpath_minimum_width_decision(
+        hull,
+        tolerance:,
+      )
+      |> result.map_error(ConvexHullError)
+  }
 }
 
 fn degenerate_window_traversal(

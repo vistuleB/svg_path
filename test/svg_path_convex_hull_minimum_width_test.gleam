@@ -30,6 +30,72 @@ pub fn collinear_bezier_width_is_not_certified_positive_test() {
   }
 }
 
+pub fn source_seed_uses_controls_when_endpoints_coincide_test() {
+  let assert Ok(Some(strip)) =
+    convex_hull.internal_source_strip_candidate([
+      svg_path.QuadraticBezier(
+        svg_path.Point(0.0, 0.0),
+        svg_path.Point(-20.0, 0.0),
+        svg_path.Point(0.0, 0.0),
+      ),
+    ])
+  assert strip.width == 0.0
+  assert strip.normal.x == 0.0
+}
+
+pub fn source_seed_preserves_exact_rotated_collinearity_test() {
+  let assert Ok(Some(strip)) =
+    convex_hull.internal_source_strip_candidate([
+      svg_path.CubicBezier(
+        svg_path.Point(1.0, 1.0),
+        svg_path.Point(-10.0, -10.0),
+        svg_path.Point(20.0, 20.0),
+        svg_path.Point(2.0, 2.0),
+      ),
+    ])
+  assert strip.width == 0.0
+}
+
+pub fn source_seed_checks_actual_arc_not_endpoint_chord_test() {
+  let assert Ok(Some(strip)) =
+    convex_hull.internal_source_strip_candidate([
+      svg_path.Arc(
+        svg_path.Point(1.0, 0.0),
+        svg_path.Point(1.0, 1.0),
+        0.0,
+        False,
+        True,
+        svg_path.Point(-1.0, 0.0),
+      ),
+    ])
+  assert near(strip.width, 1.0)
+}
+
+pub fn source_seed_skips_empty_or_coincident_point_cloud_test() {
+  assert convex_hull.internal_source_strip_candidate([]) == Ok(None)
+  assert convex_hull.internal_source_strip_candidate([
+      svg_path.Line(svg_path.Point(2.0, 3.0), svg_path.Point(2.0, 3.0)),
+    ])
+    == Ok(None)
+}
+
+pub fn source_seed_allows_zero_tolerance_bezier_prefix_test() {
+  let first =
+    svg_path.QuadraticBezier(
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(-20.0, 0.0),
+      svg_path.Point(0.0, 0.0),
+    )
+  let assert Ok(prefix) =
+    degeneracy.internal_longest_thin_prefix(
+      svg_path.segment_as_subpath(first),
+      tolerance: 0.0,
+    )
+  assert prefix.segments == [first]
+  let assert Some(strip) = prefix.strip
+  assert strip.width == 0.0
+}
+
 pub fn width_threshold_roundoff_remains_unresolved_not_exceeds_test() {
   // This callback describes a circle: every direction has the same width.
   // A sub-roundoff difference must not become a positive lower-bound proof.

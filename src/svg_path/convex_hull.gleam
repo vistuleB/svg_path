@@ -878,6 +878,119 @@ fn line_loop_vertices(
   }
 }
 
+/// Propose a strip from source endpoints/control points, then measure its
+/// width on the actual segments. This is a candidate, not a minimum-width
+/// proof. Arc endpoints suggest a direction but do not bound the arc.
+@internal
+pub fn internal_source_strip_candidate(
+  segments: List(svg_path.Segment),
+) -> Result(Option(MinimumWidthStrip), svg_path.Error) {
+  let points =
+    list.flat_map(segments, fn(segment) {
+      case segment {
+        svg_path.Line(start:, end:) | svg_path.Arc(start:, end:, ..) -> [
+          start,
+          end,
+        ]
+        svg_path.QuadraticBezier(start:, control:, end:) -> [
+          start,
+          control,
+          end,
+        ]
+        svg_path.CubicBezier(start:, control1:, control2:, end:) -> [
+          start,
+          control1,
+          control2,
+          end,
+        ]
+      }
+    })
+  case points {
+    [] -> Ok(None)
+    [first, ..] -> {
+      let a = seed_farthest_point(first, points)
+      let b = seed_farthest_point(a, points)
+      let c = seed_farthest_point(b, points)
+      let normal =
+        point_helpers.subtract(c, b) |> point_helpers.rotate_clockwise
+      let length = number.hypot(normal.x, normal.y)
+      case number.is_zero(length) || !number.is_finite(length) {
+        True -> Ok(None)
+        False -> {
+          use upper <- result.try(source_direction_support(segments, normal))
+          use lower <- result.try(source_direction_support(
+            segments,
+            point_helpers.scale(normal, -1.0),
+          ))
+          // Subtract the support points before projection to avoid cancelling
+          // large absolute support values for translated, narrow geometry.
+          let width =
+            dot(point_helpers.subtract(upper, lower), normal) /. length
+          let lower_support = dot(lower, normal) /. length
+          let upper_support = dot(upper, normal) /. length
+          case
+            number.is_finite(width)
+            && width >=. 0.0
+            && number.is_finite(lower_support)
+            && number.is_finite(upper_support)
+          {
+            False -> Ok(None)
+            True ->
+              Ok(
+                Some(MinimumWidthStrip(
+                  width:,
+                  normal: svg_path.Point(normal.x /. length, normal.y /. length),
+                  lower_point: lower,
+                  upper_point: upper,
+                  lower_support:,
+                  upper_support:,
+                )),
+              )
+          }
+        }
+      }
+    }
+  }
+}
+
+fn seed_farthest_point(
+  origin: svg_path.Point,
+  points: List(svg_path.Point),
+) -> svg_path.Point {
+  let assert [first, ..rest] = points
+  let #(best, _) =
+    list.fold(
+      rest,
+      #(first, point_helpers.distance(origin, first)),
+      fn(best, candidate) {
+        let distance = point_helpers.distance(origin, candidate)
+        case distance >. best.1 {
+          True -> #(candidate, distance)
+          False -> best
+        }
+      },
+    )
+  best
+}
+
+fn source_direction_support(
+  segments: List(svg_path.Segment),
+  direction: svg_path.Point,
+) -> Result(svg_path.Point, svg_path.Error) {
+  use samples <- result.try(
+    list.try_map(segments, internal_segment_support_in_direction(_, direction)),
+  )
+  let assert [first, ..rest] = samples
+  let best =
+    list.fold(rest, first, fn(best, candidate) {
+      case candidate.2 >. best.2 {
+        True -> candidate
+        False -> best
+      }
+    })
+  Ok(best.1)
+}
+
 /// Add a segment to a curve-preserving convex hull and retest its thinness.
 @internal
 pub fn internal_convex_subpath_add_segment_and_test_width(
