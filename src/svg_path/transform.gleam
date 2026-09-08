@@ -548,8 +548,9 @@ pub fn skew_y_subpath(
 
 /// Transform a subpath, gracefully converting collapsed arcs when possible.
 ///
-/// This uses the core path wiggle helpers to preserve continuity after
-/// collapsed arcs are converted to line-based subpaths.
+/// Collapsed arcs retain their directly transformed endpoints so neighboring
+/// segments remain continuous. Reconstruction uses strict endpoint matching;
+/// only closing a semantically closed subpath has a final wiggle fallback.
 pub fn subpath_gracefully(
   subpath: svg_path.Subpath,
   by transform: Matrix,

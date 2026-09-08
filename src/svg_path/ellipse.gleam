@@ -276,6 +276,8 @@ pub fn collapsed_arc_line(
 }
 
 /// Convert an arc collapsed by an affine transform into a line-based subpath.
+/// The first and last points are the directly transformed input endpoints;
+/// only interior extrema are reconstructed from the ellipse parameterization.
 @internal
 pub fn collapsed_arc_subpath(
   start start: EllipsePoint,
@@ -670,16 +672,26 @@ fn collapsed_arc_points(
                   beta,
                 )
 
+              let last_index = list.length(angles) - 1
               Ok(
-                list.map(angles, fn(angle) {
-                  offset(
-                    center,
-                    axis,
-                    alpha
-                      *. trig.cos_degrees(angle)
-                      +. beta
-                      *. trig.sin_degrees(angle),
-                  )
+                list.index_map(angles, fn(angle, index) {
+                  // Use the same arithmetic as neighboring transformed
+                  // segments. Trigonometric reconstruction can drift even
+                  // when both segments shared an exactly equal endpoint.
+                  case index {
+                    0 -> transform_point(start, by: transform)
+                    _ if index == last_index ->
+                      transform_point(end, by: transform)
+                    _ ->
+                      offset(
+                        center,
+                        axis,
+                        alpha
+                          *. trig.cos_degrees(angle)
+                          +. beta
+                          *. trig.sin_degrees(angle),
+                      )
+                  }
                 }),
               )
             }

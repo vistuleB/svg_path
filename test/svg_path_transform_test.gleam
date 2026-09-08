@@ -1,4 +1,5 @@
 import gleam/float
+import gleam/list
 import gleeunit
 import svg_path
 import svg_path/serialize
@@ -636,6 +637,50 @@ pub fn graceful2_arc_transform_follows_full_collapse_to_point_test() {
     transform.segment_to_subpath_gracefully(arc, by: matrix)
 
   assert serialize.subpath(subpath) == "M 7 11 H 7"
+}
+
+pub fn graceful_arc_subpaths_preserve_exact_noncardinal_endpoints_test() {
+  let matrix = transform.scale_xy(x: 1.0, y: 0.0)
+  list.each([False, True], fn(large_arc) {
+    let arc =
+      svg_path.Arc(
+        svg_path.Point(3.0, 4.0),
+        svg_path.Point(5.0, 5.0),
+        0.0,
+        large_arc,
+        True,
+        svg_path.Point(-3.0, 4.0),
+      )
+    let assert Ok(part) =
+      transform.segment_to_subpath_gracefully(arc, by: matrix)
+    assert svg_path.subpath_start(part)
+      == transform.point(svg_path.segment_start(arc), by: matrix)
+    assert svg_path.subpath_end(part)
+      == transform.point(svg_path.segment_end(arc), by: matrix)
+    let assert Ok(source) =
+      svg_path.subpath([
+        svg_path.Line(svg_path.Point(10.0, 4.0), svg_path.segment_start(arc)),
+        arc,
+        svg_path.Line(svg_path.segment_end(arc), svg_path.Point(10.0, 4.0)),
+      ])
+    let assert Ok(open) = transform.subpath_gracefully(source, by: matrix)
+    assert !svg_path.subpath_is_closed(open)
+    let assert Ok(closed) = svg_path.subpath_set_closed(source, closed: True)
+    let assert Ok(closed) = transform.subpath_gracefully(closed, by: matrix)
+    assert svg_path.subpath_is_closed(closed)
+    assert svg_path.subpath_start(closed) == svg_path.subpath_end(closed)
+    let assert Ok(_) =
+      transform.path_gracefully(svg_path.subpath_as_path(source), by: matrix)
+    // The large arc still visits both extrema before returning to its end.
+    case large_arc {
+      True -> {
+        let assert Ok(box) = svg_path.subpath_bounding_box(part)
+        assert near(box.min.x, -5.0)
+        assert near(box.max.x, 5.0)
+      }
+      False -> Nil
+    }
+  })
 }
 
 pub fn graceful_subpath_transform_keeps_surrounding_continuity_test() {
