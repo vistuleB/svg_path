@@ -3139,7 +3139,7 @@ fn loop_tangent_chains_to_subpaths(
 fn build_open_subpath_from_segments(
   segments: List(svg_path.Segment),
 ) -> Result(svg_path.Subpath, InternalError) {
-  let segments = remove_point_like_segments(segments)
+  let segments = remove_zero_length_segments(segments)
   case segments {
     [] -> Error(TangentSearchDegenerateLoop)
     _ ->
@@ -3151,11 +3151,33 @@ fn build_open_subpath_from_segments(
   }
 }
 
-fn remove_point_like_segments(
+// Portion boundaries can emit constant segments. Only discard those exact
+// points: a short nonconstant segment may carry a tangent-chain endpoint or
+// a hull extremum. Equal curve endpoints do not imply a constant curve.
+// Numeric comparison also treats +0.0 and -0.0 as the same coordinate.
+fn remove_zero_length_segments(
   segments: List(svg_path.Segment),
 ) -> List(svg_path.Segment) {
-  segments
-  |> list.filter(fn(segment) { segment_is_point_like(segment) == False })
+  list.filter(segments, fn(segment) { !segment_is_exactly_constant(segment) })
+}
+
+fn segment_is_exactly_constant(segment: svg_path.Segment) -> Bool {
+  case segment {
+    svg_path.Line(start:, end:) -> exact_same_point(start, end)
+    svg_path.QuadraticBezier(start:, control:, end:) ->
+      exact_same_point(start, control) && exact_same_point(start, end)
+    svg_path.CubicBezier(start:, control1:, control2:, end:) ->
+      exact_same_point(start, control1)
+      && exact_same_point(start, control2)
+      && exact_same_point(start, end)
+    // Valid endpoint-form arcs are nonconstant. Coincident endpoints do not
+    // define center geometry in this library; do not swallow an arc error.
+    svg_path.Arc(..) -> False
+  }
+}
+
+fn exact_same_point(a: svg_path.Point, b: svg_path.Point) -> Bool {
+  float.compare(a.x, b.x) == order.Eq && float.compare(a.y, b.y) == order.Eq
 }
 
 fn segment_chain_is_outside(
@@ -3795,7 +3817,7 @@ fn union_piece_segments(
       ]
     }
   })
-  |> remove_point_like_segments
+  |> remove_zero_length_segments
 }
 
 fn loop_initial_samples(

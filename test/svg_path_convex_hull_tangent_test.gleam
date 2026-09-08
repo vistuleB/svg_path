@@ -6,6 +6,84 @@ import svg_path/convex_hull
 
 const tolerance = 0.000001
 
+pub fn exact_tangent_chain_preserves_short_final_line_test() {
+  let a = svg_path.Point(0.0, 0.0)
+  let b = svg_path.Point(1.0, 0.0)
+  let c = svg_path.Point(1.0, 1.0)
+  let d = svg_path.Point(0.0, 1.0)
+  let near_a = svg_path.Point(0.0, 0.0000000005)
+  let final = svg_path.Line(near_a, a)
+  let loop = [
+    svg_path.Line(a, b),
+    svg_path.Line(b, c),
+    svg_path.Line(c, d),
+    svg_path.Line(d, near_a),
+    final,
+  ]
+  let assert Ok(#(outside, inside)) =
+    convex_hull.internal_point_exact_loop_tangent_subpaths(
+      loop,
+      point: svg_path.Point(-1.0, 0.5),
+    )
+  assert svg_path.subpath_start(outside) == d
+  assert svg_path.subpath_end(outside) == a
+  assert svg_path.subpath_start(inside) == a
+  assert svg_path.subpath_end(inside) == d
+  assert svg_path.subpath_segments(outside) == [svg_path.Line(d, near_a), final]
+}
+
+pub fn exact_tangent_chain_preserves_short_final_quadratic_test() {
+  let a = svg_path.Point(0.0, 0.0)
+  let b = svg_path.Point(1.0, 0.0)
+  let c = svg_path.Point(1.0, 1.0)
+  let d = svg_path.Point(0.0, 1.0)
+  let near_a = svg_path.Point(0.0, 0.0000000005)
+  let final =
+    svg_path.QuadraticBezier(near_a, svg_path.Point(0.0, 0.00000000025), a)
+  let loop = [
+    svg_path.Line(a, b),
+    svg_path.Line(b, c),
+    svg_path.Line(c, d),
+    svg_path.Line(d, near_a),
+    final,
+  ]
+  let assert Ok(#(outside, inside)) =
+    convex_hull.internal_point_exact_loop_tangent_subpaths(
+      loop,
+      point: svg_path.Point(-1.0, 0.5),
+    )
+  assert svg_path.subpath_segments(outside) == [svg_path.Line(d, near_a), final]
+  assert svg_path.subpath_end(outside) == svg_path.subpath_start(inside)
+}
+
+pub fn loop_union_removes_exactly_constant_beziers_test() {
+  let a = svg_path.Point(0.0, 0.0)
+  let b = svg_path.Point(1.0, 0.0)
+  let c = svg_path.Point(1.0, 1.0)
+  let d = svg_path.Point(0.0, 1.0)
+  let inside = svg_path.Point(0.5, 0.5)
+  let expected = [
+    svg_path.Line(a, b),
+    svg_path.Line(b, c),
+    svg_path.Line(c, d),
+    svg_path.Line(d, a),
+  ]
+  let loop = [
+    svg_path.Line(a, b),
+    svg_path.Line(b, c),
+    svg_path.Line(c, d),
+    svg_path.QuadraticBezier(d, d, d),
+    svg_path.CubicBezier(d, d, d, d),
+    svg_path.Line(d, a),
+  ]
+  assert convex_hull.internal_loop_union_segments_with_seed_angles(
+      loop,
+      [svg_path.Line(inside, inside)],
+      seed_angles: [],
+    )
+    == expected
+}
+
 pub fn point_chord_polygon_loop_separation_returns_none_for_inside_polygon_point_test() {
   let loop = square_loop()
   assert convex_hull.internal_point_chord_polygon_loop_separation(
