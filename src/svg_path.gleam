@@ -2058,7 +2058,7 @@ fn segment_degenerate_lines_valid(
         tolerance,
       )
     Arc(start:, radius:, end:, ..) -> {
-      case radius.x == 0.0 || radius.y == 0.0 {
+      case number.is_zero(radius.x) || number.is_zero(radius.y) {
         True -> {
           case start == end {
             True -> Ok(Some([]))
@@ -2212,7 +2212,7 @@ fn quadratic_degenerate_breaks(
   let c = axis_coordinate(control, axis_start, axis)
   let e = axis_coordinate(end, axis_start, axis)
   let denominator = s -. { 2.0 *. c } +. e
-  case denominator == 0.0 {
+  case number.is_zero(denominator) {
     True -> []
     False -> {
       let root = { s -. c } /. denominator
@@ -5518,10 +5518,10 @@ fn crossing_for_window(
   next_t: Float,
   next_value: Float,
 ) -> Result(Option(Float), Error) {
-  case previous_value == 0.0 {
+  case number.is_zero(previous_value) {
     True -> Ok(Some(previous_t))
     False -> {
-      case next_value == 0.0 {
+      case number.is_zero(next_value) {
         True -> Ok(Some(next_t))
         False -> {
           case same_sign(previous_value, next_value) {
@@ -6309,7 +6309,7 @@ fn subpath_parameter_at_known_length(
     [] -> Error(EmptySubpath)
     _ -> {
       use _ <- result.try(validate_length_distance(distance, length:))
-      case distance == 0.0 {
+      case number.is_zero(distance) {
         True -> Ok(SubpathParameter(segment_index: 0, t: 0.0))
         False ->
           case distance == length {
@@ -6386,7 +6386,7 @@ fn segment_parameter_at_valid_length(
   length length: Float,
   options options: LengthOptions,
 ) -> Result(Float, Error) {
-  case distance == 0.0 {
+  case number.is_zero(distance) {
     True -> Ok(0.0)
     False ->
       case distance == length {
@@ -6964,7 +6964,7 @@ fn refine_arc_projection_window_by_bisection_loop(
             value: midpoint_value,
           ))
         False ->
-          case midpoint_value == 0.0 {
+          case number.is_zero(midpoint_value) {
             True -> Ok(midpoint_t)
             False ->
               case same_sign(left_value, midpoint_value) {
@@ -7007,7 +7007,7 @@ fn polish_arc_projection_window_by_bisection(
   estimate_value: Float,
   remaining remaining: Int,
 ) -> Result(Float, Error) {
-  case remaining <= 0 || estimate_value == 0.0 {
+  case remaining <= 0 || number.is_zero(estimate_value) {
     True -> Ok(estimate)
     False -> {
       let midpoint_t = left_t +. { right_t -. left_t } /. 2.0
