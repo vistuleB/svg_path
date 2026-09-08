@@ -2,7 +2,6 @@
 
 import gleam/float
 import gleam/list
-import gleam/option.{type Option, None, Some}
 import gleam/order
 import gleam/result
 import svg_path
@@ -106,7 +105,10 @@ fn enclosing_with_two_loop(
     [third, ..rest] -> {
       let circle = case contains(circle, third) {
         True -> circle
-        False -> three_point_circle(first, second, third)
+        // Both fixed points must stay on the boundary. The smallest circle of
+        // just this triple may instead use a different diameter and discard
+        // an earlier support, invalidating the already-processed points.
+        False -> circumcircle(first, second, third)
       }
       enclosing_with_two_loop(rest, first, second, circle)
     }
@@ -127,49 +129,11 @@ fn two_point_circle(
       let center = midpoint(first, second)
       EnclosingCircle(
         center:,
-        radius_squared: point.distance_squared(center, first),
+        radius_squared: float.max(
+          point.distance_squared(center, first),
+          point.distance_squared(center, second),
+        ),
       )
-    }
-  }
-}
-
-fn three_point_circle(
-  first: svg_path.Point,
-  second: svg_path.Point,
-  third: svg_path.Point,
-) -> EnclosingCircle {
-  let pairs = [
-    two_point_circle(first, second),
-    two_point_circle(first, third),
-    two_point_circle(second, third),
-  ]
-  case smallest_containing(pairs, [first, second, third], None) {
-    Some(circle) -> circle
-    None -> circumcircle(first, second, third)
-  }
-}
-
-fn smallest_containing(
-  candidates: List(EnclosingCircle),
-  samples: List(svg_path.Point),
-  best: Option(EnclosingCircle),
-) -> Option(EnclosingCircle) {
-  case candidates {
-    [] -> best
-    [candidate, ..rest] -> {
-      let best = case list.all(samples, contains(candidate, _)) {
-        False -> best
-        True ->
-          case best {
-            None -> Some(candidate)
-            Some(previous) ->
-              case compare_circles(candidate, previous) == order.Lt {
-                True -> Some(candidate)
-                False -> best
-              }
-          }
-      }
-      smallest_containing(rest, samples, best)
     }
   }
 }
@@ -197,10 +161,14 @@ fn circumcircle(
           x: first.x +. { a_norm *. by -. b_norm *. ay } /. denominator,
           y: first.y +. { ax *. b_norm -. bx *. a_norm } /. denominator,
         )
-      EnclosingCircle(
-        center:,
-        radius_squared: point.distance_squared(center, first),
-      )
+      // Roundoff can give the three support points slightly different squared
+      // distances. Include all of them rather than immediately rejecting one
+      // of the circle's own supports on a later containment check.
+      circle_with_exact_radius(EnclosingCircle(center:, radius_squared: 0.0), [
+        first,
+        second,
+        third,
+      ])
     }
   }
 }

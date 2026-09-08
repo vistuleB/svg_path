@@ -1,7 +1,9 @@
 import gleam/list
 import gleeunit/should
 import svg_path
+import svg_path/point
 import svg_path/smallest_enclosing_circle
+import svg_path/trig
 
 const tolerance = 0.000000001
 
@@ -124,6 +126,47 @@ pub fn circumcircle_is_stable_after_large_translation_test() {
     svg_path.Point(origin +. 1.0, origin +. 0.75),
     1.5625,
   )
+}
+
+pub fn cocircular_trapezoid_preserves_previous_support_points_test() {
+  // All four points lie on the same circle. A boundary-rounding rejection
+  // previously replaced it with a diameter circle that forgot (-7, 8), then
+  // expanded the radius around the wrong center to 171.25.
+  assert_circle(
+    [
+      svg_path.Point(6.0, 8.0),
+      svg_path.Point(0.0, -10.0),
+      svg_path.Point(-1.0, -10.0),
+      svg_path.Point(-7.0, 8.0),
+    ],
+    svg_path.Point(-0.5, 1.0 /. 6.0),
+    3730.0 /. 36.0,
+  )
+}
+
+pub fn cocircular_points_preserve_radius_under_rotation_and_scaling_test() {
+  list.each([0.0, 7.0, 43.0, 90.0, 137.0], fn(rotation) {
+    list.each([0.000000001, 1.0, 1000.0], fn(scale) {
+      let samples =
+        list.map([0.0, 29.0, 83.0, 145.0, 191.0, 239.0, 301.0], fn(angle) {
+          svg_path.Point(
+            scale *. { 3.0 +. 7.0 *. trig.cos_degrees(angle +. rotation) },
+            scale *. { -2.0 +. 7.0 *. trig.sin_degrees(angle +. rotation) },
+          )
+        })
+      let assert Ok(circle) = smallest_enclosing_circle.points(samples)
+      near(circle.center.x /. scale, 3.0) |> should.be_true
+      near(circle.center.y /. scale, -2.0) |> should.be_true
+      near(circle.radius_squared /. { scale *. scale }, 49.0)
+      |> should.be_true
+      list.all(samples, fn(sample) {
+        point.distance_squared(circle.center, sample) <=. circle.radius_squared
+      })
+      |> should.be_true
+      smallest_enclosing_circle.points(list.reverse(samples))
+      |> should.equal(Ok(circle))
+    })
+  })
 }
 
 fn assert_circle(
