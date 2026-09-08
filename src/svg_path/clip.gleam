@@ -114,13 +114,25 @@ pub fn subpath_with(
             input,
             between: split_points,
           ))
-          keep_inside_subpaths(
-            pieces,
-            clip_region,
-            fill_rule,
-            options,
-            kept: [],
+          use kept <- result.try(
+            keep_inside_subpaths(
+              pieces,
+              clip_region,
+              fill_rule,
+              options,
+              kept: [],
+            ),
           )
+          // Boundary encounters can subdivide an otherwise wholly retained
+          // input. Restore its original segmentation and closure in that case.
+          case kept {
+            [] -> Ok([])
+            _ ->
+              case list.length(kept) == list.length(pieces) {
+                True -> Ok([input])
+                False -> Ok(kept)
+              }
+          }
         }
       }
     }

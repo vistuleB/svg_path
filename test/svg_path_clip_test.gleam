@@ -239,6 +239,19 @@ pub fn closed_subpath_survives_whole_when_fully_inside_test() {
   assert svg_path.subpath_segments(clipped) == svg_path.subpath_segments(input)
 }
 
+pub fn whole_subpaths_survive_coincident_boundary_cuts_unchanged_test() {
+  let source = rectangle_subpath(0.0, 0.0, 10.0, 10.0)
+  let region = rectangle(0.0, 0.0, 20.0, 20.0)
+  assert clip.subpath(source, region, svg_path.Nonzero) == Ok([source])
+  let open =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(1.0, 0.0),
+      svg_path.Point(2.0, 0.0),
+      svg_path.Point(3.0, 2.0),
+    ])
+  assert clip.subpath(open, region, svg_path.Nonzero) == Ok([open])
+}
+
 pub fn closed_circle_clips_to_open_arc_fragments_test() {
   let input = circle_subpath(svg_path.Point(0.0, 0.0), 10.0)
 
