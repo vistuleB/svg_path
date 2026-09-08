@@ -865,6 +865,7 @@ fn parameter_snap_candidate(
   t: Float,
   rank rank: Int,
 ) -> ParameterSnapCandidate {
+  let t = number.normalize_zero(t)
   let rank = case t == 0.0 || t == 1.0 {
     True -> -1
     False -> rank
@@ -2408,7 +2409,9 @@ fn segment_self_intersections_valid_options(
     }
     Line(..) | QuadraticBezier(..) -> Ok([])
     Arc(start:, radius:, end:, ..) -> {
-      case start == end && radius.x != 0.0 && radius.y != 0.0 {
+      case
+        start == end && !number.is_zero(radius.x) && !number.is_zero(radius.y)
+      {
         True ->
           Ok([
             SegmentIntersection(left_t: 0.0, right_t: 1.0, point: start),
