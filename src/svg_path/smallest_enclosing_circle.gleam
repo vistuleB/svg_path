@@ -6,6 +6,7 @@ import gleam/option.{type Option, None, Some}
 import gleam/order
 import gleam/result
 import svg_path
+import svg_path/internal/number
 import svg_path/point
 
 @internal
@@ -186,7 +187,7 @@ fn circumcircle(
   let bx = third.x -. first.x
   let by = third.y -. first.y
   let denominator = 2.0 *. { ax *. by -. ay *. bx }
-  case denominator == 0.0 {
+  case number.is_zero(denominator) {
     True -> farthest_pair_circle(first, second, third)
     False -> {
       let a_norm = ax *. ax +. ay *. ay
