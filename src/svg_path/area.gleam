@@ -5,6 +5,12 @@
 //// the filled vertical intervals of each arrangement slab. Absolute winding
 //// area uses the same arrangement but weights each region by the absolute
 //// value of its winding number.
+////
+//// Fill-rule and absolute winding area also use an internal merging tolerance
+//// of `1e-12` times the larger width or height of the linearized path's bounding
+//// box. Near-coincident slab boundaries and crossings can therefore be merged,
+//// even for line-only paths. This is separate from the caller's curve-to-line
+//// tolerance; neither tolerance directly bounds the final area error.
 
 import gleam/float
 import gleam/int
@@ -38,8 +44,8 @@ const arrangement_relative_tolerance = 0.000000000001
 /// Return the signed area of a polygonal point loop.
 ///
 /// The final point is implicitly connected to the first. Lists with fewer than
-/// three points have zero area. Positive and negative signs represent opposite
-/// traversal directions.
+/// three points have zero area. Positive area means visually clockwise traversal
+/// in SVG coordinates; negative area means visually counterclockwise traversal.
 pub fn signed_points(points: List(svg_path.Point)) -> Float {
   case points {
     [] | [_] | [_, _] -> 0.0
@@ -56,6 +62,9 @@ pub fn signed_points(points: List(svg_path.Point)) -> Float {
 }
 
 /// Return one segment's contribution to a closed curve's signed area.
+///
+/// Summing contributions around a visually clockwise loop gives positive area
+/// in SVG coordinates; counterclockwise traversal gives negative area.
 ///
 /// Lines and Beziers are integrated exactly as polynomials. Elliptical arcs use
 /// their exact center parameterization. A degenerate arc contributes the same
