@@ -12,6 +12,7 @@ import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import svg_path
+import svg_path/internal/number
 import svg_path/point as point_helpers
 import svg_path/trig
 
@@ -660,7 +661,7 @@ fn interval_area(lower: Edge, upper: Edge, left: Float, right: Float) -> Float {
 
 fn edge_y_at(edge: Edge, x: Float) -> Float {
   let dx = edge.end.x -. edge.start.x
-  case dx == 0.0 {
+  case number.is_zero(dx) {
     True -> edge.start.y
     False ->
       edge.start.y
