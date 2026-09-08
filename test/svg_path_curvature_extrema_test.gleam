@@ -13,6 +13,43 @@ fn arch() -> svg_path.Segment {
   )
 }
 
+fn parabola() -> svg_path.Segment {
+  svg_path.QuadraticBezier(
+    svg_path.Point(0.0, 0.0),
+    svg_path.Point(0.5, 0.0),
+    svg_path.Point(1.0, 1.0),
+  )
+}
+
+pub fn cusp_depth_exhaustion_reports_remaining_bracket_test() {
+  assert curvature.segment_left_normal_cusp_parameters(
+      parabola(),
+      distance: -1.0,
+      options: curvature.Options(1.0e-12, 1, 1),
+    )
+    == Error(curvature.CurvatureMaxDepthReached(lower: 0.0, upper: 0.5))
+}
+
+pub fn cusp_exact_root_at_depth_limit_succeeds_test() {
+  let assert Ok(speed) = float.square_root(1.25)
+  let distance = 0.0 -. 1.25 *. speed /. 2.0
+  assert curvature.segment_left_normal_cusp_parameters(
+      parabola(),
+      distance:,
+      options: curvature.Options(0.0, 1, 1),
+    )
+    == Ok([0.25])
+}
+
+pub fn cusp_interval_converged_at_depth_limit_succeeds_test() {
+  assert curvature.segment_left_normal_cusp_parameters(
+      parabola(),
+      distance: -1.0,
+      options: curvature.Options(0.5, 1, 1),
+    )
+    == Ok([0.25])
+}
+
 pub fn shifted_stationary_cubics_keep_both_neighboring_intervals_test() {
   // One velocity coordinate has a simple zero; the other a double zero.
   // Solving only the latter can miss the stationary boundary through rounding.

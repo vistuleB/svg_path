@@ -53,6 +53,9 @@ pub type Error {
   InfiniteRadiusOfCurvature
   /// Polynomial isolation could not determine the curvature partition points.
   CurvatureRootIsolationFailed
+  /// Cusp bisection exhausted its depth before satisfying the parameter
+  /// tolerance or finding an exact root. Bounds are the remaining bracket.
+  CurvatureMaxDepthReached(lower: Float, upper: Float)
 }
 
 /// Options for cusp/root/band discovery.
@@ -184,8 +187,10 @@ pub fn segment_left_normal_cusp_residual(
 /// Zero-speed parameters are excluded, using one-sided residual signs to search
 /// their neighboring intervals. Lines and zero offsets return `[]`. A circular
 /// arc whose entire radius matches the target returns `[0.0, 1.0]`.
-/// At `max_depth`, bisection returns the current midpoint without an accuracy
-/// guarantee. Polynomial-isolation failures and arc-conversion errors propagate.
+/// Bisection returns `CurvatureMaxDepthReached` with the remaining bracket if
+/// `max_depth` is exhausted before convergence. An exact midpoint root or an
+/// interval within tolerance still succeeds at the depth limit.
+/// Polynomial-isolation failures and arc-conversion errors also propagate.
 /// Results are sorted and merged within `options.tolerance` in parameter space.
 pub fn segment_left_normal_cusp_parameters(
   segment: svg_path.Segment,
@@ -593,16 +598,16 @@ fn refine_root(
   options: Options,
   depth depth: Int,
 ) -> Result(Float, Error) {
+  let mid = { a +. b } /. 2.0
+  use vm <- result.try(f(mid))
+  // Test success first, including on the final permitted subdivision.
   case
-    depth >= options.max_depth
-    || float.absolute_value(b -. a) <=. options.tolerance
+    number.is_zero(vm) || float.absolute_value(b -. a) <=. options.tolerance
   {
-    True -> Ok({ a +. b } /. 2.0)
+    True -> Ok(mid)
     False -> {
-      let mid = { a +. b } /. 2.0
-      use vm <- result.try(f(mid))
-      case number.is_zero(vm) {
-        True -> Ok(mid)
+      case depth >= options.max_depth {
+        True -> Error(CurvatureMaxDepthReached(lower: a, upper: b))
         False ->
           case sign_change(va, vm) {
             True -> refine_root(f, a, mid, va, vm, options, depth: depth + 1)
