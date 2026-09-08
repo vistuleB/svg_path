@@ -3238,6 +3238,29 @@ pub fn segment_length(segment: Segment) -> Result(Float, Error) {
   segment_length_with(segment, options: default_length_options())
 }
 
+/// Return a cheap upper bound on a segment's length.
+///
+/// Lines use their chord length. Beziers use the sum of their control-polygon
+/// edge lengths. Arcs use absolute angular travel in radians times the larger
+/// corrected ellipse radius. No numerical integration or subdivision is used.
+/// These mathematical upper bounds are evaluated with ordinary floating-point
+/// arithmetic, not outward-rounded interval arithmetic, and can substantially
+/// overestimate length. Invalid arcs return `DegenerateArc`.
+pub fn segment_length_upper_bound(segment: Segment) -> Result(Float, Error) {
+  case segment {
+    Line(start:, end:) -> Ok(distance(start, end))
+    QuadraticBezier(start:, control:, end:) ->
+      Ok(distance(start, control) +. distance(control, end))
+    CubicBezier(start:, control1:, control2:, end:) ->
+      Ok(
+        distance(start, control1)
+        +. distance(control1, control2)
+        +. distance(control2, end),
+      )
+    Arc(..) -> segment_derivative_scale(segment)
+  }
+}
+
 /// Return the approximate length of a segment using explicit options.
 pub fn segment_length_with(
   segment: Segment,
@@ -3519,6 +3542,17 @@ pub fn subpath_length(subpath: Subpath) -> Result(Float, Error) {
   subpath_length_with(subpath, options: default_length_options())
 }
 
+/// Sum the cheap segment-length upper bounds of a subpath.
+///
+/// Empty subpaths return `0.0`. The closed flag adds no implicit segment.
+/// See `segment_length_upper_bound` for the bounds and numerical limitations.
+pub fn subpath_length_upper_bound(subpath: Subpath) -> Result(Float, Error) {
+  list.try_fold(subpath.segments, 0.0, fn(total, segment) {
+    use bound <- result.try(segment_length_upper_bound(segment))
+    Ok(total +. bound)
+  })
+}
+
 /// Return the approximate length of a subpath using explicit options.
 pub fn subpath_length_with(
   subpath: Subpath,
@@ -3699,6 +3733,17 @@ pub fn subpath_between_lengths_many_with(
 /// Empty paths have length `0.0`. Move-only subpaths contribute `0.0`.
 pub fn path_length(path: Path) -> Result(Float, Error) {
   path_length_with(path, options: default_length_options())
+}
+
+/// Sum the cheap segment-length upper bounds across a path's subpaths.
+///
+/// Empty paths and move-only subpaths contribute `0.0`; gaps between subpaths
+/// contribute nothing. See `segment_length_upper_bound` for numerical limits.
+pub fn path_length_upper_bound(path: Path) -> Result(Float, Error) {
+  list.try_fold(path.subpaths, 0.0, fn(total, subpath) {
+    use bound <- result.try(subpath_length_upper_bound(subpath))
+    Ok(total +. bound)
+  })
 }
 
 /// Return the approximate length of a path using explicit options.

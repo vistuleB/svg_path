@@ -682,6 +682,11 @@ appropriate.
 ### Segment and Subpath Lengths
 
 Use `segment_length`, `subpath_length`, or `path_length` to measure geometry.
+For cheap upper bounds without numerical integration, use
+`segment_length_upper_bound`, `subpath_length_upper_bound`, or
+`path_length_upper_bound`. These use control-polygon lengths for Beziers and
+angular travel times the larger ellipse radius for arcs; they may overestimate
+substantially and use ordinary floating-point arithmetic.
 Lines are exact. Beziers and arcs use adaptive integration. Distances are true
 path-coordinate lengths, not normalized fractions.
 
