@@ -117,7 +117,7 @@ pub fn segment_left_normal_radius(
   at t: Float,
 ) -> Result(Float, Error) {
   use curvature <- result.try(segment_left_normal_curvature(segment, at: t))
-  case curvature == 0.0 {
+  case number.is_zero(curvature) {
     True -> Error(InfiniteRadiusOfCurvature)
     False -> Ok(1.0 /. curvature)
   }
@@ -271,7 +271,7 @@ fn left_normal_radius_close_to(
   case speed_squared <=. 0.0 || !number.is_finite(speed_squared) {
     True -> Error(DegenerateCurvatureDerivative)
     False ->
-      case c == 0.0 {
+      case number.is_zero(c) {
         True -> Error(InfiniteRadiusOfCurvature)
         False -> {
           let assert Ok(speed) = float.square_root(speed_squared)
@@ -321,11 +321,11 @@ fn sampled_roots_loop(
       let b = int_to_float(index + 1) /. int_to_float(options.samples)
       let roots = case f(a), f(b) {
         Ok(va), Ok(vb) -> {
-          let roots = case va == 0.0 {
+          let roots = case number.is_zero(va) {
             True -> [a, ..roots]
             False -> roots
           }
-          let roots = case vb == 0.0 {
+          let roots = case number.is_zero(vb) {
             True -> [b, ..roots]
             False -> roots
           }
@@ -363,7 +363,7 @@ fn refine_root(
     False -> {
       let mid = { a +. b } /. 2.0
       use vm <- result.try(f(mid))
-      case vm == 0.0 {
+      case number.is_zero(vm) {
         True -> Ok(mid)
         False ->
           case sign_change(va, vm) {

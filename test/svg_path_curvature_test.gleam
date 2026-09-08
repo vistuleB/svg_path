@@ -9,6 +9,26 @@ pub fn main() -> Nil {
   gleeunit.main()
 }
 
+pub fn reversed_line_still_has_infinite_radius_test() {
+  let line = svg_path.Line(svg_path.Point(1.0, 0.0), svg_path.Point(0.0, 0.0))
+  assert curvature.segment_left_normal_radius(line, at: 0.5)
+    == Error(curvature.InfiniteRadiusOfCurvature)
+  assert curvature.segment_left_normal_radius_close_to(
+      line,
+      distance: 1.0,
+      margin: 0.1,
+      at: 0.5,
+    )
+    == Error(curvature.InfiniteRadiusOfCurvature)
+  assert curvature.segment_left_normal_radius_close_to(
+      svg_path.segment_reverse(line),
+      distance: 1.0,
+      margin: 0.1,
+      at: 0.5,
+    )
+    == Error(curvature.InfiniteRadiusOfCurvature)
+}
+
 pub fn line_cusp_residual_is_speed_cubed_test() {
   let line =
     svg_path.Line(
