@@ -2,7 +2,8 @@
 ////
 //// Congruency means that a translation, rotation, and uniform scale maps the
 //// source geometry to the target geometry within a tolerance. Reflection and
-//// shear are not allowed.
+//// shear are not allowed by congruency checks. Best-fit queries additionally
+//// support the general `Affine` transform family.
 ////
 //// These checks compare ordered semantic structure, not rendered shape. Segment
 //// constructors must match, subpaths and paths must have matching ordered
@@ -230,7 +231,7 @@ pub fn segment_with(
   tolerance tolerance: CongruencyTolerance,
 ) -> Result(transform.Matrix, Nil) {
   use _ <- result_try_nil(validate_congruency_tolerance(tolerance))
-  case segment_points(source, target) {
+  case segment_points(source, target, Similar) {
     Error(_) -> Error(Nil)
     Ok(#(source_extra, target_extra, has_arc)) -> {
       let source_points = [svg_path.segment_start(source), ..source_extra]
@@ -265,12 +266,16 @@ pub fn segment_with(
 ///
 /// This uses the same semantic point-cloud policy as `segment`, but returns a
 /// best-fit transform and RMS point error instead of applying a tolerance.
+/// Arc clouds contain the start, its antipodal ellipse point, the parameter
+/// midpoint, and the end. `Affine` permits differing sweep flags to support
+/// reflection; `Similar` requires matching flags. Large-arc flags must match.
+/// The reported error measures these fitting points, not the entire curve.
 pub fn fit_segment(
   source source: svg_path.Segment,
   target target: svg_path.Segment,
   family family: TransformFamily,
 ) -> Result(Fit, Nil) {
-  use cloud <- result_try_nil(segment_point_cloud(source, target))
+  use cloud <- result_try_nil(segment_point_cloud(source, target, family))
   fit_points(source: cloud.source, target: cloud.target, family:)
 }
 
@@ -303,7 +308,7 @@ pub fn subpath_with(
   tolerance tolerance: CongruencyTolerance,
 ) -> Result(transform.Matrix, Nil) {
   use _ <- result_try_nil(validate_congruency_tolerance(tolerance))
-  case subpath_point_cloud(source, target) {
+  case subpath_point_cloud(source, target, Similar) {
     Error(_) -> Error(Nil)
     Ok(cloud) -> {
       case
@@ -329,6 +334,7 @@ pub fn subpath_with(
 }
 
 /// Find the best transform mapping one ordered subpath to another.
+/// Uses the fitting points and arc-flag policy documented by `fit_segment`.
 ///
 /// The subpath `closed` field is ignored. Segment constructors must match in
 /// order. Closed subpaths are not cycled, and no alternate starting segment is
@@ -338,7 +344,7 @@ pub fn fit_subpath(
   target target: svg_path.Subpath,
   family family: TransformFamily,
 ) -> Result(Fit, Nil) {
-  use cloud <- result_try_nil(subpath_point_cloud(source, target))
+  use cloud <- result_try_nil(subpath_point_cloud(source, target, family))
   fit_points(source: cloud.source, target: cloud.target, family:)
 }
 
@@ -375,6 +381,7 @@ pub fn path_with(
     path_point_cloud(
       svg_path.path_subpaths(source),
       svg_path.path_subpaths(target),
+      Similar,
     )
   {
     Error(_) -> Error(Nil)
@@ -407,6 +414,7 @@ pub fn path_with(
 }
 
 /// Find the best transform mapping one ordered path to another.
+/// Uses the fitting points and arc-flag policy documented by `fit_segment`.
 ///
 /// Path subpaths must match in order. Each subpath comparison ignores the
 /// subpath `closed` field. Closed subpaths are not cycled, no alternate
@@ -419,6 +427,7 @@ pub fn fit_path(
   use cloud <- result_try_nil(path_point_cloud(
     svg_path.path_subpaths(source),
     svg_path.path_subpaths(target),
+    family,
   ))
   fit_points(source: cloud.source, target: cloud.target, family:)
 }
@@ -426,8 +435,9 @@ pub fn fit_path(
 fn segment_point_cloud(
   source: svg_path.Segment,
   target: svg_path.Segment,
+  family: TransformFamily,
 ) -> Result(PointCloud, Nil) {
-  case segment_points(source, target) {
+  case segment_points(source, target, family) {
     Error(_) -> Error(Nil)
     Ok(#(source_extra, target_extra, has_arc)) -> {
       Ok(PointCloud(
@@ -729,10 +739,12 @@ fn determinant_is_degenerate(determinant: Float, scale: Float) -> Bool {
 fn path_point_cloud(
   source: List(svg_path.Subpath),
   target: List(svg_path.Subpath),
+  family: TransformFamily,
 ) -> Result(PointCloud, Nil) {
   path_point_cloud_loop(
     source,
     target,
+    family,
     PointCloud(source: [], target: [], has_arc: False),
   )
 }
@@ -740,6 +752,7 @@ fn path_point_cloud(
 fn path_point_cloud_loop(
   source: List(svg_path.Subpath),
   target: List(svg_path.Subpath),
+  family: TransformFamily,
   cloud: PointCloud,
 ) -> Result(PointCloud, Nil) {
   case source, target {
@@ -752,12 +765,13 @@ fn path_point_cloud_loop(
     }
 
     [source_first, ..source_rest], [target_first, ..target_rest] -> {
-      case subpath_point_cloud(source_first, target_first) {
+      case subpath_point_cloud(source_first, target_first, family) {
         Error(_) -> Error(Nil)
         Ok(subpath_cloud) -> {
           path_point_cloud_loop(
             source_rest,
             target_rest,
+            family,
             PointCloud(
               source: prepend_reversed(subpath_cloud.source, cloud.source),
               target: prepend_reversed(subpath_cloud.target, cloud.target),
@@ -775,10 +789,12 @@ fn path_point_cloud_loop(
 fn subpath_point_cloud(
   source: svg_path.Subpath,
   target: svg_path.Subpath,
+  family: TransformFamily,
 ) -> Result(PointCloud, Nil) {
   subpath_points(
     svg_path.subpath_segments(source),
     svg_path.subpath_segments(target),
+    family,
     [svg_path.subpath_start(source)],
     [svg_path.subpath_start(target)],
     has_arc: False,
@@ -788,6 +804,7 @@ fn subpath_point_cloud(
 fn subpath_points(
   source: List(svg_path.Segment),
   target: List(svg_path.Segment),
+  family: TransformFamily,
   source_points: List(svg_path.Point),
   target_points: List(svg_path.Point),
   has_arc has_arc: Bool,
@@ -801,12 +818,13 @@ fn subpath_points(
       ))
 
     [source_first, ..source_rest], [target_first, ..target_rest] -> {
-      case segment_points(source_first, target_first) {
+      case segment_points(source_first, target_first, family) {
         Error(_) -> Error(Nil)
         Ok(#(source_extra, target_extra, segment_has_arc)) -> {
           subpath_points(
             source_rest,
             target_rest,
+            family,
             prepend_reversed(source_extra, source_points),
             prepend_reversed(target_extra, target_points),
             has_arc: has_arc || segment_has_arc,
@@ -822,6 +840,7 @@ fn subpath_points(
 fn segment_points(
   source: svg_path.Segment,
   target: svg_path.Segment,
+  family: TransformFamily,
 ) -> Result(#(List(svg_path.Point), List(svg_path.Point), Bool), Nil) {
   case source, target {
     svg_path.Line(end: source_end, ..), svg_path.Line(end: target_end, ..) -> {
@@ -868,18 +887,30 @@ fn segment_points(
       )
     -> {
       case
-        source_large_arc == target_large_arc && source_sweep == target_sweep
+        source_large_arc == target_large_arc
+        && { family == Affine || source_sweep == target_sweep }
       {
         False -> Error(Nil)
         True -> {
-          case arc_opposite_point(source), arc_opposite_point(target) {
-            Ok(source_opposite), Ok(target_opposite) ->
+          // A semicircle's antipodal point is its end. The midpoint supplies
+          // the transverse extent that its diameter alone cannot determine.
+          case
+            arc_opposite_point(source),
+            arc_opposite_point(target),
+            svg_path.segment_point(source, at: 0.5),
+            svg_path.segment_point(target, at: 0.5)
+          {
+            Ok(source_opposite),
+              Ok(target_opposite),
+              Ok(source_midpoint),
+              Ok(target_midpoint)
+            ->
               Ok(#(
-                [source_opposite, source_end],
-                [target_opposite, target_end],
+                [source_opposite, source_midpoint, source_end],
+                [target_opposite, target_midpoint, target_end],
                 True,
               ))
-            _, _ -> Error(Nil)
+            _, _, _, _ -> Error(Nil)
           }
         }
       }

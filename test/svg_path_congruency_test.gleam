@@ -424,6 +424,64 @@ pub fn arc_rejects_mismatched_flags_test() {
   assert congruency.segment(source:, target:, tolerance:) == Error(Nil)
 }
 
+pub fn affine_arc_fit_accepts_reflection_at_every_container_level_test() {
+  let source =
+    svg_path.Arc(
+      svg_path.Point(10.0, 0.0),
+      svg_path.Point(10.0, 10.0),
+      0.0,
+      False,
+      True,
+      svg_path.Point(0.0, 10.0),
+    )
+  let expected = transform.matrix(-1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
+  let assert Ok(target) = transform.segment(source, by: expected)
+  let assert Ok(segment_fit) =
+    congruency.fit_segment(source:, target:, family: congruency.Affine)
+  let assert Ok(source_subpath) = svg_path.subpath([source])
+  let assert Ok(target_subpath) = svg_path.subpath([target])
+  let assert Ok(subpath_fit) =
+    congruency.fit_subpath(
+      source: source_subpath,
+      target: target_subpath,
+      family: congruency.Affine,
+    )
+  let assert Ok(path_fit) =
+    congruency.fit_path(
+      source: svg_path.subpath_as_path(source_subpath),
+      target: svg_path.subpath_as_path(target_subpath),
+      family: congruency.Affine,
+    )
+  list.each([segment_fit, subpath_fit, path_fit], fn(fit) {
+    assert near(fit.error, 0.0)
+    assert matrix_near(fit.transform, expected)
+  })
+  assert congruency.segment(source:, target:, tolerance:) == Error(Nil)
+  assert congruency.fit_segment(source:, target:, family: congruency.Similar)
+    == Error(Nil)
+}
+
+pub fn semicircle_fit_retains_transverse_extent_test() {
+  let source =
+    svg_path.Arc(
+      svg_path.Point(-10.0, 0.0),
+      svg_path.Point(10.0, 10.0),
+      0.0,
+      False,
+      True,
+      svg_path.Point(10.0, 0.0),
+    )
+  let expected = transform.matrix(1.0, 0.0, 0.0, 2.0, 0.0, 0.0)
+  let assert Ok(target) = transform.segment(source, by: expected)
+  let assert Ok(fit) =
+    congruency.fit_segment(source:, target:, family: congruency.Affine)
+  assert near(fit.error, 0.0)
+  assert matrix_near(fit.transform, expected)
+  let assert Ok(similar) =
+    congruency.fit_segment(source:, target:, family: congruency.Similar)
+  assert similar.error >. 1.0
+}
+
 pub fn arc_accepts_equivalent_axis_representations_test() {
   let source =
     svg_path.Arc(
