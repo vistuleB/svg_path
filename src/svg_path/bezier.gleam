@@ -1048,7 +1048,7 @@ fn cubic_self_intersection_candidates(
   let cross_ab = cross(a, b)
   let length_squared_a = dot(a, a)
 
-  case cross_ab == 0.0 || length_squared_a == 0.0 {
+  case number.is_zero(cross_ab) || length_squared_a == 0.0 {
     True -> []
     False -> {
       let u = { 0.0 -. cross(a, c) } /. cross_ab
@@ -1213,7 +1213,7 @@ fn bezier_axis_extrema(curve: BezierData) -> List(Float) {
 fn quadratic_extrema(start: Float, control: Float, end: Float) -> List(Float) {
   let denominator = start -. { 2.0 *. control } +. end
 
-  case denominator == 0.0 {
+  case number.is_zero(denominator) {
     True -> []
     False -> [{ start -. control } /. denominator]
   }
