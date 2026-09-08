@@ -25,7 +25,7 @@ pub fn cusp_depth_exhaustion_reports_remaining_bracket_test() {
   assert curvature.segment_left_normal_cusp_parameters(
       parabola(),
       distance: -1.0,
-      options: curvature.Options(1.0e-12, 1, 1),
+      options: curvature.Options(1.0e-12, 1),
     )
     == Error(curvature.CurvatureMaxDepthReached(lower: 0.0, upper: 0.5))
 }
@@ -36,7 +36,7 @@ pub fn cusp_exact_root_at_depth_limit_succeeds_test() {
   assert curvature.segment_left_normal_cusp_parameters(
       parabola(),
       distance:,
-      options: curvature.Options(0.0, 1, 1),
+      options: curvature.Options(0.0, 1),
     )
     == Ok([0.25])
 }
@@ -45,7 +45,7 @@ pub fn cusp_interval_converged_at_depth_limit_succeeds_test() {
   assert curvature.segment_left_normal_cusp_parameters(
       parabola(),
       distance: -1.0,
-      options: curvature.Options(0.5, 1, 1),
+      options: curvature.Options(0.5, 1),
     )
     == Ok([0.25])
 }
@@ -76,7 +76,7 @@ pub fn shifted_stationary_cubics_keep_both_neighboring_intervals_test() {
       curvature.segment_left_normal_cusp_parameters(
         curve,
         distance:,
-        options: curvature.Options(1.0e-10, 1, 48),
+        options: curvature.Options(1.0e-10, 48),
       )
     let expected =
       list.filter([r -. 0.1, r +. 0.1], fn(t) { t >=. 0.0 && t <=. 1.0 })
@@ -95,7 +95,7 @@ pub fn touching_cusp_between_sample_points_test() {
     curvature.segment_left_normal_cusp_parameters(
       curve,
       distance:,
-      options: curvature.Options(1.0e-9, 99, 48),
+      options: curvature.Options(1.0e-9, 48),
     )
   assert float.absolute_value(t -. 0.5) <. 1.0e-8
 }
@@ -107,7 +107,7 @@ pub fn two_cusps_in_one_old_sample_window_test() {
     curvature.segment_left_normal_cusp_parameters(
       curve,
       distance: radius +. 0.000001,
-      options: curvature.Options(1.0e-10, 99, 48),
+      options: curvature.Options(1.0e-10, 48),
     )
   assert left >. 49.0 /. 99.0 && left <. 0.5
   assert right >. 0.5 && right <. 50.0 /. 99.0
@@ -137,7 +137,7 @@ pub fn stationary_cubic_endpoint_does_not_hide_cusp_test() {
     curvature.segment_left_normal_cusp_parameters(
       curve,
       distance: -125.0 /. 96.0,
-      options: curvature.Options(1.0e-10, 1, 48),
+      options: curvature.Options(1.0e-10, 48),
     )
   assert float.absolute_value(t -. 0.5) <. 1.0e-8
 }
@@ -155,7 +155,7 @@ pub fn stationary_interior_is_not_a_cusp_root_test() {
     curvature.segment_left_normal_cusp_parameters(
       curve,
       distance: -1.0,
-      options: curvature.Options(1.0e-10, 1, 48),
+      options: curvature.Options(1.0e-10, 48),
     )
   assert left <. 0.5 && right >. 0.5
   assert float.absolute_value(left +. right -. 1.0) <. 1.0e-8
@@ -205,7 +205,7 @@ pub fn elliptical_touch_between_sample_points_test() {
     curvature.segment_left_normal_cusp_parameters(
       arc,
       distance: -8.0,
-      options: curvature.Options(1.0e-9, 99, 48),
+      options: curvature.Options(1.0e-9, 48),
     )
   assert float.absolute_value(t -. 0.5) <. 1.0e-8
 }

@@ -44,7 +44,7 @@ pub fn line_cusp_residual_is_speed_cubed_test() {
 }
 
 pub fn invalid_tolerance_reports_invalid_curvature_tolerance_test() {
-  let invalid = curvature.Options(tolerance: -0.5, samples: 100, max_depth: 32)
+  let invalid = curvature.Options(tolerance: -0.5, max_depth: 32)
 
   let assert Error(curvature.InvalidCurvatureTolerance(value)) =
     curvature.segment_left_normal_cusp_parameters(
@@ -57,7 +57,7 @@ pub fn invalid_tolerance_reports_invalid_curvature_tolerance_test() {
 }
 
 pub fn zero_tolerance_options_are_accepted_test() {
-  let exact = curvature.Options(tolerance: 0.0, samples: 100, max_depth: 32)
+  let exact = curvature.Options(tolerance: 0.0, max_depth: 32)
 
   let assert Ok(parameters) =
     curvature.segment_left_normal_cusp_parameters(
@@ -70,23 +70,8 @@ pub fn zero_tolerance_options_are_accepted_test() {
   assert near(right, 0.5213021719455719)
 }
 
-pub fn invalid_samples_reports_invalid_curvature_samples_test() {
-  let invalid =
-    curvature.Options(tolerance: 0.000000001, samples: 0, max_depth: 32)
-
-  let assert Error(curvature.InvalidCurvatureSamples(value)) =
-    curvature.segment_left_normal_cusp_parameters(
-      visually_upward_cubic(),
-      distance: 0.27,
-      options: invalid,
-    )
-
-  assert value == 0
-}
-
 pub fn invalid_max_depth_reports_invalid_curvature_max_depth_test() {
-  let invalid =
-    curvature.Options(tolerance: 0.000000001, samples: 100, max_depth: 0)
+  let invalid = curvature.Options(tolerance: 0.000000001, max_depth: 0)
 
   let assert Error(curvature.InvalidCurvatureMaxDepth(value)) =
     curvature.segment_left_normal_cusp_parameters(

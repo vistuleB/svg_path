@@ -9,6 +9,17 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
+## Unreleased
+
+### Removed
+
+- Removed `curvature.segment_left_normal_radius_close_bands`,
+  `curvature.CurvatureBand`, and their private sampling implementation.
+- Removed the unused `samples` field from `curvature.Options` and the
+  `InvalidCurvatureSamples` error. Construct options with `tolerance` and
+  `max_depth` only. Cusp discovery now partitions at curvature extrema;
+  the pointwise `segment_left_normal_radius_close_to` predicate remains.
+
 ## 0.45.0 - 2026-09-07
 
 ### Changed

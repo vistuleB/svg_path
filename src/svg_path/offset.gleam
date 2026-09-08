@@ -8700,11 +8700,7 @@ fn offset_inflection_parameters(
   segment: svg_path.Segment,
 ) -> Result(List(Float), InternalError) {
   let options =
-    curvature.Options(
-      tolerance: curvature_parameter_tolerance,
-      samples: 100,
-      max_depth: 32,
-    )
+    curvature.Options(tolerance: curvature_parameter_tolerance, max_depth: 32)
   curvature.segment_inflection_parameters(segment, options:)
   |> result.map_error(fn(_) { InternalNonFinite })
 }

@@ -5,13 +5,11 @@
 //// have length units. Parameters refer to the segment's `0.0..1.0` interval.
 ////
 //// Pointwise queries evaluate segment derivatives directly. Cusp discovery
-//// partitions at curvature extrema before bisection; near-radius-band discovery
-//// remains sampled. Their individual contracts describe numerical limitations.
+//// partitions at curvature extrema before bisection. Individual contracts
+//// describe numerical limitations.
 
 import gleam/float
-import gleam/int
 import gleam/list
-import gleam/option.{type Option, None, Some}
 import gleam/result
 import svg_path
 import svg_path/bezier
@@ -21,8 +19,6 @@ import svg_path/root
 import svg_path/trig
 
 const default_tolerance = 0.000000001
-
-const default_samples = 100
 
 const default_max_depth = 32
 
@@ -39,8 +35,6 @@ pub type Error {
   PathError(error: svg_path.Error)
   /// A curvature `tolerance` option was invalid (not finite or negative).
   InvalidCurvatureTolerance(tolerance: Float)
-  /// A curvature `samples` option was invalid (not positive).
-  InvalidCurvatureSamples(samples: Int)
   /// A curvature `max_depth` option was invalid (not positive).
   InvalidCurvatureMaxDepth(max_depth: Int)
   /// A curvature `margin` argument was invalid (not finite or negative).
@@ -58,16 +52,13 @@ pub type Error {
   CurvatureMaxDepthReached(lower: Float, upper: Float)
 }
 
-/// Options for cusp/root/band discovery.
-/// All fields are validated by discovery functions. Band discovery uses only
-/// `samples`; inflection discovery is algebraic and uses none of these fields
-/// after validation.
+/// Options for cusp discovery.
+/// All fields are validated by discovery functions. Inflection discovery is
+/// algebraic and uses none of these fields after validation.
 pub type Options {
   Options(
     /// Numeric tolerance for roots and interval widths in parameter space.
     tolerance: Float,
-    /// Number of sample windows for band discovery; unused by cusp discovery.
-    samples: Int,
     /// Maximum bisection/subdivision depth.
     max_depth: Int,
   )
@@ -78,19 +69,9 @@ pub type Derivatives {
   Derivatives(first: svg_path.Point, second: svg_path.Point)
 }
 
-/// A sampled interval where the signed radius of curvature is close to a target
-/// offset distance.
-pub type CurvatureBand {
-  CurvatureBand(from: Float, to: Float)
-}
-
 /// Return default curvature options.
 pub fn default_options() -> Options {
-  Options(
-    tolerance: default_tolerance,
-    samples: default_samples,
-    max_depth: default_max_depth,
-  )
+  Options(tolerance: default_tolerance, max_depth: default_max_depth)
 }
 
 /// Return first and second parameter derivatives for a segment at `t`.
@@ -179,7 +160,7 @@ pub fn segment_left_normal_cusp_residual(
 /// Polynomial curvature extrema (degree at most five for cubics) and zero-speed
 /// parameters partition Beziers into monotone-curvature intervals. Ellipses use
 /// their axis extrema. Partition points are checked for touching roots, and
-/// crossings are bisected. `samples` does not affect this computation.
+/// crossings are bisected.
 ///
 /// Touches use a `1e-12` relative cancellation threshold in the cusp residual;
 /// sufficiently close misses cannot be distinguished from exact touches.
@@ -291,32 +272,6 @@ pub fn segment_inflection_parameters(
 
 fn to_bezier_point(point: svg_path.Point) -> bezier.BezierPoint {
   bezier.BezierPoint(point.x, point.y)
-}
-
-/// Sample intervals where visual-left-normal signed radius is within `margin` of
-/// `distance`.
-///
-/// Adjacent close samples on a uniform grid are merged into parameter bands.
-/// A band starts at its first close sample and ends at the first subsequent
-/// non-close sample (or `1.0`). Evaluation errors count as non-close samples.
-/// These bands are approximate: narrow intervals may be missed, and not every
-/// point inside a returned band is guaranteed to satisfy the predicate.
-pub fn segment_left_normal_radius_close_bands(
-  segment: svg_path.Segment,
-  distance distance: Float,
-  margin margin: Float,
-  options options: Options,
-) -> Result(List(CurvatureBand), Error) {
-  use _ <- result.try(validate_options(options))
-  case margin <. 0.0 || !number.is_finite(margin) {
-    True -> Error(InvalidCurvatureMargin(margin))
-    False -> {
-      let close = fn(t) {
-        segment_left_normal_radius_close_to(segment, distance:, margin:, at: t)
-      }
-      sampled_bands(close, options)
-    }
-  }
 }
 
 fn segment_derivatives_curvature(
@@ -623,71 +578,13 @@ fn refine_root(
   }
 }
 
-fn sampled_bands(
-  close: fn(Float) -> Result(Bool, Error),
-  options: Options,
-) -> Result(List(CurvatureBand), Error) {
-  sampled_bands_loop(close, options, index: 0, open: None, bands: [])
-}
-
-fn sampled_bands_loop(
-  close: fn(Float) -> Result(Bool, Error),
-  options: Options,
-  index index: Int,
-  open open: Option(Float),
-  bands bands: List(CurvatureBand),
-) -> Result(List(CurvatureBand), Error) {
-  case index > options.samples {
-    True -> {
-      let bands = case open {
-        Some(from) -> [CurvatureBand(from:, to: 1.0), ..bands]
-        None -> bands
-      }
-      Ok(list.reverse(bands))
-    }
-    False -> {
-      let t = int_to_float(index) /. int_to_float(options.samples)
-      let is_close = case close(t) {
-        Ok(True) -> True
-        _ -> False
-      }
-      case is_close, open {
-        True, None ->
-          sampled_bands_loop(
-            close,
-            options,
-            index: index + 1,
-            open: Some(t),
-            bands:,
-          )
-        True, Some(_) ->
-          sampled_bands_loop(close, options, index: index + 1, open:, bands:)
-        False, Some(from) ->
-          sampled_bands_loop(
-            close,
-            options,
-            index: index + 1,
-            open: None,
-            bands: [CurvatureBand(from:, to: t), ..bands],
-          )
-        False, None ->
-          sampled_bands_loop(close, options, index: index + 1, open:, bands:)
-      }
-    }
-  }
-}
-
 fn validate_options(options: Options) -> Result(Nil, Error) {
   case options.tolerance <. 0.0 || !number.is_finite(options.tolerance) {
     True -> Error(InvalidCurvatureTolerance(options.tolerance))
     False ->
-      case options.samples <= 0 {
-        True -> Error(InvalidCurvatureSamples(options.samples))
-        False ->
-          case options.max_depth <= 0 {
-            True -> Error(InvalidCurvatureMaxDepth(options.max_depth))
-            False -> Ok(Nil)
-          }
+      case options.max_depth <= 0 {
+        True -> Error(InvalidCurvatureMaxDepth(options.max_depth))
+        False -> Ok(Nil)
       }
   }
 }
@@ -732,8 +629,4 @@ fn dot(a: svg_path.Point, b: svg_path.Point) -> Float {
 
 fn cross(a: svg_path.Point, b: svg_path.Point) -> Float {
   a.x *. b.y -. a.y *. b.x
-}
-
-fn int_to_float(value: Int) -> Float {
-  int.to_float(value)
 }
