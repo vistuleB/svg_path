@@ -1,3 +1,4 @@
+import gleam/float
 import gleam/list
 import gleam/option.{None, Some}
 import svg_path
@@ -390,6 +391,58 @@ pub fn closed_cubic_identity_overlap_keeps_endpoint_alternatives_test() {
   let assert Ok(found) = encounters.segment(curve, curve)
   assert list.length(found.overlaps) == 1
   assert list.length(found.intersections) == 2
+}
+
+pub fn overlap_endpoints_keep_multiple_interior_addresses_test() {
+  let source =
+    svg_path.CubicBezier(
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(-13.0, -16.0),
+      svg_path.Point(-26.0, -16.0),
+      svg_path.Point(9.0, 0.0),
+    )
+  list.each([#(0.25, 0.75), #(0.75, 1.0), #(0.0, 0.75)], fn(bounds) {
+    let #(from, to) = bounds
+    let assert Ok(portion) = svg_path.segment_between(source, from:, to:)
+    list.each([portion, svg_path.segment_reverse(portion)], fn(part) {
+      list.each([#(source, part), #(part, source)], fn(pair) {
+        let #(left, right) = pair
+        let assert Ok([overlap]) = overlaps.segment(left, right)
+        case left == source {
+          True -> {
+            assert near(overlap.left_from, from)
+            assert near(overlap.left_to, to)
+          }
+          False -> {
+            assert overlap.left_from == 0.0
+            assert overlap.left_to == 1.0
+          }
+        }
+        case right == source {
+          True -> {
+            assert near(float.min(overlap.right_from, overlap.right_to), from)
+            assert near(float.max(overlap.right_from, overlap.right_to), to)
+          }
+          False -> {
+            assert overlap.right_from == 0.0 || overlap.right_from == 1.0
+            assert overlap.right_to == 1.0 -. overlap.right_from
+          }
+        }
+        let assert Ok(found) =
+          overlaps.check_parameter_correspondence(
+            left,
+            right,
+            left_from: overlap.left_from,
+            left_to: overlap.left_to,
+            right_from: overlap.right_from,
+            right_to: overlap.right_to,
+            tolerance: tolerance,
+            samples: 5,
+          )
+        assert found != None
+      })
+    })
+  })
 }
 
 pub fn closed_cubic_reversed_overlap_keeps_endpoint_alternatives_test() {

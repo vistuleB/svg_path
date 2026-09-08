@@ -6,6 +6,7 @@ import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import svg_path
+import svg_path/internal/number
 import svg_path/point
 
 const overlap_samples = 5
@@ -253,13 +254,13 @@ fn insert_overlap_loop(
   }
 }
 
-/// Find sampled overlap intervals proposed by endpoint projections.
+/// Find sampled overlap intervals proposed by endpoint matches.
 ///
 /// This experimental algorithm assumes non-degenerate segments and that every
 /// overlap boundary is an endpoint of at least one input segment. Every pair
 /// of endpoint matches within `tolerance` proposes an interval. Matches include
-/// both explicit target endpoints as alternatives to the closest projection.
-/// Interior
+/// explicit target endpoints and roots of both coordinate equations, alongside
+/// the closest projection. Interior
 /// samples on the proposed left interval must remain within `tolerance` of the
 /// proposed right interval. Compatible proposals are merged into maximal
 /// intervals.
@@ -274,7 +275,7 @@ pub fn detect_with_samples(
     True, _ -> Error(svg_path.InvalidOverlapTolerance(tolerance))
     _, True -> Error(svg_path.InvalidOverlapSamples(samples))
     False, False -> {
-      use projections <- result.try(endpoint_projections(left, right))
+      use projections <- result.try(endpoint_projections(left, right, tolerance))
       let close =
         projections
         |> list.filter(fn(projection) {
@@ -446,30 +447,35 @@ fn intervals_cover(
 fn endpoint_projections(
   left: svg_path.Segment,
   right: svg_path.Segment,
+  tolerance: Float,
 ) -> Result(List(EndpointProjection), svg_path.Error) {
   use left_start <- result.try(endpoint_projection_alternatives(
     LeftEndpoint,
     0.0,
     svg_path.segment_start(left),
     right,
+    tolerance,
   ))
   use left_end <- result.try(endpoint_projection_alternatives(
     LeftEndpoint,
     1.0,
     svg_path.segment_end(left),
     right,
+    tolerance,
   ))
   use right_start <- result.try(endpoint_projection_alternatives(
     RightEndpoint,
     0.0,
     svg_path.segment_start(right),
     left,
+    tolerance,
   ))
   use right_end <- result.try(endpoint_projection_alternatives(
     RightEndpoint,
     1.0,
     svg_path.segment_end(right),
     left,
+    tolerance,
   ))
   Ok(list.unique(list.flatten([left_start, left_end, right_start, right_end])))
 }
@@ -479,26 +485,175 @@ fn endpoint_projection_alternatives(
   source_t: Float,
   point: svg_path.Point,
   target: svg_path.Segment,
+  tolerance: Float,
 ) -> Result(List(EndpointProjection), svg_path.Error) {
-  use projection <- result.try(svg_path.segment_projection(point, to: target))
-  let svg_path.SegmentProjection(t: target_t, distance:, ..) = projection
-  // Projection returns one closest address, not every matching address.
-  // Keep explicit endpoint alternatives; the caller filters by tolerance.
-  Ok([
-    EndpointProjection(source:, source_t:, target_t:, distance:),
-    EndpointProjection(
+  let x = coordinate_matches(target, point, True, tolerance)
+  let y = coordinate_matches(target, point, False, tolerance)
+  use coordinates <- result.try(combine_coordinate_matches(x, y))
+  // Keep closest projection for approximate coincidences too. A complete
+  // coordinate inventory can replace a failed projection, but not an arbitrary
+  // partial collection of geometric matches.
+  let projection = svg_path.segment_projection(point, to: target)
+  use projected <- result.try(case projection {
+    Ok(found) -> Ok([found.t])
+    Error(svg_path.DistanceMaxIterationsReached(..) as error) ->
+      case complete_coordinate(x) || complete_coordinate(y) {
+        True -> Ok([])
+        False -> Error(error)
+      }
+    Error(error) -> Error(error)
+  })
+  use matches <- result.try(matching_parameters(
+    target,
+    point,
+    [0.0, 1.0, ..list.append(coordinates, projected)],
+    tolerance,
+  ))
+  list.try_map(matches, fn(target_t) {
+    use at <- result.try(svg_path.segment_point(target, at: target_t))
+    Ok(EndpointProjection(
       source:,
       source_t:,
-      target_t: 0.0,
-      distance: point.distance(point, svg_path.segment_start(target)),
-    ),
-    EndpointProjection(
-      source:,
-      source_t:,
-      target_t: 1.0,
-      distance: point.distance(point, svg_path.segment_end(target)),
-    ),
-  ])
+      target_t:,
+      distance: point.distance(point, at),
+    ))
+  })
+}
+
+// The existing supporting-line query solves coordinate polynomials for
+// Béziers, and uses the ellipse's angular representation for arcs.
+fn coordinate_matches(
+  segment: svg_path.Segment,
+  at: svg_path.Point,
+  x: Bool,
+  tolerance: Float,
+) -> Result(#(List(Float), Int), svg_path.Error) {
+  let degree = coordinate_degree(segment, x)
+  case degree == 0 {
+    True -> Ok(#([], 0))
+    False -> {
+      let options =
+        svg_path.CrossingOptions(
+          ..svg_path.default_crossing_options(),
+          signed_line_distance_tolerance: float.max(
+            tolerance *. 0.25,
+            0.000000000001,
+          ),
+        )
+      use roots <- result.try(svg_path.segment_ray_crossings_with(
+        segment,
+        origin: at,
+        direction: case x {
+          True -> svg_path.Point(0.0, 1.0)
+          False -> svg_path.Point(1.0, 0.0)
+        },
+        options:,
+      ))
+      use matches <- result.try(matching_parameters(
+        segment,
+        at,
+        [0.0, 1.0, ..list.map(roots, fn(pair) { pair.0 })],
+        tolerance,
+      ))
+      Ok(#(matches, degree))
+    }
+  }
+}
+
+fn complete_coordinate(
+  found: Result(#(List(Float), Int), svg_path.Error),
+) -> Bool {
+  // A degree-d coordinate has at most d distinct roots. Only geometrically
+  // verified, deduplicated matches count toward exhausting this bound.
+  case found {
+    Ok(#(matches, degree)) -> degree > 0 && list.length(matches) == degree
+    Error(_) -> False
+  }
+}
+
+fn combine_coordinate_matches(
+  x: Result(#(List(Float), Int), svg_path.Error),
+  y: Result(#(List(Float), Int), svg_path.Error),
+) -> Result(List(Float), svg_path.Error) {
+  case x, y {
+    Ok(#(xs, _)), Ok(#(ys, _)) -> Ok(list.append(xs, ys))
+    Ok(#(xs, _)), Error(svg_path.CrossingMaxIterationsReached(..)) ->
+      case complete_coordinate(x) {
+        True -> Ok(xs)
+        False -> result.map(y, fn(pair) { pair.0 })
+      }
+    Error(svg_path.CrossingMaxIterationsReached(..)), Ok(#(ys, _)) ->
+      case complete_coordinate(y) {
+        True -> Ok(ys)
+        False -> result.map(x, fn(pair) { pair.0 })
+      }
+    Error(error), _ | _, Error(error) -> Error(error)
+  }
+}
+
+// Deduplicate addresses, never positions. Endpoint candidates go first so
+// exact 0/1 win over nearby numerical roots after geometric verification.
+fn matching_parameters(
+  segment: svg_path.Segment,
+  at: svg_path.Point,
+  parameters: List(Float),
+  tolerance: Float,
+) -> Result(List(Float), svg_path.Error) {
+  list.try_fold(parameters, [], fn(found, t) {
+    use candidate <- result.try(svg_path.segment_point(segment, at: t))
+    case
+      point.distance(at, candidate) <=. tolerance
+      && !list.any(found, fn(previous) {
+        float.absolute_value(previous -. t) <=. 0.000000001
+      })
+    {
+      True -> Ok(list.append(found, [t]))
+      False -> Ok(found)
+    }
+  })
+}
+
+fn coordinate_degree(segment: svg_path.Segment, x: Bool) -> Int {
+  let component = fn(p: svg_path.Point) {
+    case x {
+      True -> p.x
+      False -> p.y
+    }
+  }
+  case segment {
+    svg_path.Line(a, b) ->
+      case number.is_zero(component(b) -. component(a)) {
+        True -> 0
+        False -> 1
+      }
+    svg_path.QuadraticBezier(a, b, c) ->
+      coordinate_control_degree([component(a), component(b), component(c)])
+    svg_path.CubicBezier(a, b, c, d) ->
+      coordinate_control_degree([
+        component(a),
+        component(b),
+        component(c),
+        component(d),
+      ])
+    // No polynomial completeness claim for arcs. Their angular solver still
+    // supplies candidates, including both visits to a closed seam.
+    svg_path.Arc(..) -> -1
+  }
+}
+
+fn coordinate_control_degree(values: List(Float)) -> Int {
+  let differences = control_differences(values)
+  case list.any(differences, fn(value) { !number.is_zero(value) }) {
+    False -> 0
+    True -> 1 + coordinate_control_degree(differences)
+  }
+}
+
+fn control_differences(values: List(Float)) -> List(Float) {
+  case values {
+    [a, b, ..rest] -> [b -. a, ..control_differences([b, ..rest])]
+    _ -> []
+  }
 }
 
 fn overlap_candidates_from_projection_pairs(
@@ -575,7 +730,25 @@ fn overlap_candidates_against(
                   ))
                   case affine {
                     True -> Ok(Ok(#(overlap, True)))
-                    False -> Ok(Ok(#(overlap, False)))
+                    False -> {
+                      // One-sided containment can accept a wrong pairing whose
+                      // target interval includes an extra loop. That is not
+                      // evidence of a non-affine overlap between the intervals.
+                      let #(lf, lt, rf, rt, start, end) = overlap
+                      let opposite =
+                        canonicalize_overlap(#(rf, rt, lf, lt, start, end))
+                      use reciprocal <- result.try(sampled_overlap_valid(
+                        opposite,
+                        right,
+                        left,
+                        tolerance,
+                        samples,
+                      ))
+                      case reciprocal {
+                        True -> Ok(Ok(#(overlap, False)))
+                        False -> Ok(Error(Nil))
+                      }
+                    }
                   }
                 }
               }
