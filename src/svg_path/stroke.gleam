@@ -22,10 +22,10 @@ const point_tolerance = 0.000000001
 /// Errors returned by stroke helpers.
 pub type Error {
   /// An underlying path operation failed.
-  PathError(svg_path.Error)
+  PathError(error: svg_path.Error)
 
   /// An underlying offset operation failed.
-  OffsetError(offset.Error)
+  OffsetError(error: offset.Error)
 
   /// Stroke width must be finite and greater than zero.
   InvalidWidth(width: Float)

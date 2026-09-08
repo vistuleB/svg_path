@@ -2659,7 +2659,7 @@ const adjacent_loop_endpoint_parameter_tolerance = 0.0001
 pub type InternalError {
   /// Cubic fitting failed; retain its cause without inventing an endpoint or
   /// attributing an underdetermined system to non-finite arithmetic.
-  InternalBezierFitError(bezier.Error)
+  InternalBezierFitError(error: bezier.Error)
   /// The internal winding classifier reached a boundary state unexpectedly.
   InternalInconsistentContainment
 
@@ -2670,19 +2670,19 @@ pub type InternalError {
   InternalInvalidOffsetMapDistance(distance: Float, length: Float)
 
   /// An underlying path operation failed.
-  InternalPathError(svg_path.Error)
+  InternalPathError(error: svg_path.Error)
 
   /// Arrangement construction failed while noding offset geometry.
-  InternalArrangementGraphError(arrangement_graph.InternalError)
+  InternalArrangementGraphError(error: arrangement_graph.InternalError)
 
   /// Arrangement construction failed without a stable internal payload.
   InternalArrangementGraphConstructionFailed
 
   /// Forced parity pruning could not determine a unique feasible assignment.
-  InternalForcedParityPruningError(ForcedParityError)
+  InternalForcedParityPruningError(error: ForcedParityError)
 
   /// Source normalization failed before offset construction.
-  InternalSourceNormalizationError(degeneracy.Error)
+  InternalSourceNormalizationError(error: degeneracy.Error)
 
   /// The offset tolerance must be finite and greater than zero.
   InternalInvalidTolerance(tolerance: Float)
@@ -2706,9 +2706,11 @@ pub type InternalError {
   InternalBandSubpathNotClosed
 
   /// A segment tangent was too small to define a stable normal direction.
+  /// Carries the segment parameter where the tangent query failed.
   InternalDegenerateTangent(t: Float)
 
   /// Refinement could not produce an offset within the requested tolerance.
+  /// Carries the remaining geometric divergence, not the recursion depth.
   InternalMaxDepthReached(divergence: Float)
 
   /// A calculation produced a non-finite coordinate.
@@ -2775,7 +2777,7 @@ pub type Error {
   InvalidOffsetMapDistance(distance: Float, length: Float)
 
   /// An underlying path operation failed.
-  PathError(svg_path.Error)
+  PathError(error: svg_path.Error)
 
   /// The offset tolerance must be finite and greater than zero.
   InvalidTolerance(tolerance: Float)
@@ -2796,9 +2798,11 @@ pub type Error {
   InvalidTangentHealAngleDegrees(angle: Float)
 
   /// A segment tangent was too small to define a stable normal direction.
+  /// Carries the segment parameter where the tangent query failed.
   DegenerateTangent(t: Float)
 
   /// Refinement could not produce an offset within the requested tolerance.
+  /// Carries the remaining geometric divergence, not the recursion depth.
   MaxDepthReached(divergence: Float)
 
   /// A calculation produced a non-finite coordinate.
@@ -2815,16 +2819,16 @@ pub fn public_error(error: InternalError) -> Error {
     InternalInvalidOffsetMapDistance(distance:, length:) ->
       InvalidOffsetMapDistance(distance:, length:)
     InternalPathError(value) -> PathError(value)
-    InternalInvalidTolerance(tolerance:) -> InvalidTolerance(tolerance:)
-    InternalInvalidSamples(samples:) -> InvalidSamples(samples:)
-    InternalInvalidMaxDepth(max_depth:) -> InvalidMaxDepth(max_depth:)
-    InternalInvalidMiterLimit(miter_limit:) -> InvalidMiterLimit(miter_limit:)
-    InternalInvalidStalledOffsetDiameter(diameter:) ->
-      InvalidStalledOffsetDiameter(diameter:)
-    InternalInvalidTangentHealAngleDegrees(angle:) ->
-      InvalidTangentHealAngleDegrees(angle:)
-    InternalDegenerateTangent(t:) -> DegenerateTangent(t:)
-    InternalMaxDepthReached(divergence:) -> MaxDepthReached(divergence:)
+    InternalInvalidTolerance(tolerance) -> InvalidTolerance(tolerance)
+    InternalInvalidSamples(samples) -> InvalidSamples(samples)
+    InternalInvalidMaxDepth(max_depth) -> InvalidMaxDepth(max_depth)
+    InternalInvalidMiterLimit(miter_limit) -> InvalidMiterLimit(miter_limit)
+    InternalInvalidStalledOffsetDiameter(diameter) ->
+      InvalidStalledOffsetDiameter(diameter)
+    InternalInvalidTangentHealAngleDegrees(angle) ->
+      InvalidTangentHealAngleDegrees(angle)
+    InternalDegenerateTangent(t) -> DegenerateTangent(t)
+    InternalMaxDepthReached(divergence) -> MaxDepthReached(divergence)
     InternalNonFinite -> NonFinite
     _ -> ConstructionFailed
   }
@@ -4102,7 +4106,7 @@ fn segment_image_start_vertex(
     image
   use edges <- result.try(source_segment_image_edges(build, image))
   case edges {
-    [] -> Error(InternalEmptySegmentImage(segment_index:))
+    [] -> Error(InternalEmptySegmentImage(segment_index))
     [first, ..] -> {
       let #(edge, reversed) = first
       case reversed {
@@ -4122,7 +4126,7 @@ fn segment_image_end_vertex(
   use edges <- result.try(source_segment_image_edges(build, image))
   use last <- result.try(
     last_directed_edge(edges)
-    |> result.map_error(fn(_) { InternalEmptySegmentImage(segment_index:) }),
+    |> result.map_error(fn(_) { InternalEmptySegmentImage(segment_index) }),
   )
   let #(edge, reversed) = last
   case reversed {
@@ -4232,7 +4236,7 @@ fn arrangement_edge_winding_opinion(
 ) -> Result(WindingSideOpinion, InternalError) {
   let OffsetArrangementBuild(edge_images:, ..) = build
   case arrangement_edge_image_by_id(edge_images, edge_id) {
-    Error(Nil) -> Error(InternalMissingEdgeImage(edge_id:))
+    Error(Nil) -> Error(InternalMissingEdgeImage(edge_id))
     Ok(arrangement_graph.ArrangementEdgeImage(sources:, ..)) ->
       arrangement_source_winding_opinions(
         build,
@@ -4258,13 +4262,13 @@ fn arrangement_source_winding_opinions(
       use indexed <- result.try(
         offset_indexed_segment_at(build.indexed_segments, segment_index)
         |> result.map_error(fn(_) {
-          InternalMissingIndexedSegment(segment_index:)
+          InternalMissingIndexedSegment(segment_index)
         }),
       )
       let IndexedOffsetSegment(winding_opinion:, ..) = indexed
       use source_opinion <- result.try(case winding_opinion {
         Some(opinion) -> Ok(opinion)
-        None -> Error(InternalMissingWindingOpinion(segment_index:))
+        None -> Error(InternalMissingWindingOpinion(segment_index))
       })
       let WindingSideOpinion(left:, right:) = source_opinion
       let source_opinion = case reversed {
@@ -11383,14 +11387,21 @@ pub type VertexParityRequest {
 /// Failure of forced parity pruning.
 @internal
 pub type ForcedParityError {
+  /// The supplied vertex ID is absent from the graph.
   ForcedParityMissingVertex(vertex: Int)
+  /// The supplied vertex ID appears more than once in the parity requests.
   ForcedParityDuplicateVertex(vertex: Int)
   ForcedParityInvalidVertexParity(vertex: Int, parity: Int)
+  /// The supplied edge ID has no capacity assignment.
   ForcedParityMissingEdgeCapacity(edge_id: Int)
+  /// The supplied edge ID has more than one capacity assignment.
   ForcedParityDuplicateEdgeCapacity(edge_id: Int)
+  /// The supplied edge ID is absent from the graph.
   ForcedParityUnknownEdgeCapacity(edge_id: Int)
   ForcedParityInvalidEdgeCapacity(edge_id: Int, capacity: Int)
+  /// The parity request cannot be met at the supplied vertex ID.
   ForcedParityInfeasible(vertex: Int)
+  /// Carries the vertex IDs whose remaining parity reductions are ambiguous.
   ForcedParityAmbiguous(vertices: List(Int))
 }
 

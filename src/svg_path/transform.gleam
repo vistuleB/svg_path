@@ -45,7 +45,7 @@ pub type Error {
   InvalidMatrix
 
   /// An error from the core path model.
-  PathError(svg_path.Error)
+  PathError(error: svg_path.Error)
 }
 
 /// Create an affine matrix from SVG's six matrix values.

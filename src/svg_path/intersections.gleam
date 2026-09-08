@@ -88,28 +88,28 @@ pub type ClassificationOptions {
 /// Errors returned while classifying subpath intersections.
 pub type Error {
   /// An underlying path direction query failed.
-  PathError(svg_path.Error)
+  PathError(error: svg_path.Error)
 
   /// Angular tolerance must be finite and in `[0, 180)` degrees.
-  InvalidAngularTolerance(Float)
+  InvalidAngularTolerance(tolerance: Float)
 
   /// Length tolerance used by classification.
-  InvalidClassificationLengthTolerance(Float)
+  InvalidClassificationLengthTolerance(tolerance: Float)
 
   /// Maximum length-option depth used by classification.
-  InvalidClassificationLengthMaxDepth(Int)
+  InvalidClassificationLengthMaxDepth(max_depth: Int)
 
   /// Distance tolerance must be finite and non-negative.
-  InvalidDistanceTolerance(Float)
+  InvalidDistanceTolerance(tolerance: Float)
 
   /// Initial arc length must be finite and greater than zero.
-  InvalidInitialArcLength(Float)
+  InvalidInitialArcLength(initial_arc_length: Float)
 
   /// Maximum arc length must be finite and at least the initial arc length.
-  InvalidMaximumArcLength(Float)
+  InvalidMaximumArcLength(maximum_arc_length: Float)
 
   /// At least one sampling step is required.
-  InvalidMaxSamplingSteps(Int)
+  InvalidMaxSamplingSteps(max_sampling_steps: Int)
 }
 
 /// The oriented sense in which the second traversal crosses the first.

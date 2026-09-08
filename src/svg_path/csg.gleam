@@ -34,7 +34,7 @@ pub type Error {
   ArrangementGraphError
 
   /// An underlying path operation failed.
-  PathError(svg_path.Error)
+  PathError(error: svg_path.Error)
 
   /// Boundary classification produced topology that could not be reconstructed.
   /// This indicates an internal consistency failure rather than invalid caller

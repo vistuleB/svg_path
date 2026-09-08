@@ -22,7 +22,7 @@ pub type Error {
   DegenerateTangent
 
   /// An underlying path operation failed.
-  PathError(svg_path.Error)
+  PathError(error: svg_path.Error)
 
   /// Marker viewport width must be finite and greater than zero.
   InvalidMarkerWidth(width: Float)

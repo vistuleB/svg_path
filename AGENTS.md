@@ -8,6 +8,12 @@
 - Treat questions about committing, especially messages ending in `?`, as discussion or permission checks, not as authorization.
 - If the user asks whether a commit should be made, answer the question and wait for an explicit follow-up command before committing.
 
+## Error Payload Style
+
+- Name every error-variant payload argument, including single arguments.
+  Labels describe the values carried (for example, `divergence`, not `depth`,
+  when reporting the fitting error remaining at a recursion limit).
+
 ## Test Reporting
 
 - Always report the exact test command or named profile that completed. For

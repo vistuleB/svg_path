@@ -132,10 +132,12 @@ pub type Error {
   UnderdeterminedCubicFit
 
   /// Cubic self-intersection separation must be finite and greater than zero.
-  InvalidCubicSelfIntersectionMinimumArcLengthSeparation(Float)
+  InvalidCubicSelfIntersectionMinimumArcLengthSeparation(
+    minimum_arc_length_separation: Float,
+  )
 
   /// Cubic self-intersection distance tolerance must be finite and positive.
-  InvalidCubicSelfIntersectionDistanceTolerance(Float)
+  InvalidCubicSelfIntersectionDistanceTolerance(distance_tolerance: Float)
 }
 
 /// Return the curve's start point.

@@ -26,7 +26,7 @@ pub type Error {
 /// The reason SVG path-data parsing failed.
 pub type ErrorReason {
   /// A parsed path was internally invalid according to the core path model.
-  PathError(svg_path.Error)
+  PathError(error: svg_path.Error)
 
   /// An arc flag was not `0` or `1`.
   ExpectedArcFlag
@@ -41,13 +41,13 @@ pub type ErrorReason {
   ExpectedNumber
 
   /// A numeric token could not be parsed as a float.
-  InvalidNumber(String)
+  InvalidNumber(token: String)
 
   /// A comma appeared somewhere SVG path grammar does not permit one.
   InvalidSeparator
 
   /// The command letter is not supported by this library.
-  UnsupportedCommand(String)
+  UnsupportedCommand(command: String)
 }
 
 type Token {

@@ -233,10 +233,10 @@ pub type WidthExtremum {
 /// Errors returned by convex-hull construction.
 pub type Error {
   /// An underlying path operation failed.
-  PathError(svg_path.Error)
+  PathError(error: svg_path.Error)
 
   /// A generated hull construction operation failed in a path helper.
-  ConstructionPathError(svg_path.Error)
+  ConstructionPathError(error: svg_path.Error)
 
   /// The construction input contained no subpaths.
   ConstructionEmptyInput
@@ -295,11 +295,11 @@ pub type InternalError {
   /// parameters.
   DuplicateAdjacentTValues
 
-  /// Support-sample refinement did not settle before the iteration limit.
-  RefinementReachedMaxIterations(Int)
+  /// Support-sample refinement did not settle before the supplied iteration limit.
+  RefinementReachedMaxIterations(max_iterations: Int)
 
-  /// Support-sample simplification did not settle before the iteration limit.
-  PurificationReachedMaxIterations(Int)
+  /// Support-sample simplification did not settle before the supplied iteration limit.
+  PurificationReachedMaxIterations(max_iterations: Int)
 
   /// Convex-loop union collapsed to no boundary pieces.
   LoopUnionCollapsed
@@ -307,14 +307,13 @@ pub type InternalError {
   /// Tangent search expected a non-degenerate chord polygon.
   TangentSearchDegenerateLoop
 
-  /// Tangent search found a locally non-convex chord-polygon vertex.
-  TangentSearchNonConvexVertex(Int)
+  /// Tangent search found a locally non-convex chord-polygon vertex; carries
+  /// that vertex's index.
+  TangentSearchNonConvexVertex(vertex_index: Int)
 
-  /// Tangent search did not find exactly two tangent transitions.
-  TangentSearchExpectedTwoTangencies(Int)
-
-  /// Seeded worst-direction search grew past its allowed interval width.
-  SeededWorstDirectionExceededThreshold(Float, Float)
+  /// Tangent search did not find exactly two tangent transitions; carries the
+  /// actual number found.
+  TangentSearchExpectedTwoTangencies(actual_count: Int)
 }
 
 /// Compute the convex hull of a subpath.

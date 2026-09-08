@@ -265,7 +265,7 @@ pub type ArrangementSegmentImage {
 @internal
 pub type InternalError {
   /// An underlying path operation failed.
-  InternalPathError(svg_path.Error)
+  InternalPathError(error: svg_path.Error)
 
   /// Normalization failed for a reason outside its path-operation contract.
   InternalNormalizationError
@@ -298,7 +298,8 @@ pub type InternalError {
   /// A vertex has no incident edge.
   InternalIsolatedVertex(vertex: Int)
 
-  /// An edge's total directional multiplicity is not positive.
+  /// An edge's total directional multiplicity is not positive. Carries the
+  /// edge ID, not the multiplicity.
   InternalInvalidMultiplicity(edge: Int)
 
   /// A closed-boundary graph has an odd weighted degree at a vertex.
@@ -320,7 +321,8 @@ pub type InternalError {
     tolerance_squared: Float,
   )
 
-  /// A contour could not be traced into closed loops.
+  /// A contour could not be traced into closed loops. Carries the vertex ID
+  /// where tracing failed.
   InternalContourTraceFailed(vertex: Int)
 
   /// A cyclic edge order was requested for a vertex outside the graph.
@@ -364,7 +366,7 @@ pub type InternalError {
 /// Stable errors returned by arrangement construction and validation.
 pub type Error {
   /// An underlying path operation failed.
-  PathError(svg_path.Error)
+  PathError(error: svg_path.Error)
 
   /// Endpoint tolerance must be greater than zero.
   InvalidTolerance(tolerance: Float)
@@ -386,11 +388,11 @@ pub type Error {
 fn public_error(error: InternalError) -> Error {
   case error {
     InternalPathError(value) -> PathError(value)
-    InternalInvalidTolerance(tolerance:) -> InvalidTolerance(tolerance:)
-    InternalInvalidMinimumChord(minimum_chord:) ->
-      InvalidMinimumChord(minimum_chord:)
-    InternalInvalidEndpointSliverTolerance(tolerance:) ->
-      InvalidEndpointSliverTolerance(tolerance:)
+    InternalInvalidTolerance(tolerance) -> InvalidTolerance(tolerance)
+    InternalInvalidMinimumChord(minimum_chord) ->
+      InvalidMinimumChord(minimum_chord)
+    InternalInvalidEndpointSliverTolerance(tolerance) ->
+      InvalidEndpointSliverTolerance(tolerance)
     InternalSegmentTooShort(chord:, minimum:) ->
       SegmentTooShort(chord:, minimum:)
     _ -> ConstructionFailed
@@ -1648,7 +1650,7 @@ fn nested_contour_successor(
   let NestedContourRay(edge_id:, starts:, ..) = successor
   case starts {
     True -> Ok(edge_id)
-    False -> Error(InternalContourTraceFailed(vertex:))
+    False -> Error(InternalContourTraceFailed(vertex))
   }
 }
 
@@ -1725,7 +1727,7 @@ fn contour_direction(
 ) -> Result(svg_path.Point, InternalError) {
   case direction {
     Some(direction) -> Ok(direction)
-    None -> Error(InternalContourTraceFailed(vertex:))
+    None -> Error(InternalContourTraceFailed(vertex))
   }
 }
 
@@ -1745,7 +1747,7 @@ fn cyclic_nested_contour_successor(
   vertex vertex: Int,
 ) -> Result(NestedContourRay, InternalError) {
   case rays {
-    [] -> Error(InternalContourTraceFailed(vertex:))
+    [] -> Error(InternalContourTraceFailed(vertex))
     [first, ..rest] -> {
       let NestedContourRay(edge_id:, starts:, ..) = first
       case edge_id == incoming_id && !starts {
@@ -1754,7 +1756,7 @@ fn cyclic_nested_contour_successor(
             [next, ..] -> Ok(next)
             [] ->
               first_ray
-              |> result.map_error(fn(_) { InternalContourTraceFailed(vertex:) })
+              |> result.map_error(fn(_) { InternalContourTraceFailed(vertex) })
           }
         False ->
           cyclic_nested_contour_successor(
@@ -1834,7 +1836,7 @@ fn trace_nested_contour_cycle(
     True -> Ok(#(list.reverse(reversed_cycle), remaining))
     False ->
       case limit <= 0 {
-        True -> Error(InternalContourTraceFailed(vertex: end_vertex))
+        True -> Error(InternalContourTraceFailed(end_vertex))
         False -> {
           use selected <- result.try(
             take_nested_contour_edge(
@@ -1863,7 +1865,7 @@ fn nested_boundary_successor(
   vertex vertex: Int,
 ) -> Result(Int, InternalError) {
   case links {
-    [] -> Error(InternalContourTraceFailed(vertex:))
+    [] -> Error(InternalContourTraceFailed(vertex))
     [NestedContourLink(edge_id: candidate, successor_id:), ..rest] ->
       case candidate == edge_id {
         True -> Ok(successor_id)
@@ -1879,7 +1881,7 @@ fn take_nested_contour_edge(
   retained retained: List(NestedContourEdge),
 ) -> Result(#(NestedContourEdge, List(NestedContourEdge)), InternalError) {
   case edges {
-    [] -> Error(InternalContourTraceFailed(vertex:))
+    [] -> Error(InternalContourTraceFailed(vertex))
     [first, ..rest] -> {
       let NestedContourEdge(id: candidate, ..) = first
       case candidate == id {
@@ -1990,7 +1992,7 @@ pub fn insert_atomic_segment(
           let #(vertices, start_id) = attach_vertex(vertices, start, tolerance)
           let #(vertices, end_id) = attach_vertex(vertices, end, tolerance)
           case start_id == end_id {
-            True -> Error(InternalSegmentCollapsedToVertex(vertex: start_id))
+            True -> Error(InternalSegmentCollapsedToVertex(start_id))
             False ->
               Ok(
                 ArrangementGraph(
@@ -4758,10 +4760,10 @@ fn validate_edges(
       ..rest
     ] -> {
       case forward_multiplicity + reverse_multiplicity <= 0 {
-        True -> Error(InternalInvalidMultiplicity(edge: id))
+        True -> Error(InternalInvalidMultiplicity(id))
         False ->
           case start_vertex == end_vertex {
-            True -> Error(InternalLoopEdge(vertex: start_vertex))
+            True -> Error(InternalLoopEdge(start_vertex))
             False -> {
               use start <- result.try(vertex_point(vertices, start_vertex))
               use end <- result.try(vertex_point(vertices, end_vertex))
@@ -4830,7 +4832,7 @@ fn validate_vertices(
       ))
       let degree = weighted_degree(edges, id, 0)
       case degree == 0 {
-        True -> Error(InternalIsolatedVertex(vertex: id))
+        True -> Error(InternalIsolatedVertex(id))
         False ->
           case int.modulo(degree, 2) != Ok(0) {
             True -> Error(InternalOddWeightedDegree(vertex: id, degree:))
@@ -4848,7 +4850,7 @@ fn validate_vertex_samples(
   tolerance_squared: Float,
 ) -> Result(Nil, InternalError) {
   case samples {
-    [] -> Error(InternalVertexWithoutEndpointSamples(vertex:))
+    [] -> Error(InternalVertexWithoutEndpointSamples(vertex))
     _ -> {
       let assert Ok(smallest_enclosing_circle.EnclosingCircle(
         center: expected_center,
@@ -4912,6 +4914,6 @@ fn vertex_point(
     })
   {
     Ok(ArrangementVertex(point:, ..)) -> Ok(point)
-    Error(_) -> Error(InternalMissingVertex(vertex: id))
+    Error(_) -> Error(InternalMissingVertex(id))
   }
 }

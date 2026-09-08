@@ -25,15 +25,15 @@ const default_max_depth = 32
 /// path-operation failures, and degenerate or infinite curvature geometry.
 pub type Error {
   /// An underlying segment derivative query failed, for example arc conversion.
-  PathError(svg_path.Error)
+  PathError(error: svg_path.Error)
   /// A curvature `tolerance` option was invalid (not finite or negative).
-  InvalidCurvatureTolerance(Float)
+  InvalidCurvatureTolerance(tolerance: Float)
   /// A curvature `samples` option was invalid (not positive).
-  InvalidCurvatureSamples(Int)
+  InvalidCurvatureSamples(samples: Int)
   /// A curvature `max_depth` option was invalid (not positive).
-  InvalidCurvatureMaxDepth(Int)
+  InvalidCurvatureMaxDepth(max_depth: Int)
   /// A curvature `margin` argument was invalid (not finite or negative).
-  InvalidCurvatureMargin(Float)
+  InvalidCurvatureMargin(margin: Float)
   /// The segment has a degenerate zero-speed parameter, so its curvature is
   /// undefined there.
   DegenerateCurvatureDerivative

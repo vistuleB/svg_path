@@ -248,10 +248,10 @@ pub type ParametricOptions {
 /// Errors returned by fallible point-mapping helpers.
 pub type PointMapError(error) {
   /// The path structure could not be mapped.
-  PointMapPathError(Error)
+  PointMapPathError(error: Error)
 
   /// The caller-provided point mapping function failed.
-  PointMapFunctionError(error)
+  PointMapFunctionError(error: error)
 }
 
 /// Options for approximating segments with straight lines.
@@ -667,13 +667,13 @@ pub type Error {
   InvalidPathParameter(subpath_index: Int, length: Int)
 
   /// A direction relative tolerance must be finite and non-negative.
-  InvalidDirectionRelativeTolerance(Float)
+  InvalidDirectionRelativeTolerance(relative_tolerance: Float)
 
   /// Geometry has no usable direction for the requested operation.
   IndeterminateDirection
 
   /// A custom endpoint wiggle tolerance must be finite and non-negative.
-  InvalidWiggleTolerance(Float)
+  InvalidWiggleTolerance(tolerance: Float)
 
   /// A subpath interval would not produce a positive-length piece.
   InvalidSubpathInterval(from: SubpathParameter, to: SubpathParameter)
@@ -742,6 +742,7 @@ pub type Error {
   NonFiniteParametricTangent(parameter: Float, tangent: Point)
 
   /// A parametric interval could not be fitted within the recursion limit.
+  /// Carries the remaining geometric fitting error, not the recursion depth.
   ParametricMaxDepthReached(error: Float)
 
   /// A parametric interval could not determine a stable cubic fit.
@@ -760,6 +761,7 @@ pub type Error {
   InvalidLinearizeMaxDepth(max_depth: Int)
 
   /// A segment could not be approximated within the recursion limit.
+  /// Carries the remaining geometric approximation error, not the recursion depth.
   LinearizeMaxDepthReached(error: Float)
 
   /// The number of distance scan samples must be greater than zero.
@@ -820,10 +822,12 @@ pub type Error {
   InvalidIntersectionParameterSnapExponent(exponent: Int)
 
   /// The self-intersection arc-length separation must be finite and positive.
-  InvalidSelfIntersectionMinimumArcLengthSeparation(Float)
+  InvalidSelfIntersectionMinimumArcLengthSeparation(
+    minimum_arc_length_separation: Float,
+  )
 
   /// The self-intersection distance tolerance must be finite and positive.
-  InvalidSelfIntersectionDistanceTolerance(Float)
+  InvalidSelfIntersectionDistanceTolerance(distance_tolerance: Float)
 
   /// The two segments overlap in more than a single point.
   OverlappingSegments
@@ -9281,7 +9285,7 @@ fn bezier_segment_to_lines(
     True -> Ok([Line(start: segment_start(segment), end: segment_end(segment))])
     False -> {
       case depth >= options.max_depth {
-        True -> Error(LinearizeMaxDepthReached(error:))
+        True -> Error(LinearizeMaxDepthReached(error))
         False -> {
           use split <- result.try(segment_split(segment, at: 0.5))
           let #(left, right) = split
@@ -9327,7 +9331,7 @@ fn arc_to_lines(
     True -> Ok([Line(start:, end:)])
     False -> {
       case depth >= options.max_depth {
-        True -> Error(LinearizeMaxDepthReached(error:))
+        True -> Error(LinearizeMaxDepthReached(error))
         False -> {
           let #(left_arc, right_arc) = ellipse.split_arc(arc, at: 0.5)
           let middle = ellipse.arc_point(arc, at: 0.5) |> from_ellipse_point

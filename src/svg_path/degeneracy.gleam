@@ -31,13 +31,13 @@ pub type ThinPrefix {
 /// Errors returned by degeneracy cleanup helpers.
 pub type Error {
   /// The linearization tolerance must be finite and non-negative.
-  InvalidTolerance(Float)
+  InvalidTolerance(tolerance: Float)
 
   /// An underlying path operation failed.
-  PathError(svg_path.Error)
+  PathError(error: svg_path.Error)
 
   /// Convex-hull construction failed while normalizing degenerate segments.
-  ConvexHullError(convex_hull.Error)
+  ConvexHullError(error: convex_hull.Error)
 }
 
 /// Replace maximal contiguous line-degenerate windows in a subpath.

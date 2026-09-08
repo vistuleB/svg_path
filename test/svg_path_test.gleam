@@ -2806,7 +2806,7 @@ pub fn segment_to_lines_rejects_invalid_options_and_depth_exhaustion_test() {
       options: svg_path.LinearizeOptions(tolerance: 0.1, max_depth: 0),
     )
     == Error(svg_path.InvalidLinearizeMaxDepth(0))
-  let assert Error(svg_path.LinearizeMaxDepthReached(error:)) =
+  let assert Error(svg_path.LinearizeMaxDepthReached(error)) =
     svg_path.segment_to_lines_with(
       curve,
       options: svg_path.LinearizeOptions(

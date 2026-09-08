@@ -33,19 +33,19 @@ pub type ErrorReason {
   ExpectedTransform
 
   /// A transform function received the wrong number of arguments.
-  InvalidArgumentCount(String, Int)
+  InvalidArgumentCount(transform: String, count: Int)
 
   /// A numeric token could not be parsed as a float.
-  InvalidNumber(String)
+  InvalidNumber(token: String)
 
   /// Finite transform arguments produced a non-finite composed matrix.
   NonFiniteTransform
 
   /// A token appeared where it is not valid.
-  UnexpectedToken(String)
+  UnexpectedToken(token: String)
 
   /// The transform function is not part of SVG's supported transform set.
-  UnknownTransform(String)
+  UnknownTransform(name: String)
 }
 
 type Token {

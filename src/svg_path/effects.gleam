@@ -15,10 +15,10 @@ const default_tolerance = 0.000001
 /// Errors returned by path effects.
 pub type Error {
   /// The degeneracy linearization tolerance must be finite and non-negative.
-  InvalidDegeneracyTolerance(Float)
+  InvalidDegeneracyTolerance(tolerance: Float)
 
   /// An underlying path operation failed.
-  PathError(svg_path.Error)
+  PathError(error: svg_path.Error)
 
   /// The radius must be greater than zero.
   InvalidRadius(radius: Float)
@@ -29,14 +29,14 @@ pub type Error {
   /// The angular tolerance must be finite and non-negative.
   InvalidAngularTolerance(tolerance: Float)
 
-  /// The requested corner cannot be rounded with the current options.
+  /// The corner at the supplied index cannot be rounded with the current options.
   CannotRoundCorner(index: Int)
 
-  /// Two rounded corners would consume too much of a segment between them.
+  /// Two rounded corners would consume too much of the segment at the supplied index.
   CornerTrimsOverlap(segment_index: Int)
 
   /// Convex-hull construction failed while normalizing degenerate segments.
-  ConvexHullError(convex_hull.Error)
+  ConvexHullError(error: convex_hull.Error)
 }
 
 /// Replace maximal contiguous line-degenerate windows in a subpath.

@@ -646,9 +646,7 @@ pub fn insertion_reports_tolerance_cluster_collapse_test() {
     tolerance: 1.0,
     minimum_chord: 0.1,
   )
-  |> should.equal(
-    Error(arrangement_graph.InternalSegmentCollapsedToVertex(vertex: 0)),
-  )
+  |> should.equal(Error(arrangement_graph.InternalSegmentCollapsedToVertex(0)))
 }
 
 pub fn two_endpoint_samples_use_enclosing_circle_midpoint_test() {

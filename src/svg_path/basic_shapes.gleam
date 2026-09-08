@@ -34,7 +34,7 @@ pub type Error {
   DisabledRendering
 
   /// An error from the core path model.
-  PathError(svg_path.Error)
+  PathError(error: svg_path.Error)
 }
 
 /// Convert an SVG `rect` element to a subpath.
