@@ -163,8 +163,7 @@ fn normalized_eighth_turn(degrees: Float) -> Float {
       let normalized = positive_remainder(degrees, full_turn_degrees)
 
       case normalized {
-        0.0 | 45.0 | 90.0 | 135.0 | 180.0 | 225.0 | 270.0 | 315.0 ->
-          normalized
+        0.0 | 45.0 | 90.0 | 135.0 | 180.0 | 225.0 | 270.0 | 315.0 -> normalized
         _ -> degrees
       }
     }

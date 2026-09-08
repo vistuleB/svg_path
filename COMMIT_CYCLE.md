@@ -26,7 +26,7 @@ Run the canonical generator from the repository root:
 scripts/generate-published-figures
 ```
 
-It regenerates the five README figures in `test/generated/readme`, regenerates
+It regenerates the nine README figures in `test/generated/readme`, regenerates
 all published Gallery figures in `test/generated/gallery`, verifies that every
 published filename was produced, and promotes the Gallery figures into
 `docs/gallery`. README figures still require review and promotion through the

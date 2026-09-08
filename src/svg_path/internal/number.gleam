@@ -123,8 +123,7 @@ pub fn checked_product(first: Float, second: Float) -> Result(Float, Nil) {
     False, True -> Ok(first *. second)
     False, False ->
       case
-        float.absolute_value(first)
-        >. maximum_finite_float /. absolute_second
+        float.absolute_value(first) >. maximum_finite_float /. absolute_second
       {
         True -> Error(Nil)
         False -> Ok(first *. second)
@@ -136,13 +135,12 @@ pub fn checked_product(first: Float, second: Float) -> Result(Float, Nil) {
 @internal
 pub fn checked_sum(first: Float, second: Float) -> Result(Float, Nil) {
   let same_sign =
-    { first >. 0.0 && second >. 0.0 }
-    || { first <. 0.0 && second <. 0.0 }
+    { first >. 0.0 && second >. 0.0 } || { first <. 0.0 && second <. 0.0 }
 
   case
     same_sign
     && float.absolute_value(first)
-      >. maximum_finite_float -. float.absolute_value(second)
+    >. maximum_finite_float -. float.absolute_value(second)
   {
     True -> Error(Nil)
     False -> Ok(first +. second)

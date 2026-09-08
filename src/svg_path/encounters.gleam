@@ -9,8 +9,8 @@ import gleam/option.{type Option, None, Some}
 import gleam/order
 import gleam/result
 import svg_path
-import svg_path/intersections
 import svg_path/internal/number
+import svg_path/intersections
 import svg_path/overlaps
 
 /// Continuous overlaps and point intersections reported for one query.

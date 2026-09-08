@@ -394,7 +394,7 @@ fn offside_trimmed_single_offset_winding_subpaths(
   }
 }
 
-/// Classify whether both immediate sides of a segment lie inside a predicate.
+// Regression-test entry point for band arrangement trimming without orientation.
 @internal
 pub fn internal_topological_band_loops(
   untrimmed: List(svg_path.Subpath),
@@ -777,10 +777,7 @@ fn survivor_chains_to_subpaths(
   }
 }
 
-/// Reclassify a rebuild discontinuity between survivor-chain edges as an
-/// internal construction failure: the joined edges are library-reconstructed
-/// arrangement output, so a gap beyond the wiggle tolerance is never user
-/// input fault. Any other error passes through unchanged.
+// Assign exterior/interior roles and assemble the corresponding closed band.
 fn band_from_sides(
   side_a: svg_path.Subpath,
   inner_offset: Float,

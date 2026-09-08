@@ -9,6 +9,44 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
+## 0.45.0 - 2026-09-07
+
+### Changed
+
+- Moved stroke outline construction from `offset` into `stroke`. Use
+  `stroke.segment`, `stroke.subpath`, `stroke.path`, and their `_with` forms.
+  Stroke outlines preserve whole-outline trimming rather than using the
+  configurable band-trimming pipeline.
+- Made join and cap styles explicit operation arguments. Stroke operations
+  use `stroke.Join` and `stroke.Cap`; offset operations use their `offset`
+  counterparts. Both cap types use `RoundCap`. Technical options no longer
+  store styles, and length-option fields consistently use `length_options`.
+- Separated caller-facing errors from internal construction failures in
+  offset, arrangement, convex-hull, and degeneracy operations. Removed the
+  obsolete stroke-width errors from `offset`; stroke width is validated by
+  `stroke`.
+- Standardized the curvature error type name as `curvature.Error`.
+- Renamed `transform.point_pair_map` to `transform.point_pair_similarity`.
+- Shortened `bezier.bezier_start`, `bezier_end`, `bezier_point`,
+  `bezier_derivative`, and `bezier_bounding_box` to `start`, `end`, `point`,
+  `derivative`, and `bounding_box`, respectively.
+- Renamed the `offset.MaxDepthReached` payload label from `error` to
+  `divergence`.
+- Moved internal parity-capacity pruning helpers from arrangement to offset,
+  removed obsolete debug helpers, and corrected public API documentation.
+
+### Added
+
+- `svg_path.segment_ray_crossings`, using `default_crossing_options()`.
+- Regression coverage for default ray crossings and empty-path stroke
+  validation, plus updated stroke and correspondence-block Gallery fixtures.
+
+### Fixed
+
+- Cusp trimming always uses butt closures for its classification region,
+  independently of the cap requested for the final stroke or band. Round or
+  square final caps no longer distort this intermediate classification.
+
 ## 0.44.0 - 2026-09-05
 
 ### Changed

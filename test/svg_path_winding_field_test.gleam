@@ -72,10 +72,11 @@ pub fn side_levels_reject_a_segment_without_a_regular_sample_test() {
 pub fn side_levels_validate_options_before_degenerate_fallback_test() {
   let point = svg_path.Point(1.0, 2.0)
   let collapsed = svg_path.Line(start: point, end: point)
-  let options = svg_path.ContainmentOptions(
-    ..svg_path.default_containment_options(),
-    samples: 0,
-  )
+  let options =
+    svg_path.ContainmentOptions(
+      ..svg_path.default_containment_options(),
+      samples: 0,
+    )
 
   assert winding_field.segment_side_nonzero_levels(
       collapsed,
