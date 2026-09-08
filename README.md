@@ -360,6 +360,10 @@ pub type EndpointPolicy {
   WiggleThenBridgeWith(Float)
   Custom(fn(Segment, Segment, EndpointPolicyContext) -> List(Segment))
 }
+
+pub type EndpointPolicyContext {
+  EndpointPolicyContext(first: Bool, last: Bool, closing: Bool)
+}
 ```
 
 `Strict` is the behavior of `subpath`, requiring exact endpoint
@@ -379,6 +383,13 @@ argument is `EndpointPolicyContext(first: Bool, last: Bool, closing: Bool)`.
 both are true for a two-segment input. The separate last-to-first closing
 call has only `closing: True`. A singleton has no forward pair and is passed
 twice to the closing call. Empty subpaths have no calls.
+
+These flags describe traversal of the input, not the changing output list.
+Replacement segments are not processed as fresh input: the last replacement
+becomes `previous` for the next input segment. If deletion leaves no preceding
+segment, the next input establishes a new starting segment without a callback;
+`first` does not become true again. Consequently, deleting a pair can also
+leave no pair on which to make a `last: True` call.
 
 `subpath_set_closed_with(..., closed: True, policy:)` applies the policy to
 the closing pair even if the subpath is already closed. It does not revisit
@@ -436,10 +447,11 @@ svg_path.subpath_assert_set_closed_with(subpath, closed, policy)
 adjacent pairs, its returned list replaces the pair. For the closing join from
 the last segment back to the first segment of a closed subpath, the returned
 list replaces only the last segment. An empty list deletes the replaced segment
-or pair. If the returned list is nonempty, its first segment must start where
-`previous` started; the constructor verifies the final subpath afterward. A
+or pair. If the returned list is nonempty, it must be internally continuous
+and its first segment must start where `previous` started. Each replacement
+is checked immediately; the constructor also verifies the final subpath. A
 custom policy can adjust, delete, replace, or insert bridge-like segments. It
-may be called even when the original adjacent endpoints already match, so it
+is called even when the original adjacent endpoints already match, so it
 can also perform coalescing or cleanup effects.
 
 Use `subpath_rebuild_with` to re-run an endpoint policy over an existing
