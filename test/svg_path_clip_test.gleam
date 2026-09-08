@@ -10,6 +10,33 @@ pub fn main() -> Nil {
   gleeunit.main()
 }
 
+pub fn open_fill_region_uses_implicit_closing_edge_test() {
+  let triangle =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
+      svg_path.Point(0.0, 10.0),
+    ])
+  let assert Ok(closed) =
+    svg_path.subpath_set_closed_with(triangle, True, svg_path.Bridge)
+  let input =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(-2.0, 2.0),
+      svg_path.Point(4.0, 2.0),
+    ])
+  let expected =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(0.0, 2.0),
+      svg_path.Point(4.0, 2.0),
+    ])
+  list.each([svg_path.Nonzero, svg_path.EvenOdd], fn(fill_rule) {
+    assert clip.subpath(input, svg_path.subpath_as_path(triangle), fill_rule)
+      == Ok([expected])
+    assert clip.subpath(input, svg_path.subpath_as_path(closed), fill_rule)
+      == Ok([expected])
+  })
+}
+
 pub fn open_line_clips_to_inside_piece_test() {
   let input =
     svg_path.subpath_assert([

@@ -5,6 +5,8 @@
 //// curves to keep or discard. Returned subpaths contain only pieces of the
 //// original input geometry; no bridge segments from the clipping boundary are
 //// inserted.
+//// Open clipping-region subpaths include their implicit straight closing edge,
+//// consistently with SVG fill containment. Open input curves remain open.
 
 import gleam/list
 import gleam/option.{Some}
@@ -168,9 +170,18 @@ fn split_points(
   clip_region: svg_path.Path,
   options: Options,
 ) -> Result(List(svg_path.SubpathParameter), svg_path.Error) {
+  // Containment includes these fill-closing lines, so encounter detection
+  // must include them too. Only the region is closed, never the subject.
+  use boundaries <- result.try(
+    clip_region
+    |> svg_path.path_subpaths
+    |> list.try_map(fn(subpath) {
+      svg_path.subpath_set_closed_with(subpath, True, svg_path.Bridge)
+    }),
+  )
   use found <- result.try(encounters.path_with(
     svg_path.subpath_as_path(input),
-    clip_region,
+    svg_path.Path(boundaries),
     options: options.intersection,
   ))
   let encounters.Encounters(overlaps: overlap_intervals, intersections:) = found
