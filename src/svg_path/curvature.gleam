@@ -4,9 +4,9 @@
 //// Curvature has inverse-length units; radius, target distances, and margins
 //// have length units. Parameters refer to the segment's `0.0..1.0` interval.
 ////
-//// Pointwise queries evaluate segment derivatives directly. Cusp-parameter and
-//// near-radius-band discovery use sampling and are not exhaustive root or
-//// interval solvers; their individual contracts describe the limitations.
+//// Pointwise queries evaluate segment derivatives directly. Cusp discovery
+//// partitions at curvature extrema before bisection; near-radius-band discovery
+//// remains sampled. Their individual contracts describe numerical limitations.
 
 import gleam/float
 import gleam/int
@@ -15,13 +15,20 @@ import gleam/option.{type Option, None, Some}
 import gleam/result
 import svg_path
 import svg_path/bezier
+import svg_path/ellipse
 import svg_path/internal/number
+import svg_path/root
+import svg_path/trig
 
 const default_tolerance = 0.000000001
 
 const default_samples = 100
 
 const default_max_depth = 32
+
+const cusp_relative_tolerance = 0.000000000001
+
+const root_parameter_tolerance = 0.000000001
 
 /// Error returned by curvature helpers.
 ///
@@ -44,9 +51,11 @@ pub type Error {
   /// The radius of curvature is infinite at this parameter (a line or an
   /// inflection/flat point).
   InfiniteRadiusOfCurvature
+  /// Polynomial isolation could not determine the curvature partition points.
+  CurvatureRootIsolationFailed
 }
 
-/// Options for sampled cusp/root/band discovery.
+/// Options for cusp/root/band discovery.
 /// All fields are validated by discovery functions. Band discovery uses only
 /// `samples`; inflection discovery is algebraic and uses none of these fields
 /// after validation.
@@ -54,7 +63,7 @@ pub type Options {
   Options(
     /// Numeric tolerance for roots and interval widths in parameter space.
     tolerance: Float,
-    /// Initial number of sample windows on `0.0..1.0`.
+    /// Number of sample windows for band discovery; unused by cusp discovery.
     samples: Int,
     /// Maximum bisection/subdivision depth.
     max_depth: Int,
@@ -161,14 +170,22 @@ pub fn segment_left_normal_cusp_residual(
   left_normal_cusp_residual_from_derivatives(data, distance: distance)
 }
 
-/// Sample and refine parameters where visual-left-normal signed radius equals
+/// Find parameters where visual-left-normal signed radius equals
 /// `distance`.
 ///
-/// Samples the cusp residual on a uniform grid and bisects sign-changing
-/// windows. Exact sampled zeros are included. Multiple roots within one window
-/// and non-sign-changing roots between samples may be missed. Windows whose
-/// evaluations fail are skipped, including failed bisections. At `max_depth`,
-/// bisection returns the current midpoint without an accuracy guarantee.
+/// Polynomial curvature extrema (degree at most five for cubics) and zero-speed
+/// parameters partition Beziers into monotone-curvature intervals. Ellipses use
+/// their axis extrema. Partition points are checked for touching roots, and
+/// crossings are bisected. `samples` does not affect this computation.
+///
+/// Touches use a `1e-12` relative cancellation threshold in the cusp residual;
+/// sufficiently close misses cannot be distinguished from exact touches.
+/// Completeness is subject to polynomial isolation and floating-point accuracy.
+/// Zero-speed parameters are excluded, using one-sided residual signs to search
+/// their neighboring intervals. Lines and zero offsets return `[]`. A circular
+/// arc whose entire radius matches the target returns `[0.0, 1.0]`.
+/// At `max_depth`, bisection returns the current midpoint without an accuracy
+/// guarantee. Polynomial-isolation failures and arc-conversion errors propagate.
 /// Results are sorted and merged within `options.tolerance` in parameter space.
 pub fn segment_left_normal_cusp_parameters(
   segment: svg_path.Segment,
@@ -176,10 +193,69 @@ pub fn segment_left_normal_cusp_parameters(
   options options: Options,
 ) -> Result(List(Float), Error) {
   use _ <- result.try(validate_options(options))
-  let residual = fn(t) {
-    segment_left_normal_cusp_residual(segment, distance:, at: t)
+  case number.is_zero(distance), segment {
+    True, _ | _, svg_path.Line(..) -> Ok([])
+    False, svg_path.QuadraticBezier(start:, control:, end:) -> {
+      let first = point_scale(point_subtract(control, start), 2.0)
+      let last = point_scale(point_subtract(end, control), 2.0)
+      polynomial_cusps(
+        first,
+        point_subtract(last, first),
+        svg_path.Point(0.0, 0.0),
+        distance,
+        options,
+      )
+    }
+    False, svg_path.CubicBezier(start:, control1:, control2:, end:) -> {
+      let first = point_scale(point_subtract(control1, start), 3.0)
+      let middle = point_scale(point_subtract(control2, control1), 3.0)
+      let last = point_scale(point_subtract(end, control2), 3.0)
+      polynomial_cusps(
+        first,
+        point_scale(point_subtract(middle, first), 2.0),
+        point_add(point_subtract(last, point_scale(middle, 2.0)), first),
+        distance,
+        options,
+      )
+    }
+    False, svg_path.Arc(..) -> {
+      use arc <- result.try(
+        svg_path.arc_center_data(segment) |> result.map_error(PathError),
+      )
+      let evaluate = fn(t) {
+        let first = ellipse.arc_derivative(arc, t)
+        let second = ellipse.arc_second_derivative(arc, t)
+        relative_cusp_residual(
+          svg_path.Point(first.x, first.y),
+          svg_path.Point(second.x, second.y),
+          distance,
+        )
+      }
+      case arc.radius.x == arc.radius.y {
+        True ->
+          case float.absolute_value(evaluate(0.5)) <=. cusp_relative_tolerance {
+            True -> Ok([0.0, 1.0])
+            False -> Ok([])
+          }
+        False -> {
+          let cos = trig.cos_degrees(arc.x_axis_rotation)
+          let sin = trig.sin_degrees(arc.x_axis_rotation)
+          let parameters =
+            list.append(
+              ellipse.arc_projection_extrema(
+                arc,
+                ellipse.EllipsePoint(cos, sin),
+              ),
+              ellipse.arc_projection_extrema(
+                arc,
+                ellipse.EllipsePoint(0.0 -. sin, cos),
+              ),
+            )
+          partitioned_cusp_roots(evaluate, parameters, [], options)
+        }
+      }
+    }
   }
-  sampled_roots(residual, options)
 }
 
 /// Return algebraically computed interior inflection parameters.
@@ -300,49 +376,211 @@ fn left_normal_cusp_residual_from_derivatives(
   }
 }
 
-fn sampled_roots(
-  f: fn(Float) -> Result(Float, Error),
+// Velocity is v0 + v1*t + v2*t^2. Coefficient lists below are ascending;
+// root.gleam takes descending order, so reverse only at that boundary.
+fn polynomial_cusps(
+  v0: svg_path.Point,
+  v1: svg_path.Point,
+  v2: svg_path.Point,
+  distance: Float,
   options: Options,
 ) -> Result(List(Float), Error) {
-  sampled_roots_loop(f, options, index: 0, roots: [])
+  let c = [cross(v0, v1), 2.0 *. cross(v0, v2), cross(v1, v2)]
+  case list.all(c, number.is_zero) {
+    True -> Ok([])
+    False -> {
+      let q = [
+        dot(v0, v0),
+        2.0 *. dot(v0, v1),
+        dot(v1, v1) +. 2.0 *. dot(v0, v2),
+        2.0 *. dot(v1, v2),
+        dot(v2, v2),
+      ]
+      // k=-C/Q^(3/2); k'=0 iff 2*C'*Q - 3*C*Q'=0 where Q>0.
+      let extrema_polynomial =
+        polynomial_add(
+          polynomial_scale(
+            polynomial_multiply(polynomial_derivative(c), q),
+            2.0,
+          ),
+          polynomial_scale(
+            polynomial_multiply(c, polynomial_derivative(q)),
+            -3.0,
+          ),
+        )
+      use extrema <- result.try(polynomial_roots(extrema_polynomial))
+      let xs = [v0.x, v1.x, v2.x]
+      let ys = [v0.y, v1.y, v2.y]
+      // Solve both coordinates: one can have a numerically delicate double
+      // root while the other has a simple root at the same stationary point.
+      use x_roots <- result.try(polynomial_roots(xs))
+      use y_roots <- result.try(polynomial_roots(ys))
+      let candidates = list.append(x_roots, y_roots)
+      let velocity = fn(t) {
+        point_add(v0, point_scale(point_add(v1, point_scale(v2, t)), t))
+      }
+      let stationary =
+        list.filter(candidates, fn(t) {
+          let v = velocity(t)
+          float.absolute_value(v.x)
+          <=. cusp_relative_tolerance *. coefficient_scale(xs)
+          && float.absolute_value(v.y)
+          <=. cusp_relative_tolerance *. coefficient_scale(ys)
+        })
+        |> unique_sorted_parameters(root_parameter_tolerance)
+      let evaluate = fn(t) {
+        case list.contains(stationary, t) {
+          True -> {
+            // At a simple stationary cubic point, C has a double zero with
+            // leading coefficient cross(v1,v2), while |v|^3 has a triple zero.
+            // For nonzero offset the residual has this same limiting sign on
+            // both sides. A collinear velocity (including a double zero) was
+            // rejected above. Never count the stationary point as a cusp root.
+            case distance *. cross(v1, v2) <. 0.0 {
+              True -> -1.0
+              False -> 1.0
+            }
+          }
+          False ->
+            relative_cusp_residual(
+              velocity(t),
+              point_add(v1, point_scale(v2, 2.0 *. t)),
+              distance,
+            )
+        }
+      }
+      // A zero-speed root also occurs in the extrema polynomial. Prefer the
+      // directly solved velocity root over its higher-multiplicity estimate.
+      let extrema =
+        list.filter(extrema, fn(t) {
+          !list.any(stationary, fn(zero) {
+            float.absolute_value(t -. zero) <=. root_parameter_tolerance
+          })
+        })
+      partitioned_cusp_roots(
+        evaluate,
+        list.append(extrema, stationary),
+        stationary,
+        options,
+      )
+    }
+  }
+}
+
+fn relative_cusp_residual(
+  first: svg_path.Point,
+  second: svg_path.Point,
+  distance: Float,
+) -> Float {
+  let speed_squared = dot(first, first)
+  let assert Ok(speed) = float.square_root(speed_squared)
+  let speed_cubed = speed_squared *. speed
+  let term = distance *. cross(first, second)
+  let scale = speed_cubed +. float.absolute_value(term)
+  case number.is_zero(scale) {
+    True -> 1.0
+    False -> { speed_cubed +. term } /. scale
+  }
+}
+
+fn polynomial_roots(coefficients: List(Float)) -> Result(List(Float), Error) {
+  root.polynomial_roots_with(
+    list.reverse(coefficients),
+    from: 0.0,
+    to: 1.0,
+    options: root.default_polynomial_options(),
+  )
+  |> result.map_error(fn(_) { CurvatureRootIsolationFailed })
+}
+
+fn coefficient_scale(values: List(Float)) -> Float {
+  list.fold(values, 0.0, fn(sum, value) { sum +. float.absolute_value(value) })
+}
+
+fn polynomial_derivative(values: List(Float)) -> List(Float) {
+  values |> list.reverse |> root.polynomial_derivative |> list.reverse
+}
+
+fn polynomial_scale(values: List(Float), factor: Float) -> List(Float) {
+  list.map(values, fn(value) { value *. factor })
+}
+
+fn polynomial_add(a: List(Float), b: List(Float)) -> List(Float) {
+  case a, b {
+    [], _ -> b
+    _, [] -> a
+    [x, ..xs], [y, ..ys] -> [x +. y, ..polynomial_add(xs, ys)]
+  }
+}
+
+fn polynomial_multiply(a: List(Float), b: List(Float)) -> List(Float) {
+  case a {
+    [] -> []
+    [x, ..xs] ->
+      polynomial_add(polynomial_scale(b, x), [0.0, ..polynomial_multiply(xs, b)])
+  }
+}
+
+fn point_add(a: svg_path.Point, b: svg_path.Point) -> svg_path.Point {
+  svg_path.Point(a.x +. b.x, a.y +. b.y)
+}
+
+fn point_subtract(a: svg_path.Point, b: svg_path.Point) -> svg_path.Point {
+  svg_path.Point(a.x -. b.x, a.y -. b.y)
+}
+
+fn point_scale(a: svg_path.Point, scale: Float) -> svg_path.Point {
+  svg_path.Point(a.x *. scale, a.y *. scale)
+}
+
+fn partitioned_cusp_roots(
+  f: fn(Float) -> Float,
+  parameters: List(Float),
+  stationary: List(Float),
+  options: Options,
+) -> Result(List(Float), Error) {
+  let parameters = unique_sorted_parameters([0.0, 1.0, ..parameters], 0.0)
+  let values =
+    list.map(parameters, fn(t) {
+      let value = f(t)
+      let value = case
+        !list.contains(stationary, t)
+        && float.absolute_value(value) <=. cusp_relative_tolerance
+      {
+        True -> 0.0
+        False -> value
+      }
+      #(t, value)
+    })
+  let roots =
+    list.filter_map(values, fn(pair) {
+      let #(t, value) = pair
+      case number.is_zero(value) {
+        True -> Ok(t)
+        False -> Error(Nil)
+      }
+    })
+  partition_crossings(f, values, options, roots)
   |> result.map(unique_sorted_parameters(_, options.tolerance))
 }
 
-fn sampled_roots_loop(
-  f: fn(Float) -> Result(Float, Error),
+fn partition_crossings(
+  f: fn(Float) -> Float,
+  values: List(#(Float, Float)),
   options: Options,
-  index index: Int,
-  roots roots: List(Float),
+  roots: List(Float),
 ) -> Result(List(Float), Error) {
-  case index >= options.samples {
-    True -> Ok(roots)
-    False -> {
-      let a = int_to_float(index) /. int_to_float(options.samples)
-      let b = int_to_float(index + 1) /. int_to_float(options.samples)
-      let roots = case f(a), f(b) {
-        Ok(va), Ok(vb) -> {
-          let roots = case number.is_zero(va) {
-            True -> [a, ..roots]
-            False -> roots
-          }
-          let roots = case number.is_zero(vb) {
-            True -> [b, ..roots]
-            False -> roots
-          }
-          case sign_change(va, vb) {
-            True -> {
-              case refine_root(f, a, b, va, vb, options, depth: 0) {
-                Ok(root) -> [root, ..roots]
-                Error(_) -> roots
-              }
-            }
-            False -> roots
-          }
-        }
-        _, _ -> roots
-      }
-      sampled_roots_loop(f, options, index: index + 1, roots:)
+  case values {
+    [#(a, va), #(b, vb) as next, ..rest] -> {
+      use roots <- result.try(case sign_change(va, vb) {
+        True ->
+          refine_root(fn(t) { Ok(f(t)) }, a, b, va, vb, options, depth: 0)
+          |> result.map(fn(t) { [t, ..roots] })
+        False -> Ok(roots)
+      })
+      partition_crossings(f, [next, ..rest], options, roots)
     }
+    _ -> Ok(roots)
   }
 }
 
