@@ -3,8 +3,6 @@ import gleam/int
 import gleam/result
 import gleam/string
 
-const maximum_finite_float = 1.7976931348623157e308
-
 /// Test mathematical zero, accepting both signs without a tolerance.
 /// Erlang exact equality distinguishes `0.0` from `-0.0`.
 @internal
@@ -121,37 +119,29 @@ fn nonnegative_integer_power(
   }
 }
 
+/// Multiply two floats, rejecting arithmetic errors and non-finite results.
 @internal
 pub fn checked_product(first: Float, second: Float) -> Result(Float, Nil) {
-  let absolute_second = float.absolute_value(second)
-
-  case is_zero(first) || is_zero(second), absolute_second <=. 1.0 {
-    True, _ -> Ok(0.0)
-    False, True -> Ok(first *. second)
-    False, False ->
-      case
-        float.absolute_value(first) >. maximum_finite_float /. absolute_second
-      {
-        True -> Error(Nil)
-        False -> Ok(first *. second)
-      }
-  }
+  with_arithmetic_errors(fn() { finite_number(first *. second) }, Nil)
 }
 
 /// Add two finite floats, rejecting a result outside the finite Float range.
 @internal
 pub fn checked_sum(first: Float, second: Float) -> Result(Float, Nil) {
-  let same_sign =
-    { first >. 0.0 && second >. 0.0 } || { first <. 0.0 && second <. 0.0 }
+  with_arithmetic_errors(fn() { finite_number(first +. second) }, Nil)
+}
 
-  case
-    same_sign
-    && float.absolute_value(first)
-    >. maximum_finite_float -. float.absolute_value(second)
-  {
-    True -> Error(Nil)
-    False -> Ok(first +. second)
-  }
+// Overflow thresholds obtained by division or subtraction can round upward,
+// admitting an overflowing operation at equality. Check the actual result on
+// JavaScript; Erlang raises instead, so convert only its arithmetic errors.
+// Keep the operation inside the callback, not in arguments evaluated before it.
+@external(erlang, "number_ffi", "with_arithmetic_errors")
+@internal
+pub fn with_arithmetic_errors(
+  compute: fn() -> Result(a, error),
+  _overflow: error,
+) -> Result(a, error) {
+  compute()
 }
 
 fn finite_number(number: Float) -> Result(Float, Nil) {

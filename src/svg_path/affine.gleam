@@ -173,7 +173,7 @@ pub fn point_pair_similarity(
   target_start target_start: #(Float, Float),
   target_end target_end: #(Float, Float),
 ) -> Result(Affine, Error) {
-  with_arithmetic_errors(
+  number.with_arithmetic_errors(
     fn() {
       do_point_pair_similarity(
         source_start,
@@ -252,7 +252,7 @@ pub fn point_triple_map(
   target_b target_b: #(Float, Float),
   target_c target_c: #(Float, Float),
 ) -> Result(Affine, Error) {
-  with_arithmetic_errors(
+  number.with_arithmetic_errors(
     fn() {
       do_point_triple_map(
         source_a,
@@ -325,14 +325,4 @@ fn finite_denominator(denominator: Float) -> Result(Nil, Error) {
     True -> Ok(Nil)
     False -> Error(NonFiniteTransform)
   }
-}
-
-// Erlang raises on floating-point overflow; JavaScript produces non-finite
-// values that the explicit checks above reject. Only catch arithmetic errors.
-@external(erlang, "affine_ffi", "with_arithmetic_errors")
-fn with_arithmetic_errors(
-  compute: fn() -> Result(a, Error),
-  _overflow: Error,
-) -> Result(a, Error) {
-  compute()
 }

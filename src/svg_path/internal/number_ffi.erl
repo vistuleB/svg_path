@@ -1,4 +1,4 @@
--module(affine_ffi).
+-module(number_ffi).
 -export([with_arithmetic_errors/2]).
 
 with_arithmetic_errors(Compute, Overflow) ->
