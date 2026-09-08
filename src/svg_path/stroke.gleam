@@ -780,7 +780,7 @@ fn validate_width(width: Float) -> Result(Nil, Error) {
 
 fn normalize_dash_pattern(pattern: List(Float)) -> Result(List(Float), Error) {
   use _ <- result.try(validate_dash_pattern(pattern))
-  case pattern, list.all(pattern, fn(length) { length == 0.0 }) {
+  case pattern, list.all(pattern, number.is_zero) {
     [], _ -> Ok([])
     _, True -> Ok([])
     _, False -> {

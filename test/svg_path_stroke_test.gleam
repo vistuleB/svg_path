@@ -5,6 +5,17 @@ import svg_path/parse
 import svg_path/serialize
 import svg_path/stroke
 
+pub fn signed_zero_dash_patterns_are_continuous_test() {
+  let assert Ok(subpath) =
+    svg_path.subpath([
+      svg_path.Line(svg_path.Point(0.0, 0.0), svg_path.Point(1.0, 0.0)),
+    ])
+  list.each([[-0.0], [0.0, -0.0], [-0.0, 0.0, -0.0]], fn(pattern) {
+    assert stroke.subpath_dashes(subpath, pattern:, offset: 0.0)
+      == Ok([subpath])
+  })
+}
+
 pub fn empty_path_stroke_validates_join_test() {
   let empty = svg_path.path_empty()
   assert stroke.path_with(
