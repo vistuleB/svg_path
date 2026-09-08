@@ -6,6 +6,42 @@ import svg_path/intersections
 import svg_path/point
 import svg_path/transform
 
+pub fn circular_arc_intersections_respect_local_axis_rotation_test() {
+  list.each([False, True], fn(sweep) {
+    list.each([0.0, 30.0, 90.0, -90.0], fn(left_rotation) {
+      list.each([0.0, 30.0, 90.0, -90.0], fn(right_rotation) {
+        let left =
+          svg_path.Arc(
+            svg_path.Point(1.0, 0.0),
+            svg_path.Point(1.0, 1.0),
+            left_rotation,
+            False,
+            sweep,
+            svg_path.Point(-1.0, 0.0),
+          )
+        let right =
+          svg_path.Arc(
+            svg_path.Point(2.0, 0.0),
+            svg_path.Point(1.0, 1.0),
+            right_rotation,
+            False,
+            sweep,
+            svg_path.Point(0.0, 0.0),
+          )
+        let assert Ok([hit]) = intersections.segment(left, right)
+        let assert Ok(a) = svg_path.segment_point(left, hit.left_t)
+        let assert Ok(b) = svg_path.segment_point(right, hit.right_t)
+        assert point.distance(a, b) <=. 1.0e-9
+        assert float.absolute_value(a.x -. 0.5) <=. 1.0e-9
+        assert float.absolute_value(
+            float.absolute_value(a.y) -. 0.8660254037844386,
+          )
+          <=. 1.0e-9
+      })
+    })
+  })
+}
+
 pub fn cubic_line_crossing_is_polished_to_geometric_tolerance_test() {
   let cubic =
     svg_path.CubicBezier(

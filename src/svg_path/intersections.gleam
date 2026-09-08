@@ -4304,12 +4304,14 @@ fn window_preserving_circular_arc_intersections(
                 window_preserving_circular_arc_parameter(
                   point,
                   left_center,
+                  left_rotation,
                   left_angle,
                   left_delta,
                 ),
                 window_preserving_circular_arc_parameter(
                   point,
                   right_center,
+                  right_rotation,
                   right_angle,
                   right_delta,
                 )
@@ -4332,10 +4334,13 @@ fn window_preserving_circular_arc_intersections(
 fn window_preserving_circular_arc_parameter(
   point: svg_path.Point,
   center: ellipse.EllipsePoint,
+  rotation: Float,
   start_angle: Float,
   delta_angle: Float,
 ) -> Option(Float) {
-  let angle = trig.atan2_degrees(point.y -. center.y, point.x -. center.x)
+  // Even for a circle, the ellipse's start angle uses its rotated local axes.
+  let angle =
+    trig.atan2_degrees(point.y -. center.y, point.x -. center.x) -. rotation
   let progress = case delta_angle >=. 0.0 {
     True ->
       window_preserving_positive_angle_remainder(angle -. start_angle)
