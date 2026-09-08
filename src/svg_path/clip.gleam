@@ -12,6 +12,7 @@ import gleam/order
 import gleam/result
 import svg_path
 import svg_path/encounters
+import svg_path/internal/number
 import svg_path/intersections
 import svg_path/overlaps
 
@@ -233,6 +234,11 @@ fn is_open_boundary_parameter(
   parameter: svg_path.SubpathParameter,
 ) -> Bool {
   let length = list.length(svg_path.subpath_segments(input))
+  let parameter =
+    svg_path.SubpathParameter(
+      ..parameter,
+      t: number.normalize_zero(parameter.t),
+    )
   case parameter {
     svg_path.SubpathParameter(segment_index: 0, t:) if t == 0.0 -> True
     svg_path.SubpathParameter(segment_index:, t:)
