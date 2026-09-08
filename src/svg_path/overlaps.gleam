@@ -26,6 +26,7 @@ import gleam/option.{type Option, None, Some}
 import gleam/order
 import gleam/result
 import svg_path
+import svg_path/internal/number
 import svg_path/overlap_detection
 import svg_path/point
 
@@ -579,6 +580,10 @@ fn subpath_parameters_are_exact_endpoint_aliases(
   second: svg_path.SubpathParameter,
   subpath: svg_path.Subpath,
 ) -> Bool {
+  let first =
+    svg_path.SubpathParameter(..first, t: number.normalize_zero(first.t))
+  let second =
+    svg_path.SubpathParameter(..second, t: number.normalize_zero(second.t))
   let svg_path.SubpathParameter(segment_index: first_index, t: first_t) = first
   let svg_path.SubpathParameter(segment_index: second_index, t: second_t) =
     second
