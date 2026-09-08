@@ -20,10 +20,14 @@ pub type Encounters(overlap, intersection) {
 
 /// Return overlap intervals and point intersections between two segments.
 ///
-/// Results from the underlying operations are returned unchanged. When the
-/// existing point solver reports `OverlappingSegments` for a pair already
-/// classified as overlapping, it supplied no point-intersection list, so this
-/// result contains the detected overlaps and an empty intersection list.
+/// Detected overlap intervals are returned alongside isolated parameter-pair
+/// intersections. For overlapping segments, the point search partitions the
+/// parameter domains at overlap boundaries and skips corresponding overlap
+/// windows. It also checks self-intersections for off-diagonal parameter pairs
+/// that reach the same point without following the overlap correspondence.
+///
+/// Point intersections explained by an overlap correspondence are removed;
+/// the remaining intersections are deduplicated and sorted by `left_t`.
 pub fn segment(
   left: svg_path.Segment,
   right: svg_path.Segment,
