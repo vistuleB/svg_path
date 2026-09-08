@@ -1579,7 +1579,10 @@ fn number_group_separator(
 ) -> String {
   case options.minimize_whitespace {
     False -> " "
-    True -> minimized_number_separator(left, right)
+    // `left` may contain several numbers. A decimal point in an earlier
+    // coordinate says nothing about its final token: "1.5 2" + ".5 .5"
+    // still needs a separator. Only a leading sign is unambiguous here.
+    True -> command_chunk_separator(left, right, options)
   }
 }
 

@@ -14,6 +14,20 @@ pub fn empty_path_serializes_to_empty_string_test() {
   assert serialize.path(svg_path.path_empty()) == ""
 }
 
+pub fn minified_number_groups_preserve_integer_decimal_boundaries_test() {
+  list.each([2.0, -2.0, 0.5], fn(y) {
+    let curve =
+      svg_path.QuadraticBezier(
+        svg_path.Point(0.0, 0.0),
+        svg_path.Point(1.5, y),
+        svg_path.Point(0.5, 0.5),
+      )
+    let source = svg_path.subpath_assert([curve]) |> svg_path.subpath_as_path
+    let encoded = serialize.path_with(source, serialize.minifying_options(5))
+    assert parse.path(encoded) == Ok(source)
+  })
+}
+
 pub fn serialization_preserves_scientific_exponents_test() {
   let subpath = svg_path.subpath_empty(at: svg_path.Point(1.0e20, 0.0))
   let options =
