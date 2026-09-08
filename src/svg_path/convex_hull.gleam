@@ -156,7 +156,8 @@ pub type PointLoopView {
 pub type MinimumWidthStrip {
   MinimumWidthStrip(
     width: Float,
-    direction: svg_path.Point,
+    /// Unit normal pointing from lower support toward upper support.
+    normal: svg_path.Point,
     lower_point: svg_path.Point,
     upper_point: svg_path.Point,
     lower_support: Float,
@@ -566,13 +567,13 @@ fn minimum_width_strip_for_edges(
         |> point_helpers.normalize
       {
         Error(_) -> best
-        Ok(direction) -> {
+        Ok(normal) -> {
           let #(lower_point, lower_support, upper_point, upper_support) =
-            projection_extrema(vertices, direction)
+            projection_extrema(vertices, normal)
           let candidate =
             MinimumWidthStrip(
               width: upper_support -. lower_support,
-              direction:,
+              normal:,
               lower_point:,
               upper_point:,
               lower_support:,
@@ -630,18 +631,18 @@ fn projection_extrema(
 fn degenerate_minimum_width_strip(
   vertices: List(svg_path.Point),
 ) -> MinimumWidthStrip {
-  let direction = svg_path.Point(1.0, 0.0)
+  let normal = svg_path.Point(1.0, 0.0)
   let point = case vertices {
     [] -> svg_path.Point(0.0, 0.0)
     [first, ..] -> first
   }
   let support = case vertices {
     [] -> 0.0
-    [first, ..] -> dot(first, direction)
+    [first, ..] -> dot(first, normal)
   }
   MinimumWidthStrip(
     width: 0.0,
-    direction:,
+    normal:,
     lower_point: point,
     upper_point: point,
     lower_support: support,
@@ -1301,14 +1302,14 @@ fn width_sample_strip(
   support: DirectionalSupport,
 ) -> MinimumWidthStrip {
   let DirectionalSupport(lower_point:, upper_point:, width:) = support
-  let direction = point_helpers.direction(degrees: angle)
+  let normal = point_helpers.direction(degrees: angle)
   MinimumWidthStrip(
     width:,
-    direction:,
+    normal:,
     lower_point:,
     upper_point:,
-    lower_support: dot(lower_point, direction),
-    upper_support: dot(upper_point, direction),
+    lower_support: dot(lower_point, normal),
+    upper_support: dot(upper_point, normal),
   )
 }
 
