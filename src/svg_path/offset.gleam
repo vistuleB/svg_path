@@ -971,7 +971,7 @@ pub fn normalize_source_subpath(
   subpath: svg_path.Subpath,
   options: Options,
 ) -> Result(svg_path.Subpath, InternalError) {
-  use subpath <- result.try(eliminate_small_offset_source_segments(
+  use subpath <- result.try(normalize_short_source_runs(
     subpath,
     tolerance: 0.001,
   ))
@@ -1009,28 +1009,45 @@ fn normalize_source_path(
   })
 }
 
-fn eliminate_small_offset_source_segments(
+/// Normalize short interior source runs without swallowing unbounded travel.
+///
+/// Individual segments qualify when their cheap length upper bound is below
+/// `tolerance`. Runs are bisected near half their bound until each portion is
+/// at most three times that tolerance, then passed through degeneracy cleanup.
+/// Original first/last segments and every portion's endpoints are preserved.
+/// This is one source-preparation stage, before the ordinary global
+/// degeneracy normalization and tangent alignment.
+@internal
+pub fn normalize_short_source_runs(
   subpath: svg_path.Subpath,
   tolerance tolerance: Float,
 ) -> Result(svg_path.Subpath, InternalError) {
-  let segments = svg_path.subpath_segments(subpath)
-  case eliminate_small_segments(segments, tolerance) {
-    [] -> Ok(subpath)
-    normalized -> {
-      use normalized <- result.try(
-        svg_path.subpath_with(
-          normalized,
-          policy: svg_path.WiggleElseBridgeWith(tolerance),
-        )
-        |> result.map_error(InternalPathError),
-      )
-      svg_path.subpath_set_closed_with(
-        normalized,
-        closed: svg_path.subpath_is_closed(subpath),
-        policy: svg_path.WiggleElseBridgeWith(tolerance),
-      )
-      |> result.map_error(InternalPathError)
-    }
+  case tolerance <=. 0.0 || !number.is_finite(tolerance) {
+    True -> Error(InternalInvalidTolerance(tolerance))
+    False ->
+      case svg_path.subpath_segments(subpath) {
+        [] | [_] -> Ok(subpath)
+        [first, ..rest] -> {
+          use segments <- result.try(
+            normalize_short_source_runs_loop(
+              rest,
+              tolerance,
+              pending: [],
+              pending_bound: 0.0,
+              normalized: [first],
+            ),
+          )
+          use normalized <- result.try(
+            svg_path.subpath(segments)
+            |> result.map_error(InternalPathError),
+          )
+          svg_path.subpath_set_closed(
+            normalized,
+            closed: svg_path.subpath_is_closed(subpath),
+          )
+          |> result.map_error(InternalPathError)
+        }
+      }
   }
 }
 
@@ -4983,148 +5000,131 @@ fn snap_source_start_tangent(
   }
 }
 
-fn eliminate_small_segments(
-  segments: List(svg_path.Segment),
+fn normalize_short_source_runs_loop(
+  remaining: List(svg_path.Segment),
   tolerance: Float,
-) -> List(svg_path.Segment) {
-  case segments {
-    [] -> []
-    [first, ..rest] ->
-      eliminate_small_segments_loop(
-        previous: first,
-        rest: rest,
-        tolerance:,
-        normalized: [],
-        deleted_since_bridge: False,
-      )
-  }
-}
-
-fn eliminate_small_segments_loop(
-  previous previous: svg_path.Segment,
-  rest rest: List(svg_path.Segment),
-  tolerance tolerance: Float,
+  pending pending: List(#(svg_path.Segment, Float)),
+  pending_bound pending_bound: Float,
   normalized normalized: List(svg_path.Segment),
-  deleted_since_bridge deleted_since_bridge: Bool,
-) -> List(svg_path.Segment) {
-  case rest {
-    [] -> list.reverse([previous, ..normalized])
-    [next, ..remaining] -> {
-      case segment_is_short(next, tolerance) {
+) -> Result(List(svg_path.Segment), InternalError) {
+  case remaining {
+    [] -> Ok(list.reverse(normalized))
+    [last] -> {
+      use normalized <- result.try(normalize_short_run(
+        list.reverse(pending),
+        pending_bound,
+        tolerance,
+        normalized,
+      ))
+      Ok(list.reverse([last, ..normalized]))
+    }
+    [next, ..rest] -> {
+      use bound <- result.try(
+        svg_path.segment_length_upper_bound(next)
+        |> result.map_error(InternalPathError),
+      )
+      case number.is_finite(bound) && bound <. tolerance {
+        True ->
+          normalize_short_source_runs_loop(
+            rest,
+            tolerance,
+            pending: [#(next, bound), ..pending],
+            pending_bound: pending_bound +. bound,
+            normalized:,
+          )
         False -> {
-          let #(previous, next) = case deleted_since_bridge {
-            True -> bridge_deleted_small_segment_gap(previous, next, tolerance)
-            False -> #(previous, next)
-          }
-          eliminate_small_segments_loop(
-            previous: next,
-            rest: remaining,
-            tolerance:,
-            normalized: [previous, ..normalized],
-            deleted_since_bridge: False,
+          use normalized <- result.try(normalize_short_run(
+            list.reverse(pending),
+            pending_bound,
+            tolerance,
+            normalized,
+          ))
+          normalize_short_source_runs_loop(
+            rest,
+            tolerance,
+            pending: [],
+            pending_bound: 0.0,
+            normalized: [next, ..normalized],
           )
         }
-        True ->
-          case remaining {
-            [] ->
-              eliminate_small_segments_loop(
-                previous: next,
-                rest: [],
-                tolerance:,
-                normalized: [previous, ..normalized],
-                deleted_since_bridge: False,
-              )
-            [_, ..] -> {
-              let previous =
-                carry_deleted_small_segment(previous, deleted: next, tolerance:)
-              eliminate_small_segments_loop(
-                previous:,
-                rest: remaining,
-                tolerance:,
-                normalized:,
-                deleted_since_bridge: True,
-              )
-            }
-          }
       }
     }
   }
 }
 
-fn carry_deleted_small_segment(
-  previous: svg_path.Segment,
-  deleted deleted: svg_path.Segment,
-  tolerance tolerance: Float,
-) -> svg_path.Segment {
-  let displacement =
-    point_helpers.subtract(
-      svg_path.segment_end(deleted),
-      svg_path.segment_start(deleted),
-    )
-  let target =
-    point_helpers.add(
-      svg_path.segment_end(previous),
-      point_helpers.scale(displacement, 1.0 /. 3.0),
-    )
-  stretch_segment_end(previous, to: target, tolerance:)
-}
-
-fn bridge_deleted_small_segment_gap(
-  previous: svg_path.Segment,
-  next: svg_path.Segment,
+// Bisect at the existing boundary nearest half the cumulative bound. Every
+// input piece is shorter than tolerance, so a child of an oversized parent
+// has bound greater than tolerance (up to floating-point rounding). Unlike
+// greedy capacity filling, this cannot strand an arbitrarily short tail.
+// Balanced subdivision only limits the scope of cleanup: a curved/backtracking
+// portion may still require multiple output segments to preserve its geometry.
+fn normalize_short_run(
+  run: List(#(svg_path.Segment, Float)),
+  bound: Float,
   tolerance: Float,
-) -> #(svg_path.Segment, svg_path.Segment) {
-  let previous_end = svg_path.segment_end(previous)
-  let next_start = svg_path.segment_start(next)
-  let target = point_helpers.lerp(previous_end, next_start, 0.25)
-  #(
-    stretch_segment_end(previous, to: target, tolerance:),
-    stretch_segment_start(next, to: target, tolerance:),
-  )
-}
-
-fn segment_is_short(segment: svg_path.Segment, tolerance: Float) -> Bool {
-  case segment_diameter(segment) {
-    Ok(diameter) -> diameter <. tolerance
-    Error(_) -> False
+  normalized: List(svg_path.Segment),
+) -> Result(List(svg_path.Segment), InternalError) {
+  case run {
+    [] -> Ok(normalized)
+    [_, ..] ->
+      case bound /. 3.0 <=. tolerance {
+        True -> {
+          use subpath <- result.try(
+            svg_path.subpath(list.map(run, fn(piece) { piece.0 }))
+            |> result.map_error(InternalPathError),
+          )
+          use simplified <- result.try(
+            degeneracy.normalize_degenerate_segments(subpath, tolerance:)
+            |> result.map_error(InternalSourceNormalizationError),
+          )
+          Ok(list.append(
+            list.reverse(svg_path.subpath_segments(simplified)),
+            normalized,
+          ))
+        }
+        False -> {
+          let #(left, right) =
+            split_short_run_near_half(run, bound /. 2.0, [], 0.0)
+          let left_bound =
+            list.fold(left, 0.0, fn(sum, piece) { sum +. piece.1 })
+          let right_bound =
+            list.fold(right, 0.0, fn(sum, piece) { sum +. piece.1 })
+          use normalized <- result.try(normalize_short_run(
+            left,
+            left_bound,
+            tolerance,
+            normalized,
+          ))
+          normalize_short_run(right, right_bound, tolerance, normalized)
+        }
+      }
   }
 }
 
-fn stretch_segment_start(
-  segment: svg_path.Segment,
-  to target_start: svg_path.Point,
-  tolerance tolerance: Float,
-) -> svg_path.Segment {
-  stretch_segment(
-    segment,
-    target_start:,
-    target_end: svg_path.segment_end(segment),
-    tolerance:,
-  )
-}
-
-fn stretch_segment_end(
-  segment: svg_path.Segment,
-  to target_end: svg_path.Point,
-  tolerance tolerance: Float,
-) -> svg_path.Segment {
-  stretch_segment(
-    segment,
-    target_start: svg_path.segment_start(segment),
-    target_end:,
-    tolerance:,
-  )
-}
-
-fn stretch_segment(
-  segment: svg_path.Segment,
-  target_start target_start: svg_path.Point,
-  target_end target_end: svg_path.Point,
-  tolerance _tolerance: Float,
-) -> svg_path.Segment {
-  case svg_path.segment_remap_endpoints(segment, target_start, target_end) {
-    Ok(segment) -> segment
-    Error(_) -> svg_path.Line(start: target_start, end: target_end)
+fn split_short_run_near_half(
+  remaining: List(#(svg_path.Segment, Float)),
+  target: Float,
+  before: List(#(svg_path.Segment, Float)),
+  before_bound: Float,
+) -> #(List(#(svg_path.Segment, Float)), List(#(svg_path.Segment, Float))) {
+  case remaining {
+    [] -> #(list.reverse(before), [])
+    [last] -> #(list.reverse(before), [last])
+    [next, ..rest] -> {
+      let after_bound = before_bound +. next.1
+      case after_bound >=. target {
+        True ->
+          case
+            list.is_empty(before)
+            || after_bound -. target <=. target -. before_bound
+          {
+            True -> #(list.reverse([next, ..before]), rest)
+            False -> #(list.reverse(before), remaining)
+          }
+        False ->
+          split_short_run_near_half(rest, target, [next, ..before], after_bound)
+      }
+    }
   }
 }
 
