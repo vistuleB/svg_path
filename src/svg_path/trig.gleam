@@ -11,55 +11,60 @@ const full_turn_degrees = 360.0
 
 /// Convert degrees to radians.
 pub fn degrees_to_radians(degrees: Float) -> Float {
-  degrees *. pi /. half_turn_degrees
+  // Form the conversion factor first; degrees * pi can overflow unnecessarily.
+  degrees *. { pi /. half_turn_degrees }
 }
 
 /// Convert radians to degrees.
 pub fn radians_to_degrees(radians: Float) -> Float {
-  radians *. half_turn_degrees /. pi
+  // The final result may fit even when radians * 180 does not.
+  radians *. { half_turn_degrees /. pi }
 }
 
 /// Return the sine of an angle in degrees.
 ///
+/// Finite angles are reduced modulo 360 before conversion to radians.
 /// Non-finite inputs propagate through the platform trigonometric function
 /// instead of causing angle normalization to panic.
 pub fn sin_degrees(degrees: Float) -> Float {
-  case normalized_quarter_turn(degrees) {
+  case reduced_degrees(degrees) {
     0.0 -> 0.0
-    90.0 -> 1.0
-    180.0 -> 0.0
-    270.0 -> -1.0
-    _ -> sin_radians(degrees_to_radians(degrees))
+    90.0 | -270.0 -> 1.0
+    180.0 | -180.0 -> 0.0
+    270.0 | -90.0 -> -1.0
+    reduced -> sin_radians(degrees_to_radians(reduced))
   }
 }
 
 /// Return the cosine of an angle in degrees.
 ///
+/// Finite angles are reduced modulo 360 before conversion to radians.
 /// Non-finite inputs propagate through the platform trigonometric function
 /// instead of causing angle normalization to panic.
 pub fn cos_degrees(degrees: Float) -> Float {
-  case normalized_quarter_turn(degrees) {
+  case reduced_degrees(degrees) {
     0.0 -> 1.0
-    90.0 -> 0.0
-    180.0 -> -1.0
-    270.0 -> 0.0
-    _ -> cos_radians(degrees_to_radians(degrees))
+    90.0 | -90.0 -> 0.0
+    180.0 | -180.0 -> -1.0
+    270.0 | -270.0 -> 0.0
+    reduced -> cos_radians(degrees_to_radians(reduced))
   }
 }
 
 /// Return the tangent of an angle in degrees.
 ///
+/// Finite angles are reduced modulo 360 before conversion to radians.
 /// Non-finite inputs propagate through the platform trigonometric function
 /// instead of causing angle normalization to panic.
 pub fn tan_degrees(degrees: Float) -> Float {
-  case normalized_eighth_turn(degrees) {
+  case reduced_degrees(degrees) {
     0.0 -> 0.0
-    45.0 -> 1.0
-    135.0 -> -1.0
-    180.0 -> 0.0
-    225.0 -> 1.0
-    315.0 -> -1.0
-    _ -> tan_radians(degrees_to_radians(degrees))
+    45.0 | -315.0 -> 1.0
+    135.0 | -225.0 -> -1.0
+    180.0 | -180.0 -> 0.0
+    225.0 | -135.0 -> 1.0
+    315.0 | -45.0 -> -1.0
+    reduced -> tan_radians(degrees_to_radians(reduced))
   }
 }
 
@@ -142,35 +147,22 @@ fn diagonal_atan2(y: Float, x: Float) -> Float {
   }
 }
 
-fn normalized_quarter_turn(degrees: Float) -> Float {
+fn reduced_degrees(degrees: Float) -> Float {
   case number.is_finite(degrees) {
     False -> degrees
     True -> {
-      let normalized = positive_remainder(degrees, full_turn_degrees)
-
-      case normalized {
-        0.0 | 90.0 | 180.0 | 270.0 -> normalized
-        _ -> degrees
+      // Computing value - floor(value / 360) * 360 loses the remainder for
+      // large angles. Reduce before conversion to radians, using fmod instead.
+      // Keep negative remainders: adding 360 can erase a small negative angle.
+      let reduced = signed_remainder(degrees, full_turn_degrees)
+      case number.is_zero(reduced) {
+        True -> 0.0
+        False -> reduced
       }
     }
   }
 }
 
-fn normalized_eighth_turn(degrees: Float) -> Float {
-  case number.is_finite(degrees) {
-    False -> degrees
-    True -> {
-      let normalized = positive_remainder(degrees, full_turn_degrees)
-
-      case normalized {
-        0.0 | 45.0 | 90.0 | 135.0 | 180.0 | 225.0 | 270.0 | 315.0 -> normalized
-        _ -> degrees
-      }
-    }
-  }
-}
-
-fn positive_remainder(value: Float, modulus: Float) -> Float {
-  let assert Ok(remainder) = float.modulo(value, by: modulus)
-  remainder
-}
+@external(erlang, "math", "fmod")
+@external(javascript, "./trig_ffi.mjs", "remainder")
+fn signed_remainder(value: Float, modulus: Float) -> Float
