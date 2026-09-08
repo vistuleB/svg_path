@@ -70,21 +70,21 @@ pub fn atan_degrees(x: Float) -> Float {
 
 /// Return `atan2(y, x)` in degrees.
 pub fn atan2_degrees(y: Float, x: Float) -> Float {
-  case x, y {
-    0.0, 0.0 -> radians_to_degrees(atan2_radians(y, x))
-    0.0, _ -> {
+  case number.is_zero(x), number.is_zero(y) {
+    True, True -> radians_to_degrees(atan2_radians(y, x))
+    True, False -> {
       case y >. 0.0 {
         True -> 90.0
         False -> -90.0
       }
     }
-    _, 0.0 -> {
+    False, True -> {
       case x >. 0.0 {
         True -> 0.0
         False -> 180.0
       }
     }
-    _, _ -> {
+    False, False -> {
       case float.absolute_value(x) == float.absolute_value(y) {
         True -> diagonal_atan2(y, x)
         False -> radians_to_degrees(atan2_radians(y, x))

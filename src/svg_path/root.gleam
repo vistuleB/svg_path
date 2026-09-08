@@ -8,6 +8,7 @@ import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
+import svg_path/internal/number
 
 const parameter_tolerance = 0.000000001
 
@@ -134,7 +135,7 @@ pub fn quadratic_with(
           let assert Ok(root_discriminant) = float.square_root(discriminant)
           let denominator = 2.0 *. a
           let root = { 0.0 -. b } /. denominator
-          case root_discriminant == 0.0, options.repeated_root_policy {
+          case number.is_zero(root_discriminant), options.repeated_root_policy {
             True, ConsolidateRepeatedRoot -> [root]
             True, PreserveRepeatedRoot -> [root, root]
             False, _ -> {
@@ -572,7 +573,7 @@ fn polynomial_refine_bracket(
         False -> {
           let proposal = midpoint
           let proposal_value = evaluate_polynomial(coefficients, at: proposal)
-          case proposal_value == 0.0 {
+          case number.is_zero(proposal_value) {
             True -> Ok(RootIsolation(left, proposal, right))
             False ->
               case same_sign(left_value, proposal_value) {
@@ -800,8 +801,8 @@ fn linear_with_tolerance(a: Float, b: Float, tolerance: Float) -> List(Float) {
 }
 
 fn coefficient_is_zero(value: Float, tolerance: Float) -> Bool {
-  case tolerance == 0.0 {
-    True -> value == 0.0
+  case number.is_zero(tolerance) {
+    True -> number.is_zero(value)
     False -> float.absolute_value(value) <. tolerance
   }
 }
@@ -825,7 +826,7 @@ pub fn bisect_isolation_until(
       let #(left, right) = ordered_bracket(left, right)
       let left_value = f(left)
       let right_value = f(right)
-      case left_value == 0.0, right_value == 0.0 {
+      case number.is_zero(left_value), number.is_zero(right_value) {
         True, _ -> Ok(RootIsolation(left, left, left))
         _, True -> Ok(RootIsolation(right, right, right))
         False, False ->
@@ -862,7 +863,7 @@ fn bisect_isolation_until_loop(
       case remaining_iterations <= 1 {
         True -> Error(MaxIterationsReached(midpoint, midpoint_value))
         False ->
-          case midpoint_value == 0.0 {
+          case number.is_zero(midpoint_value) {
             True -> Ok(RootIsolation(midpoint, midpoint, midpoint))
             False ->
               case same_sign(left_value, midpoint_value) {

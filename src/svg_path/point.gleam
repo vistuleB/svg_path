@@ -32,12 +32,17 @@ pub fn direction(degrees degrees: Float) -> svg_path.Point {
 /// `0` points right, `90` points down, `180` points left, and `270` points up.
 /// A zero vector has heading `0`.
 pub fn heading(vector: svg_path.Point) -> Float {
-  let degrees = trig.atan2_degrees(vector.y, vector.x)
-  let turns = float.floor(degrees /. 360.0)
-  let normalized = degrees -. turns *. 360.0
-  case normalized <. 0.0 {
-    True -> normalized +. 360.0
-    False -> normalized
+  case number.is_zero(vector.x) && number.is_zero(vector.y) {
+    True -> 0.0
+    False -> {
+      let degrees = trig.atan2_degrees(vector.y, vector.x)
+      let turns = float.floor(degrees /. 360.0)
+      let normalized = degrees -. turns *. 360.0
+      case normalized <. 0.0 {
+        True -> normalized +. 360.0
+        False -> normalized
+      }
+    }
   }
 }
 
@@ -126,9 +131,10 @@ pub fn lerp(
 
 /// Return a unit vector with the same direction as `point`.
 pub fn normalize(point: svg_path.Point) -> Result(svg_path.Point, Nil) {
-  case norm(point) {
-    0.0 -> Error(Nil)
-    length -> Ok(scale(point, by: 1.0 /. length))
+  let length = norm(point)
+  case number.is_zero(length) {
+    True -> Error(Nil)
+    False -> Ok(scale(point, by: 1.0 /. length))
   }
 }
 
@@ -138,9 +144,9 @@ pub fn project(
   onto onto: svg_path.Point,
 ) -> Result(svg_path.Point, Nil) {
   let denominator = norm_squared(onto)
-  case denominator {
-    0.0 -> Error(Nil)
-    _ -> Ok(scale(onto, by: dot(point, onto) /. denominator))
+  case number.is_zero(denominator) {
+    True -> Error(Nil)
+    False -> Ok(scale(onto, by: dot(point, onto) /. denominator))
   }
 }
 
@@ -149,9 +155,10 @@ pub fn scalar_projection(
   point point: svg_path.Point,
   onto onto: svg_path.Point,
 ) -> Result(Float, Nil) {
-  case norm(onto) {
-    0.0 -> Error(Nil)
-    length -> Ok(dot(point, onto) /. length)
+  let length = norm(onto)
+  case number.is_zero(length) {
+    True -> Error(Nil)
+    False -> Ok(dot(point, onto) /. length)
   }
 }
 

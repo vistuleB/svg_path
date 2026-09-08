@@ -5,6 +5,13 @@ import gleam/string
 
 const maximum_finite_float = 1.7976931348623157e308
 
+/// Test mathematical zero, accepting both signs without a tolerance.
+/// Erlang exact equality distinguishes `0.0` from `-0.0`.
+@internal
+pub fn is_zero(value: Float) -> Bool {
+  value == 0.0 || value == -0.0
+}
+
 /// Return `sqrt(x² + y²)` without overflowing when the result is representable.
 @internal
 pub fn hypot(x: Float, y: Float) -> Float {
@@ -15,7 +22,7 @@ pub fn hypot(x: Float, y: Float) -> Float {
     False -> y
   }
 
-  case largest == 0.0 || !is_finite(largest) {
+  case is_zero(largest) || !is_finite(largest) {
     True -> largest
     False -> {
       let scaled_x = x /. largest
@@ -82,9 +89,9 @@ fn strip_leading_plus(raw: String) -> String {
 }
 
 fn scale_by_power_of_ten(value: Float, exponent: Int) -> Result(Float, Nil) {
-  case exponent, value {
-    0, _ | _, 0.0 -> Ok(value)
-    _, _ if exponent > 0 -> {
+  case exponent == 0 || is_zero(value) {
+    True -> Ok(value)
+    False if exponent > 0 -> {
       let step = int.min(exponent, 100)
       use scaled <- result.try(checked_product(
         value,
@@ -92,7 +99,7 @@ fn scale_by_power_of_ten(value: Float, exponent: Int) -> Result(Float, Nil) {
       ))
       scale_by_power_of_ten(scaled, exponent - step)
     }
-    _, _ -> {
+    False -> {
       let step = int.max(exponent, -100)
       let factor_exponent = 0 - step
       let scaled = value *. nonnegative_integer_power(0.1, factor_exponent, 1.0)
@@ -118,7 +125,7 @@ fn nonnegative_integer_power(
 pub fn checked_product(first: Float, second: Float) -> Result(Float, Nil) {
   let absolute_second = float.absolute_value(second)
 
-  case first == 0.0 || second == 0.0, absolute_second <=. 1.0 {
+  case is_zero(first) || is_zero(second), absolute_second <=. 1.0 {
     True, _ -> Ok(0.0)
     False, True -> Ok(first *. second)
     False, False ->

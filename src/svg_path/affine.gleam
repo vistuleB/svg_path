@@ -214,7 +214,7 @@ fn do_point_pair_similarity(
   let target_x = target_x /. divisor
   let target_y = target_y /. divisor
   let denominator = source_x *. source_x +. source_y *. source_y
-  case denominator == 0.0 {
+  case number.is_zero(denominator) {
     True -> Error(DegenerateSourcePair)
     False -> {
       use _ <- result.try(finite_denominator(denominator))
@@ -292,7 +292,7 @@ fn do_point_triple_map(
   let denominator = source_ab_x *. source_ac_y -. source_ab_y *. source_ac_x
   // Do not divide by zero: Gleam's zero-division behavior can otherwise yield
   // a finite matrix even though these correspondences do not determine one.
-  use _ <- result.try(case denominator == 0.0 {
+  use _ <- result.try(case number.is_zero(denominator) {
     True -> Error(DegenerateSourceTriple)
     False -> finite_denominator(denominator)
   })
