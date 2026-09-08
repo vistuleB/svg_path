@@ -1,7 +1,6 @@
 //// Degenerate and nearly-degenerate geometry cleanup.
 
 import gleam/float
-import gleam/int
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
@@ -404,7 +403,9 @@ fn degenerate_window_traversal(
     Some(strip) ->
       case strip_points_in_traversal_order(segments, strip, tolerance) {
         Error(_) -> degenerate_traversal(segments, tolerance)
-        Ok(points) -> Ok(point_traversal_lines(points, tolerance))
+        // Candidates were already deduplicated against both endpoint anchors.
+        // Do not drop a final short line and thereby move the original end.
+        Ok(points) -> Ok(point_traversal_lines(points, 0.0))
       }
   }
 }
@@ -413,19 +414,32 @@ fn strip_points_in_traversal_order(
   segments: List(svg_path.Segment),
   strip: convex_hull.MinimumWidthStrip,
   tolerance: Float,
-) -> Result(List(svg_path.Point), Nil) {
-  let convex_hull.MinimumWidthStrip(lower_point:, upper_point:, ..) = strip
+) -> Result(List(svg_path.Point), svg_path.Error) {
+  let axis = point.rotate_clockwise(strip.normal)
+  let angle = point.heading(axis)
   let assert [first, ..] = segments
   let start = svg_path.segment_start(first)
   let end = last_segment_end(segments)
+  use minimum <- result.try(traversal_support(segments, angle +. 180.0))
+  use maximum <- result.try(traversal_support(segments, angle))
+  let #(min_index, min_t, min_point, _) = minimum
+  let #(max_index, max_t, max_point, _) = maximum
+  let ordered = case
+    min_index < max_index || { min_index == max_index && min_t <=. max_t }
+  {
+    True -> [min_point, max_point]
+    False -> [max_point, min_point]
+  }
+  // Endpoints have priority over nearby extrema, including when the original
+  // start and end coincide. Only interior candidates are deduplicated.
   let protrusions =
-    [lower_point, upper_point]
-    |> sort_points_by_segment_order(segments, tolerance)
+    ordered
+    |> list.filter(fn(candidate) {
+      point.distance(candidate, start) >. tolerance
+      && point.distance(candidate, end) >. tolerance
+    })
     |> unique_points(tolerance)
-  Ok(
-    [start, ..list.append(protrusions, [end])]
-    |> unique_points(tolerance),
-  )
+  Ok([start, ..list.append(protrusions, [end])])
 }
 
 fn last_segment_end(segments: List(svg_path.Segment)) -> svg_path.Point {
@@ -443,50 +457,36 @@ fn last_segment_end_loop(
   }
 }
 
-fn sort_points_by_segment_order(
-  points: List(svg_path.Point),
+// Query the original segments, retaining the parameter and segment index.
+// A strict comparison keeps the first segment occurrence of tied support.
+fn traversal_support(
   segments: List(svg_path.Segment),
-  tolerance: Float,
-) -> List(svg_path.Point) {
-  case points {
-    [] -> []
-    [point] -> [point]
-    [first, second] -> {
-      let first_order = point_order_in_segments(first, segments, tolerance)
-      let second_order = point_order_in_segments(second, segments, tolerance)
-      case first_order <=. second_order {
-        True -> [first, second]
-        False -> [second, first]
-      }
-    }
-    [first, second, ..] ->
-      sort_points_by_segment_order([first, second], segments, tolerance)
-  }
+  angle: Float,
+) -> Result(#(Int, Float, svg_path.Point, Float), svg_path.Error) {
+  let assert [first, ..rest] = segments
+  use #(t, support_point, value) <- result.try(
+    convex_hull.internal_segment_support(first, angle:),
+  )
+  traversal_support_loop(rest, angle, 1, #(0, t, support_point, value))
 }
 
-fn point_order_in_segments(
-  point: svg_path.Point,
+fn traversal_support_loop(
   segments: List(svg_path.Segment),
-  tolerance: Float,
-) -> Float {
-  point_order_in_segments_loop(point, segments, tolerance, index: 0)
-}
-
-fn point_order_in_segments_loop(
-  point: svg_path.Point,
-  segments: List(svg_path.Segment),
-  tolerance: Float,
-  index index: Int,
-) -> Float {
+  angle: Float,
+  index: Int,
+  best: #(Int, Float, svg_path.Point, Float),
+) -> Result(#(Int, Float, svg_path.Point, Float), svg_path.Error) {
   case segments {
-    [] -> int.to_float(index)
+    [] -> Ok(best)
     [first, ..rest] -> {
-      case svg_path.segment_projection(point, to: first) {
-        Ok(projection) if projection.distance <=. tolerance ->
-          int.to_float(index) +. projection.t
-        _ ->
-          point_order_in_segments_loop(point, rest, tolerance, index: index + 1)
+      use #(t, support_point, value) <- result.try(
+        convex_hull.internal_segment_support(first, angle:),
+      )
+      let best = case value >. best.3 {
+        True -> #(index, t, support_point, value)
+        False -> best
       }
+      traversal_support_loop(rest, angle, index + 1, best)
     }
   }
 }

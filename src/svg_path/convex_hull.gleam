@@ -26,8 +26,6 @@ const loop_union_tie_tolerance = 0.0000001
 
 const loop_union_angle_tolerance = 0.02
 
-const loop_union_point_tolerance = 0.000001
-
 const loop_union_bisection_steps = 32
 
 const seeded_worst_direction_step = 0.1
@@ -3601,10 +3599,7 @@ fn loop_union(
 
   case boundaries {
     [] -> all_one_loop(samples)
-    _ -> {
-      loop_pieces_from_boundaries(boundaries)
-      |> compact_loop_pieces(loop_a, loop_b)
-    }
+    _ -> loop_pieces_from_boundaries(boundaries)
   }
 }
 
@@ -3950,33 +3945,6 @@ fn loop_pieces_from_boundaries(
     [loop_piece, line_piece]
   })
   |> list.flatten
-}
-
-fn compact_loop_pieces(
-  pieces: List(UnionPiece),
-  loop_a: Loop,
-  loop_b: Loop,
-) -> List(UnionPiece) {
-  pieces
-  |> list.filter(fn(piece) {
-    case piece {
-      LoopPieceA(from, to) ->
-        loop_points_far(loop_point(loop_a, from), loop_point(loop_a, to))
-      LoopPieceB(from, to) ->
-        loop_points_far(loop_point(loop_b, from), loop_point(loop_b, to))
-      HullLineAB(a, b) ->
-        loop_points_far(loop_point(loop_a, a), loop_point(loop_b, b))
-      HullLineBA(b, a) ->
-        loop_points_far(loop_point(loop_b, b), loop_point(loop_a, a))
-    }
-  })
-}
-
-fn loop_points_far(a: svg_path.Point, b: svg_path.Point) -> Bool {
-  let dx = a.x -. b.x
-  let dy = a.y -. b.y
-  dx *. dx +. dy *. dy
-  >. loop_union_point_tolerance *. loop_union_point_tolerance
 }
 
 fn all_one_loop(samples: List(LoopSample)) -> List(UnionPiece) {
