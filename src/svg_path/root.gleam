@@ -57,9 +57,10 @@ pub type PolynomialOptions {
 
 /// A real polynomial root and the final parameter window used by its caller.
 ///
-/// Crossing roots retain their sign-changing bisection bracket. Direct and
-/// repeated-root estimates receive a centered `1e-9` window, clamped to the
-/// requested domain and away from neighboring root windows.
+/// Crossing roots retain their sign-changing bisection bracket unless an exact
+/// zero was evaluated. Exact hits, directly solved roots, and repeated-root
+/// estimates receive a centered `1e-9` window, clamped to the requested domain
+/// and away from neighboring root windows.
 @internal
 pub type RootIsolation {
   RootIsolation(lower: Float, estimate: Float, upper: Float)
@@ -79,6 +80,13 @@ pub type RootKind {
 @internal
 pub type ClassifiedRoot {
   ClassifiedRoot(isolation: RootIsolation, kind: RootKind)
+}
+
+// Keep derivative roots attached to the evidence that produced them. A root
+// inherited from f' has at least one vanishing derivative, even if evaluating
+// f' at its approximate parameter produces a small nonzero value.
+type RootCandidate {
+  RootCandidate(isolation: RootIsolation, vanishing_derivatives: Int)
 }
 
 /// Return the default options for polynomial root isolation.
@@ -235,7 +243,7 @@ pub fn polynomial_roots_with(
         upper,
         options,
       ))
-      Ok(list.map(isolations, fn(isolation) { isolation.estimate }))
+      Ok(list.map(isolations, fn(candidate) { candidate.isolation.estimate }))
     }
   }
 }
@@ -261,7 +269,13 @@ pub fn polynomial_root_isolations_with(
         upper,
         options,
       ))
-      Ok(finalize_root_windows(isolations, lower, upper))
+      Ok(finalize_root_windows(
+        list.map(distinct_candidates(isolations), fn(candidate) {
+          candidate.isolation
+        }),
+        lower,
+        upper,
+      ))
     }
   }
 }
@@ -286,13 +300,24 @@ pub fn classified_polynomial_roots_with(
         upper,
         options,
       ))
-      let isolations = finalize_root_windows(isolations, lower, upper)
+      let candidates = distinct_candidates(isolations)
+      let isolations =
+        finalize_root_windows(
+          list.map(candidates, fn(candidate) { candidate.isolation }),
+          lower,
+          upper,
+        )
       let value_scale = polynomial_value_scale(coefficients)
       Ok(
-        list.map(isolations, fn(isolation) {
+        list.map2(candidates, isolations, fn(candidate, isolation) {
           ClassifiedRoot(
             isolation:,
-            kind: classify_polynomial_root(coefficients, isolation, value_scale),
+            kind: classify_polynomial_root(
+              coefficients,
+              isolation,
+              value_scale,
+              candidate.vanishing_derivatives,
+            ),
           )
         }),
       )
@@ -394,26 +419,37 @@ fn cubic_with(
   }
 }
 
-fn distinct_isolations(isolations: List(RootIsolation)) -> List(RootIsolation) {
-  isolations
-  |> list.sort(by: fn(left, right) {
-    float.compare(left.estimate, right.estimate)
+fn distinct_candidates(candidates: List(RootCandidate)) -> List(RootCandidate) {
+  candidates
+  |> list.sort(by: fn(a, b) {
+    float.compare(a.isolation.estimate, b.isolation.estimate)
   })
-  |> distinct_sorted_isolations(kept: [])
+  |> distinct_sorted_candidates([])
 }
 
-fn distinct_sorted_isolations(
-  isolations: List(RootIsolation),
-  kept kept: List(RootIsolation),
-) -> List(RootIsolation) {
-  case isolations, kept {
+fn distinct_sorted_candidates(
+  candidates: List(RootCandidate),
+  kept: List(RootCandidate),
+) -> List(RootCandidate) {
+  case candidates, kept {
     [], _ -> list.reverse(kept)
-    [first, ..rest], [] -> distinct_sorted_isolations(rest, kept: [first])
-    [first, ..rest], [previous, ..] ->
-      case first.estimate == previous.estimate {
-        True -> distinct_sorted_isolations(rest, kept:)
-        False -> distinct_sorted_isolations(rest, kept: [first, ..kept])
+    [first, ..rest], [previous, ..older] -> {
+      case first.isolation.estimate == previous.isolation.estimate {
+        True -> {
+          // An endpoint can also be a derivative root. Deduplication must not
+          // discard the stronger multiplicity information from that candidate.
+          let preferred = case
+            first.vanishing_derivatives > previous.vanishing_derivatives
+          {
+            True -> first
+            False -> previous
+          }
+          distinct_sorted_candidates(rest, [preferred, ..older])
+        }
+        False -> distinct_sorted_candidates(rest, [first, ..kept])
       }
+    }
+    [first, ..rest], [] -> distinct_sorted_candidates(rest, [first])
   }
 }
 
@@ -422,7 +458,7 @@ fn polynomial_root_isolations_valid(
   lower: Float,
   upper: Float,
   options: PolynomialOptions,
-) -> Result(List(RootIsolation), Error) {
+) -> Result(List(RootCandidate), Error) {
   let coefficient_tolerance = polynomial_coefficient_tolerance(coefficients)
   case coefficients {
     [] | [_] -> Ok([])
@@ -430,7 +466,9 @@ fn polynomial_root_isolations_valid(
       Ok(
         linear_with_tolerance(a, b, coefficient_tolerance)
         |> inside(from: lower, to: upper)
-        |> list.map(fn(root) { RootIsolation(root, root, root) }),
+        |> list.map(fn(root) {
+          RootCandidate(RootIsolation(root, root, root), 0)
+        }),
       )
     [a, b, c] ->
       Ok(
@@ -444,7 +482,16 @@ fn polynomial_root_isolations_valid(
           ),
         )
         |> inside(from: lower, to: upper)
-        |> list.map(fn(root) { RootIsolation(root, root, root) }),
+        |> list.map(fn(root) {
+          // The direct quadratic solver knows when its discriminant is zero.
+          let repeated =
+            !coefficient_is_zero(a, coefficient_tolerance)
+            && number.is_zero(b *. b -. 4.0 *. a *. c)
+          RootCandidate(RootIsolation(root, root, root), case repeated {
+            True -> 1
+            False -> 0
+          })
+        }),
       )
     _ -> {
       let derivative = polynomial_derivative(coefficients)
@@ -454,26 +501,23 @@ fn polynomial_root_isolations_valid(
         upper,
         options,
       ))
-      let critical = distinct_isolations(critical)
+      let critical = distinct_candidates(critical)
       let critical_values =
-        list.map(critical, fn(isolation) {
-          let RootIsolation(estimate:, ..) = isolation
-          estimate
-        })
+        list.map(critical, fn(candidate) { candidate.isolation.estimate })
       let repeated =
         critical
-        |> list.filter(fn(isolation) {
-          let RootIsolation(estimate:, ..) = isolation
+        |> list.filter(fn(candidate) {
+          let RootIsolation(estimate:, ..) = candidate.isolation
           value_is_close_to_zero(
             evaluate_polynomial(coefficients, at: estimate),
             polynomial_value_scale(coefficients),
           )
         })
-        |> list.map(fn(isolation) {
-          RootIsolation(
-            isolation.estimate,
-            isolation.estimate,
-            isolation.estimate,
+        |> list.map(fn(candidate) {
+          let estimate = candidate.isolation.estimate
+          RootCandidate(
+            RootIsolation(estimate, estimate, estimate),
+            candidate.vanishing_derivatives + 1,
           )
         })
       let endpoints =
@@ -484,7 +528,9 @@ fn polynomial_root_isolations_valid(
             polynomial_value_scale(coefficients),
           )
         })
-        |> list.map(fn(root) { RootIsolation(root, root, root) })
+        |> list.map(fn(root) {
+          RootCandidate(RootIsolation(root, root, root), 0)
+        })
       use crossing <- result.try(
         polynomial_crossing_roots(
           coefficients,
@@ -494,8 +540,14 @@ fn polynomial_root_isolations_valid(
         ),
       )
       Ok(
-        list.append(endpoints, list.append(repeated, crossing))
-        |> distinct_isolations,
+        list.append(
+          endpoints,
+          list.append(
+            repeated,
+            list.map(crossing, fn(isolation) { RootCandidate(isolation, 0) }),
+          ),
+        )
+        |> distinct_candidates,
       )
     }
   }
@@ -565,37 +617,34 @@ fn polynomial_refine_bracket(
 ) -> Result(RootIsolation, Error) {
   let midpoint = left +. { right -. left } /. 2.0
   let midpoint_value = evaluate_polynomial(coefficients, at: midpoint)
-  case right -. left <=. tolerance {
-    True -> Ok(RootIsolation(left, midpoint, right))
-    False ->
+  // An exact hit is success even on the final permitted evaluation. Mark it
+  // as a point so the common finalizer supplies the centered parameter window.
+  case number.is_zero(midpoint_value), right -. left <=. tolerance {
+    True, _ -> Ok(RootIsolation(midpoint, midpoint, midpoint))
+    False, True -> Ok(RootIsolation(left, midpoint, right))
+    False, False ->
       case remaining_iterations <= 1 {
         True -> Error(MaxIterationsReached(midpoint, midpoint_value))
         False -> {
-          let proposal = midpoint
-          let proposal_value = evaluate_polynomial(coefficients, at: proposal)
-          case number.is_zero(proposal_value) {
-            True -> Ok(RootIsolation(left, proposal, right))
+          case same_sign(left_value, midpoint_value) {
+            True ->
+              polynomial_refine_bracket(
+                coefficients,
+                midpoint,
+                midpoint_value,
+                right,
+                tolerance,
+                remaining_iterations - 1,
+              )
             False ->
-              case same_sign(left_value, proposal_value) {
-                True ->
-                  polynomial_refine_bracket(
-                    coefficients,
-                    proposal,
-                    proposal_value,
-                    right,
-                    tolerance,
-                    remaining_iterations - 1,
-                  )
-                False ->
-                  polynomial_refine_bracket(
-                    coefficients,
-                    left,
-                    left_value,
-                    proposal,
-                    tolerance,
-                    remaining_iterations - 1,
-                  )
-              }
+              polynomial_refine_bracket(
+                coefficients,
+                left,
+                left_value,
+                midpoint,
+                tolerance,
+                remaining_iterations - 1,
+              )
           }
         }
       }
@@ -606,6 +655,7 @@ fn classify_polynomial_root(
   coefficients: List(Float),
   isolation: RootIsolation,
   value_scale: Float,
+  vanishing_derivatives: Int,
 ) -> RootKind {
   let RootIsolation(lower:, estimate:, upper:) = isolation
   let sampled =
@@ -615,7 +665,12 @@ fn classify_polynomial_root(
       value_scale,
     )
   case sampled {
-    Ambiguous -> classify_root_from_derivatives(coefficients, estimate)
+    Ambiguous ->
+      classify_root_from_derivatives(
+        coefficients,
+        estimate,
+        vanishing_derivatives,
+      )
     kind -> kind
   }
 }
@@ -623,11 +678,13 @@ fn classify_polynomial_root(
 fn classify_root_from_derivatives(
   coefficients: List(Float),
   estimate: Float,
+  vanishing_derivatives: Int,
 ) -> RootKind {
   classify_root_from_derivatives_loop(
     polynomial_derivative(coefficients),
     estimate,
     order: 1,
+    vanishing_derivatives:,
   )
 }
 
@@ -635,17 +692,22 @@ fn classify_root_from_derivatives_loop(
   coefficients: List(Float),
   estimate: Float,
   order order: Int,
+  vanishing_derivatives vanishing_derivatives: Int,
 ) -> RootKind {
   case coefficients {
     [] -> Ambiguous
     _ -> {
       let value = evaluate_polynomial(coefficients, at: estimate)
-      case value_is_close_to_zero(value, polynomial_value_scale(coefficients)) {
+      case
+        order <= vanishing_derivatives
+        || value_is_close_to_zero(value, polynomial_value_scale(coefficients))
+      {
         True ->
           classify_root_from_derivatives_loop(
             polynomial_derivative(coefficients),
             estimate,
             order: order + 1,
+            vanishing_derivatives:,
           )
         False ->
           case int.is_odd(order), value >. 0.0 {
@@ -707,7 +769,8 @@ fn finalize_root_windows(
   lower: Float,
   upper: Float,
 ) -> List(RootIsolation) {
-  let isolations = distinct_isolations(isolations)
+  // Callers already sorted and deduplicated candidates before dropping their
+  // classification evidence. Preserve that order for the subsequent pairing.
   finalize_root_windows_loop(
     isolations,
     lower,
@@ -857,35 +920,35 @@ fn bisect_isolation_until_loop(
 ) -> Result(RootIsolation, Error) {
   let midpoint = left +. { right -. left } /. 2.0
   let midpoint_value = f(midpoint)
-  case certified(left, right) || midpoint == left || midpoint == right {
-    True -> Ok(RootIsolation(left, midpoint, right))
-    False ->
+  case
+    number.is_zero(midpoint_value),
+    certified(left, right) || midpoint == left || midpoint == right
+  {
+    True, _ -> Ok(RootIsolation(midpoint, midpoint, midpoint))
+    False, True -> Ok(RootIsolation(left, midpoint, right))
+    False, False ->
       case remaining_iterations <= 1 {
         True -> Error(MaxIterationsReached(midpoint, midpoint_value))
         False ->
-          case number.is_zero(midpoint_value) {
-            True -> Ok(RootIsolation(midpoint, midpoint, midpoint))
+          case same_sign(left_value, midpoint_value) {
+            True ->
+              bisect_isolation_until_loop(
+                f,
+                midpoint,
+                midpoint_value,
+                right,
+                remaining_iterations - 1,
+                certified,
+              )
             False ->
-              case same_sign(left_value, midpoint_value) {
-                True ->
-                  bisect_isolation_until_loop(
-                    f,
-                    midpoint,
-                    midpoint_value,
-                    right,
-                    remaining_iterations - 1,
-                    certified,
-                  )
-                False ->
-                  bisect_isolation_until_loop(
-                    f,
-                    left,
-                    left_value,
-                    midpoint,
-                    remaining_iterations - 1,
-                    certified,
-                  )
-              }
+              bisect_isolation_until_loop(
+                f,
+                left,
+                left_value,
+                midpoint,
+                remaining_iterations - 1,
+                certified,
+              )
           }
       }
   }
