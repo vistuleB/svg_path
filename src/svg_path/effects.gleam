@@ -69,8 +69,8 @@ fn degeneracy_error(error: degeneracy.Error) -> Error {
 /// `previous.end` and `next.start`. For a closing pair, `previous.end` is
 /// moved to `next.start`, which is the fixed subpath start.
 pub fn stretch_to_join_endpoint_policy() -> svg_path.EndpointPolicy {
-  svg_path.Custom(fn(previous, next, closing) {
-    stretch_to_join_segments(previous, next, closing)
+  svg_path.Custom(fn(previous, next, context) {
+    stretch_to_join_segments(previous, next, context.closing)
   })
 }
 

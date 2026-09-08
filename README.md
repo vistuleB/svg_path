@@ -358,7 +358,7 @@ pub type EndpointPolicy {
   Bridge
   WiggleThenBridge
   WiggleThenBridgeWith(Float)
-  Custom(fn(Segment, Segment, Bool) -> List(Segment))
+  Custom(fn(Segment, Segment, EndpointPolicyContext) -> List(Segment))
 }
 ```
 
@@ -374,8 +374,17 @@ when needed. `WiggleThenBridge` applies the same pair-local wiggle behavior
 when adjacent endpoints are within tolerance, and otherwise bridges that pair;
 `wiggle_then_bridge_with(tolerance)` is its configurable counterpart. `Custom`
 gives callers a hook for bespoke endpoint reconciliation. Its third callback
-argument is `True` only for the closing join from the last segment back to the
-first segment of a closed subpath.
+argument is `EndpointPolicyContext(first: Bool, last: Bool, closing: Bool)`.
+`first` and `last` identify the first and last forward pairs of the input;
+both are true for a two-segment input. The separate last-to-first closing
+call has only `closing: True`. A singleton has no forward pair and is passed
+twice to the closing call. Empty subpaths have no calls.
+
+`subpath_set_closed_with(..., closed: True, policy:)` applies the policy to
+the closing pair even if the subpath is already closed. It does not revisit
+interior pairs. Consequently, repeating it with a non-idempotent policy may
+change geometry again. `subpath_rebuild_with` revisits all forward pairs and,
+for a closed subpath, the closing pair.
 
 Functions that accept an `EndpointPolicy` end in `_with`. Including:
 

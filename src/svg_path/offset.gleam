@@ -4817,10 +4817,10 @@ fn colinearize_offset_source_tangents(
 fn colinearize_source_tangent_policy(
   tolerance: Float,
 ) -> svg_path.EndpointPolicy {
-  svg_path.Custom(fn(previous, next, closing) {
+  svg_path.Custom(fn(previous, next, context) {
     let #(previous, next) =
       colinearize_source_tangent_boundary(previous, next, tolerance)
-    case closing {
+    case context.closing {
       True -> [previous]
       False -> [previous, next]
     }

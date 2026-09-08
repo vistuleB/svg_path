@@ -574,13 +574,27 @@ pub type EndpointPolicy {
   /// replace only the last segment. An empty list deletes the replaced
   /// segment or pair. If the returned list is nonempty, its first segment must
   /// start where the previous segment started.
-  /// The callback's third argument is `True` only for a closing join from the
-  /// last segment back to the first segment.
-  Custom(fn(Segment, Segment, Bool) -> List(Segment))
+  /// The callback's context identifies the first/last forward pair and the
+  /// separate closing join. Replacement segments are not visited again;
+  /// only the final replacement is used as `previous` for the next input.
+  Custom(fn(Segment, Segment, EndpointPolicyContext) -> List(Segment))
+}
+
+/// The position of an endpoint-policy call in construction.
+///
+/// `first` marks the first forward pair; `last` marks a forward pair whose
+/// `next` is the final input segment. Both are true for a two-segment input.
+/// They describe input traversal, not the size of the replacement list.
+/// The separate closing call has only `closing` true. A singleton has no
+/// forward call, but closing calls the policy with that segment twice.
+/// Empty subpaths have no calls. Deletions can leave no preceding segment
+/// for a remaining input segment, in which case no pairwise call is made.
+pub type EndpointPolicyContext {
+  EndpointPolicyContext(first: Bool, last: Bool, closing: Bool)
 }
 
 type CustomPolicy =
-  fn(Segment, Segment, Bool) -> List(Segment)
+  fn(Segment, Segment, EndpointPolicyContext) -> List(Segment)
 
 /// Create a wiggle endpoint policy with a custom distance tolerance.
 pub fn wiggle_with(tolerance: Float) -> EndpointPolicy {
@@ -2319,7 +2333,10 @@ pub fn subpath_set_closed(
 ///
 /// Setting `closed` to `False` always succeeds. Setting it to `True` uses the
 /// given endpoint policy to reconcile a non-empty subpath's end point with its
-/// start point. Empty subpaths may be closed.
+/// start point, even if it is already closed. This invokes the policy exactly
+/// once, for the closing pair only; interior pairs are not revisited. Repeated
+/// calls can change geometry if the policy is not idempotent. Empty subpaths
+/// may be closed and do not invoke the policy.
 pub fn subpath_set_closed_with(
   subpath: Subpath,
   closed closed: Bool,
@@ -9057,19 +9074,20 @@ fn wiggle_then_bridge_start_segments(
 fn strict_reconcile_segments(
   previous: Segment,
   next: Segment,
-  closing closing: Bool,
+  context context: EndpointPolicyContext,
 ) -> List(Segment) {
-  case closing {
+  case context.closing {
     True -> [previous]
     False -> [previous, next]
   }
 }
 
 fn wiggle_reconcile_segments(tolerance: Float) -> CustomPolicy {
-  fn(previous, next, closing) {
+  fn(previous, next, context: EndpointPolicyContext) {
     case distance(segment_end(previous), segment_start(next)) <=. tolerance {
-      True -> wiggle_nearby_segment_pair(previous, next, closing:)
-      False -> strict_reconcile_segments(previous, next, closing:)
+      True ->
+        wiggle_nearby_segment_pair(previous, next, closing: context.closing)
+      False -> strict_reconcile_segments(previous, next, context:)
     }
   }
 }
@@ -9077,16 +9095,16 @@ fn wiggle_reconcile_segments(tolerance: Float) -> CustomPolicy {
 fn bridge_reconcile_segments(
   previous: Segment,
   next: Segment,
-  closing closing: Bool,
+  context context: EndpointPolicyContext,
 ) -> List(Segment) {
   let previous_end = segment_end(previous)
   let next_start = segment_start(next)
 
   case previous_end == next_start {
-    True -> strict_reconcile_segments(previous, next, closing:)
+    True -> strict_reconcile_segments(previous, next, context:)
     False -> {
       let bridge = Line(start: previous_end, end: next_start)
-      case closing {
+      case context.closing {
         True -> [previous, bridge]
         False -> [previous, bridge, next]
       }
@@ -9095,10 +9113,11 @@ fn bridge_reconcile_segments(
 }
 
 fn wiggle_then_bridge_reconcile_segments(tolerance: Float) -> CustomPolicy {
-  fn(previous, next, closing) {
+  fn(previous, next, context: EndpointPolicyContext) {
     case distance(segment_end(previous), segment_start(next)) <=. tolerance {
-      True -> wiggle_nearby_segment_pair(previous, next, closing:)
-      False -> bridge_reconcile_segments(previous, next, closing:)
+      True ->
+        wiggle_nearby_segment_pair(previous, next, closing: context.closing)
+      False -> bridge_reconcile_segments(previous, next, context:)
     }
   }
 }
@@ -9150,7 +9169,13 @@ fn custom_open_subpath_from(
   segments: List(Segment),
   reconcile: CustomPolicy,
 ) -> Result(Subpath, Error) {
-  custom_reconcile_segments(segments, [], reconcile, previous_index: 0)
+  custom_reconcile_segments(
+    segments,
+    [],
+    reconcile,
+    previous_index: 0,
+    first: True,
+  )
   |> finish_custom_open_subpath(start)
 }
 
@@ -9159,14 +9184,30 @@ fn custom_reconcile_segments(
   reversed_accumulated: List(Segment),
   reconcile: CustomPolicy,
   previous_index previous_index: Int,
+  first first: Bool,
 ) -> Result(List(Segment), Error) {
   case reversed_accumulated, remaining {
     [], [] -> Ok([])
     [], [next, ..rest] ->
-      custom_reconcile_segments(rest, [next], reconcile, previous_index:)
+      custom_reconcile_segments(
+        rest,
+        [next],
+        reconcile,
+        previous_index:,
+        first:,
+      )
     [previous, ..before], [] -> Ok(list.reverse([previous, ..before]))
     [previous, ..before], [next, ..rest] -> {
-      let replacement = reconcile(previous, next, False)
+      let replacement =
+        reconcile(
+          previous,
+          next,
+          EndpointPolicyContext(
+            first:,
+            last: list.is_empty(rest),
+            closing: False,
+          ),
+        )
       use replacement <- result.try(validate_custom_replacement(
         previous,
         replacement,
@@ -9179,6 +9220,7 @@ fn custom_reconcile_segments(
         reversed_accumulated,
         reconcile,
         previous_index: previous_index + list.length(replacement) - 1,
+        first: False,
       )
     }
   }
@@ -9734,10 +9776,7 @@ fn close_subpath_with(
   policy: EndpointPolicy,
 ) -> Result(Subpath, Error) {
   use _ <- result.try(validate_endpoint_policy(policy))
-  case subpath.closed {
-    True -> Ok(subpath)
-    False -> close_open_subpath_with(subpath, policy)
-  }
+  close_open_subpath_with(subpath, policy)
 }
 
 fn validate_endpoint_policy(policy: EndpointPolicy) -> Result(Nil, Error) {
@@ -9766,7 +9805,12 @@ fn custom_close_open_subpath(
   case subpath.segments {
     [] -> Ok(Subpath(..subpath, closed: True))
     [only] -> {
-      let replacement = reconcile(only, only, True)
+      let replacement =
+        reconcile(
+          only,
+          only,
+          EndpointPolicyContext(first: False, last: False, closing: True),
+        )
       use replacement <- result.try(validate_custom_replacement(
         only,
         replacement,
@@ -9776,7 +9820,12 @@ fn custom_close_open_subpath(
     }
     [first, ..rest] -> {
       let assert Ok(#(middle, last)) = split_last(rest)
-      let replacement = reconcile(last, first, True)
+      let replacement =
+        reconcile(
+          last,
+          first,
+          EndpointPolicyContext(first: False, last: False, closing: True),
+        )
       use replacement <- result.try(validate_custom_replacement(
         last,
         replacement,
