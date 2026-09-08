@@ -562,10 +562,10 @@ pub type EndpointPolicy {
   Bridge
 
   /// Try `Wiggle`; if that fails, use `Bridge`.
-  WiggleThenBridge
+  WiggleElseBridge
 
   /// Try wiggle with the supplied tolerance; if that fails, use `Bridge`.
-  WiggleThenBridgeWith(Float)
+  WiggleElseBridgeWith(Float)
 
   /// Reconcile adjacent segments with a caller-provided function.
   ///
@@ -601,10 +601,10 @@ pub fn wiggle_with(tolerance: Float) -> EndpointPolicy {
   WiggleWith(tolerance)
 }
 
-/// Create a wiggle-then-bridge endpoint policy with a custom distance
+/// Create a wiggle-else-bridge endpoint policy with a custom distance
 /// tolerance.
-pub fn wiggle_then_bridge_with(tolerance: Float) -> EndpointPolicy {
-  WiggleThenBridgeWith(tolerance)
+pub fn wiggle_else_bridge_with(tolerance: Float) -> EndpointPolicy {
+  WiggleElseBridgeWith(tolerance)
 }
 
 /// A single SVG path segment.
@@ -8988,10 +8988,10 @@ fn endpoint_policy_custom(policy: EndpointPolicy) -> CustomPolicy {
     Wiggle -> wiggle_reconcile_segments(default_wiggle_tolerance)
     WiggleWith(tolerance) -> wiggle_reconcile_segments(tolerance)
     Bridge -> bridge_reconcile_segments
-    WiggleThenBridge ->
-      wiggle_then_bridge_reconcile_segments(default_wiggle_tolerance)
-    WiggleThenBridgeWith(tolerance) ->
-      wiggle_then_bridge_reconcile_segments(tolerance)
+    WiggleElseBridge ->
+      wiggle_else_bridge_reconcile_segments(default_wiggle_tolerance)
+    WiggleElseBridgeWith(tolerance) ->
+      wiggle_else_bridge_reconcile_segments(tolerance)
     Custom(reconcile) -> reconcile
   }
 }
@@ -9013,15 +9013,15 @@ fn reconcile_start(
           wiggle_start_segments(start, first, rest, default_wiggle_tolerance)
         WiggleWith(tolerance) ->
           wiggle_start_segments(start, first, rest, tolerance)
-        WiggleThenBridge ->
-          Ok(wiggle_then_bridge_start_segments(
+        WiggleElseBridge ->
+          Ok(wiggle_else_bridge_start_segments(
             start,
             first,
             rest,
             default_wiggle_tolerance,
           ))
-        WiggleThenBridgeWith(tolerance) ->
-          Ok(wiggle_then_bridge_start_segments(start, first, rest, tolerance))
+        WiggleElseBridgeWith(tolerance) ->
+          Ok(wiggle_else_bridge_start_segments(start, first, rest, tolerance))
         Bridge -> Ok(bridge_start_segments(start, first, rest))
       }
     }
@@ -9059,7 +9059,7 @@ fn bridge_start_segments(
   }
 }
 
-fn wiggle_then_bridge_start_segments(
+fn wiggle_else_bridge_start_segments(
   start: Point,
   first: Segment,
   rest: List(Segment),
@@ -9112,7 +9112,7 @@ fn bridge_reconcile_segments(
   }
 }
 
-fn wiggle_then_bridge_reconcile_segments(tolerance: Float) -> CustomPolicy {
+fn wiggle_else_bridge_reconcile_segments(tolerance: Float) -> CustomPolicy {
   fn(previous, next, context: EndpointPolicyContext) {
     case distance(segment_end(previous), segment_start(next)) <=. tolerance {
       True ->
@@ -9781,7 +9781,7 @@ fn close_subpath_with(
 
 fn validate_endpoint_policy(policy: EndpointPolicy) -> Result(Nil, Error) {
   case policy {
-    WiggleWith(tolerance) | WiggleThenBridgeWith(tolerance) ->
+    WiggleWith(tolerance) | WiggleElseBridgeWith(tolerance) ->
       case tolerance <. 0.0 || !number.is_finite(tolerance) {
         True -> Error(InvalidWiggleTolerance(tolerance))
         False -> Ok(Nil)

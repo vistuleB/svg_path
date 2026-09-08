@@ -765,7 +765,7 @@ fn survivor_chains_to_subpaths(
         svg_path.subpath_set_closed_with(
           subpath,
           closed:,
-          policy: svg_path.WiggleThenBridgeWith(tolerance),
+          policy: svg_path.WiggleElseBridgeWith(tolerance),
         )
         |> result.map_error(InternalPathError),
       )
@@ -1020,14 +1020,14 @@ fn eliminate_small_offset_source_segments(
       use normalized <- result.try(
         svg_path.subpath_with(
           normalized,
-          policy: svg_path.WiggleThenBridgeWith(tolerance),
+          policy: svg_path.WiggleElseBridgeWith(tolerance),
         )
         |> result.map_error(InternalPathError),
       )
       svg_path.subpath_set_closed_with(
         normalized,
         closed: svg_path.subpath_is_closed(subpath),
-        policy: svg_path.WiggleThenBridgeWith(tolerance),
+        policy: svg_path.WiggleElseBridgeWith(tolerance),
       )
       |> result.map_error(InternalPathError)
     }
@@ -4315,7 +4315,7 @@ fn close_survivor_subpath(
       svg_path.subpath_set_closed_with(
         subpath,
         closed: True,
-        policy: svg_path.WiggleThenBridgeWith(tolerance),
+        policy: svg_path.WiggleElseBridgeWith(tolerance),
       )
       |> result.map_error(InternalPathError)
     False -> Ok(subpath)

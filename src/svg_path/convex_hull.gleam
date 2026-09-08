@@ -3143,7 +3143,7 @@ fn build_open_subpath_from_segments(
   case segments {
     [] -> Error(TangentSearchDegenerateLoop)
     _ ->
-      svg_path.subpath_with(segments, policy: svg_path.WiggleThenBridge)
+      svg_path.subpath_with(segments, policy: svg_path.WiggleElseBridge)
       |> map_path_error(
         function: BuildOpenSubpathFromSegments,
         operation: SubpathWith,

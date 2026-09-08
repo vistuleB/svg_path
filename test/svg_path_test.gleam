@@ -1979,7 +1979,7 @@ pub fn subpath_with_wiggle_then_line_prefers_wiggle_test() {
         svg_path.Line(start: a, end: b),
         svg_path.Line(start: near_b, end: c),
       ],
-      policy: svg_path.WiggleThenBridge,
+      policy: svg_path.WiggleElseBridge,
     )
 
   assert subpath |> svg_path.subpath_segments |> list.length == 2
@@ -1998,7 +1998,7 @@ pub fn subpath_with_wiggle_then_line_falls_back_to_bridge_line_test() {
         svg_path.Line(start: a, end: b),
         svg_path.Line(start: c, end: d),
       ],
-      policy: svg_path.WiggleThenBridge,
+      policy: svg_path.WiggleElseBridge,
     )
 
   assert svg_path.subpath_segments(subpath)
@@ -2885,7 +2885,7 @@ pub fn subpath_with_custom_wiggle_tolerance_accepts_larger_gap_test() {
   assert svg_path.subpath_end(subpath) == d
 }
 
-pub fn subpath_with_custom_wiggle_then_bridge_tolerance_accepts_larger_gap_test() {
+pub fn subpath_with_custom_wiggle_else_bridge_tolerance_accepts_larger_gap_test() {
   let a = svg_path.Point(0.0, 0.0)
   let b = svg_path.Point(10.0, 0.0)
   let c = svg_path.Point(10.1, 0.0)
@@ -2897,7 +2897,7 @@ pub fn subpath_with_custom_wiggle_then_bridge_tolerance_accepts_larger_gap_test(
         svg_path.Line(start: a, end: b),
         svg_path.Line(start: c, end: d),
       ],
-      policy: svg_path.wiggle_then_bridge_with(0.2),
+      policy: svg_path.wiggle_else_bridge_with(0.2),
     )
 
   assert svg_path.subpath_end(subpath) == d
@@ -2914,7 +2914,7 @@ pub fn subpath_with_rejects_negative_custom_wiggle_tolerance_test() {
     == Error(svg_path.InvalidWiggleTolerance(-0.1))
 }
 
-pub fn subpath_with_rejects_negative_wiggle_then_bridge_tolerance_test() {
+pub fn subpath_with_rejects_negative_wiggle_else_bridge_tolerance_test() {
   let first =
     svg_path.Line(
       start: svg_path.Point(0.0, 0.0),
@@ -2928,7 +2928,7 @@ pub fn subpath_with_rejects_negative_wiggle_then_bridge_tolerance_test() {
 
   assert svg_path.subpath_with(
       [first, second],
-      policy: svg_path.wiggle_then_bridge_with(-0.1),
+      policy: svg_path.wiggle_else_bridge_with(-0.1),
     )
     == Error(svg_path.InvalidWiggleTolerance(-0.1))
 }
@@ -3319,9 +3319,7 @@ pub fn subpath_with_custom_rejects_invalid_results_test() {
 
   assert svg_path.subpath_with(
       [svg_path.Line(start: a, end: b), svg_path.Line(start: c, end: d)],
-      policy: svg_path.Custom(fn(previous, next, _context) {
-        [previous, next]
-      }),
+      policy: svg_path.Custom(fn(previous, next, _context) { [previous, next] }),
     )
     == Error(svg_path.Discontinuous(
       previous_index: 0,

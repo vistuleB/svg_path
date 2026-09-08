@@ -356,8 +356,8 @@ pub type EndpointPolicy {
   Wiggle
   WiggleWith(Float)
   Bridge
-  WiggleThenBridge
-  WiggleThenBridgeWith(Float)
+  WiggleElseBridge
+  WiggleElseBridgeWith(Float)
   Custom(fn(Segment, Segment, EndpointPolicyContext) -> List(Segment))
 }
 
@@ -374,9 +374,9 @@ If adjacent horizontal/horizontal or vertical/vertical lines are misaligned, a
 bridge is inserted regardless of endpoint distance.
 `wiggle_with(tolerance)` provides the same policy with an explicit tolerance.
 `Bridge` keeps existing endpoints in place and inserts a straight line segment
-when needed. `WiggleThenBridge` applies the same pair-local wiggle behavior
+when needed. `WiggleElseBridge` applies the same pair-local wiggle behavior
 when adjacent endpoints are within tolerance, and otherwise bridges that pair;
-`wiggle_then_bridge_with(tolerance)` is its configurable counterpart. `Custom`
+`wiggle_else_bridge_with(tolerance)` is its configurable counterpart. `Custom`
 gives callers a hook for bespoke endpoint reconciliation. Its third callback
 argument is `EndpointPolicyContext(first: Bool, last: Bool, closing: Bool)`.
 `first` and `last` identify the first and last forward pairs of the input;
@@ -402,7 +402,7 @@ Functions that accept an `EndpointPolicy` end in `_with`. Including:
 ```gleam
 svg_path.subpath_with(segments, policy: svg_path.Wiggle)
 svg_path.subpath_append_segment_with(subpath, segment, policy: svg_path.Bridge)
-svg_path.subpath_join_with([first_subpath, second_subpath], policy: svg_path.WiggleThenBridge)
+svg_path.subpath_join_with([first_subpath, second_subpath], policy: svg_path.WiggleElseBridge)
 svg_path.subpath_splice_with(subpath, start: Int, delete: Int, insert: List(Segment), policy: svg_path.Wiggle)
 svg_path.subpath_set_closed_with(subpath, closed, policy: svg_path.Bridge)
 ```
