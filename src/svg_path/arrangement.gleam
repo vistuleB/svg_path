@@ -1514,7 +1514,10 @@ fn classify_nested_contour_edges(
           segment,
           within: path,
           side_sampling_distance: tolerance *. 16.0,
-          options: svg_path.default_containment_options(),
+          options: svg_path.ContainmentOptions(
+            ..svg_path.default_containment_options(),
+            tolerance:,
+          ),
         )
         |> result.map_error(InternalPathError),
       )

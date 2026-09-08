@@ -3,6 +3,8 @@
 //// Binary operations interpret both operands with one fill rule. The unary
 //// `nested_contours` operation instead preserves the complete signed integer
 //// winding field and therefore takes no fill rule.
+//// Open subpaths are implicitly closed by a straight line for filling; those
+//// closing lines are also included in the returned arrangement build.
 
 import gleam/int
 import gleam/list
@@ -266,11 +268,20 @@ fn csg_subpath_segments(
 ) -> List(svg_path.Segment) {
   case subpaths {
     [] -> segments
-    [subpath, ..rest] ->
-      csg_subpath_segments(
-        rest,
-        segments: prepend_reversed(svg_path.subpath_segments(subpath), segments),
-      )
+    [subpath, ..rest] -> {
+      let source = svg_path.subpath_segments(subpath)
+      let segments = prepend_reversed(source, segments)
+      let start = svg_path.subpath_start(subpath)
+      let end = svg_path.subpath_end(subpath)
+      // Fill geometry includes the implicit end-to-start line, even when the
+      // source is open. Prepend it to this reversed accumulator so its image
+      // follows the source segments in the final build inventory.
+      let segments = case source == [] || point.near(start, end, 0.0) {
+        True -> segments
+        False -> [svg_path.Line(start: end, end: start), ..segments]
+      }
+      csg_subpath_segments(rest, segments:)
+    }
   }
 }
 
@@ -454,7 +465,10 @@ fn classify_boolean_edges(
           segment,
           within: left_path,
           side_sampling_distance: tolerance *. 16.0,
-          options: svg_path.default_containment_options(),
+          options: svg_path.ContainmentOptions(
+            ..svg_path.default_containment_options(),
+            tolerance:,
+          ),
         )
         |> result.map_error(PathError),
       )
@@ -463,7 +477,10 @@ fn classify_boolean_edges(
           segment,
           within: right_path,
           side_sampling_distance: tolerance *. 16.0,
-          options: svg_path.default_containment_options(),
+          options: svg_path.ContainmentOptions(
+            ..svg_path.default_containment_options(),
+            tolerance:,
+          ),
         )
         |> result.map_error(PathError),
       )

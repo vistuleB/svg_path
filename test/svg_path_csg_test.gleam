@@ -10,6 +10,56 @@ import svg_path/csg
 
 const tolerance = 0.000001
 
+pub fn open_subpath_fill_closure_is_included_in_arrangement_test() {
+  let input =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
+      svg_path.Point(0.0, 10.0),
+    ])
+    |> svg_path.subpath_as_path
+  let assert Ok(output) =
+    csg.union(input, svg_path.path_empty(), using: svg_path.Nonzero)
+  assert_area(output.path, 50.0)
+  output.path |> svg_path.path_subpaths |> list.length |> should.equal(1)
+  output.build.segments |> list.length |> should.equal(3)
+  let assert Ok(reversed) =
+    csg.union(
+      svg_path.path_empty(),
+      svg_path.path_reverse(input),
+      using: svg_path.Nonzero,
+    )
+  assert_area(reversed.path, 50.0)
+}
+
+pub fn fine_csg_tolerance_preserves_square_boundary_test() {
+  let square = rectangle(0.0, 0.0, 10.0, 10.0)
+  let options = csg.Options(tolerance: 0.000000000001, minimum_chord: 0.00001)
+  let assert Ok(output) =
+    csg.union_with(
+      square,
+      svg_path.path_empty(),
+      using: svg_path.Nonzero,
+      options:,
+    )
+  assert_area(output.path, 100.0)
+  output.path |> svg_path.path_subpaths |> list.length |> should.equal(1)
+  let assert Ok(intersection) =
+    csg.intersection_with(square, square, using: svg_path.Nonzero, options:)
+  assert_area(intersection.path, 100.0)
+}
+
+pub fn fine_csg_tolerance_preserves_nested_contours_test() {
+  let square = rectangle(0.0, 0.0, 10.0, 10.0)
+  let assert Ok(output) =
+    csg.nested_contours_with(
+      square,
+      options: csg.Options(tolerance: 0.000000000001, minimum_chord: 0.00001),
+    )
+  assert_area(output.path, 100.0)
+  output.path |> svg_path.path_subpaths |> list.length |> should.equal(1)
+}
+
 type BooleanCase {
   BooleanCase(
     left: svg_path.Path,
