@@ -15,6 +15,7 @@
 //// assembles these representations directly is responsible for all documented
 //// invariants.
 
+import gleam/dict.{type Dict}
 import gleam/float
 import gleam/int
 import gleam/list
@@ -164,6 +165,200 @@ pub type ArrangementFaceEdge {
 /// A bridge has the same face on both sides.
 pub type ArrangementEdgeFaces {
   ArrangementEdgeFaces(edge_id: Int, left_face: Int, right_face: Int)
+}
+
+/// Signed winding change from the visual left face to the visual right face
+/// of the stored edge. Contributions must describe the actual winding boundary,
+/// which need not include every geometric preimage used to build the graph.
+@internal
+pub type EdgeWindingChange {
+  EdgeWindingChange(edge_id: Int, right_minus_left: Int)
+}
+
+@internal
+pub type FaceWinding {
+  FaceWinding(face_id: Int, value: Int)
+}
+
+@internal
+pub type WindingPropagationError {
+  InvalidWindingDual
+  InvalidWindingChanges
+  MissingWindingChange(edge_id: Int)
+  ContradictoryWinding(edge_id: Int, face_id: Int, assigned: Int, required: Int)
+  UnreachableWindingFace(face_id: Int)
+}
+
+type WindingNeighbor {
+  WindingNeighbor(edge_id: Int, face_id: Int, change: Int)
+}
+
+/// Assign signed integer windings to the faces of an already constructed dual.
+/// The infinite face starts at zero. Every edge must have exactly one supplied
+/// change, including zero for noncontributing edges. Opposite contributions
+/// must be summed by the caller before this operation.
+///
+/// This operation is deliberately separate from `dual`: an open directed
+/// boundary can have a valid dual but no consistent face-winding assignment.
+/// A nonzero change across a bridge, or inconsistent changes around a cycle,
+/// returns `ContradictoryWinding`. No geometry is sampled or modified.
+@internal
+pub fn face_windings(
+  dual: DualArrangementGraph,
+  changes: List(EdgeWindingChange),
+) -> Result(List(FaceWinding), WindingPropagationError) {
+  let face_ids =
+    dict.from_list(list.map(dual.faces, fn(face) { #(face.id, Nil) }))
+  let change_map =
+    dict.from_list(
+      list.map(changes, fn(change) {
+        #(change.edge_id, change.right_minus_left)
+      }),
+    )
+  let edge_ids =
+    dict.from_list(list.map(dual.edge_faces, fn(edge) { #(edge.edge_id, Nil) }))
+  use _ <- result.try(
+    case
+      dict.size(face_ids) == list.length(dual.faces)
+      && dict.size(edge_ids) == list.length(dual.edge_faces)
+    {
+      True -> Ok(Nil)
+      False -> Error(InvalidWindingDual)
+    },
+  )
+  use _ <- result.try(
+    case
+      dict.size(change_map) == list.length(changes)
+      && dict.size(change_map) == dict.size(edge_ids)
+    {
+      True -> Ok(Nil)
+      False -> Error(InvalidWindingChanges)
+    },
+  )
+  use outer <- result.try(
+    case list.filter(dual.faces, fn(face) { face.outer }) {
+      [outer] -> Ok(outer.id)
+      _ -> Error(InvalidWindingDual)
+    },
+  )
+  use neighbors <- result.try(winding_neighbors(
+    dual.edge_faces,
+    face_ids,
+    change_map,
+    dict.new(),
+  ))
+  use assigned <- result.try(propagate_face_windings(
+    [outer],
+    neighbors,
+    dict.from_list([#(outer, 0)]),
+  ))
+  list.try_map(dual.faces, fn(face) {
+    use value <- result.try(
+      dict.get(assigned, face.id)
+      |> result.map_error(fn(_) { UnreachableWindingFace(face.id) }),
+    )
+    Ok(FaceWinding(face.id, value))
+  })
+}
+
+fn winding_neighbors(
+  edges: List(ArrangementEdgeFaces),
+  face_ids: Dict(Int, Nil),
+  changes: Dict(Int, Int),
+  neighbors: Dict(Int, List(WindingNeighbor)),
+) -> Result(Dict(Int, List(WindingNeighbor)), WindingPropagationError) {
+  case edges {
+    [] -> Ok(neighbors)
+    [edge, ..rest] -> {
+      use _ <- result.try(
+        case
+          dict.has_key(face_ids, edge.left_face)
+          && dict.has_key(face_ids, edge.right_face)
+        {
+          True -> Ok(Nil)
+          False -> Error(InvalidWindingDual)
+        },
+      )
+      use change <- result.try(
+        dict.get(changes, edge.edge_id)
+        |> result.map_error(fn(_) { MissingWindingChange(edge.edge_id) }),
+      )
+      let neighbors =
+        add_winding_neighbor(
+          neighbors,
+          edge.left_face,
+          WindingNeighbor(edge.edge_id, edge.right_face, change),
+        )
+      let neighbors =
+        add_winding_neighbor(
+          neighbors,
+          edge.right_face,
+          WindingNeighbor(edge.edge_id, edge.left_face, 0 - change),
+        )
+      winding_neighbors(rest, face_ids, changes, neighbors)
+    }
+  }
+}
+
+fn add_winding_neighbor(
+  neighbors: Dict(Int, List(WindingNeighbor)),
+  face_id: Int,
+  neighbor: WindingNeighbor,
+) -> Dict(Int, List(WindingNeighbor)) {
+  let existing = dict.get(neighbors, face_id) |> result.unwrap([])
+  dict.insert(neighbors, face_id, [neighbor, ..existing])
+}
+
+fn propagate_face_windings(
+  pending: List(Int),
+  neighbors: Dict(Int, List(WindingNeighbor)),
+  assigned: Dict(Int, Int),
+) -> Result(Dict(Int, Int), WindingPropagationError) {
+  case pending {
+    [] -> Ok(assigned)
+    [face_id, ..rest] -> {
+      let assert Ok(value) = dict.get(assigned, face_id)
+      let incident = dict.get(neighbors, face_id) |> result.unwrap([])
+      use next <- result.try(assign_winding_neighbors(
+        incident,
+        value,
+        rest,
+        assigned,
+      ))
+      propagate_face_windings(next.0, neighbors, next.1)
+    }
+  }
+}
+
+fn assign_winding_neighbors(
+  neighbors: List(WindingNeighbor),
+  value: Int,
+  pending: List(Int),
+  assigned: Dict(Int, Int),
+) -> Result(#(List(Int), Dict(Int, Int)), WindingPropagationError) {
+  case neighbors {
+    [] -> Ok(#(pending, assigned))
+    [neighbor, ..rest] -> {
+      let required = value + neighbor.change
+      case dict.get(assigned, neighbor.face_id) {
+        Ok(existing) if existing != required ->
+          Error(ContradictoryWinding(
+            neighbor.edge_id,
+            neighbor.face_id,
+            existing,
+            required,
+          ))
+        Ok(_) -> assign_winding_neighbors(rest, value, pending, assigned)
+        Error(_) ->
+          assign_winding_neighbors(
+            rest,
+            value,
+            [neighbor.face_id, ..pending],
+            dict.insert(assigned, neighbor.face_id, required),
+          )
+      }
+    }
+  }
 }
 
 /// An arrangement graph and source-segment images for the paths from which it

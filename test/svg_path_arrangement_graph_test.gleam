@@ -452,6 +452,92 @@ pub fn dual_square_has_infinite_and_bounded_faces_test() {
   list.length(edge_faces) |> should.equal(4)
 }
 
+fn propagated_source_windings(subpaths: List(svg_path.Subpath)) {
+  let assert Ok(graph) = build_graph(subpaths, tolerance:, minimum_chord:)
+  let assert Ok(dual) = arrangement_graph.dual(graph)
+  let changes =
+    list.map(graph.edges, fn(edge) {
+      arrangement_graph.EdgeWindingChange(
+        edge.id,
+        edge.forward_multiplicity - edge.reverse_multiplicity,
+      )
+    })
+  arrangement_graph.face_windings(dual, changes)
+}
+
+pub fn dual_face_windings_follow_signed_nested_sources_test() {
+  let outer = square(0.0, 0.0, 10.0)
+  let inner = square(2.0, 2.0, 6.0)
+  list.each(
+    [
+      #([outer, inner], [0, 1, 2]),
+      #([outer, svg_path.subpath_reverse(inner)], [0, 0, 1]),
+      #([svg_path.subpath_reverse(outer), svg_path.subpath_reverse(inner)], [
+        -2,
+        -1,
+        0,
+      ]),
+    ],
+    fn(example) {
+      let assert Ok(values) = propagated_source_windings(example.0)
+      list.map(values, fn(value) { value.value })
+      |> list.sort(int.compare)
+      |> should.equal(example.1)
+    },
+  )
+}
+
+pub fn dual_face_windings_accumulate_overlap_and_multiplicity_test() {
+  let a = square(0.0, 0.0, 10.0)
+  let b = square(5.0, 5.0, 10.0)
+  let assert Ok(values) = propagated_source_windings([a, a, b])
+  list.map(values, fn(value) { value.value })
+  |> list.sort(int.compare)
+  |> should.equal([0, 1, 2, 3])
+}
+
+pub fn dual_face_windings_reject_open_boundary_but_accept_cancellation_test() {
+  let line =
+    svg_path.subpath_assert([
+      svg_path.Line(svg_path.Point(0.0, 0.0), svg_path.Point(10.0, 0.0)),
+    ])
+  let assert Error(arrangement_graph.ContradictoryWinding(..)) =
+    propagated_source_windings([line])
+  let assert Ok([arrangement_graph.FaceWinding(_, 0)]) =
+    propagated_source_windings([line, svg_path.subpath_reverse(line)])
+}
+
+pub fn dual_face_windings_empty_graph_test() {
+  let assert Ok([arrangement_graph.FaceWinding(0, 0)]) =
+    propagated_source_windings([])
+}
+
+pub fn dual_face_windings_validate_changes_and_detect_cycle_conflicts_test() {
+  let assert Ok(graph) =
+    build_graph([square(0.0, 0.0, 10.0)], tolerance:, minimum_chord:)
+  let assert Ok(dual) = arrangement_graph.dual(graph)
+  let changes =
+    list.map(graph.edges, fn(edge) {
+      arrangement_graph.EdgeWindingChange(
+        edge.id,
+        edge.forward_multiplicity - edge.reverse_multiplicity,
+      )
+    })
+  let assert [first, ..rest] = changes
+  let assert Error(arrangement_graph.InvalidWindingChanges) =
+    arrangement_graph.face_windings(dual, rest)
+  let assert Error(arrangement_graph.InvalidWindingChanges) =
+    arrangement_graph.face_windings(dual, [first, ..changes])
+  let assert Error(arrangement_graph.ContradictoryWinding(..)) =
+    arrangement_graph.face_windings(dual, [
+      arrangement_graph.EdgeWindingChange(
+        first.edge_id,
+        first.right_minus_left + 1,
+      ),
+      ..rest
+    ])
+}
+
 pub fn dual_narrow_nested_squares_do_not_skip_annular_face_test() {
   let assert Ok(graph) =
     build_graph(
