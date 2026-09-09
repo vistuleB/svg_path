@@ -87,7 +87,7 @@ pub fn generate_gallery_figures() {
       "gallery-package-title-second-offset-arrangement.svg",
       "Package title second offset arrangement",
       generated_debug_svg(
-        "examples/debug/package_title_second_offset_arrangement.svg",
+        "test/generated/gallery/gallery-package-title-second-offset-arrangement.svg",
       ),
     ),
     #(

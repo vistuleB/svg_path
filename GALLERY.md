@@ -116,13 +116,19 @@ single offset used to stress arrangement-based offset pruning.
 
 ![Package title second offset arrangement](docs/gallery/gallery-package-title-second-offset-arrangement.svg)
 
-Shows the second-offset arrangement graph for the package title stress fixture:
-red submerged edges, green non-submerged edges, yellow first-round dangling
-edges, and purple final survivor edges.
+Shows the full second-offset arrangement graph for two successive `1.05` offsets
+of the package title, using `Miter(4)`. The first offset uses default options;
+the second disables offside trimming so the drawing includes geometry that
+would otherwise disappear before the final in-band trimming stage. The graph
+and pruning results are captured from the production pipeline using Erlang
+runtime tracing, not a separate implementation of trimming.
 
-This is an archived diagnostic drawing. Its original graph-capture generator
-is not currently connected to the Gallery workflow, so regeneration copies the
-saved SVG; it does not verify this graph against current code.
+Red marks initially submerged offset edges; purple marks edges retaining
+positive final capacity. Yellow marks deleted edges already dangling immediately
+after submerged deletion (the original figure's first-round meaning). Green
+denotes other initially retained edges subsequently deleted, and pale gray
+denotes source-only graph edges.
+The original lettering is pale gray and its first offset is blue.
 
 ### Offset Text
 

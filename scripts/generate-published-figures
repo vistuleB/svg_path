@@ -11,6 +11,10 @@ mkdir -p "$readme_output" "$gallery_output" "$gallery_destination"
 "$root/scripts/test-fast"
 (
   cd "$root"
+  escript scripts/gallery/package_title_arrangement.escript
+)
+(
+  cd "$root"
   gleam run -m svg_path_gallery_test
 )
 (
@@ -81,4 +85,4 @@ done
 
 echo "Generated ${#readme_figures[@]} README figures in test/generated/readme."
 echo "Generated and promoted ${#gallery_figures[@]} Gallery figures."
-echo "Gallery verification: 28 recomputed figures; second-offset arrangement is an archived SVG (see GALLERY.md)."
+echo "Gallery verification: all 29 figures recomputed, including the production-traced second-offset arrangement."

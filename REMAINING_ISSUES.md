@@ -18,6 +18,20 @@ to address this Gallery failure first.
 Gallery figures, one explicitly archived arrangement figure, and nine README
 figures. `xmllint --noout` accepted the Gallery files and staged chat previews.
 
+The subsequent arrangement follow-up restored fresh generation of that final
+Gallery entry. `scripts/gallery/package_title_arrangement.escript` traces the
+actual production classification and capacity-reduction calls while running
+the second `1.05` offset. It does not duplicate pruning algorithms or alter the
+library. The initial capture was incorrectly taken after offside trimming.
+The corrected diagnostic disables offside trimming only for the second offset,
+capturing all 1,181 graph edges: 783 eligible offset edges, 471 initially
+submerged, 103 initially dangling and deleted, 24 deleted later, and 185
+retaining positive final capacity. Yellow uses the historical initially
+degree-one/deleted meaning, not a serial capacity decrement. The original SVG
+is archived at `docs/gallery/archive/second-offset-arrangement-2026-08-22.svg`.
+The maintained fixture writes directly into `test/generated/gallery` and has
+no dependency on that archived drawing.
+
 AD1 and OF5 have now been resolved in `c2e8865` and `3bf9b2a`. Their illustrated
 entries are retained below, explicitly marked resolved, as a record of this
 follow-up. They are no longer candidates for further fixes.
