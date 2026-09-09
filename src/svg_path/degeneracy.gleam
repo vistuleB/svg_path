@@ -1,6 +1,5 @@
 //// Degenerate and nearly-degenerate geometry cleanup.
 
-import gleam/float
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
@@ -8,13 +7,6 @@ import svg_path
 import svg_path/convex_hull
 import svg_path/internal/number
 import svg_path/point
-
-type LineWindow {
-  LineWindow(
-    replacement: List(svg_path.Segment),
-    remaining: List(svg_path.Segment),
-  )
-}
 
 /// The longest leading segment sequence certified to fit in a thin strip.
 @internal
@@ -41,8 +33,10 @@ pub type Error {
 
 /// Replace maximal contiguous line-degenerate windows in a subpath.
 ///
-/// Each selected window is replaced by its ordered line traversal. Windows are
-/// considered from left to right. Their exact curve-preserving convex hull is
+/// Each selected window preserves its start and end and the two longitudinal
+/// support extrema, ordered by their occurrence in the source. Intermediate
+/// local reversals need not be retained. Windows are considered from left to
+/// right. Their exact curve-preserving convex hull is
 /// grown one segment at a time, and the largest prefix certified to fit in a
 /// strip of the requested width is selected first. A `0.0` tolerance collapses
 /// a window only when its strip width is exactly zero.
@@ -88,178 +82,35 @@ fn colinearize_segments(
   case segments {
     [] -> Ok(list.reverse(converted))
     [first, ..rest] -> {
-      case leading_line_window([first, ..rest], tolerance) {
-        Some(LineWindow(replacement:, remaining:)) -> {
+      use pending <- result.try(
+        svg_path.subpath([first, ..rest]) |> result.map_error(PathError),
+      )
+      use prefix <- result.try(longest_thin_prefix(pending, tolerance:))
+      case prefix.segments {
+        [_, _, ..] -> {
+          use lines <- result.try(degenerate_window_traversal(prefix, tolerance))
           colinearize_segments(
-            remaining,
+            prefix.remaining,
+            tolerance,
+            converted: list.append(list.reverse(lines), converted),
+          )
+        }
+        _ -> {
+          use replacement <- result.try(
+            svg_path.segment_degenerate_lines(first, tolerance)
+            |> result.map_error(PathError),
+          )
+          let replacement = case replacement {
+            None -> [first]
+            Some(lines) -> lines
+          }
+          colinearize_segments(
+            rest,
             tolerance,
             converted: list.append(list.reverse(replacement), converted),
           )
         }
-        None -> {
-          use pending <- result.try(
-            svg_path.subpath([first, ..rest]) |> result.map_error(PathError),
-          )
-          use prefix <- result.try(longest_thin_prefix(pending, tolerance:))
-          case prefix.segments {
-            [_, _, ..] -> {
-              use lines <- result.try(degenerate_window_traversal(
-                prefix,
-                tolerance,
-              ))
-              colinearize_segments(
-                prefix.remaining,
-                tolerance,
-                converted: list.append(list.reverse(lines), converted),
-              )
-            }
-            _ -> {
-              use replacement <- result.try(
-                svg_path.segment_degenerate_lines(first, tolerance)
-                |> result.map_error(PathError),
-              )
-              let replacement = case replacement {
-                None -> [first]
-                Some(lines) -> lines
-              }
-              colinearize_segments(
-                rest,
-                tolerance,
-                converted: list.append(list.reverse(replacement), converted),
-              )
-            }
-          }
-        }
       }
-    }
-  }
-}
-
-fn leading_line_window(
-  segments: List(svg_path.Segment),
-  tolerance: Float,
-) -> Option(LineWindow) {
-  case segments {
-    [svg_path.Line(start:, end:), ..rest] -> {
-      case point.normalize(point.subtract(end, start)) {
-        Error(_) -> None
-        Ok(axis) -> {
-          let normal = svg_path.Point(0.0 -. axis.y, axis.x)
-          let start_support = point.dot(start, normal)
-          let end_support = point.dot(end, normal)
-          let lower = float.min(start_support, end_support)
-          let upper = float.max(start_support, end_support)
-          let endpoints = [end, start]
-          leading_line_window_loop(
-            rest,
-            tolerance,
-            axis,
-            normal,
-            lower,
-            upper,
-            accepted_count: 1,
-            endpoints:,
-          )
-        }
-      }
-    }
-    _ -> None
-  }
-}
-
-fn leading_line_window_loop(
-  remaining: List(svg_path.Segment),
-  tolerance: Float,
-  axis: svg_path.Point,
-  normal: svg_path.Point,
-  lower: Float,
-  upper: Float,
-  accepted_count accepted_count: Int,
-  endpoints endpoints: List(svg_path.Point),
-) -> Option(LineWindow) {
-  case remaining {
-    [svg_path.Line(end:, ..), ..rest] -> {
-      let support = point.dot(end, normal)
-      let candidate_lower = float.min(lower, support)
-      let candidate_upper = float.max(upper, support)
-      case candidate_upper -. candidate_lower <=. tolerance {
-        True ->
-          leading_line_window_loop(
-            rest,
-            tolerance,
-            axis,
-            normal,
-            candidate_lower,
-            candidate_upper,
-            accepted_count: accepted_count + 1,
-            endpoints: [end, ..endpoints],
-          )
-        False -> line_window_result(accepted_count, endpoints, axis, remaining)
-      }
-    }
-    _ -> line_window_result(accepted_count, endpoints, axis, remaining)
-  }
-}
-
-fn line_window_result(
-  accepted_count: Int,
-  reversed_endpoints: List(svg_path.Point),
-  axis: svg_path.Point,
-  remaining: List(svg_path.Segment),
-) -> Option(LineWindow) {
-  case accepted_count >= 2 {
-    False -> None
-    True -> {
-      let endpoints = list.reverse(reversed_endpoints)
-      let replacement =
-        endpoints
-        |> axial_protrusion_points(axis)
-        |> point_traversal_lines(0.0)
-      Some(LineWindow(replacement:, remaining:))
-    }
-  }
-}
-
-fn axial_protrusion_points(
-  ordered_points: List(svg_path.Point),
-  axis: svg_path.Point,
-) -> List(svg_path.Point) {
-  case unique_adjacent_points(ordered_points, 0.0) {
-    [] | [_] -> ordered_points
-    [first, second, ..rest] ->
-      axial_protrusion_points_loop(
-        previous: first,
-        current: second,
-        rest:,
-        axis:,
-        reversed_kept: [first],
-      )
-  }
-}
-
-fn axial_protrusion_points_loop(
-  previous previous: svg_path.Point,
-  current current: svg_path.Point,
-  rest rest: List(svg_path.Point),
-  axis axis: svg_path.Point,
-  reversed_kept reversed_kept: List(svg_path.Point),
-) -> List(svg_path.Point) {
-  case rest {
-    [] -> list.reverse([current, ..reversed_kept])
-    [next, ..tail] -> {
-      let previous_delta = point.dot(current, axis) -. point.dot(previous, axis)
-      let next_delta = point.dot(next, axis) -. point.dot(current, axis)
-      let reversed_kept = case previous_delta *. next_delta <. 0.0 {
-        True -> [current, ..reversed_kept]
-        False -> reversed_kept
-      }
-      axial_protrusion_points_loop(
-        previous: current,
-        current: next,
-        rest: tail,
-        axis:,
-        reversed_kept:,
-      )
     }
   }
 }
@@ -522,40 +373,6 @@ fn unique_points(
     }
   })
   |> list.reverse
-}
-
-fn unique_adjacent_points(
-  points: List(svg_path.Point),
-  tolerance: Float,
-) -> List(svg_path.Point) {
-  case points {
-    [] -> []
-    [first, ..rest] ->
-      unique_adjacent_points_loop(rest, tolerance, previous: first, kept: [
-        first,
-      ])
-      |> list.reverse
-  }
-}
-
-fn unique_adjacent_points_loop(
-  points: List(svg_path.Point),
-  tolerance: Float,
-  previous previous: svg_path.Point,
-  kept kept: List(svg_path.Point),
-) -> List(svg_path.Point) {
-  case points {
-    [] -> kept
-    [first, ..rest] ->
-      case point.distance(previous, first) <=. tolerance {
-        True -> unique_adjacent_points_loop(rest, tolerance, previous:, kept:)
-        False ->
-          unique_adjacent_points_loop(rest, tolerance, previous: first, kept: [
-            first,
-            ..kept
-          ])
-      }
-  }
 }
 
 fn point_is_already_present(

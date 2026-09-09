@@ -27,6 +27,32 @@ pub fn zero_line_does_not_introduce_a_middle_stop_test() {
     == [svg_path.Point(0.0, 0.0), svg_path.Point(2.0, 0.0)]
 }
 
+pub fn transverse_line_step_does_not_hide_longitudinal_extent_test() {
+  let cleaned = normalize("M0 0 L10 0 L10 0.0001 L1 0", 0.001)
+  let assert [start, extremum, end] = vertices(cleaned)
+  assert start == svg_path.Point(0.0, 0.0)
+  assert extremum.x == 10.0
+  assert end == svg_path.Point(1.0, 0.0)
+}
+
+pub fn line_run_preserves_global_extrema_not_every_local_reversal_test() {
+  assert normalize("M0 0 L4 0 L2 0 L10 0 L-3 0 L-1 0 L-10 0 L3 0", 0.0)
+    |> vertices
+    == [
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
+      svg_path.Point(-10.0, 0.0),
+      svg_path.Point(3.0, 0.0),
+    ]
+}
+
+pub fn line_and_quadratic_encoding_use_same_protrusion_policy_test() {
+  assert normalize("M0 0 L4 0 L2 0 L10 0 L-10 0 L3 0", 0.0)
+    |> vertices
+    == normalize("M0 0 Q2 0 4 0 L2 0 L10 0 L-10 0 L3 0", 0.0)
+    |> vertices
+}
+
 pub fn constant_beziers_do_not_introduce_a_middle_stop_test() {
   list.each(
     [
