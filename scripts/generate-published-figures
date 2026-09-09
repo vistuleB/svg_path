@@ -81,3 +81,4 @@ done
 
 echo "Generated ${#readme_figures[@]} README figures in test/generated/readme."
 echo "Generated and promoted ${#gallery_figures[@]} Gallery figures."
+echo "Gallery verification: 28 recomputed figures; second-offset arrangement is an archived SVG (see GALLERY.md)."

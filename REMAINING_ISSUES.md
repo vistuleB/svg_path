@@ -14,6 +14,9 @@ labeled archived diagnostic; reconnecting its original graph-capture generator
 is still needed for fresh verification. The next two audit issues were deferred
 to address this Gallery failure first.
 `scripts/test-fast` passed **1,560 tests** with this fix.
+`scripts/generate-published-figures` then completed: 28 freshly recomputed
+Gallery figures, one explicitly archived arrangement figure, and nine README
+figures. `xmllint --noout` accepted the Gallery files and staged chat previews.
 
 AD1 and OF5 have now been resolved in `c2e8865` and `3bf9b2a`. Their illustrated
 entries are retained below, explicitly marked resolved, as a record of this
