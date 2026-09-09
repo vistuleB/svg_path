@@ -6,6 +6,29 @@ import svg_path/intersections
 import svg_path/point
 import svg_path/transform
 
+pub fn arc_window_subdivision_preserves_original_ellipse_test() {
+  let curve =
+    svg_path.CubicBezier(
+      start: svg_path.Point(-100.9882874507623, -19.817662984205167),
+      control1: svg_path.Point(-98.39429354181092, -11.553611592855663),
+      control2: svg_path.Point(-94.47604615998095, -2.517586549964266),
+      end: svg_path.Point(-89.11764705882354, 7.529411764705882),
+    )
+  let arc =
+    svg_path.Arc(
+      start: curve.end,
+      radius: svg_path.Point(16.0, 16.0),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: True,
+      end: svg_path.Point(-89.11764705882354, -7.529411764705882),
+    )
+  let assert Ok(found) = intersections.segment(curve, arc)
+  should.be_true(
+    list.any(found, fn(hit) { hit.left_t == 1.0 && hit.right_t == 0.0 }),
+  )
+}
+
 pub fn ray_crossing_rejects_unmatched_clamped_endpoint_root_test() {
   let curve =
     svg_path.CubicBezier(

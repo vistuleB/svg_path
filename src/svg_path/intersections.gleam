@@ -3989,6 +3989,175 @@ fn parameter_tolerance_for_chord(direction: Point, tolerance: Float) -> Float {
 
 const window_preserving_maximum_windows = 1000
 
+// Private prototype switch. Both modes retain the cheap bounding-box check;
+// EnclosingPolygons additionally tests convex enclosures when boxes overlap.
+type WindowBounds {
+  BoundingBoxes
+  EnclosingPolygons
+}
+
+const window_bounds = EnclosingPolygons
+
+// The convex hull of these points contains the requested curve portion.
+// Points are not boundary-ordered. For arcs, use the original center
+// parameterization rather than reconstructing an ellipse from cut endpoints.
+fn segment_enclosing_points(
+  segment: Segment,
+  from: Float,
+  to: Float,
+) -> Result(List(Point), svg_path.Error) {
+  case segment {
+    Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:) -> {
+      use arc <- result.try(
+        ellipse.endpoint_to_center(ellipse.EndpointArcData(
+          ellipse.EllipsePoint(start.x, start.y),
+          ellipse.EllipsePoint(radius.x, radius.y),
+          x_axis_rotation,
+          large_arc,
+          sweep,
+          ellipse.EllipsePoint(end.x, end.y),
+        ))
+        |> result.map_error(fn(_) { svg_path.DegenerateArc }),
+      )
+      Ok(arc_enclosing_points(arc, from, to))
+    }
+    _ -> {
+      use piece <- result.try(svg_path.segment_between(segment, from, to))
+      case piece {
+        Line(start:, end:) -> Ok([start, end])
+        QuadraticBezier(start:, control:, end:) -> Ok([start, control, end])
+        CubicBezier(start:, control1:, control2:, end:) ->
+          Ok([start, control1, control2, end])
+        Arc(..) -> Error(svg_path.DegenerateArc)
+      }
+    }
+  }
+}
+
+fn arc_enclosing_points(
+  arc: ellipse.CenterArcData,
+  from: Float,
+  to: Float,
+) -> List(Point) {
+  let middle = from +. { to -. from } /. 2.0
+  let span = arc.delta_angle *. { to -. from }
+  case float.absolute_value(span) >. 90.0 {
+    True ->
+      list.append(
+        arc_enclosing_points(arc, from, middle),
+        arc_enclosing_points(arc, middle, to),
+      )
+    False -> {
+      let a = ellipse.arc_point(arc, from)
+      let b = ellipse.arc_point(arc, to)
+      let m = ellipse.arc_point(arc, middle)
+      // Tangent intersection = center + radial(midpoint) / cos(half-span).
+      // No nearly-parallel line solve: cos(half-span) >= sqrt(1/2).
+      let divisor = trig.cos_degrees(span /. 2.0)
+      [
+        Point(a.x, a.y),
+        Point(b.x, b.y),
+        Point(
+          arc.center.x +. { m.x -. arc.center.x } /. divisor,
+          arc.center.y +. { m.y -. arc.center.y } /. divisor,
+        ),
+      ]
+    }
+  }
+}
+
+// A separating axis for the two convex hulls is sufficient. Trying every
+// point-pair normal includes all hull-edge normals without constructing hulls.
+// Pair directions and coordinate axes also cover line/point degeneracies.
+// The allowance is a floating-point heuristic, not geometric tolerance.
+fn enclosing_points_disjoint(left: List(Point), right: List(Point)) -> Bool {
+  case left, right {
+    [], _ | _, [] -> False
+    [origin, ..], _ -> {
+      let points = list.append(left, right)
+      let scale =
+        list.fold(points, 0.0, fn(scale, p) {
+          float.max(
+            scale,
+            float.max(
+              float.max(float.absolute_value(p.x), float.absolute_value(p.y)),
+              float.max(
+                float.absolute_value(p.x -. origin.x),
+                float.absolute_value(p.y -. origin.y),
+              ),
+            ),
+          )
+        })
+      let axes =
+        list.append(enclosing_point_axes(left), enclosing_point_axes(right))
+      list.any([Point(1.0, 0.0), Point(0.0, 1.0), ..axes], fn(axis) {
+        let #(a, b) = enclosing_projection_interval(left, origin, axis)
+        let #(c, d) = enclosing_projection_interval(right, origin, axis)
+        let margin =
+          0.000000000001
+          *. scale
+          *. { float.absolute_value(axis.x) +. float.absolute_value(axis.y) }
+        b +. margin <. c || d +. margin <. a
+      })
+    }
+  }
+}
+
+fn enclosing_point_axes(points: List(Point)) -> List(Point) {
+  case points {
+    [] -> []
+    [a, ..rest] ->
+      list.fold(rest, enclosing_point_axes(rest), fn(axes, b) {
+        let dx = b.x -. a.x
+        let dy = b.y -. a.y
+        [Point(0.0 -. dy, dx), Point(dx, dy), ..axes]
+      })
+  }
+}
+
+fn enclosing_projection_interval(
+  points: List(Point),
+  origin: Point,
+  axis: Point,
+) -> #(Float, Float) {
+  let assert [first, ..rest] = points
+  let initial =
+    { first.x -. origin.x } *. axis.x +. { first.y -. origin.y } *. axis.y
+  list.fold(rest, #(initial, initial), fn(bounds, p) {
+    let value = { p.x -. origin.x } *. axis.x +. { p.y -. origin.y } *. axis.y
+    #(float.min(bounds.0, value), float.max(bounds.1, value))
+  })
+}
+
+fn window_bounds_overlap(
+  left: Segment,
+  right: Segment,
+  window: WindowPreservingWindow,
+  left_box: BoundingBox,
+  right_box: BoundingBox,
+) -> Result(Bool, svg_path.Error) {
+  case window_preserving_boxes_overlap(left_box, right_box, 0.000000000001) {
+    False -> Ok(False)
+    True ->
+      case window_bounds {
+        BoundingBoxes -> Ok(True)
+        EnclosingPolygons -> {
+          use a <- result.try(segment_enclosing_points(
+            left,
+            window.left_from,
+            window.left_to,
+          ))
+          use b <- result.try(segment_enclosing_points(
+            right,
+            window.right_from,
+            window.right_to,
+          ))
+          Ok(!enclosing_points_disjoint(a, b))
+        }
+      }
+  }
+}
+
 type WindowPreservingWindow {
   WindowPreservingWindow(
     left_from: Float,
@@ -4701,25 +4870,30 @@ fn window_preserving_inspect_window(
 ) -> Result(WindowPreservingDecision, svg_path.Error) {
   let WindowPreservingWindow(left_from:, left_to:, right_from:, right_to:) =
     window
-  use left_piece <- result.try(svg_path.segment_between(
+  use left_box <- result.try(window_segment_bounding_box(
     left,
-    from: left_from,
-    to: left_to,
+    left_from,
+    left_to,
   ))
-  use right_piece <- result.try(svg_path.segment_between(
+  use right_box <- result.try(window_segment_bounding_box(
     right,
-    from: right_from,
-    to: right_to,
+    right_from,
+    right_to,
   ))
-  use left_box <- result.try(svg_path.segment_bounding_box(left_piece))
-  use right_box <- result.try(svg_path.segment_bounding_box(right_piece))
   // Bounding boxes are an enclosure test, not a coincidence test. Expanding
   // them by the geometric certification tolerance creates a two-dimensional
   // band of surviving windows around a tangency.
   // Exact extrema formulas still incur floating-point rounding when two boxes
   // merely touch at a tangency. This fixed enclosure slack is independent of
   // the caller's geometric coincidence tolerance.
-  case window_preserving_boxes_overlap(left_box, right_box, 0.000000000001) {
+  use overlapping <- result.try(window_bounds_overlap(
+    left,
+    right,
+    window,
+    left_box,
+    right_box,
+  ))
+  case overlapping {
     False -> Ok(Disjoint)
     True -> {
       use left_start <- result.try(svg_path.segment_point(left, at: left_from))
@@ -4797,6 +4971,34 @@ fn window_preserving_inspect_window(
           }
         }
       }
+    }
+  }
+}
+
+fn window_segment_bounding_box(
+  segment: Segment,
+  from: Float,
+  to: Float,
+) -> Result(BoundingBox, svg_path.Error) {
+  case segment {
+    Arc(..) -> {
+      // Do not round-trip a short arc portion through endpoint encoding:
+      // distinct parameters can produce identical rounded endpoints. These
+      // enclosures evaluate the original ellipse and remain meaningful there.
+      use points <- result.try(segment_enclosing_points(segment, from, to))
+      let assert [first, ..rest] = points
+      Ok(
+        list.fold(rest, svg_path.BoundingBox(first, first), fn(box, p) {
+          svg_path.BoundingBox(
+            Point(float.min(box.min.x, p.x), float.min(box.min.y, p.y)),
+            Point(float.max(box.max.x, p.x), float.max(box.max.y, p.y)),
+          )
+        }),
+      )
+    }
+    _ -> {
+      use piece <- result.try(svg_path.segment_between(segment, from, to))
+      svg_path.segment_bounding_box(piece)
     }
   }
 }
@@ -4941,6 +5143,17 @@ fn window_preserving_split_window_nine(
     WindowPreservingWindow(left_b, left_to, right_a, right_b),
     WindowPreservingWindow(left_b, left_to, right_b, right_to),
   ]
+  |> list.filter(fn(child) {
+    // Discard empty or unchanged rectangles produced by rounded cut points.
+    child.left_from <. child.left_to
+    && child.right_from <. child.right_to
+    && {
+      child.left_from >. left_from
+      || child.left_to <. left_to
+      || child.right_from >. right_from
+      || child.right_to <. right_to
+    }
+  })
 }
 
 fn window_preserving_insert_intersection(
