@@ -3989,6 +3989,8 @@ fn parameter_tolerance_for_chord(direction: Point, tolerance: Float) -> Float {
 
 const window_preserving_maximum_windows = 1000
 
+const window_preserving_distinct_parameter_tolerance = 0.0000001
+
 type WindowPreservingWindow {
   WindowPreservingWindow(
     left_from: Float,
@@ -4455,8 +4457,8 @@ fn window_preserving_sampled_crossing_candidate(
         right,
         left_t,
         right_t,
-        tolerance,
-        remaining: 20,
+        float.min(tolerance, 0.000000000000001),
+        remaining: 32,
       ))
       case candidate {
         None -> Ok(candidates)
@@ -4558,19 +4560,21 @@ fn window_preserving_search(
   case pending {
     [] -> Ok(list.reverse(intersections))
     [#(window, depth), ..rest] -> {
-      case window_preserving_window_already_resolved(window, intersections) {
-        True ->
+      case window_preserving_residual_windows(window, intersections) {
+        Some(residuals) ->
           window_preserving_search(
             left,
             right,
             tolerance,
             WindowPreservingSearchState(
-              pending: rest,
+              pending: list.fold(residuals, rest, fn(pending, residual) {
+                [#(residual, depth), ..pending]
+              }),
               intersections:,
               examined:,
             ),
           )
-        False ->
+        None ->
           case examined >= window_preserving_maximum_windows {
             True ->
               Error(svg_path.IntersectionTerminalWindowLimitExceeded(
@@ -4596,17 +4600,47 @@ fn window_preserving_search(
                     ),
                   )
                 Candidate(candidate) -> {
+                  // Geometric residual alone gives poor parameter accuracy
+                  // at shallow crossings. Polish before excluding its small
+                  // parameter neighbourhood, rather than excluding the whole
+                  // window in which this candidate happened to be found.
+                  use polished <- result.try(
+                    window_preserving_refine_tangent_crossing(
+                      left,
+                      right,
+                      candidate.left_t,
+                      candidate.right_t,
+                      float.min(tolerance, 0.000000000000001),
+                      remaining: 32,
+                    ),
+                  )
+                  let candidate = option.unwrap(polished, candidate)
                   let intersections =
                     window_preserving_insert_intersection(
                       intersections,
                       candidate,
                     )
+                  let pending = case
+                    window_preserving_residual_windows(window, intersections)
+                  {
+                    Some(residuals) ->
+                      list.fold(residuals, rest, fn(pending, residual) {
+                        [#(residual, depth), ..pending]
+                      })
+                    None if depth > 0 ->
+                      list.fold(
+                        window_preserving_split_window_nine(window),
+                        rest,
+                        fn(pending, child) { [#(child, depth - 1), ..pending] },
+                      )
+                    None -> rest
+                  }
                   window_preserving_search(
                     left,
                     right,
                     tolerance,
                     WindowPreservingSearchState(
-                      pending: rest,
+                      pending:,
                       intersections:,
                       examined: examined + 1,
                     ),
@@ -4652,39 +4686,41 @@ fn window_preserving_search(
   }
 }
 
-fn window_preserving_window_already_resolved(
+fn window_preserving_residual_windows(
   window: WindowPreservingWindow,
   intersections: List(svg_path.SegmentIntersection),
-) -> Bool {
+) -> Option(List(WindowPreservingWindow)) {
   let WindowPreservingWindow(left_from:, left_to:, right_from:, right_to:) =
     window
-  let left_width = left_to -. left_from
-  let right_width = right_to -. right_from
-  left_width <=. 0.125
-  && right_width <=. 0.125
-  && list.any(intersections, fn(intersection) {
-    window_preserving_parameter_near_interval(
-      intersection.left_t,
-      left_from,
-      left_to,
-      left_width *. 2.0,
-    )
-    && window_preserving_parameter_near_interval(
-      intersection.right_t,
-      right_from,
-      right_to,
-      right_width *. 2.0,
-    )
-  })
-}
-
-fn window_preserving_parameter_near_interval(
-  parameter: Float,
-  from: Float,
-  to: Float,
-  margin: Float,
-) -> Bool {
-  parameter >=. from -. margin && parameter <=. to +. margin
+  case intersections {
+    [] -> None
+    [hit, ..rest] -> {
+      let d = window_preserving_distinct_parameter_tolerance
+      let a = float.max(left_from, hit.left_t -. d)
+      let b = float.min(left_to, hit.left_t +. d)
+      let c = float.max(right_from, hit.right_t -. d)
+      let e = float.min(right_to, hit.right_t +. d)
+      case a <. b && c <. e {
+        False -> window_preserving_residual_windows(window, rest)
+        True -> {
+          // Subtract only the root's deduplication rectangle. The four
+          // remaining rectangles cover everything outside it, including
+          // other intersections sharing either one of its parameters.
+          Some(
+            list.filter(
+              [
+                WindowPreservingWindow(left_from, a, right_from, right_to),
+                WindowPreservingWindow(b, left_to, right_from, right_to),
+                WindowPreservingWindow(a, b, right_from, c),
+                WindowPreservingWindow(a, b, e, right_to),
+              ],
+              fn(w) { w.left_from <. w.left_to && w.right_from <. w.right_to },
+            ),
+          )
+        }
+      }
+    }
+  }
 }
 
 type WindowPreservingDecision {
@@ -4949,9 +4985,10 @@ fn window_preserving_insert_intersection(
 ) -> List(svg_path.SegmentIntersection) {
   case
     list.any(intersections, fn(existing) {
-      float.absolute_value(existing.left_t -. candidate.left_t) <=. 0.0000001
+      float.absolute_value(existing.left_t -. candidate.left_t)
+      <=. window_preserving_distinct_parameter_tolerance
       && float.absolute_value(existing.right_t -. candidate.right_t)
-      <=. 0.0000001
+      <=. window_preserving_distinct_parameter_tolerance
     })
   {
     True -> intersections

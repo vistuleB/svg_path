@@ -6,6 +6,47 @@ import svg_path/intersections
 import svg_path/point
 import svg_path/transform
 
+pub fn clustered_cubic_crossings_are_all_found_test() {
+  assert_three_cubic_crossings(0.2, 0.21, 0.22)
+}
+
+pub fn nearby_cubic_crossings_do_not_hide_distant_crossing_test() {
+  assert_three_cubic_crossings(0.2, 0.21, 0.8)
+}
+
+fn assert_three_cubic_crossings(a: Float, b: Float, c: Float) {
+  let constant = 0.0 -. a *. b *. c
+  let linear = a *. b +. a *. c +. b *. c
+  let quadratic = 0.0 -. a -. b -. c
+  let curve =
+    svg_path.CubicBezier(
+      start: svg_path.Point(0.0, constant),
+      control1: svg_path.Point(1.0 /. 3.0, constant +. linear /. 3.0),
+      control2: svg_path.Point(
+        2.0 /. 3.0,
+        constant +. 2.0 *. linear /. 3.0 +. quadratic /. 3.0,
+      ),
+      end: svg_path.Point(1.0, constant +. linear +. quadratic +. 1.0),
+    )
+  let axis =
+    svg_path.QuadraticBezier(
+      start: svg_path.Point(0.0, 0.0),
+      control: svg_path.Point(0.5, 0.0),
+      end: svg_path.Point(1.0, 0.0),
+    )
+  list.each([#(curve, axis), #(axis, curve)], fn(pair) {
+    let assert Ok(found) = intersections.segment(pair.0, pair.1)
+    list.length(found) |> should.equal(3)
+    list.each([a, b, c], fn(expected) {
+      list.any(found, fn(hit) {
+        float.absolute_value(hit.left_t -. expected) <. 0.0000001
+        && float.absolute_value(hit.right_t -. expected) <. 0.0000001
+      })
+      |> should.be_true
+    })
+  })
+}
+
 pub fn circular_arc_intersections_respect_local_axis_rotation_test() {
   list.each([False, True], fn(sweep) {
     list.each([0.0, 30.0, 90.0, -90.0], fn(left_rotation) {
