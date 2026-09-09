@@ -2995,6 +2995,18 @@ pub fn segment_directions_with(
     }
     Line(..) | QuadraticBezier(..) | CubicBezier(..) ->
       case t {
+        _ if t <. 0.0 || t >. 1.0 -> {
+          // Splitting 0..1 at an extrapolated t reverses one child, and both
+          // children can then approach t from the same side. Reparameterize
+          // an increasing neighborhood so the existing singularity-safe
+          // interior logic really sees the two different sides of t.
+          use local <- result.try(segment_between(
+            segment,
+            from: t -. 1.0,
+            to: t +. 1.0,
+          ))
+          segment_directions_with(local, at: 0.5, options:)
+        }
         0.0 ->
           Ok(Directions(
             incoming: None,

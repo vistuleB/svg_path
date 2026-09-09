@@ -1,3 +1,4 @@
+import gleam/list
 import gleam/option.{None, Some}
 import gleeunit
 import svg_path
@@ -29,6 +30,63 @@ pub fn segment_directions_normalize_ordinary_tangent_test() {
 
   assert point_near(incoming, svg_path.Point(0.6, 0.8))
   assert point_near(outgoing, svg_path.Point(0.6, 0.8))
+}
+
+pub fn extrapolated_line_directions_follow_increasing_parameter_test() {
+  let segment =
+    svg_path.Line(svg_path.Point(0.0, 0.0), svg_path.Point(10.0, 0.0))
+  list.each([-1.0, 2.0], fn(t) {
+    let assert Ok(svg_path.Directions(Some(incoming), Some(outgoing))) =
+      svg_path.segment_directions(segment, at: t)
+    assert point_near(incoming, svg_path.Point(1.0, 0.0))
+    assert point_near(outgoing, svg_path.Point(1.0, 0.0))
+  })
+}
+
+pub fn extrapolated_quadratic_stationary_directions_keep_both_sides_test() {
+  // x=(t+1)^2 and x=(t-2)^2 have stationary reversals outside [0,1].
+  list.each(
+    [
+      #(
+        svg_path.QuadraticBezier(
+          svg_path.Point(1.0, 0.0),
+          svg_path.Point(2.0, 0.0),
+          svg_path.Point(4.0, 0.0),
+        ),
+        -1.0,
+      ),
+      #(
+        svg_path.QuadraticBezier(
+          svg_path.Point(4.0, 0.0),
+          svg_path.Point(2.0, 0.0),
+          svg_path.Point(1.0, 0.0),
+        ),
+        2.0,
+      ),
+    ],
+    fn(pair) {
+      let #(segment, t) = pair
+      let assert Ok(svg_path.Directions(Some(incoming), Some(outgoing))) =
+        svg_path.segment_directions(segment, at: t)
+      assert point_near(incoming, svg_path.Point(-1.0, 0.0))
+      assert point_near(outgoing, svg_path.Point(1.0, 0.0))
+    },
+  )
+}
+
+pub fn extrapolated_cubic_stationary_direction_does_not_reverse_test() {
+  // x=(t+1)^3 is stationary at -1 without changing traversal direction.
+  let segment =
+    svg_path.CubicBezier(
+      svg_path.Point(1.0, 0.0),
+      svg_path.Point(2.0, 0.0),
+      svg_path.Point(4.0, 0.0),
+      svg_path.Point(8.0, 0.0),
+    )
+  let assert Ok(svg_path.Directions(Some(incoming), Some(outgoing))) =
+    svg_path.segment_directions(segment, at: -1.0)
+  assert point_near(incoming, svg_path.Point(1.0, 0.0))
+  assert point_near(outgoing, svg_path.Point(1.0, 0.0))
 }
 
 pub fn segment_directions_recover_collapsed_cubic_endpoint_tangent_test() {

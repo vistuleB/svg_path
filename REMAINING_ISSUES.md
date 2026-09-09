@@ -1,6 +1,6 @@
 # Remaining audit issues
 
-Updated 2026-09-09, including OF2 (`316f9dd`) and the CH1 follow-up.
+Updated 2026-09-09, including the SP1 follow-up after `f57dd01`.
 
 AD1 and OF5 have now been resolved in `c2e8865` and `3bf9b2a`. Their illustrated
 entries are retained below, explicitly marked resolved, as a record of this
@@ -279,17 +279,26 @@ control reset, repeated Z, and a leading-Z error. They failed before the fix.
 This follows [SVG closepath semantics](https://www.w3.org/TR/SVG/paths.html#PathDataClosePathCommand).
 The illustration shows the former rejection and the intended continuation.
 
-### SP1 — extrapolated directions inherit reversed split-child orientation
+### SP1 — resolved: extrapolated directions inherited split-child orientation
 
 ![SP1 — extrapolated directions inherit reversed split-child orientation](examples/debug/v1_review_visuals/sp1.svg)
 
 **Module/function:** `svg_path.segment_directions_with`.
 **Evidence:** reproduced on a Line outside t in [0,1].
 
-For x=10t, the incoming direction at t=−1 and outgoing direction at t=2 can
-point backward. Obtain directions relative to increasing original parameter,
-not a reversed split child. Preserve endpoint/stationary behavior within [0,1];
-the existing local-neighborhood prototype is not a complete Arc policy.
+For x=10t, the incoming direction at t=−1 and outgoing direction at t=2 pointed
+backward. Polynomial segments outside [0,1] are now reparameterized over the
+increasing interval [t−1,t+1], then evaluated at its interior midpoint using
+the existing singularity-safe direction logic. This supplies genuinely opposite
+sides of t, including at stationary points. Arc handling already uses its
+derivative and is unchanged, as is all handling within [0,1].
+
+Three regressions cover extrapolated Lines, quadratic stationary reversals,
+and a cubic stationary point with no reversal. The Line and Cubic tests failed
+before the fix; the Quadratic test guards existing correct behavior. The
+illustration shows the old Line failure.
+Verification in the combined SP1/OF3 worktree: `scripts/test-fast` passed
+1,559 tests; `scripts/test-slow` passed 26 tests.
 
 ### TS1 — resolved: compact transform serialization discarded shear
 
