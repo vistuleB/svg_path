@@ -1,5 +1,84 @@
 # Remaining audit issues
 
+## Face-winding classification refactor (A): wired
+
+`arrangement.face_windings` propagates caller-supplied signed edge changes over
+an existing dual, seeding the infinite face at zero. Dual construction remains
+independent. Inconsistent changes, missing assignments, and unreachable faces
+return explicit errors. Tests cover nested orientations, overlaps, multiplicity,
+empty graphs, open boundaries, cancellation, and cycle contradictions.
+
+Classification graphs now include the exact assembled winding boundary.
+Each winding segment occurrence is matched to one unused original segment
+occurrence in either direction. Unmatched winding segments, including caps, are
+appended with winding-only provenance, preserving the indices of original
+preimages. Their expected-classification contribution is zero, but their actual
+signed winding contribution is retained. Existing stroke caps already present
+in the input outline are matched, not duplicated. Opposite coincident caps
+remain separate occurrences and cancel through their signed contributions.
+
+General submerged classification and side-local cusp classification now obtain
+their measured side values from the propagated faces. The expected-versus-
+measured comparison is unchanged. The old sampler remains for the explicit
+comparison diagnostic; propagation errors are not caught and replaced by probes.
+Algorithm B (final-loop orientation) and the parity-reduction algorithm are
+unchanged.
+
+`scripts/test-fast` passes 1,580 tests. The diagnostic
+`escript examples/debug/face_winding_comparison.escript` captures production
+classification calls and compares both measurements and decisions. All 18
+captures agree: figure-eight and concave-square bands, open bands with Butt,
+RoundCap and Square caps in both offset orders and with negative offsets,
+open single offsets of either sign with every cap style, and the first
+lettering offset at 0.4. It verifies actual winding contributions rather than
+inferring them from expected opinions.
+`scripts/generate-published-figures` also completes: 9 README and 29 Gallery
+figures regenerated, all byte-identical to the committed SVGs.
+The five successive lettering offsets at 0.4 also succeed with unchanged
+subpath counts (10, 13, 9, 10, 6) and an unchanged SVG.
+
+### Follow-up: capped bands and shallow stroke delegation
+
+Public open bands now submit the complete capped outline as output candidates,
+with the same outline defining winding. Arbitrary winding-only boundaries in
+the generic trimmer remain ineligible. Tests that expected capless open-band
+results were corrected; a regression covers all three cap styles, both final
+trimming modes, and both offset orders.
+
+Nonzero strokes now call `offset.subpath_band_with` with symmetric offsets.
+Duplicate stroke side construction, cap construction, trimming, and orientation
+helpers were removed. The public stroke API is unchanged: it explicitly selects
+no per-side cusp trimming and final in-band trimming, preserving its existing
+policy. Zero-length stroke behavior and dash extraction remain in `stroke`.
+An exact-result regression compares open and closed strokes against the public
+band operation for every cap style. `scripts/test-fast` passes 1,582 tests.
+
+`scripts/generate-published-figures` completes (9 README and 29 Gallery figures).
+Only dashed-strokes and recursive-dashes SVGs change. Dashed-stroke outlines
+retain their contour/cap counts but have additional cubic subdivision from
+synchronized band construction. The recursive-dashes SVG has one additional
+two-arc contour whose endpoints coincide at the displayed five-decimal
+precision; no cleanup policy was added to suppress it. All other published
+SVGs are byte-identical. The stroke module is 264 lines shorter.
+
+The additional recursive-dash contour was subsequently traced to a discrepancy
+between adjacent-loop culling and AG shared-endpoint sliver handling. Culling
+rejected a hit near either endpoint; the AG rejects it only near both endpoints.
+Culling now uses the same both-parameters condition and the AG builder shares
+its `0.0001` constant. A regression using the exact arc/line pair fails before
+the fix and passes afterward, including reversed traversal. The production
+trace now retains join interval `[0, 0.999895513484253]` and line interval
+`[7.905709238521863e-7, 1]`. The isolated final stroke has one closed contour;
+the extra two-arc contour is gone. `scripts/test-fast` passes 1,583 tests.
+Fresh previews: `examples/debug/recursive-dashes-current.svg` and
+`examples/debug/recursive-dash-isolated-current.svg`.
+The full published-figure generator was rerun after this fix: all 9 README
+and 29 Gallery figures completed; current Gallery assets include the fix.
+The separate solver endpoint-omission investigation remains saved in
+`examples/debug/JOIN_LINE_MISSING_ENDPOINT.md`; this fix does not change the solver.
+
+## Earlier audit record
+
 Updated 2026-09-09, including the SP1 and OF3 follow-ups after `f57dd01`.
 
 Gallery regeneration subsequently exposed and resolved an offset-map cumulative

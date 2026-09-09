@@ -1,0 +1,7 @@
+%% Exact outer join and following line captured before cap assembly.
+{{arc,{point,430.66681589309076,178.69245771161582},
+       {point,3.0,3.0},0.0,false,false,
+       {point,430.670203101245,178.69477431938788}},
+ {line,{point,430.670203101245,178.69477431938788},
+       {point,430.22232031893986,178.38890397610967}},
+ {intersection_options,1.0e-9,48,no_parameter_snap}}.
