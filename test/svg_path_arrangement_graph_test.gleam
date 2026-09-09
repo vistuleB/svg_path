@@ -50,6 +50,111 @@ pub fn closed_cubic_is_split_instead_of_discarded_test() {
   assert list.length(graph.edges) == 2
 }
 
+pub fn closed_cubic_source_intervals_preserve_final_endpoint_test() {
+  let assert Ok(build) =
+    arrangement_graph.build_with(
+      [closed_cubic()],
+      vertex_tolerance: 0.000000001,
+      minimum_chord: 0.00000001,
+      endpoint_sliver_tolerance: 0.0,
+    )
+  let assert [image] = build.segment_images
+  assert list.map(image.edges, fn(edge) { #(edge.ta, edge.tb) })
+    == [#(0.0, 0.5), #(0.5, 1.0)]
+}
+
+pub fn self_crossing_source_intervals_preserve_each_occurrence_test() {
+  let source = self_crossing_cubic()
+  let assert Ok(build) =
+    arrangement_graph.build_with(
+      [source],
+      vertex_tolerance: 0.000000001,
+      minimum_chord: 0.00000001,
+      endpoint_sliver_tolerance: 0.0,
+    )
+  let assert [image] = build.segment_images
+  assert_image_intervals(source, build.graph, image.edges, 0.0)
+}
+
+pub fn repeated_graph_edge_splits_compose_reverse_source_intervals_test() {
+  let source =
+    svg_path.Line(svg_path.Point(0.0, 0.0), svg_path.Point(10.0, 0.0))
+  let reverse = svg_path.segment_reverse(source)
+  let assert Ok(build) =
+    arrangement_graph.build_with(
+      [
+        source,
+        reverse,
+        svg_path.Line(svg_path.Point(3.0, -1.0), svg_path.Point(3.0, 1.0)),
+        svg_path.Line(svg_path.Point(7.0, -1.0), svg_path.Point(7.0, 1.0)),
+      ],
+      vertex_tolerance: 0.000000001,
+      minimum_chord: 0.00000001,
+      endpoint_sliver_tolerance: 0.0,
+    )
+  let assert [forward_image, reverse_image, ..] = build.segment_images
+  assert list.length(forward_image.edges) == 3
+  assert list.length(reverse_image.edges) == 3
+  assert_image_intervals(source, build.graph, forward_image.edges, 0.0)
+  assert_image_intervals(reverse, build.graph, reverse_image.edges, 0.0)
+}
+
+pub fn closed_curve_duplicate_intervals_survive_later_graph_cuts_test() {
+  let source = closed_cubic()
+  let reverse = svg_path.segment_reverse(source)
+  let assert Ok(build) =
+    arrangement_graph.build_with(
+      [
+        source,
+        reverse,
+        svg_path.Line(svg_path.Point(-2.0, 0.75), svg_path.Point(2.0, 0.75)),
+        svg_path.Line(svg_path.Point(-2.0, 1.0), svg_path.Point(2.0, 1.0)),
+      ],
+      vertex_tolerance: 0.000000001,
+      minimum_chord: 0.00000001,
+      endpoint_sliver_tolerance: 0.0,
+    )
+  let assert [forward_image, reverse_image, ..] = build.segment_images
+  assert list.length(forward_image.edges) == 6
+  assert list.length(reverse_image.edges) == 6
+  assert_image_intervals(source, build.graph, forward_image.edges, 0.0)
+  assert_image_intervals(reverse, build.graph, reverse_image.edges, 0.0)
+}
+
+fn assert_image_intervals(
+  source: svg_path.Segment,
+  graph: arrangement_graph.ArrangementGraph,
+  images: List(arrangement_graph.ArrangementSegmentEdgeImage),
+  previous: Float,
+) {
+  case images {
+    [] -> {
+      assert previous == 1.0
+    }
+    [image, ..rest] -> {
+      assert image.ta == previous
+      assert image.tb >. image.ta
+      let assert Ok(edge) =
+        list.find(graph.edges, fn(edge) { edge.id == image.edge_id })
+      list.each([0.0, 0.5, 1.0], fn(t) {
+        let source_t = case t {
+          0.0 -> image.ta
+          1.0 -> image.tb
+          _ -> image.ta +. t *. { image.tb -. image.ta }
+        }
+        let assert Ok(expected) = svg_path.segment_point(source, at: source_t)
+        let edge_t = case image.reversed {
+          True -> 1.0 -. t
+          False -> t
+        }
+        let assert Ok(actual) = svg_path.segment_point(edge.segment, at: edge_t)
+        assert point.distance(expected, actual) <. 0.00000001
+      })
+      assert_image_intervals(source, graph, rest, image.tb)
+    }
+  }
+}
+
 pub fn self_crossing_cubic_is_noded_and_its_loop_preserved_test() {
   let graph = build_loop_fixture([self_crossing_cubic()])
   assert list.length(graph.vertices) == 4

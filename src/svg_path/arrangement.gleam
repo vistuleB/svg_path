@@ -186,7 +186,8 @@ pub type ArrangementGraphBuild {
 
 /// One atomic graph edge in the image of one input segment.
 ///
-/// `ta` and `tb` are parameters on the input segment. `reversed` records
+/// `ta <= tb` are source parameters retained through subdivision, not recovered
+/// by endpoint projection. `reversed` records
 /// whether the input traversal opposes the stored graph edge orientation.
 /// `own` is true for the first input segment occurrence assigned to the edge.
 pub type ArrangementSegmentEdgeImage {
@@ -2082,12 +2083,7 @@ pub fn build_with(
     endpoint_sliver_tolerance,
     iteration: 0,
   ))
-  use segment_images <- result.try(source_segment_images(
-    segments,
-    graph,
-    images,
-    vertex_tolerance,
-  ))
+  let segment_images = mark_segment_ownership(images)
   let edge_images = edge_source_images(graph, segment_images)
   use _ <- result.try(certify_segment_build(
     graph,
@@ -2148,11 +2144,11 @@ fn indexed_segments_as_atomic_pieces(
 type ProgressivePieceResult {
   ProgressivePieceInserted(
     graph: ArrangementGraph,
-    images: List(ArrangementSegmentImage),
+    images: List(ArrangementSourceSegmentImage),
   )
   ProgressivePieceReplaced(
     graph: ArrangementGraph,
-    images: List(ArrangementSegmentImage),
+    images: List(ArrangementSourceSegmentImage),
     replacements: List(AtomicPiece),
   )
 }
@@ -2168,7 +2164,7 @@ fn segment_length_bound(
 fn progressive_insert_piece_direct(
   context: IncomingContext,
   graph: ArrangementGraph,
-  images: List(ArrangementSegmentImage),
+  images: List(ArrangementSourceSegmentImage),
   tolerance: Float,
   minimum_chord: Float,
 ) -> Result(ProgressivePieceResult, InternalError) {
@@ -2249,7 +2245,7 @@ fn progressive_insert_piece_direct(
 fn progressive_insert_simple_piece_direct(
   context: IncomingContext,
   graph: ArrangementGraph,
-  images: List(ArrangementSegmentImage),
+  images: List(ArrangementSourceSegmentImage),
   tolerance: Float,
   minimum_chord: Float,
 ) -> Result(ProgressivePieceResult, InternalError) {
@@ -2268,7 +2264,13 @@ fn progressive_insert_simple_piece_direct(
         append_segment_image_reference(
           images,
           source_index,
-          DirectedEdgeReference(edge_id:, reversed:),
+          ArrangementSegmentEdgeImage(
+            edge_id:,
+            reversed:,
+            ta: piece.source_from,
+            tb: piece.source_to,
+            own: False,
+          ),
         )
       Ok(ProgressivePieceInserted(graph, images))
     }
@@ -2285,12 +2287,15 @@ fn progressive_insert_simple_piece_direct(
 fn progressive_insert_pieces_loop(
   stack: List(AtomicPiece),
   graph: ArrangementGraph,
-  images: List(ArrangementSegmentImage),
+  images: List(ArrangementSourceSegmentImage),
   vertex_tolerance: Float,
   minimum_chord: Float,
   endpoint_sliver_tolerance: Float,
   iteration iteration: Int,
-) -> Result(#(ArrangementGraph, List(ArrangementSegmentImage)), InternalError) {
+) -> Result(
+  #(ArrangementGraph, List(ArrangementSourceSegmentImage)),
+  InternalError,
+) {
   case stack {
     [] -> Ok(#(graph, images))
     [first, ..rest] -> {
@@ -2527,7 +2532,7 @@ fn segment_bounding_box_assert(
 fn progressive_insert_piece(
   piece: AtomicPiece,
   graph: ArrangementGraph,
-  images: List(ArrangementSegmentImage),
+  images: List(ArrangementSourceSegmentImage),
   vertex_tolerance: Float,
   minimum_chord: Float,
   endpoint_sliver_tolerance: Float,
@@ -2582,7 +2587,7 @@ fn incoming_context(
 fn progressive_insert_piece_context(
   context: IncomingContext,
   graph: ArrangementGraph,
-  images: List(ArrangementSegmentImage),
+  images: List(ArrangementSourceSegmentImage),
   vertex_tolerance: Float,
   minimum_chord: Float,
   endpoint_sliver_tolerance: Float,
@@ -2602,11 +2607,11 @@ fn progressive_insert_piece_context(
 fn split_existing_edge_at_incoming_endpoint(
   context: IncomingContext,
   graph: ArrangementGraph,
-  images: List(ArrangementSegmentImage),
+  images: List(ArrangementSourceSegmentImage),
   vertex_tolerance: Float,
   minimum_chord: Float,
 ) -> Result(
-  Option(#(ArrangementGraph, List(ArrangementSegmentImage))),
+  Option(#(ArrangementGraph, List(ArrangementSourceSegmentImage))),
   InternalError,
 ) {
   let IncomingContext(piece: AtomicPiece(segment:, ..), ..) = context
@@ -2637,11 +2642,11 @@ fn split_existing_edge_at_endpoint(
   edges: List(ArrangementEdge),
   endpoint: svg_path.Point,
   graph: ArrangementGraph,
-  images: List(ArrangementSegmentImage),
+  images: List(ArrangementSourceSegmentImage),
   vertex_tolerance: Float,
   minimum_chord: Float,
 ) -> Result(
-  Option(#(ArrangementGraph, List(ArrangementSegmentImage))),
+  Option(#(ArrangementGraph, List(ArrangementSourceSegmentImage))),
   InternalError,
 ) {
   case edges {
@@ -2708,7 +2713,7 @@ fn progressive_compare_edges(
   context: IncomingContext,
   edges: List(ArrangementEdge),
   graph: ArrangementGraph,
-  images: List(ArrangementSegmentImage),
+  images: List(ArrangementSourceSegmentImage),
   vertex_tolerance: Float,
   minimum_chord: Float,
   endpoint_sliver_tolerance: Float,
@@ -2754,7 +2759,7 @@ fn progressive_compare_edge(
   context: IncomingContext,
   edge: ArrangementEdge,
   graph: ArrangementGraph,
-  images: List(ArrangementSegmentImage),
+  images: List(ArrangementSourceSegmentImage),
   vertex_tolerance: Float,
   minimum_chord: Float,
   endpoint_sliver_tolerance: Float,
@@ -2790,11 +2795,11 @@ fn progressive_compare_edge(
 type ProgressiveEdgeStep {
   ProgressiveContinue(
     graph: ArrangementGraph,
-    images: List(ArrangementSegmentImage),
+    images: List(ArrangementSourceSegmentImage),
   )
   ProgressiveReplaceIncoming(
     graph: ArrangementGraph,
-    images: List(ArrangementSegmentImage),
+    images: List(ArrangementSourceSegmentImage),
     replacements: List(AtomicPiece),
   )
 }
@@ -2803,7 +2808,7 @@ fn progressive_compare_edge_cuts(
   piece: AtomicPiece,
   edge: ArrangementEdge,
   graph: ArrangementGraph,
-  images: List(ArrangementSegmentImage),
+  images: List(ArrangementSourceSegmentImage),
   cuts: List(SegmentCut),
   tolerance: Float,
   minimum_chord: Float,
@@ -3026,12 +3031,15 @@ fn cuts_produce_retained_split(
 
 fn split_progressive_graph_edge(
   graph: ArrangementGraph,
-  images: List(ArrangementSegmentImage),
+  images: List(ArrangementSourceSegmentImage),
   edge_id: Int,
   cuts: List(Float),
   tolerance: Float,
   minimum_chord: Float,
-) -> Result(#(ArrangementGraph, List(ArrangementSegmentImage)), InternalError) {
+) -> Result(
+  #(ArrangementGraph, List(ArrangementSourceSegmentImage)),
+  InternalError,
+) {
   let ArrangementGraph(vertices:, edges:, ..) = graph
   use edge <- result.try(arrangement_edge_by_id(edges, edge_id))
   let ArrangementEdge(
@@ -3058,7 +3066,8 @@ fn split_progressive_graph_edge(
       let next_id = next_arrangement_edge_id(edges)
       use #(vertices, replacements, references) <- result.try(
         progressive_replacement_edges(
-          retained,
+          split,
+          parameters,
           edge_id,
           next_id,
           forward_multiplicity,
@@ -3111,6 +3120,7 @@ fn retained_split_segments(
 
 fn progressive_replacement_edges(
   segments: List(svg_path.Segment),
+  parameters: List(Float),
   first_id: Int,
   next_id: Int,
   forward_multiplicity: Int,
@@ -3119,14 +3129,18 @@ fn progressive_replacement_edges(
   tolerance: Float,
   minimum_chord: Float,
   edges edges: List(ArrangementEdge),
-  references references: List(DirectedEdgeReference),
+  references references: List(ArrangementSegmentEdgeImage),
 ) -> Result(
-  #(List(ArrangementVertex), List(ArrangementEdge), List(DirectedEdgeReference)),
+  #(
+    List(ArrangementVertex),
+    List(ArrangementEdge),
+    List(ArrangementSegmentEdgeImage),
+  ),
   InternalError,
 ) {
-  case segments {
-    [] -> Ok(#(vertices, edges, references))
-    [segment, ..rest] -> {
+  case segments, parameters {
+    [], _ -> Ok(#(vertices, edges, references))
+    [segment, ..rest], [from, to, ..parameter_rest] -> {
       let id = case edges {
         [] -> first_id
         [_, ..] -> next_id + list.length(edges) - 1
@@ -3138,6 +3152,7 @@ fn progressive_replacement_edges(
         True ->
           progressive_replacement_edges(
             rest,
+            [to, ..parameter_rest],
             first_id,
             next_id,
             forward_multiplicity,
@@ -3156,6 +3171,7 @@ fn progressive_replacement_edges(
             True ->
               progressive_replacement_edges(
                 rest,
+                [to, ..parameter_rest],
                 first_id,
                 next_id,
                 forward_multiplicity,
@@ -3169,6 +3185,7 @@ fn progressive_replacement_edges(
             False ->
               progressive_replacement_edges(
                 rest,
+                [to, ..parameter_rest],
                 first_id,
                 next_id,
                 forward_multiplicity,
@@ -3189,7 +3206,13 @@ fn progressive_replacement_edges(
                   ..edges
                 ],
                 references: [
-                  DirectedEdgeReference(edge_id: id, reversed: False),
+                  ArrangementSegmentEdgeImage(
+                    edge_id: id,
+                    reversed: False,
+                    ta: from,
+                    tb: to,
+                    own: False,
+                  ),
                   ..references
                 ],
               )
@@ -3197,6 +3220,7 @@ fn progressive_replacement_edges(
         }
       }
     }
+    _, _ -> Error(InternalNormalizationError)
   }
 }
 
@@ -3234,61 +3258,57 @@ fn replace_edge_with(
 }
 
 fn expand_edge_references(
-  images: List(ArrangementSegmentImage),
+  images: List(ArrangementSourceSegmentImage),
   edge_id: Int,
-  replacements: List(DirectedEdgeReference),
-) -> List(ArrangementSegmentImage) {
-  images
-  |> list.map(fn(image) {
-    let ArrangementSegmentImage(
-      path_index:,
-      subpath_index:,
-      segment_index:,
-      edges:,
-    ) = image
-    ArrangementSegmentImage(
-      path_index:,
-      subpath_index:,
-      segment_index:,
-      edges: expand_references(edges, edge_id, replacements, expanded: []),
+  replacements: List(ArrangementSegmentEdgeImage),
+) -> List(ArrangementSourceSegmentImage) {
+  list.map(images, fn(image) {
+    ArrangementSourceSegmentImage(
+      ..image,
+      edges: expand_references(image.edges, edge_id, replacements, expanded: []),
     )
   })
 }
 
 fn expand_references(
-  references: List(DirectedEdgeReference),
+  references: List(ArrangementSegmentEdgeImage),
   edge_id: Int,
-  replacements: List(DirectedEdgeReference),
-  expanded expanded: List(DirectedEdgeReference),
-) -> List(DirectedEdgeReference) {
+  replacements: List(ArrangementSegmentEdgeImage),
+  expanded expanded: List(ArrangementSegmentEdgeImage),
+) -> List(ArrangementSegmentEdgeImage) {
   case references {
     [] -> list.reverse(expanded)
     [first, ..rest] -> {
-      let DirectedEdgeReference(edge_id: candidate, reversed:) = first
-      let expanded = case candidate == edge_id {
-        True -> {
-          let replacement = case reversed {
-            False -> replacements
-            True -> reverse_directed_references(replacements)
-          }
-          list.append(list.reverse(replacement), expanded)
-        }
+      let expanded = case first.edge_id == edge_id {
         False -> [first, ..expanded]
+        True -> {
+          // Replacement bounds are in the old stored edge's parameter space.
+          // Compose with this source occurrence, reversing both order and the
+          // local interval when its traversal opposes the stored edge.
+          let ordered = case first.reversed {
+            True -> list.reverse(replacements)
+            False -> replacements
+          }
+          let mapped =
+            list.map(ordered, fn(replacement) {
+              let #(from, to) = case first.reversed {
+                True -> #(1.0 -. replacement.tb, 1.0 -. replacement.ta)
+                False -> #(replacement.ta, replacement.tb)
+              }
+              ArrangementSegmentEdgeImage(
+                edge_id: replacement.edge_id,
+                ta: interpolate_float(first.ta, first.tb, from),
+                tb: interpolate_float(first.ta, first.tb, to),
+                reversed: first.reversed != replacement.reversed,
+                own: False,
+              )
+            })
+          list.append(list.reverse(mapped), expanded)
+        }
       }
       expand_references(rest, edge_id, replacements, expanded:)
     }
   }
-}
-
-fn reverse_directed_references(
-  references: List(DirectedEdgeReference),
-) -> List(DirectedEdgeReference) {
-  references
-  |> list.reverse
-  |> list.map(fn(reference) {
-    let DirectedEdgeReference(edge_id:, reversed:) = reference
-    DirectedEdgeReference(edge_id:, reversed: !reversed)
-  })
 }
 
 fn index_paths(paths: List(svg_path.Path)) -> List(IndexedSegment) {
@@ -3790,7 +3810,11 @@ fn split_atomic_pieces_for_parameters(
 }
 
 fn interpolate_float(from: Float, to: Float, at t: Float) -> Float {
-  from +. { to -. from } *. t
+  case t {
+    0.0 -> from
+    1.0 -> to
+    _ -> from +. { to -. from } *. t
+  }
 }
 
 fn cut_parameters(
@@ -3878,16 +3902,9 @@ fn float_compare(left: Float, right: Float) -> order.Order {
 
 fn initial_segment_images(
   segments: List(IndexedSegment),
-) -> List(ArrangementSegmentImage) {
+) -> List(ArrangementSourceSegmentImage) {
   list.map(segments, fn(segment) {
-    let IndexedSegment(path_index:, subpath_index:, segment_index:, ..) =
-      segment
-    ArrangementSegmentImage(
-      path_index:,
-      subpath_index:,
-      segment_index:,
-      edges: [],
-    )
+    ArrangementSourceSegmentImage(segment_index: segment.index, edges: [])
   })
 }
 
@@ -4032,76 +4049,20 @@ fn check_edge_correspondence(
 }
 
 fn append_segment_image_reference(
-  images: List(ArrangementSegmentImage),
+  images: List(ArrangementSourceSegmentImage),
   source_index: Int,
-  reference: DirectedEdgeReference,
-) -> List(ArrangementSegmentImage) {
-  images
-  |> list.index_map(fn(image, index) {
-    case index == source_index {
+  reference: ArrangementSegmentEdgeImage,
+) -> List(ArrangementSourceSegmentImage) {
+  list.map(images, fn(image) {
+    case image.segment_index == source_index {
       False -> image
-      True -> {
-        let ArrangementSegmentImage(
-          path_index:,
-          subpath_index:,
-          segment_index:,
-          edges:,
-        ) = image
-        ArrangementSegmentImage(
-          path_index:,
-          subpath_index:,
-          segment_index:,
-          edges: list.append(edges, [reference]),
+      True ->
+        ArrangementSourceSegmentImage(
+          ..image,
+          edges: list.append(image.edges, [reference]),
         )
-      }
     }
   })
-}
-
-fn source_segment_images(
-  segments: List(svg_path.Segment),
-  graph: ArrangementGraph,
-  images: List(ArrangementSegmentImage),
-  tolerance: Float,
-) -> Result(List(ArrangementSourceSegmentImage), InternalError) {
-  images
-  |> list.index_map(fn(image, index) {
-    case segment_at(segments, index) {
-      Ok(source) -> source_segment_image(source, graph, image, index, tolerance)
-      Error(Nil) -> Error(InternalNormalizationError)
-    }
-  })
-  |> result.all
-  |> result.map(mark_segment_ownership)
-}
-
-fn source_segment_image(
-  source: svg_path.Segment,
-  graph: ArrangementGraph,
-  image: ArrangementSegmentImage,
-  index: Int,
-  tolerance: Float,
-) -> Result(ArrangementSourceSegmentImage, InternalError) {
-  use edges <- result.try(segment_image_edges_internal(
-    ArrangementGraphBuild(graph:, segment_images: []),
-    image,
-  ))
-  use edges <- result.try(
-    edges
-    |> list.map(fn(edge) {
-      let #(edge, reversed) = edge
-      source_segment_edge_image(source, edge, reversed, tolerance)
-    })
-    |> result.all,
-  )
-  let edges =
-    list.filter_map(edges, fn(edge) {
-      case edge {
-        Some(edge) -> Ok(edge)
-        None -> Error(Nil)
-      }
-    })
-  Ok(ArrangementSourceSegmentImage(segment_index: index, edges:))
 }
 
 fn segment_at(
@@ -4113,53 +4074,6 @@ fn segment_at(
     [first, ..], 0 -> Ok(first)
     [_, ..rest], _ -> segment_at(rest, target - 1)
   }
-}
-
-fn source_segment_edge_image(
-  source: svg_path.Segment,
-  edge: ArrangementEdge,
-  reversed: Bool,
-  tolerance: Float,
-) -> Result(Option(ArrangementSegmentEdgeImage), InternalError) {
-  let ArrangementEdge(id: edge_id, segment:, ..) = edge
-  use start_projection <- result.try(source_projection(
-    svg_path.segment_start(segment),
-    source,
-  ))
-  use end_projection <- result.try(source_projection(
-    svg_path.segment_end(segment),
-    source,
-  ))
-  let svg_path.SegmentProjection(t: ta_start, distance: start_distance, ..) =
-    start_projection
-  let svg_path.SegmentProjection(t: ta_end, distance: end_distance, ..) =
-    end_projection
-  case start_distance <=. tolerance && end_distance <=. tolerance {
-    False -> Ok(None)
-    True -> {
-      let #(ta, tb) = case reversed {
-        True -> #(ta_end, ta_start)
-        False -> #(ta_start, ta_end)
-      }
-      Ok(
-        Some(ArrangementSegmentEdgeImage(
-          ta:,
-          tb:,
-          edge_id:,
-          reversed:,
-          own: False,
-        )),
-      )
-    }
-  }
-}
-
-fn source_projection(
-  point: svg_path.Point,
-  source: svg_path.Segment,
-) -> Result(svg_path.SegmentProjection, InternalError) {
-  svg_path.segment_projection(point, to: source)
-  |> result.map_error(InternalPathError)
 }
 
 fn mark_segment_ownership(
