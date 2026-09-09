@@ -2680,9 +2680,6 @@ pub type InternalError {
   /// The internal winding classifier reached a boundary state unexpectedly.
   InternalInconsistentContainment
 
-  /// An internal contour probe received no segments.
-  InternalEmptySubpath
-
   /// An offset-map distance lies outside the source length range.
   InternalInvalidOffsetMapDistance(distance: Float, length: Float)
 
@@ -6674,18 +6671,26 @@ fn orient_outline_subpath_from_depth(
   case svg_path.subpath_is_closed(subpath) {
     False -> Ok(subpath)
     True -> {
-      use depth <- result.try(outline_contour_depth(subpath, all))
-      let assert Ok(remainder) = int.remainder(depth, by: 2)
-      Ok(orient_outline_subpath(subpath, clockwise: remainder == 0))
+      use probe <- result.try(outline_contour_probe(subpath))
+      case probe {
+        // A geometrically closed survivor can retrace itself without enclosing
+        // an interior. If no interior probe is found, keep its traversal rather
+        // than treating the missing orientation as a construction failure.
+        None -> Ok(subpath)
+        Some(probe) -> {
+          use depth <- result.try(outline_contour_depth(probe, all))
+          let assert Ok(remainder) = int.remainder(depth, by: 2)
+          Ok(orient_outline_subpath(subpath, clockwise: remainder == 0))
+        }
+      }
     }
   }
 }
 
 fn outline_contour_depth(
-  subpath: svg_path.Subpath,
+  probe: svg_path.Point,
   all: List(svg_path.Subpath),
 ) -> Result(Int, InternalError) {
-  use probe <- result.try(outline_contour_probe(subpath))
   use containing_count <- result.try(outline_contour_depth_loop(
     probe,
     all,
@@ -6721,16 +6726,16 @@ fn outline_contour_depth_loop(
 
 fn outline_contour_probe(
   subpath: svg_path.Subpath,
-) -> Result(svg_path.Point, InternalError) {
+) -> Result(Option(svg_path.Point), InternalError) {
   outline_contour_probe_segments(subpath, svg_path.subpath_segments(subpath))
 }
 
 fn outline_contour_probe_segments(
   subpath: svg_path.Subpath,
   segments: List(svg_path.Segment),
-) -> Result(svg_path.Point, InternalError) {
+) -> Result(Option(svg_path.Point), InternalError) {
   case segments {
-    [] -> Error(InternalEmptySubpath)
+    [] -> Ok(None)
     [first, ..rest] -> {
       use point <- result.try(
         svg_path.segment_point(first, at: 0.5)
@@ -6768,8 +6773,8 @@ fn outline_contour_probe_segments(
             |> result.map_error(InternalPathError),
           )
           case left_containment, right_containment {
-            svg_path.Inside, svg_path.Outside -> Ok(left)
-            svg_path.Outside, svg_path.Inside -> Ok(right)
+            svg_path.Inside, svg_path.Outside -> Ok(Some(left))
+            svg_path.Outside, svg_path.Inside -> Ok(Some(right))
             _, _ -> outline_contour_probe_segments(subpath, rest)
           }
         }

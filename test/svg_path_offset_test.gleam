@@ -17,6 +17,43 @@ import svg_path/serialize
 import svg_path/stroke
 import svg_path/trig
 
+pub fn open_c_offset_preserves_closed_retraced_line_test() {
+  let source =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(2.0, 0.0),
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(0.0, 2.0),
+      svg_path.Point(2.0, 2.0),
+    ])
+  let assert Ok(actual) =
+    offset.subpath(source, offset: 1.0, join: offset.Round, cap: offset.Butt)
+  // Closedness follows the reconstructed geometry. No interior exists, but
+  // the two directed occurrences of the surviving line must both remain.
+  let assert Ok(expected) = parse.path("M 2 1 H 1 H 2 Z")
+  actual |> should.equal(expected)
+}
+
+pub fn closed_c_and_reversal_offset_preserves_retraced_line_and_outline_test() {
+  let source =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(2.0, 0.0),
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(0.0, 2.0),
+      svg_path.Point(2.0, 2.0),
+      svg_path.Point(0.0, 2.0),
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(2.0, 0.0),
+    ])
+    |> svg_path.subpath_assert_set_closed(closed: True)
+  let assert Ok(actual) =
+    offset.subpath(source, offset: 1.0, join: offset.Round, cap: offset.Butt)
+  let assert Ok(expected) =
+    parse.path(
+      "M 2 1 H 1 H 2 A 1 1 0 0 1 2 3 H 0 A 1 1 0 0 1 -1 2 V 0 A 1 1 0 0 1 0 -1 H 2 A 1 1 0 0 1 2 1 Z",
+    )
+  actual |> should.equal(expected)
+}
+
 pub fn cubic_fit_failures_do_not_invent_public_numeric_diagnostics_test() {
   assert offset.public_error(offset.InternalBezierFitError(
       bezier.UnderdeterminedCubicFit,
