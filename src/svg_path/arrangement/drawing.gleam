@@ -153,7 +153,12 @@ fn annotated_edge_things(
           segment,
           within: source,
           side_sampling_distance: tolerance *. 16.0,
-          options: svg_path.default_containment_options(),
+          // Match containment to the probe displacement's tolerance; a larger
+          // default boundary band can swallow both side samples.
+          options: svg_path.ContainmentOptions(
+            ..svg_path.default_containment_options(),
+            tolerance:,
+          ),
         )
         |> result.map_error(PathError),
       )

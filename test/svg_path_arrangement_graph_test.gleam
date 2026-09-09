@@ -7,6 +7,7 @@ import svg_path/arrangement as arrangement_graph
 import svg_path/arrangement/drawing as arrangement_graph_drawing
 import svg_path/csg
 import svg_path/point
+import svg_path/svg
 
 const tolerance = 0.000001
 
@@ -1106,6 +1107,45 @@ pub fn short_chord_is_rejected_test() {
       minimum: minimum_chord,
     )),
   )
+}
+
+pub fn annotated_drawing_uses_requested_winding_tolerance_test() {
+  let source =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(100.0, 0.0),
+      svg_path.Point(100.0, 100.0),
+      svg_path.Point(0.0, 100.0),
+      svg_path.Point(0.0, 0.0),
+    ])
+    |> svg_path.subpath_assert_set_closed(True)
+  let path = svg_path.subpath_as_path(source)
+  let assert Ok(build) =
+    arrangement_graph.build([path], 0.000000000001, 0.00000001)
+  let assert Ok(things) =
+    arrangement_graph_drawing.annotated_drawing(
+      build.graph,
+      path,
+      tolerance: 0.000000000001,
+    )
+  let winding_labels =
+    list.filter_map(things, fn(thing) {
+      case thing {
+        svg.RotatedText(label, style, _, _, _, _) -> {
+          case
+            style
+            == "fill: #0f172a; font-family: ui-monospace, monospace; font-weight: 700; text-anchor: middle"
+          {
+            True -> Ok(label)
+            False -> Error(Nil)
+          }
+        }
+        _ -> Error(Nil)
+      }
+    })
+  list.length(winding_labels) |> should.equal(4)
+  list.all(winding_labels, fn(label) { label == "0/1" || label == "1/0" })
+  |> should.be_true
 }
 
 pub fn drawing_contains_edges_vertices_and_multiplicity_labels_test() {
