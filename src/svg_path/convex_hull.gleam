@@ -1171,7 +1171,12 @@ fn minimum_width_optimization_loop(
     False -> {
       let #(active, discarded) =
         bounds
-        |> list.partition(fn(pair) { pair.1 <. best_width -. accuracy })
+        |> list.partition(fn(pair) {
+          // Use the same conservative bound as the convergence check. A raw
+          // bound must not discard the last interval and bypass its allowance.
+          float.max(0.0, pair.1 -. lower_bound_roundoff)
+          <. best_width -. accuracy
+        })
       case active {
         [] ->
           width_extremum(

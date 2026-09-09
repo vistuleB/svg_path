@@ -1,6 +1,6 @@
 # Remaining audit issues
 
-Updated 2026-09-09, including the OF2 follow-up after `0d8f613`.
+Updated 2026-09-09, including OF2 (`316f9dd`) and the CH1 follow-up.
 
 AD1 and OF5 have now been resolved in `c2e8865` and `3bf9b2a`. Their illustrated
 entries are retained below, explicitly marked resolved, as a record of this
@@ -331,17 +331,27 @@ options. This affects annotations, not arrangement topology; the drawing
 illustrates the old mismatch. A public `annotated_drawing` regression checks
 all four square-edge winding labels and failed before the repair.
 
-### CH1 — minimum-width optimization prunes with an unadjusted lower bound
+### CH1 — resolved: minimum-width pruning used an unadjusted lower bound
 
 ![CH1 — minimum-width optimization prunes with an unadjusted lower bound](examples/debug/v1_review_visuals/ch1.svg)
 
 **Module/function:** `svg_path/convex_hull.minimum_width_optimization_loop`.
-**Evidence:** code-level inconsistency; no public geometric failure yet.
+**Evidence:** controlled late-stage search reproduced false convergence.
 
-The reported lower bound includes a rounding allowance, but interval pruning
-uses the raw bound; exhaustion can then report convergence without that
-allowance. Apply conservative bounds consistently to pruning and convergence.
-Prepare a targeted regression before changing this branch.
+Interval pruning now subtracts the same rounding allowance used by the
+convergence check. Thus exhaustion cannot bypass the allowance by discarding
+an interval whose adjusted bound is still insufficient. Stored discarded bounds
+remain raw and are adjusted at the existing reporting point, not twice.
+
+`node examples/debug/width_pruning_roundoff_regression.mjs` passes four cases
+using exact circle support geometry at two scales. It resumes a controlled
+late-stage interval with a known bound for previously discarded regions.
+A strict request previously reported convergence after discarding its last
+interval; it now refines and reports unresolved at the supplied depth limit.
+A coarse request still converges immediately. This is a private search-state
+regression, not a claim of a newly reproduced public end-to-end hull failure.
+Build JavaScript first as described for the other private regression scripts.
+The original illustration remains a schematic of the old inconsistency.
 
 ### CH2 — hull tangent-root helpers assert success of fallible operations
 
@@ -356,6 +366,10 @@ Propagate the error if reachable; otherwise document the invariant supporting
 the assertion. Do not replace assertions indiscriminately.
 
 ## Verification baseline and next work
+
+For OF2 and CH1, `scripts/test-fast` passed **1,554 tests** and
+`scripts/test-slow` passed **26 tests**. The width-pruning private regression
+passed **four cases**. Formatting and whitespace checks passed.
 
 For PA1 and OF4, `scripts/test-fast` passed **1,553 tests**. The private survivor
 provenance regression passed **seven cases**, and the private cusp-empty
