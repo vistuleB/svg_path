@@ -225,6 +225,22 @@ published version (1,181 graph edges, 783 eligible, 471 initially submerged,
 **Module/functions:** `svg_path/offset.outline_contour_probe`, `orient_outline_path`.
 **Status:** still open; independent of the repaired dual construction.
 
+**Single-offset removal:** final nesting-based orientation is no longer applied
+for single offsets, for all three finish modes. Their reconstructed traversal
+is returned unchanged. Stroke construction still calls `orient_outline_path`;
+band winding-based orientation is unchanged. `scripts/test-all` passes with
+1,574 fast tests and 26 slow tests. This removes the problematic orientation
+step from single offsets; it does not repair the probe used by strokes.
+`scripts/generate-published-figures` also completes: all 29 Gallery SVGs remain
+byte-identical, including nine successive lettering offsets at 1.04. The
+single-offset README/debug fixtures change only contour traversal direction
+(concentric rectangles and surviving umbrella triangles), not their geometry.
+Five successive `0.4` lettering offsets also succeed, with subpath counts
+10, 13, 9, 10, and 6. The repeatable public-API check is
+`examples/debug/package_title_five_offsets_0_4.escript`. A regression checks that
+two nested counterclockwise contours retain their traversal with final trimming
+disabled. With that regression added, `scripts/test-fast` passes 1,575 tests.
+
 The same nested squares can give both output contours the same orientation
 instead of opposite orientations. This function still uses the chord-scaled
 displacement and does not use the new dual sweeps. Its replacement is separate

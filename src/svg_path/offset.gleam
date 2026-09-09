@@ -428,7 +428,7 @@ pub fn topological_band_path_with_opinions(
   orient_band_path(svg_path.Path(subpaths: loops), winding)
 }
 
-/// Extract, filter, and orient band loops as a path.
+/// Extract and filter single-offset survivors as a path.
 fn trim_single_offset_builds(
   builds: List(SingleOffsetUntrimmedBuild),
   offset: Float,
@@ -452,8 +452,9 @@ fn trim_single_offset_builds(
     |> list.filter(fn(subpath) {
       !list.is_empty(svg_path.subpath_segments(subpath))
     })
-  use oriented <- result.try(orient_outline_path(svg_path.Path(subpaths:)))
-  Ok(oriented)
+  // Preserve reconstructed traversal for single offsets. Nesting-based outline
+  // orientation is a filled-stroke convention, not a final single-offset step.
+  Ok(svg_path.Path(subpaths:))
 }
 
 /// Build the exact closed band used to classify one single-sided offset.
@@ -2922,6 +2923,8 @@ pub type SingleOffsetFinalTrimming {
 ///
 /// `final_trimming` selects the terminal operation. In-band trimming includes
 /// cusp removal and is the default, more comprehensive operation.
+/// The resulting traversal is returned without a final nesting-based reversal
+/// of closed contours into clockwise exteriors and counterclockwise holes.
 pub type SingleOffsetTrimming {
   SingleOffsetTrimming(offside: Bool, final_trimming: SingleOffsetFinalTrimming)
 }

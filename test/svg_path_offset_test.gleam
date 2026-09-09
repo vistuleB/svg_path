@@ -448,6 +448,35 @@ pub fn public_single_offset_trimming_branches_test() {
   })
 }
 
+pub fn untrimmed_single_offset_does_not_reorient_nested_contours_test() {
+  // Both contours deliberately have the same counterclockwise traversal.
+  // A final filled-outline normalization would reverse the exterior contour.
+  let assert Ok(source) =
+    parse.path("M 0 0 V 10 H 10 V 0 Z M 3 3 V 7 H 7 V 3 Z")
+  let options =
+    offset.Options(
+      ..offset.default_options(),
+      single_offset_trimming: offset.SingleOffsetTrimming(
+        offside: False,
+        final_trimming: offset.NoTrimming,
+      ),
+    )
+  let assert Ok(actual) =
+    offset.path_with(
+      source,
+      offset: 0.25,
+      join: offset.Miter(offset.default_miter_limit),
+      cap: offset.Butt,
+      options:,
+    )
+  let contours = svg_path.path_subpaths(actual)
+  assert list.length(contours) == 2
+  list.each(contours, fn(contour) {
+    assert svg_path.subpath_is_closed(contour)
+    assert area.signed_subpath(contour) <. 0.0
+  })
+}
+
 pub fn public_band_trimming_branches_test() {
   let source =
     svg_path.subpath_assert_polyline([
