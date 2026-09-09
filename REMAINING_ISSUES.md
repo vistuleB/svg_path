@@ -175,24 +175,65 @@ and its SVG is byte-identical to the published Gallery figure.
 
 ## Arrangement and offset topology/provenance
 
-### AG1 / OF8 — an interior probe can cross into another contour
+### AG1 — resolved: dual grouping no longer uses displaced probes
 
 ![AG1 / OF8 — an interior probe can cross into another contour](examples/debug/v1_review_visuals/ag1_of8.svg)
 
-**Modules/functions:** `svg_path/arrangement.dual_face_walk_sample`;
-`svg_path/offset.outline_contour_probe`, `orient_outline_path`.
-**Evidence:** two independently reproduced failures.
+**Module/functions:** `svg_path/arrangement.dual_walk_candidates`,
+`dual_sweep_intersections`, `dual_line_placements`.
 
-Nested squares of side 10 separated by 0.00001 expose a probe displacement of
-chord×0.0001 that crosses the gap. Dual construction fails; independently,
-outline orientation gives both contours the same orientation instead of
-opposite orientations. Bound the probe step using surrounding boundaries,
-rather than decreasing a universal sampling fraction.
+Nested squares of side 10 separated by 0.00001 exposed a probe displacement of
+chord×0.0001 that crossed the gap. The regression failed before the repair.
+Dual construction now uses infinite-line sweeps through graph edges, not
+containment samples or signed area:
+
+- Partition by graph connectivity; retain each edge's two local boundary walks.
+- Lines through a component establish its exterior walk from the first/last
+  crossing and check the full sequence of intervening local faces.
+- Lines targeting walks in disjoint components establish relative placement.
+  Every accepted line contributes all the relationships it encounters.
+- Sweep from infinity with one local face per component. The vector of local
+  faces identifies a global face; matching vectors group boundary walks.
+- Exterior walks become island boundaries, except that the all-exterior vector
+  is the infinite face. Bounded local walks become enclosing boundaries.
+
+Acceptance and confirmation are independent. Vertex-near lines, overlaps,
+nontransverse/uncertain contacts, failed intersection calculations, and hits
+too close to order are rejected before any conclusion is recorded. Tolerance
+includes endpoint-cluster displacement and coordinate rounding allowance.
+The existing algebraic supporting-line intersection solver is reused.
+Deterministic pseudorandom proposals currently require two accepted lines per
+conclusion, counting each walk only once per line. Conflicting accepted
+conclusions and exhausted proposal budgets surface explicit internal errors
+(the public API retains `ConstructionFailed`). The constants are private.
+
+Public regressions cover the narrow-gap squares, several nested and separate
+components, oppositely traversed nested circles, and a closed cubic containing
+a disconnected bridge. The private production-helper harness
+`escript examples/debug/dual_sweep_checks.escript` tests rejection, confirmation
+counting, contradictions, and bounded exhaustion. No test-only sweep algorithm
+or public debugging API was introduced.
+
+Verification: `scripts/test-fast` passes **1,574 tests**, `scripts/test-slow`
+passes **26 tests**, and the private sweep checks pass. The production
+second-offset Gallery capture also succeeds; its SVG is byte-identical to the
+published version (1,181 graph edges, 783 eligible, 471 initially submerged,
+312 initially retained, and 185 with positive final capacity).
+
+### OF8 — an outline orientation probe can cross into another contour
+
+**Module/functions:** `svg_path/offset.outline_contour_probe`, `orient_outline_path`.
+**Status:** still open; independent of the repaired dual construction.
+
+The same nested squares can give both output contours the same orientation
+instead of opposite orientations. This function still uses the chord-scaled
+displacement and does not use the new dual sweeps. Its replacement is separate
+work; the dual change must not be described as fixing outline orientation.
 
 **C-shape fix is separate:** `6679aa6` preserves traversal when no interior
 probe is found, allowing a closed retraced line to survive orientation
 normalization. It does not stop an existing probe landing in the wrong nested
-region. AG1 and OF8 therefore remain open.
+region. OF8 therefore remains open.
 
 ### OF1 — resolved: reconstruction capacity included ineligible source occurrences
 

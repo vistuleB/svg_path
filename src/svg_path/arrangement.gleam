@@ -22,7 +22,6 @@ import gleam/option.{type Option, None, Some}
 import gleam/order
 import gleam/result
 import svg_path
-import svg_path/area
 import svg_path/internal/number
 import svg_path/intersections
 import svg_path/overlaps
@@ -357,8 +356,11 @@ pub type InternalError {
   /// A dual walk repeated an edge side before returning to its start.
   InternalDualWalkDidNotClose(edge: Int, left: Bool)
 
-  /// A face boundary could not provide a non-boundary point on its left side.
-  InternalDualFaceSampleUnavailable(edge: Int, left: Bool)
+  /// Accepted line sweeps disagreed about a local face or its placement.
+  InternalDualSweepContradiction(walk: Int)
+
+  /// No sufficient set of unambiguous line sweeps was found within the budget.
+  InternalDualSweepExhausted(unresolved: Int)
 
   /// A bounded face did not have exactly one enclosing outer walk.
   InternalDualInvalidOuterWalkCount(count: Int)
@@ -918,8 +920,10 @@ type DualWalkCandidate {
 /// Derive the planar dual without modifying the arrangement graph.
 ///
 /// The existing clockwise cyclic orders determine face successors. Boundary
-/// walks are grouped when points immediately on their visual-left sides occupy
-/// the same combination of nested boundary regions.
+/// walks are grouped using accepted infinite-line sweeps through the components.
+/// Vertex hits, tangencies, overlaps and inseparable crossings are rejected.
+/// Independent accepted lines must agree; exhausted or contradictory searches
+/// return an error. No displaced containment probes are used.
 pub fn dual(graph: ArrangementGraph) -> Result(DualArrangementGraph, Error) {
   let result = {
     let ArrangementGraph(edges:, ..) = graph
@@ -1109,219 +1113,635 @@ fn dual_next_clockwise_edge_loop(
   }
 }
 
+// Acceptance is independent of repetition: two accepted lines must agree,
+// but agreement never makes a rejected (tangent/vertex/overlap) line usable.
+const dual_sweep_confirmations = 2
+
+const dual_sweep_attempts_per_question = 64
+
+const dual_sweep_minimum_sine = 0.000001
+
+type DualSweepEdge {
+  DualSweepEdge(
+    id: Int,
+    component: Int,
+    left_walk: Int,
+    right_walk: Int,
+    segment: svg_path.Segment,
+    bounds: svg_path.BoundingBox,
+  )
+}
+
+type DualSweepHit {
+  DualSweepHit(
+    edge_id: Int,
+    position: Float,
+    uncertainty: Float,
+    component: Int,
+    before: Int,
+    after: Int,
+  )
+}
+
+type DualExterior {
+  DualExterior(component: Int, walk: Int, confirmations: Int)
+}
+
+type DualPlacement {
+  DualPlacement(walk: Int, signature: List(Bool), confirmations: Int)
+}
+
+type DualSweepLine {
+  DualSweepLine(origin: svg_path.Point, direction: svg_path.Point)
+}
+
 fn dual_walk_candidates(
   walks: List(ArrangementFaceWalk),
   graph: ArrangementGraph,
 ) -> Result(List(DualWalkCandidate), InternalError) {
-  use prepared <- result.try(
-    walks
-    |> list.map(fn(walk) {
-      use subpath <- result.try(dual_face_walk_subpath(walk, graph))
-      Ok(#(walk, subpath))
-    })
-    |> result.all,
-  )
-  let subpaths = list.map(prepared, fn(item) { item.1 })
-  prepared
-  |> list.map(fn(item) {
-    let #(walk, subpath) = item
-    use sampled <- result.try(dual_face_walk_sample(
-      walk,
-      subpath,
-      graph,
-      subpaths,
-    ))
-    let #(_sample, signature) = sampled
-    let outer = area.signed_subpath(subpath) <. 0.0
-    Ok(DualWalkCandidate(walk: ArrangementFaceWalk(..walk, outer:), signature:))
-  })
-  |> result.all
-}
-
-fn dual_face_walk_subpath(
-  walk: ArrangementFaceWalk,
-  graph: ArrangementGraph,
-) -> Result(svg_path.Subpath, InternalError) {
-  use segments <- result.try(
-    walk.edges
-    |> list.map(fn(reference) { dual_face_edge_segment(reference, graph) })
-    |> result.all,
-  )
-  use subpath <- result.try(
-    svg_path.subpath(segments)
-    |> result.map_error(InternalPathError),
-  )
-  svg_path.subpath_set_closed(subpath, closed: True)
-  |> result.map_error(InternalPathError)
-}
-
-fn dual_face_edge_segment(
-  reference: ArrangementFaceEdge,
-  graph: ArrangementGraph,
-) -> Result(svg_path.Segment, InternalError) {
-  let ArrangementGraph(edges:, vertices:, ..) = graph
-  use edge <- result.try(
-    list.find(edges, fn(edge) { edge.id == reference.edge_id })
-    |> result.replace_error(InternalMissingEdge(reference.edge_id)),
-  )
-  let #(segment, start_vertex, end_vertex) = case reference.left {
-    True -> #(edge.segment, edge.start_vertex, edge.end_vertex)
-    False -> #(
-      svg_path.segment_reverse(edge.segment),
-      edge.end_vertex,
-      edge.start_vertex,
+  // Each connected component has one local face per boundary walk. A sweep
+  // starts in every component's exterior walk, then changes one local face
+  // at each crossing. The vector of local faces identifies the global face.
+  // Store it as one Boolean per bounded local walk so the all-False signature
+  // still denotes infinity. No pairwise containment predicates are required.
+  let components = dual_components(graph.edges, [])
+  use edges <- result.try(dual_sweep_edges(graph.edges, components, walks))
+  let tolerance = dual_sweep_tolerance(graph)
+  let budget =
+    dual_sweep_attempts_per_question
+    * { list.length(walks) + list.length(components) }
+  use exteriors <- result.try(dual_find_exteriors(
+    edges,
+    graph.vertices,
+    tolerance,
+    list.length(components),
+    [],
+    1729,
+    budget,
+  ))
+  use placements <- result.try(dual_find_placements(
+    edges,
+    graph.vertices,
+    tolerance,
+    walks,
+    exteriors,
+    [],
+    7919,
+    budget,
+  ))
+  list.index_map(walks, fn(walk, id) {
+    let assert Ok(placement) = list.find(placements, fn(p) { p.walk == id })
+    let exterior = list.any(exteriors, fn(e) { e.walk == id })
+    DualWalkCandidate(
+      ArrangementFaceWalk(..walk, outer: !exterior),
+      placement.signature,
     )
+  })
+  |> Ok
+}
+
+fn dual_sweep_edges(
+  edges: List(ArrangementEdge),
+  components: List(List(Int)),
+  walks: List(ArrangementFaceWalk),
+) -> Result(List(DualSweepEdge), InternalError) {
+  list.try_map(edges, fn(edge) {
+    use left_walk <- result.try(dual_walk_index(walks, edge.id, True))
+    use right_walk <- result.try(dual_walk_index(walks, edge.id, False))
+    let assert Ok(component) =
+      components
+      |> list.index_map(fn(ids, index) { #(ids, index) })
+      |> list.find(fn(item) { list.contains(item.0, edge.id) })
+    use bounds <- result.try(
+      svg_path.segment_bounding_box(edge.segment)
+      |> result.map_error(InternalPathError),
+    )
+    Ok(DualSweepEdge(
+      edge.id,
+      component.1,
+      left_walk,
+      right_walk,
+      edge.segment,
+      bounds,
+    ))
+  })
+}
+
+// Components are defined by graph vertex identity, not proximity.
+fn dual_components(
+  remaining: List(ArrangementEdge),
+  found: List(List(Int)),
+) -> List(List(Int)) {
+  case remaining {
+    [] -> list.reverse(found)
+    [first, ..rest] -> {
+      let #(component, rest) = dual_grow_component([first], rest)
+      dual_components(rest, [list.map(component, fn(e) { e.id }), ..found])
+    }
   }
-  use start <- result.try(
-    list.find(vertices, fn(vertex) { vertex.id == start_vertex })
-    |> result.map(fn(vertex) { vertex.point })
-    |> result.replace_error(InternalMissingVertex(start_vertex)),
-  )
-  use end <- result.try(
-    list.find(vertices, fn(vertex) { vertex.id == end_vertex })
-    |> result.map(fn(vertex) { vertex.point })
-    |> result.replace_error(InternalMissingVertex(end_vertex)),
-  )
-  svg_path.segment_remap_endpoints(segment, new_start: start, new_end: end)
+}
+
+fn dual_grow_component(
+  component: List(ArrangementEdge),
+  remaining: List(ArrangementEdge),
+) -> #(List(ArrangementEdge), List(ArrangementEdge)) {
+  let vertices =
+    list.flat_map(component, fn(e) { [e.start_vertex, e.end_vertex] })
+  let #(attached, rest) =
+    list.partition(remaining, fn(e) {
+      list.contains(vertices, e.start_vertex)
+      || list.contains(vertices, e.end_vertex)
+    })
+  case attached {
+    [] -> #(component, rest)
+    _ -> dual_grow_component(list.append(component, attached), rest)
+  }
+}
+
+fn dual_walk_index(
+  walks: List(ArrangementFaceWalk),
+  edge: Int,
+  left: Bool,
+) -> Result(Int, InternalError) {
+  walks
+  |> list.index_map(fn(walk, index) { #(walk, index) })
+  |> list.find(fn(item) {
+    list.any(item.0.edges, fn(e) { e.edge_id == edge && e.left == left })
+  })
+  |> result.map(fn(item) { item.1 })
+  |> result.replace_error(InternalDualMissingEdgeFace(edge, left))
+}
+
+fn dual_sweep_tolerance(graph: ArrangementGraph) -> Float {
+  list.fold(graph.vertices, 0.000000001, fn(tolerance, vertex) {
+    let rounding =
+      0.0000000000000072
+      *. float.max(
+        1.0,
+        float.max(
+          float.absolute_value(vertex.point.x),
+          float.absolute_value(vertex.point.y),
+        ),
+      )
+    list.fold(
+      vertex.endpoint_samples,
+      float.max(tolerance, rounding),
+      fn(tolerance, sample) {
+        float.max(
+          tolerance,
+          2.0 *. point.distance(vertex.point, sample) +. rounding,
+        )
+      },
+    )
+  })
+}
+
+// Park-Miller arithmetic stays exactly representable on both supported targets.
+fn dual_random(seed: Int) -> Int {
+  seed * 48_271 % 2_147_483_647
+}
+
+fn dual_random_point(
+  edges: List(DualSweepEdge),
+  seed: Int,
+) -> Result(svg_path.Point, InternalError) {
+  let assert [edge, ..] = list.drop(edges, seed % list.length(edges))
+  let t = 0.15 +. 0.7 *. int.to_float(dual_random(seed) % 10_000) /. 10_000.0
+  svg_path.segment_point(edge.segment, at: t)
   |> result.map_error(InternalPathError)
 }
 
-fn dual_face_walk_sample(
-  walk: ArrangementFaceWalk,
-  subpath: svg_path.Subpath,
-  graph: ArrangementGraph,
-  subpaths: List(svg_path.Subpath),
-) -> Result(#(svg_path.Point, List(Bool)), InternalError) {
-  case walk.edges {
-    [] -> Error(InternalDualFaceSampleUnavailable(-1, True))
-    [first, ..] -> {
-      use segment <- result.try(dual_face_edge_segment(first, graph))
-      use midpoint <- result.try(
-        svg_path.segment_point(segment, at: 0.5)
-        |> result.map_error(InternalPathError),
-      )
-      use derivative <- result.try(
-        svg_path.segment_derivative(segment, at: 0.5)
-        |> result.map_error(InternalPathError),
-      )
-      let direction = case point.normalize(derivative) {
-        Ok(direction) -> direction
-        Error(Nil) ->
-          point.subtract(
-            svg_path.segment_end(segment),
-            svg_path.segment_start(segment),
-          )
-          |> point.normalize
-          |> result.unwrap(svg_path.Point(1.0, 0.0))
-      }
-      let distance = svg_path.segment_chord_length(segment) *. 0.0001
-      dual_face_walk_sample_at_distance(
-        first,
-        midpoint,
-        point.rotate_counterclockwise(direction),
-        subpath,
-        subpaths,
-        distance,
-        remaining_attempts: 12,
-      )
-    }
-  }
+fn dual_outer_line(
+  edges: List(DualSweepEdge),
+  component: Int,
+  seed: Int,
+) -> Result(DualSweepLine, InternalError) {
+  use origin <- result.try(dual_random_point(
+    list.filter(edges, fn(e) { e.component == component }),
+    seed,
+  ))
+  let direction =
+    point.direction(
+      degrees: int.to_float(dual_random(seed) % 360_000) /. 1000.0,
+    )
+  Ok(DualSweepLine(origin, direction))
 }
 
-fn dual_face_walk_sample_at_distance(
-  edge: ArrangementFaceEdge,
-  midpoint: svg_path.Point,
-  normal: svg_path.Point,
-  subpath: svg_path.Subpath,
-  subpaths: List(svg_path.Subpath),
-  distance: Float,
-  remaining_attempts remaining_attempts: Int,
-) -> Result(#(svg_path.Point, List(Bool)), InternalError) {
-  case remaining_attempts <= 0 || distance <=. 0.0 {
-    True -> Error(InternalDualFaceSampleUnavailable(edge.edge_id, edge.left))
+fn dual_pair_line(
+  edges: List(DualSweepEdge),
+  walk: Int,
+  seed: Int,
+) -> Result(DualSweepLine, InternalError) {
+  let own =
+    list.filter(edges, fn(e) { e.left_walk == walk || e.right_walk == walk })
+  let assert [first, ..] = own
+  let others = list.filter(edges, fn(e) { e.component != first.component })
+  case others == [] || seed % 3 == 0 {
+    True -> {
+      use origin <- result.try(dual_random_point(own, seed))
+      Ok(DualSweepLine(
+        origin,
+        point.direction(
+          degrees: int.to_float(dual_random(seed) % 360_000) /. 1000.0,
+        ),
+      ))
+    }
     False -> {
-      let sample = point.add(midpoint, point.scale(normal, by: distance))
-      let options =
-        svg_path.ContainmentOptions(
-          ..svg_path.default_containment_options(),
-          tolerance: distance *. 0.01,
-        )
-      case
-        svg_path.subpath_containment_with(
-          sample,
-          within: subpath,
-          using: svg_path.Nonzero,
-          options:,
-        )
-      {
-        Ok(svg_path.Boundary) ->
-          dual_face_walk_sample_at_distance(
-            edge,
-            midpoint,
-            normal,
-            subpath,
-            subpaths,
-            distance *. 0.5,
-            remaining_attempts: remaining_attempts - 1,
-          )
-        Ok(_) ->
-          case dual_containment_signature(sample, subpaths, options) {
-            Ok(Some(signature)) -> Ok(#(sample, signature))
-            Ok(None) ->
-              dual_face_walk_sample_at_distance(
-                edge,
-                midpoint,
-                normal,
-                subpath,
-                subpaths,
-                distance *. 0.5,
-                remaining_attempts: remaining_attempts - 1,
-              )
-            Error(error) -> Error(error)
-          }
-        Error(error) -> Error(InternalPathError(error))
-      }
+      // Target a second boundary walk in a disjoint component; all other
+      // relationships encountered by this line are still evaluated.
+      let assert [other, ..] =
+        list.drop(others, dual_random(seed) % list.length(others))
+      let target =
+        list.filter(others, fn(e) {
+          e.left_walk == other.left_walk || e.right_walk == other.left_walk
+        })
+      use origin <- result.try(dual_random_point(own, seed))
+      use end <- result.try(dual_random_point(target, dual_random(seed)))
+      let direction =
+        point.normalize(point.subtract(end, origin))
+        |> result.unwrap(point.direction(degrees: 37.0))
+      Ok(DualSweepLine(origin, direction))
     }
   }
 }
 
-fn dual_containment_signature(
-  sample: svg_path.Point,
-  subpaths: List(svg_path.Subpath),
-  options: svg_path.ContainmentOptions,
-) -> Result(Option(List(Bool)), InternalError) {
-  dual_containment_signature_loop(sample, subpaths, options, signature: [])
+fn dual_signed_line_distance(p: svg_path.Point, line: DualSweepLine) -> Float {
+  let delta = point.subtract(p, line.origin)
+  line.direction.x *. delta.y -. line.direction.y *. delta.x
 }
 
-fn dual_containment_signature_loop(
-  sample: svg_path.Point,
-  subpaths: List(svg_path.Subpath),
-  options: svg_path.ContainmentOptions,
-  signature signature: List(Bool),
-) -> Result(Option(List(Bool)), InternalError) {
-  case subpaths {
-    [] -> Ok(Some(list.reverse(signature)))
-    [subpath, ..rest] ->
-      case
-        svg_path.subpath_containment_with(
-          sample,
-          within: subpath,
-          using: svg_path.Nonzero,
-          options:,
+// No conclusions escape this function until every edge has been checked.
+// Negative line parameters are retained; this is an infinite-line sweep.
+fn dual_sweep_intersections(
+  edges: List(DualSweepEdge),
+  vertices: List(ArrangementVertex),
+  line: DualSweepLine,
+  tolerance: Float,
+) -> Result(List(DualSweepHit), Nil) {
+  case
+    list.any(vertices, fn(v) {
+      float.absolute_value(dual_signed_line_distance(v.point, line))
+      <=. tolerance
+    })
+  {
+    True -> Error(Nil)
+    False -> {
+      use batches <- result.try(
+        list.try_map(edges, fn(edge) {
+          dual_sweep_edge_hits(edge, line, tolerance)
+        }),
+      )
+      let hits =
+        list.flatten(batches)
+        |> list.sort(fn(a, b) { float.compare(a.position, b.position) })
+      use _ <- result.try(dual_check_hit_separation(hits, tolerance))
+      Ok(hits)
+    }
+  }
+}
+
+fn dual_sweep_edge_hits(
+  edge: DualSweepEdge,
+  line: DualSweepLine,
+  tolerance: Float,
+) -> Result(List(DualSweepHit), Nil) {
+  let box = edge.bounds
+  let distances =
+    list.map(
+      [
+        box.min,
+        box.max,
+        svg_path.Point(box.min.x, box.max.y),
+        svg_path.Point(box.max.x, box.min.y),
+      ],
+      fn(p) { dual_signed_line_distance(p, line) },
+    )
+  case
+    list.all(distances, fn(d) { d >. tolerance })
+    || list.all(distances, fn(d) { d <. 0.0 -. tolerance })
+  {
+    True -> Ok([])
+    False -> {
+      use crossings <- result.try(
+        svg_path.segment_ray_crossings_with(
+          edge.segment,
+          origin: line.origin,
+          direction: line.direction,
+          options: svg_path.CrossingOptions(
+            ..svg_path.default_crossing_options(),
+            signed_line_distance_tolerance: tolerance *. 0.01,
+          ),
         )
+        |> result.replace_error(Nil),
+      )
+      list.try_map(crossings, fn(crossing) {
+        let #(t, position) = crossing
+        use p <- result.try(
+          svg_path.segment_point(edge.segment, at: t)
+          |> result.replace_error(Nil),
+        )
+        use derivative <- result.try(
+          svg_path.segment_derivative(edge.segment, at: t)
+          |> result.replace_error(Nil),
+        )
+        use tangent <- result.try(point.normalize(derivative))
+        let determinant =
+          tangent.x *. line.direction.y -. tangent.y *. line.direction.x
+        case
+          t <=. 0.000000001
+          || t >=. 0.999999999
+          || !number.is_finite(position)
+          || !number.is_finite(determinant)
+          || float.absolute_value(dual_signed_line_distance(p, line))
+          >. tolerance
+          || float.absolute_value(determinant) <=. dual_sweep_minimum_sine
+        {
+          True -> Error(Nil)
+          False -> {
+            let #(before, after) = case determinant >. 0.0 {
+              True -> #(edge.left_walk, edge.right_walk)
+              False -> #(edge.right_walk, edge.left_walk)
+            }
+            Ok(DualSweepHit(
+              edge.id,
+              position,
+              tolerance /. float.absolute_value(determinant),
+              edge.component,
+              before,
+              after,
+            ))
+          }
+        }
+      })
+    }
+  }
+}
+
+fn dual_check_hit_separation(
+  hits: List(DualSweepHit),
+  tolerance: Float,
+) -> Result(Nil, Nil) {
+  case hits {
+    [] | [_] -> Ok(Nil)
+    [a, b, ..rest] ->
+      case
+        b.position -. a.position
+        <=. float.max(tolerance, a.uncertainty +. b.uncertainty)
       {
-        Ok(svg_path.Boundary) -> Ok(None)
-        Ok(svg_path.Inside) ->
-          dual_containment_signature_loop(sample, rest, options, signature: [
-            True,
-            ..signature
-          ])
-        Ok(svg_path.Outside) ->
-          dual_containment_signature_loop(sample, rest, options, signature: [
-            False,
-            ..signature
-          ])
-        Error(error) -> Error(InternalPathError(error))
+        True -> Error(Nil)
+        False -> dual_check_hit_separation([b, ..rest], tolerance)
+      }
+  }
+}
+
+// Validate the complete local-face sequence before accepting exterior claims.
+// Bridges legitimately have before == after.
+fn dual_line_exteriors(
+  hits: List(DualSweepHit),
+) -> Result(List(DualExterior), InternalError) {
+  case hits {
+    [] -> Ok([])
+    [first, ..] -> {
+      let #(own, rest) =
+        list.partition(hits, fn(h) { h.component == first.component })
+      use _ <- result.try(dual_check_local_sequence(
+        own,
+        first.before,
+        first.before,
+      ))
+      use others <- result.try(dual_line_exteriors(rest))
+      Ok([DualExterior(first.component, first.before, 1), ..others])
+    }
+  }
+}
+
+fn dual_check_local_sequence(
+  hits: List(DualSweepHit),
+  current: Int,
+  exterior: Int,
+) -> Result(Nil, InternalError) {
+  case hits {
+    [] ->
+      case current == exterior {
+        True -> Ok(Nil)
+        False -> Error(InternalDualSweepContradiction(current))
+      }
+    [hit, ..rest] ->
+      case hit.before == current {
+        True -> dual_check_local_sequence(rest, hit.after, exterior)
+        False -> Error(InternalDualSweepContradiction(hit.before))
+      }
+  }
+}
+
+fn dual_merge_exteriors(
+  new: List(DualExterior),
+  old: List(DualExterior),
+) -> Result(List(DualExterior), InternalError) {
+  case new {
+    [] -> Ok(old)
+    [e, ..rest] -> {
+      use merged <- result.try(
+        case list.find(old, fn(p) { p.component == e.component }) {
+          Error(_) -> Ok([e, ..old])
+          Ok(previous) ->
+            case previous.walk == e.walk {
+              False -> Error(InternalDualSweepContradiction(e.walk))
+              True ->
+                Ok(
+                  list.map(old, fn(p) {
+                    case p.component == e.component {
+                      True ->
+                        DualExterior(..p, confirmations: p.confirmations + 1)
+                      False -> p
+                    }
+                  }),
+                )
+            }
+        },
+      )
+      dual_merge_exteriors(rest, merged)
+    }
+  }
+}
+
+fn dual_find_exteriors(
+  edges: List(DualSweepEdge),
+  vertices: List(ArrangementVertex),
+  tolerance: Float,
+  count: Int,
+  found: List(DualExterior),
+  seed: Int,
+  remaining: Int,
+) -> Result(List(DualExterior), InternalError) {
+  let unresolved =
+    int.range(from: 0, to: count, with: [], run: fn(ids, id) { [id, ..ids] })
+    |> list.reverse
+    |> list.filter(fn(c) {
+      !list.any(found, fn(e) {
+        e.component == c && e.confirmations >= dual_sweep_confirmations
+      })
+    })
+  case unresolved {
+    [] -> Ok(found)
+    [component, ..] ->
+      case remaining <= 0 {
+        True -> Error(InternalDualSweepExhausted(list.length(unresolved)))
+        False -> {
+          use line <- result.try(dual_outer_line(edges, component, seed))
+          use next <- result.try(
+            case dual_sweep_intersections(edges, vertices, line, tolerance) {
+              Error(_) -> Ok(found)
+              Ok(hits) -> {
+                use claims <- result.try(dual_line_exteriors(hits))
+                dual_merge_exteriors(claims, found)
+              }
+            },
+          )
+          dual_find_exteriors(
+            edges,
+            vertices,
+            tolerance,
+            count,
+            next,
+            dual_random(seed),
+            remaining - 1,
+          )
+        }
+      }
+  }
+}
+
+fn dual_signature(
+  states: List(#(Int, Int)),
+  exteriors: List(DualExterior),
+  walks: List(ArrangementFaceWalk),
+) -> List(Bool) {
+  list.index_map(walks, fn(_, walk) {
+    !list.any(exteriors, fn(e) { e.walk == walk })
+    && list.any(states, fn(s) { s.1 == walk })
+  })
+}
+
+fn dual_line_placements(
+  hits: List(DualSweepHit),
+  states: List(#(Int, Int)),
+  exteriors: List(DualExterior),
+  walks: List(ArrangementFaceWalk),
+  found: List(DualPlacement),
+) -> Result(List(DualPlacement), InternalError) {
+  // A boundary walk cannot change its position relative to a disjoint
+  // component without intersecting that component. Thus the states beside
+  // any of its crossed edges must agree. Record at most one confirmation per
+  // walk per line, however many of its edges the line crosses.
+  case hits {
+    [] -> Ok(found)
+    [hit, ..rest] -> {
+      let before =
+        DualPlacement(hit.before, dual_signature(states, exteriors, walks), 1)
+      let states =
+        list.map(states, fn(s) {
+          case s.0 == hit.component {
+            True -> #(s.0, hit.after)
+            False -> s
+          }
+        })
+      let after =
+        DualPlacement(hit.after, dual_signature(states, exteriors, walks), 1)
+      use found <- result.try(dual_merge_placements(
+        [before, after],
+        found,
+        False,
+      ))
+      dual_line_placements(rest, states, exteriors, walks, found)
+    }
+  }
+}
+
+fn dual_merge_placements(
+  new: List(DualPlacement),
+  old: List(DualPlacement),
+  confirm: Bool,
+) -> Result(List(DualPlacement), InternalError) {
+  case new {
+    [] -> Ok(old)
+    [p, ..rest] -> {
+      use merged <- result.try(case list.find(old, fn(q) { q.walk == p.walk }) {
+        Error(_) -> Ok([p, ..old])
+        Ok(previous) ->
+          case previous.signature == p.signature {
+            False -> Error(InternalDualSweepContradiction(p.walk))
+            True ->
+              Ok(
+                list.map(old, fn(q) {
+                  case q.walk == p.walk && confirm {
+                    True ->
+                      DualPlacement(..q, confirmations: q.confirmations + 1)
+                    False -> q
+                  }
+                }),
+              )
+          }
+      })
+      dual_merge_placements(rest, merged, confirm)
+    }
+  }
+}
+
+fn dual_find_placements(
+  edges: List(DualSweepEdge),
+  vertices: List(ArrangementVertex),
+  tolerance: Float,
+  walks: List(ArrangementFaceWalk),
+  exteriors: List(DualExterior),
+  found: List(DualPlacement),
+  seed: Int,
+  remaining: Int,
+) -> Result(List(DualPlacement), InternalError) {
+  let unresolved =
+    list.index_map(walks, fn(_, i) { i })
+    |> list.filter(fn(w) {
+      !list.any(found, fn(p) {
+        p.walk == w && p.confirmations >= dual_sweep_confirmations
+      })
+    })
+  case unresolved {
+    [] -> Ok(found)
+    [walk, ..] ->
+      case remaining <= 0 {
+        True -> Error(InternalDualSweepExhausted(list.length(unresolved)))
+        False -> {
+          use line <- result.try(dual_pair_line(edges, walk, seed))
+          use next <- result.try(
+            case dual_sweep_intersections(edges, vertices, line, tolerance) {
+              Error(_) -> Ok(found)
+              Ok(hits) -> {
+                use claims <- result.try(dual_line_exteriors(hits))
+                use _ <- result.try(dual_merge_exteriors(claims, exteriors))
+                use placements <- result.try(
+                  dual_line_placements(
+                    hits,
+                    list.map(exteriors, fn(e) { #(e.component, e.walk) }),
+                    exteriors,
+                    walks,
+                    [],
+                  ),
+                )
+                dual_merge_placements(placements, found, True)
+              }
+            },
+          )
+          dual_find_placements(
+            edges,
+            vertices,
+            tolerance,
+            walks,
+            exteriors,
+            next,
+            dual_random(seed),
+            remaining - 1,
+          )
+        }
       }
   }
 }

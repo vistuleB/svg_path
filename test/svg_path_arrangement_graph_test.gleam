@@ -452,6 +452,102 @@ pub fn dual_square_has_infinite_and_bounded_faces_test() {
   list.length(edge_faces) |> should.equal(4)
 }
 
+pub fn dual_narrow_nested_squares_do_not_skip_annular_face_test() {
+  let assert Ok(graph) =
+    build_graph(
+      [
+        square(0.0, 0.0, 10.0),
+        square(0.00001, 0.00001, 9.99998),
+      ],
+      tolerance: 0.000000001,
+      minimum_chord: 0.000000001,
+    )
+  let assert Ok(dual) = arrangement_graph.dual(graph)
+  assert list.length(dual.faces) == 3
+  let assert Ok(annulus) =
+    list.find(dual.faces, fn(face) { list.length(face.walks) == 2 })
+  assert !annulus.outer
+  let assert [enclosing, island] = annulus.walks
+  assert enclosing.outer && !island.outer
+}
+
+pub fn dual_mixed_nested_and_separate_components_test() {
+  let assert Ok(graph) =
+    build_graph(
+      [
+        square(0.0, 0.0, 20.0),
+        square(0.00001, 0.00001, 19.99998),
+        square(5.0, 5.0, 2.0),
+        square(10.0, 5.0, 2.0),
+        square(30.0, 0.0, 4.0),
+      ],
+      tolerance: 0.000000001,
+      minimum_chord: 0.000000001,
+    )
+  let assert Ok(dual) = arrangement_graph.dual(graph)
+  assert list.length(dual.faces) == 6
+  let assert [outer, ..] = dual.faces
+  assert outer.outer && list.length(outer.walks) == 2
+  assert list.any(dual.faces, fn(face) {
+    !face.outer && list.length(face.walks) == 3
+  })
+  assert arrangement_graph.dual(graph) == Ok(dual)
+}
+
+pub fn dual_curved_nested_components_ignore_traversal_orientation_test() {
+  let outer = dual_test_circle(10.0)
+  let inner = dual_test_circle(9.99999)
+  list.each([inner, svg_path.subpath_reverse(inner)], fn(inner) {
+    let assert Ok(graph) =
+      build_graph(
+        [outer, inner],
+        tolerance: 0.000000001,
+        minimum_chord: 0.000000001,
+      )
+    let assert Ok(dual) = arrangement_graph.dual(graph)
+    assert list.length(dual.faces) == 3
+    assert list.any(dual.faces, fn(face) {
+      !face.outer && list.length(face.walks) == 2
+    })
+  })
+}
+
+pub fn dual_closed_cubic_and_disconnected_bridge_test() {
+  let loop =
+    closed_subpath([
+      svg_path.CubicBezier(
+        svg_path.Point(0.0, 0.0),
+        svg_path.Point(4.0, 6.0),
+        svg_path.Point(-4.0, 6.0),
+        svg_path.Point(0.0, 0.0),
+      ),
+    ])
+  let bridge =
+    svg_path.segment_as_subpath(svg_path.Line(
+      svg_path.Point(-0.2, 2.0),
+      svg_path.Point(0.2, 2.0),
+    ))
+  let assert Ok(graph) = build_graph([loop, bridge], tolerance:, minimum_chord:)
+  let assert Ok(dual) = arrangement_graph.dual(graph)
+  assert list.length(dual.faces) == 2
+  assert list.any(dual.faces, fn(face) {
+    !face.outer && list.length(face.walks) == 2
+  })
+  assert list.any(dual.edge_faces, fn(edge) {
+    edge.left_face == edge.right_face
+  })
+}
+
+fn dual_test_circle(radius: Float) -> svg_path.Subpath {
+  let a = svg_path.Point(radius, 0.0)
+  let b = svg_path.Point(0.0 -. radius, 0.0)
+  let r = svg_path.Point(radius, radius)
+  closed_subpath([
+    svg_path.Arc(a, r, 0.0, False, True, b),
+    svg_path.Arc(b, r, 0.0, False, True, a),
+  ])
+}
+
 pub fn dual_infinite_face_collects_disconnected_islands_test() {
   let assert Ok(graph) =
     build_graph(
