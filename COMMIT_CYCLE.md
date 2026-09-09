@@ -32,6 +32,11 @@ published filename was produced, and promotes the Gallery figures into
 `docs/gallery`. README figures still require review and promotion through the
 asset worktree described below.
 
+The package-title second-offset arrangement is currently an archived diagnostic
+SVG, copied rather than recomputed. It is labeled accordingly in `GALLERY.md`.
+The two offset-text figures are recomputed by their original fixtures before
+their generated SVGs are included in the Gallery.
+
 ## Gallery Figures
 
 Gallery figures are committed on `main`.

@@ -952,6 +952,32 @@ pub fn subpath_offset_map_uses_cumulative_segment_lengths_test() {
   assert map(svg_path.Point(12.0, 3.0)) == Ok(svg_path.Point(13.0, 2.0))
 }
 
+pub fn subpath_offset_map_preserves_rounded_cumulative_boundaries_test() {
+  let first =
+    svg_path.Line(
+      start: svg_path.Point(0.0, 0.0),
+      end: svg_path.Point(10.0, 0.0),
+    )
+  let second =
+    svg_path.Line(
+      start: svg_path.Point(10.0, 0.0),
+      end: svg_path.Point(10.0, 0.3),
+    )
+  let third =
+    svg_path.Line(
+      start: svg_path.Point(10.0, 0.3),
+      end: svg_path.Point(11.0, 0.3),
+    )
+  // (10.0 + 0.3) - 10.0 is slightly greater than the stored length 0.3.
+  // Test both a final endpoint and an interior segment boundary.
+  list.each([[first, second], [first, second, third]], fn(segments) {
+    let assert Ok(source) = svg_path.subpath(segments)
+    let assert Ok(map) = offset.subpath_offset_map(source)
+    assert map(svg_path.Point(10.0 +. 0.3, 0.0))
+      == Ok(svg_path.Point(10.0, 0.3))
+  })
+}
+
 pub fn subpath_offset_map_wraps_closed_subpath_distances_test() {
   let subpath =
     svg_path.subpath_assert([

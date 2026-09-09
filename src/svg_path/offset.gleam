@@ -10872,7 +10872,12 @@ fn offset_map_point(
         closed,
       ))
       use span <- result.try(length_span_at(spans, distance))
-      let local_distance = distance -. span.start_distance
+      // The cumulative bounds already selected this span. Subtracting its
+      // start can round past its independently stored length, even at an exact
+      // cumulative endpoint. Keep that conversion inside the selected span;
+      // the caller's global distance was validated above, without a tolerance.
+      let local_distance =
+        float.clamp(distance -. span.start_distance, 0.0, span.length)
       use t <- result.try(
         svg_path.segment_parameter_at_length_with(
           span.segment,

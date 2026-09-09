@@ -120,6 +120,10 @@ Shows the second-offset arrangement graph for the package title stress fixture:
 red submerged edges, green non-submerged edges, yellow first-round dangling
 edges, and purple final survivor edges.
 
+This is an archived diagnostic drawing. Its original graph-capture generator
+is not currently connected to the Gallery workflow, so regeneration copies the
+saved SVG; it does not verify this graph against current code.
+
 ### Offset Text
 
 ![Lazy dog offset coil](docs/gallery/gallery-lazy-dog-offset-coil.svg)
@@ -152,4 +156,3 @@ pushed outward from the `SVG_PATH` text outline.
 
 Shows a dense snaking subpath cut by a text outline, with the pieces inside the
 outline removed.
-

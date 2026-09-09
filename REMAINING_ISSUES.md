@@ -2,6 +2,19 @@
 
 Updated 2026-09-09, including the SP1 and OF3 follow-ups after `f57dd01`.
 
+Gallery regeneration subsequently exposed and resolved an offset-map cumulative
+length roundoff failure: subtracting a span's start from a valid cumulative
+endpoint could exceed the stored segment length. The conversion is now clamped
+to the selected span after strict global-distance validation. A regression
+covers both an interior boundary and the final endpoint using lengths 10 and
+0.3; it failed before the fix with `InvalidLengthDistance(0.3000000000000007, 0.3)`.
+Both offset-text generators now run during Gallery generation instead of merely
+copying their saved SVGs. The second-offset arrangement remains an explicitly
+labeled archived diagnostic; reconnecting its original graph-capture generator
+is still needed for fresh verification. The next two audit issues were deferred
+to address this Gallery failure first.
+`scripts/test-fast` passed **1,560 tests** with this fix.
+
 AD1 and OF5 have now been resolved in `c2e8865` and `3bf9b2a`. Their illustrated
 entries are retained below, explicitly marked resolved, as a record of this
 follow-up. They are no longer candidates for further fixes.

@@ -20,6 +20,7 @@ import svg_path/transform
 import svg_path/trig
 import svg_path_convex_hull_gallery_fixture as convex_hull_gallery_fixture
 import svg_path_figure_eight_correspondence_fixture as figure_eight_correspondence_fixture
+import svg_path_offset_map_visual_test as offset_map_visual
 
 const output_dir = "test/generated/gallery"
 
@@ -33,6 +34,10 @@ pub fn main() -> Nil {
 
 pub fn generate_gallery_figures() {
   let _ = ensure_dir(output_dir <> "/README.md")
+  // These figures are written by their original fixtures. Regenerate them
+  // before reading their SVGs so a saved successful image cannot hide a crash.
+  offset_map_visual.generate_khmer_text_offset_map_spiral_visual()
+  offset_map_visual.generate_khmer_text_offset_map_decaying_spiral_visual()
 
   let figures = [
     #(
