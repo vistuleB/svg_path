@@ -1545,12 +1545,11 @@ offset.path_band(
 `inner` and `outer` are caller-assigned roles, not a numeric-order
 restriction. Either ordering is accepted. Exchanging the values reverses the
 orientation of the resulting band. The explicit `cap:` argument determines
-how open-source endpoints are connected in the internal winding band. With
-`band_trimming.in_band: False`, the returned assembled outline exposes these
-caps: `Butt` connects the sides directly, while `Square` and `RoundCap` extend or
-round the ends. With the default `in_band: True`, reconstruction can return
-capless offset sides; selecting a cap does not guarantee visible caps in the
-trimmed output. Use the stroke APIs when you need a stroke outline.
+how open-source endpoints are capped: `Butt` connects the sides directly,
+while `Square` and `RoundCap` extend or round the ends. Caps are part of the
+assembled outline whether or not `band_trimming.in_band` is enabled. With
+trimming enabled, caps participate in pruning along with the offset sides;
+the surviving band contours are closed.
 
 Band trimming has three independent Boolean controls:
 
@@ -1631,11 +1630,11 @@ The non-`_with` forms accept `width:` directly and default only the technical
 options. Pure dash extraction (`subpath_dashes`, `path_dashes`, and their
 `_with` forms) is unchanged and takes no join or cap.
 
-Stroke outlines use the same normalized source for their sides and caps, then
-trim the complete outline. The nested offset options' per-side band-trimming
-switches do not control this final stroke trimming. Any intermediate cusp
-trimming uses butt closures for its classification region, independently of
-the cap chosen for the final outline.
+Nonzero stroke outlines delegate to symmetric bands with offsets `-width/2`
+and `+width/2`. Band construction owns normalization, sides, caps, and trimming.
+For compatibility, stroke explicitly disables both per-side cusp passes and
+enables final in-band trimming; the nested `band_trimming` settings are ignored.
+Zero-length strokes retain the SVG cap-specific point behavior.
 
 ## Arrangement Graphs
 

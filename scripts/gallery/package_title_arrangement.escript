@@ -33,7 +33,7 @@ main(_) ->
     [{Build, Eligible}] = [{B,G} || {trace,_,call,{'svg_path@offset',delete_winding_mismatched_edges,[B,G,_,_]}} <- Events],
     [Retained] = [G || {trace,_,return_from,{'svg_path@offset',delete_winding_mismatched_edges,4},{ok,G}} <- Events],
     [Reduced] = [G || {trace,_,return_from,{'svg_path@offset',forced_parity_reduce_trim_graph,2},{ok,G}} <- Events],
-    {offset_arrangement_build, {arrangement_graph,Vertices,Edges,_},_,_,_} = Build,
+    {offset_arrangement_build, {arrangement_graph,Vertices,Edges,_},_,_,_,_} = Build,
     EligibleIds = ids(Eligible), RetainedIds = ids(Retained), SurvivorIds = ids(Reduced),
     %% Match the historical figure's first-round meaning: degree-one edges
     %% immediately after submerged deletion, not merely the first serial

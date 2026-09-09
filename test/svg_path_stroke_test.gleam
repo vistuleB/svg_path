@@ -6,6 +6,72 @@ import svg_path/parse
 import svg_path/serialize
 import svg_path/stroke
 
+pub fn stroke_delegates_to_symmetric_band_for_open_and_closed_sources_test() {
+  let open =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
+      svg_path.Point(10.0, 10.0),
+    ])
+  let closed =
+    svg_path.subpath_assert_polygon([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
+      svg_path.Point(10.0, 10.0),
+      svg_path.Point(0.0, 10.0),
+    ])
+  let band_options =
+    offset.Options(
+      ..offset.default_options(),
+      band_trimming: offset.BandTrimming(
+        inner_cusps: False,
+        outer_cusps: False,
+        in_band: True,
+      ),
+    )
+  // Stroke's existing API ignores band trimming choices and retains its
+  // always-on final trim. Make that compatibility choice explicit here.
+  let stroke_options =
+    stroke.Options(
+      width: 2.0,
+      offset: offset.Options(
+        ..offset.default_options(),
+        band_trimming: offset.BandTrimming(
+          inner_cusps: True,
+          outer_cusps: True,
+          in_band: False,
+        ),
+      ),
+    )
+  list.each([open, closed], fn(source) {
+    list.each(
+      [
+        #(stroke.Butt, offset.Butt),
+        #(stroke.RoundCap, offset.RoundCap),
+        #(stroke.Square, offset.Square),
+      ],
+      fn(caps) {
+        let assert Ok(expected) =
+          offset.subpath_band_with(
+            source,
+            inner_offset: -1.0,
+            outer_offset: 1.0,
+            join: offset.Round,
+            cap: caps.1,
+            options: band_options,
+          )
+        assert stroke.subpath_with(
+            source,
+            join: stroke.Round,
+            cap: caps.0,
+            options: stroke_options,
+          )
+          == Ok(expected)
+      },
+    )
+  })
+}
+
 pub fn signed_zero_dash_patterns_are_continuous_test() {
   let assert Ok(subpath) =
     svg_path.subpath([

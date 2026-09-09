@@ -30,12 +30,10 @@
 //// is useful for debugging, drawing raw construction geometry, or implementing
 //// a different trimming policy.
 ////
-//// `subpath_band` and `path_band` construct two signed offset walks and trim
-//// them together without adding endpoint caps to the arranged walks. Their
-//// `cap` style closes the internal winding bands for open sources; disabling
-//// in-band trimming returns that capped band outline. The separate
-//// `svg_path/stroke` module adds endpoint caps to the arranged outline for open subpaths.
-//// Closed strokes use capless per-subpath band construction.
+//// `subpath_band` and `path_band` construct two signed offset walks. Open
+//// bands connect them with the requested endpoint caps before final trimming;
+//// closed bands have two contour sides and need no caps. The `svg_path/stroke`
+//// module delegates nonzero stroke outlines to this same band construction.
 
 fn traced_subpath_geometry(
   traced: TracedOffsetSubpath,
@@ -214,6 +212,7 @@ type IndexedOffsetSegment {
     subpath_index: Int,
     segment: svg_path.Segment,
     winding_opinion: Option(WindingSideOpinion),
+    winding_change: Option(Int),
   )
 }
 
@@ -308,13 +307,13 @@ pub fn default_options() -> Options {
   )
 }
 
-fn offside_trimmed_single_offset_winding_function(
+fn offside_trimmed_single_offset_winding_path(
   builds: List(SingleOffsetUntrimmedBuild),
   trimmed: List(TracedOffsetSubpath),
   offset: Float,
   bands: List(OneSubpathBand),
   tolerance: Float,
-) -> Result(fn(svg_path.Point) -> Result(Int, InternalError), InternalError) {
+) -> Result(svg_path.Path, InternalError) {
   use subpaths <- result.try(
     offside_trimmed_single_offset_winding_subpaths(
       builds,
@@ -326,17 +325,7 @@ fn offside_trimmed_single_offset_winding_function(
       collected: [],
     ),
   )
-  let path = svg_path.Path(subpaths:)
-  Ok(fn(point) {
-    use winding <- result.try(
-      svg_path.path_winding(point, within: path)
-      |> result.map_error(InternalPathError),
-    )
-    case winding {
-      svg_path.Winding(value) -> Ok(value)
-      svg_path.BoundaryWinding -> Error(InternalInconsistentContainment)
-    }
-  })
+  Ok(svg_path.Path(subpaths:))
 }
 
 fn offside_trimmed_single_offset_winding_subpaths(
@@ -404,13 +393,14 @@ pub fn internal_topological_band_loops(
   use winding <- result.try(internal_band_winding_function(bands))
   trim_band_arrangement(
     untrimmed,
+    bands:,
     winding:,
     winding_opinions: band_subpath_winding_opinions(bands),
     options:,
   )
 }
 
-/// Shared implementation used by stroke construction.
+/// Internal offset construction helper.
 @internal
 pub fn topological_band_path_with_opinions(
   untrimmed: List(svg_path.Subpath),
@@ -421,6 +411,7 @@ pub fn topological_band_path_with_opinions(
   use winding <- result.try(internal_band_winding_function(bands))
   use loops <- result.try(trim_band_arrangement(
     untrimmed,
+    bands:,
     winding:,
     winding_opinions:,
     options:,
@@ -491,10 +482,12 @@ fn final_single_offset_subpaths(
   let zero_source_segments =
     builds
     |> list.flat_map(fn(build) { svg_path.subpath_segments(build.zero_source) })
+  use winding_path <- result.try(band_winding_path(bands))
   use original_arrangement <- result.try(single_offset_segment_arrangement(
     original_untrimmed,
     zero_source_segments:,
     offset:,
+    winding_path:,
   ))
   use offside_trimmed <- result.try(offside_trimmed_single_offset_subpaths(
     builds,
@@ -556,17 +549,18 @@ fn submerged_trimmed_single_offset_subpaths(
     })
     |> result.all,
   )
-  use winding <- result.try(case offside {
+  use winding_path <- result.try(case offside {
     True ->
-      offside_trimmed_single_offset_winding_function(
+      offside_trimmed_single_offset_winding_path(
         builds,
         offside_trimmed,
         offset,
         bands,
         options.fitting.tolerance,
       )
-    False -> internal_band_winding_function(bands)
+    False -> band_winding_path(bands)
   })
+  let winding = path_winding_function(winding_path)
   use arrangement <- result.try(case offside {
     False -> Ok(original_arrangement)
     True ->
@@ -574,6 +568,7 @@ fn submerged_trimmed_single_offset_subpaths(
         untrimmed,
         zero_source_segments:,
         offset:,
+        winding_path:,
       )
   })
   trim_single_offset_arrangement(arrangement, untrimmed, winding, options)
@@ -682,11 +677,17 @@ fn trim_single_offset_arrangement(
 /// and source-order reconstruction then produce closed survivor subpaths.
 fn trim_band_arrangement(
   untrimmed: List(svg_path.Subpath),
+  bands bands: List(OneSubpathBand),
   winding winding: fn(svg_path.Point) -> Result(Int, InternalError),
   winding_opinions winding_opinions: List(WindingSideOpinion),
   options options: Options,
 ) -> Result(List(svg_path.Subpath), InternalError) {
-  use build <- result.try(band_segment_arrangement(untrimmed, winding_opinions))
+  use winding_path <- result.try(band_winding_path(bands))
+  use build <- result.try(band_segment_arrangement(
+    untrimmed,
+    winding_opinions,
+    winding_path,
+  ))
   let OffsetArrangementBuild(graph:, ..) = build
   use protected_vertices <- result.try(untrimmed_open_endpoint_vertices(
     build,
@@ -694,7 +695,7 @@ fn trim_band_arrangement(
   ))
   use without_submerged <- result.try(delete_winding_mismatched_edges(
     build,
-    offset_trim_graph(graph),
+    retain_offset_image_edges(graph, build),
     winding:,
     side_sampling_distance: submerged_side_sampling_distance,
   ))
@@ -956,7 +957,7 @@ pub fn subpath_with(
   result |> result.map_error(public_error)
 }
 
-/// Shared implementation used by stroke construction.
+/// Internal offset construction helper.
 @internal
 pub fn normalize_source_subpath(
   subpath: svg_path.Subpath,
@@ -1145,13 +1146,25 @@ pub fn subpath_band_with(
       }
       use path <- result.try(
         case in_band {
-          True ->
+          True -> {
+            // Open bands are trimmed as complete capped outlines. The caps
+            // are output candidates, not merely winding-region boundaries.
+            let #(candidates, opinions) = case band {
+              OpenSubpathBand(outline) -> #([outline], [
+                WindingSideOpinion(left: 0, right: 1),
+              ])
+              ClosedSubpathBand(..) -> #(
+                [untrimmed_a, untrimmed_b],
+                winding_opinions,
+              )
+            }
             topological_band_path_with_opinions(
-              [untrimmed_a, untrimmed_b],
+              candidates,
               [band],
-              winding_opinions,
+              opinions,
               options,
             )
+          }
           False -> one_subpath_band_semantic_path(band)
         }
         |> result.map_error(public_error),
@@ -1280,7 +1293,7 @@ pub fn subpath_untrimmed_with(
   |> result.map_error(public_error)
 }
 
-/// Shared implementation used by stroke construction.
+/// Internal offset construction helper.
 @internal
 pub fn untrimmed_subpath_from_normalized_source(
   subpath: svg_path.Subpath,
@@ -1991,11 +2004,14 @@ fn cusp_trim_i_subpath(
         cap: Butt,
       ))
       use winding <- result.try(internal_band_winding_function([band]))
+      use winding_path <- result.try(band_winding_path([band]))
       use build <- result.try(single_offset_segment_arrangement(
         [geometry],
         zero_source_segments: svg_path.subpath_segments(zero_source),
         offset:,
+        winding_path:,
       ))
+      use build <- result.try(with_face_windings(build))
       use split <- result.try(arrangement_split_subpath_from_i_arrangement(
         subpath,
         build,
@@ -2735,6 +2751,7 @@ pub type InternalError {
 
   /// An indexed offset segment had no winding-side opinion.
   InternalMissingWindingOpinion(segment_index: Int)
+  InternalFaceWindingError(error: arrangement_graph.WindingPropagationError)
 
   /// Source-order reconstruction did not consume an assigned edge capacity.
   InternalSurvivorCapacityMismatch(edge_id: Int, remaining: Int)
@@ -3143,6 +3160,7 @@ type OffsetArrangementBuild {
     indexed_segments: List(IndexedOffsetSegment),
     segment_images: List(arrangement_graph.ArrangementSourceSegmentImage),
     edge_images: List(arrangement_graph.ArrangementEdgeImage),
+    edge_windings: Option(List(#(Int, #(Int, Int)))),
   )
 }
 
@@ -3163,6 +3181,7 @@ type OffsetTrimGraph {
 type OffsetArrangementSegmentGroup {
   UntrimmedOffsetSegment
   ZeroOffsetSourceSegment
+  WindingClosureSegment
 }
 
 type SingleOffsetUntrimmedBuild {
@@ -3477,15 +3496,26 @@ pub fn internal_band_inside_function(
 pub fn internal_band_winding_function(
   bands: List(OneSubpathBand),
 ) -> Result(fn(svg_path.Point) -> Result(Int, InternalError), InternalError) {
+  use path <- result.try(band_winding_path(bands))
+  Ok(path_winding_function(path))
+}
+
+fn band_winding_path(
+  bands: List(OneSubpathBand),
+) -> Result(svg_path.Path, InternalError) {
   use semantic_paths <- result.try(
     one_subpath_band_semantic_paths(bands, paths: []),
   )
-  let path =
-    svg_path.Path(
-      semantic_paths
-      |> list.flat_map(svg_path.path_subpaths),
-    )
-  Ok(fn(point) {
+  Ok(svg_path.Path(
+    semantic_paths
+    |> list.flat_map(svg_path.path_subpaths),
+  ))
+}
+
+fn path_winding_function(
+  path: svg_path.Path,
+) -> fn(svg_path.Point) -> Result(Int, InternalError) {
+  fn(point) {
     use winding <- result.try(
       svg_path.path_winding(point, within: path)
       |> result.map_error(InternalPathError),
@@ -3494,7 +3524,7 @@ pub fn internal_band_winding_function(
       svg_path.Winding(value) -> Ok(value)
       svg_path.BoundaryWinding -> Error(InternalInconsistentContainment)
     }
-  })
+  }
 }
 
 fn unique_ints(values: List(Int), unique unique: List(Int)) -> List(Int) {
@@ -4177,6 +4207,7 @@ fn delete_winding_mismatched_edges(
   winding winding: fn(svg_path.Point) -> Result(Int, InternalError),
   side_sampling_distance side_sampling_distance: Float,
 ) -> Result(OffsetTrimGraph, InternalError) {
+  use build <- result.try(with_face_windings(build))
   let OffsetTrimGraph(vertices:, edges:, edge_capacities:) = graph
   use retained <- result.try(
     delete_winding_mismatched_edges_loop(
@@ -4227,8 +4258,24 @@ fn arrangement_edge_winding_matches_opinion(
   winding winding: fn(svg_path.Point) -> Result(Int, InternalError),
   side_sampling_distance side_sampling_distance: Float,
 ) -> Result(Bool, InternalError) {
-  let arrangement_graph.ArrangementEdge(id:, segment:, ..) = edge
-  use expected <- result.try(arrangement_edge_winding_opinion(build, id))
+  use expected <- result.try(arrangement_edge_winding_opinion(build, edge.id))
+  use measured <- result.try(case build.edge_windings {
+    Some(pairs) ->
+      list.find(pairs, fn(pair) { pair.0 == edge.id })
+      |> result.map(fn(pair) { pair.1 })
+      |> result.map_error(fn(_) { InternalMissingEdgeImage(edge.id) })
+    None ->
+      arrangement_edge_sampled_windings(edge, winding, side_sampling_distance)
+  })
+  Ok(winding_pair_matches_opinion(expected, measured.0, measured.1))
+}
+
+fn arrangement_edge_sampled_windings(
+  edge: arrangement_graph.ArrangementEdge,
+  winding: fn(svg_path.Point) -> Result(Int, InternalError),
+  side_sampling_distance: Float,
+) -> Result(#(Int, Int), InternalError) {
+  let arrangement_graph.ArrangementEdge(segment:, ..) = edge
   use point <- result.try(
     svg_path.segment_point(segment, at: 0.5)
     |> result.map_error(InternalPathError),
@@ -4246,14 +4293,20 @@ fn arrangement_edge_winding_matches_opinion(
       point_helpers.scale(normal, 0.0 -. side_sampling_distance),
     )),
   )
+  Ok(#(left, right))
+}
+
+fn winding_pair_matches_opinion(
+  expected: WindingSideOpinion,
+  left: Int,
+  right: Int,
+) -> Bool {
   let WindingSideOpinion(left: expected_left, right: expected_right) = expected
   let common_shift = expected_left - left
-  Ok(
-    common_shift >= 0
-    && expected_right - right == common_shift
-    && left + common_shift >= 0
-    && right + common_shift >= 0,
-  )
+  common_shift >= 0
+  && expected_right - right == common_shift
+  && left + common_shift >= 0
+  && right + common_shift >= 0
 }
 
 fn arrangement_edge_winding_opinion(
@@ -5255,6 +5308,7 @@ pub fn validate_join(join: Join) -> Result(Nil, InternalError) {
 fn band_segment_arrangement(
   untrimmed: List(svg_path.Subpath),
   winding_opinions: List(WindingSideOpinion),
+  winding_path: svg_path.Path,
 ) -> Result(OffsetArrangementBuild, InternalError) {
   let indexed =
     indexed_offset_segments(
@@ -5262,13 +5316,133 @@ fn band_segment_arrangement(
       group: UntrimmedOffsetSegment,
       winding_opinions:,
     )
-  offset_segment_arrangement(indexed)
+  offset_segment_arrangement(include_winding_boundary(indexed, winding_path))
+}
+
+// Match occurrences, not just geometric sets. In particular, opposite caps at
+// a geometrically closed open seam must remain two opposite contributions.
+// Existing preimage indices stay stable; unmatched winding segments are added
+// after them. Use the exact assembled winding geometry, including cap geometry.
+fn include_winding_boundary(
+  indexed: List(IndexedOffsetSegment),
+  winding_path: svg_path.Path,
+) -> List(IndexedOffsetSegment) {
+  winding_path
+  |> svg_path.path_subpaths
+  |> list.flat_map(svg_path.subpath_segments)
+  |> list.fold(indexed, fn(indexed, segment) {
+    let #(matched, found) = assign_winding_occurrence(indexed, segment)
+    case found {
+      True -> matched
+      False ->
+        list.append(matched, [
+          IndexedOffsetSegment(
+            group: WindingClosureSegment,
+            subpath_index: -1,
+            segment:,
+            winding_change: Some(1),
+            winding_opinion: Some(WindingSideOpinion(0, 0)),
+          ),
+        ])
+    }
+  })
+}
+
+fn assign_winding_occurrence(
+  indexed: List(IndexedOffsetSegment),
+  segment: svg_path.Segment,
+) -> #(List(IndexedOffsetSegment), Bool) {
+  case indexed {
+    [] -> #([], False)
+    [first, ..rest] -> {
+      let same = first.segment == segment
+      let opposite = first.segment == svg_path.segment_reverse(segment)
+      case first.winding_change == None && { same || opposite } {
+        True -> #(
+          [
+            IndexedOffsetSegment(
+              ..first,
+              winding_change: Some(case same {
+                True -> 1
+                False -> -1
+              }),
+            ),
+            ..rest
+          ],
+          True,
+        )
+        False -> {
+          let #(remaining, found) = assign_winding_occurrence(rest, segment)
+          #([first, ..remaining], found)
+        }
+      }
+    }
+  }
+}
+
+fn with_face_windings(
+  build: OffsetArrangementBuild,
+) -> Result(OffsetArrangementBuild, InternalError) {
+  case build.edge_windings {
+    Some(_) -> Ok(build)
+    None -> {
+      use dual <- result.try(
+        arrangement_graph.dual(build.graph)
+        |> result.map_error(arrangement_error),
+      )
+      use changes <- result.try(
+        list.try_map(build.edge_images, fn(image) {
+          use contributions <- result.try(
+            list.try_map(image.sources, fn(source) {
+              use indexed <- result.try(
+                offset_indexed_segment_at(
+                  build.indexed_segments,
+                  source.segment_index,
+                )
+                |> result.map_error(fn(_) {
+                  InternalMissingIndexedSegment(source.segment_index)
+                }),
+              )
+              let contribution = option.unwrap(indexed.winding_change, 0)
+              Ok(case source.reversed {
+                True -> 0 - contribution
+                False -> contribution
+              })
+            }),
+          )
+          Ok(arrangement_graph.EdgeWindingChange(
+            image.edge_id,
+            list.fold(contributions, 0, fn(a, b) { a + b }),
+          ))
+        }),
+      )
+      use values <- result.try(
+        arrangement_graph.face_windings(dual, changes)
+        |> result.map_error(InternalFaceWindingError),
+      )
+      use pairs <- result.try(
+        list.try_map(dual.edge_faces, fn(edge) {
+          use left <- result.try(
+            list.find(values, fn(face) { face.face_id == edge.left_face })
+            |> result.map_error(fn(_) { InternalMissingEdgeImage(edge.edge_id) }),
+          )
+          use right <- result.try(
+            list.find(values, fn(face) { face.face_id == edge.right_face })
+            |> result.map_error(fn(_) { InternalMissingEdgeImage(edge.edge_id) }),
+          )
+          Ok(#(edge.edge_id, #(left.value, right.value)))
+        }),
+      )
+      Ok(OffsetArrangementBuild(..build, edge_windings: Some(pairs)))
+    }
+  }
 }
 
 fn single_offset_segment_arrangement(
   untrimmed: List(svg_path.Subpath),
   zero_source_segments zero_source_segments: List(svg_path.Segment),
   offset offset: Float,
+  winding_path winding_path: svg_path.Path,
 ) -> Result(OffsetArrangementBuild, InternalError) {
   let #(offset_opinion, zero_opinion) = case offset >=. 0.0 {
     True -> #(
@@ -5293,10 +5467,11 @@ fn single_offset_segment_arrangement(
           subpath_index: 0,
           segment:,
           winding_opinion: Some(zero_opinion),
+          winding_change: None,
         )
       }),
     )
-  offset_segment_arrangement(indexed)
+  offset_segment_arrangement(include_winding_boundary(indexed, winding_path))
 }
 
 fn offset_segment_arrangement(
@@ -5313,7 +5488,7 @@ fn offset_segment_arrangement(
       segments,
       vertex_tolerance: arrangement_tolerance,
       minimum_chord: arrangement_tolerance,
-      endpoint_sliver_tolerance: 0.0001,
+      endpoint_sliver_tolerance: adjacent_loop_endpoint_parameter_tolerance,
     )
   use build <- result.try(
     build_result |> result.map_error(InternalArrangementGraphError),
@@ -5329,6 +5504,7 @@ fn offset_segment_arrangement(
     indexed_segments: indexed,
     segment_images:,
     edge_images:,
+    edge_windings: None,
   ))
 }
 
@@ -5370,6 +5546,7 @@ fn indexed_offset_segments_loop(
               subpath_index:,
               segment:,
               winding_opinion:,
+              winding_change: None,
             ),
             ..collected
           ]
@@ -5491,13 +5668,6 @@ fn offset_reconstruction_images(
       UntrimmedOffsetSegment,
     )
   })
-}
-
-fn offset_trim_graph(
-  graph: arrangement_graph.ArrangementGraph,
-) -> OffsetTrimGraph {
-  let arrangement_graph.ArrangementGraph(vertices:, edges:, ..) = graph
-  OffsetTrimGraph(vertices:, edges:, edge_capacities: None)
 }
 
 fn arrangement_edge_has_group(
@@ -6653,7 +6823,7 @@ fn join_between_offset_portions(
   }
 }
 
-/// Shared implementation used by stroke construction.
+/// Internal offset construction helper.
 @internal
 pub fn orient_band_path(
   path: svg_path.Path,
@@ -9083,15 +9253,18 @@ fn earliest_interior_adjacent_intersection(
     [] -> best
     [intersection, ..rest] -> {
       let svg_path.SegmentIntersection(left_t:, right_t:, ..) = intersection
-      // Contacts this close to the already-shared endpoint are not an
-      // adjacent loop. Arc reconstruction can otherwise turn an exact
-      // internal tangency into a second numerical root immediately beside
-      // that endpoint.
+      // Match the AG's shared-endpoint sliver rule: ignore a contact only
+      // when BOTH parameters are near their already-shared endpoint.
+      // Being near just one endpoint can still delimit a loop to remove.
+      let shared_endpoint_sliver =
+        1.0 -. left_t <=. adjacent_loop_endpoint_parameter_tolerance
+        && right_t <=. adjacent_loop_endpoint_parameter_tolerance
       let interior =
         left_t >. 0.0
-        && left_t <. 1.0 -. adjacent_loop_endpoint_parameter_tolerance
-        && right_t >. adjacent_loop_endpoint_parameter_tolerance
+        && left_t <=. 1.0
+        && right_t >=. 0.0
         && right_t <. 1.0
+        && !shared_endpoint_sliver
       let best = case interior, best {
         False, _ -> best
         True, None -> Some(intersection)
@@ -11101,7 +11274,7 @@ fn unit_normal(
   Ok(point_helpers.rotate_counterclockwise(tangent))
 }
 
-/// Shared implementation used by stroke construction.
+/// Internal offset construction helper.
 @internal
 pub fn unit_tangent(
   segment: svg_path.Segment,

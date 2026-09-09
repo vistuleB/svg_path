@@ -1877,7 +1877,7 @@ pub fn arrangement_consolidates_coincident_pieces_test() {
   })
 }
 
-pub fn subpath_band_open_line_returns_two_capless_sides_test() {
+pub fn subpath_band_open_line_returns_closed_capped_outline_test() {
   let subpath =
     svg_path.subpath_assert_polyline([
       svg_path.Point(0.0, 0.0),
@@ -1893,8 +1893,63 @@ pub fn subpath_band_open_line_returns_two_capless_sides_test() {
       cap: offset.Butt,
     )
 
-  assert list.length(svg_path.path_subpaths(offset_path)) == 2
-  assert serialize.path(offset_path) == "M 0 1 H 10 M 0 -2 H 10"
+  assert list.length(svg_path.path_subpaths(offset_path)) == 1
+  assert list.all(
+    svg_path.path_subpaths(offset_path),
+    svg_path.subpath_is_closed,
+  )
+  assert svg_path.path_subpaths(offset_path)
+    |> list.flat_map(svg_path.subpath_segments)
+    |> list.length
+    == 4
+}
+
+pub fn open_band_caps_survive_both_trimming_modes_and_offset_orders_test() {
+  let source =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
+    ])
+  list.each([offset.Butt, offset.RoundCap, offset.Square], fn(cap) {
+    list.each([True, False], fn(in_band) {
+      let options =
+        offset.Options(
+          ..offset.default_options(),
+          band_trimming: offset.BandTrimming(
+            inner_cusps: False,
+            outer_cusps: False,
+            in_band:,
+          ),
+        )
+      let assert Ok(forward) =
+        offset.subpath_band_with(
+          source,
+          inner_offset: -1.0,
+          outer_offset: 2.0,
+          join: offset.Round,
+          cap:,
+          options:,
+        )
+      let assert Ok(backward) =
+        offset.subpath_band_with(
+          source,
+          inner_offset: 2.0,
+          outer_offset: -1.0,
+          join: offset.Round,
+          cap:,
+          options:,
+        )
+      let assert [outline] = svg_path.path_subpaths(forward)
+      assert svg_path.subpath_is_closed(outline)
+      assert backward == svg_path.path_reverse(forward)
+      let expected_segments = case cap {
+        offset.Butt | offset.RoundCap -> 4
+        offset.Square -> 8
+      }
+      assert list.length(svg_path.subpath_segments(outline))
+        == expected_segments
+    })
+  })
 }
 
 pub fn subpath_band_closed_square_returns_two_closed_sides_test() {
@@ -2014,9 +2069,11 @@ pub fn path_band_offsets_every_subpath_on_both_sides_test() {
       cap: offset.Butt,
     )
 
-  assert list.length(svg_path.path_subpaths(offset_path)) == 4
-  assert serialize.path(offset_path)
-    == "M 0 1 H 10 M 0 -1 H 10 M 0 11 H 10 M 0 9 H 10"
+  assert list.length(svg_path.path_subpaths(offset_path)) == 2
+  assert list.all(
+    svg_path.path_subpaths(offset_path),
+    svg_path.subpath_is_closed,
+  )
 }
 
 pub fn subpath_band_untrimmed_returns_two_raw_sides_test() {
@@ -3618,6 +3675,41 @@ fn first_path_data(contents: String) -> String {
   let assert [_, after_attribute] = string.split(contents, on: " d=\"")
   let assert [data, ..] = string.split(after_attribute, on: "\"")
   data
+}
+
+pub fn adjacent_loop_culling_keeps_hit_near_only_one_shared_endpoint_test() {
+  let join =
+    svg_path.Arc(
+      start: svg_path.Point(430.66681589309076, 178.69245771161582),
+      radius: svg_path.Point(3.0, 3.0),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: False,
+      end: svg_path.Point(430.670203101245, 178.69477431938788),
+    )
+  let line =
+    svg_path.Line(
+      start: svg_path.segment_end(join),
+      end: svg_path.Point(430.22232031893986, 178.38890397610967),
+    )
+  // The hit lies within the line's endpoint sliver, but outside the join's.
+  // Neither traversal order may discard it merely for being near one side.
+  list.each(
+    [
+      #(join, line),
+      #(svg_path.segment_reverse(line), svg_path.segment_reverse(join)),
+    ],
+    fn(pair) {
+      let assert Ok(#(left, right)) =
+        offset.internal_short_circuit_adjacent_offset_segment_loop(
+          pair.0,
+          pair.1,
+        )
+      assert svg_path.segment_end(left) != svg_path.segment_end(pair.0)
+      assert svg_path.segment_start(right) != svg_path.segment_start(pair.1)
+      assert svg_path.segment_end(left) == svg_path.segment_start(right)
+    },
+  )
 }
 
 pub fn pairwise_healing_loop_short_circuit_is_idempotent_test() {
