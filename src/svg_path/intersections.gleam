@@ -1981,7 +1981,58 @@ fn classify_directions(
             second_branch: second_outgoing,
             options:,
           ))
-          Ok(Touching(direction:, incoming_order:, outgoing_order:, apertures:))
+          // At a common smooth tangent, equal outward-ray orders on the two
+          // geometric sides mean the branches alternate: an odd-order crossing.
+          // Opposite orders mean a touch. Do not apply this to corners/cusps,
+          // where the paired branches need not occupy opposite tangent rays.
+          let smooth_tangent =
+            aligned_directions(
+              left_incoming,
+              left_outgoing,
+              options.angular_tolerance,
+            )
+            && aligned_directions(
+              right_incoming,
+              right_outgoing,
+              options.angular_tolerance,
+            )
+            && aligned_directions(
+              left_outgoing,
+              case direction {
+                SimilarlyDirected -> right_outgoing
+                OppositelyDirected -> point.negate(right_outgoing)
+              },
+              options.angular_tolerance,
+            )
+          case smooth_tangent, incoming_order, outgoing_order, direction {
+            True,
+              ClockwiseFromFirstToSecond,
+              ClockwiseFromFirstToSecond,
+              SimilarlyDirected
+            -> Ok(Crossing(Clockwise, apertures:))
+            True,
+              ClockwiseFromSecondToFirst,
+              ClockwiseFromSecondToFirst,
+              OppositelyDirected
+            -> Ok(Crossing(Clockwise, apertures:))
+            True,
+              ClockwiseFromFirstToSecond,
+              ClockwiseFromFirstToSecond,
+              OppositelyDirected
+            -> Ok(Crossing(Counterclockwise, apertures:))
+            True,
+              ClockwiseFromSecondToFirst,
+              ClockwiseFromSecondToFirst,
+              SimilarlyDirected
+            -> Ok(Crossing(Counterclockwise, apertures:))
+            _, _, _, _ ->
+              Ok(Touching(
+                direction:,
+                incoming_order:,
+                outgoing_order:,
+                apertures:,
+              ))
+          }
         }
       }
     }
@@ -1992,6 +2043,11 @@ fn classify_directions(
 type TraversalBranch {
   IncomingBranch
   OutgoingBranch
+}
+
+fn aligned_directions(first: Point, second: Point, tolerance: Float) -> Bool {
+  let angle = point.clockwise_aperture(from: first, to: second)
+  angle <=. tolerance || 360.0 -. angle <=. tolerance
 }
 
 fn touching_branch_pairing(

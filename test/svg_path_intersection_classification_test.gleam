@@ -116,15 +116,24 @@ pub fn tangential_cubic_crossing_has_same_order_on_both_sides_test() {
     )
     |> svg_path.segment_as_subpath
 
-  let assert Ok(intersections.Touching(
-    direction: intersections.SimilarlyDirected,
-    incoming_order: intersections.ClockwiseFromFirstToSecond,
-    outgoing_order: intersections.ClockwiseFromFirstToSecond,
-    ..,
-  )) =
+  let assert Ok(intersections.Crossing(intersections.Clockwise, ..)) =
     intersections.classify_subpath_intersection(
       line,
       cubic,
+      first_parameter: svg_path.SubpathParameter(0, 0.5),
+      second_parameter: svg_path.SubpathParameter(0, 0.5),
+    )
+  let assert Ok(intersections.Crossing(intersections.Counterclockwise, ..)) =
+    intersections.classify_subpath_intersection(
+      cubic,
+      line,
+      first_parameter: svg_path.SubpathParameter(0, 0.5),
+      second_parameter: svg_path.SubpathParameter(0, 0.5),
+    )
+  let assert Ok(intersections.Crossing(intersections.Counterclockwise, ..)) =
+    intersections.classify_subpath_intersection(
+      line,
+      svg_path.subpath_reverse(cubic),
       first_parameter: svg_path.SubpathParameter(0, 0.5),
       second_parameter: svg_path.SubpathParameter(0, 0.5),
     )

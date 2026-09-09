@@ -130,7 +130,7 @@ removed on the current solver, with the fast suite and second-offset fixture
 passing. The archived residual-search experiment still needs its own checks
 for multiple approximations of one root; IX4 does not resolve window exhaustion.
 
-### IX3 — parallel tangents do not imply touching
+### IX3 — parallel tangents do not imply touching — resolved
 
 ![IX3 — parallel tangents do not imply touching](examples/debug/v1_review_visuals/ix3.svg)
 
@@ -138,9 +138,17 @@ for multiple approximations of one root; IX4 does not resolve window exhaustion.
 **Evidence:** reproduced classification error.
 
 The cubic y=(t−0.5)^3 crosses a horizontal line at t=0.5, but the equal-tangent
-branch labels it `Touching`. Higher-order/local separation is needed to
-distinguish an odd-order crossing from an even-order touch. Endpoint and
-overlap cases need explicit treatment. No repair has been committed.
+branch labeled it `Touching` despite already obtaining the same outward-ray
+order on both sides. For a common smooth tangent, those equal determinate
+orders now produce `Crossing`; opposite orders retain `Touching`. Reversing
+one traversal reverses the reported crossing direction. Corners/cusps do not
+use this inference; open endpoints retain their separate classification.
+Indeterminate samples retain the existing touching-order uncertainty.
+
+The former test that expected `Touching` for the cubic now expects `Crossing`
+and checks swapped operands and reversed traversal. It failed before the fix.
+Existing parabola and kissing-circle tests still pass. `scripts/test-fast`
+passes **1,565 tests**.
 
 ### IX4 — coincident positions can have distinct parameter pairs — resolved
 
