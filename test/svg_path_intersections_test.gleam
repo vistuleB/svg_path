@@ -6,6 +6,28 @@ import svg_path/intersections
 import svg_path/point
 import svg_path/transform
 
+pub fn ray_crossing_rejects_unmatched_clamped_endpoint_root_test() {
+  let curve =
+    svg_path.CubicBezier(
+      start: svg_path.Point(-16.041725986943476, -10.810480774525221),
+      control1: svg_path.Point(-330.65275800451764, -215.61911559176272),
+      control2: svg_path.Point(-330.65275800435217, 215.61911559210864),
+      end: svg_path.Point(-16.041725986446977, 10.810480774202006),
+    )
+  let assert Ok([#(t, _)]) =
+    svg_path.segment_ray_crossings_with(
+      curve,
+      origin: svg_path.Point(0.0, -10.810480773800316),
+      direction: svg_path.Point(1.0, 0.0),
+      options: svg_path.CrossingOptions(
+        samples: 100,
+        signed_line_distance_tolerance: 0.00000000025,
+        max_iterations: 100,
+      ),
+    )
+  should.be_true(t >. 0.46 && t <. 0.48)
+}
+
 pub fn circular_arc_intersections_respect_local_axis_rotation_test() {
   list.each([False, True], fn(sweep) {
     list.each([0.0, 30.0, 90.0, -90.0], fn(left_rotation) {

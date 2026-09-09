@@ -5242,6 +5242,7 @@ fn polish_line_crossing_roots(
                 lower,
                 upper,
               ))
+              let at_endpoint = number.is_zero(estimate) || estimate == 1.0
               case polished {
                 Some(parameter) ->
                   polish_line_crossing_roots(
@@ -5251,6 +5252,19 @@ fn polish_line_crossing_roots(
                     options,
                     signed_line_distance_tolerance,
                     crossings: [parameter, ..crossings],
+                  )
+                // A coefficient-relative root can be clamped to a domain
+                // endpoint without satisfying this caller's stricter
+                // geometric tolerance. If its clipped window has no sign
+                // bracket either, it is not an accepted endpoint crossing.
+                None if at_endpoint ->
+                  polish_line_crossing_roots(
+                    segment,
+                    crossing_function,
+                    rest,
+                    options,
+                    signed_line_distance_tolerance,
+                    crossings:,
                   )
                 None ->
                   Error(CrossingMaxIterationsReached(
@@ -5565,12 +5579,14 @@ fn refine_crossing(
 ) -> Result(Option(Float), Error) {
   let previous_value = crossing_value_unsafe(segment, f, previous_t)
   let next_value = crossing_value_unsafe(segment, f, next_t)
+  let unbracketed = same_sign(previous_value, next_value)
 
   case float.absolute_value(previous_value) <=. signed_line_distance_tolerance {
     True -> Ok(Some(previous_t))
     False -> {
       case float.absolute_value(next_value) <=. signed_line_distance_tolerance {
         True -> Ok(Some(next_t))
+        False if unbracketed -> Ok(None)
         False ->
           refine_crossing_loop(
             segment,
