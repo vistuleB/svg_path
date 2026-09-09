@@ -1790,13 +1790,31 @@ fn cull_adjacent_preimage_loops(
         preimage_to: 1.0,
       )
     })
-  use segments <- result.try(cull_adjacent_offset_segment_loops(segments))
+  use segments <- result.try(case small_loop_culling_stage {
+    BeforeCuspTrimming -> cull_adjacent_offset_segment_loops(segments)
+    InsideCuspTrimming -> Ok(segments)
+  })
   use segments <- result.try(case closed {
     False -> Ok(segments)
-    True -> cull_wrapping_offset_segment_loop(segments)
+    True ->
+      case small_loop_culling_stage {
+        BeforeCuspTrimming -> cull_wrapping_offset_segment_loop(segments)
+        InsideCuspTrimming -> Ok(segments)
+      }
   })
   Ok(ICulledOffsetSubpath(segments:, closed:, side:))
 }
+
+// Private experiment: the embedded policy runs only when cusp trimming runs.
+// In particular, offside/final trimming must not invoke it independently.
+type SmallLoopCullingStage {
+  BeforeCuspTrimming
+  InsideCuspTrimming
+}
+
+// Keep the established default while comparing the experiment: default single
+// offsets do not cusp-trim, so embedding deliberately leaves their loops alone.
+const small_loop_culling_stage = BeforeCuspTrimming
 
 fn cull_adjacent_offset_segment_loops(
   segments: List(ICulledOffsetSegment),
@@ -2018,7 +2036,121 @@ fn cusp_trim_i_subpath(
         winding,
       ))
       let rescued = rescue_arrangement_split_submerged_runs(split)
+      use loop_edges <- result.try(case small_loop_culling_stage {
+        BeforeCuspTrimming -> Ok([])
+        InsideCuspTrimming -> {
+          use span <- result.try(take_segment_images(
+            build.segment_images,
+            list.length(segments),
+          ))
+          cusp_small_loop_edges(
+            build.graph,
+            span.0,
+            list.map(segments, fn(s) { h_preimage_is_reversed(s.preimage) }),
+            closed,
+          )
+        }
+      })
+      // Small-loop deletion is independent of the winding-based rescue rule.
+      // Mark every occurrence of the selected graph edge, without recutting it.
+      let rescued =
+        list.map(rescued, fn(s) {
+          ArrangementSplitTracedSegment(
+            ..s,
+            deletion_candidate: s.deletion_candidate
+              || list.contains(loop_edges, s.edge_id),
+          )
+        })
       finish_cusp_trim_with_parity(split, rescued, build)
+    }
+  }
+}
+
+/// Identify adjacent opposite-REVERSED loops using only arrangement images.
+/// Image order is source traversal order. An edge is represented below by its
+/// id and its start/end vertices in that traversal, not its stored direction.
+/// The earliest common vertex on the previous preimage and latest occurrence
+/// on the next select the largest adjacent loop, as in pre-AG culling.
+@internal
+pub fn cusp_small_loop_edges(
+  graph: arrangement_graph.ArrangementGraph,
+  images: List(arrangement_graph.ArrangementSourceSegmentImage),
+  reversed: List(Bool),
+  closed: Bool,
+) -> Result(List(Int), InternalError) {
+  case list.length(images) == list.length(reversed) {
+    False -> Error(InternalSegmentImageCountMismatch)
+    True -> {
+      use walks <- result.try(
+        list.try_map(images, fn(image) {
+          list.try_map(image.edges, fn(image) {
+            use edge <- result.try(
+              arrangement_edge_by_id(graph.edges, image.edge_id)
+              |> result.map_error(InternalArrangementGraphError),
+            )
+            Ok(case image.reversed {
+              True -> #(edge.id, edge.end_vertex, edge.start_vertex)
+              False -> #(edge.id, edge.start_vertex, edge.end_vertex)
+            })
+          })
+        }),
+      )
+      let groups = list.zip(walks, reversed)
+      let pairs = case groups {
+        [] -> []
+        [first, ..rest] -> {
+          let next = case closed {
+            True -> list.append(rest, [first])
+            False -> rest
+          }
+          list.zip(groups, next)
+        }
+      }
+      Ok(
+        pairs
+        |> list.flat_map(fn(pair) {
+          let #(left, right) = pair
+          let connected = case list.last(left.0), right.0 {
+            Ok(last), [first, ..] -> last.2 == first.1
+            _, _ -> False
+          }
+          case left.1 == right.1 || !connected {
+            True -> []
+            False ->
+              adjacent_cusp_loop_edges(
+                list.drop(left.0, 1),
+                list.take(right.0, list.length(right.0) - 1),
+              )
+          }
+        })
+        |> list.unique,
+      )
+    }
+  }
+}
+
+fn adjacent_cusp_loop_edges(
+  left: List(#(Int, Int, Int)),
+  right: List(#(Int, Int, Int)),
+) -> List(Int) {
+  case left {
+    [] -> []
+    [first, ..rest] -> {
+      // Starting at a left-piece start and ending at a right-piece end
+      // selects actual edge occurrences; the ordinary shared endpoint alone
+      // selects no pieces. AG noding already applied the endpoint sliver rule.
+      let matches =
+        right
+        |> list.index_map(fn(edge, i) { #(edge, i) })
+        |> list.filter(fn(item) { item.0.2 == first.1 })
+      case list.last(matches) {
+        Error(_) -> adjacent_cusp_loop_edges(rest, right)
+        Ok(last) ->
+          list.append(
+            list.map(left, fn(e) { e.0 }),
+            right |> list.take(last.1 + 1) |> list.map(fn(e) { e.0 }),
+          )
+      }
     }
   }
 }
