@@ -555,7 +555,6 @@ fn polish_and_certify_segment_intersections(
     right,
     intersections,
     options.parameter_snap,
-    options.tolerance,
   ))
   certify_segment_intersections(left, right, intersections, options.tolerance)
 }
@@ -621,7 +620,6 @@ fn polish_segment_intersections(
   right: Segment,
   intersections: List(SegmentIntersection),
   parameter_snap: ParameterSnap,
-  tolerance: Float,
 ) -> Result(List(SegmentIntersection), svg_path.Error) {
   case parameter_snap {
     NoParameterSnap -> Ok(sort_segment_intersections(intersections))
@@ -636,7 +634,7 @@ fn polish_segment_intersections(
         ),
       )
       Ok(
-        dedupe_segment_intersections(polished, tolerance)
+        dedupe_segment_intersections(polished)
         |> sort_segment_intersections,
       )
     }
@@ -681,13 +679,11 @@ fn polish_segment_intersections_loop(
 
 fn dedupe_segment_intersections(
   intersections: List(SegmentIntersection),
-  tolerance: Float,
 ) -> List(SegmentIntersection) {
   list.fold(intersections, [], fn(deduped, intersection) {
     insert_intersection(
       deduped,
       intersection,
-      point_tolerance: tolerance,
       parameter_tolerance: intersection_parameter_dedupe_tolerance,
     )
   })
@@ -3843,7 +3839,6 @@ fn line_segment_intersections_by_ray(
         line_is_left,
         segment,
         crossings,
-        options.tolerance,
         line_parameter_tolerance,
         [],
       )
@@ -3921,7 +3916,6 @@ fn line_segment_intersections_from_crossings(
   line_is_left: Bool,
   segment: Segment,
   crossings: List(#(Float, Float)),
-  point_tolerance: Float,
   line_parameter_tolerance: Float,
   intersections: List(SegmentIntersection),
 ) -> Result(List(SegmentIntersection), svg_path.Error) {
@@ -3953,12 +3947,10 @@ fn line_segment_intersections_from_crossings(
                 line_is_left,
                 segment,
                 rest,
-                point_tolerance,
                 line_parameter_tolerance,
                 insert_intersection(
                   intersections,
                   intersection,
-                  point_tolerance:,
                   parameter_tolerance: intersection_parameter_dedupe_tolerance,
                 ),
               )
@@ -3968,7 +3960,6 @@ fn line_segment_intersections_from_crossings(
                 line_is_left,
                 segment,
                 rest,
-                point_tolerance,
                 line_parameter_tolerance,
                 intersections,
               )
@@ -6291,7 +6282,6 @@ fn segment_intersections_from_minima(
             intersections: insert_intersections(
               intersections,
               found,
-              point_tolerance: intersection_dedupe_tolerance(tolerance),
               parameter_tolerance: intersection_parameter_dedupe_tolerance,
             ),
           )
@@ -6531,30 +6521,23 @@ fn in_unit_range(value: Float, tolerance: Float) -> Bool {
 fn insert_intersection(
   intersections: List(SegmentIntersection),
   intersection: SegmentIntersection,
-  point_tolerance point_tolerance: Float,
   parameter_tolerance parameter_tolerance: Float,
 ) -> List(SegmentIntersection) {
+  // An intersection is an address pair, not merely a position. A closed or
+  // retraced curve can visit the same point at distinct parameters.
   case intersections {
     [] -> [intersection]
     [first, ..rest] -> {
       case
-        distance(first.point, intersection.point) <=. point_tolerance
-        || {
-          float.absolute_value(first.left_t -. intersection.left_t)
-          <=. parameter_tolerance
-          && float.absolute_value(first.right_t -. intersection.right_t)
-          <=. parameter_tolerance
-        }
+        float.absolute_value(first.left_t -. intersection.left_t)
+        <=. parameter_tolerance
+        && float.absolute_value(first.right_t -. intersection.right_t)
+        <=. parameter_tolerance
       {
         True -> [preferred_duplicate_intersection(first, intersection), ..rest]
         False -> [
           first,
-          ..insert_intersection(
-            rest,
-            intersection,
-            point_tolerance:,
-            parameter_tolerance:,
-          )
+          ..insert_intersection(rest, intersection, parameter_tolerance:)
         ]
       }
     }
@@ -6584,24 +6567,14 @@ fn endpoint_distance_in_parameter(t: Float) -> Float {
 fn insert_intersections(
   intersections: List(SegmentIntersection),
   new_intersections: List(SegmentIntersection),
-  point_tolerance point_tolerance: Float,
   parameter_tolerance parameter_tolerance: Float,
 ) -> List(SegmentIntersection) {
   list.fold(new_intersections, intersections, fn(intersections, intersection) {
-    insert_intersection(
-      intersections,
-      intersection,
-      point_tolerance:,
-      parameter_tolerance:,
-    )
+    insert_intersection(intersections, intersection, parameter_tolerance:)
   })
 }
 
 const intersection_parameter_dedupe_tolerance = 0.000000001
-
-fn intersection_dedupe_tolerance(tolerance: Float) -> Float {
-  float.max(tolerance *. 1_000_000.0, 0.000001)
-}
 
 fn cross(a: Point, b: Point) -> Float {
   a.x *. b.y -. a.y *. b.x

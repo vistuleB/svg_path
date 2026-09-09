@@ -125,8 +125,10 @@ Retain found intersections while searching the residual parameter region,
 without repeatedly rediscovering one approximate root or excluding a distinct
 nearby root. Candidate refinement/deduplication and window exhaustion need
 separate criteria. Test clustered crossings, touching roots, endpoint hits,
-and fallback behavior together. Address IX4 alongside this work; changing only
-geometric deduplication can admit multiple approximations of one root.
+and fallback behavior together. IX4's position-only deduplication has now been
+removed on the current solver, with the fast suite and second-offset fixture
+passing. The archived residual-search experiment still needs its own checks
+for multiple approximations of one root; IX4 does not resolve window exhaustion.
 
 ### IX3 — parallel tangents do not imply touching
 
@@ -140,19 +142,28 @@ branch labels it `Touching`. Higher-order/local separation is needed to
 distinguish an odd-order crossing from an even-order touch. Endpoint and
 overlap cases need explicit treatment. No repair has been committed.
 
-### IX4 — coincident positions can have distinct parameter pairs
+### IX4 — coincident positions can have distinct parameter pairs — resolved
 
 ![IX4 — coincident positions can have distinct parameter pairs](examples/debug/v1_review_visuals/ix4.svg)
 
 **Module/function:** `svg_path/intersections.insert_intersection`.
-**Evidence:** reproduced lost address.
+**Evidence:** reproduced lost addresses; regression-tested repair.
 
-A closed cubic can meet a line at both `(0,0.5)` and `(1,0.5)`. Current
-deduplication merges hits when their positions agree **or** both parameters
-are close, losing one occurrence. Preserve distinct parameter pairs while
-deduplicating numerical approximations of the same pair. Endpoint preference
-alone does not solve this. A later graph vertex may merge positions while
-retaining both preimages.
+A closed cubic can meet a line at both `(0,0.5)` and `(1,0.5)`. The old
+deduplication merged hits when their positions agreed **or** both parameters
+were close, losing one occurrence. Deduplication now requires both parameters
+to be within the existing `1e-9` parameter tolerance. Endpoint preference is
+preserved within such a duplicate pair. Geometric certification still uses
+the caller's tolerance; only the unrelated position-based merging is removed.
+A graph vertex may merge positions while retaining both preimages.
+
+Two public regressions failed before the repair and pass afterward: a closed
+cubic meeting a line at both endpoints (also with operands swapped), and a
+retraced quadratic meeting a line at two interior parameters. Removed the
+unused geometric deduplication tolerance and its private argument plumbing.
+`scripts/test-fast` passes **1,565 tests**. The production second-offset
+capture (`escript scripts/gallery/package_title_arrangement.escript`) succeeds
+and its SVG is byte-identical to the published Gallery figure.
 
 ## Arrangement and offset topology/provenance
 
@@ -461,6 +472,6 @@ tests, `scripts/test-all` passed with **1,546 ordinary tests and 26 slow tests**
 on the retained intersection improvements. These are historical completed runs,
 not a fresh verification performed while writing this document.
 
-The current interrupted task is **IX2**, with IX4's address/deduplication
-contract considered alongside it. IX3 is a separate classification problem.
+The remaining intersection search task is **IX2**. IX4's address/deduplication
+repair is committed separately. IX3 is a separate classification problem.
 The other entries remain available for separate fixes with their own regressions.

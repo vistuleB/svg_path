@@ -6,6 +6,51 @@ import svg_path/intersections
 import svg_path/point
 import svg_path/transform
 
+pub fn coincident_cubic_endpoints_keep_both_intersection_addresses_test() {
+  let cubic =
+    svg_path.CubicBezier(
+      start: svg_path.Point(0.0, 0.0),
+      control1: svg_path.Point(1.0, 1.0),
+      control2: svg_path.Point(-1.0, 1.0),
+      end: svg_path.Point(0.0, 0.0),
+    )
+  let line =
+    svg_path.Line(
+      start: svg_path.Point(-2.0, 0.0),
+      end: svg_path.Point(2.0, 0.0),
+    )
+  let assert Ok(found) = intersections.segment(cubic, line)
+  assert list.length(found) == 2
+  assert list.any(found, fn(hit) { hit.left_t == 0.0 && hit.right_t == 0.5 })
+  assert list.any(found, fn(hit) { hit.left_t == 1.0 && hit.right_t == 0.5 })
+  let assert Ok(swapped) = intersections.segment(line, cubic)
+  assert list.length(swapped) == 2
+  assert list.any(swapped, fn(hit) { hit.right_t == 0.0 && hit.left_t == 0.5 })
+  assert list.any(swapped, fn(hit) { hit.right_t == 1.0 && hit.left_t == 0.5 })
+}
+
+pub fn retraced_quadratic_keeps_both_interior_intersection_addresses_test() {
+  let curve =
+    svg_path.QuadraticBezier(
+      start: svg_path.Point(0.0, 0.0),
+      control: svg_path.Point(1.0, 0.0),
+      end: svg_path.Point(0.0, 0.0),
+    )
+  let line =
+    svg_path.Line(
+      start: svg_path.Point(0.375, -1.0),
+      end: svg_path.Point(0.375, 1.0),
+    )
+  let assert Ok(found) = intersections.segment(curve, line)
+  assert list.length(found) == 2
+  list.each([0.25, 0.75], fn(t) {
+    assert list.any(found, fn(hit) {
+      float.absolute_value(hit.left_t -. t) <. 0.00000001
+      && float.absolute_value(hit.right_t -. 0.5) <. 0.00000001
+    })
+  })
+}
+
 pub fn arc_window_subdivision_preserves_original_ellipse_test() {
   let curve =
     svg_path.CubicBezier(
