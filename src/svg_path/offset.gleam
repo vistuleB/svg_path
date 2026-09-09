@@ -4835,23 +4835,67 @@ fn colinearize_offset_source_tangents(
   subpath: svg_path.Subpath,
   tolerance tolerance: Float,
 ) -> Result(svg_path.Subpath, InternalError) {
-  svg_path.subpath_rebuild_with(
-    subpath,
-    policy: colinearize_source_tangent_policy(tolerance),
-  )
-  |> result.map_error(InternalPathError)
+  let segments = svg_path.subpath_segments(subpath)
+  case segments {
+    [] -> Ok(subpath)
+    [_, ..] -> {
+      let closed = svg_path.subpath_is_closed(subpath)
+      let segments = case closed {
+        True -> colinearize_source_seam(segments, tolerance)
+        False -> segments
+      }
+      // Handle the seam explicitly: a closing Custom replacement owns only
+      // the tail and cannot retain an edit to the first segment.
+      use aligned <- result.try(
+        svg_path.subpath_with(
+          segments,
+          policy: colinearize_source_tangent_policy(tolerance),
+        )
+        |> result.map_error(InternalPathError),
+      )
+      svg_path.subpath_set_closed_with(
+        aligned,
+        closed:,
+        policy: svg_path.Strict,
+      )
+      |> result.map_error(InternalPathError)
+    }
+  }
+}
+
+fn colinearize_source_seam(
+  segments: List(svg_path.Segment),
+  tolerance: Float,
+) -> List(svg_path.Segment) {
+  case segments {
+    [] -> []
+    [only] -> {
+      let #(at_end, at_start) =
+        colinearize_source_tangent_boundary(only, only, tolerance)
+      // Both edits belong to the same cubic, not to two segment occurrences.
+      case at_end, at_start {
+        svg_path.CubicBezier(control2:, ..),
+          svg_path.CubicBezier(start:, control1:, end:, ..)
+        -> [svg_path.CubicBezier(start:, control1:, control2:, end:)]
+        _, _ -> [only]
+      }
+    }
+    [first, ..rest] -> {
+      let assert [last, ..middle_reversed] = list.reverse(rest)
+      let #(last, first) =
+        colinearize_source_tangent_boundary(last, first, tolerance)
+      [first, ..list.reverse([last, ..middle_reversed])]
+    }
+  }
 }
 
 fn colinearize_source_tangent_policy(
   tolerance: Float,
 ) -> svg_path.EndpointPolicy {
-  svg_path.Custom(fn(previous, next, context) {
+  svg_path.Custom(fn(previous, next, _context) {
     let #(previous, next) =
       colinearize_source_tangent_boundary(previous, next, tolerance)
-    case context.closing {
-      True -> [previous]
-      False -> [previous, next]
-    }
+    [previous, next]
   })
 }
 

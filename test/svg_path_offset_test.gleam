@@ -33,6 +33,58 @@ pub fn open_c_offset_preserves_closed_retraced_line_test() {
   actual |> should.equal(expected)
 }
 
+pub fn source_alignment_preserves_first_handle_edit_at_closed_seam_test() {
+  let curve =
+    svg_path.CubicBezier(
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(1.0, 0.01),
+      svg_path.Point(2.0, 1.0),
+      svg_path.Point(2.0, 2.0),
+    )
+  let a = svg_path.Line(svg_path.Point(2.0, 2.0), svg_path.Point(-1.0, 0.0))
+  let b = svg_path.Line(svg_path.Point(-1.0, 0.0), svg_path.Point(0.0, 0.0))
+  list.each([[curve, a, b], [a, b, curve], [b, curve, a]], fn(segments) {
+    let source =
+      svg_path.subpath_assert(segments)
+      |> svg_path.subpath_assert_set_closed(True)
+    let assert Ok(normalized) =
+      offset.normalize_source_subpath(source, offset.default_options())
+    let assert [svg_path.CubicBezier(control1:, ..)] =
+      svg_path.subpath_segments(normalized)
+      |> list.filter(fn(segment) {
+        case segment {
+          svg_path.CubicBezier(..) -> True
+          _ -> False
+        }
+      })
+    control1.y |> should.equal(0.0)
+    svg_path.subpath_start(normalized)
+    |> should.equal(svg_path.subpath_start(source))
+    svg_path.subpath_is_closed(normalized) |> should.be_true
+  })
+}
+
+pub fn source_alignment_keeps_both_edits_for_single_closed_cubic_test() {
+  let source =
+    svg_path.subpath_assert([
+      svg_path.CubicBezier(
+        svg_path.Point(0.0, 0.0),
+        svg_path.Point(100.0, 0.0),
+        svg_path.Point(-100.0, 1.0),
+        svg_path.Point(0.0, 0.0),
+      ),
+    ])
+    |> svg_path.subpath_assert_set_closed(True)
+  let assert Ok(normalized) =
+    offset.normalize_source_subpath(source, offset.default_options())
+  let assert [curve] = svg_path.subpath_segments(normalized)
+  let assert Ok(svg_path.Directions(_, Some(start))) =
+    svg_path.segment_directions(curve, 0.0)
+  let assert Ok(svg_path.Directions(Some(end), _)) =
+    svg_path.segment_directions(curve, 1.0)
+  { point.distance(start, end) <. 1.0e-12 } |> should.be_true
+}
+
 pub fn closed_offset_preserves_corner_at_single_portion_seam_test() {
   let line = svg_path.Line(svg_path.Point(0.0, 0.0), svg_path.Point(1.0, 0.0))
   let curve =

@@ -1,6 +1,6 @@
 # Remaining audit issues
 
-Updated 2026-09-09, including the SP1 follow-up after `f57dd01`.
+Updated 2026-09-09, including the SP1 and OF3 follow-ups after `f57dd01`.
 
 AD1 and OF5 have now been resolved in `c2e8865` and `3bf9b2a`. Their illustrated
 entries are retained below, explicitly marked resolved, as a record of this
@@ -179,18 +179,23 @@ failed before the fix. The illustration shows that former failure.
 Verification: `scripts/test-fast` passed 1,554 tests in the combined OF2/CH1
 worktree; `scripts/test-slow` passed its 26 additional tests.
 
-### OF3 — closing alignment loses the first segment's edit
+### OF3 — resolved: closing alignment lost the first segment's edit
 
 ![OF3 — closing alignment loses the first segment's edit](examples/debug/v1_review_visuals/of3.svg)
 
 **Module/function:** `svg_path/offset.colinearize_source_tangent_policy`.
 **Evidence:** reproduced private normalization difference at the seam.
 
-Alignment computes edits to both neighbors, but the closing Custom policy
-retains only the last segment's edit. Use a cyclic alignment pass or explicit
-seam handling that retains both edits. Returning the first segment as an
-appended tail would duplicate it; do not alter the public closure contract
-incidentally. Pair tests with OF2's cyclic-rotation cases.
+The source normalizer now aligns the last-to-first boundary explicitly before
+rebuilding the ordinary interior boundaries. Both edited endpoint segments are
+retained. For a single closed cubic, the start-handle and end-handle edits are
+combined into that one segment. Final closure uses Strict; the public Custom
+contract is unchanged, and no extra segment is appended.
+
+Two public normalization regressions failed before the fix: one checks all
+three cyclic orderings of a Cubic/Line/Line source and preservation of its
+start and closedness; the other checks both endpoint directions of a single
+closed cubic. The original drawing depicts the discarded first-handle edit.
 
 ### OF4 — resolved: reversed survivor parameter orientation
 
@@ -375,6 +380,9 @@ Propagate the error if reachable; otherwise document the invariant supporting
 the assertion. Do not replace assertions indiscriminately.
 
 ## Verification baseline and next work
+
+For SP1 and OF3, `scripts/test-fast` passed **1,559 tests** and
+`scripts/test-slow` passed **26 tests**. Formatting and whitespace checks passed.
 
 For OF2 and CH1, `scripts/test-fast` passed **1,554 tests** and
 `scripts/test-slow` passed **26 tests**. The width-pruning private regression
