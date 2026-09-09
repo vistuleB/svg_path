@@ -921,6 +921,40 @@ pub fn reversal_tangent_adjustment_rejects_ambiguous_turns_test() {
     == Error(Nil)
 }
 
+pub fn zero_offset_preserves_closed_square_without_source_capacity_test() {
+  let assert Ok(svg_path.Path([source])) = parse.path("M 0 0 H 10 V 10 H 0 Z")
+  list.each([source, svg_path.subpath_reverse(source)], fn(source) {
+    let assert Ok(result) =
+      offset.subpath(source, offset: 0.0, join: offset.Round, cap: offset.Butt)
+    let assert [loop] = svg_path.path_subpaths(result)
+    assert svg_path.subpath_is_closed(loop)
+    let assert Ok(length) = svg_path.subpath_length(loop)
+    assert float.absolute_value(length -. 40.0) <. 0.000001
+  })
+}
+
+pub fn zero_offset_preserves_open_line_endpoint_demands_test() {
+  let assert Ok(svg_path.Path([source])) = parse.path("M 0 0 H 10")
+  let assert Ok(result) =
+    offset.subpath(source, offset: 0.0, join: offset.Round, cap: offset.Butt)
+  let assert [line] = svg_path.path_subpaths(result)
+  assert !svg_path.subpath_is_closed(line)
+  assert svg_path.subpath_start(line) == svg_path.subpath_start(source)
+  assert svg_path.subpath_end(line) == svg_path.subpath_end(source)
+}
+
+pub fn zero_offset_preserves_repeated_eligible_traversals_test() {
+  let assert Ok(source) =
+    parse.path("M 0 0 H 10 V 10 H 0 Z M 0 0 H 10 V 10 H 0 Z")
+  let assert Ok(result) =
+    offset.path(source, offset: 0.0, join: offset.Round, cap: offset.Butt)
+  let assert Ok(length) = svg_path.path_length(result)
+  // Coincident offset occurrences each supply capacity; their zero-source
+  // companions do not. A universal capacity-one replacement would lose half.
+  assert float.absolute_value(length -. 80.0) <. 0.000001
+  assert list.all(svg_path.path_subpaths(result), svg_path.subpath_is_closed)
+}
+
 pub fn subpath_offset_map_maps_local_coordinates_to_right_side_test() {
   let subpath =
     svg_path.subpath_assert([

@@ -716,17 +716,7 @@ fn source_order_survivor_subpaths(
   protected_vertices protected_vertices: List(Int),
   tolerance tolerance: Float,
 ) -> Result(List(svg_path.Subpath), InternalError) {
-  let OffsetArrangementBuild(segment_images:, ..) = build
-  let segment_images =
-    list.filter(segment_images, fn(image) {
-      let arrangement_graph.ArrangementSourceSegmentImage(segment_index:, ..) =
-        image
-      offset_segment_index_has_group(
-        build,
-        segment_index,
-        UntrimmedOffsetSegment,
-      )
-    })
+  let segment_images = offset_reconstruction_images(build)
   let available = arrangement_edge_capacities(graph)
   use chain_result <- result.try(
     source_order_survivor_chains(build, segment_images, available, open: []),
@@ -3960,14 +3950,32 @@ fn forced_parity_reduce_trim_graph(
   graph: OffsetTrimGraph,
   protected_vertices: List(Int),
 ) -> Result(OffsetTrimGraph, InternalError) {
-  let OffsetTrimGraph(vertices:, edges:, ..) = graph
+  let OffsetTrimGraph(vertices:, edges:, edge_capacities:) = graph
   let arrangement =
     arrangement_graph.ArrangementGraph(vertices:, edges:, cyclic_orders: [])
   use assignments <- result.try(
-    forced_parity_capacities(
-      arrangement,
-      vertex_parities: protected_vertex_parities(protected_vertices),
-    )
+    case edge_capacities {
+      None ->
+        forced_parity_capacities(
+          arrangement,
+          vertex_parities: protected_vertex_parities(protected_vertices),
+        )
+      Some(capacities) -> {
+        // Submerged edges have been removed from this pruning view. Retain
+        // explicit occurrence counts only for its remaining geometric edges.
+        let initial =
+          capacities
+          |> list.filter(fn(entry) {
+            list.any(edges, fn(edge) { edge.id == entry.0 })
+          })
+          |> list.map(fn(entry) { EdgeCapacityAssignment(entry.0, entry.1) })
+        forced_parity_capacities_with(
+          arrangement,
+          initial,
+          vertex_parities: protected_vertex_parities(protected_vertices),
+        )
+      }
+    }
     |> result.map_error(InternalForcedParityPruningError),
   )
   let edge_capacities =
@@ -5456,7 +5464,31 @@ fn retain_offset_image_edges(
       let arrangement_graph.ArrangementEdge(id:, ..) = edge
       arrangement_edge_has_group(build, id, UntrimmedOffsetSegment)
     })
-  OffsetTrimGraph(vertices:, edges: retained, edge_capacities: None)
+  // Count precisely the occurrences that source-order reconstruction visits.
+  // Source-only preimages remain authoritative for winding classification,
+  // but cannot supply capacity to an offset-only reconstruction.
+  let occurrence_ids =
+    offset_reconstruction_images(build)
+    |> list.flat_map(fn(image) {
+      list.map(image.edges, fn(edge) { edge.edge_id })
+    })
+  let capacities =
+    list.map(retained, fn(edge) {
+      #(edge.id, int_occurrences(occurrence_ids, edge.id))
+    })
+  OffsetTrimGraph(vertices:, edges: retained, edge_capacities: Some(capacities))
+}
+
+fn offset_reconstruction_images(
+  build: OffsetArrangementBuild,
+) -> List(arrangement_graph.ArrangementSourceSegmentImage) {
+  list.filter(build.segment_images, fn(image) {
+    offset_segment_index_has_group(
+      build,
+      image.segment_index,
+      UntrimmedOffsetSegment,
+    )
+  })
 }
 
 fn offset_trim_graph(

@@ -175,18 +175,31 @@ probe is found, allowing a closed retraced line to survive orientation
 normalization. It does not stop an existing probe landing in the wrong nested
 region. AG1 and OF8 therefore remain open.
 
-### OF1 — reconstruction capacity includes ineligible source occurrences
+### OF1 — resolved: reconstruction capacity included ineligible source occurrences
 
 ![OF1 — reconstruction capacity includes ineligible source occurrences](examples/debug/v1_review_visuals/of1.svg)
 
-**Module/function:** `svg_path/offset.forced_parity_capacities`.
-**Evidence:** reproduced zero-offset closed-square failure.
+**Module/functions:** `svg_path/offset.retain_offset_image_edges`,
+`offset_reconstruction_images`, `forced_parity_reduce_trim_graph`.
+**Evidence:** zero-offset closed-square and duplicate-square regressions failed
+before the fix with `ConstructionFailed`; an open-line control already passed.
 
-At offset zero, source and offset share graph edges. Initial capacity counts
-both, but reconstruction can consume only the eligible offset occurrence.
-Initialize capacities from eligible reconstruction preimages while retaining
-the complete inventory for winding classification. Keep the capacity-consumed
-assertion. Replacing capacities universally with one is not a valid fix.
+At offset zero, source and offset share graph edges. Initial capacity counted
+both, but reconstruction could consume only the eligible offset occurrences.
+Capacities now count the same filtered source-image occurrences that
+reconstruction visits. The pruning adapter respects these explicit counts,
+excluding submerged edges, while the full arrangement remains unchanged for
+winding classification. Band trimming still derives capacity from all its
+boundary occurrences. The capacity-consumed assertion remains in place.
+
+Regressions cover both square orientations, an open line's endpoint demands,
+and two coincident square traversals. The latter preserves total length 80,
+guarding against incorrectly replacing every capacity by one.
+Verification: `scripts/test-fast` passed **1,563 tests**. Both
+`escript scripts/gallery/package_title_arrangement.escript` and
+`gleam run -m svg_path_two_corner_square_bands_fixture` succeeded and left
+their tracked generated outputs unchanged. Formatting and whitespace checks
+passed.
 
 ### OF2 — resolved: a corner at the closing seam missed join construction
 
@@ -208,6 +221,9 @@ remain closed, and contain exactly one Round join. The seam-at-corner case
 failed before the fix. The illustration shows that former failure.
 Verification: `scripts/test-fast` passed 1,554 tests in the combined OF2/CH1
 worktree; `scripts/test-slow` passed its 26 additional tests.
+The existing `closed_offset_preserves_corner_at_single_portion_seam_test`
+was rerun successfully during the OF1 follow-up; no further OF2 code change
+was needed.
 
 ### OF3 — resolved: closing alignment lost the first segment's edit
 
