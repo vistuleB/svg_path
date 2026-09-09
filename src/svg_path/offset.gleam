@@ -5653,6 +5653,9 @@ fn finish_cusp_trim_with_parity(
         protected_vertices: protected,
       ))
       case chains {
+        // Parity may erase the last retained segment. Empty has the same
+        // optional-result meaning as when classification retained nothing.
+        [] -> Ok(None)
         [chain] ->
           cusp_trim_subpath_from_chain(
             chain,
