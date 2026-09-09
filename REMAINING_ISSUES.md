@@ -220,36 +220,31 @@ second-offset Gallery capture also succeeds; its SVG is byte-identical to the
 published version (1,181 graph edges, 783 eligible, 471 initially submerged,
 312 initially retained, and 185 with positive final capacity).
 
-### OF8 — an outline orientation probe can cross into another contour
+### OF8 — resolved: remove unnecessary nesting-based orientation
 
-**Module/functions:** `svg_path/offset.outline_contour_probe`, `orient_outline_path`.
-**Status:** still open; independent of the repaired dual construction.
+**Former module/functions:** `svg_path/offset.outline_contour_probe`,
+`orient_outline_path`, and their private helpers.
 
-**Single-offset removal:** final nesting-based orientation is no longer applied
-for single offsets, for all three finish modes. Their reconstructed traversal
-is returned unchanged. Stroke construction still calls `orient_outline_path`;
-band winding-based orientation is unchanged. `scripts/test-all` passes with
-1,574 fast tests and 26 slow tests. This removes the problematic orientation
-step from single offsets; it does not repair the probe used by strokes.
-`scripts/generate-published-figures` also completes: all 29 Gallery SVGs remain
-byte-identical, including nine successive lettering offsets at 1.04. The
-single-offset README/debug fixtures change only contour traversal direction
-(concentric rectangles and surviving umbrella triangles), not their geometry.
+The displaced interior probe could cross another contour and infer incorrect
+nesting. Rather than replace that probe, we removed the unnecessary operation:
+single offsets now return their reconstructed traversal, and strokes retain
+the orientation already supplied by band construction. Both stroke branches
+previously applied the nesting pass after band orientation. The unused nesting,
+depth-counting, probe, and signed-area reversal helpers have now been deleted.
+
+**Verification:** `scripts/test-all` passed with 1,574 fast tests and 26 slow
+tests after removing the single-offset call. The added nested-counterclockwise
+contour regression brings `scripts/test-fast` to 1,575 passing tests.
+After removing the stroke calls, `scripts/generate-published-figures`
+regenerated 9 README and 29 Gallery figures without further SVG changes.
+The earlier single-offset removal changed only traversal in the rectangle and
+umbrella fixtures; all Gallery figures remained byte-identical.
+
 Five successive `0.4` lettering offsets also succeed, with subpath counts
 10, 13, 9, 10, and 6. The repeatable public-API check is
-`examples/debug/package_title_five_offsets_0_4.escript`. A regression checks that
-two nested counterclockwise contours retain their traversal with final trimming
-disabled. With that regression added, `scripts/test-fast` passes 1,575 tests.
-
-The same nested squares can give both output contours the same orientation
-instead of opposite orientations. This function still uses the chord-scaled
-displacement and does not use the new dual sweeps. Its replacement is separate
-work; the dual change must not be described as fixing outline orientation.
-
-**C-shape fix is separate:** `6679aa6` preserves traversal when no interior
-probe is found, allowing a closed retraced line to survive orientation
-normalization. It does not stop an existing probe landing in the wrong nested
-region. OF8 therefore remains open.
+`examples/debug/package_title_five_offsets_0_4.escript`.
+The retraced C-shape regressions remain; they no longer need the removed
+no-interior-probe exception.
 
 ### OF1 — resolved: reconstruction capacity included ineligible source occurrences
 
