@@ -11,6 +11,7 @@
 
 import gleam/float
 import gleam/list
+import gleam/option.{None, Some}
 import gleam/result
 import svg_path
 import svg_path/internal/number
@@ -382,7 +383,8 @@ fn zero_length_stroke_path(
   case cap {
     Butt -> Ok(svg_path.path_empty())
     RoundCap -> zero_length_round_stroke_path(center, radius)
-    Square -> zero_length_square_stroke_path(center, radius)
+    Square ->
+      zero_length_square_stroke_path(center, radius, svg_path.Point(1.0, 0.0))
   }
 }
 
@@ -428,14 +430,17 @@ fn zero_length_round_stroke_path(
 fn zero_length_square_stroke_path(
   center: svg_path.Point,
   radius: Float,
+  direction: svg_path.Point,
 ) -> Result(svg_path.Path, offset.InternalError) {
+  let along = point_helpers.scale(direction, by: radius)
+  let across = svg_path.Point(0.0 -. along.y, along.x)
   let top_left =
-    point_helpers.add(center, svg_path.Point(0.0 -. radius, 0.0 -. radius))
+    point_helpers.subtract(point_helpers.subtract(center, along), across)
   let top_right =
-    point_helpers.add(center, svg_path.Point(radius, 0.0 -. radius))
-  let bottom_right = point_helpers.add(center, svg_path.Point(radius, radius))
+    point_helpers.subtract(point_helpers.add(center, along), across)
+  let bottom_right = point_helpers.add(point_helpers.add(center, along), across)
   let bottom_left =
-    point_helpers.add(center, svg_path.Point(0.0 -. radius, radius))
+    point_helpers.add(point_helpers.subtract(center, along), across)
   use outline <- result.try(
     svg_path.subpath_with(
       line_segments_between([
@@ -612,6 +617,7 @@ pub fn path_with(
 /// subpath as a singleton when the subpath has positive length. An active dash
 /// pattern on a closed subpath has a visible seam: a dash covering the whole
 /// closed subpath is opened at the subpath start so cap styles can apply there.
+/// Zero-length visible entries are retained as coincident-endpoint Lines.
 pub fn subpath_dashes(
   subpath: svg_path.Subpath,
   pattern pattern: List(Float),
@@ -628,6 +634,15 @@ pub fn subpath_dashes_with(
   subpath subpath: svg_path.Subpath,
   dash_options dash_options: DashOptions,
 ) -> Result(List(svg_path.Subpath), Error) {
+  use pieces <- result.try(located_dash_pieces(subpath, dash_options))
+  Ok(list.map(pieces, fn(piece) { piece.0 }))
+}
+
+// Retain the source arc-length address for the tangent of zero-length caps.
+fn located_dash_pieces(
+  subpath: svg_path.Subpath,
+  dash_options: DashOptions,
+) -> Result(List(#(svg_path.Subpath, Float)), Error) {
   use _ <- result.try(validate_dash_options(dash_options))
   use pattern <- result.try(normalize_dash_pattern(dash_options.pattern))
   use length <- result.try(
@@ -639,7 +654,7 @@ pub fn subpath_dashes_with(
     True -> Ok([])
     False ->
       case pattern {
-        [] -> continuous_dash(subpath)
+        [] -> Ok([#(subpath, 0.0)])
         _ -> {
           let intervals =
             dash_intervals(length, pattern, offset: dash_options.offset)
@@ -709,6 +724,8 @@ pub fn subpath_dashed(
 /// stroke and dash options.
 ///
 /// This first extracts open dash subpaths, then strokes each dash independently.
+/// Zero-length visible dashes produce Round or Square caps (nothing for Butt).
+/// Square caps use the source direction at the dash address.
 pub fn subpath_dashed_with(
   subpath subpath: svg_path.Subpath,
   join join: Join,
@@ -717,11 +734,46 @@ pub fn subpath_dashed_with(
   dash_options dash_options: DashOptions,
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(validate_options(options, join))
-  use dashes <- result.try(subpath_dashes_with(subpath, dash_options:))
-  use subpaths <- result.try(
-    stroke_subpaths(dashes, join, cap, options, stroked: []),
+  use dashes <- result.try(located_dash_pieces(subpath, dash_options))
+  use paths <- result.try(
+    list.try_map(dashes, fn(dash) {
+      let #(piece, at) = dash
+      let point_dash = case svg_path.subpath_segments(piece) {
+        [svg_path.Line(start:, end:)] -> start == end
+        _ -> False
+      }
+      case cap == Square && point_dash {
+        True -> {
+          use parameter <- result.try(
+            svg_path.subpath_parameter_at_length_with(
+              subpath,
+              distance: at,
+              options: dash_options.length_options,
+            )
+            |> result.map_error(PathError),
+          )
+          use directions <- result.try(
+            svg_path.subpath_directions(subpath, at: parameter)
+            |> result.map_error(PathError),
+          )
+          let direction = case directions.outgoing, directions.incoming {
+            Some(direction), _ | None, Some(direction) -> direction
+            None, None -> svg_path.Point(1.0, 0.0)
+          }
+          zero_length_square_stroke_path(
+            svg_path.subpath_start(piece),
+            options.width /. 2.0,
+            direction,
+          )
+          |> result.map_error(fn(error) {
+            OffsetError(offset.public_error(error))
+          })
+        }
+        False -> subpath_with(piece, join:, cap:, options:)
+      }
+    }),
   )
-  Ok(svg_path.Path(subpaths:))
+  Ok(svg_path.Path(list.flat_map(paths, svg_path.path_subpaths)))
 }
 
 /// Stroke a path after applying SVG dasharray semantics to each subpath.
@@ -756,8 +808,13 @@ pub fn path_dashed_with(
   dash_options dash_options: DashOptions,
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(validate_options(options, join))
-  use dashes <- result.try(path_dashes_with(path, dash_options:))
-  path_with(dashes, join:, cap:, options:)
+  use _ <- result.try(validate_dash_options(dash_options))
+  use paths <- result.try(
+    list.try_map(svg_path.path_subpaths(path), fn(subpath) {
+      subpath_dashed_with(subpath, join:, cap:, options:, dash_options:)
+    }),
+  )
+  Ok(svg_path.Path(list.flat_map(paths, svg_path.path_subpaths)))
 }
 
 fn validate_options(options: Options, join: Join) -> Result(Nil, Error) {
@@ -862,7 +919,9 @@ fn dash_start(
   case pattern {
     [] -> #(0, 0.0)
     [first, ..rest] -> {
-      case offset <. first || rest == [] {
+      // At a pattern boundary keep zero entries for the interval walker;
+      // skipping them here would erase visible point dashes at phase zero.
+      case offset == 0.0 || offset <. first || rest == [] {
         True -> #(index, first -. offset)
         False -> dash_start(rest, offset -. first, index: index + 1)
       }
@@ -878,10 +937,16 @@ fn dash_intervals_loop(
   remaining remaining: Float,
   intervals intervals: List(#(Float, Float)),
 ) -> List(#(Float, Float)) {
-  case position >=. length {
+  case position >. length || { position == length && remaining >. 0.0 } {
     True -> list.reverse(intervals)
     False if remaining <=. 0.0 -> {
+      // Advancing the index makes progress even when the position is unchanged.
+      // Normalization guarantees the pattern has a positive total length.
       let next_index = next_dash_index(index, pattern)
+      let intervals = case index % 2 == 0 {
+        True -> [#(position, position), ..intervals]
+        False -> intervals
+      }
       dash_intervals_loop(
         length,
         pattern,
@@ -902,14 +967,20 @@ fn dash_intervals_loop(
         False -> intervals
       }
       let next_index = next_dash_index(index, pattern)
-      dash_intervals_loop(
-        length,
-        pattern,
-        position: next,
-        index: next_index,
-        remaining: dash_length_at(pattern, next_index),
-        intervals:,
-      )
+      case remaining >. distance_to_end {
+        // Clipping the last dash/gap is not a pattern boundary. In particular
+        // it must not create a zero-length dash at an artificial boundary.
+        True -> list.reverse(intervals)
+        False ->
+          dash_intervals_loop(
+            length,
+            pattern,
+            position: next,
+            index: next_index,
+            remaining: dash_length_at(pattern, next_index),
+            intervals:,
+          )
+      }
     }
   }
 }
@@ -934,8 +1005,8 @@ fn dash_pieces(
   subpath: svg_path.Subpath,
   length: Float,
   length_options: svg_path.LengthOptions,
-  accumulated accumulated: List(svg_path.Subpath),
-) -> Result(List(svg_path.Subpath), Error) {
+  accumulated accumulated: List(#(svg_path.Subpath, Float)),
+) -> Result(List(#(svg_path.Subpath, Float)), Error) {
   case intervals {
     [] -> Ok(list.reverse(accumulated))
     [first, ..rest] -> {
@@ -945,7 +1016,7 @@ fn dash_pieces(
         |> result.map_error(PathError),
       )
       dash_pieces(rest, subpath, length, length_options, accumulated: [
-        piece,
+        #(piece, from),
         ..accumulated
       ])
     }
@@ -953,6 +1024,26 @@ fn dash_pieces(
 }
 
 fn dash_piece(
+  subpath: svg_path.Subpath,
+  from from: Float,
+  to to: Float,
+  length length: Float,
+  length_options length_options: svg_path.LengthOptions,
+) -> Result(svg_path.Subpath, svg_path.Error) {
+  case from == to {
+    True -> {
+      use at <- result.try(svg_path.subpath_point_at_length_with(
+        subpath,
+        distance: from,
+        options: length_options,
+      ))
+      Ok(svg_path.segment_as_subpath(svg_path.Line(at, at)))
+    }
+    False -> positive_dash_piece(subpath, from:, to:, length:, length_options:)
+  }
+}
+
+fn positive_dash_piece(
   subpath: svg_path.Subpath,
   from from: Float,
   to to: Float,
@@ -988,12 +1079,6 @@ fn dash_piece(
         }
       }
   }
-}
-
-fn continuous_dash(
-  subpath: svg_path.Subpath,
-) -> Result(List(svg_path.Subpath), Error) {
-  Ok([subpath])
 }
 
 fn open_full_dash(

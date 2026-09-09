@@ -1,3 +1,4 @@
+import gleam/float
 import gleam/list
 import svg_path
 import svg_path/offset
@@ -546,7 +547,7 @@ pub fn subpath_dashes_duplicates_odd_patterns_test() {
     ]
 }
 
-pub fn subpath_dashes_skips_zero_entries_in_nonzero_patterns_test() {
+pub fn subpath_dashes_preserves_zero_visible_entries_test() {
   let subpath =
     svg_path.subpath_assert_polyline([
       svg_path.Point(0.0, 0.0),
@@ -558,8 +559,120 @@ pub fn subpath_dashes_skips_zero_entries_in_nonzero_patterns_test() {
 
   assert dashes |> list.map(serialize.subpath)
     == [
+      "M 0 0 H 0",
       "M 2 0 H 5",
+      "M 7 0 H 7",
     ]
+}
+
+pub fn zero_visible_dashes_keep_caps_and_phase_test() {
+  let source =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(4.0, 0.0),
+    ])
+  list.each(
+    [#(0.0, [0.0, 2.0, 4.0]), #(1.0, [1.0, 3.0]), #(-1.0, [1.0, 3.0])],
+    fn(case_) {
+      let #(phase, positions) = case_
+      let assert Ok(dashes) =
+        stroke.subpath_dashes(source, pattern: [0.0, 2.0], offset: phase)
+      assert list.map(dashes, fn(dash) { svg_path.subpath_start(dash).x })
+        == positions
+      list.each([stroke.Butt, stroke.RoundCap, stroke.Square], fn(cap) {
+        let assert Ok(result) =
+          stroke.subpath_dashed(
+            source,
+            width: 0.5,
+            pattern: [0.0, 2.0],
+            offset: phase,
+            join: stroke.Bevel,
+            cap:,
+          )
+        assert list.length(svg_path.path_subpaths(result))
+          == case cap {
+            stroke.Butt -> 0
+            _ -> list.length(positions)
+          }
+      })
+    },
+  )
+}
+
+pub fn zero_dash_square_cap_uses_source_direction_test() {
+  let source =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(3.0, 4.0),
+    ])
+  let assert Ok(result) =
+    stroke.subpath_dashed(
+      source,
+      width: 2.0,
+      pattern: [0.0, 2.0],
+      offset: 0.0,
+      join: stroke.Bevel,
+      cap: stroke.Square,
+    )
+  let assert [first, ..] = svg_path.path_subpaths(result)
+  let corner = svg_path.subpath_start(first)
+  assert float.absolute_value(corner.x -. 0.2) <. 0.000000001
+  assert float.absolute_value(corner.y +. 1.4) <. 0.000000001
+  assert stroke.path_dashed(
+      svg_path.subpath_as_path(source),
+      width: 2.0,
+      pattern: [0.0, 2.0],
+      offset: 0.0,
+      join: stroke.Bevel,
+      cap: stroke.Square,
+    )
+    == Ok(result)
+}
+
+pub fn zero_visible_dashes_on_closed_source_are_points_not_full_loops_test() {
+  let source =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(2.0, 0.0),
+      svg_path.Point(2.0, 2.0),
+      svg_path.Point(0.0, 2.0),
+      svg_path.Point(0.0, 0.0),
+    ])
+  let assert Ok(source) =
+    svg_path.subpath_set_closed_with(
+      source,
+      closed: True,
+      policy: svg_path.Strict,
+    )
+  let assert Ok(dashes) =
+    stroke.subpath_dashes(source, pattern: [0.0, 3.0], offset: 0.0)
+  assert list.length(dashes) == 3
+  list.each(dashes, fn(dash) {
+    assert !svg_path.subpath_is_closed(dash)
+    assert svg_path.subpath_length(dash) == Ok(0.0)
+  })
+  let assert Ok(stroked) =
+    stroke.subpath_dashed(
+      source,
+      width: 0.5,
+      pattern: [0.0, 3.0],
+      offset: 0.0,
+      join: stroke.Bevel,
+      cap: stroke.RoundCap,
+    )
+  assert list.length(svg_path.path_subpaths(stroked)) == 3
+}
+
+pub fn consecutive_zero_visible_dashes_advance_pattern_test() {
+  let source =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(4.0, 0.0),
+    ])
+  let assert Ok(dashes) =
+    stroke.subpath_dashes(source, pattern: [0.0, 0.0, 0.0, 2.0], offset: 0.0)
+  assert list.map(dashes, fn(dash) { svg_path.subpath_start(dash).x })
+    == [0.0, 0.0, 2.0, 2.0, 4.0, 4.0]
 }
 
 pub fn subpath_dashes_treats_empty_pattern_as_none_test() {

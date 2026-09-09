@@ -393,17 +393,31 @@ otherwise it emits `matrix`. A regression covers positive/negative small shear
 and scaled-up geometry. Existing pure-rotation and anisotropic-scale tests
 continue to check compact output. The drawing illustrates the old behavior.
 
-### ST1 — zero-length visible dashes lose their caps
+### ST1 — zero-length visible dashes lose their caps — resolved
 
 ![ST1 — zero-length visible dashes lose their caps](examples/debug/v1_review_visuals/st1.svg)
 
 **Module/functions:** `svg_path/stroke.dash_start`, `dash_intervals_loop`.
-**Evidence:** reproduced empty output for [0,2] with Round caps.
+**Evidence:** reproduced empty output for [0,2] with Round caps; regression-tested repair.
 
-Preserve zero-length visible dash events so cap construction can produce their
-geometry. Test Butt, Round, Square, phase shifts and endpoints. Do not send zero
-intervals through unrelated curve-offset construction or conflate this with
-coalescing a [1,0] pattern into a solid stroke.
+Dash extraction now preserves zero-length visible events as open coincident-
+endpoint Lines, including events at actual path-end pattern boundaries. A gap
+clipped by the path end does not invent a new event there. Zero intervals are
+handled explicitly, rather than passed through subpath-between logic that can
+interpret equal closed-path addresses as a whole loop.
+
+Round and Butt reuse the existing point-stroke handling. Located dash pieces
+retain their original arc-length addresses internally so Square caps use the
+source tangent (outgoing when available, otherwise incoming). Public dash
+extraction still returns `List(Subpath)`; combined dashed-stroke APIs retain
+the additional address until cap construction. Positive-length dashes continue
+through ordinary stroke construction. No [1,0] coalescing policy was added.
+
+Regressions cover all caps, phase shifts, endpoints, consecutive zero entries,
+closed sources, and a diagonal source's Square-cap orientation, including the
+path API. The [0,2] regression failed before the repair. The former test that
+expected zero visible entries to disappear was corrected. `scripts/test-fast`
+passes **1,569 tests**.
 
 ### AD1 — resolved: annotation sampling and containment tolerance mismatch
 
