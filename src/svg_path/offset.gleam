@@ -3057,7 +3057,6 @@ type SegmentEndpoint {
 }
 
 type CubicEndpointFitPolicy {
-  FitPositionOnly
   FitPositionAndDirection(direction: svg_path.Point)
   FitPositionAndDirectionWithCollapsedHandle(direction: svg_path.Point)
 }
@@ -9819,7 +9818,6 @@ fn offset_segment_nudged_tangent_direction(
         endpoint:,
       ))
       case policy {
-        FitPositionOnly -> unit_tangent_at_endpoint(offset_segment, endpoint:)
         FitPositionAndDirection(direction)
         | FitPositionAndDirectionWithCollapsedHandle(direction) -> Ok(direction)
       }
@@ -10189,14 +10187,6 @@ fn fit_offset_cubic_data_with_endpoint_policies(
         samples:,
       )
     }
-    FitPositionOnly, FitPositionOnly -> {
-      use fit <- result.try(
-        bezier.fit_cubic_with_endpoints(start:, end:, samples:)
-        |> result.map_error(cubic_fit_error),
-      )
-      let #(curve, _) = fit
-      Ok(curve)
-    }
     FitPositionAndDirectionWithCollapsedHandle(_start_direction),
       FitPositionAndDirectionWithCollapsedHandle(_end_direction)
     -> Error(InternalNonFinite)
@@ -10217,36 +10207,6 @@ fn fit_offset_cubic_data_with_endpoint_policies(
         start:,
         end:,
         start_direction:,
-        end_direction:,
-        samples:,
-      )
-    FitPositionAndDirectionWithCollapsedHandle(start_direction), FitPositionOnly
-    ->
-      fit_offset_cubic_start_stalled_end_position(
-        start:,
-        end:,
-        start_direction:,
-        samples:,
-      )
-    FitPositionOnly, FitPositionAndDirectionWithCollapsedHandle(end_direction)
-    ->
-      fit_offset_cubic_start_position_end_stalled(
-        start:,
-        end:,
-        end_direction:,
-        samples:,
-      )
-    FitPositionAndDirection(start_direction), FitPositionOnly ->
-      fit_offset_cubic_start_tangent_end_position(
-        start:,
-        end:,
-        start_direction:,
-        samples:,
-      )
-    FitPositionOnly, FitPositionAndDirection(end_direction) ->
-      fit_offset_cubic_start_position_end_tangent(
-        start:,
-        end:,
         end_direction:,
         samples:,
       )
@@ -10353,118 +10313,6 @@ fn fit_offset_cubic_start_tangent_end_stalled(
     start:,
     control1: to_bezier_point(c1),
     control2: end,
-    end:,
-  ))
-}
-
-fn fit_offset_cubic_start_stalled_end_position(
-  start start: bezier.BezierPoint,
-  end end: bezier.BezierPoint,
-  start_direction start_direction: svg_path.Point,
-  samples samples: List(#(Float, bezier.BezierPoint)),
-) -> Result(bezier.BezierData, InternalError) {
-  let start_point = from_bezier_point(start)
-  let end_point = from_bezier_point(end)
-  use start_direction <- result.try(unit_vector(start_direction, t: 0.0))
-  use b <- result.try(fit_start_tangent_one_handle(
-    start: start_point,
-    end: end_point,
-    direction: start_direction,
-    control2: end_point,
-    samples:,
-  ))
-  use _ <- result.try(validate_reversal_handle_scalar(start_point, end_point, b))
-  Ok(bezier.CubicBezierData(
-    start:,
-    control1: start,
-    control2: to_bezier_point(point_helpers.add(
-      start_point,
-      point_helpers.scale(start_direction, b),
-    )),
-    end:,
-  ))
-}
-
-fn fit_offset_cubic_start_position_end_stalled(
-  start start: bezier.BezierPoint,
-  end end: bezier.BezierPoint,
-  end_direction end_direction: svg_path.Point,
-  samples samples: List(#(Float, bezier.BezierPoint)),
-) -> Result(bezier.BezierData, InternalError) {
-  let start_point = from_bezier_point(start)
-  let end_point = from_bezier_point(end)
-  use end_direction <- result.try(unit_vector(end_direction, t: 1.0))
-  use a <- result.try(fit_end_tangent_one_handle(
-    start: start_point,
-    end: end_point,
-    control1: start_point,
-    direction: end_direction,
-    samples:,
-  ))
-  use _ <- result.try(validate_reversal_handle_scalar(start_point, end_point, a))
-  Ok(bezier.CubicBezierData(
-    start:,
-    control1: to_bezier_point(point_helpers.subtract(
-      end_point,
-      point_helpers.scale(end_direction, a),
-    )),
-    control2: end,
-    end:,
-  ))
-}
-
-fn fit_offset_cubic_start_tangent_end_position(
-  start start: bezier.BezierPoint,
-  end end: bezier.BezierPoint,
-  start_direction start_direction: svg_path.Point,
-  samples samples: List(#(Float, bezier.BezierPoint)),
-) -> Result(bezier.BezierData, InternalError) {
-  let start_point = from_bezier_point(start)
-  let end_point = from_bezier_point(end)
-  use start_direction <- result.try(unit_vector(start_direction, t: 0.0))
-  use a <- result.try(fit_start_tangent_one_handle(
-    start: start_point,
-    end: end_point,
-    direction: start_direction,
-    control2: end_point,
-    samples:,
-  ))
-  use _ <- result.try(validate_reversal_handle_scalar(start_point, end_point, a))
-  Ok(bezier.CubicBezierData(
-    start:,
-    control1: to_bezier_point(point_helpers.add(
-      start_point,
-      point_helpers.scale(start_direction, a),
-    )),
-    control2: end,
-    end:,
-  ))
-}
-
-fn fit_offset_cubic_start_position_end_tangent(
-  start start: bezier.BezierPoint,
-  end end: bezier.BezierPoint,
-  end_direction end_direction: svg_path.Point,
-  samples samples: List(#(Float, bezier.BezierPoint)),
-) -> Result(bezier.BezierData, InternalError) {
-  let start_point = from_bezier_point(start)
-  let end_point = from_bezier_point(end)
-  use end_direction <- result.try(unit_vector(end_direction, t: 1.0))
-  use b <- result.try(fit_end_tangent_one_handle(
-    start: start_point,
-    end: end_point,
-    control1: start_point,
-    direction: end_direction,
-    samples:,
-  ))
-  use _ <- result.try(validate_reversal_handle_scalar(start_point, end_point, b))
-  Ok(bezier.CubicBezierData(
-    start:,
-    control1: start,
-    control2: to_bezier_point(point_helpers.subtract(
-      end_point,
-      point_helpers.scale(end_direction, b),
-    )),
     end:,
   ))
 }
