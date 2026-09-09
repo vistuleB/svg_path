@@ -283,7 +283,7 @@ square, and the complete surviving square. Build JavaScript first using
 The harness exposes the production finisher in memory without replacing its
 logic or adding public API. This is not a newly found public winding fixture.
 
-### OF6 — collapsed-handle constraints check lines rather than signed rays
+### OF6 — resolved: collapsed-handle constraints checked lines rather than signed rays
 
 ![OF6 — collapsed-handle constraints check lines rather than signed rays](examples/debug/v1_review_visuals/of6.svg)
 
@@ -291,10 +291,18 @@ logic or adding public API. This is not a newly found public winding fixture.
 `stalled_end_control1`, including their bisection fallbacks.
 **Evidence:** reproduced synthetic private-fit violation, not a full offset.
 
-A candidate can satisfy collinearity and handle length while pointing opposite
-the requested one-sided direction. Validate the signed direction, including
-collapsed handles; continue the existing fallback or return fitting failure
-when the candidate lies on the wrong ray.
+A candidate could satisfy collinearity and handle length while pointing opposite
+the requested one-sided direction. Both collapsed-handle fitters now validate
+the returned cubic's actual one-sided endpoint directions against the requested
+directions. This common final check covers direct, parallel-fit, and bisection
+branches, including higher-derivative directions at collapsed handles. A wrong
+ray returns fitting failure through the existing error/refinement path.
+
+`examples/debug/collapsed_handle_rays.escript` tests the actual compiled private
+fitters with exports enabled only in memory. Its 12 cases cover correct rays,
+each wrong endpoint separately, both wrong, and forward/backward parallel
+constraints for both collapsed endpoints. The wrong-ray case failed before
+the fix; all 12 now pass. `scripts/test-fast` passed **1,563 tests**.
 
 ### OF7 — resolved: unused fitting alternatives
 

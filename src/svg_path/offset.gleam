@@ -10446,37 +10446,45 @@ fn stalled_start_control2(
   end_direction end_direction: svg_path.Point,
   samples samples: List(#(Float, bezier.BezierPoint)),
 ) -> Result(svg_path.Point, InternalError) {
-  case
-    direction_line_intersection(
-      start,
-      start_direction,
-      end,
-      point_helpers.scale(end_direction, -1.0),
-    )
-  {
-    Ok(point) -> {
-      let handle = point_helpers.distance(end, point)
-      let chord = point_helpers.distance(start, end)
-      case handle >=. 0.0 && handle <=. 2.0 *. chord {
-        True -> Ok(point)
-        False ->
-          stalled_start_control2_by_bisection(
-            start:,
-            end:,
-            start_direction:,
-            end_direction:,
-          )
-      }
-    }
-    Error(_) ->
-      stalled_start_control2_parallel_or_bisection(
-        start:,
-        end:,
-        start_direction:,
-        end_direction:,
-        samples:,
+  use control2 <- result.try(
+    case
+      direction_line_intersection(
+        start,
+        start_direction,
+        end,
+        point_helpers.scale(end_direction, -1.0),
       )
-  }
+    {
+      Ok(point) -> {
+        let handle = point_helpers.distance(end, point)
+        let chord = point_helpers.distance(start, end)
+        case handle >=. 0.0 && handle <=. 2.0 *. chord {
+          True -> Ok(point)
+          False ->
+            stalled_start_control2_by_bisection(
+              start:,
+              end:,
+              start_direction:,
+              end_direction:,
+            )
+        }
+      }
+      Error(_) ->
+        stalled_start_control2_parallel_or_bisection(
+          start:,
+          end:,
+          start_direction:,
+          end_direction:,
+          samples:,
+        )
+    },
+  )
+  use _ <- result.try(validate_collapsed_fit_directions(
+    svg_path.CubicBezier(start:, control1: start, control2:, end:),
+    start_direction,
+    end_direction,
+  ))
+  Ok(control2)
 }
 
 fn stalled_end_control1(
@@ -10486,29 +10494,58 @@ fn stalled_end_control1(
   end_direction end_direction: svg_path.Point,
   samples samples: List(#(Float, bezier.BezierPoint)),
 ) -> Result(svg_path.Point, InternalError) {
-  case direction_line_intersection(start, start_direction, end, end_direction) {
-    Ok(point) -> {
-      let handle = point_helpers.distance(start, point)
-      let chord = point_helpers.distance(start, end)
-      case handle >=. 0.0 && handle <=. 2.0 *. chord {
-        True -> Ok(point)
-        False ->
-          stalled_end_control1_by_bisection(
-            start:,
-            end:,
-            start_direction:,
-            end_direction:,
-          )
+  use control1 <- result.try(
+    case
+      direction_line_intersection(start, start_direction, end, end_direction)
+    {
+      Ok(point) -> {
+        let handle = point_helpers.distance(start, point)
+        let chord = point_helpers.distance(start, end)
+        case handle >=. 0.0 && handle <=. 2.0 *. chord {
+          True -> Ok(point)
+          False ->
+            stalled_end_control1_by_bisection(
+              start:,
+              end:,
+              start_direction:,
+              end_direction:,
+            )
+        }
       }
-    }
-    Error(_) ->
-      stalled_end_control1_parallel_or_bisection(
-        start:,
-        end:,
-        start_direction:,
-        end_direction:,
-        samples:,
-      )
+      Error(_) ->
+        stalled_end_control1_parallel_or_bisection(
+          start:,
+          end:,
+          start_direction:,
+          end_direction:,
+          samples:,
+        )
+    },
+  )
+  use _ <- result.try(validate_collapsed_fit_directions(
+    svg_path.CubicBezier(start:, control1:, control2: end, end:),
+    start_direction,
+    end_direction,
+  ))
+  Ok(control1)
+}
+
+fn validate_collapsed_fit_directions(
+  segment: svg_path.Segment,
+  start_direction: svg_path.Point,
+  end_direction: svg_path.Point,
+) -> Result(Nil, InternalError) {
+  // Intersecting tangent lines (including the bisection fallback) does not
+  // establish their ray orientation. Check the actual one-sided directions,
+  // which also handles a collapsed control point via higher derivatives.
+  use start <- result.try(unit_tangent(segment, t: 0.0))
+  use end <- result.try(unit_tangent(segment, t: 1.0))
+  case
+    point_helpers.dot(start, start_direction) >. 0.0
+    && point_helpers.dot(end, end_direction) >. 0.0
+  {
+    True -> Ok(Nil)
+    False -> Error(InternalNonFinite)
   }
 }
 
