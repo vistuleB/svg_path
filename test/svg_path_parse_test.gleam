@@ -13,6 +13,45 @@ pub fn empty_string_parses_as_empty_path_test() {
   assert parse.path("") == Ok(svg_path.path_empty())
 }
 
+pub fn drawing_after_close_starts_at_closed_subpath_start_test() {
+  let prefix = "M 10 20 L 30 40 Z "
+  list.each(
+    [
+      "L 15 25", "l 5 5", "H 15", "h 5", "V 25", "v 5", "C 11 20 12 22 15 25",
+      "c 1 0 2 2 5 5", "S 12 22 15 25", "s 2 2 5 5", "Q 12 22 15 25",
+      "q 2 2 5 5", "T 15 25", "t 5 5", "A 10 10 0 0 1 15 25",
+      "a 10 10 0 0 1 5 5",
+    ],
+    fn(command) {
+      let assert Ok(actual) = parse.path(prefix <> command)
+      let assert Ok(expected) = parse.path(prefix <> "M 10 20 " <> command)
+      assert actual == expected
+    },
+  )
+}
+
+pub fn close_resets_smooth_curve_controls_before_continuation_test() {
+  list.each(
+    [
+      #("M10 20 C11 21 12 22 13 23 Z", "S14 24 15 25"),
+      #("M10 20 Q11 21 13 23 Z", "T15 25"),
+    ],
+    fn(pair) {
+      let #(prefix, command) = pair
+      let assert Ok(actual) = parse.path(prefix <> command)
+      let assert Ok(expected) = parse.path(prefix <> "M10 20" <> command)
+      assert actual == expected
+    },
+  )
+}
+
+pub fn repeated_close_does_not_duplicate_completed_subpath_test() {
+  let assert Ok(actual) = parse.path("M10 20L30 40ZzZl5 5z")
+  let assert Ok(expected) = parse.path("M10 20L30 40Z M10 20l5 5z")
+  assert actual == expected
+  assert parse.path("Z") == Error(parse.ParseError(parse.ExpectedMove, "Z"))
+}
+
 pub fn absolute_lines_parse_test() {
   let assert Ok(path) = parse.path("M 0 0 L 10 0 V 20 H 0")
   let assert Ok(subpath) = svg_path.path_as_subpath(path)

@@ -1,6 +1,6 @@
 # Remaining audit issues
 
-Updated 2026-09-09 against `c91e527`.
+Updated 2026-09-09, including the PA1 follow-up after `c91e527`.
 
 AD1 and OF5 have now been resolved in `c2e8865` and `3bf9b2a`. Their illustrated
 entries are retained below, explicitly marked resolved, as a record of this
@@ -244,16 +244,22 @@ drawing describes the removed alternatives; documentation fixes were already don
 
 ## Other public behavior and numerical contracts
 
-### PA1 — drawing commands after closepath are rejected
+### PA1 — resolved: drawing commands after closepath
 
 ![PA1 — drawing commands after closepath are rejected](examples/debug/v1_review_visuals/pa1.svg)
 
 **Module/functions:** `svg_path/parse.parse_close`, `ensure_active`.
-**Evidence:** `M0 0L1 0ZL2 0` returns `ExpectedMove`.
+**Evidence:** `M0 0L1 0ZL2 0` previously returned `ExpectedMove`.
 
-Retain the current point after Z independently of an actively accumulating
-subpath. A subsequent drawing command starts a continuation there. Test relative
-commands, repeated Z, and reset smooth-command control state.
+The parser now requires a current point rather than an active subpath before
+accepting a drawing command. Its existing append operation starts the new
+subpath at the point retained after Z. Repeated Z is a no-op; a leading Z still
+errors. Closepath continues to clear both smooth-control histories.
+
+Three regressions cover all absolute/relative drawing command families, smooth
+control reset, repeated Z, and a leading-Z error. They failed before the fix.
+This follows [SVG closepath semantics](https://www.w3.org/TR/SVG/paths.html#PathDataClosePathCommand).
+The illustration shows the former rejection and the intended continuation.
 
 ### SP1 — extrapolated directions inherit reversed split-child orientation
 

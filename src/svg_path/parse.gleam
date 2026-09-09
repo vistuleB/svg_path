@@ -78,6 +78,8 @@ type State {
 /// Empty strings parse as an empty path. Move-only subpaths are preserved as
 /// empty subpaths with start points. Closepath commands mark subpaths as
 /// closed, inserting a straight line back to the subpath start when needed.
+/// Drawing commands after closepath start a new subpath at that same start
+/// point. Repeated closepath commands do not append additional empty subpaths.
 pub fn path(input: String) -> Result(svg_path.Path, Error) {
   case string.trim(input) {
     "none" -> Ok(svg_path.path_empty())
@@ -212,7 +214,7 @@ fn parse_line(
   state: State,
   relative relative: Bool,
 ) -> Result(svg_path.Path, LocatedError) {
-  case ensure_active(state) {
+  case ensure_current(state) {
     Error(error) -> Error(error)
     Ok(Nil) -> parse_line_loop(tokens, state, relative, parsed_any: False)
   }
@@ -251,7 +253,7 @@ fn parse_horizontal(
   state: State,
   relative relative: Bool,
 ) -> Result(svg_path.Path, LocatedError) {
-  case ensure_active(state) {
+  case ensure_current(state) {
     Error(error) -> Error(error)
     Ok(Nil) -> parse_horizontal_loop(tokens, state, relative, parsed_any: False)
   }
@@ -290,7 +292,7 @@ fn parse_vertical(
   state: State,
   relative relative: Bool,
 ) -> Result(svg_path.Path, LocatedError) {
-  case ensure_active(state) {
+  case ensure_current(state) {
     Error(error) -> Error(error)
     Ok(Nil) -> parse_vertical_loop(tokens, state, relative, parsed_any: False)
   }
@@ -329,7 +331,7 @@ fn parse_quadratic_bezier(
   state: State,
   relative relative: Bool,
 ) -> Result(svg_path.Path, LocatedError) {
-  case ensure_active(state) {
+  case ensure_current(state) {
     Error(error) -> Error(error)
     Ok(Nil) ->
       parse_quadratic_bezier_loop(tokens, state, relative, parsed_any: False)
@@ -381,7 +383,7 @@ fn parse_smooth_quadratic_bezier(
   state: State,
   relative relative: Bool,
 ) -> Result(svg_path.Path, LocatedError) {
-  case ensure_active(state) {
+  case ensure_current(state) {
     Error(error) -> Error(error)
     Ok(Nil) ->
       parse_smooth_quadratic_bezier_loop(
@@ -438,7 +440,7 @@ fn parse_cubic_bezier(
   state: State,
   relative relative: Bool,
 ) -> Result(svg_path.Path, LocatedError) {
-  case ensure_active(state) {
+  case ensure_current(state) {
     Error(error) -> Error(error)
     Ok(Nil) ->
       parse_cubic_bezier_loop(tokens, state, relative, parsed_any: False)
@@ -491,7 +493,7 @@ fn parse_smooth_cubic_bezier(
   state: State,
   relative relative: Bool,
 ) -> Result(svg_path.Path, LocatedError) {
-  case ensure_active(state) {
+  case ensure_current(state) {
     Error(error) -> Error(error)
     Ok(Nil) ->
       parse_smooth_cubic_bezier_loop(tokens, state, relative, parsed_any: False)
@@ -549,7 +551,7 @@ fn parse_arc(
   state: State,
   relative relative: Bool,
 ) -> Result(svg_path.Path, LocatedError) {
-  case ensure_active(state) {
+  case ensure_current(state) {
     Error(error) -> Error(error)
     Ok(Nil) -> parse_arc_loop(tokens, state, relative, parsed_any: False)
   }
@@ -637,8 +639,9 @@ fn parse_close(
   tokens: List(Token),
   state: State,
 ) -> Result(svg_path.Path, LocatedError) {
-  case ensure_active(state) {
+  case ensure_current(state) {
     Error(error) -> Error(error)
+    Ok(Nil) if !state.active -> parse_tokens(tokens, state)
     Ok(Nil) -> {
       let start = svg_path.subpath_start(state.subpath)
       case
@@ -760,8 +763,10 @@ fn reflect(
   svg_path.Point(origin.x *. 2.0 -. point.x, origin.y *. 2.0 -. point.y)
 }
 
-fn ensure_active(state: State) -> Result(Nil, LocatedError) {
-  case state.active && state.has_current {
+fn ensure_current(state: State) -> Result(Nil, LocatedError) {
+  // Closepath finishes the active subpath but retains its start as the
+  // current point. Drawing can resume there without another moveto.
+  case state.has_current {
     True -> Ok(Nil)
     False -> Error(LocatedError(ExpectedMove, state.at))
   }
