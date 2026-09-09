@@ -1,5 +1,85 @@
 # Remaining audit issues
 
+## Final band orientation refactor (B): revised signed-unit contract
+
+The approved revision allows face values `-1, 0, 1`. An undecided contour
+chooses `0 -> 1` or `nonzero -> 0`. Already-decided contours instead propagate
+their fixed signed winding change, including transitions into negative faces.
+Values outside the allowed range and disagreement with an assigned face remain
+errors. Opposite same-contour preimages still cancel; other multiple-preimage
+patterns remain unsupported. Traversal order is deterministic, without
+backtracking.
+
+`scripts/test-fast` passes 1,596 tests. The opposite-lobe test now verifies
+successful orientation and idempotence; a new same-direction nested-lobe test
+rejects winding magnitude two.
+`gleam run -m svg_path_two_corner_square_bands_fixture` succeeds for all three trimming
+configurations, including both configurations that failed under the former
+0/1-only contract. The preview is
+`examples/debug/four_concave_corner_square_band_trimming_comparison.svg`.
+
+`escript examples/debug/final_orientation_checks.escript` also succeeds:
+three square configurations, recursive dashes (67 orientation calls), figure
+eight (one), and loop eight bands (two), with no orientation errors.
+
+Part B is complete under this revised contract. The investigation below records the
+superseded 0/1-only contract and its captured conflict for comparison.
+
+### Historical 0/1-only implementation and diagnosis
+
+`offset.orient_band_path` now takes only the reconstructed contour path. It
+builds an AG from those contours and derives its dual; it no longer receives
+the original winding-band callback or uses displaced midpoint probes.
+
+The infinite face starts at zero. Every single-owner edge toggles the adjacent
+face value between zero and one and decides (or verifies) its whole contour's
+direction. Two opposite preimages from the same contour cancel, preserving the
+face value without constraining that contour. Every other preimage pattern is
+an explicit unexpected-edge error. Contradictory face/direction assignments and
+unreachable faces are also errors. Fully retraced contours may remain undecided
+and preserve their original traversal. A final pass validates every constraint.
+
+Faces are scheduled only when first assigned; incident-edge lookup uses a
+dictionary. The algorithm changes no segment geometry and does not alter
+submerged classification or parity pruning. It runs only after in-band trimming;
+the existing caller still reverses the whole band for reversed offset ordering.
+Single offsets do not call it. Strokes inherit it through their band call.
+
+`scripts/test-fast` passes 1,591 tests, including eight new orientation tests.
+These cover nested contours in shuffled order, disjoint and vertex-touching
+contours, fully retraced walks, attached retraced spurs, duplicate ownership,
+same-loop same-direction repetition, contradictory lobe orientations, and
+open/empty inputs.
+
+`scripts/generate-published-figures` stops at
+`svg_path_two_corner_square_bands_fixture`: `inner_cusps: False` yields
+`ConstructionFailed` with either setting of `outer_cusps`. Both cusp trimmers
+enabled succeeds. Independent tracing of actual orientation calls also checked
+recursive dashes (67 calls), figure eight (one), and loop eight bands (two): no
+orientation errors in those fixtures.
+
+The first conflict is captured verbatim in
+`examples/debug/orientation-square-outer-cusps.term`. On reconstructed contour
+0, edge 23 separates faces 1 and 2 and requires reversal; edge 22 separates
+faces 2 and 6 and requires retaining the original direction. Both edges have
+one preimage, from that same contour, following the stored edge direction.
+Signed winding propagation for contour 0 alone gives 0 on faces 0/1, 1 on
+face 2, and 2 on faces 3–6. These are self-overlapping corner lobes, not a
+whole-contour direction that can be corrected by reversal. The agreed 0/1
+contract detects this; no fallback or splitting policy has been added.
+
+![Captured contours and the two conflicting arrangement edges](examples/debug/final-orientation-square-conflict.svg)
+
+Blue is captured contour 0; grey is contour 1. Green edge 23 requires reversing
+contour 0, red edge 22 requires keeping it, and the pale-yellow region is actual
+dual face 6. `examples/debug/final_orientation_conflict.escript` rebuilds the
+same AG from the captured input and draws its edges/vertices. The broader
+`final_orientation_checks.escript` records production calls without substituting
+geometry. At this earlier checkpoint, B remained uncommitted pending a decision about these non-simple
+contours: retain the strict error, or authorize a change beyond whole-contour
+orientation (such as splitting). Published figures have not been promoted from
+the failed generation run.
+
 ## Face-winding classification refactor (A): wired
 
 `arrangement.face_windings` propagates caller-supplied signed edge changes over
@@ -21,8 +101,8 @@ General submerged classification and side-local cusp classification now obtain
 their measured side values from the propagated faces. The expected-versus-
 measured comparison is unchanged. The old sampler remains for the explicit
 comparison diagnostic; propagation errors are not caught and replaced by probes.
-Algorithm B (final-loop orientation) and the parity-reduction algorithm are
-unchanged.
+At the A checkpoint, algorithm B (final-loop orientation) and parity reduction
+were unchanged. The subsequent B implementation is recorded above.
 
 `scripts/test-fast` passes 1,580 tests. The diagnostic
 `escript examples/debug/face_winding_comparison.escript` captures production

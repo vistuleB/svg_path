@@ -1572,6 +1572,16 @@ let options =
 - `in_band` performs the final joint winding classification and
   parity-capacity reconstruction after the two sides are assembled.
 
+After this final trimming, contour directions are chosen together using the
+arrangement's adjacent faces. For `outer_offset > inner_offset`, the infinite
+face has value zero. An undecided contour chooses a transition from zero to
+one, or from nonzero to zero; decided contours propagate their fixed signed
+winding changes. Face values must remain in `-1, 0, 1`. Inconsistent face
+assignments, values outside that range, or unsupported coincident ownership
+return `ConstructionFailed`. Decisions follow deterministic graph order without
+backtracking; fully retraced, unconstrained contours retain their traversal.
+This orientation pass is skipped when `in_band` is false.
+
 The cusp switches act before joint band trimming. The four-concave-corner
 example below holds `in_band: True` while changing the two side-local switches:
 

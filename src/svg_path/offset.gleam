@@ -416,7 +416,7 @@ pub fn topological_band_path_with_opinions(
     winding_opinions:,
     options:,
   ))
-  orient_band_path(svg_path.Path(subpaths: loops), winding)
+  orient_band_path(svg_path.Path(subpaths: loops))
 }
 
 /// Extract and filter single-offset survivors as a path.
@@ -2728,6 +2728,7 @@ fn short_circuit_adjacent_offset_segment_loop_with_parameters(
   }
 }
 
+import gleam/dict.{type Dict}
 import gleam/float
 import gleam/int
 import gleam/list
@@ -2769,8 +2770,6 @@ const angle_tolerance_degrees = 0.000000001
 const arrangement_tolerance = 0.000000002
 
 const submerged_side_sampling_distance = 0.00000005
-
-const band_orientation_side_sampling_distance = 0.0001
 
 const curvature_parameter_tolerance = 0.000001
 
@@ -2857,6 +2856,15 @@ pub type InternalError {
 
   /// Band payloads used for inside classification must be closed.
   InternalBandSubpathNotClosed
+
+  /// Final contours violate the one-owner or same-loop retrace contract.
+  InternalBandOrientationUnexpectedEdge(edge_id: Int, preimage_count: Int)
+
+  /// A loop direction or face value contradicts an earlier assignment.
+  InternalBandOrientationConflict(edge_id: Int)
+
+  /// Dual propagation could not reach a face from the infinite face.
+  InternalBandOrientationUnreachableFace(face_id: Int)
 
   /// A segment tangent was too small to define a stable normal direction.
   /// Carries the segment parameter where the tangent query failed.
@@ -6955,77 +6963,249 @@ fn join_between_offset_portions(
   }
 }
 
-/// Internal offset construction helper.
+// Final orientation only reverses whole reconstructed contours; the original
+// winding band and the earlier submerged classification play no part here.
+type BandOrientationEdge {
+  BandOrientationEdge(
+    edge_id: Int,
+    left_face: Int,
+    right_face: Int,
+    // None means exactly two opposite occurrences from the same loop.
+    source: Option(#(Int, Bool)),
+  )
+}
+
+type BandOrientationState {
+  BandOrientationState(
+    faces: Dict(Int, Int),
+    reversed_loops: Dict(Int, Bool),
+    pending: List(Int),
+  )
+}
+
+/// Orient reconstructed closed contours with face values restricted to -1/0/1.
+/// The infinite face starts at 0. An undecided contour chooses 0 -> 1 or
+/// nonzero -> 0; a decided contour propagates its fixed signed change instead.
+/// A same-loop opposite pair preserves the value without deciding a direction.
+/// Out-of-range values, contradictory assignments and other ownership patterns
+/// are errors. Fully retraced contours may retain their input traversal.
+/// Decisions use the deterministic graph traversal order; no backtracking.
 @internal
 pub fn orient_band_path(
   path: svg_path.Path,
-  winding: fn(svg_path.Point) -> Result(Int, InternalError),
 ) -> Result(svg_path.Path, InternalError) {
-  use subpaths <- result.try(
-    orient_band_subpaths(svg_path.path_subpaths(path), winding, oriented: []),
+  let subpaths = svg_path.path_subpaths(path)
+  use _ <- result.try(case list.all(subpaths, svg_path.subpath_is_closed) {
+    True -> Ok(Nil)
+    False -> Error(InternalBandSubpathNotClosed)
+  })
+  let indexed =
+    subpaths
+    |> list.index_map(fn(subpath, loop_index) {
+      list.map(svg_path.subpath_segments(subpath), fn(segment) {
+        #(segment, loop_index)
+      })
+    })
+    |> list.flatten
+  let loop_indices =
+    indexed
+    |> list.index_map(fn(item, segment_index) { #(segment_index, item.1) })
+    |> dict.from_list
+  use build <- result.try(
+    arrangement_graph.build_with(
+      list.map(indexed, fn(item) { item.0 }),
+      vertex_tolerance: arrangement_tolerance,
+      minimum_chord: arrangement_tolerance,
+      endpoint_sliver_tolerance: adjacent_loop_endpoint_parameter_tolerance,
+    )
+    |> result.map_error(InternalArrangementGraphError),
   )
-  Ok(svg_path.Path(subpaths:))
+  use dual <- result.try(
+    arrangement_graph.dual(build.graph) |> result.map_error(arrangement_error),
+  )
+  let images =
+    build.edge_images
+    |> list.map(fn(image) { #(image.edge_id, image.sources) })
+    |> dict.from_list
+  use constraints <- result.try(
+    list.try_map(dual.edge_faces, fn(edge) {
+      use sources <- result.try(
+        dict.get(images, edge.edge_id)
+        |> result.map_error(fn(_) {
+          InternalBandOrientationUnexpectedEdge(edge.edge_id, 0)
+        }),
+      )
+      use owners <- result.try(
+        list.try_map(sources, fn(source) {
+          use loop_index <- result.try(
+            dict.get(loop_indices, source.segment_index)
+            |> result.map_error(fn(_) { InternalSegmentImageCountMismatch }),
+          )
+          Ok(#(loop_index, source.reversed))
+        }),
+      )
+      use source <- result.try(case owners {
+        [owner] -> Ok(Some(owner))
+        [#(a, reversed_a), #(b, reversed_b)]
+          if a == b && reversed_a != reversed_b
+        -> Ok(None)
+        _ ->
+          Error(InternalBandOrientationUnexpectedEdge(
+            edge.edge_id,
+            list.length(owners),
+          ))
+      })
+      Ok(BandOrientationEdge(
+        edge.edge_id,
+        edge.left_face,
+        edge.right_face,
+        source,
+      ))
+    }),
+  )
+  let adjacency =
+    list.fold(constraints, dict.new(), fn(adjacency, edge) {
+      adjacency
+      |> add_band_orientation_incident(edge.left_face, edge)
+      |> add_band_orientation_incident(edge.right_face, edge)
+    })
+  use outer <- result.try(
+    list.find(dual.faces, fn(face) { face.outer })
+    |> result.map_error(fn(_) { InternalBandOrientationUnreachableFace(-1) }),
+  )
+  let initial =
+    BandOrientationState(
+      faces: dict.from_list([#(outer.id, 0)]),
+      reversed_loops: dict.new(),
+      pending: [outer.id],
+    )
+  use state <- result.try(propagate_band_orientation(adjacency, initial))
+  use _ <- result.try(
+    list.try_each(dual.faces, fn(face) {
+      case dict.has_key(state.faces, face.id) {
+        True -> Ok(Nil)
+        False -> Error(InternalBandOrientationUnreachableFace(face.id))
+      }
+    }),
+  )
+  // Final validation pass: every face is assigned, so no new work or arbitrary
+  // loop directions can be introduced here.
+  use state <- result.try(
+    list.try_fold(constraints, state, fn(state, edge) {
+      visit_band_orientation_edge(edge, edge.left_face, state)
+    }),
+  )
+  Ok(
+    svg_path.Path(
+      list.index_map(subpaths, fn(subpath, loop_index) {
+        case dict.get(state.reversed_loops, loop_index) {
+          Ok(True) -> svg_path.subpath_reverse(subpath)
+          Ok(False) | Error(_) -> subpath
+        }
+      }),
+    ),
+  )
 }
 
-fn orient_band_subpaths(
-  subpaths: List(svg_path.Subpath),
-  winding: fn(svg_path.Point) -> Result(Int, InternalError),
-  oriented oriented: List(svg_path.Subpath),
-) -> Result(List(svg_path.Subpath), InternalError) {
-  case subpaths {
-    [] -> Ok(list.reverse(oriented))
-    [first, ..rest] -> {
-      use oriented_first <- result.try(case svg_path.subpath_is_closed(first) {
-        False -> Ok(first)
-        True ->
-          orient_band_subpath(first, svg_path.subpath_segments(first), winding)
-      })
-      orient_band_subpaths(rest, winding, oriented: [oriented_first, ..oriented])
+fn add_band_orientation_incident(
+  adjacency: Dict(Int, List(BandOrientationEdge)),
+  face: Int,
+  edge: BandOrientationEdge,
+) -> Dict(Int, List(BandOrientationEdge)) {
+  let incident = dict.get(adjacency, face) |> result.unwrap([])
+  dict.insert(adjacency, face, [edge, ..incident])
+}
+
+fn propagate_band_orientation(
+  adjacency: Dict(Int, List(BandOrientationEdge)),
+  state: BandOrientationState,
+) -> Result(BandOrientationState, InternalError) {
+  case state.pending {
+    [] -> Ok(state)
+    [face, ..rest] -> {
+      let incident = dict.get(adjacency, face) |> result.unwrap([])
+      use next <- result.try(
+        list.try_fold(
+          incident,
+          BandOrientationState(..state, pending: rest),
+          fn(state, edge) { visit_band_orientation_edge(edge, face, state) },
+        ),
+      )
+      propagate_band_orientation(adjacency, next)
     }
   }
 }
 
-fn orient_band_subpath(
-  subpath: svg_path.Subpath,
-  segments: List(svg_path.Segment),
-  winding: fn(svg_path.Point) -> Result(Int, InternalError),
-) -> Result(svg_path.Subpath, InternalError) {
-  case segments {
-    [] -> Ok(subpath)
-    [first, ..rest] -> {
-      use point <- result.try(
-        svg_path.segment_point(first, at: 0.5)
-        |> result.map_error(InternalPathError),
-      )
-      case unit_normal(first, t: 0.5) {
-        Error(_) -> orient_band_subpath(subpath, rest, winding)
-        Ok(normal) -> {
-          use left <- result.try(
-            winding(point_helpers.add(
-              point,
-              point_helpers.scale(
-                normal,
-                band_orientation_side_sampling_distance,
-              ),
-            )),
-          )
-          use right <- result.try(
-            winding(point_helpers.add(
-              point,
-              point_helpers.scale(
-                normal,
-                0.0 -. band_orientation_side_sampling_distance,
-              ),
-            )),
-          )
-          case right > left, left > right {
-            True, False -> Ok(subpath)
-            False, True -> Ok(svg_path.subpath_reverse(subpath))
-            _, _ -> orient_band_subpath(subpath, rest, winding)
+fn visit_band_orientation_edge(
+  edge: BandOrientationEdge,
+  from: Int,
+  state: BandOrientationState,
+) -> Result(BandOrientationState, InternalError) {
+  use value <- result.try(
+    dict.get(state.faces, from)
+    |> result.map_error(fn(_) { InternalBandOrientationUnreachableFace(from) }),
+  )
+  let from_left = from == edge.left_face
+  let destination = case from_left {
+    True -> edge.right_face
+    False -> edge.left_face
+  }
+  use #(required, state) <- result.try(case edge.source {
+    None -> Ok(#(value, state))
+    Some(#(loop_index, preimage_reversed)) -> {
+      case dict.get(state.reversed_loops, loop_index) {
+        Ok(reverse_loop) -> {
+          let right_minus_left = case preimage_reversed != reverse_loop {
+            True -> -1
+            False -> 1
           }
+          let change = case from_left {
+            True -> right_minus_left
+            False -> 0 - right_minus_left
+          }
+          Ok(#(value + change, state))
+        }
+        Error(_) -> {
+          let required = case value {
+            0 -> 1
+            _ -> 0
+          }
+          let right_minus_left = case from_left {
+            True -> required - value
+            False -> value - required
+          }
+          let reverse_loop = preimage_reversed != { right_minus_left < 0 }
+          Ok(#(
+            required,
+            BandOrientationState(
+              ..state,
+              reversed_loops: dict.insert(
+                state.reversed_loops,
+                loop_index,
+                reverse_loop,
+              ),
+            ),
+          ))
         }
       }
     }
+  })
+  use _ <- result.try(case required < -1 || required > 1 {
+    True -> Error(InternalBandOrientationConflict(edge.edge_id))
+    False -> Ok(Nil)
+  })
+  case dict.get(state.faces, destination) {
+    Ok(previous) if previous != required ->
+      Error(InternalBandOrientationConflict(edge.edge_id))
+    Ok(_) -> Ok(state)
+    Error(_) ->
+      Ok(
+        BandOrientationState(
+          ..state,
+          faces: dict.insert(state.faces, destination, required),
+          pending: [destination, ..state.pending],
+        ),
+      )
   }
 }
 
