@@ -1,6 +1,6 @@
 # Remaining audit issues
 
-Updated 2026-09-09, including the PA1 follow-up after `c91e527`.
+Updated 2026-09-09, including PA1 (`cbc802b`) and the OF4 follow-up.
 
 AD1 and OF5 have now been resolved in `c2e8865` and `3bf9b2a`. Their illustrated
 entries are retained below, explicitly marked resolved, as a record of this
@@ -183,17 +183,26 @@ seam handling that retains both edits. Returning the first segment as an
 appended tail would duplicate it; do not alter the public closure contract
 incidentally. Pair tests with OF2's cyclic-rotation cases.
 
-### OF4 — reversed survivor geometry retains its old parameter orientation
+### OF4 — resolved: reversed survivor parameter orientation
 
 ![OF4 — reversed survivor geometry retains its old parameter orientation](examples/debug/v1_review_visuals/of4.svg)
 
 **Module/function:** `svg_path/offset.reverse_survivor_edges`.
-**Evidence:** private-helper metadata mismatch; no public failing fixture yet.
+**Evidence:** private-helper and downstream conversion regression; no public
+offset fixture was needed to demonstrate the parameter-mapping error.
 
-The Line reverses but its ascending preimage interval is copied unchanged into
-cusp output. Carry directed interval orientation and compose it exactly once
-with subsequent cuts. Do not conflate traversal reversal with the independent
-geometric REVERSED classification.
+Reversing a survivor now also reverses its arrangement-split section geometry,
+endpoint vertices, and directed H interval. The immutable I/H preimages and the
+independent geometric REVERSED flag are unchanged. Both offside and cusp output
+conversions therefore receive the correctly oriented interval without needing
+separate reversal logic. Double reversal restores the original metadata.
+
+`node examples/debug/survivor_provenance_regression.mjs` passes seven private
+production-helper cases, covering both geometric REVERSED states, both output
+conversions, later local-to-H parameter mapping, double reversal, and a survivor
+without traced provenance. Before the fix it reproduced the wrong interval.
+Build JavaScript first as described for the cusp regression. The illustration
+depicts the old mismatch using explanatory parameter values.
 
 ### OF5 — resolved: complete erasure after parity
 
@@ -338,6 +347,10 @@ Propagate the error if reachable; otherwise document the invariant supporting
 the assertion. Do not replace assertions indiscriminately.
 
 ## Verification baseline and next work
+
+For PA1 and OF4, `scripts/test-fast` passed **1,553 tests**. The private survivor
+provenance regression passed **seven cases**, and the private cusp-empty
+regression still passed **17 cases**. Formatting and whitespace checks passed.
 
 For TS1 and OF7, `scripts/test-fast` passed **1,550 tests**. The private cusp
 finisher regression still passed its **17 cases**, and the two public C-offset

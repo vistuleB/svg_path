@@ -3297,7 +3297,9 @@ type TracedOffsetSubpath {
 
 /// One I-segment section in original traversal order after arrangement noding.
 ///
-/// `segment` is oriented in the I walk's traversal direction. `edge_id` and
+/// Initially `segment` follows the I walk; reconstruction can reverse this
+/// section together with its directed H interval and endpoint vertices.
+/// `edge_id` and
 /// the vertex ids identify its arrangement image. `preimage_from..preimage_to`
 /// is expressed directly in the immutable H preimage's parameter space, not
 /// in the immediate I segment's local parameter space. `deletion_candidate`
@@ -4647,7 +4649,19 @@ fn reverse_survivor_edges(
           start_vertex: end_vertex,
           end_vertex: start_vertex,
           segment: svg_path.segment_reverse(segment),
-          arrangement_preimage:,
+          // Keep the directed H interval aligned with the reversed geometry.
+          // The immutable I/H preimages and geometric REVERSED label do not
+          // change; this is only a reversal of the survivor's traversal.
+          arrangement_preimage: option.map(arrangement_preimage, fn(split) {
+            ArrangementSplitTracedSegment(
+              ..split,
+              segment: svg_path.segment_reverse(split.segment),
+              start_vertex: split.end_vertex,
+              end_vertex: split.start_vertex,
+              preimage_from: split.preimage_to,
+              preimage_to: split.preimage_from,
+            )
+          }),
         ),
         ..reversed
       ])
