@@ -12,6 +12,86 @@ const tolerance = 0.000001
 
 const minimum_chord = 0.00001
 
+pub fn shared_endpoints_do_not_hide_an_interior_crossing_test() {
+  let start = svg_path.Point(0.0, 0.0)
+  let end = svg_path.Point(1.0, 0.0)
+  let curve =
+    svg_path.CubicBezier(
+      start:,
+      control1: svg_path.Point(1.0 /. 3.0, 1.0 /. 6.0),
+      control2: svg_path.Point(2.0 /. 3.0, -1.0 /. 6.0),
+      end:,
+    )
+  let line = svg_path.Line(start:, end:)
+  list.each([line, svg_path.segment_reverse(line)], fn(line) {
+    list.each([[curve, line], [line, curve]], fn(segments) {
+      let assert Ok(arrangement_graph.ArrangementSegmentBuild(graph:, ..)) =
+        arrangement_graph.build_with(
+          segments,
+          vertex_tolerance: 0.000000001,
+          minimum_chord: 0.00000001,
+          endpoint_sliver_tolerance: 0.0,
+        )
+      assert list.length(graph.vertices) == 3
+      assert list.length(graph.edges) == 4
+      assert list.any(graph.vertices, fn(vertex) {
+        point.distance(vertex.point, svg_path.Point(0.5, 0.0)) <. 0.000000001
+      })
+      assert arrangement_graph.validate(
+          graph,
+          tolerance: 0.000000001,
+          minimum_chord: 0.00000001,
+        )
+        == Ok(Nil)
+    })
+  })
+}
+
+pub fn shared_endpoint_lens_keeps_distinct_edges_test() {
+  let start = svg_path.Point(0.0, 0.0)
+  let end = svg_path.Point(2.0, 0.0)
+  let assert Ok(arrangement_graph.ArrangementSegmentBuild(graph:, ..)) =
+    arrangement_graph.build_with(
+      [
+        svg_path.QuadraticBezier(
+          start:,
+          control: svg_path.Point(1.0, 1.0),
+          end:,
+        ),
+        svg_path.QuadraticBezier(
+          start:,
+          control: svg_path.Point(1.0, -1.0),
+          end:,
+        ),
+      ],
+      vertex_tolerance: tolerance,
+      minimum_chord:,
+      endpoint_sliver_tolerance: 0.0,
+    )
+  assert list.length(graph.vertices) == 2
+  assert list.length(graph.edges) == 2
+}
+
+pub fn progressive_duplicate_curves_preserve_directional_multiplicity_test() {
+  let curve =
+    svg_path.QuadraticBezier(
+      start: svg_path.Point(0.0, 0.0),
+      control: svg_path.Point(1.0, 1.0),
+      end: svg_path.Point(2.0, 0.0),
+    )
+  let assert Ok(arrangement_graph.ArrangementSegmentBuild(graph:, ..)) =
+    arrangement_graph.build_with(
+      [curve, curve, svg_path.segment_reverse(curve)],
+      vertex_tolerance: tolerance,
+      minimum_chord:,
+      endpoint_sliver_tolerance: 0.0,
+    )
+  let assert [edge] = graph.edges
+  assert list.length(graph.vertices) == 2
+  assert edge.forward_multiplicity == 2
+  assert edge.reverse_multiplicity == 1
+}
+
 pub fn closed_square_builds_valid_graph_test() {
   let a = svg_path.Point(0.0, 0.0)
   let b = svg_path.Point(10.0, 0.0)

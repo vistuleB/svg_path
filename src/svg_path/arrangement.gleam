@@ -2691,47 +2691,28 @@ fn progressive_compare_edge(
       case bounding_boxes_overlap(bounds, existing_bounds, vertex_tolerance) {
         False -> Ok(ProgressiveContinue(graph, images))
         True -> {
-          case edge_matches_incoming_endpoints(edge, start_match, end_match) {
-            True -> Ok(ProgressiveContinue(graph, images))
-            False -> {
-              use cuts <- result.try(pair_cuts_with_common_endpoint_sliver(
-                piece,
-                edge,
-                start_match,
-                end_match,
-                vertex_tolerance,
-                endpoint_sliver_tolerance,
-              ))
-              progressive_compare_edge_cuts(
-                piece,
-                edge,
-                graph,
-                images,
-                cuts,
-                vertex_tolerance,
-                minimum_chord,
-              )
-            }
-          }
+          // Shared endpoint vertices do not exclude interior intersections.
+          // Let the ordinary pair logic distinguish overlap from new cuts.
+          use cuts <- result.try(pair_cuts_with_common_endpoint_sliver(
+            piece,
+            edge,
+            start_match,
+            end_match,
+            vertex_tolerance,
+            endpoint_sliver_tolerance,
+          ))
+          progressive_compare_edge_cuts(
+            piece,
+            edge,
+            graph,
+            images,
+            cuts,
+            vertex_tolerance,
+            minimum_chord,
+          )
         }
       }
     }
-  }
-}
-
-fn edge_matches_incoming_endpoints(
-  edge: ArrangementEdge,
-  start_match: Option(Int),
-  end_match: Option(Int),
-) -> Bool {
-  let ArrangementEdge(start_vertex:, end_vertex:, ..) = edge
-  case start_match, end_match {
-    Some(start), Some(end) ->
-      start_vertex == start
-      && end_vertex == end
-      || start_vertex == end
-      && end_vertex == start
-    _, _ -> False
   }
 }
 
