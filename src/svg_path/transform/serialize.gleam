@@ -16,6 +16,10 @@ const rotation_scale_epsilon = 0.000001
 
 const identity_scale_epsilon = 0.0000000000001
 
+// Recognition may absorb arithmetic noise, not an independent geometric shear.
+// Compare each column at its own scale so a large axis cannot hide the other.
+const rotation_scale_reconstruction_epsilon = 0.000000000001
+
 type LinearTransform {
   Matrix2x2
   Identity2x2
@@ -215,20 +219,21 @@ fn analyze_rotation_scale(
   {
     False -> Matrix2x2
     True -> {
-      let normalized_a = a /. scale_x
-      let normalized_b = b /. scale_x
-      let normalized_c = c /. scale_y
-      let normalized_d = d /. scale_y
-      let normalized_dot_product =
-        normalized_a *. normalized_c +. normalized_b *. normalized_d
-
-      case close_to_zero(normalized_dot_product) {
+      let rotation_degrees = trig.atan2_degrees(b, a)
+      let cosine = trig.cos_degrees(rotation_degrees)
+      let sine = trig.sin_degrees(rotation_degrees)
+      case
+        rotation_scale_coefficient_matches(a, cosine *. scale_x, scale_x)
+        && rotation_scale_coefficient_matches(b, sine *. scale_x, scale_x)
+        && rotation_scale_coefficient_matches(
+          c,
+          0.0 -. sine *. scale_y,
+          scale_y,
+        )
+        && rotation_scale_coefficient_matches(d, cosine *. scale_y, scale_y)
+      {
         False -> Matrix2x2
-        True -> {
-          let rotation_degrees = trig.atan2_degrees(b, a)
-
-          RotateScale2x2(degrees: rotation_degrees, scale_x:, scale_y:)
-        }
+        True -> RotateScale2x2(degrees: rotation_degrees, scale_x:, scale_y:)
       }
     }
   }
@@ -292,8 +297,13 @@ fn length(x: Float, y: Float) -> Float {
   result
 }
 
-fn close_to_zero(value: Float) -> Bool {
-  float.absolute_value(value) <=. rotation_scale_epsilon
+fn rotation_scale_coefficient_matches(
+  original: Float,
+  reconstructed: Float,
+  column_scale: Float,
+) -> Bool {
+  float.absolute_value(original -. reconstructed)
+  <=. column_scale *. rotation_scale_reconstruction_epsilon
 }
 
 fn number(number: Float, options: Options) -> String {

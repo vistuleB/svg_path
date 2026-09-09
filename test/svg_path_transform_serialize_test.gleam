@@ -1,3 +1,5 @@
+import gleam/float
+import gleam/list
 import gleam/option.{None}
 import gleam/string
 import gleeunit
@@ -52,6 +54,25 @@ pub fn transform_rotation_scale_recognition_is_scale_independent_test() {
     |> transform.chain(first: _, then: transform.rotate(degrees: 30.0))
 
   assert serialize.to_string(matrix) == "rotate(30) scale(2000000 3000000)"
+}
+
+pub fn transform_serialization_preserves_small_shear_test() {
+  let options = serialize.Options(None, False, False)
+  list.each(
+    [#(2.0, 0.000001), #(2.0, -0.000001), #(2_000_000.0, 1.0)],
+    fn(pair) {
+      let #(scale, shear) = pair
+      let matrix = transform.from_tuple(#(scale, 0.0, shear, scale, 0.0, 0.0))
+      let text = serialize.to_string_with(matrix, options:)
+      assert string.starts_with(text, "matrix(")
+      let assert Ok(decoded) = transform_parse.attribute(text)
+      let #(a, b, c, d, e, f) = transform.to_tuple(decoded)
+      assert a == scale && b == 0.0 && d == scale && e == 0.0 && f == 0.0
+      // Parsing a decimal need not recover the identical float bit pattern.
+      assert float.absolute_value(c -. shear)
+        <=. float.absolute_value(shear) *. 1.0e-12
+    },
+  )
 }
 
 pub fn transform_serialization_preserves_near_identity_rotation_scale_test() {
