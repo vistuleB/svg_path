@@ -1,6 +1,6 @@
 # Remaining audit issues
 
-Updated 2026-09-09, including PA1 (`cbc802b`) and the OF4 follow-up.
+Updated 2026-09-09, including the OF2 follow-up after `0d8f613`.
 
 AD1 and OF5 have now been resolved in `c2e8865` and `3bf9b2a`. Their illustrated
 entries are retained below, explicitly marked resolved, as a record of this
@@ -158,7 +158,7 @@ Initialize capacities from eligible reconstruction preimages while retaining
 the complete inventory for winding classification. Keep the capacity-consumed
 assertion. Replacing capacities universally with one is not a valid fix.
 
-### OF2 — a corner at the closing seam misses join construction
+### OF2 — resolved: a corner at the closing seam missed join construction
 
 ![OF2 — a corner at the closing seam misses join construction](examples/debug/v1_review_visuals/of2.svg)
 
@@ -166,9 +166,18 @@ assertion. Replacing capacities universally with one is not a valid fix.
 `mark_closed_join_free_portion`, `synchronized_join_correspondences`.
 **Evidence:** reproduced dependence on the starting segment address.
 
-The linear smooth/corner partition misses the cyclic seam. A sole portion is
-marked closed even when it needs an end-to-start join. Include the wraparound
-boundary in classification and test cyclic rotations of the segment list.
+The single-portion case now checks the last-to-first source tangent boundary
+before marking the portion internally closed. A sharp seam remains an open
+portion, so it is not incorrectly healed as a smooth boundary. The join
+assembler now visits the closing boundary even with only one portion; smooth
+coincident endpoints produce no additional join geometry.
+
+A public untrimmed-offset regression covers both cyclic orderings of a Line
+and CubicBezier with one smooth junction and one corner. Both must succeed,
+remain closed, and contain exactly one Round join. The seam-at-corner case
+failed before the fix. The illustration shows that former failure.
+Verification: `scripts/test-fast` passed 1,554 tests in the combined OF2/CH1
+worktree; `scripts/test-slow` passed its 26 additional tests.
 
 ### OF3 — closing alignment loses the first segment's edit
 

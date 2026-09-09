@@ -2189,6 +2189,7 @@ fn join_free_portions(
         mark_closed_join_free_portion(
           portions,
           closed: svg_path.subpath_is_closed(subpath),
+          options:,
         )
         |> index_join_free_portions(index: 0, indexed: []),
       )
@@ -6380,12 +6381,12 @@ fn synchronized_join_correspondences(
   closed closed: Bool,
 ) -> Result(List(OffsetJoinCorrespondence), InternalError) {
   case portions {
-    [] | [_] -> Ok([])
-    [first, second, ..rest] ->
+    [] -> Ok([])
+    [first, ..rest] ->
       synchronized_join_correspondences_loop(
         first,
         first,
-        [second, ..rest],
+        rest,
         distances,
         join,
         closed:,
@@ -8968,11 +8969,23 @@ fn segment_diameter(segment: svg_path.Segment) -> Result(Float, InternalError) {
 fn mark_closed_join_free_portion(
   portions: List(JoinFreePortion),
   closed closed: Bool,
+  options options: Options,
 ) -> List(JoinFreePortion) {
   case closed, portions {
-    True, [JoinFreePortion(index:, subpath:, ..)] -> [
-      JoinFreePortion(index:, subpath:, closed: True),
-    ]
+    True, [JoinFreePortion(index:, subpath:, ..)] -> {
+      let segments = svg_path.subpath_segments(subpath)
+      let assert [first, ..] = segments
+      let assert [last, ..] = list.reverse(segments)
+      // The linear partition has not inspected the wraparound boundary.
+      // Only a smooth seam belongs inside a closed join-free portion.
+      [
+        JoinFreePortion(
+          index:,
+          subpath:,
+          closed: source_boundary_is_smooth(last, first, options),
+        ),
+      ]
+    }
     _, _ -> portions
   }
 }

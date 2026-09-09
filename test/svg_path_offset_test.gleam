@@ -33,6 +33,34 @@ pub fn open_c_offset_preserves_closed_retraced_line_test() {
   actual |> should.equal(expected)
 }
 
+pub fn closed_offset_preserves_corner_at_single_portion_seam_test() {
+  let line = svg_path.Line(svg_path.Point(0.0, 0.0), svg_path.Point(1.0, 0.0))
+  let curve =
+    svg_path.CubicBezier(
+      svg_path.Point(1.0, 0.0),
+      svg_path.Point(2.0, 0.0),
+      svg_path.Point(0.0, 1.0),
+      svg_path.Point(0.0, 0.0),
+    )
+  list.each([[line, curve], [curve, line]], fn(segments) {
+    let source =
+      svg_path.subpath_assert(segments)
+      |> svg_path.subpath_assert_set_closed(True)
+    let assert Ok(actual) = offset.subpath_untrimmed(source, 0.1, offset.Round)
+    svg_path.subpath_is_closed(actual) |> should.be_true
+    // The only source corner needs a round join regardless of start address.
+    svg_path.subpath_segments(actual)
+    |> list.filter(fn(segment) {
+      case segment {
+        svg_path.Arc(..) -> True
+        _ -> False
+      }
+    })
+    |> list.length
+    |> should.equal(1)
+  })
+}
+
 pub fn closed_c_and_reversal_offset_preserves_retraced_line_and_outline_test() {
   let source =
     svg_path.subpath_assert_polyline([
