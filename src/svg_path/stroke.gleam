@@ -179,14 +179,13 @@ pub fn subpath_with(
           Ok(False) -> {
             case svg_path.subpath_is_closed(subpath) {
               True -> {
-                use stroke <- result.try(closed_stroke_path(
+                closed_stroke_path(
                   subpath,
                   radius: radius,
                   join:,
                   cap:,
                   options: options,
-                ))
-                offset.orient_outline_path(stroke)
+                )
               }
               False -> {
                 use untrimmed <- result.try(untrimmed_stroke_outline(
@@ -196,12 +195,11 @@ pub fn subpath_with(
                   cap,
                   options,
                 ))
-                use stroke <- result.try(topological_band_path(
+                topological_band_path(
                   [untrimmed],
                   bands: [offset.OpenSubpathBand(untrimmed)],
                   options:,
-                ))
-                offset.orient_outline_path(stroke)
+                )
               }
             }
           }
