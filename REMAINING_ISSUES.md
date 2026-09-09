@@ -454,17 +454,35 @@ regression, not a claim of a newly reproduced public end-to-end hull failure.
 Build JavaScript first as described for the other private regression scripts.
 The original illustration remains a schematic of the old inconsistency.
 
-### CH2 — hull tangent-root helpers assert success of fallible operations
+### CH2 — hull tangent-root helpers assert success of fallible operations — resolved
 
 ![CH2 — hull tangent-root helpers assert success of fallible operations](examples/debug/v1_review_visuals/ch2.svg)
 
 **Module/functions:** `svg_path/convex_hull.cubic_point_tangent_roots`,
 `refine_polynomial_tangent_isolation`.
-**Status:** investigation, not a confirmed reachable crash.
+**Status:** confirmed exhaustion in the production helper at extreme scale;
+error propagation implemented.
 
-Determine whether exhaustion can occur with the actual inputs and budgets.
-Propagate the error if reachable; otherwise document the invariant supporting
-the assertion. Do not replace assertions indiscriminately.
+Polynomial isolation on `[0,1]` reaches its fixed `1e-9` parameter tolerance
+within about 30 bisections, comfortably inside the 100-step budget. However,
+the subsequent geometric refinement has no equivalent scale-independent bound.
+For `C(t)=3s(t,t²)`, `P=(0,-3sr²)`, `s=2^120`, and `r=2^-150`, the existing
+helper panicked on `MaxIterationsReached` after 100 steps. This is a controlled
+extreme-scale diagnostic, not a newly found ordinary-scale hull failure or a
+claim that a complete public hull operation was made to reach this case.
+
+The helper now returns `Error(TangentRootFailure(root_error))`, retaining the
+estimate/value internally. Both point-tangent and chord-tangent construction
+paths propagate this result; the public API retains its existing
+`ConstructionFailed` mapping. Root budgets, tolerances, coefficients, and
+successful results are unchanged. The two polynomial-isolation calls use the
+same propagation instead of asserting success. Unrelated structural assertions
+remain untouched.
+
+The new regression exercises the original exhausting inputs and requires an
+error rather than a panic. Existing successful internal-helper tests now unwrap
+their `Result`s. `scripts/test-fast` passes **1,570 tests** and
+`scripts/test-slow` passes **26 tests**.
 
 ## Verification baseline and next work
 

@@ -281,6 +281,9 @@ pub type ConstructionOperation {
 
 @internal
 pub type InternalError {
+  /// Polynomial tangent isolation or geometric refinement failed.
+  TangentRootFailure(error: root.Error)
+
   /// The construction input contained no subpaths.
   EmptyConstructionInput
 
@@ -2868,7 +2871,7 @@ fn segment_point_tangent_roots(
       )
     }
     svg_path.CubicBezier(start:, control1:, control2:, end:) ->
-      Ok(cubic_point_tangent_roots(start, control1, control2, end, point))
+      cubic_point_tangent_roots(start, control1, control2, end, point)
     svg_path.Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:) ->
       arc_point_tangent_roots(
         start,
@@ -2971,20 +2974,22 @@ fn cubic_point_tangent_roots(
   control2: svg_path.Point,
   end: svg_path.Point,
   point: svg_path.Point,
-) -> List(Float) {
+) -> Result(List(Float), InternalError) {
   // For C(t) = a t³ + b t² + c t + d, point tangency is
   // cross(C(t) - point, C'(t)) = 0, a quartic polynomial.
   let coefficients =
     cubic_point_tangent_coefficients(start, control1, control2, end, point)
   let segment = svg_path.CubicBezier(start, control1, control2, end)
-  let assert Ok(isolations) =
+  use isolations <- result.try(
     root.polynomial_root_isolations_with(
       coefficients,
       from: 0.0,
       to: 1.0,
       options: root.PolynomialOptions(max_iterations: 100),
     )
-  list.map(isolations, fn(isolation) {
+    |> result.map_error(TangentRootFailure),
+  )
+  list.try_map(isolations, fn(isolation) {
     refine_polynomial_tangent_isolation(coefficients, segment, isolation)
   })
 }
@@ -3033,19 +3038,21 @@ fn refine_polynomial_tangent_isolation(
   coefficients: List(Float),
   segment: svg_path.Segment,
   isolation: root.RootIsolation,
-) -> Float {
+) -> Result(Float, InternalError) {
   let root.RootIsolation(lower:, estimate:, upper:) = isolation
   case lower == upper {
-    True -> estimate
+    True -> Ok(estimate)
     False -> {
       let lower_value = root.evaluate_polynomial(coefficients, at: lower)
       let upper_value = root.evaluate_polynomial(coefficients, at: upper)
       case same_sign(lower_value, upper_value) {
         // Repeated roots are inherited from derivative isolation and do not
         // supply a crossing bracket for the parent polynomial.
-        True -> estimate
+        True -> Ok(estimate)
         False -> {
-          let assert Ok(refined) =
+          // A geometric tolerance need not be reached in 100 parameter
+          // bisections, especially near t=0 at large coordinate scales.
+          use refined <- result.try(
             root.bisect_isolation_until(
               fn(t) { root.evaluate_polynomial(coefficients, at: t) },
               from: lower,
@@ -3059,8 +3066,10 @@ fn refine_polynomial_tangent_isolation(
                 )
               },
             )
+            |> result.map_error(TangentRootFailure),
+          )
           let root.RootIsolation(estimate:, ..) = refined
-          estimate
+          Ok(estimate)
         }
       }
     }
@@ -3072,11 +3081,11 @@ fn refine_polynomial_tangent_isolation(
 pub fn internal_cubic_point_tangent_roots(
   segment: svg_path.Segment,
   point point: svg_path.Point,
-) -> List(Float) {
+) -> Result(List(Float), InternalError) {
   case segment {
     svg_path.CubicBezier(start:, control1:, control2:, end:) ->
       cubic_point_tangent_roots(start, control1, control2, end, point)
-    _ -> []
+    _ -> Ok([])
   }
 }
 
@@ -3673,11 +3682,12 @@ fn cubic_hull(
   case segment_is_point_like(segment) {
     True -> build_hull(segment, [HullLine(0.0, 0.0), HullLine(0.0, 0.0)])
     False -> {
-      let pieces =
+      use pieces <- result.try(
         raw_samples(segment, cubic_sample_count)
         |> collapse_runs
         |> pieces_from_runs
-        |> refine_pieces(segment)
+        |> refine_pieces(segment),
+      )
 
       use pieces <- result.try(reject_consecutive_curves(pieces))
       build_hull(segment, pieces)
@@ -4543,10 +4553,10 @@ fn end_t(endpoint: RunEndpoint) -> Float {
 fn refine_pieces(
   pieces: List(HullPiece),
   segment: svg_path.Segment,
-) -> List(HullPiece) {
+) -> Result(List(HullPiece), InternalError) {
   case pieces {
-    [] -> []
-    [_] -> pieces
+    [] -> Ok([])
+    [_] -> Ok(pieces)
     [first, ..] -> {
       let assert Ok(last) = list.last(pieces)
       let window = list.append([last, ..pieces], [first])
@@ -4556,8 +4566,9 @@ fn refine_pieces(
         remaining: list.length(pieces),
         refined: [],
       )
-      |> list.reverse
-      |> sync_line_endpoints
+      |> result.map(fn(refined) {
+        refined |> list.reverse |> sync_line_endpoints
+      })
     }
   }
 }
@@ -4567,39 +4578,39 @@ fn refine_pieces_loop(
   window: List(HullPiece),
   remaining remaining: Int,
   refined refined: List(HullPiece),
-) -> List(HullPiece) {
+) -> Result(List(HullPiece), InternalError) {
   case remaining <= 0 {
-    True -> refined
+    True -> Ok(refined)
     False -> {
       let assert [previous, current, next, ..rest] = window
-      let refined_current = case current {
+      use refined_current <- result.try(case current {
         HullCurve(from, to) -> {
-          let from = case previous {
+          use from <- result.try(case previous {
             HullLine(other, _) ->
               refine_chord_tangent(segment, approximate: from, other: other)
-            _ -> from
-          }
-          let to = case next {
+            _ -> Ok(from)
+          })
+          use to <- result.try(case next {
             HullLine(_, other) ->
               refine_chord_tangent(segment, approximate: to, other: other)
-            _ -> to
-          }
-          HullCurve(from, to)
+            _ -> Ok(to)
+          })
+          Ok(HullCurve(from, to))
         }
         HullLine(from, to) -> {
-          let from = case previous {
+          use from <- result.try(case previous {
             HullCurve(_, _) ->
               refine_chord_tangent(segment, approximate: from, other: to)
-            _ -> from
-          }
-          let to = case next {
+            _ -> Ok(from)
+          })
+          use to <- result.try(case next {
             HullCurve(_, _) ->
               refine_chord_tangent(segment, approximate: to, other: from)
-            _ -> to
-          }
-          HullLine(from, to)
+            _ -> Ok(to)
+          })
+          Ok(HullLine(from, to))
         }
-      }
+      })
 
       refine_pieces_loop(
         segment,
@@ -4664,9 +4675,9 @@ fn refine_chord_tangent(
   segment: svg_path.Segment,
   approximate approximate: Float,
   other other: Float,
-) -> Float {
+) -> Result(Float, InternalError) {
   case approximate <. same_t || approximate >. 1.0 -. same_t {
-    True -> approximate
+    True -> Ok(approximate)
     False -> refine_chord_tangent_polynomial(segment, approximate:, other:)
   }
 }
@@ -4677,7 +4688,7 @@ pub fn internal_refine_chord_tangent(
   segment: svg_path.Segment,
   approximate approximate: Float,
   other other: Float,
-) -> Float {
+) -> Result(Float, InternalError) {
   refine_chord_tangent(segment, approximate:, other:)
 }
 
@@ -4685,7 +4696,7 @@ fn refine_chord_tangent_polynomial(
   segment: svg_path.Segment,
   approximate approximate: Float,
   other other: Float,
-) -> Float {
+) -> Result(Float, InternalError) {
   case segment {
     svg_path.CubicBezier(start:, control1:, control2:, end:) -> {
       let assert Ok(other_point) = svg_path.segment_point(segment, at: other)
@@ -4699,20 +4710,22 @@ fn refine_chord_tangent_polynomial(
         )
       let lower = float.max(0.0, approximate -. t_close)
       let upper = float.min(1.0, approximate +. t_close)
-      let assert Ok(isolations) =
+      use isolations <- result.try(
         root.polynomial_root_isolations_with(
           coefficients,
           from: lower,
           to: upper,
           options: root.PolynomialOptions(max_iterations: 100),
         )
+        |> result.map_error(TangentRootFailure),
+      )
       case nearest_chord_tangent_isolation(isolations, approximate, other) {
-        None -> approximate
+        None -> Ok(approximate)
         Some(isolation) ->
           refine_polynomial_tangent_isolation(coefficients, segment, isolation)
       }
     }
-    _ -> approximate
+    _ -> Ok(approximate)
   }
 }
 

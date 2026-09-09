@@ -3,8 +3,37 @@ import gleam/list
 import gleam/option.{None, Some}
 import svg_path
 import svg_path/convex_hull
+import svg_path/root
 
 const tolerance = 0.000001
+
+pub fn cubic_tangent_geometric_refinement_exhaustion_returns_error_test() {
+  // C(t) = 3s(t,t²), P = (0,-3sr²), so the positive tangent root is r.
+  // Powers of two keep the coefficients controlled. This extreme-scale
+  // diagnostic disproves the former assertion that 100 steps always suffice;
+  // it does not require the solver to support a larger numerical range.
+  let s = 1.329227995784916e36
+  // 2^120
+  let r = 7.006492321624085e-46
+  // 2^-150
+  let segment =
+    svg_path.CubicBezier(
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(s, 0.0),
+      svg_path.Point(2.0 *. s, s),
+      svg_path.Point(3.0 *. s, 3.0 *. s),
+    )
+  let assert Error(convex_hull.TangentRootFailure(root.MaxIterationsReached(
+    estimate:,
+    value:,
+  ))) =
+    convex_hull.internal_cubic_point_tangent_roots(
+      segment,
+      point: svg_path.Point(0.0, -3.0 *. s *. r *. r),
+    )
+  assert estimate >. r && estimate <. 0.000000001
+  assert value >. 0.0
+}
 
 pub fn exact_tangent_chain_preserves_short_final_line_test() {
   let a = svg_path.Point(0.0, 0.0)
@@ -447,7 +476,7 @@ pub fn cubic_point_tangent_roots_preserve_non_crossing_root_test() {
       point: svg_path.Point(0.37, 0.1369),
     )
 
-  let assert [root] = roots
+  let assert Ok([root]) = roots
   assert near_float(root, 0.37)
 }
 
@@ -460,7 +489,7 @@ pub fn cubic_chord_tangent_refinement_reaches_interior_tangency_test() {
       control2: svg_path.Point(2.0 /. 3.0, -1.0 /. 3.0),
       end: svg_path.Point(1.0, 0.0),
     )
-  let refined =
+  let assert Ok(refined) =
     convex_hull.internal_refine_chord_tangent(
       segment,
       approximate: 0.47,
@@ -482,7 +511,7 @@ pub fn cubic_chord_tangent_refinement_certifies_in_geometry_space_test() {
       control2: svg_path.Point(2.0 *. scale /. 3.0, -0.74 *. scale /. 3.0),
       end: svg_path.Point(scale, 0.26 *. scale),
     )
-  let refined =
+  let assert Ok(refined) =
     convex_hull.internal_refine_chord_tangent(
       segment,
       approximate: 0.35,
@@ -501,7 +530,7 @@ pub fn cubic_chord_polynomial_refinement_matches_known_family_test() {
       let segment = chord_tangent_family(expected, scale)
       list.each([-0.05, 0.05], fn(offset) {
         let approximate = expected +. offset
-        let refined =
+        let assert Ok(refined) =
           convex_hull.internal_refine_chord_tangent(
             segment,
             approximate:,
@@ -518,7 +547,7 @@ pub fn cubic_chord_refinement_is_scale_independent_test() {
   let approximate = 0.32
   let segment = chord_tangent_family(expected, 0.000001)
 
-  let refined =
+  let assert Ok(refined) =
     convex_hull.internal_refine_chord_tangent(segment, approximate:, other: 0.0)
 
   assert float.absolute_value(refined -. expected) <=. 0.000000001
@@ -528,7 +557,7 @@ pub fn cubic_chord_refinement_ignores_trivial_endpoint_root_test() {
   let expected = 0.12
   let segment = chord_tangent_family(expected, 1.0)
 
-  let refined =
+  let assert Ok(refined) =
     convex_hull.internal_refine_chord_tangent(
       segment,
       approximate: 0.05,
