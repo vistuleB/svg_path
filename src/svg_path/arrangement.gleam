@@ -58,7 +58,8 @@ pub type ArrangementVertex {
 /// The stored segment runs from `start_vertex` to `end_vertex`. Its endpoints
 /// remain the source endpoints and are within the build tolerance
 /// of the corresponding vertex points; construction does not move the segment
-/// to the cluster centers. The segment's chord is at least `minimum_chord`.
+/// to the cluster centers. The segment's length upper bound is at least
+/// `minimum_chord` (the legacy name of the size threshold).
 ///
 /// `forward_multiplicity` counts coincident source segments oriented like the
 /// stored segment, and `reverse_multiplicity` counts those oriented against it.
@@ -271,17 +272,21 @@ pub type InternalError {
   /// Normalization failed for a reason outside its path-operation contract.
   InternalNormalizationError
 
+  /// Late self-intersection subdivision could not make bounded progress.
+  InternalSelfIntersectionSubdivisionFailed(source_index: Int)
+
   /// Endpoint tolerance must be greater than zero.
   InternalInvalidTolerance(tolerance: Float)
 
-  /// Minimum edge chord length must be greater than zero.
+  /// The minimum length-upper-bound threshold must be greater than zero.
   InternalInvalidMinimumChord(minimum_chord: Float)
 
   /// Endpoint-sliver tolerance is a parameter-space quantity and must be
   /// finite and non-negative.
   InternalInvalidEndpointSliverTolerance(tolerance: Float)
 
-  /// A segment is shorter than the required minimum chord length.
+  /// A segment length upper bound is below the required threshold.
+  /// The `chord` label is retained for compatibility; it carries that bound.
   InternalSegmentTooShort(chord: Float, minimum: Float)
 
   /// Endpoint clustering collapsed an inserted segment to one vertex.
@@ -372,13 +377,14 @@ pub type Error {
   /// Endpoint tolerance must be greater than zero.
   InvalidTolerance(tolerance: Float)
 
-  /// Minimum edge chord length must be greater than zero.
+  /// The minimum length-upper-bound threshold must be greater than zero.
   InvalidMinimumChord(minimum_chord: Float)
 
   /// Endpoint-sliver tolerance must be finite and non-negative.
   InvalidEndpointSliverTolerance(tolerance: Float)
 
-  /// A segment is shorter than the requested minimum chord length.
+  /// A segment length upper bound is below the requested threshold.
+  /// The `chord` label is retained for compatibility; it carries that bound.
   SegmentTooShort(chord: Float, minimum: Float)
 
   /// The arrangement construction or validation failed an internal invariant.
@@ -1925,6 +1931,7 @@ type AtomicPiece {
     segment_index: Int,
     source_from: Float,
     source_to: Float,
+    self_split_depth: Int,
     segment: svg_path.Segment,
   )
 }
@@ -1983,7 +1990,7 @@ pub fn insert_atomic_segment(
     False, False -> {
       let start = svg_path.segment_start(segment)
       let end = svg_path.segment_end(segment)
-      let chord = svg_path.segment_chord_length(segment)
+      use chord <- result.try(segment_length_bound(segment))
       case chord <. minimum_chord {
         True -> Error(InternalSegmentTooShort(chord:, minimum: minimum_chord))
         False -> {
@@ -2016,7 +2023,10 @@ pub fn insert_atomic_segment(
 ///
 /// Construction flattens the input paths into their existing segments, then
 /// nodes them progressively at intersections and endpoint-bounded overlap
-/// boundaries.
+/// boundaries. Remaining self-intersecting pieces are subdivided only after
+/// comparisons against existing edges; the children re-enter ordinary insertion.
+/// The legacy `minimum_chord` argument filters by segment length upper bound,
+/// so a zero-chord loop is not discarded merely because its endpoints coincide.
 pub fn build(
   paths: List(svg_path.Path),
   tolerance tolerance: Float,
@@ -2059,7 +2069,9 @@ pub fn build_with(
   use _ <- result.try(validate_options(vertex_tolerance, minimum_chord))
   use _ <- result.try(validate_endpoint_cut_tolerance(endpoint_sliver_tolerance))
   let indexed = index_flat_segments(segments)
-  let pieces = indexed_segments_as_atomic_pieces(indexed, minimum_chord, [])
+  use pieces <- result.try(
+    indexed_segments_as_atomic_pieces(indexed, minimum_chord, []),
+  )
   let images = initial_segment_images(indexed)
   use #(graph, images) <- result.try(progressive_insert_pieces_loop(
     pieces,
@@ -2098,9 +2110,9 @@ fn indexed_segments_as_atomic_pieces(
   segments: List(IndexedSegment),
   minimum_chord: Float,
   pieces pieces: List(AtomicPiece),
-) -> List(AtomicPiece) {
+) -> Result(List(AtomicPiece), InternalError) {
   case segments {
-    [] -> list.reverse(pieces)
+    [] -> Ok(list.reverse(pieces))
     [
       IndexedSegment(
         index:,
@@ -2111,9 +2123,8 @@ fn indexed_segments_as_atomic_pieces(
       ),
       ..rest
     ] -> {
-      let pieces = case
-        svg_path.segment_chord_length(segment) >=. minimum_chord
-      {
+      use size <- result.try(segment_length_bound(segment))
+      let pieces = case size >=. minimum_chord {
         True -> [
           AtomicPiece(
             source_index: index,
@@ -2122,6 +2133,7 @@ fn indexed_segments_as_atomic_pieces(
             segment_index:,
             source_from: 0.0,
             source_to: 1.0,
+            self_split_depth: 0,
             segment:,
           ),
           ..pieces
@@ -2145,7 +2157,96 @@ type ProgressivePieceResult {
   )
 }
 
+// Zero chord does not imply zero length, in particular for closed Beziers.
+fn segment_length_bound(
+  segment: svg_path.Segment,
+) -> Result(Float, InternalError) {
+  svg_path.segment_length_upper_bound(segment)
+  |> result.map_error(InternalPathError)
+}
+
 fn progressive_insert_piece_direct(
+  context: IncomingContext,
+  graph: ArrangementGraph,
+  images: List(ArrangementSegmentImage),
+  tolerance: Float,
+  minimum_chord: Float,
+) -> Result(ProgressivePieceResult, InternalError) {
+  let IncomingContext(piece:, ..) = context
+  // All existing-edge comparisons have finished. Split only now, so their
+  // cuts can make this extra subdivision unnecessary. Sibling pieces return
+  // through the ordinary stack and rediscover their mutual intersection.
+  use hits <- result.try(
+    intersections.segment_self_with(
+      piece.segment,
+      options: svg_path.SelfIntersectionOptions(
+        minimum_arc_length_separation: minimum_chord,
+        distance_tolerance: tolerance /. 2.0,
+      ),
+    )
+    |> result.map_error(InternalPathError),
+  )
+  case hits {
+    [svg_path.SegmentIntersection(left_t:, right_t:, ..), ..] -> {
+      let middle = left_t +. { right_t -. left_t } /. 2.0
+      let source_middle =
+        interpolate_float(piece.source_from, piece.source_to, middle)
+      case
+        piece.self_split_depth >= 32
+        || !{ middle >. 0.0 && middle <. 1.0 }
+        || !{
+          source_middle >. piece.source_from && source_middle <. piece.source_to
+        }
+      {
+        True ->
+          Error(InternalSelfIntersectionSubdivisionFailed(piece.source_index))
+        False -> {
+          use #(left, right) <- result.try(
+            svg_path.segment_split(piece.segment, at: middle)
+            |> result.map_error(InternalPathError),
+          )
+          let depth = piece.self_split_depth + 1
+          let replacements = [
+            AtomicPiece(
+              ..piece,
+              segment: left,
+              source_to: source_middle,
+              self_split_depth: depth,
+            ),
+            AtomicPiece(
+              ..piece,
+              segment: right,
+              source_from: source_middle,
+              self_split_depth: depth,
+            ),
+          ]
+          use replacements <- result.try(
+            replacements
+            |> list.map(fn(child) {
+              use size <- result.try(segment_length_bound(child.segment))
+              Ok(case size >=. minimum_chord {
+                True -> [child]
+                False -> []
+              })
+            })
+            |> result.all,
+          )
+          Ok(ProgressivePieceReplaced(graph, images, list.flatten(replacements)))
+        }
+      }
+    }
+    [] ->
+      progressive_insert_simple_piece_direct(
+        context,
+        graph,
+        images,
+        tolerance,
+        minimum_chord,
+      )
+  }
+}
+
+fn progressive_insert_simple_piece_direct(
   context: IncomingContext,
   graph: ArrangementGraph,
   images: List(ArrangementSegmentImage),
@@ -2513,7 +2614,6 @@ fn split_existing_edge_at_incoming_endpoint(
   use start_result <- result.try(split_existing_edge_at_endpoint(
     edges,
     svg_path.segment_start(segment),
-    context,
     graph,
     images,
     vertex_tolerance,
@@ -2525,7 +2625,6 @@ fn split_existing_edge_at_incoming_endpoint(
       split_existing_edge_at_endpoint(
         edges,
         svg_path.segment_end(segment),
-        context,
         graph,
         images,
         vertex_tolerance,
@@ -2537,7 +2636,6 @@ fn split_existing_edge_at_incoming_endpoint(
 fn split_existing_edge_at_endpoint(
   edges: List(ArrangementEdge),
   endpoint: svg_path.Point,
-  context: IncomingContext,
   graph: ArrangementGraph,
   images: List(ArrangementSegmentImage),
   vertex_tolerance: Float,
@@ -2549,74 +2647,55 @@ fn split_existing_edge_at_endpoint(
   case edges {
     [] -> Ok(None)
     [edge, ..rest] -> {
-      let IncomingContext(piece: AtomicPiece(source_index:, ..), ..) = context
       let ArrangementEdge(id: edge_id, segment:, bounds: edge_bounds, ..) = edge
-      case edge_is_image_of_source(images, source_index, edge_id) {
-        True ->
+      use t <- result.try(
+        case point_in_expanded_box(endpoint, edge_bounds, vertex_tolerance) {
+          False -> Ok(None)
+          True ->
+            vertex_projects_to_piece_interior(
+              endpoint,
+              segment,
+              vertex_tolerance,
+            )
+        },
+      )
+      case t {
+        None ->
           split_existing_edge_at_endpoint(
             rest,
             endpoint,
-            context,
             graph,
             images,
             vertex_tolerance,
             minimum_chord,
           )
-        False -> {
-          use t <- result.try(
-            case
-              point_in_expanded_box(endpoint, edge_bounds, vertex_tolerance)
-            {
-              False -> Ok(None)
-              True ->
-                vertex_projects_to_piece_interior(
-                  endpoint,
-                  segment,
-                  vertex_tolerance,
-                )
-            },
-          )
-          case t {
-            None ->
+        Some(t) -> {
+          use cuts <- result.try(effective_cut_parameters(
+            segment,
+            [t],
+            vertex_tolerance,
+            minimum_chord,
+          ))
+          case cuts {
+            [] ->
               split_existing_edge_at_endpoint(
                 rest,
                 endpoint,
-                context,
                 graph,
                 images,
                 vertex_tolerance,
                 minimum_chord,
               )
-            Some(t) -> {
-              use cuts <- result.try(effective_cut_parameters(
-                segment,
-                [t],
+            [_, ..] -> {
+              use result <- result.try(split_progressive_graph_edge(
+                graph,
+                images,
+                edge_id,
+                cuts,
                 vertex_tolerance,
                 minimum_chord,
               ))
-              case cuts {
-                [] ->
-                  split_existing_edge_at_endpoint(
-                    rest,
-                    endpoint,
-                    context,
-                    graph,
-                    images,
-                    vertex_tolerance,
-                    minimum_chord,
-                  )
-                [_, ..] -> {
-                  use result <- result.try(split_progressive_graph_edge(
-                    graph,
-                    images,
-                    edge_id,
-                    cuts,
-                    vertex_tolerance,
-                    minimum_chord,
-                  ))
-                  Ok(Some(result))
-                }
-              }
+              Ok(Some(result))
             }
           }
         }
@@ -2681,37 +2760,29 @@ fn progressive_compare_edge(
   endpoint_sliver_tolerance: Float,
 ) -> Result(ProgressiveEdgeStep, InternalError) {
   let IncomingContext(piece:, bounds:, start_match:, end_match:) = context
-  let AtomicPiece(source_index:, ..) = piece
-  let ArrangementEdge(id: edge_id, bounds: existing_bounds, ..) = edge
-  case edge_is_image_of_source(images, source_index, edge_id) {
+  let ArrangementEdge(bounds: existing_bounds, ..) = edge
+  case bounding_boxes_overlap(bounds, existing_bounds, vertex_tolerance) {
+    False -> Ok(ProgressiveContinue(graph, images))
     True -> {
-      Ok(ProgressiveContinue(graph, images))
-    }
-    False -> {
-      case bounding_boxes_overlap(bounds, existing_bounds, vertex_tolerance) {
-        False -> Ok(ProgressiveContinue(graph, images))
-        True -> {
-          // Shared endpoint vertices do not exclude interior intersections.
-          // Let the ordinary pair logic distinguish overlap from new cuts.
-          use cuts <- result.try(pair_cuts_with_common_endpoint_sliver(
-            piece,
-            edge,
-            start_match,
-            end_match,
-            vertex_tolerance,
-            endpoint_sliver_tolerance,
-          ))
-          progressive_compare_edge_cuts(
-            piece,
-            edge,
-            graph,
-            images,
-            cuts,
-            vertex_tolerance,
-            minimum_chord,
-          )
-        }
-      }
+      // Shared endpoint vertices do not exclude interior intersections.
+      // Let the ordinary pair logic distinguish overlap from new cuts.
+      use cuts <- result.try(pair_cuts_with_common_endpoint_sliver(
+        piece,
+        edge,
+        start_match,
+        end_match,
+        vertex_tolerance,
+        endpoint_sliver_tolerance,
+      ))
+      progressive_compare_edge_cuts(
+        piece,
+        edge,
+        graph,
+        images,
+        cuts,
+        vertex_tolerance,
+        minimum_chord,
+      )
     }
   }
 }
@@ -2789,52 +2860,6 @@ fn progressive_compare_edge_cuts(
   }
 }
 
-fn edge_is_image_of_source(
-  images: List(ArrangementSegmentImage),
-  source_index: Int,
-  edge_id: Int,
-) -> Bool {
-  edge_is_image_of_source_loop(images, source_index, edge_id, index: 0)
-}
-
-fn edge_is_image_of_source_loop(
-  images: List(ArrangementSegmentImage),
-  source_index: Int,
-  edge_id: Int,
-  index index: Int,
-) -> Bool {
-  case images {
-    [] -> False
-    [ArrangementSegmentImage(edges:, ..), ..rest] -> {
-      case index == source_index && references_contain_edge(edges, edge_id) {
-        True -> True
-        False ->
-          edge_is_image_of_source_loop(
-            rest,
-            source_index,
-            edge_id,
-            index: index + 1,
-          )
-      }
-    }
-  }
-}
-
-fn references_contain_edge(
-  references: List(DirectedEdgeReference),
-  edge_id: Int,
-) -> Bool {
-  case references {
-    [] -> False
-    [DirectedEdgeReference(edge_id: candidate, ..), ..rest] -> {
-      case candidate == edge_id {
-        True -> True
-        False -> references_contain_edge(rest, edge_id)
-      }
-    }
-  }
-}
-
 fn effective_cut_parameters(
   segment: svg_path.Segment,
   cuts: List(Float),
@@ -2846,7 +2871,7 @@ fn effective_cut_parameters(
     |> list.sort(float_compare)
     |> distinct_parameters(segment, tolerance, []),
   )
-  use parameters <- result.try(retain_minimum_chord_cuts(
+  use parameters <- result.try(retain_minimum_length_cuts(
     segment,
     parameters,
     minimum_chord,
@@ -2882,7 +2907,7 @@ fn interior_distinct_parameters(
   }
 }
 
-fn retain_minimum_chord_cuts(
+fn retain_minimum_length_cuts(
   segment: svg_path.Segment,
   parameters: List(Float),
   minimum_chord: Float,
@@ -2890,7 +2915,7 @@ fn retain_minimum_chord_cuts(
   case parameters {
     [] | [_] -> Ok(parameters)
     [start, ..rest] ->
-      retain_minimum_chord_cuts_loop(
+      retain_minimum_length_cuts_loop(
         segment,
         rest,
         previous: start,
@@ -2900,7 +2925,7 @@ fn retain_minimum_chord_cuts(
   }
 }
 
-fn retain_minimum_chord_cuts_loop(
+fn retain_minimum_length_cuts_loop(
   segment: svg_path.Segment,
   parameters: List(Float),
   previous previous: Float,
@@ -2910,7 +2935,7 @@ fn retain_minimum_chord_cuts_loop(
   case parameters {
     [] -> Ok(list.reverse(retained))
     [last] -> {
-      use long_enough <- result.try(parameter_chord_long_enough(
+      use long_enough <- result.try(parameter_length_bound_long_enough(
         segment,
         previous,
         last,
@@ -2923,13 +2948,13 @@ fn retain_minimum_chord_cuts_loop(
       Ok(list.reverse(retained))
     }
     [candidate, next, ..rest] -> {
-      use before_long_enough <- result.try(parameter_chord_long_enough(
+      use before_long_enough <- result.try(parameter_length_bound_long_enough(
         segment,
         previous,
         candidate,
         minimum_chord,
       ))
-      use after_long_enough <- result.try(parameter_chord_long_enough(
+      use after_long_enough <- result.try(parameter_length_bound_long_enough(
         segment,
         candidate,
         next,
@@ -2937,7 +2962,7 @@ fn retain_minimum_chord_cuts_loop(
       ))
       case before_long_enough && after_long_enough {
         True ->
-          retain_minimum_chord_cuts_loop(
+          retain_minimum_length_cuts_loop(
             segment,
             [next, ..rest],
             previous: candidate,
@@ -2945,7 +2970,7 @@ fn retain_minimum_chord_cuts_loop(
             minimum_chord:,
           )
         False ->
-          retain_minimum_chord_cuts_loop(
+          retain_minimum_length_cuts_loop(
             segment,
             [next, ..rest],
             previous:,
@@ -2964,21 +2989,18 @@ fn replace_retained_end(retained: List(Float), end: Float) -> List(Float) {
   }
 }
 
-fn parameter_chord_long_enough(
+fn parameter_length_bound_long_enough(
   segment: svg_path.Segment,
   from from: Float,
   to to: Float,
   minimum_chord minimum_chord: Float,
 ) -> Result(Bool, InternalError) {
-  use start <- result.try(
-    svg_path.segment_point(segment, at: from)
+  use portion <- result.try(
+    svg_path.segment_between(segment, from:, to:)
     |> result.map_error(InternalPathError),
   )
-  use end <- result.try(
-    svg_path.segment_point(segment, at: to)
-    |> result.map_error(InternalPathError),
-  )
-  Ok(point.distance(start, end) >=. minimum_chord)
+  use size <- result.try(segment_length_bound(portion))
+  Ok(size >=. minimum_chord)
 }
 
 fn cuts_produce_retained_split(
@@ -2993,7 +3015,9 @@ fn cuts_produce_retained_split(
     )
     |> result.map_error(InternalPathError),
   )
-  let retained = retained_split_segments(split, minimum_chord, retained: [])
+  use retained <- result.try(
+    retained_split_segments(split, minimum_chord, retained: []),
+  )
   case retained {
     [_, _, ..] -> Ok(True)
     _ -> Ok(False)
@@ -3025,7 +3049,9 @@ fn split_progressive_graph_edge(
     svg_path.segment_between_many_inside(segment, between: parameters)
     |> result.map_error(InternalPathError),
   )
-  let retained = retained_split_segments(split, minimum_chord, retained: [])
+  use retained <- result.try(
+    retained_split_segments(split, minimum_chord, retained: []),
+  )
   case retained {
     [] -> Error(InternalSegmentTooShort(chord: 0.0, minimum: minimum_chord))
     [_, ..] -> {
@@ -3069,13 +3095,12 @@ fn retained_split_segments(
   segments: List(svg_path.Segment),
   minimum_chord: Float,
   retained retained: List(svg_path.Segment),
-) -> List(svg_path.Segment) {
+) -> Result(List(svg_path.Segment), InternalError) {
   case segments {
-    [] -> list.reverse(retained)
+    [] -> Ok(list.reverse(retained))
     [first, ..rest] -> {
-      let retained = case
-        svg_path.segment_chord_length(first) >=. minimum_chord
-      {
+      use size <- result.try(segment_length_bound(first))
+      let retained = case size >=. minimum_chord {
         True -> [first, ..retained]
         False -> retained
       }
@@ -3108,7 +3133,7 @@ fn progressive_replacement_edges(
       }
       let start = svg_path.segment_start(segment)
       let end = svg_path.segment_end(segment)
-      let chord = svg_path.segment_chord_length(segment)
+      use chord <- result.try(segment_length_bound(segment))
       case chord <. minimum_chord {
         True ->
           progressive_replacement_edges(
@@ -3685,6 +3710,7 @@ fn split_atomic_piece(
     segment_index:,
     source_from:,
     source_to:,
+    self_split_depth:,
     segment:,
   ) = piece
   use parameters <- result.try(
@@ -3696,19 +3722,18 @@ fn split_atomic_piece(
     svg_path.segment_between_many_inside(segment, between: parameters)
     |> result.map_error(InternalPathError),
   )
-  Ok(
-    split_atomic_pieces_for_parameters(
-      split,
-      parameters,
-      source_index,
-      path_index,
-      subpath_index,
-      segment_index,
-      source_from,
-      source_to,
-      minimum_chord,
-      pieces: [],
-    ),
+  split_atomic_pieces_for_parameters(
+    split,
+    parameters,
+    source_index,
+    path_index,
+    subpath_index,
+    segment_index,
+    source_from,
+    source_to,
+    self_split_depth,
+    minimum_chord,
+    pieces: [],
   )
 }
 
@@ -3721,20 +3746,16 @@ fn split_atomic_pieces_for_parameters(
   segment_index: Int,
   source_from: Float,
   source_to: Float,
+  self_split_depth: Int,
   minimum_chord: Float,
   pieces pieces: List(AtomicPiece),
-) -> List(AtomicPiece) {
+) -> Result(List(AtomicPiece), InternalError) {
   case segments, parameters {
     [segment, ..segment_rest], [from, to, ..parameter_rest] -> {
       let global_from = interpolate_float(source_from, source_to, from)
       let global_to = interpolate_float(source_from, source_to, to)
-      let pieces = case
-        point.distance(
-          svg_path.segment_start(segment),
-          svg_path.segment_end(segment),
-        )
-        >=. minimum_chord
-      {
+      use size <- result.try(segment_length_bound(segment))
+      let pieces = case size >=. minimum_chord {
         True -> [
           AtomicPiece(
             source_index:,
@@ -3743,6 +3764,7 @@ fn split_atomic_pieces_for_parameters(
             segment_index:,
             source_from: global_from,
             source_to: global_to,
+            self_split_depth:,
             segment:,
           ),
           ..pieces
@@ -3758,11 +3780,12 @@ fn split_atomic_pieces_for_parameters(
         segment_index,
         source_from,
         source_to,
+        self_split_depth,
         minimum_chord,
         pieces:,
       )
     }
-    _, _ -> list.reverse(pieces)
+    _, _ -> Ok(list.reverse(pieces))
   }
 }
 
@@ -4673,7 +4696,7 @@ fn increment_matching_edge(
 /// Validate local representation and closed-boundary invariants.
 ///
 /// This checks multiplicity totals, vertex references, non-loop edges, endpoint
-/// tolerance, minimum chord length, endpoint-cluster centers and radii, vertex
+/// tolerance, minimum length upper bound, endpoint-cluster centers and radii, vertex
 /// incidence, and even weighted degree. It does not test pairwise edge
 /// intersections, atomicity, identifier uniqueness, or individual directional
 /// multiplicity signs; use `build` to establish those construction invariants.
@@ -4767,11 +4790,7 @@ fn validate_edges(
                         distance: end_distance,
                       ))
                     False -> {
-                      let chord =
-                        point.distance(
-                          svg_path.segment_start(segment),
-                          svg_path.segment_end(segment),
-                        )
+                      use chord <- result.try(segment_length_bound(segment))
                       case chord <. minimum_chord {
                         True ->
                           Error(InternalSegmentTooShort(

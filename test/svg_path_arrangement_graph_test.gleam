@@ -12,6 +12,76 @@ const tolerance = 0.000001
 
 const minimum_chord = 0.00001
 
+fn self_crossing_cubic() -> svg_path.Segment {
+  svg_path.CubicBezier(
+    start: svg_path.Point(0.0, -0.09375),
+    control1: svg_path.Point(-1.0 /. 3.0, 0.13541666666666666),
+    control2: svg_path.Point(-1.0 /. 3.0, -0.13541666666666666),
+    end: svg_path.Point(0.0, 0.09375),
+  )
+}
+
+fn closed_cubic() -> svg_path.Segment {
+  svg_path.CubicBezier(
+    start: svg_path.Point(0.0, 0.0),
+    control1: svg_path.Point(2.0, 2.0),
+    control2: svg_path.Point(-2.0, 2.0),
+    end: svg_path.Point(0.0, 0.0),
+  )
+}
+
+fn build_loop_fixture(
+  segments: List(svg_path.Segment),
+) -> arrangement_graph.ArrangementGraph {
+  let assert Ok(arrangement_graph.ArrangementSegmentBuild(graph:, ..)) =
+    arrangement_graph.build_with(
+      segments,
+      vertex_tolerance: 0.000000001,
+      minimum_chord: 0.00000001,
+      endpoint_sliver_tolerance: 0.0,
+    )
+  assert list.all(graph.edges, fn(edge) { edge.start_vertex != edge.end_vertex })
+  graph
+}
+
+pub fn closed_cubic_is_split_instead_of_discarded_test() {
+  let graph = build_loop_fixture([closed_cubic()])
+  assert list.length(graph.vertices) == 2
+  assert list.length(graph.edges) == 2
+}
+
+pub fn self_crossing_cubic_is_noded_and_its_loop_preserved_test() {
+  let graph = build_loop_fixture([self_crossing_cubic()])
+  assert list.length(graph.vertices) == 4
+  assert list.length(graph.edges) == 4
+  assert list.any(graph.vertices, fn(vertex) {
+    point.distance(vertex.point, svg_path.Point(-0.1875, 0.0)) <. 0.000000001
+  })
+}
+
+pub fn preexisting_cuts_do_not_hide_same_source_self_crossing_test() {
+  let cutter =
+    svg_path.Line(
+      start: svg_path.Point(-0.24, -1.0),
+      end: svg_path.Point(-0.24, 1.0),
+    )
+  let graph = build_loop_fixture([cutter, self_crossing_cubic()])
+  assert list.any(graph.vertices, fn(vertex) {
+    point.distance(vertex.point, svg_path.Point(-0.1875, 0.0)) <. 0.000000001
+  })
+}
+
+pub fn externally_cut_closed_cubic_needs_no_extra_midpoint_test() {
+  let cutter =
+    svg_path.Line(
+      start: svg_path.Point(-2.0, 0.75),
+      end: svg_path.Point(2.0, 0.75),
+    )
+  let graph = build_loop_fixture([cutter, closed_cubic()])
+  assert list.length(graph.vertices) == 5
+  assert list.length(graph.edges) == 6
+}
+
 pub fn shared_endpoints_do_not_hide_an_interior_crossing_test() {
   let start = svg_path.Point(0.0, 0.0)
   let end = svg_path.Point(1.0, 0.0)
