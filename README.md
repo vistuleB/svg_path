@@ -1652,6 +1652,13 @@ or the clipping line would cut behind either join endpoint, it falls back to
 The same source and stroke width are used in each panel. An over-limit `Miter`
 bevels the corner; `MiterClip` preserves the tip up to the clipping line.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/miter_clip_limits.svg" alt="Computed MiterClip stroke outlines with limits 0.5, 1, 1.5, and 2">
+</p>
+
+Varying the limit changes how much of the tip is retained. Limits that would
+cut behind a join endpoint use the bevel fallback.
+
 `Arcs(miter_limit:)` continues the curvature of each source segment with a
 tangent circle (or a line for zero or unavailable endpoint curvature). When the
 circles do not intersect, their radii are adjusted while preserving tangency.
@@ -1667,6 +1674,22 @@ also covers parallel rays, rather than SVG's special parallel-case rectangle.
 As with `MiterClip`, a limit that would require shortening neighboring segments
 falls back to `Bevel`. Limits must be finite and positive; an unsuccessful
 circle construction reports `ConstructionFailed`.
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/arcs_join_self_intersection.svg" alt="Self-intersecting curved stroke comparing MiterClip, Round, Arcs, and clipped Arcs joins">
+</p>
+
+Here the two source arcs have unequal curvatures. The stroke intersects itself
+near its butt end, leaving an enclosed region; each panel is computed from the
+same source through the public stroke API.
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/arcs_join_comparison_2.svg" alt="Curved stroke comparing joins when the Arcs continuation circles initially do not intersect">
+</p>
+
+In this example the initial continuation circles do not intersect. `Arcs`
+adjusts their radii while maintaining endpoint tangency before applying the
+limit. Both strips use stroke width 2 and Butt caps.
 
 ```gleam
 import svg_path/stroke
