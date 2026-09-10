@@ -1,3 +1,4 @@
+import closed_path_assertions
 import gleam/float
 import gleam/list
 import svg_path
@@ -200,7 +201,10 @@ pub fn segment_stroke_with_butt_caps_returns_closed_outline_test() {
   let assert [outline] = svg_path.path_subpaths(path)
 
   assert svg_path.subpath_is_closed(outline)
-  assert serialize.subpath(outline) == "M 0 -1 H 10 V 1 H 0 Z"
+  closed_path_assertions.assert_equivalent(
+    svg_path.Path([outline]),
+    "M 0 -1 H 10 V 1 H 0 Z",
+  )
 }
 
 pub fn subpath_stroke_with_round_caps_adds_two_cap_arcs_test() {
@@ -241,8 +245,10 @@ pub fn subpath_stroke_with_round_cap_serializes_semicircles_test() {
     )
   let assert [outline] = svg_path.path_subpaths(path)
 
-  assert serialize.subpath(outline)
-    == "M 0 -1 H 10 A 1 1 0 0 1 10 1 H 0 A 1 1 0 0 1 0 -1 Z"
+  closed_path_assertions.assert_equivalent(
+    svg_path.Path([outline]),
+    "M 0 -1 H 10 A 1 1 0 0 1 10 1 H 0 A 1 1 0 0 1 0 -1 Z",
+  )
 }
 
 pub fn round_caps_use_normalized_source_endpoint_directions_test() {
@@ -358,8 +364,10 @@ pub fn subpath_stroke_with_square_caps_extends_by_half_width_test() {
     )
   let assert [outline] = svg_path.path_subpaths(path)
 
-  assert serialize.subpath(outline)
-    == "M 0 -1 H 10 H 11 V 1 H 10 H 0 H -1 V -1 Z"
+  closed_path_assertions.assert_equivalent(
+    svg_path.Path([outline]),
+    "M 0 -1 H 10 H 11 V 1 H 10 H 0 H -1 V -1 Z",
+  )
 }
 
 pub fn subpath_stroke_with_bevel_join_keeps_corner_cut_test() {
@@ -370,7 +378,10 @@ pub fn subpath_stroke_with_bevel_join_keeps_corner_cut_test() {
     stroke.subpath_with(subpath, join: stroke.Bevel, cap: stroke.Butt, options:)
   let assert [outline] = svg_path.path_subpaths(path)
 
-  assert serialize.subpath(outline) == "M 0 -1 H 10 L 11 0 V 10 H 9 V 1 H 0 Z"
+  closed_path_assertions.assert_equivalent(
+    svg_path.Path([outline]),
+    "M 0 -1 H 10 L 11 0 V 10 H 9 V 1 H 0 Z",
+  )
 }
 
 pub fn subpath_stroke_with_round_join_adds_join_arcs_test() {
@@ -382,8 +393,10 @@ pub fn subpath_stroke_with_round_join_adds_join_arcs_test() {
   let assert [outline] = svg_path.path_subpaths(path)
 
   assert arc_count(svg_path.subpath_segments(outline)) == 1
-  assert serialize.subpath(outline)
-    == "M 0 -1 H 10 A 1 1 0 0 1 11 0 V 10 H 9 V 1 H 0 Z"
+  closed_path_assertions.assert_equivalent(
+    svg_path.Path([outline]),
+    "M 0 -1 H 10 A 1 1 0 0 1 11 0 V 10 H 9 V 1 H 0 Z",
+  )
 }
 
 pub fn subpath_stroke_with_miter_join_extends_to_apex_test() {
@@ -399,7 +412,10 @@ pub fn subpath_stroke_with_miter_join_extends_to_apex_test() {
     )
   let assert [outline] = svg_path.path_subpaths(path)
 
-  assert serialize.subpath(outline) == "M 0 -1 H 10 H 11 V 0 V 10 H 9 V 1 H 0 Z"
+  closed_path_assertions.assert_equivalent(
+    svg_path.Path([outline]),
+    "M 0 -1 H 10 H 11 V 0 V 10 H 9 V 1 H 0 Z",
+  )
 }
 
 pub fn subpath_stroke_with_low_miter_limit_falls_back_to_bevel_test() {
@@ -864,11 +880,10 @@ pub fn subpath_dashed_strokes_each_dash_test() {
     )
 
   assert list.length(svg_path.path_subpaths(path)) == 2
-  assert svg_path.path_subpaths(path) |> list.map(serialize.subpath)
-    == [
-      "M 0 -1 H 3 V 1 H 0 Z",
-      "M 5 -1 H 8 V 1 H 5 Z",
-    ]
+  closed_path_assertions.assert_equivalent(
+    path,
+    "M 0 -1 H 3 V 1 H 0 Z M 5 -1 H 8 V 1 H 5 Z",
+  )
 }
 
 pub fn subpath_dashes_rejects_invalid_pattern_and_offset_test() {

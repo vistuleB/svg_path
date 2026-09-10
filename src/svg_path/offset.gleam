@@ -416,8 +416,22 @@ pub fn topological_band_path_with_opinions(
     winding_opinions:,
     options:,
   ))
-  orient_band_path(svg_path.Path(subpaths: loops))
+  case final_band_loop_enumeration {
+    SourceOrderLoops -> orient_band_path(svg_path.Path(subpaths: loops))
+    EvenOddFaceLoops ->
+      enumerate_band_face_loops(svg_path.Path(subpaths: loops))
+  }
 }
+
+// Face walks carry their own orientation. Keep source-order reconstruction
+// with the older signed-unit orientator available for comparison, without
+// changing submerged/parity pruning.
+type FinalBandLoopEnumeration {
+  SourceOrderLoops
+  EvenOddFaceLoops
+}
+
+const final_band_loop_enumeration = EvenOddFaceLoops
 
 /// Extract and filter single-offset survivors as a path.
 fn trim_single_offset_builds(
@@ -6961,6 +6975,141 @@ fn join_between_offset_portions(
       parametric_join_segments(previous, next, offset, join)
     _, _ -> Ok([])
   }
+}
+
+/// Enumerate final contours from even-odd-filled faces of the surviving path.
+/// Input directions do not affect parity. Use the dual's existing boundary
+/// walks, including its face-sector decisions at touching vertices. Shared
+/// seams between two filled faces occur once in each face's boundary walk.
+///
+/// Preserve residual even multiplicity as zero-area, opposite-edge retraces;
+/// otherwise even-odd enumeration would silently discard surviving material.
+/// Every input edge occurrence must be consumed exactly once. The returned
+/// loops keep filled faces on their visual right, giving winding 1 inside and
+/// 0 outside without a separate contour-orientation pass.
+@internal
+pub fn enumerate_band_face_loops(
+  path: svg_path.Path,
+) -> Result(svg_path.Path, InternalError) {
+  let subpaths = svg_path.path_subpaths(path)
+  use _ <- result.try(case list.all(subpaths, svg_path.subpath_is_closed) {
+    True -> Ok(Nil)
+    False -> Error(InternalBandSubpathNotClosed)
+  })
+  use build <- result.try(
+    arrangement_graph.build_with(
+      list.flat_map(subpaths, svg_path.subpath_segments),
+      vertex_tolerance: arrangement_tolerance,
+      minimum_chord: arrangement_tolerance,
+      endpoint_sliver_tolerance: adjacent_loop_endpoint_parameter_tolerance,
+    )
+    |> result.map_error(InternalArrangementGraphError),
+  )
+  use dual <- result.try(
+    arrangement_graph.dual(build.graph)
+    |> result.map_error(arrangement_error),
+  )
+  // Signed winding is only a convenient way to compute orientation-independent
+  // parity here, not a demand on the eventual nonzero fill.
+  use windings <- result.try(
+    arrangement_graph.face_windings(
+      dual,
+      list.map(build.graph.edges, fn(edge) {
+        arrangement_graph.EdgeWindingChange(
+          edge.id,
+          edge.forward_multiplicity - edge.reverse_multiplicity,
+        )
+      }),
+    )
+    |> result.map_error(InternalFaceWindingError),
+  )
+  let inside =
+    windings
+    |> list.map(fn(face) { #(face.face_id, int.is_odd(face.value)) })
+    |> dict.from_list
+  let walks =
+    dual.faces
+    |> list.filter(fn(face) { dict.get(inside, face.id) == Ok(True) })
+    |> list.flat_map(fn(face) {
+      list.map(face.walks, fn(walk) {
+        // Dual walks keep their face on the left. Reverse both traversal order
+        // and edge direction to keep filled material on the right, including
+        // around holes. Kissing seams then have opposite directed occurrences.
+        walk.edges
+        |> list.reverse
+        |> list.map(fn(edge) {
+          arrangement_graph.ArrangementFaceEdge(edge.edge_id, left: !edge.left)
+        })
+      })
+    })
+  let consumed =
+    walks
+    |> list.flatten
+    |> list.fold(dict.new(), fn(counts, edge) {
+      dict.insert(
+        counts,
+        edge.edge_id,
+        result.unwrap(dict.get(counts, edge.edge_id), 0) + 1,
+      )
+    })
+  // Each selected face walk uses one occurrence of each oriented edge. Extra
+  // occurrences are necessarily even; odd leftovers would contradict parity.
+  use retraces <- result.try(
+    list.try_map(build.graph.edges, fn(edge) {
+      let capacity = edge.forward_multiplicity + edge.reverse_multiplicity
+      let remaining = capacity - result.unwrap(dict.get(consumed, edge.id), 0)
+      case remaining < 0 || int.is_odd(remaining) {
+        True -> Error(InternalSurvivorCapacityMismatch(edge.id, remaining))
+        False ->
+          Ok(list.repeat(
+            [
+              arrangement_graph.ArrangementFaceEdge(edge.id, left: True),
+              arrangement_graph.ArrangementFaceEdge(edge.id, left: False),
+            ],
+            remaining / 2,
+          ))
+      }
+    }),
+  )
+  let walks = list.append(walks, list.flatten(retraces))
+  let edges =
+    build.graph.edges
+    |> list.map(fn(edge) { #(edge.id, edge) })
+    |> dict.from_list
+  use subpaths <- result.try(
+    list.try_map(walks, fn(walk) {
+      use segments <- result.try(
+        list.try_map(walk, fn(reference) {
+          use edge <- result.try(
+            dict.get(edges, reference.edge_id)
+            |> result.map_error(fn(_) {
+              InternalMissingEdgeImage(reference.edge_id)
+            }),
+          )
+          Ok(case reference.left {
+            True -> edge.segment
+            False -> svg_path.segment_reverse(edge.segment)
+          })
+        }),
+      )
+      // Endpoints assigned to one vertex can differ by twice its tolerance.
+      // Reconcile those endpoints, but never introduce bridge edges here.
+      use subpath <- result.try(
+        svg_path.subpath_with(
+          segments,
+          policy: svg_path.WiggleWith(2.0 *. arrangement_tolerance),
+        )
+        |> result.map_error(InternalPathError),
+      )
+      svg_path.subpath_set_closed_with(
+        subpath,
+        closed: True,
+        policy: svg_path.WiggleWith(2.0 *. arrangement_tolerance),
+      )
+      |> result.map_error(InternalPathError)
+    }),
+  )
+  Ok(svg_path.Path(subpaths))
 }
 
 // Final orientation only reverses whole reconstructed contours; the original

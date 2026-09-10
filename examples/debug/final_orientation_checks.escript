@@ -25,6 +25,7 @@ check(Label,Run) ->
     Collector=spawn(fun()->collect([],0,[]) end),
     MFA={'svg_path@offset',orient_band_path,1},
     1=erlang:trace_pattern(MFA,[{'_',[],[{return_trace}]}],[local]),
+    1=erlang:trace_pattern({'svg_path@offset',enumerate_band_face_loops,1},[{'_',[],[{return_trace}]}],[local]),
     1=erlang:trace_pattern({'svg_path@offset',visit_band_orientation_edge,3},[{'_',[],[{return_trace}]}],[local]),
     erlang:trace(self(),true,[call,{tracer,Collector}]),
     Outcome=try Run(),ok catch Class:Reason->{Class,Reason} end,
@@ -32,11 +33,12 @@ check(Label,Run) ->
     R=erlang:trace_delivered(self()),receive {trace_delivered,_,R}->ok end,
     Collector!{get,self()},
     {Count,Errors}=receive {checks,N,E}->{N,E} end,
-    io:format("~s: ~p orientation calls, ~p errors; fixture ~p~n",[Label,Count,length(Errors),Outcome]),
+    io:format("~s: ~p enumeration/orientation calls, ~p errors; fixture ~p~n",[Label,Count,length(Errors),Outcome]),
     case Errors of
         []->ok;
         _->
-            File="examples/debug/orientation-"++string:replace(Label," ","-",all)++".term",
+            %% Keep historical captures intact when testing a new policy.
+            File="examples/debug/orientation-latest-"++string:replace(Label," ","-",all)++".term",
             ok=file:write_file(File,io_lib:format("~p.~n",[Errors])),
             io:format("Actual failing orientation inputs/results saved to ~s~n",[File])
     end,
@@ -56,8 +58,8 @@ collect(Stack,Count,Errors) ->
                 false->ok
             end,
             collect(Stack,Count,Errors);
-        {trace,_,call,{'svg_path@offset',orient_band_path,[Path]}}->collect([Path|Stack],Count,Errors);
-        {trace,_,return_from,{'svg_path@offset',orient_band_path,1},Result}->
+        {trace,_,call,{'svg_path@offset',Name,[Path]}} when Name=:=orient_band_path; Name=:=enumerate_band_face_loops ->collect([Path|Stack],Count,Errors);
+        {trace,_,return_from,{'svg_path@offset',Name,1},Result} when Name=:=orient_band_path; Name=:=enumerate_band_face_loops ->
             [Path|Rest]=Stack,
             Next=case Result of {error,_}->[{Path,Result}|Errors];_->Errors end,
             collect(Rest,Count+1,Next);

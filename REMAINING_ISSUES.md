@@ -1,5 +1,96 @@
 # Remaining audit issues
 
+## Arc–line stored endpoint omission — fixed
+
+`intersections.line_segment_intersections_by_ray` now independently checks the
+curve's stored endpoints against the finite line, supplementing analytic roots.
+The recursive-dash join regression previously omitted exact address `(1, 0)`
+because center/angle reconstruction moved its analytic candidate beyond the
+arc sweep. The fix uses existing geometric and deduplication tolerances.
+
+`scripts/test-fast`: **1,606 passed**. Regression checks swapped arguments and
+both segment traversal directions. The nearby interior candidate remains; no
+claim is made that restoring the endpoint settles its distinctness. Details:
+[saved investigation](examples/debug/JOIN_LINE_MISSING_ENDPOINT.md).
+
+## Alternate final loop enumeration: even–odd face walks
+
+Current verification: `scripts/test-fast` passes **1,606 tests**, including the
+subsequent arc–line endpoint regression.
+`escript examples/debug/final_orientation_checks.escript` succeeds for all
+three square configurations, recursive dashes, figure eight, and both loop-eight
+bands. `escript examples/debug/loop8_seam_trace.escript` confirms no old
+orientator calls, retaining 4 contours / 43 occurrences / 41 edges in -5/+25.
+Both kissing-seam edges retain multiplicity 1/1 with winding 1 on both sides.
+
+`offset.gleam` now has a private `FinalBandLoopEnumeration` choice:
+`SourceOrderLoops` retains the established reconstruction; `EvenOddFaceLoops`
+re-enumerates those survivors with filled material on the right, bypassing
+the old signed-unit orientator. `SourceOrderLoops` still uses that orientator.
+Submerged classification, parity-capacity reduction, single offsets,
+and the independently selectable small-loop culling stage are unchanged.
+
+`offset.enumerate_band_face_loops` builds an AG only from the surviving
+contours, obtains its dual, and labels faces from signed winding modulo two.
+Input traversal directions therefore do not affect the target region. Each
+filled face contributes its existing dual boundary walks, so touching vertices
+are followed according to their local face sectors rather than merged just
+because their coordinates coincide. Holes remain separate boundary walks
+unless a retraced bridge connects their walk to the enclosing boundary.
+The dual's face-on-left walks are reversed once (edge order and directions),
+so the output has winding 0/1 directly, with hole boundaries oriented correctly.
+
+An edge between two filled faces contributes both boundary occurrences,
+preserving a kissing seam. Remaining even multiplicities, including edges
+outside all filled faces, are emitted as opposite-edge, zero-area retraces.
+This explicitly preserves surviving material rather than silently throwing
+it away. Used occurrences are counted per edge; negative or odd residual
+capacity is an error. Endpoint reconciliation introduces no bridge segments.
+
+Nine tests in `svg_path_band_face_loops_test.gleam` cover bowties, nesting,
+vertex contact, re-enumerating a multiply wound contour, crossing contours,
+kissing seams, empty/open inputs, and even/triple multiplicities. Grid probes
+compare original even–odd fill with oriented nonzero fill, and tests also
+reverse each independently enumerated loop before exercising the old
+orientation logic. Eleven existing exact-string assertions now allow cyclic
+starting-point and contour-order changes while preserving checks of every
+serialized segment's geometry, direction, and multiplicity.
+
+**Legacy compatibility limitation, bypassed in the active pipeline:**
+`orient_band_path` deliberately still
+rejects two different contour owners of one edge. Two adjacent rectangles
+enumerate into the correct two face loops, preserving all eight segment
+occurrences, but the old orientation pass rejects their shared seam. Likewise
+triple multiplicity is retained by enumeration and rejected by the old
+orientation policy. Tests expose these errors explicitly; no fallback has
+been introduced. Direct enumeration now supplies the final
+orientation, and tests require its sampled winding values to be exactly 0/1.
+
+The actual **loop-eight -5/+25** case does contain a kissing seam and succeeds.
+`examples/debug/loop8_seam_trace.escript` captures its production enumeration
+inputs/results and asserts that the old orientator is not called.
+Edges 39 and 40 each have multiplicity 1/1,
+with both opposite preimages owned by contour 3, before and after enumeration.
+Both sides of each edge are the **same face 1**, whose winding changes from -1
+before enumeration to +1 afterward. These are same-contour retraces, accepted
+by the existing orientation rule, not the different-contour ownership pattern
+in the adjacent-rectangles regression. All stages retain 4 contours, 43 segment
+occurrences and 41 geometric edges. The captured paths are saved in
+`examples/debug/loop8-minus5-plus25-direct-enumeration.term`; the earlier
+`loop8-minus5-plus25-enumeration.term` retains the old orientator's capture.
+Thus the compatibility
+limitation above must not be described as rejection of every kissing seam.
+
+`scripts/test-fast` passes 1,605 tests with each enumeration choice tested
+separately. `EvenOddFaceLoops` is restored as the active experimental choice.
+These results preceded the filled-on-right wiring; the old orientator remains
+unchanged for comparison, but the active branch no longer constructs its AG.
+
+With `EvenOddFaceLoops`, the concave-square fixture and the traced recursive
+dashes, figure-eight, and loop-eight fixtures succeed. The filled-on-right
+policy also handles the
+different-contour kissing seam and triple-multiplicity regression directly.
+
 ## Final band orientation refactor (B): revised signed-unit contract
 
 The approved revision allows face values `-1, 0, 1`. An undecided contour

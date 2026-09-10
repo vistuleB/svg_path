@@ -1,3 +1,4 @@
+import closed_path_assertions
 import gleam/dynamic.{type Dynamic}
 import gleam/float
 import gleam/int
@@ -1973,8 +1974,10 @@ pub fn subpath_band_closed_square_returns_two_closed_sides_test() {
 
   assert svg_path.subpath_is_closed(inner)
   assert svg_path.subpath_is_closed(outer)
-  assert serialize.path(offset_path)
-    == "M 2 2 V 8 H 8 V 2 Z M 0 -2 H 10 H 12 V 0 V 10 V 12 H 10 H 0 H -2 V 10 V 0 V -2 Z"
+  closed_path_assertions.assert_equivalent(
+    offset_path,
+    "M 2 2 V 8 H 8 V 2 Z M 0 -2 H 10 H 12 V 0 V 10 V 12 H 10 H 0 H -2 V 10 V 0 V -2 Z",
+  )
 }
 
 pub fn concave_band_orients_overlapping_contours_for_nonzero_fill_test() {
@@ -2139,7 +2142,7 @@ pub fn subpath_stroke_open_line_with_butt_cap_returns_closed_outline_test() {
     )
 
   assert list.length(svg_path.path_subpaths(stroke)) == 1
-  assert serialize.path(stroke) == "M 0 -1 H 10 V 1 H 0 Z"
+  closed_path_assertions.assert_equivalent(stroke, "M 0 -1 H 10 V 1 H 0 Z")
 }
 
 pub fn subpath_stroke_open_line_with_square_cap_extends_ends_test() {
@@ -2157,7 +2160,10 @@ pub fn subpath_stroke_open_line_with_square_cap_extends_ends_test() {
       options: stroke.Options(width: 2.0, offset: offset.default_options()),
     )
 
-  assert serialize.path(stroke) == "M 0 -1 H 10 H 11 V 1 H 10 H 0 H -1 V -1 Z"
+  closed_path_assertions.assert_equivalent(
+    stroke,
+    "M 0 -1 H 10 H 11 V 1 H 10 H 0 H -1 V -1 Z",
+  )
 }
 
 pub fn band_round_cap_matches_stroke_round_cap_outline_test() {
@@ -2262,8 +2268,10 @@ pub fn subpath_stroke_closed_square_uses_band_test() {
       cap: stroke.Butt,
     )
 
-  assert serialize.path(stroke)
-    == "M 2 2 V 8 H 8 V 2 Z M 0 -2 H 10 H 12 V 0 V 10 V 12 H 10 H 0 H -2 V 10 V 0 V -2 Z"
+  closed_path_assertions.assert_equivalent(
+    stroke,
+    "M 2 2 V 8 H 8 V 2 Z M 0 -2 H 10 H 12 V 0 V 10 V 12 H 10 H 0 H -2 V 10 V 0 V -2 Z",
+  )
 }
 
 pub fn subpath_stroke_rejects_invalid_width_test() {
