@@ -23,10 +23,7 @@ main(_) ->
 
 check(Label,Run) ->
     Collector=spawn(fun()->collect([],0,[]) end),
-    MFA={'svg_path@offset',orient_band_path,1},
-    1=erlang:trace_pattern(MFA,[{'_',[],[{return_trace}]}],[local]),
     1=erlang:trace_pattern({'svg_path@offset',enumerate_band_face_loops,1},[{'_',[],[{return_trace}]}],[local]),
-    1=erlang:trace_pattern({'svg_path@offset',visit_band_orientation_edge,3},[{'_',[],[{return_trace}]}],[local]),
     erlang:trace(self(),true,[call,{tracer,Collector}]),
     Outcome=try Run(),ok catch Class:Reason->{Class,Reason} end,
     erlang:trace(self(),false,[call]),
@@ -46,20 +43,8 @@ check(Label,Run) ->
 
 collect(Stack,Count,Errors) ->
     receive
-        {trace,_,call,{'svg_path@offset',visit_band_orientation_edge,Args}}->
-            put(last_visit,Args),collect(Stack,Count,Errors);
-        {trace,_,return_from,{'svg_path@offset',visit_band_orientation_edge,3},{error,E}}->
-            io:format("Failed orientation edge visit: ~p -> ~p~n",[get(last_visit),E]),
-            collect(Stack,Count,Errors);
-        {trace,_,return_from,{'svg_path@offset',visit_band_orientation_edge,3},{ok,{band_orientation_state,_,After,_}}}->
-            [Edge,_,{band_orientation_state,_,Before,_}]=get(last_visit),
-            case map_size(After)>map_size(Before) of
-                true->io:format("Contour direction decided by ~p: ~p~n",[Edge,maps:without(maps:keys(Before),After)]);
-                false->ok
-            end,
-            collect(Stack,Count,Errors);
-        {trace,_,call,{'svg_path@offset',Name,[Path]}} when Name=:=orient_band_path; Name=:=enumerate_band_face_loops ->collect([Path|Stack],Count,Errors);
-        {trace,_,return_from,{'svg_path@offset',Name,1},Result} when Name=:=orient_band_path; Name=:=enumerate_band_face_loops ->
+        {trace,_,call,{'svg_path@offset',Name,[Path]}} when Name=:=enumerate_band_face_loops ->collect([Path|Stack],Count,Errors);
+        {trace,_,return_from,{'svg_path@offset',Name,1},Result} when Name=:=enumerate_band_face_loops ->
             [Path|Rest]=Stack,
             Next=case Result of {error,_}->[{Path,Result}|Errors];_->Errors end,
             collect(Rest,Count+1,Next);

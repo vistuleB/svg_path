@@ -10,14 +10,13 @@ main(_) ->
     Collector=spawn(fun()->collect(#{},[]) end),
     lists:foreach(fun(Name)->
         1=erlang:trace_pattern({'svg_path@offset',Name,1},[{'_',[],[{return_trace}]}],[local])
-    end,[enumerate_band_face_loops,orient_band_path]),
+    end,[enumerate_band_face_loops]),
     erlang:trace(self(),true,[call,{tracer,Collector}]),
     _=M:symmetric_figure_eight_bands(),
     erlang:trace(self(),false,[call]),
     Ref=erlang:trace_delivered(self()),receive {trace_delivered,_,Ref}->ok end,
     Collector!{get,self()},Calls=receive {calls,C}->C end,
     [{enumerate_band_face_loops,Input,{ok,Enumerated}}|_]=Calls,
-    []=[Call||Call={orient_band_path,_,_}<-Calls],
     ok=file:write_file("examples/debug/loop8-minus5-plus25-direct-enumeration.term",io_lib:format("~p.~n",[{Input,Enumerated}])),
     inspect("Before enumeration",Input),
     inspect("After filled-on-right enumeration (no old orientator)",Enumerated).

@@ -52,7 +52,8 @@ fn check_orientation_choices(input: svg_path.Path, loops: svg_path.Path) {
       })
     })
   list.each(choices, fn(subpaths) {
-    let assert Ok(oriented) = offset.orient_band_path(svg_path.Path(subpaths))
+    let assert Ok(oriented) =
+      offset.enumerate_band_face_loops(svg_path.Path(subpaths))
     check_fill(input, oriented)
   })
 }
@@ -86,7 +87,7 @@ pub fn touching_vertices_do_not_merge_filled_face_sectors_test() {
   let assert Ok(loops) = offset.enumerate_band_face_loops(input)
   assert list.length(svg_path.path_subpaths(loops)) == 2
   check_fill(input, loops)
-  let assert Ok(oriented) = offset.orient_band_path(loops)
+  let assert Ok(oriented) = offset.enumerate_band_face_loops(loops)
   check_fill(input, oriented)
 }
 
@@ -106,11 +107,9 @@ pub fn multiply_wound_single_contour_can_be_reenumerated_before_orientation_test
         svg_path.Point(1.0, 1.0),
       ]),
     ])
-  let assert Error(offset.InternalBandOrientationConflict(_)) =
-    offset.orient_band_path(input)
   let assert Ok(loops) = offset.enumerate_band_face_loops(input)
   check_fill(input, loops)
-  let assert Ok(oriented) = offset.orient_band_path(loops)
+  let assert Ok(oriented) = offset.enumerate_band_face_loops(loops)
   check_fill(input, oriented)
 }
 
@@ -123,22 +122,18 @@ pub fn crossing_contours_follow_even_odd_independent_of_input_directions_test() 
       let assert Ok(loops) = offset.enumerate_band_face_loops(input)
       assert list.length(svg_path.path_subpaths(loops)) == 2
       check_fill(input, loops)
-      let assert Ok(oriented) = offset.orient_band_path(loops)
+      let assert Ok(oriented) = offset.enumerate_band_face_loops(loops)
       check_fill(input, oriented)
     })
   })
 }
 
-pub fn kissing_seam_retains_two_occurrences_but_old_orientation_rejects_owners_test() {
+pub fn kissing_seam_retains_two_opposite_occurrences_test() {
   let input = svg_path.Path([square(0.0, 0.0, 2.0), square(2.0, 0.0, 2.0)])
   let assert Ok(loops) = offset.enumerate_band_face_loops(input)
   assert list.length(svg_path.path_subpaths(loops)) == 2
   assert segment_count(loops) == 8
   check_fill(input, loops)
-  // Enumeration has the requested seam multiplicity. The unchanged orientation
-  // policy still forbids two different contour owners on the same graph edge.
-  let assert Error(offset.InternalBandOrientationUnexpectedEdge(_, 2)) =
-    offset.orient_band_path(loops)
 }
 
 pub fn even_multiplicity_outside_fill_is_preserved_as_retraces_test() {
@@ -147,7 +142,7 @@ pub fn even_multiplicity_outside_fill_is_preserved_as_retraces_test() {
   let assert Ok(loops) = offset.enumerate_band_face_loops(input)
   assert segment_count(loops) == 8
   check_fill(input, loops)
-  let assert Ok(oriented) = offset.orient_band_path(loops)
+  let assert Ok(oriented) = offset.enumerate_band_face_loops(loops)
   check_fill(input, oriented)
 }
 
@@ -157,8 +152,6 @@ pub fn triple_multiplicity_is_not_silently_dropped_test() {
     offset.enumerate_band_face_loops(svg_path.Path([a, a, a]))
   assert segment_count(loops) == 12
   check_fill(svg_path.Path([a, a, a]), loops)
-  let assert Error(offset.InternalBandOrientationUnexpectedEdge(_, 3)) =
-    offset.orient_band_path(loops)
 }
 
 pub fn empty_and_open_inputs_have_explicit_contracts_test() {
