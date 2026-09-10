@@ -2750,7 +2750,7 @@ const default_max_depth = maximum_refinement_generation
 
 const default_samples = 10
 
-/// Conventional miter-limit ratio for callers constructing `Miter` joins.
+/// Conventional miter-limit ratio for `Miter` and `MiterClip` joins.
 pub const default_miter_limit = 4.0
 
 const small_unit_division_tolerance = 0.000001
@@ -2999,9 +2999,8 @@ fn arrangement_error(error: arrangement_graph.Error) -> InternalError {
 
 /// Join style used when offsetting adjacent subpath segments.
 ///
-/// This covers the common SVG `stroke-linejoin` values `bevel`, `miter`, and
-/// `round`. SVG 2 also describes `miter-clip` and `arcs`; those are not exposed
-/// here yet.
+/// Supports SVG `bevel`, `miter`, `miter-clip`, and `round`. The curvature-based
+/// SVG 2 `arcs` join is not supported yet.
 pub type Join {
   /// Connect adjacent offset segments with a straight line.
   Bevel
@@ -3009,6 +3008,14 @@ pub type Join {
   /// Extend the offset tangents toward their intersection when the miter stays
   /// within `miter_limit`; otherwise fall back to `Bevel`.
   Miter(miter_limit: Float)
+
+  /// Keep the miter tip within the limit; otherwise clip it perpendicular to
+  /// the pivot-to-tip direction at `miter_limit * abs(offset)` from the pivot.
+  /// The limit must be finite and positive. If the directed extensions do not
+  /// meet, use the same bevel fallback as `Miter`. If the clipping plane would
+  /// cut behind either join endpoint, use `Bevel` rather than trim the adjacent
+  /// segments. Limits below one are accepted with this same policy.
+  MiterClip(miter_limit: Float)
 
   /// Connect adjacent offset segments with a circular SVG arc.
   Round
@@ -5303,7 +5310,7 @@ fn validate_tangent_heal_angle(options: Options) -> Result(Nil, InternalError) {
 @internal
 pub fn validate_join(join: Join) -> Result(Nil, InternalError) {
   case join {
-    Miter(miter_limit) ->
+    Miter(miter_limit) | MiterClip(miter_limit) ->
       case miter_limit <=. 0.0 || !number.is_finite(miter_limit) {
         True -> Error(InternalInvalidMiterLimit(miter_limit))
         False -> Ok(Nil)
@@ -6620,7 +6627,25 @@ fn parametric_join_segments(
       case join {
         Bevel -> Ok(line_segments_between([start, end]))
         Miter(miter_limit) ->
-          directed_miter_join(left, right, start, end, offset, miter_limit)
+          directed_miter_join(
+            left,
+            right,
+            start,
+            end,
+            offset,
+            miter_limit,
+            False,
+          )
+        MiterClip(miter_limit) ->
+          directed_miter_join(
+            left,
+            right,
+            start,
+            end,
+            offset,
+            miter_limit,
+            True,
+          )
         Round -> round_join(left, right, start, end, offset)
       }
   }
@@ -9784,6 +9809,7 @@ fn directed_miter_join(
   end: svg_path.Point,
   offset: Float,
   miter_limit: Float,
+  clip: Bool,
 ) -> Result(List(svg_path.Segment), InternalError) {
   let left_tangent = left.nudged_end_tangent_direction
   let right_tangent = right.nudged_start_tangent_direction
@@ -9801,7 +9827,53 @@ fn directed_miter_join(
 
       case within_limit && point_is_finite(apex) {
         True -> Ok(line_segments_between([start, apex, end]))
-        False -> Ok(line_segments_between([start, end]))
+        False -> {
+          case clip && point_is_finite(apex) {
+            True ->
+              Ok(clipped_miter_join(
+                start,
+                end,
+                corner,
+                apex,
+                miter_limit *. offset_distance,
+              ))
+            False -> Ok(line_segments_between([start, end]))
+          }
+        }
+      }
+    }
+  }
+}
+
+fn clipped_miter_join(
+  start: svg_path.Point,
+  end: svg_path.Point,
+  pivot: svg_path.Point,
+  apex: svg_path.Point,
+  limit: Float,
+) -> List(svg_path.Segment) {
+  let bevel = line_segments_between([start, end])
+  case point_helpers.normalize(point_helpers.subtract(apex, pivot)) {
+    Error(_) -> bevel
+    Ok(axis) -> {
+      let tip = point_helpers.dot(point_helpers.subtract(apex, pivot), axis)
+      let a = point_helpers.dot(point_helpers.subtract(start, pivot), axis)
+      let b = point_helpers.dot(point_helpers.subtract(end, pivot), axis)
+      // Solve the clipping plane along each endpoint-to-apex segment. Using
+      // limit/tip as an interpolation fraction would ignore the endpoints'
+      // nonzero projections and put the clipping line in the wrong place.
+      // A join cannot trim geometry already emitted by its adjacent segments.
+      case a >. limit || b >. limit || tip <=. limit {
+        True -> bevel
+        False -> {
+          let p =
+            point_helpers.lerp(start, apex, { limit -. a } /. { tip -. a })
+          let q = point_helpers.lerp(end, apex, { limit -. b } /. { tip -. b })
+          case point_is_finite(p) && point_is_finite(q) {
+            True -> line_segments_between([start, p, q, end])
+            False -> bevel
+          }
+        }
       }
     }
   }

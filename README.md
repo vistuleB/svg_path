@@ -1474,7 +1474,8 @@ degenerate normalization, but do not take `cap:`. The offset-map helpers take
 neither style.
 
 Joins and caps are explicit labeled arguments, not fields of `offset.Options`.
-Choose `join: offset.Bevel`, `offset.Miter(miter_limit:)`, or `offset.Round`,
+Choose `join: offset.Bevel`, `offset.Miter(miter_limit:)`,
+`offset.MiterClip(miter_limit:)`, or `offset.Round`,
 and `cap: offset.Butt`, `offset.Square`, or `offset.RoundCap` wherever the operation
 constructs an open-source band or stroke outline. Single-offset trimming also
 takes `cap:` for its internal source-to-offset winding band; this does not add
@@ -1630,10 +1631,26 @@ These untrimmed functions take an explicit `join:` but no `cap:`.
 ### Stroke Styles
 
 `svg_path/stroke` has its own parallel `stroke.Join` and `stroke.Cap` types:
-`stroke.Bevel`, `stroke.Miter(miter_limit:)`, and `stroke.Round` select the
+`stroke.Bevel`, `stroke.Miter(miter_limit:)`, `stroke.MiterClip(miter_limit:)`,
+and `stroke.Round` select the
 join; `stroke.Butt`, `stroke.RoundCap`, and `stroke.Square` select the cap.
 Use these constructors at the stroke layer, not the corresponding `offset.*`
 constructors.
+
+`MiterClip` keeps an ordinary miter within the supplied limit, but clips an
+over-limit tip instead of replacing the entire join with a bevel. The clipping
+line is perpendicular to the pivot-to-tip direction, at `miter_limit * width / 2`
+from the pivot for a stroke (or `miter_limit * abs(offset)` for a single offset).
+The limit must be finite and positive. If the directed extensions do not meet,
+or the clipping line would cut behind either join endpoint, it falls back to
+`Bevel`; neighboring segments are not shortened to satisfy a low limit.
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/miter_clip_comparison.svg" alt="Computed stroke outlines comparing Miter(4), Miter(1.5), MiterClip(1.5), and Round joins">
+</p>
+
+The same source and stroke width are used in each panel. An over-limit `Miter`
+bevels the corner; `MiterClip` preserves the tip up to the clipping line.
 
 ```gleam
 import svg_path/stroke

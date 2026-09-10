@@ -30,7 +30,15 @@ mkdir -p "$readme_output" "$gallery_output" "$gallery_destination"
   gleam run -m svg_path_band_trimming_fixture
 )
 
+(
+  cd "$root/examples/public_api_smoke"
+  gleam build --target javascript
+)
+node "$root/examples/debug/miter_clip_demos.mjs"
+cp "$root/examples/debug/miter_clip_comparison.svg" "$readme_output/miter_clip_comparison.svg"
+
 readme_figures=(
+  miter_clip_comparison.svg
   zero_length_closepath_probe.svg
   arrangement_graph_overlapping_squares.svg
   arrangement_graph_semantic_circle_overlap.svg

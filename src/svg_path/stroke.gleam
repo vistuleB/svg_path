@@ -43,9 +43,8 @@ pub type Error {
 
 /// Join style for the stroke.
 ///
-/// This covers the common SVG `stroke-linejoin` values `bevel`, `miter`, and
-/// `round`. SVG 2 also describes `miter-clip` and `arcs`; those are not exposed
-/// here yet.
+/// Supports SVG `bevel`, `miter`, `miter-clip`, and `round`. The curvature-based
+/// SVG 2 `arcs` join is not supported yet.
 pub type Join {
   /// Connect adjacent offset segments with a straight line.
   Bevel
@@ -53,6 +52,12 @@ pub type Join {
   /// Extend the offset tangents toward their intersection when the miter stays
   /// within `miter_limit`; otherwise fall back to `Bevel`.
   Miter(miter_limit: Float)
+
+  /// Clip an over-limit miter at `miter_limit * width / 2` from the pivot.
+  /// The limit must be finite and positive. Uses `Bevel` if the extensions
+  /// do not meet or clipping would cut behind either join endpoint; it does
+  /// not trim adjacent segments to satisfy a limit below the bevel.
+  MiterClip(miter_limit: Float)
 
   /// Connect adjacent offset segments with a circular SVG arc.
   Round
@@ -916,6 +921,7 @@ fn to_offset_join(join: Join) -> offset.Join {
   case join {
     Bevel -> offset.Bevel
     Miter(miter_limit) -> offset.Miter(miter_limit)
+    MiterClip(miter_limit) -> offset.MiterClip(miter_limit)
     Round -> offset.Round
   }
 }

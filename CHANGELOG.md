@@ -9,6 +9,14 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
+## Unreleased
+
+### Added
+
+- `offset.MiterClip(miter_limit:)` and `stroke.MiterClip(miter_limit:)` joins.
+  Over-limit miters are clipped at a plane measured from the source pivot;
+  divergent extensions and clipping behind a join endpoint fall back to bevel.
+
 ## 0.46.0 - 2026-09-10
 
 ### Changed
