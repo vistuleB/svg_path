@@ -29,5 +29,6 @@ longer appears in the final stroke.
 run and highlights its current stroke. Its circle marks the historical artifact
 location, whether or not that artifact survives current logic.
 
-The independent solver endpoint-omission question is recorded separately in
-`JOIN_LINE_MISSING_ENDPOINT.md` and has not been fixed.
+The independent solver endpoint omission was subsequently fixed. Its reproducer,
+regression, and historical verification are recorded in
+[JOIN_LINE_MISSING_ENDPOINT.md](JOIN_LINE_MISSING_ENDPOINT.md).

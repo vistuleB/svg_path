@@ -9,12 +9,34 @@ beam counts remain available through `elizabeth_beam_intersections`. The old
 solver/enclosure comparison scripts were removed with their dependencies and
 remain recoverable from Git. Comparisons recorded below are historical.
 
+- Production uses Elizabeth for generic curve pairs and analytic dispatch for
+  Line pairs. No Edward/Henry intersection fallback or selector remains.
+- Residual cutoff: `min(caller tolerance, 1e-13)`; terminal parameter width:
+  `1e-9`; final parameter deduplication: `1e-7`.
+- Polygon enclosures reject disjoint windows. Endpoint-to-segment discovery
+  protects endpoint candidates independently of the beam.
+- Ranking samples four corners and the midpoint, plus a predicted crossing
+  when available. Curve evaluations are cached by exact parameters.
+- Each bucket starts at 500 slots. Decay starts when enclosure survivors exceed
+  1000 or at generation 5, whichever comes first, reaching 12 slots per bucket
+  at absolute generation 12. Unused slots can be shared between buckets.
+- Coarse-to-fine spatial diversity is used both during search and final
+  selection. This remains a heuristic search, not a completeness certificate.
+
+See [current follow-ups](../../REMAINING_ISSUES.md) for outstanding test reviews.
+
+## Historical removal and benchmark checkpoints
+
+Everything below records earlier checkpoints. In particular, references to
+comparison APIs or solvers describe what existed then, not callable options on
+current main.
+
 Depth-first Elizabeth has been removed, together with its total-window budget,
 the unused alternating terminal-refinement experiment, and three experiment-only
 tests. Useful crossing, endpoint, kissing, and disjointness cases now exercise
-the public production API, including the 0.20/0.21/0.22 cubic. The comparison
-API retains Henry, Edward, and Elizabeth, but Elizabeth selects the production
-beam and there is no separate `max_windows` argument. Historical depth-first
+the public production API, including the 0.20/0.21/0.22 cubic. At that checkpoint the comparison
+API still retained Henry, Edward, and Elizabeth; that API was subsequently
+removed. Production uses only the beam solver. Historical depth-first
 trace/sweep programs were removed; their source and recorded experiments remain
 available in Git history (before this removal). Historical text below is kept
 as a research record, not current runnable instructions.
@@ -30,8 +52,8 @@ failures (1614 passed); separately, `scripts/test-slow` passed 26 tests.
 The nine-offset title took 32.91s in that concurrent gallery run.
 
 - Generic curve pairs use breadth-first Elizabeth; analytic Line dispatch is
-  unchanged. Edward/Henry remain behind a private comparison switch, not an
-  automatic fallback from Elizabeth.
+  unchanged. At that checkpoint Edward/Henry remained behind a private comparison switch,
+  not an automatic fallback; that switch has since been removed.
 - Residual cutoff: min(caller tolerance, 1e-13); terminal parameter widths:
   1e-9; final parameter-space deduplication: 1e-7.
 - Independent endpoint-to-segment candidates protect endpoint matches from
@@ -66,7 +88,7 @@ allocation/cache/diversity checks passed; gallery and slow tests had not yet
 been rerun. The extra depth-first failure was removed with that experiment;
 current verification is recorded above.
 
-## Enclosure comparison counters (current beam)
+## Historical enclosure comparison counters
 
 `elizabeth_enclosure_counts.escript polygons` and `boxes_polygons` run the
 nine-offset title sequentially in separate VMs. Only the enclosure decision

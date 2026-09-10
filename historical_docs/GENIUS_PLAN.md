@@ -1,5 +1,9 @@
 # Arrangement Graph construction new plan
 
+> Historical record. Status, commands, and code locations below describe their
+> original checkpoints, not current main. See [the archive index](README.md)
+> and [current follow-ups](../REMAINING_ISSUES.md).
+
 - no normalization before construction; this is the caller's problem
 
 - arrangement.build takes a List(Segment)

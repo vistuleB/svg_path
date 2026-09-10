@@ -1,8 +1,14 @@
+# Historical development notes
+
+Snapshot before the 2026-09-10 documentation cleanup. Superseded proposals and
+status claims are preserved here for reference, not as current instructions.
+Paths mentioned below are relative to the repository root unless stated otherwise.
+
 # Notes
 
 ## Local Commit Style
 
-- Use sentence-case commit subjects, consistently.
+- Use lowercase commit subjects.
 
 ## Wishlist
 
@@ -26,12 +32,23 @@
   there is concrete demand. The current effect guarantees tangency for
   line-line corners; a curved implementation would need a local bitangent-circle
   solver for the two contact parameters and common center.
+- Possible `intersection` module extraction in a future breaking release, while
+  keeping `svg_path` as the large convenience module.
 - Further orientation and topology helpers if actual caller needs appear.
+- A complete `encounters` module, when a concrete caller needs it.
+  It should return both continuous overlap intervals and isolated point
+  intersections, including isolated intersections that coexist with an
+  overlap. Point intersections covered by an overlap interval should be
+  removed. The narrow `overlaps` and `intersections` APIs should remain
+  separate projections rather than owning this combined result prematurely.
 - Full SVG path-module reshaping such as `svg_path/subpath` or
   `svg_path/segment`, only if the user experience clearly beats the current
   one-import convenience style.
+- Rename or split `CrossingOptions.parameter_tolerance` in a future breaking
+  API pass. It is now used as a scalar residual tolerance by crossing
+  refinements, not as a pure parameter-space tolerance.
 
-Implemented capabilities:
+Recently completed:
 
 - Path offsets, including trimmed and untrimmed variants.
 - Path bands, including asymmetric and untrimmed variants.
@@ -141,18 +158,30 @@ tests and deterministic point-cloud tests under `test/`.
 
 The slower convex hull stress module lives at
 `test_slow/svg_path_convex_hull_test.gleam`, outside normal discovery. Run it
-with `scripts/test-slow`. It parks the whole ordinary suite at
-`.test-disabled/fast-tests/`, installs the isolated stress profile, and restores
-the ordinary suite on exit. Do not run profiles concurrently in one worktree.
+with `scripts/test-slow`. That script temporarily parks
+`test/svg_path_convex_hull_test.gleam`, copies the slow file into its place,
+runs `gleam test`, then restores the smoke-test file.
 
-- `gleam test` and `scripts/test-fast` run the ordinary suite, including hull
-  smoke tests; the latter cleans the build first.
-- `scripts/test-slow` runs only the additional convex-hull stress tests.
-- `scripts/test-all` runs fast, then slow, stopping if fast fails.
-- `scripts/test-release` delegates to `scripts/test-all`.
+Use these local helpers when iterating on the ordinary suite:
 
-Report the exact command and result. See [RELEASING.md](RELEASING.md) for release
-verification and [test_slow/README.md](test_slow/README.md) for profile details.
+```sh
+scripts/test-fast
+scripts/test-all
+scripts/test-slow
+scripts/test-release
+```
+
+`scripts/test-fast` temporarily moves `test/svg_path_convex_hull_test.gleam`
+out of `test/`, runs `gleam test`, and restores the file before exiting.
+`scripts/test-all` runs the ordinary suite and then `scripts/test-slow`.
+
+`scripts/test-all` restores `test/svg_path_convex_hull_test.gleam` if needed,
+then runs both the fast and slow profiles.
+
+In test reports, name the exact command or profile that passed. Reserve “full
+suite” and “all tests” for a successful `scripts/test-all` run. Before a
+release, use `scripts/test-release`, which deliberately delegates to
+`scripts/test-all` so the slow profile cannot be omitted.
 
 ## SVG Path Parser Conformance
 
@@ -165,7 +194,8 @@ rejected or invalid separator placements are accepted.
 The parser historically discarded commas and whitespace before interpreting
 commands. That architecture loses information required to reject inputs such as
 `M,0,0`, `M0,,0`, and `M0 0,`, and it previously prevented contextual parsing
-of concatenated arc flags. The current parser validates separators before semantic path construction.
+of concatenated arc flags. The conformance repair should preserve or validate
+separators before semantic path construction.
 
 Testing should proceed in three layers:
 
@@ -191,10 +221,20 @@ upstream automatically.
 
 ### Parse Error Locations
 
-The public `parse.ParseError(reason:, remaining:)` retains the exact input
-suffix beginning at the failure location. Subtract its UTF-8 byte size from the
-original input's byte size to recover a byte offset. End-of-input failures have
-an empty suffix.
+The current public `parse.Error` describes what failed but not where it failed.
+Reliable source locations require retaining offsets through tokenization and
+semantic parsing; the current `Token` type stores only command strings and
+numeric values. Tokenizer-only offsets would be incomplete because errors such
+as a missing coordinate or an arc flag in the wrong argument position arise
+after tokenization.
+
+A compatible future API can keep `path(String) -> Result(Path, Error)` and add
+a detailed entry point returning a record such as
+`LocatedError(error:, offset:)`. The offset should identify a UTF-8 byte
+boundary in the original input, with end-of-input used for missing arguments.
+Implementing this requires located tokens plus parser state that remembers the
+active command position; it should be done as one parser refactor rather than
+adding approximate locations to the existing error variants.
 
 Primary references:
 
@@ -203,14 +243,35 @@ Primary references:
 - <https://www.w3.org/Graphics/SVG/Test/Overview.html>
 - <https://dev.w3.org/SVG/profiles/1.1F2/test/status/test_suite_status.html>
 
-## Historical investigations
+## Offset Micro-Loop Regressions
 
-Old block-based micro-loop observations, error-payload proposals, and ellipse
-tolerance notes are archived in
-[NOTES_BEFORE_CLEANUP.md](historical_docs/NOTES_BEFORE_CLEANUP.md).
-Do not use their fixture counts as evidence of current behavior. In particular,
-the old V-at-0.4 drawing is not an established current micro-loop reproducer.
+- The isolated package-title `V` at offset distance `0.4` is **not** a current
+  micro-loop example. With fitting tolerance `0.01`, it produces one ordinary
+  closed survivor with 45 arrangement edges. That survivor is not band-sized,
+  so small-loop filtering constructs no blocks and removes nothing. Do not use
+  the historical `0.4` drawings as evidence of current behavior.
+- The isolated package-title `V` at offset distance `1.04` remains the current
+  micro-loop regression. Before direct-containment filtering it produces three
+  two-edge micro-loops plus the main contour.
 
-Current follow-ups live in [REMAINING_ISSUES.md](REMAINING_ISSUES.md).
-The [historical documentation index](historical_docs/README.md) contains earlier
-plans, audit results, and drawings.
+## Offset Error Payloads
+
+`offset.Error.DegenerateTangent(t:)` normally reports the segment parameter
+where tangent construction failed. One current offset postcondition path
+instead returns `DegenerateTangent(1.0)` when two adjacent generated offset
+segments meet at the same point but their tangent angle exceeds the healing
+threshold. That payload is incongruous: the available diagnostic value at that
+site is the measured boundary angle, not a meaningful segment parameter.
+
+Before stabilizing or documenting that behavior, either change the error
+payload/variant to report the boundary angle or introduce a narrower offset
+postcondition error that describes the failed continuity check directly.
+
+## Ellipse Tolerance Cleanup
+
+`src/svg_path/ellipse.gleam` currently uses one module-wide
+`epsilon = 0.000000001` for several unrelated decisions: sweep-angle
+inclusion, degenerate radii, axis orthogonality, and vector normalization. If
+arc directional support or projection-extrema helpers become shared machinery,
+avoid implicitly inheriting this one tolerance. Prefer operation-local
+tolerances or an options object.

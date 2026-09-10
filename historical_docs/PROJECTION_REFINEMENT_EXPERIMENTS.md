@@ -1,5 +1,9 @@
 # Projection refinement experiments
 
+> Historical record. Status, commands, and code locations below describe their
+> original checkpoints, not current main. See [the archive index](README.md)
+> and [current follow-ups](../REMAINING_ISSUES.md).
+
 This note records the informal numerical experiments that preceded selection of
 the point-to-Bezier projection algorithm. It is not an API contract or a formal
 accuracy study.

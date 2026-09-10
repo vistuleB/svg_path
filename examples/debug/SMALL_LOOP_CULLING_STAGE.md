@@ -25,12 +25,17 @@ Four tests in `test/svg_path_cusp_small_loop_test.gleam` cover opposite/same
 REVERSED states, extra graph cuts inside a loop, wrapping adjacency, and an
 ordinary shared endpoint.
 
+## Historical experiment results
+
+The default remains `BeforeCuspTrimming`. The following counts describe the
+original placement experiment, not a fresh run or the current whole suite.
+
 With `InsideCuspTrimming`, `scripts/test-fast` completed with 1,593 passing
 tests and two failures: the existing A/V single-offset micro-loop regressions
 at offset 1.05. Those use final in-band trimming, not cusp trimming, so their
 previous small-loop cleanup is deliberately absent under this experiment.
 The tests have not been weakened or rewritten to accept the changed result.
 
-The constant is restored to `BeforeCuspTrimming` pending evaluation of that
-behavior change; `scripts/test-fast` then passes 1,595 tests. The separate final-orientation experiment remains in the
-worktree and still has its previously reported concave-square fixture conflict.
+Restoring `BeforeCuspTrimming` gave 1,595 passing tests at that checkpoint.
+The separate final-orientation conflict mentioned at the time was subsequently
+resolved; final band reconstruction now uses filled-face boundary walks.

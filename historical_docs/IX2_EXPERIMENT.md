@@ -1,5 +1,9 @@
 # Residual-window experiment checkpoint
 
+> Historical record. Status, commands, and code locations below describe their
+> original checkpoints, not current main. See [the archive index](README.md)
+> and [current follow-ups](../REMAINING_ISSUES.md).
+
 `ix2-residual-experiment.patch` preserves the combined experiment against
 commit `af898f9`. It includes residual-window retention, partial-result fallback
 merging, enclosing polygons, subdivision safeguards, and bracket validation.
