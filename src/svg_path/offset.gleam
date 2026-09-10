@@ -294,6 +294,7 @@ pub fn default_options() -> Options {
     fitting: default_fitting_options(),
     stalled_offset_diameter: default_stalled_offset_diameter,
     tangent_heal_angle_degrees: default_tangent_heal_angle_degrees,
+    inner_join: None,
     single_offset_trimming: SingleOffsetTrimming(
       offside: True,
       final_trimming: InBandTrimming,
@@ -1701,6 +1702,7 @@ fn build_synchronized_untrimmed(
         portions,
         distances,
         join,
+        option.unwrap(options.inner_join, default_inner_join(join)),
         closed: svg_path.subpath_is_closed(subpath),
       ))
       let closed = svg_path.subpath_is_closed(subpath)
@@ -3004,8 +3006,8 @@ fn arrangement_error(error: arrangement_graph.Error) -> InternalError {
 /// Supports SVG `bevel`, `miter`, `miter-clip`, `round`, and `arcs`.
 pub type Join {
   /// Continue source curvature with tangent circles, clipped at the limit.
-  /// Diverging rays and reversed source endpoints use Round. Straight/straight
-  /// joins use MiterClip. The limit must be finite and positive.
+  /// On the outer side, diverging rays and reversed source endpoints use Round.
+  /// Straight/straight joins use MiterClip. The limit must be finite and positive.
   Arcs(miter_limit: Float)
   /// Connect adjacent offset segments with a straight line.
   Bevel
@@ -3024,6 +3026,20 @@ pub type Join {
 
   /// Connect adjacent offset segments with a circular SVG arc.
   Round
+}
+
+/// Construction of a join on the inner side of a local source corner.
+/// This is independent of the caller-designated inner/outer band offsets.
+pub type InnerJoin {
+  InnerBevel
+  InnerRound
+}
+
+fn default_inner_join(join: Join) -> InnerJoin {
+  case join {
+    Round -> InnerRound
+    _ -> InnerBevel
+  }
 }
 
 /// Cap style used at open stroke endpoints and to close open-source winding bands.
@@ -3103,7 +3119,7 @@ pub type FittingOptions {
   FittingOptions(tolerance: Float, samples: Int, max_depth: Int)
 }
 
-/// Technical options for offset construction; styles are explicit parameters.
+/// Offset construction options; the main join and cap are explicit parameters.
 ///
 /// `fitting` controls offset approximation. `stalled_offset_diameter`
 /// decides when the stalled-run builder treats an offset piece as too small to
@@ -3112,11 +3128,15 @@ pub type FittingOptions {
 /// degrees, allowed by post-healing continuity checks at stable smooth
 /// boundaries. `single_offset_trimming` and `band_trimming` select the public
 /// trimming pipelines.
+/// `inner_join` overrides local inner-corner construction. `None` selects
+/// `InnerRound` for `Round` joins and `InnerBevel` for every other join style.
+/// It applies to each offset side independently, including single offsets.
 pub type Options {
   Options(
     fitting: FittingOptions,
     stalled_offset_diameter: Float,
     tangent_heal_angle_degrees: Float,
+    inner_join: Option(InnerJoin),
     single_offset_trimming: SingleOffsetTrimming,
     band_trimming: BandTrimming,
   )
@@ -6623,12 +6643,33 @@ fn parametric_join_segments(
   right: GHealedOffsetSegment,
   offset: Float,
   join: Join,
+  inner_join: InnerJoin,
 ) -> Result(List(svg_path.Segment), InternalError) {
   let start = svg_path.segment_end(left.segment)
   let end = svg_path.segment_start(right.segment)
   case point_helpers.near(start, end, tolerance: point_tolerance) {
     True -> Ok([])
-    False ->
+    False -> {
+      use incoming <- result.try(offset_source_endpoint_unit_tangent(
+        left.source,
+        endpoint: SegmentEnd,
+      ))
+      use outgoing <- result.try(offset_source_endpoint_unit_tangent(
+        right.source,
+        endpoint: SegmentStart,
+      ))
+      // Positive SVG cross product is a visual clockwise turn. Positive
+      // offsets lie on the visual left, so opposite turn/offset signs mean
+      // the local inner side. Use source tangents, not possibly reversed
+      // offset tangents. Collinear corners retain the ordinary join policy.
+      let turn = point_helpers.cross(incoming, outgoing)
+      let is_inner =
+        turn <. 0.0 && offset >. 0.0 || turn >. 0.0 && offset <. 0.0
+      let join = case is_inner, inner_join {
+        True, InnerRound -> Round
+        True, InnerBevel -> Bevel
+        False, _ -> join
+      }
       case join {
         Arcs(miter_limit) ->
           arcs_join_segments(left, right, start, end, offset, miter_limit)
@@ -6655,6 +6696,7 @@ fn parametric_join_segments(
           )
         Round -> round_join(left, right, start, end, offset)
       }
+    }
   }
 }
 
@@ -6662,6 +6704,7 @@ fn synchronized_join_correspondences(
   portions: List(SynchronizedHealedPortion),
   distances: OffsetDistances,
   join: Join,
+  inner_join: InnerJoin,
   closed closed: Bool,
 ) -> Result(List(OffsetJoinCorrespondence), InternalError) {
   case portions {
@@ -6673,6 +6716,7 @@ fn synchronized_join_correspondences(
         rest,
         distances,
         join,
+        inner_join,
         closed:,
         joined: [],
       )
@@ -6685,6 +6729,7 @@ fn synchronized_join_correspondences_loop(
   rest: List(SynchronizedHealedPortion),
   distances: OffsetDistances,
   join: Join,
+  inner_join: InnerJoin,
   closed closed: Bool,
   joined joined: List(OffsetJoinCorrespondence),
 ) -> Result(List(OffsetJoinCorrespondence), InternalError) {
@@ -6698,6 +6743,7 @@ fn synchronized_join_correspondences_loop(
             first,
             distances,
             join,
+            inner_join,
           ))
           Ok(list.reverse([closing, ..joined]))
         }
@@ -6708,6 +6754,7 @@ fn synchronized_join_correspondences_loop(
         next,
         distances,
         join,
+        inner_join,
       ))
       synchronized_join_correspondences_loop(
         first,
@@ -6715,6 +6762,7 @@ fn synchronized_join_correspondences_loop(
         remaining,
         distances,
         join,
+        inner_join,
         closed:,
         joined: [correspondence, ..joined],
       )
@@ -6727,6 +6775,7 @@ fn synchronized_join_correspondence(
   right: SynchronizedHealedPortion,
   distances: OffsetDistances,
   join: Join,
+  inner_join_style: InnerJoin,
 ) -> Result(OffsetJoinCorrespondence, InternalError) {
   let SynchronizedHealedPortion(
     portion_index:,
@@ -6741,12 +6790,14 @@ fn synchronized_join_correspondence(
     right_inner,
     inner,
     join,
+    inner_join_style,
   ))
   use outer_join <- result.try(join_between_offset_portions(
     left_outer,
     right_outer,
     outer,
     join,
+    inner_join_style,
   ))
   use inner_boundary <- result.try(offset_portion_join_boundary(
     left_inner,
@@ -6851,10 +6902,11 @@ fn join_between_offset_portions(
   right: List(GHealedOffsetSegment),
   offset: Float,
   join: Join,
+  inner_join: InnerJoin,
 ) -> Result(List(svg_path.Segment), InternalError) {
   case list.last(left), right {
     Ok(previous), [next, ..] ->
-      parametric_join_segments(previous, next, offset, join)
+      parametric_join_segments(previous, next, offset, join, inner_join)
     _, _ -> Ok([])
   }
 }

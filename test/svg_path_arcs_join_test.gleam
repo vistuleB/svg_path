@@ -164,9 +164,9 @@ pub fn arcs_public_straight_join_matches_miter_clip_test() {
   })
 }
 
-pub fn arcs_diverging_rays_use_round_test() {
+pub fn arcs_inner_corner_defaults_to_bevel_test() {
   assert offset.subpath_untrimmed(corner(), -1.0, offset.Arcs(4.0))
-    == offset.subpath_untrimmed(corner(), -1.0, offset.Round)
+    == offset.subpath_untrimmed(corner(), -1.0, offset.Bevel)
 }
 
 pub fn arcs_invalid_limits_test() {
