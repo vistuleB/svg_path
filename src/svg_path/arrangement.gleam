@@ -614,7 +614,7 @@ type CyclicOrderSample {
 
 /// Compute clockwise cyclic oriented-edge orders without modifying the graph.
 ///
-/// This is an experimental embedding helper. At each vertex it samples every
+/// Graph construction uses this embedding helper. At each vertex it samples every
 /// incident edge on a common circle, beginning at `0.8` times the least
 /// opposite-endpoint distance and continuing at `0.8` times the previous
 /// radius, up to `max_attempts` total radii. The largest successful radius

@@ -256,7 +256,7 @@ fn insert_overlap_loop(
 
 /// Find sampled overlap intervals proposed by endpoint matches.
 ///
-/// This experimental algorithm assumes non-degenerate segments and that every
+/// This sampled overlap detector assumes non-degenerate segments and that every
 /// overlap boundary is an endpoint of at least one input segment. Every pair
 /// of endpoint matches within `tolerance` proposes an interval. Matches include
 /// explicit target endpoints and roots of both coordinate equations, alongside
