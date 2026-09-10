@@ -40,11 +40,9 @@ import svg_path.{
   SubpathSubpathProjection,
 }
 import svg_path/bezier
-import svg_path/ellipse
 import svg_path/internal/number
 import svg_path/overlap_detection
 import svg_path/point
-import svg_path/trig
 
 const default_intersection_tolerance = 0.000000001
 
@@ -4064,77 +4062,8 @@ fn parameter_tolerance_for_chord(direction: Point, tolerance: Float) -> Float {
   }
 }
 
-// The convex hull of these points contains the requested curve portion.
-// Points are not boundary-ordered. For arcs, use the original center
-// parameterization rather than reconstructing an ellipse from cut endpoints.
-fn segment_enclosing_points(
-  segment: Segment,
-  from: Float,
-  to: Float,
-) -> Result(List(Point), svg_path.Error) {
-  case segment {
-    Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:) -> {
-      use arc <- result.try(
-        ellipse.endpoint_to_center(ellipse.EndpointArcData(
-          ellipse.EllipsePoint(start.x, start.y),
-          ellipse.EllipsePoint(radius.x, radius.y),
-          x_axis_rotation,
-          large_arc,
-          sweep,
-          ellipse.EllipsePoint(end.x, end.y),
-        ))
-        |> result.map_error(fn(_) { svg_path.DegenerateArc }),
-      )
-      Ok(arc_enclosing_points(arc, from, to))
-    }
-    _ -> {
-      use piece <- result.try(svg_path.segment_between(segment, from, to))
-      case piece {
-        Line(start:, end:) -> Ok([start, end])
-        QuadraticBezier(start:, control:, end:) -> Ok([start, control, end])
-        CubicBezier(start:, control1:, control2:, end:) ->
-          Ok([start, control1, control2, end])
-        Arc(..) -> Error(svg_path.DegenerateArc)
-      }
-    }
-  }
-}
-
-fn arc_enclosing_points(
-  arc: ellipse.CenterArcData,
-  from: Float,
-  to: Float,
-) -> List(Point) {
-  let middle = from +. { to -. from } /. 2.0
-  let span = arc.delta_angle *. { to -. from }
-  case float.absolute_value(span) >. 90.0 {
-    True ->
-      list.append(
-        arc_enclosing_points(arc, from, middle),
-        arc_enclosing_points(arc, middle, to),
-      )
-    False -> {
-      let a = ellipse.arc_point(arc, from)
-      let b = ellipse.arc_point(arc, to)
-      let m = ellipse.arc_point(arc, middle)
-      // Tangent intersection = center + radial(midpoint) / cos(half-span).
-      // No nearly-parallel line solve: cos(half-span) >= sqrt(1/2).
-      let divisor = trig.cos_degrees(span /. 2.0)
-      [
-        Point(a.x, a.y),
-        Point(b.x, b.y),
-        Point(
-          arc.center.x +. { m.x -. arc.center.x } /. divisor,
-          arc.center.y +. { m.y -. arc.center.y } /. divisor,
-        ),
-      ]
-    }
-  }
-}
-
-// A separating axis for the two convex hulls is sufficient. Trying every
-// point-pair normal includes all hull-edge normals without constructing hulls.
-// Pair directions and coordinate axes also cover line/point degeneracies.
+// Convex polygon side normals provide the separating axes; diagonals are
+// unnecessary. Along-line axes also cover collinear line degeneracies.
 // The allowance is a floating-point heuristic, not geometric tolerance.
 fn enclosing_points_disjoint(left: List(Point), right: List(Point)) -> Bool {
   case left, right {
@@ -4171,13 +4100,23 @@ fn enclosing_points_disjoint(left: List(Point), right: List(Point)) -> Bool {
 
 fn enclosing_point_axes(points: List(Point)) -> List(Point) {
   case points {
-    [] -> []
-    [a, ..rest] ->
-      list.fold(rest, enclosing_point_axes(rest), fn(axes, b) {
-        let dx = b.x -. a.x
-        let dy = b.y -. a.y
-        [Point(0.0 -. dy, dx), Point(dx, dy), ..axes]
-      })
+    [] | [_] -> []
+    [a, b] -> {
+      let dx = b.x -. a.x
+      let dy = b.y -. a.y
+      [Point(0.0 -. dy, dx), Point(dx, dy)]
+    }
+    [first, ..rest] -> polygon_side_axes(first, rest, first)
+  }
+}
+
+fn polygon_side_axes(a: Point, rest: List(Point), first: Point) -> List(Point) {
+  case rest {
+    [] -> [Point(a.y -. first.y, first.x -. a.x)]
+    [b, ..tail] -> [
+      Point(a.y -. b.y, b.x -. a.x),
+      ..polygon_side_axes(b, tail, first)
+    ]
   }
 }
 
@@ -4506,12 +4445,12 @@ fn elizabeth_window_overlaps(
   right: Segment,
   window: WindowPreservingWindow,
 ) -> Result(Bool, svg_path.Error) {
-  use a <- result.try(segment_enclosing_points(
+  use a <- result.try(svg_path.segment_bounding_polygon_between(
     left,
     window.left_from,
     window.left_to,
   ))
-  use b <- result.try(segment_enclosing_points(
+  use b <- result.try(svg_path.segment_bounding_polygon_between(
     right,
     window.right_from,
     window.right_to,

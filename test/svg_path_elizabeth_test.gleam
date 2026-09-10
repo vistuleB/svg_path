@@ -20,6 +20,23 @@ fn diagonal() -> svg_path.Segment {
   )
 }
 
+pub fn elizabeth_polygon_axes_separate_collinear_degeneracies_test() {
+  // Polygon normals alone cannot distinguish separated collinear segments.
+  // The enclosure must retain the along-line axis for a two-point hull.
+  let a = svg_path.Point(0.0, 0.0)
+  let b = svg_path.Point(1.0, 1.0)
+  let c = svg_path.Point(2.0, 2.0)
+  let d = svg_path.Point(3.0, 3.0)
+  let options = ix.IntersectionOptions(..ix.default_options(), max_depth: 1)
+  let assert Ok(report) =
+    ix.elizabeth_beam_intersections(
+      svg_path.QuadraticBezier(a, svg_path.Point(0.5, 0.5), b),
+      svg_path.QuadraticBezier(c, svg_path.Point(2.5, 2.5), d),
+      options,
+    )
+  assert report.intersections == []
+}
+
 pub fn elizabeth_endpoint_keeps_multiple_target_parameters_test() {
   let retraced =
     svg_path.QuadraticBezier(
