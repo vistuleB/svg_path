@@ -3291,6 +3291,141 @@ pub fn segment_length_upper_bound(segment: Segment) -> Result(Float, Error) {
   }
 }
 
+/// Return a convex polygon enclosing the segment, in visual clockwise order.
+///
+/// The first vertex is the segment start when it is a hull vertex; otherwise
+/// it is the lexicographically smallest vertex (x, then y). The first vertex
+/// is not repeated at the end. Point and line degeneracies return one or two
+/// vertices. Beziers use their control-point hull; arcs use tangent triangles
+/// spanning at most 90 degrees on the corrected ellipse, then their hull.
+/// This is an ordinary floating-point bound, not outward-rounded arithmetic.
+/// Invalid arcs return `DegenerateArc`.
+pub fn segment_bounding_polygon(
+  segment: Segment,
+) -> Result(List(Point), Error) {
+  segment_bounding_polygon_between(segment, 0.0, 1.0)
+}
+
+/// Enclose the segment portion between `from` and `to`, both in `0.0..1.0`.
+///
+/// Reversed intervals are allowed. The boundary remains visually clockwise;
+/// its preferred first vertex is the point at `from`, when that is a hull
+/// vertex. Equal parameters return one point. Other conventions are those of
+/// `segment_bounding_polygon`. Out-of-range parameters return
+/// `SplitOutsideSegment`.
+pub fn segment_bounding_polygon_between(
+  segment: Segment,
+  from from: Float,
+  to to: Float,
+) -> Result(List(Point), Error) {
+  case from <. 0.0 || from >. 1.0 || to <. 0.0 || to >. 1.0 {
+    True -> Error(SplitOutsideSegment)
+    False -> {
+      use start <- result.try(segment_point(segment, from))
+      case from == to {
+        True -> Ok([start])
+        False -> {
+          use points <- result.try(case segment {
+            Arc(..) -> {
+              use arc <- result.try(arc_center_data(segment))
+              use end <- result.try(segment_point(segment, to))
+              // Include the exact stored endpoints as well as reconstructed
+              // ellipse points; endpoint encoding can differ by roundoff.
+              Ok([start, end, ..bounding_arc_points(arc, from, to)])
+            }
+            _ -> {
+              use piece <- result.try(segment_between(segment, from, to))
+              Ok(case piece {
+                Line(a, b) -> [a, b]
+                QuadraticBezier(a, b, c) -> [a, b, c]
+                CubicBezier(a, b, c, d) -> [a, b, c, d]
+                Arc(..) -> []
+              })
+            }
+          })
+          let sorted =
+            list.map(points, fn(p) {
+              Point(number.normalize_zero(p.x), number.normalize_zero(p.y))
+            })
+            |> list.sort(fn(a, b) {
+              case float.compare(a.x, b.x) {
+                order.Eq -> float.compare(a.y, b.y)
+                other -> other
+              }
+            })
+            |> list.unique
+          let hull = case sorted {
+            [] | [_] -> sorted
+            _ -> {
+              let lower =
+                list.fold(sorted, [], bounding_hull_push) |> list.reverse
+              let upper =
+                list.fold(list.reverse(sorted), [], bounding_hull_push)
+                |> list.reverse
+              list.append(
+                list.take(lower, list.length(lower) - 1),
+                list.take(upper, list.length(upper) - 1),
+              )
+            }
+          }
+          let #(before, after) =
+            list.split_while(hull, fn(p) { p.x != start.x || p.y != start.y })
+          Ok(case after {
+            [] -> hull
+            _ -> list.append(after, before)
+          })
+        }
+      }
+    }
+  }
+}
+
+fn bounding_hull_push(stack: List(Point), p: Point) -> List(Point) {
+  case stack {
+    [b, a, ..rest] -> {
+      let cross =
+        { b.x -. a.x } *. { p.y -. a.y } -. { b.y -. a.y } *. { p.x -. a.x }
+      case cross <=. 0.0 {
+        True -> bounding_hull_push([a, ..rest], p)
+        False -> [p, ..stack]
+      }
+    }
+    _ -> [p, ..stack]
+  }
+}
+
+fn bounding_arc_points(
+  arc: ellipse.CenterArcData,
+  from: Float,
+  to: Float,
+) -> List(Point) {
+  let middle = from +. { to -. from } /. 2.0
+  let span = arc.delta_angle *. { to -. from }
+  case float.absolute_value(span) >. 90.0 {
+    True ->
+      list.append(
+        bounding_arc_points(arc, from, middle),
+        bounding_arc_points(arc, middle, to),
+      )
+    False -> {
+      let a = ellipse.arc_point(arc, from)
+      let b = ellipse.arc_point(arc, to)
+      let m = ellipse.arc_point(arc, middle)
+      // Tangent intersection without a nearly-parallel line solve.
+      // cos(half-span) is at least sqrt(1/2).
+      let divisor = trig.cos_degrees(span /. 2.0)
+      [
+        Point(a.x, a.y),
+        Point(b.x, b.y),
+        Point(
+          arc.center.x +. { m.x -. arc.center.x } /. divisor,
+          arc.center.y +. { m.y -. arc.center.y } /. divisor,
+        ),
+      ]
+    }
+  }
+}
+
 /// Return the approximate length of a segment using explicit options.
 pub fn segment_length_with(
   segment: Segment,
