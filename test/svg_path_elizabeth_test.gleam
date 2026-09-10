@@ -71,14 +71,6 @@ pub fn elizabeth_beam_flat_crossing_completes_with_explicit_loss_test() {
       tolerance: 0.00000000000005,
       max_depth: 48,
     )
-  let assert Error(ix.ExperimentalWindowLimit(100_000)) =
-    ix.experimental_curve_intersections(
-      curve,
-      horizontal(),
-      ix.Elizabeth,
-      options,
-      100_000,
-    )
   let assert Ok(report) =
     ix.elizabeth_beam_intersections(curve, horizontal(), options)
   assert report.discarded_other > 0
@@ -139,13 +131,7 @@ pub fn elizabeth_beam_join_line_selection_keeps_endpoint_test() {
 
 pub fn elizabeth_transverse_crossing_test() {
   let assert Ok(found) =
-    ix.experimental_curve_intersections(
-      horizontal(),
-      diagonal(),
-      ix.Elizabeth,
-      ix.default_options(),
-      10_000,
-    )
+    ix.segment_with(horizontal(), diagonal(), options: ix.default_options())
   assert list.length(found) == 1
   let assert [hit] = found
   assert float.absolute_value(hit.left_t -. 0.5) <. 0.000000001
@@ -154,25 +140,8 @@ pub fn elizabeth_transverse_crossing_test() {
 
 pub fn elizabeth_candidate_does_not_finish_coarse_window_test() {
   let options = ix.IntersectionOptions(..ix.default_options(), max_depth: 1)
-  let assert Error(ix.ExperimentalDepthLimit(..)) =
-    ix.experimental_curve_intersections(
-      horizontal(),
-      diagonal(),
-      ix.Elizabeth,
-      options,
-      10_000,
-    )
-}
-
-pub fn elizabeth_window_budget_is_explicit_test() {
-  assert ix.experimental_curve_intersections(
-      horizontal(),
-      diagonal(),
-      ix.Elizabeth,
-      ix.default_options(),
-      0,
-    )
-    == Error(ix.ExperimentalWindowLimit(0))
+  let assert Error(svg_path.IntersectionDepthLimitReached(..)) =
+    ix.segment_with(horizontal(), diagonal(), options: options)
 }
 
 pub fn elizabeth_clustered_crossings_test() {
@@ -189,13 +158,7 @@ pub fn elizabeth_clustered_crossings_test() {
       svg_path.Point(1.0, d +. c +. b +. 1.0),
     )
   let assert Ok(found) =
-    ix.experimental_curve_intersections(
-      curve,
-      horizontal(),
-      ix.Elizabeth,
-      ix.default_options(),
-      1000,
-    )
+    ix.segment_with(curve, horizontal(), options: ix.default_options())
   assert list.length(found) == 3
   list.each([0.2, 0.21, 0.22], fn(t) {
     assert list.any(found, fn(hit) {
@@ -213,32 +176,9 @@ pub fn elizabeth_endpoint_preference_test() {
       svg_path.Point(1.0, 1.0),
     )
   let assert Ok(found) =
-    ix.experimental_curve_intersections(
-      horizontal(),
-      rising,
-      ix.Elizabeth,
-      ix.default_options(),
-      10_000,
-    )
+    ix.segment_with(horizontal(), rising, options: ix.default_options())
   let assert [hit] = found
   assert hit.left_t == 0.0 && hit.right_t == 0.0
-}
-
-pub fn elizabeth_kissing_root_reports_budget_exhaustion_test() {
-  let tangent =
-    svg_path.QuadraticBezier(
-      svg_path.Point(0.0, 0.25),
-      svg_path.Point(0.5, -0.25),
-      svg_path.Point(1.0, 0.25),
-    )
-  let assert Error(ix.ExperimentalWindowLimit(1000)) =
-    ix.experimental_curve_intersections(
-      horizontal(),
-      tangent,
-      ix.Elizabeth,
-      ix.default_options(),
-      1000,
-    )
 }
 
 pub fn elizabeth_kissing_candidates_obey_resolution_contract_test() {
@@ -250,13 +190,7 @@ pub fn elizabeth_kissing_candidates_obey_resolution_contract_test() {
     )
   let flat = horizontal()
   let assert Ok(found) =
-    ix.experimental_curve_intersections(
-      flat,
-      tangent,
-      ix.Elizabeth,
-      ix.default_options(),
-      100_000,
-    )
+    ix.segment_with(flat, tangent, options: ix.default_options())
   assert !list.is_empty(found)
   assert list.any(found, fn(hit) { hit.left_t == 0.5 && hit.right_t == 0.5 })
   list.index_map(found, fn(hit, index) {
@@ -281,61 +215,5 @@ pub fn elizabeth_disjoint_windows_need_no_refinement_test() {
       svg_path.Point(1.0, 1.0),
     )
   let options = ix.IntersectionOptions(..ix.default_options(), max_depth: 1)
-  assert ix.experimental_curve_intersections(
-      horizontal(),
-      other,
-      ix.Elizabeth,
-      options,
-      64,
-    )
-    == Ok([])
-}
-
-pub fn elizabeth_terminal_newton_recovers_strict_translated_candidates_test() {
-  let d = -0.2 *. 0.21 *. 0.22
-  let c = 0.2 *. 0.21 +. 0.2 *. 0.22 +. 0.21 *. 0.22
-  let b = -0.63
-  let curve =
-    svg_path.CubicBezier(
-      svg_path.Point(100.0, 100.0 +. d),
-      svg_path.Point(100.0 +. 1.0 /. 3.0, 100.0 +. { d +. c /. 3.0 }),
-      svg_path.Point(
-        100.0 +. 2.0 /. 3.0,
-        100.0 +. { d +. 2.0 *. c /. 3.0 +. b /. 3.0 },
-      ),
-      svg_path.Point(101.0, 100.0 +. { d +. c +. b +. 1.0 }),
-    )
-  let flat =
-    svg_path.QuadraticBezier(
-      svg_path.Point(100.0, 100.0),
-      svg_path.Point(100.5, 100.0),
-      svg_path.Point(101.0, 100.0),
-    )
-  let options =
-    ix.IntersectionOptions(..ix.default_options(), tolerance: 0.00000000000001)
-  let assert Ok(found) =
-    ix.experimental_curve_intersections(
-      curve,
-      flat,
-      ix.Elizabeth,
-      options,
-      10_000,
-    )
-  // Without terminal Newton corrections none of the terminal seeds qualify.
-  // Two roots are currently recovered; recovery of the third at this strict
-  // threshold remains an explicitly documented experimental limitation.
-  // Alternating Newton with chords between successive iterates also fails to
-  // recover that third root; these checks still require valid residuals.
-  assert list.length(found) >= 2
-  list.each(found, fn(hit) {
-    assert list.any([0.2, 0.21, 0.22], fn(t) {
-      float.absolute_value(hit.left_t -. t) <. 0.0000001
-      && float.absolute_value(hit.right_t -. t) <. 0.0000001
-    })
-    let assert Ok(p) = svg_path.segment_point(curve, hit.left_t)
-    let assert Ok(q) = svg_path.segment_point(flat, hit.right_t)
-    let dx = p.x -. q.x
-    let dy = p.y -. q.y
-    assert dx *. dx +. dy *. dy <=. options.tolerance *. options.tolerance
-  })
+  assert ix.segment_with(horizontal(), other, options: options) == Ok([])
 }

@@ -239,14 +239,7 @@ pub fn elizabeth_terminal_newton_recovers_loop8_arc_crossing_test() {
       ..intersections.default_options(),
       tolerance: 0.0000000000000001,
     )
-  let assert Ok([hit]) =
-    intersections.experimental_curve_intersections(
-      left,
-      right,
-      intersections.Elizabeth,
-      options,
-      1000,
-    )
+  let assert Ok([hit]) = intersections.segment_with(left, right, options:)
   assert hit.left_t >. 0.998 && hit.left_t <. 1.0
   assert hit.right_t >. 0.0 && hit.right_t <. 0.001
   let assert Ok(p) = svg_path.segment_point(left, hit.left_t)

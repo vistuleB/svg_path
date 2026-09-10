@@ -5292,8 +5292,8 @@ fn window_preserving_clamp01(value: Float) -> Float {
 // Chronological solver names: Henry minimizes curve-pair distance; Edward
 // accepts candidates before exhausting windows; Elizabeth refines windows to
 // parameter resolution before collecting candidates. Production uses the
-// breadth-first Elizabeth beam below. This comparison entry point uses the
-// depth-first Elizabeth variant and never falls back.
+// breadth-first Elizabeth beam below. This comparison entry point never
+// falls back.
 @internal
 pub type ExperimentalSolver {
   Henry
@@ -5304,7 +5304,6 @@ pub type ExperimentalSolver {
 @internal
 pub type ExperimentalSolverError {
   ExperimentalPathError(error: svg_path.Error)
-  ExperimentalWindowLimit(limit: Int)
   ExperimentalDepthLimit(
     left_from: Float,
     left_to: Float,
@@ -5315,17 +5314,13 @@ pub type ExperimentalSolverError {
 
 /// Compare curve-pair solvers directly, without analytic Line dispatch,
 /// overlap prechecks, parameter snapping, or fallback. Inputs must not overlap.
-/// Elizabeth uses 1e-9 terminal widths, 1e-7 square deduplication, and geometric
-/// residual at most min(options.tolerance, 1e-12). max_windows limits total
-/// examined windows, not live windows; exhaustion returns an error. This budget
-/// applies only to Elizabeth; Henry and Edward retain their existing limits.
+/// Elizabeth uses the production breadth-first beam and its private budgets.
 @internal
 pub fn experimental_curve_intersections(
   left: Segment,
   right: Segment,
   solver: ExperimentalSolver,
   options: IntersectionOptions,
-  max_windows: Int,
 ) -> Result(List(SegmentIntersection), ExperimentalSolverError) {
   use _ <- result.try(
     validate_options(options) |> result.map_error(ExperimentalPathError),
@@ -5343,7 +5338,8 @@ pub fn experimental_curve_intersections(
       )
       |> result.map_error(ExperimentalPathError)
     Elizabeth ->
-      elizabeth_depth_first_intersections(left, right, options, max_windows)
+      elizabeth_beam_intersections(left, right, options)
+      |> result.map(fn(report) { report.intersections })
   }
 }
 
@@ -5526,13 +5522,7 @@ fn elizabeth_beam_generation(
           {
             True -> {
               use found <- result.try(
-                elizabeth_terminal_candidates_with(
-                  left,
-                  right,
-                  window,
-                  tolerance,
-                  False,
-                )
+                elizabeth_terminal_candidates(left, right, window, tolerance)
                 |> result.map_error(ExperimentalPathError),
               )
               Ok(#(acc.0, list.append(found, acc.1)))
@@ -5790,26 +5780,6 @@ fn elizabeth_window_score(
   Ok(#(option.is_some(crossing), scored.0, scored.1, scored.2))
 }
 
-fn elizabeth_depth_first_intersections(
-  left: Segment,
-  right: Segment,
-  options: IntersectionOptions,
-  max_windows: Int,
-) -> Result(List(SegmentIntersection), ExperimentalSolverError) {
-  let tolerance = float.min(options.tolerance, 0.000000000001)
-  let pending = window_preserving_initial_windows(8, options.max_depth)
-  use candidates <- result.try(elizabeth_search(
-    left,
-    right,
-    tolerance,
-    pending,
-    [],
-    0,
-    max_windows,
-  ))
-  elizabeth_finish_candidates(left, right, candidates)
-}
-
 fn elizabeth_finish_candidates(
   left: Segment,
   right: Segment,
@@ -5990,96 +5960,7 @@ fn elizabeth_endpoint_rank(candidate: SegmentIntersection) -> Int {
   left + right
 }
 
-fn elizabeth_search(
-  left: Segment,
-  right: Segment,
-  tolerance: Float,
-  pending: List(#(WindowPreservingWindow, Int)),
-  candidates: List(SegmentIntersection),
-  examined: Int,
-  max_windows: Int,
-) -> Result(List(SegmentIntersection), ExperimentalSolverError) {
-  case pending {
-    [] -> Ok(candidates)
-    [#(window, depth), ..rest] -> {
-      use _ <- result.try(case examined >= max_windows {
-        True -> Error(ExperimentalWindowLimit(max_windows))
-        False -> Ok(Nil)
-      })
-      // Nonterminal work is enclosure rejection only: no candidate evaluation,
-      // propagation, or candidate-dependent subdivision.
-      use overlapping <- result.try(
-        elizabeth_window_overlaps(left, right, window)
-        |> result.map_error(ExperimentalPathError),
-      )
-      case overlapping {
-        False ->
-          elizabeth_search(
-            left,
-            right,
-            tolerance,
-            rest,
-            candidates,
-            examined + 1,
-            max_windows,
-          )
-        True -> {
-          case
-            window.left_to -. window.left_from
-            <=. elizabeth_parameter_resolution
-            && window.right_to -. window.right_from
-            <=. elizabeth_parameter_resolution
-          {
-            True -> {
-              use found <- result.try(
-                elizabeth_terminal_candidates(left, right, window, tolerance)
-                |> result.map_error(ExperimentalPathError),
-              )
-              elizabeth_search(
-                left,
-                right,
-                tolerance,
-                rest,
-                list.append(found, candidates),
-                examined + 1,
-                max_windows,
-              )
-            }
-            False -> {
-              let children = window_preserving_split_window_nine(window)
-              case depth <= 0 || list.is_empty(children) {
-                True ->
-                  Error(ExperimentalDepthLimit(
-                    window.left_from,
-                    window.left_to,
-                    window.right_from,
-                    window.right_to,
-                  ))
-                False -> {
-                  let pending =
-                    list.fold(children, rest, fn(pending, child) {
-                      [#(child, depth - 1), ..pending]
-                    })
-                  elizabeth_search(
-                    left,
-                    right,
-                    tolerance,
-                    pending,
-                    candidates,
-                    examined + 1,
-                    max_windows,
-                  )
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-// Elizabeth's terminal experiment. Chords give one seed, not an intersection
+// Elizabeth's shared terminal refinement. Chords give one seed, not an intersection
 // certificate. Corners include original endpoint pairs and shared cut points.
 // The tangent-line iteration below never leaves this terminal rectangle.
 fn elizabeth_terminal_candidates(
@@ -6087,16 +5968,6 @@ fn elizabeth_terminal_candidates(
   right: Segment,
   window: WindowPreservingWindow,
   tolerance: Float,
-) -> Result(List(SegmentIntersection), svg_path.Error) {
-  elizabeth_terminal_candidates_with(left, right, window, tolerance, True)
-}
-
-fn elizabeth_terminal_candidates_with(
-  left: Segment,
-  right: Segment,
-  window: WindowPreservingWindow,
-  tolerance: Float,
-  alternating: Bool,
 ) -> Result(List(SegmentIntersection), svg_path.Error) {
   let WindowPreservingWindow(a, b, c, d) = window
   use p <- result.try(svg_path.segment_point(left, a))
@@ -6120,7 +5991,7 @@ fn elizabeth_terminal_candidates_with(
   ]
   use found <- result.try(
     list.try_map(seeds, fn(seed) {
-      use hit <- result.try(elizabeth_terminal_newton(
+      elizabeth_terminal_newton(
         left,
         right,
         window,
@@ -6128,23 +5999,7 @@ fn elizabeth_terminal_candidates_with(
         seed.1,
         tolerance,
         8,
-      ))
-      case hit {
-        Some(_) -> Ok(hit)
-        None if !alternating -> Ok(None)
-        None ->
-          elizabeth_terminal_alternating(
-            left,
-            right,
-            window,
-            seed.0,
-            seed.1,
-            None,
-            False,
-            tolerance,
-            8,
-          )
-      }
+      )
     }),
   )
   Ok(
@@ -6155,78 +6010,6 @@ fn elizabeth_terminal_candidates_with(
       }
     }),
   )
-}
-
-// Experimental second attempt: alternate analytic tangent steps with secants
-// through the current and previous parameter pair. Intersect the chord lines
-// (allow extrapolation), but never accept a step outside the terminal window.
-// A collapsed or parallel chord pair falls back to the analytic tangents.
-fn elizabeth_terminal_alternating(
-  left: Segment,
-  right: Segment,
-  window: WindowPreservingWindow,
-  t: Float,
-  u: Float,
-  previous: Option(#(Float, Float)),
-  use_chords: Bool,
-  tolerance: Float,
-  remaining: Int,
-) -> Result(Option(SegmentIntersection), svg_path.Error) {
-  use p <- result.try(svg_path.segment_point(left, t))
-  use q <- result.try(svg_path.segment_point(right, u))
-  case window_preserving_point_distance(p, q) <=. tolerance {
-    True ->
-      Ok(Some(SegmentIntersection(t, u, window_preserving_midpoint(p, q))))
-    False if remaining <= 0 -> Ok(None)
-    False -> {
-      use v <- result.try(svg_path.segment_derivative(left, t))
-      use w <- result.try(svg_path.segment_derivative(right, u))
-      use directions <- result.try(case previous, use_chords {
-        Some(#(old_t, old_u)), True if old_t != t && old_u != u -> {
-          use old_p <- result.try(svg_path.segment_point(left, old_t))
-          use old_q <- result.try(svg_path.segment_point(right, old_u))
-          let chord_v = point_difference(p, old_p)
-          let chord_w = point_difference(q, old_q)
-          case directions_are_independent(chord_v, chord_w) {
-            True -> Ok(#(chord_v, chord_w, t -. old_t, u -. old_u))
-            False -> Ok(#(v, w, 1.0, 1.0))
-          }
-        }
-        _, _ -> Ok(#(v, w, 1.0, 1.0))
-      })
-      let #(v, w, dt, du) = directions
-      case directions_are_independent(v, w) {
-        False -> Ok(None)
-        True -> {
-          let determinant = cross(v, w)
-          let delta = point_difference(q, p)
-          let next_t = t +. cross(delta, w) /. determinant *. dt
-          let next_u = u -. cross(v, delta) /. determinant *. du
-          case
-            next_t >=. window.left_from
-            && next_t <=. window.left_to
-            && next_u >=. window.right_from
-            && next_u <=. window.right_to
-            && { next_t != t || next_u != u }
-          {
-            False -> Ok(None)
-            True ->
-              elizabeth_terminal_alternating(
-                left,
-                right,
-                window,
-                next_t,
-                next_u,
-                Some(#(t, u)),
-                !use_chords,
-                tolerance,
-                remaining - 1,
-              )
-          }
-        }
-      }
-    }
-  }
 }
 
 fn elizabeth_terminal_newton(
@@ -6298,8 +6081,6 @@ fn curve_curve_intersections(
       |> result.map_error(fn(error) {
         case error {
           ExperimentalPathError(error) -> error
-          ExperimentalWindowLimit(limit) ->
-            IntersectionTerminalWindowLimitExceeded(limit)
           ExperimentalDepthLimit(a, b, c, d) ->
             svg_path.IntersectionDepthLimitReached(a, b, c, d)
         }

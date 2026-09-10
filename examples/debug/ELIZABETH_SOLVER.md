@@ -2,6 +2,21 @@
 
 ## Current production policy
 
+Depth-first Elizabeth has been removed, together with its total-window budget,
+the unused alternating terminal-refinement experiment, and three experiment-only
+tests. Useful crossing, endpoint, kissing, and disjointness cases now exercise
+the public production API, including the 0.20/0.21/0.22 cubic. The comparison
+API retains Henry, Edward, and Elizabeth, but Elizabeth selects the production
+beam and there is no separate `max_windows` argument. Historical depth-first
+trace/sweep programs were removed; their source and recorded experiments remain
+available in Git history (before this removal). Historical text below is kept
+as a research record, not current runnable instructions.
+
+Removal validation: `scripts/test-fast`: 1614 passed, the four existing
+candidate-count failures remain. Focused allocation/cache/diversity checks
+pass. The updated direct comparison finds three clustered crossings with
+Elizabeth and Henry, and one with Edward.
+
 - Generic curve pairs use breadth-first Elizabeth; analytic Line dispatch is
   unchanged. Edward/Henry remain behind a private comparison switch, not an
   automatic fallback from Elizabeth.
