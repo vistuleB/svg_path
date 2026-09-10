@@ -22,8 +22,7 @@ import svg_path.{
   type SubpathSelfIntersection, type SubpathSubpathProjection, Arc, CubicBezier,
   EmptyPath, EmptySubpath, EmptySubpaths,
   InternalOverlapClassificationInconsistency,
-  InternalUncertifiedSegmentIntersection,
-  IntersectionTerminalWindowLimitExceeded, InvalidIntersectionMaxDepth,
+  InternalUncertifiedSegmentIntersection, InvalidIntersectionMaxDepth,
   InvalidIntersectionParameterSnapExponent, InvalidIntersectionTolerance,
   InvalidSelfIntersectionDistanceTolerance,
   InvalidSelfIntersectionMinimumArcLengthSeparation, Line, OverlappingSegments,
@@ -47,8 +46,6 @@ const default_intersection_max_depth = 48
 const parameter_snap_distance_tie_slack = 0.000000000001
 
 const terminal_subdivision_tolerance = 0.01
-
-const maximum_intersection_terminal_windows = 1000
 
 // Squared sine of the smallest angle for which a two-direction solve is
 // treated as numerically independent. Keeping this dimensionless makes the
@@ -4060,17 +4057,6 @@ fn parameter_tolerance_for_chord(direction: Point, tolerance: Float) -> Float {
   }
 }
 
-const window_preserving_maximum_windows = 1000
-
-// Private prototype switch. Both modes retain the cheap bounding-box check;
-// EnclosingPolygons additionally tests convex enclosures when boxes overlap.
-type WindowBounds {
-  BoundingBoxes
-  EnclosingPolygons
-}
-
-const window_bounds = EnclosingPolygons
-
 // The convex hull of these points contains the requested curve portion.
 // Points are not boundary-ordered. For arcs, use the original center
 // parameterization rather than reconstructing an ellipse from cut endpoints.
@@ -4202,35 +4188,6 @@ fn enclosing_projection_interval(
   })
 }
 
-fn window_bounds_overlap(
-  left: Segment,
-  right: Segment,
-  window: WindowPreservingWindow,
-  left_box: BoundingBox,
-  right_box: BoundingBox,
-) -> Result(Bool, svg_path.Error) {
-  case window_preserving_boxes_overlap(left_box, right_box, 0.000000000001) {
-    False -> Ok(False)
-    True ->
-      case window_bounds {
-        BoundingBoxes -> Ok(True)
-        EnclosingPolygons -> {
-          use a <- result.try(segment_enclosing_points(
-            left,
-            window.left_from,
-            window.left_to,
-          ))
-          use b <- result.try(segment_enclosing_points(
-            right,
-            window.right_from,
-            window.right_to,
-          ))
-          Ok(!enclosing_points_disjoint(a, b))
-        }
-      }
-  }
-}
-
 type WindowPreservingWindow {
   WindowPreservingWindow(
     left_from: Float,
@@ -4240,367 +4197,16 @@ type WindowPreservingWindow {
   )
 }
 
-type WindowPreservingSearchState {
-  WindowPreservingSearchState(
-    pending: List(#(WindowPreservingWindow, Int)),
-    intersections: List(svg_path.SegmentIntersection),
-    examined: Int,
-  )
-}
-
 // Find curve intersections while preserving parameter windows. Transverse
 // roots are seeded by chord crossings and refined by tangent-line Newton
 // steps. Nontransverse contacts remain discoverable through exact curve-piece
 // bounding-box subdivision and coincident terminal samples.
-fn edward_curve_intersections(
-  left: svg_path.Segment,
-  right: svg_path.Segment,
-  tolerance tolerance: Float,
-  max_depth max_depth: Int,
-) -> Result(List(svg_path.SegmentIntersection), svg_path.Error) {
-  case left, right {
-    svg_path.Arc(radius: left_radius, ..),
-      svg_path.Arc(radius: right_radius, ..)
-    ->
-      case
-        window_preserving_circular_radius(left_radius)
-        && window_preserving_circular_radius(right_radius)
-      {
-        True ->
-          window_preserving_circular_arc_intersections(left, right, tolerance)
-        False ->
-          window_preserving_windowed_intersections(
-            left,
-            right,
-            tolerance,
-            max_depth,
-          )
-      }
-    _, _ ->
-      window_preserving_windowed_intersections(
-        left,
-        right,
-        tolerance,
-        max_depth,
-      )
-  }
-}
-
-fn window_preserving_windowed_intersections(
-  left: svg_path.Segment,
-  right: svg_path.Segment,
-  tolerance: Float,
-  max_depth: Int,
-) -> Result(List(svg_path.SegmentIntersection), svg_path.Error) {
-  case window_preserving_certified_disjoint_translation(left, right) {
-    True -> Ok([])
-    False ->
-      window_preserving_windowed_intersections_unchecked(
-        left,
-        right,
-        tolerance,
-        max_depth,
-      )
-  }
-}
-
-fn window_preserving_windowed_intersections_unchecked(
-  left: svg_path.Segment,
-  right: svg_path.Segment,
-  tolerance: Float,
-  max_depth: Int,
-) -> Result(List(svg_path.SegmentIntersection), svg_path.Error) {
-  use endpoints <- result.try(window_preserving_endpoint_candidates(
-    left,
-    right,
-    tolerance,
-  ))
-  use crossings <- result.try(window_preserving_sampled_crossing_candidates(
-    left,
-    right,
-    tolerance,
-  ))
-  window_preserving_search(
-    left,
-    right,
-    tolerance,
-    WindowPreservingSearchState(
-      pending: window_preserving_initial_windows(count: 8, depth: max_depth),
-      intersections: list.fold(
-        crossings,
-        endpoints,
-        window_preserving_insert_intersection,
-      ),
-      examined: 0,
-    ),
-  )
-}
 
 // Two identically parameterized Beziers separated by a constant translation
 // cannot meet when their projection perpendicular to that translation is
 // strictly monotone. The derivative-control projections certify monotonicity;
 // this avoids an unbounded strip of overlapping axis-aligned search boxes for
 // close parallel curves.
-fn window_preserving_certified_disjoint_translation(
-  left: svg_path.Segment,
-  right: svg_path.Segment,
-) -> Bool {
-  case
-    window_preserving_bezier_points(left),
-    window_preserving_bezier_points(right)
-  {
-    Some(left_points), Some(right_points) ->
-      case left_points, right_points {
-        [left_start, ..], [right_start, ..] -> {
-          let dx = right_start.x -. left_start.x
-          let dy = right_start.y -. left_start.y
-          let translation_squared = dx *. dx +. dy *. dy
-          translation_squared >. 0.000000000000000000000000000001
-          && window_preserving_translated_points_match(
-            left_points,
-            right_points,
-            dx,
-            dy,
-          )
-          && window_preserving_strictly_monotone_projection(
-            left_points,
-            0.0 -. dy,
-            dx,
-          )
-        }
-        _, _ -> False
-      }
-    _, _ -> False
-  }
-}
-
-fn window_preserving_bezier_points(
-  segment: svg_path.Segment,
-) -> Option(List(svg_path.Point)) {
-  case segment {
-    svg_path.Line(start:, end:) -> Some([start, end])
-    svg_path.QuadraticBezier(start:, control:, end:) ->
-      Some([start, control, end])
-    svg_path.CubicBezier(start:, control1:, control2:, end:) ->
-      Some([start, control1, control2, end])
-    svg_path.Arc(..) -> None
-  }
-}
-
-fn window_preserving_translated_points_match(
-  left: List(svg_path.Point),
-  right: List(svg_path.Point),
-  dx: Float,
-  dy: Float,
-) -> Bool {
-  case left, right {
-    [], [] -> True
-    [left_point, ..left_rest], [right_point, ..right_rest] ->
-      float.absolute_value(right_point.x -. left_point.x -. dx)
-      <=. 0.00000000000001
-      && float.absolute_value(right_point.y -. left_point.y -. dy)
-      <=. 0.00000000000001
-      && window_preserving_translated_points_match(
-        left_rest,
-        right_rest,
-        dx,
-        dy,
-      )
-    _, _ -> False
-  }
-}
-
-fn window_preserving_strictly_monotone_projection(
-  points: List(svg_path.Point),
-  axis_x: Float,
-  axis_y: Float,
-) -> Bool {
-  let projections =
-    window_preserving_consecutive_projection_differences(points, axis_x, axis_y)
-  list.all(projections, fn(value) { value >. 0.000000000000001 })
-  || list.all(projections, fn(value) { value <. -0.000000000000001 })
-}
-
-fn window_preserving_consecutive_projection_differences(
-  points: List(svg_path.Point),
-  axis_x: Float,
-  axis_y: Float,
-) -> List(Float) {
-  case points {
-    [first, second, ..rest] -> [
-      { second.x -. first.x } *. axis_x +. { second.y -. first.y } *. axis_y,
-      ..window_preserving_consecutive_projection_differences(
-        [second, ..rest],
-        axis_x,
-        axis_y,
-      )
-    ]
-    _ -> []
-  }
-}
-
-fn window_preserving_circular_radius(radius: svg_path.Point) -> Bool {
-  float.absolute_value(
-    float.absolute_value(radius.x) -. float.absolute_value(radius.y),
-  )
-  <=. 0.000000000001
-}
-
-fn window_preserving_circular_arc_intersections(
-  left: svg_path.Segment,
-  right: svg_path.Segment,
-  tolerance: Float,
-) -> Result(List(svg_path.SegmentIntersection), svg_path.Error) {
-  let assert svg_path.Arc(
-    start: left_start,
-    radius: left_radius,
-    x_axis_rotation: left_rotation,
-    large_arc: left_large,
-    sweep: left_sweep,
-    end: left_end,
-  ) = left
-  let assert svg_path.Arc(
-    start: right_start,
-    radius: right_radius,
-    x_axis_rotation: right_rotation,
-    large_arc: right_large,
-    sweep: right_sweep,
-    end: right_end,
-  ) = right
-  use left_arc <- result.try(
-    ellipse.endpoint_to_center(ellipse.EndpointArcData(
-      start: ellipse.EllipsePoint(left_start.x, left_start.y),
-      radius: ellipse.EllipsePoint(left_radius.x, left_radius.y),
-      x_axis_rotation: left_rotation,
-      large_arc: left_large,
-      sweep: left_sweep,
-      end: ellipse.EllipsePoint(left_end.x, left_end.y),
-    ))
-    |> result.map_error(fn(_) { svg_path.DegenerateArc }),
-  )
-  use right_arc <- result.try(
-    ellipse.endpoint_to_center(ellipse.EndpointArcData(
-      start: ellipse.EllipsePoint(right_start.x, right_start.y),
-      radius: ellipse.EllipsePoint(right_radius.x, right_radius.y),
-      x_axis_rotation: right_rotation,
-      large_arc: right_large,
-      sweep: right_sweep,
-      end: ellipse.EllipsePoint(right_end.x, right_end.y),
-    ))
-    |> result.map_error(fn(_) { svg_path.DegenerateArc }),
-  )
-  let ellipse.CenterArcData(
-    center: left_center,
-    radius: ellipse.EllipsePoint(x: left_r, ..),
-    start_angle: left_angle,
-    delta_angle: left_delta,
-    ..,
-  ) = left_arc
-  let ellipse.CenterArcData(
-    center: right_center,
-    radius: ellipse.EllipsePoint(x: right_r, ..),
-    start_angle: right_angle,
-    delta_angle: right_delta,
-    ..,
-  ) = right_arc
-  let dx = right_center.x -. left_center.x
-  let dy = right_center.y -. left_center.y
-  let distance_squared = dx *. dx +. dy *. dy
-  let assert Ok(distance) = float.square_root(distance_squared)
-  let radius_difference = float.absolute_value(left_r -. right_r)
-  case distance <=. 0.000000000000001 {
-    // The production caller has already classified true overlaps. Distinct
-    // arcs on the same circle can otherwise meet only at their endpoints.
-    True -> window_preserving_endpoint_candidates(left, right, tolerance)
-    False if distance >. left_r +. right_r +. tolerance -> Ok([])
-    False if distance <. radius_difference -. tolerance -> Ok([])
-    False -> {
-      let along =
-        { left_r *. left_r -. right_r *. right_r +. distance_squared }
-        /. { 2.0 *. distance }
-      let height_squared = left_r *. left_r -. along *. along
-      case height_squared <. 0.0 -. tolerance {
-        True -> Ok([])
-        False -> {
-          let height = case height_squared <=. 0.0 {
-            True -> 0.0
-            False -> {
-              let assert Ok(value) = float.square_root(height_squared)
-              value
-            }
-          }
-          let base_x = left_center.x +. along *. dx /. distance
-          let base_y = left_center.y +. along *. dy /. distance
-          let offset_x = 0.0 -. dy *. height /. distance
-          let offset_y = dx *. height /. distance
-          let candidates = case height <=. tolerance {
-            True -> [svg_path.Point(base_x, base_y)]
-            False -> [
-              svg_path.Point(base_x +. offset_x, base_y +. offset_y),
-              svg_path.Point(base_x -. offset_x, base_y -. offset_y),
-            ]
-          }
-          Ok(
-            list.fold(candidates, [], fn(found, point) {
-              case
-                window_preserving_circular_arc_parameter(
-                  point,
-                  left_center,
-                  left_rotation,
-                  left_angle,
-                  left_delta,
-                ),
-                window_preserving_circular_arc_parameter(
-                  point,
-                  right_center,
-                  right_rotation,
-                  right_angle,
-                  right_delta,
-                )
-              {
-                Some(left_t), Some(right_t) ->
-                  window_preserving_insert_intersection(
-                    found,
-                    svg_path.SegmentIntersection(left_t:, right_t:, point:),
-                  )
-                _, _ -> found
-              }
-            }),
-          )
-        }
-      }
-    }
-  }
-}
-
-fn window_preserving_circular_arc_parameter(
-  point: svg_path.Point,
-  center: ellipse.EllipsePoint,
-  rotation: Float,
-  start_angle: Float,
-  delta_angle: Float,
-) -> Option(Float) {
-  // Even for a circle, the ellipse's start angle uses its rotated local axes.
-  let angle =
-    trig.atan2_degrees(point.y -. center.y, point.x -. center.x) -. rotation
-  let progress = case delta_angle >=. 0.0 {
-    True ->
-      window_preserving_positive_angle_remainder(angle -. start_angle)
-      /. delta_angle
-    False ->
-      window_preserving_positive_angle_remainder(start_angle -. angle)
-      /. { 0.0 -. delta_angle }
-  }
-  case progress >=. -0.000000001 && progress <=. 1.000000001 {
-    True -> Some(window_preserving_clamp01(progress))
-    False -> None
-  }
-}
-
-fn window_preserving_positive_angle_remainder(angle: Float) -> Float {
-  let turns = float.floor(angle /. 360.0)
-  angle -. turns *. 360.0
-}
 
 fn window_preserving_initial_windows(
   count count: Int,
@@ -4623,30 +4229,6 @@ fn window_preserving_initial_windows(
   })
 }
 
-fn window_preserving_sampled_crossing_candidates(
-  left: svg_path.Segment,
-  right: svg_path.Segment,
-  tolerance: Float,
-) -> Result(List(svg_path.SegmentIntersection), svg_path.Error) {
-  let intervals =
-    window_preserving_parameter_intervals(0, count: 16, accumulated: [])
-  use candidates <- result.try(
-    list.try_fold(intervals, [], fn(candidates, left_interval) {
-      list.try_fold(intervals, candidates, fn(candidates, right_interval) {
-        window_preserving_sampled_crossing_candidate(
-          left,
-          right,
-          left_interval,
-          right_interval,
-          tolerance,
-          candidates,
-        )
-      })
-    }),
-  )
-  Ok(candidates)
-}
-
 fn window_preserving_parameter_intervals(
   index: Int,
   count count: Int,
@@ -4663,452 +4245,6 @@ fn window_preserving_parameter_intervals(
       ])
     }
   }
-}
-
-fn window_preserving_sampled_crossing_candidate(
-  left: svg_path.Segment,
-  right: svg_path.Segment,
-  left_interval: #(Float, Float),
-  right_interval: #(Float, Float),
-  tolerance: Float,
-  candidates: List(svg_path.SegmentIntersection),
-) -> Result(List(svg_path.SegmentIntersection), svg_path.Error) {
-  let #(left_from, left_to) = left_interval
-  let #(right_from, right_to) = right_interval
-  use left_start <- result.try(svg_path.segment_point(left, at: left_from))
-  use left_end <- result.try(svg_path.segment_point(left, at: left_to))
-  use right_start <- result.try(svg_path.segment_point(right, at: right_from))
-  use right_end <- result.try(svg_path.segment_point(right, at: right_to))
-  case
-    window_preserving_chord_crossing(
-      left_start,
-      left_end,
-      right_start,
-      right_end,
-    )
-  {
-    None -> Ok(candidates)
-    Some(#(left_local, right_local)) -> {
-      let left_t = window_preserving_interpolate(left_from, left_to, left_local)
-      let right_t =
-        window_preserving_interpolate(right_from, right_to, right_local)
-      use candidate <- result.try(window_preserving_refine_tangent_crossing(
-        left,
-        right,
-        left_t,
-        right_t,
-        tolerance,
-        remaining: 20,
-      ))
-      case candidate {
-        None -> Ok(candidates)
-        Some(candidate) ->
-          Ok(window_preserving_insert_intersection(candidates, candidate))
-      }
-    }
-  }
-}
-
-fn window_preserving_refine_tangent_crossing(
-  left: svg_path.Segment,
-  right: svg_path.Segment,
-  left_t: Float,
-  right_t: Float,
-  tolerance: Float,
-  remaining remaining: Int,
-) -> Result(Option(svg_path.SegmentIntersection), svg_path.Error) {
-  use left_point <- result.try(svg_path.segment_point(left, at: left_t))
-  use right_point <- result.try(svg_path.segment_point(right, at: right_t))
-  case window_preserving_point_distance(left_point, right_point) <=. tolerance {
-    True ->
-      Ok(
-        Some(svg_path.SegmentIntersection(
-          left_t:,
-          right_t:,
-          point: window_preserving_midpoint(left_point, right_point),
-        )),
-      )
-    False if remaining <= 0 -> Ok(None)
-    False -> {
-      use left_direction <- result.try(svg_path.segment_derivative(
-        left,
-        at: left_t,
-      ))
-      use right_direction <- result.try(svg_path.segment_derivative(
-        right,
-        at: right_t,
-      ))
-      let denominator =
-        window_preserving_cross(
-          left_direction.x,
-          left_direction.y,
-          right_direction.x,
-          right_direction.y,
-        )
-      case directions_are_independent(left_direction, right_direction) {
-        False -> Ok(None)
-        True -> {
-          let dx = right_point.x -. left_point.x
-          let dy = right_point.y -. left_point.y
-          let left_step =
-            window_preserving_cross(
-              dx,
-              dy,
-              right_direction.x,
-              right_direction.y,
-            )
-            /. denominator
-          let right_step =
-            0.0
-            -. window_preserving_cross(
-              left_direction.x,
-              left_direction.y,
-              dx,
-              dy,
-            )
-            /. denominator
-          let next_left = left_t +. left_step
-          let next_right = right_t +. right_step
-          case
-            window_preserving_inside01(next_left)
-            && window_preserving_inside01(next_right)
-          {
-            False -> Ok(None)
-            True ->
-              window_preserving_refine_tangent_crossing(
-                left,
-                right,
-                window_preserving_clamp01(next_left),
-                window_preserving_clamp01(next_right),
-                tolerance,
-                remaining: remaining - 1,
-              )
-          }
-        }
-      }
-    }
-  }
-}
-
-fn window_preserving_search(
-  left: svg_path.Segment,
-  right: svg_path.Segment,
-  tolerance: Float,
-  state: WindowPreservingSearchState,
-) -> Result(List(svg_path.SegmentIntersection), svg_path.Error) {
-  let WindowPreservingSearchState(pending:, intersections:, examined:) = state
-  case pending {
-    [] -> Ok(list.reverse(intersections))
-    [#(window, depth), ..rest] -> {
-      case window_preserving_window_already_resolved(window, intersections) {
-        True ->
-          window_preserving_search(
-            left,
-            right,
-            tolerance,
-            WindowPreservingSearchState(
-              pending: rest,
-              intersections:,
-              examined:,
-            ),
-          )
-        False ->
-          case examined >= window_preserving_maximum_windows {
-            True ->
-              Error(svg_path.IntersectionTerminalWindowLimitExceeded(
-                window_preserving_maximum_windows,
-              ))
-            False -> {
-              use decision <- result.try(window_preserving_inspect_window(
-                left,
-                right,
-                window,
-                tolerance,
-              ))
-              case decision {
-                Disjoint ->
-                  window_preserving_search(
-                    left,
-                    right,
-                    tolerance,
-                    WindowPreservingSearchState(
-                      pending: rest,
-                      intersections:,
-                      examined: examined + 1,
-                    ),
-                  )
-                Candidate(candidate) -> {
-                  let intersections =
-                    window_preserving_insert_intersection(
-                      intersections,
-                      candidate,
-                    )
-                  window_preserving_search(
-                    left,
-                    right,
-                    tolerance,
-                    WindowPreservingSearchState(
-                      pending: rest,
-                      intersections:,
-                      examined: examined + 1,
-                    ),
-                  )
-                }
-                Refine -> {
-                  case depth <= 0 {
-                    True ->
-                      window_preserving_search(
-                        left,
-                        right,
-                        tolerance,
-                        WindowPreservingSearchState(
-                          pending: rest,
-                          intersections:,
-                          examined: examined + 1,
-                        ),
-                      )
-                    False -> {
-                      let children = window_preserving_split_window_nine(window)
-                      let pending =
-                        list.fold(children, rest, fn(pending, child) {
-                          [#(child, depth - 1), ..pending]
-                        })
-                      window_preserving_search(
-                        left,
-                        right,
-                        tolerance,
-                        WindowPreservingSearchState(
-                          pending:,
-                          intersections:,
-                          examined: examined + 1,
-                        ),
-                      )
-                    }
-                  }
-                }
-              }
-            }
-          }
-      }
-    }
-  }
-}
-
-fn window_preserving_window_already_resolved(
-  window: WindowPreservingWindow,
-  intersections: List(svg_path.SegmentIntersection),
-) -> Bool {
-  let WindowPreservingWindow(left_from:, left_to:, right_from:, right_to:) =
-    window
-  let left_width = left_to -. left_from
-  let right_width = right_to -. right_from
-  left_width <=. 0.125
-  && right_width <=. 0.125
-  && list.any(intersections, fn(intersection) {
-    window_preserving_parameter_near_interval(
-      intersection.left_t,
-      left_from,
-      left_to,
-      left_width *. 2.0,
-    )
-    && window_preserving_parameter_near_interval(
-      intersection.right_t,
-      right_from,
-      right_to,
-      right_width *. 2.0,
-    )
-  })
-}
-
-fn window_preserving_parameter_near_interval(
-  parameter: Float,
-  from: Float,
-  to: Float,
-  margin: Float,
-) -> Bool {
-  parameter >=. from -. margin && parameter <=. to +. margin
-}
-
-type WindowPreservingDecision {
-  Disjoint
-  Candidate(svg_path.SegmentIntersection)
-  Refine
-}
-
-fn window_preserving_inspect_window(
-  left: svg_path.Segment,
-  right: svg_path.Segment,
-  window: WindowPreservingWindow,
-  tolerance: Float,
-) -> Result(WindowPreservingDecision, svg_path.Error) {
-  let WindowPreservingWindow(left_from:, left_to:, right_from:, right_to:) =
-    window
-  use left_box <- result.try(window_segment_bounding_box(
-    left,
-    left_from,
-    left_to,
-  ))
-  use right_box <- result.try(window_segment_bounding_box(
-    right,
-    right_from,
-    right_to,
-  ))
-  // Bounding boxes are an enclosure test, not a coincidence test. Expanding
-  // them by the geometric certification tolerance creates a two-dimensional
-  // band of surviving windows around a tangency.
-  // Exact extrema formulas still incur floating-point rounding when two boxes
-  // merely touch at a tangency. This fixed enclosure slack is independent of
-  // the caller's geometric coincidence tolerance.
-  use overlapping <- result.try(window_bounds_overlap(
-    left,
-    right,
-    window,
-    left_box,
-    right_box,
-  ))
-  case overlapping {
-    False -> Ok(Disjoint)
-    True -> {
-      use left_start <- result.try(svg_path.segment_point(left, at: left_from))
-      use left_end <- result.try(svg_path.segment_point(left, at: left_to))
-      use right_start <- result.try(svg_path.segment_point(
-        right,
-        at: right_from,
-      ))
-      use right_end <- result.try(svg_path.segment_point(right, at: right_to))
-      let center_left_t = { left_from +. left_to } /. 2.0
-      let center_right_t = { right_from +. right_to } /. 2.0
-      use center_left <- result.try(svg_path.segment_point(
-        left,
-        at: center_left_t,
-      ))
-      use center_right <- result.try(svg_path.segment_point(
-        right,
-        at: center_right_t,
-      ))
-      // A center sample is evidence for a nontransverse contact only when it
-      // is effectively coincident. The caller's looser geometric tolerance
-      // must not turn an arbitrary close approach into a tangency.
-      case
-        window_preserving_point_distance(center_left, center_right)
-        <=. float.min(tolerance, 0.000000000001)
-      {
-        True ->
-          Ok(
-            Candidate(svg_path.SegmentIntersection(
-              left_t: center_left_t,
-              right_t: center_right_t,
-              point: window_preserving_midpoint(center_left, center_right),
-            )),
-          )
-        False -> {
-          let #(local_left, local_right) = case
-            window_preserving_chord_crossing(
-              left_start,
-              left_end,
-              right_start,
-              right_end,
-            )
-          {
-            Some(parameters) -> parameters
-            None ->
-              window_preserving_chord_closest_parameters(
-                left_start,
-                left_end,
-                right_start,
-                right_end,
-              )
-          }
-          let left_t =
-            window_preserving_interpolate(left_from, left_to, local_left)
-          let right_t =
-            window_preserving_interpolate(right_from, right_to, local_right)
-          use left_point <- result.try(svg_path.segment_point(left, at: left_t))
-          use right_point <- result.try(svg_path.segment_point(
-            right,
-            at: right_t,
-          ))
-          case
-            window_preserving_point_distance(left_point, right_point)
-            <=. tolerance
-          {
-            True ->
-              Ok(
-                Candidate(svg_path.SegmentIntersection(
-                  left_t:,
-                  right_t:,
-                  point: window_preserving_midpoint(left_point, right_point),
-                )),
-              )
-            False -> Ok(Refine)
-          }
-        }
-      }
-    }
-  }
-}
-
-fn window_segment_bounding_box(
-  segment: Segment,
-  from: Float,
-  to: Float,
-) -> Result(BoundingBox, svg_path.Error) {
-  case segment {
-    Arc(..) -> {
-      // Do not round-trip a short arc portion through endpoint encoding:
-      // distinct parameters can produce identical rounded endpoints. These
-      // enclosures evaluate the original ellipse and remain meaningful there.
-      use points <- result.try(segment_enclosing_points(segment, from, to))
-      let assert [first, ..rest] = points
-      Ok(
-        list.fold(rest, svg_path.BoundingBox(first, first), fn(box, p) {
-          svg_path.BoundingBox(
-            Point(float.min(box.min.x, p.x), float.min(box.min.y, p.y)),
-            Point(float.max(box.max.x, p.x), float.max(box.max.y, p.y)),
-          )
-        }),
-      )
-    }
-    _ -> {
-      use piece <- result.try(svg_path.segment_between(segment, from, to))
-      svg_path.segment_bounding_box(piece)
-    }
-  }
-}
-
-fn window_preserving_endpoint_candidates(
-  left: svg_path.Segment,
-  right: svg_path.Segment,
-  tolerance: Float,
-) -> Result(List(svg_path.SegmentIntersection), svg_path.Error) {
-  use left_start <- result.try(svg_path.segment_point(left, at: 0.0))
-  use left_end <- result.try(svg_path.segment_point(left, at: 1.0))
-  use right_start <- result.try(svg_path.segment_point(right, at: 0.0))
-  use right_end <- result.try(svg_path.segment_point(right, at: 1.0))
-  Ok(
-    [
-      #(0.0, 0.0, left_start, right_start),
-      #(0.0, 1.0, left_start, right_end),
-      #(1.0, 0.0, left_end, right_start),
-      #(1.0, 1.0, left_end, right_end),
-    ]
-    |> list.fold([], fn(candidates, candidate) {
-      let #(left_t, right_t, left_point, right_point) = candidate
-      case
-        window_preserving_point_distance(left_point, right_point) <=. tolerance
-      {
-        False -> candidates
-        True -> [
-          svg_path.SegmentIntersection(
-            left_t:,
-            right_t:,
-            point: window_preserving_midpoint(left_point, right_point),
-          ),
-          ..candidates
-        ]
-      }
-    }),
-  )
 }
 
 fn window_preserving_chord_closest_parameters(
@@ -5229,35 +4365,6 @@ fn window_preserving_split_window_nine(
   })
 }
 
-fn window_preserving_insert_intersection(
-  intersections: List(svg_path.SegmentIntersection),
-  candidate: svg_path.SegmentIntersection,
-) -> List(svg_path.SegmentIntersection) {
-  case
-    list.any(intersections, fn(existing) {
-      float.absolute_value(existing.left_t -. candidate.left_t) <=. 0.0000001
-      && float.absolute_value(existing.right_t -. candidate.right_t)
-      <=. 0.0000001
-    })
-  {
-    True -> intersections
-    False -> [candidate, ..intersections]
-  }
-}
-
-fn window_preserving_boxes_overlap(
-  left: svg_path.BoundingBox,
-  right: svg_path.BoundingBox,
-  tolerance: Float,
-) -> Bool {
-  !{
-    left.max.x +. tolerance <. right.min.x
-    || right.max.x +. tolerance <. left.min.x
-    || left.max.y +. tolerance <. right.min.y
-    || right.max.y +. tolerance <. left.min.y
-  }
-}
-
 fn window_preserving_point_distance(
   left: svg_path.Point,
   right: svg_path.Point,
@@ -5289,58 +4396,16 @@ fn window_preserving_clamp01(value: Float) -> Float {
   float.max(0.0, float.min(1.0, value))
 }
 
-// Chronological solver names: Henry minimizes curve-pair distance; Edward
-// accepts candidates before exhausting windows; Elizabeth refines windows to
-// parameter resolution before collecting candidates. Production uses the
-// breadth-first Elizabeth beam below. This comparison entry point never
-// falls back.
+// Errors from the bounded production curve-pair solver.
 @internal
-pub type ExperimentalSolver {
-  Henry
-  Edward
-  Elizabeth
-}
-
-@internal
-pub type ExperimentalSolverError {
-  ExperimentalPathError(error: svg_path.Error)
-  ExperimentalDepthLimit(
+pub type CurveSolverError {
+  CurveSolverPathError(error: svg_path.Error)
+  CurveSolverDepthLimit(
     left_from: Float,
     left_to: Float,
     right_from: Float,
     right_to: Float,
   )
-}
-
-/// Compare curve-pair solvers directly, without analytic Line dispatch,
-/// overlap prechecks, parameter snapping, or fallback. Inputs must not overlap.
-/// Elizabeth uses the production breadth-first beam and its private budgets.
-@internal
-pub fn experimental_curve_intersections(
-  left: Segment,
-  right: Segment,
-  solver: ExperimentalSolver,
-  options: IntersectionOptions,
-) -> Result(List(SegmentIntersection), ExperimentalSolverError) {
-  use _ <- result.try(
-    validate_options(options) |> result.map_error(ExperimentalPathError),
-  )
-  case solver {
-    Henry ->
-      henry_curve_intersections(left, right, options)
-      |> result.map_error(ExperimentalPathError)
-    Edward ->
-      edward_curve_intersections(
-        left,
-        right,
-        options.tolerance,
-        options.max_depth,
-      )
-      |> result.map_error(ExperimentalPathError)
-    Elizabeth ->
-      elizabeth_beam_intersections(left, right, options)
-      |> result.map(fn(report) { report.intersections })
-  }
 }
 
 const elizabeth_parameter_resolution = 0.000000001
@@ -5371,14 +4436,14 @@ pub fn elizabeth_beam_intersections(
   left: Segment,
   right: Segment,
   options: IntersectionOptions,
-) -> Result(ElizabethBeamReport, ExperimentalSolverError) {
+) -> Result(ElizabethBeamReport, CurveSolverError) {
   use _ <- result.try(
-    validate_options(options) |> result.map_error(ExperimentalPathError),
+    validate_options(options) |> result.map_error(CurveSolverPathError),
   )
   let tolerance = float.min(options.tolerance, 0.0000000000001)
   use endpoints <- result.try(
     elizabeth_endpoint_candidates(left, right, tolerance)
-    |> result.map_error(ExperimentalPathError),
+    |> result.map_error(CurveSolverPathError),
   )
   elizabeth_beam_generation(
     left,
@@ -5456,7 +4521,7 @@ fn elizabeth_beam_generation(
   generation: Int,
   decay_start: Option(Int),
   cache: ElizabethEvaluationCache,
-) -> Result(ElizabethBeamReport, ExperimentalSolverError) {
+) -> Result(ElizabethBeamReport, CurveSolverError) {
   case pending {
     [] -> {
       use intersections <- result.try(elizabeth_finish_candidates(
@@ -5489,7 +4554,7 @@ fn elizabeth_beam_generation(
           ))
           Ok(#(item, overlaps))
         })
-        |> result.map_error(ExperimentalPathError),
+        |> result.map_error(CurveSolverPathError),
       )
       let survivors =
         overlapping |> list.filter(fn(x) { x.1 }) |> list.map(fn(x) { x.0 })
@@ -5523,7 +4588,7 @@ fn elizabeth_beam_generation(
             True -> {
               use found <- result.try(
                 elizabeth_terminal_candidates(left, right, window, tolerance)
-                |> result.map_error(ExperimentalPathError),
+                |> result.map_error(CurveSolverPathError),
               )
               Ok(#(acc.0, list.append(found, acc.1)))
             }
@@ -5531,7 +4596,7 @@ fn elizabeth_beam_generation(
               let children = window_preserving_split_window_nine(window)
               case depth <= 0 || list.is_empty(children) {
                 True ->
-                  Error(ExperimentalDepthLimit(
+                  Error(CurveSolverDepthLimit(
                     window.left_from,
                     window.left_to,
                     window.right_from,
@@ -5615,7 +4680,7 @@ fn elizabeth_beam_select(
   cache: ElizabethEvaluationCache,
 ) -> Result(
   #(List(#(WindowPreservingWindow, Int)), Int, Int, ElizabethEvaluationCache),
-  ExperimentalSolverError,
+  CurveSolverError,
 ) {
   let #(crossing_budget, other_budget) = budget
   let total_budget = crossing_budget + other_budget
@@ -5632,7 +4697,7 @@ fn elizabeth_beam_select(
           ))
           Ok(#([#(item, score.0, score.1, score.3), ..acc.0], score.2))
         })
-        |> result.map_error(ExperimentalPathError),
+        |> result.map_error(CurveSolverPathError),
       )
       let ranked =
         list.sort(list.reverse(scored.0), fn(a, b) {
@@ -5784,7 +4849,7 @@ fn elizabeth_finish_candidates(
   left: Segment,
   right: Segment,
   candidates: List(SegmentIntersection),
-) -> Result(List(SegmentIntersection), ExperimentalSolverError) {
+) -> Result(List(SegmentIntersection), CurveSolverError) {
   // Sort first; never move a retained representative after discarding its
   // neighbors. This guarantees coverage of every discarded candidate.
   use ranked <- result.try(elizabeth_rank_candidates(left, right, candidates))
@@ -5834,7 +4899,7 @@ fn elizabeth_select_candidates(
   left: Segment,
   right: Segment,
   candidates: List(SegmentIntersection),
-) -> Result(List(SegmentIntersection), ExperimentalSolverError) {
+) -> Result(List(SegmentIntersection), CurveSolverError) {
   use ranked <- result.try(elizabeth_rank_candidates(left, right, candidates))
   let limit =
     elizabeth_intersection_degree(left) * elizabeth_intersection_degree(right)
@@ -5914,16 +4979,16 @@ fn elizabeth_rank_candidates(
   left: Segment,
   right: Segment,
   candidates: List(SegmentIntersection),
-) -> Result(List(SegmentIntersection), ExperimentalSolverError) {
+) -> Result(List(SegmentIntersection), CurveSolverError) {
   use ranked <- result.try(
     list.try_map(candidates, fn(candidate) {
       use a <- result.try(
         svg_path.segment_point(left, candidate.left_t)
-        |> result.map_error(ExperimentalPathError),
+        |> result.map_error(CurveSolverPathError),
       )
       use b <- result.try(
         svg_path.segment_point(right, candidate.right_t)
-        |> result.map_error(ExperimentalPathError),
+        |> result.map_error(CurveSolverPathError),
       )
       Ok(#(candidate, window_preserving_point_distance(a, b)))
     }),
@@ -6064,90 +5129,20 @@ fn elizabeth_terminal_newton(
   }
 }
 
-// Production defaults to Elizabeth. Retain the old route for diagnostics and
-// comparative benchmarks, but do not silently fall back on Elizabeth errors.
-const use_elizabeth_beam = True
-
 fn curve_curve_intersections(
   left: Segment,
   right: Segment,
   options: IntersectionOptions,
 ) -> Result(List(SegmentIntersection), svg_path.Error) {
-  case use_elizabeth_beam {
-    False -> edward_then_henry_intersections(left, right, options)
-    True ->
-      elizabeth_beam_intersections(left, right, options)
-      |> result.map(fn(report) { report.intersections })
-      |> result.map_error(fn(error) {
-        case error {
-          ExperimentalPathError(error) -> error
-          ExperimentalDepthLimit(a, b, c, d) ->
-            svg_path.IntersectionDepthLimitReached(a, b, c, d)
-        }
-      })
-  }
-}
-
-fn edward_then_henry_intersections(
-  left: Segment,
-  right: Segment,
-  options: IntersectionOptions,
-) -> Result(List(SegmentIntersection), svg_path.Error) {
-  case
-    edward_curve_intersections(
-      left,
-      right,
-      tolerance: options.tolerance,
-      max_depth: options.max_depth,
-    )
-  {
-    Error(IntersectionTerminalWindowLimitExceeded(_)) ->
-      henry_curve_intersections(left, right, options)
-    result -> result
-  }
-}
-
-fn henry_curve_intersections(
-  left: Segment,
-  right: Segment,
-  options: IntersectionOptions,
-) -> Result(List(SegmentIntersection), svg_path.Error) {
-  use minima <- result.try(segment_pair_intersection_minima(
-    left,
-    right,
-    options,
-  ))
-  segment_intersections_from_minima(
-    left,
-    right,
-    minima,
-    tolerance: options.tolerance,
-    intersections: [],
-  )
-}
-
-fn segment_pair_intersection_minima(
-  left: Segment,
-  right: Segment,
-  options: IntersectionOptions,
-) -> Result(List(DistanceMinimum), svg_path.Error) {
-  use boundary_minima <- result.try(boundary_edge_minima(left, right, options))
-  use raw_terminal_windows <- result.try(
-    collect_intersection_terminal_windows(
-      IntersectionPiece(segment: left, from: 0.0, to: 1.0),
-      IntersectionPiece(segment: right, from: 0.0, to: 1.0),
-      options,
-      remaining_depth: options.max_depth,
-      windows: [],
-    ),
-  )
-  let terminal_windows =
-    number_terminal_windows(list.reverse(raw_terminal_windows), next_id: 0)
-  use terminal_minima <- result.try(minima_from_terminal_windows(
-    terminal_windows,
-    finish_tolerance: options.tolerance,
-  ))
-  Ok(list.append(boundary_minima, terminal_minima))
+  elizabeth_beam_intersections(left, right, options)
+  |> result.map(fn(report) { report.intersections })
+  |> result.map_error(fn(error) {
+    case error {
+      CurveSolverPathError(error) -> error
+      CurveSolverDepthLimit(a, b, c, d) ->
+        svg_path.IntersectionDepthLimitReached(a, b, c, d)
+    }
+  })
 }
 
 fn segment_pair_projection_minima(
@@ -6270,104 +5265,6 @@ fn boundary_edge_intersections_for_right(
   ))
   let svg_path.SegmentProjection(t: left_t, distance:, ..) = projection
   boundary_edge_minimum(left_t, right_t, distance:, minima:)
-}
-
-fn collect_intersection_terminal_windows(
-  left: IntersectionPiece,
-  right: IntersectionPiece,
-  options: IntersectionOptions,
-  remaining_depth remaining_depth: Int,
-  windows windows: List(RawTerminalWindow),
-) -> Result(List(RawTerminalWindow), svg_path.Error) {
-  case
-    intersection_piece_bounding_box(left),
-    intersection_piece_bounding_box(right)
-  {
-    Error(error), _ | _, Error(error) -> Error(error)
-    Ok(left_box), Ok(right_box) -> {
-      case boxes_overlap(left_box, right_box, options.tolerance) {
-        False -> Ok(windows)
-        True -> {
-          case
-            remaining_depth <= 0
-            || {
-              svg_path.bounding_box_diameter(left_box)
-              <=. terminal_subdivision_tolerance
-              && svg_path.bounding_box_diameter(right_box)
-              <=. terminal_subdivision_tolerance
-            }
-          {
-            True -> add_intersection_terminal_window_grid(left, right, windows)
-            False -> {
-              let split_left =
-                svg_path.bounding_box_diameter(left_box)
-                >=. svg_path.bounding_box_diameter(right_box)
-
-              case split_left {
-                True -> {
-                  let #(first, second) = split_intersection_piece(left)
-
-                  use windows <- result.try(
-                    collect_intersection_terminal_windows(
-                      first,
-                      right,
-                      options,
-                      remaining_depth: remaining_depth - 1,
-                      windows:,
-                    ),
-                  )
-                  collect_intersection_terminal_windows(
-                    second,
-                    right,
-                    options,
-                    remaining_depth: remaining_depth - 1,
-                    windows:,
-                  )
-                }
-                False -> {
-                  let #(first, second) = split_intersection_piece(right)
-
-                  use windows <- result.try(
-                    collect_intersection_terminal_windows(
-                      left,
-                      first,
-                      options,
-                      remaining_depth: remaining_depth - 1,
-                      windows:,
-                    ),
-                  )
-                  collect_intersection_terminal_windows(
-                    left,
-                    second,
-                    options,
-                    remaining_depth: remaining_depth - 1,
-                    windows:,
-                  )
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-fn add_intersection_terminal_window_grid(
-  left: IntersectionPiece,
-  right: IntersectionPiece,
-  windows: List(RawTerminalWindow),
-) -> Result(List(RawTerminalWindow), svg_path.Error) {
-  // Every terminal pair contributes a fixed 3x3 grid. Check before allocating
-  // it so pathological near-coincident pairs cannot grow the search without a
-  // deterministic bound.
-  case list.length(windows) + 9 > maximum_intersection_terminal_windows {
-    True ->
-      Error(IntersectionTerminalWindowLimitExceeded(
-        maximum_intersection_terminal_windows,
-      ))
-    False -> Ok(add_terminal_window_grid(left, right, windows))
-  }
 }
 
 fn collect_projection_terminal_windows(
@@ -7124,54 +6021,6 @@ fn window_minima(
   }
 }
 
-fn segment_intersections_from_minima(
-  left: Segment,
-  right: Segment,
-  minima: List(DistanceMinimum),
-  tolerance tolerance: Float,
-  intersections intersections: List(SegmentIntersection),
-) -> Result(List(SegmentIntersection), svg_path.Error) {
-  case minima {
-    [] -> Ok(intersections)
-    [minimum, ..rest] -> {
-      let DistanceMinimum(
-        left_t: left_global_t,
-        right_t: right_global_t,
-        distance_squared:,
-      ) = minimum
-      case distance_squared <=. tolerance *. tolerance {
-        False ->
-          segment_intersections_from_minima(
-            left,
-            right,
-            rest,
-            tolerance:,
-            intersections:,
-          )
-        True -> {
-          use found <- result.try(segment_intersection_from_minimum(
-            left,
-            right,
-            left_global_t,
-            right_global_t,
-          ))
-          segment_intersections_from_minima(
-            left,
-            right,
-            rest,
-            tolerance:,
-            intersections: insert_intersections(
-              intersections,
-              found,
-              parameter_tolerance: intersection_parameter_dedupe_tolerance,
-            ),
-          )
-        }
-      }
-    }
-  }
-}
-
 fn finished_minima(
   descents: List(DescentRecord),
   minima minima: List(DistanceMinimum),
@@ -7286,28 +6135,6 @@ fn split_intersection_piece(
     IntersectionPiece(segment: piece.segment, from: piece.from, to: middle),
     IntersectionPiece(segment: piece.segment, from: middle, to: piece.to),
   )
-}
-
-fn segment_intersection_from_minimum(
-  left: Segment,
-  right: Segment,
-  left_global_t: Float,
-  right_global_t: Float,
-) -> Result(List(SegmentIntersection), svg_path.Error) {
-  case
-    svg_path.segment_point(left, at: left_global_t),
-    svg_path.segment_point(right, at: right_global_t)
-  {
-    Error(error), _ | _, Error(error) -> Error(error)
-    Ok(left_point), Ok(right_point) ->
-      Ok([
-        SegmentIntersection(
-          left_t: left_global_t,
-          right_t: right_global_t,
-          point: midpoint(left_point, right_point),
-        ),
-      ])
-  }
 }
 
 fn boxes_overlap(
@@ -7443,16 +6270,6 @@ fn endpoint_parameter_score(intersection: SegmentIntersection) -> Float {
 
 fn endpoint_distance_in_parameter(t: Float) -> Float {
   float.min(float.absolute_value(t), float.absolute_value(1.0 -. t))
-}
-
-fn insert_intersections(
-  intersections: List(SegmentIntersection),
-  new_intersections: List(SegmentIntersection),
-  parameter_tolerance parameter_tolerance: Float,
-) -> List(SegmentIntersection) {
-  list.fold(new_intersections, intersections, fn(intersections, intersection) {
-    insert_intersection(intersections, intersection, parameter_tolerance:)
-  })
 }
 
 const intersection_parameter_dedupe_tolerance = 0.000000001

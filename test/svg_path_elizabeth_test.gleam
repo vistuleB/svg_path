@@ -53,7 +53,7 @@ pub fn elizabeth_beam_simple_crossing_needs_no_culling_test() {
 
 pub fn elizabeth_beam_still_reports_depth_exhaustion_test() {
   let options = ix.IntersectionOptions(..ix.default_options(), max_depth: 1)
-  let assert Error(ix.ExperimentalDepthLimit(..)) =
+  let assert Error(ix.CurveSolverDepthLimit(..)) =
     ix.elizabeth_beam_intersections(horizontal(), diagonal(), options)
 }
 

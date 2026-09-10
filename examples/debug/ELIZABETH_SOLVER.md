@@ -2,6 +2,13 @@
 
 ## Current production policy
 
+The Edward/Henry intersection comparison entry points and fixed production
+selector have now been removed. Projection still uses shared distance-descent
+machinery. Elizabeth's internal errors are named `CurveSolverError`; diagnostic
+beam counts remain available through `elizabeth_beam_intersections`. The old
+solver/enclosure comparison scripts were removed with their dependencies and
+remain recoverable from Git. Comparisons recorded below are historical.
+
 Depth-first Elizabeth has been removed, together with its total-window budget,
 the unused alternating terminal-refinement experiment, and three experiment-only
 tests. Useful crossing, endpoint, kissing, and disjointness cases now exercise
