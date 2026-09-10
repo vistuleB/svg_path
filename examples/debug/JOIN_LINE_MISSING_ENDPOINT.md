@@ -1,5 +1,26 @@
 # Join/line shared endpoint omitted by intersection solver
 
+## Fix verification
+
+The missing stored endpoint is now included by
+`intersections.line_segment_intersections_by_ray`: independently project both
+curve endpoints onto the finite line and retain matches within the caller's
+geometric tolerance, then combine with analytic roots using the existing
+endpoint-preferring parameter deduplication. No tolerance was increased.
+
+`near_tangent_arc_line_keeps_exact_stored_endpoint_test` failed before the fix
+and now checks both argument orders and both traversal directions of each
+segment. `scripts/test-fast` passes **1,606 tests**.
+
+The saved reproducer now returns both the previous near-endpoint candidate
+and the exact `(1, 0)` address. The nearby candidate is deliberately not removed:
+its geometric residual passes tolerance, and these parameter pairs are not
+duplicates under the existing parameter tolerance. Determining whether it
+represents a second true intersection remains separate from restoring the
+missing exact endpoint. The analytic ray-crossing primitive itself is unchanged.
+
+## Original reproduction and investigation
+
 Captured from the isolated recursive-dash stroke, outer offset +3, before caps.
 The exact source segments and intersection options are in
 `join_line_missing_endpoint.term`. This fixture does not need gallery generation.

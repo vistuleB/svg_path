@@ -3847,7 +3847,7 @@ fn line_segment_intersections(
             False ->
               line_segment_intersections_by_ray(
                 line_start,
-                line_direction,
+                line_end,
                 line_is_left,
                 segment,
                 options,
@@ -3858,7 +3858,7 @@ fn line_segment_intersections(
         _ ->
           line_segment_intersections_by_ray(
             line_start,
-            line_direction,
+            line_end,
             line_is_left,
             segment,
             options,
@@ -3871,12 +3871,37 @@ fn line_segment_intersections(
 
 fn line_segment_intersections_by_ray(
   line_start: Point,
-  line_direction: Point,
+  line_end: Point,
   line_is_left: Bool,
   segment: Segment,
   options: IntersectionOptions,
   line_parameter_tolerance: Float,
 ) -> Result(List(SegmentIntersection), svg_path.Error) {
+  let line_direction = point_difference(line_end, line_start)
+  // Analytic arc roots use reconstructed center/angle data. Near tangency,
+  // roundoff can move an exact stored endpoint root outside the arc sweep.
+  // Independently check both stored endpoints against the finite line. Keep
+  // normal root candidates too: proximity alone does not prove duplication.
+  let endpoints =
+    [
+      #(0.0, svg_path.segment_start(segment)),
+      #(1.0, svg_path.segment_end(segment)),
+    ]
+    |> list.filter_map(fn(endpoint) {
+      let #(segment_t, p) = endpoint
+      let line_t = line_projection_t(p, line_start, line_end) |> clamp01
+      let projected = interpolate(line_start, line_end, line_t)
+      case distance(p, projected) <=. options.tolerance {
+        False -> Error(Nil)
+        True ->
+          Ok(case line_is_left {
+            True ->
+              SegmentIntersection(left_t: line_t, right_t: segment_t, point: p)
+            False ->
+              SegmentIntersection(left_t: segment_t, right_t: line_t, point: p)
+          })
+      }
+    })
   case
     svg_path.segment_ray_crossings_with(
       segment,
@@ -3896,7 +3921,7 @@ fn line_segment_intersections_by_ray(
         segment,
         crossings,
         line_parameter_tolerance,
-        [],
+        endpoints,
       )
     }
   }

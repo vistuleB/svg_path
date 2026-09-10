@@ -6,6 +6,55 @@ import svg_path/intersections
 import svg_path/point
 import svg_path/transform
 
+pub fn near_tangent_arc_line_keeps_exact_stored_endpoint_test() {
+  // Captured recursive-dash join: center/angle arithmetic proposes an arc
+  // parameter slightly beyond 1, despite these stored endpoints being equal.
+  let arc =
+    svg_path.Arc(
+      start: svg_path.Point(430.66681589309076, 178.69245771161582),
+      radius: svg_path.Point(3.0, 3.0),
+      x_axis_rotation: 0.0,
+      large_arc: False,
+      sweep: False,
+      end: svg_path.Point(430.670203101245, 178.69477431938788),
+    )
+  let line =
+    svg_path.Line(
+      start: arc.end,
+      end: svg_path.Point(430.22232031893986, 178.38890397610967),
+    )
+  list.each([False, True], fn(reverse_arc) {
+    list.each([False, True], fn(reverse_line) {
+      let a = case reverse_arc {
+        True -> svg_path.segment_reverse(arc)
+        False -> arc
+      }
+      let b = case reverse_line {
+        True -> svg_path.segment_reverse(line)
+        False -> line
+      }
+      let ta = case reverse_arc {
+        True -> 0.0
+        False -> 1.0
+      }
+      let tb = case reverse_line {
+        True -> 1.0
+        False -> 0.0
+      }
+      let options =
+        intersections.IntersectionOptions(
+          tolerance: 0.000000001,
+          max_depth: 48,
+          parameter_snap: intersections.NoParameterSnap,
+        )
+      let assert Ok(found) = intersections.segment_with(a, b, options)
+      assert list.any(found, fn(hit) { hit.left_t == ta && hit.right_t == tb })
+      let assert Ok(swapped) = intersections.segment_with(b, a, options)
+      assert list.any(swapped, fn(hit) { hit.left_t == tb && hit.right_t == ta })
+    })
+  })
+}
+
 pub fn coincident_cubic_endpoints_keep_both_intersection_addresses_test() {
   let cubic =
     svg_path.CubicBezier(
