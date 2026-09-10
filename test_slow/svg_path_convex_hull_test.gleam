@@ -27,7 +27,7 @@ const smart_support_base_tolerance = 0.000000001
 
 const smart_support_unit_diameter_tolerance = 0.000000001
 
-const repair_modes_to_check = ["dumb", "ambitious"]
+const repair_modes_to_check = [convex_hull.PointRepair, convex_hull.LoopRepair]
 
 const scale_covariance_relative_tolerance = 0.0000001
 
@@ -1424,7 +1424,7 @@ fn point_cloud_is_valid_in_all_modes(points: List(svg_path.Point)) -> Bool {
 
 fn path_point_cloud_is_valid_with_repair_mode(
   points: List(svg_path.Point),
-  repair_mode repair_mode: String,
+  repair_mode repair_mode: convex_hull.RepairMode,
 ) -> Bool {
   let path =
     points

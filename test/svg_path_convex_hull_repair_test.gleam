@@ -161,7 +161,7 @@ pub fn path_hull_with_dumb_repair_mode_handles_line_arc_probe_test() {
   let assert Ok(hull) =
     convex_hull.internal_path_hull_with_repair_mode(
       line_arc_probe_path(),
-      repair_mode: "dumb",
+      repair_mode: convex_hull.PointRepair,
     )
 
   assert svg_path.subpath_is_closed(hull)
@@ -172,7 +172,7 @@ pub fn path_hull_with_ambitious_repair_mode_handles_line_arc_probe_test() {
   let assert Ok(hull) =
     convex_hull.internal_path_hull_with_repair_mode(
       line_arc_probe_path(),
-      repair_mode: "ambitious",
+      repair_mode: convex_hull.LoopRepair,
     )
 
   assert svg_path.subpath_is_closed(hull)

@@ -35,17 +35,17 @@ const seeded_worst_direction_refined_step = 0.01
 
 const loop_union_seed_max_drift = 1.0
 
-const repair_mode_dumb = "dumb"
+// Internal comparison policies remain covered by the repair tests.
+@internal
+pub type RepairMode {
+  PointRepair
+  LoopRepair
+  NoRepair
+}
 
-const repair_mode_ambitious = "ambitious"
+const default_repair_mode = LoopRepair
 
-const repair_mode_none = "none"
-
-const default_repair_mode = repair_mode_ambitious
-
-const pairwise_repair_mode = repair_mode_none
-
-const loop_prefilter_enabled = True
+const pairwise_repair_mode = NoRepair
 
 const loop_prefilter_sample_count = 36
 
@@ -1694,7 +1694,7 @@ pub fn internal_loop_plus_points_hull(
 @internal
 pub fn internal_path_hull_with_repair_mode(
   path: svg_path.Path,
-  repair_mode repair_mode: String,
+  repair_mode repair_mode: RepairMode,
 ) -> Result(svg_path.Subpath, InternalError) {
   case svg_path.path_subpaths(path) {
     [] -> Error(EmptyConstructionInput)
@@ -1786,10 +1786,10 @@ pub fn internal_point_loop_view(
 
 fn segments_hull(
   segments: List(svg_path.Segment),
-  repair_mode repair_mode: String,
+  repair_mode repair_mode: RepairMode,
 ) -> Result(svg_path.Subpath, InternalError) {
   use loops <- result.try(segment_convex_loops(segments))
-  let loops = maybe_prefilter_convex_loops(loops)
+  let loops = prefilter_convex_loops(loops)
   let repair_point_groups = convex_loop_endpoint_groups(loops)
   use convex_loop <- result.try(
     loops
@@ -1882,7 +1882,7 @@ fn add_distinct_point(
 
 fn union_convex_loop_list(
   loops: List(ConvexLoop),
-  repair_mode repair_mode: String,
+  repair_mode repair_mode: RepairMode,
 ) -> Result(ConvexLoop, InternalError) {
   case loops {
     [] -> Error(LoopUnionCollapsed)
@@ -1898,7 +1898,7 @@ fn union_convex_loop_list(
 fn union_convex_loops(
   left: ConvexLoop,
   right: ConvexLoop,
-  repair_mode repair_mode: String,
+  repair_mode repair_mode: RepairMode,
 ) -> Result(ConvexLoop, InternalError) {
   let ConvexLoop(loop: Loop(left_segments), enclosure: _) = left
   let ConvexLoop(loop: Loop(right_segments), enclosure: _) = right
@@ -1910,13 +1910,6 @@ fn union_convex_loops(
   ))
   let Loop(segments:) = repaired
   Ok(convex_loop(segments))
-}
-
-fn maybe_prefilter_convex_loops(loops: List(ConvexLoop)) -> List(ConvexLoop) {
-  case loop_prefilter_enabled {
-    True -> prefilter_convex_loops(loops)
-    False -> loops
-  }
 }
 
 fn prefilter_convex_loops(loops: List(ConvexLoop)) -> List(ConvexLoop) {
@@ -2422,29 +2415,25 @@ fn final_repair_loop(
   loop: Loop,
   source_loops source_loops: List(ConvexLoop),
   repair_point_groups repair_point_groups: List(List(svg_path.Point)),
-  repair_mode repair_mode: String,
+  repair_mode repair_mode: RepairMode,
 ) -> Result(Loop, InternalError) {
   case repair_mode {
-    mode if mode == repair_mode_ambitious ->
+    LoopRepair ->
       ambitious_repair_loop_with_loops(loop, additions: source_loops)
-    mode if mode == repair_mode_dumb ->
-      dumb_repair_loop_with_point_groups(loop, repair_point_groups)
-    mode if mode == repair_mode_none -> Ok(loop)
-    _ -> Ok(loop)
+    PointRepair -> dumb_repair_loop_with_point_groups(loop, repair_point_groups)
+    NoRepair -> Ok(loop)
   }
 }
 
 fn configured_repair_loop_with_loop(
   current: Loop,
   addition addition: Loop,
-  repair_mode repair_mode: String,
+  repair_mode repair_mode: RepairMode,
 ) -> Result(Loop, InternalError) {
   case repair_mode {
-    mode if mode == repair_mode_ambitious ->
-      ambitious_repair_loop_with_loop(current, addition:)
-    mode if mode == repair_mode_dumb -> Ok(current)
-    mode if mode == repair_mode_none -> Ok(current)
-    _ -> Ok(current)
+    LoopRepair -> ambitious_repair_loop_with_loop(current, addition:)
+    PointRepair -> Ok(current)
+    NoRepair -> Ok(current)
   }
 }
 
