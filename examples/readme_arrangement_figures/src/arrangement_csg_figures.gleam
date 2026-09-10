@@ -24,7 +24,7 @@ type FigureOperation {
   DifferenceFigure
 }
 
-pub fn main() -> Dynamic {
+pub fn gallery_jobs() -> List(#(String, String, fn() -> String)) {
   let cases = [
     #(
       "gallery-intersection-rectangles.svg",
@@ -123,14 +123,21 @@ pub fn main() -> Dynamic {
       DifferenceFigure,
     ),
   ]
-  list.each(cases, fn(entry) {
+  list.map(cases, fn(entry) {
     let #(name, title, left, right, rule, operation) = entry
-    let _ =
-      write_file(
-        gallery_output_dir <> "/" <> name,
-        render_case(title, left, right, rule, operation),
-      )
+    #(name, title, fn() { render_case(title, left, right, rule, operation) })
   })
+}
+
+pub fn main() -> Dynamic {
+  list.each(gallery_jobs(), fn(job) {
+    let #(name, _, generate) = job
+    let _ = write_file(gallery_output_dir <> "/" <> name, generate())
+  })
+  generate_readme_figures()
+}
+
+pub fn generate_readme_figures() -> Dynamic {
   let figure_left =
     svg_path.Path([
       rectangle_subpath(0.0, 0.0, 4.0, 4.0),

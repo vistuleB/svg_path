@@ -33,100 +33,93 @@ pub fn main() -> Nil {
 }
 
 pub fn generate_gallery_figures() {
-  let _ = ensure_dir(output_dir <> "/README.md")
-  // These figures are written by their original fixtures. Regenerate them
-  // before reading their SVGs so a saved successful image cannot hide a crash.
-  offset_map_visual.generate_khmer_text_offset_map_spiral_visual()
-  offset_map_visual.generate_khmer_text_offset_map_decaying_spiral_visual()
+  assert run_jobs(gallery_jobs(), output_dir)
+}
 
-  let figures = [
+// Portable job descriptions: geometry stays in ordinary zero-argument
+// functions. Scheduling, timing and failure isolation belong to the runner.
+pub fn gallery_jobs() -> List(#(String, String, fn() -> String)) {
+  [
     #(
       "gallery-rounded-rectangle-union.svg",
       "Rounded rectangle union",
-      rounded_rectangle_union(),
+      rounded_rectangle_union,
     ),
-    #("gallery-stroke-caps.svg", "Stroke caps", stroke_caps()),
-    #("gallery-dashed-strokes.svg", "Dashed strokes", dashed_strokes()),
-    #("gallery-recursive-dashes.svg", "Recursive dashes", recursive_dashes()),
+    #("gallery-stroke-caps.svg", "Stroke caps", stroke_caps),
+    #("gallery-dashed-strokes.svg", "Dashed strokes", dashed_strokes),
+    #("gallery-recursive-dashes.svg", "Recursive dashes", recursive_dashes),
     #(
       "gallery-figure-eight-band.svg",
       "Figure-eight asymmetric band",
-      figure_eight_band(),
+      figure_eight_band,
     ),
     #(
       "gallery-symmetric-figure-eight-bands.svg",
       "Stretched figure-eight bands",
-      symmetric_figure_eight_bands(),
+      symmetric_figure_eight_bands,
     ),
     #(
       "gallery-figure-eight-correspondence-blocks.svg",
       "Figure-eight band correspondence blocks",
-      figure_eight_correspondence_fixture.figure_eight_correspondence_blocks(),
+      figure_eight_correspondence_fixture.figure_eight_correspondence_blocks,
     ),
     #(
       "gallery-figure-eight-convex-hulls.svg",
       "Figure-eight convex-hull regressions",
-      convex_hull_gallery_fixture.figure_eight_hull_strip(),
+      convex_hull_gallery_fixture.figure_eight_hull_strip,
     ),
     #(
       "gallery-stroke-offset-tracks.svg",
       "Stroke offset tracks",
-      stroke_offset_tracks(),
+      stroke_offset_tracks,
     ),
     #(
       "gallery-earth-tone-offsets.svg",
       "Earth-tone offsets",
-      earth_tone_offsets(),
+      earth_tone_offsets,
     ),
     #(
       "gallery-package-title-first-offset.svg",
       "Package title first offset",
-      package_title_first_offset(),
+      package_title_first_offset,
     ),
     #(
       "gallery-package-title-second-offset-arrangement.svg",
       "Package title second offset arrangement",
-      generated_debug_svg(
-        "test/generated/gallery/gallery-package-title-second-offset-arrangement.svg",
-      ),
+      traced_arrangement,
     ),
-    #(
-      "gallery-lazy-dog-offset-coil.svg",
-      "Lazy Dog Offset Coil",
-      generated_debug_svg("examples/debug/the_quick_brown_khmer_spiral_map.svg"),
-    ),
+    #("gallery-lazy-dog-offset-coil.svg", "Lazy Dog Offset Coil", fn() {
+      offset_map_visual.generate_khmer_text_offset_map_spiral_visual()
+      generated_debug_svg("examples/debug/the_quick_brown_khmer_spiral_map.svg")
+    }),
     #(
       "gallery-lazy-dog-offset-decaying-spiral.svg",
       "Lazy Dog Offset Decaying Spiral",
-      generated_debug_svg(
-        "examples/debug/the_quick_brown_khmer_decaying_spiral_map.svg",
-      ),
+      fn() {
+        offset_map_visual.generate_khmer_text_offset_map_decaying_spiral_visual()
+        generated_debug_svg(
+          "examples/debug/the_quick_brown_khmer_decaying_spiral_map.svg",
+        )
+      },
     ),
-    #("gallery-crescent-hull.svg", "Crescent hull", crescent_hull()),
+    #("gallery-crescent-hull.svg", "Crescent hull", crescent_hull),
     #(
       "gallery-package-title-nine-offsets.svg",
       "Package title nine offsets",
-      package_title_nine_offsets(),
+      package_title_nine_offsets,
     ),
-    #("gallery-cut-radiator.svg", "Cut radiator", cut_radiator()),
+    #("gallery-cut-radiator.svg", "Cut radiator", cut_radiator),
   ]
-
-  let entries =
-    figures
-    |> list.map(fn(figure) {
-      let #(filename, title, contents) = figure
-      let _ = write_file(output_dir <> "/" <> filename, contents)
-      "- [" <> title <> "](" <> filename <> ")"
-    })
-
-  let _ =
-    write_file(
-      output_dir <> "/README.md",
-      "# Generated Gallery Figures\n\n" <> string.join(entries, "\n") <> "\n",
-    )
-
-  assert figures != []
 }
+
+@external(erlang, "gallery_jobs", "run")
+fn run_jobs(
+  jobs: List(#(String, String, fn() -> String)),
+  directory: String,
+) -> Bool
+
+@external(erlang, "gallery_jobs", "traced_arrangement")
+fn traced_arrangement() -> String
 
 fn rounded_rectangle_union() -> String {
   let rectangles = rectangle_stack()

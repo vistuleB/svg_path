@@ -40,6 +40,30 @@ no generator reads the archived SVG.
 The two offset-text figures are recomputed by their original fixtures before
 their generated SVGs are included in the Gallery.
 
+### Concurrent gallery-only generation
+
+Build the root and `examples/readme_arrangement_figures` projects with
+`gleam build`, then run `escript scripts/gallery/run.escript` from the root.
+This runs all 29 gallery figures concurrently without requiring passing tests
+or promoting images. Pass one or more exact SVG filenames to select jobs.
+
+Each job prints START, DONE or FAILED with elapsed wall time and Erlang
+reductions. Every ten idle seconds the coordinator prints unfinished filenames,
+elapsed times and current reductions. Successful files are written immediately;
+failures do not cancel other jobs. The final exit status is nonzero if any job
+failed. `test/generated/gallery/timings.tsv` is replaced as results arrive;
+failed jobs have a `.svg.error.txt` diagnostic, and the generated index links
+only successful jobs from this run. Existing SVGs are not deleted on failure,
+so consult the run report rather than treating file existence as success.
+
+The portable registry is filename, title, and a zero-argument SVG-producing
+function. Only the development runner in `test/gallery_jobs.erl` handles
+processes and timing; an F# port can use the same registry with a .NET scheduler.
+The arrangement tracing job alone uses an isolated VM to avoid interfering
+with other jobs' trace patterns; its wrapper reductions exclude child-VM work.
+Shared build steps happen before launching jobs. Each offset-text job runs its
+own required fixture before reading that fixture's output.
+
 ## Gallery Figures
 
 Gallery figures are committed on `main`.

@@ -10,17 +10,17 @@ mkdir -p "$readme_output" "$gallery_output" "$gallery_destination"
 
 "$root/scripts/test-fast"
 (
-  cd "$root"
-  escript scripts/gallery/package_title_arrangement.escript
+  cd "$root/examples/readme_arrangement_figures"
+  gleam build
 )
 (
   cd "$root"
-  gleam run -m svg_path_gallery_test
+  escript scripts/gallery/run.escript
 )
 (
   cd "$root/examples/readme_arrangement_figures"
   gleam run
-  gleam run -m arrangement_csg_figures
+  gleam run -m arrangement_csg_readme_figures
 )
 (
   cd "$root"
