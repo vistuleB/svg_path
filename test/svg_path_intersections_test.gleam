@@ -5,6 +5,7 @@ import svg_path
 import svg_path/intersections
 import svg_path/point
 import svg_path/transform
+import svg_path_intersection_contract_support as contract
 
 pub fn near_tangent_arc_line_keeps_exact_stored_endpoint_test() {
   // Captured recursive-dash join: center/angle arithmetic proposes an arc
@@ -327,11 +328,12 @@ pub fn production_off_center_kissing_quadratics_test() {
       control: svg_path.Point(0.24, 0.2331),
       end: svg_path.Point(0.74, -0.1369),
     )
-  let assert Ok([intersection]) = intersections.segment(left, right)
-  // At a quadratic contact, a 1e-9 geometric tolerance implies parameter
-  // uncertainty on the order of sqrt(1e-9).
-  should.be_true(float.absolute_value(intersection.left_t -. 0.37) <=. 0.00002)
-  should.be_true(float.absolute_value(intersection.right_t -. 0.63) <=. 0.00002)
+  let assert Ok(found) = intersections.segment(left, right)
+  contract.assert_known(found, 0.37, 0.63, 0.0000001)
+  contract.assert_candidates(found, left, right, 0.0000000000001)
+  // Numerical-candidate count snapshot, not four distinct mathematical roots.
+  // Keep this alert in either direction; investigate changes before updating.
+  assert list.length(found) == 4
 }
 
 pub fn production_two_close_quadratic_crossings_test() {
@@ -367,9 +369,12 @@ pub fn flat_cubic_crossing_regression_test() {
       control2: svg_path.Point(2.0 /. 3.0, 0.125),
       end: svg_path.Point(1.0, -0.125),
     )
-  let assert Ok([intersection]) = intersections.segment(rising, falling)
-  should.be_true(float.absolute_value(intersection.left_t -. 0.5) <=. 0.000001)
-  should.be_true(float.absolute_value(intersection.right_t -. 0.5) <=. 0.000001)
+  let assert Ok(found) = intersections.segment(rising, falling)
+  contract.assert_known(found, 0.5, 0.5, 0.0000001)
+  contract.assert_candidates(found, rising, falling, 0.0000000000001)
+  // Count snapshot of the flat-contact candidate cloud, not root multiplicity.
+  // Flag both increases and decreases for review across solver/backend changes.
+  assert list.length(found) == 9
 }
 
 pub fn disjoint_quadratics_regression_test() {

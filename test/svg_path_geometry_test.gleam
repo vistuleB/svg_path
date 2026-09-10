@@ -5,6 +5,7 @@ import gleam/option.{None, Some}
 import gleam/result
 import svg_path
 import svg_path/intersections
+import svg_path_intersection_contract_support as contract
 
 const tolerance = 0.000001
 
@@ -2531,7 +2532,7 @@ pub fn segment_intersections_prefers_shared_endpoint_over_near_endpoint_minimum_
       end: svg_path.Point(2.8162911593757998, 2.903741355683332),
     )
 
-  let assert Ok([raw]) =
+  let assert Ok(raw) =
     intersections.segment_with(
       left,
       right,
@@ -2552,14 +2553,31 @@ pub fn segment_intersections_prefers_shared_endpoint_over_near_endpoint_minimum_
         parameter_snap: intersections.DecimalParameterSnap(exponent: 7),
       ),
     )
-  let assert [intersection] = intersections
+  contract.assert_candidates(raw, left, right, 0.000000001)
+  contract.assert_candidates(intersections, left, right, 0.000000001)
+  // Count snapshots flag changes, not the number of mathematical roots.
+  assert list.length(raw) == 4
+  assert list.length(intersections) == 4
   let shared_endpoint = svg_path.Point(2.8236048558813205, 2.9152343073348637)
 
-  assert raw.left_t == 1.0
-  assert raw.right_t == 0.0
-  assert intersection.left_t == 1.0
-  assert intersection.right_t == 0.0
-  assert point_distance(intersection.point, shared_endpoint) <=. 0.000000001
+  list.each([raw, intersections], fn(found) {
+    // The exact stored endpoint must survive; a nearby candidate is not a
+    // substitute, including when decimal snapping is enabled.
+    let assert Ok(endpoint) =
+      list.find(found, fn(hit) { hit.left_t == 1.0 && hit.right_t == 0.0 })
+    assert endpoint.point == shared_endpoint
+    // No near-endpoint candidate may displace or duplicate that exact pair
+    // within the final selector's parameter-space deduplication radius.
+    list.each(found, fn(hit) {
+      case hit == endpoint {
+        True -> Nil
+        False -> {
+          assert float.absolute_value(hit.left_t -. 1.0) >. 0.0000001
+            || float.absolute_value(hit.right_t) >. 0.0000001
+        }
+      }
+    })
+  })
 }
 
 pub fn segment_intersections_with_rejects_invalid_options_test() {

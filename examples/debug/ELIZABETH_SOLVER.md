@@ -23,7 +23,10 @@ remain recoverable from Git. Comparisons recorded below are historical.
 - Coarse-to-fine spatial diversity is used both during search and final
   selection. This remains a heuristic search, not a completeness certificate.
 
-See [current follow-ups](../../REMAINING_ISSUES.md) for outstanding test reviews.
+The four candidate-count regressions now assert the numerical contract plus
+documented count snapshots. `scripts/test-fast`: 1606 passed. Earlier failures
+below belong to their historical checkpoints. See
+[current follow-ups](../../REMAINING_ISSUES.md) for release verification status.
 
 ## Historical removal and benchmark checkpoints
 

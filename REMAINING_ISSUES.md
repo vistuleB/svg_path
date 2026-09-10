@@ -4,20 +4,21 @@ Updated 2026-09-10. Every concrete geometry reproducer in the previous audit
 ledger has a fix. The complete findings, resolutions, and illustrations are
 preserved in [the resolved audit history](historical_docs/RESOLVED_ISSUES.md).
 
-## Intersection test expectations
+## Intersection test expectations — resolved
 
-Four tests still demand one candidate where the numerical residual/separation
-contract admits several. Review their assertions without weakening geometric
-residual, parameter separation, or endpoint-preference checks:
+The four tests now check known intersections, geometric residuals, parameter
+separation, and exact endpoint retention where applicable. Explicit numerical
+candidate-count snapshots remain to flag changes in either direction; they are
+not assertions of mathematical root multiplicity:
 
 - `elizabeth_beam_flat_crossing_completes_with_explicit_loss_test`
 - `segment_intersections_prefers_shared_endpoint_over_near_endpoint_minimum_test`
 - `production_off_center_kissing_quadratics_test`
 - `flat_cubic_crossing_regression_test`
 
-Latest verification, after the package documentation pass:
-`scripts/test-fast`: **1602 passed, 4 known failures**. No expectations were
-changed. This is not a passing release verification.
+Latest verification after updating these assertions:
+`scripts/test-fast`: **1606 passed, no failures**. Release verification still
+requires `scripts/test-release` and the published figure workflow.
 
 ## Numerical limitation
 
