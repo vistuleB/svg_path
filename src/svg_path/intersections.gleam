@@ -5430,6 +5430,27 @@ fn elizabeth_endpoint_candidates(
   Ok(list.flatten(batches))
 }
 
+// Construct each enclosure once. Control points and arc tangent-intersection
+// points are not curve evaluations and must not enter the parameter cache.
+// No axis-aligned bounding-box construction or curve-extrema query is needed.
+fn elizabeth_window_overlaps(
+  left: Segment,
+  right: Segment,
+  window: WindowPreservingWindow,
+) -> Result(Bool, svg_path.Error) {
+  use a <- result.try(segment_enclosing_points(
+    left,
+    window.left_from,
+    window.left_to,
+  ))
+  use b <- result.try(segment_enclosing_points(
+    right,
+    window.right_from,
+    window.right_to,
+  ))
+  Ok(!enclosing_points_disjoint(a, b))
+}
+
 fn elizabeth_beam_generation(
   left: Segment,
   right: Segment,
@@ -5465,22 +5486,10 @@ fn elizabeth_beam_generation(
       use overlapping <- result.try(
         list.try_map(pending, fn(item) {
           let #(window, _) = item
-          use a <- result.try(window_segment_bounding_box(
-            left,
-            window.left_from,
-            window.left_to,
-          ))
-          use b <- result.try(window_segment_bounding_box(
-            right,
-            window.right_from,
-            window.right_to,
-          ))
-          use overlaps <- result.try(window_bounds_overlap(
+          use overlaps <- result.try(elizabeth_window_overlaps(
             left,
             right,
             window,
-            a,
-            b,
           ))
           Ok(#(item, overlaps))
         })
@@ -5999,16 +6008,8 @@ fn elizabeth_search(
       })
       // Nonterminal work is enclosure rejection only: no candidate evaluation,
       // propagation, or candidate-dependent subdivision.
-      use left_box <- result.try(
-        window_segment_bounding_box(left, window.left_from, window.left_to)
-        |> result.map_error(ExperimentalPathError),
-      )
-      use right_box <- result.try(
-        window_segment_bounding_box(right, window.right_from, window.right_to)
-        |> result.map_error(ExperimentalPathError),
-      )
       use overlapping <- result.try(
-        window_bounds_overlap(left, right, window, left_box, right_box)
+        elizabeth_window_overlaps(left, right, window)
         |> result.map_error(ExperimentalPathError),
       )
       case overlapping {

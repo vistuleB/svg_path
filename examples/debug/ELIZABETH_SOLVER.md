@@ -23,6 +23,41 @@ The four existing candidate-count test failures remain intentionally visible.
 This document retains earlier experiments below; their settings are historical,
 not a description of the current default.
 
+Latest enclosure change: both Elizabeth variants now construct each curve
+window's enclosing point inventory once and apply polygon separation directly,
+without curve-extrema or axis-aligned bounding-box construction. Enclosure
+points remain local and do not enter the curve-evaluation cache. Edward's old
+box path remains unchanged. The isolated nine-offset title completed in 30.19s
+(6,287,924,717 reductions), versus 29.40s (6,149,387,450) in the earlier
+box-plus-polygon measurement. No speed benefit established.
+`scripts/test-fast` after cleanup: 1616 passed, 5 failures. The four existing
+candidate-count failures remain. The additional failure is the depth-first
+experimental `elizabeth_terminal_newton_recovers_strict_translated_candidates_test`:
+polygon-only rejection reaches its 10,000 examined-window cap. This is not the
+production beam entry point. No test expectations were changed. Focused
+allocation/cache/diversity checks pass; gallery and slow tests were not rerun.
+
+## Enclosure comparison counters (current beam)
+
+`elizabeth_enclosure_counts.escript polygons` and `boxes_polygons` run the
+nine-offset title sequentially in separate VMs. Only the enclosure decision
+differs. Process-local diagnostic counters count initial/child windows at
+creation, actual enclosure queries, geometric rejections, and beam discards.
+
+| Measure | Polygons only | Previous boxes then polygons |
+| --- | ---: | ---: |
+| Curve-pair solves | 2,182 | 2,182 |
+| Windows created | 826,744 | 776,272 |
+| Windows examined | 826,744 | 776,272 |
+| Geometrically rejected | 494,476 | 549,551 |
+| Budget discarded | 248,262 | 149,797 |
+| Wall seconds | 29.86 | 29.87 |
+| Erlang reductions | 6,293,798,865 | 6,152,709,114 |
+
+Both complete. Polygon-only creates about 6.5% more windows here; no wall-time
+improvement is established. Counts include instrumentation overhead in timings.
+The two generated SVGs are byte-identical.
+
 ## Original depth-first experiment
 
 The internal `intersections.experimental_curve_intersections` entry point
