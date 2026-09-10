@@ -2290,54 +2290,18 @@ pub fn subpath_stroke_rejects_invalid_width_test() {
     == Error(stroke.InvalidWidth(0.0))
 }
 
-pub fn band_inside_function_uses_nonzero_for_open_subpath_band_test() {
-  let outline =
-    svg_path.subpath_assert_polygon([
-      svg_path.Point(0.0, 0.0),
-      svg_path.Point(10.0, 0.0),
-      svg_path.Point(10.0, 10.0),
-      svg_path.Point(0.0, 10.0),
-    ])
-  let assert Ok(inside) =
-    offset.internal_band_inside_function([offset.OpenSubpathBand(outline)])
-
-  assert inside(svg_path.Point(5.0, 5.0)) == Ok(True)
-  assert inside(svg_path.Point(15.0, 5.0)) == Ok(False)
-}
-
-pub fn band_inside_function_reverses_second_closed_subpath_side_test() {
-  let outer =
-    svg_path.subpath_assert_polygon([
-      svg_path.Point(0.0, 0.0),
-      svg_path.Point(10.0, 0.0),
-      svg_path.Point(10.0, 10.0),
-      svg_path.Point(0.0, 10.0),
-    ])
-  let inner =
-    svg_path.subpath_assert_polygon([
-      svg_path.Point(2.0, 2.0),
-      svg_path.Point(8.0, 2.0),
-      svg_path.Point(8.0, 8.0),
-      svg_path.Point(2.0, 8.0),
-    ])
-  let assert Ok(inside) =
-    offset.internal_band_inside_function([
-      offset.ClosedSubpathBand(outer, inner),
-    ])
-
-  assert inside(svg_path.Point(1.0, 1.0)) == Ok(True)
-  assert inside(svg_path.Point(5.0, 5.0)) == Ok(False)
-  assert inside(svg_path.Point(12.0, 5.0)) == Ok(False)
-}
-
-pub fn band_inside_function_rejects_open_payload_test() {
+pub fn topological_band_loops_rejects_open_payload_test() {
   let open =
     svg_path.subpath_assert_polyline([
       svg_path.Point(0.0, 0.0),
       svg_path.Point(10.0, 0.0),
     ])
 
-  assert offset.internal_band_inside_function([offset.OpenSubpathBand(open)])
+  assert offset.internal_topological_band_loops(
+      [],
+      bands: [offset.OpenSubpathBand(open)],
+      options: offset.default_options(),
+    )
     == Error(offset.InternalBandSubpathNotClosed)
 }
 

@@ -53,14 +53,12 @@ fn cusp_trim_traced_subpath(
   traced: TracedOffsetSubpath,
   zero_source: svg_path.Subpath,
   offset: Float,
-  cap: Cap,
   options: Options,
 ) -> Result(Option(TracedOffsetSubpath), InternalError) {
   use trimmed <- result.try(cusp_trim_i_subpath(
     i_subpath_from_traced(traced),
     zero_source,
     offset,
-    cap,
     options,
   ))
   Ok(
@@ -420,7 +418,6 @@ fn trim_single_offset_builds(
   builds: List(SingleOffsetUntrimmedBuild),
   offset: Float,
   bands bands: List(OneSubpathBand),
-  cap cap: Cap,
   options options: Options,
 ) -> Result(svg_path.Path, InternalError) {
   let SingleOffsetTrimming(offside:, final_trimming:) =
@@ -429,7 +426,6 @@ fn trim_single_offset_builds(
     builds,
     offset,
     bands:,
-    cap:,
     options:,
     offside:,
     final_trimming:,
@@ -465,11 +461,18 @@ pub fn internal_single_offset_band_candidate(
   band_from_sides(build.zero_source, 0.0, build.subpath, offset, cap:)
 }
 
+/// Run the configurable single-offset trimming pipeline.
+///
+/// Small-loop culling has already produced one I walk per untrimmed build.
+/// This function first enters Traced form, optionally replaces each closed I
+/// walk with its offside survivor walks, and then selects exactly one terminal
+/// operation: cusp-only trimming, general in-band trimming, or materialization
+/// without further trimming. Cusp and in-band trimming are alternatives;
+/// in-band trimming already performs the more general submerged removal.
 fn final_single_offset_subpaths(
   builds: List(SingleOffsetUntrimmedBuild),
   offset: Float,
   bands bands: List(OneSubpathBand),
-  cap cap: Cap,
   options options: Options,
   offside offside: Bool,
   final_trimming final_trimming: SingleOffsetFinalTrimming,
@@ -498,7 +501,6 @@ fn final_single_offset_subpaths(
         offside_trimmed,
         builds,
         offset,
-        cap,
         options,
       )
     InBandTrimming ->
@@ -577,7 +579,6 @@ fn cusp_trimmed_single_offset_subpaths_result(
   offside_trimmed: List(TracedOffsetSubpath),
   builds: List(SingleOffsetUntrimmedBuild),
   offset: Float,
-  cap: Cap,
   options: Options,
 ) -> Result(List(svg_path.Subpath), InternalError) {
   use traced <- result.try(
@@ -585,7 +586,6 @@ fn cusp_trimmed_single_offset_subpaths_result(
       offside_trimmed,
       builds,
       offset,
-      cap,
       options,
       trimmed: [],
     ),
@@ -601,7 +601,6 @@ fn cusp_trimmed_single_offset_subpaths(
   subpaths: List(TracedOffsetSubpath),
   builds: List(SingleOffsetUntrimmedBuild),
   offset: Float,
-  cap: Cap,
   options: Options,
   trimmed trimmed: List(TracedOffsetSubpath),
 ) -> Result(List(TracedOffsetSubpath), InternalError) {
@@ -616,14 +615,12 @@ fn cusp_trimmed_single_offset_subpaths(
         traced,
         build.zero_source,
         offset,
-        cap,
         options,
       ))
       cusp_trimmed_single_offset_subpaths(
         rest,
         builds,
         offset,
-        cap,
         options,
         trimmed: case result {
           Some(subpath) -> [subpath, ..trimmed]
@@ -939,7 +936,6 @@ pub fn subpath_with(
       [untrimmed_build],
       offset,
       bands: [band],
-      cap:,
       options:,
     )
   }
@@ -1093,7 +1089,6 @@ pub fn subpath_band_with(
       culled_a,
       normalized,
       inner_offset,
-      cap,
       options,
       enabled: inner_cusps,
     )
@@ -1104,7 +1099,6 @@ pub fn subpath_band_with(
       culled_b,
       normalized,
       outer_offset,
-      cap,
       options,
       enabled: outer_cusps,
     )
@@ -1170,7 +1164,6 @@ fn trim_band_side_cusps(
   subpath: ICulledOffsetSubpath,
   zero_source: svg_path.Subpath,
   offset: Float,
-  cap: Cap,
   options: Options,
   enabled enabled: Bool,
 ) -> Result(Option(svg_path.Subpath), InternalError) {
@@ -1184,7 +1177,6 @@ fn trim_band_side_cusps(
         subpath,
         zero_source,
         offset,
-        cap,
         options,
       ))
       case trimmed {
@@ -1342,7 +1334,7 @@ pub fn path_with(
     |> result.map_error(public_error),
   )
   use result <- result.try(
-    trim_single_offset_builds(untrimmed_builds, offset, bands:, cap:, options:)
+    trim_single_offset_builds(untrimmed_builds, offset, bands:, options:)
     |> result.map_error(public_error),
   )
   Ok(result)
@@ -1801,8 +1793,12 @@ type SmallLoopCullingStage {
   InsideCuspTrimming
 }
 
-// Keep the established default while comparing the experiment: default single
-// offsets do not cusp-trim, so embedding deliberately leaves their loops alone.
+// Intentionally retained, hardcoded experiment switch (not a public option).
+// BeforeCuspTrimming cuts adjacent opposite-REVERSED loops during I construction,
+// even when no cusp-trimming stage follows. InsideCuspTrimming instead marks
+// their arrangement edges for deletion within cusp trimming; with no cusp stage,
+// it performs no small-loop culling. Keep both policies available for comparison.
+// Default single offsets do not cusp-trim, so embedding leaves their loops alone.
 const small_loop_culling_stage = BeforeCuspTrimming
 
 fn cull_adjacent_offset_segment_loops(
@@ -1988,7 +1984,6 @@ fn cusp_trim_i_subpath(
   subpath: ICulledOffsetSubpath,
   zero_source: svg_path.Subpath,
   offset: Float,
-  _cap: Cap,
   options: Options,
 ) -> Result(Option(CuspTrimmedSubpath), InternalError) {
   let ICulledOffsetSubpath(segments:, closed:, ..) = subpath
@@ -3596,17 +3591,6 @@ fn refinement_depth(options: Options) -> Int {
   int.min(options.fitting.max_depth, maximum_refinement_generation)
 }
 
-/// Build the nonzero inside predicate for closed band payloads.
-@internal
-pub fn internal_band_inside_function(
-  bands: List(OneSubpathBand),
-) -> Result(fn(svg_path.Point) -> Result(Bool, InternalError), InternalError) {
-  use semantic_paths <- result.try(
-    one_subpath_band_semantic_paths(bands, paths: []),
-  )
-  Ok(fn(point) { point_inside_any_semantic_band(point, semantic_paths) })
-}
-
 fn band_winding_path(
   bands: List(OneSubpathBand),
 ) -> Result(svg_path.Path, InternalError) {
@@ -3630,14 +3614,6 @@ fn unique_ints(values: List(Int), unique unique: List(Int)) -> List(Int) {
   }
 }
 
-/// Run the configurable single-offset trimming pipeline.
-///
-/// Small-loop culling has already produced one I walk per untrimmed build.
-/// This function first enters Traced form, optionally replaces each closed I
-/// walk with its offside survivor walks, and then selects exactly one terminal
-/// operation: cusp-only trimming, general in-band trimming, or materialization
-/// without further trimming. Cusp and in-band trimming are alternatives;
-/// in-band trimming already performs the more general submerged removal.
 fn list_at(values: List(a), index: Int) -> Result(a, Nil) {
   case values, index {
     [], _ -> Error(Nil)
@@ -4920,33 +4896,6 @@ fn require_closed_band_subpath(
     True -> Ok(Nil)
     False -> Error(InternalBandSubpathNotClosed)
   }
-}
-
-fn point_inside_any_semantic_band(
-  point: svg_path.Point,
-  paths: List(svg_path.Path),
-) -> Result(Bool, InternalError) {
-  case paths {
-    [] -> Ok(False)
-    [first, ..rest] -> {
-      use inside <- result.try(point_inside_semantic_band(point, first))
-      case inside {
-        True -> Ok(True)
-        False -> point_inside_any_semantic_band(point, rest)
-      }
-    }
-  }
-}
-
-fn point_inside_semantic_band(
-  point: svg_path.Point,
-  path: svg_path.Path,
-) -> Result(Bool, InternalError) {
-  use containment <- result.try(
-    svg_path.path_containment(point, within: path, using: svg_path.Nonzero)
-    |> result.map_error(InternalPathError),
-  )
-  Ok(containment == svg_path.Inside)
 }
 
 fn colinearize_offset_source_tangents(

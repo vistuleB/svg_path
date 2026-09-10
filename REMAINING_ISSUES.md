@@ -30,6 +30,13 @@ Verification after polygon-only rejection and depth-first experiment removal:
 No test expectations were changed. Counts in the sections below describe the
 historical checkpoints at which those changes were verified.
 
+Subsequent offset cleanup removed the old signed-unit orientator and its fixed
+selector, as well as the sampled-winding fallback and its callback plumbing.
+Classification now requires a dictionary of dual-derived edge winding pairs.
+The old orientator/probe comparisons below are historical, not available modes.
+The private small-loop culling stage switch remains intentionally available and
+documented; its default is still `BeforeCuspTrimming`.
+
 ## Arc–line stored endpoint omission — fixed
 
 `intersections.line_segment_intersections_by_ray` now independently checks the
