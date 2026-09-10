@@ -28,7 +28,7 @@ collect()->
           _->ok
         end,
         io:format("~p -> ~p~n",[MFA,E]),collect();
-      {trace,_,call,{'svg_path@offset',with_face_windings,[Build]}}->
+      {trace,_,call,{'svg_path@offset',arrangement_edge_windings,[Build]}}->
         put(build,Build),collect();
       {trace,_,call,{'svg_path@arrangement',face_windings,Args}}->
         put(winding,Args),collect();

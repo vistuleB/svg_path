@@ -390,11 +390,9 @@ pub fn internal_topological_band_loops(
   bands bands: List(OneSubpathBand),
   options options: Options,
 ) -> Result(List(svg_path.Subpath), InternalError) {
-  use winding <- result.try(internal_band_winding_function(bands))
   trim_band_arrangement(
     untrimmed,
     bands:,
-    winding:,
     winding_opinions: band_subpath_winding_opinions(bands),
     options:,
   )
@@ -408,11 +406,9 @@ pub fn topological_band_path_with_opinions(
   winding_opinions: List(WindingSideOpinion),
   options: Options,
 ) -> Result(svg_path.Path, InternalError) {
-  use winding <- result.try(internal_band_winding_function(bands))
   use loops <- result.try(trim_band_arrangement(
     untrimmed,
     bands:,
-    winding:,
     winding_opinions:,
     options:,
   ))
@@ -560,7 +556,6 @@ fn submerged_trimmed_single_offset_subpaths(
       )
     False -> band_winding_path(bands)
   })
-  let winding = path_winding_function(winding_path)
   use arrangement <- result.try(case offside {
     False -> Ok(original_arrangement)
     True ->
@@ -571,7 +566,7 @@ fn submerged_trimmed_single_offset_subpaths(
         winding_path:,
       )
   })
-  trim_single_offset_arrangement(arrangement, untrimmed, winding, options)
+  trim_single_offset_arrangement(arrangement, untrimmed, options)
 }
 
 /// Finish a single offset using only side-local cusp trimming.
@@ -642,7 +637,6 @@ fn cusp_trimmed_single_offset_subpaths(
 fn trim_single_offset_arrangement(
   build: OffsetArrangementBuild,
   untrimmed: List(svg_path.Subpath),
-  winding: fn(svg_path.Point) -> Result(Int, InternalError),
   options: Options,
 ) -> Result(List(svg_path.Subpath), InternalError) {
   let OffsetArrangementBuild(graph:, ..) = build
@@ -654,8 +648,6 @@ fn trim_single_offset_arrangement(
   use without_submerged <- result.try(delete_winding_mismatched_edges(
     build,
     trim_graph,
-    winding:,
-    side_sampling_distance: submerged_side_sampling_distance,
   ))
   use parity_reduced <- result.try(forced_parity_reduce_trim_graph(
     without_submerged,
@@ -678,7 +670,6 @@ fn trim_single_offset_arrangement(
 fn trim_band_arrangement(
   untrimmed: List(svg_path.Subpath),
   bands bands: List(OneSubpathBand),
-  winding winding: fn(svg_path.Point) -> Result(Int, InternalError),
   winding_opinions winding_opinions: List(WindingSideOpinion),
   options options: Options,
 ) -> Result(List(svg_path.Subpath), InternalError) {
@@ -696,8 +687,6 @@ fn trim_band_arrangement(
   use without_submerged <- result.try(delete_winding_mismatched_edges(
     build,
     retain_offset_image_edges(graph, build),
-    winding:,
-    side_sampling_distance: submerged_side_sampling_distance,
   ))
   use parity_reduced <- result.try(forced_parity_reduce_trim_graph(
     without_submerged,
@@ -2021,7 +2010,6 @@ fn cusp_trim_i_subpath(
         // a final round/square cap must not change cusp classification.
         cap: Butt,
       ))
-      use winding <- result.try(internal_band_winding_function([band]))
       use winding_path <- result.try(band_winding_path([band]))
       use build <- result.try(single_offset_segment_arrangement(
         [geometry],
@@ -2029,11 +2017,11 @@ fn cusp_trim_i_subpath(
         offset:,
         winding_path:,
       ))
-      use build <- result.try(with_face_windings(build))
+      use edge_windings <- result.try(arrangement_edge_windings(build))
       use split <- result.try(arrangement_split_subpath_from_i_arrangement(
         subpath,
         build,
-        winding,
+        edge_windings,
       ))
       let rescued = rescue_arrangement_split_submerged_runs(split)
       use loop_edges <- result.try(case small_loop_culling_stage {
@@ -2769,8 +2757,6 @@ const angle_tolerance_degrees = 0.000000001
 
 const arrangement_tolerance = 0.000000002
 
-const submerged_side_sampling_distance = 0.00000005
-
 const curvature_parameter_tolerance = 0.000001
 
 // Curvature has inverse-length units; keep this distinct from the parameter
@@ -3291,7 +3277,6 @@ type OffsetArrangementBuild {
     indexed_segments: List(IndexedOffsetSegment),
     segment_images: List(arrangement_graph.ArrangementSourceSegmentImage),
     edge_images: List(arrangement_graph.ArrangementEdgeImage),
-    edge_windings: Option(List(#(Int, #(Int, Int)))),
   )
 }
 
@@ -3622,15 +3607,6 @@ pub fn internal_band_inside_function(
   Ok(fn(point) { point_inside_any_semantic_band(point, semantic_paths) })
 }
 
-/// Build the winding function used for whole-outline trimming.
-@internal
-pub fn internal_band_winding_function(
-  bands: List(OneSubpathBand),
-) -> Result(fn(svg_path.Point) -> Result(Int, InternalError), InternalError) {
-  use path <- result.try(band_winding_path(bands))
-  Ok(path_winding_function(path))
-}
-
 fn band_winding_path(
   bands: List(OneSubpathBand),
 ) -> Result(svg_path.Path, InternalError) {
@@ -3641,21 +3617,6 @@ fn band_winding_path(
     semantic_paths
     |> list.flat_map(svg_path.path_subpaths),
   ))
-}
-
-fn path_winding_function(
-  path: svg_path.Path,
-) -> fn(svg_path.Point) -> Result(Int, InternalError) {
-  fn(point) {
-    use winding <- result.try(
-      svg_path.path_winding(point, within: path)
-      |> result.map_error(InternalPathError),
-    )
-    case winding {
-      svg_path.Winding(value) -> Ok(value)
-      svg_path.BoundaryWinding -> Error(InternalInconsistentContainment)
-    }
-  }
 }
 
 fn unique_ints(values: List(Int), unique unique: List(Int)) -> List(Int) {
@@ -4335,17 +4296,14 @@ fn last_directed_edge(
 fn delete_winding_mismatched_edges(
   build: OffsetArrangementBuild,
   graph: OffsetTrimGraph,
-  winding winding: fn(svg_path.Point) -> Result(Int, InternalError),
-  side_sampling_distance side_sampling_distance: Float,
 ) -> Result(OffsetTrimGraph, InternalError) {
-  use build <- result.try(with_face_windings(build))
+  use edge_windings <- result.try(arrangement_edge_windings(build))
   let OffsetTrimGraph(vertices:, edges:, edge_capacities:) = graph
   use retained <- result.try(
     delete_winding_mismatched_edges_loop(
       build,
+      edge_windings,
       edges,
-      winding:,
-      side_sampling_distance:,
       retained: [],
     ),
   )
@@ -4354,9 +4312,8 @@ fn delete_winding_mismatched_edges(
 
 fn delete_winding_mismatched_edges_loop(
   build: OffsetArrangementBuild,
+  edge_windings: Dict(Int, #(Int, Int)),
   edges: List(arrangement_graph.ArrangementEdge),
-  winding winding: fn(svg_path.Point) -> Result(Int, InternalError),
-  side_sampling_distance side_sampling_distance: Float,
   retained retained: List(arrangement_graph.ArrangementEdge),
 ) -> Result(List(arrangement_graph.ArrangementEdge), InternalError) {
   case edges {
@@ -4365,8 +4322,7 @@ fn delete_winding_mismatched_edges_loop(
       use matches <- result.try(arrangement_edge_winding_matches_opinion(
         build,
         edge,
-        winding:,
-        side_sampling_distance:,
+        edge_windings,
       ))
       let retained = case matches {
         True -> [edge, ..retained]
@@ -4374,9 +4330,8 @@ fn delete_winding_mismatched_edges_loop(
       }
       delete_winding_mismatched_edges_loop(
         build,
+        edge_windings,
         rest,
-        winding:,
-        side_sampling_distance:,
         retained:,
       )
     }
@@ -4386,45 +4341,14 @@ fn delete_winding_mismatched_edges_loop(
 fn arrangement_edge_winding_matches_opinion(
   build: OffsetArrangementBuild,
   edge: arrangement_graph.ArrangementEdge,
-  winding winding: fn(svg_path.Point) -> Result(Int, InternalError),
-  side_sampling_distance side_sampling_distance: Float,
+  edge_windings: Dict(Int, #(Int, Int)),
 ) -> Result(Bool, InternalError) {
   use expected <- result.try(arrangement_edge_winding_opinion(build, edge.id))
-  use measured <- result.try(case build.edge_windings {
-    Some(pairs) ->
-      list.find(pairs, fn(pair) { pair.0 == edge.id })
-      |> result.map(fn(pair) { pair.1 })
-      |> result.map_error(fn(_) { InternalMissingEdgeImage(edge.id) })
-    None ->
-      arrangement_edge_sampled_windings(edge, winding, side_sampling_distance)
-  })
+  use measured <- result.try(
+    dict.get(edge_windings, edge.id)
+    |> result.map_error(fn(_) { InternalMissingEdgeImage(edge.id) }),
+  )
   Ok(winding_pair_matches_opinion(expected, measured.0, measured.1))
-}
-
-fn arrangement_edge_sampled_windings(
-  edge: arrangement_graph.ArrangementEdge,
-  winding: fn(svg_path.Point) -> Result(Int, InternalError),
-  side_sampling_distance: Float,
-) -> Result(#(Int, Int), InternalError) {
-  let arrangement_graph.ArrangementEdge(segment:, ..) = edge
-  use point <- result.try(
-    svg_path.segment_point(segment, at: 0.5)
-    |> result.map_error(InternalPathError),
-  )
-  use normal <- result.try(unit_normal(segment, t: 0.5))
-  use left <- result.try(
-    winding(point_helpers.add(
-      point,
-      point_helpers.scale(normal, side_sampling_distance),
-    )),
-  )
-  use right <- result.try(
-    winding(point_helpers.add(
-      point,
-      point_helpers.scale(normal, 0.0 -. side_sampling_distance),
-    )),
-  )
-  Ok(#(left, right))
 }
 
 fn winding_pair_matches_opinion(
@@ -5511,62 +5435,61 @@ fn assign_winding_occurrence(
   }
 }
 
-fn with_face_windings(
+// Compute once per classification pass. Callers must supply this complete map
+// when testing edges; there is no displaced-point sampling fallback.
+fn arrangement_edge_windings(
   build: OffsetArrangementBuild,
-) -> Result(OffsetArrangementBuild, InternalError) {
-  case build.edge_windings {
-    Some(_) -> Ok(build)
-    None -> {
-      use dual <- result.try(
-        arrangement_graph.dual(build.graph)
-        |> result.map_error(arrangement_error),
-      )
-      use changes <- result.try(
-        list.try_map(build.edge_images, fn(image) {
-          use contributions <- result.try(
-            list.try_map(image.sources, fn(source) {
-              use indexed <- result.try(
-                offset_indexed_segment_at(
-                  build.indexed_segments,
-                  source.segment_index,
-                )
-                |> result.map_error(fn(_) {
-                  InternalMissingIndexedSegment(source.segment_index)
-                }),
-              )
-              let contribution = option.unwrap(indexed.winding_change, 0)
-              Ok(case source.reversed {
-                True -> 0 - contribution
-                False -> contribution
-              })
+) -> Result(Dict(Int, #(Int, Int)), InternalError) {
+  use dual <- result.try(
+    arrangement_graph.dual(build.graph)
+    |> result.map_error(arrangement_error),
+  )
+  use changes <- result.try(
+    list.try_map(build.edge_images, fn(image) {
+      use contributions <- result.try(
+        list.try_map(image.sources, fn(source) {
+          use indexed <- result.try(
+            offset_indexed_segment_at(
+              build.indexed_segments,
+              source.segment_index,
+            )
+            |> result.map_error(fn(_) {
+              InternalMissingIndexedSegment(source.segment_index)
             }),
           )
-          Ok(arrangement_graph.EdgeWindingChange(
-            image.edge_id,
-            list.fold(contributions, 0, fn(a, b) { a + b }),
-          ))
+          let contribution = option.unwrap(indexed.winding_change, 0)
+          Ok(case source.reversed {
+            True -> 0 - contribution
+            False -> contribution
+          })
         }),
       )
-      use values <- result.try(
-        arrangement_graph.face_windings(dual, changes)
-        |> result.map_error(InternalFaceWindingError),
+      Ok(arrangement_graph.EdgeWindingChange(
+        image.edge_id,
+        list.fold(contributions, 0, fn(a, b) { a + b }),
+      ))
+    }),
+  )
+  use values <- result.try(
+    arrangement_graph.face_windings(dual, changes)
+    |> result.map_error(InternalFaceWindingError),
+  )
+  let values =
+    dict.from_list(list.map(values, fn(face) { #(face.face_id, face.value) }))
+  use pairs <- result.try(
+    list.try_map(dual.edge_faces, fn(edge) {
+      use left <- result.try(
+        dict.get(values, edge.left_face)
+        |> result.map_error(fn(_) { InternalMissingEdgeImage(edge.edge_id) }),
       )
-      use pairs <- result.try(
-        list.try_map(dual.edge_faces, fn(edge) {
-          use left <- result.try(
-            list.find(values, fn(face) { face.face_id == edge.left_face })
-            |> result.map_error(fn(_) { InternalMissingEdgeImage(edge.edge_id) }),
-          )
-          use right <- result.try(
-            list.find(values, fn(face) { face.face_id == edge.right_face })
-            |> result.map_error(fn(_) { InternalMissingEdgeImage(edge.edge_id) }),
-          )
-          Ok(#(edge.edge_id, #(left.value, right.value)))
-        }),
+      use right <- result.try(
+        dict.get(values, edge.right_face)
+        |> result.map_error(fn(_) { InternalMissingEdgeImage(edge.edge_id) }),
       )
-      Ok(OffsetArrangementBuild(..build, edge_windings: Some(pairs)))
-    }
-  }
+      Ok(#(edge.edge_id, #(left, right)))
+    }),
+  )
+  Ok(dict.from_list(pairs))
 }
 
 fn single_offset_segment_arrangement(
@@ -5635,7 +5558,6 @@ fn offset_segment_arrangement(
     indexed_segments: indexed,
     segment_images:,
     edge_images:,
-    edge_windings: None,
   ))
 }
 
@@ -6260,7 +6182,7 @@ fn cusp_trim_subpath_from_chain(
 fn arrangement_split_subpath_from_i_arrangement(
   subpath: ICulledOffsetSubpath,
   build: OffsetArrangementBuild,
-  winding: fn(svg_path.Point) -> Result(Int, InternalError),
+  edge_windings: Dict(Int, #(Int, Int)),
 ) -> Result(ArrangementSplitTracedSubpath, InternalError) {
   let ICulledOffsetSubpath(segments:, closed:, side:) = subpath
   let OffsetArrangementBuild(segment_images:, ..) = build
@@ -6274,7 +6196,7 @@ fn arrangement_split_subpath_from_i_arrangement(
       segments,
       images,
       build,
-      winding,
+      edge_windings,
       split: [],
     ),
   )
@@ -6285,7 +6207,7 @@ fn arrangement_split_segments_from_i_images(
   segments: List(ICulledOffsetSegment),
   images: List(arrangement_graph.ArrangementSourceSegmentImage),
   build: OffsetArrangementBuild,
-  winding: fn(svg_path.Point) -> Result(Int, InternalError),
+  edge_windings: Dict(Int, #(Int, Int)),
   split split: List(ArrangementSplitTracedSegment),
 ) -> Result(List(ArrangementSplitTracedSegment), InternalError) {
   case segments, images {
@@ -6296,7 +6218,7 @@ fn arrangement_split_segments_from_i_images(
           segment,
           image,
           build,
-          winding,
+          edge_windings,
           split: [],
         ),
       )
@@ -6304,7 +6226,7 @@ fn arrangement_split_segments_from_i_images(
         remaining_segments,
         remaining_images,
         build,
-        winding,
+        edge_windings,
         split: list.append(list.reverse(pieces), split),
       )
     }
@@ -6316,7 +6238,7 @@ fn arrangement_split_segments_from_i_image(
   source: ICulledOffsetSegment,
   image: arrangement_graph.ArrangementSourceSegmentImage,
   build: OffsetArrangementBuild,
-  winding: fn(svg_path.Point) -> Result(Int, InternalError),
+  edge_windings: Dict(Int, #(Int, Int)),
   split split: List(ArrangementSplitTracedSegment),
 ) -> Result(List(ArrangementSplitTracedSegment), InternalError) {
   let arrangement_graph.ArrangementSourceSegmentImage(edges:, ..) = image
@@ -6324,7 +6246,7 @@ fn arrangement_split_segments_from_i_image(
     source,
     edges,
     build,
-    winding,
+    edge_windings,
     split:,
   )
 }
@@ -6333,7 +6255,7 @@ fn arrangement_split_segments_from_i_edge_images(
   source: ICulledOffsetSegment,
   images: List(arrangement_graph.ArrangementSegmentEdgeImage),
   build: OffsetArrangementBuild,
-  winding: fn(svg_path.Point) -> Result(Int, InternalError),
+  edge_windings: Dict(Int, #(Int, Int)),
   split split: List(ArrangementSplitTracedSegment),
 ) -> Result(List(ArrangementSplitTracedSegment), InternalError) {
   case images {
@@ -6363,8 +6285,7 @@ fn arrangement_split_segments_from_i_edge_images(
       use matches <- result.try(arrangement_edge_winding_matches_opinion(
         build,
         edge,
-        winding:,
-        side_sampling_distance: submerged_side_sampling_distance,
+        edge_windings,
       ))
       let #(segment, start_vertex, end_vertex) = case edge_reversed {
         True -> #(svg_path.segment_reverse(edge_segment), edge_end, edge_start)
@@ -6378,7 +6299,7 @@ fn arrangement_split_segments_from_i_edge_images(
         source,
         rest,
         build,
-        winding,
+        edge_windings,
         split: [
           ArrangementSplitTracedSegment(
             segment:,

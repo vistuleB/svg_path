@@ -17,7 +17,7 @@ main(_) ->
     {ok, First} = 'svg_path@offset':path_with(Source, 1.05, Join, butt, Options),
     io:format("First offset succeeded.~n"),
     Collector = spawn(fun() -> collect([]) end),
-    Functions = [{delete_winding_mismatched_edges, 4},
+    Functions = [{delete_winding_mismatched_edges, 2},
                  {forced_parity_reduce_trim_graph, 2}],
     [erlang:trace_pattern({'svg_path@offset', F, A},
                          [{'_', [], [{return_trace}]}], [local]) || {F,A} <- Functions],
@@ -30,10 +30,10 @@ main(_) ->
     Events = receive {events, Captured} -> Captured end,
     [erlang:trace_pattern({'svg_path@offset', F, A}, false, [local]) || {F,A} <- Functions],
     {ok, _} = Second,
-    [{Build, Eligible}] = [{B,G} || {trace,_,call,{'svg_path@offset',delete_winding_mismatched_edges,[B,G,_,_]}} <- Events],
-    [Retained] = [G || {trace,_,return_from,{'svg_path@offset',delete_winding_mismatched_edges,4},{ok,G}} <- Events],
+    [{Build, Eligible}] = [{B,G} || {trace,_,call,{'svg_path@offset',delete_winding_mismatched_edges,[B,G]}} <- Events],
+    [Retained] = [G || {trace,_,return_from,{'svg_path@offset',delete_winding_mismatched_edges,2},{ok,G}} <- Events],
     [Reduced] = [G || {trace,_,return_from,{'svg_path@offset',forced_parity_reduce_trim_graph,2},{ok,G}} <- Events],
-    {offset_arrangement_build, {arrangement_graph,Vertices,Edges,_},_,_,_,_} = Build,
+    {offset_arrangement_build, {arrangement_graph,Vertices,Edges,_},_,_,_} = Build,
     EligibleIds = ids(Eligible), RetainedIds = ids(Retained), SurvivorIds = ids(Reduced),
     %% Match the historical figure's first-round meaning: degree-one edges
     %% immediately after submerged deletion, not merely the first serial
