@@ -138,7 +138,7 @@ pub fn segment_with(
   use subpath <- result.try(
     svg_path.subpath([segment]) |> result.map_error(PathError),
   )
-  subpath_with(subpath, join:, cap:, options:)
+  stroke_validated_subpath(subpath, join, cap, options)
 }
 
 /// Stroke a subpath using default options with the given width.
@@ -163,6 +163,17 @@ pub fn subpath_with(
   options options: Options,
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(validate_options(options, join))
+  stroke_validated_subpath(subpath, join, cap, options)
+}
+
+// Public entry points validate before examining even empty geometry.
+// Internal traversal reuses that validation for each subpath/dash.
+fn stroke_validated_subpath(
+  subpath: svg_path.Subpath,
+  join: Join,
+  cap: Cap,
+  options: Options,
+) -> Result(svg_path.Path, Error) {
   let radius = options.width /. 2.0
   case svg_path.subpath_segments(subpath) {
     [] -> Ok(svg_path.path_empty())
@@ -174,9 +185,7 @@ pub fn subpath_with(
       case zero_length {
         True ->
           zero_length_stroke_path(subpath, radius:, cap:)
-          |> result.map_error(fn(error) {
-            OffsetError(offset.public_error(error))
-          })
+          |> result.map_error(fn(error) { OffsetError(offset.PathError(error)) })
         False ->
           offset.subpath_band_with(
             subpath,
@@ -203,7 +212,7 @@ fn zero_length_stroke_path(
   subpath: svg_path.Subpath,
   radius radius: Float,
   cap cap: Cap,
-) -> Result(svg_path.Path, offset.InternalError) {
+) -> Result(svg_path.Path, svg_path.Error) {
   let center = svg_path.subpath_start(subpath)
   case cap {
     Butt -> Ok(svg_path.path_empty())
@@ -216,7 +225,7 @@ fn zero_length_stroke_path(
 fn zero_length_round_stroke_path(
   center: svg_path.Point,
   radius: Float,
-) -> Result(svg_path.Path, offset.InternalError) {
+) -> Result(svg_path.Path, svg_path.Error) {
   let right = point_helpers.add(center, svg_path.Point(radius, 0.0))
   let left = point_helpers.add(center, svg_path.Point(0.0 -. radius, 0.0))
   let segments = [
@@ -237,18 +246,15 @@ fn zero_length_round_stroke_path(
       end: right,
     ),
   ]
-  use outline <- result.try(
-    svg_path.subpath_with(segments, policy: svg_path.Strict)
-    |> result.map_error(offset.InternalPathError),
-  )
-  use closed <- result.try(
-    svg_path.subpath_set_closed_with(
-      outline,
-      closed: True,
-      policy: svg_path.Strict,
-    )
-    |> result.map_error(offset.InternalPathError),
-  )
+  use outline <- result.try(svg_path.subpath_with(
+    segments,
+    policy: svg_path.Strict,
+  ))
+  use closed <- result.try(svg_path.subpath_set_closed_with(
+    outline,
+    closed: True,
+    policy: svg_path.Strict,
+  ))
   Ok(svg_path.Path(subpaths: [closed]))
 }
 
@@ -256,7 +262,7 @@ fn zero_length_square_stroke_path(
   center: svg_path.Point,
   radius: Float,
   direction: svg_path.Point,
-) -> Result(svg_path.Path, offset.InternalError) {
+) -> Result(svg_path.Path, svg_path.Error) {
   let along = point_helpers.scale(direction, by: radius)
   let across = svg_path.Point(0.0 -. along.y, along.x)
   let top_left =
@@ -266,27 +272,21 @@ fn zero_length_square_stroke_path(
   let bottom_right = point_helpers.add(point_helpers.add(center, along), across)
   let bottom_left =
     point_helpers.add(point_helpers.subtract(center, along), across)
-  use outline <- result.try(
-    svg_path.subpath_with(
-      line_segments_between([
-        top_left,
-        top_right,
-        bottom_right,
-        bottom_left,
-        top_left,
-      ]),
-      policy: svg_path.Strict,
-    )
-    |> result.map_error(offset.InternalPathError),
-  )
-  use closed <- result.try(
-    svg_path.subpath_set_closed_with(
-      outline,
-      closed: True,
-      policy: svg_path.Strict,
-    )
-    |> result.map_error(offset.InternalPathError),
-  )
+  use outline <- result.try(svg_path.subpath_with(
+    line_segments_between([
+      top_left,
+      top_right,
+      bottom_right,
+      bottom_left,
+      top_left,
+    ]),
+    policy: svg_path.Strict,
+  ))
+  use closed <- result.try(svg_path.subpath_set_closed_with(
+    outline,
+    closed: True,
+    policy: svg_path.Strict,
+  ))
   Ok(svg_path.Path(subpaths: [closed]))
 }
 
@@ -491,11 +491,9 @@ pub fn subpath_dashed_with(
             options.width /. 2.0,
             direction,
           )
-          |> result.map_error(fn(error) {
-            OffsetError(offset.public_error(error))
-          })
+          |> result.map_error(fn(error) { OffsetError(offset.PathError(error)) })
         }
-        False -> subpath_with(piece, join:, cap:, options:)
+        False -> stroke_validated_subpath(piece, join, cap, options)
       }
     }),
   )
@@ -568,10 +566,9 @@ fn normalize_dash_pattern(pattern: List(Float)) -> Result(List(Float), Error) {
     _, True -> Ok([])
     _, False -> {
       let normalized = case list.length(pattern) % 2 == 1 {
-        True -> Ok(list.append(pattern, pattern))
-        False -> Ok(pattern)
+        True -> list.append(pattern, pattern)
+        False -> pattern
       }
-      use normalized <- result.try(normalized)
       use _ <- result.try(validate_dash_pattern_length(normalized, total: 0.0))
       Ok(normalized)
     }
@@ -889,7 +886,7 @@ fn stroke_subpaths(
   case subpaths {
     [] -> Ok(list.reverse(stroked))
     [first, ..rest] -> {
-      use path <- result.try(subpath_with(first, join:, cap:, options:))
+      use path <- result.try(stroke_validated_subpath(first, join, cap, options))
       stroke_subpaths(
         rest,
         join,
