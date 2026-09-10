@@ -67,6 +67,19 @@ pub fn prepare_for_arc_averse_consumer(
 }
 ```
 
+## Contents
+
+- [Module map](#module-map)
+- [Core model](#core-model) and [subpath building](#subpath-building)
+- [Arc conversion](#converting-arcs-to-beziers), [line approximation](#converting-segments-to-lines), and [ellipse helpers](#arcs-and-the-ellipse-module)
+- [Geometry helpers](#geometry-helpers)
+- [Parsing](#parsing) and [serialization](#serialization)
+- [Path transforms](#transforming-paths) and [transform attributes](#transform-attributes)
+- [Inspection](#inspecting-paths) and [clipping](#curve-clipping)
+- [Offsets, bands, and strokes](#offsets-bands-and-stroke-outlines)
+- [Arrangement graphs](#arrangement-graphs) and [Boolean operations](#path-csg)
+- [Development](#development)
+
 ## Module Map
 
 - `svg_path`: core `Path`, `Subpath`, `Segment`, and `Point` types, plus
@@ -94,7 +107,8 @@ pub fn prepare_for_arc_averse_consumer(
 - `svg_path/encounters`: combined continuous-overlap and isolated
   point-intersection queries.
 - `svg_path/arrangement`: planar arrangements built by progressively noding
-  path segments, including endpoint clusters and coincident-edge multiplicities.
+  path segments, including endpoint clusters, coincident-edge multiplicities,
+  cyclic edge orders, and a separately computed dual graph of faces.
 - `svg_path/arrangement/drawing`: drawing primitives for inspecting an
   arrangement graph.
 - `svg_path/csg`: Boolean union, intersection, difference, symmetric
@@ -129,8 +143,9 @@ types, supported by lower-level `Segment` and `Point` primitives.
 A `Point` stores `x` and `y` coordinates:
 
 ```gleam
-pub type Point =
+pub type Point {
   Point(x: Float, y: Float)
+}
 ```
 
 Construct points with the public `Point` constructor:
@@ -289,7 +304,7 @@ pub fn closed_triangle() -> Result(svg_path.Subpath, svg_path.Error) {
   ]))
 
   io.println(serialize.subpath(subpath))
-  // -> "M 0 0 H 10 L 5 10"
+  // -> "M 0 0 H 10 L 5 10 L 0 0"
 
   use subpath <- result.try(svg_path.subpath_set_closed(subpath, closed: True))
 
@@ -927,6 +942,14 @@ intersections.path_self(path)
 
 Results are ordered by parameter, and boundary aliases are canonicalized. Use
 `_with` variants to supply `IntersectionOptions` or `SelfIntersectionOptions`.
+
+These are numerical results, not exact algebraic root certificates. Returned
+candidates satisfy the geometric tolerance, but several distinct parameter
+pairs can approximate the same mathematical contact, especially at tangencies
+or nearly coincident curves. Do not assume that the candidate count equals the
+number of distinct mathematical roots. Generic curve-pair search is bounded
+and heuristic: it can return an error when refinement cannot finish, and a
+successful result is not a proof that every mathematical root was found.
 
 Known subpath intersection addresses can be classified afterward with
 `classify_subpath_intersection` as crossings, nontransverse contacts, endpoint
@@ -1678,14 +1701,43 @@ arrangement.build(
 image records, in original path, subpath, and segment order, the graph-edge
 identifiers produced from one source segment and whether each traversal
 reverses the stored edge direction. An image can be empty when all pieces of an
-input segment are shorter than `minimum_chord`.
+input segment have a length upper bound below `minimum_chord`. Despite its
+historical name, this threshold measures a segment-length upper bound, not the
+distance between its endpoints; a loop with coincident endpoints is not
+discarded merely because its chord is zero.
 
 The graph, vertex, and edge representations are transparent for inspection.
 Vertices retain their clustered source endpoints and use the center of the
 smallest circle enclosing those endpoints as their representative point. Edges
 retain their segment geometry, endpoint vertex identifiers, and directional
-multiplicities. Cyclic edge order around a vertex is derived from geometry; it
-is not stored in the graph.
+multiplicities. The graph stores geometry-derived clockwise incident-edge
+orders in `cyclic_orders`. Each order is a list of groups: the order between
+groups is geometrically separated, while order within an unresolved group is
+deterministic and best-effort.
+
+### Dual Faces
+
+`arrangement.dual` computes a separate face representation without modifying
+the original graph:
+
+```gleam
+let assert Ok(build) =
+  arrangement.build([left, right], tolerance: 0.000001, minimum_chord: 0.00001)
+let assert Ok(dual) = arrangement.dual(build.graph)
+```
+
+`DualArrangementGraph.faces` contains the infinite face first, identified by
+`outer: True`. A face may have several boundary walks. For a bounded face,
+the enclosing walk comes first and has `outer: True`; the remaining walks
+surround islands. The infinite face has no enclosing walk. Each walk keeps
+its face on its visual left.
+
+`dual.edge_faces` identifies the faces on the visual left and right of each
+stored edge direction. A bridge can have the same face on both sides. The
+dual describes topology; it does not itself assign winding numbers or a fill
+rule, and it does not require the source paths to be closed winding boundaries.
+
+### Construction and Drawing
 
 Arrangement construction compares segment geometry rather than requiring
 structurally equal segment values. In the following case, two equal circles run
@@ -1787,7 +1839,8 @@ For points away from a boundary:
 | `symmetric_difference(left, right)` | it is inside exactly one operand |
 
 Use the `_with` variants with `csg.Options` to choose the endpoint tolerance
-and minimum atomic-edge chord. Returned segments retain their source type where
+and minimum atomic-edge length-upper-bound threshold (the historically named
+`minimum_chord` option). Returned segments retain their source type where
 possible: lines remain lines, Beziers remain Beziers, and arcs remain arcs
 after splitting.
 
@@ -1798,8 +1851,17 @@ values.
 
 ## Development
 
+`scripts/test-fast` runs the ordinary suite, including convex-hull smoke tests.
+`scripts/test-slow` runs the additional convex-hull stress tests only.
+`scripts/test-all` runs both profiles; it stops if the fast profile fails.
+
 ```sh
 scripts/test-fast
 scripts/test-slow
 gleam docs build
 ```
+
+Before a release, use `scripts/test-release`, the canonical pre-release check,
+rather than relying on the fast profile alone. Figure generation and asset
+publication are documented in
+[COMMIT_CYCLE.md](https://github.com/vistuleB/svg_path/blob/main/COMMIT_CYCLE.md).
