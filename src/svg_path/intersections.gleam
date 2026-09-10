@@ -4,6 +4,13 @@
 //// Result types are the root `svg_path` types, such as
 //// `svg_path.SegmentIntersection`, `svg_path.SubpathIntersection`, and
 //// `svg_path.PathIntersection`.
+////
+//// General curve pairs use a bounded numerical search. Returned candidates
+//// satisfy the geometric tolerance, but the search is not a proof that every
+//// mathematical intersection was found. Nearby parameter pairs are merged;
+//// near-tangent geometry can yield several acceptable candidates for one
+//// mathematical contact. Continuous overlaps are reported as errors here;
+//// use `svg_path/encounters` to query both overlaps and isolated intersections.
 
 import gleam/dict.{type Dict}
 import gleam/float
@@ -408,10 +415,10 @@ pub fn segment_with(
 
 /// Return one closest-point pair between two segments.
 ///
-/// This solves the same segment-pair distance problem used by point
-/// intersection search, but it returns the best pair even when the segments do
+/// This uses a distance-minimization search, separate from the bounded
+/// intersection search, and returns the best pair even when the segments do
 /// not intersect. Overlapping segments return one coincident pair with distance
-/// zero.
+/// zero. Tied minima need not have canonical parameters.
 pub fn segment_segment_projection(
   left: Segment,
   right: Segment,

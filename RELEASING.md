@@ -23,6 +23,7 @@ This checklist supplements the figure and asset-tag workflow in
 
    ```sh
    test ! -e .test-disabled/svg_path_convex_hull_test.gleam
+   test ! -e .test-disabled/fast-tests
    ```
 
 4. Confirm that no temporary package-source debug module is present:

@@ -113,6 +113,7 @@ pub fn scale_xy(x x: Float, y y: Float) -> Affine {
 }
 
 /// Create a rotation matrix from an angle in degrees.
+/// Positive angles rotate visually clockwise in SVG coordinates (y down).
 pub fn rotate(degrees degrees: Float) -> Affine {
   let cosine = trig.cos_degrees(degrees)
   let sine = trig.sin_degrees(degrees)

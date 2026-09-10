@@ -10,19 +10,21 @@
 //// Subpath and path offsets first normalize the source, split it into stalled
 //// and not-stalled pieces, fit the offset pieces, heal their boundaries, add
 //// joins, and cull adjacent reversal loops. A trimmed single offset then nodes
-//// that walk with its final refined zero-offset source. For each closed source
-//// subpath, the arrangement dual floods the signed source-side faces and
+//// that walk with its final refined zero-offset source. With default trimming,
+//// for each closed source subpath the dual floods the signed source-side faces and
 //// removes offside offset occurrences. A second arrangement classifies the
 //// remaining offset edges by their measured and expected winding pairs,
 //// removes winding mismatches, applies forced parity-capacity reductions,
 //// and reconstructs the survivors in source order.
 ////
-//// Band construction shares source refinement between its two sides. Each
-//// side is first noded against the zero-offset source and trimmed in source
+//// Band construction shares source refinement between its two sides. By
+//// default, each side is noded against the zero-offset source and trimmed in source
 //// order, retaining submerged runs that contain no reversed preimage. The two
 //// surviving sides are then noded together; winding mismatches and forced
 //// parity-capacity reductions are applied before the final band walks are
 //// reconstructed.
+//// `SingleOffsetTrimming` and `BandTrimming` allow these stages to be disabled
+//// or, for a single offset, replaced by cusp-only trimming.
 //// Because trimming can split an offset or remove it entirely, subpath and
 //// path offsets return `Path`.
 ////
@@ -277,7 +279,7 @@ type OffsetCurvatureZone {
   UnknownCurvatureZone
 }
 
-/// Return default options for offset construction.
+/// Return default cubic-fitting options for offset construction.
 pub fn default_fitting_options() -> FittingOptions {
   FittingOptions(
     tolerance: default_tolerance,
@@ -1027,6 +1029,12 @@ pub fn normalize_short_source_runs(
   }
 }
 
+/// Construct a band between two signed visual-left-normal offsets.
+///
+/// Open sources receive the requested caps; closed sources need no caps.
+/// Both offset orderings are accepted. Exchanging `inner_offset` and
+/// `outer_offset` reverses the resulting band's orientation.
+/// Uses the default side-local cusp trimming and final in-band trimming.
 pub fn subpath_band(
   subpath: svg_path.Subpath,
   inner_offset inner_offset: Float,
@@ -1046,10 +1054,13 @@ pub fn subpath_band(
 
 /// Offset a subpath at two signed normal displacements using explicit options.
 ///
-/// Each synchronized side is first noded and trimmed on its own. A submerged
-/// run without any reversed source preimage is retained because it does not
+/// When its cusp trimming is enabled, each synchronized side is first noded
+/// and trimmed on its own. A submerged run without any reversed source
+/// preimage is retained because it does not
 /// represent a reversal-generated fold. The surviving sides are then assembled
-/// into a band and trimmed together using their directed winding-side opinions.
+/// into a band. `band_trimming.in_band` controls final joint trimming using
+/// their directed winding-side opinions. Open bands receive caps even when
+/// final trimming is disabled.
 pub fn subpath_band_with(
   subpath subpath: svg_path.Subpath,
   inner_offset inner_offset: Float,
@@ -1188,6 +1199,10 @@ fn trim_band_side_cusps(
   }
 }
 
+/// Return the two synchronized offset sides without side-local or final trimming.
+///
+/// Unlike `subpath_band`, this diagnostic form returns separate, uncapped
+/// sides. Use `subpath_band_with` with trimming disabled for a capped band.
 pub fn subpath_band_untrimmed(
   subpath: svg_path.Subpath,
   inner_offset inner_offset: Float,
@@ -1205,6 +1220,7 @@ pub fn subpath_band_untrimmed(
 
 /// Offset a subpath at two signed normal displacements without trimming,
 /// using explicit options.
+/// The sides remain separate and uncapped, as in `subpath_band_untrimmed`.
 pub fn subpath_band_untrimmed_with(
   subpath subpath: svg_path.Subpath,
   inner_offset inner_offset: Float,
@@ -1413,6 +1429,7 @@ pub fn path_band_with(
 
 /// Offset every subpath at two signed normal displacements without trimming any
 /// side.
+/// Each pair is returned separately and uncapped; see `subpath_band_untrimmed`.
 pub fn path_band_untrimmed(
   path: svg_path.Path,
   inner_offset inner_offset: Float,
@@ -1455,8 +1472,6 @@ pub fn path_band_untrimmed_with(
   Ok(svg_path.Path(subpaths:))
 }
 
-/// Stroke every subpath in a path using explicit join and cap styles.
-/// Stroke every subpath in a path using explicit join, cap, and technical options.
 /// Offset every subpath in a path without trimming self-intersections.
 pub fn path_untrimmed(
   path: svg_path.Path,
@@ -2735,6 +2750,7 @@ const default_max_depth = maximum_refinement_generation
 
 const default_samples = 10
 
+/// Conventional miter-limit ratio for callers constructing `Miter` joins.
 pub const default_miter_limit = 4.0
 
 const small_unit_division_tolerance = 0.000001
@@ -2903,6 +2919,7 @@ pub type InternalError {
   )
 }
 
+/// Public failures from offset construction, fitting, and trimming.
 pub type Error {
   /// An offset-map distance lies outside the source length range.
   InvalidOffsetMapDistance(distance: Float, length: Float)
@@ -3059,7 +3076,6 @@ pub type SingleOffsetTrimming {
 /// `inner_cusps` and `outer_cusps` independently enable side-local cusp
 /// trimming for the caller-designated inner and outer offsets. The names keep
 /// those caller-designated roles even when `inner_offset > outer_offset`.
-/// Each cusp-trimming region uses Butt closures, independently of the final cap.
 /// `in_band` enables the final joint submerged trimming pass.
 pub type BandTrimming {
   BandTrimming(inner_cusps: Bool, outer_cusps: Bool, in_band: Bool)

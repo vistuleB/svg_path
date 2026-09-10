@@ -1,3 +1,8 @@
+//// Internal floating-point compatibility and numeric-text helpers.
+////
+//// These centralize signed-zero handling and checked arithmetic across the
+//// Erlang and JavaScript targets; they are not geometric tolerance policies.
+
 import gleam/float
 import gleam/int
 import gleam/result

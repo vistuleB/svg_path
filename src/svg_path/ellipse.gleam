@@ -335,6 +335,10 @@ pub fn arc_to_cubics(
 /// Radii are corrected according to SVG's implementation notes: negative radii
 /// are made positive, and radii that are too small to reach between the
 /// endpoints are scaled up uniformly.
+/// Coincident endpoints or an absolute radius at or below `1e-9` return
+/// `DegenerateInputArc`. Coincident endpoints do not determine an ellipse;
+/// the radius cutoff is a numerical policy. This function does not substitute
+/// SVG's straight-line fallback.
 pub fn endpoint_to_center(
   data: EndpointArcData,
 ) -> Result(CenterArcData, Error) {
@@ -374,7 +378,7 @@ pub fn arc_point(arc: CenterArcData, at t: Float) -> EllipsePoint {
 
 /// Return the derivative with respect to angular progress `t`.
 ///
-/// This is the tangent direction followed from the arc start to the arc end.
+/// This vector includes parameter speed, not just tangent direction.
 /// For the raw derivative with respect to the ellipse angle, use
 /// `arc_derivative_at_angle`.
 pub fn arc_derivative(arc: CenterArcData, at t: Float) -> EllipsePoint {

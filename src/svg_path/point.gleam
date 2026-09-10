@@ -51,8 +51,8 @@ pub fn heading(vector: svg_path.Point) -> Float {
 /// Return the clockwise aperture in degrees from one vector to another.
 ///
 /// The result is in `[0, 360)`. Equal headings have aperture `0`. Since
-/// `heading` assigns the zero vector a heading of `0`, this function does the
-/// same when either input is zero.
+/// `heading` assigns the zero vector a heading of `0`, a zero input is treated
+/// as pointing right when computing the difference of headings.
 pub fn clockwise_aperture(
   from from: svg_path.Point,
   to to: svg_path.Point,

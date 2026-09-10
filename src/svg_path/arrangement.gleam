@@ -368,7 +368,7 @@ fn assign_winding_neighbors(
 /// and segment order. Each image lists the atomic graph edges in that segment's
 /// traversal order. A reference's `reversed` flag is true when that traversal
 /// opposes the edge's stored direction. An image can be empty when every
-/// refined piece is shorter than `minimum_chord`.
+/// refined piece has a segment length upper bound below `minimum_chord`.
 pub type ArrangementGraphBuild {
   ArrangementGraphBuild(
     /// The arrangement produced from the input paths.

@@ -3,6 +3,13 @@
 //// This module models paths as a list of subpaths, and subpaths as continuous
 //// segment lists. Use `svg_path/parse` and `svg_path/serialize` when working
 //// directly with SVG path data strings.
+////
+//// Coordinates follow SVG's page convention: positive x points right and
+//// positive y points down. Angles are in degrees unless explicitly stated
+//// otherwise. Segment parameters normally run from `0.0` to `1.0`; evaluation
+//// and unchecked segment splitting also allow extrapolation. A parameter is
+//// not an arc-length fraction. Use the `*_at_length` helpers for traveled
+//// distances, and `*_directions` for singularity-safe unit tangents.
 
 import gleam/float
 import gleam/int
@@ -4450,6 +4457,8 @@ fn path_containment_with_initial_ray_angle_loop(
 /// point is within the boundary tolerance of any non-empty subpath, the result
 /// is `BoundaryWinding` because the winding number is not numerically stable at
 /// that point.
+/// A visually clockwise loop contributes `+1`; a counterclockwise loop
+/// contributes `-1`.
 pub fn path_winding(
   point: Point,
   within path: Path,

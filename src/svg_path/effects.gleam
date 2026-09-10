@@ -41,7 +41,9 @@ pub type Error {
 
 /// Replace maximal contiguous line-degenerate windows in a subpath.
 ///
-/// Each selected window is replaced by its ordered line traversal. Windows are
+/// Each selected window preserves its start, end, and two longitudinal support
+/// extrema in source traversal order; intermediate local reversals need not
+/// survive. This delegates to `svg_path/degeneracy`. Windows are
 /// considered from left to right. Their exact curve-preserving convex hull is
 /// grown one segment at a time, and the largest prefix certified to fit in a
 /// strip of the requested width is selected first. A `0.0` tolerance collapses

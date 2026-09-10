@@ -189,6 +189,7 @@ pub fn scale_xy(x x: Float, y y: Float) -> Matrix {
 }
 
 /// Create a rotation matrix from an angle in degrees.
+/// Positive angles rotate visually clockwise in SVG coordinates (y down).
 pub fn rotate(degrees degrees: Float) -> Matrix {
   affine.rotate(degrees:) |> from_affine
 }

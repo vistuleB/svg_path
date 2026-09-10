@@ -77,6 +77,9 @@ pub type Options {
     /// Finite, positive full stroke width in path-coordinate units.
     width: Float,
     /// Technical options used to construct the two half-width offsets.
+    /// Stroke construction overrides trimming choices: side-local cusp trimming
+    /// is disabled and final in-band trimming is enabled. Single-offset trimming
+    /// options do not apply.
     offset: offset.Options,
   )
 }

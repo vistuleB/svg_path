@@ -2,6 +2,11 @@
 ////
 //// Polynomial root isolation partitions an interval at derivative roots, then
 //// refines each sign-changing monotone window with bracketed bisection.
+//// Linear and quadratic cases are solved directly. Higher degrees use the
+//// same procedure recursively on their derivative. Root lists are numerical:
+//// fixed parameter merging and coefficient-relative zero tests can merge
+//// close roots or classify a near-touch as a root. They do not certify exact
+//// algebraic multiplicity or completeness for ill-conditioned polynomials.
 
 import gleam/float
 import gleam/int

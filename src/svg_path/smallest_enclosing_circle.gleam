@@ -8,6 +8,7 @@ import svg_path
 import svg_path/internal/number
 import svg_path/point
 
+/// A circle represented by its center and squared radius.
 @internal
 pub type EnclosingCircle {
   EnclosingCircle(center: svg_path.Point, radius_squared: Float)
@@ -19,6 +20,7 @@ pub type EnclosingCircle {
 /// support decisions. Exact duplicate points are discarded. The returned
 /// squared radius is recomputed as the greatest squared distance from the
 /// selected center to any input point.
+/// An empty list returns `Error(Nil)`.
 @internal
 pub fn points(samples: List(svg_path.Point)) -> Result(EnclosingCircle, Nil) {
   let samples = samples |> list.sort(compare_points) |> unique_points([])

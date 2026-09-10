@@ -35,9 +35,11 @@ pub fn nonzero_level_at(
   }
 }
 
-/// Sample the Nonzero winding field immediately on the geometric left and
-/// right of a segment. `side_sampling_distance` is the geometric distance from
-/// the segment midpoint to each sample. The first result is the left-side level.
+/// Sample the Nonzero winding field on the visual left and right of a segment.
+/// `side_sampling_distance` is the displacement from the sampled curve point;
+/// it does not certify that no other boundary lies between them. The midpoint
+/// is tried first. If its tangent is unavailable, symmetric parameter pairs
+/// are tried and must agree. The first result is the left-side level.
 @internal
 pub fn segment_side_nonzero_levels(
   segment: svg_path.Segment,

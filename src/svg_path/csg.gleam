@@ -24,8 +24,10 @@ const default_minimum_chord = 0.00001
 ///
 /// `tolerance` is a distance in path coordinates used for endpoint clustering,
 /// intersection and overlap detection, winding-side sampling, and final cycle
-/// joins. `minimum_chord` discards refined edge pieces whose endpoint chord is
-/// shorter than that distance. Both values must be greater than zero.
+/// joins. The legacy name `minimum_chord` denotes a size threshold: refined
+/// pieces are discarded when their segment length upper bound is below it,
+/// not merely when their endpoints are close. Both values must be finite and
+/// greater than zero.
 pub type Options {
   Options(tolerance: Float, minimum_chord: Float)
 }
@@ -71,7 +73,7 @@ pub type CsgResult {
 /// Return default arrangement-graph CSG options.
 ///
 /// The default tolerance is `0.000001` path-coordinate units and the default
-/// minimum chord is `0.00001` path-coordinate units.
+/// minimum segment-size threshold is `0.00001` path-coordinate units.
 pub fn default_options() -> Options {
   Options(tolerance: 0.000001, minimum_chord: default_minimum_chord)
 }
