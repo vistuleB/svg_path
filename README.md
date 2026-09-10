@@ -1475,7 +1475,7 @@ neither style.
 
 Joins and caps are explicit labeled arguments, not fields of `offset.Options`.
 Choose `join: offset.Bevel`, `offset.Miter(miter_limit:)`,
-`offset.MiterClip(miter_limit:)`, or `offset.Round`,
+`offset.MiterClip(miter_limit:)`, `offset.Arcs(miter_limit:)`, or `offset.Round`,
 and `cap: offset.Butt`, `offset.Square`, or `offset.RoundCap` wherever the operation
 constructs an open-source band or stroke outline. Single-offset trimming also
 takes `cap:` for its internal source-to-offset winding band; this does not add
@@ -1632,7 +1632,7 @@ These untrimmed functions take an explicit `join:` but no `cap:`.
 
 `svg_path/stroke` has its own parallel `stroke.Join` and `stroke.Cap` types:
 `stroke.Bevel`, `stroke.Miter(miter_limit:)`, `stroke.MiterClip(miter_limit:)`,
-and `stroke.Round` select the
+`stroke.Arcs(miter_limit:)`, and `stroke.Round` select the
 join; `stroke.Butt`, `stroke.RoundCap`, and `stroke.Square` select the cap.
 Use these constructors at the stroke layer, not the corresponding `offset.*`
 constructors.
@@ -1651,6 +1651,22 @@ or the clipping line would cut behind either join endpoint, it falls back to
 
 The same source and stroke width are used in each panel. An over-limit `Miter`
 bevels the corner; `MiterClip` preserves the tip up to the clipping line.
+
+`Arcs(miter_limit:)` continues the curvature of each source segment with a
+tangent circle (or a line for zero or unavailable endpoint curvature). When the
+circles do not intersect, their radii are adjusted while preserving tangency.
+The limit is measured along an auxiliary arc from the source corner, following
+the [published SVG 2 arcs construction](https://www.w3.org/TR/SVG2/painting.html#LineJoinShape).
+`Arcs` and `MiterClip` are based on that proposal; both were removed from the
+[current editor's draft in March 2026](https://w3c.github.io/svgwg/svg2-draft/changes.html#painting).
+They remain available here as geometric outline operations, without depending
+on browser support for those SVG attribute values.
+Two straight continuations use `MiterClip`. For signed offsets, diverging
+extension rays or reversed source endpoints use `Round`; in particular this
+also covers parallel rays, rather than SVG's special parallel-case rectangle.
+As with `MiterClip`, a limit that would require shortening neighboring segments
+falls back to `Bevel`. Limits must be finite and positive; an unsuccessful
+circle construction reports `ConstructionFailed`.
 
 ```gleam
 import svg_path/stroke

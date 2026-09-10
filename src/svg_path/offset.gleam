@@ -2736,6 +2736,7 @@ import svg_path/arrangement as arrangement_graph
 import svg_path/bezier
 import svg_path/curvature
 import svg_path/degeneracy
+import svg_path/internal/arcs_join
 import svg_path/internal/number
 import svg_path/intersections
 import svg_path/overlaps
@@ -2750,7 +2751,7 @@ const default_max_depth = maximum_refinement_generation
 
 const default_samples = 10
 
-/// Conventional miter-limit ratio for `Miter` and `MiterClip` joins.
+/// Conventional miter-limit ratio for `Miter`, `MiterClip`, and `Arcs` joins.
 pub const default_miter_limit = 4.0
 
 const small_unit_division_tolerance = 0.000001
@@ -2806,6 +2807,7 @@ const adjacent_loop_endpoint_parameter_tolerance = 0.0001
 /// Errors returned by offset helpers.
 @internal
 pub type InternalError {
+  InternalArcsJoinConstructionFailed
   /// Cubic fitting failed; retain its cause without inventing an endpoint or
   /// attributing an underdetermined system to non-finite arithmetic.
   InternalBezierFitError(error: bezier.Error)
@@ -2999,9 +3001,12 @@ fn arrangement_error(error: arrangement_graph.Error) -> InternalError {
 
 /// Join style used when offsetting adjacent subpath segments.
 ///
-/// Supports SVG `bevel`, `miter`, `miter-clip`, and `round`. The curvature-based
-/// SVG 2 `arcs` join is not supported yet.
+/// Supports SVG `bevel`, `miter`, `miter-clip`, `round`, and `arcs`.
 pub type Join {
+  /// Continue source curvature with tangent circles, clipped at the limit.
+  /// Diverging rays and reversed source endpoints use Round. Straight/straight
+  /// joins use MiterClip. The limit must be finite and positive.
+  Arcs(miter_limit: Float)
   /// Connect adjacent offset segments with a straight line.
   Bevel
 
@@ -5310,7 +5315,7 @@ fn validate_tangent_heal_angle(options: Options) -> Result(Nil, InternalError) {
 @internal
 pub fn validate_join(join: Join) -> Result(Nil, InternalError) {
   case join {
-    Miter(miter_limit) | MiterClip(miter_limit) ->
+    Miter(miter_limit) | MiterClip(miter_limit) | Arcs(miter_limit) ->
       case miter_limit <=. 0.0 || !number.is_finite(miter_limit) {
         True -> Error(InternalInvalidMiterLimit(miter_limit))
         False -> Ok(Nil)
@@ -6625,6 +6630,8 @@ fn parametric_join_segments(
     True -> Ok([])
     False ->
       case join {
+        Arcs(miter_limit) ->
+          arcs_join_segments(left, right, start, end, offset, miter_limit)
         Bevel -> Ok(line_segments_between([start, end]))
         Miter(miter_limit) ->
           directed_miter_join(
@@ -9799,6 +9806,131 @@ fn replace_last_offset(
     [] -> []
     [_] -> [replacement]
     [first, ..rest] -> [first, ..replace_last_offset(rest, replacement)]
+  }
+}
+
+fn join_source_curvature(
+  source: OffsetSegmentSource,
+  endpoint: SegmentEndpoint,
+) -> Option(Float) {
+  case source {
+    OffsetFromJoinFree(source) ->
+      e_join_free_source_endpoint_curvature(source, endpoint)
+    OffsetFromStalledRun(_) -> None
+  }
+}
+
+fn arcs_join_segments(
+  left: GHealedOffsetSegment,
+  right: GHealedOffsetSegment,
+  start: svg_path.Point,
+  end: svg_path.Point,
+  offset: Float,
+  limit: Float,
+) -> Result(List(svg_path.Segment), InternalError) {
+  let lt = left.nudged_end_tangent_direction
+  let rt = right.nudged_start_tangent_direction
+  case directed_line_intersection(start, lt, end, rt) {
+    Error(_) -> round_join(left, right, start, end, offset)
+    Ok(apex) -> {
+      // SVG's degenerate endpoint-curvature case uses a straight continuation.
+      let lk =
+        option.unwrap(join_source_curvature(left.source, SegmentEnd), 0.0)
+      let rk =
+        option.unwrap(join_source_curvature(right.source, SegmentStart), 0.0)
+      case 1.0 -. offset *. lk <=. 0.0 || 1.0 -. offset *. rk <=. 0.0 {
+        True -> round_join(left, right, start, end, offset)
+        False ->
+          case number.is_zero(lk) && number.is_zero(rk) {
+            True ->
+              directed_miter_join(left, right, start, end, offset, limit, True)
+            False -> {
+              let pivot = offset_segment_source_end(left.source)
+              use axis <- result.try(
+                point_helpers.normalize(point_helpers.subtract(lt, rt))
+                |> result.map_error(fn(_) { InternalArcsJoinConstructionFailed }),
+              )
+              let axis = case
+                point_helpers.dot(axis, point_helpers.subtract(apex, pivot))
+                <. 0.0
+              {
+                True -> point_helpers.scale(axis, -1.0)
+                False -> axis
+              }
+              let lr = case number.is_zero(lk) {
+                True -> None
+                False -> Some(1.0 /. lk -. offset)
+              }
+              let rr = case number.is_zero(rk) {
+                True -> None
+                False -> Some(1.0 /. rk -. offset)
+              }
+              use segments <- result.try(
+                arcs_join.join(
+                  arcs_join.Continuation(
+                    point_helpers.subtract(start, pivot),
+                    lt,
+                    lr,
+                  ),
+                  arcs_join.Continuation(
+                    point_helpers.subtract(end, pivot),
+                    rt,
+                    rr,
+                  ),
+                  axis,
+                  limit *. float.absolute_value(offset),
+                )
+                |> result.map_error(fn(_) { InternalArcsJoinConstructionFailed }),
+              )
+              let segments =
+                list.map(segments, fn(segment) {
+                  case segment {
+                    svg_path.Line(start:, end:) ->
+                      svg_path.Line(
+                        point_helpers.add(start, pivot),
+                        point_helpers.add(end, pivot),
+                      )
+                    svg_path.Arc(
+                      start:,
+                      radius:,
+                      x_axis_rotation:,
+                      large_arc:,
+                      sweep:,
+                      end:,
+                    ) ->
+                      svg_path.Arc(
+                        point_helpers.add(start, pivot),
+                        radius,
+                        x_axis_rotation,
+                        large_arc,
+                        sweep,
+                        point_helpers.add(end, pivot),
+                      )
+                    _ -> segment
+                  }
+                })
+              // Translation through corner-local coordinates must not
+              // perturb the endpoints shared with existing geometry.
+              let last = list.length(segments) - 1
+              let segments =
+                list.index_map(segments, fn(segment, i) {
+                  let segment = case i == 0 {
+                    True -> segment_with_start(segment, start)
+                    False -> segment
+                  }
+                  case i == last {
+                    True -> segment_with_end(segment, end)
+                    False -> segment
+                  }
+                })
+              case list.all(segments, segment_is_finite) {
+                True -> Ok(segments)
+                False -> Error(InternalNonFinite)
+              }
+            }
+          }
+      }
+    }
   }
 }
 

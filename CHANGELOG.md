@@ -13,6 +13,10 @@ rather than only the tag object.
 
 ### Added
 
+- `offset.Arcs(miter_limit:)` and `stroke.Arcs(miter_limit:)` joins, using
+  source-curvature circles, tangent-preserving radius adjustment, and arc-length
+  miter clipping. Diverging rays use the documented Round fallback for offsets.
+
 - `offset.MiterClip(miter_limit:)` and `stroke.MiterClip(miter_limit:)` joins.
   Over-limit miters are clipped at a plane measured from the source pivot;
   divergent extensions and clipping behind a join endpoint fall back to bevel.
