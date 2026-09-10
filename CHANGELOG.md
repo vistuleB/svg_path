@@ -9,7 +9,87 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
-## Unreleased
+## 0.46.0 - 2026-09-10
+
+### Changed
+
+- `EndpointPolicy.Custom` now receives `EndpointPolicyContext` with `first`,
+  `last`, and `closing` fields. Closing a nonempty subpath honors its endpoint
+  policy, including repeated closure requests and singleton subpaths.
+- Renamed `WiggleThenBridge`, `WiggleThenBridgeWith`, and
+  `wiggle_then_bridge_with` to `WiggleElseBridge`, `WiggleElseBridgeWith`, and
+  `wiggle_else_bridge_with`.
+- Labeled error payloads consistently, retained underlying error causes, and
+  distinguished affine mapping failures. Code constructing or matching errors
+  may need updating.
+- Removed the unused `distance_options` field from `offset.Options`.
+- General curve intersections now use the Elizabeth bounded breadth-first
+  solver, with polygonal exclusion, endpoint discovery, cached evaluations,
+  spatially diverse window selection, and terminal refinement. The search
+  remains heuristic; admissible candidate counts can differ from previous
+  versions. Superseded production solvers and experiment switches were removed.
+- Offset submerged classification now uses signed dual-face winding data.
+  Final band contours follow filled-face boundaries, preserving retraced
+  multiplicities and kissing seams. Single offsets no longer undergo the
+  former nesting-based final orientation pass.
+- Stroke construction is a symmetric-band wrapper. Capped bands close open
+  sources even when final in-band trimming is disabled; explicitly untrimmed
+  band helpers continue to return separate uncapped offset sides.
+- Short-run normalization before offsetting uses bounded, balanced runs rather
+  than swallowing arbitrarily long chains of individually short segments.
+
+### Added
+
+- `svg_path.segment_bounding_polygon` and
+  `segment_bounding_polygon_between`: convex, visually clockwise enclosing
+  polygons for lines, Beziers, and arcs. Elizabeth uses their boundary normals
+  instead of testing all point-pair axes.
+- `segment_length_upper_bound`, `subpath_length_upper_bound`, and
+  `path_length_upper_bound` for inexpensive conservative length estimates.
+- Public curvature diagnostics and `arrangement.face_windings` for signed
+  winding propagation on a supplied dual graph.
+- Concurrent Gallery generation with per-file progress, timings, and failure
+  reports. The second-offset arrangement illustration is regenerated from
+  production graph data rather than an archived drawing.
+
+### Fixed
+
+- Arrangement construction detects self-intersections late in insertion,
+  compares pieces sharing source provenance, retains nontrivial loop geometry,
+  and carries source parameter intervals directly through subdivision.
+- Dual-face construction uses validated line sweeps to classify boundary
+  components instead of displaced containment probes.
+- Degeneracy normalization preserves longitudinal extrema and source endpoints.
+  Convex-hull assembly distinguishes full loops, points, and portions, retains
+  nonconstant segments, and reports unresolved tangent refinements.
+- Minimum-width decisions account for lower-bound roundoff before pruning and
+  use source-derived directions to recognize thin and collinear geometry.
+- Signed zero is handled consistently in scalar guards, parameter aliases,
+  root deduplication, clipping, overlaps, offsets, and serialization. Exact
+  interpolation endpoints are preserved; angle reduction and finite-vector
+  normalization avoid unnecessary overflow and underflow.
+- Root classification retains multiplicity evidence and exact bisection
+  success. Curvature cusp discovery partitions at extrema and reports depth
+  exhaustion rather than silently returning an unconverged midpoint.
+- Cubic self-intersections at parameter boundaries, coincident-point distinct
+  intersection pairs, and stored curve endpoints in line intersections are
+  retained. Projection considers better candidates at isolation boundaries;
+  overlap matching retains alternative and interior endpoint addresses.
+- Ellipse transformations preserve the smaller eigenvalue more stably;
+  congruency fitting preserves arc geometry, and endpoint arc splits do not
+  invent whole loops. Enclosing-circle boundary supports survive roundoff.
+- Offset reconstruction retains retraced contours, reverses provenance with
+  geometry, preserves seam tangent edits, and uses only reconstructible
+  preimages for capacities. Empty cusp results and visible zero-length dashes
+  are handled without losing their intended geometry.
+- Parsing permits drawing commands after closepath. Serialization preserves
+  numeric boundaries, verifies compact affine reconstructions, and does not
+  turn coincident-endpoint arcs into invented loops.
+- Clipping accounts for implicit fill closures and preserves whole subpaths
+  across incidental cuts. Corner trimming leaves untouched segments alone;
+  basic rectangle construction handles a single zero corner radius.
+- Refreshed public API documentation and regression coverage throughout the
+  package; archived superseded investigation notes.
 
 ### Removed
 

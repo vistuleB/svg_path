@@ -16,9 +16,10 @@ not assertions of mathematical root multiplicity:
 - `production_off_center_kissing_quadratics_test`
 - `flat_cubic_crossing_regression_test`
 
-Latest verification after updating these assertions:
-`scripts/test-fast`: **1606 passed, no failures**. Release verification still
-requires `scripts/test-release` and the published figure workflow.
+Release verification for 0.46.0 (including ordered bounding polygons):
+`scripts/test-release`: **1612 fast tests and 26 slow tests passed**.
+`scripts/generate-published-figures` regenerated all **29 Gallery figures and
+9 README figures**. `gleam docs build` and `gleam export hex-tarball` succeeded.
 
 ## Numerical limitation
 
