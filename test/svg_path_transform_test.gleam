@@ -2,6 +2,7 @@ import gleam/float
 import gleam/list
 import gleeunit
 import svg_path
+import svg_path/affine
 import svg_path/serialize
 import svg_path/transform
 
@@ -143,7 +144,7 @@ pub fn point_pair_similarity_handles_large_finite_vectors_test() {
   assert transform.to_tuple(matrix) == #(1.0, 0.0, 0.0, 1.0, 0.0, 0.0)
 }
 
-pub fn point_pair_similarity_rejects_points_outside_tolerance_test() {
+pub fn point_pair_similarity_preserves_degenerate_source_error_test() {
   assert transform.point_pair_similarity(
       svg_path.Point(1.0, 2.0),
       svg_path.Point(1.0, 2.0),
@@ -151,7 +152,7 @@ pub fn point_pair_similarity_rejects_points_outside_tolerance_test() {
       svg_path.Point(10.0, 1.0),
       tolerance:,
     )
-    == Error(Nil)
+    == Error(transform.AffineError(affine.DegenerateSourcePair))
 }
 
 pub fn point_pair_similarity_rejects_negative_tolerance_test() {
@@ -162,7 +163,7 @@ pub fn point_pair_similarity_rejects_negative_tolerance_test() {
       svg_path.Point(1.0, 0.0),
       tolerance: -0.001,
     )
-    == Error(Nil)
+    == Error(transform.InvalidTolerance(-0.001))
 }
 
 pub fn point_triple_map_maps_source_points_to_targets_test() {
@@ -189,7 +190,7 @@ pub fn point_triple_map_maps_source_points_to_targets_test() {
   assert transform.to_tuple(matrix) == #(2.0, 1.0, -1.0, 2.0, 10.0, -10.0)
 }
 
-pub fn point_triple_map_rejects_points_outside_tolerance_test() {
+pub fn point_triple_map_preserves_degenerate_source_error_test() {
   assert transform.point_triple_map(
       svg_path.Point(1.0, 2.0),
       svg_path.Point(1.0, 2.0),
@@ -199,7 +200,35 @@ pub fn point_triple_map_rejects_points_outside_tolerance_test() {
       svg_path.Point(7.0, 1.0),
       tolerance:,
     )
-    == Error(Nil)
+    == Error(transform.AffineError(affine.DegenerateSourceTriple))
+}
+
+pub fn point_pair_similarity_reports_failed_correspondence_test() {
+  let target_start = svg_path.Point(10.1, -5.2)
+  let target_end = svg_path.Point(7.3, 8.7)
+  let assert Error(transform.CorrespondenceOutsideTolerance(mapped, target, 0.0)) =
+    transform.point_pair_similarity(
+      svg_path.Point(0.1, 0.2),
+      svg_path.Point(0.4, 0.6),
+      target_start,
+      target_end,
+      tolerance: 0.0,
+    )
+  assert target == target_start || target == target_end
+  assert mapped != target
+}
+
+pub fn point_triple_map_rejects_negative_tolerance_test() {
+  assert transform.point_triple_map(
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(1.0, 0.0),
+      svg_path.Point(0.0, 1.0),
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(1.0, 0.0),
+      svg_path.Point(0.0, 1.0),
+      tolerance: -0.001,
+    )
+    == Error(transform.InvalidTolerance(-0.001))
 }
 
 pub fn rotate_matrix_uses_degrees_test() {

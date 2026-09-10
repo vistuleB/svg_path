@@ -44,6 +44,19 @@ pub type Error {
   /// A matrix contains non-finite values.
   InvalidMatrix
 
+  /// The requested correspondence tolerance must be nonnegative.
+  InvalidTolerance(tolerance: Float)
+
+  /// Affine correspondence construction failed.
+  AffineError(error: affine.Error)
+
+  /// A constructed matrix failed its point correspondence check.
+  CorrespondenceOutsideTolerance(
+    mapped: svg_path.Point,
+    target: svg_path.Point,
+    tolerance: Float,
+  )
+
   /// An error from the core path model.
   PathError(error: svg_path.Error)
 }
@@ -100,16 +113,16 @@ pub fn about_point(
 /// another.
 ///
 /// The returned matrix maps `source_start` within `tolerance` of `target_start`
-/// and `source_end` within `tolerance` of `target_end`. Returns `Error(Nil)`
-/// when the source pair is degenerate, construction produces non-finite values, or the
-/// final mapped points are outside tolerance.
+/// and `source_end` within `tolerance` of `target_end`. Errors distinguish an
+/// invalid tolerance, affine construction failure, and a failed correspondence.
 pub fn point_pair_similarity(
   source_start source_start: svg_path.Point,
   source_end source_end: svg_path.Point,
   target_start target_start: svg_path.Point,
   target_end target_end: svg_path.Point,
   tolerance tolerance: Float,
-) -> Result(Matrix, Nil) {
+) -> Result(Matrix, Error) {
+  use _ <- result.try(validate_correspondence_tolerance(tolerance))
   use transform <- result.try(
     affine.point_pair_similarity(
       source_start: point_tuple(source_start),
@@ -117,27 +130,26 @@ pub fn point_pair_similarity(
       target_start: point_tuple(target_start),
       target_end: point_tuple(target_end),
     )
-    |> result.map_error(fn(_) { Nil }),
+    |> result.map_error(AffineError),
   )
   let transform = from_affine(transform)
   let mapped_start = point(source_start, by: transform)
   let mapped_end = point(source_end, by: transform)
 
-  case
-    points_within_tolerance(mapped_start, target_start, tolerance)
-    && points_within_tolerance(mapped_end, target_end, tolerance)
-  {
-    True -> Ok(transform)
-    False -> Error(Nil)
-  }
+  use _ <- result.try(check_correspondence(
+    mapped_start,
+    target_start,
+    tolerance,
+  ))
+  use _ <- result.try(check_correspondence(mapped_end, target_end, tolerance))
+  Ok(transform)
 }
 
 /// Find an affine transform mapping one point triple to another.
 ///
 /// The returned matrix maps `source_a`, `source_b`, and `source_c` within
-/// `tolerance` of `target_a`, `target_b`, and `target_c`. Returns `Error(Nil)`
-/// when the source triple is degenerate, construction produces non-finite values, or the
-/// final mapped points are outside tolerance.
+/// `tolerance` of `target_a`, `target_b`, and `target_c`. Errors distinguish an
+/// invalid tolerance, affine construction failure, and a failed correspondence.
 pub fn point_triple_map(
   source_a source_a: svg_path.Point,
   source_b source_b: svg_path.Point,
@@ -146,7 +158,8 @@ pub fn point_triple_map(
   target_b target_b: svg_path.Point,
   target_c target_c: svg_path.Point,
   tolerance tolerance: Float,
-) -> Result(Matrix, Nil) {
+) -> Result(Matrix, Error) {
+  use _ <- result.try(validate_correspondence_tolerance(tolerance))
   use transform <- result.try(
     affine.point_triple_map(
       source_a: point_tuple(source_a),
@@ -156,21 +169,17 @@ pub fn point_triple_map(
       target_b: point_tuple(target_b),
       target_c: point_tuple(target_c),
     )
-    |> result.map_error(fn(_) { Nil }),
+    |> result.map_error(AffineError),
   )
   let transform = from_affine(transform)
   let mapped_a = point(source_a, by: transform)
   let mapped_b = point(source_b, by: transform)
   let mapped_c = point(source_c, by: transform)
 
-  case
-    points_within_tolerance(mapped_a, target_a, tolerance)
-    && points_within_tolerance(mapped_b, target_b, tolerance)
-    && points_within_tolerance(mapped_c, target_c, tolerance)
-  {
-    True -> Ok(transform)
-    False -> Error(Nil)
-  }
+  use _ <- result.try(check_correspondence(mapped_a, target_a, tolerance))
+  use _ <- result.try(check_correspondence(mapped_b, target_b, tolerance))
+  use _ <- result.try(check_correspondence(mapped_c, target_c, tolerance))
+  Ok(transform)
 }
 
 /// Create a translation matrix.
@@ -892,12 +901,22 @@ fn lines_between_rest(
   }
 }
 
-fn points_within_tolerance(
+fn validate_correspondence_tolerance(tolerance: Float) -> Result(Nil, Error) {
+  case tolerance >=. 0.0 {
+    True -> Ok(Nil)
+    False -> Error(InvalidTolerance(tolerance))
+  }
+}
+
+fn check_correspondence(
   a: svg_path.Point,
   b: svg_path.Point,
   tolerance: Float,
-) -> Bool {
-  tolerance >=. 0.0 && point_helpers.distance(a, b) <=. tolerance
+) -> Result(Nil, Error) {
+  case point_helpers.distance(a, b) <=. tolerance {
+    True -> Ok(Nil)
+    False -> Error(CorrespondenceOutsideTolerance(a, b, tolerance))
+  }
 }
 
 fn transform_segments(
