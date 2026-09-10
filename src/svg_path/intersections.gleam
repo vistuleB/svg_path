@@ -5,6 +5,7 @@
 //// `svg_path.SegmentIntersection`, `svg_path.SubpathIntersection`, and
 //// `svg_path.PathIntersection`.
 
+import gleam/dict.{type Dict}
 import gleam/float
 import gleam/int
 import gleam/list
@@ -4251,7 +4252,7 @@ type WindowPreservingSearchState {
 // roots are seeded by chord crossings and refined by tangent-line Newton
 // steps. Nontransverse contacts remain discoverable through exact curve-piece
 // bounding-box subdivision and coincident terminal samples.
-fn window_preserving_segment_with(
+fn edward_curve_intersections(
   left: svg_path.Segment,
   right: svg_path.Segment,
   tolerance tolerance: Float,
@@ -5288,13 +5289,1030 @@ fn window_preserving_clamp01(value: Float) -> Float {
   float.max(0.0, float.min(1.0, value))
 }
 
+// Chronological solver names: Henry minimizes curve-pair distance; Edward
+// accepts candidates before exhausting windows; Elizabeth refines windows to
+// parameter resolution before collecting candidates. Production uses the
+// breadth-first Elizabeth beam below. This comparison entry point uses the
+// depth-first Elizabeth variant and never falls back.
+@internal
+pub type ExperimentalSolver {
+  Henry
+  Edward
+  Elizabeth
+}
+
+@internal
+pub type ExperimentalSolverError {
+  ExperimentalPathError(error: svg_path.Error)
+  ExperimentalWindowLimit(limit: Int)
+  ExperimentalDepthLimit(
+    left_from: Float,
+    left_to: Float,
+    right_from: Float,
+    right_to: Float,
+  )
+}
+
+/// Compare curve-pair solvers directly, without analytic Line dispatch,
+/// overlap prechecks, parameter snapping, or fallback. Inputs must not overlap.
+/// Elizabeth uses 1e-9 terminal widths, 1e-7 square deduplication, and geometric
+/// residual at most min(options.tolerance, 1e-12). max_windows limits total
+/// examined windows, not live windows; exhaustion returns an error. This budget
+/// applies only to Elizabeth; Henry and Edward retain their existing limits.
+@internal
+pub fn experimental_curve_intersections(
+  left: Segment,
+  right: Segment,
+  solver: ExperimentalSolver,
+  options: IntersectionOptions,
+  max_windows: Int,
+) -> Result(List(SegmentIntersection), ExperimentalSolverError) {
+  use _ <- result.try(
+    validate_options(options) |> result.map_error(ExperimentalPathError),
+  )
+  case solver {
+    Henry ->
+      henry_curve_intersections(left, right, options)
+      |> result.map_error(ExperimentalPathError)
+    Edward ->
+      edward_curve_intersections(
+        left,
+        right,
+        options.tolerance,
+        options.max_depth,
+      )
+      |> result.map_error(ExperimentalPathError)
+    Elizabeth ->
+      elizabeth_depth_first_intersections(left, right, options, max_windows)
+  }
+}
+
+const elizabeth_parameter_resolution = 0.000000001
+
+const elizabeth_dedupe_resolution = 0.0000001
+
+@internal
+pub type ElizabethBeamReport {
+  ElizabethBeamReport(
+    intersections: List(SegmentIntersection),
+    examined: Int,
+    discarded_crossing: Int,
+    discarded_other: Int,
+    peak_retained: Int,
+    discarded_candidates: Int,
+  )
+}
+
+// Production breadth-first solver, exposed internally with diagnostic counts.
+// After enclosure rejection, use decaying crossing/noncrossing budgets and
+// spatial diversity, lending unused slots to the other bucket. This search is
+// deliberately incomplete: discard counts report heuristic loss, and zero
+// counts are not a general root-completeness certificate.
+// No total-window cap: each later generation examines at most 9000 windows,
+// and options.max_depth still bounds the number of generations.
+@internal
+pub fn elizabeth_beam_intersections(
+  left: Segment,
+  right: Segment,
+  options: IntersectionOptions,
+) -> Result(ElizabethBeamReport, ExperimentalSolverError) {
+  use _ <- result.try(
+    validate_options(options) |> result.map_error(ExperimentalPathError),
+  )
+  let tolerance = float.min(options.tolerance, 0.0000000000001)
+  use endpoints <- result.try(
+    elizabeth_endpoint_candidates(left, right, tolerance)
+    |> result.map_error(ExperimentalPathError),
+  )
+  elizabeth_beam_generation(
+    left,
+    right,
+    tolerance,
+    window_preserving_initial_windows(8, options.max_depth),
+    ElizabethBeamReport(endpoints, 0, 0, 0, 0, 0),
+    1,
+    None,
+    ElizabethEvaluationCache(dict.new(), 0, 0, dict.new(), dict.new()),
+  )
+}
+
+// Independent of beam retention. Query both endpoints against every matching
+// parameter of the opposite segment, preserving multiple visits to a point.
+fn elizabeth_endpoint_candidates(
+  left: Segment,
+  right: Segment,
+  tolerance: Float,
+) -> Result(List(SegmentIntersection), svg_path.Error) {
+  use batches <- result.try(
+    list.try_map([#(left, right, False), #(right, left, True)], fn(pair) {
+      let #(source, target, reversed) = pair
+      use ends <- result.try(
+        list.try_map([0.0, 1.0], fn(t) {
+          use p <- result.try(svg_path.segment_point(source, t))
+          use matches <- result.try(overlap_detection.point_parameters(
+            target,
+            p,
+            tolerance,
+          ))
+          list.try_map(matches, fn(u) {
+            use q <- result.try(svg_path.segment_point(target, u))
+            let midpoint = window_preserving_midpoint(p, q)
+            Ok(case reversed {
+              True -> SegmentIntersection(u, t, midpoint)
+              False -> SegmentIntersection(t, u, midpoint)
+            })
+          })
+        }),
+      )
+      Ok(list.flatten(ends))
+    }),
+  )
+  Ok(list.flatten(batches))
+}
+
+fn elizabeth_beam_generation(
+  left: Segment,
+  right: Segment,
+  tolerance: Float,
+  pending: List(#(WindowPreservingWindow, Int)),
+  report: ElizabethBeamReport,
+  generation: Int,
+  decay_start: Option(Int),
+  cache: ElizabethEvaluationCache,
+) -> Result(ElizabethBeamReport, ExperimentalSolverError) {
+  case pending {
+    [] -> {
+      use intersections <- result.try(elizabeth_finish_candidates(
+        left,
+        right,
+        report.intersections,
+      ))
+      use selected <- result.try(elizabeth_select_candidates(
+        left,
+        right,
+        intersections,
+      ))
+      Ok(
+        ElizabethBeamReport(
+          ..report,
+          intersections: selected,
+          discarded_candidates: list.length(intersections)
+            - list.length(selected),
+        ),
+      )
+    }
+    _ -> {
+      use overlapping <- result.try(
+        list.try_map(pending, fn(item) {
+          let #(window, _) = item
+          use a <- result.try(window_segment_bounding_box(
+            left,
+            window.left_from,
+            window.left_to,
+          ))
+          use b <- result.try(window_segment_bounding_box(
+            right,
+            window.right_from,
+            window.right_to,
+          ))
+          use overlaps <- result.try(window_bounds_overlap(
+            left,
+            right,
+            window,
+            a,
+            b,
+          ))
+          Ok(#(item, overlaps))
+        })
+        |> result.map_error(ExperimentalPathError),
+      )
+      let survivors =
+        overlapping |> list.filter(fn(x) { x.1 }) |> list.map(fn(x) { x.0 })
+      let decay_start =
+        elizabeth_decay_start(decay_start, generation, list.length(survivors))
+      use selection <- result.try(elizabeth_beam_select(
+        left,
+        right,
+        survivors,
+        elizabeth_generation_budget(generation, decay_start),
+        cache,
+      ))
+      let #(kept, crossing_lost, other_lost, cache) = selection
+      let report =
+        ElizabethBeamReport(
+          ..report,
+          examined: report.examined + list.length(pending),
+          discarded_crossing: report.discarded_crossing + crossing_lost,
+          discarded_other: report.discarded_other + other_lost,
+          peak_retained: int.max(report.peak_retained, list.length(kept)),
+        )
+      use next <- result.try(
+        list.try_fold(kept, #([], report.intersections), fn(acc, item) {
+          let #(window, depth) = item
+          case
+            window.left_to -. window.left_from
+            <=. elizabeth_parameter_resolution
+            && window.right_to -. window.right_from
+            <=. elizabeth_parameter_resolution
+          {
+            True -> {
+              use found <- result.try(
+                elizabeth_terminal_candidates_with(
+                  left,
+                  right,
+                  window,
+                  tolerance,
+                  False,
+                )
+                |> result.map_error(ExperimentalPathError),
+              )
+              Ok(#(acc.0, list.append(found, acc.1)))
+            }
+            False -> {
+              let children = window_preserving_split_window_nine(window)
+              case depth <= 0 || list.is_empty(children) {
+                True ->
+                  Error(ExperimentalDepthLimit(
+                    window.left_from,
+                    window.left_to,
+                    window.right_from,
+                    window.right_to,
+                  ))
+                False ->
+                  Ok(#(
+                    list.fold(children, acc.0, fn(xs, child) {
+                      [#(child, depth - 1), ..xs]
+                    }),
+                    acc.1,
+                  ))
+              }
+            }
+          }
+        }),
+      )
+      elizabeth_beam_generation(
+        left,
+        right,
+        tolerance,
+        next.0,
+        ElizabethBeamReport(..report, intersections: next.1),
+        generation + 1,
+        decay_start,
+        cache,
+      )
+    }
+  }
+}
+
+// One-based breadth-first generations: the initial 8x8 grid is generation 1.
+// Tuple entries reserve crossing and non-crossing slots respectively. Unused
+// slots remain available to the other bucket. This is an incomplete search.
+const elizabeth_final_bucket_budget = 12
+
+const elizabeth_decay_stop_generation = 12
+
+fn elizabeth_decay_start(
+  previous: Option(Int),
+  generation: Int,
+  survivors: Int,
+) -> Option(Int) {
+  case previous {
+    Some(_) -> previous
+    None if survivors > 1000 || generation >= 5 -> Some(generation)
+    None -> None
+  }
+}
+
+fn elizabeth_generation_budget(
+  generation: Int,
+  decay_start: Option(Int),
+) -> #(Int, Int) {
+  // Start once, after enclosure rejection exceeds 1000 survivors or at
+  // generation 5. Reach the target at an absolute generation, not a decay age.
+  let budget = case decay_start {
+    None -> 500
+    Some(_) if generation >= elizabeth_decay_stop_generation ->
+      elizabeth_final_bucket_budget
+    Some(start) -> {
+      let progress =
+        int.to_float(int.max(0, generation - start))
+        /. int.to_float(elizabeth_decay_stop_generation - start)
+      let assert Ok(factor) =
+        float.power(
+          int.to_float(elizabeth_final_bucket_budget) /. 500.0,
+          progress,
+        )
+      float.round(500.0 *. factor)
+    }
+  }
+  #(budget, budget)
+}
+
+fn elizabeth_beam_select(
+  left: Segment,
+  right: Segment,
+  windows: List(#(WindowPreservingWindow, Int)),
+  budget: #(Int, Int),
+  cache: ElizabethEvaluationCache,
+) -> Result(
+  #(List(#(WindowPreservingWindow, Int)), Int, Int, ElizabethEvaluationCache),
+  ExperimentalSolverError,
+) {
+  let #(crossing_budget, other_budget) = budget
+  let total_budget = crossing_budget + other_budget
+  case list.length(windows) <= total_budget {
+    True -> Ok(#(windows, 0, 0, cache))
+    False -> {
+      use scored <- result.try(
+        list.try_fold(windows, #([], cache), fn(acc, item) {
+          use score <- result.try(elizabeth_window_score(
+            left,
+            right,
+            item.0,
+            acc.1,
+          ))
+          Ok(#([#(item, score.0, score.1, score.3), ..acc.0], score.2))
+        })
+        |> result.map_error(ExperimentalPathError),
+      )
+      let ranked =
+        list.sort(list.reverse(scored.0), fn(a, b) {
+          case float.compare(a.2, b.2) {
+            order.Eq ->
+              case float.compare(a.0.0.left_from, b.0.0.left_from) {
+                order.Eq -> float.compare(a.0.0.right_from, b.0.0.right_from)
+                other -> other
+              }
+            other -> other
+          }
+        })
+      let crossings = list.filter(ranked, fn(x) { x.1 })
+      let others = list.filter(ranked, fn(x) { !x.1 })
+      let nc = list.length(crossings)
+      let no = list.length(others)
+      let keep_c = int.min(nc, int.max(crossing_budget, total_budget - no))
+      let keep_o = int.min(no, total_budget - keep_c)
+      Ok(#(
+        list.append(
+          select_spatially_diverse(crossings, fn(x) { x.3 }, keep_c, 0.0),
+          select_spatially_diverse(others, fn(x) { x.3 }, keep_o, 0.0),
+        )
+          |> list.map(fn(x) { x.0 }),
+        nc - keep_c,
+        no - keep_o,
+        scored.1,
+      ))
+    }
+  }
+}
+
+// Ranking samples only; terminal refinement and enclosures retain their own
+// evaluation paths. Scoped to one segment pair, retained across generations.
+// Cache only exact parameter pairs (canonicalizing signed zero), never
+// approximate neighbors.
+// Store points too because the corner samples also define the chord test.
+type ElizabethEvaluationCache {
+  ElizabethEvaluationCache(
+    samples: Dict(#(Float, Float), #(Point, Point, Float)),
+    lookups: Int,
+    hits: Int,
+    left_points: Dict(Float, Point),
+    right_points: Dict(Float, Point),
+  )
+}
+
+fn elizabeth_cached_pair(
+  left: Segment,
+  right: Segment,
+  u: Float,
+  v: Float,
+  cache: ElizabethEvaluationCache,
+) -> Result(#(#(Point, Point, Float), ElizabethEvaluationCache), svg_path.Error) {
+  let key = #(number.normalize_zero(u), number.normalize_zero(v))
+  let cache = ElizabethEvaluationCache(..cache, lookups: cache.lookups + 1)
+  case dict.get(cache.samples, key) {
+    Ok(sample) ->
+      Ok(#(sample, ElizabethEvaluationCache(..cache, hits: cache.hits + 1)))
+    Error(_) -> {
+      use left_sample <- result.try(elizabeth_cached_point(
+        left,
+        key.0,
+        cache.left_points,
+      ))
+      use right_sample <- result.try(elizabeth_cached_point(
+        right,
+        key.1,
+        cache.right_points,
+      ))
+      let p = left_sample.0
+      let q = right_sample.0
+      let sample = #(p, q, window_preserving_point_distance(p, q))
+      Ok(#(
+        sample,
+        ElizabethEvaluationCache(
+          ..cache,
+          samples: dict.insert(cache.samples, key, sample),
+          left_points: left_sample.1,
+          right_points: right_sample.1,
+        ),
+      ))
+    }
+  }
+}
+
+fn elizabeth_cached_point(
+  segment: Segment,
+  t: Float,
+  points: Dict(Float, Point),
+) -> Result(#(Point, Dict(Float, Point)), svg_path.Error) {
+  case dict.get(points, t) {
+    Ok(p) -> Ok(#(p, points))
+    Error(_) -> {
+      use p <- result.try(svg_path.segment_point(segment, t))
+      Ok(#(p, dict.insert(points, t, p)))
+    }
+  }
+}
+
+fn elizabeth_window_score(
+  left: Segment,
+  right: Segment,
+  window: WindowPreservingWindow,
+  cache: ElizabethEvaluationCache,
+) -> Result(
+  #(Bool, Float, ElizabethEvaluationCache, #(Float, Float)),
+  svg_path.Error,
+) {
+  let WindowPreservingWindow(a, b, c, d) = window
+  use first <- result.try(elizabeth_cached_pair(left, right, a, c, cache))
+  use last <- result.try(elizabeth_cached_pair(left, right, b, d, first.1))
+  let crossing =
+    window_preserving_chord_crossing(first.0.0, last.0.0, first.0.1, last.0.1)
+  let parameters = [#(a, d), #(b, c), #({ a +. b } /. 2.0, { c +. d } /. 2.0)]
+  // Keep the midpoint even when the chords cross: its actual curve residual
+  // can be better. Evaluate the curves at the crossing, not chord residual.
+  let parameters = case crossing {
+    None -> parameters
+    Some(#(u, v)) ->
+      list.append(parameters, [#(a +. u *. { b -. a }, c +. v *. { d -. c })])
+  }
+  use scored <- result.try(
+    list.try_fold(
+      parameters,
+      #(float.min(first.0.2, last.0.2), last.1, case first.0.2 <=. last.0.2 {
+        True -> #(a, c)
+        False -> #(b, d)
+      }),
+      fn(acc, pair) {
+        use sample <- result.try(elizabeth_cached_pair(
+          left,
+          right,
+          pair.0,
+          pair.1,
+          acc.1,
+        ))
+        case sample.0.2 <. acc.0 {
+          True -> Ok(#(sample.0.2, sample.1, pair))
+          False -> Ok(#(acc.0, sample.1, acc.2))
+        }
+      },
+    ),
+  )
+  Ok(#(option.is_some(crossing), scored.0, scored.1, scored.2))
+}
+
+fn elizabeth_depth_first_intersections(
+  left: Segment,
+  right: Segment,
+  options: IntersectionOptions,
+  max_windows: Int,
+) -> Result(List(SegmentIntersection), ExperimentalSolverError) {
+  let tolerance = float.min(options.tolerance, 0.000000000001)
+  let pending = window_preserving_initial_windows(8, options.max_depth)
+  use candidates <- result.try(elizabeth_search(
+    left,
+    right,
+    tolerance,
+    pending,
+    [],
+    0,
+    max_windows,
+  ))
+  elizabeth_finish_candidates(left, right, candidates)
+}
+
+fn elizabeth_finish_candidates(
+  left: Segment,
+  right: Segment,
+  candidates: List(SegmentIntersection),
+) -> Result(List(SegmentIntersection), ExperimentalSolverError) {
+  // Sort first; never move a retained representative after discarding its
+  // neighbors. This guarantees coverage of every discarded candidate.
+  use ranked <- result.try(elizabeth_rank_candidates(left, right, candidates))
+  Ok(
+    ranked
+    |> list.fold([], fn(kept, candidate) {
+      case
+        list.any(kept, fn(other) {
+          elizabeth_candidate_distance(candidate, other)
+          <=. elizabeth_dedupe_resolution
+        })
+      {
+        True -> kept
+        False -> [candidate, ..kept]
+      }
+    })
+    |> sort_segment_intersections,
+  )
+}
+
+fn elizabeth_candidate_distance(
+  a: SegmentIntersection,
+  b: SegmentIntersection,
+) -> Float {
+  float.max(
+    float.absolute_value(a.left_t -. b.left_t),
+    float.absolute_value(a.right_t -. b.right_t),
+  )
+}
+
+// Conservative degree-product bounds for isolated parameter-pair solutions.
+// Arcs are conics. Coincident/shared-component inputs are excluded by the
+// solver's contract. Do not reduce a Bezier's degree merely
+// because its control points look approximately collinear.
+fn elizabeth_intersection_degree(segment: Segment) -> Int {
+  case segment {
+    Line(..) -> 1
+    QuadraticBezier(..) | Arc(..) -> 2
+    CubicBezier(..) -> 3
+  }
+}
+
+// Pragmatic coarse-to-fine representative selection, not root certification.
+// Earlier representatives remain fixed; residual ties prefer parameter order
+// after exact endpoints. A single broad cloud may still consume the bound.
+fn elizabeth_select_candidates(
+  left: Segment,
+  right: Segment,
+  candidates: List(SegmentIntersection),
+) -> Result(List(SegmentIntersection), ExperimentalSolverError) {
+  use ranked <- result.try(elizabeth_rank_candidates(left, right, candidates))
+  let limit =
+    elizabeth_intersection_degree(left) * elizabeth_intersection_degree(right)
+  let selected =
+    select_spatially_diverse(
+      ranked,
+      fn(candidate) { #(candidate.left_t, candidate.right_t) },
+      limit,
+      elizabeth_dedupe_resolution,
+    )
+  Ok(sort_segment_intersections(selected))
+}
+
+// Best-first inputs in normalized [0,1]^2. Each occurrence is selected at most
+// once; equal locations remain distinct occurrences. Output is selection order.
+fn select_spatially_diverse(
+  ranked: List(a),
+  location: fn(a) -> #(Float, Float),
+  limit: Int,
+  minimum_separation: Float,
+) -> List(a) {
+  spatial_diversity_pass(
+    list.map(ranked, fn(item) { #(item, location(item)) }),
+    [],
+    limit,
+    float.max(0.5, minimum_separation),
+    minimum_separation,
+  )
+}
+
+fn spatial_diversity_pass(
+  remaining: List(#(a, #(Float, Float))),
+  selected: List(#(a, #(Float, Float))),
+  slots: Int,
+  separation: Float,
+  minimum_separation: Float,
+) -> List(a) {
+  let #(deferred, selected, slots) =
+    list.fold(remaining, #([], selected, slots), fn(acc, candidate) {
+      let blocked =
+        separation >. 0.0
+        && list.any(acc.1, fn(other) {
+          float.max(
+            float.absolute_value(candidate.1.0 -. other.1.0),
+            float.absolute_value(candidate.1.1 -. other.1.1),
+          )
+          <. separation
+        })
+      case acc.2 <= 0 || blocked {
+        True -> #([candidate, ..acc.0], acc.1, acc.2)
+        False -> #(acc.0, [candidate, ..acc.1], acc.2 - 1)
+      }
+    })
+  case
+    slots <= 0 || list.is_empty(deferred) || separation <=. minimum_separation
+  {
+    True -> selected |> list.reverse |> list.map(fn(x) { x.0 })
+    False -> {
+      // Zero is an explicit final fill pass, not an infinite halving limit.
+      // Below floating-point resolution on the unit interval, stop halving.
+      let next = case separation <=. 0.0000000000000002220446049250313 {
+        True -> minimum_separation
+        False -> float.max(minimum_separation, separation /. 2.0)
+      }
+      spatial_diversity_pass(
+        list.reverse(deferred),
+        selected,
+        slots,
+        next,
+        minimum_separation,
+      )
+    }
+  }
+}
+
+fn elizabeth_rank_candidates(
+  left: Segment,
+  right: Segment,
+  candidates: List(SegmentIntersection),
+) -> Result(List(SegmentIntersection), ExperimentalSolverError) {
+  use ranked <- result.try(
+    list.try_map(candidates, fn(candidate) {
+      use a <- result.try(
+        svg_path.segment_point(left, candidate.left_t)
+        |> result.map_error(ExperimentalPathError),
+      )
+      use b <- result.try(
+        svg_path.segment_point(right, candidate.right_t)
+        |> result.map_error(ExperimentalPathError),
+      )
+      Ok(#(candidate, window_preserving_point_distance(a, b)))
+    }),
+  )
+  let ranked =
+    list.sort(ranked, fn(a, b) {
+      case
+        int.compare(elizabeth_endpoint_rank(a.0), elizabeth_endpoint_rank(b.0))
+      {
+        order.Eq ->
+          case float.compare(a.1, b.1) {
+            order.Eq ->
+              case float.compare(a.0.left_t, b.0.left_t) {
+                order.Eq -> float.compare(a.0.right_t, b.0.right_t)
+                other -> other
+              }
+            other -> other
+          }
+        other -> other
+      }
+    })
+  Ok(list.map(ranked, fn(item) { item.0 }))
+}
+
+fn elizabeth_endpoint_rank(candidate: SegmentIntersection) -> Int {
+  let left = case candidate.left_t == 0.0 || candidate.left_t == 1.0 {
+    True -> 0
+    False -> 1
+  }
+  let right = case candidate.right_t == 0.0 || candidate.right_t == 1.0 {
+    True -> 0
+    False -> 1
+  }
+  left + right
+}
+
+fn elizabeth_search(
+  left: Segment,
+  right: Segment,
+  tolerance: Float,
+  pending: List(#(WindowPreservingWindow, Int)),
+  candidates: List(SegmentIntersection),
+  examined: Int,
+  max_windows: Int,
+) -> Result(List(SegmentIntersection), ExperimentalSolverError) {
+  case pending {
+    [] -> Ok(candidates)
+    [#(window, depth), ..rest] -> {
+      use _ <- result.try(case examined >= max_windows {
+        True -> Error(ExperimentalWindowLimit(max_windows))
+        False -> Ok(Nil)
+      })
+      // Nonterminal work is enclosure rejection only: no candidate evaluation,
+      // propagation, or candidate-dependent subdivision.
+      use left_box <- result.try(
+        window_segment_bounding_box(left, window.left_from, window.left_to)
+        |> result.map_error(ExperimentalPathError),
+      )
+      use right_box <- result.try(
+        window_segment_bounding_box(right, window.right_from, window.right_to)
+        |> result.map_error(ExperimentalPathError),
+      )
+      use overlapping <- result.try(
+        window_bounds_overlap(left, right, window, left_box, right_box)
+        |> result.map_error(ExperimentalPathError),
+      )
+      case overlapping {
+        False ->
+          elizabeth_search(
+            left,
+            right,
+            tolerance,
+            rest,
+            candidates,
+            examined + 1,
+            max_windows,
+          )
+        True -> {
+          case
+            window.left_to -. window.left_from
+            <=. elizabeth_parameter_resolution
+            && window.right_to -. window.right_from
+            <=. elizabeth_parameter_resolution
+          {
+            True -> {
+              use found <- result.try(
+                elizabeth_terminal_candidates(left, right, window, tolerance)
+                |> result.map_error(ExperimentalPathError),
+              )
+              elizabeth_search(
+                left,
+                right,
+                tolerance,
+                rest,
+                list.append(found, candidates),
+                examined + 1,
+                max_windows,
+              )
+            }
+            False -> {
+              let children = window_preserving_split_window_nine(window)
+              case depth <= 0 || list.is_empty(children) {
+                True ->
+                  Error(ExperimentalDepthLimit(
+                    window.left_from,
+                    window.left_to,
+                    window.right_from,
+                    window.right_to,
+                  ))
+                False -> {
+                  let pending =
+                    list.fold(children, rest, fn(pending, child) {
+                      [#(child, depth - 1), ..pending]
+                    })
+                  elizabeth_search(
+                    left,
+                    right,
+                    tolerance,
+                    pending,
+                    candidates,
+                    examined + 1,
+                    max_windows,
+                  )
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Elizabeth's terminal experiment. Chords give one seed, not an intersection
+// certificate. Corners include original endpoint pairs and shared cut points.
+// The tangent-line iteration below never leaves this terminal rectangle.
+fn elizabeth_terminal_candidates(
+  left: Segment,
+  right: Segment,
+  window: WindowPreservingWindow,
+  tolerance: Float,
+) -> Result(List(SegmentIntersection), svg_path.Error) {
+  elizabeth_terminal_candidates_with(left, right, window, tolerance, True)
+}
+
+fn elizabeth_terminal_candidates_with(
+  left: Segment,
+  right: Segment,
+  window: WindowPreservingWindow,
+  tolerance: Float,
+  alternating: Bool,
+) -> Result(List(SegmentIntersection), svg_path.Error) {
+  let WindowPreservingWindow(a, b, c, d) = window
+  use p <- result.try(svg_path.segment_point(left, a))
+  use q <- result.try(svg_path.segment_point(left, b))
+  use r <- result.try(svg_path.segment_point(right, c))
+  use s <- result.try(svg_path.segment_point(right, d))
+  let #(t, u) = case window_preserving_chord_crossing(p, q, r, s) {
+    Some(pair) -> pair
+    None -> window_preserving_chord_closest_parameters(p, q, r, s)
+  }
+  let seeds = [
+    #(a, c),
+    #(a, d),
+    #(b, c),
+    #(b, d),
+    #({ a +. b } /. 2.0, { c +. d } /. 2.0),
+    #(
+      window_preserving_interpolate(a, b, t),
+      window_preserving_interpolate(c, d, u),
+    ),
+  ]
+  use found <- result.try(
+    list.try_map(seeds, fn(seed) {
+      use hit <- result.try(elizabeth_terminal_newton(
+        left,
+        right,
+        window,
+        seed.0,
+        seed.1,
+        tolerance,
+        8,
+      ))
+      case hit {
+        Some(_) -> Ok(hit)
+        None if !alternating -> Ok(None)
+        None ->
+          elizabeth_terminal_alternating(
+            left,
+            right,
+            window,
+            seed.0,
+            seed.1,
+            None,
+            False,
+            tolerance,
+            8,
+          )
+      }
+    }),
+  )
+  Ok(
+    list.filter_map(found, fn(hit) {
+      case hit {
+        Some(hit) -> Ok(hit)
+        None -> Error(Nil)
+      }
+    }),
+  )
+}
+
+// Experimental second attempt: alternate analytic tangent steps with secants
+// through the current and previous parameter pair. Intersect the chord lines
+// (allow extrapolation), but never accept a step outside the terminal window.
+// A collapsed or parallel chord pair falls back to the analytic tangents.
+fn elizabeth_terminal_alternating(
+  left: Segment,
+  right: Segment,
+  window: WindowPreservingWindow,
+  t: Float,
+  u: Float,
+  previous: Option(#(Float, Float)),
+  use_chords: Bool,
+  tolerance: Float,
+  remaining: Int,
+) -> Result(Option(SegmentIntersection), svg_path.Error) {
+  use p <- result.try(svg_path.segment_point(left, t))
+  use q <- result.try(svg_path.segment_point(right, u))
+  case window_preserving_point_distance(p, q) <=. tolerance {
+    True ->
+      Ok(Some(SegmentIntersection(t, u, window_preserving_midpoint(p, q))))
+    False if remaining <= 0 -> Ok(None)
+    False -> {
+      use v <- result.try(svg_path.segment_derivative(left, t))
+      use w <- result.try(svg_path.segment_derivative(right, u))
+      use directions <- result.try(case previous, use_chords {
+        Some(#(old_t, old_u)), True if old_t != t && old_u != u -> {
+          use old_p <- result.try(svg_path.segment_point(left, old_t))
+          use old_q <- result.try(svg_path.segment_point(right, old_u))
+          let chord_v = point_difference(p, old_p)
+          let chord_w = point_difference(q, old_q)
+          case directions_are_independent(chord_v, chord_w) {
+            True -> Ok(#(chord_v, chord_w, t -. old_t, u -. old_u))
+            False -> Ok(#(v, w, 1.0, 1.0))
+          }
+        }
+        _, _ -> Ok(#(v, w, 1.0, 1.0))
+      })
+      let #(v, w, dt, du) = directions
+      case directions_are_independent(v, w) {
+        False -> Ok(None)
+        True -> {
+          let determinant = cross(v, w)
+          let delta = point_difference(q, p)
+          let next_t = t +. cross(delta, w) /. determinant *. dt
+          let next_u = u -. cross(v, delta) /. determinant *. du
+          case
+            next_t >=. window.left_from
+            && next_t <=. window.left_to
+            && next_u >=. window.right_from
+            && next_u <=. window.right_to
+            && { next_t != t || next_u != u }
+          {
+            False -> Ok(None)
+            True ->
+              elizabeth_terminal_alternating(
+                left,
+                right,
+                window,
+                next_t,
+                next_u,
+                Some(#(t, u)),
+                !use_chords,
+                tolerance,
+                remaining - 1,
+              )
+          }
+        }
+      }
+    }
+  }
+}
+
+fn elizabeth_terminal_newton(
+  left: Segment,
+  right: Segment,
+  window: WindowPreservingWindow,
+  t: Float,
+  u: Float,
+  tolerance: Float,
+  remaining: Int,
+) -> Result(Option(SegmentIntersection), svg_path.Error) {
+  use p <- result.try(svg_path.segment_point(left, t))
+  use q <- result.try(svg_path.segment_point(right, u))
+  case window_preserving_point_distance(p, q) <=. tolerance {
+    True ->
+      Ok(Some(SegmentIntersection(t, u, window_preserving_midpoint(p, q))))
+    False if remaining <= 0 -> Ok(None)
+    False -> {
+      use v <- result.try(svg_path.segment_derivative(left, t))
+      use w <- result.try(svg_path.segment_derivative(right, u))
+      case directions_are_independent(v, w) {
+        False -> Ok(None)
+        True -> {
+          let determinant = cross(v, w)
+          let delta = point_difference(q, p)
+          let next_t = t +. cross(delta, w) /. determinant
+          let next_u = u -. cross(v, delta) /. determinant
+          // Do not clamp an escaped Newton step: a different window owns it.
+          // The remaining terminal seeds can still succeed independently.
+          case
+            next_t >=. window.left_from
+            && next_t <=. window.left_to
+            && next_u >=. window.right_from
+            && next_u <=. window.right_to
+            && { next_t != t || next_u != u }
+          {
+            False -> Ok(None)
+            True ->
+              elizabeth_terminal_newton(
+                left,
+                right,
+                window,
+                next_t,
+                next_u,
+                tolerance,
+                remaining - 1,
+              )
+          }
+        }
+      }
+    }
+  }
+}
+
+// Production defaults to Elizabeth. Retain the old route for diagnostics and
+// comparative benchmarks, but do not silently fall back on Elizabeth errors.
+const use_elizabeth_beam = True
+
 fn curve_curve_intersections(
   left: Segment,
   right: Segment,
   options: IntersectionOptions,
 ) -> Result(List(SegmentIntersection), svg_path.Error) {
+  case use_elizabeth_beam {
+    False -> edward_then_henry_intersections(left, right, options)
+    True ->
+      elizabeth_beam_intersections(left, right, options)
+      |> result.map(fn(report) { report.intersections })
+      |> result.map_error(fn(error) {
+        case error {
+          ExperimentalPathError(error) -> error
+          ExperimentalWindowLimit(limit) ->
+            IntersectionTerminalWindowLimitExceeded(limit)
+          ExperimentalDepthLimit(a, b, c, d) ->
+            svg_path.IntersectionDepthLimitReached(a, b, c, d)
+        }
+      })
+  }
+}
+
+fn edward_then_henry_intersections(
+  left: Segment,
+  right: Segment,
+  options: IntersectionOptions,
+) -> Result(List(SegmentIntersection), svg_path.Error) {
   case
-    window_preserving_segment_with(
+    edward_curve_intersections(
       left,
       right,
       tolerance: options.tolerance,
@@ -5302,12 +6320,12 @@ fn curve_curve_intersections(
     )
   {
     Error(IntersectionTerminalWindowLimitExceeded(_)) ->
-      legacy_curve_curve_intersections(left, right, options)
+      henry_curve_intersections(left, right, options)
     result -> result
   }
 }
 
-fn legacy_curve_curve_intersections(
+fn henry_curve_intersections(
   left: Segment,
   right: Segment,
   options: IntersectionOptions,

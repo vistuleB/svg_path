@@ -319,8 +319,23 @@ captured private probe. A drawing alone does not establish a reachable failure.
 **Module:** `svg_path/intersections`.
 **Functions:** `window_preserving_search`, `window_preserving_inspect_window`,
 `window_preserving_window_already_resolved`, and `insert_intersection`.
-**Status:** unresolved; supporting improvements committed, residual-search
-experiment shelved.
+**Status:** the clustered-crossing reproducer is fixed by the production
+Elizabeth solver. General completeness remains heuristic; the four existing
+candidate-count assertions are intentionally unchanged.
+
+Elizabeth now uses a breadth-first beam with spatial diversity and exact
+ranking-sample caches. It starts budget decay on >1000 enclosure survivors or
+at generation 5, and reaches 12 slots per bucket at absolute generation 12.
+The residual cap is min(caller tolerance, 1e-13). Endpoint discovery runs
+independently of beam culling. Edward/Henry remain available for comparison.
+
+The current production call finds all three roots at 0.20, 0.21 and 0.22.
+`scripts/test-fast`: 1617 passed, four candidate-count failures;
+`scripts/test-slow`: 26 passed; all 29 gallery figures generated successfully.
+The test expectations have not been weakened. Historical experiments,
+measurements, and the distinction between numerical candidates and distinct
+mathematical roots are retained in
+[ELIZABETH_SOLVER.md](examples/debug/ELIZABETH_SOLVER.md).
 
 The original reproducer uses x=t and y=(t−0.2)(t−0.21)(t−0.22).
 Intersecting it with a horizontal Line finds three crossings. Representing the

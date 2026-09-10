@@ -232,6 +232,30 @@ pub fn arc_arc_crossing_regression_test() {
   |> should.equal(1)
 }
 
+pub fn elizabeth_terminal_newton_recovers_loop8_arc_crossing_test() {
+  let #(left, right) = arc_pair()
+  let options =
+    intersections.IntersectionOptions(
+      ..intersections.default_options(),
+      tolerance: 0.0000000000000001,
+    )
+  let assert Ok([hit]) =
+    intersections.experimental_curve_intersections(
+      left,
+      right,
+      intersections.Elizabeth,
+      options,
+      1000,
+    )
+  assert hit.left_t >. 0.998 && hit.left_t <. 1.0
+  assert hit.right_t >. 0.0 && hit.right_t <. 0.001
+  let assert Ok(p) = svg_path.segment_point(left, hit.left_t)
+  let assert Ok(q) = svg_path.segment_point(right, hit.right_t)
+  let dx = p.x -. q.x
+  let dy = p.y -. q.y
+  assert dx *. dx +. dy *. dy <=. options.tolerance *. options.tolerance
+}
+
 pub fn production_arc_arc_crossing_regression_both_orders_test() {
   let #(left, right) = arc_pair()
   let assert Ok([forward]) = intersections.segment(left, right)

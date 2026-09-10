@@ -1,0 +1,49 @@
+resolution=1.0e-11; budget=100000; coverage radius=1e-5 in both parameters
+case | residual | candidates | expected-neighborhoods-hit | max-residual | milliseconds | windows
+cluster | 1.0e-12 | 3 | 3/3 | 1.3482509883381638e-16 | 225 | 29134
+cluster | 1.0e-13 | 3 | 3/3 | 1.3482509883381638e-16 | 216 | 29134
+cluster | 1.0e-14 | 3 | 3/3 | 1.3482509883381638e-16 | 215 | 29134
+cluster | 1.0e-15 | 3 | 3/3 | 3.1527007723046287e-16 | 346 | 29134
+cluster | 1.0e-16 | 3 | 3/3 | 5.898059818321144e-17 | 218 | 29134
+cluster translated | 1.0e-12 | {error,{experimental_window_limit,100000}} | 739ms | 100000
+cluster translated | 1.0e-13 | {error,{experimental_window_limit,100000}} | 746ms | 100000
+cluster translated | 1.0e-14 | {error,{experimental_window_limit,100000}} | 747ms | 100000
+cluster translated | 1.0e-15 | {error,{experimental_window_limit,100000}} | 747ms | 100000
+cluster translated | 1.0e-16 | {error,{experimental_window_limit,100000}} | 747ms | 100000
+center kiss | 1.0e-12 | {error,{experimental_window_limit,100000}} | 509ms | 100000
+center kiss | 1.0e-13 | {error,{experimental_window_limit,100000}} | 513ms | 100000
+center kiss | 1.0e-14 | {error,{experimental_window_limit,100000}} | 512ms | 100000
+center kiss | 1.0e-15 | {error,{experimental_window_limit,100000}} | 510ms | 100000
+center kiss | 1.0e-16 | {error,{experimental_window_limit,100000}} | 512ms | 100000
+off-center kiss | 1.0e-12 | {error,{experimental_window_limit,100000}} | 553ms | 100000
+off-center kiss | 1.0e-13 | {error,{experimental_window_limit,100000}} | 555ms | 100000
+off-center kiss | 1.0e-14 | {error,{experimental_window_limit,100000}} | 553ms | 100000
+off-center kiss | 1.0e-15 | {error,{experimental_window_limit,100000}} | 555ms | 100000
+off-center kiss | 1.0e-16 | {error,{experimental_window_limit,100000}} | 558ms | 100000
+two close crossings | 1.0e-12 | 2 | 2/2 | 1.4387362828882644e-16 | 190 | 34426
+two close crossings | 1.0e-13 | 2 | 2/2 | 1.4387362828882644e-16 | 183 | 34426
+two close crossings | 1.0e-14 | 2 | 2/2 | 1.4387362828882644e-16 | 184 | 34426
+two close crossings | 1.0e-15 | 2 | 2/2 | 1.601163320853749e-16 | 183 | 34426
+two close crossings | 1.0e-16 | 2 | 2/2 | 8.34158046456035e-18 | 184 | 34426
+flat cubic | 1.0e-12 | {error,{experimental_window_limit,100000}} | 751ms | 100000
+flat cubic | 1.0e-13 | {error,{experimental_window_limit,100000}} | 740ms | 100000
+flat cubic | 1.0e-14 | {error,{experimental_window_limit,100000}} | 740ms | 100000
+flat cubic | 1.0e-15 | {error,{experimental_window_limit,100000}} | 739ms | 100000
+flat cubic | 1.0e-16 | {error,{experimental_window_limit,100000}} | 739ms | 100000
+loop8 arcs | 1.0e-12 | 1 | 1/1 | 8.277746632763125e-13 | 3 | 568
+loop8 arcs | 1.0e-13 | 1 | 1/1 | 9.099386826154683e-14 | 3 | 568
+loop8 arcs | 1.0e-14 | 0 | 0/1 | 0.0 | 3 | 568
+loop8 arcs | 1.0e-15 | 0 | 0/1 | 0.0 | 3 | 568
+loop8 arcs | 1.0e-16 | 0 | 0/1 | 0.0 | 3 | 568
+loop8 cubics | 1.0e-12 | 1 | 1/1 | 1.0345658394727079e-13 | 6 | 775
+loop8 cubics | 1.0e-13 | 1 | 1/1 | 2.1316282072803006e-14 | 6 | 775
+loop8 cubics | 1.0e-14 | 1 | 1/1 | 0.0 | 6 | 775
+loop8 cubics | 1.0e-15 | 1 | 1/1 | 0.0 | 6 | 775
+loop8 cubics | 1.0e-16 | 1 | 1/1 | 0.0 | 6 | 775
+join exact endpoint | 1.0e-12 | {error,{experimental_window_limit,100000}} | 627ms | 100000
+join exact endpoint | 1.0e-13 | {error,{experimental_window_limit,100000}} | 669ms | 100000
+join exact endpoint | 1.0e-14 | {error,{experimental_window_limit,100000}} | 657ms | 100000
+join exact endpoint | 1.0e-15 | {error,{experimental_window_limit,100000}} | 650ms | 100000
+join exact endpoint | 1.0e-16 | {error,{experimental_window_limit,100000}} | 640ms | 100000
+Newton from 1e-12 candidates, loop8 arcs: [{ok,none}]
+Newton from 1e-12 candidates, loop8 cubics: [{ok,none}]

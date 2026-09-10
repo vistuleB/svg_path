@@ -1,0 +1,64 @@
+resolution=1.0e-9; Newton=true; budget=100000; coverage radius=1e-5 in both parameters
+case | residual | candidates | expected-neighborhoods-hit | max-residual | milliseconds | windows
+cluster | 1.0e-12 | 3 | 3/3 | 2.777254463988146e-17 | 4 | 622
+cluster | 1.0e-13 | 3 | 3/3 | 2.777254463988146e-17 | 4 | 622
+cluster | 1.0e-14 | 3 | 3/3 | 1.7753810574450135e-18 | 3 | 622
+cluster | 1.0e-15 | 3 | 3/3 | 1.7753810574450135e-18 | 3 | 622
+cluster | 1.0e-16 | 3 | 3/3 | 1.7753810574450135e-18 | 4 | 622
+cluster translated | 1.0e-12 | 3 | 3/3 | 1.4210854715202004e-14 | 8 | 1315
+cluster translated | 1.0e-13 | 3 | 3/3 | 1.4210854715202004e-14 | 8 | 1315
+cluster translated | 1.0e-14 | 2 | 2/3 | 0.0 | 8 | 1315
+cluster translated | 1.0e-15 | 2 | 2/3 | 0.0 | 8 | 1315
+cluster translated | 1.0e-16 | 2 | 2/3 | 0.0 | 8 | 1315
+center kiss | 1.0e-12 | 15 | 1/1 | 4.917837171626619e-13 | 125 | 20332
+center kiss | 1.0e-13 | 7 | 1/1 | 9.032762147375563e-14 | 119 | 20332
+center kiss | 1.0e-14 | 1 | 1/1 | 0.0 | 116 | 20332
+center kiss | 1.0e-15 | 1 | 1/1 | 0.0 | 119 | 20332
+center kiss | 1.0e-16 | 1 | 1/1 | 0.0 | 120 | 20332
+off-center kiss | 1.0e-12 | 9 | 1/1 | 3.297234837709611e-13 | 51 | 8227
+off-center kiss | 1.0e-13 | 5 | 1/1 | 8.379396521805759e-14 | 48 | 8227
+off-center kiss | 1.0e-14 | 1 | 1/1 | 9.068087406301386e-19 | 48 | 8227
+off-center kiss | 1.0e-15 | 1 | 1/1 | 9.068087406301386e-19 | 47 | 8227
+off-center kiss | 1.0e-16 | 1 | 1/1 | 9.068087406301386e-19 | 47 | 8227
+two close crossings | 1.0e-12 | 2 | 2/2 | 2.0328790734103208e-20 | 2 | 532
+two close crossings | 1.0e-13 | 2 | 2/2 | 2.0328790734103208e-20 | 2 | 532
+two close crossings | 1.0e-14 | 2 | 2/2 | 2.0328790734103208e-20 | 2 | 532
+two close crossings | 1.0e-15 | 2 | 2/2 | 2.0328790734103208e-20 | 2 | 532
+two close crossings | 1.0e-16 | 2 | 2/2 | 2.0328790734103208e-20 | 2 | 532
+flat cubic | 1.0e-12 | {error,{experimental_window_limit,100000}} | 861ms | 100000
+flat cubic | 1.0e-13 | {error,{experimental_window_limit,100000}} | 873ms | 100000
+flat cubic | 1.0e-14 | {error,{experimental_window_limit,100000}} | 869ms | 100000
+flat cubic | 1.0e-15 | {error,{experimental_window_limit,100000}} | 878ms | 100000
+flat cubic | 1.0e-16 | {error,{experimental_window_limit,100000}} | 886ms | 100000
+loop8 arcs | 1.0e-12 | 1 | 1/1 | 0.0 | 1 | 217
+loop8 arcs | 1.0e-13 | 1 | 1/1 | 0.0 | 1 | 217
+loop8 arcs | 1.0e-14 | 1 | 1/1 | 0.0 | 1 | 217
+loop8 arcs | 1.0e-15 | 1 | 1/1 | 0.0 | 1 | 217
+loop8 arcs | 1.0e-16 | 1 | 1/1 | 0.0 | 1 | 217
+loop8 cubics | 1.0e-12 | 1 | 1/1 | 0.0 | 1 | 217
+loop8 cubics | 1.0e-13 | 1 | 1/1 | 0.0 | 1 | 217
+loop8 cubics | 1.0e-14 | 1 | 1/1 | 0.0 | 1 | 217
+loop8 cubics | 1.0e-15 | 1 | 1/1 | 0.0 | 1 | 217
+loop8 cubics | 1.0e-16 | 1 | 1/1 | 0.0 | 1 | 217
+join exact endpoint | 1.0e-12 | {error,{experimental_window_limit,100000}} | 688ms | 100000
+join exact endpoint | 1.0e-13 | {error,{experimental_window_limit,100000}} | 688ms | 100000
+join exact endpoint | 1.0e-14 | {error,{experimental_window_limit,100000}} | 704ms | 100000
+join exact endpoint | 1.0e-15 | {error,{experimental_window_limit,100000}} | 691ms | 100000
+join exact endpoint | 1.0e-16 | {error,{experimental_window_limit,100000}} | 685ms | 100000
+Newton from 1e-12 candidates, cluster translated: [{ok,none},
+                                                   {ok,none},
+                                                   {ok,none}]
+Newton from 1e-12 candidates, loop8 arcs: [{ok,
+                                            {some,
+                                             {segment_intersection,
+                                              0.9989117248790069,
+                                              1.2899500140094955e-4,
+                                              {point,43.203274386102606,
+                                               213.46078441769131}}}}]
+Newton from 1e-12 candidates, loop8 cubics: [{ok,
+                                              {some,
+                                               {segment_intersection,
+                                                0.9978871974282525,
+                                                2.1318339160114703e-4,
+                                                {point,43.20326430699905,
+                                                 213.46083984865444}}}}]

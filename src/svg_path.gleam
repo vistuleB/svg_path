@@ -832,6 +832,14 @@ pub type Error {
   /// Intersection search generated more terminal windows than its safety limit.
   IntersectionTerminalWindowLimitExceeded(limit: Int)
 
+  /// Intersection refinement exhausted its depth before resolving this window.
+  IntersectionDepthLimitReached(
+    left_from: Float,
+    left_to: Float,
+    right_from: Float,
+    right_to: Float,
+  )
+
   /// The intersection parameter snap exponent must be between 1 and 15.
   InvalidIntersectionParameterSnapExponent(exponent: Int)
 

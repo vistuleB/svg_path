@@ -487,6 +487,28 @@ fn endpoint_projection_alternatives(
   target: svg_path.Segment,
   tolerance: Float,
 ) -> Result(List(EndpointProjection), svg_path.Error) {
+  use matches <- result.try(point_parameters(target, point, tolerance))
+  list.try_map(matches, fn(target_t) {
+    use at <- result.try(svg_path.segment_point(target, at: target_t))
+    Ok(EndpointProjection(
+      source:,
+      source_t:,
+      target_t:,
+      distance: point.distance(point, at),
+    ))
+  })
+}
+
+// Shared endpoint-on-segment inventory: coordinate roots plus closest-point
+// candidates, geometrically checked and deduplicated by parameter, not point.
+// Exact endpoints have priority. Constant/overlapping inputs do not have a
+// finite all-parameters inventory; callers retain their overlap prechecks.
+@internal
+pub fn point_parameters(
+  target: svg_path.Segment,
+  point: svg_path.Point,
+  tolerance: Float,
+) -> Result(List(Float), svg_path.Error) {
   let x = coordinate_matches(target, point, True, tolerance)
   let y = coordinate_matches(target, point, False, tolerance)
   use coordinates <- result.try(combine_coordinate_matches(x, y))
@@ -503,21 +525,12 @@ fn endpoint_projection_alternatives(
       }
     Error(error) -> Error(error)
   })
-  use matches <- result.try(matching_parameters(
+  matching_parameters(
     target,
     point,
     [0.0, 1.0, ..list.append(coordinates, projected)],
     tolerance,
-  ))
-  list.try_map(matches, fn(target_t) {
-    use at <- result.try(svg_path.segment_point(target, at: target_t))
-    Ok(EndpointProjection(
-      source:,
-      source_t:,
-      target_t:,
-      distance: point.distance(point, at),
-    ))
-  })
+  )
 }
 
 // The existing supporting-line query solves coordinate polynomials for

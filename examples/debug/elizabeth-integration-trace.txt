@@ -1,0 +1,92 @@
+
+shared endpoint
+{endpoint_bounds,{window_preserving_window,0.875,1.0,0.0,0.125},{ok,true}}
+{beam_selection,1,1,0,0,true,true}
+{endpoint_bounds,{window_preserving_window,0.9583333333333334,1.0,0.0,0.041666666666666664},{ok,true}}
+{beam_selection,1,1,0,0,true,true}
+{endpoint_bounds,{window_preserving_window,0.9861111111111112,1.0,0.0,0.013888888888888888},{ok,true}}
+{beam_selection,1,1,0,0,true,true}
+{endpoint_bounds,{window_preserving_window,0.9953703703703703,1.0,0.0,0.004629629629629629},{ok,true}}
+{beam_selection,1,1,0,0,true,true}
+{endpoint_bounds,{window_preserving_window,0.9984567901234568,1.0,0.0,0.0015432098765432098},{ok,true}}
+{beam_selection,1,1,0,0,true,true}
+{endpoint_bounds,{window_preserving_window,0.9994855967078189,1.0,0.0,5.144032921810699e-4},{ok,true}}
+{beam_selection,1,1,0,0,true,true}
+{endpoint_bounds,{window_preserving_window,0.9998285322359396,1.0,0.0,1.714677640603566e-4},{ok,true}}
+{beam_selection,1,1,0,0,true,true}
+{endpoint_bounds,{window_preserving_window,0.9999428440786465,1.0,0.0,5.71559213534522e-5},{ok,true}}
+{beam_selection,2,2,0,0,true,true}
+{endpoint_bounds,{window_preserving_window,0.9999809480262155,1.0,0.0,1.9051973784484066e-5},{ok,true}}
+{beam_selection,6,6,0,0,true,true}
+{endpoint_bounds,{window_preserving_window,0.9999936493420718,1.0,0.0,6.350657928161355e-6},{ok,true}}
+{beam_selection,18,18,0,0,true,true}
+{endpoint_bounds,{window_preserving_window,0.9999978831140239,1.0,0.0,2.116885976053785e-6},{ok,true}}
+{beam_selection,52,52,0,0,true,true}
+{endpoint_bounds,{window_preserving_window,0.9999992943713413,1.0,0.0,7.05628658684595e-7},{ok,true}}
+{beam_selection,156,156,0,0,true,true}
+{endpoint_bounds,{window_preserving_window,0.999999764790447,1.0,0.0,2.3520955289486497e-7},{ok,true}}
+{beam_selection,467,467,0,0,true,true}
+{endpoint_bounds,{window_preserving_window,0.9999999215968157,1.0,0.0,7.840318429828831e-8},{ok,true}}
+{beam_selection,1397,1000,0,397,true,true}
+{endpoint_bounds,{window_preserving_window,0.9999999738656052,1.0,0.0,2.6134394766096104e-8},{ok,true}}
+{beam_selection,2980,1000,0,1980,true,false}
+{beam_selection,2853,1000,0,1853,false,false}
+{beam_selection,3514,1000,0,2514,false,false}
+{beam_selection,6021,1000,0,5021,false,false}
+{raw_candidates,33,false}
+{deduplicated,{4,[{0.9999995053823806,0.0},{0.999999640894057,0.0},{0.9999997463995767,0.0},{0.9999999293403401,0.0}]}}
+{selected,{4,[{0.9999995053823806,0.0},{0.999999640894057,0.0},{0.9999997463995767,0.0},{0.9999999293403401,0.0}]}}
+beam: {ok,{elizabeth_beam_report,[{segment_intersection,0.9999995053823806,0.0,{point,2.8236048558813174,2.9152343073348557}},{segment_intersection,0.999999640894057,0.0,{point,2.823604855881319,2.9152343073348597}},{segment_intersection,0.9999997463995767,0.0,{point,2.82360485588132,2.9152343073348614}},{segment_intersection,0.9999999293403401,0.0,{point,2.8236048558813205,2.9152343073348637}}],42436,0,11765,1000,0}}
+old production: {ok,[{segment_intersection,1.0,0.0,{point,2.8236048558813205,2.9152343073348637}}]}
+
+off-center kiss
+{endpoint_bounds,{window_preserving_window,0.875,1.0,0.0,0.125},{ok,false}}
+{beam_selection,1,1,0,0,false,false}
+{beam_selection,1,1,0,0,false,false}
+{beam_selection,1,1,0,0,false,false}
+{beam_selection,1,1,0,0,false,false}
+{beam_selection,1,1,0,0,false,false}
+{beam_selection,1,1,0,0,false,false}
+{beam_selection,1,1,0,0,false,false}
+{beam_selection,1,1,0,0,false,false}
+{beam_selection,1,1,0,0,false,false}
+{beam_selection,1,1,0,0,false,false}
+{beam_selection,3,3,0,0,false,false}
+{beam_selection,3,3,0,0,false,false}
+{beam_selection,9,9,0,0,false,false}
+{beam_selection,23,23,0,0,false,false}
+{beam_selection,67,67,0,0,false,false}
+{beam_selection,199,199,0,0,false,false}
+{beam_selection,593,593,0,0,false,false}
+{beam_selection,1777,1000,0,777,false,false}
+{raw_candidates,402,false}
+{deduplicated,{3,[{0.36999989592703236,0.6299998959270324},{0.36999999672540573,0.6299999967254057},{0.37000009729738376,0.6300000972973837}]}}
+{selected,{3,[{0.36999989592703236,0.6299998959270324},{0.36999999672540573,0.6299999967254057},{0.37000009729738376,0.6300000972973837}]}}
+beam: {ok,{elizabeth_beam_report,[{segment_intersection,0.36999989592703236,0.6299998959270324,{point,0.36999989592703236,1.2073680422056702e-17}},{segment_intersection,0.36999999672540573,0.6299999967254057,{point,0.36999999672540573,9.159340110321858e-18}},{segment_intersection,0.37000009729738376,0.6300000972973837,{point,0.3700000972973837,1.1934902676327455e-17}}],8227,0,777,1000,0}}
+old production: {ok,[{segment_intersection,0.3699917123914037,0.6299917123914034,{point,0.36999171239140355,-2.6395664218812134e-18}}]}
+
+flat cubic pair
+{endpoint_bounds,{window_preserving_window,0.875,1.0,0.0,0.125},{ok,false}}
+{beam_selection,4,4,0,0,false,false}
+{beam_selection,4,4,0,0,false,false}
+{beam_selection,4,4,0,0,false,false}
+{beam_selection,4,4,0,0,false,false}
+{beam_selection,4,4,0,0,false,false}
+{beam_selection,4,4,0,0,false,false}
+{beam_selection,4,4,0,0,false,false}
+{beam_selection,10,10,0,0,false,false}
+{beam_selection,22,22,0,0,false,false}
+{beam_selection,58,58,0,0,false,false}
+{beam_selection,178,178,0,0,false,false}
+{beam_selection,538,538,0,0,false,false}
+{beam_selection,1606,1000,0,606,false,false}
+{beam_selection,4216,1000,0,3216,false,false}
+{beam_selection,7000,1000,0,6000,false,false}
+{beam_selection,7000,1000,0,6000,false,false}
+{beam_selection,7000,1000,0,6000,false,false}
+{beam_selection,7000,1000,0,6000,false,false}
+{raw_candidates,4000,false}
+{deduplicated,{9,[{0.49999959927261356,0.49999959927261356},{0.4999996994544602,0.4999996994544602},{0.4999997996363068,0.4999997996363068},{0.4999998998181534,0.4999998998181534},{0.5,0.5},{0.5000001001818466,0.5000001001818466},{0.5000002003636933,0.5000002003636933},{0.5000003005455398,0.5000003005455398},{0.5000004007273864,0.5000004007273864}]}}
+{selected,{9,[{0.49999959927261356,0.49999959927261356},{0.4999996994544602,0.4999996994544602},{0.4999997996363068,0.4999997996363068},{0.4999998998181534,0.4999998998181534},{0.5,0.5},{0.5000001001818466,0.5000001001818466},{0.5000002003636933,0.5000002003636933},{0.5000003005455398,0.5000003005455398},{0.5000004007273864,0.5000004007273864}]}}
+beam: {ok,{elizabeth_beam_report,[{segment_intersection,0.49999959927261356,0.49999959927261356,{point,0.4999995992726135,0.0}},{segment_intersection,0.4999996994544602,0.4999996994544602,{point,0.4999996994544602,0.0}},{segment_intersection,0.4999997996363068,0.4999997996363068,{point,0.4999997996363068,0.0}},{segment_intersection,0.4999998998181534,0.4999998998181534,{point,0.4999998998181534,0.0}},{segment_intersection,0.5,0.5,{point,0.5,0.0}},{segment_intersection,0.5000001001818466,0.5000001001818466,{point,0.5000001001818466,0.0}},{segment_intersection,0.5000002003636933,0.5000002003636933,{point,0.5000002003636934,0.0}},{segment_intersection,0.5000003005455398,0.5000003005455398,{point,0.5000003005455398,0.0}},{segment_intersection,0.5000004007273864,0.5000004007273864,{point,0.5000004007273864,0.0}}],52570,0,27822,1000,0}}
+old production: {ok,[{segment_intersection,0.5,0.5,{point,0.5,0.0}}]}

@@ -1,0 +1,37 @@
+resolution=1.0e-9; Newton=true; alternating=false; beam=true; DFS budget=100000; beam live cap=1000; coverage radius=1e-5 in both parameters
+case | residual | candidates | expected-neighborhoods-hit | max-residual | milliseconds | windows
+beam discarded crossing/other, peak retained: {0,0,33}
+cluster | 5.0e-14 | 3 | 3/3 | 1.7753810574450135e-18 | 4 | 622
+beam discarded crossing/other, peak retained: {0,0,135}
+cluster translated | 5.0e-14 | 3 | 3/3 | 1.4210854715202004e-14 | 8 | 1315
+beam discarded crossing/other, peak retained: {0,3384,1000}
+center kiss | 5.0e-14 | 5 | 1/1 | 4.0145609595360406e-14 | 94 | 16174
+beam discarded crossing/other, peak retained: {0,777,1000}
+off-center kiss | 5.0e-14 | 3 | 1/1 | 2.1659312059648843e-14 | 45 | 8227
+beam discarded crossing/other, peak retained: {0,0,32}
+two close crossings | 5.0e-14 | 2 | 2/2 | 2.0328790734103208e-20 | 2 | 532
+beam discarded crossing/other, peak retained: {0,29076,1000}
+flat cubic | 5.0e-14 | 17 | 1/1 | 5.73808459634729e-19 | 622 | 54460
+beam discarded crossing/other, peak retained: {0,0,1}
+loop8 arcs | 5.0e-14 | 1 | 1/1 | 0.0 | 0 | 217
+beam discarded crossing/other, peak retained: {0,0,1}
+loop8 cubics | 5.0e-14 | 1 | 1/1 | 0.0 | 1 | 217
+beam discarded crossing/other, peak retained: {0,15265,1000}
+join exact endpoint | 5.0e-14 | 20 | 1/1 | 0.0 | 383 | 82522
+Newton from 1e-12 candidates, cluster translated: [{ok,none},
+                                                   {ok,none},
+                                                   {ok,none}]
+Newton from 1e-12 candidates, loop8 arcs: [{ok,
+                                            {some,
+                                             {segment_intersection,
+                                              0.9989117248790069,
+                                              1.2899500140094955e-4,
+                                              {point,43.203274386102606,
+                                               213.46078441769131}}}}]
+Newton from 1e-12 candidates, loop8 cubics: [{ok,
+                                              {some,
+                                               {segment_intersection,
+                                                0.9978871974282525,
+                                                2.1318339160114703e-4,
+                                                {point,43.20326430699905,
+                                                 213.46083984865444}}}}]

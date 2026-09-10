@@ -1,0 +1,33 @@
+Running fast test profile.
+Downloading packages
+ Downloaded 2 packages in 0.01s
+  Compiling gleam_stdlib
+  Compiling gleeunit
+  Compiling svg_path
+   Compiled in 3.20s
+    Running svg_path_test.main
+let assert test/svg_path_geometry_test.gleam:2534
+ test: svg_path_geometry_test.segment_intersections_prefers_shared_endpoint_over_near_endpoint_minimum_test
+ code: let assert Ok([raw]) =
+    intersections.segment_with(
+      left,
+      right,
+      options: intersections.IntersectionOptions(
+        tolerance: 0.000000001,
+        max_depth: 64,
+        parameter_snap: intersections.NoParameterSnap,
+      ),
+    )
+value: Ok([SegmentIntersection(0.9999995053823806, 0.0, Point(2.8236048558813174, 2.9152343073348557)), SegmentIntersection(0.999999640894057, 0.0, Point(2.823604855881319, 2.9152343073348597)), SegmentIntersection(0.9999997463995767, 0.0, Point(2.82360485588132, 2.9152343073348614)), SegmentIntersection(0.9999999293403401, 0.0, Point(2.8236048558813205, 2.9152343073348637))])
+ info: Pattern match failed, no pattern matched the value.
+let assert test/svg_path_intersections_test.gleam:337
+ test: svg_path_intersections_test.production_off_center_kissing_quadratics_test
+ code: let assert Ok([intersection]) = intersections.segment(left, right)
+value: Ok([SegmentIntersection(0.36999989592703236, 0.6299998959270324, Point(0.36999989592703236, 1.2073680422056702e-17)), SegmentIntersection(0.36999999672540573, 0.6299999967254057, Point(0.36999999672540573, 9.159340110321858e-18)), SegmentIntersection(0.37000009729738376, 0.6300000972973837, Point(0.3700000972973837, 1.1934902676327455e-17))])
+ info: Pattern match failed, no pattern matched the value.
+let assert test/svg_path_intersections_test.gleam:377
+ test: svg_path_intersections_test.flat_cubic_crossing_regression_test
+ code: let assert Ok([intersection]) = intersections.segment(rising, falling)
+value: Ok([SegmentIntersection(0.49999959927261356, 0.49999959927261356, Point(0.4999995992726135, 0.0)), SegmentIntersection(0.4999996994544602, 0.4999996994544602, Point(0.4999996994544602, 0.0)), SegmentIntersection(0.4999997996363068, 0.4999997996363068, Point(0.4999997996363068, 0.0)), SegmentIntersection(0.4999998998181534, 0.4999998998181534, Point(0.4999998998181534, 0.0)), SegmentIntersection(0.5, 0.5, Point(0.5, 0.0)), SegmentIntersection(0.5000001001818466, 0.5000001001818466, Point(0.5000001001818466, 0.0)), SegmentIntersection(0.5000002003636933, 0.5000002003636933, Point(0.5000002003636934, 0.0)), SegmentIntersection(0.5000003005455398, 0.5000003005455398, Point(0.5000003005455398, 0.0)), SegmentIntersection(0.5000004007273864, 0.5000004007273864, Point(0.5000004007273864, 0.0))])
+ info: Pattern match failed, no pattern matched the value.
+1617 passed, 3 failures
