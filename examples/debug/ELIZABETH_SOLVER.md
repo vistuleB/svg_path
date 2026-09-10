@@ -17,6 +17,11 @@ candidate-count failures remain. Focused allocation/cache/diversity checks
 pass. The updated direct comparison finds three clustered crossings with
 Elizabeth and Henry, and one with Edward.
 
+Post-removal verification: `scripts/test-all` stopped at those same four fast
+failures (1614 passed); separately, `scripts/test-slow` passed 26 tests.
+`escript scripts/gallery/run.escript` regenerated all 29 figures successfully.
+The nine-offset title took 32.91s in that concurrent gallery run.
+
 - Generic curve pairs use breadth-first Elizabeth; analytic Line dispatch is
   unchanged. Edward/Henry remain behind a private comparison switch, not an
   automatic fallback from Elizabeth.
@@ -38,19 +43,21 @@ The four existing candidate-count test failures remain intentionally visible.
 This document retains earlier experiments below; their settings are historical,
 not a description of the current default.
 
-Latest enclosure change: both Elizabeth variants now construct each curve
+The polygon-only enclosure change made both then-existing Elizabeth variants construct each curve
 window's enclosing point inventory once and apply polygon separation directly,
 without curve-extrema or axis-aligned bounding-box construction. Enclosure
 points remain local and do not enter the curve-evaluation cache. Edward's old
 box path remains unchanged. The isolated nine-offset title completed in 30.19s
 (6,287,924,717 reductions), versus 29.40s (6,149,387,450) in the earlier
 box-plus-polygon measurement. No speed benefit established.
-`scripts/test-fast` after cleanup: 1616 passed, 5 failures. The four existing
+At that pre-removal checkpoint, `scripts/test-fast`: 1616 passed, 5 failures. The four existing
 candidate-count failures remain. The additional failure is the depth-first
 experimental `elizabeth_terminal_newton_recovers_strict_translated_candidates_test`:
 polygon-only rejection reaches its 10,000 examined-window cap. This is not the
 production beam entry point. No test expectations were changed. Focused
-allocation/cache/diversity checks pass; gallery and slow tests were not rerun.
+allocation/cache/diversity checks passed; gallery and slow tests had not yet
+been rerun. The extra depth-first failure was removed with that experiment;
+current verification is recorded above.
 
 ## Enclosure comparison counters (current beam)
 

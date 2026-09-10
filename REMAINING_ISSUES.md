@@ -1,5 +1,35 @@
 # Remaining audit issues
 
+## Current status — 2026-09-10
+
+Every concrete reproducer in this ledger has a fix. IX2's clustered crossings
+are now covered by the production Elizabeth solver; this does not establish
+completeness for arbitrary curve pairs. The drawings and investigations below
+are retained as a resolved audit history, not a list of outstanding fixes.
+
+The remaining follow-ups are:
+
+- Review four intersection tests that still demand one candidate where the
+  numerical residual/separation contract admits several. Their assertions
+  remain unchanged: `elizabeth_beam_flat_crossing_completes_with_explicit_loss_test`,
+  `segment_intersections_prefers_shared_endpoint_over_near_endpoint_minimum_test`,
+  `production_off_center_kissing_quadratics_test`, and
+  `flat_cubic_crossing_regression_test`.
+- Retain the explicit limitation that Elizabeth's bounded beam search and
+  candidate selection are heuristic, not a proof of finding every distinct
+  mathematical root. No further failing geometry case is established here.
+
+Verification after polygon-only rejection and depth-first experiment removal:
+
+- `scripts/test-all` stopped in its fast profile: **1,614 passed, four known
+  failures**. It did not reach the slow profile.
+- `scripts/test-slow`, run separately: **26 passed, no failures**.
+- `escript scripts/gallery/run.escript`: **29 succeeded, zero failed**, after
+  building both generator projects. The nine-offset title completed in 32.91s.
+
+No test expectations were changed. Counts in the sections below describe the
+historical checkpoints at which those changes were verified.
+
 ## Arc–line stored endpoint omission — fixed
 
 `intersections.line_segment_intersections_by_ray` now independently checks the
@@ -15,7 +45,7 @@ claim is made that restoring the endpoint settles its distinctness. Details:
 
 ## Alternate final loop enumeration: even–odd face walks
 
-Current verification: `scripts/test-fast` passes **1,606 tests**, including the
+Verification at implementation: `scripts/test-fast` passed **1,606 tests**, including the
 subsequent arc–line endpoint regression.
 `escript examples/debug/final_orientation_checks.escript` succeeds for all
 three square configurations, recursive dashes, figure eight, and both loop-eight
@@ -259,9 +289,9 @@ to the selected span after strict global-distance validation. A regression
 covers both an interior boundary and the final endpoint using lengths 10 and
 0.3; it failed before the fix with `InvalidLengthDistance(0.3000000000000007, 0.3)`.
 Both offset-text generators now run during Gallery generation instead of merely
-copying their saved SVGs. The second-offset arrangement remains an explicitly
-labeled archived diagnostic; reconnecting its original graph-capture generator
-is still needed for fresh verification. The next two audit issues were deferred
+copying their saved SVGs. At that checkpoint the second-offset arrangement was
+still an explicitly labeled archived diagnostic; its generator was subsequently
+reconnected as described below. The next two audit issues were deferred
 to address this Gallery failure first.
 `scripts/test-fast` passed **1,560 tests** with this fix.
 `scripts/generate-published-figures` then completed: 28 freshly recomputed
@@ -312,13 +342,16 @@ captured private probe. A drawing alone does not establish a reachable failure.
 
 ## Intersection search and classification
 
-### IX2 — a found intersection does not exhaust its parameter window
+### IX2 — a found intersection does not exhaust its parameter window — reproducer resolved
 
 ![IX2 — a found intersection does not exhaust its parameter window](examples/debug/v1_review_visuals/ix2.svg)
 
 **Module:** `svg_path/intersections`.
-**Functions:** `window_preserving_search`, `window_preserving_inspect_window`,
-`window_preserving_window_already_resolved`, and `insert_intersection`.
+**Current functions:** `elizabeth_beam_intersections`, `elizabeth_beam_generation`,
+`elizabeth_terminal_candidates`, and `elizabeth_finish_candidates`.
+**Historical diagnosis:** `window_preserving_search`,
+`window_preserving_inspect_window`, `window_preserving_window_already_resolved`,
+and `insert_intersection` in the Edward search path.
 **Status:** the clustered-crossing reproducer is fixed by the production
 Elizabeth solver. General completeness remains heuristic; the four existing
 candidate-count assertions are intentionally unchanged.
@@ -330,8 +363,7 @@ The residual cap is min(caller tolerance, 1e-13). Endpoint discovery runs
 independently of beam culling. Edward/Henry remain available for comparison.
 
 The current production call finds all three roots at 0.20, 0.21 and 0.22.
-`scripts/test-fast`: 1617 passed, four candidate-count failures;
-`scripts/test-slow`: 26 passed; all 29 gallery figures generated successfully.
+See the current verification summary above for test and gallery results.
 The test expectations have not been weakened. Historical experiments,
 measurements, and the distinction between numerical candidates and distinct
 mathematical roots are retained in
@@ -339,10 +371,11 @@ mathematical roots are retained in
 
 The original reproducer uses x=t and y=(t−0.2)(t−0.21)(t−0.22).
 Intersecting it with a horizontal Line finds three crossings. Representing the
-same horizontal geometry as a Quadratic selects the generic solver, which
-misses crossings. See the [original illustration](examples/debug/v1_review_visuals/ix2.svg).
+same horizontal geometry as a Quadratic selected the generic Edward solver,
+which missed crossings. Production Elizabeth finds all three. See the
+[original illustration](examples/debug/v1_review_visuals/ix2.svg).
 
-The current window-preserving solver still has two insufficient stopping rules:
+The historical Edward diagnosis identified two insufficient stopping rules:
 
 - Finding an accepted candidate can finish the current window without proving
   that it contains no other intersection.
@@ -350,12 +383,12 @@ The current window-preserving solver still has two insufficient stopping rules:
   parameter widths are at most 0.125 when an existing intersection lies within
   a margin of twice those widths. Proximity to a known hit is not uniqueness.
 
-There are still two search algorithms: the window-preserving solver and the
-older descent solver used as fallback on terminal-window exhaustion. The
-crossing-based window search did not become a descent step inside the older
-solver.
+There are three retained algorithms: production breadth-first Elizabeth,
+Edward's window-preserving search, and Henry's descent search. The private
+comparison route uses Edward with Henry fallback on window exhaustion; it is
+not the production route. Depth-first Elizabeth has been removed.
 
-#### Improvements retained on main
+#### Earlier repairs retained on main
 
 - `46b3cd6`: crossing-root refinement validates the endpoint signs of its
   bracket. Unmatched endpoint root estimates can be rejected rather than
@@ -364,7 +397,8 @@ solver.
   its bounding-box test. Bézier portions use control points; Arc portions use
   endpoint/tangent enclosures. Separation includes a floating-point allowance.
   A private switch retains the bounding-box-only mode; `EnclosingPolygons` is
-  selected. Subdivision also avoids zero-width and unchanged children.
+  selected for Edward. Production Elizabeth now uses polygon-only rejection.
+  Subdivision also avoids zero-width and unchanged children.
 
 These changes improve rejection of empty windows and bracket handling. They
 do **not** establish that a window containing a hit has been exhausted.
@@ -384,16 +418,15 @@ search exhaustion around accepted roots. The trial `1e-15` polishing threshold
 was removed. The fixed parameter-exclusion box was not an adequate way to
 identify a root and delimit its remaining uncertainty.
 
-#### Remaining work
+#### Resolution and remaining limitation
 
-Retain found intersections while searching the residual parameter region,
-without repeatedly rediscovering one approximate root or excluding a distinct
-nearby root. Candidate refinement/deduplication and window exhaustion need
-separate criteria. Test clustered crossings, touching roots, endpoint hits,
-and fallback behavior together. IX4's position-only deduplication has now been
-removed on the current solver, with the fast suite and second-offset fixture
-passing. The archived residual-search experiment still needs its own checks
-for multiple approximations of one root; IX4 does not resolve window exhaustion.
+Elizabeth does not terminate a coarse window merely because it found a
+candidate. It continues subdivision, applies bounded spatially diverse beam
+selection, and refines terminal candidates. The production clustered-cubic
+regression checks all three roots. IX4 separately removed position-only
+deduplication. The archived residual-window patch is not an outstanding
+implementation task. The remaining numerical-contract assertions and search
+completeness limitation are listed at the top of this document.
 
 ### IX3 — parallel tangents do not imply touching — resolved
 
@@ -801,7 +834,7 @@ error rather than a panic. Existing successful internal-helper tests now unwrap
 their `Result`s. `scripts/test-fast` passes **1,570 tests** and
 `scripts/test-slow` passes **26 tests**.
 
-## Verification baseline and next work
+## Historical verification runs
 
 For SP1 and OF3, `scripts/test-fast` passed **1,559 tests** and
 `scripts/test-slow` passed **26 tests**. Formatting and whitespace checks passed.
@@ -829,6 +862,6 @@ tests, `scripts/test-all` passed with **1,546 ordinary tests and 26 slow tests**
 on the retained intersection improvements. These are historical completed runs,
 not a fresh verification performed while writing this document.
 
-The remaining intersection search task is **IX2**. IX4's address/deduplication
-repair is committed separately. IX3 is a separate classification problem.
-The other entries remain available for separate fixes with their own regressions.
+IX2, IX3, IX4, and the other recorded reproducers have since been addressed as
+described above. Use the opening status section for current follow-ups and
+verification, rather than these historical counts.
