@@ -1723,10 +1723,6 @@ fn package_title_first_offset() -> String {
     offset.Options(
       ..offset.default_options(),
       fitting: offset.FittingOptions(tolerance: 0.01, samples: 5, max_depth: 12),
-      distance_options: svg_path.DistanceOptions(
-        ..svg_path.default_distance_options(),
-        tolerance: 0.000000001,
-      ),
     )
   let distance = 1.05
   let assert Ok(untrimmed) =

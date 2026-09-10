@@ -290,7 +290,6 @@ pub fn default_fitting_options() -> FittingOptions {
 pub fn default_options() -> Options {
   Options(
     fitting: default_fitting_options(),
-    distance_options: default_distance_options(),
     stalled_offset_diameter: default_stalled_offset_diameter,
     tangent_heal_angle_degrees: default_tangent_heal_angle_degrees,
     single_offset_trimming: SingleOffsetTrimming(
@@ -2736,8 +2735,6 @@ const default_max_depth = maximum_refinement_generation
 
 const default_samples = 10
 
-const default_trimming_samples = 5
-
 pub const default_miter_limit = 4.0
 
 const small_unit_division_tolerance = 0.000001
@@ -3080,8 +3077,7 @@ pub type FittingOptions {
 
 /// Technical options for offset construction; styles are explicit parameters.
 ///
-/// `fitting` controls offset approximation. `distance_options` controls
-/// projection and root-finding used while pruning. `stalled_offset_diameter`
+/// `fitting` controls offset approximation. `stalled_offset_diameter`
 /// decides when the stalled-run builder treats an offset piece as too small to
 /// keep as an ordinary independently fitted segment.
 /// `tangent_heal_angle_degrees` is the maximum tangent direction mismatch, in
@@ -3091,7 +3087,6 @@ pub type FittingOptions {
 pub type Options {
   Options(
     fitting: FittingOptions,
-    distance_options: svg_path.DistanceOptions,
     stalled_offset_diameter: Float,
     tangent_heal_angle_degrees: Float,
     single_offset_trimming: SingleOffsetTrimming,
@@ -4029,14 +4024,6 @@ fn arrangement_split_segments_from_i_contamination_edges(
       )
     }
   }
-}
-
-/// Projection options using the trimming pipeline's sampling budget.
-fn default_distance_options() -> svg_path.DistanceOptions {
-  svg_path.DistanceOptions(
-    ..svg_path.default_distance_options(),
-    samples: default_trimming_samples,
-  )
 }
 
 /// Terminal general-purpose trimming for current single-offset geometry.

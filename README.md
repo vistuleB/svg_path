@@ -1461,8 +1461,6 @@ The `_with` variants additionally accept `options: offset.Options` for fitting,
 numerical tolerances, and trimming controls. The forms without `_with` supply
 only these technical defaults, not a join or cap choice. `Options.fitting`
 controls fitted-curve accuracy and maximum subdivision depth.
-`Options.distance_options` controls the projection and root-finding tolerances
-used during trimming; it is not a trimming-policy switch.
 
 Use `subpath_untrimmed`, `path_untrimmed`, or their `_with` variants to obtain
 the connected offset walks before topological trimming. These are useful for

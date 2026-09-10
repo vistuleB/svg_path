@@ -296,7 +296,7 @@ fn section_has_enough_non_negative_samples(
         svg_path.subpath_projection_with(
           point,
           to: source,
-          options: options.distance_options,
+          options: svg_path.default_distance_options(),
         )
         |> result.map_error(offset.InternalPathError),
       )

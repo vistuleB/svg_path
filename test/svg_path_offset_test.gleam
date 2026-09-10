@@ -1129,10 +1129,6 @@ pub fn package_title_s_iterated_offset_keeps_three_closed_first_offset_subpaths_
     offset.Options(
       ..offset.default_options(),
       fitting: offset.FittingOptions(tolerance: 0.01, samples: 5, max_depth: 12),
-      distance_options: svg_path.DistanceOptions(
-        ..svg_path.default_distance_options(),
-        tolerance: 0.000000001,
-      ),
     )
 
   let assert Ok(first_offset) =
@@ -1212,10 +1208,6 @@ pub fn package_title_v_1_05_public_offset_filters_micro_loops_test() {
     offset.Options(
       ..offset.default_options(),
       fitting: offset.FittingOptions(tolerance: 0.01, samples: 5, max_depth: 12),
-      distance_options: svg_path.DistanceOptions(
-        ..svg_path.default_distance_options(),
-        tolerance: 0.000000001,
-      ),
     )
   let assert Ok(result) =
     offset.path_with(
@@ -1240,10 +1232,6 @@ pub fn package_title_a_and_v_1_05_bevel_offsets_filter_micro_loops_test() {
     offset.Options(
       ..offset.default_options(),
       fitting: offset.FittingOptions(tolerance: 0.01, samples: 5, max_depth: 12),
-      distance_options: svg_path.DistanceOptions(
-        ..svg_path.default_distance_options(),
-        tolerance: 0.000000001,
-      ),
     )
 
   let assert Ok(v_offset) =
@@ -1503,14 +1491,6 @@ pub fn segment_rejects_invalid_options_test() {
       options:,
     )
     == Error(offset.InvalidTolerance(0.0))
-}
-
-pub fn default_offset_trimming_uses_precise_projection_test() {
-  let options = offset.default_options()
-
-  assert options.distance_options.samples == 5
-  assert options.distance_options.tolerance
-    == svg_path.default_distance_options().tolerance
 }
 
 pub fn segment_rejects_negative_stalled_offset_diameter_test() {

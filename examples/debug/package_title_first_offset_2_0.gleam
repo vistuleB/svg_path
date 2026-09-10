@@ -19,10 +19,6 @@ pub fn main() -> Nil {
     offset.Options(
       ..offset.default_options(),
       fitting: offset.FittingOptions(tolerance: 0.01, samples: 5, max_depth: 12),
-      distance_options: svg_path.DistanceOptions(
-        ..svg_path.default_distance_options(),
-        tolerance: 0.000000001,
-      ),
     )
   let assert Ok(first_offset) =
     offset.path_with(
