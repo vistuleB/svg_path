@@ -36,6 +36,7 @@ mkdir -p "$readme_output" "$gallery_output" "$gallery_destination"
 )
 node "$root/examples/debug/miter_clip_demos.mjs"
 node "$root/examples/debug/arcs_join_demos.mjs"
+node "$root/scripts/gallery/w3c_join_comparison.mjs" "$gallery_output"
 for figure in miter_clip_comparison.svg miter_clip_limits.svg arcs_join_self_intersection.svg arcs_join_comparison_2.svg; do
   cp "$root/examples/debug/$figure" "$readme_output/$figure"
 done
@@ -57,6 +58,10 @@ readme_figures=(
 )
 
 gallery_figures=(
+  w3c-miter-limit.svg
+  w3c-linejoin-construction-fallback.svg
+  w3c-linejoin-construction-fallback2.svg
+  w3c-linejoin-construction-fallback3.svg
   gallery-rounded-rectangle-union.svg
   gallery-intersection-rectangles.svg
   gallery-intersection-circle-rectangle.svg
@@ -99,4 +104,4 @@ done
 
 echo "Generated ${#readme_figures[@]} README figures in test/generated/readme."
 echo "Generated and promoted ${#gallery_figures[@]} Gallery figures."
-echo "Gallery verification: all 29 figures recomputed, including the production-traced second-offset arrangement."
+echo "Gallery verification: all ${#gallery_figures[@]} figures recomputed, including the production-traced second-offset arrangement and four W3C join comparisons."

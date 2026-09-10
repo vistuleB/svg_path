@@ -1166,7 +1166,7 @@ There is a similar difference between `M 0,0` and `M 0,0 Z`, with the `Z`
 command "supplying" a zero-length line segment to the subpath:
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.46.0/figures/zero_length_closepath_probe.svg" alt="Zero-length closepath probe">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.47.0/figures/zero_length_closepath_probe.svg" alt="Zero-length closepath probe">
 </center>
 
 ```xml
@@ -1482,9 +1482,14 @@ takes `cap:` for its internal source-to-offset winding band; this does not add
 caps to the returned one-sided offset walk.
 
 The `_with` variants additionally accept `options: offset.Options` for fitting,
-numerical tolerances, and trimming controls. The forms without `_with` supply
-only these technical defaults, not a join or cap choice. `Options.fitting`
+numerical tolerances, trimming controls, and an optional inner-corner join
+override. The main join and cap remain explicit arguments. `Options.fitting`
 controls fitted-curve accuracy and maximum subdivision depth.
+
+For single offsets, the inside join can be controlled independently of the main
+join style: set `inner_join: Some(offset.InnerRound)` or
+`Some(offset.InnerBevel)` in the `_with` options. With the default `None`,
+inside joins are round for `Round` and beveled for every other main join style.
 
 Use `subpath_untrimmed`, `path_untrimmed`, or their `_with` variants to obtain
 the connected offset walks before topological trimming. These are useful for
@@ -1525,7 +1530,7 @@ The following open source has no offside stage, so the panels isolate the three
 final-trimming choices:
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.46.0/figures/single_offset_final_trimming.svg" alt="Single offset with no final trimming, cusp trimming, and in-band trimming">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.47.0/figures/single_offset_final_trimming.svg" alt="Single offset with no final trimming, cusp trimming, and in-band trimming">
 </center>
 
 For closed contours, `offside` is an additional and independent operation. In
@@ -1533,7 +1538,7 @@ this example the source contains oppositely oriented concentric rectangles;
 the final trimming mode is `NoTrimming` in both panels:
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.46.0/figures/single_offset_offside_trimming.svg" alt="Single offset of concentric rectangles with offside trimming disabled and enabled">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.47.0/figures/single_offset_offside_trimming.svg" alt="Single offset of concentric rectangles with offside trimming disabled and enabled">
 </center>
 
 The defaults are `offside: True` and
@@ -1608,14 +1613,14 @@ The cusp switches act before joint band trimming. The four-concave-corner
 example below holds `in_band: True` while changing the two side-local switches:
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.46.0/figures/band_cusp_trimming.svg" alt="Band trimming with both, one, and neither side-local cusp pass enabled">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.47.0/figures/band_cusp_trimming.svg" alt="Band trimming with both, one, and neither side-local cusp pass enabled">
 </center>
 
 The figure-eight below holds both cusp switches at `True` and changes only the
 final joint pass:
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.46.0/figures/band_in_band_trimming.svg" alt="Figure-eight band with in-band trimming disabled and enabled">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.47.0/figures/band_in_band_trimming.svg" alt="Figure-eight band with in-band trimming disabled and enabled">
 </center>
 
 All three band switches default to `True`. Turning a stage off is useful for
@@ -1646,14 +1651,14 @@ or the clipping line would cut behind either join endpoint, it falls back to
 `Bevel`; neighboring segments are not shortened to satisfy a low limit.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/miter_clip_comparison.svg" alt="Computed stroke outlines comparing Miter(4), Miter(1.5), MiterClip(1.5), and Round joins">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.47.0/figures/miter_clip_comparison.svg" alt="Computed stroke outlines comparing Miter(4), Miter(1.5), MiterClip(1.5), and Round joins">
 </p>
 
 The same source and stroke width are used in each panel. An over-limit `Miter`
 bevels the corner; `MiterClip` preserves the tip up to the clipping line.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/miter_clip_limits.svg" alt="Computed MiterClip stroke outlines with limits 0.5, 1, 1.5, and 2">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.47.0/figures/miter_clip_limits.svg" alt="Computed MiterClip stroke outlines with limits 0.5, 1, 1.5, and 2">
 </p>
 
 Varying the limit changes how much of the tip is retained. Limits that would
@@ -1664,7 +1669,11 @@ tangent circle (or a line for zero or unavailable endpoint curvature). When the
 circles do not intersect, their radii are adjusted while preserving tangency.
 The limit is measured along an auxiliary arc from the source corner, following
 the [published SVG 2 arcs construction](https://www.w3.org/TR/SVG2/painting.html#LineJoinShape).
-`Arcs` and `MiterClip` are based on that proposal; both were removed from the
+These are historical SVG 2 proposals: `arcs` was adopted at the
+[19 September 2012 working-group meeting](https://www.w3.org/2012/09/19-svg-minutes.html#action10),
+and `miter-clip` at the
+[12 February 2015 meeting](https://www.w3.org/2015/02/12-svg-minutes.html#action02).
+Both were removed from the
 [current editor's draft in March 2026](https://w3c.github.io/svgwg/svg2-draft/changes.html#painting).
 They remain available here as geometric outline operations, without depending
 on browser support for those SVG attribute values.
@@ -1676,7 +1685,7 @@ falls back to `Bevel`. Limits must be finite and positive; an unsuccessful
 circle construction reports `ConstructionFailed`.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/arcs_join_self_intersection.svg" alt="Self-intersecting curved stroke comparing MiterClip, Round, Arcs, and clipped Arcs joins">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.47.0/figures/arcs_join_self_intersection.svg" alt="Self-intersecting curved stroke comparing MiterClip, Round, Arcs, and clipped Arcs joins">
 </p>
 
 Here the two source arcs have unequal curvatures. The stroke intersects itself
@@ -1684,7 +1693,7 @@ near its butt end, leaving an enclosed region; each panel is computed from the
 same source through the public stroke API.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/arcs_join_comparison_2.svg" alt="Curved stroke comparing joins when the Arcs continuation circles initially do not intersect">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.47.0/figures/arcs_join_comparison_2.svg" alt="Curved stroke comparing joins when the Arcs continuation circles initially do not intersect">
 </p>
 
 In this example the initial continuation circles do not intersect. `Arcs`
@@ -1739,7 +1748,7 @@ the right panel shows the resulting vertices, directed edges, winding levels,
 and directional multiplicities.
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.46.0/figures/arrangement_graph_overlapping_squares.svg" alt="Two overlapping square subpaths and their arrangement graph">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.47.0/figures/arrangement_graph_overlapping_squares.svg" alt="Two overlapping square subpaths and their arrangement graph">
 </center>
 
 ```gleam
@@ -1803,7 +1812,7 @@ circle at all four source endpoints and represents each geometric edge once,
 with one occurrence in each direction.
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.46.0/figures/arrangement_graph_semantic_circle_overlap.svg" alt="Oppositely directed equal circles with phase-shifted arc subdivisions and their arrangement graph">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.47.0/figures/arrangement_graph_semantic_circle_overlap.svg" alt="Oppositely directed equal circles with phase-shifted arc subdivisions and their arrangement graph">
 </center>
 
 `build` is the supported constructor. Direct construction remains possible for
@@ -1873,7 +1882,7 @@ black numbers are the winding levels immediately to the left and right of each
 directed edge; its red numbers are forward and reverse source multiplicities.
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.46.0/figures/arrangement_csg_nonzero.svg" alt="Eight-panel ArrangementGraph CSG example using the Nonzero fill rule">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.47.0/figures/arrangement_csg_nonzero.svg" alt="Eight-panel ArrangementGraph CSG example using the Nonzero fill rule">
 </center>
 
 The same inputs and arrangement produce different Boolean boundaries under
@@ -1882,7 +1891,7 @@ final `nested_contours` panel is unchanged because that unary operation
 preserves the complete signed winding field and does not take a fill rule.
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.46.0/figures/arrangement_csg_evenodd.svg" alt="Eight-panel ArrangementGraph CSG example using the EvenOdd fill rule">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.47.0/figures/arrangement_csg_evenodd.svg" alt="Eight-panel ArrangementGraph CSG example using the EvenOdd fill rule">
 </center>
 
 For points away from a boundary:

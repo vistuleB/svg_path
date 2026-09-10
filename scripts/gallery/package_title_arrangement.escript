@@ -11,8 +11,10 @@ main(_) ->
     Options = 'svg_path@offset':default_options(),
     %% Only the second diagnostic bypasses offside trimming. The first offset
     %% remains the ordinary public result used as the next source.
-    {single_offset_trimming, _, Finish} = element(5, Options),
-    DiagnosticOptions = setelement(5, Options, {single_offset_trimming, false, Finish}),
+    {options, Fitting, StalledDiameter, HealAngle, InnerJoin,
+     {single_offset_trimming, _, Finish}, BandTrimming} = Options,
+    DiagnosticOptions = {options, Fitting, StalledDiameter, HealAngle, InnerJoin,
+                         {single_offset_trimming, false, Finish}, BandTrimming},
     Join = {miter, 4.0},
     {ok, First} = 'svg_path@offset':path_with(Source, 1.05, Join, butt, Options),
     io:format("First offset succeeded.~n"),

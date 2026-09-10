@@ -9,9 +9,21 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
-## Unreleased
+## 0.47.0 - 2026-09-10
+
+### Changed
+
+- `transform.point_pair_similarity` and `transform.point_triple_map` now return
+  `transform.Error` instead of `Nil` on failure. Errors preserve the underlying
+  affine construction failure, distinguish invalid tolerance, and include the
+  mapped point, target, and tolerance when a correspondence check fails.
 
 ### Added
+
+- `offset.InnerJoin` and the optional `offset.Options.inner_join` override
+  for local inner corners. Defaults are Round for Round joins and Bevel for all
+  other styles, including Arcs. The override applies independently to both band
+  sides and to single offsets, and is available through stroke's offset options.
 
 - `offset.Arcs(miter_limit:)` and `stroke.Arcs(miter_limit:)` joins, using
   source-curvature circles, tangent-preserving radius adjustment, and arc-length
@@ -20,6 +32,10 @@ rather than only the tag object.
 - `offset.MiterClip(miter_limit:)` and `stroke.MiterClip(miter_limit:)` joins.
   Over-limit miters are clipped at a plane measured from the source pivot;
   divergent extensions and clipping behind a join endpoint fall back to bevel.
+
+- README join comparisons and Gallery overlays of the historical SVG 2 join
+  illustrations. Arcs and MiterClip remain available as geometric operations;
+  both were removed from the SVG editor's draft in March 2026.
 
 ## 0.46.0 - 2026-09-10
 
