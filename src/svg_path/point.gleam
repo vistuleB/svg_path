@@ -216,12 +216,12 @@ pub fn scalar_projection(
 }
 
 /// Rotate a point as a vector by 90 degrees clockwise.
-pub fn rotate_clockwise(point: svg_path.Point) -> svg_path.Point {
+pub fn rotate_90_clockwise(point: svg_path.Point) -> svg_path.Point {
   svg_path.Point(0.0 -. point.y, point.x)
 }
 
 /// Rotate a point as a vector by 90 degrees counterclockwise.
-pub fn rotate_counterclockwise(point: svg_path.Point) -> svg_path.Point {
+pub fn rotate_90_counterclockwise(point: svg_path.Point) -> svg_path.Point {
   svg_path.Point(point.y, 0.0 -. point.x)
 }
 

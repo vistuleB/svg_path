@@ -24,7 +24,7 @@ pub fn point_cloud_hull_handles_10_point_cloud_test() {
 }
 
 pub fn point_cloud_hull_rejects_empty_point_cloud_test() {
-  assert convex_hull.points_hull([]) == Error(convex_hull.EmptyPath)
+  assert convex_hull.points([]) == Error(convex_hull.EmptyPath)
 }
 
 pub fn point_cloud_hull_handles_points_test() {
@@ -112,7 +112,7 @@ fn point_cloud_hull_is_valid_for_count(count: Int) -> Bool {
 }
 
 fn public_point_cloud_hull_is_valid(points: List(svg_path.Point)) -> Bool {
-  case convex_hull.points_hull(points) {
+  case convex_hull.points(points) {
     Error(_) -> False
     Ok(hull) -> point_cloud_hull_is_valid(points, hull)
   }

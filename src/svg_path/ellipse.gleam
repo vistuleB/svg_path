@@ -47,7 +47,7 @@
 ////   roundoff.
 //// - `arc_point(arc, at: 1.0)` is the arc end point, modulo floating-point
 ////   roundoff.
-//// - `split_arc(arc, at: t)` preserves `center`, `radius`, and
+//// - `arc_split(arc, at: t)` preserves `center`, `radius`, and
 ////   `x_axis_rotation`, and divides `delta_angle` at angular progress `t`.
 ////
 //// The public `CenterArcData` constructor is intentionally available for
@@ -65,9 +65,9 @@
 //// This is not arc-length parameterization. Equal `t` steps correspond to
 //// equal angle steps in the unstretched ellipse coordinate system, not equal
 //// distances along the rendered curve. The `at` value is not clamped; values
-//// outside `0.0..1.0` extrapolate along the same ellipse. `split_arc` follows
-//// the same unclamped policy; use `split_arc_inside` when outside values should
-//// return an error. `split_arc_many` and `split_arc_inside_many` sort their
+//// outside `0.0..1.0` extrapolate along the same ellipse. `arc_split` follows
+//// the same unclamped policy; use `arc_split_inside` when outside values should
+//// return an error. `arc_split_many` and `arc_split_many_inside` sort their
 //// split points, remove exact duplicates, and trim boundary `0.0` or `1.0`
 //// split points that would only create zero-length boundary arcs.
 
@@ -309,7 +309,7 @@ pub fn collapsed_arc_subpath(
 /// The arc is split into chunks of at most a quarter turn. This is the common
 /// deterministic SVG arc approximation strategy. This function does not accept
 /// a tolerance; use a higher-level helper if you want SVG path segments back.
-pub fn arc_to_cubics(
+pub fn arc_to_cubic_beziers(
   start start: EllipsePoint,
   radius radius: EllipsePoint,
   x_axis_rotation x_axis_rotation: Float,
@@ -322,7 +322,7 @@ pub fn arc_to_cubics(
   {
     Error(error) -> Error(error)
     Ok(arc) -> {
-      case split_arc_inside_many(arc, at: cubic_split_progresses(arc)) {
+      case arc_split_many_inside(arc, at: cubic_split_progresses(arc)) {
         Error(error) -> Error(error)
         Ok(chunks) -> Ok(list.map(chunks, cubic_for_arc))
       }
@@ -373,7 +373,7 @@ pub fn center_to_endpoint(data: CenterArcData) -> EndpointArcData {
 /// the end of the arc, and values outside that range extrapolate along the
 /// same ellipse.
 pub fn arc_point(arc: CenterArcData, at t: Float) -> EllipsePoint {
-  arc_point_at_angle(arc, angle_at(arc, t))
+  arc_point_at_angle(arc, arc_angle_at(arc, t))
 }
 
 /// Return the derivative with respect to angular progress `t`.
@@ -382,12 +382,12 @@ pub fn arc_point(arc: CenterArcData, at t: Float) -> EllipsePoint {
 /// For the raw derivative with respect to the ellipse angle, use
 /// `arc_derivative_at_angle`.
 pub fn arc_derivative(arc: CenterArcData, at t: Float) -> EllipsePoint {
-  scale(arc_derivative_at_angle(arc, angle_at(arc, t)), arc.delta_angle)
+  scale(arc_derivative_at_angle(arc, arc_angle_at(arc, t)), arc.delta_angle)
 }
 
 /// Return the second derivative with respect to angular progress `t`.
 pub fn arc_second_derivative(arc: CenterArcData, at t: Float) -> EllipsePoint {
-  let angle = angle_at(arc, t)
+  let angle = arc_angle_at(arc, t)
   let radians_per_degree = trig.degrees_to_radians(1.0)
   let angular_speed = arc.delta_angle *. radians_per_degree
   scale(
@@ -462,7 +462,7 @@ fn repeated_angle_parameters(
 ///
 /// `t` is not clamped. Values outside `0.0..1.0` extrapolate along the same
 /// ellipse, matching `arc_point`.
-pub fn split_arc(
+pub fn arc_split(
   arc: CenterArcData,
   at t: Float,
 ) -> #(CenterArcData, CenterArcData) {
@@ -473,13 +473,13 @@ pub fn split_arc(
 ///
 /// Values exactly at `0.0` or `1.0` are accepted and produce one zero-length
 /// arc.
-pub fn split_arc_inside(
+pub fn arc_split_inside(
   arc: CenterArcData,
   at t: Float,
 ) -> Result(#(CenterArcData, CenterArcData), Error) {
   case t <. 0.0 || t >. 1.0 {
     True -> Error(SplitOutsideArc)
-    False -> Ok(split_arc(arc, at: t))
+    False -> Ok(arc_split(arc, at: t))
   }
 }
 
@@ -488,8 +488,8 @@ pub fn split_arc_inside(
 /// Split points are sorted, exact duplicates are removed, and boundary `0.0`
 /// or `1.0` split points are trimmed when they would only create zero-length
 /// boundary arcs. Values outside `0.0..1.0` are allowed and extrapolate along
-/// the same ellipse, matching `split_arc`.
-pub fn split_arc_many(
+/// the same ellipse, matching `arc_split`.
+pub fn arc_split_many(
   arc: CenterArcData,
   at points: List(Float),
 ) -> List(CenterArcData) {
@@ -501,7 +501,7 @@ pub fn split_arc_many(
 /// Split points are sorted, exact duplicates are removed, and boundary `0.0`
 /// or `1.0` split points are trimmed when they would only create zero-length
 /// boundary arcs. Values exactly at `0.0` or `1.0` are accepted.
-pub fn split_arc_inside_many(
+pub fn arc_split_many_inside(
   arc: CenterArcData,
   at points: List(Float),
 ) -> Result(List(CenterArcData), Error) {
@@ -530,7 +530,7 @@ pub fn arc_derivative_at_angle(
 }
 
 /// Return the angle at `t` using this module's angular-progress parameterization.
-pub fn angle_at(arc: CenterArcData, t t: Float) -> Float {
+pub fn arc_angle_at(arc: CenterArcData, t t: Float) -> Float {
   arc.start_angle +. t *. arc.delta_angle
 }
 
@@ -558,7 +558,7 @@ fn arc_between(
     center: arc.center,
     radius: arc.radius,
     x_axis_rotation: arc.x_axis_rotation,
-    start_angle: angle_at(arc, t: from),
+    start_angle: arc_angle_at(arc, t: from),
     delta_angle: arc.delta_angle *. { to -. from },
   )
 }

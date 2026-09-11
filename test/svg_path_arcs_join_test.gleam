@@ -107,7 +107,7 @@ fn corner() {
 pub fn arcs_asymmetric_clipping_uses_auxiliary_arc_length_test() {
   let assert Ok([a, _]) = pair(Some(10.0), Some(5.0), 10.0)
   let tip = svg_path.segment_end(a)
-  let n = point.rotate_counterclockwise(axis())
+  let n = point.rotate_90_counterclockwise(axis())
   let r = point.dot(tip, tip) /. { 2.0 *. point.dot(tip, n) }
   let radius = float.absolute_value(r)
   let helper =

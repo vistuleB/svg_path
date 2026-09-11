@@ -203,7 +203,7 @@ fn arrow_glyph(
 ) -> svg.ThingToDraw {
   let half_width = 4.0 *. arrow_scale
   let arrow_height = half_width *. 1.7320508075688772
-  let normal = rotate_counterclockwise(unit)
+  let normal = rotate_90_counterclockwise(unit)
   let tip = add(point, scale(unit, arrow_height *. 2.0 /. 3.0))
   let base = add(point, scale(unit, 0.0 -. arrow_height /. 3.0))
   let left = add(base, scale(normal, half_width))
@@ -228,7 +228,7 @@ fn point_length(point: svg_path.Point) -> Float {
   length
 }
 
-fn rotate_counterclockwise(point: svg_path.Point) -> svg_path.Point {
+fn rotate_90_counterclockwise(point: svg_path.Point) -> svg_path.Point {
   svg_path.Point(0.0 -. point.y, point.x)
 }
 

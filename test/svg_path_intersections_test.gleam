@@ -447,7 +447,7 @@ pub fn near_parallel_line_projection_is_scale_invariant_test() {
     let assert Ok(scaled_left) = transform.scale_segment(left, factor: scale)
     let assert Ok(scaled_right) = transform.scale_segment(right, factor: scale)
     let assert Ok(projection) =
-      intersections.segment_segment_projection_with(
+      intersections.segment_segment_closest_pair_with(
         scaled_left,
         scaled_right,
         options: intersections.IntersectionOptions(

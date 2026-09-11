@@ -523,9 +523,9 @@ pub fn split_inside_many_rejects_any_outside_point_test() {
     )
 
   let assert Error(bezier.SplitOutsideBezier) =
-    bezier.split_inside_many(curve, at: [0.25, 1.01])
+    bezier.split_many_inside(curve, at: [0.25, 1.01])
   let assert Error(bezier.SplitOutsideBezier) =
-    bezier.split_inside_many(curve, at: [-0.01, 0.75])
+    bezier.split_many_inside(curve, at: [-0.01, 0.75])
 }
 
 pub fn split_inside_many_trims_boundary_points_test() {
@@ -536,7 +536,7 @@ pub fn split_inside_many_trims_boundary_points_test() {
     )
 
   let assert Ok(pieces) =
-    bezier.split_inside_many(curve, at: [1.0, 0.0, 0.5, 0.5])
+    bezier.split_many_inside(curve, at: [1.0, 0.0, 0.5, 0.5])
   let assert [first_half, second_half] = pieces
 
   assert point_near(bezier.start(first_half), bezier.BezierPoint(0.0, 0.0))

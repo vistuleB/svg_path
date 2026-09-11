@@ -413,7 +413,7 @@ pub fn subpath_intersection_entirely_explained_by_overlap_is_removed_test() {
     encounters.Encounters(overlaps: overlap_intervals, intersections: [
       intersection,
     ])
-  assert encounters.filter_fully_overlap_explained_subpath_intersection_parameters(
+  assert encounters.subpath_filter_overlap_explained_intersections(
       found,
       left,
       right,
@@ -426,7 +426,7 @@ pub fn empty_filtered_encounters_still_validate_tolerance_test() {
   let assert Ok(subpath) = svg_path.subpath([line(0.0, 0.0, 10.0, 0.0)])
   let found = encounters.Encounters(overlaps: [], intersections: [])
 
-  assert encounters.filter_fully_overlap_explained_subpath_intersection_parameters(
+  assert encounters.subpath_filter_overlap_explained_intersections(
       found,
       subpath,
       subpath,
@@ -454,7 +454,7 @@ pub fn subpath_intersection_retains_parameters_with_non_overlap_claim_test() {
     encounters.Encounters(overlaps: overlap_intervals, intersections: [
       intersection,
     ])
-  assert encounters.filter_fully_overlap_explained_subpath_intersection_parameters(
+  assert encounters.subpath_filter_overlap_explained_intersections(
       found,
       left,
       right,
@@ -663,7 +663,7 @@ fn filter_removes_parameter_pair(
       ),
     ])
   case
-    encounters.filter_fully_overlap_explained_subpath_intersection_parameters(
+    encounters.subpath_filter_overlap_explained_intersections(
       found,
       left,
       right,

@@ -1147,7 +1147,7 @@ fn source_point_to_offset_point(
 fn coil_subpath(turns turns: Int, samples _samples: Int) -> svg_path.Subpath {
   let total_degrees = int.to_float(turns) *. 360.0
   let assert Ok(subpath) =
-    svg_path.subpath_parametric_with(
+    svg_path.subpath_from_parametric_with(
       from: 0.0,
       to: total_degrees,
       point: coil_point_at_degrees,
@@ -1188,7 +1188,7 @@ fn decaying_spiral_subpath(
 ) -> svg_path.Subpath {
   let total_degrees = int.to_float(turns) *. 360.0
   let assert Ok(subpath) =
-    svg_path.subpath_parametric_with(
+    svg_path.subpath_from_parametric_with(
       from: 0.0,
       to: total_degrees,
       point: decaying_spiral_point_at_degrees,

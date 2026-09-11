@@ -4499,7 +4499,7 @@ fn segment_taxicab_diameter(
         svg_path.segment_bounding_box(segment)
         |> result.map_error(InternalPathError),
       )
-      Ok(svg_path.bounding_box_diameter(bounds))
+      Ok(svg_path.bounding_box_taxicab_diameter(bounds))
     }
   }
 }

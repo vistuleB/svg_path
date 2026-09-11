@@ -647,9 +647,7 @@ fn subpath_parameters_are_stalled(
   case first == second, svg_path.subpath_is_closed(subpath) {
     True, _ -> Ok(True)
     False, False -> {
-      let #(from, to) = case
-        svg_path.subpath_parameters_compare(first, second)
-      {
+      let #(from, to) = case svg_path.subpath_parameter_compare(first, second) {
         order.Gt -> #(second, first)
         _ -> #(first, second)
       }
@@ -777,9 +775,7 @@ fn shortest_subpath_parameter_motion(
       Ok(float.min(forward, reverse))
     }
     False -> {
-      let #(from, to) = case
-        svg_path.subpath_parameters_compare(first, second)
-      {
+      let #(from, to) = case svg_path.subpath_parameter_compare(first, second) {
         order.Gt -> #(second, first)
         _ -> #(first, second)
       }
@@ -1128,7 +1124,7 @@ fn filter_subpath_intersections(
 /// removed only when it is complementary, after arc-length clamping by
 /// `tolerance`, to every parameter on the opposite side. Both sides are
 /// filtered against the original parameter lists.
-pub fn filter_fully_overlap_explained_subpath_intersection_parameters(
+pub fn subpath_filter_overlap_explained_intersections(
   encounters: Encounters(overlaps.SubpathOverlap, svg_path.SubpathIntersection),
   left_subpath: svg_path.Subpath,
   right_subpath: svg_path.Subpath,
@@ -1153,7 +1149,7 @@ pub fn filter_fully_overlap_explained_subpath_intersection_parameters(
 ///
 /// Point intersections are collected from every constituent segment pair.
 /// Overlap-boundary intersections are retained; use
-/// `filter_fully_overlap_explained_subpath_intersection_parameters` to derive
+/// `subpath_filter_overlap_explained_intersections` to derive
 /// a filtered view.
 pub fn subpath(
   left: svg_path.Subpath,

@@ -19,6 +19,6 @@ pub fn negative_zero_radius_degenerates_to_line_test() {
   let end = svg_path.Point(2.0, 2.0)
   let arc =
     svg_path.Arc(start, svg_path.Point(-0.0, 1.0), 0.0, False, True, end)
-  assert svg_path.segment_degenerate_lines(arc, tolerance: 0.0)
+  assert svg_path.segment_linearize_if_degenerate(arc, tolerance: 0.0)
     == Ok(Some([svg_path.Line(start, end)]))
 }

@@ -55,7 +55,7 @@ pub fn arc_point_uses_angular_progress_test() {
     ellipse.EllipsePoint(10.0, -10.0),
   )
   assert point_near(ellipse.arc_point(arc, at: 1.0), end)
-  assert near(ellipse.angle_at(arc, t: 0.5), arc.start_angle +. 90.0)
+  assert near(ellipse.arc_angle_at(arc, t: 0.5), arc.start_angle +. 90.0)
   assert near(ellipse.arc_end_angle(arc), arc.start_angle +. arc.delta_angle)
 }
 
@@ -210,7 +210,7 @@ pub fn split_arc_divides_center_data_at_t_test() {
       delta_angle: 2.0,
     )
 
-  let #(left, right) = ellipse.split_arc(arc, at: 0.25)
+  let #(left, right) = ellipse.arc_split(arc, at: 0.25)
 
   assert point_near(left.center, arc.center)
   assert point_near(left.radius, arc.radius)
@@ -242,8 +242,8 @@ pub fn split_arc_allows_endpoint_splits_test() {
       delta_angle: -2.0,
     )
 
-  let #(zero_start, whole_after) = ellipse.split_arc(arc, at: 0.0)
-  let #(whole_before, zero_end) = ellipse.split_arc(arc, at: 1.0)
+  let #(zero_start, whole_after) = ellipse.arc_split(arc, at: 0.0)
+  let #(whole_before, zero_end) = ellipse.arc_split(arc, at: 1.0)
 
   assert near(zero_start.delta_angle, 0.0)
   assert near(zero_start.start_angle, arc.start_angle)
@@ -265,8 +265,8 @@ pub fn split_arc_extrapolates_outside_t_test() {
       delta_angle: 2.0,
     )
 
-  let #(before, through_end) = ellipse.split_arc(arc, at: -0.25)
-  let #(through_past_end, back_to_end) = ellipse.split_arc(arc, at: 1.25)
+  let #(before, through_end) = ellipse.arc_split(arc, at: -0.25)
+  let #(through_past_end, back_to_end) = ellipse.arc_split(arc, at: 1.25)
 
   assert near(before.delta_angle, -0.5)
   assert near(through_end.start_angle, 0.5)
@@ -287,11 +287,11 @@ pub fn split_arc_inside_rejects_outside_t_test() {
     )
 
   let assert Error(ellipse.SplitOutsideArc) =
-    ellipse.split_arc_inside(arc, at: -0.01)
+    ellipse.arc_split_inside(arc, at: -0.01)
   let assert Error(ellipse.SplitOutsideArc) =
-    ellipse.split_arc_inside(arc, at: 1.01)
-  let assert Ok(_) = ellipse.split_arc_inside(arc, at: 0.0)
-  let assert Ok(_) = ellipse.split_arc_inside(arc, at: 1.0)
+    ellipse.arc_split_inside(arc, at: 1.01)
+  let assert Ok(_) = ellipse.arc_split_inside(arc, at: 0.0)
+  let assert Ok(_) = ellipse.arc_split_inside(arc, at: 1.0)
 }
 
 pub fn split_arc_many_sorts_and_removes_duplicate_points_test() {
@@ -304,7 +304,7 @@ pub fn split_arc_many_sorts_and_removes_duplicate_points_test() {
       delta_angle: 4.0,
     )
 
-  let pieces = ellipse.split_arc_many(arc, at: [0.75, -0.25, 0.25, 0.25])
+  let pieces = ellipse.arc_split_many(arc, at: [0.75, -0.25, 0.25, 0.25])
   let assert [first, second, third, fourth] = pieces
 
   assert near(first.start_angle, 1.0)
@@ -327,7 +327,7 @@ pub fn split_arc_many_without_points_returns_original_arc_test() {
       delta_angle: 4.0,
     )
 
-  let assert [piece] = ellipse.split_arc_many(arc, at: [])
+  let assert [piece] = ellipse.arc_split_many(arc, at: [])
 
   assert near(piece.start_angle, arc.start_angle)
   assert near(piece.delta_angle, arc.delta_angle)
@@ -344,9 +344,9 @@ pub fn split_arc_inside_many_rejects_any_outside_point_test() {
     )
 
   let assert Error(ellipse.SplitOutsideArc) =
-    ellipse.split_arc_inside_many(arc, at: [0.25, 1.01])
+    ellipse.arc_split_many_inside(arc, at: [0.25, 1.01])
   let assert Error(ellipse.SplitOutsideArc) =
-    ellipse.split_arc_inside_many(arc, at: [-0.01, 0.75])
+    ellipse.arc_split_many_inside(arc, at: [-0.01, 0.75])
 }
 
 pub fn split_arc_inside_many_accepts_endpoint_points_test() {
@@ -360,7 +360,7 @@ pub fn split_arc_inside_many_accepts_endpoint_points_test() {
     )
 
   let assert Ok(pieces) =
-    ellipse.split_arc_inside_many(arc, at: [1.0, 0.0, 0.5, 0.5])
+    ellipse.arc_split_many_inside(arc, at: [1.0, 0.0, 0.5, 0.5])
   let assert [first_half, second_half] = pieces
 
   assert near(first_half.start_angle, 1.0)
@@ -379,7 +379,7 @@ pub fn split_arc_many_keeps_boundary_points_when_they_are_interior_test() {
       delta_angle: 4.0,
     )
 
-  let pieces = ellipse.split_arc_many(arc, at: [1.25, 1.0, 0.0, -0.25])
+  let pieces = ellipse.arc_split_many(arc, at: [1.25, 1.0, 0.0, -0.25])
   let assert [before_start, to_start, original_arc, past_end, back_to_end] =
     pieces
 

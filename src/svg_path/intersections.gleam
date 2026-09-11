@@ -417,15 +417,15 @@ pub fn segment_with(
 /// intersection search, and returns the best pair even when the segments do
 /// not intersect. Overlapping segments return one coincident pair with distance
 /// zero. Tied minima need not have canonical parameters.
-pub fn segment_segment_projection(
+pub fn segment_segment_closest_pair(
   left: Segment,
   right: Segment,
 ) -> Result(SegmentSegmentProjection, svg_path.Error) {
-  segment_segment_projection_with(left, right, options: default_options())
+  segment_segment_closest_pair_with(left, right, options: default_options())
 }
 
 /// Return one closest-point pair between two segments using explicit options.
-pub fn segment_segment_projection_with(
+pub fn segment_segment_closest_pair_with(
   left: Segment,
   right: Segment,
   options options: IntersectionOptions,
@@ -435,16 +435,16 @@ pub fn segment_segment_projection_with(
 }
 
 /// Return one closest-point pair between a segment and a subpath.
-pub fn segment_subpath_projection(
+pub fn segment_subpath_closest_pair(
   left: Segment,
   right: Subpath,
 ) -> Result(SegmentSubpathProjection, svg_path.Error) {
-  segment_subpath_projection_with(left, right, options: default_options())
+  segment_subpath_closest_pair_with(left, right, options: default_options())
 }
 
 /// Return one closest-point pair between a segment and a subpath using
 /// explicit options.
-pub fn segment_subpath_projection_with(
+pub fn segment_subpath_closest_pair_with(
   left: Segment,
   right: Subpath,
   options options: IntersectionOptions,
@@ -454,16 +454,16 @@ pub fn segment_subpath_projection_with(
 }
 
 /// Return one closest-point pair between a segment and a path.
-pub fn segment_path_projection(
+pub fn segment_path_closest_pair(
   left: Segment,
   right: Path,
 ) -> Result(SegmentPathProjection, svg_path.Error) {
-  segment_path_projection_with(left, right, options: default_options())
+  segment_path_closest_pair_with(left, right, options: default_options())
 }
 
 /// Return one closest-point pair between a segment and a path using explicit
 /// options.
-pub fn segment_path_projection_with(
+pub fn segment_path_closest_pair_with(
   left: Segment,
   right: Path,
   options options: IntersectionOptions,
@@ -473,15 +473,15 @@ pub fn segment_path_projection_with(
 }
 
 /// Return one closest-point pair between two subpaths.
-pub fn subpath_subpath_projection(
+pub fn subpath_subpath_closest_pair(
   left: Subpath,
   right: Subpath,
 ) -> Result(SubpathSubpathProjection, svg_path.Error) {
-  subpath_subpath_projection_with(left, right, options: default_options())
+  subpath_subpath_closest_pair_with(left, right, options: default_options())
 }
 
 /// Return one closest-point pair between two subpaths using explicit options.
-pub fn subpath_subpath_projection_with(
+pub fn subpath_subpath_closest_pair_with(
   left: Subpath,
   right: Subpath,
   options options: IntersectionOptions,
@@ -491,16 +491,16 @@ pub fn subpath_subpath_projection_with(
 }
 
 /// Return one closest-point pair between a subpath and a path.
-pub fn subpath_path_projection(
+pub fn subpath_path_closest_pair(
   left: Subpath,
   right: Path,
 ) -> Result(SubpathPathProjection, svg_path.Error) {
-  subpath_path_projection_with(left, right, options: default_options())
+  subpath_path_closest_pair_with(left, right, options: default_options())
 }
 
 /// Return one closest-point pair between a subpath and a path using explicit
 /// options.
-pub fn subpath_path_projection_with(
+pub fn subpath_path_closest_pair_with(
   left: Subpath,
   right: Path,
   options options: IntersectionOptions,
@@ -510,15 +510,15 @@ pub fn subpath_path_projection_with(
 }
 
 /// Return one closest-point pair between two paths.
-pub fn path_path_projection(
+pub fn path_path_closest_pair(
   left: Path,
   right: Path,
 ) -> Result(PathPathProjection, svg_path.Error) {
-  path_path_projection_with(left, right, options: default_options())
+  path_path_closest_pair_with(left, right, options: default_options())
 }
 
 /// Return one closest-point pair between two paths using explicit options.
-pub fn path_path_projection_with(
+pub fn path_path_closest_pair_with(
   left: Path,
   right: Path,
   options options: IntersectionOptions,
@@ -2883,7 +2883,7 @@ fn ordered_subpath_parameter_pair(
   first: SubpathParameter,
   second: SubpathParameter,
 ) -> #(SubpathParameter, SubpathParameter) {
-  case svg_path.subpath_parameters_compare(first, second) {
+  case svg_path.subpath_parameter_compare(first, second) {
     order.Gt -> #(second, first)
     order.Lt | order.Eq -> #(first, second)
   }
@@ -2899,8 +2899,8 @@ fn sort_subpath_self_intersections(
     let #(a_first, a_second) = a_parameters
     let #(b_first, b_second) = b_parameters
 
-    case svg_path.subpath_parameters_compare(a_first, b_first) {
-      order.Eq -> svg_path.subpath_parameters_compare(a_second, b_second)
+    case svg_path.subpath_parameter_compare(a_first, b_first) {
+      order.Eq -> svg_path.subpath_parameter_compare(a_second, b_second)
       order -> order
     }
   })
@@ -3166,7 +3166,7 @@ fn compare_subpath_intersections(
 ) -> order.Order {
   case a.left_parameters, b.left_parameters {
     [a_first, ..], [b_first, ..] ->
-      svg_path.subpath_parameters_compare(a_first, b_first)
+      svg_path.subpath_parameter_compare(a_first, b_first)
     _, _ -> order.Eq
   }
 }
@@ -3178,7 +3178,7 @@ fn sort_unique_subpath_parameters(
 ) -> List(SubpathParameter) {
   parameters
   |> list.map(canonicalize_subpath_parameter_unchecked(_, subpath, tolerance))
-  |> list.sort(by: svg_path.subpath_parameters_compare)
+  |> list.sort(by: svg_path.subpath_parameter_compare)
   |> dedupe_sorted_subpath_parameters(subpath, tolerance, accumulated: [])
   |> drop_closed_wrap_duplicate(subpath, tolerance)
 }
@@ -3598,7 +3598,7 @@ fn ordered_path_parameter_pair(
   first: PathParameter,
   second: PathParameter,
 ) -> #(PathParameter, PathParameter) {
-  case svg_path.path_parameters_compare(first, second) {
+  case svg_path.path_parameter_compare(first, second) {
     order.Gt -> #(second, first)
     order.Lt | order.Eq -> #(first, second)
   }
@@ -3614,8 +3614,8 @@ fn sort_path_self_intersections(
     let #(a_first, a_second) = a_parameters
     let #(b_first, b_second) = b_parameters
 
-    case svg_path.path_parameters_compare(a_first, b_first) {
-      order.Eq -> svg_path.path_parameters_compare(a_second, b_second)
+    case svg_path.path_parameter_compare(a_first, b_first) {
+      order.Eq -> svg_path.path_parameter_compare(a_second, b_second)
       order -> order
     }
   })
@@ -3779,7 +3779,7 @@ fn compare_path_intersections(
 ) -> order.Order {
   case a.left_parameters, b.left_parameters {
     [a_first, ..], [b_first, ..] ->
-      svg_path.path_parameters_compare(a_first, b_first)
+      svg_path.path_parameter_compare(a_first, b_first)
     _, _ -> order.Eq
   }
 }
@@ -3788,7 +3788,7 @@ fn sort_unique_path_parameters(
   parameters: List(PathParameter),
 ) -> List(PathParameter) {
   parameters
-  |> list.sort(by: svg_path.path_parameters_compare)
+  |> list.sort(by: svg_path.path_parameter_compare)
   |> dedupe_sorted_path_parameters(accumulated: [])
 }
 
@@ -3801,7 +3801,7 @@ fn dedupe_sorted_path_parameters(
     [first, ..rest], [] ->
       dedupe_sorted_path_parameters(rest, accumulated: [first])
     [first, ..rest], [previous, ..] -> {
-      case svg_path.path_parameters_compare(first, previous) {
+      case svg_path.path_parameter_compare(first, previous) {
         order.Eq -> dedupe_sorted_path_parameters(rest, accumulated:)
         _ ->
           dedupe_sorted_path_parameters(rest, accumulated: [
@@ -5294,9 +5294,9 @@ fn inspect_projection_window(
           case
             remaining_depth <= 0
             || {
-              svg_path.bounding_box_diameter(left_box)
+              svg_path.bounding_box_taxicab_diameter(left_box)
               <=. terminal_subdivision_tolerance
-              && svg_path.bounding_box_diameter(right_box)
+              && svg_path.bounding_box_taxicab_diameter(right_box)
               <=. terminal_subdivision_tolerance
             }
           {
@@ -5311,8 +5311,8 @@ fn inspect_projection_window(
             }
             False -> {
               let split_left =
-                svg_path.bounding_box_diameter(left_box)
-                >=. svg_path.bounding_box_diameter(right_box)
+                svg_path.bounding_box_taxicab_diameter(left_box)
+                >=. svg_path.bounding_box_taxicab_diameter(right_box)
 
               case split_left {
                 True -> {

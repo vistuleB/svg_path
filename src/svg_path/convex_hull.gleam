@@ -331,9 +331,7 @@ pub type InternalError {
 /// The result is a closed subpath. Move-only subpaths are treated as a single
 /// point at their start. Otherwise each individual segment is first converted
 /// to its own convex hull, then those convex loops are unioned one at a time.
-pub fn subpath_hull(
-  subpath: svg_path.Subpath,
-) -> Result(svg_path.Subpath, Error) {
+pub fn subpath(subpath: svg_path.Subpath) -> Result(svg_path.Subpath, Error) {
   subpath
   |> hull_input_segments
   |> segments_hull(repair_mode: default_repair_mode)
@@ -345,7 +343,7 @@ pub fn subpath_hull(
 /// Move-only subpaths are treated as single points at their starts. The result
 /// is a single closed subpath containing the hull of every subpath in the input
 /// path.
-pub fn path_hull(path: svg_path.Path) -> Result(svg_path.Subpath, Error) {
+pub fn path(path: svg_path.Path) -> Result(svg_path.Subpath, Error) {
   case svg_path.path_subpaths(path) {
     [] -> Error(EmptyPath)
     subpaths -> {
@@ -360,22 +358,18 @@ pub fn path_hull(path: svg_path.Path) -> Result(svg_path.Subpath, Error) {
 /// Compute the convex hull of a list of points.
 ///
 /// The result is a single closed subpath containing every input point.
-pub fn points_hull(
-  points: List(svg_path.Point),
-) -> Result(svg_path.Subpath, Error) {
+pub fn points(points: List(svg_path.Point)) -> Result(svg_path.Subpath, Error) {
   points
   |> list.map(fn(point) { svg_path.subpath_empty(at: point) })
   |> svg_path.Path
-  |> path_hull
+  |> path
 }
 
 /// Return the closed convex hull boundary of one segment.
 ///
 /// The returned subpath uses exact pieces of the input curve where they lie on
 /// the hull boundary and straight support chords between those pieces.
-pub fn segment_hull(
-  segment: svg_path.Segment,
-) -> Result(svg_path.Subpath, Error) {
+pub fn segment(segment: svg_path.Segment) -> Result(svg_path.Subpath, Error) {
   construct_segment_hull(segment)
   |> result.map_error(public_error)
 }
@@ -603,7 +597,7 @@ fn minimum_width_strip_for_edges(
       let edge = subtract(end, start)
       let best = case
         edge
-        |> point_helpers.rotate_counterclockwise
+        |> point_helpers.rotate_90_counterclockwise
         |> point_helpers.normalize
       {
         Error(_) -> best
@@ -922,7 +916,7 @@ pub fn internal_source_strip_candidate(
       let b = seed_farthest_point(a, points)
       let c = seed_farthest_point(b, points)
       let normal =
-        point_helpers.subtract(c, b) |> point_helpers.rotate_clockwise
+        point_helpers.subtract(c, b) |> point_helpers.rotate_90_clockwise
       let length = number.hypot(normal.x, normal.y)
       case number.is_zero(length) || !number.is_finite(length) {
         True -> Ok(None)
@@ -4373,7 +4367,7 @@ fn normalize_angle(angle: Float) -> Float {
 fn segment_is_point_like(segment: svg_path.Segment) -> Bool {
   case svg_path.segment_bounding_box(segment) {
     Error(_) -> True
-    Ok(box) -> svg_path.bounding_box_diameter(box) <=. point_tolerance
+    Ok(box) -> svg_path.bounding_box_taxicab_diameter(box) <=. point_tolerance
   }
 }
 
@@ -4759,7 +4753,8 @@ fn tangent_window_is_geometrically_small(
     Ok(portion) ->
       case svg_path.segment_bounding_box(portion) {
         Error(_) -> False
-        Ok(box) -> svg_path.bounding_box_diameter(box) <=. point_tolerance
+        Ok(box) ->
+          svg_path.bounding_box_taxicab_diameter(box) <=. point_tolerance
       }
   }
 }

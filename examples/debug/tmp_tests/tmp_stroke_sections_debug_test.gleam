@@ -145,7 +145,7 @@ fn normalize_parameters(
   parameters: List(svg_path.SubpathParameter),
 ) -> List(svg_path.SubpathParameter) {
   parameters
-  |> list.sort(by: svg_path.subpath_parameters_compare)
+  |> list.sort(by: svg_path.subpath_parameter_compare)
   |> unique_subpath_parameters([])
 }
 
@@ -158,7 +158,7 @@ fn unique_subpath_parameters(
     [first, ..rest] ->
       case unique {
         [previous, ..] ->
-          case svg_path.subpath_parameters_compare(first, previous) {
+          case svg_path.subpath_parameter_compare(first, previous) {
             order.Eq -> unique_subpath_parameters(rest, unique:)
             _ -> unique_subpath_parameters(rest, unique: [first, ..unique])
           }

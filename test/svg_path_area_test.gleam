@@ -131,7 +131,7 @@ pub fn fill_rules_differ_for_a_twice_traced_loop_test() {
 
   let assert Ok(nonzero) = area.subpath(subpath, using: svg_path.Nonzero)
   let assert Ok(even_odd) = area.subpath(subpath, using: svg_path.EvenOdd)
-  let assert Ok(absolute) = area.absolute_subpath(subpath)
+  let assert Ok(absolute) = area.absolute_winding_subpath(subpath)
 
   assert_close(nonzero, 100.0, tolerance)
   assert_close(even_odd, 0.0, tolerance)
@@ -150,7 +150,7 @@ pub fn self_intersecting_bow_tie_has_filled_but_no_signed_area_test() {
 
   let assert Ok(nonzero) = area.subpath(subpath, using: svg_path.Nonzero)
   let assert Ok(even_odd) = area.subpath(subpath, using: svg_path.EvenOdd)
-  let assert Ok(absolute) = area.absolute_subpath(subpath)
+  let assert Ok(absolute) = area.absolute_winding_subpath(subpath)
 
   assert_close(area.signed_subpath(subpath), 0.0, tolerance)
   assert_close(nonzero, 50.0, tolerance)
@@ -172,12 +172,13 @@ pub fn path_fill_area_combines_subpaths_by_fill_rule_test() {
     area.path(same_direction, using: svg_path.Nonzero)
   let assert Ok(same_even_odd) =
     area.path(same_direction, using: svg_path.EvenOdd)
-  let assert Ok(same_absolute) = area.absolute_path(same_direction)
+  let assert Ok(same_absolute) = area.absolute_winding_path(same_direction)
   let assert Ok(opposite_nonzero) =
     area.path(opposite_direction, using: svg_path.Nonzero)
   let assert Ok(opposite_even_odd) =
     area.path(opposite_direction, using: svg_path.EvenOdd)
-  let assert Ok(opposite_absolute) = area.absolute_path(opposite_direction)
+  let assert Ok(opposite_absolute) =
+    area.absolute_winding_path(opposite_direction)
 
   assert_close(same_nonzero, 400.0, tolerance)
   assert_close(same_even_odd, 300.0, tolerance)
@@ -195,7 +196,7 @@ pub fn path_fill_area_cancels_overlapping_opposite_loops_test() {
 
   let assert Ok(nonzero) = area.path(path, using: svg_path.Nonzero)
   let assert Ok(even_odd) = area.path(path, using: svg_path.EvenOdd)
-  let assert Ok(absolute) = area.absolute_path(path)
+  let assert Ok(absolute) = area.absolute_winding_path(path)
 
   assert_close(nonzero, 0.0, tolerance)
   assert_close(even_odd, 0.0, tolerance)
@@ -210,7 +211,7 @@ pub fn absolute_path_counts_overlapping_winding_magnitude_test() {
 
   let assert Ok(nonzero) = area.path(path, using: svg_path.Nonzero)
   let assert Ok(even_odd) = area.path(path, using: svg_path.EvenOdd)
-  let assert Ok(absolute) = area.absolute_path(path)
+  let assert Ok(absolute) = area.absolute_winding_path(path)
 
   assert_close(nonzero, 400.0, tolerance)
   assert_close(even_odd, 300.0, tolerance)
@@ -283,7 +284,7 @@ pub fn move_only_paths_have_zero_area_test() {
   assert area.signed_path(path) == 0.0
   assert nonzero == 0.0
   assert even_odd == 0.0
-  assert area.absolute_path(path) == Ok(0.0)
+  assert area.absolute_winding_path(path) == Ok(0.0)
 }
 
 pub fn curved_fill_area_uses_linearization_options_test() {
@@ -313,7 +314,7 @@ pub fn fill_area_rejects_invalid_linearization_options_test() {
       options: svg_path.LinearizeOptions(tolerance: 0.0, max_depth: 20),
     )
     == Error(svg_path.InvalidLinearizeTolerance(0.0))
-  assert area.absolute_subpath_with(
+  assert area.absolute_winding_subpath_with(
       subpath,
       options: svg_path.LinearizeOptions(tolerance: 0.0, max_depth: 20),
     )

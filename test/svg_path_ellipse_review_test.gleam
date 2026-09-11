@@ -14,9 +14,15 @@ pub fn collapsed_quarter_preserves_direction_and_endpoints_test() {
       True,
       svg_path.Point(0.0, 1.0),
     )
-  assert transform.segment_gracefully(arc, by: transform.scale_xy(1.0, 0.0))
+  assert transform.segment_with_arc_collapse(
+      arc,
+      by: transform.scale_xy(1.0, 0.0),
+    )
     == Ok(svg_path.Line(svg_path.Point(1.0, 0.0), svg_path.Point(0.0, 0.0)))
-  assert transform.segment_gracefully(arc, by: transform.scale_xy(-1.0, 0.0))
+  assert transform.segment_with_arc_collapse(
+      arc,
+      by: transform.scale_xy(-1.0, 0.0),
+    )
     == Ok(svg_path.Line(svg_path.Point(-1.0, 0.0), svg_path.Point(0.0, 0.0)))
 }
 
@@ -53,13 +59,13 @@ pub fn multi_turn_projection_extrema_include_each_visit_test() {
       0.0,
       90.0,
     )
-  let #(two_turns, _) = ellipse.split_arc(quarter, at: 8.0)
+  let #(two_turns, _) = ellipse.arc_split(quarter, at: 8.0)
   assert ellipse.arc_projection_extrema(
       two_turns,
       ellipse.EllipsePoint(1.0, 0.0),
     )
     == [0.0, 0.25, 0.5, 0.75, 1.0]
-  let #(reverse_turns, _) = ellipse.split_arc(quarter, at: -8.0)
+  let #(reverse_turns, _) = ellipse.arc_split(quarter, at: -8.0)
   assert ellipse.arc_projection_extrema(
       reverse_turns,
       ellipse.EllipsePoint(1.0, 0.0),

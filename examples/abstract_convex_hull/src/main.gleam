@@ -632,7 +632,7 @@ fn production_error_stats(
   angles: List(Float),
 ) -> Result(ErrorStats, String) {
   use hull <- result.try(
-    convex_hull.segment_hull(segment)
+    convex_hull.segment(segment)
     |> result.map_error(fn(error) {
       name <> " production hull failed " <> string.inspect(error)
     }),
@@ -922,7 +922,10 @@ fn segment_support_tolerance(segment: svg_path.Segment) -> Float {
   case svg_path.segment_bounding_box(segment) {
     Error(_) -> 0.000001
     Ok(box) ->
-      float.max(0.000001, svg_path.bounding_box_diameter(box) *. 0.00000002)
+      float.max(
+        0.000001,
+        svg_path.bounding_box_taxicab_diameter(box) *. 0.00000002,
+      )
   }
 }
 

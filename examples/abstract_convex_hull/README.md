@@ -29,7 +29,7 @@ Current fixtures:
   refactor: loops carry `LoopPiece(id)` values, support returns
   `SupportSet(id)` over `LoopPoint(id)`, and the union core does not interpret
   the meaning of an `id`.
-- `segment_hull_loop.gleam` wraps the real `svg_path/convex_hull.segment_hull`
+- `segment_hull_loop.gleam` wraps the real `svg_path/convex_hull.segment`
   output. Curved support is currently sampled, not solved exactly.
 
 The production hull API intentionally does not expose this tracing model. The

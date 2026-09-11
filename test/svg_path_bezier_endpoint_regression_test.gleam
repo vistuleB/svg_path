@@ -52,7 +52,7 @@ pub fn split_many_trims_both_signed_zero_boundaries_test() {
     )
   assert bezier.split_many(curve, at: [-0.0]) == [curve]
   assert bezier.split_many(curve, at: [0.0, -0.0, 0.0, 1.0]) == [curve]
-  assert bezier.split_inside_many(curve, at: [-0.0, 0.0, -0.0, 1.0])
+  assert bezier.split_many_inside(curve, at: [-0.0, 0.0, -0.0, 1.0])
     == Ok([curve])
 }
 

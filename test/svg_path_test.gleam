@@ -367,7 +367,7 @@ pub fn bounding_box_dimensions_use_extents_test() {
   assert svg_path.bounding_box_width(box) == 10.0
   assert svg_path.bounding_box_height(box) == 12.0
   assert svg_path.bounding_box_center(box) == svg_path.Point(3.0, 9.0)
-  assert svg_path.bounding_box_diameter(box) == 22.0
+  assert svg_path.bounding_box_taxicab_diameter(box) == 22.0
 }
 
 pub fn bounding_box_union_covers_both_boxes_test() {

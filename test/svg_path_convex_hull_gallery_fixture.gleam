@@ -54,9 +54,9 @@ pub fn figure_eight_hull_strip() -> String {
   let source = figure_eight()
   let assert Ok(band) = figure_eight_band()
   let assert Ok(combined) = combined_path()
-  let assert Ok(source_hull) = convex_hull.subpath_hull(source)
-  let assert Ok(band_hull) = convex_hull.path_hull(band)
-  let assert Ok(combined_hull) = convex_hull.path_hull(combined)
+  let assert Ok(source_hull) = convex_hull.subpath(source)
+  let assert Ok(band_hull) = convex_hull.path(band)
+  let assert Ok(combined_hull) = convex_hull.path(combined)
 
   let panels = [
     panel(

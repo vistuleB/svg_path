@@ -279,7 +279,7 @@ pub fn skew_y_point(
 /// Transform a segment by a matrix.
 ///
 /// Degenerate arc transforms return `DegenerateArcTransform`; use
-/// `segment_gracefully` or `segment_to_subpath_gracefully` to convert
+/// `segment_with_arc_collapse` or `segment_to_subpath_with_arc_collapse` to convert
 /// collapsed arcs into line-based representations when possible.
 pub fn segment(
   segment: svg_path.Segment,
@@ -370,8 +370,8 @@ pub fn skew_y_segment(
 /// Transform a segment, converting collapsed arcs into lines when possible.
 ///
 /// This returns a single segment. If a collapsed arc needs multiple line
-/// segments to preserve its motion, use `segment_to_subpath_gracefully`.
-pub fn segment_gracefully(
+/// segments to preserve its motion, use `segment_to_subpath_with_arc_collapse`.
+pub fn segment_with_arc_collapse(
   input: svg_path.Segment,
   by transform: Matrix,
 ) -> Result(svg_path.Segment, Error) {
@@ -418,7 +418,7 @@ pub fn segment_gracefully(
 /// Transform a segment, returning a subpath for graceful collapsed arc handling.
 ///
 /// This can represent collapsed arcs as multiple line segments when needed.
-pub fn segment_to_subpath_gracefully(
+pub fn segment_to_subpath_with_arc_collapse(
   input: svg_path.Segment,
   by transform: Matrix,
 ) -> Result(svg_path.Subpath, Error) {
@@ -561,7 +561,7 @@ pub fn skew_y_subpath(
 /// Collapsed arcs retain their directly transformed endpoints so neighboring
 /// segments remain continuous. Reconstruction uses strict endpoint matching;
 /// only closing a semantically closed subpath has a final wiggle fallback.
-pub fn subpath_gracefully(
+pub fn subpath_with_arc_collapse(
   subpath: svg_path.Subpath,
   by transform: Matrix,
 ) -> Result(svg_path.Subpath, Error) {
@@ -633,8 +633,8 @@ pub fn path(
 /// Transform every subpath in a path, gracefully converting collapsed arcs
 /// when possible.
 ///
-/// This is the path-level counterpart of `subpath_gracefully`.
-pub fn path_gracefully(
+/// This is the path-level counterpart of `subpath_with_arc_collapse`.
+pub fn path_with_arc_collapse(
   path: svg_path.Path,
   by transform: Matrix,
 ) -> Result(svg_path.Path, Error) {
@@ -943,7 +943,7 @@ fn transform_segments_gracefully(
   case segments {
     [] -> Ok(list.reverse(transformed))
     [first, ..rest] -> {
-      case segment_to_subpath_gracefully(first, by: transform) {
+      case segment_to_subpath_with_arc_collapse(first, by: transform) {
         Error(error) -> Error(error)
         Ok(first) -> {
           let transformed =
@@ -989,7 +989,7 @@ fn transform_subpaths_gracefully(
   case subpaths {
     [] -> Ok(list.reverse(transformed))
     [first, ..rest] -> {
-      case subpath_gracefully(first, by: transform) {
+      case subpath_with_arc_collapse(first, by: transform) {
         Error(error) -> Error(error)
         Ok(first) ->
           transform_subpaths_gracefully(rest, transform, [first, ..transformed])

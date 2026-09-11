@@ -294,14 +294,6 @@ pub fn with_right_decimals(
   Options(..options, right_decimals:)
 }
 
-/// Set left-side number padding for serialization options.
-pub fn with_left_padding(
-  options options: Options,
-  left_padding left_padding: LeftDecimalOptions,
-) -> Options {
-  with_left_decimals(options, left_padding)
-}
-
 /// Serialize a path with default options.
 ///
 /// Empty paths serialize to the empty string. Empty subpaths serialize as

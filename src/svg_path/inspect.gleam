@@ -94,14 +94,6 @@ pub fn with_right_decimals(
   Options(..options, right_decimals:)
 }
 
-/// Set left-side number padding for inspection options.
-pub fn with_left_padding(
-  options options: Options,
-  left_padding left_padding: LeftDecimalOptions,
-) -> Options {
-  with_left_decimals(options, left_padding)
-}
-
 /// Inspect a path as a multiline structural string.
 pub fn path(path: svg_path.Path) -> String {
   path_with(path, default_options())

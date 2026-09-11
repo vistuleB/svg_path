@@ -568,9 +568,9 @@ pub fn singular_oblique_arc_transform_uses_graceful_collapse_test() {
   assert transform.segment(arc, by: matrix)
     == Error(transform.DegenerateArcTransform)
   let assert Ok(svg_path.Line(..)) =
-    transform.segment_gracefully(arc, by: matrix)
+    transform.segment_with_arc_collapse(arc, by: matrix)
   let assert Ok(collapsed) =
-    transform.segment_to_subpath_gracefully(arc, by: matrix)
+    transform.segment_to_subpath_with_arc_collapse(arc, by: matrix)
   assert svg_path.subpath_start(collapsed)
     == transform.point(svg_path.segment_start(arc), by: matrix)
   assert svg_path.subpath_end(collapsed)
@@ -611,7 +611,7 @@ pub fn graceful_arc_transform_returns_collapsed_line_test() {
       end: svg_path.Point(-5.0, 0.0),
     )
   let matrix = transform.matrix(a: 1.0, b: 0.0, c: 0.0, d: 0.0, e: 0.0, f: 0.0)
-  let assert Ok(segment) = transform.segment_gracefully(arc, by: matrix)
+  let assert Ok(segment) = transform.segment_with_arc_collapse(arc, by: matrix)
 
   assert serialize.segment(segment) == "M 5 0 H -5"
 }
@@ -627,7 +627,7 @@ pub fn graceful_arc_transform_follows_full_collapse_to_point_test() {
       end: svg_path.Point(-5.0, 0.0),
     )
   let matrix = transform.matrix(a: 0.0, b: 0.0, c: 0.0, d: 0.0, e: 7.0, f: 11.0)
-  let assert Ok(segment) = transform.segment_gracefully(arc, by: matrix)
+  let assert Ok(segment) = transform.segment_with_arc_collapse(arc, by: matrix)
 
   assert serialize.segment(segment) == "M 7 11 H 7"
 }
@@ -644,7 +644,7 @@ pub fn graceful2_arc_transform_preserves_transformed_endpoints_test() {
     )
   let matrix = transform.matrix(a: 1.0, b: 0.0, c: 0.0, d: 0.0, e: 0.0, f: 0.0)
   let assert Ok(subpath) =
-    transform.segment_to_subpath_gracefully(arc, by: matrix)
+    transform.segment_to_subpath_with_arc_collapse(arc, by: matrix)
 
   assert serialize.subpath(subpath) == "M 5 0 H -5"
 }
@@ -657,7 +657,7 @@ pub fn graceful2_line_transform_returns_single_segment_subpath_test() {
     )
   let matrix = transform.matrix(a: 1.0, b: 0.0, c: 0.0, d: 1.0, e: 10.0, f: 0.0)
   let assert Ok(subpath) =
-    transform.segment_to_subpath_gracefully(line, by: matrix)
+    transform.segment_to_subpath_with_arc_collapse(line, by: matrix)
 
   assert serialize.subpath(subpath) == "M 11 2 H 14"
 }
@@ -674,7 +674,7 @@ pub fn graceful2_arc_transform_preserves_out_and_back_motion_test() {
     )
   let matrix = transform.matrix(a: 1.0, b: 0.0, c: 0.0, d: 0.0, e: 0.0, f: 0.0)
   let assert Ok(subpath) =
-    transform.segment_to_subpath_gracefully(arc, by: matrix)
+    transform.segment_to_subpath_with_arc_collapse(arc, by: matrix)
 
   assert serialize.subpath(subpath) == "M 3.53553 0 H 5 H 3.53553"
 }
@@ -691,7 +691,7 @@ pub fn graceful2_arc_transform_follows_full_collapse_to_point_test() {
     )
   let matrix = transform.matrix(a: 0.0, b: 0.0, c: 0.0, d: 0.0, e: 7.0, f: 11.0)
   let assert Ok(subpath) =
-    transform.segment_to_subpath_gracefully(arc, by: matrix)
+    transform.segment_to_subpath_with_arc_collapse(arc, by: matrix)
 
   assert serialize.subpath(subpath) == "M 7 11 H 7"
 }
@@ -709,7 +709,7 @@ pub fn graceful_arc_subpaths_preserve_exact_noncardinal_endpoints_test() {
         svg_path.Point(-3.0, 4.0),
       )
     let assert Ok(part) =
-      transform.segment_to_subpath_gracefully(arc, by: matrix)
+      transform.segment_to_subpath_with_arc_collapse(arc, by: matrix)
     assert svg_path.subpath_start(part)
       == transform.point(svg_path.segment_start(arc), by: matrix)
     assert svg_path.subpath_end(part)
@@ -720,14 +720,19 @@ pub fn graceful_arc_subpaths_preserve_exact_noncardinal_endpoints_test() {
         arc,
         svg_path.Line(svg_path.segment_end(arc), svg_path.Point(10.0, 4.0)),
       ])
-    let assert Ok(open) = transform.subpath_gracefully(source, by: matrix)
+    let assert Ok(open) =
+      transform.subpath_with_arc_collapse(source, by: matrix)
     assert !svg_path.subpath_is_closed(open)
     let assert Ok(closed) = svg_path.subpath_set_closed(source, closed: True)
-    let assert Ok(closed) = transform.subpath_gracefully(closed, by: matrix)
+    let assert Ok(closed) =
+      transform.subpath_with_arc_collapse(closed, by: matrix)
     assert svg_path.subpath_is_closed(closed)
     assert svg_path.subpath_start(closed) == svg_path.subpath_end(closed)
     let assert Ok(_) =
-      transform.path_gracefully(svg_path.subpath_as_path(source), by: matrix)
+      transform.path_with_arc_collapse(
+        svg_path.subpath_as_path(source),
+        by: matrix,
+      )
     // The large arc still visits both extrema before returning to its end.
     case large_arc {
       True -> {
@@ -761,7 +766,8 @@ pub fn graceful_subpath_transform_keeps_surrounding_continuity_test() {
       ),
     ])
   let matrix = transform.matrix(a: 1.0, b: 0.0, c: 0.0, d: 0.0, e: 0.0, f: 0.0)
-  let assert Ok(transformed) = transform.subpath_gracefully(subpath, by: matrix)
+  let assert Ok(transformed) =
+    transform.subpath_with_arc_collapse(subpath, by: matrix)
 
   assert serialize.subpath(transformed) == "M -10 0 H 5 H -5 H -10"
 }
@@ -784,7 +790,8 @@ pub fn graceful_closed_subpath_transform_preserves_semantic_closure_test() {
     ])
     |> result_try_set_closed_true
   let matrix = transform.matrix(a: 1.0, b: 0.0, c: 0.0, d: 0.0, e: 0.0, f: 0.0)
-  let assert Ok(transformed) = transform.subpath_gracefully(subpath, by: matrix)
+  let assert Ok(transformed) =
+    transform.subpath_with_arc_collapse(subpath, by: matrix)
 
   assert svg_path.subpath_is_closed(transformed)
   assert serialize.subpath(transformed) == "M 5 0 H -5 Z"
@@ -811,7 +818,8 @@ pub fn graceful_path_transform_converts_collapsed_arcs_in_each_subpath_test() {
     ])
   let source = svg_path.Path([first, second])
   let matrix = transform.matrix(a: 1.0, b: 0.0, c: 0.0, d: 0.0, e: 0.0, f: 3.0)
-  let assert Ok(transformed) = transform.path_gracefully(source, by: matrix)
+  let assert Ok(transformed) =
+    transform.path_with_arc_collapse(source, by: matrix)
 
   assert serialize.path(transformed) == "M 5 3 H -5 M 0 3 H 4"
 }
@@ -827,7 +835,7 @@ pub fn graceful_arc_transform_returns_vertical_collapsed_line_test() {
       end: svg_path.Point(0.0, -5.0),
     )
   let matrix = transform.matrix(a: 0.0, b: 0.0, c: 0.0, d: 1.0, e: 10.0, f: 0.0)
-  let assert Ok(segment) = transform.segment_gracefully(arc, by: matrix)
+  let assert Ok(segment) = transform.segment_with_arc_collapse(arc, by: matrix)
 
   assert serialize.segment(segment) == "M 10 5 V -5"
 }
@@ -843,7 +851,7 @@ pub fn graceful_non_degenerate_arc_transform_returns_arc_test() {
       end: svg_path.Point(10.0, 0.0),
     )
   let assert Ok(segment) =
-    transform.segment_gracefully(arc, by: transform.identity())
+    transform.segment_with_arc_collapse(arc, by: transform.identity())
 
   assert serialize.segment(segment) == "M 0 0 A 5 5 0 0 0 10 0"
 }

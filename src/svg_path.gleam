@@ -157,7 +157,7 @@ pub fn bounding_box_center(box: BoundingBox) -> Point {
 /// Return the taxicab diameter of a bounding box.
 ///
 /// This is the box width plus the box height.
-pub fn bounding_box_diameter(box: BoundingBox) -> Float {
+pub fn bounding_box_taxicab_diameter(box: BoundingBox) -> Float {
   bounding_box_width(box) +. bounding_box_height(box)
 }
 
@@ -1181,12 +1181,12 @@ pub fn subpath_assert_polygon(points: List(Point)) -> Subpath {
 /// `default_parametric_options().initial_piece_count` pieces. Each piece is
 /// fitted with a cubic, then recursively bisected in parameter space until the
 /// maximum sampled fitting error is within tolerance.
-pub fn subpath_parametric(
+pub fn subpath_from_parametric(
   from start: Float,
   to end: Float,
   point point_function: fn(Float) -> Point,
 ) -> Result(Subpath, Error) {
-  subpath_parametric_with(
+  subpath_from_parametric_with(
     from: start,
     to: end,
     point: point_function,
@@ -1200,7 +1200,7 @@ pub fn subpath_parametric(
 /// If `options.tangent` is `Some(tangent_function)`, each cubic is constrained
 /// to match the endpoint tangent directions returned by that function. If it is
 /// `None`, control points are fitted from samples while the endpoints are fixed.
-pub fn subpath_parametric_with(
+pub fn subpath_from_parametric_with(
   from start: Float,
   to end: Float,
   point point_function: fn(Float) -> Point,
@@ -1845,7 +1845,7 @@ pub fn segment_arcs_to_cubic_beziers(segment: Segment) -> List(Segment) {
     Line(..) | QuadraticBezier(..) | CubicBezier(..) -> [segment]
     Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:) -> {
       case
-        ellipse.arc_to_cubics(
+        ellipse.arc_to_cubic_beziers(
           start: to_ellipse_point(start),
           radius: to_ellipse_point(radius),
           x_axis_rotation:,
@@ -1992,7 +1992,7 @@ pub fn segment_to_lines_with(
 /// `Ok(None)`. The tolerance must be finite and non-negative; a tolerance of
 /// `0.0` collapses the segment only when it lies exactly on a line strip of
 /// width zero.
-pub fn segment_degenerate_lines(
+pub fn segment_linearize_if_degenerate(
   segment: Segment,
   tolerance tolerance: Float,
 ) -> Result(Option(List(Segment)), Error) {
@@ -2007,7 +2007,7 @@ pub fn segment_degenerate_lines(
 /// `Ok(Some(lines))` returns an ordered line replacement, preserving the
 /// subpath's flattened traversal and backtracking. `Ok(None)` means that the
 /// subpath is not line-degenerate. Empty subpaths return `Ok(Some([]))`.
-pub fn subpath_degenerate_lines(
+pub fn subpath_linearize_if_degenerate(
   subpath: Subpath,
   tolerance tolerance: Float,
 ) -> Result(Option(List(Segment)), Error) {
@@ -2033,7 +2033,10 @@ fn subpath_degenerate_line_replacements(
   case segments {
     [] -> Ok(Some(list.reverse(lines)))
     [first, ..rest] -> {
-      use replacement <- result.try(segment_degenerate_lines(first, tolerance:))
+      use replacement <- result.try(segment_linearize_if_degenerate(
+        first,
+        tolerance:,
+      ))
       case first, replacement {
         Line(..), None ->
           subpath_degenerate_line_replacements(rest, tolerance, lines: [
@@ -2408,7 +2411,7 @@ pub fn subpath_open_at(
 }
 
 /// Compare two subpath parameters by segment index and then local `t`.
-pub fn subpath_parameters_compare(
+pub fn subpath_parameter_compare(
   a: SubpathParameter,
   b: SubpathParameter,
 ) -> order.Order {
@@ -2422,7 +2425,7 @@ pub fn subpath_parameters_compare(
 }
 
 /// Compare two path parameters by subpath index, then subpath parameter.
-pub fn path_parameters_compare(
+pub fn path_parameter_compare(
   a: PathParameter,
   b: PathParameter,
 ) -> order.Order {
@@ -2430,7 +2433,7 @@ pub fn path_parameters_compare(
   let PathParameter(subpath_index: b_index, at: b_at) = b
 
   case int.compare(a_index, b_index) {
-    order.Eq -> subpath_parameters_compare(a_at, b_at)
+    order.Eq -> subpath_parameter_compare(a_at, b_at)
     order -> order
   }
 }
@@ -4965,7 +4968,7 @@ fn split_arc_segment(
   at t: Float,
 ) -> Result(#(Segment, Segment), Error) {
   use arc <- result.try(arc_center_data(segment))
-  let #(left, right) = ellipse.split_arc(arc, at: t)
+  let #(left, right) = ellipse.arc_split(arc, at: t)
   let left = arc_from_center_data(left)
   let right = arc_from_center_data(right)
   let #(left, right) = arc_split_with_exact_endpoints(segment, left, right, t)
@@ -4981,7 +4984,7 @@ fn split_arc_segment_inside(
   case arc_center_data(segment) {
     Error(error) -> Error(error)
     Ok(arc) -> {
-      case ellipse.split_arc_inside(arc, at: t) {
+      case ellipse.arc_split_inside(arc, at: t) {
         Error(_) -> Error(SplitOutsideSegment)
         Ok(#(left, right)) -> {
           let left = arc_from_center_data(left)
@@ -7119,7 +7122,7 @@ fn refine_arc_projection_window_by_bisection_loop(
     to: right_t,
   ))
   use box <- result.try(segment_bounding_box(portion))
-  case bounding_box_diameter(box) <=. tolerance {
+  case bounding_box_taxicab_diameter(box) <=. tolerance {
     True -> {
       use estimate <- result.try(best_distance_parameter(
         point,
@@ -9623,7 +9626,7 @@ fn arc_to_lines(
       case depth >= options.max_depth {
         True -> Error(LinearizeMaxDepthReached(error))
         False -> {
-          let #(left_arc, right_arc) = ellipse.split_arc(arc, at: 0.5)
+          let #(left_arc, right_arc) = ellipse.arc_split(arc, at: 0.5)
           let middle = ellipse.arc_point(arc, at: 0.5) |> from_ellipse_point
           use left <- result.try(arc_to_lines(
             left_arc,
@@ -9941,12 +9944,12 @@ pub fn arc_derivative_at_angle(
 
 /// Return the ellipse angle, in degrees, reached at arc parameter `t`.
 ///
-/// This is a root-module convenience wrapper around `ellipse.angle_at`.
+/// This is a root-module convenience wrapper around `ellipse.arc_angle_at`.
 /// Non-arc segments return `DegenerateArc`.
 pub fn arc_angle_at(segment: Segment, t t: Float) -> Result(Float, Error) {
   use arc <- result.try(arc_center_data(segment))
 
-  Ok(ellipse.angle_at(arc, t: t))
+  Ok(ellipse.arc_angle_at(arc, t: t))
 }
 
 /// Return the end angle, in degrees, of an arc segment.

@@ -71,7 +71,7 @@ fn draw_selected_segment() -> Nil {
   print_segment_probe(segment)
   print_hull_samples(segment)
 
-  case convex_hull.segment_hull(segment) {
+  case convex_hull.segment(segment) {
     Ok(#(subpath, pieces)) -> {
       io.println_error("segment_hull: Ok")
       io.println_error("hull pieces: " <> hull_pieces_to_string(pieces))
@@ -245,7 +245,7 @@ fn print_segment_probe(segment: svg_path.Segment) -> Nil {
       io.println_error("bounding box: " <> bounding_box_to_string(box))
       io.println_error(
         "bounding box diameter: "
-        <> float_to_string(svg_path.bounding_box_diameter(box)),
+        <> float_to_string(svg_path.bounding_box_taxicab_diameter(box)),
       )
     }
     Error(error) ->
@@ -577,7 +577,7 @@ fn all_derivative_angles() -> String {
   debug_segments()
   |> list.map(fn(specimen) {
     let #(name, segment) = specimen
-    case convex_hull.segment_hull(segment) {
+    case convex_hull.segment(segment) {
       Ok(#(subpath, _)) ->
         name
         <> "\n"
@@ -729,9 +729,8 @@ fn smallest_positive_at_01_index(
     [] -> best_index
     [first, ..rest] -> {
       case first.at_01 {
-        Ok(angle)
-          if angle >. 0.0 && { best_index < 0 || angle <. best_angle }
-        -> smallest_positive_at_01_index(rest, position + 1, position, angle)
+        Ok(angle) if angle >. 0.0 && { best_index < 0 || angle <. best_angle } ->
+          smallest_positive_at_01_index(rest, position + 1, position, angle)
 
         _ ->
           smallest_positive_at_01_index(

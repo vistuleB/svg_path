@@ -10,17 +10,17 @@ pub fn main() -> Nil {
 }
 
 pub fn compare_subpath_parameters_orders_by_segment_then_t_test() {
-  assert svg_path.subpath_parameters_compare(
+  assert svg_path.subpath_parameter_compare(
       svg_path.SubpathParameter(0, 0.75),
       svg_path.SubpathParameter(1, 0.25),
     )
     == order.Lt
-  assert svg_path.subpath_parameters_compare(
+  assert svg_path.subpath_parameter_compare(
       svg_path.SubpathParameter(1, 0.25),
       svg_path.SubpathParameter(1, 0.25),
     )
     == order.Eq
-  assert svg_path.subpath_parameters_compare(
+  assert svg_path.subpath_parameter_compare(
       svg_path.SubpathParameter(2, 0.0),
       svg_path.SubpathParameter(1, 1.0),
     )
@@ -28,17 +28,17 @@ pub fn compare_subpath_parameters_orders_by_segment_then_t_test() {
 }
 
 pub fn compare_path_parameters_orders_by_subpath_then_subpath_parameter_test() {
-  assert svg_path.path_parameters_compare(
+  assert svg_path.path_parameter_compare(
       svg_path.PathParameter(0, svg_path.SubpathParameter(3, 0.75)),
       svg_path.PathParameter(1, svg_path.SubpathParameter(0, 0.25)),
     )
     == order.Lt
-  assert svg_path.path_parameters_compare(
+  assert svg_path.path_parameter_compare(
       svg_path.PathParameter(1, svg_path.SubpathParameter(0, 0.25)),
       svg_path.PathParameter(1, svg_path.SubpathParameter(0, 0.25)),
     )
     == order.Eq
-  assert svg_path.path_parameters_compare(
+  assert svg_path.path_parameter_compare(
       svg_path.PathParameter(1, svg_path.SubpathParameter(2, 0.0)),
       svg_path.PathParameter(1, svg_path.SubpathParameter(1, 1.0)),
     )

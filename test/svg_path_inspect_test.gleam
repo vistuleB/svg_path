@@ -17,7 +17,7 @@ pub fn point_inspection_preserves_scientific_exponents_test() {
 pub fn point_padding_measures_scientific_significands_test() {
   let options =
     inspect.default_options()
-    |> inspect.with_left_padding(inspect.LeftPadding(4, inspect.Zero))
+    |> inspect.with_left_decimals(inspect.LeftPadding(4, inspect.Zero))
 
   assert inspect.point_with(svg_path.Point(1.0e20, 2.0), options:)
     == "0001e20,0002"
@@ -92,7 +92,7 @@ pub fn segment_inspects_with_auto_left_padding_test() {
     )
   let options =
     inspect.fixed_decimal_options(1)
-    |> inspect.with_left_padding(inspect.AutoLeftPadding(inspect.Zero))
+    |> inspect.with_left_decimals(inspect.AutoLeftPadding(inspect.Zero))
 
   assert inspect.segment_with(segment, options:)
     == "Line(start=000.0,-05.0 end=120.0,010.0)"
@@ -101,7 +101,7 @@ pub fn segment_inspects_with_auto_left_padding_test() {
 pub fn point_inspects_with_explicit_left_padding_test() {
   let options =
     inspect.fixed_decimal_options(1)
-    |> inspect.with_left_padding(inspect.LeftPadding(4, inspect.Zero))
+    |> inspect.with_left_decimals(inspect.LeftPadding(4, inspect.Zero))
 
   assert inspect.point_with(svg_path.Point(2.0, -3.0), options:)
     == "0002.0,-003.0"
@@ -110,7 +110,7 @@ pub fn point_inspects_with_explicit_left_padding_test() {
 pub fn point_inspects_with_space_left_padding_test() {
   let options =
     inspect.fixed_decimal_options(1)
-    |> inspect.with_left_padding(inspect.LeftPadding(4, inspect.Space))
+    |> inspect.with_left_decimals(inspect.LeftPadding(4, inspect.Space))
 
   assert inspect.point_with(svg_path.Point(2.0, -3.0), options:)
     == "   2.0,  -3.0"
@@ -287,7 +287,7 @@ pub fn code_inspection_respects_auto_left_padding_test() {
   let path = svg_path.subpath_as_path(subpath)
   let options =
     inspect.fixed_decimal_options(1)
-    |> inspect.with_left_padding(inspect.AutoLeftPadding(inspect.Zero))
+    |> inspect.with_left_decimals(inspect.AutoLeftPadding(inspect.Zero))
 
   assert inspect.path_code_with(path, options:) == "svg_path.Path([
   svg_path.subpath_assert([

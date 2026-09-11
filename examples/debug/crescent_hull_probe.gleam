@@ -19,7 +19,7 @@ pub fn drawing_svg() -> String {
   let end = radius_1000_point(1.0)
   let points = visible_crescent_points(60, line_start: start, line_end: end)
   let path = crescent_path(points, line_start: start, line_end: end)
-  let assert Ok(hull) = convex_hull.path_hull(path)
+  let assert Ok(hull) = convex_hull.path(path)
 
   svg.document(
     [

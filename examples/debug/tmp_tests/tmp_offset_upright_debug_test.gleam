@@ -135,7 +135,7 @@ fn split_sections(
   use self_points <- result.try(self_split_parameters(subpath))
   let split_points =
     list.append(self_points, extra_split_points)
-    |> list.sort(by: svg_path.subpath_parameters_compare)
+    |> list.sort(by: svg_path.subpath_parameter_compare)
     |> unique_subpath_parameters([])
 
   case split_points {
@@ -167,7 +167,7 @@ fn self_split_parameters(
         intersection
       [left, right]
     })
-    |> list.sort(by: svg_path.subpath_parameters_compare)
+    |> list.sort(by: svg_path.subpath_parameter_compare)
     |> unique_subpath_parameters([]),
   )
 }
@@ -193,7 +193,7 @@ fn cross_side_split_parameters(
       let svg_path.SubpathIntersection(left_parameters:, ..) = intersection
       left_parameters
     })
-    |> list.sort(by: svg_path.subpath_parameters_compare)
+    |> list.sort(by: svg_path.subpath_parameter_compare)
     |> unique_subpath_parameters([])
   let right_parameters =
     intersections
@@ -201,7 +201,7 @@ fn cross_side_split_parameters(
       let svg_path.SubpathIntersection(right_parameters:, ..) = intersection
       right_parameters
     })
-    |> list.sort(by: svg_path.subpath_parameters_compare)
+    |> list.sort(by: svg_path.subpath_parameter_compare)
     |> unique_subpath_parameters([])
   Ok(#(left_parameters, right_parameters))
 }
@@ -263,7 +263,8 @@ fn section_is_valid(
   options: offset.Options,
 ) -> Result(Bool, offset.InternalError) {
   use length <- result.try(
-    svg_path.subpath_length(section) |> result.map_error(offset.InternalPathError),
+    svg_path.subpath_length(section)
+    |> result.map_error(offset.InternalPathError),
   )
   section_has_enough_non_negative_samples(
     section,

@@ -120,7 +120,7 @@ fn collinear_summary(segment: svg_path.Segment) -> String {
 }
 
 fn current_hull_summary(segment: svg_path.Segment) -> String {
-  case convex_hull.segment_hull(segment) {
+  case convex_hull.segment(segment) {
     Ok(#(_, pieces)) -> ", current hull = " <> string.inspect(pieces)
     Error(error) -> ", current hull error = " <> string.inspect(error)
   }

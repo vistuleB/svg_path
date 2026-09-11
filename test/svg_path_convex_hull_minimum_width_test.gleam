@@ -15,7 +15,7 @@ pub fn collinear_bezier_width_is_not_certified_positive_test() {
       svg_path.Point(-20.0, 0.0),
       svg_path.Point(0.0, 0.0),
     )
-  let assert Ok(hull) = convex_hull.segment_hull(segment)
+  let assert Ok(hull) = convex_hull.segment(segment)
   let assert Ok(decision) =
     convex_hull.internal_convex_subpath_minimum_width_decision(hull, 0.0)
   case decision {
@@ -269,7 +269,7 @@ pub fn five_way_decisions_are_translation_and_reversal_invariant_test() {
 
 pub fn curved_circle_hull_uses_exact_directional_support_test() {
   let circle = circle_subpath(radius: 2.0)
-  let assert Ok(hull) = convex_hull.subpath_hull(circle)
+  let assert Ok(hull) = convex_hull.subpath(circle)
   let assert Ok(fits) =
     convex_hull.internal_convex_subpath_minimum_width_decision(
       hull,
@@ -290,7 +290,7 @@ pub fn curved_circle_hull_uses_exact_directional_support_test() {
 pub fn curved_hull_search_certifies_an_arbitrary_line_at_graph_tolerance_test() {
   let end = point.direction(degrees: 31.7) |> point.scale(by: 10.0)
   let segment = svg_path.Line(start: svg_path.Point(0.0, 0.0), end:)
-  let assert Ok(hull) = convex_hull.segment_hull(segment)
+  let assert Ok(hull) = convex_hull.segment(segment)
   let assert Ok(decision) =
     convex_hull.internal_convex_subpath_minimum_width_decision(
       hull,
@@ -304,7 +304,7 @@ pub fn adding_a_segment_returns_the_augmented_hull_and_width_decision_test() {
   let first = line(0.0, 0.0, 1.0, 0.0)
   let second = line(1.0, 0.0, 2.0, 0.0)
   let third = line(2.0, 0.0, 2.0, 2.0)
-  let assert Ok(first_hull) = convex_hull.segment_hull(first)
+  let assert Ok(first_hull) = convex_hull.segment(first)
   let assert Ok(#(second_hull, second_decision)) =
     convex_hull.internal_convex_subpath_add_segment_and_test_width(
       first_hull,
@@ -508,7 +508,7 @@ fn rectangle_at_angle(
 ) -> List(svg_path.Point) {
   let along = point.direction(degrees: angle) |> point.scale(by: length /. 2.0)
   let across =
-    point.rotate_counterclockwise(along)
+    point.rotate_90_counterclockwise(along)
     |> point.normalize
     |> fn(result) {
       let assert Ok(direction) = result

@@ -97,7 +97,7 @@ fn colinearize_segments(
         }
         _ -> {
           use replacement <- result.try(
-            svg_path.segment_degenerate_lines(first, tolerance)
+            svg_path.segment_linearize_if_degenerate(first, tolerance)
             |> result.map_error(PathError),
           )
           let replacement = case replacement {
@@ -132,7 +132,7 @@ fn longest_thin_prefix(
     [] -> Ok(ThinPrefix(segments: [], remaining: [], hull: None, strip: None))
     [first, ..rest] -> {
       use hull <- result.try(
-        convex_hull.segment_hull(first) |> result.map_error(ConvexHullError),
+        convex_hull.segment(first) |> result.map_error(ConvexHullError),
       )
       use decision <- result.try(source_width_decision([first], hull, tolerance))
       case decision {
@@ -236,7 +236,7 @@ fn rebuilt_candidate_width_decision(
     |> result.map_error(PathError),
   )
   use hull <- result.try(
-    convex_hull.subpath_hull(subpath) |> result.map_error(ConvexHullError),
+    convex_hull.subpath(subpath) |> result.map_error(ConvexHullError),
   )
   use decision <- result.try(source_width_decision(
     reversed_segments,
@@ -285,7 +285,7 @@ fn strip_points_in_traversal_order(
   strip: convex_hull.MinimumWidthStrip,
   tolerance: Float,
 ) -> Result(List(svg_path.Point), svg_path.Error) {
-  let axis = point.rotate_clockwise(strip.normal)
+  let axis = point.rotate_90_clockwise(strip.normal)
   let angle = point.heading(axis)
   let assert [first, ..] = segments
   let start = svg_path.segment_start(first)
@@ -414,7 +414,7 @@ fn degenerate_traversal(
     [] -> Ok([])
     [first, ..rest] -> {
       use replacement <- result.try(
-        svg_path.segment_degenerate_lines(first, tolerance)
+        svg_path.segment_linearize_if_degenerate(first, tolerance)
         |> result.map_error(PathError),
       )
       let replacement = case replacement {

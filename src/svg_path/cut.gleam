@@ -194,7 +194,7 @@ fn sort_unique_parameters(
   parameters: List(svg_path.SubpathParameter),
 ) -> List(svg_path.SubpathParameter) {
   parameters
-  |> list.sort(by: svg_path.subpath_parameters_compare)
+  |> list.sort(by: svg_path.subpath_parameter_compare)
   |> unique_sorted_parameters(kept: [])
 }
 
@@ -206,7 +206,7 @@ fn unique_sorted_parameters(
     [], _ -> list.reverse(kept)
     [first, ..rest], [] -> unique_sorted_parameters(rest, kept: [first])
     [first, ..rest], [previous, ..] ->
-      case svg_path.subpath_parameters_compare(first, previous) {
+      case svg_path.subpath_parameter_compare(first, previous) {
         order.Eq -> unique_sorted_parameters(rest, kept:)
         _ -> unique_sorted_parameters(rest, kept: [first, ..kept])
       }

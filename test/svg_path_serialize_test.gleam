@@ -76,7 +76,7 @@ pub fn serialized_padding_measures_scientific_significands_test() {
   let options =
     serialize.default_options()
     |> serialize.with_right_decimals(serialize.System)
-    |> serialize.with_left_padding(serialize.LeftPadding(4, serialize.Zero))
+    |> serialize.with_left_decimals(serialize.LeftPadding(4, serialize.Zero))
 
   assert serialize.subpath_with(subpath, options:) == "M 0001e20 0002"
 }
@@ -284,7 +284,7 @@ pub fn left_padding_pads_serialized_numbers_test() {
   assert serialize.segment_with(
       svg_path.Line(start: a, end: b),
       options: serialize.fixed_decimal_options(1)
-        |> serialize.with_left_padding(serialize.LeftPadding(3, serialize.Zero)),
+        |> serialize.with_left_decimals(serialize.LeftPadding(3, serialize.Zero)),
     )
     == "M 000.0 -02.0 L 012.2 010.2"
 }
@@ -296,7 +296,10 @@ pub fn space_left_padding_pads_serialized_numbers_test() {
   assert serialize.segment_with(
       svg_path.Line(start: a, end: b),
       options: serialize.fixed_decimal_options(1)
-        |> serialize.with_left_padding(serialize.LeftPadding(3, serialize.Space)),
+        |> serialize.with_left_decimals(serialize.LeftPadding(
+          3,
+          serialize.Space,
+        )),
     )
     == "M   0.0  -2.0 L  12.2  10.2"
 }
@@ -314,7 +317,9 @@ pub fn auto_left_padding_aligns_serialized_path_numbers_test() {
   assert serialize.subpath_with(
       subpath,
       options: serialize.fixed_decimal_options(1)
-        |> serialize.with_left_padding(serialize.AutoLeftPadding(serialize.Zero)),
+        |> serialize.with_left_decimals(serialize.AutoLeftPadding(
+          serialize.Zero,
+        )),
     )
     == "M 000.0 -05.0 L 120.0 010.0 L 002.0 -30.0"
 }
@@ -656,7 +661,7 @@ pub fn commas_preserve_spaces_between_curve_point_pairs_test() {
   assert serialize.subpath_with(
       subpath,
       options: serialize.fixed_decimal_options(2)
-        |> serialize.with_left_padding(serialize.AutoLeftPadding(
+        |> serialize.with_left_decimals(serialize.AutoLeftPadding(
           serialize.Space,
         ))
         |> serialize.with_commas(True)
@@ -1160,7 +1165,9 @@ pub fn parser_tracked_auto_padding_uses_corrected_numbers_test() {
   assert serialize.path_with_parser_tracked_relative_options(
       svg_path.Path([subpath]),
       serialize.relative_decimal_options(1)
-        |> serialize.with_left_padding(serialize.AutoLeftPadding(serialize.Zero)),
+        |> serialize.with_left_decimals(serialize.AutoLeftPadding(
+          serialize.Zero,
+        )),
     )
     == "m 00.1 00 h 10"
 }

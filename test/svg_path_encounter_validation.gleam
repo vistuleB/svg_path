@@ -976,7 +976,7 @@ fn all_path_parameters_match(path, parameters, found, tolerance) {
 
 fn subpath_parameter_between(subpath, parameter, from, to) {
   parameter_between(
-    svg_path.subpath_parameters_compare,
+    svg_path.subpath_parameter_compare,
     canonical_subpath_boundary(subpath, parameter),
     canonical_subpath_boundary(subpath, from),
     canonical_subpath_boundary(subpath, to),
@@ -985,7 +985,7 @@ fn subpath_parameter_between(subpath, parameter, from, to) {
 
 fn path_parameter_between(path, parameter, from, to) {
   parameter_between(
-    svg_path.path_parameters_compare,
+    svg_path.path_parameter_compare,
     canonical_path_boundary(path, parameter),
     canonical_path_boundary(path, from),
     canonical_path_boundary(path, to),

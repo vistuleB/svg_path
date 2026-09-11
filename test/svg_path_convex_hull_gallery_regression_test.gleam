@@ -8,7 +8,7 @@ const support_tolerance = 0.00001
 
 pub fn figure_eight_hull_preserves_source_support_test() {
   let source = fixture.figure_eight()
-  let assert Ok(hull) = convex_hull.subpath_hull(source)
+  let assert Ok(hull) = convex_hull.subpath(source)
 
   assert svg_path.subpath_is_closed(hull)
   assert support_matches(
@@ -19,7 +19,7 @@ pub fn figure_eight_hull_preserves_source_support_test() {
 
 pub fn figure_eight_band_hull_preserves_band_support_test() {
   let assert Ok(band) = fixture.figure_eight_band()
-  let assert Ok(hull) = convex_hull.path_hull(band)
+  let assert Ok(hull) = convex_hull.path(band)
 
   assert svg_path.subpath_is_closed(hull)
   assert support_matches(path_segments(band), svg_path.subpath_segments(hull))
@@ -27,7 +27,7 @@ pub fn figure_eight_band_hull_preserves_band_support_test() {
 
 pub fn figure_eight_and_band_hull_preserves_combined_support_test() {
   let assert Ok(combined) = fixture.combined_path()
-  let assert Ok(hull) = convex_hull.path_hull(combined)
+  let assert Ok(hull) = convex_hull.path(combined)
 
   assert svg_path.subpath_is_closed(hull)
   assert support_matches(

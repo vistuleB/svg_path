@@ -386,7 +386,8 @@ fn segment_hull_sample_stages(
 ) -> Result(#(List(SupportSample), List(SupportSample)), HullError) {
   use box <- result.try(map_path_error(svg_path.segment_bounding_box(segment)))
   let distance_tolerance =
-    svg_path.bounding_box_diameter(box) *. unit_diameter_distance_tolerance
+    svg_path.bounding_box_taxicab_diameter(box)
+    *. unit_diameter_distance_tolerance
   use samples <- result.try(map_path_error(initial_support_samples(segment)))
   use refined <- result.try(refine_until_contextually_resolved(
     segment,

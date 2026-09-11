@@ -147,7 +147,7 @@ pub fn path_hull_handles_scaled_two_arc_probe_test() {
   let assert Ok(small_subpath) = svg_path.subpath([small_arc])
 
   let assert Ok(hull) =
-    convex_hull.path_hull(svg_path.Path([large_subpath, small_subpath]))
+    convex_hull.path(svg_path.Path([large_subpath, small_subpath]))
 
   assert svg_path.subpath_is_closed(hull)
 }

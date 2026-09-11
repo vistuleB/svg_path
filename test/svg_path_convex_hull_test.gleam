@@ -14,7 +14,7 @@ pub fn segment_hull_returns_closed_subpath_for_line_test() {
       start: svg_path.Point(0.0, 0.0),
       end: svg_path.Point(10.0, 0.0),
     )
-  let assert Ok(subpath) = convex_hull.segment_hull(segment)
+  let assert Ok(subpath) = convex_hull.segment(segment)
 
   assert svg_path.subpath_is_closed(subpath)
   assert list.length(svg_path.subpath_segments(subpath)) == 2
@@ -28,7 +28,7 @@ pub fn segment_hull_returns_closed_hull_for_quadratic_test() {
       control: svg_path.Point(5.0, 10.0),
       end: svg_path.Point(10.0, 0.0),
     )
-  let assert Ok(subpath) = convex_hull.segment_hull(segment)
+  let assert Ok(subpath) = convex_hull.segment(segment)
 
   assert svg_path.subpath_is_closed(subpath)
   assert list.length(svg_path.subpath_segments(subpath)) == 2
@@ -47,7 +47,7 @@ pub fn subpath_hull_returns_closed_hull_for_l_shaped_polyline_test() {
     ),
   ]
   let assert Ok(subpath) = svg_path.subpath(segments)
-  let assert Ok(hull) = convex_hull.subpath_hull(subpath)
+  let assert Ok(hull) = convex_hull.subpath(subpath)
 
   assert svg_path.subpath_is_closed(hull)
   assert list.length(svg_path.subpath_segments(hull)) >= 3
@@ -56,8 +56,7 @@ pub fn subpath_hull_returns_closed_hull_for_l_shaped_polyline_test() {
 
 pub fn subpath_hull_treats_empty_subpath_as_single_point_test() {
   let point = svg_path.Point(4.0, -3.0)
-  let assert Ok(hull) =
-    convex_hull.subpath_hull(svg_path.subpath_empty(at: point))
+  let assert Ok(hull) = convex_hull.subpath(svg_path.subpath_empty(at: point))
 
   assert svg_path.subpath_is_closed(hull)
   assert svg_path.subpath_segments(hull)
@@ -79,7 +78,7 @@ pub fn path_hull_includes_empty_subpath_start_points_test() {
       svg_path.subpath_assert([svg_path.Line(start: a, end: b)]),
       svg_path.subpath_empty(at: far),
     ])
-  let assert Ok(hull) = convex_hull.path_hull(path)
+  let assert Ok(hull) = convex_hull.path(path)
 
   assert svg_path.subpath_is_closed(hull)
   assert near_value(
@@ -89,8 +88,7 @@ pub fn path_hull_includes_empty_subpath_start_points_test() {
 }
 
 pub fn path_hull_rejects_empty_path_test() {
-  assert convex_hull.path_hull(svg_path.path_empty())
-    == Error(convex_hull.EmptyPath)
+  assert convex_hull.path(svg_path.path_empty()) == Error(convex_hull.EmptyPath)
 }
 
 fn support_values_match(

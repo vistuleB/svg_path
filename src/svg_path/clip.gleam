@@ -278,7 +278,7 @@ fn sort_unique_parameters(
 ) -> Result(List(svg_path.SubpathParameter), svg_path.Error) {
   use unique <- result.try(
     parameters
-    |> list.sort(by: svg_path.subpath_parameters_compare)
+    |> list.sort(by: svg_path.subpath_parameter_compare)
     |> unique_sorted_parameters(input, tolerance, kept: []),
   )
   case svg_path.subpath_is_closed(input) {
@@ -328,7 +328,7 @@ fn unique_sorted_parameters(
     [first, ..rest], [] ->
       unique_sorted_parameters(rest, input, tolerance, kept: [first])
     [first, ..rest], [previous, ..] ->
-      case svg_path.subpath_parameters_compare(first, previous) {
+      case svg_path.subpath_parameter_compare(first, previous) {
         order.Eq -> unique_sorted_parameters(rest, input, tolerance, kept:)
         _ -> {
           use between <- result.try(svg_path.subpath_between(

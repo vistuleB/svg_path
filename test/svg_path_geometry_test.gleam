@@ -78,7 +78,7 @@ pub fn segment_segment_projection_reports_crossing_line_pair_test() {
     left_point:,
     right_point:,
     distance:,
-  )) = intersections.segment_segment_projection(left, right)
+  )) = intersections.segment_segment_closest_pair(left, right)
 
   assert float.absolute_value(left_t -. 1.0 /. 3.0) <. tolerance
   assert float.absolute_value(right_t -. 1.0 /. 3.0) <. tolerance
@@ -104,7 +104,7 @@ pub fn segment_segment_projection_reports_separated_line_pair_test() {
     right_point:,
     distance:,
     ..,
-  )) = intersections.segment_segment_projection(left, right)
+  )) = intersections.segment_segment_closest_pair(left, right)
 
   assert float.absolute_value(distance -. 2.0) <. tolerance
   assert float.absolute_value(left_point.x -. right_point.x) <. tolerance
@@ -129,7 +129,7 @@ pub fn segment_segment_projection_reports_overlapping_line_pair_test() {
     right_point:,
     distance:,
     ..,
-  )) = intersections.segment_segment_projection(left, right)
+  )) = intersections.segment_segment_closest_pair(left, right)
 
   assert distance <. tolerance
   assert point_distance(left_point, right_point) <. tolerance
@@ -154,7 +154,7 @@ pub fn segment_subpath_projection_reports_nearest_segment_test() {
     ])
 
   let assert Ok(svg_path.SegmentSubpathProjection(right_at:, distance:, ..)) =
-    intersections.segment_subpath_projection(left, right)
+    intersections.segment_subpath_closest_pair(left, right)
 
   assert right_at.segment_index == 1
   assert float.absolute_value(distance -. 2.0) <. tolerance
@@ -186,7 +186,7 @@ pub fn segment_path_projection_reports_nearest_subpath_test() {
     |> svg_path.path_append_subpath(near)
 
   let assert Ok(svg_path.SegmentPathProjection(right_at:, distance:, ..)) =
-    intersections.segment_path_projection(left, path)
+    intersections.segment_path_closest_pair(left, path)
 
   assert right_at.subpath_index == 1
   assert float.absolute_value(distance -. 2.0) <. tolerance
@@ -221,7 +221,7 @@ pub fn subpath_subpath_projection_reports_nearest_segments_test() {
     right_at:,
     distance:,
     ..,
-  )) = intersections.subpath_subpath_projection(left, right)
+  )) = intersections.subpath_subpath_closest_pair(left, right)
 
   assert left_at.segment_index == 0 || left_at.segment_index == 1
   assert right_at.segment_index == 1
@@ -256,7 +256,7 @@ pub fn subpath_path_projection_reports_nearest_subpath_test() {
     |> svg_path.path_append_subpath(near)
 
   let assert Ok(svg_path.SubpathPathProjection(right_at:, distance:, ..)) =
-    intersections.subpath_path_projection(left, path)
+    intersections.subpath_path_closest_pair(left, path)
 
   assert right_at.subpath_index == 1
   assert float.absolute_value(distance -. 2.0) <. tolerance
@@ -291,7 +291,7 @@ pub fn path_path_projection_reports_nearest_subpaths_test() {
     |> svg_path.path_append_subpath(near_right)
 
   let assert Ok(svg_path.PathPathProjection(right_at:, distance:, ..)) =
-    intersections.path_path_projection(left, right)
+    intersections.path_path_closest_pair(left, right)
 
   assert right_at.subpath_index == 1
   assert float.absolute_value(distance -. 2.0) <. tolerance
@@ -305,7 +305,8 @@ pub fn segment_degenerate_lines_preserves_quadratic_backtracking_test() {
       end: svg_path.Point(0.0, 0.0),
     )
 
-  let assert Ok(Some(lines)) = svg_path.segment_degenerate_lines(curve, 0.001)
+  let assert Ok(Some(lines)) =
+    svg_path.segment_linearize_if_degenerate(curve, 0.001)
   assert list.length(lines) == 2
   assert list.all(lines, fn(segment) {
     case segment {
@@ -324,7 +325,8 @@ pub fn segment_degenerate_lines_preserves_cubic_backtracking_test() {
       end: svg_path.Point(0.0, 0.0),
     )
 
-  let assert Ok(Some(lines)) = svg_path.segment_degenerate_lines(curve, 0.001)
+  let assert Ok(Some(lines)) =
+    svg_path.segment_linearize_if_degenerate(curve, 0.001)
   assert list.length(lines) == 3
 }
 
@@ -340,7 +342,7 @@ pub fn segment_degenerate_lines_converts_zero_radius_arc_test() {
     )
 
   let assert Ok(Some([svg_path.Line(start:, end:)])) =
-    svg_path.segment_degenerate_lines(arc, 0.001)
+    svg_path.segment_linearize_if_degenerate(arc, 0.001)
   assert start == svg_path.Point(0.0, 0.0)
   assert end == svg_path.Point(10.0, 0.0)
 }
@@ -353,7 +355,7 @@ pub fn segment_degenerate_lines_rejects_wide_curve_test() {
       end: svg_path.Point(10.0, 0.0),
     )
 
-  assert svg_path.segment_degenerate_lines(curve, 0.001) == Ok(None)
+  assert svg_path.segment_linearize_if_degenerate(curve, 0.001) == Ok(None)
 }
 
 pub fn subpath_degenerate_lines_uses_one_strip_for_all_segments_test() {
@@ -370,7 +372,8 @@ pub fn subpath_degenerate_lines_uses_one_strip_for_all_segments_test() {
       ),
     ])
 
-  let assert Ok(Some(lines)) = svg_path.subpath_degenerate_lines(subpath, 0.001)
+  let assert Ok(Some(lines)) =
+    svg_path.subpath_linearize_if_degenerate(subpath, 0.001)
   assert list.length(lines) == 3
 }
 
@@ -387,12 +390,12 @@ pub fn subpath_degenerate_lines_rejects_bent_subpath_test() {
       ),
     ])
 
-  assert svg_path.subpath_degenerate_lines(subpath, 0.001) == Ok(None)
+  assert svg_path.subpath_linearize_if_degenerate(subpath, 0.001) == Ok(None)
 }
 
 pub fn parametric_subpath_fits_simple_parabola_test() {
   let assert Ok(subpath) =
-    svg_path.subpath_parametric(from: 0.0, to: 1.0, point: fn(t) {
+    svg_path.subpath_from_parametric(from: 0.0, to: 1.0, point: fn(t) {
       svg_path.Point(t, t *. t)
     })
   let assert [segment] = svg_path.subpath_segments(subpath)
@@ -409,7 +412,7 @@ pub fn parametric_subpath_uses_optional_tangents_test() {
       tangent: Some(fn(_) { svg_path.Point(1.0, 1.0) }),
     )
   let assert Ok(subpath) =
-    svg_path.subpath_parametric_with(
+    svg_path.subpath_from_parametric_with(
       from: 2.0,
       to: 6.0,
       point: fn(t) { svg_path.Point(t, t) },
@@ -429,7 +432,7 @@ pub fn parametric_subpath_adaptively_subdivides_test() {
       max_depth: 8,
     )
   let assert Ok(subpath) =
-    svg_path.subpath_parametric_with(
+    svg_path.subpath_from_parametric_with(
       from: -1.0,
       to: 1.0,
       point: fn(t) { svg_path.Point(t, t *. t *. t *. t) },
@@ -440,7 +443,7 @@ pub fn parametric_subpath_adaptively_subdivides_test() {
 }
 
 pub fn parametric_subpath_rejects_invalid_options_test() {
-  assert svg_path.subpath_parametric_with(
+  assert svg_path.subpath_from_parametric_with(
       from: 0.0,
       to: 1.0,
       point: fn(t) { svg_path.Point(t, t) },
@@ -451,7 +454,7 @@ pub fn parametric_subpath_rejects_invalid_options_test() {
     )
     == Error(svg_path.InvalidParametricSamplesPerPiece(1))
 
-  assert svg_path.subpath_parametric(from: 1.0, to: 1.0, point: fn(t) {
+  assert svg_path.subpath_from_parametric(from: 1.0, to: 1.0, point: fn(t) {
       svg_path.Point(t, t)
     })
     == Error(svg_path.InvalidParametricInterval(start: 1.0, end: 1.0))

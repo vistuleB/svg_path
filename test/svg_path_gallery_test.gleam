@@ -834,7 +834,7 @@ fn crescent_hull() -> String {
   let source =
     crescent_point_cloud_path(points, line_start: start, line_end: end)
   let reference = crescent_reference_path(start, end)
-  let assert Ok(hull) = convex_hull.path_hull(source)
+  let assert Ok(hull) = convex_hull.path(source)
   let by = crescent_display_transform()
   let assert Ok(display_source) = transform.path(source, by:)
   let assert Ok(display_reference) = transform.path(reference, by:)
@@ -1300,7 +1300,8 @@ fn segment_bounding_box_diameter_to_string(
   segment: svg_path.Segment,
 ) -> String {
   case svg_path.segment_bounding_box(segment) {
-    Ok(box) -> debug_float_to_string(svg_path.bounding_box_diameter(box))
+    Ok(box) ->
+      debug_float_to_string(svg_path.bounding_box_taxicab_diameter(box))
     Error(_) -> "Error"
   }
 }
@@ -2225,7 +2226,7 @@ fn arrow_glyph(
 ) -> svg.ThingToDraw {
   let half_width = 5.0 *. arrow_scale
   let arrow_height = half_width *. 1.7320508075688772
-  let normal = rotate_counterclockwise(unit)
+  let normal = rotate_90_counterclockwise(unit)
   let tip = add(point, scale(unit, arrow_height *. 2.0 /. 3.0))
   let base = add(point, scale(unit, 0.0 -. arrow_height /. 3.0))
   let left = add(base, scale(normal, half_width))
@@ -2273,7 +2274,7 @@ fn float_square_root(value: Float) -> Float {
   root
 }
 
-fn rotate_counterclockwise(point: svg_path.Point) -> svg_path.Point {
+fn rotate_90_counterclockwise(point: svg_path.Point) -> svg_path.Point {
   svg_path.Point(point.y, 0.0 -. point.x)
 }
 

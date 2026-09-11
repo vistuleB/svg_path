@@ -3,11 +3,11 @@ import svg_path/ellipse
 
 pub fn signed_zero_split_parameters_are_canonical_test() {
   let arc = arc()
-  assert ellipse.split_arc_many(arc, at: [-0.0, 0.0]) == [arc]
-  assert ellipse.split_arc_inside_many(arc, at: [-0.0, 0.0]) == Ok([arc])
-  let expected = ellipse.split_arc_many(arc, at: [-0.5, 0.0, 0.5])
+  assert ellipse.arc_split_many(arc, at: [-0.0, 0.0]) == [arc]
+  assert ellipse.arc_split_many_inside(arc, at: [-0.0, 0.0]) == Ok([arc])
+  let expected = ellipse.arc_split_many(arc, at: [-0.5, 0.0, 0.5])
   assert list.length(expected) == 4
-  assert ellipse.split_arc_many(arc, at: [-0.5, -0.0, 0.0, 0.5]) == expected
+  assert ellipse.arc_split_many(arc, at: [-0.5, -0.0, 0.0, 0.5]) == expected
 }
 
 pub fn either_zero_direction_has_no_projection_extrema_test() {

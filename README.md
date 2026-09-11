@@ -247,7 +247,7 @@ Subpath parameters are strict: `segment_index` must address a real segment and
 not extrapolate beyond a segment. The split helpers only return positive-length
 pieces: open subpath split lists must be strictly increasing and cannot include
 the very start or very end, while closed subpath split lists must be distinct
-and cyclically increasing. Use `subpath_parameters_compare` for plain
+and cyclically increasing. Use `subpath_parameter_compare` for plain
 segment-index-then-`t` ordering.
 
 The subpath interval helpers have deliberately narrow roles:
@@ -657,7 +657,7 @@ Use `svg_path.arc_center_data` to convert a root-module `Arc` segment to
 `svg_path.arc_derivative`, and `svg_path.arc_point_at_angle`; these keep the
 ordinary `svg_path.Point` and `svg_path.Error` types. The `ellipse` module also
 exposes lower-level helpers such as `arc_point`, `arc_point_at_angle`,
-`split_arc`, `arc_bounding_box`, and `arc_to_cubics`.
+`arc_split`, `arc_bounding_box`, and `arc_to_cubic_beziers`.
 
 ## Geometry Helpers
 
@@ -670,7 +670,7 @@ details; this section is a map of the available families.
 Use `segment_bounding_box`, `subpath_bounding_box`, and `path_bounding_box` for
 axis-aligned bounds. Line, Bezier, and arc extrema are included. Measure a box
 with `bounding_box_width`, `bounding_box_height`, `bounding_box_center`, and
-`bounding_box_diameter`; the diameter is width plus height.
+`bounding_box_taxicab_diameter`; the diameter is width plus height.
 
 ### Optimization Over Segments
 
@@ -841,8 +841,8 @@ pub fn filled_area(path: svg_path.Path) -> Result(Float, svg_path.Error) {
 
 There are three area notions here. `area.signed_subpath` and `area.signed_path`
 return algebraic area. `area.subpath` and `area.path` return unsigned filled
-area under `Nonzero` or `EvenOdd`. `area.absolute_subpath` and
-`area.absolute_path` integrate `abs(winding_number)`, so repeated same-direction
+area under `Nonzero` or `EvenOdd`. `area.absolute_winding_subpath` and
+`area.absolute_winding_path` integrate `abs(winding_number)`, so repeated same-direction
 loops count with multiplicity. `svg_path/convex_hull` is a separate geometry
 operation; a hull area can be larger than the filled area of a concave or
 self-intersecting shape.
@@ -867,10 +867,10 @@ The difference matters for repeated or nested loops:
 | Same loop twice, same direction | `+2A` or `-2A` | `A` | `0` |
 | Same loop twice, opposite directions | `0` | `0` | `0` |
 
-For those three rows, `area.absolute_path` returns `A`, `2A`, and `0`,
+For those three rows, `area.absolute_winding_path` returns `A`, `2A`, and `0`,
 respectively.
 
-`area.subpath`, `area.path`, `area.absolute_subpath`, and `area.absolute_path`
+`area.subpath`, `area.path`, `area.absolute_winding_subpath`, and `area.absolute_winding_path`
 first linearize curves and then integrate slabs of the resulting line
 arrangement. The `_with` variants accept `LinearizeOptions`;
 `options.tolerance` controls curve-to-line approximation in coordinate units,
@@ -996,7 +996,7 @@ intersections are required from one query. Its segment, segment-subpath,
 subpath, and path functions return both lists without changing the underlying
 payload types. Subpath encounters retain overlap-boundary intersections by
 default; the explicitly named
-`filter_fully_overlap_explained_subpath_intersection_parameters` helper derives
+`subpath_filter_overlap_explained_intersections` helper derives
 a view with parameters fully explained by overlaps removed.
 
 ### Convex Hulls
@@ -1011,7 +1011,7 @@ import svg_path/convex_hull
 pub fn hull(
   segment: svg_path.Segment,
 ) -> Result(svg_path.Subpath, convex_hull.Error) {
-  convex_hull.segment_hull(segment)
+  convex_hull.segment(segment)
 }
 ```
 
@@ -1241,8 +1241,8 @@ y' = b*x + d*y + f
 
 The ordinary `segment`, `subpath`, and `path` transform functions preserve
 segment types and return `DegenerateArcTransform` when an affine transform
-collapses an arc into line geometry. Use `segment_gracefully`,
-`segment_to_subpath_gracefully`, `subpath_gracefully`, or `path_gracefully`
+collapses an arc into line geometry. Use `segment_with_arc_collapse`,
+`segment_to_subpath_with_arc_collapse`, `subpath_with_arc_collapse`, or `path_with_arc_collapse`
 when collapsed arcs should instead become one or more line segments.
 
 Matrix values can be constructed and inspected as tuples:

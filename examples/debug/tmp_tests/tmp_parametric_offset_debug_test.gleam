@@ -1356,7 +1356,7 @@ fn self_intersection_split_parameters(
     |> list.filter(fn(parameter) {
       !is_open_subpath_boundary_parameter(subpath, parameter)
     })
-    |> list.sort(by: svg_path.subpath_parameters_compare)
+    |> list.sort(by: svg_path.subpath_parameter_compare)
     |> unique_subpath_parameters(0.000000001, [])
 
   Ok(parameters)

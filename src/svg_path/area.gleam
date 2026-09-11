@@ -119,7 +119,7 @@ pub fn signed_subpath(subpath: svg_path.Subpath) -> Float {
 /// This is algebraic area: repeated loops can multiply the value and opposite
 /// loops can cancel. Equivalently, this is the integral of the signed winding
 /// number over the plane. Use `path` for SVG fill-rule area and
-/// `absolute_path` when repeated loops should contribute by winding magnitude.
+/// `absolute_winding_path` when repeated loops should contribute by winding magnitude.
 pub fn signed_path(path: svg_path.Path) -> Float {
   path
   |> svg_path.path_subpaths
@@ -132,10 +132,13 @@ pub fn signed_path(path: svg_path.Path) -> Float {
 /// This integrates `abs(winding_number)` over the plane. A loop traced twice
 /// in the same direction contributes twice its ordinary fill area; coincident
 /// opposite loops cancel to zero because their total winding is zero.
-pub fn absolute_subpath(
+pub fn absolute_winding_subpath(
   subpath: svg_path.Subpath,
 ) -> Result(Float, svg_path.Error) {
-  absolute_subpath_with(subpath, options: svg_path.default_linearize_options())
+  absolute_winding_subpath_with(
+    subpath,
+    options: svg_path.default_linearize_options(),
+  )
 }
 
 /// Approximate a subpath's absolute winding area using explicit linearization
@@ -143,11 +146,11 @@ pub fn absolute_subpath(
 ///
 /// `options.tolerance` is a geometric curve-to-line tolerance, not a direct
 /// bound on the final area error.
-pub fn absolute_subpath_with(
+pub fn absolute_winding_subpath_with(
   subpath: svg_path.Subpath,
   options options: svg_path.LinearizeOptions,
 ) -> Result(Float, svg_path.Error) {
-  absolute_path_with(svg_path.subpath_as_path(subpath), options:)
+  absolute_winding_path_with(svg_path.subpath_as_path(subpath), options:)
 }
 
 /// Return a subpath's area-based clockwiseness as a value from `0.0` to `1.0`.
@@ -155,7 +158,7 @@ pub fn absolute_subpath_with(
 /// `1.0` means fully clockwise, `0.0` means fully counterclockwise, and `0.5`
 /// means balanced or zero-area. Open subpaths are treated as if closed by a
 /// straight line from end to start, matching `signed_subpath` and
-/// `absolute_subpath`.
+/// `absolute_winding_subpath`.
 ///
 /// The value is computed from signed area divided by absolute winding area, so
 /// self-crossing or overlapping subpaths can return intermediate values. The
@@ -179,7 +182,10 @@ pub fn subpath_clockwiseness_with(
   options options: svg_path.LinearizeOptions,
 ) -> Result(Float, svg_path.Error) {
   let signed_area = signed_subpath(subpath)
-  use absolute_area <- result.try(absolute_subpath_with(subpath, options:))
+  use absolute_area <- result.try(absolute_winding_subpath_with(
+    subpath,
+    options:,
+  ))
   case absolute_area <=. 0.0 {
     True -> Ok(0.5)
     False -> {
@@ -195,8 +201,13 @@ pub fn subpath_clockwiseness_with(
 /// This integrates `abs(winding_number)` over the path's combined winding
 /// field. It is different from `path(path, using: Nonzero)` when some regions
 /// have winding magnitude greater than one.
-pub fn absolute_path(path: svg_path.Path) -> Result(Float, svg_path.Error) {
-  absolute_path_with(path, options: svg_path.default_linearize_options())
+pub fn absolute_winding_path(
+  path: svg_path.Path,
+) -> Result(Float, svg_path.Error) {
+  absolute_winding_path_with(
+    path,
+    options: svg_path.default_linearize_options(),
+  )
 }
 
 /// Approximate a path's absolute winding area using explicit linearization
@@ -205,7 +216,7 @@ pub fn absolute_path(path: svg_path.Path) -> Result(Float, svg_path.Error) {
 /// Every nonempty subpath is implicitly closed. Move-only subpaths contribute
 /// no area. Curves are linearized before their line arrangement is decomposed
 /// into vertical slabs; each slab is then integrated exactly.
-pub fn absolute_path_with(
+pub fn absolute_winding_path_with(
   path: svg_path.Path,
   options options: svg_path.LinearizeOptions,
 ) -> Result(Float, svg_path.Error) {

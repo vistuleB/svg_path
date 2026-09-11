@@ -24,7 +24,7 @@
 //// The `at` value is not clamped. Values outside `0.0..1.0` extrapolate along
 //// the same polynomial curve. `split` follows the same unclamped policy;
 //// use `split_inside` when outside values should return an error.
-//// `split_many` and `split_inside_many` sort their split points,
+//// `split_many` and `split_many_inside` sort their split points,
 //// remove exact duplicates, and trim boundary `0.0` or `1.0` split points that
 //// would only create zero-length boundary curves.
 ////
@@ -505,7 +505,7 @@ pub fn split_many(
 /// Split points are sorted, exact duplicates are removed, and boundary `0.0`
 /// or `1.0` split points are trimmed when they would only create zero-length
 /// boundary curves. Values exactly at `0.0` or `1.0` are accepted.
-pub fn split_inside_many(
+pub fn split_many_inside(
   curve: BezierData,
   at points: List(Float),
 ) -> Result(List(BezierData), Error) {

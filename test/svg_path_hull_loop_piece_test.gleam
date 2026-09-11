@@ -55,7 +55,7 @@ pub fn vertex_contribution_does_not_expand_into_full_loop_test() {
       svg_path.Point(2.0, 1.0),
       svg_path.Point(3.0, 0.0),
     ])
-  let assert Ok(hull) = convex_hull.subpath_hull(source)
+  let assert Ok(hull) = convex_hull.subpath(source)
   assert list.length(svg_path.subpath_segments(hull)) == 3
   assert_polygon(hull, [
     svg_path.Point(0.0, 0.0),
@@ -72,7 +72,7 @@ pub fn reversed_input_preserves_triangle_without_extra_circuit_test() {
       svg_path.Point(1.0, 0.0),
       svg_path.Point(0.0, 0.0),
     ])
-  let assert Ok(hull) = convex_hull.subpath_hull(source)
+  let assert Ok(hull) = convex_hull.subpath(source)
   assert_polygon(hull, [
     svg_path.Point(0.0, 0.0),
     svg_path.Point(3.0, 0.0),
@@ -91,7 +91,7 @@ pub fn closure_address_aliases_preserve_triangle_test() {
     let rotated =
       list.append(list.drop(vertices, index), list.take(vertices, index))
     let assert Ok(hull) =
-      convex_hull.subpath_hull(svg_path.subpath_assert_polygon(rotated))
+      convex_hull.subpath(svg_path.subpath_assert_polygon(rotated))
     assert_polygon(hull, [
       svg_path.Point(0.0, 0.0),
       svg_path.Point(3.0, 0.0),
@@ -117,7 +117,7 @@ pub fn full_hull_is_retained_in_either_union_operand_test() {
   list.each(
     [[square, interior], [interior, square], [square, square]],
     fn(subpaths) {
-      let assert Ok(hull) = convex_hull.path_hull(svg_path.Path(subpaths))
+      let assert Ok(hull) = convex_hull.path(svg_path.Path(subpaths))
       assert_polygon(hull, vertices)
     },
   )
@@ -131,7 +131,7 @@ pub fn narrow_triangle_vertex_contribution_preserves_extent_test() {
       svg_path.Point(2.0, 0.000000001),
       svg_path.Point(3.0, 0.0),
     ])
-  let assert Ok(hull) = convex_hull.subpath_hull(source)
+  let assert Ok(hull) = convex_hull.subpath(source)
   assert_polygon(hull, [
     svg_path.Point(0.0, 0.0),
     svg_path.Point(3.0, 0.0),

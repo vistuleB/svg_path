@@ -19,7 +19,7 @@ pub type Continuation {
 }
 
 fn normal(c: Continuation) -> Point {
-  p.rotate_counterclockwise(c.tangent)
+  p.rotate_90_counterclockwise(c.tangent)
 }
 
 fn center(c: Continuation, r: Float) -> Point {
@@ -66,7 +66,7 @@ fn circle_circle(a: Point, ra: Float, b: Point, rb: Float) -> List(Point) {
         Ok(y) -> {
           let axis = p.scale(delta, 1.0 /. d)
           let mid = p.add(a, p.scale(axis, x))
-          let side = p.scale(p.rotate_counterclockwise(axis), y)
+          let side = p.scale(p.rotate_90_counterclockwise(axis), y)
           [p.add(mid, side), p.subtract(mid, side)]
         }
       }
@@ -265,7 +265,7 @@ fn clip_point(
       }
     }
     Some(r) ->
-      line_circle(origin, p.rotate_counterclockwise(axis), center(c, r), r)
+      line_circle(origin, p.rotate_90_counterclockwise(axis), center(c, r), r)
   }
   let stop = progress(c, tip, forward)
   candidates
@@ -289,7 +289,7 @@ fn clipped(
   // Auxiliary circle through the pivot (local zero) and tip, tangent to the
   // outward angle bisector at the pivot. Its arc length, not chord length,
   // determines the clipping plane. The straight case is its exact limit.
-  let n = p.rotate_counterclockwise(axis)
+  let n = p.rotate_90_counterclockwise(axis)
   let x = p.dot(tip, axis)
   let y = p.dot(tip, n)
   let #(extent, cut, tangent) = case number.is_zero(y) {

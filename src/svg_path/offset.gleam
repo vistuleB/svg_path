@@ -9198,7 +9198,7 @@ fn segment_diameter(segment: svg_path.Segment) -> Result(Float, InternalError) {
     svg_path.segment_bounding_box(segment)
     |> result.map_error(InternalPathError),
   )
-  Ok(svg_path.bounding_box_diameter(box))
+  Ok(svg_path.bounding_box_taxicab_diameter(box))
 }
 
 fn mark_closed_join_free_portion(
@@ -11592,7 +11592,7 @@ fn unit_normal(
   t t: Float,
 ) -> Result(svg_path.Point, InternalError) {
   use tangent <- result.try(unit_tangent(segment, t:))
-  Ok(point_helpers.rotate_counterclockwise(tangent))
+  Ok(point_helpers.rotate_90_counterclockwise(tangent))
 }
 
 /// Internal offset construction helper.

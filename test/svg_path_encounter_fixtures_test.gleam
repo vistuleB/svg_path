@@ -66,7 +66,7 @@ pub fn point_at_overlap_boundary_through_adjacent_alias_fixture_test() {
     boundary,
     overlap,
   )
-  assert encounters.filter_fully_overlap_explained_subpath_intersection_parameters(
+  assert encounters.subpath_filter_overlap_explained_intersections(
       encounter,
       left,
       right,
@@ -108,7 +108,7 @@ pub fn isolated_intersection_elsewhere_in_same_query_fixture_test() {
     overlap,
   )
   assert isolated.point == svg_path.Point(10.0, 5.0)
-  assert encounters.filter_fully_overlap_explained_subpath_intersection_parameters(
+  assert encounters.subpath_filter_overlap_explained_intersections(
       encounter,
       left,
       right,

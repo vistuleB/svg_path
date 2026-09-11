@@ -99,15 +99,14 @@ pub fn segment_hull_returns_two_segments_for_point_cubic_test() {
       control2: svg_path.Point(0.0, 0.0),
       end: svg_path.Point(0.0, 0.0),
     )
-  let assert Ok(subpath) = convex_hull.segment_hull(segment)
+  let assert Ok(subpath) = convex_hull.segment(segment)
 
   assert svg_path.subpath_is_closed(subpath)
   assert list.length(svg_path.subpath_segments(subpath)) == 2
 }
 
 pub fn segment_hull_handles_near_endpoint_arc_test() {
-  let assert Ok(subpath) =
-    convex_hull.segment_hull(near_endpoint_arc(sweep: True))
+  let assert Ok(subpath) = convex_hull.segment(near_endpoint_arc(sweep: True))
 
   assert svg_path.subpath_is_closed(subpath)
   assert list.length(svg_path.subpath_segments(subpath)) == 2
@@ -128,7 +127,7 @@ pub fn subpath_hull_handles_curved_subpath_test() {
     )
   let segments = [curve, tail]
   let assert Ok(subpath) = svg_path.subpath(segments)
-  let assert Ok(hull) = convex_hull.subpath_hull(subpath)
+  let assert Ok(hull) = convex_hull.subpath(subpath)
 
   assert svg_path.subpath_is_closed(hull)
   assert list.length(svg_path.subpath_segments(hull)) >= 3
@@ -151,7 +150,7 @@ pub fn path_hull_returns_closed_hull_for_multiple_subpaths_test() {
   let assert Ok(left) = svg_path.subpath(left_segments)
   let assert Ok(right) = svg_path.subpath(right_segments)
   let path = svg_path.Path([left, right])
-  let assert Ok(hull) = convex_hull.path_hull(path)
+  let assert Ok(hull) = convex_hull.path(path)
 
   assert svg_path.subpath_is_closed(hull)
   assert subpath_support_matches_bool(
@@ -176,7 +175,7 @@ pub fn path_hull_handles_customer_line_path_test() {
       <> "M -79.02201 267.10191 L -70.36788 262.04612 "
       <> "M -70.36788 -336.56919 L -70.36788 262.04612",
     )
-  let assert Ok(hull) = convex_hull.path_hull(path)
+  let assert Ok(hull) = convex_hull.path(path)
 
   assert svg_path.subpath_is_closed(hull)
   assert subpath_support_matches_bool(
@@ -193,7 +192,7 @@ pub fn path_hull_handles_customer_polyline_path_test() {
       <> "L 8.65413 294.25187 L -79.02201 267.10191 "
       <> "L -70.36788 -336.56919 L -70.36788 262.04612",
     )
-  let assert Ok(hull) = convex_hull.path_hull(path)
+  let assert Ok(hull) = convex_hull.path(path)
 
   assert svg_path.subpath_is_closed(hull)
   assert subpath_support_matches_bool(
@@ -206,7 +205,7 @@ pub fn path_hull_treats_path_with_only_empty_subpaths_as_points_test() {
   let left = svg_path.Point(0.0, 0.0)
   let right = svg_path.Point(10.0, 0.0)
   let assert Ok(hull) =
-    convex_hull.path_hull(
+    convex_hull.path(
       svg_path.Path([
         svg_path.subpath_empty(at: left),
         svg_path.subpath_empty(at: right),
@@ -228,7 +227,7 @@ pub fn specimen_hulls_survive_strict_subpath_constructor_test() {
   assert list.all(specimens(), fn(specimen) {
     let #(_, segment) = specimen
 
-    case convex_hull.segment_hull(segment) {
+    case convex_hull.segment(segment) {
       Ok(_) -> True
       Error(_) -> False
     }
@@ -239,7 +238,7 @@ pub fn specimen_hulls_have_at_least_two_segments_test() {
   assert list.all(specimens(), fn(specimen) {
     let #(_, segment) = specimen
 
-    case convex_hull.segment_hull(segment) {
+    case convex_hull.segment(segment) {
       Ok(subpath) -> list.length(svg_path.subpath_segments(subpath)) >= 2
       Error(_) -> False
     }
@@ -250,7 +249,7 @@ pub fn specimen_hull_derivative_angles_are_nondecreasing_test() {
   assert list.all(specimens(), fn(specimen) {
     let #(_, segment) = specimen
 
-    case convex_hull.segment_hull(segment) {
+    case convex_hull.segment(segment) {
       Ok(subpath) ->
         subpath
         |> svg_path.subpath_segments
@@ -268,7 +267,7 @@ pub fn specimen_hull_support_matches_original_at_10_degree_steps_test() {
   assert list.all(specimens(), fn(specimen) {
     let #(_, segment) = specimen
 
-    case convex_hull.segment_hull(segment) {
+    case convex_hull.segment(segment) {
       Ok(hull) ->
         multiples_of_10_degrees()
         |> list.all(fn(angle) {
@@ -457,7 +456,7 @@ fn failing_subpath_specimen_reports(
 }
 
 fn hull_failure_reason(segment: svg_path.Segment) -> Result(Nil, String) {
-  case convex_hull.segment_hull(segment) {
+  case convex_hull.segment(segment) {
     Error(error) -> Error("segment_hull returned " <> string.inspect(error))
     Ok(subpath) -> {
       case svg_path.subpath_is_closed(subpath) {
@@ -488,7 +487,7 @@ fn subpath_hull_failure_reason(
     Error(error) ->
       Error("subpath constructor returned " <> string.inspect(error))
     Ok(subpath) -> {
-      case convex_hull.subpath_hull(subpath) {
+      case convex_hull.subpath(subpath) {
         Error(error) -> Error("subpath_hull returned " <> string.inspect(error))
         Ok(hull) -> {
           case svg_path.subpath_is_closed(hull) {
@@ -667,7 +666,8 @@ fn subpath_support_tolerance(segments: List(svg_path.Segment)) -> Float {
       Ok(box) ->
         float.max(
           best,
-          svg_path.bounding_box_diameter(box) *. support_unit_diameter_tolerance,
+          svg_path.bounding_box_taxicab_diameter(box)
+            *. support_unit_diameter_tolerance,
         )
       Error(_) -> best
     }
@@ -1379,7 +1379,8 @@ fn support_tolerance(segment: svg_path.Segment) -> Float {
     Ok(box) ->
       float.max(
         tolerance,
-        svg_path.bounding_box_diameter(box) *. support_unit_diameter_tolerance,
+        svg_path.bounding_box_taxicab_diameter(box)
+          *. support_unit_diameter_tolerance,
       )
     Error(_) -> tolerance
   }
@@ -1390,7 +1391,7 @@ fn smart_support_tolerance(segment: svg_path.Segment) -> Float {
     Ok(box) ->
       float.max(
         smart_support_base_tolerance,
-        svg_path.bounding_box_diameter(box)
+        svg_path.bounding_box_taxicab_diameter(box)
           *. smart_support_unit_diameter_tolerance,
       )
     Error(_) -> smart_support_base_tolerance
@@ -1408,7 +1409,7 @@ fn unit_circle_point_cloud_hull_is_valid(count: Int) -> Bool {
 }
 
 fn public_point_cloud_hull_is_valid(points: List(svg_path.Point)) -> Bool {
-  case convex_hull.points_hull(points) {
+  case convex_hull.points(points) {
     Error(_) -> False
     Ok(hull) -> point_cloud_hull_is_valid(points, hull)
   }
@@ -1735,8 +1736,8 @@ fn representative_geometry_is_covariant_at_scale(scale: Float) -> Bool {
       scaled_overlap_right,
       tolerance: 0.000000001 *. scale,
     )
-  let assert Ok(reference_hull) = convex_hull.segment_hull(cubic)
-  let assert Ok(scaled_hull) = convex_hull.segment_hull(scaled_cubic)
+  let assert Ok(reference_hull) = convex_hull.segment(cubic)
+  let assert Ok(scaled_hull) = convex_hull.segment(scaled_cubic)
   let assert Ok(reference_hull_box) =
     svg_path.subpath_bounding_box(reference_hull)
   let assert Ok(scaled_hull_box) = svg_path.subpath_bounding_box(scaled_hull)
