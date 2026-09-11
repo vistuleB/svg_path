@@ -21,7 +21,7 @@ import svg_path/affine
 import svg_path/bezier
 import svg_path/ellipse
 import svg_path/internal/number
-import svg_path/root
+import svg_path/internal/root
 import svg_path/trig
 
 const default_wiggle_tolerance = 0.000000001
@@ -1118,12 +1118,7 @@ pub fn subpath_rebuild_with(
       ))
       case subpath.closed {
         False -> Ok(rebuilt)
-        True ->
-          subpath_set_closed_with(
-            rebuilt,
-            closed: True,
-            policy: endpoint_policy,
-          )
+        True -> subpath_close_with(rebuilt, policy: endpoint_policy)
       }
     }
   }
@@ -1158,7 +1153,7 @@ pub fn subpath_assert_polyline(points: List(Point)) -> Subpath {
 /// first point, no extra zero-length closing line is added.
 ///
 /// This is equivalent to constructing a `subpath_polyline` from the same points
-/// and closing it with `subpath_set_closed_with(..., policy: Bridge)`.
+/// and closing it with `subpath_close_with(..., policy: Bridge)`.
 pub fn subpath_polygon(points: List(Point)) -> Result(Subpath, Error) {
   case points {
     [] | [_] -> Error(EmptySubpath)
@@ -1167,7 +1162,7 @@ pub fn subpath_polygon(points: List(Point)) -> Result(Subpath, Error) {
 
       case subpath(segments) {
         Error(error) -> Error(error)
-        Ok(subpath) -> subpath_set_closed(subpath, closed: True)
+        Ok(subpath) -> subpath_close(subpath)
       }
     }
   }
@@ -2067,63 +2062,60 @@ pub fn subpath_is_empty(subpath: Subpath) -> Bool {
   list.is_empty(subpath.segments)
 }
 
-/// Set a subpath's semantic closed state.
+/// Open a subpath without changing its segments, endpoints, or traversal order.
 ///
-/// Setting `closed` to `False` always succeeds. Setting it to `True` requires a
-/// non-empty subpath's end point to exactly match its start point. Empty
-/// subpaths may be closed.
-pub fn subpath_set_closed(
-  subpath: Subpath,
-  closed closed: Bool,
-) -> Result(Subpath, Error) {
-  subpath_set_closed_with(subpath, closed:, policy: Strict)
+/// Only the semantic closed flag is cleared. This cannot fail and does not
+/// reconcile endpoints. Empty and already-open subpaths are returned unchanged.
+/// Use `subpath_open_at` to choose a new start along a closed traversal.
+pub fn subpath_open(subpath: Subpath) -> Subpath {
+  Subpath(..subpath, closed: False)
 }
 
-/// Set a subpath's semantic closed state with an endpoint policy.
+/// Close a subpath without changing its geometry.
 ///
-/// Setting `closed` to `False` always succeeds. Setting it to `True` uses the
-/// given endpoint policy to reconcile a non-empty subpath's end point with its
-/// start point, even if it is already closed. This invokes the policy exactly
-/// once, for the closing pair only; interior pairs are not revisited. Repeated
+/// A nonempty subpath's end must exactly equal its start; otherwise returns
+/// `Discontinuous`. Empty subpaths may be closed. Use `subpath_close_with` to
+/// reconcile endpoints instead of requiring an exact match.
+pub fn subpath_close(subpath: Subpath) -> Result(Subpath, Error) {
+  subpath_close_with(subpath, policy: Strict)
+}
+
+/// Close a subpath using an endpoint reconciliation policy.
+///
+/// Reconciles a nonempty subpath's end with its start, even if it is already
+/// closed. This invokes the policy exactly once, for the closing pair only;
+/// interior pairs are not revisited. Repeated
 /// calls can change geometry if the policy is not idempotent. Empty subpaths
 /// may be closed and do not invoke the policy.
-pub fn subpath_set_closed_with(
+pub fn subpath_close_with(
   subpath: Subpath,
-  closed closed: Bool,
   policy endpoint_policy: EndpointPolicy,
 ) -> Result(Subpath, Error) {
-  case closed {
-    False -> Ok(Subpath(..subpath, closed: False))
-    True -> close_subpath_with(subpath, endpoint_policy)
-  }
+  close_subpath_with(subpath, endpoint_policy)
 }
 
-/// Set a subpath's semantic closed state, asserting `subpath_set_closed`.
+/// Close a subpath, asserting `subpath_close`.
 ///
-/// Panics when closing a nonempty subpath whose end differs from its start.
-/// Opening always succeeds, and empty subpaths may be closed.
-pub fn subpath_assert_set_closed(
-  subpath: Subpath,
-  closed closed: Bool,
-) -> Subpath {
-  subpath_assert_set_closed_with(subpath, closed:, policy: Strict)
+/// Panics if a nonempty subpath's end differs from its start.
+/// Empty subpaths may be closed.
+pub fn subpath_assert_close(subpath: Subpath) -> Subpath {
+  subpath_assert_close_with(subpath, policy: Strict)
 }
 
-/// Set a subpath's semantic closed state with an endpoint policy.
+/// Close a subpath with an endpoint policy, asserting `subpath_close_with`.
 ///
 /// Panics if closing-boundary reconciliation returns an error, including a
-/// custom-policy contract violation. Opening always succeeds; empty subpaths
-/// may be closed without invoking the policy. See `subpath_set_closed_with`
+/// custom-policy contract violation. Empty subpaths may be closed without
+/// invoking the policy. See `subpath_close_with`
 /// for the non-panicking version and policy invocation rules.
-pub fn subpath_assert_set_closed_with(
+pub fn subpath_assert_close_with(
   subpath: Subpath,
-  closed closed: Bool,
   policy endpoint_policy: EndpointPolicy,
 ) -> Subpath {
-  case subpath_set_closed_with(subpath, closed:, policy: endpoint_policy) {
+  case subpath_close_with(subpath, policy: endpoint_policy) {
     Ok(subpath) -> subpath
     Error(_) ->
-      panic as "svg_path.subpath_assert_set_closed received an invalid subpath"
+      panic as "svg_path.subpath_assert_close could not reconcile closing endpoints"
   }
 }
 

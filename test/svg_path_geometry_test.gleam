@@ -1298,7 +1298,7 @@ pub fn segment_subdivide_to_max_length_rejects_invalid_max_length_test() {
 
 pub fn subpath_subdivide_to_max_length_preserves_boundaries_and_closed_test() {
   let subpath =
-    svg_path.subpath_assert_set_closed(
+    svg_path.subpath_assert_close(
       svg_path.subpath_assert([
         svg_path.Line(
           start: svg_path.Point(0.0, 0.0),
@@ -1313,7 +1313,6 @@ pub fn subpath_subdivide_to_max_length_preserves_boundaries_and_closed_test() {
           end: svg_path.Point(0.0, 0.0),
         ),
       ]),
-      closed: True,
     )
 
   let assert Ok(subdivided) =
@@ -2188,8 +2187,7 @@ pub fn clockwise_svg_circle_has_positive_winding_test() {
         end: right,
       ),
     ])
-  let assert Ok(clockwise_circle) =
-    svg_path.subpath_set_closed(clockwise_circle, closed: True)
+  let assert Ok(clockwise_circle) = svg_path.subpath_close(clockwise_circle)
   let path = svg_path.Path([clockwise_circle])
 
   assert svg_path.path_winding(svg_path.Point(0.0, 0.0), within: path)
@@ -2739,7 +2737,7 @@ pub fn segment_subpath_intersections_canonicalizes_closed_boundary_aliases_test(
       svg_path.Line(start: b, end: c),
       svg_path.Line(start: c, end: a),
     ])
-    |> svg_path.subpath_assert_set_closed(closed: True)
+    |> svg_path.subpath_assert_close()
 
   let assert Ok([intersection]) =
     intersections.segment_subpath(segment, subpath)
@@ -3124,7 +3122,7 @@ pub fn segment_intersections_match_returned_parameters_test() {
 
 fn closed_subpath(segments: List(svg_path.Segment)) -> svg_path.Subpath {
   svg_path.subpath_assert(segments)
-  |> svg_path.subpath_assert_set_closed(closed: True)
+  |> svg_path.subpath_assert_close()
 }
 
 fn point_near(a: svg_path.Point, b: svg_path.Point) -> Bool {

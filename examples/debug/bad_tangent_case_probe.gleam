@@ -33,7 +33,7 @@ pub fn drawing_svg() -> String {
             svg_path.Line(start: loop_a_start, end: loop_a_vertex),
             svg_path.Line(start: loop_a_vertex, end: loop_a_start),
           ])
-          |> svg_path.subpath_assert_set_closed(closed: True),
+          |> svg_path.subpath_assert_close(),
         ]),
         "fill: none; stroke: #2f6fbb; stroke-width: 1.2; stroke-linecap: round",
       ),

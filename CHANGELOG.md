@@ -9,6 +9,55 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
+## 0.48.0 - 2026-09-11
+
+### Breaking API changes
+
+- Replaced `subpath_set_closed` / `subpath_set_closed_with` and their assert
+  variants with `subpath_open`, `subpath_close`, `subpath_close_with`,
+  `subpath_assert_close`, and `subpath_assert_close_with`. No Boolean setter
+  remains. Opening returns a `Subpath` directly and preserves its segments;
+  closing uses Strict by default or the supplied endpoint policy. Use an
+  explicit branch when closedness is selected at runtime. `subpath_open_at`
+  remains the separate operation for cutting a closed traversal at a parameter.
+- Moved `segment_degenerate_lines` and `subpath_degenerate_lines` from
+  `svg_path` into `degeneracy`, renamed to `segment_linearize_if_degenerate`
+  and `subpath_linearize_if_degenerate`. Their errors now use
+  `degeneracy.Error`: `InvalidTolerance` or the wrapped `PathError`.
+- Renamed `bounding_box_diameter` to `bounding_box_taxicab_diameter`;
+  `area.absolute_subpath` / `absolute_path` (including `_with` variants) to
+  `absolute_winding_subpath` / `absolute_winding_path`.
+- Renamed the four `transform.*_gracefully` functions to
+  `*_with_arc_collapse`, and `point.rotate_clockwise` /
+  `rotate_counterclockwise` to `rotate_90_clockwise` /
+  `rotate_90_counterclockwise`.
+- Renamed the six pairwise `intersections.*_projection` families, including
+  `_with` variants, to `*_closest_pair`. The projection result types retain
+  their names.
+- Renamed `convex_hull.segment_hull`, `subpath_hull`, `path_hull`, and
+  `points_hull` to `segment`, `subpath`, `path`, and `points`.
+- Renamed `bezier.split_inside_many` to `split_many_inside`. Ellipse splitting
+  functions now use `arc_split`, `arc_split_inside`, `arc_split_many`, and
+  `arc_split_many_inside`; `angle_at` is now `arc_angle_at`, and
+  `arc_to_cubics` is now `arc_to_cubic_beziers`.
+- Renamed `subpath_parametric` / `subpath_parametric_with` to
+  `subpath_from_parametric` / `subpath_from_parametric_with`, and
+  `subpath_parameters_compare` / `path_parameters_compare` to singular
+  `subpath_parameter_compare` / `path_parameter_compare`.
+- Renamed `encounters.filter_fully_overlap_explained_subpath_intersection_parameters`
+  to `subpath_filter_overlap_explained_intersections`.
+- Removed the `inspect.with_left_padding` and `serialize.with_left_padding`
+  aliases; use `with_left_decimals` instead.
+
+### Documentation
+
+- Specified construction, assertion, arc-conversion, and endpoint-policy
+  failure conditions, including the difference between opening and closing.
+- Reorganized the Gallery and preserved historical audit illustrations.
+- Moved the internal-only `root`, `format`, `overlap_detection`,
+  `winding_field`, and `smallest_enclosing_circle` modules under
+  `svg_path/internal`, removing their empty pages from public documentation.
+
 ## 0.47.0 - 2026-09-10
 
 ### Changed

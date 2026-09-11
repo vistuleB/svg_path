@@ -711,7 +711,7 @@ fn circle(center: svg_path.Point, radius: Float) -> svg_path.Path {
         end: right,
       ),
     ])
-    |> svg_path.subpath_assert_set_closed(closed: True),
+    |> svg_path.subpath_assert_close(),
   )
 }
 

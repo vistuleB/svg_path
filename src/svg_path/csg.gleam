@@ -15,8 +15,8 @@ import svg_path
 import svg_path/arrangement.{
   type ArrangementEdge, type ArrangementGraph, ArrangementEdge, ArrangementGraph,
 }
+import svg_path/internal/winding_field
 import svg_path/point
-import svg_path/winding_field
 
 const default_minimum_chord = 0.00001
 
@@ -735,9 +735,8 @@ fn trace_boundary_edges(
         |> result.map_error(PathError),
       )
       use closed <- result.try(
-        svg_path.subpath_set_closed_with(
+        svg_path.subpath_close_with(
           subpath,
-          closed: True,
           policy: svg_path.WiggleWith(tolerance),
         )
         |> result.map_error(PathError),

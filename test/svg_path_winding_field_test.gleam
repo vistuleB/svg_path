@@ -1,5 +1,5 @@
 import svg_path
-import svg_path/winding_field
+import svg_path/internal/winding_field
 
 pub fn side_levels_reject_nonpositive_sampling_distance_test() {
   let segment =
@@ -42,7 +42,7 @@ pub fn side_levels_fall_back_from_a_midpoint_cusp_test() {
         end: svg_path.Point(-1.0, 0.0),
       ),
     ])
-  let assert Ok(subpath) = svg_path.subpath_set_closed(open, closed: True)
+  let assert Ok(subpath) = svg_path.subpath_close(open)
   let path = svg_path.subpath_as_path(subpath)
 
   assert svg_path.segment_derivative(cusp, at: 0.5)

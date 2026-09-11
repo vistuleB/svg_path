@@ -644,13 +644,7 @@ fn parse_close(
     Ok(Nil) if !state.active -> parse_tokens(tokens, state)
     Ok(Nil) -> {
       let start = svg_path.subpath_start(state.subpath)
-      case
-        svg_path.subpath_set_closed_with(
-          state.subpath,
-          closed: True,
-          policy: svg_path.Bridge,
-        )
-      {
+      case svg_path.subpath_close_with(state.subpath, policy: svg_path.Bridge) {
         Error(error) -> Error(LocatedError(PathError(error), state.at))
         Ok(subpath) -> {
           parse_tokens(

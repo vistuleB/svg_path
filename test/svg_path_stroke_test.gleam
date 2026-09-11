@@ -491,7 +491,7 @@ pub fn self_meeting_closed_subpath_stroke_uses_band_sections_test() {
         end: svg_path.Point(76.0, 0.0),
       ),
     ])
-    |> svg_path.subpath_assert_set_closed(closed: True)
+    |> svg_path.subpath_assert_close()
 
   let assert Ok(path) =
     stroke.subpath(
@@ -721,11 +721,7 @@ pub fn zero_visible_dashes_on_closed_source_are_points_not_full_loops_test() {
       svg_path.Point(0.0, 0.0),
     ])
   let assert Ok(source) =
-    svg_path.subpath_set_closed_with(
-      source,
-      closed: True,
-      policy: svg_path.Strict,
-    )
+    svg_path.subpath_close_with(source, policy: svg_path.Strict)
   let assert Ok(dashes) =
     stroke.subpath_dashes(source, pattern: [0.0, 3.0], offset: 0.0)
   assert list.length(dashes) == 3

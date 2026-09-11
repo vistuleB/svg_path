@@ -6,7 +6,7 @@
 import gleam/list
 import gleam/string
 import svg_path
-import svg_path/format as number_format
+import svg_path/internal/format as number_format
 
 /// Options for structural inspection output.
 pub type Options {
@@ -230,7 +230,7 @@ fn do_subpath_code(
       case svg_path.subpath_is_closed(subpath) {
         False -> constructor
         True -> {
-          constructor <> "\n|> svg_path.subpath_assert_set_closed(closed: True)"
+          constructor <> "\n|> svg_path.subpath_assert_close()"
         }
       }
     }
@@ -247,7 +247,7 @@ fn do_subpath_code(
       case svg_path.subpath_is_closed(subpath) {
         False -> constructor
         True -> {
-          constructor <> "\n|> svg_path.subpath_assert_set_closed(closed: True)"
+          constructor <> "\n|> svg_path.subpath_assert_close()"
         }
       }
     }

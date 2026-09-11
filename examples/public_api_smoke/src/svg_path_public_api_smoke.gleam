@@ -1,4 +1,4 @@
-//// Compile-only smoke coverage for public geometry APIs.
+//// Compile and runtime smoke coverage for public geometry APIs on both targets.
 
 import svg_path
 import svg_path/arrangement
@@ -43,6 +43,17 @@ pub fn main() -> Nil {
   let _ = overlaps.segment(horizontal, horizontal)
   let _ = svg_path.segment_as_subpath(horizontal)
   let _ = svg_path.segment_as_path(vertical)
+  let open = svg_path.segment_as_subpath(horizontal)
+  let assert False = svg_path.subpath_is_closed(open)
+  let assert Error(svg_path.Discontinuous(..)) = svg_path.subpath_close(open)
+  let assert Ok(closed) = svg_path.subpath_close_with(open, svg_path.Bridge)
+  let assert True = svg_path.subpath_is_closed(closed)
+  let reopened = svg_path.subpath_open(closed)
+  let assert False = svg_path.subpath_is_closed(reopened)
+  let assert True =
+    svg_path.subpath_segments(reopened) == svg_path.subpath_segments(closed)
+  let assert Ok(reclosed) = svg_path.subpath_close(reopened)
+  let assert True = reclosed == closed
   let assert Ok(1000.0) =
     curvature.segment_left_normal_cusp_residual(
       horizontal,
@@ -70,6 +81,6 @@ fn rectangle(
       svg_path.Line(start: c, end: d),
       svg_path.Line(start: d, end: a),
     ])
-    |> svg_path.subpath_assert_set_closed(closed: True)
+    |> svg_path.subpath_assert_close()
   svg_path.subpath_as_path(subpath)
 }

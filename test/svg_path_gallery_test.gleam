@@ -9,7 +9,7 @@ import svg_path/convex_hull
 import svg_path/csg
 import svg_path/cut
 import svg_path/effects
-import svg_path/format as number_format
+import svg_path/internal/format as number_format
 import svg_path/intersections
 import svg_path/offset
 import svg_path/parse
@@ -417,11 +417,7 @@ pub fn generate_recursive_dash_cap_report() {
         )
       case svg_path.subpath_with(segments, policy: svg_path.Wiggle) {
         Ok(candidate) ->
-          svg_path.subpath_set_closed_with(
-            candidate,
-            closed: True,
-            policy: svg_path.Wiggle,
-          )
+          svg_path.subpath_close_with(candidate, policy: svg_path.Wiggle)
         Error(error) -> Error(error)
       }
     }
@@ -2017,7 +2013,7 @@ fn figure_eight() -> svg_path.Subpath {
       end: svg_path.Point(0.0, 0.0),
     ),
   ])
-  |> svg_path.subpath_assert_set_closed(closed: True)
+  |> svg_path.subpath_assert_close()
 }
 
 fn offset_track_source() -> svg_path.Subpath {

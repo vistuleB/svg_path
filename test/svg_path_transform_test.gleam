@@ -723,7 +723,7 @@ pub fn graceful_arc_subpaths_preserve_exact_noncardinal_endpoints_test() {
     let assert Ok(open) =
       transform.subpath_with_arc_collapse(source, by: matrix)
     assert !svg_path.subpath_is_closed(open)
-    let assert Ok(closed) = svg_path.subpath_set_closed(source, closed: True)
+    let assert Ok(closed) = svg_path.subpath_close(source)
     let assert Ok(closed) =
       transform.subpath_with_arc_collapse(closed, by: matrix)
     assert svg_path.subpath_is_closed(closed)
@@ -860,7 +860,7 @@ fn result_try_set_closed_true(
   result_subpath: Result(svg_path.Subpath, svg_path.Error),
 ) -> Result(svg_path.Subpath, svg_path.Error) {
   case result_subpath {
-    Ok(subpath) -> svg_path.subpath_set_closed(subpath, closed: True)
+    Ok(subpath) -> svg_path.subpath_close(subpath)
     Error(error) -> Error(error)
   }
 }

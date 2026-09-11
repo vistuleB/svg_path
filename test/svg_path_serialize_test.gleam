@@ -101,7 +101,7 @@ pub fn empty_subpath_serializes_to_move_test() {
 pub fn closed_empty_subpath_serializes_to_move_and_z_test() {
   let subpath =
     svg_path.subpath_empty(at: svg_path.Point(0.0, 0.0))
-    |> svg_path.subpath_assert_set_closed(closed: True)
+    |> svg_path.subpath_assert_close()
 
   assert serialize.subpath(subpath) == "M 0 0 Z"
 }
@@ -167,7 +167,7 @@ pub fn closed_subpath_keeps_final_zero_length_line_test() {
     svg_path.subpath_assert([
       svg_path.Line(start: a, end: a),
     ])
-    |> svg_path.subpath_assert_set_closed(closed: True)
+    |> svg_path.subpath_assert_close()
 
   assert serialize.subpath(subpath) == "M 0 0 H 0 Z"
 }
@@ -1411,12 +1411,7 @@ fn result_try_set_closed_with_bridge(
   result_subpath: Result(svg_path.Subpath, svg_path.Error),
 ) -> Result(svg_path.Subpath, svg_path.Error) {
   case result_subpath {
-    Ok(subpath) ->
-      svg_path.subpath_set_closed_with(
-        subpath,
-        closed: True,
-        policy: svg_path.Bridge,
-      )
+    Ok(subpath) -> svg_path.subpath_close_with(subpath, policy: svg_path.Bridge)
     Error(error) -> Error(error)
   }
 }
@@ -1425,7 +1420,7 @@ fn result_try_set_closed_true(
   result_subpath: Result(svg_path.Subpath, svg_path.Error),
 ) -> Result(svg_path.Subpath, svg_path.Error) {
   case result_subpath {
-    Ok(subpath) -> svg_path.subpath_set_closed(subpath, closed: True)
+    Ok(subpath) -> svg_path.subpath_close(subpath)
     Error(error) -> Error(error)
   }
 }

@@ -261,7 +261,7 @@ fn arrow_head(
         svg_path.Line(start: left, end: right),
         svg_path.Line(start: right, end: end),
       ])
-      |> svg_path.subpath_assert_set_closed(closed: True),
+      |> svg_path.subpath_assert_close(),
     ]),
     style,
   )

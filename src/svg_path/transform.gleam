@@ -601,8 +601,7 @@ fn finalize_transformed_subpath(
     [] -> {
       let subpath = svg_path.subpath_empty(at: start)
       case svg_path.subpath_is_closed(original) {
-        True ->
-          svg_path.subpath_set_closed(subpath, closed: True) |> map_core_error
+        True -> svg_path.subpath_close(subpath) |> map_core_error
         False -> Ok(subpath)
       }
     }
@@ -1006,16 +1005,10 @@ fn transform_subpaths_gracefully(
 fn close_transformed_subpath(
   subpath: svg_path.Subpath,
 ) -> Result(svg_path.Subpath, Error) {
-  case svg_path.subpath_set_closed(subpath, closed: True) {
+  case svg_path.subpath_close(subpath) {
     Ok(subpath) -> Ok(subpath)
     Error(_) -> {
-      case
-        svg_path.subpath_set_closed_with(
-          subpath,
-          closed: True,
-          policy: svg_path.Wiggle,
-        )
-      {
+      case svg_path.subpath_close_with(subpath, policy: svg_path.Wiggle) {
         Ok(subpath) -> Ok(subpath)
         Error(error) -> Error(PathError(error))
       }

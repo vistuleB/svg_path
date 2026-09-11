@@ -327,7 +327,7 @@ fn figure_eight() -> svg_path.Subpath {
       end: svg_path.Point(76.0, 0.0),
     ),
   ])
-  |> svg_path.subpath_assert_set_closed(closed: True)
+  |> svg_path.subpath_assert_close()
 }
 
 fn radius() -> Float {

@@ -9,7 +9,7 @@ import gleam/float
 import gleam/list
 import gleam/string
 import svg_path
-import svg_path/format as number_format
+import svg_path/internal/format as number_format
 import svg_path/internal/number as numeric
 import svg_path/trig
 

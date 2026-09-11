@@ -1,6 +1,6 @@
 import gleam/string
 import gleeunit
-import svg_path/format
+import svg_path/internal/format
 
 pub fn main() -> Nil {
   gleeunit.main()

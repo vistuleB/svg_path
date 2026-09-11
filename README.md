@@ -264,9 +264,9 @@ The subpath interval helpers have deliberately narrow roles:
   `SubpathParameter`.
 
 Use `svg_path.subpath` to construct an open subpath from a nonempty list of
-contiguous segments, and `svg_path.subpath_set_closed` to change whether a
-subpath is topologically closed. `subpath_set_closed(_, True)` may return an
-error, but `subpath_set_closed(_, False)` cannot:
+contiguous segments. `svg_path.subpath_close` marks it closed, requiring its
+end to match its start; it can return an error. `svg_path.subpath_open` simply
+clears the closed flag and returns a `Subpath` directly, without changing geometry.
 
 Use `SubpathParameter(index, t)` for normal forward addresses. Use
 `subpath_parameter_from_end(subpath, segment_index:, t:)` to address the
@@ -275,7 +275,8 @@ the original subpath's coordinates.
 
 ```gleam
 svg_path.subpath(segments)                  // -> Result(Subpath, svg_path.Error)
-svg_path.subpath_set_closed(subpath, closed: Bool)  // -> Result(Subpath, svg_path.Error)
+svg_path.subpath_close(subpath)            // -> Result(Subpath, svg_path.Error)
+svg_path.subpath_open(subpath)             // -> Subpath
 ```
 
 Construction succeeds when the required segment endpoints meet. Construct empty
@@ -284,7 +285,7 @@ the subpath.
 
 In the following example the segments return to their starting point
 geometrically, but the subpath only becomes topologically closed after
-`subpath_set_closed`:
+`subpath_close`:
 
 ```gleam
 import gleam/io
@@ -306,7 +307,7 @@ pub fn closed_triangle() -> Result(svg_path.Subpath, svg_path.Error) {
   io.println(serialize.subpath(subpath))
   // -> "M 0 0 H 10 L 5 10 L 0 0"
 
-  use subpath <- result.try(svg_path.subpath_set_closed(subpath, closed: True))
+  use subpath <- result.try(svg_path.subpath_close(subpath))
 
   io.println(serialize.subpath(subpath))
   // -> "M 0 0 H 10 L 5 10 Z"
@@ -406,7 +407,7 @@ segment, the next input establishes a new starting segment without a callback;
 `first` does not become true again. Consequently, deleting a pair can also
 leave no pair on which to make a `last: True` call.
 
-`subpath_set_closed_with(..., closed: True, policy:)` applies the policy to
+`subpath_close_with(..., policy:)` applies the policy to
 the closing pair even if the subpath is already closed. It does not revisit
 interior pairs. Consequently, repeating it with a non-idempotent policy may
 change geometry again. `subpath_rebuild_with` revisits all forward pairs and,
@@ -419,7 +420,7 @@ svg_path.subpath_with(segments, policy: svg_path.Wiggle)
 svg_path.subpath_append_segment_with(subpath, segment, policy: svg_path.Bridge)
 svg_path.subpath_join_with([first_subpath, second_subpath], policy: svg_path.WiggleElseBridge)
 svg_path.subpath_splice_with(subpath, start: Int, delete: Int, insert: List(Segment), policy: svg_path.Wiggle)
-svg_path.subpath_set_closed_with(subpath, closed, policy: svg_path.Bridge)
+svg_path.subpath_close_with(subpath, policy: svg_path.Bridge)
 ```
 
 Subtracting the `_with` suffix yields equivalent functions whose policy is
@@ -454,8 +455,8 @@ svg_path.subpath_assert_join([first_subpath, second_subpath])
 svg_path.subpath_assert_join_with([first_subpath, second_subpath], policy)
 svg_path.subpath_assert_splice(subpath, start, delete, insert)
 svg_path.subpath_assert_splice_with(subpath, start, delete, insert, policy)
-svg_path.subpath_assert_set_closed(subpath, closed)
-svg_path.subpath_assert_set_closed_with(subpath, closed, policy)
+svg_path.subpath_assert_close(subpath)
+svg_path.subpath_assert_close_with(subpath, policy)
 ```
 
 `Custom` receives adjacent segments as `previous` and `next`. For ordinary
@@ -487,7 +488,7 @@ svg_path.subpath_join([first_subpath, second_subpath, third_subpath])
 
 Closed subpaths are rejected rather than implicitly opened. This keeps
 closedness as explicit topology: if you want to discard it, use
-`subpath_set_closed(subpath, closed: False)` first.
+`subpath_open(subpath)` first.
 
 Use `subpath_join_with` when you want another endpoint policy:
 
@@ -1028,7 +1029,7 @@ produce a two-line closed hull, while quadratic Beziers and arcs produce the
 original primitive plus the chord joining its endpoints. Cubic Beziers use a
 cubic-specific numerical solver.
 
-Use `subpath_hull`, `path_hull`, and `points_hull` for larger inputs. Move-only
+Use `convex_hull.subpath`, `convex_hull.path`, and `convex_hull.points` for larger inputs. Move-only
 subpaths contribute their start points.
 
 ### Congruency
@@ -1174,7 +1175,7 @@ There is a similar difference between `M 0,0` and `M 0,0 Z`, with the `Z`
 command "supplying" a zero-length line segment to the subpath:
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.47.0/figures/zero_length_closepath_probe.svg" alt="Zero-length closepath probe">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.48.0/figures/zero_length_closepath_probe.svg" alt="Zero-length closepath probe">
 </center>
 
 ```xml
@@ -1538,7 +1539,7 @@ The following open source has no offside stage, so the panels isolate the three
 final-trimming choices:
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.47.0/figures/single_offset_final_trimming.svg" alt="Single offset with no final trimming, cusp trimming, and in-band trimming">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.48.0/figures/single_offset_final_trimming.svg" alt="Single offset with no final trimming, cusp trimming, and in-band trimming">
 </center>
 
 For closed contours, `offside` is an additional and independent operation. In
@@ -1546,7 +1547,7 @@ this example the source contains oppositely oriented concentric rectangles;
 the final trimming mode is `NoTrimming` in both panels:
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.47.0/figures/single_offset_offside_trimming.svg" alt="Single offset of concentric rectangles with offside trimming disabled and enabled">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.48.0/figures/single_offset_offside_trimming.svg" alt="Single offset of concentric rectangles with offside trimming disabled and enabled">
 </center>
 
 The defaults are `offside: True` and
@@ -1621,14 +1622,14 @@ The cusp switches act before joint band trimming. The four-concave-corner
 example below holds `in_band: True` while changing the two side-local switches:
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.47.0/figures/band_cusp_trimming.svg" alt="Band trimming with both, one, and neither side-local cusp pass enabled">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.48.0/figures/band_cusp_trimming.svg" alt="Band trimming with both, one, and neither side-local cusp pass enabled">
 </center>
 
 The figure-eight below holds both cusp switches at `True` and changes only the
 final joint pass:
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.47.0/figures/band_in_band_trimming.svg" alt="Figure-eight band with in-band trimming disabled and enabled">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.48.0/figures/band_in_band_trimming.svg" alt="Figure-eight band with in-band trimming disabled and enabled">
 </center>
 
 All three band switches default to `True`. Turning a stage off is useful for
@@ -1659,14 +1660,14 @@ or the clipping line would cut behind either join endpoint, it falls back to
 `Bevel`; neighboring segments are not shortened to satisfy a low limit.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.47.0/figures/miter_clip_comparison.svg" alt="Computed stroke outlines comparing Miter(4), Miter(1.5), MiterClip(1.5), and Round joins">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.48.0/figures/miter_clip_comparison.svg" alt="Computed stroke outlines comparing Miter(4), Miter(1.5), MiterClip(1.5), and Round joins">
 </p>
 
 The same source and stroke width are used in each panel. An over-limit `Miter`
 bevels the corner; `MiterClip` preserves the tip up to the clipping line.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.47.0/figures/miter_clip_limits.svg" alt="Computed MiterClip stroke outlines with limits 0.5, 1, 1.5, and 2">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.48.0/figures/miter_clip_limits.svg" alt="Computed MiterClip stroke outlines with limits 0.5, 1, 1.5, and 2">
 </p>
 
 Varying the limit changes how much of the tip is retained. Limits that would
@@ -1693,7 +1694,7 @@ falls back to `Bevel`. Limits must be finite and positive; an unsuccessful
 circle construction reports `ConstructionFailed`.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.47.0/figures/arcs_join_self_intersection.svg" alt="Self-intersecting curved stroke comparing MiterClip, Round, Arcs, and clipped Arcs joins">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.48.0/figures/arcs_join_self_intersection.svg" alt="Self-intersecting curved stroke comparing MiterClip, Round, Arcs, and clipped Arcs joins">
 </p>
 
 Here the two source arcs have unequal curvatures. The stroke intersects itself
@@ -1701,7 +1702,7 @@ near its butt end, leaving an enclosed region; each panel is computed from the
 same source through the public stroke API.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.47.0/figures/arcs_join_comparison_2.svg" alt="Curved stroke comparing joins when the Arcs continuation circles initially do not intersect">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.48.0/figures/arcs_join_comparison_2.svg" alt="Curved stroke comparing joins when the Arcs continuation circles initially do not intersect">
 </p>
 
 In this example the initial continuation circles do not intersect. `Arcs`
@@ -1756,7 +1757,7 @@ the right panel shows the resulting vertices, directed edges, winding levels,
 and directional multiplicities.
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.47.0/figures/arrangement_graph_overlapping_squares.svg" alt="Two overlapping square subpaths and their arrangement graph">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.48.0/figures/arrangement_graph_overlapping_squares.svg" alt="Two overlapping square subpaths and their arrangement graph">
 </center>
 
 ```gleam
@@ -1820,7 +1821,7 @@ circle at all four source endpoints and represents each geometric edge once,
 with one occurrence in each direction.
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.47.0/figures/arrangement_graph_semantic_circle_overlap.svg" alt="Oppositely directed equal circles with phase-shifted arc subdivisions and their arrangement graph">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.48.0/figures/arrangement_graph_semantic_circle_overlap.svg" alt="Oppositely directed equal circles with phase-shifted arc subdivisions and their arrangement graph">
 </center>
 
 `build` is the supported constructor. Direct construction remains possible for
@@ -1890,7 +1891,7 @@ black numbers are the winding levels immediately to the left and right of each
 directed edge; its red numbers are forward and reverse source multiplicities.
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.47.0/figures/arrangement_csg_nonzero.svg" alt="Eight-panel ArrangementGraph CSG example using the Nonzero fill rule">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.48.0/figures/arrangement_csg_nonzero.svg" alt="Eight-panel ArrangementGraph CSG example using the Nonzero fill rule">
 </center>
 
 The same inputs and arrangement produce different Boolean boundaries under
@@ -1899,7 +1900,7 @@ final `nested_contours` panel is unchanged because that unary operation
 preserves the complete signed winding field and does not take a fill rule.
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.47.0/figures/arrangement_csg_evenodd.svg" alt="Eight-panel ArrangementGraph CSG example using the EvenOdd fill rule">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v0.48.0/figures/arrangement_csg_evenodd.svg" alt="Eight-panel ArrangementGraph CSG example using the EvenOdd fill rule">
 </center>
 
 For points away from a boundary:

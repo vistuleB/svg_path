@@ -1799,7 +1799,7 @@ fn rectangle_path(
       svg_path.Point(min_x, max_y),
       start,
     ])
-  svg_path.Path([svg_path.subpath_assert_set_closed(subpath, closed: True)])
+  svg_path.Path([svg_path.subpath_assert_close(subpath)])
 }
 
 fn unscale_point(point: svg_path.Point, scale: Float) -> svg_path.Point {

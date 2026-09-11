@@ -43,7 +43,7 @@ fn rectangle(
     False -> [top_left, bottom_left, bottom_right, top_right]
   }
   svg_path.subpath_assert_polyline(list.append(points, [top_left]))
-  |> svg_path.subpath_assert_set_closed(closed: True)
+  |> svg_path.subpath_assert_close()
 }
 
 fn single_offset(

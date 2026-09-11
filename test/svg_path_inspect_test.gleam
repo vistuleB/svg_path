@@ -241,7 +241,7 @@ pub fn closed_subpath_code_inspects_as_copy_pasteable_gleam_test() {
   svg_path.Line(start: svg_path.Point(0.0, 0.0), end: svg_path.Point(12.0, 10.0)),
   svg_path.Line(start: svg_path.Point(12.0, 10.0), end: svg_path.Point(0.0, 0.0))
 ])
-|> svg_path.subpath_assert_set_closed(closed: True)"
+|> svg_path.subpath_assert_close()"
 }
 
 pub fn path_code_inspects_as_copy_pasteable_gleam_test() {
@@ -302,11 +302,6 @@ fn result_try_set_closed_with_bridge(
 ) -> Result(svg_path.Subpath, svg_path.Error) {
   case result {
     Error(error) -> Error(error)
-    Ok(subpath) ->
-      svg_path.subpath_set_closed_with(
-        subpath,
-        closed: True,
-        policy: svg_path.Bridge,
-      )
+    Ok(subpath) -> svg_path.subpath_close_with(subpath, policy: svg_path.Bridge)
   }
 }

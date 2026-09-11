@@ -534,10 +534,7 @@ fn polygon_subpath(vertices: List(svg_path.Point)) -> svg_path.Subpath {
         svg_path.Line(start: first, end: second),
       ])
   }
-  svg_path.subpath_assert_set_closed(
-    svg_path.subpath_assert(segments),
-    closed: True,
-  )
+  svg_path.subpath_assert_close(svg_path.subpath_assert(segments))
 }
 
 fn polygon_segments(
@@ -575,7 +572,7 @@ fn line(
 fn circle_subpath(radius radius: Float) -> svg_path.Subpath {
   let right = svg_path.Point(radius, 0.0)
   let left = svg_path.Point(0.0 -. radius, 0.0)
-  svg_path.subpath_assert_set_closed(
+  svg_path.subpath_assert_close(
     svg_path.subpath_assert([
       svg_path.Arc(
         start: right,
@@ -594,6 +591,5 @@ fn circle_subpath(radius radius: Float) -> svg_path.Subpath {
         end: right,
       ),
     ]),
-    closed: True,
   )
 }

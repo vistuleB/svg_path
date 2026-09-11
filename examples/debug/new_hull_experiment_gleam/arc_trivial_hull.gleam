@@ -24,11 +24,7 @@ pub fn hull(
         |> result.map_error(PathError),
       )
       use closed <- result.try(
-        svg_path.subpath_set_closed_with(
-          subpath,
-          closed: True,
-          policy: svg_path.Wiggle,
-        )
+        svg_path.subpath_close_with(subpath, policy: svg_path.Wiggle)
         |> result.map_error(PathError),
       )
 

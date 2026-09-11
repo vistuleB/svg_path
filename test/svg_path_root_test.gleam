@@ -1,6 +1,6 @@
 import gleam/float
 import gleeunit
-import svg_path/root
+import svg_path/internal/root
 
 pub fn linear_root_test() {
   assert root.linear(2.0, -1.0) == [0.5]

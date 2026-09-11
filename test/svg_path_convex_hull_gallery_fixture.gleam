@@ -24,7 +24,7 @@ pub fn figure_eight() -> svg_path.Subpath {
       end: svg_path.Point(0.0, 0.0),
     ),
   ])
-  |> svg_path.subpath_assert_set_closed(closed: True)
+  |> svg_path.subpath_assert_close()
 }
 
 pub fn figure_eight_band() -> Result(svg_path.Path, offset.Error) {

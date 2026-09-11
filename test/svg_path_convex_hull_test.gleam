@@ -60,13 +60,14 @@ pub fn subpath_hull_treats_empty_subpath_as_single_point_test() {
 
   assert svg_path.subpath_is_closed(hull)
   assert svg_path.subpath_segments(hull)
-    == svg_path.subpath_segments(svg_path.subpath_assert_set_closed(
-      svg_path.subpath_assert([
-        svg_path.Line(start: point, end: point),
-        svg_path.Line(start: point, end: point),
-      ]),
-      closed: True,
-    ))
+    == svg_path.subpath_segments(
+      svg_path.subpath_assert_close(
+        svg_path.subpath_assert([
+          svg_path.Line(start: point, end: point),
+          svg_path.Line(start: point, end: point),
+        ]),
+      ),
+    )
 }
 
 pub fn path_hull_includes_empty_subpath_start_points_test() {

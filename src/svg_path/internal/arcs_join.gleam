@@ -9,8 +9,8 @@ import gleam/option.{type Option, None, Some}
 import gleam/result
 import svg_path.{type Point, type Segment, Arc, Line, Point}
 import svg_path/internal/number
+import svg_path/internal/root
 import svg_path/point as p
-import svg_path/root
 import svg_path/trig
 
 @internal

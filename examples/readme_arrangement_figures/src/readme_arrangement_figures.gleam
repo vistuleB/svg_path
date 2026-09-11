@@ -74,7 +74,7 @@ fn zero_length_closepath_probe() -> String {
   let closed_move = fn(x, y) {
     svg_path.Path([
       svg_path.subpath_empty(at: svg_path.Point(x, y))
-      |> svg_path.subpath_assert_set_closed(closed: True),
+      |> svg_path.subpath_assert_close(),
     ])
   }
   let round_style =
@@ -493,7 +493,7 @@ fn circle_subpath(
       end: start,
     ),
   ])
-  |> svg_path.subpath_assert_set_closed(closed: True)
+  |> svg_path.subpath_assert_close()
 }
 
 fn heading_style() -> String {

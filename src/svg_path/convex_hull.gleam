@@ -15,8 +15,8 @@ import svg_path
 import svg_path/bezier
 import svg_path/ellipse
 import svg_path/internal/number
+import svg_path/internal/root
 import svg_path/point as point_helpers
-import svg_path/root
 import svg_path/trig
 
 const cubic_sample_count = 3600
@@ -2313,11 +2313,7 @@ fn loop_plus_point_hull(
     |> map_path_error(function: LoopPlusPointHull, operation: SubpathWith),
   )
   use closed <- result.try(
-    svg_path.subpath_set_closed_with(
-      subpath,
-      closed: True,
-      policy: svg_path.Strict,
-    )
+    svg_path.subpath_close_with(subpath, policy: svg_path.Strict)
     |> map_path_error(
       function: LoopPlusPointHull,
       operation: SubpathSetClosedWith,
@@ -3694,11 +3690,7 @@ fn build_closed_subpath(
     |> map_path_error(function: BuildClosedSubpath, operation: SubpathWith),
   )
   case
-    svg_path.subpath_set_closed_with(
-      subpath,
-      closed: True,
-      policy: svg_path.Wiggle,
-    )
+    svg_path.subpath_close_with(subpath, policy: svg_path.Wiggle)
     |> map_path_error(
       function: BuildClosedSubpath,
       operation: SubpathSetClosedWith,

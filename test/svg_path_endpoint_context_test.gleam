@@ -85,14 +85,12 @@ pub fn endpoint_context_coalescing_keeps_last_flag_test() {
 
 pub fn set_closed_reapplies_policy_only_at_closing_boundary_test() {
   let assert Ok(closed) =
-    svg_path.subpath_set_closed(
+    svg_path.subpath_close(
       svg_path.subpath_assert([line(0.0, 1.0), line(1.0, 0.0)]),
-      closed: True,
     )
   let assert Ok(reclosed) =
-    svg_path.subpath_set_closed_with(
+    svg_path.subpath_close_with(
       closed,
-      closed: True,
       policy: svg_path.Custom(fn(previous, next, context) {
         assert context == svg_path.EndpointPolicyContext(False, False, True)
         assert previous == line(1.0, 0.0)
@@ -108,7 +106,7 @@ pub fn set_closed_reapplies_policy_only_at_closing_boundary_test() {
 pub fn closed_singleton_rebuild_calls_policy_once_test() {
   let only = line(0.0, 0.0)
   let assert Ok(closed) =
-    svg_path.subpath_set_closed(svg_path.subpath_assert([only]), closed: True)
+    svg_path.subpath_close(svg_path.subpath_assert([only]))
   let assert Ok(rebuilt) =
     svg_path.subpath_rebuild_with(
       closed,
@@ -127,10 +125,8 @@ pub fn empty_closure_and_rebuild_do_not_call_policy_test() {
   let empty = svg_path.subpath_empty(at: svg_path.Point(3.0, 4.0))
   let policy =
     svg_path.Custom(fn(_, _, _) { panic as "empty subpath has no pair" })
-  let assert Ok(closed) =
-    svg_path.subpath_set_closed_with(empty, closed: True, policy:)
-  let assert Ok(reclosed) =
-    svg_path.subpath_set_closed_with(closed, closed: True, policy:)
+  let assert Ok(closed) = svg_path.subpath_close_with(empty, policy:)
+  let assert Ok(reclosed) = svg_path.subpath_close_with(closed, policy:)
   let assert Ok(rebuilt) = svg_path.subpath_rebuild_with(closed, policy:)
   assert svg_path.subpath_is_closed(closed)
   assert svg_path.subpath_is_empty(closed)
@@ -154,7 +150,7 @@ pub fn open_singleton_rebuild_does_not_call_policy_test() {
 pub fn closed_rebuild_distinguishes_last_forward_pair_from_closure_test() {
   let segments = [line(0.0, 1.0), line(1.0, 0.0)]
   let assert Ok(closed) =
-    svg_path.subpath_set_closed(svg_path.subpath_assert(segments), closed: True)
+    svg_path.subpath_close(svg_path.subpath_assert(segments))
   let assert Ok(rebuilt) =
     svg_path.subpath_rebuild_with(
       closed,

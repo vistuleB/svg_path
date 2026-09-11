@@ -8,7 +8,7 @@
 import gleam/list
 import gleam/string
 import svg_path
-import svg_path/format as number_format
+import svg_path/internal/format as number_format
 import svg_path/serialize
 
 /// One item to render inside a generated SVG document.
@@ -100,7 +100,7 @@ pub fn labeled_point(
         svg_path.Line(start: bottom_right, end: bottom_left),
         svg_path.Line(start: bottom_left, end: top_left),
       ])
-        |> svg_path.subpath_assert_set_closed(closed: True),
+        |> svg_path.subpath_assert_close(),
       svg_path.subpath_assert([
         svg_path.Line(start: top_left, end: bottom_right),
       ]),

@@ -742,11 +742,14 @@ fn survivor_chains_to_subpaths(
         |> result.map_error(survivor_chain_discontinuity),
       )
       use subpath <- result.try(
-        svg_path.subpath_set_closed_with(
-          subpath,
-          closed:,
-          policy: svg_path.WiggleElseBridgeWith(tolerance),
-        )
+        case closed {
+          True ->
+            svg_path.subpath_close_with(
+              subpath,
+              policy: svg_path.WiggleElseBridgeWith(tolerance),
+            )
+          False -> Ok(svg_path.subpath_open(subpath))
+        }
         |> result.map_error(InternalPathError),
       )
       survivor_chains_to_subpaths(rest, tolerance, subpaths: [
@@ -804,11 +807,7 @@ fn open_band_outline(
     svg_path.subpath_with(segments, policy: svg_path.Wiggle)
     |> result.map_error(InternalPathError),
   )
-  svg_path.subpath_set_closed_with(
-    outline,
-    closed: True,
-    policy: svg_path.Wiggle,
-  )
+  svg_path.subpath_close_with(outline, policy: svg_path.Wiggle)
   |> result.map_error(InternalPathError)
 }
 
@@ -1020,10 +1019,10 @@ pub fn normalize_short_source_runs(
             svg_path.subpath(segments)
             |> result.map_error(InternalPathError),
           )
-          svg_path.subpath_set_closed(
-            normalized,
-            closed: svg_path.subpath_is_closed(subpath),
-          )
+          case svg_path.subpath_is_closed(subpath) {
+            True -> svg_path.subpath_close(normalized)
+            False -> Ok(svg_path.subpath_open(normalized))
+          }
           |> result.map_error(InternalPathError)
         }
       }
@@ -1763,11 +1762,14 @@ fn subpath_from_synchronized_segments(
         svg_path.subpath_with(segments, policy: svg_path.WiggleWith(tolerance))
         |> result.map_error(InternalPathError),
       )
-      svg_path.subpath_set_closed_with(
-        subpath,
-        closed:,
-        policy: svg_path.WiggleWith(tolerance),
-      )
+      case closed {
+        True ->
+          svg_path.subpath_close_with(
+            subpath,
+            policy: svg_path.WiggleWith(tolerance),
+          )
+        False -> Ok(svg_path.subpath_open(subpath))
+      }
       |> result.map_error(InternalPathError)
     }
   }
@@ -2668,11 +2670,11 @@ fn prepend_join_free_portion(
         |> result.map_error(InternalPathError),
       )
       use subpath <- result.try(
-        svg_path.subpath_set_closed_with(
-          open_subpath,
-          closed:,
-          policy: svg_path.Strict,
-        )
+        case closed {
+          True ->
+            svg_path.subpath_close_with(open_subpath, policy: svg_path.Strict)
+          False -> Ok(svg_path.subpath_open(open_subpath))
+        }
         |> result.map_error(InternalPathError),
       )
       Ok([JoinFreePortion(index: 0, subpath:, closed:), ..portions])
@@ -4457,9 +4459,8 @@ fn close_survivor_subpath(
   let end = svg_path.subpath_end(subpath)
   case point_helpers.distance(start, end) <=. tolerance {
     True ->
-      svg_path.subpath_set_closed_with(
+      svg_path.subpath_close_with(
         subpath,
-        closed: True,
         policy: svg_path.WiggleElseBridgeWith(tolerance),
       )
       |> result.map_error(InternalPathError)
@@ -4955,11 +4956,10 @@ fn colinearize_offset_source_tangents(
         )
         |> result.map_error(InternalPathError),
       )
-      svg_path.subpath_set_closed_with(
-        aligned,
-        closed:,
-        policy: svg_path.Strict,
-      )
+      case closed {
+        True -> svg_path.subpath_close_with(aligned, policy: svg_path.Strict)
+        False -> Ok(svg_path.subpath_open(aligned))
+      }
       |> result.map_error(InternalPathError)
     }
   }
@@ -7035,9 +7035,8 @@ pub fn enumerate_band_face_loops(
         )
         |> result.map_error(InternalPathError),
       )
-      svg_path.subpath_set_closed_with(
+      svg_path.subpath_close_with(
         subpath,
-        closed: True,
         policy: svg_path.WiggleWith(2.0 *. arrangement_tolerance),
       )
       |> result.map_error(InternalPathError)

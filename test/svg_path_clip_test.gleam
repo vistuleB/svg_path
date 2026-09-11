@@ -17,8 +17,7 @@ pub fn open_fill_region_uses_implicit_closing_edge_test() {
       svg_path.Point(10.0, 0.0),
       svg_path.Point(0.0, 10.0),
     ])
-  let assert Ok(closed) =
-    svg_path.subpath_set_closed_with(triangle, True, svg_path.Bridge)
+  let assert Ok(closed) = svg_path.subpath_close_with(triangle, svg_path.Bridge)
   let input =
     svg_path.subpath_assert_polyline([
       svg_path.Point(-2.0, 2.0),
@@ -340,7 +339,7 @@ fn circle_subpath(center: svg_path.Point, radius: Float) -> svg_path.Subpath {
       end: right,
     ),
   ])
-  |> svg_path.subpath_assert_set_closed(closed: True)
+  |> svg_path.subpath_assert_close()
 }
 
 fn has_arc(subpath: svg_path.Subpath) -> Bool {

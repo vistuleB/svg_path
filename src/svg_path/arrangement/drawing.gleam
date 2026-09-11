@@ -10,10 +10,10 @@ import svg_path/arrangement.{
   type ArrangementEdge, type ArrangementGraph, type Error, ArrangementEdge,
   ArrangementGraph, ArrangementVertex, PathError,
 }
+import svg_path/internal/winding_field
 import svg_path/point
 import svg_path/svg
 import svg_path/trig
-import svg_path/winding_field
 
 /// Placement of an edge annotation derived from the stored segment itself.
 /// `rotation` is an SVG rotation angle for which the annotation's local up

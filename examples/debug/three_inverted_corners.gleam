@@ -43,7 +43,7 @@ pub fn subpath() -> svg_path.Subpath {
       end: svg_path.Point(1.0, 0.0),
     ),
   ])
-  |> svg_path.subpath_assert_set_closed(closed: True)
+  |> svg_path.subpath_assert_close()
 }
 
 fn inward_arc(start: svg_path.Point, end: svg_path.Point) -> svg_path.Segment {

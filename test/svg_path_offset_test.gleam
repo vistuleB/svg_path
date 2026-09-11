@@ -10,7 +10,7 @@ import svg_path
 import svg_path/area
 import svg_path/arrangement as arrangement_graph
 import svg_path/bezier
-import svg_path/format as number_format
+import svg_path/internal/format as number_format
 import svg_path/offset
 import svg_path/parse
 import svg_path/point
@@ -47,7 +47,7 @@ pub fn source_alignment_preserves_first_handle_edit_at_closed_seam_test() {
   list.each([[curve, a, b], [a, b, curve], [b, curve, a]], fn(segments) {
     let source =
       svg_path.subpath_assert(segments)
-      |> svg_path.subpath_assert_set_closed(True)
+      |> svg_path.subpath_assert_close()
     let assert Ok(normalized) =
       offset.normalize_source_subpath(source, offset.default_options())
     let assert [svg_path.CubicBezier(control1:, ..)] =
@@ -75,7 +75,7 @@ pub fn source_alignment_keeps_both_edits_for_single_closed_cubic_test() {
         svg_path.Point(0.0, 0.0),
       ),
     ])
-    |> svg_path.subpath_assert_set_closed(True)
+    |> svg_path.subpath_assert_close()
   let assert Ok(normalized) =
     offset.normalize_source_subpath(source, offset.default_options())
   let assert [curve] = svg_path.subpath_segments(normalized)
@@ -98,7 +98,7 @@ pub fn closed_offset_preserves_corner_at_single_portion_seam_test() {
   list.each([[line, curve], [curve, line]], fn(segments) {
     let source =
       svg_path.subpath_assert(segments)
-      |> svg_path.subpath_assert_set_closed(True)
+      |> svg_path.subpath_assert_close()
     let assert Ok(actual) = offset.subpath_untrimmed(source, 0.1, offset.Round)
     svg_path.subpath_is_closed(actual) |> should.be_true
     // The only source corner needs a round join regardless of start address.
@@ -125,7 +125,7 @@ pub fn closed_c_and_reversal_offset_preserves_retraced_line_and_outline_test() {
       svg_path.Point(0.0, 0.0),
       svg_path.Point(2.0, 0.0),
     ])
-    |> svg_path.subpath_assert_set_closed(closed: True)
+    |> svg_path.subpath_assert_close()
   let assert Ok(actual) =
     offset.subpath(source, offset: 1.0, join: offset.Round, cap: offset.Butt)
   let assert Ok(expected) =
@@ -1062,7 +1062,7 @@ pub fn subpath_offset_map_wraps_closed_subpath_distances_test() {
         end: svg_path.Point(0.0, 0.0),
       ),
     ])
-    |> svg_path.subpath_assert_set_closed(closed: True)
+    |> svg_path.subpath_assert_close()
   let assert Ok(map) = offset.subpath_offset_map(subpath)
 
   assert map(svg_path.Point(42.0, 1.0)) == Ok(svg_path.Point(2.0, -1.0))
@@ -1678,7 +1678,7 @@ pub fn subpath_band_side_trimming_removes_round_join_loops_test() {
         end: svg_path.Point(1.0, 0.0),
       ),
     ])
-    |> svg_path.subpath_assert_set_closed(closed: True)
+    |> svg_path.subpath_assert_close()
   let options = offset.default_options()
 
   let assert Ok(band) =
@@ -2012,7 +2012,7 @@ pub fn figure_eight_band_joins_reversed_outer_chunks_test() {
         end: svg_path.Point(0.0, 0.0),
       ),
     ])
-    |> svg_path.subpath_assert_set_closed(closed: True)
+    |> svg_path.subpath_assert_close()
   let options = offset.default_options()
 
   let assert Ok(band) =
@@ -3545,7 +3545,7 @@ fn two_cut_corner_loop() -> svg_path.Subpath {
     svg_path.Line(svg_path.Point(0.0, 3.0), svg_path.Point(0.0, 1.0)),
     svg_path.Line(svg_path.Point(0.0, 1.0), svg_path.Point(1.0, 0.0)),
   ])
-  |> svg_path.subpath_assert_set_closed(closed: True)
+  |> svg_path.subpath_assert_close()
 }
 
 pub fn side_local_band_trimming_preserves_positive_band_test() {

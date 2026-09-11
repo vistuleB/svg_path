@@ -126,7 +126,7 @@ pub fn collapsed_cubic_endpoint_direction_reconstructs_boundary_test() {
         ),
         svg_path.Line(start: svg_path.Point(10.0, 0.0), end: start),
       ])
-      |> svg_path.subpath_assert_set_closed(closed: True),
+      |> svg_path.subpath_assert_close(),
     ])
 
   let assert Ok(output) = union_paths(input, svg_path.path_empty())
@@ -929,7 +929,7 @@ fn circle_subpath_at(
       end: right,
     ),
   ])
-  |> svg_path.subpath_assert_set_closed(closed: True)
+  |> svg_path.subpath_assert_close()
 }
 
 fn quadratic_loop() -> svg_path.Subpath {
@@ -959,7 +959,7 @@ fn quadratic_loop() -> svg_path.Subpath {
       end: left,
     ),
   ])
-  |> svg_path.subpath_assert_set_closed(closed: True)
+  |> svg_path.subpath_assert_close()
 }
 
 fn cubic_loop() -> svg_path.Subpath {
@@ -995,7 +995,7 @@ fn cubic_loop() -> svg_path.Subpath {
       end: left,
     ),
   ])
-  |> svg_path.subpath_assert_set_closed(closed: True)
+  |> svg_path.subpath_assert_close()
 }
 
 fn has_arc(path: svg_path.Path) -> Bool {

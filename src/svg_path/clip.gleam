@@ -188,7 +188,7 @@ fn split_points(
     clip_region
     |> svg_path.path_subpaths
     |> list.try_map(fn(subpath) {
-      svg_path.subpath_set_closed_with(subpath, True, svg_path.Bridge)
+      svg_path.subpath_close_with(subpath, svg_path.Bridge)
     }),
   )
   use found <- result.try(encounters.path_with(

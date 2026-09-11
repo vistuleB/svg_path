@@ -583,7 +583,7 @@ pub fn subpath_ignores_closed_field_test() {
         end: svg_path.Point(0.0, 0.0),
       ),
     ])
-  let assert Ok(closed) = svg_path.subpath_set_closed(open, closed: True)
+  let assert Ok(closed) = svg_path.subpath_close(open)
 
   assert result_is_ok(congruency.subpath(
     source: open,
@@ -596,7 +596,7 @@ pub fn subpath_maps_move_only_subpaths_test() {
   let source = svg_path.subpath_empty(at: svg_path.Point(1.0, 2.0))
   let assert Ok(target) =
     svg_path.subpath_empty(at: svg_path.Point(6.0, 8.0))
-    |> svg_path.subpath_set_closed(closed: True)
+    |> svg_path.subpath_close()
 
   let assert Ok(matrix) = congruency.subpath(source:, target:, tolerance:)
 
@@ -886,7 +886,7 @@ pub fn path_ignores_subpath_closed_fields_test() {
         end: svg_path.Point(0.0, 0.0),
       ),
     ])
-  let assert Ok(closed) = svg_path.subpath_set_closed(open, closed: True)
+  let assert Ok(closed) = svg_path.subpath_close(open)
 
   assert result_is_ok(congruency.path(
     source: svg_path.Path([open]),

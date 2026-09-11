@@ -683,7 +683,7 @@ pub fn subpaths_between_closed_rejects_duplicate_and_nonlinear_order_test() {
 
 fn closed_subpath(segments: List(svg_path.Segment)) -> svg_path.Subpath {
   svg_path.subpath_assert(segments)
-  |> svg_path.subpath_assert_set_closed(closed: True)
+  |> svg_path.subpath_assert_close()
 }
 
 fn point_near(a: svg_path.Point, b: svg_path.Point) -> Bool {

@@ -362,9 +362,7 @@ pub fn segment_hull(
   use pieces <- result.try(segment_hull_pieces(segment))
   use segments <- result.try(hull_piece_segments(segment, pieces))
   use subpath <- result.try(map_path_error(svg_path.subpath(segments)))
-  use subpath <- result.try(
-    map_path_error(svg_path.subpath_set_closed(subpath, closed: True)),
-  )
+  use subpath <- result.try(map_path_error(svg_path.subpath_close(subpath)))
 
   Ok(#(subpath, pieces))
 }

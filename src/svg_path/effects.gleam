@@ -569,11 +569,10 @@ fn rounded_subpath_from_corners(
         svg_path.subpath_with(rounded_segments, policy: svg_path.Wiggle)
         |> result.map_error(PathError),
       )
-      svg_path.subpath_set_closed_with(
-        rounded,
-        closed: svg_path.subpath_is_closed(subpath),
-        policy: svg_path.Wiggle,
-      )
+      case svg_path.subpath_is_closed(subpath) {
+        True -> svg_path.subpath_close_with(rounded, policy: svg_path.Wiggle)
+        False -> Ok(svg_path.subpath_open(rounded))
+      }
       |> result.map_error(PathError)
     }
   }

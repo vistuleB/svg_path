@@ -43,7 +43,7 @@ pub fn drawing_svg() -> String {
         end: svg_path.Point(45.0, 45.0),
       ),
     ])
-    |> svg_path.subpath_assert_set_closed(closed: True)
+    |> svg_path.subpath_assert_close()
 
   let vein =
     svg_path.subpath_assert([

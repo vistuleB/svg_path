@@ -14,7 +14,7 @@ const off = await import('data:text/javascript;base64,' + Buffer.from(source +
   '\nexport {finish_cusp_trim_with_parity, ArrangementSplitTracedSegment, ArrangementSplitTracedSubpath, OffsetArrangementBuild, ICulledOffsetSegment, HPreimageSegment, JoinPreimage, Outer};').toString('base64'));
 const ok = r => { assert(r.isOk(), JSON.stringify(r)); return r[0]; };
 const points = [[0,0],[10,0],[10,10],[0,10],[0,0]].map(([x,y]) => new s.Point(x,y));
-const square = s.subpath_assert_set_closed(s.subpath_assert_polyline(toList(points)), true);
+const square = s.case true { True -> subpath_assert_close(s.subpath_assert_polyline(toList(points))) False -> subpath_open(s.subpath_assert_polyline(toList(points))) };
 const built = ok(ag.build(toList([s.subpath_as_path(square)]), 1e-9, 1e-8));
 const segments = [...built.graph.edges].map(edge => new off.ArrangementSplitTracedSegment(
   edge.segment,

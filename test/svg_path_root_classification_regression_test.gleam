@@ -1,5 +1,5 @@
 import gleam/list
-import svg_path/root
+import svg_path/internal/root
 
 pub fn repeated_quartic_roots_retain_touch_classification_test() {
   // (t - 1/4)^2 (t - 3/4)^2; all coefficients are exact binary fractions.

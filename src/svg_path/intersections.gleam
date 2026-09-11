@@ -41,7 +41,7 @@ import svg_path.{
 }
 import svg_path/bezier
 import svg_path/internal/number
-import svg_path/overlap_detection
+import svg_path/internal/overlap_detection
 import svg_path/point
 
 const default_intersection_tolerance = 0.000000001

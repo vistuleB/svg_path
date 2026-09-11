@@ -329,7 +329,7 @@ pub fn subpath_parameter_complementarity_uses_short_closed_seam_motion_test() {
       svg_path.Point(0.0, 10.0),
       svg_path.Point(0.0, 0.0),
     ])
-    |> svg_path.subpath_assert_set_closed(closed: True)
+    |> svg_path.subpath_assert_close()
   let assert Ok(right) = svg_path.subpath([line(0.0, 5.0, 0.0, 0.0)])
   let assert Ok([overlap]) = overlaps.subpath(left, right)
 

@@ -216,7 +216,7 @@ fn cubic_algorithm_comparison_demo() -> Nil {
   let failures = collect_failures(reports)
 
   io.println("cubic support error comparison over 1-degree directions:")
-  io.println("production segment_hull: " <> summarize_stats(production))
+  io.println("production convex_hull.segment: " <> summarize_stats(production))
   io.println("inflection split union:  " <> summarize_stats(split))
 
   io.println("worst production cases:")

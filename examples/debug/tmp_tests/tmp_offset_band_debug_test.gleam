@@ -272,7 +272,7 @@ fn smooth_figure_eight() -> svg_path.Subpath {
       end: svg_path.Point(82.0, 58.0),
     ),
   ])
-  |> svg_path.subpath_assert_set_closed(closed: True)
+  |> svg_path.subpath_assert_close()
 }
 
 fn upright_figure_eight() -> svg_path.Subpath {
@@ -302,7 +302,7 @@ fn upright_figure_eight() -> svg_path.Subpath {
       end: svg_path.Point(82.0, 58.0),
     ),
   ])
-  |> svg_path.subpath_assert_set_closed(closed: True)
+  |> svg_path.subpath_assert_close()
 }
 
 fn int_to_float(value: Int) -> Float {

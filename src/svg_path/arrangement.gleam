@@ -24,11 +24,11 @@ import gleam/order
 import gleam/result
 import svg_path
 import svg_path/internal/number
+import svg_path/internal/smallest_enclosing_circle
+import svg_path/internal/winding_field
 import svg_path/intersections
 import svg_path/overlaps
 import svg_path/point
-import svg_path/smallest_enclosing_circle
-import svg_path/winding_field
 
 const cyclic_order_max_attempts = 3
 
@@ -2424,9 +2424,8 @@ fn trace_nested_contour_edges(
         |> result.map_error(InternalPathError),
       )
       use closed <- result.try(
-        svg_path.subpath_set_closed_with(
+        svg_path.subpath_close_with(
           subpath,
-          closed: True,
           policy: svg_path.WiggleWith(tolerance),
         )
         |> result.map_error(InternalPathError),

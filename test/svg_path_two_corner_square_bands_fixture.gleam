@@ -56,7 +56,7 @@ fn source_subpath() -> svg_path.Subpath {
     svg_path.Line(svg_path.Point(0.0, 3.0), svg_path.Point(0.0, 1.0)),
     inward_arc(svg_path.Point(0.0, 1.0), svg_path.Point(1.0, 0.0)),
   ])
-  |> svg_path.subpath_assert_set_closed(closed: True)
+  |> svg_path.subpath_assert_close()
 }
 
 fn inward_arc(start: svg_path.Point, end: svg_path.Point) -> svg_path.Segment {

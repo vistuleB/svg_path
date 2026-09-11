@@ -93,7 +93,7 @@ pub fn short_run_keeps_small_first_and_last_segments_test() {
 pub fn short_run_preserves_closed_empty_and_singleton_subpaths_test() {
   let empty = svg_path.subpath_empty(at: p(1.0))
   let singleton = svg_path.subpath_assert([svg_path.Line(p(0.0), p(0.0))])
-  let assert Ok(closed) = svg_path.subpath_set_closed(singleton, closed: True)
+  let assert Ok(closed) = svg_path.subpath_close(singleton)
   assert normalize(empty) == empty
   assert normalize(singleton) == singleton
   assert normalize(closed) == closed
@@ -104,7 +104,7 @@ pub fn short_run_preserves_closed_empty_and_singleton_subpaths_test() {
       svg_path.Line(p(0.0006), p(0.0008)),
       svg_path.Line(p(0.0008), p(0.0)),
     ])
-  let assert Ok(source) = svg_path.subpath_set_closed(source, closed: True)
+  let assert Ok(source) = svg_path.subpath_close(source)
   let normalized = normalize(source)
   assert list.length(svg_path.subpath_segments(normalized)) == 3
 }

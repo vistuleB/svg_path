@@ -39,7 +39,7 @@ import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import svg_path/internal/number
-import svg_path/root
+import svg_path/internal/root
 
 const parameter_tolerance = 0.000000001
 

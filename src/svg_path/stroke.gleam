@@ -262,9 +262,8 @@ fn zero_length_round_stroke_path(
     segments,
     policy: svg_path.Strict,
   ))
-  use closed <- result.try(svg_path.subpath_set_closed_with(
+  use closed <- result.try(svg_path.subpath_close_with(
     outline,
-    closed: True,
     policy: svg_path.Strict,
   ))
   Ok(svg_path.Path(subpaths: [closed]))
@@ -294,9 +293,8 @@ fn zero_length_square_stroke_path(
     ]),
     policy: svg_path.Strict,
   ))
-  use closed <- result.try(svg_path.subpath_set_closed_with(
+  use closed <- result.try(svg_path.subpath_close_with(
     outline,
-    closed: True,
     policy: svg_path.Strict,
   ))
   Ok(svg_path.Path(subpaths: [closed]))

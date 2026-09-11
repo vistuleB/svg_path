@@ -3,7 +3,7 @@ import gleam/list
 import gleam/option.{None, Some}
 import svg_path
 import svg_path/convex_hull
-import svg_path/root
+import svg_path/internal/root
 
 const tolerance = 0.000001
 

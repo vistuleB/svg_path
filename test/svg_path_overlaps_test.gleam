@@ -621,7 +621,7 @@ pub fn subpath_overlap_exact_lookup_accepts_closed_seam_alias_test() {
       svg_path.Point(0.0, 1.0),
       svg_path.Point(0.0, 0.0),
     ])
-    |> svg_path.subpath_assert_set_closed(closed: True)
+    |> svg_path.subpath_assert_close()
   let correspondence =
     overlaps.SegmentOverlap(
       left_from: 0.5,

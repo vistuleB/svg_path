@@ -175,7 +175,7 @@ pub fn subpath_self_intersections_ignores_closed_endpoint_join_test() {
       svg_path.Line(start: c, end: d),
       svg_path.Line(start: d, end: a),
     ])
-    |> svg_path.subpath_assert_set_closed(closed: True)
+    |> svg_path.subpath_assert_close()
 
   assert intersections.subpath_self(subpath) == Ok([])
 }

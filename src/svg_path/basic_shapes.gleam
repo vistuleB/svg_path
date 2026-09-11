@@ -272,7 +272,7 @@ fn validate_ellipse_radii(rx: Float, ry: Float) -> Result(Nil, Error) {
 fn close(segments: List(svg_path.Segment)) -> Result(svg_path.Subpath, Error) {
   use subpath <- result_try(svg_path.subpath(segments) |> map_core_error)
 
-  svg_path.subpath_set_closed(subpath, closed: True)
+  svg_path.subpath_close(subpath)
   |> map_core_error
 }
 

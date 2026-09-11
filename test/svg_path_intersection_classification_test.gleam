@@ -43,7 +43,7 @@ fn quarter_arc_circle(
     )
   })
   |> svg_path.subpath_assert
-  |> svg_path.subpath_assert_set_closed(closed: True)
+  |> svg_path.subpath_assert_close()
 }
 
 pub fn transverse_lines_classify_clockwise_crossing_test() {

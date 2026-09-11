@@ -72,12 +72,12 @@ Useful current observations:
   loops, then folded through the abstract two-loop union. The first pass over
   the old cubic specimen list passed support checks for all 45 cubics at
   10-degree directions.
-- A denser 1-degree support-error comparison against production `segment_hull`
+- A denser 1-degree support-error comparison against production `convex_hull.segment`
   found both algorithms at floating-point-noise scale on the old cubic corpus.
   The diagnostic is slow because it repeatedly minimizes support over many
   generated hull segments; see `output/comparison_output.txt`. Replacing the
   primitive cubic support oracle with an analytic root-solved version did not
   change the topology or produce new support errors.
-- The next useful improvements are probably exact support for `segment_hull`
+- The next useful improvements are probably exact support for `convex_hull.segment`
   loop pieces, better transition coalescing, and examples with three or more
   loops folded through the same two-loop union.

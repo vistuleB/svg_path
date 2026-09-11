@@ -1152,7 +1152,7 @@ fn smooth_figure_eight() -> svg_path.Subpath {
       end: svg_path.Point(82.0, 58.0),
     ),
   ])
-  |> svg_path.subpath_assert_set_closed(closed: True)
+  |> svg_path.subpath_assert_close()
 }
 
 fn rounded_diamond() -> svg_path.Subpath {
@@ -1178,7 +1178,7 @@ fn rounded_diamond() -> svg_path.Subpath {
       end: svg_path.Point(82.0, 12.0),
     ),
   ])
-  |> svg_path.subpath_assert_set_closed(closed: True)
+  |> svg_path.subpath_assert_close()
 }
 
 type DebugOffsetPiece {
@@ -1245,11 +1245,7 @@ fn debug_provisional_with(
           let assert Ok(subpath) =
             svg_path.subpath_with(segments, policy: svg_path.Wiggle)
           let assert Ok(subpath) =
-            svg_path.subpath_set_closed_with(
-              subpath,
-              closed: True,
-              policy: svg_path.Wiggle,
-            )
+            svg_path.subpath_close_with(subpath, policy: svg_path.Wiggle)
           Ok(subpath)
         }
       }

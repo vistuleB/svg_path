@@ -3,9 +3,9 @@ import svg_path
 import svg_path/affine
 import svg_path/degeneracy
 import svg_path/internal/number
+import svg_path/internal/root
 import svg_path/parse
 import svg_path/point
-import svg_path/root
 import svg_path/trig
 
 pub fn is_zero_accepts_both_signs_without_a_tolerance_test() {

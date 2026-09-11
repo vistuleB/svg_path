@@ -7,8 +7,8 @@ import gleam/result
 import svg_path
 import svg_path/convex_hull
 import svg_path/internal/number
+import svg_path/internal/root
 import svg_path/point
-import svg_path/root
 
 /// The longest leading segment sequence certified to fit in a thin strip.
 @internal
@@ -65,11 +65,7 @@ pub fn normalize_degenerate_segments(
       case svg_path.subpath_is_closed(subpath) {
         False -> Ok(open)
         True ->
-          svg_path.subpath_set_closed_with(
-            open,
-            closed: True,
-            policy: svg_path.Strict,
-          )
+          svg_path.subpath_close_with(open, policy: svg_path.Strict)
           |> result.map_error(PathError)
       }
     }

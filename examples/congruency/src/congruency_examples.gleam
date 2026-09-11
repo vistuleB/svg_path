@@ -87,7 +87,7 @@ fn result_try_set_closed(
   result: Result(svg_path.Subpath, svg_path.Error),
 ) -> Result(svg_path.Subpath, svg_path.Error) {
   case result {
-    Ok(subpath) -> svg_path.subpath_set_closed(subpath, closed: True)
+    Ok(subpath) -> svg_path.subpath_close(subpath)
     Error(error) -> Error(error)
   }
 }

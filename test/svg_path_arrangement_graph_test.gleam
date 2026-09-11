@@ -1300,7 +1300,7 @@ pub fn annotated_drawing_uses_requested_winding_tolerance_test() {
       svg_path.Point(0.0, 100.0),
       svg_path.Point(0.0, 0.0),
     ])
-    |> svg_path.subpath_assert_set_closed(True)
+    |> svg_path.subpath_assert_close()
   let path = svg_path.subpath_as_path(source)
   let assert Ok(build) =
     arrangement_graph.build([path], 0.000000000001, 0.00000001)
@@ -1834,7 +1834,7 @@ pub fn segment_direction_arrow_recovers_collapsed_cubic_endpoint_test() {
 
 fn closed_subpath(segments: List(svg_path.Segment)) -> svg_path.Subpath {
   svg_path.subpath_assert(segments)
-  |> svg_path.subpath_assert_set_closed(closed: True)
+  |> svg_path.subpath_assert_close()
 }
 
 fn build_graph(

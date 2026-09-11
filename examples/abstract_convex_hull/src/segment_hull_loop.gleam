@@ -1,4 +1,4 @@
-//// Approximate support wrapper around the real `svg_path.segment_hull`.
+//// Approximate support wrapper around the real `svg_path/convex_hull.segment`.
 ////
 //// This hydrates the abstract loop-union experiment with actual library
 //// geometry. It now wraps the materialized hull subpath only; production no

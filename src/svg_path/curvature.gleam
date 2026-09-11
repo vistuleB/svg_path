@@ -15,7 +15,7 @@ import svg_path
 import svg_path/bezier
 import svg_path/ellipse
 import svg_path/internal/number
-import svg_path/root
+import svg_path/internal/root
 import svg_path/trig
 
 const default_tolerance = 0.000000001

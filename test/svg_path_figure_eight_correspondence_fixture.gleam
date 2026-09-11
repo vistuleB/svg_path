@@ -130,11 +130,7 @@ fn block_subpath(
       policy: svg_path.Bridge,
     )
   let assert Ok(closed) =
-    svg_path.subpath_set_closed_with(
-      open,
-      closed: True,
-      policy: svg_path.Bridge,
-    )
+    svg_path.subpath_close_with(open, policy: svg_path.Bridge)
   closed
 }
 
@@ -179,7 +175,7 @@ fn figure_eight() -> svg_path.Subpath {
       end: svg_path.Point(0.0, 0.0),
     ),
   ])
-  |> svg_path.subpath_assert_set_closed(closed: True)
+  |> svg_path.subpath_assert_close()
 }
 
 @external(erlang, "filelib", "ensure_dir")

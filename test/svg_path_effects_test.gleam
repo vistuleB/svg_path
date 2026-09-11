@@ -347,7 +347,7 @@ pub fn round_corners_rounds_closed_one_segment_cusp_test() {
         end: svg_path.Point(0.0, 0.0),
       ),
     ])
-    |> svg_path.subpath_assert_set_closed(closed: True)
+    |> svg_path.subpath_assert_close()
   let options =
     effects.RoundCornerOptions(
       ..effects.default_round_corner_options(),
@@ -396,9 +396,8 @@ pub fn stretch_to_join_endpoint_policy_closes_by_dragging_last_end_test() {
     ])
 
   let assert Ok(closed) =
-    svg_path.subpath_set_closed_with(
+    svg_path.subpath_close_with(
       subpath,
-      closed: True,
       policy: effects.stretch_to_join_endpoint_policy(),
     )
 
@@ -417,9 +416,8 @@ pub fn stretch_to_join_endpoint_policy_closes_near_loop_single_segment_test() {
   let subpath = svg_path.subpath_assert([svg_path.Line(start: a, end: near_a)])
 
   let assert Ok(closed) =
-    svg_path.subpath_set_closed_with(
+    svg_path.subpath_close_with(
       subpath,
-      closed: True,
       policy: effects.stretch_to_join_endpoint_policy(),
     )
 
@@ -642,7 +640,7 @@ pub fn normalize_degenerate_segments_preserves_closed_one_line_replacement_test(
         end: svg_path.Point(0.0, 0.0),
       ),
     ])
-  let subpath = svg_path.subpath_assert_set_closed(open, closed: True)
+  let subpath = svg_path.subpath_assert_close(open)
 
   let assert Ok(cleaned) =
     effects.normalize_degenerate_segments(subpath, tolerance: 0.001)
@@ -704,7 +702,7 @@ pub fn normalize_degenerate_segments_preserves_closed_two_line_backtracking_test
         end: svg_path.Point(0.0, 0.0),
       ),
     ])
-  let subpath = svg_path.subpath_assert_set_closed(open, closed: True)
+  let subpath = svg_path.subpath_assert_close(open)
 
   let assert Ok(cleaned) =
     effects.normalize_degenerate_segments(subpath, tolerance: 0.001)
@@ -742,7 +740,7 @@ pub fn normalize_degenerate_segments_keeps_closed_three_line_traversal_test() {
         end: svg_path.Point(0.0, 0.0),
       ),
     ])
-  let subpath = svg_path.subpath_assert_set_closed(open, closed: True)
+  let subpath = svg_path.subpath_assert_close(open)
 
   let assert Ok(cleaned) =
     effects.normalize_degenerate_segments(subpath, tolerance: 0.001)

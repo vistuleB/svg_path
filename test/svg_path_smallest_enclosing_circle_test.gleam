@@ -1,8 +1,8 @@
 import gleam/list
 import gleeunit/should
 import svg_path
+import svg_path/internal/smallest_enclosing_circle
 import svg_path/point
-import svg_path/smallest_enclosing_circle
 import svg_path/trig
 
 const tolerance = 0.000000001

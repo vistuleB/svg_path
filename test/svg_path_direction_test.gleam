@@ -226,7 +226,7 @@ pub fn subpath_directions_report_open_ends_and_closed_seam_test() {
       svg_path.Line(b, c),
       svg_path.Line(c, a),
     ])
-    |> svg_path.subpath_assert_set_closed(closed: True)
+    |> svg_path.subpath_assert_close()
   let assert Ok(svg_path.Directions(Some(seam_in), Some(seam_out))) =
     svg_path.subpath_directions(
       closed,

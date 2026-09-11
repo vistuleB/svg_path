@@ -70,7 +70,7 @@ pub fn length_bounds_sum_subpaths_without_counting_gaps_test() {
   let b = svg_path.Point(3.0, 4.0)
   let subpath =
     svg_path.subpath_assert([svg_path.Line(a, b), svg_path.Line(b, a)])
-  let assert Ok(closed) = svg_path.subpath_set_closed(subpath, closed: True)
+  let assert Ok(closed) = svg_path.subpath_close(subpath)
   assert svg_path.subpath_length_upper_bound(empty) == Ok(0.0)
   assert svg_path.subpath_length_upper_bound(closed) == Ok(10.0)
   assert svg_path.path_length_upper_bound(svg_path.Path([])) == Ok(0.0)
