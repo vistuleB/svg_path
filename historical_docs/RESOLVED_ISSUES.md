@@ -1,17 +1,36 @@
-# Remaining audit issues
+# Resolved audit issues
 
 > Historical record. Status, commands, and code locations below describe their
 > original checkpoints, not current main. See [the archive index](README.md)
 > and [current follow-ups](../REMAINING_ISSUES.md).
 
-## Current status — 2026-09-10
+## Resolved status
 
 Every concrete reproducer in this ledger has a fix. IX2's clustered crossings
 are now covered by the production Elizabeth solver; this does not establish
 completeness for arbitrary curve pairs. The drawings and investigations below
 are retained as a resolved audit history, not a list of outstanding fixes.
 
-The remaining follow-ups are:
+## Intersection test expectations — resolved
+
+The four tests now check known intersections, geometric residuals, parameter
+separation, and exact endpoint retention where applicable. Explicit numerical
+candidate-count snapshots remain to flag changes in either direction; they are
+not assertions of mathematical root multiplicity:
+
+- `elizabeth_beam_flat_crossing_completes_with_explicit_loss_test`
+- `segment_intersections_prefers_shared_endpoint_over_near_endpoint_minimum_test`
+- `production_off_center_kissing_quadratics_test`
+- `flat_cubic_crossing_regression_test`
+
+Release verification for 0.46.0 (including ordered bounding polygons):
+`scripts/test-release`: **1612 fast tests and 26 slow tests passed**.
+`scripts/generate-published-figures` regenerated all **29 Gallery figures and
+9 README figures**. `gleam docs build` and `gleam export hex-tarball` succeeded.
+
+## Earlier checkpoint — before the test-expectation update
+
+The follow-ups at this checkpoint were:
 
 - Review four intersection tests that still demand one candidate where the
   numerical residual/separation contract admits several. Their assertions
