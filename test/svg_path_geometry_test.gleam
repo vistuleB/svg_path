@@ -4,6 +4,7 @@ import gleam/list
 import gleam/option.{None, Some}
 import gleam/result
 import svg_path
+import svg_path/degeneracy
 import svg_path/intersections
 import svg_path_intersection_contract_support as contract
 
@@ -297,7 +298,19 @@ pub fn path_path_projection_reports_nearest_subpaths_test() {
   assert float.absolute_value(distance -. 2.0) <. tolerance
 }
 
-pub fn segment_degenerate_lines_preserves_quadratic_backtracking_test() {
+pub fn segment_linearize_if_degenerate_rejects_negative_tolerance_test() {
+  let line = svg_path.Line(svg_path.Point(0.0, 0.0), svg_path.Point(1.0, 0.0))
+  assert degeneracy.segment_linearize_if_degenerate(line, tolerance: -1.0)
+    == Error(degeneracy.InvalidTolerance(-1.0))
+}
+
+pub fn subpath_linearize_if_degenerate_rejects_negative_tolerance_test() {
+  let empty = svg_path.subpath_empty(at: svg_path.Point(0.0, 0.0))
+  assert degeneracy.subpath_linearize_if_degenerate(empty, tolerance: -1.0)
+    == Error(degeneracy.InvalidTolerance(-1.0))
+}
+
+pub fn segment_linearize_if_degenerate_preserves_quadratic_backtracking_test() {
   let curve =
     svg_path.QuadraticBezier(
       start: svg_path.Point(0.0, 0.0),
@@ -306,7 +319,7 @@ pub fn segment_degenerate_lines_preserves_quadratic_backtracking_test() {
     )
 
   let assert Ok(Some(lines)) =
-    svg_path.segment_linearize_if_degenerate(curve, 0.001)
+    degeneracy.segment_linearize_if_degenerate(curve, 0.001)
   assert list.length(lines) == 2
   assert list.all(lines, fn(segment) {
     case segment {
@@ -316,7 +329,7 @@ pub fn segment_degenerate_lines_preserves_quadratic_backtracking_test() {
   })
 }
 
-pub fn segment_degenerate_lines_preserves_cubic_backtracking_test() {
+pub fn segment_linearize_if_degenerate_preserves_cubic_backtracking_test() {
   let curve =
     svg_path.CubicBezier(
       start: svg_path.Point(0.0, 0.0),
@@ -326,11 +339,11 @@ pub fn segment_degenerate_lines_preserves_cubic_backtracking_test() {
     )
 
   let assert Ok(Some(lines)) =
-    svg_path.segment_linearize_if_degenerate(curve, 0.001)
+    degeneracy.segment_linearize_if_degenerate(curve, 0.001)
   assert list.length(lines) == 3
 }
 
-pub fn segment_degenerate_lines_converts_zero_radius_arc_test() {
+pub fn segment_linearize_if_degenerate_converts_zero_radius_arc_test() {
   let arc =
     svg_path.Arc(
       start: svg_path.Point(0.0, 0.0),
@@ -342,12 +355,12 @@ pub fn segment_degenerate_lines_converts_zero_radius_arc_test() {
     )
 
   let assert Ok(Some([svg_path.Line(start:, end:)])) =
-    svg_path.segment_linearize_if_degenerate(arc, 0.001)
+    degeneracy.segment_linearize_if_degenerate(arc, 0.001)
   assert start == svg_path.Point(0.0, 0.0)
   assert end == svg_path.Point(10.0, 0.0)
 }
 
-pub fn segment_degenerate_lines_rejects_wide_curve_test() {
+pub fn segment_linearize_if_degenerate_rejects_wide_curve_test() {
   let curve =
     svg_path.QuadraticBezier(
       start: svg_path.Point(0.0, 0.0),
@@ -355,10 +368,10 @@ pub fn segment_degenerate_lines_rejects_wide_curve_test() {
       end: svg_path.Point(10.0, 0.0),
     )
 
-  assert svg_path.segment_linearize_if_degenerate(curve, 0.001) == Ok(None)
+  assert degeneracy.segment_linearize_if_degenerate(curve, 0.001) == Ok(None)
 }
 
-pub fn subpath_degenerate_lines_uses_one_strip_for_all_segments_test() {
+pub fn subpath_linearize_if_degenerate_uses_one_strip_for_all_segments_test() {
   let subpath =
     svg_path.subpath_assert([
       svg_path.QuadraticBezier(
@@ -373,11 +386,11 @@ pub fn subpath_degenerate_lines_uses_one_strip_for_all_segments_test() {
     ])
 
   let assert Ok(Some(lines)) =
-    svg_path.subpath_linearize_if_degenerate(subpath, 0.001)
+    degeneracy.subpath_linearize_if_degenerate(subpath, 0.001)
   assert list.length(lines) == 3
 }
 
-pub fn subpath_degenerate_lines_rejects_bent_subpath_test() {
+pub fn subpath_linearize_if_degenerate_rejects_bent_subpath_test() {
   let subpath =
     svg_path.subpath_assert([
       svg_path.Line(
@@ -390,7 +403,7 @@ pub fn subpath_degenerate_lines_rejects_bent_subpath_test() {
       ),
     ])
 
-  assert svg_path.subpath_linearize_if_degenerate(subpath, 0.001) == Ok(None)
+  assert degeneracy.subpath_linearize_if_degenerate(subpath, 0.001) == Ok(None)
 }
 
 pub fn parametric_subpath_fits_simple_parabola_test() {

@@ -672,6 +672,14 @@ axis-aligned bounds. Line, Bezier, and arc extrema are included. Measure a box
 with `bounding_box_width`, `bounding_box_height`, `bounding_box_center`, and
 `bounding_box_taxicab_diameter`; the diameter is width plus height.
 
+### Conditional Linearization
+
+For conditional line replacement, use
+`degeneracy.segment_linearize_if_degenerate` or
+`degeneracy.subpath_linearize_if_degenerate`. They return `Ok(None)` when the
+geometry is not line-degenerate, or `Ok(Some(lines))` for its line replacement,
+preserving backtracking. Errors use `degeneracy.Error`.
+
 ### Optimization Over Segments
 
 Use `segment_minimize` to find the segment parameter where a scalar function of

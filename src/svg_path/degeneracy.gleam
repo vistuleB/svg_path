@@ -1,5 +1,6 @@
 //// Degenerate and nearly-degenerate geometry cleanup.
 
+import gleam/float
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
@@ -7,6 +8,7 @@ import svg_path
 import svg_path/convex_hull
 import svg_path/internal/number
 import svg_path/point
+import svg_path/root
 
 /// The longest leading segment sequence certified to fit in a thin strip.
 @internal
@@ -96,10 +98,10 @@ fn colinearize_segments(
           )
         }
         _ -> {
-          use replacement <- result.try(
-            svg_path.segment_linearize_if_degenerate(first, tolerance)
-            |> result.map_error(PathError),
-          )
+          use replacement <- result.try(segment_linearize_if_degenerate(
+            first,
+            tolerance,
+          ))
           let replacement = case replacement {
             None -> [first]
             Some(lines) -> lines
@@ -413,10 +415,10 @@ fn degenerate_traversal(
   case segments {
     [] -> Ok([])
     [first, ..rest] -> {
-      use replacement <- result.try(
-        svg_path.segment_linearize_if_degenerate(first, tolerance)
-        |> result.map_error(PathError),
-      )
+      use replacement <- result.try(segment_linearize_if_degenerate(
+        first,
+        tolerance,
+      ))
       let replacement = case replacement {
         None -> [first]
         Some(lines) -> lines
@@ -425,4 +427,337 @@ fn degenerate_traversal(
       Ok(list.append(replacement, remaining))
     }
   }
+}
+
+/// Detect a curve that is contained in an absolute-width strip and replace it
+/// with ordered line segments when possible.
+///
+/// `tolerance` is the maximum distance from the replacement line or lines to
+/// the curve, in path coordinate units. `Ok(None)` means that the segment is
+/// not line-degenerate. `Ok(Some(lines))` preserves collinear backtracking;
+/// `Some([])` represents a curve with no movement. Lines themselves return
+/// `Ok(None)`. The tolerance must be finite and non-negative; a tolerance of
+/// `0.0` collapses the segment only when it lies exactly on a line strip of
+/// width zero.
+pub fn segment_linearize_if_degenerate(
+  segment: svg_path.Segment,
+  tolerance tolerance: Float,
+) -> Result(Option(List(svg_path.Segment)), Error) {
+  case tolerance <. 0.0 || !number.is_finite(tolerance) {
+    True -> Error(InvalidTolerance(tolerance))
+    False -> segment_degenerate_lines_valid(segment, tolerance)
+  }
+}
+
+/// Detect whether an entire subpath fits inside one absolute-width line strip.
+///
+/// `Ok(Some(lines))` returns an ordered line replacement, preserving the
+/// subpath's flattened traversal and backtracking. `Ok(None)` means that the
+/// subpath is not line-degenerate. Empty subpaths return `Ok(Some([]))`.
+pub fn subpath_linearize_if_degenerate(
+  subpath: svg_path.Subpath,
+  tolerance tolerance: Float,
+) -> Result(Option(List(svg_path.Segment)), Error) {
+  case tolerance <. 0.0 || !number.is_finite(tolerance) {
+    True -> Error(InvalidTolerance(tolerance))
+    False -> {
+      use replacements <- result.try(
+        subpath_degenerate_line_replacements(
+          svg_path.subpath_segments(subpath),
+          tolerance,
+          [],
+        ),
+      )
+      case replacements {
+        None -> Ok(None)
+        Some(lines) -> degenerate_line_list(lines, tolerance)
+      }
+    }
+  }
+}
+
+fn subpath_degenerate_line_replacements(
+  segments: List(svg_path.Segment),
+  tolerance: Float,
+  lines lines: List(svg_path.Segment),
+) -> Result(Option(List(svg_path.Segment)), Error) {
+  case segments {
+    [] -> Ok(Some(list.reverse(lines)))
+    [first, ..rest] -> {
+      use replacement <- result.try(segment_linearize_if_degenerate(
+        first,
+        tolerance:,
+      ))
+      case first, replacement {
+        svg_path.Line(..), None ->
+          subpath_degenerate_line_replacements(rest, tolerance, lines: [
+            first,
+            ..lines
+          ])
+        _, None -> Ok(None)
+        _, Some(replacement) ->
+          subpath_degenerate_line_replacements(
+            rest,
+            tolerance,
+            lines: list.append(list.reverse(replacement), lines),
+          )
+      }
+    }
+  }
+}
+
+fn segment_degenerate_lines_valid(
+  segment: svg_path.Segment,
+  tolerance: Float,
+) -> Result(Option(List(svg_path.Segment)), Error) {
+  case segment {
+    svg_path.Line(..) -> Ok(None)
+    svg_path.QuadraticBezier(start:, control:, end:) ->
+      bezier_degenerate_lines(
+        segment,
+        [start, control, end],
+        quadratic_degenerate_breaks(start, control, end, start),
+        tolerance,
+      )
+    svg_path.CubicBezier(start:, control1:, control2:, end:) ->
+      bezier_degenerate_lines(
+        segment,
+        [start, control1, control2, end],
+        cubic_degenerate_breaks(start, control1, control2, end, start),
+        tolerance,
+      )
+    svg_path.Arc(start:, radius:, end:, ..) -> {
+      case number.is_zero(radius.x) || number.is_zero(radius.y) {
+        True -> {
+          case start == end {
+            True -> Ok(Some([]))
+            False -> Ok(Some([svg_path.Line(start:, end:)]))
+          }
+        }
+        False -> {
+          use lines <- result.try(
+            svg_path.segment_to_lines_with(
+              segment,
+              options: svg_path.LinearizeOptions(
+                tolerance:,
+                max_depth: svg_path.default_linearize_options().max_depth,
+              ),
+            )
+            |> result.map_error(PathError),
+          )
+          degenerate_line_list(lines, tolerance)
+        }
+      }
+    }
+  }
+}
+
+fn bezier_degenerate_lines(
+  segment: svg_path.Segment,
+  defining_points: List(svg_path.Point),
+  breaks: List(Float),
+  tolerance: Float,
+) -> Result(Option(List(svg_path.Segment)), Error) {
+  case degenerate_line_axis(defining_points, tolerance) {
+    None -> Ok(None)
+    Some(#(start, axis)) -> {
+      case
+        defining_points_are_in_strip(defining_points, start, axis, tolerance)
+      {
+        False -> Ok(None)
+        True -> {
+          let breaks = [0.0, ..breaks] |> list.append([1.0])
+          use lines <- result.try(line_pieces_at_breaks(segment, breaks, []))
+          Ok(Some(remove_zero_length_lines(lines)))
+        }
+      }
+    }
+  }
+}
+
+fn degenerate_line_axis(
+  points: List(svg_path.Point),
+  tolerance: Float,
+) -> Option(#(svg_path.Point, svg_path.Point)) {
+  case points {
+    [start, ..] -> {
+      case farthest_point(points, start, start) {
+        farthest -> {
+          case
+            point.distance_squared(farthest, start) <=. tolerance *. tolerance
+          {
+            True -> None
+            False -> Some(#(start, point.subtract(farthest, start)))
+          }
+        }
+      }
+    }
+    [] -> None
+  }
+}
+
+fn defining_points_are_in_strip(
+  points: List(svg_path.Point),
+  start: svg_path.Point,
+  axis: svg_path.Point,
+  tolerance: Float,
+) -> Bool {
+  let axis_length_squared =
+    point.distance_squared(axis, svg_path.Point(0.0, 0.0))
+  list.all(points, fn(point) {
+    let relative = point.subtract(point, start)
+    let cross = relative.x *. axis.y -. relative.y *. axis.x
+    float.absolute_value(cross) /. sqrt(axis_length_squared) <=. tolerance
+  })
+}
+
+fn degenerate_line_list(
+  lines: List(svg_path.Segment),
+  tolerance: Float,
+) -> Result(Option(List(svg_path.Segment)), Error) {
+  let points = line_list_points(lines, [])
+  case degenerate_line_axis(points, tolerance) {
+    None -> Ok(Some([]))
+    Some(#(start, axis)) -> {
+      case defining_points_are_in_strip(points, start, axis, tolerance) {
+        True -> Ok(Some(remove_zero_length_lines(lines)))
+        False -> Ok(None)
+      }
+    }
+  }
+}
+
+fn farthest_point(
+  points: List(svg_path.Point),
+  origin: svg_path.Point,
+  best: svg_path.Point,
+) -> svg_path.Point {
+  case points {
+    [] -> best
+    [first, ..rest] -> {
+      let best = case
+        point.distance_squared(first, origin)
+        >. point.distance_squared(best, origin)
+      {
+        True -> first
+        False -> best
+      }
+      farthest_point(rest, origin, best)
+    }
+  }
+}
+
+fn line_list_points(
+  lines: List(svg_path.Segment),
+  points: List(svg_path.Point),
+) -> List(svg_path.Point) {
+  case lines {
+    [] -> list.reverse(points)
+    [svg_path.Line(start:, end:), ..rest] ->
+      line_list_points(rest, [end, start, ..points])
+    [_first, ..rest] -> line_list_points(rest, points)
+  }
+}
+
+fn remove_zero_length_lines(
+  lines: List(svg_path.Segment),
+) -> List(svg_path.Segment) {
+  list.filter(lines, fn(segment) {
+    svg_path.segment_start(segment) != svg_path.segment_end(segment)
+  })
+}
+
+fn line_pieces_at_breaks(
+  segment: svg_path.Segment,
+  breaks: List(Float),
+  lines: List(svg_path.Segment),
+) -> Result(List(svg_path.Segment), Error) {
+  case breaks {
+    [] | [_] -> Ok(list.reverse(lines))
+    [from, to, ..rest] -> {
+      use start <- result.try(
+        svg_path.segment_point(segment, at: from) |> result.map_error(PathError),
+      )
+      use end <- result.try(
+        svg_path.segment_point(segment, at: to) |> result.map_error(PathError),
+      )
+      line_pieces_at_breaks(segment, [to, ..rest], [
+        svg_path.Line(start:, end:),
+        ..lines
+      ])
+    }
+  }
+}
+
+fn quadratic_degenerate_breaks(
+  start: svg_path.Point,
+  control: svg_path.Point,
+  end: svg_path.Point,
+  axis_start: svg_path.Point,
+) -> List(Float) {
+  let axis =
+    point.subtract(
+      farthest_point([start, control, end], axis_start, axis_start),
+      axis_start,
+    )
+  let s = axis_coordinate(start, axis_start, axis)
+  let c = axis_coordinate(control, axis_start, axis)
+  let e = axis_coordinate(end, axis_start, axis)
+  let denominator = s -. { 2.0 *. c } +. e
+  case number.is_zero(denominator) {
+    True -> []
+    False -> {
+      let root = { s -. c } /. denominator
+      root.strictly_inside([root], from: 0.0, to: 1.0)
+    }
+  }
+}
+
+fn cubic_degenerate_breaks(
+  start: svg_path.Point,
+  control1: svg_path.Point,
+  control2: svg_path.Point,
+  end: svg_path.Point,
+  axis_start: svg_path.Point,
+) -> List(Float) {
+  let axis =
+    point.subtract(
+      farthest_point([start, control1, control2, end], axis_start, axis_start),
+      axis_start,
+    )
+  let s = axis_coordinate(start, axis_start, axis)
+  let c1 = axis_coordinate(control1, axis_start, axis)
+  let c2 = axis_coordinate(control2, axis_start, axis)
+  let e = axis_coordinate(end, axis_start, axis)
+  let a = 0.0 -. s +. { 3.0 *. c1 } -. { 3.0 *. c2 } +. e
+  let b = { 3.0 *. s } -. { 6.0 *. c1 } +. { 3.0 *. c2 }
+  let c = { 3.0 *. c1 } -. { 3.0 *. s }
+  root.quadratic_with(
+    3.0 *. a,
+    2.0 *. b,
+    c,
+    options: root.QuadraticOptions(
+      coefficient_tolerance: 0.0,
+      repeated_root_policy: root.PreserveRepeatedRoot,
+    ),
+  )
+  |> root.strictly_inside(from: 0.0, to: 1.0)
+}
+
+fn axis_coordinate(
+  point: svg_path.Point,
+  origin: svg_path.Point,
+  axis: svg_path.Point,
+) -> Float {
+  let relative = point.subtract(point, origin)
+  let denominator = point.distance_squared(axis, svg_path.Point(0.0, 0.0))
+  case denominator == 0.0 {
+    True -> 0.0
+    False -> point.dot(relative, axis) /. denominator
+  }
+}
+
+fn sqrt(value: Float) -> Float {
+  let assert Ok(root) = float.square_root(value)
+  root
 }
