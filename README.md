@@ -1929,4 +1929,4 @@ gleam docs build
 Before a release, use `scripts/test-release`, the canonical pre-release check,
 rather than relying on the fast profile alone. Figure generation and asset
 publication are documented in
-[COMMIT_CYCLE.md](https://github.com/vistuleB/svg_path/blob/main/COMMIT_CYCLE.md).
+[WORKFLOW.md](https://github.com/vistuleB/svg_path/blob/main/WORKFLOW.md).

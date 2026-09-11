@@ -2,7 +2,7 @@
 
 Regenerate these SVGs with `scripts/generate-published-figures`. Most fixtures
 live in `test/svg_path_gallery_test.gleam`; the production arrangement capture
-and concurrent runner are described in [COMMIT_CYCLE.md](COMMIT_CYCLE.md).
+and concurrent runner are described in [WORKFLOW.md](WORKFLOW.md).
 
 ### Rounded Rectangle Union
 

@@ -1,7 +1,7 @@
 # Releasing
 
 This checklist supplements the figure and asset-tag workflow in
-`COMMIT_CYCLE.md`.
+`WORKFLOW.md`.
 
 ## Required verification
 
@@ -36,4 +36,4 @@ This checklist supplements the figure and asset-tag workflow in
    in package source.
 
 5. Complete the README figure, changelog, version, asset-tag, release-tag, and
-   publication steps in `COMMIT_CYCLE.md`.
+   publication steps in `WORKFLOW.md`.

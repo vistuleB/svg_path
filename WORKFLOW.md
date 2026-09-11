@@ -1,7 +1,36 @@
-# Commit Cycle
+# Contributor Workflow
 
-This file describes the intended workflow for generated figures during normal
-feature work and release prep.
+This file describes coding conventions, verification, generated figures, and
+release preparation for contributors, whether working manually or with an agent.
+
+## Coding And Documentation Conventions
+
+- Name every error-variant payload argument, including single arguments.
+  Labels describe the carried value: for example, `divergence`, not `depth`,
+  when reporting fitting error remaining at a recursion limit.
+- Use `xml`, not `svg`, as the Markdown code-fence language for SVG examples.
+
+## Test Profiles And Reporting
+
+- `gleam test`: default suite.
+- `scripts/test-fast`: ordinary suite, including convex-hull smoke tests.
+- `scripts/test-slow`: additional convex-hull stress tests only.
+- `scripts/test-all`: both profiles.
+- `scripts/test-release`: canonical pre-release verification, including both
+  profiles; fast tests alone do not verify a release.
+
+In review notes and reports, record the exact completed command and test count.
+Reserve claims that the full suite passes for a successful `scripts/test-all`
+or `scripts/test-release` run in the current worktree.
+
+## Figure Layout
+
+- When comparing opposite orientations, keep each direction arrow at the same
+  visual location and only reverse its direction.
+- Compute each panel's actual geometry bounds and recenter the geometry in its
+  panel rather than relying on hand-tuned translations when practical.
+
+## Figure Audiences
 
 There are two different audiences:
 
