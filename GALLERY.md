@@ -110,6 +110,37 @@ pushed outward from the `SVG_PATH` text outline.
 
 Shows a dense snaking subpath cut by a text outline, with the pieces inside the
 outline removed.
+### Historical SVG 2 Join Comparisons
+
+These compare our public `stroke.subpath` output (blue outlines) with the
+[published SVG 2 illustrations](https://www.w3.org/TR/SVG2/painting.html#LineJoinShape).
+The original reference drawings are retained alongside or beneath the output;
+their geometry is not substituted for the computed outlines.
+
+![Miter and miter-clip comparison](docs/gallery/w3c-miter-limit.svg)
+
+For stroke width 35 and miter limit 3, `MiterClip` reaches the reference clip
+plane at x=227.5 exactly. The generator asserts this value.
+
+![Arcs with nested circles](docs/gallery/w3c-linejoin-construction-fallback.svg)
+
+![Arcs with disjoint circles](docs/gallery/w3c-linejoin-construction-fallback2.svg)
+
+The arc illustrations use approximate outlines and rounded construction guides,
+so they are visual checks, not exact numerical fixtures. For example, the
+disjoint reference's pink tip is at x=323.85, its circle guides meet at x=325,
+and our computed tip is at x=324.635836.
+
+![Arcs with parallel tangents](docs/gallery/w3c-linejoin-construction-fallback3.svg)
+
+The parallel case deliberately differs: our signed-offset contract uses a
+Round fallback rather than the proposal's rectangular extension.
+
+`arcs` was adopted for SVG 2 in September 2012 and `miter-clip` in February
+2015; both were removed from the editor's draft in March 2026. References,
+reproduction details, and comparison limitations are recorded with the
+[gallery fixture](scripts/gallery/w3c-join-reference/README.md).
+
 ### ArrangementGraph Intersection Studies
 
 Each sheet shows the source operands, their shared arrangement graph, and the
@@ -143,34 +174,3 @@ nested fill-rule cases, mixed curves, and self-crossing input.
 ![Nested EvenOdd difference](docs/gallery/gallery-difference-nested-evenodd.svg)
 
 ![Bowtie and rectangle difference](docs/gallery/gallery-difference-bowtie-rectangle.svg)
-
-### Historical SVG 2 Join Comparisons
-
-These compare our public `stroke.subpath` output (blue outlines) with the
-[published SVG 2 illustrations](https://www.w3.org/TR/SVG2/painting.html#LineJoinShape).
-The original reference drawings are retained alongside or beneath the output;
-their geometry is not substituted for the computed outlines.
-
-![Miter and miter-clip comparison](docs/gallery/w3c-miter-limit.svg)
-
-For stroke width 35 and miter limit 3, `MiterClip` reaches the reference clip
-plane at x=227.5 exactly. The generator asserts this value.
-
-![Arcs with nested circles](docs/gallery/w3c-linejoin-construction-fallback.svg)
-
-![Arcs with disjoint circles](docs/gallery/w3c-linejoin-construction-fallback2.svg)
-
-The arc illustrations use approximate outlines and rounded construction guides,
-so they are visual checks, not exact numerical fixtures. For example, the
-disjoint reference's pink tip is at x=323.85, its circle guides meet at x=325,
-and our computed tip is at x=324.635836.
-
-![Arcs with parallel tangents](docs/gallery/w3c-linejoin-construction-fallback3.svg)
-
-The parallel case deliberately differs: our signed-offset contract uses a
-Round fallback rather than the proposal's rectangular extension.
-
-`arcs` was adopted for SVG 2 in September 2012 and `miter-clip` in February
-2015; both were removed from the editor's draft in March 2026. References,
-reproduction details, and comparison limitations are recorded with the
-[gallery fixture](scripts/gallery/w3c-join-reference/README.md).
