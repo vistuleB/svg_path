@@ -200,7 +200,7 @@ face 2, and 2 on faces 3–6. These are self-overlapping corner lobes, not a
 whole-contour direction that can be corrected by reversal. The agreed 0/1
 contract detects this; no fallback or splitting policy has been added.
 
-![Captured contours and the two conflicting arrangement edges](../examples/debug/final-orientation-square-conflict.svg)
+![Captured contours and the two conflicting arrangement edges](images/final-orientation-square-conflict.svg)
 
 Blue is captured contour 0; grey is contour 1. Green edge 23 requires reversing
 contour 0, red edge 22 requires keeping it, and the pale-yellow region is actual
@@ -355,7 +355,7 @@ captured private probe. A drawing alone does not establish a reachable failure.
 
 ### IX2 — a found intersection does not exhaust its parameter window — reproducer resolved
 
-![IX2 — a found intersection does not exhaust its parameter window](../examples/debug/v1_review_visuals/ix2.svg)
+![IX2 — a found intersection does not exhaust its parameter window](images/ix2.svg)
 
 **Module:** `svg_path/intersections`.
 **Current functions:** `elizabeth_beam_intersections`, `elizabeth_beam_generation`,
@@ -384,7 +384,7 @@ The original reproducer uses x=t and y=(t−0.2)(t−0.21)(t−0.22).
 Intersecting it with a horizontal Line finds three crossings. Representing the
 same horizontal geometry as a Quadratic selected the generic Edward solver,
 which missed crossings. Production Elizabeth finds all three. See the
-[original illustration](../examples/debug/v1_review_visuals/ix2.svg).
+[original illustration](images/ix2.svg).
 
 The historical Edward diagnosis identified two insufficient stopping rules:
 
@@ -441,7 +441,7 @@ completeness limitation are listed at the top of this document.
 
 ### IX3 — parallel tangents do not imply touching — resolved
 
-![IX3 — parallel tangents do not imply touching](../examples/debug/v1_review_visuals/ix3.svg)
+![IX3 — parallel tangents do not imply touching](images/ix3.svg)
 
 **Module/function:** `svg_path/intersections.classify_directions`.
 **Evidence:** reproduced classification error.
@@ -461,7 +461,7 @@ passes **1,565 tests**.
 
 ### IX4 — coincident positions can have distinct parameter pairs — resolved
 
-![IX4 — coincident positions can have distinct parameter pairs](../examples/debug/v1_review_visuals/ix4.svg)
+![IX4 — coincident positions can have distinct parameter pairs](images/ix4.svg)
 
 **Module/function:** `svg_path/intersections.insert_intersection`.
 **Evidence:** reproduced lost addresses; regression-tested repair.
@@ -486,7 +486,7 @@ and its SVG is byte-identical to the published Gallery figure.
 
 ### AG1 — resolved: dual grouping no longer uses displaced probes
 
-![AG1 / OF8 — an interior probe can cross into another contour](../examples/debug/v1_review_visuals/ag1_of8.svg)
+![AG1 / OF8 — an interior probe can cross into another contour](images/ag1_of8.svg)
 
 **Module/functions:** `svg_path/arrangement.dual_walk_candidates`,
 `dual_sweep_intersections`, `dual_line_placements`.
@@ -557,7 +557,7 @@ no-interior-probe exception.
 
 ### OF1 — resolved: reconstruction capacity included ineligible source occurrences
 
-![OF1 — reconstruction capacity includes ineligible source occurrences](../examples/debug/v1_review_visuals/of1.svg)
+![OF1 — reconstruction capacity includes ineligible source occurrences](images/of1.svg)
 
 **Module/functions:** `svg_path/offset.retain_offset_image_edges`,
 `offset_reconstruction_images`, `forced_parity_reduce_trim_graph`.
@@ -583,7 +583,7 @@ passed.
 
 ### OF2 — resolved: a corner at the closing seam missed join construction
 
-![OF2 — a corner at the closing seam misses join construction](../examples/debug/v1_review_visuals/of2.svg)
+![OF2 — a corner at the closing seam misses join construction](images/of2.svg)
 
 **Module/functions:** `svg_path/offset.split_join_free_portions`,
 `mark_closed_join_free_portion`, `synchronized_join_correspondences`.
@@ -607,7 +607,7 @@ was needed.
 
 ### OF3 — resolved: closing alignment lost the first segment's edit
 
-![OF3 — closing alignment loses the first segment's edit](../examples/debug/v1_review_visuals/of3.svg)
+![OF3 — closing alignment loses the first segment's edit](images/of3.svg)
 
 **Module/function:** `svg_path/offset.colinearize_source_tangent_policy`.
 **Evidence:** reproduced private normalization difference at the seam.
@@ -625,7 +625,7 @@ closed cubic. The original drawing depicts the discarded first-handle edit.
 
 ### OF4 — resolved: reversed survivor parameter orientation
 
-![OF4 — reversed survivor geometry retains its old parameter orientation](../examples/debug/v1_review_visuals/of4.svg)
+![OF4 — reversed survivor geometry retains its old parameter orientation](images/of4.svg)
 
 **Module/function:** `svg_path/offset.reverse_survivor_edges`.
 **Evidence:** private-helper and downstream conversion regression; no public
@@ -646,7 +646,7 @@ depicts the old mismatch using explanatory parameter values.
 
 ### OF5 — resolved: complete erasure after parity
 
-![OF5 — complete erasure after parity is treated differently from before it](../examples/debug/v1_review_visuals/of5.svg)
+![OF5 — complete erasure after parity is treated differently from before it](images/of5.svg)
 
 **Module/function:** `svg_path/offset.finish_cusp_trim_with_parity`.
 **Evidence:** controlled internal-state reproducer.
@@ -665,7 +665,7 @@ logic or adding public API. This is not a newly found public winding fixture.
 
 ### OF6 — resolved: collapsed-handle constraints checked lines rather than signed rays
 
-![OF6 — collapsed-handle constraints check lines rather than signed rays](../examples/debug/v1_review_visuals/of6.svg)
+![OF6 — collapsed-handle constraints check lines rather than signed rays](images/of6.svg)
 
 **Module/functions:** `svg_path/offset.stalled_start_control2`,
 `stalled_end_control1`, including their bisection fallbacks.
@@ -686,7 +686,7 @@ the fix; all 12 now pass. `scripts/test-fast` passed **1,563 tests**.
 
 ### OF7 — resolved: unused fitting alternatives
 
-![OF7 — apparently unused fitting alternatives](../examples/debug/v1_review_visuals/of7.svg)
+![OF7 — apparently unused fitting alternatives](images/of7.svg)
 
 **Module/functions:** `svg_path/offset.e_join_free_endpoint_policy`,
 `fit_offset_cubic_data_with_endpoint_policies`.
@@ -703,7 +703,7 @@ drawing describes the removed alternatives; documentation fixes were already don
 
 ### PA1 — resolved: drawing commands after closepath
 
-![PA1 — drawing commands after closepath are rejected](../examples/debug/v1_review_visuals/pa1.svg)
+![PA1 — drawing commands after closepath are rejected](images/pa1.svg)
 
 **Module/functions:** `svg_path/parse.parse_close`, `ensure_active`.
 **Evidence:** `M0 0L1 0ZL2 0` previously returned `ExpectedMove`.
@@ -720,7 +720,7 @@ The illustration shows the former rejection and the intended continuation.
 
 ### SP1 — resolved: extrapolated directions inherited split-child orientation
 
-![SP1 — extrapolated directions inherit reversed split-child orientation](../examples/debug/v1_review_visuals/sp1.svg)
+![SP1 — extrapolated directions inherit reversed split-child orientation](images/sp1.svg)
 
 **Module/function:** `svg_path.segment_directions_with`.
 **Evidence:** reproduced on a Line outside t in [0,1].
@@ -741,7 +741,7 @@ Verification in the combined SP1/OF3 worktree: `scripts/test-fast` passed
 
 ### TS1 — resolved: compact transform serialization discarded shear
 
-![TS1 — compact transform serialization can discard shear](../examples/debug/v1_review_visuals/ts1.svg)
+![TS1 — compact transform serialization can discard shear](images/ts1.svg)
 
 **Module/functions:** `svg_path/transform/serialize.analyze_rotation_scale`,
 `close_to_zero`.
@@ -756,7 +756,7 @@ continue to check compact output. The drawing illustrates the old behavior.
 
 ### ST1 — zero-length visible dashes lose their caps — resolved
 
-![ST1 — zero-length visible dashes lose their caps](../examples/debug/v1_review_visuals/st1.svg)
+![ST1 — zero-length visible dashes lose their caps](images/st1.svg)
 
 **Module/functions:** `svg_path/stroke.dash_start`, `dash_intervals_loop`.
 **Evidence:** reproduced empty output for [0,2] with Round caps; regression-tested repair.
@@ -782,7 +782,7 @@ passes **1,569 tests**.
 
 ### AD1 — resolved: annotation sampling and containment tolerance mismatch
 
-![AD1 — annotation sampling and containment use different tolerances](../examples/debug/v1_review_visuals/ad1.svg)
+![AD1 — annotation sampling and containment use different tolerances](images/ad1.svg)
 
 **Module/function:** `svg_path/arrangement/drawing.annotated_edge_things`.
 **Evidence:** reproduced helper-level incorrect side labels.
@@ -795,7 +795,7 @@ all four square-edge winding labels and failed before the repair.
 
 ### CH1 — resolved: minimum-width pruning used an unadjusted lower bound
 
-![CH1 — minimum-width optimization prunes with an unadjusted lower bound](../examples/debug/v1_review_visuals/ch1.svg)
+![CH1 — minimum-width optimization prunes with an unadjusted lower bound](images/ch1.svg)
 
 **Module/function:** `svg_path/convex_hull.minimum_width_optimization_loop`.
 **Evidence:** controlled late-stage search reproduced false convergence.
@@ -817,7 +817,7 @@ The original illustration remains a schematic of the old inconsistency.
 
 ### CH2 — hull tangent-root helpers assert success of fallible operations — resolved
 
-![CH2 — hull tangent-root helpers assert success of fallible operations](../examples/debug/v1_review_visuals/ch2.svg)
+![CH2 — hull tangent-root helpers assert success of fallible operations](images/ch2.svg)
 
 **Module/functions:** `svg_path/convex_hull.cubic_point_tangent_roots`,
 `refine_polynomial_tangent_isolation`.
