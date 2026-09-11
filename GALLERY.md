@@ -4,83 +4,11 @@ Regenerate these SVGs with `scripts/generate-published-figures`. Most fixtures
 live in `test/svg_path_gallery_test.gleam`; the production arrangement capture
 and concurrent runner are described in [WORKFLOW.md](WORKFLOW.md).
 
-### Rounded Rectangle Union
-
-![Rounded rectangle union](docs/gallery/gallery-rounded-rectangle-union.svg)
-
-Shows a pile of overlapping rectangles, their raw `Nonzero` union, and the same
-result after `effects.round_corners`.
-
-### ArrangementGraph Intersection Studies
-
-Each sheet shows the source operands, their shared arrangement graph, and the
-reconstructed intersection boundary.
-
-![Overlapping rectangle intersection](docs/gallery/gallery-intersection-rectangles.svg)
-
-![Circle and rectangle intersection](docs/gallery/gallery-intersection-circle-rectangle.svg)
-
-![Edge-tangent rectangle intersection](docs/gallery/gallery-intersection-edge-tangent.svg)
-
-![Nested Nonzero intersection](docs/gallery/gallery-intersection-nested-nonzero.svg)
-
-![Nested EvenOdd intersection](docs/gallery/gallery-intersection-nested-evenodd.svg)
-
-![Bowtie and rectangle intersection](docs/gallery/gallery-intersection-bowtie-rectangle.svg)
-
-### ArrangementGraph Difference Studies
-
-These use the same three-panel format for subtraction, including holes,
-nested fill-rule cases, mixed curves, and self-crossing input.
-
-![Overlapping rectangle difference](docs/gallery/gallery-difference-rectangles.svg)
-
-![Circle and rectangle difference](docs/gallery/gallery-difference-circle-rectangle.svg)
-
-![Contained rectangle cutout](docs/gallery/gallery-difference-hole.svg)
-
-![Nested Nonzero difference](docs/gallery/gallery-difference-nested-nonzero.svg)
-
-![Nested EvenOdd difference](docs/gallery/gallery-difference-nested-evenodd.svg)
-
-![Bowtie and rectangle difference](docs/gallery/gallery-difference-bowtie-rectangle.svg)
-
 ### Stroke Caps
 
 ![Stroke caps](docs/gallery/gallery-stroke-caps.svg)
 
 Shows the same open cubic stroked with butt, square, and round caps.
-
-### Historical SVG 2 Join Comparisons
-
-These compare our public `stroke.subpath` output (blue outlines) with the
-[published SVG 2 illustrations](https://www.w3.org/TR/SVG2/painting.html#LineJoinShape).
-The original reference drawings are retained alongside or beneath the output;
-their geometry is not substituted for the computed outlines.
-
-![Miter and miter-clip comparison](docs/gallery/w3c-miter-limit.svg)
-
-For stroke width 35 and miter limit 3, `MiterClip` reaches the reference clip
-plane at x=227.5 exactly. The generator asserts this value.
-
-![Arcs with nested circles](docs/gallery/w3c-linejoin-construction-fallback.svg)
-
-![Arcs with disjoint circles](docs/gallery/w3c-linejoin-construction-fallback2.svg)
-
-The arc illustrations use approximate outlines and rounded construction guides,
-so they are visual checks, not exact numerical fixtures. For example, the
-disjoint reference's pink tip is at x=323.85, its circle guides meet at x=325,
-and our computed tip is at x=324.635836.
-
-![Arcs with parallel tangents](docs/gallery/w3c-linejoin-construction-fallback3.svg)
-
-The parallel case deliberately differs: our signed-offset contract uses a
-Round fallback rather than the proposal's rectangular extension.
-
-`arcs` was adopted for SVG 2 in September 2012 and `miter-clip` in February
-2015; both were removed from the editor's draft in March 2026. References,
-reproduction details, and comparison limitations are recorded with the
-[gallery fixture](scripts/gallery/w3c-join-reference/README.md).
 
 ### Dashed Strokes
 
@@ -94,12 +22,6 @@ Shows SVG-style dash extraction followed by geometric stroking with round caps.
 
 Shows a dashed stroke whose individual dash outlines are dashed and stroked
 again at a smaller scale.
-
-### Figure-Eight Band
-
-![Figure-eight band](docs/gallery/gallery-figure-eight-band.svg)
-
-Shows an asymmetric two-sided band around a closed figure-eight.
 
 ### Stretched Figure-Eight Bands
 
@@ -170,17 +92,10 @@ The original lettering is pale gray and its first offset is blue.
 Maps a path extracted from an SVG text sample into `(distance, offset)` space
 and then onto a fixed-radius coil with `offset.subpath_offset_map`.
 
-![Lazy dog offset decaying spiral](docs/gallery/gallery-lazy-dog-offset-decaying-spiral.svg)
+<img src="docs/gallery/gallery-lazy-dog-offset-decaying-spiral.svg" alt="Lazy dog offset decaying spiral" width="350" height="350">
 
 Uses the same text sample on a decaying spiral, with both radius and local
 offset shrinking by the same factor per turn.
-
-### Crescent Hull
-
-![Crescent hull](docs/gallery/gallery-crescent-hull.svg)
-
-Shows a crescent-shaped point cloud, a reference arc and chord, and the computed
-convex hull.
 
 ### Package Title Nine Offsets
 
@@ -195,3 +110,67 @@ pushed outward from the `SVG_PATH` text outline.
 
 Shows a dense snaking subpath cut by a text outline, with the pieces inside the
 outline removed.
+### ArrangementGraph Intersection Studies
+
+Each sheet shows the source operands, their shared arrangement graph, and the
+reconstructed intersection boundary.
+
+![Overlapping rectangle intersection](docs/gallery/gallery-intersection-rectangles.svg)
+
+![Circle and rectangle intersection](docs/gallery/gallery-intersection-circle-rectangle.svg)
+
+![Edge-tangent rectangle intersection](docs/gallery/gallery-intersection-edge-tangent.svg)
+
+![Nested Nonzero intersection](docs/gallery/gallery-intersection-nested-nonzero.svg)
+
+![Nested EvenOdd intersection](docs/gallery/gallery-intersection-nested-evenodd.svg)
+
+![Bowtie and rectangle intersection](docs/gallery/gallery-intersection-bowtie-rectangle.svg)
+
+### ArrangementGraph Difference Studies
+
+These use the same three-panel format for subtraction, including holes,
+nested fill-rule cases, mixed curves, and self-crossing input.
+
+![Overlapping rectangle difference](docs/gallery/gallery-difference-rectangles.svg)
+
+![Circle and rectangle difference](docs/gallery/gallery-difference-circle-rectangle.svg)
+
+![Contained rectangle cutout](docs/gallery/gallery-difference-hole.svg)
+
+![Nested Nonzero difference](docs/gallery/gallery-difference-nested-nonzero.svg)
+
+![Nested EvenOdd difference](docs/gallery/gallery-difference-nested-evenodd.svg)
+
+![Bowtie and rectangle difference](docs/gallery/gallery-difference-bowtie-rectangle.svg)
+
+### Historical SVG 2 Join Comparisons
+
+These compare our public `stroke.subpath` output (blue outlines) with the
+[published SVG 2 illustrations](https://www.w3.org/TR/SVG2/painting.html#LineJoinShape).
+The original reference drawings are retained alongside or beneath the output;
+their geometry is not substituted for the computed outlines.
+
+![Miter and miter-clip comparison](docs/gallery/w3c-miter-limit.svg)
+
+For stroke width 35 and miter limit 3, `MiterClip` reaches the reference clip
+plane at x=227.5 exactly. The generator asserts this value.
+
+![Arcs with nested circles](docs/gallery/w3c-linejoin-construction-fallback.svg)
+
+![Arcs with disjoint circles](docs/gallery/w3c-linejoin-construction-fallback2.svg)
+
+The arc illustrations use approximate outlines and rounded construction guides,
+so they are visual checks, not exact numerical fixtures. For example, the
+disjoint reference's pink tip is at x=323.85, its circle guides meet at x=325,
+and our computed tip is at x=324.635836.
+
+![Arcs with parallel tangents](docs/gallery/w3c-linejoin-construction-fallback3.svg)
+
+The parallel case deliberately differs: our signed-offset contract uses a
+Round fallback rather than the proposal's rectangular extension.
+
+`arcs` was adopted for SVG 2 in September 2012 and `miter-clip` in February
+2015; both were removed from the editor's draft in March 2026. References,
+reproduction details, and comparison limitations are recorded with the
+[gallery fixture](scripts/gallery/w3c-join-reference/README.md).
