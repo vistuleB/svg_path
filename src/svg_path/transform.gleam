@@ -367,10 +367,12 @@ pub fn skew_y_segment(
   segment(input, by: skew_y(degrees:))
 }
 
-/// Transform a segment, converting collapsed arcs into lines when possible.
+/// Transform a segment, allowing a collapsed arc to become one line segment.
 ///
 /// This returns a single segment. If a collapsed arc needs multiple line
 /// segments to preserve its motion, use `segment_to_subpath_with_arc_collapse`.
+/// Such a multi-line collapse returns `DegenerateArcTransform` here. Errors
+/// from matrix validation or source arc conversion are not suppressed.
 pub fn segment_with_arc_collapse(
   input: svg_path.Segment,
   by transform: Matrix,
@@ -415,9 +417,11 @@ pub fn segment_with_arc_collapse(
   }
 }
 
-/// Transform a segment, returning a subpath for graceful collapsed arc handling.
+/// Transform a segment, representing collapsed arcs with line segments.
 ///
 /// This can represent collapsed arcs as multiple line segments when needed.
+/// Matrix validation, source arc conversion, and subpath construction errors
+/// still propagate.
 pub fn segment_to_subpath_with_arc_collapse(
   input: svg_path.Segment,
   by transform: Matrix,
@@ -556,11 +560,13 @@ pub fn skew_y_subpath(
   subpath(input, by: skew_y(degrees:))
 }
 
-/// Transform a subpath, gracefully converting collapsed arcs when possible.
+/// Transform a subpath, replacing collapsed arcs with line segments.
 ///
 /// Collapsed arcs retain their directly transformed endpoints so neighboring
 /// segments remain continuous. Reconstruction uses strict endpoint matching;
 /// only closing a semantically closed subpath has a final wiggle fallback.
+/// Matrix validation, source arc conversion, and reconstruction errors still
+/// propagate; allowing arc collapse does not guarantee success.
 pub fn subpath_with_arc_collapse(
   subpath: svg_path.Subpath,
   by transform: Matrix,
@@ -630,8 +636,7 @@ pub fn path(
   }
 }
 
-/// Transform every subpath in a path, gracefully converting collapsed arcs
-/// when possible.
+/// Transform every subpath in a path, replacing collapsed arcs with lines.
 ///
 /// This is the path-level counterpart of `subpath_with_arc_collapse`.
 pub fn path_with_arc_collapse(

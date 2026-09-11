@@ -44,6 +44,9 @@ pub type Error {
 /// one corner radius is present, the missing radius uses the same value. Radii
 /// are clamped so they are no greater than half the rectangle extent. If either
 /// effective radius is zero, the rectangle is unrounded and starts at `(x, y)`.
+/// Negative dimensions or supplied corner radii return their corresponding
+/// `InvalidRect*` error. Zero width or height returns `DisabledRendering`,
+/// not an empty subpath.
 pub fn rect(
   x x: Float,
   y y: Float,
@@ -126,6 +129,8 @@ pub fn rect(
 ///
 /// The equivalent path starts at the 3 o'clock point and uses four quarter-arc
 /// segments.
+/// A negative radius returns `InvalidCircleRadius`; zero returns
+/// `DisabledRendering`, not an empty subpath.
 pub fn circle(
   cx cx: Float,
   cy cy: Float,
@@ -142,6 +147,8 @@ pub fn circle(
 ///
 /// The equivalent path starts at the 3 o'clock point and uses four quarter-arc
 /// segments.
+/// Negative radii return `InvalidEllipseRadiusX` or `InvalidEllipseRadiusY`.
+/// Either radius being zero returns `DisabledRendering`, not an empty subpath.
 pub fn ellipse(
   cx cx: Float,
   cy cy: Float,

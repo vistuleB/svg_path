@@ -241,11 +241,11 @@ pub type ParametricOptions {
   ParametricOptions(
     /// Maximum finite, positive sampled fitting error for one piece.
     tolerance: Float,
-    /// Number of interior fitting samples used for each candidate piece.
+    /// Number of interior fitting samples per candidate piece; at least two.
     samples_per_piece: Int,
-    /// Number of equal parameter pieces attempted before adaptive subdivision.
+    /// Positive number of equal parameter pieces before adaptive subdivision.
     initial_piece_count: Int,
-    /// Maximum recursive subdivision depth.
+    /// Non-negative maximum recursive subdivision depth; zero forbids refinement.
     max_depth: Int,
     /// Optional derivative function used to constrain endpoint tangents.
     tangent: Option(fn(Float) -> Point),
@@ -1090,6 +1090,9 @@ pub fn subpath(segments: List(Segment)) -> Result(Subpath, Error) {
 /// Create an open subpath using the given endpoint reconciliation policy.
 ///
 /// Empty segment lists still return `EmptySubpath`.
+/// Other construction rules are those of `subpath`, except that `policy`
+/// may repair endpoint gaps. Returns an error if the policy cannot reconcile
+/// a boundary or a custom replacement violates the `EndpointPolicy` contract.
 pub fn subpath_with(
   segments: List(Segment),
   policy endpoint_policy: EndpointPolicy,
@@ -1136,7 +1139,11 @@ pub fn subpath_polyline(points: List(Point)) -> Result(Subpath, Error) {
   }
 }
 
-/// Create an open polyline subpath, panicking if the point list is invalid.
+/// Create an open polyline subpath from at least two points.
+///
+/// Panics if fewer than two points are supplied. Points need not be distinct.
+/// This is the asserting counterpart of `subpath_polyline`, not a coordinate
+/// validation function.
 pub fn subpath_assert_polyline(points: List(Point)) -> Subpath {
   case subpath_polyline(points) {
     Ok(subpath) -> subpath
@@ -1166,7 +1173,11 @@ pub fn subpath_polygon(points: List(Point)) -> Result(Subpath, Error) {
   }
 }
 
-/// Create a closed polygon subpath, panicking if the point list is invalid.
+/// Create a closed polygon subpath from at least two points.
+///
+/// Panics if fewer than two points are supplied. Points need not be distinct,
+/// and the polygon need not be simple or have nonzero area. See
+/// `subpath_polygon` for closing-edge behavior and a non-panicking result.
 pub fn subpath_assert_polygon(points: List(Point)) -> Subpath {
   case subpath_polygon(points) {
     Ok(subpath) -> subpath
@@ -1181,6 +1192,9 @@ pub fn subpath_assert_polygon(points: List(Point)) -> Subpath {
 /// `default_parametric_options().initial_piece_count` pieces. Each piece is
 /// fitted with a cubic, then recursively bisected in parameter space until the
 /// maximum sampled fitting error is within tolerance.
+/// `from` and `to` must be finite and unequal; descending intervals are allowed.
+/// Otherwise returns `InvalidParametricInterval`. Fitting and construction
+/// errors propagate; this function does not guarantee a successful fit.
 pub fn subpath_from_parametric(
   from start: Float,
   to end: Float,
@@ -1200,6 +1214,9 @@ pub fn subpath_from_parametric(
 /// If `options.tangent` is `Some(tangent_function)`, each cubic is constrained
 /// to match the endpoint tangent directions returned by that function. If it is
 /// `None`, control points are fitted from samples while the endpoints are fixed.
+/// The interval restrictions are the same as for `subpath_from_parametric`.
+/// Options must satisfy the constraints documented on `ParametricOptions`;
+/// invalid options, failed fits, and exhausted refinement return errors.
 pub fn subpath_from_parametric_with(
   from start: Float,
   to end: Float,
@@ -1221,8 +1238,9 @@ pub fn subpath_from_parametric_with(
   subpath(segments)
 }
 
-/// Create an open subpath from a non-empty continuous list of segments,
-/// panicking if the segments are invalid.
+/// Create an open subpath from a non-empty continuous list of segments.
+///
+/// Panics if the list is empty or any consecutive endpoints differ exactly.
 ///
 /// This is useful for hand-authored paths where invalid continuity would be a
 /// programmer error. Use `subpath` when you want to handle construction errors.
@@ -1230,7 +1248,11 @@ pub fn subpath_assert(segments: List(Segment)) -> Subpath {
   subpath_assert_with(segments, policy: Strict)
 }
 
-/// Create an open subpath with an endpoint policy, panicking if construction fails.
+/// Create an open subpath with an endpoint policy.
+///
+/// Panics on any error from `subpath_with`: an empty input list, an endpoint
+/// gap the policy cannot reconcile, or a custom replacement that violates
+/// the `EndpointPolicy` contract. Use `subpath_with` to handle those errors.
 pub fn subpath_assert_with(
   segments: List(Segment),
   policy endpoint_policy: EndpointPolicy,
@@ -1298,6 +1320,10 @@ pub fn subpath_splice(
 }
 
 /// Replace a range of segments in a subpath using the given endpoint policy.
+///
+/// Index, deletion, start-point, and closure rules are those of `subpath_splice`.
+/// The policy reconciles resulting boundaries; errors from that reconciliation
+/// propagate, including violations of the `EndpointPolicy` custom contract.
 pub fn subpath_splice_with(
   subpath: Subpath,
   start start: Int,
@@ -1322,7 +1348,11 @@ pub fn subpath_splice_with(
   }
 }
 
-/// Replace a range of segments, panicking if the splice is invalid.
+/// Replace a range of segments, asserting the rules of `subpath_splice`.
+///
+/// Panics for a negative `start` or `delete`, a `start` beyond the segment
+/// count, or a result with discontinuous endpoints (including closure).
+/// Use `subpath_splice` for a non-panicking result.
 pub fn subpath_assert_splice(
   subpath: Subpath,
   start start: Int,
@@ -1332,7 +1362,11 @@ pub fn subpath_assert_splice(
   subpath_assert_splice_with(subpath, start:, delete:, insert:, policy: Strict)
 }
 
-/// Replace a range of segments with an endpoint policy, panicking if invalid.
+/// Replace a range of segments with an endpoint policy.
+///
+/// Panics on any error from `subpath_splice_with`: invalid index/count as
+/// described by `subpath_splice`, or failure to reconcile the resulting
+/// boundaries while preserving the subpath's closed state.
 pub fn subpath_assert_splice_with(
   subpath: Subpath,
   start start: Int,
@@ -2064,7 +2098,10 @@ pub fn subpath_set_closed_with(
   }
 }
 
-/// Set a subpath's semantic closed state, panicking if invalid.
+/// Set a subpath's semantic closed state, asserting `subpath_set_closed`.
+///
+/// Panics when closing a nonempty subpath whose end differs from its start.
+/// Opening always succeeds, and empty subpaths may be closed.
 pub fn subpath_assert_set_closed(
   subpath: Subpath,
   closed closed: Bool,
@@ -2072,7 +2109,12 @@ pub fn subpath_assert_set_closed(
   subpath_assert_set_closed_with(subpath, closed:, policy: Strict)
 }
 
-/// Set a subpath's semantic closed state with an endpoint policy, panicking if invalid.
+/// Set a subpath's semantic closed state with an endpoint policy.
+///
+/// Panics if closing-boundary reconciliation returns an error, including a
+/// custom-policy contract violation. Opening always succeeds; empty subpaths
+/// may be closed without invoking the policy. See `subpath_set_closed_with`
+/// for the non-panicking version and policy invocation rules.
 pub fn subpath_assert_set_closed_with(
   subpath: Subpath,
   closed closed: Bool,
@@ -2450,6 +2492,10 @@ pub fn subpath_append_segment(
 }
 
 /// Append a segment to an open subpath using the given endpoint policy.
+///
+/// Returns `AlreadyClosed` for a closed source. Otherwise follows
+/// `subpath_append_segment`, allowing the policy to reconcile endpoint gaps.
+/// Reconciliation errors propagate; the original subpath start is preserved.
 pub fn subpath_append_segment_with(
   subpath: Subpath,
   segment: Segment,
@@ -2464,7 +2510,10 @@ pub fn subpath_append_segment_with(
   }
 }
 
-/// Append a segment to an open subpath, panicking if invalid.
+/// Append a segment, asserting `subpath_append_segment`.
+///
+/// Panics if the source is closed or the new segment's start differs from the
+/// current end. Use `subpath_append_segment` for a non-panicking result.
 pub fn subpath_assert_append_segment(
   subpath: Subpath,
   segment: Segment,
@@ -2472,7 +2521,10 @@ pub fn subpath_assert_append_segment(
   subpath_assert_append_segment_with(subpath, segment, policy: Strict)
 }
 
-/// Append a segment with an endpoint policy, panicking if invalid.
+/// Append a segment with an endpoint policy.
+///
+/// Panics if the source is closed or endpoint reconciliation returns an error.
+/// See `subpath_append_segment_with` for the non-panicking version.
 pub fn subpath_assert_append_segment_with(
   subpath: Subpath,
   segment: Segment,
@@ -2495,6 +2547,10 @@ pub fn subpath_join(subpaths: List(Subpath)) -> Result(Subpath, Error) {
 }
 
 /// Join open subpaths using the given endpoint policy.
+///
+/// Returns `EmptySubpath` for an empty input list and `AlreadyClosed` if any
+/// input is closed. Follows `subpath_join`, except the policy may repair gaps;
+/// reconciliation errors propagate.
 pub fn subpath_join_with(
   subpaths: List(Subpath),
   policy endpoint_policy: EndpointPolicy,
@@ -2505,12 +2561,18 @@ pub fn subpath_join_with(
   }
 }
 
-/// Join open subpaths, panicking if invalid.
+/// Join open subpaths, asserting `subpath_join`.
+///
+/// Panics for an empty input list, a closed input subpath, or endpoint gaps
+/// that prevent continuous reconstruction. Use `subpath_join` to handle errors.
 pub fn subpath_assert_join(subpaths: List(Subpath)) -> Subpath {
   subpath_assert_join_with(subpaths, policy: Strict)
 }
 
-/// Join open subpaths with an endpoint policy, panicking if invalid.
+/// Join open subpaths with an endpoint policy.
+///
+/// Panics for an empty input list, a closed input subpath, or an error during
+/// endpoint reconciliation. See `subpath_join_with` for a non-panicking result.
 pub fn subpath_assert_join_with(
   subpaths: List(Subpath),
   policy endpoint_policy: EndpointPolicy,
@@ -2976,7 +3038,8 @@ pub fn segment_length(segment: Segment) -> Result(Float, Error) {
 /// corrected ellipse radius. No numerical integration or subdivision is used.
 /// These mathematical upper bounds are evaluated with ordinary floating-point
 /// arithmetic, not outward-rounded interval arithmetic, and can substantially
-/// overestimate length. Invalid arcs return `DegenerateArc`.
+/// overestimate length. Arcs rejected by `arc_center_data` return
+/// `DegenerateArc`; see that function for endpoint and radius restrictions.
 pub fn segment_length_upper_bound(segment: Segment) -> Result(Float, Error) {
   case segment {
     Line(start:, end:) -> Ok(distance(start, end))
@@ -3000,7 +3063,8 @@ pub fn segment_length_upper_bound(segment: Segment) -> Result(Float, Error) {
 /// vertices. Beziers use their control-point hull; arcs use tangent triangles
 /// spanning at most 90 degrees on the corrected ellipse, then their hull.
 /// This is an ordinary floating-point bound, not outward-rounded arithmetic.
-/// Invalid arcs return `DegenerateArc`.
+/// Arcs rejected by `arc_center_data` return `DegenerateArc`; see that function
+/// for endpoint and radius restrictions.
 pub fn segment_bounding_polygon(
   segment: Segment,
 ) -> Result(List(Point), Error) {
@@ -9564,6 +9628,11 @@ fn segment_from_bezier_data(data: bezier.BezierData) -> Segment {
 }
 
 /// Return an elliptical arc segment as center-parameter arc data.
+///
+/// Returns `DegenerateArc` for non-arc segments, coincident arc endpoints, or
+/// either absolute radius at or below `1e-9`. Uses `ellipse.endpoint_to_center`:
+/// negative radii are made positive, and radii too small to span the endpoints
+/// are enlarged. This does not replace degenerate arcs with lines.
 pub fn arc_center_data(
   segment: Segment,
 ) -> Result(ellipse.CenterArcData, Error) {
