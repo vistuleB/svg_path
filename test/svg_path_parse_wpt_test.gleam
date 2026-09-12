@@ -11,7 +11,6 @@
 import gleam/list
 import gleeunit
 import svg_path
-import svg_path/degeneracy
 import svg_path/parse
 import svg_path/serialize
 
@@ -70,7 +69,7 @@ pub fn wpt_negative_arc_radius_uses_absolute_value_test() {
   let assert Ok(path) = parse.path("M 200,300 A -50,50 0 0,1 300,300")
 
   assert serialize.path(path) == "M 200 300 A -50 50 0 0 1 300 300"
-  let path = degeneracy.path_normalize_svg_arcs(path)
+  let path = svg_path.path_normalize_svg_arcs(path)
   assert serialize.path(path) == "M 200 300 A 50 50 0 0 1 300 300"
 }
 
@@ -79,7 +78,7 @@ pub fn wpt_zero_arc_radius_becomes_line_test() {
   let assert Ok(path) = parse.path("M 200,250 A 0,0 0 0,1 300,250")
 
   assert serialize.path(path) == "M 200 250 A 0 0 0 0 1 300 250"
-  let path = degeneracy.path_normalize_svg_arcs(path)
+  let path = svg_path.path_normalize_svg_arcs(path)
   assert serialize.path(path) == "M 200 250 H 300"
 }
 
@@ -88,7 +87,7 @@ pub fn svg_same_endpoint_arc_is_omitted_test() {
   let assert Ok(path) = parse.path("M 20,30 A 10,10 0 1,1 20,30")
 
   assert serialize.path(path) == "M 20 30 A 10 10 0 1 1 20 30"
-  let path = degeneracy.path_normalize_svg_arcs(path)
+  let path = svg_path.path_normalize_svg_arcs(path)
   assert serialize.path(path) == "M 20 30"
 }
 

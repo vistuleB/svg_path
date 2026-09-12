@@ -343,7 +343,7 @@ pub fn segment_linearize_if_degenerate_preserves_cubic_backtracking_test() {
   assert list.length(lines) == 3
 }
 
-pub fn segment_linearize_if_degenerate_converts_zero_radius_arc_test() {
+pub fn segment_linearize_if_degenerate_rejects_zero_radius_arc_test() {
   let arc =
     svg_path.Arc(
       start: svg_path.Point(0.0, 0.0),
@@ -354,10 +354,8 @@ pub fn segment_linearize_if_degenerate_converts_zero_radius_arc_test() {
       end: svg_path.Point(10.0, 0.0),
     )
 
-  let assert Ok(Some([svg_path.Line(start:, end:)])) =
-    degeneracy.segment_linearize_if_degenerate(arc, 0.001)
-  assert start == svg_path.Point(0.0, 0.0)
-  assert end == svg_path.Point(10.0, 0.0)
+  assert degeneracy.segment_linearize_if_degenerate(arc, 0.001)
+    == Error(degeneracy.PathError(svg_path.DegenerateArc))
 }
 
 pub fn segment_linearize_if_degenerate_rejects_wide_curve_test() {

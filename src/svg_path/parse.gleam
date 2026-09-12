@@ -81,7 +81,7 @@ type State {
 /// point. Repeated closepath commands do not append additional empty subpaths.
 /// Arc arguments are preserved, including negative or zero radii and coincident
 /// endpoints. To apply SVG's arc omission and line-replacement rules explicitly,
-/// use `degeneracy.path_normalize_svg_arcs`.
+/// use `svg_path.path_normalize_svg_arcs`.
 pub fn path(input: String) -> Result(svg_path.Path, Error) {
   case string.trim(input) {
     "none" -> Ok(svg_path.path_empty())

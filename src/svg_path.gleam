@@ -1263,6 +1263,67 @@ pub fn subpath_segments(subpath: Subpath) -> List(Segment) {
   subpath.segments
 }
 
+/// Apply SVG's exact interpretation rules to one arc, without a tolerance.
+///
+/// Coincident endpoints omit the arc (`None`), even when a radius is zero.
+/// Otherwise a zero radius produces the straight endpoint-to-endpoint line;
+/// nonzero radii are made positive. Non-arcs are unchanged. This does not
+/// enlarge insufficient radii or approximate narrow ellipses.
+pub fn segment_normalize_svg_arc(segment: Segment) -> Option(Segment) {
+  case segment {
+    Arc(start:, radius:, end:, ..) -> {
+      case
+        number.is_zero(start.x -. end.x) && number.is_zero(start.y -. end.y)
+      {
+        True -> None
+        False -> {
+          case number.is_zero(radius.x) || number.is_zero(radius.y) {
+            True -> Some(Line(start:, end:))
+            False ->
+              Some(
+                Arc(
+                  ..segment,
+                  radius: Point(
+                    float.absolute_value(radius.x),
+                    float.absolute_value(radius.y),
+                  ),
+                ),
+              )
+          }
+        }
+      }
+    }
+    _ -> Some(segment)
+  }
+}
+
+/// Normalize SVG arcs while preserving subpath boundaries, start, and closure.
+/// An entirely omitted subpath remains an empty subpath, not a zero-length line.
+/// This does not remove zero-length lines or simplify other geometry.
+pub fn subpath_normalize_svg_arcs(subpath: Subpath) -> Subpath {
+  let segments =
+    subpath_segments(subpath)
+    |> list.filter_map(fn(segment) {
+      case segment_normalize_svg_arc(segment) {
+        None -> Error(Nil)
+        Some(segment) -> Ok(segment)
+      }
+    })
+  let normalized = case segments {
+    [] -> subpath_empty(at: subpath_start(subpath))
+    _ -> subpath_assert(segments)
+  }
+  case subpath_is_closed(subpath) {
+    True -> subpath_assert_close(normalized)
+    False -> normalized
+  }
+}
+
+/// Apply exact SVG arc normalization independently to every subpath.
+pub fn path_normalize_svg_arcs(path: Path) -> Path {
+  Path(list.map(path_subpaths(path), subpath_normalize_svg_arcs))
+}
+
 /// Remove zero-length line segments from a subpath.
 ///
 /// If cleanup would remove every segment, one zero-length line is preserved so
@@ -1869,9 +1930,29 @@ fn force_subpath_endpoints(
 ///
 /// Non-arc segments are returned unchanged as a single-item list. An arc may
 /// become several cubic Bezier segments.
+/// This infallible conversion retains its historical fallback: if ellipse
+/// conversion fails, it returns a straight cubic between the endpoints.
+/// Use `segment_arcs_to_cubic_beziers_strict` to report `DegenerateArc` instead.
 pub fn segment_arcs_to_cubic_beziers(segment: Segment) -> List(Segment) {
+  case segment_arcs_to_cubic_beziers_strict(segment) {
+    Ok(segments) -> segments
+    Error(_) -> [line_to_cubic(segment_start(segment), segment_end(segment))]
+  }
+}
+
+/// Approximate an arc with cubics, returning `DegenerateArc` if conversion fails.
+///
+/// Non-arcs are unchanged. This uses the same quarter-turn approximation and
+/// exact endpoint reconciliation as `segment_arcs_to_cubic_beziers`, but never
+/// substitutes a straight cubic on failure. Strictness concerns error recovery,
+/// not approximation accuracy. Coincident endpoints and either absolute radius
+/// at or below `1e-9` are rejected; negative and insufficient radii follow the
+/// correction rules of `arc_center_data`.
+pub fn segment_arcs_to_cubic_beziers_strict(
+  segment: Segment,
+) -> Result(List(Segment), Error) {
   case segment {
-    Line(..) | QuadraticBezier(..) | CubicBezier(..) -> [segment]
+    Line(..) | QuadraticBezier(..) | CubicBezier(..) -> Ok([segment])
     Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:) -> {
       case
         ellipse.arc_to_cubic_beziers(
@@ -1883,8 +1964,8 @@ pub fn segment_arcs_to_cubic_beziers(segment: Segment) -> List(Segment) {
           end: to_ellipse_point(end),
         )
       {
-        Ok(cubics) -> cubic_segments_from_ellipse(cubics, start, end)
-        Error(_) -> [line_to_cubic(start, end)]
+        Ok(cubics) -> Ok(cubic_segments_from_ellipse(cubics, start, end))
+        Error(_) -> Error(DegenerateArc)
       }
     }
   }
@@ -1895,6 +1976,8 @@ pub fn segment_arcs_to_cubic_beziers(segment: Segment) -> List(Segment) {
 /// Lines and quadratic Beziers are converted exactly. Cubic Beziers are
 /// preserved. Elliptical arcs are approximated with one or more cubic Beziers,
 /// split into chunks of at most a quarter turn.
+/// Arc conversion failures use the straight-cubic fallback documented by
+/// `segment_arcs_to_cubic_beziers`.
 pub fn subpath_to_cubic_beziers(subpath: Subpath) -> Subpath {
   Subpath(
     start: subpath.start,
@@ -1914,6 +1997,8 @@ pub fn path_to_cubic_beziers(path: Path) -> Path {
 ///
 /// Lines and quadratic Beziers are converted exactly. Cubic Beziers are
 /// returned unchanged. Arcs may become several cubic Bezier segments.
+/// Arc conversion failures use the straight-cubic fallback documented by
+/// `segment_arcs_to_cubic_beziers`.
 pub fn segment_to_cubic_beziers(segment: Segment) -> List(Segment) {
   case segment {
     Line(start:, end:) -> [line_to_cubic(start, end)]
@@ -1923,6 +2008,43 @@ pub fn segment_to_cubic_beziers(segment: Segment) -> List(Segment) {
     CubicBezier(..) -> [segment]
     Arc(..) -> segment_arcs_to_cubic_beziers(segment)
   }
+}
+
+/// Convert a segment to cubics, returning `DegenerateArc` on arc failure.
+/// Non-arcs use the exact conversions of `segment_to_cubic_beziers`.
+/// Arcs use `segment_arcs_to_cubic_beziers_strict`; strictness does not make
+/// their cubic approximation exact or introduce an accuracy tolerance.
+pub fn segment_to_cubic_beziers_strict(
+  segment: Segment,
+) -> Result(List(Segment), Error) {
+  case segment {
+    Arc(..) -> segment_arcs_to_cubic_beziers_strict(segment)
+    _ -> Ok(segment_to_cubic_beziers(segment))
+  }
+}
+
+/// Convert a subpath to cubics, stopping at the first arc-conversion error.
+/// Preserves the start and closed flag, including for empty subpaths. No
+/// partial converted subpath or fallback geometry is returned on failure.
+pub fn subpath_to_cubic_beziers_strict(
+  subpath: Subpath,
+) -> Result(Subpath, Error) {
+  use segments <- result.try(list.try_map(
+    subpath.segments,
+    segment_to_cubic_beziers_strict,
+  ))
+  Ok(Subpath(..subpath, segments: list.flatten(segments)))
+}
+
+/// Convert a path to cubics, stopping at the first arc-conversion error.
+/// Subpath order, starts, and closed flags are preserved. Uses the same
+/// approximation as `path_to_cubic_beziers`, without straight-cubic recovery.
+pub fn path_to_cubic_beziers_strict(path: Path) -> Result(Path, Error) {
+  use subpaths <- result.try(list.try_map(
+    path.subpaths,
+    subpath_to_cubic_beziers_strict,
+  ))
+  Ok(Path(subpaths:))
 }
 
 /// Fit a cubic Bezier segment with fixed endpoints and endpoint tangents.
@@ -1996,8 +2118,9 @@ pub fn fit_cubic_with_endpoints(
 /// Approximate a segment with one or more straight lines.
 ///
 /// Lines are returned unchanged. Beziers and arcs are subdivided until each
-/// resulting chord is within the default geometric tolerance. Degenerate arcs
-/// fall back to a straight line between their endpoints.
+/// resulting chord is within the default geometric tolerance. Arcs rejected by
+/// `arc_center_data` return `DegenerateArc`; SVG-specific replacements require
+/// explicit normalization through `svg_path.path_normalize_svg_arcs`.
 pub fn segment_to_lines(segment: Segment) -> Result(List(Segment), Error) {
   segment_to_lines_with(segment, options: default_linearize_options())
 }
@@ -9315,7 +9438,7 @@ fn segment_to_lines_valid_options(
       bezier_segment_to_lines(segment, options, depth: 0)
     Arc(start:, end:, ..) -> {
       case arc_center_data(segment) {
-        Error(_) -> Ok([Line(start:, end:)])
+        Error(error) -> Error(error)
         Ok(arc) -> arc_to_lines(arc, start, end, options, depth: 0)
       }
     }

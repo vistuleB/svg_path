@@ -2763,7 +2763,7 @@ pub fn segment_to_lines_approximates_arcs_within_tolerance_test() {
   assert sampled_segment_within_lines(arc, lines, tolerance, samples: 500)
 }
 
-pub fn segment_to_lines_degenerate_arc_falls_back_to_line_test() {
+pub fn segment_to_lines_rejects_undefined_arc_test() {
   let start = svg_path.Point(0.0, 0.0)
   let end = svg_path.Point(10.0, 0.0)
   let arc =
@@ -2776,7 +2776,7 @@ pub fn segment_to_lines_degenerate_arc_falls_back_to_line_test() {
       end:,
     )
 
-  assert svg_path.segment_to_lines(arc) == Ok([svg_path.Line(start:, end:)])
+  assert svg_path.segment_to_lines(arc) == Error(svg_path.DegenerateArc)
 }
 
 pub fn segment_to_lines_tighter_tolerance_does_not_use_fewer_lines_test() {

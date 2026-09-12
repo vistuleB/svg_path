@@ -15,11 +15,13 @@ pub fn negative_zero_length_returns_exact_start_parameter_test() {
     == Ok(svg_path.SubpathParameter(0, 0.0))
 }
 
-pub fn negative_zero_radius_degenerates_to_line_test() {
+pub fn negative_zero_radius_requires_explicit_svg_normalization_test() {
   let start = svg_path.Point(1.0, 1.0)
   let end = svg_path.Point(2.0, 2.0)
   let arc =
     svg_path.Arc(start, svg_path.Point(-0.0, 1.0), 0.0, False, True, end)
   assert degeneracy.segment_linearize_if_degenerate(arc, tolerance: 0.0)
-    == Ok(Some([svg_path.Line(start, end)]))
+    == Error(degeneracy.PathError(svg_path.DegenerateArc))
+  assert svg_path.segment_normalize_svg_arc(arc)
+    == Some(svg_path.Line(start, end))
 }

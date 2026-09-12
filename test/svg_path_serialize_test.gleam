@@ -3,7 +3,6 @@ import gleam/list
 import gleam/string
 import gleeunit
 import svg_path
-import svg_path/degeneracy
 import svg_path/parse
 import svg_path/serialize
 
@@ -1395,7 +1394,7 @@ pub fn parser_tracked_relative_coincident_arc_does_not_invent_geometry_test() {
   let rounded = svg_path.Point(0.3, 0.0)
   assert svg_path.subpath_segments(parsed)
     == [svg_path.Arc(..arc, start: rounded, end: rounded)]
-  assert degeneracy.subpath_normalize_svg_arcs(parsed)
+  assert svg_path.subpath_normalize_svg_arcs(parsed)
     == svg_path.subpath_empty(at: rounded)
 }
 
@@ -1408,7 +1407,7 @@ pub fn relative_coincident_zero_radius_arc_terminates_test() {
     let assert Ok(parsed) = parse.path(encoded)
     assert parse.path(serialize.path(source)) == Ok(parsed)
     assert parsed == source
-    assert degeneracy.path_normalize_svg_arcs(parsed)
+    assert svg_path.path_normalize_svg_arcs(parsed)
       == svg_path.subpath_as_path(svg_path.subpath_empty(at: point))
     assert string.split(encoded, on: "a") |> list.length == 2
   })

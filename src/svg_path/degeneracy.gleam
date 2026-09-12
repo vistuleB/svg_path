@@ -1,4 +1,8 @@
 //// Degenerate and nearly-degenerate geometry cleanup.
+////
+//// Arcs must determine ellipse geometry accepted by `svg_path.arc_center_data`.
+//// Undefined arcs return errors; SVG's zero-radius line replacement and
+//// coincident-endpoint omission are opt-in operations in `svg_path`.
 
 import gleam/float
 import gleam/list
@@ -33,74 +37,6 @@ pub type Error {
   ConvexHullError(error: convex_hull.Error)
 }
 
-/// Apply SVG's exact interpretation rules to one arc, without a tolerance.
-///
-/// Coincident endpoints omit the arc (`None`), even when a radius is zero.
-/// Otherwise a zero radius produces the straight endpoint-to-endpoint line;
-/// nonzero radii are made positive. Non-arcs are unchanged. This does not
-/// enlarge insufficient radii or approximate narrow ellipses.
-pub fn segment_normalize_svg_arc(
-  segment: svg_path.Segment,
-) -> Option(svg_path.Segment) {
-  case segment {
-    svg_path.Arc(start:, radius:, end:, ..) -> {
-      case
-        number.is_zero(start.x -. end.x) && number.is_zero(start.y -. end.y)
-      {
-        True -> None
-        False -> {
-          case number.is_zero(radius.x) || number.is_zero(radius.y) {
-            True -> Some(svg_path.Line(start:, end:))
-            False ->
-              Some(
-                svg_path.Arc(
-                  ..segment,
-                  radius: svg_path.Point(
-                    float.absolute_value(radius.x),
-                    float.absolute_value(radius.y),
-                  ),
-                ),
-              )
-          }
-        }
-      }
-    }
-    _ -> Some(segment)
-  }
-}
-
-/// Normalize SVG arcs while preserving subpath boundaries, start, and closure.
-/// An entirely omitted subpath remains an empty subpath, not a zero-length line.
-/// This does not remove zero-length lines or simplify other geometry.
-pub fn subpath_normalize_svg_arcs(
-  subpath: svg_path.Subpath,
-) -> svg_path.Subpath {
-  let segments =
-    svg_path.subpath_segments(subpath)
-    |> list.filter_map(fn(segment) {
-      case segment_normalize_svg_arc(segment) {
-        None -> Error(Nil)
-        Some(segment) -> Ok(segment)
-      }
-    })
-  let normalized = case segments {
-    [] -> svg_path.subpath_empty(at: svg_path.subpath_start(subpath))
-    _ -> svg_path.subpath_assert(segments)
-  }
-  case svg_path.subpath_is_closed(subpath) {
-    True -> svg_path.subpath_assert_close(normalized)
-    False -> normalized
-  }
-}
-
-/// Apply exact SVG arc normalization independently to every subpath.
-pub fn path_normalize_svg_arcs(path: svg_path.Path) -> svg_path.Path {
-  svg_path.Path(list.map(
-    svg_path.path_subpaths(path),
-    subpath_normalize_svg_arcs,
-  ))
-}
-
 /// Replace maximal contiguous line-degenerate windows in a subpath.
 ///
 /// Each selected window preserves its start and end and the two longitudinal
@@ -117,6 +53,9 @@ pub fn normalize_degenerate_segments(
   case tolerance <. 0.0 || !number.is_finite(tolerance) {
     True -> Error(InvalidTolerance(tolerance))
     False -> {
+      use _ <- result.try(
+        validate_arc_geometry(svg_path.subpath_segments(subpath)),
+      )
       use segments <- result.try(
         colinearize_segments(
           svg_path.subpath_segments(subpath),
@@ -137,6 +76,23 @@ pub fn normalize_degenerate_segments(
           |> result.map_error(PathError)
       }
     }
+  }
+}
+
+// Validate before constructing a hull: hull/conversion helpers may otherwise
+// replace an undefined arc with its chord before this module can reject it.
+fn validate_arc_geometry(
+  segments: List(svg_path.Segment),
+) -> Result(Nil, Error) {
+  case segments {
+    [] -> Ok(Nil)
+    [svg_path.Arc(..) as arc, ..rest] -> {
+      use _ <- result.try(
+        svg_path.arc_center_data(arc) |> result.map_error(PathError),
+      )
+      validate_arc_geometry(rest)
+    }
+    [_, ..rest] -> validate_arc_geometry(rest)
   }
 }
 
@@ -503,6 +459,8 @@ fn degenerate_traversal(
 /// `Ok(None)`. The tolerance must be finite and non-negative; a tolerance of
 /// `0.0` collapses the segment only when it lies exactly on a line strip of
 /// width zero.
+/// Arcs rejected by `svg_path.arc_center_data` return `PathError(DegenerateArc)`;
+/// this function does not apply SVG-specific line/omission fallbacks.
 pub fn segment_linearize_if_degenerate(
   segment: svg_path.Segment,
   tolerance tolerance: Float,
@@ -590,28 +548,21 @@ fn segment_degenerate_lines_valid(
         cubic_degenerate_breaks(start, control1, control2, end, start),
         tolerance,
       )
-    svg_path.Arc(start:, radius:, end:, ..) -> {
-      case number.is_zero(radius.x) || number.is_zero(radius.y) {
-        True -> {
-          case start == end {
-            True -> Ok(Some([]))
-            False -> Ok(Some([svg_path.Line(start:, end:)]))
-          }
-        }
-        False -> {
-          use lines <- result.try(
-            svg_path.segment_to_lines_with(
-              segment,
-              options: svg_path.LinearizeOptions(
-                tolerance:,
-                max_depth: svg_path.default_linearize_options().max_depth,
-              ),
-            )
-            |> result.map_error(PathError),
-          )
-          degenerate_line_list(lines, tolerance)
-        }
-      }
+    svg_path.Arc(..) -> {
+      use _ <- result.try(
+        svg_path.arc_center_data(segment) |> result.map_error(PathError),
+      )
+      use lines <- result.try(
+        svg_path.segment_to_lines_with(
+          segment,
+          options: svg_path.LinearizeOptions(
+            tolerance:,
+            max_depth: svg_path.default_linearize_options().max_depth,
+          ),
+        )
+        |> result.map_error(PathError),
+      )
+      degenerate_line_list(lines, tolerance)
     }
   }
 }

@@ -48,6 +48,8 @@ pub type Error {
 /// grown one segment at a time, and the largest prefix certified to fit in a
 /// strip of the requested width is selected first. A `0.0` tolerance collapses
 /// a window only when its strip width is exactly zero.
+/// Undefined ellipse geometry returns an error. SVG-specific arc replacements
+/// are available separately through `svg_path.path_normalize_svg_arcs`.
 pub fn normalize_degenerate_segments(
   subpath: svg_path.Subpath,
   tolerance tolerance: Float,

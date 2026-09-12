@@ -681,6 +681,31 @@ For conditional line replacement, use
 geometry is not line-degenerate, or `Ok(Some(lines))` for its line replacement,
 preserving backtracking. Errors use `degeneracy.Error`.
 
+These helpers require defined ellipse geometry. Zero-radius arcs and arcs with
+coincident endpoints return an error rather than silently becoming lines.
+
+### Explicit SVG Arc Normalization
+
+Parsing preserves arc arguments, including signed radii, zero radii, and
+coincident endpoints. To request SVG's special interpretation rules, use
+`svg_path.segment_normalize_svg_arc`,
+`svg_path.subpath_normalize_svg_arcs`, or
+`svg_path.path_normalize_svg_arcs`.
+
+Coincident-endpoint arcs are omitted; otherwise zero-radius arcs become lines,
+and negative radii become positive. Subpath starts, boundaries, and closed flags
+are preserved, including when an entire subpath becomes empty. These operations
+use no tolerance, do not enlarge insufficient radii, and do not remove existing
+zero-length lines. They are never applied automatically by the parser.
+
+The existing cubic converters retain their straight-cubic recovery on arc
+conversion failure. Use `segment_arcs_to_cubic_beziers_strict`,
+`segment_to_cubic_beziers_strict`, `subpath_to_cubic_beziers_strict`, or
+`path_to_cubic_beziers_strict` from `svg_path` to return a `Result` instead:
+undefined arcs produce `Error(DegenerateArc)` without fallback geometry.
+Strictness concerns error recovery, not approximation accuracy; valid arcs use
+the same quarter-turn cubic approximation in both modes.
+
 ### Optimization Over Segments
 
 Use `segment_minimize` to find the segment parameter where a scalar function of
