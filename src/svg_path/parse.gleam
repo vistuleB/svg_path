@@ -4,7 +4,6 @@
 //// comma and whitespace separators, compact signed numbers, relative commands,
 //// implicit repeated commands, smooth curves, and arcs.
 
-import gleam/float
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
@@ -80,6 +79,9 @@ type State {
 /// closed, inserting a straight line back to the subpath start when needed.
 /// Drawing commands after closepath start a new subpath at that same start
 /// point. Repeated closepath commands do not append additional empty subpaths.
+/// Arc arguments are preserved, including negative or zero radii and coincident
+/// endpoints. To apply SVG's arc omission and line-replacement rules explicitly,
+/// use `degeneracy.path_normalize_svg_arcs`.
 pub fn path(input: String) -> Result(svg_path.Path, Error) {
   case string.trim(input) {
     "none" -> Ok(svg_path.path_empty())
@@ -613,26 +615,18 @@ fn append_svg_arc(
   sweep: Bool,
   end: svg_path.Point,
 ) -> Result(State, LocatedError) {
-  let radius_x = float.absolute_value(radius_x)
-  let radius_y = float.absolute_value(radius_y)
-
-  case end == state.current, radius_x == 0.0 || radius_y == 0.0 {
-    True, _ -> Ok(clear_curve_controls(state))
-    False, True -> append_line_to(state, end)
-    False, False ->
-      append_segment(
-        state,
-        svg_path.Arc(
-          start: state.current,
-          radius: svg_path.Point(radius_x, radius_y),
-          x_axis_rotation:,
-          large_arc:,
-          sweep:,
-          end:,
-        ),
-        end,
-      )
-  }
+  append_segment(
+    state,
+    svg_path.Arc(
+      start: state.current,
+      radius: svg_path.Point(radius_x, radius_y),
+      x_axis_rotation:,
+      large_arc:,
+      sweep:,
+      end:,
+    ),
+    end,
+  )
 }
 
 fn parse_close(

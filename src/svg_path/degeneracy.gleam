@@ -33,6 +33,74 @@ pub type Error {
   ConvexHullError(error: convex_hull.Error)
 }
 
+/// Apply SVG's exact interpretation rules to one arc, without a tolerance.
+///
+/// Coincident endpoints omit the arc (`None`), even when a radius is zero.
+/// Otherwise a zero radius produces the straight endpoint-to-endpoint line;
+/// nonzero radii are made positive. Non-arcs are unchanged. This does not
+/// enlarge insufficient radii or approximate narrow ellipses.
+pub fn segment_normalize_svg_arc(
+  segment: svg_path.Segment,
+) -> Option(svg_path.Segment) {
+  case segment {
+    svg_path.Arc(start:, radius:, end:, ..) -> {
+      case
+        number.is_zero(start.x -. end.x) && number.is_zero(start.y -. end.y)
+      {
+        True -> None
+        False -> {
+          case number.is_zero(radius.x) || number.is_zero(radius.y) {
+            True -> Some(svg_path.Line(start:, end:))
+            False ->
+              Some(
+                svg_path.Arc(
+                  ..segment,
+                  radius: svg_path.Point(
+                    float.absolute_value(radius.x),
+                    float.absolute_value(radius.y),
+                  ),
+                ),
+              )
+          }
+        }
+      }
+    }
+    _ -> Some(segment)
+  }
+}
+
+/// Normalize SVG arcs while preserving subpath boundaries, start, and closure.
+/// An entirely omitted subpath remains an empty subpath, not a zero-length line.
+/// This does not remove zero-length lines or simplify other geometry.
+pub fn subpath_normalize_svg_arcs(
+  subpath: svg_path.Subpath,
+) -> svg_path.Subpath {
+  let segments =
+    svg_path.subpath_segments(subpath)
+    |> list.filter_map(fn(segment) {
+      case segment_normalize_svg_arc(segment) {
+        None -> Error(Nil)
+        Some(segment) -> Ok(segment)
+      }
+    })
+  let normalized = case segments {
+    [] -> svg_path.subpath_empty(at: svg_path.subpath_start(subpath))
+    _ -> svg_path.subpath_assert(segments)
+  }
+  case svg_path.subpath_is_closed(subpath) {
+    True -> svg_path.subpath_assert_close(normalized)
+    False -> normalized
+  }
+}
+
+/// Apply exact SVG arc normalization independently to every subpath.
+pub fn path_normalize_svg_arcs(path: svg_path.Path) -> svg_path.Path {
+  svg_path.Path(list.map(
+    svg_path.path_subpaths(path),
+    subpath_normalize_svg_arcs,
+  ))
+}
+
 /// Replace maximal contiguous line-degenerate windows in a subpath.
 ///
 /// Each selected window preserves its start and end and the two longitudinal
