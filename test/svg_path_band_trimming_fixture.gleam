@@ -109,7 +109,7 @@ fn panel(
   <> ")\">\n"
   <> "    <path d=\""
   <> serialize.path(band)
-  <> "\" fill=\"#bbf7d0\" stroke=\"#14532d\" stroke-width=\"3.2\" vector-effect=\"non-scaling-stroke\" stroke-linejoin=\"round\" />\n"
+  <> "\" fill=\"#bbf7d0\" stroke=\"#14532d\" stroke-width=\"2.592\" vector-effect=\"non-scaling-stroke\" stroke-linejoin=\"round\" />\n"
   <> "    <path d=\""
   <> serialize.subpath(source)
   <> "\" fill=\"none\" stroke=\"#be123c\" stroke-width=\"2.2\" vector-effect=\"non-scaling-stroke\" stroke-dasharray=\"7 6\" stroke-linecap=\"round\" />\n"

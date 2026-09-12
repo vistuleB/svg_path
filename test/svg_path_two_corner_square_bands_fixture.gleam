@@ -36,7 +36,7 @@ fn band(
   let assert Ok(band) =
     offset.subpath_band_with(
       source,
-      inner_offset: 1.7,
+      inner_offset: 1.6,
       outer_offset: 1.8,
       join: offset.Round,
       cap: offset.Butt,
@@ -131,7 +131,7 @@ fn panel(
   <> "  </g>\n"
   <> "  <text x=\""
   <> float.to_string(center_x)
-  <> "\" y=\"0.38\" font-family=\"sans-serif\" font-size=\"0.16\" font-weight=\"600\" fill=\"#111827\" text-anchor=\"middle\">"
+  <> "\" y=\"0.38\" font-family=\"sans-serif\" font-size=\"0.1936\" font-weight=\"600\" fill=\"#111827\" text-anchor=\"middle\">"
   <> label
   <> "</text>\n"
 }

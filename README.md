@@ -1622,14 +1622,14 @@ The cusp switches act before joint band trimming. The four-concave-corner
 example below holds `in_band: True` while changing the two side-local switches:
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v1.0.0/figures/band_cusp_trimming.svg" alt="Band trimming with both, one, and neither side-local cusp pass enabled">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/band_cusp_trimming.svg" alt="Band trimming with both, one, and neither side-local cusp pass enabled">
 </center>
 
 The figure-eight below holds both cusp switches at `True` and changes only the
 final joint pass:
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v1.0.0/figures/band_in_band_trimming.svg" alt="Figure-eight band with in-band trimming disabled and enabled">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/markdown-assets/figures/band_in_band_trimming.svg" alt="Figure-eight band with in-band trimming disabled and enabled">
 </center>
 
 All three band switches default to `True`. Turning a stage off is useful for
