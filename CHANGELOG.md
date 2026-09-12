@@ -9,6 +9,17 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
+## 1.0.0 - 2026-09-12
+
+### Stable release
+
+- Established the public API from v0.48.0 as the v1.0.0 baseline. This release
+  introduces no additional API or geometry algorithm changes.
+- Public API compatibility now follows semantic versioning: breaking changes
+  require a new major version. Documented numerical tolerances and bounded
+  intersection-search limitations remain part of the existing contracts.
+- Pinned README figures to the immutable `assets-v1.0.0` release tag.
+
 ## 0.48.0 - 2026-09-11
 
 ### Breaking API changes
