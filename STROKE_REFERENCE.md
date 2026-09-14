@@ -46,16 +46,21 @@ caps at both ends.
 
 ## Joins
 
-`stroke-linejoin` values:
+Join styles supported by this package:
 
 - `miter`: extend outer stroke edges until they meet; if the miter limit is
   exceeded, fall back to bevel.
 - `round`: circular sector centered at the join point.
 - `bevel`: triangle joining the outer corners of adjacent stroked segments.
-- `miter-clip`: SVG 2 value; like miter, but clip instead of bevel on miter-limit
-  overflow. Marked at risk / not widely implemented.
-- `arcs`: SVG 2 value; uses arcs matching outer-edge curvature. Also at risk /
-  not widely implemented.
+- `miter-clip`: historical SVG 2 proposal; like miter, but clip instead of bevel
+  on miter-limit overflow.
+- `arcs`: historical SVG 2 proposal; uses arcs matching outer-edge curvature.
+
+The latter two were removed from the SVG 2 editor's draft in March 2026.
+The package retains them as geometric outline operations; it does not rely on
+browser support for those attribute values. The
+[README join discussion](README.md#stroke-styles) records their specification
+history, construction rules, and fallback policies.
 
 `stroke-miterlimit` is a multiple of stroke width. SVG 2 defines miter length
 from the join angle:
@@ -66,9 +71,10 @@ miter length = stroke-width / sin(theta / 2)
 
 For `miter`, if `miter length / stroke-width > stroke-miterlimit`, use bevel.
 
-Current package implication: `Miter`, `Round`, and `Bevel` are the supported
-join set. `miter-clip` and `arcs` remain deferred unless users ask for exact
-SVG 2 edge behavior.
+The public `stroke.Join` and `offset.Join` types support `Miter`, `Round`,
+`Bevel`, `MiterClip`, and `Arcs`. The last two use the historical SVG 2
+constructions with the offset-specific fallback policies documented in the
+README.
 
 ## Dash Arrays
 
@@ -210,7 +216,6 @@ Deferred:
 - CSS parsing of comma/space dash syntax.
 - Percentage dash values.
 - `pathLength` unless added as an explicit option.
-- `miter-clip` and `arcs` joins.
 - SVG Markers Level 1 segment/repeating marker extensions.
 - Full marker element rendering. A geometry-first helper should probably return
   marker placement records first, not render marker contents.

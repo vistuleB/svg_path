@@ -34,7 +34,7 @@ the input geometry with a polygonal approximation.
 the Gleam standard library.
 
 ```sh
-gleam add svg_path@0
+gleam add svg_path
 ```
 
 ```gleam
@@ -583,8 +583,10 @@ deterministic: each arc chunk spans no more than 90 degrees. This is the common
 practical SVG arc-to-cubic approximation and is usually more than adequate for
 rendering and interchange.
 
-If you want every segment represented as cubic Bezier curves, use the stricter
-helpers instead. Lines and quadratic Beziers are converted exactly.
+If you want every segment represented as cubic Bezier curves, use the
+all-cubic helpers instead. Lines and quadratic Beziers are converted exactly.
+These retain the same arc-conversion fallback; the `_strict` variants described
+below report conversion errors instead.
 
 ```gleam
 svg_path.segment_to_cubic_beziers(segment)
@@ -607,7 +609,9 @@ The `_with` variants accept `LinearizeOptions(tolerance:, max_depth:)`. The
 default tolerance is `0.01` coordinate units and the default recursion limit is
 20. Beziers are adaptively subdivided using their control points' distance from
 each chord. Arcs use a conservative bound based on their radius and angular
-span. Degenerate arcs become lines between their endpoints.
+span. Arcs without defined ellipse geometry return `Error(DegenerateArc)`.
+To apply SVG's zero-radius line replacement and coincident-endpoint omission
+first, explicitly call the appropriate `_normalize_svg_arcs` helper.
 
 Subpath order, start points, closed/open state, and move-only subpaths are
 preserved. Conversion returns an error when the requested tolerance cannot be
