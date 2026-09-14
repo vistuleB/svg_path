@@ -2,7 +2,6 @@ import gleam/list
 import gleam/option.{None, Some}
 import svg_path
 import svg_path/degeneracy
-import svg_path/effects
 import svg_path/parse
 import svg_path/serialize
 
@@ -221,8 +220,6 @@ pub fn geometric_degeneracy_rejects_undefined_arcs_test() {
         == Error(degeneracy.PathError(svg_path.DegenerateArc))
       assert degeneracy.normalize_degenerate_segments(subpath, 0.001)
         == Error(degeneracy.PathError(svg_path.DegenerateArc))
-      assert effects.normalize_degenerate_segments(subpath, 0.001)
-        == Error(effects.PathError(svg_path.DegenerateArc))
     },
   )
 }

@@ -619,7 +619,7 @@ pub fn normalize_degenerate_segments_replaces_degenerate_segments_test() {
     ])
 
   let assert Ok(cleaned) =
-    effects.normalize_degenerate_segments(subpath, tolerance: 0.001)
+    degeneracy.normalize_degenerate_segments(subpath, tolerance: 0.001)
   assert list.length(svg_path.subpath_segments(cleaned)) == 2
 }
 
@@ -643,7 +643,7 @@ pub fn normalize_degenerate_segments_preserves_closed_one_line_replacement_test(
   let subpath = svg_path.subpath_assert_close(open)
 
   let assert Ok(cleaned) =
-    effects.normalize_degenerate_segments(subpath, tolerance: 0.001)
+    degeneracy.normalize_degenerate_segments(subpath, tolerance: 0.001)
   assert svg_path.subpath_is_closed(cleaned)
   assert list.length(svg_path.subpath_segments(cleaned)) == 3
   assert has_line(
@@ -675,7 +675,7 @@ pub fn normalize_degenerate_segments_coalesces_thin_line_window_test() {
     ])
 
   let assert Ok(cleaned) =
-    effects.normalize_degenerate_segments(subpath, tolerance: 0.001)
+    degeneracy.normalize_degenerate_segments(subpath, tolerance: 0.001)
   assert svg_path.subpath_segments(cleaned)
     == [
       svg_path.Line(
@@ -705,7 +705,7 @@ pub fn normalize_degenerate_segments_preserves_closed_two_line_backtracking_test
   let subpath = svg_path.subpath_assert_close(open)
 
   let assert Ok(cleaned) =
-    effects.normalize_degenerate_segments(subpath, tolerance: 0.001)
+    degeneracy.normalize_degenerate_segments(subpath, tolerance: 0.001)
   assert svg_path.subpath_is_closed(cleaned)
   assert list.length(svg_path.subpath_segments(cleaned)) == 4
   assert has_line(
@@ -743,7 +743,7 @@ pub fn normalize_degenerate_segments_keeps_closed_three_line_traversal_test() {
   let subpath = svg_path.subpath_assert_close(open)
 
   let assert Ok(cleaned) =
-    effects.normalize_degenerate_segments(subpath, tolerance: 0.001)
+    degeneracy.normalize_degenerate_segments(subpath, tolerance: 0.001)
   assert svg_path.subpath_is_closed(cleaned)
   assert list.length(svg_path.subpath_segments(cleaned)) == 4
 }

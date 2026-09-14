@@ -5,8 +5,6 @@ import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import svg_path
-import svg_path/convex_hull
-import svg_path/degeneracy
 import svg_path/point as point_helpers
 import svg_path/trig
 
@@ -14,9 +12,6 @@ const default_tolerance = 0.000001
 
 /// Errors returned by path effects.
 pub type Error {
-  /// The degeneracy linearization tolerance must be finite and non-negative.
-  InvalidDegeneracyTolerance(tolerance: Float)
-
   /// An underlying path operation failed.
   PathError(error: svg_path.Error)
 
@@ -34,37 +29,6 @@ pub type Error {
 
   /// Two rounded corners would consume too much of the segment at the supplied index.
   CornerTrimsOverlap(segment_index: Int)
-
-  /// Convex-hull construction failed while normalizing degenerate segments.
-  ConvexHullError(error: convex_hull.Error)
-}
-
-/// Replace maximal contiguous line-degenerate windows in a subpath.
-///
-/// Each selected window preserves its start, end, and two longitudinal support
-/// extrema in source traversal order; intermediate local reversals need not
-/// survive. This delegates to `svg_path/degeneracy`. Windows are
-/// considered from left to right. Their exact curve-preserving convex hull is
-/// grown one segment at a time, and the largest prefix certified to fit in a
-/// strip of the requested width is selected first. A `0.0` tolerance collapses
-/// a window only when its strip width is exactly zero.
-/// Undefined ellipse geometry returns an error. SVG-specific arc replacements
-/// are available separately through `svg_path.path_normalize_svg_arcs`.
-pub fn normalize_degenerate_segments(
-  subpath: svg_path.Subpath,
-  tolerance tolerance: Float,
-) -> Result(svg_path.Subpath, Error) {
-  degeneracy.normalize_degenerate_segments(subpath, tolerance:)
-  |> result.map_error(degeneracy_error)
-}
-
-fn degeneracy_error(error: degeneracy.Error) -> Error {
-  case error {
-    degeneracy.InvalidTolerance(tolerance) ->
-      InvalidDegeneracyTolerance(tolerance)
-    degeneracy.PathError(error) -> PathError(error)
-    degeneracy.ConvexHullError(error) -> ConvexHullError(error)
-  }
 }
 
 /// Return an endpoint policy that stretches adjacent segments to meet.
