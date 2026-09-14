@@ -9,7 +9,13 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
-## Unreleased
+## 2.0.0 - 2026-09-14
+
+This major release reduces and reorganizes the public API. Geometry algorithms
+are unchanged by this cleanup; the inflection-query signature no longer accepts
+unused options. Public function count falls from 631 to 607, and public type
+count from 155 to 153. The migrations below describe the removed, renamed, and
+relocated entry points.
 
 ### Breaking API changes
 
