@@ -13,6 +13,10 @@ rather than only the tag object.
 
 ### Breaking API changes
 
+- Made the callback-based `convex_hull.minimum_width` and `diameter` searches,
+  their `_with` variants, and their `DirectionalExtent` input type internal.
+  The segment/subpath/path width and diameter queries remain public and supply
+  the support callback and diameter bound automatically.
 - Made the degree-specific Bezier projection-extrema helpers private. Use
   `bezier.projection_extrema` for all Bezier degrees.
 - Removed `effects.normalize_degenerate_segments` and its dedicated

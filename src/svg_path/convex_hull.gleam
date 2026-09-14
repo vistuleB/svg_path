@@ -204,6 +204,7 @@ type WidthExtremumKind {
 
 /// The supporting points and nonnegative width of a convex set in one unit
 /// direction supplied to a directional-support callback.
+@internal
 pub type DirectionalExtent {
   DirectionalExtent(
     lower_point: svg_path.Point,
@@ -688,6 +689,7 @@ fn degenerate_minimum_width_strip(
 ///
 /// The callback receives a unit direction. `diameter_upper_bound` must bound
 /// the diameter of the represented convex set.
+@internal
 pub fn minimum_width(
   support: fn(svg_path.Point) -> DirectionalExtent,
   diameter_upper_bound diameter_upper_bound: Float,
@@ -700,6 +702,7 @@ pub fn minimum_width(
 }
 
 /// Find the minimum directional width using explicit search options.
+@internal
 pub fn minimum_width_with(
   support: fn(svg_path.Point) -> DirectionalExtent,
   diameter_upper_bound diameter_upper_bound: Float,
@@ -717,6 +720,7 @@ pub fn minimum_width_with(
 ///
 /// The callback receives a unit direction. `diameter_upper_bound` must bound
 /// the diameter of the represented convex set.
+@internal
 pub fn diameter(
   support: fn(svg_path.Point) -> DirectionalExtent,
   diameter_upper_bound diameter_upper_bound: Float,
@@ -729,6 +733,7 @@ pub fn diameter(
 }
 
 /// Find the diameter using explicit directional search options.
+@internal
 pub fn diameter_with(
   support: fn(svg_path.Point) -> DirectionalExtent,
   diameter_upper_bound diameter_upper_bound: Float,
