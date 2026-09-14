@@ -5,7 +5,10 @@
 //// box, and non-negative SVG dimensions such as radii, widths, heights, and
 //// font sizes. Text and attribute strings are XML-escaped.
 
+import gleam/float
 import gleam/list
+import gleam/option.{None, Some}
+import gleam/result
 import gleam/string
 import svg_path
 import svg_path/internal/format as number_format
@@ -72,6 +75,150 @@ pub type ThingToDraw {
 /// A list of items to render inside a generated SVG document.
 pub type ThingsToDraw =
   List(ThingToDraw)
+
+/// Draw one arrowhead whose tip is the head of a segment.
+pub fn segment_direction_arrow(
+  segment: svg_path.Segment,
+  color: String,
+) -> Result(ThingToDraw, Nil) {
+  segment_direction_arrow_with(
+    segment,
+    color,
+    length_scale: 1.0,
+    width_scale: 1.0,
+    arrival_offset: 0.0,
+    opacity: 1.0,
+  )
+}
+
+/// Draw one arrowhead whose tip is the head of a segment.
+///
+/// Length and width are scaled independently from the default dimensions.
+pub fn segment_direction_arrow_with(
+  segment: svg_path.Segment,
+  color: String,
+  length_scale length_scale: Float,
+  width_scale width_scale: Float,
+  arrival_offset arrival_offset: Float,
+  opacity opacity: Float,
+) -> Result(ThingToDraw, Nil) {
+  use endpoint <- result.try(
+    svg_path.segment_point(segment, at: 1.0) |> result.replace_error(Nil),
+  )
+  use directions <- result.try(
+    svg_path.segment_directions(segment, at: 1.0)
+    |> result.replace_error(Nil),
+  )
+  case directions.incoming {
+    None -> Error(Nil)
+    Some(direction) -> {
+      let ux = direction.x
+      let uy = direction.y
+      let px = 0.0 -. uy
+      let py = ux
+      let point =
+        svg_path.Point(
+          endpoint.x -. ux *. arrival_offset,
+          endpoint.y -. uy *. arrival_offset,
+        )
+      let left =
+        svg_path.Point(
+          point.x -. ux *. 9.0 *. length_scale +. px *. 3.5 *. width_scale,
+          point.y -. uy *. 9.0 *. length_scale +. py *. 3.5 *. width_scale,
+        )
+      let right =
+        svg_path.Point(
+          point.x -. ux *. 9.0 *. length_scale -. px *. 3.5 *. width_scale,
+          point.y -. uy *. 9.0 *. length_scale -. py *. 3.5 *. width_scale,
+        )
+      Ok(StyledPath(
+        svg_path.Path([svg_path.subpath_assert_polygon([point, left, right])]),
+        "fill: "
+          <> color
+          <> "; fill-opacity: "
+          <> float.to_string(opacity)
+          <> "; stroke: none",
+      ))
+    }
+  }
+}
+
+/// Draw endpoint arrowheads for every segment of a subpath.
+pub fn subpath_direction_arrows(
+  subpath: svg_path.Subpath,
+  color: String,
+) -> ThingsToDraw {
+  subpath_direction_arrows_with(
+    subpath,
+    color,
+    length_scale: 1.0,
+    width_scale: 1.0,
+    arrival_offset: 0.0,
+    opacity: 1.0,
+  )
+}
+
+/// Draw independently scaled endpoint arrowheads for every segment of a
+/// subpath.
+pub fn subpath_direction_arrows_with(
+  subpath: svg_path.Subpath,
+  color: String,
+  length_scale length_scale: Float,
+  width_scale width_scale: Float,
+  arrival_offset arrival_offset: Float,
+  opacity opacity: Float,
+) -> ThingsToDraw {
+  subpath
+  |> svg_path.subpath_segments
+  |> list.filter_map(fn(segment) {
+    segment_direction_arrow_with(
+      segment,
+      color,
+      length_scale:,
+      width_scale:,
+      arrival_offset:,
+      opacity:,
+    )
+  })
+}
+
+/// Draw endpoint arrowheads for every segment of a path.
+pub fn path_direction_arrows(
+  path: svg_path.Path,
+  color: String,
+) -> ThingsToDraw {
+  path_direction_arrows_with(
+    path,
+    color,
+    length_scale: 1.0,
+    width_scale: 1.0,
+    arrival_offset: 0.0,
+    opacity: 1.0,
+  )
+}
+
+/// Draw independently scaled endpoint arrowheads for every segment of a path.
+pub fn path_direction_arrows_with(
+  path: svg_path.Path,
+  color: String,
+  length_scale length_scale: Float,
+  width_scale width_scale: Float,
+  arrival_offset arrival_offset: Float,
+  opacity opacity: Float,
+) -> ThingsToDraw {
+  path
+  |> svg_path.path_subpaths
+  |> list.flat_map(fn(subpath) {
+    subpath_direction_arrows_with(
+      subpath,
+      color,
+      length_scale:,
+      width_scale:,
+      arrival_offset:,
+      opacity:,
+    )
+  })
+}
 
 /// Draw a labeled square-and-cross marker centered on a point.
 ///

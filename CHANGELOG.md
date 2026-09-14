@@ -13,6 +13,10 @@ rather than only the tag object.
 
 ### Breaking API changes
 
+- Moved `segment_direction_arrow`, `subpath_direction_arrows`,
+  `path_direction_arrows`, and their `_with` variants from
+  `svg_path/arrangement/drawing` to `svg_path/svg`. These helpers operate on
+  ordinary path geometry and do not require an arrangement graph.
 - Renamed `encounters.subpath_filter_overlap_explained_intersections` to
   `subpath_remove_redundant_intersections`. Expanded its documentation to define
   the pairwise overlap-correspondence and arc-length tolerance criteria; its

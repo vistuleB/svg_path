@@ -360,32 +360,17 @@ fn render_boolean_table(
   ]
   let source_arrows =
     list.append(
-      arrangement_graph_drawing.path_direction_arrows(left_placed, "#2563eb"),
-      arrangement_graph_drawing.path_direction_arrows(right_placed, "#e11d48"),
+      svg.path_direction_arrows(left_placed, "#2563eb"),
+      svg.path_direction_arrows(right_placed, "#e11d48"),
     )
   let result_arrows =
     list.flatten([
-      arrangement_graph_drawing.path_direction_arrows(union_placed, "#15803d"),
-      arrangement_graph_drawing.path_direction_arrows(
-        intersection_placed,
-        "#6d28d9",
-      ),
-      arrangement_graph_drawing.path_direction_arrows(
-        difference_placed,
-        "#b45309",
-      ),
-      arrangement_graph_drawing.path_direction_arrows(
-        reverse_difference_placed,
-        "#0e7490",
-      ),
-      arrangement_graph_drawing.path_direction_arrows(
-        symmetric_difference_placed,
-        "#be185d",
-      ),
-      arrangement_graph_drawing.path_direction_arrows(
-        rounded_monotone_placed,
-        "#4338ca",
-      ),
+      svg.path_direction_arrows(union_placed, "#15803d"),
+      svg.path_direction_arrows(intersection_placed, "#6d28d9"),
+      svg.path_direction_arrows(difference_placed, "#b45309"),
+      svg.path_direction_arrows(reverse_difference_placed, "#0e7490"),
+      svg.path_direction_arrows(symmetric_difference_placed, "#be185d"),
+      svg.path_direction_arrows(rounded_monotone_placed, "#4338ca"),
     ])
   svg.document(
     list.flatten([
@@ -494,11 +479,10 @@ fn render_case(
   ]
   let arrows =
     list.append(
-      arrangement_graph_drawing.path_direction_arrows(left_placed, "#2563eb"),
-      arrangement_graph_drawing.path_direction_arrows(right_placed, "#e11d48"),
+      svg.path_direction_arrows(left_placed, "#2563eb"),
+      svg.path_direction_arrows(right_placed, "#e11d48"),
     )
-  let result_arrows =
-    arrangement_graph_drawing.path_direction_arrows(result_placed, "#7c3aed")
+  let result_arrows = svg.path_direction_arrows(result_placed, "#7c3aed")
   let empty_note = case svg_path.path_subpaths(boolean_result) {
     [] -> [
       svg.Text(

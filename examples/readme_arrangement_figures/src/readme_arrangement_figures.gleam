@@ -304,7 +304,7 @@ fn semantic_circle_overlap() -> String {
           14.0,
         ),
       ],
-      drawing.path_direction_arrows_with(
+      svg.path_direction_arrows_with(
         left_clockwise,
         "#2563eb",
         length_scale: 4.0,
@@ -312,7 +312,7 @@ fn semantic_circle_overlap() -> String {
         arrival_offset: 0.0,
         opacity: 0.58,
       ),
-      drawing.path_direction_arrows_with(
+      svg.path_direction_arrows_with(
         left_counterclockwise,
         "#ea580c",
         length_scale: 4.0,
@@ -412,7 +412,7 @@ fn overlapping_squares() -> String {
           12.0,
         ),
       ],
-      drawing.path_direction_arrows_with(
+      svg.path_direction_arrows_with(
         left_first,
         "#2563eb",
         length_scale: 4.0,
@@ -420,7 +420,7 @@ fn overlapping_squares() -> String {
         arrival_offset: 0.0,
         opacity: 0.58,
       ),
-      drawing.path_direction_arrows_with(
+      svg.path_direction_arrows_with(
         left_second,
         "#ea580c",
         length_scale: 4.0,

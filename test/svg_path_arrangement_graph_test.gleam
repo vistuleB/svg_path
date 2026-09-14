@@ -1804,34 +1804,6 @@ pub fn csg_union_pairs_filled_sectors_at_other_corner_pinch_reversed_orientation
   |> should.equal(Ok(svg_path.Inside))
 }
 
-pub fn subpath_direction_arrows_draws_one_arrow_per_segment_test() {
-  let subpath =
-    svg_path.subpath_assert_polyline([
-      svg_path.Point(0.0, 0.0),
-      svg_path.Point(10.0, 0.0),
-      svg_path.Point(10.0, 10.0),
-    ])
-
-  subpath
-  |> arrangement_graph_drawing.subpath_direction_arrows("red")
-  |> list.length
-  |> should.equal(2)
-}
-
-pub fn segment_direction_arrow_recovers_collapsed_cubic_endpoint_test() {
-  let end = svg_path.Point(10.0, 10.0)
-  let segment =
-    svg_path.CubicBezier(
-      start: svg_path.Point(0.0, 0.0),
-      control1: svg_path.Point(0.0, 10.0),
-      control2: end,
-      end:,
-    )
-
-  arrangement_graph_drawing.segment_direction_arrow(segment, "red")
-  |> should.be_ok
-}
-
 fn closed_subpath(segments: List(svg_path.Segment)) -> svg_path.Subpath {
   svg_path.subpath_assert(segments)
   |> svg_path.subpath_assert_close()

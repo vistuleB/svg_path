@@ -87,11 +87,10 @@ pub fn main() {
   ]
   let arrows =
     list.append(
-      arrangement_graph_drawing.path_direction_arrows(left_placed, "#2563eb"),
-      arrangement_graph_drawing.path_direction_arrows(right_placed, "#e11d48"),
+      svg.path_direction_arrows(left_placed, "#2563eb"),
+      svg.path_direction_arrows(right_placed, "#e11d48"),
     )
-  let result_arrows =
-    arrangement_graph_drawing.path_direction_arrows(union_placed, "#7c3aed")
+  let result_arrows = svg.path_direction_arrows(union_placed, "#7c3aed")
   let _ =
     write_file(
       output,
