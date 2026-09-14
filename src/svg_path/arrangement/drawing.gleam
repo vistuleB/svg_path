@@ -414,6 +414,7 @@ pub fn path_direction_arrows_with(
 /// incoming direction determines the orientation. The outgoing direction is
 /// used when no incoming direction exists. Directionless geometry returns
 /// `svg_path.IndeterminateDirection`.
+@internal
 pub fn edge_annotation_pose(
   edge: ArrangementEdge,
 ) -> Result(EdgeAnnotationPose, svg_path.Error) {
