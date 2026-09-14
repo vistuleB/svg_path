@@ -9,6 +9,41 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
+## 1.1.0 - 2026-09-14
+
+### Behavior changes
+
+- Parsing now preserves arc arguments, including negative radii, zero radii,
+  and coincident endpoints, instead of normalizing or omitting those arcs.
+  Call `path_normalize_svg_arcs` explicitly to obtain the former SVG arc
+  interpretation. Existing function signatures remain unchanged.
+- Geometric degeneracy normalization and segment/subpath/path line conversion
+  now reject undefined arcs rather than substituting straight lines or omitting
+  them. These operations propagate `DegenerateArc` through their existing error
+  types. Valid narrow ellipses remain eligible for geometric simplification.
+
+### Added
+
+- Added `segment_normalize_svg_arc`, `subpath_normalize_svg_arcs`, and
+  `path_normalize_svg_arcs` in the root module. These opt-in helpers apply SVG's
+  coincident-endpoint omission, zero-radius line replacement, and absolute-radius
+  rules without a tolerance, preserving subpath starts and closed flags.
+- Added `_strict` variants of `segment_arcs_to_cubic_beziers`,
+  `segment_to_cubic_beziers`, `subpath_to_cubic_beziers`, and
+  `path_to_cubic_beziers`. They return `Result` instead of recovering with a
+  straight cubic. Existing forgiving converters retain their signatures and
+  behavior; both modes use the same approximation for valid arcs.
+- Added regressions for arc preservation, explicit normalization, geometric
+  rejection, and strict/forgiving conversion agreement.
+
+### Documentation and figures
+
+- Documented the separation between SVG arc interpretation and geometric
+  simplification, and the cubic converters' fallback behavior.
+- Updated the README square comparison to offsets 1.6/1.8 with larger legends,
+  and reduced figure-eight band stroke widths. Pinned all README figures to
+  `assets-v1.1.0`.
+
 ## 1.0.0 - 2026-09-12
 
 ### Stable release
