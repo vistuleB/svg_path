@@ -1662,11 +1662,6 @@ inspection and for specialized callers that want to preserve intermediate
 geometry, but the result can retain reversal folds, self-intersections, or
 disconnected loops that the default pipeline removes.
 
-`subpath_band_untrimmed`, `path_band_untrimmed`, and their `_with` variants
-return the two synchronized offset sides without side-local or joint trimming.
-They preserve inner-then-outer ordering and add no caps or bridges.
-These untrimmed functions take an explicit `join:` but no `cap:`.
-
 ### Stroke Styles
 
 `svg_path/stroke` has its own parallel `stroke.Join` and `stroke.Cap` types:

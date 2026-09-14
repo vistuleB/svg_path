@@ -1203,6 +1203,7 @@ fn trim_band_side_cusps(
 ///
 /// Unlike `subpath_band`, this diagnostic form returns separate, uncapped
 /// sides. Use `subpath_band_with` with trimming disabled for a capped band.
+@internal
 pub fn subpath_band_untrimmed(
   subpath: svg_path.Subpath,
   inner_offset inner_offset: Float,
@@ -1221,6 +1222,7 @@ pub fn subpath_band_untrimmed(
 /// Offset a subpath at two signed normal displacements without trimming,
 /// using explicit options.
 /// The sides remain separate and uncapped, as in `subpath_band_untrimmed`.
+@internal
 pub fn subpath_band_untrimmed_with(
   subpath subpath: svg_path.Subpath,
   inner_offset inner_offset: Float,
@@ -1430,6 +1432,7 @@ pub fn path_band_with(
 /// Offset every subpath at two signed normal displacements without trimming any
 /// side.
 /// Each pair is returned separately and uncapped; see `subpath_band_untrimmed`.
+@internal
 pub fn path_band_untrimmed(
   path: svg_path.Path,
   inner_offset inner_offset: Float,
@@ -1447,6 +1450,7 @@ pub fn path_band_untrimmed(
 
 /// Offset every subpath at two signed normal displacements without trimming any
 /// side, using explicit options.
+@internal
 pub fn path_band_untrimmed_with(
   path path: svg_path.Path,
   inner_offset inner_offset: Float,
