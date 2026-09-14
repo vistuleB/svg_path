@@ -232,7 +232,7 @@ pub fn bounding_box(curve: BezierData) -> BoundingBox {
 ///
 /// A non-degenerate line has no interior projection extrema. Degenerate lines
 /// are flat in every direction; this helper returns an empty list for them too.
-pub fn line_projection_extrema(
+fn line_projection_extrema(
   _start: BezierPoint,
   _end: BezierPoint,
   _direction: BezierPoint,
@@ -242,7 +242,7 @@ pub fn line_projection_extrema(
 
 /// Return the parameters where a quadratic Bezier's projection onto
 /// `direction` is stationary.
-pub fn quadratic_projection_extrema(
+fn quadratic_projection_extrema(
   start: BezierPoint,
   control: BezierPoint,
   end: BezierPoint,
@@ -260,7 +260,7 @@ pub fn quadratic_projection_extrema(
 
 /// Return the parameters where a cubic Bezier's projection onto `direction` is
 /// stationary.
-pub fn cubic_projection_extrema(
+fn cubic_projection_extrema(
   start: BezierPoint,
   control1: BezierPoint,
   control2: BezierPoint,
