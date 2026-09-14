@@ -4,10 +4,10 @@
 //// This module is the more technical layer for users who want the ellipse math
 //// behind SVG arcs.
 ////
-//// For common arc evaluation with ordinary `svg_path.Point` values and root
-//// `svg_path.Error`, use the root-module wrappers such as
-//// `svg_path.arc_point`, `svg_path.arc_derivative`, and
-//// `svg_path.arc_point_at_angle`.
+//// For parameter-based evaluation with ordinary `svg_path.Point` values and
+//// root `svg_path.Error`, use `svg_path.segment_point` and
+//// `svg_path.segment_derivative`. For ellipse-angle evaluation, convert the
+//// segment with `svg_path.arc_center_data` and use this module's helpers.
 ////
 //// SVG path data uses endpoint parameterization for elliptical arcs,
 //// represented here by `EndpointArcData`. An `A` command stores the current

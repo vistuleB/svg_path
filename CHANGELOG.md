@@ -13,6 +13,12 @@ rather than only the tag object.
 
 ### Breaking API changes
 
+- Removed the root module's `arc_point`, `arc_derivative`, `arc_point_at_angle`,
+  `arc_derivative_at_angle`, `arc_angle_at`, and `arc_end_angle` wrappers. Use
+  `segment_point`/`segment_derivative` for parameter-based evaluation, or
+  `arc_center_data` followed by the `ellipse` helpers for angle-based queries.
+  Arc data conversion bridges remain public; segment endpoint behavior is
+  unchanged.
 - Made the callback-based `convex_hull.minimum_width` and `diameter` searches,
   their `_with` variants, and their `DirectionalExtent` input type internal.
   The segment/subpath/path width and diameter queries remain public and supply

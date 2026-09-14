@@ -482,7 +482,7 @@ pub fn arc_center_data_rejects_non_arc_segments_test() {
   assert svg_path.arc_center_data(segment) == Error(svg_path.DegenerateArc)
 }
 
-pub fn arc_wrappers_use_root_points_test() {
+pub fn arc_center_data_supports_angle_evaluation_test() {
   let segment =
     svg_path.Arc(
       start: svg_path.Point(0.0, 0.0),
@@ -493,41 +493,24 @@ pub fn arc_wrappers_use_root_points_test() {
       end: svg_path.Point(20.0, 0.0),
     )
 
-  let assert Ok(point) = svg_path.arc_point(segment, at: 0.5)
-  let assert Ok(derivative) = svg_path.arc_derivative(segment, at: 0.5)
-  let assert Ok(angle_point) =
-    svg_path.arc_point_at_angle(segment, angle: 270.0)
-  let assert Ok(angle_derivative) =
-    svg_path.arc_derivative_at_angle(segment, angle: 270.0)
-  let assert Ok(angle) = svg_path.arc_angle_at(segment, t: 0.5)
-  let assert Ok(end_angle) = svg_path.arc_end_angle(segment)
+  let assert Ok(point) = svg_path.segment_point(segment, at: 0.5)
+  let assert Ok(derivative) = svg_path.segment_derivative(segment, at: 0.5)
+  let assert Ok(center_data) = svg_path.arc_center_data(segment)
+  let angle_point = ellipse.arc_point_at_angle(center_data, angle: 270.0)
+  let angle_derivative =
+    ellipse.arc_derivative_at_angle(center_data, angle: 270.0)
+  let angle = ellipse.arc_angle_at(center_data, t: 0.5)
+  let end_angle = ellipse.arc_end_angle(center_data)
 
   assert point_near(point, svg_path.Point(10.0, -10.0))
   assert derivative.x >. 0.0
   assert near(derivative.y, 0.0)
-  assert point_near(angle_point, svg_path.Point(10.0, -10.0))
+  assert near(angle_point.x, point.x)
+  assert near(angle_point.y, point.y)
   assert angle_derivative.x >. 0.0
   assert near(angle_derivative.y, 0.0)
   assert near(angle, 270.0)
   assert near(end_angle, 360.0)
-}
-
-pub fn arc_wrappers_reject_non_arc_segments_test() {
-  let segment =
-    svg_path.Line(
-      start: svg_path.Point(0.0, 0.0),
-      end: svg_path.Point(1.0, 0.0),
-    )
-
-  assert svg_path.arc_point(segment, at: 0.5) == Error(svg_path.DegenerateArc)
-  assert svg_path.arc_derivative(segment, at: 0.5)
-    == Error(svg_path.DegenerateArc)
-  assert svg_path.arc_point_at_angle(segment, angle: 0.0)
-    == Error(svg_path.DegenerateArc)
-  assert svg_path.arc_derivative_at_angle(segment, angle: 0.0)
-    == Error(svg_path.DegenerateArc)
-  assert svg_path.arc_angle_at(segment, t: 0.5) == Error(svg_path.DegenerateArc)
-  assert svg_path.arc_end_angle(segment) == Error(svg_path.DegenerateArc)
 }
 
 pub fn fit_cubic_with_endpoint_tangents_returns_root_segment_test() {
