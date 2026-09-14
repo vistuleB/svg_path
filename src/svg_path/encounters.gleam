@@ -1116,15 +1116,32 @@ fn filter_subpath_intersections(
   }
 }
 
-/// Remove intersection parameters explained entirely by the continuous
-/// overlaps in an existing subpath encounter result.
+/// Remove point-intersection parameters fully accounted for by the continuous
+/// overlaps in an existing subpath encounter result. The overlaps are unchanged.
 ///
 /// This is an optional derived view. The ordinary subpath encounter functions
-/// return their complete, unfiltered point-intersection results. A parameter is
-/// removed only when it is complementary, after arc-length clamping by
-/// `tolerance`, to every parameter on the opposite side. Both sides are
-/// filtered against the original parameter lists.
-pub fn subpath_filter_overlap_explained_intersections(
+/// return their complete, unfiltered point-intersection results.
+///
+/// For each intersection record, a left parameter is removed only if every
+/// right parameter in that record is paired with it by some reported overlap.
+/// Different pairs may be accounted for by different overlaps. Right parameters
+/// are tested symmetrically against the original left list, not the filtered
+/// one. A record is removed only when both parameter lists become empty.
+///
+/// A pair is accounted for by an overlap when its piecewise-affine parameter
+/// correspondence matches in both directions. Each input address may first be
+/// clamped onto the overlap if it is at most `tolerance` away along its subpath.
+/// Mapping that clamped address through the overlap must then land at most
+/// `tolerance` from the original opposite address, again along that subpath.
+/// These checks use arc length, not Euclidean point distance or local parameter
+/// distance. Closed subpaths use the shorter of the two traversal distances.
+/// `tolerance` must be finite and positive; underlying geometry errors propagate.
+///
+/// Thus merely sharing a point with an overlap is insufficient. For example,
+/// if a record has left addresses A and B and right address C, and only A/C
+/// are accounted for by an overlap, A is removed but B and C remain: B/C still
+/// represents a point intersection not described by the overlaps.
+pub fn subpath_remove_redundant_intersections(
   encounters: Encounters(overlaps.SubpathOverlap, svg_path.SubpathIntersection),
   left_subpath: svg_path.Subpath,
   right_subpath: svg_path.Subpath,
@@ -1149,7 +1166,7 @@ pub fn subpath_filter_overlap_explained_intersections(
 ///
 /// Point intersections are collected from every constituent segment pair.
 /// Overlap-boundary intersections are retained; use
-/// `subpath_filter_overlap_explained_intersections` to derive
+/// `subpath_remove_redundant_intersections` to derive
 /// a filtered view.
 pub fn subpath(
   left: svg_path.Subpath,

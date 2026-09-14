@@ -1031,8 +1031,13 @@ intersections are required from one query. Its segment, segment-subpath,
 subpath, and path functions return both lists without changing the underlying
 payload types. Subpath encounters retain overlap-boundary intersections by
 default; the explicitly named
-`subpath_filter_overlap_explained_intersections` helper derives
-a view with parameters fully explained by overlaps removed.
+`subpath_remove_redundant_intersections` helper derives
+a view with redundant parameters removed. Within each intersection record, a
+parameter is redundant only when every opposite-side parameter is matched to it
+by a reported overlap's parameter correspondence, checked in both directions
+with the supplied arc-length tolerance. Merely lying at the same geometric point
+as an overlap does not qualify. Both sides are tested against the original
+parameter lists; an intersection record is dropped only if both lists empty.
 
 ### Convex Hulls
 

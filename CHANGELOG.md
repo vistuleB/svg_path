@@ -13,6 +13,10 @@ rather than only the tag object.
 
 ### Breaking API changes
 
+- Renamed `encounters.subpath_filter_overlap_explained_intersections` to
+  `subpath_remove_redundant_intersections`. Expanded its documentation to define
+  the pairwise overlap-correspondence and arc-length tolerance criteria; its
+  behavior is unchanged.
 - Removed the root module's `arc_point`, `arc_derivative`, `arc_point_at_angle`,
   `arc_derivative_at_angle`, `arc_angle_at`, and `arc_end_angle` wrappers. Use
   `segment_point`/`segment_derivative` for parameter-based evaluation, or
