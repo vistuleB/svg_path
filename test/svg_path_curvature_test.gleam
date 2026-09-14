@@ -13,34 +13,11 @@ pub fn reversed_line_still_has_infinite_radius_test() {
   let line = svg_path.Line(svg_path.Point(1.0, 0.0), svg_path.Point(0.0, 0.0))
   assert curvature.segment_left_normal_radius(line, at: 0.5)
     == Error(curvature.InfiniteRadiusOfCurvature)
-  assert curvature.segment_left_normal_radius_close_to(
-      line,
-      distance: 1.0,
-      margin: 0.1,
-      at: 0.5,
-    )
-    == Error(curvature.InfiniteRadiusOfCurvature)
-  assert curvature.segment_left_normal_radius_close_to(
+  assert curvature.segment_left_normal_radius(
       svg_path.segment_reverse(line),
-      distance: 1.0,
-      margin: 0.1,
       at: 0.5,
     )
     == Error(curvature.InfiniteRadiusOfCurvature)
-}
-
-pub fn line_cusp_residual_is_speed_cubed_test() {
-  let line =
-    svg_path.Line(
-      start: svg_path.Point(0.0, 0.0),
-      end: svg_path.Point(3.0, 4.0),
-    )
-  assert curvature.segment_left_normal_cusp_residual(
-      line,
-      distance: 2.0,
-      at: 0.5,
-    )
-    == Ok(125.0)
 }
 
 pub fn invalid_tolerance_reports_invalid_curvature_tolerance_test() {
@@ -69,19 +46,11 @@ pub fn zero_tolerance_reports_unconverged_curvature_bracket_test() {
     )
   assert lower <. upper
   assert upper -. lower <. tolerance
-  let assert Ok(lower_residual) =
-    curvature.segment_left_normal_cusp_residual(
-      visually_upward_cubic(),
-      distance: 0.27,
-      at: lower,
-    )
-  let assert Ok(upper_residual) =
-    curvature.segment_left_normal_cusp_residual(
-      visually_upward_cubic(),
-      distance: 0.27,
-      at: upper,
-    )
-  assert lower_residual *. upper_residual <. 0.0
+  let assert Ok(lower_radius) =
+    curvature.segment_left_normal_radius(visually_upward_cubic(), at: lower)
+  let assert Ok(upper_radius) =
+    curvature.segment_left_normal_radius(visually_upward_cubic(), at: upper)
+  assert { lower_radius -. 0.27 } *. { upper_radius -. 0.27 } <. 0.0
 }
 
 pub fn invalid_max_depth_reports_invalid_curvature_max_depth_test() {
@@ -95,18 +64,6 @@ pub fn invalid_max_depth_reports_invalid_curvature_max_depth_test() {
     )
 
   assert value == 0
-}
-
-pub fn invalid_margin_reports_invalid_curvature_margin_test() {
-  let assert Error(curvature.InvalidCurvatureMargin(value)) =
-    curvature.segment_left_normal_radius_close_to(
-      visually_upward_cubic(),
-      distance: 0.27,
-      margin: -1.0,
-      at: 0.5,
-    )
-
-  assert value == -1.0
 }
 
 pub fn line_radius_reports_infinite_radius_of_curvature_test() {
@@ -176,11 +133,7 @@ pub fn segment_inflection_parameters_detect_cubic_inflection_test() {
       end: svg_path.Point(3.0, 0.0),
     )
 
-  let assert Ok(parameters) =
-    curvature.segment_inflection_parameters(
-      segment,
-      options: curvature.default_options(),
-    )
+  let parameters = curvature.segment_inflection_parameters(segment)
 
   let assert [parameter] = parameters
   assert near(parameter, 0.5)
@@ -195,11 +148,7 @@ pub fn segment_inflection_parameters_ignore_flat_cubic_test() {
       end: svg_path.Point(1.0, 0.0),
     )
 
-  assert curvature.segment_inflection_parameters(
-      segment,
-      options: curvature.default_options(),
-    )
-    == Ok([])
+  assert curvature.segment_inflection_parameters(segment) == []
 }
 
 pub fn invalid_arc_curvature_preserves_path_error_test() {

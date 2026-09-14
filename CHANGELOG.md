@@ -9,6 +9,30 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
+## Unreleased
+
+### Breaking API changes
+
+- Made the degree-specific Bezier projection-extrema helpers private. Use
+  `bezier.projection_extrema` for all Bezier degrees.
+- Removed `effects.normalize_degenerate_segments` and its dedicated
+  `InvalidDegeneracyTolerance` and `ConvexHullError` variants. Use
+  `degeneracy.normalize_degenerate_segments` and its error type instead.
+- Removed `area.subpath_clockwiseness` and its `_with` variant. Signed area and
+  absolute winding area remain available separately.
+- Made the uncapped `offset.subpath_band_untrimmed` and `path_band_untrimmed`
+  diagnostics, including their `_with` variants, internal. Public band calls
+  with trimming disabled still return capped bands, not separate offset sides.
+- Made `arrangement/drawing.edge_annotation_pose` internal. Annotated graph
+  drawing remains public.
+- Made curvature's derivative bundle and helper private; the root module's
+  `segment_derivative` and `segment_second_derivative` remain public. Removed
+  `segment_left_normal_radius_close_to`, `segment_left_normal_cusp_residual`,
+  and `InvalidCurvatureMargin`. Curvature, radius, and cusp discovery remain.
+- Simplified `curvature.segment_inflection_parameters` to accept only a segment
+  and return `List(Float)` directly. Its former options were validated but did
+  not affect the algebraic computation.
+
 ## 1.1.0 - 2026-09-14
 
 ### Behavior changes

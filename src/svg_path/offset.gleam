@@ -2574,7 +2574,7 @@ fn synchronized_curvature_split_parameters(
     SideStalled -> Ok([])
     SideNotStalled -> offset_reversal_parameters(segment, outer)
   })
-  use inflections <- result.try(offset_inflection_parameters(segment))
+  let inflections = curvature.segment_inflection_parameters(segment)
   let reversals =
     list.append(inner_reversals, outer_reversals)
     |> list.filter(fn(t) {
@@ -8954,15 +8954,6 @@ fn split_e_join_free_segment_at_midpoint(
       start_boundary: Ordinary,
     ),
   ))
-}
-
-fn offset_inflection_parameters(
-  segment: svg_path.Segment,
-) -> Result(List(Float), InternalError) {
-  let options =
-    curvature.Options(tolerance: curvature_parameter_tolerance, max_depth: 32)
-  curvature.segment_inflection_parameters(segment, options:)
-  |> result.map_error(fn(_) { InternalNonFinite })
 }
 
 fn offset_c_stalled_run(

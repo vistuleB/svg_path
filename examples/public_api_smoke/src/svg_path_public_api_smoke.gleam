@@ -54,12 +54,9 @@ pub fn main() -> Nil {
     svg_path.subpath_segments(reopened) == svg_path.subpath_segments(closed)
   let assert Ok(reclosed) = svg_path.subpath_close(reopened)
   let assert True = reclosed == closed
-  let assert Ok(1000.0) =
-    curvature.segment_left_normal_cusp_residual(
-      horizontal,
-      distance: 2.0,
-      at: 0.5,
-    )
+  let assert Error(curvature.InfiniteRadiusOfCurvature) =
+    curvature.segment_left_normal_radius(horizontal, at: 0.5)
+  let assert [] = curvature.segment_inflection_parameters(horizontal)
 
   Nil
 }

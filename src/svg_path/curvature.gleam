@@ -37,8 +37,6 @@ pub type Error {
   InvalidCurvatureTolerance(tolerance: Float)
   /// A curvature `max_depth` option was invalid (not positive).
   InvalidCurvatureMaxDepth(max_depth: Int)
-  /// A curvature `margin` argument was invalid (not finite or negative).
-  InvalidCurvatureMargin(margin: Float)
   /// The segment has a degenerate zero-speed parameter, so its curvature is
   /// undefined there.
   DegenerateCurvatureDerivative
@@ -53,8 +51,8 @@ pub type Error {
 }
 
 /// Options for cusp discovery.
-/// All fields are validated by discovery functions. Inflection discovery is
-/// algebraic and uses none of these fields after validation.
+/// All fields are validated by cusp discovery. Inflection discovery is
+/// algebraic and does not accept options.
 pub type Options {
   Options(
     /// Numeric tolerance for roots and interval widths in parameter space.
@@ -65,7 +63,7 @@ pub type Options {
 }
 
 /// First and second derivative data at a segment parameter.
-pub type Derivatives {
+type Derivatives {
   Derivatives(first: svg_path.Point, second: svg_path.Point)
 }
 
@@ -77,7 +75,7 @@ pub fn default_options() -> Options {
 /// Return first and second parameter derivatives for a segment at `t`.
 ///
 /// Lines return zero second derivative. Arcs use exact ellipse derivatives.
-pub fn segment_derivatives(
+fn segment_derivatives(
   segment: svg_path.Segment,
   at t: Float,
 ) -> Result(Derivatives, svg_path.Error) {
@@ -114,44 +112,6 @@ pub fn segment_left_normal_radius(
     True -> Error(InfiniteRadiusOfCurvature)
     False -> Ok(1.0 /. curvature)
   }
-}
-
-/// Return `abs(R_left(t) - distance) < margin` without evaluating `R_left(t)`
-/// directly.
-///
-/// Algebraically, for finite nonzero curvature this is equivalent to:
-///
-/// `abs(|p'|^3 + distance * cross(p', p'')) < margin * abs(cross(p', p''))`.
-pub fn segment_left_normal_radius_close_to(
-  segment: svg_path.Segment,
-  distance distance: Float,
-  margin margin: Float,
-  at t: Float,
-) -> Result(Bool, Error) {
-  case margin <. 0.0 || !number.is_finite(margin) {
-    True -> Error(InvalidCurvatureMargin(margin))
-    False -> {
-      use data <- result.try(segment_derivatives_curvature(segment, at: t))
-      left_normal_radius_close_to(data, distance: distance, margin: margin)
-    }
-  }
-}
-
-/// Return the visual-left-normal cusp residual
-/// `|p'|^3 + distance * cross(p', p'')`.
-///
-/// A zero residual means the visual-left-normal signed radius equals `distance`,
-/// assuming finite nonzero curvature.
-/// Its magnitude depends on parameter speed: it has cubed-length units for a
-/// dimensionless parameter and is not a geometric distance error. Lines return
-/// `|p'|^3`; zero-speed parameters return `DegenerateCurvatureDerivative`.
-pub fn segment_left_normal_cusp_residual(
-  segment: svg_path.Segment,
-  distance distance: Float,
-  at t: Float,
-) -> Result(Float, Error) {
-  use data <- result.try(segment_derivatives_curvature(segment, at: t))
-  left_normal_cusp_residual_from_derivatives(data, distance: distance)
 }
 
 /// Find parameters where visual-left-normal signed radius equals
@@ -249,15 +209,10 @@ pub fn segment_left_normal_cusp_parameters(
 /// This solves `cross(p'(t), p''(t)) = 0`. Lines and identically flat pieces
 /// return an empty list. Roots at the segment endpoints are filtered out.
 /// Cubics use the Bezier inflection solver; lines, quadratics, and arcs return
-/// an empty list. Options are validated but do not affect the algebraic solve.
-pub fn segment_inflection_parameters(
-  segment: svg_path.Segment,
-  options options: Options,
-) -> Result(List(Float), Error) {
-  use _ <- result.try(validate_options(options))
+/// an empty list. No numerical search options are required.
+pub fn segment_inflection_parameters(segment: svg_path.Segment) -> List(Float) {
   case segment {
-    svg_path.Line(..) | svg_path.QuadraticBezier(..) | svg_path.Arc(..) ->
-      Ok([])
+    svg_path.Line(..) | svg_path.QuadraticBezier(..) | svg_path.Arc(..) -> []
     svg_path.CubicBezier(start:, control1:, control2:, end:) ->
       bezier.CubicBezierData(
         start: to_bezier_point(start),
@@ -266,7 +221,6 @@ pub fn segment_inflection_parameters(
         end: to_bezier_point(end),
       )
       |> bezier.cubic_inflection_parameters
-      |> Ok
   }
 }
 
@@ -292,46 +246,6 @@ fn left_normal_curvature_from_derivatives(
     False -> {
       let assert Ok(speed) = float.square_root(speed_squared)
       Ok({ 0.0 -. cross(first, second) } /. { speed_squared *. speed })
-    }
-  }
-}
-
-fn left_normal_radius_close_to(
-  data: Derivatives,
-  distance distance: Float,
-  margin margin: Float,
-) -> Result(Bool, Error) {
-  let Derivatives(first:, second:) = data
-  let speed_squared = dot(first, first)
-  let c = cross(first, second)
-  case speed_squared <=. 0.0 || !number.is_finite(speed_squared) {
-    True -> Error(DegenerateCurvatureDerivative)
-    False ->
-      case number.is_zero(c) {
-        True -> Error(InfiniteRadiusOfCurvature)
-        False -> {
-          let assert Ok(speed) = float.square_root(speed_squared)
-          let speed_cubed = speed_squared *. speed
-          Ok(
-            float.absolute_value(speed_cubed +. distance *. c)
-            <. margin *. float.absolute_value(c),
-          )
-        }
-      }
-  }
-}
-
-fn left_normal_cusp_residual_from_derivatives(
-  data: Derivatives,
-  distance distance: Float,
-) -> Result(Float, Error) {
-  let Derivatives(first:, second:) = data
-  let speed_squared = dot(first, first)
-  case speed_squared <=. 0.0 || !number.is_finite(speed_squared) {
-    True -> Error(DegenerateCurvatureDerivative)
-    False -> {
-      let assert Ok(speed) = float.square_root(speed_squared)
-      Ok(speed_squared *. speed +. distance *. cross(first, second))
     }
   }
 }
