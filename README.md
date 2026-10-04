@@ -69,6 +69,8 @@ pub fn prepare_for_arc_averse_consumer(
 
 ## Contents
 
+- [Start with your task](#start-with-your-task), [conventions](#conventions), and [migration from 2.0.0](#migrating-from-200)
+
 - [Module map](#module-map)
 - [Core model](#core-model) and [subpath building](#subpath-building)
 - [Arc conversion](#converting-arcs-to-beziers), [line approximation](#converting-segments-to-lines), and [ellipse helpers](#arcs-and-the-ellipse-module)
@@ -80,10 +82,108 @@ pub fn prepare_for_arc_averse_consumer(
 - [Arrangement graphs](#arrangement-graphs) and [Boolean operations](#path-csg)
 - [Development](#development)
 
+## Start with your task
+
+The package supports both complete SVG workflows and specialized geometry work.
+Choose an operation module for the task; the shared `Point`, `Segment`,
+`Subpath`, and `Path` model lets results pass between modules.
+
+| Task | Start here | Further controls and results |
+| --- | --- | --- |
+| Read, edit, and write SVG path data | `parse`, `svg_path`, `serialize` | Endpoint policies, curve-preserving edits, decimal and relative output |
+| Measure curves or place something along a path | `measure`, `bounds`, `marker` | Length tolerances, distance-to-parameter conversion, conservative bounds |
+| Find nearest points or nearest pairs | `distance` | Projection addresses, point-query options, closest-pair search options |
+| Find where geometries meet | `encounters` | Both isolated intersections and continuous overlaps; `intersections` and `overlaps` for specialized queries |
+| Work with filled regions | `containment`, `csg`, `clip` | Explicit fill rules, boundary classification, arrangement and source correspondence |
+| Construct offsets, bands, and stroke outlines | `offset`, `stroke` | Joins, caps, numerical fitting controls, offset trimming policies |
+| Approximate a mathematical curve | `fit` | Parametric functions, endpoint tangents, sampled fitting error and reports |
+| Inspect or develop topology algorithms | `arrangement`, `arrangement/drawing` | Refined edges, multiplicities, source images, dual faces and drawing primitives |
+
+For example, combine filled paths and serialize the resulting geometry:
+
+```gleam
+import gleam/result
+import svg_path
+import svg_path/csg
+import svg_path/parse
+import svg_path/serialize
+
+pub fn union_data(left: String, right: String) -> Result(String, String) {
+  use left <- result.try(parse.path(left) |> result.map_error(fn(_) { "Invalid left path" }))
+  use right <- result.try(parse.path(right) |> result.map_error(fn(_) { "Invalid right path" }))
+  use path <- result.try(
+    csg.union_path(left, right, using: svg_path.Nonzero)
+    |> result.map_error(fn(_) { "Union failed" }),
+  )
+  Ok(serialize.path(path))
+}
+```
+
+Use `csg.union` instead when you need both `output.path` and `output.build`.
+Both entry points use the same geometry and numerical behavior. Other Boolean
+operations and nested contours also offer `_path` and `_path_with` forms.
+
+### Conventions
+
+- Geometry levels stay explicit: a `segment_*`, `subpath_*`, or `path_*`
+  operation accepts the corresponding geometry. Existing convenience functions
+  and asserting constructors remain available.
+- Ordinary operations provide numerical defaults; `_with` variants accept
+  explicit controls. Essential geometric arguments stay explicit, including
+  stroke width, joins, caps, and Boolean fill rules.
+- Shared geometry, addresses, numerical option records, and geometry failures
+  remain in `svg_path`. For example, modify `svg_path.LengthOptions` obtained
+  from `measure.default_length_options()`. Domain-specific errors remain in
+  their operation modules; no diagnostic payloads are discarded.
+- `intersections` searches for isolated point intersections and reports a
+  continuous overlap as an error. `overlaps` returns continuous coincidence
+  and parameter correspondence. `encounters` returns both kinds of result.
+  Choose `encounters` when overlap is an expected outcome of a general query.
+- A segment parameter is not a fraction of its length. Use `measure.*_at_length`
+  for traveled distances, and the root evaluation functions for parameters.
+
+### Migrating from 2.0.0
+
+Version 3 reorganizes operations without removing geometry capabilities. The
+following relocated functions keep their names, argument labels, return values,
+and numerical defaults; change their module qualifier and import.
+
+| Previously | Now |
+| --- | --- |
+| Root length, length-bound, chord-length, zero-length query, distance-addressed evaluation, and subdivision-by-length functions | `svg_path/measure` |
+| Root bounding-box and bounding-polygon functions | `svg_path/bounds` |
+| Root containment, winding, and crossing functions | `svg_path/containment` |
+| Root point distance and projection functions | `svg_path/distance` |
+| `intersections.*_closest_pair` and `_with` variants | `svg_path/distance` |
+| Root parametric construction, constrained cubic fitting, and scalar minimization functions | `svg_path/fit` |
+
+Default-option functions move with their families. Closest-pair searches can use
+`distance.default_closest_pair_options()`; their configuration remains the
+shared `intersections.IntersectionOptions`. Root normalization functions, such
+as `subpath_normalize_zero_length_lines`, stay in the root module.
+
+Every configurable stroke outline now requires `width:` just like its ordinary
+counterpart. Replace `stroke.Options(width:, offset:)` with a numerical-only
+record containing `fitting`, `stalled_offset_diameter`,
+`tangent_heal_angle_degrees`, and `inner_join`, or use `stroke.default_options()`.
+When migrating a customized offset record, copy those four applicable fields.
+Stroke trimming remains fixed to its existing construction policy; ignored
+single-offset and band-trimming fields are no longer accepted. Dash extraction
+and its `DashOptions` are unchanged.
+
+Internal declarations are implementation details, including any old entry
+points still needed by the geometry kernels. Use the operation modules above
+rather than depending on those declarations.
+
 ## Module Map
 
 - `svg_path`: core `Path`, `Subpath`, `Segment`, and `Point` types, plus
-  construction, editing, geometry, splitting, and distances.
+  construction, editing, parameter evaluation, and splitting.
+- `svg_path/measure`: length, distance-addressed evaluation, and subdivision.
+- `svg_path/bounds`: bounding boxes and conservative bounding polygons.
+- `svg_path/containment`: point containment, winding, and crossing queries.
+- `svg_path/distance`: nearest-point projections and geometry closest pairs.
+- `svg_path/fit`: parametric construction, constrained cubic fitting, and minimization.
 - `svg_path/point`: small helper library for the `svg_path.Point` type.
 - `svg_path/parse` and `svg_path/serialize`: SVG path-data parsing and
   serialization.
@@ -101,7 +201,7 @@ pub fn prepare_for_arc_averse_consumer(
 - `svg_path/clip`: curve clipping that keeps original geometry inside a filled
   clipping region without adding closure bridges.
 - `svg_path/intersections`: segment, subpath, and path point-intersection
-  queries, plus closest-point pair projections.
+  queries and classification; closest-point pairs are in `svg_path/distance`.
 - `svg_path/overlaps`: continuous coincident intervals between segments,
   subpaths, and paths.
 - `svg_path/encounters`: combined continuous-overlap and isolated
@@ -667,16 +767,16 @@ helpers. That module exposes `arc_point`, `arc_point_at_angle`,
 
 ## Geometry Helpers
 
-The root module exposes common geometry helpers directly on `Segment`,
-`Subpath`, and `Path`. The module docs contain the full option and error
-details; this section is a map of the available families.
+Geometry operations accept `Segment`, `Subpath`, and `Path` values through
+their operation modules. Parameter evaluation and editing remain in the root
+module. The module docs contain full option and error details.
 
 ### Bounding Boxes
 
-Use `segment_bounding_box`, `subpath_bounding_box`, and `path_bounding_box` for
+Use `bounds.segment_bounding_box`, `bounds.subpath_bounding_box`, and `bounds.path_bounding_box` for
 axis-aligned bounds. Line, Bezier, and arc extrema are included. Measure a box
-with `bounding_box_width`, `bounding_box_height`, `bounding_box_center`, and
-`bounding_box_taxicab_diameter`; the diameter is width plus height.
+with `bounds.bounding_box_width`, `bounds.bounding_box_height`, `bounds.bounding_box_center`, and
+`bounds.bounding_box_taxicab_diameter`; the diameter is width plus height.
 
 ### Conditional Linearization
 
@@ -713,14 +813,15 @@ the same quarter-turn cubic approximation in both modes.
 
 ### Optimization Over Segments
 
-Use `segment_minimize` to find the segment parameter where a scalar function of
+Use `fit.segment_minimize` to find the segment parameter where a scalar function of
 the segment point is minimized:
 
 ```gleam
+import svg_path/fit
 import svg_path
 
 pub fn lowest_point(segment: svg_path.Segment) -> Result(Float, svg_path.Error) {
-  svg_path.segment_minimize(segment, measure: fn(point) {
+  fit.segment_minimize(segment, measure: fn(point) {
     point.y
   })
 }
@@ -730,15 +831,15 @@ The returned value is a segment parameter in `0.0..1.0`. You can pass it to
 `segment_point` or `segment_split`.
 
 Minimization is numerical and does not require a derivative. Use
-`segment_minimize_with` when the default sampling and tolerance are not
+`fit.segment_minimize_with` when the default sampling and tolerance are not
 appropriate.
 
 ### Segment and Subpath Lengths
 
-Use `segment_length`, `subpath_length`, or `path_length` to measure geometry.
+Use `measure.segment_length`, `measure.subpath_length`, or `measure.path_length` to measure geometry.
 For cheap upper bounds without numerical integration, use
-`segment_length_upper_bound`, `subpath_length_upper_bound`, or
-`path_length_upper_bound`. These use control-polygon lengths for Beziers and
+`measure.segment_length_upper_bound`, `measure.subpath_length_upper_bound`, or
+`measure.path_length_upper_bound`. These use control-polygon lengths for Beziers and
 angular travel times the larger ellipse radius for arcs; they may overestimate
 substantially and use ordinary floating-point arithmetic.
 Lines are exact. Beziers and arcs use adaptive integration. Distances are true
@@ -748,55 +849,57 @@ Length-address helpers convert traveled distances back to ordinary parameters
 and evaluated geometry:
 
 ```gleam
-svg_path.segment_parameter_at_length(segment, distance: 12.0)
-svg_path.segment_point_at_length(segment, distance: 12.0)
-svg_path.segment_derivative_at_length(segment, distance: 12.0)
-svg_path.segment_between_lengths(segment, from: 12.0, to: 30.0)
-svg_path.segment_between_lengths_many(segment, between: [12.0, 20.0, 30.0])
+import svg_path/measure
+measure.segment_parameter_at_length(segment, distance: 12.0)
+measure.segment_point_at_length(segment, distance: 12.0)
+measure.segment_derivative_at_length(segment, distance: 12.0)
+measure.segment_between_lengths(segment, from: 12.0, to: 30.0)
+measure.segment_between_lengths_many(segment, between: [12.0, 20.0, 30.0])
 
-svg_path.subpath_parameter_at_length(subpath, distance: 25.0)
-svg_path.subpath_point_at_length(subpath, distance: 25.0)
-svg_path.subpath_derivative_at_length(subpath, distance: 25.0)
-svg_path.subpath_between_lengths(subpath, from: 25.0, to: 60.0)
-svg_path.subpath_between_lengths_many(subpath, between: [25.0, 40.0, 60.0])
+measure.subpath_parameter_at_length(subpath, distance: 25.0)
+measure.subpath_point_at_length(subpath, distance: 25.0)
+measure.subpath_derivative_at_length(subpath, distance: 25.0)
+measure.subpath_between_lengths(subpath, from: 25.0, to: 60.0)
+measure.subpath_between_lengths_many(subpath, between: [25.0, 40.0, 60.0])
 
-svg_path.path_parameter_at_length(path, distance: 40.0)
-svg_path.path_point_at_length(path, distance: 40.0)
-svg_path.path_derivative_at_length(path, distance: 40.0)
+measure.path_parameter_at_length(path, distance: 40.0)
+measure.path_point_at_length(path, distance: 40.0)
+measure.path_derivative_at_length(path, distance: 40.0)
 ```
 
 ### Distances and Projections
 
-Use `segment_distance` to measure the shortest distance from a point to a
-segment. Use `segment_projection` when you also need the nearest segment
+Use `distance.segment_distance` to measure the shortest distance from a point to a
+segment. Use `distance.segment_projection` when you also need the nearest segment
 parameter and point:
 
 ```gleam
+import svg_path/distance
 import svg_path
 
 pub fn distance_to_segment(
   point: svg_path.Point,
   segment: svg_path.Segment,
 ) -> Result(Float, svg_path.Error) {
-  svg_path.segment_distance(point, to: segment)
+  distance.segment_distance(point, to: segment)
 }
 
 pub fn nearest_on_segment(
   point: svg_path.Point,
   segment: svg_path.Segment,
 ) -> Result(svg_path.SegmentProjection, svg_path.Error) {
-  svg_path.segment_projection(point, to: segment)
+  distance.segment_projection(point, to: segment)
 }
 
 pub fn nearest_on_path(
   point: svg_path.Point,
   path: svg_path.Path,
 ) -> Result(svg_path.PathProjection, svg_path.Error) {
-  svg_path.path_projection(point, to: path)
+  distance.path_projection(point, to: path)
 }
 ```
 
-`subpath_projection` and `path_projection` lift the same idea to larger
+`distance.subpath_projection` and `distance.path_projection` lift the same idea to larger
 structures and return public parameters. Move-only subpaths are skipped.
 
 ### Point Containment
@@ -804,8 +907,9 @@ structures and return public parameters. Move-only subpaths are skipped.
 Use the containment helpers to classify a point relative to SVG fill geometry:
 
 ```gleam
-svg_path.subpath_containment(point, within: subpath, using: svg_path.Nonzero)
-svg_path.path_containment(point, within: path, using: svg_path.EvenOdd)
+import svg_path/containment
+containment.subpath_containment(point, within: subpath, using: svg_path.Nonzero)
+containment.path_containment(point, within: path, using: svg_path.EvenOdd)
 
 // Both return Result(svg_path.PointContainment, svg_path.Error)
 ```
@@ -855,7 +959,7 @@ For a point inside both an outer loop and a nested inner loop:
 | Same as outer loop | `Inside` (winding magnitude 2) | `Outside` (two crossings) |
 | Opposite to outer loop | `Outside` (windings cancel) | `Outside` (two crossings) |
 
-This aggregation is why `path_containment` cannot be implemented as "inside
+This aggregation is why `containment.path_containment` cannot be implemented as "inside
 any subpath". Self-intersecting subpaths and paths that revisit an area use the
 same winding and crossing rules.
 
@@ -919,24 +1023,25 @@ number of generated line edges.
 
 ### Segment Crossings
 
-Use `segment_crossings` to find parameter values where a scalar predicate
+Use `containment.segment_crossings` to find parameter values where a scalar predicate
 changes sign along a segment:
 
 ```gleam
+import svg_path/containment
 import svg_path
 
 pub fn horizontal_crossings(
   segment: svg_path.Segment,
   y: Float,
 ) -> Result(List(Float), svg_path.Error) {
-  svg_path.segment_crossings(segment, where: fn(point) {
+  containment.segment_crossings(segment, where: fn(point) {
     point.y -. y
   })
 }
 ```
 
 The returned values are ordinary segment parameters in `0.0..1.0`. Crossing
-detection is numerical and sampling-based; use `segment_crossings_with` to tune
+detection is numerical and sampling-based; use `containment.segment_crossings_with` to tune
 it.
 
 ### Segment Intersections

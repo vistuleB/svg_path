@@ -11,6 +11,7 @@ import new_hull_experiment/cubic_support
 import new_hull_experiment/fixtures
 import svg_path
 import svg_path/convex_hull
+import svg_path/fit
 
 const samples = 36
 
@@ -149,7 +150,7 @@ fn numeric_support(
 ) -> Result(svg_path.Point, svg_path.Error) {
   let direction = angle_direction(angle)
   use t <- result_try_float(
-    svg_path.segment_minimize(segment, measure: fn(point) {
+    fit.segment_minimize(segment, measure: fn(point) {
       0.0 -. dot(point, direction)
     }),
   )

@@ -4,6 +4,7 @@ import gleam/list
 import gleam/order
 import gleam/result
 import svg_path
+import svg_path/measure
 import svg_path/offset
 import svg_path/svg
 import svg_path/transform
@@ -236,13 +237,13 @@ fn subpath_arrows(
   color: String,
   arrow_scale: Float,
 ) -> svg.ThingsToDraw {
-  case svg_path.subpath_length(subpath) {
+  case measure.subpath_length(subpath) {
     Error(_) -> []
     Ok(total_length) -> {
       let distance = total_length *. 0.42
       case
-        svg_path.subpath_point_at_length(subpath, distance:),
-        svg_path.subpath_derivative_at_length(subpath, distance:)
+        measure.subpath_point_at_length(subpath, distance:),
+        measure.subpath_derivative_at_length(subpath, distance:)
       {
         Ok(point), Ok(derivative) -> {
           let length = point_length(derivative)

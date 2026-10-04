@@ -5,6 +5,7 @@ import gleam/float
 import gleam/int
 import gleam/list
 import svg_path
+import svg_path/fit
 
 pub type Param {
   Param(segment_index: Int, t: Float)
@@ -46,7 +47,7 @@ fn segment_support(
 ) -> abstract_union.Support(Param) {
   let direction = abstract_union.direction(angle)
   let assert Ok(t) =
-    svg_path.segment_minimize(segment, measure: fn(point) {
+    fit.segment_minimize(segment, measure: fn(point) {
       0.0 -. abstract_union.dot(point, direction)
     })
   let assert Ok(point) = svg_path.segment_point(segment, at: t)

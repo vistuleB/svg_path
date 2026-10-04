@@ -11,6 +11,7 @@ import gleam/result
 import svg_path
 import svg_path/internal/number
 import svg_path/intersections
+import svg_path/measure
 import svg_path/overlaps
 
 /// Continuous overlaps and point intersections reported for one query.
@@ -598,7 +599,7 @@ fn segment_parameters_are_stalled(
         from: float.min(first, second),
         to: float.max(first, second),
       ))
-      use motion <- result.try(svg_path.segment_length(portion))
+      use motion <- result.try(measure.segment_length(portion))
       Ok(motion <=. tolerance)
     }
   }
@@ -625,7 +626,7 @@ fn subpath_arc_length_between_parameters(
     True -> Ok(0.0)
     False -> {
       use portion <- result.try(svg_path.subpath_between(subpath, from:, to:))
-      svg_path.subpath_length(portion)
+      measure.subpath_length(portion)
     }
   }
 }

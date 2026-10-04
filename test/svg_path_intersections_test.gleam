@@ -2,6 +2,8 @@ import gleam/float
 import gleam/list
 import gleeunit/should
 import svg_path
+import svg_path/containment
+import svg_path/distance
 import svg_path/intersections
 import svg_path/point
 import svg_path/transform
@@ -133,7 +135,7 @@ pub fn ray_crossing_rejects_unmatched_clamped_endpoint_root_test() {
       end: svg_path.Point(-16.041725986446977, 10.810480774202006),
     )
   let assert Ok([#(t, _)]) =
-    svg_path.segment_ray_crossings_with(
+    containment.segment_ray_crossings_with(
       curve,
       origin: svg_path.Point(0.0, -10.810480773800316),
       direction: svg_path.Point(1.0, 0.0),
@@ -447,7 +449,7 @@ pub fn near_parallel_line_projection_is_scale_invariant_test() {
     let assert Ok(scaled_left) = transform.scale_segment(left, factor: scale)
     let assert Ok(scaled_right) = transform.scale_segment(right, factor: scale)
     let assert Ok(projection) =
-      intersections.segment_segment_closest_pair_with(
+      distance.segment_segment_closest_pair_with(
         scaled_left,
         scaled_right,
         options: intersections.IntersectionOptions(

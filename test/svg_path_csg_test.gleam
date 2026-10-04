@@ -6,6 +6,7 @@ import gleeunit/should
 import svg_path
 import svg_path/area
 import svg_path/arrangement as arrangement_graph
+import svg_path/containment
 import svg_path/csg
 
 const tolerance = 0.000001
@@ -577,9 +578,17 @@ pub fn symmetric_difference_is_commutative_test() {
   samples
   |> list.each(fn(point) {
     let assert Ok(forward_containment) =
-      svg_path.path_containment(point, within: forward, using: svg_path.Nonzero)
+      containment.path_containment(
+        point,
+        within: forward,
+        using: svg_path.Nonzero,
+      )
     let assert Ok(reverse_containment) =
-      svg_path.path_containment(point, within: reverse, using: svg_path.Nonzero)
+      containment.path_containment(
+        point,
+        within: reverse,
+        using: svg_path.Nonzero,
+      )
     assert forward_containment == reverse_containment
   })
 }
@@ -785,11 +794,15 @@ fn assert_intersection_case(boolean_case: BooleanCase) -> Nil {
     samples
     |> list.each(fn(point) {
       let assert Ok(left_containment) =
-        svg_path.path_containment(point, within: left, using: fill_rule)
+        containment.path_containment(point, within: left, using: fill_rule)
       let assert Ok(right_containment) =
-        svg_path.path_containment(point, within: right, using: fill_rule)
+        containment.path_containment(point, within: right, using: fill_rule)
       let assert Ok(result_containment) =
-        svg_path.path_containment(point, within: intersection, using: fill_rule)
+        containment.path_containment(
+          point,
+          within: intersection,
+          using: fill_rule,
+        )
       assert containment_is_inside(result_containment)
         == {
           containment_is_inside(left_containment)
@@ -825,11 +838,11 @@ fn assert_difference_case(boolean_case: BooleanCase) -> Nil {
   samples
   |> list.each(fn(point) {
     let assert Ok(left_containment) =
-      svg_path.path_containment(point, within: left, using: fill_rule)
+      containment.path_containment(point, within: left, using: fill_rule)
     let assert Ok(right_containment) =
-      svg_path.path_containment(point, within: right, using: fill_rule)
+      containment.path_containment(point, within: right, using: fill_rule)
     let assert Ok(result_containment) =
-      svg_path.path_containment(point, within: difference, using: fill_rule)
+      containment.path_containment(point, within: difference, using: fill_rule)
     assert containment_is_inside(result_containment)
       == {
         containment_is_inside(left_containment)
@@ -1067,7 +1080,7 @@ fn assert_containment(
   point: svg_path.Point,
   expected: svg_path.PointContainment,
 ) {
-  svg_path.path_containment(point, within: path, using: svg_path.Nonzero)
+  containment.path_containment(point, within: path, using: svg_path.Nonzero)
   |> should.equal(Ok(expected))
 }
 
@@ -1078,8 +1091,10 @@ fn assert_same_winding_field(
 ) {
   samples
   |> list.each(fn(point) {
-    let assert Ok(input_winding) = svg_path.path_winding(point, within: input)
-    let assert Ok(output_winding) = svg_path.path_winding(point, within: output)
+    let assert Ok(input_winding) =
+      containment.path_winding(point, within: input)
+    let assert Ok(output_winding) =
+      containment.path_winding(point, within: output)
     input_winding |> should.equal(output_winding)
   })
 }

@@ -8,6 +8,7 @@ import gleam/io
 import gleam/list
 import gleam/string
 import svg_path
+import svg_path/bounds
 import svg_path/curvature
 import svg_path/offset
 import svg_path/parse
@@ -47,8 +48,8 @@ pub fn main() -> Nil {
     <> bool_string(svg_path.subpath_is_closed(joined)),
   )
   let offset_path = svg_path.Path([joined])
-  let assert Ok(source_box) = svg_path.path_bounding_box(source)
-  let assert Ok(offset_box) = svg_path.path_bounding_box(offset_path)
+  let assert Ok(source_box) = bounds.path_bounding_box(source)
+  let assert Ok(offset_box) = bounds.path_bounding_box(offset_path)
   let view_box = padded_box([source_box, offset_box], margin: 4.0)
   write_file(
     output,
@@ -185,8 +186,8 @@ fn joined_offset_path(joined: svg_path.Subpath) -> svg.ThingToDraw {
 fn background(view_box: svg_path.BoundingBox) -> svg.ThingToDraw {
   svg.Rectangle(
     view_box.min,
-    svg_path.bounding_box_width(view_box),
-    svg_path.bounding_box_height(view_box),
+    bounds.bounding_box_width(view_box),
+    bounds.bounding_box_height(view_box),
     "fill: #ffffff; stroke: none",
   )
 }

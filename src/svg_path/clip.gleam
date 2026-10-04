@@ -13,9 +13,11 @@ import gleam/option.{Some}
 import gleam/order
 import gleam/result
 import svg_path
+import svg_path/containment
 import svg_path/encounters
 import svg_path/internal/number
 import svg_path/intersections
+import svg_path/measure
 import svg_path/overlaps
 
 const default_tolerance = 0.000001
@@ -39,7 +41,7 @@ pub type Options {
 pub fn default_options() -> Options {
   Options(
     intersection: intersections.default_options(),
-    containment: svg_path.default_containment_options(),
+    containment: containment.default_containment_options(),
     tolerance: default_tolerance,
   )
 }
@@ -300,7 +302,7 @@ fn deduplicate_closed_seam(
         from: last,
         to: first,
       ))
-      use separation <- result.try(svg_path.subpath_length(between))
+      use separation <- result.try(measure.subpath_length(between))
       case separation <=. tolerance {
         True -> Ok(without_last(parameters))
         False -> Ok(parameters)
@@ -336,7 +338,7 @@ fn unique_sorted_parameters(
             from: previous,
             to: first,
           ))
-          use separation <- result.try(svg_path.subpath_length(between))
+          use separation <- result.try(measure.subpath_length(between))
           case separation <=. tolerance {
             True -> unique_sorted_parameters(rest, input, tolerance, kept:)
             False ->
@@ -404,7 +406,7 @@ fn subpath_is_inside(
   options: Options,
 ) -> Result(Bool, svg_path.Error) {
   use sample <- result.try(subpath_sample_point(input, options))
-  use containment <- result.try(svg_path.path_containment_with(
+  use containment <- result.try(containment.path_containment_with(
     sample,
     within: clip_region,
     using: fill_rule,
@@ -420,9 +422,9 @@ fn subpath_sample_point(
   input: svg_path.Subpath,
   options: Options,
 ) -> Result(svg_path.Point, svg_path.Error) {
-  use length <- result.try(svg_path.subpath_length(input))
+  use length <- result.try(measure.subpath_length(input))
   case length <=. options.tolerance {
     True -> svg_path.subpath_point(input, at: svg_path.SubpathParameter(0, 0.0))
-    False -> svg_path.subpath_point_at_length(input, distance: length /. 2.0)
+    False -> measure.subpath_point_at_length(input, distance: length /. 2.0)
   }
 }

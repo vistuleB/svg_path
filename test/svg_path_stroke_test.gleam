@@ -2,6 +2,8 @@ import closed_path_assertions
 import gleam/float
 import gleam/list
 import svg_path
+import svg_path/containment
+import svg_path/measure
 import svg_path/offset
 import svg_path/parse
 import svg_path/serialize
@@ -160,13 +162,13 @@ pub fn stroke_preserves_gallery_hairpin_dash_test() {
   assert svg_path.subpath_is_closed(outline)
   assert arc_count(svg_path.subpath_segments(outline)) >= 2
   let assert Ok(svg_path.Inside) =
-    svg_path.path_containment(
+    containment.path_containment(
       svg_path.subpath_start(source),
       within: path,
       using: svg_path.Nonzero,
     )
   let assert Ok(svg_path.Inside) =
-    svg_path.path_containment(
+    containment.path_containment(
       svg_path.subpath_end(source),
       within: path,
       using: svg_path.Nonzero,
@@ -519,13 +521,13 @@ pub fn self_meeting_closed_subpath_stroke_uses_band_sections_test() {
 
   assert list.length(subpaths) == 3
   assert list.all(subpaths, svg_path.subpath_is_closed)
-  assert svg_path.path_containment(
+  assert containment.path_containment(
       svg_path.Point(76.0, 0.0),
       within: path,
       using: svg_path.Nonzero,
     )
     == Ok(svg_path.Inside)
-  assert svg_path.path_containment(
+  assert containment.path_containment(
       svg_path.Point(76.0, 0.0),
       within: path,
       using: svg_path.EvenOdd,
@@ -742,7 +744,7 @@ pub fn zero_visible_dashes_on_closed_source_are_points_not_full_loops_test() {
   assert list.length(dashes) == 3
   list.each(dashes, fn(dash) {
     assert !svg_path.subpath_is_closed(dash)
-    assert svg_path.subpath_length(dash) == Ok(0.0)
+    assert measure.subpath_length(dash) == Ok(0.0)
   })
   let assert Ok(stroked) =
     stroke.subpath_dashed(

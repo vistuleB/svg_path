@@ -5,6 +5,7 @@ import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import svg_path
+import svg_path/measure
 import svg_path/point as point_helpers
 import svg_path/trig
 
@@ -140,7 +141,7 @@ type AssignedScale {
 pub fn default_round_corner_options() -> RoundCornerOptions {
   RoundCornerOptions(
     failure: ErrorOnFailure,
-    length_options: svg_path.default_length_options(),
+    length_options: measure.default_length_options(),
     distance_tolerance: default_tolerance,
     angular_tolerance: default_tolerance,
   )
@@ -221,7 +222,7 @@ fn validate_round_corner_inputs(
     False -> Error(InvalidRadius(radius))
     True -> {
       use _ <- result.try(
-        svg_path.validate_length_options(options.length_options)
+        measure.validate_length_options(options.length_options)
         |> result.map_error(PathError),
       )
       case
@@ -301,7 +302,7 @@ fn segment_infos_loop(
     [] -> Ok(list.reverse(infos))
     [segment, ..rest] -> {
       use length <- result.try(
-        svg_path.segment_length_with(segment, options: length_options)
+        measure.segment_length_with(segment, options: length_options)
         |> result.map_error(PathError),
       )
       segment_infos_loop(rest, length_options, index: index + 1, infos: [
@@ -423,7 +424,7 @@ fn corner_candidate(
             False -> corner_failure(index, options)
             True -> {
               use incoming_cut <- result.try(
-                svg_path.segment_point_at_length_with(
+                measure.segment_point_at_length_with(
                   incoming.segment,
                   distance: incoming.length -. trim,
                   options: options.length_options,
@@ -431,7 +432,7 @@ fn corner_candidate(
                 |> result.map_error(PathError),
               )
               use outgoing_cut <- result.try(
-                svg_path.segment_point_at_length_with(
+                measure.segment_point_at_length_with(
                   outgoing.segment,
                   distance: trim,
                   options: options.length_options,
@@ -768,7 +769,7 @@ fn corner_from_spec(
     next_segment_info(spec.index, infos) |> result.map_error(CornerTrimsOverlap),
   )
   use incoming_cut <- result.try(
-    svg_path.segment_point_at_length_with(
+    measure.segment_point_at_length_with(
       incoming.segment,
       distance: incoming.length -. trim,
       options: options.length_options,
@@ -776,7 +777,7 @@ fn corner_from_spec(
     |> result.map_error(PathError),
   )
   use outgoing_cut <- result.try(
-    svg_path.segment_point_at_length_with(
+    measure.segment_point_at_length_with(
       outgoing.segment,
       distance: trim,
       options: options.length_options,
@@ -899,7 +900,7 @@ fn rounded_subpath_segments(
               // over-consumed and need no inverse-length reconstruction.
               False -> Ok(info.segment)
               True ->
-                svg_path.segment_between_lengths_with(
+                measure.segment_between_lengths_with(
                   info.segment,
                   from: start_trim,
                   to: info.length -. end_trim,

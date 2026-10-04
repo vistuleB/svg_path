@@ -4,6 +4,7 @@ import gleam/int
 import gleam/list
 import gleam/result
 import svg_path
+import svg_path/bounds
 import svg_path/offset
 import svg_path/serialize
 import svg_path/transform
@@ -193,7 +194,7 @@ fn panel(
   }
   let geometry = svg_path.Path([source, ..svg_path.path_subpaths(offset_path)])
   let assert Ok(svg_path.BoundingBox(min:, max:)) =
-    svg_path.path_bounding_box(geometry)
+    bounds.path_bounding_box(geometry)
   let geometry_center_x = { min.x +. max.x } /. 2.0
   let geometry_center_y = { min.y +. max.y } /. 2.0
   "  <g transform=\"translate("

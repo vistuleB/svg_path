@@ -8,6 +8,9 @@ import gleam/result
 import gleam/string
 import gleeunit
 import svg_path
+import svg_path/bounds
+import svg_path/fit
+import svg_path/measure
 import svg_path/offset
 import svg_path/parse
 import svg_path/svg
@@ -35,14 +38,14 @@ pub fn generate_khmer_text_offset_map_spiral_visual() {
   let assert Ok(source_svg) = read_file(source)
   let d = extract_path_data(source_svg)
   let assert Ok(text_path) = parse.path(d)
-  let assert Ok(text_box) = svg_path.path_bounding_box(text_path)
+  let assert Ok(text_box) = bounds.path_bounding_box(text_path)
   let coil = coil_subpath(turns: 6, samples: 900)
-  let assert Ok(coil_length) = svg_path.subpath_length(coil)
+  let assert Ok(coil_length) = measure.subpath_length(coil)
   let assert Ok(coil_map) = offset.subpath_offset_map(coil)
   let text_layout = text_layout(text_box, coil_length)
   let assert Ok(mapped) =
     repeated_text_on_coil(text_path, text_box, text_layout, coil_map)
-  let assert Ok(mapped_box) = svg_path.path_bounding_box(mapped)
+  let assert Ok(mapped_box) = bounds.path_bounding_box(mapped)
   let view_box = offset_map_view_box(mapped_box)
 
   let drawing =
@@ -65,9 +68,9 @@ pub fn generate_khmer_text_offset_map_decaying_spiral_visual() {
   let assert Ok(source_svg) = read_file(source)
   let d = extract_path_data(source_svg)
   let assert Ok(text_path) = parse.path(d)
-  let assert Ok(text_box) = svg_path.path_bounding_box(text_path)
+  let assert Ok(text_box) = bounds.path_bounding_box(text_path)
   let spiral = decaying_spiral_subpath(turns: 5, samples: 900)
-  let assert Ok(spiral_length) = svg_path.subpath_length(spiral)
+  let assert Ok(spiral_length) = measure.subpath_length(spiral)
   let assert Ok(spiral_map) = offset.subpath_offset_map(spiral)
   let source_capacity =
     source_distance_for_spiral_length(
@@ -77,10 +80,10 @@ pub fn generate_khmer_text_offset_map_decaying_spiral_visual() {
   let text_layout = text_layout(text_box, source_capacity)
   let decaying_map = decaying_offset_map(spiral_length, spiral_map)
   let assert Ok(subdivided_text) =
-    svg_path.path_subdivide_to_max_length(text_path, max_length: 1.0)
+    measure.path_subdivide_to_max_length(text_path, max_length: 1.0)
   let assert Ok(mapped) =
     repeated_text_on_coil(subdivided_text, text_box, text_layout, decaying_map)
-  let assert Ok(mapped_box) = svg_path.path_bounding_box(mapped)
+  let assert Ok(mapped_box) = bounds.path_bounding_box(mapped)
   let view_box = offset_map_view_box(mapped_box)
 
   let drawing =
@@ -104,9 +107,9 @@ pub fn khmer_text_offset_map_rectangle_focus_visual_probe() {
   let d = extract_path_data(source_svg)
   let source_rectangle = extract_rectangle(source_svg)
   let assert Ok(text_path) = parse.path(d)
-  let assert Ok(text_box) = svg_path.path_bounding_box(text_path)
+  let assert Ok(text_box) = bounds.path_bounding_box(text_path)
   let spiral = decaying_spiral_subpath(turns: 5, samples: 900)
-  let assert Ok(spiral_length) = svg_path.subpath_length(spiral)
+  let assert Ok(spiral_length) = measure.subpath_length(spiral)
   let assert Ok(spiral_map) = offset.subpath_offset_map(spiral)
   let source_capacity =
     source_distance_for_spiral_length(
@@ -199,7 +202,7 @@ pub fn khmer_text_offset_map_rectangle_focus_visual_probe() {
   let source_view_box =
     focus_view_box(source_rectangle_bounding_box(source_rectangle))
   let assert Ok(mapped_focus_box) =
-    svg_path.subpath_bounding_box(mapped_rectangle)
+    bounds.subpath_bounding_box(mapped_rectangle)
   let mapped_view_box = focus_view_box(mapped_focus_box)
   let source_panel_map =
     panel_map(
@@ -267,8 +270,8 @@ pub fn khmer_text_offset_map_rectangle_focus_visual_probe() {
       things: [
         svg.Rectangle(
           view_box.min,
-          svg_path.bounding_box_width(view_box),
-          svg_path.bounding_box_height(view_box),
+          bounds.bounding_box_width(view_box),
+          bounds.bounding_box_height(view_box),
           "fill: #ffffff; stroke: none",
         ),
         svg.Text(
@@ -626,8 +629,8 @@ fn panel_map(
   width width: Float,
   height height: Float,
 ) -> fn(svg_path.Point) -> svg_path.Point {
-  let source_width = svg_path.bounding_box_width(source_box)
-  let source_height = svg_path.bounding_box_height(source_box)
+  let source_width = bounds.bounding_box_width(source_box)
+  let source_height = bounds.bounding_box_height(source_box)
   let scale = float.min(width /. source_width, height /. source_height)
   let used_width = source_width *. scale
   let used_height = source_height *. scale
@@ -959,9 +962,9 @@ fn map_vertical_grid_loop(
 }
 
 fn focus_view_box(rectangle_box: svg_path.BoundingBox) -> svg_path.BoundingBox {
-  let center = svg_path.bounding_box_center(rectangle_box)
-  let width = svg_path.bounding_box_width(rectangle_box) /. 0.3
-  let height = svg_path.bounding_box_height(rectangle_box) /. 0.3
+  let center = bounds.bounding_box_center(rectangle_box)
+  let width = bounds.bounding_box_width(rectangle_box) /. 0.3
+  let height = bounds.bounding_box_height(rectangle_box) /. 0.3
   svg_path.BoundingBox(
     min: svg_path.Point(center.x -. width /. 2.0, center.y -. height /. 2.0),
     max: svg_path.Point(center.x +. width /. 2.0, center.y +. height /. 2.0),
@@ -980,8 +983,8 @@ fn offset_map_view_box(
 fn background_rectangle(view_box: svg_path.BoundingBox) -> svg.ThingToDraw {
   svg.Rectangle(
     view_box.min,
-    svg_path.bounding_box_width(view_box),
-    svg_path.bounding_box_height(view_box),
+    bounds.bounding_box_width(view_box),
+    bounds.bounding_box_height(view_box),
     "fill: #ffffff; stroke: none",
   )
 }
@@ -1000,8 +1003,8 @@ fn text_layout(
   text_box: svg_path.BoundingBox,
   coil_length: Float,
 ) -> TextLayout {
-  let width = svg_path.bounding_box_width(text_box)
-  let height = svg_path.bounding_box_height(text_box)
+  let width = bounds.bounding_box_width(text_box)
+  let height = bounds.bounding_box_height(text_box)
   let x_scale = height /. band_height
   let text_length = width *. x_scale
   let gap = band_height
@@ -1044,7 +1047,7 @@ fn repeated_text_on_coil(
     True -> {
       let available_width =
         float.min(
-          svg_path.bounding_box_width(text_box),
+          bounds.bounding_box_width(text_box),
           layout.remainder /. layout.x_scale,
         )
       case available_width <=. 0.0 {
@@ -1092,7 +1095,7 @@ fn repeated_text_copies(
           text_box,
           layout.x_scale,
           start_distance,
-          available_width: svg_path.bounding_box_width(text_box),
+          available_width: bounds.bounding_box_width(text_box),
           coil_map:,
         )
       repeated_text_copies(
@@ -1136,7 +1139,7 @@ fn source_point_to_offset_point(
   start_distance: Float,
   coil_map: fn(svg_path.Point) -> Result(svg_path.Point, offset.Error),
 ) -> Result(svg_path.Point, offset.Error) {
-  let height = svg_path.bounding_box_height(text_box)
+  let height = bounds.bounding_box_height(text_box)
   let source_x = point.x -. text_box.min.x
   let distance = start_distance +. source_x *. x_scale
   let band_offset =
@@ -1147,7 +1150,7 @@ fn source_point_to_offset_point(
 fn coil_subpath(turns turns: Int, samples _samples: Int) -> svg_path.Subpath {
   let total_degrees = int.to_float(turns) *. 360.0
   let assert Ok(subpath) =
-    svg_path.subpath_from_parametric_with(
+    fit.subpath_from_parametric_with(
       from: 0.0,
       to: total_degrees,
       point: coil_point_at_degrees,
@@ -1188,7 +1191,7 @@ fn decaying_spiral_subpath(
 ) -> svg_path.Subpath {
   let total_degrees = int.to_float(turns) *. 360.0
   let assert Ok(subpath) =
-    svg_path.subpath_from_parametric_with(
+    fit.subpath_from_parametric_with(
       from: 0.0,
       to: total_degrees,
       point: decaying_spiral_point_at_degrees,

@@ -4,6 +4,7 @@ import gleam/int
 import gleam/list
 import gleam/string
 import svg_path
+import svg_path/bounds
 import svg_path/offset
 import svg_path/parse
 import svg_path/svg
@@ -30,8 +31,8 @@ pub fn main() -> Nil {
     )
   let boxes =
     [
-      svg_path.path_bounding_box(source),
-      svg_path.path_bounding_box(first_offset),
+      bounds.path_bounding_box(source),
+      bounds.path_bounding_box(first_offset),
     ]
     |> list.filter_map(fn(result) { result })
   let view_box = padded_box(boxes, margin: 2.0)
@@ -40,8 +41,8 @@ pub fn main() -> Nil {
       things: [
         svg.Rectangle(
           view_box.min,
-          svg_path.bounding_box_width(view_box),
-          svg_path.bounding_box_height(view_box),
+          bounds.bounding_box_width(view_box),
+          bounds.bounding_box_height(view_box),
           "fill: #ffffff; stroke: none",
         ),
         svg.StyledPath(source, "fill: #111827; stroke: none; opacity: 0.16"),

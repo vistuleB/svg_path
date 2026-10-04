@@ -2,6 +2,7 @@ import gleam/dynamic.{type Dynamic}
 import gleam/int
 import gleam/list
 import svg_path
+import svg_path/bounds
 import svg_path/offset
 import svg_path/svg
 
@@ -43,7 +44,7 @@ pub fn figure_eight_correspondence_blocks() -> String {
     _ -> []
   }
   let geometry = svg_path.Path([source, ..svg_path.path_subpaths(band)])
-  let assert Ok(bounds) = svg_path.path_bounding_box(geometry)
+  let assert Ok(bounds) = bounds.path_bounding_box(geometry)
   let view_box = padded_box(bounds, fraction: 0.15)
   let svg_path.BoundingBox(min:, max:) = view_box
   svg.document(

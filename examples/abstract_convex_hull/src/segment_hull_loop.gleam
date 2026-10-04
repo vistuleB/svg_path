@@ -11,6 +11,7 @@ import gleam/list
 import gleam/result
 import svg_path
 import svg_path/convex_hull
+import svg_path/fit
 
 pub type Param {
   Param(segment_index: Int, t: Float)
@@ -56,7 +57,7 @@ fn segment_support(
   direction: svg_path.Point,
 ) -> abstract_union.Support(Param) {
   let assert Ok(t) =
-    svg_path.segment_minimize(segment, measure: fn(point) {
+    fit.segment_minimize(segment, measure: fn(point) {
       0.0 -. abstract_union.dot(point, direction)
     })
   let assert Ok(point) = svg_path.segment_point(segment, at: t)

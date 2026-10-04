@@ -4,7 +4,11 @@ import gleam/list
 import gleam/result
 import gleeunit
 import svg_path
+import svg_path/bounds
+import svg_path/distance
 import svg_path/ellipse
+import svg_path/fit
+import svg_path/measure
 
 const tolerance = 0.000001
 
@@ -308,25 +312,25 @@ pub fn segment_second_derivative_evaluates_arc_analytically_test() {
 
 pub fn segment_bounding_box_handles_lines_beziers_and_arcs_test() {
   let assert Ok(line_box) =
-    svg_path.segment_bounding_box(svg_path.Line(
+    bounds.segment_bounding_box(svg_path.Line(
       start: svg_path.Point(1.0, 2.0),
       end: svg_path.Point(5.0, -3.0),
     ))
   let assert Ok(quadratic_box) =
-    svg_path.segment_bounding_box(svg_path.QuadraticBezier(
+    bounds.segment_bounding_box(svg_path.QuadraticBezier(
       start: svg_path.Point(0.0, 0.0),
       control: svg_path.Point(10.0, 10.0),
       end: svg_path.Point(20.0, 0.0),
     ))
   let assert Ok(cubic_box) =
-    svg_path.segment_bounding_box(svg_path.CubicBezier(
+    bounds.segment_bounding_box(svg_path.CubicBezier(
       start: svg_path.Point(0.0, 0.0),
       control1: svg_path.Point(0.0, 30.0),
       control2: svg_path.Point(30.0, 30.0),
       end: svg_path.Point(30.0, 0.0),
     ))
   let assert Ok(arc_box) =
-    svg_path.segment_bounding_box(svg_path.Arc(
+    bounds.segment_bounding_box(svg_path.Arc(
       start: svg_path.Point(0.0, 0.0),
       radius: svg_path.Point(10.0, 10.0),
       x_axis_rotation: 0.0,
@@ -364,10 +368,10 @@ pub fn bounding_box_dimensions_use_extents_test() {
       max: svg_path.Point(8.0, 15.0),
     )
 
-  assert svg_path.bounding_box_width(box) == 10.0
-  assert svg_path.bounding_box_height(box) == 12.0
-  assert svg_path.bounding_box_center(box) == svg_path.Point(3.0, 9.0)
-  assert svg_path.bounding_box_taxicab_diameter(box) == 22.0
+  assert bounds.bounding_box_width(box) == 10.0
+  assert bounds.bounding_box_height(box) == 12.0
+  assert bounds.bounding_box_center(box) == svg_path.Point(3.0, 9.0)
+  assert bounds.bounding_box_taxicab_diameter(box) == 22.0
 }
 
 pub fn bounding_box_union_covers_both_boxes_test() {
@@ -382,7 +386,7 @@ pub fn bounding_box_union_covers_both_boxes_test() {
       max: svg_path.Point(-2.0, 9.0),
     )
 
-  assert svg_path.bounding_box_union(first, second)
+  assert bounds.bounding_box_union(first, second)
     == svg_path.BoundingBox(
       min: svg_path.Point(-7.0, -3.0),
       max: svg_path.Point(5.0, 9.0),
@@ -406,7 +410,7 @@ pub fn bounding_box_union_many_covers_every_box_test() {
       max: svg_path.Point(4.0, -6.0),
     )
 
-  assert svg_path.bounding_box_union_many([first, second, third])
+  assert bounds.bounding_box_union_many([first, second, third])
     == Ok(svg_path.BoundingBox(
       min: svg_path.Point(-7.0, -8.0),
       max: svg_path.Point(5.0, 9.0),
@@ -414,11 +418,11 @@ pub fn bounding_box_union_many_covers_every_box_test() {
 }
 
 pub fn bounding_box_union_many_returns_error_for_empty_lists_test() {
-  assert svg_path.bounding_box_union_many([]) == Error(Nil)
+  assert bounds.bounding_box_union_many([]) == Error(Nil)
 }
 
 pub fn points_bounding_box_covers_every_point_test() {
-  assert svg_path.points_bounding_box([
+  assert bounds.points_bounding_box([
       svg_path.Point(2.0, -3.0),
       svg_path.Point(-7.0, 6.0),
       svg_path.Point(4.0, -8.0),
@@ -430,7 +434,7 @@ pub fn points_bounding_box_covers_every_point_test() {
 }
 
 pub fn points_bounding_box_returns_error_for_empty_lists_test() {
-  assert svg_path.points_bounding_box([]) == Error(Nil)
+  assert bounds.points_bounding_box([]) == Error(Nil)
 }
 
 pub fn segment_bounding_box_returns_degenerate_arc_errors_test() {
@@ -444,7 +448,7 @@ pub fn segment_bounding_box_returns_degenerate_arc_errors_test() {
       end: svg_path.Point(20.0, 0.0),
     )
 
-  assert svg_path.segment_bounding_box(segment) == Error(svg_path.DegenerateArc)
+  assert bounds.segment_bounding_box(segment) == Error(svg_path.DegenerateArc)
 }
 
 pub fn arc_center_data_converts_arc_segments_test() {
@@ -523,7 +527,7 @@ pub fn fit_cubic_with_endpoint_tangents_returns_root_segment_test() {
     )
 
   let assert Ok(#(fit, report)) =
-    svg_path.fit_cubic_with_endpoint_tangents(
+    fit.fit_cubic_with_endpoint_tangents(
       start: svg_path.segment_start(original),
       end: svg_path.segment_end(original),
       start_tangent: result.unwrap(
@@ -580,7 +584,7 @@ pub fn fit_cubic_with_endpoint_tangents_returns_root_segment_test() {
 
 pub fn fit_cubic_with_endpoints_returns_root_segment_test() {
   let assert Ok(#(fit, _report)) =
-    svg_path.fit_cubic_with_endpoints(
+    fit.fit_cubic_with_endpoints(
       start: svg_path.Point(0.0, 0.0),
       end: svg_path.Point(10.0, 0.0),
       samples: [
@@ -597,7 +601,7 @@ pub fn fit_cubic_with_endpoints_returns_root_segment_test() {
 }
 
 pub fn fit_cubic_with_endpoint_tangents_reports_degenerate_tangent_test() {
-  assert svg_path.fit_cubic_with_endpoint_tangents(
+  assert fit.fit_cubic_with_endpoint_tangents(
       start: svg_path.Point(0.0, 0.0),
       end: svg_path.Point(10.0, 0.0),
       start_tangent: svg_path.Point(0.0, 0.0),
@@ -608,7 +612,7 @@ pub fn fit_cubic_with_endpoint_tangents_reports_degenerate_tangent_test() {
 }
 
 pub fn fit_cubic_with_endpoints_reports_underdetermined_fit_test() {
-  assert svg_path.fit_cubic_with_endpoints(
+  assert fit.fit_cubic_with_endpoints(
       start: svg_path.Point(0.0, 0.0),
       end: svg_path.Point(10.0, 0.0),
       samples: [#(0.5, svg_path.Point(5.0, 1.0))],
@@ -1073,9 +1077,9 @@ pub fn endpoint_arc_splits_return_usable_empty_lines_test() {
       }
       assert empty == svg_path.Line(endpoint, endpoint)
       assert retained == arc
-      assert svg_path.segment_length(empty) == Ok(0.0)
+      assert measure.segment_length(empty) == Ok(0.0)
       assert svg_path.segment_point(empty, 0.5) == Ok(endpoint)
-      assert svg_path.segment_length(retained) == svg_path.segment_length(arc)
+      assert measure.segment_length(retained) == measure.segment_length(arc)
     })
   })
 }
@@ -1407,7 +1411,7 @@ pub fn subpath_bounding_box_combines_segment_boxes_test() {
       ),
     ])
 
-  let assert Ok(box) = svg_path.subpath_bounding_box(subpath)
+  let assert Ok(box) = bounds.subpath_bounding_box(subpath)
 
   assert bbox_near(
     box,
@@ -1443,7 +1447,7 @@ pub fn path_bounding_box_uses_nonempty_subpaths_test() {
       second,
     ])
 
-  let assert Ok(box) = svg_path.path_bounding_box(path)
+  let assert Ok(box) = bounds.path_bounding_box(path)
 
   assert bbox_near(
     box,
@@ -1455,7 +1459,7 @@ pub fn path_bounding_box_uses_nonempty_subpaths_test() {
 pub fn empty_path_has_no_start_or_end_test() {
   assert svg_path.path_start(svg_path.path_empty()) == Error(svg_path.EmptyPath)
   assert svg_path.path_end(svg_path.path_empty()) == Error(svg_path.EmptyPath)
-  assert svg_path.path_bounding_box(svg_path.path_empty())
+  assert bounds.path_bounding_box(svg_path.path_empty())
     == Error(svg_path.EmptyPath)
 }
 
@@ -1470,7 +1474,7 @@ pub fn path_with_only_empty_subpaths_has_start_and_end_test() {
 
   assert svg_path.path_start(path) == Ok(a)
   assert svg_path.path_end(path) == Ok(b)
-  assert svg_path.path_bounding_box(path) == Error(svg_path.EmptySubpaths)
+  assert bounds.path_bounding_box(path) == Error(svg_path.EmptySubpaths)
 }
 
 pub fn as_subpath_rejects_empty_path_test() {
@@ -1604,7 +1608,7 @@ pub fn empty_subpath_has_start_and_end_test() {
 
   assert svg_path.subpath_start(svg_path.subpath_empty(at: start)) == start
   assert svg_path.subpath_end(svg_path.subpath_empty(at: start)) == start
-  assert svg_path.subpath_bounding_box(svg_path.subpath_empty(at: start))
+  assert bounds.subpath_bounding_box(svg_path.subpath_empty(at: start))
     == Error(svg_path.EmptySubpath)
 }
 
@@ -2068,29 +2072,29 @@ pub fn segment_is_zero_length_detects_exact_zero_lines_test() {
   let zero = svg_path.Line(start: a, end: a)
   let nonzero = svg_path.Line(start: a, end: svg_path.Point(1.0, 0.0))
 
-  assert svg_path.segment_is_zero_length(zero, tolerance: 0.0) == Ok(True)
-  assert svg_path.segment_is_zero_length(nonzero, tolerance: 0.0) == Ok(False)
+  assert measure.segment_is_zero_length(zero, tolerance: 0.0) == Ok(True)
+  assert measure.segment_is_zero_length(nonzero, tolerance: 0.0) == Ok(False)
 }
 
 pub fn segment_is_zero_length_uses_tolerance_test() {
   let a = svg_path.Point(0.0, 0.0)
   let short = svg_path.Line(start: a, end: svg_path.Point(0.001, 0.0))
 
-  assert svg_path.segment_is_zero_length(short, tolerance: 0.0009) == Ok(False)
-  assert svg_path.segment_is_zero_length(short, tolerance: 0.0011) == Ok(True)
+  assert measure.segment_is_zero_length(short, tolerance: 0.0009) == Ok(False)
+  assert measure.segment_is_zero_length(short, tolerance: 0.0011) == Ok(True)
 }
 
 pub fn segment_is_zero_length_detects_collapsed_cubic_test() {
   let a = svg_path.Point(2.0, 3.0)
   let zero = svg_path.CubicBezier(start: a, control1: a, control2: a, end: a)
 
-  assert svg_path.segment_is_zero_length(zero, tolerance: 0.0) == Ok(True)
+  assert measure.segment_is_zero_length(zero, tolerance: 0.0) == Ok(True)
 }
 
 pub fn subpath_is_zero_length_requires_non_empty_subpath_test() {
   let empty = svg_path.subpath_empty(at: svg_path.Point(0.0, 0.0))
 
-  assert svg_path.subpath_is_zero_length(empty, tolerance: 0.0) == Ok(False)
+  assert measure.subpath_is_zero_length(empty, tolerance: 0.0) == Ok(False)
 }
 
 pub fn subpath_is_empty_detects_move_only_subpath_test() {
@@ -2111,17 +2115,17 @@ pub fn subpath_is_zero_length_checks_every_segment_test() {
   let zero = svg_path.Line(start: a, end: a)
   let nonzero = svg_path.Line(start: a, end: b)
 
-  assert svg_path.subpath_is_zero_length(
+  assert measure.subpath_is_zero_length(
       svg_path.subpath_assert([zero]),
       tolerance: 0.0,
     )
     == Ok(True)
-  assert svg_path.subpath_is_zero_length(
+  assert measure.subpath_is_zero_length(
       svg_path.subpath_assert([zero, zero]),
       tolerance: 0.0,
     )
     == Ok(True)
-  assert svg_path.subpath_is_zero_length(
+  assert measure.subpath_is_zero_length(
       svg_path.subpath_assert_with([zero, nonzero], policy: svg_path.Wiggle),
       tolerance: 0.0,
     )
@@ -2132,7 +2136,7 @@ pub fn zero_length_predicates_reject_negative_tolerance_test() {
   let a = svg_path.Point(0.0, 0.0)
   let zero = svg_path.Line(start: a, end: a)
 
-  assert svg_path.segment_is_zero_length(zero, tolerance: -0.1)
+  assert measure.segment_is_zero_length(zero, tolerance: -0.1)
     == Error(svg_path.InvalidZeroLengthTolerance(-0.1))
 }
 
@@ -3944,10 +3948,10 @@ fn point_distance_to_lines(
   lines: List(svg_path.Segment),
 ) -> Float {
   let assert [first, ..rest] = lines
-  let assert Ok(first_distance) = svg_path.segment_distance(point, to: first)
+  let assert Ok(first_distance) = distance.segment_distance(point, to: first)
 
   list.fold(rest, first_distance, fn(best, line) {
-    let assert Ok(distance) = svg_path.segment_distance(point, to: line)
+    let assert Ok(distance) = distance.segment_distance(point, to: line)
     float.min(best, distance)
   })
 }

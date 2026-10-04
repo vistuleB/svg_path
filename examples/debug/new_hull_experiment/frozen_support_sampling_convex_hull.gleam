@@ -14,6 +14,8 @@ import gleam/list
 import gleam/result
 import gleam_community/maths
 import svg_path
+import svg_path/bounds
+import svg_path/fit
 
 const initial_sample_number = 100
 
@@ -113,7 +115,7 @@ fn numeric_support(
   direction: svg_path.Point,
 ) -> Result(#(Float, svg_path.Point), svg_path.Error) {
   use t <- result.try(
-    svg_path.segment_minimize(segment, measure: fn(point) {
+    fit.segment_minimize(segment, measure: fn(point) {
       0.0 -. dot(point, direction)
     }),
   )
@@ -382,9 +384,9 @@ fn segment_hull_pieces(
 fn segment_hull_sample_stages(
   segment: svg_path.Segment,
 ) -> Result(#(List(SupportSample), List(SupportSample)), HullError) {
-  use box <- result.try(map_path_error(svg_path.segment_bounding_box(segment)))
+  use box <- result.try(map_path_error(bounds.segment_bounding_box(segment)))
   let distance_tolerance =
-    svg_path.bounding_box_taxicab_diameter(box)
+    bounds.bounding_box_taxicab_diameter(box)
     *. unit_diameter_distance_tolerance
   use samples <- result.try(map_path_error(initial_support_samples(segment)))
   use refined <- result.try(refine_until_contextually_resolved(

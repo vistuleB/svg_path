@@ -9,6 +9,7 @@ import gleam/option.{None, Some}
 import gleam/order
 import gleam/result
 import svg_path
+import svg_path/distance
 import svg_path/encounters
 import svg_path/overlaps
 import svg_path/point
@@ -773,7 +774,7 @@ fn samples_are_near_loop(
     [] -> Ok(True)
     [first, ..rest] -> {
       use sample <- result.try(svg_path.segment_point(source, at: first))
-      use distance <- result.try(svg_path.segment_distance(sample, to: target))
+      use distance <- result.try(distance.segment_distance(sample, to: target))
       case distance <=. tolerance {
         False -> Ok(False)
         True -> samples_are_near_loop(rest, source, target, tolerance)

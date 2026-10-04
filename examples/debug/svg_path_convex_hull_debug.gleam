@@ -15,7 +15,9 @@ import gleam/list
 import gleam/string
 import gleam_community/maths
 import svg_path
+import svg_path/bounds
 import svg_path/convex_hull
+import svg_path/fit
 import svg_path/number_format
 import svg_path/svg
 
@@ -240,12 +242,12 @@ fn support_bucket(t: Float) -> String {
 }
 
 fn print_segment_probe(segment: svg_path.Segment) -> Nil {
-  case svg_path.segment_bounding_box(segment) {
+  case bounds.segment_bounding_box(segment) {
     Ok(box) -> {
       io.println_error("bounding box: " <> bounding_box_to_string(box))
       io.println_error(
         "bounding box diameter: "
-        <> float_to_string(svg_path.bounding_box_taxicab_diameter(box)),
+        <> float_to_string(bounds.bounding_box_taxicab_diameter(box)),
       )
     }
     Error(error) ->
@@ -281,7 +283,7 @@ fn print_initial_10_degree_support_ts(segment: svg_path.Segment) -> Nil {
 fn format_support_t(segment: svg_path.Segment, angle: Float) -> String {
   let direction = angle_direction(angle)
   let t = case
-    svg_path.segment_minimize(segment, measure: fn(point) {
+    fit.segment_minimize(segment, measure: fn(point) {
       0.0 -. { point.x *. direction.x +. point.y *. direction.y }
     })
   {
@@ -295,7 +297,7 @@ fn format_support_t(segment: svg_path.Segment, angle: Float) -> String {
 fn support_probe(segment: svg_path.Segment, angle: Float) -> String {
   let direction = angle_direction(angle)
   case
-    svg_path.segment_minimize(segment, measure: fn(point) {
+    fit.segment_minimize(segment, measure: fn(point) {
       0.0 -. { point.x *. direction.x +. point.y *. direction.y }
     })
   {
@@ -397,7 +399,7 @@ fn support_value(
 ) -> Result(Float, svg_path.Error) {
   let direction = angle_direction(angle)
   use t <- result_try_minimize(
-    svg_path.segment_minimize(segment, measure: fn(point) {
+    fit.segment_minimize(segment, measure: fn(point) {
       0.0 -. dot(point, direction)
     }),
   )
@@ -441,7 +443,7 @@ fn drawing_svg(
   hull: svg_path.Subpath,
   pieces: List(convex_hull.HullPiece),
 ) -> String {
-  let assert Ok(box) = svg_path.segment_bounding_box(segment)
+  let assert Ok(box) = bounds.segment_bounding_box(segment)
   let original = svg_path.Path([svg_path.subpath_assert([segment])])
   let hull_path = svg_path.Path([hull])
   let assert Ok(start) = svg_path.segment_point(segment, at: 0.0)

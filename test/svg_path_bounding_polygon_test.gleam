@@ -1,6 +1,7 @@
 import gleam/int
 import gleam/list
 import svg_path.{type Point, Point}
+import svg_path/bounds
 
 fn cross(a: Point, b: Point, p: Point) -> Float {
   { b.x -. a.x } *. { p.y -. a.y } -. { b.y -. a.y } *. { p.x -. a.x }
@@ -8,7 +9,7 @@ fn cross(a: Point, b: Point, p: Point) -> Float {
 
 fn check_enclosure(segment: svg_path.Segment, from: Float, to: Float) {
   let assert Ok(points) =
-    svg_path.segment_bounding_polygon_between(segment, from, to)
+    bounds.segment_bounding_polygon_between(segment, from, to)
   let assert [first, ..rest] = points
   let edges = list.zip(points, list.append(rest, [first]))
   assert list.length(points) >= 3
@@ -28,20 +29,16 @@ fn check_enclosure(segment: svg_path.Segment, from: Float, to: Float) {
 pub fn bounding_polygon_line_and_point_test() {
   let a = Point(4.0, 2.0)
   let b = Point(-1.0, 3.0)
-  assert svg_path.segment_bounding_polygon(svg_path.Line(a, b)) == Ok([a, b])
-  assert svg_path.segment_bounding_polygon(svg_path.Line(a, a)) == Ok([a])
-  assert svg_path.segment_bounding_polygon_between(
-      svg_path.Line(a, b),
-      1.0,
-      0.0,
-    )
+  assert bounds.segment_bounding_polygon(svg_path.Line(a, b)) == Ok([a, b])
+  assert bounds.segment_bounding_polygon(svg_path.Line(a, a)) == Ok([a])
+  assert bounds.segment_bounding_polygon_between(svg_path.Line(a, b), 1.0, 0.0)
     == Ok([b, a])
 }
 
 pub fn bounding_polygon_bezier_order_and_interior_start_test() {
   let a = Point(0.0, 0.0)
   let q = svg_path.QuadraticBezier(a, Point(2.0, -3.0), Point(4.0, 0.0))
-  let assert Ok([first, ..]) = svg_path.segment_bounding_polygon(q)
+  let assert Ok([first, ..]) = bounds.segment_bounding_polygon(q)
   assert first == a
   check_enclosure(q, 0.0, 1.0)
   let c =
@@ -51,7 +48,7 @@ pub fn bounding_polygon_bezier_order_and_interior_start_test() {
       Point(3.0, -2.0),
       Point(0.0, 4.0),
     )
-  let assert Ok(points) = svg_path.segment_bounding_polygon(c)
+  let assert Ok(points) = bounds.segment_bounding_polygon(c)
   assert points == [Point(-3.0, -2.0), Point(3.0, -2.0), Point(0.0, 4.0)]
   check_enclosure(c, 0.0, 1.0)
   check_enclosure(c, 0.8, 0.2)
@@ -60,9 +57,9 @@ pub fn bounding_polygon_bezier_order_and_interior_start_test() {
 pub fn bounding_polygon_collinear_controls_test() {
   let a = Point(0.0, 0.0)
   let c = svg_path.CubicBezier(a, Point(-3.0, 0.0), Point(5.0, 0.0), a)
-  assert svg_path.segment_bounding_polygon(c)
+  assert bounds.segment_bounding_polygon(c)
     == Ok([Point(-3.0, 0.0), Point(5.0, 0.0)])
-  assert svg_path.segment_bounding_polygon_between(c, 0.0, 0.0) == Ok([a])
+  assert bounds.segment_bounding_polygon_between(c, 0.0, 0.0) == Ok([a])
 }
 
 pub fn bounding_polygon_arcs_test() {
@@ -99,13 +96,9 @@ pub fn bounding_polygon_arcs_test() {
 
 pub fn bounding_polygon_invalid_interval_and_arc_test() {
   let a = Point(0.0, 0.0)
-  assert svg_path.segment_bounding_polygon_between(
-      svg_path.Line(a, a),
-      -0.1,
-      1.0,
-    )
+  assert bounds.segment_bounding_polygon_between(svg_path.Line(a, a), -0.1, 1.0)
     == Error(svg_path.SplitOutsideSegment)
-  assert svg_path.segment_bounding_polygon(svg_path.Arc(
+  assert bounds.segment_bounding_polygon(svg_path.Arc(
       a,
       Point(1.0, 1.0),
       0.0,

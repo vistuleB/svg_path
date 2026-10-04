@@ -1,6 +1,7 @@
 import gleam/dynamic.{type Dynamic}
 import gleam/float
 import svg_path
+import svg_path/bounds
 import svg_path/offset
 import svg_path/serialize
 
@@ -112,7 +113,7 @@ fn panel(
 ) -> String {
   let geometry = svg_path.Path([source, ..svg_path.path_subpaths(band)])
   let assert Ok(svg_path.BoundingBox(min:, max:)) =
-    svg_path.path_bounding_box(geometry)
+    bounds.path_bounding_box(geometry)
   let center_y = { min.y +. max.y } /. 2.0
   let geometry_center_x = { min.x +. max.x } /. 2.0
   "  <g transform=\"translate("

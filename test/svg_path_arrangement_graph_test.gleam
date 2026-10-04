@@ -5,6 +5,8 @@ import gleeunit/should
 import svg_path
 import svg_path/arrangement as arrangement_graph
 import svg_path/arrangement/drawing as arrangement_graph_drawing
+import svg_path/bounds
+import svg_path/containment
 import svg_path/csg
 import svg_path/point
 import svg_path/svg
@@ -1420,7 +1422,7 @@ fn test_edge(
   forward_multiplicity forward_multiplicity: Int,
   reverse_multiplicity reverse_multiplicity: Int,
 ) -> arrangement_graph.ArrangementEdge {
-  let assert Ok(bounds) = svg_path.segment_bounding_box(segment)
+  let assert Ok(bounds) = bounds.segment_bounding_box(segment)
   arrangement_graph.ArrangementEdge(
     id:,
     segment:,
@@ -1656,25 +1658,25 @@ pub fn csg_union_removes_interlocking_square_internal_edges_test() {
     csg.union(left, right, using: svg_path.Nonzero)
 
   list.length(svg_path.path_subpaths(union)) |> should.equal(1)
-  svg_path.path_containment(
+  containment.path_containment(
     svg_path.Point(2.0, 2.0),
     within: union,
     using: svg_path.Nonzero,
   )
   |> should.equal(Ok(svg_path.Inside))
-  svg_path.path_containment(
+  containment.path_containment(
     svg_path.Point(7.0, 7.0),
     within: union,
     using: svg_path.Nonzero,
   )
   |> should.equal(Ok(svg_path.Inside))
-  svg_path.path_containment(
+  containment.path_containment(
     svg_path.Point(13.0, 13.0),
     within: union,
     using: svg_path.Nonzero,
   )
   |> should.equal(Ok(svg_path.Inside))
-  svg_path.path_containment(
+  containment.path_containment(
     svg_path.Point(2.0, 13.0),
     within: union,
     using: svg_path.Nonzero,
@@ -1691,7 +1693,7 @@ pub fn csg_union_does_not_cancel_opposite_operands_test() {
     csg.union(left, right, using: svg_path.Nonzero)
 
   list.length(svg_path.path_subpaths(union)) |> should.equal(1)
-  svg_path.path_containment(
+  containment.path_containment(
     svg_path.Point(5.0, 5.0),
     within: union,
     using: svg_path.Nonzero,
@@ -1721,13 +1723,13 @@ pub fn csg_union_pairs_filled_sectors_at_corner_pinch_test() {
     csg.union(left, right, using: svg_path.Nonzero)
 
   list.length(svg_path.path_subpaths(union)) |> should.equal(1)
-  svg_path.path_containment(
+  containment.path_containment(
     svg_path.Point(5.0, 5.0),
     within: union,
     using: svg_path.Nonzero,
   )
   |> should.equal(Ok(svg_path.Inside))
-  svg_path.path_containment(
+  containment.path_containment(
     svg_path.Point(15.0, 15.0),
     within: union,
     using: svg_path.Nonzero,
@@ -1744,13 +1746,13 @@ pub fn csg_union_pairs_filled_sectors_at_corner_pinch_reversed_orientation_test(
     csg.union(left, right, using: svg_path.Nonzero)
 
   list.length(svg_path.path_subpaths(union)) |> should.equal(1)
-  svg_path.path_containment(
+  containment.path_containment(
     svg_path.Point(5.0, 5.0),
     within: union,
     using: svg_path.Nonzero,
   )
   |> should.equal(Ok(svg_path.Inside))
-  svg_path.path_containment(
+  containment.path_containment(
     svg_path.Point(15.0, 15.0),
     within: union,
     using: svg_path.Nonzero,
@@ -1767,13 +1769,13 @@ pub fn csg_union_pairs_filled_sectors_at_other_corner_pinch_test() {
     csg.union(left, right, using: svg_path.Nonzero)
 
   list.length(svg_path.path_subpaths(union)) |> should.equal(1)
-  svg_path.path_containment(
+  containment.path_containment(
     svg_path.Point(5.0, 15.0),
     within: union,
     using: svg_path.Nonzero,
   )
   |> should.equal(Ok(svg_path.Inside))
-  svg_path.path_containment(
+  containment.path_containment(
     svg_path.Point(15.0, 5.0),
     within: union,
     using: svg_path.Nonzero,
@@ -1790,13 +1792,13 @@ pub fn csg_union_pairs_filled_sectors_at_other_corner_pinch_reversed_orientation
     csg.union(left, right, using: svg_path.Nonzero)
 
   list.length(svg_path.path_subpaths(union)) |> should.equal(1)
-  svg_path.path_containment(
+  containment.path_containment(
     svg_path.Point(5.0, 15.0),
     within: union,
     using: svg_path.Nonzero,
   )
   |> should.equal(Ok(svg_path.Inside))
-  svg_path.path_containment(
+  containment.path_containment(
     svg_path.Point(15.0, 5.0),
     within: union,
     using: svg_path.Nonzero,

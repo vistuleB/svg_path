@@ -15,6 +15,7 @@ import gleam/option.{type Option, None, Some}
 import gleam/result
 import svg_path
 import svg_path/internal/number
+import svg_path/measure
 import svg_path/offset
 import svg_path/point as point_helpers
 
@@ -128,7 +129,7 @@ pub fn default_dash_options(
   DashOptions(
     pattern:,
     offset:,
-    length_options: svg_path.default_length_options(),
+    length_options: measure.default_length_options(),
   )
 }
 
@@ -197,7 +198,7 @@ fn stroke_validated_subpath(
     [] -> Ok(svg_path.path_empty())
     _ -> {
       use zero_length <- result.try(
-        svg_path.subpath_is_zero_length(subpath, tolerance: point_tolerance)
+        measure.subpath_is_zero_length(subpath, tolerance: point_tolerance)
         |> result.map_error(fn(error) { OffsetError(offset.PathError(error)) }),
       )
       case zero_length {
@@ -383,7 +384,7 @@ fn located_dash_pieces(
   use _ <- result.try(validate_dash_options(dash_options))
   use pattern <- result.try(normalize_dash_pattern(dash_options.pattern))
   use length <- result.try(
-    svg_path.subpath_length_with(subpath, options: dash_options.length_options)
+    measure.subpath_length_with(subpath, options: dash_options.length_options)
     |> result.map_error(PathError),
   )
 
@@ -484,7 +485,7 @@ pub fn subpath_dashed_with(
       case cap == Square && point_dash {
         True -> {
           use parameter <- result.try(
-            svg_path.subpath_parameter_at_length_with(
+            measure.subpath_parameter_at_length_with(
               subpath,
               distance: at,
               options: dash_options.length_options,
@@ -631,7 +632,7 @@ fn validate_dash_offset(offset: Float) -> Result(Nil, Error) {
 fn validate_dash_options(options: DashOptions) -> Result(Nil, Error) {
   use _ <- result.try(validate_dash_pattern(options.pattern))
   use _ <- result.try(validate_dash_offset(options.offset))
-  svg_path.validate_length_options(options.length_options)
+  measure.validate_length_options(options.length_options)
   |> result.map_error(PathError)
 }
 
@@ -774,7 +775,7 @@ fn dash_piece(
 ) -> Result(svg_path.Subpath, svg_path.Error) {
   case from == to {
     True -> {
-      use at <- result.try(svg_path.subpath_point_at_length_with(
+      use at <- result.try(measure.subpath_point_at_length_with(
         subpath,
         distance: from,
         options: length_options,
@@ -797,7 +798,7 @@ fn positive_dash_piece(
     False ->
       case svg_path.subpath_is_closed(subpath) {
         True ->
-          svg_path.subpath_between_lengths_with(
+          measure.subpath_between_lengths_with(
             subpath,
             from:,
             to:,
@@ -810,7 +811,7 @@ fn positive_dash_piece(
               case to == length {
                 True -> last_split_piece(subpath, at: from, length_options:)
                 False ->
-                  svg_path.subpath_between_lengths_with(
+                  measure.subpath_between_lengths_with(
                     subpath,
                     from:,
                     to:,
@@ -838,7 +839,7 @@ fn first_split_piece(
   at distance: Float,
   length_options length_options: svg_path.LengthOptions,
 ) -> Result(svg_path.Subpath, svg_path.Error) {
-  use pieces <- result.try(svg_path.subpath_between_lengths_many_with(
+  use pieces <- result.try(measure.subpath_between_lengths_many_with(
     subpath,
     between: [distance],
     options: length_options,
@@ -846,7 +847,7 @@ fn first_split_piece(
   case pieces {
     [first, ..] -> Ok(first)
     [] ->
-      svg_path.subpath_between_lengths_with(
+      measure.subpath_between_lengths_with(
         subpath,
         from: 0.0,
         to: distance,
@@ -860,7 +861,7 @@ fn last_split_piece(
   at distance: Float,
   length_options length_options: svg_path.LengthOptions,
 ) -> Result(svg_path.Subpath, svg_path.Error) {
-  use pieces <- result.try(svg_path.subpath_between_lengths_many_with(
+  use pieces <- result.try(measure.subpath_between_lengths_many_with(
     subpath,
     between: [distance],
     options: length_options,
@@ -868,7 +869,7 @@ fn last_split_piece(
   case list.last(pieces) {
     Ok(last) -> Ok(last)
     Error(_) ->
-      svg_path.subpath_between_lengths_with(
+      measure.subpath_between_lengths_with(
         subpath,
         from: distance,
         to: distance,

@@ -14,7 +14,9 @@ import new_hull_experiment/fixtures
 import polygon_loop
 import segment_hull_loop
 import svg_path
+import svg_path/bounds
 import svg_path/convex_hull
+import svg_path/fit
 import svg_path/svg
 
 const run_slow_cubic_comparison = False
@@ -904,7 +906,7 @@ fn segment_support_point(
   angle: Float,
 ) -> Result(svg_path.Point, String) {
   let direction = abstract_union.direction(angle)
-  svg_path.segment_minimize(segment, measure: fn(point) {
+  fit.segment_minimize(segment, measure: fn(point) {
     0.0 -. abstract_union.dot(point, direction)
   })
   |> result.map_error(fn(error) { string.inspect(error) })
@@ -919,12 +921,12 @@ fn point_support(point: svg_path.Point, angle: Float) -> Float {
 }
 
 fn segment_support_tolerance(segment: svg_path.Segment) -> Float {
-  case svg_path.segment_bounding_box(segment) {
+  case bounds.segment_bounding_box(segment) {
     Error(_) -> 0.000001
     Ok(box) ->
       float.max(
         0.000001,
-        svg_path.bounding_box_taxicab_diameter(box) *. 0.00000002,
+        bounds.bounding_box_taxicab_diameter(box) *. 0.00000002,
       )
   }
 }

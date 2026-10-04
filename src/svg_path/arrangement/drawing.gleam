@@ -10,6 +10,7 @@ import svg_path/arrangement.{
   type ArrangementEdge, type ArrangementGraph, type Error, ArrangementEdge,
   ArrangementGraph, ArrangementVertex, PathError,
 }
+import svg_path/containment
 import svg_path/internal/winding_field
 import svg_path/point
 import svg_path/svg
@@ -156,7 +157,7 @@ fn annotated_edge_things(
           // Match containment to the probe displacement's tolerance; a larger
           // default boundary band can swallow both side samples.
           options: svg_path.ContainmentOptions(
-            ..svg_path.default_containment_options(),
+            ..containment.default_containment_options(),
             tolerance:,
           ),
         )

@@ -23,10 +23,14 @@ import gleam/option.{type Option, None, Some}
 import gleam/order
 import gleam/result
 import svg_path
+import svg_path/bounds
+import svg_path/containment
+import svg_path/distance
 import svg_path/internal/number
 import svg_path/internal/smallest_enclosing_circle
 import svg_path/internal/winding_field
 import svg_path/intersections
+import svg_path/measure
 import svg_path/overlaps
 import svg_path/point
 
@@ -870,7 +874,7 @@ fn circle_sample_for_oriented_edge(
   let radius_squared = radius *. radius
   let residual_tolerance = tolerance *. { 2.0 *. radius +. tolerance }
   use roots <- result.try(
-    svg_path.segment_crossings_with(
+    containment.segment_crossings_with(
       segment,
       where: fn(candidate) {
         point.distance_squared(candidate, vertex) -. radius_squared
@@ -1408,7 +1412,7 @@ fn dual_sweep_edges(
       |> list.index_map(fn(ids, index) { #(ids, index) })
       |> list.find(fn(item) { list.contains(item.0, edge.id) })
     use bounds <- result.try(
-      svg_path.segment_bounding_box(edge.segment)
+      bounds.segment_bounding_box(edge.segment)
       |> result.map_error(InternalPathError),
     )
     Ok(DualSweepEdge(
@@ -1618,12 +1622,12 @@ fn dual_sweep_edge_hits(
     True -> Ok([])
     False -> {
       use crossings <- result.try(
-        svg_path.segment_ray_crossings_with(
+        containment.segment_ray_crossings_with(
           edge.segment,
           origin: line.origin,
           direction: line.direction,
           options: svg_path.CrossingOptions(
-            ..svg_path.default_crossing_options(),
+            ..containment.default_crossing_options(),
             signed_line_distance_tolerance: tolerance *. 0.01,
           ),
         )
@@ -2138,7 +2142,7 @@ fn classify_nested_contour_edges(
           within: path,
           side_sampling_distance: tolerance *. 16.0,
           options: svg_path.ContainmentOptions(
-            ..svg_path.default_containment_options(),
+            ..containment.default_containment_options(),
             tolerance:,
           ),
         )
@@ -2771,7 +2775,7 @@ type ProgressivePieceResult {
 fn segment_length_bound(
   segment: svg_path.Segment,
 ) -> Result(Float, InternalError) {
-  svg_path.segment_length_upper_bound(segment)
+  measure.segment_length_upper_bound(segment)
   |> result.map_error(InternalPathError)
 }
 
@@ -3000,7 +3004,7 @@ fn split_piece_at_existing_vertex(
 ) -> Result(Option(List(AtomicPiece)), InternalError) {
   let ArrangementGraph(vertices:, ..) = graph
   use bounds <- result.try(
-    svg_path.segment_bounding_box(piece.segment)
+    bounds.segment_bounding_box(piece.segment)
     |> result.map_error(InternalPathError),
   )
   use cut <- result.try(vertex_cut_parameter(
@@ -3074,7 +3078,7 @@ fn vertex_projects_to_piece_interior_uncached(
       vertex_projects_to_line_interior(vertex, start, end, vertex_tolerance)
     _ -> {
       use projection <- result.try(
-        svg_path.segment_projection(vertex, to: segment)
+        distance.segment_projection(vertex, to: segment)
         |> result.map_error(InternalPathError),
       )
       let svg_path.SegmentProjection(t:, distance:, ..) = projection
@@ -3139,7 +3143,7 @@ fn bounding_boxes_overlap(
 fn segment_bounding_box_assert(
   segment: svg_path.Segment,
 ) -> svg_path.BoundingBox {
-  let assert Ok(bounds) = svg_path.segment_bounding_box(segment)
+  let assert Ok(bounds) = bounds.segment_bounding_box(segment)
   bounds
 }
 
@@ -3182,7 +3186,7 @@ fn incoming_context(
   let AtomicPiece(segment:, ..) = piece
   let ArrangementGraph(vertices:, ..) = graph
   use bounds <- result.try(
-    svg_path.segment_bounding_box(segment)
+    bounds.segment_bounding_box(segment)
     |> result.map_error(InternalPathError),
   )
   use start_match <- result.try(unique_vertex_for_endpoint(
@@ -4495,10 +4499,10 @@ fn segment_taxicab_diameter(
     svg_path.Arc(start:, end:, ..) if start == end -> Ok(0.0)
     _ -> {
       use bounds <- result.try(
-        svg_path.segment_bounding_box(segment)
+        bounds.segment_bounding_box(segment)
         |> result.map_error(InternalPathError),
       )
-      Ok(svg_path.bounding_box_taxicab_diameter(bounds))
+      Ok(bounds.bounding_box_taxicab_diameter(bounds))
     }
   }
 }

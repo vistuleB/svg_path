@@ -6,6 +6,7 @@ import gleam/list
 import svg_path
 import svg_path/arrangement as arrangement_graph
 import svg_path/arrangement/drawing as arrangement_graph_drawing
+import svg_path/bounds
 import svg_path/csg
 import svg_path/effects
 import svg_path/svg
@@ -524,9 +525,9 @@ fn fit_with_bounds(
   maximum_width: Float,
   maximum_height: Float,
 ) -> Result(svg_path.Path, Nil) {
-  let assert Ok(box) = svg_path.path_bounding_box(path)
-  let width = svg_path.bounding_box_width(box)
-  let height = svg_path.bounding_box_height(box)
+  let assert Ok(box) = bounds.path_bounding_box(path)
+  let width = bounds.bounding_box_width(box)
+  let height = bounds.bounding_box_height(box)
   let factor = float.min(maximum_width /. width, maximum_height /. height)
   let middle_x = { box.min.x +. box.max.x } /. 2.0
   let middle_y = { box.min.y +. box.max.y } /. 2.0
@@ -549,11 +550,11 @@ fn place_like(
   maximum_width: Float,
   maximum_height: Float,
 ) -> Result(svg_path.Path, Nil) {
-  let assert Ok(box) = svg_path.path_bounding_box(reference)
+  let assert Ok(box) = bounds.path_bounding_box(reference)
   let factor =
     float.min(
-      maximum_width /. svg_path.bounding_box_width(box),
-      maximum_height /. svg_path.bounding_box_height(box),
+      maximum_width /. bounds.bounding_box_width(box),
+      maximum_height /. bounds.bounding_box_height(box),
     )
   let middle_x = { box.min.x +. box.max.x } /. 2.0
   let middle_y = { box.min.y +. box.max.y } /. 2.0

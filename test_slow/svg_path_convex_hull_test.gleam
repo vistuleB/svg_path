@@ -8,8 +8,10 @@ import gleam/option.{None}
 import gleam/result
 import gleam/string
 import svg_path
+import svg_path/bounds
 import svg_path/convex_hull
 import svg_path/csg
+import svg_path/fit
 import svg_path/intersections
 import svg_path/overlaps
 import svg_path/parse
@@ -662,11 +664,11 @@ fn subpath_support_matches_bool(
 fn subpath_support_tolerance(segments: List(svg_path.Segment)) -> Float {
   segments
   |> list.fold(tolerance, fn(best, segment) {
-    case svg_path.segment_bounding_box(segment) {
+    case bounds.segment_bounding_box(segment) {
       Ok(box) ->
         float.max(
           best,
-          svg_path.bounding_box_taxicab_diameter(box)
+          bounds.bounding_box_taxicab_diameter(box)
             *. support_unit_diameter_tolerance,
         )
       Error(_) -> best
@@ -1350,7 +1352,7 @@ fn segment_support_point(
 ) -> Result(svg_path.Point, svg_path.Error) {
   let direction = angle_direction(angle)
   use t <- result.try(
-    svg_path.segment_minimize(segment, measure: fn(point) {
+    fit.segment_minimize(segment, measure: fn(point) {
       0.0 -. dot(point, direction)
     }),
   )
@@ -1375,11 +1377,11 @@ fn near(a: Float, b: Float) -> Bool {
 }
 
 fn support_tolerance(segment: svg_path.Segment) -> Float {
-  case svg_path.segment_bounding_box(segment) {
+  case bounds.segment_bounding_box(segment) {
     Ok(box) ->
       float.max(
         tolerance,
-        svg_path.bounding_box_taxicab_diameter(box)
+        bounds.bounding_box_taxicab_diameter(box)
           *. support_unit_diameter_tolerance,
       )
     Error(_) -> tolerance
@@ -1387,11 +1389,11 @@ fn support_tolerance(segment: svg_path.Segment) -> Float {
 }
 
 fn smart_support_tolerance(segment: svg_path.Segment) -> Float {
-  case svg_path.segment_bounding_box(segment) {
+  case bounds.segment_bounding_box(segment) {
     Ok(box) ->
       float.max(
         smart_support_base_tolerance,
-        svg_path.bounding_box_taxicab_diameter(box)
+        bounds.bounding_box_taxicab_diameter(box)
           *. smart_support_unit_diameter_tolerance,
       )
     Error(_) -> smart_support_base_tolerance
@@ -1739,8 +1741,8 @@ fn representative_geometry_is_covariant_at_scale(scale: Float) -> Bool {
   let assert Ok(reference_hull) = convex_hull.segment(cubic)
   let assert Ok(scaled_hull) = convex_hull.segment(scaled_cubic)
   let assert Ok(reference_hull_box) =
-    svg_path.subpath_bounding_box(reference_hull)
-  let assert Ok(scaled_hull_box) = svg_path.subpath_bounding_box(scaled_hull)
+    bounds.subpath_bounding_box(reference_hull)
+  let assert Ok(scaled_hull_box) = bounds.subpath_bounding_box(scaled_hull)
   let assert Ok(scaled_left_path) =
     transform.scale_path(left_path, factor: scale)
   let assert Ok(scaled_right_path) =
@@ -1755,7 +1757,7 @@ fn representative_geometry_is_covariant_at_scale(scale: Float) -> Bool {
         minimum_chord: 0.00001 *. scale,
       ),
     )
-  let assert Ok(union_box) = svg_path.path_bounding_box(union_path)
+  let assert Ok(union_box) = bounds.path_bounding_box(union_path)
 
   points_nearly_equal(reference_point, unscale_point(scaled_point, scale))
   && floats_nearly_equal(left_t, 0.5)

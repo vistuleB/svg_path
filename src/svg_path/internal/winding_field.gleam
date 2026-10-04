@@ -4,6 +4,7 @@ import gleam/float
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import svg_path
+import svg_path/internal/query
 
 /// Return the signed Nonzero winding level at a point. Boundary samples fall
 /// back to filled/not-filled because a signed winding is undefined there.
@@ -13,7 +14,7 @@ pub fn nonzero_level_at(
   within path: svg_path.Path,
   options options: svg_path.ContainmentOptions,
 ) -> Result(Int, svg_path.Error) {
-  use winding <- result.try(svg_path.path_winding_with(
+  use winding <- result.try(query.path_winding_with(
     point,
     within: path,
     options:,
@@ -21,7 +22,7 @@ pub fn nonzero_level_at(
   case winding {
     svg_path.Winding(value) -> Ok(value)
     svg_path.BoundaryWinding -> {
-      use containment <- result.try(svg_path.path_containment_with(
+      use containment <- result.try(query.path_containment_with(
         point,
         within: path,
         using: svg_path.Nonzero,

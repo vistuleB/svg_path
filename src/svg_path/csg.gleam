@@ -15,6 +15,7 @@ import svg_path
 import svg_path/arrangement.{
   type ArrangementEdge, type ArrangementGraph, ArrangementEdge, ArrangementGraph,
 }
+import svg_path/containment
 import svg_path/internal/winding_field
 import svg_path/point
 
@@ -468,7 +469,7 @@ fn classify_boolean_edges(
           within: left_path,
           side_sampling_distance: tolerance *. 16.0,
           options: svg_path.ContainmentOptions(
-            ..svg_path.default_containment_options(),
+            ..containment.default_containment_options(),
             tolerance:,
           ),
         )
@@ -480,7 +481,7 @@ fn classify_boolean_edges(
           within: right_path,
           side_sampling_distance: tolerance *. 16.0,
           options: svg_path.ContainmentOptions(
-            ..svg_path.default_containment_options(),
+            ..containment.default_containment_options(),
             tolerance:,
           ),
         )
@@ -829,4 +830,122 @@ fn float_compare(left: Float, right: Float) -> order.Order {
         False -> order.Eq
       }
   }
+}
+
+/// Return only the reconstructed union path.
+/// Use `union` when arrangement geometry and source correspondence are needed.
+pub fn union_path(
+  left: svg_path.Path,
+  right: svg_path.Path,
+  using fill_rule: svg_path.FillRule,
+) -> Result(svg_path.Path, Error) {
+  union_path_with(left, right, using: fill_rule, options: default_options())
+}
+
+/// Return only the reconstructed path using explicit numerical options.
+/// This has the same geometry and failure behavior as `union_with`.
+pub fn union_path_with(
+  left: svg_path.Path,
+  right: svg_path.Path,
+  using fill_rule: svg_path.FillRule,
+  options options: Options,
+) -> Result(svg_path.Path, Error) {
+  union_with(left, right, using: fill_rule, options:)
+  |> result.map(fn(output) { output.path })
+}
+
+/// Return only the reconstructed intersection path.
+/// Use `intersection` when arrangement geometry and source correspondence are needed.
+pub fn intersection_path(
+  left: svg_path.Path,
+  right: svg_path.Path,
+  using fill_rule: svg_path.FillRule,
+) -> Result(svg_path.Path, Error) {
+  intersection_path_with(
+    left,
+    right,
+    using: fill_rule,
+    options: default_options(),
+  )
+}
+
+/// Return only the reconstructed path using explicit numerical options.
+/// This has the same geometry and failure behavior as `intersection_with`.
+pub fn intersection_path_with(
+  left: svg_path.Path,
+  right: svg_path.Path,
+  using fill_rule: svg_path.FillRule,
+  options options: Options,
+) -> Result(svg_path.Path, Error) {
+  intersection_with(left, right, using: fill_rule, options:)
+  |> result.map(fn(output) { output.path })
+}
+
+/// Return only the reconstructed difference path.
+/// Use `difference` when arrangement geometry and source correspondence are needed.
+pub fn difference_path(
+  left: svg_path.Path,
+  minus right: svg_path.Path,
+  using fill_rule: svg_path.FillRule,
+) -> Result(svg_path.Path, Error) {
+  difference_path_with(
+    left,
+    minus: right,
+    using: fill_rule,
+    options: default_options(),
+  )
+}
+
+/// Return only the reconstructed path using explicit numerical options.
+/// This has the same geometry and failure behavior as `difference_with`.
+pub fn difference_path_with(
+  left: svg_path.Path,
+  minus right: svg_path.Path,
+  using fill_rule: svg_path.FillRule,
+  options options: Options,
+) -> Result(svg_path.Path, Error) {
+  difference_with(left, minus: right, using: fill_rule, options:)
+  |> result.map(fn(output) { output.path })
+}
+
+/// Return only the reconstructed symmetric difference path.
+/// Use `symmetric_difference` when arrangement geometry and source correspondence are needed.
+pub fn symmetric_difference_path(
+  left: svg_path.Path,
+  right: svg_path.Path,
+  using fill_rule: svg_path.FillRule,
+) -> Result(svg_path.Path, Error) {
+  symmetric_difference_path_with(
+    left,
+    right,
+    using: fill_rule,
+    options: default_options(),
+  )
+}
+
+/// Return only the reconstructed path using explicit numerical options.
+/// This has the same geometry and failure behavior as `symmetric_difference_with`.
+pub fn symmetric_difference_path_with(
+  left: svg_path.Path,
+  right: svg_path.Path,
+  using fill_rule: svg_path.FillRule,
+  options options: Options,
+) -> Result(svg_path.Path, Error) {
+  symmetric_difference_with(left, right, using: fill_rule, options:)
+  |> result.map(fn(output) { output.path })
+}
+
+/// Return nested contours without retaining the arrangement build.
+pub fn nested_contours_path(
+  path: svg_path.Path,
+) -> Result(svg_path.Path, Error) {
+  nested_contours_path_with(path, options: default_options())
+}
+
+/// Return nested contours using explicit options, without the arrangement build.
+pub fn nested_contours_path_with(
+  path: svg_path.Path,
+  options options: Options,
+) -> Result(svg_path.Path, Error) {
+  nested_contours_with(path, options:) |> result.map(fn(output) { output.path })
 }

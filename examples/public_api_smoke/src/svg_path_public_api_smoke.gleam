@@ -2,10 +2,16 @@
 
 import svg_path
 import svg_path/arrangement
+import svg_path/bounds
+import svg_path/containment
 import svg_path/csg
 import svg_path/curvature
+import svg_path/distance
+import svg_path/fit
 import svg_path/intersections
+import svg_path/measure
 import svg_path/overlaps
+import svg_path/stroke
 
 pub fn main() -> Nil {
   let left = rectangle(0.0, 0.0, 10.0, 10.0)
@@ -58,6 +64,33 @@ pub fn main() -> Nil {
     curvature.segment_left_normal_radius(horizontal, at: 0.5)
   let assert [] = curvature.segment_inflection_parameters(horizontal)
 
+  let assert Ok(path_only) =
+    csg.union_path(left, right, using: svg_path.Nonzero)
+  let assert True = path_only == union.path
+  let assert Ok(50.0) = measure.path_length(path_only)
+  let assert Ok(box) = bounds.path_bounding_box(path_only)
+  let assert True = bounds.bounding_box_width(box) == 15.0
+  let assert Ok(svg_path.Inside) =
+    containment.path_containment(
+      svg_path.Point(7.0, 5.0),
+      within: path_only,
+      using: svg_path.Nonzero,
+    )
+  let assert Ok(pair) =
+    distance.segment_segment_closest_pair(horizontal, vertical)
+  let assert True = pair.distance == 0.0
+  let assert Ok(fitted) =
+    fit.subpath_from_parametric(from: 0.0, to: 1.0, point: fn(t) {
+      svg_path.Point(t *. 10.0, 0.0)
+    })
+  let assert Ok(_) =
+    stroke.subpath_with(
+      fitted,
+      width: 2.0,
+      join: stroke.Round,
+      cap: stroke.Butt,
+      options: stroke.default_options(),
+    )
   Nil
 }
 

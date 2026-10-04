@@ -2,6 +2,7 @@ import gleam/list
 import gleeunit
 import svg_path
 import svg_path/intersections
+import svg_path/measure
 
 pub fn main() -> Nil {
   gleeunit.main()
@@ -362,7 +363,7 @@ pub fn classification_rejects_out_of_range_angular_tolerance_test() {
         direction_options: svg_path.default_direction_options(),
         angular_tolerance: 180.0,
         distance_tolerance: 0.000000000001,
-        length_options: svg_path.default_length_options(),
+        length_options: measure.default_length_options(),
         initial_arc_length: 0.000001,
         maximum_arc_length: 0.25,
         max_sampling_steps: 18,

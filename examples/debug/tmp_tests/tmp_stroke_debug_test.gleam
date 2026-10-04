@@ -3,6 +3,7 @@ import gleam/float
 import gleam/int
 import gleam/list
 import svg_path
+import svg_path/measure
 import svg_path/offset
 import svg_path/stroke
 import svg_path/svg
@@ -104,7 +105,8 @@ fn panel(
     )
   let result_things = case
     stroke.subpath_with(
-      source, width: 1.0,
+      source,
+      width: 1.0,
       join:,
       cap:,
       options: stroke.Options(width:, offset: options),
@@ -167,13 +169,13 @@ fn subpath_arrows(
   color: String,
   arrow_scale: Float,
 ) -> svg.ThingsToDraw {
-  case svg_path.subpath_length(subpath) {
+  case measure.subpath_length(subpath) {
     Error(_) -> []
     Ok(total_length) -> {
       let distance = total_length *. 0.42
       case
-        svg_path.subpath_point_at_length(subpath, distance:),
-        svg_path.subpath_derivative_at_length(subpath, distance:)
+        measure.subpath_point_at_length(subpath, distance:),
+        measure.subpath_derivative_at_length(subpath, distance:)
       {
         Ok(point), Ok(derivative) -> {
           let length = point_length(derivative)

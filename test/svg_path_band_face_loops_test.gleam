@@ -1,6 +1,7 @@
 import gleam/int
 import gleam/list
 import svg_path
+import svg_path/containment
 import svg_path/offset
 
 fn square(x: Float, y: Float, size: Float) -> svg_path.Subpath {
@@ -25,8 +26,8 @@ fn check_fill(input: svg_path.Path, output: svg_path.Path) {
   list.each([-1, 0, 1, 2, 3, 4, 5, 6, 7], fn(x) {
     list.each([-1, 0, 1, 2, 3, 4, 5, 6, 7], fn(y) {
       let p = svg_path.Point(int.to_float(x) +. 0.37, int.to_float(y) +. 0.19)
-      let assert Ok(a) = svg_path.path_winding(p, input)
-      let assert Ok(b) = svg_path.path_winding(p, output)
+      let assert Ok(a) = containment.path_winding(p, input)
+      let assert Ok(b) = containment.path_winding(p, output)
       case a, b {
         svg_path.Winding(a), svg_path.Winding(b) -> {
           assert int.is_odd(a) == { b != 0 }

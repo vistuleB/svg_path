@@ -9,6 +9,7 @@ import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import svg_path
+import svg_path/bounds
 import svg_path/internal/number
 import svg_path/transform as affine
 import svg_path/trig
@@ -472,8 +473,8 @@ fn view_box_to_marker_viewport(
 ) -> affine.Matrix {
   let MarkerLayout(marker_width:, marker_height:, preserve_aspect_ratio:, ..) =
     layout
-  let view_width = svg_path.bounding_box_width(box)
-  let view_height = svg_path.bounding_box_height(box)
+  let view_width = bounds.bounding_box_width(box)
+  let view_height = bounds.bounding_box_height(box)
   let x_scale = marker_width /. view_width
   let y_scale = marker_height /. view_height
 
@@ -499,8 +500,8 @@ fn uniform_view_box_transform(
   scale: Float,
   align: AspectAlign,
 ) -> affine.Matrix {
-  let view_width = svg_path.bounding_box_width(box)
-  let view_height = svg_path.bounding_box_height(box)
+  let view_width = bounds.bounding_box_width(box)
+  let view_height = bounds.bounding_box_height(box)
   let x_extra = marker_width -. view_width *. scale
   let y_extra = marker_height -. view_height *. scale
   let x_offset = x_extra *. x_align_fraction(align)
@@ -559,8 +560,8 @@ fn validate_view_box(
   case view_box {
     None -> Ok(Nil)
     Some(box) -> {
-      let width = svg_path.bounding_box_width(box)
-      let height = svg_path.bounding_box_height(box)
+      let width = bounds.bounding_box_width(box)
+      let height = bounds.bounding_box_height(box)
       case
         width <=. 0.0
         || height <=. 0.0

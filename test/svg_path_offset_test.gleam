@@ -10,7 +10,9 @@ import svg_path
 import svg_path/area
 import svg_path/arrangement as arrangement_graph
 import svg_path/bezier
+import svg_path/distance
 import svg_path/internal/format as number_format
+import svg_path/measure
 import svg_path/offset
 import svg_path/parse
 import svg_path/point
@@ -747,7 +749,7 @@ pub fn endpoint_near_reversal_is_absorbed_into_stalled_piece_test() {
     ),
   ]) = offset.internal_offset_source_trace(source, offset: 1.04, options:)
 
-  assert svg_path.segment_chord_length(stalled) <. 0.001
+  assert measure.segment_chord_length(stalled) <. 0.001
   assert float.absolute_value(source_from -. 0.00019493877887725834)
     <. 0.000000001
 }
@@ -958,7 +960,7 @@ pub fn zero_offset_preserves_closed_square_without_source_capacity_test() {
       offset.subpath(source, offset: 0.0, join: offset.Round, cap: offset.Butt)
     let assert [loop] = svg_path.path_subpaths(result)
     assert svg_path.subpath_is_closed(loop)
-    let assert Ok(length) = svg_path.subpath_length(loop)
+    let assert Ok(length) = measure.subpath_length(loop)
     assert float.absolute_value(length -. 40.0) <. 0.000001
   })
 }
@@ -978,7 +980,7 @@ pub fn zero_offset_preserves_repeated_eligible_traversals_test() {
     parse.path("M 0 0 H 10 V 10 H 0 Z M 0 0 H 10 V 10 H 0 Z")
   let assert Ok(result) =
     offset.path(source, offset: 0.0, join: offset.Round, cap: offset.Butt)
-  let assert Ok(length) = svg_path.path_length(result)
+  let assert Ok(length) = measure.path_length(result)
   // Coincident offset occurrences each supply capacity; their zero-source
   // companions do not. A universal capacity-one replacement would lose half.
   assert float.absolute_value(length -. 80.0) <. 0.000001
@@ -2688,7 +2690,7 @@ fn max_offset_error_loop(
           point.y +. normal.y *. distance,
         )
       let assert Ok(projection) =
-        svg_path.subpath_projection(extruded, to: offset_subpath)
+        distance.subpath_projection(extruded, to: offset_subpath)
 
       max_offset_error_loop(
         source,
@@ -3045,7 +3047,7 @@ fn stalled_arc_turn_corner_segments(
 fn stalled_arc_turn_segments_length(segments: List(svg_path.Segment)) -> Float {
   segments
   |> list.fold(0.0, fn(total, segment) {
-    case svg_path.segment_length(segment) {
+    case measure.segment_length(segment) {
       Ok(length) -> total +. length
       Error(_) -> total
     }

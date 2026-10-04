@@ -9,6 +9,7 @@ import gleam/result
 import gleam/string
 import svg_path
 import svg_path/arrangement
+import svg_path/bounds
 import svg_path/offset
 import svg_path/parse
 import svg_path/svg
@@ -66,15 +67,15 @@ fn render(
 ) -> String {
   let assert Ok(mini) =
     subpath_at(svg_path.path_subpaths(trimmed_first_offset), 4)
-  let assert Ok(mini_box) = svg_path.subpath_bounding_box(mini)
-  let assert Ok(source_box) = svg_path.path_bounding_box(source)
+  let assert Ok(mini_box) = bounds.subpath_bounding_box(mini)
+  let assert Ok(source_box) = bounds.path_bounding_box(source)
   let assert Ok(untrimmed_box) =
-    svg_path.path_bounding_box(untrimmed_first_offset)
+    bounds.path_bounding_box(untrimmed_first_offset)
   let full_box = combine_boxes(source_box, untrimmed_box)
   let view_box =
     zoom_from_full_box(
       full_box,
-      around: svg_path.bounding_box_center(mini_box),
+      around: bounds.bounding_box_center(mini_box),
       zoom: 25.0,
     )
   let assert Ok(build) =
@@ -109,10 +110,10 @@ fn render(
         "25x zoom: source + untrimmed first offset + arrangement edge ids",
         "fill: #111827; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace",
         svg_path.Point(
-          view_box.min.x +. svg_path.bounding_box_width(view_box) *. 0.02,
-          view_box.min.y +. svg_path.bounding_box_height(view_box) *. 0.08,
+          view_box.min.x +. bounds.bounding_box_width(view_box) *. 0.02,
+          view_box.min.y +. bounds.bounding_box_height(view_box) *. 0.08,
         ),
-        svg_path.bounding_box_height(view_box) *. 0.035,
+        bounds.bounding_box_height(view_box) *. 0.035,
       ),
       ..list.append(
         graph_edge_paths(graph_edges),
@@ -334,8 +335,8 @@ fn graph_edge_labels(
   edges
   |> list.filter_map(fn(edge) {
     let arrangement.ArrangementEdge(id:, segment:, ..) = edge
-    use box <- result.try(svg_path.segment_bounding_box(segment))
-    let center = svg_path.bounding_box_center(box)
+    use box <- result.try(bounds.segment_bounding_box(segment))
+    let center = bounds.bounding_box_center(box)
     Ok(svg.Text(
       int.to_string(id),
       "fill: #1e3a8a; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; text-anchor: middle; dominant-baseline: central",
@@ -369,8 +370,8 @@ fn graph_vertices(
 fn background(view_box: svg_path.BoundingBox) -> svg.ThingToDraw {
   svg.Rectangle(
     view_box.min,
-    svg_path.bounding_box_width(view_box),
-    svg_path.bounding_box_height(view_box),
+    bounds.bounding_box_width(view_box),
+    bounds.bounding_box_height(view_box),
     "fill: #ffffff; stroke: none",
   )
 }
@@ -396,8 +397,8 @@ fn zoom_from_full_box(
   around center: svg_path.Point,
   zoom zoom: Float,
 ) -> svg_path.BoundingBox {
-  let width = svg_path.bounding_box_width(full_box) /. zoom
-  let height = svg_path.bounding_box_height(full_box) /. zoom
+  let width = bounds.bounding_box_width(full_box) /. zoom
+  let height = bounds.bounding_box_height(full_box) /. zoom
 
   svg_path.BoundingBox(
     min: svg_path.Point(center.x -. width /. 2.0, center.y -. height /. 2.0),

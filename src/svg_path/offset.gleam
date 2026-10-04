@@ -820,7 +820,7 @@ fn open_band_outline(
 pub fn subpath_offset_map(
   subpath: svg_path.Subpath,
 ) -> Result(fn(svg_path.Point) -> Result(svg_path.Point, Error), Error) {
-  subpath_offset_map_with(subpath, options: svg_path.default_length_options())
+  subpath_offset_map_with(subpath, options: measure.default_length_options())
 }
 
 /// Build a local coordinate map around a subpath using explicit length options.
@@ -2742,11 +2742,13 @@ import gleam/result
 import svg_path
 import svg_path/arrangement as arrangement_graph
 import svg_path/bezier
+import svg_path/bounds
 import svg_path/curvature
 import svg_path/degeneracy
 import svg_path/internal/arcs_join
 import svg_path/internal/number
 import svg_path/intersections
+import svg_path/measure
 import svg_path/overlaps
 import svg_path/point as point_helpers
 import svg_path/trig
@@ -5181,7 +5183,7 @@ fn normalize_short_source_runs_loop(
     }
     [next, ..rest] -> {
       use bound <- result.try(
-        svg_path.segment_length_upper_bound(next)
+        measure.segment_length_upper_bound(next)
         |> result.map_error(InternalPathError),
       )
       case number.is_finite(bound) && bound <. tolerance {
@@ -9189,10 +9191,10 @@ fn assert_continuous_offset_tangent_boundary(
 
 fn segment_diameter(segment: svg_path.Segment) -> Result(Float, InternalError) {
   use box <- result.try(
-    svg_path.segment_bounding_box(segment)
+    bounds.segment_bounding_box(segment)
     |> result.map_error(InternalPathError),
   )
-  Ok(svg_path.bounding_box_taxicab_diameter(box))
+  Ok(bounds.bounding_box_taxicab_diameter(box))
 }
 
 fn mark_closed_join_free_portion(
@@ -11225,7 +11227,7 @@ fn length_spans(
     [] -> Ok(list.reverse(spans))
     [first, ..rest] -> {
       use length <- result.try(
-        svg_path.segment_length_with(first, options:)
+        measure.segment_length_with(first, options:)
         |> result.map_error(InternalPathError),
       )
       let spans = case length >. 0.0 {
@@ -11276,7 +11278,7 @@ fn offset_map_point(
       let local_distance =
         float.clamp(distance -. span.start_distance, 0.0, span.length)
       use t <- result.try(
-        svg_path.segment_parameter_at_length_with(
+        measure.segment_parameter_at_length_with(
           span.segment,
           distance: local_distance,
           options:,

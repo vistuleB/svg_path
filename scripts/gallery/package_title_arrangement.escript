@@ -95,7 +95,7 @@ edge_svg(E, Color) ->
            ["fill: none; stroke: ",Color,"; stroke-width: ",Width,"; stroke-linecap: round; stroke-linejoin: round",Opacity]), "</g>"].
 edge_label(E) ->
     {ok,{bounding_box,{point,X0,Y0},{point,X1,Y1}}} =
-        svg_path:segment_bounding_box(element(3,E)),
+        'svg_path@bounds':segment_bounding_box(element(3,E)),
     ["<text x=\"",float_to_binary((X0+X1)/2,[short]),
      "\" y=\"",float_to_binary((Y0+Y1)/2,[short]),
      "\" font-size=\"0.3\" style=\"fill: #1e3a8a; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; text-anchor: middle; dominant-baseline: central\">",

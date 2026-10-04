@@ -9,6 +9,39 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
+## 3.0.0 - Unreleased
+
+This release organizes the public API by task while preserving the supported
+geometry operations, specialized queries, convenience functions, and numerical
+diagnostics. It does not target a smaller function count.
+
+### Breaking API changes
+
+- Moved root measurement, bounding, containment, distance/projection, and fitting
+  operations into `measure`, `bounds`, `containment`, `distance`, and `fit`.
+  Names, labels, result data, and defaults are preserved. Default-option
+  functions move with their families; shared records remain in `svg_path`.
+- Moved geometry-to-geometry closest-pair entry points from `intersections` to
+  `distance`, alongside point projections. Pair-search options remain compatible
+  with `intersections.IntersectionOptions` and have a discoverable default
+  constructor at `distance.default_closest_pair_options`.
+- Configurable stroke outlines now take explicit `width:`. `stroke.Options`
+  contains only fitting, stalled-offset diameter, tangent healing, and inner-join
+  controls. Removed offset trimming settings that strokes ignored or overrode;
+  the actual stroke construction and trimming policy is unchanged.
+
+### Additions and documentation
+
+- Added path-only Boolean operations (`union_path`, `intersection_path`,
+  `difference_path`, `symmetric_difference_path`, `nested_contours_path`) and
+  their `_with` variants. Existing detailed results still expose the arrangement
+  and source correspondence.
+- Added task-oriented API entry points and a migration guide to the README.
+- Extracted shared numerical implementations behind the public operation
+  modules; migrated repository callers and added cross-module workflow tests.
+- Expanded the external-package smoke example to exercise the reorganized API
+  on both Erlang and JavaScript.
+
 ## 2.0.0 - 2026-09-14
 
 This major release reduces and reorganizes the public API. Geometry algorithms

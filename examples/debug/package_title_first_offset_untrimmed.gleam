@@ -7,6 +7,7 @@ import gleam/io
 import gleam/list
 import gleam/string
 import svg_path
+import svg_path/bounds
 import svg_path/offset
 import svg_path/parse
 import svg_path/svg
@@ -92,14 +93,14 @@ fn render(
 
 fn path_boxes(paths: List(svg_path.Path)) -> List(svg_path.BoundingBox) {
   paths
-  |> list.filter_map(svg_path.path_bounding_box)
+  |> list.filter_map(bounds.path_bounding_box)
 }
 
 fn background(view_box: svg_path.BoundingBox) -> svg.ThingToDraw {
   svg.Rectangle(
     view_box.min,
-    svg_path.bounding_box_width(view_box),
-    svg_path.bounding_box_height(view_box),
+    bounds.bounding_box_width(view_box),
+    bounds.bounding_box_height(view_box),
     "fill: #ffffff; stroke: none",
   )
 }

@@ -7,6 +7,8 @@ import gleam/list
 import gleam/option.{Some}
 import gleam/string
 import svg_path
+import svg_path/bounds
+import svg_path/distance
 import svg_path/offset
 import svg_path/parse
 import svg_path/svg
@@ -102,7 +104,7 @@ fn render(
     offset_sample_markers(
       e_segment,
       u1,
-      options: svg_path.default_distance_options(),
+      options: distance.default_distance_options(),
       line_width: 0.003,
       sample_radius: 0.014,
       projection_radius: 0.01,
@@ -179,7 +181,7 @@ fn render_e_zoom(
     offset_sample_markers(
       e_segment,
       u1,
-      options: svg_path.default_distance_options(),
+      options: distance.default_distance_options(),
       line_width: 0.000035,
       sample_radius: 0.00022,
       projection_radius: 0.00016,
@@ -453,7 +455,7 @@ fn offset_sample_markers(
       Error(_) -> []
       Ok(sample) -> {
         let projection =
-          svg_path.segment_projection_with(sample, to: candidate, options:)
+          distance.segment_projection_with(sample, to: candidate, options:)
         let projection_point = case projection {
           Ok(svg_path.SegmentProjection(point:, ..)) -> point
           Error(_) -> sample
@@ -559,14 +561,14 @@ fn segment_path(segment: svg_path.Segment) -> svg_path.Path {
 }
 
 fn path_boxes(paths: List(svg_path.Path)) -> List(svg_path.BoundingBox) {
-  paths |> list.filter_map(svg_path.path_bounding_box)
+  paths |> list.filter_map(bounds.path_bounding_box)
 }
 
 fn background(view_box: svg_path.BoundingBox) -> svg.ThingToDraw {
   svg.Rectangle(
     view_box.min,
-    svg_path.bounding_box_width(view_box),
-    svg_path.bounding_box_height(view_box),
+    bounds.bounding_box_width(view_box),
+    bounds.bounding_box_height(view_box),
     "fill: #ffffff; stroke: none",
   )
 }

@@ -42,6 +42,7 @@ import svg_path.{
 import svg_path/bezier
 import svg_path/internal/number
 import svg_path/internal/overlap_detection
+import svg_path/internal/query
 import svg_path/point
 
 const default_intersection_tolerance = 0.000000001
@@ -252,7 +253,7 @@ pub fn default_classification_options() -> ClassificationOptions {
     direction_options: svg_path.default_direction_options(),
     angular_tolerance: default_classification_angular_tolerance,
     distance_tolerance: default_classification_distance_tolerance,
-    length_options: svg_path.default_length_options(),
+    length_options: query.default_length_options(),
     initial_arc_length: default_classification_initial_arc_length,
     maximum_arc_length: default_classification_maximum_arc_length,
     max_sampling_steps: default_classification_max_sampling_steps,
@@ -417,6 +418,7 @@ pub fn segment_with(
 /// intersection search, and returns the best pair even when the segments do
 /// not intersect. Overlapping segments return one coincident pair with distance
 /// zero. Tied minima need not have canonical parameters.
+@internal
 pub fn segment_segment_closest_pair(
   left: Segment,
   right: Segment,
@@ -425,6 +427,7 @@ pub fn segment_segment_closest_pair(
 }
 
 /// Return one closest-point pair between two segments using explicit options.
+@internal
 pub fn segment_segment_closest_pair_with(
   left: Segment,
   right: Segment,
@@ -435,6 +438,7 @@ pub fn segment_segment_closest_pair_with(
 }
 
 /// Return one closest-point pair between a segment and a subpath.
+@internal
 pub fn segment_subpath_closest_pair(
   left: Segment,
   right: Subpath,
@@ -444,6 +448,7 @@ pub fn segment_subpath_closest_pair(
 
 /// Return one closest-point pair between a segment and a subpath using
 /// explicit options.
+@internal
 pub fn segment_subpath_closest_pair_with(
   left: Segment,
   right: Subpath,
@@ -454,6 +459,7 @@ pub fn segment_subpath_closest_pair_with(
 }
 
 /// Return one closest-point pair between a segment and a path.
+@internal
 pub fn segment_path_closest_pair(
   left: Segment,
   right: Path,
@@ -463,6 +469,7 @@ pub fn segment_path_closest_pair(
 
 /// Return one closest-point pair between a segment and a path using explicit
 /// options.
+@internal
 pub fn segment_path_closest_pair_with(
   left: Segment,
   right: Path,
@@ -473,6 +480,7 @@ pub fn segment_path_closest_pair_with(
 }
 
 /// Return one closest-point pair between two subpaths.
+@internal
 pub fn subpath_subpath_closest_pair(
   left: Subpath,
   right: Subpath,
@@ -481,6 +489,7 @@ pub fn subpath_subpath_closest_pair(
 }
 
 /// Return one closest-point pair between two subpaths using explicit options.
+@internal
 pub fn subpath_subpath_closest_pair_with(
   left: Subpath,
   right: Subpath,
@@ -491,6 +500,7 @@ pub fn subpath_subpath_closest_pair_with(
 }
 
 /// Return one closest-point pair between a subpath and a path.
+@internal
 pub fn subpath_path_closest_pair(
   left: Subpath,
   right: Path,
@@ -500,6 +510,7 @@ pub fn subpath_path_closest_pair(
 
 /// Return one closest-point pair between a subpath and a path using explicit
 /// options.
+@internal
 pub fn subpath_path_closest_pair_with(
   left: Subpath,
   right: Path,
@@ -510,6 +521,7 @@ pub fn subpath_path_closest_pair_with(
 }
 
 /// Return one closest-point pair between two paths.
+@internal
 pub fn path_path_closest_pair(
   left: Path,
   right: Path,
@@ -518,6 +530,7 @@ pub fn path_path_closest_pair(
 }
 
 /// Return one closest-point pair between two paths using explicit options.
+@internal
 pub fn path_path_closest_pair_with(
   left: Path,
   right: Path,
@@ -1644,7 +1657,7 @@ pub fn subpath_self_with(
   options options: SelfIntersectionOptions,
 ) -> Result(List(SubpathSelfIntersection), svg_path.Error) {
   use _ <- result.try(validate_self_intersection_options(options))
-  use total_length <- result.try(svg_path.subpath_length(subpath))
+  use total_length <- result.try(query.subpath_length(subpath))
   use indexed_segments <- result.try(
     indexed_segments_with_lengths(
       svg_path.subpath_segments(subpath),
@@ -2102,7 +2115,7 @@ fn subpath_arc_length_location(
     subpath,
     parameter:,
   ))
-  use total <- result.try(svg_path.subpath_length_with(
+  use total <- result.try(query.subpath_length_with(
     subpath,
     options: length_options,
   ))
@@ -2115,7 +2128,7 @@ fn subpath_arc_length_location(
         from: start,
         to: parameter,
       ))
-      svg_path.subpath_length_with(portion, options: length_options)
+      query.subpath_length_with(portion, options: length_options)
     }
   })
   Ok(ArcLengthLocation(
@@ -2209,7 +2222,7 @@ fn sample_subpath_branch_at_arc_length(
     True, True -> positive_remainder(distance, total)
     _, _ -> distance |> float.max(0.0) |> float.min(total)
   }
-  svg_path.subpath_point_at_length_with(
+  query.subpath_point_at_length_with(
     subpath,
     distance:,
     options: length_options,
@@ -2577,7 +2590,7 @@ fn indexed_segments_with_lengths(
   case segments {
     [] -> Ok(list.reverse(accumulated))
     [first, ..rest] -> {
-      use length <- result.try(svg_path.segment_length(first))
+      use length <- result.try(query.segment_length(first))
       indexed_segments_with_lengths(
         rest,
         index: index + 1,
@@ -2804,13 +2817,13 @@ fn segment_length_to_t(segment: Segment, t: Float) -> Float {
     False ->
       case t >=. 1.0 {
         True -> {
-          let assert Ok(length) = svg_path.segment_length(segment)
+          let assert Ok(length) = query.segment_length(segment)
           length
         }
         False -> {
           let assert Ok(piece) =
             svg_path.segment_between(segment, from: 0.0, to: t)
-          let assert Ok(length) = svg_path.segment_length(piece)
+          let assert Ok(length) = query.segment_length(piece)
           length
         }
       }
@@ -2920,7 +2933,7 @@ fn coarse_segment_bounding_box(
 }
 
 fn assert_points_bounding_box(points: List(Point)) -> BoundingBox {
-  let assert Ok(box) = svg_path.points_bounding_box(points)
+  let assert Ok(box) = query.points_bounding_box(points)
   box
 }
 
@@ -4445,12 +4458,12 @@ fn elizabeth_window_overlaps(
   right: Segment,
   window: WindowPreservingWindow,
 ) -> Result(Bool, svg_path.Error) {
-  use a <- result.try(svg_path.segment_bounding_polygon_between(
+  use a <- result.try(query.segment_bounding_polygon_between(
     left,
     window.left_from,
     window.left_to,
   ))
-  use b <- result.try(svg_path.segment_bounding_polygon_between(
+  use b <- result.try(query.segment_bounding_polygon_between(
     right,
     window.right_from,
     window.right_to,

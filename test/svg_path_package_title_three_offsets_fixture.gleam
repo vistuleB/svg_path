@@ -5,6 +5,7 @@ import gleam/io
 import gleam/list
 import gleam/string
 import svg_path
+import svg_path/bounds
 import svg_path/offset
 import svg_path/parse
 import svg_path/svg
@@ -70,7 +71,7 @@ fn render(source: svg_path.Path, levels: List(svg_path.Path)) -> String {
   ]
   let view_box =
     [source, ..levels]
-    |> list.filter_map(svg_path.path_bounding_box)
+    |> list.filter_map(bounds.path_bounding_box)
     |> padded_box(2.0)
   let offset_things =
     list.map2(levels, colors, fn(path, color) {
@@ -85,8 +86,8 @@ fn render(source: svg_path.Path, levels: List(svg_path.Path)) -> String {
     things: [
       svg.Rectangle(
         view_box.min,
-        svg_path.bounding_box_width(view_box),
-        svg_path.bounding_box_height(view_box),
+        bounds.bounding_box_width(view_box),
+        bounds.bounding_box_height(view_box),
         "fill: #ffffff; stroke: none",
       ),
       svg.StyledPath(source, "fill: #111827; stroke: none; opacity: 0.14"),

@@ -7,6 +7,8 @@ import gleam/io
 import gleam/list
 import gleam/string
 import svg_path
+import svg_path/bounds
+import svg_path/measure
 import svg_path/offset
 import svg_path/parse
 import svg_path/serialize
@@ -111,7 +113,7 @@ fn report_subpath_segments(
           <> " segment "
           <> int.to_string(segment_index)
           <> " chord="
-          <> float.to_string(svg_path.segment_chord_length(segment))
+          <> float.to_string(measure.segment_chord_length(segment))
           <> " "
           <> serialize.segment(segment),
         )
@@ -152,7 +154,7 @@ fn report_subpath_counts(label: String, path: svg_path.Path) -> Nil {
 }
 
 fn subpath_box_to_string(subpath: svg_path.Subpath) -> String {
-  case svg_path.subpath_bounding_box(subpath) {
+  case bounds.subpath_bounding_box(subpath) {
     Error(_) -> "none"
     Ok(svg_path.BoundingBox(min:, max:)) ->
       "("
@@ -477,14 +479,14 @@ fn point_to_string(point: svg_path.Point) -> String {
 
 fn path_boxes(paths: List(svg_path.Path)) -> List(svg_path.BoundingBox) {
   paths
-  |> list.filter_map(svg_path.path_bounding_box)
+  |> list.filter_map(bounds.path_bounding_box)
 }
 
 fn background(view_box: svg_path.BoundingBox) -> svg.ThingToDraw {
   svg.Rectangle(
     view_box.min,
-    svg_path.bounding_box_width(view_box),
-    svg_path.bounding_box_height(view_box),
+    bounds.bounding_box_width(view_box),
+    bounds.bounding_box_height(view_box),
     "fill: #ffffff; stroke: none",
   )
 }

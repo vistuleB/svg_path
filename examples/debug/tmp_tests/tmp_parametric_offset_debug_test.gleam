@@ -5,6 +5,8 @@ import gleam/io
 import gleam/list
 import gleam/string
 import svg_path
+import svg_path/distance
+import svg_path/measure
 import svg_path/offset
 import svg_path/svg
 import svg_path/transform
@@ -496,7 +498,7 @@ fn print_segment_samples(
     [0.2, 0.5, 0.8]
     |> list.map(fn(t) {
       let assert Ok(point) = svg_path.segment_point(segment, at: t)
-      let assert Ok(projection) = svg_path.subpath_projection(point, to: source)
+      let assert Ok(projection) = distance.subpath_projection(point, to: source)
       "t=" <> f(t) <> " d=" <> f(projection.distance)
     })
     |> string.join(" | ")
@@ -836,12 +838,12 @@ fn section_sample_markers(
 ) -> svg.ThingsToDraw {
   let assert Ok(subpath) =
     svg_path.subpath_with(section, policy: svg_path.Wiggle)
-  let assert Ok(length) = svg_path.subpath_length(subpath)
+  let assert Ok(length) = measure.subpath_length(subpath)
   section_sample_parameters()
   |> list.map(fn(t) {
     let assert Ok(point) =
-      svg_path.subpath_point_at_length(subpath, distance: length *. t)
-    let assert Ok(projection) = svg_path.subpath_projection(point, to: source)
+      measure.subpath_point_at_length(subpath, distance: length *. t)
+    let assert Ok(projection) = distance.subpath_projection(point, to: source)
     let color = case
       projection.distance +. debug_distance_margin()
       >=. float.absolute_value(offset_distance)
@@ -864,12 +866,12 @@ fn good_sample_markers(
 ) -> svg.ThingsToDraw {
   let assert Ok(subpath) =
     svg_path.subpath_with(section, policy: svg_path.Wiggle)
-  let assert Ok(length) = svg_path.subpath_length(subpath)
+  let assert Ok(length) = measure.subpath_length(subpath)
   section_sample_parameters()
   |> list.flat_map(fn(t) {
     let assert Ok(point) =
-      svg_path.subpath_point_at_length(subpath, distance: length *. t)
-    let assert Ok(projection) = svg_path.subpath_projection(point, to: source)
+      measure.subpath_point_at_length(subpath, distance: length *. t)
+    let assert Ok(projection) = distance.subpath_projection(point, to: source)
     case
       projection.distance +. debug_distance_margin()
       >=. float.absolute_value(offset_distance)
@@ -891,11 +893,11 @@ fn section_global_parameter_markers(
 ) -> svg.ThingsToDraw {
   let assert Ok(subpath) =
     svg_path.subpath_with(section, policy: svg_path.Wiggle)
-  let assert Ok(length) = svg_path.subpath_length(subpath)
+  let assert Ok(length) = measure.subpath_length(subpath)
   [0.2, 0.4, 0.6, 0.8]
   |> list.flat_map(fn(t) {
     let assert Ok(point) =
-      svg_path.subpath_point_at_length(subpath, distance: length *. t)
+      measure.subpath_point_at_length(subpath, distance: length *. t)
     [
       svg.Circle(
         point,
@@ -934,7 +936,7 @@ fn first_good_section_sample(
 ) -> Result(svg_path.Point, Nil) {
   let assert Ok(subpath) =
     svg_path.subpath_with(section, policy: svg_path.Wiggle)
-  let assert Ok(length) = svg_path.subpath_length(subpath)
+  let assert Ok(length) = measure.subpath_length(subpath)
   first_good_section_sample_loop(
     subpath,
     length,
@@ -953,8 +955,8 @@ fn first_good_section_sample_loop(
     [] -> Error(Nil)
     [t, ..rest] -> {
       let assert Ok(point) =
-        svg_path.subpath_point_at_length(section, distance: length *. t)
-      let assert Ok(projection) = svg_path.subpath_projection(point, to: source)
+        measure.subpath_point_at_length(section, distance: length *. t)
+      let assert Ok(projection) = distance.subpath_projection(point, to: source)
       case
         projection.distance +. debug_distance_margin()
         >=. float.absolute_value(offset_distance)
@@ -984,12 +986,12 @@ fn count_good_section_samples(
 ) -> Int {
   let assert Ok(subpath) =
     svg_path.subpath_with(section, policy: svg_path.Wiggle)
-  let assert Ok(length) = svg_path.subpath_length(subpath)
+  let assert Ok(length) = measure.subpath_length(subpath)
   section_sample_parameters()
   |> list.fold(0, fn(count, t) {
     let assert Ok(point) =
-      svg_path.subpath_point_at_length(subpath, distance: length *. t)
-    let assert Ok(projection) = svg_path.subpath_projection(point, to: source)
+      measure.subpath_point_at_length(subpath, distance: length *. t)
+    let assert Ok(projection) = distance.subpath_projection(point, to: source)
     case
       projection.distance +. debug_distance_margin()
       >=. float.absolute_value(offset_distance)

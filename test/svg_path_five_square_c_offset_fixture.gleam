@@ -2,6 +2,7 @@ import gleam/dynamic.{type Dynamic}
 import gleam/float
 import gleam/list
 import svg_path
+import svg_path/bounds
 import svg_path/degeneracy
 import svg_path/offset
 import svg_path/serialize
@@ -35,7 +36,7 @@ pub fn main() -> Nil {
   let normalized = svg_path.Path(normalized_subpaths)
   let geometry = svg_path.Path([source, ..normalized_subpaths])
   let assert Ok(svg_path.BoundingBox(min:, max:)) =
-    svg_path.path_bounding_box(geometry)
+    bounds.path_bounding_box(geometry)
   let padding = 0.35
   let x = min.x -. padding
   let y = min.y -. padding

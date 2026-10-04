@@ -4,8 +4,12 @@ import gleam/list
 import gleam/option.{None, Some}
 import gleam/result
 import svg_path
+import svg_path/containment
 import svg_path/degeneracy
+import svg_path/distance
+import svg_path/fit
 import svg_path/intersections
+import svg_path/measure
 import svg_path_intersection_contract_support as contract
 
 const tolerance = 0.000001
@@ -79,7 +83,7 @@ pub fn segment_segment_projection_reports_crossing_line_pair_test() {
     left_point:,
     right_point:,
     distance:,
-  )) = intersections.segment_segment_closest_pair(left, right)
+  )) = distance.segment_segment_closest_pair(left, right)
 
   assert float.absolute_value(left_t -. 1.0 /. 3.0) <. tolerance
   assert float.absolute_value(right_t -. 1.0 /. 3.0) <. tolerance
@@ -105,7 +109,7 @@ pub fn segment_segment_projection_reports_separated_line_pair_test() {
     right_point:,
     distance:,
     ..,
-  )) = intersections.segment_segment_closest_pair(left, right)
+  )) = distance.segment_segment_closest_pair(left, right)
 
   assert float.absolute_value(distance -. 2.0) <. tolerance
   assert float.absolute_value(left_point.x -. right_point.x) <. tolerance
@@ -130,7 +134,7 @@ pub fn segment_segment_projection_reports_overlapping_line_pair_test() {
     right_point:,
     distance:,
     ..,
-  )) = intersections.segment_segment_closest_pair(left, right)
+  )) = distance.segment_segment_closest_pair(left, right)
 
   assert distance <. tolerance
   assert point_distance(left_point, right_point) <. tolerance
@@ -155,7 +159,7 @@ pub fn segment_subpath_projection_reports_nearest_segment_test() {
     ])
 
   let assert Ok(svg_path.SegmentSubpathProjection(right_at:, distance:, ..)) =
-    intersections.segment_subpath_closest_pair(left, right)
+    distance.segment_subpath_closest_pair(left, right)
 
   assert right_at.segment_index == 1
   assert float.absolute_value(distance -. 2.0) <. tolerance
@@ -187,7 +191,7 @@ pub fn segment_path_projection_reports_nearest_subpath_test() {
     |> svg_path.path_append_subpath(near)
 
   let assert Ok(svg_path.SegmentPathProjection(right_at:, distance:, ..)) =
-    intersections.segment_path_closest_pair(left, path)
+    distance.segment_path_closest_pair(left, path)
 
   assert right_at.subpath_index == 1
   assert float.absolute_value(distance -. 2.0) <. tolerance
@@ -222,7 +226,7 @@ pub fn subpath_subpath_projection_reports_nearest_segments_test() {
     right_at:,
     distance:,
     ..,
-  )) = intersections.subpath_subpath_closest_pair(left, right)
+  )) = distance.subpath_subpath_closest_pair(left, right)
 
   assert left_at.segment_index == 0 || left_at.segment_index == 1
   assert right_at.segment_index == 1
@@ -257,7 +261,7 @@ pub fn subpath_path_projection_reports_nearest_subpath_test() {
     |> svg_path.path_append_subpath(near)
 
   let assert Ok(svg_path.SubpathPathProjection(right_at:, distance:, ..)) =
-    intersections.subpath_path_closest_pair(left, path)
+    distance.subpath_path_closest_pair(left, path)
 
   assert right_at.subpath_index == 1
   assert float.absolute_value(distance -. 2.0) <. tolerance
@@ -292,7 +296,7 @@ pub fn path_path_projection_reports_nearest_subpaths_test() {
     |> svg_path.path_append_subpath(near_right)
 
   let assert Ok(svg_path.PathPathProjection(right_at:, distance:, ..)) =
-    intersections.path_path_closest_pair(left, right)
+    distance.path_path_closest_pair(left, right)
 
   assert right_at.subpath_index == 1
   assert float.absolute_value(distance -. 2.0) <. tolerance
@@ -406,7 +410,7 @@ pub fn subpath_linearize_if_degenerate_rejects_bent_subpath_test() {
 
 pub fn parametric_subpath_fits_simple_parabola_test() {
   let assert Ok(subpath) =
-    svg_path.subpath_from_parametric(from: 0.0, to: 1.0, point: fn(t) {
+    fit.subpath_from_parametric(from: 0.0, to: 1.0, point: fn(t) {
       svg_path.Point(t, t *. t)
     })
   let assert [segment] = svg_path.subpath_segments(subpath)
@@ -418,12 +422,12 @@ pub fn parametric_subpath_fits_simple_parabola_test() {
 pub fn parametric_subpath_uses_optional_tangents_test() {
   let options =
     svg_path.ParametricOptions(
-      ..svg_path.default_parametric_options(),
+      ..fit.default_parametric_options(),
       tolerance: 0.000000001,
       tangent: Some(fn(_) { svg_path.Point(1.0, 1.0) }),
     )
   let assert Ok(subpath) =
-    svg_path.subpath_from_parametric_with(
+    fit.subpath_from_parametric_with(
       from: 2.0,
       to: 6.0,
       point: fn(t) { svg_path.Point(t, t) },
@@ -438,12 +442,12 @@ pub fn parametric_subpath_uses_optional_tangents_test() {
 pub fn parametric_subpath_adaptively_subdivides_test() {
   let options =
     svg_path.ParametricOptions(
-      ..svg_path.default_parametric_options(),
+      ..fit.default_parametric_options(),
       tolerance: 0.00001,
       max_depth: 8,
     )
   let assert Ok(subpath) =
-    svg_path.subpath_from_parametric_with(
+    fit.subpath_from_parametric_with(
       from: -1.0,
       to: 1.0,
       point: fn(t) { svg_path.Point(t, t *. t *. t *. t) },
@@ -454,18 +458,18 @@ pub fn parametric_subpath_adaptively_subdivides_test() {
 }
 
 pub fn parametric_subpath_rejects_invalid_options_test() {
-  assert svg_path.subpath_from_parametric_with(
+  assert fit.subpath_from_parametric_with(
       from: 0.0,
       to: 1.0,
       point: fn(t) { svg_path.Point(t, t) },
       options: svg_path.ParametricOptions(
-        ..svg_path.default_parametric_options(),
+        ..fit.default_parametric_options(),
         samples_per_piece: 1,
       ),
     )
     == Error(svg_path.InvalidParametricSamplesPerPiece(1))
 
-  assert svg_path.subpath_from_parametric(from: 1.0, to: 1.0, point: fn(t) {
+  assert fit.subpath_from_parametric(from: 1.0, to: 1.0, point: fn(t) {
       svg_path.Point(t, t)
     })
     == Error(svg_path.InvalidParametricInterval(start: 1.0, end: 1.0))
@@ -479,7 +483,7 @@ pub fn segment_crossings_finds_line_crossing_test() {
     )
 
   let assert Ok(crossings) =
-    svg_path.segment_crossings(line, where: fn(point) { point.x -. 5.0 })
+    containment.segment_crossings(line, where: fn(point) { point.x -. 5.0 })
   let assert [crossing] = crossings
 
   assert near(crossing, 0.5)
@@ -500,7 +504,7 @@ pub fn segment_crossings_finds_multiple_quadratic_crossings_test() {
     )
 
   let assert Ok(crossings) =
-    svg_path.segment_crossings_with(
+    containment.segment_crossings_with(
       curve,
       where: fn(point) { point.y -. 5.0 },
       options:,
@@ -523,7 +527,7 @@ pub fn segment_crossings_finds_arc_crossing_test() {
     )
 
   let assert Ok(crossings) =
-    svg_path.segment_crossings(arc, where: fn(point) { point.x -. 10.0 })
+    containment.segment_crossings(arc, where: fn(point) { point.x -. 10.0 })
   let assert [crossing] = crossings
 
   assert near(crossing, 0.5)
@@ -538,13 +542,13 @@ pub fn segment_ray_crossings_defaults_match_explicit_options_test() {
   let origin = svg_path.Point(5.0, 0.0)
   let direction = svg_path.Point(1.0, 0.0)
   let assert Ok(crossings) =
-    svg_path.segment_ray_crossings(line, origin:, direction:)
+    containment.segment_ray_crossings(line, origin:, direction:)
   assert Ok(crossings)
-    == svg_path.segment_ray_crossings_with(
+    == containment.segment_ray_crossings_with(
       line,
       origin:,
       direction:,
-      options: svg_path.default_crossing_options(),
+      options: containment.default_crossing_options(),
     )
   let assert [#(crossing, ray_t)] = crossings
   assert near(crossing, 0.5)
@@ -559,11 +563,11 @@ pub fn segment_ray_crossings_finds_line_crossing_test() {
     )
 
   let assert Ok(crossings) =
-    svg_path.segment_ray_crossings_with(
+    containment.segment_ray_crossings_with(
       line,
       origin: svg_path.Point(5.0, 0.0),
       direction: svg_path.Point(1.0, 0.0),
-      options: svg_path.default_crossing_options(),
+      options: containment.default_crossing_options(),
     )
   let assert [#(crossing, ray_t)] = crossings
 
@@ -580,11 +584,11 @@ pub fn segment_ray_crossings_finds_quadratic_tangent_contact_test() {
     )
 
   let assert Ok(crossings) =
-    svg_path.segment_ray_crossings_with(
+    containment.segment_ray_crossings_with(
       curve,
       origin: svg_path.Point(0.0, 5.0),
       direction: svg_path.Point(1.0, 0.0),
-      options: svg_path.default_crossing_options(),
+      options: containment.default_crossing_options(),
     )
   let assert [#(crossing, ray_t)] = crossings
 
@@ -602,11 +606,11 @@ pub fn segment_ray_crossings_finds_cubic_line_crossing_test() {
     )
 
   let assert Ok(crossings) =
-    svg_path.segment_ray_crossings_with(
+    containment.segment_ray_crossings_with(
       curve,
       origin: svg_path.Point(1.0, 0.0),
       direction: svg_path.Point(0.0, 1.0),
-      options: svg_path.default_crossing_options(),
+      options: containment.default_crossing_options(),
     )
   let assert [#(crossing, ray_t)] =
     crossings
@@ -631,11 +635,11 @@ pub fn segment_ray_crossings_finds_arc_line_crossing_test() {
     )
 
   let assert Ok(crossings) =
-    svg_path.segment_ray_crossings_with(
+    containment.segment_ray_crossings_with(
       arc,
       origin: svg_path.Point(10.0, -15.0),
       direction: svg_path.Point(0.0, 1.0),
-      options: svg_path.default_crossing_options(),
+      options: containment.default_crossing_options(),
     )
   let assert [#(crossing, ray_t)] =
     crossings
@@ -656,11 +660,11 @@ pub fn segment_ray_crossings_includes_wrong_side_crossing_test() {
     )
 
   let assert Ok(crossings) =
-    svg_path.segment_ray_crossings_with(
+    containment.segment_ray_crossings_with(
       line,
       origin: svg_path.Point(5.0, 0.0),
       direction: svg_path.Point(-1.0, 0.0),
-      options: svg_path.default_crossing_options(),
+      options: containment.default_crossing_options(),
     )
   let assert [#(crossing, ray_t)] = crossings
 
@@ -675,11 +679,11 @@ pub fn segment_ray_crossings_rejects_zero_direction_test() {
       end: svg_path.Point(10.0, 0.0),
     )
 
-  assert svg_path.segment_ray_crossings_with(
+  assert containment.segment_ray_crossings_with(
       line,
       origin: svg_path.Point(5.0, 0.0),
       direction: svg_path.Point(0.0, 0.0),
-      options: svg_path.default_crossing_options(),
+      options: containment.default_crossing_options(),
     )
     == Error(svg_path.IndeterminateDirection)
 }
@@ -691,7 +695,7 @@ pub fn segment_crossings_rejects_invalid_options_test() {
       end: svg_path.Point(10.0, 0.0),
     )
 
-  assert svg_path.segment_crossings_with(
+  assert containment.segment_crossings_with(
       line,
       where: fn(point) { point.x -. 5.0 },
       options: svg_path.CrossingOptions(
@@ -701,7 +705,7 @@ pub fn segment_crossings_rejects_invalid_options_test() {
       ),
     )
     == Error(svg_path.InvalidCrossingSamples(0))
-  assert svg_path.segment_crossings_with(
+  assert containment.segment_crossings_with(
       line,
       where: fn(point) { point.x -. 5.0 },
       options: svg_path.CrossingOptions(
@@ -711,7 +715,7 @@ pub fn segment_crossings_rejects_invalid_options_test() {
       ),
     )
     == Error(svg_path.InvalidCrossingTolerance(0.0))
-  assert svg_path.segment_crossings_with(
+  assert containment.segment_crossings_with(
       line,
       where: fn(point) { point.x -. 5.0 },
       options: svg_path.CrossingOptions(
@@ -734,7 +738,7 @@ pub fn segment_crossings_returns_degenerate_arc_errors_test() {
       end: svg_path.Point(20.0, 0.0),
     )
 
-  assert svg_path.segment_crossings(segment, where: fn(point) { point.x })
+  assert containment.segment_crossings(segment, where: fn(point) { point.x })
     == Error(svg_path.DegenerateArc)
 }
 
@@ -746,7 +750,7 @@ pub fn segment_minimize_finds_line_minimum_test() {
     )
 
   let assert Ok(t) =
-    svg_path.segment_minimize(line, measure: fn(point) {
+    fit.segment_minimize(line, measure: fn(point) {
       let dx = point.x -. 7.0
       dx *. dx
     })
@@ -763,7 +767,7 @@ pub fn segment_minimize_finds_quadratic_minimum_test() {
     )
 
   let assert Ok(t) =
-    svg_path.segment_minimize(curve, measure: fn(point) {
+    fit.segment_minimize(curve, measure: fn(point) {
       let dx = point.x -. 10.0
       let dy = point.y -. 10.0
       dx *. dx +. dy *. dy
@@ -784,7 +788,7 @@ pub fn segment_minimize_finds_arc_minimum_test() {
     )
 
   let assert Ok(t) =
-    svg_path.segment_minimize(arc, measure: fn(point) {
+    fit.segment_minimize(arc, measure: fn(point) {
       let dx = point.x -. 10.0
       dx *. dx
     })
@@ -799,7 +803,7 @@ pub fn segment_minimize_with_rejects_invalid_options_test() {
       end: svg_path.Point(10.0, 0.0),
     )
 
-  assert svg_path.segment_minimize_with(
+  assert fit.segment_minimize_with(
       line,
       measure: fn(point) { point.x },
       options: svg_path.MinimizeOptions(
@@ -809,7 +813,7 @@ pub fn segment_minimize_with_rejects_invalid_options_test() {
       ),
     )
     == Error(svg_path.InvalidMinimizeSamples(0))
-  assert svg_path.segment_minimize_with(
+  assert fit.segment_minimize_with(
       line,
       measure: fn(point) { point.x },
       options: svg_path.MinimizeOptions(
@@ -819,7 +823,7 @@ pub fn segment_minimize_with_rejects_invalid_options_test() {
       ),
     )
     == Error(svg_path.InvalidMinimizeTolerance(0.0))
-  assert svg_path.segment_minimize_with(
+  assert fit.segment_minimize_with(
       line,
       measure: fn(point) { point.x },
       options: svg_path.MinimizeOptions(
@@ -842,7 +846,7 @@ pub fn segment_minimize_returns_degenerate_arc_errors_test() {
       end: svg_path.Point(20.0, 0.0),
     )
 
-  assert svg_path.segment_minimize(segment, measure: fn(point) { point.x })
+  assert fit.segment_minimize(segment, measure: fn(point) { point.x })
     == Error(svg_path.DegenerateArc)
 }
 
@@ -854,7 +858,7 @@ pub fn segment_distance_measures_line_projection_test() {
     )
 
   let assert Ok(distance) =
-    svg_path.segment_distance(svg_path.Point(5.0, 4.0), to: line)
+    distance.segment_distance(svg_path.Point(5.0, 4.0), to: line)
 
   assert near(distance, 4.0)
 }
@@ -867,7 +871,7 @@ pub fn segment_distance_measures_line_endpoint_test() {
     )
 
   let assert Ok(distance) =
-    svg_path.segment_distance(svg_path.Point(13.0, 4.0), to: line)
+    distance.segment_distance(svg_path.Point(13.0, 4.0), to: line)
 
   assert near(distance, 5.0)
 }
@@ -881,7 +885,7 @@ pub fn segment_distance_measures_quadratic_curve_test() {
     )
 
   let assert Ok(distance) =
-    svg_path.segment_distance(svg_path.Point(10.0, 15.0), to: curve)
+    distance.segment_distance(svg_path.Point(10.0, 15.0), to: curve)
 
   assert near(distance, 5.0)
 }
@@ -896,7 +900,7 @@ pub fn segment_distance_measures_cubic_curve_test() {
     )
 
   let assert Ok(distance) =
-    svg_path.segment_distance(svg_path.Point(5.0, 7.5), to: curve)
+    distance.segment_distance(svg_path.Point(5.0, 7.5), to: curve)
 
   assert distance <. 0.0001
 }
@@ -913,7 +917,7 @@ pub fn segment_distance_measures_arc_test() {
     )
 
   let assert Ok(distance) =
-    svg_path.segment_distance(svg_path.Point(10.0, -15.0), to: arc)
+    distance.segment_distance(svg_path.Point(10.0, -15.0), to: arc)
 
   assert near(distance, 5.0)
 }
@@ -925,7 +929,7 @@ pub fn segment_distance_with_rejects_invalid_options_test() {
       end: svg_path.Point(10.0, 0.0),
     )
 
-  assert svg_path.segment_distance_with(
+  assert distance.segment_distance_with(
       svg_path.Point(5.0, 4.0),
       to: line,
       options: svg_path.DistanceOptions(
@@ -935,7 +939,7 @@ pub fn segment_distance_with_rejects_invalid_options_test() {
       ),
     )
     == Error(svg_path.InvalidDistanceSamples(0))
-  assert svg_path.segment_distance_with(
+  assert distance.segment_distance_with(
       svg_path.Point(5.0, 4.0),
       to: line,
       options: svg_path.DistanceOptions(
@@ -945,7 +949,7 @@ pub fn segment_distance_with_rejects_invalid_options_test() {
       ),
     )
     == Error(svg_path.InvalidDistanceTolerance(0.0))
-  assert svg_path.segment_distance_with(
+  assert distance.segment_distance_with(
       svg_path.Point(5.0, 4.0),
       to: line,
       options: svg_path.DistanceOptions(
@@ -968,7 +972,7 @@ pub fn segment_distance_returns_degenerate_arc_errors_test() {
       end: svg_path.Point(20.0, 0.0),
     )
 
-  assert svg_path.segment_distance(svg_path.Point(10.0, 0.0), to: segment)
+  assert distance.segment_distance(svg_path.Point(10.0, 0.0), to: segment)
     == Error(svg_path.DegenerateArc)
 }
 
@@ -979,7 +983,7 @@ pub fn segment_length_measures_line_exactly_test() {
       end: svg_path.Point(3.0, 4.0),
     )
 
-  let assert Ok(length) = svg_path.segment_length(line)
+  let assert Ok(length) = measure.segment_length(line)
 
   assert near(length, 5.0)
 }
@@ -991,7 +995,7 @@ pub fn segment_length_avoids_intermediate_overflow_test() {
       end: svg_path.Point(1.0e200, 0.0),
     )
 
-  let assert Ok(length) = svg_path.segment_length(line)
+  let assert Ok(length) = measure.segment_length(line)
 
   assert length == 1.0e200
 }
@@ -1004,7 +1008,7 @@ pub fn segment_length_approximates_quadratic_curve_test() {
       end: svg_path.Point(20.0, 0.0),
     )
 
-  let assert Ok(length) = svg_path.segment_length(curve)
+  let assert Ok(length) = measure.segment_length(curve)
 
   assert length >. 20.0
   assert length <. 40.0
@@ -1019,7 +1023,7 @@ pub fn segment_length_matches_sampled_curve_reference_test() {
       end: svg_path.Point(40.0, 20.0),
     )
 
-  let assert Ok(length) = svg_path.segment_length(curve)
+  let assert Ok(length) = measure.segment_length(curve)
   let assert Ok(reference) = sampled_segment_length(curve, samples: 1000)
 
   assert float.absolute_value(length -. reference) <. 0.001
@@ -1036,7 +1040,7 @@ pub fn segment_length_approximates_arc_test() {
       end: svg_path.Point(20.0, 0.0),
     )
 
-  let assert Ok(length) = svg_path.segment_length(arc)
+  let assert Ok(length) = measure.segment_length(arc)
 
   assert float.absolute_value(length -. 31.41592653589793) <. 0.01
 }
@@ -1048,12 +1052,12 @@ pub fn segment_length_with_rejects_invalid_options_test() {
       end: svg_path.Point(10.0, 0.0),
     )
 
-  assert svg_path.segment_length_with(
+  assert measure.segment_length_with(
       line,
       options: svg_path.LengthOptions(tolerance: 0.0, max_depth: 20),
     )
     == Error(svg_path.InvalidLengthTolerance(0.0))
-  assert svg_path.segment_length_with(
+  assert measure.segment_length_with(
       line,
       options: svg_path.LengthOptions(tolerance: 0.000000001, max_depth: 0),
     )
@@ -1070,7 +1074,7 @@ pub fn segment_length_with_reports_exhausted_refinement_depth_test() {
     )
 
   case
-    svg_path.segment_length_with(
+    measure.segment_length_with(
       curve,
       options: svg_path.LengthOptions(tolerance: 1.0e-30, max_depth: 1),
     )
@@ -1096,7 +1100,7 @@ pub fn subpath_length_sums_segment_lengths_test() {
       ),
     ])
 
-  let assert Ok(length) = svg_path.subpath_length(subpath)
+  let assert Ok(length) = measure.subpath_length(subpath)
 
   assert near(length, 18.0)
 }
@@ -1104,7 +1108,7 @@ pub fn subpath_length_sums_segment_lengths_test() {
 pub fn subpath_length_returns_zero_for_empty_subpath_test() {
   let subpath = svg_path.subpath_empty(at: svg_path.Point(0.0, 0.0))
 
-  assert svg_path.subpath_length(subpath) == Ok(0.0)
+  assert measure.subpath_length(subpath) == Ok(0.0)
 }
 
 pub fn segment_parameter_at_length_measures_line_exactly_test() {
@@ -1114,7 +1118,7 @@ pub fn segment_parameter_at_length_measures_line_exactly_test() {
       end: svg_path.Point(10.0, 0.0),
     )
 
-  assert svg_path.segment_parameter_at_length(line, distance: 4.0) == Ok(0.4)
+  assert measure.segment_parameter_at_length(line, distance: 4.0) == Ok(0.4)
 }
 
 pub fn segment_point_at_length_evaluates_line_test() {
@@ -1124,7 +1128,7 @@ pub fn segment_point_at_length_evaluates_line_test() {
       end: svg_path.Point(10.0, 0.0),
     )
 
-  let assert Ok(point) = svg_path.segment_point_at_length(line, distance: 4.0)
+  let assert Ok(point) = measure.segment_point_at_length(line, distance: 4.0)
 
   assert point_near(point, svg_path.Point(4.0, 0.0))
 }
@@ -1137,9 +1141,9 @@ pub fn segment_parameter_at_length_inverts_symmetric_curve_test() {
       end: svg_path.Point(20.0, 0.0),
     )
 
-  let assert Ok(length) = svg_path.segment_length(curve)
+  let assert Ok(length) = measure.segment_length(curve)
   let assert Ok(t) =
-    svg_path.segment_parameter_at_length(curve, distance: length /. 2.0)
+    measure.segment_parameter_at_length(curve, distance: length /. 2.0)
 
   assert near(t, 0.5)
 }
@@ -1155,11 +1159,11 @@ pub fn segment_point_at_length_evaluates_arc_test() {
       end: svg_path.Point(20.0, 0.0),
     )
 
-  let assert Ok(length) = svg_path.segment_length(arc)
+  let assert Ok(length) = measure.segment_length(arc)
   let assert Ok(point) =
-    svg_path.segment_point_at_length(arc, distance: length /. 2.0)
+    measure.segment_point_at_length(arc, distance: length /. 2.0)
   let assert Ok(derivative) =
-    svg_path.segment_derivative_at_length(arc, distance: length /. 2.0)
+    measure.segment_derivative_at_length(arc, distance: length /. 2.0)
 
   assert point_near(point, svg_path.Point(10.0, -10.0))
   assert derivative.x >. 0.0
@@ -1173,9 +1177,9 @@ pub fn segment_parameter_at_length_rejects_invalid_distances_test() {
       end: svg_path.Point(10.0, 0.0),
     )
 
-  assert svg_path.segment_parameter_at_length(line, distance: -1.0)
+  assert measure.segment_parameter_at_length(line, distance: -1.0)
     == Error(svg_path.InvalidLengthDistance(distance: -1.0, length: 10.0))
-  assert svg_path.segment_parameter_at_length(line, distance: 11.0)
+  assert measure.segment_parameter_at_length(line, distance: 11.0)
     == Error(svg_path.InvalidLengthDistance(distance: 11.0, length: 10.0))
 }
 
@@ -1187,9 +1191,9 @@ pub fn segment_between_lengths_uses_traveled_distances_test() {
     )
 
   let assert Ok(forward) =
-    svg_path.segment_between_lengths(line, from: 2.0, to: 7.0)
+    measure.segment_between_lengths(line, from: 2.0, to: 7.0)
   let assert Ok(reverse) =
-    svg_path.segment_between_lengths(line, from: 7.0, to: 2.0)
+    measure.segment_between_lengths(line, from: 7.0, to: 2.0)
 
   assert svg_path.segment_start(forward) == svg_path.Point(2.0, 0.0)
   assert svg_path.segment_end(forward) == svg_path.Point(7.0, 0.0)
@@ -1205,7 +1209,7 @@ pub fn segments_between_lengths_uses_adjacent_distances_test() {
     )
 
   let assert Ok([first, second]) =
-    svg_path.segment_between_lengths_many(line, between: [2.0, 7.0, 4.0])
+    measure.segment_between_lengths_many(line, between: [2.0, 7.0, 4.0])
 
   assert svg_path.segment_start(first) == svg_path.Point(2.0, 0.0)
   assert svg_path.segment_end(first) == svg_path.Point(7.0, 0.0)
@@ -1220,9 +1224,9 @@ pub fn segment_between_lengths_rejects_invalid_input_test() {
       end: svg_path.Point(10.0, 0.0),
     )
 
-  assert svg_path.segment_between_lengths(line, from: 0.0, to: 11.0)
+  assert measure.segment_between_lengths(line, from: 0.0, to: 11.0)
     == Error(svg_path.InvalidLengthDistance(distance: 11.0, length: 10.0))
-  assert svg_path.segment_between_lengths_with(
+  assert measure.segment_between_lengths_with(
       line,
       from: 2.0,
       to: 7.0,
@@ -1239,7 +1243,7 @@ pub fn segment_subdivide_to_max_length_splits_line_by_arc_length_test() {
     )
 
   let assert Ok(pieces) =
-    svg_path.segment_subdivide_to_max_length(line, max_length: 3.0)
+    measure.segment_subdivide_to_max_length(line, max_length: 3.0)
 
   let assert [first, second, third, fourth] = pieces
   assert svg_path.segment_start(first) == svg_path.Point(0.0, 0.0)
@@ -1260,12 +1264,12 @@ pub fn segment_subdivide_to_max_length_splits_curve_by_arc_length_test() {
       end: svg_path.Point(30.0, 30.0),
     )
 
-  let assert Ok(length) = svg_path.segment_length(curve)
+  let assert Ok(length) = measure.segment_length(curve)
   let assert Ok(pieces) =
-    svg_path.segment_subdivide_to_max_length(curve, max_length: length /. 2.0)
+    measure.segment_subdivide_to_max_length(curve, max_length: length /. 2.0)
   let assert [first, second] = pieces
-  let assert Ok(first_length) = svg_path.segment_length(first)
-  let assert Ok(second_length) = svg_path.segment_length(second)
+  let assert Ok(first_length) = measure.segment_length(first)
+  let assert Ok(second_length) = measure.segment_length(second)
 
   assert near(first_length, length /. 2.0)
   assert near(second_length, length /. 2.0)
@@ -1279,7 +1283,7 @@ pub fn segment_subdivide_to_max_length_keeps_zero_length_segment_test() {
       end: svg_path.Point(1.0, 2.0),
     )
 
-  assert svg_path.segment_subdivide_to_max_length(line, max_length: 1.0)
+  assert measure.segment_subdivide_to_max_length(line, max_length: 1.0)
     == Ok([line])
 }
 
@@ -1290,7 +1294,7 @@ pub fn segment_subdivide_to_max_length_rejects_invalid_max_length_test() {
       end: svg_path.Point(10.0, 0.0),
     )
 
-  assert svg_path.segment_subdivide_to_max_length(line, max_length: 0.0)
+  assert measure.segment_subdivide_to_max_length(line, max_length: 0.0)
     == Error(svg_path.InvalidSubdivisionMaxLength(0.0))
 }
 
@@ -1314,7 +1318,7 @@ pub fn subpath_subdivide_to_max_length_preserves_boundaries_and_closed_test() {
     )
 
   let assert Ok(subdivided) =
-    svg_path.subpath_subdivide_to_max_length(subpath, max_length: 4.0)
+    measure.subpath_subdivide_to_max_length(subpath, max_length: 4.0)
   let segments = svg_path.subpath_segments(subdivided)
 
   assert svg_path.subpath_is_closed(subdivided)
@@ -1342,7 +1346,7 @@ pub fn path_subdivide_to_max_length_preserves_subpaths_test() {
   let path = svg_path.Path(subpaths: [first, second])
 
   let assert Ok(subdivided) =
-    svg_path.path_subdivide_to_max_length(path, max_length: 4.0)
+    measure.path_subdivide_to_max_length(path, max_length: 4.0)
   let subpaths = svg_path.path_subpaths(subdivided)
 
   let assert [first_subpath, second_subpath] = subpaths
@@ -1363,9 +1367,9 @@ pub fn subpath_parameter_at_length_returns_public_parameter_test() {
       ),
     ])
 
-  assert svg_path.subpath_parameter_at_length(subpath, distance: 11.0)
+  assert measure.subpath_parameter_at_length(subpath, distance: 11.0)
     == Ok(svg_path.SubpathParameter(segment_index: 1, t: 0.5))
-  assert svg_path.subpath_parameter_at_length(subpath, distance: 17.0)
+  assert measure.subpath_parameter_at_length(subpath, distance: 17.0)
     == Ok(svg_path.SubpathParameter(segment_index: 1, t: 1.0))
 }
 
@@ -1383,9 +1387,9 @@ pub fn subpath_point_and_derivative_at_length_evaluate_parameter_test() {
     ])
 
   let assert Ok(point) =
-    svg_path.subpath_point_at_length(subpath, distance: 11.0)
+    measure.subpath_point_at_length(subpath, distance: 11.0)
   let assert Ok(derivative) =
-    svg_path.subpath_derivative_at_length(subpath, distance: 11.0)
+    measure.subpath_derivative_at_length(subpath, distance: 11.0)
 
   assert point_near(point, svg_path.Point(3.0, 10.0))
   assert point_near(derivative, svg_path.Point(0.0, 12.0))
@@ -1394,7 +1398,7 @@ pub fn subpath_point_and_derivative_at_length_evaluate_parameter_test() {
 pub fn subpath_parameter_at_length_rejects_empty_subpaths_test() {
   let subpath = svg_path.subpath_empty(at: svg_path.Point(0.0, 0.0))
 
-  assert svg_path.subpath_parameter_at_length(subpath, distance: 0.0)
+  assert measure.subpath_parameter_at_length(subpath, distance: 0.0)
     == Error(svg_path.EmptySubpath)
 }
 
@@ -1411,7 +1415,7 @@ pub fn subpath_between_lengths_crosses_segments_test() {
     ])
 
   let assert Ok(piece) =
-    svg_path.subpath_between_lengths(subpath, from: 5.0, to: 25.0)
+    measure.subpath_between_lengths(subpath, from: 5.0, to: 25.0)
 
   assert svg_path.subpath_segments(piece)
     == [
@@ -1434,7 +1438,7 @@ pub fn subpaths_between_lengths_splits_open_subpath_test() {
     ])
 
   let assert Ok([first, second, third]) =
-    svg_path.subpath_between_lengths_many(subpath, between: [5.0, 25.0])
+    measure.subpath_between_lengths_many(subpath, between: [5.0, 25.0])
 
   assert svg_path.subpath_segments(first)
     == [svg_path.Line(start: a, end: svg_path.Point(5.0, 0.0))]
@@ -1462,7 +1466,7 @@ pub fn subpath_between_lengths_wraps_closed_subpaths_test() {
     ])
 
   let assert Ok(piece) =
-    svg_path.subpath_between_lengths(subpath, from: 25.0, to: 15.0)
+    measure.subpath_between_lengths(subpath, from: 25.0, to: 15.0)
 
   assert svg_path.subpath_segments(piece)
     == [
@@ -1495,13 +1499,13 @@ pub fn path_length_sums_subpath_lengths_test() {
       second,
     ])
 
-  let assert Ok(length) = svg_path.path_length(path)
+  let assert Ok(length) = measure.path_length(path)
 
   assert near(length, 17.0)
 }
 
 pub fn path_length_returns_zero_for_empty_path_test() {
-  assert svg_path.path_length(svg_path.path_empty()) == Ok(0.0)
+  assert measure.path_length(svg_path.path_empty()) == Ok(0.0)
 }
 
 pub fn path_parameter_at_length_returns_public_parameter_test() {
@@ -1526,12 +1530,12 @@ pub fn path_parameter_at_length_returns_public_parameter_test() {
       second,
     ])
 
-  assert svg_path.path_parameter_at_length(path, distance: 11.0)
+  assert measure.path_parameter_at_length(path, distance: 11.0)
     == Ok(svg_path.PathParameter(
       subpath_index: 2,
       at: svg_path.SubpathParameter(segment_index: 0, t: 0.5),
     ))
-  assert svg_path.path_parameter_at_length(path, distance: 17.0)
+  assert measure.path_parameter_at_length(path, distance: 17.0)
     == Ok(svg_path.PathParameter(
       subpath_index: 2,
       at: svg_path.SubpathParameter(segment_index: 0, t: 1.0),
@@ -1555,9 +1559,9 @@ pub fn path_point_and_derivative_at_length_evaluate_parameter_test() {
     ])
   let path = svg_path.Path([first, second])
 
-  let assert Ok(point) = svg_path.path_point_at_length(path, distance: 11.0)
+  let assert Ok(point) = measure.path_point_at_length(path, distance: 11.0)
   let assert Ok(derivative) =
-    svg_path.path_derivative_at_length(path, distance: 11.0)
+    measure.path_derivative_at_length(path, distance: 11.0)
 
   assert point_near(point, svg_path.Point(10.0, 16.0))
   assert point_near(derivative, svg_path.Point(0.0, 12.0))
@@ -1566,9 +1570,9 @@ pub fn path_point_and_derivative_at_length_evaluate_parameter_test() {
 pub fn path_parameter_at_length_rejects_empty_paths_and_empty_subpaths_test() {
   let move_only = svg_path.subpath_empty(at: svg_path.Point(0.0, 0.0))
 
-  assert svg_path.path_parameter_at_length(svg_path.path_empty(), distance: 0.0)
+  assert measure.path_parameter_at_length(svg_path.path_empty(), distance: 0.0)
     == Error(svg_path.EmptyPath)
-  assert svg_path.path_parameter_at_length(
+  assert measure.path_parameter_at_length(
       svg_path.Path([move_only]),
       distance: 0.0,
     )
@@ -1585,9 +1589,9 @@ pub fn path_parameter_at_length_rejects_invalid_distances_test() {
     ])
   let path = svg_path.subpath_as_path(subpath)
 
-  assert svg_path.path_parameter_at_length(path, distance: -1.0)
+  assert measure.path_parameter_at_length(path, distance: -1.0)
     == Error(svg_path.InvalidLengthDistance(distance: -1.0, length: 10.0))
-  assert svg_path.path_parameter_at_length(path, distance: 11.0)
+  assert measure.path_parameter_at_length(path, distance: 11.0)
     == Error(svg_path.InvalidLengthDistance(distance: 11.0, length: 10.0))
 }
 
@@ -1619,7 +1623,7 @@ pub fn segment_projection_returns_line_parameter_point_and_distance_test() {
     )
 
   let assert Ok(svg_path.SegmentProjection(t:, point:, distance:)) =
-    svg_path.segment_projection(svg_path.Point(4.0, 3.0), to: line)
+    distance.segment_projection(svg_path.Point(4.0, 3.0), to: line)
 
   assert near(t, 0.4)
   assert point_near(point, svg_path.Point(4.0, 0.0))
@@ -1634,7 +1638,7 @@ pub fn segment_projection_clamps_to_line_endpoint_test() {
     )
 
   let assert Ok(svg_path.SegmentProjection(t:, point:, distance:)) =
-    svg_path.segment_projection(svg_path.Point(13.0, 4.0), to: line)
+    distance.segment_projection(svg_path.Point(13.0, 4.0), to: line)
 
   assert near(t, 1.0)
   assert point_near(point, svg_path.Point(10.0, 0.0))
@@ -1650,7 +1654,7 @@ pub fn segment_projection_returns_curve_parameter_point_and_distance_test() {
     )
 
   let assert Ok(svg_path.SegmentProjection(t:, point:, distance:)) =
-    svg_path.segment_projection(svg_path.Point(10.0, 15.0), to: curve)
+    distance.segment_projection(svg_path.Point(10.0, 15.0), to: curve)
 
   assert near(t, 0.5)
   assert point_near(point, svg_path.Point(10.0, 10.0))
@@ -1666,7 +1670,7 @@ pub fn projection_returns_quadratic_parameter_point_and_distance_test() {
     )
 
   let assert Ok(svg_path.SegmentProjection(t:, point:, distance:)) =
-    svg_path.segment_projection(svg_path.Point(10.0, 15.0), to: curve)
+    distance.segment_projection(svg_path.Point(10.0, 15.0), to: curve)
 
   assert near(t, 0.5)
   assert point_near(point, svg_path.Point(10.0, 10.0))
@@ -1689,7 +1693,7 @@ pub fn projection_keeps_better_isolation_endpoint_without_sign_change_test() {
   // At the root window's upper endpoint (0.5), geometric evaluation gives a
   // slightly negative stationary value. Both window endpoints then have the
   // same sign; returning its midpoint used to report distance 2.58e-9.
-  let assert Ok(projection) = svg_path.segment_projection(query, to: reversed)
+  let assert Ok(projection) = distance.segment_projection(query, to: reversed)
   assert projection.distance <. 0.000000000001
   assert float.absolute_value(projection.t -. 0.5) <. 0.000000000001
 }
@@ -1703,7 +1707,7 @@ pub fn polished_bezier_projections_have_small_tangential_error_test() {
       |> list.each(fn(y) {
         let query = svg_path.Point(x, y)
         let assert Ok(svg_path.SegmentProjection(t:, ..)) =
-          svg_path.segment_projection(query, to: segment)
+          distance.segment_projection(query, to: segment)
         case t >. 0.0 && t <. 1.0 {
           True -> {
             assert projection_tangential_error(query, segment, t) <. 0.0000001
@@ -1724,7 +1728,7 @@ pub fn projection_handles_unreliable_near_cusp_tangent_test() {
     )
   let query = svg_path.Point(0.5, 0.6)
   let assert Ok(svg_path.SegmentProjection(t:, distance:, ..)) =
-    svg_path.segment_projection(query, to: segment)
+    distance.segment_projection(query, to: segment)
 
   assert t >=. 0.0 && t <=. 1.0
   assert distance >=. 0.0
@@ -1752,7 +1756,7 @@ pub fn projection_of_bezier_points_respects_tolerance_test() {
     |> list.each(fn(t) {
       let assert Ok(point) = svg_path.segment_point(segment, at: t)
       let assert Ok(svg_path.SegmentProjection(distance:, ..)) =
-        svg_path.segment_projection(point, to: segment)
+        distance.segment_projection(point, to: segment)
       assert distance <=. 0.000000001
     })
   })
@@ -1788,7 +1792,7 @@ pub fn projection_of_curve_points_respects_geometric_tolerance_test() {
     |> list.each(fn(t) {
       let assert Ok(point) = svg_path.segment_point(segment, at: t)
       let assert Ok(svg_path.SegmentProjection(distance:, ..)) =
-        svg_path.segment_projection_with(
+        distance.segment_projection_with(
           point,
           to: segment,
           options: svg_path.DistanceOptions(
@@ -1809,7 +1813,7 @@ pub fn segment_projection_with_rejects_invalid_options_test() {
       end: svg_path.Point(10.0, 0.0),
     )
 
-  assert svg_path.segment_projection_with(
+  assert distance.segment_projection_with(
       svg_path.Point(5.0, 4.0),
       to: line,
       options: svg_path.DistanceOptions(
@@ -1835,7 +1839,7 @@ pub fn subpath_projection_returns_subpath_parameter_point_and_distance_test() {
     ])
 
   let assert Ok(svg_path.SubpathProjection(at:, point:, distance:)) =
-    svg_path.subpath_projection(svg_path.Point(14.0, 8.0), to: subpath)
+    distance.subpath_projection(svg_path.Point(14.0, 8.0), to: subpath)
 
   assert at == svg_path.SubpathParameter(segment_index: 1, t: 0.4)
   assert point_near(point, svg_path.Point(10.0, 8.0))
@@ -1845,7 +1849,7 @@ pub fn subpath_projection_returns_subpath_parameter_point_and_distance_test() {
 pub fn subpath_projection_rejects_empty_subpaths_test() {
   let subpath = svg_path.subpath_empty(at: svg_path.Point(0.0, 0.0))
 
-  assert svg_path.subpath_projection(svg_path.Point(1.0, 1.0), to: subpath)
+  assert distance.subpath_projection(svg_path.Point(1.0, 1.0), to: subpath)
     == Error(svg_path.EmptySubpath)
 }
 
@@ -1862,25 +1866,25 @@ pub fn subpath_containment_implicitly_closes_open_subpaths_test() {
     ])
 
   assert !svg_path.subpath_is_closed(subpath)
-  assert svg_path.subpath_containment(
+  assert containment.subpath_containment(
       svg_path.Point(5.0, 5.0),
       within: subpath,
       using: svg_path.Nonzero,
     )
     == Ok(svg_path.Inside)
-  assert svg_path.subpath_containment(
+  assert containment.subpath_containment(
       svg_path.Point(15.0, 5.0),
       within: subpath,
       using: svg_path.Nonzero,
     )
     == Ok(svg_path.Outside)
-  assert svg_path.subpath_containment(
+  assert containment.subpath_containment(
       svg_path.Point(0.0, 5.0),
       within: subpath,
       using: svg_path.Nonzero,
     )
     == Ok(svg_path.Boundary)
-  assert svg_path.subpath_containment(
+  assert containment.subpath_containment(
       svg_path.Point(10.0, 5.0),
       within: subpath,
       using: svg_path.Nonzero,
@@ -1905,13 +1909,13 @@ pub fn subpath_containment_supports_both_fill_rules_test() {
       svg_path.Line(start: d, end: a),
     ])
 
-  assert svg_path.subpath_containment(
+  assert containment.subpath_containment(
       svg_path.Point(5.0, 5.0),
       within: subpath,
       using: svg_path.Nonzero,
     )
     == Ok(svg_path.Inside)
-  assert svg_path.subpath_containment(
+  assert containment.subpath_containment(
       svg_path.Point(5.0, 5.0),
       within: subpath,
       using: svg_path.EvenOdd,
@@ -1927,13 +1931,13 @@ pub fn subpath_containment_handles_ray_through_vertex_test() {
       svg_path.Point(0.0, 10.0),
     ])
 
-  assert svg_path.subpath_containment(
+  assert containment.subpath_containment(
       svg_path.Point(2.0, 5.0),
       within: subpath,
       using: svg_path.Nonzero,
     )
     == Ok(svg_path.Inside)
-  assert svg_path.subpath_containment(
+  assert containment.subpath_containment(
       svg_path.Point(12.0, 5.0),
       within: subpath,
       using: svg_path.Nonzero,
@@ -1950,13 +1954,13 @@ pub fn subpath_containment_handles_curved_boundaries_test() {
     )
   let subpath = svg_path.subpath_assert([curve])
 
-  assert svg_path.subpath_containment(
+  assert containment.subpath_containment(
       svg_path.Point(10.0, 10.0),
       within: subpath,
       using: svg_path.Nonzero,
     )
     == Ok(svg_path.Boundary)
-  assert svg_path.subpath_containment(
+  assert containment.subpath_containment(
       svg_path.Point(10.0, 5.0),
       within: subpath,
       using: svg_path.Nonzero,
@@ -1973,12 +1977,12 @@ pub fn subpath_containment_uses_boundary_tolerance_test() {
       svg_path.Point(0.0, 10.0),
     ])
 
-  assert svg_path.subpath_containment_with(
+  assert containment.subpath_containment_with(
       svg_path.Point(-0.0005, 5.0),
       within: subpath,
       using: svg_path.Nonzero,
       options: svg_path.ContainmentOptions(
-        ..svg_path.default_containment_options(),
+        ..containment.default_containment_options(),
         tolerance: 0.001,
         samples: 100,
         max_iterations: 100,
@@ -1991,7 +1995,7 @@ pub fn subpath_containment_move_only_subpath_is_outside_test() {
   let point = svg_path.Point(5.0, 5.0)
   let subpath = svg_path.subpath_empty(at: point)
 
-  assert svg_path.subpath_containment(
+  assert containment.subpath_containment(
       point,
       within: subpath,
       using: svg_path.Nonzero,
@@ -2003,36 +2007,36 @@ pub fn subpath_containment_rejects_invalid_options_test() {
   let subpath = svg_path.subpath_empty(at: svg_path.Point(0.0, 0.0))
   let point = svg_path.Point(1.0, 1.0)
 
-  assert svg_path.subpath_containment_with(
+  assert containment.subpath_containment_with(
       point,
       within: subpath,
       using: svg_path.Nonzero,
       options: svg_path.ContainmentOptions(
-        ..svg_path.default_containment_options(),
+        ..containment.default_containment_options(),
         tolerance: 0.0,
         samples: 100,
         max_iterations: 100,
       ),
     )
     == Error(svg_path.InvalidContainmentTolerance(0.0))
-  assert svg_path.subpath_containment_with(
+  assert containment.subpath_containment_with(
       point,
       within: subpath,
       using: svg_path.Nonzero,
       options: svg_path.ContainmentOptions(
-        ..svg_path.default_containment_options(),
+        ..containment.default_containment_options(),
         tolerance: 0.000000001,
         samples: 0,
         max_iterations: 100,
       ),
     )
     == Error(svg_path.InvalidContainmentSamples(0))
-  assert svg_path.subpath_containment_with(
+  assert containment.subpath_containment_with(
       point,
       within: subpath,
       using: svg_path.Nonzero,
       options: svg_path.ContainmentOptions(
-        ..svg_path.default_containment_options(),
+        ..containment.default_containment_options(),
         tolerance: 0.000000001,
         samples: 100,
         max_iterations: 0,
@@ -2067,31 +2071,31 @@ pub fn path_containment_combines_subpath_winding_and_parity_test() {
   let opposite_direction = svg_path.Path([outer, inner_opposite_direction])
   let center = svg_path.Point(10.0, 10.0)
 
-  assert svg_path.path_containment(
+  assert containment.path_containment(
       center,
       within: same_direction,
       using: svg_path.Nonzero,
     )
     == Ok(svg_path.Inside)
-  assert svg_path.path_containment(
+  assert containment.path_containment(
       center,
       within: same_direction,
       using: svg_path.EvenOdd,
     )
     == Ok(svg_path.Outside)
-  assert svg_path.path_containment(
+  assert containment.path_containment(
       center,
       within: opposite_direction,
       using: svg_path.Nonzero,
     )
     == Ok(svg_path.Outside)
-  assert svg_path.path_containment(
+  assert containment.path_containment(
       center,
       within: opposite_direction,
       using: svg_path.EvenOdd,
     )
     == Ok(svg_path.Outside)
-  assert svg_path.path_containment(
+  assert containment.path_containment(
       svg_path.Point(2.0, 2.0),
       within: opposite_direction,
       using: svg_path.Nonzero,
@@ -2115,7 +2119,7 @@ pub fn path_containment_boundary_on_any_subpath_dominates_test() {
       svg_path.Point(5.0, 15.0),
     ])
 
-  assert svg_path.path_containment(
+  assert containment.path_containment(
       svg_path.Point(5.0, 10.0),
       within: svg_path.Path([outer, inner]),
       using: svg_path.Nonzero,
@@ -2146,17 +2150,17 @@ pub fn path_winding_accumulates_subpath_winding_test() {
       svg_path.Point(15.0, 5.0),
     ])
 
-  assert svg_path.path_winding(
+  assert containment.path_winding(
       svg_path.Point(10.0, 10.0),
       within: svg_path.Path([outer, inner_same_direction]),
     )
     == Ok(svg_path.Winding(2))
-  assert svg_path.path_winding(
+  assert containment.path_winding(
       svg_path.Point(10.0, 10.0),
       within: svg_path.Path([outer, inner_opposite_direction]),
     )
     == Ok(svg_path.Winding(0))
-  assert svg_path.path_winding(
+  assert containment.path_winding(
       svg_path.Point(5.0, 10.0),
       within: svg_path.Path([outer, inner_same_direction]),
     )
@@ -2188,9 +2192,9 @@ pub fn clockwise_svg_circle_has_positive_winding_test() {
   let assert Ok(clockwise_circle) = svg_path.subpath_close(clockwise_circle)
   let path = svg_path.Path([clockwise_circle])
 
-  assert svg_path.path_winding(svg_path.Point(0.0, 0.0), within: path)
+  assert containment.path_winding(svg_path.Point(0.0, 0.0), within: path)
     == Ok(svg_path.Winding(1))
-  assert svg_path.path_winding(svg_path.Point(2.0, 0.0), within: path)
+  assert containment.path_winding(svg_path.Point(2.0, 0.0), within: path)
     == Ok(svg_path.Winding(0))
 }
 
@@ -2198,13 +2202,13 @@ pub fn path_containment_empty_and_move_only_paths_are_outside_test() {
   let point = svg_path.Point(5.0, 5.0)
   let move_only = svg_path.subpath_empty(at: point)
 
-  assert svg_path.path_containment(
+  assert containment.path_containment(
       point,
       within: svg_path.path_empty(),
       using: svg_path.Nonzero,
     )
     == Ok(svg_path.Outside)
-  assert svg_path.path_containment(
+  assert containment.path_containment(
       point,
       within: svg_path.Path([move_only]),
       using: svg_path.Nonzero,
@@ -2213,12 +2217,12 @@ pub fn path_containment_empty_and_move_only_paths_are_outside_test() {
 }
 
 pub fn path_containment_with_rejects_invalid_options_test() {
-  assert svg_path.path_containment_with(
+  assert containment.path_containment_with(
       svg_path.Point(0.0, 0.0),
       within: svg_path.path_empty(),
       using: svg_path.Nonzero,
       options: svg_path.ContainmentOptions(
-        ..svg_path.default_containment_options(),
+        ..containment.default_containment_options(),
         tolerance: 0.0,
         samples: 100,
         max_iterations: 100,
@@ -2250,7 +2254,7 @@ pub fn path_projection_returns_path_parameter_point_and_distance_test() {
     ])
 
   let assert Ok(svg_path.PathProjection(at:, point:, distance:)) =
-    svg_path.path_projection(svg_path.Point(17.0, 6.0), to: path)
+    distance.path_projection(svg_path.Point(17.0, 6.0), to: path)
 
   assert at
     == svg_path.PathParameter(
@@ -2273,7 +2277,7 @@ pub fn path_distance_returns_projection_distance_test() {
     ])
 
   let assert Ok(distance) =
-    svg_path.path_distance(svg_path.Point(4.0, 3.0), to: path)
+    distance.path_distance(svg_path.Point(4.0, 3.0), to: path)
 
   assert near(distance, 3.0)
 }
@@ -2288,7 +2292,7 @@ pub fn subpath_distance_returns_projection_distance_test() {
     ])
 
   let assert Ok(distance) =
-    svg_path.subpath_distance(svg_path.Point(4.0, 3.0), to: subpath)
+    distance.subpath_distance(svg_path.Point(4.0, 3.0), to: subpath)
 
   assert near(distance, 3.0)
 }
@@ -2296,12 +2300,12 @@ pub fn subpath_distance_returns_projection_distance_test() {
 pub fn path_projection_rejects_empty_paths_and_empty_subpaths_test() {
   let move_only = svg_path.subpath_empty(at: svg_path.Point(0.0, 0.0))
 
-  assert svg_path.path_projection(
+  assert distance.path_projection(
       svg_path.Point(1.0, 1.0),
       to: svg_path.path_empty(),
     )
     == Error(svg_path.EmptyPath)
-  assert svg_path.path_projection(
+  assert distance.path_projection(
       svg_path.Point(1.0, 1.0),
       to: svg_path.Path([move_only]),
     )
@@ -2319,7 +2323,7 @@ pub fn path_projection_with_rejects_invalid_options_test() {
       ]),
     ])
 
-  assert svg_path.path_projection_with(
+  assert distance.path_projection_with(
       svg_path.Point(4.0, 3.0),
       to: path,
       options: svg_path.DistanceOptions(

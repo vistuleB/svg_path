@@ -1,6 +1,7 @@
 import gleam/option.{Some}
 import svg_path
 import svg_path/degeneracy
+import svg_path/measure
 
 pub fn negative_zero_length_returns_exact_start_parameter_test() {
   let curve =
@@ -10,8 +11,8 @@ pub fn negative_zero_length_returns_exact_start_parameter_test() {
       svg_path.Point(2.0, 0.0),
     )
   let assert Ok(subpath) = svg_path.subpath([curve])
-  assert svg_path.segment_parameter_at_length(curve, distance: -0.0) == Ok(0.0)
-  assert svg_path.subpath_parameter_at_length(subpath, distance: -0.0)
+  assert measure.segment_parameter_at_length(curve, distance: -0.0) == Ok(0.0)
+  assert measure.subpath_parameter_at_length(subpath, distance: -0.0)
     == Ok(svg_path.SubpathParameter(0, 0.0))
 }
 

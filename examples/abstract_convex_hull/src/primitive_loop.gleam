@@ -5,6 +5,7 @@ import gleam/float
 import gleam/int
 import gleam/list
 import svg_path
+import svg_path/fit
 
 pub type Param {
   Param(piece_index: Int, t: Float)
@@ -75,7 +76,7 @@ fn support_t(piece: svg_path.Segment, direction: svg_path.Point) -> Float {
       cubic_support_t(start, control1, control2, end, direction)
     _ -> {
       let assert Ok(t) =
-        svg_path.segment_minimize(piece, measure: fn(point) {
+        fit.segment_minimize(piece, measure: fn(point) {
           0.0 -. abstract_union.dot(point, direction)
         })
       t

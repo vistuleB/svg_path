@@ -5,12 +5,15 @@ import gleam/list
 import gleam/result
 import gleam/string
 import svg_path
+import svg_path/bounds
+import svg_path/containment
 import svg_path/convex_hull
 import svg_path/csg
 import svg_path/cut
 import svg_path/effects
 import svg_path/internal/format as number_format
 import svg_path/intersections
+import svg_path/measure
 import svg_path/offset
 import svg_path/parse
 import svg_path/serialize
@@ -298,15 +301,15 @@ fn keep_cut_piece(
   piece: svg_path.Subpath,
   cutter: svg_path.Path,
 ) -> Result(Bool, svg_path.Error) {
-  use length <- result_try(svg_path.subpath_length(piece))
+  use length <- result_try(measure.subpath_length(piece))
   case length <=. 0.000001 {
     True -> Ok(False)
     False -> {
-      use point <- result_try(svg_path.subpath_point_at_length(
+      use point <- result_try(measure.subpath_point_at_length(
         piece,
         length /. 2.0,
       ))
-      use containment <- result_try(svg_path.path_containment(
+      use containment <- result_try(containment.path_containment(
         point,
         within: cutter,
         using: svg_path.Nonzero,
@@ -429,8 +432,7 @@ pub fn generate_recursive_dash_cap_report() {
         "dash index: 4",
         "dash segment count: "
           <> int.to_string(list.length(svg_path.subpath_segments(dash))),
-        "dash length: "
-          <> length_result_to_string(svg_path.subpath_length(dash)),
+        "dash length: " <> length_result_to_string(measure.subpath_length(dash)),
         "start point: " <> point_to_string(svg_path.subpath_start(dash)),
         "end point: " <> point_to_string(svg_path.subpath_end(dash)),
         "first derivative length at t=0: "
@@ -673,11 +675,11 @@ fn recursive_dash_truncate_source(
   pattern pattern: List(Float),
   offset offset: Float,
 ) -> Result(svg_path.Subpath, svg_path.Error) {
-  use length <- result.try(svg_path.subpath_length(source))
+  use length <- result.try(measure.subpath_length(source))
   let intervals = gallery_dash_intervals(length, pattern, offset: offset)
   case list.last(intervals) {
     Ok(#(_, last_distance)) ->
-      svg_path.subpath_between_lengths(source, from: 0.0, to: last_distance)
+      measure.subpath_between_lengths(source, from: 0.0, to: last_distance)
     Error(_) -> Ok(source)
   }
 }
@@ -951,7 +953,7 @@ fn stroke_non_degenerate_dashes(
   case dashes {
     [] -> Ok(list.reverse(accumulated))
     [dash, ..rest] -> {
-      case svg_path.subpath_length(dash) {
+      case measure.subpath_length(dash) {
         Ok(length) if length >. 0.1 -> {
           case stroke.subpath_with(dash, width: 6.0, join:, cap:, options:) {
             Ok(stroked) ->
@@ -1148,7 +1150,7 @@ fn subpath_result_to_string(
       <> ", closed="
       <> bool_to_string(svg_path.subpath_is_closed(subpath))
       <> ", length="
-      <> length_result_to_string(svg_path.subpath_length(subpath))
+      <> length_result_to_string(measure.subpath_length(subpath))
       <> ")"
     Error(_) -> "Error"
   }
@@ -1287,7 +1289,7 @@ fn inserted_join_diameters_loop(
             <> " bbox_diameter="
             <> segment_bounding_box_diameter_to_string(segment)
             <> " chord="
-            <> debug_float_to_string(svg_path.segment_chord_length(segment)),
+            <> debug_float_to_string(measure.segment_chord_length(segment)),
           ..joins
         ]
         _ -> joins
@@ -1300,9 +1302,8 @@ fn inserted_join_diameters_loop(
 fn segment_bounding_box_diameter_to_string(
   segment: svg_path.Segment,
 ) -> String {
-  case svg_path.segment_bounding_box(segment) {
-    Ok(box) ->
-      debug_float_to_string(svg_path.bounding_box_taxicab_diameter(box))
+  case bounds.segment_bounding_box(segment) {
+    Ok(box) -> debug_float_to_string(bounds.bounding_box_taxicab_diameter(box))
     Error(_) -> "Error"
   }
 }
@@ -1376,7 +1377,7 @@ fn subpath_summary_to_string(subpath: svg_path.Subpath) -> String {
   <> ", closed="
   <> bool_to_string(svg_path.subpath_is_closed(subpath))
   <> ", length="
-  <> length_result_to_string(svg_path.subpath_length(subpath))
+  <> length_result_to_string(measure.subpath_length(subpath))
   <> ")"
 }
 
@@ -1566,7 +1567,7 @@ fn symmetric_figure_eight_panel(
 ) -> String {
   let geometry = svg_path.Path([source, ..svg_path.path_subpaths(band)])
   let assert Ok(svg_path.BoundingBox(min:, max:)) =
-    svg_path.path_bounding_box(geometry)
+    bounds.path_bounding_box(geometry)
   let geometry_width = max.x -. min.x
   let geometry_height = max.y -. min.y
   let padding = float.max(geometry_width, geometry_height) *. 0.12
@@ -1633,8 +1634,8 @@ fn stroke_offset_tracks() -> String {
         track
       })
     ])
-  let assert Ok(box) = svg_path.path_bounding_box(geometry_path)
-  let center = svg_path.bounding_box_center(box)
+  let assert Ok(box) = bounds.path_bounding_box(geometry_path)
+  let center = bounds.bounding_box_center(box)
   let panel_center = svg_path.Point(365.0, 140.0)
   let dx = panel_center.x -. center.x
   let dy = panel_center.y -. center.y
@@ -1839,14 +1840,14 @@ fn package_title_nine_offsets_document(
 
 fn path_boxes(paths: List(svg_path.Path)) -> List(svg_path.BoundingBox) {
   paths
-  |> list.filter_map(svg_path.path_bounding_box)
+  |> list.filter_map(bounds.path_bounding_box)
 }
 
 fn gallery_background(view_box: svg_path.BoundingBox) -> svg.ThingToDraw {
   svg.Rectangle(
     view_box.min,
-    svg_path.bounding_box_width(view_box),
-    svg_path.bounding_box_height(view_box),
+    bounds.bounding_box_width(view_box),
+    bounds.bounding_box_height(view_box),
     "fill: #ffffff; stroke: none",
   )
 }
@@ -1918,8 +1919,8 @@ fn centered_offset_family(
       track
     })
   let geometry_path = svg_path.Path([source, ..tracks])
-  let assert Ok(box) = svg_path.path_bounding_box(geometry_path)
-  let center = svg_path.bounding_box_center(box)
+  let assert Ok(box) = bounds.path_bounding_box(geometry_path)
+  let center = bounds.bounding_box_center(box)
   let dx = panel_center.x -. center.x
   let dy = panel_center.y -. center.y
   let assert Ok(placed_source) =
@@ -2191,13 +2192,13 @@ fn subpath_arrows(
   color: String,
   arrow_scale: Float,
 ) -> svg.ThingsToDraw {
-  case svg_path.subpath_length(subpath) {
+  case measure.subpath_length(subpath) {
     Error(_) -> []
     Ok(total_length) -> {
       let distance = total_length *. 0.34
       case
-        svg_path.subpath_point_at_length(subpath, distance:),
-        svg_path.subpath_derivative_at_length(subpath, distance:)
+        measure.subpath_point_at_length(subpath, distance:),
+        measure.subpath_derivative_at_length(subpath, distance:)
       {
         Ok(point), Ok(derivative) -> {
           let length = point_length(derivative)

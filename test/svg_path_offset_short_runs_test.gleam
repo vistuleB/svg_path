@@ -2,6 +2,8 @@ import gleam/float
 import gleam/int
 import gleam/list
 import svg_path
+import svg_path/bounds
+import svg_path/measure
 import svg_path/offset
 
 fn p(x: Float) -> svg_path.Point {
@@ -33,7 +35,7 @@ pub fn balanced_short_run_has_no_greedy_remainder_test() {
   assert list.last(segments) == list.last(svg_path.subpath_segments(source))
   let chunks = segments |> list.drop(1) |> list.take(3)
   list.each(chunks, fn(segment) {
-    let assert Ok(bound) = svg_path.segment_length_upper_bound(segment)
+    let assert Ok(bound) = measure.segment_length_upper_bound(segment)
     assert bound >. 0.001
     assert bound <=. 0.003
   })
@@ -49,11 +51,11 @@ pub fn long_short_run_preserves_large_backtracking_extent_test() {
   let points = [p(-1.0), ..list.append(outward, list.append(inward, [p(-1.0)]))]
   let assert Ok(source) = svg_path.subpath_polyline(points)
   let normalized = normalize(source)
-  let assert Ok(original_box) = svg_path.subpath_bounding_box(source)
-  let assert Ok(box) = svg_path.subpath_bounding_box(normalized)
+  let assert Ok(original_box) = bounds.subpath_bounding_box(source)
+  let assert Ok(box) = bounds.subpath_bounding_box(normalized)
   assert box == original_box
-  let assert Ok(length) = svg_path.subpath_length(normalized)
-  let assert Ok(original_length) = svg_path.subpath_length(source)
+  let assert Ok(length) = measure.subpath_length(normalized)
+  let assert Ok(original_length) = measure.subpath_length(source)
   assert float.absolute_value(length -. original_length) <. 0.000000000001
 }
 
@@ -118,7 +120,7 @@ pub fn zero_length_run_is_handled_without_division_by_zero_test() {
       svg_path.Line(p(0.0), p(1.0)),
     ])
   let normalized = normalize(source)
-  let assert Ok(length) = svg_path.subpath_length(normalized)
+  let assert Ok(length) = measure.subpath_length(normalized)
   assert length == 2.0
 }
 

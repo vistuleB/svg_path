@@ -13,6 +13,7 @@ import gleam/order
 import gleam/result
 import svg_path
 import svg_path/bezier
+import svg_path/bounds
 import svg_path/ellipse
 import svg_path/internal/number
 import svg_path/internal/root
@@ -396,7 +397,7 @@ pub fn segment_minimum_width_with(
   options options: WidthSearchOptions,
 ) -> Result(WidthExtremum, Error) {
   use box <- result.try(
-    svg_path.segment_bounding_box(segment) |> result.map_error(PathError),
+    bounds.segment_bounding_box(segment) |> result.map_error(PathError),
   )
   Ok(source_width_extremum([segment], box, options:, find: MinimumWidth))
 }
@@ -450,7 +451,7 @@ pub fn segment_diameter_with(
   options options: WidthSearchOptions,
 ) -> Result(WidthExtremum, Error) {
   use box <- result.try(
-    svg_path.segment_bounding_box(segment) |> result.map_error(PathError),
+    bounds.segment_bounding_box(segment) |> result.map_error(PathError),
   )
   Ok(source_width_extremum([segment], box, options:, find: MaximumWidth))
 }
@@ -861,7 +862,7 @@ pub fn internal_convex_subpath_minimum_width_decision(
     }
     None -> {
       use box <- result.try(
-        svg_path.subpath_bounding_box(hull)
+        bounds.subpath_bounding_box(hull)
         |> result.map_error(PathError),
       )
       let diameter = point_helpers.distance(box.min, box.max)
@@ -3598,7 +3599,7 @@ fn loop_bounding_box(
   case segments {
     [] -> Error(svg_path.EmptySubpath)
     [first, ..rest] -> {
-      use box <- result.try(svg_path.segment_bounding_box(first))
+      use box <- result.try(bounds.segment_bounding_box(first))
       loop_bounding_box_loop(rest, box)
     }
   }
@@ -3611,7 +3612,7 @@ fn loop_bounding_box_loop(
   case segments {
     [] -> Ok(box)
     [segment, ..rest] -> {
-      use next <- result.try(svg_path.segment_bounding_box(segment))
+      use next <- result.try(bounds.segment_bounding_box(segment))
       loop_bounding_box_loop(rest, combine_boxes(box, next))
     }
   }
@@ -4362,9 +4363,9 @@ fn normalize_angle(angle: Float) -> Float {
 }
 
 fn segment_is_point_like(segment: svg_path.Segment) -> Bool {
-  case svg_path.segment_bounding_box(segment) {
+  case bounds.segment_bounding_box(segment) {
     Error(_) -> True
-    Ok(box) -> svg_path.bounding_box_taxicab_diameter(box) <=. point_tolerance
+    Ok(box) -> bounds.bounding_box_taxicab_diameter(box) <=. point_tolerance
   }
 }
 
@@ -4748,10 +4749,9 @@ fn tangent_window_is_geometrically_small(
   case svg_path.segment_between_inside(segment, from: lower, to: upper) {
     Error(_) -> False
     Ok(portion) ->
-      case svg_path.segment_bounding_box(portion) {
+      case bounds.segment_bounding_box(portion) {
         Error(_) -> False
-        Ok(box) ->
-          svg_path.bounding_box_taxicab_diameter(box) <=. point_tolerance
+        Ok(box) -> bounds.bounding_box_taxicab_diameter(box) <=. point_tolerance
       }
   }
 }

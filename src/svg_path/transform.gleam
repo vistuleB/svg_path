@@ -9,6 +9,7 @@ import gleam/list
 import gleam/result
 import svg_path
 import svg_path/affine
+import svg_path/bounds
 import svg_path/ellipse
 import svg_path/point as point_helpers
 
@@ -306,7 +307,7 @@ pub fn segment_about_anchor(
   by transform: Matrix,
   anchor anchor: Anchor,
 ) -> Result(svg_path.Segment, Error) {
-  case svg_path.segment_bounding_box(input) {
+  case bounds.segment_bounding_box(input) {
     Error(error) -> Error(PathError(error))
     Ok(box) ->
       segment_about_point(
@@ -499,7 +500,7 @@ pub fn subpath_about_anchor(
   by transform: Matrix,
   anchor anchor: Anchor,
 ) -> Result(svg_path.Subpath, Error) {
-  case svg_path.subpath_bounding_box(input) {
+  case bounds.subpath_bounding_box(input) {
     Error(error) -> Error(PathError(error))
     Ok(box) ->
       subpath_about_point(
@@ -677,7 +678,7 @@ pub fn bounding_box(
       let bottom_right = point(max, by: transform)
 
       let assert Ok(box) =
-        svg_path.bounding_box_union_many([
+        bounds.bounding_box_union_many([
           svg_path.BoundingBox(min: top_left, max: top_left),
           svg_path.BoundingBox(min: top_right, max: top_right),
           svg_path.BoundingBox(min: bottom_left, max: bottom_left),
@@ -704,7 +705,7 @@ pub fn path_about_anchor(
   by transform: Matrix,
   anchor anchor: Anchor,
 ) -> Result(svg_path.Path, Error) {
-  case svg_path.path_bounding_box(input) {
+  case bounds.path_bounding_box(input) {
     Error(error) -> Error(PathError(error))
     Ok(box) ->
       path_about_point(input, by: transform, point: anchor_point(box, anchor))
@@ -829,7 +830,7 @@ fn map_core_error(
 
 fn anchor_point(box: svg_path.BoundingBox, anchor: Anchor) -> svg_path.Point {
   let svg_path.BoundingBox(min:, max:) = box
-  let center = svg_path.bounding_box_center(box)
+  let center = bounds.bounding_box_center(box)
 
   case anchor {
     TopLeft -> min

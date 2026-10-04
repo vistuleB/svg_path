@@ -3,6 +3,7 @@ import gleam/list
 import gleam/option.{None, Some}
 import svg_path.{Arc, Line, Point}
 import svg_path/internal/arcs_join as arcs
+import svg_path/measure
 import svg_path/offset
 import svg_path/point
 import svg_path/stroke
@@ -112,7 +113,7 @@ pub fn arcs_asymmetric_clipping_uses_auxiliary_arc_length_test() {
   let radius = float.absolute_value(r)
   let helper =
     Arc(Point(0.0, 0.0), Point(radius, radius), 0.0, False, r <. 0.0, tip)
-  let assert Ok(length) = svg_path.segment_length(helper)
+  let assert Ok(length) = measure.segment_length(helper)
   let assert Ok(cut) = svg_path.segment_point(helper, at: 1.2 /. length)
   let assert Ok(direction) =
     svg_path.segment_derivative(helper, at: 1.2 /. length)

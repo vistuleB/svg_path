@@ -3,6 +3,8 @@ import gleam/float
 import gleam/list
 import gleam/result
 import svg_path
+import svg_path/distance
+import svg_path/measure
 import svg_path/offset
 import svg_path/svg
 import svg_path/transform
@@ -263,7 +265,7 @@ fn section_is_valid(
   options: offset.Options,
 ) -> Result(Bool, offset.InternalError) {
   use length <- result.try(
-    svg_path.subpath_length(section)
+    measure.subpath_length(section)
     |> result.map_error(offset.InternalPathError),
   )
   section_has_enough_non_negative_samples(
@@ -290,14 +292,14 @@ fn section_has_enough_non_negative_samples(
     [] -> Ok(count >= 5)
     [first, ..rest] -> {
       use point <- result.try(
-        svg_path.subpath_point_at_length(section, distance: length *. first)
+        measure.subpath_point_at_length(section, distance: length *. first)
         |> result.map_error(offset.InternalPathError),
       )
       use projection <- result.try(
-        svg_path.subpath_projection_with(
+        distance.subpath_projection_with(
           point,
           to: source,
-          options: svg_path.default_distance_options(),
+          options: distance.default_distance_options(),
         )
         |> result.map_error(offset.InternalPathError),
       )

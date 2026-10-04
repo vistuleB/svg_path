@@ -9,6 +9,7 @@ import gleam/result
 import gleam/string
 import svg_path
 import svg_path/arrangement
+import svg_path/bounds
 import svg_path/offset
 import svg_path/parse
 import svg_path/svg
@@ -99,21 +100,21 @@ fn render(
     )
   {
     Ok(offset.OffsetSourceTraceDRefined(segment:, ..)) ->
-      svg_path.segment_bounding_box(segment)
+      bounds.segment_bounding_box(segment)
     _ -> Error(svg_path.SplitOutsideSegment)
   }
   let assert Ok(focus_edge) =
     edge_with_id(arrangement_edges, focus_arrangement_edge_id)
   let arrangement.ArrangementEdge(segment: focus_edge_segment, ..) = focus_edge
-  let assert Ok(edge_box) = svg_path.segment_bounding_box(focus_edge_segment)
+  let assert Ok(edge_box) = bounds.segment_bounding_box(focus_edge_segment)
   let focus_box = combine_boxes(edge_box, preimage_box) |> pad_box(margin: 0.2)
-  let assert Ok(source_box) = svg_path.path_bounding_box(source)
-  let assert Ok(offset_box) = svg_path.path_bounding_box(untrimmed_first_offset)
+  let assert Ok(source_box) = bounds.path_bounding_box(source)
+  let assert Ok(offset_box) = bounds.path_bounding_box(untrimmed_first_offset)
   let full_box = combine_boxes(source_box, offset_box)
   let view_box =
     zoom_from_full_box(
       full_box,
-      around: svg_path.bounding_box_center(focus_box),
+      around: bounds.bounding_box_center(focus_box),
       zoom: 25.0,
     )
     |> combine_boxes(focus_box)
@@ -216,7 +217,7 @@ fn trace_portions_intersecting_box(
   portions
   |> list.filter(fn(portion) {
     let offset.OffsetSourceTracePortion(subpath:, ..) = portion
-    case svg_path.subpath_bounding_box(subpath) {
+    case bounds.subpath_bounding_box(subpath) {
       Error(_) -> False
       Ok(subpath_box) -> boxes_intersect(subpath_box, box)
     }
@@ -243,7 +244,7 @@ fn trace_pieces_intersecting_box(
   pieces
   |> list.filter(fn(entry) {
     let #(_, _, piece) = entry
-    case trace_piece_segment(piece) |> svg_path.segment_bounding_box {
+    case trace_piece_segment(piece) |> bounds.segment_bounding_box {
       Error(_) -> False
       Ok(segment_box) -> boxes_intersect(segment_box, box)
     }
@@ -269,8 +270,8 @@ fn trace_piece_overlays(
     let segment = trace_piece_segment(piece)
     let start = svg_path.segment_start(segment)
     let end = svg_path.segment_end(segment)
-    let label_point = case svg_path.segment_bounding_box(segment) {
-      Ok(box) -> svg_path.bounding_box_center(box)
+    let label_point = case bounds.segment_bounding_box(segment) {
+      Ok(box) -> bounds.bounding_box_center(box)
       Error(_) ->
         svg_path.Point(
           start.x +. { end.x -. start.x } /. 2.0,
@@ -422,11 +423,11 @@ fn graph_edge_labels(
   edges
   |> list.filter_map(fn(edge) {
     let arrangement.ArrangementEdge(id:, segment:, ..) = edge
-    use box <- result.try(svg_path.segment_bounding_box(segment))
+    use box <- result.try(bounds.segment_bounding_box(segment))
     Ok(svg.Text(
       "A" <> int.to_string(id),
       "fill: #1e3a8a; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; text-anchor: middle; dominant-baseline: central",
-      svg_path.bounding_box_center(box),
+      bounds.bounding_box_center(box),
       0.009,
     ))
   })
@@ -466,8 +467,8 @@ fn boxes_intersect(
 fn background(view_box: svg_path.BoundingBox) -> svg.ThingToDraw {
   svg.Rectangle(
     view_box.min,
-    svg_path.bounding_box_width(view_box),
-    svg_path.bounding_box_height(view_box),
+    bounds.bounding_box_width(view_box),
+    bounds.bounding_box_height(view_box),
     "fill: #ffffff; stroke: none",
   )
 }
@@ -514,8 +515,8 @@ fn zoom_from_full_box(
   around center: svg_path.Point,
   zoom zoom: Float,
 ) -> svg_path.BoundingBox {
-  let width = svg_path.bounding_box_width(full_box) /. zoom
-  let height = svg_path.bounding_box_height(full_box) /. zoom
+  let width = bounds.bounding_box_width(full_box) /. zoom
+  let height = bounds.bounding_box_height(full_box) /. zoom
 
   svg_path.BoundingBox(
     min: svg_path.Point(center.x -. width /. 2.0, center.y -. height /. 2.0),

@@ -7,6 +7,7 @@ import gleam/option.{type Option, None, Some}
 import gleam/result
 import svg_path
 import svg_path/internal/number
+import svg_path/internal/query
 import svg_path/point
 
 const overlap_samples = 5
@@ -515,7 +516,7 @@ pub fn point_parameters(
   // Keep closest projection for approximate coincidences too. A complete
   // coordinate inventory can replace a failed projection, but not an arbitrary
   // partial collection of geometric matches.
-  let projection = svg_path.segment_projection(point, to: target)
+  let projection = query.segment_projection(point, to: target)
   use projected <- result.try(case projection {
     Ok(found) -> Ok([found.t])
     Error(svg_path.DistanceMaxIterationsReached(..) as error) ->
@@ -547,7 +548,7 @@ fn coordinate_matches(
     False -> {
       let options =
         svg_path.CrossingOptions(
-          ..svg_path.default_crossing_options(),
+          ..query.default_crossing_options(),
           signed_line_distance_tolerance: float.max(
             tolerance *. 0.25,
             0.000000000001,
@@ -892,10 +893,7 @@ fn sampled_overlap_valid_loop(
       let portion = int.to_float(index) /. int.to_float(samples + 1)
       let t = left_from +. { left_to -. left_from } *. portion
       use point <- result.try(svg_path.segment_point(left, at: t))
-      use distance <- result.try(svg_path.segment_distance(
-        point,
-        to: right_piece,
-      ))
+      use distance <- result.try(query.segment_distance(point, to: right_piece))
       case distance <=. tolerance {
         False -> Ok(False)
         True ->

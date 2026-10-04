@@ -1,4 +1,5 @@
 import svg_path
+import svg_path/containment
 import svg_path/internal/winding_field
 
 pub fn side_levels_reject_nonpositive_sampling_distance_test() {
@@ -8,7 +9,7 @@ pub fn side_levels_reject_nonpositive_sampling_distance_test() {
       end: svg_path.Point(1.0, 0.0),
     )
   let path = svg_path.path_empty()
-  let options = svg_path.default_containment_options()
+  let options = containment.default_containment_options()
 
   assert winding_field.segment_side_nonzero_levels(
       segment,
@@ -51,7 +52,7 @@ pub fn side_levels_fall_back_from_a_midpoint_cusp_test() {
       cusp,
       within: path,
       side_sampling_distance: 0.0001,
-      options: svg_path.default_containment_options(),
+      options: containment.default_containment_options(),
     )
     == Ok(#(-1, 0))
 }
@@ -64,7 +65,7 @@ pub fn side_levels_reject_a_segment_without_a_regular_sample_test() {
       collapsed,
       within: svg_path.path_empty(),
       side_sampling_distance: 0.0001,
-      options: svg_path.default_containment_options(),
+      options: containment.default_containment_options(),
     )
     == Error(svg_path.IndeterminateWindingSideLevels)
 }
@@ -74,7 +75,7 @@ pub fn side_levels_validate_options_before_degenerate_fallback_test() {
   let collapsed = svg_path.Line(start: point, end: point)
   let options =
     svg_path.ContainmentOptions(
-      ..svg_path.default_containment_options(),
+      ..containment.default_containment_options(),
       samples: 0,
     )
 

@@ -3,6 +3,7 @@ import gleam/list
 import gleeunit
 import svg_path
 import svg_path/affine
+import svg_path/bounds
 import svg_path/serialize
 import svg_path/transform
 
@@ -736,7 +737,7 @@ pub fn graceful_arc_subpaths_preserve_exact_noncardinal_endpoints_test() {
     // The large arc still visits both extrema before returning to its end.
     case large_arc {
       True -> {
-        let assert Ok(box) = svg_path.subpath_bounding_box(part)
+        let assert Ok(box) = bounds.subpath_bounding_box(part)
         assert near(box.min.x, -5.0)
         assert near(box.max.x, 5.0)
       }

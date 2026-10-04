@@ -11,6 +11,7 @@ import gleam/option.{None, Some}
 import gleam/result
 import gleam/string
 import svg_path
+import svg_path/bounds
 import svg_path/internal/format as number_format
 import svg_path/serialize
 
@@ -292,17 +293,17 @@ pub fn document(
       [
         min.x,
         min.y,
-        svg_path.bounding_box_width(view_box),
-        svg_path.bounding_box_height(view_box),
+        bounds.bounding_box_width(view_box),
+        bounds.bounding_box_height(view_box),
       ],
     )
 
   "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\""
   <> view_box_value(view_box, format)
   <> "\" width=\""
-  <> number_format.number(svg_path.bounding_box_width(view_box), with: format)
+  <> number_format.number(bounds.bounding_box_width(view_box), with: format)
   <> "\" height=\""
-  <> number_format.number(svg_path.bounding_box_height(view_box), with: format)
+  <> number_format.number(bounds.bounding_box_height(view_box), with: format)
   <> "\">\n"
   <> {
     things
@@ -497,8 +498,8 @@ fn view_box_value(
   [
     min.x,
     min.y,
-    svg_path.bounding_box_width(box),
-    svg_path.bounding_box_height(box),
+    bounds.bounding_box_width(box),
+    bounds.bounding_box_height(box),
   ]
   |> list.map(number_format.number(_, with: format))
   |> string.join(" ")
