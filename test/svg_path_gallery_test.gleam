@@ -1639,12 +1639,14 @@ fn stroke_offset_tracks() -> String {
   let panel_center = svg_path.Point(365.0, 140.0)
   let dx = panel_center.x -. center.x
   let dy = panel_center.y -. center.y
-  let assert Ok(source) = transform.translate_subpath(source, x: dx, y: dy)
+  let assert Ok(source) =
+    transform.subpath(source, by: transform.translate(x: dx, y: dy))
   let tracks =
     tracks
     |> list.map(fn(entry) {
       let #(track, color) = entry
-      let assert Ok(track) = transform.translate_subpath(track, x: dx, y: dy)
+      let assert Ok(track) =
+        transform.subpath(track, by: transform.translate(x: dx, y: dy))
       #(track, color)
     })
 
@@ -1924,11 +1926,12 @@ fn centered_offset_family(
   let dx = panel_center.x -. center.x
   let dy = panel_center.y -. center.y
   let assert Ok(placed_source) =
-    transform.translate_subpath(source, x: dx, y: dy)
+    transform.subpath(source, by: transform.translate(x: dx, y: dy))
   let placed_tracks =
     tracks
     |> list.map(fn(track) {
-      let assert Ok(placed) = transform.translate_subpath(track, x: dx, y: dy)
+      let assert Ok(placed) =
+        transform.subpath(track, by: transform.translate(x: dx, y: dy))
       placed
     })
 
@@ -2240,7 +2243,8 @@ fn arrow_glyph(
 }
 
 fn place_path(path: svg_path.Path, x: Float, y: Float) -> svg_path.Path {
-  let assert Ok(translated) = transform.translate_path(path, x:, y:)
+  let assert Ok(translated) =
+    transform.path(path, by: transform.translate(x:, y:))
   translated
 }
 
@@ -2249,7 +2253,8 @@ fn place_subpath(
   x: Float,
   y: Float,
 ) -> svg_path.Subpath {
-  let assert Ok(translated) = transform.translate_subpath(subpath, x:, y:)
+  let assert Ok(translated) =
+    transform.subpath(subpath, by: transform.translate(x:, y:))
   translated
 }
 

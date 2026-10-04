@@ -126,8 +126,8 @@ operations and nested contours also offer `_path` and `_path_with` forms.
 ### Conventions
 
 - Geometry levels stay explicit: a `segment_*`, `subpath_*`, or `path_*`
-  operation accepts the corresponding geometry. Existing convenience functions
-  and asserting constructors remain available.
+  operation accepts the corresponding geometry. Asserting constructors remain
+  available for pipelines.
 - Ordinary operations provide numerical defaults; `_with` variants accept
   explicit controls. Essential geometric arguments stay explicit, including
   stroke width, joins, caps, and Boolean fill rules.
@@ -161,6 +161,19 @@ Default-option functions move with their families. Closest-pair searches can use
 `distance.default_closest_pair_options()`; their configuration remains the
 shared `intersections.IntersectionOptions`. Root normalization functions, such
 as `subpath_normalize_zero_length_lines`, stay in the root module.
+
+The 24 direct transform shortcuts (`translate_*`, `scale_*`, `scale_xy_*`,
+`rotate_*`, `skew_x_*`, and `skew_y_*`, for points, segments, subpaths, and
+paths) have been removed. Construct a matrix and apply it with
+`transform.point`, `transform.segment`, `transform.subpath`, or `transform.path`.
+Argument labels, numerical behavior, and error handling are unchanged:
+
+```gleam
+import svg_path/transform
+
+// Previously: path |> transform.rotate_path(degrees: 30.0)
+path |> transform.path(by: transform.rotate(degrees: 30.0))
+```
 
 Every configurable stroke outline now requires `width:` just like its ordinary
 counterpart. Replace `stroke.Options(width:, offset:)` with a numerical-only

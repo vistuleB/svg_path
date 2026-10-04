@@ -1700,13 +1700,14 @@ fn representative_geometry_is_covariant_at_scale(scale: Float) -> Bool {
   let left_path = rectangle_path(0.0, 0.0, 4.0, 3.0)
   let right_path = rectangle_path(2.0, 1.0, 6.0, 4.0)
 
-  let assert Ok(scaled_cubic) = transform.scale_segment(cubic, factor: scale)
+  let assert Ok(scaled_cubic) =
+    transform.segment(cubic, by: transform.scale(factor: scale))
   let assert Ok(reference_point) = svg_path.segment_point(cubic, at: 0.37)
   let assert Ok(scaled_point) = svg_path.segment_point(scaled_cubic, at: 0.37)
   let assert Ok(scaled_crossing_left) =
-    transform.scale_segment(crossing_left, factor: scale)
+    transform.segment(crossing_left, by: transform.scale(factor: scale))
   let assert Ok(scaled_crossing_right) =
-    transform.scale_segment(crossing_right, factor: scale)
+    transform.segment(crossing_right, by: transform.scale(factor: scale))
   let intersection_options =
     intersections.IntersectionOptions(
       tolerance: 0.000000001 *. scale,
@@ -1720,9 +1721,9 @@ fn representative_geometry_is_covariant_at_scale(scale: Float) -> Bool {
       options: intersection_options,
     )
   let assert Ok(scaled_overlap_left) =
-    transform.scale_segment(overlap_left, factor: scale)
+    transform.segment(overlap_left, by: transform.scale(factor: scale))
   let assert Ok(scaled_overlap_right) =
-    transform.scale_segment(overlap_right, factor: scale)
+    transform.segment(overlap_right, by: transform.scale(factor: scale))
   let assert Ok([
     overlaps.SegmentOverlap(
       left_from:,
@@ -1744,9 +1745,9 @@ fn representative_geometry_is_covariant_at_scale(scale: Float) -> Bool {
     bounds.subpath_bounding_box(reference_hull)
   let assert Ok(scaled_hull_box) = bounds.subpath_bounding_box(scaled_hull)
   let assert Ok(scaled_left_path) =
-    transform.scale_path(left_path, factor: scale)
+    transform.path(left_path, by: transform.scale(factor: scale))
   let assert Ok(scaled_right_path) =
-    transform.scale_path(right_path, factor: scale)
+    transform.path(right_path, by: transform.scale(factor: scale))
   let assert Ok(csg.CsgResult(path: union_path, ..)) =
     csg.union_with(
       scaled_left_path,

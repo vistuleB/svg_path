@@ -12,10 +12,16 @@ rather than only the tag object.
 ## 3.0.0 - Unreleased
 
 This release organizes the public API by task while preserving the supported
-geometry operations, specialized queries, convenience functions, and numerical
-diagnostics. It does not target a smaller function count.
+geometry operations, specialized queries, asserting constructors, and numerical
+diagnostics. Redundant transform shortcuts are replaced by matrix composition.
 
 ### Breaking API changes
+
+- Removed 24 direct transform shortcuts: `translate_*`, `scale_*`, `scale_xy_*`,
+  `rotate_*`, `skew_x_*`, and `skew_y_*` for points, segments, subpaths, and paths.
+  Use the matching matrix constructor with `transform.point`, `transform.segment`,
+  `transform.subpath`, or `transform.path`; this also works in pipelines.
+  This reduces the public function count from 618 to 594 (607 in 2.0.0).
 
 - Moved root measurement, bounding, containment, distance/projection, and fitting
   operations into `measure`, `bounds`, `containment`, `distance`, and `fit`.

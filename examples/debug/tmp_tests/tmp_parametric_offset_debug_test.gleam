@@ -1778,7 +1778,7 @@ fn section_color(index: Int) -> String {
 }
 
 fn place_path(path: svg_path.Path, x: Float, y: Float) -> svg_path.Path {
-  let assert Ok(placed) = transform.translate_path(path, x:, y:)
+  let assert Ok(placed) = transform.path(path, by: transform.translate(x:, y:))
   placed
 }
 

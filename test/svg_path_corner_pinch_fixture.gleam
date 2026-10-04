@@ -150,10 +150,13 @@ fn fit_with_bounds(
   let middle_x = { box.min.x +. box.max.x } /. 2.0
   let middle_y = { box.min.y +. box.max.y } /. 2.0
   let assert Ok(centered) =
-    transform.translate_path(path, x: 0.0 -. middle_x, y: 0.0 -. middle_y)
-  let assert Ok(scaled) = transform.scale_path(centered, factor:)
+    transform.path(
+      path,
+      by: transform.translate(x: 0.0 -. middle_x, y: 0.0 -. middle_y),
+    )
+  let assert Ok(scaled) = transform.path(centered, by: transform.scale(factor:))
   let assert Ok(placed) =
-    transform.translate_path(scaled, x: center_x, y: center_y)
+    transform.path(scaled, by: transform.translate(x: center_x, y: center_y))
   Ok(placed)
 }
 
@@ -177,10 +180,13 @@ fn place_like(
   let middle_x = { box.min.x +. box.max.x } /. 2.0
   let middle_y = { box.min.y +. box.max.y } /. 2.0
   let assert Ok(centered) =
-    transform.translate_path(path, x: 0.0 -. middle_x, y: 0.0 -. middle_y)
-  let assert Ok(scaled) = transform.scale_path(centered, factor:)
+    transform.path(
+      path,
+      by: transform.translate(x: 0.0 -. middle_x, y: 0.0 -. middle_y),
+    )
+  let assert Ok(scaled) = transform.path(centered, by: transform.scale(factor:))
   let assert Ok(placed) =
-    transform.translate_path(scaled, x: center_x, y: center_y)
+    transform.path(scaled, by: transform.translate(x: center_x, y: center_y))
   Ok(placed)
 }
 

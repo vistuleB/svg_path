@@ -22,7 +22,8 @@ pub fn main() -> Nil {
   let none = offset_path(source, offset.NoTrimming)
   let _ = write_file(output, drawing(source, cusp, in_band, none))
   let double = double_side_umbrella(source)
-  let assert Ok(double) = transform.rotate_subpath(double, degrees: -90.0)
+  let assert Ok(double) =
+    transform.subpath(double, by: transform.rotate(degrees: -90.0))
   let double_cusp = offset_path(double, offset.CuspTrimming)
   let double_in_band = offset_path(double, offset.InBandTrimming)
   let double_none = offset_path(double, offset.NoTrimming)
@@ -75,7 +76,7 @@ fn double_side_umbrella(source: svg_path.Subpath) -> svg_path.Subpath {
     source
     |> svg_path.subpath_segments
     |> list.map(fn(segment) {
-      transform.translate_segment(segment, x: 0.0, y: 2.0)
+      transform.segment(segment, by: transform.translate(x: 0.0, y: 2.0))
     })
     |> result.all
   let assert Ok(translated) = translated

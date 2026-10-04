@@ -21,9 +21,10 @@ pub fn main() -> Nil {
 fn render() -> String {
   let assert Ok(source) =
     figure_eight()
-    |> transform.scale_subpath(factor: scale_factor)
+    |> transform.subpath(by: transform.scale(factor: scale_factor))
     |> result.try_recover(fn(_) { Error(Nil) })
-  let assert Ok(source) = transform.translate_subpath(source, x: 80.0, y: 240.0)
+  let assert Ok(source) =
+    transform.subpath(source, by: transform.translate(x: 80.0, y: 240.0))
   let default = offset.default_options()
   let options =
     offset.Options(

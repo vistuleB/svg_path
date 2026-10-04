@@ -26,8 +26,6 @@ pub fn translate_matrix_transforms_points_test() {
 
   assert transform.point(point, by: transform.translate(x: 5.0, y: -7.0))
     == svg_path.Point(7.0, -4.0)
-  assert transform.translate_point(point, x: 5.0, y: -7.0)
-    == svg_path.Point(7.0, -4.0)
 }
 
 pub fn matrix_transforms_bounding_boxes_test() {
@@ -65,15 +63,12 @@ pub fn scale_matrix_transforms_points_test() {
 
   assert transform.point(point, by: transform.scale(factor: 4.0))
     == svg_path.Point(8.0, 12.0)
-  assert transform.scale_point(point, factor: 4.0) == svg_path.Point(8.0, 12.0)
 }
 
 pub fn scale_xy_matrix_transforms_points_test() {
   let point = svg_path.Point(2.0, 3.0)
 
   assert transform.point(point, by: transform.scale_xy(x: 4.0, y: -2.0))
-    == svg_path.Point(8.0, -6.0)
-  assert transform.scale_xy_point(point, x: 4.0, y: -2.0)
     == svg_path.Point(8.0, -6.0)
 }
 
@@ -238,7 +233,8 @@ pub fn rotate_matrix_uses_degrees_test() {
       start: svg_path.Point(1.0, 0.0),
       end: svg_path.Point(1.0, 2.0),
     )
-  let assert Ok(segment) = transform.rotate_segment(line, degrees: 90.0)
+  let assert Ok(segment) =
+    transform.segment(line, by: transform.rotate(degrees: 90.0))
 
   assert serialize.segment(segment) == "M 0 1 H -2"
 }
@@ -334,7 +330,7 @@ pub fn skew_matrices_use_degrees_test() {
 
   assert transform.point(point, by: transform.skew_x(degrees: 45.0))
     == svg_path.Point(5.0, 3.0)
-  assert transform.skew_y_point(point, degrees: 45.0)
+  assert transform.point(point, by: transform.skew_y(degrees: 45.0))
     == svg_path.Point(2.0, 5.0)
 }
 
@@ -367,7 +363,7 @@ pub fn multiply_uses_algebraic_left_times_right_order_test() {
     == svg_path.Point(22.0, 42.0)
 }
 
-pub fn direct_subpath_and_path_helpers_delegate_to_matrices_test() {
+pub fn matrix_application_supports_subpath_and_path_pipelines_test() {
   let assert Ok(subpath) =
     svg_path.subpath([
       svg_path.Line(
@@ -377,8 +373,9 @@ pub fn direct_subpath_and_path_helpers_delegate_to_matrices_test() {
     ])
   let path = svg_path.subpath_as_path(subpath)
   let assert Ok(translated_subpath) =
-    transform.translate_subpath(subpath, x: 10.0, y: 20.0)
-  let assert Ok(scaled_path) = transform.scale_path(path, factor: 2.0)
+    subpath |> transform.subpath(by: transform.translate(x: 10.0, y: 20.0))
+  let assert Ok(scaled_path) =
+    path |> transform.path(by: transform.scale(factor: 2.0))
 
   assert serialize.subpath(translated_subpath) == "M 10 20 H 15"
   assert serialize.path(scaled_path) == "M 0 0 H 10"

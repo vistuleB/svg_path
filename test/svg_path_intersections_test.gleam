@@ -446,8 +446,10 @@ pub fn near_parallel_line_projection_is_scale_invariant_test() {
 
   [0.000001, 1.0, 1_000_000.0]
   |> list.each(fn(scale) {
-    let assert Ok(scaled_left) = transform.scale_segment(left, factor: scale)
-    let assert Ok(scaled_right) = transform.scale_segment(right, factor: scale)
+    let assert Ok(scaled_left) =
+      transform.segment(left, by: transform.scale(factor: scale))
+    let assert Ok(scaled_right) =
+      transform.segment(right, by: transform.scale(factor: scale))
     let assert Ok(projection) =
       distance.segment_segment_closest_pair_with(
         scaled_left,

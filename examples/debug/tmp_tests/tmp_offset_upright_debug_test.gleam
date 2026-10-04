@@ -19,7 +19,7 @@ pub fn main() -> Nil {
 fn render() -> String {
   let source =
     smooth_horizontal_figure_eight()
-    |> transform.translate_subpath(x: -220.4, y: -116.0)
+    |> transform.subpath(by: transform.translate(x: -220.4, y: -116.0))
   let assert Ok(source) = source
   let default = offset.default_options()
   let options =

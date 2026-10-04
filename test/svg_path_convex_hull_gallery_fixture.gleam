@@ -120,8 +120,10 @@ fn panel(
 }
 
 fn place_path(path: svg_path.Path, x x: Float, y y: Float) -> svg_path.Path {
-  let assert Ok(scaled) = transform.scale_path(path, factor: 0.48)
-  let assert Ok(placed) = transform.translate_path(scaled, x:, y:)
+  let assert Ok(scaled) =
+    transform.path(path, by: transform.scale(factor: 0.48))
+  let assert Ok(placed) =
+    transform.path(scaled, by: transform.translate(x:, y:))
   placed
 }
 

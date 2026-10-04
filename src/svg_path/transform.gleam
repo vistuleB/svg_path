@@ -227,56 +227,6 @@ pub fn point(point: svg_path.Point, by transform: Matrix) -> svg_path.Point {
   svg_path.Point(x, y)
 }
 
-/// Translate a point.
-pub fn translate_point(
-  input: svg_path.Point,
-  x x: Float,
-  y y: Float,
-) -> svg_path.Point {
-  point(input, by: translate(x:, y:))
-}
-
-/// Scale a point uniformly.
-pub fn scale_point(
-  input: svg_path.Point,
-  factor factor: Float,
-) -> svg_path.Point {
-  point(input, by: scale(factor:))
-}
-
-/// Scale a point non-uniformly.
-pub fn scale_xy_point(
-  input: svg_path.Point,
-  x x: Float,
-  y y: Float,
-) -> svg_path.Point {
-  point(input, by: scale_xy(x:, y:))
-}
-
-/// Rotate a point around the origin.
-pub fn rotate_point(
-  input: svg_path.Point,
-  degrees degrees: Float,
-) -> svg_path.Point {
-  point(input, by: rotate(degrees:))
-}
-
-/// Skew a point along the x axis.
-pub fn skew_x_point(
-  input: svg_path.Point,
-  degrees degrees: Float,
-) -> svg_path.Point {
-  point(input, by: skew_x(degrees:))
-}
-
-/// Skew a point along the y axis.
-pub fn skew_y_point(
-  input: svg_path.Point,
-  degrees degrees: Float,
-) -> svg_path.Point {
-  point(input, by: skew_y(degrees:))
-}
-
 /// Transform a segment by a matrix.
 ///
 /// Degenerate arc transforms return `DegenerateArcTransform`; use
@@ -316,56 +266,6 @@ pub fn segment_about_anchor(
         point: anchor_point(box, anchor),
       )
   }
-}
-
-/// Translate a segment.
-pub fn translate_segment(
-  input: svg_path.Segment,
-  x x: Float,
-  y y: Float,
-) -> Result(svg_path.Segment, Error) {
-  segment(input, by: translate(x:, y:))
-}
-
-/// Scale a segment uniformly.
-pub fn scale_segment(
-  input: svg_path.Segment,
-  factor factor: Float,
-) -> Result(svg_path.Segment, Error) {
-  segment(input, by: scale(factor:))
-}
-
-/// Scale a segment non-uniformly.
-pub fn scale_xy_segment(
-  input: svg_path.Segment,
-  x x: Float,
-  y y: Float,
-) -> Result(svg_path.Segment, Error) {
-  segment(input, by: scale_xy(x:, y:))
-}
-
-/// Rotate a segment around the origin.
-pub fn rotate_segment(
-  input: svg_path.Segment,
-  degrees degrees: Float,
-) -> Result(svg_path.Segment, Error) {
-  segment(input, by: rotate(degrees:))
-}
-
-/// Skew a segment along the x axis.
-pub fn skew_x_segment(
-  input: svg_path.Segment,
-  degrees degrees: Float,
-) -> Result(svg_path.Segment, Error) {
-  segment(input, by: skew_x(degrees:))
-}
-
-/// Skew a segment along the y axis.
-pub fn skew_y_segment(
-  input: svg_path.Segment,
-  degrees degrees: Float,
-) -> Result(svg_path.Segment, Error) {
-  segment(input, by: skew_y(degrees:))
 }
 
 /// Transform a segment, allowing a collapsed arc to become one line segment.
@@ -509,56 +409,6 @@ pub fn subpath_about_anchor(
         point: anchor_point(box, anchor),
       )
   }
-}
-
-/// Translate a subpath.
-pub fn translate_subpath(
-  input: svg_path.Subpath,
-  x x: Float,
-  y y: Float,
-) -> Result(svg_path.Subpath, Error) {
-  subpath(input, by: translate(x:, y:))
-}
-
-/// Scale a subpath uniformly.
-pub fn scale_subpath(
-  input: svg_path.Subpath,
-  factor factor: Float,
-) -> Result(svg_path.Subpath, Error) {
-  subpath(input, by: scale(factor:))
-}
-
-/// Scale a subpath non-uniformly.
-pub fn scale_xy_subpath(
-  input: svg_path.Subpath,
-  x x: Float,
-  y y: Float,
-) -> Result(svg_path.Subpath, Error) {
-  subpath(input, by: scale_xy(x:, y:))
-}
-
-/// Rotate a subpath around the origin.
-pub fn rotate_subpath(
-  input: svg_path.Subpath,
-  degrees degrees: Float,
-) -> Result(svg_path.Subpath, Error) {
-  subpath(input, by: rotate(degrees:))
-}
-
-/// Skew a subpath along the x axis.
-pub fn skew_x_subpath(
-  input: svg_path.Subpath,
-  degrees degrees: Float,
-) -> Result(svg_path.Subpath, Error) {
-  subpath(input, by: skew_x(degrees:))
-}
-
-/// Skew a subpath along the y axis.
-pub fn skew_y_subpath(
-  input: svg_path.Subpath,
-  degrees degrees: Float,
-) -> Result(svg_path.Subpath, Error) {
-  subpath(input, by: skew_y(degrees:))
 }
 
 /// Transform a subpath, replacing collapsed arcs with line segments.
@@ -710,56 +560,6 @@ pub fn path_about_anchor(
     Ok(box) ->
       path_about_point(input, by: transform, point: anchor_point(box, anchor))
   }
-}
-
-/// Translate a path.
-pub fn translate_path(
-  input: svg_path.Path,
-  x x: Float,
-  y y: Float,
-) -> Result(svg_path.Path, Error) {
-  path(input, by: translate(x:, y:))
-}
-
-/// Scale a path uniformly.
-pub fn scale_path(
-  input: svg_path.Path,
-  factor factor: Float,
-) -> Result(svg_path.Path, Error) {
-  path(input, by: scale(factor:))
-}
-
-/// Scale a path non-uniformly.
-pub fn scale_xy_path(
-  input: svg_path.Path,
-  x x: Float,
-  y y: Float,
-) -> Result(svg_path.Path, Error) {
-  path(input, by: scale_xy(x:, y:))
-}
-
-/// Rotate a path around the origin.
-pub fn rotate_path(
-  input: svg_path.Path,
-  degrees degrees: Float,
-) -> Result(svg_path.Path, Error) {
-  path(input, by: rotate(degrees:))
-}
-
-/// Skew a path along the x axis.
-pub fn skew_x_path(
-  input: svg_path.Path,
-  degrees degrees: Float,
-) -> Result(svg_path.Path, Error) {
-  path(input, by: skew_x(degrees:))
-}
-
-/// Skew a path along the y axis.
-pub fn skew_y_path(
-  input: svg_path.Path,
-  degrees degrees: Float,
-) -> Result(svg_path.Path, Error) {
-  path(input, by: skew_y(degrees:))
 }
 
 fn transform_valid_segment(
