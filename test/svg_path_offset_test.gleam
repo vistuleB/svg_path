@@ -2135,9 +2135,10 @@ pub fn subpath_stroke_open_line_with_square_cap_extends_ends_test() {
   let assert Ok(stroke) =
     stroke.subpath_with(
       subpath,
+      width: 2.0,
       join: stroke.Miter(offset.default_miter_limit),
       cap: stroke.Square,
-      options: stroke.Options(width: 2.0, offset: offset.default_options()),
+      options: stroke.default_options(),
     )
 
   closed_path_assertions.assert_equivalent(

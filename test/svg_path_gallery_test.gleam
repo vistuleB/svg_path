@@ -364,11 +364,11 @@ pub fn generate_recursive_dash_failure_zoom() {
 pub fn generate_recursive_dash_cap_report() {
   let _ = ensure_dir("examples/debug/recursive-dash-cap-report.txt")
   let source = place_subpath(recursive_dash_source(), 92.0, 154.0)
-  let first_options =
-    stroke.Options(width: 58.0, offset: offset.default_options())
+  let first_options = stroke.default_options()
   let assert Ok(first_stroke) =
     stroke.subpath_dashed_with(
       source,
+      width: 58.0,
       join: stroke.Round,
       cap: stroke.RoundCap,
       options: first_options,
@@ -382,7 +382,7 @@ pub fn generate_recursive_dash_cap_report() {
     stroke.subpath_dashes(outline, pattern: [17.0, 9.0], offset: 3.0)
   let dash = nth_subpath(dashes, 4)
   let options = offset.default_options()
-  let stroke_options = stroke.Options(width: 6.0, offset: options)
+  let stroke_options = stroke.default_options()
   let radius = 3.0
   let positive =
     offset.subpath_untrimmed_with(
@@ -480,6 +480,7 @@ pub fn generate_recursive_dash_cap_report() {
         "full stroke result: "
           <> stroke_result_to_string(stroke.subpath_with(
           dash,
+          width: 6.0,
           join: stroke.Round,
           cap: stroke.RoundCap,
           options: stroke_options,
@@ -513,10 +514,15 @@ fn stroke_caps() -> String {
       |> list.map(fn(example) {
         let #(x, label, cap) = example
         let placed = place_subpath(source, x +. 42.0, 112.0)
-        let options =
-          stroke.Options(width: 28.0, offset: offset.default_options())
+        let options = stroke.default_options()
         let assert Ok(stroke) =
-          stroke.subpath_with(placed, join: stroke.Round, cap:, options:)
+          stroke.subpath_with(
+            placed,
+            width: 28.0,
+            join: stroke.Round,
+            cap:,
+            options:,
+          )
         [
           panel(x, label),
           svg.StyledPath(
@@ -558,11 +564,11 @@ fn dashed_strokes() -> String {
         let #(x, label, pattern, dash_offset, stroke_color, fill_color) =
           example
         let placed = place_subpath(source, x +. 22.0, 118.0)
-        let options =
-          stroke.Options(width: 16.0, offset: offset.default_options())
+        let options = stroke.default_options()
         let assert Ok(dashed) =
           stroke.subpath_dashed_with(
             placed,
+            width: 16.0,
             join: stroke.Round,
             cap: stroke.RoundCap,
             options:,
@@ -604,11 +610,11 @@ fn recursive_dashes() -> String {
       pattern: first_dash_pattern,
       offset: first_dash_offset,
     )
-  let first_options =
-    stroke.Options(width: 58.0, offset: offset.default_options())
+  let first_options = stroke.default_options()
   let assert Ok(first_stroke) =
     stroke.subpath_dashed_with(
       source,
+      width: 58.0,
       join: stroke.Round,
       cap: stroke.RoundCap,
       options: first_options,
@@ -617,8 +623,7 @@ fn recursive_dashes() -> String {
         offset: first_dash_offset,
       ),
     )
-  let second_options =
-    stroke.Options(width: 6.0, offset: offset.default_options())
+  let second_options = stroke.default_options()
   let assert Ok(second_paths) =
     recursive_dash_outline_strokes(
       svg_path.path_subpaths(first_stroke),
@@ -948,7 +953,7 @@ fn stroke_non_degenerate_dashes(
     [dash, ..rest] -> {
       case svg_path.subpath_length(dash) {
         Ok(length) if length >. 0.1 -> {
-          case stroke.subpath_with(dash, join:, cap:, options:) {
+          case stroke.subpath_with(dash, width: 6.0, join:, cap:, options:) {
             Ok(stroked) ->
               stroke_non_degenerate_dashes(
                 rest,

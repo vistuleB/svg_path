@@ -1744,8 +1744,8 @@ import svg_path/stroke
 
 stroke.subpath(subpath, width: 8.0, join: stroke.Round, cap: stroke.RoundCap)
 
-let options = stroke.Options(..stroke.default_options(), width: 8.0)
-stroke.path_with(path, join: stroke.Bevel, cap: stroke.Square, options:)
+let options = stroke.default_options()
+stroke.path_with(path, width: 8.0, join: stroke.Bevel, cap: stroke.Square, options:)
 
 stroke.subpath_dashed(
   subpath,
@@ -1759,10 +1759,10 @@ stroke.subpath_dashed(
 
 All stroke-outline entry points (`segment`, `subpath`, `path`,
 `subpath_dashed`, and `path_dashed`, including their `_with` forms) require
-explicit `join:` and `cap:` arguments. `stroke.Options` contains only `width`
-and nested `offset.Options` in `offset`; neither options type stores styles.
-The non-`_with` forms accept `width:` directly and default only the technical
-options. Pure dash extraction (`subpath_dashes`, `path_dashes`, and their
+explicit `width:`, `join:`, and `cap:` arguments. `stroke.Options` contains
+only fitting, healing, and inner-join controls that stroke construction uses.
+Trimming follows the stroke construction policy and is not a caller setting.
+The non-`_with` forms default only the numerical options. Pure dash extraction (`subpath_dashes`, `path_dashes`, and their
 `_with` forms) is unchanged and takes no join or cap.
 
 Nonzero stroke outlines delegate to symmetric bands with offsets `-width/2`

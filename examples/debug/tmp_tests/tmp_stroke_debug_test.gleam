@@ -104,7 +104,7 @@ fn panel(
     )
   let result_things = case
     stroke.subpath_with(
-      source,
+      source, width: 1.0,
       join:,
       cap:,
       options: stroke.Options(width:, offset: options),

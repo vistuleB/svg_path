@@ -11,7 +11,7 @@
 
 import gleam/float
 import gleam/list
-import gleam/option.{None, Some}
+import gleam/option.{type Option, None, Some}
 import gleam/result
 import svg_path
 import svg_path/internal/number
@@ -79,17 +79,15 @@ pub type Cap {
   Square
 }
 
-/// Width and technical options for stroke outline construction.
-/// Join and cap styles are explicit operation arguments.
+/// Numerical controls for stroke outline construction.
+/// Width, joins, and caps are operation arguments. Stroke always performs final
+/// band trimming; offset-only trimming policies are intentionally not accepted.
 pub type Options {
   Options(
-    /// Finite, positive full stroke width in path-coordinate units.
-    width: Float,
-    /// Technical options used to construct the two half-width offsets.
-    /// Stroke construction overrides trimming choices: side-local cusp trimming
-    /// is disabled and final in-band trimming is enabled. Single-offset trimming
-    /// options do not apply.
-    offset: offset.Options,
+    fitting: offset.FittingOptions,
+    stalled_offset_diameter: Float,
+    tangent_heal_angle_degrees: Float,
+    inner_join: Option(offset.InnerJoin),
   )
 }
 
@@ -111,7 +109,13 @@ pub type DashOptions {
 
 /// Return default stroke options.
 pub fn default_options() -> Options {
-  Options(width: 1.0, offset: offset.default_options())
+  let defaults = offset.default_options()
+  Options(
+    fitting: defaults.fitting,
+    stalled_offset_diameter: defaults.stalled_offset_diameter,
+    tangent_heal_angle_degrees: defaults.tangent_heal_angle_degrees,
+    inner_join: defaults.inner_join,
+  )
 }
 
 /// Return default dash extraction options for a pattern and dash offset.
@@ -135,22 +139,23 @@ pub fn segment(
   join join: Join,
   cap cap: Cap,
 ) -> Result(svg_path.Path, Error) {
-  let options = Options(..default_options(), width:)
-  segment_with(segment, join:, cap:, options:)
+  let options = default_options()
+  segment_with(segment, width:, join:, cap:, options:)
 }
 
 /// Stroke a segment using explicit options.
 pub fn segment_with(
   segment segment: svg_path.Segment,
+  width width: Float,
   join join: Join,
   cap cap: Cap,
   options options: Options,
 ) -> Result(svg_path.Path, Error) {
-  use _ <- result.try(validate_options(options, join))
+  use _ <- result.try(validate_options(width, options, join))
   use subpath <- result.try(
     svg_path.subpath([segment]) |> result.map_error(PathError),
   )
-  stroke_validated_subpath(subpath, join, cap, options)
+  stroke_validated_subpath(subpath, width, join, cap, options)
 }
 
 /// Stroke a subpath using default options with the given width.
@@ -160,33 +165,34 @@ pub fn subpath(
   join join: Join,
   cap cap: Cap,
 ) -> Result(svg_path.Path, Error) {
-  let options = Options(..default_options(), width:)
-  subpath_with(subpath, join:, cap:, options:)
+  let options = default_options()
+  subpath_with(subpath, width:, join:, cap:, options:)
 }
 
 /// Stroke a subpath as a symmetric band with offsets -width/2 and +width/2.
 /// Band construction owns normalization, side construction, caps, and trimming.
-/// For compatibility, strokes disable per-side cusp trimming and always enable
-/// final in-band trimming, irrespective of the supplied band trimming options.
+/// Strokes disable per-side cusp trimming and always enable final in-band trimming.
 pub fn subpath_with(
   subpath subpath: svg_path.Subpath,
+  width width: Float,
   join join: Join,
   cap cap: Cap,
   options options: Options,
 ) -> Result(svg_path.Path, Error) {
-  use _ <- result.try(validate_options(options, join))
-  stroke_validated_subpath(subpath, join, cap, options)
+  use _ <- result.try(validate_options(width, options, join))
+  stroke_validated_subpath(subpath, width, join, cap, options)
 }
 
 // Public entry points validate before examining even empty geometry.
 // Internal traversal reuses that validation for each subpath/dash.
 fn stroke_validated_subpath(
   subpath: svg_path.Subpath,
+  width: Float,
   join: Join,
   cap: Cap,
   options: Options,
 ) -> Result(svg_path.Path, Error) {
-  let radius = options.width /. 2.0
+  let radius = width /. 2.0
   case svg_path.subpath_segments(subpath) {
     [] -> Ok(svg_path.path_empty())
     _ -> {
@@ -205,14 +211,7 @@ fn stroke_validated_subpath(
             outer_offset: radius,
             join: to_offset_join(join),
             cap: to_offset_cap(cap),
-            options: offset.Options(
-              ..options.offset,
-              band_trimming: offset.BandTrimming(
-                inner_cusps: False,
-                outer_cusps: False,
-                in_band: True,
-              ),
-            ),
+            options: offset_options(options),
           )
           |> result.map_error(OffsetError)
       }
@@ -322,21 +321,23 @@ pub fn path(
   join join: Join,
   cap cap: Cap,
 ) -> Result(svg_path.Path, Error) {
-  let options = Options(..default_options(), width:)
-  path_with(path, join:, cap:, options:)
+  let options = default_options()
+  path_with(path, width:, join:, cap:, options:)
 }
 
 /// Stroke every subpath in a path using explicit options.
 pub fn path_with(
   path path: svg_path.Path,
+  width width: Float,
   join join: Join,
   cap cap: Cap,
   options options: Options,
 ) -> Result(svg_path.Path, Error) {
-  use _ <- result.try(validate_options(options, join))
+  use _ <- result.try(validate_options(width, options, join))
   use subpaths <- result.try(
     stroke_subpaths(
       svg_path.path_subpaths(path),
+      width,
       join,
       cap,
       options,
@@ -449,9 +450,10 @@ pub fn subpath_dashed(
 ) -> Result(svg_path.Path, Error) {
   subpath_dashed_with(
     subpath,
+    width:,
     join:,
     cap:,
-    options: Options(..default_options(), width:),
+    options: default_options(),
     dash_options: default_dash_options(pattern:, offset:),
   )
 }
@@ -464,12 +466,13 @@ pub fn subpath_dashed(
 /// Square caps use the source direction at the dash address.
 pub fn subpath_dashed_with(
   subpath subpath: svg_path.Subpath,
+  width width: Float,
   join join: Join,
   cap cap: Cap,
   options options: Options,
   dash_options dash_options: DashOptions,
 ) -> Result(svg_path.Path, Error) {
-  use _ <- result.try(validate_options(options, join))
+  use _ <- result.try(validate_options(width, options, join))
   use dashes <- result.try(located_dash_pieces(subpath, dash_options))
   use paths <- result.try(
     list.try_map(dashes, fn(dash) {
@@ -498,12 +501,12 @@ pub fn subpath_dashed_with(
           }
           zero_length_square_stroke_path(
             svg_path.subpath_start(piece),
-            options.width /. 2.0,
+            width /. 2.0,
             direction,
           )
           |> result.map_error(fn(error) { OffsetError(offset.PathError(error)) })
         }
-        False -> stroke_validated_subpath(piece, join, cap, options)
+        False -> stroke_validated_subpath(piece, width, join, cap, options)
       }
     }),
   )
@@ -523,9 +526,10 @@ pub fn path_dashed(
 ) -> Result(svg_path.Path, Error) {
   path_dashed_with(
     path,
+    width:,
     join:,
     cap:,
-    options: Options(..default_options(), width:),
+    options: default_options(),
     dash_options: default_dash_options(pattern:, offset:),
   )
 }
@@ -536,26 +540,31 @@ pub fn path_dashed(
 /// The dash pattern resets at the start of each subpath.
 pub fn path_dashed_with(
   path path: svg_path.Path,
+  width width: Float,
   join join: Join,
   cap cap: Cap,
   options options: Options,
   dash_options dash_options: DashOptions,
 ) -> Result(svg_path.Path, Error) {
-  use _ <- result.try(validate_options(options, join))
+  use _ <- result.try(validate_options(width, options, join))
   use _ <- result.try(validate_dash_options(dash_options))
   use paths <- result.try(
     list.try_map(svg_path.path_subpaths(path), fn(subpath) {
-      subpath_dashed_with(subpath, join:, cap:, options:, dash_options:)
+      subpath_dashed_with(subpath, width:, join:, cap:, options:, dash_options:)
     }),
   )
   Ok(svg_path.Path(list.flat_map(paths, svg_path.path_subpaths)))
 }
 
-fn validate_options(options: Options, join: Join) -> Result(Nil, Error) {
+fn validate_options(
+  width: Float,
+  options: Options,
+  join: Join,
+) -> Result(Nil, Error) {
   // Validate before traversing geometry, including empty paths and dash output.
-  use _ <- result.try(validate_width(options.width))
+  use _ <- result.try(validate_width(width))
   let validation = {
-    use _ <- result.try(offset.validate_options(options.offset))
+    use _ <- result.try(offset.validate_options(offset_options(options)))
     offset.validate_join(to_offset_join(join))
   }
   validation
@@ -888,6 +897,7 @@ fn path_dashes_loop(
 
 fn stroke_subpaths(
   subpaths: List(svg_path.Subpath),
+  width: Float,
   join: Join,
   cap: Cap,
   options: Options,
@@ -896,9 +906,16 @@ fn stroke_subpaths(
   case subpaths {
     [] -> Ok(list.reverse(stroked))
     [first, ..rest] -> {
-      use path <- result.try(stroke_validated_subpath(first, join, cap, options))
+      use path <- result.try(stroke_validated_subpath(
+        first,
+        width,
+        join,
+        cap,
+        options,
+      ))
       stroke_subpaths(
         rest,
+        width,
         join,
         cap,
         options,
@@ -944,4 +961,21 @@ fn positive_remainder(value: Float, modulus: Float) -> Float {
         False -> remainder
       }
   }
+}
+
+// Only stroke-applicable controls cross this boundary. The construction policy
+// is fixed here, rather than silently overriding caller-supplied settings.
+fn offset_options(options: Options) -> offset.Options {
+  offset.Options(
+    ..offset.default_options(),
+    fitting: options.fitting,
+    stalled_offset_diameter: options.stalled_offset_diameter,
+    tangent_heal_angle_degrees: options.tangent_heal_angle_degrees,
+    inner_join: options.inner_join,
+    band_trimming: offset.BandTrimming(
+      inner_cusps: False,
+      outer_cusps: False,
+      in_band: True,
+    ),
+  )
 }
