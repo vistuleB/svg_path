@@ -959,3 +959,20 @@ fn right_angle_subpath() -> svg_path.Subpath {
     svg_path.Point(10.0, 10.0),
   ])
 }
+
+pub fn stroke_rejects_unsupported_fitting_depth_test() {
+  let defaults = stroke.default_options()
+  let options =
+    stroke.Options(
+      ..defaults,
+      fitting: offset.FittingOptions(..defaults.fitting, max_depth: 6),
+    )
+  assert stroke.path_with(
+      svg_path.path_empty(),
+      width: 1.0,
+      join: offset.Round,
+      cap: offset.Butt,
+      options:,
+    )
+    == Error(stroke.OffsetError(offset.InvalidMaxDepth(6)))
+}

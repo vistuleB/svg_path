@@ -2848,7 +2848,7 @@ pub type InternalError {
   /// The number of divergence samples must be greater than zero.
   InternalInvalidSamples(samples: Int)
 
-  /// The recursive subdivision limit must be greater than zero.
+  /// The recursive subdivision limit must be between one and five inclusive.
   InternalInvalidMaxDepth(max_depth: Int)
 
   /// The miter limit must be finite and greater than zero.
@@ -2945,7 +2945,7 @@ pub type Error {
   /// The number of divergence samples must be greater than zero.
   InvalidSamples(samples: Int)
 
-  /// The recursive subdivision limit must be greater than zero.
+  /// The recursive subdivision limit must be between one and five inclusive.
   InvalidMaxDepth(max_depth: Int)
 
   /// The miter limit must be finite and greater than zero.
@@ -3121,8 +3121,8 @@ pub type BandTrimming {
 ///
 /// `tolerance` bounds the sampled geometric error of a fitted offset curve,
 /// `samples` controls the number of check samples, and `max_depth` limits
-/// recursive subdivision. The offset pipeline additionally caps refinement at
-/// five generations, so values above five do not increase refinement depth.
+/// recursive subdivision. Supported depths are one through five inclusive;
+/// values outside this range return `InvalidMaxDepth`.
 pub type FittingOptions {
   FittingOptions(tolerance: Float, samples: Int, max_depth: Int)
 }
@@ -5304,7 +5304,10 @@ pub fn validate_options(options: Options) -> Result(Nil, InternalError) {
       case options.fitting.samples <= 0 {
         True -> Error(InternalInvalidSamples(options.fitting.samples))
         False ->
-          case options.fitting.max_depth <= 0 {
+          case
+            options.fitting.max_depth <= 0
+            || options.fitting.max_depth > maximum_refinement_generation
+          {
             True -> Error(InternalInvalidMaxDepth(options.fitting.max_depth))
             False -> validate_offset_diameter(options)
           }

@@ -17,6 +17,9 @@ diagnostics. Redundant transform shortcuts are replaced by matrix composition.
 
 ### Breaking API changes
 
+- Reject offset/stroke fitting depths outside 1–5 with `InvalidMaxDepth`
+  instead of silently capping larger values.
+
 - Carry a stable `arrangement.Error` payload in `csg.ArrangementGraphError`,
   preserving invalid-option values and other public arrangement diagnostics.
 

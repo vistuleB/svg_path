@@ -736,7 +736,7 @@ pub fn endpoint_near_reversal_is_absorbed_into_stalled_piece_test() {
   let options =
     offset.Options(
       ..offset.default_options(),
-      fitting: offset.FittingOptions(tolerance: 0.01, samples: 5, max_depth: 12),
+      fitting: offset.FittingOptions(tolerance: 0.01, samples: 5, max_depth: 5),
     )
   let assert Ok([
     offset.OffsetSourceTracePortion(
@@ -1130,7 +1130,7 @@ pub fn package_title_s_iterated_offset_keeps_three_closed_first_offset_subpaths_
   let options =
     offset.Options(
       ..offset.default_options(),
-      fitting: offset.FittingOptions(tolerance: 0.01, samples: 5, max_depth: 12),
+      fitting: offset.FittingOptions(tolerance: 0.01, samples: 5, max_depth: 5),
     )
 
   let assert Ok(first_offset) =
@@ -1209,7 +1209,7 @@ pub fn package_title_v_1_05_public_offset_filters_micro_loops_test() {
   let options =
     offset.Options(
       ..offset.default_options(),
-      fitting: offset.FittingOptions(tolerance: 0.01, samples: 5, max_depth: 12),
+      fitting: offset.FittingOptions(tolerance: 0.01, samples: 5, max_depth: 5),
     )
   let assert Ok(result) =
     offset.path_with(
@@ -1233,7 +1233,7 @@ pub fn package_title_a_and_v_1_05_bevel_offsets_filter_micro_loops_test() {
   let options =
     offset.Options(
       ..offset.default_options(),
-      fitting: offset.FittingOptions(tolerance: 0.01, samples: 5, max_depth: 12),
+      fitting: offset.FittingOptions(tolerance: 0.01, samples: 5, max_depth: 5),
     )
 
   let assert Ok(v_offset) =
@@ -3692,4 +3692,27 @@ pub fn pairwise_healing_loop_short_circuit_is_idempotent_test() {
       rebuilt_next,
     )
     == Ok(#(rebuilt_previous, rebuilt_next))
+}
+
+pub fn offset_fitting_depth_limits_test() {
+  let line = svg_path.Line(svg_path.Point(0.0, 0.0), svg_path.Point(10.0, 0.0))
+  let defaults = offset.default_options()
+  list.each([-1, 0, 6, 12], fn(depth) {
+    let options =
+      offset.Options(
+        ..defaults,
+        fitting: offset.FittingOptions(..defaults.fitting, max_depth: depth),
+      )
+    assert offset.segment_with(line, offset: 1.0, join: offset.Round, options:)
+      == Error(offset.InvalidMaxDepth(depth))
+  })
+  list.each([1, 5], fn(depth) {
+    let options =
+      offset.Options(
+        ..defaults,
+        fitting: offset.FittingOptions(..defaults.fitting, max_depth: depth),
+      )
+    let assert Ok(_) =
+      offset.segment_with(line, offset: 1.0, join: offset.Round, options:)
+  })
 }

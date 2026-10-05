@@ -153,7 +153,7 @@ geometry or stages. These distinctions matter when tuning a query:
 | `distance.ClosestPairOptions` | Geometry-to-geometry searches use `tolerance` and `max_depth`. Intersection parameter snapping is not part of this search. |
 | `svg_path.DistanceOptions.samples` | Arc and sampling-based projection; quadratic and cubic projection use polynomial root isolation. |
 | `offset.Options.single_offset_trimming` / `band_trimming` | Single-offset operations use the first policy; band operations use the second. Changing one does not tune the other. |
-| `offset.FittingOptions.max_depth` | Offset fitting also has an internal five-generation cap; larger values do not increase that cap. |
+| `offset.FittingOptions.max_depth` | Offset fitting accepts depths 1–5 inclusive; other values return `InvalidMaxDepth`. |
 | `stroke.Options` | Only fitting, stalled-offset diameter, tangent healing, and inner joins. Stroke trimming is fixed. |
 | `clip.Options.tolerance` | Arc-length separation for merging cuts; also selects start-point sampling for pieces no longer than this tolerance. Intersection and fill-classification tolerances are separate nested controls. |
 | `csg.Options.minimum_length` | This is a segment-length **upper-bound** threshold for discarding refined pieces, not an endpoint-distance threshold. |

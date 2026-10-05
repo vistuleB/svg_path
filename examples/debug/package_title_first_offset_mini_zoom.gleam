@@ -28,7 +28,7 @@ pub fn main() -> Nil {
   let options =
     offset.Options(
       ..offset.default_options(),
-      fitting: offset.FittingOptions(tolerance: 0.01, samples: 5, max_depth: 12),
+      fitting: offset.FittingOptions(tolerance: 0.01, samples: 5, max_depth: 5),
     )
 
   let assert Ok(untrimmed_first_offset) =
