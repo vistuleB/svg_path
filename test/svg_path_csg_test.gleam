@@ -1098,3 +1098,22 @@ fn assert_same_winding_field(
     input_winding |> should.equal(output_winding)
   })
 }
+
+pub fn csg_preserves_arrangement_validation_errors_test() {
+  let empty = svg_path.path_empty()
+  let options = csg.default_options()
+  assert csg.union_with(
+      empty,
+      empty,
+      using: svg_path.Nonzero,
+      options: csg.Options(..options, tolerance: 0.0),
+    )
+    == Error(csg.ArrangementGraphError(arrangement_graph.InvalidTolerance(0.0)))
+  assert csg.nested_contours_with(
+      empty,
+      options: csg.Options(..options, minimum_length: -1.0),
+    )
+    == Error(
+      csg.ArrangementGraphError(arrangement_graph.InvalidMinimumLength(-1.0)),
+    )
+}

@@ -17,6 +17,9 @@ diagnostics. Redundant transform shortcuts are replaced by matrix composition.
 
 ### Breaking API changes
 
+- Carry a stable `arrangement.Error` payload in `csg.ArrangementGraphError`,
+  preserving invalid-option values and other public arrangement diagnostics.
+
 - Name subpath partitioning `subpath_split_many` and
   `measure.subpath_split_at_lengths`, with `at:` labels. Segment interval
   extraction remains `segment_between_many`; splitting behavior is unchanged.

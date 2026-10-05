@@ -594,7 +594,8 @@ pub type Error {
 }
 
 /// Convert internal arrangement failures at public API boundaries.
-fn public_error(error: InternalError) -> Error {
+@internal
+pub fn public_error(error: InternalError) -> Error {
   case error {
     InternalPathError(value) -> PathError(value)
     InternalInvalidTolerance(tolerance) -> InvalidTolerance(tolerance)

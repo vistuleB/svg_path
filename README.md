@@ -134,7 +134,8 @@ operations and nested contours also offer `_path` and `_path_with` forms.
 - Shared geometry, addresses, numerical option records, and geometry failures
   remain in `svg_path`. For example, modify `svg_path.LengthOptions` obtained
   from `measure.default_length_options()`. Domain-specific errors remain in
-  their operation modules; no diagnostic payloads are discarded.
+  their operation modules. CSG preserves stable arrangement error payloads;
+  internal arrangement invariant failures are summarized as `ConstructionFailed`.
 - `intersections` searches for isolated point intersections and reports a
   continuous overlap as an error. `overlaps` returns continuous coincidence
   and parameter correspondence. `encounters` returns both kinds of result.
