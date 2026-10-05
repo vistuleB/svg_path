@@ -252,6 +252,10 @@ and numerical defaults; change their module qualifier and import.
 
 Additional 3.0 changes:
 
+- Segment–subpath intersections now return
+  `SegmentSubpathIntersection(point:, segment_t:, subpath_parameters:)` rather
+  than a three-element tuple. This also applies to `encounters.segment_subpath`.
+
 - Replace `subpath_between_many(..., between:)` with
   `subpath_split_many(..., at:)`. Distance-based subpath partitioning is
   `measure.subpath_split_at_lengths(..., at:)`, including its `_with` variant.
@@ -261,7 +265,6 @@ Additional 3.0 changes:
   distance:)`. Segment addresses use `at` instead of `t`, and segment pair
   addresses use `left_at`/`right_at` instead of `left_t`/`right_t`. The geometry-
   specific type names remain readable aliases of these two generic records.
-  Intersection records are unchanged.
 - Use `offset.Join`/`offset.Cap` constructors for both offset and stroke calls.
   The duplicate `stroke` constructors have been removed.
 - Replace `minimum_chord` with `minimum_length` in CSG options and arrangement
@@ -1205,6 +1208,10 @@ intersections.segment_subpath(segment, subpath)
 intersections.subpath(left_subpath, right_subpath)
 intersections.path(left_path, right_path)
 ```
+
+`segment_subpath` returns named `SegmentSubpathIntersection` records with
+`point`, `segment_t`, and `subpath_parameters` fields. Multiple subpath addresses
+are retained when the traversal reaches the same point more than once.
 
 Self-intersections use parallel names:
 

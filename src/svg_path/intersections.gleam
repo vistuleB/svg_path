@@ -1582,7 +1582,7 @@ pub fn segment_self_with(
 pub fn segment_subpath(
   segment: Segment,
   subpath: Subpath,
-) -> Result(List(#(Point, Float, List(SubpathParameter))), svg_path.Error) {
+) -> Result(List(svg_path.SegmentSubpathIntersection), svg_path.Error) {
   segment_subpath_with(segment, subpath, options: default_options())
 }
 
@@ -1592,7 +1592,7 @@ pub fn segment_subpath_with(
   segment: Segment,
   subpath: Subpath,
   options options: IntersectionOptions,
-) -> Result(List(#(Point, Float, List(SubpathParameter))), svg_path.Error) {
+) -> Result(List(svg_path.SegmentSubpathIntersection), svg_path.Error) {
   use _ <- result.try(validate_options(options))
   use intersections <- result.try(
     collect_segment_subpath_intersections(
@@ -1621,7 +1621,7 @@ pub fn segment_subpath_without_overlap_precheck_with(
   segment: Segment,
   subpath: Subpath,
   options options: IntersectionOptions,
-) -> Result(List(#(Point, Float, List(SubpathParameter))), svg_path.Error) {
+) -> Result(List(svg_path.SegmentSubpathIntersection), svg_path.Error) {
   use _ <- result.try(validate_options(options))
   use found <- result.try(
     collect_segment_subpath_intersections(
@@ -2953,8 +2953,8 @@ fn collect_segment_subpath_intersections(
   options: IntersectionOptions,
   permit_overlapping_pairs permit_overlapping_pairs: Bool,
   segment_index segment_index: Int,
-  grouped grouped: List(#(Point, Float, List(SubpathParameter))),
-) -> Result(List(#(Point, Float, List(SubpathParameter))), svg_path.Error) {
+  grouped grouped: List(svg_path.SegmentSubpathIntersection),
+) -> Result(List(svg_path.SegmentSubpathIntersection), svg_path.Error) {
   case segments {
     [] -> Ok(grouped)
     [first, ..rest] -> {
@@ -3010,20 +3010,34 @@ fn segment_intersections_for_collection(
 }
 
 fn insert_segment_subpath_intersection(
-  grouped: List(#(Point, Float, List(SubpathParameter))),
+  grouped: List(svg_path.SegmentSubpathIntersection),
   intersection: SegmentIntersection,
   at: SubpathParameter,
   tolerance: Float,
-) -> List(#(Point, Float, List(SubpathParameter))) {
+) -> List(svg_path.SegmentSubpathIntersection) {
   case grouped {
-    [] -> [#(intersection.point, intersection.left_t, [at])]
+    [] -> [
+      svg_path.SegmentSubpathIntersection(
+        intersection.point,
+        intersection.left_t,
+        [at],
+      ),
+    ]
     [first, ..rest] -> {
-      let #(point, segment_t, parameters) = first
+      let svg_path.SegmentSubpathIntersection(point, segment_t, parameters) =
+        first
       case
         float.absolute_value(segment_t -. intersection.left_t) <=. tolerance
         && distance(point, intersection.point) <=. tolerance
       {
-        True -> [#(point, segment_t, list.append(parameters, [at])), ..rest]
+        True -> [
+          svg_path.SegmentSubpathIntersection(
+            point,
+            segment_t,
+            list.append(parameters, [at]),
+          ),
+          ..rest
+        ]
         False -> [
           first,
           ..insert_segment_subpath_intersection(
@@ -3039,24 +3053,21 @@ fn insert_segment_subpath_intersection(
 }
 
 fn sort_segment_subpath_intersections(
-  intersections: List(#(Point, Float, List(SubpathParameter))),
+  intersections: List(svg_path.SegmentSubpathIntersection),
   subpath: Subpath,
   tolerance: Float,
-) -> List(#(Point, Float, List(SubpathParameter))) {
+) -> List(svg_path.SegmentSubpathIntersection) {
   intersections
   |> list.map(fn(intersection) {
-    let #(point, segment_t, parameters) = intersection
-    #(
+    let svg_path.SegmentSubpathIntersection(point, segment_t, parameters) =
+      intersection
+    svg_path.SegmentSubpathIntersection(
       point,
       segment_t,
       sort_unique_subpath_parameters(parameters, subpath, tolerance),
     )
   })
-  |> list.sort(by: fn(a, b) {
-    let #(_, a_t, _) = a
-    let #(_, b_t, _) = b
-    float.compare(a_t, b_t)
-  })
+  |> list.sort(by: fn(a, b) { float.compare(a.segment_t, b.segment_t) })
 }
 
 fn collect_subpath_intersections(
@@ -3082,7 +3093,11 @@ fn collect_subpath_intersections(
       )
       let grouped =
         list.fold(intersections, grouped, fn(grouped, intersection) {
-          let #(point, left_t, right_parameters) = intersection
+          let svg_path.SegmentSubpathIntersection(
+            point,
+            left_t,
+            right_parameters,
+          ) = intersection
           insert_subpath_intersection(
             grouped,
             point,

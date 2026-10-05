@@ -505,10 +505,10 @@ pub fn segment_subpath_retains_addresses_for_overlap_and_points_test() {
     )
   assert intersections
     == [
-      #(svg_path.Point(5.0, 0.0), 0.5, [
+      svg_path.SegmentSubpathIntersection(svg_path.Point(5.0, 0.0), 0.5, [
         svg_path.SubpathParameter(segment_index: 1, t: 0.0),
       ]),
-      #(svg_path.Point(7.5, 0.0), 0.75, [
+      svg_path.SegmentSubpathIntersection(svg_path.Point(7.5, 0.0), 0.75, [
         svg_path.SubpathParameter(segment_index: 2, t: 0.5),
       ]),
     ]

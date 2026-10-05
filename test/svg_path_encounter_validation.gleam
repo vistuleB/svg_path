@@ -378,10 +378,11 @@ pub fn path_overlap_is_valid(
 pub fn segment_subpath_intersection_is_valid(
   segment: svg_path.Segment,
   subpath: svg_path.Subpath,
-  intersection: #(svg_path.Point, Float, List(svg_path.SubpathParameter)),
+  intersection: svg_path.SegmentSubpathIntersection,
   tolerance tolerance: Float,
 ) -> Result(Bool, svg_path.Error) {
-  let #(found, segment_t, subpath_parameters) = intersection
+  let svg_path.SegmentSubpathIntersection(found, segment_t, subpath_parameters) =
+    intersection
   case tolerance <. 0.0 || !in_unit_interval(segment_t), subpath_parameters {
     True, _ | _, [] -> Ok(False)
     False, [_, ..] -> {
@@ -464,7 +465,7 @@ pub fn path_intersection_is_valid(
 
 pub fn segment_subpath_intersection_is_contained_in_overlap(
   subpath: svg_path.Subpath,
-  intersection: #(svg_path.Point, Float, List(svg_path.SubpathParameter)),
+  intersection: svg_path.SegmentSubpathIntersection,
   overlap: overlaps.SegmentSubpathOverlap,
 ) -> Bool {
   segment_subpath_intersection_overlap_interval_containment(
@@ -477,10 +478,11 @@ pub fn segment_subpath_intersection_is_contained_in_overlap(
 
 pub fn segment_subpath_intersection_overlap_interval_containment(
   subpath: svg_path.Subpath,
-  intersection: #(svg_path.Point, Float, List(svg_path.SubpathParameter)),
+  intersection: svg_path.SegmentSubpathIntersection,
   overlap: overlaps.SegmentSubpathOverlap,
 ) -> OverlapIntervalContainment {
-  let #(_, segment_t, subpath_parameters) = intersection
+  let svg_path.SegmentSubpathIntersection(_, segment_t, subpath_parameters) =
+    intersection
   let assert Some(segment_from) =
     overlaps.segment_subpath_overlap_segment_start(overlap)
   let assert Some(segment_to) =
@@ -591,7 +593,7 @@ pub fn segment_subpath_encounters_are_valid(
   subpath: svg_path.Subpath,
   found: encounters.Encounters(
     overlaps.SegmentSubpathOverlap,
-    #(svg_path.Point, Float, List(svg_path.SubpathParameter)),
+    svg_path.SegmentSubpathIntersection,
   ),
   tolerance tolerance: Float,
 ) -> Result(Bool, svg_path.Error) {

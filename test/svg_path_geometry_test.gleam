@@ -2671,8 +2671,16 @@ pub fn segment_subpath_intersections_groups_and_orders_results_test() {
 
   let assert Ok(intersections) = intersections.segment_subpath(segment, subpath)
   let assert [first, second] = intersections
-  let #(first_point, first_t, first_parameters) = first
-  let #(second_point, second_t, second_parameters) = second
+  let svg_path.SegmentSubpathIntersection(
+    first_point,
+    first_t,
+    first_parameters,
+  ) = first
+  let svg_path.SegmentSubpathIntersection(
+    second_point,
+    second_t,
+    second_parameters,
+  ) = second
 
   assert near(first_point.x, 10.0)
   assert near(first_point.y, 0.0)
@@ -2705,7 +2713,8 @@ pub fn segment_subpath_intersections_canonicalizes_boundary_aliases_test() {
 
   let assert Ok([intersection]) =
     intersections.segment_subpath(segment, subpath)
-  let #(point, segment_t, parameters) = intersection
+  let svg_path.SegmentSubpathIntersection(point, segment_t, parameters) =
+    intersection
 
   assert point_near(point, b)
   assert near(segment_t, 0.5)
@@ -2731,7 +2740,8 @@ pub fn segment_subpath_intersections_canonicalizes_closed_boundary_aliases_test(
 
   let assert Ok([intersection]) =
     intersections.segment_subpath(segment, subpath)
-  let #(point, segment_t, parameters) = intersection
+  let svg_path.SegmentSubpathIntersection(point, segment_t, parameters) =
+    intersection
 
   assert point_near(point, a)
   assert near(segment_t, 0.5)

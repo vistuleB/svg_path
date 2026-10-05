@@ -1211,7 +1211,7 @@ pub fn segment_subpath(
 ) -> Result(
   Encounters(
     overlaps.SegmentSubpathOverlap,
-    #(svg_path.Point, Float, List(svg_path.SubpathParameter)),
+    svg_path.SegmentSubpathIntersection,
   ),
   svg_path.Error,
 ) {
@@ -1230,7 +1230,7 @@ pub fn segment_subpath_with(
 ) -> Result(
   Encounters(
     overlaps.SegmentSubpathOverlap,
-    #(svg_path.Point, Float, List(svg_path.SubpathParameter)),
+    svg_path.SegmentSubpathIntersection,
   ),
   svg_path.Error,
 ) {

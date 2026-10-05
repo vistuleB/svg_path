@@ -353,6 +353,19 @@ pub type SubpathPathProjection =
 pub type PathPathProjection =
   ClosestPair(PathParameter, PathParameter)
 
+/// A point intersection between a standalone segment and a subpath.
+///
+/// `segment_t` addresses the standalone segment. `subpath_parameters` retains
+/// each distinct traversal address reaching this point on the subpath;
+/// segment-boundary aliases are canonicalized to one address.
+pub type SegmentSubpathIntersection {
+  SegmentSubpathIntersection(
+    point: Point,
+    segment_t: Float,
+    subpath_parameters: List(SubpathParameter),
+  )
+}
+
 /// A point where a subpath intersects itself.
 pub type SubpathSelfIntersection {
   SubpathSelfIntersection(

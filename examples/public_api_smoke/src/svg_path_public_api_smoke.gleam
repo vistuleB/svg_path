@@ -50,6 +50,19 @@ pub fn main() -> Nil {
       end: svg_path.Point(5.0, 10.0),
     )
   let _ = intersections.segment(horizontal, vertical)
+  let assert Ok([crossing]) =
+    intersections.segment_subpath(
+      horizontal,
+      svg_path.segment_as_subpath(vertical),
+    )
+  let assert True =
+    crossing
+    == svg_path.SegmentSubpathIntersection(
+      point: svg_path.Point(5.0, 5.0),
+      segment_t: 0.5,
+      subpath_parameters: [svg_path.SubpathParameter(segment_index: 0, t: 0.5)],
+    )
+  let assert True = crossing.segment_t == 0.5
   let _ = overlaps.segment(horizontal, horizontal)
   let _ = svg_path.segment_as_subpath(horizontal)
   let _ = svg_path.segment_as_path(vertical)

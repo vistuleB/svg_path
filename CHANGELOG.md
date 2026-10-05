@@ -17,6 +17,10 @@ diagnostics. Redundant transform shortcuts are replaced by matrix composition.
 
 ### Breaking API changes
 
+- Return `SegmentSubpathIntersection(point:, segment_t:, subpath_parameters:)`
+  records from segment–subpath intersection and encounter queries, replacing
+  anonymous tuples without changing grouping or parameter ordering.
+
 - Reject offset/stroke fitting depths outside 1–5 with `InvalidMaxDepth`
   instead of silently capping larger values.
 
@@ -29,7 +33,7 @@ diagnostics. Redundant transform shortcuts are replaced by matrix composition.
 - Consolidate nine projection/closest-pair record variants into generic
   `Projection(address)` and `ClosestPair(left_address, right_address)` records.
   Geometry-specific type names remain aliases; segment address fields now use
-  `at`, `left_at`, and `right_at` consistently. Intersection records are unchanged.
+  `at`, `left_at`, and `right_at` consistently.
 - Share `offset.Join` and `offset.Cap` with stroke operations; remove duplicate
   stroke style types and constructors.
 - Rename `minimum_chord` to `minimum_length`, including associated arrangement
