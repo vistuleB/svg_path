@@ -1241,6 +1241,10 @@ number of distinct mathematical roots. Generic curve-pair search is bounded
 and heuristic: it can return an error when refinement cannot finish, and a
 successful result is not a proof that every mathematical root was found.
 
+Curve-pair refinement accounts for floating-point rounding at the input
+coordinate scale. Final certification still enforces the requested tolerance;
+requesting accuracy below representable precision can produce an error.
+
 Known subpath intersection addresses can be classified afterward with
 `classify_subpath_intersection` as crossings, nontransverse contacts, endpoint
 contacts, or indeterminate cases. Contact order uses outward-pointing rays

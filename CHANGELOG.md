@@ -11,6 +11,10 @@ rather than only the tag object.
 
 ## 3.0.0 - 2026-10-05
 
+- Fix missed curve intersections at larger coordinates by accounting for
+  floating-point evaluation error during curve-pair refinement and endpoint
+  lookup. Final certification still enforces the requested tolerance.
+
 This release organizes the public API by task while preserving the supported
 geometry operations, specialized queries, asserting constructors, and numerical
 diagnostics. Redundant transform shortcuts are replaced by matrix composition.

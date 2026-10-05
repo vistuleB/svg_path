@@ -220,6 +220,9 @@ pub type ParameterSnap {
 pub type IntersectionOptions {
   IntersectionOptions(
     /// Path-coordinate distance used for geometric coincidence tests.
+    /// Final results must satisfy this tolerance. General curve-pair refinement
+    /// uses a roundoff allowance internally; an unachievable requested tolerance
+    /// can therefore return a certification error rather than an empty result.
     tolerance: Float,
     /// Maximum recursive subdivision depth for one segment pair.
     max_depth: Int,
@@ -4412,7 +4415,30 @@ pub fn elizabeth_beam_intersections(
   use _ <- result.try(
     validate_options(options) |> result.map_error(CurveSolverPathError),
   )
-  let tolerance = float.min(options.tolerance, 0.0000000000001)
+  // Curve evaluation has an absolute rounding error proportional to its
+  // coordinates. A fixed residual cap can be smaller than representable steps.
+  // Include the enclosure (control points for Beziers), not only endpoints.
+  // Sixteen machine epsilons allow for evaluation and subtraction rounding.
+  use left_points <- result.try(
+    query.segment_bounding_polygon(left)
+    |> result.map_error(CurveSolverPathError),
+  )
+  use right_points <- result.try(
+    query.segment_bounding_polygon(right)
+    |> result.map_error(CurveSolverPathError),
+  )
+  let magnitude =
+    list.fold(list.append(left_points, right_points), 0.0, fn(size, p) {
+      float.max(
+        size,
+        float.max(float.absolute_value(p.x), float.absolute_value(p.y)),
+      )
+    })
+  let tolerance =
+    float.max(
+      float.min(options.tolerance, 0.0000000000001),
+      magnitude *. 0.000000000000003552713678800501,
+    )
   use endpoints <- result.try(
     elizabeth_endpoint_candidates(left, right, tolerance)
     |> result.map_error(CurveSolverPathError),
