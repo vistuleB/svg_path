@@ -9,7 +9,7 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
-## 3.0.0 - Unreleased
+## 3.0.0 - 2026-10-05
 
 This release organizes the public API by task while preserving the supported
 geometry operations, specialized queries, asserting constructors, and numerical
@@ -52,6 +52,15 @@ diagnostics. Redundant transform shortcuts are replaced by matrix composition.
   modules; migrated repository callers and added cross-module workflow tests.
 - Expanded the external-package smoke example to exercise the reorganized API
   on both Erlang and JavaScript.
+
+### Release verification
+
+- `scripts/test-release`: 1,664 fast and 26 slow tests passed.
+- `gleam docs build` and the JavaScript public-API example build passed.
+- All 13 regenerated README figures match the existing artwork byte-for-byte;
+  `assets-v3.0.0` pins that same asset commit.
+- README recipes match their compiled source. The Hex tarball contains the new
+  public modules and excludes tests, scratch examples, and local agent files.
 
 ## 2.0.0 - 2026-09-14
 
