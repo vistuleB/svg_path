@@ -10,6 +10,14 @@ release preparation for contributors, whether working manually or with an agent.
   when reporting fitting error remaining at a recursion limit.
 - Use `xml`, not `svg`, as the Markdown code-fence language for SVG examples.
 
+## Tested README Recipes
+
+The `tested-recipes` block in `README.md` must match
+`test/readme_recipes.gleam`. Edit the compiled module, format it, and copy its
+contents into that block. `bash scripts/check-readme-recipes` checks the match;
+CI and `scripts/test-fast` run it before the tests. Behavior checks live in
+`test/readme_recipes_test.gleam`.
+
 ## Test Profiles And Reporting
 
 - `gleam test`: default suite.

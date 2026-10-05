@@ -142,6 +142,97 @@ operations and nested contours also offer `_path` and `_path_with` forms.
 - A segment parameter is not a fraction of its length. Use `measure.*_at_length`
   for traveled distances, and the root evaluation functions for parameters.
 
+### Controls that depend on the operation
+
+Options describe numerical work, so some controls apply only to particular
+geometry or stages. These distinctions matter when tuning a query:
+
+| Controls | Where they apply |
+| --- | --- |
+| `distance.ClosestPairOptions` | Geometry-to-geometry searches use `tolerance` and `max_depth`. Intersection parameter snapping is not part of this search. |
+| `svg_path.DistanceOptions.samples` | Arc and sampling-based projection; quadratic and cubic projection use polynomial root isolation. |
+| `offset.Options.single_offset_trimming` / `band_trimming` | Single-offset operations use the first policy; band operations use the second. Changing one does not tune the other. |
+| `offset.FittingOptions.max_depth` | Offset fitting also has an internal five-generation cap; larger values do not increase that cap. |
+| `stroke.Options` | Only fitting, stalled-offset diameter, tangent healing, and inner joins. Stroke trimming is fixed. |
+| `clip.Options.tolerance` | Arc-length separation for merging cuts; also selects start-point sampling for pieces no longer than this tolerance. Intersection and fill-classification tolerances are separate nested controls. |
+| `csg.Options.minimum_chord` | Despite its legacy name, this is a segment-length **upper-bound** threshold for discarding refined pieces, not an endpoint-distance threshold. |
+
+Analytic cases may not need iterative controls. Different modules' tolerances
+have different units and contracts; they are not interchangeable global error
+bounds. See each option record for validation rules and convergence behavior.
+
+### Complete recipes
+
+These functions fit and trim a curve by distance, recover a usable address from
+a projection, and combine a stroke outline with filled geometry. They preserve
+operation errors instead of assuming that arbitrary input succeeds. Parameters
+and traveled distances remain distinct, and the nearest-point derivative is
+not assumed to be a unit tangent.
+
+The following block is compiled as
+[`test/readme_recipes.gleam`](test/readme_recipes.gleam) and exercised by the
+recipe tests. CI checks that the README and compiled source stay identical.
+
+<!-- tested-recipes:start -->
+```gleam
+import gleam/result
+import svg_path
+import svg_path/csg
+import svg_path/distance
+import svg_path/fit
+import svg_path/measure
+import svg_path/stroke
+
+// Fit a curve on 0..1, then retain its middle half by traveled distance.
+pub fn middle_half(
+  point: fn(Float) -> svg_path.Point,
+) -> Result(svg_path.Subpath, svg_path.Error) {
+  use curve <- result.try(fit.subpath_from_parametric(
+    from: 0.0,
+    to: 1.0,
+    point:,
+  ))
+  use length <- result.try(measure.subpath_length(curve))
+  measure.subpath_between_lengths(
+    curve,
+    from: length *. 0.25,
+    to: length *. 0.75,
+  )
+}
+
+// Recover a nearest address and the derivative at that address.
+// The derivative is not a unit tangent and can be zero at a singularity.
+pub fn nearest_location(
+  point: svg_path.Point,
+  path: svg_path.Path,
+) -> Result(#(svg_path.PathProjection, svg_path.Point), svg_path.Error) {
+  use projection <- result.try(distance.path_projection(point, to: path))
+  use derivative <- result.try(svg_path.path_derivative(path, at: projection.at))
+  Ok(#(projection, derivative))
+}
+
+// Keep the original diagnostic when composing operations with different errors.
+pub type OutlineUnionError {
+  StrokeFailure(error: stroke.Error)
+  BooleanFailure(error: csg.Error)
+}
+
+// Turn centerlines into a filled outline, then combine it with another fill.
+pub fn outline_union(
+  centerlines: svg_path.Path,
+  width: Float,
+  filled_region: svg_path.Path,
+) -> Result(svg_path.Path, OutlineUnionError) {
+  use outline <- result.try(
+    stroke.path(centerlines, width:, join: stroke.Round, cap: stroke.Butt)
+    |> result.map_error(StrokeFailure),
+  )
+  csg.union_path(outline, filled_region, using: svg_path.Nonzero)
+  |> result.map_error(BooleanFailure)
+}
+```
+<!-- tested-recipes:end -->
+
 ### Migrating from 2.0.0
 
 Version 3 reorganizes operations without removing geometry capabilities. The
@@ -158,8 +249,10 @@ and numerical defaults; change their module qualifier and import.
 | Root parametric construction, constrained cubic fitting, and scalar minimization functions | `svg_path/fit` |
 
 Default-option functions move with their families. Closest-pair searches can use
-`distance.default_closest_pair_options()`; their configuration remains the
-shared `intersections.IntersectionOptions`. Root normalization functions, such
+`distance.default_closest_pair_options()`; they take
+`distance.ClosestPairOptions(tolerance:, max_depth:)`.
+The former intersection `parameter_snap` field never affected pair searches and
+is no longer accepted by these operations. Root normalization functions, such
 as `subpath_normalize_zero_length_lines`, stay in the root module.
 
 The 24 direct transform shortcuts (`translate_*`, `scale_*`, `scale_xy_*`,

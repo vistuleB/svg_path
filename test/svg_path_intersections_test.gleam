@@ -454,10 +454,9 @@ pub fn near_parallel_line_projection_is_scale_invariant_test() {
       distance.segment_segment_closest_pair_with(
         scaled_left,
         scaled_right,
-        options: intersections.IntersectionOptions(
+        options: distance.ClosestPairOptions(
           tolerance: 0.000000000001 *. scale,
           max_depth: 48,
-          parameter_snap: intersections.NoParameterSnap,
         ),
       )
     should.be_true(float.absolute_value(projection.left_t -. 0.5) <=. 0.000001)

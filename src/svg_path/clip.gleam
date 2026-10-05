@@ -29,7 +29,8 @@ pub type Options {
     intersection: intersections.IntersectionOptions,
     /// Options used to classify pieces against the filled clipping region.
     containment: svg_path.ContainmentOptions,
-    /// Path-coordinate tolerance used to deduplicate cut parameters.
+    /// Path-coordinate arc-length tolerance used to merge neighboring cuts
+    /// and select the start-point sample for pieces no longer than this tolerance.
     tolerance: Float,
   )
 }

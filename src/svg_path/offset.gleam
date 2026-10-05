@@ -3135,7 +3135,8 @@ pub type FittingOptions {
 /// `tangent_heal_angle_degrees` is the maximum tangent direction mismatch, in
 /// degrees, allowed by post-healing continuity checks at stable smooth
 /// boundaries. `single_offset_trimming` and `band_trimming` select the public
-/// trimming pipelines.
+/// trimming pipelines. Single-offset operations use only `single_offset_trimming`;
+/// band operations use only `band_trimming`. The two policies are independent.
 /// `inner_join` overrides local inner-corner construction. `None` selects
 /// `InnerRound` for `Round` joins and `InnerBevel` for every other join style.
 /// It applies to each offset side independently, including single offsets.

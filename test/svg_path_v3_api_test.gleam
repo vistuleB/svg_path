@@ -99,3 +99,40 @@ pub fn fitted_geometry_supports_projection_and_configurable_strokes_test() {
   assert float.absolute_value(bounds.bounding_box_height(box) -. 2.0)
     <. 0.000001
 }
+
+pub fn closest_pair_options_validate_even_for_empty_geometry_test() {
+  let line = svg_path.Line(svg_path.Point(0.0, 0.0), svg_path.Point(10.0, 0.0))
+  let assert Ok(subpath) = svg_path.subpath([line])
+  let empty = svg_path.path_empty()
+  list.each(
+    [
+      #(
+        distance.ClosestPairOptions(0.0, 48),
+        svg_path.InvalidIntersectionTolerance(0.0),
+      ),
+      #(
+        distance.ClosestPairOptions(0.000000001, 0),
+        svg_path.InvalidIntersectionMaxDepth(0),
+      ),
+    ],
+    fn(case_) {
+      let #(options, expected) = case_
+      assert distance.segment_segment_closest_pair_with(line, line, options:)
+        == Error(expected)
+      assert distance.segment_subpath_closest_pair_with(line, subpath, options:)
+        == Error(expected)
+      assert distance.segment_path_closest_pair_with(line, empty, options:)
+        == Error(expected)
+      assert distance.subpath_subpath_closest_pair_with(
+          subpath,
+          subpath,
+          options:,
+        )
+        == Error(expected)
+      assert distance.subpath_path_closest_pair_with(subpath, empty, options:)
+        == Error(expected)
+      assert distance.path_path_closest_pair_with(empty, empty, options:)
+        == Error(expected)
+    },
+  )
+}

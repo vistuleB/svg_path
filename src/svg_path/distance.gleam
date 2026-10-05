@@ -121,10 +121,37 @@ pub fn path_projection_with(
   query.path_projection_with(point, to: path, options: options)
 }
 
+/// Controls for geometry-to-geometry closest-pair searches.
+///
+/// Intersection parameter snapping does not apply to distance minimization.
+/// Invalid values retain the existing `InvalidIntersectionTolerance` and
+/// `InvalidIntersectionMaxDepth` errors from the shared numerical engine.
+pub type ClosestPairOptions {
+  ClosestPairOptions(
+    /// Finite, positive path-coordinate tolerance for overlap detection and
+    /// numerical refinement. This is not a certified global distance-error bound.
+    tolerance: Float,
+    /// Positive search subdivision limit; also bounds boundary projection
+    /// refinement. Analytic line-line searches need no subdivision.
+    max_depth: Int,
+  )
+}
+
 /// Default controls for geometry-to-geometry closest-pair searches.
-/// These use the shared bounded curve-pair search configuration.
-pub fn default_closest_pair_options() -> intersections.IntersectionOptions {
-  intersections.default_options()
+/// The tolerance is `0.000000001` and the maximum subdivision depth is `48`.
+pub fn default_closest_pair_options() -> ClosestPairOptions {
+  let defaults = intersections.default_options()
+  ClosestPairOptions(defaults.tolerance, defaults.max_depth)
+}
+
+fn pair_search_options(
+  options: ClosestPairOptions,
+) -> intersections.IntersectionOptions {
+  intersections.IntersectionOptions(
+    tolerance: options.tolerance,
+    max_depth: options.max_depth,
+    parameter_snap: intersections.NoParameterSnap,
+  )
 }
 
 /// Return one closest-point pair between two segments.
@@ -144,9 +171,13 @@ pub fn segment_segment_closest_pair(
 pub fn segment_segment_closest_pair_with(
   left: svg_path.Segment,
   right: svg_path.Segment,
-  options options: intersections.IntersectionOptions,
+  options options: ClosestPairOptions,
 ) -> Result(svg_path.SegmentSegmentProjection, svg_path.Error) {
-  intersections.segment_segment_closest_pair_with(left, right, options: options)
+  intersections.segment_segment_closest_pair_with(
+    left,
+    right,
+    options: pair_search_options(options),
+  )
 }
 
 /// Return one closest-point pair between a segment and a subpath.
@@ -162,9 +193,13 @@ pub fn segment_subpath_closest_pair(
 pub fn segment_subpath_closest_pair_with(
   left: svg_path.Segment,
   right: svg_path.Subpath,
-  options options: intersections.IntersectionOptions,
+  options options: ClosestPairOptions,
 ) -> Result(svg_path.SegmentSubpathProjection, svg_path.Error) {
-  intersections.segment_subpath_closest_pair_with(left, right, options: options)
+  intersections.segment_subpath_closest_pair_with(
+    left,
+    right,
+    options: pair_search_options(options),
+  )
 }
 
 /// Return one closest-point pair between a segment and a path.
@@ -180,9 +215,13 @@ pub fn segment_path_closest_pair(
 pub fn segment_path_closest_pair_with(
   left: svg_path.Segment,
   right: svg_path.Path,
-  options options: intersections.IntersectionOptions,
+  options options: ClosestPairOptions,
 ) -> Result(svg_path.SegmentPathProjection, svg_path.Error) {
-  intersections.segment_path_closest_pair_with(left, right, options: options)
+  intersections.segment_path_closest_pair_with(
+    left,
+    right,
+    options: pair_search_options(options),
+  )
 }
 
 /// Return one closest-point pair between two subpaths.
@@ -197,9 +236,13 @@ pub fn subpath_subpath_closest_pair(
 pub fn subpath_subpath_closest_pair_with(
   left: svg_path.Subpath,
   right: svg_path.Subpath,
-  options options: intersections.IntersectionOptions,
+  options options: ClosestPairOptions,
 ) -> Result(svg_path.SubpathSubpathProjection, svg_path.Error) {
-  intersections.subpath_subpath_closest_pair_with(left, right, options: options)
+  intersections.subpath_subpath_closest_pair_with(
+    left,
+    right,
+    options: pair_search_options(options),
+  )
 }
 
 /// Return one closest-point pair between a subpath and a path.
@@ -215,9 +258,13 @@ pub fn subpath_path_closest_pair(
 pub fn subpath_path_closest_pair_with(
   left: svg_path.Subpath,
   right: svg_path.Path,
-  options options: intersections.IntersectionOptions,
+  options options: ClosestPairOptions,
 ) -> Result(svg_path.SubpathPathProjection, svg_path.Error) {
-  intersections.subpath_path_closest_pair_with(left, right, options: options)
+  intersections.subpath_path_closest_pair_with(
+    left,
+    right,
+    options: pair_search_options(options),
+  )
 }
 
 /// Return one closest-point pair between two paths.
@@ -232,7 +279,11 @@ pub fn path_path_closest_pair(
 pub fn path_path_closest_pair_with(
   left: svg_path.Path,
   right: svg_path.Path,
-  options options: intersections.IntersectionOptions,
+  options options: ClosestPairOptions,
 ) -> Result(svg_path.PathPathProjection, svg_path.Error) {
-  intersections.path_path_closest_pair_with(left, right, options: options)
+  intersections.path_path_closest_pair_with(
+    left,
+    right,
+    options: pair_search_options(options),
+  )
 }

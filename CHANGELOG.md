@@ -28,9 +28,10 @@ diagnostics. Redundant transform shortcuts are replaced by matrix composition.
   Names, labels, result data, and defaults are preserved. Default-option
   functions move with their families; shared records remain in `svg_path`.
 - Moved geometry-to-geometry closest-pair entry points from `intersections` to
-  `distance`, alongside point projections. Pair-search options remain compatible
-  with `intersections.IntersectionOptions` and have a discoverable default
-  constructor at `distance.default_closest_pair_options`.
+  `distance`, alongside point projections. Pair searches now take
+  `distance.ClosestPairOptions` (`tolerance`, `max_depth`)
+  and use `distance.default_closest_pair_options`. This removes the accepted but
+  unused intersection `parameter_snap` setting; search behavior is unchanged.
 - Configurable stroke outlines now take explicit `width:`. `stroke.Options`
   contains only fitting, stalled-offset diameter, tangent healing, and inner-join
   controls. Removed offset trimming settings that strokes ignored or overrode;
@@ -43,6 +44,10 @@ diagnostics. Redundant transform shortcuts are replaced by matrix composition.
   their `_with` variants. Existing detailed results still expose the arrangement
   and source correspondence.
 - Added task-oriented API entry points and a migration guide to the README.
+- Documented geometry- and operation-specific option applicability, including
+  independent offset trimming policies and clipping's short-piece sampling.
+- Added three compiled, behavior-tested README recipes; CI verifies that the
+  documented code matches its test module.
 - Extracted shared numerical implementations behind the public operation
   modules; migrated repository callers and added cross-module workflow tests.
 - Expanded the external-package smoke example to exercise the reorganized API
