@@ -23,7 +23,7 @@ pub fn main() -> Dynamic {
   let options =
     offset.Options(
       ..offset.default_options(),
-      fitting: offset.FittingOptions(tolerance: 0.05, samples: 5, max_depth: 12),
+      fitting: offset.FittingOptions(tolerance: 0.05, samples: 5, max_depth: 5),
     )
   let assert Ok(offset_path) =
     offset.path_untrimmed_with(

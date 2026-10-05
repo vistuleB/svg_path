@@ -252,6 +252,11 @@ and numerical defaults; change their module qualifier and import.
 
 Additional 3.0 changes:
 
+- Match `csg.ArrangementGraphError(error:)` to inspect the underlying stable
+  `arrangement.Error`, including invalid numerical option values.
+- Keep offset/stroke `FittingOptions.max_depth` in the supported range 1–5.
+  Values above five previously acted as five; use five to preserve that behavior.
+
 - Segment–subpath intersections now return
   `SegmentSubpathIntersection(point:, segment_t:, subpath_parameters:)` rather
   than a three-element tuple. This also applies to `encounters.segment_subpath`.
@@ -1765,7 +1770,9 @@ Choose `join: offset.Bevel`, `offset.Miter(miter_limit:)`,
 and `cap: offset.Butt`, `offset.Square`, or `offset.RoundCap` wherever the operation
 constructs an open-source band or stroke outline. Single-offset trimming also
 takes `cap:` for its internal source-to-offset winding band; this does not add
-caps to the returned one-sided offset walk.
+caps to the returned one-sided offset walk. With `InBandTrimming`, the cap
+changes the closed band's winding region and can therefore change which offset
+pieces survive. Closed source subpaths have no endpoint caps.
 
 The `_with` variants additionally accept `options: offset.Options` for fitting,
 numerical tolerances, trimming controls, and an optional inner-corner join
@@ -2138,7 +2145,7 @@ let arrangement_build = output.build
 ```
 
 `CsgResult.path` is the reconstructed output path. `CsgResult.build` is the
-exact `ArrangementGraphBuild` used to compute it, exposing the arrangement
+exact `ArrangementSegmentBuild` used to compute it, exposing the arrangement
 graph and source-segment images for inspection or drawing. This matters because
 endpoint clustering and segment refinement make the arrangement's geometry the
 source of truth for the returned path.

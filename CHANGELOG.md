@@ -62,6 +62,10 @@ diagnostics. Redundant transform shortcuts are replaced by matrix composition.
 
 ### Additions and documentation
 
+- Correct the CSG build type in the README, explain how single-offset caps
+  affect in-band trimming, and distinguish historical join extensions from
+  SVG join styles.
+
 - Added path-only Boolean operations (`union_path`, `intersection_path`,
   `difference_path`, `symmetric_difference_path`, `nested_contours_path`) and
   their `_with` variants. Existing detailed results still expose the arrangement
@@ -78,7 +82,7 @@ diagnostics. Redundant transform shortcuts are replaced by matrix composition.
 
 ### Release verification
 
-- `scripts/test-release`: 1,665 fast and 26 slow tests passed.
+- `scripts/test-release`: 1,668 fast and 26 slow tests passed.
 - `gleam docs build` and the JavaScript public-API example build passed.
 - All 13 regenerated README figures match the existing artwork byte-for-byte;
   `assets-v3.0.0` pins that same asset commit.

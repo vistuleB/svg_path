@@ -898,7 +898,10 @@ pub fn segment_with(
 /// zero-offset source pieces, removes zero-source-only and winding-mismatched
 /// arrangement capacities, applies forced parity reductions, and reconstructs
 /// surviving offset edges in untrimmed traversal order.
-/// `cap` closes the internal winding bands at open source endpoints.
+/// `cap` closes the internal source-to-offset winding band at open endpoints.
+/// With `InBandTrimming`, this changes the region used for winding classification
+/// and can change which offset pieces survive. Cap edges are not appended to
+/// the returned one-sided offset walk. Closed sources have no endpoint caps.
 pub fn subpath(
   subpath: svg_path.Subpath,
   offset offset: Float,
@@ -1304,6 +1307,9 @@ pub fn untrimmed_subpath_from_normalized_source(
 }
 
 /// Offset every subpath in a path by a signed normal displacement.
+///
+/// As with `subpath`, `cap` closes open-source winding bands for in-band
+/// trimming; it can affect survivors but adds no caps to the returned walks.
 pub fn path(
   path: svg_path.Path,
   offset offset: Float,
@@ -3011,7 +3017,9 @@ fn arrangement_error(error: arrangement_graph.Error) -> InternalError {
 
 /// Join style used when offsetting adjacent subpath segments.
 ///
-/// Supports SVG `bevel`, `miter`, `miter-clip`, `round`, and `arcs`.
+/// Supports SVG `bevel`, `miter`, and `round`, plus the `miter-clip` and `arcs`
+/// extensions based on historical SVG 2 proposals. These construct geometry
+/// directly and do not depend on browser support for those attribute values.
 pub type Join {
   /// Continue source curvature with tangent circles, clipped at the limit.
   /// On the outer side, diverging rays and reversed source endpoints use Round.
