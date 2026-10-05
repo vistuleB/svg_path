@@ -38,20 +38,16 @@ fn offset_path(
   source: svg_path.Subpath,
   final_trimming: offset.SingleOffsetFinalTrimming,
 ) -> Result(svg_path.Path, offset.Error) {
-  let options =
-    offset.Options(
-      ..offset.default_options(),
-      single_offset_trimming: offset.SingleOffsetTrimming(
-        offside: False,
-        final_trimming:,
-      ),
-    )
+  let options_trimming =
+    offset.SingleOffsetTrimming(offside: False, final_trimming:)
+  let options = offset.default_options()
   offset.subpath_with(
     source,
     offset: 0.2,
     join: offset.Round,
     cap: offset.Butt,
     options:,
+    trimming: options_trimming,
   )
 }
 

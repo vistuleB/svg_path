@@ -367,7 +367,7 @@ pub fn generate_recursive_dash_failure_zoom() {
 pub fn generate_recursive_dash_cap_report() {
   let _ = ensure_dir("examples/debug/recursive-dash-cap-report.txt")
   let source = place_subpath(recursive_dash_source(), 92.0, 154.0)
-  let first_options = stroke.default_options()
+  let first_options = offset.default_options()
   let assert Ok(first_stroke) =
     stroke.subpath_dashed_with(
       source,
@@ -385,7 +385,7 @@ pub fn generate_recursive_dash_cap_report() {
     stroke.subpath_dashes(outline, pattern: [17.0, 9.0], offset: 3.0)
   let dash = nth_subpath(dashes, 4)
   let options = offset.default_options()
-  let stroke_options = stroke.default_options()
+  let stroke_options = offset.default_options()
   let radius = 3.0
   let positive =
     offset.subpath_untrimmed_with(
@@ -516,7 +516,7 @@ fn stroke_caps() -> String {
       |> list.map(fn(example) {
         let #(x, label, cap) = example
         let placed = place_subpath(source, x +. 42.0, 112.0)
-        let options = stroke.default_options()
+        let options = offset.default_options()
         let assert Ok(stroke) =
           stroke.subpath_with(
             placed,
@@ -566,7 +566,7 @@ fn dashed_strokes() -> String {
         let #(x, label, pattern, dash_offset, stroke_color, fill_color) =
           example
         let placed = place_subpath(source, x +. 22.0, 118.0)
-        let options = stroke.default_options()
+        let options = offset.default_options()
         let assert Ok(dashed) =
           stroke.subpath_dashed_with(
             placed,
@@ -612,7 +612,7 @@ fn recursive_dashes() -> String {
       pattern: first_dash_pattern,
       offset: first_dash_offset,
     )
-  let first_options = stroke.default_options()
+  let first_options = offset.default_options()
   let assert Ok(first_stroke) =
     stroke.subpath_dashed_with(
       source,
@@ -625,7 +625,7 @@ fn recursive_dashes() -> String {
         offset: first_dash_offset,
       ),
     )
-  let second_options = stroke.default_options()
+  let second_options = offset.default_options()
   let assert Ok(second_paths) =
     recursive_dash_outline_strokes(
       svg_path.path_subpaths(first_stroke),
@@ -792,7 +792,7 @@ fn recursive_dash_outline_strokes(
   outlines: List(svg_path.Subpath),
   join join: offset.Join,
   cap cap: offset.Cap,
-  options options: stroke.Options,
+  options options: offset.Options,
   accumulated accumulated: List(svg_path.Path),
 ) -> Result(List(svg_path.Path), stroke.Error) {
   case outlines {
@@ -947,7 +947,7 @@ fn stroke_non_degenerate_dashes(
   dashes: List(svg_path.Subpath),
   join join: offset.Join,
   cap cap: offset.Cap,
-  options options: stroke.Options,
+  options options: offset.Options,
   accumulated accumulated: List(svg_path.Subpath),
 ) -> Result(List(svg_path.Subpath), stroke.Error) {
   case dashes {
@@ -1503,6 +1503,7 @@ fn figure_eight_band() -> String {
       join: offset.Round,
       cap: offset.Butt,
       options:,
+      trimming: offset.default_band_trimming(),
     )
 
   document(
@@ -1540,6 +1541,7 @@ fn symmetric_figure_eight_bands() -> String {
       join: offset.Round,
       cap: offset.Butt,
       options:,
+      trimming: offset.default_band_trimming(),
     )
   let assert Ok(outer_band) =
     offset.subpath_band_with(
@@ -1549,6 +1551,7 @@ fn symmetric_figure_eight_bands() -> String {
       join: offset.Round,
       cap: offset.Butt,
       options:,
+      trimming: offset.default_band_trimming(),
     )
 
   let left = symmetric_figure_eight_panel(source, outer_band, x: 18.0)
@@ -1744,6 +1747,7 @@ fn package_title_first_offset() -> String {
       join: offset.Miter(offset.default_miter_limit),
       cap: offset.Butt,
       options:,
+      trimming: offset.default_single_offset_trimming(),
     )
   package_title_first_offset_document(source, untrimmed, trimmed)
 }
@@ -1798,6 +1802,7 @@ fn package_title_nine_offsets() -> String {
           join: offset.Miter(offset.default_miter_limit),
           cap: offset.Butt,
           options:,
+          trimming: offset.default_single_offset_trimming(),
         )
       [next, ..levels]
     })

@@ -43,6 +43,7 @@ pub fn main() -> Nil {
       join: offset.Miter(offset.default_miter_limit),
       cap: offset.Butt,
       options:,
+      trimming: offset.default_single_offset_trimming(),
     )
   let assert Ok(second_untrimmed) =
     offset.path_untrimmed_with(

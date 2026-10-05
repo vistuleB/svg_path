@@ -25,6 +25,7 @@ pub fn main() -> Nil {
       join: offset.Round,
       cap: offset.Butt,
       options:,
+      trimming: offset.default_band_trimming(),
     )
   let assert Ok(inner_34_outer_18) =
     offset.subpath_band_with(
@@ -34,6 +35,7 @@ pub fn main() -> Nil {
       join: offset.Round,
       cap: offset.Butt,
       options:,
+      trimming: offset.default_band_trimming(),
     )
   let assert Ok(inner_minus_18_outer_minus_34) =
     offset.subpath_band_with(
@@ -43,6 +45,7 @@ pub fn main() -> Nil {
       join: offset.Round,
       cap: offset.Butt,
       options:,
+      trimming: offset.default_band_trimming(),
     )
   let assert Ok(inner_minus_34_outer_minus_18) =
     offset.subpath_band_with(
@@ -52,6 +55,7 @@ pub fn main() -> Nil {
       join: offset.Round,
       cap: offset.Butt,
       options:,
+      trimming: offset.default_band_trimming(),
     )
   let band_subpaths =
     [

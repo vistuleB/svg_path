@@ -94,7 +94,7 @@ pub fn fitted_geometry_supports_projection_and_configurable_strokes_test() {
       width: 2.0,
       join: offset.Round,
       cap: offset.Butt,
-      options: stroke.default_options(),
+      options: offset.default_options(),
     )
   let assert Ok(box) = bounds.path_bounding_box(outline)
   assert float.absolute_value(bounds.bounding_box_height(box) -. 2.0)
@@ -169,4 +169,100 @@ pub fn generic_projection_records_compose_across_geometry_levels_test() {
     == Ok(mixed_pair.left_point)
   assert svg_path.path_point(path, at: mixed_pair.right_at)
     == Ok(mixed_pair.right_point)
+}
+
+pub fn default_trimming_entrypoints_match_explicit_policies_test() {
+  let assert Ok(path) = parse.path("M0 0H10V10")
+  let assert [source] = svg_path.path_subpaths(path)
+  let options = offset.default_options()
+  let single = offset.default_single_offset_trimming()
+  let band = offset.default_band_trimming()
+  assert offset.subpath(
+      source,
+      offset: 1.0,
+      join: offset.Round,
+      cap: offset.Butt,
+    )
+    == offset.subpath_with(
+      source,
+      offset: 1.0,
+      join: offset.Round,
+      cap: offset.Butt,
+      options:,
+      trimming: single,
+    )
+  assert offset.path(path, offset: 1.0, join: offset.Round, cap: offset.Butt)
+    == offset.path_with(
+      path,
+      offset: 1.0,
+      join: offset.Round,
+      cap: offset.Butt,
+      options:,
+      trimming: single,
+    )
+  assert offset.subpath_band(
+      source,
+      inner_offset: -1.0,
+      outer_offset: 1.0,
+      join: offset.Round,
+      cap: offset.Butt,
+    )
+    == offset.subpath_band_with(
+      source,
+      inner_offset: -1.0,
+      outer_offset: 1.0,
+      join: offset.Round,
+      cap: offset.Butt,
+      options:,
+      trimming: band,
+    )
+  assert offset.path_band(
+      path,
+      inner_offset: -1.0,
+      outer_offset: 1.0,
+      join: offset.Round,
+      cap: offset.Butt,
+    )
+    == offset.path_band_with(
+      path,
+      inner_offset: -1.0,
+      outer_offset: 1.0,
+      join: offset.Round,
+      cap: offset.Butt,
+      options:,
+      trimming: band,
+    )
+}
+
+pub fn path_band_propagates_custom_trimming_to_every_subpath_test() {
+  let assert Ok(path) = parse.path("M0 0H10V10 M20 0H30V10")
+  let options = offset.default_options()
+  let trimming = offset.BandTrimming(False, False, False)
+  let expected =
+    path
+    |> svg_path.path_subpaths
+    |> list.map(fn(source) {
+      let assert Ok(band) =
+        offset.subpath_band_with(
+          source,
+          inner_offset: -1.0,
+          outer_offset: 1.0,
+          join: offset.Round,
+          cap: offset.Square,
+          options:,
+          trimming:,
+        )
+      band
+    })
+    |> svg_path.path_combine
+  assert offset.path_band_with(
+      path,
+      inner_offset: -1.0,
+      outer_offset: 1.0,
+      join: offset.Round,
+      cap: offset.Square,
+      options:,
+      trimming:,
+    )
+    == Ok(expected)
 }

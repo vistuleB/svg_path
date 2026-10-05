@@ -288,23 +288,24 @@ pub fn default_fitting_options() -> FittingOptions {
   )
 }
 
-/// Return default technical options for offset construction.
+/// Return default construction options shared by offsets and strokes.
 pub fn default_options() -> Options {
   Options(
     fitting: default_fitting_options(),
     stalled_offset_diameter: default_stalled_offset_diameter,
     tangent_heal_angle_degrees: default_tangent_heal_angle_degrees,
     inner_join: None,
-    single_offset_trimming: SingleOffsetTrimming(
-      offside: True,
-      final_trimming: InBandTrimming,
-    ),
-    band_trimming: BandTrimming(
-      inner_cusps: True,
-      outer_cusps: True,
-      in_band: True,
-    ),
   )
+}
+
+/// Default single-offset trimming: offside trimming followed by in-band trimming.
+pub fn default_single_offset_trimming() -> SingleOffsetTrimming {
+  SingleOffsetTrimming(offside: True, final_trimming: InBandTrimming)
+}
+
+/// Default band trimming: trim both sides' cusps, then trim the assembled band.
+pub fn default_band_trimming() -> BandTrimming {
+  BandTrimming(inner_cusps: True, outer_cusps: True, in_band: True)
 }
 
 fn offside_trimmed_single_offset_winding_path(
@@ -421,9 +422,9 @@ fn trim_single_offset_builds(
   offset: Float,
   bands bands: List(OneSubpathBand),
   options options: Options,
+  trimming trimming: SingleOffsetTrimming,
 ) -> Result(svg_path.Path, InternalError) {
-  let SingleOffsetTrimming(offside:, final_trimming:) =
-    options.single_offset_trimming
+  let SingleOffsetTrimming(offside:, final_trimming:) = trimming
   use subpaths <- result.try(final_single_offset_subpaths(
     builds,
     offset,
@@ -908,16 +909,25 @@ pub fn subpath(
   join join: Join,
   cap cap: Cap,
 ) -> Result(svg_path.Path, Error) {
-  subpath_with(subpath, offset:, join:, cap:, options: default_options())
+  subpath_with(
+    subpath,
+    offset:,
+    join:,
+    cap:,
+    options: default_options(),
+    trimming: default_single_offset_trimming(),
+  )
 }
 
-/// Offset a subpath by a signed normal displacement using explicit options.
+/// Offset a subpath using explicit construction options and trimming.
+/// Use `default_single_offset_trimming()` for the ordinary trimming behavior.
 pub fn subpath_with(
   subpath subpath: svg_path.Subpath,
   offset offset: Float,
   join join: Join,
   cap cap: Cap,
   options options: Options,
+  trimming trimming: SingleOffsetTrimming,
 ) -> Result(svg_path.Path, Error) {
   let result = {
     use _ <- result.try(validate_options(options))
@@ -941,6 +951,7 @@ pub fn subpath_with(
       offset,
       bands: [band],
       options:,
+      trimming:,
     )
   }
   result |> result.map_error(public_error)
@@ -1052,16 +1063,18 @@ pub fn subpath_band(
     join:,
     cap:,
     options: default_options(),
+    trimming: default_band_trimming(),
   )
 }
 
-/// Offset a subpath at two signed normal displacements using explicit options.
+/// Offset a subpath at two signed normal displacements using explicit options
+/// and trimming. Use `default_band_trimming()` for the ordinary policy.
 ///
 /// When its cusp trimming is enabled, each synchronized side is first noded
 /// and trimmed on its own. A submerged run without any reversed source
 /// preimage is retained because it does not
 /// represent a reversal-generated fold. The surviving sides are then assembled
-/// into a band. `band_trimming.in_band` controls final joint trimming using
+/// into a band. `trimming.in_band` controls final joint trimming using
 /// their directed winding-side opinions. Open bands receive caps even when
 /// final trimming is disabled.
 pub fn subpath_band_with(
@@ -1071,6 +1084,7 @@ pub fn subpath_band_with(
   join join: Join,
   cap cap: Cap,
   options options: Options,
+  trimming trimming: BandTrimming,
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(
     validate_options(options)
@@ -1096,7 +1110,7 @@ pub fn subpath_band_with(
     outer_culled: culled_b,
     ..,
   ) = build
-  let BandTrimming(inner_cusps:, outer_cusps:, in_band:) = options.band_trimming
+  let BandTrimming(inner_cusps:, outer_cusps:, in_band:) = trimming
   use untrimmed_a <- result.try(
     trim_band_side_cusps(
       culled_a,
@@ -1316,16 +1330,25 @@ pub fn path(
   join join: Join,
   cap cap: Cap,
 ) -> Result(svg_path.Path, Error) {
-  path_with(path, offset:, join:, cap:, options: default_options())
+  path_with(
+    path,
+    offset:,
+    join:,
+    cap:,
+    options: default_options(),
+    trimming: default_single_offset_trimming(),
+  )
 }
 
-/// Offset every subpath by a signed normal displacement using explicit options.
+/// Offset every subpath using explicit construction options and trimming.
+/// Use `default_single_offset_trimming()` for the ordinary trimming behavior.
 pub fn path_with(
   path path: svg_path.Path,
   offset offset: Float,
   join join: Join,
   cap cap: Cap,
   options options: Options,
+  trimming trimming: SingleOffsetTrimming,
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(
     validate_options(options)
@@ -1357,7 +1380,13 @@ pub fn path_with(
     |> result.map_error(public_error),
   )
   use result <- result.try(
-    trim_single_offset_builds(untrimmed_builds, offset, bands:, options:)
+    trim_single_offset_builds(
+      untrimmed_builds,
+      offset,
+      bands:,
+      options:,
+      trimming:,
+    )
     |> result.map_error(public_error),
   )
   Ok(result)
@@ -1403,11 +1432,13 @@ pub fn path_band(
     join:,
     cap:,
     options: default_options(),
+    trimming: default_band_trimming(),
   )
 }
 
-/// Offset every subpath in a path at two signed normal displacements using
-/// options.
+/// Offset every subpath at two signed normal displacements using explicit
+/// construction options and trimming. Use `default_band_trimming()` for the
+/// ordinary policy; the supplied policy is applied to every source subpath.
 pub fn path_band_with(
   path path: svg_path.Path,
   inner_offset inner_offset: Float,
@@ -1415,6 +1446,7 @@ pub fn path_band_with(
   join join: Join,
   cap cap: Cap,
   options options: Options,
+  trimming trimming: BandTrimming,
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(
     validate_options(options)
@@ -1429,6 +1461,7 @@ pub fn path_band_with(
       join,
       cap,
       options,
+      trimming,
       converted: [],
     ),
   )
@@ -1607,6 +1640,7 @@ fn band_path_subpaths(
   join: Join,
   cap: Cap,
   options: Options,
+  trimming: BandTrimming,
   converted converted: List(svg_path.Subpath),
 ) -> Result(List(svg_path.Subpath), Error) {
   case subpaths {
@@ -1619,6 +1653,7 @@ fn band_path_subpaths(
         join:,
         cap:,
         options:,
+        trimming:,
       ))
       band_path_subpaths(
         rest,
@@ -1627,6 +1662,7 @@ fn band_path_subpaths(
         join,
         cap,
         options,
+        trimming,
         converted: list.append(
           list.reverse(svg_path.path_subpaths(offset)),
           converted,
@@ -3135,16 +3171,17 @@ pub type FittingOptions {
   FittingOptions(tolerance: Float, samples: Int, max_depth: Int)
 }
 
-/// Offset construction options; the main join and cap are explicit parameters.
+/// Shared construction options for offsets and strokes.
+/// Joins, caps, and operation-specific trimming are separate arguments.
 ///
 /// `fitting` controls offset approximation. `stalled_offset_diameter`
 /// decides when the stalled-run builder treats an offset piece as too small to
 /// keep as an ordinary independently fitted segment.
 /// `tangent_heal_angle_degrees` is the maximum tangent direction mismatch, in
 /// degrees, allowed by post-healing continuity checks at stable smooth
-/// boundaries. `single_offset_trimming` and `band_trimming` select the public
-/// trimming pipelines. Single-offset operations use only `single_offset_trimming`;
-/// band operations use only `band_trimming`. The two policies are independent.
+/// boundaries. Trimmed offset `_with` calls separately accept `trimming:`:
+/// `SingleOffsetTrimming` for one-sided offsets, or `BandTrimming` for bands.
+/// Stroke uses these same construction options with its fixed trimming policy.
 /// `inner_join` overrides local inner-corner construction. `None` selects
 /// `InnerRound` for `Round` joins and `InnerBevel` for every other join style.
 /// It applies to each offset side independently, including single offsets.
@@ -3154,8 +3191,6 @@ pub type Options {
     stalled_offset_diameter: Float,
     tangent_heal_angle_degrees: Float,
     inner_join: Option(InnerJoin),
-    single_offset_trimming: SingleOffsetTrimming,
-    band_trimming: BandTrimming,
   )
 }
 

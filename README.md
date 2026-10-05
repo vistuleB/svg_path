@@ -152,9 +152,9 @@ geometry or stages. These distinctions matter when tuning a query:
 | --- | --- |
 | `distance.ClosestPairOptions` | Geometry-to-geometry searches use `tolerance` and `max_depth`. Intersection parameter snapping is not part of this search. |
 | `svg_path.DistanceOptions.samples` | Arc and sampling-based projection; quadratic and cubic projection use polynomial root isolation. |
-| `offset.Options.single_offset_trimming` / `band_trimming` | Single-offset operations use the first policy; band operations use the second. Changing one does not tune the other. |
+| Offset `trimming:` arguments | Single-offset `_with` calls accept `SingleOffsetTrimming`; band `_with` calls accept `BandTrimming`. Neither policy is stored in shared construction options. |
 | `offset.FittingOptions.max_depth` | Offset fitting accepts depths 1–5 inclusive; other values return `InvalidMaxDepth`. |
-| `stroke.Options` | Only fitting, stalled-offset diameter, tangent healing, and inner joins. Stroke trimming is fixed. |
+| `offset.Options` | Shared by offsets and strokes: fitting, stalled-offset diameter, tangent healing, and inner joins. Stroke trimming is fixed. |
 | `clip.Options.tolerance` | Arc-length separation for merging cuts; also selects start-point sampling for pieces no longer than this tolerance. Intersection and fill-classification tolerances are separate nested controls. |
 | `csg.Options.minimum_length` | This is a segment-length **upper-bound** threshold for discarding refined pieces, not an endpoint-distance threshold. |
 
@@ -298,13 +298,17 @@ path |> transform.path(by: transform.rotate(degrees: 30.0))
 ```
 
 Every configurable stroke outline now requires `width:` just like its ordinary
-counterpart. Replace `stroke.Options(width:, offset:)` with a numerical-only
-record containing `fitting`, `stalled_offset_diameter`,
-`tangent_heal_angle_degrees`, and `inner_join`, or use `stroke.default_options()`.
-When migrating a customized offset record, copy those four applicable fields.
-Stroke trimming remains fixed to its existing construction policy; ignored
-single-offset and band-trimming fields are no longer accepted. Dash extraction
-and its `DashOptions` are unchanged.
+counterpart. Replace `stroke.Options` and `stroke.default_options()` with
+`offset.Options` and `offset.default_options()`. The shared record contains
+`fitting`, `stalled_offset_diameter`, `tangent_heal_angle_degrees`, and `inner_join`.
+
+Move the former `offset.Options.single_offset_trimming` or `band_trimming`
+value into the applicable operation's `trimming:` argument. Only trimmed offset
+`_with` operations require this extra argument. Use
+`offset.default_single_offset_trimming()` or `offset.default_band_trimming()`
+to preserve ordinary behavior; non-`_with` signatures and defaults are unchanged.
+Stroke accepts the same construction record and retains its fixed trimming
+policy. Dash extraction and `DashOptions` are unchanged.
 
 Internal declarations are implementation details, including any old entry
 points still needed by the geometry kernels. Use the operation modules above
@@ -1774,10 +1778,11 @@ caps to the returned one-sided offset walk. With `InBandTrimming`, the cap
 changes the closed band's winding region and can therefore change which offset
 pieces survive. Closed source subpaths have no endpoint caps.
 
-The `_with` variants additionally accept `options: offset.Options` for fitting,
-numerical tolerances, trimming controls, and an optional inner-corner join
-override. The main join and cap remain explicit arguments. `Options.fitting`
-controls fitted-curve accuracy and maximum subdivision depth.
+The `_with` variants accept `options: offset.Options` for fitting,
+numerical tolerances, and an optional inner-corner join
+override. Trimmed `_with` calls also require `trimming:` with the policy for
+that operation, as shown below. The main join and cap remain explicit arguments.
+`Options.fitting` controls fitted-curve accuracy and maximum subdivision depth.
 
 For single offsets, the inside join can be controlled independently of the main
 join style: set `inner_join: Some(offset.InnerRound)` or
@@ -1795,14 +1800,18 @@ side of a closed source contour. They take `join:` but no `cap:`.
 `SingleOffsetTrimming` controls two consecutive stages:
 
 ```gleam
-let options =
-  offset.Options(
-    ..offset.default_options(),
-    single_offset_trimming: offset.SingleOffsetTrimming(
-      offside: True,
-      final_trimming: offset.InBandTrimming,
-    ),
-  )
+let trimming = offset.SingleOffsetTrimming(
+  offside: True,
+  final_trimming: offset.InBandTrimming,
+)
+offset.subpath_with(
+  subpath,
+  offset: 12.0,
+  join: offset.Round,
+  cap: offset.Butt,
+  options: offset.default_options(),
+  trimming:,
+)
 ```
 
 `offside` applies only to closed source subpaths. The source and its offset
@@ -1867,22 +1876,27 @@ restriction. Either ordering is accepted. Exchanging the values reverses the
 orientation of the resulting band. The explicit `cap:` argument determines
 how open-source endpoints are capped: `Butt` connects the sides directly,
 while `Square` and `RoundCap` extend or round the ends. Caps are part of the
-assembled outline whether or not `band_trimming.in_band` is enabled. With
+assembled outline whether or not `trimming.in_band` is enabled. With
 trimming enabled, caps participate in pruning along with the offset sides;
 the surviving band contours are closed.
 
 Band trimming has three independent Boolean controls:
 
 ```gleam
-let options =
-  offset.Options(
-    ..offset.default_options(),
-    band_trimming: offset.BandTrimming(
-      inner_cusps: True,
-      outer_cusps: True,
-      in_band: True,
-    ),
-  )
+let trimming = offset.BandTrimming(
+  inner_cusps: True,
+  outer_cusps: True,
+  in_band: True,
+)
+offset.subpath_band_with(
+  subpath,
+  inner_offset: -6.0,
+  outer_offset: 6.0,
+  join: offset.Round,
+  cap: offset.Butt,
+  options: offset.default_options(),
+  trimming:,
+)
 ```
 
 - `inner_cusps` applies side-local cusp trimming to the caller-designated
@@ -1993,7 +2007,7 @@ import svg_path/stroke
 
 stroke.subpath(subpath, width: 8.0, join: offset.Round, cap: offset.RoundCap)
 
-let options = stroke.default_options()
+let options = offset.default_options()
 stroke.path_with(path, width: 8.0, join: offset.Bevel, cap: offset.Square, options:)
 
 stroke.subpath_dashed(
@@ -2008,7 +2022,7 @@ stroke.subpath_dashed(
 
 All stroke-outline entry points (`segment`, `subpath`, `path`,
 `subpath_dashed`, and `path_dashed`, including their `_with` forms) require
-explicit `width:`, `join:`, and `cap:` arguments. `stroke.Options` contains
+explicit `width:`, `join:`, and `cap:` arguments. Shared `offset.Options` contains
 only fitting, healing, and inner-join controls that stroke construction uses.
 Trimming follows the stroke construction policy and is not a caller setting.
 The non-`_with` forms default only the numerical options. Pure dash extraction (`subpath_dashes`, `path_dashes`, and their
@@ -2017,7 +2031,7 @@ The non-`_with` forms default only the numerical options. Pure dash extraction (
 Nonzero stroke outlines delegate to symmetric bands with offsets `-width/2`
 and `+width/2`. Band construction owns normalization, sides, caps, and trimming.
 For compatibility, stroke explicitly disables both per-side cusp passes and
-enables final in-band trimming; the nested `band_trimming` settings are ignored.
+enables final in-band trimming. No trimming settings are accepted by stroke.
 Zero-length strokes retain the SVG cap-specific point behavior.
 
 ## Arrangement Graphs

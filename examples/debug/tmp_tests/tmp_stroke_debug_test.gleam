@@ -109,7 +109,7 @@ fn panel(
       width: 1.0,
       join:,
       cap:,
-      options: stroke.Options(width:, offset: options),
+      options: offset.Options(width:, offset: options),
     )
   {
     Ok(result) -> [

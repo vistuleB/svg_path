@@ -78,11 +78,11 @@ pub fn inner_bevel_override_does_not_change_outer_round_join_test() {
 }
 
 pub fn band_inner_join_is_local_not_the_named_inner_offset_test() {
+  let options_trimming = offset.BandTrimming(False, False, False)
   let options =
     offset.Options(
       ..offset.default_options(),
       inner_join: Some(offset.InnerRound),
-      band_trimming: offset.BandTrimming(False, False, False),
     )
   list.each([#(-1.0, 1.0), #(1.0, -1.0)], fn(pair) {
     let #(inner, outer) = pair
@@ -94,6 +94,7 @@ pub fn band_inner_join_is_local_not_the_named_inner_offset_test() {
         offset.Bevel,
         offset.Butt,
         options,
+        trimming: options_trimming,
       )
     let assert [outline] = svg_path.path_subpaths(band)
     assert arc_count(outline) == 1
@@ -105,6 +106,7 @@ pub fn band_inner_join_is_local_not_the_named_inner_offset_test() {
         offset.Bevel,
         offset.Butt,
         offset.Options(..options, inner_join: Some(offset.InnerBevel)),
+        trimming: options_trimming,
       )
     let assert [outline] = svg_path.path_subpaths(beveled)
     assert arc_count(outline) == 0

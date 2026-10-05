@@ -35,6 +35,7 @@ pub fn main() -> Nil {
       join: offset.Miter(offset.default_miter_limit),
       cap: offset.Butt,
       options:,
+      trimming: offset.default_single_offset_trimming(),
     )
 
   let assert Ok(source_box) = bounds.path_bounding_box(source)

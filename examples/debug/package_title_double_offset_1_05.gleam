@@ -36,6 +36,7 @@ pub fn main() -> Nil {
       join: offset.Miter(offset.default_miter_limit),
       cap: offset.Butt,
       options:,
+      trimming: offset.default_single_offset_trimming(),
     )
   io.println(
     "first offset subpaths: "
@@ -72,6 +73,7 @@ pub fn main() -> Nil {
       join: offset.Miter(offset.default_miter_limit),
       cap: offset.Butt,
       options:,
+      trimming: offset.default_single_offset_trimming(),
     )
   case second_trimmed {
     Ok(second_offset) -> {

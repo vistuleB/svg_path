@@ -25,6 +25,7 @@ pub fn figure_eight_correspondence_blocks() -> String {
       join: offset.Round,
       cap: offset.Butt,
       options:,
+      trimming: offset.default_band_trimming(),
     )
   let assert Ok(untrimmed) =
     offset.subpath_band_untrimmed_with(

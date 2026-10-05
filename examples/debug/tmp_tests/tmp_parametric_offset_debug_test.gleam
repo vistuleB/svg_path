@@ -103,6 +103,7 @@ fn print_parametric_cut_diagnostics(
       join:,
       cap: offset.Butt,
       options:,
+      trimming: offset.default_single_offset_trimming(),
     )
   let segments = svg_path.subpath_segments(provisional)
   let cuts =
@@ -472,6 +473,7 @@ fn print_diamond_round_negative_distances() -> Nil {
       join: offset.Round,
       cap: offset.Butt,
       options:,
+      trimming: offset.default_single_offset_trimming(),
     )
   let threshold =
     float.absolute_value(offset_distance) -. debug_distance_margin()
@@ -1045,6 +1047,7 @@ fn render_panel(
       join: join_case.join,
       cap: offset.Butt,
       options:,
+      trimming: offset.default_single_offset_trimming(),
     )
   let placed_result = place_path(result, x, y)
 

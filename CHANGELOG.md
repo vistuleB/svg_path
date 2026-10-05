@@ -55,10 +55,14 @@ diagnostics. Redundant transform shortcuts are replaced by matrix composition.
   `distance.ClosestPairOptions` (`tolerance`, `max_depth`)
   and use `distance.default_closest_pair_options`. This removes the accepted but
   unused intersection `parameter_snap` setting; search behavior is unchanged.
-- Configurable stroke outlines now take explicit `width:`. `stroke.Options`
-  contains only fitting, stalled-offset diameter, tangent healing, and inner-join
-  controls. Removed offset trimming settings that strokes ignored or overrode;
-  the actual stroke construction and trimming policy is unchanged.
+- Configurable stroke outlines now take explicit `width:` and share
+  `offset.Options`; remove `stroke.Options` and `stroke.default_options`.
+  Construction settings contain fitting, stalled-offset diameter, tangent
+  healing, and inner joins. Trimmed offset `_with` operations take a separate
+  `trimming:` argument of type `SingleOffsetTrimming` or `BandTrimming`.
+  Add `default_single_offset_trimming` and `default_band_trimming`; ordinary
+  entry points retain their signatures and default behavior. Stroke retains
+  its fixed trimming policy.
 
 ### Additions and documentation
 
@@ -82,7 +86,7 @@ diagnostics. Redundant transform shortcuts are replaced by matrix composition.
 
 ### Release verification
 
-- `scripts/test-release`: 1,668 fast and 26 slow tests passed.
+- `scripts/test-release`: 1,670 fast and 26 slow tests passed.
 - `gleam docs build` and the JavaScript public-API example build passed.
 - All 13 regenerated README figures match the existing artwork byte-for-byte;
   `assets-v3.0.0` pins that same asset commit.

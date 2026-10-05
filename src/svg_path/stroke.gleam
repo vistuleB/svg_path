@@ -1,5 +1,10 @@
 //// Stroke outline construction.
 ////
+//// Stroke `_with` operations accept shared `offset.Options` construction
+//// settings, obtained from `offset.default_options()`. Stroke trimming remains
+//// fixed: both side-local cusp passes are disabled and final band trimming is
+//// enabled. Width, joins, and caps are explicit operation arguments.
+////
 //// This module turns path geometry into filled outline paths by delegating
 //// nonzero strokes to symmetric bands in `svg_path/offset`. That module owns
 //// the side construction, caps, and trimming. This module also exposes
@@ -11,7 +16,7 @@
 
 import gleam/float
 import gleam/list
-import gleam/option.{type Option, None, Some}
+import gleam/option.{None, Some}
 import gleam/result
 import svg_path
 import svg_path/internal/number
@@ -42,18 +47,6 @@ pub type Error {
   InvalidDashPatternLength
 }
 
-/// Numerical controls for stroke outline construction.
-/// Width, joins, and caps are operation arguments. Stroke always performs final
-/// band trimming; offset-only trimming policies are intentionally not accepted.
-pub type Options {
-  Options(
-    fitting: offset.FittingOptions,
-    stalled_offset_diameter: Float,
-    tangent_heal_angle_degrees: Float,
-    inner_join: Option(offset.InnerJoin),
-  )
-}
-
 /// Options for SVG-style dash extraction.
 ///
 /// Dash lengths are already-resolved user-coordinate lengths. CSS parsing,
@@ -67,17 +60,6 @@ pub type DashOptions {
     offset: Float,
     /// Options used for arc-length measurement and splitting.
     length_options: svg_path.LengthOptions,
-  )
-}
-
-/// Return default stroke options.
-pub fn default_options() -> Options {
-  let defaults = offset.default_options()
-  Options(
-    fitting: defaults.fitting,
-    stalled_offset_diameter: defaults.stalled_offset_diameter,
-    tangent_heal_angle_degrees: defaults.tangent_heal_angle_degrees,
-    inner_join: defaults.inner_join,
   )
 }
 
@@ -102,7 +84,7 @@ pub fn segment(
   join join: Join,
   cap cap: Cap,
 ) -> Result(svg_path.Path, Error) {
-  let options = default_options()
+  let options = offset.default_options()
   segment_with(segment, width:, join:, cap:, options:)
 }
 
@@ -112,7 +94,7 @@ pub fn segment_with(
   width width: Float,
   join join: Join,
   cap cap: Cap,
-  options options: Options,
+  options options: offset.Options,
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(validate_options(width, options, join))
   use subpath <- result.try(
@@ -128,7 +110,7 @@ pub fn subpath(
   join join: Join,
   cap cap: Cap,
 ) -> Result(svg_path.Path, Error) {
-  let options = default_options()
+  let options = offset.default_options()
   subpath_with(subpath, width:, join:, cap:, options:)
 }
 
@@ -140,7 +122,7 @@ pub fn subpath_with(
   width width: Float,
   join join: Join,
   cap cap: Cap,
-  options options: Options,
+  options options: offset.Options,
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(validate_options(width, options, join))
   stroke_validated_subpath(subpath, width, join, cap, options)
@@ -153,7 +135,7 @@ fn stroke_validated_subpath(
   width: Float,
   join: Join,
   cap: Cap,
-  options: Options,
+  options: offset.Options,
 ) -> Result(svg_path.Path, Error) {
   let radius = width /. 2.0
   case svg_path.subpath_segments(subpath) {
@@ -174,7 +156,12 @@ fn stroke_validated_subpath(
             outer_offset: radius,
             join: join,
             cap: cap,
-            options: offset_options(options),
+            options: options,
+            trimming: offset.BandTrimming(
+              inner_cusps: False,
+              outer_cusps: False,
+              in_band: True,
+            ),
           )
           |> result.map_error(OffsetError)
       }
@@ -284,7 +271,7 @@ pub fn path(
   join join: Join,
   cap cap: Cap,
 ) -> Result(svg_path.Path, Error) {
-  let options = default_options()
+  let options = offset.default_options()
   path_with(path, width:, join:, cap:, options:)
 }
 
@@ -294,7 +281,7 @@ pub fn path_with(
   width width: Float,
   join join: Join,
   cap cap: Cap,
-  options options: Options,
+  options options: offset.Options,
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(validate_options(width, options, join))
   use subpaths <- result.try(
@@ -416,7 +403,7 @@ pub fn subpath_dashed(
     width:,
     join:,
     cap:,
-    options: default_options(),
+    options: offset.default_options(),
     dash_options: default_dash_options(pattern:, offset:),
   )
 }
@@ -432,7 +419,7 @@ pub fn subpath_dashed_with(
   width width: Float,
   join join: Join,
   cap cap: Cap,
-  options options: Options,
+  options options: offset.Options,
   dash_options dash_options: DashOptions,
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(validate_options(width, options, join))
@@ -492,7 +479,7 @@ pub fn path_dashed(
     width:,
     join:,
     cap:,
-    options: default_options(),
+    options: offset.default_options(),
     dash_options: default_dash_options(pattern:, offset:),
   )
 }
@@ -506,7 +493,7 @@ pub fn path_dashed_with(
   width width: Float,
   join join: Join,
   cap cap: Cap,
-  options options: Options,
+  options options: offset.Options,
   dash_options dash_options: DashOptions,
 ) -> Result(svg_path.Path, Error) {
   use _ <- result.try(validate_options(width, options, join))
@@ -521,13 +508,13 @@ pub fn path_dashed_with(
 
 fn validate_options(
   width: Float,
-  options: Options,
+  options: offset.Options,
   join: Join,
 ) -> Result(Nil, Error) {
   // Validate before traversing geometry, including empty paths and dash output.
   use _ <- result.try(validate_width(width))
   let validation = {
-    use _ <- result.try(offset.validate_options(offset_options(options)))
+    use _ <- result.try(offset.validate_options(options))
     offset.validate_join(join)
   }
   validation
@@ -863,7 +850,7 @@ fn stroke_subpaths(
   width: Float,
   join: Join,
   cap: Cap,
-  options: Options,
+  options: offset.Options,
   stroked stroked: List(svg_path.Subpath),
 ) -> Result(List(svg_path.Subpath), Error) {
   case subpaths {
@@ -906,21 +893,4 @@ fn positive_remainder(value: Float, modulus: Float) -> Float {
         False -> remainder
       }
   }
-}
-
-// Only stroke-applicable controls cross this boundary. The construction policy
-// is fixed here, rather than silently overriding caller-supplied settings.
-fn offset_options(options: Options) -> offset.Options {
-  offset.Options(
-    ..offset.default_options(),
-    fitting: options.fitting,
-    stalled_offset_diameter: options.stalled_offset_diameter,
-    tangent_heal_angle_degrees: options.tangent_heal_angle_degrees,
-    inner_join: options.inner_join,
-    band_trimming: offset.BandTrimming(
-      inner_cusps: False,
-      outer_cusps: False,
-      in_band: True,
-    ),
-  )
 }

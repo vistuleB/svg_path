@@ -51,14 +51,9 @@ fn single_offset(
   source: svg_path.Path,
   offside offside: Bool,
 ) -> svg_path.Path {
-  let options =
-    offset.Options(
-      ..offset.default_options(),
-      single_offset_trimming: offset.SingleOffsetTrimming(
-        offside:,
-        final_trimming: offset.NoTrimming,
-      ),
-    )
+  let options_trimming =
+    offset.SingleOffsetTrimming(offside:, final_trimming: offset.NoTrimming)
+  let options = offset.default_options()
   let assert Ok(path) =
     offset.path_with(
       source,
@@ -66,6 +61,7 @@ fn single_offset(
       join: offset.Round,
       cap: offset.Butt,
       options:,
+      trimming: options_trimming,
     )
   path
 }

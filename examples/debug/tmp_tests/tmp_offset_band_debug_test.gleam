@@ -155,6 +155,7 @@ fn panel(
       join:,
       cap: offset.Butt,
       options:,
+      trimming: offset.default_band_trimming(),
     )
   {
     Ok(result) -> [

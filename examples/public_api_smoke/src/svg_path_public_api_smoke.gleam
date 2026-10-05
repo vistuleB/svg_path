@@ -66,6 +66,34 @@ pub fn main() -> Nil {
   let _ = overlaps.segment(horizontal, horizontal)
   let _ = svg_path.segment_as_subpath(horizontal)
   let _ = svg_path.segment_as_path(vertical)
+  let shared_options = offset.default_options()
+  let assert Ok(_) =
+    offset.subpath_with(
+      svg_path.segment_as_subpath(horizontal),
+      offset: 1.0,
+      join: offset.Round,
+      cap: offset.Butt,
+      options: shared_options,
+      trimming: offset.default_single_offset_trimming(),
+    )
+  let assert Ok(_) =
+    offset.path_band_with(
+      left,
+      inner_offset: -1.0,
+      outer_offset: 1.0,
+      join: offset.Round,
+      cap: offset.Butt,
+      options: shared_options,
+      trimming: offset.default_band_trimming(),
+    )
+  let assert Ok(_) =
+    stroke.path_with(
+      left,
+      width: 2.0,
+      join: offset.Round,
+      cap: offset.Butt,
+      options: shared_options,
+    )
   let open = svg_path.segment_as_subpath(horizontal)
   let assert False = svg_path.subpath_is_closed(open)
   let assert Error(svg_path.Discontinuous(..)) = svg_path.subpath_close(open)
@@ -106,7 +134,7 @@ pub fn main() -> Nil {
       width: 2.0,
       join: offset.Round,
       cap: offset.Butt,
-      options: stroke.default_options(),
+      options: offset.default_options(),
     )
   Nil
 }

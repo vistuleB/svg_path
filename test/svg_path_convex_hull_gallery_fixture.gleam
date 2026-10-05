@@ -35,6 +35,7 @@ pub fn figure_eight_band() -> Result(svg_path.Path, offset.Error) {
     join: offset.Round,
     cap: offset.Butt,
     options: offset.default_options(),
+    trimming: offset.default_band_trimming(),
   )
 }
 
