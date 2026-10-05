@@ -17,6 +17,19 @@ diagnostics. Redundant transform shortcuts are replaced by matrix composition.
 
 ### Breaking API changes
 
+- Name subpath partitioning `subpath_split_many` and
+  `measure.subpath_split_at_lengths`, with `at:` labels. Segment interval
+  extraction remains `segment_between_many`; splitting behavior is unchanged.
+- Consolidate nine projection/closest-pair record variants into generic
+  `Projection(address)` and `ClosestPair(left_address, right_address)` records.
+  Geometry-specific type names remain aliases; segment address fields now use
+  `at`, `left_at`, and `right_at` consistently. Intersection records are unchanged.
+- Share `offset.Join` and `offset.Cap` with stroke operations; remove duplicate
+  stroke style types and constructors.
+- Rename `minimum_chord` to `minimum_length`, including associated arrangement
+  validation errors. Its length-upper-bound filtering behavior is unchanged.
+- Add labels to all SVG drawing constructor fields; positional calls still work.
+
 - Removed 24 direct transform shortcuts: `translate_*`, `scale_*`, `scale_xy_*`,
   `rotate_*`, `skew_x_*`, and `skew_y_*` for points, segments, subpaths, and paths.
   Use the matching matrix constructor with `transform.point`, `transform.segment`,
@@ -55,7 +68,7 @@ diagnostics. Redundant transform shortcuts are replaced by matrix composition.
 
 ### Release verification
 
-- `scripts/test-release`: 1,664 fast and 26 slow tests passed.
+- `scripts/test-release`: 1,665 fast and 26 slow tests passed.
 - `gleam docs build` and the JavaScript public-API example build passed.
 - All 13 regenerated README figures match the existing artwork byte-for-byte;
   `assets-v3.0.0` pins that same asset commit.

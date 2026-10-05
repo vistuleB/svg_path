@@ -71,7 +71,7 @@ miter length = stroke-width / sin(theta / 2)
 
 For `miter`, if `miter length / stroke-width > stroke-miterlimit`, use bevel.
 
-The public `stroke.Join` and `offset.Join` types support `Miter`, `Round`,
+The shared public `offset.Join` type used by strokes and offsets supports `Miter`, `Round`,
 `Bevel`, `MiterClip`, and `Arcs`. The last two use the historical SVG 2
 constructions with the offset-specific fallback policies documented in the
 README.

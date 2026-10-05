@@ -16,7 +16,7 @@ import gleam/result
 import svg_path
 import svg_path/internal/number
 import svg_path/measure
-import svg_path/offset
+import svg_path/offset.{type Cap, type Join, Butt, RoundCap, Square}
 import svg_path/point as point_helpers
 
 const point_tolerance = 0.000000001
@@ -40,44 +40,6 @@ pub type Error {
 
   /// The normalized dash pattern's total length must be finite.
   InvalidDashPatternLength
-}
-
-/// Join style for the stroke.
-///
-/// Supports SVG `bevel`, `miter`, `miter-clip`, `round`, and `arcs`.
-pub type Join {
-  /// Connect adjacent offset segments with a straight line.
-  Bevel
-
-  /// Extend the offset tangents toward their intersection when the miter stays
-  /// within `miter_limit`; otherwise fall back to `Bevel`.
-  Miter(miter_limit: Float)
-
-  /// Clip an over-limit miter at `miter_limit * width / 2` from the pivot.
-  /// The limit must be finite and positive. Uses `Bevel` if the extensions
-  /// do not meet or clipping would cut behind either join endpoint; it does
-  /// not trim adjacent segments to satisfy a limit below the bevel.
-  MiterClip(miter_limit: Float)
-  /// Curvature-continuing SVG 2 join with an arc-length miter limit.
-  /// Uses Round for diverging rays or reversed source endpoints; a missing
-  /// endpoint curvature uses a line continuation. Limits must be positive
-  /// and finite. See `offset.Arcs` for the offset-layer counterpart.
-  Arcs(miter_limit: Float)
-
-  /// Connect adjacent offset segments with a circular SVG arc.
-  Round
-}
-
-/// Cap style used at open subpath endpoints.
-pub type Cap {
-  /// Connect the two offset sides directly at the endpoint.
-  Butt
-
-  /// Add a half-circle cap at the endpoint.
-  RoundCap
-
-  /// Extend the stroke by half the stroke width before capping.
-  Square
 }
 
 /// Numerical controls for stroke outline construction.
@@ -210,8 +172,8 @@ fn stroke_validated_subpath(
             subpath,
             inner_offset: 0.0 -. radius,
             outer_offset: radius,
-            join: to_offset_join(join),
-            cap: to_offset_cap(cap),
+            join: join,
+            cap: cap,
             options: offset_options(options),
           )
           |> result.map_error(OffsetError)
@@ -566,7 +528,7 @@ fn validate_options(
   use _ <- result.try(validate_width(width))
   let validation = {
     use _ <- result.try(offset.validate_options(offset_options(options)))
-    offset.validate_join(to_offset_join(join))
+    offset.validate_join(join)
   }
   validation
   |> result.map_error(fn(error) { OffsetError(offset.public_error(error)) })
@@ -839,9 +801,9 @@ fn first_split_piece(
   at distance: Float,
   length_options length_options: svg_path.LengthOptions,
 ) -> Result(svg_path.Subpath, svg_path.Error) {
-  use pieces <- result.try(measure.subpath_between_lengths_many_with(
+  use pieces <- result.try(measure.subpath_split_at_lengths_with(
     subpath,
-    between: [distance],
+    at: [distance],
     options: length_options,
   ))
   case pieces {
@@ -861,9 +823,9 @@ fn last_split_piece(
   at distance: Float,
   length_options length_options: svg_path.LengthOptions,
 ) -> Result(svg_path.Subpath, svg_path.Error) {
-  use pieces <- result.try(measure.subpath_between_lengths_many_with(
+  use pieces <- result.try(measure.subpath_split_at_lengths_with(
     subpath,
-    between: [distance],
+    at: [distance],
     options: length_options,
   ))
   case list.last(pieces) {
@@ -926,24 +888,6 @@ fn stroke_subpaths(
         ),
       )
     }
-  }
-}
-
-fn to_offset_cap(cap: Cap) -> offset.Cap {
-  case cap {
-    Butt -> offset.Butt
-    RoundCap -> offset.RoundCap
-    Square -> offset.Square
-  }
-}
-
-fn to_offset_join(join: Join) -> offset.Join {
-  case join {
-    Bevel -> offset.Bevel
-    Miter(miter_limit) -> offset.Miter(miter_limit)
-    MiterClip(miter_limit) -> offset.MiterClip(miter_limit)
-    Arcs(miter_limit) -> offset.Arcs(miter_limit)
-    Round -> offset.Round
   }
 }
 

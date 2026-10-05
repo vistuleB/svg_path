@@ -4,6 +4,7 @@ import svg_path/csg
 import svg_path/distance
 import svg_path/fit
 import svg_path/measure
+import svg_path/offset
 import svg_path/stroke
 
 // Fit a curve on 0..1, then retain its middle half by traveled distance.
@@ -47,7 +48,7 @@ pub fn outline_union(
   filled_region: svg_path.Path,
 ) -> Result(svg_path.Path, OutlineUnionError) {
   use outline <- result.try(
-    stroke.path(centerlines, width:, join: stroke.Round, cap: stroke.Butt)
+    stroke.path(centerlines, width:, join: offset.Round, cap: offset.Butt)
     |> result.map_error(StrokeFailure),
   )
   csg.union_path(outline, filled_region, using: svg_path.Nonzero)

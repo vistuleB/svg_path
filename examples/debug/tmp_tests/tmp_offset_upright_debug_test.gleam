@@ -143,7 +143,7 @@ fn split_sections(
   case split_points {
     [] -> Ok([subpath])
     _ ->
-      svg_path.subpath_between_many(subpath, between: split_points)
+      svg_path.subpath_split_many(subpath, at: split_points)
       |> result.map_error(offset.InternalPathError)
   }
 }

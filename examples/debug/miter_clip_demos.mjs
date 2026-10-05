@@ -4,6 +4,7 @@
 import {writeFile} from 'node:fs/promises';
 import * as s from '../public_api_smoke/build/dev/javascript/svg_path/svg_path.mjs';
 import * as stroke from '../public_api_smoke/build/dev/javascript/svg_path/svg_path/stroke.mjs';
+import * as offset from '../public_api_smoke/build/dev/javascript/svg_path/svg_path/offset.mjs';
 import * as serialize from '../public_api_smoke/build/dev/javascript/svg_path/svg_path/serialize.mjs';
 import {toList} from '../public_api_smoke/build/dev/javascript/gleam_stdlib/gleam.mjs';
 
@@ -17,7 +18,7 @@ const width = 2;
 
 async function figure(filename, title, cases) {
   const results = cases.map(([label, join]) => {
-    const path = ok(stroke.subpath(source, width, join, new stroke.Butt()));
+    const path = ok(stroke.subpath(source, width, join, new offset.Butt()));
     return {label, path, box:ok(s.path_bounding_box(path))};
   });
   // One common scale, but recenter each panel from its actual geometry bounds.
@@ -46,14 +47,14 @@ ${drawing}
 }
 
 await figure('miter_clip_comparison.svg','Miter versus clipped miter',[
-  ['Miter(4)', new stroke.Miter(4)],
-  ['Miter(1.5)', new stroke.Miter(1.5)],
-  ['MiterClip(1.5)', new stroke.MiterClip(1.5)],
-  ['Round', new stroke.Round()],
+  ['Miter(4)', new offset.Miter(4)],
+  ['Miter(1.5)', new offset.Miter(1.5)],
+  ['MiterClip(1.5)', new offset.MiterClip(1.5)],
+  ['Round', new offset.Round()],
 ]);
 await figure('miter_clip_limits.svg','MiterClip: varying the limit',[
-  ['MiterClip(0.5)', new stroke.MiterClip(.5)],
-  ['MiterClip(1)', new stroke.MiterClip(1)],
-  ['MiterClip(1.5)', new stroke.MiterClip(1.5)],
-  ['MiterClip(2)', new stroke.MiterClip(2)],
+  ['MiterClip(0.5)', new offset.MiterClip(.5)],
+  ['MiterClip(1)', new offset.MiterClip(1)],
+  ['MiterClip(1.5)', new offset.MiterClip(1.5)],
+  ['MiterClip(2)', new offset.MiterClip(2)],
 ]);

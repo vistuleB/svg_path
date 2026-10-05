@@ -314,95 +314,44 @@ pub type SegmentIntersection {
   SegmentIntersection(left_t: Float, right_t: Float, point: Point)
 }
 
-/// A closest-point pair between two segments.
-///
-/// When multiple pairs are equally nearest, this records one valid pair. The
-/// chosen parameters are not guaranteed to be canonical for ties or flat
-/// minima.
-pub type SegmentSegmentProjection {
-  SegmentSegmentProjection(
-    left_t: Float,
-    right_t: Float,
+/// A closest-point pair, parameterized by each geometry's address type.
+/// Tied minima return one valid pair; addresses are not canonical for ties.
+/// Segment addresses are Float, subpath addresses SubpathParameter, and
+/// path addresses PathParameter. Distances are in path-coordinate units.
+/// Path searches skip move-only subpaths.
+pub type ClosestPair(left_address, right_address) {
+  ClosestPair(
+    left_at: left_address,
+    right_at: right_address,
     left_point: Point,
     right_point: Point,
     distance: Float,
   )
 }
 
-/// A closest-point pair between a segment and a subpath.
-///
-/// When multiple pairs are equally nearest, this records one valid pair. The
-/// chosen parameters are not guaranteed to be canonical for ties or flat
-/// minima.
-pub type SegmentSubpathProjection {
-  SegmentSubpathProjection(
-    left_t: Float,
-    right_at: SubpathParameter,
-    left_point: Point,
-    right_point: Point,
-    distance: Float,
-  )
-}
+/// A closest pair addressed on two segments.
+pub type SegmentSegmentProjection =
+  ClosestPair(Float, Float)
 
-/// A closest-point pair between a segment and a path.
-///
-/// Move-only subpaths are skipped. When multiple pairs are equally nearest,
-/// this records one valid pair. The chosen parameters are not guaranteed to be
-/// canonical for ties or flat minima.
-pub type SegmentPathProjection {
-  SegmentPathProjection(
-    left_t: Float,
-    right_at: PathParameter,
-    left_point: Point,
-    right_point: Point,
-    distance: Float,
-  )
-}
+/// A closest pair addressed on a segment and a subpath.
+pub type SegmentSubpathProjection =
+  ClosestPair(Float, SubpathParameter)
 
-/// A closest-point pair between two subpaths.
-///
-/// When multiple pairs are equally nearest, this records one valid pair. The
-/// chosen parameters are not guaranteed to be canonical for ties or flat
-/// minima.
-pub type SubpathSubpathProjection {
-  SubpathSubpathProjection(
-    left_at: SubpathParameter,
-    right_at: SubpathParameter,
-    left_point: Point,
-    right_point: Point,
-    distance: Float,
-  )
-}
+/// A closest pair addressed on a segment and a path.
+pub type SegmentPathProjection =
+  ClosestPair(Float, PathParameter)
 
-/// A closest-point pair between a subpath and a path.
-///
-/// Move-only subpaths are skipped. When multiple pairs are equally nearest,
-/// this records one valid pair. The chosen parameters are not guaranteed to be
-/// canonical for ties or flat minima.
-pub type SubpathPathProjection {
-  SubpathPathProjection(
-    left_at: SubpathParameter,
-    right_at: PathParameter,
-    left_point: Point,
-    right_point: Point,
-    distance: Float,
-  )
-}
+/// A closest pair addressed on two subpaths.
+pub type SubpathSubpathProjection =
+  ClosestPair(SubpathParameter, SubpathParameter)
 
-/// A closest-point pair between two paths.
-///
-/// Move-only subpaths are skipped. When multiple pairs are equally nearest,
-/// this records one valid pair. The chosen parameters are not guaranteed to be
-/// canonical for ties or flat minima.
-pub type PathPathProjection {
-  PathPathProjection(
-    left_at: PathParameter,
-    right_at: PathParameter,
-    left_point: Point,
-    right_point: Point,
-    distance: Float,
-  )
-}
+/// A closest pair addressed on a subpath and a path.
+pub type SubpathPathProjection =
+  ClosestPair(SubpathParameter, PathParameter)
+
+/// A closest pair addressed on two paths.
+pub type PathPathProjection =
+  ClosestPair(PathParameter, PathParameter)
 
 /// A point where a subpath intersects itself.
 pub type SubpathSelfIntersection {
@@ -446,32 +395,24 @@ pub type PathIntersection {
   )
 }
 
-/// The nearest point on a segment to an input point.
-///
-/// When multiple segment points are equally nearest, this records one valid
-/// nearest point. The chosen point and parameter are not guaranteed to be
-/// canonical for ties or flat minima.
-pub type SegmentProjection {
-  SegmentProjection(t: Float, point: Point, distance: Float)
+/// A nearest point and its reusable geometry address.
+/// Tied minima return one valid point; addresses are not canonical for ties.
+/// Move-only subpaths are skipped by path projections.
+pub type Projection(address) {
+  Projection(at: address, point: Point, distance: Float)
 }
 
-/// The nearest point on a subpath to an input point.
-///
-/// When multiple subpath points are equally nearest, this records one valid
-/// nearest point. The chosen point and parameter are not guaranteed to be
-/// canonical for ties or flat minima.
-pub type SubpathProjection {
-  SubpathProjection(at: SubpathParameter, point: Point, distance: Float)
-}
+/// A point projection addressed by a segment parameter.
+pub type SegmentProjection =
+  Projection(Float)
 
-/// The nearest point on a path to an input point.
-///
-/// Move-only subpaths are skipped. When multiple path points are equally
-/// nearest, this records one valid nearest point. The chosen point and
-/// parameter are not guaranteed to be canonical for ties or flat minima.
-pub type PathProjection {
-  PathProjection(at: PathParameter, point: Point, distance: Float)
-}
+/// A point projection addressed within a subpath.
+pub type SubpathProjection =
+  Projection(SubpathParameter)
+
+/// A point projection addressed within a path.
+pub type PathProjection =
+  Projection(PathParameter)
 
 @internal
 pub type MinimizeCandidate {
@@ -2060,9 +2001,7 @@ pub fn subpath_open_at(
   case subpath.closed {
     False -> Error(NotClosed)
     True -> {
-      use subpaths <- result.try(
-        subpath_between_many(subpath, between: [parameter]),
-      )
+      use subpaths <- result.try(subpath_split_many(subpath, at: [parameter]))
       case subpaths {
         [opened] -> Ok(opened)
         _ -> Error(EmptySubpath)
@@ -2340,9 +2279,9 @@ pub fn subpath_between(
 /// closed subpaths, an empty split list returns an empty list, and a single
 /// split point returns one open subpath traversing the whole loop from that
 /// point back to itself.
-pub fn subpath_between_many(
+pub fn subpath_split_many(
   subpath: Subpath,
-  between points: List(SubpathParameter),
+  at points: List(SubpathParameter),
 ) -> Result(List(Subpath), Error) {
   let length = list.length(subpath.segments)
   use points <- result.try(validate_subpath_parameters(subpath, points))
@@ -4926,7 +4865,7 @@ fn refine_isolated_distance_root_by_bisection(
         // but must not discard an endpoint that projects better than estimate.
         True ->
           smallest_segment_projection(point, segment, [estimate, lower, upper])
-          |> result.map(fn(projection) { projection.t })
+          |> result.map(fn(projection) { projection.at })
         False ->
           refine_arc_projection_window_by_bisection_loop(
             point,
@@ -5063,8 +5002,8 @@ fn smallest_segment_projection(
     [] -> {
       use segment_point <- result.try(segment_point(segment, at: 0.0))
 
-      Ok(SegmentProjection(
-        t: 0.0,
+      Ok(Projection(
+        at: 0.0,
         point: segment_point,
         distance: distance(point, segment_point),
       ))
@@ -5116,8 +5055,8 @@ fn segment_projection_at(
   case segment_point(segment, at: t) {
     Error(error) -> Error(error)
     Ok(segment_point) ->
-      Ok(SegmentProjection(
-        t:,
+      Ok(Projection(
+        at: t,
         point: segment_point,
         distance: distance(point, segment_point),
       ))
@@ -5134,16 +5073,15 @@ pub fn point_to_line_projection(
   let length_squared = dot(line, line)
 
   case length_squared == 0.0 {
-    True ->
-      SegmentProjection(t: 0.0, point: start, distance: distance(point, start))
+    True -> Projection(at: 0.0, point: start, distance: distance(point, start))
     False -> {
       let progress =
         dot(point_difference(point, start), line) /. length_squared
         |> clamp01
       let projection = offset(start, line, progress)
 
-      SegmentProjection(
-        t: progress,
+      Projection(
+        at: progress,
         point: projection,
         distance: distance(point, projection),
       )
@@ -5171,8 +5109,8 @@ fn subpath_projection_loop(
         options:,
       ))
       let subpath_projection =
-        SubpathProjection(
-          at: SubpathParameter(segment_index: index, t: projection.t),
+        Projection(
+          at: SubpathParameter(segment_index: index, t: projection.at),
           point: projection.point,
           distance: projection.distance,
         )

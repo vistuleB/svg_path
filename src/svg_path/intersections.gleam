@@ -26,18 +26,16 @@ import svg_path.{
   type SegmentSegmentProjection, type SegmentSubpathProjection,
   type SelfIntersectionOptions, type Subpath, type SubpathIntersection,
   type SubpathParameter, type SubpathPathProjection,
-  type SubpathSelfIntersection, type SubpathSubpathProjection, Arc, CubicBezier,
-  EmptyPath, EmptySubpath, EmptySubpaths,
+  type SubpathSelfIntersection, type SubpathSubpathProjection, Arc, ClosestPair,
+  CubicBezier, EmptyPath, EmptySubpath, EmptySubpaths,
   InternalOverlapClassificationInconsistency,
   InternalUncertifiedSegmentIntersection, InvalidIntersectionMaxDepth,
   InvalidIntersectionParameterSnapExponent, InvalidIntersectionTolerance,
   InvalidSelfIntersectionDistanceTolerance,
   InvalidSelfIntersectionMinimumArcLengthSeparation, Line, OverlappingSegments,
-  PathIntersection, PathParameter, PathPathProjection, PathSelfIntersection,
-  Point, QuadraticBezier, SegmentIntersection, SegmentPathProjection,
-  SegmentSegmentProjection, SegmentSubpathProjection, SubpathIntersection,
-  SubpathParameter, SubpathPathProjection, SubpathSelfIntersection,
-  SubpathSubpathProjection,
+  PathIntersection, PathParameter, PathSelfIntersection, Point, QuadraticBezier,
+  SegmentIntersection, SubpathIntersection, SubpathParameter,
+  SubpathSelfIntersection,
 }
 import svg_path/bezier
 import svg_path/internal/number
@@ -1013,16 +1011,16 @@ fn segment_subpath_projection_from_segment_projection(
   projection: SegmentSegmentProjection,
   right_index right_index: Int,
 ) -> SegmentSubpathProjection {
-  let SegmentSegmentProjection(
-    left_t:,
-    right_t:,
+  let ClosestPair(
+    left_at: left_t,
+    right_at: right_t,
     left_point:,
     right_point:,
     distance:,
   ) = projection
   let candidate =
-    SegmentSubpathProjection(
-      left_t:,
+    ClosestPair(
+      left_at: left_t,
       right_at: SubpathParameter(segment_index: right_index, t: right_t),
       left_point:,
       right_point:,
@@ -1055,16 +1053,16 @@ fn segment_path_projection_from_segment_projection(
   projection: SegmentSegmentProjection,
   right_at right_at: PathParameter,
 ) -> SegmentPathProjection {
-  let SegmentSegmentProjection(
-    left_t:,
-    right_t:,
+  let ClosestPair(
+    left_at: left_t,
+    right_at: right_t,
     left_point:,
     right_point:,
     distance:,
   ) = projection
   let candidate =
-    SegmentPathProjection(
-      left_t:,
+    ClosestPair(
+      left_at: left_t,
       right_at: path_projection_address_with_t(right_at, right_t),
       left_point:,
       right_point:,
@@ -1104,15 +1102,15 @@ fn subpath_subpath_projection_from_segment_projection(
   left_index left_index: Int,
   right_index right_index: Int,
 ) -> SubpathSubpathProjection {
-  let SegmentSegmentProjection(
-    left_t:,
-    right_t:,
+  let ClosestPair(
+    left_at: left_t,
+    right_at: right_t,
     left_point:,
     right_point:,
     distance:,
   ) = projection
   let candidate =
-    SubpathSubpathProjection(
+    ClosestPair(
       left_at: SubpathParameter(segment_index: left_index, t: left_t),
       right_at: SubpathParameter(segment_index: right_index, t: right_t),
       left_point:,
@@ -1158,15 +1156,15 @@ fn subpath_path_projection_from_segment_projection(
   left_index left_index: Int,
   right_at right_at: PathParameter,
 ) -> SubpathPathProjection {
-  let SegmentSegmentProjection(
-    left_t:,
-    right_t:,
+  let ClosestPair(
+    left_at: left_t,
+    right_at: right_t,
     left_point:,
     right_point:,
     distance:,
   ) = projection
   let candidate =
-    SubpathPathProjection(
+    ClosestPair(
       left_at: SubpathParameter(segment_index: left_index, t: left_t),
       right_at: path_projection_address_with_t(right_at, right_t),
       left_point:,
@@ -1211,15 +1209,15 @@ fn path_path_projection_from_segment_projection(
   left_at left_at: PathParameter,
   right_at right_at: PathParameter,
 ) -> PathPathProjection {
-  let SegmentSegmentProjection(
-    left_t:,
-    right_t:,
+  let ClosestPair(
+    left_at: left_t,
+    right_at: right_t,
     left_point:,
     right_point:,
     distance:,
   ) = projection
   let candidate =
-    PathPathProjection(
+    ClosestPair(
       left_at: path_projection_address_with_t(left_at, left_t),
       right_at: path_projection_address_with_t(right_at, right_t),
       left_point:,
@@ -1470,9 +1468,9 @@ fn line_line_segment_projection(
             right,
             at: right_t,
           ))
-          Ok(SegmentSegmentProjection(
-            left_t:,
-            right_t:,
+          Ok(ClosestPair(
+            left_at: left_t,
+            right_at: right_t,
             left_point:,
             right_point:,
             distance: 0.0,
@@ -1503,9 +1501,9 @@ fn segment_segment_projection_from_overlap(
   let #(left_from, _, right_from, _, _, _) = overlap
   use left_point <- result.try(svg_path.segment_point(left, at: left_from))
   use right_point <- result.try(svg_path.segment_point(right, at: right_from))
-  Ok(SegmentSegmentProjection(
-    left_t: left_from,
-    right_t: right_from,
+  Ok(ClosestPair(
+    left_at: left_from,
+    right_at: right_from,
     left_point:,
     right_point:,
     distance: 0.0,
@@ -1521,9 +1519,9 @@ fn segment_segment_projection_from_minimum(
   use left_point <- result.try(svg_path.segment_point(left, at: left_t))
   use right_point <- result.try(svg_path.segment_point(right, at: right_t))
   let assert Ok(distance) = float.square_root(distance_squared)
-  Ok(SegmentSegmentProjection(
-    left_t:,
-    right_t:,
+  Ok(ClosestPair(
+    left_at: left_t,
+    right_at: right_t,
     left_point:,
     right_point:,
     distance:,
@@ -5179,7 +5177,7 @@ fn boundary_edge_intersections_for_left(
     to: right,
     options: distance_options_for_intersection_options(options),
   ))
-  let svg_path.SegmentProjection(t: right_t, distance:, ..) = projection
+  let svg_path.Projection(at: right_t, distance:, ..) = projection
   boundary_edge_minimum(left_t, right_t, distance:, minima:)
 }
 
@@ -5222,7 +5220,7 @@ fn boundary_edge_intersections_for_right(
     to: left,
     options: distance_options_for_intersection_options(options),
   ))
-  let svg_path.SegmentProjection(t: left_t, distance:, ..) = projection
+  let svg_path.Projection(at: left_t, distance:, ..) = projection
   boundary_edge_minimum(left_t, right_t, distance:, minima:)
 }
 

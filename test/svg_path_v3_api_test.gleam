@@ -8,6 +8,7 @@ import svg_path/csg
 import svg_path/distance
 import svg_path/fit
 import svg_path/measure
+import svg_path/offset
 import svg_path/parse
 import svg_path/serialize
 import svg_path/stroke
@@ -91,8 +92,8 @@ pub fn fitted_geometry_supports_projection_and_configurable_strokes_test() {
     stroke.subpath_with(
       subpath,
       width: 2.0,
-      join: stroke.Round,
-      cap: stroke.Butt,
+      join: offset.Round,
+      cap: offset.Butt,
       options: stroke.default_options(),
     )
   let assert Ok(box) = bounds.path_bounding_box(outline)
@@ -135,4 +136,37 @@ pub fn closest_pair_options_validate_even_for_empty_geometry_test() {
         == Error(expected)
     },
   )
+}
+
+fn projected_point(projection: svg_path.Projection(address)) -> svg_path.Point {
+  let svg_path.Projection(point:, ..) = projection
+  point
+}
+
+fn closest_distance(pair: svg_path.ClosestPair(left, right)) -> Float {
+  pair.distance
+}
+
+pub fn generic_projection_records_compose_across_geometry_levels_test() {
+  let line = svg_path.Line(svg_path.Point(0.0, 0.0), svg_path.Point(10.0, 0.0))
+  let assert Ok(subpath) = svg_path.subpath([line])
+  let path = svg_path.subpath_as_path(subpath)
+  let query = svg_path.Point(5.0, 3.0)
+  let assert Ok(segment_hit) = distance.segment_projection(query, to: line)
+  let assert Ok(path_hit) = distance.path_projection(query, to: path)
+  assert projected_point(segment_hit) == projected_point(path_hit)
+  assert svg_path.segment_point(line, at: segment_hit.at)
+    == Ok(segment_hit.point)
+  assert svg_path.path_point(path, at: path_hit.at) == Ok(path_hit.point)
+  let parallel =
+    svg_path.Line(svg_path.Point(0.0, 3.0), svg_path.Point(10.0, 3.0))
+  let assert Ok(segment_pair) =
+    distance.segment_segment_closest_pair(line, parallel)
+  let assert Ok(mixed_pair) = distance.segment_path_closest_pair(parallel, path)
+  assert closest_distance(segment_pair) == 3.0
+  assert closest_distance(mixed_pair) == 3.0
+  assert svg_path.segment_point(parallel, at: mixed_pair.left_at)
+    == Ok(mixed_pair.left_point)
+  assert svg_path.path_point(path, at: mixed_pair.right_at)
+    == Ok(mixed_pair.right_point)
 }

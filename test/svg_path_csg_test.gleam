@@ -35,7 +35,7 @@ pub fn open_subpath_fill_closure_is_included_in_arrangement_test() {
 
 pub fn fine_csg_tolerance_preserves_square_boundary_test() {
   let square = rectangle(0.0, 0.0, 10.0, 10.0)
-  let options = csg.Options(tolerance: 0.000000000001, minimum_chord: 0.00001)
+  let options = csg.Options(tolerance: 0.000000000001, minimum_length: 0.00001)
   let assert Ok(output) =
     csg.union_with(
       square,
@@ -55,7 +55,7 @@ pub fn fine_csg_tolerance_preserves_nested_contours_test() {
   let assert Ok(output) =
     csg.nested_contours_with(
       square,
-      options: csg.Options(tolerance: 0.000000000001, minimum_chord: 0.00001),
+      options: csg.Options(tolerance: 0.000000000001, minimum_length: 0.00001),
     )
   assert_area(output.path, 100.0)
   output.path |> svg_path.path_subpaths |> list.length |> should.equal(1)
@@ -83,7 +83,7 @@ pub fn csg_result_retains_its_arrangement_build_test() {
 
   list.length(segments) |> should.equal(8)
   path |> svg_path.path_subpaths |> list.length |> should.equal(1)
-  arrangement_graph.validate(graph, tolerance:, minimum_chord: 0.00001)
+  arrangement_graph.validate(graph, tolerance:, minimum_length: 0.00001)
   |> should.equal(Ok(Nil))
 }
 

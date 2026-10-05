@@ -16,7 +16,7 @@ import svg_path/transform
 
 const tolerance = 0.000001
 
-const minimum_chord = 0.00001
+const minimum_length = 0.00001
 
 const output = "examples/debug/square_corner_pinch_union_clockwise.svg"
 
@@ -38,7 +38,7 @@ pub fn main() {
 
   let assert Ok(graph_source) = fit(source, 450.0, 147.0)
   let assert Ok(arrangement_graph.ArrangementGraphBuild(graph:, ..)) =
-    arrangement_graph.build([graph_source], tolerance:, minimum_chord:)
+    arrangement_graph.build([graph_source], tolerance:, minimum_length:)
   let assert Ok(graph_drawing) =
     arrangement_graph_drawing.annotated_drawing(graph, graph_source, tolerance:)
 

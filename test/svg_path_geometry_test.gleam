@@ -77,9 +77,9 @@ pub fn segment_segment_projection_reports_crossing_line_pair_test() {
       end: svg_path.Point(1.0, 3.0),
     )
 
-  let assert Ok(svg_path.SegmentSegmentProjection(
-    left_t:,
-    right_t:,
+  let assert Ok(svg_path.ClosestPair(
+    left_at: left_t,
+    right_at: right_t,
     left_point:,
     right_point:,
     distance:,
@@ -104,12 +104,8 @@ pub fn segment_segment_projection_reports_separated_line_pair_test() {
       end: svg_path.Point(1.0, 2.0),
     )
 
-  let assert Ok(svg_path.SegmentSegmentProjection(
-    left_point:,
-    right_point:,
-    distance:,
-    ..,
-  )) = distance.segment_segment_closest_pair(left, right)
+  let assert Ok(svg_path.ClosestPair(left_point:, right_point:, distance:, ..)) =
+    distance.segment_segment_closest_pair(left, right)
 
   assert float.absolute_value(distance -. 2.0) <. tolerance
   assert float.absolute_value(left_point.x -. right_point.x) <. tolerance
@@ -129,12 +125,8 @@ pub fn segment_segment_projection_reports_overlapping_line_pair_test() {
       end: svg_path.Point(2.0, 0.0),
     )
 
-  let assert Ok(svg_path.SegmentSegmentProjection(
-    left_point:,
-    right_point:,
-    distance:,
-    ..,
-  )) = distance.segment_segment_closest_pair(left, right)
+  let assert Ok(svg_path.ClosestPair(left_point:, right_point:, distance:, ..)) =
+    distance.segment_segment_closest_pair(left, right)
 
   assert distance <. tolerance
   assert point_distance(left_point, right_point) <. tolerance
@@ -158,7 +150,7 @@ pub fn segment_subpath_projection_reports_nearest_segment_test() {
       ),
     ])
 
-  let assert Ok(svg_path.SegmentSubpathProjection(right_at:, distance:, ..)) =
+  let assert Ok(svg_path.ClosestPair(right_at:, distance:, ..)) =
     distance.segment_subpath_closest_pair(left, right)
 
   assert right_at.segment_index == 1
@@ -190,7 +182,7 @@ pub fn segment_path_projection_reports_nearest_subpath_test() {
     |> svg_path.path_append_subpath(far)
     |> svg_path.path_append_subpath(near)
 
-  let assert Ok(svg_path.SegmentPathProjection(right_at:, distance:, ..)) =
+  let assert Ok(svg_path.ClosestPair(right_at:, distance:, ..)) =
     distance.segment_path_closest_pair(left, path)
 
   assert right_at.subpath_index == 1
@@ -221,12 +213,8 @@ pub fn subpath_subpath_projection_reports_nearest_segments_test() {
       ),
     ])
 
-  let assert Ok(svg_path.SubpathSubpathProjection(
-    left_at:,
-    right_at:,
-    distance:,
-    ..,
-  )) = distance.subpath_subpath_closest_pair(left, right)
+  let assert Ok(svg_path.ClosestPair(left_at:, right_at:, distance:, ..)) =
+    distance.subpath_subpath_closest_pair(left, right)
 
   assert left_at.segment_index == 0 || left_at.segment_index == 1
   assert right_at.segment_index == 1
@@ -260,7 +248,7 @@ pub fn subpath_path_projection_reports_nearest_subpath_test() {
     |> svg_path.path_append_subpath(far)
     |> svg_path.path_append_subpath(near)
 
-  let assert Ok(svg_path.SubpathPathProjection(right_at:, distance:, ..)) =
+  let assert Ok(svg_path.ClosestPair(right_at:, distance:, ..)) =
     distance.subpath_path_closest_pair(left, path)
 
   assert right_at.subpath_index == 1
@@ -295,7 +283,7 @@ pub fn path_path_projection_reports_nearest_subpaths_test() {
     |> svg_path.path_append_subpath(far_right)
     |> svg_path.path_append_subpath(near_right)
 
-  let assert Ok(svg_path.PathPathProjection(right_at:, distance:, ..)) =
+  let assert Ok(svg_path.ClosestPair(right_at:, distance:, ..)) =
     distance.path_path_closest_pair(left, right)
 
   assert right_at.subpath_index == 1
@@ -1438,7 +1426,7 @@ pub fn subpaths_between_lengths_splits_open_subpath_test() {
     ])
 
   let assert Ok([first, second, third]) =
-    measure.subpath_between_lengths_many(subpath, between: [5.0, 25.0])
+    measure.subpath_split_at_lengths(subpath, at: [5.0, 25.0])
 
   assert svg_path.subpath_segments(first)
     == [svg_path.Line(start: a, end: svg_path.Point(5.0, 0.0))]
@@ -1622,7 +1610,7 @@ pub fn segment_projection_returns_line_parameter_point_and_distance_test() {
       end: svg_path.Point(10.0, 0.0),
     )
 
-  let assert Ok(svg_path.SegmentProjection(t:, point:, distance:)) =
+  let assert Ok(svg_path.Projection(at: t, point:, distance:)) =
     distance.segment_projection(svg_path.Point(4.0, 3.0), to: line)
 
   assert near(t, 0.4)
@@ -1637,7 +1625,7 @@ pub fn segment_projection_clamps_to_line_endpoint_test() {
       end: svg_path.Point(10.0, 0.0),
     )
 
-  let assert Ok(svg_path.SegmentProjection(t:, point:, distance:)) =
+  let assert Ok(svg_path.Projection(at: t, point:, distance:)) =
     distance.segment_projection(svg_path.Point(13.0, 4.0), to: line)
 
   assert near(t, 1.0)
@@ -1653,7 +1641,7 @@ pub fn segment_projection_returns_curve_parameter_point_and_distance_test() {
       end: svg_path.Point(20.0, 0.0),
     )
 
-  let assert Ok(svg_path.SegmentProjection(t:, point:, distance:)) =
+  let assert Ok(svg_path.Projection(at: t, point:, distance:)) =
     distance.segment_projection(svg_path.Point(10.0, 15.0), to: curve)
 
   assert near(t, 0.5)
@@ -1669,7 +1657,7 @@ pub fn projection_returns_quadratic_parameter_point_and_distance_test() {
       end: svg_path.Point(20.0, 0.0),
     )
 
-  let assert Ok(svg_path.SegmentProjection(t:, point:, distance:)) =
+  let assert Ok(svg_path.Projection(at: t, point:, distance:)) =
     distance.segment_projection(svg_path.Point(10.0, 15.0), to: curve)
 
   assert near(t, 0.5)
@@ -1695,7 +1683,7 @@ pub fn projection_keeps_better_isolation_endpoint_without_sign_change_test() {
   // same sign; returning its midpoint used to report distance 2.58e-9.
   let assert Ok(projection) = distance.segment_projection(query, to: reversed)
   assert projection.distance <. 0.000000000001
-  assert float.absolute_value(projection.t -. 0.5) <. 0.000000000001
+  assert float.absolute_value(projection.at -. 0.5) <. 0.000000000001
 }
 
 pub fn polished_bezier_projections_have_small_tangential_error_test() {
@@ -1706,7 +1694,7 @@ pub fn polished_bezier_projections_have_small_tangential_error_test() {
       projection_comparison_coordinates()
       |> list.each(fn(y) {
         let query = svg_path.Point(x, y)
-        let assert Ok(svg_path.SegmentProjection(t:, ..)) =
+        let assert Ok(svg_path.Projection(at: t, ..)) =
           distance.segment_projection(query, to: segment)
         case t >. 0.0 && t <. 1.0 {
           True -> {
@@ -1727,7 +1715,7 @@ pub fn projection_handles_unreliable_near_cusp_tangent_test() {
       end: svg_path.Point(0.00000001, 0.0),
     )
   let query = svg_path.Point(0.5, 0.6)
-  let assert Ok(svg_path.SegmentProjection(t:, distance:, ..)) =
+  let assert Ok(svg_path.Projection(at: t, distance:, ..)) =
     distance.segment_projection(query, to: segment)
 
   assert t >=. 0.0 && t <=. 1.0
@@ -1755,7 +1743,7 @@ pub fn projection_of_bezier_points_respects_tolerance_test() {
     parameters
     |> list.each(fn(t) {
       let assert Ok(point) = svg_path.segment_point(segment, at: t)
-      let assert Ok(svg_path.SegmentProjection(distance:, ..)) =
+      let assert Ok(svg_path.Projection(distance:, ..)) =
         distance.segment_projection(point, to: segment)
       assert distance <=. 0.000000001
     })
@@ -1791,7 +1779,7 @@ pub fn projection_of_curve_points_respects_geometric_tolerance_test() {
     parameters
     |> list.each(fn(t) {
       let assert Ok(point) = svg_path.segment_point(segment, at: t)
-      let assert Ok(svg_path.SegmentProjection(distance:, ..)) =
+      let assert Ok(svg_path.Projection(distance:, ..)) =
         distance.segment_projection_with(
           point,
           to: segment,
@@ -1838,7 +1826,7 @@ pub fn subpath_projection_returns_subpath_parameter_point_and_distance_test() {
       ),
     ])
 
-  let assert Ok(svg_path.SubpathProjection(at:, point:, distance:)) =
+  let assert Ok(svg_path.Projection(at:, point:, distance:)) =
     distance.subpath_projection(svg_path.Point(14.0, 8.0), to: subpath)
 
   assert at == svg_path.SubpathParameter(segment_index: 1, t: 0.4)
@@ -2253,7 +2241,7 @@ pub fn path_projection_returns_path_parameter_point_and_distance_test() {
       second,
     ])
 
-  let assert Ok(svg_path.PathProjection(at:, point:, distance:)) =
+  let assert Ok(svg_path.Projection(at:, point:, distance:)) =
     distance.path_projection(svg_path.Point(17.0, 6.0), to: path)
 
   assert at

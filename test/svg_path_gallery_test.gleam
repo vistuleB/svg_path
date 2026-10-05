@@ -372,8 +372,8 @@ pub fn generate_recursive_dash_cap_report() {
     stroke.subpath_dashed_with(
       source,
       width: 58.0,
-      join: stroke.Round,
-      cap: stroke.RoundCap,
+      join: offset.Round,
+      cap: offset.RoundCap,
       options: first_options,
       dash_options: stroke.default_dash_options(
         pattern: [112.0, 48.0],
@@ -483,8 +483,8 @@ pub fn generate_recursive_dash_cap_report() {
           <> stroke_result_to_string(stroke.subpath_with(
           dash,
           width: 6.0,
-          join: stroke.Round,
-          cap: stroke.RoundCap,
+          join: offset.Round,
+          cap: offset.RoundCap,
           options: stroke_options,
         )),
       ],
@@ -505,9 +505,9 @@ fn stroke_caps() -> String {
       ),
     ])
   let examples = [
-    #(0.0, "butt", stroke.Butt),
-    #(250.0, "square", stroke.Square),
-    #(500.0, "round", stroke.RoundCap),
+    #(0.0, "butt", offset.Butt),
+    #(250.0, "square", offset.Square),
+    #(500.0, "round", offset.RoundCap),
   ]
 
   document(
@@ -521,7 +521,7 @@ fn stroke_caps() -> String {
           stroke.subpath_with(
             placed,
             width: 28.0,
-            join: stroke.Round,
+            join: offset.Round,
             cap:,
             options:,
           )
@@ -571,8 +571,8 @@ fn dashed_strokes() -> String {
           stroke.subpath_dashed_with(
             placed,
             width: 16.0,
-            join: stroke.Round,
-            cap: stroke.RoundCap,
+            join: offset.Round,
+            cap: offset.RoundCap,
             options:,
             dash_options: stroke.default_dash_options(
               pattern:,
@@ -617,8 +617,8 @@ fn recursive_dashes() -> String {
     stroke.subpath_dashed_with(
       source,
       width: 58.0,
-      join: stroke.Round,
-      cap: stroke.RoundCap,
+      join: offset.Round,
+      cap: offset.RoundCap,
       options: first_options,
       dash_options: stroke.default_dash_options(
         pattern: first_dash_pattern,
@@ -629,8 +629,8 @@ fn recursive_dashes() -> String {
   let assert Ok(second_paths) =
     recursive_dash_outline_strokes(
       svg_path.path_subpaths(first_stroke),
-      join: stroke.Round,
-      cap: stroke.RoundCap,
+      join: offset.Round,
+      cap: offset.RoundCap,
       options: second_options,
       accumulated: [],
     )
@@ -790,8 +790,8 @@ fn gallery_positive_remainder(value: Float, modulus: Float) -> Float {
 
 fn recursive_dash_outline_strokes(
   outlines: List(svg_path.Subpath),
-  join join: stroke.Join,
-  cap cap: stroke.Cap,
+  join join: offset.Join,
+  cap cap: offset.Cap,
   options options: stroke.Options,
   accumulated accumulated: List(svg_path.Path),
 ) -> Result(List(svg_path.Path), stroke.Error) {
@@ -945,8 +945,8 @@ fn crescent_point_markers(points: List(svg_path.Point)) -> svg.ThingsToDraw {
 
 fn stroke_non_degenerate_dashes(
   dashes: List(svg_path.Subpath),
-  join join: stroke.Join,
-  cap cap: stroke.Cap,
+  join join: offset.Join,
+  cap cap: offset.Cap,
   options options: stroke.Options,
   accumulated accumulated: List(svg_path.Subpath),
 ) -> Result(List(svg_path.Subpath), stroke.Error) {

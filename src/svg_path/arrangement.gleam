@@ -63,7 +63,7 @@ pub type ArrangementVertex {
 /// remain the source endpoints and are within the build tolerance
 /// of the corresponding vertex points; construction does not move the segment
 /// to the cluster centers. The segment's length upper bound is at least
-/// `minimum_chord` (the legacy name of the size threshold).
+/// `minimum_length` (the segment-length upper-bound threshold).
 ///
 /// `forward_multiplicity` counts coincident source segments oriented like the
 /// stored segment, and `reverse_multiplicity` counts those oriented against it.
@@ -372,7 +372,7 @@ fn assign_winding_neighbors(
 /// and segment order. Each image lists the atomic graph edges in that segment's
 /// traversal order. A reference's `reversed` flag is true when that traversal
 /// opposes the edge's stored direction. An image can be empty when every
-/// refined piece has a segment length upper bound below `minimum_chord`.
+/// refined piece has a segment length upper bound below `minimum_length`.
 pub type ArrangementGraphBuild {
   ArrangementGraphBuild(
     /// The arrangement produced from the input paths.
@@ -478,7 +478,7 @@ pub type InternalError {
   InternalInvalidTolerance(tolerance: Float)
 
   /// The minimum length-upper-bound threshold must be greater than zero.
-  InternalInvalidMinimumChord(minimum_chord: Float)
+  InternalInvalidMinimumLength(minimum_length: Float)
 
   /// Endpoint-sliver tolerance is a parameter-space quantity and must be
   /// finite and non-negative.
@@ -580,7 +580,7 @@ pub type Error {
   InvalidTolerance(tolerance: Float)
 
   /// The minimum length-upper-bound threshold must be greater than zero.
-  InvalidMinimumChord(minimum_chord: Float)
+  InvalidMinimumLength(minimum_length: Float)
 
   /// Endpoint-sliver tolerance must be finite and non-negative.
   InvalidEndpointSliverTolerance(tolerance: Float)
@@ -598,8 +598,8 @@ fn public_error(error: InternalError) -> Error {
   case error {
     InternalPathError(value) -> PathError(value)
     InternalInvalidTolerance(tolerance) -> InvalidTolerance(tolerance)
-    InternalInvalidMinimumChord(minimum_chord) ->
-      InvalidMinimumChord(minimum_chord)
+    InternalInvalidMinimumLength(minimum_length) ->
+      InvalidMinimumLength(minimum_length)
     InternalInvalidEndpointSliverTolerance(tolerance) ->
       InvalidEndpointSliverTolerance(tolerance)
     InternalSegmentTooShort(chord:, minimum:) ->
@@ -2598,20 +2598,20 @@ pub fn insert_atomic_segment(
   graph: ArrangementGraph,
   segment: svg_path.Segment,
   tolerance tolerance: Float,
-  minimum_chord minimum_chord: Float,
+  minimum_length minimum_length: Float,
 ) -> Result(ArrangementGraph, InternalError) {
   case
     tolerance <=. 0.0 || tolerance -. tolerance != 0.0,
-    minimum_chord <=. 0.0 || minimum_chord -. minimum_chord != 0.0
+    minimum_length <=. 0.0 || minimum_length -. minimum_length != 0.0
   {
     True, _ -> Error(InternalInvalidTolerance(tolerance))
-    _, True -> Error(InternalInvalidMinimumChord(minimum_chord))
+    _, True -> Error(InternalInvalidMinimumLength(minimum_length))
     False, False -> {
       let start = svg_path.segment_start(segment)
       let end = svg_path.segment_end(segment)
       use chord <- result.try(segment_length_bound(segment))
-      case chord <. minimum_chord {
-        True -> Error(InternalSegmentTooShort(chord:, minimum: minimum_chord))
+      case chord <. minimum_length {
+        True -> Error(InternalSegmentTooShort(chord:, minimum: minimum_length))
         False -> {
           let ArrangementGraph(vertices:, edges:, ..) = graph
           let #(vertices, start_id) = attach_vertex(vertices, start, tolerance)
@@ -2644,12 +2644,12 @@ pub fn insert_atomic_segment(
 /// nodes them progressively at intersections and endpoint-bounded overlap
 /// boundaries. Remaining self-intersecting pieces are subdivided only after
 /// comparisons against existing edges; the children re-enter ordinary insertion.
-/// The legacy `minimum_chord` argument filters by segment length upper bound,
+/// The `minimum_length` argument filters by segment length upper bound,
 /// so a zero-chord loop is not discarded merely because its endpoints coincide.
 pub fn build(
   paths: List(svg_path.Path),
   tolerance tolerance: Float,
-  minimum_chord minimum_chord: Float,
+  minimum_length minimum_length: Float,
 ) -> Result(ArrangementGraphBuild, Error) {
   let result = {
     let indexed = index_paths(paths)
@@ -2661,7 +2661,7 @@ pub fn build(
     use build <- result.try(build_with(
       segments,
       vertex_tolerance: tolerance,
-      minimum_chord:,
+      minimum_length:,
       endpoint_sliver_tolerance: 0.0,
     ))
     let ArrangementSegmentBuild(graph:, segment_images:, ..) = build
@@ -2682,14 +2682,14 @@ pub fn build(
 pub fn build_with(
   segments: List(svg_path.Segment),
   vertex_tolerance vertex_tolerance: Float,
-  minimum_chord minimum_chord: Float,
+  minimum_length minimum_length: Float,
   endpoint_sliver_tolerance endpoint_sliver_tolerance: Float,
 ) -> Result(ArrangementSegmentBuild, InternalError) {
-  use _ <- result.try(validate_options(vertex_tolerance, minimum_chord))
+  use _ <- result.try(validate_options(vertex_tolerance, minimum_length))
   use _ <- result.try(validate_endpoint_cut_tolerance(endpoint_sliver_tolerance))
   let indexed = index_flat_segments(segments)
   use pieces <- result.try(
-    indexed_segments_as_atomic_pieces(indexed, minimum_chord, []),
+    indexed_segments_as_atomic_pieces(indexed, minimum_length, []),
   )
   let images = initial_segment_images(indexed)
   use #(graph, images) <- result.try(progressive_insert_pieces_loop(
@@ -2697,7 +2697,7 @@ pub fn build_with(
     empty(),
     images,
     vertex_tolerance,
-    minimum_chord,
+    minimum_length,
     endpoint_sliver_tolerance,
     iteration: 0,
   ))
@@ -2722,7 +2722,7 @@ pub fn build_with(
 
 fn indexed_segments_as_atomic_pieces(
   segments: List(IndexedSegment),
-  minimum_chord: Float,
+  minimum_length: Float,
   pieces pieces: List(AtomicPiece),
 ) -> Result(List(AtomicPiece), InternalError) {
   case segments {
@@ -2738,7 +2738,7 @@ fn indexed_segments_as_atomic_pieces(
       ..rest
     ] -> {
       use size <- result.try(segment_length_bound(segment))
-      let pieces = case size >=. minimum_chord {
+      let pieces = case size >=. minimum_length {
         True -> [
           AtomicPiece(
             source_index: index,
@@ -2754,7 +2754,7 @@ fn indexed_segments_as_atomic_pieces(
         ]
         False -> pieces
       }
-      indexed_segments_as_atomic_pieces(rest, minimum_chord, pieces:)
+      indexed_segments_as_atomic_pieces(rest, minimum_length, pieces:)
     }
   }
 }
@@ -2784,7 +2784,7 @@ fn progressive_insert_piece_direct(
   graph: ArrangementGraph,
   images: List(ArrangementSourceSegmentImage),
   tolerance: Float,
-  minimum_chord: Float,
+  minimum_length: Float,
 ) -> Result(ProgressivePieceResult, InternalError) {
   let IncomingContext(piece:, ..) = context
   // All existing-edge comparisons have finished. Split only now, so their
@@ -2794,7 +2794,7 @@ fn progressive_insert_piece_direct(
     intersections.segment_self_with(
       piece.segment,
       options: svg_path.SelfIntersectionOptions(
-        minimum_arc_length_separation: minimum_chord,
+        minimum_arc_length_separation: minimum_length,
         distance_tolerance: tolerance /. 2.0,
       ),
     )
@@ -2838,7 +2838,7 @@ fn progressive_insert_piece_direct(
             replacements
             |> list.map(fn(child) {
               use size <- result.try(segment_length_bound(child.segment))
-              Ok(case size >=. minimum_chord {
+              Ok(case size >=. minimum_length {
                 True -> [child]
                 False -> []
               })
@@ -2855,7 +2855,7 @@ fn progressive_insert_piece_direct(
         graph,
         images,
         tolerance,
-        minimum_chord,
+        minimum_length,
       )
   }
 }
@@ -2865,7 +2865,7 @@ fn progressive_insert_simple_piece_direct(
   graph: ArrangementGraph,
   images: List(ArrangementSourceSegmentImage),
   tolerance: Float,
-  minimum_chord: Float,
+  minimum_length: Float,
 ) -> Result(ProgressivePieceResult, InternalError) {
   let IncomingContext(piece:, ..) = context
   let AtomicPiece(source_index:, ..) = piece
@@ -2874,7 +2874,7 @@ fn progressive_insert_simple_piece_direct(
       context,
       graph,
       tolerance,
-      minimum_chord,
+      minimum_length,
     )
   {
     Ok(#(graph, edge_id, reversed)) -> {
@@ -2907,7 +2907,7 @@ fn progressive_insert_pieces_loop(
   graph: ArrangementGraph,
   images: List(ArrangementSourceSegmentImage),
   vertex_tolerance: Float,
-  minimum_chord: Float,
+  minimum_length: Float,
   endpoint_sliver_tolerance: Float,
   iteration iteration: Int,
 ) -> Result(
@@ -2921,7 +2921,7 @@ fn progressive_insert_pieces_loop(
         first,
         graph,
         vertex_tolerance,
-        minimum_chord,
+        minimum_length,
       ))
       case vertex_split {
         Some(replacements) ->
@@ -2930,7 +2930,7 @@ fn progressive_insert_pieces_loop(
             graph,
             images,
             vertex_tolerance,
-            minimum_chord,
+            minimum_length,
             endpoint_sliver_tolerance,
             iteration: iteration + 1,
           )
@@ -2945,7 +2945,7 @@ fn progressive_insert_pieces_loop(
             graph,
             images,
             vertex_tolerance,
-            minimum_chord,
+            minimum_length,
             endpoint_sliver_tolerance,
           ))
           case result {
@@ -2955,7 +2955,7 @@ fn progressive_insert_pieces_loop(
                 graph,
                 images,
                 vertex_tolerance,
-                minimum_chord,
+                minimum_length,
                 endpoint_sliver_tolerance,
                 iteration: iteration + 1,
               )
@@ -2965,7 +2965,7 @@ fn progressive_insert_pieces_loop(
                 graph,
                 images,
                 vertex_tolerance,
-                minimum_chord,
+                minimum_length,
                 endpoint_sliver_tolerance,
                 iteration: iteration + 1,
               )
@@ -3000,7 +3000,7 @@ fn split_piece_at_existing_vertex(
   piece: AtomicPiece,
   graph: ArrangementGraph,
   vertex_tolerance: Float,
-  minimum_chord: Float,
+  minimum_length: Float,
 ) -> Result(Option(List(AtomicPiece)), InternalError) {
   let ArrangementGraph(vertices:, ..) = graph
   use bounds <- result.try(
@@ -3015,7 +3015,7 @@ fn split_piece_at_existing_vertex(
   ))
   case cut {
     Some(t) -> {
-      split_atomic_piece(piece, [t], vertex_tolerance, minimum_chord)
+      split_atomic_piece(piece, [t], vertex_tolerance, minimum_length)
       |> result.map(Some)
     }
     None -> Ok(None)
@@ -3081,7 +3081,7 @@ fn vertex_projects_to_piece_interior_uncached(
         distance.segment_projection(vertex, to: segment)
         |> result.map_error(InternalPathError),
       )
-      let svg_path.SegmentProjection(t:, distance:, ..) = projection
+      let svg_path.Projection(at: t, distance:, ..) = projection
       Ok(case distance <=. vertex_tolerance && t >. 0.0 && t <. 1.0 {
         True -> Some(t)
         False -> None
@@ -3152,7 +3152,7 @@ fn progressive_insert_piece(
   graph: ArrangementGraph,
   images: List(ArrangementSourceSegmentImage),
   vertex_tolerance: Float,
-  minimum_chord: Float,
+  minimum_length: Float,
   endpoint_sliver_tolerance: Float,
 ) -> Result(ProgressivePieceResult, InternalError) {
   use context <- result.try(incoming_context(piece, graph, vertex_tolerance))
@@ -3161,7 +3161,7 @@ fn progressive_insert_piece(
     graph,
     images,
     vertex_tolerance,
-    minimum_chord,
+    minimum_length,
   ))
   case endpoint_split {
     Some(#(graph, images)) ->
@@ -3172,7 +3172,7 @@ fn progressive_insert_piece(
         graph,
         images,
         vertex_tolerance,
-        minimum_chord,
+        minimum_length,
         endpoint_sliver_tolerance,
       )
   }
@@ -3207,7 +3207,7 @@ fn progressive_insert_piece_context(
   graph: ArrangementGraph,
   images: List(ArrangementSourceSegmentImage),
   vertex_tolerance: Float,
-  minimum_chord: Float,
+  minimum_length: Float,
   endpoint_sliver_tolerance: Float,
 ) -> Result(ProgressivePieceResult, InternalError) {
   let ArrangementGraph(edges:, ..) = graph
@@ -3217,7 +3217,7 @@ fn progressive_insert_piece_context(
     graph,
     images,
     vertex_tolerance,
-    minimum_chord,
+    minimum_length,
     endpoint_sliver_tolerance,
   )
 }
@@ -3227,7 +3227,7 @@ fn split_existing_edge_at_incoming_endpoint(
   graph: ArrangementGraph,
   images: List(ArrangementSourceSegmentImage),
   vertex_tolerance: Float,
-  minimum_chord: Float,
+  minimum_length: Float,
 ) -> Result(
   Option(#(ArrangementGraph, List(ArrangementSourceSegmentImage))),
   InternalError,
@@ -3240,7 +3240,7 @@ fn split_existing_edge_at_incoming_endpoint(
     graph,
     images,
     vertex_tolerance,
-    minimum_chord,
+    minimum_length,
   ))
   case start_result {
     Some(_) -> Ok(start_result)
@@ -3251,7 +3251,7 @@ fn split_existing_edge_at_incoming_endpoint(
         graph,
         images,
         vertex_tolerance,
-        minimum_chord,
+        minimum_length,
       )
   }
 }
@@ -3262,7 +3262,7 @@ fn split_existing_edge_at_endpoint(
   graph: ArrangementGraph,
   images: List(ArrangementSourceSegmentImage),
   vertex_tolerance: Float,
-  minimum_chord: Float,
+  minimum_length: Float,
 ) -> Result(
   Option(#(ArrangementGraph, List(ArrangementSourceSegmentImage))),
   InternalError,
@@ -3290,14 +3290,14 @@ fn split_existing_edge_at_endpoint(
             graph,
             images,
             vertex_tolerance,
-            minimum_chord,
+            minimum_length,
           )
         Some(t) -> {
           use cuts <- result.try(effective_cut_parameters(
             segment,
             [t],
             vertex_tolerance,
-            minimum_chord,
+            minimum_length,
           ))
           case cuts {
             [] ->
@@ -3307,7 +3307,7 @@ fn split_existing_edge_at_endpoint(
                 graph,
                 images,
                 vertex_tolerance,
-                minimum_chord,
+                minimum_length,
               )
             [_, ..] -> {
               use result <- result.try(split_progressive_graph_edge(
@@ -3316,7 +3316,7 @@ fn split_existing_edge_at_endpoint(
                 edge_id,
                 cuts,
                 vertex_tolerance,
-                minimum_chord,
+                minimum_length,
               ))
               Ok(Some(result))
             }
@@ -3333,7 +3333,7 @@ fn progressive_compare_edges(
   graph: ArrangementGraph,
   images: List(ArrangementSourceSegmentImage),
   vertex_tolerance: Float,
-  minimum_chord: Float,
+  minimum_length: Float,
   endpoint_sliver_tolerance: Float,
 ) -> Result(ProgressivePieceResult, InternalError) {
   case edges {
@@ -3343,7 +3343,7 @@ fn progressive_compare_edges(
         graph,
         images,
         vertex_tolerance,
-        minimum_chord,
+        minimum_length,
       )
     [edge, ..rest] -> {
       use step <- result.try(progressive_compare_edge(
@@ -3352,7 +3352,7 @@ fn progressive_compare_edges(
         graph,
         images,
         vertex_tolerance,
-        minimum_chord,
+        minimum_length,
         endpoint_sliver_tolerance,
       ))
       case step {
@@ -3363,7 +3363,7 @@ fn progressive_compare_edges(
             graph,
             images,
             vertex_tolerance,
-            minimum_chord,
+            minimum_length,
             endpoint_sliver_tolerance,
           )
         ProgressiveReplaceIncoming(graph, images, replacements) ->
@@ -3379,7 +3379,7 @@ fn progressive_compare_edge(
   graph: ArrangementGraph,
   images: List(ArrangementSourceSegmentImage),
   vertex_tolerance: Float,
-  minimum_chord: Float,
+  minimum_length: Float,
   endpoint_sliver_tolerance: Float,
 ) -> Result(ProgressiveEdgeStep, InternalError) {
   let IncomingContext(piece:, bounds:, start_match:, end_match:) = context
@@ -3404,7 +3404,7 @@ fn progressive_compare_edge(
         images,
         cuts,
         vertex_tolerance,
-        minimum_chord,
+        minimum_length,
       )
     }
   }
@@ -3429,7 +3429,7 @@ fn progressive_compare_edge_cuts(
   images: List(ArrangementSourceSegmentImage),
   cuts: List(SegmentCut),
   tolerance: Float,
-  minimum_chord: Float,
+  minimum_length: Float,
 ) -> Result(ProgressiveEdgeStep, InternalError) {
   let AtomicPiece(segment: incoming, ..) = piece
   let ArrangementEdge(id: edge_id, segment: existing, ..) = edge
@@ -3443,13 +3443,13 @@ fn progressive_compare_edge_cuts(
     existing,
     existing_parameters,
     tolerance,
-    minimum_chord,
+    minimum_length,
   ))
   use incoming_parameters <- result.try(effective_cut_parameters(
     incoming,
     incoming_parameters,
     tolerance,
-    minimum_chord,
+    minimum_length,
   ))
   case existing_parameters, incoming_parameters {
     [], [] -> Ok(ProgressiveContinue(graph, images))
@@ -3462,7 +3462,7 @@ fn progressive_compare_edge_cuts(
             edge_id,
             existing_parameters,
             tolerance,
-            minimum_chord,
+            minimum_length,
           )
         }
         [] -> Ok(#(graph, images))
@@ -3473,7 +3473,7 @@ fn progressive_compare_edge_cuts(
             piece,
             incoming_parameters,
             tolerance,
-            minimum_chord,
+            minimum_length,
           ))
           Ok(ProgressiveReplaceIncoming(graph, images, replacements))
         }
@@ -3487,7 +3487,7 @@ fn effective_cut_parameters(
   segment: svg_path.Segment,
   cuts: List(Float),
   tolerance: Float,
-  minimum_chord: Float,
+  minimum_length: Float,
 ) -> Result(List(Float), InternalError) {
   use parameters <- result.try(
     [0.0, 1.0, ..cuts]
@@ -3497,7 +3497,7 @@ fn effective_cut_parameters(
   use parameters <- result.try(retain_minimum_length_cuts(
     segment,
     parameters,
-    minimum_chord,
+    minimum_length,
   ))
   let cuts = interior_distinct_parameters(parameters, [])
   case cuts {
@@ -3506,7 +3506,7 @@ fn effective_cut_parameters(
       use produces_split <- result.try(cuts_produce_retained_split(
         segment,
         cuts,
-        minimum_chord,
+        minimum_length,
       ))
       case produces_split {
         True -> Ok(cuts)
@@ -3533,7 +3533,7 @@ fn interior_distinct_parameters(
 fn retain_minimum_length_cuts(
   segment: svg_path.Segment,
   parameters: List(Float),
-  minimum_chord: Float,
+  minimum_length: Float,
 ) -> Result(List(Float), InternalError) {
   case parameters {
     [] | [_] -> Ok(parameters)
@@ -3543,7 +3543,7 @@ fn retain_minimum_length_cuts(
         rest,
         previous: start,
         retained: [start],
-        minimum_chord:,
+        minimum_length:,
       )
   }
 }
@@ -3553,7 +3553,7 @@ fn retain_minimum_length_cuts_loop(
   parameters: List(Float),
   previous previous: Float,
   retained retained: List(Float),
-  minimum_chord minimum_chord: Float,
+  minimum_length minimum_length: Float,
 ) -> Result(List(Float), InternalError) {
   case parameters {
     [] -> Ok(list.reverse(retained))
@@ -3562,7 +3562,7 @@ fn retain_minimum_length_cuts_loop(
         segment,
         previous,
         last,
-        minimum_chord,
+        minimum_length,
       ))
       let retained = case long_enough {
         True -> [last, ..retained]
@@ -3575,13 +3575,13 @@ fn retain_minimum_length_cuts_loop(
         segment,
         previous,
         candidate,
-        minimum_chord,
+        minimum_length,
       ))
       use after_long_enough <- result.try(parameter_length_bound_long_enough(
         segment,
         candidate,
         next,
-        minimum_chord,
+        minimum_length,
       ))
       case before_long_enough && after_long_enough {
         True ->
@@ -3590,7 +3590,7 @@ fn retain_minimum_length_cuts_loop(
             [next, ..rest],
             previous: candidate,
             retained: [candidate, ..retained],
-            minimum_chord:,
+            minimum_length:,
           )
         False ->
           retain_minimum_length_cuts_loop(
@@ -3598,7 +3598,7 @@ fn retain_minimum_length_cuts_loop(
             [next, ..rest],
             previous:,
             retained:,
-            minimum_chord:,
+            minimum_length:,
           )
       }
     }
@@ -3616,20 +3616,20 @@ fn parameter_length_bound_long_enough(
   segment: svg_path.Segment,
   from from: Float,
   to to: Float,
-  minimum_chord minimum_chord: Float,
+  minimum_length minimum_length: Float,
 ) -> Result(Bool, InternalError) {
   use portion <- result.try(
     svg_path.segment_between(segment, from:, to:)
     |> result.map_error(InternalPathError),
   )
   use size <- result.try(segment_length_bound(portion))
-  Ok(size >=. minimum_chord)
+  Ok(size >=. minimum_length)
 }
 
 fn cuts_produce_retained_split(
   segment: svg_path.Segment,
   cuts: List(Float),
-  minimum_chord: Float,
+  minimum_length: Float,
 ) -> Result(Bool, InternalError) {
   use split <- result.try(
     svg_path.segment_between_many_inside(
@@ -3639,7 +3639,7 @@ fn cuts_produce_retained_split(
     |> result.map_error(InternalPathError),
   )
   use retained <- result.try(
-    retained_split_segments(split, minimum_chord, retained: []),
+    retained_split_segments(split, minimum_length, retained: []),
   )
   case retained {
     [_, _, ..] -> Ok(True)
@@ -3653,7 +3653,7 @@ fn split_progressive_graph_edge(
   edge_id: Int,
   cuts: List(Float),
   tolerance: Float,
-  minimum_chord: Float,
+  minimum_length: Float,
 ) -> Result(
   #(ArrangementGraph, List(ArrangementSourceSegmentImage)),
   InternalError,
@@ -3676,10 +3676,10 @@ fn split_progressive_graph_edge(
     |> result.map_error(InternalPathError),
   )
   use retained <- result.try(
-    retained_split_segments(split, minimum_chord, retained: []),
+    retained_split_segments(split, minimum_length, retained: []),
   )
   case retained {
-    [] -> Error(InternalSegmentTooShort(chord: 0.0, minimum: minimum_chord))
+    [] -> Error(InternalSegmentTooShort(chord: 0.0, minimum: minimum_length))
     [_, ..] -> {
       let next_id = next_arrangement_edge_id(edges)
       use #(vertices, replacements, references) <- result.try(
@@ -3692,7 +3692,7 @@ fn split_progressive_graph_edge(
           reverse_multiplicity,
           vertices,
           tolerance,
-          minimum_chord,
+          minimum_length,
           edges: [],
           references: [],
         ),
@@ -3720,18 +3720,18 @@ fn next_arrangement_edge_id(edges: List(ArrangementEdge)) -> Int {
 
 fn retained_split_segments(
   segments: List(svg_path.Segment),
-  minimum_chord: Float,
+  minimum_length: Float,
   retained retained: List(svg_path.Segment),
 ) -> Result(List(svg_path.Segment), InternalError) {
   case segments {
     [] -> Ok(list.reverse(retained))
     [first, ..rest] -> {
       use size <- result.try(segment_length_bound(first))
-      let retained = case size >=. minimum_chord {
+      let retained = case size >=. minimum_length {
         True -> [first, ..retained]
         False -> retained
       }
-      retained_split_segments(rest, minimum_chord, retained:)
+      retained_split_segments(rest, minimum_length, retained:)
     }
   }
 }
@@ -3745,7 +3745,7 @@ fn progressive_replacement_edges(
   reverse_multiplicity: Int,
   vertices: List(ArrangementVertex),
   tolerance: Float,
-  minimum_chord: Float,
+  minimum_length: Float,
   edges edges: List(ArrangementEdge),
   references references: List(ArrangementSegmentEdgeImage),
 ) -> Result(
@@ -3766,7 +3766,7 @@ fn progressive_replacement_edges(
       let start = svg_path.segment_start(segment)
       let end = svg_path.segment_end(segment)
       use chord <- result.try(segment_length_bound(segment))
-      case chord <. minimum_chord {
+      case chord <. minimum_length {
         True ->
           progressive_replacement_edges(
             rest,
@@ -3777,7 +3777,7 @@ fn progressive_replacement_edges(
             reverse_multiplicity,
             vertices,
             tolerance,
-            minimum_chord,
+            minimum_length,
             edges:,
             references:,
           )
@@ -3796,7 +3796,7 @@ fn progressive_replacement_edges(
                 reverse_multiplicity,
                 vertices,
                 tolerance,
-                minimum_chord,
+                minimum_length,
                 edges:,
                 references:,
               )
@@ -3810,7 +3810,7 @@ fn progressive_replacement_edges(
                 reverse_multiplicity,
                 vertices,
                 tolerance,
-                minimum_chord,
+                minimum_length,
                 edges: [
                   ArrangementEdge(
                     id:,
@@ -4339,7 +4339,7 @@ fn split_atomic_piece(
   piece: AtomicPiece,
   cuts: List(Float),
   tolerance: Float,
-  minimum_chord: Float,
+  minimum_length: Float,
 ) -> Result(List(AtomicPiece), InternalError) {
   let AtomicPiece(
     source_index:,
@@ -4370,7 +4370,7 @@ fn split_atomic_piece(
     source_from,
     source_to,
     self_split_depth,
-    minimum_chord,
+    minimum_length,
     pieces: [],
   )
 }
@@ -4385,7 +4385,7 @@ fn split_atomic_pieces_for_parameters(
   source_from: Float,
   source_to: Float,
   self_split_depth: Int,
-  minimum_chord: Float,
+  minimum_length: Float,
   pieces pieces: List(AtomicPiece),
 ) -> Result(List(AtomicPiece), InternalError) {
   case segments, parameters {
@@ -4393,7 +4393,7 @@ fn split_atomic_pieces_for_parameters(
       let global_from = interpolate_float(source_from, source_to, from)
       let global_to = interpolate_float(source_from, source_to, to)
       use size <- result.try(segment_length_bound(segment))
-      let pieces = case size >=. minimum_chord {
+      let pieces = case size >=. minimum_length {
         True -> [
           AtomicPiece(
             source_index:,
@@ -4419,7 +4419,7 @@ fn split_atomic_pieces_for_parameters(
         source_from,
         source_to,
         self_split_depth,
-        minimum_chord,
+        minimum_length,
         pieces:,
       )
     }
@@ -4530,7 +4530,7 @@ fn insert_corresponding_piece_with_ref(
   context: IncomingContext,
   graph: ArrangementGraph,
   tolerance: Float,
-  minimum_chord: Float,
+  minimum_length: Float,
 ) -> Result(#(ArrangementGraph, Int, Bool), InternalError) {
   let ArrangementGraph(edges:, ..) = graph
   let IncomingContext(piece: AtomicPiece(segment:, ..), ..) = context
@@ -4542,7 +4542,7 @@ fn insert_corresponding_piece_with_ref(
         graph,
         segment,
         tolerance:,
-        minimum_chord:,
+        minimum_length:,
       ))
       Ok(#(graph, edge_id, False))
     }
@@ -5235,16 +5235,16 @@ fn increment_matching_edge(
 pub fn validate(
   graph: ArrangementGraph,
   tolerance tolerance: Float,
-  minimum_chord minimum_chord: Float,
+  minimum_length minimum_length: Float,
 ) -> Result(Nil, Error) {
   let result = {
-    use _ <- result.try(validate_options(tolerance, minimum_chord))
+    use _ <- result.try(validate_options(tolerance, minimum_length))
     let ArrangementGraph(vertices:, edges:, ..) = graph
     use _ <- result.try(validate_edges(
       edges,
       vertices,
       tolerance,
-      minimum_chord,
+      minimum_length,
     ))
     validate_vertices(vertices, edges, tolerance)
   }
@@ -5253,14 +5253,14 @@ pub fn validate(
 
 fn validate_options(
   tolerance: Float,
-  minimum_chord: Float,
+  minimum_length: Float,
 ) -> Result(Nil, InternalError) {
   case
     tolerance <=. 0.0 || !number.is_finite(tolerance),
-    minimum_chord <=. 0.0 || !number.is_finite(minimum_chord)
+    minimum_length <=. 0.0 || !number.is_finite(minimum_length)
   {
     True, _ -> Error(InternalInvalidTolerance(tolerance))
-    _, True -> Error(InternalInvalidMinimumChord(minimum_chord))
+    _, True -> Error(InternalInvalidMinimumLength(minimum_length))
     False, False -> Ok(Nil)
   }
 }
@@ -5278,7 +5278,7 @@ fn validate_edges(
   edges: List(ArrangementEdge),
   vertices: List(ArrangementVertex),
   tolerance: Float,
-  minimum_chord: Float,
+  minimum_length: Float,
 ) -> Result(Nil, InternalError) {
   case edges {
     [] -> Ok(Nil)
@@ -5323,18 +5323,18 @@ fn validate_edges(
                       ))
                     False -> {
                       use chord <- result.try(segment_length_bound(segment))
-                      case chord <. minimum_chord {
+                      case chord <. minimum_length {
                         True ->
                           Error(InternalSegmentTooShort(
                             chord:,
-                            minimum: minimum_chord,
+                            minimum: minimum_length,
                           ))
                         False ->
                           validate_edges(
                             rest,
                             vertices,
                             tolerance,
-                            minimum_chord,
+                            minimum_length,
                           )
                       }
                     }

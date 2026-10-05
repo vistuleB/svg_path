@@ -535,7 +535,7 @@ pub fn subpaths_between_open_returns_outer_pieces_test() {
     ])
 
   let assert Ok([first, second, third]) =
-    svg_path.subpath_between_many(subpath, between: [
+    svg_path.subpath_split_many(subpath, at: [
       svg_path.SubpathParameter(0, 0.5),
       svg_path.SubpathParameter(2, 0.5),
     ])
@@ -562,7 +562,7 @@ pub fn subpaths_between_open_rejects_boundary_and_duplicate_points_test() {
       svg_path.Line(start: b, end: c),
     ])
 
-  assert svg_path.subpath_between_many(subpath, between: [
+  assert svg_path.subpath_split_many(subpath, at: [
       svg_path.SubpathParameter(0, 0.0),
     ])
     == Error(svg_path.InvalidSubpathParameter(
@@ -570,7 +570,7 @@ pub fn subpaths_between_open_rejects_boundary_and_duplicate_points_test() {
       t: 0.0,
       length: 2,
     ))
-  assert svg_path.subpath_between_many(subpath, between: [
+  assert svg_path.subpath_split_many(subpath, at: [
       svg_path.SubpathParameter(0, 1.0),
       svg_path.SubpathParameter(1, 0.0),
     ])
@@ -594,7 +594,7 @@ pub fn subpaths_between_closed_accepts_cyclic_order_test() {
     ])
 
   let assert Ok([first, second, third]) =
-    svg_path.subpath_between_many(subpath, between: [
+    svg_path.subpath_split_many(subpath, at: [
       svg_path.SubpathParameter(2, 0.5),
       svg_path.SubpathParameter(3, 0.5),
       svg_path.SubpathParameter(1, 0.5),
@@ -632,7 +632,7 @@ pub fn subpaths_between_closed_accepts_single_split_point_test() {
     ])
 
   let assert Ok([opened]) =
-    svg_path.subpath_between_many(subpath, between: [
+    svg_path.subpath_split_many(subpath, at: [
       svg_path.SubpathParameter(1, 0.5),
     ])
 
@@ -662,7 +662,7 @@ pub fn subpaths_between_closed_rejects_duplicate_and_nonlinear_order_test() {
       svg_path.Line(start: d, end: a),
     ])
 
-  assert svg_path.subpath_between_many(subpath, between: [
+  assert svg_path.subpath_split_many(subpath, at: [
       svg_path.SubpathParameter(3, 1.0),
       svg_path.SubpathParameter(0, 0.0),
     ])
@@ -670,7 +670,7 @@ pub fn subpaths_between_closed_rejects_duplicate_and_nonlinear_order_test() {
       from: svg_path.SubpathParameter(0, 0.0),
       to: svg_path.SubpathParameter(0, 0.0),
     ))
-  assert svg_path.subpath_between_many(subpath, between: [
+  assert svg_path.subpath_split_many(subpath, at: [
       svg_path.SubpathParameter(2, 0.5),
       svg_path.SubpathParameter(1, 0.5),
       svg_path.SubpathParameter(3, 0.5),

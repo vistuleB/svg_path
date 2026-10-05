@@ -518,7 +518,7 @@ pub fn point_parameters(
   // partial collection of geometric matches.
   let projection = query.segment_projection(point, to: target)
   use projected <- result.try(case projection {
-    Ok(found) -> Ok([found.t])
+    Ok(found) -> Ok([found.at])
     Error(svg_path.DistanceMaxIterationsReached(..) as error) ->
       case complete_coordinate(x) || complete_coordinate(y) {
         True -> Ok([])

@@ -162,7 +162,7 @@ const stalled_arc_turn_threshold = 0.01
 
 const tolerance = 0.000001
 
-const minimum_chord = 0.00001
+const minimum_length = 0.00001
 
 pub fn forced_parity_reduces_unique_edge_without_mutating_graph_test() {
   let line =
@@ -174,7 +174,7 @@ pub fn forced_parity_reduces_unique_edge_without_mutating_graph_test() {
     arrangement_graph.build_with(
       [line, line],
       vertex_tolerance: tolerance,
-      minimum_chord:,
+      minimum_length:,
       endpoint_sliver_tolerance: 0.0,
     )
   let arrangement_graph.ArrangementGraph(vertices:, edges: original_edges, ..) =
@@ -207,7 +207,7 @@ pub fn forced_parity_reports_unresolved_diamond_choice_test() {
     arrangement_graph.build_with(
       segments,
       vertex_tolerance: tolerance,
-      minimum_chord:,
+      minimum_length:,
       endpoint_sliver_tolerance: 0.0,
     )
   let arrangement_graph.ArrangementGraph(vertices:, ..) = graph
@@ -236,7 +236,7 @@ pub fn forced_parity_reduces_unique_edge_at_higher_threshold_test() {
         svg_path.Line(start: c, end: a),
       ],
       vertex_tolerance: tolerance,
-      minimum_chord:,
+      minimum_length:,
       endpoint_sliver_tolerance: 0.0,
     )
   let arrangement_graph.ArrangementGraph(edges:, ..) = graph
@@ -266,7 +266,7 @@ pub fn forced_parity_reports_capacity_infeasibility_test() {
     arrangement_graph.build_with(
       [line],
       vertex_tolerance: tolerance,
-      minimum_chord:,
+      minimum_length:,
       endpoint_sliver_tolerance: 0.0,
     )
   let assert arrangement_graph.ArrangementGraph(vertices: [start, end], ..) =
@@ -289,7 +289,7 @@ pub fn preferred_parity_guides_reduction_but_allows_isolation_test() {
     arrangement_graph.build_with(
       [line],
       vertex_tolerance: tolerance,
-      minimum_chord:,
+      minimum_length:,
       endpoint_sliver_tolerance: 0.0,
     )
   let assert arrangement_graph.ArrangementGraph(vertices: [start, end], ..) =
@@ -306,7 +306,7 @@ pub fn preferred_parity_guides_reduction_but_allows_isolation_test() {
     arrangement_graph.build_with(
       [line, line],
       vertex_tolerance: tolerance,
-      minimum_chord:,
+      minimum_length:,
       endpoint_sliver_tolerance: 0.0,
     )
   let assert arrangement_graph.ArrangementGraph(vertices: [start, end], ..) =
@@ -328,7 +328,7 @@ pub fn forced_parity_sums_forward_and_reverse_capacity_test() {
     arrangement_graph.build_with(
       [forward, reverse],
       vertex_tolerance: tolerance,
-      minimum_chord:,
+      minimum_length:,
       endpoint_sliver_tolerance: 0.0,
     )
   let assert Ok([offset.EdgeCapacityAssignment(capacity:, ..)]) =
@@ -346,7 +346,7 @@ pub fn forced_parity_accepts_explicit_initial_capacities_test() {
     arrangement_graph.build_with(
       [line, line],
       vertex_tolerance: tolerance,
-      minimum_chord:,
+      minimum_length:,
       endpoint_sliver_tolerance: 0.0,
     )
   let assert arrangement_graph.ArrangementGraph(
@@ -385,7 +385,7 @@ pub fn forced_parity_rejects_invalid_vertex_parities_test() {
     arrangement_graph.build_with(
       [line],
       vertex_tolerance: tolerance,
-      minimum_chord:,
+      minimum_length:,
       endpoint_sliver_tolerance: 0.0,
     )
   let assert arrangement_graph.ArrangementGraph(vertices: [start, _], ..) =
@@ -1823,7 +1823,7 @@ pub fn arrangement_nodes_crossing_subpaths_test() {
     arrangement_graph.build(
       [svg_path.Path([horizontal, vertical])],
       tolerance: 0.000000002,
-      minimum_chord: 0.000000002,
+      minimum_length: 0.000000002,
     )
 
   assert list.length(build.graph.vertices) == 5
@@ -1850,7 +1850,7 @@ pub fn arrangement_consolidates_coincident_pieces_test() {
     arrangement_graph.build(
       [svg_path.Path([whole, divided])],
       tolerance: 0.000000002,
-      minimum_chord: 0.000000002,
+      minimum_length: 0.000000002,
     )
 
   assert list.length(build.graph.vertices) == 3
@@ -2119,8 +2119,8 @@ pub fn subpath_stroke_open_line_with_butt_cap_returns_closed_outline_test() {
     stroke.subpath(
       subpath,
       width: 2.0,
-      join: stroke.Miter(offset.default_miter_limit),
-      cap: stroke.Butt,
+      join: offset.Miter(offset.default_miter_limit),
+      cap: offset.Butt,
     )
 
   assert list.length(svg_path.path_subpaths(stroke)) == 1
@@ -2138,8 +2138,8 @@ pub fn subpath_stroke_open_line_with_square_cap_extends_ends_test() {
     stroke.subpath_with(
       subpath,
       width: 2.0,
-      join: stroke.Miter(offset.default_miter_limit),
-      cap: stroke.Square,
+      join: offset.Miter(offset.default_miter_limit),
+      cap: offset.Square,
       options: stroke.default_options(),
     )
 
@@ -2247,8 +2247,8 @@ pub fn subpath_stroke_closed_square_uses_band_test() {
     stroke.subpath(
       square,
       width: 4.0,
-      join: stroke.Miter(offset.default_miter_limit),
-      cap: stroke.Butt,
+      join: offset.Miter(offset.default_miter_limit),
+      cap: offset.Butt,
     )
 
   closed_path_assertions.assert_equivalent(
@@ -2267,8 +2267,8 @@ pub fn subpath_stroke_rejects_invalid_width_test() {
   assert stroke.subpath(
       subpath,
       width: 0.0,
-      join: stroke.Miter(offset.default_miter_limit),
-      cap: stroke.Butt,
+      join: offset.Miter(offset.default_miter_limit),
+      cap: offset.Butt,
     )
     == Error(stroke.InvalidWidth(0.0))
 }

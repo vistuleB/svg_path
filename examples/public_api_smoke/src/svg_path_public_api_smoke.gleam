@@ -10,10 +10,14 @@ import svg_path/distance
 import svg_path/fit
 import svg_path/intersections
 import svg_path/measure
+import svg_path/offset
 import svg_path/overlaps
 import svg_path/stroke
+import svg_path/svg
 
 pub fn main() -> Nil {
+  let _ =
+    svg.Circle(center: svg_path.Point(1.0, 2.0), radius: 3.0, style: "fill:red")
   let left = rectangle(0.0, 0.0, 10.0, 10.0)
   let right = rectangle(5.0, 0.0, 15.0, 10.0)
 
@@ -21,7 +25,7 @@ pub fn main() -> Nil {
     arrangement.build(
       [left, right],
       tolerance: 0.000001,
-      minimum_chord: 0.00001,
+      minimum_length: 0.00001,
     )
   let arrangement.ArrangementGraphBuild(graph:, segment_images:) = build
   let _ = graph
@@ -87,8 +91,8 @@ pub fn main() -> Nil {
     stroke.subpath_with(
       fitted,
       width: 2.0,
-      join: stroke.Round,
-      cap: stroke.Butt,
+      join: offset.Round,
+      cap: offset.Butt,
       options: stroke.default_options(),
     )
   Nil

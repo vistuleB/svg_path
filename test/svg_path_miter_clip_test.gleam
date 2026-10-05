@@ -122,20 +122,20 @@ pub fn miter_clip_invalid_limit_test() {
   list.each([0.0, -1.0], fn(limit) {
     assert offset.subpath_untrimmed(corner(), 1.0, offset.MiterClip(limit))
       == Error(offset.InvalidMiterLimit(limit))
-    assert stroke.subpath(corner(), 2.0, stroke.MiterClip(limit), stroke.Butt)
+    assert stroke.subpath(corner(), 2.0, offset.MiterClip(limit), offset.Butt)
       == Error(stroke.OffsetError(offset.InvalidMiterLimit(limit)))
   })
 }
 
 pub fn miter_clip_stroke_produces_closed_outline_test() {
   let assert Ok(path) =
-    stroke.subpath(corner(), 2.0, stroke.MiterClip(1.2), stroke.Butt)
+    stroke.subpath(corner(), 2.0, offset.MiterClip(1.2), offset.Butt)
   let assert [outline] = svg_path.path_subpaths(path)
   assert svg_path.subpath_is_closed(outline)
   let assert Ok(root_two) = float.square_root(2.0)
   let x = 1.2 *. root_two -. 1.0
   assert has_edge(outline, Point(x, -1.0), Point(1.0, 0.0 -. x))
   let assert Ok(bevel) =
-    stroke.subpath(corner(), 2.0, stroke.Bevel, stroke.Butt)
+    stroke.subpath(corner(), 2.0, offset.Bevel, offset.Butt)
   assert serialize.path(path) != serialize.path(bevel)
 }

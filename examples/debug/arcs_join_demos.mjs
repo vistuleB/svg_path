@@ -3,12 +3,13 @@
 import {writeFile} from 'node:fs/promises';
 import * as s from '../public_api_smoke/build/dev/javascript/svg_path/svg_path.mjs';
 import * as stroke from '../public_api_smoke/build/dev/javascript/svg_path/svg_path/stroke.mjs';
+import * as offset from '../public_api_smoke/build/dev/javascript/svg_path/svg_path/offset.mjs';
 import * as serialize from '../public_api_smoke/build/dev/javascript/svg_path/svg_path/serialize.mjs';
 import {toList} from '../public_api_smoke/build/dev/javascript/gleam_stdlib/gleam.mjs';
 const ok = r => {if (!r.isOk()) throw r; return r[0];};
 const P = (x,y)=>new s.Point(x,y);
 const fmt = serialize.decimal_options(10);
-const cases = [['MiterClip(4)',new stroke.MiterClip(4)],['Round',new stroke.Round()],['Arcs(4)',new stroke.Arcs(4)],['Arcs(1.1)',new stroke.Arcs(1.1)]];
+const cases = [['MiterClip(4)',new offset.MiterClip(4)],['Round',new offset.Round()],['Arcs(4)',new offset.Arcs(4)],['Arcs(1.1)',new offset.Arcs(1.1)]];
 const sources = [
   ['Unequal source curvatures',s.subpath_assert(toList([
     new s.Arc(P(-3,3),P(3,3),0,false,true,P(0,0)),
@@ -25,7 +26,7 @@ const sources = [
 ];
 for (const [row,[title,source]] of sources.entries()) {
   const results = cases.map(([label,join])=> {
-    const path=ok(stroke.subpath(source,2,join,new stroke.Butt()));
+    const path=ok(stroke.subpath(source,2,join,new offset.Butt()));
     return {label,path,b:ok(s.path_bounding_box(path))};
   });
   const sourceBox=ok(s.subpath_bounding_box(source));

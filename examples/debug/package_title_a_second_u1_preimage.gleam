@@ -457,7 +457,7 @@ fn offset_sample_markers(
         let projection =
           distance.segment_projection_with(sample, to: candidate, options:)
         let projection_point = case projection {
-          Ok(svg_path.SegmentProjection(point:, ..)) -> point
+          Ok(svg_path.Projection(point:, ..)) -> point
           Error(_) -> sample
         }
         [

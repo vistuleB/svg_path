@@ -87,7 +87,7 @@ fn render(
     arrangement.build(
       [untrimmed_first_offset, source],
       tolerance: 0.000000002,
-      minimum_chord: 0.000000002,
+      minimum_length: 0.000000002,
     )
   let arrangement.ArrangementGraphBuild(graph:, segment_images:) = build
   let arrangement.ArrangementGraph(edges: arrangement_edges, ..) = graph

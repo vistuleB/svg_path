@@ -19,18 +19,18 @@ import svg_path/containment
 import svg_path/internal/winding_field
 import svg_path/point
 
-const default_minimum_chord = 0.00001
+const default_minimum_length = 0.00001
 
 /// Numeric options used while constructing and classifying an arrangement.
 ///
 /// `tolerance` is a distance in path coordinates used for endpoint clustering,
 /// intersection and overlap detection, winding-side sampling, and final cycle
-/// joins. The legacy name `minimum_chord` denotes a size threshold: refined
+/// joins. `minimum_length` is a size threshold: refined
 /// pieces are discarded when their segment length upper bound is below it,
 /// not merely when their endpoints are close. Both values must be finite and
 /// greater than zero.
 pub type Options {
-  Options(tolerance: Float, minimum_chord: Float)
+  Options(tolerance: Float, minimum_length: Float)
 }
 
 /// Errors returned by arrangement-graph CSG operations.
@@ -76,7 +76,7 @@ pub type CsgResult {
 /// The default tolerance is `0.000001` path-coordinate units and the default
 /// minimum segment-size threshold is `0.00001` path-coordinate units.
 pub fn default_options() -> Options {
-  Options(tolerance: 0.000001, minimum_chord: default_minimum_chord)
+  Options(tolerance: 0.000001, minimum_length: default_minimum_length)
 }
 
 /// Return the Boolean union of two paths under `using`.
@@ -245,7 +245,7 @@ fn csg_arrangement_build(
   arrangement.build_with(
     csg_path_segments(paths, segments: []),
     vertex_tolerance: options.tolerance,
-    minimum_chord: options.minimum_chord,
+    minimum_length: options.minimum_length,
     endpoint_sliver_tolerance: 0.0,
   )
   |> result.map_error(fn(_) { ArrangementGraphError })

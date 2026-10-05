@@ -175,7 +175,7 @@ pub fn arcs_invalid_limits_test() {
     assert offset.subpath_untrimmed(corner(), 1.0, offset.Arcs(limit))
       == Error(offset.InvalidMiterLimit(limit))
     let assert Error(_) =
-      stroke.subpath(corner(), 2.0, stroke.Arcs(limit), stroke.Butt)
+      stroke.subpath(corner(), 2.0, offset.Arcs(limit), offset.Butt)
   })
 }
 
@@ -194,7 +194,7 @@ pub fn arcs_public_curved_source_and_stroke_test() {
     near(radius, Point(4.0, 4.0))
   })
   let assert Ok(band) =
-    stroke.subpath(source, 2.0, stroke.Arcs(4.0), stroke.Butt)
+    stroke.subpath(source, 2.0, offset.Arcs(4.0), offset.Butt)
   assert !list.is_empty(svg_path.path_subpaths(band))
   assert list.all(svg_path.path_subpaths(band), svg_path.subpath_is_closed)
 }

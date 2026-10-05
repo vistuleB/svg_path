@@ -26,20 +26,20 @@ pub type ThingToDraw {
   /// The first field is serialized as the element's `d` attribute. The second
   /// field is used directly as the element's `style` attribute after XML
   /// attribute escaping.
-  StyledPath(svg_path.Path, String)
+  StyledPath(path: svg_path.Path, style: String)
 
   /// A `<rect>` element.
   ///
   /// The fields are the top-left point, width, height, and raw CSS declarations
   /// for the `style` attribute.
-  Rectangle(svg_path.Point, Float, Float, String)
+  Rectangle(at: svg_path.Point, width: Float, height: Float, style: String)
 
   /// A rectangle rotated in degrees around the supplied origin.
   RotatedRectangle(
-    svg_path.Point,
-    Float,
-    Float,
-    String,
+    at: svg_path.Point,
+    width: Float,
+    height: Float,
+    style: String,
     rotation: Float,
     origin: svg_path.Point,
   )
@@ -48,26 +48,26 @@ pub type ThingToDraw {
   ///
   /// The fields are the center point, radius, and raw CSS declarations for the
   /// `style` attribute.
-  Circle(svg_path.Point, Float, String)
+  Circle(center: svg_path.Point, radius: Float, style: String)
 
   /// An `<ellipse>` element.
   ///
   /// The fields are the center point, x/y radii, and raw CSS declarations for
   /// the `style` attribute.
-  Ellipse(svg_path.Point, svg_path.Point, String)
+  Ellipse(center: svg_path.Point, radii: svg_path.Point, style: String)
 
   /// A `<text>` element.
   ///
   /// The fields are text content, raw CSS declarations for the `style`
   /// attribute, the text position, and the font size in SVG user units.
-  Text(String, String, svg_path.Point, Float)
+  Text(content: String, style: String, at: svg_path.Point, size: Float)
 
   /// Text rotated in degrees around the supplied origin.
   RotatedText(
-    String,
-    String,
-    svg_path.Point,
-    Float,
+    content: String,
+    style: String,
+    at: svg_path.Point,
+    size: Float,
     rotation: Float,
     origin: svg_path.Point,
   )

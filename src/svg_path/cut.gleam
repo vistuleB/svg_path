@@ -157,7 +157,7 @@ fn cut_at_parameters(
 
   case cut_points {
     [] -> Ok([subject])
-    _ -> svg_path.subpath_between_many(subject, between: cut_points)
+    _ -> svg_path.subpath_split_many(subject, at: cut_points)
   }
 }
 

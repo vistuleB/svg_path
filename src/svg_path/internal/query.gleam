@@ -32,8 +32,8 @@ import svg_path.{
   MinimizeCandidate, MinimizeMaxIterationsReached, MinimizeOptions,
   NonFiniteParametricPoint, NonFiniteParametricTangent, Outside,
   ParametricFitFailed, ParametricMaxDepthReached, ParametricOptions, Path,
-  PathParameter, PathProjection, Point, PositiveHandle, QuadraticBezier,
-  SplitOutsideSegment, SubpathParameter, SubpathProjection, UnconstrainedHandle,
+  PathParameter, Point, PositiveHandle, Projection, QuadraticBezier,
+  SplitOutsideSegment, SubpathParameter, UnconstrainedHandle,
   UnderdeterminedCubicFit, Winding, arc_center_data, bounding_box_height,
   bounding_box_union, bounding_box_width, canonical_to_subpath_parameter,
   containment_from_winding, containment_ray_for_angle,
@@ -52,9 +52,9 @@ import svg_path.{
   segment_crossings_with, segment_derivative, segment_derivative_scale,
   segment_end, segment_from_bezier_data, segment_point, segment_projection_with,
   segment_ray_crossings_with, segment_start, subpath, subpath_between,
-  subpath_between_many, subpath_derivative, subpath_directions,
-  subpath_end_parameter, subpath_point, subpath_projection_with,
-  subpath_replace_segments, subpath_segments, subpath_start, to_bezier_point,
+  subpath_derivative, subpath_directions, subpath_end_parameter, subpath_point,
+  subpath_projection_with, subpath_replace_segments, subpath_segments,
+  subpath_split_many, subpath_start, to_bezier_point,
   validate_containment_options, validate_distance_options,
 }
 
@@ -982,30 +982,30 @@ pub fn subpath_between_lengths_with(
 ///
 /// Distances are measured in path coordinate units from the subpath start and
 /// must be inside `0.0..length`, inclusive. The resulting parameters follow
-/// the same split-point rules as `subpath_between_many`.
-pub fn subpath_between_lengths_many(
+/// the same split-point rules as `subpath_split_many`.
+pub fn subpath_split_at_lengths(
   subpath: Subpath,
-  between distances: List(Float),
+  at distances: List(Float),
 ) -> Result(List(Subpath), Error) {
-  subpath_between_lengths_many_with(
+  subpath_split_at_lengths_with(
     subpath,
-    between: distances,
+    at: distances,
     options: default_length_options(),
   )
 }
 
 /// Split a subpath at multiple traveled distances using explicit length
 /// options.
-pub fn subpath_between_lengths_many_with(
+pub fn subpath_split_at_lengths_with(
   subpath: Subpath,
-  between distances: List(Float),
+  at distances: List(Float),
   options options: LengthOptions,
 ) -> Result(List(Subpath), Error) {
   use length <- result.try(subpath_length_with(subpath, options:))
   use points <- result.try(
     subpath_parameters_at_known_lengths(subpath, distances, length, options, []),
   )
-  subpath_between_many(subpath, between: points)
+  subpath_split_many(subpath, at: points)
 }
 
 /// Return the approximate length of a path.
@@ -2352,7 +2352,7 @@ fn containment_ray_for_subpath_projection(
   subpath: Subpath,
   projection: SubpathProjection,
 ) -> ContainmentRay {
-  let SubpathProjection(at:, ..) = projection
+  let Projection(at:, ..) = projection
   case subpath_directions(subpath, at:) {
     Error(_) ->
       containment_ray_for_angle(default_containment_horizontal_ray_angle)
@@ -2497,7 +2497,7 @@ fn path_projection_loop(
             options:,
           ))
           let path_projection =
-            PathProjection(
+            Projection(
               at: PathParameter(subpath_index: index, at: projection.at),
               point: projection.point,
               distance: projection.distance,

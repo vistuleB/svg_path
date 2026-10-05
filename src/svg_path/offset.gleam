@@ -2998,7 +2998,7 @@ fn arrangement_error(error: arrangement_graph.Error) -> InternalError {
   case error {
     arrangement_graph.PathError(value) -> InternalPathError(value)
     arrangement_graph.InvalidTolerance(value) -> InternalInvalidTolerance(value)
-    arrangement_graph.InvalidMinimumChord(_value) ->
+    arrangement_graph.InvalidMinimumLength(_value) ->
       InternalArrangementGraphConstructionFailed
     arrangement_graph.InvalidEndpointSliverTolerance(_value) ->
       InternalArrangementGraphConstructionFailed
@@ -5532,7 +5532,7 @@ fn offset_segment_arrangement(
     arrangement_graph.build_with(
       segments,
       vertex_tolerance: arrangement_tolerance,
-      minimum_chord: arrangement_tolerance,
+      minimum_length: arrangement_tolerance,
       endpoint_sliver_tolerance: adjacent_loop_endpoint_parameter_tolerance,
     )
   use build <- result.try(
@@ -6941,7 +6941,7 @@ pub fn enumerate_band_face_loops(
     arrangement_graph.build_with(
       list.flat_map(subpaths, svg_path.subpath_segments),
       vertex_tolerance: arrangement_tolerance,
-      minimum_chord: arrangement_tolerance,
+      minimum_length: arrangement_tolerance,
       endpoint_sliver_tolerance: adjacent_loop_endpoint_parameter_tolerance,
     )
     |> result.map_error(InternalArrangementGraphError),

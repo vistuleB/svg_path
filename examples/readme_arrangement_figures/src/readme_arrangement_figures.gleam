@@ -9,7 +9,7 @@ import svg_path/svg
 
 const tolerance = 0.000001
 
-const minimum_chord = 0.00001
+const minimum_length = 0.00001
 
 const output_dir = "../../test/generated/readme"
 
@@ -224,7 +224,7 @@ fn semantic_circle_overlap() -> String {
       ),
     ])
   let assert Ok(arrangement_graph.ArrangementGraphBuild(graph:, ..)) =
-    arrangement_graph.build([graph_source], tolerance:, minimum_chord:)
+    arrangement_graph.build([graph_source], tolerance:, minimum_length:)
   let normalized_source = graph_source
   let assert Ok(graph_things) =
     drawing.annotated_drawing(graph, normalized_source, tolerance:)
@@ -338,7 +338,7 @@ fn overlapping_squares() -> String {
       square_subpath(650.0, 180.0, 830.0, 360.0),
     ])
   let assert Ok(arrangement_graph.ArrangementGraphBuild(graph:, ..)) =
-    arrangement_graph.build([graph_source], tolerance:, minimum_chord:)
+    arrangement_graph.build([graph_source], tolerance:, minimum_length:)
   let normalized_source = graph_source
   let assert Ok(graph_things) =
     drawing.annotated_drawing(graph, normalized_source, tolerance:)

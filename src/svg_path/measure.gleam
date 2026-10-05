@@ -403,26 +403,22 @@ pub fn subpath_between_lengths_with(
 ///
 /// Distances are measured in path coordinate units from the subpath start and
 /// must be inside `0.0..length`, inclusive. The resulting parameters follow
-/// the same split-point rules as `subpath_between_many`.
-pub fn subpath_between_lengths_many(
+/// the same split-point rules as `subpath_split_many`.
+pub fn subpath_split_at_lengths(
   subpath: svg_path.Subpath,
-  between distances: List(Float),
+  at distances: List(Float),
 ) -> Result(List(svg_path.Subpath), svg_path.Error) {
-  query.subpath_between_lengths_many(subpath, between: distances)
+  query.subpath_split_at_lengths(subpath, at: distances)
 }
 
 /// Split a subpath at multiple traveled distances using explicit length
 /// options.
-pub fn subpath_between_lengths_many_with(
+pub fn subpath_split_at_lengths_with(
   subpath: svg_path.Subpath,
-  between distances: List(Float),
+  at distances: List(Float),
   options options: svg_path.LengthOptions,
 ) -> Result(List(svg_path.Subpath), svg_path.Error) {
-  query.subpath_between_lengths_many_with(
-    subpath,
-    between: distances,
-    options: options,
-  )
+  query.subpath_split_at_lengths_with(subpath, at: distances, options: options)
 }
 
 /// Return the approximate length of a path.

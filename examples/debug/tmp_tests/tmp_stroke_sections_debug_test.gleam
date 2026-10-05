@@ -137,7 +137,7 @@ fn split_sections(
     [] -> [subpath]
     _ -> {
       let assert Ok(sections) =
-        svg_path.subpath_between_many(subpath, between: parameters)
+        svg_path.subpath_split_many(subpath, at: parameters)
       sections
     }
   }

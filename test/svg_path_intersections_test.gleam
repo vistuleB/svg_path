@@ -459,8 +459,10 @@ pub fn near_parallel_line_projection_is_scale_invariant_test() {
           max_depth: 48,
         ),
       )
-    should.be_true(float.absolute_value(projection.left_t -. 0.5) <=. 0.000001)
-    should.be_true(float.absolute_value(projection.right_t -. 0.5) <=. 0.000001)
+    should.be_true(float.absolute_value(projection.left_at -. 0.5) <=. 0.000001)
+    should.be_true(
+      float.absolute_value(projection.right_at -. 0.5) <=. 0.000001,
+    )
     projection.distance |> should.equal(0.0)
   })
 }

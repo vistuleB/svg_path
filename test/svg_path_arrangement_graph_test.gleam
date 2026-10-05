@@ -13,7 +13,7 @@ import svg_path/svg
 
 const tolerance = 0.000001
 
-const minimum_chord = 0.00001
+const minimum_length = 0.00001
 
 fn self_crossing_cubic() -> svg_path.Segment {
   svg_path.CubicBezier(
@@ -40,7 +40,7 @@ fn build_loop_fixture(
     arrangement_graph.build_with(
       segments,
       vertex_tolerance: 0.000000001,
-      minimum_chord: 0.00000001,
+      minimum_length: 0.00000001,
       endpoint_sliver_tolerance: 0.0,
     )
   assert list.all(graph.edges, fn(edge) { edge.start_vertex != edge.end_vertex })
@@ -58,7 +58,7 @@ pub fn closed_cubic_source_intervals_preserve_final_endpoint_test() {
     arrangement_graph.build_with(
       [closed_cubic()],
       vertex_tolerance: 0.000000001,
-      minimum_chord: 0.00000001,
+      minimum_length: 0.00000001,
       endpoint_sliver_tolerance: 0.0,
     )
   let assert [image] = build.segment_images
@@ -72,7 +72,7 @@ pub fn self_crossing_source_intervals_preserve_each_occurrence_test() {
     arrangement_graph.build_with(
       [source],
       vertex_tolerance: 0.000000001,
-      minimum_chord: 0.00000001,
+      minimum_length: 0.00000001,
       endpoint_sliver_tolerance: 0.0,
     )
   let assert [image] = build.segment_images
@@ -92,7 +92,7 @@ pub fn repeated_graph_edge_splits_compose_reverse_source_intervals_test() {
         svg_path.Line(svg_path.Point(7.0, -1.0), svg_path.Point(7.0, 1.0)),
       ],
       vertex_tolerance: 0.000000001,
-      minimum_chord: 0.00000001,
+      minimum_length: 0.00000001,
       endpoint_sliver_tolerance: 0.0,
     )
   let assert [forward_image, reverse_image, ..] = build.segment_images
@@ -114,7 +114,7 @@ pub fn closed_curve_duplicate_intervals_survive_later_graph_cuts_test() {
         svg_path.Line(svg_path.Point(-2.0, 1.0), svg_path.Point(2.0, 1.0)),
       ],
       vertex_tolerance: 0.000000001,
-      minimum_chord: 0.00000001,
+      minimum_length: 0.00000001,
       endpoint_sliver_tolerance: 0.0,
     )
   let assert [forward_image, reverse_image, ..] = build.segment_images
@@ -207,7 +207,7 @@ pub fn shared_endpoints_do_not_hide_an_interior_crossing_test() {
         arrangement_graph.build_with(
           segments,
           vertex_tolerance: 0.000000001,
-          minimum_chord: 0.00000001,
+          minimum_length: 0.00000001,
           endpoint_sliver_tolerance: 0.0,
         )
       assert list.length(graph.vertices) == 3
@@ -218,7 +218,7 @@ pub fn shared_endpoints_do_not_hide_an_interior_crossing_test() {
       assert arrangement_graph.validate(
           graph,
           tolerance: 0.000000001,
-          minimum_chord: 0.00000001,
+          minimum_length: 0.00000001,
         )
         == Ok(Nil)
     })
@@ -243,7 +243,7 @@ pub fn shared_endpoint_lens_keeps_distinct_edges_test() {
         ),
       ],
       vertex_tolerance: tolerance,
-      minimum_chord:,
+      minimum_length:,
       endpoint_sliver_tolerance: 0.0,
     )
   assert list.length(graph.vertices) == 2
@@ -261,7 +261,7 @@ pub fn progressive_duplicate_curves_preserve_directional_multiplicity_test() {
     arrangement_graph.build_with(
       [curve, curve, svg_path.segment_reverse(curve)],
       vertex_tolerance: tolerance,
-      minimum_chord:,
+      minimum_length:,
       endpoint_sliver_tolerance: 0.0,
     )
   let assert [edge] = graph.edges
@@ -283,12 +283,12 @@ pub fn closed_square_builds_valid_graph_test() {
       svg_path.Line(start: d, end: a),
     ])
 
-  let assert Ok(graph) = build_graph([square], tolerance:, minimum_chord:)
+  let assert Ok(graph) = build_graph([square], tolerance:, minimum_length:)
   let arrangement_graph.ArrangementGraph(vertices:, edges:, ..) = graph
 
   list.length(vertices) |> should.equal(4)
   list.length(edges) |> should.equal(4)
-  arrangement_graph.validate(graph, tolerance:, minimum_chord:)
+  arrangement_graph.validate(graph, tolerance:, minimum_length:)
   |> should.equal(Ok(Nil))
 }
 
@@ -317,8 +317,8 @@ pub fn coincident_arc_cut_parameters_do_not_create_degenerate_arcs_test() {
   let cutter = rectangle(431.25, 57.0, 90.0, 150.0)
 
   let assert Ok(graph) =
-    build_graph([circle, cutter], tolerance:, minimum_chord:)
-  arrangement_graph.validate(graph, tolerance:, minimum_chord:)
+    build_graph([circle, cutter], tolerance:, minimum_length:)
+  arrangement_graph.validate(graph, tolerance:, minimum_length:)
   |> should.equal(Ok(Nil))
 }
 
@@ -334,7 +334,7 @@ pub fn cyclic_order_uses_clockwise_common_circle_positions_test() {
     arrangement_graph.build_with(
       rays,
       vertex_tolerance: tolerance,
-      minimum_chord:,
+      minimum_length:,
       endpoint_sliver_tolerance: 0.0,
     )
   let assert Ok(order) =
@@ -374,7 +374,7 @@ pub fn cyclic_order_separates_equal_endpoint_tangents_on_circle_test() {
     arrangement_graph.build_with(
       rays,
       vertex_tolerance: tolerance,
-      minimum_chord:,
+      minimum_length:,
       endpoint_sliver_tolerance: 0.0,
     )
   let assert Ok(order) =
@@ -401,7 +401,7 @@ pub fn cyclic_order_groups_circle_points_below_both_separation_limits_test() {
     arrangement_graph.build_with(
       rays,
       vertex_tolerance: 0.000000001,
-      minimum_chord:,
+      minimum_length:,
       endpoint_sliver_tolerance: 0.0,
     )
   let assert Ok(groups) =
@@ -418,7 +418,7 @@ pub fn cyclic_order_groups_circle_points_below_both_separation_limits_test() {
 
 pub fn cyclic_orders_cover_every_vertex_of_built_square_test() {
   let assert Ok(arrangement_graph.ArrangementGraph(cyclic_orders: orders, ..)) =
-    build_graph([square(0.0, 0.0, 10.0)], tolerance:, minimum_chord:)
+    build_graph([square(0.0, 0.0, 10.0)], tolerance:, minimum_length:)
 
   list.length(orders) |> should.equal(4)
   orders
@@ -431,7 +431,7 @@ pub fn cyclic_orders_cover_every_vertex_of_built_square_test() {
 
 pub fn dual_square_has_infinite_and_bounded_faces_test() {
   let assert Ok(graph) =
-    build_graph([square(0.0, 0.0, 10.0)], tolerance:, minimum_chord:)
+    build_graph([square(0.0, 0.0, 10.0)], tolerance:, minimum_length:)
   let assert Ok(arrangement_graph.DualArrangementGraph(faces:, edge_faces:)) =
     arrangement_graph.dual(graph)
   let assert [outer, bounded] = faces
@@ -455,7 +455,7 @@ pub fn dual_square_has_infinite_and_bounded_faces_test() {
 }
 
 fn propagated_source_windings(subpaths: List(svg_path.Subpath)) {
-  let assert Ok(graph) = build_graph(subpaths, tolerance:, minimum_chord:)
+  let assert Ok(graph) = build_graph(subpaths, tolerance:, minimum_length:)
   let assert Ok(dual) = arrangement_graph.dual(graph)
   let changes =
     list.map(graph.edges, fn(edge) {
@@ -516,7 +516,7 @@ pub fn dual_face_windings_empty_graph_test() {
 
 pub fn dual_face_windings_validate_changes_and_detect_cycle_conflicts_test() {
   let assert Ok(graph) =
-    build_graph([square(0.0, 0.0, 10.0)], tolerance:, minimum_chord:)
+    build_graph([square(0.0, 0.0, 10.0)], tolerance:, minimum_length:)
   let assert Ok(dual) = arrangement_graph.dual(graph)
   let changes =
     list.map(graph.edges, fn(edge) {
@@ -548,7 +548,7 @@ pub fn dual_narrow_nested_squares_do_not_skip_annular_face_test() {
         square(0.00001, 0.00001, 9.99998),
       ],
       tolerance: 0.000000001,
-      minimum_chord: 0.000000001,
+      minimum_length: 0.000000001,
     )
   let assert Ok(dual) = arrangement_graph.dual(graph)
   assert list.length(dual.faces) == 3
@@ -570,7 +570,7 @@ pub fn dual_mixed_nested_and_separate_components_test() {
         square(30.0, 0.0, 4.0),
       ],
       tolerance: 0.000000001,
-      minimum_chord: 0.000000001,
+      minimum_length: 0.000000001,
     )
   let assert Ok(dual) = arrangement_graph.dual(graph)
   assert list.length(dual.faces) == 6
@@ -590,7 +590,7 @@ pub fn dual_curved_nested_components_ignore_traversal_orientation_test() {
       build_graph(
         [outer, inner],
         tolerance: 0.000000001,
-        minimum_chord: 0.000000001,
+        minimum_length: 0.000000001,
       )
     let assert Ok(dual) = arrangement_graph.dual(graph)
     assert list.length(dual.faces) == 3
@@ -615,7 +615,8 @@ pub fn dual_closed_cubic_and_disconnected_bridge_test() {
       svg_path.Point(-0.2, 2.0),
       svg_path.Point(0.2, 2.0),
     ))
-  let assert Ok(graph) = build_graph([loop, bridge], tolerance:, minimum_chord:)
+  let assert Ok(graph) =
+    build_graph([loop, bridge], tolerance:, minimum_length:)
   let assert Ok(dual) = arrangement_graph.dual(graph)
   assert list.length(dual.faces) == 2
   assert list.any(dual.faces, fn(face) {
@@ -641,7 +642,7 @@ pub fn dual_infinite_face_collects_disconnected_islands_test() {
     build_graph(
       [square(0.0, 0.0, 10.0), square(20.0, 0.0, 10.0)],
       tolerance:,
-      minimum_chord:,
+      minimum_length:,
     )
   let assert Ok(arrangement_graph.DualArrangementGraph(faces:, ..)) =
     arrangement_graph.dual(graph)
@@ -658,7 +659,7 @@ pub fn dual_bounded_face_orders_outer_walk_before_island_test() {
     build_graph(
       [square(0.0, 0.0, 20.0), square(5.0, 5.0, 5.0)],
       tolerance:,
-      minimum_chord:,
+      minimum_length:,
     )
   let assert Ok(arrangement_graph.DualArrangementGraph(faces:, ..)) =
     arrangement_graph.dual(graph)
@@ -678,7 +679,7 @@ pub fn dual_bounded_face_collects_two_island_walks_test() {
         square(20.0, 5.0, 5.0),
       ],
       tolerance:,
-      minimum_chord:,
+      minimum_length:,
     )
   let assert Ok(arrangement_graph.DualArrangementGraph(faces:, ..)) =
     arrangement_graph.dual(graph)
@@ -698,7 +699,7 @@ pub fn dual_bridge_has_same_face_on_both_sides_test() {
         end: svg_path.Point(10.0, 0.0),
       ),
     ])
-  let assert Ok(graph) = build_graph([line], tolerance:, minimum_chord:)
+  let assert Ok(graph) = build_graph([line], tolerance:, minimum_length:)
   let assert Ok(arrangement_graph.DualArrangementGraph(
     faces: [face],
     edge_faces: [edge_faces],
@@ -721,7 +722,7 @@ pub fn dual_overlapping_squares_partition_every_edge_side_test() {
     build_graph(
       [square(0.0, 0.0, 10.0), square(5.0, 0.0, 10.0)],
       tolerance:,
-      minimum_chord:,
+      minimum_length:,
     )
   let assert Ok(arrangement_graph.DualArrangementGraph(faces:, edge_faces:)) =
     arrangement_graph.dual(graph)
@@ -755,7 +756,7 @@ pub fn dual_self_crossing_bowtie_has_two_bounded_faces_test() {
         end: svg_path.Point(0.0, 0.0),
       ),
     ])
-  let assert Ok(graph) = build_graph([bowtie], tolerance:, minimum_chord:)
+  let assert Ok(graph) = build_graph([bowtie], tolerance:, minimum_length:)
   let assert Ok(arrangement_graph.DualArrangementGraph(faces:, ..)) =
     arrangement_graph.dual(graph)
   list.length(faces) |> should.equal(3)
@@ -774,7 +775,7 @@ pub fn build_preserves_source_path_grouping_test() {
     ])
 
   let assert Ok(arrangement_graph.ArrangementGraphBuild(segment_images:, ..)) =
-    arrangement_graph.build([first, second], tolerance:, minimum_chord:)
+    arrangement_graph.build([first, second], tolerance:, minimum_length:)
 
   first
   |> svg_path.path_subpaths
@@ -804,7 +805,7 @@ pub fn segment_images_follow_crossing_source_traversals_test() {
     arrangement_graph.build(
       [svg_path.Path([horizontal, vertical])],
       tolerance:,
-      minimum_chord:,
+      minimum_length:,
     )
   let assert [horizontal_image, vertical_image] = build.segment_images
   let assert Ok(horizontal_edges) =
@@ -856,7 +857,7 @@ pub fn progressive_segment_build_maps_crossing_sources_test() {
     arrangement_graph.build_with(
       [horizontal, vertical],
       vertex_tolerance: tolerance,
-      minimum_chord: minimum_chord,
+      minimum_length: minimum_length,
       endpoint_sliver_tolerance: 0.0,
     )
 
@@ -877,14 +878,14 @@ fn assert_near_cross_orders_agree(gap: Float) {
     arrangement_graph.build_with(
       near_cross_order_1(gap),
       vertex_tolerance: 0.000000001,
-      minimum_chord: 0.000000000001,
+      minimum_length: 0.000000000001,
       endpoint_sliver_tolerance: 0.0,
     )
   let assert Ok(second) =
     arrangement_graph.build_with(
       near_cross_order_2(gap),
       vertex_tolerance: 0.000000001,
-      minimum_chord: 0.000000000001,
+      minimum_length: 0.000000000001,
       endpoint_sliver_tolerance: 0.0,
     )
   let arrangement_graph.ArrangementSegmentBuild(
@@ -959,7 +960,7 @@ pub fn segment_images_share_coincident_edges_with_source_orientation_test() {
     arrangement_graph.build(
       [svg_path.Path([forward, reverse])],
       tolerance:,
-      minimum_chord:,
+      minimum_length:,
     )
   let assert [forward_image, reverse_image] = build.segment_images
   let assert arrangement_graph.ArrangementSegmentImage(
@@ -1000,7 +1001,7 @@ pub fn segment_images_map_different_source_decompositions_to_shared_edges_test()
     arrangement_graph.build(
       [svg_path.Path([whole, divided])],
       tolerance:,
-      minimum_chord:,
+      minimum_length:,
     )
   let assert [whole_image, divided_first_image, divided_second_image] =
     build.segment_images
@@ -1028,26 +1029,26 @@ pub fn segment_images_map_different_source_decompositions_to_shared_edges_test()
 }
 
 pub fn build_rejects_invalid_tolerance_before_inspecting_sources_test() {
-  arrangement_graph.build([], tolerance: 0.0, minimum_chord:)
+  arrangement_graph.build([], tolerance: 0.0, minimum_length:)
   |> should.equal(Error(arrangement_graph.InvalidTolerance(0.0)))
 }
 
-pub fn build_rejects_invalid_minimum_chord_before_inspecting_sources_test() {
-  arrangement_graph.build([], tolerance:, minimum_chord: 0.0)
-  |> should.equal(Error(arrangement_graph.InvalidMinimumChord(0.0)))
+pub fn build_rejects_invalid_minimum_length_before_inspecting_sources_test() {
+  arrangement_graph.build([], tolerance:, minimum_length: 0.0)
+  |> should.equal(Error(arrangement_graph.InvalidMinimumLength(0.0)))
 }
 
 pub fn build_rejects_nonfinite_numeric_options_test() {
   let infinity = 1.0 /. 0.0
   let nan = 0.0 /. 0.0
 
-  arrangement_graph.build([], tolerance: infinity, minimum_chord:)
+  arrangement_graph.build([], tolerance: infinity, minimum_length:)
   |> should.equal(Error(arrangement_graph.InvalidTolerance(infinity)))
-  arrangement_graph.build([], tolerance:, minimum_chord: infinity)
-  |> should.equal(Error(arrangement_graph.InvalidMinimumChord(infinity)))
-  arrangement_graph.build([], tolerance: nan, minimum_chord:)
+  arrangement_graph.build([], tolerance:, minimum_length: infinity)
+  |> should.equal(Error(arrangement_graph.InvalidMinimumLength(infinity)))
+  arrangement_graph.build([], tolerance: nan, minimum_length:)
   |> should.be_error
-  arrangement_graph.build([], tolerance:, minimum_chord: nan)
+  arrangement_graph.build([], tolerance:, minimum_length: nan)
   |> should.be_error
 }
 
@@ -1055,7 +1056,7 @@ pub fn build_with_rejects_negative_endpoint_sliver_tolerance_test() {
   arrangement_graph.build_with(
     [],
     vertex_tolerance: tolerance,
-    minimum_chord:,
+    minimum_length:,
     endpoint_sliver_tolerance: -0.1,
   )
   |> should.equal(
@@ -1071,9 +1072,9 @@ pub fn validation_rejects_invalid_numeric_options_test() {
       cyclic_orders: [],
     ),
     tolerance:,
-    minimum_chord: 0.0,
+    minimum_length: 0.0,
   )
-  |> should.equal(Error(arrangement_graph.InvalidMinimumChord(0.0)))
+  |> should.equal(Error(arrangement_graph.InvalidMinimumLength(0.0)))
 }
 
 pub fn insertion_reports_tolerance_cluster_collapse_test() {
@@ -1084,7 +1085,7 @@ pub fn insertion_reports_tolerance_cluster_collapse_test() {
       end: svg_path.Point(0.5, 0.0),
     ),
     tolerance: 1.0,
-    minimum_chord: 0.1,
+    minimum_length: 0.1,
   )
   |> should.equal(Error(arrangement_graph.InternalSegmentCollapsedToVertex(0)))
 }
@@ -1099,14 +1100,14 @@ pub fn two_endpoint_samples_use_enclosing_circle_midpoint_test() {
       arrangement_graph.empty(),
       svg_path.Line(start: a, end: b1),
       tolerance:,
-      minimum_chord:,
+      minimum_length:,
     )
   let assert Ok(graph) =
     arrangement_graph.insert_atomic_segment(
       first,
       svg_path.Line(start: b2, end: c),
       tolerance:,
-      minimum_chord:,
+      minimum_length:,
     )
   let arrangement_graph.ArrangementGraph(vertices:, ..) = graph
   let assert [
@@ -1187,7 +1188,7 @@ pub fn validation_rejects_vertex_sample_outside_official_tolerance_test() {
       cyclic_orders: [],
     )
 
-  arrangement_graph.validate(graph, tolerance: 1.0, minimum_chord:)
+  arrangement_graph.validate(graph, tolerance: 1.0, minimum_length:)
   |> should.equal(Error(arrangement_graph.ConstructionFailed))
 }
 
@@ -1205,7 +1206,7 @@ pub fn validation_rejects_noncanonical_vertex_center_test() {
       cyclic_orders: [],
     )
 
-  arrangement_graph.validate(graph, tolerance: 1.0, minimum_chord:)
+  arrangement_graph.validate(graph, tolerance: 1.0, minimum_length:)
   |> should.equal(Error(arrangement_graph.ConstructionFailed))
 }
 
@@ -1223,7 +1224,7 @@ pub fn validation_rejects_vertex_without_endpoint_samples_test() {
       cyclic_orders: [],
     )
 
-  arrangement_graph.validate(graph, tolerance:, minimum_chord:)
+  arrangement_graph.validate(graph, tolerance:, minimum_length:)
   |> should.equal(Error(arrangement_graph.ConstructionFailed))
 }
 
@@ -1237,14 +1238,14 @@ pub fn reversed_duplicate_increments_reverse_multiplicity_test() {
       arrangement_graph.empty(),
       forward,
       tolerance:,
-      minimum_chord:,
+      minimum_length:,
     )
   let assert Ok(graph) =
     arrangement_graph.insert_atomic_segment(
       first,
       reverse,
       tolerance:,
-      minimum_chord:,
+      minimum_length:,
     )
   let arrangement_graph.ArrangementGraph(edges:, ..) = graph
 
@@ -1255,7 +1256,7 @@ pub fn reversed_duplicate_increments_reverse_multiplicity_test() {
       ..,
     ),
   ] = edges
-  arrangement_graph.validate(graph, tolerance:, minimum_chord:)
+  arrangement_graph.validate(graph, tolerance:, minimum_length:)
   |> should.equal(Ok(Nil))
 }
 
@@ -1268,10 +1269,10 @@ pub fn open_chain_fails_final_even_degree_invariant_test() {
         end: svg_path.Point(10.0, 0.0),
       ),
       tolerance:,
-      minimum_chord:,
+      minimum_length:,
     )
 
-  arrangement_graph.validate(graph, tolerance:, minimum_chord:)
+  arrangement_graph.validate(graph, tolerance:, minimum_length:)
   |> should.equal(Error(arrangement_graph.ConstructionFailed))
 }
 
@@ -1283,12 +1284,12 @@ pub fn short_chord_is_rejected_test() {
       end: svg_path.Point(0.000001, 0.0),
     ),
     tolerance:,
-    minimum_chord:,
+    minimum_length:,
   )
   |> should.equal(
     Error(arrangement_graph.InternalSegmentTooShort(
       chord: 0.000001,
-      minimum: minimum_chord,
+      minimum: minimum_length,
     )),
   )
 }
@@ -1343,7 +1344,7 @@ pub fn drawing_contains_edges_vertices_and_multiplicity_labels_test() {
       arrangement_graph.empty(),
       line,
       tolerance:,
-      minimum_chord:,
+      minimum_length:,
     )
 
   arrangement_graph_drawing.drawing(graph)
@@ -1451,7 +1452,7 @@ pub fn builder_splits_crossing_lines_at_shared_vertex_test() {
     ])
 
   let assert Ok(arrangement_graph.ArrangementGraph(vertices:, edges:, ..)) =
-    build_graph([horizontal, vertical], tolerance:, minimum_chord:)
+    build_graph([horizontal, vertical], tolerance:, minimum_length:)
 
   list.length(vertices) |> should.equal(5)
   list.length(edges) |> should.equal(4)
@@ -1481,7 +1482,7 @@ pub fn builder_keeps_geometrically_distinct_cuts_on_long_segment_test() {
     ])
 
   let assert Ok(arrangement_graph.ArrangementGraph(vertices:, edges:, ..)) =
-    build_graph([horizontal, first, second], tolerance: 0.001, minimum_chord:)
+    build_graph([horizontal, first, second], tolerance: 0.001, minimum_length:)
 
   list.length(vertices) |> should.equal(8)
   list.length(edges) |> should.equal(7)
@@ -1504,7 +1505,7 @@ pub fn builder_refines_partial_line_overlap_and_counts_middle_test() {
     ])
 
   let assert Ok(arrangement_graph.ArrangementGraph(vertices:, edges:, ..)) =
-    build_graph([first, second], tolerance:, minimum_chord:)
+    build_graph([first, second], tolerance:, minimum_length:)
 
   list.length(vertices) |> should.equal(4)
   list.length(edges) |> should.equal(3)
@@ -1563,7 +1564,7 @@ pub fn builder_consolidates_phase_shifted_opposite_circle_arcs_test() {
     ])
 
   let assert Ok(graph) =
-    build_graph([clockwise, counterclockwise], tolerance:, minimum_chord:)
+    build_graph([clockwise, counterclockwise], tolerance:, minimum_length:)
   let arrangement_graph.ArrangementGraph(vertices:, edges:, ..) = graph
 
   list.length(vertices) |> should.equal(4)
@@ -1578,7 +1579,7 @@ pub fn builder_consolidates_phase_shifted_opposite_circle_arcs_test() {
     forward_multiplicity == 1 && reverse_multiplicity == 1
   })
   |> should.be_true
-  arrangement_graph.validate(graph, tolerance:, minimum_chord:)
+  arrangement_graph.validate(graph, tolerance:, minimum_length:)
   |> should.equal(Ok(Nil))
 }
 
@@ -1631,7 +1632,7 @@ pub fn builder_consolidates_near_equal_circles_inside_tolerance_test() {
     build_graph(
       [outer, inner_reversed],
       tolerance: graph_tolerance,
-      minimum_chord:,
+      minimum_length:,
     )
   let arrangement_graph.ArrangementGraph(vertices:, edges:, ..) = graph
 
@@ -1814,9 +1815,13 @@ fn closed_subpath(segments: List(svg_path.Segment)) -> svg_path.Subpath {
 fn build_graph(
   subpaths: List(svg_path.Subpath),
   tolerance tolerance: Float,
-  minimum_chord minimum_chord: Float,
+  minimum_length minimum_length: Float,
 ) -> Result(arrangement_graph.ArrangementGraph, arrangement_graph.Error) {
-  arrangement_graph.build([svg_path.Path(subpaths)], tolerance:, minimum_chord:)
+  arrangement_graph.build(
+    [svg_path.Path(subpaths)],
+    tolerance:,
+    minimum_length:,
+  )
   |> result.map(fn(built) {
     let arrangement_graph.ArrangementGraphBuild(graph:, ..) = built
     graph
@@ -1851,7 +1856,7 @@ fn insert_clustered_endpoints(
           end: endpoint,
         ),
         tolerance: cluster_tolerance,
-        minimum_chord:,
+        minimum_length:,
       ))
       insert_clustered_endpoints(
         rest,

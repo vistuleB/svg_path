@@ -155,7 +155,7 @@ geometry or stages. These distinctions matter when tuning a query:
 | `offset.FittingOptions.max_depth` | Offset fitting also has an internal five-generation cap; larger values do not increase that cap. |
 | `stroke.Options` | Only fitting, stalled-offset diameter, tangent healing, and inner joins. Stroke trimming is fixed. |
 | `clip.Options.tolerance` | Arc-length separation for merging cuts; also selects start-point sampling for pieces no longer than this tolerance. Intersection and fill-classification tolerances are separate nested controls. |
-| `csg.Options.minimum_chord` | Despite its legacy name, this is a segment-length **upper-bound** threshold for discarding refined pieces, not an endpoint-distance threshold. |
+| `csg.Options.minimum_length` | This is a segment-length **upper-bound** threshold for discarding refined pieces, not an endpoint-distance threshold. |
 
 Analytic cases may not need iterative controls. Different modules' tolerances
 have different units and contracts; they are not interchangeable global error
@@ -181,6 +181,7 @@ import svg_path/csg
 import svg_path/distance
 import svg_path/fit
 import svg_path/measure
+import svg_path/offset
 import svg_path/stroke
 
 // Fit a curve on 0..1, then retain its middle half by traveled distance.
@@ -224,7 +225,7 @@ pub fn outline_union(
   filled_region: svg_path.Path,
 ) -> Result(svg_path.Path, OutlineUnionError) {
   use outline <- result.try(
-    stroke.path(centerlines, width:, join: stroke.Round, cap: stroke.Butt)
+    stroke.path(centerlines, width:, join: offset.Round, cap: offset.Butt)
     |> result.map_error(StrokeFailure),
   )
   csg.union_path(outline, filled_region, using: svg_path.Nonzero)
@@ -247,6 +248,25 @@ and numerical defaults; change their module qualifier and import.
 | Root point distance and projection functions | `svg_path/distance` |
 | `intersections.*_closest_pair` and `_with` variants | `svg_path/distance` |
 | Root parametric construction, constrained cubic fitting, and scalar minimization functions | `svg_path/fit` |
+
+Additional 3.0 changes:
+
+- Replace `subpath_between_many(..., between:)` with
+  `subpath_split_many(..., at:)`. Distance-based subpath partitioning is
+  `measure.subpath_split_at_lengths(..., at:)`, including its `_with` variant.
+  Segment interval extraction retains `segment_between_many` and its semantics.
+- Construct projection results with `Projection(at:, point:, distance:)` and
+  closest pairs with `ClosestPair(left_at:, right_at:, left_point:, right_point:,
+  distance:)`. Segment addresses use `at` instead of `t`, and segment pair
+  addresses use `left_at`/`right_at` instead of `left_t`/`right_t`. The geometry-
+  specific type names remain readable aliases of these two generic records.
+  Intersection records are unchanged.
+- Use `offset.Join`/`offset.Cap` constructors for both offset and stroke calls.
+  The duplicate `stroke` constructors have been removed.
+- Replace `minimum_chord` with `minimum_length` in CSG options and arrangement
+  arguments; the threshold still applies to segment-length upper bounds.
+- SVG drawing constructors now accept field labels, such as
+  `svg.Circle(center:, radius:, style:)`. Positional construction still works.
 
 Default-option functions move with their families. Closest-pair searches can use
 `distance.default_closest_pair_options()`; they take
@@ -440,7 +460,7 @@ svg_path.subpath_between(
   from: svg_path.SubpathParameter(0, 0.5),
   to: svg_path.SubpathParameter(2, 0.25),
 )
-svg_path.subpath_between_many(subpath, between: [
+svg_path.subpath_split_many(subpath, at: [
   svg_path.SubpathParameter(0, 0.5),
   svg_path.SubpathParameter(2, 0.25),
 ])
@@ -461,9 +481,12 @@ The subpath interval helpers have deliberately narrow roles:
 - `subpath_split` splits one open subpath into two open subpaths.
 - `subpath_between` extracts one positive-length interval; closed subpaths may
   wrap.
-- `subpath_between_many` extracts every interval between a list of split points.
-  For a closed subpath, a single split point returns one open loop, while an
-  empty split list returns an empty list.
+- `subpath_split_many` partitions a subpath at split points. For open subpaths,
+  it includes both outer pieces, and no split points returns the original.
+  For closed subpaths, one split point opens the whole loop; no split points
+  returns an empty list. This differs from `segment_between_many`, which only
+  extracts intervals between adjacent supplied parameters and returns no pieces
+  for an empty or singleton list.
 - `subpath_open_at` is the convenience form for opening one closed subpath at one
   `SubpathParameter`.
 - `subpath_point` and `subpath_derivative` evaluate a subpath at one
@@ -966,7 +989,7 @@ measure.subpath_parameter_at_length(subpath, distance: 25.0)
 measure.subpath_point_at_length(subpath, distance: 25.0)
 measure.subpath_derivative_at_length(subpath, distance: 25.0)
 measure.subpath_between_lengths(subpath, from: 25.0, to: 60.0)
-measure.subpath_between_lengths_many(subpath, between: [25.0, 40.0, 60.0])
+measure.subpath_split_at_lengths(subpath, at: [25.0, 40.0, 60.0])
 
 measure.path_parameter_at_length(path, distance: 40.0)
 measure.path_point_at_length(path, distance: 40.0)
@@ -1885,12 +1908,11 @@ disconnected loops that the default pipeline removes.
 
 ### Stroke Styles
 
-`svg_path/stroke` has its own parallel `stroke.Join` and `stroke.Cap` types:
-`stroke.Bevel`, `stroke.Miter(miter_limit:)`, `stroke.MiterClip(miter_limit:)`,
-`stroke.Arcs(miter_limit:)`, and `stroke.Round` select the
-join; `stroke.Butt`, `stroke.RoundCap`, and `stroke.Square` select the cap.
-Use these constructors at the stroke layer, not the corresponding `offset.*`
-constructors.
+`svg_path/stroke` and `svg_path/offset` share `offset.Join` and `offset.Cap`:
+`offset.Bevel`, `offset.Miter(miter_limit:)`, `offset.MiterClip(miter_limit:)`,
+`offset.Arcs(miter_limit:)`, and `offset.Round` select the
+join; `offset.Butt`, `offset.RoundCap`, and `offset.Square` select the cap.
+The same join or cap value can be passed to either module.
 
 `MiterClip` keeps an ordinary miter within the supplied limit, but clips an
 over-limit tip instead of replacing the entire join with a bevel. The clipping
@@ -1951,20 +1973,21 @@ adjusts their radii while maintaining endpoint tangency before applying the
 limit. Both strips use stroke width 2 and Butt caps.
 
 ```gleam
+import svg_path/offset
 import svg_path/stroke
 
-stroke.subpath(subpath, width: 8.0, join: stroke.Round, cap: stroke.RoundCap)
+stroke.subpath(subpath, width: 8.0, join: offset.Round, cap: offset.RoundCap)
 
 let options = stroke.default_options()
-stroke.path_with(path, width: 8.0, join: stroke.Bevel, cap: stroke.Square, options:)
+stroke.path_with(path, width: 8.0, join: offset.Bevel, cap: offset.Square, options:)
 
 stroke.subpath_dashed(
   subpath,
   width: 8.0,
   pattern: [12.0, 6.0],
   offset: 0.0,
-  join: stroke.Round,
-  cap: stroke.RoundCap,
+  join: offset.Round,
+  cap: offset.RoundCap,
 )
 ```
 
@@ -2007,7 +2030,7 @@ import svg_path/arrangement
 arrangement.build(
   [left, right],
   tolerance: 0.000001,
-  minimum_chord: 0.00001,
+  minimum_length: 0.00001,
 )
 // -> Result(arrangement.ArrangementGraphBuild, arrangement.Error)
 ```
@@ -2016,8 +2039,7 @@ arrangement.build(
 image records, in original path, subpath, and segment order, the graph-edge
 identifiers produced from one source segment and whether each traversal
 reverses the stored edge direction. An image can be empty when all pieces of an
-input segment have a length upper bound below `minimum_chord`. Despite its
-historical name, this threshold measures a segment-length upper bound, not the
+input segment have a length upper bound below `minimum_length`. This threshold measures a segment-length upper bound, not the
 distance between its endpoints; a loop with coincident endpoints is not
 discarded merely because its chord is zero.
 
@@ -2037,7 +2059,7 @@ the original graph:
 
 ```gleam
 let assert Ok(build) =
-  arrangement.build([left, right], tolerance: 0.000001, minimum_chord: 0.00001)
+  arrangement.build([left, right], tolerance: 0.000001, minimum_length: 0.00001)
 let assert Ok(dual) = arrangement.dual(build.graph)
 ```
 
@@ -2155,7 +2177,7 @@ For points away from a boundary:
 
 Use the `_with` variants with `csg.Options` to choose the endpoint tolerance
 and minimum atomic-edge length-upper-bound threshold (the historically named
-`minimum_chord` option). Returned segments retain their source type where
+`minimum_length` option). Returned segments retain their source type where
 possible: lines remain lines, Beziers remain Beziers, and arcs remain arcs
 after splitting.
 

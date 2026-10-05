@@ -113,9 +113,9 @@ pub fn subpath_with(
       case split_points {
         [] -> keep_whole_subpath(input, clip_region, fill_rule, options)
         _ -> {
-          use pieces <- result.try(svg_path.subpath_between_many(
+          use pieces <- result.try(svg_path.subpath_split_many(
             input,
-            between: split_points,
+            at: split_points,
           ))
           use kept <- result.try(
             keep_inside_subpaths(

@@ -1755,7 +1755,7 @@ fn representative_geometry_is_covariant_at_scale(scale: Float) -> Bool {
       using: svg_path.Nonzero,
       options: csg.Options(
         tolerance: 0.000001 *. scale,
-        minimum_chord: 0.00001 *. scale,
+        minimum_length: 0.00001 *. scale,
       ),
     )
   let assert Ok(union_box) = bounds.path_bounding_box(union_path)
