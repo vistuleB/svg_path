@@ -215,7 +215,7 @@ pub fn shared_endpoints_do_not_hide_an_interior_crossing_test() {
       assert list.any(graph.vertices, fn(vertex) {
         point.distance(vertex.point, svg_path.Point(0.5, 0.0)) <. 0.000000001
       })
-      assert arrangement_graph.validate(
+      assert arrangement_graph.validate_closed_boundaries(
           graph,
           tolerance: 0.000000001,
           minimum_length: 0.00000001,
@@ -288,7 +288,11 @@ pub fn closed_square_builds_valid_graph_test() {
 
   list.length(vertices) |> should.equal(4)
   list.length(edges) |> should.equal(4)
-  arrangement_graph.validate(graph, tolerance:, minimum_length:)
+  arrangement_graph.validate_closed_boundaries(
+    graph,
+    tolerance:,
+    minimum_length:,
+  )
   |> should.equal(Ok(Nil))
 }
 
@@ -318,7 +322,11 @@ pub fn coincident_arc_cut_parameters_do_not_create_degenerate_arcs_test() {
 
   let assert Ok(graph) =
     build_graph([circle, cutter], tolerance:, minimum_length:)
-  arrangement_graph.validate(graph, tolerance:, minimum_length:)
+  arrangement_graph.validate_closed_boundaries(
+    graph,
+    tolerance:,
+    minimum_length:,
+  )
   |> should.equal(Ok(Nil))
 }
 
@@ -1065,7 +1073,7 @@ pub fn build_with_rejects_negative_endpoint_sliver_tolerance_test() {
 }
 
 pub fn validation_rejects_invalid_numeric_options_test() {
-  arrangement_graph.validate(
+  arrangement_graph.validate_closed_boundaries(
     arrangement_graph.ArrangementGraph(
       vertices: [],
       edges: [],
@@ -1188,7 +1196,11 @@ pub fn validation_rejects_vertex_sample_outside_official_tolerance_test() {
       cyclic_orders: [],
     )
 
-  arrangement_graph.validate(graph, tolerance: 1.0, minimum_length:)
+  arrangement_graph.validate_closed_boundaries(
+    graph,
+    tolerance: 1.0,
+    minimum_length:,
+  )
   |> should.equal(Error(arrangement_graph.ConstructionFailed))
 }
 
@@ -1206,7 +1218,11 @@ pub fn validation_rejects_noncanonical_vertex_center_test() {
       cyclic_orders: [],
     )
 
-  arrangement_graph.validate(graph, tolerance: 1.0, minimum_length:)
+  arrangement_graph.validate_closed_boundaries(
+    graph,
+    tolerance: 1.0,
+    minimum_length:,
+  )
   |> should.equal(Error(arrangement_graph.ConstructionFailed))
 }
 
@@ -1224,7 +1240,11 @@ pub fn validation_rejects_vertex_without_endpoint_samples_test() {
       cyclic_orders: [],
     )
 
-  arrangement_graph.validate(graph, tolerance:, minimum_length:)
+  arrangement_graph.validate_closed_boundaries(
+    graph,
+    tolerance:,
+    minimum_length:,
+  )
   |> should.equal(Error(arrangement_graph.ConstructionFailed))
 }
 
@@ -1256,7 +1276,11 @@ pub fn reversed_duplicate_increments_reverse_multiplicity_test() {
       ..,
     ),
   ] = edges
-  arrangement_graph.validate(graph, tolerance:, minimum_length:)
+  arrangement_graph.validate_closed_boundaries(
+    graph,
+    tolerance:,
+    minimum_length:,
+  )
   |> should.equal(Ok(Nil))
 }
 
@@ -1272,7 +1296,11 @@ pub fn open_chain_fails_final_even_degree_invariant_test() {
       minimum_length:,
     )
 
-  arrangement_graph.validate(graph, tolerance:, minimum_length:)
+  arrangement_graph.validate_closed_boundaries(
+    graph,
+    tolerance:,
+    minimum_length:,
+  )
   |> should.equal(Error(arrangement_graph.ConstructionFailed))
 }
 
@@ -1288,7 +1316,7 @@ pub fn short_chord_is_rejected_test() {
   )
   |> should.equal(
     Error(arrangement_graph.InternalSegmentTooShort(
-      chord: 0.000001,
+      length_upper_bound: 0.000001,
       minimum: minimum_length,
     )),
   )
@@ -1579,7 +1607,11 @@ pub fn builder_consolidates_phase_shifted_opposite_circle_arcs_test() {
     forward_multiplicity == 1 && reverse_multiplicity == 1
   })
   |> should.be_true
-  arrangement_graph.validate(graph, tolerance:, minimum_length:)
+  arrangement_graph.validate_closed_boundaries(
+    graph,
+    tolerance:,
+    minimum_length:,
+  )
   |> should.equal(Ok(Nil))
 }
 
@@ -1888,4 +1920,97 @@ fn rectangle(
     svg_path.Line(start: c, end: d),
     svg_path.Line(start: d, end: a),
   ])
+}
+
+fn open_validation_graph() -> arrangement_graph.ArrangementGraph {
+  let source =
+    svg_path.subpath_assert_polyline([
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(10.0, 0.0),
+    ])
+    |> svg_path.subpath_as_path()
+  let assert Ok(built) =
+    arrangement_graph.build([source], tolerance:, minimum_length:)
+  built.graph
+}
+
+pub fn public_open_build_passes_representation_only_test() {
+  let graph = open_validation_graph()
+  arrangement_graph.validate_representation(graph, tolerance:, minimum_length:)
+  |> should.equal(Ok(Nil))
+  arrangement_graph.validate_closed_boundaries(
+    graph,
+    tolerance:,
+    minimum_length:,
+  )
+  |> should.equal(Error(arrangement_graph.ConstructionFailed))
+}
+
+fn assert_invalid_representation(graph: arrangement_graph.ArrangementGraph) {
+  arrangement_graph.validate_representation(graph, tolerance:, minimum_length:)
+  |> should.equal(Error(arrangement_graph.ConstructionFailed))
+  arrangement_graph.validate_closed_boundaries(
+    graph,
+    tolerance:,
+    minimum_length:,
+  )
+  |> should.equal(Error(arrangement_graph.ConstructionFailed))
+}
+
+pub fn validators_reject_duplicate_vertex_ids_test() {
+  let graph = open_validation_graph()
+  let assert [first, ..rest] = graph.vertices
+  arrangement_graph.ArrangementGraph(..graph, vertices: [first, first, ..rest])
+  |> assert_invalid_representation()
+}
+
+pub fn validators_reject_duplicate_edge_ids_test() {
+  let graph = open_validation_graph()
+  let assert [edge] = graph.edges
+  arrangement_graph.ArrangementGraph(..graph, edges: [edge, edge])
+  |> assert_invalid_representation()
+}
+
+pub fn validators_reject_negative_directional_multiplicities_test() {
+  let graph = open_validation_graph()
+  let assert [edge] = graph.edges
+  // Positive, even totals must not hide a negative component.
+  list.each([#(-1, 3), #(3, -1)], fn(counts) {
+    let bad_edge =
+      arrangement_graph.ArrangementEdge(
+        ..edge,
+        forward_multiplicity: counts.0,
+        reverse_multiplicity: counts.1,
+      )
+    arrangement_graph.ArrangementGraph(..graph, edges: [bad_edge])
+    |> assert_invalid_representation()
+  })
+}
+
+pub fn dual_search_exhaustion_has_distinct_public_error_test() {
+  arrangement_graph.public_error(arrangement_graph.InternalDualSweepExhausted(2))
+  |> should.equal(arrangement_graph.DualCertificationFailed)
+  arrangement_graph.public_error(
+    arrangement_graph.InternalDualSweepContradiction(2),
+  )
+  |> should.equal(arrangement_graph.ConstructionFailed)
+  arrangement_graph.public_error(arrangement_graph.InternalDualMissingEdgeFace(
+    2,
+    False,
+  ))
+  |> should.equal(arrangement_graph.ConstructionFailed)
+}
+
+pub fn short_segment_public_error_has_length_upper_bound_test() {
+  arrangement_graph.validate_representation(
+    open_validation_graph(),
+    tolerance:,
+    minimum_length: 11.0,
+  )
+  |> should.equal(
+    Error(arrangement_graph.SegmentTooShort(
+      length_upper_bound: 10.0,
+      minimum: 11.0,
+    )),
+  )
 }

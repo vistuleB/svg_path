@@ -3046,6 +3046,8 @@ fn arrangement_error(error: arrangement_graph.Error) -> InternalError {
       InternalArrangementGraphConstructionFailed
     arrangement_graph.SegmentTooShort(_, _) ->
       InternalArrangementGraphConstructionFailed
+    arrangement_graph.DualCertificationFailed ->
+      InternalArrangementGraphConstructionFailed
     arrangement_graph.ConstructionFailed ->
       InternalArrangementGraphConstructionFailed
   }

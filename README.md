@@ -2118,9 +2118,17 @@ with one occurrence in each direction.
 
 `build` is the supported constructor. Direct construction remains possible for
 inspection, serialization, and tests, but callers then assume responsibility
-for the documented graph invariants. `arrangement.validate` checks local
-representation and closed-boundary invariants that do not require pairwise
-intersection tests.
+for the documented graph invariants. `arrangement.validate_representation` checks local representation invariants
+for open or closed arrangements, including unique IDs and nonnegative
+directional multiplicities. `arrangement.validate_closed_boundaries` additionally
+requires even weighted degree at every vertex. Neither certifies geometric
+atomicity or pairwise intersections; use the construction tolerance and minimum
+length when calling either validator.
+
+Oriented edges in `cyclic_orders` use the public `OrientedArrangementEdge` type.
+Dual construction returns `DualCertificationFailed` when its bounded sweep
+search cannot certify the face relationships; this does not prove an invalid
+graph. Contradictions and invariant failures remain `ConstructionFailed`.
 
 `svg_path/arrangement/drawing` provides reusable drawing primitives for
 the transparent graph representation. `drawing` shows vertices, edges, and

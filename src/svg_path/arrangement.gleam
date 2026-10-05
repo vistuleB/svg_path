@@ -91,7 +91,6 @@ pub type ArrangementEdge {
 ///
 /// `reversed` is false when the oriented edge follows the stored edge direction
 /// and true when it opposes it.
-@internal
 pub type OrientedArrangementEdge {
   OrientedArrangementEdge(edge_id: Int, reversed: Bool)
 }
@@ -110,9 +109,8 @@ pub type OrientedArrangementEdge {
 /// group could not be separated by the configured geometric tests; their
 /// order is a deterministic best-effort majority order across sampled radii.
 /// For closed-boundary input, the sum of incident edge multiplicities at every
-/// vertex is positive and even. `validate` enforces this closed-boundary
-/// condition, so an arrangement built from open subpaths may be inspectable but
-/// fail validation.
+/// vertex is positive and even. `validate_closed_boundaries` checks this extra
+/// condition; `validate_representation` also accepts open arrangements.
 pub type ArrangementGraph {
   ArrangementGraph(
     /// Endpoint clusters in the arrangement.
@@ -462,7 +460,8 @@ pub type ArrangementSegmentImage {
 /// Errors returned while constructing or validating an arrangement graph.
 ///
 /// The numeric-option variants report invalid caller options. The remaining
-/// variants report a path failure or a violated graph invariant.
+/// variants report a path failure, an exhausted certification search, or a
+/// violated graph invariant.
 @internal
 pub type InternalError {
   /// An underlying path operation failed.
@@ -485,8 +484,7 @@ pub type InternalError {
   InternalInvalidEndpointSliverTolerance(tolerance: Float)
 
   /// A segment length upper bound is below the required threshold.
-  /// The `chord` label is retained for compatibility; it carries that bound.
-  InternalSegmentTooShort(chord: Float, minimum: Float)
+  InternalSegmentTooShort(length_upper_bound: Float, minimum: Float)
 
   /// Endpoint clustering collapsed an inserted segment to one vertex.
   InternalSegmentCollapsedToVertex(vertex: Int)
@@ -503,9 +501,16 @@ pub type InternalError {
   /// A vertex has no incident edge.
   InternalIsolatedVertex(vertex: Int)
 
-  /// An edge's total directional multiplicity is not positive. Carries the
+  /// A directional multiplicity is negative or their total is not positive.
+  /// Carries the
   /// edge ID, not the multiplicity.
   InternalInvalidMultiplicity(edge: Int)
+
+  /// Vertex identifiers must be unique.
+  InternalDuplicateVertexId(vertex: Int)
+
+  /// Edge identifiers must be unique.
+  InternalDuplicateEdgeId(edge: Int)
 
   /// A closed-boundary graph has an odd weighted degree at a vertex.
   InternalOddWeightedDegree(vertex: Int, degree: Int)
@@ -586,8 +591,11 @@ pub type Error {
   InvalidEndpointSliverTolerance(tolerance: Float)
 
   /// A segment length upper bound is below the requested threshold.
-  /// The `chord` label is retained for compatibility; it carries that bound.
-  SegmentTooShort(chord: Float, minimum: Float)
+  SegmentTooShort(length_upper_bound: Float, minimum: Float)
+
+  /// The bounded dual sweep search could not certify all face relationships.
+  /// This does not establish that the input graph is invalid.
+  DualCertificationFailed
 
   /// The arrangement construction or validation failed an internal invariant.
   ConstructionFailed
@@ -603,8 +611,9 @@ pub fn public_error(error: InternalError) -> Error {
       InvalidMinimumLength(minimum_length)
     InternalInvalidEndpointSliverTolerance(tolerance) ->
       InvalidEndpointSliverTolerance(tolerance)
-    InternalSegmentTooShort(chord:, minimum:) ->
-      SegmentTooShort(chord:, minimum:)
+    InternalSegmentTooShort(length_upper_bound:, minimum:) ->
+      SegmentTooShort(length_upper_bound:, minimum:)
+    InternalDualSweepExhausted(_) -> DualCertificationFailed
     _ -> ConstructionFailed
   }
 }
@@ -1122,8 +1131,9 @@ type DualWalkCandidate {
 /// The existing clockwise cyclic orders determine face successors. Boundary
 /// walks are grouped using accepted infinite-line sweeps through the components.
 /// Vertex hits, tangencies, overlaps and inseparable crossings are rejected.
-/// Independent accepted lines must agree; exhausted or contradictory searches
-/// return an error. No displaced containment probes are used.
+/// Independent accepted lines must agree. Exhausting the search budget returns
+/// `DualCertificationFailed`; contradictory accepted results return
+/// `ConstructionFailed`. No displaced containment probes are used.
 pub fn dual(graph: ArrangementGraph) -> Result(DualArrangementGraph, Error) {
   let result = {
     let ArrangementGraph(edges:, ..) = graph
@@ -2612,7 +2622,11 @@ pub fn insert_atomic_segment(
       let end = svg_path.segment_end(segment)
       use chord <- result.try(segment_length_bound(segment))
       case chord <. minimum_length {
-        True -> Error(InternalSegmentTooShort(chord:, minimum: minimum_length))
+        True ->
+          Error(InternalSegmentTooShort(
+            length_upper_bound: chord,
+            minimum: minimum_length,
+          ))
         False -> {
           let ArrangementGraph(vertices:, edges:, ..) = graph
           let #(vertices, start_id) = attach_vertex(vertices, start, tolerance)
@@ -3101,7 +3115,10 @@ fn vertex_projects_to_line_interior(
   let length_squared = point.dot(line, line)
   case length_squared <=. 0.0 {
     True ->
-      Error(InternalSegmentTooShort(chord: 0.0, minimum: vertex_tolerance))
+      Error(InternalSegmentTooShort(
+        length_upper_bound: 0.0,
+        minimum: vertex_tolerance,
+      ))
     False -> {
       let raw_t =
         point.dot(point.subtract(vertex, start), line) /. length_squared
@@ -3680,7 +3697,11 @@ fn split_progressive_graph_edge(
     retained_split_segments(split, minimum_length, retained: []),
   )
   case retained {
-    [] -> Error(InternalSegmentTooShort(chord: 0.0, minimum: minimum_length))
+    [] ->
+      Error(InternalSegmentTooShort(
+        length_upper_bound: 0.0,
+        minimum: minimum_length,
+      ))
     [_, ..] -> {
       let next_id = next_arrangement_edge_id(edges)
       use #(vertices, replacements, references) <- result.try(
@@ -5226,21 +5247,32 @@ fn increment_matching_edge(
   }
 }
 
-/// Validate local representation and closed-boundary invariants.
+/// Check local representation invariants for open or closed arrangements.
 ///
-/// This checks multiplicity totals, vertex references, non-loop edges, endpoint
-/// tolerance, minimum length upper bound, endpoint-cluster centers and radii, vertex
-/// incidence, and even weighted degree. It does not test pairwise edge
-/// intersections, atomicity, identifier uniqueness, or individual directional
-/// multiplicity signs; use `build` to establish those construction invariants.
-pub fn validate(
+/// Checks unique vertex/edge IDs, nonnegative directional multiplicities with
+/// positive totals, vertex references, non-loop edges, endpoint tolerance,
+/// minimum length upper bounds, endpoint-cluster centers/radii, and incidence.
+/// Use the tolerance and minimum length supplied during construction.
+/// Does not certify atomicity, pairwise intersections, cached bounds, or cyclic
+/// orders. Use `build` to establish the full construction invariants.
+pub fn validate_representation(
   graph: ArrangementGraph,
   tolerance tolerance: Float,
   minimum_length minimum_length: Float,
 ) -> Result(Nil, Error) {
-  let result = {
+  let checked = {
     use _ <- result.try(validate_options(tolerance, minimum_length))
     let ArrangementGraph(vertices:, edges:, ..) = graph
+    use _ <- result.try(validate_unique_ids(
+      list.map(vertices, fn(v) { v.id }),
+      dict.new(),
+      InternalDuplicateVertexId,
+    ))
+    use _ <- result.try(validate_unique_ids(
+      list.map(edges, fn(e) { e.id }),
+      dict.new(),
+      InternalDuplicateEdgeId,
+    ))
     use _ <- result.try(validate_edges(
       edges,
       vertices,
@@ -5249,7 +5281,48 @@ pub fn validate(
     ))
     validate_vertices(vertices, edges, tolerance)
   }
-  result |> result.map_error(public_error)
+  checked |> result.map_error(public_error)
+}
+
+/// Check representation invariants and even weighted degree at every vertex.
+///
+/// This adds the closed-boundary degree requirement to
+/// `validate_representation`. It does not certify geometric atomicity or
+/// guarantee that dual construction will succeed.
+pub fn validate_closed_boundaries(
+  graph: ArrangementGraph,
+  tolerance tolerance: Float,
+  minimum_length minimum_length: Float,
+) -> Result(Nil, Error) {
+  use _ <- result.try(validate_representation(
+    graph,
+    tolerance:,
+    minimum_length:,
+  ))
+  let ArrangementGraph(vertices:, edges:, ..) = graph
+  list.try_each(vertices, fn(vertex) {
+    let degree = weighted_degree(edges, vertex.id, 0)
+    case int.modulo(degree, 2) {
+      Ok(0) -> Ok(Nil)
+      _ -> Error(public_error(InternalOddWeightedDegree(vertex.id, degree)))
+    }
+  })
+}
+
+fn validate_unique_ids(
+  ids: List(Int),
+  seen: Dict(Int, Nil),
+  duplicate: fn(Int) -> InternalError,
+) -> Result(Nil, InternalError) {
+  case ids {
+    [] -> Ok(Nil)
+    [id, ..rest] ->
+      case dict.has_key(seen, id) {
+        True -> Error(duplicate(id))
+        False ->
+          validate_unique_ids(rest, dict.insert(seen, id, Nil), duplicate)
+      }
+  }
 }
 
 fn validate_options(
@@ -5295,7 +5368,11 @@ fn validate_edges(
       ),
       ..rest
     ] -> {
-      case forward_multiplicity + reverse_multiplicity <= 0 {
+      case
+        forward_multiplicity < 0
+        || reverse_multiplicity < 0
+        || forward_multiplicity + reverse_multiplicity <= 0
+      {
         True -> Error(InternalInvalidMultiplicity(id))
         False ->
           case start_vertex == end_vertex {
@@ -5327,7 +5404,7 @@ fn validate_edges(
                       case chord <. minimum_length {
                         True ->
                           Error(InternalSegmentTooShort(
-                            chord:,
+                            length_upper_bound: chord,
                             minimum: minimum_length,
                           ))
                         False ->
@@ -5365,11 +5442,7 @@ fn validate_vertices(
       let degree = weighted_degree(edges, id, 0)
       case degree == 0 {
         True -> Error(InternalIsolatedVertex(id))
-        False ->
-          case int.modulo(degree, 2) != Ok(0) {
-            True -> Error(InternalOddWeightedDegree(vertex: id, degree:))
-            False -> validate_vertices(rest, edges, tolerance)
-          }
+        False -> validate_vertices(rest, edges, tolerance)
       }
     }
   }

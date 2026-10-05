@@ -83,7 +83,11 @@ pub fn csg_result_retains_its_arrangement_build_test() {
 
   list.length(segments) |> should.equal(8)
   path |> svg_path.path_subpaths |> list.length |> should.equal(1)
-  arrangement_graph.validate(graph, tolerance:, minimum_length: 0.00001)
+  arrangement_graph.validate_closed_boundaries(
+    graph,
+    tolerance:,
+    minimum_length: 0.00001,
+  )
   |> should.equal(Ok(Nil))
 }
 

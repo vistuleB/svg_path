@@ -17,6 +17,14 @@ diagnostics. Redundant transform shortcuts are replaced by matrix composition.
 
 ### Breaking API changes
 
+- Replace arrangement `validate` with `validate_representation` (open or closed)
+  and `validate_closed_boundaries` (adds even weighted degree). Both reject
+  duplicate vertex/edge IDs and negative directional multiplicities.
+- Rename `SegmentTooShort.chord` to `length_upper_bound`.
+- Expose `OrientedArrangementEdge` in generated API documentation.
+- Return `DualCertificationFailed` for exhausted dual sweep searches, keeping
+  contradictory results and invariant failures as `ConstructionFailed`.
+
 - Return `SegmentSubpathIntersection(point:, segment_t:, subpath_parameters:)`
   records from segment–subpath intersection and encounter queries, replacing
   anonymous tuples without changing grouping or parameter ordering.

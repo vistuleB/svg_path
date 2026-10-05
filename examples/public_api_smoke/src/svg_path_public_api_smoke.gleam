@@ -28,7 +28,23 @@ pub fn main() -> Nil {
       minimum_length: 0.00001,
     )
   let arrangement.ArrangementGraphBuild(graph:, segment_images:) = build
-  let _ = graph
+  let assert Ok(Nil) =
+    arrangement.validate_representation(
+      graph,
+      tolerance: 0.000001,
+      minimum_length: 0.00001,
+    )
+  let assert Ok(Nil) =
+    arrangement.validate_closed_boundaries(
+      graph,
+      tolerance: 0.000001,
+      minimum_length: 0.00001,
+    )
+  let assert [#(_, [first_group, ..]), ..] = graph.cyclic_orders
+  let assert [arrangement.OrientedArrangementEdge(edge_id:, reversed:), ..] =
+    first_group
+  let _: arrangement.OrientedArrangementEdge =
+    arrangement.OrientedArrangementEdge(edge_id:, reversed:)
   let _ = segment_images
 
   let assert Ok(union) = csg.union(left, right, using: svg_path.Nonzero)
