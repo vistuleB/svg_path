@@ -686,37 +686,6 @@ fn degenerate_minimum_width_strip(
   )
 }
 
-/// Find the minimum directional width exposed by a support callback.
-///
-/// The callback receives a unit direction. `diameter_upper_bound` must bound
-/// the diameter of the represented convex set.
-@internal
-pub fn minimum_width(
-  support: fn(svg_path.Point) -> DirectionalExtent,
-  diameter_upper_bound diameter_upper_bound: Float,
-) -> WidthExtremum {
-  minimum_width_with(
-    support,
-    diameter_upper_bound:,
-    options: default_width_search_options(),
-  )
-}
-
-/// Find the minimum directional width using explicit search options.
-@internal
-pub fn minimum_width_with(
-  support: fn(svg_path.Point) -> DirectionalExtent,
-  diameter_upper_bound diameter_upper_bound: Float,
-  options options: WidthSearchOptions,
-) -> WidthExtremum {
-  directional_width_extremum(
-    support,
-    diameter_upper_bound:,
-    options:,
-    find: MinimumWidth,
-  )
-}
-
 /// Find the diameter exposed by a directional support callback.
 ///
 /// The callback receives a unit direction. `diameter_upper_bound` must bound

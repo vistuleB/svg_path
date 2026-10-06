@@ -11,6 +11,10 @@ rather than only the tag object.
 
 ## 3.0.0 - 2026-10-05
 
+- Remove seven unused internal angle diagnostics and their ten private helpers,
+  plus two unused callback minimum-width wrappers (490 source lines). Retain
+  public width operations and internal hooks exercised by tests or diagnostics.
+
 - Fix missed curve intersections at larger coordinates by accounting for
   floating-point evaluation error during curve-pair refinement and endpoint
   lookup. Final certification still enforces the requested tolerance.
