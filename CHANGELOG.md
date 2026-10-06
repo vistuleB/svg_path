@@ -11,6 +11,9 @@ rather than only the tag object.
 
 ## 3.0.0 - 2026-10-05
 
+- Document coordinate-scale tolerance choices, offset/stroke length settings,
+  and the distinction between area linearization accuracy and area error.
+
 - Fix large-coordinate stroke construction failing in internal point projections.
   Arrangement and overlap matching retry stalled refinement with a coordinate
   roundoff allowance, retain the original matching tolerance, and preserve

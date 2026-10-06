@@ -3184,6 +3184,10 @@ pub type FittingOptions {
 /// boundaries. Trimmed offset `_with` calls separately accept `trimming:`:
 /// `SingleOffsetTrimming` for one-sided offsets, or `BandTrimming` for bands.
 /// Stroke uses these same construction options with its fixed trimming policy.
+/// `fitting.tolerance` and `stalled_offset_diameter` are absolute lengths in
+/// path coordinate units. For comparable relative detail after uniform scaling,
+/// scale both along with the offset distance or stroke width; leave sample
+/// counts, depth limits, angles, and miter limits unchanged.
 /// `inner_join` overrides local inner-corner construction. `None` selects
 /// `InnerRound` for `Round` joins and `InnerBevel` for every other join style.
 /// It applies to each offset side independently, including single offsets.

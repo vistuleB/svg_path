@@ -162,6 +162,40 @@ Analytic cases may not need iterative controls. Different modules' tolerances
 have different units and contracts; they are not interchangeable global error
 bounds. See each option record for validation rules and convergence behavior.
 
+### Choosing tolerances for your coordinate scale
+
+Length tolerances are absolute distances in path coordinate units. Default option values do
+not adapt to the size of a path. Choose them from the detail you need to preserve:
+a tolerance suitable for coordinates in the hundreds can be too coarse for a
+path a thousand times smaller, or unnecessarily expensive for one much larger.
+
+When uniformly scaling geometry by a positive factor `s`, multiply length-based
+settings by `s` if you want comparable geometric detail relative to the shape.
+For example, the default curve-to-line tolerance of `0.01` becomes `10.0` at
+×1,000, or `0.00001` at ×0.001. Keep the original tolerance instead when you need
+the same absolute precision in the output coordinate units.
+
+For offsets and strokes, scale the offset distance or stroke width,
+`options.fitting.tolerance`, and `options.stalled_offset_diameter` together.
+Do not scale sample counts, iteration/depth limits, angles, or dimensionless
+parameters such as the miter limit. These choices preserve the intended units;
+they do not guarantee identical topology or convergence across scales, because
+floating-point resolution and other numerical stages also matter.
+
+**Area accuracy and cost.** `area.path_with` and the absolute-winding area
+operations approximate curves with lines before processing their arrangement.
+Their `LinearizeOptions.tolerance` is a distance, not a bound on the error in
+square coordinate units. Area scales by `s²`, but this tolerance scales by `s`.
+Reducing it can create more line segments; the arrangement considers pairs of
+edges, so very fine approximations can be expensive. Leaving the absolute
+default unchanged on greatly enlarged geometry can have the same effect.
+
+Compare results at successively tighter tolerances when assessing the accuracy
+your application needs. Stabilization is a practical check, not a certified
+area-error bound. `area.signed_path` uses direct segment integrals when algebraic
+signed area is what you need; repeated and oppositely oriented loops mean it
+cannot generally replace SVG fill-rule area.
+
 ### Complete recipes
 
 These functions fit and trim a curve by distance, recover a usable address from

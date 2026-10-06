@@ -11,6 +11,15 @@
 //// box. Near-coincident slab boundaries and crossings can therefore be merged,
 //// even for line-only paths. This is separate from the caller's curve-to-line
 //// tolerance; neither tolerance directly bounds the final area error.
+////
+//// Linearization tolerance is an absolute distance in path coordinate units.
+//// Under uniform scaling by a positive factor `s`, scale it by `s` for comparable
+//// relative curve detail, while area itself scales by `s * s`. Keeping a fixed
+//// tolerance on enlarged geometry can create many more edges; arrangement
+//// construction considers edge pairs and can become expensive. Comparing
+//// successively tighter tolerances is a practical accuracy check, not a
+//// certified bound. Signed area uses direct integrals but has different winding
+//// semantics and cannot generally replace fill-rule area.
 
 import gleam/float
 import gleam/int

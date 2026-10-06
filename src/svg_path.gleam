@@ -241,6 +241,11 @@ pub type PointMapError(error) {
 }
 
 /// Options for approximating segments with straight lines.
+///
+/// `tolerance` is an absolute distance in path coordinate units (default `0.01`).
+/// Scale it with uniformly scaled geometry for comparable relative detail;
+/// keep `max_depth` unchanged. Smaller tolerances can require more subdivisions.
+/// When used for fill-rule area, this is not a bound on the final area error.
 pub type LinearizeOptions {
   LinearizeOptions(
     /// Maximum finite, positive deviation from the line approximation.
