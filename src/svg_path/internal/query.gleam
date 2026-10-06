@@ -1164,6 +1164,51 @@ pub fn segment_projection(
   )
 }
 
+// Keep the ordinary query unchanged. If absolute refinement stalls at floating-
+// point resolution, retry with an enclosure-coordinate roundoff allowance. A
+// coarse result may reject a sample only when its separation exceeds both the
+// matching tolerance and the refinement uncertainty; ambiguous cases retain
+// the original error. A point within tolerance is a geometric witness itself.
+@internal
+pub fn segment_projection_for_matching(
+  sample: svg_path.Point,
+  segment: svg_path.Segment,
+  matching_tolerance: Float,
+) -> Result(svg_path.SegmentProjection, svg_path.Error) {
+  case segment_projection(sample, to: segment) {
+    Error(svg_path.DistanceMaxIterationsReached(..) as original_error) -> {
+      use enclosure <- result.try(segment_bounding_polygon(segment))
+      let magnitude =
+        list.fold([sample, ..enclosure], 0.0, fn(size, p) {
+          float.max(
+            size,
+            float.max(float.absolute_value(p.x), float.absolute_value(p.y)),
+          )
+        })
+      let defaults = default_distance_options()
+      let roundoff = magnitude *. 0.000000000000003552713678800501
+      case roundoff >. defaults.tolerance {
+        False -> Error(original_error)
+        True -> {
+          use projection <- result.try(segment_projection_with(
+            sample,
+            to: segment,
+            options: svg_path.DistanceOptions(..defaults, tolerance: roundoff),
+          ))
+          case
+            projection.distance <=. matching_tolerance
+            || projection.distance >. matching_tolerance +. roundoff
+          {
+            True -> Ok(projection)
+            False -> Error(original_error)
+          }
+        }
+      }
+    }
+    result -> result
+  }
+}
+
 /// Classify a point relative to a subpath's fill area.
 ///
 /// Open and closed subpaths use the same fill geometry: an open subpath is

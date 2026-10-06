@@ -3,6 +3,7 @@ import gleam/float
 import gleam/list
 import svg_path
 import svg_path/containment
+import svg_path/internal/query
 import svg_path/measure
 import svg_path/offset
 import svg_path/parse
@@ -974,4 +975,84 @@ pub fn stroke_rejects_unsupported_fitting_depth_test() {
       options:,
     )
     == Error(stroke.OffsetError(offset.InvalidMaxDepth(6)))
+}
+
+// Scaling the fitting tolerance must not leave hidden projection queries stuck
+// below coordinate resolution in arrangement or overlap construction.
+pub fn stroke_large_coordinates_with_scaled_options_test() {
+  let reference = scaled_quadratic_outline(1.0)
+  list.each([1000.0, 100_000.0], fn(scale) {
+    let actual = scaled_quadratic_outline(scale)
+    assert list.length(actual) == list.length(reference)
+    list.each(list.zip(actual, reference), fn(pair) {
+      let #(actual, expected) = pair
+      list.each([0.0, 0.25, 0.5, 0.75, 1.0], fn(t) {
+        let assert Ok(a) = svg_path.segment_point(actual, at: t)
+        let assert Ok(b) = svg_path.segment_point(expected, at: t)
+        assert float.absolute_value(a.x /. scale -. b.x) <. 0.000001
+        assert float.absolute_value(a.y /. scale -. b.y) <. 0.000001
+      })
+    })
+  })
+}
+
+fn scaled_quadratic_outline(scale: Float) -> List(svg_path.Segment) {
+  let source =
+    svg_path.QuadraticBezier(
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(50.0 *. scale, 40.0 *. scale),
+      svg_path.Point(100.0 *. scale, 0.0),
+    )
+    |> svg_path.segment_as_subpath
+  let defaults = offset.default_options()
+  let options =
+    offset.Options(
+      ..defaults,
+      fitting: offset.FittingOptions(
+        ..defaults.fitting,
+        tolerance: defaults.fitting.tolerance *. scale,
+      ),
+      stalled_offset_diameter: defaults.stalled_offset_diameter *. scale,
+    )
+  let assert Ok(path) =
+    stroke.subpath_with(
+      source,
+      width: 4.0 *. scale,
+      join: offset.Round,
+      cap: offset.Butt,
+      options:,
+    )
+  let assert [outline] = svg_path.path_subpaths(path)
+  assert svg_path.subpath_is_closed(outline)
+  let segments = svg_path.subpath_segments(outline)
+  assert list.length(segments) == 6
+  segments
+}
+
+// The fallback may answer a well-separated matching query, but it must not
+// turn an unresolved distance just outside the matching tolerance into a miss.
+pub fn matching_projection_preserves_uncertain_threshold_test() {
+  let segment =
+    svg_path.CubicBezier(
+      svg_path.Point(10_124_939.009510884, 156_173.76188860607),
+      svg_path.Point(8_433_479.483413106, 1_509_341.3827668284),
+      svg_path.Point(6_722_287.76636116, 2_200_000.0),
+      svg_path.Point(5_000_000.0, 2_200_000.0),
+    )
+  let sample = svg_path.Point(5_000_000.0, 1_800_000.0)
+  let assert Error(svg_path.DistanceMaxIterationsReached(..)) =
+    query.segment_projection(sample, to: segment)
+  let assert Ok(found) =
+    query.segment_projection_for_matching(sample, segment, 0.000000002)
+  assert found.at == 1.0
+  assert found.distance == 400_000.0
+  let assert Error(svg_path.DistanceMaxIterationsReached(..)) =
+    query.segment_projection_for_matching(
+      sample,
+      segment,
+      400_000.0 -. 0.00000001,
+    )
+  let assert Ok(witness) =
+    query.segment_projection_for_matching(sample, segment, 400_000.0)
+  assert witness.distance <=. 400_000.0
 }

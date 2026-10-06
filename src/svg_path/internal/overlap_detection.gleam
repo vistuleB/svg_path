@@ -516,7 +516,8 @@ pub fn point_parameters(
   // Keep closest projection for approximate coincidences too. A complete
   // coordinate inventory can replace a failed projection, but not an arbitrary
   // partial collection of geometric matches.
-  let projection = query.segment_projection(point, to: target)
+  let projection =
+    query.segment_projection_for_matching(point, target, tolerance)
   use projected <- result.try(case projection {
     Ok(found) -> Ok([found.at])
     Error(svg_path.DistanceMaxIterationsReached(..) as error) ->

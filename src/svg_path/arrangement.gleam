@@ -25,8 +25,8 @@ import gleam/result
 import svg_path
 import svg_path/bounds
 import svg_path/containment
-import svg_path/distance
 import svg_path/internal/number
+import svg_path/internal/query
 import svg_path/internal/smallest_enclosing_circle
 import svg_path/internal/winding_field
 import svg_path/intersections
@@ -3093,7 +3093,7 @@ fn vertex_projects_to_piece_interior_uncached(
       vertex_projects_to_line_interior(vertex, start, end, vertex_tolerance)
     _ -> {
       use projection <- result.try(
-        distance.segment_projection(vertex, to: segment)
+        query.segment_projection_for_matching(vertex, segment, vertex_tolerance)
         |> result.map_error(InternalPathError),
       )
       let svg_path.Projection(at: t, distance:, ..) = projection
