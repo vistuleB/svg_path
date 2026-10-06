@@ -1,0 +1,9 @@
+name = "svg_path_portable_tests"
+version = "0.1.0"
+
+[dependencies]
+svg_path = { path = ".." }
+gleam_stdlib = ">= 1.0.0 and < 2.0.0"
+
+[dev_dependencies]
+gleeunit = ">= 1.0.0 and < 2.0.0"

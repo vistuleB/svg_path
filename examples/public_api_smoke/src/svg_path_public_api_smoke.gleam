@@ -1,6 +1,5 @@
 //// Compile and runtime smoke coverage for public geometry APIs on both targets.
 
-import intersection_scale_regression
 import svg_path
 import svg_path/arrangement
 import svg_path/bounds
@@ -17,7 +16,6 @@ import svg_path/stroke
 import svg_path/svg
 
 pub fn main() -> Nil {
-  intersection_scale_regression.run()
   let _ =
     svg.Circle(center: svg_path.Point(1.0, 2.0), radius: 3.0, style: "fill:red")
   let left = rectangle(0.0, 0.0, 10.0, 10.0)

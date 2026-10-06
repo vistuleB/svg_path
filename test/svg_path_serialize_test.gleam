@@ -62,23 +62,25 @@ pub fn minified_subpath_lines_separate_repeated_command_arguments_test() {
   )
 }
 
+// System formatting follows the target runtime; 1e30 uses scientific notation
+// on both Erlang and JavaScript (1e20 does not).
 pub fn serialization_preserves_scientific_exponents_test() {
-  let subpath = svg_path.subpath_empty(at: svg_path.Point(1.0e20, 0.0))
+  let subpath = svg_path.subpath_empty(at: svg_path.Point(1.0e30, 0.0))
   let options =
     serialize.default_options()
     |> serialize.with_right_decimals(serialize.System)
 
-  assert serialize.subpath_with(subpath, options:) == "M 1e20 0"
+  assert serialize.subpath_with(subpath, options:) == "M 1e30 0"
 }
 
 pub fn serialized_padding_measures_scientific_significands_test() {
-  let subpath = svg_path.subpath_empty(at: svg_path.Point(1.0e20, 2.0))
+  let subpath = svg_path.subpath_empty(at: svg_path.Point(1.0e30, 2.0))
   let options =
     serialize.default_options()
     |> serialize.with_right_decimals(serialize.System)
     |> serialize.with_left_decimals(serialize.LeftPadding(4, serialize.Zero))
 
-  assert serialize.subpath_with(subpath, options:) == "M 0001e20 0002"
+  assert serialize.subpath_with(subpath, options:) == "M 0001e30 0002"
 }
 
 pub fn serialization_uses_scientific_notation_when_scaling_is_unsafe_test() {

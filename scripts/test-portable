@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+suite="$root/test_portable"
+target="${1:-all}"
+case "$target" in
+  all|erlang|javascript) ;;
+  *) echo "Usage: scripts/test-portable [all|erlang|javascript]" >&2; exit 2 ;;
+esac
+
+# This directory contains only generated copies. Original tests stay in test/.
+mkdir -p "$suite/test"
+for generated in "$suite/test/"*.gleam; do
+  [ ! -f "$generated" ] || rm "$generated"
+done
+while IFS= read -r module; do
+  case "$module" in
+    ""|\#*) continue ;;
+    */*|*[!a-zA-Z0-9_.]*) echo "Invalid portable test module: $module" >&2; exit 2 ;;
+  esac
+  cp "$root/test/$module" "$suite/test/$module"
+done < "$suite/modules.txt"
+cp "$suite/runner.gleam" "$suite/test/svg_path_portable_tests_test.gleam"
+
+cd "$suite"
+if [ "$target" = all ] || [ "$target" = erlang ]; then
+  echo "Portable numerical tests: Erlang"
+  gleam test --target erlang
+fi
+if [ "$target" = all ] || [ "$target" = javascript ]; then
+  echo "Portable numerical tests: JavaScript"
+  gleam test --target javascript
+fi

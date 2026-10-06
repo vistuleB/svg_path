@@ -24,12 +24,35 @@ CI and `scripts/test-fast` run it before the tests. Behavior checks live in
 - `scripts/test-fast`: ordinary suite, including convex-hull smoke tests.
 - `scripts/test-slow`: additional convex-hull stress tests only.
 - `scripts/test-all`: both profiles.
+- `scripts/test-portable [all|erlang|javascript]`: shared numerical regressions
+  on both targets by default, or on the named target.
 - `scripts/test-release`: canonical pre-release verification, including both
-  profiles; fast tests alone do not verify a release.
+  root profiles and the portable suite on Erlang and JavaScript; fast tests
+  alone do not verify a release.
 
 In review notes and reports, record the exact completed command and test count.
 Reserve claims that the full suite passes for a successful `scripts/test-all`
 or `scripts/test-release` run in the current worktree.
+
+## Portable Numerical Tests
+
+`test_portable/modules.txt` selects existing modules from `test/`, including
+support modules. `scripts/test-portable` copies them into the ignored
+`test_portable/test/` directory and installs its Gleeunit runner. Edit the
+original tests in `test/`; generated copies must not be edited or committed.
+The standalone package compiles the library as a dependency, avoiding the
+root test directory's Erlang-only figure I/O. Its manifest locks dependencies.
+
+The initial selection runs 338 tests and covers curve intersections (including scale/translation
+regressions), overlaps, SVG arc normalization, parsing, serialization, CSG,
+clipping, area, and stroke. Add suitable modules to the selection as coverage
+expands; portable modules and their support code must implement both targets.
+CI runs the same selection in separate Erlang and JavaScript jobs. Failures
+must be fixed or explained, not bypassed by target-specific exclusions.
+
+Do not run this script concurrently with `scripts/test-slow`, which temporarily
+moves the source `test/` directory, or run two portable scripts concurrently in
+the same checkout, since they share the generated test directory.
 
 ## Figure Layout
 

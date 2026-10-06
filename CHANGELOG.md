@@ -11,6 +11,9 @@ rather than only the tag object.
 
 ## 3.0.0 - 2026-10-05
 
+- Run shared numerical test modules on Erlang and JavaScript via
+  `scripts/test-portable`, with separate CI jobs and release-check integration.
+
 - Remove seven unused internal angle diagnostics and their ten private helpers,
   plus two unused callback minimum-width wrappers (490 source lines). Retain
   public width operations and internal hooks exercised by tests or diagnostics.
