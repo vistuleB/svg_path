@@ -1,4 +1,6 @@
 import gleam/float
+import gleam/int
+import gleam/list
 import gleeunit
 import svg_path
 import svg_path/area
@@ -293,4 +295,64 @@ fn assert_close(
   within tolerance: Float,
 ) -> Nil {
   assert float.absolute_value(actual -. expected) <=. tolerance
+}
+
+// A fine polygonal approximation must keep the same area without comparing
+// every short edge against every other edge or every slab.
+pub fn filled_area_of_finely_linearized_quadratic_test() {
+  list.each([1.0, 1000.0, 100_000.0], fn(scale) {
+    let curve =
+      svg_path.QuadraticBezier(
+        svg_path.Point(0.0, 0.0),
+        svg_path.Point(50.0 *. scale, 40.0 *. scale),
+        svg_path.Point(100.0 *. scale, 0.0),
+      )
+    let path = curve |> svg_path.segment_as_subpath |> svg_path.subpath_as_path
+    let assert Ok(lines) = svg_path.path_to_lines(path)
+    let expected =
+      float.absolute_value(area.signed_path(lines)) /. scale /. scale
+    list.each([svg_path.Nonzero, svg_path.EvenOdd], fn(rule) {
+      let assert Ok(actual) = area.path(path, using: rule)
+      assert_close(actual /. scale /. scale, expected, 0.00000001)
+    })
+    let assert Ok(absolute) = area.absolute_winding_path(path)
+    assert_close(absolute /. scale /. scale, expected, 0.00000001)
+  })
+}
+
+pub fn area_sweep_preserves_disjoint_self_crossings_and_multiplicity_test() {
+  let loops =
+    list.repeat(Nil, 64)
+    |> list.index_map(fn(_, i) {
+      let x = int.to_float(i) *. 3.0
+      svg_path.subpath_assert_polygon([
+        svg_path.Point(x, 0.0),
+        svg_path.Point(x +. 2.0, 2.0),
+        svg_path.Point(x, 2.0),
+        svg_path.Point(x +. 2.0, 0.0),
+      ])
+    })
+  list.each([loops, list.reverse(loops)], fn(loops) {
+    let path = svg_path.Path(list.append(loops, loops))
+    let assert Ok(nonzero) = area.path(path, using: svg_path.Nonzero)
+    let assert Ok(evenodd) = area.path(path, using: svg_path.EvenOdd)
+    let assert Ok(absolute) = area.absolute_winding_path(path)
+    assert_close(nonzero, 128.0, tolerance)
+    assert_close(evenodd, 0.0, tolerance)
+    assert_close(absolute, 256.0, tolerance)
+  })
+}
+
+pub fn area_sweep_handles_adjacent_vertical_boundaries_test() {
+  let loops =
+    list.repeat(Nil, 64)
+    |> list.index_map(fn(_, i) {
+      square_points(int.to_float(i), 0.0, 1.0)
+      |> svg_path.subpath_assert_polygon
+    })
+  let path = svg_path.Path(loops)
+  list.each([svg_path.Nonzero, svg_path.EvenOdd], fn(rule) {
+    let assert Ok(actual) = area.path(path, using: rule)
+    assert_close(actual, 64.0, tolerance)
+  })
 }

@@ -35,6 +35,25 @@ type Edge {
   Edge(start: svg_path.Point, end: svg_path.Point)
 }
 
+// The original index preserves narrow-phase operand order and equal-height
+// crossing order after spatial sorting.
+type EdgeSpan {
+  EdgeSpan(edge: Edge, index: Int, min_x: Float, max_x: Float)
+}
+
+fn edge_spans(edges: List(Edge)) -> List(EdgeSpan) {
+  edges
+  |> list.index_map(fn(edge, index) {
+    EdgeSpan(
+      edge,
+      index,
+      float.min(edge.start.x, edge.end.x),
+      float.max(edge.start.x, edge.end.x),
+    )
+  })
+  |> list.sort(fn(a, b) { float.compare(a.min_x, b.min_x) })
+}
+
 type Crossing {
   Crossing(edge: Edge, y: Float, winding: Int)
 }
@@ -253,8 +272,9 @@ fn arrangement_area(
     [] -> Ok(0.0)
     _ -> {
       let tolerance = arrangement_tolerance(edges)
-      let xs = arrangement_xs(edges, tolerance)
-      Ok(slabs_area(xs, edges, mode, tolerance, area: 0.0))
+      let spans = edge_spans(edges)
+      let xs = arrangement_xs(edges, spans, tolerance)
+      Ok(slabs_area(xs, spans, [], mode, tolerance, area: 0.0))
     }
   }
 }
@@ -389,10 +409,29 @@ fn add_edge(
   }
 }
 
-fn arrangement_xs(edges: List(Edge), tolerance: Float) -> List(Float) {
+fn arrangement_xs(
+  edges: List(Edge),
+  spans: List(EdgeSpan),
+  tolerance: Float,
+) -> List(Float) {
   let endpoint_xs =
     list.flat_map(edges, fn(edge) { [edge.start.x, edge.end.x] })
-  let intersection_xs = pair_intersection_xs(edges, accumulated: [])
+  // The narrow phase accepts parameters just beyond [0, 1]. Expand the
+  // broad phase for that allowance and coordinate rounding; never prune using
+  // exact endpoint bounds alone.
+  let magnitude =
+    list.fold(spans, 0.0, fn(size, span) {
+      float.max(
+        size,
+        float.max(
+          float.absolute_value(span.min_x),
+          float.absolute_value(span.max_x),
+        ),
+      )
+    })
+  let padding = tolerance +. magnitude *. 0.000000000000003552713678800501
+  let intersection_xs =
+    pair_intersection_xs(spans, [], padding, accumulated: [])
 
   list.append(endpoint_xs, intersection_xs)
   |> list.sort(by: float.compare)
@@ -400,20 +439,30 @@ fn arrangement_xs(edges: List(Edge), tolerance: Float) -> List(Float) {
 }
 
 fn pair_intersection_xs(
-  edges: List(Edge),
+  pending: List(EdgeSpan),
+  active: List(EdgeSpan),
+  padding: Float,
   accumulated accumulated: List(Float),
 ) -> List(Float) {
-  case edges {
+  case pending {
     [] -> accumulated
     [first, ..rest] -> {
+      let active =
+        list.filter(active, fn(span) {
+          span.max_x +. padding >=. first.min_x -. padding
+        })
       let accumulated =
-        list.fold(rest, accumulated, fn(xs, second) {
-          case edge_intersection_x(first, second) {
+        list.fold(active, accumulated, fn(xs, second) {
+          let intersection = case first.index < second.index {
+            True -> edge_intersection_x(first.edge, second.edge)
+            False -> edge_intersection_x(second.edge, first.edge)
+          }
+          case intersection {
             None -> xs
             Some(x) -> [x, ..xs]
           }
         })
-      pair_intersection_xs(rest, accumulated:)
+      pair_intersection_xs(rest, [first, ..active], padding, accumulated:)
     }
   }
 }
@@ -469,7 +518,8 @@ fn dedupe_sorted_floats(
 
 fn slabs_area(
   xs: List(Float),
-  edges: List(Edge),
+  pending: List(EdgeSpan),
+  active: List(EdgeSpan),
   mode: AreaMode,
   tolerance: Float,
   area area: Float,
@@ -478,10 +528,15 @@ fn slabs_area(
     [] | [_] -> area
     [left, right, ..rest] -> {
       let width = right -. left
+      let middle = { left +. right } /. 2.0
+      let #(pending, active) = slab_edges(pending, active, middle)
       let slab_area = case width <=. 0.0 {
         True -> 0.0
         False -> {
-          let middle = { left +. right } /. 2.0
+          let edges =
+            active
+            |> list.sort(fn(a, b) { int.compare(a.index, b.index) })
+            |> list.map(fn(span) { span.edge })
           let groups = crossing_groups(edges, middle, tolerance)
           crossing_groups_area(
             groups,
@@ -498,12 +553,26 @@ fn slabs_area(
 
       slabs_area(
         [right, ..rest],
-        edges,
+        pending,
+        active,
         mode,
         tolerance,
         area: area +. slab_area,
       )
     }
+  }
+}
+
+// Each edge enters once. Edges ending at the slab midpoint (including
+// vertical edges) cannot contribute to its open vertical slice.
+fn slab_edges(
+  pending: List(EdgeSpan),
+  active: List(EdgeSpan),
+  x: Float,
+) -> #(List(EdgeSpan), List(EdgeSpan)) {
+  case pending {
+    [first, ..rest] if first.min_x <. x -> slab_edges(rest, [first, ..active], x)
+    _ -> #(pending, list.filter(active, fn(span) { span.max_x >. x }))
   }
 }
 

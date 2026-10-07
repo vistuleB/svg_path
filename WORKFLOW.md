@@ -54,6 +54,18 @@ Do not run this script concurrently with `scripts/test-slow`, which temporarily
 moves the source `test/` directory, or run two portable scripts concurrently in
 the same checkout, since they share the generated test directory.
 
+## Area Performance Probe
+
+After `scripts/test-portable javascript`, run `node scripts/benchmark-area.mjs`.
+It reports filled-area time, flattened segment count, and normalized area for
+one quadratic at scales 1, 1,000, and 100,000, using default and scaled geometric
+tolerances. Each case runs in a fresh JavaScript worker without warm-up and has
+an eight-second timeout. Timings include linearization and arrangement, but not
+module loading. They are diagnostic observations, not CI timing assertions.
+
+The area sweeps prune disjoint x-ranges. Many edges spanning the same x-range
+can still require quadratic work; this probe is not a worst-case bound.
+
 ## Figure Layout
 
 - When comparing opposite orientations, keep each direction arrow at the same
