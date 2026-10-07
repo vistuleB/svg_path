@@ -20,6 +20,9 @@ CI and `scripts/test-fast` run it before the tests. Behavior checks live in
 
 ## Test Profiles And Reporting
 
+Use Gleam 1.18.1 for release validation and formatting, matching both CI jobs.
+Different compiler versions can produce different formatting.
+
 - `gleam test`: default suite.
 - `scripts/test-fast`: ordinary suite, including convex-hull smoke tests.
 - `scripts/test-slow`: additional convex-hull stress tests only.
