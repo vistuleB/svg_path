@@ -9,7 +9,7 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
-## 3.0.0 - 2026-10-05
+## 3.0.0 - 2026-10-07
 
 - Consolidate internal split normalization, Bézier conversion, adjacent-line
   construction, remainder, and integer-power helpers. Store one affine value
