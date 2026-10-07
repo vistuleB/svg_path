@@ -39,6 +39,7 @@ import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import svg_path/internal/number
+import svg_path/internal/parameter
 import svg_path/internal/root
 
 const parameter_tolerance = 0.000000001
@@ -497,7 +498,7 @@ pub fn split_many(
   curve: BezierData,
   at points: List(Float),
 ) -> List(BezierData) {
-  split_at_progresses(curve, normalized_progresses(points))
+  split_at_progresses(curve, parameter.normalize_splits(points))
 }
 
 /// Split a Bezier curve at multiple parameter values, erroring outside `0.0..1.0`.
@@ -509,7 +510,7 @@ pub fn split_many_inside(
   curve: BezierData,
   at points: List(Float),
 ) -> Result(List(BezierData), Error) {
-  let points = normalized_progresses(points)
+  let points = parameter.normalize_splits(points)
 
   case list.any(points, fn(t) { t <. 0.0 || t >. 1.0 }) {
     True -> Error(SplitOutsideBezier)
@@ -1264,14 +1265,6 @@ fn distance(left: BezierPoint, right: BezierPoint) -> Float {
   distance_squared(left, right) |> sqrt
 }
 
-fn normalized_progresses(points: List(Float)) -> List(Float) {
-  points
-  |> list.map(number.normalize_zero)
-  |> sort_unique_progresses
-  |> trim_start_progress
-  |> trim_end_progress
-}
-
 fn bezier_axis_extrema(curve: BezierData) -> List(Float) {
   case curve {
     LinearBezierData(..) -> []
@@ -1382,14 +1375,6 @@ fn include_point(box: BoundingBox, point: BezierPoint) -> BoundingBox {
   )
 }
 
-fn sort_unique_progresses(points: List(Float)) -> List(Float) {
-  case points {
-    [] -> []
-    [first, ..rest] ->
-      sort_unique_progresses(rest) |> insert_unique_progress(first)
-  }
-}
-
 fn sort_unique_close_progresses(points: List(Float)) -> List(Float) {
   case list.sort(points, by: float.compare) {
     [] -> []
@@ -1411,44 +1396,6 @@ fn unique_close_progresses(
         True -> unique_close_progresses(rest, previous:, kept:)
         False ->
           unique_close_progresses(rest, previous: point, kept: [point, ..kept])
-      }
-    }
-  }
-}
-
-fn trim_start_progress(points: List(Float)) -> List(Float) {
-  case points {
-    [0.0, ..rest] -> trim_start_progress(rest)
-    _ -> points
-  }
-}
-
-fn trim_end_progress(points: List(Float)) -> List(Float) {
-  points
-  |> list.reverse
-  |> trim_reversed_end_progress
-  |> list.reverse
-}
-
-fn trim_reversed_end_progress(points: List(Float)) -> List(Float) {
-  case points {
-    [1.0, ..rest] -> trim_reversed_end_progress(rest)
-    _ -> points
-  }
-}
-
-fn insert_unique_progress(sorted: List(Float), point: Float) -> List(Float) {
-  case sorted {
-    [] -> [point]
-    [first, ..rest] -> {
-      case point == first {
-        True -> sorted
-        False -> {
-          case point <=. first {
-            True -> [point, ..sorted]
-            False -> [first, ..insert_unique_progress(rest, point)]
-          }
-        }
       }
     }
   }

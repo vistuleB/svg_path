@@ -75,6 +75,7 @@ import gleam/float
 import gleam/list
 import svg_path/affine
 import svg_path/internal/number
+import svg_path/internal/parameter
 import svg_path/trig
 
 const scalar_tolerance = 0.000000001
@@ -493,7 +494,7 @@ pub fn arc_split_many(
   arc: CenterArcData,
   at points: List(Float),
 ) -> List(CenterArcData) {
-  split_arc_at_progresses(arc, normalized_progresses(points))
+  split_arc_at_progresses(arc, parameter.normalize_splits(points))
 }
 
 /// Split an arc at multiple angular progress values, erroring outside `0.0..1.0`.
@@ -505,7 +506,7 @@ pub fn arc_split_many_inside(
   arc: CenterArcData,
   at points: List(Float),
 ) -> Result(List(CenterArcData), Error) {
-  let points = normalized_progresses(points)
+  let points = parameter.normalize_splits(points)
 
   case list.any(points, fn(t) { t <. 0.0 || t >. 1.0 }) {
     True -> Error(SplitOutsideArc)
@@ -583,60 +584,6 @@ fn split_arc_between_progresses(
         arc_between(arc, from: previous, to: next),
         ..pieces
       ])
-    }
-  }
-}
-
-fn normalized_progresses(points: List(Float)) -> List(Float) {
-  points
-  |> list.map(number.normalize_zero)
-  |> sort_unique_progresses
-  |> trim_start_progress
-  |> trim_end_progress
-}
-
-fn sort_unique_progresses(points: List(Float)) -> List(Float) {
-  case points {
-    [] -> []
-    [first, ..rest] ->
-      sort_unique_progresses(rest) |> insert_unique_progress(first)
-  }
-}
-
-fn trim_start_progress(points: List(Float)) -> List(Float) {
-  case points {
-    [0.0, ..rest] -> trim_start_progress(rest)
-    _ -> points
-  }
-}
-
-fn trim_end_progress(points: List(Float)) -> List(Float) {
-  points
-  |> list.reverse
-  |> trim_reversed_end_progress
-  |> list.reverse
-}
-
-fn trim_reversed_end_progress(points: List(Float)) -> List(Float) {
-  case points {
-    [1.0, ..rest] -> trim_reversed_end_progress(rest)
-    _ -> points
-  }
-}
-
-fn insert_unique_progress(sorted: List(Float), point: Float) -> List(Float) {
-  case sorted {
-    [] -> [point]
-    [first, ..rest] -> {
-      case point == first {
-        True -> sorted
-        False -> {
-          case point <=. first {
-            True -> [point, ..sorted]
-            False -> [first, ..insert_unique_progress(rest, point)]
-          }
-        }
-      }
     }
   }
 }
