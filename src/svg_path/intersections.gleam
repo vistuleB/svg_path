@@ -913,20 +913,7 @@ fn keep_parameter_snap_candidates(
 }
 
 fn parameter_snap_scale(exponent: Int) -> Float {
-  nonnegative_integer_power(0.1, exponent, 1.0)
-}
-
-fn nonnegative_integer_power(
-  base: Float,
-  exponent: Int,
-  result: Float,
-) -> Float {
-  case exponent {
-    0 -> result
-    _ if exponent % 2 == 0 ->
-      nonnegative_integer_power(base *. base, exponent / 2, result)
-    _ -> nonnegative_integer_power(base, exponent - 1, result *. base)
-  }
+  number.nonnegative_integer_power(0.1, exponent, 1.0)
 }
 
 fn segment_intersections_checked_valid_options(

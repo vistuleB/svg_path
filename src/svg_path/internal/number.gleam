@@ -121,7 +121,9 @@ fn scale_by_power_of_ten(value: Float, exponent: Int) -> Result(Float, Nil) {
   }
 }
 
-fn nonnegative_integer_power(
+/// Integer exponentiation for a nonnegative exponent and an initial product.
+@internal
+pub fn nonnegative_integer_power(
   base: Float,
   exponent: Int,
   result: Float,
@@ -173,4 +175,19 @@ pub fn is_finite(value: Float) -> Bool {
 
 fn is_nan(value: Float) -> Bool {
   !{ value <. 0.0 || value >=. 0.0 }
+}
+
+/// Wrap a value for a positive modulus, correcting rounded boundary results.
+@internal
+pub fn positive_remainder(value: Float, modulus: Float) -> Float {
+  let turns = float.floor(value /. modulus)
+  let remainder = value -. turns *. modulus
+  case remainder <. 0.0 {
+    True -> remainder +. modulus
+    False ->
+      case remainder >=. modulus {
+        True -> remainder -. modulus
+        False -> remainder
+      }
+  }
 }

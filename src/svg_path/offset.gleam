@@ -2789,6 +2789,7 @@ import svg_path/curvature
 import svg_path/degeneracy
 import svg_path/internal/arcs_join
 import svg_path/internal/number
+import svg_path/internal/polyline
 import svg_path/intersections
 import svg_path/measure
 import svg_path/overlaps
@@ -4883,11 +4884,11 @@ fn open_band_end_cap(
   let end_a = svg_path.subpath_end(side_a)
   let end_b = svg_path.subpath_end(side_b)
   case cap {
-    Butt -> Ok(line_segments_between([end_a, end_b]))
+    Butt -> Ok(polyline.segments(point_tolerance, [end_a, end_b]))
     Square | RoundCap -> {
       let radius = point_helpers.distance(end_a, end_b) /. 2.0
       case list.last(svg_path.subpath_segments(side_a)) {
-        Error(_) -> Ok(line_segments_between([end_a, end_b]))
+        Error(_) -> Ok(polyline.segments(point_tolerance, [end_a, end_b]))
         Ok(last) ->
           case unit_tangent(last, t: 1.0) {
             Error(error) -> Error(error)
@@ -4906,11 +4907,11 @@ fn open_band_start_cap(
   let start_a = svg_path.subpath_start(side_a)
   let start_b = svg_path.subpath_start(side_b)
   case cap {
-    Butt -> Ok(line_segments_between([start_b, start_a]))
+    Butt -> Ok(polyline.segments(point_tolerance, [start_b, start_a]))
     Square | RoundCap -> {
       let radius = point_helpers.distance(start_a, start_b) /. 2.0
       case list.first(svg_path.subpath_segments(side_b)) {
-        Error(_) -> Ok(line_segments_between([start_b, start_a]))
+        Error(_) -> Ok(polyline.segments(point_tolerance, [start_b, start_a]))
         Ok(first) ->
           case unit_tangent(first, t: 0.0) {
             Error(error) -> Error(error)
@@ -4935,8 +4936,16 @@ fn band_cap_segments(
     point_helpers.add(from, point_helpers.scale(outward, radius))
   let extended_to = point_helpers.add(to, point_helpers.scale(outward, radius))
   case cap {
-    Butt -> Ok(line_segments_between([from, to]))
-    Square -> Ok(line_segments_between([from, extended_from, extended_to, to]))
+    Butt -> Ok(polyline.segments(point_tolerance, [from, to]))
+    Square ->
+      Ok(
+        polyline.segments(point_tolerance, [
+          from,
+          extended_from,
+          extended_to,
+          to,
+        ]),
+      )
     RoundCap -> {
       Ok([
         svg_path.Arc(
@@ -6732,7 +6741,7 @@ fn parametric_join_segments(
       case join {
         Arcs(miter_limit) ->
           arcs_join_segments(left, right, start, end, offset, miter_limit)
-        Bevel -> Ok(line_segments_between([start, end]))
+        Bevel -> Ok(polyline.segments(point_tolerance, [start, end]))
         Miter(miter_limit) ->
           directed_miter_join(
             left,
@@ -10048,7 +10057,7 @@ fn directed_miter_join(
   let right_tangent = right.nudged_start_tangent_direction
 
   case directed_line_intersection(start, left_tangent, end, right_tangent) {
-    Error(_) -> Ok(line_segments_between([start, end]))
+    Error(_) -> Ok(polyline.segments(point_tolerance, [start, end]))
     Ok(apex) -> {
       let corner = offset_segment_source_end(left.source)
       let miter_length = point_helpers.distance(corner, apex)
@@ -10059,7 +10068,7 @@ fn directed_miter_join(
       }
 
       case within_limit && point_is_finite(apex) {
-        True -> Ok(line_segments_between([start, apex, end]))
+        True -> Ok(polyline.segments(point_tolerance, [start, apex, end]))
         False -> {
           case clip && point_is_finite(apex) {
             True ->
@@ -10070,7 +10079,7 @@ fn directed_miter_join(
                 apex,
                 miter_limit *. offset_distance,
               ))
-            False -> Ok(line_segments_between([start, end]))
+            False -> Ok(polyline.segments(point_tolerance, [start, end]))
           }
         }
       }
@@ -10085,7 +10094,7 @@ fn clipped_miter_join(
   apex: svg_path.Point,
   limit: Float,
 ) -> List(svg_path.Segment) {
-  let bevel = line_segments_between([start, end])
+  let bevel = polyline.segments(point_tolerance, [start, end])
   case point_helpers.normalize(point_helpers.subtract(apex, pivot)) {
     Error(_) -> bevel
     Ok(axis) -> {
@@ -10103,7 +10112,7 @@ fn clipped_miter_join(
             point_helpers.lerp(start, apex, { limit -. a } /. { tip -. a })
           let q = point_helpers.lerp(end, apex, { limit -. b } /. { tip -. b })
           case point_is_finite(p) && point_is_finite(q) {
-            True -> line_segments_between([start, p, q, end])
+            True -> polyline.segments(point_tolerance, [start, p, q, end])
             False -> bevel
           }
         }
@@ -10121,7 +10130,7 @@ fn round_join(
 ) -> Result(List(svg_path.Segment), InternalError) {
   let radius = float.absolute_value(offset)
   case radius <=. point_tolerance {
-    True -> Ok(line_segments_between([start, end]))
+    True -> Ok(polyline.segments(point_tolerance, [start, end]))
     False -> {
       // Use the actual join endpoints around their shared source corner. The
       // healed tangent directions can differ from the radial directions that
@@ -10133,7 +10142,7 @@ fn round_join(
       let end_radius = point_helpers.subtract(end, corner)
       let angle = signed_angle(start_radius, end_radius)
       case float.absolute_value(angle) <=. angle_tolerance_degrees {
-        True -> Ok(line_segments_between([start, end]))
+        True -> Ok(polyline.segments(point_tolerance, [start, end]))
         False ->
           Ok([
             svg_path.Arc(
@@ -10171,21 +10180,6 @@ fn directed_line_intersection(
       case left_t >=. 0.0 && right_t <=. 0.0 && point_is_finite(point) {
         True -> Ok(point)
         False -> Error(Nil)
-      }
-    }
-  }
-}
-
-fn line_segments_between(
-  points: List(svg_path.Point),
-) -> List(svg_path.Segment) {
-  case points {
-    [] | [_] -> []
-    [first, second, ..rest] -> {
-      let tail = line_segments_between([second, ..rest])
-      case point_helpers.near(first, second, tolerance: point_tolerance) {
-        True -> tail
-        False -> [svg_path.Line(start: first, end: second), ..tail]
       }
     }
   }
@@ -11360,7 +11354,7 @@ fn offset_map_distance(
   closed: Bool,
 ) -> Result(Float, InternalError) {
   case closed {
-    True -> Ok(positive_remainder(distance, total_length))
+    True -> Ok(number.positive_remainder(distance, total_length))
     False ->
       case distance <. 0.0 || distance >. total_length {
         True ->
@@ -11369,19 +11363,6 @@ fn offset_map_distance(
             length: total_length,
           ))
         False -> Ok(distance)
-      }
-  }
-}
-
-fn positive_remainder(value: Float, modulus: Float) -> Float {
-  let turns = float.floor(value /. modulus)
-  let remainder = value -. turns *. modulus
-  case remainder <. 0.0 {
-    True -> remainder +. modulus
-    False ->
-      case remainder >=. modulus {
-        True -> remainder -. modulus
-        False -> remainder
       }
   }
 }

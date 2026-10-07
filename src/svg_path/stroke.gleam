@@ -14,12 +14,12 @@
 //// Outline operations take explicit `join` and `cap` arguments, including
 //// the forms that use default options. Pure dash extraction takes neither.
 
-import gleam/float
 import gleam/list
 import gleam/option.{None, Some}
 import gleam/result
 import svg_path
 import svg_path/internal/number
+import svg_path/internal/polyline
 import svg_path/measure
 import svg_path/offset.{type Cap, type Join, Butt, RoundCap, Square}
 import svg_path/point as point_helpers
@@ -233,7 +233,7 @@ fn zero_length_square_stroke_path(
   let bottom_left =
     point_helpers.add(point_helpers.subtract(center, along), across)
   use outline <- result.try(svg_path.subpath_with(
-    line_segments_between([
+    polyline.segments(point_tolerance, [
       top_left,
       top_right,
       bottom_right,
@@ -247,21 +247,6 @@ fn zero_length_square_stroke_path(
     policy: svg_path.Strict,
   ))
   Ok(svg_path.Path(subpaths: [closed]))
-}
-
-fn line_segments_between(
-  points: List(svg_path.Point),
-) -> List(svg_path.Segment) {
-  case points {
-    [] | [_] -> []
-    [first, second, ..rest] -> {
-      let tail = line_segments_between([second, ..rest])
-      case point_helpers.near(first, second, tolerance: point_tolerance) {
-        True -> tail
-        False -> [svg_path.Line(start: first, end: second), ..tail]
-      }
-    }
-  }
 }
 
 /// Stroke every subpath in a path using default options with the given width.
@@ -591,7 +576,7 @@ fn dash_intervals(
   offset offset: Float,
 ) -> List(#(Float, Float)) {
   let pattern_length = sum(pattern)
-  let offset = positive_remainder(offset, pattern_length)
+  let offset = number.positive_remainder(offset, pattern_length)
   let #(index, remaining) = dash_start(pattern, offset, index: 0)
   dash_intervals_loop(
     length,
@@ -880,17 +865,4 @@ fn stroke_subpaths(
 
 fn sum(values: List(Float)) -> Float {
   list.fold(values, 0.0, fn(total, value) { total +. value })
-}
-
-fn positive_remainder(value: Float, modulus: Float) -> Float {
-  let turns = float.floor(value /. modulus)
-  let remainder = value -. turns *. modulus
-  case remainder <. 0.0 {
-    True -> remainder +. modulus
-    False ->
-      case remainder >=. modulus {
-        True -> remainder -. modulus
-        False -> remainder
-      }
-  }
 }
