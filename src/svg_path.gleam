@@ -6673,7 +6673,8 @@ pub fn from_bezier_point(point: bezier.BezierPoint) -> Point {
   Point(point.x, point.y)
 }
 
-fn segment_to_bezier_data(segment: Segment) -> bezier.BezierData {
+@internal
+pub fn segment_to_bezier_data(segment: Segment) -> bezier.BezierData {
   case segment {
     Line(start:, end:) -> {
       bezier.LinearBezierData(

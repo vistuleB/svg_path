@@ -2459,7 +2459,7 @@ fn segment_self_intersections_valid_options(
         )
       case
         segment
-        |> segment_to_bezier_data
+        |> svg_path.segment_to_bezier_data
         |> bezier.cubic_self_intersections_with(options: bezier_options)
       {
         Error(error) -> Error(bezier_self_intersection_error(error))
@@ -2470,7 +2470,7 @@ fn segment_self_intersections_valid_options(
               SegmentIntersection(
                 left_t: s,
                 right_t: t,
-                point: from_bezier_point(point),
+                point: svg_path.from_bezier_point(point),
               )
             }),
           )
@@ -2653,7 +2653,7 @@ fn collect_single_segment_self_intersections(
         )
       case
         segment.segment
-        |> segment_to_bezier_data
+        |> svg_path.segment_to_bezier_data
         |> bezier.cubic_self_intersections_with(options: bezier_options)
       {
         Error(error) -> Error(bezier_self_intersection_error(error))
@@ -2663,7 +2663,7 @@ fn collect_single_segment_self_intersections(
               let bezier.CubicSelfIntersection(s:, t:, point:) = intersection
               insert_subpath_self_intersection(
                 found,
-                point: from_bezier_point(point),
+                point: svg_path.from_bezier_point(point),
                 first: SubpathParameter(segment_index: segment.index, t: s),
                 second: SubpathParameter(segment_index: segment.index, t: t),
                 tolerance: options.distance_tolerance,
@@ -6278,41 +6278,6 @@ fn cross(a: Point, b: Point) -> Float {
 
 fn interpolate_float(start: Float, end: Float, t: Float) -> Float {
   start +. { end -. start } *. t
-}
-
-fn to_bezier_point(point: Point) -> bezier.BezierPoint {
-  bezier.BezierPoint(point.x, point.y)
-}
-
-fn segment_to_bezier_data(segment: Segment) -> bezier.BezierData {
-  case segment {
-    Line(start:, end:) -> {
-      bezier.LinearBezierData(
-        start: to_bezier_point(start),
-        end: to_bezier_point(end),
-      )
-    }
-    QuadraticBezier(start:, control:, end:) -> {
-      bezier.QuadraticBezierData(
-        start: to_bezier_point(start),
-        control: to_bezier_point(control),
-        end: to_bezier_point(end),
-      )
-    }
-    CubicBezier(start:, control1:, control2:, end:) -> {
-      bezier.CubicBezierData(
-        start: to_bezier_point(start),
-        control1: to_bezier_point(control1),
-        control2: to_bezier_point(control2),
-        end: to_bezier_point(end),
-      )
-    }
-    Arc(..) -> panic as "svg_path.segment_to_bezier_data received an arc"
-  }
-}
-
-fn from_bezier_point(point: bezier.BezierPoint) -> Point {
-  Point(point.x, point.y)
 }
 
 fn interpolate(start: Point, end: Point, t: Float) -> Point {
