@@ -11,6 +11,11 @@ rather than only the tag object.
 
 ## 3.0.0 - 2026-10-05
 
+- Consolidate internal split normalization, Bézier conversion, adjacent-line
+  construction, remainder, and integer-power helpers. Store one affine value
+  inside the opaque transform matrix; public constructors remain unchanged.
+  Extend portable coverage to transforms and signed-zero split regressions.
+
 - Accelerate fill-rule and absolute-winding area with x-axis sweeps for
   candidate edge intersections and active slab crossings. Keep existing
   linearization, intersection, merging, and winding rules; densely overlapping

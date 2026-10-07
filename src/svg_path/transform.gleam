@@ -18,7 +18,7 @@ import svg_path/point as point_helpers
 /// The stored values correspond to SVG's `matrix(a b c d e f)` form:
 /// `x' = a*x + c*y + e`, `y' = b*x + d*y + f`.
 pub opaque type Matrix {
-  Matrix(a: Float, b: Float, c: Float, d: Float, e: Float, f: Float)
+  Matrix(value: affine.Affine)
 }
 
 /// An anchor point on a bounding box.
@@ -71,7 +71,7 @@ pub fn matrix(
   e e: Float,
   f f: Float,
 ) -> Matrix {
-  Matrix(a:, b:, c:, d:, e:, f:)
+  Matrix(affine.matrix(a:, b:, c:, d:, e:, f:))
 }
 
 /// Create an affine matrix from SVG's six matrix values as a tuple.
@@ -646,19 +646,11 @@ fn anchor_point(box: svg_path.BoundingBox, anchor: Anchor) -> svg_path.Point {
 }
 
 fn to_affine(transform: Matrix) -> affine.Affine {
-  affine.matrix(
-    a: transform.a,
-    b: transform.b,
-    c: transform.c,
-    d: transform.d,
-    e: transform.e,
-    f: transform.f,
-  )
+  transform.value
 }
 
 fn from_affine(transform: affine.Affine) -> Matrix {
-  let #(a, b, c, d, e, f) = affine.to_tuple(transform)
-  Matrix(a:, b:, c:, d:, e:, f:)
+  Matrix(transform)
 }
 
 fn point_tuple(point: svg_path.Point) -> #(Float, Float) {

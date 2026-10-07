@@ -11,3 +11,6 @@ svg_path_csg_test.gleam
 svg_path_clip_test.gleam
 svg_path_area_test.gleam
 svg_path_stroke_test.gleam
+svg_path_transform_test.gleam
+svg_path_bezier_endpoint_regression_test.gleam
+svg_path_ellipse_zero_test.gleam

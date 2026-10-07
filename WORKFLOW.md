@@ -43,9 +43,9 @@ original tests in `test/`; generated copies must not be edited or committed.
 The standalone package compiles the library as a dependency, avoiding the
 root test directory's Erlang-only figure I/O. Its manifest locks dependencies.
 
-The initial selection runs 338 tests and covers curve intersections (including scale/translation
+The selection runs 400 tests and covers curve intersections (including scale/translation
 regressions), overlaps, SVG arc normalization, parsing, serialization, CSG,
-clipping, area, and stroke. Add suitable modules to the selection as coverage
+clipping, area, stroke, transforms, and signed-zero Bézier/ellipse splitting. Add suitable modules to the selection as coverage
 expands; portable modules and their support code must implement both targets.
 CI runs the same selection in separate Erlang and JavaScript jobs. Failures
 must be fixed or explained, not bypassed by target-specific exclusions.
