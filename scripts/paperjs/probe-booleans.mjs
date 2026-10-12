@@ -22,7 +22,7 @@ if(isMainThread){
  }}
  await Promise.all([run(),run()]);results.sort((a,b)=>a.id-b.id);
  const report={comparison:'Sampled bidirectional boundary distances and off-boundary fill classification, not exhaustive equivalence.',boundaryTolerance:0.001,results};
- fs.writeFileSync(new URL(process.argv[3]===undefined?'./boolean-screening.json':`./boolean-probe-${process.argv[3]}.json`,import.meta.url),JSON.stringify(report,null,2)+'\n');
+ fs.writeFileSync(new URL(process.env.PAPER_AUDIT_REPORT ?? (process.argv[3]===undefined?'./boolean-screening.json':`./boolean-probe-${process.argv[3]}.json`),import.meta.url),JSON.stringify(report,null,2)+'\n');
  console.log(JSON.stringify(results.reduce((a,r)=>(a[r.status]=(a[r.status]??0)+1,a),{})));
 }else{
  const f=workerData.fixture;

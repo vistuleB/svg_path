@@ -1,0 +1,171 @@
+{
+  "sourceCommit": "6315835",
+  "libraryFixCommit": "e55a433",
+  "changed": [
+    {
+      "id": 16,
+      "before": "CrossingMaxIterationsReached",
+      "after": "NonAffineOverlapCorrespondence"
+    },
+    {
+      "id": 17,
+      "before": "CrossingMaxIterationsReached",
+      "after": "NonAffineOverlapCorrespondence"
+    },
+    {
+      "id": 29,
+      "before": "CrossingMaxIterationsReached",
+      "after": "NonAffineOverlapCorrespondence"
+    },
+    {
+      "id": 36,
+      "before": "CrossingMaxIterationsReached",
+      "after": "NonAffineOverlapCorrespondence"
+    },
+    {
+      "id": 37,
+      "before": "CrossingMaxIterationsReached",
+      "after": "NonAffineOverlapCorrespondence"
+    },
+    {
+      "id": 38,
+      "before": "CrossingMaxIterationsReached",
+      "after": "NonAffineOverlapCorrespondence"
+    },
+    {
+      "id": 39,
+      "before": "CrossingMaxIterationsReached",
+      "after": "NonAffineOverlapCorrespondence"
+    },
+    {
+      "id": 40,
+      "before": "CrossingMaxIterationsReached",
+      "after": "NonAffineOverlapCorrespondence"
+    },
+    {
+      "id": 41,
+      "before": "CrossingMaxIterationsReached",
+      "after": "NonAffineOverlapCorrespondence"
+    },
+    {
+      "id": 42,
+      "before": "CrossingMaxIterationsReached",
+      "after": "NonAffineOverlapCorrespondence"
+    },
+    {
+      "id": 45,
+      "before": "CrossingMaxIterationsReached",
+      "after": "NonAffineOverlapCorrespondence"
+    },
+    {
+      "id": 46,
+      "before": "CrossingMaxIterationsReached",
+      "after": "NonAffineOverlapCorrespondence"
+    },
+    {
+      "id": 59,
+      "before": "CrossingMaxIterationsReached",
+      "after": "NonAffineOverlapCorrespondence"
+    },
+    {
+      "id": 62,
+      "before": "CrossingMaxIterationsReached",
+      "after": "NonAffineOverlapCorrespondence"
+    },
+    {
+      "id": 85,
+      "before": "CrossingMaxIterationsReached",
+      "after": "screen-match"
+    },
+    {
+      "id": 86,
+      "before": "CrossingMaxIterationsReached",
+      "after": "screen-match"
+    },
+    {
+      "id": 87,
+      "before": "CrossingMaxIterationsReached",
+      "after": "screen-match"
+    },
+    {
+      "id": 108,
+      "before": "CrossingMaxIterationsReached",
+      "after": "NonAffineOverlapCorrespondence"
+    },
+    {
+      "id": 109,
+      "before": "CrossingMaxIterationsReached",
+      "after": "NonAffineOverlapCorrespondence"
+    },
+    {
+      "id": 118,
+      "before": "CrossingMaxIterationsReached",
+      "after": "NonAffineOverlapCorrespondence"
+    },
+    {
+      "id": 119,
+      "before": "CrossingMaxIterationsReached",
+      "after": "NonAffineOverlapCorrespondence"
+    },
+    {
+      "id": 134,
+      "before": "CrossingMaxIterationsReached",
+      "after": "screen-match"
+    },
+    {
+      "id": 135,
+      "before": "CrossingMaxIterationsReached",
+      "after": "screen-match"
+    },
+    {
+      "id": 138,
+      "before": "CrossingMaxIterationsReached",
+      "after": "NonAffineOverlapCorrespondence"
+    },
+    {
+      "id": 139,
+      "before": "CrossingMaxIterationsReached",
+      "after": "NonAffineOverlapCorrespondence"
+    },
+    {
+      "id": 146,
+      "before": "CrossingMaxIterationsReached",
+      "after": "NonAffineOverlapCorrespondence"
+    },
+    {
+      "id": 147,
+      "before": "CrossingMaxIterationsReached",
+      "after": "NonAffineOverlapCorrespondence"
+    },
+    {
+      "id": 158,
+      "before": "CrossingMaxIterationsReached",
+      "after": "NonAffineOverlapCorrespondence"
+    },
+    {
+      "id": 159,
+      "before": "CrossingMaxIterationsReached",
+      "after": "NonAffineOverlapCorrespondence"
+    },
+    {
+      "id": 160,
+      "before": "CrossingMaxIterationsReached",
+      "after": "NonAffineOverlapCorrespondence"
+    },
+    {
+      "id": 161,
+      "before": "CrossingMaxIterationsReached",
+      "after": "NonAffineOverlapCorrespondence"
+    },
+    {
+      "id": 170,
+      "before": "CrossingMaxIterationsReached",
+      "after": "screen-match"
+    },
+    {
+      "id": 171,
+      "before": "CrossingMaxIterationsReached",
+      "after": "screen-match"
+    }
+  ]
+}

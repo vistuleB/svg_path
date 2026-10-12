@@ -11,6 +11,12 @@ The five original test files and MIT license are under `upstream/`.
 50 Boolean, 24 intersection, 17 curve, 40 general path, and 15 containment blocks. Blocks may
 contain multiple fixtures, loops, and assertions. These are not coverage percentages.
 
+The subsequent shared-vertex CSG output fix recovers Boolean fixtures 104, 136
+and 137. The latest screen is `boolean-screening-after-vertex-join.json`: 102
+sampled matches, 69 library errors and seven API adapters. All 99 prior matches
+remain matches. The original and post-crossing-fix screens are retained as
+historical evidence; see the latest section of `BOOLEAN_AUDIT.md` for validation.
+
 ## First milestone: intersection point locations
 
 `intersections.json` contains 32 extracted assertions from all 24 intersection
@@ -245,12 +251,11 @@ and suite registration are preserved in the subsequent audit commit.
   three classification/predicate blocks have no direct public counterpart. Legacy
   aliases, object behavior and the missing-direction tangent assertion remain
   outside these checks. See the second Curve batch below.
-- Boolean screening: 76 library-error comparisons still need classification;
-  fixtures 69 and 172 are confirmed topology failures awaiting approval to fix.
-  Fixture 16's remaining overlap error is an accepted limitation. Seven
-  comparisons need other adapters. The full screen predates the crossing fix;
-  counts are not fresh results for the current source. The 92 sampled matches
-  are not exhaustive region equivalence tests.
+- Boolean screening has been refreshed after the crossing fix: 99 sampled
+  matches, nine confirmed failures, one accepted limitation, 62 unclassified
+  errors and seven other-adapter cases. See `BOOLEAN_AUDIT.md` for the native
+  reproductions and seven newly recovered regressions. The original JSON screen
+  remains the baseline; the new screen is saved separately.
 - Intersections: crossing-only queries, parameter/address checks and crossing
   classification remain, plus independent segment-entry-point coverage. The
   eight raw location discrepancies are classified API differences.

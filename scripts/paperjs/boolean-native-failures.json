@@ -1,0 +1,72 @@
+{
+  "sourceCommit": "6315835",
+  "libraryFixCommit": "e55a433",
+  "productionChanged": false,
+  "inputValidation": "Both operands closed, finite source cubic coordinates, exact adjacency and closure; no Paper-derived Boolean operands; common fill rule.",
+  "fixtures": [
+    {
+      "id": 69,
+      "status": "confirmed-our-failure",
+      "category": "boundary-topology",
+      "erlang": "Error(InternalBoundaryTopologyError(7, SectorMismatch))",
+      "javascript": "Error(InternalBoundaryTopologyError(vertex: 7, reason: SectorMismatch))"
+    },
+    {
+      "id": 79,
+      "status": "confirmed-our-failure",
+      "category": "boundary-topology",
+      "erlang": "Error(InternalBoundaryTopologyError(9, SectorMismatch))",
+      "javascript": "Error(InternalBoundaryTopologyError(vertex: 9, reason: SectorMismatch))"
+    },
+    {
+      "id": 104,
+      "status": "confirmed-our-failure",
+      "category": "output-discontinuity",
+      "erlang": "Error(PathError(Discontinuous(0, 1, Point(456.94438400000007, 557.549450576), Point(456.94438506256495, 557.5494505759262), 1.0625648795363243e-6)))",
+      "javascript": "Error(PathError(error: Discontinuous(previous_index: 0, next_index: 1, expected: Point(x: 456.94438400000007, y: 557.549450576), got: Point(x: 456.94438506256495, y: 557.5494505759262), distance: 0.0000010625648795363243)))"
+    },
+    {
+      "id": 113,
+      "status": "confirmed-our-failure",
+      "category": "boundary-topology",
+      "erlang": "Error(InternalBoundaryTopologyError(0, SectorMismatch))",
+      "javascript": "Error(InternalBoundaryTopologyError(vertex: 0, reason: SectorMismatch))"
+    },
+    {
+      "id": 122,
+      "status": "confirmed-our-failure",
+      "category": "boundary-topology",
+      "erlang": "Error(InternalBoundaryTopologyError(9, SectorMismatch))",
+      "javascript": "Error(InternalBoundaryTopologyError(vertex: 9, reason: SectorMismatch))"
+    },
+    {
+      "id": 123,
+      "status": "confirmed-our-failure",
+      "category": "boundary-topology",
+      "erlang": "Error(InternalBoundaryTopologyError(10, SectorMismatch))",
+      "javascript": "Error(InternalBoundaryTopologyError(vertex: 10, reason: SectorMismatch))"
+    },
+    {
+      "id": 136,
+      "status": "confirmed-our-failure",
+      "category": "output-discontinuity",
+      "erlang": "Error(PathError(Discontinuous(5, 6, Point(545.7583424843119, 213.00167993223172), Point(545.7583411238495, 213.00167999811896), 1.3620569459976592e-6)))",
+      "javascript": "Error(PathError(error: Discontinuous(previous_index: 5, next_index: 6, expected: Point(x: 545.7583424843119, y: 213.00167993223172), got: Point(x: 545.7583411238495, y: 213.00167999811896), distance: 0.0000013620569459976592)))"
+    },
+    {
+      "id": 137,
+      "status": "confirmed-our-failure",
+      "category": "output-discontinuity",
+      "erlang": "Error(PathError(Discontinuous(2, 0, Point(545.7583411018326, 213.0016798561104), Point(545.7583424843119, 213.00167993223172), 1.384573443538261e-6)))",
+      "javascript": "Error(PathError(error: Discontinuous(previous_index: 2, next_index: 0, expected: Point(x: 545.7583411018326, y: 213.0016798561104), got: Point(x: 545.7583424843119, y: 213.00167993223172), distance: 0.000001384573443538261)))"
+    },
+    {
+      "id": 172,
+      "status": "confirmed-our-failure",
+      "category": "boundary-topology",
+      "erlang": "Error(InternalBoundaryTopologyError(4, SectorMismatch))",
+      "javascript": "Error(InternalBoundaryTopologyError(vertex: 4, reason: SectorMismatch))"
+    }
+  ],
+  "fixture104Trace": "A copied JavaScript build under /tmp, instrumented only to print Discontinuous construction stacks, traced the failure through csg.trace_boundary_edges -> subpath_with(WiggleWith(tolerance)) -> endpoint reconciliation -> continuity validation. Input geometry is exactly continuous; reported gap is generated during output reconstruction."
+}

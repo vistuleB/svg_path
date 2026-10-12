@@ -1,0 +1,196 @@
+{
+  "sourceCommit": "6315835",
+  "classification": "confirmed-internal-contract-bug",
+  "mechanism": "Arrangement clusters bound each endpoint-to-center distance by tolerance; CSG reconstruction requires pairwise endpoint distance <= tolerance. The former permits gaps up to twice tolerance. All three failing joins connect the same graph vertex and individually meet its radius bound.",
+  "evidence": [
+    {
+      "fixture": 104,
+      "tolerance": 1e-06,
+      "previous": 3,
+      "next": 8,
+      "end_vertex": 2,
+      "start_vertex": 2,
+      "p": {
+        "x": 456.94438400000007,
+        "y": 557.549450576
+      },
+      "q": {
+        "x": 456.94438506256495,
+        "y": 557.5494505759262
+      },
+      "gap": 1.0625648795363243e-06,
+      "center": {
+        "x": 456.9443845312825,
+        "y": 557.5494505759632
+      },
+      "samples": [
+        {
+          "x": 456.94438506256495,
+          "y": 557.5494505759262
+        },
+        {
+          "x": 456.94438506256495,
+          "y": 557.5494505759262
+        },
+        {
+          "x": 456.94438400000007,
+          "y": 557.549450576
+        },
+        {
+          "x": 456.94438400000007,
+          "y": 557.549450576
+        },
+        {
+          "x": 456.94438400000007,
+          "y": 557.549450576
+        }
+      ],
+      "pRadius": 5.312824113425086e-07,
+      "qRadius": 5.312824681938216e-07
+    },
+    {
+      "fixture": 136,
+      "tolerance": 1e-06,
+      "previous": 2,
+      "next": 11,
+      "end_vertex": 1,
+      "start_vertex": 1,
+      "p": {
+        "x": 545.7583424843119,
+        "y": 213.00167993223172
+      },
+      "q": {
+        "x": 545.7583411238495,
+        "y": 213.00167999811896
+      },
+      "gap": 1.3620569459976592e-06,
+      "center": {
+        "x": 545.7583417930723,
+        "y": 213.00167989417105
+      },
+      "samples": [
+        {
+          "x": 545.7583411238495,
+          "y": 213.00167999811896
+        },
+        {
+          "x": 545.7583411238495,
+          "y": 213.00167999811896
+        },
+        {
+          "x": 545.7583424843119,
+          "y": 213.00167993223172
+        },
+        {
+          "x": 545.7583411018326,
+          "y": 213.0016798561104
+        },
+        {
+          "x": 545.7583424843119,
+          "y": 213.00167993223172
+        },
+        {
+          "x": 545.7583424843119,
+          "y": 213.00167993223172
+        },
+        {
+          "x": 545.7583411018326,
+          "y": 213.0016798561104
+        },
+        {
+          "x": 545.7583411018326,
+          "y": 213.0016798561104
+        }
+      ],
+      "pRadius": 6.922866657929713e-07,
+      "qRadius": 6.772476091931882e-07
+    },
+    {
+      "fixture": 137,
+      "tolerance": 1e-06,
+      "previous": 3,
+      "next": 4,
+      "end_vertex": 1,
+      "start_vertex": 1,
+      "p": {
+        "x": 545.7583424843119,
+        "y": 213.00167993223172
+      },
+      "q": {
+        "x": 545.7583411018326,
+        "y": 213.0016798561104
+      },
+      "gap": 1.384573443538261e-06,
+      "center": {
+        "x": 545.7583417930723,
+        "y": 213.00167989417105
+      },
+      "samples": [
+        {
+          "x": 545.7583411238495,
+          "y": 213.00167999811896
+        },
+        {
+          "x": 545.7583411238495,
+          "y": 213.00167999811896
+        },
+        {
+          "x": 545.7583424843119,
+          "y": 213.00167993223172
+        },
+        {
+          "x": 545.7583411018326,
+          "y": 213.0016798561104
+        },
+        {
+          "x": 545.7583424843119,
+          "y": 213.00167993223172
+        },
+        {
+          "x": 545.7583424843119,
+          "y": 213.00167993223172
+        },
+        {
+          "x": 545.7583411018326,
+          "y": 213.0016798561104
+        },
+        {
+          "x": 545.7583411018326,
+          "y": 213.0016798561104
+        }
+      ],
+      "pRadius": 6.922866657929713e-07,
+      "qRadius": 6.922867777452901e-07
+    }
+  ],
+  "productionChanges": false,
+  "diagnosticExperiment": {
+    "scope": "Temporary compiled JavaScript copy only; changed the two CSG WiggleWith output join/closure allowances from tolerance to 2*tolerance. Arrangement construction and intersection options unchanged. This is not an approved production fix.",
+    "results": [
+      {
+        "id": 104,
+        "status": "screen-match",
+        "maxBoundaryDistance": 8.13876550243472e-05,
+        "boundarySamples": 63,
+        "fillSamples": 661,
+        "fillMismatches": 0
+      },
+      {
+        "id": 136,
+        "status": "screen-match",
+        "maxBoundaryDistance": 6.14925400496411e-06,
+        "boundarySamples": 207,
+        "fillSamples": 745,
+        "fillMismatches": 0
+      },
+      {
+        "id": 137,
+        "status": "screen-match",
+        "maxBoundaryDistance": 4.634539935593312e-06,
+        "boundarySamples": 63,
+        "fillSamples": 322,
+        "fillMismatches": 0
+      }
+    ]
+  }
+}

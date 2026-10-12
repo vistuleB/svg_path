@@ -6,6 +6,7 @@
 //// Open subpaths are implicitly closed by a straight line for filling; those
 //// closing lines are also included in the returned arrangement build.
 
+import gleam/dict.{type Dict}
 import gleam/int
 import gleam/list
 import gleam/option.{type Option, Some}
@@ -25,8 +26,8 @@ const default_minimum_length = 0.00001
 ///
 /// `tolerance` is a distance in path coordinates used for endpoint clustering,
 /// intersection and overlap detection, winding-side sampling, and final cycle
-/// joins. `minimum_length` is a size threshold: refined
-/// pieces are discarded when their segment length upper bound is below it,
+/// endpoint adjustments to their shared vertex positions. `minimum_length` is a
+/// size threshold: refined pieces are discarded when their segment length upper bound is below it,
 /// not merely when their endpoints are close. Both values must be finite and
 /// greater than zero.
 pub type Options {
@@ -60,7 +61,11 @@ pub type BoundaryTopologyFailure {
 ///
 /// Returning the build makes graph refinement visible to the caller: the result
 /// path follows the arrangement's geometry rather than silently claiming the
-/// original input geometry as its source of truth.
+/// original input geometry as its source of truth. Binary operations construct
+/// output segments with endpoints at the corresponding arrangement vertex points;
+/// each endpoint moves by at most the build tolerance. Control points and arc
+/// parameters are retained. This endpoint bound is not a bound on the interior
+/// displacement of an elliptical arc. Stored arrangement edges remain unchanged.
 pub type CsgResult {
   CsgResult(
     /// The reconstructed result path for the requested operation.
@@ -348,7 +353,7 @@ fn union_from_arrangement_graph(
   )
   use links <- result.try(pair_boundary_sectors(boundary, []))
   use subpaths <- result.try(
-    trace_boundary_edges(boundary, links, tolerance, []),
+    trace_boundary_edges(boundary, links, vertex_points(graph), []),
   )
   Ok(svg_path.Path(subpaths))
 }
@@ -375,7 +380,7 @@ fn intersection_from_arrangement_graph(
   )
   use links <- result.try(pair_boundary_sectors(boundary, []))
   use subpaths <- result.try(
-    trace_boundary_edges(boundary, links, tolerance, []),
+    trace_boundary_edges(boundary, links, vertex_points(graph), []),
   )
   Ok(svg_path.Path(subpaths))
 }
@@ -403,7 +408,7 @@ fn difference_from_arrangement_graph(
   )
   use links <- result.try(pair_boundary_sectors(boundary, []))
   use subpaths <- result.try(
-    trace_boundary_edges(boundary, links, tolerance, []),
+    trace_boundary_edges(boundary, links, vertex_points(graph), []),
   )
   Ok(svg_path.Path(subpaths))
 }
@@ -431,7 +436,7 @@ fn symmetric_difference_from_arrangement_graph(
   )
   use links <- result.try(pair_boundary_sectors(boundary, []))
   use subpaths <- result.try(
-    trace_boundary_edges(boundary, links, tolerance, []),
+    trace_boundary_edges(boundary, links, vertex_points(graph), []),
   )
   Ok(svg_path.Path(subpaths))
 }
@@ -713,10 +718,37 @@ fn cyclic_successor(
   }
 }
 
+fn vertex_points(graph: ArrangementGraph) -> Dict(Int, svg_path.Point) {
+  graph.vertices
+  |> list.map(fn(vertex) { #(vertex.id, vertex.point) })
+  |> dict.from_list
+}
+
+// Construct output geometry only after classification and sector pairing. The
+// source edges and their endpoint samples keep their original geometry. Using
+// the shared vertex bounds each endpoint adjustment by the cluster radius,
+// rather than incorrectly bounding the distance between two cluster members.
+fn boundary_output_segment(
+  edge: BoundaryEdge,
+  vertices: Dict(Int, svg_path.Point),
+) -> svg_path.Segment {
+  let assert Ok(start) = dict.get(vertices, edge.start_vertex)
+  let assert Ok(end) = dict.get(vertices, edge.end_vertex)
+  case edge.segment {
+    svg_path.Line(..) -> svg_path.Line(start:, end:)
+    svg_path.QuadraticBezier(control:, ..) ->
+      svg_path.QuadraticBezier(start:, control:, end:)
+    svg_path.CubicBezier(control1:, control2:, ..) ->
+      svg_path.CubicBezier(start:, control1:, control2:, end:)
+    svg_path.Arc(radius:, x_axis_rotation:, large_arc:, sweep:, ..) ->
+      svg_path.Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:)
+  }
+}
+
 fn trace_boundary_edges(
   remaining: List(BoundaryEdge),
   links: List(BoundaryLink),
-  tolerance: Float,
+  vertices: Dict(Int, svg_path.Point),
   subpaths: List(svg_path.Subpath),
 ) -> Result(List(svg_path.Subpath), Error) {
   case remaining {
@@ -732,21 +764,15 @@ fn trace_boundary_edges(
       let #(cycle, remaining) = traced
       use subpath <- result.try(
         cycle
-        |> list.map(fn(edge) {
-          let BoundaryEdge(segment:, ..) = edge
-          segment
-        })
-        |> svg_path.subpath_with(policy: svg_path.WiggleWith(tolerance))
+        |> list.map(fn(edge) { boundary_output_segment(edge, vertices) })
+        |> svg_path.subpath
         |> result.map_error(PathError),
       )
       use closed <- result.try(
-        svg_path.subpath_close_with(
-          subpath,
-          policy: svg_path.WiggleWith(tolerance),
-        )
+        svg_path.subpath_close(subpath)
         |> result.map_error(PathError),
       )
-      trace_boundary_edges(remaining, links, tolerance, [closed, ..subpaths])
+      trace_boundary_edges(remaining, links, vertices, [closed, ..subpaths])
     }
   }
 }

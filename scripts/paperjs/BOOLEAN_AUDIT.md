@@ -5,6 +5,176 @@ Date: 2026-10-12. Gleam library revision:
 Paper.js source revision and license are recorded in `inventory.json` and
 `upstream/LICENSE.txt`; extraction runtime is separately pinned to paper 0.12.18.
 
+## Shared-vertex output construction fix (2026-10-12)
+
+Binary CSG now constructs output segments with endpoints at their arrangement
+vertex points, after classification and sector pairing. It then uses strict
+subpath construction and closure. Arrangement edges and endpoint samples remain
+unchanged; the minimal regression compares the returned graph with an independent
+build. Bézier controls and arc parameters are retained. Endpoint displacement is
+bounded by the cluster tolerance; this is not an interior-displacement bound for
+elliptical arcs. The unary nested-contour implementation is unchanged.
+
+`boolean-screening-after-vertex-join.json` reruns all 178 Boolean comparisons:
+102 sampled matches, 69 library errors, seven API adapters, no timeouts and no
+sampled geometry mismatches. Only fixtures 104, 136 and 137 changed status;
+all 99 previous matches remain matches. The three native failures now succeed
+on both Erlang and JavaScript. The six previously recorded topology errors are
+unchanged. No new upstream batch was introduced.
+
+Verification:
+
+- `scripts/test-release`: 1,824 fast tests, 26 slow tests, and 539 portable tests
+  on each backend passed. This includes both minimal regression tests and the
+  graph-immutability assertion.
+- `scripts/test-paperjs`: 21 passes and the same eight previously classified
+  API-expectation failures on each backend; this diagnostic is not a release gate.
+- `scripts/generate-published-figures`: completed successfully; its fast-suite
+  rerun also passed all 1,824 tests. All 33 Gallery figures and all 13 README
+  figures were recomputed. Every one of the 46 generated SVGs is byte-for-byte
+  identical to its pre-fix local baseline. All parse as XML, have explicit
+  dimensions and a viewBox, and contain no NaN/Infinity tokens. Promoted Gallery
+  files exactly match the generated files. Preview copies were shown during
+  generation. README asset tags/URLs were not changed.
+- `gleam format --check src/svg_path/csg.gleam test/svg_path_csg_cluster_join_test.gleam`
+  and `git diff --check` passed.
+
+
+The investigation and deliberately failing test results below describe the
+pre-fix state and are retained as evidence.
+
+## Output-gap cause established: fixtures 104, 136, 137
+
+These three failures share an internal contract mismatch, not a Paper-specific
+parameterization requirement. Evidence is in `boolean-gap-findings.json`.
+
+Arrangement vertices are minimum-enclosing-circle endpoint clusters. Every
+source endpoint must be within the graph tolerance of its vertex center; stored
+edges retain their source endpoints. Thus two incident endpoints can legitimately
+be up to twice that tolerance apart. CSG traces cycles using shared vertex IDs,
+but constructs/closes their output with `WiggleWith(tolerance)`, whose acceptance
+rule bounds the distance *between endpoints* by tolerance. This rejects some
+connections that the arrangement itself expressly permits.
+
+Traces of the actual rejected pairs (all distances in path-coordinate units):
+
+| Fixture | Shared vertex | Endpoint radii from center | Pairwise gap |
+| --- | ---: | --- | ---: |
+| 104 | 2 | 5.313e-7, 5.313e-7 | 1.063e-6 |
+| 136 | 1 | 6.923e-7, 6.772e-7 | 1.362e-6 |
+| 137 | 1 | 6.923e-7, 6.923e-7 | 1.385e-6 |
+
+The tolerance is 1e-6. All individual radii satisfy it; every rejected pair belongs
+to the same graph vertex. The native failures and gap values were already
+confirmed on Erlang and JavaScript; graph instrumentation was performed in a
+copied JavaScript build under `/tmp`, with production source unchanged.
+
+As a causal diagnostic only, raising the two output joining/closing allowances
+in that copy to 2*tolerance lets all three operations complete. Arrangement and
+intersection tolerances were untouched. The existing Paper comparison found no
+sampled fill mismatches and maximum sampled boundary distances of approximately
+8.139e-5, 6.149e-6 and 4.635e-6, respectively (allowance 0.001). This supports the
+identified cause; sampled comparisons do not prove a general-purpose fix safe.
+
+The eventual fix should reconcile output construction with the shared-vertex
+contract while preserving a clear geometry-displacement bound. Simply applying
+a larger generic wiggle tolerance needs further review: closure may move only
+one endpoint, and horizontal/vertical line constraints affect reconciliation.
+No production fix, new test batch or commit was made for this investigation.
+
+## Minimal output-gap regression
+
+`test/svg_path_csg_cluster_join_test.gleam` reduces the mismatch to two
+axis-aligned rectangles: `[0, 10] × [0, 10]` and
+`[10.1875, 20] × [0, 10]`, with tolerance `0.125` and minimum length `0.00001`.
+The tolerance, gap and cluster centers are exactly representable in binary.
+No curves, intersections requiring Newton refinement, or Paper adapters are needed.
+
+The first test checks that the arrangement validates and places the endpoints
+at each end of the gap in the same vertex. Both endpoints are `0.09375` from
+that vertex, within tolerance, while their separation is `0.1875`.
+The second test requires union to return one closed, continuous outer boundary
+of area 200. It deliberately expects success and currently fails with
+`PathError(Discontinuous(..., distance: 0.1875))`.
+These tests preserve the failure pending a production fix.
+
+Validation: `scripts/test-portable` completed its Erlang run with 538 passes
+and one failure, then stopped as expected. `scripts/test-portable javascript`
+also completed with 538 passes and the same one failure. The arrangement
+regression passes on both targets; only the new union regression fails.
+Production source is unchanged.
+
+## Refreshed screen and native classification (2026-10-12)
+
+Current source: `6315835`, including crossing fix `e55a433`. The refreshed
+178-comparison JavaScript screen is in `boolean-screening-after-crossing.json`;
+the original `boolean-screening.json` remains the unchanged baseline.
+
+| Result | Baseline | After crossing fix |
+| --- | ---: | ---: |
+| Sampled geometry matches | 92 | 99 |
+| Library errors | 79 | 72 |
+| Other adapters needed | 7 | 7 |
+| Timeouts | 0 | 0 |
+| Sampled geometry mismatches on successful results | 0 | 0 |
+
+All 92 former sampled matches still match. Seven crossing failures now succeed:
+85, 86, 87, 134, 135, 170 and 171. Another 26 now reach overlap-correspondence
+errors. `boolean-crossing-delta.json` records every changed outcome.
+Current error categories: 55 `NonAffineOverlapCorrespondence`, eight
+`CrossingMaxIterationsReached`, six `InternalBoundaryTopologyError`, and three
+`Discontinuous`. The remaining crossing fixtures are 103, 107, 128, 129, 130,
+131, 168 and 169. Their causes have not been classified in this pass.
+
+Nine native reproductions are saved in
+`test_paperjs/src/paper_boolean_failures.gleam`, generated by
+`generate-boolean-failures.py`. Both targets reproduce the same error categories
+and topology vertices/gap distances. Generator checks establish finite control
+coordinates, exact segment adjacency, closure, one common fill rule and no
+Paper-derived Boolean operands. See `boolean-native-failures.json`.
+
+- Topology failures: 69, 79, 113, 122, 123 and 172. These report `SectorMismatch`,
+  documented by CSG as an internal consistency failure. Two were already known;
+  four more are now confirmed natively.
+- Reconstruction discontinuities: 104, 136 and 137. Output endpoint gaps are
+  approximately 1.063e-6, 1.362e-6 and 1.385e-6, versus the default 1e-6 join
+  tolerance. A trace of fixture 104 in an instrumented copy of the compiled
+  JavaScript build locates the error in `csg.trace_boundary_edges` while
+  constructing its output subpath. The original input is exactly continuous.
+  These are confirmed failures, not malformed-input errors. The appropriate
+  fix and whether they share a cause remain uninvestigated.
+
+These are nine failing comparisons, not nine proven independent bugs. No fixes
+were applied. Fixture 16 remains the user-accepted overlap limitation; the other
+54 overlap errors have not automatically been given that classification.
+Current disposition: 99 sampled matches, nine confirmed failures, one accepted
+limitation, 62 unclassified errors and seven adapter cases.
+
+The seven recovered cases are new native regressions in
+`test/svg_path_paper_boolean_recovered_test.gleam`. They compare closed output,
+absolute signed area, bidirectional boundary samples and a 7-by-7 off-boundary
+fill grid against the upstream expected geometry. Boundary allowance is 0.001
+path units; area allowance is 1e-5 times max(1, expected area), accommodating
+rounded upstream controls. Five samples per segment are checked in each
+boundary direction. These remain sampled checks, not exhaustive equivalence.
+
+Reproduce the refreshed screen without overwriting the baseline:
+
+```sh
+PAPER_AUDIT_TIMEOUT_MS=30000 PAPER_AUDIT_REPORT=./boolean-screening-after-crossing.json node scripts/paperjs/probe-booleans.mjs /tmp/svg-path-paper-audit/node_modules/paper
+python3 scripts/paperjs/generate-boolean-failures.py
+gleam format test_paperjs/src/paper_boolean_failures.gleam
+cd test_paperjs
+gleam run --target erlang -m paper_boolean_failures
+gleam run --target javascript -m paper_boolean_failures
+```
+
+The native reproducer prints errors; it does not assert that failures should
+persist. Validation: `scripts/test-portable` passed 537 tests on Erlang and 537
+on JavaScript; `scripts/test-fast` passed 1,822 tests. The slow/full release
+profiles were not run. No production code or F# files were changed in this
+follow-up. These new comparison results and regressions remain uncommitted.
+
 ## Crossing fix follow-up (2026-10-12)
 
 The results below record the original unmodified-source screening. The current
@@ -28,7 +198,8 @@ Boolean failure is recorded as an accepted API limitation, per the user’s
 is separate from the crossing defect, which was fixed. It does not classify
 the other overlap-correspondence errors automatically. Fixtures 69 and 172 retain
 their topology errors. The full 178-comparison screening has not been rerun;
-its JSON results are the baseline, not results for this fix.
+its JSON results are the baseline, not results for this fix. (The subsequent
+refreshed screen is reported above.)
 
 No overlap fix, F# change, commit or release has been made.
 

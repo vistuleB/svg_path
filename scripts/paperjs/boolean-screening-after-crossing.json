@@ -1,0 +1,2911 @@
+{
+  "comparison": "Sampled bidirectional boundary distances and off-boundary fill classification, not exhaustive equivalence.",
+  "boundaryTolerance": 0.001,
+  "results": [
+    {
+      "id": 0,
+      "title": "Boolean operations without crossings",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 574,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0,
+      "boundarySamples": 72,
+      "fillSamples": 673,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 0 200 C 0 200 0 0 0 0 C 0 0 200 0 200 0 C 200 0 200 200 200 200 C 200 200 0 200 0 200 Z",
+      "outputCurves": 4,
+      "expectedCurves": 4
+    },
+    {
+      "id": 1,
+      "title": "Boolean operations without crossings",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 571,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0,
+      "boundarySamples": 72,
+      "fillSamples": 673,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 0 200 C 0 200 0 0 0 0 C 0 0 200 0 200 0 C 200 0 200 200 200 200 C 200 200 0 200 0 200 Z",
+      "outputCurves": 4,
+      "expectedCurves": 4
+    },
+    {
+      "id": 2,
+      "title": "Boolean operations without crossings",
+      "op": "subtract",
+      "derivedOperands": false,
+      "elapsedMs": 289,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0,
+      "boundarySamples": 144,
+      "fillSamples": 721,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 0 200 C 0 200 0 0 0 0 C 0 0 200 0 200 0 C 200 0 200 200 200 200 C 200 200 0 200 0 200 Z M 50 50 C 50 50 50 150 50 150 C 50 150 150 150 150 150 C 150 150 150 50 150 50 C 150 50 50 50 50 50 Z",
+      "outputCurves": 8,
+      "expectedCurves": 8
+    },
+    {
+      "id": 3,
+      "title": "Boolean operations without crossings",
+      "op": "subtract",
+      "derivedOperands": false,
+      "elapsedMs": 347,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0,
+      "boundarySamples": 0,
+      "fillSamples": 625,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "",
+      "outputCurves": 0,
+      "expectedCurves": 0
+    },
+    {
+      "id": 4,
+      "title": "Boolean operations without crossings",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 289,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0,
+      "boundarySamples": 72,
+      "fillSamples": 673,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 50 150 C 50 150 50 50 50 50 C 50 50 150 50 150 50 C 150 50 150 150 150 150 C 150 150 50 150 50 150 Z",
+      "outputCurves": 4,
+      "expectedCurves": 4
+    },
+    {
+      "id": 5,
+      "title": "Boolean operations without crossings",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 293,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0,
+      "boundarySamples": 72,
+      "fillSamples": 673,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 50 150 C 50 150 50 50 50 50 C 50 50 150 50 150 50 C 150 50 150 150 150 150 C 150 150 50 150 50 150 Z",
+      "outputCurves": 4,
+      "expectedCurves": 4
+    },
+    {
+      "id": 6,
+      "title": "Boolean operations without crossings",
+      "op": "exclude",
+      "derivedOperands": false,
+      "elapsedMs": 364,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0,
+      "boundarySamples": 144,
+      "fillSamples": 721,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 0 200 C 0 200 0 0 0 0 C 0 0 200 0 200 0 C 200 0 200 200 200 200 C 200 200 0 200 0 200 Z M 50 50 C 50 50 50 150 50 150 C 50 150 150 150 150 150 C 150 150 150 50 150 50 C 150 50 50 50 50 50 Z",
+      "outputCurves": 8,
+      "expectedCurves": 8
+    },
+    {
+      "id": 7,
+      "title": "Boolean operations without crossings",
+      "op": "exclude",
+      "derivedOperands": false,
+      "elapsedMs": 289,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0,
+      "boundarySamples": 144,
+      "fillSamples": 721,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 50 50 C 50 50 50 150 50 150 C 50 150 150 150 150 150 C 150 150 150 50 150 50 C 150 50 50 50 50 50 Z M 0 200 C 0 200 0 0 0 0 C 0 0 200 0 200 0 C 200 0 200 200 200 200 C 200 200 0 200 0 200 Z",
+      "outputCurves": 8,
+      "expectedCurves": 8
+    },
+    {
+      "id": 8,
+      "title": "Boolean operations without crossings",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 303,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0,
+      "boundarySamples": 144,
+      "fillSamples": 721,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 0 200 C 0 200 0 0 0 0 C 0 0 200 0 200 0 C 200 0 200 200 200 200 C 200 200 0 200 0 200 Z M 250 150 C 250 150 250 50 250 50 C 250 50 350 50 350 50 C 350 50 350 150 350 150 C 350 150 250 150 250 150 Z",
+      "outputCurves": 8,
+      "expectedCurves": 8
+    },
+    {
+      "id": 9,
+      "title": "Boolean operations without crossings",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 304,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0,
+      "boundarySamples": 144,
+      "fillSamples": 721,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 250 150 C 250 150 250 50 250 50 C 250 50 350 50 350 50 C 350 50 350 150 350 150 C 350 150 250 150 250 150 Z M 0 200 C 0 200 0 0 0 0 C 0 0 200 0 200 0 C 200 0 200 200 200 200 C 200 200 0 200 0 200 Z",
+      "outputCurves": 8,
+      "expectedCurves": 8
+    },
+    {
+      "id": 10,
+      "title": "Boolean operations without crossings",
+      "op": "subtract",
+      "derivedOperands": false,
+      "elapsedMs": 370,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0,
+      "boundarySamples": 72,
+      "fillSamples": 673,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 0 200 C 0 200 0 0 0 0 C 0 0 200 0 200 0 C 200 0 200 200 200 200 C 200 200 0 200 0 200 Z",
+      "outputCurves": 4,
+      "expectedCurves": 4
+    },
+    {
+      "id": 11,
+      "title": "Boolean operations without crossings",
+      "op": "subtract",
+      "derivedOperands": false,
+      "elapsedMs": 296,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0,
+      "boundarySamples": 72,
+      "fillSamples": 673,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 250 150 C 250 150 250 50 250 50 C 250 50 350 50 350 50 C 350 50 350 150 350 150 C 350 150 250 150 250 150 Z",
+      "outputCurves": 4,
+      "expectedCurves": 4
+    },
+    {
+      "id": 12,
+      "title": "Boolean operations without crossings",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 279,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0,
+      "boundarySamples": 0,
+      "fillSamples": 625,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "",
+      "outputCurves": 0,
+      "expectedCurves": 0
+    },
+    {
+      "id": 13,
+      "title": "Boolean operations without crossings",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 285,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0,
+      "boundarySamples": 0,
+      "fillSamples": 625,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "",
+      "outputCurves": 0,
+      "expectedCurves": 0
+    },
+    {
+      "id": 14,
+      "title": "Boolean operations without crossings",
+      "op": "exclude",
+      "derivedOperands": false,
+      "elapsedMs": 373,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0,
+      "boundarySamples": 144,
+      "fillSamples": 721,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 0 200 C 0 200 0 0 0 0 C 0 0 200 0 200 0 C 200 0 200 200 200 200 C 200 200 0 200 0 200 Z M 250 150 C 250 150 250 50 250 50 C 250 50 350 50 350 50 C 350 50 350 150 350 150 C 350 150 250 150 250 150 Z",
+      "outputCurves": 8,
+      "expectedCurves": 8
+    },
+    {
+      "id": 15,
+      "title": "Boolean operations without crossings",
+      "op": "exclude",
+      "derivedOperands": false,
+      "elapsedMs": 304,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0,
+      "boundarySamples": 144,
+      "fillSamples": 721,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 250 150 C 250 150 250 50 250 50 C 250 50 350 50 350 50 C 350 50 350 150 350 150 C 350 150 250 150 250 150 Z M 0 200 C 0 200 0 0 0 0 C 0 0 200 0 200 0 C 200 0 200 200 200 200 C 200 200 0 200 0 200 Z",
+      "outputCurves": 8,
+      "expectedCurves": 8
+    },
+    {
+      "id": 16,
+      "title": "frame.intersect(rect)",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 384,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 17,
+      "title": "PathItem#resolveCrossings()",
+      "op": "resolveCrossings",
+      "derivedOperands": false,
+      "elapsedMs": 179,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 18,
+      "title": "PathItem#resolveCrossings()",
+      "op": "resolveCrossings",
+      "derivedOperands": false,
+      "elapsedMs": 562,
+      "status": "screen-match",
+      "maxBoundaryDistance": 5.684341886080802e-14,
+      "boundarySamples": 162,
+      "fillSamples": 733,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 50 300 C 50 300 50 150 50 150 C 50 150 100 175 100 175 C 100 175 100 100 100 100 C 100 100 300 100 300 100 C 300 100 300 300 300 300 C 300 300 50 300 50 300 Z M 100 200 C 100 200 150 200 150 200 C 150 200 100 175 100 175 C 100 175 100 200 100 200 Z",
+      "outputCurves": 9,
+      "expectedCurves": 9
+    },
+    {
+      "id": 19,
+      "title": "PathItem#resolveCrossings()",
+      "op": "resolveCrossings",
+      "derivedOperands": false,
+      "elapsedMs": 355,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000013240630438816743,
+      "boundarySamples": 171,
+      "fillSamples": 739,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 330.1 388.5 C 330.1 388.5 320.13127334990884 398.4687266500912 308.0016949900622 410.5983050099378 C 314.3912862274592 427.67301142560837 320.90000000000003 442 320.90000000000003 442 C 320.90000000000003 442 308.0531774457279 434.4108883033586 291.8563077180732 426.7436922819268 C 277.7305979908172 440.8694020091828 265.1 453.5 265.1 453.5 C 265.1 453.5 216.00000000000003 439 228.50000000000003 416.9 C 235.98772966923687 403.66169394478925 267.66013033630406 415.28982260989966 291.8563077180732 426.7436922819268 C 297.22594729404136 421.37405270595866 302.8116314457642 415.78836855423583 308.0016949900622 410.5983050099378 C 299.9386322208687 389.0516325421714 292.06526094572536 363.1294764439466 297.70000000000005 356.1 C 307.70000000000005 343.3 330.1 388.5 330.1 388.5 Z",
+      "outputCurves": 9,
+      "expectedCurves": 10
+    },
+    {
+      "id": 20,
+      "title": "PathItem#resolveCrossings()",
+      "op": "resolveCrossings",
+      "derivedOperands": false,
+      "elapsedMs": 206,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 21,
+      "title": "PathItem#resolveCrossings()",
+      "op": "resolveCrossings",
+      "derivedOperands": false,
+      "elapsedMs": 296,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0,
+      "boundarySamples": 144,
+      "fillSamples": 721,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 228.26666666666668 222.72 C 228.26666666666668 222.72 283.73333333333335 222.72 283.73333333333335 222.72 C 286.7883333333333 222.72 289.28 225.21166666666667 289.28 228.26666666666668 C 289.28 228.26666666666668 289.28 283.73333333333335 289.28 283.73333333333335 C 289.28 286.7883333333333 286.7883333333333 289.28 283.73333333333335 289.28 C 283.73333333333335 289.28 228.26666666666668 289.28 228.26666666666668 289.28 C 225.21166666666667 289.28 222.72 286.7883333333333 222.72 283.73333333333335 C 222.72 283.73333333333335 222.72 228.26666666666668 222.72 228.26666666666668 C 222.72 225.21166666666667 225.21166666666667 222.72 228.26666666666668 222.72 Z",
+      "outputCurves": 8,
+      "expectedCurves": 8
+    },
+    {
+      "id": 22,
+      "title": "#541",
+      "op": "exclude",
+      "derivedOperands": true,
+      "elapsedMs": 2048,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.0000042210734989384264,
+      "boundarySamples": 864,
+      "fillSamples": 1201,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 304 554 C 304 554 304.00000000000006 379 304 379.00000000000006 C 304 379.0000000000001 174 379 174 379 C 174 379 174 128 174 128 C 174 128 385.38181818181823 128 385.3818181818182 128 C 385.3818181818181 128 469 74 469 74 C 469 74 524.9520475614311 110.130978081167 583.5956112852665 148 C 605.8158903076868 148 620 148 620 148 C 620 148 620 156.845209676823 620 171.50809716599187 C 671.3397648414297 204.66069834902032 716 233.5 716 233.5 C 716 233.5 632 249.45824634655534 631.9999999999999 249.4582463465553 C 631.9999999999998 249.45824634655526 632 554 632 554 C 632 554 304 554 304 554 Z M 304.00000000000006 379 C 304.00000000000006 379 309.2693979325804 379 318 379 C 318 342.0297651522793 318 296.0640080986992 318 254.89353612167304 C 309.2830334600861 253.56776174297892 304.00000000000006 252.76425855513313 304.00000000000006 252.76425855513313 C 304.00000000000006 252.76425855513313 304 379.0000000000001 304.00000000000006 379 Z M 483 379 C 483 379 360.1544485745174 379 318 379 C 318 420.0434421189808 318 450 318 450 C 318 450 620 450 620 450 C 620 450 620 339.12570788772723 620 251.73799582463457 C 584.589259241806 258.46529730479256 482.99999999999994 277.7651356993737 482.99999999999994 277.7651356993737 C 482.99999999999994 277.7651356993737 483 379 483 379 Z M 620 251.73799582463457 C 627.4741441893347 250.31806446507412 631.9999999999998 249.45824634655526 631.9999999999999 249.4582463465553 C 632 249.45824634655534 632 226 632 226 C 632 226 627.4741441893348 226 620 226 C 620 234.2438616771538 620 242.86999701096397 620 251.73799582463457 Z M 318 254.89353612167304 C 359.09322915577457 261.14345690582127 476.5 279 476.5 279 C 476.5 279 483 277.7651356993737 483 277.7651356993737 C 483 277.7651356993737 483 226 483 226 C 483 226 360.1544485745176 226 318 226 C 318 235.21860713786756 318 244.9152315522976 318 254.89353612167304 Z M 304 226 C 304 226 309.2693979325803 226 318 226 C 318 204.35623883960676 318 185.34746448025584 318 171.5146771037182 C 269.8337370541931 202.62009153056022 213.5 239 213.5 239 C 213.5 239 304 252.76425855513318 304 252.76425855513318 C 304 252.76425855513318 304 226 304 226 Z M 318 171.5146771037182 C 331.19170435444136 162.99557253039993 343.770771061706 154.87210479381025 354.4121212121213 148 C 332.1874003906 148 318 148 318 148 C 318 148 318 156.84785589629598 318 171.5146771037182 Z M 385.38181818181823 128 C 385.38181818181823 128 372.7851887622183 136.1348096056125 354.4121212121213 148 C 386.62983895172613 148 435.7375002878384 148 483 148 C 483 136.2675565718101 483 128 483 128 C 483 128 385.3818181818181 128 385.38181818181823 128 Z M 620 171.50809716599187 C 608.0670858104603 163.80242990594502 595.7733179155409 155.86374173088572 583.5956112852665 148 C 557.7235300051123 148 520.9568109134772 148 483 148 C 483 176.6611899113996 483 226 483 226 C 483 226 584.5892592418058 226 620 226 C 620 204.35280682340252 620 185.3414361652926 620 171.50809716599187 Z",
+      "outputCurves": 48,
+      "expectedCurves": 48
+    },
+    {
+      "id": 23,
+      "title": "#609",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 307,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.00000133031199802465,
+      "boundarySamples": 72,
+      "fillSamples": 673,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 100 100 C 127.61423749153967 100 150 122.38576250846033 150 150 C 150 177.61423749153965 127.61423749153967 200 100 200 C 72.38576250846033 200 50 177.61423749153965 50 150 C 50 122.38576250846033 72.38576250846033 100 100 100 Z",
+      "outputCurves": 4,
+      "expectedCurves": 4
+    },
+    {
+      "id": 24,
+      "title": "#610",
+      "op": "subtract",
+      "derivedOperands": true,
+      "elapsedMs": 464,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.0000039349827972693,
+      "boundarySamples": 108,
+      "fillSamples": 697,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M -132 0 C -132 -69.53737498020169 -78.23019788256676 -126.51613976743465 -10 -131.62688800939907 C -10 -123.18745001247554 -10 -112.21487057479996 -10 -99.50624757419178 C -60.53322693339892 -94.48900327722302 -100 -51.853481019224674 -100 0 C -100 51.853481019224674 -60.53322693339893 94.48900327722299 -10.000000000000004 99.50624757419178 C -10 112.21487057479996 -10 123.18745001247554 -10 131.62688800939907 C -78.23019788256674 126.51613976743464 -132 69.53737498020169 -132 0 Z",
+      "outputCurves": 6,
+      "expectedCurves": 6
+    },
+    {
+      "id": 25,
+      "title": "#719",
+      "op": "subtract",
+      "derivedOperands": false,
+      "elapsedMs": 252,
+      "status": "screen-match",
+      "maxBoundaryDistance": 5.711830603848051e-14,
+      "boundarySamples": 54,
+      "fillSamples": 661,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M -50 0 C -50 -27.61423749153968 -27.61423749153968 -50 0 -50 C 0 -50 0 50 0 50 C -27.61423749153968 50 -50 27.61423749153968 -50 0 Z",
+      "outputCurves": 3,
+      "expectedCurves": 3
+    },
+    {
+      "id": 26,
+      "title": "#757 (path1.intersect(pat2, { trace: false }))",
+      "op": null,
+      "derivedOperands": false,
+      "elapsedMs": 64,
+      "status": "different-api",
+      "reason": "Open-path clipping / divided-result selection requires a separate adapter."
+    },
+    {
+      "id": 27,
+      "title": "#784",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 676,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000010000000202126103,
+      "boundarySamples": 234,
+      "fillSamples": 779,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 495.9 1693.5 C 478.3807728003307 1609.0174707314527 464.2912608481319 1542.1316211999272 452.8372630869105 1493.1501148777584 C 443.8138690216712 1471.5678430949758 433.85095933859077 1445.9092887149238 423.20000000000005 1416.1 C 417.59999999999997 1400.3 416.2 1394.1999999999998 417.9 1393.6 C 421.5892148362386 1392.2336241347264 425.9356076903085 1398.813127939593 431.16570740831304 1413.2507569967402 C 432.95970977678604 1412.609062739822 435.02811512007804 1411.8692176576226 437.3412569134489 1411.0418331288572 C 417.7407017953499 1371.308910610081 393.21306293943275 1324.7633277750333 363.1 1271.6000000000001 C 363.1 1271.6000000000001 566 1185.9 566 1185.9 C 566 1185.9 632.6 1341.2 632.6 1341.2 C 632.6 1341.2 484.37610014185486 1394.21800429501 437.3412569134489 1411.0418331288572 C 437.34220102884296 1411.043746975867 437.3431451328056 1411.0456608070706 437.3440892253368 1411.047574622468 C 484.3820502552136 1394.245093796132 632.6 1341.3 632.6 1341.3 C 632.6 1341.3 708.4 1645.1999999999998 708.4 1645.1999999999998 C 708.4 1645.1999999999998 495.9 1693.5 495.9 1693.5 Z",
+      "outputCurves": 13,
+      "expectedCurves": 13
+    },
+    {
+      "id": 28,
+      "title": "#784",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 553,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.0000028074961649689446,
+      "boundarySamples": 180,
+      "fillSamples": 745,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 265.1343397319936 453.46566026800645 C 265.1115492087684 453.4884507912316 265.1 453.5 265.1 453.5 C 265.1 453.5 216.00000000000003 439 228.50000000000003 416.9 C 235.98072992971674 403.6740694842609 267.60093497600053 415.26810373971017 291.78843034948125 426.71156965051875 C 297.1694750920772 421.3305249079228 302.7702217680558 415.7297782319442 307.9744689272936 410.5255310727064 C 299.92092515770213 388.9933016936732 292.0716032804389 363.12156422440296 297.70000000000005 356.1 C 307.476232032417 343.5864229985063 329.1037284460393 386.5061793929729 330.0667414643127 388.4332585356873 C 330.0888160196813 388.4111839803187 330.1 388.4 330.1 388.4 C 330.1 388.5 395.1 438.2 395.1 453.4 C 395.1 468.59999999999997 361.3 518.4 330.1 518.4 C 299.4760738013455 518.4 266.3472735219733 455.7781479820618 265.1343397319936 453.46566026800645 Z",
+      "outputCurves": 10,
+      "expectedCurves": 10
+    },
+    {
+      "id": 29,
+      "title": "#784#issuecomment-144653463",
+      "op": "unite",
+      "derivedOperands": true,
+      "elapsedMs": 327,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 30,
+      "title": "#784#issuecomment-144993215",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 390,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000009869075967440978,
+      "boundarySamples": 126,
+      "fillSamples": 701,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 428.65986693122585 123.24312916360232 C 428.65986693122585 123.24312916360232 446.904319903834 283.220849637258 448.8714386363569 290.0111863613697 C 448.9442908966272 290.15850064472204 448.9788454478935 290.23373185132374 448.97323531360735 290.2333603122046 C 449.08675495628825 290.25494486796924 449.06951338577625 290.253766111681 449.0325126922772 290.2477805949443 C 448.9955120021468 290.24179507875255 448.9387521926272 290.23100280298746 448.9732353341095 290.23336023178985 C 448.9466426684289 290.2283039422468 448.91260497119833 290.1532892607266 448.8714386363569 290.0111863613697 C 445.8147962420109 283.8303611938731 375.34013306877415 150.7568708363977 375.34013306877415 150.7568708363977 C 375.34013306877415 150.7568708363977 428.65986693122585 123.24312916360232 428.65986693122585 123.24312916360232 Z",
+      "outputCurves": 7,
+      "expectedCurves": 7
+    },
+    {
+      "id": 31,
+      "title": "#784#issuecomment-168605018",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 272,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 32,
+      "title": "#854",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 386,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000012539479259395175,
+      "boundarySamples": 207,
+      "fillSamples": 757,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 228.55086230042502 143.23923924241723 C 228.55086230042502 143.23923924241723 200.95824606861896 128.31954503936495 189.66108510225706 122.21102000626246 C 196.41791518884958 145.623013453407 217.49075466402314 218.6390836198678 217.49075466402314 218.6390836198678 C 183.40013645725878 197.88348933259766 170.1558020776585 155.8659450220507 185.27979096091735 119.841996052417 C 185.0474912547908 119.71638851488775 184.92483791515713 119.65006822452659 184.92483791515713 119.65006822452659 C 185.56916936570076 118.4633573179592 186.24197173210467 117.29455487715107 186.94309657127818 116.14360076408555 C 187.5248270673543 114.93225889700001 188.1397415095562 113.72895238295821 188.78813676155346 112.53475688518728 C 188.78813676155346 112.53475688518728 228.55086230042502 143.23923924241723 228.55086230042502 143.23923924241723 Z M 185.27979096091732 119.841996052417 C 185.94435863955815 120.20133662596959 187.50630418670053 121.04590133594156 189.66108510225706 122.21102000626246 C 188.37099643633718 117.74094350505158 187.6027931113199 115.07916705353665 187.6027931113199 115.07916705353665 C 187.38017957278 115.43226687699294 187.16027925538532 115.78707751801942 186.94309657127818 116.14360076408555 C 186.35482986325198 117.36855303537145 185.8004969874754 118.60172224147335 185.27979096091732 119.841996052417 Z",
+      "outputCurves": 11,
+      "expectedCurves": 12
+    },
+    {
+      "id": 33,
+      "title": "#854",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 346,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000008226252929411545,
+      "boundarySamples": 126,
+      "fillSamples": 709,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 228.55086230042502 143.23923924241723 C 228.55086230042502 143.23923924241723 200.95824606861896 128.31954503936495 189.66108510225706 122.21102000626246 C 196.41791518884958 145.623013453407 217.49075466402314 218.6390836198678 217.49075466402314 218.6390836198678 C 183.40013645725878 197.88348933259766 170.1558020776585 155.8659450220507 185.27979096091735 119.841996052417 C 185.0474912547908 119.71638851488775 184.92483791515713 119.65006822452659 184.92483791515713 119.65006822452659 C 185.56916936570076 118.4633573179592 186.24197173210467 117.29455487715107 186.94309657127818 116.14360076408555 C 187.5248270673543 114.93225889700001 188.1397415095562 113.72895238295821 188.78813676155346 112.53475688518728 C 188.78813676155346 112.53475688518728 228.55086230042502 143.23923924241723 228.55086230042502 143.23923924241723 Z",
+      "outputCurves": 7,
+      "expectedCurves": 7
+    },
+    {
+      "id": 34,
+      "title": "#859",
+      "op": "subtract",
+      "derivedOperands": false,
+      "elapsedMs": 476,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.00000723322510629457,
+      "boundarySamples": 144,
+      "fillSamples": 721,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 230 360 C 230 360 326.04999999999995 361.95 326.04999999999995 361.95 C 326.4022995219167 362.21298415016315 326.75509146578594 362.4753527728857 327.1083513978024 362.7371303019729 C 319.74105257754695 367.4286999844733 300 380 300 380 C 300 380 327.9816245617005 366.0401044369074 327.9816245617005 366.0401044369074 C 328.2804075560393 365.36586228738605 328.5604786250685 364.6857117144109 328.82198115282154 363.9998404065809 C 335.043425472465 368.55899449788285 341.3967127362325 372.94843338098116 347.74999999999994 377.3 C 347.74999999999994 377.3 260 400 260 400 C 260 400 230 360 230 360 Z",
+      "outputCurves": 8,
+      "expectedCurves": 8
+    },
+    {
+      "id": 35,
+      "title": "#839",
+      "op": "subtract",
+      "derivedOperands": false,
+      "elapsedMs": 476,
+      "status": "screen-match",
+      "maxBoundaryDistance": 5.684341886080802e-14,
+      "boundarySamples": 180,
+      "fillSamples": 745,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 522 352 C 522 352 500 400 500 400 C 500 400 480 400 480 400 C 480 400 448 448 448 448 C 448 448 405.3951262113536 448 350 448 C 350 418.44453685728996 350 381.55546314271 350 352 C 441.015228180487 352 522 352 522 352 Z M 250 448 C 171.69433847716027 448 100 448 100 448 C 100 448 100 352 100 352 C 100 352 168.33050720824707 352 250 352 C 250 381.55546314271 250 418.44453685728996 250 448 Z",
+      "outputCurves": 10,
+      "expectedCurves": 10
+    },
+    {
+      "id": 36,
+      "title": "#865",
+      "op": "subtract",
+      "derivedOperands": false,
+      "elapsedMs": 295,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 37,
+      "title": "#865",
+      "op": "subtract",
+      "derivedOperands": false,
+      "elapsedMs": 351,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 38,
+      "title": "#865",
+      "op": "subtract",
+      "derivedOperands": false,
+      "elapsedMs": 292,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 39,
+      "title": "#865",
+      "op": "subtract",
+      "derivedOperands": false,
+      "elapsedMs": 297,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 40,
+      "title": "#865",
+      "op": "subtract",
+      "derivedOperands": false,
+      "elapsedMs": 369,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 41,
+      "title": "#870",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 267,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 42,
+      "title": "#870",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 252,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 43,
+      "title": "#875",
+      "op": "subtract",
+      "derivedOperands": false,
+      "elapsedMs": 283,
+      "status": "screen-match",
+      "maxBoundaryDistance": 2.842170943040401e-14,
+      "boundarySamples": 72,
+      "fillSamples": 673,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 158.7 407.2 C 153.75 402.25 153.75 394.25 158.7 389.3 C 163.64999999999998 384.35 171.65 384.35 176.6 389.3 C 181.54999999999998 394.25 181.54999999999998 402.25 176.6 407.2 C 171.65 412.15 163.64999999999998 412.15 158.7 407.2 Z",
+      "outputCurves": 4,
+      "expectedCurves": 4
+    },
+    {
+      "id": 44,
+      "title": "#877",
+      "op": "subtract",
+      "derivedOperands": false,
+      "elapsedMs": 66,
+      "status": "different-api",
+      "reason": "Operands use different fill rules; Gleam binary CSG takes one common rule."
+    },
+    {
+      "id": 45,
+      "title": "#878",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 198,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 46,
+      "title": "#878",
+      "op": "subtract",
+      "derivedOperands": false,
+      "elapsedMs": 254,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 47,
+      "title": "#885",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 402,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0,
+      "boundarySamples": 72,
+      "fillSamples": 673,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 100 200 C 100 200 100 100 100 100 C 100 100 200 100 200 100 C 200 100 200 200 200 200 C 200 200 100 200 100 200 Z",
+      "outputCurves": 4,
+      "expectedCurves": 4
+    },
+    {
+      "id": 48,
+      "title": "#885",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 403,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0,
+      "boundarySamples": 72,
+      "fillSamples": 673,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 100 200 C 100 200 100 100 100 100 C 100 100 200 100 200 100 C 200 100 200 200 200 200 C 200 200 100 200 100 200 Z",
+      "outputCurves": 4,
+      "expectedCurves": 4
+    },
+    {
+      "id": 49,
+      "title": "#885",
+      "op": "subtract",
+      "derivedOperands": false,
+      "elapsedMs": 484,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0,
+      "boundarySamples": 0,
+      "fillSamples": 625,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "",
+      "outputCurves": 0,
+      "expectedCurves": 0
+    },
+    {
+      "id": 50,
+      "title": "#885",
+      "op": "exclude",
+      "derivedOperands": false,
+      "elapsedMs": 386,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0,
+      "boundarySamples": 0,
+      "fillSamples": 625,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "",
+      "outputCurves": 0,
+      "expectedCurves": 0
+    },
+    {
+      "id": 51,
+      "title": "#889",
+      "op": "subtract",
+      "derivedOperands": false,
+      "elapsedMs": 489,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000005421414275148525,
+      "boundarySamples": 144,
+      "fillSamples": 721,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 340.26 358.4 C 340.26 358.4 576 396.8 576 396.8 C 576 396.8 567.8112917188836 396.8 554.5226167091928 396.8 C 484.8877647543817 388.79761599439627 406.9291736893615 379.83867424719523 342.27372466716736 372.40851942377293 C 341.1827624536912 364.81921706915637 340.26 358.4 340.26 358.4 Z M 691.2 685.76 C 691.2 685.76 683.2940312013516 630.0229199695278 677.6284946771466 590.0808874738833 C 681.2792041059727 579.8445845656059 685.003944733863 569.4007039815214 688.7235525723455 558.9712153363644 C 706.161496451612 571.2650170791054 729.6 593.9656772627841 729.6 608 C 729.6 608 691.2 685.76 691.2 685.76 Z",
+      "outputCurves": 8,
+      "expectedCurves": 8
+    },
+    {
+      "id": 52,
+      "title": "#890",
+      "op": "subtract",
+      "derivedOperands": false,
+      "elapsedMs": 476,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000006503495134695415,
+      "boundarySamples": 153,
+      "fillSamples": 727,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 491.6436974789916 396.8 C 464.6773202393715 396.8 445.78 396.8 445.78 396.8 C 445.78 396.8 426 260 426 260 C 426 260 467.96872174162485 282.9652845370171 517.5148643025568 310.07693374635903 C 509.9141438915224 335.5554049833476 501.04326299045323 365.2915972996076 491.6436974789916 396.8 Z M 676.402755621798 552.286126101988 C 696.1070006395669 573.0526545977243 633.5999999999999 757.8354250360993 633.5999999999999 732.8 C 633.5999999999999 732.8 649.7121306567266 656.2673793805487 661.0629607121158 602.3509366174501 C 669.4952456651246 574.7574990313864 676.3444534355956 552.3444534355972 676.3444534355956 552.3444534355972 C 676.3638916895122 552.3250151816806 676.3833257520706 552.305572736653 676.402755621798 552.286126101988 Z",
+      "outputCurves": 8,
+      "expectedCurves": 9
+    },
+    {
+      "id": 53,
+      "title": "#890",
+      "op": "subtract",
+      "derivedOperands": false,
+      "elapsedMs": 618,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.0000052476388247446976,
+      "boundarySamples": 162,
+      "fillSamples": 733,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 576 396.8 C 576 396.8 439.36438334544033 396.8 376.6184780157637 396.8 C 370.55570202054184 358.1754407866516 363.8090081158431 322.2139944505087 356.4751786753352 293.4942017295695 C 451.6672394456683 338.29046562149097 576 396.8 576 396.8 Z M 255.78013170979023 253.06970503871682 C 251.89663881817086 246.86774508703522 249.6 243.20000000000002 249.6 243.20000000000002 C 249.6 243.20000000000002 254.85550268602523 245.67317773460013 264.0327522790104 249.9918834254167 C 261.346086501547 250.99387763177 258.5933445842217 252.02051498870614 255.78013170979023 253.06970503871682 Z M 624.84 550.46 C 624.84 550.46 672 550.4 672 550.4 C 672 550.4 729.6 608 729.6 608 C 729.6 608 624.84 550.46 624.84 550.46 Z",
+      "outputCurves": 9,
+      "expectedCurves": 9
+    },
+    {
+      "id": 54,
+      "title": "#899",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 465,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.00001715823518777886,
+      "boundarySamples": 171,
+      "fillSamples": 739,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 349.31714952528665 176.97192499841802 C 349.31714952528665 176.97192499841802 308.23418424120047 394.39737504104323 308.23418424120047 394.39737504104323 C 307.84898351482354 396.4359922808182 282.797532850191 417.4512391163461 273.60284923271973 415.7138856106701 C 273.60284923271973 415.7138856106701 319.32897551064104 222.13981012362387 335.39509999359984 166.85561856012103 C 330.9722336656118 159.8636655402454 328.3996773963691 152.6280409651213 333.4126425432937 153.58289639999975 C 335.3991399184606 153.9612788063114 337.2606208411381 154.6213675782413 338.9635964537498 155.5139142952962 C 339.8160660101452 153.18189330705036 340.40887140910405 152.0479500056156 340.6967045975081 152.3115389894092 C 346.39073090744586 157.52595716353534 349.35976849229843 164.24392000052762 349.72123243229134 170.85618880187394 C 349.8270175280467 172.79131817695094 349.71420490244935 174.73817005337494 349.3705501506112 176.68004961443629 C 349.3534864624441 176.7773070581954 349.33568756673986 176.8746007833559 349.31714952528665 176.97192499841802 Z",
+      "outputCurves": 9,
+      "expectedCurves": 10
+    },
+    {
+      "id": 55,
+      "title": "#936",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 468,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000007142857185726825,
+      "boundarySamples": 288,
+      "fillSamples": 817,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 390.3571428571429 74.97142857142856 C 390.3571428571429 74.97142857142856 437.02857142857147 121.64285714285714 437.02857142857147 121.64285714285714 C 437.02857142857147 121.64285714285714 418.72862335209504 121.64285714285714 390.3571428571429 121.64285714285714 C 390.3571428571429 191.09590799529485 390.3571428571429 320.9040920047051 390.3571428571429 390.3571428571429 C 418.72862335209504 390.3571428571429 437.02857142857147 390.3571428571429 437.02857142857147 390.3571428571429 C 437.02857142857147 390.3571428571429 390.3571428571429 437.02857142857147 390.3571428571429 437.02857142857147 C 390.3571428571429 437.02857142857147 390.3571428571429 418.728623352095 390.3571428571429 390.3571428571429 C 320.90409200470515 390.3571428571429 191.09590799529494 390.3571428571429 121.6428571428572 390.3571428571429 C 121.6428571428572 418.72862335209504 121.6428571428572 437.02857142857147 121.6428571428572 437.02857142857147 C 121.6428571428572 437.02857142857147 74.97142857142862 390.3571428571429 74.97142857142862 390.3571428571429 C 74.97142857142862 390.3571428571429 93.27137664790507 390.3571428571429 121.6428571428572 390.3571428571429 C 121.64285714285718 320.90409200470515 121.64285714285717 191.09590799529488 121.64285714285714 121.64285714285714 C 93.27137664790502 121.64285714285714 74.97142857142859 121.64285714285714 74.97142857142859 121.64285714285714 C 74.97142857142859 121.64285714285714 121.64285714285714 74.97142857142858 121.64285714285714 74.97142857142858 C 121.64285714285714 74.97142857142858 121.64285714285714 93.27137664790502 121.64285714285714 121.64285714285714 C 191.09590799529485 121.64285714285714 320.90409200470515 121.64285714285714 390.3571428571429 121.64285714285714 C 390.3571428571429 93.271376647905 390.3571428571429 74.97142857142856 390.3571428571429 74.97142857142856 Z",
+      "outputCurves": 16,
+      "expectedCurves": 16
+    },
+    {
+      "id": 56,
+      "title": "#936",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 573,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.00000925672994159479,
+      "boundarySamples": 324,
+      "fillSamples": 835,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 364.2895784370851 164.00333956484477 C 364.2895784370851 164.00333956484477 384.0884708724184 194.49096034834812 384.0884708724184 194.49096034834812 C 378.21072985919716 190.9557731087005 372.24273805917755 187.60473742468926 366.193195011959 184.4397024405398 C 370.1748288200306 247.41157242265035 356.81066804354975 310.28500559959355 327.5602975594603 366.193195011959 C 334.3741658357306 365.7623625100776 341.1891866408287 365.12844003319475 347.9966604351552 364.2895784370851 C 347.9966604351552 364.2895784370851 317.5090396516519 384.0884708724184 317.5090396516519 384.0884708724184 C 321.04422689129956 378.21072985919716 324.3952625753108 372.24273805917755 327.5602975594603 366.193195011959 C 264.5884275773501 370.17482882003065 201.71499440040662 356.8106680435498 145.80680498804105 327.5602975594603 C 146.23763748992246 334.3741658357306 146.8715599668053 341.1891866408288 147.71042156291495 347.9966604351553 C 147.71042156291495 347.9966604351553 127.91152912758163 317.50903965165196 127.91152912758163 317.50903965165196 C 133.78927014080284 321.0442268912996 139.75726194082247 324.3952625753109 145.80680498804105 327.5602975594603 C 141.82517117996943 264.5884275773497 155.18933195645036 201.71499440040645 184.4397024405398 145.806804988041 C 177.6258341642695 146.2376374899224 170.8108133591713 146.87155996680525 164.00333956484474 147.7104215629149 C 164.00333956484474 147.7104215629149 194.49096034834812 127.91152912758156 194.49096034834812 127.91152912758156 C 190.95577310870047 133.78927014080278 187.60473742468923 139.75726194082242 184.4397024405398 145.806804988041 C 247.41157242265035 141.8251711799694 310.2850055995936 155.18933195645033 366.193195011959 184.4397024405398 C 365.7623625100776 177.6258341642695 365.12844003319475 170.81081335917133 364.2895784370851 164.00333956484477 Z",
+      "outputCurves": 16,
+      "expectedCurves": 20
+    },
+    {
+      "id": 57,
+      "title": "#923",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 392,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000002649855724173622,
+      "boundarySamples": 144,
+      "fillSamples": 721,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 80 100 C 80 88.95430500338412 88.95430500338412 80 100 80 C 111.04569499661588 80 120 88.95430500338412 120 100 C 120 111.04569499661588 111.04569499661588 120 100 120 C 88.95430500338412 120 80 111.04569499661588 80 100 Z M 130 100 C 130 88.95430500338412 138.95430500338412 80 150 80 C 161.04569499661588 80 170 88.95430500338412 170 100 C 170 111.04569499661588 161.04569499661588 120 150 120 C 138.95430500338412 120 130 111.04569499661588 130 100 Z",
+      "outputCurves": 8,
+      "expectedCurves": 8
+    },
+    {
+      "id": 58,
+      "title": "#958",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 193,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 59,
+      "title": "#968",
+      "op": "subtract",
+      "derivedOperands": false,
+      "elapsedMs": 163,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 60,
+      "title": "#1036",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 440,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000006566388279729478,
+      "boundarySamples": 126,
+      "fillSamples": 709,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 424.5422646081527 112.151584677861 C 457.43613264027823 121.30360551626244 485.82315726553657 138.20708361958535 499.20274 169.42611 C 504.99196 182.93429 500.66026999999997 208.00975 497.75426 221.57115 C 489.00193392882954 262.4153532867131 456.3542287367964 294.1118284901541 426.6758998570703 322.15783268600495 C 422.19525203859985 316.5982059336861 416.9861419818703 309.47859721182454 415.19129 307.03107 C 409.20337 298.86573 400.99225 289.91507 399.25808 279.51008 C 393.64164 245.81143000000003 404.77925999999997 208.50137999999998 407.94892 175.22 C 409.015398457258 164.02195100797286 414.0920035220891 127.87726541535926 424.5422646081527 112.151584677861 Z",
+      "outputCurves": 7,
+      "expectedCurves": 7
+    },
+    {
+      "id": 61,
+      "title": "#1054",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 356,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 62,
+      "title": "#1054",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 430,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 63,
+      "title": "#1059",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 330,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 64,
+      "title": "#1075",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 440,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 65,
+      "title": "#1091",
+      "op": "unite",
+      "derivedOperands": true,
+      "elapsedMs": 2733,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 66,
+      "title": "#1109",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 689,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000005896552297677713,
+      "boundarySamples": 162,
+      "fillSamples": 733,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 200 300 C 200 300 200 100 200 100 C 200 100 400 100 400 100 C 400 100 400 300 400 300 C 400 300 200 300 200 300 Z M 274.616046379547 215.30654471841746 C 274.616046379547 215.30654471841746 296.47810618021146 202.68940186127458 296.47810618021146 202.68940186127458 C 296.47810618021146 202.68940186127458 297.0266776087829 160.32607960213838 297.0266776087829 160.32607960213838 C 297.0266776087829 160.32607960213838 260.5870762798793 181.99677727655697 260.5870762798793 181.99677727655697 C 260.5870762798793 181.99677727655697 260.5870762798793 207.20554804067655 260.5870762798793 207.20554804067655 C 260.5870762798793 207.20554804067655 274.616046379547 215.30654471841746 274.616046379547 215.30654471841746 Z",
+      "outputCurves": 9,
+      "expectedCurves": 9
+    },
+    {
+      "id": 67,
+      "title": "#1109",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 740,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000005896552297677713,
+      "boundarySamples": 162,
+      "fillSamples": 733,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 200 300 C 200 300 200 100 200 100 C 200 100 400 100 400 100 C 400 100 400 300 400 300 C 400 300 200 300 200 300 Z M 274.616046379547 215.30654471841746 C 274.616046379547 215.30654471841746 296.47810618021146 202.68940186127458 296.47810618021146 202.68940186127458 C 296.47810618021146 202.68940186127458 297.0266776087829 160.32607960213838 297.0266776087829 160.32607960213838 C 297.0266776087829 160.32607960213838 260.5870762798793 181.99677727655697 260.5870762798793 181.99677727655697 C 260.5870762798793 181.99677727655697 260.5870762798793 207.20554804067655 260.5870762798793 207.20554804067655 C 260.5870762798793 207.20554804067655 274.616046379547 215.30654471841746 274.616046379547 215.30654471841746 Z",
+      "outputCurves": 9,
+      "expectedCurves": 9
+    },
+    {
+      "id": 68,
+      "title": "#1109",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 533,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 69,
+      "title": "#1123",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 565,
+      "status": "library-error",
+      "error": {
+        "type": "InternalBoundaryTopologyError",
+        "vertex": 7,
+        "reason": {
+          "type": "SectorMismatch"
+        }
+      }
+    },
+    {
+      "id": 70,
+      "title": "#1123",
+      "op": "subtract",
+      "derivedOperands": true,
+      "elapsedMs": 503,
+      "status": "screen-match",
+      "maxBoundaryDistance": 1.4210854715202004e-14,
+      "boundarySamples": 144,
+      "fillSamples": 721,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 100 200 C 100 200 100 100 100 100 C 100 100 200 100 200 100 C 200 100 200 200 200 200 C 200 200 100 200 100 200 Z M 180 180 C 180 180 180 120 180 120 C 180 120 120 120 120 120 C 120 120 120 180 120 180 C 120 180 180 180 180 180 Z",
+      "outputCurves": 8,
+      "expectedCurves": 8
+    },
+    {
+      "id": 71,
+      "title": "#1221",
+      "op": "subtract",
+      "derivedOperands": false,
+      "elapsedMs": 66,
+      "status": "different-api",
+      "reason": "Open-path clipping / divided-result selection requires a separate adapter."
+    },
+    {
+      "id": 72,
+      "title": "#1221",
+      "op": "subtract",
+      "derivedOperands": false,
+      "elapsedMs": 296,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.0000026426768896546256,
+      "boundarySamples": 90,
+      "fillSamples": 685,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 100 300 C 100 300 100 250 100 200 C 155.22847498307937 200 200 155.22847498307937 200 100 C 250 100 300 100 300 100 C 300 100 300 300 300 300 C 300 300 100 300 100 300 Z",
+      "outputCurves": 5,
+      "expectedCurves": 5
+    },
+    {
+      "id": 73,
+      "title": "#1221",
+      "op": "subtract",
+      "derivedOperands": false,
+      "elapsedMs": 69,
+      "status": "different-api",
+      "reason": "Open-path clipping / divided-result selection requires a separate adapter."
+    },
+    {
+      "id": 74,
+      "title": "#1221",
+      "op": "subtract",
+      "derivedOperands": false,
+      "elapsedMs": 434,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.00000989228083026912,
+      "boundarySamples": 189,
+      "fillSamples": 751,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 450 236.53032580887069 C 476.3804498220157 247.60969432017328 504.3493149180638 259.74189626477045 534 273 L 629 352 C 562.1 432.3 512.8 446.1 479 442 C 449.6762980656665 438.4176333908938 428.72721322191876 420.9503153188946 409.8561630135525 400 C 434.20182117009705 400 450 400 450 400 C 450 400 450 315.74001796841594 450 236.53032580887069 Z M 30 158 C 44.74012694572645 138.23373140720616 78.3287326119622 126.59543133329366 150 138.13155866366344 C 150 202.84425899916653 150 331.89223135283805 150 380.6986749180274 C 147.07966706414368 380.68158176071745 144.08303096065376 380.4563697145705 141 380 C 61.5 368.2 -10.5 212.3 30 158 Z",
+      "outputCurves": 10,
+      "expectedCurves": 11
+    },
+    {
+      "id": 75,
+      "title": "#1221",
+      "op": "subtract",
+      "derivedOperands": false,
+      "elapsedMs": 67,
+      "status": "different-api",
+      "reason": "Open-path clipping / divided-result selection requires a separate adapter."
+    },
+    {
+      "id": 76,
+      "title": "#1221",
+      "op": "subtract",
+      "derivedOperands": false,
+      "elapsedMs": 487,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.0000046660382393761,
+      "boundarySamples": 180,
+      "fillSamples": 744,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 450 236.53032580887069 C 476.3804498220157 247.60969432017328 504.3493149180638 259.74189626477045 534 273 L 629 352 C 562.1 432.3 512.8 446.1 479 442 C 399.6 432.3 381.6 320.8 300 314 C 229 308.1 201.8 389 141 380 C 61.5 368.2 -10.5 212.3 30 158 C 44.74012694572646 138.23373140720616 78.32873261196221 126.59543133329366 150 138.13155866366344 C 150 182.57166026410667 150 250 150 250 C 150 250 450 250 450 250 C 450 250 450 244.87937214849953 450 236.53032580887069 Z",
+      "outputCurves": 10,
+      "expectedCurves": 10
+    },
+    {
+      "id": 77,
+      "title": "#1221",
+      "op": null,
+      "derivedOperands": false,
+      "elapsedMs": 62,
+      "status": "different-api",
+      "reason": "Open-path clipping / divided-result selection requires a separate adapter."
+    },
+    {
+      "id": 78,
+      "title": "#1221",
+      "op": null,
+      "derivedOperands": false,
+      "elapsedMs": 63,
+      "status": "different-api",
+      "reason": "Open-path clipping / divided-result selection requires a separate adapter."
+    },
+    {
+      "id": 79,
+      "title": "#1239 / #1073",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 817,
+      "status": "library-error",
+      "error": {
+        "type": "InternalBoundaryTopologyError",
+        "vertex": 9,
+        "reason": {
+          "type": "SectorMismatch"
+        }
+      }
+    },
+    {
+      "id": 80,
+      "title": "#1261",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 578,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000003783519986660098,
+      "boundarySamples": 90,
+      "fillSamples": 685,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 933.13 1023.97 C 933.13 1023.97 416.93999999999994 852.26 416.93999999999994 852.26 C 416.93999999999994 852.26 484.2699999999999 840.99 484.2699999999999 840.99 C 484.2699999999999 840.99 484.2736417861116 840.9912114827899 484.2809014322746 840.9936264890856 C 642.3779139528397 814.5434311971834 1024.04 750.69 1024.04 750.69 C 1024.04 750.69 933.13 1023.97 933.13 1023.97 Z",
+      "outputCurves": 5,
+      "expectedCurves": 5
+    },
+    {
+      "id": 81,
+      "title": "#1321",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 930,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0,
+      "boundarySamples": 108,
+      "fillSamples": 697,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 24 38 C 24 38 26 39 26 39 C 26 39 28 40 28 40 C 28 40 30 41 30 41 C 30 41 28 42 28 42 C 28 42 26 41 26 41 C 26 41 24 40 24 40 C 24 40 22 39 22 39 C 22 39 24 38 24 38 Z",
+      "outputCurves": 8,
+      "expectedCurves": 4
+    },
+    {
+      "id": 82,
+      "title": "Selected edge-cases from @hari's boolean-test suite",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 2507,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000006320687230931938,
+      "boundarySamples": 1206,
+      "fillSamples": 1429,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 343.8 272.8 C 336.33333333333337 268.5333333333333 327.2666666666667 266.4 316.6 266.4 C 305.6666666666667 266.4 296.3333333333333 268.46666666666664 288.6 272.6 C 280.8666666666667 276.73333333333335 274.53333333333336 282.26666666666665 269.6 289.2 C 264.6666666666667 296.1333333333333 261.06666666666666 304.1333333333333 258.8 313.2 C 258.4995295166551 314.40188193337946 258.2189742931694 315.61079278200333 257.9583343295429 316.8267325458716 C 259.7891907029562 316.8899404454288 261.6464125931086 316.9876962634716 263.53 317.12 C 263.53 317.12 335.1648449883663 322.08327517425107 374.3288199429661 324.79678121518305 C 373.8086563502478 321.0408404282549 373.0990497025924 317.3085800231939 372.2 313.6 C 370.06666666666666 304.8 366.6666666666667 296.8666666666667 362 289.8 C 357.3333333333333 282.73333333333335 351.26666666666665 277.06666666666666 343.8 272.8 Z M 372 369.2 C 372.81407232058945 365.75216428926825 373.48195778607226 362.3043285785365 374.0036563964485 358.85649286780483 C 334.4002038014718 356.11153066589037 257.19 350.76 257.19 350.76 C 256.68773635100393 350.7252813145855 256.1890888633586 350.6965895647556 255.69405753706403 350.6739247505102 C 256.10294749572205 356.98261650034016 256.938261650034 363.2913082501701 258.2 369.6 C 260.06666666666666 378.93333333333334 263.26666666666665 387.40000000000003 267.8 395 C 272.33333333333337 402.59999999999997 278.33333333333337 408.7333333333333 285.8 413.4 C 293.26666666666665 418.06666666666666 302.6 420.4 313.8 420.4 C 325 420.4 334.53333333333336 418.06666666666666 342.4 413.4 C 350.26666666666665 408.7333333333333 356.59999999999997 402.59999999999997 361.4 395 C 366.2 387.40000000000003 369.73333333333335 378.8 372 369.2 Z M 269.8 246.6 C 282.06666666666666 239.8 297.1333333333333 236.4 315 236.4 C 328.06666666666666 236.4 340.06666666666666 239.26666666666668 351 245 C 361.93333333333334 250.73333333333332 370.46666666666664 259.3333333333333 376.6 270.8 C 376.6 270.8 377 270.8 377 270.8 C 377 270.8 377 241.2 377 241.2 C 377 241.2 409 241.2 409 241.2 C 409 241.2 409 430.4 409 430.4 C 409 464.26666666666665 401.26666666666665 489.59999999999997 385.8 506.4 C 370.33333333333337 523.2 346.06666666666666 531.6 313 531.6 C 303.40000000000003 531.6 293.6 530.5333333333333 283.6 528.4 C 273.6 526.2666666666667 264.53333333333336 522.8000000000001 256.4 518 C 248.26666666666665 513.2 241.53333333333333 506.93333333333334 236.2 499.2 C 233.5529592949906 495.36179097773635 231.49711940666046 491.096603587871 230.0324803350096 486.404437830404 C 201.75325998906553 484.4443154371753 181.06 483.01 181.06 483.01 C 181.06 483.01 183.27 451.09 183.27 451.09 C 183.27 451.09 215.99 453.36 215.99 453.36 C 215.99 453.36 216.05 452.56 216.05 452.56 C 203.77666666666667 444.49333333333334 195.03666666666666 434.66666666666663 189.83 423.08 C 184.61666666666667 411.4866666666667 182.53666666666666 398.11 183.59 382.95 C 184.53 369.3833333333333 187.10666666666665 358.2 191.32 349.4 C 195.54 340.6066666666666 201.17000000000002 333.64666666666665 208.21 328.52 C 212.23149580305258 325.5914675449361 216.62716000811565 323.23397698247555 221.39699261518928 321.44752831261826 C 222.12970173195157 316.94035776636525 223.06403752688846 312.39118166215917 224.2 307.8 C 227.4 294.8666666666667 232.73333333333332 283.1333333333333 240.2 272.6 C 247.66666666666666 262.06666666666666 257.53333333333336 253.4 269.8 246.6 Z M 225.2 385.8 C 223.2064509277069 379.2694082114536 221.72681192916045 372.54388501562397 220.76108300436061 365.6234304125112 C 216.11959104711954 371.96387823105505 213.459230045666 380.0160680935513 212.78 389.78 C 212.06 400.16 213.03333333333333 409.25 215.7 417.05 C 218.36666666666665 424.8566666666667 222.45333333333332 431.49 227.96 436.95 C 233.46 442.40999999999997 240.04666666666668 446.67333333333335 247.72 449.74 C 255.39333333333335 452.81333333333333 263.88666666666666 454.67333333333335 273.2 455.32 C 273.2 455.32 340.06938162717626 459.951272826393 372.4938518399355 462.19694287974835 C 372.8936339553462 460.82902798188815 373.26235000870105 459.43004702197203 373.6 458 C 375.8666666666667 448.40000000000003 377 437.8666666666667 377 426.4 C 377 426.4 377 412.8 377 412.8 C 377 412.8 376.2 412.8 376.2 412.8 C 370.3333333333333 425.6 361.46666666666664 435 349.6 441 C 337.73333333333335 447 325.1333333333333 450 311.8 450 C 296.33333333333337 450 282.8666666666667 447.2 271.4 441.6 C 259.93333333333334 436 250.33333333333331 428.46666666666664 242.6 419 C 234.86666666666667 409.53333333333336 229.06666666666666 398.4666666666667 225.2 385.8 Z M 343.4 498.6 C 345.72208739893824 497.4389563005309 347.92395876291124 496.1456749626 350.005614091919 494.7201559862074 C 327.5316122023454 493.1624116838425 297.90757910992295 491.10907605676846 269.7503977700481 489.1574125738534 C 272.81965012341806 492.1855567725163 276.369517533402 494.73308591456515 280.4 496.8 C 285.59999999999997 499.4666666666667 291.26666666666665 501.40000000000003 297.4 502.6 C 303.53333333333336 503.8 309.40000000000003 504.4 315 504.4 C 326.2 504.4 335.6666666666667 502.46666666666664 343.4 498.6 Z",
+      "outputCurves": 67,
+      "expectedCurves": 67
+    },
+    {
+      "id": 83,
+      "title": "Selected edge-cases from @hari's boolean-test suite",
+      "op": "subtract",
+      "derivedOperands": false,
+      "elapsedMs": 1863,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000005698503024324454,
+      "boundarySamples": 1080,
+      "fillSamples": 1345,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 343.8 272.8 C 336.33333333333337 268.5333333333333 327.2666666666667 266.4 316.6 266.4 C 305.6666666666667 266.4 296.3333333333333 268.46666666666664 288.6 272.6 C 280.8666666666667 276.73333333333335 274.53333333333336 282.26666666666665 269.6 289.2 C 264.6666666666667 296.1333333333333 261.06666666666666 304.1333333333333 258.8 313.2 C 258.4995295166551 314.40188193337946 258.2189742931694 315.61079278200333 257.9583343295429 316.8267325458716 C 256.28349267732443 316.7689108486239 254.6307145674768 316.74 253 316.74 C 245.83333333333334 316.74 239.09 317.29 232.77 318.39 C 228.7681951934409 319.08745740914316 224.97719273183733 320.10663351334927 221.39699261518928 321.44752831261826 C 222.12970173195157 316.94035776636525 223.06403752688846 312.39118166215917 224.2 307.8 C 227.4 294.8666666666667 232.73333333333332 283.1333333333333 240.2 272.6 C 247.66666666666666 262.06666666666666 257.53333333333336 253.4 269.8 246.6 C 282.06666666666666 239.8 297.1333333333333 236.4 315 236.4 C 328.06666666666666 236.4 340.06666666666666 239.26666666666668 351 245 C 361.93333333333334 250.73333333333332 370.46666666666664 259.3333333333333 376.6 270.8 C 376.6 270.8 377 270.8 377 270.8 C 377 270.8 377 241.2 377 241.2 C 377 241.2 409 241.2 409 241.2 C 409 241.2 409 430.4 409 430.4 C 409 464.26666666666665 401.26666666666665 489.59999999999997 385.8 506.4 C 370.33333333333337 523.2 346.06666666666666 531.6 313 531.6 C 303.40000000000003 531.6 293.6 530.5333333333333 283.6 528.4 C 273.6 526.2666666666667 264.53333333333336 522.8000000000001 256.4 518 C 248.26666666666665 513.2 241.53333333333333 506.93333333333334 236.2 499.2 C 233.5529592949906 495.36179097773635 231.49711940666046 491.096603587871 230.0324803350096 486.404437830404 C 242.2134796031653 487.2487414973839 255.80195662534766 488.1906019084992 269.7503977700481 489.1574125738534 C 272.81965012341806 492.1855567725163 276.369517533402 494.73308591456515 280.4 496.8 C 285.59999999999997 499.4666666666667 291.26666666666665 501.40000000000003 297.4 502.6 C 303.53333333333336 503.8 309.40000000000003 504.4 315 504.4 C 326.2 504.4 335.6666666666667 502.46666666666664 343.4 498.6 C 345.72208739893824 497.4389563005309 347.92395876291124 496.1456749626 350.005614091919 494.7201559862074 C 372.162711284648 496.2559346196038 387.37 497.31 387.37 497.31 C 387.37 497.31 389.72 463.39 389.72 463.39 C 389.72 463.39 382.8709293184951 462.91564366289265 372.4938518399355 462.19694287974835 C 372.8936339553462 460.82902798188815 373.26235000870105 459.43004702197203 373.6 458 C 375.8666666666667 448.40000000000003 377 437.8666666666667 377 426.4 C 377 426.4 377 412.8 377 412.8 C 377 412.8 376.2 412.8 376.2 412.8 C 370.3333333333333 425.6 361.46666666666664 435 349.6 441 C 337.73333333333335 447 325.1333333333333 450 311.8 450 C 296.33333333333337 450 282.8666666666667 447.2 271.4 441.6 C 259.93333333333334 436 250.33333333333331 428.46666666666664 242.6 419 C 234.86666666666667 409.53333333333336 229.06666666666666 398.4666666666667 225.2 385.8 C 223.2064509277069 379.2694082114536 221.72681192916045 372.54388501562397 220.76108300436061 365.6234304125112 C 222.31526226055303 363.50036469025395 224.09156792576616 361.5692212194169 226.09 359.83 C 233.15 353.68333333333334 242.1 350.61 252.94 350.61 C 253.8452342289193 350.61 254.76325340794065 350.6313082501701 255.69405753706403 350.6739247505102 C 256.10294749572205 356.98261650034016 256.938261650034 363.2913082501701 258.2 369.6 C 260.06666666666666 378.93333333333334 263.26666666666665 387.40000000000003 267.8 395 C 272.33333333333337 402.59999999999997 278.33333333333337 408.7333333333333 285.8 413.4 C 293.26666666666665 418.06666666666666 302.6 420.4 313.8 420.4 C 325 420.4 334.53333333333336 418.06666666666666 342.4 413.4 C 350.26666666666665 408.7333333333333 356.59999999999997 402.59999999999997 361.4 395 C 366.2 387.40000000000003 369.73333333333335 378.8 372 369.2 C 372.81407232058945 365.75216428926825 373.48195778607226 362.3043285785365 374.0036563964485 358.85649286780483 C 387.6639512312466 359.8033040807566 396.85 360.44 396.85 360.44 C 396.85 360.44 399.2 326.52 399.2 326.52 C 399.2 326.52 389.06208347147106 325.81758667820316 374.3288199429661 324.79678121518305 C 373.8086563502478 321.0408404282549 373.0990497025924 317.3085800231939 372.2 313.6 C 370.06666666666666 304.8 366.6666666666667 296.8666666666667 362 289.8 C 357.3333333333333 282.73333333333335 351.26666666666665 277.06666666666666 343.8 272.8 Z",
+      "outputCurves": 60,
+      "expectedCurves": 60
+    },
+    {
+      "id": 84,
+      "title": "Selected edge-cases from @hari's boolean-test suite",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 1757,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000005798551245735575,
+      "boundarySamples": 450,
+      "fillSamples": 925,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 375.4 340.4 C 375.4 335.15429456935124 375.0429399809887 329.9532216410789 374.3288199429661 324.79678121518305 C 389.06208347147106 325.81758667820316 399.2 326.52 399.2 326.52 C 399.2 326.52 396.85 360.44 396.85 360.44 C 396.85 360.44 387.6639512312466 359.8033040807566 374.0036563964485 358.85649286780483 C 374.93455213214946 352.70432857853655 375.4 346.55216428926826 375.4 340.4 Z M 255.4 341.6 C 255.4 344.62464158350343 255.49801917902136 347.64928316700684 255.69405753706403 350.6739247505102 C 254.76325340794065 350.6313082501701 253.8452342289193 350.61 252.94 350.61 C 242.1 350.61 233.15 353.68333333333334 226.09 359.83 C 224.09156792576616 361.5692212194169 222.31526226055303 363.50036469025395 220.76108300436061 365.6234304125112 C 219.85369433478687 359.12104456291513 219.4 352.4465677587447 219.4 345.6 C 219.4 337.6878561469276 220.06566420506311 329.63703225113363 221.39699261518928 321.44752831261826 C 224.97719273183733 320.10663351334927 228.7681951934409 319.08745740914316 232.77 318.39 C 239.09 317.29 245.83333333333334 316.74 253 316.74 C 254.6307145674768 316.74 256.28349267732443 316.7689108486239 257.9583343295429 316.8267325458716 C 256.25277810984767 324.78350785455643 255.4 333.04126367259926 255.4 341.6 Z M 362.6 482.6 C 366.91191962729255 476.8129499738969 370.20987024060435 470.01193093381295 372.4938518399355 462.19694287974835 C 382.8709293184951 462.91564366289265 389.72 463.39 389.72 463.39 C 389.72 463.39 387.37 497.31 387.37 497.31 C 387.37 497.31 372.162711284648 496.2559346196038 350.005614091919 494.7201559862074 C 354.8565723035073 491.3982165239223 359.05470093953426 487.35816452851986 362.6 482.6 Z M 267.2 486.4 C 268.00966598466294 487.3596041299709 268.85979857467896 488.27874165458866 269.7503977700481 489.1574125738534 C 255.80195662534766 488.1906019084992 242.2134796031653 487.2487414973839 230.0324803350096 486.404437830404 C 228.5461227078356 481.6426937962816 227.6686292628324 476.44121451948024 227.4 470.8 C 227.4 470.8 261.4 470.8 261.4 470.8 C 261.6666666666667 476.93333333333334 263.6 482.1333333333333 267.2 486.4 Z",
+      "outputCurves": 25,
+      "expectedCurves": 25
+    },
+    {
+      "id": 85,
+      "title": "Selected edge-cases from @hari's boolean-test suite",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 1257,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000004441627929194967,
+      "boundarySamples": 612,
+      "fillSamples": 1033,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 283.8 227.2 C 283.8 227.2 283.8 165.2 283.8 165.2 C 283.8 165.2 317.8 165.2 317.8 165.2 C 317.8 165.2 317.8 227.2 317.8 227.2 C 317.8 227.2 359 227.2 359 227.2 C 359 227.2 359 234.3453556368759 359 241.6616943632968 C 384.5304333080901 217.83932174824832 402.62 200.96 402.62 200.96 C 402.62 200.96 425.82 225.82 425.82 225.82 C 425.82 225.82 351.0995738154594 295.5393338815094 317.8 326.61014307655 C 317.8 331.87952986326053 317.8 337.1017956502513 317.8 342.1336896551724 C 352.4813472129429 344.08700691199334 432.61 348.6 432.61 348.6 C 432.61 348.6 463.72 381.94 463.72 381.94 C 463.72 381.94 352.79 373.29 352.79 373.29 C 352.79 373.29 349.8194748923864 385.9438786507854 345.5807617440955 404 C 349.87210883602194 404 359 404 359 404 C 359 404 359 434 359 434 C 359 434 346.17320826913704 434 338.538197508435 434 C 328.4146548841313 477.1243888683715 316.61 527.41 316.61 527.41 C 316.61 527.41 287.14 495.82 287.14 495.82 C 287.14 495.82 295.2889456311142 462.48002152749626 303.18457815990746 430.17642908092637 C 300.11534669144294 428.99070723325264 297.4538206381404 427.46523087294383 295.2 425.6 C 291.3333333333333 422.40000000000003 288.46666666666664 417.8666666666667 286.6 412 C 284.73333333333335 406.1333333333333 283.8 398.4 283.8 388.8 C 283.8 388.8 283.8 380.41457317452785 283.8 367.8771244536462 C 278.28066405084473 367.470824130727 274.33 367.18 274.33 367.18 C 274.33 367.18 217 420.66 217 420.66 C 217 420.66 193.81 395.8 193.81 395.8 C 193.81 395.8 236.8199288857411 355.66756120828603 283.8 311.8305943201954 C 283.8 283.0465100762323 283.8 257.2 283.8 257.2 C 283.8 257.2 248.6 257.2 248.6 257.2 C 248.6 257.2 248.6 227.2 248.6 227.2 C 248.6 227.2 283.8 227.2 283.8 227.2 Z M 317.8 257.2 C 317.8 257.2 317.8 266.50505153032344 317.8 280.1052938077678 C 326.2365411269375 272.23318196842826 334.49611988939506 264.5261931935744 342.3476000821187 257.2 C 330.9162619639237 257.2 317.8 257.2 317.8 257.2 Z",
+      "outputCurves": 34,
+      "expectedCurves": 34
+    },
+    {
+      "id": 86,
+      "title": "Selected edge-cases from @hari's boolean-test suite",
+      "op": "subtract",
+      "derivedOperands": false,
+      "elapsedMs": 1219,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000004453646226920682,
+      "boundarySamples": 468,
+      "fillSamples": 937,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 283.8 227.2 C 283.8 227.2 283.8 165.2 283.8 165.2 C 283.8 165.2 317.8 165.2 317.8 165.2 C 317.8 165.2 317.8 227.2 317.8 227.2 C 317.8 227.2 359 227.2 359 227.2 C 359 227.2 359 234.3453556368759 359 241.6616943632968 C 353.7345627548264 246.57485844954562 348.15262382200535 251.78334933442113 342.3476000821187 257.2 C 330.9162619639237 257.2 317.8 257.2 317.8 257.2 C 317.8 257.2 317.8 266.50505153032344 317.8 280.1052938077678 C 306.5982963170274 290.5575707369876 295.0846173298697 301.30095090967 283.8 311.8305943201954 C 283.8 283.0465100762323 283.8 257.2 283.8 257.2 C 283.8 257.2 248.6 257.2 248.6 257.2 C 248.6 257.2 248.6 227.2 248.6 227.2 C 248.6 227.2 283.8 227.2 283.8 227.2 Z M 283.8 388.8 C 283.8 388.8 283.8 380.41457317452785 283.8 367.8771244536462 C 296.5889041478281 368.818566672948 317.8 370.38 317.8 370.38 C 317.8 370.38 310.6041322354879 399.82062793152 303.18457815990746 430.17642908092637 C 300.11534669144294 428.99070723325264 297.4538206381404 427.46523087294383 295.2 425.6 C 291.3333333333333 422.40000000000003 288.46666666666664 417.8666666666667 286.6 412 C 284.73333333333335 406.1333333333333 283.8 398.4 283.8 388.8 Z M 359 434 C 359 434 346.17320826913704 434 338.538197508435 434 C 341.05942544544115 423.2600428509843 343.47638421511994 412.96425275748265 345.5807617440955 404 C 349.87210883602194 404 359 404 359 404 C 359 404 359 434 359 434 Z M 317.8 326.61014307655 C 317.8 331.87952986326053 317.8 337.1017956502513 317.8 342.1336896551724 C 308.2217665530745 341.5942259322996 302.11 341.25 302.11 341.25 C 302.11 341.25 308.25247624186204 335.51864414681006 317.8 326.61014307655 Z",
+      "outputCurves": 26,
+      "expectedCurves": 26
+    },
+    {
+      "id": 87,
+      "title": "Selected edge-cases from @hari's boolean-test suite",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 1243,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.0000044416278008567145,
+      "boundarySamples": 369,
+      "fillSamples": 871,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 283.8 367.8771244536462 C 283.8 352.75821199535386 283.8 331.60144841303975 283.8 311.8305943201954 C 295.0846173298697 301.30095090967 306.5982963170274 290.5575707369876 317.8 280.1052938077678 C 317.8 293.13343090131804 317.8 310.10299787963305 317.8 326.61014307655 C 308.25247624186204 335.51864414681006 302.11 341.25 302.11 341.25 C 302.11 341.25 308.2217665530745 341.5942259322996 317.8 342.1336896551724 C 317.8 352.88355345301534 317.8 362.76456580083527 317.8 370.3799999999542 C 317.8 379.6790156211314 317.8 385.6 317.8 385.6 C 317.8 389.6 318.1333333333333 392.8 318.8 395.2 C 319.4666666666667 397.6 320.73333333333335 399.4666666666667 322.6 400.8 C 324.46666666666664 402.1333333333333 327.06666666666666 403 330.4 403.4 C 333.7333333333333 403.8 338.06666666666666 404 343.4 404 C 343.4 404 344.26200738331255 404 345.5807617440955 404 C 343.47638421511994 412.96425275748265 341.05942544544115 423.2600428509843 338.538197508435 434 C 335.303013996218 434 333 434 333 434 C 324.2 434 316.6666666666667 433.4 310.4 432.2 C 307.7860771261816 431.69946157735393 305.38093651281747 431.02493793766274 303.18457815990746 430.17642908092637 C 310.6041322354879 399.82062793152 317.8 370.38 317.8 370.38 C 317.8 370.38 296.5889041478281 368.818566672948 283.8 367.8771244536462 Z M 359 257.2 C 359 257.2 351.1763177844042 257.2 342.3476000821187 257.2 C 348.15262382200535 251.78334933442113 353.7345627548264 246.57485844954562 359 241.6616943632968 C 359 249.33676649293406 359 257.2 359 257.2 Z",
+      "outputCurves": 21,
+      "expectedCurves": 20
+    },
+    {
+      "id": 88,
+      "title": "Selected edge-cases from @hari's boolean-test suite",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 2019,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 89,
+      "title": "Selected edge-cases from @hari's boolean-test suite",
+      "op": "subtract",
+      "derivedOperands": false,
+      "elapsedMs": 1721,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 90,
+      "title": "Selected edge-cases from @hari's boolean-test suite",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 2958,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 91,
+      "title": "Selected edge-cases from @hari's boolean-test suite",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 3950,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000005060228413261407,
+      "boundarySamples": 1044,
+      "fillSamples": 1321,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 275.2 205 C 287.4666666666667 199.26666666666668 301.73333333333335 196.4 318 196.4 C 329.73333333333335 196.4 340.73333333333335 197.8 351 200.6 C 361.26666666666665 203.4 370.3333333333333 207.73333333333335 378.2 213.6 C 386.06666666666666 219.46666666666667 392.53333333333336 226.86666666666667 397.6 235.8 C 397.6867911676359 235.95302653241063 397.7730345968979 236.10654211694077 397.85873028778605 236.26054675359043 C 399.8738202659516 222.2973721436674 397.94091017002296 210.42385655913728 392.06 200.64 C 385.4 189.56666666666666 374.46 181.33666666666667 359.24 175.95 C 359.24 175.95 366.42 141.89 366.42 141.89 C 390.7 150.82333333333332 408.0433333333333 164.22 418.45 182.08 C 428.8566666666667 199.94666666666666 431.34 221.79666666666665 425.9 247.63 C 422.6533333333333 263.02333333333337 417.30333333333334 276.1333333333333 409.85 286.96 C 402.39000000000004 297.78666666666663 393.25333333333333 306.21999999999997 382.44 312.26 C 371.6333333333333 318.29333333333335 359.4766666666667 322 345.97 323.38 C 341.89000000000004 323.79333333333335 337.7366666666667 324 333.51 324 C 323.7366666666667 324 313.57 322.88666666666666 303.01 320.66 C 287.87 317.47333333333336 274.12333333333333 312.5366666666667 261.77 305.85 C 259.955672728246 304.8669538149806 258.18714710550836 303.8480284731964 256.46442313178716 302.7932239746474 C 256.42147437726237 304.2554385735371 256.4 305.7243639153213 256.4 307.2 C 256.4 316.8 257.5333333333333 326.1333333333333 259.8 335.2 C 262.06666666666666 344.26666666666665 265.59999999999997 352.3333333333333 270.4 359.4 C 275.2 366.46666666666664 281.4666666666667 372.1333333333333 289.2 376.4 C 296.93333333333334 380.6666666666667 306.1333333333333 382.8 316.8 382.8 C 333.6 382.8 346.73333333333335 378.40000000000003 356.2 369.6 C 365.66666666666663 360.8 371.46666666666664 348.4 373.6 332.4 C 373.6 332.4 408.4 332.4 408.4 332.4 C 404.6666666666667 358 395.1333333333333 377.73333333333335 379.8 391.6 C 364.4666666666667 405.46666666666664 343.6 412.4 317.2 412.4 C 301.4666666666667 412.4 287.53333333333336 409.8666666666667 275.4 404.8 C 263.26666666666665 399.73333333333335 253.13333333333333 392.5333333333333 245 383.2 C 236.86666666666667 373.8666666666667 230.73333333333335 362.73333333333335 226.6 349.8 C 222.46666666666667 336.8666666666667 220.4 322.66666666666663 220.4 307.2 C 220.4 294.5489800198949 221.73809709314915 282.56700858636424 224.4142912794474 271.2540856994082 C 219.81990721897893 263.5964854832616 216.44847679249645 255.16845691679214 214.3 245.97 C 211.21333333333334 232.79 211.34666666666666 218.23999999999998 214.7 202.32 C 217.12 190.84 220.7566666666667 180.36333333333332 225.61 170.89 C 230.47 161.42333333333332 236.58 153.44666666666666 243.94 146.96 C 251.29999999999998 140.47333333333333 259.87333333333333 135.67 269.66 132.55 C 276.68666666666667 130.31 284.3566666666667 129.19 292.67 129.19 C 295.93666666666667 129.19 299.3 129.36333333333334 302.76 129.71 C 302.76 129.71 295.5 164.16 295.5 164.16 C 295.34 164.15333333333334 295.18 164.15 295.02 164.15 C 281.9 164.15 270.99 167.54333333333335 262.29 174.33 C 253.49 181.19666666666666 247.60666666666665 191.67333333333332 244.64 205.76 C 242.74925569082617 214.7211328969001 242.32536496218134 222.85042983927235 243.3683278140655 230.14789082711678 C 243.77347962497572 229.6273935021284 244.18403702028724 229.11142989308948 244.6 228.6 C 252.73333333333335 218.6 262.93333333333334 210.73333333333332 275.2 205 Z M 270.2 251.2 C 267.44351230968454 255.37198136912605 265.1241029031275 259.8977880155804 263.24177178032886 264.77741993936297 C 268.5330386235185 269.20150152442767 274.6291146967422 272.9690282113067 281.53 276.08 C 290.6166666666667 280.17333333333335 300.25 283.29333333333335 310.43 285.44 C 318.40999999999997 287.12 326.37333333333333 287.96 334.32 287.96 C 335.72 287.96 337.12333333333333 287.93333333333334 338.53 287.88 C 347.8633333333333 287.53333333333336 356.4833333333333 285.74 364.39 282.5 C 372.2966666666667 279.26 379.1333333333333 274.29333333333335 384.9000000000083 267.6 C 377.9175032811587 267.6 372 267.6 372 267.6 C 369.3333333333333 254.53333333333333 363.73333333333335 244.4 355.2 237.2 C 346.66666666666663 230 335.2 226.4 320.8 226.4 C 308.5333333333333 226.4 298.26666666666665 228.66666666666666 290 233.2 C 281.73333333333335 237.73333333333332 275.1333333333333 243.73333333333332 270.2 251.2 Z",
+      "outputCurves": 58,
+      "expectedCurves": 58
+    },
+    {
+      "id": 92,
+      "title": "Selected edge-cases from @hari's boolean-test suite",
+      "op": "subtract",
+      "derivedOperands": false,
+      "elapsedMs": 1351,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000004620265587984932,
+      "boundarySamples": 630,
+      "fillSamples": 1045,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 275.2 205 C 287.4666666666667 199.26666666666668 301.73333333333335 196.4 318 196.4 C 329.73333333333335 196.4 340.73333333333335 197.8 351 200.6 C 361.26666666666665 203.4 370.3333333333333 207.73333333333335 378.2 213.6 C 386.06666666666666 219.46666666666667 392.53333333333336 226.86666666666667 397.6 235.8 C 397.6867911676359 235.95302653241063 397.7730345968979 236.10654211694077 397.85873028778605 236.26054675359043 C 397.59177567309393 238.1103569051273 397.2555322438319 239.99684132059716 396.85 241.92 C 394.65000000000003 252.35333333333332 390.6666666666667 260.91333333333336 384.9000000000083 267.6 C 377.9175032811587 267.6 372 267.6 372 267.6 C 369.3333333333333 254.53333333333333 363.73333333333335 244.4 355.2 237.2 C 346.66666666666663 230 335.2 226.4 320.8 226.4 C 308.5333333333333 226.4 298.26666666666665 228.66666666666666 290 233.2 C 281.73333333333335 237.73333333333332 275.1333333333333 243.73333333333332 270.2 251.2 C 267.44351230968454 255.37198136912605 265.1241029031275 259.8977880155804 263.24177178032886 264.77741993936297 C 261.57093146989274 263.3804135006311 259.9803408764498 261.9179401875101 258.47 260.39 C 252.18333333333334 254.02333333333334 247.67333333333332 246.32666666666668 244.94 237.3 C 244.24668026340683 235.01204486924254 243.722789534762 232.62800847828146 243.3683278140655 230.14789082711678 C 243.77347962497572 229.6273935021284 244.18403702028724 229.11142989308948 244.6 228.6 C 252.73333333333335 218.6 262.93333333333334 210.73333333333332 275.2 205 Z M 220.4 307.2 C 220.4 294.5489800198949 221.73809709314915 282.56700858636424 224.4142912794474 271.2540856994082 C 226.40629575045583 274.57422038275115 228.62819865730668 277.74952514961507 231.08 280.78 C 237.9960449923802 289.32836811146996 246.45751936964257 296.66610943635243 256.46442313178716 302.7932239746474 C 256.42147437726237 304.2554385735371 256.4 305.7243639153213 256.4 307.2 C 256.4 316.8 257.5333333333333 326.1333333333333 259.8 335.2 C 262.06666666666666 344.26666666666665 265.59999999999997 352.3333333333333 270.4 359.4 C 275.2 366.46666666666664 281.4666666666667 372.1333333333333 289.2 376.4 C 296.93333333333334 380.6666666666667 306.1333333333333 382.8 316.8 382.8 C 333.6 382.8 346.73333333333335 378.40000000000003 356.2 369.6 C 365.66666666666663 360.8 371.46666666666664 348.4 373.6 332.4 C 373.6 332.4 408.4 332.4 408.4 332.4 C 404.6666666666667 358 395.1333333333333 377.73333333333335 379.8 391.6 C 364.4666666666667 405.46666666666664 343.6 412.4 317.2 412.4 C 301.4666666666667 412.4 287.53333333333336 409.8666666666667 275.4 404.8 C 263.26666666666665 399.73333333333335 253.13333333333333 392.5333333333333 245 383.2 C 236.86666666666667 373.8666666666667 230.73333333333335 362.73333333333335 226.6 349.8 C 222.46666666666667 336.8666666666667 220.4 322.66666666666663 220.4 307.2 Z",
+      "outputCurves": 35,
+      "expectedCurves": 35
+    },
+    {
+      "id": 93,
+      "title": "Selected edge-cases from @hari's boolean-test suite",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 792,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000005060228528271139,
+      "boundarySamples": 234,
+      "fillSamples": 781,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 226.4 263.8 C 230.1954280427642 251.02205892269384 235.85153731411938 239.80468919839942 243.3683278140655 230.14789082711678 C 243.722789534762 232.62800847828146 244.24668026340683 235.01204486924254 244.94 237.3 C 247.67333333333332 246.32666666666668 252.18333333333334 254.02333333333334 258.47 260.39 C 259.9803408764498 261.9179401875101 261.57093146989274 263.3804135006311 263.24177178032886 264.77741993936297 C 261.75526258321645 268.63094902644605 260.5413386564402 272.70514237999174 259.6 277 C 257.7693612481392 285.3522893053648 256.72416895873494 293.9500306302473 256.46442313178716 302.7932239746474 C 246.45751936964257 296.66610943635243 237.9960449923802 289.32836811146996 231.08 280.78 C 228.62819865730668 277.74952514961507 226.40629575045583 274.57422038275115 224.4142912794474 271.2540856994082 C 225.00991260524532 268.7362496757456 225.67181551209617 266.2515544426096 226.4 263.8 Z M 407.2 267.6 C 407.2 267.6 394.9474315357977 267.6 384.9000000000083 267.6 C 390.6666666666667 260.91333333333336 394.65000000000003 252.35333333333332 396.85 241.92 C 397.2555322438319 239.99684132059716 397.59177567309393 238.1103569051273 397.85873028778605 236.26054675359043 C 402.7757498768855 245.09697490266612 405.8895064476235 255.543459318136 407.2 267.6 Z",
+      "outputCurves": 13,
+      "expectedCurves": 13
+    },
+    {
+      "id": 94,
+      "title": "Selected edge-cases from @hari's boolean-test suite",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 5253,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000006443707162590117,
+      "boundarySamples": 1638,
+      "fillSamples": 1717,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 356.6 336 C 356.6 336 356.6 301.2 356.6 301.2 C 352.3333333333333 304.4 346.73333333333335 306.73333333333335 339.8 308.2 C 332.8666666666667 309.66666666666663 325.59999999999997 310.8666666666667 318 311.8 C 316.11569481099895 312.0314059004036 314.2272915079105 312.271008028982 312.33479009073466 312.51880638573516 C 311.53324090288993 319.0422255034125 311.42497753931167 325.1659567081674 312.01 330.89 C 312.69666666666666 337.54333333333335 314.80333333333334 343.45666666666665 318.33 348.63 C 321.86333333333334 353.81 327.69666666666666 357.6933333333333 335.83 360.28 C 339.2033333333333 361.34666666666664 342.38 361.88 345.36 361.88 C 345.6998870212589 361.88 346.0371234245487 361.8731841252223 346.37170920986944 361.85955237566685 C 349.1809094418766 358.55296590770035 351.3903397052535 355.06644844914473 353 351.4 C 355.40000000000003 345.93333333333334 356.6 340.8 356.6 336 Z M 293.4 382.8 C 296.7889496458995 382.8 300.0314072037577 382.65961174896034 303.1273726735745 382.37883524688107 C 302.59638912369826 381.8880542986557 302.0839315658401 381.3884425496953 301.59 380.88 C 295.68333333333334 374.8066666666667 291.49333333333334 367.95 289.02 360.31 C 286.55333333333334 352.67 285.44666666666666 344.48333333333335 285.7 335.75 C 285.88913926688656 329.39686052252733 286.3111248562953 323.0066773119262 286.9659567682261 316.5794503681965 C 282.38262791357215 317.68562447454514 278.12730899083016 319.092474351813 274.2 320.8 C 268.06666666666666 323.4666666666667 263.06666666666666 327.26666666666665 259.2 332.2 C 255.33333333333334 337.1333333333333 253.4 343.8666666666667 253.4 352.4 C 253.4 358 254.53333333333333 362.73333333333335 256.8 366.6 C 259.06666666666666 370.46666666666664 262 373.59999999999997 265.6 376 C 269.2 378.40000000000003 273.46666666666664 380.1333333333333 278.4 381.2 C 283.3333333333333 382.26666666666665 288.3333333333333 382.8 293.4 382.8 Z M 282.7181566256932 199.44453116364815 C 292.361062763255 197.41484372121604 302.4550105546906 196.4 313 196.4 C 322.3333333333333 196.4 331.6 197.06666666666666 340.8 198.4 C 350 199.73333333333335 358.33333333333337 202.46666666666667 365.8 206.6 C 373.26666666666665 210.73333333333335 379.26666666666665 216.53333333333333 383.8 224 C 385.405004683715 226.64353712611876 386.725887304774 229.57119631489343 387.7626478631771 232.782977566324 C 393.651762659466 234.5195891911751 398.20754670507364 235.4885966690671 401.43 235.69 C 401.60333333333335 235.70333333333335 401.77666666666664 235.71 401.95 235.71 C 405.51666666666665 235.71 408.0733333333333 233.28333333333333 409.62 228.43 C 410.50666666666666 225.63666666666668 410.92 222.13 410.86 217.91 C 410.86 217.91 436.02 225.91 436.02 225.91 C 437.5466666666667 232.55 436.7366666666667 240.82666666666668 433.59 250.74 C 430.9233333333333 259.12666666666667 426.4533333333333 265.05 420.18 268.51 C 417.00666666666666 270.25666666666666 413.27333333333337 271.13 408.98 271.13 C 404.77333333333337 271.13 400.03000000000003 270.29333333333335 394.75 268.62 C 402.59666666666664 280.9066666666667 406.99333333333334 293.7033333333333 407.94 307.01 C 408.88666666666666 320.3233333333333 407.18 333.84333333333336 402.82 347.57 C 400 356.46333333333337 396.3833333333333 364.5466666666667 391.97 371.82 C 391.732839439833 372.21144050097155 391.4928693328816 372.5989514983649 391.25008967914573 372.98253299218004 C 391.4526998968148 374.604857679125 391.70267000376623 376.01068001506496 392 377.2 C 392.93333333333334 380.93333333333334 396.06666666666666 382.8 401.4 382.8 C 404.3333333333333 382.8 407.8 382.1333333333333 411.8 380.8 C 411.8 380.8 411.8 407.2 411.8 407.2 C 405.93333333333334 410.66666666666663 397.8 412.4 387.4 412.4 C 378.59999999999997 412.4 371.59999999999997 409.93333333333334 366.4 405 C 364.12600887114417 402.84262380082913 362.3492327090302 400.08603982122577 361.0696715136581 396.73024806118997 C 358.85397256274416 397.3703641618714 356.56408205819145 397.8669481414747 354.2 398.22 C 351.96 398.56 349.64666666666665 398.73 347.26 398.73 C 344.6838165609792 398.73 342.0247604337817 398.5337528703593 339.2828316184075 398.14125861107794 C 335.07015521168694 400.86671896850925 330.64254467221775 403.15296609814993 326 405 C 313.59999999999997 409.93333333333334 300.2 412.4 285.8 412.4 C 276.4666666666667 412.4 267.6666666666667 411.4 259.4 409.4 C 251.13333333333333 407.4 243.86666666666667 404.06666666666666 237.6 399.4 C 231.33333333333331 394.7333333333333 226.4 388.7333333333333 222.8 381.4 C 219.20000000000002 374.06666666666666 217.4 365.2 217.4 354.8 C 217.4 351.34693131885444 217.57321983124092 348.07863045769915 217.91965949372278 344.9950974165342 C 217.31941214654012 344.42293457578216 216.73619231529918 343.84123543693744 216.17 343.25 C 209.23666666666668 336.01 204.37666666666667 327.75 201.59 318.47 C 198.80333333333334 309.19 197.84 299.23 198.7 288.59 C 199.56 277.95 201.72666666666666 267.1666666666667 205.2 256.24 C 208.02666666666667 247.34666666666666 211.46666666666667 238.71666666666667 215.52 230.35 C 219.58 221.99 224.71 214.87666666666667 230.91 209.01 C 237.11 203.14333333333335 244.45333333333335 199.18 252.94 197.12 C 256.0133333333333 196.37333333333333 259.2766666666667 196 262.73 196 C 268.79883419184347 196 275.4615530670745 197.14817705454936 282.7181566256932 199.44453116364815 Z M 259.4 265.6 C 259.4 265.6 243.78785648739392 265.6 233.72204332806137 265.6 C 233.54010881951993 266.1426835462262 233.36276104349946 266.68601687955953 233.19 267.23 C 228.83 280.95666666666665 227.8 293.21999999999997 230.1 304.02 C 230.75276664859555 307.07819288258213 231.88336835634684 309.91855704545975 233.4918051232538 312.5410924886329 C 235.27292960324732 310.8263204279995 237.17566122882937 309.2459562651219 239.2 307.8 C 245.73333333333332 303.1333333333333 253.20000000000002 299.6 261.6 297.2 C 270 294.8 278.59999999999997 292.8 287.4 291.2 C 288.40434544893253 290.99913091021347 289.403287095468 290.80366562282404 290.3968249396063 290.61360413783177 C 290.85193666609035 287.9257733847607 291.33632835288824 285.2945720054835 291.85 282.72 C 293.50333333333333 274.43333333333334 294.4733333333333 266.9766666666667 294.76 260.35 C 295.0466666666667 253.73 294.1666666666667 248.13333333333333 292.12 243.56 C 290.0733333333333 238.99333333333334 286 235.74333333333334 279.9 233.81 C 279.15931743454104 233.5743778584107 278.429255074585 233.35803272849054 277.70981292013187 233.16096461023952 C 276.7862390154195 233.6175202905836 275.8829680420422 234.0971987538371 275 234.6 C 265.40000000000003 240.06666666666666 260.2 250.4 259.4 265.6 Z M 357 260.8 C 357 260.3057422203631 356.9938654665888 259.817911094776 356.9815963997663 259.3365066232388 C 355.1453797667072 258.34055096978585 353.3015143001184 257.5483820953729 351.45 256.96 C 351.45 256.96 318.28 246.42 318.28 246.42 C 320.04 251.45333333333332 320.57 257.49666666666667 319.87 264.55 C 319.16333333333336 271.60333333333335 318.1066666666667 278.8933333333333 316.7 286.42 C 316.6832155260116 286.5093852411929 316.66644609573456 286.59878505598107 316.6496917091688 286.68819944436456 C 323.9648093221716 285.7781389026667 330.4815787524487 284.5487390878785 336.2 283 C 342.6 281.26666666666665 347.6666666666667 278.7333333333333 351.4 275.4 C 355.1333333333333 272.06666666666666 357 267.2 357 260.8 Z",
+      "outputCurves": 91,
+      "expectedCurves": 91
+    },
+    {
+      "id": 95,
+      "title": "Selected edge-cases from @hari's boolean-test suite",
+      "op": "subtract",
+      "derivedOperands": false,
+      "elapsedMs": 3043,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000005562847913400069,
+      "boundarySamples": 1278,
+      "fillSamples": 1476,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 356.6 336 C 356.6 336 356.6 301.2 356.6 301.2 C 352.3333333333333 304.4 346.73333333333335 306.73333333333335 339.8 308.2 C 332.8666666666667 309.66666666666663 325.59999999999997 310.8666666666667 318 311.8 C 316.11569481099895 312.0314059004036 314.2272915079105 312.271008028982 312.33479009073466 312.51880638573516 C 312.46492042694297 311.4597388501624 312.6133237300314 310.39013672158404 312.78 309.31 C 313.96574903151924 301.6685062413201 315.2556462679089 294.12790605610826 316.6496917091688 286.68819944436456 C 323.9648093221716 285.7781389026667 330.4815787524487 284.5487390878785 336.2 283 C 342.6 281.26666666666665 347.6666666666667 278.7333333333333 351.4 275.4 C 355.1333333333333 272.06666666666666 357 267.2 357 260.8 C 357 260.3057422203631 356.9938654665888 259.817911094776 356.9815963997663 259.3365066232388 C 359.68092709391567 260.8006114663031 362.3637282939936 262.7051092585569 365.03 265.05 C 369.51666666666665 268.99 373.21666666666664 274.0833333333333 376.13 280.33 C 379.04333333333335 286.57 380.75 293.96666666666664 381.25 302.52 C 381.75 311.0733333333333 380.30333333333334 320.68666666666667 376.91 331.36 C 375.37666666666667 336.18666666666667 373.3566666666667 340.79 370.85 345.17 C 368.33666666666664 349.55 365.3933333333333 353.09333333333336 362.02 355.8 C 358.64 358.5 354.7633333333333 360.3466666666667 350.39 361.34 C 349.0959775017433 361.6299469498168 347.7565472383664 361.8031310750391 346.37170920986944 361.85955237566685 C 349.1809094418766 358.55296590770035 351.3903397052535 355.06644844914473 353 351.4 C 355.40000000000003 345.93333333333334 356.6 340.8 356.6 336 Z M 293.4 382.8 C 296.7889496458995 382.8 300.0314072037577 382.65961174896034 303.1273726735745 382.37883524688107 C 308.93897413128167 387.75042025132507 316.9698499067568 392.064141835698 327.22 395.32 C 331.4049236413889 396.6487327390257 335.4258675141914 397.5891522760517 339.2828316184075 398.14125861107794 C 335.07015521168694 400.86671896850925 330.64254467221775 403.15296609814993 326 405 C 313.59999999999997 409.93333333333334 300.2 412.4 285.8 412.4 C 276.4666666666667 412.4 267.6666666666667 411.4 259.4 409.4 C 251.13333333333333 407.4 243.86666666666667 404.06666666666666 237.6 399.4 C 231.33333333333331 394.7333333333333 226.4 388.7333333333333 222.8 381.4 C 219.20000000000002 374.06666666666666 217.4 365.2 217.4 354.8 C 217.4 351.34693131885444 217.57321983124092 348.07863045769915 217.91965949372278 344.9950974165342 C 224.6697678967188 351.42938024572123 233.57321473214455 356.6576811068765 244.63 360.68 C 244.63 360.68 254.92 328.28 254.92 328.28 C 244.7097964202316 324.4320534261641 237.56706479464955 319.18575092237506 233.4918051232538 312.5410924886329 C 235.27292960324732 310.8263204279995 237.17566122882937 309.2459562651219 239.2 307.8 C 245.73333333333332 303.1333333333333 253.20000000000002 299.6 261.6 297.2 C 270 294.8 278.59999999999997 292.8 287.4 291.2 C 288.40434544893253 290.99913091021347 289.403287095468 290.80366562282404 290.3968249396063 290.61360413783177 C 289.38708768714076 296.5769812203454 288.5214793739387 302.8191131744015 287.8 309.34 C 287.48930293942584 311.7583496352294 287.21128852883453 314.1714997579616 286.9659567682261 316.5794503681965 C 282.38262791357215 317.68562447454514 278.12730899083016 319.092474351813 274.2 320.8 C 268.06666666666666 323.4666666666667 263.06666666666666 327.26666666666665 259.2 332.2 C 255.33333333333334 337.1333333333333 253.4 343.8666666666667 253.4 352.4 C 253.4 358 254.53333333333333 362.73333333333335 256.8 366.6 C 259.06666666666666 370.46666666666664 262 373.59999999999997 265.6 376 C 269.2 378.40000000000003 273.46666666666664 380.1333333333333 278.4 381.2 C 283.3333333333333 382.26666666666665 288.3333333333333 382.8 293.4 382.8 Z M 282.7181566256932 199.44453116364815 C 292.361062763255 197.41484372121604 302.4550105546906 196.4 313 196.4 C 322.3333333333333 196.4 331.6 197.06666666666666 340.8 198.4 C 350 199.73333333333335 358.33333333333337 202.46666666666667 365.8 206.6 C 373.26666666666665 210.73333333333335 379.26666666666665 216.53333333333333 383.8 224 C 385.405004683715 226.64353712611876 386.725887304774 229.57119631489343 387.7626478631771 232.782977566324 C 386.6340656603025 232.45017560186795 385.4565163725768 232.08918307975995 384.23 231.7 C 384.23 231.7 282.83 199.48 282.83 199.48 C 282.7927032131897 199.46814677460276 282.7554220884208 199.45632382915213 282.7181566256932 199.44453116364815 Z M 259.4 265.6 C 259.4 265.6 243.78785648739392 265.6 233.72204332806137 265.6 C 235.2391087859935 261.0748196525878 237.07509434330635 256.5948196525877 239.23 252.16 C 241.65 247.18666666666667 244.67000000000002 242.96666666666667 248.29 239.5 C 251.91 236.03333333333333 256.30333333333334 233.65333333333334 261.47 232.36 C 263.3566666666667 231.88666666666668 265.37 231.65 267.51 231.65 C 270.6324611143981 231.65 274.03239875444206 232.15365487007983 277.70981292013187 233.16096461023952 C 276.7862390154195 233.6175202905836 275.8829680420422 234.0971987538371 275 234.6 C 265.40000000000003 240.06666666666666 260.2 250.4 259.4 265.6 Z M 366.4 405 C 364.12600887114417 402.84262380082913 362.3492327090302 400.08603982122577 361.0696715136581 396.73024806118997 C 366.42682624663047 395.1825644298002 371.3502690754111 392.79581507607014 375.84 389.57 C 381.84509805353656 385.25541274304726 386.9817946132518 379.7262570737739 391.25008967914573 372.98253299218004 C 391.4526998968148 374.604857679125 391.70267000376623 376.01068001506496 392 377.2 C 392.93333333333334 380.93333333333334 396.06666666666666 382.8 401.4 382.8 C 404.3333333333333 382.8 407.8 382.1333333333333 411.8 380.8 C 411.8 380.8 411.8 407.2 411.8 407.2 C 405.93333333333334 410.66666666666663 397.8 412.4 387.4 412.4 C 378.59999999999997 412.4 371.59999999999997 409.93333333333334 366.4 405 Z",
+      "outputCurves": 71,
+      "expectedCurves": 71
+    },
+    {
+      "id": 96,
+      "title": "Selected edge-cases from @hari's boolean-test suite",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 2427,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.00000775604041059512,
+      "boundarySamples": 918,
+      "fillSamples": 1236,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 341.8 366.6 C 343.468494933313 365.06322835089594 344.9923980032695 363.4830791427849 346.37170920986944 361.85955237566685 C 347.7565472383664 361.8031310750391 349.0959775017433 361.6299469498168 350.39 361.34 C 354.7633333333333 360.3466666666667 358.64 358.5 362.02 355.8 C 365.3933333333333 353.09333333333336 368.33666666666664 349.55 370.85 345.17 C 373.3566666666667 340.79 375.37666666666667 336.18666666666667 376.91 331.36 C 380.30333333333334 320.68666666666667 381.75 311.0733333333333 381.25 302.52 C 380.75 293.96666666666664 379.04333333333335 286.57 376.13 280.33 C 373.21666666666664 274.0833333333333 369.51666666666665 268.99 365.03 265.05 C 362.3637282939936 262.7051092585569 359.68092709391567 260.8006114663031 356.9815963997663 259.3365066232388 C 356.8085187992249 252.54541712725242 355.4146533326362 247.03324825283948 352.8 242.8 C 350 238.26666666666668 346.40000000000003 234.8 342 232.4 C 337.59999999999997 230 332.66666666666663 228.4 327.2 227.6 C 321.73333333333335 226.8 316.3333333333333 226.4 311 226.4 C 297.92445206306326 226.4 286.82772303644055 228.65365487007983 277.70981292013187 233.16096461023952 C 274.03239875444206 232.15365487007983 270.6324611143981 231.65 267.51 231.65 C 265.37 231.65 263.3566666666667 231.88666666666668 261.47 232.36 C 256.30333333333334 233.65333333333334 251.91 236.03333333333333 248.29 239.5 C 244.67000000000002 242.96666666666667 241.65 247.18666666666667 239.23 252.16 C 237.07509434330635 256.5948196525877 235.2391087859935 261.0748196525878 233.72204332806137 265.6 C 228.9333900820452 265.6 225.4 265.6 225.4 265.6 C 225.93333333333334 252.8 228.6 242 233.4 233.2 C 238.2 224.4 244.6 217.26666666666668 252.6 211.8 C 260.6 206.33333333333334 269.8 202.4 280.2 200 C 281.03593980541706 199.80709081413454 281.8753253473148 199.6219345353506 282.7181566256932 199.44453116364815 C 282.7554220884208 199.45632382915213 282.7927032131897 199.46814677460276 282.83 199.48 C 282.83 199.48 384.23 231.7 384.23 231.7 C 385.4565163725768 232.08918307975995 386.6340656603025 232.45017560186795 387.7626478631771 232.782977566324 C 389.6542159543924 238.64286766527502 390.6 245.4485418098337 390.6 253.2 C 390.6 253.2 390.6 359.6 390.6 359.6 C 390.6 365.05145717513926 390.81669655971524 369.51230150586593 391.25008967914573 372.98253299218004 C 386.9817946132518 379.7262570737739 381.84509805353656 385.25541274304726 375.84 389.57 C 371.3502690754111 392.79581507607014 366.42682624663047 395.1825644298002 361.0696715136581 396.73024806118997 C 359.42322383788604 392.41225564029696 358.6 387.10217295323366 358.6 380.8 C 352.7610551296263 387.8067338444485 346.3219990024288 393.5871533814745 339.2828316184075 398.14125861107794 C 335.4258675141914 397.5891522760517 331.4049236413889 396.6487327390257 327.22 395.32 C 316.9698499067568 392.064141835698 308.93897413128167 387.75042025132507 303.1273726735745 382.37883524688107 C 310.2631358763578 381.73168506020215 316.62067831849964 380.33873997790846 322.2 378.2 C 330.2 375.1333333333333 336.73333333333335 371.2666666666667 341.8 366.6 Z M 295 315 C 292.21849104640904 315.43161345831584 289.5404766358177 315.9580969143813 286.9659567682261 316.5794503681965 C 287.21128852883453 314.1714997579616 287.48930293942584 311.7583496352294 287.8 309.34 C 288.5214793739387 302.8191131744015 289.38708768714076 296.5769812203454 290.3968249396063 290.61360413783177 C 298.63618588390807 289.03743350105066 306.5039109040393 287.8328987884401 314 287 C 314.8945721125889 286.9006030986012 315.7778026823118 286.79666958005606 316.6496917091688 286.68819944436456 C 315.2556462679089 294.12790605610826 313.96574903151924 301.6685062413201 312.78 309.31 C 312.6133237300314 310.39013672158404 312.46492042694297 311.4597388501624 312.33479009073466 312.51880638573516 C 306.5942335221385 313.27045733385927 300.81597015856033 314.09752187194755 295 315 Z M 223.4 326 C 226.16060891560983 320.8468633575283 229.52454395669443 316.3605608537393 233.4918051232538 312.5410924886329 C 237.56706479464955 319.18575092237506 244.7097964202316 324.4320534261641 254.92 328.28 C 254.92 328.28 244.63 360.68 244.63 360.68 C 233.57321473214455 356.6576811068765 224.6697678967188 351.42938024572123 217.91965949372278 344.9950974165342 C 218.75040233617693 337.6009584629642 220.577182504936 331.26925932411945 223.4 326 Z",
+      "outputCurves": 51,
+      "expectedCurves": 51
+    },
+    {
+      "id": 97,
+      "title": "Selected edge-cases from @hari's boolean-test suite",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 2751,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000012562344491856176,
+      "boundarySamples": 1296,
+      "fillSamples": 1489,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 213.4 229.6 C 228.86666666666667 206.13333333333333 251.13333333333333 194.4 280.2 194.4 C 292.1385849715586 194.4 303.0332504280553 196.7198211445821 312.88399636949 201.35946343374636 C 316.6517417179358 199.17519205536252 320.67374292810575 197.24203757744706 324.95 195.56 C 333.77 192.09333333333333 342.67333333333335 189.7566666666667 351.66 188.55 C 359.7866666666667 187.46333333333334 367.52333333333337 186.92 374.87 186.92 C 378.04333333333335 186.92 381.1433333333333 187.01999999999998 384.17 187.22 C 394.2166666666667 187.89333333333332 403.3333333333333 190.17 411.52 194.05 C 412.09120548443565 194.3207179087472 412.6561309603628 194.60079903431458 413.2147764277815 194.89024337670207 C 419.1945950448405 195.4241189457503 424.7896695689134 196.39403782018297 430 197.8 C 438.40000000000003 200.06666666666666 445.6 203.6 451.6 208.4 C 457.6 213.2 462.2666666666667 219.4 465.6 227 C 468.93333333333334 234.6 470.6 243.73333333333335 470.6 254.4 C 470.6 254.4 470.6 406 470.6 406 C 470.6 406 436.6 406 436.6 406 C 436.6 406 436.6 397.84021239624593 436.6 385.52393991634983 C 430.6928825841852 389.26483134595986 424.1628825841852 392.3235180405099 417.01 394.7 C 406.83666666666664 398.08 396.5966666666667 400.46 386.29 401.84 C 379.42333333333335 402.76 372.69 403.22 366.09 403.22 C 361.77 403.22 357.50666666666666 403.02333333333337 353.3 402.63 C 349.6146663314835 402.2831994665762 346.0479996648168 401.7347452104143 342.6 400.98463723151417 C 342.6 404.18451842972735 342.6 406 342.6 406 C 342.6 406 308.6 406 308.6 406 C 308.6 406 308.6 396.72778865350193 308.6 383.0326222099459 C 306.42161117275185 380.79944646460416 304.38161117275183 378.3685723946222 302.48 375.74 C 296.53333333333336 367.5266666666667 292.44666666666666 357.11 290.22 344.49 C 290.22 344.49 299.69719862362626 343.2216864749984 308.6 342.03024332344216 C 308.6 325.12916256233115 308.6 307.909680866074 308.6 294.5906586915894 C 304.42062863594606 292.3626939884122 300.5539619692794 289.7258077578824 297 286.68 C 289.4066666666667 280.1666666666667 284.72333333333336 270.3 282.95 257.08 C 281.57 246.77333333333334 282.69666666666666 237.61 286.33 229.59 C 286.69233842586186 228.79019609851036 287.06966111793577 228.00242602143436 287.46196807622164 227.22668976877196 C 282.73857646540677 225.342229922924 276.85125377333287 224.4 269.8 224.4 C 259.93333333333334 224.4 251.46666666666667 226.4 244.4 230.4 C 237.33333333333334 234.4 231.6 239.20000000000002 227.2 244.8 C 222.79999999999998 250.4 219.6 256.2 217.6 262.2 C 215.6 268.2 214.6 273.2 214.6 277.2 C 214.6 277.2 214.6 406 214.6 406 C 214.6 406 180.6 406 180.6 406 C 180.6 406 180.6 199.2 180.6 199.2 C 180.6 199.2 212.6 199.2 212.6 199.2 C 212.6 199.2 212.6 229.6 212.6 229.6 C 212.6 229.6 213.4 229.6 213.4 229.6 Z M 342.6 304.3140447904288 C 342.6 322.57617092011674 342.6 346.94051707674015 342.6 367.2417258228543 C 343.6115514709336 367.7855205211747 344.65488480426694 368.28494524688995 345.73 368.74 C 351.29 371.08666666666664 357.39666666666665 372.4866666666667 364.05 372.94 C 366.25 373.09333333333336 368.46000000000004 373.17 370.68 373.17 C 375.18666666666667 373.17 379.74 372.86 384.34 372.24 C 389.62666666666667 371.53333333333336 395.12333333333333 370.3933333333333 400.83 368.82 C 406.53666666666663 367.24666666666667 411.6933333333333 365.07666666666665 416.3 362.31 C 420.90666666666664 359.53666666666663 424.5233333333333 355.89 427.15 351.37 C 429.77 346.84999999999997 430.65666666666664 341.41666666666663 429.81 335.07 C 428.63666666666666 326.35 424.44666666666666 320.18666666666667 417.24 316.58 C 410.03333333333336 312.97333333333336 401.2866666666667 310.44666666666666 391 309 C 380.71999999999997 307.5466666666667 369.61333333333334 306.4766666666667 357.68 305.79 C 352.5153491159726 305.49281617818167 347.48868244930594 305.00083110832463 342.6 304.3140447904288 Z M 357 238.8 C 348.70074030163016 247.09925969836988 343.9888614126866 257.790106603024 342.86436333316954 270.8725407139624 C 343.0190118046675 270.9121361089547 343.17422402694433 270.95128920430056 343.33 270.99 C 350.01 272.65000000000003 357.43 273.8066666666667 365.59 274.46 C 373.75 275.12 381.91666666666663 275.8433333333333 390.09 276.63 C 398.7966666666666 277.3433333333333 407.35999999999996 278.48333333333335 415.78 280.05 C 423.3811636947031 281.4594075313475 430.3211636947031 283.6741831846378 436.6 286.694326959871 C 436.6 276.74685456197204 436.6 270.4 436.6 270.4 C 436.6 264 436.06666666666666 258 435 252.4 C 434.36324646855616 249.05704395991987 433.39389308336507 245.9754163763554 432.0919398444267 243.1551172493067 C 422.4482937933212 244.44570608285227 410.61 246.03 410.61 246.03 C 409.19666666666666 239.49666666666667 406.74333333333334 234.24333333333334 403.25 230.27 C 401.2553860720128 227.9969791566341 399.0382333410382 226.04031249398548 396.59854180707634 224.40000001205416 C 379.79923618293697 224.40027775677316 366.59972224724487 229.20027775275514 357 238.8 Z M 337 229.6 C 338.8311540011533 226.64198199813697 340.81576555251837 223.86067269045716 342.95383465409515 221.25607207696058 C 340.1209436735249 222.1089607013826 337.4610100576436 223.1305623379859 334.9740338064512 224.32087698677043 C 335.7124893350588 226.00372652764878 336.38781139957507 227.7634341987253 337 229.6 Z",
+      "outputCurves": 71,
+      "expectedCurves": 73
+    },
+    {
+      "id": 98,
+      "title": "Selected edge-cases from @hari's boolean-test suite",
+      "op": "subtract",
+      "derivedOperands": false,
+      "elapsedMs": 3140,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000009668051270611745,
+      "boundarySamples": 1107,
+      "fillSamples": 1363,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 213.4 229.6 C 228.86666666666667 206.13333333333333 251.13333333333333 194.4 280.2 194.4 C 292.1385849715586 194.4 303.0332504280553 196.7198211445821 312.88399636949 201.35946343374636 C 308.8864471828579 203.6769587696889 305.1751150596946 206.27713762510677 301.75 209.16 C 295.76617995825865 214.20153343536882 291.0035026503325 220.2237633582928 287.46196807622164 227.22668976877196 C 282.73857646540677 225.342229922924 276.85125377333287 224.4 269.8 224.4 C 259.93333333333334 224.4 251.46666666666667 226.4 244.4 230.4 C 237.33333333333334 234.4 231.6 239.20000000000002 227.2 244.8 C 222.79999999999998 250.4 219.6 256.2 217.6 262.2 C 215.6 268.2 214.6 273.2 214.6 277.2 C 214.6 277.2 214.6 406 214.6 406 C 214.6 406 180.6 406 180.6 406 C 180.6 406 180.6 199.2 180.6 199.2 C 180.6 199.2 212.6 199.2 212.6 199.2 C 212.6 199.2 212.6 229.6 212.6 229.6 C 212.6 229.6 213.4 229.6 213.4 229.6 Z M 308.6 342.03024332344216 C 308.6 325.12916256233115 308.6 307.909680866074 308.6 294.5906586915894 C 313.3580406401748 297.1271039316002 318.52137397350816 299.1335510344037 324.09 300.61 C 330.0229959569614 302.1792755399229 336.19299595696145 303.4139571367325 342.6 304.3140447904288 C 342.6 322.57617092011674 342.6 346.94051707674015 342.6 367.2417258228543 C 338.3802737430102 364.9732651138834 334.7136070763436 361.9326898395986 331.6 358.12 C 327.73333333333335 353.3933333333333 325.17333333333335 347.34666666666664 323.92 339.98 C 323.92 339.98 316.48530233062735 340.9749699254858 308.6 342.03024332344216 Z M 308.6 406 C 308.6 406 308.6 396.72778865350193 308.6 383.0326222099459 C 313.23380938217326 387.78297283209736 318.49380938217325 391.6387654287821 324.38 394.6 C 330.0323527174397 397.44359501116185 336.10568605077304 399.57180742166656 342.6 400.98463723151417 C 342.6 404.18451842972735 342.6 406 342.6 406 C 342.6 406 308.6 406 308.6 406 Z M 357 238.8 C 348.70074030163016 247.09925969836988 343.9888614126866 257.790106603024 342.86436333316954 270.8725407139624 C 336.38736143303106 269.21420263847006 330.8992403219746 266.7800224004826 326.4 263.57 C 321.7866666666667 260.28999999999996 319.09000000000003 255.73999999999998 318.31 249.92 C 317.60333333333335 244.64 318.35 240.17 320.55 236.51 C 322.75 232.85 325.83333333333337 229.74666666666667 329.8 227.2 C 331.43235584016327 226.15023580649432 333.157033775647 225.19052813541782 334.9740338064512 224.32087698677043 C 335.7124893350588 226.00372652764878 336.38781139957507 227.7634341987253 337 229.6 C 338.8311540011533 226.64198199813697 340.81576555251837 223.86067269045716 342.95383465409515 221.25607207696058 C 343.07225421396186 221.22041991236543 343.19097599593016 221.18506255337857 343.31 221.15 C 348.3566666666667 219.66333333333333 353.3933333333333 218.58666666666664 358.42 217.92 C 361.84000000000003 217.45999999999998 365.2633333333333 217.23 368.69 217.23 C 370.83 217.23 372.96999999999997 217.32 375.11 217.5 C 380.69 217.96 385.90333333333336 219.21 390.75 221.25 C 392.8240388929636 222.12297923142623 394.7735528286557 223.17297923544427 396.59854180707634 224.40000001205416 C 379.79923618293697 224.40027775677316 366.59972224724487 229.20027775275514 357 238.8 Z M 435 252.4 C 434.36324646855616 249.05704395991987 433.39389308336507 245.9754163763554 432.0919398444267 243.1551172493067 C 438.7191967829302 242.26820541569688 444.31 241.52 444.31 241.52 C 441.8566666666667 229.2 437.8233333333333 219.18 432.21 211.46 C 426.9945253629835 204.27244339559795 420.662784172244 198.74919118783197 413.2147764277815 194.89024337670207 C 419.1945950448405 195.4241189457503 424.7896695689134 196.39403782018297 430 197.8 C 438.40000000000003 200.06666666666666 445.6 203.6 451.6 208.4 C 457.6 213.2 462.2666666666667 219.4 465.6 227 C 468.93333333333334 234.6 470.6 243.73333333333335 470.6 254.4 C 470.6 254.4 470.6 406 470.6 406 C 470.6 406 436.6 406 436.6 406 C 436.6 406 436.6 397.84021239624593 436.6 385.52393991634983 C 439.0944009654727 383.9442721127667 441.477734298806 382.2429588073168 443.75 380.42 C 451.40333333333336 374.2866666666667 457.26 366.7766666666667 461.32 357.89 C 465.37333333333333 349.01 466.56666666666666 338.3566666666667 464.9 325.93 C 463.5933333333333 316.15 460.58 308.2133333333333 455.86 302.12 C 451.1466666666667 296.0266666666667 445.39 291.2166666666667 438.59 287.69 C 437.93421484804736 287.34891449407763 437.27088151471406 287.0170234807013 436.6 286.694326959871 C 436.6 276.74685456197204 436.6 270.4 436.6 270.4 C 436.6 264 436.06666666666666 258 435 252.4 Z",
+      "outputCurves": 61,
+      "expectedCurves": 62
+    },
+    {
+      "id": 99,
+      "title": "Selected edge-cases from @hari's boolean-test suite",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 2129,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000005096505377838988,
+      "boundarySamples": 864,
+      "fillSamples": 1201,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 288.8 227.8 C 288.3648802806894 227.6000801289654 287.91886963942994 227.40897671855606 287.46196807622164 227.22668976877196 C 291.0035026503325 220.2237633582928 295.76617995825865 214.20153343536882 301.75 209.16 C 305.1751150596946 206.27713762510677 308.8864471828579 203.6769587696889 312.88399636949 201.35946343374636 C 313.594765745888 201.6942315493982 314.30010028939137 202.04107707148276 315 202.4 C 323.9077902864643 206.96809758280222 330.5658015552814 214.27505657839234 334.9740338064512 224.32087698677043 C 333.157033775647 225.19052813541782 331.43235584016327 226.15023580649432 329.8 227.2 C 325.83333333333337 229.74666666666667 322.75 232.85 320.55 236.51 C 318.35 240.17 317.60333333333335 244.64 318.31 249.92 C 319.09000000000003 255.73999999999998 321.7866666666667 260.28999999999996 326.4 263.57 C 330.8992403219746 266.7800224004826 336.38736143303106 269.21420263847006 342.86436333316954 270.8725407139624 C 342.68812111105655 272.9229464019373 342.6 275.0320994972831 342.6 277.2 C 342.6 277.2 342.6 288.4564953778192 342.6 304.3140447904288 C 336.19299595696145 303.4139571367325 330.0229959569614 302.1792755399229 324.09 300.61 C 318.52137397350816 299.1335510344037 313.3580406401748 297.1271039316002 308.6 294.5906586915894 C 308.6 280.22726612274266 308.6 270.4 308.6 270.4 C 308.6 263.7333333333333 308 257.59999999999997 306.8 252 C 305.6 246.4 303.53333333333336 241.53333333333333 300.6 237.4 C 297.6666666666667 233.26666666666665 293.73333333333335 230.06666666666666 288.8 227.8 Z M 308.6 383.0326222099459 C 308.6 371.5281095320167 308.6 356.90244891123155 308.6 342.03024332344216 C 316.48530233062735 340.9749699254858 323.92 339.98 323.92 339.98 C 325.17333333333335 347.34666666666664 327.73333333333335 353.3933333333333 331.6 358.12 C 334.7136070763436 361.9326898395986 338.3802737430102 364.9732651138834 342.6 367.2417258228543 C 342.6 381.8626446912102 342.6 394.37606614431996 342.6 400.98463723151417 C 336.10568605077304 399.57180742166656 330.0323527174397 397.44359501116185 324.38 394.6 C 318.49380938217325 391.6387654287821 313.23380938217326 387.78297283209736 308.6 383.0326222099459 Z M 396.6 224.4 C 396.5995139326786 224.4 396.5990278683707 224.40000000401807 396.59854180707634 224.40000001205416 C 394.7735528286557 223.17297923544427 392.8240388929636 222.12297923142623 390.75 221.25 C 385.90333333333336 219.21 380.69 217.96 375.11 217.5 C 372.96999999999997 217.32 370.83 217.23 368.69 217.23 C 365.2633333333333 217.23 361.84000000000003 217.45999999999998 358.42 217.92 C 353.3933333333333 218.58666666666664 348.3566666666667 219.66333333333333 343.31 221.15 C 343.19097599593016 221.18506255337857 343.07225421396186 221.22041991236543 342.95383465409515 221.25607207696058 C 348.91117738658363 213.99882369129998 356.05989916855185 208.11346633231312 364.4 203.6 C 375.7333333333333 197.46666666666667 388.2 194.4 401.8 194.4 C 405.74911470436894 194.4 409.5540401802961 194.5634144589007 413.2147764277815 194.89024337670207 C 420.662784172244 198.74919118783197 426.9945253629835 204.27244339559795 432.21 211.46 C 437.8233333333333 219.18 441.8566666666667 229.2 444.31 241.52 C 444.31 241.52 438.7191967829302 242.26820541569688 432.0919398444267 243.1551172493067 C 431.2129077366717 241.2509524820907 430.1822611218628 239.46591339898848 429 237.8 C 426.06666666666666 233.66666666666666 422 230.4 416.8 228 C 411.6 225.6 404.8666666666667 224.4 396.6 224.4 Z M 436.6 385.52393991634983 C 436.6 358.4948176786708 436.6 311.4471963643037 436.6 286.694326959871 C 437.27088151471406 287.0170234807013 437.93421484804736 287.34891449407763 438.59 287.69 C 445.39 291.2166666666667 451.1466666666667 296.0266666666667 455.86 302.12 C 460.58 308.2133333333333 463.5933333333333 316.15 464.9 325.93 C 466.56666666666666 338.3566666666667 465.37333333333333 349.01 461.32 357.89 C 457.26 366.7766666666667 451.40333333333336 374.2866666666667 443.75 380.42 C 441.477734298806 382.2429588073168 439.0944009654727 383.9442721127667 436.6 385.52393991634983 Z",
+      "outputCurves": 48,
+      "expectedCurves": 48
+    },
+    {
+      "id": 100,
+      "title": "Selected edge-cases from @hari's boolean-test suite",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 1040,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000005104134041712604,
+      "boundarySamples": 576,
+      "fillSamples": 1009,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 283.8 227.2 C 283.8 227.2 283.8 165.2 283.8 165.2 C 283.8 165.2 317.8 165.2 317.8 165.2 C 317.8 165.2 317.8 227.2 317.8 227.2 C 317.8 227.2 359 227.2 359 227.2 C 359 227.2 359 257.2 359 257.2 C 359 257.2 317.8 257.2 317.8 257.2 C 317.8 257.2 317.8 305.0912544258184 317.8 342.3770045229143 C 350.0698842739249 359.14412056846356 375.89 372.56 375.89 372.56 C 375.89 372.56 361.14 400.96 361.14 400.96 C 361.14 400.96 322.45 380.86 322.45 380.86 C 322.45 380.86 322.08 381.57 322.08 381.57 C 327.59748090810683 389.0703256094577 331.9366274980029 396.4791221011258 335.09743976968815 403.7963894750043 C 337.5256089714658 403.9321298250014 340.2931290482364 404 343.4 404 C 343.4 404 359 404 359 404 C 359 404 359 434 359 434 C 359 434 348.9890688523408 434 341.39102320275197 434 C 341.060513830721 444.95360637588766 337.7968394298037 456.39360637588766 331.6 468.32 C 331.08 469.32 330.54333333333335 470.32 329.99 471.32 C 329.99 471.32 298.04 454.72 298.04 454.72 C 302.284649460863 446.5554776576387 305.34814461452197 438.80909004418413 307.23048546097687 431.48083715963645 C 302.4024179421461 430.20214618851185 298.3922561218205 428.24186713529974 295.2 425.6 C 291.3333333333333 422.40000000000003 288.46666666666664 417.8666666666667 286.6 412 C 284.73333333333335 406.1333333333333 283.8 398.4 283.8 388.8 C 283.8 388.8 283.8 379.64535942868577 283.8 366.165153810768 C 276.6853398834898 360.381561343004 268.1986732168231 354.92651007274804 258.34 349.8 C 258.34 349.8 176.71 307.39 176.71 307.39 C 176.71 307.39 192.38 277.21 192.38 277.21 C 192.38 277.21 238.03443802538658 300.93159918108336 283.8 324.71093727862245 C 283.8 291.2506273263598 283.8 257.2 283.8 257.2 C 283.8 257.2 248.6 257.2 248.6 257.2 C 248.6 257.2 248.6 227.2 248.6 227.2 C 248.6 227.2 283.8 227.2 283.8 227.2 Z",
+      "outputCurves": 32,
+      "expectedCurves": 32
+    },
+    {
+      "id": 101,
+      "title": "Selected edge-cases from @hari's boolean-test suite",
+      "op": "subtract",
+      "derivedOperands": false,
+      "elapsedMs": 1270,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000009999999974752427,
+      "boundarySamples": 468,
+      "fillSamples": 936,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 283.8 227.2 C 283.8 227.2 283.8 165.2 283.8 165.2 C 283.8 165.2 317.8 165.2 317.8 165.2 C 317.8 165.2 317.8 227.2 317.8 227.2 C 317.8 227.2 359 227.2 359 227.2 C 359 227.2 359 257.2 359 257.2 C 359 257.2 317.8 257.2 317.8 257.2 C 317.8 257.2 317.8 305.0912544258184 317.8 342.3770045229143 C 306.9503574937027 336.7396364613621 295.3716266164884 330.72344121782015 283.8 324.71093727862245 C 283.8 291.2506273263598 283.8 257.2 283.8 257.2 C 283.8 257.2 248.6 257.2 248.6 257.2 C 248.6 257.2 248.6 227.2 248.6 227.2 C 248.6 227.2 283.8 227.2 283.8 227.2 Z M 283.8 388.8 C 283.8 388.8 283.8 379.64535942868577 283.8 366.165153810768 C 285.22504323509014 367.3235885336832 286.59504323509015 368.4952039300939 287.91 369.68 C 295.79 376.78 301.5733333333333 384.59 305.26 393.11 C 308.94666666666666 401.63666666666666 310.23333333333335 411.02 309.12 421.26 C 308.75996789935965 424.5714329735541 308.13012971968527 427.97837869343294 307.23048546097687 431.48083715963645 C 302.4024179421461 430.20214618851185 298.3922561218205 428.24186713529974 295.2 425.6 C 291.3333333333333 422.40000000000003 288.46666666666664 417.8666666666667 286.6 412 C 284.73333333333335 406.1333333333333 283.8 398.4 283.8 388.8 Z M 359 434 C 359 434 348.9890688523408 434 341.39102320275197 434 C 341.4754613121797 431.20158672623455 341.368453577929 428.4349200595679 341.07 425.7 C 340.28254487985083 418.4922724959963 338.29169146974687 411.1910689876644 335.09743976968815 403.7963894750043 C 337.5256089714658 403.9321298250014 340.2931290482364 404 343.4 404 C 343.4 404 359 404 359 404 C 359 404 359 434 359 434 Z",
+      "outputCurves": 26,
+      "expectedCurves": 26
+    },
+    {
+      "id": 102,
+      "title": "Selected edge-cases from @hari's boolean-test suite",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 1025,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.00001410879288401188,
+      "boundarySamples": 288,
+      "fillSamples": 817,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 283.8 366.165153810768 C 283.8 354.53351229623956 283.8 339.68130754192936 283.8 324.71093727862245 C 295.3716266164884 330.72344121782015 306.9503574937027 336.7396364613621 317.8 342.3770045229143 C 317.8 366.1428881359986 317.8 385.6 317.8 385.6 C 317.8 389.6 318.1333333333333 392.8 318.8 395.2 C 319.4666666666667 397.6 320.73333333333335 399.4666666666667 322.6 400.8 C 324.46666666666664 402.1333333333333 327.06666666666666 403 330.4 403.4 C 331.791538988481 403.5669846786177 333.3573522450438 403.6991145036191 335.09743976968815 403.7963894750043 C 338.29169146974687 411.1910689876644 340.28254487985083 418.4922724959963 341.07 425.7 C 341.368453577929 428.4349200595679 341.4754613121797 431.20158672623455 341.39102320275197 434 C 336.74427902264694 434 333 434 333 434 C 324.2 434 316.6666666666667 433.4 310.4 432.2 C 309.3069898066286 431.9907001757374 308.25048496028757 431.7509792289496 307.23048546097687 431.48083715963645 C 308.13012971968527 427.97837869343294 308.75996789935965 424.5714329735541 309.12 421.26 C 310.23333333333335 411.02 308.94666666666666 401.63666666666666 305.26 393.11 C 301.5733333333333 384.59 295.79 376.78 287.91 369.68 C 286.59504323509015 368.4952039300939 285.22504323509014 367.3235885336832 283.8 366.165153810768 Z",
+      "outputCurves": 16,
+      "expectedCurves": 16
+    },
+    {
+      "id": 103,
+      "title": "Selected test-cases provided by @iconexperience",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 175,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "CrossingMaxIterationsReached",
+            "estimate": 0.9999999999999715,
+            "value": -5.4569682106375694e-12
+          }
+        }
+      }
+    },
+    {
+      "id": 104,
+      "title": "Selected test-cases provided by @iconexperience",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 5535,
+      "status": "library-error",
+      "error": {
+        "type": "PathError",
+        "error": {
+          "type": "Discontinuous",
+          "previous_index": 0,
+          "next_index": 1,
+          "expected": {
+            "type": "Point",
+            "x": 456.94438400000007,
+            "y": 557.549450576
+          },
+          "got": {
+            "type": "Point",
+            "x": 456.94438506256495,
+            "y": 557.5494505759262
+          },
+          "distance": 0.0000010625648795363243
+        }
+      }
+    },
+    {
+      "id": 105,
+      "title": "Selected test-cases provided by @iconexperience",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 3287,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000015089086747551656,
+      "boundarySamples": 108,
+      "fillSamples": 697,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 506.49443840000004 600 C 506.49443840000004 600 567.0556160000001 623.6127488 567.0556160000001 623.6127488 C 567.0556160000001 626.6442417632998 564.5815655065014 629.1148581891304 561.5500750780889 629.1148694240001 C 564.5815655064977 629.1148806745134 567.0556160000001 631.5889380606981 567.0556160000001 634.620431024 C 567.0556160000001 634.620431024 567.0556160000001 656.6461184 567.0556160000001 656.6461184 C 567.0556160000001 659.0444239534892 565.5036188166075 640.3731265763876 563.351888591626 632.5031564868333 C 550.1952395566238 624.9820203650801 506.49443840000004 600 506.49443840000004 600 Z",
+      "outputCurves": 6,
+      "expectedCurves": 6
+    },
+    {
+      "id": 106,
+      "title": "Selected test-cases provided by @iconexperience",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 533,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000003824026109312379,
+      "boundarySamples": 72,
+      "fillSamples": 673,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 400.81546878700505 400.81546878700505 C 320.8360938363449 480.794843737665 191.16390616365524 480.794843737665 111.18453121299513 400.81546878700505 C 31.205156262335038 320.83609383634484 31.205156262335038 191.16390616365524 111.18453121299507 111.18453121299507 C 191.16390616365516 31.205156262334995 320.8360938363449 31.205156262334995 400.815468787005 111.18453121299503 C 480.794843737665 191.1639061636551 480.794843737665 320.83609383634484 400.81546878700505 400.81546878700505 Z",
+      "outputCurves": 4,
+      "expectedCurves": 4
+    },
+    {
+      "id": 107,
+      "title": "Selected test-cases provided by @iconexperience",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 154,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "CrossingMaxIterationsReached",
+            "estimate": 0.99999991350241,
+            "value": 6.934897101018578e-12
+          }
+        }
+      }
+    },
+    {
+      "id": 108,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 329,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 109,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 403,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 110,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 523,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000006334238676676411,
+      "boundarySamples": 99,
+      "fillSamples": 685,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 450 230 C 450 230 362.46932779553646 264.4394368330295 362.46932779553646 264.4394368330295 C 362.46932779553646 264.4394368330295 362.46397241975285 264.43146631660625 362.4533971677388 264.41572695054424 C 361.53371030487506 264.0918512606279 332.1006560105404 263.935041161187 331.7750437531172 267.3071389516512 C 331.7750437531172 267.3071389516512 329.00715661950534 214.6369961279195 329.00715661950534 214.6369961279195 C 329.00715661950534 214.6369961279195 450 230 450 230 Z",
+      "outputCurves": 5,
+      "expectedCurves": 6
+    },
+    {
+      "id": 111,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 643,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000004161836605262623,
+      "boundarySamples": 36,
+      "fillSamples": 499,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 362.46932779553646 264.4394368330295 C 362.46932779553646 264.4394368330295 362.46397241975285 264.43146631660625 362.4533971677388 264.41572695054424 C 362.475607726688 264.42354859114124 362.48118846669104 264.4314676692131 362.46932779553646 264.4394368330295 Z",
+      "outputCurves": 2,
+      "expectedCurves": 2
+    },
+    {
+      "id": 112,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 1256,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000017713192569283363,
+      "boundarySamples": 153,
+      "fillSamples": 727,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 211.76470670478773 391.55299259601287 C 210.63405597321002 380.2684616122306 215.5844703350245 403.80989021351223 206.28516988159765 416.3206370377553 C 206.28516988159765 416.3206370377553 192.84747011600953 406.04782791420797 178.2761476219954 394.9083905648196 C 164.65714578873224 396.2729455687604 152.06363005021922 397.5347520600572 152.06363005021922 397.5347520600572 C 152.06363005021922 397.5347520600572 157.42696902030644 392.31689151720326 165.10947215126524 384.84277321497524 C 152.63689136463404 375.30777511751785 142.17355611649077 367.3087985311291 142.17355611649077 367.3087985311291 C 142.17355611649077 367.3087985311291 156.6101241453531 372.33821889029394 172.3325585419042 377.81561015749514 C 191.92290093609589 358.7566479755861 218.65631922872535 332.74836297575644 218.65631922872535 332.74836297575644 C 209.07530879250808 342.84627261343127 209.87329531886755 372.6756665604503 211.76470670478773 391.55299259601287 Z",
+      "outputCurves": 8,
+      "expectedCurves": 9
+    },
+    {
+      "id": 113,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 1198,
+      "status": "library-error",
+      "error": {
+        "type": "InternalBoundaryTopologyError",
+        "vertex": 0,
+        "reason": {
+          "type": "SectorMismatch"
+        }
+      }
+    },
+    {
+      "id": 114,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 503,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000022182272686460748,
+      "boundarySamples": 99,
+      "fillSamples": 690,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 138.3141655808707 456.06810826237086 C 139.93882047647887 454.87933579285857 119.61802621053697 472.68427550985626 103.70383447788026 471.4426853592628 C 103.70383447788026 471.4426853592628 114.94022060685916 437.87383610714915 126.04870959037973 404.6870812354158 C 115.81121466634072 361.8013537265347 102.88355437423151 307.6462971693936 102.88355437423151 307.6462971693936 C 102.88355437423151 307.6462971693936 311.9175162439421 379.75248280363354 311.9175162439421 379.75248280363354 C 243.45962248422651 380.2990825404435 171.95742366235078 431.4510778394337 138.3141655808707 456.06810826237086 Z",
+      "outputCurves": 5,
+      "expectedCurves": 6
+    },
+    {
+      "id": 115,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 374,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000009369924114528677,
+      "boundarySamples": 54,
+      "fillSamples": 661,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 126.04870959037973 404.68708123541586 C 136.90716185851088 372.24731429290244 147.64340975918196 340.17263448268653 147.64340975918196 340.17263448268653 C 147.64340975918196 340.17263448268653 138.3141655808707 456.06810826237086 138.31416558087065 456.0681082623709 C 138.3141655808706 456.06810826237097 132.75939420167924 432.7987036365617 126.04870959037973 404.68708123541586 Z",
+      "outputCurves": 3,
+      "expectedCurves": 3
+    },
+    {
+      "id": 116,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 312,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 117,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 401,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 118,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 316,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 119,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 314,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 120,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 809,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000004554443933102448,
+      "boundarySamples": 90,
+      "fillSamples": 685,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 157.63421256301322 284.8394170743166 C 157.4721756887489 285.78516220199424 150 329.3972954455561 150 329.3972954455561 C 150 329.3972954455561 109.2693308633721 249.31916869409733 109.26933086337212 249.3191686940973 C 109.26933086337212 249.3191686940973 157.1468245594682 224.11329044817836 157.1468245594682 224.11329044817836 C 157.1468245594682 224.11329044817836 161.745373658654 283.93680878488584 161.745373658654 283.93680878488584 C 159.2608299508177 284.12779213971385 158.09814062518183 284.569850364426 157.63421256301322 284.8394170743166 Z",
+      "outputCurves": 5,
+      "expectedCurves": 5
+    },
+    {
+      "id": 121,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 671,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000006557435236163041,
+      "boundarySamples": 81,
+      "fillSamples": 666,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 157.6368865573791 284.8238100271277 C 157.6368865573791 284.8238100271277 157.63598873606213 284.8290502549456 157.63421256301322 284.8394170743166 C 157.62874705860247 284.84259282108 157.62337853549892 284.845744627689 157.6181059748959 284.84887180157887 C 157.49195073601632 285.013721752478 157.39350977405394 285.0721074267492 157.37582810279264 285.06008777616 C 157.35814643153134 285.0480681255708 157.42122405097112 284.96564315012125 157.6181059748959 284.84887180157887 C 157.62430142298885 284.84077606712515 157.63056371138586 284.8324235659283 157.6368865573791 284.8238100271277 Z",
+      "outputCurves": 5,
+      "expectedCurves": 4
+    },
+    {
+      "id": 122,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 4910,
+      "status": "library-error",
+      "error": {
+        "type": "InternalBoundaryTopologyError",
+        "vertex": 9,
+        "reason": {
+          "type": "SectorMismatch"
+        }
+      }
+    },
+    {
+      "id": 123,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 5593,
+      "status": "library-error",
+      "error": {
+        "type": "InternalBoundaryTopologyError",
+        "vertex": 10,
+        "reason": {
+          "type": "SectorMismatch"
+        }
+      }
+    },
+    {
+      "id": 124,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 527,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000005158907217315139,
+      "boundarySamples": 90,
+      "fillSamples": 685,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 326.356206851053 259.5165810014779 C 327.5118749946699 257.4885313639625 327.818892246002 256.26596639082845 327.8829899896636 255.68988893088675 C 327.108078922195 255.13056335632777 320 250 320 250 C 320 250 384.95409529898944 237.01272999645937 384.95409529898944 237.0127299964593 C 384.95409529898944 237.01272999645926 350 300 350 300 C 350 300 326.356206851053 259.5165810014779 326.356206851053 259.5165810014779 Z",
+      "outputCurves": 5,
+      "expectedCurves": 5
+    },
+    {
+      "id": 125,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 545,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000006989494362737871,
+      "boundarySamples": 81,
+      "fillSamples": 650,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 327.8829899896636 255.68988893088675 C 327.88922350974934 255.63386526745717 327.89315959270976 255.58395582856278 327.8953553626377 255.54001437587772 C 327.8587576718848 255.379010116142 327.8630770664686 255.29257097226113 327.8743861864487 255.28960246525463 C 327.88569530642883 255.28663395824813 327.90399415180525 255.36713608811598 327.8953553626377 255.54001437587772 C 327.90834243434364 255.59714841420453 327.9264820274063 255.66367213287506 327.9512902239682 255.73918757869131 C 327.9512902239682 255.73918757869126 327.9276649496916 255.7221350152893 327.8829899896636 255.68988893088675 Z",
+      "outputCurves": 5,
+      "expectedCurves": 4
+    },
+    {
+      "id": 126,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 191,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 127,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 238,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 128,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 291,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "CrossingMaxIterationsReached",
+            "estimate": 0.9999999999999972,
+            "value": 5.331912689143792e-11
+          }
+        }
+      }
+    },
+    {
+      "id": 129,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 289,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "CrossingMaxIterationsReached",
+            "estimate": 0.9999999999999972,
+            "value": 5.331912689143792e-11
+          }
+        }
+      }
+    },
+    {
+      "id": 130,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 330,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "CrossingMaxIterationsReached",
+            "estimate": 0.9999999999999997,
+            "value": -4.217781679471955e-11
+          }
+        }
+      }
+    },
+    {
+      "id": 131,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 269,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "CrossingMaxIterationsReached",
+            "estimate": 0.9999999999999997,
+            "value": -4.217781679471955e-11
+          }
+        }
+      }
+    },
+    {
+      "id": 132,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 282,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 133,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 346,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 134,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 547,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000007154903041585928,
+      "boundarySamples": 198,
+      "fillSamples": 757,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 134.30251416753708 172.0081092040946 C 204.19706494206415 170.38265453491957 223.6400035890658 159.70963410325308 226.11940728319908 158.06832017107445 C 226.25087350369543 157.95957776090586 226.34059217333152 157.89445967998475 226.38121703317907 157.8689998894556 C 229.83428135826318 154.53454932609452 234.71703389078777 150.83463154089927 240.2776561840474 149.3557271403692 C 240.2776561840474 149.3557271403692 248.04309709886002 178.55347910623016 248.04309709886002 178.55347910623016 C 248.04309709886002 178.55347910623016 223.30038363130373 161.29265138603904 223.30038363130373 161.29265138603904 C 220.26193087805393 165.6481531659696 220.48397130658137 164.5332325085971 222.90045868173007 161.61540771564128 C 216.51073832900394 166.77218198145155 135.69748583246292 231.99189079590533 135.69748583246292 231.99189079590533 C 135.69748583246292 231.99189079590533 134.30251416753708 172.0081092040946 134.30251416753708 172.0081092040946 Z M 226.31621362207375 157.93189048899097 C 226.26972056461548 157.9662228955629 226.2045708158592 158.01194367498414 226.11940728319908 158.06832017107445 C 225.7249666103608 158.39458215130793 224.95471793042557 159.11354674277504 224.00707362561772 160.332331217682 C 224.67792530112692 159.58386121041238 225.4516344780991 158.769967398017 226.31621362207375 157.93189048899097 Z",
+      "outputCurves": 11,
+      "expectedCurves": 11
+    },
+    {
+      "id": 135,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 530,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000006396644093088943,
+      "boundarySamples": 99,
+      "fillSamples": 689,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 226.40563689435842 157.85672347536342 C 226.4091990025565 157.85864655752798 226.38059226256388 157.88435062431677 226.31621362207375 157.93189048899097 C 226.33782471225712 157.91094185081508 226.3594925783646 157.88997810294225 226.38121703317907 157.8689998894556 C 226.39576673413967 157.85988152350654 226.404019182434 157.8558501181333 226.40563689435842 157.85672347536342 Z M 224.00707362561772 160.332331217682 C 223.7807293464704 160.6234371653558 223.54426481746015 160.94305735688712 223.30038363130024 161.29265138604404 C 223.30038363130024 161.29265138604404 223.16346674570562 161.4031490969318 222.90045868173007 161.61540771564128 C 223.22953255376802 161.21806241501162 223.5993015920876 160.78728295745213 224.00707362561772 160.332331217682 Z",
+      "outputCurves": 6,
+      "expectedCurves": 5
+    },
+    {
+      "id": 136,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 601,
+      "status": "library-error",
+      "error": {
+        "type": "PathError",
+        "error": {
+          "type": "Discontinuous",
+          "previous_index": 5,
+          "next_index": 6,
+          "expected": {
+            "type": "Point",
+            "x": 545.7583424843119,
+            "y": 213.00167993223172
+          },
+          "got": {
+            "type": "Point",
+            "x": 545.7583411238495,
+            "y": 213.00167999811896
+          },
+          "distance": 0.0000013620569459976592
+        }
+      }
+    },
+    {
+      "id": 137,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 474,
+      "status": "library-error",
+      "error": {
+        "type": "PathError",
+        "error": {
+          "type": "Discontinuous",
+          "previous_index": 2,
+          "next_index": 0,
+          "expected": {
+            "type": "Point",
+            "x": 545.7583411018326,
+            "y": 213.0016798561104
+          },
+          "got": {
+            "type": "Point",
+            "x": 545.7583424843119,
+            "y": 213.00167993223172
+          },
+          "distance": 0.000001384573443538261
+        }
+      }
+    },
+    {
+      "id": 138,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 306,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 139,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 385,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 140,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 654,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.00000792389955573742,
+      "boundarySamples": 144,
+      "fillSamples": 721,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 371.53493854231004 257.22260275739484 C 366.1942405648286 255.35519358462557 361.6894497809936 256.23186210806347 360.19441829508537 257.048529581522 C 360.1944182950853 257.0485295815221 360.18451172314883 257.0440780358196 360.16495275670405 257.03528915975016 C 360.00008639754805 257.060351287162 359.3083876885939 257.4609442820432 358.8995515281498 260.3188854078006 C 358.8995515281498 260.3188854078006 300 230 300 230 C 300 230 358.65988926135424 256.35898468453337 360.16495275670405 257.03528915975016 C 360.1950536865259 257.03071337277777 360.20759285129964 257.038655770889 360.1976423157531 257.04644607452065 C 360.7121354103765 256.71409312428676 422.64335874389803 216.7564931162548 430.4144838319712 235.2349421258068 C 430.4144838319712 235.2349421258068 371.53493854231004 257.22260275739484 371.53493854231004 257.22260275739484 Z",
+      "outputCurves": 8,
+      "expectedCurves": 8
+    },
+    {
+      "id": 141,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 611,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.0000045576420595288785,
+      "boundarySamples": 36,
+      "fillSamples": 124,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 360.1944182950855 257.04852958152196 C 360.1944182950855 257.04852958152196 360.19549576654924 257.0478327053 360.1976423157531 257.04644607452065 C 360.19674977342385 257.04714484854304 360.19567628533866 257.04784239885635 360.1944182950855 257.04852958152196 Z",
+      "outputCurves": 2,
+      "expectedCurves": 2
+    },
+    {
+      "id": 142,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 673,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000011824224552415322,
+      "boundarySamples": 90,
+      "fillSamples": 683,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 409.2490311439771 253.4403128346141 C 404.8927352309217 254.76296169619266 403.70317762992585 256.1590717353291 403.6254675741819 256.25364724519244 C 403.6254675741819 256.25364724519244 403.62136863138664 256.25027925834706 403.6132478317512 256.24360662403336 C 403.42954776812275 256.5156347438107 402.87290187862936 257.73201926301925 403.0346093549582 261.0014812561057 C 403.0346093549582 261.0014812561057 357.26742957402513 218.16254181654915 357.2674295740252 218.1625418165491 C 357.2674295740252 218.16254181654907 409.2490311439771 253.4403128346141 409.2490311439771 253.4403128346141 Z",
+      "outputCurves": 5,
+      "expectedCurves": 5
+    },
+    {
+      "id": 143,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 532,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.0000036861638371234427,
+      "boundarySamples": 36,
+      "fillSamples": 592,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 403.6254675741819 256.25364724519244 C 403.6254675741819 256.25364724519244 403.62136863138664 256.25027925834706 403.6132478317512 256.24360662403336 C 403.67660252901084 256.1497892413162 403.69559791677347 256.16829647759886 403.6254675741819 256.25364724519244 Z",
+      "outputCurves": 2,
+      "expectedCurves": 2
+    },
+    {
+      "id": 144,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 305,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 145,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 308,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 146,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 632,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 147,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 499,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 148,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 531,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000002828427129663408,
+      "boundarySamples": 126,
+      "fillSamples": 709,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 150 290 C 150 290 180 260 180 260 C 180 260 230 270 230 270 C 230 270 218.75424094638228 277.4971727024118 206 286 C 213.64439306349783 293.64439306349783 220 300 220 300 C 220 300 170 310 170 310 C 170 310 179.6313896457829 303.57907356947806 191.17647058823528 295.88235294117646 C 171.8813984905497 293.1259140700785 150 290 150 290 Z",
+      "outputCurves": 7,
+      "expectedCurves": 7
+    },
+    {
+      "id": 149,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 530,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.0000028284270532941242,
+      "boundarySamples": 54,
+      "fillSamples": 661,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 206.00000000000003 286.00000000000006 C 213.64439306349783 293.64439306349783 220 300 220 300 C 220 300 206.39242585293002 298.0560608361329 191.17647058823528 295.88235294117646 C 195.97183835337793 292.685441097748 201.09736406657012 289.2684239556199 206.00000000000003 286.00000000000006 Z",
+      "outputCurves": 3,
+      "expectedCurves": 3
+    },
+    {
+      "id": 150,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 450,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 151,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 357,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 152,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 297,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 153,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 303,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 154,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 23144,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000005059357871171074,
+      "boundarySamples": 531,
+      "fillSamples": 828,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 274.23277739390466 194.10137844277503 C 274.2327755635386 194.10137360102763 274.2327737310428 194.10136875364645 274.2327718964172 194.1013639006316 C 274.13499787503224 194.13994858964801 273.3241113702276 194.5945605302452 272.11154618911314 196.81853259861245 C 272.11154618911314 196.81853259861245 250 130 250 130 C 250 130 282.64261453718956 194.05831848298737 282.64261453718956 194.05831848298737 C 276.46592258596854 193.01419922847296 274.3526176120978 194.04496442741052 274.23395398634705 194.10449080567912 C 274.2339539863471 194.10449080567912 274.23395186768903 194.10448520133178 274.2339476316258 194.10447399595125 C 274.23394578718387 194.10446911696985 274.2339435413126 194.1044631761138 274.2339408941155 194.10445617365667 C 274.2339384541982 194.10444971950332 274.2339356733434 194.10444236349025 274.23393255163205 194.10443410583167 C 274.2339305009954 194.104428681417 274.23392830327543 194.10442286793233 274.23392595849504 194.10441666543838 C 274.23390317477265 194.1043563971502 274.2338665062129 194.10425940021142 274.23381597387487 194.10412573032815 C 274.2337873802033 194.1040500933622 274.2337543475571 194.10396271426734 274.2337168797517 194.10386360313623 C 274.2337086749671 194.10384189955707 274.2337002575023 194.10381963338887 274.2336916273973 194.10379680473764 C 274.23368720446854 194.10378510505387 274.2336827256885 194.10377325763042 274.23367819106255 194.10376126248156 C 274.23367371173697 194.103749413615 274.2336691779193 194.1037374206041 274.2336645896147 194.10372528346264 C 274.23366000131017 194.10371314632113 274.2336553585187 194.1037008650491 274.2336506612456 194.10368843966023 C 274.23364592531175 194.10367591200477 274.2336411339957 194.10366323785044 274.23363628730283 194.10365041721133 C 274.2336327066849 194.10364094563712 274.2336290958428 194.10363139411308 274.23362545477875 194.1036217626449 C 274.23362177348196 194.10361202475167 274.2336180612916 194.1036022051378 274.23361431820996 194.1035923038092 C 274.2336118023682 194.1035856488178 274.233609272571 194.10357895691098 274.233606728819 194.10357222809043 C 274.2335797066663 194.1035007481603 274.2335511097561 194.10342510262717 274.23352093889645 194.10334529362882 C 274.23349003216043 194.103263538065 274.23345747376055 194.1031774134628 274.2334232645655 194.10308692212027 C 274.23335728969187 194.10291240310934 274.23328517487136 194.10272164249918 274.2332069263355 194.10251465677374 C 274.23318270007474 194.1024505726332 274.2331578858591 194.1023849332143 274.2331324838736 194.10231773900625 C 274.23310715888607 194.10225074847602 274.23308124968656 194.102182212568 274.23305475645833 194.10211213176703 C 274.2330533576706 194.1021084316455 274.2330519572548 194.10210472721738 274.233050555211 194.10210101848276 C 274.233048978004 194.1020968464003 274.2330473987367 194.102092668868 274.2330458174092 194.10208848588607 C 274.2330444228568 194.1020847969678 274.23304302670203 194.10208110381117 274.23304162894505 194.10207740641624 C 274.23304028486245 194.10207385100247 274.23303893929824 194.1020702916697 274.2330375922525 194.10206672841792 C 274.2330343391406 194.102058123174 274.2330310773881 194.10204949507383 274.2330278069954 194.10204084411825 C 274.23300460739665 194.10197947573957 274.23298097300176 194.10191695722318 274.2329569039285 194.10185328888053 C 274.23295433560213 194.10184649505516 274.2329517623264 194.10183968813755 274.23294918410147 194.10183286812807 C 274.23294619601705 194.10182496394395 274.2329432012847 194.1018170421747 274.2329401999047 194.1018091028209 C 274.23293818174903 194.10180376432595 274.2329361605877 194.1017984178804 274.23293413642085 194.10179306348442 C 274.2329321723298 194.10178786800293 274.23293020540893 194.10178266503596 274.2329282356583 194.10177745458367 C 274.2329261453106 194.1017719251241 274.2329240517762 194.1017663872346 274.232921955055 194.10176084091535 C 274.23292001962005 194.10175572123606 274.23291808146973 194.10175059437404 274.2329161406041 194.10174546032943 C 274.23291414312996 194.10174017654185 274.2329121427798 194.10173488514658 274.2329101395537 194.10172958614382 C 274.23290757541787 194.10172280340328 274.2329050065701 194.10171600819854 274.2329024330105 194.10170920052994 C 274.2328989382135 194.10169995597238 274.2328954347276 194.1016906884307 274.23289192255316 194.10168139790576 C 274.23288922028877 194.10167424978263 274.2328865128809 194.10166708805397 274.2328838003298 194.10165991272024 C 274.2328803332636 194.1016507415172 274.23287685779496 194.10164154808768 274.2328733739242 194.10163233243256 C 274.23287173245365 194.10162799035805 274.23287008911785 194.1016236433496 274.23286844391686 194.10161929140727 C 274.2328672157936 194.10161604273324 274.23286598663094 194.10161279130986 274.23286475642897 194.10160953713714 C 274.23286353284095 194.10160630046 274.23286230822475 194.10160306106295 274.23286108258037 194.10159981894608 C 274.23285830334885 194.10159246722705 274.2328555188305 194.10158510152309 274.23285272902547 194.1015777218346 C 274.23284286350315 194.10155162521488 274.23283293186955 194.10152535371512 274.23282293413155 194.10149890735374 C 274.23281973209396 194.10149043721356 274.23281652327563 194.10148194913663 274.23281330767674 194.10147344312355 C 274.2328109326017 194.10146716049314 274.23280855382757 194.10146086807777 274.2328061713544 194.10145456587765 C 274.2328039906679 194.10144879745033 274.2328018068824 194.10144302082557 274.23279961999793 194.10143723600353 C 274.23279796144413 194.10143284873968 274.23279630110784 194.10142845676089 274.23279463898916 194.10142406006722 C 274.2327928165915 194.10141923939807 274.2327909920511 194.1014144130609 274.232789165368 194.1014095810558 C 274.2327868017658 194.10140332877378 274.2327844345762 194.1013970670022 274.2327820637993 194.10139079574134 C 274.2327805087112 194.10138668216874 274.2327789520796 194.10138256451327 274.23277739390466 194.10137844277503 Z",
+      "outputCurves": 53,
+      "expectedCurves": 6
+    },
+    {
+      "id": 155,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 19730,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000005032759123179879,
+      "boundarySamples": 468,
+      "fillSamples": 408,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 274.23277739390466 194.10137844277503 C 274.2327755635386 194.10137360102763 274.2327737310428 194.10136875364645 274.2327718964172 194.1013639006316 C 274.2455212507862 194.09633260636224 274.24614544542413 194.0983750865607 274.2339539863471 194.10449080567912 C 274.2339539863471 194.10449080567912 274.23395186768903 194.10448520133178 274.2339476316258 194.10447399595125 C 274.23394578718387 194.10446911696985 274.2339435413126 194.1044631761138 274.2339408941155 194.10445617365667 C 274.2339384541982 194.10444971950332 274.2339356733434 194.10444236349025 274.23393255163205 194.10443410583167 C 274.2339305009954 194.104428681417 274.23392830327543 194.10442286793233 274.23392595849504 194.10441666543838 C 274.23390317477265 194.1043563971502 274.2338665062129 194.10425940021142 274.23381597387487 194.10412573032815 C 274.2337873802033 194.1040500933622 274.2337543475571 194.10396271426734 274.2337168797517 194.10386360313623 C 274.2337086749671 194.10384189955707 274.2337002575023 194.10381963338887 274.2336916273973 194.10379680473764 C 274.23368720446854 194.10378510505387 274.2336827256885 194.10377325763042 274.23367819106255 194.10376126248156 C 274.23367371173697 194.103749413615 274.2336691779193 194.1037374206041 274.2336645896147 194.10372528346264 C 274.23366000131017 194.10371314632113 274.2336553585187 194.1037008650491 274.2336506612456 194.10368843966023 C 274.23364592531175 194.10367591200477 274.2336411339957 194.10366323785044 274.23363628730283 194.10365041721133 C 274.2336327066849 194.10364094563712 274.2336290958428 194.10363139411308 274.23362545477875 194.1036217626449 C 274.23362177348196 194.10361202475167 274.2336180612916 194.1036022051378 274.23361431820996 194.1035923038092 C 274.2336118023682 194.1035856488178 274.233609272571 194.10357895691098 274.233606728819 194.10357222809043 C 274.2335797066663 194.1035007481603 274.2335511097561 194.10342510262717 274.23352093889645 194.10334529362882 C 274.23349003216043 194.103263538065 274.23345747376055 194.1031774134628 274.2334232645655 194.10308692212027 C 274.23335728969187 194.10291240310934 274.23328517487136 194.10272164249918 274.2332069263355 194.10251465677374 C 274.23318270007474 194.1024505726332 274.2331578858591 194.1023849332143 274.2331324838736 194.10231773900625 C 274.23310715888607 194.10225074847602 274.23308124968656 194.102182212568 274.23305475645833 194.10211213176703 C 274.2330533576706 194.1021084316455 274.2330519572548 194.10210472721738 274.233050555211 194.10210101848276 C 274.233048978004 194.1020968464003 274.2330473987367 194.102092668868 274.2330458174092 194.10208848588607 C 274.2330444228568 194.1020847969678 274.23304302670203 194.10208110381117 274.23304162894505 194.10207740641624 C 274.23304028486245 194.10207385100247 274.23303893929824 194.1020702916697 274.2330375922525 194.10206672841792 C 274.2330343391406 194.102058123174 274.2330310773881 194.10204949507383 274.2330278069954 194.10204084411825 C 274.23300460739665 194.10197947573957 274.23298097300176 194.10191695722318 274.2329569039285 194.10185328888053 C 274.23295433560213 194.10184649505516 274.2329517623264 194.10183968813755 274.23294918410147 194.10183286812807 C 274.23294619601705 194.10182496394395 274.2329432012847 194.1018170421747 274.2329401999047 194.1018091028209 C 274.23293818174903 194.10180376432595 274.2329361605877 194.1017984178804 274.23293413642085 194.10179306348442 C 274.2329321723298 194.10178786800293 274.23293020540893 194.10178266503596 274.2329282356583 194.10177745458367 C 274.2329261453106 194.1017719251241 274.2329240517762 194.1017663872346 274.232921955055 194.10176084091535 C 274.23292001962005 194.10175572123606 274.23291808146973 194.10175059437404 274.2329161406041 194.10174546032943 C 274.23291414312996 194.10174017654185 274.2329121427798 194.10173488514658 274.2329101395537 194.10172958614382 C 274.23290757541787 194.10172280340328 274.2329050065701 194.10171600819854 274.2329024330105 194.10170920052994 C 274.2328989382135 194.10169995597238 274.2328954347276 194.1016906884307 274.23289192255316 194.10168139790576 C 274.23288922028877 194.10167424978263 274.2328865128809 194.10166708805397 274.2328838003298 194.10165991272024 C 274.2328803332636 194.1016507415172 274.23287685779496 194.10164154808768 274.2328733739242 194.10163233243256 C 274.23287173245365 194.10162799035805 274.23287008911785 194.1016236433496 274.23286844391686 194.10161929140727 C 274.2328672157936 194.10161604273324 274.23286598663094 194.10161279130986 274.23286475642897 194.10160953713714 C 274.23286353284095 194.10160630046 274.23286230822475 194.10160306106295 274.23286108258037 194.10159981894608 C 274.23285830334885 194.10159246722705 274.2328555188305 194.10158510152309 274.23285272902547 194.1015777218346 C 274.23284286350315 194.10155162521488 274.23283293186955 194.10152535371512 274.23282293413155 194.10149890735374 C 274.23281973209396 194.10149043721356 274.23281652327563 194.10148194913663 274.23281330767674 194.10147344312355 C 274.2328109326017 194.10146716049314 274.23280855382757 194.10146086807777 274.2328061713544 194.10145456587765 C 274.2328039906679 194.10144879745033 274.2328018068824 194.10144302082557 274.23279961999793 194.10143723600353 C 274.23279796144413 194.10143284873968 274.23279630110784 194.10142845676089 274.23279463898916 194.10142406006722 C 274.2327928165915 194.10141923939807 274.2327909920511 194.1014144130609 274.232789165368 194.1014095810558 C 274.2327868017658 194.10140332877378 274.2327844345762 194.1013970670022 274.2327820637993 194.10139079574134 C 274.2327805087112 194.10138668216874 274.2327789520796 194.10138256451327 274.23277739390466 194.10137844277503 Z",
+      "outputCurves": 50,
+      "expectedCurves": 2
+    },
+    {
+      "id": 156,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 490,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.00000581085530635497,
+      "boundarySamples": 99,
+      "fillSamples": 685,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 386.4093435542647 270.73026596496675 C 463.8262467728108 286.5074538421321 515.7997874137303 295.3775998190989 528.635149558586 289.6368596320347 C 528.635149558586 289.6368596320347 530.9276485961436 294.7625149316927 534.1100355657055 301.8778150338362 C 549.3438073498048 310.7750949199144 574.716309478071 325.5938972523037 574.716309478071 325.5938972523037 C 574.716309478071 325.5938972523037 553.1321511797779 344.40817431017007 553.1321511797778 344.4081743101701 C 553.1321511797777 344.4081743101702 386.4093435542647 270.73026596496675 386.4093435542647 270.73026596496675 Z",
+      "outputCurves": 5,
+      "expectedCurves": 6
+    },
+    {
+      "id": 157,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 485,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.00000665775866276627,
+      "boundarySamples": 54,
+      "fillSamples": 661,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 528.635149558586 289.6368596320347 C 528.635149558586 289.6368596320347 530.9276485961436 294.7625149316927 534.1100355657055 301.8778150338362 C 527.5749821019833 298.06101899925795 522.9057367288372 295.33394762583623 522.9057367288372 295.33394762583623 C 525.3039377430114 291.227788506408 528.3196677207795 289.7779619433015 528.635149558586 289.6368596320347 Z",
+      "outputCurves": 3,
+      "expectedCurves": 3
+    },
+    {
+      "id": 158,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 361,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 159,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 359,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 160,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 269,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 161,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 277,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 162,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 411,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000016620952521008957,
+      "boundarySamples": 126,
+      "fillSamples": 685,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 598.5486959306086 408.11025390080914 C 598.5486959306086 408.11025390080914 556.2683544908633 467.2163769525839 556.2683545522643 467.21637695086577 C 556.2683546136653 467.2163769491477 518.5330018076562 379.67700053006695 518.5330018076562 379.67700053006695 C 518.5330018076562 379.67700053006695 554.5900896267148 407.2398529865706 554.5900896267148 407.2398529865706 C 554.5900896267148 407.2398529865706 554.9756349810888 421.0181718844029 555.377141878096 435.3669119324528 C 565.5478080832187 428.94559176478356 598.5486959306086 408.11025390080914 598.5486959306086 408.11025390080914 Z",
+      "outputCurves": 5,
+      "expectedCurves": 9
+    },
+    {
+      "id": 163,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 406,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000008283270013426406,
+      "boundarySamples": 63,
+      "fillSamples": 661,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 556.2683544908633 467.2163769525839 C 556.2683544908633 467.2163769525839 552.429221746517 437.22810161381835 552.429221746517 437.22810161381835 C 552.429221746517 437.22810161381835 553.5243674660958 436.5366738200199 555.377141878096 435.3669119324528 C 555.8133292413498 450.95503540983947 556.2683546136653 467.2163769491477 556.2683544908633 467.2163769525839 Z",
+      "outputCurves": 3,
+      "expectedCurves": 4
+    },
+    {
+      "id": 164,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 208,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 165,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 207,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 166,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 402,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 167,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 491,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 168,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 373,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "CrossingMaxIterationsReached",
+            "estimate": 0.9999999999999941,
+            "value": -2.97859514830634e-11
+          }
+        }
+      }
+    },
+    {
+      "id": 169,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 371,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "CrossingMaxIterationsReached",
+            "estimate": 0.9999999999999941,
+            "value": -2.97859514830634e-11
+          }
+        }
+      }
+    },
+    {
+      "id": 170,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 787,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000009910110231722427,
+      "boundarySamples": 234,
+      "fillSamples": 781,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 224.25080140147438 238.4376691273944 C 226.70203893296264 273.3623772161043 234.11727465550447 292.57156731454046 241.45196809374954 302.51168783790655 C 245.5318147738297 308.0407761438188 249.69165896060778 310.88968106132984 253.80698658201558 312.4833067865189 C 261.48748588409313 315.45751501393096 273.73997234700516 315.70873997619873 292.1260867855211 309.5277357494549 C 373.2579555438786 282.2529994044814 482.8720957244012 163.51504164843948 490.76180664338455 154.4201945958121 C 491.6832848992697 152.71593711443862 492.15418049473163 152.34792848496494 491.20687265467575 153.8836372207884 C 491.2068726546819 153.88363722077847 503.8540231855925 161.6850806669509 516.5604270792264 169.52307477780883 C 531.4927319010168 167.4028237774819 546.5076573291738 165.27084140511377 546.5076573291738 165.27084140511377 C 548.398916255199 178.59042233019522 539.6865132223646 189.57667750331302 542.2728539190272 185.3838841644063 C 536.8632765320928 194.15350993856177 412.85773649059047 332.2401615915402 311.24528686671783 366.400015361364 C 286.42335408282185 374.7445990941734 258.33436912865847 378.5780980021339 232.1402972539619 368.4346657830759 C 216.78322280965745 362.4877689258787 203.60758169331814 352.2778464051291 193.17273810299352 338.1363415414822 C 176.20200054986503 315.13726488356616 167.22155310263557 282.8673075442859 164.39804131398674 242.63851545993796 C 164.39804131398674 242.63851545993796 224.25080140147438 238.4376691273944 224.25080140147438 238.4376691273944 Z",
+      "outputCurves": 13,
+      "expectedCurves": 13
+    },
+    {
+      "id": 171,
+      "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 482,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000007710685575614485,
+      "boundarySamples": 72,
+      "fillSamples": 673,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 490.76180664338455 154.4201945958121 C 491.0247937881605 154.11703673830561 491.17475655636173 153.93570157690985 491.2068726546819 153.88363722077847 C 491.2068726546819 153.88363722077847 503.8540231855925 161.6850806669509 516.5604270792264 169.52307477780883 C 501.79155492073215 171.62011983156725 487.10350471636843 173.70568890548608 487.10350471636843 173.70568890548608 C 485.88471445948795 165.12210723201397 489.0766823443386 157.536801716329 490.76180664338455 154.4201945958121 Z",
+      "outputCurves": 4,
+      "expectedCurves": 4
+    },
+    {
+      "id": 172,
+      "title": "#1506",
+      "op": "subtract",
+      "derivedOperands": false,
+      "elapsedMs": 276,
+      "status": "library-error",
+      "error": {
+        "type": "InternalBoundaryTopologyError",
+        "vertex": 4,
+        "reason": {
+          "type": "SectorMismatch"
+        }
+      }
+    },
+    {
+      "id": 173,
+      "title": "#1513",
+      "op": "subtract",
+      "derivedOperands": false,
+      "elapsedMs": 408,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 174,
+      "title": "#1419",
+      "op": "exclude",
+      "derivedOperands": false,
+      "elapsedMs": 489,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.000002043644632545593,
+      "boundarySamples": 216,
+      "fillSamples": 769,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 0 -50 C -27.61423749153968 -50 -50 -27.61423749153968 -50 0 C -50 7.33673096465812 -48.41980396161263 14.304387369003763 -45.581190548937414 20.58119054893741 C -39.30438736900377 23.41980396161263 -32.33673096465812 25 -25 25 C 2.6142374915396793 25 25 2.6142374915396793 25 -25 C 25 -32.33673096465812 23.41980396161263 -39.30438736900377 20.58119054893741 -45.581190548937414 C 14.304387369003763 -48.41980396161263 7.336730964658118 -50 0 -50 Z M 20.58119054893741 -45.581190548937414 C 37.92923262137647 -37.735734271463365 50 -20.27750652688156 50 0 C 50 27.61423749153968 27.61423749153968 50 0 50 C -20.27750652688156 50 -37.735734271463365 37.92923262137647 -45.581190548937414 20.58119054893741 C -62.92923262137647 12.735734271463361 -75 -4.722493473118442 -75 -25 C -75 -52.61423749153968 -52.61423749153968 -75 -25 -75 C -4.7224934731184405 -75 12.735734271463361 -62.92923262137647 20.58119054893741 -45.581190548937414 Z",
+      "outputCurves": 12,
+      "expectedCurves": 12
+    },
+    {
+      "id": 175,
+      "title": "#1351",
+      "op": "unite",
+      "derivedOperands": false,
+      "elapsedMs": 79,
+      "status": "library-error",
+      "error": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      }
+    },
+    {
+      "id": 176,
+      "title": "#1647",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 548,
+      "status": "screen-match",
+      "maxBoundaryDistance": 0.0000028571428671853027,
+      "boundarySamples": 108,
+      "fillSamples": 697,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 60 44.50000000001134 C 60 45.35536418904196 60 46.19002176757265 60 47.00000000000489 C 59.10507 46.99823 58.27746 47.47497 57.83 48.25 C 57.83 48.25 54.29886524444117 54.36830279428511 51.04857142857143 60 C 50.1375011221107 60 49.174228346127414 60 48.16714285714286 60 C 51.592143052780365 54.06559372043007 55.67000000000001 47 55.67000000000001 47 C 56.55236000000001 45.44229 58.20981000000001 44.48534 60 44.50000000001134 Z",
+      "outputCurves": 6,
+      "expectedCurves": 6
+    },
+    {
+      "id": 177,
+      "title": "#1619",
+      "op": "intersect",
+      "derivedOperands": false,
+      "elapsedMs": 489,
+      "status": "screen-match",
+      "maxBoundaryDistance": 1.2710574864626038e-13,
+      "boundarySamples": 162,
+      "fillSamples": 733,
+      "fillMismatches": 0,
+      "witness": null,
+      "outputPathData": "M 400 319.99999999999994 C 400 347.273314212798 400 398.636657106399 400 450 C 390 515 380 580 380 580 C 380 580 220 580 220 580 C 220 580 220 320 220 320 C 220 320 349.34749401158564 320 400 319.99999999999994 Z M 313.36486 413.71682 C 313.36486 413.71682 243.351 483.70296 243.351 483.70296 C 243.351 483.70296 313.33714 553.71682 313.33714 553.71682 C 313.33714 553.71682 383.351 483.73068 383.351 483.73068 C 383.351 483.73068 313.36486 413.71682 313.36486 413.71682 Z",
+      "outputCurves": 9,
+      "expectedCurves": 9
+    }
+  ]
+}
