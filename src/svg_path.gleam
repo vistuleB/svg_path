@@ -3644,8 +3644,37 @@ fn polish_line_crossing_roots(
             crossings: [estimate, ..crossings],
           )
         False ->
-          case kind {
-            root.NegativeToPositive | root.PositiveToNegative -> {
+          case
+            kind,
+            { number.is_zero(estimate) || estimate == 1.0 }
+            && line_crossing_is_monotone(segment, crossing_function)
+          {
+            _, True -> {
+              // A coefficient-relative endpoint candidate can hide a nearby
+              // simple root. Only widen to the whole domain when the projected
+              // control polygon proves monotonicity; otherwise retain the
+              // existing isolation and tangent handling.
+              use polished <- result.try(refine_crossing(
+                segment,
+                crossing_function,
+                options,
+                signed_line_distance_tolerance,
+                0.0,
+                1.0,
+              ))
+              polish_line_crossing_roots(
+                segment,
+                crossing_function,
+                rest,
+                options,
+                signed_line_distance_tolerance,
+                crossings: case polished {
+                  Some(parameter) -> [parameter, ..crossings]
+                  None -> crossings
+                },
+              )
+            }
+            root.NegativeToPositive, False | root.PositiveToNegative, False -> {
               use polished <- result.try(refine_crossing(
                 segment,
                 crossing_function,
@@ -3685,7 +3714,7 @@ fn polish_line_crossing_roots(
                   ))
               }
             }
-            _ ->
+            _, False ->
               Error(CrossingMaxIterationsReached(
                 estimate:,
                 value: estimate_value,
@@ -3693,6 +3722,43 @@ fn polish_line_crossing_roots(
           }
       }
     }
+  }
+}
+
+// Ordered projected Bézier controls are a sufficient (not necessary) proof
+// of monotonicity. Do not use endpoint signs alone: a curve may turn between
+// them, and widening a root window could then lose or merge crossings.
+fn line_crossing_is_monotone(segment: Segment, f: fn(Point) -> Float) -> Bool {
+  let values = case segment {
+    Line(start:, end:) -> [f(start), f(end)]
+    QuadraticBezier(start:, control:, end:) -> [f(start), f(control), f(end)]
+    CubicBezier(start:, control1:, control2:, end:) -> [
+      f(start),
+      f(control1),
+      f(control2),
+      f(end),
+    ]
+    Arc(..) -> []
+  }
+  case values {
+    [] -> False
+    _ ->
+      projected_controls_ordered(values, True)
+      || projected_controls_ordered(values, False)
+  }
+}
+
+fn projected_controls_ordered(values: List(Float), increasing: Bool) -> Bool {
+  case values {
+    [a, b, ..rest] ->
+      {
+        case increasing {
+          True -> a <=. b
+          False -> a >=. b
+        }
+      }
+      && projected_controls_ordered([b, ..rest], increasing)
+    _ -> True
   }
 }
 
