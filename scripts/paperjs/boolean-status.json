@@ -1,0 +1,1782 @@
+[
+  {
+    "id": 0,
+    "block": 0,
+    "title": "Boolean operations without crossings",
+    "operation": "unite",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": true,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 1,
+    "block": 0,
+    "title": "Boolean operations without crossings",
+    "operation": "unite",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": true,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 2,
+    "block": 0,
+    "title": "Boolean operations without crossings",
+    "operation": "subtract",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": true,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 3,
+    "block": 0,
+    "title": "Boolean operations without crossings",
+    "operation": "subtract",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": true,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 4,
+    "block": 0,
+    "title": "Boolean operations without crossings",
+    "operation": "intersect",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": true,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 5,
+    "block": 0,
+    "title": "Boolean operations without crossings",
+    "operation": "intersect",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": true,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 6,
+    "block": 0,
+    "title": "Boolean operations without crossings",
+    "operation": "exclude",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": true,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 7,
+    "block": 0,
+    "title": "Boolean operations without crossings",
+    "operation": "exclude",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": true,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 8,
+    "block": 0,
+    "title": "Boolean operations without crossings",
+    "operation": "unite",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": true,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 9,
+    "block": 0,
+    "title": "Boolean operations without crossings",
+    "operation": "unite",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": true,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 10,
+    "block": 0,
+    "title": "Boolean operations without crossings",
+    "operation": "subtract",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": true,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 11,
+    "block": 0,
+    "title": "Boolean operations without crossings",
+    "operation": "subtract",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": true,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 12,
+    "block": 0,
+    "title": "Boolean operations without crossings",
+    "operation": "intersect",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": true,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 13,
+    "block": 0,
+    "title": "Boolean operations without crossings",
+    "operation": "intersect",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": true,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 14,
+    "block": 0,
+    "title": "Boolean operations without crossings",
+    "operation": "exclude",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": true,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 15,
+    "block": 0,
+    "title": "Boolean operations without crossings",
+    "operation": "exclude",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": true,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 16,
+    "block": 1,
+    "title": "frame.intersect(rect)",
+    "operation": "intersect",
+    "status": "accepted-api-limitation",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "Original CrossingMaxIterationsReached defect fixed and covered by portable endpoint-crossing regressions. After the fix, both backends return NonAffineOverlapCorrespondence for the original fixture and reduced touching cubic rectangles; equivalent Line rectangles succeed. User accepted the remaining overlap-correspondence failure as an API limitation on 2026-10-12. No further fix planned for this fixture."
+  },
+  {
+    "id": 17,
+    "block": 2,
+    "title": "PathItem#resolveCrossings()",
+    "operation": "resolveCrossings",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 18,
+    "block": 2,
+    "title": "PathItem#resolveCrossings()",
+    "operation": "resolveCrossings",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 19,
+    "block": 2,
+    "title": "PathItem#resolveCrossings()",
+    "operation": "resolveCrossings",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 20,
+    "block": 2,
+    "title": "PathItem#resolveCrossings()",
+    "operation": "resolveCrossings",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 21,
+    "block": 2,
+    "title": "PathItem#resolveCrossings()",
+    "operation": "resolveCrossings",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 22,
+    "block": 3,
+    "title": "#541",
+    "operation": "exclude",
+    "status": "sampled-geometry-match",
+    "derivedOperands": true,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 23,
+    "block": 4,
+    "title": "#609",
+    "operation": "unite",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 24,
+    "block": 5,
+    "title": "#610",
+    "operation": "subtract",
+    "status": "sampled-geometry-match",
+    "derivedOperands": true,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 25,
+    "block": 6,
+    "title": "#719",
+    "operation": "subtract",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 26,
+    "block": 7,
+    "title": "#757 (path1.intersect(pat2, { trace: false }))",
+    "operation": null,
+    "status": "adapter-required",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "Open-path clipping / divided-result selection requires a separate adapter."
+  },
+  {
+    "id": 27,
+    "block": 8,
+    "title": "#784",
+    "operation": "unite",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 28,
+    "block": 8,
+    "title": "#784",
+    "operation": "unite",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 29,
+    "block": 9,
+    "title": "#784#issuecomment-144653463",
+    "operation": "unite",
+    "status": "unclassified-library-error",
+    "derivedOperands": true,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 30,
+    "block": 10,
+    "title": "#784#issuecomment-144993215",
+    "operation": "unite",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 31,
+    "block": 11,
+    "title": "#784#issuecomment-168605018",
+    "operation": "unite",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 32,
+    "block": 12,
+    "title": "#854",
+    "operation": "unite",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 33,
+    "block": 12,
+    "title": "#854",
+    "operation": "unite",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 34,
+    "block": 13,
+    "title": "#859",
+    "operation": "subtract",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 35,
+    "block": 14,
+    "title": "#839",
+    "operation": "subtract",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 36,
+    "block": 15,
+    "title": "#865",
+    "operation": "subtract",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 37,
+    "block": 15,
+    "title": "#865",
+    "operation": "subtract",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 38,
+    "block": 15,
+    "title": "#865",
+    "operation": "subtract",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 39,
+    "block": 15,
+    "title": "#865",
+    "operation": "subtract",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 40,
+    "block": 15,
+    "title": "#865",
+    "operation": "subtract",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 41,
+    "block": 16,
+    "title": "#870",
+    "operation": "intersect",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 42,
+    "block": 16,
+    "title": "#870",
+    "operation": "intersect",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 43,
+    "block": 17,
+    "title": "#875",
+    "operation": "subtract",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 44,
+    "block": 18,
+    "title": "#877",
+    "operation": "subtract",
+    "status": "adapter-required",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "Operands use different fill rules; Gleam binary CSG takes one common rule."
+  },
+  {
+    "id": 45,
+    "block": 19,
+    "title": "#878",
+    "operation": "unite",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 46,
+    "block": 19,
+    "title": "#878",
+    "operation": "subtract",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 47,
+    "block": 20,
+    "title": "#885",
+    "operation": "unite",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 48,
+    "block": 20,
+    "title": "#885",
+    "operation": "intersect",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 49,
+    "block": 20,
+    "title": "#885",
+    "operation": "subtract",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 50,
+    "block": 20,
+    "title": "#885",
+    "operation": "exclude",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 51,
+    "block": 21,
+    "title": "#889",
+    "operation": "subtract",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 52,
+    "block": 22,
+    "title": "#890",
+    "operation": "subtract",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 53,
+    "block": 22,
+    "title": "#890",
+    "operation": "subtract",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 54,
+    "block": 23,
+    "title": "#899",
+    "operation": "unite",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 55,
+    "block": 24,
+    "title": "#936",
+    "operation": "unite",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 56,
+    "block": 24,
+    "title": "#936",
+    "operation": "unite",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 57,
+    "block": 25,
+    "title": "#923",
+    "operation": "unite",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 58,
+    "block": 26,
+    "title": "#958",
+    "operation": "intersect",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 59,
+    "block": 27,
+    "title": "#968",
+    "operation": "subtract",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 60,
+    "block": 29,
+    "title": "#1036",
+    "operation": "intersect",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 61,
+    "block": 30,
+    "title": "#1054",
+    "operation": "unite",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 62,
+    "block": 30,
+    "title": "#1054",
+    "operation": "unite",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 63,
+    "block": 31,
+    "title": "#1059",
+    "operation": "unite",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 64,
+    "block": 32,
+    "title": "#1075",
+    "operation": "unite",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 65,
+    "block": 33,
+    "title": "#1091",
+    "operation": "unite",
+    "status": "unclassified-library-error",
+    "derivedOperands": true,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 66,
+    "block": 34,
+    "title": "#1109",
+    "operation": "unite",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 67,
+    "block": 34,
+    "title": "#1109",
+    "operation": "unite",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 68,
+    "block": 34,
+    "title": "#1109",
+    "operation": "unite",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 69,
+    "block": 35,
+    "title": "#1123",
+    "operation": "intersect",
+    "status": "confirmed-our-failure",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "Native Erlang and JavaScript reproducer in test_paperjs/src/paper_boolean_probe.gleam"
+  },
+  {
+    "id": 70,
+    "block": 36,
+    "title": "#1123",
+    "operation": "subtract",
+    "status": "sampled-geometry-match",
+    "derivedOperands": true,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 71,
+    "block": 37,
+    "title": "#1221",
+    "operation": "subtract",
+    "status": "adapter-required",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "Open-path clipping / divided-result selection requires a separate adapter."
+  },
+  {
+    "id": 72,
+    "block": 37,
+    "title": "#1221",
+    "operation": "subtract",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 73,
+    "block": 37,
+    "title": "#1221",
+    "operation": "subtract",
+    "status": "adapter-required",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "Open-path clipping / divided-result selection requires a separate adapter."
+  },
+  {
+    "id": 74,
+    "block": 37,
+    "title": "#1221",
+    "operation": "subtract",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 75,
+    "block": 37,
+    "title": "#1221",
+    "operation": "subtract",
+    "status": "adapter-required",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "Open-path clipping / divided-result selection requires a separate adapter."
+  },
+  {
+    "id": 76,
+    "block": 37,
+    "title": "#1221",
+    "operation": "subtract",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 77,
+    "block": 37,
+    "title": "#1221",
+    "operation": null,
+    "status": "adapter-required",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "Open-path clipping / divided-result selection requires a separate adapter."
+  },
+  {
+    "id": 78,
+    "block": 37,
+    "title": "#1221",
+    "operation": null,
+    "status": "adapter-required",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "Open-path clipping / divided-result selection requires a separate adapter."
+  },
+  {
+    "id": 79,
+    "block": 38,
+    "title": "#1239 / #1073",
+    "operation": "unite",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 80,
+    "block": 39,
+    "title": "#1261",
+    "operation": "unite",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 81,
+    "block": 40,
+    "title": "#1321",
+    "operation": "unite",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 82,
+    "block": 41,
+    "title": "Selected edge-cases from @hari's boolean-test suite",
+    "operation": "unite",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 83,
+    "block": 41,
+    "title": "Selected edge-cases from @hari's boolean-test suite",
+    "operation": "subtract",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 84,
+    "block": 41,
+    "title": "Selected edge-cases from @hari's boolean-test suite",
+    "operation": "intersect",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 85,
+    "block": 41,
+    "title": "Selected edge-cases from @hari's boolean-test suite",
+    "operation": "unite",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 86,
+    "block": 41,
+    "title": "Selected edge-cases from @hari's boolean-test suite",
+    "operation": "subtract",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 87,
+    "block": 41,
+    "title": "Selected edge-cases from @hari's boolean-test suite",
+    "operation": "intersect",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 88,
+    "block": 41,
+    "title": "Selected edge-cases from @hari's boolean-test suite",
+    "operation": "unite",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 89,
+    "block": 41,
+    "title": "Selected edge-cases from @hari's boolean-test suite",
+    "operation": "subtract",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 90,
+    "block": 41,
+    "title": "Selected edge-cases from @hari's boolean-test suite",
+    "operation": "intersect",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 91,
+    "block": 41,
+    "title": "Selected edge-cases from @hari's boolean-test suite",
+    "operation": "unite",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 92,
+    "block": 41,
+    "title": "Selected edge-cases from @hari's boolean-test suite",
+    "operation": "subtract",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 93,
+    "block": 41,
+    "title": "Selected edge-cases from @hari's boolean-test suite",
+    "operation": "intersect",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 94,
+    "block": 41,
+    "title": "Selected edge-cases from @hari's boolean-test suite",
+    "operation": "unite",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 95,
+    "block": 41,
+    "title": "Selected edge-cases from @hari's boolean-test suite",
+    "operation": "subtract",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 96,
+    "block": 41,
+    "title": "Selected edge-cases from @hari's boolean-test suite",
+    "operation": "intersect",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 97,
+    "block": 41,
+    "title": "Selected edge-cases from @hari's boolean-test suite",
+    "operation": "unite",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 98,
+    "block": 41,
+    "title": "Selected edge-cases from @hari's boolean-test suite",
+    "operation": "subtract",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 99,
+    "block": 41,
+    "title": "Selected edge-cases from @hari's boolean-test suite",
+    "operation": "intersect",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 100,
+    "block": 41,
+    "title": "Selected edge-cases from @hari's boolean-test suite",
+    "operation": "unite",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 101,
+    "block": 41,
+    "title": "Selected edge-cases from @hari's boolean-test suite",
+    "operation": "subtract",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 102,
+    "block": 41,
+    "title": "Selected edge-cases from @hari's boolean-test suite",
+    "operation": "intersect",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 103,
+    "block": 42,
+    "title": "Selected test-cases provided by @iconexperience",
+    "operation": "unite",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 104,
+    "block": 42,
+    "title": "Selected test-cases provided by @iconexperience",
+    "operation": "unite",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 105,
+    "block": 42,
+    "title": "Selected test-cases provided by @iconexperience",
+    "operation": "unite",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 106,
+    "block": 42,
+    "title": "Selected test-cases provided by @iconexperience",
+    "operation": "unite",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 107,
+    "block": 42,
+    "title": "Selected test-cases provided by @iconexperience",
+    "operation": "unite",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 108,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "unite",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 109,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "intersect",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 110,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "unite",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 111,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "intersect",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 112,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "unite",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 113,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "intersect",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 114,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "unite",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 115,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "intersect",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 116,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "unite",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 117,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "intersect",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 118,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "unite",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 119,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "intersect",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 120,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "unite",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 121,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "intersect",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 122,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "unite",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 123,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "intersect",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 124,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "unite",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 125,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "intersect",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 126,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "unite",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 127,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "intersect",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 128,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "unite",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 129,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "intersect",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 130,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "unite",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 131,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "intersect",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 132,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "unite",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 133,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "intersect",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 134,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "unite",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 135,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "intersect",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 136,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "unite",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 137,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "intersect",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 138,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "unite",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 139,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "intersect",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 140,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "unite",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 141,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "intersect",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 142,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "unite",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 143,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "intersect",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 144,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "unite",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 145,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "intersect",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 146,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "unite",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 147,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "intersect",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 148,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "unite",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 149,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "intersect",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 150,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "unite",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 151,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "intersect",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 152,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "unite",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 153,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "intersect",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 154,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "unite",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 155,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "intersect",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 156,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "unite",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 157,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "intersect",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 158,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "unite",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 159,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "intersect",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 160,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "unite",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 161,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "intersect",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 162,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "unite",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 163,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "intersect",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 164,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "unite",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 165,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "intersect",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 166,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "unite",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 167,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "intersect",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 168,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "unite",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 169,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "intersect",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 170,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "unite",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 171,
+    "block": 43,
+    "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
+    "operation": "intersect",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 172,
+    "block": 44,
+    "title": "#1506",
+    "operation": "subtract",
+    "status": "confirmed-our-failure",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "Native Erlang and JavaScript reproducer in test_paperjs/src/paper_boolean_probe.gleam"
+  },
+  {
+    "id": 173,
+    "block": 45,
+    "title": "#1513",
+    "operation": "subtract",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 174,
+    "block": 46,
+    "title": "#1419",
+    "operation": "exclude",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 175,
+    "block": 47,
+    "title": "#1351",
+    "operation": "unite",
+    "status": "unclassified-library-error",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 176,
+    "block": 48,
+    "title": "#1647",
+    "operation": "intersect",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  },
+  {
+    "id": 177,
+    "block": 49,
+    "title": "#1619",
+    "operation": "intersect",
+    "status": "sampled-geometry-match",
+    "derivedOperands": false,
+    "portableRegression": false,
+    "evidence": "See boolean-screening.json; sampled match is not exhaustive equivalence."
+  }
+]

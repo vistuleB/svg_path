@@ -14,3 +14,9 @@ svg_path_stroke_test.gleam
 svg_path_transform_test.gleam
 svg_path_bezier_endpoint_regression_test.gleam
 svg_path_ellipse_zero_test.gleam
+svg_path_paper_intersection_support.gleam
+svg_path_paper_intersections_test.gleam
+svg_path_paper_boolean_basics_test.gleam
+svg_path_crossing_endpoint_test.gleam
+svg_path_paper_curves_test.gleam
+svg_path_paper_containment_test.gleam

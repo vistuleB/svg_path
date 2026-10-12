@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Full adapted upstream audit, including unresolved failures. Not a release pass.
+set -euo pipefail
+root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+target="${1:-all}"
+case "$target" in all|erlang|javascript) ;; *) echo "Usage: scripts/test-paperjs [all|erlang|javascript]" >&2; exit 2 ;; esac
+mkdir -p "$root/test_paperjs/test"
+cp "$root/test/svg_path_paper_intersection_support.gleam" "$root/test_paperjs/test/"
+cp "$root/scripts/paperjs/audit_tests.gleam" "$root/test_paperjs/test/svg_path_paper_intersections_test.gleam"
+cp "$root/test_portable/runner.gleam" "$root/test_paperjs/test/svg_path_paper_audit_test.gleam"
+cd "$root/test_paperjs"
+status=0
+if [ "$target" = all ] || [ "$target" = erlang ]; then
+  gleam test --target erlang || status=1
+fi
+if [ "$target" = all ] || [ "$target" = javascript ]; then
+  gleam test --target javascript || status=1
+fi
+exit "$status"

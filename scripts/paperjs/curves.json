@@ -1,0 +1,1161 @@
+{
+  "blocks": [
+    {
+      "block": 0,
+      "title": "Curve#classify()",
+      "status": "pending"
+    },
+    {
+      "block": 1,
+      "title": "Curve#getPointAtTime()",
+      "status": "extracted-subset"
+    },
+    {
+      "block": 2,
+      "title": "Curve#getTangentAtTime()",
+      "status": "extracted-subset"
+    },
+    {
+      "block": 3,
+      "title": "Curve#getNormalAtTime()",
+      "status": "extracted-subset"
+    },
+    {
+      "block": 4,
+      "title": "Curve#getCurvatureAtTime()",
+      "status": "extracted-subset"
+    },
+    {
+      "block": 5,
+      "title": "Curve#getCurvatureAtTime()",
+      "status": "extracted-subset"
+    },
+    {
+      "block": 6,
+      "title": "Curve#getTimeAt()",
+      "status": "pending"
+    },
+    {
+      "block": 7,
+      "title": "Curve#getTimeAt() with straight curve",
+      "status": "extracted-subset"
+    },
+    {
+      "block": 8,
+      "title": "Curve#getTimeAt() with straight curve",
+      "status": "extracted-subset"
+    },
+    {
+      "block": 9,
+      "title": "Curve#getTimeAt() with offset at end of curve",
+      "status": "extracted-subset"
+    },
+    {
+      "block": 10,
+      "title": "Curve#getLocationAt()",
+      "status": "pending"
+    },
+    {
+      "block": 11,
+      "title": "Curve#isStraight()",
+      "status": "pending"
+    },
+    {
+      "block": 12,
+      "title": "Curve#isLinear()",
+      "status": "pending"
+    },
+    {
+      "block": 13,
+      "title": "Curve#getTimeOf()",
+      "status": "pending"
+    },
+    {
+      "block": 14,
+      "title": "Curve#getPartLength() with straight curve",
+      "status": "extracted-subset"
+    },
+    {
+      "block": 15,
+      "title": "Curve#divideAt(offset)",
+      "status": "pending"
+    },
+    {
+      "block": 16,
+      "title": "Curve#getTimesWithTangent()",
+      "status": "pending"
+    }
+  ],
+  "fixtures": [
+    {
+      "id": 0,
+      "block": 1,
+      "title": "Curve#getPointAtTime()",
+      "method": "getPointAtTime",
+      "curve": [
+        0,
+        100,
+        0,
+        44.77152501692064,
+        44.77152501692064,
+        0,
+        100,
+        0
+      ],
+      "args": [
+        0
+      ],
+      "component": null,
+      "expected": [
+        0,
+        100
+      ],
+      "message": "curve.getPointAtTime(0);"
+    },
+    {
+      "id": 1,
+      "block": 1,
+      "title": "Curve#getPointAtTime()",
+      "method": "getPointAtTime",
+      "curve": [
+        0,
+        100,
+        0,
+        44.77152501692064,
+        44.77152501692064,
+        0,
+        100,
+        0
+      ],
+      "args": [
+        0.25
+      ],
+      "component": null,
+      "expected": [
+        7.8585,
+        61.07549
+      ],
+      "message": "curve.getPointAtTime(0.25);"
+    },
+    {
+      "id": 2,
+      "block": 1,
+      "title": "Curve#getPointAtTime()",
+      "method": "getPointAtTime",
+      "curve": [
+        0,
+        100,
+        0,
+        44.77152501692064,
+        44.77152501692064,
+        0,
+        100,
+        0
+      ],
+      "args": [
+        0.5
+      ],
+      "component": null,
+      "expected": [
+        29.28932,
+        29.28932
+      ],
+      "message": "curve.getPointAtTime(0.5);"
+    },
+    {
+      "id": 3,
+      "block": 1,
+      "title": "Curve#getPointAtTime()",
+      "method": "getPointAtTime",
+      "curve": [
+        0,
+        100,
+        0,
+        44.77152501692064,
+        44.77152501692064,
+        0,
+        100,
+        0
+      ],
+      "args": [
+        0.75
+      ],
+      "component": null,
+      "expected": [
+        61.07549,
+        7.8585
+      ],
+      "message": "curve.getPointAtTime(0.75);"
+    },
+    {
+      "id": 4,
+      "block": 1,
+      "title": "Curve#getPointAtTime()",
+      "method": "getPointAtTime",
+      "curve": [
+        0,
+        100,
+        0,
+        44.77152501692064,
+        44.77152501692064,
+        0,
+        100,
+        0
+      ],
+      "args": [
+        1
+      ],
+      "component": null,
+      "expected": [
+        100,
+        0
+      ],
+      "message": "curve.getPointAtTime(1);"
+    },
+    {
+      "id": 5,
+      "block": 1,
+      "title": "Curve#getPointAtTime()",
+      "method": "getPointAtTime",
+      "curve": [
+        178.58559999999994,
+        333.41440000000006,
+        178.58559999999994,
+        333.41440000000006,
+        178.58559999999994,
+        178.58560000000008,
+        178.58559999999994,
+        178.58560000000008
+      ],
+      "args": [
+        0
+      ],
+      "component": "y",
+      "expected": 333.41440000000006,
+      "message": "Point at t=0 should not deviate from the actual coordinates."
+    },
+    {
+      "id": 6,
+      "block": 1,
+      "title": "Curve#getPointAtTime()",
+      "method": "getPointAtTime",
+      "curve": [
+        178.58559999999994,
+        333.41440000000006,
+        178.58559999999994,
+        333.41440000000006,
+        178.58559999999994,
+        178.58560000000008,
+        178.58559999999994,
+        178.58560000000008
+      ],
+      "args": [
+        1
+      ],
+      "component": "y",
+      "expected": 178.58560000000008,
+      "message": "Point at t=1 should not deviate from the actual coordinates."
+    },
+    {
+      "id": 7,
+      "block": 2,
+      "title": "Curve#getTangentAtTime()",
+      "method": "getTangentAtTime",
+      "curve": [
+        0,
+        100,
+        0,
+        44.77152501692064,
+        44.77152501692064,
+        0,
+        100,
+        0
+      ],
+      "args": [
+        0
+      ],
+      "component": null,
+      "expected": [
+        0,
+        -1
+      ],
+      "message": "curve.getTangentAtTime(0);"
+    },
+    {
+      "id": 8,
+      "block": 2,
+      "title": "Curve#getTangentAtTime()",
+      "method": "getWeightedTangentAtTime",
+      "curve": [
+        0,
+        100,
+        0,
+        44.77152501692064,
+        44.77152501692064,
+        0,
+        100,
+        0
+      ],
+      "args": [
+        0
+      ],
+      "component": null,
+      "expected": [
+        0,
+        -165.68542
+      ],
+      "message": "curve.getWeightedTangentAtTime(0);"
+    },
+    {
+      "id": 9,
+      "block": 2,
+      "title": "Curve#getTangentAtTime()",
+      "method": "getTangentAtTime",
+      "curve": [
+        0,
+        100,
+        0,
+        44.77152501692064,
+        44.77152501692064,
+        0,
+        100,
+        0
+      ],
+      "args": [
+        0.25
+      ],
+      "component": null,
+      "expected": [
+        0.38955200409223684,
+        -0.9210044712745545
+      ],
+      "message": "curve.getTangentAtTime(0.25);"
+    },
+    {
+      "id": 10,
+      "block": 2,
+      "title": "Curve#getTangentAtTime()",
+      "method": "getWeightedTangentAtTime",
+      "curve": [
+        0,
+        100,
+        0,
+        44.77152501692064,
+        44.77152501692064,
+        0,
+        100,
+        0
+      ],
+      "args": [
+        0.25
+      ],
+      "component": null,
+      "expected": [
+        60.7233,
+        -143.56602
+      ],
+      "message": "curve.getWeightedTangentAtTime(0.25);"
+    },
+    {
+      "id": 11,
+      "block": 2,
+      "title": "Curve#getTangentAtTime()",
+      "method": "getTangentAtTime",
+      "curve": [
+        0,
+        100,
+        0,
+        44.77152501692064,
+        44.77152501692064,
+        0,
+        100,
+        0
+      ],
+      "args": [
+        0.5
+      ],
+      "component": null,
+      "expected": [
+        0.7071067811865475,
+        -0.7071067811865475
+      ],
+      "message": "curve.getTangentAtTime(0.5);"
+    },
+    {
+      "id": 12,
+      "block": 2,
+      "title": "Curve#getTangentAtTime()",
+      "method": "getWeightedTangentAtTime",
+      "curve": [
+        0,
+        100,
+        0,
+        44.77152501692064,
+        44.77152501692064,
+        0,
+        100,
+        0
+      ],
+      "args": [
+        0.5
+      ],
+      "component": null,
+      "expected": [
+        108.57864,
+        -108.57864
+      ],
+      "message": "curve.getWeightedTangentAtTime(0.5);"
+    },
+    {
+      "id": 13,
+      "block": 2,
+      "title": "Curve#getTangentAtTime()",
+      "method": "getTangentAtTime",
+      "curve": [
+        0,
+        100,
+        0,
+        44.77152501692064,
+        44.77152501692064,
+        0,
+        100,
+        0
+      ],
+      "args": [
+        0.75
+      ],
+      "component": null,
+      "expected": [
+        0.9210044712745545,
+        -0.38955200409223684
+      ],
+      "message": "curve.getTangentAtTime(0.75);"
+    },
+    {
+      "id": 14,
+      "block": 2,
+      "title": "Curve#getTangentAtTime()",
+      "method": "getWeightedTangentAtTime",
+      "curve": [
+        0,
+        100,
+        0,
+        44.77152501692064,
+        44.77152501692064,
+        0,
+        100,
+        0
+      ],
+      "args": [
+        0.75
+      ],
+      "component": null,
+      "expected": [
+        143.56602,
+        -60.7233
+      ],
+      "message": "curve.getWeightedTangentAtTime(0.75);"
+    },
+    {
+      "id": 15,
+      "block": 2,
+      "title": "Curve#getTangentAtTime()",
+      "method": "getTangentAtTime",
+      "curve": [
+        0,
+        100,
+        0,
+        44.77152501692064,
+        44.77152501692064,
+        0,
+        100,
+        0
+      ],
+      "args": [
+        1
+      ],
+      "component": null,
+      "expected": [
+        1,
+        0
+      ],
+      "message": "curve.getTangentAtTime(1);"
+    },
+    {
+      "id": 16,
+      "block": 2,
+      "title": "Curve#getTangentAtTime()",
+      "method": "getWeightedTangentAtTime",
+      "curve": [
+        0,
+        100,
+        0,
+        44.77152501692064,
+        44.77152501692064,
+        0,
+        100,
+        0
+      ],
+      "args": [
+        1
+      ],
+      "component": null,
+      "expected": [
+        165.68542,
+        0
+      ],
+      "message": "curve.getWeightedTangentAtTime(1);"
+    },
+    {
+      "id": 17,
+      "block": 3,
+      "title": "Curve#getNormalAtTime()",
+      "method": "getNormalAtTime",
+      "curve": [
+        0,
+        100,
+        0,
+        44.77152501692064,
+        44.77152501692064,
+        0,
+        100,
+        0
+      ],
+      "args": [
+        0
+      ],
+      "component": null,
+      "expected": [
+        -1,
+        0
+      ],
+      "message": "curve.getNormalAtTime(0);"
+    },
+    {
+      "id": 18,
+      "block": 3,
+      "title": "Curve#getNormalAtTime()",
+      "method": "getWeightedNormalAtTime",
+      "curve": [
+        0,
+        100,
+        0,
+        44.77152501692064,
+        44.77152501692064,
+        0,
+        100,
+        0
+      ],
+      "args": [
+        0
+      ],
+      "component": null,
+      "expected": [
+        -165.68542,
+        0
+      ],
+      "message": "curve.getWeightedNormalAtTime(0);"
+    },
+    {
+      "id": 19,
+      "block": 3,
+      "title": "Curve#getNormalAtTime()",
+      "method": "getNormalAtTime",
+      "curve": [
+        0,
+        100,
+        0,
+        44.77152501692064,
+        44.77152501692064,
+        0,
+        100,
+        0
+      ],
+      "args": [
+        0.25
+      ],
+      "component": null,
+      "expected": [
+        -0.9210044712745545,
+        -0.38955200409223684
+      ],
+      "message": "curve.getNormalAtTime(0.25);"
+    },
+    {
+      "id": 20,
+      "block": 3,
+      "title": "Curve#getNormalAtTime()",
+      "method": "getWeightedNormalAtTime",
+      "curve": [
+        0,
+        100,
+        0,
+        44.77152501692064,
+        44.77152501692064,
+        0,
+        100,
+        0
+      ],
+      "args": [
+        0.25
+      ],
+      "component": null,
+      "expected": [
+        -143.56602,
+        -60.7233
+      ],
+      "message": "curve.getWeightedNormalAtTime(0.25);"
+    },
+    {
+      "id": 21,
+      "block": 3,
+      "title": "Curve#getNormalAtTime()",
+      "method": "getNormalAtTime",
+      "curve": [
+        0,
+        100,
+        0,
+        44.77152501692064,
+        44.77152501692064,
+        0,
+        100,
+        0
+      ],
+      "args": [
+        0.5
+      ],
+      "component": null,
+      "expected": [
+        -0.7071067811865475,
+        -0.7071067811865475
+      ],
+      "message": "curve.getNormalAtTime(0.5);"
+    },
+    {
+      "id": 22,
+      "block": 3,
+      "title": "Curve#getNormalAtTime()",
+      "method": "getWeightedNormalAtTime",
+      "curve": [
+        0,
+        100,
+        0,
+        44.77152501692064,
+        44.77152501692064,
+        0,
+        100,
+        0
+      ],
+      "args": [
+        0.5
+      ],
+      "component": null,
+      "expected": [
+        -108.57864,
+        -108.57864
+      ],
+      "message": "curve.getWeightedNormalAtTime(0.5);"
+    },
+    {
+      "id": 23,
+      "block": 3,
+      "title": "Curve#getNormalAtTime()",
+      "method": "getNormalAtTime",
+      "curve": [
+        0,
+        100,
+        0,
+        44.77152501692064,
+        44.77152501692064,
+        0,
+        100,
+        0
+      ],
+      "args": [
+        0.75
+      ],
+      "component": null,
+      "expected": [
+        -0.38955200409223684,
+        -0.9210044712745545
+      ],
+      "message": "curve.getNormalAtTime(0.75);"
+    },
+    {
+      "id": 24,
+      "block": 3,
+      "title": "Curve#getNormalAtTime()",
+      "method": "getWeightedNormalAtTime",
+      "curve": [
+        0,
+        100,
+        0,
+        44.77152501692064,
+        44.77152501692064,
+        0,
+        100,
+        0
+      ],
+      "args": [
+        0.75
+      ],
+      "component": null,
+      "expected": [
+        -60.7233,
+        -143.56602
+      ],
+      "message": "curve.getWeightedNormalAtTime(0.75);"
+    },
+    {
+      "id": 25,
+      "block": 3,
+      "title": "Curve#getNormalAtTime()",
+      "method": "getNormalAtTime",
+      "curve": [
+        0,
+        100,
+        0,
+        44.77152501692064,
+        44.77152501692064,
+        0,
+        100,
+        0
+      ],
+      "args": [
+        1
+      ],
+      "component": null,
+      "expected": [
+        0,
+        -1
+      ],
+      "message": "curve.getNormalAtTime(1);"
+    },
+    {
+      "id": 26,
+      "block": 3,
+      "title": "Curve#getNormalAtTime()",
+      "method": "getWeightedNormalAtTime",
+      "curve": [
+        0,
+        100,
+        0,
+        44.77152501692064,
+        44.77152501692064,
+        0,
+        100,
+        0
+      ],
+      "args": [
+        1
+      ],
+      "component": null,
+      "expected": [
+        0,
+        -165.68542
+      ],
+      "message": "curve.getWeightedNormalAtTime(1);"
+    },
+    {
+      "id": 27,
+      "block": 4,
+      "title": "Curve#getCurvatureAtTime()",
+      "method": "getCurvatureAtTime",
+      "curve": [
+        0,
+        100,
+        0,
+        44.77152501692064,
+        44.77152501692064,
+        0,
+        100,
+        0
+      ],
+      "args": [
+        0
+      ],
+      "component": null,
+      "expected": 0.009785533905932729,
+      "message": "curve.getCurvatureAtTime(0);"
+    },
+    {
+      "id": 28,
+      "block": 4,
+      "title": "Curve#getCurvatureAtTime()",
+      "method": "getCurvatureAtTime",
+      "curve": [
+        0,
+        100,
+        0,
+        44.77152501692064,
+        44.77152501692064,
+        0,
+        100,
+        0
+      ],
+      "args": [
+        0.25
+      ],
+      "component": null,
+      "expected": 0.010062133221584524,
+      "message": "curve.getCurvatureAtTime(0.25);"
+    },
+    {
+      "id": 29,
+      "block": 4,
+      "title": "Curve#getCurvatureAtTime()",
+      "method": "getCurvatureAtTime",
+      "curve": [
+        0,
+        100,
+        0,
+        44.77152501692064,
+        44.77152501692064,
+        0,
+        100,
+        0
+      ],
+      "args": [
+        0.5
+      ],
+      "component": null,
+      "expected": 0.009937576453041297,
+      "message": "curve.getCurvatureAtTime(0.5);"
+    },
+    {
+      "id": 30,
+      "block": 4,
+      "title": "Curve#getCurvatureAtTime()",
+      "method": "getCurvatureAtTime",
+      "curve": [
+        0,
+        100,
+        0,
+        44.77152501692064,
+        44.77152501692064,
+        0,
+        100,
+        0
+      ],
+      "args": [
+        0.75
+      ],
+      "component": null,
+      "expected": 0.010062133221584524,
+      "message": "curve.getCurvatureAtTime(0.75);"
+    },
+    {
+      "id": 31,
+      "block": 4,
+      "title": "Curve#getCurvatureAtTime()",
+      "method": "getCurvatureAtTime",
+      "curve": [
+        0,
+        100,
+        0,
+        44.77152501692064,
+        44.77152501692064,
+        0,
+        100,
+        0
+      ],
+      "args": [
+        1
+      ],
+      "component": null,
+      "expected": 0.009785533905932727,
+      "message": "curve.getCurvatureAtTime(1);"
+    },
+    {
+      "id": 32,
+      "block": 5,
+      "title": "Curve#getCurvatureAtTime()",
+      "method": "getCurvatureAtTime",
+      "curve": [
+        100,
+        100,
+        100,
+        100,
+        200,
+        200,
+        200,
+        200
+      ],
+      "args": [
+        0
+      ],
+      "component": null,
+      "expected": 0,
+      "message": "curve.getCurvatureAtTime(0);"
+    },
+    {
+      "id": 33,
+      "block": 5,
+      "title": "Curve#getCurvatureAtTime()",
+      "method": "getCurvatureAtTime",
+      "curve": [
+        100,
+        100,
+        100,
+        100,
+        200,
+        200,
+        200,
+        200
+      ],
+      "args": [
+        0.25
+      ],
+      "component": null,
+      "expected": 0,
+      "message": "curve.getCurvatureAtTime(0.25);"
+    },
+    {
+      "id": 34,
+      "block": 5,
+      "title": "Curve#getCurvatureAtTime()",
+      "method": "getCurvatureAtTime",
+      "curve": [
+        100,
+        100,
+        100,
+        100,
+        200,
+        200,
+        200,
+        200
+      ],
+      "args": [
+        0.5
+      ],
+      "component": null,
+      "expected": 0,
+      "message": "curve.getCurvatureAtTime(0.5);"
+    },
+    {
+      "id": 35,
+      "block": 5,
+      "title": "Curve#getCurvatureAtTime()",
+      "method": "getCurvatureAtTime",
+      "curve": [
+        100,
+        100,
+        100,
+        100,
+        200,
+        200,
+        200,
+        200
+      ],
+      "args": [
+        0.75
+      ],
+      "component": null,
+      "expected": 0,
+      "message": "curve.getCurvatureAtTime(0.75);"
+    },
+    {
+      "id": 36,
+      "block": 5,
+      "title": "Curve#getCurvatureAtTime()",
+      "method": "getCurvatureAtTime",
+      "curve": [
+        100,
+        100,
+        100,
+        100,
+        200,
+        200,
+        200,
+        200
+      ],
+      "args": [
+        1
+      ],
+      "component": null,
+      "expected": 0,
+      "message": "curve.getCurvatureAtTime(1);"
+    },
+    {
+      "id": 37,
+      "block": 7,
+      "title": "Curve#getTimeAt() with straight curve",
+      "method": "getTimeAt",
+      "curve": [
+        100,
+        100,
+        100,
+        100,
+        500,
+        500,
+        500,
+        500
+      ],
+      "args": [
+        188.56180831641268
+      ],
+      "component": null,
+      "expected": 0.3869631475722452,
+      "message": null
+    },
+    {
+      "id": 38,
+      "block": 8,
+      "title": "Curve#getTimeAt() with straight curve",
+      "method": "getTimeAt",
+      "curve": [
+        1584.4999999999998,
+        1053.2499999999995,
+        1584.4999999999998,
+        1053.2499999999995,
+        1520.5,
+        1053.2499999999995,
+        1520.5,
+        1053.2499999999995
+      ],
+      "args": [
+        63.999999999999716
+      ],
+      "component": null,
+      "expected": 1,
+      "message": null
+    },
+    {
+      "id": 39,
+      "block": 9,
+      "title": "Curve#getTimeAt() with offset at end of curve",
+      "method": "getTimeAt",
+      "curve": [
+        -7500,
+        0,
+        -7500,
+        4142.135623730952,
+        -4142.135623730952,
+        7500,
+        0,
+        7500
+      ],
+      "args": [
+        11782.625235553916
+      ],
+      "component": null,
+      "expected": 1,
+      "message": null
+    },
+    {
+      "id": 40,
+      "block": 14,
+      "title": "Curve#getPartLength() with straight curve",
+      "method": "getPartLength",
+      "curve": [
+        0,
+        0,
+        0,
+        0,
+        64,
+        0,
+        64,
+        0
+      ],
+      "args": [
+        0,
+        0.25
+      ],
+      "component": null,
+      "expected": 10,
+      "message": null
+    },
+    {
+      "id": 41,
+      "block": 14,
+      "title": "Curve#getPartLength() with straight curve",
+      "method": "getPartLength",
+      "curve": [
+        0,
+        0,
+        0,
+        0,
+        64,
+        0,
+        64,
+        0
+      ],
+      "args": [
+        0.25,
+        0.5
+      ],
+      "component": null,
+      "expected": 22,
+      "message": null
+    },
+    {
+      "id": 42,
+      "block": 14,
+      "title": "Curve#getPartLength() with straight curve",
+      "method": "getPartLength",
+      "curve": [
+        0,
+        0,
+        0,
+        0,
+        64,
+        0,
+        64,
+        0
+      ],
+      "args": [
+        0.25,
+        0.75
+      ],
+      "component": null,
+      "expected": 44,
+      "message": null
+    },
+    {
+      "id": 43,
+      "block": 14,
+      "title": "Curve#getPartLength() with straight curve",
+      "method": "getPartLength",
+      "curve": [
+        0,
+        0,
+        0,
+        0,
+        64,
+        0,
+        64,
+        0
+      ],
+      "args": [
+        0.5,
+        0.75
+      ],
+      "component": null,
+      "expected": 22,
+      "message": null
+    },
+    {
+      "id": 44,
+      "block": 14,
+      "title": "Curve#getPartLength() with straight curve",
+      "method": "getPartLength",
+      "curve": [
+        0,
+        0,
+        0,
+        0,
+        64,
+        0,
+        64,
+        0
+      ],
+      "args": [
+        0.75,
+        1
+      ],
+      "component": null,
+      "expected": 10,
+      "message": null
+    }
+  ]
+}

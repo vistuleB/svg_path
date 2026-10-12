@@ -1,0 +1,826 @@
+{
+  "date": "2026-10-12",
+  "method": "Gleam JavaScript backend; Paper.js 0.12.18 diagnostic cross-check; 80-digit Decimal evaluation of exact binary64 inputs and reported parameters. Original audit failures reproduced on both backends previously.",
+  "default_tolerance": 1e-09,
+  "findings": [
+    {
+      "fixture_id": 12,
+      "upstream": "#1073#issuecomment-234305530",
+      "classification": "different-api-expectations",
+      "reason": "Different API expectations: a genuine tolerance-certified partial cubic overlap. The point-only query intentionally returns OverlappingSegments; Paper.js includes overlap boundaries among point locations.",
+      "max_recomputed_segment_pair_residual": 4.040875605440128e-13,
+      "point_query_result": {
+        "0": {
+          "type": "OverlappingSegments"
+        },
+        "type": "Error"
+      },
+      "overlap_pairs": [
+        {
+          "i": 0,
+          "j": 1,
+          "result": {
+            "0": {
+              "type": "OverlappingSegments"
+            },
+            "type": "Error"
+          },
+          "paper": [
+            {
+              "point": [
+                426.61171800037516,
+                447.99999999999994
+              ],
+              "t": 0.2776914759760646,
+              "u": 0,
+              "overlap": true
+            },
+            {
+              "point": [
+                376,
+                480
+              ],
+              "t": 1,
+              "u": 1,
+              "overlap": true
+            }
+          ],
+          "overlaps": {
+            "0": [
+              {
+                "type": "SegmentOverlap",
+                "left_from": 0.27769147597427946,
+                "left_to": 1,
+                "right_from": 0,
+                "right_to": 1,
+                "start": {
+                  "type": "Point",
+                  "x": 426.6117180004418,
+                  "y": 447.9999999998597
+                },
+                "end": {
+                  "type": "Point",
+                  "x": 376,
+                  "y": 480
+                }
+              }
+            ],
+            "type": "Ok"
+          }
+        }
+      ],
+      "whole_interval_control_polygon_error_bound": "1.5534104631511260104907071782131790578985150921276919436817232304689847554393640e-10"
+    },
+    {
+      "fixture_id": 13,
+      "upstream": "#1074",
+      "classification": "different-api-expectations",
+      "reason": "Different API expectations: multiple near-tangent candidates are explicitly permitted. Every reported parameter pair satisfies the 1e-9 distance tolerance; both upstream contacts are retained.",
+      "max_recomputed_segment_pair_residual": 1.7517298072375657e-12,
+      "point_query_result": {
+        "0": [
+          {
+            "type": "PathIntersection",
+            "point": {
+              "type": "Point",
+              "x": 349.98644,
+              "y": 0
+            },
+            "left_parameters": [
+              {
+                "type": "PathParameter",
+                "subpath_index": 0,
+                "at": {
+                  "type": "SubpathParameter",
+                  "segment_index": 0,
+                  "t": 0
+                }
+              }
+            ],
+            "right_parameters": [
+              {
+                "type": "PathParameter",
+                "subpath_index": 0,
+                "at": {
+                  "type": "SubpathParameter",
+                  "segment_index": 0,
+                  "t": 0
+                }
+              }
+            ]
+          },
+          {
+            "type": "PathIntersection",
+            "point": {
+              "type": "Point",
+              "x": 349.98644,
+              "y": 126.84
+            },
+            "left_parameters": [
+              {
+                "type": "PathParameter",
+                "subpath_index": 0,
+                "at": {
+                  "type": "SubpathParameter",
+                  "segment_index": 4,
+                  "t": 0
+                }
+              }
+            ],
+            "right_parameters": [
+              {
+                "type": "PathParameter",
+                "subpath_index": 0,
+                "at": {
+                  "type": "SubpathParameter",
+                  "segment_index": 2,
+                  "t": 0
+                }
+              }
+            ]
+          },
+          {
+            "type": "PathIntersection",
+            "point": {
+              "type": "Point",
+              "x": 349.9864533242433,
+              "y": 126.83999999999952
+            },
+            "left_parameters": [
+              {
+                "type": "PathParameter",
+                "subpath_index": 0,
+                "at": {
+                  "type": "SubpathParameter",
+                  "segment_index": 4,
+                  "t": 1.2680021164291073e-07
+                }
+              }
+            ],
+            "right_parameters": [
+              {
+                "type": "PathParameter",
+                "subpath_index": 0,
+                "at": {
+                  "type": "SubpathParameter",
+                  "segment_index": 2,
+                  "t": 7.494837462231172e-08
+                }
+              }
+            ]
+          },
+          {
+            "type": "PathIntersection",
+            "point": {
+              "type": "Point",
+              "x": 349.9864553584788,
+              "y": 1.0790802506508183e-12
+            },
+            "left_parameters": [
+              {
+                "type": "PathParameter",
+                "subpath_index": 0,
+                "at": {
+                  "type": "SubpathParameter",
+                  "segment_index": 5,
+                  "t": 0.9999998538409773
+                }
+              }
+            ],
+            "right_parameters": [
+              {
+                "type": "PathParameter",
+                "subpath_index": 0,
+                "at": {
+                  "type": "SubpathParameter",
+                  "segment_index": 5,
+                  "t": 0.9999999435499056
+                }
+              }
+            ]
+          }
+        ],
+        "type": "Ok"
+      }
+    },
+    {
+      "fixture_id": 18,
+      "upstream": "#1233",
+      "classification": "different-api-expectations",
+      "reason": "Different API expectations: Paper.js includes a near endpoint contact outside our 1e-9 coincidence tolerance. The three genuine crossings are retained; this is not an arc-length-separation exclusion.",
+      "max_recomputed_segment_pair_residual": 4.601573390197632e-14,
+      "point_query_result": {
+        "0": [
+          {
+            "type": "PathSelfIntersection",
+            "point": {
+              "type": "Point",
+              "x": 366.0758435428664,
+              "y": 320.28023574942733
+            },
+            "parameters": {
+              "0": {
+                "type": "PathParameter",
+                "subpath_index": 0,
+                "at": {
+                  "type": "SubpathParameter",
+                  "segment_index": 1,
+                  "t": 0.00027385796381620877
+                }
+              },
+              "1": {
+                "type": "PathParameter",
+                "subpath_index": 0,
+                "at": {
+                  "type": "SubpathParameter",
+                  "segment_index": 3,
+                  "t": 0.999726170230285
+                }
+              },
+              "type": "Array"
+            }
+          },
+          {
+            "type": "PathSelfIntersection",
+            "point": {
+              "type": "Point",
+              "x": 366.02121878770265,
+              "y": 320.3567972534483
+            },
+            "parameters": {
+              "0": {
+                "type": "PathParameter",
+                "subpath_index": 0,
+                "at": {
+                  "type": "SubpathParameter",
+                  "segment_index": 1,
+                  "t": 0.0005693520264919584
+                }
+              },
+              "1": {
+                "type": "PathParameter",
+                "subpath_index": 0,
+                "at": {
+                  "type": "SubpathParameter",
+                  "segment_index": 4,
+                  "t": 0.003997941949322148
+                }
+              },
+              "type": "Array"
+            }
+          },
+          {
+            "type": "PathSelfIntersection",
+            "point": {
+              "type": "Point",
+              "x": 300.6755355463506,
+              "y": 391.76337009488543
+            },
+            "parameters": {
+              "0": {
+                "type": "PathParameter",
+                "subpath_index": 0,
+                "at": {
+                  "type": "SubpathParameter",
+                  "segment_index": 1,
+                  "t": 0.3083783607170702
+                }
+              },
+              "1": {
+                "type": "PathParameter",
+                "subpath_index": 0,
+                "at": {
+                  "type": "SubpathParameter",
+                  "segment_index": 5,
+                  "t": 0.44128040538549906
+                }
+              },
+              "type": "Array"
+            }
+          }
+        ],
+        "type": "Ok"
+      },
+      "paper_extra_contact": {
+        "left_segment": 1,
+        "left_t": 0,
+        "right_segment": 3,
+        "right_t": 0.9994523254767491,
+        "residual": "7.6981678344013282923208866589078332118391166953817966826446835293797770925247632e-8"
+      },
+      "endpoint_exclusion": {
+        "method": "Strictly increasing y gives the only parameter interval within +/-1e-9 in y. x decreases throughout that interval, and its smallest excess over the endpoint is still greater than 1e-9.",
+        "parameter_interval": [
+          "0.99945232551953319575411106779397285091988095286863532756483738906667381524671385",
+          "0.9994523255272500136845703339255468966907587920304987984586514583829864590336950"
+        ],
+        "minimum_x_excess": "6.669487343396844682417258617220345858683606740415844868699566926473909e-8"
+      }
+    },
+    {
+      "fixture_id": 19,
+      "upstream": "#1239",
+      "classification": "different-api-expectations",
+      "reason": "Different API expectations: an exactly identical constituent segment is a continuous overlap, intentionally rejected by the point-only API. Use overlap-aware encounters.",
+      "max_recomputed_segment_pair_residual": 1.0333010040649407e-13,
+      "point_query_result": {
+        "0": {
+          "type": "OverlappingSegments"
+        },
+        "type": "Error"
+      },
+      "overlap_pairs": [
+        {
+          "i": 2,
+          "j": 2,
+          "result": {
+            "0": {
+              "type": "OverlappingSegments"
+            },
+            "type": "Error"
+          },
+          "paper": [
+            {
+              "point": [
+                922.9625,
+                437.99499999999995
+              ],
+              "t": 0,
+              "u": 0,
+              "overlap": true
+            },
+            {
+              "point": [
+                911.15,
+                427.24499999999995
+              ],
+              "t": 1,
+              "u": 1,
+              "overlap": true
+            }
+          ],
+          "overlaps": {
+            "0": [
+              {
+                "type": "SegmentOverlap",
+                "left_from": 0,
+                "left_to": 1,
+                "right_from": 0,
+                "right_to": 1,
+                "start": {
+                  "type": "Point",
+                  "x": 922.9625,
+                  "y": 437.99499999999995
+                },
+                "end": {
+                  "type": "Point",
+                  "x": 911.15,
+                  "y": 427.24499999999995
+                }
+              }
+            ],
+            "type": "Ok"
+          }
+        }
+      ]
+    },
+    {
+      "fixture_id": 23,
+      "upstream": "#1284",
+      "classification": "different-api-expectations",
+      "reason": "Different API expectations: both near-tangent candidates satisfy the 1e-9 distance tolerance, and our API explicitly permits multiple candidates near tangency.",
+      "max_recomputed_segment_pair_residual": 1.0184876146356796e-12,
+      "point_query_result": {
+        "0": [
+          {
+            "type": "PathIntersection",
+            "point": {
+              "type": "Point",
+              "x": 725.9613225052132,
+              "y": 385.5480661252607
+            },
+            "left_parameters": [
+              {
+                "type": "PathParameter",
+                "subpath_index": 0,
+                "at": {
+                  "type": "SubpathParameter",
+                  "segment_index": 0,
+                  "t": 0
+                }
+              }
+            ],
+            "right_parameters": [
+              {
+                "type": "PathParameter",
+                "subpath_index": 0,
+                "at": {
+                  "type": "SubpathParameter",
+                  "segment_index": 0,
+                  "t": 0
+                }
+              }
+            ]
+          },
+          {
+            "type": "PathIntersection",
+            "point": {
+              "type": "Point",
+              "x": 725.961324001147,
+              "y": 385.5480362065491
+            },
+            "left_parameters": [
+              {
+                "type": "PathParameter",
+                "subpath_index": 0,
+                "at": {
+                  "type": "SubpathParameter",
+                  "segment_index": 0,
+                  "t": 1.2099256836155604e-07
+                }
+              }
+            ],
+            "right_parameters": [
+              {
+                "type": "PathParameter",
+                "subpath_index": 0,
+                "at": {
+                  "type": "SubpathParameter",
+                  "segment_index": 0,
+                  "t": 2.8447425672855584e-07
+                }
+              }
+            ]
+          }
+        ],
+        "type": "Ok"
+      }
+    },
+    {
+      "fixture_id": 24,
+      "upstream": "#1284",
+      "classification": "different-api-expectations",
+      "reason": "Different API expectations: same geometry and result as fixture 23, exercised upstream through the Path API.",
+      "max_recomputed_segment_pair_residual": 1.0184876146356796e-12,
+      "point_query_result": {
+        "0": [
+          {
+            "type": "PathIntersection",
+            "point": {
+              "type": "Point",
+              "x": 725.9613225052132,
+              "y": 385.5480661252607
+            },
+            "left_parameters": [
+              {
+                "type": "PathParameter",
+                "subpath_index": 0,
+                "at": {
+                  "type": "SubpathParameter",
+                  "segment_index": 0,
+                  "t": 0
+                }
+              }
+            ],
+            "right_parameters": [
+              {
+                "type": "PathParameter",
+                "subpath_index": 0,
+                "at": {
+                  "type": "SubpathParameter",
+                  "segment_index": 0,
+                  "t": 0
+                }
+              }
+            ]
+          },
+          {
+            "type": "PathIntersection",
+            "point": {
+              "type": "Point",
+              "x": 725.961324001147,
+              "y": 385.5480362065491
+            },
+            "left_parameters": [
+              {
+                "type": "PathParameter",
+                "subpath_index": 0,
+                "at": {
+                  "type": "SubpathParameter",
+                  "segment_index": 0,
+                  "t": 1.2099256836155604e-07
+                }
+              }
+            ],
+            "right_parameters": [
+              {
+                "type": "PathParameter",
+                "subpath_index": 0,
+                "at": {
+                  "type": "SubpathParameter",
+                  "segment_index": 0,
+                  "t": 2.8447425672855584e-07
+                }
+              }
+            ]
+          }
+        ],
+        "type": "Ok"
+      }
+    },
+    {
+      "fixture_id": 27,
+      "upstream": "#1262",
+      "classification": "different-api-expectations",
+      "reason": "Different API expectations: six tolerance-valid candidates versus two mathematical endpoint roots. Our documented API does not promise one returned candidate per root near tangency.",
+      "max_recomputed_segment_pair_residual": 5.336608085746274e-14,
+      "point_query_result": {
+        "0": [
+          {
+            "type": "PathIntersection",
+            "point": {
+              "type": "Point",
+              "x": 561.5500544,
+              "y": 629.1148694240001
+            },
+            "left_parameters": [
+              {
+                "type": "PathParameter",
+                "subpath_index": 0,
+                "at": {
+                  "type": "SubpathParameter",
+                  "segment_index": 0,
+                  "t": 0
+                }
+              }
+            ],
+            "right_parameters": [
+              {
+                "type": "PathParameter",
+                "subpath_index": 0,
+                "at": {
+                  "type": "SubpathParameter",
+                  "segment_index": 0,
+                  "t": 0
+                }
+              }
+            ]
+          },
+          {
+            "type": "PathIntersection",
+            "point": {
+              "type": "Point",
+              "x": 561.5500558260753,
+              "y": 629.1148694240003
+            },
+            "left_parameters": [
+              {
+                "type": "PathParameter",
+                "subpath_index": 0,
+                "at": {
+                  "type": "SubpathParameter",
+                  "segment_index": 0,
+                  "t": 1.5680636859657663e-07
+                }
+              }
+            ],
+            "right_parameters": [
+              {
+                "type": "PathParameter",
+                "subpath_index": 0,
+                "at": {
+                  "type": "SubpathParameter",
+                  "segment_index": 0,
+                  "t": 1.5680636859657663e-07
+                }
+              }
+            ]
+          },
+          {
+            "type": "PathIntersection",
+            "point": {
+              "type": "Point",
+              "x": 561.5500672346757,
+              "y": 629.1148694240148
+            },
+            "left_parameters": [
+              {
+                "type": "PathParameter",
+                "subpath_index": 0,
+                "at": {
+                  "type": "SubpathParameter",
+                  "segment_index": 0,
+                  "t": 1.41125731736919e-06
+                }
+              }
+            ],
+            "right_parameters": [
+              {
+                "type": "PathParameter",
+                "subpath_index": 0,
+                "at": {
+                  "type": "SubpathParameter",
+                  "segment_index": 0,
+                  "t": 1.41125731736919e-06
+                }
+              }
+            ]
+          },
+          {
+            "type": "PathIntersection",
+            "point": {
+              "type": "Point",
+              "x": 561.5500736520112,
+              "y": 629.1148694240334
+            },
+            "left_parameters": [
+              {
+                "type": "PathParameter",
+                "subpath_index": 0,
+                "at": {
+                  "type": "SubpathParameter",
+                  "segment_index": 0,
+                  "t": 2.116885976053785e-06
+                }
+              }
+            ],
+            "right_parameters": [
+              {
+                "type": "PathParameter",
+                "subpath_index": 0,
+                "at": {
+                  "type": "SubpathParameter",
+                  "segment_index": 0,
+                  "t": 2.116885976053785e-06
+                }
+              }
+            ]
+          },
+          {
+            "type": "PathIntersection",
+            "point": {
+              "type": "Point",
+              "x": 561.5500750780855,
+              "y": 629.1148694240385
+            },
+            "left_parameters": [
+              {
+                "type": "PathParameter",
+                "subpath_index": 0,
+                "at": {
+                  "type": "SubpathParameter",
+                  "segment_index": 0,
+                  "t": 2.2736923446503617e-06
+                }
+              }
+            ],
+            "right_parameters": [
+              {
+                "type": "PathParameter",
+                "subpath_index": 0,
+                "at": {
+                  "type": "SubpathParameter",
+                  "segment_index": 0,
+                  "t": 2.2736923446503617e-06
+                }
+              }
+            ]
+          },
+          {
+            "type": "PathIntersection",
+            "point": {
+              "type": "Point",
+              "x": 567.0556160000001,
+              "y": 634.620431024
+            },
+            "left_parameters": [
+              {
+                "type": "PathParameter",
+                "subpath_index": 0,
+                "at": {
+                  "type": "SubpathParameter",
+                  "segment_index": 0,
+                  "t": 1
+                }
+              }
+            ],
+            "right_parameters": [
+              {
+                "type": "PathParameter",
+                "subpath_index": 0,
+                "at": {
+                  "type": "SubpathParameter",
+                  "segment_index": 0,
+                  "t": 1
+                }
+              }
+            ]
+          }
+        ],
+        "type": "Ok"
+      }
+    },
+    {
+      "fixture_id": 31,
+      "upstream": "#1255",
+      "classification": "different-api-expectations",
+      "reason": "Different API expectations: three near-tangent candidates all meet 1e-9 coincidence tolerance; the expected endpoint remains present.",
+      "max_recomputed_segment_pair_residual": 8.911740117372839e-13,
+      "point_query_result": {
+        "0": [
+          {
+            "type": "PathIntersection",
+            "point": {
+              "type": "Point",
+              "x": 439.3824078319993,
+              "y": 216.13903749801196
+            },
+            "left_parameters": [
+              {
+                "type": "PathParameter",
+                "subpath_index": 0,
+                "at": {
+                  "type": "SubpathParameter",
+                  "segment_index": 0,
+                  "t": 0
+                }
+              }
+            ],
+            "right_parameters": [
+              {
+                "type": "PathParameter",
+                "subpath_index": 0,
+                "at": {
+                  "type": "SubpathParameter",
+                  "segment_index": 0,
+                  "t": 1
+                }
+              }
+            ]
+          },
+          {
+            "type": "PathIntersection",
+            "point": {
+              "type": "Point",
+              "x": 439.38240780820325,
+              "y": 216.13903352404486
+            },
+            "left_parameters": [
+              {
+                "type": "PathParameter",
+                "subpath_index": 0,
+                "at": {
+                  "type": "SubpathParameter",
+                  "segment_index": 0,
+                  "t": 1.1983965503148722e-07
+                }
+              }
+            ],
+            "right_parameters": [
+              {
+                "type": "PathParameter",
+                "subpath_index": 0,
+                "at": {
+                  "type": "SubpathParameter",
+                  "segment_index": 0,
+                  "t": 0.9999999583785565
+                }
+              }
+            ]
+          },
+          {
+            "type": "PathIntersection",
+            "point": {
+              "type": "Point",
+              "x": 439.3824077870247,
+              "y": 216.13902998717637
+            },
+            "left_parameters": [
+              {
+                "type": "PathParameter",
+                "subpath_index": 0,
+                "at": {
+                  "type": "SubpathParameter",
+                  "segment_index": 0,
+                  "t": 2.2649808797283292e-07
+                }
+              }
+            ],
+            "right_parameters": [
+              {
+                "type": "PathParameter",
+                "subpath_index": 0,
+                "at": {
+                  "type": "SubpathParameter",
+                  "segment_index": 0,
+                  "t": 0.9999999213350758
+                }
+              }
+            ]
+          }
+        ],
+        "type": "Ok"
+      }
+    }
+  ]
+}

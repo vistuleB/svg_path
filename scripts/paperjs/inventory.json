@@ -1,0 +1,688 @@
+{
+  "repository": "https://github.com/paperjs/paper.js",
+  "revision": "92775f5279c05fb7f0a743e9e7fa02cd40ec1e70",
+  "extraction_runtime": "paper@0.12.18",
+  "files": {
+    "Curve.js": {
+      "sha256": "65e23806d1864f7f6a3aa67adefa66148353c5359949c2bbaef61f0a242676a4",
+      "test_blocks": [
+        {
+          "title_expression": "'Curve#classify()'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'Curve#getPointAtTime()'",
+          "status": "extracted-subset",
+          "comparison_report": "curve-status.json"
+        },
+        {
+          "title_expression": "'Curve#getTangentAtTime()'",
+          "status": "extracted-subset",
+          "comparison_report": "curve-status.json"
+        },
+        {
+          "title_expression": "'Curve#getNormalAtTime()'",
+          "status": "extracted-subset",
+          "comparison_report": "curve-status.json"
+        },
+        {
+          "title_expression": "'Curve#getCurvatureAtTime()'",
+          "status": "extracted-subset",
+          "comparison_report": "curve-status.json"
+        },
+        {
+          "title_expression": "'Curve#getCurvatureAtTime()'",
+          "status": "extracted-subset",
+          "comparison_report": "curve-status.json"
+        },
+        {
+          "title_expression": "'Curve#getTimeAt()'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'Curve#getTimeAt() with straight curve'",
+          "status": "extracted-subset",
+          "comparison_report": "curve-status.json"
+        },
+        {
+          "title_expression": "'Curve#getTimeAt() with straight curve'",
+          "status": "extracted-subset",
+          "comparison_report": "curve-status.json"
+        },
+        {
+          "title_expression": "'Curve#getTimeAt() with offset at end of curve'",
+          "status": "extracted-subset",
+          "comparison_report": "curve-status.json"
+        },
+        {
+          "title_expression": "'Curve#getLocationAt()'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'Curve#isStraight()'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'Curve#isLinear()'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'Curve#getTimeOf()'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'Curve#getPartLength() with straight curve'",
+          "status": "extracted-subset",
+          "comparison_report": "curve-status.json"
+        },
+        {
+          "title_expression": "'Curve#divideAt(offset)'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'Curve#getTimesWithTangent()'",
+          "status": "pending"
+        }
+      ]
+    },
+    "Path.js": {
+      "sha256": "1bf6d952d9bf4ca619bc04018b69367a2985e97cd5607fb9575e677e6705a4f6",
+      "test_blocks": [
+        {
+          "title_expression": "'Path#length'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'Path#area'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'Path#equals(path)'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'Path#join(path)'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'Path#join(path, tolerance)'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'Path#remove()'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'Path#removeSegments()'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'Is the path deselected after setting a new list of segments?'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'Setting Path#fullySelected=true on an empty path should only set path#selected=true'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'After removing all segments of a fully selected path, it should still be selected.'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'After removing all segments of a selected path, it should still be selected.'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'After simplifying a path using #simplify(), the path should stay fullySelected'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'After cloning a selected item, it should be added to the Project#selectedItems array'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'After simplifying a path using #simplify(), the path should stay selected'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'After smoothing a path using #smooth(), the path should stay fullySelected'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'After smoothing a path using #smooth(), the path should stay selected'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'After selecting a segment, Path#selected should return true'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'Path#reverse()'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'Path#reverse() should adjust segment indices'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'Path#fullySelected'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'Simplifying a path with three segments of the same position should not throw an error'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'Path#interpolate(from, to, factor)'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'Path#curves synchronisation'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'Path#curves on closed paths'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'Path#flatten(maxDistance)'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'Path#single segment closed path flatten (#1338)'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'Path#curves after removing a segment - 1'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'Path#curves after removing a segment - 2'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'Splitting a straight path should produce segments without handles'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'Splitting a path with one curve in the middle result in two paths of the same length with one curve each'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'Path#lineTo(point);'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'Path#arcTo(from, through, to);'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'Path#arcTo(from, through, to); where from, through and to all share the same y position and through lies in between from and to'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'Path#arcTo(from, through, to); where from, through and to all share the same y position and through lies to the right of to'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'Path#arcTo(from, through, to); where from, through and to all share the same y position and through lies to the left of to'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'Path#getOffsetsWithTangent()'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'Path#add() with a lot of segments (#1493)'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'Path#arcTo(through, to) is on through point side (#1477)'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'Path#arcTo(to, radius, rotation, clockwise, large) when from and to are equal (#1613)'",
+          "status": "pending"
+        },
+        {
+          "title_expression": "'Path#closed with blend mode'",
+          "status": "pending"
+        }
+      ]
+    },
+    "Path_Boolean.js": {
+      "sha256": "6462afa87758c863c92e3d184452f949524d09bce7083cae355b94ef3a32523a",
+      "test_blocks": [
+        {
+          "title_expression": "'Boolean operations without crossings'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'frame.intersect(rect)'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'PathItem#resolveCrossings()'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#541'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#609'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#610'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#719'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#757 (path1.intersect(pat2, { trace: false }))'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#784'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#784#issuecomment-144653463'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#784#issuecomment-144993215'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#784#issuecomment-168605018'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#854'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#859'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#839'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#865'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#870'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#875'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#877'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#878'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#885'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#889'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#890'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#899'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#936'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#923'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#958'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#968'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#973'",
+          "status": "non-geometric-assertion-pending",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#1036'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#1054'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#1059'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#1075'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#1091'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#1109'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#1123'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#1123'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#1221'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#1239 / #1073'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#1261'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#1321'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'Selected edge-cases from @hari\\'s boolean-test suite'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'Selected test-cases provided by @iconexperience'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'Isolated edge-cases from @iconexperience\\'s boolean-test suite'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#1506'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#1513'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#1419'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#1351'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#1647'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        },
+        {
+          "title_expression": "'#1619'",
+          "status": "baseline-geometry-screened",
+          "comparison_report": "boolean-status.json"
+        }
+      ]
+    },
+    "Path_Intersections.js": {
+      "sha256": "4c5ca23d22e5f44970da9cecde43a36deaeb026875477c60fbe28d46d71fc675",
+      "test_blocks": [
+        {
+          "title_expression": "'#565'",
+          "status": "initial-location-audit"
+        },
+        {
+          "title_expression": "'#568'",
+          "status": "initial-location-audit"
+        },
+        {
+          "title_expression": "'#570'",
+          "status": "initial-location-audit"
+        },
+        {
+          "title_expression": "'#571'",
+          "status": "initial-location-audit"
+        },
+        {
+          "title_expression": "'overlapping circles'",
+          "status": "initial-location-audit"
+        },
+        {
+          "title_expression": "'circle and square (existing segments overlaps on curves)'",
+          "status": "initial-location-audit"
+        },
+        {
+          "title_expression": "'intersecting paths with applyMatrix = true / false'",
+          "status": "initial-location-audit"
+        },
+        {
+          "title_expression": "'#904'",
+          "status": "initial-location-audit"
+        },
+        {
+          "title_expression": "'#1066'",
+          "status": "initial-location-audit"
+        },
+        {
+          "title_expression": "'#1073#issuecomment-234305530'",
+          "status": "initial-location-audit"
+        },
+        {
+          "title_expression": "'#1074'",
+          "status": "initial-location-audit"
+        },
+        {
+          "title_expression": "'#1088'",
+          "status": "initial-location-audit"
+        },
+        {
+          "title_expression": "'#1165'",
+          "status": "initial-location-audit"
+        },
+        {
+          "title_expression": "'#1174'",
+          "status": "initial-location-audit"
+        },
+        {
+          "title_expression": "'#1197'",
+          "status": "initial-location-audit"
+        },
+        {
+          "title_expression": "'#1233'",
+          "status": "initial-location-audit"
+        },
+        {
+          "title_expression": "'#1239'",
+          "status": "initial-location-audit"
+        },
+        {
+          "title_expression": "'#1270'",
+          "status": "initial-location-audit"
+        },
+        {
+          "title_expression": "'#1284'",
+          "status": "initial-location-audit"
+        },
+        {
+          "title_expression": "'#1638'",
+          "status": "initial-location-audit"
+        },
+        {
+          "title_expression": "'#1263'",
+          "status": "initial-location-audit"
+        },
+        {
+          "title_expression": "'#1262'",
+          "status": "initial-location-audit"
+        },
+        {
+          "title_expression": "'#1409'",
+          "status": "initial-location-audit"
+        },
+        {
+          "title_expression": "'#1255'",
+          "status": "initial-location-audit"
+        }
+      ]
+    },
+    "PathItem_Contains.js": {
+      "sha256": "3345f42240b4d75855b527b366f4d109c9dbe9fc636f5f5b4eb0444e74262996",
+      "test_blocks": [
+        {
+          "title_expression": "'Path#contains() (regular polygon: #208)'",
+          "status": "extracted",
+          "comparison_report": "containment-screening.json"
+        },
+        {
+          "title_expression": "'Path#contains() (circle contours)'",
+          "status": "extracted",
+          "comparison_report": "containment-screening.json"
+        },
+        {
+          "title_expression": "'Path#contains() (transformed circle contours)'",
+          "status": "extracted",
+          "comparison_report": "containment-screening.json"
+        },
+        {
+          "title_expression": "'Path#contains() (round rectangle: #227)'",
+          "status": "extracted",
+          "comparison_report": "containment-screening.json"
+        },
+        {
+          "title_expression": "'Path#contains() (open circle)'",
+          "status": "extracted",
+          "comparison_report": "containment-screening.json"
+        },
+        {
+          "title_expression": "'CompoundPath#contains() (donut)'",
+          "status": "extracted",
+          "comparison_report": "containment-screening.json"
+        },
+        {
+          "title_expression": "'Shape#contains()'",
+          "status": "adapter-required"
+        },
+        {
+          "title_expression": "'Path#contains() (rectangle contours)'",
+          "status": "extracted",
+          "comparison_report": "containment-screening.json"
+        },
+        {
+          "title_expression": "'Path#contains() (rotated rectangle contours)'",
+          "status": "extracted",
+          "comparison_report": "containment-screening.json"
+        },
+        {
+          "title_expression": "'Path#contains() (touching stationary point with changing orientation)'",
+          "status": "extracted",
+          "comparison_report": "containment-screening.json"
+        },
+        {
+          "title_expression": "'Path#contains() (complex shape: #400)'",
+          "status": "extracted",
+          "comparison_report": "containment-screening.json"
+        },
+        {
+          "title_expression": "'Path#contains() (straight curves with zero-winding: #943)'",
+          "status": "extracted",
+          "comparison_report": "containment-screening.json"
+        },
+        {
+          "title_expression": "'CompoundPath#contains() (nested touching circles and other edge cases: #944)'",
+          "status": "extracted",
+          "comparison_report": "containment-screening.json"
+        },
+        {
+          "title_expression": "'Path#contains() with Path#interiorPoint: #854, #1064'",
+          "status": "extracted",
+          "comparison_report": "containment-screening.json"
+        },
+        {
+          "title_expression": "'IPathtem#contains() with non-invertible matrices (#1651)'",
+          "status": "adapter-required"
+        }
+      ]
+    }
+  }
+}

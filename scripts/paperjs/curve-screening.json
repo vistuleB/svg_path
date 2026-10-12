@@ -1,0 +1,606 @@
+[
+  {
+    "id": 0,
+    "block": 1,
+    "method": "getPointAtTime",
+    "status": "match",
+    "expected": [
+      0,
+      100
+    ],
+    "actual": [
+      0,
+      100
+    ],
+    "error": 0,
+    "tolerance": 0.00001
+  },
+  {
+    "id": 1,
+    "block": 1,
+    "method": "getPointAtTime",
+    "status": "match",
+    "expected": [
+      7.8585,
+      61.07549
+    ],
+    "actual": [
+      7.858495705504465,
+      61.0754871165134
+    ],
+    "error": 0.0000042944955351842395,
+    "tolerance": 0.00001
+  },
+  {
+    "id": 2,
+    "block": 1,
+    "method": "getPointAtTime",
+    "status": "match",
+    "expected": [
+      29.28932,
+      29.28932
+    ],
+    "actual": [
+      29.289321881345238,
+      29.289321881345238
+    ],
+    "error": 0.000001881345237819687,
+    "tolerance": 0.00001
+  },
+  {
+    "id": 3,
+    "block": 1,
+    "method": "getPointAtTime",
+    "status": "match",
+    "expected": [
+      61.07549,
+      7.8585
+    ],
+    "actual": [
+      61.0754871165134,
+      7.858495705504463
+    ],
+    "error": 0.000004294495536960596,
+    "tolerance": 0.00001
+  },
+  {
+    "id": 4,
+    "block": 1,
+    "method": "getPointAtTime",
+    "status": "match",
+    "expected": [
+      100,
+      0
+    ],
+    "actual": [
+      100,
+      0
+    ],
+    "error": 0,
+    "tolerance": 0.00001
+  },
+  {
+    "id": 5,
+    "block": 1,
+    "method": "getPointAtTime",
+    "status": "match",
+    "expected": 333.41440000000006,
+    "actual": 333.41440000000006,
+    "error": 0,
+    "tolerance": 0
+  },
+  {
+    "id": 6,
+    "block": 1,
+    "method": "getPointAtTime",
+    "status": "match",
+    "expected": 178.58560000000008,
+    "actual": 178.58560000000008,
+    "error": 0,
+    "tolerance": 0
+  },
+  {
+    "id": 7,
+    "block": 2,
+    "method": "getTangentAtTime",
+    "status": "match",
+    "expected": [
+      0,
+      -1
+    ],
+    "actual": [
+      0,
+      -1
+    ],
+    "error": 0,
+    "tolerance": 1e-7
+  },
+  {
+    "id": 8,
+    "block": 2,
+    "method": "getWeightedTangentAtTime",
+    "status": "match",
+    "expected": [
+      0,
+      -165.68542
+    ],
+    "actual": [
+      0,
+      -165.68542494923807
+    ],
+    "error": 0.000004949238075369067,
+    "tolerance": 0.00001
+  },
+  {
+    "id": 9,
+    "block": 2,
+    "method": "getTangentAtTime",
+    "status": "match",
+    "expected": [
+      0.38955200409223684,
+      -0.9210044712745545
+    ],
+    "actual": [
+      0.38955203618173356,
+      -0.9210044577018426
+    ],
+    "error": 3.2089496726506184e-8,
+    "tolerance": 1e-7
+  },
+  {
+    "id": 10,
+    "block": 2,
+    "method": "getWeightedTangentAtTime",
+    "status": "match",
+    "expected": [
+      60.7233,
+      -143.56602
+    ],
+    "actual": [
+      60.723304703363105,
+      -143.56601717798216
+    ],
+    "error": 0.000004703363103431002,
+    "tolerance": 0.00001
+  },
+  {
+    "id": 11,
+    "block": 2,
+    "method": "getTangentAtTime",
+    "status": "match",
+    "expected": [
+      0.7071067811865475,
+      -0.7071067811865475
+    ],
+    "actual": [
+      0.7071067811865475,
+      -0.7071067811865475
+    ],
+    "error": 0,
+    "tolerance": 1e-7
+  },
+  {
+    "id": 12,
+    "block": 2,
+    "method": "getWeightedTangentAtTime",
+    "status": "match",
+    "expected": [
+      108.57864,
+      -108.57864
+    ],
+    "actual": [
+      108.57864376269048,
+      -108.57864376269048
+    ],
+    "error": 0.0000037626904827448016,
+    "tolerance": 0.00001
+  },
+  {
+    "id": 13,
+    "block": 2,
+    "method": "getTangentAtTime",
+    "status": "match",
+    "expected": [
+      0.9210044712745545,
+      -0.38955200409223684
+    ],
+    "actual": [
+      0.9210044577018426,
+      -0.3895520361817335
+    ],
+    "error": 3.208949667099503e-8,
+    "tolerance": 1e-7
+  },
+  {
+    "id": 14,
+    "block": 2,
+    "method": "getWeightedTangentAtTime",
+    "status": "match",
+    "expected": [
+      143.56602,
+      -60.7233
+    ],
+    "actual": [
+      143.56601717798216,
+      -60.7233047033631
+    ],
+    "error": 0.000004703363096325575,
+    "tolerance": 0.00001
+  },
+  {
+    "id": 15,
+    "block": 2,
+    "method": "getTangentAtTime",
+    "status": "match",
+    "expected": [
+      1,
+      0
+    ],
+    "actual": [
+      1,
+      0
+    ],
+    "error": 0,
+    "tolerance": 1e-7
+  },
+  {
+    "id": 16,
+    "block": 2,
+    "method": "getWeightedTangentAtTime",
+    "status": "match",
+    "expected": [
+      165.68542,
+      0
+    ],
+    "actual": [
+      165.68542494923807,
+      0
+    ],
+    "error": 0.000004949238075369067,
+    "tolerance": 0.00001
+  },
+  {
+    "id": 17,
+    "block": 3,
+    "method": "getNormalAtTime",
+    "status": "match",
+    "expected": [
+      -1,
+      0
+    ],
+    "actual": [
+      -1,
+      0
+    ],
+    "error": 0,
+    "tolerance": 1e-7
+  },
+  {
+    "id": 18,
+    "block": 3,
+    "method": "getWeightedNormalAtTime",
+    "status": "match",
+    "expected": [
+      -165.68542,
+      0
+    ],
+    "actual": [
+      -165.68542494923807,
+      0
+    ],
+    "error": 0.000004949238075369067,
+    "tolerance": 0.00001
+  },
+  {
+    "id": 19,
+    "block": 3,
+    "method": "getNormalAtTime",
+    "status": "match",
+    "expected": [
+      -0.9210044712745545,
+      -0.38955200409223684
+    ],
+    "actual": [
+      -0.9210044577018426,
+      -0.38955203618173356
+    ],
+    "error": 3.2089496726506184e-8,
+    "tolerance": 1e-7
+  },
+  {
+    "id": 20,
+    "block": 3,
+    "method": "getWeightedNormalAtTime",
+    "status": "match",
+    "expected": [
+      -143.56602,
+      -60.7233
+    ],
+    "actual": [
+      -143.56601717798216,
+      -60.723304703363105
+    ],
+    "error": 0.000004703363103431002,
+    "tolerance": 0.00001
+  },
+  {
+    "id": 21,
+    "block": 3,
+    "method": "getNormalAtTime",
+    "status": "match",
+    "expected": [
+      -0.7071067811865475,
+      -0.7071067811865475
+    ],
+    "actual": [
+      -0.7071067811865475,
+      -0.7071067811865475
+    ],
+    "error": 0,
+    "tolerance": 1e-7
+  },
+  {
+    "id": 22,
+    "block": 3,
+    "method": "getWeightedNormalAtTime",
+    "status": "match",
+    "expected": [
+      -108.57864,
+      -108.57864
+    ],
+    "actual": [
+      -108.57864376269048,
+      -108.57864376269048
+    ],
+    "error": 0.0000037626904827448016,
+    "tolerance": 0.00001
+  },
+  {
+    "id": 23,
+    "block": 3,
+    "method": "getNormalAtTime",
+    "status": "match",
+    "expected": [
+      -0.38955200409223684,
+      -0.9210044712745545
+    ],
+    "actual": [
+      -0.3895520361817335,
+      -0.9210044577018426
+    ],
+    "error": 3.208949667099503e-8,
+    "tolerance": 1e-7
+  },
+  {
+    "id": 24,
+    "block": 3,
+    "method": "getWeightedNormalAtTime",
+    "status": "match",
+    "expected": [
+      -60.7233,
+      -143.56602
+    ],
+    "actual": [
+      -60.7233047033631,
+      -143.56601717798216
+    ],
+    "error": 0.000004703363096325575,
+    "tolerance": 0.00001
+  },
+  {
+    "id": 25,
+    "block": 3,
+    "method": "getNormalAtTime",
+    "status": "match",
+    "expected": [
+      0,
+      -1
+    ],
+    "actual": [
+      0,
+      -1
+    ],
+    "error": 0,
+    "tolerance": 1e-7
+  },
+  {
+    "id": 26,
+    "block": 3,
+    "method": "getWeightedNormalAtTime",
+    "status": "match",
+    "expected": [
+      0,
+      -165.68542
+    ],
+    "actual": [
+      0,
+      -165.68542494923807
+    ],
+    "error": 0.000004949238075369067,
+    "tolerance": 0.00001
+  },
+  {
+    "id": 27,
+    "block": 4,
+    "method": "getCurvatureAtTime",
+    "status": "match",
+    "expected": 0.009785533905932729,
+    "actual": 0.009785533905932729,
+    "error": 0,
+    "tolerance": 1e-12
+  },
+  {
+    "id": 28,
+    "block": 4,
+    "method": "getCurvatureAtTime",
+    "status": "match",
+    "expected": 0.010062133221584524,
+    "actual": 0.01006213322158452,
+    "error": 3.469446951953614e-18,
+    "tolerance": 1e-12
+  },
+  {
+    "id": 29,
+    "block": 4,
+    "method": "getCurvatureAtTime",
+    "status": "match",
+    "expected": 0.009937576453041297,
+    "actual": 0.009937576453041295,
+    "error": 1.734723475976807e-18,
+    "tolerance": 1e-12
+  },
+  {
+    "id": 30,
+    "block": 4,
+    "method": "getCurvatureAtTime",
+    "status": "match",
+    "expected": 0.010062133221584524,
+    "actual": 0.01006213322158452,
+    "error": 3.469446951953614e-18,
+    "tolerance": 1e-12
+  },
+  {
+    "id": 31,
+    "block": 4,
+    "method": "getCurvatureAtTime",
+    "status": "match",
+    "expected": 0.009785533905932727,
+    "actual": 0.009785533905932729,
+    "error": 1.734723475976807e-18,
+    "tolerance": 1e-12
+  },
+  {
+    "id": 32,
+    "block": 5,
+    "method": "getCurvatureAtTime",
+    "status": "library-error",
+    "error": {
+      "0": {
+        "type": "DegenerateCurvatureDerivative"
+      },
+      "type": "Error"
+    }
+  },
+  {
+    "id": 33,
+    "block": 5,
+    "method": "getCurvatureAtTime",
+    "status": "match",
+    "expected": 0,
+    "actual": 0,
+    "error": 0,
+    "tolerance": 1e-12
+  },
+  {
+    "id": 34,
+    "block": 5,
+    "method": "getCurvatureAtTime",
+    "status": "match",
+    "expected": 0,
+    "actual": 0,
+    "error": 0,
+    "tolerance": 1e-12
+  },
+  {
+    "id": 35,
+    "block": 5,
+    "method": "getCurvatureAtTime",
+    "status": "match",
+    "expected": 0,
+    "actual": 0,
+    "error": 0,
+    "tolerance": 1e-12
+  },
+  {
+    "id": 36,
+    "block": 5,
+    "method": "getCurvatureAtTime",
+    "status": "library-error",
+    "error": {
+      "0": {
+        "type": "DegenerateCurvatureDerivative"
+      },
+      "type": "Error"
+    }
+  },
+  {
+    "id": 37,
+    "block": 7,
+    "method": "getTimeAt",
+    "status": "match",
+    "expected": 0.3869631475722452,
+    "actual": 0.3869631431043672,
+    "error": 4.467878012004434e-9,
+    "tolerance": 1e-8
+  },
+  {
+    "id": 38,
+    "block": 8,
+    "method": "getTimeAt",
+    "status": "discrepancy",
+    "expected": 1,
+    "actual": 0.9999980926513672,
+    "error": 0.0000019073486328125,
+    "tolerance": 1e-8
+  },
+  {
+    "id": 39,
+    "block": 9,
+    "method": "getTimeAt",
+    "status": "match",
+    "expected": 1,
+    "actual": 0.9999999999999432,
+    "error": 5.684341886080802e-14,
+    "tolerance": 1e-8
+  },
+  {
+    "id": 40,
+    "block": 14,
+    "method": "getPartLength",
+    "status": "match",
+    "expected": 10,
+    "actual": 10,
+    "error": 0,
+    "tolerance": 1e-8
+  },
+  {
+    "id": 41,
+    "block": 14,
+    "method": "getPartLength",
+    "status": "match",
+    "expected": 22,
+    "actual": 22,
+    "error": 0,
+    "tolerance": 1e-8
+  },
+  {
+    "id": 42,
+    "block": 14,
+    "method": "getPartLength",
+    "status": "match",
+    "expected": 44,
+    "actual": 44,
+    "error": 0,
+    "tolerance": 1e-8
+  },
+  {
+    "id": 43,
+    "block": 14,
+    "method": "getPartLength",
+    "status": "match",
+    "expected": 22,
+    "actual": 22,
+    "error": 0,
+    "tolerance": 1e-8
+  },
+  {
+    "id": 44,
+    "block": 14,
+    "method": "getPartLength",
+    "status": "match",
+    "expected": 10,
+    "actual": 10,
+    "error": 0,
+    "tolerance": 1e-8
+  }
+]

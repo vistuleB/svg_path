@@ -1,0 +1,234 @@
+[
+  {
+    "id": 0,
+    "upstream": "#565",
+    "assertion": 1,
+    "status": "point-locations-pass",
+    "note": "Count and unordered point positions only; parameters and classification remain to audit."
+  },
+  {
+    "id": 1,
+    "upstream": "#565",
+    "assertion": 2,
+    "status": "point-locations-pass",
+    "note": "Count and unordered point positions only; parameters and classification remain to audit."
+  },
+  {
+    "id": 2,
+    "upstream": "#568",
+    "assertion": 1,
+    "status": "point-locations-pass",
+    "note": "Count and unordered point positions only; parameters and classification remain to audit."
+  },
+  {
+    "id": 3,
+    "upstream": "#568",
+    "assertion": 2,
+    "status": "point-locations-pass",
+    "note": "Count and unordered point positions only; parameters and classification remain to audit."
+  },
+  {
+    "id": 4,
+    "upstream": "#570",
+    "assertion": 1,
+    "status": "point-locations-pass",
+    "note": "Count and unordered point positions only; parameters and classification remain to audit."
+  },
+  {
+    "id": 5,
+    "upstream": "#571",
+    "assertion": 1,
+    "status": "point-locations-pass",
+    "note": "Count and unordered point positions only; parameters and classification remain to audit."
+  },
+  {
+    "id": 6,
+    "upstream": "overlapping circles",
+    "assertion": 1,
+    "status": "point-locations-pass",
+    "note": "Count and unordered point positions only; parameters and classification remain to audit."
+  },
+  {
+    "id": 7,
+    "upstream": "circle and square (existing segments overlaps on curves)",
+    "assertion": 1,
+    "status": "point-locations-pass",
+    "note": "Count and unordered point positions only; parameters and classification remain to audit."
+  },
+  {
+    "id": 8,
+    "upstream": "intersecting paths with applyMatrix = true / false",
+    "assertion": 1,
+    "status": "point-locations-pass",
+    "note": "Count and unordered point positions only; parameters and classification remain to audit."
+  },
+  {
+    "id": 9,
+    "upstream": "intersecting paths with applyMatrix = true / false",
+    "assertion": 2,
+    "status": "point-locations-pass",
+    "note": "Count and unordered point positions only; parameters and classification remain to audit."
+  },
+  {
+    "id": 10,
+    "upstream": "#904",
+    "assertion": 1,
+    "status": "point-locations-pass",
+    "note": "Count and unordered point positions only; parameters and classification remain to audit."
+  },
+  {
+    "id": 11,
+    "upstream": "#1066",
+    "assertion": 1,
+    "status": "point-locations-pass",
+    "note": "Count and unordered point positions only; parameters and classification remain to audit."
+  },
+  {
+    "id": 12,
+    "upstream": "#1073#issuecomment-234305530",
+    "assertion": 1,
+    "status": "different-api-expectations",
+    "note": "Different API expectations: a genuine tolerance-certified partial cubic overlap. The point-only query intentionally returns OverlappingSegments; Paper.js includes overlap boundaries among point locations.",
+    "classification_date": "2026-10-12"
+  },
+  {
+    "id": 13,
+    "upstream": "#1074",
+    "assertion": 1,
+    "status": "different-api-expectations",
+    "note": "Different API expectations: multiple near-tangent candidates are explicitly permitted. Every reported parameter pair satisfies the 1e-9 distance tolerance; both upstream contacts are retained.",
+    "classification_date": "2026-10-12"
+  },
+  {
+    "id": 14,
+    "upstream": "#1088",
+    "assertion": 1,
+    "status": "point-locations-pass",
+    "note": "Count and unordered point positions only; parameters and classification remain to audit."
+  },
+  {
+    "id": 15,
+    "upstream": "#1165",
+    "assertion": 1,
+    "status": "point-locations-pass",
+    "note": "Count and unordered point positions only; parameters and classification remain to audit."
+  },
+  {
+    "id": 16,
+    "upstream": "#1174",
+    "assertion": 1,
+    "status": "point-locations-pass",
+    "note": "Count and unordered point positions only; parameters and classification remain to audit."
+  },
+  {
+    "id": 17,
+    "upstream": "#1197",
+    "assertion": 1,
+    "status": "point-locations-pass",
+    "note": "Count and unordered point positions only; parameters and classification remain to audit."
+  },
+  {
+    "id": 18,
+    "upstream": "#1233",
+    "assertion": 1,
+    "status": "different-api-expectations",
+    "note": "Different API expectations: Paper.js includes a near endpoint contact outside our 1e-9 coincidence tolerance. The three genuine crossings are retained; this is not an arc-length-separation exclusion.",
+    "classification_date": "2026-10-12"
+  },
+  {
+    "id": 19,
+    "upstream": "#1239",
+    "assertion": 1,
+    "status": "different-api-expectations",
+    "note": "Different API expectations: an exactly identical constituent segment is a continuous overlap, intentionally rejected by the point-only API. Use overlap-aware encounters.",
+    "classification_date": "2026-10-12"
+  },
+  {
+    "id": 20,
+    "upstream": "#1270",
+    "assertion": 1,
+    "status": "point-locations-pass",
+    "note": "Count and unordered point positions only; parameters and classification remain to audit."
+  },
+  {
+    "id": 21,
+    "upstream": "#1284",
+    "assertion": 1,
+    "status": "point-locations-pass",
+    "note": "Count and unordered point positions only; parameters and classification remain to audit."
+  },
+  {
+    "id": 22,
+    "upstream": "#1284",
+    "assertion": 2,
+    "status": "point-locations-pass",
+    "note": "Count and unordered point positions only; parameters and classification remain to audit."
+  },
+  {
+    "id": 23,
+    "upstream": "#1284",
+    "assertion": 3,
+    "status": "different-api-expectations",
+    "note": "Different API expectations: both near-tangent candidates satisfy the 1e-9 distance tolerance, and our API explicitly permits multiple candidates near tangency.",
+    "classification_date": "2026-10-12"
+  },
+  {
+    "id": 24,
+    "upstream": "#1284",
+    "assertion": 4,
+    "status": "different-api-expectations",
+    "note": "Different API expectations: same geometry and result as fixture 23, exercised upstream through the Path API.",
+    "classification_date": "2026-10-12"
+  },
+  {
+    "id": 25,
+    "upstream": "#1638",
+    "assertion": 1,
+    "status": "point-locations-pass",
+    "note": "Count and unordered point positions only; parameters and classification remain to audit."
+  },
+  {
+    "id": 26,
+    "upstream": "#1263",
+    "assertion": 1,
+    "status": "point-locations-pass",
+    "note": "Count and unordered point positions only; parameters and classification remain to audit."
+  },
+  {
+    "id": 27,
+    "upstream": "#1262",
+    "assertion": 1,
+    "status": "different-api-expectations",
+    "note": "Different API expectations: six tolerance-valid candidates versus two mathematical endpoint roots. Our documented API does not promise one returned candidate per root near tangency.",
+    "classification_date": "2026-10-12"
+  },
+  {
+    "id": 28,
+    "upstream": "#1409",
+    "assertion": 1,
+    "status": "pending-crossings",
+    "note": "Crossing classification not yet adapted."
+  },
+  {
+    "id": 29,
+    "upstream": "#1409",
+    "assertion": 2,
+    "status": "pending-crossings",
+    "note": "Crossing classification not yet adapted."
+  },
+  {
+    "id": 30,
+    "upstream": "#1409",
+    "assertion": 3,
+    "status": "pending-crossings",
+    "note": "Crossing classification not yet adapted."
+  },
+  {
+    "id": 31,
+    "upstream": "#1255",
+    "assertion": 1,
+    "status": "different-api-expectations",
+    "note": "Different API expectations: three near-tangent candidates all meet 1e-9 coincidence tolerance; the expected endpoint remains present.",
+    "classification_date": "2026-10-12"
+  }
+]

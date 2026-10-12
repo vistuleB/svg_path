@@ -1,0 +1,230 @@
+[
+  {
+    "id": 0,
+    "status": "match",
+    "portableRegression": true
+  },
+  {
+    "id": 1,
+    "status": "match",
+    "portableRegression": true
+  },
+  {
+    "id": 2,
+    "status": "match",
+    "portableRegression": true
+  },
+  {
+    "id": 3,
+    "status": "match",
+    "portableRegression": true
+  },
+  {
+    "id": 4,
+    "status": "match",
+    "portableRegression": true
+  },
+  {
+    "id": 5,
+    "status": "match",
+    "portableRegression": true
+  },
+  {
+    "id": 6,
+    "status": "match",
+    "portableRegression": true
+  },
+  {
+    "id": 7,
+    "status": "match",
+    "portableRegression": true
+  },
+  {
+    "id": 8,
+    "status": "match",
+    "portableRegression": true
+  },
+  {
+    "id": 9,
+    "status": "match",
+    "portableRegression": true
+  },
+  {
+    "id": 10,
+    "status": "match",
+    "portableRegression": true
+  },
+  {
+    "id": 11,
+    "status": "match",
+    "portableRegression": true
+  },
+  {
+    "id": 12,
+    "status": "match",
+    "portableRegression": true
+  },
+  {
+    "id": 13,
+    "status": "match",
+    "portableRegression": true
+  },
+  {
+    "id": 14,
+    "status": "match",
+    "portableRegression": true
+  },
+  {
+    "id": 15,
+    "status": "match",
+    "portableRegression": true
+  },
+  {
+    "id": 16,
+    "status": "match",
+    "portableRegression": true
+  },
+  {
+    "id": 17,
+    "status": "match",
+    "portableRegression": true
+  },
+  {
+    "id": 18,
+    "status": "match",
+    "portableRegression": true
+  },
+  {
+    "id": 19,
+    "status": "match",
+    "portableRegression": true
+  },
+  {
+    "id": 20,
+    "status": "match",
+    "portableRegression": true
+  },
+  {
+    "id": 21,
+    "status": "match",
+    "portableRegression": true
+  },
+  {
+    "id": 22,
+    "status": "match",
+    "portableRegression": true
+  },
+  {
+    "id": 23,
+    "status": "match",
+    "portableRegression": true
+  },
+  {
+    "id": 24,
+    "status": "match",
+    "portableRegression": true
+  },
+  {
+    "id": 25,
+    "status": "match",
+    "portableRegression": true
+  },
+  {
+    "id": 26,
+    "status": "match",
+    "portableRegression": true
+  },
+  {
+    "id": 27,
+    "status": "match",
+    "portableRegression": true
+  },
+  {
+    "id": 28,
+    "status": "match",
+    "portableRegression": true
+  },
+  {
+    "id": 29,
+    "status": "match",
+    "portableRegression": true
+  },
+  {
+    "id": 30,
+    "status": "match",
+    "portableRegression": true
+  },
+  {
+    "id": 31,
+    "status": "match",
+    "portableRegression": true
+  },
+  {
+    "id": 32,
+    "status": "different-api-expectations",
+    "portableRegression": true,
+    "evidence": "Zero-speed cubic endpoint: documented DegenerateCurvatureDerivative; Paper.js returns 0."
+  },
+  {
+    "id": 33,
+    "status": "match",
+    "portableRegression": true
+  },
+  {
+    "id": 34,
+    "status": "match",
+    "portableRegression": true
+  },
+  {
+    "id": 35,
+    "status": "match",
+    "portableRegression": true
+  },
+  {
+    "id": 36,
+    "status": "different-api-expectations",
+    "portableRegression": true,
+    "evidence": "Zero-speed cubic endpoint: documented DegenerateCurvatureDerivative; Paper.js returns 0."
+  },
+  {
+    "id": 37,
+    "status": "match",
+    "portableRegression": true
+  },
+  {
+    "id": 38,
+    "status": "different-api-expectations",
+    "portableRegression": true,
+    "evidence": "Paper snaps to t=1. Our parameter satisfies distance tolerance: independent 60-digit calculation gives residual 6.984341993643259e-10 < 1e-9."
+  },
+  {
+    "id": 39,
+    "status": "match",
+    "portableRegression": true
+  },
+  {
+    "id": 40,
+    "status": "match",
+    "portableRegression": true
+  },
+  {
+    "id": 41,
+    "status": "match",
+    "portableRegression": true
+  },
+  {
+    "id": 42,
+    "status": "match",
+    "portableRegression": true
+  },
+  {
+    "id": 43,
+    "status": "match",
+    "portableRegression": true
+  },
+  {
+    "id": 44,
+    "status": "match",
+    "portableRegression": true
+  }
+]
