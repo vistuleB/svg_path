@@ -1,0 +1,219 @@
+{
+  "blocks": [
+    {
+      "block": 0,
+      "title": "new Segment()"
+    },
+    {
+      "block": 1,
+      "title": "new Segment(point)"
+    },
+    {
+      "block": 2,
+      "title": "new Segment(x, y)"
+    },
+    {
+      "block": 3,
+      "title": "new Segment(undefined)"
+    },
+    {
+      "block": 4,
+      "title": "new Segment(object)"
+    },
+    {
+      "block": 5,
+      "title": "new Segment(point, handleIn, handleOut)"
+    },
+    {
+      "block": 6,
+      "title": "new Segment(null, null, null)"
+    },
+    {
+      "block": 7,
+      "title": "new Segment(undefined, null, null)"
+    },
+    {
+      "block": 8,
+      "title": "new Segment(x, y, inX, inY, outX, outY)"
+    },
+    {
+      "block": 9,
+      "title": "new Segment(size)"
+    },
+    {
+      "block": 10,
+      "title": "segment.reverse()"
+    },
+    {
+      "block": 11,
+      "title": "segment.clone()"
+    },
+    {
+      "block": 12,
+      "title": "segment.remove()"
+    },
+    {
+      "block": 13,
+      "title": "segment.selected"
+    }
+  ],
+  "fixtures": [
+    {
+      "id": 0,
+      "block": 0,
+      "title": "new Segment()",
+      "expected": "{ point: { x: 0, y: 0 } }",
+      "actual": "{ point: { x: 0, y: 0 } }",
+      "beforeReverse": null,
+      "message": null
+    },
+    {
+      "id": 1,
+      "block": 1,
+      "title": "new Segment(point)",
+      "expected": "{ point: { x: 10, y: 10 } }",
+      "actual": "{ point: { x: 10, y: 10 } }",
+      "beforeReverse": null,
+      "message": null
+    },
+    {
+      "id": 2,
+      "block": 2,
+      "title": "new Segment(x, y)",
+      "expected": "{ point: { x: 10, y: 10 } }",
+      "actual": "{ point: { x: 10, y: 10 } }",
+      "beforeReverse": null,
+      "message": null
+    },
+    {
+      "id": 3,
+      "block": 3,
+      "title": "new Segment(undefined)",
+      "expected": "{ point: { x: 0, y: 0 } }",
+      "actual": "{ point: { x: 0, y: 0 } }",
+      "beforeReverse": null,
+      "message": null
+    },
+    {
+      "id": 4,
+      "block": 4,
+      "title": "new Segment(object)",
+      "expected": "{ point: { x: 10, y: 10 }, handleIn: { x: 5, y: 5 }, handleOut: { x: 15, y: 15 } }",
+      "actual": "{ point: { x: 10, y: 10 }, handleIn: { x: 5, y: 5 }, handleOut: { x: 15, y: 15 } }",
+      "beforeReverse": null,
+      "message": null
+    },
+    {
+      "id": 5,
+      "block": 5,
+      "title": "new Segment(point, handleIn, handleOut)",
+      "expected": "{ point: { x: 10, y: 10 }, handleIn: { x: 5, y: 5 }, handleOut: { x: 15, y: 15 } }",
+      "actual": "{ point: { x: 10, y: 10 }, handleIn: { x: 5, y: 5 }, handleOut: { x: 15, y: 15 } }",
+      "beforeReverse": null,
+      "message": null
+    },
+    {
+      "id": 6,
+      "block": 6,
+      "title": "new Segment(null, null, null)",
+      "expected": "{ point: { x: 0, y: 0 } }",
+      "actual": "{ point: { x: 0, y: 0 } }",
+      "beforeReverse": null,
+      "message": null
+    },
+    {
+      "id": 7,
+      "block": 7,
+      "title": "new Segment(undefined, null, null)",
+      "expected": "{ point: { x: 0, y: 0 } }",
+      "actual": "{ point: { x: 0, y: 0 } }",
+      "beforeReverse": null,
+      "message": null
+    },
+    {
+      "id": 8,
+      "block": 8,
+      "title": "new Segment(x, y, inX, inY, outX, outY)",
+      "expected": "{ point: { x: 10, y: 10 }, handleIn: { x: 5, y: 5 }, handleOut: { x: 15, y: 15 } }",
+      "actual": "{ point: { x: 10, y: 10 }, handleIn: { x: 5, y: 5 }, handleOut: { x: 15, y: 15 } }",
+      "beforeReverse": null,
+      "message": null
+    },
+    {
+      "id": 9,
+      "block": 9,
+      "title": "new Segment(size)",
+      "expected": "{ point: { x: 10, y: 10 } }",
+      "actual": "{ point: { x: 10, y: 10 } }",
+      "beforeReverse": null,
+      "message": null
+    },
+    {
+      "id": 10,
+      "block": 10,
+      "title": "segment.reverse()",
+      "expected": "{ point: { x: 10, y: 10 }, handleIn: { x: 15, y: 15 }, handleOut: { x: 5, y: 5 } }",
+      "actual": "{ point: { x: 10, y: 10 }, handleIn: { x: 15, y: 15 }, handleOut: { x: 5, y: 5 } }",
+      "beforeReverse": {
+        "point": [
+          10,
+          10
+        ],
+        "handleIn": [
+          5,
+          5
+        ],
+        "handleOut": [
+          15,
+          15
+        ]
+      },
+      "message": null
+    },
+    {
+      "id": 11,
+      "block": 11,
+      "title": "segment.clone()",
+      "expected": false,
+      "actual": false,
+      "beforeReverse": null,
+      "message": null
+    },
+    {
+      "id": 12,
+      "block": 11,
+      "title": "segment.clone()",
+      "expected": "{ point: { x: 10, y: 10 }, handleIn: { x: 5, y: 5 }, handleOut: { x: 15, y: 15 } }",
+      "actual": "{ point: { x: 10, y: 10 }, handleIn: { x: 5, y: 5 }, handleOut: { x: 15, y: 15 } }",
+      "beforeReverse": null,
+      "message": null
+    },
+    {
+      "id": 13,
+      "block": 12,
+      "title": "segment.remove()",
+      "expected": "{ point: { x: 10, y: 10 } },{ point: { x: 10, y: 10 } }",
+      "actual": "{ point: { x: 10, y: 10 } },{ point: { x: 10, y: 10 } }",
+      "beforeReverse": null,
+      "message": null
+    },
+    {
+      "id": 14,
+      "block": 13,
+      "title": "segment.selected",
+      "expected": true,
+      "actual": true,
+      "beforeReverse": null,
+      "message": null
+    },
+    {
+      "id": 15,
+      "block": 13,
+      "title": "segment.selected",
+      "expected": false,
+      "actual": false,
+      "beforeReverse": null,
+      "message": null
+    }
+  ]
+}

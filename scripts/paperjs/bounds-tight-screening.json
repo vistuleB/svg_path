@@ -1,0 +1,56 @@
+[
+  {
+    "id": 9,
+    "block": 10,
+    "property": "strokeBounds",
+    "strokeFittingTolerance": 0.000001,
+    "status": "library-error",
+    "stage": "stroke",
+    "error": {
+      "0": {
+        "type": "OffsetError",
+        "error": {
+          "type": "MaxDepthReached",
+          "divergence": 6.609405926239199e-7
+        }
+      },
+      "type": "Error"
+    }
+  },
+  {
+    "id": 10,
+    "block": 11,
+    "property": "strokeBounds",
+    "strokeFittingTolerance": 0.000001,
+    "status": "library-error",
+    "stage": "stroke",
+    "error": {
+      "0": {
+        "type": "OffsetError",
+        "error": {
+          "type": "MaxDepthReached",
+          "divergence": 5.078433572308661e-7
+        }
+      },
+      "type": "Error"
+    }
+  },
+  {
+    "id": 75,
+    "block": 34,
+    "property": "strokeBounds",
+    "strokeFittingTolerance": 0.000001,
+    "status": "library-error",
+    "stage": "stroke",
+    "error": {
+      "0": {
+        "type": "OffsetError",
+        "error": {
+          "type": "MaxDepthReached",
+          "divergence": 5.23319463489562e-7
+        }
+      },
+      "type": "Error"
+    }
+  }
+]

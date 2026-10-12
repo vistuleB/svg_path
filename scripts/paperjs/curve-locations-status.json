@@ -1,0 +1,18 @@
+{
+  "blocks": [
+    {
+      "block": 0,
+      "title": "CurveLocation#offset",
+      "status": "adapted-prefix-length-match",
+      "comparison_report": "curve-locations-native-screening.json"
+    }
+  ],
+  "preservedAssertions": 4,
+  "comparedAssertions": 4,
+  "representations": [
+    "original-zero-handle-cubics",
+    "straight-lines"
+  ],
+  "queriesPerBackend": 8,
+  "adapter": "Measure the prefix ending at the explicit node parameter; the start uses an empty prefix. Supplementary direct and inverse point checks preserve all four source vertices. No mutable CurveLocation object API is claimed."
+}

@@ -1,0 +1,748 @@
+{
+  "comparisonTolerance": 2e-05,
+  "distinctInputs": 41,
+  "results": [
+    {
+      "id": 0,
+      "block": 7,
+      "title": "path.bounds",
+      "status": "numeric-match",
+      "duplicateOf": null,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 1,
+      "block": 7,
+      "title": "path.bounds",
+      "status": "numeric-match",
+      "duplicateOf": null,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 2,
+      "block": 7,
+      "title": "path.bounds",
+      "status": "numeric-match",
+      "duplicateOf": null,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 3,
+      "block": 7,
+      "title": "path.bounds",
+      "status": "numeric-match",
+      "duplicateOf": null,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 4,
+      "block": 7,
+      "title": "path.bounds",
+      "status": "numeric-match",
+      "duplicateOf": null,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 5,
+      "block": 7,
+      "title": "path.bounds",
+      "status": "numeric-match",
+      "duplicateOf": null,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 6,
+      "block": 7,
+      "title": "path.bounds",
+      "status": "numeric-match",
+      "duplicateOf": null,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 7,
+      "block": 8,
+      "title": "path.strokeBounds on path without stroke",
+      "status": "numeric-match",
+      "duplicateOf": null,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 8,
+      "block": 9,
+      "title": "path.strokeBounds on path with single segment and stroke color",
+      "status": "different-api-empty-stroke",
+      "duplicateOf": null,
+      "evidence": "Gleam Butt stroke of an empty subpath returns an empty path; bounds then returns EmptyPath. Paper returns the item position as a zero-size rectangle."
+    },
+    {
+      "id": 9,
+      "block": 10,
+      "title": "path.strokeBounds on closed path with single segment and stroke color",
+      "status": "understood-stroke-approximation-difference",
+      "duplicateOf": null,
+      "evidence": "Independent source-cubic extrema and closure-miter calculation agree with Paper. Independent polynomial bounds of the returned outline agree with Gleam within 5.7e-14. Default max edge error is 0.00120330, falling to 0.00012666 at fitting tolerance 0.002/0.001. Smaller tested tolerances hit the supported depth-5 refinement limit. See first-stroke-bounds-findings.json."
+    },
+    {
+      "id": 10,
+      "block": 11,
+      "title": "path.strokeBounds with corners and miter limit",
+      "status": "understood-stroke-approximation-difference",
+      "duplicateOf": null,
+      "evidence": "Independent source extrema and accepted miter references agree with unrounded Paper bounds within 5.7e-14. Independent polynomial bounds of the returned outline agree with Gleam within 1.8e-13. Successful sweep edge errors are below the requested fitting tolerance; tighter requests eventually reach the supported refinement limit. See remaining-stroke-bounds-findings.json."
+    },
+    {
+      "id": 11,
+      "block": 12,
+      "title": "path.bounds & path.strokeBounds with stroke styles",
+      "status": "numeric-match",
+      "duplicateOf": null,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 12,
+      "block": 12,
+      "title": "path.bounds & path.strokeBounds with stroke styles",
+      "status": "numeric-match",
+      "duplicateOf": null,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 13,
+      "block": 12,
+      "title": "path.bounds & path.strokeBounds with stroke styles",
+      "status": "numeric-match",
+      "duplicateOf": null,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 14,
+      "block": 12,
+      "title": "path.bounds & path.strokeBounds with stroke styles",
+      "status": "numeric-match",
+      "duplicateOf": null,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 15,
+      "block": 12,
+      "title": "path.bounds & path.strokeBounds with stroke styles",
+      "status": "numeric-match",
+      "duplicateOf": null,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 16,
+      "block": 12,
+      "title": "path.bounds & path.strokeBounds with stroke styles",
+      "status": "numeric-match",
+      "duplicateOf": null,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 17,
+      "block": 12,
+      "title": "path.bounds & path.strokeBounds with stroke styles",
+      "status": "numeric-match",
+      "duplicateOf": null,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 18,
+      "block": 12,
+      "title": "path.bounds & path.strokeBounds with stroke styles",
+      "status": "numeric-match",
+      "duplicateOf": null,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 19,
+      "block": 12,
+      "title": "path.bounds & path.strokeBounds with stroke styles",
+      "status": "numeric-match",
+      "duplicateOf": null,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 20,
+      "block": 12,
+      "title": "path.bounds & path.strokeBounds with stroke styles",
+      "status": "numeric-match",
+      "duplicateOf": null,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 21,
+      "block": 12,
+      "title": "path.bounds & path.strokeBounds with stroke styles",
+      "status": "numeric-match",
+      "duplicateOf": null,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 22,
+      "block": 12,
+      "title": "path.bounds & path.strokeBounds with stroke styles",
+      "status": "numeric-match",
+      "duplicateOf": null,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 23,
+      "block": 12,
+      "title": "path.bounds & path.strokeBounds with stroke styles",
+      "status": "numeric-match",
+      "duplicateOf": null,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 24,
+      "block": 12,
+      "title": "path.bounds & path.strokeBounds with stroke styles",
+      "status": "numeric-match",
+      "duplicateOf": null,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 25,
+      "block": 12,
+      "title": "path.bounds & path.strokeBounds with stroke styles",
+      "status": "numeric-match",
+      "duplicateOf": null,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 26,
+      "block": 12,
+      "title": "path.bounds & path.strokeBounds with stroke styles",
+      "status": "numeric-match",
+      "duplicateOf": null,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 27,
+      "block": 12,
+      "title": "path.bounds & path.strokeBounds with stroke styles",
+      "status": "numeric-match",
+      "duplicateOf": null,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 28,
+      "block": 12,
+      "title": "path.bounds & path.strokeBounds with stroke styles",
+      "status": "numeric-match",
+      "duplicateOf": null,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 29,
+      "block": 13,
+      "title": "path.strokeBounds with rectangles",
+      "status": "numeric-match",
+      "duplicateOf": null,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 30,
+      "block": 14,
+      "title": "path.strokeBounds without strokeScaling and zoomed view",
+      "status": "numeric-match",
+      "duplicateOf": null,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 31,
+      "block": 14,
+      "title": "path.strokeBounds without strokeScaling and zoomed view",
+      "status": "numeric-match",
+      "duplicateOf": null,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 32,
+      "block": 16,
+      "title": "path.bounds",
+      "status": "numeric-match",
+      "duplicateOf": 0,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 33,
+      "block": 16,
+      "title": "path.bounds",
+      "status": "numeric-match",
+      "duplicateOf": 1,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 34,
+      "block": 16,
+      "title": "path.bounds",
+      "status": "numeric-match",
+      "duplicateOf": 2,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 35,
+      "block": 16,
+      "title": "path.bounds",
+      "status": "numeric-match",
+      "duplicateOf": 3,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 36,
+      "block": 16,
+      "title": "path.bounds",
+      "status": "numeric-match",
+      "duplicateOf": 4,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 37,
+      "block": 16,
+      "title": "path.bounds",
+      "status": "numeric-match",
+      "duplicateOf": 5,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 38,
+      "block": 16,
+      "title": "path.bounds",
+      "status": "numeric-match",
+      "duplicateOf": 6,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 39,
+      "block": 17,
+      "title": "path.strokeBounds on path without stroke",
+      "status": "numeric-match",
+      "duplicateOf": 7,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 40,
+      "block": 18,
+      "title": "path.strokeBounds on path with single segment and stroke color",
+      "status": "different-api-empty-stroke",
+      "duplicateOf": 8,
+      "evidence": "Gleam Butt stroke of an empty subpath returns an empty path; bounds then returns EmptyPath. Paper returns the item position as a zero-size rectangle."
+    },
+    {
+      "id": 41,
+      "block": 19,
+      "title": "path.strokeBounds on closed path with single segment and stroke color",
+      "status": "understood-stroke-approximation-difference",
+      "duplicateOf": 9,
+      "evidence": "Independent source-cubic extrema and closure-miter calculation agree with Paper. Independent polynomial bounds of the returned outline agree with Gleam within 5.7e-14. Default max edge error is 0.00120330, falling to 0.00012666 at fitting tolerance 0.002/0.001. Smaller tested tolerances hit the supported depth-5 refinement limit. See first-stroke-bounds-findings.json."
+    },
+    {
+      "id": 42,
+      "block": 20,
+      "title": "path.strokeBounds with corners and miter limit",
+      "status": "understood-stroke-approximation-difference",
+      "duplicateOf": 10,
+      "evidence": "Independent source extrema and accepted miter references agree with unrounded Paper bounds within 5.7e-14. Independent polynomial bounds of the returned outline agree with Gleam within 1.8e-13. Successful sweep edge errors are below the requested fitting tolerance; tighter requests eventually reach the supported refinement limit. See remaining-stroke-bounds-findings.json."
+    },
+    {
+      "id": 43,
+      "block": 21,
+      "title": "path.bounds & path.strokeBounds with stroke styles",
+      "status": "numeric-match",
+      "duplicateOf": 11,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 44,
+      "block": 21,
+      "title": "path.bounds & path.strokeBounds with stroke styles",
+      "status": "numeric-match",
+      "duplicateOf": 12,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 45,
+      "block": 21,
+      "title": "path.bounds & path.strokeBounds with stroke styles",
+      "status": "numeric-match",
+      "duplicateOf": 13,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 46,
+      "block": 21,
+      "title": "path.bounds & path.strokeBounds with stroke styles",
+      "status": "numeric-match",
+      "duplicateOf": 14,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 47,
+      "block": 21,
+      "title": "path.bounds & path.strokeBounds with stroke styles",
+      "status": "numeric-match",
+      "duplicateOf": 15,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 48,
+      "block": 21,
+      "title": "path.bounds & path.strokeBounds with stroke styles",
+      "status": "numeric-match",
+      "duplicateOf": 16,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 49,
+      "block": 21,
+      "title": "path.bounds & path.strokeBounds with stroke styles",
+      "status": "numeric-match",
+      "duplicateOf": 17,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 50,
+      "block": 21,
+      "title": "path.bounds & path.strokeBounds with stroke styles",
+      "status": "numeric-match",
+      "duplicateOf": 18,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 51,
+      "block": 21,
+      "title": "path.bounds & path.strokeBounds with stroke styles",
+      "status": "numeric-match",
+      "duplicateOf": 19,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 52,
+      "block": 21,
+      "title": "path.bounds & path.strokeBounds with stroke styles",
+      "status": "numeric-match",
+      "duplicateOf": 20,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 53,
+      "block": 21,
+      "title": "path.bounds & path.strokeBounds with stroke styles",
+      "status": "numeric-match",
+      "duplicateOf": 21,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 54,
+      "block": 21,
+      "title": "path.bounds & path.strokeBounds with stroke styles",
+      "status": "numeric-match",
+      "duplicateOf": 22,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 55,
+      "block": 21,
+      "title": "path.bounds & path.strokeBounds with stroke styles",
+      "status": "numeric-match",
+      "duplicateOf": 23,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 56,
+      "block": 21,
+      "title": "path.bounds & path.strokeBounds with stroke styles",
+      "status": "numeric-match",
+      "duplicateOf": 24,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 57,
+      "block": 21,
+      "title": "path.bounds & path.strokeBounds with stroke styles",
+      "status": "numeric-match",
+      "duplicateOf": 25,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 58,
+      "block": 21,
+      "title": "path.bounds & path.strokeBounds with stroke styles",
+      "status": "numeric-match",
+      "duplicateOf": 26,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 59,
+      "block": 21,
+      "title": "path.bounds & path.strokeBounds with stroke styles",
+      "status": "numeric-match",
+      "duplicateOf": 27,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 60,
+      "block": 21,
+      "title": "path.bounds & path.strokeBounds with stroke styles",
+      "status": "numeric-match",
+      "duplicateOf": 28,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 61,
+      "block": 22,
+      "title": "path.strokeBounds with rectangles",
+      "status": "numeric-match",
+      "duplicateOf": 29,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 62,
+      "block": 25,
+      "title": "path.internalBounds",
+      "status": "numeric-match",
+      "duplicateOf": null,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 63,
+      "block": 25,
+      "title": "path.internalBounds",
+      "status": "numeric-match",
+      "duplicateOf": null,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 64,
+      "block": 26,
+      "title": "compoundPath.strokeBounds",
+      "status": "numeric-match",
+      "duplicateOf": null,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 65,
+      "block": 26,
+      "title": "compoundPath.strokeBounds",
+      "status": "numeric-match",
+      "duplicateOf": null,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 66,
+      "block": 26,
+      "title": "compoundPath.strokeBounds",
+      "status": "numeric-match",
+      "duplicateOf": 64,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 67,
+      "block": 26,
+      "title": "compoundPath.strokeBounds",
+      "status": "numeric-match",
+      "duplicateOf": 65,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 68,
+      "block": 27,
+      "title": "path.strokeBounds with applyMatrix disabled",
+      "status": "numeric-match",
+      "duplicateOf": null,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 69,
+      "block": 27,
+      "title": "path.strokeBounds with applyMatrix disabled",
+      "status": "numeric-match",
+      "duplicateOf": 68,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 70,
+      "block": 27,
+      "title": "path.strokeBounds with applyMatrix disabled",
+      "status": "numeric-match",
+      "duplicateOf": null,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 71,
+      "block": 27,
+      "title": "path.strokeBounds with applyMatrix disabled",
+      "status": "numeric-match",
+      "duplicateOf": null,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 72,
+      "block": 28,
+      "title": "path.strokeBounds with applyMatrix enabled",
+      "status": "numeric-match",
+      "duplicateOf": 70,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 73,
+      "block": 28,
+      "title": "path.strokeBounds with applyMatrix enabled",
+      "status": "numeric-match",
+      "duplicateOf": 71,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 74,
+      "block": 33,
+      "title": "path.strokeBounds of open, circular arc (#1817)",
+      "status": "numeric-match",
+      "duplicateOf": null,
+      "evidence": "Bounds agree with upstream rounded literals within 2e-5 on both targets."
+    },
+    {
+      "id": 75,
+      "block": 34,
+      "title": "path.strokeBounds applies stroke padding properly (#1824)",
+      "status": "understood-stroke-approximation-difference",
+      "duplicateOf": null,
+      "evidence": "Independent source extrema and accepted miter references agree with unrounded Paper bounds within 5.7e-14. Independent polynomial bounds of the returned outline agree with Gleam within 1.8e-13. Successful sweep edge errors are below the requested fitting tolerance; tighter requests eventually reach the supported refinement limit. See remaining-stroke-bounds-findings.json."
+    }
+  ],
+  "unadaptedBlocks": [
+    {
+      "block": 0,
+      "title": "item.bounds caching",
+      "status": "scene-api-not-adapted"
+    },
+    {
+      "block": 1,
+      "title": "group.bounds when group contains empty group",
+      "status": "scene-api-not-adapted"
+    },
+    {
+      "block": 2,
+      "title": "group.bounds and position after children were modified",
+      "status": "scene-api-not-adapted"
+    },
+    {
+      "block": 3,
+      "title": "group.bounds when containing empty path first",
+      "status": "scene-api-not-adapted"
+    },
+    {
+      "block": 4,
+      "title": "path.bounds when contained in a transformed group",
+      "status": "scene-api-not-adapted"
+    },
+    {
+      "block": 5,
+      "title": "shape.strokeBounds when scaled without strokeScaling",
+      "status": "scene-api-not-adapted"
+    },
+    {
+      "block": 6,
+      "title": "text.bounds",
+      "status": "scene-api-not-adapted"
+    },
+    {
+      "block": 15,
+      "title": "shape.strokeBounds without strokeScaling and zoomed view",
+      "status": "scene-api-not-adapted"
+    },
+    {
+      "block": 23,
+      "title": "path.strokeBounds without strokeScaling and zoomed view",
+      "status": "scene-api-not-adapted"
+    },
+    {
+      "block": 24,
+      "title": "shape.strokeBounds without strokeScaling and zoomed view",
+      "status": "scene-api-not-adapted"
+    },
+    {
+      "block": 29,
+      "title": "symbolItem.bounds with strokeScaling disabled",
+      "status": "scene-api-not-adapted"
+    },
+    {
+      "block": 30,
+      "title": "item.visible and item.parents.bounds (#1248)",
+      "status": "scene-api-not-adapted"
+    },
+    {
+      "block": 31,
+      "title": "group.internalBounds with child and child.applyMatrix = false (#1250)",
+      "status": "scene-api-not-adapted"
+    },
+    {
+      "block": 32,
+      "title": "item._globalMatrix on item after empty symbol (#1561)",
+      "status": "scene-api-not-adapted"
+    }
+  ],
+  "omittedAssertions": [
+    {
+      "block": 7,
+      "title": "path.bounds",
+      "message": "resized path.segments",
+      "reason": "Non-bounds assertion (segment strings or scene hit testing)."
+    },
+    {
+      "block": 7,
+      "title": "path.bounds",
+      "message": "roated path.segments",
+      "reason": "Non-bounds assertion (segment strings or scene hit testing)."
+    },
+    {
+      "block": 16,
+      "title": "path.bounds",
+      "message": "resized path.segments",
+      "reason": "Non-bounds assertion (segment strings or scene hit testing)."
+    },
+    {
+      "block": 16,
+      "title": "path.bounds",
+      "message": "roated path.segments",
+      "reason": "Non-bounds assertion (segment strings or scene hit testing)."
+    },
+    {
+      "block": 27,
+      "title": "path.strokeBounds with applyMatrix disabled",
+      "message": null,
+      "reason": "Non-bounds assertion (segment strings or scene hit testing)."
+    },
+    {
+      "block": 27,
+      "title": "path.strokeBounds with applyMatrix disabled",
+      "message": null,
+      "reason": "Non-bounds assertion (segment strings or scene hit testing)."
+    },
+    {
+      "block": 27,
+      "title": "path.strokeBounds with applyMatrix disabled",
+      "message": null,
+      "reason": "Non-bounds assertion (segment strings or scene hit testing)."
+    },
+    {
+      "block": 27,
+      "title": "path.strokeBounds with applyMatrix disabled",
+      "message": null,
+      "reason": "Non-bounds assertion (segment strings or scene hit testing)."
+    },
+    {
+      "block": 27,
+      "title": "path.strokeBounds with applyMatrix disabled",
+      "message": null,
+      "reason": "Non-bounds assertion (segment strings or scene hit testing)."
+    },
+    {
+      "block": 27,
+      "title": "path.strokeBounds with applyMatrix disabled",
+      "message": null,
+      "reason": "Non-bounds assertion (segment strings or scene hit testing)."
+    }
+  ]
+}

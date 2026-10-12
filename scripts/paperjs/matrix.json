@@ -1,0 +1,1061 @@
+{
+  "blocks": [
+    {
+      "block": 0,
+      "title": "Decomposition: rotate()",
+      "status": "no-public-decomposition-counterpart"
+    },
+    {
+      "block": 1,
+      "title": "Decomposition: scale()",
+      "status": "no-public-decomposition-counterpart"
+    },
+    {
+      "block": 2,
+      "title": "Decomposition: scale() & rotate()",
+      "status": "no-public-decomposition-counterpart"
+    }
+  ],
+  "fixtures": [
+    {
+      "id": 0,
+      "block": 0,
+      "title": "Decomposition: rotate()",
+      "method": "getRotation",
+      "matrix": [
+        1,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "expected": 0,
+      "actual": 0,
+      "message": "new Matrix().rotate(0).getRotation()"
+    },
+    {
+      "id": 1,
+      "block": 0,
+      "title": "Decomposition: rotate()",
+      "method": "getScaling",
+      "matrix": [
+        1,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1,
+        1
+      ],
+      "message": "new Matrix().rotate(0).getScaling()"
+    },
+    {
+      "id": 2,
+      "block": 0,
+      "title": "Decomposition: rotate()",
+      "method": "getRotation",
+      "matrix": [
+        0.9998476951563913,
+        0.01745240643728351,
+        -0.01745240643728351,
+        0.9998476951563913,
+        0,
+        0
+      ],
+      "expected": 1,
+      "actual": 0.9999999999999002,
+      "message": "new Matrix().rotate(1).getRotation()"
+    },
+    {
+      "id": 3,
+      "block": 0,
+      "title": "Decomposition: rotate()",
+      "method": "getScaling",
+      "matrix": [
+        0.9998476951563913,
+        0.01745240643728351,
+        -0.01745240643728351,
+        0.9998476951563913,
+        0,
+        0
+      ],
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1,
+        1
+      ],
+      "message": "new Matrix().rotate(1).getScaling()"
+    },
+    {
+      "id": 4,
+      "block": 0,
+      "title": "Decomposition: rotate()",
+      "method": "getRotation",
+      "matrix": [
+        0.7071067811865476,
+        0.7071067811865475,
+        -0.7071067811865475,
+        0.7071067811865476,
+        0,
+        0
+      ],
+      "expected": 45,
+      "actual": 45,
+      "message": "new Matrix().rotate(45).getRotation()"
+    },
+    {
+      "id": 5,
+      "block": 0,
+      "title": "Decomposition: rotate()",
+      "method": "getScaling",
+      "matrix": [
+        0.7071067811865476,
+        0.7071067811865475,
+        -0.7071067811865475,
+        0.7071067811865476,
+        0,
+        0
+      ],
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1,
+        1
+      ],
+      "message": "new Matrix().rotate(45).getScaling()"
+    },
+    {
+      "id": 6,
+      "block": 0,
+      "title": "Decomposition: rotate()",
+      "method": "getRotation",
+      "matrix": [
+        6.123233995736766e-17,
+        1,
+        -1,
+        6.123233995736766e-17,
+        0,
+        0
+      ],
+      "expected": 90,
+      "actual": 90,
+      "message": "new Matrix().rotate(90).getRotation()"
+    },
+    {
+      "id": 7,
+      "block": 0,
+      "title": "Decomposition: rotate()",
+      "method": "getScaling",
+      "matrix": [
+        6.123233995736766e-17,
+        1,
+        -1,
+        6.123233995736766e-17,
+        0,
+        0
+      ],
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1,
+        1
+      ],
+      "message": "new Matrix().rotate(90).getScaling()"
+    },
+    {
+      "id": 8,
+      "block": 0,
+      "title": "Decomposition: rotate()",
+      "method": "getRotation",
+      "matrix": [
+        -0.7071067811865475,
+        0.7071067811865476,
+        -0.7071067811865476,
+        -0.7071067811865475,
+        0,
+        0
+      ],
+      "expected": 135,
+      "actual": 135,
+      "message": "new Matrix().rotate(135).getRotation()"
+    },
+    {
+      "id": 9,
+      "block": 0,
+      "title": "Decomposition: rotate()",
+      "method": "getScaling",
+      "matrix": [
+        -0.7071067811865475,
+        0.7071067811865476,
+        -0.7071067811865476,
+        -0.7071067811865475,
+        0,
+        0
+      ],
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1,
+        1
+      ],
+      "message": "new Matrix().rotate(135).getScaling()"
+    },
+    {
+      "id": 10,
+      "block": 0,
+      "title": "Decomposition: rotate()",
+      "method": "getRotation",
+      "matrix": [
+        -1,
+        1.2246467991473532e-16,
+        -1.2246467991473532e-16,
+        -1,
+        0,
+        0
+      ],
+      "expected": 180,
+      "actual": 180,
+      "message": "new Matrix().rotate(180).getRotation()"
+    },
+    {
+      "id": 11,
+      "block": 0,
+      "title": "Decomposition: rotate()",
+      "method": "getScaling",
+      "matrix": [
+        -1,
+        1.2246467991473532e-16,
+        -1.2246467991473532e-16,
+        -1,
+        0,
+        0
+      ],
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1,
+        1
+      ],
+      "message": "new Matrix().rotate(180).getScaling()"
+    },
+    {
+      "id": 12,
+      "block": 0,
+      "title": "Decomposition: rotate()",
+      "method": "getRotation",
+      "matrix": [
+        -1.8369701987210297e-16,
+        -1,
+        1,
+        -1.8369701987210297e-16,
+        0,
+        0
+      ],
+      "expected": -90,
+      "actual": -90.00000000000001,
+      "message": "new Matrix().rotate(270).getRotation()"
+    },
+    {
+      "id": 13,
+      "block": 0,
+      "title": "Decomposition: rotate()",
+      "method": "getScaling",
+      "matrix": [
+        -1.8369701987210297e-16,
+        -1,
+        1,
+        -1.8369701987210297e-16,
+        0,
+        0
+      ],
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1,
+        1
+      ],
+      "message": "new Matrix().rotate(270).getScaling()"
+    },
+    {
+      "id": 14,
+      "block": 0,
+      "title": "Decomposition: rotate()",
+      "method": "getRotation",
+      "matrix": [
+        0.9998476951563913,
+        -0.01745240643728351,
+        0.01745240643728351,
+        0.9998476951563913,
+        0,
+        0
+      ],
+      "expected": -1,
+      "actual": -0.9999999999999002,
+      "message": "new Matrix().rotate(-1).getRotation()"
+    },
+    {
+      "id": 15,
+      "block": 0,
+      "title": "Decomposition: rotate()",
+      "method": "getScaling",
+      "matrix": [
+        0.9998476951563913,
+        -0.01745240643728351,
+        0.01745240643728351,
+        0.9998476951563913,
+        0,
+        0
+      ],
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1,
+        1
+      ],
+      "message": "new Matrix().rotate(-1).getScaling()"
+    },
+    {
+      "id": 16,
+      "block": 0,
+      "title": "Decomposition: rotate()",
+      "method": "getRotation",
+      "matrix": [
+        0.7071067811865476,
+        -0.7071067811865475,
+        0.7071067811865475,
+        0.7071067811865476,
+        0,
+        0
+      ],
+      "expected": -45,
+      "actual": -45,
+      "message": "new Matrix().rotate(-45).getRotation()"
+    },
+    {
+      "id": 17,
+      "block": 0,
+      "title": "Decomposition: rotate()",
+      "method": "getScaling",
+      "matrix": [
+        0.7071067811865476,
+        -0.7071067811865475,
+        0.7071067811865475,
+        0.7071067811865476,
+        0,
+        0
+      ],
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1,
+        1
+      ],
+      "message": "new Matrix().rotate(-45).getScaling()"
+    },
+    {
+      "id": 18,
+      "block": 0,
+      "title": "Decomposition: rotate()",
+      "method": "getRotation",
+      "matrix": [
+        6.123233995736766e-17,
+        -1,
+        1,
+        6.123233995736766e-17,
+        0,
+        0
+      ],
+      "expected": -90,
+      "actual": -90,
+      "message": "new Matrix().rotate(-90).getRotation()"
+    },
+    {
+      "id": 19,
+      "block": 0,
+      "title": "Decomposition: rotate()",
+      "method": "getScaling",
+      "matrix": [
+        6.123233995736766e-17,
+        -1,
+        1,
+        6.123233995736766e-17,
+        0,
+        0
+      ],
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1,
+        1
+      ],
+      "message": "new Matrix().rotate(-90).getScaling()"
+    },
+    {
+      "id": 20,
+      "block": 0,
+      "title": "Decomposition: rotate()",
+      "method": "getRotation",
+      "matrix": [
+        -0.7071067811865475,
+        -0.7071067811865476,
+        0.7071067811865476,
+        -0.7071067811865475,
+        0,
+        0
+      ],
+      "expected": -135,
+      "actual": -135,
+      "message": "new Matrix().rotate(-135).getRotation()"
+    },
+    {
+      "id": 21,
+      "block": 0,
+      "title": "Decomposition: rotate()",
+      "method": "getScaling",
+      "matrix": [
+        -0.7071067811865475,
+        -0.7071067811865476,
+        0.7071067811865476,
+        -0.7071067811865475,
+        0,
+        0
+      ],
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1,
+        1
+      ],
+      "message": "new Matrix().rotate(-135).getScaling()"
+    },
+    {
+      "id": 22,
+      "block": 0,
+      "title": "Decomposition: rotate()",
+      "method": "getRotation",
+      "matrix": [
+        -1,
+        -1.2246467991473532e-16,
+        1.2246467991473532e-16,
+        -1,
+        0,
+        0
+      ],
+      "expected": -180,
+      "actual": -180,
+      "message": "new Matrix().rotate(-180).getRotation()"
+    },
+    {
+      "id": 23,
+      "block": 0,
+      "title": "Decomposition: rotate()",
+      "method": "getScaling",
+      "matrix": [
+        -1,
+        -1.2246467991473532e-16,
+        1.2246467991473532e-16,
+        -1,
+        0,
+        0
+      ],
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1,
+        1
+      ],
+      "message": "new Matrix().rotate(-180).getScaling()"
+    },
+    {
+      "id": 24,
+      "block": 0,
+      "title": "Decomposition: rotate()",
+      "method": "getRotation",
+      "matrix": [
+        -1.8369701987210297e-16,
+        1,
+        -1,
+        -1.8369701987210297e-16,
+        0,
+        0
+      ],
+      "expected": 90,
+      "actual": 90.00000000000001,
+      "message": "new Matrix().rotate(-270).getRotation()"
+    },
+    {
+      "id": 25,
+      "block": 0,
+      "title": "Decomposition: rotate()",
+      "method": "getScaling",
+      "matrix": [
+        -1.8369701987210297e-16,
+        1,
+        -1,
+        -1.8369701987210297e-16,
+        0,
+        0
+      ],
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1,
+        1
+      ],
+      "message": "new Matrix().rotate(-270).getScaling()"
+    },
+    {
+      "id": 26,
+      "block": 1,
+      "title": "Decomposition: scale()",
+      "method": "getRotation",
+      "matrix": [
+        1,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "expected": 0,
+      "actual": 0,
+      "message": "new Matrix().scale(1, 1).getRotation()"
+    },
+    {
+      "id": 27,
+      "block": 1,
+      "title": "Decomposition: scale()",
+      "method": "getScaling",
+      "matrix": [
+        1,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1,
+        1
+      ],
+      "message": "new Matrix().scale(1, 1).getScaling()"
+    },
+    {
+      "id": 28,
+      "block": 1,
+      "title": "Decomposition: scale()",
+      "method": "getRotation",
+      "matrix": [
+        1,
+        0,
+        0,
+        -1,
+        0,
+        0
+      ],
+      "expected": 0,
+      "actual": 0,
+      "message": "new Matrix().scale(1, -1).getRotation()"
+    },
+    {
+      "id": 29,
+      "block": 1,
+      "title": "Decomposition: scale()",
+      "method": "getScaling",
+      "matrix": [
+        1,
+        0,
+        0,
+        -1,
+        0,
+        0
+      ],
+      "expected": [
+        1,
+        -1
+      ],
+      "actual": [
+        1,
+        -1
+      ],
+      "message": "new Matrix().scale(1, -1).getScaling()"
+    },
+    {
+      "id": 30,
+      "block": 1,
+      "title": "Decomposition: scale()",
+      "method": "getRotation",
+      "matrix": [
+        -1,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "expected": -180,
+      "actual": -180,
+      "message": "new Matrix().scale(-1, 1).getRotation()"
+    },
+    {
+      "id": 31,
+      "block": 1,
+      "title": "Decomposition: scale()",
+      "method": "getScaling",
+      "matrix": [
+        -1,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "expected": [
+        1,
+        -1
+      ],
+      "actual": [
+        1,
+        -1
+      ],
+      "message": "new Matrix().scale(-1, 1).getScaling()"
+    },
+    {
+      "id": 32,
+      "block": 1,
+      "title": "Decomposition: scale()",
+      "method": "getRotation",
+      "matrix": [
+        -1,
+        0,
+        0,
+        -1,
+        0,
+        0
+      ],
+      "expected": -180,
+      "actual": -180,
+      "message": "new Matrix().scale(-1, -1).getRotation()"
+    },
+    {
+      "id": 33,
+      "block": 1,
+      "title": "Decomposition: scale()",
+      "method": "getScaling",
+      "matrix": [
+        -1,
+        0,
+        0,
+        -1,
+        0,
+        0
+      ],
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1,
+        1
+      ],
+      "message": "new Matrix().scale(-1, -1).getScaling()"
+    },
+    {
+      "id": 34,
+      "block": 1,
+      "title": "Decomposition: scale()",
+      "method": "getRotation",
+      "matrix": [
+        2,
+        0,
+        0,
+        4,
+        0,
+        0
+      ],
+      "expected": 0,
+      "actual": 0,
+      "message": "new Matrix().scale(2, 4).getRotation()"
+    },
+    {
+      "id": 35,
+      "block": 1,
+      "title": "Decomposition: scale()",
+      "method": "getScaling",
+      "matrix": [
+        2,
+        0,
+        0,
+        4,
+        0,
+        0
+      ],
+      "expected": [
+        2,
+        4
+      ],
+      "actual": [
+        2,
+        4
+      ],
+      "message": "new Matrix().scale(2, 4).getScaling()"
+    },
+    {
+      "id": 36,
+      "block": 1,
+      "title": "Decomposition: scale()",
+      "method": "getRotation",
+      "matrix": [
+        2,
+        0,
+        0,
+        -4,
+        0,
+        0
+      ],
+      "expected": 0,
+      "actual": 0,
+      "message": "new Matrix().scale(2, -4).getRotation()"
+    },
+    {
+      "id": 37,
+      "block": 1,
+      "title": "Decomposition: scale()",
+      "method": "getScaling",
+      "matrix": [
+        2,
+        0,
+        0,
+        -4,
+        0,
+        0
+      ],
+      "expected": [
+        2,
+        -4
+      ],
+      "actual": [
+        2,
+        -4
+      ],
+      "message": "new Matrix().scale(2, -4).getScaling()"
+    },
+    {
+      "id": 38,
+      "block": 1,
+      "title": "Decomposition: scale()",
+      "method": "getRotation",
+      "matrix": [
+        4,
+        0,
+        0,
+        2,
+        0,
+        0
+      ],
+      "expected": 0,
+      "actual": 0,
+      "message": "new Matrix().scale(4, 2).getRotation()"
+    },
+    {
+      "id": 39,
+      "block": 1,
+      "title": "Decomposition: scale()",
+      "method": "getScaling",
+      "matrix": [
+        4,
+        0,
+        0,
+        2,
+        0,
+        0
+      ],
+      "expected": [
+        4,
+        2
+      ],
+      "actual": [
+        4,
+        2
+      ],
+      "message": "new Matrix().scale(4, 2).getScaling()"
+    },
+    {
+      "id": 40,
+      "block": 1,
+      "title": "Decomposition: scale()",
+      "method": "getRotation",
+      "matrix": [
+        -4,
+        0,
+        0,
+        2,
+        0,
+        0
+      ],
+      "expected": -180,
+      "actual": -180,
+      "message": "new Matrix().scale(-4, 2).getRotation()"
+    },
+    {
+      "id": 41,
+      "block": 1,
+      "title": "Decomposition: scale()",
+      "method": "getScaling",
+      "matrix": [
+        -4,
+        0,
+        0,
+        2,
+        0,
+        0
+      ],
+      "expected": [
+        4,
+        -2
+      ],
+      "actual": [
+        4,
+        -2
+      ],
+      "message": "new Matrix().scale(-4, 2).getScaling()"
+    },
+    {
+      "id": 42,
+      "block": 1,
+      "title": "Decomposition: scale()",
+      "method": "getRotation",
+      "matrix": [
+        -4,
+        0,
+        0,
+        -4,
+        0,
+        0
+      ],
+      "expected": -180,
+      "actual": -180,
+      "message": "new Matrix().scale(-4, -4).getRotation()"
+    },
+    {
+      "id": 43,
+      "block": 1,
+      "title": "Decomposition: scale()",
+      "method": "getScaling",
+      "matrix": [
+        -4,
+        0,
+        0,
+        -4,
+        0,
+        0
+      ],
+      "expected": [
+        4,
+        4
+      ],
+      "actual": [
+        4,
+        4
+      ],
+      "message": "new Matrix().scale(-4, -4).getScaling()"
+    },
+    {
+      "id": 44,
+      "block": 2,
+      "title": "Decomposition: scale() & rotate()",
+      "method": "getRotation",
+      "matrix": [
+        1.4142135623730951,
+        1.414213562373095,
+        -2.82842712474619,
+        2.8284271247461903,
+        0,
+        0
+      ],
+      "expected": 45,
+      "actual": 45,
+      "message": "new Matrix().scale(2, 4).rotate(45).getRotation()"
+    },
+    {
+      "id": 45,
+      "block": 2,
+      "title": "Decomposition: scale() & rotate()",
+      "method": "getScaling",
+      "matrix": [
+        1.4142135623730951,
+        1.414213562373095,
+        -2.82842712474619,
+        2.8284271247461903,
+        0,
+        0
+      ],
+      "expected": [
+        2,
+        4
+      ],
+      "actual": [
+        2,
+        4
+      ],
+      "message": "new Matrix().scale(2, 4).rotate(45).getScaling()"
+    },
+    {
+      "id": 46,
+      "block": 2,
+      "title": "Decomposition: scale() & rotate()",
+      "method": "getRotation",
+      "matrix": [
+        1.4142135623730951,
+        1.414213562373095,
+        2.82842712474619,
+        -2.8284271247461903,
+        0,
+        0
+      ],
+      "expected": 45,
+      "actual": 45,
+      "message": "new Matrix().scale(2, -4).rotate(45).getRotation()"
+    },
+    {
+      "id": 47,
+      "block": 2,
+      "title": "Decomposition: scale() & rotate()",
+      "method": "getScaling",
+      "matrix": [
+        1.4142135623730951,
+        1.414213562373095,
+        2.82842712474619,
+        -2.8284271247461903,
+        0,
+        0
+      ],
+      "expected": [
+        2,
+        -4
+      ],
+      "actual": [
+        2,
+        -4
+      ],
+      "message": "new Matrix().scale(2, -4).rotate(45).getScaling()"
+    },
+    {
+      "id": 48,
+      "block": 2,
+      "title": "Decomposition: scale() & rotate()",
+      "method": "getRotation",
+      "matrix": [
+        -1.4142135623730951,
+        -1.414213562373095,
+        -2.82842712474619,
+        2.8284271247461903,
+        0,
+        0
+      ],
+      "expected": -135,
+      "actual": -135,
+      "message": "new Matrix().scale(-2, 4).rotate(45).getRotation()"
+    },
+    {
+      "id": 49,
+      "block": 2,
+      "title": "Decomposition: scale() & rotate()",
+      "method": "getScaling",
+      "matrix": [
+        -1.4142135623730951,
+        -1.414213562373095,
+        -2.82842712474619,
+        2.8284271247461903,
+        0,
+        0
+      ],
+      "expected": [
+        2,
+        -4
+      ],
+      "actual": [
+        2,
+        -4
+      ],
+      "message": "new Matrix().scale(-2, 4).rotate(45).getScaling()"
+    },
+    {
+      "id": 50,
+      "block": 2,
+      "title": "Decomposition: scale() & rotate()",
+      "method": "getRotation",
+      "matrix": [
+        -1.4142135623730951,
+        -1.414213562373095,
+        2.82842712474619,
+        -2.8284271247461903,
+        0,
+        0
+      ],
+      "expected": -135,
+      "actual": -135,
+      "message": "new Matrix().scale(-2, -4).rotate(45).getRotation()"
+    },
+    {
+      "id": 51,
+      "block": 2,
+      "title": "Decomposition: scale() & rotate()",
+      "method": "getScaling",
+      "matrix": [
+        -1.4142135623730951,
+        -1.414213562373095,
+        2.82842712474619,
+        -2.8284271247461903,
+        0,
+        0
+      ],
+      "expected": [
+        2,
+        4
+      ],
+      "actual": [
+        2,
+        4
+      ],
+      "message": "new Matrix().scale(-2, -4).rotate(45).getScaling()"
+    }
+  ]
+}

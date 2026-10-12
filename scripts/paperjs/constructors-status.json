@@ -1,0 +1,127 @@
+{
+  "blocks": [
+    {
+      "block": 0,
+      "title": "new Path.Rectangle([50, 50], [100, 100])",
+      "status": "adapted-constructor-match",
+      "reason": "Compare cyclic contour order and explicit arc-to-cubic conversion against upstream literals."
+    },
+    {
+      "block": 1,
+      "title": "new Path.Rectangle({ from: [50, 50], to: [150, 150] })",
+      "status": "adapted-constructor-match",
+      "reason": "Compare cyclic contour order and explicit arc-to-cubic conversion against upstream literals."
+    },
+    {
+      "block": 2,
+      "title": "new Path.Circle([100, 100], 50)",
+      "status": "adapted-constructor-match",
+      "reason": "Compare cyclic contour order and explicit arc-to-cubic conversion against upstream literals."
+    },
+    {
+      "block": 3,
+      "title": "new Path.Circle({ center: [100, 100], radius: 50 })",
+      "status": "adapted-constructor-match",
+      "reason": "Compare cyclic contour order and explicit arc-to-cubic conversion against upstream literals."
+    },
+    {
+      "block": 4,
+      "title": "new Path.Circle({ center: [100, 100], radius: 50, insert: true })",
+      "status": "scene-api-not-adapted",
+      "reason": "Scene insertion has no analogue in an immutable geometry library."
+    },
+    {
+      "block": 5,
+      "title": "new Path.Ellipse(rect)",
+      "status": "adapted-constructor-match",
+      "reason": "Compare cyclic contour order and explicit arc-to-cubic conversion against upstream literals."
+    },
+    {
+      "block": 6,
+      "title": "new Path.Rectangle(rectangle, radius)",
+      "status": "adapted-constructor-match",
+      "reason": "Compare cyclic contour order and explicit arc-to-cubic conversion against upstream literals."
+    },
+    {
+      "block": 7,
+      "title": "new Path.Rectangle({ rectangle: rectangle, radius: radius })",
+      "status": "adapted-constructor-match",
+      "reason": "Compare cyclic contour order and explicit arc-to-cubic conversion against upstream literals."
+    },
+    {
+      "block": 8,
+      "title": "new Path.Rectangle(rect, size) - too large size",
+      "status": "adapted-constructor-match",
+      "reason": "Compare cyclic contour order and explicit arc-to-cubic conversion against upstream literals."
+    },
+    {
+      "block": 9,
+      "title": "new Path.Arc(from, through, to)",
+      "status": "no-direct-constructor-counterpart",
+      "reason": "Three-point arc, regular polygon and star constructors require an explicit adapter; not claimed as covered."
+    },
+    {
+      "block": 10,
+      "title": "new Path.Arc({ from: from, through: through, to: to })",
+      "status": "no-direct-constructor-counterpart",
+      "reason": "Three-point arc, regular polygon and star constructors require an explicit adapter; not claimed as covered."
+    },
+    {
+      "block": 11,
+      "title": "new Path.RegularPolygon(center, sides, radius)",
+      "status": "no-direct-constructor-counterpart",
+      "reason": "Three-point arc, regular polygon and star constructors require an explicit adapter; not claimed as covered."
+    },
+    {
+      "block": 12,
+      "title": "new Path.RegularPolygon({ center: center, sides: sides, radius: radius })",
+      "status": "no-direct-constructor-counterpart",
+      "reason": "Three-point arc, regular polygon and star constructors require an explicit adapter; not claimed as covered."
+    },
+    {
+      "block": 13,
+      "title": "new Path.Star(center, points, radius1, radius2)",
+      "status": "no-direct-constructor-counterpart",
+      "reason": "Three-point arc, regular polygon and star constructors require an explicit adapter; not claimed as covered."
+    },
+    {
+      "block": 14,
+      "title": "new Path.Star({ center: center, points: points, radius1: radius1, radius2: radius2 })",
+      "status": "no-direct-constructor-counterpart",
+      "reason": "Three-point arc, regular polygon and star constructors require an explicit adapter; not claimed as covered."
+    },
+    {
+      "block": 15,
+      "title": "new Path.Line(from, to)",
+      "status": "adapted-constructor-match",
+      "reason": "Compare cyclic contour order and explicit arc-to-cubic conversion against upstream literals."
+    },
+    {
+      "block": 16,
+      "title": "new Path.Line({ from: from, to: to })",
+      "status": "adapted-constructor-match",
+      "reason": "Compare cyclic contour order and explicit arc-to-cubic conversion against upstream literals."
+    },
+    {
+      "block": 17,
+      "title": "new Path.Line({ insert: false })",
+      "status": "scene-api-not-adapted",
+      "reason": "Scene insertion has no analogue in an immutable geometry library."
+    }
+  ],
+  "nativeFixtureIds": [
+    0,
+    1,
+    2,
+    3,
+    5,
+    6,
+    7,
+    8,
+    19,
+    20
+  ],
+  "preservedAssertions": 24,
+  "comparedAssertions": 10,
+  "uncomparedAssertions": 14
+}

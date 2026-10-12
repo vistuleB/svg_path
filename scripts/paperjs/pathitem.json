@@ -1,0 +1,1378 @@
+{
+  "blocks": [
+    {
+      "block": 0,
+      "title": "PathItem#create() with SVG path-data (#1101)"
+    },
+    {
+      "block": 1,
+      "title": "PathItem#compare()"
+    }
+  ],
+  "fixtures": [
+    {
+      "id": 0,
+      "block": 0,
+      "title": "PathItem#create() with SVG path-data (#1101)",
+      "kind": "parse",
+      "input": "M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z",
+      "expected": [
+        [
+          [
+            11,
+            18
+          ],
+          [
+            11,
+            6
+          ],
+          [
+            2.5,
+            12
+          ],
+          true
+        ],
+        [
+          [
+            11.5,
+            12
+          ],
+          [
+            20,
+            18
+          ],
+          [
+            20,
+            6
+          ],
+          true
+        ]
+      ],
+      "message": "data[0]"
+    },
+    {
+      "id": 1,
+      "block": 0,
+      "title": "PathItem#create() with SVG path-data (#1101)",
+      "kind": "parse",
+      "input": "M20 20l20 20v-20zm20 20l-20 20h20z",
+      "expected": [
+        [
+          [
+            20,
+            20
+          ],
+          [
+            40,
+            40
+          ],
+          [
+            40,
+            20
+          ],
+          true
+        ],
+        [
+          [
+            40,
+            40
+          ],
+          [
+            20,
+            60
+          ],
+          [
+            40,
+            60
+          ],
+          true
+        ]
+      ],
+      "message": "data[1]"
+    },
+    {
+      "id": 2,
+      "block": 0,
+      "title": "PathItem#create() with SVG path-data (#1101)",
+      "kind": "parse",
+      "input": "M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z",
+      "expected": [
+        [
+          [
+            11,
+            18
+          ],
+          [
+            11,
+            6
+          ],
+          [
+            2.5,
+            12
+          ],
+          true
+        ],
+        [
+          [
+            11.5,
+            12
+          ],
+          [
+            20,
+            18
+          ],
+          [
+            20,
+            6
+          ],
+          true
+        ]
+      ],
+      "message": "data[2]"
+    },
+    {
+      "id": 3,
+      "block": 0,
+      "title": "PathItem#create() with SVG path-data (#1101)",
+      "kind": "parse",
+      "input": "M11,18l0,-12l-8.5,6z M11.5,12l8.5,6l0,-12z",
+      "expected": [
+        [
+          [
+            11,
+            18
+          ],
+          [
+            11,
+            6
+          ],
+          [
+            2.5,
+            12
+          ],
+          true
+        ],
+        [
+          [
+            11.5,
+            12
+          ],
+          [
+            20,
+            18
+          ],
+          [
+            20,
+            6
+          ],
+          true
+        ]
+      ],
+      "message": "data[3]"
+    },
+    {
+      "id": 4,
+      "block": 0,
+      "title": "PathItem#create() with SVG path-data (#1101)",
+      "kind": "parse",
+      "input": "M10,10 L20,20 L10,30 M30,10 L30,30",
+      "expected": [
+        [
+          [
+            10,
+            10
+          ],
+          [
+            20,
+            20
+          ],
+          [
+            10,
+            30
+          ]
+        ],
+        [
+          [
+            30,
+            10
+          ],
+          [
+            30,
+            30
+          ]
+        ]
+      ],
+      "message": "data[4]"
+    },
+    {
+      "id": 5,
+      "block": 0,
+      "title": "PathItem#create() with SVG path-data (#1101)",
+      "kind": "parse",
+      "input": "M 0 1.5 l 1e1 0 m -10 2 l 1e+1 0 m -10 2 l 100e-1 0",
+      "expected": [
+        [
+          [
+            0,
+            1.5
+          ],
+          [
+            10,
+            1.5
+          ]
+        ],
+        [
+          [
+            0,
+            3.5
+          ],
+          [
+            10,
+            3.5
+          ]
+        ],
+        [
+          [
+            0,
+            5.5
+          ],
+          [
+            10,
+            5.5
+          ]
+        ]
+      ],
+      "message": "data[5]"
+    },
+    {
+      "id": 6,
+      "block": 0,
+      "title": "PathItem#create() with SVG path-data (#1101)",
+      "kind": "parse",
+      "input": "M372 130Q272 50 422 10zm70 0q50-150-80-90z",
+      "expected": [
+        [
+          [
+            372,
+            130,
+            0,
+            0,
+            -66.66667,
+            -53.33333
+          ],
+          [
+            422,
+            10,
+            -100,
+            26.66667,
+            0,
+            0
+          ],
+          true
+        ],
+        [
+          [
+            442,
+            130,
+            0,
+            0,
+            33.33333,
+            -100
+          ],
+          [
+            362,
+            40,
+            86.66667,
+            -40,
+            0,
+            0
+          ],
+          true
+        ]
+      ],
+      "message": "data[6]"
+    },
+    {
+      "id": 7,
+      "block": 0,
+      "title": "PathItem#create() with SVG path-data (#1101)",
+      "kind": "parse",
+      "input": "M210 130C145 130 110 80 110 80S75 25 10 25m0 105c65 0 100 -50 100 -50s35 -55 100 -55",
+      "expected": [
+        [
+          [
+            210,
+            130,
+            0,
+            0,
+            -65,
+            0
+          ],
+          [
+            110,
+            80
+          ],
+          [
+            10,
+            25,
+            65,
+            0,
+            0,
+            0
+          ]
+        ],
+        [
+          [
+            10,
+            130,
+            0,
+            0,
+            65,
+            0
+          ],
+          [
+            110,
+            80
+          ],
+          [
+            210,
+            25,
+            -65,
+            0,
+            0,
+            0
+          ]
+        ]
+      ],
+      "message": "data[7]"
+    },
+    {
+      "id": 8,
+      "block": 0,
+      "title": "PathItem#create() with SVG path-data (#1101)",
+      "kind": "parse",
+      "input": "M240 90c0 30 7 50 50 0c43-50 50 -30 50 0c0 83-68-34-90-30C240 60 240 90 240 90z",
+      "expected": [
+        [
+          240,
+          90,
+          0,
+          0,
+          0,
+          30
+        ],
+        [
+          290,
+          90,
+          -43,
+          50,
+          43,
+          -50
+        ],
+        [
+          340,
+          90,
+          0,
+          -30,
+          0,
+          83
+        ],
+        [
+          250,
+          60,
+          22,
+          -4,
+          -10,
+          0
+        ],
+        true
+      ],
+      "message": "data[8]"
+    },
+    {
+      "id": 9,
+      "block": 0,
+      "title": "PathItem#create() with SVG path-data (#1101)",
+      "kind": "parse",
+      "input": "M80 170C100 170 160 170 180 170Z",
+      "expected": [
+        [
+          80,
+          170,
+          0,
+          0,
+          20,
+          0
+        ],
+        [
+          180,
+          170,
+          -20,
+          0,
+          0,
+          0
+        ],
+        true
+      ],
+      "message": "data[9]"
+    },
+    {
+      "id": 10,
+      "block": 0,
+      "title": "PathItem#create() with SVG path-data (#1101)",
+      "kind": "parse",
+      "input": "M5 260C40 260 60 175 55 160c-5 15 15 100 50 100Z",
+      "expected": [
+        [
+          5,
+          260,
+          0,
+          0,
+          35,
+          0
+        ],
+        [
+          55,
+          160,
+          5,
+          15,
+          -5,
+          15
+        ],
+        [
+          105,
+          260,
+          -35,
+          0,
+          0,
+          0
+        ],
+        true
+      ],
+      "message": "data[10]"
+    },
+    {
+      "id": 11,
+      "block": 0,
+      "title": "PathItem#create() with SVG path-data (#1101)",
+      "kind": "parse",
+      "input": "m200 260c50-40 50-100 25-100s-25 60 25 100",
+      "expected": [
+        [
+          200,
+          260,
+          0,
+          0,
+          50,
+          -40
+        ],
+        [
+          225,
+          160,
+          25,
+          0,
+          -25,
+          0
+        ],
+        [
+          250,
+          260,
+          -50,
+          -40,
+          0,
+          0
+        ]
+      ],
+      "message": "data[11]"
+    },
+    {
+      "id": 12,
+      "block": 0,
+      "title": "PathItem#create() with SVG path-data (#1101)",
+      "kind": "parse",
+      "input": "M360 100C420 90 460 140 450 190",
+      "expected": [
+        [
+          360,
+          100,
+          0,
+          0,
+          60,
+          -10
+        ],
+        [
+          450,
+          190,
+          10,
+          -50,
+          0,
+          0
+        ]
+      ],
+      "message": "data[12]"
+    },
+    {
+      "id": 13,
+      "block": 0,
+      "title": "PathItem#create() with SVG path-data (#1101)",
+      "kind": "parse",
+      "input": "M360 210c0 20-16 36-36 36s-36-16-36-36s16-36 36-36s36 16 36 36z",
+      "expected": [
+        [
+          360,
+          210,
+          0,
+          -20,
+          0,
+          20
+        ],
+        [
+          324,
+          246,
+          20,
+          0,
+          -20,
+          0
+        ],
+        [
+          288,
+          210,
+          0,
+          20,
+          0,
+          -20
+        ],
+        [
+          324,
+          174,
+          -20,
+          0,
+          20,
+          0
+        ],
+        true
+      ],
+      "message": "data[13]"
+    },
+    {
+      "id": 14,
+      "block": 0,
+      "title": "PathItem#create() with SVG path-data (#1101)",
+      "kind": "parse",
+      "input": "   m   360  325   c  -40-60 95   -100 80 0   z   ",
+      "expected": [
+        [
+          360,
+          325,
+          0,
+          0,
+          -40,
+          -60
+        ],
+        [
+          440,
+          325,
+          15,
+          -100,
+          0,
+          0
+        ],
+        true
+      ],
+      "message": "data[14]"
+    },
+    {
+      "id": 15,
+      "block": 0,
+      "title": "PathItem#create() with SVG path-data (#1101)",
+      "kind": "parse",
+      "input": "M15 20Q30 120 130 30M180 80q-75-100-163-60z",
+      "expected": [
+        [
+          [
+            15,
+            20,
+            0,
+            0,
+            10,
+            66.66667
+          ],
+          [
+            130,
+            30,
+            -66.66667,
+            60,
+            0,
+            0
+          ]
+        ],
+        [
+          [
+            180,
+            80,
+            0,
+            0,
+            -50,
+            -66.66667
+          ],
+          [
+            17,
+            20,
+            58.66667,
+            -26.66667,
+            0,
+            0
+          ],
+          true
+        ]
+      ],
+      "message": "data[15]"
+    },
+    {
+      "id": 16,
+      "block": 0,
+      "title": "PathItem#create() with SVG path-data (#1101)",
+      "kind": "parse",
+      "input": "M372 130Q272 50 422 10zm70 0q50-150-80-90z",
+      "expected": [
+        [
+          [
+            372,
+            130,
+            0,
+            0,
+            -66.66667,
+            -53.33333
+          ],
+          [
+            422,
+            10,
+            -100,
+            26.66667,
+            0,
+            0
+          ],
+          true
+        ],
+        [
+          [
+            442,
+            130,
+            0,
+            0,
+            33.33333,
+            -100
+          ],
+          [
+            362,
+            40,
+            86.66667,
+            -40,
+            0,
+            0
+          ],
+          true
+        ]
+      ],
+      "message": "data[16]"
+    },
+    {
+      "id": 17,
+      "block": 0,
+      "title": "PathItem#create() with SVG path-data (#1101)",
+      "kind": "parse",
+      "input": "M224 103Q234-12 304 33Z",
+      "expected": [
+        [
+          224,
+          103,
+          0,
+          0,
+          6.66667,
+          -76.66667
+        ],
+        [
+          304,
+          33,
+          -46.66667,
+          -30,
+          0,
+          0
+        ],
+        true
+      ],
+      "message": "data[17]"
+    },
+    {
+      "id": 18,
+      "block": 0,
+      "title": "PathItem#create() with SVG path-data (#1101)",
+      "kind": "parse",
+      "input": "M208 168Q258 268 308 168T258 118Q128 88 208 168z",
+      "expected": [
+        [
+          208,
+          168,
+          -53.33333,
+          -53.33333,
+          33.33333,
+          66.66667
+        ],
+        [
+          308,
+          168,
+          -33.33333,
+          66.66667,
+          33.33333,
+          -66.66667
+        ],
+        [
+          258,
+          118,
+          66.66667,
+          -33.33333,
+          -86.66667,
+          -20
+        ],
+        true
+      ],
+      "message": "data[18]"
+    },
+    {
+      "id": 19,
+      "block": 0,
+      "title": "PathItem#create() with SVG path-data (#1101)",
+      "kind": "parse",
+      "input": "M60 100Q-40 150 60 200Q160 150 60 100z",
+      "expected": [
+        [
+          60,
+          100,
+          66.66667,
+          33.33333,
+          -66.66667,
+          33.33333
+        ],
+        [
+          60,
+          200,
+          -66.66667,
+          -33.33333,
+          66.66667,
+          -33.33333
+        ],
+        true
+      ],
+      "message": "data[19]"
+    },
+    {
+      "id": 20,
+      "block": 0,
+      "title": "PathItem#create() with SVG path-data (#1101)",
+      "kind": "parse",
+      "input": "M240 296q25-100 47 0t47 0t47 0t47 0t47 0z",
+      "expected": [
+        [
+          240,
+          296,
+          0,
+          0,
+          16.66667,
+          -66.66667
+        ],
+        [
+          287,
+          296,
+          -14.66667,
+          -66.66667,
+          14.66667,
+          66.66667
+        ],
+        [
+          334,
+          296,
+          -16.66667,
+          66.66667,
+          16.66667,
+          -66.66667
+        ],
+        [
+          381,
+          296,
+          -14.66667,
+          -66.66667,
+          14.66667,
+          66.66667
+        ],
+        [
+          428,
+          296,
+          -16.66667,
+          66.66667,
+          16.66667,
+          -66.66667
+        ],
+        [
+          475,
+          296,
+          -14.66667,
+          -66.66667,
+          0,
+          0
+        ],
+        true
+      ],
+      "message": "data[20]"
+    },
+    {
+      "id": 21,
+      "block": 0,
+      "title": "PathItem#create() with SVG path-data (#1101)",
+      "kind": "parse",
+      "input": "M172 193q-100 50 0 50Q72 243 172 293q100-50 0-50Q272 243 172 193z",
+      "expected": [
+        [
+          172,
+          193,
+          66.66667,
+          33.33333,
+          -66.66667,
+          33.33333
+        ],
+        [
+          172,
+          243,
+          -66.66667,
+          0,
+          -66.66667,
+          0
+        ],
+        [
+          172,
+          293,
+          -66.66667,
+          -33.33333,
+          66.66667,
+          -33.33333
+        ],
+        [
+          172,
+          243,
+          66.66667,
+          0,
+          66.66667,
+          0
+        ],
+        true
+      ],
+      "message": "data[21]"
+    },
+    {
+      "id": 22,
+      "block": 1,
+      "title": "PathItem#compare()",
+      "kind": "compare",
+      "expected": false,
+      "actual": false,
+      "message": "Comparing with an invalid item should return false."
+    },
+    {
+      "id": 23,
+      "block": 1,
+      "title": "PathItem#compare()",
+      "kind": "compare",
+      "expected": false,
+      "actual": false,
+      "message": "Comparing a square with an empty path should return false."
+    },
+    {
+      "id": 24,
+      "block": 1,
+      "title": "PathItem#compare()",
+      "kind": "compare",
+      "expected": false,
+      "actual": false,
+      "message": "Comparing a square with a circle should return false."
+    },
+    {
+      "id": 25,
+      "block": 1,
+      "title": "PathItem#compare()",
+      "kind": "compare",
+      "expected": true,
+      "actual": true,
+      "message": "Comparing a square with its clone should return true."
+    },
+    {
+      "id": 26,
+      "block": 1,
+      "title": "PathItem#compare()",
+      "kind": "compare",
+      "expected": true,
+      "actual": true,
+      "message": "Comparing a circle with its clone should return true."
+    },
+    {
+      "id": 27,
+      "block": 1,
+      "title": "PathItem#compare()",
+      "kind": "compare",
+      "expected": true,
+      "actual": true,
+      "message": "Comparing a square with an identical square with additional segments should return true."
+    },
+    {
+      "id": 28,
+      "block": 1,
+      "title": "PathItem#compare()",
+      "kind": "compare",
+      "expected": true,
+      "actual": true,
+      "message": "Comparing a square with additional segments with an identical square should return true."
+    },
+    {
+      "id": 29,
+      "block": 1,
+      "title": "PathItem#compare()",
+      "kind": "compare",
+      "expected": true,
+      "actual": true,
+      "message": "Comparing a circle with an identical circle with additional segments should return true."
+    },
+    {
+      "id": 30,
+      "block": 1,
+      "title": "PathItem#compare()",
+      "kind": "compare",
+      "expected": true,
+      "actual": true,
+      "message": "Comparing a circle with additional segments with an identical circle should return true."
+    },
+    {
+      "id": 31,
+      "block": 1,
+      "title": "PathItem#compare()",
+      "kind": "compare",
+      "left": [
+        {
+          "closed": true,
+          "curves": [
+            [
+              50,
+              300,
+              50,
+              300,
+              50,
+              150,
+              50,
+              150
+            ],
+            [
+              50,
+              150,
+              50,
+              150,
+              100,
+              175,
+              100,
+              175
+            ],
+            [
+              100,
+              175,
+              100,
+              175,
+              100,
+              100,
+              100,
+              100
+            ],
+            [
+              100,
+              100,
+              100,
+              100,
+              300,
+              100,
+              300,
+              100
+            ],
+            [
+              300,
+              100,
+              300,
+              100,
+              300,
+              300,
+              300,
+              300
+            ],
+            [
+              300,
+              300,
+              300,
+              300,
+              50,
+              300,
+              50,
+              300
+            ]
+          ]
+        },
+        {
+          "closed": true,
+          "curves": [
+            [
+              100,
+              200,
+              100,
+              200,
+              150,
+              200,
+              150,
+              200
+            ],
+            [
+              150,
+              200,
+              150,
+              200,
+              100,
+              175,
+              100,
+              175
+            ],
+            [
+              100,
+              175,
+              100,
+              175,
+              100,
+              200,
+              100,
+              200
+            ]
+          ]
+        }
+      ],
+      "right": [
+        {
+          "closed": true,
+          "curves": [
+            [
+              50,
+              300,
+              50,
+              300,
+              50,
+              150,
+              50,
+              150
+            ],
+            [
+              50,
+              150,
+              50,
+              150,
+              100,
+              175,
+              100,
+              175
+            ],
+            [
+              100,
+              175,
+              100,
+              175,
+              100,
+              100,
+              100,
+              100
+            ],
+            [
+              100,
+              100,
+              100,
+              100,
+              300,
+              100,
+              300,
+              100
+            ],
+            [
+              300,
+              100,
+              300,
+              100,
+              300,
+              300,
+              300,
+              300
+            ],
+            [
+              300,
+              300,
+              300,
+              300,
+              50,
+              300,
+              50,
+              300
+            ]
+          ]
+        },
+        {
+          "closed": true,
+          "curves": [
+            [
+              100,
+              175,
+              100,
+              175,
+              100,
+              200,
+              100,
+              200
+            ],
+            [
+              100,
+              200,
+              100,
+              200,
+              150,
+              200,
+              150,
+              200
+            ],
+            [
+              150,
+              200,
+              150,
+              200,
+              100,
+              175,
+              100,
+              175
+            ]
+          ]
+        }
+      ],
+      "expected": true,
+      "actual": true,
+      "message": "Comparing two compound paths with one child starting at a different point should return true."
+    },
+    {
+      "id": 32,
+      "block": 1,
+      "title": "PathItem#compare()",
+      "kind": "compare",
+      "left": [
+        {
+          "closed": true,
+          "curves": [
+            [
+              50,
+              300,
+              50,
+              300,
+              50,
+              150,
+              50,
+              150
+            ],
+            [
+              50,
+              150,
+              50,
+              150,
+              100,
+              175,
+              100,
+              175
+            ],
+            [
+              100,
+              175,
+              100,
+              175,
+              100,
+              100,
+              100,
+              100
+            ],
+            [
+              100,
+              100,
+              100,
+              100,
+              300,
+              100,
+              300,
+              100
+            ],
+            [
+              300,
+              100,
+              300,
+              100,
+              300,
+              300,
+              300,
+              300
+            ],
+            [
+              300,
+              300,
+              300,
+              300,
+              50,
+              300,
+              50,
+              300
+            ]
+          ]
+        },
+        {
+          "closed": true,
+          "curves": [
+            [
+              100,
+              200,
+              100,
+              200,
+              150,
+              200,
+              150,
+              200
+            ],
+            [
+              150,
+              200,
+              150,
+              200,
+              100,
+              175,
+              100,
+              175
+            ],
+            [
+              100,
+              175,
+              100,
+              175,
+              100,
+              200,
+              100,
+              200
+            ]
+          ]
+        }
+      ],
+      "right": [
+        {
+          "closed": true,
+          "curves": [
+            [
+              50,
+              300,
+              50,
+              300,
+              50,
+              150,
+              50,
+              150
+            ],
+            [
+              50,
+              150,
+              50,
+              150,
+              100,
+              175,
+              100,
+              175
+            ],
+            [
+              100,
+              175,
+              100,
+              175,
+              100,
+              100,
+              100,
+              100
+            ],
+            [
+              100,
+              100,
+              100,
+              100,
+              300,
+              100,
+              300,
+              100
+            ],
+            [
+              300,
+              100,
+              300,
+              100,
+              300,
+              310,
+              300,
+              310
+            ],
+            [
+              300,
+              310,
+              300,
+              310,
+              50,
+              300,
+              50,
+              300
+            ]
+          ]
+        },
+        {
+          "closed": true,
+          "curves": [
+            [
+              100,
+              200,
+              100,
+              200,
+              150,
+              200,
+              150,
+              200
+            ],
+            [
+              150,
+              200,
+              150,
+              200,
+              100,
+              175,
+              100,
+              175
+            ],
+            [
+              100,
+              175,
+              100,
+              175,
+              100,
+              200,
+              100,
+              200
+            ]
+          ]
+        }
+      ],
+      "expected": false,
+      "actual": false,
+      "message": "Comparing two compound paths with one child having a different shape should return false."
+    }
+  ]
+}

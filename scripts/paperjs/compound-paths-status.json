@@ -1,0 +1,55 @@
+{
+  "blocks": [
+    {
+      "block": 0,
+      "title": "moveTo() / lineTo()",
+      "status": "adapted-multisubpath-construction-match"
+    },
+    {
+      "block": 1,
+      "title": "CompoundPath#reorient()",
+      "status": "initial-orientation-match-reorientation-api-difference"
+    }
+  ],
+  "preservedAssertions": 9,
+  "comparedAssertions": 4,
+  "results": [
+    {
+      "id": 0,
+      "status": "adapted-match"
+    },
+    {
+      "id": 1,
+      "status": "adapted-match"
+    },
+    {
+      "id": 2,
+      "status": "adapted-match"
+    },
+    {
+      "id": 3,
+      "status": "adapted-match"
+    },
+    {
+      "id": 4,
+      "status": "scene-child-identity-api-difference"
+    },
+    {
+      "id": 5,
+      "status": "scene-child-identity-api-difference"
+    },
+    {
+      "id": 6,
+      "status": "contour-reorientation-api-difference"
+    },
+    {
+      "id": 7,
+      "status": "contour-reorientation-api-difference"
+    },
+    {
+      "id": 8,
+      "status": "contour-reorientation-api-difference"
+    }
+  ],
+  "reason": "The source reorient call alternates nested contour orientations. CSG nested_contours preserves integer winding levels and is not a substitute. Mutable child identity assertions also have no direct counterpart."
+}

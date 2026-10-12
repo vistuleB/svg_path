@@ -403,3 +403,419 @@ Validation: `scripts/test-portable` passed 530 tests on Erlang and 530 on
 JavaScript; `scripts/test-fast` passed 1,815 tests. The slow/full release profiles
 were not run. No production changes or F# edits were made in this batch; tests and findings
 are included in the subsequent audit commit.
+
+## Item_Bounds.js inventory batch (2026-10-12)
+
+Source: `upstream/Item_Bounds.js`, downloaded at the same pinned revision and
+hashed in `inventory.json`. This sixth upstream file adds 35 blocks (181 total
+across the six files). The audit remains incomplete. This batch inventories
+outcomes without changing production code or asserting that errors are correct.
+
+`bounds.json` extracts 76 numeric queries from 21 blocks, representing 41 distinct
+inputs after duplicates are removed. The upstream file repeats several blocks.
+Both native targets produce **69 matches, five numerical differences, and two
+empty-path errors**. These are query counts, not new Gleeunit test counts.
+`bounds-native-screening.json` retains every native result; `bounds-status.json`
+records duplicate IDs, dispositions and unadapted blocks. All 76 JavaScript
+worker results agree in disposition with the native runs.
+
+The comparisons cover open and closed cubic bounds, bounds centers, all nine
+cap/join combinations, rectangular and triangular strokes, compound paths,
+non-scaling strokes at different zoom levels, affine stroke deformation,
+a circular arc and a rotated ellipse. Paper performs source construction and
+transform setup; Gleam receives full-precision cubic snapshots and any remaining
+matrix. These do **not** independently test Gleam's constructors, resize commands
+or scene mutation. Zero-handle cubics are retained as cubics, not replaced by lines.
+
+Adapter details:
+
+- `bounds` queries use exact path bounds. `position` uses the bounds center.
+- `strokeBounds` with a stroke constructs the Gleam outline and queries its
+  bounds. This is an approximation-based adapter to Paper's direct stroke-bounds
+  calculation, not an assertion that the APIs have identical accuracy contracts.
+- A retained stroke-scaling matrix is applied to the completed stroke outline.
+  Without stroke scaling, the input is transformed before stroking and the width
+  is divided by the view zoom. `internalBounds` uses local geometry.
+- Upstream five-decimal expected literals are preserved. The numerical comparison
+  allowance is `2e-5` for rectangle coordinates/dimensions and centers. This is a
+  comparison threshold, not a new promised stroke error bound.
+
+The seven nonmatching queries represent four distinct cases:
+
+| Fixture IDs | Case | Observed result and disposition |
+| --- | --- | --- |
+| 8, 40 | Open path with one node, butt cap | `EmptyPath` from the final bounds query. Gleam returns no stroke geometry; Paper retains a zero-size item rectangle at `(121,334)`. Different API expectations, not an established bug. |
+| 9, 41 | Closed one-cubic stroke | Maximum rectangle-component difference `0.00120548`. Unresolved numerical difference. |
+| 10, 42 | Curved miter stroke | Maximum difference `0.00178854` at defaults; with fitting tolerance `1e-4`, the difference falls to `0.00000757`, passing the comparison. Evidence of approximation sensitivity. |
+| 75 | Rotated ellipse stroke | Maximum difference `0.00012580`. Unresolved numerical difference. |
+
+All three default numerical differences are smaller than the default `0.01`
+fitting tolerance. That observation alone neither proves nor disproves correctness:
+Paper bounds and bounds of a fitted outline are different calculations.
+JavaScript-only follow-up probes are preserved in `bounds-refined-screening.json`
+and `bounds-tight-screening.json`. At fitting tolerance `1e-4`, the closed cubic
+and ellipse return `OffsetError(MaxDepthReached(...))`; at `1e-6`, all three do.
+Other options, including maximum depth, remain at defaults. These are recorded
+convergence limitations for further investigation, not three confirmed bugs or
+new failures under the default configuration. No solver changes were attempted.
+
+Fourteen blocks remain unadapted: scene/group caching and mutation, text,
+Shape/Symbol objects, visibility, global matrices, and additional internal-bound
+queries under non-scaling strokes. Ten non-bounds assertions inside selected
+blocks (segment string formatting and hit testing) are separately listed as
+omitted. No claim of covering the entire file is made.
+
+Reproduce from the repository root:
+
+```sh
+node scripts/paperjs/extract-bounds.cjs /tmp/svg-path-paper-audit/node_modules/paper
+node scripts/paperjs/probe-bounds.mjs
+python3 scripts/paperjs/generate-bounds.py
+gleam format test_paperjs/src/paper_bounds_probe.gleam
+(cd test_paperjs && gleam run -m paper_bounds_probe --target erlang) > /tmp/paper-bounds-erlang.log
+(cd test_paperjs && gleam run -m paper_bounds_probe --target javascript) > /tmp/paper-bounds-js.log
+python3 scripts/paperjs/collect-bounds-native.py /tmp/paper-bounds-erlang.log /tmp/paper-bounds-js.log
+BOUNDS_IDS=9,10,75 BOUNDS_FITTING_TOLERANCE=0.0001 BOUNDS_REPORT=bounds-refined-screening.json node scripts/paperjs/probe-bounds.mjs
+BOUNDS_IDS=9,10,75 BOUNDS_FITTING_TOLERANCE=0.000001 BOUNDS_REPORT=bounds-tight-screening.json node scripts/paperjs/probe-bounds.mjs
+```
+
+Validation: both `paper_bounds_probe` runs completed all 76 queries successfully
+as diagnostic programs, including the recorded errors. The ordinary, portable
+and release test selections are unchanged and were not rerun for this audit-only
+batch. No production code, F# code or published figures changed. No commit made.
+
+### First numerical discrepancy investigated: fixtures 9 / 41
+
+`check-first-stroke-bounds.mjs` and `first-stroke-bounds-findings.json` isolate
+the closed one-cubic, width-one miter stroke. Independent differentiation of
+the source cubic gives its coordinate extrema. Offsetting these supporting
+points by radius 0.5 and intersecting the offset endpoint tangent lines gives
+stroke bounds agreeing with Paper's unrounded result:
+
+`[minX, minY, maxX, maxY] = [120.44098344921575, 312.8832379684846,
+140.41642563622514, 343.4230062398443]`.
+
+An independent polynomial-extrema calculation on Gleam's *returned outline*
+agrees with the library bounds query to within `5.7e-14` in all successful sweep
+runs. Thus the observed difference is in the fitted outline, not a bounds-query
+error or an inaccurate Paper reference. The default outline's signed edge errors
+are `[0, -0.0000228774, +0.0012032968, -0.0008115042]`.
+
+| Fitting tolerance | Output segments | Maximum absolute edge error |
+| --- | ---: | ---: |
+| 0.01 (default) | 24 | 0.00120330 |
+| 0.005 | 28 | 0.00120330 |
+| 0.002 | 38 | 0.00012666 |
+| 0.001 | 40 | 0.00012666 |
+| 0.0005, 0.0002, 0.0001, 0.000001 | No output | `MaxDepthReached` |
+
+Disposition: **understood approximation difference, not a demonstrated bug**.
+The bounds errors in successful runs remain below the requested fitting tolerance;
+this is evidence for this fixture, not a proof of a global error guarantee.
+The default result was independently reproduced on both backends in the batch;
+the additional tolerance sweep and independent checks ran on JavaScript.
+
+There is a separate refinement limitation worth retaining in the inventory:
+`offset` defaults to, and currently permits at most, five refinement generations.
+The raw fitting acceptance threshold is half the requested tolerance, explaining
+why some reported divergences are below the caller's tolerance while still
+causing `MaxDepthReached`. Increasing the option beyond five is not a supported
+workaround. No production change or depth-limit change was attempted.
+
+Reproduce: `node scripts/paperjs/check-first-stroke-bounds.mjs`.
+
+### Remaining four numerical entries investigated
+
+The remaining entries in the five-entry numerical-discrepancy list are 10, 41,
+42 and 75. Fixture 41 exactly duplicates 9; fixture 42 exactly duplicates 10.
+The path coordinates, options, matrix and reference results were checked for
+identity, so this adds two distinct geometries rather than four distinct bugs.
+
+`check-remaining-stroke-bounds.mjs` independently solves source-cubic coordinate
+extrema and endpoint offset-tangent intersections. For these fixtures, every
+extreme bound is attained either at a radius-offset interior source extremum or
+at an accepted miter. The resulting references agree with unrounded Paper bounds
+within `5.7e-14`. The ellipse calculation uses the actual four source cubics,
+not an ideal ellipse, avoiding a separate circle/ellipse approximation difference.
+
+The same script independently bounds every line and cubic in the generated
+outlines. Those bounds agree with the library query within `1.8e-13` throughout
+the successful sweep runs. This identifies outline approximation as the source
+of the differences, rather than a defective bounds query or Paper reference.
+Full results are in `remaining-stroke-bounds-findings.json`.
+
+| Distinct case | Default maximum edge error | Tighter successful setting | Observed refinement limit |
+| --- | ---: | --- | --- |
+| Curved miter stroke (10, 42) | 0.00178661 | At tolerance 0.0001: error 0.00000364, 72 output segments | Tested 0.00001 and 0.000001 return `MaxDepthReached`; 0.00005 succeeds. |
+| Rotated cubic ellipse (75) | 0.000061654 | Tolerances 0.005, 0.002 and 0.001 retain the same extremal error while refining other portions | Every tested setting from 0.0005 down to 0.000001 returns `MaxDepthReached`. |
+
+Errors here are measured on the four box *edges*, against an unrounded independent
+reference. The original screen compared `x, y, width, height` against rounded
+literals; for the symmetric ellipse, the width difference is approximately twice
+the individual left/right edge error. This explains the earlier 0.00012580 report.
+
+Disposition for all five numerical entries: **understood stroke-approximation
+differences, not demonstrated correctness bugs**. Each successful sweep's bounds
+error is below that run's fitting tolerance. This does not establish a global
+Hausdorff bound. Keep the tight-tolerance refinement failures as a separate known
+limitation for later work. Defaults were checked on both native targets in the
+batch; independent calculations and option sweeps ran on JavaScript.
+
+Reproduce: `node scripts/paperjs/check-remaining-stroke-bounds.mjs`.
+No production changes, regression expectation changes, or commits were made.
+
+## Constructors, PathItem and Matrix batches (2026-10-12)
+
+Three more files from the same pinned Paper revision are preserved under
+`upstream/`, with hashes in `inventory.json`. The inventory now has nine files
+and 204 top-level blocks. This batch adds diagnostic programs and comparison
+reports; it makes no production changes and adds no tests to the release gate.
+
+### Path_Constructors.js
+
+All 24 original assertions from 18 blocks are preserved in `constructors.json`.
+Ten assertions from ten blocks have native constructor adapters: plain rectangle
+(two API forms), circle (two forms), ellipse, rounded rectangle (two forms),
+oversized-radius rectangle and line (two forms). These represent six distinct
+geometric inputs. All ten match on Erlang and JavaScript.
+
+The adapters use arguments transcribed from the source calls, not shapes
+reconstructed from Paper's answers. Expectations come from the original rounded
+segment-string literals. Relative handles become absolute controls; our exact
+arc segments are explicitly converted to cubic approximations for comparison.
+Closed contours may start at different cyclic vertices, but direction is retained.
+Zero-length, zero-handle segments are omitted on both sides for geometric
+comparison. Closure and every remaining endpoint/control coordinate are compared
+with allowance `2e-5`; the largest observed difference is below `0.000005`.
+Lines are encoded with zero endpoint handles to match Paper's node representation.
+This does not claim that an exact ellipse and its cubic approximation are
+identical curves, or that the libraries have identical segment counts by default.
+
+`constructors-native-screening.json` contains both runs. Fourteen assertions
+remain uncompared: scene insertion (four), three-point arcs (two), regular
+polygons (four) and stars (four). The last three families could be implemented
+as explicit geometry adapters later; no direct matching constructor was used.
+`constructors-status.json` records block dispositions.
+
+### PathItem.js
+
+`pathitem.json` preserves both blocks and all 33 assertions. The 22 SVG path-data
+parsing cases all match on Erlang and JavaScript. They exercise multiple subpaths,
+relative commands, exponent notation, whitespace, closure, smooth cubics and
+smooth quadratics. Expected coordinates and handles come from the original
+literal arrays. Quadratics are converted to cubics for comparison; lines use
+zero endpoint handles. Contour order, starting vertex and closure are retained.
+Only zero-length zero-handle segments are ignored. Coordinates use `2e-5` to
+accommodate five-decimal reference handles. Results are in
+`pathitem-native-screening.json`.
+
+The eleven `PathItem#compare` assertions are preserved but not passed through
+Gleam's congruency query. Paper asks for equality of traces across subdivisions
+and cyclic starts; Gleam congruency searches for a similarity transform under
+ordered correspondence. Using it as a boolean equality predicate would conflate
+different contracts. `pathitem-status.json` records this coverage gap.
+The upstream file includes its original attribution for W3C-derived path data.
+
+### Matrix.js
+
+All three blocks and 52 decomposition assertions are extracted into `matrix.json`.
+There is no matching public decomposition query in Gleam. The assertions involve
+rotation normalization and reflection/sign conventions as well as magnitudes;
+testing only matrix construction or point application would not cover them.
+`matrix-status.json` records all three blocks as lacking a public counterpart.
+No native comparison is claimed for these 52 assertions.
+
+### Reproduction and validation
+
+```sh
+node scripts/paperjs/extract-constructors.cjs /tmp/svg-path-paper-audit/node_modules/paper
+node scripts/paperjs/extract-pathitem.cjs /tmp/svg-path-paper-audit/node_modules/paper
+node scripts/paperjs/extract-matrix.cjs /tmp/svg-path-paper-audit/node_modules/paper
+python3 scripts/paperjs/generate-constructors.py
+python3 scripts/paperjs/generate-pathitem.py
+gleam format test_paperjs/src/paper_constructors_probe.gleam test_paperjs/src/paper_pathitem_probe.gleam
+(cd test_paperjs && gleam run -m paper_constructors_probe --target erlang) > /tmp/paper-constructors-erlang.log
+(cd test_paperjs && gleam run -m paper_constructors_probe --target javascript) > /tmp/paper-constructors-js.log
+python3 scripts/paperjs/collect-constructors.py /tmp/paper-constructors-erlang.log /tmp/paper-constructors-js.log
+(cd test_paperjs && gleam run -m paper_pathitem_probe --target erlang) > /tmp/paper-pathitem-erlang.log
+(cd test_paperjs && gleam run -m paper_pathitem_probe --target javascript) > /tmp/paper-pathitem-js.log
+python3 scripts/paperjs/collect-pathitem.py /tmp/paper-pathitem-erlang.log /tmp/paper-pathitem-js.log
+```
+
+Completed: 10 constructor and 22 parser comparisons on each backend, all matching;
+extraction/inventory of the unsupported assertions; formatting and diff checks.
+The collectors assert completeness but retain discrepancies as report entries,
+so a successful collector exit alone is not a passing geometry claim. No full
+release rerun was needed for these diagnostic-only changes. No new discrepancies,
+production changes, F# edits, figure changes, or commits in this batch.
+
+## Next downloaded batches (2026-10-12)
+
+Four further files are vendored at the same pinned Paper revision. Their original
+license headers are intact, and `inventory.json` records SHA-256 hashes and
+`downloaded-not-yet-compared` status for every block:
+
+| File | Blocks | Candidate coverage |
+| --- | ---: | --- |
+| `Numerical.js` | 2 | Quadratic and cubic roots under coefficient scaling; four explicit assertions. |
+| `CurveLocation.js` | 1 | Cumulative distances at four successive vertices of a straight path. |
+| `CompoundPath.js` | 2 | Multi-contour construction and contour reorientation. |
+| `Segment.js` | 14 | Paper node/handle construction, reversal, cloning, removal and selection; many are object-model features rather than curve-segment operations. |
+
+The inventory now contains 13 files and 223 top-level blocks. These 19 newly
+fetched blocks have not yet been compared against Gleam; download counts are
+not passing-test counts. Numerical roots and cumulative curve locations are the
+next direct numerical candidates. Decomposition remains deferred. No production
+changes or commits were made during this download batch.
+
+## Segment.js batch (2026-10-12)
+
+All 16 assertions in the 14 upstream blocks are preserved in `segments.json`.
+The central API distinction is that a Paper `Segment` is one path **node** with
+incoming/outgoing relative handles. A Gleam `Segment` is an entire **edge** with
+start/end points and absolute controls. Identical names do not imply equivalent
+constructors or editing operations.
+
+One original assertion has a geometric adapter and **matches exactly on both
+Erlang and JavaScript**: the handle-reversal test. The node `(10,10)`, incoming
+handle `(5,5)` and outgoing handle `(15,15)` becomes a closed cubic with controls
+`(25,25)` and `(15,15)`. After `subpath_reverse`, reconstructing the relative
+handles gives incoming `(15,15)` and outgoing `(5,5)`, matching the original
+expected string. Supplementary checks confirm closure, endpoint continuity, and
+that two reversals restore the original subpath. These three extra checks are
+not counted as additional upstream assertions. Mutable identity and in-place
+mutation are not tested by this adapter.
+
+The remaining assertions are explicitly unexecuted against Gleam:
+
+- Ten constructor-overload assertions: node construction, missing/null fields,
+  numeric/object/Point/Size inputs. No direct edge-constructor equivalence.
+- Two clone assertions: separate object identity and equal geometry. No matching
+  mutable-node identity API for immutable values.
+- One node-removal assertion: removing the middle node of `[A,B,A]` leaves two
+  coincident nodes and a zero-length edge. Node removal is outside our API;
+  deleting an edge is a different operation. This is an understood API difference,
+  not a pending adapter, missing test obligation, or library failure.
+- Two selection assertions: editor/scene selection state has no geometry-only
+  counterpart.
+
+`segments-status.json` records all block/assertion dispositions;
+`segments-native-screening.json` records both native outputs. No discrepancies
+were found in the single executed comparison. The 15 unexecuted assertions are
+not passing tests and are not evidence of library failures.
+
+Reproduce:
+
+```sh
+node scripts/paperjs/extract-segments.cjs /tmp/svg-path-paper-audit/node_modules/paper
+python3 scripts/paperjs/generate-segments.py
+gleam format test_paperjs/src/paper_segments_probe.gleam
+(cd test_paperjs && gleam run -m paper_segments_probe --target erlang) > /tmp/paper-segments-erlang.log
+(cd test_paperjs && gleam run -m paper_segments_probe --target javascript) > /tmp/paper-segments-js.log
+python3 scripts/paperjs/collect-segments.py /tmp/paper-segments-erlang.log /tmp/paper-segments-js.log
+```
+
+Both native probes completed. Formatting and diff checks passed. Production
+code, standard test selections and F# are unchanged; no release suite rerun or
+commit was made for this diagnostic-only batch.
+
+## CurveLocation.js batch (2026-10-12)
+
+This file has one block containing four assertions: nodes at `(100,100)`,
+`(200,100)`, `(300,100)` and `(400,100)` have cumulative distances `0,100,200,300`.
+All four assertions match exactly on Erlang and JavaScript, both with Paper's
+original zero-handle cubic representation and with an explicit line polyline.
+That is four upstream assertions in two representations, or eight native queries
+per backend—not eight independent upstream assertions.
+
+Our geometry API has no mutable `CurveLocation` object with an `offset` property.
+The adapter measures the prefix ending at each known node parameter using
+`subpath_between` and `measure.subpath_length`. At the first node it uses an empty
+prefix because `subpath_between` intentionally rejects equal parameters. The
+final node is addressed as the final segment's `t=1`; intermediate nodes use
+next-segment `t=0`. Supplementary checks evaluate each address and independently
+query `subpath_point_at_length` using the upstream expected distance. All recover
+the corresponding input point exactly on both backends.
+
+The probe uses the input geometry, not the expected offsets, to compute prefix
+lengths. Expected offsets are used only for comparison and the supplementary
+inverse query. Location-object identity, mutation and caching are not claimed
+as covered; the upstream block does not test them either.
+
+Evidence: `curve-locations.json`, `curve-locations-native-screening.json` and
+`curve-locations-status.json`. No discrepancy or failure was observed.
+
+```sh
+node scripts/paperjs/extract-curve-locations.cjs /tmp/svg-path-paper-audit/node_modules/paper
+python3 scripts/paperjs/generate-curve-locations.py
+gleam format test_paperjs/src/paper_curve_locations_probe.gleam
+(cd test_paperjs && gleam run -m paper_curve_locations_probe --target erlang) > /tmp/paper-curve-locations-erlang.log
+(cd test_paperjs && gleam run -m paper_curve_locations_probe --target javascript) > /tmp/paper-curve-locations-js.log
+python3 scripts/paperjs/collect-curve-locations.py /tmp/paper-curve-locations-erlang.log /tmp/paper-curve-locations-js.log
+```
+
+Both native probes and formatting/diff checks completed successfully. Production
+code, standard test selections and F# are unchanged. No release rerun or commit.
+
+## Remaining downloaded batches: Numerical and CompoundPath (2026-10-12)
+
+### Numerical.js
+
+All four assertions from both blocks are extracted in `numerical.json` and
+compared against `svg_path/internal/root` on Erlang and JavaScript. These are
+internal implementation checks, not a claim of a public polynomial-solving API.
+Extraction records only the outer solver call: Paper's cubic implementation also
+calls its quadratic helper internally, whose coefficients must not replace the
+original cubic input.
+
+Both quadratic cases return exactly `[-1,1]`, versus Paper's `[1,-1]`. Root order
+is explicitly ignored for comparison and retained in the report. Coefficient
+scaling from 1 to Paper's `EPSILON=1e-12` leaves both roots unchanged.
+Both cubic cases return `2.9196395657246743`, versus the upstream literal
+`2.919639565839418`: absolute difference approximately `1.14744e-10`, within the
+`1e-9` comparison allowance. The scaled and unscaled results agree exactly, as
+do the two backends. Normalized polynomial residuals are also retained.
+All four comparisons match; the raw ordering difference is an understood
+output-convention difference, not a missing root.
+
+### CompoundPath.js
+
+All nine assertions from both blocks are preserved in `compound-paths.json`.
+Four have geometric adapters, all matching on both backends:
+
+- The recorded move/line sequence is translated to SVG `M`/`L` commands and parsed;
+  the result has the expected two subpaths. This compares construction structure,
+  not mutable drawing methods, fill-color state or exhaustive vertex geometry.
+- The three source rectangles are constructed from their original corner/size
+  arguments. Positive signed area matches Paper's initial clockwise orientation
+  in SVG's downward-y coordinates.
+
+Five assertions have no direct counterpart: two compare child object identity
+and ordering after mutation; three inspect orientations after `reorient()`.
+Paper changes the two inner rectangles to counterclockwise and retains the outer
+rectangle clockwise. Our `csg.nested_contours` preserves the signed integer
+winding field and does not implement that reorientation policy. Substituting it
+would create a false discrepancy. These are documented API differences, not
+pending repairs or passing native comparisons. See `compound-paths-status.json`.
+
+### Reproduction and completion
+
+```sh
+node scripts/paperjs/extract-numerical.cjs /tmp/svg-path-paper-audit/node_modules/paper
+node scripts/paperjs/extract-compound-paths.cjs /tmp/svg-path-paper-audit/node_modules/paper
+python3 scripts/paperjs/generate-final-batches.py
+gleam format test_paperjs/src/paper_final_batches_probe.gleam
+(cd test_paperjs && gleam run -m paper_final_batches_probe --target erlang) > /tmp/paper-final-batches-erlang.log
+(cd test_paperjs && gleam run -m paper_final_batches_probe --target javascript) > /tmp/paper-final-batches-js.log
+python3 scripts/paperjs/collect-final-batches.py /tmp/paper-final-batches-erlang.log /tmp/paper-final-batches-js.log
+```
+
+`final-batches-native-screening.json` records all eight executed comparisons per
+backend; all match. Formatting/diff checks passed, and hashes of all 13 vendored
+source files were rechecked. No production changes, F# changes, standard test
+selection changes, full release rerun or commits.
+
+Every file in the most recently downloaded four-file group now has a recorded
+comparison/disposition pass. This does not close earlier audit gaps or establish
+coverage of all Paper.js tests: the larger Boolean discrepancy inventory,
+unadapted assertions in earlier files and as-yet-undownloaded files remain.

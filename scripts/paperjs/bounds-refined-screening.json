@@ -1,0 +1,59 @@
+[
+  {
+    "id": 9,
+    "block": 10,
+    "property": "strokeBounds",
+    "strokeFittingTolerance": 0.0001,
+    "status": "library-error",
+    "stage": "stroke",
+    "error": {
+      "0": {
+        "type": "OffsetError",
+        "error": {
+          "type": "MaxDepthReached",
+          "divergence": 0.000050439864641511386
+        }
+      },
+      "type": "Error"
+    }
+  },
+  {
+    "id": 10,
+    "block": 11,
+    "property": "strokeBounds",
+    "strokeFittingTolerance": 0.0001,
+    "status": "match",
+    "actual": [
+      43.09487516204666,
+      301.5524980134479,
+      411.39769906439705,
+      156.57542243107815
+    ],
+    "expected": [
+      43.09488,
+      301.5525,
+      411.3977,
+      156.57543
+    ],
+    "error": 0.000007568921859046895,
+    "tolerance": 0.00002
+  },
+  {
+    "id": 75,
+    "block": 34,
+    "property": "strokeBounds",
+    "strokeFittingTolerance": 0.0001,
+    "status": "library-error",
+    "stage": "stroke",
+    "error": {
+      "0": {
+        "type": "OffsetError",
+        "error": {
+          "type": "MaxDepthReached",
+          "divergence": 0.00021631117449158325
+        }
+      },
+      "type": "Error"
+    }
+  }
+]

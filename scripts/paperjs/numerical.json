@@ -1,0 +1,93 @@
+{
+  "epsilon": 1e-12,
+  "blocks": [
+    {
+      "block": 0,
+      "title": "Numerical.solveQuadratic()"
+    },
+    {
+      "block": 1,
+      "title": "Numerical.solveCubic()"
+    }
+  ],
+  "fixtures": [
+    {
+      "id": 0,
+      "block": 0,
+      "title": "Numerical.solveQuadratic()",
+      "method": "solveQuadratic",
+      "coefficients": [
+        1,
+        0,
+        -1
+      ],
+      "expected": [
+        1,
+        -1
+      ],
+      "actual": [
+        1,
+        -1
+      ],
+      "message": "Numerical.solveQuadratic()."
+    },
+    {
+      "id": 1,
+      "block": 0,
+      "title": "Numerical.solveQuadratic()",
+      "method": "solveQuadratic",
+      "coefficients": [
+        1e-12,
+        0,
+        -1e-12
+      ],
+      "expected": [
+        1,
+        -1
+      ],
+      "actual": [
+        1,
+        -1
+      ],
+      "message": "Numerical.solveQuadratic() with an identical set ofcoefficients at different scale."
+    },
+    {
+      "id": 2,
+      "block": 1,
+      "title": "Numerical.solveCubic()",
+      "method": "solveCubic",
+      "coefficients": [
+        0.5,
+        -1,
+        -1,
+        -1
+      ],
+      "expected": [
+        2.919639565839418
+      ],
+      "actual": [
+        2.919639565839418
+      ],
+      "message": "Numerical.solveCubic()."
+    },
+    {
+      "id": 3,
+      "block": 1,
+      "title": "Numerical.solveCubic()",
+      "method": "solveCubic",
+      "coefficients": [
+        5e-13,
+        -1e-12,
+        -1e-12,
+        -1e-12
+      ],
+      "expected": [
+        2.919639565839418
+      ],
+      "actual": [
+        2.919639565839418
+      ],
+      "message": "Numerical.solveCubic() with an identical set ofcoefficients at different scale."
+    }
+  ]
+}

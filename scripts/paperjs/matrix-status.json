@@ -1,0 +1,22 @@
+{
+  "blocks": [
+    {
+      "block": 0,
+      "title": "Decomposition: rotate()",
+      "status": "no-public-decomposition-counterpart"
+    },
+    {
+      "block": 1,
+      "title": "Decomposition: scale()",
+      "status": "no-public-decomposition-counterpart"
+    },
+    {
+      "block": 2,
+      "title": "Decomposition: scale() & rotate()",
+      "status": "no-public-decomposition-counterpart"
+    }
+  ],
+  "preservedAssertions": 52,
+  "comparedAssertions": 0,
+  "reason": "No public matrix-decomposition operation. Composing or applying a matrix would not exercise these rotation/scaling decomposition assertions."
+}

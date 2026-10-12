@@ -1,0 +1,466 @@
+[
+  {
+    "fixtureIds": [
+      10,
+      42
+    ],
+    "referenceMethod": "Source derivative extrema with stroke-radius padding, plus accepted offset-tangent miters. All four supporting values are attained for these specific fixtures.",
+    "sourceBounds": [
+      47,
+      304.0524980688874,
+      447,
+      455.6279240848656
+    ],
+    "extrema": [
+      {
+        "curve": 0,
+        "axis": 1,
+        "t": 0.5635083268962916,
+        "point": [
+          207.12295133596416,
+          304.0524980688874
+        ]
+      },
+      {
+        "curve": 1,
+        "axis": 1,
+        "t": 0.541960108450192,
+        "point": [
+          174.80497279547353,
+          455.6279240848656
+        ]
+      }
+    ],
+    "miters": [
+      {
+        "vertex": 0,
+        "sign": -1,
+        "point": [
+          50.90512483795334,
+          385
+        ]
+      },
+      {
+        "vertex": 0,
+        "sign": 1,
+        "point": [
+          43.09487516204666,
+          385
+        ]
+      },
+      {
+        "vertex": 1,
+        "sign": -1,
+        "point": [
+          439.5074257735563,
+          345.9512021413471
+        ]
+      },
+      {
+        "vertex": 1,
+        "sign": 1,
+        "point": [
+          454.4925742264437,
+          344.0487978586529
+        ]
+      }
+    ],
+    "reference": [
+      43.09487516204666,
+      301.5524980688874,
+      454.4925742264437,
+      458.1279240848656
+    ],
+    "paperEdgeResidual": 5.684341886080802e-14,
+    "runs": [
+      {
+        "tolerance": 0.01,
+        "status": "ok",
+        "segments": 28,
+        "actual": [
+          43.09487516204666,
+          301.550711460597,
+          454.4925742264437,
+          458.1269621958025
+        ],
+        "edgeErrors": [
+          0,
+          -0.0017866082904447467,
+          0,
+          -0.0009618890630918031
+        ],
+        "libraryBoundsResidual": 0
+      },
+      {
+        "tolerance": 0.005,
+        "status": "ok",
+        "segments": 32,
+        "actual": [
+          43.09487516204666,
+          301.5523734293679,
+          454.4925742264437,
+          458.1269621958025
+        ],
+        "edgeErrors": [
+          0,
+          -0.0001246395195266814,
+          0,
+          -0.0009618890630918031
+        ],
+        "libraryBoundsResidual": 5.684341886080802e-14
+      },
+      {
+        "tolerance": 0.002,
+        "status": "ok",
+        "segments": 34,
+        "actual": [
+          43.09487516204666,
+          301.5523734293679,
+          454.4925742264437,
+          458.12788594123236
+        ],
+        "edgeErrors": [
+          0,
+          -0.0001246395195266814,
+          0,
+          -0.000038143633219078765
+        ],
+        "libraryBoundsResidual": 5.684341886080802e-14
+      },
+      {
+        "tolerance": 0.001,
+        "status": "ok",
+        "segments": 42,
+        "actual": [
+          43.09487516204666,
+          301.5523734293679,
+          454.4925742264437,
+          458.12788594123236
+        ],
+        "edgeErrors": [
+          0,
+          -0.0001246395195266814,
+          0,
+          -0.000038143633219078765
+        ],
+        "libraryBoundsResidual": 5.684341886080802e-14
+      },
+      {
+        "tolerance": 0.0005,
+        "status": "ok",
+        "segments": 52,
+        "actual": [
+          43.09487516204666,
+          301.5523734293679,
+          454.4925742264437,
+          458.12788594123236
+        ],
+        "edgeErrors": [
+          0,
+          -0.0001246395195266814,
+          0,
+          -0.000038143633219078765
+        ],
+        "libraryBoundsResidual": 5.684341886080802e-14
+      },
+      {
+        "tolerance": 0.0002,
+        "status": "ok",
+        "segments": 62,
+        "actual": [
+          43.09487516204666,
+          301.5524980134479,
+          454.4925742264437,
+          458.12788594123236
+        ],
+        "edgeErrors": [
+          0,
+          -5.543950010178378e-8,
+          0,
+          -0.000038143633219078765
+        ],
+        "libraryBoundsResidual": 5.684341886080802e-14
+      },
+      {
+        "tolerance": 0.0001,
+        "status": "ok",
+        "segments": 72,
+        "actual": [
+          43.09487516204666,
+          301.5524980134479,
+          454.4925742264437,
+          458.12792044452607
+        ],
+        "edgeErrors": [
+          0,
+          -5.543950010178378e-8,
+          0,
+          -0.0000036403395142770023
+        ],
+        "libraryBoundsResidual": 1.7053025658242404e-13
+      },
+      {
+        "tolerance": 0.00005,
+        "status": "ok",
+        "segments": 82,
+        "actual": [
+          43.09487516204666,
+          301.5524980134479,
+          454.4925742264437,
+          458.12792044452607
+        ],
+        "edgeErrors": [
+          0,
+          -5.543950010178378e-8,
+          0,
+          -0.0000036403395142770023
+        ],
+        "libraryBoundsResidual": 1.7053025658242404e-13
+      },
+      {
+        "tolerance": 0.00001,
+        "status": "error",
+        "error": {
+          "0": {
+            "type": "OffsetError",
+            "error": {
+              "type": "MaxDepthReached",
+              "divergence": 0.000006755645549331776
+            }
+          },
+          "type": "Error"
+        }
+      },
+      {
+        "tolerance": 0.000001,
+        "status": "error",
+        "error": {
+          "0": {
+            "type": "OffsetError",
+            "error": {
+              "type": "MaxDepthReached",
+              "divergence": 5.078433572308661e-7
+            }
+          },
+          "type": "Error"
+        }
+      }
+    ]
+  },
+  {
+    "fixtureIds": [
+      75
+    ],
+    "referenceMethod": "Source derivative extrema with stroke-radius padding, plus accepted offset-tangent miters. All four supporting values are attained for these specific fixtures.",
+    "sourceBounds": [
+      90.3930587515645,
+      107.93798560146313,
+      159.6069412484355,
+      172.06201439853686
+    ],
+    "extrema": [
+      {
+        "curve": 0,
+        "axis": 1,
+        "t": 0.5950106883760523,
+        "point": [
+          140.0001175285112,
+          107.93798560146313
+        ]
+      },
+      {
+        "curve": 1,
+        "axis": 0,
+        "t": 0.3030796767641997,
+        "point": [
+          159.6069412484355,
+          126.09717450695751
+        ]
+      },
+      {
+        "curve": 2,
+        "axis": 1,
+        "t": 0.5950106883760523,
+        "point": [
+          109.9998824714888,
+          172.06201439853686
+        ]
+      },
+      {
+        "curve": 3,
+        "axis": 0,
+        "t": 0.3030796767641996,
+        "point": [
+          90.3930587515645,
+          153.90282549304246
+        ]
+      }
+    ],
+    "miters": [],
+    "reference": [
+      74.3930587515645,
+      91.93798560146313,
+      175.6069412484355,
+      188.06201439853686
+    ],
+    "paperEdgeResidual": 2.842170943040401e-14,
+    "runs": [
+      {
+        "tolerance": 0.01,
+        "status": "ok",
+        "segments": 60,
+        "actual": [
+          74.39299709758068,
+          91.93797766388472,
+          175.6070029024193,
+          188.06202233611535
+        ],
+        "edgeErrors": [
+          -0.0000616539838205199,
+          -0.000007937578402561485,
+          0.00006165398380630904,
+          0.000007937578487826613
+        ],
+        "libraryBoundsResidual": 1.4210854715202004e-14
+      },
+      {
+        "tolerance": 0.005,
+        "status": "ok",
+        "segments": 68,
+        "actual": [
+          74.39299709758068,
+          91.93797766388472,
+          175.6070029024193,
+          188.06202233611535
+        ],
+        "edgeErrors": [
+          -0.0000616539838205199,
+          -0.000007937578402561485,
+          0.00006165398380630904,
+          0.000007937578487826613
+        ],
+        "libraryBoundsResidual": 1.4210854715202004e-14
+      },
+      {
+        "tolerance": 0.002,
+        "status": "ok",
+        "segments": 84,
+        "actual": [
+          74.39299709758068,
+          91.93797766388472,
+          175.6070029024193,
+          188.06202233611535
+        ],
+        "edgeErrors": [
+          -0.0000616539838205199,
+          -0.000007937578402561485,
+          0.00006165398380630904,
+          0.000007937578487826613
+        ],
+        "libraryBoundsResidual": 1.4210854715202004e-14
+      },
+      {
+        "tolerance": 0.001,
+        "status": "ok",
+        "segments": 84,
+        "actual": [
+          74.39299709758068,
+          91.93797766388472,
+          175.6070029024193,
+          188.06202233611535
+        ],
+        "edgeErrors": [
+          -0.0000616539838205199,
+          -0.000007937578402561485,
+          0.00006165398380630904,
+          0.000007937578487826613
+        ],
+        "libraryBoundsResidual": 1.4210854715202004e-14
+      },
+      {
+        "tolerance": 0.0005,
+        "status": "error",
+        "error": {
+          "0": {
+            "type": "OffsetError",
+            "error": {
+              "type": "MaxDepthReached",
+              "divergence": 0.00042743295898000077
+            }
+          },
+          "type": "Error"
+        }
+      },
+      {
+        "tolerance": 0.0002,
+        "status": "error",
+        "error": {
+          "0": {
+            "type": "OffsetError",
+            "error": {
+              "type": "MaxDepthReached",
+              "divergence": 0.00021631117449158325
+            }
+          },
+          "type": "Error"
+        }
+      },
+      {
+        "tolerance": 0.0001,
+        "status": "error",
+        "error": {
+          "0": {
+            "type": "OffsetError",
+            "error": {
+              "type": "MaxDepthReached",
+              "divergence": 0.00021631117449158325
+            }
+          },
+          "type": "Error"
+        }
+      },
+      {
+        "tolerance": 0.00005,
+        "status": "error",
+        "error": {
+          "0": {
+            "type": "OffsetError",
+            "error": {
+              "type": "MaxDepthReached",
+              "divergence": 0.00021631117449158325
+            }
+          },
+          "type": "Error"
+        }
+      },
+      {
+        "tolerance": 0.00001,
+        "status": "error",
+        "error": {
+          "0": {
+            "type": "OffsetError",
+            "error": {
+              "type": "MaxDepthReached",
+              "divergence": 0.000005924606361742862
+            }
+          },
+          "type": "Error"
+        }
+      },
+      {
+        "tolerance": 0.000001,
+        "status": "error",
+        "error": {
+          "0": {
+            "type": "OffsetError",
+            "error": {
+              "type": "MaxDepthReached",
+              "divergence": 5.23319463489562e-7
+            }
+          },
+          "type": "Error"
+        }
+      }
+    ]
+  }
+]

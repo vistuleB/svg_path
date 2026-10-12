@@ -1,0 +1,18 @@
+{
+  "blocks": [
+    {
+      "block": 0,
+      "title": "PathItem#create() with SVG path-data (#1101)",
+      "status": "adapted-parser-match"
+    },
+    {
+      "block": 1,
+      "title": "PathItem#compare()",
+      "status": "no-equivalent-path-equality-query"
+    }
+  ],
+  "preservedAssertions": 33,
+  "comparedAssertions": 22,
+  "uncomparedAssertions": 11,
+  "reason": "Paper compare ignores subdivision and supports cyclic starts. Gleam congruency finds a similarity transform and requires ordered path correspondence; these predicates are not equivalent."
+}

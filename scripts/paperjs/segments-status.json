@@ -1,0 +1,173 @@
+{
+  "blocks": [
+    {
+      "block": 0,
+      "title": "new Segment()",
+      "status": "node-constructor-api-difference",
+      "reason": "Paper overloads create one node with optional relative handles, including null/undefined/Size coercion. A Gleam Segment is an edge with endpoints, not a node. No native constructor equivalence asserted."
+    },
+    {
+      "block": 1,
+      "title": "new Segment(point)",
+      "status": "node-constructor-api-difference",
+      "reason": "Paper overloads create one node with optional relative handles, including null/undefined/Size coercion. A Gleam Segment is an edge with endpoints, not a node. No native constructor equivalence asserted."
+    },
+    {
+      "block": 2,
+      "title": "new Segment(x, y)",
+      "status": "node-constructor-api-difference",
+      "reason": "Paper overloads create one node with optional relative handles, including null/undefined/Size coercion. A Gleam Segment is an edge with endpoints, not a node. No native constructor equivalence asserted."
+    },
+    {
+      "block": 3,
+      "title": "new Segment(undefined)",
+      "status": "node-constructor-api-difference",
+      "reason": "Paper overloads create one node with optional relative handles, including null/undefined/Size coercion. A Gleam Segment is an edge with endpoints, not a node. No native constructor equivalence asserted."
+    },
+    {
+      "block": 4,
+      "title": "new Segment(object)",
+      "status": "node-constructor-api-difference",
+      "reason": "Paper overloads create one node with optional relative handles, including null/undefined/Size coercion. A Gleam Segment is an edge with endpoints, not a node. No native constructor equivalence asserted."
+    },
+    {
+      "block": 5,
+      "title": "new Segment(point, handleIn, handleOut)",
+      "status": "node-constructor-api-difference",
+      "reason": "Paper overloads create one node with optional relative handles, including null/undefined/Size coercion. A Gleam Segment is an edge with endpoints, not a node. No native constructor equivalence asserted."
+    },
+    {
+      "block": 6,
+      "title": "new Segment(null, null, null)",
+      "status": "node-constructor-api-difference",
+      "reason": "Paper overloads create one node with optional relative handles, including null/undefined/Size coercion. A Gleam Segment is an edge with endpoints, not a node. No native constructor equivalence asserted."
+    },
+    {
+      "block": 7,
+      "title": "new Segment(undefined, null, null)",
+      "status": "node-constructor-api-difference",
+      "reason": "Paper overloads create one node with optional relative handles, including null/undefined/Size coercion. A Gleam Segment is an edge with endpoints, not a node. No native constructor equivalence asserted."
+    },
+    {
+      "block": 8,
+      "title": "new Segment(x, y, inX, inY, outX, outY)",
+      "status": "node-constructor-api-difference",
+      "reason": "Paper overloads create one node with optional relative handles, including null/undefined/Size coercion. A Gleam Segment is an edge with endpoints, not a node. No native constructor equivalence asserted."
+    },
+    {
+      "block": 9,
+      "title": "new Segment(size)",
+      "status": "node-constructor-api-difference",
+      "reason": "Paper overloads create one node with optional relative handles, including null/undefined/Size coercion. A Gleam Segment is an edge with endpoints, not a node. No native constructor equivalence asserted."
+    },
+    {
+      "block": 10,
+      "title": "segment.reverse()",
+      "status": "adapted-handle-reversal-match",
+      "reason": "Map the node and relative handles to a closed one-cubic subpath and reverse it. Reconstructed node/handle coordinates match the upstream literal on both targets. In-place mutation is not tested."
+    },
+    {
+      "block": 11,
+      "title": "segment.clone()",
+      "status": "mutable-object-identity-api-difference",
+      "reason": "Paper clone has separate object identity and equal node geometry. Immutable Gleam values have no corresponding mutable node clone-identity operation."
+    },
+    {
+      "block": 12,
+      "title": "segment.remove()",
+      "status": "node-editing-api-difference",
+      "reason": "Removing the middle Paper node leaves two coincident nodes, hence one zero-length edge. Node removal is outside the Gleam API; deleting an edge is not equivalent. This is an understood API difference, not a pending adapter or library failure."
+    },
+    {
+      "block": 13,
+      "title": "segment.selected",
+      "status": "scene-selection-api-difference",
+      "reason": "Selected control-point state belongs to the scene/editor object model and has no geometry-only counterpart."
+    }
+  ],
+  "preservedAssertions": 16,
+  "comparedAssertions": 1,
+  "uncomparedAssertions": 15,
+  "results": [
+    {
+      "id": 0,
+      "block": 0,
+      "status": "node-constructor-api-difference"
+    },
+    {
+      "id": 1,
+      "block": 1,
+      "status": "node-constructor-api-difference"
+    },
+    {
+      "id": 2,
+      "block": 2,
+      "status": "node-constructor-api-difference"
+    },
+    {
+      "id": 3,
+      "block": 3,
+      "status": "node-constructor-api-difference"
+    },
+    {
+      "id": 4,
+      "block": 4,
+      "status": "node-constructor-api-difference"
+    },
+    {
+      "id": 5,
+      "block": 5,
+      "status": "node-constructor-api-difference"
+    },
+    {
+      "id": 6,
+      "block": 6,
+      "status": "node-constructor-api-difference"
+    },
+    {
+      "id": 7,
+      "block": 7,
+      "status": "node-constructor-api-difference"
+    },
+    {
+      "id": 8,
+      "block": 8,
+      "status": "node-constructor-api-difference"
+    },
+    {
+      "id": 9,
+      "block": 9,
+      "status": "node-constructor-api-difference"
+    },
+    {
+      "id": 10,
+      "block": 10,
+      "status": "adapted-handle-reversal-match"
+    },
+    {
+      "id": 11,
+      "block": 11,
+      "status": "mutable-object-identity-api-difference"
+    },
+    {
+      "id": 12,
+      "block": 11,
+      "status": "mutable-object-identity-api-difference"
+    },
+    {
+      "id": 13,
+      "block": 12,
+      "status": "node-editing-api-difference"
+    },
+    {
+      "id": 14,
+      "block": 13,
+      "status": "scene-selection-api-difference"
+    },
+    {
+      "id": 15,
+      "block": 13,
+      "status": "scene-selection-api-difference"
+    }
+  ]
+}

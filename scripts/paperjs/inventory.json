@@ -731,6 +731,431 @@
           "status": "adapter-required"
         }
       ]
+    },
+    "Item_Bounds.js": {
+      "sha256": "32ff615bef8e8a25afd8d5483de77b5b3ee578249bddf20ecae338a74e5b5ad3",
+      "test_blocks": [
+        {
+          "title_expression": "'item.bounds caching'",
+          "status": "scene-api-not-adapted",
+          "comparison_report": "bounds-status.json"
+        },
+        {
+          "title_expression": "'group.bounds when group contains empty group'",
+          "status": "scene-api-not-adapted",
+          "comparison_report": "bounds-status.json"
+        },
+        {
+          "title_expression": "'group.bounds and position after children were modified'",
+          "status": "scene-api-not-adapted",
+          "comparison_report": "bounds-status.json"
+        },
+        {
+          "title_expression": "'group.bounds when containing empty path first'",
+          "status": "scene-api-not-adapted",
+          "comparison_report": "bounds-status.json"
+        },
+        {
+          "title_expression": "'path.bounds when contained in a transformed group'",
+          "status": "scene-api-not-adapted",
+          "comparison_report": "bounds-status.json"
+        },
+        {
+          "title_expression": "'shape.strokeBounds when scaled without strokeScaling'",
+          "status": "scene-api-not-adapted",
+          "comparison_report": "bounds-status.json"
+        },
+        {
+          "title_expression": "'text.bounds'",
+          "status": "scene-api-not-adapted",
+          "comparison_report": "bounds-status.json"
+        },
+        {
+          "title_expression": "'path.bounds'",
+          "status": "extracted-geometry-subset",
+          "comparison_report": "bounds-status.json"
+        },
+        {
+          "title_expression": "'path.strokeBounds on path without stroke'",
+          "status": "extracted-geometry-subset",
+          "comparison_report": "bounds-status.json"
+        },
+        {
+          "title_expression": "'path.strokeBounds on path with single segment and stroke color'",
+          "status": "extracted-geometry-subset",
+          "comparison_report": "bounds-status.json"
+        },
+        {
+          "title_expression": "'path.strokeBounds on closed path with single segment and stroke color'",
+          "status": "extracted-geometry-subset",
+          "comparison_report": "bounds-status.json"
+        },
+        {
+          "title_expression": "'path.strokeBounds with corners and miter limit'",
+          "status": "extracted-geometry-subset",
+          "comparison_report": "bounds-status.json"
+        },
+        {
+          "title_expression": "'path.bounds & path.strokeBounds with stroke styles'",
+          "status": "extracted-geometry-subset",
+          "comparison_report": "bounds-status.json"
+        },
+        {
+          "title_expression": "'path.strokeBounds with rectangles'",
+          "status": "extracted-geometry-subset",
+          "comparison_report": "bounds-status.json"
+        },
+        {
+          "title_expression": "'path.strokeBounds without strokeScaling and zoomed view'",
+          "status": "extracted-geometry-subset",
+          "comparison_report": "bounds-status.json"
+        },
+        {
+          "title_expression": "'shape.strokeBounds without strokeScaling and zoomed view'",
+          "status": "scene-api-not-adapted",
+          "comparison_report": "bounds-status.json"
+        },
+        {
+          "title_expression": "'path.bounds'",
+          "status": "extracted-geometry-subset",
+          "comparison_report": "bounds-status.json"
+        },
+        {
+          "title_expression": "'path.strokeBounds on path without stroke'",
+          "status": "extracted-geometry-subset",
+          "comparison_report": "bounds-status.json"
+        },
+        {
+          "title_expression": "'path.strokeBounds on path with single segment and stroke color'",
+          "status": "extracted-geometry-subset",
+          "comparison_report": "bounds-status.json"
+        },
+        {
+          "title_expression": "'path.strokeBounds on closed path with single segment and stroke color'",
+          "status": "extracted-geometry-subset",
+          "comparison_report": "bounds-status.json"
+        },
+        {
+          "title_expression": "'path.strokeBounds with corners and miter limit'",
+          "status": "extracted-geometry-subset",
+          "comparison_report": "bounds-status.json"
+        },
+        {
+          "title_expression": "'path.bounds & path.strokeBounds with stroke styles'",
+          "status": "extracted-geometry-subset",
+          "comparison_report": "bounds-status.json"
+        },
+        {
+          "title_expression": "'path.strokeBounds with rectangles'",
+          "status": "extracted-geometry-subset",
+          "comparison_report": "bounds-status.json"
+        },
+        {
+          "title_expression": "'path.strokeBounds without strokeScaling and zoomed view'",
+          "status": "scene-api-not-adapted",
+          "comparison_report": "bounds-status.json"
+        },
+        {
+          "title_expression": "'shape.strokeBounds without strokeScaling and zoomed view'",
+          "status": "scene-api-not-adapted",
+          "comparison_report": "bounds-status.json"
+        },
+        {
+          "title_expression": "'path.internalBounds'",
+          "status": "extracted-geometry-subset",
+          "comparison_report": "bounds-status.json"
+        },
+        {
+          "title_expression": "'compoundPath.strokeBounds'",
+          "status": "extracted-geometry-subset",
+          "comparison_report": "bounds-status.json"
+        },
+        {
+          "title_expression": "'path.strokeBounds with applyMatrix disabled'",
+          "status": "extracted-geometry-subset",
+          "comparison_report": "bounds-status.json"
+        },
+        {
+          "title_expression": "'path.strokeBounds with applyMatrix enabled'",
+          "status": "extracted-geometry-subset",
+          "comparison_report": "bounds-status.json"
+        },
+        {
+          "title_expression": "'symbolItem.bounds with strokeScaling disabled'",
+          "status": "scene-api-not-adapted",
+          "comparison_report": "bounds-status.json"
+        },
+        {
+          "title_expression": "'item.visible and item.parents.bounds (#1248)'",
+          "status": "scene-api-not-adapted",
+          "comparison_report": "bounds-status.json"
+        },
+        {
+          "title_expression": "'group.internalBounds with child and child.applyMatrix = false (#1250)'",
+          "status": "scene-api-not-adapted",
+          "comparison_report": "bounds-status.json"
+        },
+        {
+          "title_expression": "'item._globalMatrix on item after empty symbol (#1561)'",
+          "status": "scene-api-not-adapted",
+          "comparison_report": "bounds-status.json"
+        },
+        {
+          "title_expression": "'path.strokeBounds of open, circular arc (#1817)'",
+          "status": "extracted-geometry-subset",
+          "comparison_report": "bounds-status.json"
+        },
+        {
+          "title_expression": "'path.strokeBounds applies stroke padding properly (#1824)'",
+          "status": "extracted-geometry-subset",
+          "comparison_report": "bounds-status.json"
+        }
+      ]
+    },
+    "Path_Constructors.js": {
+      "sha256": "da3782f4cafb8813d17612eb2211a78ecd11d252e07c4ce2b23972944114e186",
+      "test_blocks": [
+        {
+          "title_expression": "'new Path.Rectangle([50, 50], [100, 100])'",
+          "status": "adapted-constructor-match",
+          "comparison_report": "constructors-status.json"
+        },
+        {
+          "title_expression": "'new Path.Rectangle({ from: [50, 50], to: [150, 150] })'",
+          "status": "adapted-constructor-match",
+          "comparison_report": "constructors-status.json"
+        },
+        {
+          "title_expression": "'new Path.Circle([100, 100], 50)'",
+          "status": "adapted-constructor-match",
+          "comparison_report": "constructors-status.json"
+        },
+        {
+          "title_expression": "'new Path.Circle({ center: [100, 100], radius: 50 })'",
+          "status": "adapted-constructor-match",
+          "comparison_report": "constructors-status.json"
+        },
+        {
+          "title_expression": "'new Path.Circle({ center: [100, 100], radius: 50, insert: true })'",
+          "status": "scene-api-not-adapted",
+          "comparison_report": "constructors-status.json"
+        },
+        {
+          "title_expression": "'new Path.Ellipse(rect)'",
+          "status": "adapted-constructor-match",
+          "comparison_report": "constructors-status.json"
+        },
+        {
+          "title_expression": "'new Path.Rectangle(rectangle, radius)'",
+          "status": "adapted-constructor-match",
+          "comparison_report": "constructors-status.json"
+        },
+        {
+          "title_expression": "'new Path.Rectangle({ rectangle: rectangle, radius: radius })'",
+          "status": "adapted-constructor-match",
+          "comparison_report": "constructors-status.json"
+        },
+        {
+          "title_expression": "'new Path.Rectangle(rect, size) - too large size'",
+          "status": "adapted-constructor-match",
+          "comparison_report": "constructors-status.json"
+        },
+        {
+          "title_expression": "'new Path.Arc(from, through, to)'",
+          "status": "no-direct-constructor-counterpart",
+          "comparison_report": "constructors-status.json"
+        },
+        {
+          "title_expression": "'new Path.Arc({ from: from, through: through, to: to })'",
+          "status": "no-direct-constructor-counterpart",
+          "comparison_report": "constructors-status.json"
+        },
+        {
+          "title_expression": "'new Path.RegularPolygon(center, sides, radius)'",
+          "status": "no-direct-constructor-counterpart",
+          "comparison_report": "constructors-status.json"
+        },
+        {
+          "title_expression": "'new Path.RegularPolygon({ center: center, sides: sides, radius: radius })'",
+          "status": "no-direct-constructor-counterpart",
+          "comparison_report": "constructors-status.json"
+        },
+        {
+          "title_expression": "'new Path.Star(center, points, radius1, radius2)'",
+          "status": "no-direct-constructor-counterpart",
+          "comparison_report": "constructors-status.json"
+        },
+        {
+          "title_expression": "'new Path.Star({ center: center, points: points, radius1: radius1, radius2: radius2 })'",
+          "status": "no-direct-constructor-counterpart",
+          "comparison_report": "constructors-status.json"
+        },
+        {
+          "title_expression": "'new Path.Line(from, to)'",
+          "status": "adapted-constructor-match",
+          "comparison_report": "constructors-status.json"
+        },
+        {
+          "title_expression": "'new Path.Line({ from: from, to: to })'",
+          "status": "adapted-constructor-match",
+          "comparison_report": "constructors-status.json"
+        },
+        {
+          "title_expression": "'new Path.Line({ insert: false })'",
+          "status": "scene-api-not-adapted",
+          "comparison_report": "constructors-status.json"
+        }
+      ]
+    },
+    "Matrix.js": {
+      "sha256": "82843680f397de2c1ef609322833d255b5c9aff454af1e1bb39cf5ff7ae9757a",
+      "test_blocks": [
+        {
+          "title_expression": "'Decomposition: rotate()'",
+          "status": "no-public-decomposition-counterpart",
+          "comparison_report": "matrix-status.json"
+        },
+        {
+          "title_expression": "'Decomposition: scale()'",
+          "status": "no-public-decomposition-counterpart",
+          "comparison_report": "matrix-status.json"
+        },
+        {
+          "title_expression": "'Decomposition: scale() & rotate()'",
+          "status": "no-public-decomposition-counterpart",
+          "comparison_report": "matrix-status.json"
+        }
+      ]
+    },
+    "PathItem.js": {
+      "sha256": "6872d19c3bd050a6941f3e78b53b6e0805fb5ffe8983c948eef41efd53326b5a",
+      "test_blocks": [
+        {
+          "title_expression": "'PathItem#create() with SVG path-data (#1101)'",
+          "status": "adapted-parser-match",
+          "comparison_report": "pathitem-status.json"
+        },
+        {
+          "title_expression": "'PathItem#compare()'",
+          "status": "no-equivalent-path-equality-query",
+          "comparison_report": "pathitem-status.json"
+        }
+      ]
+    },
+    "CompoundPath.js": {
+      "sha256": "7c4c9f45f4fe431866af1e92ed8f27d1e2961d52f8fd3e0ba52c25360b00002f",
+      "test_blocks": [
+        {
+          "title_expression": "'moveTo() / lineTo()'",
+          "status": "adapted-multisubpath-construction-match",
+          "comparison_report": "compound-paths-status.json"
+        },
+        {
+          "title_expression": "'CompoundPath#reorient()'",
+          "status": "initial-orientation-match-reorientation-api-difference",
+          "comparison_report": "compound-paths-status.json"
+        }
+      ]
+    },
+    "CurveLocation.js": {
+      "sha256": "8587f36420765fb8849993f691a6fb62d00f22fd4a60db0f7d64940028a14385",
+      "test_blocks": [
+        {
+          "title_expression": "'CurveLocation#offset'",
+          "status": "adapted-prefix-length-match",
+          "comparison_report": "curve-locations-status.json"
+        }
+      ]
+    },
+    "Segment.js": {
+      "sha256": "2df05c4b258365d2c4a2875dc2b07ec4608196f0344a5309e8951a7ed59ab487",
+      "test_blocks": [
+        {
+          "title_expression": "'new Segment()'",
+          "status": "node-constructor-api-difference",
+          "comparison_report": "segments-status.json"
+        },
+        {
+          "title_expression": "'new Segment(point)'",
+          "status": "node-constructor-api-difference",
+          "comparison_report": "segments-status.json"
+        },
+        {
+          "title_expression": "'new Segment(x, y)'",
+          "status": "node-constructor-api-difference",
+          "comparison_report": "segments-status.json"
+        },
+        {
+          "title_expression": "'new Segment(undefined)'",
+          "status": "node-constructor-api-difference",
+          "comparison_report": "segments-status.json"
+        },
+        {
+          "title_expression": "'new Segment(object)'",
+          "status": "node-constructor-api-difference",
+          "comparison_report": "segments-status.json"
+        },
+        {
+          "title_expression": "'new Segment(point, handleIn, handleOut)'",
+          "status": "node-constructor-api-difference",
+          "comparison_report": "segments-status.json"
+        },
+        {
+          "title_expression": "'new Segment(null, null, null)'",
+          "status": "node-constructor-api-difference",
+          "comparison_report": "segments-status.json"
+        },
+        {
+          "title_expression": "'new Segment(undefined, null, null)'",
+          "status": "node-constructor-api-difference",
+          "comparison_report": "segments-status.json"
+        },
+        {
+          "title_expression": "'new Segment(x, y, inX, inY, outX, outY)'",
+          "status": "node-constructor-api-difference",
+          "comparison_report": "segments-status.json"
+        },
+        {
+          "title_expression": "'new Segment(size)'",
+          "status": "node-constructor-api-difference",
+          "comparison_report": "segments-status.json"
+        },
+        {
+          "title_expression": "'segment.reverse()'",
+          "status": "adapted-handle-reversal-match",
+          "comparison_report": "segments-status.json"
+        },
+        {
+          "title_expression": "'segment.clone()'",
+          "status": "mutable-object-identity-api-difference",
+          "comparison_report": "segments-status.json"
+        },
+        {
+          "title_expression": "'segment.remove()'",
+          "status": "node-editing-api-difference",
+          "comparison_report": "segments-status.json"
+        },
+        {
+          "title_expression": "'segment.selected'",
+          "status": "scene-selection-api-difference",
+          "comparison_report": "segments-status.json"
+        }
+      ]
+    },
+    "Numerical.js": {
+      "sha256": "1998e03089f561f721695d56349a606aa5c4a1a0d3d84a13ccee00908214100a",
+      "test_blocks": [
+        {
+          "title_expression": "'Numerical.solveQuadratic()'",
+          "status": "internal-root-comparison-match",
+          "comparison_report": "numerical-status.json"
+        },
+        {
+          "title_expression": "'Numerical.solveCubic()'",
+          "status": "internal-root-comparison-match",
+          "comparison_report": "numerical-status.json"
+        }
+      ]
     }
   }
 }

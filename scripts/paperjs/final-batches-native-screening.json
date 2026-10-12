@@ -1,0 +1,226 @@
+{
+  "erlang": [
+    {
+      "kind": "numerical",
+      "id": 0,
+      "raw": "Ok([-1.0,1.0])",
+      "expected": [
+        1,
+        -1
+      ],
+      "actual": [
+        -1.0,
+        1.0
+      ],
+      "rootOrderDiffers": true,
+      "maxRootError": 0.0,
+      "tolerance": 1e-09,
+      "normalizedPolynomialResiduals": [
+        0.0,
+        0.0
+      ],
+      "status": "match"
+    },
+    {
+      "kind": "numerical",
+      "id": 1,
+      "raw": "Ok([-1.0,1.0])",
+      "expected": [
+        1,
+        -1
+      ],
+      "actual": [
+        -1.0,
+        1.0
+      ],
+      "rootOrderDiffers": true,
+      "maxRootError": 0.0,
+      "tolerance": 1e-09,
+      "normalizedPolynomialResiduals": [
+        0.0,
+        0.0
+      ],
+      "status": "match"
+    },
+    {
+      "kind": "numerical",
+      "id": 2,
+      "raw": "Ok([2.9196395657246743])",
+      "expected": [
+        2.919639565839418
+      ],
+      "actual": [
+        2.9196395657246743
+      ],
+      "rootOrderDiffers": false,
+      "maxRootError": 1.1474377004105918e-10,
+      "tolerance": 1e-09,
+      "normalizedPolynomialResiduals": [
+        6.824002474203894e-10
+      ],
+      "status": "match"
+    },
+    {
+      "kind": "numerical",
+      "id": 3,
+      "raw": "Ok([2.9196395657246743])",
+      "expected": [
+        2.919639565839418
+      ],
+      "actual": [
+        2.9196395657246743
+      ],
+      "rootOrderDiffers": false,
+      "maxRootError": 1.1474377004105918e-10,
+      "tolerance": 1e-09,
+      "normalizedPolynomialResiduals": [
+        6.824002474203894e-10
+      ],
+      "status": "match"
+    },
+    {
+      "kind": "compound",
+      "id": 0,
+      "raw": "2",
+      "expected": 2,
+      "actual": 2,
+      "status": "match"
+    },
+    {
+      "kind": "compound",
+      "id": 1,
+      "raw": "True",
+      "expected": true,
+      "actual": true,
+      "status": "match"
+    },
+    {
+      "kind": "compound",
+      "id": 2,
+      "raw": "True",
+      "expected": true,
+      "actual": true,
+      "status": "match"
+    },
+    {
+      "kind": "compound",
+      "id": 3,
+      "raw": "True",
+      "expected": true,
+      "actual": true,
+      "status": "match"
+    }
+  ],
+  "javascript": [
+    {
+      "kind": "numerical",
+      "id": 0,
+      "raw": "Ok([-1.0,1.0])",
+      "expected": [
+        1,
+        -1
+      ],
+      "actual": [
+        -1.0,
+        1.0
+      ],
+      "rootOrderDiffers": true,
+      "maxRootError": 0.0,
+      "tolerance": 1e-09,
+      "normalizedPolynomialResiduals": [
+        0.0,
+        0.0
+      ],
+      "status": "match"
+    },
+    {
+      "kind": "numerical",
+      "id": 1,
+      "raw": "Ok([-1.0,1.0])",
+      "expected": [
+        1,
+        -1
+      ],
+      "actual": [
+        -1.0,
+        1.0
+      ],
+      "rootOrderDiffers": true,
+      "maxRootError": 0.0,
+      "tolerance": 1e-09,
+      "normalizedPolynomialResiduals": [
+        0.0,
+        0.0
+      ],
+      "status": "match"
+    },
+    {
+      "kind": "numerical",
+      "id": 2,
+      "raw": "Ok([2.9196395657246743])",
+      "expected": [
+        2.919639565839418
+      ],
+      "actual": [
+        2.9196395657246743
+      ],
+      "rootOrderDiffers": false,
+      "maxRootError": 1.1474377004105918e-10,
+      "tolerance": 1e-09,
+      "normalizedPolynomialResiduals": [
+        6.824002474203894e-10
+      ],
+      "status": "match"
+    },
+    {
+      "kind": "numerical",
+      "id": 3,
+      "raw": "Ok([2.9196395657246743])",
+      "expected": [
+        2.919639565839418
+      ],
+      "actual": [
+        2.9196395657246743
+      ],
+      "rootOrderDiffers": false,
+      "maxRootError": 1.1474377004105918e-10,
+      "tolerance": 1e-09,
+      "normalizedPolynomialResiduals": [
+        6.824002474203894e-10
+      ],
+      "status": "match"
+    },
+    {
+      "kind": "compound",
+      "id": 0,
+      "raw": "2",
+      "expected": 2,
+      "actual": 2,
+      "status": "match"
+    },
+    {
+      "kind": "compound",
+      "id": 1,
+      "raw": "True",
+      "expected": true,
+      "actual": true,
+      "status": "match"
+    },
+    {
+      "kind": "compound",
+      "id": 2,
+      "raw": "True",
+      "expected": true,
+      "actual": true,
+      "status": "match"
+    },
+    {
+      "kind": "compound",
+      "id": 3,
+      "raw": "True",
+      "expected": true,
+      "actual": true,
+      "status": "match"
+    }
+  ]
+}

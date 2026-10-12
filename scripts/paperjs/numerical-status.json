@@ -1,0 +1,17 @@
+{
+  "blocks": [
+    {
+      "block": 0,
+      "title": "Numerical.solveQuadratic()",
+      "status": "internal-root-comparison-match"
+    },
+    {
+      "block": 1,
+      "title": "Numerical.solveCubic()",
+      "status": "internal-root-comparison-match"
+    }
+  ],
+  "preservedAssertions": 4,
+  "comparedAssertions": 4,
+  "scope": "Internal root helpers, not a public polynomial-solving API. Compare unordered real-root lists within 1e-9; preserve raw ordering and polynomial residuals. Coefficients scaled by 1 and Paper EPSILON=1e-12."
+}
