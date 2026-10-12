@@ -1,0 +1,242 @@
+[
+  {
+    "block": 0,
+    "title": "Path#length",
+    "status": "adapted-geometry-checks",
+    "evidence": "Length agrees; inverse-length literal differs, independently verified in path-length-findings.json."
+  },
+  {
+    "block": 1,
+    "title": "Path#area",
+    "status": "adapted-geometry-checks",
+    "evidence": "Upstream expected assertions retained; see scripts/paperjs/README.md."
+  },
+  {
+    "block": 2,
+    "title": "Path#equals(path)",
+    "status": "object-api-out-of-scope",
+    "evidence": "Mutable scene/style/node identity behavior, not a plain immutable path query."
+  },
+  {
+    "block": 3,
+    "title": "Path#join(path)",
+    "status": "adapted-geometry-checks",
+    "evidence": "Explicit reversal/bridge/closure adapters; scene child removal omitted."
+  },
+  {
+    "block": 4,
+    "title": "Path#join(path, tolerance)",
+    "status": "adapted-geometry-checks",
+    "evidence": "Explicit Bridge and WiggleWith policies; Paper anchor count maps to edge count + 1."
+  },
+  {
+    "block": 5,
+    "title": "Path#remove()",
+    "status": "object-api-out-of-scope",
+    "evidence": "Mutable scene/style/node identity behavior, not a plain immutable path query."
+  },
+  {
+    "block": 6,
+    "title": "Path#removeSegments()",
+    "status": "object-api-out-of-scope",
+    "evidence": "Mutable scene/style/node identity behavior, not a plain immutable path query."
+  },
+  {
+    "block": 7,
+    "title": "Is the path deselected after setting a new list of segments?",
+    "status": "object-api-out-of-scope",
+    "evidence": "Mutable scene/style/node identity behavior, not a plain immutable path query."
+  },
+  {
+    "block": 8,
+    "title": "Setting Path#fullySelected=true on an empty path should only set path#selected=true",
+    "status": "object-api-out-of-scope",
+    "evidence": "Mutable scene/style/node identity behavior, not a plain immutable path query."
+  },
+  {
+    "block": 9,
+    "title": "After removing all segments of a fully selected path, it should still be selected.",
+    "status": "object-api-out-of-scope",
+    "evidence": "Mutable scene/style/node identity behavior, not a plain immutable path query."
+  },
+  {
+    "block": 10,
+    "title": "After removing all segments of a selected path, it should still be selected.",
+    "status": "object-api-out-of-scope",
+    "evidence": "Mutable scene/style/node identity behavior, not a plain immutable path query."
+  },
+  {
+    "block": 11,
+    "title": "After simplifying a path using #simplify(), the path should stay fullySelected",
+    "status": "object-api-out-of-scope",
+    "evidence": "Mutable scene/style/node identity behavior, not a plain immutable path query."
+  },
+  {
+    "block": 12,
+    "title": "After cloning a selected item, it should be added to the Project#selectedItems array",
+    "status": "object-api-out-of-scope",
+    "evidence": "Mutable scene/style/node identity behavior, not a plain immutable path query."
+  },
+  {
+    "block": 13,
+    "title": "After simplifying a path using #simplify(), the path should stay selected",
+    "status": "object-api-out-of-scope",
+    "evidence": "Mutable scene/style/node identity behavior, not a plain immutable path query."
+  },
+  {
+    "block": 14,
+    "title": "After smoothing a path using #smooth(), the path should stay fullySelected",
+    "status": "object-api-out-of-scope",
+    "evidence": "Mutable scene/style/node identity behavior, not a plain immutable path query."
+  },
+  {
+    "block": 15,
+    "title": "After smoothing a path using #smooth(), the path should stay selected",
+    "status": "object-api-out-of-scope",
+    "evidence": "Mutable scene/style/node identity behavior, not a plain immutable path query."
+  },
+  {
+    "block": 16,
+    "title": "After selecting a segment, Path#selected should return true",
+    "status": "object-api-out-of-scope",
+    "evidence": "Mutable scene/style/node identity behavior, not a plain immutable path query."
+  },
+  {
+    "block": 17,
+    "title": "Path#reverse()",
+    "status": "adapted-geometry-checks",
+    "evidence": "Directed cubic geometry compared modulo cyclic starting vertex."
+  },
+  {
+    "block": 18,
+    "title": "Path#reverse() should adjust segment indices",
+    "status": "object-api-out-of-scope",
+    "evidence": "Mutable scene/style/node identity behavior, not a plain immutable path query."
+  },
+  {
+    "block": 19,
+    "title": "Path#fullySelected",
+    "status": "object-api-out-of-scope",
+    "evidence": "Mutable scene/style/node identity behavior, not a plain immutable path query."
+  },
+  {
+    "block": 20,
+    "title": "Simplifying a path with three segments of the same position should not throw an error",
+    "status": "adapter-required",
+    "evidence": "Paper simplify point-fitting/count policy requires a separate adapter."
+  },
+  {
+    "block": 21,
+    "title": "Path#interpolate(from, to, factor)",
+    "status": "adapter-required",
+    "evidence": "Path control-point interpolation has no directly exercised counterpart in this batch."
+  },
+  {
+    "block": 22,
+    "title": "Path#curves synchronisation",
+    "status": "object-api-out-of-scope",
+    "evidence": "Mutable scene/style/node identity behavior, not a plain immutable path query."
+  },
+  {
+    "block": 23,
+    "title": "Path#curves on closed paths",
+    "status": "object-api-out-of-scope",
+    "evidence": "Mutable scene/style/node identity behavior, not a plain immutable path query."
+  },
+  {
+    "block": 24,
+    "title": "Path#flatten(maxDistance)",
+    "status": "adapted-geometry-checks",
+    "evidence": "Eight nonzero line edges and closure retained; edge count is fixture-specific, not a general flattening contract."
+  },
+  {
+    "block": 25,
+    "title": "Path#single segment closed path flatten (#1338)",
+    "status": "adapted-geometry-checks",
+    "evidence": "No-throw closed-cubic flattening case; Paper default flatness 0.25 supplied explicitly."
+  },
+  {
+    "block": 26,
+    "title": "Path#curves after removing a segment - 1",
+    "status": "object-api-out-of-scope",
+    "evidence": "Mutable scene/style/node identity behavior, not a plain immutable path query."
+  },
+  {
+    "block": 27,
+    "title": "Path#curves after removing a segment - 2",
+    "status": "object-api-out-of-scope",
+    "evidence": "Mutable scene/style/node identity behavior, not a plain immutable path query."
+  },
+  {
+    "block": 28,
+    "title": "Splitting a straight path should produce segments without handles",
+    "status": "adapted-geometry-checks",
+    "evidence": "Split geometry/length checked; retaining cubic controls differs from Paper zero-handle simplification."
+  },
+  {
+    "block": 29,
+    "title": "Splitting a path with one curve in the middle result in two paths of the same length with one curve each",
+    "status": "adapted-geometry-checks",
+    "evidence": "Split geometry and lengths checked; object mutation not tested."
+  },
+  {
+    "block": 30,
+    "title": "Path#lineTo(point);",
+    "status": "adapted-geometry-checks",
+    "evidence": "SVG move/line construction equivalent; no mutable drawing-command API exercised."
+  },
+  {
+    "block": 31,
+    "title": "Path#arcTo(from, through, to);",
+    "status": "adapter-required",
+    "evidence": "Three-point arc construction and its degeneracy policy need a separate adapter."
+  },
+  {
+    "block": 32,
+    "title": "Path#arcTo(from, through, to); where from, through and to all share the same y position and through lies in between from and to",
+    "status": "adapter-required",
+    "evidence": "Three-point arc construction and its degeneracy policy need a separate adapter."
+  },
+  {
+    "block": 33,
+    "title": "Path#arcTo(from, through, to); where from, through and to all share the same y position and through lies to the right of to",
+    "status": "adapter-required",
+    "evidence": "Three-point arc construction and its degeneracy policy need a separate adapter."
+  },
+  {
+    "block": 34,
+    "title": "Path#arcTo(from, through, to); where from, through and to all share the same y position and through lies to the left of to",
+    "status": "adapter-required",
+    "evidence": "Three-point arc construction and its degeneracy policy need a separate adapter."
+  },
+  {
+    "block": 35,
+    "title": "Path#getOffsetsWithTangent()",
+    "status": "adapter-required",
+    "evidence": "Tangent-direction-to-offset query needs a separate adapter."
+  },
+  {
+    "block": 36,
+    "title": "Path#add() with a lot of segments (#1493)",
+    "status": "adapter-required",
+    "evidence": "100,000-node clone stress test not run; immutable data/scene clone contracts differ."
+  },
+  {
+    "block": 37,
+    "title": "Path#arcTo(through, to) is on through point side (#1477)",
+    "status": "adapter-required",
+    "evidence": "Three-point arc construction and its degeneracy policy need a separate adapter."
+  },
+  {
+    "block": 38,
+    "title": "Path#arcTo(to, radius, rotation, clockwise, large) when from and to are equal (#1613)",
+    "status": "adapter-required",
+    "evidence": "Coincident-endpoint arc drawing smoke case remains to adapt to SVG arc normalization."
+  },
+  {
+    "block": 39,
+    "title": "Path#closed with blend mode",
+    "status": "object-api-out-of-scope",
+    "evidence": "Mutable scene/style/node identity behavior, not a plain immutable path query."
+  }
+]

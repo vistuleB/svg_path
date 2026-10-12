@@ -1,0 +1,1007 @@
+{
+  "blocks": [
+    {
+      "block": 0,
+      "title": "Path#length",
+      "status": "extracted-subset",
+      "operations": [
+        {
+          "method": "length",
+          "left": {
+            "closed": false,
+            "curves": [
+              [
+                121,
+                334,
+                151.7666015625,
+                272.46630859375,
+                206,
+                246,
+                248,
+                320
+              ]
+            ]
+          }
+        },
+        {
+          "method": "length",
+          "left": {
+            "closed": false,
+            "curves": [
+              [
+                121,
+                334,
+                151.7666015625,
+                272.46630859375,
+                206,
+                246,
+                248,
+                320
+              ]
+            ]
+          }
+        },
+        {
+          "method": "getTimeAt",
+          "curve": [
+            121,
+            334,
+            151.7666015625,
+            272.46630859375,
+            206,
+            246,
+            248,
+            320
+          ],
+          "distance": 43.025282022949035
+        }
+      ],
+      "assertions": [
+        {
+          "expected": 172.10112809179614,
+          "message": null,
+          "options": null
+        },
+        {
+          "expected": 0.2255849553116685,
+          "message": null,
+          "options": null
+        }
+      ]
+    },
+    {
+      "block": 1,
+      "title": "Path#area",
+      "status": "extracted-subset",
+      "operations": [
+        {
+          "method": "area",
+          "left": {
+            "closed": true,
+            "curves": [
+              [
+                0,
+                10,
+                0,
+                10,
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                0,
+                0,
+                10,
+                0,
+                10,
+                0
+              ],
+              [
+                10,
+                0,
+                10,
+                0,
+                10,
+                10,
+                10,
+                10
+              ],
+              [
+                10,
+                10,
+                10,
+                10,
+                0,
+                10,
+                0,
+                10
+              ]
+            ]
+          }
+        },
+        {
+          "method": "area",
+          "left": {
+            "closed": true,
+            "curves": [
+              [
+                -10,
+                0,
+                -10,
+                -5.522847498307936,
+                -5.522847498307936,
+                -10,
+                0,
+                -10
+              ],
+              [
+                0,
+                -10,
+                5.522847498307936,
+                -10,
+                10,
+                -5.522847498307936,
+                10,
+                0
+              ],
+              [
+                10,
+                0,
+                10,
+                5.522847498307936,
+                5.522847498307936,
+                10,
+                0,
+                10
+              ],
+              [
+                0,
+                10,
+                -5.522847498307936,
+                10,
+                -10,
+                5.522847498307936,
+                -10,
+                0
+              ]
+            ]
+          }
+        }
+      ],
+      "assertions": [
+        {
+          "expected": 100,
+          "message": null,
+          "options": null
+        },
+        {
+          "expected": 314.1592653589793,
+          "message": null,
+          "options": {
+            "tolerance": 0.1
+          }
+        }
+      ]
+    },
+    {
+      "block": 2,
+      "title": "Path#equals(path)",
+      "status": "pending",
+      "operations": [],
+      "assertions": []
+    },
+    {
+      "block": 3,
+      "title": "Path#join(path)",
+      "status": "extracted-subset",
+      "operations": [
+        {
+          "method": "join",
+          "left": {
+            "closed": false,
+            "curves": [
+              [
+                0,
+                0,
+                0,
+                0,
+                10,
+                0,
+                10,
+                0
+              ]
+            ]
+          },
+          "args": [
+            {
+              "closed": false,
+              "curves": [
+                [
+                  10,
+                  0,
+                  10,
+                  0,
+                  20,
+                  10,
+                  20,
+                  10
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "method": "join",
+          "left": {
+            "closed": false,
+            "curves": [
+              [
+                0,
+                0,
+                0,
+                0,
+                10,
+                0,
+                10,
+                0
+              ]
+            ]
+          },
+          "args": [
+            {
+              "closed": false,
+              "curves": [
+                [
+                  20,
+                  10,
+                  20,
+                  10,
+                  10,
+                  0,
+                  10,
+                  0
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "method": "join",
+          "left": {
+            "closed": false,
+            "curves": [
+              [
+                0,
+                0,
+                0,
+                0,
+                10,
+                0,
+                10,
+                0
+              ]
+            ]
+          },
+          "args": [
+            {
+              "closed": false,
+              "curves": [
+                [
+                  30,
+                  10,
+                  30,
+                  10,
+                  40,
+                  0,
+                  40,
+                  0
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "method": "join",
+          "left": {
+            "closed": false,
+            "curves": [
+              [
+                0,
+                0,
+                0,
+                0,
+                10,
+                0,
+                10,
+                0
+              ],
+              [
+                10,
+                0,
+                10,
+                0,
+                20,
+                10,
+                20,
+                10
+              ]
+            ]
+          },
+          "args": [
+            {
+              "closed": false,
+              "curves": [
+                [
+                  0,
+                  0,
+                  0,
+                  0,
+                  10,
+                  5,
+                  10,
+                  5
+                ],
+                [
+                  10,
+                  5,
+                  10,
+                  5,
+                  20,
+                  10,
+                  20,
+                  10
+                ]
+              ]
+            }
+          ]
+        }
+      ],
+      "assertions": [
+        {
+          "expected": "{ point: { x: 0, y: 0 } },{ point: { x: 10, y: 0 } },{ point: { x: 20, y: 10 } }",
+          "message": null,
+          "options": null
+        },
+        {
+          "expected": 1,
+          "message": null,
+          "options": null
+        },
+        {
+          "expected": "{ point: { x: 0, y: 0 } },{ point: { x: 10, y: 0 } },{ point: { x: 20, y: 10 } }",
+          "message": null,
+          "options": null
+        },
+        {
+          "expected": "{ point: { x: 0, y: 0 } },{ point: { x: 10, y: 0 } },{ point: { x: 30, y: 10 } },{ point: { x: 40, y: 0 } }",
+          "message": null,
+          "options": null
+        },
+        {
+          "expected": "{ point: { x: 0, y: 0 } },{ point: { x: 10, y: 0 } },{ point: { x: 20, y: 10 } },{ point: { x: 10, y: 5 } }",
+          "message": null,
+          "options": null
+        },
+        {
+          "expected": true,
+          "message": null,
+          "options": null
+        }
+      ]
+    },
+    {
+      "block": 4,
+      "title": "Path#join(path, tolerance)",
+      "status": "extracted-subset",
+      "operations": [
+        {
+          "method": "join",
+          "left": {
+            "closed": false,
+            "curves": [
+              [
+                0,
+                0,
+                0,
+                0,
+                10,
+                0,
+                10,
+                0
+              ]
+            ]
+          },
+          "args": [
+            {
+              "closed": false,
+              "curves": [
+                [
+                  10.00000000000001,
+                  1e-14,
+                  10.00000000000001,
+                  1e-14,
+                  20,
+                  10,
+                  20,
+                  10
+                ]
+              ]
+            },
+            0
+          ]
+        },
+        {
+          "method": "join",
+          "left": {
+            "closed": false,
+            "curves": [
+              [
+                0,
+                0,
+                0,
+                0,
+                10,
+                0,
+                10,
+                0
+              ]
+            ]
+          },
+          "args": [
+            {
+              "closed": false,
+              "curves": [
+                [
+                  10.00000000000001,
+                  1e-14,
+                  10.00000000000001,
+                  1e-14,
+                  20,
+                  10,
+                  20,
+                  10
+                ]
+              ]
+            },
+            1e-12
+          ]
+        }
+      ],
+      "assertions": [
+        {
+          "expected": 4,
+          "message": null,
+          "options": null
+        },
+        {
+          "expected": 3,
+          "message": null,
+          "options": null
+        }
+      ]
+    },
+    {
+      "block": 5,
+      "title": "Path#remove()",
+      "status": "pending",
+      "operations": [],
+      "assertions": []
+    },
+    {
+      "block": 6,
+      "title": "Path#removeSegments()",
+      "status": "pending",
+      "operations": [],
+      "assertions": []
+    },
+    {
+      "block": 7,
+      "title": "Is the path deselected after setting a new list of segments?",
+      "status": "pending",
+      "operations": [],
+      "assertions": []
+    },
+    {
+      "block": 8,
+      "title": "Setting Path#fullySelected=true on an empty path should only set path#selected=true",
+      "status": "pending",
+      "operations": [],
+      "assertions": []
+    },
+    {
+      "block": 9,
+      "title": "After removing all segments of a fully selected path, it should still be selected.",
+      "status": "pending",
+      "operations": [],
+      "assertions": []
+    },
+    {
+      "block": 10,
+      "title": "After removing all segments of a selected path, it should still be selected.",
+      "status": "pending",
+      "operations": [],
+      "assertions": []
+    },
+    {
+      "block": 11,
+      "title": "After simplifying a path using #simplify(), the path should stay fullySelected",
+      "status": "pending",
+      "operations": [],
+      "assertions": []
+    },
+    {
+      "block": 12,
+      "title": "After cloning a selected item, it should be added to the Project#selectedItems array",
+      "status": "pending",
+      "operations": [],
+      "assertions": []
+    },
+    {
+      "block": 13,
+      "title": "After simplifying a path using #simplify(), the path should stay selected",
+      "status": "pending",
+      "operations": [],
+      "assertions": []
+    },
+    {
+      "block": 14,
+      "title": "After smoothing a path using #smooth(), the path should stay fullySelected",
+      "status": "pending",
+      "operations": [],
+      "assertions": []
+    },
+    {
+      "block": 15,
+      "title": "After smoothing a path using #smooth(), the path should stay selected",
+      "status": "pending",
+      "operations": [],
+      "assertions": []
+    },
+    {
+      "block": 16,
+      "title": "After selecting a segment, Path#selected should return true",
+      "status": "pending",
+      "operations": [],
+      "assertions": []
+    },
+    {
+      "block": 17,
+      "title": "Path#reverse()",
+      "status": "extracted-subset",
+      "operations": [
+        {
+          "method": "reverse",
+          "left": {
+            "closed": true,
+            "curves": [
+              [
+                70,
+                100,
+                70,
+                83.4314575050762,
+                83.4314575050762,
+                70,
+                100,
+                70
+              ],
+              [
+                100,
+                70,
+                116.5685424949238,
+                70,
+                130,
+                83.4314575050762,
+                130,
+                100
+              ],
+              [
+                130,
+                100,
+                130,
+                116.5685424949238,
+                116.5685424949238,
+                130,
+                100,
+                130
+              ],
+              [
+                100,
+                130,
+                83.4314575050762,
+                130,
+                70,
+                116.5685424949238,
+                70,
+                100
+              ]
+            ]
+          },
+          "args": []
+        }
+      ],
+      "assertions": [
+        {
+          "expected": "{ point: { x: 100, y: 130 }, handleIn: { x: -16.56854, y: 0 }, handleOut: { x: 16.56854, y: 0 } },{ point: { x: 130, y: 100 }, handleIn: { x: 0, y: 16.56854 }, handleOut: { x: 0, y: -16.56854 } },{ point: { x: 100, y: 70 }, handleIn: { x: 16.56854, y: 0 }, handleOut: { x: -16.56854, y: 0 } },{ point: { x: 70, y: 100 }, handleIn: { x: 0, y: -16.56854 }, handleOut: { x: 0, y: 16.56854 } }",
+          "message": null,
+          "options": null
+        }
+      ]
+    },
+    {
+      "block": 18,
+      "title": "Path#reverse() should adjust segment indices",
+      "status": "pending",
+      "operations": [],
+      "assertions": []
+    },
+    {
+      "block": 19,
+      "title": "Path#fullySelected",
+      "status": "pending",
+      "operations": [],
+      "assertions": []
+    },
+    {
+      "block": 20,
+      "title": "Simplifying a path with three segments of the same position should not throw an error",
+      "status": "pending",
+      "operations": [],
+      "assertions": []
+    },
+    {
+      "block": 21,
+      "title": "Path#interpolate(from, to, factor)",
+      "status": "pending",
+      "operations": [],
+      "assertions": []
+    },
+    {
+      "block": 22,
+      "title": "Path#curves synchronisation",
+      "status": "pending",
+      "operations": [],
+      "assertions": []
+    },
+    {
+      "block": 23,
+      "title": "Path#curves on closed paths",
+      "status": "pending",
+      "operations": [],
+      "assertions": []
+    },
+    {
+      "block": 24,
+      "title": "Path#flatten(maxDistance)",
+      "status": "extracted-subset",
+      "operations": [
+        {
+          "method": "flatten",
+          "left": {
+            "closed": true,
+            "curves": [
+              [
+                45,
+                50,
+                45,
+                30.670033755922226,
+                60.670033755922226,
+                15,
+                80,
+                15
+              ],
+              [
+                80,
+                15,
+                99.32996624407778,
+                15,
+                115,
+                30.670033755922226,
+                115,
+                50
+              ],
+              [
+                115,
+                50,
+                115,
+                69.32996624407778,
+                99.32996624407778,
+                85,
+                80,
+                85
+              ],
+              [
+                80,
+                85,
+                60.670033755922226,
+                85,
+                45,
+                69.32996624407778,
+                45,
+                50
+              ]
+            ]
+          },
+          "args": [
+            5
+          ]
+        }
+      ],
+      "assertions": [
+        {
+          "expected": 8,
+          "message": "Using a flatness of 10, we should end up with 8 segments.",
+          "options": null
+        },
+        {
+          "expected": false,
+          "message": "The points of the last and first segments should not be the same.",
+          "options": null
+        },
+        {
+          "expected": true,
+          "message": "The points of the last and before last segments should not be so close, that calling toString on them returns the same string value.",
+          "options": null
+        }
+      ]
+    },
+    {
+      "block": 25,
+      "title": "Path#single segment closed path flatten (#1338)",
+      "status": "extracted-subset",
+      "operations": [
+        {
+          "method": "join",
+          "left": {
+            "closed": true,
+            "curves": [
+              [
+                445.26701,
+                223.69688,
+                451.44081000000006,
+                232.45347999999998,
+                438.21529000000004,
+                237.74367999999998,
+                445.26701,
+                223.69688
+              ],
+              [
+                445.26701,
+                223.69688,
+                445.26701,
+                223.69688,
+                445.26701,
+                223.69688,
+                445.26701,
+                223.69688
+              ]
+            ]
+          },
+          "args": [
+            {
+              "closed": true,
+              "curves": [
+                [
+                  445.26701,
+                  223.69688,
+                  451.44081000000006,
+                  232.45347999999998,
+                  438.21529000000004,
+                  237.74367999999998,
+                  445.26701,
+                  223.69688
+                ],
+                [
+                  445.26701,
+                  223.69688,
+                  445.26701,
+                  223.69688,
+                  445.26701,
+                  223.69688,
+                  445.26701,
+                  223.69688
+                ]
+              ]
+            },
+            1e-12
+          ]
+        },
+        {
+          "method": "flatten",
+          "left": {
+            "closed": true,
+            "curves": [
+              [
+                445.26701,
+                223.69688,
+                451.44081000000006,
+                232.45347999999998,
+                438.21529000000004,
+                237.74367999999998,
+                445.26701,
+                223.69688
+              ]
+            ]
+          },
+          "args": []
+        }
+      ],
+      "assertions": [],
+      "expectedAssertionCount": 0
+    },
+    {
+      "block": 26,
+      "title": "Path#curves after removing a segment - 1",
+      "status": "pending",
+      "operations": [],
+      "assertions": []
+    },
+    {
+      "block": 27,
+      "title": "Path#curves after removing a segment - 2",
+      "status": "pending",
+      "operations": [],
+      "assertions": []
+    },
+    {
+      "block": 28,
+      "title": "Splitting a straight path should produce segments without handles",
+      "status": "extracted-subset",
+      "operations": [
+        {
+          "method": "splitAt",
+          "left": {
+            "closed": false,
+            "curves": [
+              [
+                0,
+                0,
+                0,
+                0,
+                50,
+                50,
+                50,
+                50
+              ]
+            ]
+          },
+          "args": [
+            35.35533905932738
+          ]
+        }
+      ],
+      "assertions": [
+        {
+          "expected": true,
+          "message": null,
+          "options": null
+        }
+      ]
+    },
+    {
+      "block": 29,
+      "title": "Splitting a path with one curve in the middle result in two paths of the same length with one curve each",
+      "status": "extracted-subset",
+      "operations": [
+        {
+          "method": "splitAt",
+          "left": {
+            "closed": false,
+            "curves": [
+              [
+                0,
+                0,
+                0,
+                0,
+                100,
+                100,
+                100,
+                100
+              ]
+            ]
+          },
+          "args": [
+            {
+              "offset": 70.71067811865476
+            }
+          ]
+        }
+      ],
+      "assertions": [
+        {
+          "expected": 1,
+          "message": null,
+          "options": null
+        },
+        {
+          "expected": 1,
+          "message": null,
+          "options": null
+        },
+        {
+          "expected": true,
+          "message": null,
+          "options": null
+        }
+      ]
+    },
+    {
+      "block": 30,
+      "title": "Path#lineTo(point);",
+      "status": "extracted-subset",
+      "operations": [],
+      "assertions": [
+        {
+          "expected": "{ point: { x: 50, y: 50 } },{ point: { x: 100, y: 100 } }",
+          "message": null,
+          "options": null
+        }
+      ]
+    },
+    {
+      "block": 31,
+      "title": "Path#arcTo(from, through, to);",
+      "status": "pending",
+      "operations": [],
+      "assertions": []
+    },
+    {
+      "block": 32,
+      "title": "Path#arcTo(from, through, to); where from, through and to all share the same y position and through lies in between from and to",
+      "status": "pending",
+      "operations": [],
+      "assertions": []
+    },
+    {
+      "block": 33,
+      "title": "Path#arcTo(from, through, to); where from, through and to all share the same y position and through lies to the right of to",
+      "status": "pending",
+      "operations": [],
+      "assertions": []
+    },
+    {
+      "block": 34,
+      "title": "Path#arcTo(from, through, to); where from, through and to all share the same y position and through lies to the left of to",
+      "status": "pending",
+      "operations": [],
+      "assertions": []
+    },
+    {
+      "block": 35,
+      "title": "Path#getOffsetsWithTangent()",
+      "status": "pending",
+      "operations": [],
+      "assertions": []
+    },
+    {
+      "block": 36,
+      "title": "Path#add() with a lot of segments (#1493)",
+      "status": "pending",
+      "operations": [],
+      "assertions": []
+    },
+    {
+      "block": 37,
+      "title": "Path#arcTo(through, to) is on through point side (#1477)",
+      "status": "pending",
+      "operations": [],
+      "assertions": []
+    },
+    {
+      "block": 38,
+      "title": "Path#arcTo(to, radius, rotation, clockwise, large) when from and to are equal (#1613)",
+      "status": "pending",
+      "operations": [],
+      "assertions": []
+    },
+    {
+      "block": 39,
+      "title": "Path#closed with blend mode",
+      "status": "pending",
+      "operations": [],
+      "assertions": []
+    }
+  ]
+}

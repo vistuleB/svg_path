@@ -239,13 +239,12 @@ and suite registration are preserved in the subsequent audit commit.
 
 ## Remaining work at this checkpoint
 
-- `Path.js`: all 40 blocks await triage. Length, area, joining, reversal,
-  flattening and splitting are relevant; selection, scene ownership and other
-  editor-object behavior may have no library equivalent.
-- `Curve.js`: eight blocks remain unadapted (classification, general inverse
-  length, location lookup, straight/linear predicates, point-to-parameter lookup,
-  division and tangent-direction roots). The nine extracted blocks also omit
-  legacy aliases and some out-of-range checks.
+- `Path.js`: now triaged below: ten blocks have adapted geometry checks,
+  20 concern object APIs, and ten still require adapters or separate work.
+- `Curve.js`: all 17 blocks are triaged. Fourteen have extracted/adapted subsets;
+  three classification/predicate blocks have no direct public counterpart. Legacy
+  aliases, object behavior and the missing-direction tangent assertion remain
+  outside these checks. See the second Curve batch below.
 - Boolean screening: 76 library-error comparisons still need classification;
   fixtures 69 and 172 are confirmed topology failures awaiting approval to fix.
   Fixture 16's remaining overlap error is an accepted limitation. Seven
@@ -262,5 +261,140 @@ and suite registration are preserved in the subsequent audit commit.
   `Path_Constructors.js`, `Item_Bounds.js`, `Matrix.js`, `Numerical.js`, and SVG
   import/export tests. Their applicability has not yet been audited.
 
-Recommended next batch: geometry-focused `Path.js` cases, then the remaining
-curve inversion/splitting cases. Continue classifying Boolean errors separately.
+Recommended next work: classify the remaining Boolean errors, or expand to
+geometry-oriented bounds/constructor tests in other upstream files.
+
+
+## Path.js geometry batch (2026-10-12)
+
+All 40 blocks are now triaged in `path-status.json`: ten have geometry-adapted
+checks, 20 concern mutable objects, style/selection, scene ownership or node/cache
+synchronization, and ten require different adapters or separate work. This is
+not 40 passed tests. The 16 new native tests in
+`test/svg_path_paper_paths_test.gleam` cover length, inverse length, area, joins,
+reversal, flattening, splitting and move/line construction from the ten blocks.
+
+`paths.json` retains extracted inputs and literal upstream assertions.
+`path-screening.json` records direct query outputs, including strict-join errors;
+those errors are classified policy differences, not newly confirmed bugs.
+The extractor also captures a setup join during SVG parsing in the zero-area
+flattening block; it is not counted as an independent upstream join regression.
+Generated geometry expectations use the upstream literal anchor/handle strings,
+not the geometry resulting from executing Paper's operation.
+
+### Numerical findings
+
+- Length: Gleam returns 172.1011280892614; the upstream literal is
+  172.10112809179614. They differ by about 2.53e-9.
+- Quarter-length inversion: Gleam returns t = 0.2255851578374859; the upstream
+  literal is 0.2255849553116685. Independent 50-digit Decimal integration,
+  repeated at 1e-14 and 1e-18 integration tolerances, gives Gleam's distance
+  residual as approximately 9.73751012007e-10, within the default 1e-9 inversion
+  tolerance. The upstream literal's distance residual is approximately
+  -3.521563074e-5. This is a reference-accuracy difference, not a confirmed bug.
+  See `check-path-length.py` and `path-length-findings.json`. The native test
+  checks traveled distance with 2e-9 to allow both integration and inversion
+  error, rather than asserting Paper's approximate parameter.
+- Rectangle area matches 100. Paper's cubic circle has area
+  314.2472332656507; the test's explicit 0.1 allowance around 100*pi is retained.
+
+### Explicit API adapters
+
+Paper `join` chooses orientation, bridges gaps, closes loops, and removes scene
+objects. Gleam's strict join requires matching endpoints in the supplied order.
+Tests make reversal, `Bridge`, `WiggleWith(1e-12)` and closure explicit. Node counts
+map to edge counts plus one for open subpaths. Scene removal is not tested.
+
+Closed-path reversal is compared modulo a cyclic starting vertex, retaining
+traversal direction and the upstream rounded cubic controls. Circle flattening
+at distance 5 produces the expected eight nonzero edges; this does not impose
+Paper's subdivision count as a general contract. The closed one-cubic smoke case
+uses Paper's default flatness 0.25 explicitly. No sampled-distance bound beyond
+these source assertions is claimed.
+
+Straight cubic splitting preserves controls in our model; Paper may simplify
+its handles. Tests check the split point, one curve per half, equal half lengths,
+and continuity. They do not demand zero handles. The `lineTo` case exercises the
+equivalent SVG move/line construction, not a mutable drawing-command interface.
+
+Still requiring work: simplifying coincident nodes, interpolation, three-point
+arc construction (five blocks), tangent offsets, the 100,000-node clone stress
+case, and coincident-endpoint arc drawing. No new production changes were made.
+
+Reproduce:
+
+```sh
+node scripts/paperjs/extract-paths.cjs /tmp/svg-path-paper-audit/node_modules/paper
+node scripts/paperjs/probe-paths.mjs
+python3 scripts/paperjs/check-path-length.py
+python3 scripts/paperjs/generate-paths.py
+gleam format test/svg_path_paper_paths_test.gleam
+scripts/test-portable
+```
+
+Path-batch validation: `scripts/test-portable` passed 517 tests on Erlang and
+517 on JavaScript; `scripts/test-fast` passed 1,802 tests. The slow/full release
+profiles were not run. These tests and findings are included in the subsequent audit commit.
+
+
+## Remaining Curve.js batch (2026-10-12)
+
+`curve-remaining.json` preserves operations and assertions from the eight blocks
+not previously extracted. `curve-remaining-status.json` classifies five as
+adapted geometry checks and three as lacking a directly equivalent public API.
+`curve-remaining-screening.json` preserves direct JavaScript query outputs;
+it includes setup queries and deliberate contract mismatches, not a pass count.
+
+The 13 new native tests in `test/svg_path_paper_curve_remaining_test.gleam` cover:
+
+- Eleven fractional arc-length round trips, including the upstream floating-point
+  loop's endpoint values. Forward and end-relative positions are compared after
+  explicitly converting the latter to start-relative distances. Returned partial
+  lengths and one-sided tangent directions are checked. Distances use Gleam's own
+  length; this tests the upstream relational assertion rather than importing
+  Paper's computed parameters as expected answers.
+- Negative and too-large distances: Paper accepts end-relative negative offsets
+  and returns null out of range; Gleam documents `InvalidLengthDistance`.
+  The location case uses point-at-length, not Paper's mutable location object.
+- One hundred unique segment/point probes across 40 points on four rectangle
+  sides. Nearest-point projection is checked against independent axis-aligned
+  membership bounds, not assumed to establish membership merely by succeeding.
+  Returned parameters must evaluate back to their projected points.
+- Two divisions, at distance 50 and parameter 0.5: source midpoint assertions
+  plus evaluation of both halves against the original curve. Object mutation
+  and legacy aliases are not tested.
+- Seven explicit tangent directions. A cubic's derivative is a quadratic curve;
+  parallel tangents are its intersections with a supporting line through zero.
+  Opposite direction vectors intentionally give the same answers. Every candidate
+  in these fixtures is checked for nonzero speed; this adapter is not a general
+  singular-tangent implementation. The missing-direction assertion is omitted.
+
+All these checks pass. The direct screen's inverse-length errors are explained:
+negative offsets are rejected by contract, as are distances larger than the
+computed length. Paper's length for the common fixture is 293.59471358341074;
+Gleam computes 293.5947135833825. The final Paper-derived positive distance is
+about 2.8e-11 greater than Gleam's length, so the strict range check rejects it.
+That is why relational round trips use each implementation's own length.
+
+The seven `classify` scenarios, eleven `isStraight` scenarios and three `isLinear`
+scenarios remain recorded but unexecuted against Gleam. There is no directly
+matching public classifier/predicate. Collinearity is insufficient to reproduce
+Paper's straightness semantics (overshoot and reversal matter), and a straight
+trace need not have linear parameterization. These are feature/API differences,
+not established numerical failures. Classification-root checks could be adapted
+individually in later work; they are not claimed as covered here.
+
+Reproduce:
+
+```sh
+node scripts/paperjs/extract-curve-remaining.cjs /tmp/svg-path-paper-audit/node_modules/paper
+node scripts/paperjs/probe-curve-remaining.mjs
+python3 scripts/paperjs/generate-curve-remaining.py
+gleam format test/svg_path_paper_curve_remaining_test.gleam
+scripts/test-portable
+```
+
+Validation: `scripts/test-portable` passed 530 tests on Erlang and 530 on
+JavaScript; `scripts/test-fast` passed 1,815 tests. The slow/full release profiles
+were not run. No production changes or F# edits were made in this batch; tests and findings
+are included in the subsequent audit commit.

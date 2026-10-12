@@ -1,0 +1,5228 @@
+{
+  "blocks": [
+    {
+      "block": 0,
+      "title": "Curve#classify()",
+      "status": "extracted",
+      "operations": [
+        {
+          "method": "classify",
+          "curve": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "args": []
+        },
+        {
+          "method": "classify",
+          "curve": [
+            100,
+            100,
+            100,
+            100,
+            200,
+            200,
+            200,
+            200
+          ],
+          "args": []
+        },
+        {
+          "method": "classify",
+          "curve": [
+            100,
+            200,
+            200,
+            100,
+            100,
+            100,
+            200,
+            200
+          ],
+          "args": []
+        },
+        {
+          "method": "classify",
+          "curve": [
+            100,
+            200,
+            250,
+            100,
+            50,
+            100,
+            200,
+            200
+          ],
+          "args": []
+        },
+        {
+          "method": "classify",
+          "curve": [
+            100,
+            100,
+            150,
+            100,
+            173,
+            154,
+            200,
+            200
+          ],
+          "args": []
+        },
+        {
+          "method": "classify",
+          "curve": [
+            100,
+            200,
+            200,
+            100,
+            160,
+            120,
+            200,
+            200
+          ],
+          "args": []
+        },
+        {
+          "method": "classify",
+          "curve": [
+            100,
+            100,
+            150,
+            100,
+            200,
+            150,
+            200,
+            200
+          ],
+          "args": []
+        }
+      ],
+      "assertions": [
+        {
+          "expected": "line",
+          "message": "info.type == 'line'",
+          "tolerance": null
+        },
+        {
+          "expected": null,
+          "message": "info.roots == null",
+          "tolerance": null
+        },
+        {
+          "expected": "line",
+          "message": "info.type == 'line'",
+          "tolerance": null
+        },
+        {
+          "expected": null,
+          "message": "info.roots == null",
+          "tolerance": null
+        },
+        {
+          "expected": "cusp",
+          "message": "info.type == 'cusp'",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            0.5
+          ],
+          "message": "info.roots == [0.5]",
+          "tolerance": null
+        },
+        {
+          "expected": "loop",
+          "message": "info.type == 'loop'",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            0.17267316464601132,
+            0.8273268353539888
+          ],
+          "message": "info.roots == [0.17267316464601132,0.8273268353539888]",
+          "tolerance": null
+        },
+        {
+          "expected": "serpentine",
+          "message": "info.type == 'serpentine'",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            0.870967741935484
+          ],
+          "message": "info.roots == [0.870967741935484]",
+          "tolerance": null
+        },
+        {
+          "expected": "serpentine",
+          "message": "info.type == 'serpentine'",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            0.15047207654837885,
+            0.7384168123405099
+          ],
+          "message": "info.roots == [0.15047207654837885,0.7384168123405099]",
+          "tolerance": null
+        },
+        {
+          "expected": "arch",
+          "message": "info.type == 'arch'",
+          "tolerance": null
+        },
+        {
+          "expected": null,
+          "message": "info.roots == null",
+          "tolerance": null
+        }
+      ]
+    },
+    {
+      "block": 1,
+      "title": "Curve#getPointAtTime()",
+      "status": "previous-batch",
+      "operations": [],
+      "assertions": []
+    },
+    {
+      "block": 2,
+      "title": "Curve#getTangentAtTime()",
+      "status": "previous-batch",
+      "operations": [],
+      "assertions": []
+    },
+    {
+      "block": 3,
+      "title": "Curve#getNormalAtTime()",
+      "status": "previous-batch",
+      "operations": [],
+      "assertions": []
+    },
+    {
+      "block": 4,
+      "title": "Curve#getCurvatureAtTime()",
+      "status": "previous-batch",
+      "operations": [],
+      "assertions": []
+    },
+    {
+      "block": 5,
+      "title": "Curve#getCurvatureAtTime()",
+      "status": "previous-batch",
+      "operations": [],
+      "assertions": []
+    },
+    {
+      "block": 6,
+      "title": "Curve#getTimeAt()",
+      "status": "extracted",
+      "operations": [
+        {
+          "method": "getTimeAt",
+          "curve": [
+            0,
+            0,
+            100,
+            0,
+            200,
+            200,
+            200,
+            200
+          ],
+          "args": [
+            0
+          ]
+        },
+        {
+          "method": "getTimeAt",
+          "curve": [
+            0,
+            0,
+            100,
+            0,
+            200,
+            200,
+            200,
+            200
+          ],
+          "args": [
+            -293.59471358341074
+          ]
+        },
+        {
+          "method": "getTimeAt",
+          "curve": [
+            0,
+            0,
+            100,
+            0,
+            200,
+            200,
+            200,
+            200
+          ],
+          "args": [
+            29.359471358341075
+          ]
+        },
+        {
+          "method": "getTimeAt",
+          "curve": [
+            0,
+            0,
+            100,
+            0,
+            200,
+            200,
+            200,
+            200
+          ],
+          "args": [
+            -264.23524222506967
+          ]
+        },
+        {
+          "method": "getTimeAt",
+          "curve": [
+            0,
+            0,
+            100,
+            0,
+            200,
+            200,
+            200,
+            200
+          ],
+          "args": [
+            58.71894271668215
+          ]
+        },
+        {
+          "method": "getTimeAt",
+          "curve": [
+            0,
+            0,
+            100,
+            0,
+            200,
+            200,
+            200,
+            200
+          ],
+          "args": [
+            -234.8757708667286
+          ]
+        },
+        {
+          "method": "getTimeAt",
+          "curve": [
+            0,
+            0,
+            100,
+            0,
+            200,
+            200,
+            200,
+            200
+          ],
+          "args": [
+            88.07841407502323
+          ]
+        },
+        {
+          "method": "getTimeAt",
+          "curve": [
+            0,
+            0,
+            100,
+            0,
+            200,
+            200,
+            200,
+            200
+          ],
+          "args": [
+            -205.5162995083875
+          ]
+        },
+        {
+          "method": "getTimeAt",
+          "curve": [
+            0,
+            0,
+            100,
+            0,
+            200,
+            200,
+            200,
+            200
+          ],
+          "args": [
+            117.4378854333643
+          ]
+        },
+        {
+          "method": "getTimeAt",
+          "curve": [
+            0,
+            0,
+            100,
+            0,
+            200,
+            200,
+            200,
+            200
+          ],
+          "args": [
+            -176.15682815004644
+          ]
+        },
+        {
+          "method": "getTimeAt",
+          "curve": [
+            0,
+            0,
+            100,
+            0,
+            200,
+            200,
+            200,
+            200
+          ],
+          "args": [
+            146.79735679170537
+          ]
+        },
+        {
+          "method": "getTimeAt",
+          "curve": [
+            0,
+            0,
+            100,
+            0,
+            200,
+            200,
+            200,
+            200
+          ],
+          "args": [
+            -146.79735679170537
+          ]
+        },
+        {
+          "method": "getTimeAt",
+          "curve": [
+            0,
+            0,
+            100,
+            0,
+            200,
+            200,
+            200,
+            200
+          ],
+          "args": [
+            176.15682815004644
+          ]
+        },
+        {
+          "method": "getTimeAt",
+          "curve": [
+            0,
+            0,
+            100,
+            0,
+            200,
+            200,
+            200,
+            200
+          ],
+          "args": [
+            -117.4378854333643
+          ]
+        },
+        {
+          "method": "getTimeAt",
+          "curve": [
+            0,
+            0,
+            100,
+            0,
+            200,
+            200,
+            200,
+            200
+          ],
+          "args": [
+            205.5162995083875
+          ]
+        },
+        {
+          "method": "getTimeAt",
+          "curve": [
+            0,
+            0,
+            100,
+            0,
+            200,
+            200,
+            200,
+            200
+          ],
+          "args": [
+            -88.07841407502323
+          ]
+        },
+        {
+          "method": "getTimeAt",
+          "curve": [
+            0,
+            0,
+            100,
+            0,
+            200,
+            200,
+            200,
+            200
+          ],
+          "args": [
+            234.87577086672857
+          ]
+        },
+        {
+          "method": "getTimeAt",
+          "curve": [
+            0,
+            0,
+            100,
+            0,
+            200,
+            200,
+            200,
+            200
+          ],
+          "args": [
+            -58.718942716682164
+          ]
+        },
+        {
+          "method": "getTimeAt",
+          "curve": [
+            0,
+            0,
+            100,
+            0,
+            200,
+            200,
+            200,
+            200
+          ],
+          "args": [
+            264.2352422250696
+          ]
+        },
+        {
+          "method": "getTimeAt",
+          "curve": [
+            0,
+            0,
+            100,
+            0,
+            200,
+            200,
+            200,
+            200
+          ],
+          "args": [
+            -29.3594713583411
+          ]
+        },
+        {
+          "method": "getTimeAt",
+          "curve": [
+            0,
+            0,
+            100,
+            0,
+            200,
+            200,
+            200,
+            200
+          ],
+          "args": [
+            293.5947135834107
+          ]
+        },
+        {
+          "method": "getTimeAt",
+          "curve": [
+            0,
+            0,
+            100,
+            0,
+            200,
+            200,
+            200,
+            200
+          ],
+          "args": [
+            -3.259556109285308e-14
+          ]
+        },
+        {
+          "method": "getTimeAt",
+          "curve": [
+            0,
+            0,
+            100,
+            0,
+            200,
+            200,
+            200,
+            200
+          ],
+          "args": [
+            294.59471358341074
+          ]
+        }
+      ],
+      "assertions": [
+        {
+          "expected": 0,
+          "message": "Curve-time parameter at offset 0 should be the same value as at offset -293.59471358341074",
+          "tolerance": 1e-8
+        },
+        {
+          "expected": 0,
+          "message": null,
+          "tolerance": null
+        },
+        {
+          "expected": 0,
+          "message": null,
+          "tolerance": null
+        },
+        {
+          "expected": 0,
+          "message": "Legacy: Curve-time parameter at offset 0 should be the same value as at offset -293.59471358341074",
+          "tolerance": 1e-8
+        },
+        {
+          "expected": [
+            1,
+            0
+          ],
+          "message": "Tangent at offset 0 should be the same value as at offset -293.59471358341074",
+          "tolerance": null
+        },
+        {
+          "expected": 0.09614541838132101,
+          "message": "Curve-time parameter at offset 29.359471358341075 should be the same value as at offset -264.23524222506967",
+          "tolerance": 1e-8
+        },
+        {
+          "expected": 29.359471358341075,
+          "message": null,
+          "tolerance": null
+        },
+        {
+          "expected": 29.359471358341068,
+          "message": null,
+          "tolerance": null
+        },
+        {
+          "expected": 0.09614541838132101,
+          "message": "Legacy: Curve-time parameter at offset 29.359471358341075 should be the same value as at offset -264.23524222506967",
+          "tolerance": 1e-8
+        },
+        {
+          "expected": [
+            0.9436082527967241,
+            0.33106414069469
+          ],
+          "message": "Tangent at offset 29.359471358341075 should be the same value as at offset -264.23524222506967",
+          "tolerance": null
+        },
+        {
+          "expected": 0.18562883602915528,
+          "message": "Curve-time parameter at offset 58.71894271668215 should be the same value as at offset -234.8757708667286",
+          "tolerance": 1e-8
+        },
+        {
+          "expected": 58.71894271668215,
+          "message": null,
+          "tolerance": null
+        },
+        {
+          "expected": 58.718942716682136,
+          "message": null,
+          "tolerance": null
+        },
+        {
+          "expected": 0.18562883602915528,
+          "message": "Legacy: Curve-time parameter at offset 58.71894271668215 should be the same value as at offset -234.8757708667286",
+          "tolerance": 1e-8
+        },
+        {
+          "expected": [
+            0.847516910837181,
+            0.5307683919046065
+          ],
+          "message": "Tangent at offset 58.71894271668215 should be the same value as at offset -234.8757708667286",
+          "tolerance": null
+        },
+        {
+          "expected": 0.268619785816405,
+          "message": "Curve-time parameter at offset 88.07841407502323 should be the same value as at offset -205.5162995083875",
+          "tolerance": 1e-8
+        },
+        {
+          "expected": 88.07841407502323,
+          "message": null,
+          "tolerance": null
+        },
+        {
+          "expected": 88.07841407502323,
+          "message": null,
+          "tolerance": null
+        },
+        {
+          "expected": 0.268619785816405,
+          "message": "Legacy: Curve-time parameter at offset 88.07841407502323 should be the same value as at offset -205.5162995083875",
+          "tolerance": 1e-8
+        },
+        {
+          "expected": [
+            0.7630802136619046,
+            0.6463037888777242
+          ],
+          "message": "Tangent at offset 88.07841407502323 should be the same value as at offset -205.5162995083875",
+          "tolerance": null
+        },
+        {
+          "expected": 0.347407559227396,
+          "message": "Curve-time parameter at offset 117.4378854333643 should be the same value as at offset -176.15682815004644",
+          "tolerance": 1e-8
+        },
+        {
+          "expected": 117.4378854333643,
+          "message": null,
+          "tolerance": null
+        },
+        {
+          "expected": 117.4378854333643,
+          "message": null,
+          "tolerance": null
+        },
+        {
+          "expected": 0.347407559227396,
+          "message": "Legacy: Curve-time parameter at offset 117.4378854333643 should be the same value as at offset -176.15682815004644",
+          "tolerance": 1e-8
+        },
+        {
+          "expected": [
+            0.6961158354731419,
+            0.7179294837263125
+          ],
+          "message": "Tangent at offset 117.4378854333643 should be the same value as at offset -176.15682815004644",
+          "tolerance": null
+        },
+        {
+          "expected": 0.4243211090107075,
+          "message": "Curve-time parameter at offset 146.79735679170537 should be the same value as at offset -146.79735679170537",
+          "tolerance": 1e-8
+        },
+        {
+          "expected": 146.79735679170537,
+          "message": null,
+          "tolerance": null
+        },
+        {
+          "expected": 146.79735679170537,
+          "message": null,
+          "tolerance": null
+        },
+        {
+          "expected": 0.4243211090107075,
+          "message": "Legacy: Curve-time parameter at offset 146.79735679170537 should be the same value as at offset -146.79735679170537",
+          "tolerance": 1e-8
+        },
+        {
+          "expected": [
+            0.6428221354048933,
+            0.7660154712755436
+          ],
+          "message": "Tangent at offset 146.79735679170537 should be the same value as at offset -146.79735679170537",
+          "tolerance": null
+        },
+        {
+          "expected": 0.5016422609917426,
+          "message": "Curve-time parameter at offset 176.15682815004644 should be the same value as at offset -117.4378854333643",
+          "tolerance": 1e-8
+        },
+        {
+          "expected": 176.15682815004644,
+          "message": null,
+          "tolerance": null
+        },
+        {
+          "expected": 176.15682815004644,
+          "message": null,
+          "tolerance": null
+        },
+        {
+          "expected": 0.5016422609917426,
+          "message": "Legacy: Curve-time parameter at offset 176.15682815004644 should be the same value as at offset -117.4378854333643",
+          "tolerance": 1e-8
+        },
+        {
+          "expected": [
+            0.5991609267752673,
+            0.8006286179158241
+          ],
+          "message": "Tangent at offset 176.15682815004644 should be the same value as at offset -117.4378854333643",
+          "tolerance": null
+        },
+        {
+          "expected": 0.5820805313207706,
+          "message": "Curve-time parameter at offset 205.5162995083875 should be the same value as at offset -88.07841407502323",
+          "tolerance": 1e-8
+        },
+        {
+          "expected": 205.5162995083875,
+          "message": null,
+          "tolerance": null
+        },
+        {
+          "expected": 205.5162995083875,
+          "message": null,
+          "tolerance": null
+        },
+        {
+          "expected": 0.5820805313207706,
+          "message": "Legacy: Curve-time parameter at offset 205.5162995083875 should be the same value as at offset -88.07841407502323",
+          "tolerance": 1e-8
+        },
+        {
+          "expected": [
+            0.5620237053631604,
+            0.8271211245095023
+          ],
+          "message": "Tangent at offset 205.5162995083875 should be the same value as at offset -88.07841407502323",
+          "tolerance": null
+        },
+        {
+          "expected": 0.6699156861686886,
+          "message": "Curve-time parameter at offset 234.87577086672857 should be the same value as at offset -58.718942716682164",
+          "tolerance": 1e-8
+        },
+        {
+          "expected": 234.87577086672857,
+          "message": null,
+          "tolerance": null
+        },
+        {
+          "expected": 234.87577086672857,
+          "message": null,
+          "tolerance": null
+        },
+        {
+          "expected": 0.6699156861686886,
+          "message": "Legacy: Curve-time parameter at offset 234.87577086672857 should be the same value as at offset -58.718942716682164",
+          "tolerance": 1e-8
+        },
+        {
+          "expected": [
+            0.5288885366646375,
+            0.8486912959284657
+          ],
+          "message": "Tangent at offset 234.87577086672857 should be the same value as at offset -58.718942716682164",
+          "tolerance": null
+        },
+        {
+          "expected": 0.7751522830771672,
+          "message": "Curve-time parameter at offset 264.2352422250696 should be the same value as at offset -29.3594713583411",
+          "tolerance": 1e-8
+        },
+        {
+          "expected": 264.2352422250696,
+          "message": null,
+          "tolerance": null
+        },
+        {
+          "expected": 264.2352422250696,
+          "message": null,
+          "tolerance": null
+        },
+        {
+          "expected": 0.7751522830771672,
+          "message": "Legacy: Curve-time parameter at offset 264.2352422250696 should be the same value as at offset -29.3594713583411",
+          "tolerance": 1e-8
+        },
+        {
+          "expected": [
+            0.49685101559523476,
+            0.867835853316734
+          ],
+          "message": "Tangent at offset 264.2352422250696 should be the same value as at offset -29.3594713583411",
+          "tolerance": null
+        },
+        {
+          "expected": 0.999999999996896,
+          "message": "Curve-time parameter at offset 293.5947135834107 should be the same value as at offset -3.259556109285308e-14",
+          "tolerance": 1e-8
+        },
+        {
+          "expected": 293.5947135834107,
+          "message": null,
+          "tolerance": null
+        },
+        {
+          "expected": 293.5947135834107,
+          "message": null,
+          "tolerance": null
+        },
+        {
+          "expected": 0.999999999996896,
+          "message": "Legacy: Curve-time parameter at offset 293.5947135834107 should be the same value as at offset -3.259556109285308e-14",
+          "tolerance": 1e-8
+        },
+        {
+          "expected": [
+            0.4472135954999579,
+            0.8944271909999159
+          ],
+          "message": "Tangent at offset 293.5947135834107 should be the same value as at offset -3.259556109285308e-14",
+          "tolerance": null
+        },
+        {
+          "expected": null,
+          "message": "Should return null when offset is out of range.",
+          "tolerance": null
+        }
+      ]
+    },
+    {
+      "block": 7,
+      "title": "Curve#getTimeAt() with straight curve",
+      "status": "previous-batch",
+      "operations": [],
+      "assertions": []
+    },
+    {
+      "block": 8,
+      "title": "Curve#getTimeAt() with straight curve",
+      "status": "previous-batch",
+      "operations": [],
+      "assertions": []
+    },
+    {
+      "block": 9,
+      "title": "Curve#getTimeAt() with offset at end of curve",
+      "status": "previous-batch",
+      "operations": [],
+      "assertions": []
+    },
+    {
+      "block": 10,
+      "title": "Curve#getLocationAt()",
+      "status": "extracted",
+      "operations": [
+        {
+          "method": "getLocationAt",
+          "curve": [
+            0,
+            0,
+            100,
+            0,
+            200,
+            200,
+            200,
+            200
+          ],
+          "args": [
+            294.59471358341074
+          ]
+        }
+      ],
+      "assertions": [
+        {
+          "expected": null,
+          "message": "Should return null when offset is out of range.",
+          "tolerance": null
+        }
+      ]
+    },
+    {
+      "block": 11,
+      "title": "Curve#isStraight()",
+      "status": "extracted",
+      "operations": [
+        {
+          "method": "isStraight",
+          "curve": [
+            100,
+            100,
+            100,
+            100,
+            200,
+            200,
+            200,
+            200
+          ],
+          "args": []
+        },
+        {
+          "method": "isStraight",
+          "curve": [
+            100,
+            100,
+            50,
+            50,
+            200,
+            200,
+            200,
+            200
+          ],
+          "args": []
+        },
+        {
+          "method": "isStraight",
+          "curve": [
+            100,
+            100,
+            150,
+            150,
+            200,
+            200,
+            200,
+            200
+          ],
+          "args": []
+        },
+        {
+          "method": "isStraight",
+          "curve": [
+            100,
+            100,
+            150,
+            150,
+            150,
+            150,
+            200,
+            200
+          ],
+          "args": []
+        },
+        {
+          "method": "isStraight",
+          "curve": [
+            100,
+            100,
+            150,
+            150,
+            250,
+            250,
+            200,
+            200
+          ],
+          "args": []
+        },
+        {
+          "method": "isStraight",
+          "curve": [
+            100,
+            100,
+            100,
+            100,
+            150,
+            150,
+            200,
+            200
+          ],
+          "args": []
+        },
+        {
+          "method": "isStraight",
+          "curve": [
+            100,
+            100,
+            100,
+            100,
+            250,
+            250,
+            200,
+            200
+          ],
+          "args": []
+        },
+        {
+          "method": "isStraight",
+          "curve": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "args": []
+        },
+        {
+          "method": "isStraight",
+          "curve": [
+            100,
+            100,
+            150,
+            150,
+            100,
+            100,
+            100,
+            100
+          ],
+          "args": []
+        },
+        {
+          "method": "isStraight",
+          "curve": [
+            100,
+            100,
+            100,
+            100,
+            50,
+            50,
+            100,
+            100
+          ],
+          "args": []
+        },
+        {
+          "method": "isStraight",
+          "curve": [
+            100,
+            300,
+            120,
+            280,
+            190,
+            210,
+            200,
+            200
+          ],
+          "args": []
+        }
+      ],
+      "assertions": [
+        {
+          "expected": true,
+          "message": null,
+          "tolerance": null
+        },
+        {
+          "expected": false,
+          "message": null,
+          "tolerance": null
+        },
+        {
+          "expected": true,
+          "message": null,
+          "tolerance": null
+        },
+        {
+          "expected": true,
+          "message": null,
+          "tolerance": null
+        },
+        {
+          "expected": false,
+          "message": null,
+          "tolerance": null
+        },
+        {
+          "expected": true,
+          "message": null,
+          "tolerance": null
+        },
+        {
+          "expected": false,
+          "message": null,
+          "tolerance": null
+        },
+        {
+          "expected": true,
+          "message": null,
+          "tolerance": null
+        },
+        {
+          "expected": false,
+          "message": null,
+          "tolerance": null
+        },
+        {
+          "expected": false,
+          "message": null,
+          "tolerance": null
+        },
+        {
+          "expected": true,
+          "message": null,
+          "tolerance": null
+        }
+      ]
+    },
+    {
+      "block": 12,
+      "title": "Curve#isLinear()",
+      "status": "extracted",
+      "operations": [
+        {
+          "method": "isLinear",
+          "curve": [
+            100,
+            100,
+            133.33333333333334,
+            133.33333333333334,
+            166.66666666666666,
+            166.66666666666666,
+            200,
+            200
+          ],
+          "args": []
+        },
+        {
+          "method": "isLinear",
+          "curve": [
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100
+          ],
+          "args": []
+        },
+        {
+          "method": "isLinear",
+          "curve": [
+            100,
+            100,
+            100,
+            100,
+            200,
+            200,
+            200,
+            200
+          ],
+          "args": []
+        }
+      ],
+      "assertions": [
+        {
+          "expected": true,
+          "message": null,
+          "tolerance": null
+        },
+        {
+          "expected": true,
+          "message": null,
+          "tolerance": null
+        },
+        {
+          "expected": false,
+          "message": null,
+          "tolerance": null
+        }
+      ]
+    },
+    {
+      "block": 13,
+      "title": "Curve#getTimeOf()",
+      "status": "extracted",
+      "operations": [
+        {
+          "method": "getLocationAt",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            0
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            [
+              250,
+              150
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            [
+              250,
+              150
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            350,
+            50,
+            350,
+            50,
+            350,
+            150,
+            350,
+            150
+          ],
+          "args": [
+            [
+              250,
+              150
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            350,
+            150,
+            350,
+            150,
+            250,
+            150,
+            250,
+            150
+          ],
+          "args": [
+            [
+              250,
+              150
+            ]
+          ]
+        },
+        {
+          "method": "getLocationAtTime",
+          "curve": [
+            350,
+            150,
+            350,
+            150,
+            250,
+            150,
+            250,
+            150
+          ],
+          "args": [
+            1
+          ]
+        },
+        {
+          "method": "getLocationAt",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            10
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            [
+              250,
+              140
+            ]
+          ]
+        },
+        {
+          "method": "getLocationAtTime",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            0.1958001056590917
+          ]
+        },
+        {
+          "method": "getLocationAt",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            20
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            [
+              250,
+              130
+            ]
+          ]
+        },
+        {
+          "method": "getLocationAtTime",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            0.28714072541674046
+          ]
+        },
+        {
+          "method": "getLocationAt",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            30
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            [
+              250,
+              120
+            ]
+          ]
+        },
+        {
+          "method": "getLocationAtTime",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            0.36325749109056765
+          ]
+        },
+        {
+          "method": "getLocationAt",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            40
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            [
+              250,
+              110
+            ]
+          ]
+        },
+        {
+          "method": "getLocationAtTime",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            0.4329310771477317
+          ]
+        },
+        {
+          "method": "getLocationAt",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            50
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            [
+              250,
+              100
+            ]
+          ]
+        },
+        {
+          "method": "getLocationAtTime",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            0.5
+          ]
+        },
+        {
+          "method": "getLocationAt",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            60
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            [
+              250,
+              90
+            ]
+          ]
+        },
+        {
+          "method": "getLocationAtTime",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            0.5670689228522682
+          ]
+        },
+        {
+          "method": "getLocationAt",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            70
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            [
+              250,
+              80
+            ]
+          ]
+        },
+        {
+          "method": "getLocationAtTime",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            0.6367425089094323
+          ]
+        },
+        {
+          "method": "getLocationAt",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            80
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            [
+              250,
+              70
+            ]
+          ]
+        },
+        {
+          "method": "getLocationAtTime",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            0.7128592745832595
+          ]
+        },
+        {
+          "method": "getLocationAt",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            90
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            [
+              250,
+              60
+            ]
+          ]
+        },
+        {
+          "method": "getLocationAtTime",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            0.8041998943409078
+          ]
+        },
+        {
+          "method": "getLocationAt",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            0
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            [
+              250,
+              50
+            ]
+          ]
+        },
+        {
+          "method": "getLocationAtTime",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            1
+          ]
+        },
+        {
+          "method": "getLocationAt",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            10
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            [
+              260,
+              50
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            [
+              260,
+              50
+            ]
+          ]
+        },
+        {
+          "method": "getLocationAtTime",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            0.1958001056590917
+          ]
+        },
+        {
+          "method": "getLocationAt",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            20
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            [
+              270,
+              50
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            [
+              270,
+              50
+            ]
+          ]
+        },
+        {
+          "method": "getLocationAtTime",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            0.28714072541674046
+          ]
+        },
+        {
+          "method": "getLocationAt",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            30
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            [
+              280,
+              50
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            [
+              280,
+              50
+            ]
+          ]
+        },
+        {
+          "method": "getLocationAtTime",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            0.36325749109056765
+          ]
+        },
+        {
+          "method": "getLocationAt",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            40
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            [
+              290,
+              50
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            [
+              290,
+              50
+            ]
+          ]
+        },
+        {
+          "method": "getLocationAtTime",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            0.4329310771477317
+          ]
+        },
+        {
+          "method": "getLocationAt",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            50
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            [
+              300,
+              50
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            [
+              300,
+              50
+            ]
+          ]
+        },
+        {
+          "method": "getLocationAtTime",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            0.5
+          ]
+        },
+        {
+          "method": "getLocationAt",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            60
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            [
+              310,
+              50
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            [
+              310,
+              50
+            ]
+          ]
+        },
+        {
+          "method": "getLocationAtTime",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            0.5670689228522682
+          ]
+        },
+        {
+          "method": "getLocationAt",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            70
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            [
+              320,
+              50
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            [
+              320,
+              50
+            ]
+          ]
+        },
+        {
+          "method": "getLocationAtTime",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            0.6367425089094323
+          ]
+        },
+        {
+          "method": "getLocationAt",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            80
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            [
+              330,
+              50
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            [
+              330,
+              50
+            ]
+          ]
+        },
+        {
+          "method": "getLocationAtTime",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            0.7128592745832595
+          ]
+        },
+        {
+          "method": "getLocationAt",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            90
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            [
+              340,
+              50
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            [
+              340,
+              50
+            ]
+          ]
+        },
+        {
+          "method": "getLocationAtTime",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            0.8041998943409078
+          ]
+        },
+        {
+          "method": "getLocationAt",
+          "curve": [
+            350,
+            50,
+            350,
+            50,
+            350,
+            150,
+            350,
+            150
+          ],
+          "args": [
+            0
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            [
+              350,
+              50
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            [
+              350,
+              50
+            ]
+          ]
+        },
+        {
+          "method": "getLocationAtTime",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            1
+          ]
+        },
+        {
+          "method": "getLocationAt",
+          "curve": [
+            350,
+            50,
+            350,
+            50,
+            350,
+            150,
+            350,
+            150
+          ],
+          "args": [
+            10
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            [
+              350,
+              60
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            [
+              350,
+              60
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            350,
+            50,
+            350,
+            50,
+            350,
+            150,
+            350,
+            150
+          ],
+          "args": [
+            [
+              350,
+              60
+            ]
+          ]
+        },
+        {
+          "method": "getLocationAtTime",
+          "curve": [
+            350,
+            50,
+            350,
+            50,
+            350,
+            150,
+            350,
+            150
+          ],
+          "args": [
+            0.1958001056590917
+          ]
+        },
+        {
+          "method": "getLocationAt",
+          "curve": [
+            350,
+            50,
+            350,
+            50,
+            350,
+            150,
+            350,
+            150
+          ],
+          "args": [
+            20
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            [
+              350,
+              70
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            [
+              350,
+              70
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            350,
+            50,
+            350,
+            50,
+            350,
+            150,
+            350,
+            150
+          ],
+          "args": [
+            [
+              350,
+              70
+            ]
+          ]
+        },
+        {
+          "method": "getLocationAtTime",
+          "curve": [
+            350,
+            50,
+            350,
+            50,
+            350,
+            150,
+            350,
+            150
+          ],
+          "args": [
+            0.28714072541674046
+          ]
+        },
+        {
+          "method": "getLocationAt",
+          "curve": [
+            350,
+            50,
+            350,
+            50,
+            350,
+            150,
+            350,
+            150
+          ],
+          "args": [
+            30
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            [
+              350,
+              80
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            [
+              350,
+              80
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            350,
+            50,
+            350,
+            50,
+            350,
+            150,
+            350,
+            150
+          ],
+          "args": [
+            [
+              350,
+              80
+            ]
+          ]
+        },
+        {
+          "method": "getLocationAtTime",
+          "curve": [
+            350,
+            50,
+            350,
+            50,
+            350,
+            150,
+            350,
+            150
+          ],
+          "args": [
+            0.36325749109056765
+          ]
+        },
+        {
+          "method": "getLocationAt",
+          "curve": [
+            350,
+            50,
+            350,
+            50,
+            350,
+            150,
+            350,
+            150
+          ],
+          "args": [
+            40
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            [
+              350,
+              90
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            [
+              350,
+              90
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            350,
+            50,
+            350,
+            50,
+            350,
+            150,
+            350,
+            150
+          ],
+          "args": [
+            [
+              350,
+              90
+            ]
+          ]
+        },
+        {
+          "method": "getLocationAtTime",
+          "curve": [
+            350,
+            50,
+            350,
+            50,
+            350,
+            150,
+            350,
+            150
+          ],
+          "args": [
+            0.4329310771477317
+          ]
+        },
+        {
+          "method": "getLocationAt",
+          "curve": [
+            350,
+            50,
+            350,
+            50,
+            350,
+            150,
+            350,
+            150
+          ],
+          "args": [
+            50
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            [
+              350,
+              100
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            [
+              350,
+              100
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            350,
+            50,
+            350,
+            50,
+            350,
+            150,
+            350,
+            150
+          ],
+          "args": [
+            [
+              350,
+              100
+            ]
+          ]
+        },
+        {
+          "method": "getLocationAtTime",
+          "curve": [
+            350,
+            50,
+            350,
+            50,
+            350,
+            150,
+            350,
+            150
+          ],
+          "args": [
+            0.5
+          ]
+        },
+        {
+          "method": "getLocationAt",
+          "curve": [
+            350,
+            50,
+            350,
+            50,
+            350,
+            150,
+            350,
+            150
+          ],
+          "args": [
+            60
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            [
+              350,
+              110
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            [
+              350,
+              110
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            350,
+            50,
+            350,
+            50,
+            350,
+            150,
+            350,
+            150
+          ],
+          "args": [
+            [
+              350,
+              110
+            ]
+          ]
+        },
+        {
+          "method": "getLocationAtTime",
+          "curve": [
+            350,
+            50,
+            350,
+            50,
+            350,
+            150,
+            350,
+            150
+          ],
+          "args": [
+            0.5670689228522682
+          ]
+        },
+        {
+          "method": "getLocationAt",
+          "curve": [
+            350,
+            50,
+            350,
+            50,
+            350,
+            150,
+            350,
+            150
+          ],
+          "args": [
+            70
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            [
+              350,
+              120
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            [
+              350,
+              120
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            350,
+            50,
+            350,
+            50,
+            350,
+            150,
+            350,
+            150
+          ],
+          "args": [
+            [
+              350,
+              120
+            ]
+          ]
+        },
+        {
+          "method": "getLocationAtTime",
+          "curve": [
+            350,
+            50,
+            350,
+            50,
+            350,
+            150,
+            350,
+            150
+          ],
+          "args": [
+            0.6367425089094323
+          ]
+        },
+        {
+          "method": "getLocationAt",
+          "curve": [
+            350,
+            50,
+            350,
+            50,
+            350,
+            150,
+            350,
+            150
+          ],
+          "args": [
+            80
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            [
+              350,
+              130
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            [
+              350,
+              130
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            350,
+            50,
+            350,
+            50,
+            350,
+            150,
+            350,
+            150
+          ],
+          "args": [
+            [
+              350,
+              130
+            ]
+          ]
+        },
+        {
+          "method": "getLocationAtTime",
+          "curve": [
+            350,
+            50,
+            350,
+            50,
+            350,
+            150,
+            350,
+            150
+          ],
+          "args": [
+            0.7128592745832595
+          ]
+        },
+        {
+          "method": "getLocationAt",
+          "curve": [
+            350,
+            50,
+            350,
+            50,
+            350,
+            150,
+            350,
+            150
+          ],
+          "args": [
+            90
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            [
+              350,
+              140
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            [
+              350,
+              140
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            350,
+            50,
+            350,
+            50,
+            350,
+            150,
+            350,
+            150
+          ],
+          "args": [
+            [
+              350,
+              140
+            ]
+          ]
+        },
+        {
+          "method": "getLocationAtTime",
+          "curve": [
+            350,
+            50,
+            350,
+            50,
+            350,
+            150,
+            350,
+            150
+          ],
+          "args": [
+            0.8041998943409078
+          ]
+        },
+        {
+          "method": "getLocationAt",
+          "curve": [
+            350,
+            150,
+            350,
+            150,
+            250,
+            150,
+            250,
+            150
+          ],
+          "args": [
+            0
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            [
+              350,
+              150
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            [
+              350,
+              150
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            350,
+            50,
+            350,
+            50,
+            350,
+            150,
+            350,
+            150
+          ],
+          "args": [
+            [
+              350,
+              150
+            ]
+          ]
+        },
+        {
+          "method": "getLocationAtTime",
+          "curve": [
+            350,
+            50,
+            350,
+            50,
+            350,
+            150,
+            350,
+            150
+          ],
+          "args": [
+            1
+          ]
+        },
+        {
+          "method": "getLocationAt",
+          "curve": [
+            350,
+            150,
+            350,
+            150,
+            250,
+            150,
+            250,
+            150
+          ],
+          "args": [
+            10
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            [
+              340,
+              150
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            [
+              340,
+              150
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            350,
+            50,
+            350,
+            50,
+            350,
+            150,
+            350,
+            150
+          ],
+          "args": [
+            [
+              340,
+              150
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            350,
+            150,
+            350,
+            150,
+            250,
+            150,
+            250,
+            150
+          ],
+          "args": [
+            [
+              340,
+              150
+            ]
+          ]
+        },
+        {
+          "method": "getLocationAtTime",
+          "curve": [
+            350,
+            150,
+            350,
+            150,
+            250,
+            150,
+            250,
+            150
+          ],
+          "args": [
+            0.1958001056590917
+          ]
+        },
+        {
+          "method": "getLocationAt",
+          "curve": [
+            350,
+            150,
+            350,
+            150,
+            250,
+            150,
+            250,
+            150
+          ],
+          "args": [
+            20
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            [
+              330,
+              150
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            [
+              330,
+              150
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            350,
+            50,
+            350,
+            50,
+            350,
+            150,
+            350,
+            150
+          ],
+          "args": [
+            [
+              330,
+              150
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            350,
+            150,
+            350,
+            150,
+            250,
+            150,
+            250,
+            150
+          ],
+          "args": [
+            [
+              330,
+              150
+            ]
+          ]
+        },
+        {
+          "method": "getLocationAtTime",
+          "curve": [
+            350,
+            150,
+            350,
+            150,
+            250,
+            150,
+            250,
+            150
+          ],
+          "args": [
+            0.28714072541674046
+          ]
+        },
+        {
+          "method": "getLocationAt",
+          "curve": [
+            350,
+            150,
+            350,
+            150,
+            250,
+            150,
+            250,
+            150
+          ],
+          "args": [
+            30
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            [
+              320,
+              150
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            [
+              320,
+              150
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            350,
+            50,
+            350,
+            50,
+            350,
+            150,
+            350,
+            150
+          ],
+          "args": [
+            [
+              320,
+              150
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            350,
+            150,
+            350,
+            150,
+            250,
+            150,
+            250,
+            150
+          ],
+          "args": [
+            [
+              320,
+              150
+            ]
+          ]
+        },
+        {
+          "method": "getLocationAtTime",
+          "curve": [
+            350,
+            150,
+            350,
+            150,
+            250,
+            150,
+            250,
+            150
+          ],
+          "args": [
+            0.36325749109056765
+          ]
+        },
+        {
+          "method": "getLocationAt",
+          "curve": [
+            350,
+            150,
+            350,
+            150,
+            250,
+            150,
+            250,
+            150
+          ],
+          "args": [
+            40
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            [
+              310,
+              150
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            [
+              310,
+              150
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            350,
+            50,
+            350,
+            50,
+            350,
+            150,
+            350,
+            150
+          ],
+          "args": [
+            [
+              310,
+              150
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            350,
+            150,
+            350,
+            150,
+            250,
+            150,
+            250,
+            150
+          ],
+          "args": [
+            [
+              310,
+              150
+            ]
+          ]
+        },
+        {
+          "method": "getLocationAtTime",
+          "curve": [
+            350,
+            150,
+            350,
+            150,
+            250,
+            150,
+            250,
+            150
+          ],
+          "args": [
+            0.4329310771477317
+          ]
+        },
+        {
+          "method": "getLocationAt",
+          "curve": [
+            350,
+            150,
+            350,
+            150,
+            250,
+            150,
+            250,
+            150
+          ],
+          "args": [
+            50
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            [
+              300,
+              150
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            [
+              300,
+              150
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            350,
+            50,
+            350,
+            50,
+            350,
+            150,
+            350,
+            150
+          ],
+          "args": [
+            [
+              300,
+              150
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            350,
+            150,
+            350,
+            150,
+            250,
+            150,
+            250,
+            150
+          ],
+          "args": [
+            [
+              300,
+              150
+            ]
+          ]
+        },
+        {
+          "method": "getLocationAtTime",
+          "curve": [
+            350,
+            150,
+            350,
+            150,
+            250,
+            150,
+            250,
+            150
+          ],
+          "args": [
+            0.5
+          ]
+        },
+        {
+          "method": "getLocationAt",
+          "curve": [
+            350,
+            150,
+            350,
+            150,
+            250,
+            150,
+            250,
+            150
+          ],
+          "args": [
+            60
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            [
+              290,
+              150
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            [
+              290,
+              150
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            350,
+            50,
+            350,
+            50,
+            350,
+            150,
+            350,
+            150
+          ],
+          "args": [
+            [
+              290,
+              150
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            350,
+            150,
+            350,
+            150,
+            250,
+            150,
+            250,
+            150
+          ],
+          "args": [
+            [
+              290,
+              150
+            ]
+          ]
+        },
+        {
+          "method": "getLocationAtTime",
+          "curve": [
+            350,
+            150,
+            350,
+            150,
+            250,
+            150,
+            250,
+            150
+          ],
+          "args": [
+            0.5670689228522682
+          ]
+        },
+        {
+          "method": "getLocationAt",
+          "curve": [
+            350,
+            150,
+            350,
+            150,
+            250,
+            150,
+            250,
+            150
+          ],
+          "args": [
+            70
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            [
+              280,
+              150
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            [
+              280,
+              150
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            350,
+            50,
+            350,
+            50,
+            350,
+            150,
+            350,
+            150
+          ],
+          "args": [
+            [
+              280,
+              150
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            350,
+            150,
+            350,
+            150,
+            250,
+            150,
+            250,
+            150
+          ],
+          "args": [
+            [
+              280,
+              150
+            ]
+          ]
+        },
+        {
+          "method": "getLocationAtTime",
+          "curve": [
+            350,
+            150,
+            350,
+            150,
+            250,
+            150,
+            250,
+            150
+          ],
+          "args": [
+            0.6367425089094323
+          ]
+        },
+        {
+          "method": "getLocationAt",
+          "curve": [
+            350,
+            150,
+            350,
+            150,
+            250,
+            150,
+            250,
+            150
+          ],
+          "args": [
+            80
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            [
+              270,
+              150
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            [
+              270,
+              150
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            350,
+            50,
+            350,
+            50,
+            350,
+            150,
+            350,
+            150
+          ],
+          "args": [
+            [
+              270,
+              150
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            350,
+            150,
+            350,
+            150,
+            250,
+            150,
+            250,
+            150
+          ],
+          "args": [
+            [
+              270,
+              150
+            ]
+          ]
+        },
+        {
+          "method": "getLocationAtTime",
+          "curve": [
+            350,
+            150,
+            350,
+            150,
+            250,
+            150,
+            250,
+            150
+          ],
+          "args": [
+            0.7128592745832595
+          ]
+        },
+        {
+          "method": "getLocationAt",
+          "curve": [
+            350,
+            150,
+            350,
+            150,
+            250,
+            150,
+            250,
+            150
+          ],
+          "args": [
+            90
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            150,
+            250,
+            150,
+            250,
+            50,
+            250,
+            50
+          ],
+          "args": [
+            [
+              260,
+              150
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            250,
+            50,
+            250,
+            50,
+            350,
+            50,
+            350,
+            50
+          ],
+          "args": [
+            [
+              260,
+              150
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            350,
+            50,
+            350,
+            50,
+            350,
+            150,
+            350,
+            150
+          ],
+          "args": [
+            [
+              260,
+              150
+            ]
+          ]
+        },
+        {
+          "method": "getTimeOf",
+          "curve": [
+            350,
+            150,
+            350,
+            150,
+            250,
+            150,
+            250,
+            150
+          ],
+          "args": [
+            [
+              260,
+              150
+            ]
+          ]
+        },
+        {
+          "method": "getLocationAtTime",
+          "curve": [
+            350,
+            150,
+            350,
+            150,
+            250,
+            150,
+            250,
+            150
+          ],
+          "args": [
+            0.8041998943409078
+          ]
+        }
+      ],
+      "assertions": [
+        {
+          "expected": 1,
+          "message": "Legacy: curve.getParameterOf() should return the same as curve.getTimeOf()",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            250,
+            150
+          ],
+          "message": "curve.getLocationAt(curve.getTimeOf({ x: 250, y: 150 })).point;",
+          "tolerance": null
+        },
+        {
+          "expected": 0.1958001056590917,
+          "message": "Legacy: curve.getParameterOf() should return the same as curve.getTimeOf()",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            250,
+            140
+          ],
+          "message": "curve.getLocationAt(curve.getTimeOf({ x: 250, y: 140 })).point;",
+          "tolerance": null
+        },
+        {
+          "expected": 0.28714072541674046,
+          "message": "Legacy: curve.getParameterOf() should return the same as curve.getTimeOf()",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            250,
+            130
+          ],
+          "message": "curve.getLocationAt(curve.getTimeOf({ x: 250, y: 130 })).point;",
+          "tolerance": null
+        },
+        {
+          "expected": 0.36325749109056765,
+          "message": "Legacy: curve.getParameterOf() should return the same as curve.getTimeOf()",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            250,
+            120
+          ],
+          "message": "curve.getLocationAt(curve.getTimeOf({ x: 250, y: 120 })).point;",
+          "tolerance": null
+        },
+        {
+          "expected": 0.4329310771477317,
+          "message": "Legacy: curve.getParameterOf() should return the same as curve.getTimeOf()",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            250,
+            110
+          ],
+          "message": "curve.getLocationAt(curve.getTimeOf({ x: 250, y: 110 })).point;",
+          "tolerance": null
+        },
+        {
+          "expected": 0.5,
+          "message": "Legacy: curve.getParameterOf() should return the same as curve.getTimeOf()",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            250,
+            100
+          ],
+          "message": "curve.getLocationAt(curve.getTimeOf({ x: 250, y: 100 })).point;",
+          "tolerance": null
+        },
+        {
+          "expected": 0.5670689228522682,
+          "message": "Legacy: curve.getParameterOf() should return the same as curve.getTimeOf()",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            250,
+            90
+          ],
+          "message": "curve.getLocationAt(curve.getTimeOf({ x: 250, y: 90 })).point;",
+          "tolerance": null
+        },
+        {
+          "expected": 0.6367425089094323,
+          "message": "Legacy: curve.getParameterOf() should return the same as curve.getTimeOf()",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            250,
+            80.00000000000001
+          ],
+          "message": "curve.getLocationAt(curve.getTimeOf({ x: 250, y: 80 })).point;",
+          "tolerance": null
+        },
+        {
+          "expected": 0.7128592745832595,
+          "message": "Legacy: curve.getParameterOf() should return the same as curve.getTimeOf()",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            250,
+            70
+          ],
+          "message": "curve.getLocationAt(curve.getTimeOf({ x: 250, y: 70 })).point;",
+          "tolerance": null
+        },
+        {
+          "expected": 0.8041998943409078,
+          "message": "Legacy: curve.getParameterOf() should return the same as curve.getTimeOf()",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            250,
+            60.00000000000004
+          ],
+          "message": "curve.getLocationAt(curve.getTimeOf({ x: 250, y: 60 })).point;",
+          "tolerance": null
+        },
+        {
+          "expected": 1,
+          "message": "Legacy: curve.getParameterOf() should return the same as curve.getTimeOf()",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            250,
+            50
+          ],
+          "message": "curve.getLocationAt(curve.getTimeOf({ x: 250, y: 50 })).point;",
+          "tolerance": null
+        },
+        {
+          "expected": 0.1958001056590917,
+          "message": "Legacy: curve.getParameterOf() should return the same as curve.getTimeOf()",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            260,
+            50
+          ],
+          "message": "curve.getLocationAt(curve.getTimeOf({ x: 260, y: 50 })).point;",
+          "tolerance": null
+        },
+        {
+          "expected": 0.28714072541674046,
+          "message": "Legacy: curve.getParameterOf() should return the same as curve.getTimeOf()",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            270,
+            50
+          ],
+          "message": "curve.getLocationAt(curve.getTimeOf({ x: 270, y: 50 })).point;",
+          "tolerance": null
+        },
+        {
+          "expected": 0.36325749109056765,
+          "message": "Legacy: curve.getParameterOf() should return the same as curve.getTimeOf()",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            280,
+            50
+          ],
+          "message": "curve.getLocationAt(curve.getTimeOf({ x: 280, y: 50 })).point;",
+          "tolerance": null
+        },
+        {
+          "expected": 0.4329310771477317,
+          "message": "Legacy: curve.getParameterOf() should return the same as curve.getTimeOf()",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            290,
+            50
+          ],
+          "message": "curve.getLocationAt(curve.getTimeOf({ x: 290, y: 50 })).point;",
+          "tolerance": null
+        },
+        {
+          "expected": 0.5,
+          "message": "Legacy: curve.getParameterOf() should return the same as curve.getTimeOf()",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            300,
+            50
+          ],
+          "message": "curve.getLocationAt(curve.getTimeOf({ x: 300, y: 50 })).point;",
+          "tolerance": null
+        },
+        {
+          "expected": 0.5670689228522682,
+          "message": "Legacy: curve.getParameterOf() should return the same as curve.getTimeOf()",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            310,
+            50
+          ],
+          "message": "curve.getLocationAt(curve.getTimeOf({ x: 310, y: 50 })).point;",
+          "tolerance": null
+        },
+        {
+          "expected": 0.6367425089094323,
+          "message": "Legacy: curve.getParameterOf() should return the same as curve.getTimeOf()",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            320,
+            50
+          ],
+          "message": "curve.getLocationAt(curve.getTimeOf({ x: 320, y: 50 })).point;",
+          "tolerance": null
+        },
+        {
+          "expected": 0.7128592745832595,
+          "message": "Legacy: curve.getParameterOf() should return the same as curve.getTimeOf()",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            330,
+            50
+          ],
+          "message": "curve.getLocationAt(curve.getTimeOf({ x: 330, y: 50 })).point;",
+          "tolerance": null
+        },
+        {
+          "expected": 0.8041998943409078,
+          "message": "Legacy: curve.getParameterOf() should return the same as curve.getTimeOf()",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            339.99999999999994,
+            50
+          ],
+          "message": "curve.getLocationAt(curve.getTimeOf({ x: 340, y: 50 })).point;",
+          "tolerance": null
+        },
+        {
+          "expected": 1,
+          "message": "Legacy: curve.getParameterOf() should return the same as curve.getTimeOf()",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            350,
+            50
+          ],
+          "message": "curve.getLocationAt(curve.getTimeOf({ x: 350, y: 50 })).point;",
+          "tolerance": null
+        },
+        {
+          "expected": 0.1958001056590917,
+          "message": "Legacy: curve.getParameterOf() should return the same as curve.getTimeOf()",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            350,
+            60
+          ],
+          "message": "curve.getLocationAt(curve.getTimeOf({ x: 350, y: 60 })).point;",
+          "tolerance": null
+        },
+        {
+          "expected": 0.28714072541674046,
+          "message": "Legacy: curve.getParameterOf() should return the same as curve.getTimeOf()",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            350,
+            70
+          ],
+          "message": "curve.getLocationAt(curve.getTimeOf({ x: 350, y: 70 })).point;",
+          "tolerance": null
+        },
+        {
+          "expected": 0.36325749109056765,
+          "message": "Legacy: curve.getParameterOf() should return the same as curve.getTimeOf()",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            350,
+            80
+          ],
+          "message": "curve.getLocationAt(curve.getTimeOf({ x: 350, y: 80 })).point;",
+          "tolerance": null
+        },
+        {
+          "expected": 0.4329310771477317,
+          "message": "Legacy: curve.getParameterOf() should return the same as curve.getTimeOf()",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            350,
+            90
+          ],
+          "message": "curve.getLocationAt(curve.getTimeOf({ x: 350, y: 90 })).point;",
+          "tolerance": null
+        },
+        {
+          "expected": 0.5,
+          "message": "Legacy: curve.getParameterOf() should return the same as curve.getTimeOf()",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            350,
+            100
+          ],
+          "message": "curve.getLocationAt(curve.getTimeOf({ x: 350, y: 100 })).point;",
+          "tolerance": null
+        },
+        {
+          "expected": 0.5670689228522682,
+          "message": "Legacy: curve.getParameterOf() should return the same as curve.getTimeOf()",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            350,
+            110
+          ],
+          "message": "curve.getLocationAt(curve.getTimeOf({ x: 350, y: 110 })).point;",
+          "tolerance": null
+        },
+        {
+          "expected": 0.6367425089094323,
+          "message": "Legacy: curve.getParameterOf() should return the same as curve.getTimeOf()",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            350,
+            119.99999999999999
+          ],
+          "message": "curve.getLocationAt(curve.getTimeOf({ x: 350, y: 120 })).point;",
+          "tolerance": null
+        },
+        {
+          "expected": 0.7128592745832595,
+          "message": "Legacy: curve.getParameterOf() should return the same as curve.getTimeOf()",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            350,
+            130
+          ],
+          "message": "curve.getLocationAt(curve.getTimeOf({ x: 350, y: 130 })).point;",
+          "tolerance": null
+        },
+        {
+          "expected": 0.8041998943409078,
+          "message": "Legacy: curve.getParameterOf() should return the same as curve.getTimeOf()",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            350,
+            139.99999999999994
+          ],
+          "message": "curve.getLocationAt(curve.getTimeOf({ x: 350, y: 140 })).point;",
+          "tolerance": null
+        },
+        {
+          "expected": 1,
+          "message": "Legacy: curve.getParameterOf() should return the same as curve.getTimeOf()",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            350,
+            150
+          ],
+          "message": "curve.getLocationAt(curve.getTimeOf({ x: 350, y: 150 })).point;",
+          "tolerance": null
+        },
+        {
+          "expected": 0.1958001056590917,
+          "message": "Legacy: curve.getParameterOf() should return the same as curve.getTimeOf()",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            340,
+            150
+          ],
+          "message": "curve.getLocationAt(curve.getTimeOf({ x: 340, y: 150 })).point;",
+          "tolerance": null
+        },
+        {
+          "expected": 0.28714072541674046,
+          "message": "Legacy: curve.getParameterOf() should return the same as curve.getTimeOf()",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            330,
+            150
+          ],
+          "message": "curve.getLocationAt(curve.getTimeOf({ x: 330, y: 150 })).point;",
+          "tolerance": null
+        },
+        {
+          "expected": 0.36325749109056765,
+          "message": "Legacy: curve.getParameterOf() should return the same as curve.getTimeOf()",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            320,
+            150
+          ],
+          "message": "curve.getLocationAt(curve.getTimeOf({ x: 320, y: 150 })).point;",
+          "tolerance": null
+        },
+        {
+          "expected": 0.4329310771477317,
+          "message": "Legacy: curve.getParameterOf() should return the same as curve.getTimeOf()",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            310,
+            150
+          ],
+          "message": "curve.getLocationAt(curve.getTimeOf({ x: 310, y: 150 })).point;",
+          "tolerance": null
+        },
+        {
+          "expected": 0.5,
+          "message": "Legacy: curve.getParameterOf() should return the same as curve.getTimeOf()",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            300,
+            150
+          ],
+          "message": "curve.getLocationAt(curve.getTimeOf({ x: 300, y: 150 })).point;",
+          "tolerance": null
+        },
+        {
+          "expected": 0.5670689228522682,
+          "message": "Legacy: curve.getParameterOf() should return the same as curve.getTimeOf()",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            290,
+            150
+          ],
+          "message": "curve.getLocationAt(curve.getTimeOf({ x: 290, y: 150 })).point;",
+          "tolerance": null
+        },
+        {
+          "expected": 0.6367425089094323,
+          "message": "Legacy: curve.getParameterOf() should return the same as curve.getTimeOf()",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            280,
+            150
+          ],
+          "message": "curve.getLocationAt(curve.getTimeOf({ x: 280, y: 150 })).point;",
+          "tolerance": null
+        },
+        {
+          "expected": 0.7128592745832595,
+          "message": "Legacy: curve.getParameterOf() should return the same as curve.getTimeOf()",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            270,
+            150
+          ],
+          "message": "curve.getLocationAt(curve.getTimeOf({ x: 270, y: 150 })).point;",
+          "tolerance": null
+        },
+        {
+          "expected": 0.8041998943409078,
+          "message": "Legacy: curve.getParameterOf() should return the same as curve.getTimeOf()",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            260.00000000000006,
+            150
+          ],
+          "message": "curve.getLocationAt(curve.getTimeOf({ x: 260, y: 150 })).point;",
+          "tolerance": null
+        }
+      ]
+    },
+    {
+      "block": 14,
+      "title": "Curve#getPartLength() with straight curve",
+      "status": "previous-batch",
+      "operations": [],
+      "assertions": []
+    },
+    {
+      "block": 15,
+      "title": "Curve#divideAt(offset)",
+      "status": "extracted",
+      "operations": [
+        {
+          "method": "divideAt",
+          "curve": [
+            0,
+            0,
+            0,
+            0,
+            100,
+            0,
+            100,
+            0
+          ],
+          "args": [
+            50
+          ]
+        },
+        {
+          "method": "divideAtTime",
+          "curve": [
+            0,
+            0,
+            0,
+            0,
+            100,
+            0,
+            100,
+            0
+          ],
+          "args": [
+            0.5
+          ]
+        }
+      ],
+      "assertions": [
+        {
+          "expected": [
+            50,
+            0
+          ],
+          "message": null,
+          "tolerance": null
+        },
+        {
+          "expected": [
+            50,
+            0
+          ],
+          "message": null,
+          "tolerance": null
+        }
+      ]
+    },
+    {
+      "block": 16,
+      "title": "Curve#getTimesWithTangent()",
+      "status": "extracted",
+      "operations": [
+        {
+          "method": "getTimesWithTangent",
+          "curve": [
+            0,
+            0,
+            100,
+            0,
+            200,
+            100,
+            200,
+            200
+          ],
+          "args": []
+        },
+        {
+          "method": "getTimesWithTangent",
+          "curve": [
+            0,
+            0,
+            100,
+            0,
+            200,
+            100,
+            200,
+            200
+          ],
+          "args": [
+            [
+              1,
+              0
+            ]
+          ]
+        },
+        {
+          "method": "getTimesWithTangent",
+          "curve": [
+            0,
+            0,
+            100,
+            0,
+            200,
+            100,
+            200,
+            200
+          ],
+          "args": [
+            [
+              -1,
+              0
+            ]
+          ]
+        },
+        {
+          "method": "getTimesWithTangent",
+          "curve": [
+            0,
+            0,
+            100,
+            0,
+            200,
+            100,
+            200,
+            200
+          ],
+          "args": [
+            [
+              0,
+              1
+            ]
+          ]
+        },
+        {
+          "method": "getTimesWithTangent",
+          "curve": [
+            0,
+            0,
+            100,
+            0,
+            200,
+            100,
+            200,
+            200
+          ],
+          "args": [
+            [
+              1,
+              1
+            ]
+          ]
+        },
+        {
+          "method": "getTimesWithTangent",
+          "curve": [
+            0,
+            0,
+            100,
+            0,
+            200,
+            100,
+            200,
+            200
+          ],
+          "args": [
+            [
+              1,
+              -1
+            ]
+          ]
+        },
+        {
+          "method": "getTimesWithTangent",
+          "curve": [
+            0,
+            0,
+            100,
+            0,
+            0,
+            -1000,
+            -500,
+            -500
+          ],
+          "args": [
+            [
+              1,
+              0
+            ]
+          ]
+        },
+        {
+          "method": "getTimesWithTangent",
+          "curve": [
+            0,
+            0,
+            100,
+            0,
+            0,
+            -200,
+            0,
+            -100
+          ],
+          "args": [
+            [
+              1,
+              0
+            ]
+          ]
+        }
+      ],
+      "assertions": [
+        {
+          "expected": [],
+          "message": "should return empty array when called without argument",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            0
+          ],
+          "message": "should return tangent at start",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            0
+          ],
+          "message": "should return the same when called with opposite direction vector",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            1
+          ],
+          "message": "should return tangent at end",
+          "tolerance": null
+        },
+        {
+          "expected": [
+            0.5
+          ],
+          "message": "should return tangent at middle",
+          "tolerance": null
+        },
+        {
+          "expected": [],
+          "message": "should return empty array when there is no tangent",
+          "tolerance": null
+        },
+        {
+          "expected": 2,
+          "message": "should return 2 values for specific self-intersecting path case",
+          "tolerance": null
+        },
+        {
+          "expected": 2,
+          "message": "should return 2 values for specific parabollic path case",
+          "tolerance": null
+        }
+      ]
+    }
+  ]
+}

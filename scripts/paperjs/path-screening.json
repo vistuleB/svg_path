@@ -1,0 +1,559 @@
+[
+  {
+    "block": 0,
+    "index": 0,
+    "method": "length",
+    "result": {
+      "0": 172.1011280892614,
+      "type": "Ok"
+    }
+  },
+  {
+    "block": 0,
+    "index": 1,
+    "method": "length",
+    "result": {
+      "0": 172.1011280892614,
+      "type": "Ok"
+    }
+  },
+  {
+    "block": 0,
+    "index": 2,
+    "method": "getTimeAt",
+    "result": {
+      "0": 0.2255851578374859,
+      "type": "Ok"
+    }
+  },
+  {
+    "block": 1,
+    "index": 0,
+    "method": "area",
+    "result": 100
+  },
+  {
+    "block": 1,
+    "index": 1,
+    "method": "area",
+    "result": 314.2472332656507
+  },
+  {
+    "block": 3,
+    "index": 0,
+    "method": "join",
+    "result": {
+      "0": {
+        "type": "Subpath",
+        "start": {
+          "type": "Point",
+          "x": 0,
+          "y": 0
+        },
+        "segments": {
+          "type": "NonEmpty",
+          "head": {
+            "type": "CubicBezier",
+            "start": {
+              "type": "Point",
+              "x": 0,
+              "y": 0
+            },
+            "control1": {
+              "type": "Point",
+              "x": 0,
+              "y": 0
+            },
+            "control2": {
+              "type": "Point",
+              "x": 10,
+              "y": 0
+            },
+            "end": {
+              "type": "Point",
+              "x": 10,
+              "y": 0
+            }
+          },
+          "tail": {
+            "type": "NonEmpty",
+            "head": {
+              "type": "CubicBezier",
+              "start": {
+                "type": "Point",
+                "x": 10,
+                "y": 0
+              },
+              "control1": {
+                "type": "Point",
+                "x": 10,
+                "y": 0
+              },
+              "control2": {
+                "type": "Point",
+                "x": 20,
+                "y": 10
+              },
+              "end": {
+                "type": "Point",
+                "x": 20,
+                "y": 10
+              }
+            },
+            "tail": {
+              "type": "Empty"
+            }
+          }
+        },
+        "closed": false
+      },
+      "type": "Ok"
+    }
+  },
+  {
+    "block": 3,
+    "index": 1,
+    "method": "join",
+    "result": {
+      "0": {
+        "type": "Discontinuous",
+        "previous_index": 0,
+        "next_index": 1,
+        "expected": {
+          "type": "Point",
+          "x": 10,
+          "y": 0
+        },
+        "got": {
+          "type": "Point",
+          "x": 20,
+          "y": 10
+        },
+        "distance": 14.142135623730951
+      },
+      "type": "Error"
+    }
+  },
+  {
+    "block": 3,
+    "index": 2,
+    "method": "join",
+    "result": {
+      "0": {
+        "type": "Discontinuous",
+        "previous_index": 0,
+        "next_index": 1,
+        "expected": {
+          "type": "Point",
+          "x": 10,
+          "y": 0
+        },
+        "got": {
+          "type": "Point",
+          "x": 30,
+          "y": 10
+        },
+        "distance": 22.360679774997898
+      },
+      "type": "Error"
+    }
+  },
+  {
+    "block": 3,
+    "index": 3,
+    "method": "join",
+    "result": {
+      "0": {
+        "type": "Discontinuous",
+        "previous_index": 1,
+        "next_index": 2,
+        "expected": {
+          "type": "Point",
+          "x": 20,
+          "y": 10
+        },
+        "got": {
+          "type": "Point",
+          "x": 0,
+          "y": 0
+        },
+        "distance": 22.360679774997898
+      },
+      "type": "Error"
+    }
+  },
+  {
+    "block": 4,
+    "index": 0,
+    "method": "join",
+    "result": {
+      "0": {
+        "type": "Discontinuous",
+        "previous_index": 0,
+        "next_index": 1,
+        "expected": {
+          "type": "Point",
+          "x": 10,
+          "y": 0
+        },
+        "got": {
+          "type": "Point",
+          "x": 10.00000000000001,
+          "y": 1e-14
+        },
+        "distance": 1.461492286506589e-14
+      },
+      "type": "Error"
+    }
+  },
+  {
+    "block": 4,
+    "index": 1,
+    "method": "join",
+    "result": {
+      "0": {
+        "type": "Discontinuous",
+        "previous_index": 0,
+        "next_index": 1,
+        "expected": {
+          "type": "Point",
+          "x": 10,
+          "y": 0
+        },
+        "got": {
+          "type": "Point",
+          "x": 10.00000000000001,
+          "y": 1e-14
+        },
+        "distance": 1.461492286506589e-14
+      },
+      "type": "Error"
+    }
+  },
+  {
+    "block": 17,
+    "index": 0,
+    "method": "reverse",
+    "result": {
+      "type": "Subpath",
+      "start": {
+        "type": "Point",
+        "x": 70,
+        "y": 100
+      },
+      "segments": {
+        "type": "NonEmpty",
+        "head": {
+          "type": "CubicBezier",
+          "start": {
+            "type": "Point",
+            "x": 70,
+            "y": 100
+          },
+          "control1": {
+            "type": "Point",
+            "x": 70,
+            "y": 116.5685424949238
+          },
+          "control2": {
+            "type": "Point",
+            "x": 83.4314575050762,
+            "y": 130
+          },
+          "end": {
+            "type": "Point",
+            "x": 100,
+            "y": 130
+          }
+        },
+        "tail": {
+          "type": "NonEmpty",
+          "head": {
+            "type": "CubicBezier",
+            "start": {
+              "type": "Point",
+              "x": 100,
+              "y": 130
+            },
+            "control1": {
+              "type": "Point",
+              "x": 116.5685424949238,
+              "y": 130
+            },
+            "control2": {
+              "type": "Point",
+              "x": 130,
+              "y": 116.5685424949238
+            },
+            "end": {
+              "type": "Point",
+              "x": 130,
+              "y": 100
+            }
+          },
+          "tail": {
+            "type": "NonEmpty",
+            "head": {
+              "type": "CubicBezier",
+              "start": {
+                "type": "Point",
+                "x": 130,
+                "y": 100
+              },
+              "control1": {
+                "type": "Point",
+                "x": 130,
+                "y": 83.4314575050762
+              },
+              "control2": {
+                "type": "Point",
+                "x": 116.5685424949238,
+                "y": 70
+              },
+              "end": {
+                "type": "Point",
+                "x": 100,
+                "y": 70
+              }
+            },
+            "tail": {
+              "type": "NonEmpty",
+              "head": {
+                "type": "CubicBezier",
+                "start": {
+                  "type": "Point",
+                  "x": 100,
+                  "y": 70
+                },
+                "control1": {
+                  "type": "Point",
+                  "x": 83.4314575050762,
+                  "y": 70
+                },
+                "control2": {
+                  "type": "Point",
+                  "x": 70,
+                  "y": 83.4314575050762
+                },
+                "end": {
+                  "type": "Point",
+                  "x": 70,
+                  "y": 100
+                }
+              },
+              "tail": {
+                "type": "Empty"
+              }
+            }
+          }
+        }
+      },
+      "closed": true
+    }
+  },
+  {
+    "block": 24,
+    "index": 0,
+    "method": "flatten",
+    "result": {
+      "type": "Object",
+      "segments": 8,
+      "closed": true
+    }
+  },
+  {
+    "block": 25,
+    "index": 0,
+    "method": "join",
+    "result": {
+      "0": {
+        "type": "AlreadyClosed"
+      },
+      "type": "Error"
+    }
+  },
+  {
+    "block": 25,
+    "index": 1,
+    "method": "flatten",
+    "result": {
+      "type": "Object",
+      "segments": 8,
+      "closed": true
+    }
+  },
+  {
+    "block": 28,
+    "index": 0,
+    "method": "splitAt",
+    "result": {
+      "0": {
+        "0": {
+          "type": "Subpath",
+          "start": {
+            "type": "Point",
+            "x": 0,
+            "y": 0
+          },
+          "segments": {
+            "type": "NonEmpty",
+            "head": {
+              "type": "CubicBezier",
+              "start": {
+                "type": "Point",
+                "x": 0,
+                "y": 0
+              },
+              "control1": {
+                "type": "Point",
+                "x": 0,
+                "y": 0
+              },
+              "control2": {
+                "type": "Point",
+                "x": 12.5,
+                "y": 12.5
+              },
+              "end": {
+                "type": "Point",
+                "x": 25,
+                "y": 25
+              }
+            },
+            "tail": {
+              "type": "Empty"
+            }
+          },
+          "closed": false
+        },
+        "1": {
+          "type": "Subpath",
+          "start": {
+            "type": "Point",
+            "x": 25,
+            "y": 25
+          },
+          "segments": {
+            "type": "NonEmpty",
+            "head": {
+              "type": "CubicBezier",
+              "start": {
+                "type": "Point",
+                "x": 25,
+                "y": 25
+              },
+              "control1": {
+                "type": "Point",
+                "x": 37.5,
+                "y": 37.5
+              },
+              "control2": {
+                "type": "Point",
+                "x": 50,
+                "y": 50
+              },
+              "end": {
+                "type": "Point",
+                "x": 50,
+                "y": 50
+              }
+            },
+            "tail": {
+              "type": "Empty"
+            }
+          },
+          "closed": false
+        },
+        "type": "Array"
+      },
+      "type": "Ok"
+    }
+  },
+  {
+    "block": 29,
+    "index": 0,
+    "method": "splitAt",
+    "result": {
+      "0": {
+        "0": {
+          "type": "Subpath",
+          "start": {
+            "type": "Point",
+            "x": 0,
+            "y": 0
+          },
+          "segments": {
+            "type": "NonEmpty",
+            "head": {
+              "type": "CubicBezier",
+              "start": {
+                "type": "Point",
+                "x": 0,
+                "y": 0
+              },
+              "control1": {
+                "type": "Point",
+                "x": 0,
+                "y": 0
+              },
+              "control2": {
+                "type": "Point",
+                "x": 25,
+                "y": 25
+              },
+              "end": {
+                "type": "Point",
+                "x": 50,
+                "y": 50
+              }
+            },
+            "tail": {
+              "type": "Empty"
+            }
+          },
+          "closed": false
+        },
+        "1": {
+          "type": "Subpath",
+          "start": {
+            "type": "Point",
+            "x": 50,
+            "y": 50
+          },
+          "segments": {
+            "type": "NonEmpty",
+            "head": {
+              "type": "CubicBezier",
+              "start": {
+                "type": "Point",
+                "x": 50,
+                "y": 50
+              },
+              "control1": {
+                "type": "Point",
+                "x": 75,
+                "y": 75
+              },
+              "control2": {
+                "type": "Point",
+                "x": 100,
+                "y": 100
+              },
+              "end": {
+                "type": "Point",
+                "x": 100,
+                "y": 100
+              }
+            },
+            "tail": {
+              "type": "Empty"
+            }
+          },
+          "closed": false
+        },
+        "type": "Array"
+      },
+      "type": "Ok"
+    }
+  }
+]

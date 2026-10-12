@@ -8,7 +8,8 @@
       "test_blocks": [
         {
           "title_expression": "'Curve#classify()'",
-          "status": "pending"
+          "status": "no-direct-public-counterpart",
+          "comparison_report": "curve-remaining-status.json"
         },
         {
           "title_expression": "'Curve#getPointAtTime()'",
@@ -37,7 +38,8 @@
         },
         {
           "title_expression": "'Curve#getTimeAt()'",
-          "status": "pending"
+          "status": "adapted-geometry-checks",
+          "comparison_report": "curve-remaining-status.json"
         },
         {
           "title_expression": "'Curve#getTimeAt() with straight curve'",
@@ -56,19 +58,23 @@
         },
         {
           "title_expression": "'Curve#getLocationAt()'",
-          "status": "pending"
+          "status": "adapted-geometry-checks",
+          "comparison_report": "curve-remaining-status.json"
         },
         {
           "title_expression": "'Curve#isStraight()'",
-          "status": "pending"
+          "status": "no-direct-public-counterpart",
+          "comparison_report": "curve-remaining-status.json"
         },
         {
           "title_expression": "'Curve#isLinear()'",
-          "status": "pending"
+          "status": "no-direct-public-counterpart",
+          "comparison_report": "curve-remaining-status.json"
         },
         {
           "title_expression": "'Curve#getTimeOf()'",
-          "status": "pending"
+          "status": "adapted-geometry-checks",
+          "comparison_report": "curve-remaining-status.json"
         },
         {
           "title_expression": "'Curve#getPartLength() with straight curve'",
@@ -77,11 +83,13 @@
         },
         {
           "title_expression": "'Curve#divideAt(offset)'",
-          "status": "pending"
+          "status": "adapted-geometry-checks",
+          "comparison_report": "curve-remaining-status.json"
         },
         {
           "title_expression": "'Curve#getTimesWithTangent()'",
-          "status": "pending"
+          "status": "adapted-geometry-checks",
+          "comparison_report": "curve-remaining-status.json"
         }
       ]
     },
@@ -90,163 +98,203 @@
       "test_blocks": [
         {
           "title_expression": "'Path#length'",
-          "status": "pending"
+          "status": "adapted-geometry-checks",
+          "comparison_report": "path-status.json"
         },
         {
           "title_expression": "'Path#area'",
-          "status": "pending"
+          "status": "adapted-geometry-checks",
+          "comparison_report": "path-status.json"
         },
         {
           "title_expression": "'Path#equals(path)'",
-          "status": "pending"
+          "status": "object-api-out-of-scope",
+          "comparison_report": "path-status.json"
         },
         {
           "title_expression": "'Path#join(path)'",
-          "status": "pending"
+          "status": "adapted-geometry-checks",
+          "comparison_report": "path-status.json"
         },
         {
           "title_expression": "'Path#join(path, tolerance)'",
-          "status": "pending"
+          "status": "adapted-geometry-checks",
+          "comparison_report": "path-status.json"
         },
         {
           "title_expression": "'Path#remove()'",
-          "status": "pending"
+          "status": "object-api-out-of-scope",
+          "comparison_report": "path-status.json"
         },
         {
           "title_expression": "'Path#removeSegments()'",
-          "status": "pending"
+          "status": "object-api-out-of-scope",
+          "comparison_report": "path-status.json"
         },
         {
           "title_expression": "'Is the path deselected after setting a new list of segments?'",
-          "status": "pending"
+          "status": "object-api-out-of-scope",
+          "comparison_report": "path-status.json"
         },
         {
           "title_expression": "'Setting Path#fullySelected=true on an empty path should only set path#selected=true'",
-          "status": "pending"
+          "status": "object-api-out-of-scope",
+          "comparison_report": "path-status.json"
         },
         {
           "title_expression": "'After removing all segments of a fully selected path, it should still be selected.'",
-          "status": "pending"
+          "status": "object-api-out-of-scope",
+          "comparison_report": "path-status.json"
         },
         {
           "title_expression": "'After removing all segments of a selected path, it should still be selected.'",
-          "status": "pending"
+          "status": "object-api-out-of-scope",
+          "comparison_report": "path-status.json"
         },
         {
           "title_expression": "'After simplifying a path using #simplify(), the path should stay fullySelected'",
-          "status": "pending"
+          "status": "object-api-out-of-scope",
+          "comparison_report": "path-status.json"
         },
         {
           "title_expression": "'After cloning a selected item, it should be added to the Project#selectedItems array'",
-          "status": "pending"
+          "status": "object-api-out-of-scope",
+          "comparison_report": "path-status.json"
         },
         {
           "title_expression": "'After simplifying a path using #simplify(), the path should stay selected'",
-          "status": "pending"
+          "status": "object-api-out-of-scope",
+          "comparison_report": "path-status.json"
         },
         {
           "title_expression": "'After smoothing a path using #smooth(), the path should stay fullySelected'",
-          "status": "pending"
+          "status": "object-api-out-of-scope",
+          "comparison_report": "path-status.json"
         },
         {
           "title_expression": "'After smoothing a path using #smooth(), the path should stay selected'",
-          "status": "pending"
+          "status": "object-api-out-of-scope",
+          "comparison_report": "path-status.json"
         },
         {
           "title_expression": "'After selecting a segment, Path#selected should return true'",
-          "status": "pending"
+          "status": "object-api-out-of-scope",
+          "comparison_report": "path-status.json"
         },
         {
           "title_expression": "'Path#reverse()'",
-          "status": "pending"
+          "status": "adapted-geometry-checks",
+          "comparison_report": "path-status.json"
         },
         {
           "title_expression": "'Path#reverse() should adjust segment indices'",
-          "status": "pending"
+          "status": "object-api-out-of-scope",
+          "comparison_report": "path-status.json"
         },
         {
           "title_expression": "'Path#fullySelected'",
-          "status": "pending"
+          "status": "object-api-out-of-scope",
+          "comparison_report": "path-status.json"
         },
         {
           "title_expression": "'Simplifying a path with three segments of the same position should not throw an error'",
-          "status": "pending"
+          "status": "adapter-required",
+          "comparison_report": "path-status.json"
         },
         {
           "title_expression": "'Path#interpolate(from, to, factor)'",
-          "status": "pending"
+          "status": "adapter-required",
+          "comparison_report": "path-status.json"
         },
         {
           "title_expression": "'Path#curves synchronisation'",
-          "status": "pending"
+          "status": "object-api-out-of-scope",
+          "comparison_report": "path-status.json"
         },
         {
           "title_expression": "'Path#curves on closed paths'",
-          "status": "pending"
+          "status": "object-api-out-of-scope",
+          "comparison_report": "path-status.json"
         },
         {
           "title_expression": "'Path#flatten(maxDistance)'",
-          "status": "pending"
+          "status": "adapted-geometry-checks",
+          "comparison_report": "path-status.json"
         },
         {
           "title_expression": "'Path#single segment closed path flatten (#1338)'",
-          "status": "pending"
+          "status": "adapted-geometry-checks",
+          "comparison_report": "path-status.json"
         },
         {
           "title_expression": "'Path#curves after removing a segment - 1'",
-          "status": "pending"
+          "status": "object-api-out-of-scope",
+          "comparison_report": "path-status.json"
         },
         {
           "title_expression": "'Path#curves after removing a segment - 2'",
-          "status": "pending"
+          "status": "object-api-out-of-scope",
+          "comparison_report": "path-status.json"
         },
         {
           "title_expression": "'Splitting a straight path should produce segments without handles'",
-          "status": "pending"
+          "status": "adapted-geometry-checks",
+          "comparison_report": "path-status.json"
         },
         {
           "title_expression": "'Splitting a path with one curve in the middle result in two paths of the same length with one curve each'",
-          "status": "pending"
+          "status": "adapted-geometry-checks",
+          "comparison_report": "path-status.json"
         },
         {
           "title_expression": "'Path#lineTo(point);'",
-          "status": "pending"
+          "status": "adapted-geometry-checks",
+          "comparison_report": "path-status.json"
         },
         {
           "title_expression": "'Path#arcTo(from, through, to);'",
-          "status": "pending"
+          "status": "adapter-required",
+          "comparison_report": "path-status.json"
         },
         {
           "title_expression": "'Path#arcTo(from, through, to); where from, through and to all share the same y position and through lies in between from and to'",
-          "status": "pending"
+          "status": "adapter-required",
+          "comparison_report": "path-status.json"
         },
         {
           "title_expression": "'Path#arcTo(from, through, to); where from, through and to all share the same y position and through lies to the right of to'",
-          "status": "pending"
+          "status": "adapter-required",
+          "comparison_report": "path-status.json"
         },
         {
           "title_expression": "'Path#arcTo(from, through, to); where from, through and to all share the same y position and through lies to the left of to'",
-          "status": "pending"
+          "status": "adapter-required",
+          "comparison_report": "path-status.json"
         },
         {
           "title_expression": "'Path#getOffsetsWithTangent()'",
-          "status": "pending"
+          "status": "adapter-required",
+          "comparison_report": "path-status.json"
         },
         {
           "title_expression": "'Path#add() with a lot of segments (#1493)'",
-          "status": "pending"
+          "status": "adapter-required",
+          "comparison_report": "path-status.json"
         },
         {
           "title_expression": "'Path#arcTo(through, to) is on through point side (#1477)'",
-          "status": "pending"
+          "status": "adapter-required",
+          "comparison_report": "path-status.json"
         },
         {
           "title_expression": "'Path#arcTo(to, radius, rotation, clockwise, large) when from and to are equal (#1613)'",
-          "status": "pending"
+          "status": "adapter-required",
+          "comparison_report": "path-status.json"
         },
         {
           "title_expression": "'Path#closed with blend mode'",
-          "status": "pending"
+          "status": "object-api-out-of-scope",
+          "comparison_report": "path-status.json"
         }
       ]
     },

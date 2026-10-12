@@ -1,0 +1,50 @@
+[
+  {
+    "block": 0,
+    "title": "Curve#classify()",
+    "status": "no-direct-public-counterpart",
+    "evidence": "Paper cubic classification labels and associated roots have no directly equivalent public classifier; preserved for potential geometry-specific adapters."
+  },
+  {
+    "block": 6,
+    "title": "Curve#getTimeAt()",
+    "status": "adapted-geometry-checks",
+    "evidence": "Negative end-relative distances translated to start-relative distances; round trips use Gleam length, not Paper length. Invalid distances asserted as errors."
+  },
+  {
+    "block": 10,
+    "title": "Curve#getLocationAt()",
+    "status": "adapted-geometry-checks",
+    "evidence": "Paper null maps to documented InvalidLengthDistance; test uses point-at-length rather than a mutable CurveLocation object."
+  },
+  {
+    "block": 11,
+    "title": "Curve#isStraight()",
+    "status": "no-direct-public-counterpart",
+    "evidence": "No equivalent public isStraight predicate; control-point collinearity alone would lose overshoot/reversal semantics."
+  },
+  {
+    "block": 12,
+    "title": "Curve#isLinear()",
+    "status": "no-direct-public-counterpart",
+    "evidence": "No equivalent public isLinear predicate; linear parameterization differs from straight geometric trace."
+  },
+  {
+    "block": 13,
+    "title": "Curve#getTimeOf()",
+    "status": "adapted-geometry-checks",
+    "evidence": "100 segment/point projection checks across 40 rectangle points; distance verifies membership before using projected parameter."
+  },
+  {
+    "block": 15,
+    "title": "Curve#divideAt(offset)",
+    "status": "adapted-geometry-checks",
+    "evidence": "Two immutable segment divisions preserve source midpoint and reconstruct original parameterized geometry."
+  },
+  {
+    "block": 16,
+    "title": "Curve#getTimesWithTangent()",
+    "status": "adapted-geometry-checks",
+    "evidence": "Seven explicit direction cases mapped to supporting-line roots of the quadratic derivative; zero-speed candidates explicitly excluded in these fixtures. Missing-direction assertion has no equivalent."
+  }
+]

@@ -46,13 +46,14 @@ original tests in `test/`; generated copies must not be edited or committed.
 The standalone package compiles the library as a dependency, avoiding the
 root test directory's Erlang-only figure I/O. Its manifest locks dependencies.
 
-The selection runs 501 tests and covers curve intersections (including scale/translation
+The selection runs 530 tests and covers curve intersections (including scale/translation
 regressions), overlaps, SVG arc normalization, parsing, serialization, CSG,
 clipping, area, stroke, transforms, and signed-zero Bézier/ellipse splitting. Add suitable modules to the selection as coverage
 expands; portable modules and their support code must implement both targets.
 The Paper.js subsets add 21 intersection-location checks and 16 non-crossing
 Boolean checks, 45 curve checks, and 13 containment tests holding 331
-point assertions; the unresolved upstream
+point assertions, plus 16 adapted Path.js geometry checks and 13 further Curve.js
+checks; the unresolved upstream
 compatibility audit is separate. See `scripts/paperjs/README.md` and run
 `scripts/test-paperjs` for its current failures and coverage limitations.
 CI runs the same selection in separate Erlang and JavaScript jobs. Failures

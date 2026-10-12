@@ -20,3 +20,5 @@ svg_path_paper_boolean_basics_test.gleam
 svg_path_crossing_endpoint_test.gleam
 svg_path_paper_curves_test.gleam
 svg_path_paper_containment_test.gleam
+svg_path_paper_paths_test.gleam
+svg_path_paper_curve_remaining_test.gleam
