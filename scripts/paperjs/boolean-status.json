@@ -164,20 +164,20 @@
     "block": 1,
     "title": "frame.intersect(rect)",
     "operation": "intersect",
-    "status": "accepted-api-limitation",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Original CrossingMaxIterationsReached defect fixed and covered by portable endpoint-crossing regressions. After the fix, both backends return NonAffineOverlapCorrespondence for the original fixture and reduced touching cubic rectangles; equivalent Line rectangles succeed. User accepted the remaining overlap-correspondence failure as an API limitation on 2026-10-12. No further fix planned for this fixture."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 17,
     "block": 2,
     "title": "PathItem#resolveCrossings()",
     "operation": "resolveCrossings",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 18,
@@ -204,10 +204,10 @@
     "block": 2,
     "title": "PathItem#resolveCrossings()",
     "operation": "resolveCrossings",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 21,
@@ -294,10 +294,10 @@
     "block": 9,
     "title": "#784#issuecomment-144653463",
     "operation": "unite",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": true,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 30,
@@ -314,10 +314,10 @@
     "block": 11,
     "title": "#784#issuecomment-168605018",
     "operation": "unite",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 32,
@@ -364,70 +364,70 @@
     "block": 15,
     "title": "#865",
     "operation": "subtract",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 37,
     "block": 15,
     "title": "#865",
     "operation": "subtract",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 38,
     "block": 15,
     "title": "#865",
     "operation": "subtract",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 39,
     "block": 15,
     "title": "#865",
     "operation": "subtract",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 40,
     "block": 15,
     "title": "#865",
     "operation": "subtract",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 41,
     "block": 16,
     "title": "#870",
     "operation": "intersect",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 42,
     "block": 16,
     "title": "#870",
     "operation": "intersect",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 43,
@@ -454,20 +454,20 @@
     "block": 19,
     "title": "#878",
     "operation": "unite",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 46,
     "block": 19,
     "title": "#878",
     "operation": "subtract",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 47,
@@ -584,20 +584,20 @@
     "block": 26,
     "title": "#958",
     "operation": "intersect",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 59,
     "block": 27,
     "title": "#968",
     "operation": "subtract",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 60,
@@ -614,50 +614,50 @@
     "block": 30,
     "title": "#1054",
     "operation": "unite",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 62,
     "block": 30,
     "title": "#1054",
     "operation": "unite",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 63,
     "block": 31,
     "title": "#1059",
     "operation": "unite",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 64,
     "block": 32,
     "title": "#1075",
     "operation": "unite",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 65,
     "block": 33,
     "title": "#1091",
     "operation": "unite",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": true,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 66,
@@ -684,10 +684,10 @@
     "block": 34,
     "title": "#1109",
     "operation": "unite",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 69,
@@ -697,7 +697,7 @@
     "status": "confirmed-our-failure",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Reproduced on Erlang and JavaScript after crossing fix; exact closed/continuous source inputs and common fill rule validated. See boolean-native-failures.json and test_paperjs/src/paper_boolean_failures.gleam. Underlying cause(s) not yet established."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. Default operation fails; identified mechanism: tangent-only-sector-order. No production fix applied."
   },
   {
     "id": 70,
@@ -797,7 +797,7 @@
     "status": "confirmed-our-failure",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Reproduced on Erlang and JavaScript after crossing fix; exact closed/continuous source inputs and common fill rule validated. See boolean-native-failures.json and test_paperjs/src/paper_boolean_failures.gleam. Underlying cause(s) not yet established."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. Default operation fails; identified mechanism: boundary-side-classification. No production fix applied."
   },
   {
     "id": 80,
@@ -884,30 +884,30 @@
     "block": 41,
     "title": "Selected edge-cases from @hari's boolean-test suite",
     "operation": "unite",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 89,
     "block": 41,
     "title": "Selected edge-cases from @hari's boolean-test suite",
     "operation": "subtract",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 90,
     "block": 41,
     "title": "Selected edge-cases from @hari's boolean-test suite",
     "operation": "intersect",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 91,
@@ -1034,10 +1034,10 @@
     "block": 42,
     "title": "Selected test-cases provided by @iconexperience",
     "operation": "unite",
-    "status": "unclassified-library-error",
+    "status": "confirmed-our-failure",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. Default operation fails; identified mechanism: crossing-root-isolation. No production fix applied."
   },
   {
     "id": 104,
@@ -1074,30 +1074,30 @@
     "block": 42,
     "title": "Selected test-cases provided by @iconexperience",
     "operation": "unite",
-    "status": "unclassified-library-error",
+    "status": "confirmed-our-failure",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. Default operation fails; identified mechanism: crossing-root-isolation. No production fix applied."
   },
   {
     "id": 108,
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "unite",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 109,
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "intersect",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 110,
@@ -1137,7 +1137,7 @@
     "status": "confirmed-our-failure",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Reproduced on Erlang and JavaScript after crossing fix; exact closed/continuous source inputs and common fill rule validated. See boolean-native-failures.json and test_paperjs/src/paper_boolean_failures.gleam. Underlying cause(s) not yet established."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. Default operation fails; identified mechanism: boundary-side-classification. No production fix applied."
   },
   {
     "id": 114,
@@ -1164,40 +1164,40 @@
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "unite",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 117,
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "intersect",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 118,
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "unite",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 119,
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "intersect",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 120,
@@ -1227,7 +1227,7 @@
     "status": "confirmed-our-failure",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Reproduced on Erlang and JavaScript after crossing fix; exact closed/continuous source inputs and common fill rule validated. See boolean-native-failures.json and test_paperjs/src/paper_boolean_failures.gleam. Underlying cause(s) not yet established."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. Default operation fails; identified mechanism: minimum-size-filter-and-classification. No production fix applied."
   },
   {
     "id": 123,
@@ -1237,7 +1237,7 @@
     "status": "confirmed-our-failure",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Reproduced on Erlang and JavaScript after crossing fix; exact closed/continuous source inputs and common fill rule validated. See boolean-native-failures.json and test_paperjs/src/paper_boolean_failures.gleam. Underlying cause(s) not yet established."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. Default operation fails; identified mechanism: minimum-size-filter-and-classification. No production fix applied."
   },
   {
     "id": 124,
@@ -1264,80 +1264,80 @@
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "unite",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 127,
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "intersect",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 128,
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "unite",
-    "status": "unclassified-library-error",
+    "status": "confirmed-our-failure",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. Default operation fails; identified mechanism: crossing-root-isolation. No production fix applied."
   },
   {
     "id": 129,
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "intersect",
-    "status": "unclassified-library-error",
+    "status": "confirmed-our-failure",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. Default operation fails; identified mechanism: crossing-root-isolation. No production fix applied."
   },
   {
     "id": 130,
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "unite",
-    "status": "unclassified-library-error",
+    "status": "confirmed-our-failure",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. Default operation fails; identified mechanism: crossing-root-isolation. No production fix applied."
   },
   {
     "id": 131,
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "intersect",
-    "status": "unclassified-library-error",
+    "status": "confirmed-our-failure",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. Default operation fails; identified mechanism: crossing-root-isolation. No production fix applied."
   },
   {
     "id": 132,
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "unite",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 133,
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "intersect",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 134,
@@ -1384,20 +1384,20 @@
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "unite",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 139,
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "intersect",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 140,
@@ -1444,40 +1444,40 @@
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "unite",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 145,
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "intersect",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 146,
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "unite",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 147,
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "intersect",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 148,
@@ -1504,40 +1504,40 @@
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "unite",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 151,
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "intersect",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 152,
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "unite",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 153,
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "intersect",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 154,
@@ -1584,40 +1584,40 @@
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "unite",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 159,
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "intersect",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 160,
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "unite",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 161,
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "intersect",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 162,
@@ -1644,60 +1644,60 @@
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "unite",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 165,
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "intersect",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 166,
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "unite",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 167,
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "intersect",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 168,
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "unite",
-    "status": "unclassified-library-error",
+    "status": "confirmed-our-failure",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. Default operation fails; identified mechanism: crossing-root-isolation. No production fix applied."
   },
   {
     "id": 169,
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "intersect",
-    "status": "unclassified-library-error",
+    "status": "confirmed-our-failure",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. Default operation fails; identified mechanism: crossing-root-isolation. No production fix applied."
   },
   {
     "id": 170,
@@ -1727,17 +1727,17 @@
     "status": "confirmed-our-failure",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Reproduced on Erlang and JavaScript after crossing fix; exact closed/continuous source inputs and common fill rule validated. See boolean-native-failures.json and test_paperjs/src/paper_boolean_failures.gleam. Underlying cause(s) not yet established."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. Default operation fails; identified mechanism: tangent-only-sector-order. No production fix applied."
   },
   {
     "id": 173,
     "block": 45,
     "title": "#1513",
     "operation": "subtract",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 174,
@@ -1754,10 +1754,10 @@
     "block": 47,
     "title": "#1351",
     "operation": "unite",
-    "status": "unclassified-library-error",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Current error in boolean-screening-after-crossing.json; requires individual classification. Baseline predates e55a433."
+    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. The detected overlap fails the required affine parameter correspondence; this explains the blocker, not all later CSG behavior."
   },
   {
     "id": 176,

@@ -1,0 +1,418 @@
+[
+  {
+    "id": 103,
+    "context": {
+      "type": "Object",
+      "segment": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 312.1968,
+          "y": 265.6776
+        },
+        "control1": {
+          "type": "Point",
+          "x": 309.55039999999997,
+          "y": 271.324
+        },
+        "control2": {
+          "type": "Point",
+          "x": 299.9904,
+          "y": 273.3128
+        },
+        "end": {
+          "type": "Point",
+          "x": 294.4,
+          "y": 273.3128
+        }
+      },
+      "lower": 0.9999999994999714,
+      "estimate": 0.9999999999999715,
+      "upper": 0.9999999999999858,
+      "options": {
+        "type": "CrossingOptions",
+        "samples": 100,
+        "signed_line_distance_tolerance": 1e-12,
+        "max_iterations": 100
+      },
+      "signed_line_distance_tolerance": 1e-12,
+      "controlValues": [
+        7.635199999994541,
+        1.9887999999945123,
+        -5.4569682106375694e-12,
+        -5.4569682106375694e-12
+      ]
+    },
+    "reportedResidual": -5.4569682106375694e-12,
+    "trueInteriorRoot": "0.99999904364425561136696806283248420847248739547213498935670661371715990406970905",
+    "floatRoot": 0.9999990436442556,
+    "bernsteinResidualAtFloatRoot": "-1.578185732937058582045197672900498920555865217294808122242880149250340E-22",
+    "rootInsideWindow": false,
+    "distanceToWindow": "9.5585571581453111357109924014615226083450833376064329338628284009593029095E-7",
+    "hasExactEndpointRoot": false
+  },
+  {
+    "id": 107,
+    "context": {
+      "type": "Object",
+      "segment": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 512,
+          "y": 640
+        },
+        "control1": {
+          "type": "Point",
+          "x": 512,
+          "y": 640
+        },
+        "control2": {
+          "type": "Point",
+          "x": 388.0405751528448,
+          "y": 332.07994673131026
+        },
+        "end": {
+          "type": "Point",
+          "x": 288.04,
+          "y": 332.0799999999999
+        }
+      },
+      "lower": 0.99999991300241,
+      "estimate": 0.99999991350241,
+      "upper": 0.9999999140024101,
+      "options": {
+        "type": "CrossingOptions",
+        "samples": 100,
+        "signed_line_distance_tolerance": 1e-12,
+        "max_iterations": 100
+      },
+      "signed_line_distance_tolerance": 1e-12,
+      "controlValues": [
+        -307.9200000000001,
+        -307.9200000000001,
+        5.3268689669039304e-05,
+        0
+      ]
+    },
+    "reportedResidual": 6.934897101018578e-12,
+    "trueInteriorRoot": "0.9999998270048149452118533434294463801862707784111230872757050419076323291980381",
+    "floatRoot": 0.9999998270048149,
+    "bernsteinResidualAtFloatRoot": "-1.7871944313579277873975955391053242015291707146456126218976040189127023E-21",
+    "rootInsideWindow": false,
+    "distanceToWindow": "8.59975950339450836265278680514810571024482519127242949580923676708019619E-8",
+    "hasExactEndpointRoot": true
+  },
+  {
+    "id": 128,
+    "context": {
+      "type": "Object",
+      "segment": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 487.8821067425946,
+          "y": 340.2688405948006
+        },
+        "control1": {
+          "type": "Point",
+          "x": 487.8821067425946,
+          "y": 340.2688405948006
+        },
+        "control2": {
+          "type": "Point",
+          "x": 529.4025393039343,
+          "y": 348.4286400051758
+        },
+        "end": {
+          "type": "Point",
+          "x": 529.4025393039343,
+          "y": 348.4286400051758
+        }
+      },
+      "lower": 0.9999999994999972,
+      "estimate": 0.9999999999999972,
+      "upper": 0.9999999999999987,
+      "options": {
+        "type": "CrossingOptions",
+        "samples": 100,
+        "signed_line_distance_tolerance": 1e-12,
+        "max_iterations": 100
+      },
+      "signed_line_distance_tolerance": 1e-12,
+      "controlValues": [
+        -41.520432561286384,
+        -41.520432561286384,
+        5.331912689143792e-11,
+        5.331912689143792e-11
+      ]
+    },
+    "reportedResidual": 5.331912689143792e-11,
+    "trueInteriorRoot": "0.99999934574048517353624037988096611303259998771010172267444496091527666561026545",
+    "floatRoot": 0.9999993457404852,
+    "bernsteinResidualAtFloatRoot": "6.371958078538520805073252485507791874299729777000134055355938679932084E-21",
+    "rootInsideWindow": false,
+    "distanceToWindow": "6.5375951200953601255768249606984684794930161702732555503908472333438973455E-7",
+    "hasExactEndpointRoot": false
+  },
+  {
+    "id": 129,
+    "context": {
+      "type": "Object",
+      "segment": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 487.8821067425946,
+          "y": 340.2688405948006
+        },
+        "control1": {
+          "type": "Point",
+          "x": 487.8821067425946,
+          "y": 340.2688405948006
+        },
+        "control2": {
+          "type": "Point",
+          "x": 529.4025393039343,
+          "y": 348.4286400051758
+        },
+        "end": {
+          "type": "Point",
+          "x": 529.4025393039343,
+          "y": 348.4286400051758
+        }
+      },
+      "lower": 0.9999999994999972,
+      "estimate": 0.9999999999999972,
+      "upper": 0.9999999999999987,
+      "options": {
+        "type": "CrossingOptions",
+        "samples": 100,
+        "signed_line_distance_tolerance": 1e-12,
+        "max_iterations": 100
+      },
+      "signed_line_distance_tolerance": 1e-12,
+      "controlValues": [
+        -41.520432561286384,
+        -41.520432561286384,
+        5.331912689143792e-11,
+        5.331912689143792e-11
+      ]
+    },
+    "reportedResidual": 5.331912689143792e-11,
+    "trueInteriorRoot": "0.99999934574048517353624037988096611303259998771010172267444496091527666561026545",
+    "floatRoot": 0.9999993457404852,
+    "bernsteinResidualAtFloatRoot": "6.371958078538520805073252485507791874299729777000134055355938679932084E-21",
+    "rootInsideWindow": false,
+    "distanceToWindow": "6.5375951200953601255768249606984684794930161702732555503908472333438973455E-7",
+    "hasExactEndpointRoot": false
+  },
+  {
+    "id": 130,
+    "context": {
+      "type": "Object",
+      "segment": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 100.10301277238074,
+          "y": 299.8360064274938
+        },
+        "control1": {
+          "type": "Point",
+          "x": 100.10301277238074,
+          "y": 299.8360064274938
+        },
+        "control2": {
+          "type": "Point",
+          "x": 192.98476439737567,
+          "y": 381.03840618337944
+        },
+        "end": {
+          "type": "Point",
+          "x": 192.98476439737567,
+          "y": 381.03840618337944
+        }
+      },
+      "lower": 0.9999999994999996,
+      "estimate": 0.9999999999999997,
+      "upper": 0.9999999999999998,
+      "options": {
+        "type": "CrossingOptions",
+        "samples": 100,
+        "signed_line_distance_tolerance": 1e-12,
+        "max_iterations": 100
+      },
+      "signed_line_distance_tolerance": 1e-12,
+      "controlValues": [
+        81.20239975584343,
+        81.20239975584343,
+        -4.217781679471955e-11,
+        -4.217781679471955e-11
+      ]
+    },
+    "reportedResidual": -4.217781679471955e-11,
+    "trueInteriorRoot": "0.9999995839006389623620325914280555140359162777819189108843118725820535462799407",
+    "floatRoot": 0.9999995839006389,
+    "bernsteinResidualAtFloatRoot": "8.183373575259129820660684419364362566614254189308773524748940401819024E-21",
+    "rootInsideWindow": false,
+    "distanceToWindow": "4.155993606632008745214797956008332014590344873391156881274179464537200593E-7",
+    "hasExactEndpointRoot": false
+  },
+  {
+    "id": 131,
+    "context": {
+      "type": "Object",
+      "segment": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 100.10301277238074,
+          "y": 299.8360064274938
+        },
+        "control1": {
+          "type": "Point",
+          "x": 100.10301277238074,
+          "y": 299.8360064274938
+        },
+        "control2": {
+          "type": "Point",
+          "x": 192.98476439737567,
+          "y": 381.03840618337944
+        },
+        "end": {
+          "type": "Point",
+          "x": 192.98476439737567,
+          "y": 381.03840618337944
+        }
+      },
+      "lower": 0.9999999994999996,
+      "estimate": 0.9999999999999997,
+      "upper": 0.9999999999999998,
+      "options": {
+        "type": "CrossingOptions",
+        "samples": 100,
+        "signed_line_distance_tolerance": 1e-12,
+        "max_iterations": 100
+      },
+      "signed_line_distance_tolerance": 1e-12,
+      "controlValues": [
+        81.20239975584343,
+        81.20239975584343,
+        -4.217781679471955e-11,
+        -4.217781679471955e-11
+      ]
+    },
+    "reportedResidual": -4.217781679471955e-11,
+    "trueInteriorRoot": "0.9999995839006389623620325914280555140359162777819189108843118725820535462799407",
+    "floatRoot": 0.9999995839006389,
+    "bernsteinResidualAtFloatRoot": "8.183373575259129820660684419364362566614254189308773524748940401819024E-21",
+    "rootInsideWindow": false,
+    "distanceToWindow": "4.155993606632008745214797956008332014590344873391156881274179464537200593E-7",
+    "hasExactEndpointRoot": false
+  },
+  {
+    "id": 168,
+    "context": {
+      "type": "Object",
+      "segment": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 479.86630925710153,
+          "y": 107.76493242524054
+        },
+        "control1": {
+          "type": "Point",
+          "x": 465.2684050136691,
+          "y": 111.21284998937328
+        },
+        "control2": {
+          "type": "Point",
+          "x": 450.6709242911992,
+          "y": 114.66066752097116
+        },
+        "end": {
+          "type": "Point",
+          "x": 450.6709242911992,
+          "y": 114.66066752097116
+        }
+      },
+      "lower": 0.9999999994999941,
+      "estimate": 0.9999999999999941,
+      "upper": 0.9999999999999971,
+      "options": {
+        "type": "CrossingOptions",
+        "samples": 100,
+        "signed_line_distance_tolerance": 1e-12,
+        "max_iterations": 100
+      },
+      "signed_line_distance_tolerance": 1e-12,
+      "controlValues": [
+        29.195384965872563,
+        14.597480722440139,
+        -2.97859514830634e-11,
+        -2.97859514830634e-11
+      ]
+    },
+    "reportedResidual": -2.97859514830634e-11,
+    "trueInteriorRoot": "0.99999917528058981452174928274516742039986769009389910682959960382809994074800495",
+    "floatRoot": 0.9999991752805898,
+    "bernsteinResidualAtFloatRoot": "1.659466514661563264042788790992473105931363600286561172099212924438989E-21",
+    "rootInsideWindow": false,
+    "distanceToWindow": "8.2421940425992603470437998157631090959262094464317040039617190005925199505E-7",
+    "hasExactEndpointRoot": false
+  },
+  {
+    "id": 169,
+    "context": {
+      "type": "Object",
+      "segment": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 479.86630925710153,
+          "y": 107.76493242524054
+        },
+        "control1": {
+          "type": "Point",
+          "x": 465.2684050136691,
+          "y": 111.21284998937328
+        },
+        "control2": {
+          "type": "Point",
+          "x": 450.6709242911992,
+          "y": 114.66066752097116
+        },
+        "end": {
+          "type": "Point",
+          "x": 450.6709242911992,
+          "y": 114.66066752097116
+        }
+      },
+      "lower": 0.9999999994999941,
+      "estimate": 0.9999999999999941,
+      "upper": 0.9999999999999971,
+      "options": {
+        "type": "CrossingOptions",
+        "samples": 100,
+        "signed_line_distance_tolerance": 1e-12,
+        "max_iterations": 100
+      },
+      "signed_line_distance_tolerance": 1e-12,
+      "controlValues": [
+        29.195384965872563,
+        14.597480722440139,
+        -2.97859514830634e-11,
+        -2.97859514830634e-11
+      ]
+    },
+    "reportedResidual": -2.97859514830634e-11,
+    "trueInteriorRoot": "0.99999917528058981452174928274516742039986769009389910682959960382809994074800495",
+    "floatRoot": 0.9999991752805898,
+    "bernsteinResidualAtFloatRoot": "1.659466514661563264042788790992473105931363600286561172099212924438989E-21",
+    "rootInsideWindow": false,
+    "distanceToWindow": "8.2421940425992603470437998157631090959262094464317040039617190005925199505E-7",
+    "hasExactEndpointRoot": false
+  }
+]

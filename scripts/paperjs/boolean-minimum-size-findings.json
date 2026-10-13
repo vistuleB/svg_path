@@ -1,0 +1,235 @@
+{
+  "date": "2026-10-13",
+  "scope": "Same source operands in fixtures 122 and 123. These are diagnostic option sweeps, not recommended production settings.",
+  "droppedConnector": [
+    {
+      "type": "Object",
+      "kind": "size-filter",
+      "size": 4.475995395897419e-06,
+      "minimum_length": 1e-05,
+      "segment": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 243.02905999678384,
+          "y": 272.453480258279
+        },
+        "control1": {
+          "type": "Point",
+          "x": 243.02906115274087,
+          "y": 272.453481234518
+        },
+        "control2": {
+          "type": "Point",
+          "x": 243.02906229262513,
+          "y": 272.45348219718306
+        },
+        "end": {
+          "type": "Point",
+          "x": 243.02906341643603,
+          "y": 272.45348314627375
+        }
+      }
+    }
+  ],
+  "minimumLengthSweep": [
+    {
+      "id": 122,
+      "variants": [
+        {
+          "minimum": 1e-05,
+          "validation": {
+            "0": {
+              "type": "ConstructionFailed"
+            },
+            "type": "Error"
+          },
+          "variants": [
+            {
+              "tol": 1e-06,
+              "imbalance": [
+                [
+                  "3",
+                  [
+                    1,
+                    2
+                  ]
+                ],
+                [
+                  "4",
+                  [
+                    2,
+                    1
+                  ]
+                ],
+                [
+                  "5",
+                  [
+                    1,
+                    0
+                  ]
+                ],
+                [
+                  "8",
+                  [
+                    2,
+                    1
+                  ]
+                ],
+                [
+                  "9",
+                  [
+                    0,
+                    1
+                  ]
+                ],
+                [
+                  "10",
+                  [
+                    0,
+                    1
+                  ]
+                ]
+              ]
+            },
+            {
+              "tol": 1e-07,
+              "imbalance": [
+                [
+                  "8",
+                  [
+                    2,
+                    1
+                  ]
+                ],
+                [
+                  "10",
+                  [
+                    0,
+                    1
+                  ]
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "minimum": 1e-07,
+          "buildError": {
+            "0": {
+              "type": "ArrangementGraphError",
+              "error": {
+                "type": "ConstructionFailed"
+              }
+            },
+            "type": "Error"
+          }
+        },
+        {
+          "minimum": 1e-09,
+          "buildError": {
+            "0": {
+              "type": "ArrangementGraphError",
+              "error": {
+                "type": "ConstructionFailed"
+              }
+            },
+            "type": "Error"
+          }
+        }
+      ]
+    },
+    {
+      "id": 123,
+      "variants": [
+        {
+          "minimum": 1e-05,
+          "validation": {
+            "0": {
+              "type": "ConstructionFailed"
+            },
+            "type": "Error"
+          },
+          "variants": [
+            {
+              "tol": 1e-06,
+              "imbalance": [
+                [
+                  "8",
+                  [
+                    2,
+                    1
+                  ]
+                ],
+                [
+                  "10",
+                  [
+                    0,
+                    1
+                  ]
+                ]
+              ]
+            },
+            {
+              "tol": 1e-07,
+              "imbalance": [
+                [
+                  "3",
+                  [
+                    0,
+                    1
+                  ]
+                ],
+                [
+                  "4",
+                  [
+                    1,
+                    0
+                  ]
+                ],
+                [
+                  "8",
+                  [
+                    2,
+                    1
+                  ]
+                ],
+                [
+                  "10",
+                  [
+                    0,
+                    1
+                  ]
+                ]
+              ]
+            }
+          ]
+        },
+        {
+          "minimum": 1e-07,
+          "buildError": {
+            "0": {
+              "type": "ArrangementGraphError",
+              "error": {
+                "type": "ConstructionFailed"
+              }
+            },
+            "type": "Error"
+          }
+        },
+        {
+          "minimum": 1e-09,
+          "buildError": {
+            "0": {
+              "type": "ArrangementGraphError",
+              "error": {
+                "type": "ConstructionFailed"
+              }
+            },
+            "type": "Error"
+          }
+        }
+      ]
+    }
+  ]
+}

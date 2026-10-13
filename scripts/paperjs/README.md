@@ -1,5 +1,26 @@
 # Paper.js regression compatibility audit
 
+## Current status (2026-10-13)
+
+**The audit is unfinished; do not describe this release as Paper.js parity.**
+The sections below retain chronological checkpoints. Their old "remaining work"
+and failure counts are historical, not a consolidated current status.
+
+The latest [Boolean error triage](BOOLEAN_ERROR_TRIAGE.md) reproduces all 69
+saved errors on Erlang and JavaScript and classifies the previously unclassified
+ones. Across the saved 178 comparisons: 102 earlier sampled matches, 55 understood
+overlap-contract limitations, **14 default failing comparisons** (eight crossing
+isolation failures and six topology/classification failures), and seven adapter
+cases. No errors remain unclassified in that saved screen. Classification is
+not repair, and the earlier 102 matches were not rerun in this triage.
+
+Intersection parameter/crossing coverage, unadapted assertions,
+diagnostic-to-regression promotion, and upstream files
+outside the 13-file inventory remain incomplete. See the final section of the
+triage document before planning release validation.
+
+## Historical investigation log
+
 This is an unfinished audit, not a claim of Paper.js compatibility or a release
 qualification. The first pass was diagnostic; crossing fix `e55a433` was subsequently approved
 and committed. See `BOOLEAN_AUDIT.md` for the baseline and follow-up results.

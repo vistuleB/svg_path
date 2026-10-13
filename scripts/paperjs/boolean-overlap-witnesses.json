@@ -1,0 +1,3622 @@
+[
+  {
+    "id": 16,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        1.0,
+        1.0,
+        0.0
+      ],
+      "transverse": 0.0,
+      "monotone": true,
+      "endpointGap": 6.969003152335063e-11,
+      "geometryDistanceBound": 6.969003152335063e-11,
+      "affineMismatch": 7.374823675077318,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 150,
+          "y": 160
+        },
+        "control1": {
+          "type": "Point",
+          "x": 150,
+          "y": 160
+        },
+        "control2": {
+          "type": "Point",
+          "x": 150,
+          "y": 80
+        },
+        "end": {
+          "type": "Point",
+          "x": 150,
+          "y": 80
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 150,
+          "y": 80.00000000006969
+        },
+        "control1": {
+          "type": "Point",
+          "x": 150,
+          "y": 102.96589799349547
+        },
+        "control2": {
+          "type": "Point",
+          "x": 150,
+          "y": 134.8636371427183
+        },
+        "end": {
+          "type": "Point",
+          "x": 150,
+          "y": 160.00000000000477
+        }
+      }
+    }
+  },
+  {
+    "id": 17,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        1.0,
+        1.0,
+        0.0
+      ],
+      "transverse": 0.0,
+      "monotone": true,
+      "endpointGap": 4.0671466194908135e-11,
+      "geometryDistanceBound": 4.0671466194908135e-11,
+      "affineMismatch": 11.617985621940246,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 150,
+          "y": 200
+        },
+        "control1": {
+          "type": "Point",
+          "x": 150,
+          "y": 200
+        },
+        "control2": {
+          "type": "Point",
+          "x": 100,
+          "y": 200
+        },
+        "end": {
+          "type": "Point",
+          "x": 100,
+          "y": 200
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 100,
+          "y": 200
+        },
+        "control1": {
+          "type": "Point",
+          "x": 100,
+          "y": 200
+        },
+        "control2": {
+          "type": "Point",
+          "x": 122.46107111832319,
+          "y": 200
+        },
+        "end": {
+          "type": "Point",
+          "x": 150.00000000004067,
+          "y": 200
+        }
+      }
+    }
+  },
+  {
+    "id": 20,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        9.778887033462524e-09,
+        1.0,
+        1.0,
+        1.1254719002286253e-08
+      ],
+      "transverse": 1.5149262301808083e-08,
+      "monotone": true,
+      "endpointGap": 1.0840454372723854e-07,
+      "geometryDistanceBound": 1.0840454380884263e-07,
+      "affineMismatch": 0.070803039706257,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 572.6813227553139,
+          "y": 305.479535820809
+        },
+        "control1": {
+          "type": "Point",
+          "x": 576.3023251998702,
+          "y": 304.9491851571779
+        },
+        "control2": {
+          "type": "Point",
+          "x": 578.8341920603752,
+          "y": 304.57835489946484
+        },
+        "end": {
+          "type": "Point",
+          "x": 578.8341920603752,
+          "y": 304.57835489946484
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 578.8341920603752,
+          "y": 304.57835489946484
+        },
+        "control1": {
+          "type": "Point",
+          "x": 578.8341920592329,
+          "y": 304.57835489166513
+        },
+        "control2": {
+          "type": "Point",
+          "x": 576.4683831541154,
+          "y": 304.924863441365
+        },
+        "end": {
+          "type": "Point",
+          "x": 572.6813227531389,
+          "y": 305.4795358058167
+        }
+      }
+    }
+  },
+  {
+    "id": 29,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        3.053760156035423e-05,
+        1.0,
+        1.0,
+        0.0
+      ],
+      "transverse": 2.2062561329238993e-07,
+      "monotone": true,
+      "endpointGap": 2.360497080378847e-07,
+      "geometryDistanceBound": 2.360497080378847e-07,
+      "affineMismatch": 2.892362378770518,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 352.11749924000907,
+          "y": 372.22000125020173
+        },
+        "control1": {
+          "type": "Point",
+          "x": 352.11749924000907,
+          "y": 372.22000125020173
+        },
+        "control2": {
+          "type": "Point",
+          "x": 380.15716053320796,
+          "y": 361.5533174872367
+        },
+        "end": {
+          "type": "Point",
+          "x": 380.15716053320796,
+          "y": 361.5533174872367
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 380.157160533209,
+          "y": 361.5533174872362
+        },
+        "control1": {
+          "type": "Point",
+          "x": 373.7497647518322,
+          "y": 363.9907815258317
+        },
+        "control2": {
+          "type": "Point",
+          "x": 352.11749931845384,
+          "y": 372.22000145641056
+        },
+        "end": {
+          "type": "Point",
+          "x": 352.11749931845384,
+          "y": 372.22000145641056
+        }
+      }
+    }
+  },
+  {
+    "id": 31,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0011575202834644982,
+        1.0,
+        1.0,
+        0.6130462033543149
+      ],
+      "transverse": 8.418733854260228e-08,
+      "monotone": true,
+      "endpointGap": 8.418733858240334e-08,
+      "geometryDistanceBound": 9.396810355887294e-08,
+      "affineMismatch": 8.647669020459491e-05,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 410.6261524612045,
+          "y": 207.9735406405153
+        },
+        "control1": {
+          "type": "Point",
+          "x": 410.6261524612045,
+          "y": 207.9735406405153
+        },
+        "control2": {
+          "type": "Point",
+          "x": 410.62602485170095,
+          "y": 207.97334673071606
+        },
+        "end": {
+          "type": "Point",
+          "x": 410.6259619224634,
+          "y": 207.9732510868053
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 410.6259619224634,
+          "y": 207.9732510868053
+        },
+        "control1": {
+          "type": "Point",
+          "x": 410.62589956050823,
+          "y": 207.97315630508692
+        },
+        "control2": {
+          "type": "Point",
+          "x": 410.62590071794074,
+          "y": 207.97315802558546
+        },
+        "end": {
+          "type": "Point",
+          "x": 410.6261525310172,
+          "y": 207.97354059345614
+        }
+      }
+    }
+  },
+  {
+    "id": 36,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        1.0,
+        1.0,
+        0.0
+      ],
+      "transverse": 5.684341886080802e-14,
+      "monotone": true,
+      "endpointGap": 7.003111510608102e-11,
+      "geometryDistanceBound": 7.003111510608102e-11,
+      "affineMismatch": 19.70209833066013,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 256.00000000000006,
+          "y": 200
+        },
+        "control1": {
+          "type": "Point",
+          "x": 256.00000000000006,
+          "y": 200
+        },
+        "control2": {
+          "type": "Point",
+          "x": 256.00000000000006,
+          "y": 175
+        },
+        "end": {
+          "type": "Point",
+          "x": 256.00000000000006,
+          "y": 150
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 256,
+          "y": 150
+        },
+        "control1": {
+          "type": "Point",
+          "x": 256,
+          "y": 150
+        },
+        "control2": {
+          "type": "Point",
+          "x": 256,
+          "y": 172.461071118263
+        },
+        "end": {
+          "type": "Point",
+          "x": 256,
+          "y": 199.99999999992997
+        }
+      }
+    }
+  },
+  {
+    "id": 37,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        1.0,
+        1.0,
+        0.0
+      ],
+      "transverse": 9.999996564147295e-08,
+      "monotone": true,
+      "endpointGap": 9.999999016324763e-08,
+      "geometryDistanceBound": 9.999999016324763e-08,
+      "affineMismatch": 19.70209833066013,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 255.99999990000003,
+          "y": 200
+        },
+        "control1": {
+          "type": "Point",
+          "x": 255.99999990000003,
+          "y": 200
+        },
+        "control2": {
+          "type": "Point",
+          "x": 255.99999990000003,
+          "y": 175
+        },
+        "end": {
+          "type": "Point",
+          "x": 255.99999990000003,
+          "y": 150
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 256,
+          "y": 150
+        },
+        "control1": {
+          "type": "Point",
+          "x": 256,
+          "y": 150
+        },
+        "control2": {
+          "type": "Point",
+          "x": 256,
+          "y": 172.461071118263
+        },
+        "end": {
+          "type": "Point",
+          "x": 256,
+          "y": 199.99999999992997
+        }
+      }
+    }
+  },
+  {
+    "id": 38,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        1.0,
+        1.0,
+        0.0
+      ],
+      "transverse": 1.0000007932831068e-07,
+      "monotone": true,
+      "endpointGap": 1.0000010385005748e-07,
+      "geometryDistanceBound": 1.0000010385005748e-07,
+      "affineMismatch": 19.70209833066013,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 256.0000001000001,
+          "y": 200
+        },
+        "control1": {
+          "type": "Point",
+          "x": 256.0000001000001,
+          "y": 200
+        },
+        "control2": {
+          "type": "Point",
+          "x": 256.0000001000001,
+          "y": 175
+        },
+        "end": {
+          "type": "Point",
+          "x": 256.0000001000001,
+          "y": 150
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 256,
+          "y": 150
+        },
+        "control1": {
+          "type": "Point",
+          "x": 256,
+          "y": 150
+        },
+        "control2": {
+          "type": "Point",
+          "x": 256,
+          "y": 172.461071118263
+        },
+        "end": {
+          "type": "Point",
+          "x": 256,
+          "y": 199.99999999992997
+        }
+      }
+    }
+  },
+  {
+    "id": 39,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        1.0,
+        1.0,
+        0.0
+      ],
+      "transverse": 9.999325811804738e-10,
+      "monotone": true,
+      "endpointGap": 1.0023819235990201e-09,
+      "geometryDistanceBound": 1.0023819235990201e-09,
+      "affineMismatch": 19.70209833066013,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 255.99999999900007,
+          "y": 200
+        },
+        "control1": {
+          "type": "Point",
+          "x": 255.99999999900007,
+          "y": 200
+        },
+        "control2": {
+          "type": "Point",
+          "x": 255.99999999900007,
+          "y": 175
+        },
+        "end": {
+          "type": "Point",
+          "x": 255.99999999900007,
+          "y": 150
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 256,
+          "y": 150
+        },
+        "control1": {
+          "type": "Point",
+          "x": 256,
+          "y": 150
+        },
+        "control2": {
+          "type": "Point",
+          "x": 256,
+          "y": 172.461071118263
+        },
+        "end": {
+          "type": "Point",
+          "x": 256,
+          "y": 199.99999999992997
+        }
+      }
+    }
+  },
+  {
+    "id": 40,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        1.0,
+        1.0,
+        0.0
+      ],
+      "transverse": 1.0000462680181954e-09,
+      "monotone": true,
+      "endpointGap": 1.0024953326719018e-09,
+      "geometryDistanceBound": 1.0024953326719018e-09,
+      "affineMismatch": 19.70209833066013,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 256.00000000100005,
+          "y": 200
+        },
+        "control1": {
+          "type": "Point",
+          "x": 256.00000000100005,
+          "y": 200
+        },
+        "control2": {
+          "type": "Point",
+          "x": 256.00000000100005,
+          "y": 175
+        },
+        "end": {
+          "type": "Point",
+          "x": 256.00000000100005,
+          "y": 150
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 256,
+          "y": 150
+        },
+        "control1": {
+          "type": "Point",
+          "x": 256,
+          "y": 150
+        },
+        "control2": {
+          "type": "Point",
+          "x": 256,
+          "y": 172.461071118263
+        },
+        "end": {
+          "type": "Point",
+          "x": 256,
+          "y": 199.99999999992997
+        }
+      }
+    }
+  },
+  {
+    "id": 41,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        1.0,
+        0.0,
+        1.0
+      ],
+      "transverse": 0.0,
+      "monotone": true,
+      "endpointGap": 1.4551915228366852e-11,
+      "geometryDistanceBound": 1.4551915228366852e-11,
+      "affineMismatch": 30.630023364892615,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 70.00000000001455,
+          "y": 50
+        },
+        "control1": {
+          "type": "Point",
+          "x": 110.84003115318531,
+          "y": 50
+        },
+        "control2": {
+          "type": "Point",
+          "x": 200,
+          "y": 50
+        },
+        "end": {
+          "type": "Point",
+          "x": 200,
+          "y": 50
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 70,
+          "y": 50
+        },
+        "control1": {
+          "type": "Point",
+          "x": 70,
+          "y": 50
+        },
+        "control2": {
+          "type": "Point",
+          "x": 159.1599688468147,
+          "y": 50
+        },
+        "end": {
+          "type": "Point",
+          "x": 199.99999999998545,
+          "y": 50
+        }
+      }
+    }
+  },
+  {
+    "id": 42,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        1.0,
+        0.0,
+        1.0
+      ],
+      "transverse": 0.0,
+      "monotone": true,
+      "endpointGap": 1.3727685654885136e-11,
+      "geometryDistanceBound": 1.3727685654885136e-11,
+      "affineMismatch": 22.214859954437852,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 50,
+          "y": 250
+        },
+        "control1": {
+          "type": "Point",
+          "x": 50,
+          "y": 250
+        },
+        "control2": {
+          "type": "Point",
+          "x": 50,
+          "y": 204.61981327258837
+        },
+        "end": {
+          "type": "Point",
+          "x": 50,
+          "y": 174.99999999998627
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 50,
+          "y": 250.0000000000137
+        },
+        "control1": {
+          "type": "Point",
+          "x": 50,
+          "y": 220.38018672741163
+        },
+        "control2": {
+          "type": "Point",
+          "x": 50,
+          "y": 175
+        },
+        "end": {
+          "type": "Point",
+          "x": 50,
+          "y": 175
+        }
+      }
+    }
+  },
+  {
+    "id": 45,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        1.0,
+        1.0,
+        0.0
+      ],
+      "transverse": 5.684341886080802e-14,
+      "monotone": true,
+      "endpointGap": 3.5470338916726225e-11,
+      "geometryDistanceBound": 3.5470338916726225e-11,
+      "affineMismatch": 23.458112288438777,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 139.99999999996453,
+          "y": 479.99999999999994
+        },
+        "control1": {
+          "type": "Point",
+          "x": 215.1810720682779,
+          "y": 479.99999999999994
+        },
+        "control2": {
+          "type": "Point",
+          "x": 341.2700267352812,
+          "y": 479.99999999999994
+        },
+        "end": {
+          "type": "Point",
+          "x": 400.0000000000054,
+          "y": 479.99999999999994
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 400,
+          "y": 480
+        },
+        "control1": {
+          "type": "Point",
+          "x": 400,
+          "y": 480
+        },
+        "control2": {
+          "type": "Point",
+          "x": 140,
+          "y": 480
+        },
+        "end": {
+          "type": "Point",
+          "x": 140,
+          "y": 480
+        }
+      }
+    }
+  },
+  {
+    "id": 46,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        1.0,
+        1.0,
+        0.0
+      ],
+      "transverse": 5.684341886080802e-14,
+      "monotone": true,
+      "endpointGap": 3.5470338916726225e-11,
+      "geometryDistanceBound": 3.5470338916726225e-11,
+      "affineMismatch": 23.458112288438777,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 139.99999999996453,
+          "y": 479.99999999999994
+        },
+        "control1": {
+          "type": "Point",
+          "x": 215.1810720682779,
+          "y": 479.99999999999994
+        },
+        "control2": {
+          "type": "Point",
+          "x": 341.2700267352812,
+          "y": 479.99999999999994
+        },
+        "end": {
+          "type": "Point",
+          "x": 400.0000000000054,
+          "y": 479.99999999999994
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 400,
+          "y": 480
+        },
+        "control1": {
+          "type": "Point",
+          "x": 400,
+          "y": 480
+        },
+        "control2": {
+          "type": "Point",
+          "x": 140,
+          "y": 480
+        },
+        "end": {
+          "type": "Point",
+          "x": 140,
+          "y": 480
+        }
+      }
+    }
+  },
+  {
+    "id": 58,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        1.0,
+        0.0,
+        1.0
+      ],
+      "transverse": 0.0,
+      "monotone": true,
+      "endpointGap": 5.115907697472721e-13,
+      "geometryDistanceBound": 5.115907697472721e-13,
+      "affineMismatch": 5.037615525451013,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 100,
+          "y": 220
+        },
+        "control1": {
+          "type": "Point",
+          "x": 100,
+          "y": 220
+        },
+        "control2": {
+          "type": "Point",
+          "x": 100,
+          "y": 211.94101457884634
+        },
+        "end": {
+          "type": "Point",
+          "x": 100,
+          "y": 200.0000000000005
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 100,
+          "y": 220
+        },
+        "control1": {
+          "type": "Point",
+          "x": 100,
+          "y": 220
+        },
+        "control2": {
+          "type": "Point",
+          "x": 100,
+          "y": 200
+        },
+        "end": {
+          "type": "Point",
+          "x": 100,
+          "y": 200
+        }
+      }
+    }
+  },
+  {
+    "id": 59,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        1.0,
+        0.0,
+        1.0
+      ],
+      "transverse": 0.0,
+      "monotone": true,
+      "endpointGap": 1.9326762412674725e-11,
+      "geometryDistanceBound": 1.9326762412674725e-11,
+      "affineMismatch": 3.0351334063580673,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 352,
+          "y": 344.0000000000193
+        },
+        "control1": {
+          "type": "Point",
+          "x": 352,
+          "y": 351.19439029653313
+        },
+        "control2": {
+          "type": "Point",
+          "x": 352,
+          "y": 356
+        },
+        "end": {
+          "type": "Point",
+          "x": 352,
+          "y": 356
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 352,
+          "y": 344
+        },
+        "control1": {
+          "type": "Point",
+          "x": 352,
+          "y": 344
+        },
+        "control2": {
+          "type": "Point",
+          "x": 352,
+          "y": 356
+        },
+        "end": {
+          "type": "Point",
+          "x": 352,
+          "y": 356
+        }
+      }
+    }
+  },
+  {
+    "id": 61,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        1.0,
+        0.0,
+        1.0
+      ],
+      "transverse": 0.0,
+      "monotone": true,
+      "endpointGap": 1.3130829756846651e-11,
+      "geometryDistanceBound": 1.3130829756846651e-11,
+      "affineMismatch": 2.131671043296464,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 315,
+          "y": 350
+        },
+        "control1": {
+          "type": "Point",
+          "x": 312.5,
+          "y": 350
+        },
+        "control2": {
+          "type": "Point",
+          "x": 310,
+          "y": 350
+        },
+        "end": {
+          "type": "Point",
+          "x": 310,
+          "y": 350
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 315,
+          "y": 350
+        },
+        "control1": {
+          "type": "Point",
+          "x": 315,
+          "y": 350
+        },
+        "control2": {
+          "type": "Point",
+          "x": 313.1844561154616,
+          "y": 350
+        },
+        "end": {
+          "type": "Point",
+          "x": 309.99999999998687,
+          "y": 350
+        }
+      }
+    }
+  },
+  {
+    "id": 62,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        1.0,
+        0.0,
+        1.0
+      ],
+      "transverse": 0.0,
+      "monotone": true,
+      "endpointGap": 5.788081125501776e-11,
+      "geometryDistanceBound": 5.788081125501776e-11,
+      "affineMismatch": 11.282110137645967,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 150,
+          "y": 150
+        },
+        "control1": {
+          "type": "Point",
+          "x": 150,
+          "y": 150
+        },
+        "control2": {
+          "type": "Point",
+          "x": 133.921641836803,
+          "y": 150
+        },
+        "end": {
+          "type": "Point",
+          "x": 120.00000000005788,
+          "y": 150
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 149.99999999996348,
+          "y": 150
+        },
+        "control1": {
+          "type": "Point",
+          "x": 133.83601480311188,
+          "y": 150
+        },
+        "control2": {
+          "type": "Point",
+          "x": 120,
+          "y": 150
+        },
+        "end": {
+          "type": "Point",
+          "x": 120,
+          "y": 150
+        }
+      }
+    }
+  },
+  {
+    "id": 63,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        0.9999997732229531,
+        1.0,
+        0.0
+      ],
+      "transverse": 1.3073980449320043e-12,
+      "monotone": true,
+      "endpointGap": 1.3128572867752149e-12,
+      "geometryDistanceBound": 1.3128572867752149e-12,
+      "affineMismatch": 3.703504536529752e-06,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 428.48408954611784,
+          "y": 189.03444010371618
+        },
+        "control1": {
+          "type": "Point",
+          "x": 428.4840846078214,
+          "y": 189.03444010371618
+        },
+        "control2": {
+          "type": "Point",
+          "x": 428.48407966952493,
+          "y": 189.0344401037166
+        },
+        "end": {
+          "type": "Point",
+          "x": 428.4840747312285,
+          "y": 189.0344401037175
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 428.4840747312317,
+          "y": 189.03444010371618
+        },
+        "control1": {
+          "type": "Point",
+          "x": 428.484084607244,
+          "y": 189.03444010371618
+        },
+        "control2": {
+          "type": "Point",
+          "x": 428.48408954611784,
+          "y": 189.03444010371618
+        },
+        "end": {
+          "type": "Point",
+          "x": 428.48408954611784,
+          "y": 189.03444010371618
+        }
+      }
+    }
+  },
+  {
+    "id": 64,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        1.1292286217212677e-06,
+        1.0,
+        0.0,
+        1.0
+      ],
+      "transverse": 0.0,
+      "monotone": true,
+      "endpointGap": 2.3282219258374124e-15,
+      "geometryDistanceBound": 2.3282219258374124e-15,
+      "affineMismatch": 4.789023777788901,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 315,
+          "y": 110
+        },
+        "control1": {
+          "type": "Point",
+          "x": 315,
+          "y": 110
+        },
+        "control2": {
+          "type": "Point",
+          "x": 315,
+          "y": 85
+        },
+        "end": {
+          "type": "Point",
+          "x": 315,
+          "y": 85
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 315,
+          "y": 109.99999999990436
+        },
+        "control1": {
+          "type": "Point",
+          "x": 315,
+          "y": 98.6481834727308
+        },
+        "control2": {
+          "type": "Point",
+          "x": 315,
+          "y": 85
+        },
+        "end": {
+          "type": "Point",
+          "x": 315,
+          "y": 85
+        }
+      }
+    }
+  },
+  {
+    "id": 65,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        1.2526288628578186e-07,
+        1.0,
+        0.0,
+        1.0
+      ],
+      "transverse": 1.1603958682826487e-08,
+      "monotone": true,
+      "endpointGap": 1.160395868283233e-08,
+      "geometryDistanceBound": 1.160396207106009e-08,
+      "affineMismatch": 7.3253929264599916e-06,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 223.66925792366396,
+          "y": 396.894
+        },
+        "control1": {
+          "type": "Point",
+          "x": 223.66937435255593,
+          "y": 396.894
+        },
+        "control2": {
+          "type": "Point",
+          "x": 223.6694810170051,
+          "y": 396.894
+        },
+        "end": {
+          "type": "Point",
+          "x": 223.66957791168272,
+          "y": 396.894
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 223.6692579237077,
+          "y": 396.89400001160396
+        },
+        "control1": {
+          "type": "Point",
+          "x": 223.66936458628354,
+          "y": 396.8940000092239
+        },
+        "control2": {
+          "type": "Point",
+          "x": 223.66947124894483,
+          "y": 396.8940000072099
+        },
+        "end": {
+          "type": "Point",
+          "x": 223.6695779116916,
+          "y": 396.8940000055621
+        }
+      }
+    }
+  },
+  {
+    "id": 68,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        1.0,
+        0.0,
+        1.0
+      ],
+      "transverse": 0.0,
+      "monotone": true,
+      "endpointGap": 4.4707348934025504e-11,
+      "geometryDistanceBound": 4.4707348934025504e-11,
+      "affineMismatch": 3.1430421243045314,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 260.5870762798793,
+          "y": 181.99677727655697
+        },
+        "control1": {
+          "type": "Point",
+          "x": 260.5870762798793,
+          "y": 181.99677727655697
+        },
+        "control2": {
+          "type": "Point",
+          "x": 260.5870762798793,
+          "y": 192.5498260757673
+        },
+        "end": {
+          "type": "Point",
+          "x": 260.5870762798793,
+          "y": 199.9999999999553
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 260.5870762798793,
+          "y": 181.99677727655697
+        },
+        "control1": {
+          "type": "Point",
+          "x": 260.5870762798793,
+          "y": 181.99677727655697
+        },
+        "control2": {
+          "type": "Point",
+          "x": 260.5870762798793,
+          "y": 200
+        },
+        "end": {
+          "type": "Point",
+          "x": 260.5870762798793,
+          "y": 200
+        }
+      }
+    }
+  },
+  {
+    "id": 88,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        1.0,
+        0.0,
+        1.0
+      ],
+      "transverse": 0.0,
+      "monotone": true,
+      "endpointGap": 4.757794158649631e-11,
+      "geometryDistanceBound": 4.757794158649631e-11,
+      "affineMismatch": 0.0025361180318057563,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 256.0999999999934,
+          "y": 157.4
+        },
+        "control1": {
+          "type": "Point",
+          "x": 255.97662284657497,
+          "y": 157.4
+        },
+        "control2": {
+          "type": "Point",
+          "x": 255.8532808386916,
+          "y": 157.4
+        },
+        "end": {
+          "type": "Point",
+          "x": 255.7299999999524,
+          "y": 157.4
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 256.1,
+          "y": 157.4
+        },
+        "control1": {
+          "type": "Point",
+          "x": 255.98,
+          "y": 157.4
+        },
+        "control2": {
+          "type": "Point",
+          "x": 255.85666666666665,
+          "y": 157.4
+        },
+        "end": {
+          "type": "Point",
+          "x": 255.73,
+          "y": 157.4
+        }
+      }
+    }
+  },
+  {
+    "id": 89,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        1.0,
+        0.0,
+        1.0
+      ],
+      "transverse": 0.0,
+      "monotone": true,
+      "endpointGap": 4.757794158649631e-11,
+      "geometryDistanceBound": 4.757794158649631e-11,
+      "affineMismatch": 0.0025361180318057563,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 256.0999999999934,
+          "y": 157.4
+        },
+        "control1": {
+          "type": "Point",
+          "x": 255.97662284657497,
+          "y": 157.4
+        },
+        "control2": {
+          "type": "Point",
+          "x": 255.8532808386916,
+          "y": 157.4
+        },
+        "end": {
+          "type": "Point",
+          "x": 255.7299999999524,
+          "y": 157.4
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 256.1,
+          "y": 157.4
+        },
+        "control1": {
+          "type": "Point",
+          "x": 255.98,
+          "y": 157.4
+        },
+        "control2": {
+          "type": "Point",
+          "x": 255.85666666666665,
+          "y": 157.4
+        },
+        "end": {
+          "type": "Point",
+          "x": 255.73,
+          "y": 157.4
+        }
+      }
+    }
+  },
+  {
+    "id": 90,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        1.0,
+        0.0,
+        1.0
+      ],
+      "transverse": 0.0,
+      "monotone": true,
+      "endpointGap": 4.757794158649631e-11,
+      "geometryDistanceBound": 4.757794158649631e-11,
+      "affineMismatch": 0.0025361180318057563,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 256.0999999999934,
+          "y": 157.4
+        },
+        "control1": {
+          "type": "Point",
+          "x": 255.97662284657497,
+          "y": 157.4
+        },
+        "control2": {
+          "type": "Point",
+          "x": 255.8532808386916,
+          "y": 157.4
+        },
+        "end": {
+          "type": "Point",
+          "x": 255.7299999999524,
+          "y": 157.4
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 256.1,
+          "y": 157.4
+        },
+        "control1": {
+          "type": "Point",
+          "x": 255.98,
+          "y": 157.4
+        },
+        "control2": {
+          "type": "Point",
+          "x": 255.85666666666665,
+          "y": 157.4
+        },
+        "end": {
+          "type": "Point",
+          "x": 255.73,
+          "y": 157.4
+        }
+      }
+    }
+  },
+  {
+    "id": 108,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        0.9999888413585711,
+        1.0,
+        0.0
+      ],
+      "transverse": 5.312043551414434e-09,
+      "monotone": true,
+      "endpointGap": 1.2432743704326456e-08,
+      "geometryDistanceBound": 1.2432743704326456e-08,
+      "affineMismatch": 6.341179992057684,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 250.53466323186618,
+          "y": 221.0057178821544
+        },
+        "control1": {
+          "type": "Point",
+          "x": 250.53466323186618,
+          "y": 221.0057178821544
+        },
+        "control2": {
+          "type": "Point",
+          "x": 237.67824477332854,
+          "y": 193.79795691566554
+        },
+        "end": {
+          "type": "Point",
+          "x": 237.67824477332854,
+          "y": 193.79795691566554
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 237.6782447781314,
+          "y": 193.79795691339606
+        },
+        "control1": {
+          "type": "Point",
+          "x": 237.6782447781314,
+          "y": 193.79795691339606
+        },
+        "control2": {
+          "type": "Point",
+          "x": 244.11305711263645,
+          "y": 207.41581141201175
+        },
+        "end": {
+          "type": "Point",
+          "x": 250.53466323183687,
+          "y": 221.0057178821307
+        }
+      }
+    }
+  },
+  {
+    "id": 109,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        0.9999888413585711,
+        1.0,
+        0.0
+      ],
+      "transverse": 5.312043551414434e-09,
+      "monotone": true,
+      "endpointGap": 1.2432743704326456e-08,
+      "geometryDistanceBound": 1.2432743704326456e-08,
+      "affineMismatch": 6.341179992057684,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 250.53466323186618,
+          "y": 221.0057178821544
+        },
+        "control1": {
+          "type": "Point",
+          "x": 250.53466323186618,
+          "y": 221.0057178821544
+        },
+        "control2": {
+          "type": "Point",
+          "x": 237.67824477332854,
+          "y": 193.79795691566554
+        },
+        "end": {
+          "type": "Point",
+          "x": 237.67824477332854,
+          "y": 193.79795691566554
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 237.6782447781314,
+          "y": 193.79795691339606
+        },
+        "control1": {
+          "type": "Point",
+          "x": 237.6782447781314,
+          "y": 193.79795691339606
+        },
+        "control2": {
+          "type": "Point",
+          "x": 244.11305711263645,
+          "y": 207.41581141201175
+        },
+        "end": {
+          "type": "Point",
+          "x": 250.53466323183687,
+          "y": 221.0057178821307
+        }
+      }
+    }
+  },
+  {
+    "id": 116,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        0.9999709618277848,
+        1.0,
+        0.0
+      ],
+      "transverse": 1.004522941767722e-08,
+      "monotone": true,
+      "endpointGap": 7.655087332269218e-08,
+      "geometryDistanceBound": 7.655087332269218e-08,
+      "affineMismatch": 6.3284269561216435,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 260.5630488345416,
+          "y": 240.11728335016855
+        },
+        "control1": {
+          "type": "Point",
+          "x": 260.5630488345416,
+          "y": 240.11728335016855
+        },
+        "control2": {
+          "type": "Point",
+          "x": 230.82205831331396,
+          "y": 236.1805613638536
+        },
+        "end": {
+          "type": "Point",
+          "x": 230.82205831331396,
+          "y": 236.1805613638536
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 230.82205831199582,
+          "y": 236.18056137381197
+        },
+        "control1": {
+          "type": "Point",
+          "x": 230.82205831199582,
+          "y": 236.18056137381197
+        },
+        "control2": {
+          "type": "Point",
+          "x": 245.69262048259773,
+          "y": 238.148931218569
+        },
+        "end": {
+          "type": "Point",
+          "x": 260.5630488345612,
+          "y": 240.11728335017102
+        }
+      }
+    }
+  },
+  {
+    "id": 117,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        0.9999709618277848,
+        1.0,
+        0.0
+      ],
+      "transverse": 1.004522941767722e-08,
+      "monotone": true,
+      "endpointGap": 7.655087332269218e-08,
+      "geometryDistanceBound": 7.655087332269218e-08,
+      "affineMismatch": 6.3284269561216435,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 260.5630488345416,
+          "y": 240.11728335016855
+        },
+        "control1": {
+          "type": "Point",
+          "x": 260.5630488345416,
+          "y": 240.11728335016855
+        },
+        "control2": {
+          "type": "Point",
+          "x": 230.82205831331396,
+          "y": 236.1805613638536
+        },
+        "end": {
+          "type": "Point",
+          "x": 230.82205831331396,
+          "y": 236.1805613638536
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 230.82205831199582,
+          "y": 236.18056137381197
+        },
+        "control1": {
+          "type": "Point",
+          "x": 230.82205831199582,
+          "y": 236.18056137381197
+        },
+        "control2": {
+          "type": "Point",
+          "x": 245.69262048259773,
+          "y": 238.148931218569
+        },
+        "end": {
+          "type": "Point",
+          "x": 260.5630488345612,
+          "y": 240.11728335017102
+        }
+      }
+    }
+  },
+  {
+    "id": 118,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        0.9999867337755859,
+        1.0,
+        0.0
+      ],
+      "transverse": 1.8046131000287863e-09,
+      "monotone": true,
+      "endpointGap": 1.594230947521927e-08,
+      "geometryDistanceBound": 1.594230947521927e-08,
+      "affineMismatch": 6.328405067614244,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 266.2339624919457,
+          "y": 249.28592706878334
+        },
+        "control1": {
+          "type": "Point",
+          "x": 266.2339624919457,
+          "y": 249.28592706878334
+        },
+        "control2": {
+          "type": "Point",
+          "x": 236.42561910533144,
+          "y": 245.88969337410168
+        },
+        "end": {
+          "type": "Point",
+          "x": 236.42561910533144,
+          "y": 245.88969337410168
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 236.42561910512714,
+          "y": 245.8896933758947
+        },
+        "control1": {
+          "type": "Point",
+          "x": 236.42561910512714,
+          "y": 245.8896933758947
+        },
+        "control2": {
+          "type": "Point",
+          "x": 251.32998879851584,
+          "y": 247.58783278160007
+        },
+        "end": {
+          "type": "Point",
+          "x": 266.2339624919864,
+          "y": 249.2859270687879
+        }
+      }
+    }
+  },
+  {
+    "id": 119,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        0.9999867337755859,
+        1.0,
+        0.0
+      ],
+      "transverse": 1.8046131000287863e-09,
+      "monotone": true,
+      "endpointGap": 1.594230947521927e-08,
+      "geometryDistanceBound": 1.594230947521927e-08,
+      "affineMismatch": 6.328405067614244,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 266.2339624919457,
+          "y": 249.28592706878334
+        },
+        "control1": {
+          "type": "Point",
+          "x": 266.2339624919457,
+          "y": 249.28592706878334
+        },
+        "control2": {
+          "type": "Point",
+          "x": 236.42561910533144,
+          "y": 245.88969337410168
+        },
+        "end": {
+          "type": "Point",
+          "x": 236.42561910533144,
+          "y": 245.88969337410168
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 236.42561910512714,
+          "y": 245.8896933758947
+        },
+        "control1": {
+          "type": "Point",
+          "x": 236.42561910512714,
+          "y": 245.8896933758947
+        },
+        "control2": {
+          "type": "Point",
+          "x": 251.32998879851584,
+          "y": 247.58783278160007
+        },
+        "end": {
+          "type": "Point",
+          "x": 266.2339624919864,
+          "y": 249.2859270687879
+        }
+      }
+    }
+  },
+  {
+    "id": 126,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        1.0,
+        1.0,
+        0.0
+      ],
+      "transverse": 5.408565646551666e-14,
+      "monotone": true,
+      "endpointGap": 1.344608214238098e-11,
+      "geometryDistanceBound": 1.3446297574482389e-11,
+      "affineMismatch": 7.2469419335613505,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 230.61969090209206,
+          "y": 265.2654116388295
+        },
+        "control1": {
+          "type": "Point",
+          "x": 230.61969090209206,
+          "y": 265.2654116388295
+        },
+        "control2": {
+          "type": "Point",
+          "x": 250.7096710100875,
+          "y": 258.76862625439634
+        },
+        "end": {
+          "type": "Point",
+          "x": 267.05421867166007,
+          "y": 253.48305514919576
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 267.0542186716473,
+          "y": 253.4830551491999
+        },
+        "control1": {
+          "type": "Point",
+          "x": 267.0542186716473,
+          "y": 253.4830551491999
+        },
+        "control2": {
+          "type": "Point",
+          "x": 230.61969090209206,
+          "y": 265.26541163882956
+        },
+        "end": {
+          "type": "Point",
+          "x": 230.61969090209206,
+          "y": 265.26541163882956
+        }
+      }
+    }
+  },
+  {
+    "id": 127,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        1.0,
+        1.0,
+        0.0
+      ],
+      "transverse": 5.408565646551666e-14,
+      "monotone": true,
+      "endpointGap": 1.344608214238098e-11,
+      "geometryDistanceBound": 1.3446297574482389e-11,
+      "affineMismatch": 7.2469419335613505,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 230.61969090209206,
+          "y": 265.2654116388295
+        },
+        "control1": {
+          "type": "Point",
+          "x": 230.61969090209206,
+          "y": 265.2654116388295
+        },
+        "control2": {
+          "type": "Point",
+          "x": 250.7096710100875,
+          "y": 258.76862625439634
+        },
+        "end": {
+          "type": "Point",
+          "x": 267.05421867166007,
+          "y": 253.48305514919576
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 267.0542186716473,
+          "y": 253.4830551491999
+        },
+        "control1": {
+          "type": "Point",
+          "x": 267.0542186716473,
+          "y": 253.4830551491999
+        },
+        "control2": {
+          "type": "Point",
+          "x": 230.61969090209206,
+          "y": 265.26541163882956
+        },
+        "end": {
+          "type": "Point",
+          "x": 230.61969090209206,
+          "y": 265.26541163882956
+        }
+      }
+    }
+  },
+  {
+    "id": 132,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        1.0,
+        1.0,
+        0.0
+      ],
+      "transverse": 6.368686593344604e-14,
+      "monotone": true,
+      "endpointGap": 6.8555260570217085e-12,
+      "geometryDistanceBound": 6.8555260570217085e-12,
+      "affineMismatch": 5.534013427180146,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 201.4099970302107,
+          "y": 456.883477028569
+        },
+        "control1": {
+          "type": "Point",
+          "x": 201.4099970302107,
+          "y": 456.883477028569
+        },
+        "control2": {
+          "type": "Point",
+          "x": 226.29027430947582,
+          "y": 456.0825533500981
+        },
+        "end": {
+          "type": "Point",
+          "x": 226.29027430947582,
+          "y": 456.0825533500981
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 226.29027430947582,
+          "y": 456.08255335009807
+        },
+        "control1": {
+          "type": "Point",
+          "x": 226.29027430947582,
+          "y": 456.08255335009807
+        },
+        "control2": {
+          "type": "Point",
+          "x": 214.5208670626357,
+          "y": 456.46142360301997
+        },
+        "end": {
+          "type": "Point",
+          "x": 201.40999703020384,
+          "y": 456.8834770285693
+        }
+      }
+    }
+  },
+  {
+    "id": 133,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        1.0,
+        1.0,
+        0.0
+      ],
+      "transverse": 6.368686593344604e-14,
+      "monotone": true,
+      "endpointGap": 6.8555260570217085e-12,
+      "geometryDistanceBound": 6.8555260570217085e-12,
+      "affineMismatch": 5.534013427180146,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 201.4099970302107,
+          "y": 456.883477028569
+        },
+        "control1": {
+          "type": "Point",
+          "x": 201.4099970302107,
+          "y": 456.883477028569
+        },
+        "control2": {
+          "type": "Point",
+          "x": 226.29027430947582,
+          "y": 456.0825533500981
+        },
+        "end": {
+          "type": "Point",
+          "x": 226.29027430947582,
+          "y": 456.0825533500981
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 226.29027430947582,
+          "y": 456.08255335009807
+        },
+        "control1": {
+          "type": "Point",
+          "x": 226.29027430947582,
+          "y": 456.08255335009807
+        },
+        "control2": {
+          "type": "Point",
+          "x": 214.5208670626357,
+          "y": 456.46142360301997
+        },
+        "end": {
+          "type": "Point",
+          "x": 201.40999703020384,
+          "y": 456.8834770285693
+        }
+      }
+    }
+  },
+  {
+    "id": 138,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        0.9999877572990954,
+        1.0,
+        0.0
+      ],
+      "transverse": 1.6519017431457327e-07,
+      "monotone": true,
+      "endpointGap": 1.6574003157087716e-07,
+      "geometryDistanceBound": 1.6574003157087716e-07,
+      "affineMismatch": 6.328228873642144,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 342.6480156335393,
+          "y": 281.88796157138086
+        },
+        "control1": {
+          "type": "Point",
+          "x": 342.6480156335393,
+          "y": 281.88796157138086
+        },
+        "control2": {
+          "type": "Point",
+          "x": 340.20645047153664,
+          "y": 251.98747653472907
+        },
+        "end": {
+          "type": "Point",
+          "x": 340.20645047153664,
+          "y": 251.98747653472907
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 340.20645030689445,
+          "y": 251.98747654817316
+        },
+        "control1": {
+          "type": "Point",
+          "x": 340.20645030689445,
+          "y": 251.98747654817316
+        },
+        "control2": {
+          "type": "Point",
+          "x": 341.42723302579964,
+          "y": 266.9377197404676
+        },
+        "end": {
+          "type": "Point",
+          "x": 342.64801563353825,
+          "y": 281.8879615713678
+        }
+      }
+    }
+  },
+  {
+    "id": 139,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        0.9999877572990954,
+        1.0,
+        0.0
+      ],
+      "transverse": 1.6519017431457327e-07,
+      "monotone": true,
+      "endpointGap": 1.6574003157087716e-07,
+      "geometryDistanceBound": 1.6574003157087716e-07,
+      "affineMismatch": 6.328228873642144,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 342.6480156335393,
+          "y": 281.88796157138086
+        },
+        "control1": {
+          "type": "Point",
+          "x": 342.6480156335393,
+          "y": 281.88796157138086
+        },
+        "control2": {
+          "type": "Point",
+          "x": 340.20645047153664,
+          "y": 251.98747653472907
+        },
+        "end": {
+          "type": "Point",
+          "x": 340.20645047153664,
+          "y": 251.98747653472907
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 340.20645030689445,
+          "y": 251.98747654817316
+        },
+        "control1": {
+          "type": "Point",
+          "x": 340.20645030689445,
+          "y": 251.98747654817316
+        },
+        "control2": {
+          "type": "Point",
+          "x": 341.42723302579964,
+          "y": 266.9377197404676
+        },
+        "end": {
+          "type": "Point",
+          "x": 342.64801563353825,
+          "y": 281.8879615713678
+        }
+      }
+    }
+  },
+  {
+    "id": 144,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        0.9999860697425902,
+        1.0,
+        0.0
+      ],
+      "transverse": 4.109464544969659e-07,
+      "monotone": true,
+      "endpointGap": 4.1131739223942124e-07,
+      "geometryDistanceBound": 4.1131739223942124e-07,
+      "affineMismatch": 6.328243268570213,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 301.41124169557446,
+          "y": 297.40574481030876
+        },
+        "control1": {
+          "type": "Point",
+          "x": 301.41124169557446,
+          "y": 297.40574481030876
+        },
+        "control2": {
+          "type": "Point",
+          "x": 271.4382902635834,
+          "y": 296.1319728479751
+        },
+        "end": {
+          "type": "Point",
+          "x": 271.4382902635834,
+          "y": 296.1319728479751
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 271.4382902810318,
+          "y": 296.1319724373992
+        },
+        "control1": {
+          "type": "Point",
+          "x": 271.4382902810318,
+          "y": 296.1319724373992
+        },
+        "control2": {
+          "type": "Point",
+          "x": 286.4247668557381,
+          "y": 296.76885866071774
+        },
+        "end": {
+          "type": "Point",
+          "x": 301.4112416955823,
+          "y": 297.40574481030916
+        }
+      }
+    }
+  },
+  {
+    "id": 145,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        0.9999860697425902,
+        1.0,
+        0.0
+      ],
+      "transverse": 4.109464544969659e-07,
+      "monotone": true,
+      "endpointGap": 4.1131739223942124e-07,
+      "geometryDistanceBound": 4.1131739223942124e-07,
+      "affineMismatch": 6.328243268570213,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 301.41124169557446,
+          "y": 297.40574481030876
+        },
+        "control1": {
+          "type": "Point",
+          "x": 301.41124169557446,
+          "y": 297.40574481030876
+        },
+        "control2": {
+          "type": "Point",
+          "x": 271.4382902635834,
+          "y": 296.1319728479751
+        },
+        "end": {
+          "type": "Point",
+          "x": 271.4382902635834,
+          "y": 296.1319728479751
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 271.4382902810318,
+          "y": 296.1319724373992
+        },
+        "control1": {
+          "type": "Point",
+          "x": 271.4382902810318,
+          "y": 296.1319724373992
+        },
+        "control2": {
+          "type": "Point",
+          "x": 286.4247668557381,
+          "y": 296.76885866071774
+        },
+        "end": {
+          "type": "Point",
+          "x": 301.4112416955823,
+          "y": 297.40574481030916
+        }
+      }
+    }
+  },
+  {
+    "id": 146,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        1.0,
+        1.0,
+        0.0
+      ],
+      "transverse": 2.7497655278599684e-13,
+      "monotone": true,
+      "endpointGap": 2.0668270224490267e-11,
+      "geometryDistanceBound": 2.0668484734573215e-11,
+      "affineMismatch": 1.8355572130583264,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 314.0528225598466,
+          "y": 293.88258277417697
+        },
+        "control1": {
+          "type": "Point",
+          "x": 315.88516694639026,
+          "y": 289.54738954646643
+        },
+        "control2": {
+          "type": "Point",
+          "x": 317.34865046978905,
+          "y": 286.0848942283935
+        },
+        "end": {
+          "type": "Point",
+          "x": 317.34865046978905,
+          "y": 286.0848942283935
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 317.34865046979115,
+          "y": 286.08489422838824
+        },
+        "control1": {
+          "type": "Point",
+          "x": 316.2205075725466,
+          "y": 288.753998073681
+        },
+        "control2": {
+          "type": "Point",
+          "x": 315.1076591167365,
+          "y": 291.3869163856126
+        },
+        "end": {
+          "type": "Point",
+          "x": 314.0528225598383,
+          "y": 293.8825827741959
+        }
+      }
+    }
+  },
+  {
+    "id": 147,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        1.0,
+        1.0,
+        0.0
+      ],
+      "transverse": 2.7497655278599684e-13,
+      "monotone": true,
+      "endpointGap": 2.0668270224490267e-11,
+      "geometryDistanceBound": 2.0668484734573215e-11,
+      "affineMismatch": 1.8355572130583264,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 314.0528225598466,
+          "y": 293.88258277417697
+        },
+        "control1": {
+          "type": "Point",
+          "x": 315.88516694639026,
+          "y": 289.54738954646643
+        },
+        "control2": {
+          "type": "Point",
+          "x": 317.34865046978905,
+          "y": 286.0848942283935
+        },
+        "end": {
+          "type": "Point",
+          "x": 317.34865046978905,
+          "y": 286.0848942283935
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 317.34865046979115,
+          "y": 286.08489422838824
+        },
+        "control1": {
+          "type": "Point",
+          "x": 316.2205075725466,
+          "y": 288.753998073681
+        },
+        "control2": {
+          "type": "Point",
+          "x": 315.1076591167365,
+          "y": 291.3869163856126
+        },
+        "end": {
+          "type": "Point",
+          "x": 314.0528225598383,
+          "y": 293.8825827741959
+        }
+      }
+    }
+  },
+  {
+    "id": 150,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        0.9999956474639431,
+        0.9999999855645001,
+        0.0
+      ],
+      "transverse": 3.724255143654198e-10,
+      "monotone": true,
+      "endpointGap": 1.8677113616077548e-08,
+      "geometryDistanceBound": 1.8680826367977146e-08,
+      "affineMismatch": 6.3288470920969,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 324.85949771228013,
+          "y": 85.81468459475798
+        },
+        "control1": {
+          "type": "Point",
+          "x": 324.85949771228013,
+          "y": 85.81468459475798
+        },
+        "control2": {
+          "type": "Point",
+          "x": 331.26017128225755,
+          "y": 56.500458549069435
+        },
+        "end": {
+          "type": "Point",
+          "x": 331.26017128225755,
+          "y": 56.500458549069435
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 331.2601712818937,
+          "y": 56.50045854899
+        },
+        "control1": {
+          "type": "Point",
+          "x": 331.2601712818937,
+          "y": 56.50045854899
+        },
+        "control2": {
+          "type": "Point",
+          "x": 328.05966107775896,
+          "y": 71.15836580912512
+        },
+        "end": {
+          "type": "Point",
+          "x": 324.8594975776765,
+          "y": 85.81468521122467
+        }
+      }
+    }
+  },
+  {
+    "id": 151,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        0.9999956474639431,
+        0.9999999855645001,
+        0.0
+      ],
+      "transverse": 3.724255143654198e-10,
+      "monotone": true,
+      "endpointGap": 1.8677113616077548e-08,
+      "geometryDistanceBound": 1.8680826367977146e-08,
+      "affineMismatch": 6.3288470920969,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 324.85949771228013,
+          "y": 85.81468459475798
+        },
+        "control1": {
+          "type": "Point",
+          "x": 324.85949771228013,
+          "y": 85.81468459475798
+        },
+        "control2": {
+          "type": "Point",
+          "x": 331.26017128225755,
+          "y": 56.500458549069435
+        },
+        "end": {
+          "type": "Point",
+          "x": 331.26017128225755,
+          "y": 56.500458549069435
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 331.2601712818937,
+          "y": 56.50045854899
+        },
+        "control1": {
+          "type": "Point",
+          "x": 331.2601712818937,
+          "y": 56.50045854899
+        },
+        "control2": {
+          "type": "Point",
+          "x": 328.05966107775896,
+          "y": 71.15836580912512
+        },
+        "end": {
+          "type": "Point",
+          "x": 324.8594975776765,
+          "y": 85.81468521122467
+        }
+      }
+    }
+  },
+  {
+    "id": 152,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        1.0,
+        1.0,
+        0.0
+      ],
+      "transverse": 3.6607007308231705e-11,
+      "monotone": true,
+      "endpointGap": 3.660716174636036e-11,
+      "geometryDistanceBound": 3.801040475010041e-11,
+      "affineMismatch": 6.100781973364033,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 597.6297927754589,
+          "y": 242.94853575962688
+        },
+        "control1": {
+          "type": "Point",
+          "x": 598.302717516689,
+          "y": 242.95049044608572
+        },
+        "control2": {
+          "type": "Point",
+          "x": 628.0354673841999,
+          "y": 243.03685701873312
+        },
+        "end": {
+          "type": "Point",
+          "x": 628.0354673841999,
+          "y": 243.03685701873312
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 628.0354673841999,
+          "y": 243.03685701876972
+        },
+        "control1": {
+          "type": "Point",
+          "x": 628.0354673841999,
+          "y": 243.03685701876972
+        },
+        "control2": {
+          "type": "Point",
+          "x": 612.7637693339734,
+          "y": 242.9924963650954
+        },
+        "end": {
+          "type": "Point",
+          "x": 597.6297927754487,
+          "y": 242.9485357596264
+        }
+      }
+    }
+  },
+  {
+    "id": 153,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        1.0,
+        1.0,
+        0.0
+      ],
+      "transverse": 3.6607007308231705e-11,
+      "monotone": true,
+      "endpointGap": 3.660716174636036e-11,
+      "geometryDistanceBound": 3.801040475010041e-11,
+      "affineMismatch": 6.100781973364033,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 597.6297927754589,
+          "y": 242.94853575962688
+        },
+        "control1": {
+          "type": "Point",
+          "x": 598.302717516689,
+          "y": 242.95049044608572
+        },
+        "control2": {
+          "type": "Point",
+          "x": 628.0354673841999,
+          "y": 243.03685701873312
+        },
+        "end": {
+          "type": "Point",
+          "x": 628.0354673841999,
+          "y": 243.03685701873312
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 628.0354673841999,
+          "y": 243.03685701876972
+        },
+        "control1": {
+          "type": "Point",
+          "x": 628.0354673841999,
+          "y": 243.03685701876972
+        },
+        "control2": {
+          "type": "Point",
+          "x": 612.7637693339734,
+          "y": 242.9924963650954
+        },
+        "end": {
+          "type": "Point",
+          "x": 597.6297927754487,
+          "y": 242.9485357596264
+        }
+      }
+    }
+  },
+  {
+    "id": 158,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        0.999998735729605,
+        0.9999999855645001,
+        0.0
+      ],
+      "transverse": 1.2260563850245715e-09,
+      "monotone": true,
+      "endpointGap": 1.913017913395648e-08,
+      "geometryDistanceBound": 1.9169427948434575e-08,
+      "affineMismatch": 6.329372520773294,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 557.3179687742295,
+          "y": 363.04379418599376
+        },
+        "control1": {
+          "type": "Point",
+          "x": 557.3179687742295,
+          "y": 363.04379418599376
+        },
+        "control2": {
+          "type": "Point",
+          "x": 587.1223034990716,
+          "y": 366.54087021669767
+        },
+        "end": {
+          "type": "Point",
+          "x": 587.1223034990716,
+          "y": 366.54087021669767
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 587.1223034989287,
+          "y": 366.54087021791537
+        },
+        "control1": {
+          "type": "Point",
+          "x": 587.1223034989287,
+          "y": 366.54087021791537
+        },
+        "control2": {
+          "type": "Point",
+          "x": 572.2186789146784,
+          "y": 364.7921612195846
+        },
+        "end": {
+          "type": "Point",
+          "x": 557.317968109932,
+          "y": 363.0437941080485
+        }
+      }
+    }
+  },
+  {
+    "id": 159,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        0.999998735729605,
+        0.9999999855645001,
+        0.0
+      ],
+      "transverse": 1.2260563850245715e-09,
+      "monotone": true,
+      "endpointGap": 1.913017913395648e-08,
+      "geometryDistanceBound": 1.9169427948434575e-08,
+      "affineMismatch": 6.329372520773294,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 557.3179687742295,
+          "y": 363.04379418599376
+        },
+        "control1": {
+          "type": "Point",
+          "x": 557.3179687742295,
+          "y": 363.04379418599376
+        },
+        "control2": {
+          "type": "Point",
+          "x": 587.1223034990716,
+          "y": 366.54087021669767
+        },
+        "end": {
+          "type": "Point",
+          "x": 587.1223034990716,
+          "y": 366.54087021669767
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 587.1223034989287,
+          "y": 366.54087021791537
+        },
+        "control1": {
+          "type": "Point",
+          "x": 587.1223034989287,
+          "y": 366.54087021791537
+        },
+        "control2": {
+          "type": "Point",
+          "x": 572.2186789146784,
+          "y": 364.7921612195846
+        },
+        "end": {
+          "type": "Point",
+          "x": 557.317968109932,
+          "y": 363.0437941080485
+        }
+      }
+    }
+  },
+  {
+    "id": 160,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        1.0,
+        1.0,
+        0.0
+      ],
+      "transverse": 3.0480759069807546e-12,
+      "monotone": true,
+      "endpointGap": 2.2480781655529515e-11,
+      "geometryDistanceBound": 2.264045593576224e-11,
+      "affineMismatch": 6.419141243776061,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 234.74625221124325,
+          "y": 182.05024235296503
+        },
+        "control1": {
+          "type": "Point",
+          "x": 234.74625221124325,
+          "y": 182.05024235296503
+        },
+        "control2": {
+          "type": "Point",
+          "x": 206.2331097319973,
+          "y": 189.09868949929785
+        },
+        "end": {
+          "type": "Point",
+          "x": 205.61255586021585,
+          "y": 189.25209037995796
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 205.61255586021304,
+          "y": 189.25209037995552
+        },
+        "control1": {
+          "type": "Point",
+          "x": 205.61255586021304,
+          "y": 189.25209037995552
+        },
+        "control2": {
+          "type": "Point",
+          "x": 220.18198487740128,
+          "y": 185.65052838254948
+        },
+        "end": {
+          "type": "Point",
+          "x": 234.74625221126468,
+          "y": 182.05024235295824
+        }
+      }
+    }
+  },
+  {
+    "id": 161,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        1.0,
+        1.0,
+        0.0
+      ],
+      "transverse": 3.0480759069807546e-12,
+      "monotone": true,
+      "endpointGap": 2.2480781655529515e-11,
+      "geometryDistanceBound": 2.264045593576224e-11,
+      "affineMismatch": 6.419141243776061,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 234.74625221124325,
+          "y": 182.05024235296503
+        },
+        "control1": {
+          "type": "Point",
+          "x": 234.74625221124325,
+          "y": 182.05024235296503
+        },
+        "control2": {
+          "type": "Point",
+          "x": 206.2331097319973,
+          "y": 189.09868949929785
+        },
+        "end": {
+          "type": "Point",
+          "x": 205.61255586021585,
+          "y": 189.25209037995796
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 205.61255586021304,
+          "y": 189.25209037995552
+        },
+        "control1": {
+          "type": "Point",
+          "x": 205.61255586021304,
+          "y": 189.25209037995552
+        },
+        "control2": {
+          "type": "Point",
+          "x": 220.18198487740128,
+          "y": 185.65052838254948
+        },
+        "end": {
+          "type": "Point",
+          "x": 234.74625221126468,
+          "y": 182.05024235295824
+        }
+      }
+    }
+  },
+  {
+    "id": 164,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        9.778887033462524e-09,
+        1.0,
+        1.0,
+        1.1254719002286253e-08
+      ],
+      "transverse": 1.5149262301808083e-08,
+      "monotone": true,
+      "endpointGap": 1.0840454372723854e-07,
+      "geometryDistanceBound": 1.0840454380884263e-07,
+      "affineMismatch": 0.070803039706257,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 572.6813227553139,
+          "y": 305.479535820809
+        },
+        "control1": {
+          "type": "Point",
+          "x": 576.3023251998702,
+          "y": 304.9491851571779
+        },
+        "control2": {
+          "type": "Point",
+          "x": 578.8341920603752,
+          "y": 304.57835489946484
+        },
+        "end": {
+          "type": "Point",
+          "x": 578.8341920603752,
+          "y": 304.57835489946484
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 578.8341920603752,
+          "y": 304.57835489946484
+        },
+        "control1": {
+          "type": "Point",
+          "x": 578.8341920592329,
+          "y": 304.57835489166513
+        },
+        "control2": {
+          "type": "Point",
+          "x": 576.4683831541154,
+          "y": 304.924863441365
+        },
+        "end": {
+          "type": "Point",
+          "x": 572.6813227531389,
+          "y": 305.4795358058167
+        }
+      }
+    }
+  },
+  {
+    "id": 165,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        9.778887033462524e-09,
+        1.0,
+        1.0,
+        1.1254719002286253e-08
+      ],
+      "transverse": 1.5149262301808083e-08,
+      "monotone": true,
+      "endpointGap": 1.0840454372723854e-07,
+      "geometryDistanceBound": 1.0840454380884263e-07,
+      "affineMismatch": 0.070803039706257,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 572.6813227553139,
+          "y": 305.479535820809
+        },
+        "control1": {
+          "type": "Point",
+          "x": 576.3023251998702,
+          "y": 304.9491851571779
+        },
+        "control2": {
+          "type": "Point",
+          "x": 578.8341920603752,
+          "y": 304.57835489946484
+        },
+        "end": {
+          "type": "Point",
+          "x": 578.8341920603752,
+          "y": 304.57835489946484
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 578.8341920603752,
+          "y": 304.57835489946484
+        },
+        "control1": {
+          "type": "Point",
+          "x": 578.8341920592329,
+          "y": 304.57835489166513
+        },
+        "control2": {
+          "type": "Point",
+          "x": 576.4683831541154,
+          "y": 304.924863441365
+        },
+        "end": {
+          "type": "Point",
+          "x": 572.6813227531389,
+          "y": 305.4795358058167
+        }
+      }
+    }
+  },
+  {
+    "id": 166,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        1.0,
+        1.0,
+        0.9265505086720475
+      ],
+      "transverse": 0.0,
+      "monotone": true,
+      "endpointGap": 1.5477424302450702e-09,
+      "geometryDistanceBound": 1.5477424302450702e-09,
+      "affineMismatch": 0.011353702628635184,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 99.77994013414165,
+          "y": 0
+        },
+        "control1": {
+          "type": "Point",
+          "x": 99.91340053691027,
+          "y": 0
+        },
+        "control2": {
+          "type": "Point",
+          "x": 100.04656576377543,
+          "y": 0
+        },
+        "end": {
+          "type": "Point",
+          "x": 100.17943209134619,
+          "y": 0
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 100.17943209134619,
+          "y": 0
+        },
+        "control1": {
+          "type": "Point",
+          "x": 106.2492788774389,
+          "y": 0
+        },
+        "control2": {
+          "type": "Point",
+          "x": 101.37810014336394,
+          "y": 0
+        },
+        "end": {
+          "type": "Point",
+          "x": 99.77994013414165,
+          "y": 0
+        }
+      }
+    }
+  },
+  {
+    "id": 167,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        1.0,
+        1.0,
+        0.9265505086720475
+      ],
+      "transverse": 0.0,
+      "monotone": true,
+      "endpointGap": 1.5477424302450702e-09,
+      "geometryDistanceBound": 1.5477424302450702e-09,
+      "affineMismatch": 0.011353702628635184,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 99.77994013414165,
+          "y": 0
+        },
+        "control1": {
+          "type": "Point",
+          "x": 99.91340053691027,
+          "y": 0
+        },
+        "control2": {
+          "type": "Point",
+          "x": 100.04656576377543,
+          "y": 0
+        },
+        "end": {
+          "type": "Point",
+          "x": 100.17943209134619,
+          "y": 0
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 100.17943209134619,
+          "y": 0
+        },
+        "control1": {
+          "type": "Point",
+          "x": 106.2492788774389,
+          "y": 0
+        },
+        "control2": {
+          "type": "Point",
+          "x": 101.37810014336394,
+          "y": 0
+        },
+        "end": {
+          "type": "Point",
+          "x": 99.77994013414165,
+          "y": 0
+        }
+      }
+    }
+  },
+  {
+    "id": 173,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        1.0,
+        0.0,
+        1.0
+      ],
+      "transverse": 6.679101716144942e-13,
+      "monotone": true,
+      "endpointGap": 6.68514615332417e-13,
+      "geometryDistanceBound": 6.68514615332417e-13,
+      "affineMismatch": 2.925049912505533e-06,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 100,
+          "y": 200
+        },
+        "control1": {
+          "type": "Point",
+          "x": 100,
+          "y": 200
+        },
+        "control2": {
+          "type": "Point",
+          "x": 100,
+          "y": 199.9999960991631
+        },
+        "end": {
+          "type": "Point",
+          "x": 100,
+          "y": 199.99998829903015
+        }
+      },
+      "right": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 100,
+          "y": 200
+        },
+        "control1": {
+          "type": "Point",
+          "x": 100,
+          "y": 199.99999609967665
+        },
+        "control2": {
+          "type": "Point",
+          "x": 100.00000000000023,
+          "y": 199.99999219935336
+        },
+        "end": {
+          "type": "Point",
+          "x": 100.00000000000067,
+          "y": 199.99998829903012
+        }
+      }
+    }
+  },
+  {
+    "id": 175,
+    "tolerance": 5e-07,
+    "witness": {
+      "domain": [
+        0.0,
+        1.0,
+        1.0,
+        0.0
+      ],
+      "transverse": 0.0,
+      "monotone": true,
+      "endpointGap": 0.0,
+      "geometryDistanceBound": 0.0,
+      "affineMismatch": 11.93242693252299,
+      "certified": true
+    },
+    "pair": {
+      "left": {
+        "type": "CubicBezier",
+        "start": {
+          "type": "Point",
+          "x": 10,
+          "y": 10
+        },
+        "control1": {
+          "type": "Point",
+          "x": 10,
+          "y": 10
+        },
+        "control2": {
+          "type": "Point",
+          "x": 100,
+          "y": 100
+        },
+        "end": {
+          "type": "Point",
+          "x": 100,
+          "y": 100
+        }
+      },
+      "right": {
+        "type": "Line",
+        "start": {
+          "type": "Point",
+          "x": 100,
+          "y": 100
+        },
+        "end": {
+          "type": "Point",
+          "x": 10,
+          "y": 10
+        }
+      }
+    }
+  }
+]

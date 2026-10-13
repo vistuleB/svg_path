@@ -1,0 +1,2905 @@
+{
+  "date": "2026-10-13",
+  "scope": "Reproduction and cause classification of the 69 saved Boolean errors; no production edits or passing CSG equivalence claim.",
+  "sourceSha256": {
+    "src/svg_path/affine.gleam": "111c14c2f1eb803db86d8b8ded63006522da2ec524feaf472ac15fa4b7589282",
+    "src/svg_path/area.gleam": "8004db5a057e5c9275bb3a523d049a1ab18281325983e650fb719f2ce5a0a246",
+    "src/svg_path/arrangement/drawing.gleam": "17a4ca39634ba56efa7da894736edc8b351d58377dab0411ef0910d3d493e01d",
+    "src/svg_path/arrangement.gleam": "3480273abb8092276e3b81410a8678417dfa7e0de0f7773f2f4d09909ebd38d0",
+    "src/svg_path/basic_shapes.gleam": "ab5e0a6ee08a01d44309ae4bff3adfaa285d91b1217eab267dda4ffedab606c1",
+    "src/svg_path/bezier.gleam": "9d78c5bf3cb951dd7a45b6af70c3807bb3a43fb8b0a0b13ee4c15835da951de8",
+    "src/svg_path/bounds.gleam": "00625153170dc2887c57d733926806f3e17924ce1b2b199208bd4fac9140a8d4",
+    "src/svg_path/clip.gleam": "5e354c94bf78af1731d9822bb8669c48ed2e0290e5464a24c01311e9295c56f9",
+    "src/svg_path/congruency.gleam": "3706bb1fb835706b68399ab07dcac1a7145a122c8e60fc8a05ad9ad5ed281cf2",
+    "src/svg_path/containment.gleam": "80a69ce8b4ceabf2f4a8930e27d7c029964c87bff91ad69cc377f5f6f21ce934",
+    "src/svg_path/convex_hull.gleam": "820e500e48cd989501109e4e524f1f5db309b24424d923a46ef50f7403b4514c",
+    "src/svg_path/csg.gleam": "9564ef9b30ad94a57e4f42c165215c1cf1bddd63191f8bb232c4b0ec739becd5",
+    "src/svg_path/curvature.gleam": "c6e64abab5754f77285dbc06152c6fc15c143524d3df73c028623bd8701466fd",
+    "src/svg_path/cut.gleam": "b6db958070707a80760f447a81c48625e5912be2b5a72234ddbb64e9857b1b2e",
+    "src/svg_path/degeneracy.gleam": "a3ce0c61c5424d8277f55ee235ab44823e7d547015be97225c988dd38625821d",
+    "src/svg_path/distance.gleam": "33c05a39f687c11ecd3b96ddfc6712661dcb4615aab9d80a7c1e1652d386d596",
+    "src/svg_path/effects.gleam": "4027d5062db4ff88fb01bee03c041f7fbe8020ebe89639c771c961dd08972856",
+    "src/svg_path/ellipse.gleam": "028d40bd2894a5a80c653504156709a1de172df13521cc5e320cef274e27c3fe",
+    "src/svg_path/encounters.gleam": "bc60db1cfe1eaf6a1de45f87102d9b3723e636761f9ce8408eb18787866d5f58",
+    "src/svg_path/fit.gleam": "fc14dd154dbe1011e461e3703c95057ebd02f331ac9a87892c1281ef887855fe",
+    "src/svg_path/inspect.gleam": "2292507298867b9a9564f1b85137029b5dfc6181784d0d55d16ad325ebc30be9",
+    "src/svg_path/internal/arcs_join.gleam": "fdf2588b45c962b09e6f91b0c567cb0214dc5581539833389e4c4a48f64a8121",
+    "src/svg_path/internal/format.gleam": "6563744217a19dbe1a8d26dc043cc72b6ac64e253e03cb217627401dd90135f0",
+    "src/svg_path/internal/number.gleam": "0e74c724480d3c485dd488f47e9cbe4413e8678e5c28af215b6d9e71b7f9a6d7",
+    "src/svg_path/internal/overlap_detection.gleam": "a50a1fb221aab42242ce6847c7002cf9f5decd20d50a76b1ccea53f90866b50b",
+    "src/svg_path/internal/parameter.gleam": "5955b7f3025b138116d5b432b264e49156c33c26ee467d0c8ec45919fe1433af",
+    "src/svg_path/internal/polyline.gleam": "69dbbd1480bfbe4f8a0ff79387db46087e5449e05db1e28aab59c4c39a45ea7b",
+    "src/svg_path/internal/query.gleam": "07e6b0a0b013d3990f7072fbf9ca8a3ab72385dafe5fa56531e6357510fc26dd",
+    "src/svg_path/internal/root.gleam": "293feb24d5f3b694873633b6b2609700f23739fec3ef79d8802e227be72da719",
+    "src/svg_path/internal/smallest_enclosing_circle.gleam": "23781c7a91989c967608c85a58a9d3dda9cab1f5da3fca1c382309449432299d",
+    "src/svg_path/internal/winding_field.gleam": "640c9af07c8a31c7eed413b77111606d917f7045223fa141b2a5082be32eafbe",
+    "src/svg_path/intersections.gleam": "ecf6b214ef7a4b6b094813368964b4116ff82a5f417387f27044498cfbf40809",
+    "src/svg_path/marker.gleam": "6de90b1c652eb50677ee365dc9dbfbfdff8b26518779b2040002e0a6789e964b",
+    "src/svg_path/measure.gleam": "15748c9d6d49d35fe2a59fcda20702b5a3319c32509c48ef182abd41b366d77b",
+    "src/svg_path/offset.gleam": "d93d938885375044d7cd58a782c42fdbb8762eb0753911f7b26ff7eeeef6fbb5",
+    "src/svg_path/overlaps.gleam": "f18b002c25a411f267f213837d5d84291f7bcac222a83879ca13822501cd23ad",
+    "src/svg_path/parse.gleam": "b046e6396d5a6b71f0e81171d84ba8472e82de7a5a2a0020b52eb3a6b5d69a66",
+    "src/svg_path/point.gleam": "47195dcdb7f8e9adebbed9b12f0c4f0de1b135127042f7032cf72069414eebd4",
+    "src/svg_path/serialize.gleam": "af925c8b3279c7aad23b9510b22b99f93bfb9d17e25b999fb7d29e9be37acdc8",
+    "src/svg_path/stroke.gleam": "66cfa1cbb761b4f41032cfa3ae9fda08cda27c9f58f101250fac2febde07fe56",
+    "src/svg_path/svg.gleam": "8fc45fa39630cfc38ca7e0b76b2bebb686d9b557d90b525a81b044b469fabbb8",
+    "src/svg_path/transform/parse.gleam": "05567474d3bd488ed4932f1e336cb0425b10085c74c226281516db306b19753b",
+    "src/svg_path/transform/serialize.gleam": "fc4e51b9deb9b35ebc32fec1eba6d4313b669f3cfbd7e54936a9c0c934fdb7ac",
+    "src/svg_path/transform.gleam": "94b22388c08bd04208bd2e605dc53cc7a8eebdcc93064d8ee706ea3d1c40ca76",
+    "src/svg_path/trig.gleam": "c39bf80d333601992b92114f1845cb5b543db8a0134646244932870ed238a577",
+    "src/svg_path.gleam": "9c28f28073b67b7641f9e4abc517289397f32f6f0f4496f35f8ff8e4f6e15630"
+  },
+  "totals": {
+    "understood-overlap-contract-limitation": 55,
+    "confirmed-our-failure": 14
+  },
+  "results": [
+    {
+      "id": 16,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 17,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 20,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 29,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 31,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 36,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 37,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 38,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 39,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 40,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 41,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 42,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 45,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 46,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 58,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 59,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 61,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 62,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 63,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 64,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 65,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 68,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 69,
+      "javascript": {
+        "type": "InternalBoundaryTopologyError",
+        "vertex": 7,
+        "reason": {
+          "type": "SectorMismatch"
+        }
+      },
+      "erlang": "Error(InternalBoundaryTopologyError(7, SectorMismatch))",
+      "status": "confirmed-our-failure",
+      "cause": "tangent-only-sector-order",
+      "failingVertex": {
+        "type": "ArrangementVertex",
+        "id": 7,
+        "point": {
+          "type": "Point",
+          "x": 44.45076578191018,
+          "y": 130.71388472676458
+        },
+        "endpoint_samples": [
+          {
+            "type": "Point",
+            "x": 44.45076578191018,
+            "y": 130.71388472676458
+          },
+          {
+            "type": "Point",
+            "x": 44.45076578191018,
+            "y": 130.71388472676458
+          },
+          {
+            "type": "Point",
+            "x": 44.45076578191018,
+            "y": 130.71388472676458
+          },
+          {
+            "type": "Point",
+            "x": 44.45076578191018,
+            "y": 130.71388472676458
+          }
+        ]
+      },
+      "rays": [
+        {
+          "type": "Object",
+          "kind": "rays",
+          "vertex": 7,
+          "incoming_id": 3,
+          "ordered": [
+            {
+              "type": "BoundaryRay",
+              "edge_id": 9,
+              "starts": false,
+              "angle": 172.99997958960165
+            },
+            {
+              "type": "BoundaryRay",
+              "edge_id": 8,
+              "starts": true,
+              "angle": 172.99999999999991
+            },
+            {
+              "type": "BoundaryRay",
+              "edge_id": 10,
+              "starts": true,
+              "angle": 352.99997958960176
+            },
+            {
+              "type": "BoundaryRay",
+              "edge_id": 3,
+              "starts": false,
+              "angle": 353.000000000001
+            }
+          ]
+        }
+      ],
+      "arrangementOrder": [
+        7,
+        [
+          [
+            {
+              "type": "OrientedArrangementEdge",
+              "edge_id": 8,
+              "reversed": false
+            }
+          ],
+          [
+            {
+              "type": "OrientedArrangementEdge",
+              "edge_id": 9,
+              "reversed": true
+            }
+          ],
+          [
+            {
+              "type": "OrientedArrangementEdge",
+              "edge_id": 10,
+              "reversed": false
+            }
+          ],
+          [
+            {
+              "type": "OrientedArrangementEdge",
+              "edge_id": 3,
+              "reversed": true
+            }
+          ]
+        ]
+      ],
+      "closedBoundaryValidation": {
+        "type": "Ok"
+      },
+      "classificationToleranceSweep": [
+        {
+          "tolerance": 1e-06,
+          "imbalance": []
+        },
+        {
+          "tolerance": 1e-07,
+          "imbalance": []
+        },
+        {
+          "tolerance": 1e-08,
+          "imbalance": []
+        },
+        {
+          "tolerance": 1e-09,
+          "imbalance": []
+        }
+      ],
+      "incidentEdges": [
+        {
+          "type": "ArrangementEdge",
+          "id": 3,
+          "segment": {
+            "type": "CubicBezier",
+            "start": {
+              "type": "Point",
+              "x": 45.443311834604344,
+              "y": 130.5920153955086
+            },
+            "control1": {
+              "type": "Point",
+              "x": 45.443311834604344,
+              "y": 130.5920153955086
+            },
+            "control2": {
+              "type": "Point",
+              "x": 45.0750820820688,
+              "y": 130.63722832398508
+            },
+            "end": {
+              "type": "Point",
+              "x": 44.45076578191018,
+              "y": 130.71388472676458
+            }
+          },
+          "bounds": {
+            "type": "BoundingBox",
+            "min": {
+              "type": "Point",
+              "x": 44.45076578191018,
+              "y": 130.5920153955086
+            },
+            "max": {
+              "type": "Point",
+              "x": 45.443311834604344,
+              "y": 130.71388472676458
+            }
+          },
+          "start_vertex": 3,
+          "end_vertex": 7,
+          "forward_multiplicity": 1,
+          "reverse_multiplicity": 0
+        },
+        {
+          "type": "ArrangementEdge",
+          "id": 8,
+          "segment": {
+            "type": "CubicBezier",
+            "start": {
+              "type": "Point",
+              "x": 44.45076578191018,
+              "y": 130.71388472676458
+            },
+            "control1": {
+              "type": "Point",
+              "x": 40.97511299538593,
+              "y": 131.14064122800892
+            },
+            "control2": {
+              "type": "Point",
+              "x": 29.562573408343212,
+              "y": 132.54192488999095
+            },
+            "end": {
+              "type": "Point",
+              "x": 29.562573408343212,
+              "y": 132.54192488999095
+            }
+          },
+          "bounds": {
+            "type": "BoundingBox",
+            "min": {
+              "type": "Point",
+              "x": 29.562573408343212,
+              "y": 130.71388472676458
+            },
+            "max": {
+              "type": "Point",
+              "x": 44.45076578191018,
+              "y": 132.54192488999095
+            }
+          },
+          "start_vertex": 7,
+          "end_vertex": 0,
+          "forward_multiplicity": 1,
+          "reverse_multiplicity": 0
+        },
+        {
+          "type": "ArrangementEdge",
+          "id": 9,
+          "segment": {
+            "type": "CubicBezier",
+            "start": {
+              "type": "Point",
+              "x": 17.45447279602068,
+              "y": 123.00742919817849
+            },
+            "control1": {
+              "type": "Point",
+              "x": 31.3421075104036,
+              "y": 121.30224259730582
+            },
+            "control2": {
+              "type": "Point",
+              "x": 43.032830679814566,
+              "y": 130.88798577838838
+            },
+            "end": {
+              "type": "Point",
+              "x": 44.45076578191018,
+              "y": 130.71388472676458
+            }
+          },
+          "bounds": {
+            "type": "BoundingBox",
+            "min": {
+              "type": "Point",
+              "x": 17.45447279602068,
+              "y": 122.80410526208729
+            },
+            "max": {
+              "type": "Point",
+              "x": 44.45076578191018,
+              "y": 130.7162291603276
+            }
+          },
+          "start_vertex": 6,
+          "end_vertex": 7,
+          "forward_multiplicity": 1,
+          "reverse_multiplicity": 0
+        },
+        {
+          "type": "ArrangementEdge",
+          "id": 10,
+          "segment": {
+            "type": "CubicBezier",
+            "start": {
+              "type": "Point",
+              "x": 44.45076578191018,
+              "y": 130.71388472676458
+            },
+            "control1": {
+              "type": "Point",
+              "x": 44.54610365889633,
+              "y": 130.70217867292732
+            },
+            "control2": {
+              "type": "Point",
+              "x": 44.59500000000003,
+              "y": 130.64635001545312
+            },
+            "end": {
+              "type": "Point",
+              "x": 44.59500000000003,
+              "y": 130.54000000000005
+            }
+          },
+          "bounds": {
+            "type": "BoundingBox",
+            "min": {
+              "type": "Point",
+              "x": 44.45076578191018,
+              "y": 130.54000000000005
+            },
+            "max": {
+              "type": "Point",
+              "x": 44.59500000000003,
+              "y": 130.71388472676458
+            }
+          },
+          "start_vertex": 7,
+          "end_vertex": 8,
+          "forward_multiplicity": 1,
+          "reverse_multiplicity": 0
+        }
+      ],
+      "secantOrders": [
+        {
+          "parameter": 0.0001,
+          "ordered": [
+            {
+              "edge": 8,
+              "starts": true,
+              "angle": 173.00000000079342
+            },
+            {
+              "edge": 9,
+              "starts": false,
+              "angle": 173.04382188813716
+            },
+            {
+              "edge": 10,
+              "starts": true,
+              "angle": 352.99702957509936
+            },
+            {
+              "edge": 3,
+              "starts": false,
+              "angle": 353.0000000037191
+            }
+          ]
+        },
+        {
+          "parameter": 0.001,
+          "ordered": [
+            {
+              "edge": 8,
+              "starts": true,
+              "angle": 172.99999999994031
+            },
+            {
+              "edge": 9,
+              "starts": false,
+              "angle": 173.4356610821565
+            },
+            {
+              "edge": 10,
+              "starts": true,
+              "angle": 352.97046690321287
+            },
+            {
+              "edge": 3,
+              "starts": false,
+              "angle": 353.0000000000012
+            }
+          ]
+        },
+        {
+          "parameter": 0.01,
+          "ordered": [
+            {
+              "edge": 8,
+              "starts": true,
+              "angle": 173.0000000000072
+            },
+            {
+              "edge": 9,
+              "starts": false,
+              "angle": 177.09306592352934
+            },
+            {
+              "edge": 10,
+              "starts": true,
+              "angle": 352.7036048969067
+            },
+            {
+              "edge": 3,
+              "starts": false,
+              "angle": 353.00000000000796
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 79,
+      "javascript": {
+        "type": "InternalBoundaryTopologyError",
+        "vertex": 9,
+        "reason": {
+          "type": "SectorMismatch"
+        }
+      },
+      "erlang": "Error(InternalBoundaryTopologyError(9, SectorMismatch))",
+      "status": "confirmed-our-failure",
+      "cause": "boundary-side-classification",
+      "failingVertex": {
+        "type": "ArrangementVertex",
+        "id": 9,
+        "point": {
+          "type": "Point",
+          "x": 956.289481847281,
+          "y": 352.2327027920063
+        },
+        "endpoint_samples": [
+          {
+            "type": "Point",
+            "x": 956.289481847281,
+            "y": 352.2327027920063
+          },
+          {
+            "type": "Point",
+            "x": 956.289481847281,
+            "y": 352.2327027920063
+          },
+          {
+            "type": "Point",
+            "x": 956.289481847281,
+            "y": 352.2327027920063
+          },
+          {
+            "type": "Point",
+            "x": 956.289481847281,
+            "y": 352.2327027920063
+          }
+        ]
+      },
+      "rays": [
+        {
+          "type": "Object",
+          "kind": "rays",
+          "vertex": 9,
+          "incoming_id": 6,
+          "ordered": [
+            {
+              "type": "BoundaryRay",
+              "edge_id": 9,
+              "starts": true,
+              "angle": 90.16370109020063
+            },
+            {
+              "type": "BoundaryRay",
+              "edge_id": 6,
+              "starts": false,
+              "angle": 270.16370109021204
+            },
+            {
+              "type": "BoundaryRay",
+              "edge_id": 11,
+              "starts": false,
+              "angle": 270.16590895026945
+            }
+          ]
+        }
+      ],
+      "arrangementOrder": [
+        9,
+        [
+          [
+            {
+              "type": "OrientedArrangementEdge",
+              "edge_id": 9,
+              "reversed": false
+            }
+          ],
+          [
+            {
+              "type": "OrientedArrangementEdge",
+              "edge_id": 12,
+              "reversed": false
+            }
+          ],
+          [
+            {
+              "type": "OrientedArrangementEdge",
+              "edge_id": 6,
+              "reversed": true
+            }
+          ],
+          [
+            {
+              "type": "OrientedArrangementEdge",
+              "edge_id": 11,
+              "reversed": true
+            }
+          ]
+        ]
+      ],
+      "closedBoundaryValidation": {
+        "type": "Ok"
+      },
+      "classificationToleranceSweep": [
+        {
+          "tolerance": 1e-06,
+          "imbalance": [
+            [
+              "6",
+              [
+                2,
+                1
+              ]
+            ],
+            [
+              "7",
+              [
+                0,
+                1
+              ]
+            ],
+            [
+              "9",
+              [
+                1,
+                2
+              ]
+            ],
+            [
+              "12",
+              [
+                2,
+                1
+              ]
+            ]
+          ]
+        },
+        {
+          "tolerance": 1e-07,
+          "imbalance": []
+        },
+        {
+          "tolerance": 1e-08,
+          "imbalance": []
+        },
+        {
+          "tolerance": 1e-09,
+          "imbalance": []
+        }
+      ],
+      "incidentEdges": [
+        {
+          "type": "ArrangementEdge",
+          "id": 6,
+          "segment": {
+            "type": "CubicBezier",
+            "start": {
+              "type": "Point",
+              "x": 956.2899880850171,
+              "y": 351.92499999999995
+            },
+            "control1": {
+              "type": "Point",
+              "x": 956.2899436410748,
+              "y": 352.02757770431793
+            },
+            "control2": {
+              "type": "Point",
+              "x": 956.2897748672407,
+              "y": 352.13014537287313
+            },
+            "end": {
+              "type": "Point",
+              "x": 956.289481847281,
+              "y": 352.2327027920063
+            }
+          },
+          "bounds": {
+            "type": "BoundingBox",
+            "min": {
+              "type": "Point",
+              "x": 956.289481847281,
+              "y": 351.92499999999995
+            },
+            "max": {
+              "type": "Point",
+              "x": 956.2899880850171,
+              "y": 352.2327027920063
+            }
+          },
+          "start_vertex": 6,
+          "end_vertex": 9,
+          "forward_multiplicity": 1,
+          "reverse_multiplicity": 0
+        },
+        {
+          "type": "ArrangementEdge",
+          "id": 9,
+          "segment": {
+            "type": "CubicBezier",
+            "start": {
+              "type": "Point",
+              "x": 956.289481847281,
+              "y": 352.2327027920063
+            },
+            "control1": {
+              "type": "Point",
+              "x": 956.2261037752975,
+              "y": 374.4151216930329
+            },
+            "control2": {
+              "type": "Point",
+              "x": 950.3501784993236,
+              "y": 396.1180467748236
+            },
+            "end": {
+              "type": "Point",
+              "x": 939.5093156970332,
+              "y": 415.1795207552082
+            }
+          },
+          "bounds": {
+            "type": "BoundingBox",
+            "min": {
+              "type": "Point",
+              "x": 939.5093156970332,
+              "y": 352.2327027920063
+            },
+            "max": {
+              "type": "Point",
+              "x": 956.289481847281,
+              "y": 415.1795207552082
+            }
+          },
+          "start_vertex": 9,
+          "end_vertex": 10,
+          "forward_multiplicity": 1,
+          "reverse_multiplicity": 0
+        },
+        {
+          "type": "ArrangementEdge",
+          "id": 11,
+          "segment": {
+            "type": "CubicBezier",
+            "start": {
+              "type": "Point",
+              "x": 956.29,
+              "y": 351.92499999999995
+            },
+            "control1": {
+              "type": "Point",
+              "x": 956.2899515648014,
+              "y": 352.0275776780916
+            },
+            "control2": {
+              "type": "Point",
+              "x": 956.2897788193405,
+              "y": 352.1301453467177
+            },
+            "end": {
+              "type": "Point",
+              "x": 956.289481847281,
+              "y": 352.2327027920063
+            }
+          },
+          "bounds": {
+            "type": "BoundingBox",
+            "min": {
+              "type": "Point",
+              "x": 956.289481847281,
+              "y": 351.92499999999995
+            },
+            "max": {
+              "type": "Point",
+              "x": 956.29,
+              "y": 352.2327027920063
+            }
+          },
+          "start_vertex": 8,
+          "end_vertex": 9,
+          "forward_multiplicity": 1,
+          "reverse_multiplicity": 0
+        },
+        {
+          "type": "ArrangementEdge",
+          "id": 12,
+          "segment": {
+            "type": "CubicBezier",
+            "start": {
+              "type": "Point",
+              "x": 956.289481847281,
+              "y": 352.2327027920063
+            },
+            "control1": {
+              "type": "Point",
+              "x": 956.2252506765798,
+              "y": 374.414536276986
+            },
+            "control2": {
+              "type": "Point",
+              "x": 950.3496955217549,
+              "y": 396.11812172731237
+            },
+            "end": {
+              "type": "Point",
+              "x": 939.5093156970332,
+              "y": 415.1795207552082
+            }
+          },
+          "bounds": {
+            "type": "BoundingBox",
+            "min": {
+              "type": "Point",
+              "x": 939.5093156970332,
+              "y": 352.2327027920063
+            },
+            "max": {
+              "type": "Point",
+              "x": 956.289481847281,
+              "y": 415.1795207552082
+            }
+          },
+          "start_vertex": 9,
+          "end_vertex": 10,
+          "forward_multiplicity": 1,
+          "reverse_multiplicity": 0
+        }
+      ]
+    },
+    {
+      "id": 88,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 89,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 90,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 103,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "CrossingMaxIterationsReached",
+            "estimate": 0.9999999999999715,
+            "value": -5.4569682106375694e-12
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(CrossingMaxIterationsReached(0.9999999999999715, -5.4569682106375694e-12))))",
+      "status": "confirmed-our-failure",
+      "cause": "crossing-root-isolation",
+      "evidence": "boolean-crossing-witnesses.json"
+    },
+    {
+      "id": 107,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "CrossingMaxIterationsReached",
+            "estimate": 0.99999991350241,
+            "value": 6.934897101018578e-12
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(CrossingMaxIterationsReached(0.99999991350241, 6.934897101018578e-12))))",
+      "status": "confirmed-our-failure",
+      "cause": "crossing-root-isolation",
+      "evidence": "boolean-crossing-witnesses.json"
+    },
+    {
+      "id": 108,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 109,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 113,
+      "javascript": {
+        "type": "InternalBoundaryTopologyError",
+        "vertex": 0,
+        "reason": {
+          "type": "SectorMismatch"
+        }
+      },
+      "erlang": "Error(InternalBoundaryTopologyError(0, SectorMismatch))",
+      "status": "confirmed-our-failure",
+      "cause": "boundary-side-classification",
+      "failingVertex": {
+        "type": "ArrangementVertex",
+        "id": 0,
+        "point": {
+          "type": "Point",
+          "x": 211.76470809030513,
+          "y": 391.5530064242439
+        },
+        "endpoint_samples": [
+          {
+            "type": "Point",
+            "x": 211.76470809030513,
+            "y": 391.55300642424385
+          },
+          {
+            "type": "Point",
+            "x": 211.76470809030513,
+            "y": 391.5530064242439
+          },
+          {
+            "type": "Point",
+            "x": 211.76470809030513,
+            "y": 391.5530064242439
+          },
+          {
+            "type": "Point",
+            "x": 211.76470809030513,
+            "y": 391.5530064242439
+          },
+          {
+            "type": "Point",
+            "x": 211.76470809030513,
+            "y": 391.5530064242439
+          }
+        ]
+      },
+      "rays": [
+        {
+          "type": "Object",
+          "kind": "rays",
+          "vertex": 0,
+          "incoming_id": 0,
+          "ordered": [
+            {
+              "type": "BoundaryRay",
+              "edge_id": 11,
+              "starts": true,
+              "angle": 174.2783487049276
+            },
+            {
+              "type": "BoundaryRay",
+              "edge_id": 5,
+              "starts": false,
+              "angle": 199.2073459171709
+            },
+            {
+              "type": "BoundaryRay",
+              "edge_id": 0,
+              "starts": false,
+              "angle": 264.27834865243597
+            }
+          ]
+        },
+        {
+          "type": "Object",
+          "kind": "rays",
+          "vertex": 0,
+          "incoming_id": 5,
+          "ordered": [
+            {
+              "type": "BoundaryRay",
+              "edge_id": 11,
+              "starts": true,
+              "angle": 174.2783487049276
+            },
+            {
+              "type": "BoundaryRay",
+              "edge_id": 5,
+              "starts": false,
+              "angle": 199.2073459171709
+            },
+            {
+              "type": "BoundaryRay",
+              "edge_id": 0,
+              "starts": false,
+              "angle": 264.27834865243597
+            }
+          ]
+        }
+      ],
+      "arrangementOrder": [
+        0,
+        [
+          [
+            {
+              "type": "OrientedArrangementEdge",
+              "edge_id": 11,
+              "reversed": false
+            }
+          ],
+          [
+            {
+              "type": "OrientedArrangementEdge",
+              "edge_id": 5,
+              "reversed": true
+            }
+          ],
+          [
+            {
+              "type": "OrientedArrangementEdge",
+              "edge_id": 0,
+              "reversed": false
+            }
+          ]
+        ]
+      ],
+      "closedBoundaryValidation": {
+        "type": "Ok"
+      },
+      "classificationToleranceSweep": [
+        {
+          "tolerance": 1e-06,
+          "imbalance": [
+            [
+              "0",
+              [
+                1,
+                2
+              ]
+            ],
+            [
+              "7",
+              [
+                1,
+                0
+              ]
+            ]
+          ]
+        },
+        {
+          "tolerance": 1e-07,
+          "imbalance": []
+        },
+        {
+          "tolerance": 1e-08,
+          "imbalance": []
+        },
+        {
+          "tolerance": 1e-09,
+          "imbalance": []
+        }
+      ],
+      "incidentEdges": [
+        {
+          "type": "ArrangementEdge",
+          "id": 0,
+          "segment": {
+            "type": "CubicBezier",
+            "start": {
+              "type": "Point",
+              "x": 211.76470809030513,
+              "y": 391.5530064242439
+            },
+            "control1": {
+              "type": "Point",
+              "x": 211.76470762846498,
+              "y": 391.5530018148277
+            },
+            "control2": {
+              "type": "Point",
+              "x": 211.76470716662584,
+              "y": 391.5529972054174
+            },
+            "end": {
+              "type": "Point",
+              "x": 211.76470670478773,
+              "y": 391.55299259601287
+            }
+          },
+          "bounds": {
+            "type": "BoundingBox",
+            "min": {
+              "type": "Point",
+              "x": 211.76470670478773,
+              "y": 391.55299259601287
+            },
+            "max": {
+              "type": "Point",
+              "x": 211.76470809030513,
+              "y": 391.5530064242439
+            }
+          },
+          "start_vertex": 0,
+          "end_vertex": 7,
+          "forward_multiplicity": 1,
+          "reverse_multiplicity": 1
+        },
+        {
+          "type": "ArrangementEdge",
+          "id": 5,
+          "segment": {
+            "type": "CubicBezier",
+            "start": {
+              "type": "Point",
+              "x": 172.3325585419042,
+              "y": 377.81561015749514
+            },
+            "control1": {
+              "type": "Point",
+              "x": 191.12965011335086,
+              "y": 384.3641523631989
+            },
+            "control2": {
+              "type": "Point",
+              "x": 211.76470809030513,
+              "y": 391.5530064242439
+            },
+            "end": {
+              "type": "Point",
+              "x": 211.76470809030513,
+              "y": 391.5530064242439
+            }
+          },
+          "bounds": {
+            "type": "BoundingBox",
+            "min": {
+              "type": "Point",
+              "x": 172.3325585419042,
+              "y": 377.81561015749514
+            },
+            "max": {
+              "type": "Point",
+              "x": 211.76470809030513,
+              "y": 391.5530064242439
+            }
+          },
+          "start_vertex": 5,
+          "end_vertex": 0,
+          "forward_multiplicity": 1,
+          "reverse_multiplicity": 0
+        },
+        {
+          "type": "ArrangementEdge",
+          "id": 11,
+          "segment": {
+            "type": "CubicBezier",
+            "start": {
+              "type": "Point",
+              "x": 211.76470809030513,
+              "y": 391.55300642424385
+            },
+            "control1": {
+              "type": "Point",
+              "x": 211.76470809030513,
+              "y": 391.55300642424385
+            },
+            "control2": {
+              "type": "Point",
+              "x": 194.30975201670992,
+              "y": 393.3019046140962
+            },
+            "end": {
+              "type": "Point",
+              "x": 178.2761476219954,
+              "y": 394.9083905648196
+            }
+          },
+          "bounds": {
+            "type": "BoundingBox",
+            "min": {
+              "type": "Point",
+              "x": 178.2761476219954,
+              "y": 391.55300642424385
+            },
+            "max": {
+              "type": "Point",
+              "x": 211.76470809030513,
+              "y": 394.9083905648196
+            }
+          },
+          "start_vertex": 0,
+          "end_vertex": 8,
+          "forward_multiplicity": 1,
+          "reverse_multiplicity": 0
+        }
+      ]
+    },
+    {
+      "id": 116,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 117,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 118,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 119,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 122,
+      "javascript": {
+        "type": "InternalBoundaryTopologyError",
+        "vertex": 9,
+        "reason": {
+          "type": "SectorMismatch"
+        }
+      },
+      "erlang": "Error(InternalBoundaryTopologyError(9, SectorMismatch))",
+      "status": "confirmed-our-failure",
+      "cause": "minimum-size-filter-and-classification",
+      "failingVertex": {
+        "type": "ArrangementVertex",
+        "id": 9,
+        "point": {
+          "type": "Point",
+          "x": 243.02905999678381,
+          "y": 272.453480258279
+        },
+        "endpoint_samples": [
+          {
+            "type": "Point",
+            "x": 243.02905999678381,
+            "y": 272.453480258279
+          },
+          {
+            "type": "Point",
+            "x": 243.02905999678381,
+            "y": 272.453480258279
+          }
+        ]
+      },
+      "rays": [
+        {
+          "type": "Object",
+          "kind": "rays",
+          "vertex": 9,
+          "incoming_id": 12,
+          "ordered": [
+            {
+              "type": "BoundaryRay",
+              "edge_id": 12,
+              "starts": false,
+              "angle": 40.18205482972266
+            }
+          ]
+        }
+      ],
+      "arrangementOrder": [
+        9,
+        [
+          [
+            {
+              "type": "OrientedArrangementEdge",
+              "edge_id": 12,
+              "reversed": true
+            }
+          ],
+          [
+            {
+              "type": "OrientedArrangementEdge",
+              "edge_id": 13,
+              "reversed": false
+            }
+          ]
+        ]
+      ],
+      "closedBoundaryValidation": {
+        "0": {
+          "type": "ConstructionFailed"
+        },
+        "type": "Error"
+      },
+      "classificationToleranceSweep": [
+        {
+          "tolerance": 1e-06,
+          "imbalance": [
+            [
+              "3",
+              [
+                1,
+                2
+              ]
+            ],
+            [
+              "4",
+              [
+                2,
+                1
+              ]
+            ],
+            [
+              "5",
+              [
+                1,
+                0
+              ]
+            ],
+            [
+              "8",
+              [
+                2,
+                1
+              ]
+            ],
+            [
+              "9",
+              [
+                0,
+                1
+              ]
+            ],
+            [
+              "10",
+              [
+                0,
+                1
+              ]
+            ]
+          ]
+        },
+        {
+          "tolerance": 1e-07,
+          "imbalance": [
+            [
+              "8",
+              [
+                2,
+                1
+              ]
+            ],
+            [
+              "10",
+              [
+                0,
+                1
+              ]
+            ]
+          ]
+        },
+        {
+          "tolerance": 1e-08,
+          "imbalance": [
+            [
+              "8",
+              [
+                2,
+                1
+              ]
+            ],
+            [
+              "10",
+              [
+                0,
+                1
+              ]
+            ]
+          ]
+        },
+        {
+          "tolerance": 1e-09,
+          "imbalance": [
+            [
+              "8",
+              [
+                2,
+                1
+              ]
+            ],
+            [
+              "10",
+              [
+                0,
+                1
+              ]
+            ]
+          ]
+        }
+      ],
+      "incidentEdges": [
+        {
+          "type": "ArrangementEdge",
+          "id": 12,
+          "segment": {
+            "type": "CubicBezier",
+            "start": {
+              "type": "Point",
+              "x": 243.02909196287735,
+              "y": 272.4535072545653
+            },
+            "control1": {
+              "type": "Point",
+              "x": 243.02908320257708,
+              "y": 272.4534998562395
+            },
+            "control2": {
+              "type": "Point",
+              "x": 243.0290725469553,
+              "y": 272.45349085726014
+            },
+            "end": {
+              "type": "Point",
+              "x": 243.02905999678381,
+              "y": 272.453480258279
+            }
+          },
+          "bounds": {
+            "type": "BoundingBox",
+            "min": {
+              "type": "Point",
+              "x": 243.02905999678381,
+              "y": 272.453480258279
+            },
+            "max": {
+              "type": "Point",
+              "x": 243.02909196287735,
+              "y": 272.4535072545653
+            }
+          },
+          "start_vertex": 8,
+          "end_vertex": 9,
+          "forward_multiplicity": 1,
+          "reverse_multiplicity": 0
+        },
+        {
+          "type": "ArrangementEdge",
+          "id": 13,
+          "segment": {
+            "type": "CubicBezier",
+            "start": {
+              "type": "Point",
+              "x": 243.02905999678381,
+              "y": 272.453480258279
+            },
+            "control1": {
+              "type": "Point",
+              "x": 243.02905738651796,
+              "y": 272.4534780538343
+            },
+            "control2": {
+              "type": "Point",
+              "x": 243.02905469429697,
+              "y": 272.4534757801762
+            },
+            "end": {
+              "type": "Point",
+              "x": 243.0290519201278,
+              "y": 272.45347343731044
+            }
+          },
+          "bounds": {
+            "type": "BoundingBox",
+            "min": {
+              "type": "Point",
+              "x": 243.0290519201278,
+              "y": 272.45347343731044
+            },
+            "max": {
+              "type": "Point",
+              "x": 243.02905999678381,
+              "y": 272.453480258279
+            }
+          },
+          "start_vertex": 9,
+          "end_vertex": 5,
+          "forward_multiplicity": 1,
+          "reverse_multiplicity": 1
+        }
+      ]
+    },
+    {
+      "id": 123,
+      "javascript": {
+        "type": "InternalBoundaryTopologyError",
+        "vertex": 10,
+        "reason": {
+          "type": "SectorMismatch"
+        }
+      },
+      "erlang": "Error(InternalBoundaryTopologyError(10, SectorMismatch))",
+      "status": "confirmed-our-failure",
+      "cause": "minimum-size-filter-and-classification",
+      "failingVertex": {
+        "type": "ArrangementVertex",
+        "id": 10,
+        "point": {
+          "type": "Point",
+          "x": 243.02906341643603,
+          "y": 272.45348314627375
+        },
+        "endpoint_samples": [
+          {
+            "type": "Point",
+            "x": 243.02906341643603,
+            "y": 272.45348314627375
+          }
+        ]
+      },
+      "rays": [
+        {
+          "type": "Object",
+          "kind": "rays",
+          "vertex": 10,
+          "incoming_id": 14,
+          "ordered": [
+            {
+              "type": "BoundaryRay",
+              "edge_id": 14,
+              "starts": false,
+              "angle": 40.182054816203255
+            }
+          ]
+        }
+      ],
+      "arrangementOrder": [
+        10,
+        [
+          [
+            {
+              "type": "OrientedArrangementEdge",
+              "edge_id": 14,
+              "reversed": false
+            }
+          ]
+        ]
+      ],
+      "closedBoundaryValidation": {
+        "0": {
+          "type": "ConstructionFailed"
+        },
+        "type": "Error"
+      },
+      "classificationToleranceSweep": [
+        {
+          "tolerance": 1e-06,
+          "imbalance": [
+            [
+              "8",
+              [
+                2,
+                1
+              ]
+            ],
+            [
+              "10",
+              [
+                0,
+                1
+              ]
+            ]
+          ]
+        },
+        {
+          "tolerance": 1e-07,
+          "imbalance": [
+            [
+              "3",
+              [
+                0,
+                1
+              ]
+            ],
+            [
+              "4",
+              [
+                1,
+                0
+              ]
+            ],
+            [
+              "8",
+              [
+                2,
+                1
+              ]
+            ],
+            [
+              "10",
+              [
+                0,
+                1
+              ]
+            ]
+          ]
+        },
+        {
+          "tolerance": 1e-08,
+          "imbalance": [
+            [
+              "8",
+              [
+                2,
+                1
+              ]
+            ],
+            [
+              "10",
+              [
+                0,
+                1
+              ]
+            ]
+          ]
+        },
+        {
+          "tolerance": 1e-09,
+          "imbalance": [
+            [
+              "8",
+              [
+                2,
+                1
+              ]
+            ],
+            [
+              "10",
+              [
+                0,
+                1
+              ]
+            ]
+          ]
+        }
+      ],
+      "incidentEdges": [
+        {
+          "type": "ArrangementEdge",
+          "id": 14,
+          "segment": {
+            "type": "CubicBezier",
+            "start": {
+              "type": "Point",
+              "x": 243.02906341643603,
+              "y": 272.45348314627375
+            },
+            "control1": {
+              "type": "Point",
+              "x": 243.02907449378793,
+              "y": 272.45349250141635
+            },
+            "control2": {
+              "type": "Point",
+              "x": 243.0290840094609,
+              "y": 272.4535005376762
+            },
+            "end": {
+              "type": "Point",
+              "x": 243.02909196287732,
+              "y": 272.45350725456535
+            }
+          },
+          "bounds": {
+            "type": "BoundingBox",
+            "min": {
+              "type": "Point",
+              "x": 243.02906341643603,
+              "y": 272.45348314627375
+            },
+            "max": {
+              "type": "Point",
+              "x": 243.02909196287732,
+              "y": 272.45350725456535
+            }
+          },
+          "start_vertex": 10,
+          "end_vertex": 8,
+          "forward_multiplicity": 1,
+          "reverse_multiplicity": 0
+        }
+      ]
+    },
+    {
+      "id": 126,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 127,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 128,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "CrossingMaxIterationsReached",
+            "estimate": 0.9999999999999972,
+            "value": 5.331912689143792e-11
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(CrossingMaxIterationsReached(0.9999999999999972, 5.331912689143792e-11))))",
+      "status": "confirmed-our-failure",
+      "cause": "crossing-root-isolation",
+      "evidence": "boolean-crossing-witnesses.json"
+    },
+    {
+      "id": 129,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "CrossingMaxIterationsReached",
+            "estimate": 0.9999999999999972,
+            "value": 5.331912689143792e-11
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(CrossingMaxIterationsReached(0.9999999999999972, 5.331912689143792e-11))))",
+      "status": "confirmed-our-failure",
+      "cause": "crossing-root-isolation",
+      "evidence": "boolean-crossing-witnesses.json"
+    },
+    {
+      "id": 130,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "CrossingMaxIterationsReached",
+            "estimate": 0.9999999999999997,
+            "value": -4.217781679471955e-11
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(CrossingMaxIterationsReached(0.9999999999999997, -4.217781679471955e-11))))",
+      "status": "confirmed-our-failure",
+      "cause": "crossing-root-isolation",
+      "evidence": "boolean-crossing-witnesses.json"
+    },
+    {
+      "id": 131,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "CrossingMaxIterationsReached",
+            "estimate": 0.9999999999999997,
+            "value": -4.217781679471955e-11
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(CrossingMaxIterationsReached(0.9999999999999997, -4.217781679471955e-11))))",
+      "status": "confirmed-our-failure",
+      "cause": "crossing-root-isolation",
+      "evidence": "boolean-crossing-witnesses.json"
+    },
+    {
+      "id": 132,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 133,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 138,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 139,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 144,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 145,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 146,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 147,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 150,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 151,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 152,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 153,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 158,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 159,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 160,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 161,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 164,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 165,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 166,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 167,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 168,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "CrossingMaxIterationsReached",
+            "estimate": 0.9999999999999941,
+            "value": -2.97859514830634e-11
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(CrossingMaxIterationsReached(0.9999999999999941, -2.97859514830634e-11))))",
+      "status": "confirmed-our-failure",
+      "cause": "crossing-root-isolation",
+      "evidence": "boolean-crossing-witnesses.json"
+    },
+    {
+      "id": 169,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "CrossingMaxIterationsReached",
+            "estimate": 0.9999999999999941,
+            "value": -2.97859514830634e-11
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(CrossingMaxIterationsReached(0.9999999999999941, -2.97859514830634e-11))))",
+      "status": "confirmed-our-failure",
+      "cause": "crossing-root-isolation",
+      "evidence": "boolean-crossing-witnesses.json"
+    },
+    {
+      "id": 172,
+      "javascript": {
+        "type": "InternalBoundaryTopologyError",
+        "vertex": 4,
+        "reason": {
+          "type": "SectorMismatch"
+        }
+      },
+      "erlang": "Error(InternalBoundaryTopologyError(4, SectorMismatch))",
+      "status": "confirmed-our-failure",
+      "cause": "tangent-only-sector-order",
+      "failingVertex": {
+        "type": "ArrangementVertex",
+        "id": 4,
+        "point": {
+          "type": "Point",
+          "x": 250,
+          "y": 225
+        },
+        "endpoint_samples": [
+          {
+            "type": "Point",
+            "x": 250,
+            "y": 225
+          },
+          {
+            "type": "Point",
+            "x": 250,
+            "y": 225
+          },
+          {
+            "type": "Point",
+            "x": 250,
+            "y": 224.99999999999997
+          },
+          {
+            "type": "Point",
+            "x": 250,
+            "y": 224.99999999999997
+          }
+        ]
+      },
+      "rays": [
+        {
+          "type": "Object",
+          "kind": "rays",
+          "vertex": 4,
+          "incoming_id": 3,
+          "ordered": [
+            {
+              "type": "BoundaryRay",
+              "edge_id": 13,
+              "starts": true,
+              "angle": 90
+            },
+            {
+              "type": "BoundaryRay",
+              "edge_id": 3,
+              "starts": false,
+              "angle": 90
+            },
+            {
+              "type": "BoundaryRay",
+              "edge_id": 7,
+              "starts": false,
+              "angle": 270
+            },
+            {
+              "type": "BoundaryRay",
+              "edge_id": 4,
+              "starts": true,
+              "angle": 270
+            }
+          ]
+        }
+      ],
+      "arrangementOrder": [
+        4,
+        [
+          [
+            {
+              "type": "OrientedArrangementEdge",
+              "edge_id": 13,
+              "reversed": true
+            }
+          ],
+          [
+            {
+              "type": "OrientedArrangementEdge",
+              "edge_id": 3,
+              "reversed": true
+            }
+          ],
+          [
+            {
+              "type": "OrientedArrangementEdge",
+              "edge_id": 4,
+              "reversed": false
+            }
+          ],
+          [
+            {
+              "type": "OrientedArrangementEdge",
+              "edge_id": 7,
+              "reversed": false
+            }
+          ]
+        ]
+      ],
+      "closedBoundaryValidation": {
+        "type": "Ok"
+      },
+      "classificationToleranceSweep": [
+        {
+          "tolerance": 1e-06,
+          "imbalance": []
+        },
+        {
+          "tolerance": 1e-07,
+          "imbalance": []
+        },
+        {
+          "tolerance": 1e-08,
+          "imbalance": []
+        },
+        {
+          "tolerance": 1e-09,
+          "imbalance": []
+        }
+      ],
+      "incidentEdges": [
+        {
+          "type": "ArrangementEdge",
+          "id": 3,
+          "segment": {
+            "type": "CubicBezier",
+            "start": {
+              "type": "Point",
+              "x": 225,
+              "y": 268.31089
+            },
+            "control1": {
+              "type": "Point",
+              "x": 239.94503,
+              "y": 259.66564999999997
+            },
+            "control2": {
+              "type": "Point",
+              "x": 250,
+              "y": 243.50705999999997
+            },
+            "end": {
+              "type": "Point",
+              "x": 250,
+              "y": 224.99999999999997
+            }
+          },
+          "bounds": {
+            "type": "BoundingBox",
+            "min": {
+              "type": "Point",
+              "x": 225,
+              "y": 224.99999999999997
+            },
+            "max": {
+              "type": "Point",
+              "x": 250,
+              "y": 268.31089
+            }
+          },
+          "start_vertex": 3,
+          "end_vertex": 4,
+          "forward_multiplicity": 1,
+          "reverse_multiplicity": 0
+        },
+        {
+          "type": "ArrangementEdge",
+          "id": 4,
+          "segment": {
+            "type": "CubicBezier",
+            "start": {
+              "type": "Point",
+              "x": 250,
+              "y": 224.99999999999997
+            },
+            "control1": {
+              "type": "Point",
+              "x": 250,
+              "y": 206.49293999999998
+            },
+            "control2": {
+              "type": "Point",
+              "x": 239.94503,
+              "y": 190.33434999999997
+            },
+            "end": {
+              "type": "Point",
+              "x": 225,
+              "y": 181.68910999999997
+            }
+          },
+          "bounds": {
+            "type": "BoundingBox",
+            "min": {
+              "type": "Point",
+              "x": 225,
+              "y": 181.68910999999997
+            },
+            "max": {
+              "type": "Point",
+              "x": 250,
+              "y": 224.99999999999997
+            }
+          },
+          "start_vertex": 4,
+          "end_vertex": 5,
+          "forward_multiplicity": 1,
+          "reverse_multiplicity": 0
+        },
+        {
+          "type": "ArrangementEdge",
+          "id": 7,
+          "segment": {
+            "type": "CubicBezier",
+            "start": {
+              "type": "Point",
+              "x": 250,
+              "y": 225
+            },
+            "control1": {
+              "type": "Point",
+              "x": 250,
+              "y": 206.49293895388536
+            },
+            "control2": {
+              "type": "Point",
+              "x": 260.05496511587944,
+              "y": 190.334343361214
+            },
+            "end": {
+              "type": "Point",
+              "x": 275,
+              "y": 181.68910856962427
+            }
+          },
+          "bounds": {
+            "type": "BoundingBox",
+            "min": {
+              "type": "Point",
+              "x": 250,
+              "y": 181.68910856962427
+            },
+            "max": {
+              "type": "Point",
+              "x": 275,
+              "y": 225
+            }
+          },
+          "start_vertex": 4,
+          "end_vertex": 6,
+          "forward_multiplicity": 1,
+          "reverse_multiplicity": 0
+        },
+        {
+          "type": "ArrangementEdge",
+          "id": 13,
+          "segment": {
+            "type": "CubicBezier",
+            "start": {
+              "type": "Point",
+              "x": 275,
+              "y": 268.31089143037576
+            },
+            "control1": {
+              "type": "Point",
+              "x": 260.05496511587944,
+              "y": 259.665656638786
+            },
+            "control2": {
+              "type": "Point",
+              "x": 250,
+              "y": 243.50706104611464
+            },
+            "end": {
+              "type": "Point",
+              "x": 250,
+              "y": 225
+            }
+          },
+          "bounds": {
+            "type": "BoundingBox",
+            "min": {
+              "type": "Point",
+              "x": 250,
+              "y": 225
+            },
+            "max": {
+              "type": "Point",
+              "x": 275,
+              "y": 268.31089143037576
+            }
+          },
+          "start_vertex": 10,
+          "end_vertex": 4,
+          "forward_multiplicity": 1,
+          "reverse_multiplicity": 0
+        }
+      ],
+      "secantOrders": [
+        {
+          "parameter": 0.0001,
+          "ordered": [
+            {
+              "edge": 13,
+              "starts": true,
+              "angle": 89.9968871094803
+            },
+            {
+              "edge": 3,
+              "starts": false,
+              "angle": 90.00311289186897
+            },
+            {
+              "edge": 4,
+              "starts": true,
+              "angle": 269.99688710813103
+            },
+            {
+              "edge": 7,
+              "starts": false,
+              "angle": 270.00311289051973
+            }
+          ]
+        },
+        {
+          "parameter": 0.001,
+          "ordered": [
+            {
+              "edge": 13,
+              "starts": true,
+              "angle": 89.9688723390712
+            },
+            {
+              "edge": 3,
+              "starts": false,
+              "angle": 90.03112767780308
+            },
+            {
+              "edge": 4,
+              "starts": true,
+              "angle": 269.9688723221969
+            },
+            {
+              "edge": 7,
+              "starts": false,
+              "angle": 270.0311276609288
+            }
+          ]
+        },
+        {
+          "parameter": 0.01,
+          "ordered": [
+            {
+              "edge": 13,
+              "starts": true,
+              "angle": 89.68884790861077
+            },
+            {
+              "edge": 3,
+              "starts": false,
+              "angle": 90.31115225963548
+            },
+            {
+              "edge": 4,
+              "starts": true,
+              "angle": 269.6888477403645
+            },
+            {
+              "edge": 7,
+              "starts": false,
+              "angle": 270.3111520913892
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 173,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    },
+    {
+      "id": 175,
+      "javascript": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "NonAffineOverlapCorrespondence"
+          }
+        }
+      },
+      "erlang": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))",
+      "status": "understood-overlap-contract-limitation",
+      "evidence": "boolean-overlap-witnesses.json"
+    }
+  ]
+}

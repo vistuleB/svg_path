@@ -1,5 +1,9 @@
 # Paper.js Boolean audit: first batch
 
+**Historical log.** The current classifications and follow-up evidence are in
+[BOOLEAN_ERROR_TRIAGE.md](BOOLEAN_ERROR_TRIAGE.md) and `boolean-status.json`.
+The earlier unclassified counts below are superseded.
+
 Date: 2026-10-12. Gleam library revision:
 `03c95a0a4053b58d8039481fac5d6e52b6820e95` (production source unchanged).
 Paper.js source revision and license are recorded in `inventory.json` and
