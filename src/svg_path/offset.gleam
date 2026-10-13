@@ -963,6 +963,32 @@ pub fn normalize_source_subpath(
   subpath: svg_path.Subpath,
   options: Options,
 ) -> Result(svg_path.Subpath, InternalError) {
+  // Isolated point lines survive generic line-degeneracy cleanup beside
+  // curved segments, but cannot supply offset tangents. Remove only exact
+  // zero-length lines when other geometry remains. Keep all-point sources
+  // on their existing degenerate-input path, including segment offset errors.
+  let retained =
+    list.filter(svg_path.subpath_segments(subpath), fn(segment) {
+      case segment {
+        svg_path.Line(start:, end:) -> start != end
+        _ -> True
+      }
+    })
+  use subpath <- result.try(case retained {
+    [] -> Ok(subpath)
+    _ -> {
+      use cleaned <- result.try(
+        svg_path.subpath_with(retained, policy: svg_path.Strict)
+        |> result.map_error(InternalPathError),
+      )
+      case svg_path.subpath_is_closed(subpath) {
+        True ->
+          svg_path.subpath_close_with(cleaned, policy: svg_path.Strict)
+          |> result.map_error(InternalPathError)
+        False -> Ok(cleaned)
+      }
+    }
+  })
   use subpath <- result.try(normalize_short_source_runs(
     subpath,
     tolerance: 0.001,
