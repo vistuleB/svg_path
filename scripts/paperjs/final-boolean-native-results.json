@@ -1,0 +1,12 @@
+{
+  "erlang": {
+    "command": "gleam run --target erlang -m paper_final_boolean_probe",
+    "exitCode": 0,
+    "log": "  Compiling svg_path_paper_audit\n   Compiled in 0.36s\n    Running paper_final_boolean_probe.main\nFixture 122\nminimum=1.0e-5\nError(ArrangementGraphError(ConstructionFailed))\nminimum=1.0e-7\nError(ArrangementGraphError(ConstructionFailed))\nFixture 123\nminimum=1.0e-5\nError(ArrangementGraphError(ConstructionFailed))\nminimum=1.0e-7\nError(ArrangementGraphError(ConstructionFailed))\n107 self-overlap; y origin=0.0\nOk([])\n107 self-overlap; y origin=337.7804798720905\nOk([#(0.0, 1.0, 0.0, 1.0)])\n"
+  },
+  "javascript": {
+    "command": "gleam run --target javascript -m paper_final_boolean_probe",
+    "exitCode": 0,
+    "log": "  Compiling svg_path_paper_audit\n   Compiled in 0.04s\n    Running paper_final_boolean_probe.main\nFixture 122\nminimum=0.00001\nError(ArrangementGraphError(error: ConstructionFailed))\nminimum=1.0e-7\nError(ArrangementGraphError(error: ConstructionFailed))\nFixture 123\nminimum=0.00001\nError(ArrangementGraphError(error: ConstructionFailed))\nminimum=1.0e-7\nError(ArrangementGraphError(error: ConstructionFailed))\n107 self-overlap; y origin=0\nOk([])\n107 self-overlap; y origin=337.7804798720905\nOk([#(0, 1, 0, 1)])\n"
+  }
+}

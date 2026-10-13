@@ -10,12 +10,18 @@ The [Boolean error triage](BOOLEAN_ERROR_TRIAGE.md) classified all 69 saved
 errors. The [tangent-order fix](BOOLEAN_TANGENT_FIX.md) recovered fixtures 69
 and 172; the [Bernstein line-root fallback](CROSSING_BERNSTEIN_FIX.md) recovers
 103, 168 and 169. The [face-winding classifier](FACE_WINDING_FIX.md) recovers
-79 and 113. The latest 178-case screen has **109 sampled matches**,
-55 understood overlap-contract limitations, **four newly exposed overlap
-rejections awaiting classification**, two remaining default filtering failures
-(122/123), one downstream timeout (107), and seven adapter cases. All 107
-pre-face-winding sampled matches remain matches. Classification and sampled
-comparisons do not establish complete parity.
+79 and 113. The [certified full-overlap fix](FULL_OVERLAP_FIX.md) recovers
+107, 122 and 123. The latest 178-case screen has **112 sampled matches**,
+**59 understood overlap-contract limitations**, and **seven adapter cases**.
+All 109 pre-overlap-fix matches remain matches; the 59 errors are unchanged.
+No unclassified Boolean discrepancy remains in this screen. Classification and
+sampled comparisons do not establish complete parity.
+
+The [128–131 investigation](NEW_OVERLAP_REJECTIONS.md) independently classified
+all four newly exposed rejections as documented overlap-contract limitations.
+The [107/122/123 investigation](FINAL_BOOLEAN_INVESTIGATION.md) records the
+pre-fix overlap-merging defect and its downstream construction errors/timeout.
+[Dead-code cleanup](DEFERRED_CLEANUP.md) is deferred until later.
 
 Intersection parameter/crossing coverage, unadapted assertions,
 diagnostic-to-regression promotion, and upstream files

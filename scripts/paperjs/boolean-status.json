@@ -794,10 +794,10 @@
     "block": 38,
     "title": "#1239 / #1073",
     "operation": "unite",
-    "status": "confirmed-our-failure",
+    "status": "sampled-geometry-match",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. Default operation fails; identified mechanism: boundary-side-classification. No production fix applied."
+    "evidence": "Recovered by d2f949a face-winding propagation; see FACE_WINDING_FIX.md and boolean-screening-after-face-winding.json. Reduced portable regressions cover the cause; the full upstream fixture is a sampled JavaScript comparison."
   },
   {
     "id": 80,
@@ -1074,10 +1074,10 @@
     "block": 42,
     "title": "Selected test-cases provided by @iconexperience",
     "operation": "unite",
-    "status": "unresolved-downstream-timeout",
+    "status": "sampled-geometry-match",
     "derivedOperands": false,
-    "portableRegression": false,
-    "evidence": "Both scalar roots are covered by portable regressions. The complete CSG operation now exceeds the 30-second screen limit in later curve-pair processing; not a passing Boolean comparison. See boolean-screening-after-bernstein.json and CROSSING_BERNSTEIN_FIX.md."
+    "portableRegression": true,
+    "evidence": "Recovered by certified full-overlap preference. See FULL_OVERLAP_FIX.md and boolean-screening-after-full-overlap.json; full-fixture portable regressions check geometry and fill. Sampled match is not exhaustive equivalence."
   },
   {
     "id": 108,
@@ -1134,10 +1134,10 @@
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "intersect",
-    "status": "confirmed-our-failure",
+    "status": "sampled-geometry-match",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. Default operation fails; identified mechanism: boundary-side-classification. No production fix applied."
+    "evidence": "Recovered by d2f949a face-winding propagation; see FACE_WINDING_FIX.md and boolean-screening-after-face-winding.json. Reduced portable regressions cover the cause; the full upstream fixture is a sampled JavaScript comparison."
   },
   {
     "id": 114,
@@ -1224,20 +1224,20 @@
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "unite",
-    "status": "confirmed-our-failure",
+    "status": "sampled-geometry-match",
     "derivedOperands": false,
-    "portableRegression": false,
-    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. Default operation fails; identified mechanism: minimum-size-filter-and-classification. No production fix applied."
+    "portableRegression": true,
+    "evidence": "Recovered by certified full-overlap preference. See FULL_OVERLAP_FIX.md and boolean-screening-after-full-overlap.json; full-fixture portable regressions check geometry and fill. Sampled match is not exhaustive equivalence."
   },
   {
     "id": 123,
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "intersect",
-    "status": "confirmed-our-failure",
+    "status": "sampled-geometry-match",
     "derivedOperands": false,
-    "portableRegression": false,
-    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. Default operation fails; identified mechanism: minimum-size-filter-and-classification. No production fix applied."
+    "portableRegression": true,
+    "evidence": "Recovered by certified full-overlap preference. See FULL_OVERLAP_FIX.md and boolean-screening-after-full-overlap.json; full-fixture portable regressions check geometry and fill. Sampled match is not exhaustive equivalence."
   },
   {
     "id": 124,
@@ -1284,40 +1284,40 @@
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "unite",
-    "status": "unclassified-overlap-rejection",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Bernstein fallback clears the original scalar-root failure; the operation now reaches NonAffineOverlapCorrespondence. These newly exposed overlap witnesses are not yet independently classified. See boolean-screening-after-bernstein.json and CROSSING_BERNSTEIN_FIX.md."
+    "evidence": "Reproduced on Erlang and JavaScript after d2f949a. Independent 80-digit bounds certify geometric coincidence within tolerance and a large affine-parameter mismatch for the exact newly exposed witness. See NEW_OVERLAP_REJECTIONS.md and new-overlap-witnesses.json. This classifies the blocker, not later CSG behavior."
   },
   {
     "id": 129,
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "intersect",
-    "status": "unclassified-overlap-rejection",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Bernstein fallback clears the original scalar-root failure; the operation now reaches NonAffineOverlapCorrespondence. These newly exposed overlap witnesses are not yet independently classified. See boolean-screening-after-bernstein.json and CROSSING_BERNSTEIN_FIX.md."
+    "evidence": "Reproduced on Erlang and JavaScript after d2f949a. Independent 80-digit bounds certify geometric coincidence within tolerance and a large affine-parameter mismatch for the exact newly exposed witness. See NEW_OVERLAP_REJECTIONS.md and new-overlap-witnesses.json. This classifies the blocker, not later CSG behavior."
   },
   {
     "id": 130,
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "unite",
-    "status": "unclassified-overlap-rejection",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Bernstein fallback clears the original scalar-root failure; the operation now reaches NonAffineOverlapCorrespondence. These newly exposed overlap witnesses are not yet independently classified. See boolean-screening-after-bernstein.json and CROSSING_BERNSTEIN_FIX.md."
+    "evidence": "Reproduced on Erlang and JavaScript after d2f949a. Independent 80-digit bounds certify geometric coincidence within tolerance and a large affine-parameter mismatch for the exact newly exposed witness. See NEW_OVERLAP_REJECTIONS.md and new-overlap-witnesses.json. This classifies the blocker, not later CSG behavior."
   },
   {
     "id": 131,
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "intersect",
-    "status": "unclassified-overlap-rejection",
+    "status": "understood-overlap-contract-limitation",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Bernstein fallback clears the original scalar-root failure; the operation now reaches NonAffineOverlapCorrespondence. These newly exposed overlap witnesses are not yet independently classified. See boolean-screening-after-bernstein.json and CROSSING_BERNSTEIN_FIX.md."
+    "evidence": "Reproduced on Erlang and JavaScript after d2f949a. Independent 80-digit bounds certify geometric coincidence within tolerance and a large affine-parameter mismatch for the exact newly exposed witness. See NEW_OVERLAP_REJECTIONS.md and new-overlap-witnesses.json. This classifies the blocker, not later CSG behavior."
   },
   {
     "id": 132,

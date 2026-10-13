@@ -1,0 +1,571 @@
+{
+  "results": [
+    {
+      "id": 128,
+      "operation": "unite",
+      "result": {
+        "0": {
+          "type": "ArrangementGraphError",
+          "error": {
+            "type": "PathError",
+            "error": {
+              "type": "NonAffineOverlapCorrespondence"
+            }
+          }
+        },
+        "type": "Error"
+      },
+      "trace": [
+        {
+          "type": "Object",
+          "kind": "non-affine",
+          "left": {
+            "type": "CubicBezier",
+            "start": {
+              "type": "Point",
+              "x": 487.8821067425946,
+              "y": 340.2688405948006
+            },
+            "control1": {
+              "type": "Point",
+              "x": 487.8821067425946,
+              "y": 340.2688405948006
+            },
+            "control2": {
+              "type": "Point",
+              "x": 529.4025393039343,
+              "y": 348.4286400051758
+            },
+            "end": {
+              "type": "Point",
+              "x": 529.4025393039343,
+              "y": 348.4286400051758
+            }
+          },
+          "right": {
+            "type": "CubicBezier",
+            "start": {
+              "type": "Point",
+              "x": 529.402539303881,
+              "y": 348.428640005165
+            },
+            "control1": {
+              "type": "Point",
+              "x": 520.2872228828007,
+              "y": 346.63725323557327
+            },
+            "control2": {
+              "type": "Point",
+              "x": 500.74991578169283,
+              "y": 342.7976856509049
+            },
+            "end": {
+              "type": "Point",
+              "x": 487.8821067425581,
+              "y": 340.26884059479363
+            }
+          },
+          "tolerance": 5e-07,
+          "candidates": {
+            "type": "OverlapCandidates",
+            "affine": [],
+            "non_affine": [
+              [
+                0,
+                1,
+                1,
+                0,
+                {
+                  "type": "Point",
+                  "x": 487.8821067425946,
+                  "y": 340.2688405948006
+                },
+                {
+                  "type": "Point",
+                  "x": 529.4025393039343,
+                  "y": 348.4286400051758
+                }
+              ],
+              [
+                0,
+                1,
+                1,
+                0,
+                {
+                  "type": "Point",
+                  "x": 487.8821067425946,
+                  "y": 340.2688405948006
+                },
+                {
+                  "type": "Point",
+                  "x": 529.4025393039343,
+                  "y": 348.4286400051758
+                }
+              ],
+              [
+                0,
+                1,
+                1,
+                0,
+                {
+                  "type": "Point",
+                  "x": 487.8821067425946,
+                  "y": 340.2688405948006
+                },
+                {
+                  "type": "Point",
+                  "x": 529.4025393039343,
+                  "y": 348.4286400051758
+                }
+              ],
+              [
+                0,
+                1,
+                1,
+                0,
+                {
+                  "type": "Point",
+                  "x": 487.8821067425946,
+                  "y": 340.2688405948006
+                },
+                {
+                  "type": "Point",
+                  "x": 529.4025393039343,
+                  "y": 348.4286400051758
+                }
+              ]
+            ]
+          }
+        }
+      ],
+      "elapsedMs": 327
+    },
+    {
+      "id": 129,
+      "operation": "intersect",
+      "result": {
+        "0": {
+          "type": "ArrangementGraphError",
+          "error": {
+            "type": "PathError",
+            "error": {
+              "type": "NonAffineOverlapCorrespondence"
+            }
+          }
+        },
+        "type": "Error"
+      },
+      "trace": [
+        {
+          "type": "Object",
+          "kind": "non-affine",
+          "left": {
+            "type": "CubicBezier",
+            "start": {
+              "type": "Point",
+              "x": 487.8821067425946,
+              "y": 340.2688405948006
+            },
+            "control1": {
+              "type": "Point",
+              "x": 487.8821067425946,
+              "y": 340.2688405948006
+            },
+            "control2": {
+              "type": "Point",
+              "x": 529.4025393039343,
+              "y": 348.4286400051758
+            },
+            "end": {
+              "type": "Point",
+              "x": 529.4025393039343,
+              "y": 348.4286400051758
+            }
+          },
+          "right": {
+            "type": "CubicBezier",
+            "start": {
+              "type": "Point",
+              "x": 529.402539303881,
+              "y": 348.428640005165
+            },
+            "control1": {
+              "type": "Point",
+              "x": 520.2872228828007,
+              "y": 346.63725323557327
+            },
+            "control2": {
+              "type": "Point",
+              "x": 500.74991578169283,
+              "y": 342.7976856509049
+            },
+            "end": {
+              "type": "Point",
+              "x": 487.8821067425581,
+              "y": 340.26884059479363
+            }
+          },
+          "tolerance": 5e-07,
+          "candidates": {
+            "type": "OverlapCandidates",
+            "affine": [],
+            "non_affine": [
+              [
+                0,
+                1,
+                1,
+                0,
+                {
+                  "type": "Point",
+                  "x": 487.8821067425946,
+                  "y": 340.2688405948006
+                },
+                {
+                  "type": "Point",
+                  "x": 529.4025393039343,
+                  "y": 348.4286400051758
+                }
+              ],
+              [
+                0,
+                1,
+                1,
+                0,
+                {
+                  "type": "Point",
+                  "x": 487.8821067425946,
+                  "y": 340.2688405948006
+                },
+                {
+                  "type": "Point",
+                  "x": 529.4025393039343,
+                  "y": 348.4286400051758
+                }
+              ],
+              [
+                0,
+                1,
+                1,
+                0,
+                {
+                  "type": "Point",
+                  "x": 487.8821067425946,
+                  "y": 340.2688405948006
+                },
+                {
+                  "type": "Point",
+                  "x": 529.4025393039343,
+                  "y": 348.4286400051758
+                }
+              ],
+              [
+                0,
+                1,
+                1,
+                0,
+                {
+                  "type": "Point",
+                  "x": 487.8821067425946,
+                  "y": 340.2688405948006
+                },
+                {
+                  "type": "Point",
+                  "x": 529.4025393039343,
+                  "y": 348.4286400051758
+                }
+              ]
+            ]
+          }
+        }
+      ],
+      "elapsedMs": 253
+    },
+    {
+      "id": 130,
+      "operation": "unite",
+      "result": {
+        "0": {
+          "type": "ArrangementGraphError",
+          "error": {
+            "type": "PathError",
+            "error": {
+              "type": "NonAffineOverlapCorrespondence"
+            }
+          }
+        },
+        "type": "Error"
+      },
+      "trace": [
+        {
+          "type": "Object",
+          "kind": "non-affine",
+          "left": {
+            "type": "CubicBezier",
+            "start": {
+              "type": "Point",
+              "x": 192.98476439737567,
+              "y": 381.03840618337944
+            },
+            "control1": {
+              "type": "Point",
+              "x": 192.98476439737567,
+              "y": 381.03840618337944
+            },
+            "control2": {
+              "type": "Point",
+              "x": 191.58826071683484,
+              "y": 405.5453629318501
+            },
+            "end": {
+              "type": "Point",
+              "x": 191.58826071683484,
+              "y": 405.5453629318501
+            }
+          },
+          "right": {
+            "type": "CubicBezier",
+            "start": {
+              "type": "Point",
+              "x": 191.5882607168351,
+              "y": 405.54536293185015
+            },
+            "control1": {
+              "type": "Point",
+              "x": 191.5882607168351,
+              "y": 405.54536293185015
+            },
+            "control2": {
+              "type": "Point",
+              "x": 192.2464343109604,
+              "y": 393.9952094815062
+            },
+            "end": {
+              "type": "Point",
+              "x": 192.98476439737814,
+              "y": 381.03840618333726
+            }
+          },
+          "tolerance": 5e-07,
+          "candidates": {
+            "type": "OverlapCandidates",
+            "affine": [],
+            "non_affine": [
+              [
+                0,
+                1,
+                1,
+                0,
+                {
+                  "type": "Point",
+                  "x": 192.98476439737567,
+                  "y": 381.03840618337944
+                },
+                {
+                  "type": "Point",
+                  "x": 191.58826071683484,
+                  "y": 405.5453629318501
+                }
+              ],
+              [
+                0,
+                1,
+                1,
+                0,
+                {
+                  "type": "Point",
+                  "x": 192.98476439737567,
+                  "y": 381.03840618337944
+                },
+                {
+                  "type": "Point",
+                  "x": 191.58826071683484,
+                  "y": 405.5453629318501
+                }
+              ],
+              [
+                0,
+                1,
+                1,
+                0,
+                {
+                  "type": "Point",
+                  "x": 192.98476439737567,
+                  "y": 381.03840618337944
+                },
+                {
+                  "type": "Point",
+                  "x": 191.58826071683484,
+                  "y": 405.5453629318501
+                }
+              ],
+              [
+                0,
+                1,
+                1,
+                0,
+                {
+                  "type": "Point",
+                  "x": 192.98476439737567,
+                  "y": 381.03840618337944
+                },
+                {
+                  "type": "Point",
+                  "x": 191.58826071683484,
+                  "y": 405.5453629318501
+                }
+              ]
+            ]
+          }
+        }
+      ],
+      "elapsedMs": 188
+    },
+    {
+      "id": 131,
+      "operation": "intersect",
+      "result": {
+        "0": {
+          "type": "ArrangementGraphError",
+          "error": {
+            "type": "PathError",
+            "error": {
+              "type": "NonAffineOverlapCorrespondence"
+            }
+          }
+        },
+        "type": "Error"
+      },
+      "trace": [
+        {
+          "type": "Object",
+          "kind": "non-affine",
+          "left": {
+            "type": "CubicBezier",
+            "start": {
+              "type": "Point",
+              "x": 192.98476439737567,
+              "y": 381.03840618337944
+            },
+            "control1": {
+              "type": "Point",
+              "x": 192.98476439737567,
+              "y": 381.03840618337944
+            },
+            "control2": {
+              "type": "Point",
+              "x": 191.58826071683484,
+              "y": 405.5453629318501
+            },
+            "end": {
+              "type": "Point",
+              "x": 191.58826071683484,
+              "y": 405.5453629318501
+            }
+          },
+          "right": {
+            "type": "CubicBezier",
+            "start": {
+              "type": "Point",
+              "x": 191.5882607168351,
+              "y": 405.54536293185015
+            },
+            "control1": {
+              "type": "Point",
+              "x": 191.5882607168351,
+              "y": 405.54536293185015
+            },
+            "control2": {
+              "type": "Point",
+              "x": 192.2464343109604,
+              "y": 393.9952094815062
+            },
+            "end": {
+              "type": "Point",
+              "x": 192.98476439737814,
+              "y": 381.03840618333726
+            }
+          },
+          "tolerance": 5e-07,
+          "candidates": {
+            "type": "OverlapCandidates",
+            "affine": [],
+            "non_affine": [
+              [
+                0,
+                1,
+                1,
+                0,
+                {
+                  "type": "Point",
+                  "x": 192.98476439737567,
+                  "y": 381.03840618337944
+                },
+                {
+                  "type": "Point",
+                  "x": 191.58826071683484,
+                  "y": 405.5453629318501
+                }
+              ],
+              [
+                0,
+                1,
+                1,
+                0,
+                {
+                  "type": "Point",
+                  "x": 192.98476439737567,
+                  "y": 381.03840618337944
+                },
+                {
+                  "type": "Point",
+                  "x": 191.58826071683484,
+                  "y": 405.5453629318501
+                }
+              ],
+              [
+                0,
+                1,
+                1,
+                0,
+                {
+                  "type": "Point",
+                  "x": 192.98476439737567,
+                  "y": 381.03840618337944
+                },
+                {
+                  "type": "Point",
+                  "x": 191.58826071683484,
+                  "y": 405.5453629318501
+                }
+              ],
+              [
+                0,
+                1,
+                1,
+                0,
+                {
+                  "type": "Point",
+                  "x": 192.98476439737567,
+                  "y": 381.03840618337944
+                },
+                {
+                  "type": "Point",
+                  "x": 191.58826071683484,
+                  "y": 405.5453629318501
+                }
+              ]
+            ]
+          }
+        }
+      ],
+      "elapsedMs": 332
+    }
+  ],
+  "sourceSha256": {
+    "src/svg_path.gleam": "0eb041af12889968505f6602d61132b48b8f6b340815435e50751eef67a9d148",
+    "src/svg_path/internal/root.gleam": "6572be8f15d50546be8e9cae627763bd5194713c08428e6a00f25d86a920a11a",
+    "src/svg_path/internal/overlap_detection.gleam": "a50a1fb221aab42242ce6847c7002cf9f5decd20d50a76b1ccea53f90866b50b",
+    "src/svg_path/arrangement.gleam": "6f072300b6efacc6073fde6ecbe6b183dfffd677494431086877fdf153da7984",
+    "src/svg_path/csg.gleam": "4955106f1f65bca9d6b7c00ae0e29fcef80ef3422df8cefcc7b33741ab713ef3"
+  }
+}

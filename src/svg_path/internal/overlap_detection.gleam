@@ -301,12 +301,106 @@ pub fn detect_with_samples(
       {
         True -> Error(svg_path.NonAffineOverlapCorrespondence)
         False ->
-          case merge_overlap_list(candidates.affine, tolerance:) {
+          case
+            merge_overlap_list(
+              prefer_certified_full_overlap(
+                candidates.affine,
+                left,
+                right,
+                tolerance,
+              ),
+              tolerance:,
+            )
+          {
             Ok(merged) -> Ok(merged)
             Error(Nil) -> Ok([])
           }
       }
     }
+  }
+}
+
+// Endpoint projection can produce several nearby parameter addresses for one
+// endpoint. Merging these proposals can contradict an otherwise valid full map.
+// Prefer that map only with a whole-curve control-point distance bound and a
+// shared strictly monotone coordinate. The latter excludes extra traversal
+// branches; sampled coincidence alone is insufficient for this preference.
+fn prefer_certified_full_overlap(
+  candidates: List(RawOverlap),
+  left: svg_path.Segment,
+  right: svg_path.Segment,
+  tolerance: Float,
+) -> List(RawOverlap) {
+  let left_controls = polynomial_controls(left)
+  let right_controls = polynomial_controls(right)
+  case
+    list.find(candidates, fn(candidate) {
+      let #(lf, lt, rf, rt, _, _) = candidate
+      case lf == 0.0 && lt == 1.0 {
+        False -> False
+        True -> {
+          let oriented_right = case rf, rt {
+            0.0, 1.0 -> right_controls
+            1.0, 0.0 -> list.reverse(right_controls)
+            _, _ -> []
+          }
+          let pairs = list.zip(left_controls, oriented_right)
+          !list.is_empty(pairs)
+          && list.length(left_controls) == list.length(oriented_right)
+          && list.all(pairs, fn(pair) { points_near(pair.0, pair.1, tolerance) })
+          && {
+            shared_monotone_coordinate(left_controls, oriented_right, fn(p) {
+              p.x
+            })
+            || shared_monotone_coordinate(left_controls, oriented_right, fn(p) {
+              p.y
+            })
+          }
+        }
+      }
+    })
+  {
+    Ok(full) -> [full]
+    Error(Nil) -> candidates
+  }
+}
+
+fn polynomial_controls(segment: svg_path.Segment) -> List(svg_path.Point) {
+  case segment {
+    svg_path.Line(start, end) -> [start, end]
+    svg_path.QuadraticBezier(start, control, end) -> [start, control, end]
+    svg_path.CubicBezier(start, control1, control2, end) -> [
+      start,
+      control1,
+      control2,
+      end,
+    ]
+    svg_path.Arc(..) -> []
+  }
+}
+
+fn shared_monotone_coordinate(
+  left: List(svg_path.Point),
+  right: List(svg_path.Point),
+  coordinate: fn(svg_path.Point) -> Float,
+) -> Bool {
+  let a = list.map(left, coordinate)
+  let b = list.map(right, coordinate)
+  // Non-strict control ordering with at least one strict step makes the
+  // polynomial coordinate strictly monotone on the curve's interior.
+  { increasing_controls(a, False) && increasing_controls(b, False) }
+  || {
+    increasing_controls(list.reverse(a), False)
+    && increasing_controls(list.reverse(b), False)
+  }
+}
+
+fn increasing_controls(values: List(Float), strict: Bool) -> Bool {
+  case values {
+    [a, b, ..rest] ->
+      a <=. b && increasing_controls([b, ..rest], strict || a <. b)
+    [_] -> strict
+    [] -> False
   }
 }
 

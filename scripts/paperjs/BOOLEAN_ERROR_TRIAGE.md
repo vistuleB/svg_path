@@ -179,6 +179,11 @@ are therefore not demonstrated workarounds. The deeper reason for that stricter
 construction failure remains uninvestigated; it does not change the reproduced
 default-failure classification. See `boolean-minimum-size-findings.json`.
 
+The later [107/122/123 investigation](FINAL_BOOLEAN_INVESTIGATION.md) traces
+these immediate failures back to lost valid overlaps. A temporary candidate
+merging adjustment recovers both cases at default settings, so the earlier
+configuration-only interpretation is superseded. Production repair is pending.
+
 ## Seven adapter cases
 
 Fixture 44 gives the two operands different fill rules; our binary CSG entry

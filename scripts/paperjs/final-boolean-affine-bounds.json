@@ -1,0 +1,74 @@
+[
+  {
+    "fixtures": "122/123",
+    "conflictIndex": 0,
+    "reversed": true,
+    "wholeAffineDistanceUpperBound": "8.4571183160101155589219495310972156642943373691249648573240230856180973450933464E-12",
+    "boundBelowTolerance": true,
+    "monotoneControlProjections": true,
+    "tolerance": 5e-07
+  },
+  {
+    "fixtures": "122/123",
+    "conflictIndex": 1,
+    "reversed": true,
+    "wholeAffineDistanceUpperBound": "8.4571183160101155589219495310972156642943373691249648573240230856180973450933464E-12",
+    "boundBelowTolerance": true,
+    "monotoneControlProjections": true,
+    "tolerance": 5e-07
+  },
+  {
+    "fixtures": "122/123",
+    "conflictIndex": 2,
+    "reversed": true,
+    "wholeAffineDistanceUpperBound": "8.4571183160101155589219495310972156642943373691249648573240230856180973450933464E-12",
+    "boundBelowTolerance": true,
+    "monotoneControlProjections": true,
+    "tolerance": 5e-07
+  },
+  {
+    "fixtures": "122/123",
+    "conflictIndex": 3,
+    "reversed": false,
+    "wholeAffineDistanceUpperBound": "0.00031244607652437371829759607502596246353970320919311896396182778757813404917626473",
+    "boundBelowTolerance": false,
+    "monotoneControlProjections": true,
+    "tolerance": 5e-07
+  },
+  {
+    "fixtures": "122/123",
+    "conflictIndex": 4,
+    "reversed": true,
+    "wholeAffineDistanceUpperBound": "0.0000044759954176115523720403909845934049390787660116854677465486850252761975061181697",
+    "boundBelowTolerance": false,
+    "monotoneControlProjections": true,
+    "tolerance": 5e-07
+  },
+  {
+    "fixtures": "122/123",
+    "conflictIndex": 5,
+    "reversed": true,
+    "wholeAffineDistanceUpperBound": "8.0388733884609283040941177444534450760879273922054612352023908555948564666215761E-14",
+    "boundBelowTolerance": true,
+    "monotoneControlProjections": true,
+    "tolerance": 5e-07
+  },
+  {
+    "fixtures": "122/123",
+    "conflictIndex": 6,
+    "reversed": true,
+    "wholeAffineDistanceUpperBound": "8.0388733884609283040941177444534450760879273922054612352023908555948564666215761E-14",
+    "boundBelowTolerance": true,
+    "monotoneControlProjections": true,
+    "tolerance": 5e-07
+  },
+  {
+    "fixtures": "107",
+    "conflictIndex": 7,
+    "reversed": false,
+    "wholeAffineDistanceUpperBound": "1.7053025658242404460906982421875E-12",
+    "boundBelowTolerance": true,
+    "monotoneControlProjections": true,
+    "tolerance": 5e-07
+  }
+]

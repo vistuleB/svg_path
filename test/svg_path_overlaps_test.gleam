@@ -863,3 +863,71 @@ fn arc() -> svg_path.Segment {
     end: svg_path.Point(10.0, 0.0),
   )
 }
+
+// Reduced from Paper.js Boolean 107. Endpoint root aliases used to erase the
+// full self-overlap at the original translation, but not near the origin.
+pub fn short_translated_monotone_cubic_full_overlap_test() {
+  list.each([0.0, 337.7804798720905], fn(origin) {
+    let curve =
+      svg_path.CubicBezier(
+        svg_path.Point(736.0, 337.7804798720905 -. origin),
+        svg_path.Point(736.0, 337.780485777646 -. origin),
+        svg_path.Point(736.0, 337.7804916832015 -. origin),
+        svg_path.Point(736.0, 337.780497588757 -. origin),
+      )
+    assert_certified_full_overlap(curve, curve, False)
+    assert_certified_full_overlap(curve, svg_path.segment_reverse(curve), True)
+  })
+}
+
+// Rounded reverse controls from the first conflicting pair in fixtures 122/123.
+// Their whole-curve separation is bounded by 8.46e-12, far below 5e-7.
+pub fn short_reversed_stationary_endpoint_cubic_full_overlap_test() {
+  let left =
+    svg_path.CubicBezier(
+      svg_path.Point(243.02912232136828, 272.45353289318496),
+      svg_path.Point(243.02912232136828, 272.45353289318496),
+      svg_path.Point(243.02909884308636, 272.4535130650999),
+      svg_path.Point(243.0290519201278, 272.45347343731044),
+    )
+  let right =
+    svg_path.CubicBezier(
+      svg_path.Point(243.0290519201213, 272.45347343730504),
+      svg_path.Point(243.02909884308414, 272.45351306509815),
+      svg_path.Point(243.02912232136822, 272.453532893185),
+      svg_path.Point(243.02912232136822, 272.453532893185),
+    )
+  assert_certified_full_overlap(left, right, True)
+  assert_certified_full_overlap(right, left, True)
+}
+
+fn assert_certified_full_overlap(
+  left: svg_path.Segment,
+  right: svg_path.Segment,
+  reversed: Bool,
+) {
+  let assert Ok([hit]) =
+    overlaps.segment_with(left, right, tolerance: 0.0000005)
+  assert hit.left_from == 0.0
+  assert hit.left_to == 1.0
+  assert hit.right_from
+    == case reversed {
+      True -> 1.0
+      False -> 0.0
+    }
+  assert hit.right_to
+    == case reversed {
+      True -> 0.0
+      False -> 1.0
+    }
+  assert intersections.segment_with(
+      left,
+      right,
+      options: intersections.IntersectionOptions(
+        tolerance: 0.0000005,
+        max_depth: 48,
+        parameter_snap: intersections.DecimalParameterSnap(exponent: 7),
+      ),
+    )
+    == Error(svg_path.OverlappingSegments)
+}

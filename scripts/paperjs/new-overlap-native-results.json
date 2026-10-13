@@ -1,0 +1,48 @@
+{
+  "erlang": {
+    "command": "gleam run --target erlang -m paper_new_overlap_probe",
+    "exitCode": 0,
+    "log": "  Compiling svg_path_paper_audit\n   Compiled in 0.32s\n    Running paper_new_overlap_probe.main\nFixture 128\nError(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))\nFixture 129\nError(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))\nFixture 130\nError(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))\nFixture 131\nError(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))\n",
+    "results": [
+      {
+        "id": 128,
+        "result": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))"
+      },
+      {
+        "id": 129,
+        "result": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))"
+      },
+      {
+        "id": 130,
+        "result": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))"
+      },
+      {
+        "id": 131,
+        "result": "Error(ArrangementGraphError(PathError(NonAffineOverlapCorrespondence)))"
+      }
+    ]
+  },
+  "javascript": {
+    "command": "gleam run --target javascript -m paper_new_overlap_probe",
+    "exitCode": 0,
+    "log": "  Compiling svg_path_paper_audit\n   Compiled in 0.04s\n    Running paper_new_overlap_probe.main\nFixture 128\nError(ArrangementGraphError(error: PathError(error: NonAffineOverlapCorrespondence)))\nFixture 129\nError(ArrangementGraphError(error: PathError(error: NonAffineOverlapCorrespondence)))\nFixture 130\nError(ArrangementGraphError(error: PathError(error: NonAffineOverlapCorrespondence)))\nFixture 131\nError(ArrangementGraphError(error: PathError(error: NonAffineOverlapCorrespondence)))\n",
+    "results": [
+      {
+        "id": 128,
+        "result": "Error(ArrangementGraphError(error: PathError(error: NonAffineOverlapCorrespondence)))"
+      },
+      {
+        "id": 129,
+        "result": "Error(ArrangementGraphError(error: PathError(error: NonAffineOverlapCorrespondence)))"
+      },
+      {
+        "id": 130,
+        "result": "Error(ArrangementGraphError(error: PathError(error: NonAffineOverlapCorrespondence)))"
+      },
+      {
+        "id": 131,
+        "result": "Error(ArrangementGraphError(error: PathError(error: NonAffineOverlapCorrespondence)))"
+      }
+    ]
+  }
+}

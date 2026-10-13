@@ -1,0 +1,126 @@
+{
+  "scope": "60-second instrumented JavaScript diagnostic of fixture 107, not a benchmark",
+  "totalSamples": 51710,
+  "top": [
+    {
+      "module": "intersections.mjs",
+      "function": "spatial_diversity_pass",
+      "line": 2573,
+      "samples": 14256
+    },
+    {
+      "module": "prelude.mjs",
+      "function": "Ok",
+      "line": 1454,
+      "samples": 5820
+    },
+    {
+      "module": "prelude.mjs",
+      "function": "isEqual",
+      "line": 1481,
+      "samples": 3761
+    },
+    {
+      "module": "intersections.mjs",
+      "function": "",
+      "line": 2590,
+      "samples": 3447
+    },
+    {
+      "module": "",
+      "function": "(garbage collector)",
+      "line": 0,
+      "samples": 2546
+    },
+    {
+      "module": "svg_path.mjs",
+      "function": "assert_split_segment_preserves_endpoints",
+      "line": 5231,
+      "samples": 2340
+    },
+    {
+      "module": "dict.mjs",
+      "function": "getHash",
+      "line": 131,
+      "samples": 2194
+    },
+    {
+      "module": "prelude.mjs",
+      "function": "",
+      "line": 1569,
+      "samples": 2174
+    },
+    {
+      "module": "dict.mjs",
+      "function": "insertIntoNode",
+      "line": 533,
+      "samples": 1309
+    },
+    {
+      "module": "query.mjs",
+      "function": "",
+      "line": 1337,
+      "samples": 847
+    },
+    {
+      "module": "prelude.mjs",
+      "function": "",
+      "line": 1525,
+      "samples": 711
+    },
+    {
+      "module": "dict.mjs",
+      "function": "hashObject",
+      "line": 83,
+      "samples": 655
+    },
+    {
+      "module": "svg_path.mjs",
+      "function": "segment_to_bezier_data",
+      "line": 4089,
+      "samples": 653
+    },
+    {
+      "module": "bezier.mjs",
+      "function": "interpolate",
+      "line": 332,
+      "samples": 594
+    },
+    {
+      "module": "dict.mjs",
+      "function": "lookup",
+      "line": 378,
+      "samples": 563
+    },
+    {
+      "module": "list.mjs",
+      "function": "unique_loop",
+      "line": 1372,
+      "samples": 554
+    },
+    {
+      "module": "bezier.mjs",
+      "function": "point",
+      "line": 354,
+      "samples": 544
+    },
+    {
+      "module": "svg_path.mjs",
+      "function": "segment_from_bezier_data",
+      "line": 4057,
+      "samples": 511
+    },
+    {
+      "module": "query.mjs",
+      "function": "bounding_hull_push",
+      "line": 1215,
+      "samples": 502
+    },
+    {
+      "module": "svg_path.mjs",
+      "function": "split_segment",
+      "line": 5431,
+      "samples": 461
+    }
+  ]
+}
