@@ -426,6 +426,19 @@ fn cubic_with(
 
 fn distinct_candidates(candidates: List(RootCandidate)) -> List(RootCandidate) {
   candidates
+  |> list.map(fn(candidate) {
+    let isolation = candidate.isolation
+    // Erlang exact equality distinguishes signed zeros. Canonicalize before
+    // sorting and merging an endpoint with the same derivative-root candidate.
+    RootCandidate(
+      ..candidate,
+      isolation: RootIsolation(
+        number.normalize_zero(isolation.lower),
+        number.normalize_zero(isolation.estimate),
+        number.normalize_zero(isolation.upper),
+      ),
+    )
+  })
   |> list.sort(by: fn(a, b) {
     float.compare(a.isolation.estimate, b.isolation.estimate)
   })

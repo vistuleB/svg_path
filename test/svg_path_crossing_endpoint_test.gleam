@@ -3,6 +3,40 @@ import gleam/list
 import gleeunit/should
 import svg_path
 import svg_path/containment
+import svg_path/internal/root
+
+pub fn signed_zero_root_candidates_are_merged_test() {
+  // t²(t + 1): an endpoint and a derivative root describe the same contact.
+  let assert Ok([candidate]) =
+    root.real_cubic_01_roots(
+      1.0,
+      1.0,
+      0.0,
+      0.0,
+      options: root.default_polynomial_options(),
+    )
+  assert candidate.isolation.estimate == 0.0
+  assert candidate.kind == root.PositiveToPositive
+}
+
+pub fn signed_zero_candidates_do_not_duplicate_a_recovered_crossing_test() {
+  let curve =
+    svg_path.CubicBezier(
+      svg_path.Point(0.0, 0.0),
+      svg_path.Point(1.0 /. 3.0, 0.0),
+      svg_path.Point(2.0 /. 3.0, 1.9),
+      svg_path.Point(1.0, 8.0),
+    )
+  let assert Ok([#(t, _)]) =
+    containment.segment_ray_crossings_with(
+      curve,
+      origin: svg_path.Point(0.0, 5.0e-12),
+      direction: svg_path.Point(-1.0, 0.0),
+      options: options(),
+    )
+  let assert Ok(point) = svg_path.segment_point(curve, at: t)
+  assert float.absolute_value(point.y -. 5.0e-12) <=. 1.0e-12
+}
 
 fn options() {
   svg_path.CrossingOptions(
