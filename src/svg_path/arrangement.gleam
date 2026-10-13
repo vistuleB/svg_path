@@ -1129,7 +1129,9 @@ type DualWalkCandidate {
 /// Derive the planar dual without modifying the arrangement graph.
 ///
 /// The existing clockwise cyclic orders determine face successors. Boundary
-/// walks are grouped using accepted infinite-line sweeps through the components.
+/// walks from disconnected components are grouped using accepted infinite-line
+/// sweeps. For a connected graph, walks already identify the faces; only its
+/// exterior needs geometric certification.
 /// Vertex hits, tangencies, overlaps and inseparable crossings are rejected.
 /// Independent accepted lines must agree. Exhausting the search budget returns
 /// `DualCertificationFailed`; contradictory accepted results return
@@ -1389,16 +1391,33 @@ fn dual_walk_candidates(
     1729,
     budget,
   ))
-  use placements <- result.try(dual_find_placements(
-    edges,
-    graph.vertices,
-    tolerance,
-    walks,
-    exteriors,
-    [],
-    7919,
-    budget,
-  ))
+  use placements <- result.try(case exteriors {
+    [exterior] -> {
+      // In a connected graph every boundary walk already identifies a face.
+      // Only infinity needs geometric certification; narrow bounded faces do
+      // not need a sweep to pass through their interiors.
+      Ok(
+        list.index_map(walks, fn(_, id) {
+          DualPlacement(
+            id,
+            dual_signature([#(exterior.component, id)], exteriors, walks),
+            dual_sweep_confirmations,
+          )
+        }),
+      )
+    }
+    _ ->
+      dual_find_placements(
+        edges,
+        graph.vertices,
+        tolerance,
+        walks,
+        exteriors,
+        [],
+        7919,
+        budget,
+      )
+  })
   list.index_map(walks, fn(walk, id) {
     let assert Ok(placement) = list.find(placements, fn(p) { p.walk == id })
     let exterior = list.any(exteriors, fn(e) { e.walk == id })

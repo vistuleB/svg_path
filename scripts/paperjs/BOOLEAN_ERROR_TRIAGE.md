@@ -153,6 +153,12 @@ This localizes the default failures to side classification. It does **not**
 prove the resulting complete Boolean geometry correct, and reducing defaults
 globally is not a proposed fix.
 
+The later [boundary-classification investigation](BOUNDARY_CLASSIFICATION_INVESTIGATION.md)
+separates the two effects, confirms displacement overshoot, records two line-only
+regressions (including a silent empty union), and tests the existing dual/face-winding
+engine as a possible replacement. The subsequent [face-winding implementation](FACE_WINDING_FIX.md)
+recovers both fixtures and the reduced failures.
+
 ### 122 and 123: minimum-size filtering breaks closed-boundary topology
 
 These operations use the same operand pair. The default graph itself fails

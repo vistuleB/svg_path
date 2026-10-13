@@ -1,6 +1,7 @@
 //// ArrangementGraph-based operations on SVG paths.
 ////
-//// Binary operations interpret both operands with one fill rule. The unary
+//// Binary operations propagate each operand's winding across arrangement faces
+//// and interpret both operands with one fill rule. The unary
 //// `nested_contours` operation instead preserves the complete signed integer
 //// winding field and therefore takes no fill rule.
 //// Open subpaths are implicitly closed by a straight line for filling; those
@@ -12,10 +13,8 @@ import gleam/list
 import gleam/result
 import svg_path
 import svg_path/arrangement.{
-  type ArrangementEdge, type ArrangementGraph, ArrangementEdge, ArrangementGraph,
+  type ArrangementEdge, type ArrangementGraph, ArrangementEdge,
 }
-import svg_path/containment
-import svg_path/internal/winding_field
 import svg_path/point
 
 const default_minimum_length = 0.00001
@@ -23,7 +22,7 @@ const default_minimum_length = 0.00001
 /// Numeric options used while constructing and classifying an arrangement.
 ///
 /// `tolerance` is a distance in path coordinates used for endpoint clustering,
-/// intersection and overlap detection, winding-side sampling, and final cycle
+/// intersection and overlap detection, and final cycle
 /// endpoint adjustments to their shared vertex positions. `minimum_length` is a
 /// size threshold: refined pieces are discarded when their segment length upper bound is below it,
 /// not merely when their endpoints are close. Both values must be finite and
@@ -34,7 +33,7 @@ pub type Options {
 
 /// Errors returned by arrangement-graph CSG operations.
 pub type Error {
-  /// Arrangement construction or validation failed.
+  /// Arrangement construction, dual certification, or winding consistency failed.
   ArrangementGraphError(error: arrangement.Error)
 
   /// An underlying path operation failed.
@@ -102,13 +101,11 @@ pub fn union_with(
   options options: Options,
 ) -> Result(CsgResult, Error) {
   use built <- result.try(csg_arrangement_build([left, right], options))
-  let arrangement.ArrangementSegmentBuild(graph:, ..) = built
-  use path <- result.try(union_from_arrangement_graph(
-    graph,
-    left,
-    right,
-    using: fill_rule,
-    tolerance: options.tolerance,
+  use path <- result.try(boolean_from_arrangement(
+    built,
+    list.length(csg_path_segments([left], segments: [])),
+    fill_rule,
+    UnionOperation,
   ))
   Ok(CsgResult(path:, build: built))
 }
@@ -133,13 +130,11 @@ pub fn intersection_with(
   options options: Options,
 ) -> Result(CsgResult, Error) {
   use built <- result.try(csg_arrangement_build([left, right], options))
-  let arrangement.ArrangementSegmentBuild(graph:, ..) = built
-  use path <- result.try(intersection_from_arrangement_graph(
-    graph,
-    left,
-    right,
-    using: fill_rule,
-    tolerance: options.tolerance,
+  use path <- result.try(boolean_from_arrangement(
+    built,
+    list.length(csg_path_segments([left], segments: [])),
+    fill_rule,
+    IntersectionOperation,
   ))
   Ok(CsgResult(path:, build: built))
 }
@@ -169,13 +164,11 @@ pub fn difference_with(
   options options: Options,
 ) -> Result(CsgResult, Error) {
   use built <- result.try(csg_arrangement_build([left, right], options))
-  let arrangement.ArrangementSegmentBuild(graph:, ..) = built
-  use path <- result.try(difference_from_arrangement_graph(
-    graph,
-    left,
-    right,
-    using: fill_rule,
-    tolerance: options.tolerance,
+  use path <- result.try(boolean_from_arrangement(
+    built,
+    list.length(csg_path_segments([left], segments: [])),
+    fill_rule,
+    DifferenceOperation,
   ))
   Ok(CsgResult(path:, build: built))
 }
@@ -205,13 +198,11 @@ pub fn symmetric_difference_with(
   options options: Options,
 ) -> Result(CsgResult, Error) {
   use built <- result.try(csg_arrangement_build([left, right], options))
-  let arrangement.ArrangementSegmentBuild(graph:, ..) = built
-  use path <- result.try(symmetric_difference_from_arrangement_graph(
-    graph,
-    left,
-    right,
-    using: fill_rule,
-    tolerance: options.tolerance,
+  use path <- result.try(boolean_from_arrangement(
+    built,
+    list.length(csg_path_segments([left], segments: [])),
+    fill_rule,
+    SymmetricDifferenceOperation,
   ))
   Ok(CsgResult(path:, build: built))
 }
@@ -325,27 +316,44 @@ type BooleanOperation {
   SymmetricDifferenceOperation
 }
 
-/// Compute the Boolean union boundary from an `ArrangementGraph`.
+/// Compute a Boolean boundary from its arrangement and source images.
 ///
-/// Winding is evaluated separately against both operands before the common
-/// fill rule is applied. Necessary edges are oriented with filled space on the
-/// right and consumed into closed cycles.
-fn union_from_arrangement_graph(
-  graph: ArrangementGraph,
-  left: svg_path.Path,
-  right: svg_path.Path,
-  using fill_rule: svg_path.FillRule,
-  tolerance tolerance: Float,
+/// Propagate each operand's signed source multiplicities from the outer face.
+/// Face membership does not depend on a displaced point fitting between edges.
+fn boolean_from_arrangement(
+  built: arrangement.ArrangementSegmentBuild,
+  left_segment_count: Int,
+  fill_rule: svg_path.FillRule,
+  operation: BooleanOperation,
 ) -> Result(svg_path.Path, Error) {
-  let ArrangementGraph(edges:, ..) = graph
+  let graph = built.graph
+  use dual <- result.try(
+    arrangement.dual(graph) |> result.map_error(ArrangementGraphError),
+  )
+  use left <- result.try(operand_face_windings(
+    built,
+    dual,
+    left_segment_count,
+    True,
+  ))
+  use right <- result.try(operand_face_windings(
+    built,
+    dual,
+    left_segment_count,
+    False,
+  ))
+  let faces =
+    dict.from_list(
+      list.map(dual.edge_faces, fn(edge) { #(edge.edge_id, edge) }),
+    )
   use boundary <- result.try(
     classify_boolean_edges(
-      edges,
+      graph.edges,
+      faces,
       left,
       right,
       fill_rule,
-      UnionOperation,
-      tolerance,
+      operation,
       [],
     ),
   )
@@ -356,87 +364,34 @@ fn union_from_arrangement_graph(
   Ok(svg_path.Path(subpaths))
 }
 
-/// Compute the Boolean intersection boundary from an `ArrangementGraph`.
-fn intersection_from_arrangement_graph(
-  graph: ArrangementGraph,
-  left: svg_path.Path,
-  right: svg_path.Path,
-  using fill_rule: svg_path.FillRule,
-  tolerance tolerance: Float,
-) -> Result(svg_path.Path, Error) {
-  let ArrangementGraph(edges:, ..) = graph
-  use boundary <- result.try(
-    classify_boolean_edges(
-      edges,
-      left,
-      right,
-      fill_rule,
-      IntersectionOperation,
-      tolerance,
-      [],
-    ),
+fn operand_face_windings(
+  built: arrangement.ArrangementSegmentBuild,
+  dual: arrangement.DualArrangementGraph,
+  left_segment_count: Int,
+  left_operand: Bool,
+) -> Result(Dict(Int, Int), Error) {
+  let changes =
+    list.map(built.edge_images, fn(image) {
+      let change =
+        list.fold(image.sources, 0, fn(total, source) {
+          case source.segment_index < left_segment_count == left_operand {
+            False -> total
+            True ->
+              case source.reversed {
+                True -> total - 1
+                False -> total + 1
+              }
+          }
+        })
+      arrangement.EdgeWindingChange(image.edge_id, change)
+    })
+  use values <- result.try(
+    arrangement.face_windings(dual, changes)
+    |> result.replace_error(ArrangementGraphError(
+      arrangement.ConstructionFailed,
+    )),
   )
-  use links <- result.try(pair_boundary_sectors(graph, boundary))
-  use subpaths <- result.try(
-    trace_boundary_edges(boundary, links, vertex_points(graph), []),
-  )
-  Ok(svg_path.Path(subpaths))
-}
-
-/// Compute the Boolean boundary of `left` minus `right` from an
-/// `ArrangementGraph` constructed from both operands.
-fn difference_from_arrangement_graph(
-  graph: ArrangementGraph,
-  left: svg_path.Path,
-  right: svg_path.Path,
-  using fill_rule: svg_path.FillRule,
-  tolerance tolerance: Float,
-) -> Result(svg_path.Path, Error) {
-  let ArrangementGraph(edges:, ..) = graph
-  use boundary <- result.try(
-    classify_boolean_edges(
-      edges,
-      left,
-      right,
-      fill_rule,
-      DifferenceOperation,
-      tolerance,
-      [],
-    ),
-  )
-  use links <- result.try(pair_boundary_sectors(graph, boundary))
-  use subpaths <- result.try(
-    trace_boundary_edges(boundary, links, vertex_points(graph), []),
-  )
-  Ok(svg_path.Path(subpaths))
-}
-
-/// Compute the Boolean symmetric-difference boundary from an
-/// `ArrangementGraph` constructed from both operands.
-fn symmetric_difference_from_arrangement_graph(
-  graph: ArrangementGraph,
-  left: svg_path.Path,
-  right: svg_path.Path,
-  using fill_rule: svg_path.FillRule,
-  tolerance tolerance: Float,
-) -> Result(svg_path.Path, Error) {
-  let ArrangementGraph(edges:, ..) = graph
-  use boundary <- result.try(
-    classify_boolean_edges(
-      edges,
-      left,
-      right,
-      fill_rule,
-      SymmetricDifferenceOperation,
-      tolerance,
-      [],
-    ),
-  )
-  use links <- result.try(pair_boundary_sectors(graph, boundary))
-  use subpaths <- result.try(
-    trace_boundary_edges(boundary, links, vertex_points(graph), []),
-  )
-  Ok(svg_path.Path(subpaths))
+  Ok(dict.from_list(list.map(values, fn(face) { #(face.face_id, face.value) })))
 }
 
 /// Reconstruct the signed winding field of `path` as nested or disjoint
@@ -460,42 +415,32 @@ fn nested_contours_from_arrangement_graph(
 
 fn classify_boolean_edges(
   edges: List(ArrangementEdge),
-  left_path: svg_path.Path,
-  right_path: svg_path.Path,
+  faces: Dict(Int, arrangement.ArrangementEdgeFaces),
+  left: Dict(Int, Int),
+  right: Dict(Int, Int),
   fill_rule: svg_path.FillRule,
   operation: BooleanOperation,
-  tolerance: Float,
   boundary: List(BoundaryEdge),
 ) -> Result(List(BoundaryEdge), Error) {
   case edges {
     [] -> Ok(list.reverse(boundary))
     [ArrangementEdge(id:, segment:, start_vertex:, end_vertex:, ..), ..rest] -> {
-      use left_levels <- result.try(
-        winding_field.segment_side_nonzero_levels(
-          segment,
-          within: left_path,
-          side_sampling_distance: tolerance *. 16.0,
-          options: svg_path.ContainmentOptions(
-            ..containment.default_containment_options(),
-            tolerance:,
-          ),
-        )
-        |> result.map_error(PathError),
+      let invalid = ArrangementGraphError(arrangement.ConstructionFailed)
+      use face <- result.try(
+        dict.get(faces, id) |> result.replace_error(invalid),
       )
-      use right_levels <- result.try(
-        winding_field.segment_side_nonzero_levels(
-          segment,
-          within: right_path,
-          side_sampling_distance: tolerance *. 16.0,
-          options: svg_path.ContainmentOptions(
-            ..containment.default_containment_options(),
-            tolerance:,
-          ),
-        )
-        |> result.map_error(PathError),
+      use left_a <- result.try(
+        dict.get(left, face.left_face) |> result.replace_error(invalid),
       )
-      let #(left_a, right_a) = left_levels
-      let #(left_b, right_b) = right_levels
+      use right_a <- result.try(
+        dict.get(left, face.right_face) |> result.replace_error(invalid),
+      )
+      use left_b <- result.try(
+        dict.get(right, face.left_face) |> result.replace_error(invalid),
+      )
+      use right_b <- result.try(
+        dict.get(right, face.right_face) |> result.replace_error(invalid),
+      )
       let filled_left =
         combine_filled(
           winding_filled(left_a, fill_rule),
@@ -527,11 +472,11 @@ fn classify_boolean_edges(
       }
       classify_boolean_edges(
         rest,
-        left_path,
-        right_path,
+        faces,
+        left,
+        right,
         fill_rule,
         operation,
-        tolerance,
         boundary,
       )
     }
@@ -681,17 +626,35 @@ fn trace_boundary_edges(
         list.length(remaining) + 1,
       ))
       let #(cycle, remaining) = traced
-      use subpath <- result.try(
-        cycle
-        |> list.map(fn(edge) { boundary_output_segment(edge, vertices) })
-        |> svg_path.subpath
-        |> result.map_error(PathError),
-      )
-      use closed <- result.try(
-        svg_path.subpath_close(subpath)
-        |> result.map_error(PathError),
-      )
-      trace_boundary_edges(remaining, links, vertices, [closed, ..subpaths])
+      let segments =
+        list.map(cycle, fn(edge) { boundary_output_segment(edge, vertices) })
+      // Distinct source edges can collapse to an exact opposite pair when
+      // their endpoints are reconstructed at cluster centers. Such a closed
+      // retrace has no filled boundary. Do not discard loops by signed area:
+      // a self-crossing loop can have zero signed area and nonempty fill.
+      let reduced =
+        list.fold(segments, [], fn(stack, segment) {
+          case stack {
+            [previous, ..rest] ->
+              case previous == svg_path.segment_reverse(segment) {
+                True -> rest
+                False -> [segment, ..stack]
+              }
+            [] -> [segment]
+          }
+        })
+      case reduced {
+        [] -> trace_boundary_edges(remaining, links, vertices, subpaths)
+        _ -> {
+          use subpath <- result.try(
+            svg_path.subpath(segments) |> result.map_error(PathError),
+          )
+          use closed <- result.try(
+            svg_path.subpath_close(subpath) |> result.map_error(PathError),
+          )
+          trace_boundary_edges(remaining, links, vertices, [closed, ..subpaths])
+        }
+      }
     }
   }
 }

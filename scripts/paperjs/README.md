@@ -9,11 +9,12 @@ and failure counts are historical, not a consolidated current status.
 The [Boolean error triage](BOOLEAN_ERROR_TRIAGE.md) classified all 69 saved
 errors. The [tangent-order fix](BOOLEAN_TANGENT_FIX.md) recovered fixtures 69
 and 172; the [Bernstein line-root fallback](CROSSING_BERNSTEIN_FIX.md) recovers
-103, 168 and 169. The latest 178-case screen has **107 sampled matches**,
+103, 168 and 169. The [face-winding classifier](FACE_WINDING_FIX.md) recovers
+79 and 113. The latest 178-case screen has **109 sampled matches**,
 55 understood overlap-contract limitations, **four newly exposed overlap
-rejections awaiting classification**, four remaining default topology/filtering
-failures, one downstream timeout (107), and seven adapter cases. All 104
-pre-Bernstein sampled matches remain matches. Classification and sampled
+rejections awaiting classification**, two remaining default filtering failures
+(122/123), one downstream timeout (107), and seven adapter cases. All 107
+pre-face-winding sampled matches remain matches. Classification and sampled
 comparisons do not establish complete parity.
 
 Intersection parameter/crossing coverage, unadapted assertions,
