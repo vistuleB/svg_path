@@ -9,6 +9,22 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
+## 3.0.1 - 2026-10-12
+
+- Recover near-endpoint ray crossings when coefficient-relative polynomial roots
+  fail the requested geometric tolerance. Widen the refinement interval only
+  when the projected Bézier controls prove monotonicity; preserve tangent,
+  nonmonotone, outside-domain, and iteration-limit behavior.
+- Fix binary CSG output joins when endpoints belong to one valid arrangement
+  cluster but their pairwise distance exceeds its radius tolerance. Construct
+  output endpoints at the shared vertex positions without modifying stored
+  arrangement edges. Each endpoint adjustment is bounded by the build tolerance;
+  this does not bound interior displacement of elliptical arcs.
+- Add adapted Paper.js regressions and a separate compatibility audit that
+  records API differences and unresolved limitations; this is not a claim of
+  complete Paper.js compatibility.
+- Preserve the public API and existing default tolerances.
+
 ## 3.0.0 - 2026-10-07
 
 - Consolidate internal split normalization, Bézier conversion, adjacent-line
