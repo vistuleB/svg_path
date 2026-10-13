@@ -694,10 +694,10 @@
     "block": 35,
     "title": "#1123",
     "operation": "intersect",
-    "status": "confirmed-our-failure",
+    "status": "sampled-geometry-match",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. Default operation fails; identified mechanism: tangent-only-sector-order. No production fix applied."
+    "evidence": "Recovered by CSG arrangement-order pairing; see boolean-screening-after-tangent-order.json and BOOLEAN_TANGENT_FIX.md. All 102 earlier sampled matches remain matches. Sampled equivalence is not exhaustive; fixture 172 also has a portable regression."
   },
   {
     "id": 70,
@@ -1724,10 +1724,10 @@
     "block": 44,
     "title": "#1506",
     "operation": "subtract",
-    "status": "confirmed-our-failure",
+    "status": "sampled-geometry-match",
     "derivedOperands": false,
-    "portableRegression": false,
-    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. Default operation fails; identified mechanism: tangent-only-sector-order. No production fix applied."
+    "portableRegression": true,
+    "evidence": "Recovered by CSG arrangement-order pairing; see boolean-screening-after-tangent-order.json and BOOLEAN_TANGENT_FIX.md. All 102 earlier sampled matches remain matches. Sampled equivalence is not exhaustive; fixture 172 also has a portable regression."
   },
   {
     "id": 173,

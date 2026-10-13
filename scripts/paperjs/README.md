@@ -6,13 +6,13 @@
 The sections below retain chronological checkpoints. Their old "remaining work"
 and failure counts are historical, not a consolidated current status.
 
-The latest [Boolean error triage](BOOLEAN_ERROR_TRIAGE.md) reproduces all 69
-saved errors on Erlang and JavaScript and classifies the previously unclassified
-ones. Across the saved 178 comparisons: 102 earlier sampled matches, 55 understood
-overlap-contract limitations, **14 default failing comparisons** (eight crossing
-isolation failures and six topology/classification failures), and seven adapter
-cases. No errors remain unclassified in that saved screen. Classification is
-not repair, and the earlier 102 matches were not rerun in this triage.
+The [Boolean error triage](BOOLEAN_ERROR_TRIAGE.md) classified all 69 saved
+errors. The subsequent [tangent-order fix](BOOLEAN_TANGENT_FIX.md) recovers
+fixtures 69 and 172. The latest 178-case screen has **104 sampled matches**,
+55 understood overlap-contract limitations, **12 default failing comparisons**
+(eight crossing-isolation failures and four topology/classification failures),
+and seven adapter cases. All 102 earlier sampled matches remain matches.
+Classification and sampled comparisons do not establish complete parity.
 
 Intersection parameter/crossing coverage, unadapted assertions,
 diagnostic-to-regression promotion, and upstream files

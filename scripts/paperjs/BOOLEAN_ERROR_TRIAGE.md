@@ -1,5 +1,10 @@
 # Boolean error triage, 2026-10-13
 
+**Pre-fix findings, committed in `cd49807`.** The subsequent
+[CSG tangent-order fix](BOOLEAN_TANGENT_FIX.md) recovers fixtures 69 and 172.
+The counts, source hashes and instrumentation below describe the pre-fix state;
+reproduce them from that revision.
+
 This is a classification of the **69 errors** in the saved 178-comparison screen.
 It is not successful Boolean parity, not a completed Paper.js audit, and not a
 release qualification. Production code was not changed. The 102 earlier sampled

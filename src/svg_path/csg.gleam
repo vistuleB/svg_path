@@ -9,8 +9,6 @@
 import gleam/dict.{type Dict}
 import gleam/int
 import gleam/list
-import gleam/option.{type Option, Some}
-import gleam/order
 import gleam/result
 import svg_path
 import svg_path/arrangement.{
@@ -317,7 +315,7 @@ type BoundaryLink {
 }
 
 type BoundaryRay {
-  BoundaryRay(edge_id: Int, starts: Bool, angle: Float)
+  BoundaryRay(edge_id: Int, starts: Bool)
 }
 
 type BooleanOperation {
@@ -351,7 +349,7 @@ fn union_from_arrangement_graph(
       [],
     ),
   )
-  use links <- result.try(pair_boundary_sectors(boundary, []))
+  use links <- result.try(pair_boundary_sectors(graph, boundary))
   use subpaths <- result.try(
     trace_boundary_edges(boundary, links, vertex_points(graph), []),
   )
@@ -378,7 +376,7 @@ fn intersection_from_arrangement_graph(
       [],
     ),
   )
-  use links <- result.try(pair_boundary_sectors(boundary, []))
+  use links <- result.try(pair_boundary_sectors(graph, boundary))
   use subpaths <- result.try(
     trace_boundary_edges(boundary, links, vertex_points(graph), []),
   )
@@ -406,7 +404,7 @@ fn difference_from_arrangement_graph(
       [],
     ),
   )
-  use links <- result.try(pair_boundary_sectors(boundary, []))
+  use links <- result.try(pair_boundary_sectors(graph, boundary))
   use subpaths <- result.try(
     trace_boundary_edges(boundary, links, vertex_points(graph), []),
   )
@@ -434,7 +432,7 @@ fn symmetric_difference_from_arrangement_graph(
       [],
     ),
   )
-  use links <- result.try(pair_boundary_sectors(boundary, []))
+  use links <- result.try(pair_boundary_sectors(graph, boundary))
   use subpaths <- result.try(
     trace_boundary_edges(boundary, links, vertex_points(graph), []),
   )
@@ -565,131 +563,52 @@ fn winding_filled(winding: Int, fill_rule: svg_path.FillRule) -> Bool {
 }
 
 fn pair_boundary_sectors(
+  graph: ArrangementGraph,
   edges: List(BoundaryEdge),
-  links: List(BoundaryLink),
 ) -> Result(List(BoundaryLink), Error) {
-  pair_boundary_sectors_loop(edges, edges, links)
-}
-
-fn pair_boundary_sectors_loop(
-  unpaired: List(BoundaryEdge),
-  all_edges: List(BoundaryEdge),
-  links: List(BoundaryLink),
-) -> Result(List(BoundaryLink), Error) {
-  case unpaired {
-    [] -> Ok(list.reverse(links))
-    [BoundaryEdge(id:, layer:, end_vertex:, ..), ..rest] -> {
-      use successor <- result.try(filled_sector_successor(
-        all_edges,
-        id,
-        end_vertex,
-        layer,
-      ))
-      pair_boundary_sectors_loop(rest, all_edges, [
-        BoundaryLink(edge_id: id, successor_id: successor),
-        ..links
-      ])
-    }
-  }
-}
-
-fn filled_sector_successor(
-  edges: List(BoundaryEdge),
-  incoming_id: Int,
-  vertex: Int,
-  layer: Int,
-) -> Result(Int, Error) {
-  use rays <- result.try(collect_boundary_rays(edges, vertex, layer, []))
-  let ordered = rays |> list.sort(by: compare_boundary_rays)
-  use successor <- result.try(cyclic_successor(
-    ordered,
-    incoming_id,
-    first: list.first(ordered),
-    vertex:,
-  ))
-  let BoundaryRay(edge_id:, starts:, ..) = successor
-  case starts {
-    True -> Ok(edge_id)
-    False ->
-      Error(InternalBoundaryTopologyError(vertex:, reason: SectorMismatch))
-  }
-}
-
-fn collect_boundary_rays(
-  edges: List(BoundaryEdge),
-  vertex: Int,
-  layer: Int,
-  rays: List(BoundaryRay),
-) -> Result(List(BoundaryRay), Error) {
-  case edges {
-    [] -> Ok(rays)
-    [
-      BoundaryEdge(id:, layer: edge_layer, segment:, start_vertex:, end_vertex:),
-      ..rest
-    ] -> {
-      use rays <- result.try(
-        case edge_layer == layer && start_vertex == vertex {
-          False -> Ok(rays)
-          True -> {
-            use directions <- result.try(
-              svg_path.segment_directions(segment, at: 0.0)
-              |> result.map_error(PathError),
-            )
-            use direction <- result.try(direction_or_topology_error(
-              directions.outgoing,
-              vertex,
+  let boundary =
+    edges |> list.map(fn(edge) { #(edge.id, edge) }) |> dict.from_list
+  let orders = dict.from_list(graph.cyclic_orders)
+  list.try_map(edges, fn(incoming) {
+    let vertex = incoming.end_vertex
+    use groups <- result.try(
+      dict.get(orders, vertex)
+      |> result.replace_error(InternalBoundaryTopologyError(
+        vertex:,
+        reason: SectorMismatch,
+      )),
+    )
+    // Retain the arrangement's geometric clockwise order, including its
+    // deterministic order within unresolved groups. Sorting endpoint tangent
+    // angles again loses the separation of curves sharing a tangent.
+    let ordered =
+      groups
+      |> list.flatten
+      |> list.filter_map(fn(incident) {
+        use edge <- result.try(dict.get(boundary, incident.edge_id))
+        case edge.layer == incoming.layer {
+          True ->
+            // Classification may reverse an edge relative to the graph.
+            Ok(BoundaryRay(
+              edge_id: edge.id,
+              starts: edge.start_vertex == vertex,
             ))
-            Ok([
-              BoundaryRay(
-                edge_id: id,
-                starts: True,
-                angle: point.heading(direction),
-              ),
-              ..rays
-            ])
-          }
-        },
-      )
-      use rays <- result.try(case edge_layer == layer && end_vertex == vertex {
-        False -> Ok(rays)
-        True -> {
-          use directions <- result.try(
-            svg_path.segment_directions(segment, at: 1.0)
-            |> result.map_error(PathError),
-          )
-          use direction <- result.try(direction_or_topology_error(
-            directions.incoming,
-            vertex,
-          ))
-          Ok([
-            BoundaryRay(
-              edge_id: id,
-              starts: False,
-              angle: point.heading(point.negate(direction)),
-            ),
-            ..rays
-          ])
+          False -> Error(Nil)
         }
       })
-      collect_boundary_rays(rest, vertex, layer, rays)
+    use successor <- result.try(cyclic_successor(
+      ordered,
+      incoming.id,
+      first: list.first(ordered),
+      vertex:,
+    ))
+    case successor.starts {
+      True ->
+        Ok(BoundaryLink(edge_id: incoming.id, successor_id: successor.edge_id))
+      False ->
+        Error(InternalBoundaryTopologyError(vertex:, reason: SectorMismatch))
     }
-  }
-}
-
-fn direction_or_topology_error(
-  direction: Option(svg_path.Point),
-  vertex: Int,
-) -> Result(svg_path.Point, Error) {
-  case direction {
-    Some(direction) -> Ok(direction)
-    _ -> Error(InternalBoundaryTopologyError(vertex:, reason: SectorMismatch))
-  }
-}
-
-fn compare_boundary_rays(left: BoundaryRay, right: BoundaryRay) -> order.Order {
-  let BoundaryRay(angle: left_angle, ..) = left
-  let BoundaryRay(angle: right_angle, ..) = right
-  float_compare(left_angle, right_angle)
+  })
 }
 
 fn cyclic_successor(
@@ -701,7 +620,7 @@ fn cyclic_successor(
   case rays {
     [] -> Error(InternalBoundaryTopologyError(vertex:, reason: SectorMismatch))
     [first, ..rest] -> {
-      let BoundaryRay(edge_id:, starts:, ..) = first
+      let BoundaryRay(edge_id:, starts:) = first
       case edge_id == incoming_id && !starts {
         True ->
           case rest {
@@ -848,17 +767,6 @@ fn take_boundary_edge(
         False -> take_boundary_edge(rest, id, vertex, [first, ..retained])
       }
     }
-  }
-}
-
-fn float_compare(left: Float, right: Float) -> order.Order {
-  case left <. right {
-    True -> order.Lt
-    False ->
-      case left >. right {
-        True -> order.Gt
-        False -> order.Eq
-      }
   }
 }
 

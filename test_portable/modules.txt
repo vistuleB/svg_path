@@ -24,3 +24,4 @@ svg_path_paper_paths_test.gleam
 svg_path_paper_curve_remaining_test.gleam
 svg_path_paper_boolean_recovered_test.gleam
 svg_path_csg_cluster_join_test.gleam
+svg_path_csg_tangent_order_test.gleam

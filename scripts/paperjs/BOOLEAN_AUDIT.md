@@ -1,7 +1,8 @@
 # Paper.js Boolean audit: first batch
 
-**Historical log.** The current classifications and follow-up evidence are in
-[BOOLEAN_ERROR_TRIAGE.md](BOOLEAN_ERROR_TRIAGE.md) and `boolean-status.json`.
+**Historical log.** Current classifications are in `boolean-status.json`; see
+[BOOLEAN_ERROR_TRIAGE.md](BOOLEAN_ERROR_TRIAGE.md) for the pre-fix analysis and
+[BOOLEAN_TANGENT_FIX.md](BOOLEAN_TANGENT_FIX.md) for the tangent-order repair.
 The earlier unclassified counts below are superseded.
 
 Date: 2026-10-12. Gleam library revision:
